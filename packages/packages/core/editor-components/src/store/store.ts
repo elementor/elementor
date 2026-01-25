@@ -27,15 +27,17 @@ type ComponentsState = {
 	loadStatus: Status;
 	styles: StylesDefinition;
 	createdThisSession: Component[ 'uid' ][];
-	archivedData: PublishedComponent[];
+	archivedThisSession: ComponentId[];
 	path: ComponentsPathItem[];
 	currentComponentId: V1Document[ 'id' ] | null;
+	updatedComponentNames: Record< number, string >;
 };
 
 export type ComponentsSlice = SliceState< typeof slice >;
 
 export type ComponentsPathItem = {
 	instanceId?: string;
+	instanceTitle?: string;
 	componentId: V1Document[ 'id' ];
 };
 
@@ -45,9 +47,10 @@ export const initialState: ComponentsState = {
 	loadStatus: 'idle',
 	styles: {},
 	createdThisSession: [],
-	archivedData: [],
+	archivedThisSession: [],
 	path: [],
 	currentComponentId: null,
+	updatedComponentNames: {},
 };
 
 export const SLICE_NAME = 'components';
@@ -58,7 +61,7 @@ export const slice = createSlice( {
 	reducers: {
 		add: ( state, { payload }: PayloadAction< PublishedComponent | PublishedComponent[] > ) => {
 			if ( Array.isArray( payload ) ) {
-				state.data = [ ...state.data, ...payload ];
+				state.data = [ ...payload, ...state.data ];
 			} else {
 				state.data.unshift( payload );
 			}
@@ -68,6 +71,12 @@ export const slice = createSlice( {
 		},
 		addUnpublished: ( state, { payload }: PayloadAction< UnpublishedComponent > ) => {
 			state.unpublishedData.unshift( payload );
+		},
+		removeUnpublished: ( state, { payload }: PayloadAction< string | string[] > ) => {
+			const uidsToRemove = Array.isArray( payload ) ? payload : [ payload ];
+			state.unpublishedData = state.unpublishedData.filter(
+				( component ) => ! uidsToRemove.includes( component.uid )
+			);
 		},
 		resetUnpublished: ( state ) => {
 			state.unpublishedData = [];
@@ -83,15 +92,16 @@ export const slice = createSlice( {
 		addCreatedThisSession: ( state, { payload }: PayloadAction< string > ) => {
 			state.createdThisSession.push( payload );
 		},
+		removeCreatedThisSession: ( state, { payload }: PayloadAction< string > ) => {
+			state.createdThisSession = state.createdThisSession.filter( ( uid ) => uid !== payload );
+		},
 		archive: ( state, { payload }: PayloadAction< number > ) => {
-			state.data = state.data.filter( ( component ) => {
-				const isArchived = component.id === payload;
-				if ( isArchived ) {
-					state.archivedData.push( component );
-				}
+			const component = state.data.find( ( comp ) => comp.id === payload );
 
-				return ! isArchived;
-			} );
+			if ( component ) {
+				component.isArchived = true;
+				state.archivedThisSession.push( payload );
+			}
 		},
 		setCurrentComponentId: ( state, { payload }: PayloadAction< V1Document[ 'id' ] | null > ) => {
 			state.currentComponentId = payload;
@@ -111,6 +121,20 @@ export const slice = createSlice( {
 
 			component.overridableProps = payload.overridableProps;
 		},
+		rename: ( state, { payload }: PayloadAction< { componentUid: string; name: string } > ) => {
+			const component = state.data.find( ( comp ) => comp.uid === payload.componentUid );
+
+			if ( ! component ) {
+				return;
+			}
+			if ( component.id ) {
+				state.updatedComponentNames[ component.id ] = payload.name;
+			}
+			component.name = payload.name;
+		},
+		cleanUpdatedComponentNames: ( state ) => {
+			state.updatedComponentNames = {};
+		},
 	},
 	extraReducers: ( builder ) => {
 		builder.addCase( loadComponents.fulfilled, ( state, { payload }: PayloadAction< GetComponentResponse > ) => {
@@ -126,8 +150,8 @@ export const slice = createSlice( {
 	},
 } );
 
-const selectData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].data;
-const selectArchivedData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].archivedData;
+export const selectData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].data;
+export const selectArchivedThisSession = ( state: ComponentsSlice ) => state[ SLICE_NAME ].archivedThisSession;
 const selectLoadStatus = ( state: ComponentsSlice ) => state[ SLICE_NAME ].loadStatus;
 const selectStylesDefinitions = ( state: ComponentsSlice ) => state[ SLICE_NAME ].styles ?? {};
 const selectUnpublishedData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].unpublishedData;
@@ -140,6 +164,10 @@ export const useComponent = ( componentId: ComponentId | null ) => {
 	return useSelector( ( state: ComponentsSlice ) => ( componentId ? selectComponent( state, componentId ) : null ) );
 };
 
+export const selectComponentByUid = ( state: ComponentsSlice, componentUid: string ) =>
+	state[ SLICE_NAME ].data.find( ( component ) => component.uid === componentUid ) ??
+	state[ SLICE_NAME ].unpublishedData.find( ( component ) => component.uid === componentUid );
+
 export const selectComponents = createSelector(
 	selectData,
 	selectUnpublishedData,
@@ -149,7 +177,7 @@ export const selectComponents = createSelector(
 			name: item.name,
 			overridableProps: item.overridableProps,
 		} ) ),
-		...data,
+		...data.filter( ( component ) => ! component.isArchived ),
 	]
 );
 export const selectUnpublishedComponents = createSelector(
@@ -201,11 +229,22 @@ export const selectCurrentComponentId = createSelector(
 	( currentComponentId ) => currentComponentId
 );
 
+export const selectCurrentComponent = createSelector( selectData, getCurrentComponentId, ( data, currentComponentId ) =>
+	data.find( ( component ) => component.id === currentComponentId )
+);
+
 export const useCurrentComponentId = () => {
 	return useSelector( selectCurrentComponentId );
 };
+export const useCurrentComponent = () => {
+	return useSelector( selectCurrentComponent );
+};
 
-export const selectArchivedComponents = createSelector(
-	selectArchivedData,
-	( archivedData: PublishedComponent[] ) => archivedData
+export const selectUpdatedComponentNames = createSelector(
+	( state: ComponentsSlice ) => state[ SLICE_NAME ].updatedComponentNames,
+	( updatedComponentNames ) =>
+		Object.entries( updatedComponentNames ).map( ( [ componentId, title ] ) => ( {
+			componentId: Number( componentId ),
+			title,
+		} ) )
 );

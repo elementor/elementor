@@ -4,6 +4,8 @@ import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
 import { INLINE_EDITING_SELECTORS } from './selectors/selectors';
 import { getElementSelector } from '../../../../assets/elements-utils';
+import topBarSelectors from '../../../../selectors/top-bar-selectors';
+import EditorSelectors from '../../../../selectors/editor-selectors';
 
 const testedAttributes = Object.keys( INLINE_EDITING_SELECTORS.attributes ).filter( ( attribute ) => attribute !== 'link' );
 
@@ -32,8 +34,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		page = await context.newPage();
 		wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
-		await wpAdminPage.setExperiments( { e_atomic_elements: 'active' } );
-		await wpAdminPage.setExperiments( { 'v4-inline-text-editing': 'active', e_classes: 'active' } );
+		await wpAdminPage.setExperiments( { e_atomic_elements: 'active', e_classes: 'active' } );
 
 		editor = await wpAdminPage.openNewPage();
 	} );
@@ -49,21 +50,20 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		// Arrange
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
-		const previewFrame = editor.getPreviewFrame();
-		const headingElement = previewFrame.locator( `.elementor-element-${ headingId }` );
+		const headingElement = editor.previewFrame.locator( `.elementor-element-${ headingId }` );
 
 		await expect( headingElement ).toBeVisible();
 
 		// Act
-		await headingElement.dblclick();
-		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.panel.inlineEditor );
+		const inlineEditor = await editor.triggerEditingElement( headingId );
 
 		await expect( inlineEditor ).toBeVisible();
 		await inlineEditor.clear();
-		await page.keyboard.press( 'ControlOrMeta+U' );
-		await page.keyboard.type( 'this' );
-		await page.keyboard.press( 'ControlOrMeta+U' );
-		await page.keyboard.type( ' is the first test' );
+		await page.keyboard.type( 'this is the first test' );
+		await editor.selectInlineEditedText( headingId, 'this' );
+		await editor.toggleInlineEditingAttribute( INLINE_EDITING_SELECTORS.attributes.underline );
+		await page.keyboard.press( 'Escape', { delay: 100 } );
+		await editor.selectElement( headingId );
 
 		// Assert
 		await expect( headingElement ).toContainText( NEW_TITLE );
@@ -73,18 +73,14 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 			.locator( INLINE_EDITING_SELECTORS.panel.inlineEditor );
 		const panelHTML = await panelInlineEditor.innerHTML();
 
-		expect( panelHTML ).toContain( '<u>this</u>&nbsp;is the first test' );
+		expect( panelHTML ).toContain( '<u>this</u> is the first test' );
 
 		await editor.publishAndViewPage();
+
 		const publishedHeading = page.locator( INLINE_EDITING_SELECTORS.headingBase ).last();
 
 		await expect( publishedHeading ).toContainText( NEW_TITLE );
-
-		const underlinedText = publishedHeading.locator( 'u' );
-
-		await expect( underlinedText ).toBeVisible();
-
-		await expect( underlinedText ).toContainText( 'this' );
+		await expect( publishedHeading.locator( 'u' ) ).toContainText( 'this' );
 	} );
 
 	test( 'Delete entire content and enter new text without errors', async () => {
@@ -94,41 +90,30 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		// Arrange
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
-		const previewFrame = editor.getPreviewFrame();
-		const headingElement = previewFrame.locator( `.elementor-element-${ headingId }` );
+		const headingElement = editor.previewFrame.locator( `.elementor-element-${ headingId }` );
 
 		await expect( headingElement ).toBeVisible();
 
-		await headingElement.dblclick();
-		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
+		const inlineEditor = await editor.triggerEditingElement( headingId );
 
 		await expect( inlineEditor ).toBeVisible();
 
 		// Act
-		await page.keyboard.press( 'ControlOrMeta+A' );
-
-		for ( let i = 0; i < INITIAL_CONTENT.length; i++ ) {
-			await page.keyboard.type( INITIAL_CONTENT.charAt( i ) );
-		}
+		await inlineEditor.clear();
+		await page.keyboard.type( INITIAL_CONTENT );
 
 		// Assert
 		await expect( headingElement ).toContainText( INITIAL_CONTENT );
 		await expect( headingElement ).toBeVisible();
 
 		// Act
-		await page.keyboard.press( 'ControlOrMeta+A' );
-		await page.keyboard.press( 'Delete' );
-
-		for ( let i = 0; i < NEW_CONTENT.length; i++ ) {
-			await page.keyboard.type( NEW_CONTENT.charAt( i ) );
-		}
+		await inlineEditor.clear();
+		await page.keyboard.type( NEW_CONTENT );
 
 		// Assert
 		await expect( headingElement ).toContainText( NEW_CONTENT );
 		await expect( headingElement ).toBeVisible();
 
-		await editor.selectElement( containerId );
-		await editor.selectElement( headingId );
 		const panelInlineEditor = page
 			.getByLabel( INLINE_EDITING_SELECTORS.panel.contentSectionLabel )
 			.locator( INLINE_EDITING_SELECTORS.panel.inlineEditor );
@@ -149,9 +134,8 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		await editor.v4Panel.openTab( 'style' );
 		await editor.v4Panel.style.openSection( 'Typography' );
 		await editor.v4Panel.style.setFontWeight( 100 );
-		await headingElement.dblclick();
 
-		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
+		const inlineEditor = await editor.triggerEditingElement( headingId );
 
 		await inlineEditor.waitFor();
 
@@ -174,9 +158,8 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		await editor.v4Panel.style.addGlobalClass( 'hello' );
 		await editor.v4Panel.style.openSection( 'Typography' );
 		await editor.v4Panel.style.setFontSize( 100, 'px' );
-		await paragraphElement.dblclick();
 
-		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
+		const inlineEditor = await editor.triggerEditingElement( paragraphId );
 
 		await inlineEditor.waitFor();
 
@@ -192,13 +175,10 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		// Arrange
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
-		const previewFrame = editor.getPreviewFrame();
-		let headingElement = previewFrame.locator( `.elementor-element-${ headingId }` );
+		let headingElement = editor.previewFrame.locator( `.elementor-element-${ headingId }` );
 
 		// Act.
-		await headingElement.dblclick();
-
-		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
+		const inlineEditor = await editor.triggerEditingElement( headingId );
 
 		await inlineEditor.waitFor();
 		await page.waitForTimeout( 1000 );
@@ -212,52 +192,109 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		await expect( headingElement ).toHaveText( 'Hello' );
 	} );
 
-	test( "ensure html tags for styling aren't stripped by twig", async ( ) => {
+	for ( const atom of supportedAtoms ) {
+		test( `ensure html tags for styling aren't stripped by twig for ${ atom } widget`, async ( ) => {
 		// Arrange
-		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
-		const atomIds: Partial< Record< typeof supportedAtoms[number], string > > = {};
-		const encodedExpectedOutput = '<strong>bold</strong>, <u>underline</u>, <s>strikethrough</s>, <sup>superscript</sup>, <sub>subscript</sub>';
+			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+			const atomIds: Partial< Record< typeof supportedAtoms[number], string > > = {};
+			const encodedExpectedOutput = '<strong draggable=\"true\">bold</strong>, <u>underline</u>, <s>strikethrough</s>, <sup>superscript</sup>, <sub>subscript</sub>, <em>italic</em>';
 
-		for ( const atom of supportedAtoms ) {
 			atomIds[ atom ] = await editor.addWidget( { widgetType: atom, container: containerId } );
 
 			await editor.previewFrame.locator( getElementSelector( atomIds[ atom ] ) ).waitFor();
 			await editor.v4Panel.fillInlineEditing( atomTexts[ atom ] );
-		}
 
-		// Unfocus.
-		await page.keyboard.press( 'Escape' );
+			// Unfocus.
+			await page.keyboard.press( 'Escape' );
 
-		// Act.
-		for ( const atom of supportedAtoms ) {
+			// Act.
 			for ( const attribute of testedAttributes ) {
 				await editor.selectInlineEditedText( atomIds[ atom ], attribute );
-				await editor.toggleInlineEditingAttribute( attribute );
+				await editor.toggleInlineEditingAttribute( INLINE_EDITING_SELECTORS.attributes[ attribute ] );
 				await page.keyboard.press( 'Escape' );
 			}
-		}
 
-		// Unfocus.
-		await page.keyboard.press( 'Escape' );
-
-		// Assert.
-		for ( const atom of supportedAtoms ) {
-			const queryString = getElementSelector( atomIds[ atom ] ) + ' ' + defaultAtomTags[ atom ];
+			// Assert.
+			let queryString = getElementSelector( atomIds[ atom ] ) + ' ' + defaultAtomTags[ atom ];
 
 			expect( await editor.previewFrame.locator( queryString ).innerHTML() )
 				.toContain( encodedExpectedOutput );
-		}
 
-		// Unfocus.
-		await page.keyboard.press( 'Escape' );
+			// Unfocus.
+			await page.keyboard.press( 'Escape' );
 
-		await editor.publishAndViewPage();
+			await editor.publishAndViewPage();
 
-		for ( const atom of supportedAtoms ) {
-			const queryString = `${ defaultAtomTags[ atom ] }[data-interaction-id="${ atomIds[ atom ] }"]`;
+			queryString = `${ defaultAtomTags[ atom ] }[data-interaction-id="${ atomIds[ atom ] }"]`;
 
 			expect( ( await page.locator( queryString ).innerHTML() ) )
-				.toContain( encodedExpectedOutput );
-		}
+				.toContain( encodedExpectedOutput.replaceAll( ' draggable="true"', '' ) );
+		} );
+	}
+
+	test( 'Ensure relevant focusing unmounts the inline editor form frame', async () => {
+		// Arrange
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		const dummyDivBlockId = await editor.addElement( { elType: 'e-div-block' }, 'document' );
+
+		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
+		const headingElement = editor.previewFrame.locator( EditorSelectors.v4.atomSelectors.heading.wrapper + ' > ' + EditorSelectors.v4.atomSelectors.heading.base );
+		const inlineEditedHeading = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
+
+		// Act
+		await editor.triggerEditingElement( headingId );
+
+		// Assert
+		await expect( inlineEditedHeading ).toBeVisible();
+		await expect( headingElement ).not.toBeAttached();
+
+		// Arrange
+		await editor.triggerEditingElement( headingId );
+
+		await test.step( 'Clicking the panel', async () => {
+			// Act - click on a panel tab
+			await editor.v4Panel.openTab( 'style' );
+
+			// Assert
+			await expect( headingElement ).toBeVisible();
+			await expect( inlineEditedHeading ).not.toBeAttached();
+		} );
+
+		// Arrange.
+		await editor.closeNavigatorIfOpen();
+		await editor.triggerEditingElement( headingId );
+
+		await test.step( 'Clicking the topbar', async () => {
+			// Act - open navigator using topbar
+			await editor.clickTopBarItem( topBarSelectors.navigator );
+
+			// Assert
+			await expect( headingElement ).toBeVisible();
+			await expect( inlineEditedHeading ).not.toBeAttached();
+		} );
+
+		// Arrange.
+		await editor.triggerEditingElement( headingId );
+
+		await test.step( 'Clicking the navigator', async () => {
+			// Act - clicking on navigator
+			await editor.closeNavigatorIfOpen();
+
+			// Assert
+			await expect( headingElement ).toBeVisible();
+			await expect( inlineEditedHeading ).not.toBeAttached();
+		} );
+
+		// Arrange.
+		await editor.triggerEditingElement( headingId );
+
+		await test.step( 'Clicking a different element', async () => {
+			// Act - clicking on a different element
+			await editor.previewFrame.locator( editor.getWidgetSelector( dummyDivBlockId ) ).click();
+
+			// Assert
+			await expect( headingElement ).toBeVisible();
+			await expect( inlineEditedHeading ).not.toBeAttached();
+		} );
 	} );
 } );

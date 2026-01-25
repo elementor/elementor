@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { type PropsWithChildren, type ReactNode, useId, useRef } from 'react';
-import { CollapseIcon } from '@elementor/editor-ui';
+import { CollapseIcon, SectionRefContext } from '@elementor/editor-ui';
 import { Collapse, Divider, ListItemButton, ListItemText, Stack } from '@elementor/ui';
 
-import { SectionRefContext } from '../contexts/section-context';
 import { useStateByElement } from '../hooks/use-state-by-element';
 import { type CollapsibleValue, getCollapsibleValue } from './collapsible-content';
 
@@ -12,7 +11,7 @@ type Props = PropsWithChildren< {
 	defaultExpanded?: boolean;
 	titleEnd?: CollapsibleValue< ReactNode | string >;
 	unmountOnExit?: boolean;
-	action?: ReactNode;
+	action?: { component: ReactNode; onClick: () => void };
 } >;
 
 export function Section( { title, children, defaultExpanded = false, titleEnd, unmountOnExit = true, action }: Props ) {
@@ -21,7 +20,9 @@ export function Section( { title, children, defaultExpanded = false, titleEnd, u
 	const isDisabled = !! action;
 
 	const handleClick = () => {
-		if ( ! isDisabled ) {
+		if ( isDisabled ) {
+			action?.onClick();
+		} else {
 			setIsOpen( ! isOpen );
 		}
 	};
@@ -47,7 +48,7 @@ export function Section( { title, children, defaultExpanded = false, titleEnd, u
 					/>
 					{ getCollapsibleValue( titleEnd, isOpen ) }
 				</Stack>
-				{ action }
+				{ action?.component }
 				<CollapseIcon
 					open={ isOpen }
 					color="secondary"

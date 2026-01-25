@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { getV1DocumentsManager, type V1Document } from '@elementor/editor-documents';
 import { type V1Element } from '@elementor/editor-elements';
 import { __privateListenTo as listenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
@@ -22,13 +22,13 @@ export function EditComponent() {
 
 	const onClose = throttle( navigateBack, 100 );
 
-	const elementDom = getComponentDOMElement( currentComponentId ?? undefined );
+	const topLevelElementDom = useComponentDOMElement( currentComponentId ?? undefined );
 
-	if ( ! elementDom ) {
+	if ( ! currentComponentId ) {
 		return null;
 	}
 
-	return <ComponentModal element={ elementDom } onClose={ onClose } />;
+	return <ComponentModal topLevelElementDom={ topLevelElementDom } onClose={ onClose } />;
 }
 
 function useHandleDocumentSwitches() {
@@ -73,27 +73,91 @@ function getUpdatedComponentPath( path: ComponentsPathItem[], nextDocument: V1Do
 		return path.slice( 0, componentIndex + 1 );
 	}
 
+	const instanceId = nextDocument?.container.view?.el?.dataset.id;
+	const instanceTitle = getInstanceTitle( instanceId, path );
+
 	return [
 		...path,
 		{
-			instanceId: nextDocument?.container.view?.el?.dataset.id,
+			instanceId,
+			instanceTitle,
 			componentId: nextDocument.id,
 		},
 	];
 }
 
-function getComponentDOMElement( id: V1Document[ 'id' ] | undefined ) {
+function getInstanceTitle( instanceId: string | undefined, path: ComponentsPathItem[] ): string | undefined {
+	if ( ! instanceId ) {
+		return undefined;
+	}
+
+	const documentsManager = getV1DocumentsManager();
+	const parentDocId = path.at( -1 )?.componentId ?? documentsManager.getInitialId();
+	const parentDoc = documentsManager.get( parentDocId );
+
+	type EditorSettings = { title?: string };
+	type ContainerWithChildren = V1Element & {
+		children?: {
+			findRecursive?: ( predicate: ( child: V1Element ) => boolean ) => V1Element | undefined;
+		};
+	};
+
+	const parentContainer = parentDoc?.container as unknown as ContainerWithChildren | undefined;
+	const widget = parentContainer?.children?.findRecursive?.(
+		( container: V1Element ) => container.id === instanceId
+	);
+
+	const editorSettings = widget?.model?.get?.( 'editor_settings' ) as EditorSettings | undefined;
+
+	return editorSettings?.title;
+}
+
+function useComponentDOMElement( id: V1Document[ 'id' ] | undefined ) {
+	const { componentContainerDomElement, topLevelElementDom } = getComponentDOMElements( id );
+
+	const [ currentElementDom, setCurrentElementDom ] = useState< HTMLElement | null >( topLevelElementDom );
+
+	useEffect( () => {
+		setCurrentElementDom( topLevelElementDom );
+	}, [ topLevelElementDom ] );
+
+	useEffect( () => {
+		if ( ! componentContainerDomElement ) {
+			return;
+		}
+
+		const mutationObserver = new MutationObserver( () => {
+			const newElementDom = componentContainerDomElement.children[ 0 ] as HTMLElement | null;
+			setCurrentElementDom( newElementDom );
+		} );
+
+		mutationObserver.observe( componentContainerDomElement, { childList: true } );
+
+		return () => {
+			mutationObserver.disconnect();
+		};
+	}, [ componentContainerDomElement ] );
+
+	return currentElementDom;
+}
+
+type ComponentDOMElements = {
+	componentContainerDomElement: HTMLElement | null;
+	topLevelElementDom: HTMLElement | null;
+};
+
+function getComponentDOMElements( id: V1Document[ 'id' ] | undefined ): ComponentDOMElements {
 	if ( ! id ) {
-		return null;
+		return { componentContainerDomElement: null, topLevelElementDom: null };
 	}
 
 	const documentsManager = getV1DocumentsManager();
 
 	const currentComponent = documentsManager.get( id );
 
-	const widget = currentComponent?.container as V1Element;
-	const container = ( widget?.view?.el?.children?.[ 0 ] ?? null ) as HTMLElement | null;
-	const elementDom = container?.children[ 0 ] as HTMLElement | null;
+	const componentContainer = currentComponent?.container as V1Element;
+	const componentContainerDomElement = ( componentContainer?.view?.el?.children?.[ 0 ] as HTMLElement ) ?? null;
+	const topLevelElementDom = ( componentContainerDomElement?.children[ 0 ] as HTMLElement ) ?? null;
 
-	return elementDom ?? null;
+	return { componentContainerDomElement, topLevelElementDom };
 }

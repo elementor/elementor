@@ -69,12 +69,15 @@ describe( 'save-as-component-tool handler', () => {
 			async ( elType ) => {
 				// Arrange
 				mockGetContainer.mockReturnValue( createMockContainer( elType ) as V1Element );
-				mockCreateUnpublishedComponent.mockReturnValue( TEST_COMPONENT_UID );
+				mockCreateUnpublishedComponent.mockReturnValue(
+					Promise.resolve( { uid: TEST_COMPONENT_UID, instanceId: '123' } )
+				);
 
 				// Act
 				const result = await handleSaveAsComponent( {
 					element_id: TEST_ELEMENT_ID,
 					component_name: TEST_COMPONENT_NAME,
+					groups: [],
 				} );
 
 				// Assert
@@ -95,13 +98,14 @@ describe( 'save-as-component-tool handler', () => {
 					} )
 				);
 
-				expect( mockCreateUnpublishedComponent ).toHaveBeenCalledWith(
-					TEST_COMPONENT_NAME,
-					expect.objectContaining( { elType } ),
-					null,
-					undefined,
-					expect.any( String )
-				);
+				expect( mockCreateUnpublishedComponent ).toHaveBeenCalledWith( {
+					name: TEST_COMPONENT_NAME,
+					element: expect.objectContaining( { elType } ),
+					eventData: null,
+					uid: expect.any( String ),
+					overridableProps: undefined,
+					source: 'mcp_tool',
+				} );
 			}
 		);
 
@@ -120,17 +124,21 @@ describe( 'save-as-component-tool handler', () => {
 				] ) as V1Element
 			);
 			mockGetElementType.mockReturnValue( mockElementType as unknown as ReturnType< typeof getElementType > );
-			mockCreateUnpublishedComponent.mockReturnValue( TEST_COMPONENT_UID );
+			mockCreateUnpublishedComponent.mockReturnValue(
+				Promise.resolve( { uid: TEST_COMPONENT_UID, instanceId: '123' } )
+			);
 
 			// Act
 			const result = await handleSaveAsComponent( {
 				element_id: TEST_ELEMENT_ID,
 				component_name: TEST_COMPONENT_NAME,
+				groups: [],
 				overridable_props: {
 					props: {
 						heading_text: {
 							elementId: TEST_CHILD_ELEMENT_ID,
 							propKey: 'text',
+							label: 'Heading Text',
 						},
 					},
 				},
@@ -159,16 +167,17 @@ describe( 'save-as-component-tool handler', () => {
 				} )
 			);
 
-			expect( mockCreateUnpublishedComponent ).toHaveBeenCalledWith(
-				TEST_COMPONENT_NAME,
-				expect.objectContaining( { elType: 'e-flexbox' } ),
-				null,
-				expect.objectContaining( {
+			expect( mockCreateUnpublishedComponent ).toHaveBeenCalledWith( {
+				name: TEST_COMPONENT_NAME,
+				element: expect.objectContaining( { elType: 'e-flexbox' } ),
+				eventData: null,
+				uid: expect.any( String ),
+				overridableProps: expect.objectContaining( {
 					props: expect.any( Object ),
 					groups: expect.any( Object ),
 				} ),
-				expect.any( String )
-			);
+				source: 'mcp_tool',
+			} );
 		} );
 	} );
 
@@ -182,6 +191,7 @@ describe( 'save-as-component-tool handler', () => {
 				handleSaveAsComponent( {
 					element_id: 'non-existent-id',
 					component_name: TEST_COMPONENT_NAME,
+					groups: [],
 				} )
 			).rejects.toThrow( ERROR_MESSAGES.ELEMENT_NOT_FOUND );
 			expect( mockApiClient.validate ).not.toHaveBeenCalled();
@@ -269,6 +279,7 @@ describe( 'save-as-component-tool handler', () => {
 							heading_text: {
 								elementId: TEST_CHILD_ELEMENT_ID,
 								propKey: 'text',
+								label: 'Heading Text',
 							},
 						},
 					},
@@ -292,6 +303,7 @@ describe( 'save-as-component-tool handler', () => {
 							heading_text: {
 								elementId: 'non-existent-child-id',
 								propKey: 'text',
+								label: 'Heading Text',
 							},
 						},
 					},
@@ -326,6 +338,7 @@ describe( 'save-as-component-tool handler', () => {
 							heading_invalid: {
 								elementId: TEST_CHILD_ELEMENT_ID,
 								propKey: 'nonExistentProp',
+								label: 'Invalid Prop',
 							},
 						},
 					},
@@ -356,6 +369,7 @@ describe( 'save-as-component-tool handler', () => {
 							heading_text: {
 								elementId: TEST_CHILD_ELEMENT_ID,
 								propKey: 'text',
+								label: 'Heading Text',
 							},
 						},
 					},

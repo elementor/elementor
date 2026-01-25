@@ -1,6 +1,9 @@
-import { type ForwardRefExoticComponent, type JSX, type RefAttributes, type RefObject } from 'react';
-import { type AnyTransformer, styleTransformersRegistry } from '@elementor/editor-canvas';
-import { stylesInheritanceTransformersRegistry } from '@elementor/editor-editing-panel';
+import { type ForwardRefExoticComponent, type JSX, type KeyboardEvent, type RefAttributes } from 'react';
+import {
+	type AnyTransformer,
+	stylesInheritanceTransformersRegistry,
+	styleTransformersRegistry,
+} from '@elementor/editor-canvas';
 import {
 	type createPropUtils,
 	type PropType,
@@ -22,7 +25,7 @@ export type ValueFieldProps = {
 	onValidationChange?: ( value: string ) => void;
 	propType?: PropType;
 	error?: { value: string; message: string };
-	ref?: RefObject< HTMLElement | null >;
+	onKeyDown?: ( event: KeyboardEvent< HTMLElement > ) => void;
 };
 
 type FallbackPropTypeUtil = ReturnType< typeof createPropUtils >;
@@ -37,10 +40,11 @@ type VariableTypeOptions = {
 	styleTransformer?: AnyTransformer;
 	fallbackPropTypeUtil: FallbackPropTypeUtil;
 	propTypeUtil: PropTypeUtil< string, string >;
-	selectionFilter?: ( variables: NormalizedVariable[], propType: PropType ) => NormalizedVariable[];
+	selectionFilter?: ( variables: NormalizedVariable[], propType?: PropType ) => NormalizedVariable[];
 	valueTransformer?: ( value: string, type?: string ) => PropValue;
 	isCompatible?: ( propType: PropType, variable: Variable ) => boolean;
 	emptyState?: JSX.Element;
+	isActive?: boolean;
 };
 
 export type VariableTypesMap = Record< string, Omit< VariableTypeOptions, 'key' > >;
@@ -62,6 +66,7 @@ export function createVariableTypeRegistry() {
 		fallbackPropTypeUtil,
 		isCompatible,
 		emptyState,
+		isActive = true,
 	}: VariableTypeOptions ) => {
 		const variableTypeKey = key ?? propTypeUtil.key;
 
@@ -88,6 +93,7 @@ export function createVariableTypeRegistry() {
 			fallbackPropTypeUtil,
 			isCompatible,
 			emptyState,
+			isActive,
 		};
 
 		registerTransformer( propTypeUtil.key, styleTransformer );
@@ -111,7 +117,7 @@ export function createVariableTypeRegistry() {
 	};
 
 	const hasVariableType = ( key: string ) => {
-		return key in variableTypes;
+		return key in variableTypes && !! variableTypes[ key ].isActive;
 	};
 
 	return {

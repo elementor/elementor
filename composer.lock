@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9a233a96e5bf3e4f3f212f91c8ceaceb",
+    "content-hash": "50e22c48ebc837c751a18b0f716e41ba",
     "packages": [
         {
             "name": "elementor/wp-notifications-package",
@@ -39,16 +39,16 @@
         },
         {
             "name": "elementor/wp-one-package",
-            "version": "1.0.22",
+            "version": "1.0.46",
             "source": {
                 "type": "git",
                 "url": "git@github.com:elementor/wp-one-package.git",
-                "reference": "d6186000bc3d072b952d71b32bbca0ca25920199"
+                "reference": "744191f07ac0dcb266dc4a9ee49bb12616a53bb8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://composer.elementor.com/download/elementor/wp-one-package/1.0.22",
-                "reference": "d6186000bc3d072b952d71b32bbca0ca25920199",
+                "url": "https://composer.elementor.com/download/elementor/wp-one-package/1.0.46",
+                "reference": "744191f07ac0dcb266dc4a9ee49bb12616a53bb8",
                 "shasum": ""
             },
             "require": {
@@ -56,14 +56,14 @@
             },
             "require-dev": {
                 "dealerdirect/phpcodesniffer-composer-installer": "^v1.0.0",
+                "johnpbloch/wordpress-core": "^6.0",
+                "phpunit/phpunit": "^9.0",
                 "squizlabs/php_codesniffer": "^3.10.2",
-                "wp-coding-standards/wpcs": "^3.1.0"
+                "wp-coding-standards/wpcs": "^3.1.0",
+                "yoast/phpunit-polyfills": "^2.0"
             },
             "type": "library",
             "autoload": {
-                "psr-4": {
-                    "ElementorOne\\": "src/"
-                },
                 "files": [
                     "./runner.php"
                 ]
@@ -77,9 +77,9 @@
                 ]
             },
             "support": {
-                "source": "https://github.com/elementor/wp-one-package/tree/1.0.22"
+                "source": "https://github.com/elementor/wp-one-package/tree/1.0.46"
             },
-            "time": "2025-12-25T11:09:16+00:00"
+            "time": "2026-01-15T15:47:17+00:00"
         }
     ],
     "packages-dev": [
@@ -4633,13 +4633,13 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=7.4"
     },
-    "platform-dev": {},
+    "platform-dev": [],
     "platform-overrides": {
         "php": "7.4"
     },

@@ -99,6 +99,7 @@ class Component_Overrides_Mocks {
 						'elType' => 'widget',
 						'widgetType' => 'e-button',
 						'propKey' => 'text',
+						'elementId' => 'button-123',
 					],
 					'groupId' => 'group-2',
 				],
@@ -189,6 +190,26 @@ class Component_Overrides_Mocks {
 				'schema_source' => ['type' => 'component', 'id' => self::VALID_COMPONENT_ID ],
 			],
 		];
+	}
+
+	public function get_mock_component_overridable_props_with_autosave_only_prop(): array {
+		$base_props = $this->get_mock_component_overridable_props();
+
+		$base_props['props']['prop-uuid-autosave-only'] = [
+			'overrideKey' => 'prop-uuid-autosave-only',
+			'label' => 'Autosave Only Prop',
+			'elementId' => 'heading-456',
+			'elType' => 'widget',
+			'widgetType' => 'e-heading',
+			'propKey' => 'title',
+			'originValue' => [
+				'$$type' => 'html',
+				'value' => 'Autosave Title',
+			],
+			'groupId' => 'group-1',
+		];
+
+		return $base_props;
 	}
 
 	public function get_mock_image_image_component_override_to_sanitize(): array {

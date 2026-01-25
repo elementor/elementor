@@ -9,6 +9,15 @@ export default class extends elementorModules.Module {
 	onInit() {
 		this.config = eventsConfig;
 
+		if ( ! this.canSendEvents() ) {
+			return;
+		}
+
+		this.initializeMixpanel();
+		this.enableTracking();
+	}
+
+	initializeMixpanel() {
 		mixpanel.init(
 			elementorCommon.config.editor_events?.token,
 			{
@@ -24,10 +33,6 @@ export default class extends elementorModules.Module {
 				},
 			},
 		);
-
-		if ( elementorCommon.config.editor_events?.can_send_events ) {
-			this.enableTracking();
-		}
 	}
 
 	enableTracking() {
@@ -51,7 +56,7 @@ export default class extends elementorModules.Module {
 	}
 
 	dispatchEvent( name, data, options = {} ) {
-		if ( ! elementorCommon.config.editor_events?.can_send_events ) {
+		if ( ! this.canSendEvents() ) {
 			return;
 		}
 
@@ -76,7 +81,7 @@ export default class extends elementorModules.Module {
 	}
 
 	startSessionRecording() {
-		if ( ! elementorCommon.config.editor_events?.can_send_events || this.isSessionRecordingInProgress() ) {
+		if ( ! this.canSendEvents() || this.isSessionRecordingInProgress() ) {
 			return;
 		}
 
@@ -89,7 +94,7 @@ export default class extends elementorModules.Module {
 	}
 
 	stopSessionRecording() {
-		if ( ! elementorCommon.config.editor_events?.can_send_events || ! this.isSessionRecordingInProgress() ) {
+		if ( ! this.canSendEvents() || ! this.isSessionRecordingInProgress() ) {
 			return;
 		}
 
@@ -120,7 +125,7 @@ export default class extends elementorModules.Module {
 
 	async getExperimentVariant( experimentName, defaultValue = 'control' ) {
 		try {
-			if ( ! elementorCommon.config.editor_events?.can_send_events ) {
+			if ( ! this.canSendEvents() ) {
 				return defaultValue;
 			}
 
@@ -164,5 +169,9 @@ export default class extends elementorModules.Module {
 		}
 
 		mixpanel.track( '$experiment_started', { 'Experiment name': experimentName, 'Variant name': experimentVariant } );
+	}
+
+	canSendEvents() {
+		return !! elementorCommon?.config?.editor_events?.can_send_events;
 	}
 }

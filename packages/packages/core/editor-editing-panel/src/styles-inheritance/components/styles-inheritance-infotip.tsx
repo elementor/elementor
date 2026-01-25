@@ -1,8 +1,12 @@
 import * as React from 'react';
-import { useMemo, useState } from 'react';
-import { createPropsResolver, type PropsResolver } from '@elementor/editor-canvas';
+import { useMemo, useRef, useState } from 'react';
+import {
+	createPropsResolver,
+	type PropsResolver,
+	stylesInheritanceTransformersRegistry,
+} from '@elementor/editor-canvas';
 import { type PropKey, type PropType } from '@elementor/editor-props';
-import { PopoverHeader } from '@elementor/editor-ui';
+import { PopoverHeader, useSectionWidth } from '@elementor/editor-ui';
 import {
 	Backdrop,
 	Box,
@@ -17,14 +21,26 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useSectionWidth } from '../../contexts/section-context';
 import { useDirection } from '../../hooks/use-direction';
 import { useNormalizedInheritanceChainItems } from '../hooks/use-normalized-inheritance-chain-items';
-import { stylesInheritanceTransformersRegistry } from '../styles-inheritance-transformers-registry';
 import { type SnapshotPropValue } from '../types';
 import { ActionIcons, BreakpointIcon, LabelChip, ValueComponent } from './infotip';
 
 const SECTION_PADDING_INLINE = 32;
+const INFOTIP_MAX_WIDTH = 496;
+
+export const calculatePopoverOffset = (
+	triggerRect: DOMRect | undefined,
+	cardWidth: number,
+	isSiteRtl: boolean
+): number => {
+	if ( ! triggerRect ) {
+		return 0;
+	}
+
+	const triggerWidth = triggerRect.width;
+	return isSiteRtl ? triggerWidth - cardWidth : -( cardWidth / 2 ) + triggerWidth / 2;
+};
 
 type Props = {
 	inheritanceChain: SnapshotPropValue[];
@@ -44,6 +60,7 @@ export const StylesInheritanceInfotip = ( {
 	isDisabled,
 }: Props ) => {
 	const [ showInfotip, setShowInfotip ] = useState< boolean >( false );
+	const triggerRef = useRef< HTMLDivElement >( null );
 
 	const toggleInfotip = () => {
 		if ( isDisabled ) {
@@ -78,7 +95,7 @@ export const StylesInheritanceInfotip = ( {
 				elevation={ 0 }
 				sx={ {
 					width: `${ sectionWidth - SECTION_PADDING_INLINE }px`,
-					maxWidth: 496,
+					maxWidth: INFOTIP_MAX_WIDTH,
 					maxHeight: 268,
 					overflowX: 'hidden',
 					display: 'flex',
@@ -146,16 +163,25 @@ export const StylesInheritanceInfotip = ( {
 	}
 
 	return (
-		<TooltipOrInfotip
-			showInfotip={ showInfotip }
-			onClose={ closeInfotip }
-			infotipContent={ infotipContent }
-			isDisabled={ isDisabled }
-		>
-			<IconButton onClick={ toggleInfotip } aria-label={ label } sx={ { my: '-1px' } } disabled={ isDisabled }>
-				{ children }
-			</IconButton>
-		</TooltipOrInfotip>
+		<Box ref={ triggerRef } sx={ { display: 'inline-flex' } }>
+			<TooltipOrInfotip
+				showInfotip={ showInfotip }
+				onClose={ closeInfotip }
+				infotipContent={ infotipContent }
+				isDisabled={ isDisabled }
+				triggerRef={ triggerRef }
+				sectionWidth={ sectionWidth }
+			>
+				<IconButton
+					onClick={ toggleInfotip }
+					aria-label={ label }
+					sx={ { my: '-1px' } }
+					disabled={ isDisabled }
+				>
+					{ children }
+				</IconButton>
+			</TooltipOrInfotip>
+		</Box>
 	);
 };
 
@@ -165,22 +191,29 @@ function TooltipOrInfotip( {
 	onClose,
 	infotipContent,
 	isDisabled,
+	triggerRef,
+	sectionWidth,
 }: {
 	children: React.ReactNode;
 	showInfotip: boolean;
 	onClose: () => void;
 	infotipContent: React.ReactNode;
 	isDisabled?: boolean;
+	triggerRef: React.RefObject< HTMLDivElement >;
+	sectionWidth: number;
 } ) {
 	const direction = useDirection();
 	const isSiteRtl = direction.isSiteRtl;
-	const forceInfotipAlignLeft = isSiteRtl ? 9999999 : -9999999;
 
 	if ( isDisabled ) {
 		return <Box sx={ { display: 'inline-flex' } }>{ children }</Box>;
 	}
 
 	if ( showInfotip ) {
+		const triggerRect = triggerRef.current?.getBoundingClientRect();
+		const cardWidth = Math.min( sectionWidth - SECTION_PADDING_INLINE, INFOTIP_MAX_WIDTH );
+		const offsetX = calculatePopoverOffset( triggerRect, cardWidth, isSiteRtl );
+
 		return (
 			<>
 				<Backdrop
@@ -207,7 +240,7 @@ function TooltipOrInfotip( {
 							modifiers: [
 								{
 									name: 'offset',
-									options: { offset: [ forceInfotipAlignLeft, 0 ] },
+									options: { offset: [ offsetX, 0 ] },
 								},
 							],
 						},

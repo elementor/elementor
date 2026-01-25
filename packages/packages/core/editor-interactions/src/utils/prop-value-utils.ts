@@ -9,6 +9,7 @@ import type {
 	StringPropValue,
 	TimingConfigPropValue,
 } from '../types';
+import { generateTempInteractionId } from './temp-id-utils';
 
 export const createString = ( value: string ): StringPropValue => ( {
 	$$type: 'string',
@@ -33,10 +34,26 @@ export const createBoolean = ( value: boolean ): BooleanPropValue => ( {
 	value,
 } );
 
-export const createConfig = ( replay: boolean ): ConfigPropValue => ( {
+export const createConfig = ( {
+	replay,
+	easing = 'easeIn',
+	relativeTo = '',
+	offsetTop = 0,
+	offsetBottom = 100,
+}: {
+	replay: boolean;
+	easing?: string;
+	relativeTo?: string;
+	offsetTop?: number;
+	offsetBottom?: number;
+} ): ConfigPropValue => ( {
 	$$type: 'config',
 	value: {
 		replay: createBoolean( replay ),
+		easing: createString( easing ),
+		relativeTo: createString( relativeTo ),
+		offsetTop: createNumber( offsetTop ),
+		offsetBottom: createNumber( offsetBottom ),
 	},
 } );
 
@@ -44,44 +61,102 @@ export const extractBoolean = ( prop: BooleanPropValue | undefined, fallback = f
 	return prop?.value ?? fallback;
 };
 
-export const createAnimationPreset = (
-	effect: string,
-	type: string,
-	direction: string,
-	duration: number,
-	delay: number,
-	replay: boolean = false
-): AnimationPresetPropValue => ( {
+export const createAnimationPreset = ( {
+	effect,
+	type,
+	direction,
+	duration,
+	delay,
+	replay = false,
+	easing = 'easeIn',
+	relativeTo,
+	offsetTop,
+	offsetBottom,
+}: {
+	effect: string;
+	type: string;
+	direction?: string;
+	duration: number;
+	delay: number;
+	replay: boolean;
+	easing?: string;
+	relativeTo?: string;
+	offsetTop?: number;
+	offsetBottom?: number;
+} ): AnimationPresetPropValue => ( {
 	$$type: 'animation-preset-props',
 	value: {
 		effect: createString( effect ),
 		type: createString( type ),
-		direction: createString( direction ),
+		direction: createString( direction ?? '' ),
 		timing_config: createTimingConfig( duration, delay ),
-		config: createConfig( replay ),
+		config: createConfig( {
+			replay,
+			easing,
+			relativeTo,
+			offsetTop,
+			offsetBottom,
+		} ),
 	},
 } );
 
-export const createInteractionItem = (
-	trigger: string,
-	effect: string,
-	type: string,
-	direction: string,
-	duration: number,
-	delay: number,
-	interactionId?: string,
-	replay: boolean = false
-): InteractionItemPropValue => ( {
+export const createInteractionItem = ( {
+	trigger,
+	effect,
+	type,
+	direction,
+	duration,
+	delay,
+	interactionId,
+	replay = false,
+	easing = 'easeIn',
+	relativeTo,
+	offsetTop,
+	offsetBottom,
+}: {
+	trigger: string;
+	effect: string;
+	type: string;
+	direction?: string;
+	duration: number;
+	delay: number;
+	interactionId?: string;
+	replay: boolean;
+	easing?: string;
+	relativeTo?: string;
+	offsetTop?: number;
+	offsetBottom?: number;
+} ): InteractionItemPropValue => ( {
 	$$type: 'interaction-item',
 	value: {
 		...( interactionId && { interaction_id: createString( interactionId ) } ),
 		trigger: createString( trigger ),
-		animation: createAnimationPreset( effect, type, direction, duration, delay, replay ),
+		animation: createAnimationPreset( {
+			effect,
+			type,
+			direction,
+			duration,
+			delay,
+			replay,
+			easing,
+			relativeTo,
+			offsetTop,
+			offsetBottom,
+		} ),
 	},
 } );
 
 export const createDefaultInteractionItem = (): InteractionItemPropValue => {
-	return createInteractionItem( 'load', 'fade', 'in', '', 300, 0, undefined, false );
+	return createInteractionItem( {
+		trigger: 'load',
+		effect: 'fade',
+		type: 'in',
+		duration: 600,
+		delay: 0,
+		replay: false,
+		easing: 'easeIn',
+		interactionId: generateTempInteractionId(),
+	} );
 };
 
 export const createDefaultInteractions = (): ElementInteractions => ( {
@@ -97,21 +172,11 @@ export const extractNumber = ( prop: NumberPropValue | undefined, fallback = 0 )
 	return prop?.value ?? fallback;
 };
 
-export const buildAnimationIdString = ( item: InteractionItemValue ): string => {
-	const trigger = extractString( item.trigger );
-	const effect = extractString( item.animation.value.effect );
-	const type = extractString( item.animation.value.type );
-	const direction = extractString( item.animation.value.direction );
-	const duration = extractNumber( item.animation.value.timing_config.value.duration );
-	const delay = extractNumber( item.animation.value.timing_config.value.delay );
-
-	return [ trigger, effect, type, direction, duration, delay ].join( '-' );
-};
-
 const TRIGGER_LABELS: Record< string, string > = {
 	load: 'On page load',
 	scrollIn: 'Scroll into view',
 	scrollOut: 'Scroll out of view',
+	scrollOn: 'While scrolling',
 };
 
 const capitalize = ( str: string ): string => {

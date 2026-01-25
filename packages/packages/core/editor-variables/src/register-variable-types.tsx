@@ -35,6 +35,7 @@ export function registerVariableTypes() {
 	} );
 
 	const sizePromotions = {
+		isActive: false,
 		icon: ExpandDiagonalIcon,
 		propTypeUtil: sizeVariablePropTypeUtil,
 		fallbackPropTypeUtil: sizePropTypeUtil,

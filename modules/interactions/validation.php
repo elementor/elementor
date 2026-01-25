@@ -10,7 +10,7 @@ class Validation {
 	private $elements_to_interactions_counter = [];
 	private $max_number_of_interactions = 5;
 
-	private const VALID_TRIGGERS = [ 'load', 'scrollIn', 'scrollOut' ];
+	private const VALID_TRIGGERS = [ 'load', 'scrollIn', 'scrollOut', 'scrollOn' ];
 	private const VALID_EFFECTS = [ 'fade', 'slide', 'scale' ];
 	private const VALID_TYPES = [ 'in', 'out' ];
 	private const VALID_DIRECTIONS = [ '', 'left', 'right', 'top', 'bottom' ];
@@ -199,6 +199,24 @@ class Validation {
 		return true;
 	}
 
+	private function is_valid_number_prop_in_range( $data, $key, $min = null, $max = null ) {
+		if ( ! $this->is_valid_number_prop( $data, $key ) ) {
+			return false;
+		}
+
+		$value = (float) $data[ $key ]['value'];
+
+		if ( null !== $min && $value < $min ) {
+			return false;
+		}
+
+		if ( null !== $max && $value > $max ) {
+			return false;
+		}
+
+		return true;
+	}
+
 	private function is_valid_config_prop( $data ) {
 		if ( ! isset( $data['config'] ) || ! is_array( $data['config'] ) ) {
 			return false;
@@ -217,6 +235,22 @@ class Validation {
 		$config_value = $config['value'];
 
 		if ( isset( $config_value['replay'] ) && ! $this->is_valid_boolean_prop( $config_value, 'replay' ) ) {
+			return false;
+		}
+
+		if ( isset( $config_value['easing'] ) && ! $this->is_valid_string_prop( $config_value, 'easing' ) ) {
+			return false;
+		}
+
+		if ( isset( $config_value['relativeTo'] ) && ! $this->is_valid_string_prop( $config_value, 'relativeTo' ) ) {
+			return false;
+		}
+
+		if ( isset( $config_value['offsetTop'] ) && ! $this->is_valid_number_prop_in_range( $config_value, 'offsetTop', 0, 100 ) ) {
+			return false;
+		}
+
+		if ( isset( $config_value['offsetBottom'] ) && ! $this->is_valid_number_prop_in_range( $config_value, 'offsetBottom', 0, 100 ) ) {
 			return false;
 		}
 

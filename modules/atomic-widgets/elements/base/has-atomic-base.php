@@ -4,13 +4,15 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 
 use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Base\Atomic_Control_Base;
-use Elementor\Modules\AtomicWidgets\Controls\Base\Element_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Utils;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
@@ -170,6 +172,7 @@ trait Has_Atomic_Base {
 		$type = $this->extract_prop_value( $animation, 'type' );
 		$direction = $this->extract_prop_value( $animation, 'direction' );
 		$timing_config = $this->extract_prop_value( $animation, 'timing_config' );
+		$config = $this->extract_prop_value( $animation, 'config' );
 
 		$duration = 300;
 		$delay = 0;
@@ -179,7 +182,21 @@ trait Has_Atomic_Base {
 			$delay = $this->extract_prop_value( $timing_config, 'delay', 0 );
 		}
 
-		$animation_id = implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay ] );
+		$easing = 'easeIn';
+		if ( is_array( $config ) ) {
+			$easing = $this->extract_prop_value( $config, 'easing', 'easeIn' );
+		}
+
+		$animation_id = implode( '-', [
+			$trigger,
+			$effect,
+			$type,
+			$direction,
+			$duration,
+			$delay,
+			'',
+			$easing,
+		] );
 
 		return [
 			'interaction_id' => $interaction_id,
@@ -297,8 +314,27 @@ trait Has_Atomic_Base {
 	public function get_atomic_settings(): array {
 		$schema = static::get_props_schema();
 		$props = $this->get_settings();
+		$initial_attributes = $this->get_initial_attributes();
+
+		$props['attributes'] = Attributes_Prop_Type::generate( array_merge(
+			$initial_attributes['value'] ?? [],
+			$props['attributes']['value'] ?? []
+		) );
 
 		return Render_Props_Resolver::for_settings()->resolve( $schema, $props );
+	}
+
+	protected function get_initial_attributes() {
+		return Attributes_Prop_Type::generate( [
+			Key_Value_Prop_Type::generate( [
+				'key' => String_Prop_Type::generate( 'data-e-type' ),
+				'value' => $this->get_type(),
+			] ),
+			Key_Value_Prop_Type::generate( [
+				'key' => String_Prop_Type::generate( 'data-id' ),
+				'value' => $this->get_id(),
+			] ),
+		] );
 	}
 
 	public function get_atomic_setting( string $key ) {
@@ -383,6 +419,10 @@ trait Has_Atomic_Base {
 		$duration = 300;
 		$delay = 0;
 		$replay = 0;
+		$easing = 'easeIn';
+		$relative_to = 'viewport';
+		$offset_top = 15;
+		$offset_bottom = 85;
 
 		if ( is_array( $timing_config ) ) {
 			$duration = $this->extract_prop_value( $timing_config, 'duration', 300 );
@@ -390,15 +430,33 @@ trait Has_Atomic_Base {
 		}
 
 		if ( is_array( $config ) ) {
+			$relative_to = $this->extract_prop_value( $config, 'relativeTo', 'viewport' );
+			$offset_top = $this->extract_prop_value( $config, 'offsetTop', 15 );
+			$offset_bottom = $this->extract_prop_value( $config, 'offsetBottom', 85 );
+
 			$replay = $this->extract_prop_value( $config, 'replay', 0 );
 			if ( empty( $replay ) && 0 !== $replay && '0' !== $replay ) {
 				$replay = 0;
 			}
+
+			$easing = $this->extract_prop_value( $config, 'easing', 'easeIn' );
 		} else {
 			$replay = 0;
 		}
 
-		return implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay, $replay ] );
+		return implode( '-', [
+			$trigger,
+			$effect,
+			$type,
+			$direction,
+			$duration,
+			$delay,
+			$replay,
+			$easing,
+			$relative_to,
+			$offset_top,
+			$offset_bottom,
+		] );
 	}
 
 	public function print_content() {
@@ -430,5 +488,25 @@ trait Has_Atomic_Base {
 			'context_key' => null,
 			'context' => [],
 		];
+	}
+
+	protected function get_link_attributes( $link_settings, $add_key_to_result = false ) {
+		$tag = $link_settings['tag'] ?? Link_Prop_Type::DEFAULT_TAG;
+		$href = $link_settings['href'];
+		$target = $link_settings['target'] ?? '_self';
+
+		$is_button = 'button' === $tag;
+		$href_attribute_key = $is_button ? 'data-action-link' : 'href';
+
+		$result = [
+			$href_attribute_key => $href,
+			'target' => $target,
+		];
+
+		if ( $add_key_to_result ) {
+			$result['key'] = $href_attribute_key;
+		}
+
+		return $result;
 	}
 }

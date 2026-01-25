@@ -1373,18 +1373,29 @@ export default class EditorPage extends BasePage {
 	}
 
 	async triggerEditingElement( elementId: string ): Promise<Locator> {
-		await this.selectElement( elementId );
-
+		const inlineEditor = this.previewFrame.locator( `.elementor-element-${ elementId } ${ INLINE_EDITING_SELECTORS.canvas.inlineEditor }` );
 		const element = this.previewFrame.locator( `.elementor-element-${ elementId }` );
-		await element.dblclick();
-		const inlineEditor = this.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
-		await inlineEditor.waitFor();
+
+		await this.page.keyboard.press( 'Escape' );
+		await this.page.waitForTimeout( timeouts.veryShort );
+		await element.waitFor();
+		await element[ INLINE_EDITING_SELECTORS.triggerEvent ]();
 
 		return inlineEditor;
 	}
 
-	async selectInlineEditedText( elementId: string, substring: string ): Promise<void> {
+	async selectInlineEditedText( elementId: string, substringOrSelectAll: string | true ): Promise<void> {
 		const inlineEditor = await this.triggerEditingElement( elementId );
+
+		if ( true === substringOrSelectAll ) {
+			return await this.page.keyboard.press( 'ControlOrMeta+A' );
+		}
+
+		if ( 'string' !== typeof substringOrSelectAll ) {
+			return;
+		}
+
+		const substring = substringOrSelectAll;
 		const entireText = await inlineEditor.textContent();
 
 		if ( ! entireText?.includes( substring ) ) {
@@ -1393,23 +1404,21 @@ export default class EditorPage extends BasePage {
 
 		const startIndex = entireText.indexOf( substring );
 
-		await this.page.keyboard.press( 'ControlOrMeta+ArrowLeft', { delay: 100 } );
-
 		for ( let i = 0; i < startIndex; i++ ) {
-			await this.page.keyboard.press( 'ArrowRight', { delay: 100 } );
+			await this.page.keyboard.press( 'ArrowRight', { delay: timeouts.veryShort } );
 		}
 
 		for ( let i = 0; i < substring.length; i++ ) {
-			await this.page.keyboard.press( 'Shift+ArrowRight', { delay: 100 } );
+			await this.page.keyboard.press( 'Shift+ArrowRight', { delay: timeouts.veryShort } );
 		}
 	}
 
 	async toggleInlineEditingAttribute( attribute: string ): Promise<void> {
-		if ( ! Object.keys( INLINE_EDITING_SELECTORS.attributes ).includes( attribute ) ) {
+		if ( ! Object.values( INLINE_EDITING_SELECTORS.attributes ).includes( attribute ) ) {
 			return;
 		}
 
-		const button = this.page.locator( `[role="presentation"] button[value="${ INLINE_EDITING_SELECTORS.attributes[ attribute ] }"]` );
+		const button = this.page.locator( `[role="presentation"] button[value="${ attribute }"]` );
 
 		await button.click();
 	}

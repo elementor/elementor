@@ -21,40 +21,11 @@ describe( 'updateArchivedComponentBeforeSave', () => {
 
 	it( 'should return early when there are no archived components', async () => {
 		// Act
-		await updateArchivedComponentBeforeSave();
+		await updateArchivedComponentBeforeSave( 'publish' );
 
 		// Assert
 		expect( mockUpdateArchivedComponents ).not.toHaveBeenCalled();
 		expect( mockNotify ).not.toHaveBeenCalled();
-	} );
-
-	it( 'should notify success when all components are archived successfully', async () => {
-		// Arrange
-		const archivedComponent1 = { id: 100, uid: 'uid-1', name: 'Component 1' };
-		const archivedComponent2 = { id: 200, uid: 'uid-2', name: 'Component 2' };
-
-		__dispatch( slice.actions.add( archivedComponent1 ) );
-		__dispatch( slice.actions.add( archivedComponent2 ) );
-		__dispatch( slice.actions.archive( archivedComponent1.id ) );
-		__dispatch( slice.actions.archive( archivedComponent2.id ) );
-
-		mockUpdateArchivedComponents.mockResolvedValue( {
-			failedIds: [],
-			successIds: [ 100, 200 ],
-			success: true,
-		} );
-
-		// Act
-		await updateArchivedComponentBeforeSave();
-
-		// Assert
-		expect( mockUpdateArchivedComponents ).toHaveBeenCalledWith( [ 100, 200 ] );
-		expect( mockNotify ).toHaveBeenCalledTimes( 1 );
-		expect( mockNotify ).toHaveBeenCalledWith( {
-			type: 'success',
-			message: 'Successfully archived components: 100, 200',
-			id: 'success-archived-components-notification',
-		} );
 	} );
 
 	it( 'should notify error when all components fail to archive', async () => {
@@ -74,52 +45,15 @@ describe( 'updateArchivedComponentBeforeSave', () => {
 		} );
 
 		// Act
-		await updateArchivedComponentBeforeSave();
+		await updateArchivedComponentBeforeSave( 'publish' );
 
 		// Assert
-		expect( mockUpdateArchivedComponents ).toHaveBeenCalledWith( [ 100, 200 ] );
+		expect( mockUpdateArchivedComponents ).toHaveBeenCalledWith( [ 100, 200 ], 'publish' );
 		expect( mockNotify ).toHaveBeenCalledTimes( 1 );
 		expect( mockNotify ).toHaveBeenCalledWith( {
 			type: 'error',
 			message: 'Failed to archive components: 100, 200',
 			id: 'failed-archived-components-notification',
-		} );
-	} );
-
-	it( 'should notify both success and error when some components succeed and some fail', async () => {
-		// Arrange
-		const archivedComponent1 = { id: 100, uid: 'uid-1', name: 'Component 1' };
-		const archivedComponent2 = { id: 200, uid: 'uid-2', name: 'Component 2' };
-		const archivedComponent3 = { id: 300, uid: 'uid-3', name: 'Component 3' };
-
-		__dispatch( slice.actions.add( archivedComponent1 ) );
-		__dispatch( slice.actions.add( archivedComponent2 ) );
-		__dispatch( slice.actions.add( archivedComponent3 ) );
-		__dispatch( slice.actions.archive( archivedComponent1.id ) );
-		__dispatch( slice.actions.archive( archivedComponent2.id ) );
-		__dispatch( slice.actions.archive( archivedComponent3.id ) );
-
-		mockUpdateArchivedComponents.mockResolvedValue( {
-			failedIds: [ 200 ],
-			successIds: [ 100, 300 ],
-			success: true,
-		} );
-
-		// Act
-		await updateArchivedComponentBeforeSave();
-
-		// Assert
-		expect( mockUpdateArchivedComponents ).toHaveBeenCalledWith( [ 100, 200, 300 ] );
-		expect( mockNotify ).toHaveBeenCalledTimes( 2 );
-		expect( mockNotify ).toHaveBeenCalledWith( {
-			type: 'error',
-			message: 'Failed to archive components: 200',
-			id: 'failed-archived-components-notification',
-		} );
-		expect( mockNotify ).toHaveBeenCalledWith( {
-			type: 'success',
-			message: 'Successfully archived components: 100, 300',
-			id: 'success-archived-components-notification',
 		} );
 	} );
 
@@ -134,7 +68,7 @@ describe( 'updateArchivedComponentBeforeSave', () => {
 		mockUpdateArchivedComponents.mockRejectedValue( apiError );
 
 		// Act & Assert
-		await expect( updateArchivedComponentBeforeSave() ).rejects.toThrow(
+		await expect( updateArchivedComponentBeforeSave( 'publish' ) ).rejects.toThrow(
 			'Failed to update archived components: Error: Network error'
 		);
 		expect( mockNotify ).not.toHaveBeenCalled();

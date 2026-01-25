@@ -5,6 +5,7 @@ import { Button, FormLabel, Grid, Select, Stack, type SxProps, TextField, Typogr
 import { __ } from '@wordpress/i18n';
 
 import { type OverridableProp } from '../../types';
+import { validatePropLabel } from './utils/validate-prop-label';
 
 const SIZE = 'tiny';
 
@@ -14,12 +15,16 @@ type Props = {
 	onSubmit: ( data: { label: string; group: string | null } ) => void;
 	currentValue?: OverridableProp;
 	groups?: { value: string; label: string }[];
+	existingLabels?: string[];
 	sx?: SxProps;
 };
 
-export function OverridablePropForm( { onSubmit, groups, currentValue, sx }: Props ) {
+export function OverridablePropForm( { onSubmit, groups, currentValue, existingLabels = [], sx }: Props ) {
+	const selectGroups = groups?.length ? groups : [ DEFAULT_GROUP ];
+
 	const [ propLabel, setPropLabel ] = useState< string | null >( currentValue?.label ?? null );
-	const [ group, setGroup ] = useState< string | null >( currentValue?.groupId ?? groups?.[ 0 ]?.value ?? null );
+	const [ group, setGroup ] = useState< string | null >( currentValue?.groupId ?? selectGroups[ 0 ]?.value ?? null );
+	const [ error, setError ] = useState< string | null >( null );
 
 	const name = __( 'Name', 'elementor' );
 	const groupName = __( 'Group Name', 'elementor' );
@@ -29,8 +34,19 @@ export function OverridablePropForm( { onSubmit, groups, currentValue, sx }: Pro
 	const title = isCreate ? __( 'Create new property', 'elementor' ) : __( 'Update property', 'elementor' );
 	const ctaLabel = isCreate ? __( 'Create', 'elementor' ) : __( 'Update', 'elementor' );
 
+	const handleSubmit = () => {
+		const validationResult = validatePropLabel( propLabel ?? '', existingLabels, currentValue?.label );
+
+		if ( ! validationResult.isValid ) {
+			setError( validationResult.errorMessage );
+			return;
+		}
+
+		onSubmit( { label: propLabel ?? '', group } );
+	};
+
 	return (
-		<Form onSubmit={ () => onSubmit( { label: propLabel ?? '', group } ) }>
+		<Form onSubmit={ handleSubmit }>
 			<Stack alignItems="start" sx={ { width: '268px', ...sx } }>
 				<Stack
 					direction="row"
@@ -54,7 +70,18 @@ export function OverridablePropForm( { onSubmit, groups, currentValue, sx }: Pro
 							fullWidth
 							placeholder={ __( 'Enter value', 'elementor' ) }
 							value={ propLabel ?? '' }
-							onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) => setPropLabel( e.target.value ) }
+							onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) => {
+								const newValue = e.target.value;
+								setPropLabel( newValue );
+								const validationResult = validatePropLabel(
+									newValue,
+									existingLabels,
+									currentValue?.label
+								);
+								setError( validationResult.errorMessage );
+							} }
+							error={ Boolean( error ) }
+							helperText={ error }
 						/>
 					</Grid>
 				</Grid>
@@ -73,16 +100,17 @@ export function OverridablePropForm( { onSubmit, groups, currentValue, sx }: Pro
 							}
 							displayEmpty
 							renderValue={ ( selectedValue: string | null ) => {
-								if ( ! selectedValue || selectedValue === '' ) {
-									const [ firstGroup = DEFAULT_GROUP ] = groups ?? [];
-
-									return firstGroup.label;
+								if ( ! selectedValue ) {
+									return selectGroups[ 0 ].label;
 								}
 
-								return groups?.find( ( { value } ) => value === selectedValue )?.label ?? selectedValue;
+								return (
+									selectGroups.find( ( { value } ) => value === selectedValue )?.label ??
+									selectedValue
+								);
 							} }
 						>
-							{ ( groups ?? [ DEFAULT_GROUP ] ).map( ( { label: groupLabel, ...props } ) => (
+							{ selectGroups.map( ( { label: groupLabel, ...props } ) => (
 								<MenuListItem key={ props.value } { ...props } value={ props.value ?? '' }>
 									{ groupLabel }
 								</MenuListItem>
@@ -91,7 +119,13 @@ export function OverridablePropForm( { onSubmit, groups, currentValue, sx }: Pro
 					</Grid>
 				</Grid>
 				<Stack direction="row" justifyContent="flex-end" alignSelf="end" mt={ 1.5 } py={ 1 } px={ 1.5 }>
-					<Button type="submit" disabled={ ! propLabel } variant="contained" color="primary" size="small">
+					<Button
+						type="submit"
+						disabled={ ! propLabel || Boolean( error ) }
+						variant="contained"
+						color="primary"
+						size="small"
+					>
 						{ ctaLabel }
 					</Button>
 				</Stack>

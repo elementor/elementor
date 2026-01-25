@@ -34,11 +34,13 @@ class Elementor_One_Menu_Manager {
 
 	private function register_actions(): void {
 		add_action( 'init', [ $this, 'check_if_pro_module_is_enabled' ] );
-		add_action( 'admin_menu', [ $this, 'register_elementor_home_submenus' ], 21 );
+		add_action( 'admin_menu', [ $this, 'register_elementor_home_submenus' ], 9 );
 
 		add_action( 'admin_menu', function () {
 			do_action( 'elementor/editor-one/menu/register', $this->menu_data_provider );
-		}, 4 );
+		} );
+
+		add_action( 'admin_menu', [ $this, 'register_pro_submenus' ], 100 );
 
 		add_action( 'admin_menu', [ $this, 'intercept_legacy_submenus' ], 10003 );
 		add_action( 'admin_menu', [ $this, 'register_flyout_items_as_hidden_submenus' ], 10004 );
@@ -61,17 +63,20 @@ class Elementor_One_Menu_Manager {
 	}
 
 	public function register_elementor_home_submenus(): void {
-
 		add_submenu_page(
 			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
 			esc_html__( 'Editor', 'elementor' ),
 			esc_html__( 'Editor', 'elementor' ),
 			Menu_Config::CAPABILITY_EDIT_POSTS,
-			Menu_Config::EDITOR_MENU_SLUG,
+			Menu_Config::ELEMENTOR_MENU_SLUG,
 			[ $this, 'render_editor_page' ],
 			20
 		);
 
+		do_action( 'elementor/editor-one/menu/register_submenus' );
+	}
+
+	public function register_pro_submenus(): void {
 		if ( ! $this->is_pro_module_enabled &&
 			Utils::has_pro() &&
 			class_exists( '\ElementorPro\License\API' ) &&
@@ -97,8 +102,6 @@ class Elementor_One_Menu_Manager {
 				80
 			);
 		}
-
-		do_action( 'elementor/editor-one/menu/register_submenus' );
 	}
 
 	public function remove_all_submenus_for_edit_posts_users(): void {
@@ -185,7 +188,8 @@ class Elementor_One_Menu_Manager {
 	public function hide_legacy_templates_menu(): void {
 		?>
 		<style type="text/css">
-			#menu-posts-elementor_library {
+			#menu-posts-elementor_library, 
+			#menu-posts-elementor_library + .wp-not-current-submenu.wp-menu-separator {
 				display: none !important;
 			}
 		</style>
@@ -195,7 +199,8 @@ class Elementor_One_Menu_Manager {
 	public function hide_old_elementor_menu(): void {
 		?>
 		<style type="text/css">
-			#toplevel_page_elementor {
+			#toplevel_page_elementor,
+			#toplevel_page_elementor + .wp-not-current-submenu.wp-menu-separator {
 				display: none !important;
 			}
 		</style>
@@ -223,6 +228,7 @@ class Elementor_One_Menu_Manager {
 		$page_title = $has_page ? $item->get_page_title() : '';
 		$callback = $has_page ? [ $item, 'render' ] : '';
 		$capability = $item->get_capability();
+		$position = $item->get_position();
 
 		return add_submenu_page(
 			$parent_slug,
@@ -230,7 +236,8 @@ class Elementor_One_Menu_Manager {
 			$item->get_label(),
 			$capability,
 			$item_slug,
-			$callback
+			$callback,
+			$position
 		);
 	}
 
@@ -293,13 +300,10 @@ class Elementor_One_Menu_Manager {
 	}
 
 	public function intercept_legacy_submenus(): void {
-		$this->legacy_submenu_interceptor->intercept_all();
+		$this->legacy_submenu_interceptor->intercept_all( $this->is_pro_module_enabled );
 	}
 
 	public function enqueue_admin_menu_assets(): void {
-		if ( $this->menu_data_provider->is_elementor_editor_page() ) {
-			return;
-		}
 
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
@@ -311,7 +315,9 @@ class Elementor_One_Menu_Manager {
 		);
 
 		$config = [
-			'editorFlyout' => $this->get_editor_flyout_data(),
+			'editorFlyout' => $this->menu_data_provider->get_third_level_data(
+				Menu_Data_Provider::THIRD_LEVEL_FLYOUT_MENU
+			),
 		];
 
 		wp_enqueue_script(
@@ -327,10 +333,6 @@ class Elementor_One_Menu_Manager {
 			'editorOneMenuConfig',
 			$config
 		);
-	}
-
-	private function get_editor_flyout_data(): array {
-		return $this->menu_data_provider->get_editor_flyout_data();
 	}
 }
 

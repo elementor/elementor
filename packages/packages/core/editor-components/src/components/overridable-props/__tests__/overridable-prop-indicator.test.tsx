@@ -2,6 +2,7 @@ import * as React from 'react';
 import { createMockPropType, renderWithStore } from 'test-utils';
 import { useBoundProp } from '@elementor/editor-controls';
 import { useElement } from '@elementor/editor-editing-panel';
+import { getWidgetsCache } from '@elementor/editor-elements';
 import { stringPropTypeUtil, type TransformablePropValue } from '@elementor/editor-props';
 import {
 	__createStore,
@@ -13,6 +14,7 @@ import {
 import { fireEvent, screen } from '@testing-library/react';
 
 import { componentOverridablePropTypeUtil } from '../../../prop-types/component-overridable-prop-type';
+import { OverridablePropProvider } from '../../../provider/overridable-prop-context';
 import { type ComponentsSlice, selectOverridableProps, slice } from '../../../store/store';
 import { type PublishedComponent } from '../../../types';
 import { OverridablePropIndicator } from '../overridable-prop-indicator';
@@ -24,6 +26,10 @@ jest.mock( '@elementor/editor-controls', () => ( {
 jest.mock( '@elementor/editor-editing-panel', () => ( {
 	...jest.requireActual( '@elementor/editor-editing-panel' ),
 	useElement: jest.fn(),
+} ) );
+jest.mock( '@elementor/editor-elements', () => ( {
+	...jest.requireActual( '@elementor/editor-elements' ),
+	getWidgetsCache: jest.fn(),
 } ) );
 
 const MOCK_ELEMENT_ID = 'test-element-123';
@@ -98,6 +104,7 @@ describe( 'OverridablePropIndicator', () => {
 		{
 			should: 'not show indicator on fields bound to forbidden keys',
 			bind: '_cssid',
+			isPrevented: true,
 			currentValue: componentOverridablePropTypeUtil.create( {
 				override_key: MOCK_OVERRIDABLE_KEY,
 				origin_value: { $$type: 'string', value: 'Test' },
@@ -116,6 +123,7 @@ describe( 'OverridablePropIndicator', () => {
 		'should $should',
 		( {
 			bind,
+			isPrevented,
 			overridableData,
 			currentValue,
 			isComponent,
@@ -125,6 +133,7 @@ describe( 'OverridablePropIndicator', () => {
 			const boundProp = mockBoundProp( {
 				bind,
 				value: currentValue,
+				isPrevented,
 			} );
 
 			const isOverridable = componentOverridablePropTypeUtil.isValid( boundProp.value );
@@ -184,7 +193,8 @@ describe( 'OverridablePropIndicator', () => {
 
 			// Assert
 			if ( ! isShowingIndicator ) {
-				expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
+				expect( screen.queryByLabelText( 'Overridable property' ) ).not.toBeInTheDocument();
+				expect( screen.queryByLabelText( 'Make prop overridable' ) ).not.toBeInTheDocument();
 
 				return;
 			}
@@ -236,12 +246,555 @@ describe( 'OverridablePropIndicator', () => {
 	);
 } );
 
+describe( 'OverridablePropIndicator with componentInstanceElement context', () => {
+	const COMPONENT_INSTANCE_ELEMENT_ID = 'component-instance-element-123';
+	const COMPONENT_INSTANCE_WIDGET_TYPE = 'e-component';
+	const ORIGINAL_ELEMENT_ID = 'original-element-456';
+	const ORIGINAL_WIDGET_TYPE = 'e-heading';
+
+	const MOCK_COMPONENT_INSTANCE_ELEMENT = {
+		element: { id: COMPONENT_INSTANCE_ELEMENT_ID, type: COMPONENT_INSTANCE_WIDGET_TYPE },
+		elementType: {
+			key: COMPONENT_INSTANCE_WIDGET_TYPE,
+			propsSchema: {},
+			controls: [],
+			title: 'Component Instance',
+		},
+	};
+
+	let store: Store< ComponentsSlice >;
+
+	beforeEach( () => {
+		__registerSlice( slice );
+		store = __createStore();
+
+		jest.mocked( useElement ).mockReturnValue( {
+			element: { id: ORIGINAL_ELEMENT_ID, type: ORIGINAL_WIDGET_TYPE },
+			elementType: { key: ORIGINAL_WIDGET_TYPE, propsSchema: {}, controls: [], title: 'Heading' },
+		} );
+
+		jest.mocked( getWidgetsCache ).mockReturnValue( {
+			[ COMPONENT_INSTANCE_WIDGET_TYPE ]: { elType: 'widget', widgetType: COMPONENT_INSTANCE_WIDGET_TYPE },
+			[ ORIGINAL_WIDGET_TYPE ]: { elType: 'widget', widgetType: ORIGINAL_WIDGET_TYPE },
+		} as unknown as ReturnType< typeof getWidgetsCache > );
+	} );
+
+	afterEach( () => {
+		jest.resetAllMocks();
+	} );
+
+	it( 'should use componentInstanceElement.element.id as elementId when context is provided', () => {
+		// Arrange
+		const currentValue = stringPropTypeUtil.create( 'Test Value' );
+		const bind = 'title';
+
+		const componentData: PublishedComponent = {
+			id: MOCK_COMPONENT_ID,
+			uid: `component-${ MOCK_COMPONENT_ID }`,
+			name: 'Test Component',
+			overridableProps: {
+				props: {},
+				groups: { items: {}, order: [] },
+			},
+		};
+
+		dispatch( slice.actions.load( [ componentData ] ) );
+		dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
+
+		const boundProp = mockBoundProp( { bind, value: currentValue } );
+
+		jest.mocked( useBoundProp ).mockImplementation( ( propUtil ) => {
+			if ( propUtil ) {
+				return mockBoundProp( { bind, value: null } );
+			}
+			return boundProp;
+		} );
+
+		// Act
+		renderWithStore(
+			<OverridablePropProvider componentInstanceElement={ MOCK_COMPONENT_INSTANCE_ELEMENT }>
+				<OverridablePropIndicator />
+			</OverridablePropProvider>,
+			store
+		);
+
+		const indicator = screen.getByLabelText( 'Make prop overridable' );
+		fireEvent.click( indicator );
+
+		const nameInput = screen.getByPlaceholderText( 'Enter value' );
+		fireEvent.change( nameInput, { target: { value: 'New Prop' } } );
+
+		const createButton = screen.getByRole( 'button', { name: 'Create' } );
+		fireEvent.click( createButton );
+
+		// Assert
+		const updatedState = getState();
+		const updatedOverridableProps = selectOverridableProps( updatedState, MOCK_COMPONENT_ID );
+
+		const createdProp = Object.values( updatedOverridableProps?.props ?? {} ).find(
+			( prop ) => prop.propKey === bind
+		);
+
+		expect( createdProp ).toMatchObject( {
+			elementId: COMPONENT_INSTANCE_ELEMENT_ID,
+			widgetType: COMPONENT_INSTANCE_WIDGET_TYPE,
+			propKey: bind,
+			label: 'New Prop',
+		} );
+	} );
+
+	it( 'should preserve originPropFields when updating existing overridable prop', () => {
+		// Arrange
+		const existingOriginPropFields = {
+			propKey: 'content',
+			widgetType: 'e-text',
+			elType: 'widget',
+			elementId: 'nested-text-element',
+		};
+
+		const currentValue = componentOverridablePropTypeUtil.create( {
+			override_key: MOCK_OVERRIDABLE_KEY,
+			origin_value: { $$type: 'string', value: 'Existing Value' },
+		} );
+		const bind = 'title';
+
+		const componentData: PublishedComponent = {
+			id: MOCK_COMPONENT_ID,
+			uid: `component-${ MOCK_COMPONENT_ID }`,
+			name: 'Test Component',
+			overridableProps: {
+				props: {
+					[ MOCK_OVERRIDABLE_KEY ]: {
+						overrideKey: MOCK_OVERRIDABLE_KEY,
+						elementId: COMPONENT_INSTANCE_ELEMENT_ID,
+						propKey: bind,
+						widgetType: COMPONENT_INSTANCE_WIDGET_TYPE,
+						elType: MOCK_EL_TYPE,
+						groupId: 'default',
+						label: 'Existing Label',
+						originValue: { $$type: 'string', value: 'Existing Value' },
+						originPropFields: existingOriginPropFields,
+					},
+				},
+				groups: {
+					items: { default: { id: 'default', label: 'Default', props: [ MOCK_OVERRIDABLE_KEY ] } },
+					order: [ 'default' ],
+				},
+			},
+		};
+
+		dispatch( slice.actions.load( [ componentData ] ) );
+		dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
+
+		const boundProp = mockBoundProp( { bind, value: currentValue } );
+
+		jest.mocked( useBoundProp ).mockImplementation( ( propUtil ) => {
+			if ( propUtil ) {
+				return { ...boundProp, value: currentValue?.value };
+			}
+			return boundProp;
+		} );
+
+		// Act
+		renderWithStore(
+			<OverridablePropProvider
+				value={ currentValue.value }
+				componentInstanceElement={ MOCK_COMPONENT_INSTANCE_ELEMENT }
+			>
+				<OverridablePropIndicator />
+			</OverridablePropProvider>,
+			store
+		);
+
+		const indicator = screen.getByLabelText( 'Overridable property' );
+		fireEvent.click( indicator );
+
+		const nameInput = screen.getByPlaceholderText( 'Enter value' );
+		fireEvent.change( nameInput, { target: { value: 'Updated Label' } } );
+
+		const updateButton = screen.getByRole( 'button', { name: 'Update' } );
+		fireEvent.click( updateButton );
+
+		// Assert
+		const updatedState = getState();
+		const updatedOverridableProps = selectOverridableProps( updatedState, MOCK_COMPONENT_ID );
+
+		const updatedProp = updatedOverridableProps?.props[ MOCK_OVERRIDABLE_KEY ];
+
+		expect( updatedProp ).toMatchObject( {
+			label: 'Updated Label',
+			originPropFields: existingOriginPropFields,
+		} );
+	} );
+} );
+
+describe( 'OverridablePropForm duplicate validation', () => {
+	let store: Store< ComponentsSlice >;
+
+	const EXISTING_PROP_KEY = 'existing-prop-key';
+	const EXISTING_PROP_LABEL = 'Existing Label';
+
+	beforeEach( () => {
+		__registerSlice( slice );
+		store = __createStore();
+
+		jest.mocked( useElement ).mockReturnValue( {
+			element: { id: MOCK_ELEMENT_ID, type: MOCK_WIDGET_TYPE },
+			elementType: { key: MOCK_WIDGET_TYPE, propsSchema: {}, controls: [], title: 'Test Element' },
+		} );
+	} );
+
+	afterEach( () => {
+		jest.resetAllMocks();
+	} );
+
+	it( 'should show error when entering duplicate property name', () => {
+		// Arrange
+		const componentData: PublishedComponent = {
+			id: MOCK_COMPONENT_ID,
+			uid: `component-${ MOCK_COMPONENT_ID }`,
+			name: 'Test Component',
+			overridableProps: {
+				props: {
+					[ EXISTING_PROP_KEY ]: {
+						overrideKey: EXISTING_PROP_KEY,
+						elementId: 'other-element',
+						propKey: 'other-prop',
+						widgetType: MOCK_WIDGET_TYPE,
+						elType: MOCK_EL_TYPE,
+						originValue: { $$type: 'string', value: 'Test' },
+						label: EXISTING_PROP_LABEL,
+						groupId: 'default',
+					},
+				},
+				groups: {
+					items: {
+						default: { id: 'default', label: 'Default', props: [ EXISTING_PROP_KEY ] },
+					},
+					order: [ 'default' ],
+				},
+			},
+		};
+
+		dispatch( slice.actions.load( [ componentData ] ) );
+		dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
+
+		const boundProp = mockBoundProp( { bind: 'title', value: stringPropTypeUtil.create( 'Test' ) } );
+		jest.mocked( useBoundProp ).mockImplementation( ( propUtil ) => {
+			if ( propUtil ) {
+				return { ...boundProp, value: null };
+			}
+			return boundProp;
+		} );
+
+		renderWithStore( <OverridablePropIndicator />, store );
+
+		// Act
+		const indicator = screen.getByLabelText( 'Make prop overridable' );
+		fireEvent.click( indicator );
+
+		const nameInput = screen.getByPlaceholderText( 'Enter value' );
+		fireEvent.change( nameInput, { target: { value: EXISTING_PROP_LABEL } } );
+
+		// Assert
+		expect( screen.getByText( 'Property name already exists' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Create' } ) ).toBeDisabled();
+	} );
+
+	it( 'should show error when property name is empty or whitespace', () => {
+		// Arrange
+		const componentData: PublishedComponent = {
+			id: MOCK_COMPONENT_ID,
+			uid: `component-${ MOCK_COMPONENT_ID }`,
+			name: 'Test Component',
+			overridableProps: {
+				props: {},
+				groups: { items: {}, order: [] },
+			},
+		};
+
+		dispatch( slice.actions.load( [ componentData ] ) );
+		dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
+
+		const boundProp = mockBoundProp( { bind: 'title', value: stringPropTypeUtil.create( 'Test' ) } );
+		jest.mocked( useBoundProp ).mockImplementation( ( propUtil ) => {
+			if ( propUtil ) {
+				return { ...boundProp, value: null };
+			}
+			return boundProp;
+		} );
+
+		renderWithStore( <OverridablePropIndicator />, store );
+
+		// Act
+		const indicator = screen.getByLabelText( 'Make prop overridable' );
+		fireEvent.click( indicator );
+
+		const nameInput = screen.getByPlaceholderText( 'Enter value' );
+
+		// Type a value first, then clear it
+		fireEvent.change( nameInput, { target: { value: 'Some Value' } } );
+		fireEvent.change( nameInput, { target: { value: '' } } );
+
+		// Assert - empty name error
+		expect( screen.getByText( 'Property name is required' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Create' } ) ).toBeDisabled();
+
+		// Act - try whitespace only
+		fireEvent.change( nameInput, { target: { value: '   ' } } );
+
+		// Assert - still shows error
+		expect( screen.getByText( 'Property name is required' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Create' } ) ).toBeDisabled();
+	} );
+
+	it( 'should prevent form submission with empty value when pressing Enter', () => {
+		// Arrange
+		const componentData: PublishedComponent = {
+			id: MOCK_COMPONENT_ID,
+			uid: `component-${ MOCK_COMPONENT_ID }`,
+			name: 'Test Component',
+			overridableProps: {
+				props: {},
+				groups: { items: {}, order: [] },
+			},
+		};
+
+		dispatch( slice.actions.load( [ componentData ] ) );
+		dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
+
+		const boundProp = mockBoundProp( { bind: 'title', value: stringPropTypeUtil.create( 'Test' ) } );
+		jest.mocked( useBoundProp ).mockImplementation( ( propUtil ) => {
+			if ( propUtil ) {
+				return { ...boundProp, value: null };
+			}
+			return boundProp;
+		} );
+
+		renderWithStore( <OverridablePropIndicator />, store );
+
+		// Act - open the form
+		const indicator = screen.getByLabelText( 'Make prop overridable' );
+		fireEvent.click( indicator );
+
+		// Submit by pressing Enter on the input
+		const nameInput = screen.getByPlaceholderText( 'Enter value' );
+		fireEvent.keyDown( nameInput, { key: 'Enter', code: 'Enter' } );
+
+		// Assert - error should be shown, form should still be open
+		expect( screen.getByText( 'Property name is required' ) ).toBeInTheDocument();
+		expect( screen.getByPlaceholderText( 'Enter value' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should detect duplicate case-insensitively', () => {
+		// Arrange
+		const componentData: PublishedComponent = {
+			id: MOCK_COMPONENT_ID,
+			uid: `component-${ MOCK_COMPONENT_ID }`,
+			name: 'Test Component',
+			overridableProps: {
+				props: {
+					[ EXISTING_PROP_KEY ]: {
+						overrideKey: EXISTING_PROP_KEY,
+						elementId: 'other-element',
+						propKey: 'other-prop',
+						widgetType: MOCK_WIDGET_TYPE,
+						elType: MOCK_EL_TYPE,
+						originValue: { $$type: 'string', value: 'Test' },
+						label: EXISTING_PROP_LABEL,
+						groupId: 'default',
+					},
+				},
+				groups: {
+					items: {
+						default: { id: 'default', label: 'Default', props: [ EXISTING_PROP_KEY ] },
+					},
+					order: [ 'default' ],
+				},
+			},
+		};
+
+		dispatch( slice.actions.load( [ componentData ] ) );
+		dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
+
+		const boundProp = mockBoundProp( { bind: 'title', value: stringPropTypeUtil.create( 'Test' ) } );
+		jest.mocked( useBoundProp ).mockImplementation( ( propUtil ) => {
+			if ( propUtil ) {
+				return { ...boundProp, value: null };
+			}
+			return boundProp;
+		} );
+
+		renderWithStore( <OverridablePropIndicator />, store );
+
+		// Act
+		const indicator = screen.getByLabelText( 'Make prop overridable' );
+		fireEvent.click( indicator );
+
+		const nameInput = screen.getByPlaceholderText( 'Enter value' );
+		fireEvent.change( nameInput, { target: { value: 'EXISTING LABEL' } } );
+
+		// Assert
+		expect( screen.getByText( 'Property name already exists' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Create' } ) ).toBeDisabled();
+	} );
+
+	it( 'should allow saving with same label when editing existing property', () => {
+		// Arrange
+		const currentValue = componentOverridablePropTypeUtil.create( {
+			override_key: EXISTING_PROP_KEY,
+			origin_value: { $$type: 'string', value: 'Test' },
+		} );
+
+		const componentData: PublishedComponent = {
+			id: MOCK_COMPONENT_ID,
+			uid: `component-${ MOCK_COMPONENT_ID }`,
+			name: 'Test Component',
+			overridableProps: {
+				props: {
+					[ EXISTING_PROP_KEY ]: {
+						overrideKey: EXISTING_PROP_KEY,
+						elementId: MOCK_ELEMENT_ID,
+						propKey: 'title',
+						widgetType: MOCK_WIDGET_TYPE,
+						elType: MOCK_EL_TYPE,
+						originValue: currentValue,
+						label: EXISTING_PROP_LABEL,
+						groupId: 'default',
+					},
+				},
+				groups: {
+					items: {
+						default: { id: 'default', label: 'Default', props: [ EXISTING_PROP_KEY ] },
+					},
+					order: [ 'default' ],
+				},
+			},
+		};
+
+		dispatch( slice.actions.load( [ componentData ] ) );
+		dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
+
+		jest.mocked( useBoundProp ).mockImplementation( ( propUtil ) => {
+			if ( propUtil ) {
+				return { ...mockBoundProp( { bind: 'title', value: currentValue } ), value: currentValue?.value };
+			}
+			return mockBoundProp( { bind: 'title', value: currentValue } );
+		} );
+
+		renderWithStore( <OverridablePropIndicator />, store );
+
+		// Act
+		const indicator = screen.getByLabelText( 'Overridable property' );
+		fireEvent.click( indicator );
+
+		// Assert
+		expect( screen.queryByText( 'Property name already exists' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Update' } ) ).toBeEnabled();
+	} );
+
+	it( 'should clear error when entering unique name', () => {
+		// Arrange
+		const componentData: PublishedComponent = {
+			id: MOCK_COMPONENT_ID,
+			uid: `component-${ MOCK_COMPONENT_ID }`,
+			name: 'Test Component',
+			overridableProps: {
+				props: {
+					[ EXISTING_PROP_KEY ]: {
+						overrideKey: EXISTING_PROP_KEY,
+						elementId: 'other-element',
+						propKey: 'other-prop',
+						widgetType: MOCK_WIDGET_TYPE,
+						elType: MOCK_EL_TYPE,
+						originValue: { $$type: 'string', value: 'Test' },
+						label: EXISTING_PROP_LABEL,
+						groupId: 'default',
+					},
+				},
+				groups: {
+					items: {
+						default: { id: 'default', label: 'Default', props: [ EXISTING_PROP_KEY ] },
+					},
+					order: [ 'default' ],
+				},
+			},
+		};
+
+		dispatch( slice.actions.load( [ componentData ] ) );
+		dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
+
+		const boundProp = mockBoundProp( { bind: 'title', value: stringPropTypeUtil.create( 'Test' ) } );
+		jest.mocked( useBoundProp ).mockImplementation( ( propUtil ) => {
+			if ( propUtil ) {
+				return { ...boundProp, value: null };
+			}
+			return boundProp;
+		} );
+
+		renderWithStore( <OverridablePropIndicator />, store );
+
+		// Act
+		const indicator = screen.getByLabelText( 'Make prop overridable' );
+		fireEvent.click( indicator );
+
+		const nameInput = screen.getByPlaceholderText( 'Enter value' );
+		fireEvent.change( nameInput, { target: { value: EXISTING_PROP_LABEL } } );
+
+		// Assert - error shown
+		expect( screen.getByText( 'Property name already exists' ) ).toBeInTheDocument();
+
+		// Act - change to unique name
+		fireEvent.change( nameInput, { target: { value: 'Unique Name' } } );
+
+		// Assert - error cleared
+		expect( screen.queryByText( 'Property name already exists' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Create' } ) ).toBeEnabled();
+	} );
+
+	it( 'should show Default group when groups array is empty', () => {
+		// Arrange
+		const componentData: PublishedComponent = {
+			id: MOCK_COMPONENT_ID,
+			uid: `component-${ MOCK_COMPONENT_ID }`,
+			name: 'Test Component',
+			overridableProps: {
+				props: {},
+				groups: { items: {}, order: [] },
+			},
+		};
+
+		dispatch( slice.actions.load( [ componentData ] ) );
+		dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
+
+		const boundProp = mockBoundProp( { bind: 'title', value: stringPropTypeUtil.create( 'Test' ) } );
+		jest.mocked( useBoundProp ).mockImplementation( ( propUtil ) => {
+			if ( propUtil ) {
+				return { ...boundProp, value: null };
+			}
+			return boundProp;
+		} );
+
+		renderWithStore( <OverridablePropIndicator />, store );
+
+		// Act
+		const indicator = screen.getByLabelText( 'Make prop overridable' );
+		fireEvent.click( indicator );
+
+		// Assert
+		const groupSelect = screen.getByRole( 'combobox' );
+		expect( groupSelect ).toHaveTextContent( 'Default' );
+	} );
+} );
+
 function mockBoundProp( {
 	bind,
 	value,
+	isPrevented = false,
 }: {
 	bind: string;
 	value: TransformablePropValue< string, unknown > | null;
+	isPrevented?: boolean;
 } ): ReturnType< typeof useBoundProp > {
 	const params = {
 		value,
@@ -249,7 +802,7 @@ function mockBoundProp( {
 		restoreValue: jest.fn(),
 		resetValue: jest.fn(),
 		bind,
-		propType: createMockPropType( { kind: 'plain' } ),
+		propType: createMockPropType( { kind: 'plain', meta: isPrevented ? { overridable: false } : {} } ),
 		path: [ bind ],
 	};
 

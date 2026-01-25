@@ -2,7 +2,18 @@ import { type ComponentType } from 'react';
 
 import { type DirectionFieldProps, type FieldProps, type ReplayFieldProps } from './types';
 
-type InteractionsControlType = 'trigger' | 'effect' | 'effectType' | 'direction' | 'duration' | 'delay' | 'replay';
+type InteractionsControlType =
+	| 'trigger'
+	| 'effect'
+	| 'effectType'
+	| 'direction'
+	| 'duration'
+	| 'delay'
+	| 'replay'
+	| 'easing'
+	| 'relativeTo'
+	| 'offsetTop'
+	| 'offsetBottom';
 
 type InteractionsControlPropsMap = {
 	trigger: FieldProps;
@@ -12,6 +23,10 @@ type InteractionsControlPropsMap = {
 	duration: FieldProps;
 	delay: FieldProps;
 	replay: ReplayFieldProps;
+	easing: FieldProps;
+	relativeTo: FieldProps;
+	offsetTop: FieldProps;
+	offsetBottom: FieldProps;
 };
 
 type ControlOptions< T extends InteractionsControlType > = {

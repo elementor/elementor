@@ -178,6 +178,8 @@ class Module extends BaseModule {
 				'401' => self::EXPERIMENT_UPDATE_COPY_VISUALS,
 				'402' => self::EXPERIMENT_REDUCE_HIERARCHY_BLANK_OPTION,
 			],
+			'pageSubheading' => __( 'Choose the capabilities you need to bring your vision to life', 'elementor' ),
+			'pageHeading' => __( ' Elevate your website with additional features.', 'elementor' ),
 		] );
 	}
 

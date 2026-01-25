@@ -15,6 +15,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -52,7 +53,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 				->default_url( static::DEFAULT_SVG_URL )
 				->meta( 'is_svg', true ),
 			'link' => Link_Prop_Type::make(),
-			'attributes' => Attributes_Prop_Type::make(),
+			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
 	}
 
@@ -153,12 +154,15 @@ class Atomic_Svg extends Atomic_Widget_Base {
 
 		if ( isset( $settings['link'] ) && ! empty( $settings['link']['href'] ) ) {
 			$html_tag = Utils::validate_html_tag( $settings['link']['tag'] ?? 'a' );
-			$link_attr = 'button' === $html_tag ? 'data-action-link' : 'href';
+			$link_attributes = $this->get_link_attributes( $settings['link'], true );
+			$link_attribute_key = $link_attributes['key'];
+			$link_destination = $link_attributes[ $link_attribute_key ];
+
 			$svg_html = sprintf(
 				'<%s %s="%s" target="%s" class="%s" %s>%s</%s>',
 				$html_tag,
-				$link_attr,
-				$settings['link']['href'],
+				$link_attribute_key,
+				$link_destination,
 				esc_attr( $settings['link']['target'] ),
 				esc_attr( $classes_string ),
 				$attributes_string,

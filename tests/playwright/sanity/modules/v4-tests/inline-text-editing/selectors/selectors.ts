@@ -1,4 +1,7 @@
+import { Page } from '@playwright/test';
+
 export const INLINE_EDITING_SELECTORS = {
+	triggerEvent: 'click' as keyof Page,
 	e_paragraph: 'e-paragraph',
 	headingBase: '.e-heading-base',
 	supportedAtoms: {
@@ -16,6 +19,7 @@ export const INLINE_EDITING_SELECTORS = {
 		superscript: 'superscript',
 		subscript: 'subscript',
 		link: 'link',
+		italic: 'italic',
 	},
 	preMadeContent: {
 		paragraph: {
@@ -31,6 +35,6 @@ export const INLINE_EDITING_SELECTORS = {
 		contentSectionLabel: 'Content',
 	},
 	canvas: {
-		inlineEditor: '[contenteditable="true"][class*="ProseMirror"]',
+		inlineEditor: '.ProseMirror[contenteditable="true"]',
 	},
 };

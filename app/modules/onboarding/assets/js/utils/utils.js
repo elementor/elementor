@@ -1,42 +1,54 @@
 import { OnboardingEventTracking } from './onboarding-event-tracking';
 
 /**
- * Checkboxes data.
+ * Updated checkboxes data with ONE features (when editor_one is active).
+ * Order matches Figma design: 2 columns, 4 rows
+ * Row 1: Theme Builder | AI for code, images, & layouts
+ * Row 2: Lead Collection | Image optimization
+ * Row 3: Custom Code & CSS | Accessibility scans and fixes
+ * Row 4: Email deliverability | WooCommerce Builder
  */
-export const options = [
+const optionsWithOne = [
 	{
 		plan: 'essential',
-		text: __( 'Templates & Theme Builder', 'elementor' ),
+		text: __( 'Theme Builder', 'elementor' ),
 	},
 	{
-		plan: 'advanced',
-		text: __( 'WooCommerce Builder', 'elementor' ),
-	},
-	{
-		plan: 'essential',
-		text: __( 'Lead Collection & Form Builder', 'elementor' ),
+		plan: 'one',
+		text: __( 'AI for code, images, & layouts', 'elementor' ),
 	},
 	{
 		plan: 'essential',
-		text: __( 'Dynamic Content', 'elementor' ),
+		text: __( 'Lead Collection', 'elementor' ),
 	},
 	{
-		plan: 'advanced',
-		text: __( 'Popup Builder', 'elementor' ),
+		plan: 'one',
+		text: __( 'Image optimization', 'elementor' ),
 	},
 	{
 		plan: 'advanced',
 		text: __( 'Custom Code & CSS', 'elementor' ),
 	},
 	{
-		plan: 'essential',
-		text: __( 'Motion Effects & Animations', 'elementor' ),
+		plan: 'one',
+		text: __( 'Accessibility scans and fixes', 'elementor' ),
+	},
+	{
+		plan: 'one',
+		text: __( 'Email deliverability', 'elementor' ),
 	},
 	{
 		plan: 'advanced',
-		text: __( 'Notes & Collaboration', 'elementor' ),
+		text: __( 'WooCommerce Builder', 'elementor' ),
 	},
 ];
+
+/**
+ * @return {Array} Array of feature options.
+ */
+export const getOptions = () => {
+	return optionsWithOne;
+};
 
 /**
  * Set the selected feature list.

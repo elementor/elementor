@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { createMockPropType, renderWithStore } from 'test-utils';
+import { createMockContainer, createMockPropType, mockCurrentUserCapabilities, renderWithStore } from 'test-utils';
 import { ControlActionsProvider, TextControl } from '@elementor/editor-controls';
 import { controlsRegistry, ElementProvider } from '@elementor/editor-editing-panel';
 import {
+	getContainer,
 	getElementLabel,
 	getElementType,
 	getWidgetsCache,
@@ -23,19 +24,9 @@ import { slice } from '../../../store/store';
 import { switchToComponent } from '../../../utils/switch-to-component';
 import { InstanceEditingPanel } from '../instance-editing-panel';
 
-jest.mock( '@elementor/editor-elements', () => ( {
-	...jest.requireActual( '@elementor/editor-elements' ),
-	useElementSetting: jest.fn(),
-	useSelectedElement: jest.fn(),
-	getElementLabel: jest.fn(),
-	getWidgetsCache: jest.fn(),
-	getElementType: jest.fn(),
-} ) );
+jest.mock( '@elementor/editor-elements' );
 
-jest.mock( '@elementor/session', () => ( {
-	getSessionStorageItem: jest.fn(),
-	setSessionStorageItem: jest.fn(),
-} ) );
+jest.mock( '@elementor/session' );
 
 jest.mock( '../../../utils/switch-to-component' );
 
@@ -45,6 +36,10 @@ jest.mock( '../../../prop-types/component-instance-prop-type', () => ( {
 		key: 'component-instance',
 	},
 } ) );
+
+jest.mock( '@elementor/editor-current-user' );
+
+mockCurrentUserCapabilities( true );
 
 const MOCK_ELEMENT_ID = 'element-123';
 const MOCK_COMPONENT_ID = 456;
@@ -83,6 +78,7 @@ const MOCK_ORIGIN_OVERRIDABLE_PROP = {
 	propKey: 'title',
 	widgetType: 'e-text',
 	elType: 'widget',
+	elementId: 'test-123',
 };
 
 const MOCK_OVERRIDABLE_PROPS = {
@@ -124,6 +120,28 @@ const MOCK_OVERRIDABLE_PROPS = {
 			settings: { id: 'settings', label: 'Settings', props: [ 'prop-3' ] },
 		},
 		order: [ 'content', 'settings' ],
+	},
+};
+
+const MOCK_OVERRIDABLE_PROPS_WITH_EMPTY_GROUP = {
+	props: {
+		'prop-1': {
+			overrideKey: 'prop-1',
+			label: 'Title',
+			elementId: 'element-1',
+			propKey: 'title',
+			widgetType: 'e-heading',
+			elType: 'widget',
+			groupId: 'content',
+			originValue: { $$type: 'string', value: 'Hello' },
+		},
+	},
+	groups: {
+		items: {
+			content: { id: 'content', label: 'Content', props: [ 'prop-1' ] },
+			empty: { id: 'empty', label: 'Empty Group', props: [] },
+		},
+		order: [ 'content', 'empty' ],
 	},
 };
 
@@ -247,6 +265,7 @@ describe( '<InstanceEditingPanel />', () => {
 			createMockWidgetsCache() as unknown as ReturnType< typeof getWidgetsCache >
 		);
 		jest.mocked( getElementType ).mockImplementation( createMockElementType );
+		jest.mocked( getContainer ).mockReturnValue( createMockContainer( MOCK_ELEMENT_ID, [] ) );
 	} );
 
 	it( 'should render the component name in the header', () => {
@@ -300,6 +319,30 @@ describe( '<InstanceEditingPanel />', () => {
 		expect( switchToComponent ).toHaveBeenCalledWith( MOCK_COMPONENT_ID, MOCK_INSTANCE_ID );
 	} );
 
+	it( 'should show edit button when user is admin', () => {
+		// Arrange.
+		mockCurrentUserCapabilities( true );
+		setupComponent();
+
+		// Act.
+		renderEditInstancePanel( store );
+
+		// Assert.
+		expect( screen.getByLabelText( `Edit ${ MOCK_COMPONENT_NAME }` ) ).toBeInTheDocument();
+	} );
+
+	it( 'should not show edit button when user is not admin', () => {
+		// Arrange.
+		mockCurrentUserCapabilities( false );
+		setupComponent();
+
+		// Act.
+		renderEditInstancePanel( store );
+
+		// Assert.
+		expect( screen.queryByLabelText( `Edit ${ MOCK_COMPONENT_NAME }` ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'should not render when componentId is missing', () => {
 		// Arrange.
 		setupComponent();
@@ -351,18 +394,76 @@ describe( '<InstanceEditingPanel />', () => {
 		expect( screen.getByText( 'Title' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Nested Component Title' ) ).toBeInTheDocument();
 	} );
+
+	it( 'should not display groups that have no props', () => {
+		// Arrange.
+		setupComponent( { isWithOverridableProps: true, isWithEmptyGroup: true } );
+
+		// Act.
+		renderEditInstancePanel( store );
+
+		// Assert.
+		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Empty Group' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should render panel for archived component instance', () => {
+		// Arrange.
+		setupComponent( { isArchived: true } );
+
+		// Act.
+		renderEditInstancePanel( store );
+
+		// Assert.
+		expect( screen.getByText( MOCK_COMPONENT_NAME ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render panel for component archived during session', () => {
+		// Arrange.
+		setupComponent();
+		dispatch( slice.actions.archive( MOCK_COMPONENT_ID ) );
+
+		// Act.
+		renderEditInstancePanel( store );
+
+		// Assert.
+		expect( screen.getByText( MOCK_COMPONENT_NAME ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
+	} );
 } );
 
-function setupComponent( options: { isWithOverridableProps?: boolean; isWithNestedOverridableProps?: boolean } = {} ) {
-	const { isWithOverridableProps = true, isWithNestedOverridableProps = false } = options;
+type SetupComponentOptions = {
+	isWithOverridableProps?: boolean;
+	isWithNestedOverridableProps?: boolean;
+	isWithEmptyGroup?: boolean;
+	isArchived?: boolean;
+};
 
-	const overridableProps = isWithNestedOverridableProps ? MOCK_OVERRIDABLE_PROPS_WITH_NESTED : MOCK_OVERRIDABLE_PROPS;
+function setupComponent( {
+	isWithOverridableProps = true,
+	isWithNestedOverridableProps = false,
+	isWithEmptyGroup = false,
+	isArchived = false,
+}: SetupComponentOptions = {} ) {
+	const getOverridableProps = () => {
+		if ( isWithNestedOverridableProps ) {
+			return MOCK_OVERRIDABLE_PROPS_WITH_NESTED;
+		}
+		if ( isWithEmptyGroup ) {
+			return MOCK_OVERRIDABLE_PROPS_WITH_EMPTY_GROUP;
+		}
+		return MOCK_OVERRIDABLE_PROPS;
+	};
+
+	const overridableProps = getOverridableProps();
 
 	const componentData = {
 		id: MOCK_COMPONENT_ID,
 		uid: 'component-uid',
 		name: MOCK_COMPONENT_NAME,
 		overridableProps: isWithOverridableProps ? overridableProps : undefined,
+		isArchived,
 	};
 
 	dispatch( slice.actions.load( [ componentData ] ) );
