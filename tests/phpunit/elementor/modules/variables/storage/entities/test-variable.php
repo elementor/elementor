@@ -199,7 +199,7 @@ class Test_Variable extends TestCase {
 		] );
 
 		// Assert
-		$this->assertEquals( 'Updated Label', $variable->label() );
+		$this->assertEquals( 'Updated-Label', $variable->label() );
 		$this->assertArrayNotHasKey( 'unknown_field', $variable->to_array() );
 	}
 
@@ -209,7 +209,7 @@ class Test_Variable extends TestCase {
 		$variable = Variable::from_array( [
 			'id' => 'id-123',
 			'type' => 'color',
-			'label' => 'Primary Color',
+			'label' => 'Primary-Color',
 			'value' => '#000000',
 			'updated_at' => $updated_at,
 			'order' => 78,
@@ -227,7 +227,7 @@ class Test_Variable extends TestCase {
 		$variable = Variable::from_array( [
 			'id' => 'id-123',
 			'type' => Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
-			'label' => 'Custom Size',
+			'label' => 'Custom-Size',
 			'value' => 'calc(100% - 20px)',
 			'order' => 1,
 		] );
@@ -248,7 +248,7 @@ class Test_Variable extends TestCase {
 		$variable = Variable::from_array( [
 			'id' => 'id-456',
 			'type' => Size_Variable_Prop_Type::get_key(),
-			'label' => 'Size Variable',
+			'label' => 'Size-Variable',
 			'value' => '20px',
 			'order' => 2,
 		] );
@@ -267,7 +267,7 @@ class Test_Variable extends TestCase {
 		$variable = Variable::from_array( [
 			'id' => 'id-789',
 			'type' => 'global-color-variable',
-			'label' => 'Color Variable',
+			'label' => 'Color-Variable',
 			'value' => '#FF0000',
 			'order' => 3,
 		] );
