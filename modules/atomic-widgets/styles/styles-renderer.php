@@ -154,10 +154,10 @@ class Styles_Renderer {
 
 	private function custom_css_to_css_string( ?array $custom_css ): string {
 		$custom_css_string = ! empty( $custom_css['raw'] )
-			? Utils::decode_string( $custom_css['raw'], '' ) . '\n'
+			? Utils::decode_string( $custom_css['raw'], '' ) . "\n"
 			: '';
 
-		return apply_filters( 'elementor/atomic_widgets/styles/custom_css', $custom_css_string, '' );
+		return $custom_css_string;
 	}
 
 	private function wrap_with_media_query( string $breakpoint_id, string $css ): string {

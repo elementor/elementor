@@ -38,7 +38,7 @@ class Atomic_Widget_Styles {
 
 		foreach ( $post_ids as $post_id ) {
 			$get_styles = fn() => $this->parse_post_styles( $post_id );
-
+			
 			$styles_manager->register( [ self::STYLES_KEY, $post_id, $context ], $get_styles );
 		}
 	}
@@ -50,7 +50,7 @@ class Atomic_Widget_Styles {
 			$post_styles = array_merge( $post_styles, $this->parse_element_style( $element_data ) );
 		} );
 
-		return $post_styles;
+		return apply_filters( 'elementor/atomic_widgets/editor_data/element_styles', $post_styles, $post_id );
 	}
 
 	private function parse_element_style( array $element_data ) {
