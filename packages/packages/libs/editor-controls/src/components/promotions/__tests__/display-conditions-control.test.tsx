@@ -13,7 +13,7 @@ const propType = createMockPropType( { kind: 'array' } );
 describe( 'DisplayConditionsControl', () => {
 	it( 'should render promotion chip and icon when isPromotion is true', () => {
 		// Arrange & Act.
-		renderControl( <DisplayConditionsControl isPromotion={ true } />, {
+		renderControl( <DisplayConditionsControl />, {
 			bind: 'display-conditions',
 			propType,
 			value: { $$type: 'array', value: [] },

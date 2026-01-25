@@ -15,8 +15,6 @@ class Display_Conditions_Promotion_Control extends Atomic_Control_Base {
 	}
 
 	public function get_props(): array {
-		return [
-			'isPromotion' => true,
-		];
+		return [];
 	}
 }

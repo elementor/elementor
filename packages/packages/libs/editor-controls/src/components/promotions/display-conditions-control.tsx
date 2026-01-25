@@ -13,13 +13,9 @@ function getDisplayConditionPromotion() {
 	return window.elementor?.config?.v4Promotions?.displayConditions;
 }
 
-export const DisplayConditionsControl = createControl( ( { isPromotion = true }: { isPromotion?: boolean } ) => {
+export const DisplayConditionsControl = createControl( () => {
 	const [ isInfotipOpen, setIsInfotipOpen ] = useState( false );
 	const promotion = getDisplayConditionPromotion();
-
-	if ( ! isPromotion ) {
-		return null;
-	}
 
 	return (
 		<Stack
