@@ -49,7 +49,7 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 
 		// Act - Select text and add link with target="_blank".
 		await editor.selectInlineEditedText( headingId, true );
-		await editor.toggleInlineEditingAttribute( 'link' );
+		await editor.toggleInlineEditingAttribute( INLINE_EDITING_SELECTORS.attributes.link );
 
 		const urlInput = page.locator( 'input[placeholder="Type a URL"]' );
 		await expect( urlInput ).toBeVisible();
@@ -97,7 +97,7 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 
 		// Act - Add link first.
 		await editor.selectInlineEditedText( headingId, true );
-		await editor.toggleInlineEditingAttribute( 'link' );
+		await editor.toggleInlineEditingAttribute( INLINE_EDITING_SELECTORS.attributes.link );
 
 		const urlInput = page.locator( 'input[placeholder="Type a URL"]' );
 		await urlInput.fill( TEST_URL );
@@ -110,7 +110,7 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 		// Act - Remove link by clearing URL.
 		await editor.triggerEditingElement( headingId );
 		await editor.selectInlineEditedText( headingId, true );
-		await editor.toggleInlineEditingAttribute( 'link' );
+		await editor.toggleInlineEditingAttribute( INLINE_EDITING_SELECTORS.attributes.link );
 		await urlInput.clear();
 		await page.keyboard.press( 'Escape' );
 		await inlineEditor.press( 'Escape' );
@@ -137,7 +137,7 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 
 		// Act - Add initial link.
 		await editor.selectInlineEditedText( headingId, true );
-		await editor.toggleInlineEditingAttribute( 'link' );
+		await editor.toggleInlineEditingAttribute( INLINE_EDITING_SELECTORS.attributes.link );
 
 		const urlInput = page.locator( 'input[placeholder="Type a URL"]' );
 		await urlInput.fill( TEST_URL );
@@ -149,7 +149,7 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 
 		// Act - Edit link URL.
 		await editor.selectInlineEditedText( headingId, true );
-		await editor.toggleInlineEditingAttribute( 'link' );
+		await editor.toggleInlineEditingAttribute( INLINE_EDITING_SELECTORS.attributes.link );
 		await urlInput.clear();
 		await urlInput.fill( UPDATED_URL );
 		await page.keyboard.press( 'Escape' );
@@ -177,7 +177,7 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 		await page.keyboard.type( MULTI_WORD_TEXT );
 
 		await editor.selectInlineEditedText( headingId, 'World' );
-		await editor.toggleInlineEditingAttribute( 'link' );
+		await editor.toggleInlineEditingAttribute( INLINE_EDITING_SELECTORS.attributes.link );
 
 		const urlInput = page.locator( 'input[placeholder="Type a URL"]' );
 		await urlInput.fill( TEST_URL );
