@@ -10,6 +10,7 @@ type InteractionsControlType =
 	| 'duration'
 	| 'delay'
 	| 'replay'
+	| 'easing'
 	| 'relativeTo'
 	| 'offsetTop'
 	| 'offsetBottom';
@@ -22,6 +23,7 @@ type InteractionsControlPropsMap = {
 	duration: FieldProps;
 	delay: FieldProps;
 	replay: ReplayFieldProps;
+	easing: FieldProps;
 	relativeTo: FieldProps;
 	offsetTop: FieldProps;
 	offsetBottom: FieldProps;
