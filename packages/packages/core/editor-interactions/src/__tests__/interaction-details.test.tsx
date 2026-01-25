@@ -356,7 +356,7 @@ describe( 'InteractionDetails', () => {
 			renderInteractionDetails( interaction );
 
 			const sizeInputs = screen.getAllByRole( 'spinbutton' );
-			fireEvent.keyDown(sizeInputs[ 0 ], { key: '-' });
+			fireEvent.keyDown( sizeInputs[ 0 ], { key: '-' } );
 
 			expect( mockOnChange ).not.toHaveBeenCalled();
 		} );
