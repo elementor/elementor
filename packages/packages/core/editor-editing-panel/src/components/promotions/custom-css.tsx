@@ -4,12 +4,9 @@ import { PromotionChip, PromotionInfotip } from '@elementor/editor-ui';
 import { __ } from '@wordpress/i18n';
 
 import { StyleTabSection } from '../style-tab-section';
-import { type CanvasExtendedWindow } from './types';
 
 function getCustomCssPromotion() {
-	const extendedWindow = window as unknown as CanvasExtendedWindow;
-
-	return extendedWindow.elementor?.config?.v4Promotions?.customCss;
+	return window.elementor?.config?.v4Promotions?.customCss;
 }
 
 export const CustomCssSection = () => {

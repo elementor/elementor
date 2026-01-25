@@ -36,6 +36,7 @@ declare global {
 					tags: DynamicTags;
 					groups: Record< DynamicTag[ 'group' ], { title: string } >;
 				};
+				v4Promotions?: Record< string, V4PromotionData >;
 			};
 			dynamicTags?: DynamicTagsManager;
 			selection?: {
