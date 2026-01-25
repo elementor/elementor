@@ -1,6 +1,7 @@
 export const timeouts = {
 	singleTest: 90_000,
 	global: 15 * 60_000,
+	veryShort: 120,
 	short: 500,
 	expect: 5_000,
 	action: 5_000,

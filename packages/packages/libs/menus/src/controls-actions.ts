@@ -1,7 +1,7 @@
 import { PopoverAction } from '@elementor/editor-ui';
-import { createMenu } from '@elementor/menus';
 
 import Action from './action';
+import { createMenu } from './create-menu';
 
 export const controlActionsMenu = createMenu( {
 	components: {
