@@ -63,6 +63,7 @@ export type { SetValue, SetValueMeta } from './bound-prop-context/prop-context';
 export type { ExtendedOption, Unit, LengthUnit, AngleUnit, TimeUnit } from './utils/size-control';
 export type { ToggleControlProps } from './controls/toggle-control';
 export type { FontCategory } from './controls/font-family-control/font-family-control';
+export type { InlineEditorToolbarProps } from './components/inline-editor-toolbar';
 
 // providers
 export {

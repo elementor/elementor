@@ -77,7 +77,7 @@ test.describe( 'Atomic Widgets Wrapper @v4-tests', () => {
 		} );
 
 		await test.step( 'Verify pasted widget is wrapped in e-flexbox', async () => {
-			const pastedWidget = editor.getPreviewFrame().locator( EditorSelectors.eflexboxWidget( 'e-button' ) ).last();
+			const pastedWidget = editor.getPreviewFrame().locator( EditorSelectors.v4.atomSelectors.button.wrapper ).last();
 			await pastedWidget.waitFor( { state: 'visible' } );
 			const parentElement = pastedWidget.locator( '..' );
 
