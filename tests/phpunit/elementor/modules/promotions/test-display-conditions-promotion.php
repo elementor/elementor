@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions;
 
-use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\Promotions\Controls\Display_Conditions_Promotion_Control;
 use Elementor\Modules\Promotions\Module;
@@ -18,6 +18,9 @@ class Test_Display_Conditions_Promotion extends Elementor_Test_Base {
 
 	public function set_up() {
 		parent::set_up();
+
+		remove_all_filters( 'elementor/atomic-widgets/props-schema' );
+		remove_all_filters( 'elementor/atomic-widgets/controls' );
 
 		$this->module = Plugin::$instance->modules_manager->get_modules( 'promotions' );
 	}
@@ -136,8 +139,16 @@ class Test_Display_Conditions_Promotion extends Elementor_Test_Base {
 				return 'mock-atomic-element';
 			}
 
-			public static function get_atomic_controls(): array {
+			public function get_atomic_controls(): array {
 				return [];
+			}
+
+			public function define_atomic_controls(): array {
+				return [];
+			}
+
+			public static function get_element_type(): string {
+				return 'mock-atomic-element';
 			}
 
 			protected static function define_props_schema(): array {
@@ -156,8 +167,16 @@ class Test_Display_Conditions_Promotion extends Elementor_Test_Base {
 				return 'mock-atomic-element-no-dc';
 			}
 
-			public static function get_atomic_controls(): array {
+			public function get_atomic_controls(): array {
 				return [];
+			}
+
+			public function define_atomic_controls(): array {
+				return [];
+			}
+
+			public static function get_element_type(): string {
+				return 'mock-atomic-element-no-dc';
 			}
 
 			protected static function define_props_schema(): array {
