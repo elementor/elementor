@@ -41,7 +41,9 @@
   },
   "dependencies": {
     "@elementor/locations": "4.0.0",
-    "@elementor/utils": "4.0.0"
+    "@elementor/utils": "4.0.0",
+    "@elementor/editor-ui": "4.0.0",
+    "@elementor/ui": "1.36.17"
   },
   "peerDependencies": {
     "react": "^18.3.1"
