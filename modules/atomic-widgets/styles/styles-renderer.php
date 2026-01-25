@@ -154,7 +154,7 @@ class Styles_Renderer {
 
 	private function custom_css_to_css_string( ?array $custom_css ): string {
 		$custom_css_string = ! empty( $custom_css['raw'] )
-			? Utils::decode_string( $custom_css['raw'], '' ) . "\n"
+			? Utils::decode_string( $custom_css['raw'], '' ) . '\n'
 			: '';
 
 		return $custom_css_string;
