@@ -34,6 +34,7 @@ test.describe( 'Editor screen UI tests', () => {
 		await mockHomeScreenData( page, mockData, apiRequests, requestContext );
 
 		const homeScreen = await navigateToHomeScreen( page );
+		await page.setViewportSize( { width: 1280, height: 4000 } );
 		await expect.soft( homeScreen ).toHaveScreenshot( 'home-screen-free.png' );
 		await requestContext.dispose();
 	} );
@@ -45,6 +46,7 @@ test.describe( 'Editor screen UI tests', () => {
 		await mockHomeScreenData( page, mockData, apiRequests, requestContext );
 
 		const homeScreen = await navigateToHomeScreen( page );
+		await page.setViewportSize( { width: 1280, height: 4000 } );
 		await expect.soft( homeScreen ).toHaveScreenshot( 'home-screen-pro.png' );
 		await requestContext.dispose();
 	} );
@@ -56,6 +58,7 @@ test.describe( 'Editor screen UI tests', () => {
 		await mockHomeScreenData( page, mockData, apiRequests, requestContext );
 
 		const homeScreen = await navigateToHomeScreen( page );
+		await page.setViewportSize( { width: 1280, height: 4000 } );
 		await expect.soft( homeScreen ).toHaveScreenshot( 'home-screen-one.png' );
 		await requestContext.dispose();
 	} );
