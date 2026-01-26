@@ -2,6 +2,8 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import UpgradeMessage from 'elementor/app/modules/kit-library/assets/js/pages/cloud/upgrade-message';
 
+jest.mock( '@elementor/app-ui' );
+
 jest.mock( 'elementor-app/event-track/apps-event-tracking', () => ( {
 	AppsEventTracking: {
 		sendKitsCloudUpgradeClicked: jest.fn(),
