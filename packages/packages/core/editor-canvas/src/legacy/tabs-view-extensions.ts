@@ -140,6 +140,7 @@ export const tabExtensions: ViewExtensions = {
 			is_active: isActive,
 			tab_id: getTabId( tabsContext.tabsId, index ),
 			tab_content_id: getTabContentId( tabsContext.tabsId, index ),
+			tab_index: index,
 		};
 	},
 };

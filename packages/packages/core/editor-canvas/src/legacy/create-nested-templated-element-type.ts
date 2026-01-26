@@ -24,6 +24,7 @@ export type CreateNestedTemplatedElementTypeOptions = {
 	renderer: DomRenderer;
 	element: NestedTemplatedElementConfig;
 	viewExtensions?: ViewExtensions;
+	modelExtensions?: ViewExtensions;
 };
 
 export function canBeNestedTemplated(
@@ -37,6 +38,7 @@ export function createNestedTemplatedElementType( {
 	renderer,
 	element,
 	viewExtensions,
+	modelExtensions,
 }: CreateNestedTemplatedElementTypeOptions ): typeof ElementType {
 	const legacyWindow = window as unknown as LegacyWindow;
 
@@ -50,7 +52,13 @@ export function createNestedTemplatedElementType( {
 		}
 
 		getModel() {
-			return legacyWindow.elementor.modules.elements.models.AtomicElementBase;
+			const BaseModel = legacyWindow.elementor.modules.elements.models.AtomicElementBase;
+
+			if ( modelExtensions && Object.keys( modelExtensions ).length > 0 ) {
+				return BaseModel.extend( modelExtensions ) as typeof BaseModel;
+			}
+
+			return BaseModel;
 		}
 	};
 }
