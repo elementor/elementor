@@ -46,6 +46,7 @@ function blockFormFieldCreate( args: CreateArgs ): boolean {
 
 	if ( ! isWithinForm( args.container ) ) {
 		handleBlockedFormField();
+
 		return true;
 	}
 
@@ -61,6 +62,7 @@ function blockFormFieldMove( args: MoveArgs ): boolean {
 
 	if ( hasFormFieldElement && ! isWithinForm( target ) ) {
 		handleBlockedFormField();
+
 		return true;
 	}
 
@@ -86,6 +88,7 @@ function blockFormFieldPaste( args: PasteArgs ): boolean {
 
 	if ( hasFormFieldElement && ! isWithinForm( args.container ) ) {
 		handleBlockedFormField();
+
 		return true;
 	}
 

@@ -77,6 +77,7 @@ export function hasClipboardElementType( elements: ClipboardElement[], type: str
 export function hasClipboardElementTypes( elements: ClipboardElement[], types: Set< string > ): boolean {
 	return elements.some( ( element ) => {
 		const elementType = element.widgetType || element.elType;
+
 		if ( elementType && types.has( elementType ) ) {
 			return true;
 		}
