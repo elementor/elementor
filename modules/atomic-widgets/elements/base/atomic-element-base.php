@@ -110,6 +110,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['include_in_widgets_config'] = true;
 		$config['default_html_tag'] = $this->define_default_html_tag();
 		$config['meta'] = $this->get_meta();
+		$config['allowed_child_types'] = $this->define_allowed_child_types();
 
 		return $config;
 	}
@@ -127,6 +128,10 @@ abstract class Atomic_Element_Base extends Element_Base {
 	}
 
 	protected function define_initial_attributes() {
+		return [];
+	}
+
+	protected function define_allowed_child_types() {
 		return [];
 	}
 

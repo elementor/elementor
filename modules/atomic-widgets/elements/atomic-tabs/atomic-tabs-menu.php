@@ -103,4 +103,8 @@ class Atomic_Tabs_Menu extends Atomic_Element_Base {
 	protected function build_template_context(): array {
 		return $this->build_base_template_context();
 	}
+
+	protected function define_allowed_child_types() {
+		return [ 'e-tab', 'container' ];
+	}
 }

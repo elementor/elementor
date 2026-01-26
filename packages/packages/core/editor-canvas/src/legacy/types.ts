@@ -61,6 +61,8 @@ type MarionetteExtendable = {
 };
 
 export declare class ElementView {
+	getChildType(): string[];
+
 	container: V1Element;
 
 	$el: JQueryElement;

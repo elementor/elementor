@@ -194,6 +194,16 @@ export function createNestedTemplatedElementView( {
 			} );
 		},
 
+		getChildType( this: NestedTwigView ): string[] {
+			const allowedTypes = ( element as { allowed_child_types?: string[] } ).allowed_child_types;
+
+			if ( allowedTypes && allowedTypes.length > 0 ) {
+				return allowedTypes;
+			}
+
+			return AtomicElementBaseView.prototype.getChildType.call( this );
+		},
+
 		...viewExtensions,
 
 		_attachTwigContent( this: NestedTwigView, html: string ) {
