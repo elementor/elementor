@@ -39,10 +39,7 @@ export default function IndexHeader( props ) {
 			icon: 'eicon-upload-circle-o',
 			elRef: importRef,
 			onClick: () => {
-				let importUrl = '/import?referrer=kit-library';
-				if ( returnTo ) {
-					importUrl += `&return_to=${ encodeURIComponent( returnTo ) }`;
-				}
+				const importUrl = '/import-customization';
 				navigate( importUrl );
 			},
 		},
