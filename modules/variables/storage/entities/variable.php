@@ -5,6 +5,7 @@ namespace Elementor\Modules\Variables\Storage\Entities;
 use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
 use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 use Elementor\Modules\Variables\Storage\Exceptions\Type_Mismatch;
+use Elementor\Modules\Variables\Storage\Exceptions\InvalidVariable;
 use InvalidArgumentException;
 
 class Variable {
@@ -130,7 +131,12 @@ class Variable {
 		return true;
 	}
 
+	/**
+	 * @throws InvalidVariable If the variable is not valid.
+	 */
 	public function apply_changes( array $data ): void {
+		$this->validate();
+
 		$allowed_fields = [ 'label', 'value', 'order' ];
 		$has_changes = $this->maybe_apply_type( $data );
 
@@ -145,5 +151,21 @@ class Variable {
 		if ( $has_changes ) {
 			$this->data['updated_at'] = $this->now();
 		}
+	}
+
+	/**
+	 * @return bool True if the variable is valid, throws an exception otherwise.
+	 * @throws InvalidVariable If the variable is not valid.
+	 */
+	public function validate(): bool {
+		if ( strpos( $this->label(), ' ' ) !== false ) {
+			throw new InvalidVariable( 'Label cannot contain spaces' );
+		}
+
+		if ( strlen( $this->label() ) > 50 ) {
+			throw new InvalidVariable( 'Label cannot be longer than 50 characters' );
+		}
+
+		return true;
 	}
 }
