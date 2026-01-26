@@ -186,6 +186,15 @@
 		max-width: min(100%, var(--width));
 	}
 
+	// Selector explanation:
+	// [data-widget_type="e-component.default"] > .e-con - Component wrapper element, when out of component edit mode.
+	// [data-widget_type="e-component.default"] > .elementor-section-wrap > .e-con - Component wrapper element, when inside component edit mode.
+	:is( [data-widget_type="e-component.default"], [data-widget_type="e-component.default"] > .elementor-section-wrap ) > & {
+		// Reset margin to default values for component wrapper element.
+		--margin-right: 0px;
+		--margin-left: 0px;
+	}
+
 	// Hack to increase specificity and avoid using `!important`.
 	.elementor-widget.elementor-widget {
 		// Override the default margin-block-end of widgets.
