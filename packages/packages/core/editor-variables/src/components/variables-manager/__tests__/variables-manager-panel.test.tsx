@@ -55,6 +55,7 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	commandEndEvent: jest.fn(),
 	windowEvent: jest.fn(),
 	getCurrentEditMode: jest.fn().mockReturnValue( 'edit' ),
+	isExperimentActive: jest.fn().mockReturnValue( false ),
 } ) );
 
 jest.mock( '@elementor/ui', () => {

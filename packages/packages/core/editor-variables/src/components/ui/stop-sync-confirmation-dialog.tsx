@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { ColorFilterIcon } from '@elementor/icons';
+import { BrushIcon } from '@elementor/icons';
 import {
 	Button,
 	Checkbox,
@@ -41,7 +41,7 @@ export const StopSyncConfirmationDialog = ( {
 	return (
 		<Dialog open={ open } onClose={ closeDialog } maxWidth="xs">
 			<DialogTitle display="flex" alignItems="center" gap={ 1 }>
-				<ColorFilterIcon color="secondary" />
+				<BrushIcon color="secondary" />
 				{ __( 'Stop syncing variable color', 'elementor' ) }
 			</DialogTitle>
 			<DialogContent>
