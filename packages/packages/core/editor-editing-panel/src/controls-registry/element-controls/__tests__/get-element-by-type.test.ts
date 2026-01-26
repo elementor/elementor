@@ -174,7 +174,6 @@ describe( 'getElementByType', () => {
 		expect( result ).toBe( sectionElement );
 	} );
 } );
-
 describe( 'findElementByType', () => {
 	const ELEMENT_ID = 'test-element-id';
 	const TARGET_TYPE = 'widget';

@@ -199,6 +199,9 @@ export type ElementModel = {
 	widgetType: string;
 	editSettings?: BackboneModel< { inactive?: boolean } >;
 	elements?: BackboneCollection< ElementModel >;
+	config: {
+		allowed_child_types?: string[];
+	};
 };
 
 type ToJSON< T > = {

@@ -1,9 +1,13 @@
-import { getWidgetsCache } from '@elementor/editor-elements';
+import { getWidgetsCache, type V1ElementConfig } from '@elementor/editor-elements';
 import { __privateListenTo, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 
-import { createDomRenderer } from '../renderers/create-dom-renderer';
+import { createDomRenderer, type DomRenderer } from '../renderers/create-dom-renderer';
 import { createElementType } from './create-element-type';
-import { canBeNestedTemplated, createNestedTemplatedElementType } from './create-nested-templated-element-type';
+import {
+	canBeNestedTemplated,
+	createNestedTemplatedElementType,
+	type NestedTemplatedElementConfig,
+} from './create-nested-templated-element-type';
 import { canBeTemplated, type CreateTemplatedElementTypeOptions } from './create-templated-element-type';
 import { createTemplatedElementTypeWithReplacements } from './replacements/manager';
 import { getTabsModelExtensions } from './tabs-model-extensions';
@@ -23,39 +27,66 @@ export function registerElementType(
 
 export function initLegacyViews() {
 	__privateListenTo( v1ReadyEvent(), () => {
-		const config = getWidgetsCache() ?? {};
+		const widgetsCache = getWidgetsCache() ?? {};
 		const legacyWindow = window as unknown as LegacyWindow;
-
 		const renderer = createDomRenderer();
 
-		Object.entries( config ).forEach( ( [ type, element ] ) => {
+		Object.entries( widgetsCache ).forEach( ( [ type, element ] ) => {
 			if ( ! element.atomic ) {
 				return;
 			}
 
-			const shouldUseNestedTemplated = canBeNestedTemplated( element );
-			const isAlreadyRegistered = !! legacyWindow.elementor.elementsManager.getElementTypeClass( type );
+			const ResolvedElementType = resolveElementType( type, renderer, element );
 
-			let ElementType;
-
-			if ( shouldUseNestedTemplated ) {
-				const modelExtensions = getTabsModelExtensions( type );
-				ElementType = createNestedTemplatedElementType( { type, renderer, element, modelExtensions } );
-			} else if ( !! elementsLegacyTypes[ type ] && canBeTemplated( element ) ) {
-				ElementType = elementsLegacyTypes[ type ]( { type, renderer, element } );
-			} else if ( canBeTemplated( element ) ) {
-				ElementType = createTemplatedElementTypeWithReplacements( { type, renderer, element } );
-			} else {
-				ElementType = createElementType( type );
-			}
-
-			try {
-				legacyWindow.elementor.elementsManager.registerElementType( new ElementType() );
-			} catch {
-				if ( shouldUseNestedTemplated && isAlreadyRegistered ) {
-					legacyWindow.elementor.elementsManager._elementTypes[ type ] = new ElementType();
-				}
-			}
+			tryRegisterElement( legacyWindow, type, element, ResolvedElementType );
 		} );
+	} );
+}
+
+function resolveElementType( type: string, renderer: DomRenderer, element: V1ElementConfig ) {
+	if ( canBeNestedTemplated( element ) ) {
+		return createNestedTemplatedType( type, renderer, element );
+	}
+
+	if ( ! canBeTemplated( element ) ) {
+		return createElementType( type );
+	}
+
+	const customGenerator = elementsLegacyTypes[ type ];
+
+	return (
+		customGenerator?.( { type, renderer, element } ) ??
+		createTemplatedElementTypeWithReplacements( { type, renderer, element } )
+	);
+}
+
+function tryRegisterElement(
+	legacyWindow: LegacyWindow,
+	type: string,
+	element: V1ElementConfig,
+	ResolvedElementType: typeof ElementType
+) {
+	const elementsManager = legacyWindow.elementor.elementsManager;
+	const isAlreadyRegistered = Boolean( elementsManager.getElementTypeClass( type ) );
+
+	try {
+		elementsManager.registerElementType( new ResolvedElementType() );
+	} catch {
+		const canOverrideExisting = canBeNestedTemplated( element ) && isAlreadyRegistered;
+
+		if ( canOverrideExisting ) {
+			elementsManager._elementTypes[ type ] = new ResolvedElementType();
+		}
+	}
+}
+
+function createNestedTemplatedType( type: string, renderer: DomRenderer, element: NestedTemplatedElementConfig ) {
+	const modelExtensions = getTabsModelExtensions( type );
+
+	return createNestedTemplatedElementType( {
+		type,
+		renderer,
+		element,
+		modelExtensions,
 	} );
 }
