@@ -17,14 +17,13 @@ export type NestedTemplatedElementConfig = TemplatedElementConfig & {
 	support_nesting: boolean;
 };
 
-export type ViewExtensions = Record< string, unknown >;
+export type ModelExtensions = Record< string, unknown >;
 
 export type CreateNestedTemplatedElementTypeOptions = {
 	type: string;
 	renderer: DomRenderer;
 	element: NestedTemplatedElementConfig;
-	viewExtensions?: ViewExtensions;
-	modelExtensions?: ViewExtensions;
+	modelExtensions?: ModelExtensions;
 };
 
 export function canBeNestedTemplated(
@@ -37,7 +36,6 @@ export function createNestedTemplatedElementType( {
 	type,
 	renderer,
 	element,
-	viewExtensions,
 	modelExtensions,
 }: CreateNestedTemplatedElementTypeOptions ): typeof ElementType {
 	const legacyWindow = window as unknown as LegacyWindow;
@@ -48,7 +46,7 @@ export function createNestedTemplatedElementType( {
 		}
 
 		getView() {
-			return createNestedTemplatedElementView( { type, renderer, element, viewExtensions } );
+			return createNestedTemplatedElementView( { type, renderer, element } );
 		}
 
 		getModel() {
@@ -79,7 +77,6 @@ interface NestedTwigView extends TwigViewInterface {
 	_initAlpine: () => void;
 	childViewContainer: string;
 	children: ElementView[ 'children' ];
-	_buildTypeSpecificContext?: ( baseContext: TwigRenderContext ) => TwigRenderContext;
 }
 
 function buildEditorAttributes( model: { get: ( key: 'id' ) => string; cid?: string } ): string {
@@ -103,12 +100,13 @@ function buildEditorClasses( model: { get: ( key: 'id' ) => string } ): string {
 	return [ 'elementor-element', 'elementor-element-edit-mode', `elementor-element-${ id }` ].join( ' ' );
 }
 
+type CreateNestedTemplatedElementViewOptions = Omit< CreateNestedTemplatedElementTypeOptions, 'modelExtensions' >;
+
 export function createNestedTemplatedElementView( {
 	type,
 	renderer,
 	element,
-	viewExtensions = {},
-}: CreateNestedTemplatedElementTypeOptions ): typeof ElementView {
+}: CreateNestedTemplatedElementViewOptions ): typeof ElementView {
 	const legacyWindow = window as unknown as LegacyWindow;
 
 	const { templateKey, baseStylesDictionary, resolveProps } = setupTwigRenderer( {
@@ -177,19 +175,11 @@ export function createNestedTemplatedElementView( {
 				baseStylesDictionary,
 				type,
 				renderer,
-				buildContext: ( context: TwigRenderContext ) => {
-					const baseContext = {
-						...context,
-						editor_attributes: buildEditorAttributes( model ),
-						editor_classes: buildEditorClasses( model ),
-					};
-
-					if ( this._buildTypeSpecificContext ) {
-						return this._buildTypeSpecificContext( baseContext );
-					}
-
-					return baseContext;
-				},
+				buildContext: ( context: TwigRenderContext ) => ( {
+					...context,
+					editor_attributes: buildEditorAttributes( model ),
+					editor_classes: buildEditorClasses( model ),
+				} ),
 				attachContent: ( html: string ) => this._attachTwigContent( html ),
 			} );
 		},
@@ -203,8 +193,6 @@ export function createNestedTemplatedElementView( {
 
 			return AtomicElementBaseView.prototype.getChildType.call( this );
 		},
-
-		...viewExtensions,
 
 		_attachTwigContent( this: NestedTwigView, html: string ) {
 			const $newContent = legacyWindow.jQuery( html );

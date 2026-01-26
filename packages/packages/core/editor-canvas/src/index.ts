@@ -14,15 +14,7 @@ export {
 	createNestedTemplatedElementView,
 	type CreateNestedTemplatedElementTypeOptions,
 	type NestedTemplatedElementConfig,
-	type ViewExtensions,
 } from './legacy/create-nested-templated-element-type';
-export {
-	getTabsViewExtensions,
-	tabContentExtensions,
-	tabExtensions,
-	tabsExtensions,
-	type TabsRenderContext,
-} from './legacy/tabs-view-extensions';
 export { registerElementType } from './legacy/init-legacy-views';
 export * from './legacy/types';
 export { createPropsResolver, type PropsResolver } from './renderers/create-props-resolver';

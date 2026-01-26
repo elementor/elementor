@@ -7,7 +7,6 @@ import { canBeNestedTemplated, createNestedTemplatedElementType } from './create
 import { canBeTemplated, type CreateTemplatedElementTypeOptions } from './create-templated-element-type';
 import { createTemplatedElementTypeWithReplacements } from './replacements/manager';
 import { getTabsModelExtensions } from './tabs-model-extensions';
-import { getTabsViewExtensions } from './tabs-view-extensions';
 import type { ElementType, LegacyWindow } from './types';
 
 type ElementLegacyType = {
@@ -40,9 +39,8 @@ export function initLegacyViews() {
 			let ElementType;
 
 			if ( shouldUseNestedTemplated ) {
-				const viewExtensions = getTabsViewExtensions( type );
 				const modelExtensions = getTabsModelExtensions( type );
-				ElementType = createNestedTemplatedElementType( { type, renderer, element, viewExtensions, modelExtensions } );
+				ElementType = createNestedTemplatedElementType( { type, renderer, element, modelExtensions } );
 			} else if ( !! elementsLegacyTypes[ type ] && canBeTemplated( element ) ) {
 				ElementType = elementsLegacyTypes[ type ]( { type, renderer, element } );
 			} else if ( canBeTemplated( element ) ) {

@@ -239,16 +239,6 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		];
 	}
 
-	protected function build_template_context(): array {
-		$settings = $this->get_atomic_settings();
-		$default_active_tab = $settings['default-active-tab'] ?? 0;
-		$default_active_tab_id = static::get_tab_id( $this->get_id(), $default_active_tab );
-
-		return array_merge( $this->build_base_template_context(), [
-			'default_active_tab_id' => $default_active_tab_id,
-		] );
-	}
-
 	public static function get_tab_id( $tabs_id, $index ) {
 		return "{$tabs_id}-tab-{$index}";
 	}

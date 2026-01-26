@@ -135,5 +135,7 @@ trait Has_Element_Template {
 
 	abstract protected function get_templates(): array;
 
-	abstract protected function build_template_context(): array;
+	protected function build_template_context(): array {
+		return $this->build_base_template_context();
+	}
 }
