@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useCallback } from 'react';
-import { PopoverContent, PopoverGridContainer } from '@elementor/editor-controls';
-import { Divider, Grid, Tab, TabPanel, Tabs, useTabs } from '@elementor/ui';
+import { Divider, Tab, TabPanel, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useInteractionItemContext } from '../contexts/interactions-item-context';

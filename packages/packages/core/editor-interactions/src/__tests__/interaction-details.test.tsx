@@ -5,7 +5,7 @@ import { Easing } from '../components/controls/easing';
 import { Trigger } from '../components/controls/trigger';
 import { InteractionDetails } from '../components/interaction-details';
 import type { InteractionItemValue } from '../types';
-import { createAnimationPreset, createString } from '../utils/prop-value-utils';
+import { createAnimationPreset, createInteractionBreakpoints, createString } from '../utils/prop-value-utils';
 
 jest.mock( '../interactions-controls-registry', () => ( {
 	getInteractionsControl: jest.fn(),
@@ -20,6 +20,7 @@ const createInteractionItemValue = ( {
 	delay = 0,
 	replay = false,
 	easing = 'easeIn',
+	excludedBreakpoints,
 }: {
 	trigger?: string;
 	effect?: string;
@@ -29,19 +30,28 @@ const createInteractionItemValue = ( {
 	delay?: number;
 	replay?: boolean;
 	easing?: string;
-} = {} ): InteractionItemValue => ( {
-	interaction_id: createString( 'test-id' ),
-	trigger: createString( trigger ),
-	animation: createAnimationPreset( {
-		effect,
-		type,
-		direction,
-		duration,
-		delay,
-		replay,
-		easing,
-	} ),
-} );
+	excludedBreakpoints?: string[];
+} = {} ): InteractionItemValue => {
+	const baseValue: InteractionItemValue = {
+		interaction_id: createString( 'test-id' ),
+		trigger: createString( trigger ),
+		animation: createAnimationPreset( {
+			effect,
+			type,
+			direction,
+			duration,
+			delay,
+			replay,
+			easing,
+		} ),
+	};
+
+	if ( excludedBreakpoints && excludedBreakpoints.length > 0 ) {
+		baseValue.breakpoints = createInteractionBreakpoints( excludedBreakpoints );
+	}
+
+	return baseValue;
+};
 
 const getEffectCombobox = (): HTMLElement => {
 	const allComboboxes = screen.getAllByRole( 'combobox' );
@@ -622,6 +632,30 @@ describe( 'InteractionDetails', () => {
 			expect( updatedInteraction.animation.value.direction.value ).toBe( 'left' );
 			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toBe( 500 );
 			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toBe( 200 );
+		} );
+
+		it( 'should preserve breakpoints when updating other properties', () => {
+			const interaction = createInteractionItemValue( {
+				trigger: 'load',
+				effect: 'fade',
+				type: 'in',
+				duration: 300,
+				delay: 0,
+				excludedBreakpoints: [ 'desktop', 'tablet' ],
+			} );
+
+			renderInteractionDetails( interaction );
+
+			const effectSelect = getEffectCombobox();
+			fireEvent.mouseDown( effectSelect );
+			const slideOption = screen.getByRole( 'option', { name: /slide/i } );
+			fireEvent.click( slideOption );
+
+			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
+			expect( updatedInteraction.breakpoints ).toBeDefined();
+			const { extractExcludedBreakpoints } = require( '../utils/prop-value-utils' );
+			const excluded = extractExcludedBreakpoints( updatedInteraction.breakpoints );
+			expect( excluded ).toEqual( [ 'desktop', 'tablet' ] );
 		} );
 
 		it( 'should preserve all unchanged values when updating effect', () => {

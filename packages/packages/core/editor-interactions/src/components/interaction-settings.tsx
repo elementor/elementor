@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { useState } from 'react';
-import type { StringPropValue } from '@elementor/editor-props';
-import { Grid, Autocomplete, TextField } from '@elementor/ui';
 import { ControlFormLabel, PopoverContent } from '@elementor/editor-controls';
+import { Autocomplete, Grid, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { InteractionItemValue } from '../types';
-import { extractString } from '../utils/prop-value-utils';
+import type { InteractionItemValue } from '../types';
+import { createInteractionBreakpoints, extractExcludedBreakpoints } from '../utils/prop-value-utils';
 
 type BreakpointOption = {
 	label: string;
@@ -25,7 +24,7 @@ type InteractionSettingsProps = {
 };
 
 export const InteractionSettings = ( { interaction, onChange }: InteractionSettingsProps ) => {
-	const excluded: string[] = [];
+	const excluded = extractExcludedBreakpoints( interaction.breakpoints );
 
 	const [ selectedBreakpoints, setSelectedBreakpoints ] = useState< BreakpointOption[] >( () => {
 		return availableBreakpoints.filter( ( { value } ) => {
@@ -35,6 +34,24 @@ export const InteractionSettings = ( { interaction, onChange }: InteractionSetti
 
 	const handleBreakpointChange = ( _event: React.SyntheticEvent, newValue: BreakpointOption[] ) => {
 		setSelectedBreakpoints( newValue );
+
+		const selectedValues = newValue.map( ( option ) => option.value );
+		const newExcluded = availableBreakpoints
+			.filter( ( bp ) => ! selectedValues.includes( bp.value ) )
+			.map( ( bp ) => bp.value );
+
+		const updatedInteraction: InteractionItemValue = {
+			...interaction,
+			...( newExcluded.length > 0 && {
+				breakpoints: createInteractionBreakpoints( newExcluded ),
+			} ),
+		};
+
+		if ( newExcluded.length === 0 ) {
+			delete updatedInteraction.breakpoints;
+		}
+
+		onChange( updatedInteraction );
 	};
 
 	return (
