@@ -67,7 +67,7 @@ export function hasElementType( element: V1Element, type: string ): boolean {
 	return getAllDescendants( element ).some( ( item ) => getElementType( item ) === type );
 }
 
-export function hasElementTypes( element: V1Element, types: Set<string> ): boolean {
+export function hasElementTypes( element: V1Element, types: Set< string > ): boolean {
 	return getAllDescendants( element ).some( ( item ) => {
 		const itemType = getElementType( item );
 		return itemType ? types.has( itemType ) : false;
@@ -85,7 +85,7 @@ export function hasClipboardElementType( elements: ClipboardElement[], type: str
 	} );
 }
 
-export function hasClipboardElementTypes( elements: ClipboardElement[], types: Set<string> ): boolean {
+export function hasClipboardElementTypes( elements: ClipboardElement[], types: Set< string > ): boolean {
 	return elements.some( ( element ) => {
 		const elementType = element.widgetType || element.elType;
 		if ( elementType && types.has( elementType ) ) {

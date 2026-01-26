@@ -142,13 +142,11 @@ class Atomic_Form extends Atomic_Element_Base {
 				->is_locked( true )
 				->build(),
 			$this->build_status_message(
-				'e-form-success',
 				__( 'Thank you! Your submission has been received.', 'elementor' ),
 				'success',
 				__( 'Success message', 'elementor' )
 			),
 			$this->build_status_message(
-				'e-form-error',
 				__( 'Oops! Something went wrong.', 'elementor' ),
 				'error',
 				__( 'Error message', 'elementor' )
@@ -156,7 +154,7 @@ class Atomic_Form extends Atomic_Element_Base {
 		];
 	}
 
-	private function build_status_message( string $class_name, string $message, string $state, string $title ): array {
+	private function build_status_message( string $message, string $state, string $title ): array {
 		$paragraph_value = Html_Prop_Type::generate( $message );
 
 		return Element_Builder::make( Div_Block::get_element_type() )
@@ -194,6 +192,8 @@ class Atomic_Form extends Atomic_Element_Base {
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
+			'x-data' => 'eForm' . $this->get_id(),
+			'x-on:submit' => 'submit',
 		];
 
 		if ( ! empty( $settings['_cssid'] ) ) {
@@ -205,9 +205,7 @@ class Atomic_Form extends Atomic_Element_Base {
 			$attributes['data-form-name'] = esc_attr( $settings['form-name'] );
 		}
 
-		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
-		$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
-		$form_state = ( $is_edit_mode || $is_preview_mode ) ? ( $settings['form-state'] ?? 'default' ) : 'default';
+		$form_state = $settings['form-state'] ?? 'default';
 		$attributes['data-form-state'] = esc_attr( $form_state );
 
 		$this->add_render_attribute( '_wrapper', $attributes );

@@ -3,15 +3,15 @@ import { blockCommand } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import {
-	FORM_FIELD_ELEMENT_TYPES,
 	type CreateArgs,
-	type MoveArgs,
-	type PasteArgs,
-	type StorageContent,
+	FORM_FIELD_ELEMENT_TYPES,
 	getArgsElementType,
 	hasClipboardElementTypes,
 	hasElementTypes,
 	isWithinForm,
+	type MoveArgs,
+	type PasteArgs,
+	type StorageContent,
 } from './utils';
 
 const FORM_FIELDS_OUTSIDE_ALERT: NotificationData = {
@@ -76,7 +76,7 @@ function blockFormFieldPaste( args: PasteArgs ): boolean {
 
 	const data = (
 		window as { elementorCommon?: { storage?: { get: () => StorageContent } } }
-	)?.elementorCommon?.storage?.get();
+	 )?.elementorCommon?.storage?.get();
 
 	if ( ! data?.clipboard?.elements ) {
 		return false;

@@ -2,6 +2,13 @@ jest.mock( '@elementor/frontend-handlers', () => ( {
 	registerBySelector: jest.fn(),
 } ), { virtual: true } );
 
+jest.mock( '@elementor/alpinejs', () => ( {
+	Alpine: {
+		data: jest.fn(),
+		destroyTree: jest.fn(),
+	},
+} ), { virtual: true } );
+
 const HANDLER_ID = 'atomic-link-action-handler';
 const SELECTOR = '[data-action-link], :has(> [data-action-link])';
 const ATOMIC_FORM_HANDLER_ID = 'atomic-form-submit-handler';

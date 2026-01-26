@@ -29,7 +29,9 @@ const createAtomicFormView = () => {
 
 		_getFormState() {
 			const setting = this.model.getSetting( 'form-state' );
-			const value = setting?.value ?? setting;
+			const renderContext = this.getResolverRenderContext?.();
+			const resolvedSetting = this._resolvePropValue?.( setting, renderContext ) ?? setting;
+			const value = resolvedSetting?.value ?? resolvedSetting;
 
 			return value || 'default';
 		}

@@ -1,4 +1,5 @@
 import { registerBySelector } from '@elementor/frontend-handlers';
+import { Alpine } from '@elementor/alpinejs';
 
 const LINK_ACTIONS_EDITOR_WHITELIST = [ 'off_canvas', 'lightbox' ];
 const WHITELIST_FILTER = 'frontend/handlers/atomic-widgets/link-actions-whitelist';
@@ -58,46 +59,54 @@ function handleAtomicFormSubmit( element ) {
 		return;
 	}
 
-	const submitHandler = async ( event ) => {
-		if ( isEditorContext() ) {
-			return;
-		}
+	if ( ! Alpine?.data ) {
+		return;
+	}
 
-		event.preventDefault();
+	const alpineId = getFormAlpineId( element, form );
 
-		if ( form.dataset.atomicFormSubmitting ) {
-			return;
-		}
+	Alpine.data( alpineId, () => ( {
+		async submit( event ) {
+			if ( isEditorContext() ) {
+				return;
+			}
 
-		form.dataset.atomicFormSubmitting = 'true';
+			event.preventDefault();
 
-		const submitButtons = form.querySelectorAll( 'button[type="submit"], input[type="submit"]' );
+			if ( form.dataset.atomicFormSubmitting ) {
+				return;
+			}
 
-		submitButtons.forEach( ( button ) => {
-			button.disabled = true;
-		} );
+			form.dataset.atomicFormSubmitting = 'true';
 
-		const payload = buildAtomicFormPayload( element, form );
+			const submitButtons = form.querySelectorAll( 'button[type="submit"], input[type="submit"]' );
 
-		if ( ! payload ) {
-			setFormState( element, 'error' );
-			clearAtomicFormSubmittingState( form, submitButtons );
-			return;
-		}
+			submitButtons.forEach( ( button ) => {
+				button.disabled = true;
+			} );
 
-		try {
-			const response = await submitAtomicForm( payload );
-			setFormState( element, response?.success ? 'success' : 'error' );
-		} catch ( error ) {
-			setFormState( element, 'error' );
-		} finally {
-			clearAtomicFormSubmittingState( form, submitButtons );
-		}
+			const payload = buildAtomicFormPayload( element, form );
+
+			if ( ! payload ) {
+				setFormState( element, 'error' );
+				clearAtomicFormSubmittingState( form, submitButtons );
+				return;
+			}
+
+			try {
+				const response = await submitAtomicForm( payload );
+				setFormState( element, response?.success ? 'success' : 'error' );
+			} catch ( error ) {
+				setFormState( element, 'error' );
+			} finally {
+				clearAtomicFormSubmittingState( form, submitButtons );
+			}
+		},
+	} ) );
+
+	return () => {
+		Alpine.destroyTree( form );
 	};
-
-	form.addEventListener( 'submit', submitHandler );
-
-	return () => form.removeEventListener( 'submit', submitHandler );
 }
 
 function getFormElement( element ) {
@@ -110,6 +119,16 @@ function getFormElement( element ) {
 	}
 
 	return element.querySelector( 'form' );
+}
+
+function getFormAlpineId( element, form ) {
+	const explicitId = form?.getAttribute?.( 'x-data' ) || element?.getAttribute?.( 'x-data' );
+	if ( explicitId ) {
+		return explicitId;
+	}
+
+	const id = element?.dataset?.id || form?.dataset?.id || element?.getAttribute?.( 'data-id' );
+	return id ? `eForm${ id }` : 'eForm';
 }
 
 function clearAtomicFormSubmittingState( form, submitButtons ) {
