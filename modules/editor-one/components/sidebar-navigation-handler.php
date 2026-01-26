@@ -34,7 +34,7 @@ class Sidebar_Navigation_Handler {
 	}
 
 	public function add_body_class( string $classes ): string {
-		if ( ! $this->menu_data_provider->is_elementor_editor_page() ) {
+		if ( ! $this->menu_data_provider->is_editor_one_admin_page() ) {
 			return $classes;
 		}
 
@@ -48,7 +48,7 @@ class Sidebar_Navigation_Handler {
 	}
 
 	public function enqueue_sidebar_assets(): void {
-		if ( ! $this->menu_data_provider->is_elementor_editor_page() ) {
+		if ( ! $this->menu_data_provider->is_editor_one_admin_page() ) {
 			return;
 		}
 
@@ -85,7 +85,7 @@ class Sidebar_Navigation_Handler {
 	}
 
 	public function render_sidebar_container(): void {
-		if ( ! $this->menu_data_provider->is_elementor_editor_page() ) {
+		if ( ! $this->menu_data_provider->is_editor_one_admin_page() ) {
 			return;
 		}
 
