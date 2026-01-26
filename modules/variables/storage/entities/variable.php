@@ -132,6 +132,8 @@ class Variable {
 
 	public function apply_changes( array $data ): void {
 		$allowed_fields = [ 'label', 'value', 'order' ];
+		$allowed_fields = apply_filters( 'elementor/variables/entity/allowed_fields', $allowed_fields );
+
 		$has_changes = $this->maybe_apply_type( $data );
 
 		foreach ( $allowed_fields as $field ) {

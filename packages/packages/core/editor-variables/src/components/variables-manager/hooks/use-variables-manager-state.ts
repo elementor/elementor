@@ -45,6 +45,22 @@ export const useVariablesManagerState = () => {
 		setIsDirty( true );
 	}, [] );
 
+	const handleStartSync = useCallback( ( itemId: string ) => {
+		setVariables( ( prev ) => ( {
+			...prev,
+			[ itemId ]: { ...prev[ itemId ], sync_to_v3: { enabled: true } },
+		} ) );
+		setIsDirty( true );
+	}, [] );
+
+	const handleStopSync = useCallback( ( itemId: string ) => {
+		setVariables( ( prev ) => ( {
+			...prev,
+			[ itemId ]: { ...prev[ itemId ], sync_to_v3: { enabled: false } },
+		} ) );
+		setIsDirty( true );
+	}, [] );
+
 	const handleSearch = ( searchTerm: string ) => {
 		setSearchValue( searchTerm );
 	};
@@ -82,6 +98,8 @@ export const useVariablesManagerState = () => {
 		handleOnChange,
 		createVariable,
 		handleDeleteVariable,
+		handleStartSync,
+		handleStopSync,
 		handleSave,
 		isSaving,
 		handleSearch,

@@ -1,3 +1,9 @@
+export type TSyncToV3 = {
+	enabled: boolean;
+	v3_id?: string;
+	synced_at?: number;
+};
+
 export type TVariable = {
 	type: string;
 	label: string;
@@ -5,6 +11,7 @@ export type TVariable = {
 	order?: number;
 	deleted?: boolean;
 	deleted_at?: string;
+	sync_to_v3?: TSyncToV3;
 };
 
 export type TVariablesList = Record< string, TVariable >;

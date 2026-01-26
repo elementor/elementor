@@ -8,11 +8,12 @@ export const variablesToList = ( variables: TVariablesList ): VariableWithKey[] 
 	return Object.entries( variables ).map( ( [ key, variable ] ) => ( { key, ...variable } ) );
 };
 
-export const toNormalizedVariable = ( { key, label, value, order }: VariableWithKey ): NormalizedVariable => ( {
+export const toNormalizedVariable = ( { key, label, value, order, sync_to_v3 }: VariableWithKey ): NormalizedVariable => ( {
 	key,
 	label,
 	value,
 	order,
+	sync_to_v3,
 } );
 
 type VariableWithType = NormalizedVariable & { type: string };

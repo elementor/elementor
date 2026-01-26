@@ -9,8 +9,8 @@ import {
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
 import { SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
-import { changeEditMode } from '@elementor/editor-v1-adapters';
-import { AlertTriangleFilledIcon, ColorFilterIcon, TrashIcon } from '@elementor/icons';
+import { changeEditMode, isExperimentActive } from '@elementor/editor-v1-adapters';
+import { AlertTriangleFilledIcon, ColorFilterIcon, DetachIcon, LinkIcon, TrashIcon } from '@elementor/icons';
 import {
 	Alert,
 	AlertAction,
@@ -28,6 +28,7 @@ import { trackVariablesManagerEvent } from '../../utils/tracking';
 import { type ErrorResponse, type MappedError, mapServerError } from '../../utils/validations';
 import { getVariableType } from '../../variables-registry/variable-type-registry';
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
+import { StopSyncConfirmationDialog } from '../ui/stop-sync-confirmation-dialog';
 import { EmptyState } from '../ui/empty-state';
 import { NoSearchResults } from '../ui/no-search-results';
 import { useAutoEdit } from './hooks/use-auto-edit';
@@ -67,6 +68,8 @@ export function VariablesManagerPanel() {
 		handleOnChange,
 		createVariable,
 		handleDeleteVariable,
+		handleStartSync,
+		handleStopSync,
 		handleSave,
 		isSaving,
 		handleSearch,
@@ -78,7 +81,10 @@ export function VariablesManagerPanel() {
 	const { createNavigationCallback, resetNavigation } = useErrorNavigation();
 
 	const [ deleteConfirmation, setDeleteConfirmation ] = useState< { id: string; label: string } | null >( null );
+	const [ stopSyncConfirmation, setStopSyncConfirmation ] = useState< string | null >( null );
 	const [ serverError, setServerError ] = useState< MappedError | null >( null );
+
+	const isSyncEnabled = isExperimentActive( 'e_design_system_sync' );
 
 	usePreventUnload( isDirty );
 
@@ -139,22 +145,60 @@ export function VariablesManagerPanel() {
 		[ handleDeleteVariable ]
 	);
 
-	const menuActions = [
-		{
-			name: __( 'Delete', 'elementor' ),
-			icon: TrashIcon,
-			color: 'error.main',
-			onClick: ( itemId: string ) => {
-				const variable = variables[ itemId ];
-				if ( variable ) {
-					setDeleteConfirmation( { id: itemId, label: variable.label } );
-
-					const variableTypeOptions = getVariableType( variable.type );
-					trackVariablesManagerEvent( { action: 'delete', varType: variableTypeOptions?.variableType } );
-				}
-			},
+	const handleStopSyncWithConfirmation = useCallback(
+		( itemId: string ) => {
+			handleStopSync( itemId );
+			setStopSyncConfirmation( null );
 		},
-	];
+		[ handleStopSync ]
+	);
+
+	const buildMenuActions = useCallback(
+		( variableId: string ) => {
+			const variable = variables[ variableId ];
+			const actions = [];
+
+			if ( isSyncEnabled && variable?.type === 'global-color-variable' ) {
+				if ( variable?.sync_to_v3?.enabled ) {
+					actions.push( {
+						name: __( 'Stop syncing to Version 3', 'elementor' ),
+						icon: DetachIcon,
+						color: 'text.primary',
+						onClick: ( itemId: string ) => {
+							setStopSyncConfirmation( itemId );
+						},
+					} );
+				} else {
+					actions.push( {
+						name: __( 'Sync to Version 3', 'elementor' ),
+						icon: LinkIcon,
+						color: 'text.primary',
+						onClick: ( itemId: string ) => {
+							handleStartSync( itemId );
+						},
+					} );
+				}
+			}
+
+			actions.push( {
+				name: __( 'Delete', 'elementor' ),
+				icon: TrashIcon,
+				color: 'error.main',
+				onClick: ( itemId: string ) => {
+					const v = variables[ itemId ];
+					if ( v ) {
+						setDeleteConfirmation( { id: itemId, label: v.label } );
+
+						const variableTypeOptions = getVariableType( v.type );
+						trackVariablesManagerEvent( { action: 'delete', varType: variableTypeOptions?.variableType } );
+					}
+				},
+			} );
+
+			return actions;
+		},
+		[ variables, isSyncEnabled, handleStartSync ]
+	);
 
 	const hasVariables = Object.keys( variables ).length > 0;
 
@@ -212,7 +256,7 @@ export function VariablesManagerPanel() {
 				>
 					{ hasVariables && (
 						<VariablesManagerTable
-							menuActions={ menuActions }
+							menuActions={ buildMenuActions }
 							variables={ variables }
 							onChange={ handleOnChange }
 							autoEditVariableId={ autoEditVariableId }
@@ -311,6 +355,14 @@ export function VariablesManagerPanel() {
 					label={ deleteConfirmation.label }
 					onConfirm={ () => handleDeleteVariableWithConfirmation( deleteConfirmation.id ) }
 					closeDialog={ () => setDeleteConfirmation( null ) }
+				/>
+			) }
+
+			{ stopSyncConfirmation && (
+				<StopSyncConfirmationDialog
+					open
+					closeDialog={ () => setStopSyncConfirmation( null ) }
+					onConfirm={ () => handleStopSyncWithConfirmation( stopSyncConfirmation ) }
 				/>
 			) }
 
