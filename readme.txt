@@ -18,7 +18,7 @@ https://www.youtube.com/watch?v=ROEC0CPRO3w
 
 Elementor, the leading WordPress website creation platform, empowers you to build professional, pixel-perfect websites seamlessly with its no-code, drag-and-drop Editor.
 
-Supporting the full website lifecycle, Elementor enables you to confidently build, optimize, and manage your website with extended capabilities such as AI-powered creation, image optimization, transactional email delivery, accessibility tools, performance boosters, and more. 
+Supporting the full website lifecycle, Elementor enables you to confidently build, optimize, and manage your website with extended capabilities such as AI-powered creation, image optimization, transactional email delivery, accessibility tools, performance boosters, and more.
 
 Unlock all features with **[Elementor One](https://go.elementor.com/wp-repo-description-tab-elementor-pro-pro-features/)**.
 
@@ -350,6 +350,16 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 6. **Motion Effects** - Add entrance animations and transitions to any element in your website to captivate visitors.
 
 == Changelog ==
+
+= 3.34.3 - 2026-01-26 =
+
+* Tweak: Editor home page renamed to Quick Start
+* Fix: Video background does not play on Mobile in Safari browser
+* Fix: Landing Pages do not appear in Editor menu in WordPress Admin
+* Fix: Theme Builder WordPress view does not work as expected
+* Fix: General UI issues in Editor screens in WordPress Admin
+* Fix: Save as Template modal appears blank in some scenarios
+* Fix: Clicking the Templates menu item leads to an incorrect URL
 
 = 3.34.2 - 2026-01-20 =
 
