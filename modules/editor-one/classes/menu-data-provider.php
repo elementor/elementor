@@ -410,7 +410,7 @@ class Menu_Data_Provider {
 			}
 
 			$children_data[] = [
-				'url' => $this->get_item_url( $child_slug, $child_item->get_parent_slug() ),
+				'url' => $this->resolve_item_url( $child_item, $child_slug ),
 				'priority' => $this->get_item_priority( $child_item ),
 			];
 		}
