@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Heading, Text, Grid, Button } from '@elementor/app-ui';
 import PropTypes from 'prop-types';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
