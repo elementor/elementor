@@ -10,7 +10,7 @@ import {
 } from '@elementor/editor-panels';
 import { SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode, isExperimentActive } from '@elementor/editor-v1-adapters';
-import { AlertTriangleFilledIcon, ColorFilterIcon, DetachIcon, LinkIcon, TrashIcon } from '@elementor/icons';
+import { AlertTriangleFilledIcon, ColorFilterIcon, ResetIcon, TrashIcon } from '@elementor/icons';
 import {
 	Alert,
 	AlertAction,
@@ -162,7 +162,7 @@ export function VariablesManagerPanel() {
 				if ( variable?.sync_to_v3?.enabled ) {
 					actions.push( {
 						name: __( 'Stop syncing to Version 3', 'elementor' ),
-						icon: DetachIcon,
+						icon: ResetIcon,
 						color: 'text.primary',
 						onClick: ( itemId: string ) => {
 							setStopSyncConfirmation( itemId );
@@ -171,7 +171,7 @@ export function VariablesManagerPanel() {
 				} else {
 					actions.push( {
 						name: __( 'Sync to Version 3', 'elementor' ),
-						icon: LinkIcon,
+						icon: ResetIcon,
 						color: 'text.primary',
 						onClick: ( itemId: string ) => {
 							handleStartSync( itemId );
