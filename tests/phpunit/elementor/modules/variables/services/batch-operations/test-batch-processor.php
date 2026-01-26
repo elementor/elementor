@@ -2,12 +2,11 @@
 
 namespace Elementor\Modules\Variables\Services\Batch_Operations;
 
-use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
-use Elementor\Modules\Variables\Storage\Entities\Variable;
 use Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed;
 use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
 use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
+use Elementor\Modules\Variables\Storage\Exceptions\InvalidVariable;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
 use PHPUnit\Framework\TestCase;
 
@@ -37,7 +36,7 @@ class Test_Batch_Processor extends TestCase {
 			'variable' => [
 				'id' => 'temp-123',
 				'type' => 'global-color',
-				'label' => 'New Color',
+				'label' => 'New-Color',
 				'value' => '#FF0000',
 			],
 		];
@@ -50,7 +49,7 @@ class Test_Batch_Processor extends TestCase {
 		$this->assertNotEmpty( $result['id'] );
 		$this->assertEquals( 'temp-123', $result['temp_id'] );
 		$this->assertEquals( 'global-color', $result['variable']['type'] );
-		$this->assertEquals( 'New Color', $result['variable']['label'] );
+		$this->assertEquals( 'New-Color', $result['variable']['label'] );
 		$this->assertEquals( '#FF0000', $result['variable']['value'] );
 	}
 
@@ -216,7 +215,7 @@ class Test_Batch_Processor extends TestCase {
 			'type' => 'create',
 			'variable' => [
 				'type' => 'global-color',
-				'label' => 'New Color',
+				'label' => 'New-Color',
 				'value' => '#FF0000',
 			],
 		];
@@ -253,7 +252,7 @@ class Test_Batch_Processor extends TestCase {
 			'type' => 'create',
 			'variable' => [
 				'type' => 'global-color',
-				'label' => 'New Color',
+				'label' => 'New-Color',
 				'value' => '#FF0000',
 			],
 		];
@@ -264,6 +263,24 @@ class Test_Batch_Processor extends TestCase {
 		// Assert
 		$this->assertEquals( 'operation_5', $result );
 	}
+	public function test_apply_operation__create_throws_invalid_variable() {
+		// Arrange
+		$collection = Variables_Collection::default();
+		$operation = [
+			'type' => 'create',
+			'variable' => [
+				'type' => 'global-color',
+				'label' => 'New Color',
+				'value' => '#FF0000',
+			],
+		];
 
+		// Assert
+		$this->expectException( InvalidVariable::class );
+		$this->expectExceptionMessage( 'Label cannot contain spaces' );
+
+		// Act
+		$this->processor->apply_operation( $collection, $operation );
+	}
 }
 
