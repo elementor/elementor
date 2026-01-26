@@ -10,7 +10,7 @@ const GetStarted = ( { ...props } ) => {
 				<Typography variant="h6">{ props.getStartedData.header.title }</Typography>
 				<Typography variant="body2" color="text.secondary">{ props.getStartedData.header.description }</Typography>
 			</Box>
-			<List sx={ { display: 'grid', gridTemplateColumns: { md: 'repeat(4, 1fr)', xs: 'repeat(2, 1fr)' }, columnGap: { md: 9, xs: 7 }, rowGap: 3 } }>
+			<List sx={ { display: 'grid', gridTemplateColumns: { xl: 'repeat(4, 1fr)', md: 'repeat(3, 1fr)', xs: 'repeat(2, 1fr)' }, columnGap: { md: 9, xs: 7 }, rowGap: 3 } }>
 				{
 					props.getStartedData.repeater.map( ( item ) => {
 						return ( <GetStartedListItem key={ item.title } item={ item } image={ item.image } adminUrl={ props.adminUrl } /> );
