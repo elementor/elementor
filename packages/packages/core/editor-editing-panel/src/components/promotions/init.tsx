@@ -1,3 +1,6 @@
+import { DisplayConditionsControl } from '@elementor/editor-controls';
+
+import { controlsRegistry } from '../../controls-registry/controls-registry';
 import { injectIntoStyleTab } from '../style-tab';
 import { CustomCssSection } from './custom-css';
 
@@ -9,5 +12,7 @@ export const init = () => {
 			component: CustomCssSection,
 			options: { overwrite: true },
 		} );
+
+		controlsRegistry.register( 'display-conditions', DisplayConditionsControl, 'two-columns' );
 	}
 };
