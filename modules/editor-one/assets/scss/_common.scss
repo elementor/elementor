@@ -22,6 +22,24 @@
 		font-family: var(--e-one-typography-fontFamily);
 	}
 
+	#submitdiv {
+		.button {
+			height: 30px;
+			padding: 5px 16px;
+		}
+
+		a:not(.button),
+		.eps-button {
+			color: var(--e-one-palette-text-primary);
+			text-decoration: none;
+
+			&:hover,
+			&:focus {
+				text-decoration: underline;
+			}
+		}
+	}
+
 	.wrap {
 		background-color: var(--e-one-palette-background-default);
 		margin: 20px 32px;
@@ -33,8 +51,6 @@
 		clear: both;
 
 		.tablenav .actions {
-			display: flex;
-			align-items: center;
 
 			.button,
 			input[type="submit"].button {
@@ -44,6 +60,13 @@
 				box-sizing: border-box;
 			}
 		}
+
+	@media screen and (min-width: 783px) {
+		.tablenav .actions {
+			display: flex;
+			align-items: center;
+		}
+	}
 
 		> h1.wp-heading-inline {
 			font-family: var(--e-one-typography-fontFamily);
@@ -56,11 +79,18 @@
 			flex-grow: 1;
 		}
 
-		> .page-title-action {
-			margin-inline-start: 8px;
-		}
+	> .page-title-action {
+		margin-inline-start: 8px;
+	}
 
-		> hr.wp-header-end {
+	@media screen and (max-width: 782px) {
+		> .page-title-action {
+			margin-block-start: 12px;
+			margin-inline-start: 0;
+		}
+	}
+
+	> hr.wp-header-end {
 			flex-basis: 100%;
 			margin-block: 20px 0;
 		}
@@ -100,8 +130,6 @@
 	}
 
 	#wpbody-content {
-		margin-block-start: 50px;
-
 		hr:not(.MuiDivider-root) {
 			border: none;
 			border-block-start: 1px solid var(--e-one-palette-divider);
@@ -344,4 +372,8 @@
 	#elementor-element-manager-wrap {
 		width: 100%;
 	}
+}
+
+body:has(#editor-one-top-bar > *) #wpcontent #wpbody-content {
+	margin-block-start: 50px;
 }
