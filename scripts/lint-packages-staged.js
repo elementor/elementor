@@ -26,5 +26,6 @@ try {
 		}
 	);
 } catch (error) {
+	console.error('Lint failed for packages files:', error.message);
 	process.exit(1);
 }
