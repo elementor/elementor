@@ -23,6 +23,7 @@ const EditorScreen = ( props ) => {
 						<GetStarted
 							getStartedData={ props.homeScreenData.get_started }
 							adminUrl={ props.adminUrl }
+							homeScreenData={ props.homeScreenData }
 						/>
 						{ props.homeScreenData.add_ons && (
 							<Addons
