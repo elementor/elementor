@@ -41,7 +41,10 @@ describe( 'buildInitialSnapshotFromStyles - Variables', () => {
 			],
 		} );
 
-		const { getSnapshot } = createStylesInheritance( [ styleWithNonExistentVariable ], createMockBreakpointsTree() );
+		const { getSnapshot } = createStylesInheritance(
+			[ styleWithNonExistentVariable ],
+			createMockBreakpointsTree()
+		);
 
 		const snapshot = getSnapshot( {
 			breakpoint: 'desktop' as BreakpointId,
@@ -268,5 +271,64 @@ describe( 'buildInitialSnapshotFromStyles - Variables', () => {
 		expect( snapshot?.[ 'font-size' ] ).toBeDefined();
 		expect( snapshot?.[ 'font-size' ]?.[ 0 ]?.value ).toBe( '16px' );
 		expect( snapshot?.[ 'margin-top' ] ).toBeUndefined();
+	} );
+
+	it( 'should handle hasVariable errors gracefully', () => {
+		mockHasVariable.mockImplementation( () => {
+			throw new Error( 'Registry error' );
+		} );
+
+		const styleWithVariable = createMockStyleDefinitionWithVariants( {
+			variants: [
+				{
+					meta: desktopNormal,
+					props: {
+						color: {
+							$$type: 'global-color-variable',
+							value: 'some-var',
+						},
+					},
+					custom_css: null,
+				},
+			],
+		} );
+
+		const { getSnapshot } = createStylesInheritance( [ styleWithVariable ], createMockBreakpointsTree() );
+
+		expect( () =>
+			getSnapshot( {
+				breakpoint: 'desktop' as BreakpointId,
+				state: null as StyleDefinitionState,
+			} )
+		).toThrow( 'Registry error' );
+	} );
+
+	it( 'should handle hasVariable returning false for non-existent variables', () => {
+		mockHasVariable.mockReturnValue( false );
+
+		const styleWithVariable = createMockStyleDefinitionWithVariants( {
+			variants: [
+				{
+					meta: desktopNormal,
+					props: {
+						color: {
+							$$type: 'global-color-variable',
+							value: 'non-existent-var',
+						},
+					},
+					custom_css: null,
+				},
+			],
+		} );
+
+		const { getSnapshot } = createStylesInheritance( [ styleWithVariable ], createMockBreakpointsTree() );
+
+		const snapshot = getSnapshot( {
+			breakpoint: 'desktop' as BreakpointId,
+			state: null as StyleDefinitionState,
+		} );
+
+		expect( snapshot ).toBeDefined();
+		expect( snapshot ).toEqual( {} );
 	} );
 } );

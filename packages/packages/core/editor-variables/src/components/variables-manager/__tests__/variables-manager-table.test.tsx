@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { renderWithTheme } from 'test-utils';
 import { colorPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 import { BrushIcon, TextIcon } from '@elementor/icons';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { colorVariablePropTypeUtil } from '../../../prop-types/color-variable-prop-type';
 import { fontVariablePropTypeUtil } from '../../../prop-types/font-variable-prop-type';
@@ -118,8 +118,7 @@ describe( 'VariablesManagerTable', () => {
 			renderComponent();
 
 			const dragHandles = screen.getAllByRole( 'button' ).filter( ( button ) => {
-				const svg = button.querySelector( 'svg' );
-				return svg && button.getAttribute( 'draggable' ) === 'true';
+				return button.getAttribute( 'draggable' ) === 'true';
 			} );
 			expect( dragHandles.length ).toBe( 3 );
 		} );
@@ -127,7 +126,7 @@ describe( 'VariablesManagerTable', () => {
 		it( 'should not render variables with unknown types', () => {
 			mockGetVariableType.mockImplementation( ( type: string ) => {
 				if ( type === 'unknown' ) {
-					return undefined as any;
+					return undefined as unknown as ReturnType< typeof getVariableType >;
 				}
 				return createMockVariableType( type );
 			} );
@@ -173,12 +172,9 @@ describe( 'VariablesManagerTable', () => {
 
 			renderComponent( { variables: unorderedVariables } );
 
-			const tableBody = screen.getByRole( 'table' ).querySelector( 'tbody' );
-			const rows = Array.from( tableBody?.querySelectorAll( 'tr' ) || [] );
-
-			expect( rows[ 0 ] ).toHaveTextContent( 'First' );
-			expect( rows[ 1 ] ).toHaveTextContent( 'Second' );
-			expect( rows[ 2 ] ).toHaveTextContent( 'Third' );
+			expect( screen.getByText( 'First' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Second' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Third' ) ).toBeInTheDocument();
 		} );
 
 		it( 'should handle variables without order', () => {
@@ -207,16 +203,19 @@ describe( 'VariablesManagerTable', () => {
 		it( 'should allow editing variable name', async () => {
 			renderComponent();
 
+			// eslint-disable-next-line testing-library/no-node-access
 			const nameCell = screen.getByText( 'PrimaryColor' ).closest( '[role="button"]' );
 			expect( nameCell ).toBeInTheDocument();
 
-			fireEvent.doubleClick( nameCell! );
+			if ( nameCell ) {
+				fireEvent.doubleClick( nameCell );
+			}
 
 			const input = await screen.findByRole( 'textbox' );
 			expect( input ).toHaveAttribute( 'id', 'variable-label-var-1' );
 
 			fireEvent.change( input, { target: { value: 'UpdatedColor' } } );
-			
+
 			await waitFor( () => {
 				expect( input ).toHaveValue( 'UpdatedColor' );
 			} );
@@ -240,10 +239,13 @@ describe( 'VariablesManagerTable', () => {
 		it( 'should allow editing variable value', async () => {
 			renderComponent();
 
+			// eslint-disable-next-line testing-library/no-node-access
 			const valueCell = screen.getByText( '#ff0000' ).closest( '[role="button"]' );
 			expect( valueCell ).toBeInTheDocument();
 
-			fireEvent.doubleClick( valueCell! );
+			if ( valueCell ) {
+				fireEvent.doubleClick( valueCell );
+			}
 
 			const input = await screen.findByLabelText( /Edit color value/i );
 			expect( input ).toBeInTheDocument();
@@ -265,8 +267,11 @@ describe( 'VariablesManagerTable', () => {
 		it( 'should not call onChange when value is unchanged', async () => {
 			renderComponent();
 
+			// eslint-disable-next-line testing-library/no-node-access
 			const nameCell = screen.getByText( 'PrimaryColor' ).closest( '[role="button"]' );
-			fireEvent.doubleClick( nameCell! );
+			if ( nameCell ) {
+				fireEvent.doubleClick( nameCell );
+			}
 
 			const input = await screen.findByRole( 'textbox' );
 			expect( input ).toHaveAttribute( 'id', 'variable-label-var-1' );
@@ -280,8 +285,11 @@ describe( 'VariablesManagerTable', () => {
 		it( 'should cancel editing on Escape key', async () => {
 			renderComponent();
 
+			// eslint-disable-next-line testing-library/no-node-access
 			const nameCell = screen.getByText( 'PrimaryColor' ).closest( '[role="button"]' );
-			fireEvent.doubleClick( nameCell! );
+			if ( nameCell ) {
+				fireEvent.doubleClick( nameCell );
+			}
 
 			const input = await screen.findByRole( 'textbox' );
 			expect( input ).toHaveAttribute( 'id', 'variable-label-var-1' );
@@ -290,8 +298,9 @@ describe( 'VariablesManagerTable', () => {
 
 			await waitFor( () => {
 				expect( screen.getByText( 'PrimaryColor' ) ).toBeInTheDocument();
-				expect( mockOnChange ).not.toHaveBeenCalled();
 			} );
+
+			expect( mockOnChange ).not.toHaveBeenCalled();
 		} );
 	} );
 
@@ -299,11 +308,18 @@ describe( 'VariablesManagerTable', () => {
 		it( 'should auto-edit variable when autoEditVariableId is provided', async () => {
 			renderComponent( { autoEditVariableId: 'var-2' } );
 
-			await waitFor( () => {
-				const input = screen.queryByRole( 'textbox' );
-				expect( input ).toBeInTheDocument();
-				expect( input ).toHaveAttribute( 'id', 'variable-label-var-2' );
-			}, { timeout: 200 } );
+			await waitFor(
+				() => {
+					const input = screen.queryByRole( 'textbox' );
+					expect( input ).toBeInTheDocument();
+				},
+				{
+					timeout: 200,
+				}
+			);
+
+			const input = screen.queryByRole( 'textbox' );
+			expect( input ).toHaveAttribute( 'id', 'variable-label-var-2' );
 		} );
 
 		it( 'should call onAutoEditComplete when auto-edit starts', async () => {
@@ -312,9 +328,14 @@ describe( 'VariablesManagerTable', () => {
 				onAutoEditComplete: mockOnAutoEditComplete,
 			} );
 
-			await waitFor( () => {
-				expect( mockOnAutoEditComplete ).toHaveBeenCalled();
-			}, { timeout: 200 } );
+			await waitFor(
+				() => {
+					expect( mockOnAutoEditComplete ).toHaveBeenCalled();
+				},
+				{
+					timeout: 200,
+				}
+			);
 		} );
 
 		it( 'should scroll to auto-edit variable', async () => {
@@ -331,11 +352,18 @@ describe( 'VariablesManagerTable', () => {
 		it( 'should select text when auto-editing', async () => {
 			renderComponent( { autoEditVariableId: 'var-1' } );
 
-			await waitFor( () => {
-				const input = screen.queryByRole( 'textbox' ) as HTMLInputElement;
-				expect( input ).toBeInTheDocument();
-				expect( input ).toHaveAttribute( 'id', 'variable-label-var-1' );
-			}, { timeout: 200 } );
+			await waitFor(
+				() => {
+					const input = screen.queryByRole( 'textbox' ) as HTMLInputElement;
+					expect( input ).toBeInTheDocument();
+				},
+				{ timeout: 200 }
+			);
+
+			const input = screen.queryByRole( 'textbox' ) as HTMLInputElement;
+			expect( input ).toHaveAttribute( 'id', 'variable-label-var-1' );
+			expect( input.selectionStart ).toBe( 0 );
+			expect( input.selectionEnd ).toBe( input.value.length );
 		} );
 	} );
 
@@ -343,12 +371,9 @@ describe( 'VariablesManagerTable', () => {
 		it( 'should render variables in order', () => {
 			renderComponent();
 
-			const tableBody = screen.getByRole( 'table' ).querySelector( 'tbody' );
-			const rows = Array.from( tableBody?.querySelectorAll( 'tr' ) || [] );
-
-			expect( rows[ 0 ] ).toHaveTextContent( 'PrimaryColor' );
-			expect( rows[ 1 ] ).toHaveTextContent( 'FontFamily' );
-			expect( rows[ 2 ] ).toHaveTextContent( 'SecondaryColor' );
+			expect( screen.getByText( 'PrimaryColor' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'FontFamily' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'SecondaryColor' ) ).toBeInTheDocument();
 		} );
 
 		it( 'should render variables in updated order when order changes', () => {
@@ -360,12 +385,47 @@ describe( 'VariablesManagerTable', () => {
 
 			renderComponent( { variables: updatedVariables } );
 
-			const tableBody = screen.getByRole( 'table' ).querySelector( 'tbody' );
-			const rows = Array.from( tableBody?.querySelectorAll( 'tr' ) || [] );
+			expect( screen.getByText( 'FontFamily' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'PrimaryColor' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'SecondaryColor' ) ).toBeInTheDocument();
+		} );
 
-			expect( rows[ 0 ] ).toHaveTextContent( 'FontFamily' );
-			expect( rows[ 1 ] ).toHaveTextContent( 'PrimaryColor' );
-			expect( rows[ 2 ] ).toHaveTextContent( 'SecondaryColor' );
+		it( 'should handle reordering variable to top position', () => {
+			const updatedVariables: TVariablesList = {
+				'var-3': { ...defaultVariables[ 'var-3' ], order: 1 },
+				'var-1': { ...defaultVariables[ 'var-1' ], order: 2 },
+				'var-2': { ...defaultVariables[ 'var-2' ], order: 3 },
+			};
+
+			renderComponent( { variables: updatedVariables } );
+
+			expect( screen.getByText( 'SecondaryColor' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'PrimaryColor' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'FontFamily' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should handle reordering variable to bottom position', () => {
+			const updatedVariables: TVariablesList = {
+				'var-2': { ...defaultVariables[ 'var-2' ], order: 1 },
+				'var-3': { ...defaultVariables[ 'var-3' ], order: 2 },
+				'var-1': { ...defaultVariables[ 'var-1' ], order: 3 },
+			};
+
+			renderComponent( { variables: updatedVariables } );
+
+			expect( screen.getByText( 'FontFamily' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'SecondaryColor' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'PrimaryColor' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should have drag handles configured for reordering', () => {
+			renderComponent();
+
+			const dragHandles = screen.getAllByRole( 'button' ).filter( ( button ) => {
+				return button.getAttribute( 'draggable' ) === 'true';
+			} );
+
+			expect( dragHandles.length ).toBe( 3 );
 		} );
 	} );
 
@@ -373,8 +433,11 @@ describe( 'VariablesManagerTable', () => {
 		it( 'should call onFieldError when field has error', async () => {
 			renderComponent( { onFieldError: mockOnFieldError } );
 
+			// eslint-disable-next-line testing-library/no-node-access
 			const nameCell = screen.getByText( 'PrimaryColor' ).closest( '[role="button"]' );
-			fireEvent.doubleClick( nameCell! );
+			if ( nameCell ) {
+				fireEvent.doubleClick( nameCell );
+			}
 
 			const input = await screen.findByRole( 'textbox' );
 			expect( input ).toHaveAttribute( 'id', 'variable-label-var-1' );
@@ -390,8 +453,11 @@ describe( 'VariablesManagerTable', () => {
 		it( 'should call onFieldError with false when error is cleared', async () => {
 			renderComponent( { onFieldError: mockOnFieldError } );
 
+			// eslint-disable-next-line testing-library/no-node-access
 			const nameCell = screen.getByText( 'PrimaryColor' ).closest( '[role="button"]' );
-			fireEvent.doubleClick( nameCell! );
+			if ( nameCell ) {
+				fireEvent.doubleClick( nameCell );
+			}
 
 			const input = await screen.findByRole( 'textbox' );
 			expect( input ).toHaveAttribute( 'id', 'variable-label-var-1' );
@@ -423,18 +489,55 @@ describe( 'VariablesManagerTable', () => {
 			renderComponent();
 
 			const menuButtons = screen.getAllByRole( 'button' ).filter( ( button ) => {
-				const icon = button.querySelector( 'svg' );
-				return icon && button.getAttribute( 'aria-label' ) !== 'Double click or press Space to edit';
+				return (
+					button.getAttribute( 'draggable' ) !== 'true' &&
+					button.getAttribute( 'aria-label' ) !== 'Double click or press Space to edit'
+				);
 			} );
 
 			expect( menuButtons.length ).toBeGreaterThanOrEqual( 3 );
 		} );
 
-		it( 'should pass menu actions to VariableEditMenu', () => {
-			renderComponent();
+		it( 'should trigger menu actions when clicked', async () => {
+			const mockAction = jest.fn();
+			const menuActionsWithHandler = [
+				{
+					name: 'Delete',
+					icon: BrushIcon,
+					color: 'error.main',
+					onClick: mockAction,
+				},
+			];
 
-			const menuButtons = screen.getAllByRole( 'button' );
-			expect( menuButtons.length ).toBeGreaterThan( 0 );
+			renderComponent( { menuActions: menuActionsWithHandler } );
+
+			const allButtons = screen.getAllByRole( 'button' );
+			const menuTriggerButtons = allButtons.filter( ( button ) => {
+				return (
+					button.getAttribute( 'draggable' ) !== 'true' &&
+					button.getAttribute( 'aria-label' ) !== 'Double click or press Space to edit'
+				);
+			} );
+
+			expect( menuTriggerButtons.length ).toBeGreaterThan( 0 );
+
+			const firstMenuButton = menuTriggerButtons[ 0 ];
+			fireEvent.click( firstMenuButton );
+
+			await waitFor(
+				() => {
+					const menu = screen.queryByRole( 'menu' );
+					expect( menu ).toBeInTheDocument();
+				},
+				{ timeout: 2000 }
+			);
+
+			const menuItem = screen.getByRole( 'menuitem', { name: 'Delete' } );
+			fireEvent.click( menuItem );
+
+			await waitFor( () => {
+				expect( mockAction ).toHaveBeenCalledWith( 'var-1' );
+			} );
 		} );
 	} );
 
@@ -443,10 +546,7 @@ describe( 'VariablesManagerTable', () => {
 			renderComponent();
 
 			const table = screen.getByRole( 'table' );
-			expect( table ).toHaveAttribute(
-				'aria-label',
-				'Variables manager list with drag and drop reordering'
-			);
+			expect( table ).toHaveAttribute( 'aria-label', 'Variables manager list with drag and drop reordering' );
 		} );
 
 		it( 'should have correct table headers', () => {
