@@ -159,7 +159,7 @@ export function VariablesManagerPanel() {
 			const actions = [];
 
 			if ( isSyncEnabled && variable?.type === 'global-color-variable' ) {
-				if ( variable?.sync_to_v3?.enabled ) {
+				if ( variable?.sync_to_v3 ) {
 					actions.push( {
 						name: __( 'Stop syncing to Version 3', 'elementor' ),
 						icon: ResetIcon,

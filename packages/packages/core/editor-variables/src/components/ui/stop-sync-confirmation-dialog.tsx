@@ -14,8 +14,6 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-export const STOP_SYNC_CONFIRMATION_DIALOG_ID = 'stop-sync-confirmation-dialog';
-
 type StopSyncConfirmationDialogProps = {
 	open: boolean;
 	closeDialog: () => void;

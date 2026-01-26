@@ -48,7 +48,7 @@ export const useVariablesManagerState = () => {
 	const handleStartSync = useCallback( ( itemId: string ) => {
 		setVariables( ( prev ) => ( {
 			...prev,
-			[ itemId ]: { ...prev[ itemId ], sync_to_v3: { enabled: true } },
+			[ itemId ]: { ...prev[ itemId ], sync_to_v3: true },
 		} ) );
 		setIsDirty( true );
 	}, [] );
@@ -56,7 +56,7 @@ export const useVariablesManagerState = () => {
 	const handleStopSync = useCallback( ( itemId: string ) => {
 		setVariables( ( prev ) => ( {
 			...prev,
-			[ itemId ]: { ...prev[ itemId ], sync_to_v3: { enabled: false } },
+			[ itemId ]: { ...prev[ itemId ], sync_to_v3: false },
 		} ) );
 		setIsDirty( true );
 	}, [] );

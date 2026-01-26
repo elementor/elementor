@@ -37,19 +37,10 @@ class Hooks {
 	public function add_sync_api_arg( array $args ): array {
 		$args['sync_to_v3'] = [
 			'required' => false,
-			'type' => 'object',
-			'validate_callback' => [ $this, 'validate_sync_to_v3' ],
+			'type' => 'boolean',
 		];
 
 		return $args;
-	}
-
-	public function validate_sync_to_v3( $value ): bool {
-		if ( ! is_array( $value ) ) {
-			return false;
-		}
-
-		return isset( $value['enabled'] ) && is_bool( $value['enabled'] );
 	}
 
 	public function process_sync_data( array $data, WP_REST_Request $request ): array {

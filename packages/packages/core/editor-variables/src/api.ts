@@ -20,11 +20,7 @@ export type BatchOperation = {
 		label?: string;
 		value?: string;
 		order?: number;
-		sync_to_v3?: {
-			enabled: boolean;
-			v3_id?: string;
-			synced_at?: number;
-		};
+		sync_to_v3?: boolean;
 	};
 	label?: string;
 	value?: string;

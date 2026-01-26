@@ -37,7 +37,7 @@ export const buildOperationsArray = (
 			} );
 		} else if ( originalVariables[ id ] ) {
 			const original = originalVariables[ id ];
-			const syncChanged = original.sync_to_v3?.enabled !== variable.sync_to_v3?.enabled;
+			const syncChanged = original.sync_to_v3 !== variable.sync_to_v3;
 
 			if ( original.deleted && ! variable.deleted ) {
 				operations.push( {
