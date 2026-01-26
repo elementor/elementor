@@ -45,7 +45,7 @@ function blockFormCreate( args: CreateArgs ): boolean {
 	}
 
 	if ( elementType === FORM_ELEMENT_TYPE && isWithinForm( args.container ) ) {
-		notify( FORM_NESTING_ALERT );
+		handleBlockedFormField();
 		return true;
 	}
 
@@ -60,7 +60,7 @@ function blockFormMove( args: MoveArgs ): boolean {
 	);
 
 	if ( hasFormElement && isWithinForm( target ) ) {
-		notify( FORM_NESTING_ALERT );
+		handleBlockedFormField();
 		return true;
 	}
 
@@ -85,9 +85,13 @@ function blockFormPaste( args: PasteArgs ): boolean {
 	const hasFormElement = hasClipboardElementType( data.clipboard.elements, FORM_ELEMENT_TYPE );
 
 	if ( hasFormElement && isWithinForm( args.container ) ) {
-		notify( FORM_NESTING_ALERT );
+		handleBlockedFormField();
 		return true;
 	}
 
 	return false;
+}
+
+function handleBlockedFormField(): void {
+	notify( FORM_NESTING_ALERT );
 }
