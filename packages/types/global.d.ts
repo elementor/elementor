@@ -1,5 +1,13 @@
+<<<<<<< HEAD
 import { type V1Element } from "@elementor/editor-elements";
 import type { InteractionsConfig } from '@elementor/editor-editing-panel';
+=======
+import type { InteractionsConfig, DynamicTags, DynamicTagsManager, DynamicTag } from '@elementor/editor-editing-panel';
+import type { ControlItem, V1Element } from '@elementor/editor-elements';
+import type { PropsSchema } from '@elementor/editor-props';
+import type { SupportedFonts, EnqueueFont } from '@elementor/editor-v1-adapters';
+import type { V4PromotionData, V4PromotionKeys } from '@elementor/editor-editing-panel';
+>>>>>>> ac2bb982a6 (Internal: Display conditions promotion [ED-22536] (#34446))
 
 declare global {
 	interface Window {
@@ -21,6 +29,38 @@ declare global {
 				getElements: () => V1Element[];
 			};
 			getContainer?: (id: string) => V1Element | undefined;
+<<<<<<< HEAD
+=======
+			config?: {
+				controls?: {
+					font?: {
+						options?: Record< string, SupportedFonts >;
+					};
+				};
+				atomicDynamicTags?: {
+					tags: DynamicTags;
+					groups: Record< DynamicTag[ 'group' ], { title: string } >;
+				};
+				v4Promotions?: Record< V4PromotionKeys, V4PromotionData >;
+			};
+			dynamicTags?: DynamicTagsManager;
+			selection?: {
+				getElements: () => V1Element[];
+			};
+			widgetsCache?: Record<
+				string,
+				{
+					atomic_controls?: ControlItem[];
+					atomic_props_schema?: PropsSchema;
+					controls: object;
+					title: string;
+				}
+			>;
+			getContainer?: ( id: string ) => V1Element;
+			helpers?: {
+				enqueueFont?: EnqueueFont;
+			};
+>>>>>>> ac2bb982a6 (Internal: Display conditions promotion [ED-22536] (#34446))
 		};
 		elementorFrontend?: {
 			config?: {
