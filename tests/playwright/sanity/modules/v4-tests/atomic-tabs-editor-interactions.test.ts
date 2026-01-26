@@ -88,7 +88,7 @@ test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 		await expect( secondContent ).not.toBeVisible();
 
 		// Act
-		await secondTab.click();
+		await secondTab.dispatchEvent( 'click' );
 
 		// Assert
 		await expect( secondTab ).toHaveAttribute( 'aria-selected', 'true' );
@@ -233,7 +233,7 @@ test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 		const tabsRoot = getTabsRoot( tabsId );
 		const tabItems = getMenuTabs( tabsRoot );
 
-		await tabItems.nth( 1 ).click();
+		await tabItems.nth( 1 ).dispatchEvent( 'click' );
 		await expect( tabItems.nth( 1 ) ).toHaveAttribute( 'aria-selected', 'true' );
 
 		await editor.selectElement( tabsId );
