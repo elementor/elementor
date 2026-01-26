@@ -33,6 +33,11 @@ export function TimeFrameIndicator( { value, onChange, defaultValue }: FieldProp
 			value={ sizeValue }
 			onChange={ handleChange }
 			onBlur={ handleBlur }
+			InputProps={ {
+				inputProps: {
+					min: 0,
+				},
+			} }
 		/>
 	);
 }
