@@ -35,3 +35,5 @@ export { getFieldIndicators, registerFieldIndicator, FIELD_TYPE } from './field-
 export { registerEditingPanelReplacement } from './editing-panel-replacement-registry';
 
 export { doApplyClasses, doGetAppliedClasses, doUnapplyClass } from './apply-unapply-actions';
+export { type DynamicTag, type DynamicTags, type DynamicTagsManager } from './dynamics/types';
+export { isDynamicPropValue } from './dynamics/utils';
