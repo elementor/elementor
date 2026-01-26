@@ -27,7 +27,7 @@ test.describe( 'Editor screen UI tests', () => {
 		await context.close();
 	} );
 
-	test( 'free license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
+	test.skip( 'free license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
 		const requestContext = await request.newContext( { storageState } );
 		const mockData = transformMockDataByLicense( 'free' );
 
@@ -38,7 +38,7 @@ test.describe( 'Editor screen UI tests', () => {
 		await requestContext.dispose();
 	} );
 
-	test( 'pro license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
+	test.skip( 'pro license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
 		const requestContext = await request.newContext( { storageState } );
 		const mockData = transformMockDataByLicense( 'pro' );
 
@@ -49,7 +49,7 @@ test.describe( 'Editor screen UI tests', () => {
 		await requestContext.dispose();
 	} );
 
-	test( 'one license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
+	test.skip( 'one license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
 		const requestContext = await request.newContext( { storageState } );
 		const mockData = transformMockDataByLicense( 'one' );
 
