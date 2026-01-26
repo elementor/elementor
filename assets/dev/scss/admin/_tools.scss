@@ -127,10 +127,9 @@
 
 		img {
 			width: 330px;
-			height: 315px;
-			padding: 0.625rem;
-			object-fit: cover;
-			object-position: top;
+			height: auto;
+			max-width: 100%;
+			aspect-ratio: 330 / 315;
 		}
 	}
 
