@@ -156,7 +156,6 @@
 		td {
 			color: var(--e-one-palette-text-primary);
 			font-size: 13px;
-			font-weight: 400;
 			padding: 10px;
 
 			&:last-child {
@@ -302,21 +301,30 @@
 	}
 }
 
-body.post-type-elementor_library {
-	.wp-list-table {
-		thead th {
-			&#title,
-			&.column-title {
-				width: 20%;
+@media screen and (min-width: 783px) {
+	body.post-type-elementor_library {
+		.wp-list-table {
+			thead th {
+				&#title,
+				&.column-title {
+					width: 20%;
+				}
 			}
-		}
 
-		tbody td {
-			&#title,
-			&.column-title {
-				width: 20%;
+			tbody td {
+				&#title,
+				&.column-title {
+					width: 20%;
+				}
 			}
 		}
 	}
 }
 
+.wp-list-table:not(.e-form-submissions-list-table) {
+	tbody {
+		td {
+			font-weight: 400;
+		}
+	}
+}
