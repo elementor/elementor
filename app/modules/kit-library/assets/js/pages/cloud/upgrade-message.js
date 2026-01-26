@@ -14,12 +14,12 @@ export default function UpgradeMessage( { hasSubscription, isCloudKitsAvailable 
 		heading: __( 'Access Website Templates with a plan upgrade', 'elementor' ),
 		description: __( 'Your current plan doesn\'t include saving and importing Website Templates. Upgrade to the Advanced plan or higher to use this feature.', 'elementor' ),
 		buttonText: __( 'Compare plans', 'elementor' ),
-		url: 'https://go.elementor.com/go-pro-cloud-website-templates-library-advanced/',
+		url: UPGRADE_URLS.ADVANCED_PLAN,
 	} : {
 		heading: __( 'It\'s time to level up', 'elementor' ),
 		description: __( 'Upgrade to Elementor Pro to import your own website template and save templates that you can reuse on any of your connected websites.', 'elementor' ),
 		buttonText: __( 'Upgrade now', 'elementor' ),
-		url: 'https://go.elementor.com/go-pro-cloud-website-templates-library/',
+		url: UPGRADE_URLS.GO_PRO,
 	}, [ showPlanUpgradeMessage ] );
 
 	return (
