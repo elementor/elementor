@@ -1,7 +1,8 @@
 import { injectIntoLogic, injectIntoTop } from '@elementor/editor';
-import { controlActionsMenu, registerControlReplacement } from '@elementor/editor-editing-panel';
+import { registerControlReplacement } from '@elementor/editor-controls';
 import { __registerPanel as registerPanel } from '@elementor/editor-panels';
 import { isTransformable, type PropValue } from '@elementor/editor-props';
+import { controlActionsMenu } from '@elementor/menus';
 
 import { OpenPanelFromUrl } from './components/open-panel-from-url';
 import { panel } from './components/variables-manager/variables-manager-panel';
