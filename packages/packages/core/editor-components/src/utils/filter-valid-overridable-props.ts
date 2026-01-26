@@ -1,54 +1,33 @@
 import { getElementSetting } from '@elementor/editor-elements';
 
+import { type ComponentInstanceOverride } from '../prop-types/component-instance-overrides-prop-type';
 import { componentInstanceOverridesPropTypeUtil } from '../prop-types/component-instance-overrides-prop-type';
 import { componentInstancePropTypeUtil } from '../prop-types/component-instance-prop-type';
 import { componentOverridablePropTypeUtil } from '../prop-types/component-overridable-prop-type';
 import { type OverridableProp, type OverridableProps } from '../types';
+import { extractInnerOverrideInfo } from './overridable-props-utils';
 
 export type GetOverridablePropsForComponent = ( componentId: number ) => OverridableProps | undefined;
 
-type OverrideMapping = {
-	overrideKey: string;
-	innerOverrideKey: string | null;
-};
-
-type ComponentInstanceData = {
-	componentId: number;
-	overrides: OverrideMapping[];
-};
-
-function getComponentInstanceData( elementId: string ): ComponentInstanceData | null {
-	const setting = getElementSetting( elementId, 'component_instance' );
-	const componentInstance = componentInstancePropTypeUtil.extract( setting );
-
-	if ( ! componentInstance?.component_id?.value ) {
+function findOverrideByOuterKey(
+	overrides: ComponentInstanceOverride[] | undefined,
+	outerKey: string
+): ComponentInstanceOverride | null {
+	if ( ! overrides ) {
 		return null;
 	}
 
-	const overridesValue = componentInstanceOverridesPropTypeUtil.extract( componentInstance.overrides );
+	return (
+		overrides.find( ( override ) => {
+			const overridableValue = componentOverridablePropTypeUtil.extract( override );
 
-	const overrides = ( overridesValue ?? [] ).map( ( override ) => {
-		const overridableValue = componentOverridablePropTypeUtil.extract( override );
+			if ( overridableValue ) {
+				return overridableValue.override_key === outerKey;
+			}
 
-		if ( overridableValue ) {
-			const innerOverride = overridableValue.origin_value as { value?: { override_key?: string } } | null;
-
-			return {
-				overrideKey: overridableValue.override_key,
-				innerOverrideKey: innerOverride?.value?.override_key ?? null,
-			};
-		}
-
-		return {
-			overrideKey: override.value.override_key,
-			innerOverrideKey: override.value.override_key,
-		};
-	} );
-
-	return {
-		componentId: componentInstance.component_id.value,
-		overrides,
-	};
+			return override.value.override_key === outerKey;
+		} ) ?? null
+	);
 }
 
 export function isExposedPropValid(
@@ -66,22 +45,29 @@ export function isExposedPropValid(
 	}
 	visited.add( visitKey );
 
-	const instanceData = getComponentInstanceData( prop.elementId );
-	if ( ! instanceData ) {
+	const setting = getElementSetting( prop.elementId, 'component_instance' );
+	const componentInstance = componentInstancePropTypeUtil.extract( setting );
+
+	if ( ! componentInstance?.component_id?.value ) {
 		return false;
 	}
 
-	const matchingOverride = instanceData.overrides.find( ( o ) => o.overrideKey === prop.overrideKey );
-	if ( ! matchingOverride || ! matchingOverride.innerOverrideKey ) {
+	const overrides = componentInstanceOverridesPropTypeUtil.extract( componentInstance.overrides ) ?? undefined;
+	const matchingOverride = findOverrideByOuterKey( overrides, prop.overrideKey );
+	const innerOverrideInfo = extractInnerOverrideInfo( matchingOverride );
+
+	if ( ! innerOverrideInfo ) {
 		return false;
 	}
 
-	const innerOverridableProps = getOverridablePropsForComponent( instanceData.componentId );
+	const { componentId, innerOverrideKey } = innerOverrideInfo;
+	const innerOverridableProps = getOverridablePropsForComponent( componentId );
+
 	if ( ! innerOverridableProps ) {
 		return false;
 	}
 
-	const innerProp = innerOverridableProps.props[ matchingOverride.innerOverrideKey ];
+	const innerProp = innerOverridableProps.props[ innerOverrideKey ];
 	if ( ! innerProp ) {
 		return false;
 	}

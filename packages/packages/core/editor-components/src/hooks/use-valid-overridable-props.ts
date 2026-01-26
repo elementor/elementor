@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { __useSelector as useSelector } from '@elementor/store';
 
 import { type ComponentsSlice, selectOverridableProps } from '../store/store';
