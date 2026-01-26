@@ -3,7 +3,6 @@ import { ModalProvider, Heading, Text, Button } from '@elementor/app-ui';
 import { useMemo, useState, useRef } from 'react';
 import { useNavigate } from '@reach/router';
 import PopoverDialog from 'elementor-app/ui/popover-dialog/popover-dialog';
-import { useReturnTo } from '../../context/return-to-context';
 
 import './index-header.scss';
 
