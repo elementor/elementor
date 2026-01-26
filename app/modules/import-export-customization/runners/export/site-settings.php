@@ -143,7 +143,7 @@ class Site_Settings extends Export_Runner_Base {
 		$export_result = $this->export_all( $data, ! empty( $customization['theme'] ) );
 
 		if ( $this->is_classes_feature_active() ) {
-			$include_classes = $customization['classes'] ?? true;
+			$include_classes = $customization['classes'] ?? false;
 			$export_result['manifest'][0]['site-settings']['classes'] = (bool) $include_classes;
 
 			if ( ! $include_classes ) {
@@ -152,7 +152,7 @@ class Site_Settings extends Export_Runner_Base {
 		}
 
 		if ( $this->is_variables_feature_active() ) {
-			$include_variables = $customization['variables'] ?? true;
+			$include_variables = $customization['variables'] ?? false;
 			$export_result['manifest'][0]['site-settings']['variables'] = (bool) $include_variables;
 
 			if ( ! $include_variables ) {

@@ -290,8 +290,8 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 					{ showClassesVariablesSection && (
 						<ClassesVariablesSection
 							settings={ {
-								classes: settings.classes ?? true,
-								variables: settings.variables ?? true,
+								classes: settings.classes ?? false,
+								variables: settings.variables ?? false,
 								classesOverrideAll: settings.classesOverrideAll ?? false,
 								variablesOverrideAll: settings.variablesOverrideAll ?? false,
 							} }

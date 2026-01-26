@@ -226,7 +226,7 @@ export function ClassesVariablesSection( {
 				<Stack spacing={ 1.5 }>
 					<SubSettingRow
 						label={ __( 'Classes', 'elementor' ) }
-						checked={ settings.classes ?? true }
+						checked={ settings.classes ?? false }
 						onChange={ ( isChecked ) => onSettingChange( 'classes', isChecked ) }
 						disabled={ disabled }
 						limitExceeded={ isImport && classesLimitExceeded && ! classesNotExported }
@@ -243,7 +243,7 @@ export function ClassesVariablesSection( {
 
 					<SubSettingRow
 						label={ __( 'Variables', 'elementor' ) }
-						checked={ settings.variables ?? true }
+						checked={ settings.variables ?? false }
 						onChange={ ( isChecked ) => onSettingChange( 'variables', isChecked ) }
 						disabled={ disabled }
 						limitExceeded={ isImport && variablesLimitExceeded && ! variablesNotExported }
