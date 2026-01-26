@@ -48,6 +48,27 @@ class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Ba
 		parent::setUp();
 
 		set_current_screen( 'front' );
+
+		remove_all_actions( 'elementor/editor/after_enqueue_scripts' );
+		remove_all_actions( 'elementor/editor/v2/scripts/enqueue' );
+
+		$this->register_mock_editor_scripts();
+	}
+
+	private function register_mock_editor_scripts(): void {
+		$mock_scripts = [
+			'elementor-editor',
+			'elementor-v2-ui',
+			'elementor-v2-icons',
+			'elementor-v2-query',
+			'elementor-v2-editor-app-bar',
+		];
+
+		foreach ( $mock_scripts as $handle ) {
+			if ( ! wp_script_is( $handle, 'registered' ) ) {
+				wp_register_script( $handle, '', [], ELEMENTOR_VERSION, true );
+			}
+		}
 	}
 
 	/**

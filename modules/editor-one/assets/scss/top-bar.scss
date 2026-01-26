@@ -26,3 +26,9 @@
 		}
 	}
 }
+
+@media screen and (max-width: 600px) {
+	body:has(#editor-one-top-bar) #wpadminbar {
+		position: fixed;
+	}
+}
