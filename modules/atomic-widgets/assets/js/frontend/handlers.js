@@ -55,11 +55,7 @@ function handleLinkActions( element ) {
 function handleAtomicFormSubmit( element ) {
 	const form = getFormElement( element );
 
-	if ( ! form ) {
-		return;
-	}
-
-	if ( ! Alpine?.data ) {
+	if ( ! form || ! Alpine?.data ) {
 		return;
 	}
 
@@ -87,18 +83,17 @@ function handleAtomicFormSubmit( element ) {
 
 			const payload = buildAtomicFormPayload( element, form );
 
-			if ( ! payload ) {
+			if ( payload ) {
+				try {
+					const response = await submitAtomicForm( payload );
+					setFormState( element, response?.success ? 'success' : 'error' );
+				} catch ( error ) {
+					setFormState( element, 'error' );
+				} finally {
+					clearAtomicFormSubmittingState( form, submitButtons );
+				}
+			} else {
 				setFormState( element, 'error' );
-				clearAtomicFormSubmittingState( form, submitButtons );
-				return;
-			}
-
-			try {
-				const response = await submitAtomicForm( payload );
-				setFormState( element, response?.success ? 'success' : 'error' );
-			} catch ( error ) {
-				setFormState( element, 'error' );
-			} finally {
 				clearAtomicFormSubmittingState( form, submitButtons );
 			}
 		},
@@ -123,6 +118,7 @@ function getFormElement( element ) {
 
 function getFormAlpineId( element, form ) {
 	const explicitId = form?.getAttribute?.( 'x-data' ) || element?.getAttribute?.( 'x-data' );
+
 	if ( explicitId ) {
 		return explicitId;
 	}

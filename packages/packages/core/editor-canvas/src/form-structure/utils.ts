@@ -46,21 +46,8 @@ export function isElementWithinFormSelector( element?: V1Element ): boolean {
 	return !! element?.view?.el?.closest( 'form,[data-element_type="e-form"]' );
 }
 
-export function getFormAncestor( element?: V1Element ): V1Element | null {
-	let current = element;
-
-	while ( current ) {
-		if ( getElementType( current ) === FORM_ELEMENT_TYPE ) {
-			return current;
-		}
-		current = current.parent;
-	}
-
-	return null;
-}
-
 export function isWithinForm( element?: V1Element ): boolean {
-	return isElementWithinFormSelector( element ) || !! getFormAncestor( element );
+	return isElementWithinFormSelector( element );
 }
 
 export function hasElementType( element: V1Element, type: string ): boolean {
@@ -70,6 +57,7 @@ export function hasElementType( element: V1Element, type: string ): boolean {
 export function hasElementTypes( element: V1Element, types: Set< string > ): boolean {
 	return getAllDescendants( element ).some( ( item ) => {
 		const itemType = getElementType( item );
+
 		return itemType ? types.has( itemType ) : false;
 	} );
 }
@@ -77,6 +65,7 @@ export function hasElementTypes( element: V1Element, types: Set< string > ): boo
 export function hasClipboardElementType( elements: ClipboardElement[], type: string ): boolean {
 	return elements.some( ( element ) => {
 		const elementType = element.widgetType || element.elType;
+
 		if ( elementType === type ) {
 			return true;
 		}
