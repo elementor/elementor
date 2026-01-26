@@ -1,8 +1,8 @@
 import { injectIntoTop } from '@elementor/editor';
 import { registerControlReplacement } from '@elementor/editor-controls';
-import { controlActionsMenu } from '@elementor/editor-editing-panel';
 import { __registerPanel as registerPanel } from '@elementor/editor-panels';
 import { isTransformable, type PropValue } from '@elementor/editor-props';
+import { controlActionsMenu } from '@elementor/menus';
 
 import { panel } from './components/variables-manager/variables-manager-panel';
 import { VariableControl } from './controls/variable-control';

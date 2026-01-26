@@ -10,14 +10,16 @@ export default class TemplatesModule extends elementorModules.editor.utils.Modul
 	registerTemplateTypes() {
 		elementor.templates.getDefaultTemplateTypeData().then( ( templateTypesData ) => {
 			jQuery.each( elementor?.config?.library?.doc_types, function( type, title ) {
-				const safeData = jQuery.extend(
-					true,
-					{},
-					templateTypesData,
-					elementor.templates.getDefaultTemplateTypeSafeData( title ),
-				);
+				elementor.templates.getDefaultTemplateTypeSafeData( title ).then( ( defaultData ) => {
+					const safeData = jQuery.extend(
+						true,
+						{},
+						templateTypesData,
+						defaultData,
+					);
 
-				elementor.templates.registerTemplateType( type, safeData );
+					elementor.templates.registerTemplateType( type, safeData );
+				} );
 			} );
 		} );
 	}

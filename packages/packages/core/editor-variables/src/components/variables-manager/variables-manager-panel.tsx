@@ -45,7 +45,7 @@ export const { panel, usePanelActions } = createPanel( {
 	onOpen: () => {
 		changeEditMode( id );
 	},
-	onClose: () => {
+	onClose: async () => {
 		changeEditMode( 'edit' );
 	},
 	isOpenPreviousElement: true,
