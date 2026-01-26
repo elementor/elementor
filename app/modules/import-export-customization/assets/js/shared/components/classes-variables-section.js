@@ -64,9 +64,10 @@ const SubSettingRow = ( {
 
 				{ limitExceeded && overLimitCount > 0 && (
 					<Chip
-						label={ `+${ overLimitCount } ${ __( 'over limit', 'elementor' ) }` }
-						size="small"
+						label={ `${ overLimitCount } ${ __( 'over limit', 'elementor' ) }` }
+						size="tiny"
 						sx={ {
+							height: 20,
 							borderColor: 'warning.main',
 							color: 'warning.main',
 							backgroundColor: 'transparent',
@@ -82,7 +83,7 @@ const SubSettingRow = ( {
 				{ limitExceeded && onReviewClick && (
 					<Link
 						component="button"
-						variant="body1"
+						variant="body2"
 						color="info.main"
 						onClick={ onReviewClick }
 						sx={ {
@@ -96,7 +97,7 @@ const SubSettingRow = ( {
 						} }
 					>
 						{ __( 'Review', 'elementor' ) }
-						<ExternalLinkIcon />
+						<ExternalLinkIcon sx={ { fontSize: 16 } } />
 					</Link>
 				) }
 			</Stack>
