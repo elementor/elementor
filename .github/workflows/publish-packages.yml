@@ -13,16 +13,11 @@ on:
         required: false
         default: ''
         description: 'Tag to use. Empty/"manual" = manual tag, "latest" = no tag suffix (latest), other = use as version tag suffix'
-      version:
-        type: string
-        required: false
-        default: ''
-        description: 'Base version to set. If not provided, uses current version from package.json'
     secrets:
       NPMJS_CLOUD_DEVOPS_TOKEN:
         required: true
       MAINTAIN_TOKEN:
-        required: false
+        required: true
   workflow_dispatch:
     inputs:
       tag:
@@ -30,11 +25,6 @@ on:
         required: false
         default: ''
         description: 'Tag to use. Empty/"manual" = manual tag, "latest" = no tag suffix (latest), other = use as version tag suffix'
-      version:
-        type: string
-        required: false
-        default: ''
-        description: 'Base version to set. If not provided, uses current version from package.json'
 
 jobs:
   publish-packages:
@@ -57,6 +47,16 @@ jobs:
         working-directory: packages
         run: |
           npm ci
+
+      - name: Validate Inputs
+        run: |
+          # Validate tag doesn't contain special characters
+          if [ -n "${{ inputs.tag }}" ]; then
+            if [[ "${{ inputs.tag }}" =~ [^a-zA-Z0-9._-] ]]; then
+              echo "Error: tag contains invalid characters"
+              exit 1
+            fi
+          fi
 
       - name: Determine Tag Strategy
         id: tag-strategy
@@ -89,14 +89,9 @@ jobs:
         id: version
         working-directory: packages
         run: |
-          # Get base version
-          if [ -n "${{ inputs.version }}" ]; then
-            BASE_VERSION="${{ inputs.version }}"
-            echo "Using provided version: $BASE_VERSION"
-          else
-            BASE_VERSION=$(node scripts/version-manager/index.js get-version "@elementor/editor")
-            echo "Current version: $BASE_VERSION"
-          fi
+          # Get base version from package.json
+          BASE_VERSION=$(node scripts/version-manager/index.js get-version "@elementor/editor")
+          echo "Current version: $BASE_VERSION"
 
           echo "BASE_VERSION=$BASE_VERSION" >> $GITHUB_OUTPUT
 
@@ -127,8 +122,19 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
 
       - name: Create Git Tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
         run: |
           git config --global user.email "github-actions@github.com"
           git config --global user.name "GitHub Actions"
-          git tag -a "v${{ steps.version.outputs.FULL_VERSION }}" -m "Release ${{ steps.version.outputs.FULL_VERSION }}"
-          git push origin "v${{ steps.version.outputs.FULL_VERSION }}"
+          git remote set-url origin https://x-access-token:${{ secrets.MAINTAIN_TOKEN }}@github.com/${{ github.repository }}.git
+
+          TAG_NAME="v${{ steps.version.outputs.FULL_VERSION }}"
+
+          # Check if tag exists
+          if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
+            echo "Tag $TAG_NAME already exists, skipping creation"
+          else
+            git tag -a "$TAG_NAME" -m "Release ${{ steps.version.outputs.FULL_VERSION }}"
+            git push origin "$TAG_NAME" || echo "Warning: Failed to push tag"
+          fi
