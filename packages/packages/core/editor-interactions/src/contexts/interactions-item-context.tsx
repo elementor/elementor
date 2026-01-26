@@ -10,12 +10,11 @@ type InteractionItemContextValue = {
 
 const InteractionItemContext = createContext< InteractionItemContextValue | null >( null );
 
-export function InteractionItemContextProvider( { value, children }: { value: InteractionItemContextValue } & React.PropsWithChildren ) {
-	return (
-		<InteractionItemContext.Provider value={ value }>
-			{ children }
-		</InteractionItemContext.Provider>
-	);
+export function InteractionItemContextProvider( {
+	value,
+	children,
+}: { value: InteractionItemContextValue } & React.PropsWithChildren ) {
+	return <InteractionItemContext.Provider value={ value }>{ children }</InteractionItemContext.Provider>;
 }
 
 export function useInteractionItemContext() {

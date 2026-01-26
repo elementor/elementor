@@ -5,8 +5,8 @@ import { InfoCircleFilledIcon, PlayerPlayIcon } from '@elementor/icons';
 import { Alert, AlertTitle, Box, IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import type { ElementInteractions, InteractionItemPropValue, InteractionItemValue } from '../types';
 import { InteractionItemContextProvider } from '../contexts/interactions-item-context';
+import type { ElementInteractions, InteractionItemPropValue, InteractionItemValue } from '../types';
 import { buildDisplayLabel, createDefaultInteractionItem, extractString } from '../utils/prop-value-utils';
 import { InteractionsListItem } from './interactions-list-item';
 export const MAX_NUMBER_OF_INTERACTIONS = 5;
