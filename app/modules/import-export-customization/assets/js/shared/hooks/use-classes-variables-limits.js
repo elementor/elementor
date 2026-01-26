@@ -1,13 +1,24 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
-const CLASSES_LIMIT = 100;
-const VARIABLES_LIMIT = 100;
+const DEFAULT_CLASSES_LIMIT = 100;
+const DEFAULT_VARIABLES_LIMIT = 100;
+
+function getLimitsFromConfig() {
+	const config = window.elementorAppConfig?.[ 'import-export-customization' ];
+
+	return {
+		classes: config?.limits?.classes ?? DEFAULT_CLASSES_LIMIT,
+		variables: config?.limits?.variables ?? DEFAULT_VARIABLES_LIMIT,
+	};
+}
 
 export function useClassesVariablesLimits( { open, isImport } ) {
 	const [ existingClassesCount, setExistingClassesCount ] = useState( 0 );
 	const [ existingVariablesCount, setExistingVariablesCount ] = useState( 0 );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ error, setError ] = useState( null );
+
+	const limits = useMemo( () => getLimitsFromConfig(), [] );
 
 	const fetchCounts = useCallback( async () => {
 		if ( ! open || ! isImport ) {
@@ -71,8 +82,8 @@ export function useClassesVariablesLimits( { open, isImport } ) {
 	return {
 		existingClassesCount,
 		existingVariablesCount,
-		classesLimit: CLASSES_LIMIT,
-		variablesLimit: VARIABLES_LIMIT,
+		classesLimit: limits.classes,
+		variablesLimit: limits.variables,
 		isLoading,
 		error,
 		calculateLimitInfo,

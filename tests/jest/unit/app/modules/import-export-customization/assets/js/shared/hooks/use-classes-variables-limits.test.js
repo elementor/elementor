@@ -12,10 +12,13 @@ describe( 'useClassesVariablesLimits Hook', () => {
 			root: 'https://example.com/wp-json/',
 			nonce: 'test-nonce',
 		};
+
+		global.window.elementorAppConfig = undefined;
 	} );
 
 	afterEach( () => {
 		jest.clearAllMocks();
+		global.window.elementorAppConfig = undefined;
 	} );
 
 	describe( 'Initial State', () => {
@@ -44,6 +47,43 @@ describe( 'useClassesVariablesLimits Hook', () => {
 			expect( result.current.existingClassesCount ).toBe( 0 );
 			expect( result.current.existingVariablesCount ).toBe( 0 );
 			expect( result.current.isLoading ).toBe( false );
+		} );
+
+		it( 'should use limits from config when available', () => {
+			// Arrange
+			global.window.elementorAppConfig = {
+				'import-export-customization': {
+					limits: {
+						classes: 200,
+						variables: 150,
+					},
+				},
+			};
+
+			// Act
+			const { result } = renderHook( () =>
+				useClassesVariablesLimits( { open: false, isImport: true } ),
+			);
+
+			// Assert
+			expect( result.current.classesLimit ).toBe( 200 );
+			expect( result.current.variablesLimit ).toBe( 150 );
+		} );
+
+		it( 'should fallback to default limits when config is missing', () => {
+			// Arrange
+			global.window.elementorAppConfig = {
+				'import-export-customization': {},
+			};
+
+			// Act
+			const { result } = renderHook( () =>
+				useClassesVariablesLimits( { open: false, isImport: true } ),
+			);
+
+			// Assert
+			expect( result.current.classesLimit ).toBe( 100 );
+			expect( result.current.variablesLimit ).toBe( 100 );
 		} );
 	} );
 
