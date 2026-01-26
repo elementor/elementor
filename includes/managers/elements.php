@@ -330,7 +330,7 @@ class Elements_Manager {
 			],
 		];
 
-		if ( Utils::has_pro() ) {
+		if ( Utils::has_pro() && Plugin::$instance->experiments->is_feature_active( 'e_pro_atomic_form' ) ) {
 			$atomic_form_category = [
 				'title' => esc_html__( 'Atomic Form', 'elementor' ),
 				'hideIfEmpty' => true,
