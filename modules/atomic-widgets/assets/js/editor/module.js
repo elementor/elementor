@@ -28,13 +28,11 @@ class Module extends elementorModules.editor.utils.Module {
 	registerAtomicElements() {
 		elementor.elementsManager.registerElementType( createDivBlockType() );
 		elementor.elementsManager.registerElementType( createFlexboxType() );
-
 		elementor.elementsManager.registerElementType( createAtomicTabsType() );
 		elementor.elementsManager.registerElementType( createAtomicTabContentType() );
 		elementor.elementsManager.registerElementType( createAtomicTabType() );
 		elementor.elementsManager.registerElementType( createAtomicTabsMenuType() );
 		elementor.elementsManager.registerElementType( createAtomicTabsContentAreaType() );
-
 		elementor.elementsManager.registerElementType( createAtomicFormType() );
 	}
 }

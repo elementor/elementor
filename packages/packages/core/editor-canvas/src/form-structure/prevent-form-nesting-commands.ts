@@ -1,40 +1,19 @@
-import { getAllDescendants, type V1Element } from '@elementor/editor-elements';
 import { type NotificationData, notify } from '@elementor/editor-notifications';
 import { blockCommand } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
-type CreateArgs = {
-	container?: V1Element;
-	model?: {
-		elType?: string;
-		widgetType?: string;
-	};
-};
+import {
+	FORM_ELEMENT_TYPE,
+	type CreateArgs,
+	type MoveArgs,
+	type PasteArgs,
+	type StorageContent,
+	getArgsElementType,
+	hasClipboardElementType,
+	hasElementType,
+	isWithinForm,
+} from './utils';
 
-type MoveArgs = {
-	containers?: V1Element[];
-	container?: V1Element;
-	target?: V1Element;
-};
-
-type PasteArgs = {
-	container?: V1Element;
-	storageType?: string;
-};
-
-type ClipboardElement = {
-	elType?: string;
-	widgetType?: string;
-	elements?: ClipboardElement[];
-};
-
-type StorageContent = {
-	clipboard?: {
-		elements?: ClipboardElement[];
-	};
-};
-
-const FORM_ELEMENT_TYPE = 'e-form';
 const FORM_NESTING_ALERT: NotificationData = {
 	type: 'default',
 	message: __( "Forms can't be nested. Create separate forms instead.", 'elementor' ),
@@ -59,7 +38,7 @@ export function initFormNestingPrevention() {
 }
 
 function blockFormCreate( args: CreateArgs ): boolean {
-	const elementType = args.model?.widgetType || args.model?.elType;
+	const elementType = getArgsElementType( args );
 
 	if ( ! elementType ) {
 		return false;
@@ -97,7 +76,7 @@ function blockFormPaste( args: PasteArgs ): boolean {
 
 	const data = (
 		window as { elementorCommon?: { storage?: { get: () => StorageContent } } }
-	 )?.elementorCommon?.storage?.get();
+	)?.elementorCommon?.storage?.get();
 
 	if ( ! data?.clipboard?.elements ) {
 		return false;
@@ -111,40 +90,4 @@ function blockFormPaste( args: PasteArgs ): boolean {
 	}
 
 	return false;
-}
-
-function hasElementType( element: V1Element, type: string ): boolean {
-	return getAllDescendants( element ).some( ( item ) => getElementType( item ) === type );
-}
-
-function hasClipboardElementType( elements: ClipboardElement[], type: string ): boolean {
-	return elements.some( ( element ) => {
-		const elementType = element.widgetType || element.elType;
-		if ( elementType === type ) {
-			return true;
-		}
-
-		return element.elements ? hasClipboardElementType( element.elements, type ) : false;
-	} );
-}
-
-function getElementType( element?: V1Element ): string | undefined {
-	return element?.model.get( 'widgetType' ) || element?.model.get( 'elType' );
-}
-
-function isWithinForm( element?: V1Element ): boolean {
-	return !! getFormAncestor( element );
-}
-
-function getFormAncestor( element?: V1Element ): V1Element | null {
-	let current = element;
-
-	while ( current ) {
-		if ( getElementType( current ) === FORM_ELEMENT_TYPE ) {
-			return current;
-		}
-		current = current.parent;
-	}
-
-	return null;
 }

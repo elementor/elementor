@@ -1,3 +1,6 @@
+const STATE_ATTRIBUTE = 'data-e-state';
+const STATE_SELECTOR = `[${ STATE_ATTRIBUTE }]`;
+
 const createAtomicFormView = () => {
 	const AtomicElementBaseView = elementor.modules.elements.views.createAtomicElementBase( 'e-form' );
 
@@ -20,7 +23,7 @@ const createAtomicFormView = () => {
 		}
 
 		_bindStatusVisibility() {
-		this.stopListening( this.model, 'change:settings', this._updateStatusVisibility );
+			this.stopListening( this.model, 'change:settings', this._updateStatusVisibility );
 			this.listenTo( this.model, 'change:settings', this._updateStatusVisibility );
 		}
 
@@ -34,8 +37,10 @@ const createAtomicFormView = () => {
 		_updateStatusVisibility() {
 			const formState = this._getFormState();
 
-		this.$el.find( '.e-form-success' ).toggle( 'success' === formState );
-		this.$el.find( '.e-form-error' ).toggle( 'error' === formState );
+			this.$el.find( STATE_SELECTOR ).toArray().forEach( ( element ) => {
+				const state = element.getAttribute( STATE_ATTRIBUTE );
+				jQuery( element ).toggle( state === formState );
+			} );
 		}
 	};
 };

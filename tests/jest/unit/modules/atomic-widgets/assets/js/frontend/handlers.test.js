@@ -5,6 +5,7 @@ jest.mock( '@elementor/frontend-handlers', () => ( {
 const HANDLER_ID = 'atomic-link-action-handler';
 const SELECTOR = '[data-action-link], :has(> [data-action-link])';
 const ATOMIC_FORM_HANDLER_ID = 'atomic-form-submit-handler';
+const REGISTRATIONS = [ 'action-link', 'form-prevention' ];
 
 const ALLOWED_ACTION = 'off_canvas';
 const BLOCKED_ACTION = 'popup';
@@ -55,7 +56,7 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		const { id, selector, callback } = registration;
 
 		// Assert
-		expect( registerBySelector ).toHaveBeenCalledTimes( 2 );
+		expect( registerBySelector ).toHaveBeenCalledTimes( REGISTRATIONS.length );
 		expect( { id, selector } ).toEqual( { id: HANDLER_ID, selector: SELECTOR } );
 		expect( typeof callback ).toBe( 'function' );
 		expect( getRegistration( ATOMIC_FORM_HANDLER_ID ) ).toBeDefined();

@@ -10,7 +10,6 @@ use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Widget_Builder;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
-use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
@@ -127,8 +126,6 @@ class Atomic_Form extends Atomic_Element_Base {
 	}
 
 	protected function define_default_children() {
-		$is_inline_editing_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING );
-
 		return [
 			Widget_Builder::make( 'e-form-input' )
 				->build(),
@@ -147,26 +144,29 @@ class Atomic_Form extends Atomic_Element_Base {
 			$this->build_status_message(
 				'e-form-success',
 				__( 'Thank you! Your submission has been received.', 'elementor' ),
-				$is_inline_editing_active,
+				'success',
 				__( 'Success message', 'elementor' )
 			),
 			$this->build_status_message(
 				'e-form-error',
 				__( 'Oops! Something went wrong.', 'elementor' ),
-				$is_inline_editing_active,
+				'error',
 				__( 'Error message', 'elementor' )
 			),
 		];
 	}
 
-	private function build_status_message( string $class_name, string $message, bool $is_inline_editing_active, string $title ): array {
-		$paragraph_value = $is_inline_editing_active
-			? Html_Prop_Type::generate( $message )
-			: String_Prop_Type::generate( $message );
+	private function build_status_message( string $class_name, string $message, string $state, string $title ): array {
+		$paragraph_value = Html_Prop_Type::generate( $message );
 
 		return Element_Builder::make( Div_Block::get_element_type() )
 			->settings( [
-				'classes' => Classes_Prop_Type::generate( [ $class_name ] ),
+				'attributes' => Attributes_Prop_Type::generate( [
+					Key_Value_Prop_Type::generate( [
+						'key' => String_Prop_Type::generate( 'data-e-state' ),
+						'value' => String_Prop_Type::generate( $state ),
+					] ),
+				] ),
 			] )
 			->editor_settings( [
 				'title' => $title,

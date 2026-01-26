@@ -38,13 +38,29 @@ class Test_Atomic_Form extends Elementor_Test_Base {
 
 		$success = $children[2];
 		$this->assertSame( 'e-div-block', $success['elType'] );
-		$this->assertSame( [ 'e-form-success' ], $success['settings']['classes']['value'] ?? [] );
+		$this->assertSame(
+			Attributes_Prop_Type::generate( [
+				Key_Value_Prop_Type::generate( [
+					'key' => String_Prop_Type::generate( 'data-e-state' ),
+					'value' => String_Prop_Type::generate( 'success' ),
+				] ),
+			] ),
+			$success['settings']['attributes'] ?? null
+		);
 		$this->assertSame( 'Success message', $success['editor_settings']['title'] ?? null );
 		$this->assertTrue( $success['isLocked'] ?? false );
 
 		$error = $children[3];
 		$this->assertSame( 'e-div-block', $error['elType'] );
-		$this->assertSame( [ 'e-form-error' ], $error['settings']['classes']['value'] ?? [] );
+		$this->assertSame(
+			Attributes_Prop_Type::generate( [
+				Key_Value_Prop_Type::generate( [
+					'key' => String_Prop_Type::generate( 'data-e-state' ),
+					'value' => String_Prop_Type::generate( 'error' ),
+				] ),
+			] ),
+			$error['settings']['attributes'] ?? null
+		);
 		$this->assertSame( 'Error message', $error['editor_settings']['title'] ?? null );
 		$this->assertTrue( $error['isLocked'] ?? false );
 	}

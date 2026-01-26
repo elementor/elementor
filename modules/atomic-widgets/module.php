@@ -282,6 +282,14 @@ class Module extends BaseModule {
 	private function register_styles_transformers( Transformers_Registry $transformers ) {
 		$transformers->register_fallback( new Plain_Transformer() );
 
+		$this->register_basic_styles_transformers( $transformers );
+		$this->register_background_styles_transformers( $transformers );
+		$this->register_filter_styles_transformers( $transformers );
+		$this->register_transform_styles_transformers( $transformers );
+		$this->register_layout_styles_transformers( $transformers );
+	}
+
+	private function register_basic_styles_transformers( Transformers_Registry $transformers ): void {
 		$transformers->register( Size_Prop_Type::get_key(), new Size_Transformer() );
 		$transformers->register( Box_Shadow_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Shadow_Prop_Type::get_key(), new Shadow_Transformer() );
@@ -289,6 +297,9 @@ class Module extends BaseModule {
 		$transformers->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
 		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
+	}
+
+	private function register_background_styles_transformers( Transformers_Registry $transformers ): void {
 		$transformers->register( Background_Image_Overlay_Prop_Type::get_key(), new Background_Image_Overlay_Transformer() );
 		$transformers->register( Background_Image_Overlay_Size_Scale_Prop_Type::get_key(), new Background_Image_Overlay_Size_Scale_Transformer() );
 		$transformers->register( Background_Image_Position_Offset_Prop_Type::get_key(), new Position_Transformer() );
@@ -296,12 +307,18 @@ class Module extends BaseModule {
 		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Background_Overlay_Transformer() );
 		$transformers->register( Background_Prop_Type::get_key(), new Background_Transformer() );
 		$transformers->register( Background_Gradient_Overlay_Prop_Type::get_key(), new Background_Gradient_Overlay_Transformer() );
+	}
+
+	private function register_filter_styles_transformers( Transformers_Registry $transformers ): void {
 		$transformers->register( Filter_Prop_Type::get_key(), new Filter_Transformer() );
 		$transformers->register( Backdrop_Filter_Prop_Type::get_key(), new Filter_Transformer() );
 		$transformers->register( Transition_Prop_Type::get_key(), new Transition_Transformer() );
 		$transformers->register( Color_Stop_Prop_Type::get_key(), new Color_Stop_Transformer() );
 		$transformers->register( Gradient_Color_Stop_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Position_Prop_Type::get_key(), new Position_Transformer() );
+	}
+
+	private function register_transform_styles_transformers( Transformers_Registry $transformers ): void {
 		$transformers->register( Transform_Move_Prop_Type::get_key(), new Transform_Move_Transformer() );
 		$transformers->register( Transform_Scale_Prop_Type::get_key(), new Transform_Scale_Transformer() );
 		$transformers->register( Transform_Rotate_Prop_Type::get_key(), new Transform_Rotate_Transformer() );
@@ -316,6 +333,9 @@ class Module extends BaseModule {
 				fn( $_, $key ) => 'transform-functions' === $key ? 'transform' : $key
 			)
 		);
+	}
+
+	private function register_layout_styles_transformers( Transformers_Registry $transformers ): void {
 		$transformers->register(
 			Border_Radius_Prop_Type::get_key(),
 			new Multi_Props_Transformer( [ 'start-start', 'start-end', 'end-start', 'end-end' ], fn ( $_, $key ) => "border-{$key}-radius" )
@@ -392,10 +412,10 @@ class Module extends BaseModule {
 
 	private function add_inline_styles() {
 		$inline_css = '.e-heading-base a, .e-paragraph-base a { all: unset; cursor: pointer; }';
-		$inline_css .= '.elementor-element[data-element_type="e-form"][data-form-state="default"] .e-form-success,';
-		$inline_css .= '.elementor-element[data-element_type="e-form"][data-form-state="default"] .e-form-error,';
-		$inline_css .= '.elementor-element[data-element_type="e-form"][data-form-state="success"] .e-form-error,';
-		$inline_css .= '.elementor-element[data-element_type="e-form"][data-form-state="error"] .e-form-success';
+		$inline_css .= '.elementor-element[data-element_type="e-form"][data-form-state="default"] [data-e-state="success"],';
+		$inline_css .= '.elementor-element[data-element_type="e-form"][data-form-state="default"] [data-e-state="error"],';
+		$inline_css .= '.elementor-element[data-element_type="e-form"][data-form-state="success"] [data-e-state="error"],';
+		$inline_css .= '.elementor-element[data-element_type="e-form"][data-form-state="error"] [data-e-state="success"]';
 		$inline_css .= '{ display: none; }';
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 		wp_add_inline_style( 'elementor-editor', $inline_css );

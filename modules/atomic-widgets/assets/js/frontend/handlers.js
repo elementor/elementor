@@ -52,7 +52,7 @@ function handleLinkActions( element ) {
 }
 
 function handleAtomicFormSubmit( element ) {
-	const form = 'FORM' === element.tagName ? element : element.querySelector( 'form' );
+	const form = getFormElement( element );
 
 	if ( ! form ) {
 		return;
@@ -72,6 +72,7 @@ function handleAtomicFormSubmit( element ) {
 		form.dataset.atomicFormSubmitting = 'true';
 
 		const submitButtons = form.querySelectorAll( 'button[type="submit"], input[type="submit"]' );
+
 		submitButtons.forEach( ( button ) => {
 			button.disabled = true;
 		} );
@@ -99,8 +100,21 @@ function handleAtomicFormSubmit( element ) {
 	return () => form.removeEventListener( 'submit', submitHandler );
 }
 
+function getFormElement( element ) {
+	if ( ! element ) {
+		return null;
+	}
+
+	if ( element.matches( 'form' ) ) {
+		return element;
+	}
+
+	return element.querySelector( 'form' );
+}
+
 function clearAtomicFormSubmittingState( form, submitButtons ) {
 	delete form.dataset.atomicFormSubmitting;
+
 	submitButtons.forEach( ( button ) => {
 		button.disabled = false;
 	} );
@@ -130,6 +144,7 @@ function getAtomicFormFields( form ) {
 
 	inputs.forEach( ( input ) => {
 		const id = input.dataset.interactionId;
+
 		if ( ! id ) {
 			return;
 		}
@@ -174,7 +189,7 @@ function getAtomicFormFieldLabel( field, form ) {
 }
 
 function getAtomicFormFieldType( field ) {
-	if ( 'TEXTAREA' === field.tagName ) {
+	if ( field.matches( 'textarea' ) ) {
 		return 'textarea';
 	}
 
@@ -226,6 +241,14 @@ function setFormState( element, state ) {
 	}
 
 	element.setAttribute( 'data-form-state', state );
+
+	const id = extractId( element );
+	const container = id ? window.elementor?.getContainer?.( id ) : null;
+	container?.view?._updateStatusVisibility?.();
+}
+
+function extractId( element ) {
+	return element?.dataset?.id || element?.getAttribute?.( 'data-id' ) || null;
 }
 
 function getPostId() {
