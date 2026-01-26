@@ -86,10 +86,7 @@ export default class WpDashboardTracking {
 	}
 
 	static isEditorOneActive() {
-<<<<<<< HEAD
-=======
 		const elementorCommon = this.getElementorCommon();
->>>>>>> 6d15abde97 (Internal: Improve handling of undefined references in Editor [ED-22668] (#34428))
 		return elementorCommon?.config?.editor_events?.isEditorOneActive ?? false;
 	}
 
