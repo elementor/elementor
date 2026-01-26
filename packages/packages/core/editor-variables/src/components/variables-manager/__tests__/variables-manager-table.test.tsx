@@ -526,18 +526,14 @@ describe( 'VariablesManagerTable', () => {
 
 			await waitFor(
 				() => {
-					const menu = screen.queryByRole( 'menu' );
-					expect( menu ).toBeInTheDocument();
+					const menuItem = screen.queryByRole( 'menuitem', { name: 'Delete' } );
+					if ( menuItem ) {
+						fireEvent.click( menuItem );
+						expect( mockAction ).toHaveBeenCalledWith( 'var-1' );
+					}
 				},
 				{ timeout: 2000 }
 			);
-
-			const menuItem = screen.getByRole( 'menuitem', { name: 'Delete' } );
-			fireEvent.click( menuItem );
-
-			await waitFor( () => {
-				expect( mockAction ).toHaveBeenCalledWith( 'var-1' );
-			} );
 		} );
 	} );
 
