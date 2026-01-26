@@ -1,14 +1,28 @@
 import * as React from 'react';
-import { useCallback } from 'react';
-import { UnstableSizeField } from '@elementor/editor-controls';
+import { useCallback, useRef, useState } from 'react';
+import { type Unit, UnstableSizeField } from '@elementor/editor-controls';
 import { sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 
 import { type FieldProps } from '../../types';
 
-const DEFAULT_UNIT = 'ms';
+type TimeUnit = Extract< Unit, 'ms' | 's' >;
+
+const UNIT_TO_MS: Record< TimeUnit, number > = {
+	ms: 1,
+	s: 1000,
+};
+
+const DEFAULT_UNIT: TimeUnit = 'ms';
+const SUPPORTED_UNITS: TimeUnit[] = [ 'ms', 's' ];
 
 export function TimeFrameIndicator( { value, onChange, defaultValue }: FieldProps & { defaultValue: number } ) {
-	const sizeValue = toSizeValue( value ?? defaultValue );
+	const [ activeUnit, setActiveUnit ] = useState< TimeUnit >( DEFAULT_UNIT );
+
+	const milliseconds = Number( value ?? defaultValue );
+	const displayValue = convertTime( milliseconds, 'ms', activeUnit );
+
+	const sizeValue = toSizeValue( displayValue, activeUnit );
+	const lastDisplayValueRef = useRef< number >( displayValue );
 
 	const setValue = useCallback(
 		( size: number ) => {
@@ -18,7 +32,20 @@ export function TimeFrameIndicator( { value, onChange, defaultValue }: FieldProp
 	);
 
 	const handleChange = ( newValue: SizePropValue[ 'value' ] ) => {
-		setValue( newValue.size as number );
+		const newUnit = newValue.unit as TimeUnit;
+		const newSize = newValue.size as number;
+
+		const isUnitSwitchOnly = newSize === lastDisplayValueRef.current && newUnit !== activeUnit;
+
+		setActiveUnit( newUnit );
+
+		if ( isUnitSwitchOnly ) {
+			lastDisplayValueRef.current = convertTime( milliseconds, 'ms', newUnit );
+			return;
+		}
+
+		lastDisplayValueRef.current = newSize;
+		setValue( convertTime( newSize, newUnit, 'ms' ) );
 	};
 
 	const handleBlur = () => {
@@ -29,7 +56,7 @@ export function TimeFrameIndicator( { value, onChange, defaultValue }: FieldProp
 
 	return (
 		<UnstableSizeField
-			units={ [ DEFAULT_UNIT ] }
+			units={ SUPPORTED_UNITS }
 			value={ sizeValue }
 			onChange={ handleChange }
 			onBlur={ handleBlur }
@@ -42,9 +69,13 @@ export function TimeFrameIndicator( { value, onChange, defaultValue }: FieldProp
 	);
 }
 
-const toSizeValue = ( value: string ): SizePropValue[ 'value' ] => {
+const convertTime = ( value: number, from: TimeUnit, to: TimeUnit ): number => {
+	return ( value * UNIT_TO_MS[ from ] ) / UNIT_TO_MS[ to ];
+};
+
+const toSizeValue = ( displaySize: number, unit: TimeUnit ): SizePropValue[ 'value' ] => {
 	return sizePropTypeUtil.create( {
-		size: Number( value ),
-		unit: DEFAULT_UNIT,
+		size: displaySize,
+		unit,
 	} ).value;
 };
