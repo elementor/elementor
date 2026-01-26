@@ -32,7 +32,8 @@ jobs:
   release:
     runs-on: ubuntu-22.04
     outputs:
-      PACKAGE_TAG: ${{ steps.output-tag.outputs.PACKAGE_TAG }}
+      PACKAGE_VERSION: ${{ steps.output-data.outputs.PACKAGE_VERSION }}
+      PACKAGE_TAG: ${{ steps.output-data.outputs.PACKAGE_TAG }}
     steps:
       - name: Check if Custom Core was executed
         if: github.event.inputs.custom_core_executed == 'false'
@@ -204,9 +205,10 @@ jobs:
             echo "tag=${NEXT_BETA_NUM}" >> $GITHUB_OUTPUT
           fi
 
-      - name: Output Package Tag for Next Job
-        id: output-tag
+      - name: Output Package Data for Next Job
+        id: output-data
         run: |
+          echo "PACKAGE_VERSION=${{ env.PACKAGE_VERSION }}" >> $GITHUB_OUTPUT
           echo "PACKAGE_TAG=${{ steps.package-tag.outputs.tag }}" >> $GITHUB_OUTPUT
 
   publish-packages:
@@ -214,6 +216,7 @@ jobs:
     if: github.event.inputs.dry_run == 'false'
     uses: ./.github/workflows/publish-packages.yml
     with:
+      version: ${{ needs.release.outputs.PACKAGE_VERSION }}
       tag: ${{ needs.release.outputs.PACKAGE_TAG }}
     secrets:
       NPMJS_CLOUD_DEVOPS_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
