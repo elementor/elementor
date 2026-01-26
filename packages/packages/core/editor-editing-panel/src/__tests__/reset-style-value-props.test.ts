@@ -257,4 +257,19 @@ describe( 'Reset Style Props Tests', () => {
 			expect( result.current.visible ).toBe( false );
 		} );
 	} );
+	describe( 'when value is a variable', () => {
+		it( 'should not show reset button when variable does not exist', () => {
+			( useBoundProp as jest.Mock ).mockReturnValue( {
+				value: { $$type: 'variable', value: 'some-variable' },
+				propType: createMockPropType( {
+					kind: 'plain',
+					settings: { required: false },
+				} ),
+			} );
+
+			const { result } = renderHook( () => useResetStyleValueProps() );
+
+			expect( result.current.visible ).toBe( false );
+		} );
+	} );
 } );
