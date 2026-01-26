@@ -1,5 +1,15 @@
 == Changelog ==
 
+= 3.34.3 - 2026-01-26 =
+
+* Tweak: Editor home page renamed to Quick Start
+* Fix: Video background does not play on Mobile in Safari browser
+* Fix: Landing Pages do not appear in Editor menu in WordPress Admin
+* Fix: Theme Builder WordPress view does not work as expected
+* Fix: General UI issues in Editor screens in WordPress Admin
+* Fix: Save as Template modal appears blank in some scenarios
+* Fix: Clicking the Templates menu item leads to an incorrect URL
+
 = 3.34.2 - 2026-01-20 =
 
 * Tweak: Unified the Elementor interface into a single place to manage, optimize, and configure Elementor capabilities in WordPress Admin
