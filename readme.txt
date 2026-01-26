@@ -19,7 +19,7 @@ https://www.youtube.com/watch?v=ROEC0CPRO3w
 
 Elementor, the leading WordPress website creation platform, empowers you to build professional, pixel-perfect websites seamlessly with its no-code, drag-and-drop Editor.
 
-Supporting the full website lifecycle, Elementor enables you to confidently build, optimize, and manage your website with extended capabilities such as AI-powered creation, image optimization, transactional email delivery, accessibility tools, performance boosters, and more.
+Supporting the full website lifecycle, Elementor enables you to confidently build, optimize, and manage your website with extended capabilities such as AI-powered creation, image optimization, transactional email delivery, accessibility tools, performance boosters, and more. 
 
 Unlock all features with **[Elementor One](https://go.elementor.com/wp-repo-description-tab-elementor-pro-pro-features/)**.
 
