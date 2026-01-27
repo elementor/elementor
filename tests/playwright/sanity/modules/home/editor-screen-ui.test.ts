@@ -3,6 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import { saveHomepageSettings, restoreHomepageSettings, mockHomeScreenData, transformMockDataByLicense, navigateToHomeScreen, type HomepageSettings } from './home-screen.helper';
 
 test.describe( 'Editor screen UI tests', () => {
+	const VIEWPORT_SIZE = { width: 1920, height: 4000 };
 	let originalHomepageSettings: HomepageSettings | null = null;
 
 	test.beforeAll( async ( { browser, apiRequests } ) => {
@@ -27,35 +28,38 @@ test.describe( 'Editor screen UI tests', () => {
 		await context.close();
 	} );
 
-	test.skip( 'free license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
+	test( 'free license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
 		const requestContext = await request.newContext( { storageState } );
 		const mockData = transformMockDataByLicense( 'free' );
 
 		await mockHomeScreenData( page, mockData, apiRequests, requestContext );
 
 		const homeScreen = await navigateToHomeScreen( page );
+		await page.setViewportSize( VIEWPORT_SIZE );
 		await expect.soft( homeScreen ).toHaveScreenshot( 'home-screen-free.png' );
 		await requestContext.dispose();
 	} );
 
-	test.skip( 'pro license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
+	test( 'pro license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
 		const requestContext = await request.newContext( { storageState } );
 		const mockData = transformMockDataByLicense( 'pro' );
 
 		await mockHomeScreenData( page, mockData, apiRequests, requestContext );
 
 		const homeScreen = await navigateToHomeScreen( page );
+		await page.setViewportSize( VIEWPORT_SIZE );
 		await expect.soft( homeScreen ).toHaveScreenshot( 'home-screen-pro.png' );
 		await requestContext.dispose();
 	} );
 
-	test.skip( 'one license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
+	test( 'one license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
 		const requestContext = await request.newContext( { storageState } );
 		const mockData = transformMockDataByLicense( 'one' );
 
 		await mockHomeScreenData( page, mockData, apiRequests, requestContext );
 
 		const homeScreen = await navigateToHomeScreen( page );
+		await page.setViewportSize( VIEWPORT_SIZE );
 		await expect.soft( homeScreen ).toHaveScreenshot( 'home-screen-one.png' );
 		await requestContext.dispose();
 	} );
