@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
+namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs;
 
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
@@ -15,6 +15,10 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Elements\Tabs_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab\Atomic_Tab;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content\Atomic_Tab_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu\Atomic_Tabs_Menu;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Content_Area\Atomic_Tabs_Content_Area;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Core\Utils\Collection;
 use Elementor\Utils;

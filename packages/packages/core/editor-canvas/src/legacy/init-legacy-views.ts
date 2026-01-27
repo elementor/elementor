@@ -6,17 +6,23 @@ import { createElementType } from './create-element-type';
 import {
 	canBeNestedTemplated,
 	createNestedTemplatedElementType,
+	type ModelExtensions,
 	type NestedTemplatedElementConfig,
 } from './create-nested-templated-element-type';
 import { canBeTemplated, type CreateTemplatedElementTypeOptions } from './create-templated-element-type';
 import { createTemplatedElementTypeWithReplacements } from './replacements/manager';
-import { getTabsModelExtensions } from './tabs-model-extensions';
 import type { ElementType, LegacyWindow } from './types';
 
 type ElementLegacyType = {
 	[ key: string ]: ( options: CreateTemplatedElementTypeOptions ) => typeof ElementType;
 };
 export const elementsLegacyTypes: ElementLegacyType = {};
+
+const modelExtensionsRegistry: Record< string, ModelExtensions > = {};
+
+export function registerModelExtensions( type: string, extensions: ModelExtensions ) {
+	modelExtensionsRegistry[ type ] = extensions;
+}
 
 export function registerElementType(
 	type: string,
@@ -87,12 +93,10 @@ function tryRegisterElement(
 }
 
 function createNestedTemplatedType( type: string, renderer: DomRenderer, element: NestedTemplatedElementConfig ) {
-	const modelExtensions = getTabsModelExtensions( type );
-
 	return createNestedTemplatedElementType( {
 		type,
 		renderer,
 		element,
-		modelExtensions,
+		modelExtensions: modelExtensionsRegistry[ type ],
 	} );
 }

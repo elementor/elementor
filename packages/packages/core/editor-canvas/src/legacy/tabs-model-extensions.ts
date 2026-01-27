@@ -1,10 +1,10 @@
 import { htmlPropTypeUtil } from '@elementor/editor-props';
 
+import { type ModelExtensions } from './create-nested-templated-element-type';
+import { registerModelExtensions } from './init-legacy-views';
 import { type BackboneModel, type ElementModel } from './types';
 
-export type ModelExtensions = Record< string, unknown >;
-
-export const tabModelExtensions: ModelExtensions = {
+const tabModelExtensions: ModelExtensions = {
 	modifyDefaultChildren( this: BackboneModel< ElementModel >, elements: unknown[] ): unknown[] {
 		if ( ! Array.isArray( elements ) || elements.length === 0 ) {
 			return elements;
@@ -31,10 +31,4 @@ export const tabModelExtensions: ModelExtensions = {
 	},
 };
 
-export function getTabsModelExtensions( type: string ): ModelExtensions | undefined {
-	const extensionsMap: Record< string, ModelExtensions > = {
-		'e-tab': tabModelExtensions,
-	};
-
-	return extensionsMap[ type ];
-}
+registerModelExtensions( 'e-tab', tabModelExtensions );

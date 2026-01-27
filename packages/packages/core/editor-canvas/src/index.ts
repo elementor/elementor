@@ -15,7 +15,7 @@ export {
 	type CreateNestedTemplatedElementTypeOptions,
 	type NestedTemplatedElementConfig,
 } from './legacy/create-nested-templated-element-type';
-export { registerElementType } from './legacy/init-legacy-views';
+export { registerElementType, registerModelExtensions } from './legacy/init-legacy-views';
 export * from './legacy/types';
 export { createPropsResolver, type PropsResolver } from './renderers/create-props-resolver';
 export { settingsTransformersRegistry } from './settings-transformers-registry';

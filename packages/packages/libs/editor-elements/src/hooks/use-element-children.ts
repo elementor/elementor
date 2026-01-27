@@ -1,23 +1,21 @@
 import { __privateUseListenTo as useListenTo, commandEndEvent, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 
 import { getContainer } from '../sync/get-container';
-import { type ElementOrModel, findChildRecursive, getElementChildren } from '../sync/get-element-or-model';
-import { type V1Element, type V1ElementEditorSettingsProps } from '../sync/types';
+import { findChildRecursive, getElementChildren, type ModelResult } from '../sync/get-model';
+import { type V1ElementEditorSettingsProps } from '../sync/types';
 import { type ElementID } from '../types';
 
 export type ElementModel = {
 	id: string;
 	editorSettings: V1ElementEditorSettingsProps;
-	container: V1Element | null;
 };
 
 export type ElementChildren = Record< string, ElementModel[] >;
 
-function toElementModel( { container, model }: ElementOrModel ): ElementModel {
+function toElementModel( { model }: ModelResult ): ElementModel {
 	return {
 		id: model.get( 'id' ) as string,
 		editorSettings: model.get( 'editor_settings' ) ?? {},
-		container,
 	};
 }
 
@@ -42,18 +40,14 @@ export function useElementChildren< T extends ElementChildren >(
 			}
 
 			const elementChildren = Object.entries( childrenTypes ).reduce( ( acc, [ parentType, childType ] ) => {
-				const parent = findChildRecursive( container, model, ( m ) => m.get( 'elType' ) === parentType );
+				const parent = findChildRecursive( model, ( m ) => m.get( 'elType' ) === parentType );
 
 				if ( ! parent ) {
 					acc[ childType ] = [];
 					return acc;
 				}
 
-				const children = getElementChildren(
-					parent.container,
-					parent.model,
-					( m ) => m.get( 'elType' ) === childType
-				);
+				const children = getElementChildren( parent.model, ( m ) => m.get( 'elType' ) === childType );
 
 				acc[ childType ] = children.map( toElementModel );
 

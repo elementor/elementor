@@ -1,9 +1,11 @@
 <?php
-namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
+namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Content_Area;
 
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
@@ -16,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Atomic_Tabs_Menu extends Atomic_Element_Base {
+class Atomic_Tabs_Content_Area extends Atomic_Element_Base {
 	use Has_Element_Template;
 
 	const BASE_STYLE_KEY = 'base';
@@ -27,15 +29,15 @@ class Atomic_Tabs_Menu extends Atomic_Element_Base {
 	}
 
 	public static function get_type() {
-		return 'e-tabs-menu';
+		return 'e-tabs-content-area';
 	}
 
 	public static function get_element_type(): string {
-		return 'e-tabs-menu';
+		return 'e-tabs-content-area';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Tabs menu', 'elementor' );
+		return esc_html__( 'Tabs content area', 'elementor' );
 	}
 
 	public function get_keywords() {
@@ -43,17 +45,11 @@ class Atomic_Tabs_Menu extends Atomic_Element_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-tab-menu';
+		return 'eicon-tab-content';
 	}
 
 	public function should_show_in_panel() {
 		return false;
-	}
-
-	public function define_initial_attributes(): array {
-		return [
-			'role' => 'tablist',
-		];
 	}
 
 	protected static function define_props_schema(): array {
@@ -81,8 +77,7 @@ class Atomic_Tabs_Menu extends Atomic_Element_Base {
 
 	protected function define_base_styles(): array {
 		$styles = [
-			'display' => String_Prop_Type::generate( 'flex' ),
-			'justify-content' => String_Prop_Type::generate( 'center' ),
+			'display' => String_Prop_Type::generate( 'block' ),
 		];
 
 		return [
@@ -96,11 +91,11 @@ class Atomic_Tabs_Menu extends Atomic_Element_Base {
 
 	protected function get_templates(): array {
 		return [
-			'elementor/elements/atomic-tabs-menu' => __DIR__ . '/atomic-tabs-menu.html.twig',
+			'elementor/elements/atomic-tabs-content-area' => __DIR__ . '/atomic-tabs-content-area.html.twig',
 		];
 	}
 
 	protected function define_allowed_child_types() {
-		return [ 'e-tab', 'container' ];
+		return [ 'e-tab-content', 'container' ];
 	}
 }
