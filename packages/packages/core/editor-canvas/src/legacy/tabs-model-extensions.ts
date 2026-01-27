@@ -31,4 +31,6 @@ const tabModelExtensions: ModelExtensions = {
 	},
 };
 
-registerModelExtensions( 'e-tab', tabModelExtensions );
+export function initTabsModelExtensions() {
+	registerModelExtensions( 'e-tab', tabModelExtensions );
+}
