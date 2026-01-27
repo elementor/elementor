@@ -472,7 +472,7 @@ class Source_Cloud extends Source_Base {
 		return $this->get_app()->get_quota();
 	}
 
-	public function import_template( $name, $path ) {
+	public function import_template( $name, $path, $import_mode = 'match_site' ) {
 		if ( empty( $path ) ) {
 			return new \WP_Error( 'file_error', 'Please upload a file to import' );
 		}
@@ -508,7 +508,7 @@ class Source_Cloud extends Source_Base {
 					continue;
 				}
 
-				$prepared = $this->prepare_import_template_data( $file_path );
+				$prepared = $this->prepare_import_template_data( $file_path, $import_mode );
 
 				if ( is_wp_error( $prepared ) ) {
 					// Skip failed templates
@@ -532,7 +532,7 @@ class Source_Cloud extends Source_Base {
 
 			Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
 		} else {
-			$prepared = $this->prepare_import_template_data( $path );
+			$prepared = $this->prepare_import_template_data( $path, $import_mode );
 
 			if ( is_wp_error( $prepared ) ) {
 				return $prepared;

@@ -2,6 +2,7 @@ import ComponentModalBase from 'elementor-api/modules/component-modal-base';
 import * as commands from './commands/';
 import * as commandsData from './commands-data/';
 import { SAVE_CONTEXTS } from './constants';
+import { showGlobalStylesDialog } from './views/parts/global-styles-dialog';
 
 const TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layout' );
 
@@ -177,32 +178,67 @@ export default class Component extends ComponentModalBase {
 			withPageSettings = true;
 		}
 
-		if ( null === withPageSettings && model.get( 'hasPageSettings' ) ) {
-			const insertTemplateHandler = this.getImportSettingsDialog();
-
-			insertTemplateHandler.showImportDialog( model );
-
-			return;
-		}
-
 		this.manager.layout.showLoadingView();
 
 		this.manager.requestTemplateContent( model.get( 'source' ), model.get( 'template_id' ), {
 			data: {
-				with_page_settings: withPageSettings,
+				with_page_settings: true,
 			},
-			success: ( data ) => {
-				// Clone the `modalConfig.importOptions` because it deleted during the closing.
+			success: async ( data ) => {
 				const importOptions = jQuery.extend( {}, this.manager.modalConfig.importOptions );
+
+				this.manager.layout.hideLoadingView();
+
+				let processedData = data;
+
+				if ( this.manager.hasGlobalStyles( data ) ) {
+					try {
+						const { mode } = await showGlobalStylesDialog();
+						importOptions.importMode = mode;
+
+						this.manager.layout.showLoadingView();
+
+						try {
+							const result = await new Promise( ( resolve, reject ) => {
+								elementorCommon.ajax.addRequest( 'process_global_styles', {
+									data: {
+										content: JSON.stringify( data.content ),
+										import_mode: mode,
+										global_classes: data.global_classes ? JSON.stringify( data.global_classes ) : null,
+										global_variables: data.global_variables ? JSON.stringify( data.global_variables ) : null,
+									},
+									success: resolve,
+									error: reject,
+								} );
+							} );
+
+							processedData = {
+								...data,
+								content: result.content,
+							};
+						} catch ( ajaxError ) {
+							this.manager.showErrorDialog( ajaxError );
+							this.manager.layout.hideLoadingView();
+							return;
+						}
+
+						this.manager.layout.hideLoadingView();
+					} catch ( e ) {
+						return;
+					}
+				}
+
+				if ( null === withPageSettings && model.get( 'hasPageSettings' ) ) {
+					const insertTemplateHandler = this.getImportSettingsDialog();
+					insertTemplateHandler.showImportDialogWithData( model, processedData, importOptions, callback );
+					return;
+				}
 
 				importOptions.withPageSettings = withPageSettings;
 
-				// Hide for next open.
-				this.manager.layout.hideLoadingView();
-
 				this.manager.layout.hideModal();
 
-				callback( data, { model, importOptions } );
+				callback( processedData, { model, importOptions } );
 			},
 			error: ( data ) => {
 				this.manager.showErrorDialog( data );
@@ -214,7 +250,7 @@ export default class Component extends ComponentModalBase {
 	}
 
 	getImportSettingsDialog() {
-		// Moved from ./behaviors/insert-template.js
+		const self = this;
 		const InsertTemplateHandler = {
 			dialog: null,
 
@@ -245,6 +281,32 @@ export default class Component extends ComponentModalBase {
 							} );
 						},
 					} );
+				};
+
+				dialog.show();
+			},
+
+			showImportDialogWithData( model, data, importOptions, callback ) {
+				const dialog = InsertTemplateHandler.getDialog( model );
+
+				dialog.onConfirm = function() {
+					importOptions.withPageSettings = true;
+					elementor.templates.eventManager.sendInsertApplySettingsEvent( {
+						apply_modal_result: 'apply',
+						library_type: model.get( 'source' ),
+					} );
+					self.manager.layout.hideModal();
+					callback( data, { model, importOptions } );
+				};
+
+				dialog.onCancel = function() {
+					importOptions.withPageSettings = false;
+					elementor.templates.eventManager.sendInsertApplySettingsEvent( {
+						apply_modal_result: `don't apply`,
+						library_type: model.get( 'source' ),
+					} );
+					self.manager.layout.hideModal();
+					callback( data, { model, importOptions } );
 				};
 
 				dialog.show();

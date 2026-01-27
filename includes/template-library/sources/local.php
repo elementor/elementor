@@ -782,6 +782,28 @@ class Source_Local extends Source_Base {
 			$data['page_settings'] = $page->get_data( 'settings' );
 		}
 
+		if ( ! empty( $content ) ) {
+			if ( class_exists( \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::class ) ) {
+				$class_ids = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::extract_used_class_ids_from_elements( $content );
+				if ( ! empty( $class_ids ) ) {
+					$snapshot = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::build_snapshot_for_ids( $class_ids );
+					if ( $snapshot ) {
+						$data['global_classes'] = $snapshot;
+					}
+				}
+			}
+
+			if ( class_exists( \Elementor\Modules\Variables\Utils\Template_Library_Variables::class ) ) {
+				$variable_ids = \Elementor\Modules\Variables\Utils\Template_Library_Variables::extract_used_variable_ids_from_elements( $content );
+				if ( ! empty( $variable_ids ) ) {
+					$snapshot = \Elementor\Modules\Variables\Utils\Template_Library_Variables::build_snapshot_for_ids( $variable_ids );
+					if ( $snapshot ) {
+						$data['global_variables'] = $snapshot;
+					}
+				}
+			}
+		}
+
 		return $data;
 	}
 
@@ -958,7 +980,7 @@ class Source_Local extends Source_Base {
 	 * @param string $path - The file path.
 	 * @return \WP_Error|array An array of items on success, 'WP_Error' on failure.
 	 */
-	public function import_template( $name, $path ) {
+	public function import_template( $name, $path, $import_mode = 'match_site' ) {
 		if ( empty( $path ) ) {
 			return new \WP_Error( 'file_error', 'Please upload a file to import' );
 		}
@@ -985,7 +1007,7 @@ class Source_Local extends Source_Base {
 					continue;
 				}
 
-				$import_result = $this->import_single_template( $file_path );
+				$import_result = $this->import_single_template( $file_path, $import_mode );
 
 				if ( is_wp_error( $import_result ) ) {
 					// Skip failed files
@@ -999,7 +1021,7 @@ class Source_Local extends Source_Base {
 			Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
 		} else {
 			// If the import file is a single JSON file
-			$import_result = $this->import_single_template( $path );
+			$import_result = $this->import_single_template( $path, $import_mode );
 
 			if ( is_wp_error( $import_result ) ) {
 				return $import_result;
@@ -1514,8 +1536,8 @@ class Source_Local extends Source_Base {
 	 * @return \WP_Error|int|array Local template array, or template ID, or
 	 *                             `WP_Error`.
 	 */
-	private function import_single_template( $file_path ) {
-		$data = $this->prepare_import_template_data( $file_path );
+	private function import_single_template( $file_path, $import_mode = 'match_site' ) {
+		$data = $this->prepare_import_template_data( $file_path, $import_mode );
 
 		if ( is_wp_error( $data ) ) {
 			return $data;

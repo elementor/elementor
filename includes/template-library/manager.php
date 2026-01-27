@@ -617,7 +617,8 @@ class Manager {
 
 		$source = $this->get_source( $data['source'] ?? 'local' );
 
-		$import_result = $source->import_template( $upload_result['name'], $upload_result['tmp_name'] );
+		$import_mode = $data['import_mode'] ?? 'match_site';
+		$import_result = $source->import_template( $upload_result['name'], $upload_result['tmp_name'], $import_mode );
 
 		// Remove the temporary directory generated for the stream-uploaded file.
 		Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $upload_result['tmp_name'] ) );
@@ -680,6 +681,73 @@ class Manager {
 		$import_data = $document->get_import_data( [ 'content' => $elements ] );
 
 		return $import_data['content'];
+	}
+
+	public function process_global_styles( array $args ) {
+		$validate_args = $this->ensure_args( [ 'content', 'import_mode' ], $args );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		$content = is_string( $args['content'] ) ? json_decode( $args['content'], true ) : $args['content'];
+		$import_mode = $args['import_mode'] ?? 'match_site';
+		$global_classes = isset( $args['global_classes'] ) ? ( is_string( $args['global_classes'] ) ? json_decode( $args['global_classes'], true ) : $args['global_classes'] ) : null;
+		$global_variables = isset( $args['global_variables'] ) ? ( is_string( $args['global_variables'] ) ? json_decode( $args['global_variables'], true ) : $args['global_variables'] ) : null;
+
+		if ( ! empty( $global_classes ) && is_array( $global_classes ) && class_exists( \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::class ) ) {
+			switch ( $import_mode ) {
+				case 'keep_flatten':
+					$content = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::flatten_elements_classes( $content, $global_classes );
+					break;
+
+				case 'keep_create':
+					$create_result = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::create_all_as_new( $global_classes );
+					$id_map = $create_result['id_map'] ?? [];
+					if ( ! empty( $id_map ) ) {
+						$content = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::rewrite_elements_classes_ids( $content, $id_map );
+					}
+					break;
+
+				case 'match_site':
+				default:
+					$merge_result = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::merge_snapshot_and_get_id_map( $global_classes );
+					$id_map = $merge_result['id_map'] ?? [];
+					if ( ! empty( $id_map ) ) {
+						$content = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::rewrite_elements_classes_ids( $content, $id_map );
+					}
+					break;
+			}
+		}
+
+		if ( ! empty( $global_variables ) && is_array( $global_variables ) && class_exists( \Elementor\Modules\Variables\Utils\Template_Library_Variables::class ) ) {
+			switch ( $import_mode ) {
+				case 'keep_flatten':
+					$content = \Elementor\Modules\Variables\Utils\Template_Library_Variables::flatten_elements_variables( $content, $global_variables );
+					break;
+
+				case 'keep_create':
+					$create_result = \Elementor\Modules\Variables\Utils\Template_Library_Variables::create_all_as_new( $global_variables );
+					$variables_id_map = $create_result['id_map'] ?? [];
+					if ( ! empty( $variables_id_map ) ) {
+						$content = \Elementor\Modules\Variables\Utils\Template_Library_Variables::rewrite_elements_variable_ids( $content, $variables_id_map );
+					}
+					break;
+
+				case 'match_site':
+				default:
+					$merge_result = \Elementor\Modules\Variables\Utils\Template_Library_Variables::merge_snapshot_and_get_id_map( $global_variables );
+					$variables_id_map = $merge_result['id_map'] ?? [];
+					if ( ! empty( $variables_id_map ) ) {
+						$content = \Elementor\Modules\Variables\Utils\Template_Library_Variables::rewrite_elements_variable_ids( $content, $variables_id_map );
+					}
+					break;
+			}
+		}
+
+		return [
+			'content' => $content,
+		];
 	}
 
 	public function get_item_children( array $args ) {
@@ -930,6 +998,7 @@ class Manager {
 			'bulk_undo_delete_items',
 			'get_templates_quota',
 			'template_screenshot_failed',
+			'process_global_styles',
 		];
 
 		foreach ( $library_ajax_requests as $ajax_request ) {

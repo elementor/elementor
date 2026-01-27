@@ -225,4 +225,130 @@ class Template_Library_Global_Classes {
 			}
 		);
 	}
+
+	public static function flatten_elements_classes( array $elements, array $global_classes ): array {
+		$items = $global_classes['items'] ?? [];
+
+		if ( empty( $elements ) || empty( $items ) ) {
+			return $elements;
+		}
+
+		return Plugin::$instance->db->iterate_data(
+			$elements,
+			function ( $element_data ) use ( $items ) {
+				$class_values = $element_data['settings']['classes']['value'] ?? null;
+
+				if ( ! is_array( $class_values ) || empty( $class_values ) ) {
+					return $element_data;
+				}
+
+				$updated_values = [];
+				$element_styles = $element_data['styles'] ?? [];
+
+				foreach ( $class_values as $class_id ) {
+					if ( ! is_string( $class_id ) || '' === $class_id ) {
+						continue;
+					}
+
+					if ( 0 !== strpos( $class_id, 'g-' ) ) {
+						$updated_values[] = $class_id;
+						continue;
+					}
+
+					if ( ! isset( $items[ $class_id ] ) ) {
+						$updated_values[] = $class_id;
+						continue;
+					}
+
+					$global_class = $items[ $class_id ];
+
+					$local_id = 'e-' . substr( $element_data['id'] ?? '', 0, 8 ) . '-' . Template_Library_Import_Export_Utils::generate_random_string( 7 );
+
+					$element_styles[ $local_id ] = [
+						'id' => $local_id,
+						'label' => $global_class['label'] ?? 'flattened',
+						'type' => 'class',
+						'variants' => $global_class['variants'] ?? [],
+					];
+
+					$updated_values[] = $local_id;
+				}
+
+				$element_data['settings']['classes']['value'] = array_values( array_unique( $updated_values ) );
+				$element_data['styles'] = $element_styles;
+
+				return $element_data;
+			}
+		);
+	}
+
+	public static function create_all_as_new( array $snapshot ): array {
+		if ( ! class_exists( Global_Classes_Repository::class ) ) {
+			return [ 'id_map' => [] ];
+		}
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		if ( ! $kit ) {
+			return [ 'id_map' => [] ];
+		}
+
+		$parse_result = Global_Classes_Parser::make()->parse( $snapshot );
+		if ( ! $parse_result->is_valid() ) {
+			return [ 'id_map' => [] ];
+		}
+
+		$snapshot = $parse_result->unwrap();
+
+		$current = Global_Classes_Repository::make()->all()->get();
+		$current_items = $current['items'] ?? [];
+		$current_order = $current['order'] ?? [];
+
+		$existing_labels = [];
+		foreach ( $current_items as $item ) {
+			if ( isset( $item['label'] ) && is_string( $item['label'] ) ) {
+				$existing_labels[] = $item['label'];
+			}
+		}
+
+		$id_map = [];
+		$updated_items = $current_items;
+		$updated_order = $current_order;
+
+		foreach ( $snapshot['order'] as $incoming_id ) {
+			if ( empty( $snapshot['items'][ $incoming_id ] ) ) {
+				continue;
+			}
+
+			$incoming_item = $snapshot['items'][ $incoming_id ];
+
+			$new_id = Template_Library_Import_Export_Utils::generate_unique_id( array_keys( $updated_items ), 'g-' );
+			$id_map[ $incoming_id ] = $new_id;
+
+			$incoming_item['id'] = $new_id;
+
+			if ( isset( $incoming_item['label'] ) && is_string( $incoming_item['label'] ) && '' !== $incoming_item['label'] ) {
+				$label = $incoming_item['label'];
+
+				if ( in_array( $label, $existing_labels, true ) ) {
+					$label = Template_Library_Import_Export_Utils::generate_unique_label( $label, $existing_labels );
+					$incoming_item['label'] = $label;
+				}
+
+				$existing_labels[] = $label;
+			}
+
+			$updated_items[ $new_id ] = $incoming_item;
+			$updated_order[] = $new_id;
+		}
+
+		Global_Classes_Repository::make()->put( $updated_items, $updated_order );
+
+		return [
+			'id_map' => $id_map,
+			'global_classes' => [
+				'items' => $updated_items,
+				'order' => $updated_order,
+			],
+		];
+	}
 }

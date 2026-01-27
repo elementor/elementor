@@ -461,7 +461,7 @@ abstract class Source_Base {
 		return new \WP_Error( 'quota_error', 'This source does not support quota validation' );
 	}
 
-	public function prepare_import_template_data( $file_path ) {
+	public function prepare_import_template_data( $file_path, $import_mode = 'match_site' ) {
 		$data = json_decode( Utils::file_get_contents( $file_path ), true );
 
 		if ( empty( $data ) ) {
@@ -481,31 +481,39 @@ abstract class Source_Base {
 			$content
 		);
 
-		// Import embedded Global Classes (if present) and rewrite ids in the imported content.
+		// Import embedded Global Classes (if present) based on import mode.
 		if (
 			! empty( $data['global_classes'] ) &&
 			is_array( $data['global_classes'] ) &&
 			class_exists( \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::class )
 		) {
-			/**
-			 * Filter embedded global classes snapshot for Template Library imports.
-			 *
-			 * @since 3.0.0
-			 *
-			 * @param array $snapshot
-			 * @param array $template_file_data Full decoded template JSON.
-			 */
 			$snapshot = apply_filters( 'elementor/template_library/import/global_classes_snapshot', $data['global_classes'], $data );
 
-			$merge_result = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::merge_snapshot_and_get_id_map( $snapshot );
-			$id_map = $merge_result['id_map'] ?? [];
+			switch ( $import_mode ) {
+				case 'keep_flatten':
+					$content = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::flatten_elements_classes( $content, $snapshot );
+					break;
 
-			if ( ! empty( $id_map ) ) {
-				$content = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::rewrite_elements_classes_ids( $content, $id_map );
+				case 'keep_create':
+					$create_result = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::create_all_as_new( $snapshot );
+					$id_map = $create_result['id_map'] ?? [];
+					if ( ! empty( $id_map ) ) {
+						$content = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::rewrite_elements_classes_ids( $content, $id_map );
+					}
+					break;
+
+				case 'match_site':
+				default:
+					$merge_result = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::merge_snapshot_and_get_id_map( $snapshot );
+					$id_map = $merge_result['id_map'] ?? [];
+					if ( ! empty( $id_map ) ) {
+						$content = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::rewrite_elements_classes_ids( $content, $id_map );
+					}
+					break;
 			}
 		}
 
-		// Import embedded Global Variables (if present) and rewrite ids in the imported content.
+		// Import embedded Global Variables (if present) based on import mode.
 		if (
 			! empty( $data['global_variables'] ) &&
 			is_array( $data['global_variables'] ) &&
@@ -513,11 +521,27 @@ abstract class Source_Base {
 		) {
 			$variables_snapshot = apply_filters( 'elementor/template_library/import/global_variables_snapshot', $data['global_variables'], $data );
 
-			$merge_result = \Elementor\Modules\Variables\Utils\Template_Library_Variables::merge_snapshot_and_get_id_map( $variables_snapshot );
-			$variables_id_map = $merge_result['id_map'] ?? [];
+			switch ( $import_mode ) {
+				case 'keep_flatten':
+					$content = \Elementor\Modules\Variables\Utils\Template_Library_Variables::flatten_elements_variables( $content, $variables_snapshot );
+					break;
 
-			if ( ! empty( $variables_id_map ) ) {
-				$content = \Elementor\Modules\Variables\Utils\Template_Library_Variables::rewrite_elements_variable_ids( $content, $variables_id_map );
+				case 'keep_create':
+					$create_result = \Elementor\Modules\Variables\Utils\Template_Library_Variables::create_all_as_new( $variables_snapshot );
+					$variables_id_map = $create_result['id_map'] ?? [];
+					if ( ! empty( $variables_id_map ) ) {
+						$content = \Elementor\Modules\Variables\Utils\Template_Library_Variables::rewrite_elements_variable_ids( $content, $variables_id_map );
+					}
+					break;
+
+				case 'match_site':
+				default:
+					$merge_result = \Elementor\Modules\Variables\Utils\Template_Library_Variables::merge_snapshot_and_get_id_map( $variables_snapshot );
+					$variables_id_map = $merge_result['id_map'] ?? [];
+					if ( ! empty( $variables_id_map ) ) {
+						$content = \Elementor\Modules\Variables\Utils\Template_Library_Variables::rewrite_elements_variable_ids( $content, $variables_id_map );
+					}
+					break;
 			}
 		}
 
