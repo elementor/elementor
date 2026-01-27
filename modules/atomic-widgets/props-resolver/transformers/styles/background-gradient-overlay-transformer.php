@@ -20,6 +20,8 @@ class Background_Gradient_Overlay_Transformer extends Transformer_Base {
 			return sprintf( 'radial-gradient(circle at %s, %s)', $positions, $stops );
 		}
 
-		return sprintf( 'linear-gradient(%ddeg, %s)', $angle, $stops );
+		$angle_by_direction = sprintf('calc(%sdeg * var(--direction-multiplier, 1))', $angle);
+
+		return sprintf('linear-gradient(%s, %s)', $angle_by_direction, $stops);
 	}
 }
