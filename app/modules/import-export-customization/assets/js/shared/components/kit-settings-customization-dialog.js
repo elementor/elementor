@@ -179,33 +179,27 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 		} ) );
 	};
 
-	const handleClassesReviewClick = async () => {
+	const handleReviewClick = useCallback( async ( panelId ) => {
 		const transformedAnalytics = transformAnalyticsData( settings );
 		handleSaveChanges( 'settings', settings, true, transformedAnalytics );
 		handleClose();
 
 		try {
-			const url = await fetchManagerUrl( 'global-classes-manager' );
+			const url = await fetchManagerUrl( panelId );
 			window.open( url, '_blank' );
 		} catch ( error ) {
 			// eslint-disable-next-line no-console
-			console.error( 'Failed to open Class Manager:', error );
+			console.error( `Failed to open ${ panelId }:`, error );
 		}
-	};
+	}, [ settings, handleSaveChanges, handleClose ] );
 
-	const handleVariablesReviewClick = async () => {
-		const transformedAnalytics = transformAnalyticsData( settings );
-		handleSaveChanges( 'settings', settings, true, transformedAnalytics );
-		handleClose();
+	const handleClassesReviewClick = useCallback( () => {
+		handleReviewClick( 'global-classes-manager' );
+	}, [ handleReviewClick ] );
 
-		try {
-			const url = await fetchManagerUrl( 'variables-manager' );
-			window.open( url, '_blank' );
-		} catch ( error ) {
-			// eslint-disable-next-line no-console
-			console.error( 'Failed to open Variables Manager:', error );
-		}
-	};
+	const handleVariablesReviewClick = useCallback( () => {
+		handleReviewClick( 'variables-manager' );
+	}, [ handleReviewClick ] );
 
 	const classesNotExported = isImport && ! isClassesExported( contextData );
 	const variablesNotExported = isImport && ! isVariablesExported( contextData );
