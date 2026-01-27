@@ -120,7 +120,7 @@ describe( 'ClassesVariablesSection Component', () => {
 			expect( switches[ 1 ].checked ).toBe( false );
 		} );
 
-		it( 'should default to true when classes setting is undefined', () => {
+		it( 'should default to false when classes setting is undefined', () => {
 			// Arrange & Act
 			render(
 				<ClassesVariablesSection
@@ -131,7 +131,7 @@ describe( 'ClassesVariablesSection Component', () => {
 
 			// Assert
 			const switches = screen.getAllByRole( 'checkbox' );
-			expect( switches[ 0 ].checked ).toBe( true );
+			expect( switches[ 0 ].checked ).toBe( false );
 		} );
 	} );
 
