@@ -72,6 +72,7 @@ interface NestedTwigView extends TwigViewInterface {
 	_afterRender: () => void;
 	_renderTemplate: () => Promise< void >;
 	_renderChildren: () => Promise< void >;
+	_removeChildrenPlaceholder: () => void;
 	_attachTwigContent: ( html: string ) => void;
 	_destroyAlpine: () => void;
 	_initAlpine: () => void;
@@ -227,6 +228,22 @@ export function createNestedTemplatedElementView( {
 			} );
 
 			await Promise.all( renderPromises );
+
+			this._removeChildrenPlaceholder();
+		},
+
+		_removeChildrenPlaceholder( this: NestedTwigView ) {
+			const el = this.$el.get( 0 );
+			if ( ! el ) {
+				return;
+			}
+
+			const placeholderComment = Array.from( el.childNodes ).find(
+				( node ) =>
+					node.nodeType === Node.COMMENT_NODE && node.nodeValue?.trim() === 'elementor-children-placeholder'
+			);
+
+			placeholderComment?.remove();
 		},
 
 		getChildViewContainer( this: NestedTwigView ) {
@@ -247,8 +264,9 @@ export function createNestedTemplatedElementView( {
 			);
 
 			if ( placeholderComment ) {
-				// Insert children at the placeholder location
+				// Insert children at the placeholder location and remove the placeholder
 				placeholderComment.parentNode?.insertBefore( buffer, placeholderComment );
+				placeholderComment.remove();
 			} else {
 				// Fallback: append to root
 				el.append( buffer );
