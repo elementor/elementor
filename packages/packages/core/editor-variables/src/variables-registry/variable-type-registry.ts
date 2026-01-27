@@ -1,8 +1,8 @@
+import { type VariableManagerMenuAction } from '../components/variables-manager/ui/variable-edit-menu';
 import {
 	createVariableTypeRegistry,
 	type MenuActionContext,
 	type MenuActionsFactory,
-	type VariableMenuAction,
 } from './create-variable-type-registry';
 
 export const { registerVariableType, getVariableType, getVariableTypes, hasVariableType } =
@@ -11,7 +11,7 @@ export const { registerVariableType, getVariableType, getVariableTypes, hasVaria
 export function getMenuActionsForVariable(
 	variableType: string,
 	context: MenuActionContext
-): VariableMenuAction[] {
+): VariableManagerMenuAction[] {
 	const typeOptions = getVariableType( variableType );
 	if ( typeOptions?.menuActionsFactory ) {
 		return typeOptions.menuActionsFactory( context );
@@ -19,4 +19,4 @@ export function getMenuActionsForVariable(
 	return [];
 }
 
-export type { MenuActionContext, MenuActionsFactory, VariableMenuAction };
+export type { MenuActionContext, MenuActionsFactory, VariableManagerMenuAction };

@@ -166,7 +166,7 @@ export function VariablesManagerPanel() {
 				isSyncEnabled,
 				handlers: {
 					onStartSync: handleStartSync,
-					onStopSync: ( id: string ) => setStopSyncConfirmation( id ),
+					onStopSync: ( itemId: string ) => setStopSyncConfirmation( itemId ),
 				},
 			} );
 

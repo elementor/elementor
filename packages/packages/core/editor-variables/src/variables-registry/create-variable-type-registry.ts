@@ -1,4 +1,4 @@
-import { type ElementType, type ForwardRefExoticComponent, type JSX, type KeyboardEvent, type RefAttributes } from 'react';
+import { type ForwardRefExoticComponent, type JSX, type KeyboardEvent, type RefAttributes } from 'react';
 import {
 	type AnyTransformer,
 	stylesInheritanceTransformersRegistry,
@@ -13,16 +13,10 @@ import {
 } from '@elementor/editor-props';
 import { type SvgIconProps } from '@elementor/ui';
 
+import { type VariableManagerMenuAction } from '../components/variables-manager/ui/variable-edit-menu';
 import { inheritanceTransformer } from '../transformers/inheritance-transformer';
 import { variableTransformer } from '../transformers/variable-transformer';
 import { type NormalizedVariable, type Variable } from '../types';
-
-export type VariableMenuAction = {
-	name: string;
-	icon: ForwardRefExoticComponent< Omit< SvgIconProps, 'ref' > & RefAttributes< SVGSVGElement > > | ElementType;
-	color: string;
-	onClick: ( id: string ) => void;
-};
 
 export type MenuActionContext = {
 	variable: Variable;
@@ -34,7 +28,7 @@ export type MenuActionContext = {
 	};
 };
 
-export type MenuActionsFactory = ( context: MenuActionContext ) => VariableMenuAction[];
+export type MenuActionsFactory = ( context: MenuActionContext ) => VariableManagerMenuAction[];
 
 export type ValueFieldProps = {
 	value: string;

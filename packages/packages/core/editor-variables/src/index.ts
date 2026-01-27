@@ -8,7 +8,7 @@ export {
 	registerVariableType,
 	type MenuActionContext,
 	type MenuActionsFactory,
-	type VariableMenuAction,
+	type VariableManagerMenuAction,
 } from './variables-registry/variable-type-registry';
 export { hasVariable } from './hooks/use-prop-variables';
 
