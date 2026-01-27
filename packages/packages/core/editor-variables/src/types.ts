@@ -8,6 +8,7 @@ export type Variable = {
 	type: string;
 	deleted?: boolean;
 	deleted_at?: string;
+	sync_to_v3?: boolean;
 };
 
 export type StyleVariables = Record< string, Variable >;
