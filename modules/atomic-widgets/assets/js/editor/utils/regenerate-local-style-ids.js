@@ -9,17 +9,7 @@ function isClassesProp( prop ) {
 	return prop.$$type && 'classes' === prop.$$type && Array.isArray( prop.value ) && prop.value.length > 0;
 }
 
-/**
- * Update the style id of the element.
- * Works with both rendered containers and unrendered models.
- *
- * @param {Container|Object} element
- */
-function updateStyleId( element ) {
-	const container = window.elementor.getContainer( element.id );
-	const model = container?.model ?? element;
-	const settings = container?.settings ?? model.get( 'settings' );
-
+function calculateNewStylesAndSettings( element, model, settings ) {
 	const originalStyles = model.get( 'styles' );
 	const settingsJson = settings?.toJSON() ?? {};
 
@@ -43,20 +33,37 @@ function updateStyleId( element ) {
 		} ];
 	}, {} );
 
-	const newSettings = Object.fromEntries( newClassesProps );
+	return {
+		newStyles,
+		newSettings: Object.fromEntries( newClassesProps ),
+	};
+}
 
-	// Use the command when view exists to trigger proper rendering.
-	// For unrendered elements, set directly on model - they'll render with correct values.
+function updateStyleIdForContainer( container ) {
+	const { model, settings } = container;
+	const { newStyles, newSettings } = calculateNewStylesAndSettings( container, model, settings );
+
+	$e.internal( 'document/elements/set-settings', { container, settings: newSettings } );
+	model.set( 'styles', newStyles );
+}
+
+function updateStyleIdForModel( model ) {
+	const settings = model.get( 'settings' );
+	const { newStyles, newSettings } = calculateNewStylesAndSettings( model, model, settings );
+
+	settings.set( newSettings );
+	model.set( 'styles', newStyles );
+}
+
+function updateStyleId( element ) {
+	const container = window.elementor.getContainer( element.id );
+
 	if ( container ) {
-		$e.internal( 'document/elements/set-settings', {
-			container,
-			settings: newSettings,
-		} );
-	} else {
-		settings.set( newSettings );
+		updateStyleIdForContainer( container );
+		return;
 	}
 
-	model.set( 'styles', newStyles );
+	updateStyleIdForModel( element );
 }
 
 function updateElementsStyleIdsInsideOut( styledElements ) {
