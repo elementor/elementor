@@ -122,12 +122,12 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	getExtractedContentValue() {
 		const propValue = this.getInlineEditablePropValue();
 
-		return htmlPropTypeUtil.extract( propValue ) ?? stringPropTypeUtil.extract( propValue ) ?? '';
+		return htmlPropTypeUtil.extract( propValue ) ?? '';
 	}
 
 	setContentValue( value: string | null ) {
 		const settingKey = this.getInlineEditablePropertyName();
-		const valueToSave = value ? htmlPropTypeUtil.create( value ) : null;
+		const valueToSave = htmlPropTypeUtil.create( value || '' );
 
 		undoable(
 			{
