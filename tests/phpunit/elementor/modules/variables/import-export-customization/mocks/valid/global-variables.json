@@ -1,0 +1,18 @@
+{
+  "data": {
+    "e-gv-123": {
+      "type": "color",
+      "label": "Primary Color",
+      "value": "#ff5733",
+      "order": 1
+    },
+    "e-gv-456": {
+      "type": "font",
+      "label": "Primary Font",
+      "value": "Roboto",
+      "order": 2
+    }
+  },
+  "watermark": 5,
+  "version": 1
+}
