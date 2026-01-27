@@ -83,12 +83,26 @@ class Parser {
 
 	private function decode_interactions( $interactions ) {
 		if ( is_array( $interactions ) ) {
+			// Handle v2 wrapped format
+			if ( isset( $interactions['items']['$$type'] ) && 'interactions-array' === $interactions['items']['$$type'] ) {
+				return [
+					'items' => isset( $interactions['items']['value'] ) ? $interactions['items']['value'] : [],
+					'version' => 1,
+				];
+			}
 			return $interactions;
 		}
 
 		if ( is_string( $interactions ) ) {
 			$decoded = json_decode( $interactions, true );
 			if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
+				// Handle v2 wrapped format
+				if ( isset( $decoded['items']['$$type'] ) && 'interactions-array' === $decoded['items']['$$type'] ) {
+					return [
+						'items' => isset( $decoded['items']['value'] ) ? $decoded['items']['value'] : [],
+						'version' => 1,
+					];
+				}
 				return $decoded;
 			}
 		}
