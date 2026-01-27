@@ -411,12 +411,14 @@ class Module extends BaseModule {
 	}
 
 	private function add_inline_styles() {
-		$inline_css = '.e-heading-base a, .e-paragraph-base a { all: unset; cursor: pointer; }';
-		$inline_css .= '.elementor-element[data-element_type="e-form"][data-form-state="default"] [data-e-state="success"],';
-		$inline_css .= '.elementor-element[data-element_type="e-form"][data-form-state="default"] [data-e-state="error"],';
-		$inline_css .= '.elementor-element[data-element_type="e-form"][data-form-state="success"] [data-e-state="error"],';
-		$inline_css .= '.elementor-element[data-element_type="e-form"][data-form-state="error"] [data-e-state="success"]';
-		$inline_css .= '{ display: none; }';
+		$inline_css = implode( '', [
+			'.e-heading-base a, .e-paragraph-base a { all: unset; cursor: pointer; }',
+			'.elementor-element[data-element_type="e-form"][data-form-state="default"] [data-e-state="success"],',
+			'.elementor-element[data-element_type="e-form"][data-form-state="default"] [data-e-state="error"],',
+			'.elementor-element[data-element_type="e-form"][data-form-state="success"] [data-e-state="error"],',
+			'.elementor-element[data-element_type="e-form"][data-form-state="error"] [data-e-state="success"]',
+			'{ display: none; }',
+		] );
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 		wp_add_inline_style( 'elementor-editor', $inline_css );
 	}
