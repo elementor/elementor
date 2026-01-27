@@ -3,6 +3,8 @@ import type {
 	BooleanPropValue,
 	ConfigPropValue,
 	ElementInteractions,
+	ExcludedBreakpointsPropValue,
+	InteractionBreakpointsPropValue,
 	InteractionItemPropValue,
 	NumberPropValue,
 	StringPropValue,
@@ -18,6 +20,8 @@ export type {
 	AnimationPresetPropValue,
 	InteractionItemPropValue,
 	ElementInteractions,
+	ExcludedBreakpointsPropValue,
+	InteractionBreakpointsPropValue,
 };
 
 export type AnimationOption = {

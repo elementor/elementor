@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { useMemo, useRef, useState } from 'react';
-import { createPropsResolver, type PropsResolver } from '@elementor/editor-canvas';
+import {
+	createPropsResolver,
+	type PropsResolver,
+	stylesInheritanceTransformersRegistry,
+} from '@elementor/editor-canvas';
 import { type PropKey, type PropType } from '@elementor/editor-props';
 import { PopoverHeader, useSectionWidth } from '@elementor/editor-ui';
 import {
@@ -19,7 +23,6 @@ import { __ } from '@wordpress/i18n';
 
 import { useDirection } from '../../hooks/use-direction';
 import { useNormalizedInheritanceChainItems } from '../hooks/use-normalized-inheritance-chain-items';
-import { stylesInheritanceTransformersRegistry } from '../styles-inheritance-transformers-registry';
 import { type SnapshotPropValue } from '../types';
 import { ActionIcons, BreakpointIcon, LabelChip, ValueComponent } from './infotip';
 

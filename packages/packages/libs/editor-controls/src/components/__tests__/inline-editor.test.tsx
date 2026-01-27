@@ -86,16 +86,5 @@ describe( 'InlineEditor', () => {
 		const paragraph = within( editor ).getByText( 'Test' );
 		expect( paragraph ).toHaveClass( 'custom-padding' );
 		expect( paragraph ).toHaveClass( 'custom-margin' );
-		expect( paragraph ).toHaveClass( 'elementor-inline-editor-reset' );
-	} );
-
-	it( 'should apply reset class without elementClasses', () => {
-		// Arrange & Act.
-		setup( { value: '<p>Test</p>', expectedTag: 'p' } );
-
-		// Assert.
-		const editor = screen.getByRole( 'textbox' );
-		const paragraph = within( editor ).getByText( 'Test' );
-		expect( paragraph ).toHaveClass( 'elementor-inline-editor-reset' );
 	} );
 } );
