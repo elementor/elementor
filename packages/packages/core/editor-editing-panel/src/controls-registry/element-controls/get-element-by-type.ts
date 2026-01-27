@@ -1,6 +1,4 @@
-import { findElementByType } from './find-element-by-type';
-
-export { findElementByType };
+import { getContainer } from '@elementor/editor-elements';
 
 export const getElementByType = ( elementId: string, type: string ) => {
 	const element = findElementByType( elementId, type );
@@ -10,4 +8,18 @@ export const getElementByType = ( elementId: string, type: string ) => {
 	}
 
 	return element;
+};
+
+const findElementByType = ( elementId: string, type: string ) => {
+	const currentElement = getContainer( elementId );
+
+	if ( ! currentElement ) {
+		return null;
+	}
+
+	if ( currentElement.model.get( 'elType' ) === type ) {
+		return currentElement;
+	}
+
+	return currentElement.children?.findRecursive?.( ( child ) => child.model.get( 'elType' ) === type ) ?? null;
 };

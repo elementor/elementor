@@ -1,6 +1,16 @@
 import { getElementChildren } from './get-element-children';
 import { getRandomStyleId } from './get-random-style-id';
 
+export function regenerateLocalStyleIds( container ) {
+	const allElements = getElementChildren( container.model );
+
+	const styledElements = allElements.filter( ( model ) => {
+		return Object.keys( model.get( 'styles' ) ?? {} ).length > 0;
+	} );
+
+	updateElementsStyleIdsInsideOut( styledElements );
+}
+
 function isClassesProp( prop ) {
 	return prop.$$type && 'classes' === prop.$$type && Array.isArray( prop.value ) && prop.value.length > 0;
 }
@@ -65,14 +75,4 @@ function updateStyleId( model ) {
 
 function updateElementsStyleIdsInsideOut( styledElements ) {
 	styledElements?.reverse().forEach( updateStyleId );
-}
-
-export function regenerateLocalStyleIds( container ) {
-	const allElements = getElementChildren( container.model );
-
-	const styledElements = allElements.filter( ( model ) => {
-		return Object.keys( model.get( 'styles' ) ?? {} ).length > 0;
-	} );
-
-	updateElementsStyleIdsInsideOut( styledElements );
 }

@@ -24,7 +24,9 @@ export type LegacyWindow = Window & {
 				};
 				views: {
 					Widget: typeof ElementView;
-					createAtomicElementBase: ( type: string ) => typeof ElementView & MarionetteExtendable;
+					createAtomicElementBase: (
+						type: string
+					) => typeof ElementView & MarionetteExtendable< ElementView >;
 				};
 				models: {
 					AtomicElementBase: BackboneModelConstructor< ElementModel >;
@@ -56,8 +58,10 @@ export declare class ElementType {
 	getView(): typeof ElementView;
 }
 
-type MarionetteExtendable = {
-	extend: ( properties: Record< string, unknown > ) => typeof ElementView;
+type MarionetteExtendable< TBase = unknown > = {
+	extend: < TExtended extends object >(
+		properties: TExtended & ThisType< TBase & TExtended >
+	) => TBase & TExtended & MarionetteExtendable< TBase & TExtended >;
 };
 
 export declare class ElementView {
@@ -126,6 +130,8 @@ export declare class ElementView {
 	_isRendering: boolean;
 
 	resetChildViewContainer(): void;
+
+	childViewContainer: string;
 
 	isRendered: boolean;
 

@@ -9,11 +9,11 @@ import {
 	renderTwigTemplate,
 	setupTwigRenderer,
 	type TwigRenderContext,
-	type TwigViewInterface,
 } from './twig-rendering-utils';
 import { type ElementType, type ElementView, type LegacyWindow } from './types';
 
 export type NestedTemplatedElementConfig = TemplatedElementConfig & {
+	allowed_child_types?: string[];
 	support_nesting: boolean;
 };
 
@@ -59,25 +59,6 @@ export function createNestedTemplatedElementType( {
 			return BaseModel;
 		}
 	};
-}
-
-type JQueryElement = ReturnType< ElementView[ 'getDomElement' ] >;
-
-interface NestedTwigView extends TwigViewInterface {
-	setElement: ( element: JQueryElement ) => void;
-	dispatchPreviewEvent: ( eventName: string ) => void;
-	getHandlesOverlay: () => JQueryElement | null;
-	_beforeRender: () => void;
-	_onTemplateReady: () => void;
-	_afterRender: () => void;
-	_renderTemplate: () => Promise< void >;
-	_renderChildren: () => Promise< void >;
-	_removeChildrenPlaceholder: () => void;
-	_attachTwigContent: ( html: string ) => void;
-	_destroyAlpine: () => void;
-	_initAlpine: () => void;
-	childViewContainer: string;
-	children: ElementView[ 'children' ];
 }
 
 function buildEditorAttributes( model: { get: ( key: 'id' ) => string; cid?: string } ): string {
@@ -128,7 +109,7 @@ export function createNestedTemplatedElementView( {
 			return 'twig';
 		},
 
-		render( this: NestedTwigView ) {
+		render() {
 			this._abortController?.abort();
 			this._abortController = new AbortController();
 
@@ -145,15 +126,15 @@ export function createNestedTemplatedElementView( {
 			return this._currentRenderPromise;
 		},
 
-		_beforeRender( this: NestedTwigView ) {
+		_beforeRender() {
 			createBeforeRender( this );
 		},
 
-		_onTemplateReady( this: NestedTwigView ) {
+		_onTemplateReady() {
 			this.dispatchPreviewEvent( 'elementor/element/render' );
 		},
 
-		_afterRender( this: NestedTwigView ) {
+		_afterRender() {
 			createAfterRender( this );
 			this.dispatchPreviewEvent( 'elementor/element/rendered' );
 
@@ -165,7 +146,7 @@ export function createNestedTemplatedElementView( {
 			window.dispatchEvent( new CustomEvent( ELEMENT_STYLE_CHANGE_EVENT ) );
 		},
 
-		async _renderTemplate( this: NestedTwigView ) {
+		async _renderTemplate() {
 			const model = this.model;
 
 			await renderTwigTemplate( {
@@ -185,8 +166,8 @@ export function createNestedTemplatedElementView( {
 			} );
 		},
 
-		getChildType( this: NestedTwigView ): string[] {
-			const allowedTypes = ( element as { allowed_child_types?: string[] } ).allowed_child_types;
+		getChildType(): string[] {
+			const allowedTypes = element.allowed_child_types ?? [];
 
 			if ( allowedTypes && allowedTypes.length > 0 ) {
 				return allowedTypes;
@@ -195,7 +176,7 @@ export function createNestedTemplatedElementView( {
 			return AtomicElementBaseView.prototype.getChildType.call( this );
 		},
 
-		_attachTwigContent( this: NestedTwigView, html: string ) {
+		_attachTwigContent( html: string ) {
 			const $newContent = legacyWindow.jQuery( html );
 			const oldEl = this.$el.get( 0 );
 			const newEl = $newContent.get( 0 );
@@ -216,7 +197,7 @@ export function createNestedTemplatedElementView( {
 			oldEl.innerHTML = overlayHTML + newEl.innerHTML;
 		},
 
-		async _renderChildren( this: NestedTwigView ) {
+		async _renderChildren() {
 			parentRenderChildren.call( this );
 
 			const renderPromises: Promise< void >[] = [];
@@ -232,7 +213,7 @@ export function createNestedTemplatedElementView( {
 			this._removeChildrenPlaceholder();
 		},
 
-		_removeChildrenPlaceholder( this: NestedTwigView ) {
+		_removeChildrenPlaceholder() {
 			const el = this.$el.get( 0 );
 			if ( ! el ) {
 				return;
@@ -246,12 +227,12 @@ export function createNestedTemplatedElementView( {
 			placeholderComment?.remove();
 		},
 
-		getChildViewContainer( this: NestedTwigView ) {
+		getChildViewContainer() {
 			this.childViewContainer = '';
 			return this.$el;
 		},
 
-		attachBuffer( this: NestedTwigView, _collectionView: ElementView, buffer: DocumentFragment ) {
+		attachBuffer( _collectionView: ElementView, buffer: DocumentFragment ) {
 			const el = this.$el.get( 0 );
 			if ( ! el ) {
 				return;
@@ -273,19 +254,19 @@ export function createNestedTemplatedElementView( {
 			}
 		},
 
-		getDomElement( this: NestedTwigView ) {
+		getDomElement() {
 			return this.$el;
 		},
 
-		onBeforeDestroy( this: NestedTwigView ) {
+		onBeforeDestroy() {
 			this._abortController?.abort();
 		},
 
-		onDestroy( this: NestedTwigView ) {
+		onDestroy() {
 			this.dispatchPreviewEvent( 'elementor/element/destroy' );
 		},
 
-		_destroyAlpine( this: NestedTwigView ) {
+		_destroyAlpine() {
 			const el = this.$el.get( 0 );
 			if ( ! el ) {
 				return;
@@ -303,7 +284,7 @@ export function createNestedTemplatedElementView( {
 			previewWindow?.Alpine?.destroyTree( el );
 		},
 
-		_initAlpine( this: NestedTwigView ) {
+		_initAlpine() {
 			const el = this.$el.get( 0 );
 			if ( ! el ) {
 				return;
