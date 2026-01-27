@@ -5,53 +5,12 @@ import { Easing } from '../components/controls/easing';
 import { Trigger } from '../components/controls/trigger';
 import { InteractionDetails } from '../components/interaction-details';
 import type { InteractionItemValue } from '../types';
-import { createAnimationPreset, createInteractionBreakpoints, createString } from '../utils/prop-value-utils';
+import { extractExcludedBreakpoints } from '../utils/prop-value-utils';
+import { createInteractionItemValue } from './utils';
 
 jest.mock( '../interactions-controls-registry', () => ( {
 	getInteractionsControl: jest.fn(),
 } ) );
-
-const createInteractionItemValue = ( {
-	trigger = 'load',
-	effect = 'fade',
-	type = 'in',
-	direction = '',
-	duration = 300,
-	delay = 0,
-	replay = false,
-	easing = 'easeIn',
-	excludedBreakpoints,
-}: {
-	trigger?: string;
-	effect?: string;
-	type?: string;
-	direction?: string;
-	duration?: number;
-	delay?: number;
-	replay?: boolean;
-	easing?: string;
-	excludedBreakpoints?: string[];
-} = {} ): InteractionItemValue => {
-	const baseValue: InteractionItemValue = {
-		interaction_id: createString( 'test-id' ),
-		trigger: createString( trigger ),
-		animation: createAnimationPreset( {
-			effect,
-			type,
-			direction,
-			duration,
-			delay,
-			replay,
-			easing,
-		} ),
-	};
-
-	if ( excludedBreakpoints && excludedBreakpoints.length > 0 ) {
-		baseValue.breakpoints = createInteractionBreakpoints( excludedBreakpoints );
-	}
-
-	return baseValue;
-};
 
 const getEffectCombobox = (): HTMLElement => {
 	const allComboboxes = screen.getAllByRole( 'combobox' );
@@ -653,7 +612,7 @@ describe( 'InteractionDetails', () => {
 
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
 			expect( updatedInteraction.breakpoints ).toBeDefined();
-			const { extractExcludedBreakpoints } = require( '../utils/prop-value-utils' );
+
 			const excluded = extractExcludedBreakpoints( updatedInteraction.breakpoints );
 			expect( excluded ).toEqual( [ 'desktop', 'tablet' ] );
 		} );

@@ -2,35 +2,8 @@ import * as React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { InteractionSettings } from '../components/interaction-settings';
-import type { InteractionItemValue } from '../types';
-import {
-	createAnimationPreset,
-	createInteractionBreakpoints,
-	createString,
-	extractExcludedBreakpoints,
-} from '../utils/prop-value-utils';
-
-const createInteractionItemValue = ( excludedBreakpoints?: string[] ): InteractionItemValue => {
-	const baseValue: InteractionItemValue = {
-		interaction_id: createString( 'test-id' ),
-		trigger: createString( 'load' ),
-		animation: createAnimationPreset( {
-			effect: 'fade',
-			type: 'in',
-			direction: '',
-			duration: 300,
-			delay: 0,
-			replay: false,
-			easing: 'easeIn',
-		} ),
-	};
-
-	if ( excludedBreakpoints && excludedBreakpoints.length > 0 ) {
-		baseValue.breakpoints = createInteractionBreakpoints( excludedBreakpoints );
-	}
-
-	return baseValue;
-};
+import { extractExcludedBreakpoints } from '../utils/prop-value-utils';
+import { createInteractionItemValue } from './utils';
 
 describe( 'InteractionSettings', () => {
 	const mockOnChange = jest.fn();
@@ -60,7 +33,7 @@ describe( 'InteractionSettings', () => {
 		} );
 
 		it( 'should render with some breakpoints excluded', () => {
-			const interaction = createInteractionItemValue( [ 'desktop' ] );
+			const interaction = createInteractionItemValue( { excludedBreakpoints: [ 'desktop' ] } );
 
 			render( <InteractionSettings interaction={ interaction } onChange={ mockOnChange } /> );
 
@@ -70,7 +43,7 @@ describe( 'InteractionSettings', () => {
 		} );
 
 		it( 'should render with multiple breakpoints excluded', () => {
-			const interaction = createInteractionItemValue( [ 'desktop', 'tablet' ] );
+			const interaction = createInteractionItemValue( { excludedBreakpoints: [ 'desktop', 'tablet' ] } );
 
 			render( <InteractionSettings interaction={ interaction } onChange={ mockOnChange } /> );
 
@@ -122,7 +95,7 @@ describe( 'InteractionSettings', () => {
 		} );
 
 		it( 'should remove breakpoints property when all breakpoints are selected', () => {
-			const interaction = createInteractionItemValue( [ 'desktop' ] );
+			const interaction = createInteractionItemValue( { excludedBreakpoints: [ 'desktop' ] } );
 
 			render( <InteractionSettings interaction={ interaction } onChange={ mockOnChange } /> );
 
@@ -171,7 +144,9 @@ describe( 'InteractionSettings', () => {
 		} );
 
 		it( 'should handle interaction with all breakpoints excluded', () => {
-			const interaction = createInteractionItemValue( [ 'desktop', 'tablet', 'mobile' ] );
+			const interaction = createInteractionItemValue( {
+				excludedBreakpoints: [ 'desktop', 'tablet', 'mobile' ],
+			} );
 
 			render( <InteractionSettings interaction={ interaction } onChange={ mockOnChange } /> );
 
@@ -180,7 +155,7 @@ describe( 'InteractionSettings', () => {
 		} );
 
 		it( 'should handle adding breakpoint back after exclusion', () => {
-			const interaction = createInteractionItemValue( [ 'desktop', 'tablet' ] );
+			const interaction = createInteractionItemValue( { excludedBreakpoints: [ 'desktop', 'tablet' ] } );
 
 			render( <InteractionSettings interaction={ interaction } onChange={ mockOnChange } /> );
 
