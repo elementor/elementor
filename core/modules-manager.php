@@ -125,6 +125,7 @@ class Modules_Manager {
 			'floating-buttons',
 			'content-sanitizer',
 			'atomic-widgets',
+			'atomic-converters',
 			'global-classes',
 			'variables',
 			'wc-product-editor',

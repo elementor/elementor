@@ -1,6 +1,9 @@
 import { toolPrompts } from '@elementor/editor-mcp';
 
-import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
+import {
+	STYLE_SCHEMA_URI,
+	WIDGET_SCHEMA_URI,
+} from '../../resources/widgets-schema-resource';
 
 export const generatePrompt = () => {
 	const buildCompositionsToolPrompt = toolPrompts( 'build-compositions' );
