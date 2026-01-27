@@ -1,4 +1,4 @@
-import { type PropsSchema, type PropValue } from '@elementor/editor-props';
+import { type PropsSchema, type PropValue, type SizePropValue } from '@elementor/editor-props';
 import { type ClassState, type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 
 import { type ControlItem } from '../types';
@@ -62,8 +62,8 @@ export type BooleanPropValue = {
 export type TimingConfigPropValue = {
 	$$type: 'timing-config';
 	value: {
-		duration: NumberPropValue;
-		delay: NumberPropValue;
+		duration: SizePropValue;
+		delay: SizePropValue;
 	};
 };
 

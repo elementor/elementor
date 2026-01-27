@@ -1,3 +1,7 @@
+import { sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
+
+import { DEFAULT_INTERACTION_CONFIG } from '../configs/default-interaction-config';
+import { DEFAULT_TIME_UNIT, TIME_UNITS } from '../configs/time-constants';
 import type {
 	AnimationPresetPropValue,
 	BooleanPropValue,
@@ -9,6 +13,7 @@ import type {
 	StringPropValue,
 	TimingConfigPropValue,
 } from '../types';
+import { formatSizeValue, parseSizeValue } from '../utils/size-transform-utils';
 import { generateTempInteractionId } from './temp-id-utils';
 
 export const createString = ( value: string ): StringPropValue => ( {
@@ -21,11 +26,11 @@ export const createNumber = ( value: number ): NumberPropValue => ( {
 	value,
 } );
 
-export const createTimingConfig = ( duration: number, delay: number ): TimingConfigPropValue => ( {
+export const createTimingConfig = ( duration: string, delay: string ): TimingConfigPropValue => ( {
 	$$type: 'timing-config',
 	value: {
-		duration: createNumber( duration ),
-		delay: createNumber( delay ),
+		duration: sizePropTypeUtil.create( parseSizeValue( duration, TIME_UNITS, undefined, DEFAULT_TIME_UNIT ) ),
+		delay: sizePropTypeUtil.create( parseSizeValue( delay, TIME_UNITS, undefined, DEFAULT_TIME_UNIT ) ),
 	},
 } );
 
@@ -76,8 +81,8 @@ export const createAnimationPreset = ( {
 	effect: string;
 	type: string;
 	direction?: string;
-	duration: number;
-	delay: number;
+	duration: string;
+	delay: string;
 	replay: boolean;
 	easing?: string;
 	relativeTo?: string;
@@ -118,8 +123,8 @@ export const createInteractionItem = ( {
 	effect: string;
 	type: string;
 	direction?: string;
-	duration: number;
-	delay: number;
+	duration: string;
+	delay: string;
 	interactionId?: string;
 	replay: boolean;
 	easing?: string;
@@ -151,8 +156,8 @@ export const createDefaultInteractionItem = (): InteractionItemPropValue => {
 		trigger: 'load',
 		effect: 'fade',
 		type: 'in',
-		duration: 600,
-		delay: 0,
+		duration: DEFAULT_INTERACTION_CONFIG.duration,
+		delay: DEFAULT_INTERACTION_CONFIG.delay,
 		replay: false,
 		easing: 'easeIn',
 		interactionId: generateTempInteractionId(),
@@ -166,6 +171,10 @@ export const createDefaultInteractions = (): ElementInteractions => ( {
 
 export const extractString = ( prop: StringPropValue | undefined, fallback = '' ): string => {
 	return prop?.value ?? fallback;
+};
+
+export const extractSize = ( prop: SizePropValue ): string => {
+	return formatSizeValue( prop?.value ) as string;
 };
 
 export const extractNumber = ( prop: NumberPropValue | undefined, fallback = 0 ): number => {
