@@ -306,7 +306,7 @@ describe( 'ClassesVariablesSection Component', () => {
 			);
 
 			// Assert
-			expect( screen.getByText( '+15 over limit' ) ).toBeTruthy();
+			expect( screen.getByText( '15 over limit' ) ).toBeTruthy();
 		} );
 
 		it( 'should show over limit chip when variables limit is exceeded', () => {
@@ -322,7 +322,7 @@ describe( 'ClassesVariablesSection Component', () => {
 			);
 
 			// Assert
-			expect( screen.getByText( '+8 over limit' ) ).toBeTruthy();
+			expect( screen.getByText( '8 over limit' ) ).toBeTruthy();
 		} );
 	} );
 
@@ -513,7 +513,7 @@ describe( 'ClassesVariablesSection Component', () => {
 			);
 
 			// Assert
-			expect( screen.queryByText( '+10 over limit' ) ).toBeFalsy();
+			expect( screen.queryByText( '10 over limit' ) ).toBeFalsy();
 		} );
 	} );
 
@@ -535,8 +535,8 @@ describe( 'ClassesVariablesSection Component', () => {
 			);
 
 			// Assert
-			expect( screen.getByText( '+10 over limit' ) ).toBeTruthy();
-			expect( screen.getByText( '+5 over limit' ) ).toBeTruthy();
+			expect( screen.getByText( '10 over limit' ) ).toBeTruthy();
+			expect( screen.getByText( '5 over limit' ) ).toBeTruthy();
 			expect( screen.getAllByText( 'Override all' ).length ).toBe( 2 );
 		} );
 
@@ -553,7 +553,7 @@ describe( 'ClassesVariablesSection Component', () => {
 			);
 
 			// Assert
-			expect( screen.queryByText( '+0 over limit' ) ).toBeFalsy();
+			expect( screen.queryByText( '0 over limit' ) ).toBeFalsy();
 		} );
 
 		it( 'should initialize override state from settings', () => {
