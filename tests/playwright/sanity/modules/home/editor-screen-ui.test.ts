@@ -3,6 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import { saveHomepageSettings, restoreHomepageSettings, mockHomeScreenData, transformMockDataByLicense, navigateToHomeScreen, type HomepageSettings } from './home-screen.helper';
 
 test.describe( 'Editor screen UI tests', () => {
+	const VIEWPORT_SIZE = { width: 1920, height: 4000 };
 	let originalHomepageSettings: HomepageSettings | null = null;
 
 	test.beforeAll( async ( { browser, apiRequests } ) => {
@@ -34,6 +35,7 @@ test.describe( 'Editor screen UI tests', () => {
 		await mockHomeScreenData( page, mockData, apiRequests, requestContext );
 
 		const homeScreen = await navigateToHomeScreen( page );
+		await page.setViewportSize( VIEWPORT_SIZE );
 		await expect.soft( homeScreen ).toHaveScreenshot( 'home-screen-free.png' );
 		await requestContext.dispose();
 	} );
@@ -45,6 +47,7 @@ test.describe( 'Editor screen UI tests', () => {
 		await mockHomeScreenData( page, mockData, apiRequests, requestContext );
 
 		const homeScreen = await navigateToHomeScreen( page );
+		await page.setViewportSize( VIEWPORT_SIZE );
 		await expect.soft( homeScreen ).toHaveScreenshot( 'home-screen-pro.png' );
 		await requestContext.dispose();
 	} );
@@ -56,6 +59,7 @@ test.describe( 'Editor screen UI tests', () => {
 		await mockHomeScreenData( page, mockData, apiRequests, requestContext );
 
 		const homeScreen = await navigateToHomeScreen( page );
+		await page.setViewportSize( VIEWPORT_SIZE );
 		await expect.soft( homeScreen ).toHaveScreenshot( 'home-screen-one.png' );
 		await requestContext.dispose();
 	} );

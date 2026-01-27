@@ -69,7 +69,8 @@ class Atomic_Tabs extends Atomic_Element_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'default-active-tab' => Number_Prop_Type::make()
-				->default( 0 ),
+				->default( 0 )
+				->meta( Overridable_Prop_Type::ignore() ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
 	}
