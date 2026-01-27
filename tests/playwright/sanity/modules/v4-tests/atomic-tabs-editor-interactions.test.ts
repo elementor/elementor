@@ -53,7 +53,6 @@ test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 	};
 
 	test.beforeEach( async ( { browser, apiRequests }, testInfo ) => {
-		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
 		context = await browser.newContext();
 		const page = await context.newPage();
 
@@ -63,8 +62,6 @@ test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 	} );
 
 	test.afterEach( async () => {
-		await wpAdmin.resetExperiments();
-
 		await context.close();
 	} );
 

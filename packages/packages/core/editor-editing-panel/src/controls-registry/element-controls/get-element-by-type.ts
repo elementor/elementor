@@ -1,16 +1,6 @@
 import { getContainer } from '@elementor/editor-elements';
 
 export const getElementByType = ( elementId: string, type: string ) => {
-	const element = findElementByType( elementId, type );
-
-	if ( ! element ) {
-		throw new Error( `Child element ${ type } not found` );
-	}
-
-	return element;
-};
-
-const findElementByType = ( elementId: string, type: string ) => {
 	const currentElement = getContainer( elementId );
 
 	if ( ! currentElement ) {

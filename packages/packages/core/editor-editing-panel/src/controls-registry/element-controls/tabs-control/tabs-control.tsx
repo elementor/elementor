@@ -38,6 +38,11 @@ export const TabsControlContent = ( { label }: { label: string } ) => {
 	const tabList = getElementByType( element.id, TAB_MENU_ELEMENT_TYPE );
 	const tabContentArea = getElementByType( element.id, TAB_CONTENT_AREA_ELEMENT_TYPE );
 
+	if ( ! tabList || ! tabContentArea ) {
+		// children might not be avilable on the first render
+		return null;
+	}
+
 	const repeaterValues: RepeaterItem< TabItem >[] = tabLinks.map( ( tabLink, index ) => {
 		return {
 			id: tabLink.id,
