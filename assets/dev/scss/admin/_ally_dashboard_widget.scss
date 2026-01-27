@@ -1,4 +1,4 @@
-#dashboard-widgets #e-dashboard-ally .ui-sortable-handle {
+#e-dashboard-ally .ui-sortable-handle {
 	justify-content: flex-start;
 	gap: 8px;
 }
@@ -33,4 +33,11 @@
 		color: #3F444B;
 		margin: 0 0 16px;
 	}
+}
+
+label[for="e-dashboard-ally-hide"] svg {
+	display: inline-block;
+	vertical-align: middle;
+	margin-inline-end: 4px;
+	margin-block-end: 2px;
 }
