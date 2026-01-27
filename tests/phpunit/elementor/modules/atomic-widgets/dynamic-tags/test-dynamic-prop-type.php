@@ -140,6 +140,14 @@ class Test_Dynamic_Prop_Type extends Elementor_Test_Base {
 			'non-existing tag' => [
 				[ 'name' => 'non-existing-tag', 'settings' => [], ],
 			],
+
+			'missing group' => [
+				[ 'name' => 'mock-dynamic-tag', 'settings' => [], ],
+			],
+
+			'non-string group' => [
+				[ 'name' => 'mock-dynamic-tag', 'group' => 123, 'settings' => [], ],
+			],
 		];
 	}
 
