@@ -1,7 +1,6 @@
 import { BrowserContext, expect, Page } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import EditorPage from '../../../pages/editor-page';
 
 test.describe( 'Revision loading with unknown widgets @history', () => {
 	let wpAdminPage: WpAdminPage;
@@ -20,22 +19,17 @@ test.describe( 'Revision loading with unknown widgets @history', () => {
 	} );
 
 	test( 'should gracefully handle revision loading when atomic experiment is deactivated', async () => {
-		let editor: EditorPage;
-		let pageUrl: string;
-
 		await test.step( 'Ensure atomic experiment is active initially', async () => {
 			await wpAdminPage.setExperiments( { e_atomic_elements: true } );
 		} );
 
-		await test.step( 'Create page with atomic and regular widgets', async () => {
-			editor = await wpAdminPage.openNewPage();
+		const editor = await wpAdminPage.openNewPage();
 
+		await test.step( 'Create page with atomic and regular widgets', async () => {
 			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
 			await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
 			await editor.addWidget( { widgetType: 'button', container: containerId } );
-
-			pageUrl = page.url();
 		} );
 
 		await test.step( 'Publish page to create first revision with atomic widget', async () => {
@@ -53,7 +47,7 @@ test.describe( 'Revision loading with unknown widgets @history', () => {
 		} );
 
 		await test.step( 'Reload editor with experiment off', async () => {
-			await page.goto( pageUrl );
+			await page.reload();
 			await wpAdminPage.waitForPanel();
 			await wpAdminPage.closeAnnouncementsIfVisible();
 		} );

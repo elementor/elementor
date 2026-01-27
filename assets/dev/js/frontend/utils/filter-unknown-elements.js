@@ -9,21 +9,20 @@ export const filterUnknownElements = ( data ) => {
 };
 
 function filterChildren( elements ) {
-	return elements.filter( ( el ) => {
-		if ( ! el ) {
-			return false;
+	return elements.reduce( ( acc, element ) => {
+		if ( ! element ) {
+			return acc;
+		}
+		const isKnownType = elementor.elementsManager.getElementTypeClass( element.widgetType ?? element.elType );
+		if ( ! isKnownType ) {
+			return acc;
 		}
 
-		const { widgetType, elType } = el;
-		return !! elementor.elementsManager.getElementTypeClass( widgetType ?? elType );
-	} ).map( ( element ) => {
-		if ( element.elements?.length ) {
-			return {
-				...element,
-				elements: filterChildren( element.elements ),
-			};
-		}
+		const processedElement = element.elements?.length
+			? { ...element, elements: filterChildren( element.elements ) }
+			: element;
 
-		return element;
-	} );
+		acc.push( processedElement );
+		return acc;
+	}, [] );
 }
