@@ -31,7 +31,8 @@ class Module extends Base_Module {
 	const ADMIN_MENU_PROMOTIONS_PRIORITY = 120;
 
 	public static function is_active() {
-		return ! Utils::has_pro();
+		return ! Utils::has_pro() ||
+		( '\ElementorPro\License\API' && \ElementorPro\License\API::is_license_expired() ) ;
 	}
 
 	public function get_name() {
@@ -66,6 +67,8 @@ class Module extends Base_Module {
 			new Black_Friday();
 		}
 
+		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
+
 		if ( Utils::has_pro() ) {
 			return;
 		}
@@ -76,7 +79,6 @@ class Module extends Base_Module {
 
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_editor_v4_alphachip' ] );
-		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
 
 		$this->register_display_conditions_promo_hooks();
 	}
