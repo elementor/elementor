@@ -609,6 +609,10 @@ abstract class Document extends Controls_Stack {
 		if ( $autosave_id ) {
 			$document = Plugin::$instance->documents->get( $autosave_id );
 		} elseif ( $create ) {
+			if ( ! function_exists( 'wp_create_post_autosave' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/post.php';
+			}
+
 			$autosave_id = wp_create_post_autosave( [
 				'post_ID' => $this->post->ID,
 				'post_type' => $this->post->post_type,
