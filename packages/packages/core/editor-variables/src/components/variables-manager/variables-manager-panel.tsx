@@ -9,7 +9,7 @@ import {
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
 import { SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
-import { changeEditMode, isExperimentActive } from '@elementor/editor-v1-adapters';
+import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { AlertTriangleFilledIcon, ColorFilterIcon, TrashIcon } from '@elementor/icons';
 import {
 	Alert,
@@ -83,8 +83,6 @@ export function VariablesManagerPanel() {
 	const [ deleteConfirmation, setDeleteConfirmation ] = useState< { id: string; label: string } | null >( null );
 	const [ stopSyncConfirmation, setStopSyncConfirmation ] = useState< string | null >( null );
 	const [ serverError, setServerError ] = useState< MappedError | null >( null );
-
-	const isSyncEnabled = isExperimentActive( 'e_design_system_sync' );
 
 	usePreventUnload( isDirty );
 
@@ -163,7 +161,6 @@ export function VariablesManagerPanel() {
 			const typeActions = getMenuActionsForVariable( variable.type, {
 				variable,
 				variableId,
-				isSyncEnabled,
 				handlers: {
 					onStartSync: handleStartSync,
 					onStopSync: ( itemId: string ) => setStopSyncConfirmation( itemId ),
@@ -187,7 +184,7 @@ export function VariablesManagerPanel() {
 
 			return [ ...typeActions, deleteAction ];
 		},
-		[ variables, isSyncEnabled, handleStartSync ]
+		[ variables, handleStartSync ]
 	);
 
 	const hasVariables = Object.keys( variables ).length > 0;

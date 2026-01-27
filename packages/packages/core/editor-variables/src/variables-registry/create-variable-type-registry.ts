@@ -21,7 +21,6 @@ import { type NormalizedVariable, type Variable } from '../types';
 export type MenuActionContext = {
 	variable: Variable;
 	variableId: string;
-	isSyncEnabled: boolean;
 	handlers: {
 		onStartSync: ( id: string ) => void;
 		onStopSync: ( id: string ) => void;

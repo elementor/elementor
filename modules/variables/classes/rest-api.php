@@ -83,7 +83,37 @@ class Rest_Api {
 			'methods' => WP_REST_Server::EDITABLE,
 			'callback' => [ $this, 'update_variable' ],
 			'permission_callback' => [ $this, 'enough_permissions_to_perform_rw_action' ],
-			'args' => $this->get_update_args(),
+			'args' => [
+				'id' => [
+					'required' => true,
+					'type' => 'string',
+					'validate_callback' => [ $this, 'is_valid_variable_id' ],
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
+				],
+				'label' => [
+					'required' => true,
+					'type' => 'string',
+					'validate_callback' => [ $this, 'is_valid_variable_label' ],
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
+				],
+				'value' => [
+					'required' => true,
+					'type' => 'string',
+					'validate_callback' => [ $this, 'is_valid_variable_value' ],
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
+				],
+				'order' => [
+					'required' => false,
+					'type' => 'integer',
+					'validate_callback' => [ $this, 'is_valid_order' ],
+				],
+				'type' => [
+					'required' => false,
+					'type' => 'string',
+					'validate_callback' => [ $this, 'is_valid_variable_type' ],
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
+				],
+			],
 		] );
 
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/delete', [
@@ -149,42 +179,6 @@ class Rest_Api {
 				],
 			],
 		] );
-	}
-
-	private function get_update_args() {
-		$args = [
-			'id' => [
-				'required' => true,
-				'type' => 'string',
-				'validate_callback' => [ $this, 'is_valid_variable_id' ],
-				'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
-			],
-			'label' => [
-				'required' => true,
-				'type' => 'string',
-				'validate_callback' => [ $this, 'is_valid_variable_label' ],
-				'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
-			],
-			'value' => [
-				'required' => true,
-				'type' => 'string',
-				'validate_callback' => [ $this, 'is_valid_variable_value' ],
-				'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
-			],
-			'order' => [
-				'required' => false,
-				'type' => 'integer',
-				'validate_callback' => [ $this, 'is_valid_order' ],
-			],
-			'type' => [
-				'required' => false,
-				'type' => 'string',
-				'validate_callback' => [ $this, 'is_valid_variable_type' ],
-				'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
-			],
-		];
-
-		return apply_filters( 'elementor/variables/rest-api/update/args', $args );
 	}
 
 	public function trim_and_sanitize_text_field( $value ) {
@@ -330,8 +324,6 @@ class Rest_Api {
 		if ( null !== $order ) {
 			$update_data['order'] = $order;
 		}
-
-		$update_data = apply_filters( 'elementor/variables/rest-api/update/data', $update_data, $request );
 
 		$result = $this->service->update( $id, $update_data );
 

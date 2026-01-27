@@ -136,10 +136,11 @@ class Repository {
 			throw new RecordNotFound( 'Variable not found' );
 		}
 
-		$allowed_fields = [ 'label', 'value', 'order' ];
-		$allowed_fields = apply_filters( 'elementor/variables/entity/allowed_fields', $allowed_fields );
-
-		$updated_variable = array_merge( $list_of_variables[ $id ], $this->extract_from( $variable, $allowed_fields ) );
+		$updated_variable = array_merge( $list_of_variables[ $id ], $this->extract_from( $variable, [
+			'label',
+			'value',
+			'order',
+		] ) );
 
 		$this->assert_if_variable_label_is_duplicated( $db_record, array_merge( $updated_variable, [ 'id' => $id ] ) );
 
@@ -345,10 +346,7 @@ class Repository {
 			throw new RecordNotFound( 'Variable not found' );
 		}
 
-		$allowed_fields = [ 'label', 'value', 'order' ];
-		$allowed_fields = apply_filters( 'elementor/variables/entity/allowed_fields', $allowed_fields );
-
-		$updated_fields = $this->extract_from( $variable_data, $allowed_fields );
+		$updated_fields = $this->extract_from( $variable_data, [ 'label', 'value', 'order' ] );
 		$updated_variable = array_merge( $db_record['data'][ $id ], $updated_fields );
 		$updated_variable['updated_at'] = $this->now();
 
