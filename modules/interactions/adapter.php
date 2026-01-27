@@ -13,7 +13,8 @@ class Adapter {
 
     /**
      * Wrap interactions data from v1 to v2 format before saving to DB.
-     * {items: [], version: 1} → {items: {$$type: 'interactions-array', value: []}, version: 2}
+     * - {items: [], version: 1} → {items: {$$type: 'interactions-array', value: []}, version: 2}
+     * - duration/delay: {$$type: 'number', value: X} → {$$type: 'size', value: {size: X, unit: 'ms'}}
      */
     public static function wrap_for_db( $interactions ) {
         $decoded = self::decode( $interactions );
@@ -22,17 +23,14 @@ class Adapter {
             return $interactions;
         }
 
-        // Already in v2 format
-        if ( isset( $decoded['version'] ) && $decoded['version'] === self::VERSION_V2 ) {
-            return $interactions;
+        // Get items array (handle both v1 and already wrapped format)
+        $items = $decoded['items'];
+        if ( isset( $decoded['items']['$$type'] ) && $decoded['items']['$$type'] === self::ITEMS_TYPE ) {
+            $items = isset( $decoded['items']['value'] ) ? $decoded['items']['value'] : [];
         }
 
-        // Already wrapped (items has $$type)
-        if ( isset( $decoded['items']['$$type'] ) ) {
-            return $interactions;
-        }
-
-        $items = is_array( $decoded['items'] ) ? $decoded['items'] : [];
+        // Transform timing values in each interaction item
+        $items = self::transform_items_timing_to_size( $items );
 
         $wrapped = [
             'items' => [
@@ -47,7 +45,8 @@ class Adapter {
 
     /**
      * Unwrap interactions data from v2 to v1 format before sending to FE.
-     * {items: {$$type: 'interactions-array', value: []}, version: 2} → {items: [], version: 1}
+     * - {items: {$$type: 'interactions-array', value: []}, version: 2} → {items: [], version: 1}
+     * - duration/delay: {$$type: 'size', value: {size: X, unit: 'ms'}} → {$$type: 'number', value: X}
      */
     public static function unwrap_for_frontend( $interactions ) {
         $decoded = self::decode( $interactions );
@@ -56,24 +55,116 @@ class Adapter {
             return $interactions;
         }
 
-        // Already in v1 format (items is array, not object with $$type)
-        if ( is_array( $decoded['items'] ) && ! isset( $decoded['items']['$$type'] ) ) {
-            return $interactions;
-        }
-
-        // Check if it's wrapped v2 format
+        // Get items array
+        $items = $decoded['items'];
         if ( isset( $decoded['items']['$$type'] ) && $decoded['items']['$$type'] === self::ITEMS_TYPE ) {
             $items = isset( $decoded['items']['value'] ) ? $decoded['items']['value'] : [];
-
-            $unwrapped = [
-                'items' => $items,
-                'version' => self::VERSION_V1,
-            ];
-
-            return wp_json_encode( $unwrapped );
         }
 
-        return $interactions;
+        // Transform timing values back to number format
+        $items = self::transform_items_timing_to_number( $items );
+
+        $unwrapped = [
+            'items' => $items,
+            'version' => self::VERSION_V1,
+        ];
+
+        return wp_json_encode( $unwrapped );
+    }
+
+    /**
+     * Transform duration/delay from number to size format for all items.
+     * {$$type: 'number', value: X} → {$$type: 'size', value: {size: X, unit: 'ms'}}
+     */
+    private static function transform_items_timing_to_size( $items ) {
+        if ( ! is_array( $items ) ) {
+            return $items;
+        }
+
+        foreach ( $items as &$item ) {
+            if ( ! isset( $item['$$type'] ) || 'interaction-item' !== $item['$$type'] ) {
+                continue;
+            }
+
+            $timing_config = $item['value']['animation']['value']['timing_config']['value'] ?? null;
+            if ( ! $timing_config ) {
+                continue;
+            }
+
+            // Transform duration
+            if ( isset( $timing_config['duration'] ) && 'number' === ( $timing_config['duration']['$$type'] ?? null ) ) {
+                $item['value']['animation']['value']['timing_config']['value']['duration'] = self::number_to_size( $timing_config['duration'] );
+            }
+
+            // Transform delay
+            if ( isset( $timing_config['delay'] ) && 'number' === ( $timing_config['delay']['$$type'] ?? null ) ) {
+                $item['value']['animation']['value']['timing_config']['value']['delay'] = self::number_to_size( $timing_config['delay'] );
+            }
+        }
+
+        return $items;
+    }
+
+    /**
+     * Transform duration/delay from size to number format for all items.
+     * {$$type: 'size', value: {size: X, unit: 'ms'}} → {$$type: 'number', value: X}
+     */
+    private static function transform_items_timing_to_number( $items ) {
+        if ( ! is_array( $items ) ) {
+            return $items;
+        }
+
+        foreach ( $items as &$item ) {
+            if ( ! isset( $item['$$type'] ) || 'interaction-item' !== $item['$$type'] ) {
+                continue;
+            }
+
+            $timing_config = $item['value']['animation']['value']['timing_config']['value'] ?? null;
+            if ( ! $timing_config ) {
+                continue;
+            }
+
+            // Transform duration
+            if ( isset( $timing_config['duration'] ) && 'size' === ( $timing_config['duration']['$$type'] ?? null ) ) {
+                $item['value']['animation']['value']['timing_config']['value']['duration'] = self::size_to_number( $timing_config['duration'] );
+            }
+
+            // Transform delay
+            if ( isset( $timing_config['delay'] ) && 'size' === ( $timing_config['delay']['$$type'] ?? null ) ) {
+                $item['value']['animation']['value']['timing_config']['value']['delay'] = self::size_to_number( $timing_config['delay'] );
+            }
+        }
+
+        return $items;
+    }
+
+    /**
+     * Convert number prop to size prop.
+     * {$$type: 'number', value: 123} → {$$type: 'size', value: {size: 123, unit: 'ms'}}
+     */
+    private static function number_to_size( $number_prop ) {
+        $value = $number_prop['value'] ?? 0;
+
+        return [
+            '$$type' => 'size',
+            'value' => [
+                'size' => $value,
+                'unit' => 'ms',
+            ],
+        ];
+    }
+
+    /**
+     * Convert size prop to number prop.
+     * {$$type: 'size', value: {size: 123, unit: 'ms'}} → {$$type: 'number', value: 123}
+     */
+    private static function size_to_number( $size_prop ) {
+        $size = $size_prop['value']['size'] ?? 0;
+
+        return [
+            '$$type' => 'number',
+            'value' => $size,
+        ];
     }
 
     /**

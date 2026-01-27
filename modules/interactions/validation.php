@@ -326,13 +326,77 @@ class Validation {
 
 		$timing_value = $timing['value'];
 
-		// Validate duration
-		if ( ! $this->is_valid_number_prop_in_range( $timing_value, 'duration', 0 ) ) {
+		// Validate duration (accepts both 'number' and 'size' formats)
+		if ( ! $this->is_valid_timing_value( $timing_value, 'duration', 0 ) ) {
 			return false;
 		}
 
-		// Validate delay
-		if ( ! $this->is_valid_number_prop_in_range( $timing_value, 'delay', 0 ) ) {
+		// Validate delay (accepts both 'number' and 'size' formats)
+		if ( ! $this->is_valid_timing_value( $timing_value, 'delay', 0 ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Validate timing value that can be either 'number' or 'size' type.
+	 * - number format: {$$type: 'number', value: 123}
+	 * - size format: {$$type: 'size', value: {size: 123, unit: 'ms'}}
+	 */
+	private function is_valid_timing_value( $data, $key, $min = null ) {
+		if ( ! isset( $data[ $key ] ) || ! is_array( $data[ $key ] ) ) {
+			return false;
+		}
+
+		$prop = $data[ $key ];
+
+		if ( ! isset( $prop['$$type'] ) ) {
+			return false;
+		}
+
+		// Accept 'number' format
+		if ( 'number' === $prop['$$type'] ) {
+			return $this->is_valid_number_prop_in_range( $data, $key, $min );
+		}
+
+		// Accept 'size' format
+		if ( 'size' === $prop['$$type'] ) {
+			return $this->is_valid_size_prop_in_range( $data, $key, $min );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Validate size prop: {$$type: 'size', value: {size: X, unit: 'ms'}}
+	 */
+	private function is_valid_size_prop_in_range( $data, $key, $min = null, $max = null ) {
+		if ( ! isset( $data[ $key ] ) || ! is_array( $data[ $key ] ) ) {
+			return false;
+		}
+
+		$prop = $data[ $key ];
+
+		if ( ! isset( $prop['$$type'] ) || 'size' !== $prop['$$type'] ) {
+			return false;
+		}
+
+		if ( ! isset( $prop['value'] ) || ! is_array( $prop['value'] ) ) {
+			return false;
+		}
+
+		if ( ! isset( $prop['value']['size'] ) || ! is_numeric( $prop['value']['size'] ) ) {
+			return false;
+		}
+
+		$value = (float) $prop['value']['size'];
+
+		if ( null !== $min && $value < $min ) {
+			return false;
+		}
+
+		if ( null !== $max && $value > $max ) {
 			return false;
 		}
 
