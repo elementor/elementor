@@ -10,6 +10,7 @@ export {
 	type MenuActionsFactory,
 	type VariableMenuAction,
 } from './variables-registry/variable-type-registry';
+export { hasVariable } from './hooks/use-prop-variables';
 
 import { globalVariablesLLMResolvers } from './utils/llm-propvalue-label-resolver';
 

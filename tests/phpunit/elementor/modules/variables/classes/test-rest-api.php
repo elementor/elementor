@@ -7,8 +7,6 @@ use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
 use Elementor\Modules\Variables\Classes\Rest_Api;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
-use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
-use Elementor\Modules\Variables\Storage\Exceptions\Type_Mismatch;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
@@ -122,7 +120,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				'data' => [
 					'color-1' => [
 						'type' => Color_Variable_Prop_Type::get_key(),
-						'label' => 'Primary Color',
+						'label' => 'Primary-Color',
 						'value' => '#FF0000',
 					],
 				],
@@ -138,7 +136,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$request = new WP_REST_Request( 'PUT', '/elementor/v1/variables/update' );
 		$request->set_body_params( [
 			'id' => 'color-1',
-			'label' => 'Updated Color',
+			'label' => 'Updated-Color',
 			'value' => '#0000FF',
 		] );
 
@@ -153,7 +151,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 
 		$this->assertEquals( 11, $response_data['data']['watermark'], 'Watermark validation failed' );
 
-		$this->assertEquals( 'Updated Color', $response_data['data']['variable']['label'] );
+		$this->assertEquals( 'Updated-Color', $response_data['data']['variable']['label'] );
 		$this->assertEquals( '#0000FF', $response_data['data']['variable']['value'] );
 		$this->assertEquals( Color_Variable_Prop_Type::get_key(), $response_data['data']['variable']['type'] );
 		$this->assertEquals( 'color-1', $response_data['data']['variable']['id'] );
@@ -168,7 +166,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				'data' => [
 					'size-1' => [
 						'type' => Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
-						'label' => 'Custom Size',
+						'label' => 'Custom-Size',
 						'value' => 'calc(100% - 20px)',
 					],
 				],
@@ -208,7 +206,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				'data' => [
 					'size-2' => [
 						'type' => Size_Variable_Prop_Type::get_key(),
-						'label' => 'Normal Size',
+						'label' => 'Normal-Size',
 						'value' => '100px',
 					],
 				],
@@ -283,7 +281,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				'data' => [
 					'color-1' => [
 						'type' => Color_Variable_Prop_Type::get_key(),
-						'label' => 'Primary Color',
+						'label' => 'Primary-Color',
 						'value' => '#FF0000',
 					],
 				],
@@ -313,7 +311,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$this->assertTrue( $response_data['success'] );
 
 		$this->assertEquals( Color_Variable_Prop_Type::get_key(), $response_data['data']['variable']['type'] );
-		$this->assertEquals( 'Primary Color', $response_data['data']['variable']['label'] );
+		$this->assertEquals( 'Primary-Color', $response_data['data']['variable']['label'] );
 		$this->assertEquals( '#FF0000', $response_data['data']['variable']['value'] );
 		$this->assertTrue( $response_data['data']['variable']['deleted'] );
 		$this->assertNotEmpty( $response_data['data']['variable']['deleted_at'] );
@@ -355,7 +353,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				'data' => [
 					'color-1' => [
 						'type' => Color_Variable_Prop_Type::get_key(),
-						'label' => 'Primary Color',
+						'label' => 'Primary-Color',
 						'value' => '#FF0000',
 						'deleted' => true,
 						'deleted_at' => '2021-01-01 00:00:00',
@@ -373,7 +371,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$request = new WP_REST_Request( 'PUT', '/elementor/v1/variables/restore' );
 		$request->set_body_params( [
 			'id' => 'color-1',
-			'label' => 'Primary Color',
+			'label' => 'Primary-Color',
 		] );
 
 		$response = $this->rest_api->restore_variable( $request );
@@ -385,7 +383,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 
 		$this->assertEquals( 11, $response_data['data']['watermark'], 'Watermark validation failed' );
 
-		$this->assertEquals( 'Primary Color', $response_data['data']['variable']['label'] );
+		$this->assertEquals( 'Primary-Color', $response_data['data']['variable']['label'] );
 		$this->assertEquals( '#FF0000', $response_data['data']['variable']['value'] );
 		$this->assertArrayNotHasKey( 'deleted', $response_data['data']['variable'] );
 		$this->assertArrayNotHasKey( 'deleted_at', $response_data['data']['variable'] );
@@ -402,7 +400,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				'data' => [
 					'size-deleted' => [
 						'type' => Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
-						'label' => 'Deleted Custom Size',
+						'label' => 'Deleted-Custom-Size',
 						'value' => 'calc(100vh - 50px)',
 						'deleted_at' => '2024-01-01 00:00:00',
 						],
@@ -447,7 +445,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				'data' => [
 					'size-deleted-2' => [
 						'type' => Size_Variable_Prop_Type::get_key(),
-						'label' => 'Deleted Size',
+						'label' => 'Deleted-Size',
 						'value' => '150px',
 						'deleted' => true,
 						'deleted_at' => '2024-01-01 00:00:00',
@@ -633,7 +631,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				'data' => [
 					'color-1' => [
 						'type' => Color_Variable_Prop_Type::get_key(),
-						'label' => 'Primary Color',
+						'label' => 'Primary-Color',
 						'value' => '#FF0000',
 					],
 					'color-2' => [
@@ -769,7 +767,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 			'data' => [
 				'existing-id' => [
 					'type' => Color_Variable_Prop_Type::get_key(),
-					'label' => 'Existing Color',
+					'label' => 'Existing-Color',
 					'value' => '#000000',
 				],
 			],
@@ -792,7 +790,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 					'variable' => [
 						'id' => 'temp-123',
 						'type' => Color_Variable_Prop_Type::get_key(),
-						'label' => 'New Color',
+						'label' => 'New-Color',
 						'value' => '#FF0000',
 					],
 				],
@@ -800,7 +798,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 					'type' => 'update',
 					'id' => 'existing-id',
 					'variable' => [
-						'label' => 'Updated Color',
+						'label' => 'Updated-Color',
 						'value' => '#00FF00',
 					],
 				],
@@ -820,11 +818,11 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$create_result = $response_data['data']['results'][0];
 		$this->assertEquals( 'temp-123', $create_result['temp_id'] );
 		$this->assertNotEmpty( $create_result['id'] );
-		$this->assertEquals( 'New Color', $create_result['variable']['label'] );
+		$this->assertEquals( 'New-Color', $create_result['variable']['label'] );
 
 		$update_result = $response_data['data']['results'][1];
 		$this->assertEquals( 'existing-id', $update_result['id'] );
-		$this->assertEquals( 'Updated Color', $update_result['variable']['label'] );
+		$this->assertEquals( 'Updated-Color', $update_result['variable']['label'] );
 	}
 
 	public function test_process_batch__batch_operation_failed_error() {
@@ -835,7 +833,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 			'data' => [
 				'existing-id' => [
 					'type' => Color_Variable_Prop_Type::get_key(),
-					'label' => 'Existing Label',
+					'label' => 'Existing-Label',
 					'value' => '#000000',
 				],
 			],
@@ -853,7 +851,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 					'variable' => [
 						'id' => 'temp-fail',
 						'type' => Color_Variable_Prop_Type::get_key(),
-						'label' => 'Existing Label',
+						'label' => 'Existing-Label',
 						'value' => '#FF0000',
 					],
 				],
@@ -992,7 +990,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 			'data' => [
 				'existing-label' => [
 					'type' => Color_Variable_Prop_Type::get_key(),
-					'label' => 'Conflicting Label',
+					'label' => 'Conflicting-Label',
 					'value' => '#000000',
 				],
 			],
@@ -1010,7 +1008,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 					'variable' => [
 						'id' => 'temp-success',
 						'type' => Color_Variable_Prop_Type::get_key(),
-						'label' => 'Valid Label',
+						'label' => 'Valid-Label',
 						'value' => '#FF0000',
 					],
 				],

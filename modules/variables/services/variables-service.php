@@ -94,6 +94,7 @@ class Variables_Service {
 		}
 
 		$variable = Variable::from_array( $data );
+		$variable->validate();
 
 		$collection->add_variable( $variable );
 
@@ -121,6 +122,7 @@ class Variables_Service {
 		}
 
 		$variable->apply_changes( $data );
+		$variable->validate();
 
 		$watermark = $this->repo->save( $collection );
 
@@ -172,6 +174,7 @@ class Variables_Service {
 		}
 
 		$variable->apply_changes( $overrides );
+		$variable->validate();
 
 		$variable->restore();
 
