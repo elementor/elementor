@@ -50,7 +50,7 @@ class Atomic_Widget_Styles {
 			$post_styles = array_merge( $post_styles, $this->parse_element_style( $element_data ) );
 		} );
 
-		return apply_filters( 'elementor/atomic_widgets/editor_data/element_styles', $post_styles, $post_id );
+		return apply_filters( 'elementor/atomic_widgets/editor_data/element_styles', $post_styles );
 	}
 
 	private function parse_element_style( array $element_data ) {
