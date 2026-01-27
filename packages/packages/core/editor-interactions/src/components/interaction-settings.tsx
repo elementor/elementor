@@ -35,9 +35,10 @@ export const InteractionSettings = ( { interaction, onChange }: InteractionSetti
 		setSelectedBreakpoints( newValue );
 
 		const selectedValues = newValue.map( ( option ) => option.value );
+
 		const newExcluded = availableBreakpoints
-			.filter( ( bp ) => ! selectedValues.includes( bp.value ) )
-			.map( ( bp ) => bp.value );
+			.filter( ( breakpoint ) => ! selectedValues.includes( breakpoint.value ) )
+			.map( ( breakpoint ) => breakpoint.value );
 
 		const updatedInteraction: InteractionItemValue = {
 			...interaction,
