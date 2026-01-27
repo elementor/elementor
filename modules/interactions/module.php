@@ -79,9 +79,9 @@ class Module extends BaseModule {
 			return $this->wrap_interactions_for_db( $data );
 		}, 12, 2 ); // Priority 12 = after validation (10) and ID assignment (11)
 		
-		// Unwrap data AFTER loading from DB for frontend
-		add_filter( 'elementor/document/raw_data', function( $data, $document ) {
-			return $this->unwrap_interactions_for_frontend( $data );
+		// Unwrap data AFTER loading from DB for frontend/editor
+		add_filter( 'elementor/document/load/data', function( $elements, $document ) {
+			return $this->process_elements_unwrap( $elements );
 		}, 10, 2 );
 	}
 

@@ -54,9 +54,7 @@ trait Has_Template {
 	public function get_interactions_ids() {
 		$animation_ids = [];
 
-		$list_of_interactions = ( is_array( $this->interactions ) && isset( $this->interactions['items'] ) )
-			? $this->interactions['items']
-			: [];
+		$list_of_interactions = $this->extract_interactions_items( $this->interactions );
 
 		foreach ( $list_of_interactions as $interaction ) {
 
@@ -71,6 +69,26 @@ trait Has_Template {
 		}
 
 		return $animation_ids;
+	}
+
+	/**
+	 * Extract items array from interactions data.
+	 * Handles both v1 format (items is array) and v2 format (items is wrapped with $$type).
+	 */
+	private function extract_interactions_items( $interactions ) {
+		if ( ! is_array( $interactions ) || ! isset( $interactions['items'] ) ) {
+			return [];
+		}
+
+		$items = $interactions['items'];
+
+		// Handle v2 wrapped format: {$$type: 'interactions-array', value: [...]}
+		if ( isset( $items['$$type'] ) && 'interactions-array' === $items['$$type'] ) {
+			return isset( $items['value'] ) && is_array( $items['value'] ) ? $items['value'] : [];
+		}
+
+		// v1 format: items is direct array
+		return is_array( $items ) ? $items : [];
 	}
 
 	private function extract_animation_id_from_prop_type( $item ) {
@@ -142,6 +160,11 @@ trait Has_Template {
 		$value = $data[ $key ];
 
 		if ( is_array( $value ) && isset( $value['$$type'] ) && isset( $value['value'] ) ) {
+			// Handle size format: {$$type: 'size', value: {size: X, unit: 'ms'}}
+			if ( 'size' === $value['$$type'] && is_array( $value['value'] ) && isset( $value['value']['size'] ) ) {
+				return $value['value']['size'];
+			}
+
 			return $value['value'];
 		}
 
