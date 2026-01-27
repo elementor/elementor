@@ -50,7 +50,7 @@
             {
                 "slug": "elementor-templates",
                 "label": "Templates",
-                "url": "/wp-admin/edit.php?post_type=elementor_library",
+                "url": "/wp-admin/edit.php?post_type=elementor_library&tabs_group=library",
                 "icon": "folder",
                 "group_id": "elementor-editor-templates",
                 "priority": 60,

@@ -1,13 +1,12 @@
 import { expect, request } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import { saveHomepageSettings, restoreHomepageSettings, mockHomeScreenData, transformMockDataByLicense, navigateToHomeScreen, type HomepageSettings } from './home-screen.helper';
-import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Editor screen UI tests', () => {
+	const VIEWPORT_SIZE = { width: 1920, height: 4000 };
 	let originalHomepageSettings: HomepageSettings | null = null;
 
 	test.beforeAll( async ( { browser, apiRequests } ) => {
-		await wpCli( 'wp elementor experiments activate e_editor_one' );
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const requestContext = page.context().request;
@@ -17,7 +16,6 @@ test.describe( 'Editor screen UI tests', () => {
 	} );
 
 	test.afterAll( async ( { browser, apiRequests } ) => {
-		await wpCli( 'wp elementor experiments deactivate e_editor_one' );
 		const context = await browser.newContext();
 		const page = await context.newPage();
 
@@ -37,6 +35,7 @@ test.describe( 'Editor screen UI tests', () => {
 		await mockHomeScreenData( page, mockData, apiRequests, requestContext );
 
 		const homeScreen = await navigateToHomeScreen( page );
+		await page.setViewportSize( VIEWPORT_SIZE );
 		await expect.soft( homeScreen ).toHaveScreenshot( 'home-screen-free.png' );
 		await requestContext.dispose();
 	} );
@@ -48,6 +47,7 @@ test.describe( 'Editor screen UI tests', () => {
 		await mockHomeScreenData( page, mockData, apiRequests, requestContext );
 
 		const homeScreen = await navigateToHomeScreen( page );
+		await page.setViewportSize( VIEWPORT_SIZE );
 		await expect.soft( homeScreen ).toHaveScreenshot( 'home-screen-pro.png' );
 		await requestContext.dispose();
 	} );
@@ -59,6 +59,7 @@ test.describe( 'Editor screen UI tests', () => {
 		await mockHomeScreenData( page, mockData, apiRequests, requestContext );
 
 		const homeScreen = await navigateToHomeScreen( page );
+		await page.setViewportSize( VIEWPORT_SIZE );
 		await expect.soft( homeScreen ).toHaveScreenshot( 'home-screen-one.png' );
 		await requestContext.dispose();
 	} );

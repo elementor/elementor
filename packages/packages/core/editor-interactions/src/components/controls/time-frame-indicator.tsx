@@ -1,34 +1,50 @@
 import * as React from 'react';
-import { MenuListItem } from '@elementor/editor-ui';
-import { Select, type SelectChangeEvent } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
+import { useCallback } from 'react';
+import { UnstableSizeField } from '@elementor/editor-controls';
+import { sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 
 import { type FieldProps } from '../../types';
 
-export function TimeFrameIndicator( { value, onChange }: FieldProps ) {
-	const availableTimeFrames = [ '0', '100', '200', '300', '400', '500', '750', '1000', '1250', '1500' ].map(
-		( key ) => ( {
-			key,
-			// translators: %s: time in milliseconds
-			label: __( '%s MS', 'elementor' ).replace( '%s', key ),
-		} )
+const DEFAULT_UNIT = 'ms';
+
+export function TimeFrameIndicator( { value, onChange, defaultValue }: FieldProps & { defaultValue: number } ) {
+	const sizeValue = toSizeValue( value ?? defaultValue );
+
+	const setValue = useCallback(
+		( size: number ) => {
+			onChange( String( size ) );
+		},
+		[ onChange ]
 	);
 
+	const handleChange = ( newValue: SizePropValue[ 'value' ] ) => {
+		setValue( newValue.size as number );
+	};
+
+	const handleBlur = () => {
+		if ( ! sizeValue.size ) {
+			setValue( defaultValue );
+		}
+	};
+
 	return (
-		<Select
-			fullWidth
-			displayEmpty
-			size="tiny"
-			value={ value }
-			onChange={ ( event: SelectChangeEvent< string > ) => onChange( event.target.value ) }
-		>
-			{ availableTimeFrames.map( ( timeFrame ) => {
-				return (
-					<MenuListItem key={ timeFrame.key } value={ timeFrame.key }>
-						{ timeFrame.label }
-					</MenuListItem>
-				);
-			} ) }
-		</Select>
+		<UnstableSizeField
+			units={ [ DEFAULT_UNIT ] }
+			value={ sizeValue }
+			onChange={ handleChange }
+			onBlur={ handleBlur }
+			InputProps={ {
+				inputProps: {
+					min: 0,
+				},
+			} }
+		/>
 	);
 }
+
+const toSizeValue = ( value: string ): SizePropValue[ 'value' ] => {
+	return sizePropTypeUtil.create( {
+		size: Number( value ),
+		unit: DEFAULT_UNIT,
+	} ).value;
+};

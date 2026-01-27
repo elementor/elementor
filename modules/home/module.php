@@ -3,7 +3,6 @@ namespace Elementor\Modules\Home;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\App as BaseApp;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Settings;
 use Elementor\Plugin;
@@ -23,10 +22,6 @@ class Module extends BaseApp {
 
 	public function __construct() {
 		parent::__construct();
-
-		if ( ! $this->is_experiment_active() ) {
-			return;
-		}
 
 		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
 			$hook_suffix = 'toplevel_page_elementor';
@@ -64,20 +59,12 @@ class Module extends BaseApp {
 			$this->get_app_js_config()
 		);
 
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_editor_one' ) ) {
-			return;
-		}
-
 		wp_enqueue_style(
 			'e-home-screen',
 			$this->get_css_assets_url( 'modules/home/e-home-screen' ),
 			[],
 			ELEMENTOR_VERSION
 		);
-	}
-
-	public function is_experiment_active(): bool {
-		return Plugin::$instance->experiments->is_feature_active( self::PAGE_ID );
 	}
 
 	public function add_active_document_to_edit_link( $edit_link ) {
@@ -95,23 +82,11 @@ class Module extends BaseApp {
 		return $edit_link;
 	}
 
-	public static function get_experimental_data(): array {
-		return [
-			'name' => static::PAGE_ID,
-			'title' => esc_html__( 'Elementor Home Screen', 'elementor' ),
-			'description' => esc_html__( 'Default Elementor menu page.', 'elementor' ),
-			'hidden' => true,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
-			'default' => Experiments_Manager::STATE_ACTIVE,
-		];
-	}
-
 	private function get_app_js_config(): array {
 		$editor_assets_api = new EditorAssetsAPI( $this->get_api_config() );
 		$api = new API( $editor_assets_api );
 
 		$config = $api->get_home_screen_items();
-		$config['isEditorOneActive'] = Plugin::$instance->experiments->is_feature_active( 'e_editor_one' );
 
 		return $config;
 	}
@@ -125,8 +100,6 @@ class Module extends BaseApp {
 	}
 
 	public static function get_elementor_settings_page_id(): string {
-		return Plugin::$instance->experiments->is_feature_active( self::PAGE_ID )
-			? 'elementor-settings'
-			: Settings::PAGE_ID;
+		return 'elementor-settings';
 	}
 }
