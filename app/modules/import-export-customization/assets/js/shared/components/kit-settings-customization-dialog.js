@@ -224,7 +224,8 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 	const performSave = useCallback( () => {
 		const transformedAnalytics = transformAnalyticsData( settings );
 		handleSaveChanges( 'settings', settings, true, transformedAnalytics );
-	}, [ settings, handleSaveChanges ] );
+		handleClose();
+	}, [ settings, handleSaveChanges, handleClose ] );
 
 	const handleSaveClick = useCallback( () => {
 		const classesOverrideEnabled = settings.classesOverrideAll && settings.classes;
