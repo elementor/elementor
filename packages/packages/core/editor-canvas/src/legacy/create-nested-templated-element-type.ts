@@ -1,4 +1,4 @@
-import { ELEMENT_CHILDREN_RENDERED_EVENT, ELEMENT_STYLE_CHANGE_EVENT } from '@elementor/editor-elements';
+import { ELEMENT_STYLE_CHANGE_EVENT } from '@elementor/editor-elements';
 
 import { type DomRenderer } from '../renderers/create-dom-renderer';
 import { signalizedProcess } from '../utils/signalized-process';
@@ -227,20 +227,6 @@ export function createNestedTemplatedElementView( {
 			} );
 
 			await Promise.all( renderPromises );
-
-			const elementId = this.model.get( 'id' );
-			const targetEl = this.$el.get( 0 );
-			const elementType = targetEl?.getAttribute( 'data-element_type' ) ?? 'unknown';
-
-			targetEl?.dispatchEvent(
-				new CustomEvent( ELEMENT_CHILDREN_RENDERED_EVENT, {
-					bubbles: true,
-					detail: { elementId, elementType },
-				} )
-			);
-
-			// Also dispatch globally for listeners on window
-			window.dispatchEvent( new CustomEvent( ELEMENT_CHILDREN_RENDERED_EVENT ) );
 		},
 
 		getChildViewContainer( this: NestedTwigView ) {
