@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $notice = Plugin::$instance->editor->notice_bar->get_notice();
+$editor_sidebar_feature = Plugin::$instance->experiments->is_feature_active( 'editor_side_panel' );
 ?>
 
 <div id="elementor-loading">
@@ -33,6 +34,9 @@ $notice = Plugin::$instance->editor->notice_bar->get_notice();
 <div id="elementor-editor-wrapper-v2"></div>
 
 <div id="elementor-editor-wrapper">
+	<?php if ( $editor_sidebar_feature ) { ?>
+	<aside id="elementor-sidebar" class="elementor-sidebar" aria-labelledby="elementor-sidebar-heading"></aside>
+	<?php } ?>
 	<aside id="elementor-panel" class="elementor-panel" aria-labelledby="elementor-panel-header-title"></aside>
 	<main id="elementor-preview" aria-label="<?php echo esc_attr__( 'Preview', 'elementor' ); ?>">
 		<div id="elementor-responsive-bar"></div>
