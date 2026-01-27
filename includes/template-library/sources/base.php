@@ -505,6 +505,22 @@ abstract class Source_Base {
 			}
 		}
 
+		// Import embedded Global Variables (if present) and rewrite ids in the imported content.
+		if (
+			! empty( $data['global_variables'] ) &&
+			is_array( $data['global_variables'] ) &&
+			class_exists( \Elementor\Modules\Variables\Utils\Template_Library_Variables::class )
+		) {
+			$variables_snapshot = apply_filters( 'elementor/template_library/import/global_variables_snapshot', $data['global_variables'], $data );
+
+			$merge_result = \Elementor\Modules\Variables\Utils\Template_Library_Variables::merge_snapshot_and_get_id_map( $variables_snapshot );
+			$variables_id_map = $merge_result['id_map'] ?? [];
+
+			if ( ! empty( $variables_id_map ) ) {
+				$content = \Elementor\Modules\Variables\Utils\Template_Library_Variables::rewrite_elements_variable_ids( $content, $variables_id_map );
+			}
+		}
+
 		$page_settings = [];
 
 		if ( ! empty( $data['page_settings'] ) ) {

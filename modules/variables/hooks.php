@@ -21,7 +21,7 @@ use Elementor\Modules\Variables\Classes\Style_Transformers;
 use Elementor\Modules\Variables\Classes\Variables;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
+	exit;
 }
 
 class Hooks {

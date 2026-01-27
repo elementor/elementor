@@ -135,6 +135,25 @@ class Source_Cloud extends Source_Base {
 			}
 		}
 
+		// Embed Global Variables snapshot (only if used by the template).
+		if (
+			class_exists( \Elementor\Modules\Variables\Utils\Template_Library_Variables::class ) &&
+			is_array( $template_data['content'] ?? null )
+		) {
+			$variables_snapshot = \Elementor\Modules\Variables\Utils\Template_Library_Variables::build_snapshot_for_elements( $template_data['content'] );
+
+			$variables_snapshot = apply_filters( 'elementor/template_library/export/global_variables_snapshot', $variables_snapshot, 0, [
+				'content' => $template_data['content'],
+				'page_settings' => $template_data['page_settings'],
+				'title' => $template_data['title'] ?? '',
+				'type' => $template_data['type'] ?? '',
+			] );
+
+			if ( ! empty( $variables_snapshot ) ) {
+				$content_payload['global_variables'] = $variables_snapshot;
+			}
+		}
+
 		return [
 			'title' => $template_data['title'] ?? esc_html__( '(no title)', 'elementor' ),
 			'type' => self::TEMPLATE_RESOURCE_TYPE,
@@ -249,6 +268,21 @@ class Source_Cloud extends Source_Base {
 
 		if ( ! empty( $snapshot ) ) {
 			$export_data['global_classes'] = $snapshot;
+		}
+
+		// Prefer variables snapshot stored in cloud content; fallback to current site snapshot.
+		$variables_snapshot = $data['content']['global_variables'] ?? null;
+
+		if ( class_exists( \Elementor\Modules\Variables\Utils\Template_Library_Variables::class ) ) {
+			if ( empty( $variables_snapshot ) && is_array( $export_data['content'] ?? null ) ) {
+				$variables_snapshot = \Elementor\Modules\Variables\Utils\Template_Library_Variables::build_snapshot_for_elements( $export_data['content'] );
+			}
+
+			$variables_snapshot = apply_filters( 'elementor/template_library/export/global_variables_snapshot', $variables_snapshot, (int) ( $data['id'] ?? 0 ), $export_data );
+		}
+
+		if ( ! empty( $variables_snapshot ) ) {
+			$export_data['global_variables'] = $variables_snapshot;
 		}
 
 		return [

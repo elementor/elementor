@@ -1593,6 +1593,17 @@ class Source_Local extends Source_Base {
 			}
 		}
 
+		// Embed Global Variables snapshot (only if used by the template).
+		if ( class_exists( \Elementor\Modules\Variables\Utils\Template_Library_Variables::class ) ) {
+			$variables_snapshot = \Elementor\Modules\Variables\Utils\Template_Library_Variables::build_snapshot_for_elements( $content );
+
+			$variables_snapshot = apply_filters( 'elementor/template_library/export/global_variables_snapshot', $variables_snapshot, $template_id, $export_data );
+
+			if ( ! empty( $variables_snapshot ) ) {
+				$export_data['global_variables'] = $variables_snapshot;
+			}
+		}
+
 		return [
 			'name' => 'elementor-' . $template_id . '-' . gmdate( 'Y-m-d' ) . '.json',
 			'content' => wp_json_encode( $export_data ),
