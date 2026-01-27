@@ -3,14 +3,21 @@
  */
 
 /**
- * return all recursively nested elements in a flat array
+ * Return all recursively nested elements in a flat array.
+ * Works with both rendered containers and unrendered models.
  *
- * @param {Container} model
- * @return {Container[]}
+ * Nested elements (e.g. tabs) render their children asynchronously.
+ * When duplicating, the model is cloned synchronously but views may not exist yet.
+ * This function falls back to traversing via model when container is not available.
+ *
+ * @param {Container|Object} containerOrModel
+ * @return {(Container|Object)[]}
  */
-export function getElementChildren( model ) {
-	const container = window.elementor.getContainer( model.id );
-	const children = ( container.model?.get( 'elements' )?.models ?? [] ).flatMap( ( child ) => getElementChildren( child ) ) ?? [];
+export function getElementChildren( containerOrModel ) {
+	const container = window.elementor.getContainer( containerOrModel.id );
+	const model = container?.model ?? containerOrModel;
+	const childModels = model?.get( 'elements' )?.models ?? [];
+	const children = childModels.flatMap( getElementChildren );
 
-	return [ container, ...children ];
+	return [ container ?? model, ...children ];
 }

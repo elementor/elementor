@@ -6,12 +6,7 @@ import {
 	type SetRepeaterValuesMeta,
 	useBoundProp,
 } from '@elementor/editor-controls';
-import {
-	getElementEditorSettings,
-	updateElementEditorSettings,
-	useElementChildren,
-	useElementEditorSettings,
-} from '@elementor/editor-elements';
+import { updateElementEditorSettings, useElementChildren, useElementEditorSettings } from '@elementor/editor-elements';
 import { type CreateOptions, numberPropTypeUtil } from '@elementor/editor-props';
 import { InfoCircleFilledIcon } from '@elementor/icons';
 import { Alert, Chip, Infotip, type InfotipProps, Stack, Switch, TextField, Typography } from '@elementor/ui';
@@ -44,11 +39,9 @@ export const TabsControlContent = ( { label }: { label: string } ) => {
 	const tabContentArea = findElementByType( element.id, TAB_CONTENT_AREA_ELEMENT_TYPE );
 
 	const repeaterValues: RepeaterItem< TabItem >[] = tabLinks.map( ( tabLink, index ) => {
-		const { title: titleSetting } = getElementEditorSettings( tabLink.id ) ?? {};
-
 		return {
 			id: tabLink.id,
-			title: titleSetting,
+			title: tabLink.editorSettings?.title,
 			index,
 		};
 	} );
@@ -115,11 +108,7 @@ export const TabsControlContent = ( { label }: { label: string } ) => {
 };
 
 const ItemLabel = ( { value, index }: { value: TabItem; index: number } ) => {
-	const id = value.id ?? '';
-
-	const editorSettings = useElementEditorSettings( id );
-
-	const elementTitle = editorSettings?.title;
+	const elementTitle = value?.title;
 
 	return (
 		<Stack sx={ { minHeight: 20 } } direction="row" alignItems="center" gap={ 1.5 }>

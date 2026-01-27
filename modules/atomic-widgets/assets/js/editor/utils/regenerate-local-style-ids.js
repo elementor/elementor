@@ -10,24 +10,28 @@ function isClassesProp( prop ) {
 }
 
 /**
- * Update the style id of the container.
+ * Update the style id of the element.
+ * Works with both rendered containers and unrendered models.
  *
- * @param {Container} container
+ * @param {Container|Object} element
  */
-function updateStyleId( container ) {
-	const originalStyles = container.model.get( 'styles' );
-	const settings = container.settings?.toJSON() ?? {};
+function updateStyleId( element ) {
+	const container = window.elementor.getContainer( element.id );
+	const model = container?.model ?? element;
+	const settings = container?.settings ?? model.get( 'settings' );
 
-	const classesProps = Object.entries( settings ).filter(
+	const originalStyles = model.get( 'styles' );
+	const settingsJson = settings?.toJSON() ?? {};
+
+	const classesProps = Object.entries( settingsJson ).filter(
 		( [ , propValue ] ) => ( isClassesProp( propValue ) ),
 	);
 
 	const newStyles = {};
-
-	const changedIds = {}; // Conversion map - {[originalId: string]: newId: string}
+	const changedIds = {};
 
 	Object.entries( originalStyles ).forEach( ( [ originalStyleId, style ] ) => {
-		const newStyleId = getRandomStyleId( container, newStyles );
+		const newStyleId = getRandomStyleId( element, newStyles );
 		newStyles[ newStyleId ] = structuredClone( { ...style, id: newStyleId } );
 		changedIds[ originalStyleId ] = newStyleId;
 	} );
@@ -39,14 +43,20 @@ function updateStyleId( container ) {
 		} ];
 	}, {} );
 
-	// Update classes array
-	$e.internal( 'document/elements/set-settings', {
-		container,
-		settings: Object.fromEntries( newClassesProps ),
-	} );
+	const newSettings = Object.fromEntries( newClassesProps );
 
-	// Update local styles
-	container.model.set( 'styles', newStyles );
+	// Use the command when view exists to trigger proper rendering.
+	// For unrendered elements, set directly on model - they'll render with correct values.
+	if ( container ) {
+		$e.internal( 'document/elements/set-settings', {
+			container,
+			settings: newSettings,
+		} );
+	} else {
+		settings.set( newSettings );
+	}
+
+	model.set( 'styles', newStyles );
 }
 
 function updateElementsStyleIdsInsideOut( styledElements ) {
@@ -61,7 +71,10 @@ function updateElementsStyleIdsInsideOut( styledElements ) {
 export function regenerateLocalStyleIds( container ) {
 	const allElements = getElementChildren( container );
 
-	const styledElements = allElements.filter( ( element ) => Object.keys( element.model.get( 'styles' ) ?? {} ).length > 0 );
+	const styledElements = allElements.filter( ( element ) => {
+		const model = element.model ?? element;
+		return Object.keys( model.get( 'styles' ) ?? {} ).length > 0;
+	} );
 
 	updateElementsStyleIdsInsideOut( styledElements );
 }

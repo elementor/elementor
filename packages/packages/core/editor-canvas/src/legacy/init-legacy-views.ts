@@ -66,6 +66,12 @@ function tryRegisterElement(
 	element: V1ElementConfig,
 	ResolvedElementType: typeof ElementType
 ) {
+	const shouldBeRegistered = canBeTemplated( element ) || canBeNestedTemplated( element );
+
+	if ( ! shouldBeRegistered ) {
+		return;
+	}
+
 	const elementsManager = legacyWindow.elementor.elementsManager;
 	const isAlreadyRegistered = Boolean( elementsManager.getElementTypeClass( type ) );
 
