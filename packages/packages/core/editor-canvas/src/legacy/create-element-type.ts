@@ -85,7 +85,7 @@ export function createElementViewClassDeclaration(): typeof ElementView {
 			if ( ! element ) {
 				return;
 			}
-			
+
 			legacyWindow.elementor?.$preview?.[ 0 ]?.contentWindow.dispatchEvent(
 				new CustomEvent( eventType, {
 					detail: {
