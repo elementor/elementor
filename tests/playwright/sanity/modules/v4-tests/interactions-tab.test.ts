@@ -116,7 +116,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 
 			await selectOption( page.getByText( 'Page load', { exact: true } ), 'Scroll into view' );
 			await selectOption( page.getByText( 'Fade', { exact: true } ), 'Slide' );
-			await selectOption( page.getByText( '300 MS', { exact: true } ), '100 MS' );
+			await editor.v4Panel.fillField( 0, '300' );
 
 			const effectTypeOption = page.getByLabel( 'Out', { exact: true } );
 			const directionOption = page.getByLabel( 'To bottom', { exact: true } );

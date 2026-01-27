@@ -238,6 +238,10 @@ class Validation {
 			return false;
 		}
 
+		if ( isset( $config_value['easing'] ) && ! $this->is_valid_string_prop( $config_value, 'easing' ) ) {
+			return false;
+		}
+
 		if ( isset( $config_value['relativeTo'] ) && ! $this->is_valid_string_prop( $config_value, 'relativeTo' ) ) {
 			return false;
 		}
@@ -315,12 +319,12 @@ class Validation {
 		$timing_value = $timing['value'];
 
 		// Validate duration
-		if ( ! $this->is_valid_number_prop( $timing_value, 'duration' ) ) {
+		if ( ! $this->is_valid_number_prop_in_range( $timing_value, 'duration', 0 ) ) {
 			return false;
 		}
 
 		// Validate delay
-		if ( ! $this->is_valid_number_prop( $timing_value, 'delay' ) ) {
+		if ( ! $this->is_valid_number_prop_in_range( $timing_value, 'delay', 0 ) ) {
 			return false;
 		}
 

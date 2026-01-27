@@ -172,6 +172,7 @@ trait Has_Atomic_Base {
 		$type = $this->extract_prop_value( $animation, 'type' );
 		$direction = $this->extract_prop_value( $animation, 'direction' );
 		$timing_config = $this->extract_prop_value( $animation, 'timing_config' );
+		$config = $this->extract_prop_value( $animation, 'config' );
 
 		$duration = 300;
 		$delay = 0;
@@ -181,7 +182,21 @@ trait Has_Atomic_Base {
 			$delay = $this->extract_prop_value( $timing_config, 'delay', 0 );
 		}
 
-		$animation_id = implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay ] );
+		$easing = 'easeIn';
+		if ( is_array( $config ) ) {
+			$easing = $this->extract_prop_value( $config, 'easing', 'easeIn' );
+		}
+
+		$animation_id = implode( '-', [
+			$trigger,
+			$effect,
+			$type,
+			$direction,
+			$duration,
+			$delay,
+			'',
+			$easing,
+		] );
 
 		return [
 			'interaction_id' => $interaction_id,
@@ -404,6 +419,7 @@ trait Has_Atomic_Base {
 		$duration = 300;
 		$delay = 0;
 		$replay = 0;
+		$easing = 'easeIn';
 		$relative_to = 'viewport';
 		$offset_top = 15;
 		$offset_bottom = 85;
@@ -414,19 +430,33 @@ trait Has_Atomic_Base {
 		}
 
 		if ( is_array( $config ) ) {
-			$relative_to = $this->extract_prop_value( $config, 'relative_to', 'viewport' );
-			$offset_top = $this->extract_prop_value( $config, 'offset_top', 15 );
-			$offset_bottom = $this->extract_prop_value( $config, 'offset_bottom', 85 );
+			$relative_to = $this->extract_prop_value( $config, 'relativeTo', 'viewport' );
+			$offset_top = $this->extract_prop_value( $config, 'offsetTop', 15 );
+			$offset_bottom = $this->extract_prop_value( $config, 'offsetBottom', 85 );
 
 			$replay = $this->extract_prop_value( $config, 'replay', 0 );
 			if ( empty( $replay ) && 0 !== $replay && '0' !== $replay ) {
 				$replay = 0;
 			}
+
+			$easing = $this->extract_prop_value( $config, 'easing', 'easeIn' );
 		} else {
 			$replay = 0;
 		}
 
-		return implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay, $replay, $relative_to, $offset_top, $offset_bottom ] );
+		return implode( '-', [
+			$trigger,
+			$effect,
+			$type,
+			$direction,
+			$duration,
+			$delay,
+			$replay,
+			$easing,
+			$relative_to,
+			$offset_top,
+			$offset_bottom,
+		] );
 	}
 
 	public function print_content() {

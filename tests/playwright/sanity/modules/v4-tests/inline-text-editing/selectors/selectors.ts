@@ -19,6 +19,7 @@ export const INLINE_EDITING_SELECTORS = {
 		superscript: 'superscript',
 		subscript: 'subscript',
 		link: 'link',
+		italic: 'italic',
 	},
 	preMadeContent: {
 		paragraph: {
@@ -34,6 +35,6 @@ export const INLINE_EDITING_SELECTORS = {
 		contentSectionLabel: 'Content',
 	},
 	canvas: {
-		inlineEditor: '[contenteditable="true"][class*="ProseMirror"]',
+		inlineEditor: '.ProseMirror[contenteditable="true"]',
 	},
 };
