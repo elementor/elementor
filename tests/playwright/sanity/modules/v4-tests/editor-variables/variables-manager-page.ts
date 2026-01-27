@@ -21,7 +21,7 @@ export default class VariablesManagerPage {
 		const control = await this.getControl( styleSectionSelector, controlToAccessFrom );
 		const controlBoundingBox = await control.boundingBox();
 		await this.page.mouse.move( controlBoundingBox.x + ( controlBoundingBox.width / 2 ), controlBoundingBox.y + ( controlBoundingBox.height / 2 ) );
-		await this.page.click( EditorSelectors.floatingElements.v4.floatingActionsBar );
+		await this.page.locator( EditorSelectors.floatingElements.v4.floatingActionsBar ).getByLabel( 'Variables' ).click();
 		return control;
 	}
 
