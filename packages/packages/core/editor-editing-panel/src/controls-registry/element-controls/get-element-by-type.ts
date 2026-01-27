@@ -1,5 +1,3 @@
-import { getContainer } from '@elementor/editor-elements';
-
 import { findElementByType } from './find-element-by-type';
 
 export { findElementByType };
