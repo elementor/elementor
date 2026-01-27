@@ -1,15 +1,26 @@
 import * as React from 'react';
+import { useBreakpoints } from '@elementor/editor-responsive';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { InteractionSettings } from '../components/interaction-settings';
 import { extractExcludedBreakpoints } from '../utils/prop-value-utils';
 import { createInteractionItemValue } from './utils';
 
+jest.mock( '@elementor/editor-responsive', () => ( {
+	useBreakpoints: jest.fn(),
+} ) );
+
 describe( 'InteractionSettings', () => {
 	const mockOnChange = jest.fn();
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+
+		jest.mocked( useBreakpoints ).mockReturnValue( [
+			{ id: 'desktop', label: 'Desktop' },
+			{ id: 'tablet', label: 'Tablet' },
+			{ id: 'mobile', label: 'Mobile' },
+		] );
 	} );
 
 	describe( 'Rendering', () => {
@@ -49,6 +60,18 @@ describe( 'InteractionSettings', () => {
 
 			expect( screen.queryByText( 'Desktop' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'Tablet' ) ).not.toBeInTheDocument();
+			expect( screen.getByText( 'Mobile' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should render with excluded breakpoints, that are not present in the list of available', () => {
+			const interaction = createInteractionItemValue( {
+				excludedBreakpoints: [ 'desktop', 'tablet-non-existing' ],
+			} );
+
+			render( <InteractionSettings interaction={ interaction } onChange={ mockOnChange } /> );
+
+			expect( screen.queryByText( 'Desktop' ) ).not.toBeInTheDocument();
+			expect( screen.getByText( 'Tablet' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Mobile' ) ).toBeInTheDocument();
 		} );
 	} );
