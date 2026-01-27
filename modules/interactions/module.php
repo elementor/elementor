@@ -78,7 +78,7 @@ class Module extends BaseModule {
 		add_filter( 'elementor/document/save/data', function( $data, $document ) {
 			return $this->wrap_interactions_for_db( $data );
 		}, 12, 2 ); // Priority 12 = after validation (10) and ID assignment (11)
-		
+
 		// Unwrap data AFTER loading from DB for frontend/editor
 		add_filter( 'elementor/document/load/data', function( $elements, $document ) {
 			return $this->process_elements_unwrap( $elements );
@@ -157,14 +157,14 @@ class Module extends BaseModule {
 		}
 		return $data;
 	}
-	
+
 	private function unwrap_interactions_for_frontend( $data ) {
 		if ( isset( $data['elements'] ) && is_array( $data['elements'] ) ) {
 			$data['elements'] = $this->process_elements_unwrap( $data['elements'] );
 		}
 		return $data;
 	}
-	
+
 	private function process_elements_wrap( $elements ) {
 		foreach ( $elements as &$element ) {
 			if ( isset( $element['interactions'] ) ) {
@@ -176,7 +176,7 @@ class Module extends BaseModule {
 		}
 		return $elements;
 	}
-	
+
 	private function process_elements_unwrap( $elements ) {
 		foreach ( $elements as &$element ) {
 			if ( isset( $element['interactions'] ) ) {

@@ -70,7 +70,7 @@ class Validation {
 			}
 			return isset( $interactions['items'] ) ? $interactions['items'] : [];
 		}
-	
+
 		if ( is_string( $interactions ) ) {
 			$decoded = json_decode( $interactions, true );
 			if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
@@ -81,7 +81,7 @@ class Validation {
 				return isset( $decoded['items'] ) ? $decoded['items'] : [];
 			}
 		}
-	
+
 		return [];
 	}
 
