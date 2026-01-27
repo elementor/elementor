@@ -54,6 +54,7 @@ function updateStyleIdForModel( model ) {
 function updateStyleId( model ) {
 	const container = window.elementor.getContainer( model.get( 'id' ) );
 
+	// If view exists, update the styles via the container
 	if ( container ) {
 		updateStyleIdForContainer( container );
 		return;

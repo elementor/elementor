@@ -13,10 +13,6 @@ describe( 'getElementByType', () => {
 	const ELEMENT_ID = 'test-element-id';
 	const TARGET_TYPE = 'widget';
 
-	beforeEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	it( 'should return the current element when it matches the target type', () => {
 		// Arrange
 		const mockElement = createMockElement( {
