@@ -6,6 +6,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as ExperimentsManager;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\Variables\Classes\Variable_Types_Registry;
+use Elementor\Modules\Variables\ImportExportCustomization\Import_Export_Customization;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
@@ -13,7 +14,7 @@ use Elementor\Plugin;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
+	exit;
 }
 
 class Module extends BaseModule {
@@ -51,6 +52,8 @@ class Module extends BaseModule {
 		$this->register_features();
 
 		$this->hooks()->register();
+
+		( new Import_Export_Customization() )->register_hooks();
 
 		add_action( 'init', [ $this, 'init_variable_types_registry' ] );
 		add_action( 'elementor/editor/before_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
