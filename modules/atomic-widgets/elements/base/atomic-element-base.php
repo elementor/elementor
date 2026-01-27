@@ -92,7 +92,6 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config = parent::get_initial_config();
 		$props_schema = static::get_props_schema();
 
-		
 		$config['atomic'] = true;
 		$config['atomic_controls'] = $this->get_atomic_controls();
 		$config['atomic_props_schema'] = $props_schema;
