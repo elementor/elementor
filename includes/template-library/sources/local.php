@@ -1593,9 +1593,10 @@ class Source_Local extends Source_Base {
 			}
 		}
 
-		// Embed Global Variables snapshot (only if used by the template).
+		// Embed Global Variables snapshot (only if used by the template or global classes).
 		if ( class_exists( \Elementor\Modules\Variables\Utils\Template_Library_Variables::class ) ) {
-			$variables_snapshot = \Elementor\Modules\Variables\Utils\Template_Library_Variables::build_snapshot_for_elements( $content );
+			$global_classes_for_variables = $export_data['global_classes'] ?? null;
+			$variables_snapshot = \Elementor\Modules\Variables\Utils\Template_Library_Variables::build_snapshot_for_elements( $content, $global_classes_for_variables );
 
 			$variables_snapshot = apply_filters( 'elementor/template_library/export/global_variables_snapshot', $variables_snapshot, $template_id, $export_data );
 

@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Variables\Utils;
 
+use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
 use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
@@ -15,9 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Template_Library_Variables {
-	const LABEL_PREFIX = 'DUP_';
-	const MAX_LABEL_LENGTH = 50;
-
 	private static function get_variable_types(): array {
 		return [
 			Color_Variable_Prop_Type::get_key(),
@@ -38,7 +36,14 @@ class Template_Library_Variables {
 		Plugin::$instance->db->iterate_data(
 			$elements,
 			function ( $element_data ) use ( &$ids, $variable_types ) {
-				self::extract_variable_ids_recursive( $element_data, $ids, $variable_types );
+				if ( ! empty( $element_data['settings'] ) && is_array( $element_data['settings'] ) ) {
+					self::extract_variable_ids_recursive( $element_data['settings'], $ids, $variable_types );
+				}
+
+				if ( ! empty( $element_data['styles'] ) && is_array( $element_data['styles'] ) ) {
+					self::extract_variable_ids_recursive( $element_data['styles'], $ids, $variable_types );
+				}
+
 				return $element_data;
 			}
 		);
@@ -55,11 +60,12 @@ class Template_Library_Variables {
 			if ( isset( $data['value'] ) && is_string( $data['value'] ) && '' !== $data['value'] ) {
 				$ids[] = $data['value'];
 			}
-			return;
 		}
 
 		foreach ( $data as $value ) {
-			self::extract_variable_ids_recursive( $value, $ids, $variable_types );
+			if ( is_array( $value ) ) {
+				self::extract_variable_ids_recursive( $value, $ids, $variable_types );
+			}
 		}
 	}
 
@@ -106,14 +112,28 @@ class Template_Library_Variables {
 		];
 	}
 
-	public static function build_snapshot_for_elements( array $elements ): ?array {
+	public static function build_snapshot_for_elements( array $elements, ?array $global_classes_snapshot = null ): ?array {
 		$ids = self::extract_used_variable_ids_from_elements( $elements );
+
+		if ( ! empty( $global_classes_snapshot ) ) {
+			$ids_from_classes = self::extract_variable_ids_from_data( $global_classes_snapshot );
+			$ids = array_merge( $ids, $ids_from_classes );
+		}
+
+		$ids = array_values( array_unique( $ids ) );
 
 		if ( empty( $ids ) ) {
 			return null;
 		}
 
 		return self::build_snapshot_for_ids( $ids );
+	}
+
+	public static function extract_variable_ids_from_data( array $data ): array {
+		$ids = [];
+		$variable_types = self::get_variable_types();
+		self::extract_variable_ids_recursive( $data, $ids, $variable_types );
+		return array_values( array_unique( $ids ) );
 	}
 
 	public static function merge_snapshot_and_get_id_map( array $snapshot ): array {
@@ -151,13 +171,13 @@ class Template_Library_Variables {
 			$target_id = $incoming_id;
 
 			if ( isset( $existing_ids[ $incoming_id ] ) ) {
-				$is_same = self::variables_equal( $updated_variables[ $incoming_id ], $incoming_variable );
+				$is_same = Template_Library_Import_Export_Utils::items_equal( $updated_variables[ $incoming_id ], $incoming_variable );
 
 				if ( $is_same ) {
 					continue;
 				}
 
-				$target_id = self::generate_unique_id( array_keys( $updated_variables ) );
+				$target_id = Template_Library_Import_Export_Utils::generate_unique_id( array_keys( $updated_variables ), 'e-gv-' );
 				$id_map[ $incoming_id ] = $target_id;
 			}
 
@@ -165,7 +185,7 @@ class Template_Library_Variables {
 				$label = $incoming_variable['label'];
 
 				if ( in_array( $label, $existing_labels, true ) ) {
-					$label = self::generate_unique_label( $label, $existing_labels );
+					$label = Template_Library_Import_Export_Utils::generate_unique_label( $label, $existing_labels );
 					$incoming_variable['label'] = $label;
 				}
 
@@ -203,7 +223,14 @@ class Template_Library_Variables {
 		return Plugin::$instance->db->iterate_data(
 			$elements,
 			function ( $element_data ) use ( $id_map, $variable_types ) {
-				$element_data = self::rewrite_variable_ids_recursive( $element_data, $id_map, $variable_types );
+				if ( ! empty( $element_data['settings'] ) && is_array( $element_data['settings'] ) ) {
+					$element_data['settings'] = self::rewrite_variable_ids_recursive( $element_data['settings'], $id_map, $variable_types );
+				}
+
+				if ( ! empty( $element_data['styles'] ) && is_array( $element_data['styles'] ) ) {
+					$element_data['styles'] = self::rewrite_variable_ids_recursive( $element_data['styles'], $id_map, $variable_types );
+				}
+
 				return $element_data;
 			}
 		);
@@ -222,86 +249,11 @@ class Template_Library_Variables {
 		}
 
 		foreach ( $data as $key => $value ) {
-			$data[ $key ] = self::rewrite_variable_ids_recursive( $value, $id_map, $variable_types );
+			if ( is_array( $value ) ) {
+				$data[ $key ] = self::rewrite_variable_ids_recursive( $value, $id_map, $variable_types );
+			}
 		}
 
 		return $data;
-	}
-
-	private static function variables_equal( array $a, array $b ): bool {
-		$a = self::recursive_ksort( $a );
-		$b = self::recursive_ksort( $b );
-
-		return wp_json_encode( $a ) === wp_json_encode( $b );
-	}
-
-	private static function recursive_ksort( $value ) {
-		if ( is_array( $value ) ) {
-			foreach ( $value as $k => $v ) {
-				$value[ $k ] = self::recursive_ksort( $v );
-			}
-			ksort( $value );
-		}
-
-		return $value;
-	}
-
-	private static function generate_unique_id( array $existing_ids ): string {
-		$existing = array_fill_keys( $existing_ids, true );
-
-		do {
-			$random = substr( strtolower( dechex( wp_rand( 0, PHP_INT_MAX ) ) ), 0, 7 );
-			$id = 'e-gv-' . $random;
-		} while ( isset( $existing[ $id ] ) );
-
-		return $id;
-	}
-
-	private static function generate_unique_label( string $original_label, array $existing_labels ): string {
-		$prefix = self::LABEL_PREFIX;
-		$max_length = self::MAX_LABEL_LENGTH;
-
-		$has_prefix = 0 === strpos( $original_label, $prefix );
-
-		if ( $has_prefix ) {
-			$base_label = substr( $original_label, strlen( $prefix ) );
-			$counter = 1;
-			$new_label = $prefix . $base_label . $counter;
-
-			while ( in_array( $new_label, $existing_labels, true ) ) {
-				++$counter;
-				$new_label = $prefix . $base_label . $counter;
-			}
-
-			if ( strlen( $new_label ) > $max_length ) {
-				$available_length = $max_length - strlen( $prefix . $counter );
-				$base_label = substr( $base_label, 0, $available_length );
-				$new_label = $prefix . $base_label . $counter;
-			}
-		} else {
-			$new_label = $prefix . $original_label;
-
-			if ( strlen( $new_label ) > $max_length ) {
-				$available_length = $max_length - strlen( $prefix );
-				$new_label = $prefix . substr( $original_label, 0, $available_length );
-			}
-
-			$counter = 1;
-			$base_label = substr( $original_label, 0, $available_length ?? strlen( $original_label ) );
-
-			while ( in_array( $new_label, $existing_labels, true ) ) {
-				$new_label = $prefix . $base_label . $counter;
-
-				if ( strlen( $new_label ) > $max_length ) {
-					$available_length = $max_length - strlen( $prefix . $counter );
-					$base_label = substr( $original_label, 0, $available_length );
-					$new_label = $prefix . $base_label . $counter;
-				}
-
-				++$counter;
-			}
-		}
-
-		return $new_label;
 	}
 }

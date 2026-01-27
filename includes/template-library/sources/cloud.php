@@ -135,12 +135,13 @@ class Source_Cloud extends Source_Base {
 			}
 		}
 
-		// Embed Global Variables snapshot (only if used by the template).
+		// Embed Global Variables snapshot (only if used by the template or global classes).
 		if (
 			class_exists( \Elementor\Modules\Variables\Utils\Template_Library_Variables::class ) &&
 			is_array( $template_data['content'] ?? null )
 		) {
-			$variables_snapshot = \Elementor\Modules\Variables\Utils\Template_Library_Variables::build_snapshot_for_elements( $template_data['content'] );
+			$global_classes_for_variables = $content_payload['global_classes'] ?? null;
+			$variables_snapshot = \Elementor\Modules\Variables\Utils\Template_Library_Variables::build_snapshot_for_elements( $template_data['content'], $global_classes_for_variables );
 
 			$variables_snapshot = apply_filters( 'elementor/template_library/export/global_variables_snapshot', $variables_snapshot, 0, [
 				'content' => $template_data['content'],
@@ -275,7 +276,8 @@ class Source_Cloud extends Source_Base {
 
 		if ( class_exists( \Elementor\Modules\Variables\Utils\Template_Library_Variables::class ) ) {
 			if ( empty( $variables_snapshot ) && is_array( $export_data['content'] ?? null ) ) {
-				$variables_snapshot = \Elementor\Modules\Variables\Utils\Template_Library_Variables::build_snapshot_for_elements( $export_data['content'] );
+				$global_classes_for_variables = $export_data['global_classes'] ?? null;
+				$variables_snapshot = \Elementor\Modules\Variables\Utils\Template_Library_Variables::build_snapshot_for_elements( $export_data['content'], $global_classes_for_variables );
 			}
 
 			$variables_snapshot = apply_filters( 'elementor/template_library/export/global_variables_snapshot', $variables_snapshot, (int) ( $data['id'] ?? 0 ), $export_data );
