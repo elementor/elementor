@@ -202,6 +202,7 @@ export function ClassesVariablesSection( {
 						severity="warning"
 						icon={ <AlertTriangleFilledIcon sx={ { color: 'warning.main' } } /> }
 						sx={ {
+							alignItems: 'center',
 							backgroundColor: 'warning.background',
 							'& .MuiAlert-message': {
 								display: 'flex',

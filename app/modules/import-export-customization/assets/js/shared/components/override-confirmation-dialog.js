@@ -98,6 +98,7 @@ export function OverrideConfirmationDialog( {
 					onClick={ onConfirm }
 					variant="contained"
 					sx={ {
+						color: 'white',
 						backgroundColor: 'warning.main',
 						'&:hover': {
 							backgroundColor: 'warning.dark',
