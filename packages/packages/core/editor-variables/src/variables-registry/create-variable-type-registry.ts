@@ -1,4 +1,4 @@
-import { type ForwardRefExoticComponent, type JSX, type KeyboardEvent, type RefAttributes } from 'react';
+import { type ElementType, type ForwardRefExoticComponent, type JSX, type KeyboardEvent, type RefAttributes } from 'react';
 import {
 	type AnyTransformer,
 	stylesInheritanceTransformersRegistry,
@@ -16,6 +16,25 @@ import { type SvgIconProps } from '@elementor/ui';
 import { inheritanceTransformer } from '../transformers/inheritance-transformer';
 import { variableTransformer } from '../transformers/variable-transformer';
 import { type NormalizedVariable, type Variable } from '../types';
+
+export type VariableMenuAction = {
+	name: string;
+	icon: ForwardRefExoticComponent< Omit< SvgIconProps, 'ref' > & RefAttributes< SVGSVGElement > > | ElementType;
+	color: string;
+	onClick: ( id: string ) => void;
+};
+
+export type MenuActionContext = {
+	variable: Variable;
+	variableId: string;
+	isSyncEnabled: boolean;
+	handlers: {
+		onStartSync: ( id: string ) => void;
+		onStopSync: ( id: string ) => void;
+	};
+};
+
+export type MenuActionsFactory = ( context: MenuActionContext ) => VariableMenuAction[];
 
 export type ValueFieldProps = {
 	value: string;
@@ -45,6 +64,7 @@ type VariableTypeOptions = {
 	isCompatible?: ( propType: PropType, variable: Variable ) => boolean;
 	emptyState?: JSX.Element;
 	isActive?: boolean;
+	menuActionsFactory?: MenuActionsFactory;
 };
 
 export type VariableTypesMap = Record< string, Omit< VariableTypeOptions, 'key' > >;
@@ -67,6 +87,7 @@ export function createVariableTypeRegistry() {
 		isCompatible,
 		emptyState,
 		isActive = true,
+		menuActionsFactory,
 	}: VariableTypeOptions ) => {
 		const variableTypeKey = key ?? propTypeUtil.key;
 
@@ -94,6 +115,7 @@ export function createVariableTypeRegistry() {
 			isCompatible,
 			emptyState,
 			isActive,
+			menuActionsFactory,
 		};
 
 		registerTransformer( propTypeUtil.key, styleTransformer );

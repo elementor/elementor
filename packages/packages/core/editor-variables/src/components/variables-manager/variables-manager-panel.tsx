@@ -10,7 +10,7 @@ import {
 } from '@elementor/editor-panels';
 import { SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode, isExperimentActive } from '@elementor/editor-v1-adapters';
-import { AlertTriangleFilledIcon, ColorFilterIcon, ResetIcon, TrashIcon } from '@elementor/icons';
+import { AlertTriangleFilledIcon, ColorFilterIcon, TrashIcon } from '@elementor/icons';
 import {
 	Alert,
 	AlertAction,
@@ -26,7 +26,7 @@ import { __ } from '@wordpress/i18n';
 
 import { trackVariablesManagerEvent } from '../../utils/tracking';
 import { type ErrorResponse, type MappedError, mapServerError } from '../../utils/validations';
-import { getVariableType } from '../../variables-registry/variable-type-registry';
+import { getMenuActionsForVariable, getVariableType } from '../../variables-registry/variable-type-registry';
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
 import { EmptyState } from '../ui/empty-state';
 import { NoSearchResults } from '../ui/no-search-results';
@@ -156,31 +156,21 @@ export function VariablesManagerPanel() {
 	const buildMenuActions = useCallback(
 		( variableId: string ) => {
 			const variable = variables[ variableId ];
-			const actions = [];
-
-			if ( isSyncEnabled && variable?.type === 'global-color-variable' ) {
-				if ( variable?.sync_to_v3 ) {
-					actions.push( {
-						name: __( 'Stop syncing to Version 3', 'elementor' ),
-						icon: ResetIcon,
-						color: 'text.primary',
-						onClick: ( itemId: string ) => {
-							setStopSyncConfirmation( itemId );
-						},
-					} );
-				} else {
-					actions.push( {
-						name: __( 'Sync to Version 3', 'elementor' ),
-						icon: ResetIcon,
-						color: 'text.primary',
-						onClick: ( itemId: string ) => {
-							handleStartSync( itemId );
-						},
-					} );
-				}
+			if ( ! variable ) {
+				return [];
 			}
 
-			actions.push( {
+			const typeActions = getMenuActionsForVariable( variable.type, {
+				variable,
+				variableId,
+				isSyncEnabled,
+				handlers: {
+					onStartSync: handleStartSync,
+					onStopSync: ( id: string ) => setStopSyncConfirmation( id ),
+				},
+			} );
+
+			const deleteAction = {
 				name: __( 'Delete', 'elementor' ),
 				icon: TrashIcon,
 				color: 'error.main',
@@ -193,9 +183,9 @@ export function VariablesManagerPanel() {
 						trackVariablesManagerEvent( { action: 'delete', varType: variableTypeOptions?.variableType } );
 					}
 				},
-			} );
+			};
 
-			return actions;
+			return [ ...typeActions, deleteAction ];
 		},
 		[ variables, isSyncEnabled, handleStartSync ]
 	);

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { colorPropTypeUtil, sizePropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 import { CtaButton } from '@elementor/editor-ui';
-import { BrushIcon, ExpandDiagonalIcon, TextIcon } from '@elementor/icons';
+import { BrushIcon, ExpandDiagonalIcon, ResetIcon, TextIcon } from '@elementor/icons';
+import { __ } from '@wordpress/i18n';
 
 import { ColorField } from './components/fields/color-field';
 import { FontField } from './components/fields/font-field';
@@ -22,6 +23,29 @@ export function registerVariableTypes() {
 		variableType: 'color',
 		startIcon: ( { value } ) => <ColorIndicator size="inherit" component="span" value={ value } />,
 		defaultValue: '#ffffff',
+		menuActionsFactory: ( { variable, variableId, isSyncEnabled, handlers } ) => {
+			const actions = [];
+
+			if ( isSyncEnabled ) {
+				if ( variable.sync_to_v3 ) {
+					actions.push( {
+						name: __( 'Stop syncing to Version 3', 'elementor' ),
+						icon: ResetIcon,
+						color: 'text.primary',
+						onClick: () => handlers.onStopSync( variableId ),
+					} );
+				} else {
+					actions.push( {
+						name: __( 'Sync to Version 3', 'elementor' ),
+						icon: ResetIcon,
+						color: 'text.primary',
+						onClick: () => handlers.onStartSync( variableId ),
+					} );
+				}
+			}
+
+			return actions;
+		},
 	} );
 
 	registerVariableType( {

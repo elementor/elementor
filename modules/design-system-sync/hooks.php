@@ -22,7 +22,7 @@ class Hooks {
 
 		add_filter(
 			'elementor/variables/rest-api/update/data',
-			[ $this, 'process_sync_data' ],
+			[ $this, 'save_sync_flag' ],
 			10,
 			2
 		);
@@ -43,7 +43,7 @@ class Hooks {
 		return $args;
 	}
 
-	public function process_sync_data( array $data, WP_REST_Request $request ): array {
+	public function save_sync_flag( array $data, WP_REST_Request $request ): array {
 		$sync_to_v3 = $request->get_param( 'sync_to_v3' );
 
 		if ( null !== $sync_to_v3 ) {
