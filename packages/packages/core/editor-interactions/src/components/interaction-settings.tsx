@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { type SyntheticEvent, useState } from 'react';
 import { ControlFormLabel, PopoverContent } from '@elementor/editor-controls';
 import { Autocomplete, Grid, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -24,15 +24,14 @@ type InteractionSettingsProps = {
 };
 
 export const InteractionSettings = ( { interaction, onChange }: InteractionSettingsProps ) => {
-	const excluded = extractExcludedBreakpoints( interaction.breakpoints );
-
 	const [ selectedBreakpoints, setSelectedBreakpoints ] = useState< BreakpointOption[] >( () => {
+		const excluded = extractExcludedBreakpoints( interaction.breakpoints );
 		return availableBreakpoints.filter( ( { value } ) => {
 			return ! excluded.includes( value );
 		} );
 	} );
 
-	const handleBreakpointChange = ( _event: React.SyntheticEvent, newValue: BreakpointOption[] ) => {
+	const handleBreakpointChange = ( _: SyntheticEvent, newValue: BreakpointOption[] ) => {
 		setSelectedBreakpoints( newValue );
 
 		const selectedValues = newValue.map( ( option ) => option.value );
