@@ -19,7 +19,7 @@ class Adapter {
 		}
 
 		$items = $decoded['items'];
-		if ( isset( $decoded['items']['$$type'] ) && $decoded['items']['$$type'] === self::ITEMS_TYPE ) {
+		if ( isset( $decoded['items']['$$type'] ) && self::ITEMS_TYPE === $decoded['items']['$$type'] ) {
 			$items = isset( $decoded['items']['value'] ) ? $decoded['items']['value'] : [];
 		}
 
@@ -44,7 +44,7 @@ class Adapter {
 		}
 
 		$items = $decoded['items'];
-		if ( isset( $decoded['items']['$$type'] ) && $decoded['items']['$$type'] === self::ITEMS_TYPE ) {
+		if ( isset( $decoded['items']['$$type'] ) && self::ITEMS_TYPE === $decoded['items']['$$type'] ) {
 			$items = isset( $decoded['items']['value'] ) ? $decoded['items']['value'] : [];
 		}
 

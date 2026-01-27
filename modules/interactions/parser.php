@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Interactions;
 
 use Elementor\Modules\AtomicWidgets\Utils\Utils;
+use Elementor\Modules\Interactions\Adapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -84,7 +85,7 @@ class Parser {
 	private function decode_interactions( $interactions ) {
 		if ( is_array( $interactions ) ) {
 			// Handle v2 wrapped format
-			if ( isset( $interactions['items']['$$type'] ) && 'interactions-array' === $interactions['items']['$$type'] ) {
+			if ( isset( $interactions['items']['$$type'] ) && Adapter::ITEMS_TYPE === $interactions['items']['$$type'] ) {
 				return [
 					'items' => isset( $interactions['items']['value'] ) ? $interactions['items']['value'] : [],
 					'version' => 1,
@@ -97,7 +98,7 @@ class Parser {
 			$decoded = json_decode( $interactions, true );
 			if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
 				// Handle v2 wrapped format
-				if ( isset( $decoded['items']['$$type'] ) && 'interactions-array' === $decoded['items']['$$type'] ) {
+				if ( isset( $decoded['items']['$$type'] ) && Adapter::ITEMS_TYPE === $decoded['items']['$$type'] ) {
 					return [
 						'items' => isset( $decoded['items']['value'] ) ? $decoded['items']['value'] : [],
 						'version' => 1,

@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 
 use Elementor\Modules\AtomicWidgets\Elements\TemplateRenderer\Template_Renderer;
+use Elementor\Modules\Interactions\Adapter as Interactions_Adapter;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -83,7 +84,7 @@ trait Has_Template {
 		$items = $interactions['items'];
 
 		// Handle v2 wrapped format: {$$type: 'interactions-array', value: [...]}
-		if ( isset( $items['$$type'] ) && 'interactions-array' === $items['$$type'] ) {
+		if ( isset( $items['$$type'] ) && Interactions_Adapter::ITEMS_TYPE === $items['$$type'] ) {
 			return isset( $items['value'] ) && is_array( $items['value'] ) ? $items['value'] : [];
 		}
 

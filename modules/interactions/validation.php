@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Interactions;
 
+use Elementor\Modules\Interactions\Adapter;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -65,7 +67,7 @@ class Validation {
 	private function decode_interactions( $interactions ) {
 		if ( is_array( $interactions ) ) {
 			// Handle v2 wrapped format
-			if ( isset( $interactions['items']['$$type'] ) && 'interactions-array' === $interactions['items']['$$type'] ) {
+			if ( isset( $interactions['items']['$$type'] ) && Adapter::ITEMS_TYPE === $interactions['items']['$$type'] ) {
 				return isset( $interactions['items']['value'] ) ? $interactions['items']['value'] : [];
 			}
 			return isset( $interactions['items'] ) ? $interactions['items'] : [];
@@ -75,7 +77,7 @@ class Validation {
 			$decoded = json_decode( $interactions, true );
 			if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
 				// Handle v2 wrapped format
-				if ( isset( $decoded['items']['$$type'] ) && 'interactions-array' === $decoded['items']['$$type'] ) {
+				if ( isset( $decoded['items']['$$type'] ) && Adapter::ITEMS_TYPE === $decoded['items']['$$type'] ) {
 					return isset( $decoded['items']['value'] ) ? $decoded['items']['value'] : [];
 				}
 				return isset( $decoded['items'] ) ? $decoded['items'] : [];

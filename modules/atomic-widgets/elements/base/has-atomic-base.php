@@ -14,6 +14,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\Interactions\Adapter as Interactions_Adapter;
 use Elementor\Utils;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
@@ -413,7 +414,7 @@ trait Has_Atomic_Base {
 		$items = $interactions['items'];
 
 		// Handle v2 wrapped format: {$$type: 'interactions-array', value: [...]}
-		if ( isset( $items['$$type'] ) && 'interactions-array' === $items['$$type'] ) {
+		if ( isset( $items['$$type'] ) && Interactions_Adapter::ITEMS_TYPE === $items['$$type'] ) {
 			return isset( $items['value'] ) && is_array( $items['value'] ) ? $items['value'] : [];
 		}
 
