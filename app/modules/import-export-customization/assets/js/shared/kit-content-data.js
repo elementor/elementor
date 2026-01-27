@@ -52,6 +52,8 @@ const kitContentData = [
 			title: __( 'Settings & configurations', 'elementor' ),
 			features: {
 				open: [
+					__( 'Classes', 'elementor' ),
+					__( 'Variables', 'elementor' ),
 					__( 'Global Colors', 'elementor' ),
 					__( 'Global Fonts', 'elementor' ),
 					__( 'Theme Style Settings', 'elementor' ),
