@@ -19,6 +19,8 @@ export type BatchOperation = {
 		type?: string;
 		label?: string;
 		value?: string;
+		order?: number;
+		sync_to_v3?: boolean;
 	};
 	label?: string;
 	value?: string;

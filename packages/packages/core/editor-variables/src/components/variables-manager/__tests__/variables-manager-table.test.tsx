@@ -25,7 +25,7 @@ describe( 'VariablesManagerTable', () => {
 	const mockOnAutoEditComplete = jest.fn();
 	const mockOnFieldError = jest.fn();
 
-	const mockMenuActions = [
+	const mockMenuActions = () => [
 		{
 			name: 'Delete',
 			icon: BrushIcon,
@@ -500,7 +500,7 @@ describe( 'VariablesManagerTable', () => {
 
 		it( 'should trigger menu actions when clicked', async () => {
 			const mockAction = jest.fn();
-			const menuActionsWithHandler = [
+			const menuActionsWithHandler = () => [
 				{
 					name: 'Delete',
 					icon: BrushIcon,
