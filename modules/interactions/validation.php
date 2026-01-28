@@ -4,6 +4,7 @@ namespace Elementor\Modules\Interactions;
 
 use Elementor\Modules\Interactions\Validators\Breakpoints_Value as BreakpointsValueValidator;
 use Elementor\Modules\Interactions\Validators\String_Value as StringValueValidator;
+use Elementor\Modules\Interactions\Adapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -67,12 +68,18 @@ class Validation {
 
 	private function decode_interactions( $interactions ) {
 		if ( is_array( $interactions ) ) {
+			if ( isset( $interactions['items']['$$type'] ) && Adapter::ITEMS_TYPE === $interactions['items']['$$type'] ) {
+				return isset( $interactions['items']['value'] ) ? $interactions['items']['value'] : [];
+			}
 			return isset( $interactions['items'] ) ? $interactions['items'] : [];
 		}
 
 		if ( is_string( $interactions ) ) {
 			$decoded = json_decode( $interactions, true );
 			if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
+				if ( isset( $decoded['items']['$$type'] ) && Adapter::ITEMS_TYPE === $decoded['items']['$$type'] ) {
+					return isset( $decoded['items']['value'] ) ? $decoded['items']['value'] : [];
+				}
 				return isset( $decoded['items'] ) ? $decoded['items'] : [];
 			}
 		}
@@ -319,13 +326,77 @@ class Validation {
 
 		$timing_value = $timing['value'];
 
-		// Validate duration
-		if ( ! $this->is_valid_number_prop_in_range( $timing_value, 'duration', 0 ) ) {
+		// Validate duration (accepts both 'number' and 'size' formats)
+		if ( ! $this->is_valid_timing_value( $timing_value, 'duration', 0 ) ) {
 			return false;
 		}
 
-		// Validate delay
-		if ( ! $this->is_valid_number_prop_in_range( $timing_value, 'delay', 0 ) ) {
+		// Validate delay (accepts both 'number' and 'size' formats)
+		if ( ! $this->is_valid_timing_value( $timing_value, 'delay', 0 ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Validate timing value that can be either 'number' or 'size' type.
+	 * - number format: {$$type: 'number', value: 123}
+	 * - size format: {$$type: 'size', value: {size: 123, unit: 'ms'}}
+	 */
+	private function is_valid_timing_value( $data, $key, $min = null, $max = null ) {
+		if ( ! isset( $data[ $key ] ) || ! is_array( $data[ $key ] ) ) {
+			return false;
+		}
+
+		$prop = $data[ $key ];
+
+		if ( ! isset( $prop['$$type'] ) ) {
+			return false;
+		}
+
+		// Accept 'number' format
+		if ( 'number' === $prop['$$type'] ) {
+			return $this->is_valid_number_prop_in_range( $data, $key, $min, $max );
+		}
+
+		// Accept 'size' format
+		if ( 'size' === $prop['$$type'] ) {
+			return $this->is_valid_size_prop_in_range( $data, $key, $min, $max );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Validate size prop: {$$type: 'size', value: {size: X, unit: 'ms'}}
+	 */
+	private function is_valid_size_prop_in_range( $data, $key, $min = null, $max = null ) {
+		if ( ! isset( $data[ $key ] ) || ! is_array( $data[ $key ] ) ) {
+			return false;
+		}
+
+		$prop = $data[ $key ];
+
+		if ( ! isset( $prop['$$type'] ) || 'size' !== $prop['$$type'] ) {
+			return false;
+		}
+
+		if ( ! isset( $prop['value'] ) || ! is_array( $prop['value'] ) ) {
+			return false;
+		}
+
+		if ( ! isset( $prop['value']['size'] ) || ! is_numeric( $prop['value']['size'] ) ) {
+			return false;
+		}
+
+		$value = (float) $prop['value']['size'];
+
+		if ( null !== $min && $value < $min ) {
+			return false;
+		}
+
+		if ( null !== $max && $value > $max ) {
 			return false;
 		}
 
