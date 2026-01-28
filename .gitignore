@@ -53,3 +53,6 @@ tests/playwright/blob-report
 **/allure-results
 playwright-test-results
 **/.env
+
+# logs
+modules/css-converter/logs/

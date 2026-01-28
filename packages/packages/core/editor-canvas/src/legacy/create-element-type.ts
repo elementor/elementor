@@ -100,5 +100,29 @@ export function createElementViewClassDeclaration(): typeof ElementView {
 		getContextMenuGroups() {
 			return super.getContextMenuGroups().filter( ( group ) => group.name !== 'save' );
 		}
+
+		className() {
+			if ( this.isCssConverterWidget() ) {
+				return this.classesWithoutBaseClasses();
+			}
+			return super.className();
+		}
+
+		isCssConverterWidget(): boolean {
+			const editorSettings = this.model.get( 'editor_settings' ) || {};
+			return !! editorSettings?.css_converter_widget;
+		}
+
+		classesWithoutBaseClasses(): string {
+			const originalClasses = super.className();
+			const widgetType = this.model.get( 'widgetType' ) || this.model.get( 'elType' );
+			const baseClassName = `${ widgetType }-base`;
+			
+			return originalClasses
+				.split( ' ' )
+				.filter( className => className !== baseClassName )
+				.join( ' ' )
+				.trim();
+		}
 	};
 }

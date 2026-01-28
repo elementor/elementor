@@ -36,6 +36,7 @@ import { useErrorNavigation } from './hooks/use-error-navigation';
 import { useVariablesManagerState } from './hooks/use-variables-manager-state';
 import { SIZE, VariableManagerCreateMenu } from './variables-manager-create-menu';
 import { VariablesManagerTable } from './variables-manager-table';
+import { VariablesImportPanel } from './variables-import-panel';
 
 const id = 'variables-manager';
 
@@ -76,6 +77,9 @@ export function VariablesManagerPanel() {
 		setIsSaving,
 		setIsSaveDisabled,
 	} = useVariablesManagerState();
+
+	// Import UI state
+	const [ showImportUI, setShowImportUI ] = React.useState( false );
 
 	const { autoEditVariableId, startAutoEdit, handleAutoEditComplete } = useAutoEdit();
 	const { createNavigationCallback, resetNavigation } = useErrorNavigation();

@@ -14,6 +14,7 @@ use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Plugin;
 use Elementor\Stylesheet;
 use Elementor\Icons_Manager;
+use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Output_Optimizer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -77,6 +78,17 @@ abstract class Base extends Base_File {
 	 * @var Stylesheet
 	 */
 	protected $stylesheet_obj;
+
+	/**
+	 * CSS Output Optimizer.
+	 *
+	 * Holds the CSS optimizer instance for filtering empty rules.
+	 *
+	 * @access private
+	 *
+	 * @var Css_Output_Optimizer
+	 */
+	private $css_optimizer;
 
 	/**
 	 * Printed.
@@ -705,7 +717,13 @@ abstract class Base extends Base_File {
 
 		Performance::set_use_style_controls( false );
 
-		return $this->get_stylesheet()->__toString();
+		// Get the raw CSS output
+		$css_output = $this->get_stylesheet()->__toString();
+
+		// INTEGRATION POINT C: Optimize CSS output to remove empty rules
+		$css_output = $this->optimize_css_output( $css_output );
+
+		return $css_output;
 	}
 
 	/**
@@ -742,6 +760,112 @@ abstract class Base extends Base_File {
 	 * @param $control
 	 * @return string|null
 	 */
+	/**
+	 * Optimize CSS output.
+	 *
+	 * Remove empty CSS rules and fix broken values using the CSS Output Optimizer.
+	 *
+	 * @since 3.34.0
+	 * @access private
+	 *
+	 * @param string $css_output Raw CSS output.
+	 * @return string Optimized CSS output.
+	 */
+	private function optimize_css_output( $css_output ) {
+		if ( empty( $css_output ) ) {
+			return $css_output;
+		}
+
+		// Initialize CSS optimizer if not already done
+		if ( ! $this->css_optimizer ) {
+			// Check if the CSS converter module exists
+			$optimizer_file = ABSPATH . 'wp-content/plugins/elementor-css/modules/css-converter/services/css/processing/css-output-optimizer.php';
+			if ( file_exists( $optimizer_file ) ) {
+				require_once $optimizer_file;
+				$this->css_optimizer = new Css_Output_Optimizer();
+			}
+		}
+
+		// If optimizer is not available, return original CSS
+		if ( ! $this->css_optimizer ) {
+			return $css_output;
+		}
+
+		// Parse CSS into rules for optimization
+		$css_rules = $this->parse_css_string_to_rules( $css_output );
+
+		// Optimize the rules
+		$optimized_rules = $this->css_optimizer->optimize_css_output( $css_rules );
+
+		// Convert back to CSS string
+		return $this->convert_rules_to_css_string( $optimized_rules );
+	}
+
+	/**
+	 * Parse CSS string into rules array.
+	 *
+	 * @since 3.34.0
+	 * @access private
+	 *
+	 * @param string $css_string CSS string.
+	 * @return array CSS rules array.
+	 */
+	private function parse_css_string_to_rules( $css_string ) {
+		$rules = [];
+
+		// Simple regex to match CSS rules
+		preg_match_all( '/([^{}]+)\{([^{}]*)\}/', $css_string, $matches, PREG_SET_ORDER );
+
+		foreach ( $matches as $match ) {
+			$selector = trim( $match[1] );
+			$properties_string = trim( $match[2] );
+
+			// Parse properties
+			$properties = [];
+			if ( ! empty( $properties_string ) ) {
+				$property_pairs = explode( ';', $properties_string );
+				foreach ( $property_pairs as $pair ) {
+					$pair = trim( $pair );
+					if ( ! empty( $pair ) && strpos( $pair, ':' ) !== false ) {
+						list( $property, $value ) = explode( ':', $pair, 2 );
+						$properties[ trim( $property ) ] = trim( $value );
+					}
+				}
+			}
+
+			$rules[ $selector ] = $properties;
+		}
+
+		return $rules;
+	}
+
+	/**
+	 * Convert rules array back to CSS string.
+	 *
+	 * @since 3.34.0
+	 * @access private
+	 *
+	 * @param array $rules CSS rules array.
+	 * @return string CSS string.
+	 */
+	private function convert_rules_to_css_string( $rules ) {
+		$css_output = '';
+
+		foreach ( $rules as $selector => $properties ) {
+			if ( empty( $properties ) ) {
+				continue; // Skip empty rules
+			}
+
+			$css_output .= $selector . '{';
+			foreach ( $properties as $property => $value ) {
+				$css_output .= $property . ':' . $value . ';';
+			}
+			$css_output .= '}';
+		}
+
+		return $css_output;
+	}
+
 	private function get_control_global_default_value( $control ) {
 		if ( empty( $control['global']['default'] ) ) {
 			return null;
