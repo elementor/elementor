@@ -103,12 +103,18 @@ class Template_Library_Variables_Snapshot_Builder {
 	public static function merge_snapshot_and_get_id_map( array $snapshot ): array {
 		$repository = self::get_repository_or_null();
 		if ( ! $repository ) {
-			return [ 'id_map' => [], 'ids_to_flatten' => [] ];
+			return [
+				'id_map' => [],
+				'ids_to_flatten' => [],
+			];
 		}
 
 		$incoming_data = $snapshot['data'] ?? [];
 		if ( empty( $incoming_data ) ) {
-			return [ 'id_map' => [], 'ids_to_flatten' => [] ];
+			return [
+				'id_map' => [],
+				'ids_to_flatten' => [],
+			];
 		}
 
 		$current_data = self::load_repository_data( $repository );
@@ -174,12 +180,18 @@ class Template_Library_Variables_Snapshot_Builder {
 	public static function create_all_as_new( array $snapshot ): array {
 		$repository = self::get_repository_or_null();
 		if ( ! $repository ) {
-			return [ 'id_map' => [], 'ids_to_flatten' => [] ];
+			return [
+				'id_map' => [],
+				'ids_to_flatten' => [],
+			];
 		}
 
 		$incoming_data = $snapshot['data'] ?? [];
 		if ( empty( $incoming_data ) ) {
-			return [ 'id_map' => [], 'ids_to_flatten' => [] ];
+			return [
+				'id_map' => [],
+				'ids_to_flatten' => [],
+			];
 		}
 
 		$current_data = self::load_repository_data( $repository );

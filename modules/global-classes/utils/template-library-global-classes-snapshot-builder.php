@@ -81,12 +81,18 @@ class Template_Library_Global_Classes_Snapshot_Builder {
 
 	public static function merge_snapshot_and_get_id_map( array $snapshot ): array {
 		if ( ! self::can_access_repository() ) {
-			return [ 'id_map' => [], 'ids_to_flatten' => [] ];
+			return [
+				'id_map' => [],
+				'ids_to_flatten' => [],
+			];
 		}
 
 		$snapshot = self::parse_snapshot_or_null( $snapshot );
 		if ( null === $snapshot ) {
-			return [ 'id_map' => [], 'ids_to_flatten' => [] ];
+			return [
+				'id_map' => [],
+				'ids_to_flatten' => [],
+			];
 		}
 
 		$current = self::get_repository_data();
@@ -148,12 +154,18 @@ class Template_Library_Global_Classes_Snapshot_Builder {
 
 	public static function create_all_as_new( array $snapshot ): array {
 		if ( ! self::can_access_repository() ) {
-			return [ 'id_map' => [], 'ids_to_flatten' => [] ];
+			return [
+				'id_map' => [],
+				'ids_to_flatten' => [],
+			];
 		}
 
 		$snapshot = self::parse_snapshot_or_null( $snapshot );
 		if ( null === $snapshot ) {
-			return [ 'id_map' => [], 'ids_to_flatten' => [] ];
+			return [
+				'id_map' => [],
+				'ids_to_flatten' => [],
+			];
 		}
 
 		$current = self::get_repository_data();
