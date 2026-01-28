@@ -1,5 +1,7 @@
 export function showGlobalStylesDialog() {
 	return new Promise( ( resolve, reject ) => {
+		let settled = false;
+
 		const dialog = elementorCommon.dialogsManager.createWidget( 'lightbox', {
 			id: 'elementor-global-styles-dialog',
 			headerMessage: '',
@@ -12,9 +14,30 @@ export function showGlobalStylesDialog() {
 				onBackgroundClick: false,
 			},
 			onShow: () => {
-				setupDialogEventListeners( dialog, resolve, reject );
+				setupDialogEventListeners( dialog, ( payload ) => {
+					if ( settled ) {
+						return;
+					}
+
+					settled = true;
+					resolve( payload );
+					dialog.hide();
+				}, ( error ) => {
+					if ( settled ) {
+						return;
+					}
+
+					settled = true;
+					reject( error );
+					dialog.hide();
+				} );
 			},
 			onHide: () => {
+				if ( settled ) {
+					return;
+				}
+
+				settled = true;
 				reject( new Error( 'Dialog closed' ) );
 			},
 		} );
@@ -32,15 +55,15 @@ function setupDialogEventListeners( dialog, resolve, reject ) {
 	const $insertBtn = $content.find( '#elementor-global-styles-insert' );
 	const $cancelBtn = $content.find( '#elementor-global-styles-cancel' );
 
-	$matchRadio.on( 'change', () => {
+	$matchRadio.off( '.elementorGlobalStyles' ).on( 'change.elementorGlobalStyles', () => {
 		$checkboxContainer.hide();
 	} );
 
-	$keepRadio.on( 'change', () => {
+	$keepRadio.off( '.elementorGlobalStyles' ).on( 'change.elementorGlobalStyles', () => {
 		$checkboxContainer.show();
 	} );
 
-	$insertBtn.on( 'click', () => {
+	$insertBtn.off( '.elementorGlobalStyles' ).on( 'click.elementorGlobalStyles', () => {
 		let mode;
 
 		if ( $matchRadio.is( ':checked' ) ) {
@@ -51,12 +74,10 @@ function setupDialogEventListeners( dialog, resolve, reject ) {
 			mode = 'keep_flatten';
 		}
 
-		dialog.hide();
 		resolve( { mode } );
 	} );
 
-	$cancelBtn.on( 'click', () => {
-		dialog.hide();
+	$cancelBtn.off( '.elementorGlobalStyles' ).on( 'click.elementorGlobalStyles', () => {
 		reject( new Error( 'User cancelled' ) );
 	} );
 }

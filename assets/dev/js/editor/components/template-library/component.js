@@ -194,7 +194,6 @@ export default class Component extends ComponentModalBase {
 				if ( this.manager.hasGlobalStyles( data ) ) {
 					try {
 						const { mode } = await showGlobalStylesDialog();
-						importOptions.importMode = mode;
 
 						this.manager.layout.showLoadingView();
 
@@ -216,6 +215,15 @@ export default class Component extends ComponentModalBase {
 								...data,
 								content: result.content,
 							};
+
+							if ( result.updated_global_classes || result.updated_global_variables ) {
+								window.dispatchEvent( new CustomEvent( 'elementor/global-styles/imported', {
+									detail: {
+										global_classes: result.updated_global_classes,
+										global_variables: result.updated_global_variables,
+									},
+								} ) );
+							}
 						} catch ( ajaxError ) {
 							this.manager.showErrorDialog( ajaxError );
 							this.manager.layout.hideLoadingView();

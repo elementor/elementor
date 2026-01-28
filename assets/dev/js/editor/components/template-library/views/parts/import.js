@@ -90,7 +90,6 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 			IntroductionClass: window.elementorModules.editor.utils.Introduction,
 		} );
 
-		// Check for global styles in JSON files and show dialog if needed
 		if ( fileName.endsWith( '.json' ) ) {
 			try {
 				const jsonContent = JSON.parse( atob( fileData ) );
@@ -99,12 +98,10 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 						const { mode } = await showGlobalStylesDialog();
 						this.options.data.import_mode = mode;
 					} catch ( e ) {
-						// User cancelled the dialog
 						return;
 					}
 				}
 			} catch ( parseError ) {
-				// If parsing fails, continue without the dialog
 			}
 		}
 

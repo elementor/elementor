@@ -140,6 +140,7 @@ class Test_Global_Classes_Template_Bundle extends Elementor_Test_Base {
 
 		// Act.
 		$prepared = $this->get_local_source()->prepare_import_template_data( $tmp );
+		unlink( $tmp );
 
 		// Assert: content remapped away from g-123.
 		$this->assertIsArray( $prepared );
@@ -162,6 +163,157 @@ class Test_Global_Classes_Template_Bundle extends Elementor_Test_Base {
 		// The duplicated label should be auto-renamed.
 		$this->assertSame( 'Existing', $current['items']['g-123']['label'] );
 		$this->assertStringStartsWith( 'DUP_', $current['items'][ $new_id ]['label'] );
+	}
+
+	public function test_import_keep_flatten_replaces_global_class_with_local_style_and_preserves_variants_props() {
+		$this->act_as_admin();
+
+		$template_json = [
+			'content' => [
+				[
+					'id' => '1a02b300',
+					'elType' => 'container',
+					'settings' => [],
+					'elements' => [
+						[
+							'id' => '2819ab7c',
+							'elType' => 'container',
+							'isInner' => true,
+							'settings' => [],
+							'elements' => [
+								[
+									'id' => '66257faa',
+									'elType' => 'widget',
+									'widgetType' => 'e-heading',
+									'isInner' => false,
+									'settings' => [
+										'classes' => [
+											'$$type' => 'classes',
+											'value' => [
+												'g-0c98828',
+												'e-66257faa-0a6ca5b',
+											],
+										],
+									],
+									'elements' => [],
+									'styles' => [
+										'e-66257faa-0a6ca5b' => [
+											'id' => 'e-66257faa-0a6ca5b',
+											'label' => 'local',
+											'type' => 'class',
+											'variants' => [
+												[
+													'meta' => [
+														'breakpoint' => 'desktop',
+														'state' => null,
+													],
+													'props' => [
+														'font-family' => [
+															'$$type' => 'global-font-variable',
+															'value' => 'e-gv-3c8270e',
+														],
+													],
+													'custom_css' => null,
+												],
+											],
+										],
+									],
+								],
+								[
+									'id' => '507ee1cf',
+									'elType' => 'widget',
+									'widgetType' => 'e-heading',
+									'isInner' => false,
+									'settings' => [
+										'classes' => [
+											'$$type' => 'classes',
+											'value' => [
+												'g-0c98828',
+											],
+										],
+									],
+									'elements' => [],
+									'styles' => [],
+								],
+							],
+						],
+					],
+				],
+			],
+			'page_settings' => [],
+			'title' => 'export testing',
+			'type' => 'page',
+			'global_classes' => [
+				'items' => [
+					'g-0c98828' => [
+						'id' => 'g-0c98828',
+						'type' => 'class',
+						'label' => 'heading',
+						'variants' => [
+							[
+								'meta' => [
+									'breakpoint' => 'desktop',
+									'state' => null,
+								],
+								'props' => [
+									'font-family' => [
+										'$$type' => 'global-font-variable',
+										'value' => 'e-gv-3c8270e',
+									],
+									'background' => [
+										'$$type' => 'background',
+										'value' => [
+											'color' => [
+												'$$type' => 'global-color-variable',
+												'value' => 'e-gv-29a8784',
+											],
+										],
+									],
+								],
+								'custom_css' => null,
+							],
+						],
+					],
+				],
+				'order' => [ 'g-0c98828' ],
+			],
+		];
+
+		$tmp = wp_tempnam( 'elementor-template' );
+		file_put_contents( $tmp, wp_json_encode( $template_json ) );
+
+		$prepared = $this->get_local_source()->prepare_import_template_data( $tmp, 'keep_flatten' );
+		unlink( $tmp );
+
+		$widgets = $prepared['content'][0]['elements'][0]['elements'];
+		$first = $widgets[0];
+		$second = $widgets[1];
+
+		$this->assertNotContains( 'g-0c98828', $first['settings']['classes']['value'] );
+		$this->assertContains( 'e-66257faa-0a6ca5b', $first['settings']['classes']['value'] );
+
+		$new_first_ids = array_values( array_diff( $first['settings']['classes']['value'], [ 'e-66257faa-0a6ca5b' ] ) );
+		$this->assertCount( 1, $new_first_ids );
+		$new_first_id = $new_first_ids[0];
+
+		$this->assertStringStartsWith( 'e-', $new_first_id );
+		$this->assertArrayHasKey( $new_first_id, $first['styles'] );
+
+		$flattened_first = $first['styles'][ $new_first_id ];
+		$this->assertSame( 'class', $flattened_first['type'] );
+		$this->assertSame( 'heading', $flattened_first['label'] );
+		$this->assertNotEmpty( $flattened_first['variants'] );
+
+		$props = $flattened_first['variants'][0]['props'];
+		$this->assertArrayHasKey( 'font-family', $props );
+		$this->assertArrayHasKey( 'background', $props );
+
+		$this->assertNotContains( 'g-0c98828', $second['settings']['classes']['value'] );
+		$this->assertCount( 1, $second['settings']['classes']['value'] );
+
+		$new_second_id = $second['settings']['classes']['value'][0];
+		$this->assertStringStartsWith( 'e-', $new_second_id );
+		$this->assertArrayHasKey( $new_second_id, $second['styles'] );
 	}
 }
 

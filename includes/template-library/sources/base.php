@@ -450,7 +450,7 @@ abstract class Source_Base {
 	/**
 	 * @return array|\WP_Error
 	 */
-	public function import_template( $name, $path ) {
+	public function import_template( $name, $path, $import_mode = Template_Library_Import_Export_Utils::IMPORT_MODE_MATCH_SITE ) {
 		return new \WP_Error( 'template_error', 'This source does not support import' );
 	}
 
@@ -482,69 +482,17 @@ abstract class Source_Base {
 			$content
 		);
 
-		// Import embedded Global Classes (if present) based on import mode.
-		if (
-			! empty( $data['global_classes'] ) &&
-			is_array( $data['global_classes'] ) &&
-			Template_Library_Import_Export_Utils::is_classes_feature_active()
-		) {
+		$snapshot = null;
+		if ( ! empty( $data['global_classes'] ) && is_array( $data['global_classes'] ) && Template_Library_Import_Export_Utils::is_classes_feature_active() ) {
 			$snapshot = apply_filters( 'elementor/template_library/import/global_classes_snapshot', $data['global_classes'], $data );
-
-			switch ( $import_mode ) {
-				case 'keep_flatten':
-					$content = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::flatten_elements_classes( $content, $snapshot );
-					break;
-
-				case 'keep_create':
-					$create_result = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::create_all_as_new( $snapshot );
-					$id_map = $create_result['id_map'] ?? [];
-					if ( ! empty( $id_map ) ) {
-						$content = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::rewrite_elements_classes_ids( $content, $id_map );
-					}
-					break;
-
-				case 'match_site':
-				default:
-					$merge_result = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::merge_snapshot_and_get_id_map( $snapshot );
-					$id_map = $merge_result['id_map'] ?? [];
-					if ( ! empty( $id_map ) ) {
-						$content = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::rewrite_elements_classes_ids( $content, $id_map );
-					}
-					break;
-			}
 		}
 
-		// Import embedded Global Variables (if present) based on import mode.
-		if (
-			! empty( $data['global_variables'] ) &&
-			is_array( $data['global_variables'] ) &&
-			Template_Library_Import_Export_Utils::is_variables_feature_active()
-		) {
+		$variables_snapshot = null;
+		if ( ! empty( $data['global_variables'] ) && is_array( $data['global_variables'] ) && Template_Library_Import_Export_Utils::is_variables_feature_active() ) {
 			$variables_snapshot = apply_filters( 'elementor/template_library/import/global_variables_snapshot', $data['global_variables'], $data );
-
-			switch ( $import_mode ) {
-				case 'keep_flatten':
-					$content = \Elementor\Modules\Variables\Utils\Template_Library_Variables::flatten_elements_variables( $content, $variables_snapshot );
-					break;
-
-				case 'keep_create':
-					$create_result = \Elementor\Modules\Variables\Utils\Template_Library_Variables::create_all_as_new( $variables_snapshot );
-					$variables_id_map = $create_result['id_map'] ?? [];
-					if ( ! empty( $variables_id_map ) ) {
-						$content = \Elementor\Modules\Variables\Utils\Template_Library_Variables::rewrite_elements_variable_ids( $content, $variables_id_map );
-					}
-					break;
-
-				case 'match_site':
-				default:
-					$merge_result = \Elementor\Modules\Variables\Utils\Template_Library_Variables::merge_snapshot_and_get_id_map( $variables_snapshot );
-					$variables_id_map = $merge_result['id_map'] ?? [];
-					if ( ! empty( $variables_id_map ) ) {
-						$content = \Elementor\Modules\Variables\Utils\Template_Library_Variables::rewrite_elements_variable_ids( $content, $variables_id_map );
-					}
-					break;
-			}
 		}
+
+		$content = Template_Library_Import_Export_Utils::apply_import_mode_to_content( $content, $import_mode, $snapshot, $variables_snapshot );
 
 		$page_settings = [];
 

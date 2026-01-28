@@ -82,6 +82,14 @@ class Source_Cloud extends Source_Base {
 			$data['page_settings'] = $decoded_data['page_settings'];
 		}
 
+		if ( ! empty( $decoded_data['global_classes'] ) && Template_Library_Import_Export_Utils::is_classes_feature_active() ) {
+			$data['global_classes'] = $decoded_data['global_classes'];
+		}
+
+		if ( ! empty( $decoded_data['global_variables'] ) && Template_Library_Import_Export_Utils::is_variables_feature_active() ) {
+			$data['global_variables'] = $decoded_data['global_variables'];
+		}
+
 		// After the upload complete, set the elementor upload state back to false
 		Plugin::$instance->uploads_manager->set_elementor_upload_state( false );
 

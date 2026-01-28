@@ -11,6 +11,7 @@ import { __registerSlice as registerSlice } from '@elementor/store';
 import { ClassManagerButton } from './components/class-manager/class-manager-button';
 import { panel } from './components/class-manager/class-manager-panel';
 import { ConvertLocalClassToGlobalClass } from './components/convert-local-class-to-global-class';
+import { GlobalStylesImportListener } from './components/global-styles-import-listener';
 import { PopulateStore } from './components/populate-store';
 import { GLOBAL_CLASSES_PROVIDER_KEY, globalClassesStylesProvider } from './global-classes-styles-provider';
 import { PrefetchCssClassUsage } from './hooks/use-prefetch-css-class-usage';
@@ -32,6 +33,11 @@ export function init() {
 	injectIntoLogic( {
 		id: 'global-classes-sync-with-document',
 		component: SyncWithDocumentSave,
+	} );
+
+	injectIntoLogic( {
+		id: 'global-classes-import-listener',
+		component: GlobalStylesImportListener,
 	} );
 
 	injectIntoLogic( {

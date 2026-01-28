@@ -691,64 +691,68 @@ class Manager {
 			return $validate_args;
 		}
 
-		$content = is_string( $args['content'] ) ? json_decode( $args['content'], true ) : $args['content'];
-		$import_mode = $args['import_mode'] ?? 'match_site';
-		$global_classes = isset( $args['global_classes'] ) ? ( is_string( $args['global_classes'] ) ? json_decode( $args['global_classes'], true ) : $args['global_classes'] ) : null;
-		$global_variables = isset( $args['global_variables'] ) ? ( is_string( $args['global_variables'] ) ? json_decode( $args['global_variables'], true ) : $args['global_variables'] ) : null;
+		$import_mode = Template_Library_Import_Export_Utils::sanitize_import_mode( $args['import_mode'] );
 
-		if ( ! empty( $global_classes ) && is_array( $global_classes ) && Template_Library_Import_Export_Utils::is_classes_feature_active() ) {
-			switch ( $import_mode ) {
-				case 'keep_flatten':
-					$content = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::flatten_elements_classes( $content, $global_classes );
-					break;
+		if ( is_string( $args['content'] ) ) {
+			$content = json_decode( $args['content'], true );
+			if ( JSON_ERROR_NONE !== json_last_error() ) {
+				return new \WP_Error( 'invalid_json', 'Invalid JSON content.' );
+			}
+		} else {
+			$content = $args['content'];
+		}
 
-				case 'keep_create':
-					$create_result = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::create_all_as_new( $global_classes );
-					$id_map = $create_result['id_map'] ?? [];
-					if ( ! empty( $id_map ) ) {
-						$content = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::rewrite_elements_classes_ids( $content, $id_map );
-					}
-					break;
+		if ( ! is_array( $content ) ) {
+			return new \WP_Error( 'invalid_content', 'Invalid template content.' );
+		}
 
-				case 'match_site':
-				default:
-					$merge_result = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::merge_snapshot_and_get_id_map( $global_classes );
-					$id_map = $merge_result['id_map'] ?? [];
-					if ( ! empty( $id_map ) ) {
-						$content = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::rewrite_elements_classes_ids( $content, $id_map );
-					}
-					break;
+		$global_classes = null;
+		if ( array_key_exists( 'global_classes', $args ) && null !== $args['global_classes'] && '' !== $args['global_classes'] ) {
+			if ( is_string( $args['global_classes'] ) ) {
+				$global_classes = json_decode( $args['global_classes'], true );
+				if ( JSON_ERROR_NONE !== json_last_error() ) {
+					return new \WP_Error( 'invalid_global_classes', 'Invalid global classes snapshot.' );
+				}
+			} else {
+				$global_classes = $args['global_classes'];
+			}
+
+			if ( null !== $global_classes && ! is_array( $global_classes ) ) {
+				return new \WP_Error( 'invalid_global_classes', 'Invalid global classes snapshot.' );
 			}
 		}
 
-		if ( ! empty( $global_variables ) && is_array( $global_variables ) && Template_Library_Import_Export_Utils::is_variables_feature_active() ) {
-			switch ( $import_mode ) {
-				case 'keep_flatten':
-					$content = \Elementor\Modules\Variables\Utils\Template_Library_Variables::flatten_elements_variables( $content, $global_variables );
-					break;
+		$global_variables = null;
+		if ( array_key_exists( 'global_variables', $args ) && null !== $args['global_variables'] && '' !== $args['global_variables'] ) {
+			if ( is_string( $args['global_variables'] ) ) {
+				$global_variables = json_decode( $args['global_variables'], true );
+				if ( JSON_ERROR_NONE !== json_last_error() ) {
+					return new \WP_Error( 'invalid_global_variables', 'Invalid global variables snapshot.' );
+				}
+			} else {
+				$global_variables = $args['global_variables'];
+			}
 
-				case 'keep_create':
-					$create_result = \Elementor\Modules\Variables\Utils\Template_Library_Variables::create_all_as_new( $global_variables );
-					$variables_id_map = $create_result['id_map'] ?? [];
-					if ( ! empty( $variables_id_map ) ) {
-						$content = \Elementor\Modules\Variables\Utils\Template_Library_Variables::rewrite_elements_variable_ids( $content, $variables_id_map );
-					}
-					break;
-
-				case 'match_site':
-				default:
-					$merge_result = \Elementor\Modules\Variables\Utils\Template_Library_Variables::merge_snapshot_and_get_id_map( $global_variables );
-					$variables_id_map = $merge_result['id_map'] ?? [];
-					if ( ! empty( $variables_id_map ) ) {
-						$content = \Elementor\Modules\Variables\Utils\Template_Library_Variables::rewrite_elements_variable_ids( $content, $variables_id_map );
-					}
-					break;
+			if ( null !== $global_variables && ! is_array( $global_variables ) ) {
+				return new \WP_Error( 'invalid_global_variables', 'Invalid global variables snapshot.' );
 			}
 		}
 
-		return [
-			'content' => $content,
+		$result = Template_Library_Import_Export_Utils::apply_import_mode_to_content( $content, $import_mode, $global_classes, $global_variables );
+
+		$response = [
+			'content' => $result['content'],
 		];
+
+		if ( ! empty( $result['updated_global_classes'] ) ) {
+			$response['updated_global_classes'] = $result['updated_global_classes'];
+		}
+
+		if ( ! empty( $result['updated_global_variables'] ) ) {
+			$response['updated_global_variables'] = $result['updated_global_variables'];
+		}
+
+		return $response;
 	}
 
 	public function get_item_children( array $args ) {
@@ -1134,13 +1138,13 @@ class Manager {
 		$bulk_args = $from_source->format_args_for_bulk_action( $args );
 
 		if ( $source->supports_quota() && ! $this->is_action_to_same_source( $args ) ) {
-			$is_quota_valid = $source->validate_quota( $bulk_args );
+			$quota_validation = $source->validate_quota( $bulk_args );
 
-			if ( is_wp_error( $is_quota_valid ) ) {
-				return $is_quota_valid;
+			if ( is_wp_error( $quota_validation ) ) {
+				return $quota_validation;
 			}
 
-			if ( ! $is_quota_valid ) {
+			if ( false === $quota_validation ) {
 				return new \WP_Error( 'quota_error', 'The moving failed because it will pass the maximum templates you can save.' );
 			}
 		}
@@ -1185,13 +1189,13 @@ class Manager {
 		$bulk_args = $from_source->format_args_for_bulk_action( $args );
 
 		if ( $source->supports_quota() && ! $this->is_action_to_same_source( $args ) ) {
-			$is_quota_valid = $source->validate_quota( $bulk_args );
+			$quota_validation = $source->validate_quota( $bulk_args );
 
-			if ( is_wp_error( $is_quota_valid ) ) {
-				return $is_quota_valid;
+			if ( is_wp_error( $quota_validation ) ) {
+				return $quota_validation;
 			}
 
-			if ( ! $is_quota_valid ) {
+			if ( false === $quota_validation ) {
 				return new \WP_Error( 'quota_error', 'The copying failed because it will pass the maximum templates you can save.' );
 			}
 		}
