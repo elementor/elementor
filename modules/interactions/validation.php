@@ -66,7 +66,6 @@ class Validation {
 
 	private function decode_interactions( $interactions ) {
 		if ( is_array( $interactions ) ) {
-			// Handle v2 wrapped format
 			if ( isset( $interactions['items']['$$type'] ) && Adapter::ITEMS_TYPE === $interactions['items']['$$type'] ) {
 				return isset( $interactions['items']['value'] ) ? $interactions['items']['value'] : [];
 			}
@@ -76,7 +75,6 @@ class Validation {
 		if ( is_string( $interactions ) ) {
 			$decoded = json_decode( $interactions, true );
 			if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
-				// Handle v2 wrapped format
 				if ( isset( $decoded['items']['$$type'] ) && Adapter::ITEMS_TYPE === $decoded['items']['$$type'] ) {
 					return isset( $decoded['items']['value'] ) ? $decoded['items']['value'] : [];
 				}
@@ -346,7 +344,7 @@ class Validation {
 	 * - number format: {$$type: 'number', value: 123}
 	 * - size format: {$$type: 'size', value: {size: 123, unit: 'ms'}}
 	 */
-	private function is_valid_timing_value( $data, $key, $min = null ) {
+	private function is_valid_timing_value( $data, $key, $min = null, $max = null ) {
 		if ( ! isset( $data[ $key ] ) || ! is_array( $data[ $key ] ) ) {
 			return false;
 		}
