@@ -3,6 +3,7 @@ namespace Elementor\TemplateLibrary;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Exceptions;
+use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
 use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
 use Elementor\Modules\CloudLibrary\Documents\Cloud_Template_Preview;
 use Elementor\Plugin;
@@ -109,7 +110,7 @@ class Source_Cloud extends Source_Base {
 
 		// Embed Global Classes snapshot (only if used by the template).
 		if (
-			class_exists( \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::class ) &&
+			Template_Library_Import_Export_Utils::is_classes_feature_active() &&
 			is_array( $template_data['content'] ?? null )
 		) {
 			$snapshot = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::build_snapshot_for_elements( $template_data['content'] );
@@ -137,7 +138,7 @@ class Source_Cloud extends Source_Base {
 
 		// Embed Global Variables snapshot (only if used by the template or global classes).
 		if (
-			class_exists( \Elementor\Modules\Variables\Utils\Template_Library_Variables::class ) &&
+			Template_Library_Import_Export_Utils::is_variables_feature_active() &&
 			is_array( $template_data['content'] ?? null )
 		) {
 			$global_classes_for_variables = $content_payload['global_classes'] ?? null;
@@ -250,7 +251,7 @@ class Source_Cloud extends Source_Base {
 		// Prefer snapshot stored in cloud content; fallback to current site snapshot.
 		$snapshot = $data['content']['global_classes'] ?? null;
 
-		if ( class_exists( \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::class ) ) {
+		if ( Template_Library_Import_Export_Utils::is_classes_feature_active() ) {
 			if ( empty( $snapshot ) && is_array( $export_data['content'] ?? null ) ) {
 				$snapshot = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::build_snapshot_for_elements( $export_data['content'] );
 			}
@@ -274,7 +275,7 @@ class Source_Cloud extends Source_Base {
 		// Prefer variables snapshot stored in cloud content; fallback to current site snapshot.
 		$variables_snapshot = $data['content']['global_variables'] ?? null;
 
-		if ( class_exists( \Elementor\Modules\Variables\Utils\Template_Library_Variables::class ) ) {
+		if ( Template_Library_Import_Export_Utils::is_variables_feature_active() ) {
 			if ( empty( $variables_snapshot ) && is_array( $export_data['content'] ?? null ) ) {
 				$global_classes_for_variables = $export_data['global_classes'] ?? null;
 				$variables_snapshot = \Elementor\Modules\Variables\Utils\Template_Library_Variables::build_snapshot_for_elements( $export_data['content'], $global_classes_for_variables );

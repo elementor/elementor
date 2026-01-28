@@ -2,6 +2,11 @@
 
 namespace Elementor\Core\Utils;
 
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
+use Elementor\Modules\GlobalClasses\Module as Global_Classes_Module;
+use Elementor\Modules\Variables\Module as Variables_Module;
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -85,5 +90,15 @@ class Template_Library_Import_Export_Utils {
 		}
 
 		return $new_label;
+	}
+
+	public static function is_classes_feature_active(): bool {
+		return Plugin::instance()->experiments->is_feature_active( Global_Classes_Module::NAME )
+			&& Plugin::instance()->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME );
+	}
+
+	public static function is_variables_feature_active(): bool {
+		return Plugin::instance()->experiments->is_feature_active( Variables_Module::EXPERIMENT_NAME )
+			&& Plugin::instance()->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME );
 	}
 }

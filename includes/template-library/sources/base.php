@@ -3,6 +3,7 @@ namespace Elementor\TemplateLibrary;
 
 use Elementor\Controls_Stack;
 use Elementor\Core\Settings\Page\Model;
+use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -485,7 +486,7 @@ abstract class Source_Base {
 		if (
 			! empty( $data['global_classes'] ) &&
 			is_array( $data['global_classes'] ) &&
-			class_exists( \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::class )
+			Template_Library_Import_Export_Utils::is_classes_feature_active()
 		) {
 			$snapshot = apply_filters( 'elementor/template_library/import/global_classes_snapshot', $data['global_classes'], $data );
 
@@ -517,7 +518,7 @@ abstract class Source_Base {
 		if (
 			! empty( $data['global_variables'] ) &&
 			is_array( $data['global_variables'] ) &&
-			class_exists( \Elementor\Modules\Variables\Utils\Template_Library_Variables::class )
+			Template_Library_Import_Export_Utils::is_variables_feature_active()
 		) {
 			$variables_snapshot = apply_filters( 'elementor/template_library/import/global_variables_snapshot', $data['global_variables'], $data );
 

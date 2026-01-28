@@ -6,6 +6,7 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Includes\TemplateLibrary\Data\Controller;
 use Elementor\TemplateLibrary\Classes\Import_Images;
+use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
 use Elementor\Plugin;
 use Elementor\User;
 use Elementor\Utils;
@@ -695,7 +696,7 @@ class Manager {
 		$global_classes = isset( $args['global_classes'] ) ? ( is_string( $args['global_classes'] ) ? json_decode( $args['global_classes'], true ) : $args['global_classes'] ) : null;
 		$global_variables = isset( $args['global_variables'] ) ? ( is_string( $args['global_variables'] ) ? json_decode( $args['global_variables'], true ) : $args['global_variables'] ) : null;
 
-		if ( ! empty( $global_classes ) && is_array( $global_classes ) && class_exists( \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::class ) ) {
+		if ( ! empty( $global_classes ) && is_array( $global_classes ) && Template_Library_Import_Export_Utils::is_classes_feature_active() ) {
 			switch ( $import_mode ) {
 				case 'keep_flatten':
 					$content = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::flatten_elements_classes( $content, $global_classes );
@@ -720,7 +721,7 @@ class Manager {
 			}
 		}
 
-		if ( ! empty( $global_variables ) && is_array( $global_variables ) && class_exists( \Elementor\Modules\Variables\Utils\Template_Library_Variables::class ) ) {
+		if ( ! empty( $global_variables ) && is_array( $global_variables ) && Template_Library_Import_Export_Utils::is_variables_feature_active() ) {
 			switch ( $import_mode ) {
 				case 'keep_flatten':
 					$content = \Elementor\Modules\Variables\Utils\Template_Library_Variables::flatten_elements_variables( $content, $global_variables );
