@@ -167,8 +167,6 @@ trait Has_Template {
 		return null !== $value ? $value : $default;
 	}
 
-	 
-
 	protected function get_templates_contents() {
 		return array_map(
 			fn ( $path ) => Utils::file_get_contents( $path ),
