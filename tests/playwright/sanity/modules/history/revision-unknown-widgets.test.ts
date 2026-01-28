@@ -24,6 +24,7 @@ test.describe( 'Revision loading with unknown widgets @history', () => {
 		} );
 
 		const editor = await wpAdminPage.openNewPage();
+		const pageUrl = page.url();
 
 		await test.step( 'Create page with atomic and regular widgets', async () => {
 			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
@@ -47,7 +48,7 @@ test.describe( 'Revision loading with unknown widgets @history', () => {
 		} );
 
 		await test.step( 'Reload editor with experiment off', async () => {
-			await page.reload();
+			await page.goto( pageUrl );
 			await wpAdminPage.waitForPanel();
 			await wpAdminPage.closeAnnouncementsIfVisible();
 		} );
@@ -105,6 +106,53 @@ test.describe( 'Revision loading with unknown widgets @history', () => {
 
 			const containers = previewFrame.locator( '[data-element_type="container"]' );
 			await expect( containers.first() ).toBeVisible();
+		} );
+
+		await test.step( 'Reactivate atomic experiment', async () => {
+			await wpAdminPage.setExperiments( { e_atomic_elements: true } );
+		} );
+
+		await test.step( 'Reload editor with experiment on', async () => {
+			await page.goto( pageUrl );
+			await wpAdminPage.waitForPanel();
+			await wpAdminPage.closeAnnouncementsIfVisible();
+		} );
+
+		await test.step( 'Open revisions panel', async () => {
+			await page.evaluate( () => {
+				// @ts-expect-error - $e is a global variable in Elementor
+				$e.route( 'panel/history/revisions' );
+			} );
+
+			await page.waitForSelector( '#elementor-panel-revisions' );
+		} );
+
+		await test.step( 'Select first revision containing atomic widget', async () => {
+			const revisionTypeItems = page.locator( '.elementor-revision-item .elementor-revision-item__wrapper.revision' );
+			const revisionCount = await revisionTypeItems.count();
+			expect( revisionCount ).toBeGreaterThanOrEqual( 2 );
+
+			await revisionTypeItems.nth( 2 ).locator( '.elementor-revision-item__details' ).click();
+
+			await page.waitForSelector( '.elementor-revision-item-loading', { state: 'hidden', timeout: 30000 } );
+		} );
+
+		await test.step( 'Verify revision loads without breaking - Apply button is enabled', async () => {
+			const applyButton = page.locator( '.e-revision-save' );
+			await expect( applyButton ).toBeEnabled( { timeout: 10000 } );
+		} );
+
+		await test.step( 'Verify regular widgets still render correctly', async () => {
+			const previewFrame = editor.getPreviewFrame();
+
+			const buttonWidget = previewFrame.locator( '[data-widget_type="button.default"]' );
+			await expect( buttonWidget ).toBeVisible();
+		} );
+
+		await test.step( 'Verify atomic widgets are rendered', async () => {
+			const previewFrame = editor.getPreviewFrame();
+			const atomicHeading = previewFrame.locator( '[data-widget_type="e-heading.default"]' );
+			await expect( atomicHeading ).toHaveCount( 1 );
 		} );
 	} );
 } );
