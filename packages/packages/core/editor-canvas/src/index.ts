@@ -8,7 +8,14 @@ export {
 	createTemplatedElementView,
 	type CreateTemplatedElementTypeOptions,
 } from './legacy/create-templated-element-type';
-export { registerElementType } from './legacy/init-legacy-views';
+export {
+	canBeNestedTemplated,
+	createNestedTemplatedElementType,
+	createNestedTemplatedElementView,
+	type CreateNestedTemplatedElementTypeOptions,
+	type NestedTemplatedElementConfig,
+} from './legacy/create-nested-templated-element-type';
+export { registerElementType, registerModelExtensions } from './legacy/init-legacy-views';
 export * from './legacy/types';
 export { createPropsResolver, type PropsResolver } from './renderers/create-props-resolver';
 export { settingsTransformersRegistry } from './settings-transformers-registry';
