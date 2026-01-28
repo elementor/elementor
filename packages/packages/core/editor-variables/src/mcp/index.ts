@@ -4,7 +4,7 @@ import { initManageVariableTool } from './manage-variable-tool';
 import { initVariablesResource } from './variables-resource';
 
 export function initMcp() {
-	if ( !isAngieAvailable() ) {
+	if ( ! isAngieAvailable() ) {
 		return;
 	}
 	initManageVariableTool();
