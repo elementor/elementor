@@ -139,12 +139,12 @@ class Template_Library_Variables {
 	public static function merge_snapshot_and_get_id_map( array $snapshot ): array {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 		if ( ! $kit ) {
-			return [ 'id_map' => [] ];
+			return [ 'id_map' => [], 'ids_to_flatten' => [] ];
 		}
 
 		$incoming_data = $snapshot['data'] ?? [];
 		if ( empty( $incoming_data ) ) {
-			return [ 'id_map' => [] ];
+			return [ 'id_map' => [], 'ids_to_flatten' => [] ];
 		}
 
 		$repository = new Variables_Repository( $kit );
@@ -160,6 +160,7 @@ class Template_Library_Variables {
 		}
 
 		$id_map = [];
+		$ids_to_flatten = [];
 		$updated_variables = $current_variables;
 		$existing_ids = array_fill_keys( array_keys( $updated_variables ), true );
 
@@ -179,6 +180,11 @@ class Template_Library_Variables {
 
 				$target_id = Template_Library_Import_Export_Utils::generate_unique_id( array_keys( $updated_variables ), 'e-gv-' );
 				$id_map[ $incoming_id ] = $target_id;
+			}
+
+			if ( self::count_active_variables( $updated_variables ) >= Variables_Collection::TOTAL_VARIABLES_COUNT ) {
+				$ids_to_flatten[] = $incoming_id;
+				continue;
 			}
 
 			if ( isset( $incoming_variable['label'] ) && is_string( $incoming_variable['label'] ) && '' !== $incoming_variable['label'] ) {
@@ -206,11 +212,22 @@ class Template_Library_Variables {
 
 		return [
 			'id_map' => $id_map,
+			'ids_to_flatten' => $ids_to_flatten,
 			'variables' => [
 				'data' => $updated_variables,
 				'watermark' => $updated_collection->watermark(),
 			],
 		];
+	}
+
+	private static function count_active_variables( array $variables ): int {
+		$count = 0;
+		foreach ( $variables as $variable ) {
+			if ( empty( $variable['deleted'] ) ) {
+				++$count;
+			}
+		}
+		return $count;
 	}
 
 	public static function rewrite_elements_variable_ids( array $elements, array $id_map ): array {
@@ -257,7 +274,7 @@ class Template_Library_Variables {
 		return $data;
 	}
 
-	public static function flatten_elements_variables( array $elements, array $global_variables ): array {
+	public static function flatten_elements_variables( array $elements, array $global_variables, ?array $only_ids = null ): array {
 		$variable_data = $global_variables['data'] ?? [];
 
 		if ( empty( $elements ) || empty( $variable_data ) ) {
@@ -265,16 +282,17 @@ class Template_Library_Variables {
 		}
 
 		$variable_types = self::get_variable_types();
+		$ids_to_flatten = null !== $only_ids ? array_fill_keys( $only_ids, true ) : null;
 
 		return Plugin::$instance->db->iterate_data(
 			$elements,
-			function ( $element_data ) use ( $variable_data, $variable_types ) {
+			function ( $element_data ) use ( $variable_data, $variable_types, $ids_to_flatten ) {
 				if ( ! empty( $element_data['settings'] ) && is_array( $element_data['settings'] ) ) {
-					$element_data['settings'] = self::flatten_variable_refs_recursive( $element_data['settings'], $variable_data, $variable_types );
+					$element_data['settings'] = self::flatten_variable_refs_recursive( $element_data['settings'], $variable_data, $variable_types, $ids_to_flatten );
 				}
 
 				if ( ! empty( $element_data['styles'] ) && is_array( $element_data['styles'] ) ) {
-					$element_data['styles'] = self::flatten_variable_refs_recursive( $element_data['styles'], $variable_data, $variable_types );
+					$element_data['styles'] = self::flatten_variable_refs_recursive( $element_data['styles'], $variable_data, $variable_types, $ids_to_flatten );
 				}
 
 				return $element_data;
@@ -282,7 +300,7 @@ class Template_Library_Variables {
 		);
 	}
 
-	private static function flatten_variable_refs_recursive( $data, array $variable_data, array $variable_types ) {
+	private static function flatten_variable_refs_recursive( $data, array $variable_data, array $variable_types, ?array $ids_to_flatten = null ) {
 		if ( ! is_array( $data ) ) {
 			return $data;
 		}
@@ -291,6 +309,10 @@ class Template_Library_Variables {
 			$var_id = $data['value'] ?? null;
 
 			if ( is_string( $var_id ) && isset( $variable_data[ $var_id ] ) ) {
+				if ( null !== $ids_to_flatten && ! isset( $ids_to_flatten[ $var_id ] ) ) {
+					return $data;
+				}
+
 				$variable = $variable_data[ $var_id ];
 				$resolved_value = $variable['value'] ?? null;
 				$resolved_type = self::get_resolved_type( $data['$$type'] );
@@ -308,7 +330,7 @@ class Template_Library_Variables {
 
 		foreach ( $data as $key => $value ) {
 			if ( is_array( $value ) ) {
-				$data[ $key ] = self::flatten_variable_refs_recursive( $value, $variable_data, $variable_types );
+				$data[ $key ] = self::flatten_variable_refs_recursive( $value, $variable_data, $variable_types, $ids_to_flatten );
 			}
 		}
 
@@ -329,12 +351,12 @@ class Template_Library_Variables {
 	public static function create_all_as_new( array $snapshot ): array {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 		if ( ! $kit ) {
-			return [ 'id_map' => [] ];
+			return [ 'id_map' => [], 'ids_to_flatten' => [] ];
 		}
 
 		$incoming_data = $snapshot['data'] ?? [];
 		if ( empty( $incoming_data ) ) {
-			return [ 'id_map' => [] ];
+			return [ 'id_map' => [], 'ids_to_flatten' => [] ];
 		}
 
 		$repository = new Variables_Repository( $kit );
@@ -350,10 +372,16 @@ class Template_Library_Variables {
 		}
 
 		$id_map = [];
+		$ids_to_flatten = [];
 		$updated_variables = $current_variables;
 
 		foreach ( $incoming_data as $incoming_id => $incoming_variable ) {
 			if ( empty( $incoming_variable ) ) {
+				continue;
+			}
+
+			if ( self::count_active_variables( $updated_variables ) >= Variables_Collection::TOTAL_VARIABLES_COUNT ) {
+				$ids_to_flatten[] = $incoming_id;
 				continue;
 			}
 
@@ -384,6 +412,7 @@ class Template_Library_Variables {
 
 		return [
 			'id_map' => $id_map,
+			'ids_to_flatten' => $ids_to_flatten,
 			'variables' => [
 				'data' => $updated_variables,
 				'watermark' => $updated_collection->watermark(),

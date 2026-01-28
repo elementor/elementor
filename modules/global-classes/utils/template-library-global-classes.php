@@ -5,6 +5,7 @@ namespace Elementor\Modules\GlobalClasses\Utils;
 use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
 use Elementor\Modules\GlobalClasses\Global_Classes_Parser;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
+use Elementor\Modules\GlobalClasses\Global_Classes_Rest_Api;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Template_Library_Global_Classes {
+
 	public static function extract_used_class_ids_from_elements( array $elements ): array {
 		$ids = [];
 
@@ -112,17 +114,17 @@ class Template_Library_Global_Classes {
 
 	public static function merge_snapshot_and_get_id_map( array $snapshot ): array {
 		if ( ! class_exists( Global_Classes_Repository::class ) ) {
-			return [ 'id_map' => [] ];
+			return [ 'id_map' => [], 'ids_to_flatten' => [] ];
 		}
 
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 		if ( ! $kit ) {
-			return [ 'id_map' => [] ];
+			return [ 'id_map' => [], 'ids_to_flatten' => [] ];
 		}
 
 		$parse_result = Global_Classes_Parser::make()->parse( $snapshot );
 		if ( ! $parse_result->is_valid() ) {
-			return [ 'id_map' => [] ];
+			return [ 'id_map' => [], 'ids_to_flatten' => [] ];
 		}
 
 		$snapshot = $parse_result->unwrap();
@@ -139,6 +141,7 @@ class Template_Library_Global_Classes {
 		}
 
 		$id_map = [];
+		$ids_to_flatten = [];
 		$updated_items = $current_items;
 		$updated_order = $current_order;
 
@@ -161,6 +164,11 @@ class Template_Library_Global_Classes {
 
 				$target_id = Template_Library_Import_Export_Utils::generate_unique_id( array_keys( $updated_items ), 'g-' );
 				$id_map[ $incoming_id ] = $target_id;
+			}
+
+			if ( count( $updated_items ) >= Global_Classes_Rest_Api::MAX_ITEMS ) {
+				$ids_to_flatten[] = $incoming_id;
+				continue;
 			}
 
 			$incoming_item['id'] = $target_id;
@@ -188,6 +196,7 @@ class Template_Library_Global_Classes {
 
 		return [
 			'id_map' => $id_map,
+			'ids_to_flatten' => $ids_to_flatten,
 			'global_classes' => [
 				'items' => $updated_items,
 				'order' => $updated_order,
@@ -226,16 +235,18 @@ class Template_Library_Global_Classes {
 		);
 	}
 
-	public static function flatten_elements_classes( array $elements, array $global_classes ): array {
+	public static function flatten_elements_classes( array $elements, array $global_classes, ?array $only_ids = null ): array {
 		$items = $global_classes['items'] ?? [];
 
 		if ( empty( $elements ) || empty( $items ) ) {
 			return $elements;
 		}
 
+		$ids_to_flatten = null !== $only_ids ? array_fill_keys( $only_ids, true ) : null;
+
 		return Plugin::$instance->db->iterate_data(
 			$elements,
-			function ( $element_data ) use ( $items ) {
+			function ( $element_data ) use ( $items, $ids_to_flatten ) {
 				$class_values = $element_data['settings']['classes']['value'] ?? null;
 
 				if ( ! is_array( $class_values ) || empty( $class_values ) ) {
@@ -256,6 +267,11 @@ class Template_Library_Global_Classes {
 					}
 
 					if ( ! isset( $items[ $class_id ] ) ) {
+						$updated_values[] = $class_id;
+						continue;
+					}
+
+					if ( null !== $ids_to_flatten && ! isset( $ids_to_flatten[ $class_id ] ) ) {
 						$updated_values[] = $class_id;
 						continue;
 					}
@@ -284,17 +300,17 @@ class Template_Library_Global_Classes {
 
 	public static function create_all_as_new( array $snapshot ): array {
 		if ( ! class_exists( Global_Classes_Repository::class ) ) {
-			return [ 'id_map' => [] ];
+			return [ 'id_map' => [], 'ids_to_flatten' => [] ];
 		}
 
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 		if ( ! $kit ) {
-			return [ 'id_map' => [] ];
+			return [ 'id_map' => [], 'ids_to_flatten' => [] ];
 		}
 
 		$parse_result = Global_Classes_Parser::make()->parse( $snapshot );
 		if ( ! $parse_result->is_valid() ) {
-			return [ 'id_map' => [] ];
+			return [ 'id_map' => [], 'ids_to_flatten' => [] ];
 		}
 
 		$snapshot = $parse_result->unwrap();
@@ -311,6 +327,7 @@ class Template_Library_Global_Classes {
 		}
 
 		$id_map = [];
+		$ids_to_flatten = [];
 		$updated_items = $current_items;
 		$updated_order = $current_order;
 
@@ -320,6 +337,11 @@ class Template_Library_Global_Classes {
 			}
 
 			$incoming_item = $snapshot['items'][ $incoming_id ];
+
+			if ( count( $updated_items ) >= Global_Classes_Rest_Api::MAX_ITEMS ) {
+				$ids_to_flatten[] = $incoming_id;
+				continue;
+			}
 
 			$new_id = Template_Library_Import_Export_Utils::generate_unique_id( array_keys( $updated_items ), 'g-' );
 			$id_map[ $incoming_id ] = $new_id;
@@ -345,6 +367,7 @@ class Template_Library_Global_Classes {
 
 		return [
 			'id_map' => $id_map,
+			'ids_to_flatten' => $ids_to_flatten,
 			'global_classes' => [
 				'items' => $updated_items,
 				'order' => $updated_order,
