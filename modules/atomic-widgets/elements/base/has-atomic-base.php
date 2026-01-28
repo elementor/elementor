@@ -376,8 +376,8 @@ trait Has_Atomic_Base {
 
 		if ( is_array( $config ) ) {
 			$relative_to = $this->extract_prop_value( $config, 'relativeTo', 'viewport' );
-			$offset_top = Interactions_Adapter::extract_numeric_value( $config, 'offsetTop', 15 );
-			$offset_bottom = Interactions_Adapter::extract_numeric_value( $config, 'offsetBottom', 85 );
+			$offset_top = Interactions_Adapter::extract_numeric_value( $config['offsetTop'] ?? null, 15 );
+			$offset_bottom = Interactions_Adapter::extract_numeric_value( $config['offsetBottom'] ?? null, 85 );
 
 			$replay = $this->extract_prop_value( $config, 'replay', 0 );
 			if ( empty( $replay ) && 0 !== $replay && '0' !== $replay ) {

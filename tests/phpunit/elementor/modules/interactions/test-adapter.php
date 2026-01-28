@@ -14,7 +14,55 @@ class Test_Adapter extends TestCase {
 	/**
 	 * Create a v1 format interaction item with 'number' type timing values.
 	 */
-	private function create_v1_interaction_item( $duration = 300, $delay = 0 ) {
+	private function create_v1_interaction_item( $duration = 300, $delay = 0, $offset_top = null, $offset_bottom = null ) {
+		$animation_value = [
+			'effect' => [
+				'$$type' => 'string',
+				'value' => 'fade',
+			],
+			'type' => [
+				'$$type' => 'string',
+				'value' => 'in',
+			],
+			'direction' => [
+				'$$type' => 'string',
+				'value' => '',
+			],
+			'timing_config' => [
+				'$$type' => 'timing-config',
+				'value' => [
+					'duration' => [
+						'$$type' => 'number',
+						'value' => $duration,
+					],
+					'delay' => [
+						'$$type' => 'number',
+						'value' => $delay,
+					],
+				],
+			],
+		];
+
+		if ( null !== $offset_top || null !== $offset_bottom ) {
+			$config_value = [];
+			if ( null !== $offset_top ) {
+				$config_value['offsetTop'] = [
+					'$$type' => 'number',
+					'value' => $offset_top,
+				];
+			}
+			if ( null !== $offset_bottom ) {
+				$config_value['offsetBottom'] = [
+					'$$type' => 'number',
+					'value' => $offset_bottom,
+				];
+			}
+			$animation_value['config'] = [
+				'$$type' => 'config',
+				'value' => $config_value,
+			];
+		}
+
 		return [
 			'$$type' => 'interaction-item',
 			'value' => [
@@ -28,33 +76,7 @@ class Test_Adapter extends TestCase {
 				],
 				'animation' => [
 					'$$type' => 'animation-preset-props',
-					'value' => [
-						'effect' => [
-							'$$type' => 'string',
-							'value' => 'fade',
-						],
-						'type' => [
-							'$$type' => 'string',
-							'value' => 'in',
-						],
-						'direction' => [
-							'$$type' => 'string',
-							'value' => '',
-						],
-						'timing_config' => [
-							'$$type' => 'timing-config',
-							'value' => [
-								'duration' => [
-									'$$type' => 'number',
-									'value' => $duration,
-								],
-								'delay' => [
-									'$$type' => 'number',
-									'value' => $delay,
-								],
-							],
-						],
-					],
+					'value' => $animation_value,
 				],
 			],
 		];
@@ -63,7 +85,67 @@ class Test_Adapter extends TestCase {
 	/**
 	 * Create a v2 format interaction item with 'size' type timing values.
 	 */
-	private function create_v2_interaction_item( $duration = 300, $delay = 0 ) {
+	private function create_v2_interaction_item( $duration = 300, $delay = 0, $offset_top = null, $offset_bottom = null ) {
+		$animation_value = [
+			'effect' => [
+				'$$type' => 'string',
+				'value' => 'fade',
+			],
+			'type' => [
+				'$$type' => 'string',
+				'value' => 'in',
+			],
+			'direction' => [
+				'$$type' => 'string',
+				'value' => '',
+			],
+			'timing_config' => [
+				'$$type' => 'timing-config',
+				'value' => [
+					'duration' => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => $duration,
+							'unit' => 'ms',
+						],
+					],
+					'delay' => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => $delay,
+							'unit' => 'ms',
+						],
+					],
+				],
+			],
+		];
+
+		if ( null !== $offset_top || null !== $offset_bottom ) {
+			$config_value = [];
+			if ( null !== $offset_top ) {
+				$config_value['offsetTop'] = [
+					'$$type' => 'size',
+					'value' => [
+						'size' => $offset_top,
+						'unit' => '%',
+					],
+				];
+			}
+			if ( null !== $offset_bottom ) {
+				$config_value['offsetBottom'] = [
+					'$$type' => 'size',
+					'value' => [
+						'size' => $offset_bottom,
+						'unit' => '%',
+					],
+				];
+			}
+			$animation_value['config'] = [
+				'$$type' => 'config',
+				'value' => $config_value,
+			];
+		}
+
 		return [
 			'$$type' => 'interaction-item',
 			'value' => [
@@ -77,39 +159,7 @@ class Test_Adapter extends TestCase {
 				],
 				'animation' => [
 					'$$type' => 'animation-preset-props',
-					'value' => [
-						'effect' => [
-							'$$type' => 'string',
-							'value' => 'fade',
-						],
-						'type' => [
-							'$$type' => 'string',
-							'value' => 'in',
-						],
-						'direction' => [
-							'$$type' => 'string',
-							'value' => '',
-						],
-						'timing_config' => [
-							'$$type' => 'timing-config',
-							'value' => [
-								'duration' => [
-									'$$type' => 'size',
-									'value' => [
-										'size' => $duration,
-										'unit' => 'ms',
-									],
-								],
-								'delay' => [
-									'$$type' => 'size',
-									'value' => [
-										'size' => $delay,
-										'unit' => 'ms',
-									],
-								],
-							],
-						],
-					],
+					'value' => $animation_value,
 				],
 			],
 		];
@@ -223,6 +273,23 @@ class Test_Adapter extends TestCase {
 		$this->assertEquals( 300, $decoded['items']['value'][2]['value']['animation']['value']['timing_config']['value']['duration']['value']['size'] );
 	}
 
+	public function test_wrap_for_db__transforms_offset_number_to_size() {
+		$v1_input = $this->create_v1_interactions( [ $this->create_v1_interaction_item( 300, 0, 15, 85 ) ] );
+
+		$result = Adapter::wrap_for_db( $v1_input );
+		$decoded = json_decode( $result, true );
+
+		$config = $decoded['items']['value'][0]['value']['animation']['value']['config']['value'];
+
+		$this->assertEquals( 'size', $config['offsetTop']['$$type'] );
+		$this->assertEquals( 15, $config['offsetTop']['value']['size'] );
+		$this->assertEquals( '%', $config['offsetTop']['value']['unit'] );
+
+		$this->assertEquals( 'size', $config['offsetBottom']['$$type'] );
+		$this->assertEquals( 85, $config['offsetBottom']['value']['size'] );
+		$this->assertEquals( '%', $config['offsetBottom']['value']['unit'] );
+	}
+
 	// =========================================================================
 	// unwrap_for_frontend() Tests
 	// =========================================================================
@@ -296,6 +363,21 @@ class Test_Adapter extends TestCase {
 		$this->assertEquals( 100, $decoded['items'][0]['value']['animation']['value']['timing_config']['value']['duration']['value'] );
 		$this->assertEquals( 200, $decoded['items'][1]['value']['animation']['value']['timing_config']['value']['duration']['value'] );
 		$this->assertEquals( 300, $decoded['items'][2]['value']['animation']['value']['timing_config']['value']['duration']['value'] );
+	}
+
+	public function test_unwrap_for_frontend__transforms_offset_size_to_number() {
+		$v2_input = $this->create_v2_interactions( [ $this->create_v2_interaction_item( 300, 0, 15, 85 ) ] );
+
+		$result = Adapter::unwrap_for_frontend( $v2_input );
+		$decoded = json_decode( $result, true );
+
+		$config = $decoded['items'][0]['value']['animation']['value']['config']['value'];
+
+		$this->assertEquals( 'number', $config['offsetTop']['$$type'] );
+		$this->assertEquals( 15, $config['offsetTop']['value'] );
+
+		$this->assertEquals( 'number', $config['offsetBottom']['$$type'] );
+		$this->assertEquals( 85, $config['offsetBottom']['value'] );
 	}
 
 	// =========================================================================
@@ -537,98 +619,5 @@ class Test_Adapter extends TestCase {
 		$this->assertEquals( 1, Adapter::VERSION_V1 );
 		$this->assertEquals( 2, Adapter::VERSION_V2 );
 		$this->assertEquals( 'interactions-array', Adapter::ITEMS_TYPE );
-	}
-
-	// =========================================================================
-	// extract_size_value() Tests
-	// =========================================================================
-
-	public function test_extract_size_value__extracts_size_from_valid_prop() {
-		$prop = [
-			'$$type' => 'size',
-			'value' => [
-				'size' => 300,
-				'unit' => 'ms',
-			],
-		];
-
-		$result = Adapter::extract_size_value( $prop );
-
-		$this->assertEquals( 300, $result );
-	}
-
-	public function test_extract_size_value__returns_null_for_non_size_type() {
-		$prop = [
-			'$$type' => 'number',
-			'value' => 500,
-		];
-
-		$result = Adapter::extract_size_value( $prop );
-
-		$this->assertNull( $result );
-	}
-
-	public function test_extract_size_value__returns_null_for_non_array() {
-		$result = Adapter::extract_size_value( 'not an array' );
-
-		$this->assertNull( $result );
-	}
-
-	public function test_extract_size_value__returns_null_for_null() {
-		$result = Adapter::extract_size_value( null );
-
-		$this->assertNull( $result );
-	}
-
-	public function test_extract_size_value__returns_null_for_missing_size_key() {
-		$prop = [
-			'$$type' => 'size',
-			'value' => [
-				'unit' => 'ms',
-			],
-		];
-
-		$result = Adapter::extract_size_value( $prop );
-
-		$this->assertNull( $result );
-	}
-
-	public function test_extract_size_value__returns_null_for_non_array_value() {
-		$prop = [
-			'$$type' => 'size',
-			'value' => 'not an array',
-		];
-
-		$result = Adapter::extract_size_value( $prop );
-
-		$this->assertNull( $result );
-	}
-
-	public function test_extract_size_value__handles_zero_value() {
-		$prop = [
-			'$$type' => 'size',
-			'value' => [
-				'size' => 0,
-				'unit' => 'ms',
-			],
-		];
-
-		$result = Adapter::extract_size_value( $prop );
-
-		$this->assertEquals( 0, $result );
-	}
-
-	public function test_extract_size_value__handles_float_value() {
-		$prop = [
-			'$$type' => 'size',
-			'value' => [
-				'size' => 150.5,
-				'unit' => 'ms',
-			],
-		];
-
-		$result = Adapter::extract_size_value( $prop );
-
-		$this->assertEquals( 150.5, $result );
 	}
 }

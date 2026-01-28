@@ -69,16 +69,25 @@ class Adapter {
 			}
 
 			$timing_config = $item['value']['animation']['value']['timing_config']['value'] ?? null;
-			if ( ! $timing_config ) {
-				continue;
+			if ( $timing_config ) {
+				if ( isset( $timing_config['duration'] ) && 'number' === ( $timing_config['duration']['$$type'] ?? null ) ) {
+					$item['value']['animation']['value']['timing_config']['value']['duration'] = self::number_to_size( $timing_config['duration'], 'ms' );
+				}
+
+				if ( isset( $timing_config['delay'] ) && 'number' === ( $timing_config['delay']['$$type'] ?? null ) ) {
+					$item['value']['animation']['value']['timing_config']['value']['delay'] = self::number_to_size( $timing_config['delay'], 'ms' );
+				}
 			}
 
-			if ( isset( $timing_config['duration'] ) && 'number' === ( $timing_config['duration']['$$type'] ?? null ) ) {
-				$item['value']['animation']['value']['timing_config']['value']['duration'] = self::number_to_size( $timing_config['duration'] );
-			}
+			$config = $item['value']['animation']['value']['config']['value'] ?? null;
+			if ( $config ) {
+				if ( isset( $config['offsetTop'] ) && 'number' === ( $config['offsetTop']['$$type'] ?? null ) ) {
+					$item['value']['animation']['value']['config']['value']['offsetTop'] = self::number_to_size( $config['offsetTop'], '%' );
+				}
 
-			if ( isset( $timing_config['delay'] ) && 'number' === ( $timing_config['delay']['$$type'] ?? null ) ) {
-				$item['value']['animation']['value']['timing_config']['value']['delay'] = self::number_to_size( $timing_config['delay'] );
+				if ( isset( $config['offsetBottom'] ) && 'number' === ( $config['offsetBottom']['$$type'] ?? null ) ) {
+					$item['value']['animation']['value']['config']['value']['offsetBottom'] = self::number_to_size( $config['offsetBottom'], '%' );
+				}
 			}
 		}
 
@@ -96,30 +105,39 @@ class Adapter {
 			}
 
 			$timing_config = $item['value']['animation']['value']['timing_config']['value'] ?? null;
-			if ( ! $timing_config ) {
-				continue;
+			if ( $timing_config ) {
+				if ( isset( $timing_config['duration'] ) && 'size' === ( $timing_config['duration']['$$type'] ?? null ) ) {
+					$item['value']['animation']['value']['timing_config']['value']['duration'] = self::size_to_number( $timing_config['duration'] );
+				}
+
+				if ( isset( $timing_config['delay'] ) && 'size' === ( $timing_config['delay']['$$type'] ?? null ) ) {
+					$item['value']['animation']['value']['timing_config']['value']['delay'] = self::size_to_number( $timing_config['delay'] );
+				}
 			}
 
-			if ( isset( $timing_config['duration'] ) && 'size' === ( $timing_config['duration']['$$type'] ?? null ) ) {
-				$item['value']['animation']['value']['timing_config']['value']['duration'] = self::size_to_number( $timing_config['duration'] );
-			}
+			$config = $item['value']['animation']['value']['config']['value'] ?? null;
+			if ( $config ) {
+				if ( isset( $config['offsetTop'] ) && 'size' === ( $config['offsetTop']['$$type'] ?? null ) ) {
+					$item['value']['animation']['value']['config']['value']['offsetTop'] = self::size_to_number( $config['offsetTop'] );
+				}
 
-			if ( isset( $timing_config['delay'] ) && 'size' === ( $timing_config['delay']['$$type'] ?? null ) ) {
-				$item['value']['animation']['value']['timing_config']['value']['delay'] = self::size_to_number( $timing_config['delay'] );
+				if ( isset( $config['offsetBottom'] ) && 'size' === ( $config['offsetBottom']['$$type'] ?? null ) ) {
+					$item['value']['animation']['value']['config']['value']['offsetBottom'] = self::size_to_number( $config['offsetBottom'] );
+				}
 			}
 		}
 
 		return $items;
 	}
 
-	private static function number_to_size( $number_prop ) {
+	private static function number_to_size( $number_prop, $unit = 'ms' ) {
 		$value = $number_prop['value'] ?? 0;
 
 		return [
 			'$$type' => 'size',
 			'value' => [
 				'size' => $value,
-				'unit' => 'ms',
+				'unit' => $unit,
 			],
 		];
 	}
