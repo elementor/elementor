@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect } from 'react';
+import { type MouseEvent, useEffect } from 'react';
 import { getCanvasIframeDocument } from '@elementor/editor-v1-adapters';
 import {
 	Card,
@@ -20,7 +20,7 @@ type InfotipCardProps = {
 	content: string;
 	assetUrl: string;
 	ctaUrl: string;
-	onClose: () => void;
+	onClose: ( e: MouseEvent | Event ) => void;
 };
 
 type PromotionInfotipProps = React.PropsWithChildren<
