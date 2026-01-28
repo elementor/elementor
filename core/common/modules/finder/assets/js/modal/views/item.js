@@ -14,6 +14,8 @@ export default class extends Marionette.ItemView {
 	onClick( e ) {
 		const lockOptions = this.model.get( 'lock' );
 
+		this.trackResultSelect();
+
 		if ( ! lockOptions?.is_locked ) {
 			return;
 		}
@@ -39,6 +41,24 @@ export default class extends Marionette.ItemView {
 				window.open( link, '_blank' );
 			},
 		} ).show();
+	}
+
+	trackResultSelect() {
+		const config = elementorCommon?.eventsManager?.config;
+		const title = this.model.get( 'title' ) || this.model.get( 'name' ) || '';
+
+		elementorCommon?.eventsManager?.dispatchEvent?.( config?.names?.editorOne?.finderResultSelect, {
+			app_type: config?.appTypes?.editor,
+			window_name: config?.appTypes?.editor,
+			interaction_type: config?.triggers?.click,
+			target_type: config?.targetTypes?.searchResult,
+			target_name: title,
+			interaction_result: config?.interactionResults?.selected,
+			target_location: config?.locations?.topBar,
+			location_l1: config?.secondaryLocations?.finder,
+			location_l2: config?.secondaryLocations?.finderResults,
+			interaction_description: 'Finder search results was selected',
+		} );
 	}
 
 	replaceLockLinkPlaceholders( link ) {
