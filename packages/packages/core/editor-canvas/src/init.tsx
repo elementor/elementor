@@ -10,6 +10,7 @@ import { initSettingsTransformers } from './init-settings-transformers';
 import { initStyleTransformers } from './init-style-transformers';
 import { initLegacyViews } from './legacy/init-legacy-views';
 import { initViewReplacements } from './legacy/replacements/manager';
+import { initTabsModelExtensions } from './legacy/tabs-model-extensions';
 import { initCanvasMcp } from './mcp/canvas-mcp';
 import { mcpDescription } from './mcp/mcp-description';
 import { initLinkInLinkPrevention } from './prevent-link-in-link-commands';
@@ -54,4 +55,6 @@ export function init() {
 			instructions: mcpDescription,
 		} )
 	);
+
+	initTabsModelExtensions();
 }
