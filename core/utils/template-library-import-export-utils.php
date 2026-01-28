@@ -37,6 +37,43 @@ class Template_Library_Import_Export_Utils {
 		return $value;
 	}
 
+	public static function normalize_string_ids( array $ids ): array {
+		return array_values(
+			array_unique(
+				array_filter( $ids, fn( $id ) => is_string( $id ) && '' !== $id )
+			)
+		);
+	}
+
+	public static function extract_labels( array $items, string $label_key = 'label' ): array {
+		$labels = [];
+
+		foreach ( $items as $item ) {
+			if ( isset( $item[ $label_key ] ) && is_string( $item[ $label_key ] ) ) {
+				$labels[] = $item[ $label_key ];
+			}
+		}
+
+		return $labels;
+	}
+
+	public static function apply_unique_label( array $item, array &$existing_labels, string $label_key = 'label' ): array {
+		if ( ! isset( $item[ $label_key ] ) || ! is_string( $item[ $label_key ] ) || '' === $item[ $label_key ] ) {
+			return $item;
+		}
+
+		$label = $item[ $label_key ];
+
+		if ( in_array( $label, $existing_labels, true ) ) {
+			$label = self::generate_unique_label( $label, $existing_labels );
+			$item[ $label_key ] = $label;
+		}
+
+		$existing_labels[] = $label;
+
+		return $item;
+	}
+
 	public static function generate_unique_id( array $existing_ids, string $prefix = 'g-' ): string {
 		$existing = array_fill_keys( $existing_ids, true );
 
@@ -248,7 +285,7 @@ class Template_Library_Import_Export_Utils {
 		$variable_types = [ 'global-color-variable', 'global-font-variable', 'global-size-variable', 'e-global-custom-size-variable' ];
 		$type_map = [
 			'global-color-variable' => 'color',
-			'global-font-variable' => 'font-family',
+			'global-font-variable' => 'string',
 			'global-size-variable' => 'size',
 			'e-global-custom-size-variable' => 'size',
 		];
