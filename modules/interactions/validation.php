@@ -357,12 +357,12 @@ class Validation {
 
 		// Accept 'number' format
 		if ( 'number' === $prop['$$type'] ) {
-			return $this->is_valid_number_prop_in_range( $data, $key, $min );
+			return $this->is_valid_number_prop_in_range( $data, $key, $min, $max );
 		}
 
 		// Accept 'size' format
 		if ( 'size' === $prop['$$type'] ) {
-			return $this->is_valid_size_prop_in_range( $data, $key, $min );
+			return $this->is_valid_size_prop_in_range( $data, $key, $min, $max );
 		}
 
 		return false;
