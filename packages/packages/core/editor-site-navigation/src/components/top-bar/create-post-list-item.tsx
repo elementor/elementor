@@ -6,6 +6,8 @@ import { __ } from '@wordpress/i18n';
 
 import useCreatePage from '../../hooks/use-create-page';
 import useUser from '../../hooks/use-user';
+import { type ExtendedWindow } from '../../types';
+import { trackPageListAction } from '../../utils/tracking';
 
 type Props = MenuItemProps & {
 	closePopup: () => void;
@@ -15,11 +17,14 @@ export function CreatePostListItem( { closePopup, ...props }: Props ) {
 	const { create, isLoading } = useCreatePage();
 	const navigateToDocument = useNavigateToDocument();
 	const { data: user } = useUser();
+	const extendedWindow = window as unknown as ExtendedWindow;
+	const config = extendedWindow?.elementorCommon?.eventsManager?.config;
 
 	return (
 		<MenuItem
 			disabled={ isLoading || ! user?.capabilities?.edit_pages }
 			onClick={ async () => {
+				trackPageListAction( config?.targetNames?.pageList?.addNewPage ?? 'add_new_page', true );
 				const { id } = await create();
 				closePopup();
 				await navigateToDocument( id );
