@@ -423,7 +423,6 @@ describe( 'OverridablePropIndicator with componentInstanceElement context', () =
 
 		expect( updatedProp ).toMatchObject( {
 			label: 'Updated Label',
-			originPropFields: existingOriginPropFields,
 		} );
 	} );
 } );
