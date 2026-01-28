@@ -7,6 +7,8 @@ import type {
 	BooleanPropValue,
 	ConfigPropValue,
 	ElementInteractions,
+	ExcludedBreakpointsPropValue,
+	InteractionBreakpointsPropValue,
 	InteractionItemPropValue,
 	InteractionItemValue,
 	NumberPropValue,
@@ -66,6 +68,22 @@ export const extractBoolean = ( prop: BooleanPropValue | undefined, fallback = f
 	return prop?.value ?? fallback;
 };
 
+export const createExcludedBreakpoints = ( breakpoints: string[] ): ExcludedBreakpointsPropValue => ( {
+	$$type: 'excluded-breakpoints',
+	value: breakpoints.map( createString ),
+} );
+
+export const createInteractionBreakpoints = ( excluded: string[] ): InteractionBreakpointsPropValue => ( {
+	$$type: 'interaction-breakpoints',
+	value: {
+		excluded: createExcludedBreakpoints( excluded ),
+	},
+} );
+
+export const extractExcludedBreakpoints = ( breakpoints: InteractionBreakpointsPropValue | undefined ): string[] => {
+	return breakpoints?.value.excluded.value.map( ( bp: StringPropValue ) => bp.value ) ?? [];
+};
+
 export const createAnimationPreset = ( {
 	effect,
 	type,
@@ -118,6 +136,7 @@ export const createInteractionItem = ( {
 	relativeTo,
 	offsetTop,
 	offsetBottom,
+	excludedBreakpoints,
 }: {
 	trigger: string;
 	effect: string;
@@ -131,6 +150,7 @@ export const createInteractionItem = ( {
 	relativeTo?: string;
 	offsetTop?: number;
 	offsetBottom?: number;
+	excludedBreakpoints?: string[];
 } ): InteractionItemPropValue => ( {
 	$$type: 'interaction-item',
 	value: {
@@ -148,6 +168,10 @@ export const createInteractionItem = ( {
 			offsetTop,
 			offsetBottom,
 		} ),
+		...( excludedBreakpoints &&
+			excludedBreakpoints.length > 0 && {
+				breakpoints: createInteractionBreakpoints( excludedBreakpoints ),
+			} ),
 	},
 } );
 
