@@ -45,7 +45,6 @@ export const InteractionsListItem = ( { index, value }: { index: number; value: 
 
 			<TabPanel sx={ { p: 0 } } { ...getTabPanelProps( 'details' ) }>
 				<InteractionDetails
-					key={ `details-${ index }` }
 					interaction={ value.value }
 					onChange={ handleChange }
 					onPlayInteraction={ handlePlayInteraction }
@@ -53,11 +52,7 @@ export const InteractionsListItem = ( { index, value }: { index: number; value: 
 			</TabPanel>
 
 			<TabPanel sx={ { p: 0 } } { ...getTabPanelProps( 'settings' ) }>
-				<InteractionSettings
-					key={ `settings-${ index }` }
-					interaction={ value.value }
-					onChange={ handleChange }
-				/>
+				<InteractionSettings interaction={ value.value } onChange={ handleChange } />
 			</TabPanel>
 		</>
 	);
