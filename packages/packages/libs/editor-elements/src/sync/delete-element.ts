@@ -1,6 +1,6 @@
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 
-import { getRealContainer } from './get-container';
+import { getContainer } from './get-container';
 import { findModelWithParent } from './get-model';
 
 type Options = {
@@ -15,7 +15,7 @@ export function deleteElement( {
 	elementId: string;
 	options?: Options;
 } ): Promise< void > {
-	const container = getRealContainer( elementId );
+	const container = getContainer( elementId );
 
 	if ( container ) {
 		return runCommand( 'document/elements/delete', {

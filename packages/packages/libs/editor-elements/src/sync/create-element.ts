@@ -1,6 +1,6 @@
 import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
 
-import { getContainer, getRealContainer } from './get-container';
+import { getContainer } from './get-container';
 import { getModel, type V1Collection, type V1Model } from './get-model';
 import { type V1Element, type V1ElementModelProps, type V1ElementSettingsProps } from './types';
 
@@ -18,10 +18,10 @@ export type CreateElementParams = {
 };
 
 export function createElement( { containerId, model, options }: CreateElementParams ): V1Element {
-	const realContainer = getRealContainer( containerId );
+	const container = getContainer( containerId );
 
-	if ( realContainer ) {
-		return createElementViaContainer( { container: realContainer, model, options } );
+	if ( container ) {
+		return createElementViaContainer( { container, model, options } );
 	}
 
 	return createElementViaModel( { containerId, model, options } );
@@ -32,7 +32,7 @@ function createElementViaContainer( {
 	model,
 	options,
 }: {
-	container: NonNullable< ReturnType< typeof getRealContainer > >;
+	container: NonNullable< ReturnType< typeof getContainer > >;
 	model: CreateElementParams[ 'model' ];
 	options: CreateElementParams[ 'options' ];
 } ): V1Element {
@@ -57,16 +57,16 @@ function createElementViaModel( { containerId, model: modelData, options = {} }:
 		throw new Error( `Container with ID "${ containerId }" has no elements collection` );
 	}
 
-	const newModel = createModelFromData( modelData );
 	const insertAt = options.at;
 
-	if ( insertAt !== undefined ) {
-		targetCollection.add( newModel, { at: insertAt }, true );
-	} else {
-		targetCollection.add( newModel, {}, true );
+	targetCollection.add( modelData as unknown as V1Model, insertAt !== undefined ? { at: insertAt } : {}, true );
+
+	const elementId = modelData?.id;
+
+	if ( ! elementId ) {
+		throw new Error( 'Model data must have an id when creating via model fallback' );
 	}
 
-	const elementId = modelData?.id ?? newModel.get( 'id' );
 	const container = getContainer( elementId );
 
 	if ( container ) {
@@ -75,11 +75,7 @@ function createElementViaModel( { containerId, model: modelData, options = {} }:
 
 	return {
 		id: elementId,
-		model: newModel,
-		settings: newModel.get( 'settings' ) ?? {},
+		model: modelData as unknown as V1Model,
+		settings: modelData?.settings ?? {},
 	} as V1Element;
-}
-
-function createModelFromData( modelData: CreateElementParams[ 'model' ] ): V1Model {
-	return modelData as unknown as V1Model;
 }

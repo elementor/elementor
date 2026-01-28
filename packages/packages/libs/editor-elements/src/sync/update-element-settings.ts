@@ -2,7 +2,8 @@ import { type Props } from '@elementor/editor-props';
 import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
 
 import { type ElementID } from '../types';
-import { getContainer, getRealContainer } from './get-container';
+import { getContainer } from './get-container';
+import { findModel } from './get-model';
 
 export type UpdateElementSettingsArgs = {
 	id: ElementID;
@@ -11,10 +12,10 @@ export type UpdateElementSettingsArgs = {
 };
 
 export const updateElementSettings = ( { id, props, withHistory = true }: UpdateElementSettingsArgs ) => {
-	const realContainer = getRealContainer( id );
+	const container = getContainer( id );
 
-	if ( realContainer ) {
-		updateViaCommand( realContainer, props, withHistory );
+	if ( container ) {
+		updateViaCommand( container, props, withHistory );
 		return;
 	}
 
@@ -22,7 +23,7 @@ export const updateElementSettings = ( { id, props, withHistory = true }: Update
 };
 
 function updateViaCommand(
-	container: NonNullable< ReturnType< typeof getRealContainer > >,
+	container: NonNullable< ReturnType< typeof getContainer > >,
 	props: Props,
 	withHistory: boolean
 ) {
@@ -39,13 +40,14 @@ function updateViaCommand(
 }
 
 function updateViaModel( id: ElementID, props: Props ) {
-	const container = getContainer( id );
+	const result = findModel( id );
 
-	if ( ! container ) {
+	if ( ! result ) {
 		return;
 	}
 
-	const currentSettings = container.model.get( 'settings' ) ?? {};
+	const { model } = result;
+	const currentSettings = model.get( 'settings' ) ?? {};
 
-	container.model.set( 'settings', { ...currentSettings, ...props } );
+	model.set( 'settings', { ...currentSettings, ...props } );
 }

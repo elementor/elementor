@@ -1,9 +1,10 @@
 import { updateElementSettings } from '@elementor/editor-elements';
 import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
 
-import { getRealContainer } from '../get-container';
+import { getContainer } from '../get-container';
 
 jest.mock( '../get-container' );
+jest.mock( '../get-model' );
 jest.mock( '@elementor/editor-v1-adapters' );
 
 describe( 'updateElementSettings', () => {
@@ -12,7 +13,7 @@ describe( 'updateElementSettings', () => {
 		const element = { id: 'test-element-id' };
 		const props = { testProp: 'test-value' };
 
-		jest.mocked( getRealContainer ).mockImplementation( ( elementId ) => {
+		jest.mocked( getContainer ).mockImplementation( ( elementId ) => {
 			return elementId === element.id ? ( element as never ) : null;
 		} );
 
@@ -34,7 +35,7 @@ describe( 'updateElementSettings', () => {
 		const element = { id: 'test-element-id' };
 		const props = { testProp: 'test-value' };
 
-		jest.mocked( getRealContainer ).mockImplementation( ( elementId ) => {
+		jest.mocked( getContainer ).mockImplementation( ( elementId ) => {
 			return elementId === element.id ? ( element as never ) : null;
 		} );
 

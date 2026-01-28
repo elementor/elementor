@@ -1,6 +1,6 @@
 import { createElement } from './create-element';
 import { deleteElement } from './delete-element';
-import { getContainer, getRealContainer } from './get-container';
+import { getContainer } from './get-container';
 import { findModelWithParent, getModel, type V1Collection } from './get-model';
 import { type V1Element } from './types';
 
@@ -17,8 +17,8 @@ export type MoveElementParams = {
 };
 
 export function moveElement( { elementId, targetContainerId, options = {} }: MoveElementParams ): V1Element {
-	const sourceContainer = getRealContainer( elementId );
-	const targetContainer = getRealContainer( targetContainerId );
+	const sourceContainer = getContainer( elementId );
+	const targetContainer = getContainer( targetContainerId );
 
 	if ( sourceContainer && targetContainer ) {
 		return moveElementViaContainers( { elementId, targetContainerId, options } );
@@ -28,8 +28,8 @@ export function moveElement( { elementId, targetContainerId, options = {} }: Mov
 }
 
 function moveElementViaContainers( { elementId, targetContainerId, options = {} }: MoveElementParams ): V1Element {
-	const container = getRealContainer( elementId );
-	const target = getRealContainer( targetContainerId );
+	const container = getContainer( elementId );
+	const target = getContainer( targetContainerId );
 
 	if ( ! container ) {
 		throw new Error( `Element with ID "${ elementId }" not found` );
@@ -78,11 +78,7 @@ function moveElementViaModels( { elementId, targetContainerId, options = {} }: M
 
 	const insertAt = options.at;
 
-	if ( insertAt !== undefined ) {
-		targetCollection.add( model, { at: insertAt }, true );
-	} else {
-		targetCollection.add( model, {}, true );
-	}
+	targetCollection.add( model, insertAt !== undefined ? { at: insertAt } : {}, true );
 
 	const container = getContainer( elementId );
 

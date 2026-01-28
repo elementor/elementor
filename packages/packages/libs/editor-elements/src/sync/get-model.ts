@@ -1,4 +1,4 @@
-import { type ExtendedWindow, type V1Element, type V1ElementSettingsProps } from './types';
+import { type ExtendedWindow, type V1Element } from './types';
 
 export type V1Model = V1Element[ 'model' ];
 
@@ -21,44 +21,50 @@ export type ModelWithParentResult = {
 
 export function getModel( id: string, parentModel?: V1Model ): ModelResult | null {
 	const extendedWindow = window as unknown as ExtendedWindow;
-	const container = extendedWindow.elementor?.getContainer?.( id ) ?? null;
+
+	const container = extendedWindow.elementor?.getContainer?.( id );
 
 	if ( container ) {
 		return { model: container.model };
 	}
 
 	if ( parentModel ) {
-		const childModels = parentModel.get( 'elements' ) ?? [];
-		const model = childModels.find( ( m: V1Model ) => m.get( 'id' ) === id );
+		const model = findChildById( parentModel, id );
+		return model ? { model } : null;
+	}
 
-		if ( model ) {
-			return { model };
-		}
+	return findModel( id );
+}
 
+export function findModel( id: string ): ModelResult | null {
+	const documentModel = getDocumentModel();
+
+	if ( ! documentModel ) {
 		return null;
 	}
 
-	const result = findModelWithParent( id );
+	const result = findModelRecursive( documentModel, id, false );
 
-	if ( result ) {
-		return { model: result.model };
-	}
-
-	return null;
+	return result ? { model: result.model } : null;
 }
 
 export function findModelWithParent( id: string ): ModelWithParentResult | null {
-	const extendedWindow = window as unknown as ExtendedWindow;
-	const documentContainer = extendedWindow.elementor?.documents?.getCurrent?.()?.container;
+	const documentModel = getDocumentModel();
 
-	if ( ! documentContainer ) {
+	if ( ! documentModel ) {
 		return null;
 	}
 
-	return findModelWithParentRecursive( id, documentContainer.model );
+	return findModelRecursive( documentModel, id, true );
 }
 
-function findModelWithParentRecursive( id: string, parentModel: V1Model ): ModelWithParentResult | null {
+function findModelRecursive( parentModel: V1Model, id: string, includeParent: true ): ModelWithParentResult | null;
+function findModelRecursive( parentModel: V1Model, id: string, includeParent: false ): ModelResult | null;
+function findModelRecursive(
+	parentModel: V1Model,
+	id: string,
+	includeParent: boolean
+): ModelWithParentResult | ModelResult | null {
 	const collection = parentModel.get( 'elements' ) as V1Collection | undefined;
 
 	if ( ! collection ) {
@@ -71,15 +77,14 @@ function findModelWithParentRecursive( id: string, parentModel: V1Model ): Model
 		const childModel = childModels[ index ];
 
 		if ( childModel.get( 'id' ) === id ) {
-			return {
-				model: childModel,
-				parentModel,
-				collection,
-				index,
-			};
+			if ( includeParent ) {
+				return { model: childModel, parentModel, collection, index };
+			}
+
+			return { model: childModel };
 		}
 
-		const found = findModelWithParentRecursive( id, childModel );
+		const found = findModelRecursive( childModel, id, includeParent as true );
 
 		if ( found ) {
 			return found;
@@ -115,31 +120,14 @@ export function getElementChildren( model: V1Model, predicate?: ( model: V1Model
 		.map( ( childModel ) => ( { model: childModel } ) );
 }
 
-export function createVirtualContainer( model: V1Model, parentModel?: V1Model ): V1Element {
-	const rawSettings = ( model.get( 'settings' ) ?? {} ) as V1ElementSettingsProps;
+function getDocumentModel(): V1Model | null {
+	const extendedWindow = window as unknown as ExtendedWindow;
 
-	const settingsProxy = createSettingsProxy( rawSettings, model );
-
-	const virtualContainer: V1Element = {
-		id: model.get( 'id' ) as string,
-		model,
-		settings: settingsProxy,
-		view: undefined,
-		parent: parentModel ? createVirtualContainer( parentModel ) : undefined,
-	};
-
-	return virtualContainer;
+	return extendedWindow.elementor?.documents?.getCurrent?.()?.container?.model ?? null;
 }
 
-type SettingsModel = V1Element[ 'settings' ];
+function findChildById( parentModel: V1Model, id: string ): V1Model | null {
+	const childModels = ( parentModel.get( 'elements' ) ?? [] ) as V1Model[];
 
-function createSettingsProxy( rawSettings: V1ElementSettingsProps, parentModel: V1Model ): SettingsModel {
-	return {
-		get: ( key ) => rawSettings[ key ],
-		set: ( key, value ) => {
-			rawSettings[ key ] = value;
-			parentModel.set( 'settings', rawSettings );
-		},
-		toJSON: () => rawSettings,
-	} as SettingsModel;
+	return childModels.find( ( m ) => m.get( 'id' ) === id ) ?? null;
 }
