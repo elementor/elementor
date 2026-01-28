@@ -185,8 +185,6 @@ export default class Component extends ComponentModalBase {
 				with_page_settings: true,
 			},
 			success: async ( data ) => {
-				const importOptions = jQuery.extend( {}, this.manager.modalConfig.importOptions );
-
 				this.manager.layout.hideLoadingView();
 
 				let processedData = data;
@@ -235,6 +233,7 @@ export default class Component extends ComponentModalBase {
 						return;
 					}
 				}
+				const importOptions = jQuery.extend( {}, this.manager.modalConfig.importOptions );
 
 				if ( null === withPageSettings && model.get( 'hasPageSettings' ) ) {
 					const insertTemplateHandler = this.getImportSettingsDialog();
