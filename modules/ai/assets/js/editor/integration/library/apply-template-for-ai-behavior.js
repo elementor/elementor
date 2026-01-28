@@ -2,7 +2,7 @@ const { renderLayoutApp, importToEditor } = require( '../../utils/editor-integra
 const { MODE_VARIATION } = require( '../../pages/form-layout/context/config' );
 const { __ } = require( '@wordpress/i18n' );
 const { ATTACHMENT_TYPE_JSON, ELEMENTOR_LIBRARY_SOURCE } = require( '../../pages/form-layout/components/attachments' );
-import { EditorOneEventManager } from 'elementor-editor-utils/editor-one-events';
+const { EditorOneEventManager } = require( 'elementor-editor-utils/editor-one-events' );
 
 var ApplyTemplateForAiBehavior;
 
