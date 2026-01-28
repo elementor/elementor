@@ -1,4 +1,8 @@
 const eventsConfig = {
+	appTypes: {
+		editor: 'editor',
+	},
+
 	triggers: {
 		click: 'Click',
 		rightClick: 'Right Click',
@@ -9,6 +13,34 @@ const eventsConfig = {
 		editorLoaded: 'Editor Loaded',
 		visible: 'Visible',
 		pageLoaded: 'Page Loaded',
+		typing: 'Typing',
+		tabSelect: 'Tab Select',
+		insert: 'Insert',
+	},
+
+	targetTypes: {
+		dropdownItem: 'dropdown_item',
+		tab: 'tab',
+		button: 'button',
+		toggle: 'toggle',
+		searchInput: 'search_input',
+		searchResult: 'search_result',
+		buttons: 'buttons',
+		searchWidget: 'search_widget',
+	},
+
+	interactionResults: {
+		actionSelected: 'action_selected',
+		create: 'create',
+		navigate: 'navigate',
+		sessionEnd: 'session_end',
+		tabChanged: 'tab_changed',
+		assetInserted: 'asset_inserted',
+		assetFavorite: 'asset_favorite',
+		aiGenerate: 'ai_generate',
+		resultsUpdated: 'results_updated',
+		noResults: 'no_results',
+		selected: 'selected',
 	},
 
 	locations: {
@@ -29,6 +61,8 @@ const eventsConfig = {
 		admin: 'WP admin',
 		structurePanel: 'Structure Panel',
 		canvas: 'Canvas',
+		leftPanel: 'Left Panel',
+		elementorLibrary: 'Elementor Library',
 	},
 
 	secondaryLocations: {
@@ -62,6 +96,13 @@ const eventsConfig = {
 		checklistSteps: 'Checklist Steps',
 		userPreferences: 'User Preferences',
 		contextMenu: 'Context Menu',
+		publishDropdown: 'Publish Dropdown',
+		pageListDropdown: 'Page List Dropdown',
+		emptyBox: 'Empty Box',
+		searchBar: 'Search Bar',
+		finderResults: 'Finder Results',
+		libraryTabs: 'Library Tabs',
+		assetCard: 'Asset Card',
 		templateLibrary: {
 			saveModal: 'Save to Modal',
 			moveModal: 'Move to Modal',
@@ -205,6 +246,19 @@ const eventsConfig = {
 			classStateClicked: 'class_state_clicked',
 			classUsageClicked: 'class_usage_clicked',
 			classDuplicate: 'class_duplicate',
+		},
+		editorOne: {
+			topBarPublishDropdown: 'top_bar_publish_dropdown',
+			topBarPageList: 'top_bar_page_list',
+			siteSettingsSession: 'site_settings_session',
+			eLibraryNav: 'e_library_nav',
+			eLibraryInsert: 'e_library_insert',
+			eLibraryFavorite: 'e_library_favorite',
+			eLibraryGenerateAi: 'e_library_generate_ai',
+			finderSearchInput: 'finder_search_input',
+			finderResultSelect: 'finder_result_select',
+			canvasEmptyBoxAction: 'canvas_empty_box_action',
+			widgetPanelSearch: 'widget_panel_search',
 		},
 	},
 };

@@ -31,15 +31,24 @@ export type RecentPost = {
 export type ExtendedWindow = Window & {
 	elementorCommon: {
 		eventsManager: {
-			dispatchEvent: ( name: string, data: Record< string, string > ) => void;
+			dispatchEvent: ( name: string, data: Record< string, string | number | boolean | null > ) => void;
 			config: {
+				appTypes: Record< string, string >;
 				locations: Record< string, string >;
 				secondaryLocations: Record< string, string >;
 				triggers: Record< string, string >;
 				elements: Record< string, string >;
+				targetTypes: Record< string, string >;
+				interactionResults: Record< string, string >;
 				names: {
 					topBar: Record< string, string >;
+					editorOne: Record< string, string >;
 				};
+			};
+		};
+		config?: {
+			editor_events?: {
+				can_send_events: boolean;
 			};
 		};
 	};

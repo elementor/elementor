@@ -6,6 +6,7 @@ import { FileReportIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
 import { type ActionProps } from '../../../types';
+import { trackPublishDropdownAction } from '../../../utils/tracking';
 
 export default function useDocumentSaveDraftProps(): ActionProps {
 	const document = useActiveDocument();
@@ -14,7 +15,10 @@ export default function useDocumentSaveDraftProps(): ActionProps {
 	return {
 		icon: FileReportIcon,
 		title: __( 'Save Draft', 'elementor' ),
-		onClick: saveDraft,
+		onClick: () => {
+			trackPublishDropdownAction( 'save_as_draft' );
+			saveDraft();
+		},
 		disabled: ! document || document.isSaving || document.isSavingDraft || ! document.isDirty,
 	};
 }
