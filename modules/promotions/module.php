@@ -85,7 +85,7 @@ class Module extends Base_Module {
 		// Add Ally promo
 		Ally_Dashboard_Widget::init();
 
-		// Top bar link for accessibility scanner (will be init later)
+		// Top bar link for accessibility scanner (will be initialized later)
 		// Ally_Top_Bar_Link::init();
 	}
 
