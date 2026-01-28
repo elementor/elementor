@@ -99,6 +99,7 @@ export function createNestedTemplatedElementView( {
 
 	const AtomicElementBaseView = legacyWindow.elementor.modules.elements.views.createAtomicElementBase( type );
 	const parentRenderChildren = AtomicElementBaseView.prototype._renderChildren;
+	const parentOpenEditingPanel = AtomicElementBaseView.prototype._openEditingPanel;
 
 	return AtomicElementBaseView.extend( {
 		_abortController: null as AbortController | null,
@@ -302,6 +303,18 @@ export function createNestedTemplatedElementView( {
 				| null;
 
 			previewWindow?.Alpine?.initTree( el );
+		},
+
+		_doAfterRender( callback: () => void ) {
+			if ( this.isRendered ) {
+				callback();
+			} else {
+				this.once( 'render', callback );
+			}
+		},
+
+		_openEditingPanel( options?: { scrollIntoView: boolean } ) {
+			this._doAfterRender( () => parentOpenEditingPanel.call( this, options ) );
 		},
 	} ) as unknown as typeof ElementView;
 }

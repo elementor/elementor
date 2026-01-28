@@ -6,7 +6,12 @@ import {
 	type SetRepeaterValuesMeta,
 	useBoundProp,
 } from '@elementor/editor-controls';
-import { updateElementEditorSettings, useElementChildren, useElementEditorSettings } from '@elementor/editor-elements';
+import {
+	updateElementEditorSettings,
+	useElementChildren,
+	useElementEditorSettings,
+	type V1Element,
+} from '@elementor/editor-elements';
 import { type CreateOptions, numberPropTypeUtil } from '@elementor/editor-props';
 import { InfoCircleFilledIcon } from '@elementor/icons';
 import { Alert, Chip, Infotip, type InfotipProps, Stack, Switch, TextField, Typography } from '@elementor/ui';
@@ -35,13 +40,8 @@ export const TabsControlContent = ( { label }: { label: string } ) => {
 		[ TAB_MENU_ELEMENT_TYPE ]: TAB_ELEMENT_TYPE,
 	} );
 
-	const tabList = getElementByType( element.id, TAB_MENU_ELEMENT_TYPE );
-	const tabContentArea = getElementByType( element.id, TAB_CONTENT_AREA_ELEMENT_TYPE );
-
-	if ( ! tabList || ! tabContentArea ) {
-		// children might not be avilable on the first render
-		return null;
-	}
+	const tabList = getElementByType( element.id, TAB_MENU_ELEMENT_TYPE ) as V1Element;
+	const tabContentArea = getElementByType( element.id, TAB_CONTENT_AREA_ELEMENT_TYPE ) as V1Element;
 
 	const repeaterValues: RepeaterItem< TabItem >[] = tabLinks.map( ( tabLink, index ) => {
 		return {
