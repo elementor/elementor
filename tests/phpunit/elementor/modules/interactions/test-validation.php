@@ -280,12 +280,16 @@ class Test_Validation extends TestCase {
 		$validation->validate();
 
 		$expected_interaction = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0, '1' );
+
 		$expected_interaction['value']['breakpoints'] = [
 			'$$type' => 'interaction-breakpoints',
 			'value' => [
 				'excluded' => [
 					'$$type' => 'excluded-breakpoints',
-					'value' => [ [ '$$type' => 'string', 'value' => 'desktop' ], [ '$$type' => 'string', 'value' => 'tablet' ] ],
+					'value' => [
+						[ '$$type' => 'string', 'value' => 'desktop' ],
+						[ '$$type' => 'string', 'value' => 'tablet' ],
+					],
 				],
 			],
 		];
