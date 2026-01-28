@@ -4,6 +4,7 @@ import { ListItemText, MenuItem, type MenuItemProps } from '@elementor/ui';
 
 import { useReverseHtmlEntities } from '../../hooks/use-reverse-html-entities';
 import { type RecentPost } from '../../types';
+import { trackPageListAction } from '../../utils/tracking';
 import DocTypeChip from './chip-doc-type';
 
 type Props = MenuItemProps & {
@@ -19,6 +20,7 @@ export function PostListItem( { post, closePopup, ...props }: Props ) {
 		<MenuItem
 			disabled={ ! post.user_can.edit }
 			onClick={ async () => {
+				trackPageListAction( 'page_list' );
 				closePopup();
 				await navigateToDocument( post.id );
 			} }
