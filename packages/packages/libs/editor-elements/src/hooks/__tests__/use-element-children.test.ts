@@ -2,7 +2,7 @@ import { createMockChild, createMockContainer, dispatchCommandAfter, dispatchV1R
 import { act, renderHook } from '@testing-library/react';
 
 import { getContainer } from '../../sync/get-container';
-import { type ElementChildren, useElementChildren } from '../use-element-children';
+import { useElementChildren } from '../use-element-children';
 
 jest.mock( '../../sync/get-container' );
 
@@ -13,7 +13,7 @@ describe( 'useElementChildren', () => {
 		mockGetContainer.mockClear();
 	} );
 
-	it( 'should return empty arrays for each requested type when container is not found', () => {
+	it( 'should return empty object when container is not found', () => {
 		// Arrange.
 		mockGetContainer.mockReturnValue( null );
 
@@ -23,10 +23,7 @@ describe( 'useElementChildren', () => {
 		);
 
 		// Assert.
-		expect( result.current ).toEqual< ElementChildren >( {
-			tab: [],
-			accordion: [],
-		} );
+		expect( result.current ).toEqual( {} );
 	} );
 
 	it( 'should return empty arrays for each requested type when container has no children', () => {
@@ -40,10 +37,8 @@ describe( 'useElementChildren', () => {
 		);
 
 		// Assert.
-		expect( result.current ).toEqual< ElementChildren >( {
-			tab: [],
-			accordion: [],
-		} );
+		expect( result.current.tab ).toEqual( [] );
+		expect( result.current.accordion ).toEqual( [] );
 	} );
 
 	it( 'should return children grouped by element type', () => {
@@ -68,10 +63,8 @@ describe( 'useElementChildren', () => {
 		);
 
 		// Assert.
-		expect( result.current ).toEqual< ElementChildren >( {
-			tab: [ { id: 'child-1' }, { id: 'child-3' } ],
-			accordion: [ { id: 'child-2' } ],
-		} );
+		expect( result.current.tab.map( ( e ) => e.id ) ).toEqual( [ 'child-1', 'child-3' ] );
+		expect( result.current.accordion.map( ( e ) => e.id ) ).toEqual( [ 'child-2' ] );
 	} );
 
 	it( 'should filter children by requested types only', () => {
@@ -91,9 +84,7 @@ describe( 'useElementChildren', () => {
 		const { result } = renderHook( () => useElementChildren( 'element-1', { tabs: 'tab' } ) );
 
 		// Assert.
-		expect( result.current ).toEqual< ElementChildren >( {
-			tab: [ { id: 'child-1' } ],
-		} );
+		expect( result.current.tab.map( ( e ) => e.id ) ).toEqual( [ 'child-1' ] );
 	} );
 
 	it( 'should include empty arrays for types with no matching children', () => {
@@ -112,10 +103,8 @@ describe( 'useElementChildren', () => {
 		);
 
 		// Assert.
-		expect( result.current ).toEqual< ElementChildren >( {
-			tab: [ { id: 'child-1' } ],
-			accordion: [],
-		} );
+		expect( result.current.tab.map( ( e ) => e.id ) ).toEqual( [ 'child-1' ] );
+		expect( result.current.accordion ).toEqual( [] );
 	} );
 
 	it( 'should update when V1 ready event is dispatched', () => {
@@ -130,9 +119,7 @@ describe( 'useElementChildren', () => {
 		const { result } = renderHook( () => useElementChildren( 'element-1', { tabs: 'tab' } ) );
 
 		// Assert.
-		expect( result.current ).toEqual< ElementChildren >( {
-			tab: [ { id: 'child-1' } ],
-		} );
+		expect( result.current.tab.map( ( e ) => e.id ) ).toEqual( [ 'child-1' ] );
 
 		// Arrange.
 		const newTabs = [
@@ -151,9 +138,7 @@ describe( 'useElementChildren', () => {
 		} );
 
 		// Assert.
-		expect( result.current ).toEqual< ElementChildren >( {
-			tab: [ { id: 'child-1' }, { id: 'child-2' } ],
-		} );
+		expect( result.current.tab.map( ( e ) => e.id ) ).toEqual( [ 'child-1', 'child-2' ] );
 	} );
 
 	it.each( [
@@ -173,9 +158,7 @@ describe( 'useElementChildren', () => {
 		const { result } = renderHook( () => useElementChildren( 'element-1', { tabs: 'tab' } ) );
 
 		// Assert.
-		expect( result.current ).toEqual< ElementChildren >( {
-			tab: [ { id: 'child-1' } ],
-		} );
+		expect( result.current.tab.map( ( e ) => e.id ) ).toEqual( [ 'child-1' ] );
 
 		// Arrange.
 		const newTabs = [
@@ -193,9 +176,7 @@ describe( 'useElementChildren', () => {
 		} );
 
 		// Assert.
-		expect( result.current ).toEqual< ElementChildren >( {
-			tab: [ { id: 'child-1' }, { id: 'child-2' } ],
-		} );
+		expect( result.current.tab.map( ( e ) => e.id ) ).toEqual( [ 'child-1', 'child-2' ] );
 	} );
 
 	it( 'should re-compute when elementId dependency changes', () => {
@@ -230,17 +211,13 @@ describe( 'useElementChildren', () => {
 		);
 
 		// Assert.
-		expect( result.current ).toEqual< ElementChildren >( {
-			tab: [ { id: 'child-1' } ],
-		} );
+		expect( result.current.tab.map( ( e ) => e.id ) ).toEqual( [ 'child-1' ] );
 
 		// Act.
 		rerender( { elementId: 'element-2' } );
 
 		// Assert.
-		expect( result.current ).toEqual< ElementChildren >( {
-			tab: [ { id: 'child-2' }, { id: 'child-3' } ],
-		} );
+		expect( result.current.tab.map( ( e ) => e.id ) ).toEqual( [ 'child-2', 'child-3' ] );
 	} );
 
 	it( 'should handle children without elType', () => {
@@ -258,9 +235,7 @@ describe( 'useElementChildren', () => {
 		const { result } = renderHook( () => useElementChildren( 'element-1', { tabs: 'tab' } ) );
 
 		// Assert.
-		expect( result.current ).toEqual< ElementChildren >( {
-			tab: [ { id: 'child-1' } ],
-		} );
+		expect( result.current.tab.map( ( e ) => e.id ) ).toEqual( [ 'child-1' ] );
 	} );
 
 	it( 'should find children recursively at multiple levels', () => {
@@ -275,10 +250,8 @@ describe( 'useElementChildren', () => {
 		);
 
 		// Assert.
-		expect( result.current ).toEqual< ElementChildren >( {
-			tab: [ { id: 'grandchild-1' } ],
-			accordion: [ { id: 'grandchild-2' } ],
-		} );
+		expect( result.current.tab.map( ( e ) => e.id ) ).toEqual( [ 'grandchild-1' ] );
+		expect( result.current.accordion.map( ( e ) => e.id ) ).toEqual( [ 'grandchild-2' ] );
 	} );
 
 	it( 'should handle deeply nested children correctly', () => {
@@ -295,9 +268,7 @@ describe( 'useElementChildren', () => {
 		const { result } = renderHook( () => useElementChildren( 'element-1', { tabs: 'tab' } ) );
 
 		// Assert.
-		expect( result.current ).toEqual< ElementChildren >( {
-			tab: [ { id: 'deep-child' } ],
-		} );
+		expect( result.current.tab.map( ( e ) => e.id ) ).toEqual( [ 'deep-child' ] );
 	} );
 
 	it( 'should handle case when container children is undefined', () => {
@@ -315,9 +286,7 @@ describe( 'useElementChildren', () => {
 		const { result } = renderHook( () => useElementChildren( 'element-1', { tabs: 'tab' } ) );
 
 		// Assert.
-		expect( result.current ).toEqual< ElementChildren >( {
-			tab: [],
-		} );
+		expect( result.current.tab ).toEqual( [] );
 	} );
 
 	it( 'should properly group nested children by element type', () => {
@@ -339,10 +308,8 @@ describe( 'useElementChildren', () => {
 		);
 
 		// Assert.
-		expect( result.current ).toEqual< ElementChildren >( {
-			tab: [ { id: 'nested-tab' } ],
-			accordion: [ { id: 'nested-accordion' } ],
-		} );
+		expect( result.current.tab.map( ( e ) => e.id ) ).toEqual( [ 'nested-tab' ] );
+		expect( result.current.accordion.map( ( e ) => e.id ) ).toEqual( [ 'nested-accordion' ] );
 	} );
 
 	it( 'should only return direct children from the first level where parent is found, not nested descendants', () => {
@@ -363,9 +330,7 @@ describe( 'useElementChildren', () => {
 		const { result } = renderHook( () => useElementChildren( 'element-1', { tabs: 'tab' } ) );
 
 		// Assert.
-		expect( result.current ).toEqual< ElementChildren >( {
-			tab: [ { id: 'direct-tab-1' }, { id: 'direct-tab-2' } ],
-		} );
+		expect( result.current.tab.map( ( e ) => e.id ) ).toEqual( [ 'direct-tab-1', 'direct-tab-2' ] );
 	} );
 } );
 
