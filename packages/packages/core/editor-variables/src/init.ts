@@ -5,6 +5,7 @@ import { isTransformable, type PropValue } from '@elementor/editor-props';
 import { controlActionsMenu } from '@elementor/menus';
 
 import { GlobalStylesImportListener } from './components/global-styles-import-listener';
+import { OpenPanelFromUrl } from './components/open-panel-from-url';
 import { panel } from './components/variables-manager/variables-manager-panel';
 import { VariableControl } from './controls/variable-control';
 import { usePropVariableAction } from './hooks/use-prop-variable-action';
@@ -53,6 +54,11 @@ export function init() {
 	injectIntoLogic( {
 		id: 'variables-import-listener',
 		component: GlobalStylesImportListener,
+  } );
+  
+  injectIntoLogic( {
+		id: 'variables-open-panel-from-url',
+		component: OpenPanelFromUrl,
 	} );
 
 	registerPanel( panel );
