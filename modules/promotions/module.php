@@ -219,10 +219,10 @@ class Module extends Base_Module {
 		];
 	}
 
-<<<<<<< HEAD
 	private function is_editor_one_active(): bool {
 		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
-=======
+	}
+
 	private function is_atomic_widgets_active(): bool {
 		return Plugin::$instance->experiments->is_feature_active( 'e_atomic_elements' );
 	}
@@ -290,6 +290,5 @@ class Module extends Base_Module {
 		}
 
 		return $element_controls;
->>>>>>> ac2bb982a6 (Internal: Display conditions promotion [ED-22536] (#34446))
 	}
 }
