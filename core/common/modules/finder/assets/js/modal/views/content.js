@@ -1,5 +1,3 @@
-import { debounce } from 'lodash';
-
 import CategoriesView from './categories';
 
 export default class extends Marionette.LayoutView {
@@ -30,7 +28,7 @@ export default class extends Marionette.LayoutView {
 	}
 
 	initialize() {
-		this.trackSearchInputDebounced = debounce( this.trackSearchInput.bind( this ), 300 );
+		this.trackSearchInputDebounced = _.debounce( this.trackSearchInput.bind( this ), 300 );
 	}
 
 	showCategoriesView() {
