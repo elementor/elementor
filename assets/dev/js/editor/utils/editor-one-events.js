@@ -1,5 +1,3 @@
-import { debounce } from 'lodash';
-
 export class EditorOneEventManager {
 	static getEventsManager() {
 		return elementorCommon?.eventsManager;
@@ -220,13 +218,13 @@ export class EditorOneEventManager {
 }
 
 export const createDebouncedFinderSearch = ( delay = 300 ) => {
-	return debounce( ( resultsCount ) => {
+	return _.debounce( ( resultsCount ) => {
 		EditorOneEventManager.sendFinderSearchInput( { resultsCount } );
 	}, delay );
 };
 
 export const createDebouncedWidgetPanelSearch = ( delay = 2000 ) => {
-	return debounce( ( resultsCount, userInput ) => {
+	return _.debounce( ( resultsCount, userInput ) => {
 		EditorOneEventManager.sendWidgetPanelSearch( { resultsCount, userInput } );
 	}, delay );
 };
