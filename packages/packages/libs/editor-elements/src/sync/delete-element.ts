@@ -1,6 +1,7 @@
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 
-import { getContainer } from './get-container';
+import { getRealContainer } from './get-container';
+import { findModelWithParent } from './get-model';
 
 type Options = {
 	useHistory?: boolean;
@@ -14,14 +15,28 @@ export function deleteElement( {
 	elementId: string;
 	options?: Options;
 } ): Promise< void > {
-	const container = getContainer( elementId );
+	const container = getRealContainer( elementId );
 
-	if ( ! container ) {
+	if ( container ) {
+		return runCommand( 'document/elements/delete', {
+			container,
+			options,
+		} );
+	}
+
+	return deleteElementViaModel( elementId );
+}
+
+function deleteElementViaModel( elementId: string ): Promise< void > {
+	const result = findModelWithParent( elementId );
+
+	if ( ! result ) {
 		throw new Error( `Element with ID "${ elementId }" not found` );
 	}
 
-	return runCommand( 'document/elements/delete', {
-		container,
-		options,
-	} );
+	const { model, collection } = result;
+
+	collection.remove( model );
+
+	return Promise.resolve();
 }
