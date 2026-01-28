@@ -351,6 +351,13 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.34.4 - 2026-01-28 =
+
+* Tweak: Updated import and export flow for Website Templates
+* Tweak: Optimized configuration loading behavior ([#34206](https://github.com/elementor/elementor/issues/34206))
+* Fix: Editor errors occur when references are undefined ([#34411](https://github.com/elementor/elementor/issues/34411))
+* Fix: Importing a site containing elements with dynamic tags fails - Editor V4
+
 = 3.34.3 - 2026-01-26 =
 
 * Tweak: Editor home page renamed to Quick Start
