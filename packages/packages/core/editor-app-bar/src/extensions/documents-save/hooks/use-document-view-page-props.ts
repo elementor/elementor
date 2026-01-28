@@ -16,10 +16,11 @@ export default function useDocumentViewPageProps() {
 		title: __( 'View Page', 'elementor' ),
 		onClick: () => {
 			trackPublishDropdownAction( config?.targetNames?.publishDropdown?.viewPage ?? 'view_page' );
-			document?.id &&
-			runCommand( 'editor/documents/view', {
-				id: document.id,
-			} );
+			if ( document?.id ) {
+				runCommand( 'editor/documents/view', {
+					id: document.id,
+				} );
+			}
 		},
 	};
 }
