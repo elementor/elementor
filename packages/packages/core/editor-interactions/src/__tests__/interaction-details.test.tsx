@@ -5,43 +5,12 @@ import { Easing } from '../components/controls/easing';
 import { Trigger } from '../components/controls/trigger';
 import { InteractionDetails } from '../components/interaction-details';
 import type { InteractionItemValue } from '../types';
-import { createAnimationPreset, createString } from '../utils/prop-value-utils';
+import { extractExcludedBreakpoints } from '../utils/prop-value-utils';
+import { createInteractionItemValue } from './utils';
 
 jest.mock( '../interactions-controls-registry', () => ( {
 	getInteractionsControl: jest.fn(),
 } ) );
-
-const createInteractionItemValue = ( {
-	trigger = 'load',
-	effect = 'fade',
-	type = 'in',
-	direction = '',
-	duration = 300,
-	delay = 0,
-	replay = false,
-	easing = 'easeIn',
-}: {
-	trigger?: string;
-	effect?: string;
-	type?: string;
-	direction?: string;
-	duration?: number;
-	delay?: number;
-	replay?: boolean;
-	easing?: string;
-} = {} ): InteractionItemValue => ( {
-	interaction_id: createString( 'test-id' ),
-	trigger: createString( trigger ),
-	animation: createAnimationPreset( {
-		effect,
-		type,
-		direction,
-		duration,
-		delay,
-		replay,
-		easing,
-	} ),
-} );
 
 const getEffectCombobox = (): HTMLElement => {
 	const allComboboxes = screen.getAllByRole( 'combobox' );
@@ -344,6 +313,23 @@ describe( 'InteractionDetails', () => {
 			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toBe( 200 );
 		} );
 
+		it( 'should prevent negative values for duration', () => {
+			const interaction = createInteractionItemValue( {
+				trigger: 'load',
+				effect: 'fade',
+				type: 'in',
+				duration: 0,
+				delay: 0,
+			} );
+
+			renderInteractionDetails( interaction );
+
+			const sizeInputs = screen.getAllByRole( 'spinbutton' );
+			fireEvent.keyDown( sizeInputs[ 0 ], { key: '-' } );
+
+			expect( mockOnChange ).not.toHaveBeenCalled();
+		} );
+
 		it( 'should call onChange when replay changes', () => {
 			const interaction = createInteractionItemValue( {
 				trigger: 'scrollIn',
@@ -605,6 +591,30 @@ describe( 'InteractionDetails', () => {
 			expect( updatedInteraction.animation.value.direction.value ).toBe( 'left' );
 			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toBe( 500 );
 			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toBe( 200 );
+		} );
+
+		it( 'should preserve breakpoints when updating other properties', () => {
+			const interaction = createInteractionItemValue( {
+				trigger: 'load',
+				effect: 'fade',
+				type: 'in',
+				duration: 300,
+				delay: 0,
+				excludedBreakpoints: [ 'desktop', 'tablet' ],
+			} );
+
+			renderInteractionDetails( interaction );
+
+			const effectSelect = getEffectCombobox();
+			fireEvent.mouseDown( effectSelect );
+			const slideOption = screen.getByRole( 'option', { name: /slide/i } );
+			fireEvent.click( slideOption );
+
+			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
+			expect( updatedInteraction.breakpoints ).toBeDefined();
+
+			const excluded = extractExcludedBreakpoints( updatedInteraction.breakpoints );
+			expect( excluded ).toEqual( [ 'desktop', 'tablet' ] );
 		} );
 
 		it( 'should preserve all unchanged values when updating effect', () => {

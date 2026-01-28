@@ -5,6 +5,7 @@ export type TVariable = {
 	order?: number;
 	deleted?: boolean;
 	deleted_at?: string;
+	sync_to_v3?: boolean;
 };
 
 export type TVariablesList = Record< string, TVariable >;
