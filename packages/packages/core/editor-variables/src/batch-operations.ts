@@ -51,6 +51,7 @@ export const buildOperationsArray = (
 				( original.label !== variable.label ||
 					original.value !== variable.value ||
 					original.order !== variable.order ||
+					original.type !== variable.type ||
 					syncChanged )
 			) {
 				operations.push( {
@@ -60,6 +61,7 @@ export const buildOperationsArray = (
 						...( original.label !== variable.label && { label: variable.label } ),
 						...( original.value !== variable.value && { value: variable.value } ),
 						...( original.order !== variable.order && { order: variable.order } ),
+						...( original.type !== variable.type && { type: variable.type } ),
 						...( syncChanged && { sync_to_v3: variable.sync_to_v3 } ),
 					},
 				} );
