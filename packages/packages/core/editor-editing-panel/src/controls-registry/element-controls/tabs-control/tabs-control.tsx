@@ -7,10 +7,10 @@ import {
 	useBoundProp,
 } from '@elementor/editor-controls';
 import {
-	getElementEditorSettings,
 	updateElementEditorSettings,
 	useElementChildren,
 	useElementEditorSettings,
+	type V1Element,
 } from '@elementor/editor-elements';
 import { type CreateOptions, numberPropTypeUtil } from '@elementor/editor-props';
 import { InfoCircleFilledIcon } from '@elementor/icons';
@@ -40,15 +40,13 @@ export const TabsControlContent = ( { label }: { label: string } ) => {
 		[ TAB_MENU_ELEMENT_TYPE ]: TAB_ELEMENT_TYPE,
 	} );
 
-	const tabList = getElementByType( element.id, TAB_MENU_ELEMENT_TYPE );
-	const tabContentArea = getElementByType( element.id, TAB_CONTENT_AREA_ELEMENT_TYPE );
+	const tabList = getElementByType( element.id, TAB_MENU_ELEMENT_TYPE ) as V1Element;
+	const tabContentArea = getElementByType( element.id, TAB_CONTENT_AREA_ELEMENT_TYPE ) as V1Element;
 
 	const repeaterValues: RepeaterItem< TabItem >[] = tabLinks.map( ( tabLink, index ) => {
-		const { title: titleSetting } = getElementEditorSettings( tabLink.id ) ?? {};
-
 		return {
 			id: tabLink.id,
-			title: titleSetting,
+			title: tabLink.editorSettings?.title,
 			index,
 		};
 	} );
@@ -111,11 +109,7 @@ export const TabsControlContent = ( { label }: { label: string } ) => {
 };
 
 const ItemLabel = ( { value, index }: { value: TabItem; index: number } ) => {
-	const id = value.id ?? '';
-
-	const editorSettings = useElementEditorSettings( id );
-
-	const elementTitle = editorSettings?.title;
+	const elementTitle = value?.title;
 
 	return (
 		<Stack sx={ { minHeight: 20 } } direction="row" alignItems="center" gap={ 1.5 }>
