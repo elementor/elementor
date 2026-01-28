@@ -1,14 +1,10 @@
-import { expect, type Locator, type BrowserContext } from '@playwright/test';
+import { expect, type Locator } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
-import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 	let editor: EditorPage;
-	let wpAdmin: WpAdminPage;
-	let context: BrowserContext;
-
 	const tabsType = 'e-tabs';
 	const tabsMenuType = 'e-tabs-menu';
 	const tabType = 'e-tab';
@@ -52,17 +48,22 @@ test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 		return menuItemsField;
 	};
 
-	test.beforeEach( async ( { browser, apiRequests }, testInfo ) => {
-		context = await browser.newContext();
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		const context = await browser.newContext();
 		const page = await context.newPage();
-
-		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
-		editor = await wpAdmin.openNewPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.setExperiments( {
+			e_atomic_elements: 'active',
+		} );
+		await page.close();
 	} );
 
-	test.afterEach( async () => {
-		await context.close();
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.resetExperiments();
+		await page.close();
 	} );
 
 	test( 'Clicking tab changes active content', async () => {
