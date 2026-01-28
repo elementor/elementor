@@ -13,6 +13,7 @@ export function createContainer( {
 		label,
 		settings: settingsModel,
 		model: createModel( {
+			id,
 			elType,
 			widgetType,
 			styles,
@@ -28,7 +29,7 @@ export function createContainer( {
 export function addChildToContainer( container, child ) {
 	const children = container.model.get( 'elements' )?.models || [];
 
-	children.push( child );
+	children.push( child.model );
 
 	container.model.set( 'elements', { models: children } );
 	container.children = children;

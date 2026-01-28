@@ -176,4 +176,59 @@ describe( 'InteractionsList onPlayInteraction', () => {
 		fireEvent.click( previewButtons[ 1 ] );
 		expect( mockOnPlayInteraction ).toHaveBeenCalledWith( 'id-2' );
 	} );
+
+	it( 'should handle interactions with breakpoints data', () => {
+		const mockOnPlayInteraction = jest.fn();
+		const interactions = {
+			version: 1,
+			items: [
+				{
+					$$type: 'interaction-item',
+					value: {
+						interaction_id: { $$type: 'string', value: 'id-with-breakpoints' },
+						trigger: { $$type: 'string', value: 'load' },
+						animation: {
+							$$type: 'animation-preset-props',
+							value: {
+								effect: { $$type: 'string', value: 'fade' },
+								type: { $$type: 'string', value: 'in' },
+								direction: { $$type: 'string', value: '' },
+								timing_config: {
+									$$type: 'timing-config',
+									value: {
+										duration: { $$type: 'number', value: 300 },
+										delay: { $$type: 'number', value: 0 },
+									},
+								},
+							},
+						},
+						breakpoints: {
+							$$type: 'interaction-breakpoints',
+							value: {
+								excluded: {
+									$$type: 'excluded-breakpoints',
+									value: [
+										{ $$type: 'string', value: 'desktop' },
+										{ $$type: 'string', value: 'tablet' },
+									],
+								},
+							},
+						},
+					},
+				},
+			],
+		};
+
+		render(
+			<PopupStateProvider>
+				<InteractionsList
+					interactions={ interactions as ElementInteractions }
+					onSelectInteractions={ jest.fn() }
+					onPlayInteraction={ mockOnPlayInteraction }
+				/>
+			</PopupStateProvider>
+		);
+
+		expect( screen.getByText( 'On page load: Fade In' ) ).toBeInTheDocument();
+	} );
 } );
