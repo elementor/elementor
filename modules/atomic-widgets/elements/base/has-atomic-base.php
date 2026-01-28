@@ -142,11 +142,6 @@ trait Has_Atomic_Base {
 		$value = $data[ $key ];
 
 		if ( is_array( $value ) && isset( $value['$$type'] ) && isset( $value['value'] ) ) {
-			// Handle size format: {$$type: 'size', value: {size: X, unit: 'ms'}}
-			if ( 'size' === $value['$$type'] && is_array( $value['value'] ) && isset( $value['value']['size'] ) ) {
-				return $value['value']['size'];
-			}
-
 			return $value['value'];
 		}
 
@@ -375,14 +370,14 @@ trait Has_Atomic_Base {
 		$offset_bottom = 85;
 
 		if ( is_array( $timing_config ) ) {
-			$duration = $this->extract_prop_value( $timing_config, 'duration', 300 );
-			$delay = $this->extract_prop_value( $timing_config, 'delay', 0 );
+			$duration = Interactions_Adapter::extract_numeric_value( $timing_config['duration'] ?? null, 300 );
+			$delay = Interactions_Adapter::extract_numeric_value( $timing_config['delay'] ?? null, 0 );
 		}
 
 		if ( is_array( $config ) ) {
 			$relative_to = $this->extract_prop_value( $config, 'relativeTo', 'viewport' );
-			$offset_top = $this->extract_prop_value( $config, 'offsetTop', 15 );
-			$offset_bottom = $this->extract_prop_value( $config, 'offsetBottom', 85 );
+			$offset_top = Interactions_Adapter::extract_numeric_value( $config, 'offsetTop', 15 );
+			$offset_bottom = Interactions_Adapter::extract_numeric_value( $config, 'offsetBottom', 85 );
 
 			$replay = $this->extract_prop_value( $config, 'replay', 0 );
 			if ( empty( $replay ) && 0 !== $replay && '0' !== $replay ) {

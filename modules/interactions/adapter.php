@@ -134,6 +134,31 @@ class Adapter {
 	}
 
 	/**
+	 * Extract numeric value from a PropType that can be either 'number' or 'size'.
+	 * - number format: {$$type: 'number', value: 300} → returns 300
+	 * - size format: {$$type: 'size', value: {size: 300, unit: 'ms'}} → returns 300
+	 *
+	 * @param array $prop    The PropType array.
+	 * @param mixed $default Default value if extraction fails.
+	 * @return int|float|mixed The numeric value or default.
+	 */
+	public static function extract_numeric_value( $prop, $default = 0 ) {
+		if ( ! is_array( $prop ) || ! isset( $prop['$$type'] ) ) {
+			return $default;
+		}
+
+		if ( 'size' === $prop['$$type'] && is_array( $prop['value'] ?? null ) && isset( $prop['value']['size'] ) ) {
+			return $prop['value']['size'];
+		}
+
+		if ( 'number' === $prop['$$type'] && isset( $prop['value'] ) ) {
+			return $prop['value'];
+		}
+
+		return $default;
+	}
+
+	/**
 	 * Decode interactions from string or return as-is if array.
 	 */
 	private static function decode( $interactions ) {

@@ -538,4 +538,97 @@ class Test_Adapter extends TestCase {
 		$this->assertEquals( 2, Adapter::VERSION_V2 );
 		$this->assertEquals( 'interactions-array', Adapter::ITEMS_TYPE );
 	}
+
+	// =========================================================================
+	// extract_size_value() Tests
+	// =========================================================================
+
+	public function test_extract_size_value__extracts_size_from_valid_prop() {
+		$prop = [
+			'$$type' => 'size',
+			'value' => [
+				'size' => 300,
+				'unit' => 'ms',
+			],
+		];
+
+		$result = Adapter::extract_size_value( $prop );
+
+		$this->assertEquals( 300, $result );
+	}
+
+	public function test_extract_size_value__returns_null_for_non_size_type() {
+		$prop = [
+			'$$type' => 'number',
+			'value' => 500,
+		];
+
+		$result = Adapter::extract_size_value( $prop );
+
+		$this->assertNull( $result );
+	}
+
+	public function test_extract_size_value__returns_null_for_non_array() {
+		$result = Adapter::extract_size_value( 'not an array' );
+
+		$this->assertNull( $result );
+	}
+
+	public function test_extract_size_value__returns_null_for_null() {
+		$result = Adapter::extract_size_value( null );
+
+		$this->assertNull( $result );
+	}
+
+	public function test_extract_size_value__returns_null_for_missing_size_key() {
+		$prop = [
+			'$$type' => 'size',
+			'value' => [
+				'unit' => 'ms',
+			],
+		];
+
+		$result = Adapter::extract_size_value( $prop );
+
+		$this->assertNull( $result );
+	}
+
+	public function test_extract_size_value__returns_null_for_non_array_value() {
+		$prop = [
+			'$$type' => 'size',
+			'value' => 'not an array',
+		];
+
+		$result = Adapter::extract_size_value( $prop );
+
+		$this->assertNull( $result );
+	}
+
+	public function test_extract_size_value__handles_zero_value() {
+		$prop = [
+			'$$type' => 'size',
+			'value' => [
+				'size' => 0,
+				'unit' => 'ms',
+			],
+		];
+
+		$result = Adapter::extract_size_value( $prop );
+
+		$this->assertEquals( 0, $result );
+	}
+
+	public function test_extract_size_value__handles_float_value() {
+		$prop = [
+			'$$type' => 'size',
+			'value' => [
+				'size' => 150.5,
+				'unit' => 'ms',
+			],
+		];
+
+		$result = Adapter::extract_size_value( $prop );
+
+		$this->assertEquals( 150.5, $result );
+	}
 }
