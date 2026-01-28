@@ -1,6 +1,8 @@
 import LocalizedValueStore from 'elementor-editor-utils/localized-value-store';
 import { createDebouncedWidgetPanelSearch } from 'elementor-editor-utils/editor-one-events';
 
+const WIDGET_PANEL_SEARCH_DEBOUNCE_MS = 2000;
+
 const PanelElementsSearchView = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-panel-element-search',
 
@@ -22,7 +24,7 @@ const PanelElementsSearchView = Marionette.ItemView.extend( {
 	},
 
 	initialize() {
-		this.debouncedTrackSearch = createDebouncedWidgetPanelSearch( 2000 );
+		this.debouncedTrackSearch = createDebouncedWidgetPanelSearch( WIDGET_PANEL_SEARCH_DEBOUNCE_MS );
 	},
 
 	clearInput() {

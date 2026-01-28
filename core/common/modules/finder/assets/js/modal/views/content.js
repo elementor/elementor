@@ -1,6 +1,8 @@
 import CategoriesView from './categories';
 import { createDebouncedFinderSearch } from 'elementor-editor-utils/editor-one-events';
 
+const FINDER_SEARCH_DEBOUNCE_MS = 300;
+
 export default class extends Marionette.LayoutView {
 	id() {
 		return 'elementor-finder';
@@ -29,7 +31,7 @@ export default class extends Marionette.LayoutView {
 	}
 
 	initialize() {
-		this.debouncedTrackSearch = createDebouncedFinderSearch( 300 );
+		this.debouncedTrackSearch = createDebouncedFinderSearch( FINDER_SEARCH_DEBOUNCE_MS );
 	}
 
 	showCategoriesView() {
