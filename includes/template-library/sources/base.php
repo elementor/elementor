@@ -492,7 +492,8 @@ abstract class Source_Base {
 			$variables_snapshot = apply_filters( 'elementor/template_library/import/global_variables_snapshot', $data['global_variables'], $data );
 		}
 
-		$content = Template_Library_Import_Export_Utils::apply_import_mode_to_content( $content, $import_mode, $snapshot, $variables_snapshot );
+		$import_result = Template_Library_Import_Export_Utils::apply_import_mode_to_content( $content, $import_mode, $snapshot, $variables_snapshot );
+		$content = $import_result['content'];
 
 		$page_settings = [];
 
