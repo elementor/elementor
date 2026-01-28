@@ -6,11 +6,7 @@ import { type SizePropValue } from '@elementor/editor-props';
 import { TIME_UNITS } from '../../configs/time-constants';
 import { type FieldProps, type TimeUnit } from '../../types';
 import { formatSizeValue, parseSizeValue } from '../../utils/size-transform-utils';
-
-const UNIT_TO_MS: Record< TimeUnit, number > = {
-	ms: 1,
-	s: 1000,
-};
+import { convertTimeUnit } from '../../utils/time-conversion';
 
 export function TimeFrameIndicator( { value, onChange, defaultValue }: FieldProps & { defaultValue: string } ) {
 	const sizeValue = parseSizeValue( value, TIME_UNITS, defaultValue );
@@ -24,7 +20,8 @@ export function TimeFrameIndicator( { value, onChange, defaultValue }: FieldProp
 				const fromUnit = prevUnitRef.current;
 				const toUnit = size.unit as TimeUnit;
 
-				size.size = convertTime( Number( size.size ), fromUnit, toUnit );
+				size.size = convertTimeUnit( Number( size.size ), fromUnit, toUnit );
+				prevUnitRef.current = toUnit;
 			}
 
 			onChange( formatSizeValue( size ) as string );
@@ -56,7 +53,3 @@ export function TimeFrameIndicator( { value, onChange, defaultValue }: FieldProp
 		/>
 	);
 }
-
-const convertTime = ( value: number, from: TimeUnit, to: TimeUnit ): number => {
-	return ( value * UNIT_TO_MS[ from ] ) / UNIT_TO_MS[ to ];
-};

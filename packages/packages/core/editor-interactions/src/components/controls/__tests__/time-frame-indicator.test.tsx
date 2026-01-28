@@ -74,10 +74,30 @@ describe( 'TimeFrameIndicator', () => {
 			expect( input ).toHaveValue( 600 );
 			expect( unitSelector ).toBeInTheDocument();
 		} );
+
+		it( 'should render value with seconds unit', () => {
+			// Arrange & Act.
+			render( <TimeFrameIndicator value="2.5s" onChange={ mockOnChange } defaultValue="600ms" /> );
+
+			// Assert.
+			const input = screen.getByRole( 'spinbutton' );
+			const unitSelector = screen.getByText( 's' );
+
+			expect( input ).toHaveValue( 2.5 );
+			expect( unitSelector ).toBeInTheDocument();
+		} );
+
+		it( 'should render decimal millisecond values', () => {
+			// Arrange & Act.
+			render( <TimeFrameIndicator value="150.5ms" onChange={ mockOnChange } defaultValue="600ms" /> );
+
+			// Assert.
+			const input = screen.getByRole( 'spinbutton' );
+
+			expect( input ).toHaveValue( 150.5 );
+		} );
 	} );
 
-	// handle negative values
-	// handle backspace
 	describe( 'OnChange', () => {
 		it( 'should call onChange with string when input value changes', () => {
 			// Arrange
@@ -104,6 +124,34 @@ describe( 'TimeFrameIndicator', () => {
 			// Assert.
 			expect( mockOnChange ).toHaveBeenCalledWith( '600ms' );
 		} );
+
+		it( 'should not call onChange on blur when value is non-zero', () => {
+			// Arrange.
+			mockOnChange.mockClear();
+			render( <TimeFrameIndicator value="500ms" onChange={ mockOnChange } defaultValue="600ms" /> );
+
+			const input = screen.getByRole( 'spinbutton' );
+
+			// Act.
+			fireEvent.blur( input );
+
+			// Assert.
+			expect( mockOnChange ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should handle decimal input values', () => {
+			// Arrange.
+			mockOnChange.mockClear();
+			render( <TimeFrameIndicator value="100ms" onChange={ mockOnChange } defaultValue="600ms" /> );
+
+			const input = screen.getByRole( 'spinbutton' );
+
+			// Act.
+			fireEvent.input( input, { target: { value: 1.5 } } );
+
+			// Assert.
+			expect( mockOnChange ).toHaveBeenCalledWith( '1.5ms' );
+		} );
 	} );
 
 	describe( 'Unit conversion', () => {
@@ -122,11 +170,35 @@ describe( 'TimeFrameIndicator', () => {
 			// Arrange.
 			render( <TimeFrameIndicator value="13s" onChange={ mockOnChange } defaultValue="0ms" /> );
 
-			// Act
+			// Act.
 			switchToMillisecondsUnit();
 
-			// Assert
+			// Assert.
 			expect( mockOnChange ).toHaveBeenLastCalledWith( '13000ms' );
+		} );
+
+		it( 'should convert milliseconds to decimal seconds', () => {
+			// Arrange.
+			mockOnChange.mockClear();
+			render( <TimeFrameIndicator value="1500ms" onChange={ mockOnChange } defaultValue="0ms" /> );
+
+			// Act.
+			switchToSecondsUnit();
+
+			// Assert.
+			expect( mockOnChange ).toHaveBeenLastCalledWith( '1.5s' );
+		} );
+
+		it( 'should convert decimal seconds to milliseconds', () => {
+			// Arrange.
+			mockOnChange.mockClear();
+			render( <TimeFrameIndicator value="0.25s" onChange={ mockOnChange } defaultValue="0ms" /> );
+
+			// Act.
+			switchToMillisecondsUnit();
+
+			// Assert.
+			expect( mockOnChange ).toHaveBeenLastCalledWith( '250ms' );
 		} );
 	} );
 } );

@@ -112,8 +112,8 @@ trait Has_Template {
 		$timing_config = $this->extract_prop_value_simple( $animation, 'timing_config' );
 		$config = $this->extract_prop_value_simple( $animation, 'config' );
 
-		$duration = 300;
-		$delay = 0;
+		$duration = '600ms';
+		$delay = '0ms';
 		$replay = 0;
 		$easing = 'easeIn';
 		$relative_to = 'viewport';
@@ -151,6 +151,16 @@ trait Has_Template {
 			$offset_top,
 			$offset_bottom,
 		] );
+	}
+
+	private function extract_size_prop_value( $data, $key, $default = '' ): string {
+		$value = $this->extract_prop_value_simple( $data, $key, $default );
+
+		if ( ! array_key_exists( 'size', $value ) || ! array_key_exists( 'unit', $value ) ) {
+			return $default . 'ms';
+		}
+
+		return $value['size'] . $value['unit'];
 	}
 
 	private function extract_prop_value_simple( $data, $key, $default = '' ) {
