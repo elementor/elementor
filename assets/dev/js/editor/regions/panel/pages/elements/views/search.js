@@ -1,5 +1,5 @@
 import LocalizedValueStore from 'elementor-editor-utils/localized-value-store';
-import { createDebouncedWidgetPanelSearch } from 'elementor-editor-utils/editor-one-events';
+const { createDebouncedWidgetPanelSearch } = require( 'elementor-editor-utils/editor-one-events' );
 
 const WIDGET_PANEL_SEARCH_DEBOUNCE_MS = 2000;
 

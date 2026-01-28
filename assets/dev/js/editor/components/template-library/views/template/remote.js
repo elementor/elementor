@@ -1,4 +1,4 @@
-import { EditorOneEventManager } from 'elementor-editor-utils/editor-one-events';
+const { EditorOneEventManager } = require( 'elementor-editor-utils/editor-one-events' );
 
 var TemplateLibraryTemplateView = require( 'elementor-templates/views/template/base' ),
 	TemplateLibraryTemplateRemoteView;
