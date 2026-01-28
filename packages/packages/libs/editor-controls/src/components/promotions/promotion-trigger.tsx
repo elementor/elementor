@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { forwardRef, useImperativeHandle, useState } from 'react';
-import { type MouseEvent } from 'react';
 import { PromotionChip, PromotionInfotip } from '@elementor/editor-ui';
 import { Box } from '@elementor/ui';
 
@@ -37,13 +36,13 @@ export const PromotionTrigger = forwardRef< PromotionTriggerRef, PromotionTrigge
 						assetUrl={ promotion.image }
 						ctaUrl={ promotion.ctaUrl }
 						open={ isOpen }
-						onClose={ ( e: MouseEvent | Event ) => {
+						onClose={ ( e: MouseEvent ) => {
 							e.stopPropagation();
 							setIsOpen( false );
 						} }
 					>
 						<Box
-							onClick={ ( e: React.MouseEvent ) => {
+							onClick={ ( e: MouseEvent ) => {
 								e.stopPropagation();
 								toggle();
 							} }
