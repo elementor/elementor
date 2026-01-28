@@ -20,7 +20,7 @@ type InfotipCardProps = {
 	content: string;
 	assetUrl: string;
 	ctaUrl: string;
-	onClose: () => void;
+	onClose: ( e: MouseEvent ) => void;
 };
 
 type PromotionInfotipProps = React.PropsWithChildren<
