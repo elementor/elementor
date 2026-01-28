@@ -10,10 +10,16 @@ export function GlobalStylesImportListener() {
 			}
 		};
 
-		window.addEventListener( 'elementor/global-styles/imported', handleGlobalStylesImported as EventListener );
+		window.addEventListener(
+			'elementor/global-styles/imported',
+			handleGlobalStylesImported as EventListener
+		);
 
 		return () => {
-			window.removeEventListener( 'elementor/global-styles/imported', handleGlobalStylesImported as EventListener );
+			window.removeEventListener(
+				'elementor/global-styles/imported',
+				handleGlobalStylesImported as EventListener
+			);
 		};
 	}, [] );
 

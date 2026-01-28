@@ -54,9 +54,9 @@ export function init() {
 	injectIntoLogic( {
 		id: 'variables-import-listener',
 		component: GlobalStylesImportListener,
-  } );
-  
-  injectIntoLogic( {
+	} );
+
+	injectIntoLogic( {
 		id: 'variables-open-panel-from-url',
 		component: OpenPanelFromUrl,
 	} );
