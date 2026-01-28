@@ -22,7 +22,8 @@ export const isTempId = ( id: string ): boolean => {
 
 export const buildOperationsArray = (
 	originalVariables: TVariablesList,
-	currentVariables: TVariablesList
+	currentVariables: TVariablesList,
+	deletedVariables: string[]
 ): BatchOperation[] => {
 	const operations: BatchOperation[] = [];
 
@@ -69,19 +70,11 @@ export const buildOperationsArray = (
 		}
 	} );
 
-	Object.entries( originalVariables ).forEach( ( [ id, variable ] ) => {
-		if ( isTempId( id ) || variable.deleted ) {
-			return;
-		}
-
-		const currentVariable = currentVariables[ id ];
-
-		if ( ! currentVariable || currentVariable.deleted ) {
-			operations.push( {
-				type: 'delete',
-				id,
-			} );
-		}
+	deletedVariables.forEach( ( id: string ) => {
+		operations.push( {
+			type: 'delete',
+			id,
+		} );
 	} );
 
 	return operations.filter( ( op ) => {
