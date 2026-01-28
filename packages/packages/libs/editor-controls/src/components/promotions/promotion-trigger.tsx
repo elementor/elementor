@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import { forwardRef, type ReactNode, useImperativeHandle, useState } from 'react';
 import { PromotionChip, PromotionInfotip } from '@elementor/editor-ui';
 import { Box } from '@elementor/ui';
 
@@ -11,7 +11,7 @@ function getV4Promotion( key: V4PromotionKey ): V4PromotionData | undefined {
 
 type PromotionTriggerProps = {
 	promotionKey: V4PromotionKey;
-	children?: React.ReactNode;
+	children?: ReactNode;
 };
 
 export type PromotionTriggerRef = {
