@@ -197,8 +197,8 @@ export const extractString = ( prop: StringPropValue | undefined, fallback = '' 
 	return prop?.value ?? fallback;
 };
 
-export const extractSize = ( prop: SizePropValue ): string => {
-	return formatSizeValue( prop?.value ) as string;
+export const extractSize = ( prop: SizePropValue ): TimeValue => {
+	return formatSizeValue( prop?.value );
 };
 
 export const extractNumber = ( prop: NumberPropValue | undefined, fallback = 0 ): number => {

@@ -59,8 +59,8 @@ type InteractionValues = {
 	effect: string;
 	type: string;
 	direction: string;
-	duration: string;
-	delay: string;
+	duration: TimeValue;
+	delay: TimeValue;
 	replay: boolean;
 	easing: string;
 	relativeTo: string;

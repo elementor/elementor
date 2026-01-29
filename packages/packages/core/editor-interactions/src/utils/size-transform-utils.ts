@@ -54,8 +54,8 @@ const tryParse = ( value: string, allowedUnits: SizeUnit[] ): SizeValue | null =
 	return createSizeValue( size, unit );
 };
 
-export const formatSizeValue = ( { size, unit }: SizeValue ): string | null => {
-	return `${ size ?? '' }${ unit }`;
+export const formatSizeValue = ( { size, unit }: SizeValue ): TimeValue => {
+	return `${ size ?? '' }${ unit }` as TimeValue;
 };
 
 const createSizeValue = ( size: number | null, unit?: SizeUnit ): SizeValue => {
