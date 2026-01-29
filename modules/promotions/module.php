@@ -6,13 +6,9 @@ use Elementor\Api;
 use Elementor\Controls_Manager;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as Base_Module;
-<<<<<<< HEAD
 use Elementor\Modules\Promotions\AdminMenuItems\Custom_Code_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Custom_Fonts_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Custom_Icons_Promotion_Item;
-=======
-use Elementor\Modules\Promotions\AdminMenuItems\Ally_Top_Bar_Link;
->>>>>>> a38c974838 (Internal: Add dashboard widget PLG when the user has Elementor but not Ally [ED-22708][ED-22707] (#33699))
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Custom_Code_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Custom_Elements_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Fonts_Menu;
