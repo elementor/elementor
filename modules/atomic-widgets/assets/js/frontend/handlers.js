@@ -53,13 +53,13 @@ function handleLinkActions( element ) {
 }
 
 function handleAtomicFormSubmit( element ) {
-	const form = getFormElement( element );
+	const form = element;
 
 	if ( ! form || ! Alpine?.data ) {
 		return;
 	}
 
-	const alpineId = getFormAlpineId( element, form );
+	const alpineId = getFormAlpineId( form );
 
 	Alpine.data( alpineId, () => ( {
 		async submit( event ) {
@@ -81,7 +81,7 @@ function handleAtomicFormSubmit( element ) {
 				button.disabled = true;
 			} );
 
-			const payload = buildAtomicFormPayload( element, form );
+			const payload = buildAtomicFormPayload( form );
 
 			if ( payload ) {
 				try {
@@ -104,27 +104,8 @@ function handleAtomicFormSubmit( element ) {
 	};
 }
 
-function getFormElement( element ) {
-	if ( ! element ) {
-		return null;
-	}
-
-	if ( element.matches( 'form' ) ) {
-		return element;
-	}
-
-	return element.querySelector( 'form' );
-}
-
-function getFormAlpineId( element, form ) {
-	const explicitId = form?.getAttribute?.( 'x-data' ) || element?.getAttribute?.( 'x-data' );
-
-	if ( explicitId ) {
-		return explicitId;
-	}
-
-	const id = element?.dataset?.id || form?.dataset?.id || element?.getAttribute?.( 'data-id' );
-	return id ? `eForm${ id }` : 'eForm';
+function getFormAlpineId( form ) {
+	return form.getAttribute( 'x-data' );
 }
 
 function clearAtomicFormSubmittingState( form, submitButtons ) {
@@ -135,13 +116,13 @@ function clearAtomicFormSubmittingState( form, submitButtons ) {
 	} );
 }
 
-function buildAtomicFormPayload( element, form ) {
+function buildAtomicFormPayload( form ) {
 	const postId = getPostId();
-	const formId = element.dataset.id || form.getAttribute( 'id' );
-	const formName = element.dataset.formName || form.getAttribute( 'aria-label' ) || '';
+	const formId = form.dataset.id;
+	const formName = form.dataset.formName || '';
 	const formFields = getAtomicFormFields( form );
 
-	if ( ! postId || ! formId || ! formFields.length ) {
+	if ( ! postId || ! formFields.length ) {
 		return null;
 	}
 
@@ -263,7 +244,7 @@ function setFormState( element, state ) {
 }
 
 function extractId( element ) {
-	return element?.dataset?.id || element?.getAttribute?.( 'data-id' ) || null;
+	return element?.dataset?.id || null;
 }
 
 function getPostId() {
