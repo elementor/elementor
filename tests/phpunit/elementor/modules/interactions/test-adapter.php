@@ -324,11 +324,11 @@ class Test_Adapter extends TestCase {
 
 		$timing = $decoded['items'][0]['value']['animation']['value']['timing_config']['value'];
 
-		$this->assertEquals( 'number', $timing['duration']['$$type'] );
-		$this->assertEquals( 500, $timing['duration']['value'] );
+		$this->assertEquals( 'size', $timing['duration']['$$type'] );
+		$this->assertEquals( [ 'size' => 500, 'unit' => 'ms' ], $timing['duration']['value'] );
 
-		$this->assertEquals( 'number', $timing['delay']['$$type'] );
-		$this->assertEquals( 100, $timing['delay']['value'] );
+		$this->assertEquals( 'size', $timing['delay']['$$type'] );
+		$this->assertEquals( [ 'size' => 100, 'unit' => 'ms' ], $timing['delay']['value'] );
 	}
 
 	public function test_unwrap_for_frontend__preserves_already_v1_format() {
