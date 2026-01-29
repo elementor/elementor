@@ -6,6 +6,7 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Includes\TemplateLibrary\Data\Controller;
 use Elementor\TemplateLibrary\Classes\Import_Images;
+use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
 use Elementor\Plugin;
 use Elementor\User;
 use Elementor\Utils;
@@ -617,7 +618,8 @@ class Manager {
 
 		$source = $this->get_source( $data['source'] ?? 'local' );
 
-		$import_result = $source->import_template( $upload_result['name'], $upload_result['tmp_name'] );
+		$import_mode = $data['import_mode'] ?? 'match_site';
+		$import_result = $source->import_template( $upload_result['name'], $upload_result['tmp_name'], $import_mode );
 
 		// Remove the temporary directory generated for the stream-uploaded file.
 		Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $upload_result['tmp_name'] ) );
@@ -680,6 +682,77 @@ class Manager {
 		$import_data = $document->get_import_data( [ 'content' => $elements ] );
 
 		return $import_data['content'];
+	}
+
+	public function process_global_styles( array $args ) {
+		$validate_args = $this->ensure_args( [ 'content', 'import_mode' ], $args );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		$import_mode = Template_Library_Import_Export_Utils::sanitize_import_mode( $args['import_mode'] );
+
+		if ( is_string( $args['content'] ) ) {
+			$content = json_decode( $args['content'], true );
+			if ( JSON_ERROR_NONE !== json_last_error() ) {
+				return new \WP_Error( 'invalid_json', 'Invalid JSON content.' );
+			}
+		} else {
+			$content = $args['content'];
+		}
+
+		if ( ! is_array( $content ) ) {
+			return new \WP_Error( 'invalid_content', 'Invalid template content.' );
+		}
+
+		$global_classes = null;
+		if ( array_key_exists( 'global_classes', $args ) && null !== $args['global_classes'] && '' !== $args['global_classes'] ) {
+			if ( is_string( $args['global_classes'] ) ) {
+				$global_classes = json_decode( $args['global_classes'], true );
+				if ( JSON_ERROR_NONE !== json_last_error() ) {
+					return new \WP_Error( 'invalid_global_classes', 'Invalid global classes snapshot.' );
+				}
+			} else {
+				$global_classes = $args['global_classes'];
+			}
+
+			if ( null !== $global_classes && ! is_array( $global_classes ) ) {
+				return new \WP_Error( 'invalid_global_classes', 'Invalid global classes snapshot.' );
+			}
+		}
+
+		$global_variables = null;
+		if ( array_key_exists( 'global_variables', $args ) && null !== $args['global_variables'] && '' !== $args['global_variables'] ) {
+			if ( is_string( $args['global_variables'] ) ) {
+				$global_variables = json_decode( $args['global_variables'], true );
+				if ( JSON_ERROR_NONE !== json_last_error() ) {
+					return new \WP_Error( 'invalid_global_variables', 'Invalid global variables snapshot.' );
+				}
+			} else {
+				$global_variables = $args['global_variables'];
+			}
+
+			if ( null !== $global_variables && ! is_array( $global_variables ) ) {
+				return new \WP_Error( 'invalid_global_variables', 'Invalid global variables snapshot.' );
+			}
+		}
+
+		$result = Template_Library_Import_Export_Utils::apply_import_mode_to_content( $content, $import_mode, $global_classes, $global_variables );
+
+		$response = [
+			'content' => $result['content'],
+		];
+
+		if ( ! empty( $result['updated_global_classes'] ) ) {
+			$response['updated_global_classes'] = $result['updated_global_classes'];
+		}
+
+		if ( ! empty( $result['updated_global_variables'] ) ) {
+			$response['updated_global_variables'] = $result['updated_global_variables'];
+		}
+
+		return $response;
 	}
 
 	public function get_item_children( array $args ) {
@@ -930,6 +1003,7 @@ class Manager {
 			'bulk_undo_delete_items',
 			'get_templates_quota',
 			'template_screenshot_failed',
+			'process_global_styles',
 		];
 
 		foreach ( $library_ajax_requests as $ajax_request ) {
@@ -1064,13 +1138,13 @@ class Manager {
 		$bulk_args = $from_source->format_args_for_bulk_action( $args );
 
 		if ( $source->supports_quota() && ! $this->is_action_to_same_source( $args ) ) {
-			$is_quota_valid = $source->validate_quota( $bulk_args );
+			$quota_validation = $source->validate_quota( $bulk_args );
 
-			if ( is_wp_error( $is_quota_valid ) ) {
-				return $is_quota_valid;
+			if ( is_wp_error( $quota_validation ) ) {
+				return $quota_validation;
 			}
 
-			if ( ! $is_quota_valid ) {
+			if ( false === $quota_validation ) {
 				return new \WP_Error( 'quota_error', 'The moving failed because it will pass the maximum templates you can save.' );
 			}
 		}
@@ -1115,13 +1189,13 @@ class Manager {
 		$bulk_args = $from_source->format_args_for_bulk_action( $args );
 
 		if ( $source->supports_quota() && ! $this->is_action_to_same_source( $args ) ) {
-			$is_quota_valid = $source->validate_quota( $bulk_args );
+			$quota_validation = $source->validate_quota( $bulk_args );
 
-			if ( is_wp_error( $is_quota_valid ) ) {
-				return $is_quota_valid;
+			if ( is_wp_error( $quota_validation ) ) {
+				return $quota_validation;
 			}
 
-			if ( ! $is_quota_valid ) {
+			if ( false === $quota_validation ) {
 				return new \WP_Error( 'quota_error', 'The copying failed because it will pass the maximum templates you can save.' );
 			}
 		}

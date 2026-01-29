@@ -3,6 +3,7 @@ namespace Elementor\TemplateLibrary;
 
 use Elementor\Controls_Stack;
 use Elementor\Core\Settings\Page\Model;
+use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -449,7 +450,7 @@ abstract class Source_Base {
 	/**
 	 * @return array|\WP_Error
 	 */
-	public function import_template( $name, $path ) {
+	public function import_template( $name, $path, $import_mode = Template_Library_Import_Export_Utils::IMPORT_MODE_MATCH_SITE ) {
 		return new \WP_Error( 'template_error', 'This source does not support import' );
 	}
 
@@ -461,7 +462,7 @@ abstract class Source_Base {
 		return new \WP_Error( 'quota_error', 'This source does not support quota validation' );
 	}
 
-	public function prepare_import_template_data( $file_path ) {
+	public function prepare_import_template_data( $file_path, $import_mode = 'match_site' ) {
 		$data = json_decode( Utils::file_get_contents( $file_path ), true );
 
 		if ( empty( $data ) ) {
@@ -480,6 +481,19 @@ abstract class Source_Base {
 			"elementor/template_library/sources/{$this->get_id()}/import/elements",
 			$content
 		);
+
+		$snapshot = null;
+		if ( ! empty( $data['global_classes'] ) && is_array( $data['global_classes'] ) && Template_Library_Import_Export_Utils::is_classes_feature_active() ) {
+			$snapshot = apply_filters( 'elementor/template_library/import/global_classes_snapshot', $data['global_classes'], $data );
+		}
+
+		$variables_snapshot = null;
+		if ( ! empty( $data['global_variables'] ) && is_array( $data['global_variables'] ) && Template_Library_Import_Export_Utils::is_variables_feature_active() ) {
+			$variables_snapshot = apply_filters( 'elementor/template_library/import/global_variables_snapshot', $data['global_variables'], $data );
+		}
+
+		$import_result = Template_Library_Import_Export_Utils::apply_import_mode_to_content( $content, $import_mode, $snapshot, $variables_snapshot );
+		$content = $import_result['content'];
 
 		$page_settings = [];
 
