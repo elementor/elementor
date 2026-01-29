@@ -137,7 +137,7 @@ class Variable {
 	public function apply_changes( array $data ): void {
 		$this->validate();
 
-		$allowed_fields = [ 'label', 'value', 'order' ];
+		$allowed_fields = [ 'label', 'value', 'order', 'type' ];
 		$has_changes = $this->maybe_apply_type( $data );
 
 		foreach ( $allowed_fields as $field ) {
