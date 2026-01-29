@@ -322,7 +322,6 @@ class Validation {
 
 		$timing_value = $timing['value'];
 
-
 		// Validate duration (accepts both 'number' and 'size' formats)
 		if ( ! $this->is_valid_timing_value( $timing_value, 'duration', 0 ) ) {
 			return false;

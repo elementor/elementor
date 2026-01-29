@@ -167,7 +167,6 @@ class Module extends BaseModule {
 		if ( isset( $data['elements'] ) && is_array( $data['elements'] ) ) {
 			$data['elements'] = $this->process_elements_unwrap( $data['elements'] );
 		}
-		
 	}
 
 	private function process_elements_wrap( $elements ) {
