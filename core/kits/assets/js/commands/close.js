@@ -6,6 +6,8 @@ export class Close extends $e.modules.CommandBase {
 
 		this.trackSiteSettingsSession( 'close', 'saved' === mode ? 'saved' : 'discard' );
 
+		// The kit is opened directly.
+
 		if ( elementor.config.initial_document.id === parseInt( elementor.config.kit_id ) ) {
 			return $e.run( 'panel/global/exit' );
 		}
@@ -24,6 +26,7 @@ export class Close extends $e.modules.CommandBase {
 				$e.components.get( 'panel/global' ).close();
 				$e.routes.clearHistory( this.component.getServiceName() );
 
+				// The kit shouldn't be cached for next open. (it may be changed via create colors/typography).
 				elementor.documents.invalidateCache( elementor.config.kit_id );
 			},
 		} ).finally( () => $e.internal( 'panel/state-ready' ) );
