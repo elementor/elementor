@@ -1,6 +1,6 @@
 import { type SizePropValue } from '@elementor/editor-props';
 
-import { type TimeUnit } from '../types';
+import { type TimeUnit, type TimeValue } from '../types';
 
 type SizeValue = SizePropValue[ 'value' ];
 type SizeUnit = SizeValue[ 'unit' ];
@@ -8,11 +8,18 @@ type SizeUnit = SizeValue[ 'unit' ];
 const SIZE_REGEX = /^(?:(-?\d*\.?\d+)([a-z%]+)|([a-z%]+))$/i;
 
 export const parseSizeValue = (
-	value: string,
+	value: TimeValue,
 	allowedUnits: SizeUnit[],
 	defaultValue?: string,
 	defaultUnit?: TimeUnit
 ): SizeValue => {
+	if ( typeof value === 'number' ) {
+		return {
+			size: value,
+			unit: defaultUnit as TimeUnit,
+		};
+	}
+
 	const sizeValue = tryParse( value, allowedUnits );
 
 	if ( sizeValue ) {

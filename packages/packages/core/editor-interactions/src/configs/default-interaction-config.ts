@@ -1,14 +1,12 @@
 // TODO: move all defaults configs here
-import { type TimeUnit } from '../types';
-
-type TimeString = `${ number }${ TimeUnit }`;
+import { type TimeValue } from '../types';
 
 type DefaultConfig = {
-	duration: TimeString;
-	delay: TimeString;
+	duration: TimeValue;
+	delay: TimeValue;
 };
 
 export const DEFAULT_INTERACTION_CONFIG: DefaultConfig = {
-	duration: '600ms',
-	delay: '0ms',
+	duration: 600,
+	delay: 0,
 };

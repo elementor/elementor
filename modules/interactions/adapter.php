@@ -184,6 +184,10 @@ class Adapter {
 	public static function extract_time_value( $prop, $default ) {
 		$value = self::extract_numeric_value( $prop, $default );
 
+		if ( 'number' === $prop['$$type'] ) {
+			return $value;
+		}
+
 		return self::to_milliseconds( $value, $prop['value']['unit'] );
 	}
 

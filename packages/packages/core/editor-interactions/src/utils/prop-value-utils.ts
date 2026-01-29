@@ -2,18 +2,19 @@ import { sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 
 import { DEFAULT_INTERACTION_CONFIG } from '../configs/default-interaction-config';
 import { DEFAULT_TIME_UNIT, TIME_UNITS } from '../configs/time-constants';
-import type {
-	AnimationPresetPropValue,
-	BooleanPropValue,
-	ConfigPropValue,
-	ElementInteractions,
-	ExcludedBreakpointsPropValue,
-	InteractionBreakpointsPropValue,
-	InteractionItemPropValue,
-	InteractionItemValue,
-	NumberPropValue,
-	StringPropValue,
-	TimingConfigPropValue,
+import {
+	type AnimationPresetPropValue,
+	type BooleanPropValue,
+	type ConfigPropValue,
+	type ElementInteractions,
+	type ExcludedBreakpointsPropValue,
+	type InteractionBreakpointsPropValue,
+	type InteractionItemPropValue,
+	type InteractionItemValue,
+	type NumberPropValue,
+	type StringPropValue,
+	type TimeValue,
+	type TimingConfigPropValue,
 } from '../types';
 import { formatSizeValue, parseSizeValue } from '../utils/size-transform-utils';
 import { generateTempInteractionId } from './temp-id-utils';
@@ -28,7 +29,7 @@ export const createNumber = ( value: number ): NumberPropValue => ( {
 	value,
 } );
 
-export const createTimingConfig = ( duration: string, delay: string ): TimingConfigPropValue => ( {
+export const createTimingConfig = ( duration: TimeValue, delay: TimeValue ): TimingConfigPropValue => ( {
 	$$type: 'timing-config',
 	value: {
 		duration: sizePropTypeUtil.create( parseSizeValue( duration, TIME_UNITS, undefined, DEFAULT_TIME_UNIT ) ),
@@ -99,8 +100,8 @@ export const createAnimationPreset = ( {
 	effect: string;
 	type: string;
 	direction?: string;
-	duration: string;
-	delay: string;
+	duration: TimeValue;
+	delay: TimeValue;
 	replay: boolean;
 	easing?: string;
 	relativeTo?: string;
@@ -142,8 +143,8 @@ export const createInteractionItem = ( {
 	effect: string;
 	type: string;
 	direction?: string;
-	duration: string;
-	delay: string;
+	duration: TimeValue;
+	delay: TimeValue;
 	interactionId?: string;
 	replay: boolean;
 	easing?: string;
