@@ -20,14 +20,14 @@ export const parseSizeValue = (
 		};
 	}
 
-	const sizeValue = tryParse( value, allowedUnits );
+	const sizeValue = tryParse( value, allowedUnits, defaultUnit );
 
 	if ( sizeValue ) {
 		return sizeValue;
 	}
 
 	if ( defaultValue ) {
-		const fallbackSize = tryParse( defaultValue as string, allowedUnits );
+		const fallbackSize = tryParse( defaultValue, allowedUnits, defaultUnit );
 
 		if ( fallbackSize ) {
 			return fallbackSize;
@@ -37,7 +37,11 @@ export const parseSizeValue = (
 	return createSizeValue( null, defaultUnit );
 };
 
-const tryParse = ( value: string, allowedUnits: SizeUnit[] ): SizeValue | null => {
+const tryParse = ( value: TimeValue, allowedUnits: SizeUnit[], defaultUnit?: TimeUnit ): SizeValue | null => {
+	if ( typeof value === 'number' ) {
+		return createSizeValue( value, defaultUnit );
+	}
+
 	const match = value && value.match( SIZE_REGEX );
 
 	if ( ! match ) {
