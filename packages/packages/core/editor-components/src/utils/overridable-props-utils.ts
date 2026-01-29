@@ -1,0 +1,76 @@
+import {
+	type ComponentInstanceOverrideProp,
+	componentInstanceOverridePropTypeUtil,
+} from '../prop-types/component-instance-override-prop-type';
+import {
+	type ComponentInstanceOverride,
+	type ComponentInstanceOverridesPropValue,
+} from '../prop-types/component-instance-overrides-prop-type';
+import { componentOverridablePropTypeUtil } from '../prop-types/component-overridable-prop-type';
+import { type OverridableProp, type PublishedComponent } from '../types';
+
+export type InnerOverrideInfo = {
+	componentId: number;
+	innerOverrideKey: string;
+	overrideValue: unknown;
+};
+
+export function getOverridableProp(
+	components: PublishedComponent[],
+	componentId: number,
+	overrideKey: string
+): OverridableProp | undefined {
+	const component = components.find( ( { id } ) => id === componentId );
+
+	return component?.overridableProps?.props?.[ overrideKey ];
+}
+
+export function getMatchingOverride(
+	overrides: ComponentInstanceOverridesPropValue,
+	overrideKey: string
+): ComponentInstanceOverride | null {
+	const result =
+		overrides?.find( ( override ) => {
+			const overridableValue = componentOverridablePropTypeUtil.extract( override );
+			let comparedOverrideKey = null;
+
+			if ( overridableValue ) {
+				comparedOverrideKey = ( overridableValue.origin_value as ComponentInstanceOverrideProp )?.value
+					?.override_key;
+			} else {
+				comparedOverrideKey = override.value.override_key;
+			}
+
+			return comparedOverrideKey === overrideKey;
+		} ) ?? null;
+
+	return result;
+}
+
+export function extractInnerOverrideInfo( override: ComponentInstanceOverride | null ): InnerOverrideInfo | null {
+	if ( ! override ) {
+		return null;
+	}
+
+	const overridableValue = componentOverridablePropTypeUtil.extract( override );
+	const innerOverride = overridableValue
+		? componentInstanceOverridePropTypeUtil.extract( overridableValue.origin_value )
+		: componentInstanceOverridePropTypeUtil.extract( override );
+
+	if ( ! innerOverride ) {
+		return null;
+	}
+
+	const {
+		schema_source: schemaSource,
+		override_key: innerOverrideKey,
+		override_value: overrideValue,
+	} = innerOverride;
+	const componentId = schemaSource?.id;
+
+	if ( ! componentId || ! innerOverrideKey ) {
+		return null;
+	}
+
+	return { componentId, innerOverrideKey, overrideValue };
+}

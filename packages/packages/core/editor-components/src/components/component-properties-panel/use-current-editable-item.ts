@@ -4,9 +4,9 @@ import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import { useEditable } from '@elementor/editor-ui';
 import { __ } from '@wordpress/i18n';
 
+import { useValidOverridableProps } from '../../hooks/use-valid-overridable-props';
 import { renameOverridableGroup } from '../../store/actions/rename-overridable-group';
 import { useCurrentComponentId } from '../../store/store';
-import { useOverridableProps } from '../component-panel-header/use-overridable-props';
 import { validateGroupLabel } from './utils/validate-group-label';
 
 export type GroupLabelEditableState = {
@@ -21,7 +21,7 @@ export type GroupLabelEditableState = {
 export function useCurrentEditableItem(): GroupLabelEditableState {
 	const [ editingGroupId, setEditingGroupId ] = useState< string | null >( null );
 	const currentComponentId = useCurrentComponentId();
-	const overridableProps = useOverridableProps( currentComponentId );
+	const overridableProps = useValidOverridableProps( currentComponentId );
 
 	const allGroupsRecord = overridableProps?.groups?.items ?? {};
 	const currentGroup = editingGroupId ? allGroupsRecord[ editingGroupId ] : null;
