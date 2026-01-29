@@ -7,23 +7,12 @@ import {
 	type ComponentInstanceOverridesPropValue,
 } from '../prop-types/component-instance-overrides-prop-type';
 import { componentOverridablePropTypeUtil } from '../prop-types/component-overridable-prop-type';
-import { type OverridableProp, type PublishedComponent } from '../types';
 
 export type InnerOverrideInfo = {
 	componentId: number;
 	innerOverrideKey: string;
 	overrideValue: unknown;
 };
-
-export function getOverridableProp(
-	components: PublishedComponent[],
-	componentId: number,
-	overrideKey: string
-): OverridableProp | undefined {
-	const component = components.find( ( { id } ) => id === componentId );
-
-	return component?.overridableProps?.props?.[ overrideKey ];
-}
 
 export function getMatchingOverride(
 	overrides: ComponentInstanceOverridesPropValue,
