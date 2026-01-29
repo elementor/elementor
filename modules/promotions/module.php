@@ -196,16 +196,16 @@ class Module extends Base_Module {
 	private function get_atomic_promotion_configs(): array {
 		return [
 			[
-				'key'=> 'attributes',
-				'label'=> __( 'Attributes', 'elementor' ),
-				'section'=> 'settings',
-				'priority'=> 40,
+				'key' => 'attributes',
+				'label' => __( 'Attributes', 'elementor' ),
+				'section' => 'settings',
+				'priority' => 40,
 			],
 			[
-				'key'=> 'display-conditions',
-				'label'=> __( 'Display Conditions', 'elementor' ),
-				'section'=> 'settings',
-				'priority'=> 50,
+				'key' => 'display-conditions',
+				'label' => __( 'Display Conditions', 'elementor' ),
+				'section' => 'settings',
+				'priority' => 50,
 			],
 		];
 	}
