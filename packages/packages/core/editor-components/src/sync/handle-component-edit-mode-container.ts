@@ -86,7 +86,7 @@ function initRedirectDropIntoComponent() {
 
 function createEmptyTopLevelContainer( container: Container ) {
 	const newContainer = createElement( {
-		containerId: container.id,
+		container: container as V1Element,
 		model: { elType: V4_DEFAULT_CONTAINER_TYPE },
 	} );
 
