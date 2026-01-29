@@ -36,7 +36,7 @@ class Atomic_Form extends Atomic_Element_Base {
 	}
 
 	public static function get_element_type(): string {
-		return 'e-form';
+		return self::get_type();
 	}
 
 	public function get_title() {
