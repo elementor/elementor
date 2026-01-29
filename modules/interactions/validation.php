@@ -207,24 +207,6 @@ class Validation {
 		return true;
 	}
 
-	private function is_valid_size_prop( $data, $key ) {
-		if ( ! isset( $data[ $key ] ) || ! is_array( $data[ $key ] ) ) {
-			return false;
-		}
-
-		$prop = $data[ $key ];
-
-		if ( ! isset( $prop['$$type'] ) || 'size' !== $prop['$$type'] ) {
-			return false;
-		}
-
-		if ( ! isset( $prop['value'] ) || ! array_key_exists( 'size', $prop['value'] ) || ! array_key_exists( 'unit', $prop['value'] )) {
-			return false;
-		}
-
-		return true;
-	}
-
 	private function is_valid_number_prop_in_range( $data, $key, $min = null, $max = null ) {
 		if ( ! $this->is_valid_number_prop( $data, $key ) ) {
 			return false;

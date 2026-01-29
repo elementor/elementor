@@ -11,6 +11,11 @@ class Adapter {
 	const VERSION_V2 = 2;
 	const ITEMS_TYPE = 'interactions-array';
 
+	private const TO_MS = [
+		'ms'  => 1,
+		's'   => 1000,
+	];
+
 	public static function wrap_for_db( $interactions ) {
 		$decoded = self::decode( $interactions );
 
@@ -174,6 +179,18 @@ class Adapter {
 		}
 
 		return $default;
+	}
+
+	public static function extract_time_value( $prop, $default ) {
+		$value = self::extract_numeric_value( $prop, $default );
+
+		return self::to_milliseconds( $value, $prop['value']['unit'] );
+	}
+
+	public static function to_milliseconds( int $value, string $unit ): int {
+		$multiplier = self::TO_MS[ $unit ] ?? 1;
+
+		return $value * $multiplier;
 	}
 
 	/**

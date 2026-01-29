@@ -112,8 +112,8 @@ trait Has_Template {
 		$timing_config = $this->extract_prop_value_simple( $animation, 'timing_config' );
 		$config = $this->extract_prop_value_simple( $animation, 'config' );
 
-		$duration = '600ms';
-		$delay = '0ms';
+		$duration = 600;
+		$delay = 0;
 		$replay = 0;
 		$easing = 'easeIn';
 		$relative_to = 'viewport';
@@ -121,8 +121,8 @@ trait Has_Template {
 		$offset_bottom = 85;
 
 		if ( is_array( $timing_config ) ) {
-			$duration = Interactions_Adapter::extract_numeric_value( $timing_config['duration'] ?? null, 300 );
-			$delay = Interactions_Adapter::extract_numeric_value( $timing_config['delay'] ?? null, 0 );
+			$duration = Interactions_Adapter::extract_time_value( $timing_config['duration'] ?? null, 600 );
+			$delay = Interactions_Adapter::extract_time_value( $timing_config['delay'] ?? null, 0 );
 		}
 
 		if ( is_array( $config ) ) {
@@ -151,16 +151,6 @@ trait Has_Template {
 			$offset_top,
 			$offset_bottom,
 		] );
-	}
-
-	private function extract_size_prop_value( $data, $key, $default = '' ): string {
-		$value = $this->extract_prop_value_simple( $data, $key, $default );
-
-		if ( ! array_key_exists( 'size', $value ) || ! array_key_exists( 'unit', $value ) ) {
-			return $default . 'ms';
-		}
-
-		return $value['size'] . $value['unit'];
 	}
 
 	private function extract_prop_value_simple( $data, $key, $default = '' ) {
