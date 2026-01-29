@@ -19,7 +19,7 @@ export const InlineEditingControl = createControl(
 		props?: ComponentProps< 'div' >;
 	} ) => {
 		const { value, setValue } = useBoundProp( htmlPropTypeUtil );
-		const handleChange = ( newValue: unknown ) => setValue( newValue as string );
+		const handleChange = ( newValue: unknown ) => setValue( ( newValue ?? '' ) as string );
 
 		return (
 			<ControlActions>
