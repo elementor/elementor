@@ -4,9 +4,8 @@ import { ControlFormLabel, PopoverContent, PopoverGridContainer } from '@element
 import { Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { DEFAULT_INTERACTION_CONFIG } from '../configs/default-interaction-config';
 import { getInteractionsControl } from '../interactions-controls-registry';
-import type { InteractionItemValue } from '../types';
+import type { InteractionItemValue, TimeValue } from '../types';
 import {
 	createAnimationPreset,
 	createString,
@@ -31,8 +30,8 @@ const DEFAULT_VALUES = {
 	effect: 'fade',
 	type: 'in',
 	direction: '',
-	duration: DEFAULT_INTERACTION_CONFIG.duration,
-	delay: DEFAULT_INTERACTION_CONFIG.delay,
+	duration: 600,
+	delay: 0,
 	replay: false,
 	easing: 'easeIn',
 	relativeTo: 'viewport',
@@ -160,8 +159,8 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			effect: string;
 			type: string;
 			direction: string;
-			duration: string;
-			delay: string;
+			duration: TimeValue;
+			delay: TimeValue;
 			replay: boolean;
 			easing?: string;
 			relativeTo: string;
@@ -179,8 +178,8 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 				effect: updates.effect ?? effect,
 				type: updates.type ?? type,
 				direction: resolvedDirectionValue,
-				duration: updates.duration ?? duration,
-				delay: updates.delay ?? delay,
+				duration: updates.duration ?? ( duration as TimeValue ),
+				delay: updates.delay ?? ( delay as TimeValue ),
 				replay: updates.replay ?? replay,
 				easing: updates.easing ?? easing,
 				relativeTo: updates.relativeTo ?? relativeTo,
@@ -241,7 +240,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 					<Field label={ __( 'Duration', 'elementor' ) }>
 						<TimeFrameIndicator
 							value={ String( duration ) }
-							onChange={ ( v ) => updateInteraction( { duration: v } ) }
+							onChange={ ( v ) => updateInteraction( { duration: v as TimeValue } ) }
 							defaultValue={ DEFAULT_VALUES.duration }
 						/>
 					</Field>
@@ -251,7 +250,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 					<Field label={ __( 'Delay', 'elementor' ) }>
 						<TimeFrameIndicator
 							value={ String( delay ) }
-							onChange={ ( v ) => updateInteraction( { delay: v } ) }
+							onChange={ ( v ) => updateInteraction( { delay: v as TimeValue } ) }
 							defaultValue={ DEFAULT_VALUES.delay }
 						/>
 					</Field>

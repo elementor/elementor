@@ -10,7 +10,7 @@ const SIZE_REGEX = /^(?:(-?\d*\.?\d+)([a-z%]+)|([a-z%]+))$/i;
 export const parseSizeValue = (
 	value: TimeValue,
 	allowedUnits: SizeUnit[],
-	defaultValue?: string,
+	defaultValue?: TimeValue,
 	defaultUnit?: TimeUnit
 ): SizeValue => {
 	if ( typeof value === 'number' ) {
@@ -27,7 +27,7 @@ export const parseSizeValue = (
 	}
 
 	if ( defaultValue ) {
-		const fallbackSize = tryParse( defaultValue, allowedUnits );
+		const fallbackSize = tryParse( defaultValue as string, allowedUnits );
 
 		if ( fallbackSize ) {
 			return fallbackSize;

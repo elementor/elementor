@@ -1,6 +1,5 @@
 import { sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 
-import { DEFAULT_INTERACTION_CONFIG } from '../configs/default-interaction-config';
 import { DEFAULT_TIME_UNIT, TIME_UNITS } from '../configs/time-constants';
 import {
 	type AnimationPresetPropValue,
@@ -181,8 +180,8 @@ export const createDefaultInteractionItem = (): InteractionItemPropValue => {
 		trigger: 'load',
 		effect: 'fade',
 		type: 'in',
-		duration: DEFAULT_INTERACTION_CONFIG.duration,
-		delay: DEFAULT_INTERACTION_CONFIG.delay,
+		duration: 600,
+		delay: 0,
 		replay: false,
 		easing: 'easeIn',
 		interactionId: generateTempInteractionId(),
