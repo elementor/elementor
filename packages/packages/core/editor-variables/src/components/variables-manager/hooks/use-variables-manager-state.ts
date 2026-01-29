@@ -52,7 +52,7 @@ export const useVariablesManagerState = () => {
 	const handleSave = useCallback( async (): Promise< { success: boolean } > => {
 		const originalVariables = getVariables( false );
 		setIsSaving( true );
-		const result = await service.batchSave( originalVariables, variables );
+		const result = await service.batchSave( originalVariables, variables, deletedVariables );
 
 		if ( result.success ) {
 			await service.load();
@@ -64,7 +64,7 @@ export const useVariablesManagerState = () => {
 		}
 
 		return { success: result.success };
-	}, [ variables ] );
+	}, [ variables, deletedVariables ] );
 
 	const filteredVariables = useCallback( () => {
 		const list = variablesToList( variables ).filter( ( v ) => ! v.deleted );
