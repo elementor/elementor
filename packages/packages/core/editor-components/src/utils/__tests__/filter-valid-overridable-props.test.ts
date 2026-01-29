@@ -1,5 +1,6 @@
 import { getElementSetting } from '@elementor/editor-elements';
 
+import { getOverridableProp } from '../../components/overridable-props/utils/get-overridable-prop';
 import { componentInstanceOverridePropTypeUtil } from '../../prop-types/component-instance-override-prop-type';
 import { componentInstanceOverridesPropTypeUtil } from '../../prop-types/component-instance-overrides-prop-type';
 import { componentInstancePropTypeUtil } from '../../prop-types/component-instance-prop-type';
@@ -9,6 +10,9 @@ import { filterValidOverridableProps, isExposedPropValid } from '../filter-valid
 
 jest.mock( '@elementor/editor-elements', () => ( {
 	getElementSetting: jest.fn(),
+} ) );
+jest.mock( '../../components/overridable-props/utils/get-overridable-prop', () => ( {
+	getOverridableProp: jest.fn(),
 } ) );
 
 const mockGetElementSetting = jest.mocked( getElementSetting );
@@ -100,14 +104,14 @@ describe( 'filter-valid-overridable-props', () => {
 		it( 'should return true for direct props (no originPropFields)', () => {
 			// Arrange
 			const prop = createDirectProp( 'prop-1' );
-			const getOverridablePropsForComponent = jest.fn();
+			jest.mocked( getOverridableProp ).mockReturnValue( undefined );
 
 			// Act
-			const result = isExposedPropValid( prop, getOverridablePropsForComponent );
+			const result = isExposedPropValid( prop );
 
 			// Assert
 			expect( result ).toBe( true );
-			expect( getOverridablePropsForComponent ).not.toHaveBeenCalled();
+			expect( getOverridableProp ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should return true when inner prop exists', () => {
@@ -119,14 +123,19 @@ describe( 'filter-valid-overridable-props', () => {
 				createComponentInstanceSetting( [ { outerKey: 'prop-4', innerKey: 'prop-0' } ] )
 			);
 
-			const getOverridablePropsForComponent = jest.fn().mockReturnValue( innerOverridableProps );
+			jest.mocked( getOverridableProp ).mockImplementation( ( { overrideKey } ) => {
+				return innerOverridableProps.props[ overrideKey ];
+			} );
 
 			// Act
-			const result = isExposedPropValid( prop, getOverridablePropsForComponent );
+			const result = isExposedPropValid( prop );
 
 			// Assert
 			expect( result ).toBe( true );
-			expect( getOverridablePropsForComponent ).toHaveBeenCalledWith( INNER_COMPONENT_ID );
+			expect( getOverridableProp ).toHaveBeenCalledWith( {
+				componentId: INNER_COMPONENT_ID,
+				overrideKey: 'prop-0',
+			} );
 		} );
 
 		it( 'should return false when inner prop was deleted', () => {
@@ -138,10 +147,12 @@ describe( 'filter-valid-overridable-props', () => {
 				createComponentInstanceSetting( [ { outerKey: 'prop-4', innerKey: 'prop-0' } ] )
 			);
 
-			const getOverridablePropsForComponent = jest.fn().mockReturnValue( innerOverridableProps );
+			jest.mocked( getOverridableProp ).mockImplementation(
+				( { overrideKey } ) => innerOverridableProps.props[ overrideKey ]
+			);
 
 			// Act
-			const result = isExposedPropValid( prop, getOverridablePropsForComponent );
+			const result = isExposedPropValid( prop );
 
 			// Assert
 			expect( result ).toBe( false );
@@ -153,14 +164,14 @@ describe( 'filter-valid-overridable-props', () => {
 
 			mockGetElementSetting.mockReturnValue( null );
 
-			const getOverridablePropsForComponent = jest.fn();
+			jest.mocked( getOverridableProp ).mockReturnValue( undefined );
 
 			// Act
-			const result = isExposedPropValid( prop, getOverridablePropsForComponent );
+			const result = isExposedPropValid( prop );
 
 			// Assert
 			expect( result ).toBe( false );
-			expect( getOverridablePropsForComponent ).not.toHaveBeenCalled();
+			expect( getOverridableProp ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should return false when inner component not found in store', () => {
@@ -171,10 +182,10 @@ describe( 'filter-valid-overridable-props', () => {
 				createComponentInstanceSetting( [ { outerKey: 'prop-4', innerKey: 'prop-0' } ] )
 			);
 
-			const getOverridablePropsForComponent = jest.fn().mockReturnValue( undefined );
+			jest.mocked( getOverridableProp ).mockReturnValue( undefined );
 
 			// Act
-			const result = isExposedPropValid( prop, getOverridablePropsForComponent );
+			const result = isExposedPropValid( prop );
 
 			// Assert
 			expect( result ).toBe( false );
@@ -197,10 +208,12 @@ describe( 'filter-valid-overridable-props', () => {
 				},
 			};
 
-			const getOverridablePropsForComponent = jest.fn();
+			jest.mocked( getOverridableProp ).mockImplementation( ( { overrideKey } ) => {
+				return overridableProps.props[ overrideKey ];
+			} );
 
 			// Act
-			const result = filterValidOverridableProps( overridableProps, getOverridablePropsForComponent );
+			const result = filterValidOverridableProps( overridableProps );
 
 			// Assert
 			expect( Object.keys( result.props ) ).toEqual( [ 'prop-1', 'prop-2' ] );
@@ -232,10 +245,12 @@ describe( 'filter-valid-overridable-props', () => {
 				] )
 			);
 
-			const getOverridablePropsForComponent = jest.fn().mockReturnValue( innerOverridableProps );
+			jest.mocked( getOverridableProp ).mockImplementation( ( { overrideKey } ) => {
+				return innerOverridableProps.props[ overrideKey ];
+			} );
 
 			// Act
-			const result = filterValidOverridableProps( overridableProps, getOverridablePropsForComponent );
+			const result = filterValidOverridableProps( overridableProps );
 
 			// Assert
 			expect( Object.keys( result.props ) ).toEqual( [ 'prop-2', 'prop-5' ] );
@@ -325,24 +340,19 @@ describe( 'filter-valid-overridable-props', () => {
 				return null;
 			} );
 
-			const getOverridablePropsForComponent = jest.fn().mockImplementation( ( componentId ) => {
-				if ( componentId === middleComponentId ) {
-					return {
-						props: { 'prop-4': middleProp },
-						groups: { items: {}, order: [] },
-					};
+			jest.mocked( getOverridableProp ).mockImplementation( ( { componentId, overrideKey } ) => {
+				if ( componentId === middleComponentId && overrideKey === 'prop-4' ) {
+					return middleProp;
 				}
-				if ( componentId === innerComponentId ) {
-					return {
-						props: { 'prop-0': innerProp },
-						groups: { items: {}, order: [] },
-					};
+				if ( componentId === innerComponentId && overrideKey === 'prop-0' ) {
+					return innerProp;
 				}
+
 				return undefined;
 			} );
 
 			// Act
-			const result = filterValidOverridableProps( overridableProps, getOverridablePropsForComponent );
+			const result = filterValidOverridableProps( overridableProps );
 
 			// Assert
 			expect( Object.keys( result.props ) ).toEqual( [ 'prop-10' ] );

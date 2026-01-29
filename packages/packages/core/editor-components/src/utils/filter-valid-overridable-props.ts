@@ -1,13 +1,12 @@
 import { getElementSetting } from '@elementor/editor-elements';
 
+import { getOverridableProp } from '../components/overridable-props/utils/get-overridable-prop';
 import { type ComponentInstanceOverride } from '../prop-types/component-instance-overrides-prop-type';
 import { componentInstanceOverridesPropTypeUtil } from '../prop-types/component-instance-overrides-prop-type';
 import { componentInstancePropTypeUtil } from '../prop-types/component-instance-prop-type';
 import { componentOverridablePropTypeUtil } from '../prop-types/component-overridable-prop-type';
 import { type OverridableProp, type OverridableProps } from '../types';
 import { extractInnerOverrideInfo } from './overridable-props-utils';
-
-export type GetOverridablePropsForComponent = ( componentId: number ) => OverridableProps | undefined;
 
 function findOverrideByOuterKey(
 	overrides: ComponentInstanceOverride[] | undefined,
@@ -30,11 +29,7 @@ function findOverrideByOuterKey(
 	);
 }
 
-export function isExposedPropValid(
-	prop: OverridableProp,
-	getOverridablePropsForComponent: GetOverridablePropsForComponent,
-	visited: Set< string > = new Set()
-): boolean {
+export function isExposedPropValid( prop: OverridableProp, visited: Set< string > = new Set() ): boolean {
 	if ( ! prop.originPropFields ) {
 		return true;
 	}
@@ -61,28 +56,20 @@ export function isExposedPropValid(
 	}
 
 	const { componentId, innerOverrideKey } = innerOverrideInfo;
-	const innerOverridableProps = getOverridablePropsForComponent( componentId );
+	const innerOverridableProp = getOverridableProp( { componentId, overrideKey: innerOverrideKey } );
 
-	if ( ! innerOverridableProps ) {
+	if ( ! innerOverridableProp ) {
 		return false;
 	}
 
-	const innerProp = innerOverridableProps.props[ innerOverrideKey ];
-	if ( ! innerProp ) {
-		return false;
-	}
-
-	return isExposedPropValid( innerProp, getOverridablePropsForComponent, visited );
+	return isExposedPropValid( innerOverridableProp, visited );
 }
 
-export function filterValidOverridableProps(
-	overridableProps: OverridableProps,
-	getOverridablePropsForComponent: GetOverridablePropsForComponent
-): OverridableProps {
+export function filterValidOverridableProps( overridableProps: OverridableProps ): OverridableProps {
 	const validProps: Record< string, OverridableProp > = {};
 
 	for ( const [ key, prop ] of Object.entries( overridableProps.props ) ) {
-		if ( isExposedPropValid( prop, getOverridablePropsForComponent ) ) {
+		if ( isExposedPropValid( prop ) ) {
 			validProps[ key ] = prop;
 		}
 	}
