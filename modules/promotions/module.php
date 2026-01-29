@@ -81,13 +81,12 @@ class Module extends Base_Module {
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
 
 		$this->register_atomic_promotions();
-        
+
 		// Add Ally promo
 		Ally_Dashboard_Widget::init();
 
 		// Top bar link for accessibility scanner (will be initialized later)
 		// Ally_Top_Bar_Link::init();
-
 	}
 
 	/**
