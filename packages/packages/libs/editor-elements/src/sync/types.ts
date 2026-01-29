@@ -42,6 +42,7 @@ export type V1Element = {
 		};
 	};
 	parent?: V1Element;
+	lookup?: () => V1Element;
 };
 
 export type StringPropValue = {
