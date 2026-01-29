@@ -4,6 +4,7 @@ import { ControlFormLabel, PopoverContent, PopoverGridContainer } from '@element
 import { Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { DEFAULT_INTERACTION_CONFIG } from '../configs/default-interaction-config';
 import { getInteractionsControl } from '../interactions-controls-registry';
 import type { InteractionItemValue } from '../types';
 import {
@@ -11,6 +12,7 @@ import {
 	createString,
 	extractBoolean,
 	extractNumber,
+	extractSize,
 	extractString,
 } from '../utils/prop-value-utils';
 import { Direction } from './controls/direction';
@@ -29,8 +31,8 @@ const DEFAULT_VALUES = {
 	effect: 'fade',
 	type: 'in',
 	direction: '',
-	duration: 600,
-	delay: 0,
+	duration: DEFAULT_INTERACTION_CONFIG.duration,
+	delay: DEFAULT_INTERACTION_CONFIG.delay,
 	replay: false,
 	easing: 'easeIn',
 	relativeTo: 'viewport',
@@ -58,8 +60,8 @@ type InteractionValues = {
 	effect: string;
 	type: string;
 	direction: string;
-	duration: number;
-	delay: number;
+	duration: string;
+	delay: string;
 	replay: boolean;
 	easing: string;
 	relativeTo: string;
@@ -102,8 +104,8 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const effect = extractString( interaction.animation.value.effect, DEFAULT_VALUES.effect );
 	const type = extractString( interaction.animation.value.type, DEFAULT_VALUES.type );
 	const direction = extractString( interaction.animation.value.direction, DEFAULT_VALUES.direction );
-	const duration = extractNumber( interaction.animation.value.timing_config.value.duration, DEFAULT_VALUES.duration );
-	const delay = extractNumber( interaction.animation.value.timing_config.value.delay, DEFAULT_VALUES.delay );
+	const duration = extractSize( interaction.animation.value.timing_config.value.duration );
+	const delay = extractSize( interaction.animation.value.timing_config.value.delay );
 	const replay = extractBoolean( interaction.animation.value.config?.value.replay, DEFAULT_VALUES.replay );
 	const easing = extractString( interaction.animation.value.config?.value.easing, DEFAULT_VALUES.easing );
 	const relativeTo = extractString( interaction.animation.value.config?.value.relativeTo, DEFAULT_VALUES.relativeTo );
@@ -158,8 +160,8 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			effect: string;
 			type: string;
 			direction: string;
-			duration: number;
-			delay: number;
+			duration: string;
+			delay: string;
 			replay: boolean;
 			easing?: string;
 			relativeTo: string;
@@ -239,7 +241,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 					<Field label={ __( 'Duration', 'elementor' ) }>
 						<TimeFrameIndicator
 							value={ String( duration ) }
-							onChange={ ( v ) => updateInteraction( { duration: parseInt( v, 10 ) } ) }
+							onChange={ ( v ) => updateInteraction( { duration: v } ) }
 							defaultValue={ DEFAULT_VALUES.duration }
 						/>
 					</Field>
@@ -249,7 +251,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 					<Field label={ __( 'Delay', 'elementor' ) }>
 						<TimeFrameIndicator
 							value={ String( delay ) }
-							onChange={ ( v ) => updateInteraction( { delay: parseInt( v, 10 ) } ) }
+							onChange={ ( v ) => updateInteraction( { delay: v } ) }
 							defaultValue={ DEFAULT_VALUES.delay }
 						/>
 					</Field>
