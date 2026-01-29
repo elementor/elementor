@@ -59,6 +59,7 @@ const eventsConfig = {
 	locations: {
 		widgetPanel: 'Widget Panel',
 		topBar: 'Top Bar',
+		sidebar: 'Sidebar',
 		elementorEditor: 'Elementor Editor',
 		templatesLibrary: {
 			library: 'Templates Library',

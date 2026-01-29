@@ -28,6 +28,20 @@ export class EditorOneEventManager {
 		}
 	}
 
+	static isInEditorContext() {
+		return 'undefined' !== typeof window.elementor && !! window.elementor?.documents;
+	}
+
+	static getFinderContext() {
+		const config = this.getConfig();
+		const isEditor = this.isInEditorContext();
+
+		return {
+			windowName: isEditor ? config?.appTypes?.editor : config?.appTypes?.wpAdmin,
+			targetLocation: isEditor ? config?.locations?.topBar : config?.locations?.sidebar,
+		};
+	}
+
 	static createBasePayload( overrides = {} ) {
 		const config = this.getConfig();
 		return {
@@ -144,12 +158,15 @@ export class EditorOneEventManager {
 	static sendFinderSearchInput( { resultsCount } ) {
 		const config = this.getConfig();
 		const hasResults = resultsCount > 0;
+		const finderContext = this.getFinderContext();
+
 		return this.dispatchEvent( config?.names?.editorOne?.finderSearchInput, this.createBasePayload( {
+			window_name: finderContext.windowName,
 			interaction_type: config?.triggers?.typing,
 			target_type: config?.targetTypes?.searchInput,
 			target_name: 'finder',
 			interaction_result: hasResults ? config?.interactionResults?.resultsUpdated : config?.interactionResults?.noResults,
-			target_location: config?.locations?.topBar,
+			target_location: finderContext.targetLocation,
 			location_l1: config?.secondaryLocations?.finder,
 			interaction_description: 'Finder search input, follows debounce behavior',
 			metadata: {
@@ -160,12 +177,15 @@ export class EditorOneEventManager {
 
 	static sendFinderResultSelect( choice ) {
 		const config = this.getConfig();
+		const finderContext = this.getFinderContext();
+
 		return this.dispatchEvent( config?.names?.editorOne?.finderResultSelect, this.createBasePayload( {
+			window_name: finderContext.windowName,
 			interaction_type: config?.triggers?.click,
 			target_type: config?.targetTypes?.searchResult,
 			target_name: choice,
 			interaction_result: config?.interactionResults?.selected,
-			target_location: config?.locations?.topBar,
+			target_location: finderContext.targetLocation,
 			location_l1: config?.secondaryLocations?.finder,
 			location_l2: config?.secondaryLocations?.finderResults,
 			interaction_description: 'Finder search results was selected',
