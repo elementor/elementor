@@ -207,6 +207,7 @@ describe( 'InlineEditorToolbar', () => {
 			const mockEditor = createMockEditor();
 
 			jest.mocked( getElementSetting ).mockReturnValue( {
+				$$type: 'link',
 				value: {
 					destination: 'https://example.com',
 				},

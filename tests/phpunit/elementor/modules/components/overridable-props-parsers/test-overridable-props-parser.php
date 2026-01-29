@@ -108,7 +108,7 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'propKey' => 'override',
 				'widgetType' => 'e-component',
 				'elType' => 'widget',
-				'originValue' => [ '$$type' => 'string', 'value' => '<script>alert("xss")</script>Click here' ],
+				'originValue' => [ '$$type' => 'html', 'value' => '<script>alert("xss")</script>Click here' ],
 				'originPropFields' => [
 					'elType' => 'widget',
 					'widgetType' => 'e-button',
