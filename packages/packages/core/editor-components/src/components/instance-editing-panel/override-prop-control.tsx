@@ -40,6 +40,7 @@ import { updateOverridableProp } from '../../store/actions/update-overridable-pr
 import { useCurrentComponentId } from '../../store/store';
 import { type OriginPropFields, type OverridableProp } from '../../types';
 import { getPropTypeForComponentOverride } from '../../utils/get-prop-type-for-component-override';
+import { getMatchingOverride } from '../../utils/overridable-props-utils';
 import { resolveOverridePropValue } from '../../utils/resolve-override-prop-value';
 import { ControlLabel } from '../control-label';
 import { OverrideControlInnerElementNotFoundError } from '../errors';
@@ -198,28 +199,6 @@ function getTempNewValueForDynamicProp( propType: PropType, propValue: PropValue
 	}
 
 	return newPropValue as ComponentInstanceOverrideProp | ComponentOverridableProp;
-}
-
-function getMatchingOverride(
-	overrides: ComponentInstanceOverridesPropValue,
-	overrideKey: string
-): ComponentInstanceOverride | null {
-	const result =
-		overrides?.find( ( override ) => {
-			const overridableValue = componentOverridablePropTypeUtil.extract( override );
-			let comparedOverrideKey = null;
-
-			if ( overridableValue ) {
-				comparedOverrideKey = ( overridableValue.origin_value as ComponentInstanceOverrideProp )?.value
-					?.override_key;
-			} else {
-				comparedOverrideKey = override.value.override_key;
-			}
-
-			return comparedOverrideKey === overrideKey;
-		} ) ?? null;
-
-	return result;
 }
 
 function createOverrideValue( {
