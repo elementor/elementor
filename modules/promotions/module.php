@@ -5,6 +5,7 @@ namespace Elementor\Modules\Promotions;
 use Elementor\Api;
 use Elementor\Controls_Manager;
 use Elementor\Core\Base\Module as Base_Module;
+use Elementor\Modules\Promotions\AdminMenuItems\Ally_Top_Bar_Link;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Custom_Code_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Custom_Elements_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Fonts_Menu;
@@ -14,6 +15,7 @@ use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Submissions_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
 use Elementor\Modules\Promotions\Pointers\Birthday;
 use Elementor\Modules\Promotions\Pointers\Black_Friday;
+use Elementor\Modules\Promotions\Widgets\Ally_Dashboard_Widget;
 use Elementor\Widgets_Manager;
 use Elementor\Utils;
 use Elementor\Includes\EditorAssetsAPI;
@@ -79,6 +81,21 @@ class Module extends Base_Module {
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
 
 		$this->register_display_conditions_promo_hooks();
+
+		// Add Ally promo
+		Ally_Dashboard_Widget::init();
+
+		// Top bar link for accessibility scanner (will be initialized later)
+		// Ally_Top_Bar_Link::init();
+	}
+
+	/**
+	 * Get Ally Scanner URL
+	 *
+	 * @return string
+	 */
+	public static function get_ally_external_scanner_url(): string {
+		return apply_filters( 'elementor/ally_external_scanner_url', 'https://elementor.com/tools/ally-accessibility-checker/scanner' );
 	}
 
 	private function handle_external_redirects() {
