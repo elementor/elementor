@@ -234,7 +234,7 @@ class Style_Parser {
 
 		if ( ! empty( $style['variants'] ) ) {
 			foreach ( $style['variants'] as $variant_index => $variant ) {
-				$style['variants'][ $variant_index ]['props'] = $props_parser->sanitize( $variant['props'] )->unwrap();
+				$style['variants'][ $variant_index ]['props'] = $props_parser->parse( $variant['props'] )->unwrap();
 				$style['variants'][ $variant_index ]['meta'] = $this->sanitize_meta( $variant['meta'] );
 				$style['variants'][ $variant_index ]['custom_css'] = $this->sanitize_custom_css( $variant );
 			}
