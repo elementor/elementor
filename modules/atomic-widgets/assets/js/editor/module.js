@@ -4,12 +4,6 @@ import createAtomicElementViewBase from './create-atomic-element-base-view';
 import AtomicElementBaseModel from './atomic-element-base-model';
 import createDivBlockType from './atomic-element-types/create-div-block-type';
 import createFlexboxType from './atomic-element-types/create-flexbox-type';
-import createAtomicTabsType from './atomic-element-types/atomic-tabs/create-atomic-tabs-type';
-import createAtomicTabContentType from './atomic-element-types/atomic-tab-content/create-atomic-tab-content-type';
-import createAtomicTabType from './atomic-element-types/atomic-tab/create-atomic-tab-type';
-import createAtomicTabsMenuType from './atomic-element-types/atomic-tabs-menu/create-atomic-tabs-menu-type';
-import createAtomicTabsContentAreaType from './atomic-element-types/atomic-tabs-content-area/create-atomic-tabs-content-area-type';
-import createAtomicFormType from './atomic-element-types/atomic-form/create-atomic-form-type';
 
 class Module extends elementorModules.editor.utils.Module {
 	onInit() {
@@ -28,12 +22,6 @@ class Module extends elementorModules.editor.utils.Module {
 	registerAtomicElements() {
 		elementor.elementsManager.registerElementType( createDivBlockType() );
 		elementor.elementsManager.registerElementType( createFlexboxType() );
-		elementor.elementsManager.registerElementType( createAtomicTabsType() );
-		elementor.elementsManager.registerElementType( createAtomicTabContentType() );
-		elementor.elementsManager.registerElementType( createAtomicTabType() );
-		elementor.elementsManager.registerElementType( createAtomicTabsMenuType() );
-		elementor.elementsManager.registerElementType( createAtomicTabsContentAreaType() );
-		elementor.elementsManager.registerElementType( createAtomicFormType() );
 	}
 }
 
