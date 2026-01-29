@@ -131,13 +131,7 @@ class Variable {
 	}
 
 	public function apply_changes( array $data ): void {
-<<<<<<< HEAD
-		$allowed_fields = [ 'label', 'value', 'order' ];
-=======
-		$this->validate();
-
 		$allowed_fields = [ 'label', 'value', 'order', 'type' ];
->>>>>>> c0ef1b1d7d (Internal: Support variables manager type change [ED-22723] (#34520))
 		$has_changes = $this->maybe_apply_type( $data );
 
 		foreach ( $allowed_fields as $field ) {

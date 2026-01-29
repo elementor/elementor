@@ -50,13 +50,8 @@ export const buildOperationsArray = (
 				! variable.deleted &&
 				( original.label !== variable.label ||
 					original.value !== variable.value ||
-<<<<<<< HEAD
-					original.order !== variable.order )
-=======
 					original.order !== variable.order ||
-					original.type !== variable.type ||
-					syncChanged )
->>>>>>> c0ef1b1d7d (Internal: Support variables manager type change [ED-22723] (#34520))
+					original.type !== variable.type )
 			) {
 				operations.push( {
 					type: 'update',
@@ -65,11 +60,7 @@ export const buildOperationsArray = (
 						...( original.label !== variable.label && { label: variable.label } ),
 						...( original.value !== variable.value && { value: variable.value } ),
 						...( original.order !== variable.order && { order: variable.order } ),
-<<<<<<< HEAD
-=======
 						...( original.type !== variable.type && { type: variable.type } ),
-						...( syncChanged && { sync_to_v3: variable.sync_to_v3 } ),
->>>>>>> c0ef1b1d7d (Internal: Support variables manager type change [ED-22723] (#34520))
 					},
 				} );
 			}
