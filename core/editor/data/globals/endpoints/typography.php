@@ -63,13 +63,13 @@ class Typography extends Base {
 	protected function convert_db_format( $item ) {
 		$db_format = [
 			'_id' => $item['id'],
-			'title' => sanitize_text_field( $item['title'] ),
+			'title' => sanitize_text_field( $item['title'] ?? '' ),
 		];
 
 		$value = $item['value'];
 
 		foreach ( $value as $key => $dirty_value ) {
-			$db_format[ $key ] = is_string( $dirty_value ) ? sanitize_text_field( $dirty_value ) : $dirty_value;
+			$db_format[ $key ] = is_string( $dirty_value ) ? sanitize_text_field( $dirty_value ) : $dirty_value ?? '';
 		}
 
 		return $db_format;
