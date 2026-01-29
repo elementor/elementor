@@ -322,15 +322,7 @@ class Validation {
 
 		$timing_value = $timing['value'];
 
-<<<<<<< HEAD
-		// Validate duration
-		if ( ! $this->is_valid_number_prop( $timing_value, 'duration' ) ) {
-			return false;
-		}
 
-		// Validate delay
-		if ( ! $this->is_valid_number_prop( $timing_value, 'delay' ) ) {
-=======
 		// Validate duration (accepts both 'number' and 'size' formats)
 		if ( ! $this->is_valid_timing_value( $timing_value, 'duration', 0 ) ) {
 			return false;
@@ -402,7 +394,6 @@ class Validation {
 		}
 
 		if ( null !== $max && $value > $max ) {
->>>>>>> 59f5ba15c4 (Internal: Move Interaction Array To Prop Type Be [ED-22691] (#34500))
 			return false;
 		}
 

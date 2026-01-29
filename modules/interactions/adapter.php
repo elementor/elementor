@@ -43,6 +43,16 @@ class Adapter {
 			return $interactions;
 		}
 
+		// Check version - if v1 or no version, return empty items (breaking change)
+		$version = $decoded['version'] ?? self::VERSION_V1;
+		if ( self::VERSION_V1 === $version ) {
+			return wp_json_encode( [
+				'items' => [],
+				'version' => self::VERSION_V1,
+			] );
+		}
+
+		// v2 format: unwrap and transform
 		$items = $decoded['items'];
 		if ( isset( $decoded['items']['$$type'] ) && self::ITEMS_TYPE === $decoded['items']['$$type'] ) {
 			$items = isset( $decoded['items']['value'] ) ? $decoded['items']['value'] : [];
@@ -78,17 +88,6 @@ class Adapter {
 					$item['value']['animation']['value']['timing_config']['value']['delay'] = self::number_to_size( $timing_config['delay'], 'ms' );
 				}
 			}
-
-			$config = $item['value']['animation']['value']['config']['value'] ?? null;
-			if ( $config ) {
-				if ( isset( $config['offsetTop'] ) && 'number' === ( $config['offsetTop']['$$type'] ?? null ) ) {
-					$item['value']['animation']['value']['config']['value']['offsetTop'] = self::number_to_size( $config['offsetTop'], '%' );
-				}
-
-				if ( isset( $config['offsetBottom'] ) && 'number' === ( $config['offsetBottom']['$$type'] ?? null ) ) {
-					$item['value']['animation']['value']['config']['value']['offsetBottom'] = self::number_to_size( $config['offsetBottom'], '%' );
-				}
-			}
 		}
 
 		return $items;
@@ -112,17 +111,6 @@ class Adapter {
 
 				if ( isset( $timing_config['delay'] ) && 'size' === ( $timing_config['delay']['$$type'] ?? null ) ) {
 					$item['value']['animation']['value']['timing_config']['value']['delay'] = self::size_to_number( $timing_config['delay'] );
-				}
-			}
-
-			$config = $item['value']['animation']['value']['config']['value'] ?? null;
-			if ( $config ) {
-				if ( isset( $config['offsetTop'] ) && 'size' === ( $config['offsetTop']['$$type'] ?? null ) ) {
-					$item['value']['animation']['value']['config']['value']['offsetTop'] = self::size_to_number( $config['offsetTop'] );
-				}
-
-				if ( isset( $config['offsetBottom'] ) && 'size' === ( $config['offsetBottom']['$$type'] ?? null ) ) {
-					$item['value']['animation']['value']['config']['value']['offsetBottom'] = self::size_to_number( $config['offsetBottom'] );
 				}
 			}
 		}

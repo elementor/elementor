@@ -79,9 +79,14 @@ class Module extends BaseModule {
 			return $this->wrap_interactions_for_db( $data );
 		}, 12, 2 ); // Priority 12 = after validation (10) and ID assignment (11)
 
-		// Unwrap data AFTER loading from DB for frontend/editor
+		// Unwrap data AFTER loading from DB for editor
 		add_filter( 'elementor/document/load/data', function( $elements, $document ) {
 			return $this->process_elements_unwrap( $elements );
+		}, 10, 2 );
+
+		// Unwrap data for frontend rendering (uses different filter than editor)
+		add_filter( 'elementor/frontend/builder_content_data', function( $data, $post_id ) {
+			return $this->process_elements_unwrap( $data );
 		}, 10, 2 );
 	}
 
@@ -162,7 +167,7 @@ class Module extends BaseModule {
 		if ( isset( $data['elements'] ) && is_array( $data['elements'] ) ) {
 			$data['elements'] = $this->process_elements_unwrap( $data['elements'] );
 		}
-		return $data;
+		
 	}
 
 	private function process_elements_wrap( $elements ) {

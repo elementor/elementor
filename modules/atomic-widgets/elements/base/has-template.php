@@ -75,6 +75,7 @@ trait Has_Template {
 	/**
 	 * Extract items array from interactions data.
 	 * Handles both v1 format (items is array) and v2 format (items is wrapped with $$type).
+	 * Note: Original v1 data returns empty from Adapter::unwrap_for_frontend() (breaking change).
 	 */
 	private function extract_interactions_items( $interactions ) {
 		if ( ! is_array( $interactions ) || ! isset( $interactions['items'] ) ) {
@@ -88,8 +89,12 @@ trait Has_Template {
 			return isset( $items['value'] ) && is_array( $items['value'] ) ? $items['value'] : [];
 		}
 
-		// v1 format: items is direct array
-		return is_array( $items ) ? $items : [];
+		// Direct array format (unwrapped v2 or empty v1)
+		if ( is_array( $items ) ) {
+			return $items;
+		}
+
+		return [];
 	}
 
 	private function extract_animation_id_from_prop_type( $item ) {
@@ -115,9 +120,6 @@ trait Has_Template {
 		$duration = 300;
 		$delay = 0;
 		$replay = 0;
-		$relative_to = 'viewport';
-		$offset_top = 15;
-		$offset_bottom = 85;
 
 		if ( is_array( $timing_config ) ) {
 			$duration = Interactions_Adapter::extract_numeric_value( $timing_config['duration'] ?? null, 300 );
@@ -125,15 +127,6 @@ trait Has_Template {
 		}
 
 		if ( is_array( $config ) ) {
-<<<<<<< HEAD
-			$relative_to = $this->extract_prop_value_simple( $config, 'relative_to', 'viewport' );
-			$offset_top = $this->extract_prop_value_simple( $config, 'offset_top', 15 );
-			$offset_bottom = $this->extract_prop_value_simple( $config, 'offset_bottom', 85 );
-=======
-			$relative_to = $this->extract_prop_value_simple( $config, 'relativeTo', 'viewport' );
-			$offset_top = Interactions_Adapter::extract_numeric_value( $config['offsetTop'] ?? null, 15 );
-			$offset_bottom = Interactions_Adapter::extract_numeric_value( $config['offsetBottom'] ?? null, 85 );
->>>>>>> 59f5ba15c4 (Internal: Move Interaction Array To Prop Type Be [ED-22691] (#34500))
 			$replay = $this->extract_prop_value_simple( $config, 'replay', 0 );
 			if ( empty( $replay ) && 0 !== $replay && '0' !== $replay ) {
 				$replay = 0;
@@ -141,7 +134,7 @@ trait Has_Template {
 		} else {
 			$replay = 0;
 		}
-		return implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay, $replay, $relative_to, $offset_top, $offset_bottom ] );
+		return implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay, $replay ] );
 	}
 
 	private function extract_prop_value_simple( $data, $key, $default = '' ) {

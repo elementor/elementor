@@ -134,68 +134,6 @@ trait Has_Atomic_Base {
 		return [];
 	}
 
-<<<<<<< HEAD
-	private function convert_prop_type_interactions_to_legacy( $interactions ) {
-		$legacy_items = [];
-
-		foreach ( $interactions['items'] as $item ) {
-			if ( isset( $item['$$type'] ) && 'interaction-item' === $item['$$type'] ) {
-				$legacy_item = $this->extract_legacy_interaction_from_prop_type( $item );
-				if ( $legacy_item ) {
-					$legacy_items[] = $legacy_item;
-				}
-			} else {
-				$legacy_items[] = $item;
-			}
-		}
-
-		return [
-			'version' => $interactions['version'] ?? 1,
-			'items' => $legacy_items,
-		];
-	}
-
-	private function extract_legacy_interaction_from_prop_type( $item ) {
-		if ( ! isset( $item['value'] ) || ! is_array( $item['value'] ) ) {
-			return null;
-		}
-
-		$item_value = $item['value'];
-
-		$interaction_id = $this->extract_prop_value( $item_value, 'interaction_id' );
-		$trigger = $this->extract_prop_value( $item_value, 'trigger' );
-		$animation = $this->extract_prop_value( $item_value, 'animation' );
-
-		if ( ! is_array( $animation ) ) {
-			return null;
-		}
-
-		$effect = $this->extract_prop_value( $animation, 'effect' );
-		$type = $this->extract_prop_value( $animation, 'type' );
-		$direction = $this->extract_prop_value( $animation, 'direction' );
-		$timing_config = $this->extract_prop_value( $animation, 'timing_config' );
-
-		$duration = 300;
-		$delay = 0;
-
-		if ( is_array( $timing_config ) ) {
-			$duration = $this->extract_prop_value( $timing_config, 'duration', 300 );
-			$delay = $this->extract_prop_value( $timing_config, 'delay', 0 );
-		}
-
-		$animation_id = implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay ] );
-
-		return [
-			'interaction_id' => $interaction_id,
-			'animation' => [
-				'animation_id' => $animation_id,
-				'animation_type' => 'full-preset',
-			],
-		];
-	}
-
-=======
->>>>>>> 59f5ba15c4 (Internal: Move Interaction Array To Prop Type Be [ED-22691] (#34500))
 	private function extract_prop_value( $data, $key, $default = '' ) {
 		if ( ! is_array( $data ) || ! isset( $data[ $key ] ) ) {
 			return $default;
@@ -386,6 +324,7 @@ trait Has_Atomic_Base {
 	/**
 	 * Extract items array from interactions data.
 	 * Handles both v1 format (items is array) and v2 format (items is wrapped with $$type).
+	 * Note: Original v1 data returns empty from Adapter::unwrap_for_frontend() (breaking change).
 	 */
 	private function extract_interactions_items( $interactions ) {
 		if ( ! is_array( $interactions ) || ! isset( $interactions['items'] ) ) {
@@ -399,8 +338,12 @@ trait Has_Atomic_Base {
 			return isset( $items['value'] ) && is_array( $items['value'] ) ? $items['value'] : [];
 		}
 
-		// v1 format: items is direct array
-		return is_array( $items ) ? $items : [];
+		// Direct array format (unwrapped v2 or empty v1)
+		if ( is_array( $items ) ) {
+			return $items;
+		}
+
+		return [];
 	}
 
 	private function extract_animation_id_from_prop_type( $item ) {
@@ -426,9 +369,6 @@ trait Has_Atomic_Base {
 		$duration = 300;
 		$delay = 0;
 		$replay = 0;
-		$relative_to = 'viewport';
-		$offset_top = 15;
-		$offset_bottom = 85;
 
 		if ( is_array( $timing_config ) ) {
 			$duration = Interactions_Adapter::extract_numeric_value( $timing_config['duration'] ?? null, 300 );
@@ -436,16 +376,6 @@ trait Has_Atomic_Base {
 		}
 
 		if ( is_array( $config ) ) {
-<<<<<<< HEAD
-			$relative_to = $this->extract_prop_value( $config, 'relative_to', 'viewport' );
-			$offset_top = $this->extract_prop_value( $config, 'offset_top', 15 );
-			$offset_bottom = $this->extract_prop_value( $config, 'offset_bottom', 85 );
-=======
-			$relative_to = $this->extract_prop_value( $config, 'relativeTo', 'viewport' );
-			$offset_top = Interactions_Adapter::extract_numeric_value( $config['offsetTop'] ?? null, 15 );
-			$offset_bottom = Interactions_Adapter::extract_numeric_value( $config['offsetBottom'] ?? null, 85 );
->>>>>>> 59f5ba15c4 (Internal: Move Interaction Array To Prop Type Be [ED-22691] (#34500))
-
 			$replay = $this->extract_prop_value( $config, 'replay', 0 );
 			if ( empty( $replay ) && 0 !== $replay && '0' !== $replay ) {
 				$replay = 0;
@@ -454,7 +384,7 @@ trait Has_Atomic_Base {
 			$replay = 0;
 		}
 
-		return implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay, $replay, $relative_to, $offset_top, $offset_bottom ] );
+		return implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay, $replay ] );
 	}
 
 	public function print_content() {
