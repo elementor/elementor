@@ -21,7 +21,6 @@ import { type PropType, type PropValue } from '@elementor/editor-props';
 import { Stack } from '@elementor/ui';
 
 import { useControlsByWidgetType } from '../../hooks/use-controls-by-widget-type';
-import { useValidOverridableProps } from '../../hooks/use-valid-overridable-props';
 import {
 	type ComponentInstanceOverrideProp,
 	componentInstanceOverridePropTypeUtil,
@@ -38,7 +37,7 @@ import {
 } from '../../prop-types/component-overridable-prop-type';
 import { OverridablePropProvider } from '../../provider/overridable-prop-context';
 import { updateOverridableProp } from '../../store/actions/update-overridable-prop';
-import { useCurrentComponentId } from '../../store/store';
+import { useCurrentComponentId, useOverridableProps } from '../../store/store';
 import { type OriginPropFields, type OverridableProp, type OverridableProps } from '../../types';
 import { getPropTypeForComponentOverride } from '../../utils/get-prop-type-for-component-override';
 import { getMatchingOverride } from '../../utils/overridable-props-utils';
@@ -81,7 +80,7 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 	if ( ! componentInstanceId ) {
 		throw new Error( 'Component ID is required' );
 	}
-	const overridableProps = useValidOverridableProps( componentInstanceId );
+	const overridableProps = useOverridableProps( componentInstanceId );
 
 	const propType = getPropTypeForComponentOverride( overridableProp );
 

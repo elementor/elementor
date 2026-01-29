@@ -12,7 +12,10 @@ type DeletePropParams = {
 	source: Source;
 };
 
-export function deleteOverridableProp( { componentId, propKey, source }: DeletePropParams ): void {
+export function deleteOverridableProp(
+	{ componentId, propKey, source }: DeletePropParams,
+	shouldRevertElementSetting: boolean = true
+): void {
 	const overridableProps = selectOverridableProps( getState(), componentId );
 
 	if ( ! overridableProps ) {
@@ -25,7 +28,9 @@ export function deleteOverridableProp( { componentId, propKey, source }: DeleteP
 		return;
 	}
 
-	revertElementOverridableSetting( prop.elementId, prop.propKey, prop.originValue, propKey );
+	if ( shouldRevertElementSetting ) {
+		revertElementOverridableSetting( prop.elementId, prop.propKey, prop.originValue, propKey );
+	}
 
 	const { [ propKey ]: removedProp, ...remainingProps } = overridableProps.props;
 
