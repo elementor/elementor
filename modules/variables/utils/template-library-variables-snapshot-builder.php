@@ -101,6 +101,27 @@ class Template_Library_Variables_Snapshot_Builder {
 	}
 
 	public static function merge_snapshot_and_get_id_map( array $snapshot ): array {
+		return self::process_snapshot( $snapshot, function( $incoming_id, $incoming_variable, $updated_variables, $existing_ids ) {
+			if ( isset( $existing_ids[ $incoming_id ] ) ) {
+				$is_same = Template_Library_Import_Export_Utils::items_equal( $updated_variables[ $incoming_id ], $incoming_variable );
+
+				if ( $is_same ) {
+					return null; // Skip, it's the same
+				}
+
+				return Template_Library_Import_Export_Utils::generate_unique_id( array_keys( $updated_variables ), 'e-gv-' );
+			}
+			return $incoming_id;
+		} );
+	}
+
+	public static function create_all_as_new( array $snapshot ): array {
+		return self::process_snapshot( $snapshot, function( $incoming_id, $incoming_variable, $updated_variables, $existing_ids ) {
+			return Template_Library_Import_Export_Utils::generate_unique_id( array_keys( $updated_variables ), 'e-gv-' );
+		} );
+	}
+
+	private static function process_snapshot( array $snapshot, callable $id_strategy ): array {
 		$repository = self::get_repository_or_null();
 		if ( ! $repository ) {
 			return [
@@ -132,94 +153,24 @@ class Template_Library_Variables_Snapshot_Builder {
 				continue;
 			}
 
-			$target_id = $incoming_id;
-
-			if ( isset( $existing_ids[ $incoming_id ] ) ) {
-				$is_same = Template_Library_Import_Export_Utils::items_equal( $updated_variables[ $incoming_id ], $incoming_variable );
-
-				if ( $is_same ) {
-					continue;
-				}
-
-				$target_id = Template_Library_Import_Export_Utils::generate_unique_id( array_keys( $updated_variables ), 'e-gv-' );
-				$id_map[ $incoming_id ] = $target_id;
-			}
-
 			if ( self::count_active_variables( $updated_variables ) >= Variables_Collection::TOTAL_VARIABLES_COUNT ) {
 				$ids_to_flatten[] = $incoming_id;
 				continue;
+			}
+
+			$target_id = $id_strategy( $incoming_id, $incoming_variable, $updated_variables, $existing_ids );
+
+			if ( null === $target_id ) {
+				continue;
+			}
+
+			if ( $target_id !== $incoming_id ) {
+				$id_map[ $incoming_id ] = $target_id;
 			}
 
 			self::add_variable_with_label(
 				$incoming_variable,
 				$target_id,
-				$updated_variables,
-				$existing_ids,
-				$existing_labels
-			);
-		}
-
-		$updated_collection = Variables_Collection::hydrate( [
-			'data' => $updated_variables,
-			'watermark' => $current_data['watermark'] ?? 0,
-			'version' => $current_data['version'] ?? Variables_Collection::FORMAT_VERSION_V1,
-		] );
-
-		$repository->save( $updated_collection );
-
-		return [
-			'id_map' => $id_map,
-			'ids_to_flatten' => $ids_to_flatten,
-			'variables' => [
-				'data' => $updated_variables,
-				'watermark' => $updated_collection->watermark(),
-			],
-		];
-	}
-
-	public static function create_all_as_new( array $snapshot ): array {
-		$repository = self::get_repository_or_null();
-		if ( ! $repository ) {
-			return [
-				'id_map' => [],
-				'ids_to_flatten' => [],
-			];
-		}
-
-		$incoming_data = $snapshot['data'] ?? [];
-		if ( empty( $incoming_data ) ) {
-			return [
-				'id_map' => [],
-				'ids_to_flatten' => [],
-			];
-		}
-
-		$current_data = self::load_repository_data( $repository );
-		$current_variables = $current_data['data'] ?? [];
-
-		$existing_labels = Template_Library_Import_Export_Utils::extract_labels( $current_variables );
-
-		$id_map = [];
-		$ids_to_flatten = [];
-		$updated_variables = $current_variables;
-		$existing_ids = array_fill_keys( array_keys( $updated_variables ), true );
-
-		foreach ( $incoming_data as $incoming_id => $incoming_variable ) {
-			if ( empty( $incoming_variable ) ) {
-				continue;
-			}
-
-			if ( self::count_active_variables( $updated_variables ) >= Variables_Collection::TOTAL_VARIABLES_COUNT ) {
-				$ids_to_flatten[] = $incoming_id;
-				continue;
-			}
-
-			$new_id = Template_Library_Import_Export_Utils::generate_unique_id( array_keys( $updated_variables ), 'e-gv-' );
-			$id_map[ $incoming_id ] = $new_id;
-
-			self::add_variable_with_label(
-				$incoming_variable,
-				$new_id,
 				$updated_variables,
 				$existing_ids,
 				$existing_labels

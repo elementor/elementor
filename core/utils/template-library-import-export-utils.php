@@ -23,7 +23,14 @@ class Template_Library_Import_Export_Utils {
 		$a = self::recursive_ksort( $a );
 		$b = self::recursive_ksort( $b );
 
-		return wp_json_encode( $a ) === wp_json_encode( $b );
+		$encoded_a = wp_json_encode( $a );
+		$encoded_b = wp_json_encode( $b );
+
+		if ( false === $encoded_a || false === $encoded_b ) {
+			return $a === $b;
+		}
+
+		return $encoded_a === $encoded_b;
 	}
 
 	public static function recursive_ksort( $value ) {
@@ -122,114 +129,155 @@ class Template_Library_Import_Export_Utils {
 
 		$variables_id_map = [];
 		$variables_to_flatten = [];
-		$has_variables = ! empty( $global_variables_snapshot ) &&
-			is_array( $global_variables_snapshot ) &&
-			self::is_variables_feature_active() &&
-			class_exists( \Elementor\Modules\Variables\Utils\Template_Library_Variables::class );
 
-		$has_classes = ! empty( $global_classes_snapshot ) &&
-			is_array( $global_classes_snapshot ) &&
-			self::is_classes_feature_active() &&
-			class_exists( \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::class );
+		if ( self::should_process_variables( $global_variables_snapshot ) ) {
+			$variables_result = self::process_variables_import( $result['content'], $global_variables_snapshot, $import_mode );
+			$result['content'] = $variables_result['content'];
+			$result['updated_global_variables'] = $variables_result['updated_global_variables'];
+			$variables_id_map = $variables_result['id_map'] ?? [];
+			$variables_to_flatten = $variables_result['ids_to_flatten'] ?? [];
 
-		if ( $has_variables ) {
-			switch ( $import_mode ) {
-				case self::IMPORT_MODE_KEEP_FLATTEN:
-					$result['content'] = \Elementor\Modules\Variables\Utils\Template_Library_Variables::flatten_elements_variables( $result['content'], $global_variables_snapshot );
-					if ( $has_classes ) {
-						$global_classes_snapshot = self::flatten_variables_in_classes_snapshot( $global_classes_snapshot, $global_variables_snapshot );
-					}
-					break;
-
-				case self::IMPORT_MODE_KEEP_CREATE:
-					$create_result = \Elementor\Modules\Variables\Utils\Template_Library_Variables::create_all_as_new( $global_variables_snapshot );
-					$variables_id_map = $create_result['id_map'] ?? [];
-					$variables_to_flatten = $create_result['ids_to_flatten'] ?? [];
-
-					if ( ! empty( $variables_id_map ) ) {
-						$result['content'] = \Elementor\Modules\Variables\Utils\Template_Library_Variables::rewrite_elements_variable_ids( $result['content'], $variables_id_map );
-						if ( $has_classes ) {
-							$global_classes_snapshot = self::rewrite_variable_ids_in_classes_snapshot( $global_classes_snapshot, $variables_id_map );
-						}
-					}
-
-					if ( ! empty( $variables_to_flatten ) ) {
-						$result['content'] = \Elementor\Modules\Variables\Utils\Template_Library_Variables::flatten_elements_variables( $result['content'], $global_variables_snapshot, $variables_to_flatten );
-						if ( $has_classes ) {
-							$global_classes_snapshot = self::flatten_variables_in_classes_snapshot( $global_classes_snapshot, $global_variables_snapshot, $variables_to_flatten );
-						}
-					}
-
-					$result['updated_global_variables'] = $create_result['variables'] ?? null;
-					break;
-
-				case self::IMPORT_MODE_MATCH_SITE:
-				default:
-					$merge_result = \Elementor\Modules\Variables\Utils\Template_Library_Variables::merge_snapshot_and_get_id_map( $global_variables_snapshot );
-					$variables_id_map = $merge_result['id_map'] ?? [];
-					$variables_to_flatten = $merge_result['ids_to_flatten'] ?? [];
-
-					if ( ! empty( $variables_id_map ) ) {
-						$result['content'] = \Elementor\Modules\Variables\Utils\Template_Library_Variables::rewrite_elements_variable_ids( $result['content'], $variables_id_map );
-						if ( $has_classes ) {
-							$global_classes_snapshot = self::rewrite_variable_ids_in_classes_snapshot( $global_classes_snapshot, $variables_id_map );
-						}
-					}
-
-					if ( ! empty( $variables_to_flatten ) ) {
-						$result['content'] = \Elementor\Modules\Variables\Utils\Template_Library_Variables::flatten_elements_variables( $result['content'], $global_variables_snapshot, $variables_to_flatten );
-						if ( $has_classes ) {
-							$global_classes_snapshot = self::flatten_variables_in_classes_snapshot( $global_classes_snapshot, $global_variables_snapshot, $variables_to_flatten );
-						}
-					}
-
-					$result['updated_global_variables'] = $merge_result['variables'] ?? null;
-					break;
+			if ( self::should_process_classes( $global_classes_snapshot ) ) {
+				$global_classes_snapshot = self::update_classes_snapshot_with_variables(
+					$global_classes_snapshot,
+					$global_variables_snapshot,
+					$variables_id_map,
+					$variables_to_flatten
+				);
 			}
 		}
 
-		if ( $has_classes ) {
-			switch ( $import_mode ) {
-				case self::IMPORT_MODE_KEEP_FLATTEN:
-					$result['content'] = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::flatten_elements_classes( $result['content'], $global_classes_snapshot );
-					break;
-
-				case self::IMPORT_MODE_KEEP_CREATE:
-					$create_result = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::create_all_as_new( $global_classes_snapshot );
-					$id_map = $create_result['id_map'] ?? [];
-					$classes_to_flatten = $create_result['ids_to_flatten'] ?? [];
-
-					if ( ! empty( $id_map ) ) {
-						$result['content'] = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::rewrite_elements_classes_ids( $result['content'], $id_map );
-					}
-
-					if ( ! empty( $classes_to_flatten ) ) {
-						$result['content'] = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::flatten_elements_classes( $result['content'], $global_classes_snapshot, $classes_to_flatten );
-					}
-
-					$result['updated_global_classes'] = $create_result['global_classes'] ?? null;
-					break;
-
-				case self::IMPORT_MODE_MATCH_SITE:
-				default:
-					$merge_result = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::merge_snapshot_and_get_id_map( $global_classes_snapshot );
-					$id_map = $merge_result['id_map'] ?? [];
-					$classes_to_flatten = $merge_result['ids_to_flatten'] ?? [];
-
-					if ( ! empty( $id_map ) ) {
-						$result['content'] = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::rewrite_elements_classes_ids( $result['content'], $id_map );
-					}
-
-					if ( ! empty( $classes_to_flatten ) ) {
-						$result['content'] = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::flatten_elements_classes( $result['content'], $global_classes_snapshot, $classes_to_flatten );
-					}
-
-					$result['updated_global_classes'] = $merge_result['global_classes'] ?? null;
-					break;
-			}
+		if ( self::should_process_classes( $global_classes_snapshot ) ) {
+			$classes_result = self::process_classes_import( $result['content'], $global_classes_snapshot, $import_mode );
+			$result['content'] = $classes_result['content'];
+			$result['updated_global_classes'] = $classes_result['updated_global_classes'];
 		}
 
 		return $result;
+	}
+
+	private static function should_process_variables( ?array $snapshot ): bool {
+		return ! empty( $snapshot ) &&
+			is_array( $snapshot ) &&
+			self::is_variables_feature_active() &&
+			class_exists( \Elementor\Modules\Variables\Utils\Template_Library_Variables::class );
+	}
+
+	private static function should_process_classes( ?array $snapshot ): bool {
+		return ! empty( $snapshot ) &&
+			is_array( $snapshot ) &&
+			self::is_classes_feature_active() &&
+			class_exists( \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::class );
+	}
+
+	private static function process_variables_import( array $content, array $snapshot, string $import_mode ): array {
+		$result = [
+			'content' => $content,
+			'updated_global_variables' => null,
+			'id_map' => [],
+			'ids_to_flatten' => [],
+		];
+
+		switch ( $import_mode ) {
+			case self::IMPORT_MODE_KEEP_FLATTEN:
+				$result['content'] = \Elementor\Modules\Variables\Utils\Template_Library_Variables::flatten_elements_variables( $content, $snapshot );
+				break;
+
+			case self::IMPORT_MODE_KEEP_CREATE:
+				$create_result = \Elementor\Modules\Variables\Utils\Template_Library_Variables::create_all_as_new( $snapshot );
+				$result['id_map'] = $create_result['id_map'] ?? [];
+				$result['ids_to_flatten'] = $create_result['ids_to_flatten'] ?? [];
+
+				if ( ! empty( $result['id_map'] ) ) {
+					$result['content'] = \Elementor\Modules\Variables\Utils\Template_Library_Variables::rewrite_elements_variable_ids( $result['content'], $result['id_map'] );
+				}
+
+				if ( ! empty( $result['ids_to_flatten'] ) ) {
+					$result['content'] = \Elementor\Modules\Variables\Utils\Template_Library_Variables::flatten_elements_variables( $result['content'], $snapshot, $result['ids_to_flatten'] );
+				}
+
+				$result['updated_global_variables'] = $create_result['variables'] ?? null;
+				break;
+
+			case self::IMPORT_MODE_MATCH_SITE:
+			default:
+				$merge_result = \Elementor\Modules\Variables\Utils\Template_Library_Variables::merge_snapshot_and_get_id_map( $snapshot );
+				$result['id_map'] = $merge_result['id_map'] ?? [];
+				$result['ids_to_flatten'] = $merge_result['ids_to_flatten'] ?? [];
+
+				if ( ! empty( $result['id_map'] ) ) {
+					$result['content'] = \Elementor\Modules\Variables\Utils\Template_Library_Variables::rewrite_elements_variable_ids( $result['content'], $result['id_map'] );
+				}
+
+				if ( ! empty( $result['ids_to_flatten'] ) ) {
+					$result['content'] = \Elementor\Modules\Variables\Utils\Template_Library_Variables::flatten_elements_variables( $result['content'], $snapshot, $result['ids_to_flatten'] );
+				}
+
+				$result['updated_global_variables'] = $merge_result['variables'] ?? null;
+				break;
+		}
+
+		return $result;
+	}
+
+	private static function process_classes_import( array $content, array $snapshot, string $import_mode ): array {
+		$result = [
+			'content' => $content,
+			'updated_global_classes' => null,
+		];
+
+		switch ( $import_mode ) {
+			case self::IMPORT_MODE_KEEP_FLATTEN:
+				$result['content'] = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::flatten_elements_classes( $content, $snapshot );
+				break;
+
+			case self::IMPORT_MODE_KEEP_CREATE:
+				$create_result = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::create_all_as_new( $snapshot );
+				$id_map = $create_result['id_map'] ?? [];
+				$classes_to_flatten = $create_result['ids_to_flatten'] ?? [];
+
+				if ( ! empty( $id_map ) ) {
+					$result['content'] = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::rewrite_elements_classes_ids( $result['content'], $id_map );
+				}
+
+				if ( ! empty( $classes_to_flatten ) ) {
+					$result['content'] = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::flatten_elements_classes( $result['content'], $snapshot, $classes_to_flatten );
+				}
+
+				$result['updated_global_classes'] = $create_result['global_classes'] ?? null;
+				break;
+
+			case self::IMPORT_MODE_MATCH_SITE:
+			default:
+				$merge_result = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::merge_snapshot_and_get_id_map( $snapshot );
+				$id_map = $merge_result['id_map'] ?? [];
+				$classes_to_flatten = $merge_result['ids_to_flatten'] ?? [];
+
+				if ( ! empty( $id_map ) ) {
+					$result['content'] = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::rewrite_elements_classes_ids( $result['content'], $id_map );
+				}
+
+				if ( ! empty( $classes_to_flatten ) ) {
+					$result['content'] = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::flatten_elements_classes( $result['content'], $snapshot, $classes_to_flatten );
+				}
+
+				$result['updated_global_classes'] = $merge_result['global_classes'] ?? null;
+				break;
+		}
+
+		return $result;
+	}
+
+	private static function update_classes_snapshot_with_variables( array $classes_snapshot, array $variables_snapshot, array $id_map, array $ids_to_flatten ): array {
+		if ( ! empty( $id_map ) ) {
+			$classes_snapshot = self::rewrite_variable_ids_in_classes_snapshot( $classes_snapshot, $id_map );
+		}
+
+		if ( ! empty( $ids_to_flatten ) ) {
+			$classes_snapshot = self::flatten_variables_in_classes_snapshot( $classes_snapshot, $variables_snapshot, $ids_to_flatten );
+		}
+
+		return $classes_snapshot;
 	}
 
 	private static function rewrite_variable_ids_in_classes_snapshot( array $snapshot, array $id_map ): array {
@@ -345,46 +393,20 @@ class Template_Library_Import_Export_Utils {
 		$prefix = self::LABEL_PREFIX;
 		$max_length = self::MAX_LABEL_LENGTH;
 
-		$has_prefix = 0 === strpos( $original_label, $prefix );
+		$base_label = 0 === strpos( $original_label, $prefix )
+			? substr( $original_label, strlen( $prefix ) )
+			: $original_label;
 
-		if ( $has_prefix ) {
-			$base_label = substr( $original_label, strlen( $prefix ) );
-			$counter = 1;
-			$new_label = $prefix . $base_label . $counter;
+		// Reserve space for prefix + counter (at least 2 chars for counter)
+		$max_base_length = $max_length - strlen( $prefix ) - 2;
+		$base_label = substr( $base_label, 0, $max_base_length );
 
-			while ( in_array( $new_label, $existing_labels, true ) ) {
-				++$counter;
-				$new_label = $prefix . $base_label . $counter;
-			}
-
-			if ( strlen( $new_label ) > $max_length ) {
-				$available_length = $max_length - strlen( $prefix . $counter );
-				$base_label = substr( $base_label, 0, $available_length );
-				$new_label = $prefix . $base_label . $counter;
-			}
-		} else {
-			$new_label = $prefix . $original_label;
-
-			if ( strlen( $new_label ) > $max_length ) {
-				$available_length = $max_length - strlen( $prefix );
-				$new_label = $prefix . substr( $original_label, 0, $available_length );
-			}
-
-			$counter = 1;
-			$base_label = substr( $original_label, 0, $available_length ?? strlen( $original_label ) );
-
-			while ( in_array( $new_label, $existing_labels, true ) ) {
-				$new_label = $prefix . $base_label . $counter;
-
-				if ( strlen( $new_label ) > $max_length ) {
-					$available_length = $max_length - strlen( $prefix . $counter );
-					$base_label = substr( $original_label, 0, $available_length );
-					$new_label = $prefix . $base_label . $counter;
-				}
-
-				++$counter;
-			}
-		}
+		$counter = 1;
+		do {
+			$suffix = ( 1 === $counter && 0 !== strpos( $original_label, $prefix ) ) ? '' : (string) $counter;
+			$new_label = $prefix . $base_label . $suffix;
+			$counter++;
+		} while ( in_array( $new_label, $existing_labels, true ) );
 
 		return $new_label;
 	}

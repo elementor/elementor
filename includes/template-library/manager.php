@@ -693,49 +693,19 @@ class Manager {
 
 		$import_mode = Template_Library_Import_Export_Utils::sanitize_import_mode( $args['import_mode'] );
 
-		if ( is_string( $args['content'] ) ) {
-			$content = json_decode( $args['content'], true );
-			if ( JSON_ERROR_NONE !== json_last_error() ) {
-				return new \WP_Error( 'invalid_json', 'Invalid JSON content.' );
-			}
-		} else {
-			$content = $args['content'];
+		$content = $this->get_validated_json_arg( $args, 'content' );
+		if ( is_wp_error( $content ) ) {
+			return $content;
 		}
 
-		if ( ! is_array( $content ) ) {
-			return new \WP_Error( 'invalid_content', 'Invalid template content.' );
+		$global_classes = $this->get_validated_json_arg( $args, 'global_classes', true );
+		if ( is_wp_error( $global_classes ) ) {
+			return $global_classes;
 		}
 
-		$global_classes = null;
-		if ( array_key_exists( 'global_classes', $args ) && null !== $args['global_classes'] && '' !== $args['global_classes'] ) {
-			if ( is_string( $args['global_classes'] ) ) {
-				$global_classes = json_decode( $args['global_classes'], true );
-				if ( JSON_ERROR_NONE !== json_last_error() ) {
-					return new \WP_Error( 'invalid_global_classes', 'Invalid global classes snapshot.' );
-				}
-			} else {
-				$global_classes = $args['global_classes'];
-			}
-
-			if ( null !== $global_classes && ! is_array( $global_classes ) ) {
-				return new \WP_Error( 'invalid_global_classes', 'Invalid global classes snapshot.' );
-			}
-		}
-
-		$global_variables = null;
-		if ( array_key_exists( 'global_variables', $args ) && null !== $args['global_variables'] && '' !== $args['global_variables'] ) {
-			if ( is_string( $args['global_variables'] ) ) {
-				$global_variables = json_decode( $args['global_variables'], true );
-				if ( JSON_ERROR_NONE !== json_last_error() ) {
-					return new \WP_Error( 'invalid_global_variables', 'Invalid global variables snapshot.' );
-				}
-			} else {
-				$global_variables = $args['global_variables'];
-			}
-
-			if ( null !== $global_variables && ! is_array( $global_variables ) ) {
-				return new \WP_Error( 'invalid_global_variables', 'Invalid global variables snapshot.' );
-			}
+		$global_variables = $this->get_validated_json_arg( $args, 'global_variables', true );
+		if ( is_wp_error( $global_variables ) ) {
+			return $global_variables;
 		}
 
 		$result = Template_Library_Import_Export_Utils::apply_import_mode_to_content( $content, $import_mode, $global_classes, $global_variables );
@@ -753,6 +723,27 @@ class Manager {
 		}
 
 		return $response;
+	}
+
+	private function get_validated_json_arg( array $args, string $key, bool $is_optional = false ) {
+		if ( ! array_key_exists( $key, $args ) || null === $args[ $key ] || '' === $args[ $key ] ) {
+			return $is_optional ? null : new \WP_Error( "invalid_$key", "Invalid $key." );
+		}
+
+		$value = $args[ $key ];
+		if ( is_string( $value ) ) {
+			$decoded = json_decode( $value, true );
+			if ( JSON_ERROR_NONE !== json_last_error() ) {
+				return new \WP_Error( "invalid_$key", "Invalid JSON $key." );
+			}
+			return $decoded;
+		}
+
+		if ( ! is_array( $value ) ) {
+			return new \WP_Error( "invalid_$key", "Invalid $key format." );
+		}
+
+		return $value;
 	}
 
 	public function get_item_children( array $args ) {

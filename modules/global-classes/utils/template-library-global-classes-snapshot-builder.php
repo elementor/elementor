@@ -80,6 +80,27 @@ class Template_Library_Global_Classes_Snapshot_Builder {
 	}
 
 	public static function merge_snapshot_and_get_id_map( array $snapshot ): array {
+		return self::process_snapshot( $snapshot, function( $incoming_id, $incoming_item, $updated_items, $existing_ids ) {
+			if ( isset( $existing_ids[ $incoming_id ] ) ) {
+				$is_same = Template_Library_Import_Export_Utils::items_equal( $updated_items[ $incoming_id ], $incoming_item );
+
+				if ( $is_same ) {
+					return null; // Skip, it's the same
+				}
+
+				return Template_Library_Import_Export_Utils::generate_unique_id( array_keys( $updated_items ), 'g-' );
+			}
+			return $incoming_id;
+		} );
+	}
+
+	public static function create_all_as_new( array $snapshot ): array {
+		return self::process_snapshot( $snapshot, function( $incoming_id, $incoming_item, $updated_items, $existing_ids ) {
+			return Template_Library_Import_Export_Utils::generate_unique_id( array_keys( $updated_items ), 'g-' );
+		} );
+	}
+
+	private static function process_snapshot( array $snapshot, callable $id_strategy ): array {
 		if ( ! self::can_access_repository() ) {
 			return [
 				'id_map' => [],
@@ -112,91 +133,25 @@ class Template_Library_Global_Classes_Snapshot_Builder {
 			}
 
 			$incoming_item = $snapshot['items'][ $incoming_id ];
-			$target_id = $incoming_id;
-
-			if ( isset( $existing_ids[ $incoming_id ] ) ) {
-				$is_same = Template_Library_Import_Export_Utils::items_equal( $updated_items[ $incoming_id ], $incoming_item );
-
-				if ( $is_same ) {
-					continue;
-				}
-
-				$target_id = Template_Library_Import_Export_Utils::generate_unique_id( array_keys( $updated_items ), 'g-' );
-				$id_map[ $incoming_id ] = $target_id;
-			}
 
 			if ( count( $updated_items ) >= Global_Classes_Rest_Api::MAX_ITEMS ) {
 				$ids_to_flatten[] = $incoming_id;
 				continue;
+			}
+
+			$target_id = $id_strategy( $incoming_id, $incoming_item, $updated_items, $existing_ids );
+
+			if ( null === $target_id ) {
+				continue;
+			}
+
+			if ( $target_id !== $incoming_id ) {
+				$id_map[ $incoming_id ] = $target_id;
 			}
 
 			self::add_item_with_label(
 				$incoming_item,
 				$target_id,
-				$updated_items,
-				$updated_order,
-				$existing_ids,
-				$existing_labels
-			);
-		}
-
-		Global_Classes_Repository::make()->put( $updated_items, $updated_order );
-
-		return [
-			'id_map' => $id_map,
-			'ids_to_flatten' => $ids_to_flatten,
-			'global_classes' => [
-				'items' => $updated_items,
-				'order' => $updated_order,
-			],
-		];
-	}
-
-	public static function create_all_as_new( array $snapshot ): array {
-		if ( ! self::can_access_repository() ) {
-			return [
-				'id_map' => [],
-				'ids_to_flatten' => [],
-			];
-		}
-
-		$snapshot = self::parse_snapshot_or_null( $snapshot );
-		if ( null === $snapshot ) {
-			return [
-				'id_map' => [],
-				'ids_to_flatten' => [],
-			];
-		}
-
-		$current = self::get_repository_data();
-		$current_items = $current['items'];
-		$current_order = $current['order'];
-		$existing_labels = Template_Library_Import_Export_Utils::extract_labels( $current_items );
-
-		$id_map = [];
-		$ids_to_flatten = [];
-		$updated_items = $current_items;
-		$updated_order = $current_order;
-		$existing_ids = array_fill_keys( array_keys( $updated_items ), true );
-
-		foreach ( $snapshot['order'] as $incoming_id ) {
-			if ( empty( $snapshot['items'][ $incoming_id ] ) ) {
-				continue;
-			}
-
-			$incoming_item = $snapshot['items'][ $incoming_id ];
-
-			if ( count( $updated_items ) >= Global_Classes_Rest_Api::MAX_ITEMS ) {
-				$ids_to_flatten[] = $incoming_id;
-				continue;
-			}
-
-			$new_id = Template_Library_Import_Export_Utils::generate_unique_id( array_keys( $updated_items ), 'g-' );
-			$id_map[ $incoming_id ] = $new_id;
-
-			self::add_item_with_label(
-				$incoming_item,
-				$new_id,
 				$updated_items,
 				$updated_order,
 				$existing_ids,
