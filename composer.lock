@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "afefbc3b9775f68c3a6f40f06abb31ed",
+    "content-hash": "1742fc0d1cefcbe30d4e24c579cf697d",
     "packages": [
         {
             "name": "elementor/wp-notifications-package",
@@ -39,16 +39,16 @@
         },
         {
             "name": "elementor/wp-one-package",
-            "version": "1.0.47",
+            "version": "1.0.48",
             "source": {
                 "type": "git",
                 "url": "git@github.com:elementor/wp-one-package.git",
-                "reference": "79b558c889e20b2dfd7aaff33ddf902746a9aac8"
+                "reference": "6fba587dcdb214de923dc91eedf9eec9286ebe90"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://composer.elementor.com/download/elementor/wp-one-package/1.0.47",
-                "reference": "79b558c889e20b2dfd7aaff33ddf902746a9aac8",
+                "url": "https://composer.elementor.com/download/elementor/wp-one-package/1.0.48",
+                "reference": "6fba587dcdb214de923dc91eedf9eec9286ebe90",
                 "shasum": ""
             },
             "require": {
@@ -77,9 +77,9 @@
                 ]
             },
             "support": {
-                "source": "https://github.com/elementor/wp-one-package/tree/1.0.47"
+                "source": "https://github.com/elementor/wp-one-package/tree/1.0.48"
             },
-            "time": "2026-01-28T11:16:24+00:00"
+            "time": "2026-01-29T17:06:07+00:00"
         }
     ],
     "packages-dev": [
