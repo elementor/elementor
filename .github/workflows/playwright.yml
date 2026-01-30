@@ -27,6 +27,9 @@ on:
       tag:
         description: 'Provide @tag or a keyword'
         required: false
+      wordpress_version:
+        description: 'WordPress version URL (e.g., https://wordpress.org/wordpress-6.9.1-RC1.zip)'
+        required: false
 
 permissions:
   contents: write
@@ -111,6 +114,9 @@ jobs:
       - name: Install WordPress environment
         run: |
           npm run start-local-server
+      - name: Update wordpress to specified version
+        if: ${{ github.event.inputs.wordpress_version }}
+        run: npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core update ${{ github.event.inputs.wordpress_version }}"
       - name: Update wordpress to nightly build
         if: ${{ github.event_name == 'schedule' }}
         run: npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip"
@@ -202,6 +208,9 @@ jobs:
       - name: Install WordPress environment
         run: |
           npm run start-local-server
+      - name: Update wordpress to specified version
+        if: ${{ github.event.inputs.wordpress_version }}
+        run: npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core update ${{ github.event.inputs.wordpress_version }}"
       - name: Setup test data
         run: npm run test:setup:playwright
       - name: WordPress debug information
