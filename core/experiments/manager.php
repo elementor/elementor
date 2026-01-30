@@ -640,7 +640,11 @@ class Manager extends Base_Object {
 
 		$is_feature_active = $this->is_feature_active( $feature['name'] );
 
-		$indicator_classes = 'e-experiment__title__indicator e-experiment__title__indicator--active';
+		$indicator_classes = 'e-experiment__title__indicator';
+
+		if ( $is_feature_active ) {
+			$indicator_classes .= ' e-experiment__title__indicator--active';
+		}
 
 		$indicator_tooltip = $this->get_feature_state_label( $feature );
 
