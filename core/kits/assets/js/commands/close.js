@@ -1,8 +1,13 @@
+import { EditorOneEventManager } from 'elementor-editor-utils/editor-one-events';
+
 export class Close extends $e.modules.CommandBase {
 	apply( args ) {
 		const { mode } = args;
 
+		this.trackSiteSettingsSession( 'close', 'saved' === mode ? 'saved' : 'discard' );
+
 		// The kit is opened directly.
+
 		if ( elementor.config.initial_document.id === parseInt( elementor.config.kit_id ) ) {
 			return $e.run( 'panel/global/exit' );
 		}
@@ -14,7 +19,6 @@ export class Close extends $e.modules.CommandBase {
 			id: elementor.config.initial_document.id,
 			onClose: ( document ) => {
 				if ( document.isDraft() ) {
-					// Restore published style.
 					elementor.toggleDocumentCssFiles( document, true );
 					elementor.settings.page.destroyControlsCSS();
 				}
@@ -26,6 +30,19 @@ export class Close extends $e.modules.CommandBase {
 				elementor.documents.invalidateCache( elementor.config.kit_id );
 			},
 		} ).finally( () => $e.internal( 'panel/state-ready' ) );
+	}
+
+	trackSiteSettingsSession( targetType, state ) {
+		const sessionData = this.component.getSiteSettingsSessionData?.() || {};
+
+		EditorOneEventManager.sendSiteSettingsSession( {
+			targetType,
+			visitedItems: sessionData.visitedItems || [],
+			savedItems: sessionData.savedItems || [],
+			state,
+		} );
+
+		this.component.resetSiteSettingsSession?.();
 	}
 }
 
