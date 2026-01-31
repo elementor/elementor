@@ -5,10 +5,6 @@ namespace Elementor\Modules\Variables\Utils;
 use Elementor\Core\Utils\Template_Library_Element_Iterator;
 use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
 use Elementor\Core\Utils\Template_Library_Snapshot_Utils;
-use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
-use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
-use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
-use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Plugin;
@@ -19,18 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Template_Library_Variables_Snapshot_Builder {
 
-	private static function get_variable_types(): array {
-		return [
-			Color_Variable_Prop_Type::get_key(),
-			Font_Variable_Prop_Type::get_key(),
-			Size_Variable_Prop_Type::get_key(),
-			Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
-		];
-	}
-
 	public static function extract_used_variable_ids_from_elements( array $elements ): array {
 		$ids = [];
-		$variable_types = self::get_variable_types();
+		$variable_types = Variable_Type_Keys::get_all();
 
 		if ( empty( $elements ) ) {
 			return [];
@@ -95,7 +82,7 @@ class Template_Library_Variables_Snapshot_Builder {
 
 	public static function extract_variable_ids_from_data( array $data ): array {
 		$ids = [];
-		$variable_types = self::get_variable_types();
+		$variable_types = Variable_Type_Keys::get_all();
 		self::extract_variable_ids_recursive( $data, $ids, $variable_types );
 		return array_values( array_unique( $ids ) );
 	}
@@ -224,7 +211,7 @@ class Template_Library_Variables_Snapshot_Builder {
 	}
 
 	private static function get_repository_or_null(): ?Variables_Repository {
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$kit = Plugin::instance()->kits_manager->get_active_kit();
 		if ( ! $kit ) {
 			return null;
 		}

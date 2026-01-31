@@ -14,7 +14,7 @@ class Template_Library_Element_Iterator {
 			return $elements;
 		}
 
-		return Plugin::$instance->db->iterate_data( $elements, $callback );
+		return Plugin::instance()->db->iterate_data( $elements, $callback );
 	}
 
 	private static function is_valid_elements_array( array $elements ): bool {

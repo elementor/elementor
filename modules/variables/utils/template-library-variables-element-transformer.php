@@ -3,10 +3,6 @@
 namespace Elementor\Modules\Variables\Utils;
 
 use Elementor\Core\Utils\Template_Library_Element_Iterator;
-use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
-use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
-use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
-use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -14,21 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Template_Library_Variables_Element_Transformer {
 
-	private static function get_variable_types(): array {
-		return [
-			Color_Variable_Prop_Type::get_key(),
-			Font_Variable_Prop_Type::get_key(),
-			Size_Variable_Prop_Type::get_key(),
-			Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
-		];
-	}
-
 	public static function rewrite_elements_variable_ids( array $elements, array $id_map ): array {
 		if ( empty( $elements ) || empty( $id_map ) ) {
 			return $elements;
 		}
 
-		$variable_types = self::get_variable_types();
+		$variable_types = Variable_Type_Keys::get_all();
 
 		return Template_Library_Element_Iterator::iterate(
 			$elements,
@@ -45,7 +32,7 @@ class Template_Library_Variables_Element_Transformer {
 			return $elements;
 		}
 
-		$variable_types = self::get_variable_types();
+		$variable_types = Variable_Type_Keys::get_all();
 		$ids_to_flatten = null !== $only_ids ? array_fill_keys( $only_ids, true ) : null;
 
 		return Template_Library_Element_Iterator::iterate(
@@ -116,7 +103,7 @@ class Template_Library_Variables_Element_Transformer {
 
 				$variable = $variable_data[ $var_id ];
 				$resolved_value = $variable['value'] ?? null;
-				$resolved_type = self::get_resolved_type( $data['$$type'] );
+				$resolved_type = Variable_Type_Keys::get_resolved_type( $data['$$type'] );
 
 				if ( null !== $resolved_value && null !== $resolved_type ) {
 					return [
@@ -136,16 +123,5 @@ class Template_Library_Variables_Element_Transformer {
 		}
 
 		return $data;
-	}
-
-	private static function get_resolved_type( string $variable_type ): ?string {
-		$type_map = [
-			Color_Variable_Prop_Type::get_key() => 'color',
-			Font_Variable_Prop_Type::get_key() => 'string',
-			Size_Variable_Prop_Type::get_key() => 'size',
-			Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY => 'size',
-		];
-
-		return $type_map[ $variable_type ] ?? null;
 	}
 }

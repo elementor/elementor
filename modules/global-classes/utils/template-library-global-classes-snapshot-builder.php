@@ -176,7 +176,7 @@ class Template_Library_Global_Classes_Snapshot_Builder {
 	}
 
 	private static function has_active_kit(): bool {
-		return (bool) Plugin::$instance->kits_manager->get_active_kit();
+		return (bool) Plugin::instance()->kits_manager->get_active_kit();
 	}
 
 	private static function parse_snapshot_or_null( array $snapshot ): ?array {

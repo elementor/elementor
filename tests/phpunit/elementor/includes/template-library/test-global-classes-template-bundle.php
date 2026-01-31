@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Global_Classes_Template_Bundle extends Elementor_Test_Base {
 
 	private function get_local_source(): Source_Local {
-		return Plugin::$instance->templates_manager->get_source( 'local' );
+		return Plugin::instance()->templates_manager->get_source( 'local' );
 	}
 
 	public function test_export_embeds_only_used_global_classes() {

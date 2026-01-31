@@ -15,11 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Variables_Template_Bundle extends Elementor_Test_Base {
 
 	private function get_local_source(): Source_Local {
-		return Plugin::$instance->templates_manager->get_source( 'local' );
+		return Plugin::instance()->templates_manager->get_source( 'local' );
 	}
 
 	private function get_repository(): Variables_Repository {
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$kit = Plugin::instance()->kits_manager->get_active_kit();
 		return new Variables_Repository( $kit );
 	}
 

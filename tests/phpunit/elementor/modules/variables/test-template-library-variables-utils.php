@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Template_Library_Variables_Utils extends Elementor_Test_Base {
 
 	private function repository(): Variables_Repository {
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$kit = Plugin::instance()->kits_manager->get_active_kit();
 		return new Variables_Repository( $kit );
 	}
 
