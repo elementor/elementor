@@ -23,7 +23,7 @@ export const useAdminMenuOffset = () => {
 			const isRTL = getIsRTL();
 			const rect = adminMenuWrap.getBoundingClientRect();
 
-			const offset = isRTL ? window.innerWidth - rect.left : rect.right;
+			const offset = isRTL ? document.documentElement.clientWidth - rect.left : rect.right;
 
 			wpcontent.style.setProperty( '--editor-one-sidebar-left-offset', `${ offset }px` );
 		};
