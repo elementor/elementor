@@ -165,6 +165,207 @@ class Test_Global_Classes_Template_Bundle extends Elementor_Test_Base {
 		$this->assertStringStartsWith( 'DUP_', $current['items'][ $new_id ]['label'] );
 	}
 
+	public function test_import_keep_flatten_does_not_add_global_classes_to_repository() {
+		$this->act_as_admin();
+
+		// Clear any existing global classes
+		Global_Classes_Repository::make()->put( [], [] );
+
+		$initial_classes = Global_Classes_Repository::make()->all()->get();
+		$initial_count = count( $initial_classes['items'] ?? [] );
+
+		$template_json = [
+			'content' => [
+				[
+					'id' => '1a02b300',
+					'elType' => 'container',
+					'settings' => [],
+					'elements' => [
+						[
+							'id' => '2819ab7c',
+							'elType' => 'container',
+							'isInner' => true,
+							'settings' => [],
+							'elements' => [
+								[
+									'id' => '66257faa',
+									'elType' => 'widget',
+									'widgetType' => 'e-heading',
+									'isInner' => false,
+									'settings' => [
+										'classes' => [
+											'$$type' => 'classes',
+											'value' => [
+												'g-7561cbe',
+												'e-66257faa-0a6ca5b',
+												'g-0c98828',
+											],
+										],
+									],
+									'elements' => [],
+									'styles' => [
+										'e-66257faa-0a6ca5b' => [
+											'id' => 'e-66257faa-0a6ca5b',
+											'label' => 'local',
+											'type' => 'class',
+											'variants' => [
+												[
+													'meta' => [
+														'breakpoint' => 'desktop',
+														'state' => null,
+													],
+													'props' => [
+														'font-family' => [
+															'$$type' => 'global-font-variable',
+															'value' => 'e-gv-3c8270e',
+														],
+													],
+													'custom_css' => null,
+												],
+											],
+										],
+									],
+								],
+								[
+									'id' => '507ee1cf',
+									'elType' => 'widget',
+									'widgetType' => 'e-heading',
+									'isInner' => false,
+									'settings' => [
+										'classes' => [
+											'$$type' => 'classes',
+											'value' => [
+												'g-7561cbe',
+												'g-0c98828',
+											],
+										],
+									],
+									'elements' => [],
+									'styles' => [],
+								],
+							],
+						],
+					],
+				],
+			],
+			'page_settings' => [],
+			'title' => 'export testing',
+			'type' => 'page',
+			'global_classes' => [
+				'items' => [
+					'g-0c98828' => [
+						'id' => 'g-0c98828',
+						'type' => 'class',
+						'label' => 'heading',
+						'variants' => [
+							[
+								'meta' => [
+									'breakpoint' => 'desktop',
+									'state' => null,
+								],
+								'props' => [
+									'font-family' => [
+										'$$type' => 'global-font-variable',
+										'value' => 'e-gv-3c8270e',
+									],
+									'font-weight' => [
+										'$$type' => 'string',
+										'value' => '700',
+									],
+									'text-align' => [
+										'$$type' => 'string',
+										'value' => 'center',
+									],
+									'background' => [
+										'$$type' => 'background',
+										'value' => [
+											'color' => [
+												'$$type' => 'global-color-variable',
+												'value' => 'e-gv-29a8784',
+											],
+										],
+									],
+								],
+								'custom_css' => null,
+							],
+						],
+					],
+				],
+				'order' => [ 'g-0c98828' ],
+			],
+			'global_variables' => [
+				'data' => [
+					'e-gv-3c8270e' => [
+						'type' => 'global-font-variable',
+						'label' => 'heading-font',
+						'value' => 'Verdana',
+						'order' => 1,
+					],
+					'e-gv-29a8784' => [
+						'type' => 'global-color-variable',
+						'label' => 'red',
+						'value' => '#f60707',
+						'order' => 2,
+					],
+				],
+				'watermark' => 0,
+				'version' => 1,
+			],
+		];
+
+		$tmp = wp_tempnam( 'elementor-template' );
+		file_put_contents( $tmp, wp_json_encode( $template_json ) );
+
+		$prepared = $this->get_local_source()->prepare_import_template_data( $tmp, 'keep_flatten' );
+		unlink( $tmp );
+
+		// Assert: NO global classes were added to the repository
+		$final_classes = Global_Classes_Repository::make()->all()->get();
+		$final_count = count( $final_classes['items'] ?? [] );
+		$this->assertSame( $initial_count, $final_count, 'Global classes should NOT be added to repository in keep_flatten mode' );
+		$this->assertArrayNotHasKey( 'g-0c98828', $final_classes['items'] ?? [], 'g-0c98828 should NOT be in the repository' );
+
+		// Assert: All global class references are converted to local styles or removed
+		$widgets = $prepared['content'][0]['elements'][0]['elements'];
+		$first = $widgets[0];
+		$second = $widgets[1];
+
+		// First widget: g-7561cbe (not in snapshot) should be removed, g-0c98828 (in snapshot) should be flattened, local e-66257faa-0a6ca5b preserved
+		$this->assertNotContains( 'g-0c98828', $first['settings']['classes']['value'], 'g-0c98828 should be flattened to local' );
+		$this->assertNotContains( 'g-7561cbe', $first['settings']['classes']['value'], 'g-7561cbe (not in snapshot) should be removed' );
+		$this->assertContains( 'e-66257faa-0a6ca5b', $first['settings']['classes']['value'], 'Existing local class should be preserved' );
+
+		// All remaining class IDs should now start with 'e-' (local)
+		foreach ( $first['settings']['classes']['value'] as $class_id ) {
+			$this->assertStringStartsWith( 'e-', $class_id, "Class $class_id should be local (start with e-)" );
+		}
+
+		// Second widget: g-7561cbe (not in snapshot) should be removed, g-0c98828 should be flattened
+		$this->assertNotContains( 'g-0c98828', $second['settings']['classes']['value'], 'g-0c98828 should be flattened' );
+		$this->assertNotContains( 'g-7561cbe', $second['settings']['classes']['value'], 'g-7561cbe should be removed' );
+
+		// All remaining class IDs should now start with 'e-' (local)
+		foreach ( $second['settings']['classes']['value'] as $class_id ) {
+			$this->assertStringStartsWith( 'e-', $class_id, "Class $class_id should be local (start with e-)" );
+		}
+
+		// Assert: Flattened global class has all the properties from the snapshot
+		$flattened_ids = array_filter( $second['settings']['classes']['value'], fn( $id ) => str_contains( $id, '507ee1cf' ) );
+		$this->assertNotEmpty( $flattened_ids, 'Should have a flattened local class for this element' );
+
+		$flattened_id = array_values( $flattened_ids )[0];
+		$this->assertArrayHasKey( $flattened_id, $second['styles'], 'Flattened class should be in styles' );
+
+		$flattened_style = $second['styles'][ $flattened_id ];
+		$this->assertSame( 'heading', $flattened_style['label'], 'Label should be preserved from global class' );
+		$this->assertNotEmpty( $flattened_style['variants'], 'Variants should be preserved' );
+
+		$props = $flattened_style['variants'][0]['props'];
+		$this->assertArrayHasKey( 'font-weight', $props, 'font-weight prop should be preserved' );
+		$this->assertArrayHasKey( 'text-align', $props, 'text-align prop should be preserved' );
+		$this->assertArrayHasKey( 'background', $props, 'background prop should be preserved' );
+	}
+
 	public function test_import_keep_flatten_replaces_global_class_with_local_style_and_preserves_variants_props() {
 		$this->act_as_admin();
 
