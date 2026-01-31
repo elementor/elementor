@@ -20,6 +20,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu\Atomic
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab\Atomic_Tab;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Content_Area\Atomic_Tabs_Content_Area;
 use Elementor\Modules\AtomicWidgets\ImportExport\Atomic_Import_Export;
+use Elementor\Modules\AtomicWidgets\Usage\Atomic_Element_Usage_Calculator;
 use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Export\Image_Src_Export_Transformer;
@@ -171,6 +172,7 @@ class Module extends BaseModule {
 			add_action( 'elementor/atomic-widgets/import/transformers/register', fn ( $transformers ) => $this->register_import_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/export/transformers/register', fn ( $transformers ) => $this->register_export_transformers( $transformers ) );
 			add_action( 'elementor/editor/templates/panel/category', fn () => $this->render_panel_category_chip() );
+			add_action( 'elementor/usage/calculators/register', fn ( $registry ) => $this->register_usage_calculator( $registry ) );
 		}
 	}
 
@@ -354,6 +356,10 @@ class Module extends BaseModule {
 		}
 
 		return $title;
+	}
+
+	private function register_usage_calculator( $registry ): void {
+		$registry->register( 'atomic', new Atomic_Element_Usage_Calculator(), 5 );
 	}
 
 	/**
