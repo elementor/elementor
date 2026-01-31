@@ -216,16 +216,18 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 			videoID;
 
 		const playOnce = this.getElementSettings( 'background_play_once' );
-
 		if ( -1 !== videoLink.indexOf( 'vimeo.com' ) ) {
 			this.videoType = 'vimeo';
 			this.apiProvider = elementorFrontend.utils.vimeo;
 		} else if ( videoLink.match( /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com)/ ) ) {
+			console.log(44444, 'youtube');
 			this.videoType = 'youtube';
 			this.apiProvider = elementorFrontend.utils.youtube;
+			console.log(this.apiProvider, 'apiProvider');
 		}
 
 		if ( this.apiProvider ) {
+			console.log(this.apiProvider, 'if true ');
 			videoID = this.apiProvider.getVideoIDFromURL( videoLink );
 
 			this.apiProvider.onApiReady( ( apiObject ) => {
@@ -237,9 +239,10 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 					this.prepareVimeoVideo( apiObject, videoLink );
 				}
 			} );
+			console.log(videoID, 'Video Id ');
 		} else {
 			this.videoType = 'hosted';
-
+			console.log(this.videoType, 'hosted');
 			const startTime = this.getElementSettings( 'background_video_start' ),
 				endTime = this.getElementSettings( 'background_video_end' );
 			if ( startTime || endTime ) {
@@ -252,7 +255,7 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 				} );
 			}
 		}
-
+		console.log('resize elementor/bg-video/recalc', this.changeVideoSize, ' end of function ');
 		elementorFrontend.elements.$window.on( 'resize elementor/bg-video/recalc', this.changeVideoSize );
 	}
 
