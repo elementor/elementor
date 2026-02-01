@@ -82,22 +82,6 @@ class Module extends Base_Module {
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
 
 		$this->register_atomic_promotions();
-
-		// Add Ally promo
-		Ally_Dashboard_Widget::init();
-
-		// Top bar link for accessibility scanner (will be initialized later)
-		// Ally_Top_Bar_Link::init();
-	}
-
-	/**
-	 * Get Ally Scanner URL
-	 *
-	 * @return string
-	 */
-	public static function get_ally_external_scanner_url(): string {
-		return apply_filters( 'elementor/ally_external_scanner_url', 'https://elementor.com/tools/ally-accessibility-checker/scanner' );
-		$this->register_display_conditions_promo_hooks();
 	}
 
 	private function handle_external_redirects() {
