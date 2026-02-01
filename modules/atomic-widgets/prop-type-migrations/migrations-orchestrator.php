@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Modules\AtomicWidgets\Interactions\Interactions_Schema;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
 
@@ -187,12 +188,18 @@ class Migrations_Orchestrator {
 	}
 
 	private function try_get_schema( array $data, ?array $context ): array {
-		if ( isset( $context['key'] ) && 'settings' === $context['key'] && isset( $context['parent'] ) ) {
-			return $this->get_settings_schema( $context['parent'] );
-		}
-
-		if ( isset( $context['key'] ) && 'props' === $context['key'] ) {
-			return Style_Schema::get();
+		if ( isset( $context['key'] ) ) {
+			if ( 'settings' === $context['key'] && isset( $context['parent'] ) ) {
+				return $this->get_settings_schema( $context['parent'] );
+			}
+	
+			if ( 'props' === $context['key'] ) {
+				return Style_Schema::get();
+			}
+	
+			if ( 'interactions' === $context['key'] ) {
+				return Interactions_Schema::get();
+			}
 		}
 
 		return [];
