@@ -32,11 +32,10 @@ export { getElementStyles } from './sync/get-element-styles';
 export { getElementType } from './sync/get-element-type';
 export { getAllDescendants } from './sync/get-all-descendants';
 export {
-	getModel,
 	findChildRecursive,
 	getElementChildren as getElementChildrenWithFallback,
 	type ModelResult,
-} from './sync/get-model';
+} from './sync/model-utils';
 export { getElements } from './sync/get-elements';
 export { getSelectedElements } from './sync/get-selected-elements';
 export { getWidgetsCache } from './sync/get-widgets-cache';

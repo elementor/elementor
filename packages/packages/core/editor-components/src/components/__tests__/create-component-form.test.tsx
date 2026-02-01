@@ -484,6 +484,27 @@ describe( 'CreateComponentForm', () => {
 				return Promise.resolve();
 			} );
 
+			const componentInstanceContainer = {
+				model: {
+					toJSON: () => ( { id: CREATED_COMPONENT_INSTANCE_ID } ),
+				},
+				parent: { id: 'parent-container-id' },
+				view: { _index: 0 },
+			} as ReturnType< typeof getContainer >;
+
+			mockGetContainer.mockImplementation( ( id: string ) => {
+				if ( id === CREATED_COMPONENT_INSTANCE_ID ) {
+					return componentInstanceContainer;
+				}
+				return {
+					model: {
+						toJSON: () => mockElement,
+					},
+					parent: { id: 'parent-container-id' },
+					view: { _index: 0 },
+				} as ReturnType< typeof getContainer >;
+			} );
+
 			const { openForm, fillComponentName, getCreateButton } = setupForm();
 			openForm();
 
@@ -494,7 +515,7 @@ describe( 'CreateComponentForm', () => {
 			// Assert.
 			await waitFor( () => {
 				expect( mockDeleteElement ).toHaveBeenCalledWith( {
-					elementId: CREATED_COMPONENT_INSTANCE_ID,
+					container: componentInstanceContainer,
 					options: { useHistory: false },
 				} );
 			} );

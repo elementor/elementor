@@ -4,7 +4,11 @@ import { getContainer } from './get-container';
 export const getElementSetting = < TValue >( elementId: ElementID, settingKey: string ): TValue | null => {
 	const container = getContainer( elementId );
 
-	return ( container?.settings?.get( settingKey ) as TValue ) ?? null;
+	if ( ! container ) {
+		return null;
+	}
+
+	return ( container.settings?.get( settingKey ) as TValue ) ?? null;
 };
 
 export const getElementSettings = < TValue >(

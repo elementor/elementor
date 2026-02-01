@@ -1,7 +1,7 @@
 import { __privateUseListenTo as useListenTo, commandEndEvent, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 
 import { getContainer } from '../sync/get-container';
-import { findChildRecursive, getElementChildren, type ModelResult } from '../sync/get-model';
+import { findChildRecursive, getElementChildren, type ModelResult } from '../sync/model-utils';
 import { type V1ElementEditorSettingsProps } from '../sync/types';
 import { type ElementID } from '../types';
 
