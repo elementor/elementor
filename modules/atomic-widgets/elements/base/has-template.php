@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 
 use Elementor\Modules\AtomicWidgets\Elements\TemplateRenderer\Template_Renderer;
+use Elementor\Modules\Interactions\Adapter as Interactions_Adapter;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -54,9 +55,7 @@ trait Has_Template {
 	public function get_interactions_ids() {
 		$animation_ids = [];
 
-		$list_of_interactions = ( is_array( $this->interactions ) && isset( $this->interactions['items'] ) )
-			? $this->interactions['items']
-			: [];
+		$list_of_interactions = $this->extract_interactions_items( $this->interactions );
 
 		foreach ( $list_of_interactions as $interaction ) {
 
@@ -71,6 +70,31 @@ trait Has_Template {
 		}
 
 		return $animation_ids;
+	}
+
+	/**
+	 * Extract items array from interactions data.
+	 * Handles both v1 format (items is array) and v2 format (items is wrapped with $$type).
+	 * Note: Original v1 data returns empty from Adapter::unwrap_for_frontend() (breaking change).
+	 */
+	private function extract_interactions_items( $interactions ) {
+		if ( ! is_array( $interactions ) || ! isset( $interactions['items'] ) ) {
+			return [];
+		}
+
+		$items = $interactions['items'];
+
+		// Handle v2 wrapped format: {$$type: 'interactions-array', value: [...]}
+		if ( isset( $items['$$type'] ) && Interactions_Adapter::ITEMS_TYPE === $items['$$type'] ) {
+			return isset( $items['value'] ) && is_array( $items['value'] ) ? $items['value'] : [];
+		}
+
+		// Direct array format (unwrapped v2 or empty v1)
+		if ( is_array( $items ) ) {
+			return $items;
+		}
+
+		return [];
 	}
 
 	private function extract_animation_id_from_prop_type( $item ) {
@@ -101,14 +125,14 @@ trait Has_Template {
 		$offset_bottom = 85;
 
 		if ( is_array( $timing_config ) ) {
-			$duration = $this->extract_prop_value_simple( $timing_config, 'duration', 300 );
-			$delay = $this->extract_prop_value_simple( $timing_config, 'delay', 0 );
+			$duration = Interactions_Adapter::extract_numeric_value( $timing_config['duration'] ?? null, 300 );
+			$delay = Interactions_Adapter::extract_numeric_value( $timing_config['delay'] ?? null, 0 );
 		}
 
 		if ( is_array( $config ) ) {
-			$relative_to = $this->extract_prop_value_simple( $config, 'relative_to', 'viewport' );
-			$offset_top = $this->extract_prop_value_simple( $config, 'offset_top', 15 );
-			$offset_bottom = $this->extract_prop_value_simple( $config, 'offset_bottom', 85 );
+			$relative_to = $this->extract_prop_value_simple( $config, 'relativeTo', 'viewport' );
+			$offset_top = Interactions_Adapter::extract_numeric_value( $config['offsetTop'] ?? null, 15 );
+			$offset_bottom = Interactions_Adapter::extract_numeric_value( $config['offsetBottom'] ?? null, 85 );
 			$replay = $this->extract_prop_value_simple( $config, 'replay', 0 );
 			if ( empty( $replay ) && 0 !== $replay && '0' !== $replay ) {
 				$replay = 0;
