@@ -16,9 +16,8 @@ class Interactions_Schema {
 
 	public static function get_interactions_schema(): array {
 		return [
-            'version' => Number_Prop_Type::make()->description( 'The version of the interactions schema' ),
-            'items' => Interactions_Array_Prop_Type::make()->description( 'The list of interaction items' )
-        ];
+			'version' => Number_Prop_Type::make()->description( 'The version of the interactions schema' ),
+			'items' => Interactions_Array_Prop_Type::make()->description( 'The list of interaction items' ),
+		];
 	}
 }
-
