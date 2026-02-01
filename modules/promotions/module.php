@@ -13,8 +13,10 @@ use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Icons_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Popups_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Submissions_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
+use Elementor\Modules\Promotions\Controls\Atomic_Promotion_Control;
 use Elementor\Modules\Promotions\Pointers\Birthday;
 use Elementor\Modules\Promotions\Pointers\Black_Friday;
+use Elementor\Modules\Promotions\PropTypes\Promotion_Prop_Type;
 use Elementor\Modules\Promotions\Widgets\Ally_Dashboard_Widget;
 use Elementor\Widgets_Manager;
 use Elementor\Utils;
@@ -233,9 +235,6 @@ class Module extends Base_Module {
 				return;
 			}
 
-			require_once __DIR__ . '/prop-types/promotion-prop-type.php';
-			require_once __DIR__ . '/controls/atomic-promotion-control.php';
-
 			add_filter(
 				'elementor/atomic-widgets/props-schema',
 				[ $this, 'inject_atomic_promotion_props' ]
@@ -260,7 +259,7 @@ class Module extends Base_Module {
 				continue;
 			}
 
-			$schema[ $key ] = PropTypes\Promotion_Prop_Type::make( $key );
+			$schema[ $key ] = Promotion_Prop_Type::make( $key );
 		}
 
 		return $schema;
@@ -283,7 +282,7 @@ class Module extends Base_Module {
 				continue;
 			}
 
-			$control = Controls\Atomic_Promotion_Control::make( $key )
+			$control = Atomic_Promotion_Control::make( $key )
 				->set_label( $config['label'] )
 				->set_meta( [
 					'topDivider' => true,
