@@ -31,8 +31,20 @@ const createInteraction = (
 						timing_config: {
 							$$type: 'timing-config',
 							value: {
-								duration: { $$type: 'number', value: duration },
-								delay: { $$type: 'number', value: delay },
+								duration: {
+									$$type: 'size',
+									value: {
+										size: duration,
+										unit: 'ms',
+									},
+								},
+								delay: {
+									$$type: 'size',
+									value: {
+										size: delay,
+										unit: 'ms',
+									},
+								},
 							},
 						},
 						config: {
@@ -126,8 +138,20 @@ describe( 'InteractionsList onPlayInteraction', () => {
 								timing_config: {
 									$$type: 'timing-config',
 									value: {
-										duration: { $$type: 'number', value: 300 },
-										delay: { $$type: 'number', value: 0 },
+										duration: {
+											$$type: 'size',
+											value: {
+												size: 300,
+												unit: 'ms',
+											},
+										},
+										delay: {
+											$$type: 'size',
+											value: {
+												size: 0,
+												unit: 'ms',
+											},
+										},
 									},
 								},
 							},
@@ -148,8 +172,20 @@ describe( 'InteractionsList onPlayInteraction', () => {
 								timing_config: {
 									$$type: 'timing-config',
 									value: {
-										duration: { $$type: 'number', value: 500 },
-										delay: { $$type: 'number', value: 0 },
+										duration: {
+											$$type: 'number',
+											value: {
+												size: 500,
+												unit: 'ms',
+											},
+										},
+										delay: {
+											$$type: 'number',
+											value: {
+												size: 0,
+												unit: 'ms',
+											},
+										},
 									},
 								},
 							},
@@ -196,8 +232,20 @@ describe( 'InteractionsList onPlayInteraction', () => {
 								timing_config: {
 									$$type: 'timing-config',
 									value: {
-										duration: { $$type: 'number', value: 300 },
-										delay: { $$type: 'number', value: 0 },
+										duration: {
+											$$type: 'size',
+											value: {
+												size: 300,
+												unit: 'ms',
+											},
+										},
+										delay: {
+											$$type: 'size',
+											value: {
+												size: 0,
+												unit: 'ms',
+											},
+										},
 									},
 								},
 							},

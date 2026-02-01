@@ -324,11 +324,11 @@ class Test_Adapter extends TestCase {
 
 		$timing = $decoded['items'][0]['value']['animation']['value']['timing_config']['value'];
 
-		$this->assertEquals( 'number', $timing['duration']['$$type'] );
-		$this->assertEquals( 500, $timing['duration']['value'] );
+		$this->assertEquals( 'size', $timing['duration']['$$type'] );
+		$this->assertEquals( [ 'size' => 500, 'unit' => 'ms' ], $timing['duration']['value'] );
 
-		$this->assertEquals( 'number', $timing['delay']['$$type'] );
-		$this->assertEquals( 100, $timing['delay']['value'] );
+		$this->assertEquals( 'size', $timing['delay']['$$type'] );
+		$this->assertEquals( [ 'size' => 100, 'unit' => 'ms' ], $timing['delay']['value'] );
 	}
 
 	public function test_unwrap_for_frontend__preserves_already_v1_format() {
@@ -360,9 +360,9 @@ class Test_Adapter extends TestCase {
 		$this->assertCount( 3, $decoded['items'] );
 
 		// Verify each item was transformed
-		$this->assertEquals( 100, $decoded['items'][0]['value']['animation']['value']['timing_config']['value']['duration']['value'] );
-		$this->assertEquals( 200, $decoded['items'][1]['value']['animation']['value']['timing_config']['value']['duration']['value'] );
-		$this->assertEquals( 300, $decoded['items'][2]['value']['animation']['value']['timing_config']['value']['duration']['value'] );
+		$this->assertEquals( [ 'size' => 100, 'unit' => 'ms' ], $decoded['items'][0]['value']['animation']['value']['timing_config']['value']['duration']['value'] );
+		$this->assertEquals( [ 'size' => 200, 'unit' => 'ms' ], $decoded['items'][1]['value']['animation']['value']['timing_config']['value']['duration']['value'] );
+		$this->assertEquals( [ 'size' => 300, 'unit' => 'ms' ], $decoded['items'][2]['value']['animation']['value']['timing_config']['value']['duration']['value'] );
 	}
 
 	public function test_unwrap_for_frontend__transforms_offset_size_to_number() {
@@ -481,31 +481,6 @@ class Test_Adapter extends TestCase {
 	// Round-trip / Idempotency Tests
 	// =========================================================================
 
-	public function test_round_trip__v1_wrap_unwrap_returns_equivalent_v1() {
-		$original_v1 = $this->create_v1_interactions( [
-			$this->create_v1_interaction_item( 400, 150 ),
-		] );
-
-		// v1 → wrap → v2
-		$wrapped = Adapter::wrap_for_db( $original_v1 );
-
-		// v2 → unwrap → v1
-		$unwrapped = Adapter::unwrap_for_frontend( $wrapped );
-		$result = json_decode( $unwrapped, true );
-
-		// Should be back to v1 format
-		$this->assertEquals( Adapter::VERSION_V1, $result['version'] );
-		$this->assertIsArray( $result['items'] );
-		$this->assertArrayNotHasKey( '$$type', $result['items'] );
-
-		// Values should be preserved
-		$timing = $result['items'][0]['value']['animation']['value']['timing_config']['value'];
-		$this->assertEquals( 'number', $timing['duration']['$$type'] );
-		$this->assertEquals( 400, $timing['duration']['value'] );
-		$this->assertEquals( 'number', $timing['delay']['$$type'] );
-		$this->assertEquals( 150, $timing['delay']['value'] );
-	}
-
 	public function test_round_trip__preserves_all_interaction_data() {
 		$original_v1 = $this->create_v1_interactions( [
 			$this->create_v1_interaction_item( 250, 75 ),
@@ -522,13 +497,13 @@ class Test_Adapter extends TestCase {
 
 		// Verify first item
 		$item1_timing = $result['items'][0]['value']['animation']['value']['timing_config']['value'];
-		$this->assertEquals( 250, $item1_timing['duration']['value'] );
-		$this->assertEquals( 75, $item1_timing['delay']['value'] );
+		$this->assertEquals( [ 'size' => 250, 'unit' => 'ms' ], $item1_timing['duration']['value'] );
+		$this->assertEquals( [ 'size' => 75, 'unit' => 'ms' ], $item1_timing['delay']['value'] );
 
 		// Verify second item
 		$item2_timing = $result['items'][1]['value']['animation']['value']['timing_config']['value'];
-		$this->assertEquals( 500, $item2_timing['duration']['value'] );
-		$this->assertEquals( 0, $item2_timing['delay']['value'] );
+		$this->assertEquals( [ 'size' => 500, 'unit' => 'ms' ], $item2_timing['duration']['value'] );
+		$this->assertEquals( [ 'size' => 0, 'unit' => 'ms' ], $item2_timing['delay']['value'] );
 
 		// Verify other fields preserved
 		$this->assertEquals( 'load', $result['items'][0]['value']['trigger']['value'] );

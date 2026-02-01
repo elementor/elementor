@@ -287,7 +287,10 @@ describe( 'InteractionDetails', () => {
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
-			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toBe( 354 );
+			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toEqual( {
+				size: 354,
+				unit: 'ms',
+			} );
 		} );
 
 		it( 'should call onChange when delay changes', () => {
@@ -310,7 +313,10 @@ describe( 'InteractionDetails', () => {
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
-			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toBe( 200 );
+			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toEqual( {
+				size: 200,
+				unit: 'ms',
+			} );
 		} );
 
 		it( 'should prevent negative values for duration', () => {
@@ -538,7 +544,10 @@ describe( 'InteractionDetails', () => {
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
 			expect( updatedInteraction.animation.value.direction.value ).toBe( 'right' );
-			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toBe( 500 );
+			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toEqual( {
+				size: 500,
+				unit: 'ms',
+			} );
 		} );
 
 		it( 'should preserve direction when updating delay', () => {
@@ -562,7 +571,10 @@ describe( 'InteractionDetails', () => {
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
 			expect( updatedInteraction.animation.value.direction.value ).toBe( 'left' );
-			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toBe( 200 );
+			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toEqual( {
+				size: 200,
+				unit: 'ms',
+			} );
 		} );
 	} );
 
@@ -589,8 +601,14 @@ describe( 'InteractionDetails', () => {
 			expect( updatedInteraction.animation.value.effect.value ).toBe( 'fade' );
 			expect( updatedInteraction.animation.value.type.value ).toBe( 'in' );
 			expect( updatedInteraction.animation.value.direction.value ).toBe( 'left' );
-			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toBe( 500 );
-			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toBe( 200 );
+			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toEqual( {
+				size: 500,
+				unit: 'ms',
+			} );
+			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toEqual( {
+				size: 200,
+				unit: 'ms',
+			} );
 		} );
 
 		it( 'should preserve breakpoints when updating other properties', () => {
@@ -638,8 +656,14 @@ describe( 'InteractionDetails', () => {
 			expect( updatedInteraction.trigger.value ).toBe( 'load' );
 			expect( updatedInteraction.animation.value.type.value ).toBe( 'out' );
 			expect( updatedInteraction.animation.value.direction.value ).toBe( 'right' );
-			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toBe( 750 );
-			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toBe( 100 );
+			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toEqual( {
+				size: 750,
+				unit: 'ms',
+			} );
+			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toEqual( {
+				size: 100,
+				unit: 'ms',
+			} );
 		} );
 
 		it( 'should preserve replay value when updating other properties', () => {
