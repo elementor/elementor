@@ -3,10 +3,10 @@ namespace Elementor\Modules\Usage;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\DynamicTags\Manager;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
+use Elementor\Modules\AtomicWidgets\Usage\Atomic_Element_Usage_Calculator;
 use Elementor\Modules\System_Info\Module as System_Info;
-use Elementor\Modules\Usage\Calculators\Classic_Element_Usage_Calculator;
-use Elementor\Modules\Usage\Contracts\Element_Usage_Calculator;
+use Elementor\Modules\Usage\Calculators\Legacy_Element_Usage_Calculator;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Tracker;
@@ -485,19 +485,20 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Get the calculator registry.
-	 *
 	 * @return Element_Usage_Calculator_Registry
 	 */
 	private function get_calculator_registry(): Element_Usage_Calculator_Registry {
 		static $registry = null;
 
 		if ( null === $registry ) {
-			$registry = new Element_Usage_Calculator_Registry();
+			$calculators = [];
 
-			$registry->register_fallback( new Classic_Element_Usage_Calculator() );
+			if ( Atomic_Widgets_Module::is_active() ) {
+				$calculators[] = new Atomic_Element_Usage_Calculator();
+			}
 
-			do_action( 'elementor/usage/calculators/register', $registry );
+			$registry = new Element_Usage_Calculator_Registry( $calculators );
+			$registry->set_fallback( new Legacy_Element_Usage_Calculator() );
 		}
 
 		return $registry;

@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Classic_Element_Usage_Calculator implements Element_Usage_Calculator {
+class Legacy_Element_Usage_Calculator implements Element_Usage_Calculator {
 
 	const GENERAL_TAB = 'general';
 
