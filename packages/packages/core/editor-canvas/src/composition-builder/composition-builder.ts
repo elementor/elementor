@@ -79,7 +79,7 @@ export class CompositionBuilder {
 		const elementTag = node.tagName;
 		const isContainer = this.containerElements.includes( elementTag );
 		const parentElType = containerElement.model.get( 'elType' );
-		let targetContainer: V1Element | null | undefined =
+		let targetContainer =
 			parentElType === 'e-tabs'
 				? containerElement.children?.[ 1 ].children?.[ childIndex ] || containerElement.children?.[ 1 ]
 				: containerElement;
