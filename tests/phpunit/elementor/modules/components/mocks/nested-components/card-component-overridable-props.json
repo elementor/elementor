@@ -49,7 +49,7 @@
           "value": {
             "override_key": "prop-0",
             "override_value": {
-              "$$type": "string",
+              "$$type": "html",
               "value": "Learn more"
             },
             "schema_source": {

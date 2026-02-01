@@ -1,4 +1,5 @@
 {% if settings.text is not empty %}
+    {%- set allowed_tags = '<b><strong><sup><sub><s><em><i><u><del><span><br>' %}
     {% set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') %}
 	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
     {% if settings.link.href %}
@@ -11,11 +12,11 @@
             data-interactions="{{ interactions | json_encode | e('html_attr') }}"
             {{ id_attribute }} {{ settings.attributes | raw }}
         >
-            {{ settings.text }}
+            {{ settings.text | striptags(allowed_tags) | raw }}
         </{{ settings.link.tag | e('html_tag') }}>
     {% else %}
         <button class="{{ classes }}" data-interaction-id="{{ id }}" data-interactions="{{ interactions | json_encode | e('html_attr') }}" {{ id_attribute }} {{ settings.attributes | raw }}>
-            {{ settings.text }}
+            {{ settings.text | striptags(allowed_tags) | raw }}
         </button>
     {% endif %}
 {% endif %}

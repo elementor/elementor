@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMemo, useRef, useState } from 'react';
-import { type ElementID, getElementSetting } from '@elementor/editor-elements';
+import { type ElementID, getContainer, getElementSetting } from '@elementor/editor-elements';
 import { type LinkPropValue } from '@elementor/editor-props';
 import {
 	BoldIcon,
@@ -44,6 +44,7 @@ export const InlineEditorToolbar = ( { editor, elementId, sx = {} }: InlineEdito
 	const toolbarRef = useRef< HTMLDivElement >( null );
 	const linkPopupState = usePopupState( { variant: 'popover' } );
 	const hasLinkOnElement = elementId ? checkIfElementHasLink( elementId ) : false;
+	const isButton = elementId ? checkIfElementIsButton( elementId ) : false;
 
 	const editorState = useEditorState( {
 		editor,
@@ -53,12 +54,12 @@ export const InlineEditorToolbar = ( { editor, elementId, sx = {} }: InlineEdito
 	const formatButtonsList = useMemo( () => {
 		const buttons = Object.values( formatButtons );
 
-		if ( hasLinkOnElement ) {
+		if ( hasLinkOnElement || isButton ) {
 			return buttons.filter( ( button ) => button.action !== 'link' );
 		}
 
 		return buttons;
-	}, [ hasLinkOnElement ] );
+	}, [ hasLinkOnElement, isButton ] );
 
 	const handleLinkClick = () => {
 		const linkAttrs = editor.getAttributes( 'link' );
@@ -182,6 +183,12 @@ export const InlineEditorToolbar = ( { editor, elementId, sx = {} }: InlineEdito
 
 const checkIfElementHasLink = ( elementId: ElementID ): boolean =>
 	!! getElementSetting< LinkPropValue >( elementId, 'link' )?.value?.destination;
+
+const checkIfElementIsButton = ( elementId: ElementID ): boolean => {
+	const container = getContainer( elementId );
+	const type = container?.model.get( 'widgetType' ) || container?.model.get( 'elType' );
+	return type === 'e-button';
+};
 
 const toolbarButtons = {
 	clear: {

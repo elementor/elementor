@@ -8,7 +8,7 @@
         "elType": "widget",
         "widgetType": "e-button",
         "originValue": {
-          "$$type": "string",
+          "$$type": "html",
           "value": "Click here"
         },
         "groupId": "group-0"

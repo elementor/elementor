@@ -62,6 +62,12 @@ export const CanvasInlineEditor = ( {
 			.ProseMirror > * {
 				height: 100%;
 			}
+		.ProseMirror > button {
+			height: auto;
+			padding: inherit;
+			margin: inherit;
+			cursor: text;
+		}
 			` }
 			</style>
 			<InlineEditor
