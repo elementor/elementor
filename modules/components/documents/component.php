@@ -128,7 +128,7 @@ class Component extends Document {
 
 	private function update_post_field( string $field, $value ): bool {
 		if ( is_string( $value ) ) {
-			// escape the json
+			// NOTE: escape the json to support non-UTF-8 characters
 			$value = wp_slash( $value );
 		}
 		$result = wp_update_post( [
