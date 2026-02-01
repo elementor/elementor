@@ -841,6 +841,14 @@ const TemplateLibraryManager = function() {
 		return elementorCommon.ajax.addRequest( 'get_template_data', options );
 	};
 
+	this.hasGlobalStyles = function( templateData ) {
+		const hasClasses = templateData.global_classes?.items &&
+			Object.keys( templateData.global_classes.items ).length > 0;
+		const hasVariables = templateData.global_variables?.data &&
+			Object.keys( templateData.global_variables.data ).length > 0;
+		return hasClasses || hasVariables;
+	};
+
 	this.markAsFavorite = function( templateModel, favorite ) {
 		this.clearLastRemovedItems();
 

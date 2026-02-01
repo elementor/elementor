@@ -2117,3 +2117,167 @@ label.elementor-template-library-order-label {
 		}
 	}
 }
+
+#elementor-global-styles-dialog {
+
+	.dialog-message {
+		padding: 0;
+		overflow: visible;
+	}
+
+	.dialog-lightbox-widget-content {
+		width: 444px;
+		max-width: 444px;
+		border-radius: 4px;
+		box-shadow: 0 9px 46px 8px rgba(0, 0, 0, 0.12), 0 24px 38px 3px rgba(0, 0, 0, 0.14), 0 11px 15px -7px rgba(0, 0, 0, 0.2);
+	}
+}
+
+.elementor-global-styles-dialog {
+	padding: 16px 0 0;
+
+	&__header {
+		padding: 10px 24px 0;
+		margin-block-end: 16px;
+
+		h2 {
+			margin: 0 0 8px;
+			font-size: 16px;
+			font-weight: 500;
+			line-height: 1.3;
+			color: #0c0d0e;
+			letter-spacing: 0.15px;
+		}
+
+		p {
+			margin: 0;
+			font-size: 14px;
+			font-weight: 400;
+			line-height: 20px;
+			color: #515962;
+			letter-spacing: 0.15px;
+		}
+	}
+
+	&__options {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		padding: 0 24px;
+	}
+
+	&__radio-card {
+		display: flex;
+		align-items: center;
+		gap: 0;
+		padding: 8px;
+		border: 1px solid rgba(12, 13, 14, 0.23);
+		border-radius: 4px;
+		cursor: pointer;
+		transition: border-color 0.2s, border-width 0.2s;
+
+		&:has(input[type="radio"]:checked) {
+			border: 2px solid #0c0d0e;
+			padding: 7px;
+		}
+
+		input[type="radio"] {
+			width: 24px;
+			height: 24px;
+			margin: 9px;
+			cursor: pointer;
+			accent-color: #0c0d0e;
+		}
+	}
+
+	&__radio-label {
+		font-size: 16px;
+		font-weight: 400;
+		line-height: 24px;
+		color: #0c0d0e;
+		letter-spacing: 0.15px;
+	}
+
+	&__checkbox-container {
+		display: flex;
+		align-items: flex-start;
+		gap: 4px;
+		padding: 0;
+		margin-block-start: 0;
+	}
+
+	&__checkbox-option {
+		display: flex;
+		align-items: flex-start;
+		gap: 4px;
+		cursor: pointer;
+
+		input[type="checkbox"] {
+			width: 24px;
+			height: 24px;
+			margin: 4px;
+			cursor: pointer;
+			accent-color: #0c0d0e;
+		}
+	}
+
+	&__checkbox-label {
+		font-size: 12px;
+		font-weight: 400;
+		line-height: 1.43;
+		color: #0c0d0e;
+		letter-spacing: 0.15px;
+		padding-block-start: 4px;
+
+		a {
+			color: #2563eb;
+			text-decoration: underline;
+
+			&:hover {
+				text-decoration: none;
+			}
+		}
+	}
+
+	&__footer {
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+		gap: 8px;
+		padding: 16px 24px;
+	}
+
+	&__button-cancel {
+		padding: 6px 8px;
+		font-size: 15px;
+		font-weight: 500;
+		line-height: 24px;
+		letter-spacing: 0.4px;
+		color: #515962;
+		background: transparent;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+
+		&:hover {
+			background: rgba(0, 0, 0, 0.04);
+		}
+	}
+
+	&__button-insert {
+		padding: 6px 16px;
+		font-size: 15px;
+		font-weight: 500;
+		line-height: 24px;
+		letter-spacing: 0.4px;
+		color: #0c0d0e;
+		background: #f0abfc;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+
+		&:hover {
+			background: #e879f9;
+		}
+	}
+}

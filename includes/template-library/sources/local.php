@@ -21,6 +21,7 @@ use Elementor\Core\Isolation\Elementor_Adapter_Interface;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Editor_One_Saved_Templates_Menu;
 use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Editor_One_Templates_Menu;
+use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -772,6 +773,28 @@ class Source_Local extends Source_Base {
 			$data['page_settings'] = $page->get_data( 'settings' );
 		}
 
+		if ( ! empty( $content ) ) {
+			if ( Template_Library_Import_Export_Utils::is_classes_feature_active() ) {
+				$class_ids = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::extract_used_class_ids_from_elements( $content );
+				if ( ! empty( $class_ids ) ) {
+					$snapshot = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::build_snapshot_for_ids( $class_ids );
+					if ( $snapshot ) {
+						$data['global_classes'] = $snapshot;
+					}
+				}
+			}
+
+			if ( Template_Library_Import_Export_Utils::is_variables_feature_active() ) {
+				$variable_ids = \Elementor\Modules\Variables\Utils\Template_Library_Variables::extract_used_variable_ids_from_elements( $content );
+				if ( ! empty( $variable_ids ) ) {
+					$snapshot = \Elementor\Modules\Variables\Utils\Template_Library_Variables::build_snapshot_for_ids( $variable_ids );
+					if ( $snapshot ) {
+						$data['global_variables'] = $snapshot;
+					}
+				}
+			}
+		}
+
 		return $data;
 	}
 
@@ -948,7 +971,7 @@ class Source_Local extends Source_Base {
 	 * @param string $path - The file path.
 	 * @return \WP_Error|array An array of items on success, 'WP_Error' on failure.
 	 */
-	public function import_template( $name, $path ) {
+	public function import_template( $name, $path, $import_mode = 'match_site' ) {
 		if ( empty( $path ) ) {
 			return new \WP_Error( 'file_error', 'Please upload a file to import' );
 		}
@@ -975,7 +998,7 @@ class Source_Local extends Source_Base {
 					continue;
 				}
 
-				$import_result = $this->import_single_template( $file_path );
+				$import_result = $this->import_single_template( $file_path, $import_mode );
 
 				if ( is_wp_error( $import_result ) ) {
 					// Skip failed files
@@ -989,7 +1012,7 @@ class Source_Local extends Source_Base {
 			Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
 		} else {
 			// If the import file is a single JSON file
-			$import_result = $this->import_single_template( $path );
+			$import_result = $this->import_single_template( $path, $import_mode );
 
 			if ( is_wp_error( $import_result ) ) {
 				return $import_result;
@@ -1504,8 +1527,8 @@ class Source_Local extends Source_Base {
 	 * @return \WP_Error|int|array Local template array, or template ID, or
 	 *                             `WP_Error`.
 	 */
-	private function import_single_template( $file_path ) {
-		$data = $this->prepare_import_template_data( $file_path );
+	private function import_single_template( $file_path, $import_mode = 'match_site' ) {
+		$data = $this->prepare_import_template_data( $file_path, $import_mode );
 
 		if ( is_wp_error( $data ) ) {
 			return $data;
@@ -1562,6 +1585,38 @@ class Source_Local extends Source_Base {
 			'title' => $document->get_main_post()->post_title,
 			'type' => self::get_template_type( $template_id ),
 		];
+
+		// Embed Global Classes snapshot (only if used by the template).
+		if ( Template_Library_Import_Export_Utils::is_classes_feature_active() ) {
+			$snapshot = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::build_snapshot_for_elements( $content );
+
+			/**
+			 * Filter embedded global classes snapshot for Template Library exports.
+			 *
+			 * @since 3.0.0
+			 *
+			 * @param array|null $snapshot
+			 * @param int        $template_id
+			 * @param array      $export_data
+			 */
+			$snapshot = apply_filters( 'elementor/template_library/export/global_classes_snapshot', $snapshot, $template_id, $export_data );
+
+			if ( ! empty( $snapshot ) ) {
+				$export_data['global_classes'] = $snapshot;
+			}
+		}
+
+		// Embed Global Variables snapshot (only if used by the template or global classes).
+		if ( Template_Library_Import_Export_Utils::is_variables_feature_active() ) {
+			$global_classes_for_variables = $export_data['global_classes'] ?? null;
+			$variables_snapshot = \Elementor\Modules\Variables\Utils\Template_Library_Variables::build_snapshot_for_elements( $content, $global_classes_for_variables );
+
+			$variables_snapshot = apply_filters( 'elementor/template_library/export/global_variables_snapshot', $variables_snapshot, $template_id, $export_data );
+
+			if ( ! empty( $variables_snapshot ) ) {
+				$export_data['global_variables'] = $variables_snapshot;
+			}
+		}
 
 		return [
 			'name' => 'elementor-' . $template_id . '-' . gmdate( 'Y-m-d' ) . '.json',

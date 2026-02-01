@@ -3,6 +3,7 @@ namespace Elementor\TemplateLibrary;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Exceptions;
+use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
 use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
 use Elementor\Modules\CloudLibrary\Documents\Cloud_Template_Preview;
 use Elementor\Plugin;
@@ -81,6 +82,14 @@ class Source_Cloud extends Source_Base {
 			$data['page_settings'] = $decoded_data['page_settings'];
 		}
 
+		if ( ! empty( $decoded_data['global_classes'] ) && Template_Library_Import_Export_Utils::is_classes_feature_active() ) {
+			$data['global_classes'] = $decoded_data['global_classes'];
+		}
+
+		if ( ! empty( $decoded_data['global_variables'] ) && Template_Library_Import_Export_Utils::is_variables_feature_active() ) {
+			$data['global_variables'] = $decoded_data['global_variables'];
+		}
+
 		// After the upload complete, set the elementor upload state back to false
 		Plugin::$instance->uploads_manager->set_elementor_upload_state( false );
 
@@ -102,15 +111,65 @@ class Source_Cloud extends Source_Base {
 	}
 
 	private function format_resource_item_for_create( $template_data ) {
+		$content_payload = [
+			'content' => $template_data['content'],
+			'page_settings' => $template_data['page_settings'],
+		];
+
+		// Embed Global Classes snapshot (only if used by the template).
+		if (
+			Template_Library_Import_Export_Utils::is_classes_feature_active() &&
+			is_array( $template_data['content'] ?? null )
+		) {
+			$snapshot = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::build_snapshot_for_elements( $template_data['content'] );
+
+			/**
+			 * Filter embedded global classes snapshot for Template Library exports.
+			 *
+			 * @since 3.0.0
+			 *
+			 * @param array|null $snapshot
+			 * @param int        $template_id
+			 * @param array      $export_data
+			 */
+			$snapshot = apply_filters( 'elementor/template_library/export/global_classes_snapshot', $snapshot, 0, [
+				'content' => $template_data['content'],
+				'page_settings' => $template_data['page_settings'],
+				'title' => $template_data['title'] ?? '',
+				'type' => $template_data['type'] ?? '',
+			] );
+
+			if ( ! empty( $snapshot ) ) {
+				$content_payload['global_classes'] = $snapshot;
+			}
+		}
+
+		// Embed Global Variables snapshot (only if used by the template or global classes).
+		if (
+			Template_Library_Import_Export_Utils::is_variables_feature_active() &&
+			is_array( $template_data['content'] ?? null )
+		) {
+			$global_classes_for_variables = $content_payload['global_classes'] ?? null;
+			$variables_snapshot = \Elementor\Modules\Variables\Utils\Template_Library_Variables::build_snapshot_for_elements( $template_data['content'], $global_classes_for_variables );
+
+			$variables_snapshot = apply_filters( 'elementor/template_library/export/global_variables_snapshot', $variables_snapshot, 0, [
+				'content' => $template_data['content'],
+				'page_settings' => $template_data['page_settings'],
+				'title' => $template_data['title'] ?? '',
+				'type' => $template_data['type'] ?? '',
+			] );
+
+			if ( ! empty( $variables_snapshot ) ) {
+				$content_payload['global_variables'] = $variables_snapshot;
+			}
+		}
+
 		return [
 			'title' => $template_data['title'] ?? esc_html__( '(no title)', 'elementor' ),
 			'type' => self::TEMPLATE_RESOURCE_TYPE,
 			'templateType' => $template_data['type'],
 			'parentId' => ! empty( $template_data['parentId'] ) ? (int) $template_data['parentId'] : null,
-			'content' => wp_json_encode( [
-				'content' => $template_data['content'],
-				'page_settings' => $template_data['page_settings'],
-			] ),
+			'content' => wp_json_encode( $content_payload ),
 			'hasPageSettings' => ! empty( $template_data['page_settings'] ),
 		];
 	}
@@ -196,6 +255,46 @@ class Source_Cloud extends Source_Base {
 			'title' => $data['title'],
 			'type' => $data['templateType'],
 		];
+
+		// Prefer snapshot stored in cloud content; fallback to current site snapshot.
+		$snapshot = $data['content']['global_classes'] ?? null;
+
+		if ( Template_Library_Import_Export_Utils::is_classes_feature_active() ) {
+			if ( empty( $snapshot ) && is_array( $export_data['content'] ?? null ) ) {
+				$snapshot = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::build_snapshot_for_elements( $export_data['content'] );
+			}
+
+			/**
+			 * Filter embedded global classes snapshot for Template Library exports.
+			 *
+			 * @since 3.0.0
+			 *
+			 * @param array|null $snapshot
+			 * @param int        $template_id
+			 * @param array      $export_data
+			 */
+			$snapshot = apply_filters( 'elementor/template_library/export/global_classes_snapshot', $snapshot, (int) ( $data['id'] ?? 0 ), $export_data );
+		}
+
+		if ( ! empty( $snapshot ) ) {
+			$export_data['global_classes'] = $snapshot;
+		}
+
+		// Prefer variables snapshot stored in cloud content; fallback to current site snapshot.
+		$variables_snapshot = $data['content']['global_variables'] ?? null;
+
+		if ( Template_Library_Import_Export_Utils::is_variables_feature_active() ) {
+			if ( empty( $variables_snapshot ) && is_array( $export_data['content'] ?? null ) ) {
+				$global_classes_for_variables = $export_data['global_classes'] ?? null;
+				$variables_snapshot = \Elementor\Modules\Variables\Utils\Template_Library_Variables::build_snapshot_for_elements( $export_data['content'], $global_classes_for_variables );
+			}
+
+			$variables_snapshot = apply_filters( 'elementor/template_library/export/global_variables_snapshot', $variables_snapshot, (int) ( $data['id'] ?? 0 ), $export_data );
+		}
+
+		if ( ! empty( $variables_snapshot ) ) {
+			$export_data['global_variables'] = $variables_snapshot;
+		}
 
 		return [
 			'name' => 'elementor-' . $data['id'] . '-' . gmdate( 'Y-m-d' ) . '.json',
@@ -382,7 +481,7 @@ class Source_Cloud extends Source_Base {
 		return $this->get_app()->get_quota();
 	}
 
-	public function import_template( $name, $path ) {
+	public function import_template( $name, $path, $import_mode = 'match_site' ) {
 		if ( empty( $path ) ) {
 			return new \WP_Error( 'file_error', 'Please upload a file to import' );
 		}
@@ -418,7 +517,7 @@ class Source_Cloud extends Source_Base {
 					continue;
 				}
 
-				$prepared = $this->prepare_import_template_data( $file_path );
+				$prepared = $this->prepare_import_template_data( $file_path, $import_mode );
 
 				if ( is_wp_error( $prepared ) ) {
 					// Skip failed templates
@@ -442,7 +541,7 @@ class Source_Cloud extends Source_Base {
 
 			Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
 		} else {
-			$prepared = $this->prepare_import_template_data( $path );
+			$prepared = $this->prepare_import_template_data( $path, $import_mode );
 
 			if ( is_wp_error( $prepared ) ) {
 				return $prepared;
