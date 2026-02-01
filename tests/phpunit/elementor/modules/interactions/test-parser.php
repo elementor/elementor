@@ -32,6 +32,16 @@ class Test_Parser extends TestCase {
 		return new Parser_Ex( self::DOCUMENT_ID );
 	}
 
+	private function create_v2_interactions( $items ) {
+		return [
+			'items' => [
+				'$$type' => 'interactions-array',
+				'value' => $items,
+			],
+			'version' => 2,
+		];
+	}
+
 	private function create_prop_type_interaction( $trigger = 'load', $effect = 'fade', $type = 'in', $direction = '', $duration = 300, $delay = 0, $interaction_id = null ) {
 		$value = [
 			'trigger' => [
@@ -273,5 +283,109 @@ class Test_Parser extends TestCase {
 		$this->assertFalse( $method->invoke( $parser, '1-1-1' ) );
 		$this->assertFalse( $method->invoke( $parser, '' ) );
 		$this->assertFalse( $method->invoke( $parser, null ) );
+	}
+
+	public function test_assign_interactions_ids__handles_v2_wrapped_format_array() {
+		$interaction_without_id = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0 );
+
+		$v2_interactions = $this->create_v2_interactions( [ $interaction_without_id ] );
+
+		$given_document = [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => $v2_interactions,
+				],
+			],
+		];
+
+		$result = $this->parser()->assign_interaction_ids( $given_document );
+
+		$decoded = json_decode( $result['elements'][0]['interactions'], true );
+
+		$this->assertIsArray( $decoded['items'] );
+		$this->assertCount( 1, $decoded['items'] );
+		$this->assertEquals( '1-1-1', $decoded['items'][0]['value']['interaction_id']['value'] );
+	}
+
+	public function test_assign_interactions_ids__handles_v2_wrapped_format_json_string() {
+		$interaction_without_id = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0 );
+
+		$v2_interactions = $this->create_v2_interactions( [ $interaction_without_id ] );
+
+		$given_document = [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( $v2_interactions ),
+				],
+			],
+		];
+
+		$result = $this->parser()->assign_interaction_ids( $given_document );
+
+		$decoded = json_decode( $result['elements'][0]['interactions'], true );
+
+		$this->assertIsArray( $decoded['items'] );
+		$this->assertCount( 1, $decoded['items'] );
+		$this->assertEquals( '1-1-1', $decoded['items'][0]['value']['interaction_id']['value'] );
+	}
+
+	public function test_assign_interactions_ids__v2_format_preserves_existing_interaction_ids() {
+		$interaction_with_existing_id = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0, 'existing-v2-id' );
+		$interaction_without_id = $this->create_prop_type_interaction( 'scrollIn', 'slide', 'in', 'top', 200, 0 );
+
+		$v2_interactions = $this->create_v2_interactions( [
+			$interaction_with_existing_id,
+			$interaction_without_id,
+		] );
+
+		$given_document = [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( $v2_interactions ),
+				],
+			],
+		];
+
+		$result = $this->parser()->assign_interaction_ids( $given_document );
+
+		$decoded = json_decode( $result['elements'][0]['interactions'], true );
+
+		$this->assertCount( 2, $decoded['items'] );
+		$this->assertEquals( 'existing-v2-id', $decoded['items'][0]['value']['interaction_id']['value'] );
+		$this->assertEquals( '1-1-1', $decoded['items'][1]['value']['interaction_id']['value'] );
+	}
+
+	public function test_assign_interactions_ids__v2_format_replaces_temp_ids() {
+		$interaction_with_temp_id = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0, 'temp-v2-abc123' );
+
+		$v2_interactions = $this->create_v2_interactions( [ $interaction_with_temp_id ] );
+
+		$given_document = [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( $v2_interactions ),
+				],
+			],
+		];
+
+		$result = $this->parser()->assign_interaction_ids( $given_document );
+
+		$decoded = json_decode( $result['elements'][0]['interactions'], true );
+		$new_id = $decoded['items'][0]['value']['interaction_id']['value'];
+
+		$this->assertStringNotContainsString( 'temp-', $new_id );
+		$this->assertStringStartsWith( '1-1-', $new_id );
 	}
 }

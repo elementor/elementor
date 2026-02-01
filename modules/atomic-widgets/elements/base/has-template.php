@@ -75,6 +75,10 @@ trait Has_Template {
 	/**
 	 * Extract items array from interactions data.
 	 * Handles both v1 format (items is array) and v2 format (items is wrapped with $$type).
+<<<<<<< HEAD
+=======
+	 * Note: Original v1 data returns empty from Adapter::unwrap_for_frontend() (breaking change).
+>>>>>>> 21e634ebb1 (Internal: Cherry-pick PR 34500 to 3.35 with conflicts Move Interaction Array To Prop Type Be [ED-22691] (#34528))
 	 */
 	private function extract_interactions_items( $interactions ) {
 		if ( ! is_array( $interactions ) || ! isset( $interactions['items'] ) ) {
@@ -88,8 +92,17 @@ trait Has_Template {
 			return isset( $items['value'] ) && is_array( $items['value'] ) ? $items['value'] : [];
 		}
 
+<<<<<<< HEAD
 		// v1 format: items is direct array
 		return is_array( $items ) ? $items : [];
+=======
+		// Direct array format (unwrapped v2 or empty v1)
+		if ( is_array( $items ) ) {
+			return $items;
+		}
+
+		return [];
+>>>>>>> 21e634ebb1 (Internal: Cherry-pick PR 34500 to 3.35 with conflicts Move Interaction Array To Prop Type Be [ED-22691] (#34528))
 	}
 
 	private function extract_animation_id_from_prop_type( $item ) {

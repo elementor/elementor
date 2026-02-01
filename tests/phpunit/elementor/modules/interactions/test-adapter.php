@@ -14,6 +14,7 @@ class Test_Adapter extends TestCase {
 	/**
 	 * Create a v1 format interaction item with 'number' type timing values.
 	 */
+<<<<<<< HEAD
 	private function create_v1_interaction_item( $duration = 300, $delay = 0, $offset_top = null, $offset_bottom = null ) {
 		$animation_value = [
 			'effect' => [
@@ -63,6 +64,9 @@ class Test_Adapter extends TestCase {
 			];
 		}
 
+=======
+	private function create_v1_interaction_item( $duration = 300, $delay = 0 ) {
+>>>>>>> 21e634ebb1 (Internal: Cherry-pick PR 34500 to 3.35 with conflicts Move Interaction Array To Prop Type Be [ED-22691] (#34528))
 		return [
 			'$$type' => 'interaction-item',
 			'value' => [
@@ -76,7 +80,37 @@ class Test_Adapter extends TestCase {
 				],
 				'animation' => [
 					'$$type' => 'animation-preset-props',
+<<<<<<< HEAD
 					'value' => $animation_value,
+=======
+					'value' => [
+						'effect' => [
+							'$$type' => 'string',
+							'value' => 'fade',
+						],
+						'type' => [
+							'$$type' => 'string',
+							'value' => 'in',
+						],
+						'direction' => [
+							'$$type' => 'string',
+							'value' => '',
+						],
+						'timing_config' => [
+							'$$type' => 'timing-config',
+							'value' => [
+								'duration' => [
+									'$$type' => 'number',
+									'value' => $duration,
+								],
+								'delay' => [
+									'$$type' => 'number',
+									'value' => $delay,
+								],
+							],
+						],
+					],
+>>>>>>> 21e634ebb1 (Internal: Cherry-pick PR 34500 to 3.35 with conflicts Move Interaction Array To Prop Type Be [ED-22691] (#34528))
 				],
 			],
 		];
@@ -85,6 +119,7 @@ class Test_Adapter extends TestCase {
 	/**
 	 * Create a v2 format interaction item with 'size' type timing values.
 	 */
+<<<<<<< HEAD
 	private function create_v2_interaction_item( $duration = 300, $delay = 0, $offset_top = null, $offset_bottom = null ) {
 		$animation_value = [
 			'effect' => [
@@ -146,6 +181,9 @@ class Test_Adapter extends TestCase {
 			];
 		}
 
+=======
+	private function create_v2_interaction_item( $duration = 300, $delay = 0 ) {
+>>>>>>> 21e634ebb1 (Internal: Cherry-pick PR 34500 to 3.35 with conflicts Move Interaction Array To Prop Type Be [ED-22691] (#34528))
 		return [
 			'$$type' => 'interaction-item',
 			'value' => [
@@ -159,7 +197,43 @@ class Test_Adapter extends TestCase {
 				],
 				'animation' => [
 					'$$type' => 'animation-preset-props',
+<<<<<<< HEAD
 					'value' => $animation_value,
+=======
+					'value' => [
+						'effect' => [
+							'$$type' => 'string',
+							'value' => 'fade',
+						],
+						'type' => [
+							'$$type' => 'string',
+							'value' => 'in',
+						],
+						'direction' => [
+							'$$type' => 'string',
+							'value' => '',
+						],
+						'timing_config' => [
+							'$$type' => 'timing-config',
+							'value' => [
+								'duration' => [
+									'$$type' => 'size',
+									'value' => [
+										'size' => $duration,
+										'unit' => 'ms',
+									],
+								],
+								'delay' => [
+									'$$type' => 'size',
+									'value' => [
+										'size' => $delay,
+										'unit' => 'ms',
+									],
+								],
+							],
+						],
+					],
+>>>>>>> 21e634ebb1 (Internal: Cherry-pick PR 34500 to 3.35 with conflicts Move Interaction Array To Prop Type Be [ED-22691] (#34528))
 				],
 			],
 		];
@@ -273,6 +347,7 @@ class Test_Adapter extends TestCase {
 		$this->assertEquals( 300, $decoded['items']['value'][2]['value']['animation']['value']['timing_config']['value']['duration']['value']['size'] );
 	}
 
+<<<<<<< HEAD
 	public function test_wrap_for_db__transforms_offset_number_to_size() {
 		$v1_input = $this->create_v1_interactions( [ $this->create_v1_interaction_item( 300, 0, 15, 85 ) ] );
 
@@ -290,6 +365,8 @@ class Test_Adapter extends TestCase {
 		$this->assertEquals( '%', $config['offsetBottom']['value']['unit'] );
 	}
 
+=======
+>>>>>>> 21e634ebb1 (Internal: Cherry-pick PR 34500 to 3.35 with conflicts Move Interaction Array To Prop Type Be [ED-22691] (#34528))
 	// =========================================================================
 	// unwrap_for_frontend() Tests
 	// =========================================================================
@@ -331,12 +408,17 @@ class Test_Adapter extends TestCase {
 		$this->assertEquals( 100, $timing['delay']['value'] );
 	}
 
+<<<<<<< HEAD
 	public function test_unwrap_for_frontend__preserves_already_v1_format() {
+=======
+	public function test_unwrap_for_frontend__returns_empty_for_v1_format() {
+>>>>>>> 21e634ebb1 (Internal: Cherry-pick PR 34500 to 3.35 with conflicts Move Interaction Array To Prop Type Be [ED-22691] (#34528))
 		$v1_input = $this->create_v1_interactions( [ $this->create_v1_interaction_item( 600, 200 ) ] );
 
 		$result = Adapter::unwrap_for_frontend( $v1_input );
 		$decoded = json_decode( $result, true );
 
+<<<<<<< HEAD
 		$this->assertEquals( Adapter::VERSION_V1, $decoded['version'] );
 		$this->assertIsArray( $decoded['items'] );
 
@@ -344,6 +426,12 @@ class Test_Adapter extends TestCase {
 		$timing = $decoded['items'][0]['value']['animation']['value']['timing_config']['value'];
 		$this->assertEquals( 'number', $timing['duration']['$$type'] );
 		$this->assertEquals( 600, $timing['duration']['value'] );
+=======
+		// Breaking change: v1 format returns empty items to force users to recreate interactions
+		$this->assertEquals( Adapter::VERSION_V1, $decoded['version'] );
+		$this->assertIsArray( $decoded['items'] );
+		$this->assertEmpty( $decoded['items'] );
+>>>>>>> 21e634ebb1 (Internal: Cherry-pick PR 34500 to 3.35 with conflicts Move Interaction Array To Prop Type Be [ED-22691] (#34528))
 	}
 
 	public function test_unwrap_for_frontend__handles_multiple_interaction_items() {
@@ -365,6 +453,7 @@ class Test_Adapter extends TestCase {
 		$this->assertEquals( 300, $decoded['items'][2]['value']['animation']['value']['timing_config']['value']['duration']['value'] );
 	}
 
+<<<<<<< HEAD
 	public function test_unwrap_for_frontend__transforms_offset_size_to_number() {
 		$v2_input = $this->create_v2_interactions( [ $this->create_v2_interaction_item( 300, 0, 15, 85 ) ] );
 
@@ -380,6 +469,8 @@ class Test_Adapter extends TestCase {
 		$this->assertEquals( 85, $config['offsetBottom']['value'] );
 	}
 
+=======
+>>>>>>> 21e634ebb1 (Internal: Cherry-pick PR 34500 to 3.35 with conflicts Move Interaction Array To Prop Type Be [ED-22691] (#34528))
 	// =========================================================================
 	// Malformed/Empty/Null Input Tests
 	// =========================================================================
@@ -548,6 +639,7 @@ class Test_Adapter extends TestCase {
 		$this->assertEquals( $first_decoded['items'], $second_decoded['items'] );
 	}
 
+<<<<<<< HEAD
 	public function test_unwrap_is_idempotent__unwrapping_twice_same_result() {
 		$v2_input = $this->create_v2_interactions();
 
@@ -559,6 +651,24 @@ class Test_Adapter extends TestCase {
 
 		$this->assertEquals( $first_decoded['version'], $second_decoded['version'] );
 		$this->assertEquals( $first_decoded['items'], $second_decoded['items'] );
+=======
+	public function test_unwrap_for_frontend__v1_result_unwraps_to_empty() {
+		$v2_input = $this->create_v2_interactions();
+
+		// First unwrap: v2 → v1 with items
+		$first_unwrap = Adapter::unwrap_for_frontend( $v2_input );
+		$first_decoded = json_decode( $first_unwrap, true );
+
+		$this->assertEquals( Adapter::VERSION_V1, $first_decoded['version'] );
+		$this->assertNotEmpty( $first_decoded['items'] );
+
+		// Second unwrap: v1 → v1 with empty items (breaking change behavior)
+		$second_unwrap = Adapter::unwrap_for_frontend( $first_unwrap );
+		$second_decoded = json_decode( $second_unwrap, true );
+
+		$this->assertEquals( Adapter::VERSION_V1, $second_decoded['version'] );
+		$this->assertEmpty( $second_decoded['items'] );
+>>>>>>> 21e634ebb1 (Internal: Cherry-pick PR 34500 to 3.35 with conflicts Move Interaction Array To Prop Type Be [ED-22691] (#34528))
 	}
 
 	// =========================================================================
