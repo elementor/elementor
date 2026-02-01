@@ -5,7 +5,6 @@ namespace Elementor\Modules\Promotions;
 use Elementor\Api;
 use Elementor\Controls_Manager;
 use Elementor\Core\Base\Module as Base_Module;
-use Elementor\Modules\Promotions\AdminMenuItems\Ally_Top_Bar_Link;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Custom_Code_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Custom_Elements_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Fonts_Menu;
@@ -98,6 +97,7 @@ class Module extends Base_Module {
 	 */
 	public static function get_ally_external_scanner_url(): string {
 		return apply_filters( 'elementor/ally_external_scanner_url', 'https://elementor.com/tools/ally-accessibility-checker/scanner' );
+		$this->register_display_conditions_promo_hooks();
 	}
 
 	private function handle_external_redirects() {
