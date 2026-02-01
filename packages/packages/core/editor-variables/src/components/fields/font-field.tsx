@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useId, useRef, useState } from 'react';
-import { enqueueFont, ItemSelector } from '@elementor/editor-controls';
-import { useFontFamilies, useSectionWidth } from '@elementor/editor-editing-panel';
+import { enqueueFont, ItemSelector, useFontFamilies } from '@elementor/editor-controls';
+import { useSectionWidth } from '@elementor/editor-ui';
 import { ChevronDownIcon, TextIcon } from '@elementor/icons';
 import { bindPopover, bindTrigger, Popover, UnstableTag, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';

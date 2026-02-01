@@ -83,7 +83,7 @@ describe( 'interactions-utils', () => {
 
     describe( 'parseAnimationName', () => {
         it( 'should parse complete animation name', () => {
-            const result = parseAnimationName( 'load-fade-in-top-300-100' );
+            const result = parseAnimationName( 'load-fade-in-top-300-100--easeIn' );
             expect( result ).toEqual( {
                 trigger: 'load',
                 effect: 'fade',
@@ -91,6 +91,7 @@ describe( 'interactions-utils', () => {
                 direction: 'top',
                 duration: 300,
                 delay: 100,
+                easing: 'easeIn',
             } );
         } );
 
@@ -103,6 +104,7 @@ describe( 'interactions-utils', () => {
                 direction: null,
                 duration: 500,
                 delay: 0,
+                easing: 'easeIn',
             } );
         } );
 
@@ -112,7 +114,7 @@ describe( 'interactions-utils', () => {
         } );
 
         it( 'should use default delay when missing', () => {
-            const result = parseAnimationName( 'load-fade-in--300' );
+            const result = parseAnimationName( 'load-fade-in--300--easeIn' );
             expect( result.delay ).toBe( 0 );
         } );
     } );
@@ -145,7 +147,7 @@ describe( 'interactions-utils', () => {
                 },
             };
             const result = extractAnimationId( interaction );
-            expect( result ).toBe( 'load-fade-in-top-300-100' );
+            expect( result ).toBe( 'load-fade-in-top-300-100--easeIn' );
         } );
 
         it( 'should use default values when missing', () => {
@@ -159,7 +161,7 @@ describe( 'interactions-utils', () => {
                 },
             };
             const result = extractAnimationId( interaction );
-            expect( result ).toBe( 'load-fade-in--300-0' );
+            expect( result ).toBe( 'load-fade-in--300-0--easeIn' );
         } );
 
         it( 'should return null for invalid interaction', () => {

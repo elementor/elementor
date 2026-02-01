@@ -47,10 +47,11 @@ function defaultAnimation( element, transition, keyframes, options, animateFunc 
 
 function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
+
 	const options = {
 		duration: animConfig.duration / 1000,
 		delay: animConfig.delay / 1000,
-		ease: config.ease,
+		ease: config.defaultEasing,
 	};
 
 	// WHY - Transition can be set on elements but once it sets it destroys all animations, so we basically put it aside.

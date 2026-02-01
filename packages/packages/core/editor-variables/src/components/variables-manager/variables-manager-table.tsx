@@ -25,7 +25,7 @@ import { VariableTableCell } from './ui/variable-table-cell';
 import { VariableEditableCell } from './variable-editable-cell';
 
 type Props = {
-	menuActions: VariableManagerMenuAction[];
+	menuActions: ( variableId: string ) => VariableManagerMenuAction[];
 	variables: TVariablesList;
 	onChange: ( variables: TVariablesList ) => void;
 	autoEditVariableId?: string;
@@ -306,7 +306,7 @@ export const VariablesManagerTable = ( {
 											>
 												<Stack role="toolbar" direction="row" justifyContent="flex-end">
 													<VariableEditMenu
-														menuActions={ menuActions }
+														menuActions={ menuActions( row.id ) }
 														disabled={ isSorting }
 														itemId={ row.id }
 													/>

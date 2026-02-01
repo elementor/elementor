@@ -1,6 +1,9 @@
 import { type ForwardRefExoticComponent, type JSX, type KeyboardEvent, type RefAttributes } from 'react';
-import { type AnyTransformer, styleTransformersRegistry } from '@elementor/editor-canvas';
-import { stylesInheritanceTransformersRegistry } from '@elementor/editor-editing-panel';
+import {
+	type AnyTransformer,
+	stylesInheritanceTransformersRegistry,
+	styleTransformersRegistry,
+} from '@elementor/editor-canvas';
 import {
 	type createPropUtils,
 	type PropType,
@@ -10,9 +13,21 @@ import {
 } from '@elementor/editor-props';
 import { type SvgIconProps } from '@elementor/ui';
 
+import { type VariableManagerMenuAction } from '../components/variables-manager/ui/variable-edit-menu';
 import { inheritanceTransformer } from '../transformers/inheritance-transformer';
 import { variableTransformer } from '../transformers/variable-transformer';
 import { type NormalizedVariable, type Variable } from '../types';
+
+export type MenuActionContext = {
+	variable: Variable;
+	variableId: string;
+	handlers: {
+		onStartSync: ( id: string ) => void;
+		onStopSync: ( id: string ) => void;
+	};
+};
+
+export type MenuActionsFactory = ( context: MenuActionContext ) => VariableManagerMenuAction[];
 
 export type ValueFieldProps = {
 	value: string;
@@ -42,6 +57,7 @@ type VariableTypeOptions = {
 	isCompatible?: ( propType: PropType, variable: Variable ) => boolean;
 	emptyState?: JSX.Element;
 	isActive?: boolean;
+	menuActionsFactory?: MenuActionsFactory;
 };
 
 export type VariableTypesMap = Record< string, Omit< VariableTypeOptions, 'key' > >;
@@ -64,6 +80,7 @@ export function createVariableTypeRegistry() {
 		isCompatible,
 		emptyState,
 		isActive = true,
+		menuActionsFactory,
 	}: VariableTypeOptions ) => {
 		const variableTypeKey = key ?? propTypeUtil.key;
 
@@ -91,6 +108,7 @@ export function createVariableTypeRegistry() {
 			isCompatible,
 			emptyState,
 			isActive,
+			menuActionsFactory,
 		};
 
 		registerTransformer( propTypeUtil.key, styleTransformer );

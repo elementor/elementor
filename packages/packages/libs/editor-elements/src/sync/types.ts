@@ -71,6 +71,7 @@ export type ConfigPropValue = {
 	$$type: 'config';
 	value: {
 		replay: BooleanPropValue;
+		easing: StringPropValue;
 		relativeTo: StringPropValue;
 		offsetTop: NumberPropValue;
 		offsetBottom: NumberPropValue;
@@ -88,12 +89,25 @@ export type AnimationPresetPropValue = {
 	};
 };
 
+export type ExcludedBreakpointsPropValue = {
+	$$type: 'excluded-breakpoints';
+	value: StringPropValue[];
+};
+
+export type InteractionBreakpointsPropValue = {
+	$$type: 'interaction-breakpoints';
+	value: {
+		excluded: ExcludedBreakpointsPropValue;
+	};
+};
+
 export type InteractionItemPropValue = {
 	$$type: 'interaction-item';
 	value: {
 		interaction_id?: StringPropValue;
 		trigger: StringPropValue;
 		animation: AnimationPresetPropValue;
+		breakpoints?: InteractionBreakpointsPropValue;
 	};
 };
 

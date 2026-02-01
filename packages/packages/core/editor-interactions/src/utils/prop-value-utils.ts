@@ -3,6 +3,8 @@ import type {
 	BooleanPropValue,
 	ConfigPropValue,
 	ElementInteractions,
+	ExcludedBreakpointsPropValue,
+	InteractionBreakpointsPropValue,
 	InteractionItemPropValue,
 	InteractionItemValue,
 	NumberPropValue,
@@ -34,23 +36,47 @@ export const createBoolean = ( value: boolean ): BooleanPropValue => ( {
 	value,
 } );
 
-export const createConfig = (
-	replay: boolean,
-	relativeTo?: string,
-	offsetTop?: number,
-	offsetBottom?: number
-): ConfigPropValue => ( {
+export const createConfig = ( {
+	replay,
+	easing = 'easeIn',
+	relativeTo = '',
+	offsetTop = 0,
+	offsetBottom = 100,
+}: {
+	replay: boolean;
+	easing?: string;
+	relativeTo?: string;
+	offsetTop?: number;
+	offsetBottom?: number;
+} ): ConfigPropValue => ( {
 	$$type: 'config',
 	value: {
 		replay: createBoolean( replay ),
-		relativeTo: createString( relativeTo ?? '' ),
-		offsetTop: createNumber( offsetTop ?? 0 ),
-		offsetBottom: createNumber( offsetBottom ?? 100 ),
+		easing: createString( easing ),
+		relativeTo: createString( relativeTo ),
+		offsetTop: createNumber( offsetTop ),
+		offsetBottom: createNumber( offsetBottom ),
 	},
 } );
 
 export const extractBoolean = ( prop: BooleanPropValue | undefined, fallback = false ): boolean => {
 	return prop?.value ?? fallback;
+};
+
+export const createExcludedBreakpoints = ( breakpoints: string[] ): ExcludedBreakpointsPropValue => ( {
+	$$type: 'excluded-breakpoints',
+	value: breakpoints.map( createString ),
+} );
+
+export const createInteractionBreakpoints = ( excluded: string[] ): InteractionBreakpointsPropValue => ( {
+	$$type: 'interaction-breakpoints',
+	value: {
+		excluded: createExcludedBreakpoints( excluded ),
+	},
+} );
+
+export const extractExcludedBreakpoints = ( breakpoints: InteractionBreakpointsPropValue | undefined ): string[] => {
+	return breakpoints?.value.excluded.value.map( ( bp: StringPropValue ) => bp.value ) ?? [];
 };
 
 export const createAnimationPreset = ( {
@@ -60,6 +86,7 @@ export const createAnimationPreset = ( {
 	duration,
 	delay,
 	replay = false,
+	easing = 'easeIn',
 	relativeTo,
 	offsetTop,
 	offsetBottom,
@@ -70,6 +97,7 @@ export const createAnimationPreset = ( {
 	duration: number;
 	delay: number;
 	replay: boolean;
+	easing?: string;
 	relativeTo?: string;
 	offsetTop?: number;
 	offsetBottom?: number;
@@ -80,7 +108,13 @@ export const createAnimationPreset = ( {
 		type: createString( type ),
 		direction: createString( direction ?? '' ),
 		timing_config: createTimingConfig( duration, delay ),
-		config: createConfig( replay, relativeTo, offsetTop, offsetBottom ),
+		config: createConfig( {
+			replay,
+			easing,
+			relativeTo,
+			offsetTop,
+			offsetBottom,
+		} ),
 	},
 } );
 
@@ -93,9 +127,11 @@ export const createInteractionItem = ( {
 	delay,
 	interactionId,
 	replay = false,
+	easing = 'easeIn',
 	relativeTo,
 	offsetTop,
 	offsetBottom,
+	excludedBreakpoints,
 }: {
 	trigger: string;
 	effect: string;
@@ -105,9 +141,11 @@ export const createInteractionItem = ( {
 	delay: number;
 	interactionId?: string;
 	replay: boolean;
+	easing?: string;
 	relativeTo?: string;
 	offsetTop?: number;
 	offsetBottom?: number;
+	excludedBreakpoints?: string[];
 } ): InteractionItemPropValue => ( {
 	$$type: 'interaction-item',
 	value: {
@@ -120,10 +158,15 @@ export const createInteractionItem = ( {
 			duration,
 			delay,
 			replay,
+			easing,
 			relativeTo,
 			offsetTop,
 			offsetBottom,
 		} ),
+		...( excludedBreakpoints &&
+			excludedBreakpoints.length > 0 && {
+				breakpoints: createInteractionBreakpoints( excludedBreakpoints ),
+			} ),
 	},
 } );
 
@@ -132,9 +175,10 @@ export const createDefaultInteractionItem = (): InteractionItemPropValue => {
 		trigger: 'load',
 		effect: 'fade',
 		type: 'in',
-		duration: 300,
+		duration: 600,
 		delay: 0,
 		replay: false,
+		easing: 'easeIn',
 		interactionId: generateTempInteractionId(),
 	} );
 };
@@ -150,17 +194,6 @@ export const extractString = ( prop: StringPropValue | undefined, fallback = '' 
 
 export const extractNumber = ( prop: NumberPropValue | undefined, fallback = 0 ): number => {
 	return prop?.value ?? fallback;
-};
-
-export const buildAnimationIdString = ( item: InteractionItemValue ): string => {
-	const trigger = extractString( item.trigger );
-	const effect = extractString( item.animation.value.effect );
-	const type = extractString( item.animation.value.type );
-	const direction = extractString( item.animation.value.direction );
-	const duration = extractNumber( item.animation.value.timing_config.value.duration );
-	const delay = extractNumber( item.animation.value.timing_config.value.delay );
-
-	return [ trigger, effect, type, direction, duration, delay ].join( '-' );
 };
 
 const TRIGGER_LABELS: Record< string, string > = {

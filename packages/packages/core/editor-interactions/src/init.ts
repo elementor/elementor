@@ -1,3 +1,5 @@
+import { Easing } from './components/controls/easing';
+import { Replay } from './components/controls/replay';
 import { Trigger } from './components/controls/trigger';
 import { initCleanInteractionIdsOnDuplicate } from './hooks/on-duplicate';
 import { registerInteractionsControl } from './interactions-controls-registry';
@@ -12,6 +14,17 @@ export function init() {
 			type: 'trigger',
 			component: Trigger,
 			options: [ 'load', 'scrollIn' ],
+		} );
+
+		registerInteractionsControl( {
+			type: 'easing',
+			component: Easing,
+			options: [ 'easeIn' ],
+		} );
+		registerInteractionsControl( {
+			type: 'replay',
+			component: Replay,
+			options: [ 'true', 'false' ],
 		} );
 	} catch ( error ) {
 		throw error;

@@ -26,10 +26,11 @@ import { __ } from '@wordpress/i18n';
 
 import { trackVariablesManagerEvent } from '../../utils/tracking';
 import { type ErrorResponse, type MappedError, mapServerError } from '../../utils/validations';
-import { getVariableType } from '../../variables-registry/variable-type-registry';
+import { getMenuActionsForVariable, getVariableType } from '../../variables-registry/variable-type-registry';
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
 import { EmptyState } from '../ui/empty-state';
 import { NoSearchResults } from '../ui/no-search-results';
+import { StopSyncConfirmationDialog } from '../ui/stop-sync-confirmation-dialog';
 import { useAutoEdit } from './hooks/use-auto-edit';
 import { useErrorNavigation } from './hooks/use-error-navigation';
 import { useVariablesManagerState } from './hooks/use-variables-manager-state';
@@ -45,7 +46,7 @@ export const { panel, usePanelActions } = createPanel( {
 	onOpen: () => {
 		changeEditMode( id );
 	},
-	onClose: () => {
+	onClose: async () => {
 		changeEditMode( 'edit' );
 	},
 	isOpenPreviousElement: true,
@@ -67,6 +68,8 @@ export function VariablesManagerPanel() {
 		handleOnChange,
 		createVariable,
 		handleDeleteVariable,
+		handleStartSync,
+		handleStopSync,
 		handleSave,
 		isSaving,
 		handleSearch,
@@ -78,6 +81,7 @@ export function VariablesManagerPanel() {
 	const { createNavigationCallback, resetNavigation } = useErrorNavigation();
 
 	const [ deleteConfirmation, setDeleteConfirmation ] = useState< { id: string; label: string } | null >( null );
+	const [ stopSyncConfirmation, setStopSyncConfirmation ] = useState< string | null >( null );
 	const [ serverError, setServerError ] = useState< MappedError | null >( null );
 
 	usePreventUnload( isDirty );
@@ -139,22 +143,49 @@ export function VariablesManagerPanel() {
 		[ handleDeleteVariable ]
 	);
 
-	const menuActions = [
-		{
-			name: __( 'Delete', 'elementor' ),
-			icon: TrashIcon,
-			color: 'error.main',
-			onClick: ( itemId: string ) => {
-				const variable = variables[ itemId ];
-				if ( variable ) {
-					setDeleteConfirmation( { id: itemId, label: variable.label } );
-
-					const variableTypeOptions = getVariableType( variable.type );
-					trackVariablesManagerEvent( { action: 'delete', varType: variableTypeOptions?.variableType } );
-				}
-			},
+	const handleStopSyncWithConfirmation = useCallback(
+		( itemId: string ) => {
+			handleStopSync( itemId );
+			setStopSyncConfirmation( null );
 		},
-	];
+		[ handleStopSync ]
+	);
+
+	const buildMenuActions = useCallback(
+		( variableId: string ) => {
+			const variable = variables[ variableId ];
+			if ( ! variable ) {
+				return [];
+			}
+
+			const typeActions = getMenuActionsForVariable( variable.type, {
+				variable,
+				variableId,
+				handlers: {
+					onStartSync: handleStartSync,
+					onStopSync: ( itemId: string ) => setStopSyncConfirmation( itemId ),
+				},
+			} );
+
+			const deleteAction = {
+				name: __( 'Delete', 'elementor' ),
+				icon: TrashIcon,
+				color: 'error.main',
+				onClick: ( itemId: string ) => {
+					const v = variables[ itemId ];
+					if ( v ) {
+						setDeleteConfirmation( { id: itemId, label: v.label } );
+
+						const variableTypeOptions = getVariableType( v.type );
+						trackVariablesManagerEvent( { action: 'delete', varType: variableTypeOptions?.variableType } );
+					}
+				},
+			};
+
+			return [ ...typeActions, deleteAction ];
+		},
+		[ variables, handleStartSync ]
+	);
 
 	const hasVariables = Object.keys( variables ).length > 0;
 
@@ -212,7 +243,7 @@ export function VariablesManagerPanel() {
 				>
 					{ hasVariables && (
 						<VariablesManagerTable
-							menuActions={ menuActions }
+							menuActions={ buildMenuActions }
 							variables={ variables }
 							onChange={ handleOnChange }
 							autoEditVariableId={ autoEditVariableId }
@@ -311,6 +342,14 @@ export function VariablesManagerPanel() {
 					label={ deleteConfirmation.label }
 					onConfirm={ () => handleDeleteVariableWithConfirmation( deleteConfirmation.id ) }
 					closeDialog={ () => setDeleteConfirmation( null ) }
+				/>
+			) }
+
+			{ stopSyncConfirmation && (
+				<StopSyncConfirmationDialog
+					open
+					closeDialog={ () => setStopSyncConfirmation( null ) }
+					onConfirm={ () => handleStopSyncWithConfirmation( stopSyncConfirmation ) }
 				/>
 			) }
 

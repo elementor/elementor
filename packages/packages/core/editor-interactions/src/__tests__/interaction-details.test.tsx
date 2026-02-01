@@ -1,42 +1,16 @@
 import * as React from 'react';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 
+import { Easing } from '../components/controls/easing';
 import { Trigger } from '../components/controls/trigger';
 import { InteractionDetails } from '../components/interaction-details';
 import type { InteractionItemValue } from '../types';
-import { createAnimationPreset, createString } from '../utils/prop-value-utils';
+import { extractExcludedBreakpoints } from '../utils/prop-value-utils';
+import { createInteractionItemValue } from './utils';
+
 jest.mock( '../interactions-controls-registry', () => ( {
 	getInteractionsControl: jest.fn(),
 } ) );
-
-const createInteractionItemValue = ( {
-	trigger = 'load',
-	effect = 'fade',
-	type = 'in',
-	direction = '',
-	duration = 300,
-	delay = 0,
-	replay = false,
-}: {
-	trigger?: string;
-	effect?: string;
-	type?: string;
-	direction?: string;
-	duration?: number;
-	delay?: number;
-	replay?: boolean;
-} = {} ): InteractionItemValue => ( {
-	interaction_id: createString( 'test-id' ),
-	trigger: createString( trigger ),
-	animation: createAnimationPreset( {
-		effect,
-		type,
-		direction,
-		duration,
-		delay,
-		replay,
-	} ),
-} );
 
 const getEffectCombobox = (): HTMLElement => {
 	const allComboboxes = screen.getAllByRole( 'combobox' );
@@ -63,6 +37,7 @@ const getEffectCombobox = (): HTMLElement => {
 
 describe( 'InteractionDetails', () => {
 	const mockOnChange = jest.fn();
+
 	const mockReplayControl = jest.fn( ( { value, onChange, disabled } ) => (
 		<div>
 			<span>Replay: { String( value ) }</span>
@@ -70,6 +45,7 @@ describe( 'InteractionDetails', () => {
 			<button onClick={ () => onChange( ! value ) }>Toggle Replay</button>
 		</div>
 	) );
+
 	const mockOnPlayInteraction = jest.fn();
 
 	const renderInteractionDetails = ( interaction: InteractionItemValue ) => {
@@ -85,17 +61,26 @@ describe( 'InteractionDetails', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		const { getInteractionsControl } = require( '../interactions-controls-registry' );
+
 		getInteractionsControl.mockImplementation( ( type: string ) => {
 			if ( type === 'trigger' ) {
 				return {
 					component: Trigger,
 				};
 			}
+
 			if ( type === 'replay' ) {
 				return {
 					component: mockReplayControl,
 				};
 			}
+
+			if ( type === 'easing' ) {
+				return {
+					component: Easing,
+				};
+			}
+
 			return null;
 		} );
 	} );
@@ -112,6 +97,7 @@ describe( 'InteractionDetails', () => {
 			expect( screen.getByText( 'Direction' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Duration' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Delay' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Easing' ) ).toBeInTheDocument();
 		} );
 
 		it( 'should render with custom values', () => {
@@ -123,6 +109,7 @@ describe( 'InteractionDetails', () => {
 				duration: 500,
 				delay: 200,
 				replay: true,
+				easing: 'easeIn',
 			} );
 
 			renderInteractionDetails( interaction );
@@ -291,19 +278,16 @@ describe( 'InteractionDetails', () => {
 
 			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const durationSelect = comboboxes[ 2 ];
-			fireEvent.mouseDown( durationSelect );
-			const allOptions = screen.getAllByRole( 'option' );
-			const duration500Option = allOptions.find( ( opt ) => opt.textContent?.includes( '500 MS' ) );
-			expect( duration500Option ).toBeInTheDocument();
-			if ( duration500Option ) {
-				fireEvent.click( duration500Option );
-			}
+			const sizeInputs = screen.getAllByRole( 'spinbutton' );
+			const durationInput = sizeInputs[ 0 ];
+
+			expect( durationInput ).toHaveValue( 300 );
+
+			fireEvent.input( durationInput, { target: { value: 354 } } );
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
-			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toBe( 500 );
+			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toBe( 354 );
 		} );
 
 		it( 'should call onChange when delay changes', () => {
@@ -317,15 +301,33 @@ describe( 'InteractionDetails', () => {
 
 			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const delaySelect = comboboxes[ 3 ];
-			fireEvent.mouseDown( delaySelect );
-			const delay200Option = screen.getByRole( 'option', { name: /200 MS/i } );
-			fireEvent.click( delay200Option );
+			const sizeInputs = screen.getAllByRole( 'spinbutton' );
+			const durationInput = sizeInputs[ 1 ];
+
+			expect( durationInput ).toHaveValue( 0 );
+
+			fireEvent.input( durationInput, { target: { value: 200 } } );
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
 			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toBe( 200 );
+		} );
+
+		it( 'should prevent negative values for duration', () => {
+			const interaction = createInteractionItemValue( {
+				trigger: 'load',
+				effect: 'fade',
+				type: 'in',
+				duration: 0,
+				delay: 0,
+			} );
+
+			renderInteractionDetails( interaction );
+
+			const sizeInputs = screen.getAllByRole( 'spinbutton' );
+			fireEvent.keyDown( sizeInputs[ 0 ], { key: '-' } );
+
+			expect( mockOnChange ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should call onChange when replay changes', () => {
@@ -526,14 +528,12 @@ describe( 'InteractionDetails', () => {
 
 			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const durationSelect = comboboxes[ 2 ];
-			fireEvent.mouseDown( durationSelect );
-			const allOptions = screen.getAllByRole( 'option' );
-			const duration500Option = allOptions.find( ( opt ) => opt.textContent?.includes( '500 MS' ) );
-			if ( duration500Option ) {
-				fireEvent.click( duration500Option );
-			}
+			const sizeInputs = screen.getAllByRole( 'spinbutton' );
+			const durationInput = sizeInputs[ 0 ];
+
+			expect( durationInput ).toHaveValue( 300 );
+
+			fireEvent.input( durationInput, { target: { value: 500 } } );
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
@@ -552,11 +552,12 @@ describe( 'InteractionDetails', () => {
 
 			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const delaySelect = comboboxes[ 3 ];
-			fireEvent.mouseDown( delaySelect );
-			const delay200Option = screen.getByRole( 'option', { name: /200 MS/i } );
-			fireEvent.click( delay200Option );
+			const sizeInputs = screen.getAllByRole( 'spinbutton' );
+			const durationInput = sizeInputs[ 1 ];
+
+			expect( durationInput ).toHaveValue( 0 );
+
+			fireEvent.input( durationInput, { target: { value: 200 } } );
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
@@ -590,6 +591,30 @@ describe( 'InteractionDetails', () => {
 			expect( updatedInteraction.animation.value.direction.value ).toBe( 'left' );
 			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toBe( 500 );
 			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toBe( 200 );
+		} );
+
+		it( 'should preserve breakpoints when updating other properties', () => {
+			const interaction = createInteractionItemValue( {
+				trigger: 'load',
+				effect: 'fade',
+				type: 'in',
+				duration: 300,
+				delay: 0,
+				excludedBreakpoints: [ 'desktop', 'tablet' ],
+			} );
+
+			renderInteractionDetails( interaction );
+
+			const effectSelect = getEffectCombobox();
+			fireEvent.mouseDown( effectSelect );
+			const slideOption = screen.getByRole( 'option', { name: /slide/i } );
+			fireEvent.click( slideOption );
+
+			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
+			expect( updatedInteraction.breakpoints ).toBeDefined();
+
+			const excluded = extractExcludedBreakpoints( updatedInteraction.breakpoints );
+			expect( excluded ).toEqual( [ 'desktop', 'tablet' ] );
 		} );
 
 		it( 'should preserve all unchanged values when updating effect', () => {
