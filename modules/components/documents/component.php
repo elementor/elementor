@@ -127,6 +127,10 @@ class Component extends Document {
 	}
 
 	private function update_post_field( string $field, $value ): bool {
+		if ( is_string( $value ) ) {
+			// escape the json
+			$value = wp_slash( $value );
+		}
 		$result = wp_update_post( [
 			'ID' => $this->post->ID,
 			$field => $value,
