@@ -4,7 +4,6 @@ module.exports = Marionette.ItemView.extend( {
 	id: 'elementor-template-library-connect-states',
 
 	ui: {
-		connect: '#elementor-template-library-connect__button',
 		selectSourceFilter: '.elementor-template-library-filter-select-source .source-option',
 		title: '.elementor-template-library-blank-title',
 		message: '.elementor-template-library-blank-message',
@@ -26,7 +25,7 @@ module.exports = Marionette.ItemView.extend( {
 				title: elementorAppConfig?.[ 'cloud-library' ]?.library_connect_title_copy ?? __( 'Connect to your Elementor account', 'elementor' ),
 				message: elementorAppConfig?.[ 'cloud-library' ]?.library_connect_sub_title_copy ?? __( 'Then you can find all your templates in one convenient library.', 'elementor' ),
 				icon: defaultIcon,
-				button: `<a class="elementor-button e-primary" href="${ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_url }" target="_blank">${ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_button_copy ?? __( 'Connect', 'elementor' ) }</a>`,
+				button: `<a class="elementor-button e-primary connect-button" href="${ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_url }" target="_blank">${ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_button_copy ?? __( 'Connect', 'elementor' ) }</a>`,
 			},
 			connectedNoQuota: {
 				title: __( 'It’s time to level up', 'elementor' ),
@@ -96,14 +95,25 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	handleElementorConnect() {
-		this.ui.connect.elementorConnect( {
+		const $connectButton = this.$el.find( '.connect-button' );
+
+		if ( ! $connectButton.length ) {
+			return;
+		}
+
+		$connectButton.elementorConnect( {
+			popup: {
+				width: 726,
+				height: 534,
+			},
 			success: () => {
 				elementor.config.library_connect.is_connected = true;
 
-				$e.run( 'library/close' );
 				elementor.notifications.showToast( {
 					message: __( 'Connected successfully.', 'elementor' ),
 				} );
+
+				$e.routes.refreshContainer( 'library' );
 			},
 			error: () => {
 				elementor.config.library_connect.is_connected = false;
