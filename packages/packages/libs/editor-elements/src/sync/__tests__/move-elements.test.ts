@@ -262,4 +262,106 @@ describe( 'moveElements', () => {
 			options: { at: 2, edit: true, useHistory: false },
 		} );
 	} );
+
+	it( 'should handle undo when original index is -1', () => {
+		// Arrange.
+		const mockParentA = createMockContainer( 'parent-a', [] );
+		const mockParentB = createMockContainer( 'parent-b', [] );
+
+		const mockElement = createMockContainer( 'element-1', [] );
+		mockElement.parent = mockParentA;
+		// eslint-disable-next-line testing-library/no-node-access
+		mockParentA.children = [];
+
+		mockElement.lookup = jest.fn().mockReturnValue( mockElement );
+		mockParentA.lookup = jest.fn().mockReturnValue( mockParentA );
+		mockParentB.lookup = jest.fn().mockReturnValue( mockParentB );
+
+		const mockMovedElement = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
+		mockMovedElement.lookup = jest.fn().mockReturnValue( mockMovedElement );
+
+		mockMoveElement.mockReturnValueOnce( mockMovedElement ).mockReturnValueOnce( mockMovedElement );
+
+		// Act.
+		moveElements( {
+			moves: [
+				{
+					element: mockElement,
+					targetContainer: mockParentB,
+				},
+			],
+			title: 'Move Element',
+		} );
+
+		act( () => {
+			historyMock.instance.undo();
+		} );
+
+		// Assert.
+		expect( mockMoveElement ).toHaveBeenNthCalledWith( 2, {
+			element: mockMovedElement,
+			targetContainer: mockParentA,
+			options: { useHistory: false, at: undefined },
+		} );
+	} );
+
+	it( 'should handle multiple undo/redo cycles correctly', () => {
+		// Arrange.
+		const { mockElement1, mockElement2, mockParentA, mockParentB } = setupMockElementsForMove();
+
+		const mockMovedElement1 = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
+		const mockMovedElement2 = createMockChild( { id: 'element-2', elType: 'widget', widgetType: 'text' } );
+
+		mockMovedElement1.lookup = jest.fn().mockReturnValue( mockMovedElement1 );
+		mockMovedElement2.lookup = jest.fn().mockReturnValue( mockMovedElement2 );
+
+		mockMoveElement
+			.mockReturnValueOnce( mockMovedElement1 )
+			.mockReturnValueOnce( mockMovedElement2 )
+			.mockReturnValueOnce( mockMovedElement2 )
+			.mockReturnValueOnce( mockMovedElement1 )
+			.mockReturnValueOnce( mockMovedElement1 )
+			.mockReturnValueOnce( mockMovedElement2 )
+			.mockReturnValueOnce( mockMovedElement2 )
+			.mockReturnValueOnce( mockMovedElement1 )
+			.mockReturnValueOnce( mockMovedElement1 )
+			.mockReturnValueOnce( mockMovedElement2 );
+
+		// Act.
+		moveElements( {
+			moves: [
+				{
+					element: mockElement1,
+					targetContainer: mockParentB,
+				},
+				{
+					element: mockElement2,
+					targetContainer: mockParentB,
+				},
+			],
+			title: 'Move Elements',
+		} );
+
+		act( () => {
+			historyMock.instance.undo();
+			historyMock.instance.redo();
+			historyMock.instance.undo();
+			historyMock.instance.redo();
+		} );
+
+		// Assert.
+		expect( mockMoveElement ).toHaveBeenCalledTimes( 10 );
+
+		expect( mockMoveElement ).toHaveBeenNthCalledWith( 9, {
+			element: mockMovedElement1,
+			targetContainer: mockParentB,
+			options: { useHistory: false },
+		} );
+
+		expect( mockMoveElement ).toHaveBeenNthCalledWith( 10, {
+			element: mockMovedElement2,
+			targetContainer: mockParentB,
+			options: { useHistory: false },
+		} );
+	} );
 } );

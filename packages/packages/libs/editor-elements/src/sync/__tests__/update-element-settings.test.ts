@@ -4,7 +4,6 @@ import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-
 import { getContainer } from '../get-container';
 
 jest.mock( '../get-container' );
-jest.mock( '../get-model' );
 jest.mock( '@elementor/editor-v1-adapters' );
 
 describe( 'updateElementSettings', () => {

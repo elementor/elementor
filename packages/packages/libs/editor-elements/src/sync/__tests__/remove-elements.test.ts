@@ -253,4 +253,139 @@ describe( 'removeElements', () => {
 		const historyItem = historyMock.instance.get();
 		expect( historyItem?.subTitle ).toBe( 'Item removed' );
 	} );
+
+	it( 'should handle multiple undo/redo cycles correctly', () => {
+		// Arrange.
+		const { mockElement1, mockElement2, mockParent } = setupMockElementsForRemoval();
+
+		const mockRestoredElement1 = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
+		const mockRestoredElement2 = createMockChild( { id: 'element-2', elType: 'widget', widgetType: 'text' } );
+
+		mockRestoredElement1.lookup = jest.fn().mockReturnValue( mockElement1 );
+		mockRestoredElement2.lookup = jest.fn().mockReturnValue( mockElement2 );
+
+		mockCreateElement
+			.mockReturnValueOnce( mockRestoredElement2 )
+			.mockReturnValueOnce( mockRestoredElement1 )
+			.mockReturnValueOnce( mockRestoredElement2 )
+			.mockReturnValueOnce( mockRestoredElement1 );
+
+		// Act.
+		removeElements( {
+			elementIds: [ 'element-1', 'element-2' ],
+			title: 'Remove Elements',
+		} );
+
+		act( () => {
+			historyMock.instance.undo();
+			historyMock.instance.redo();
+			historyMock.instance.undo();
+			historyMock.instance.redo();
+		} );
+
+		// Assert.
+		expect( mockDeleteElement ).toHaveBeenCalledTimes( 6 );
+		expect( mockCreateElement ).toHaveBeenCalledTimes( 4 );
+
+		expect( mockCreateElement ).toHaveBeenNthCalledWith( 3, {
+			container: mockParent,
+			model: {
+				id: 'element-2',
+				elType: 'widget',
+				widgetType: 'text',
+				settings: { content: 'Text content' },
+			},
+			options: { useHistory: false, at: 1 },
+		} );
+		expect( mockCreateElement ).toHaveBeenNthCalledWith( 4, {
+			container: mockParent,
+			model: {
+				id: 'element-1',
+				elType: 'widget',
+				widgetType: 'button',
+				settings: { text: 'Button 1' },
+			},
+			options: { useHistory: false, at: 0 },
+		} );
+	} );
+
+	it( 'should skip undo when parent container lookup returns null', () => {
+		// Arrange.
+		const { mockElement1, mockParent } = setupMockElementsForRemoval();
+
+		mockParent.lookup = jest.fn().mockReturnValue( null );
+
+		const mockRestoredElement = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
+		mockCreateElement.mockReturnValue( mockRestoredElement );
+
+		// Act.
+		removeElements( {
+			elementIds: [ 'element-1' ],
+			title: 'Remove Element',
+		} );
+
+		act( () => {
+			historyMock.instance.undo();
+		} );
+
+		// Assert.
+		expect( mockDeleteElement ).toHaveBeenCalledTimes( 1 );
+		expect( mockCreateElement ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should skip redo when container lookup returns null', () => {
+		// Arrange.
+		const { mockElement1, mockParent } = setupMockElementsForRemoval();
+
+		const mockRestoredElement = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
+		mockCreateElement.mockReturnValue( mockRestoredElement );
+
+		// Act.
+		removeElements( {
+			elementIds: [ 'element-1' ],
+			title: 'Remove Element',
+		} );
+
+		act( () => {
+			historyMock.instance.undo();
+		} );
+
+		mockElement1.lookup = jest.fn().mockReturnValue( null );
+
+		act( () => {
+			historyMock.instance.redo();
+		} );
+
+		// Assert.
+		expect( mockDeleteElement ).toHaveBeenCalledTimes( 1 );
+		expect( mockCreateElement ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'should skip redo when parent lookup returns null', () => {
+		// Arrange.
+		const { mockElement1, mockParent } = setupMockElementsForRemoval();
+
+		const mockRestoredElement = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
+		mockCreateElement.mockReturnValue( mockRestoredElement );
+
+		// Act.
+		removeElements( {
+			elementIds: [ 'element-1' ],
+			title: 'Remove Element',
+		} );
+
+		act( () => {
+			historyMock.instance.undo();
+		} );
+
+		mockParent.lookup = jest.fn().mockReturnValue( null );
+
+		act( () => {
+			historyMock.instance.redo();
+		} );
+
+		// Assert.
+		expect( mockDeleteElement ).toHaveBeenCalledTimes( 1 );
+		expect( mockCreateElement ).toHaveBeenCalledTimes( 1 );
+	} );
 } );
