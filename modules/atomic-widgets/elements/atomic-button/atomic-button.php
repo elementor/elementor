@@ -55,9 +55,9 @@ class Atomic_Button extends Atomic_Widget_Base {
 
 			'link' => Link_Prop_Type::make(),
 
-		'tag' => String_Prop_Type::make()
-			->default( 'button' )
-			->description( 'The HTML tag for the button element.' ),
+		// 'tag' => String_Prop_Type::make()
+		// 	->default( 'button' )
+		// 	->description( 'The HTML tag for the button element.' ),
 
 		'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
