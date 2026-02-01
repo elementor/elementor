@@ -21,7 +21,5 @@ export function Replay( { onChange }: ReplayFieldProps ) {
 		},
 	];
 
-	return (
-		<ToggleButtonGroupUi items={ options } exclusive onChange={ onChange } value={ false } />
-	);
+	return <ToggleButtonGroupUi items={ options } exclusive onChange={ onChange } value={ false } />;
 }
