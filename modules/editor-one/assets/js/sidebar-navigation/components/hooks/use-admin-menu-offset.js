@@ -1,12 +1,9 @@
 import { useEffect, useRef } from '@wordpress/element';
+import getIsRTL from '../shared/get-is-rtl';
 
 const ADMIN_MENU_WRAP_ID = 'adminmenuwrap';
 const WPCONTENT_ID = 'wpcontent';
 const INITIALIZED_DATA_ATTR = 'data-editor-one-offset-initialized';
-
-const getIsRTL = () => {
-	return 'rtl' === document.dir || document.body.classList.contains( 'rtl' );
-};
 
 export const useAdminMenuOffset = () => {
 	const cleanupRef = useRef( null );
