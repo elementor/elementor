@@ -17,9 +17,10 @@ import {
 const playingInteractionsToStop = {};
 
 function applyAnimation( element, animConfig, animateFunc ) {
-	if ( playingInteractionsToStop[ element ] ) {
-		playingInteractionsToStop[ element ].cancel();
-		delete playingInteractionsToStop[ element ];
+	const { id } = element;
+	if ( playingInteractionsToStop[ id ] ) {
+		playingInteractionsToStop[ id ].cancel();
+		delete playingInteractionsToStop[ id ];
 	}
 	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
 
@@ -39,7 +40,7 @@ function applyAnimation( element, animConfig, animateFunc ) {
 	element.style.transition = 'none';
 	animateFunc( element, initialKeyframes, { duration: 0 } ).then( () => {
 		const animations = animateFunc( element, keyframes, options );
-		playingInteractionsToStop[ element ] = animations;
+		playingInteractionsToStop[ id ] = animations;
 		animations.then( () => {
 			if ( 'out' === animConfig.type ) {
 				const resetValues = { opacity: 1, scale: 1, x: 0, y: 0 };
@@ -50,7 +51,7 @@ function applyAnimation( element, animConfig, animateFunc ) {
 				element.style.transition = transition;
 				animateFunc( element, resetKeyframes, { duration: 0 } );
 			}
-			delete playingInteractionsToStop[ element ];
+			delete playingInteractionsToStop[ id ];
 		} );
 	} );
 }
