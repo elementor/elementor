@@ -43,6 +43,19 @@ class Adapter {
 			return $interactions;
 		}
 
+<<<<<<< HEAD
+=======
+		// Check version - if v1 or no version, return empty items (breaking change)
+		$version = $decoded['version'] ?? self::VERSION_V1;
+		if ( self::VERSION_V1 === $version ) {
+			return wp_json_encode( [
+				'items' => [],
+				'version' => self::VERSION_V1,
+			] );
+		}
+
+		// v2 format: unwrap and transform
+>>>>>>> 21e634ebb1 (Internal: Cherry-pick PR 34500 to 3.35 with conflicts Move Interaction Array To Prop Type Be [ED-22691] (#34528))
 		$items = $decoded['items'];
 		if ( isset( $decoded['items']['$$type'] ) && self::ITEMS_TYPE === $decoded['items']['$$type'] ) {
 			$items = isset( $decoded['items']['value'] ) ? $decoded['items']['value'] : [];
@@ -78,6 +91,7 @@ class Adapter {
 					$item['value']['animation']['value']['timing_config']['value']['delay'] = self::number_to_size( $timing_config['delay'], 'ms' );
 				}
 			}
+<<<<<<< HEAD
 
 			$config = $item['value']['animation']['value']['config']['value'] ?? null;
 			if ( $config ) {
@@ -89,6 +103,8 @@ class Adapter {
 					$item['value']['animation']['value']['config']['value']['offsetBottom'] = self::number_to_size( $config['offsetBottom'], '%' );
 				}
 			}
+=======
+>>>>>>> 21e634ebb1 (Internal: Cherry-pick PR 34500 to 3.35 with conflicts Move Interaction Array To Prop Type Be [ED-22691] (#34528))
 		}
 
 		return $items;
@@ -114,6 +130,7 @@ class Adapter {
 					$item['value']['animation']['value']['timing_config']['value']['delay'] = self::size_to_number( $timing_config['delay'] );
 				}
 			}
+<<<<<<< HEAD
 
 			$config = $item['value']['animation']['value']['config']['value'] ?? null;
 			if ( $config ) {
@@ -125,6 +142,8 @@ class Adapter {
 					$item['value']['animation']['value']['config']['value']['offsetBottom'] = self::size_to_number( $config['offsetBottom'] );
 				}
 			}
+=======
+>>>>>>> 21e634ebb1 (Internal: Cherry-pick PR 34500 to 3.35 with conflicts Move Interaction Array To Prop Type Be [ED-22691] (#34528))
 		}
 
 		return $items;

@@ -2,8 +2,11 @@
 
 namespace Elementor\Modules\Interactions;
 
+<<<<<<< HEAD
 use Elementor\Modules\Interactions\Validators\Breakpoints_Value as BreakpointsValueValidator;
 use Elementor\Modules\Interactions\Validators\String_Value as StringValueValidator;
+=======
+>>>>>>> 21e634ebb1 (Internal: Cherry-pick PR 34500 to 3.35 with conflicts Move Interaction Array To Prop Type Be [ED-22691] (#34528))
 use Elementor\Modules\Interactions\Adapter;
 
 if ( ! defined( 'ABSPATH' ) ) {

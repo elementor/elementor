@@ -17,6 +17,16 @@ class Test_Validation extends TestCase {
 		return new Validation();
 	}
 
+	private function create_v2_interactions( $items ) {
+		return [
+			'items' => [
+				'$$type' => 'interactions-array',
+				'value' => $items,
+			],
+			'version' => 2,
+		];
+	}
+
 	private function create_prop_type_interaction( $trigger = 'load', $effect = 'fade', $type = 'in', $direction = '', $duration = 300, $delay = 0, $interaction_id = null ) {
 		$value = [
 			'trigger' => [
@@ -243,6 +253,7 @@ class Test_Validation extends TestCase {
 		$this->assertTrue( true, 'No exception was thrown' );
 	}
 
+<<<<<<< HEAD
 	public function test_validate__will_not_throw_if_breakpoints_prop_is_valid() {
 		$interaction = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0, '1' );
 
@@ -258,6 +269,12 @@ class Test_Validation extends TestCase {
 				],
 			],
 		];
+=======
+	public function test_sanitize__handles_v2_wrapped_format_array() {
+		$interaction = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0 );
+
+		$v2_interactions = $this->create_v2_interactions( [ $interaction ] );
+>>>>>>> 21e634ebb1 (Internal: Cherry-pick PR 34500 to 3.35 with conflicts Move Interaction Array To Prop Type Be [ED-22691] (#34528))
 
 		$document = [
 			'elements' => [
@@ -265,16 +282,21 @@ class Test_Validation extends TestCase {
 					'id' => '1',
 					'elType' => 'e-flexbox',
 					'settings' => [],
+<<<<<<< HEAD
 					'interactions' => json_encode( [
 						'items' => [
 							$interaction,
 						],
 						'version' => 1,
 					] ),
+=======
+					'interactions' => $v2_interactions,
+>>>>>>> 21e634ebb1 (Internal: Cherry-pick PR 34500 to 3.35 with conflicts Move Interaction Array To Prop Type Be [ED-22691] (#34528))
 				],
 			],
 		];
 
+<<<<<<< HEAD
 		$validation = $this->validation();
 		$result = $validation->sanitize( $document );
 		$validation->validate();
@@ -295,11 +317,29 @@ class Test_Validation extends TestCase {
 		];
 
 		$this->assertEquals( [
+=======
+		$result = $this->validation()->sanitize( $document );
+
+		$decoded = json_decode( $result['elements'][0]['interactions'], true );
+
+		$this->assertIsArray( $decoded['items'] );
+		$this->assertCount( 1, $decoded['items'] );
+		$this->assertEquals( 'load', $decoded['items'][0]['value']['trigger']['value'] );
+	}
+
+	public function test_sanitize__handles_v2_wrapped_format_json_string() {
+		$interaction = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0 );
+
+		$v2_interactions = $this->create_v2_interactions( [ $interaction ] );
+
+		$document = [
+>>>>>>> 21e634ebb1 (Internal: Cherry-pick PR 34500 to 3.35 with conflicts Move Interaction Array To Prop Type Be [ED-22691] (#34528))
 			'elements' => [
 				[
 					'id' => '1',
 					'elType' => 'e-flexbox',
 					'settings' => [],
+<<<<<<< HEAD
 					'interactions' => json_encode( [
 						'items' => [
 							$expected_interaction
@@ -311,3 +351,112 @@ class Test_Validation extends TestCase {
 		], $result );
 	}
 }
+=======
+					'interactions' => json_encode( $v2_interactions ),
+				],
+			],
+		];
+
+		$result = $this->validation()->sanitize( $document );
+
+		$decoded = json_decode( $result['elements'][0]['interactions'], true );
+
+		$this->assertIsArray( $decoded['items'] );
+		$this->assertCount( 1, $decoded['items'] );
+		$this->assertEquals( 'load', $decoded['items'][0]['value']['trigger']['value'] );
+	}
+
+	public function test_sanitize__v2_format_strips_invalid_interactions() {
+		$valid_interaction = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0 );
+		$invalid_interaction = $this->create_prop_type_interaction( 'invalid-trigger', 'fade', 'in', '', 100, 0 );
+
+		$v2_interactions = $this->create_v2_interactions( [
+			$valid_interaction,
+			$invalid_interaction,
+		] );
+
+		$document = [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( $v2_interactions ),
+				],
+			],
+		];
+
+		$result = $this->validation()->sanitize( $document );
+
+		$decoded = json_decode( $result['elements'][0]['interactions'], true );
+
+		$this->assertIsArray( $decoded['items'] );
+		$this->assertCount( 1, $decoded['items'] );
+		$this->assertEquals( 'load', $decoded['items'][0]['value']['trigger']['value'] );
+	}
+
+	public function test_sanitize__v2_format_will_throw_if_exceeds_interactions_limit() {
+		$interactions = [];
+		for ( $i = 0; $i < 6; $i++ ) {
+			$interactions[] = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0 );
+		}
+
+		$v2_interactions = $this->create_v2_interactions( $interactions );
+
+		$document = [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( $v2_interactions ),
+				],
+			],
+		];
+
+		$this->expectException( \Exception::class );
+
+		$validation = $this->validation();
+		$validation->sanitize( $document );
+		$validation->validate();
+	}
+
+	public function test_sanitize__v2_format_nested_elements() {
+		$interaction1 = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0 );
+		$interaction2 = $this->create_prop_type_interaction( 'scrollIn', 'slide', 'in', 'top', 200, 50 );
+
+		$v2_interactions_parent = $this->create_v2_interactions( [ $interaction1 ] );
+		$v2_interactions_child = $this->create_v2_interactions( [ $interaction2 ] );
+
+		$document = [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( $v2_interactions_parent ),
+					'elements' => [
+						[
+							'id' => '2',
+							'elType' => 'widget',
+							'widgetType' => 'e-heading',
+							'interactions' => json_encode( $v2_interactions_child ),
+						],
+					],
+				],
+			],
+		];
+
+		$result = $this->validation()->sanitize( $document );
+
+		$parent_decoded = json_decode( $result['elements'][0]['interactions'], true );
+		$child_decoded = json_decode( $result['elements'][0]['elements'][0]['interactions'], true );
+
+		$this->assertCount( 1, $parent_decoded['items'] );
+		$this->assertEquals( 'load', $parent_decoded['items'][0]['value']['trigger']['value'] );
+
+		$this->assertCount( 1, $child_decoded['items'] );
+		$this->assertEquals( 'scrollIn', $child_decoded['items'][0]['value']['trigger']['value'] );
+	}
+}
+>>>>>>> 21e634ebb1 (Internal: Cherry-pick PR 34500 to 3.35 with conflicts Move Interaction Array To Prop Type Be [ED-22691] (#34528))
