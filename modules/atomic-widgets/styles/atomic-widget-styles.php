@@ -50,7 +50,7 @@ class Atomic_Widget_Styles {
 			$post_styles = array_merge( $post_styles, $this->parse_element_style( $element_data ) );
 		} );
 
-		return apply_filters( 'elementor/atomic_widgets/editor_data/element_styles', $post_styles );
+		return apply_filters( 'elementor/atomic_widgets/editor_data/element_styles', self::remove_custom_css_from_styles( $post_styles ), $post_styles );
 	}
 
 	private function parse_element_style( array $element_data ) {
@@ -85,5 +85,21 @@ class Atomic_Widget_Styles {
 
 	private function get_context( bool $is_preview ) {
 		return $is_preview ? self::CONTEXT_PREVIEW : self::CONTEXT_FRONTEND;
+	}
+
+	public static function remove_custom_css_from_styles( array $styles ) {
+		if ( empty( $styles ) ) {
+			return $styles;
+		}
+
+		foreach ( $styles as $style_id => $style ) {
+			if ( isset( $style['variants'] ) && is_array( $style['variants'] ) ) {
+				foreach ( $style['variants'] as $variant_index => $variant ) {
+					unset( $styles[ $style_id ]['variants'][ $variant_index ]['custom_css'] );
+				}
+			}
+		}
+
+		return $styles;
 	}
 }
