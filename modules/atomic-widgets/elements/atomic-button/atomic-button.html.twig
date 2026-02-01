@@ -1,5 +1,5 @@
 {% if settings.text is not empty %}
-    {%- set allowed_tags = '<b><strong><sup><sub><s><em><i><u><del><span><br>' -%}
+    {%- set allowed_tags = '<b><strong><sup><sub><s><em><i><u><del><span><br>' %}
     {% set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') %}
 	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
     {% if settings.link.href %}
