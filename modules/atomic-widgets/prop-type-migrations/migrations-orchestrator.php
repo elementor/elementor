@@ -8,7 +8,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
-use Elementor\Modules\AtomicWidgets\Interactions\Interactions_Schema;
+use Elementor\Modules\Interactions\Schema\Interactions_Schema;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
 
