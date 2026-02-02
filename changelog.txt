@@ -1,5 +1,21 @@
 == Changelog ==
 
+= 3.35.0 - 2026-02-02 =
+
+* New: Introducing Components - reusable layout building blocks with global sync and per-instance content overrides - Editor V4
+* New: Introducing Inline Editing - edit Atomic Heading and Paragraph text directly on the canvas - Editor V4
+* New: Introducing a contextual formatting toolbar for inline text editing, including links and common text styles - Editor V4
+* Tweak: Version 4 status updated to Beta and production-ready - Editor V4
+* Tweak: Children perspective controls available only for relevant parent elements - Editor V4
+* Tweak: `:hover` styling automatically applies to `:focus-visible` for improved accessibility - Editor V4
+* Tweak: Dynamic tags support added to color picker controls - Editor V4
+* Tweak: Link and Button accessibility improvements in Dynamic Tags - Editor V4
+* Tweak: Nested Accordion optimizations with Grid in Chrome browser
+* Fix: Size link-unlink operations not applying consistently - Editor V4
+* Fix: Div Block and Flexbox base styles overriding user settings when viewed from another document - Editor V4
+* Fix: Flex and Div blocks lose selection when deleting an assigned class via the Class Manager - Editor V4
+* Fix: Container handles not visible when "Overflow: Hidden" is enabled
+
 = 3.34.4 - 2026-01-29 =
 
 * Tweak: Updated import and export flow for Website Templates
