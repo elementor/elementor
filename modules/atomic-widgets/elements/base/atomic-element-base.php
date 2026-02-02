@@ -193,7 +193,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 	protected function _get_default_child_type( array $element_data ) {
 		$el_types = array_keys( Plugin::$instance->elements_manager->get_element_types() );
 
-		if ( in_array( $element_data['elType'], $el_types, true ) ) {
+		if ( isset( $element_data['elType'] ) && in_array( $element_data['elType'], $el_types, true ) ) {
 			return Plugin::$instance->elements_manager->get_element_types( $element_data['elType'] );
 		}
 

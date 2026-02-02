@@ -734,9 +734,17 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		getBaseClass() {
-			const baseStyles = elementor.helpers.getAtomicWidgetBaseStyles( this.options?.model );
+			if ( this.isCssConverterWidget() ) {
+				return '';
+			}
 
+			const baseStyles = elementor.helpers.getAtomicWidgetBaseStyles( this.options?.model );
 			return Object.keys( baseStyles ?? {} )[ 0 ] ?? '';
+		},
+
+		isCssConverterWidget() {
+			const editorSettings = this.model.get( 'editor_settings' ) || {};
+			return editorSettings.css_converter_widget;
 		},
 
 		isOverflowHidden() {

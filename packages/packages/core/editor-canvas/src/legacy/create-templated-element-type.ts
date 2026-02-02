@@ -24,7 +24,13 @@ export type CreateTemplatedElementTypeOptions = {
 };
 
 export type TemplatedElementConfig = Required<
-	Pick< V1ElementConfig, 'twig_templates' | 'twig_main_template' | 'atomic_props_schema' | 'base_styles_dictionary' >
+	Pick<
+		V1ElementConfig,
+		| 'twig_templates'
+		| 'twig_main_template'
+		| 'atomic_props_schema'
+		| 'base_styles_dictionary'
+	>
 >;
 
 export function createTemplatedElementType( {
@@ -51,7 +57,9 @@ export function createTemplatedElementType( {
 	};
 }
 
-export function canBeTemplated( element: Partial< TemplatedElementConfig > ): element is TemplatedElementConfig {
+export function canBeTemplated(
+	element: Partial< TemplatedElementConfig >
+): element is TemplatedElementConfig {
 	return !! (
 		element.atomic_props_schema &&
 		element.twig_templates &&
@@ -145,7 +153,9 @@ export function createTemplatedElementView( {
 		#collectChildrenRenderPromises() {
 			this.children?.each( ( childView: ElementView ) => {
 				if ( childView._currentRenderPromise ) {
-					this.#childrenRenderPromises.push( childView._currentRenderPromise );
+					this.#childrenRenderPromises.push(
+						childView._currentRenderPromise
+					);
 				}
 			} );
 		}
@@ -159,7 +169,9 @@ export function createTemplatedElementView( {
 		async _renderTemplate() {
 			this.triggerMethod( 'before:render:template' );
 
-			const process = signalizedProcess( this.#abortController?.signal as AbortSignal )
+			const process = signalizedProcess(
+				this.#abortController?.signal as AbortSignal
+			)
 				.then( ( _, signal ) => {
 					const settings = this.model.get( 'settings' ).toJSON();
 					return resolveProps( {
@@ -173,7 +185,8 @@ export function createTemplatedElementView( {
 				} )
 				.then( async ( settings ) => {
 					const settingsHash = JSON.stringify( settings );
-					const settingsChanged = settingsHash !== this.#lastResolvedSettingsHash;
+					const settingsChanged =
+						settingsHash !== this.#lastResolvedSettingsHash;
 
 					if ( ! settingsChanged && this.isRendered ) {
 						this.#domUpdateWasSkipped = true;
@@ -187,7 +200,9 @@ export function createTemplatedElementView( {
 						id: this.model.get( 'id' ),
 						type,
 						settings,
-						base_styles: baseStylesDictionary,
+						base_styles: this.isCssConverterWidget()
+							? {}
+							: baseStylesDictionary,
 					};
 
 					return renderer.render( templateKey, context );
@@ -209,6 +224,11 @@ export function createTemplatedElementView( {
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
 			return settings;
+		}
+
+		isCssConverterWidget(): boolean {
+			const editorSettings = this.model.get( 'editor_settings' ) || {};
+			return !! editorSettings?.css_converter_widget;
 		}
 
 		_beforeRender() {
