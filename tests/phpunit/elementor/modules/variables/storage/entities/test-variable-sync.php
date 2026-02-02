@@ -10,7 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * @group Elementor\Modules
  * @group Elementor\Modules\Variables
  */
 class Test_Variable_Sync extends TestCase {
@@ -94,4 +93,3 @@ class Test_Variable_Sync extends TestCase {
 		$this->assertTrue( $result['sync_to_v3'] );
 	}
 }
-

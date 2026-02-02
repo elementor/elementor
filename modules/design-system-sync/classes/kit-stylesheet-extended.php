@@ -38,4 +38,3 @@ class Kit_Stylesheet_Extended {
 		return $type_map[ $type ] ?? 'color';
 	}
 }
-

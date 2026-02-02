@@ -47,4 +47,3 @@ class Module extends BaseModule {
 		( new Kit_Stylesheet_Extended() )->register_hooks();
 	}
 }
-
