@@ -95,7 +95,7 @@ class Module extends BaseModule {
 	}
 
 	public function enqueue_editor_scripts() {
-		if ( Utils::has_pro() ) {
+		if ( Utils::has_pro() && ! $this->is_pro_license_expired() ) {
 			return;
 		}
 
@@ -104,5 +104,13 @@ class Module extends BaseModule {
 			'window.ElementorVariablesQuotaConfig = ' . wp_json_encode( $this->get_quota_config() ) . ';',
 			'before'
 		);
+	}
+
+	private function is_pro_license_expired(): bool {
+		if ( ! class_exists( 'ElementorPro\License\API' ) ) {
+			return false;
+		}
+
+		return \ElementorPro\License\API::is_license_expired();
 	}
 }
