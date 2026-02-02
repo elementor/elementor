@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\Interactions;
+namespace Elementor\Modules\Interactions\Schema;
 
-use Elementor\Modules\AtomicWidgets\Interactions\Props\Interactions_Array_Prop_Type;
+use Elementor\Modules\Interactions\Props\Interactions_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,9 +16,8 @@ class Interactions_Schema {
 
 	public static function get_interactions_schema(): array {
 		return [
-            'version' => Number_Prop_Type::make()->description( 'The version of the interactions schema' ),
-            'items' => Interactions_Array_Prop_Type::make()->description( 'The list of interaction items' )
-        ];
+			'version' => 1,
+			'items' => Interactions_Array_Prop_Type::make()->description( 'The list of interaction items' ),
+		];
 	}
 }
-

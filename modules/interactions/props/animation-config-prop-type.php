@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\Interactions\Props;
+namespace Elementor\Modules\Interactions\Props;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
@@ -19,15 +19,7 @@ class Animation_Config_Prop_Type extends Object_Prop_Type {
 	protected function define_shape(): array {
 		return [
 			'replay' => Boolean_Prop_Type::make()->description( 'Whether to replay the animation' ),
-			'easing' => String_Prop_Type::make()->enum( [
-				'easeIn',
-				'easeOut',
-				'easeInOut',
-				'backIn',
-				'backOut',
-				'backInOut',
-				'linear',
-			] )->description( 'The easing function to use for the animation' ),
+			'easing' => String_Prop_Type::make()->description( 'The easing function to use for the animation' ),
 			'offsetTop' => Number_Prop_Type::make()->description( 'The offset top to use for the animation' ),
 			'offsetBottom' => Number_Prop_Type::make()->description( 'The offset bottom to use for the animation' ),
 		];

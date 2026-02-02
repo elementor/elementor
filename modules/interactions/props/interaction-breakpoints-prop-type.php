@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\Interactions\Props;
+namespace Elementor\Modules\Interactions\Props;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 
