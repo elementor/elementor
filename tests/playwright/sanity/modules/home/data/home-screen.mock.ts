@@ -240,67 +240,6 @@ export default {
 			],
 		},
 	],
-	add_ons: {
-		hide_section: [ 'free' ],
-		header: {
-			title: 'Test Add-ons Title',
-			description: 'Test add-ons description with predictable content for testing purposes.',
-		},
-		repeater: [
-			{
-				file_path: 'test-plugin-1/test-plugin-1.php',
-				title: 'Test Plugin 1',
-				url: '',
-				description: 'Test plugin description with predictable content for testing.',
-				button_label: 'Install',
-				image: getImageUrl( 'ally_logo.svg' ),
-				type: 'wporg',
-			},
-			{
-				file_path: 'test-plugin-2/test-plugin-2.php',
-				title: 'Test Plugin 2',
-				url: '',
-				description: 'Test plugin description with predictable content for testing.',
-				button_label: 'Install',
-				image: getImageUrl( 'send-logo.svg' ),
-				type: 'wporg',
-			},
-			{
-				file_path: 'test-plugin-3/test-plugin-3.php',
-				title: 'Test Plugin 3',
-				url: '',
-				description: 'Test plugin description with predictable content for testing.',
-				button_label: 'Install',
-				image: getImageUrl( 'site-mailer.svg' ),
-				type: 'wporg',
-			},
-			{
-				file_path: 'test-plugin-4/test-plugin-4.php',
-				title: 'Test Plugin 4',
-				url: 'https://test.example.com/plugin4',
-				description: 'Test plugin description with predictable content for testing.',
-				button_label: 'Install',
-				image: getImageUrl( 'image-optimizer.svg' ),
-				type: 'wporg',
-			},
-			{
-				title: 'Test Elementor AI',
-				url: 'https://test.example.com/elementor-ai',
-				description: 'Test AI description with predictable content for testing purposes.',
-				button_label: 'Let\'s go',
-				image: getImageUrl( 'elementor.svg' ),
-				type: 'link',
-				condition: {
-					key: 'introduction_meta',
-					value: 'ai_get_started',
-				},
-			},
-		],
-		footer: {
-			label: 'Explore more add-ons',
-			file_path: 'wp-admin/admin.php?page=elementor-apps',
-		},
-	},
 	sidebar_upgrade: [
 		{
 			license: [ 'free' ],
