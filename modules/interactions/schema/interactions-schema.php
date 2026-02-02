@@ -3,7 +3,6 @@
 namespace Elementor\Modules\Interactions\Schema;
 
 use Elementor\Modules\Interactions\Props\Interactions_Array_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
