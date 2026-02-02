@@ -139,7 +139,6 @@ class Module extends BaseModule {
 	public function print_interactions_data() {
 		// Only output on frontend, not in editor
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
-			var_dump( 'dfbdfb' );
 			return;
 		}
 
@@ -147,44 +146,54 @@ class Module extends BaseModule {
 		$all_interactions = $collector->get_all();
 
 		if ( empty( $all_interactions ) ) {
-			var_dump( 'dfbdfb' );
 			return;
 		}
 
-		// Format data similar to editor: array of interaction items
-		$interactions_array = [];
+		// Format: array of elements, each with elementId, dataId, and cleaned interactions
+		$elements_with_interactions = [];
 		foreach ( $all_interactions as $element_id => $interactions ) {
-			if ( isset( $interactions['items'] ) && is_array( $interactions['items'] ) ) {
-				foreach ( $interactions['items'] as $item ) {
-					// Add element_id to each interaction item for easy lookup
-					$item['element_id'] = $element_id;
-					$interactions_array[] = $item;
-				}
+			// Get items, handling both v1 and v2 formats
+			$items = $interactions['items'] ?? [];
+
+			// If items is wrapped with $$type (v2 format), extract the value
+			if ( isset( $items['$$type'] ) && Adapter::ITEMS_TYPE === $items['$$type'] ) {
+				$items = $items['value'] ?? [];
 			}
+
+			if ( ! is_array( $items ) || empty( $items ) ) {
+				continue;
+			}
+
+			// Clean $$type markers from all interaction items
+			$cleaned_items = [];
+			foreach ( $items as $item ) {
+				if ( ! is_array( $item ) ) {
+					continue;
+				}
+				$cleaned_items[] = Adapter::clean_prop_types( $item );
+			}
+
+			if ( empty( $cleaned_items ) ) {
+				continue;
+			}
+
+			// Build element entry with elementId, dataId, and cleaned interactions array
+			$elements_with_interactions[] = [
+				'elementId' => $element_id,
+				'dataId' => $element_id,
+				'interactions' => $cleaned_items,
+			];
 		}
 
-		if ( empty( $interactions_array ) ) {
+		if ( empty( $elements_with_interactions ) ) {
 			return;
 		}
 
-		// Output as JSON script tag and move it to head
-		$json_data = wp_json_encode( $interactions_array, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
-		?>
-		<script type="application/json" data-e-interactions="true" id="elementor-interactions-data">
-			<?php
-			echo $json_data;
-			?>
-		</script>
-		<script>
-			// Move interactions data to head (similar to editor approach)
-			(function() {
-				var script = document.getElementById('elementor-interactions-data');
-				if ( script && document.head ) {
-					document.head.appendChild(script);
-				}
-			})();
-		</script>
-		<?php
+		// Output as JSON script tag
+		$json_data = wp_json_encode( $elements_with_interactions, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON data is already encoded
+		echo '<script type="application/json" id="elementor-interactions-data">' . $json_data . '</script>';
 	}
 
 	private function get_config() {

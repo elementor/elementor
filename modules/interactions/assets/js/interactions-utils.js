@@ -43,7 +43,7 @@ export function parseAnimationName( name ) {
 		direction,
 		duration,
 		delay,
-		,
+		replay,
 		easing,
 	] = name.split( '-' );
 
@@ -51,9 +51,10 @@ export function parseAnimationName( name ) {
 		trigger,
 		effect,
 		type,
-		direction: direction || null,
+		direction: direction || '',
 		duration: duration ? parseInt( duration, 10 ) : config.defaultDuration,
 		delay: delay ? parseInt( delay, 10 ) : config.defaultDelay,
+		replay: 'true' === replay,
 		easing: easing || config.defaultEasing,
 	};
 }
@@ -134,4 +135,81 @@ export function parseInteractionsData( data ) {
 		}
 	}
 	return data;
+}
+
+/**
+ * Get interactions data from the script tag injected by PHP.
+ * Returns array of { elementId, dataId, interactions: [...] }
+ */
+export function getInteractionsData() {
+	const scriptTag = document.getElementById( 'elementor-interactions-data' );
+	if ( ! scriptTag ) {
+		return null;
+	}
+
+	try {
+		return JSON.parse( scriptTag.textContent );
+	} catch {
+		return null;
+	}
+}
+
+/**
+ * Find an Elementor element by its data-id attribute.
+ */
+export function findElementByDataId( dataId ) {
+	return document.querySelector( `[data-interaction-id="${ dataId }"]` );
+}
+
+/**
+ * Extract animation config from a cleaned interaction object (no $$type wrappers).
+ * Returns an object with trigger, effect, type, direction, duration, delay, easing, replay.
+ */
+export function extractAnimationConfig( interaction ) {
+	if ( ! interaction || ! interaction.animation ) {
+		return null;
+	}
+
+	const { trigger, animation } = interaction;
+
+	// Handle cleaned format (no $$type)
+	const effect = animation.effect || 'fade';
+	const type = animation.type || 'in';
+	const direction = animation.direction || '';
+
+	// timing_config can have size objects: { size: 300, unit: 'ms' } or plain numbers
+	const timingConfig = animation.timing_config || {};
+	const duration = extractNumericValue( timingConfig.duration, config.defaultDuration );
+	const delay = extractNumericValue( timingConfig.delay, config.defaultDelay );
+
+	// config contains replay, easing, etc.
+	const animConfig = animation.config || {};
+	const easing = animConfig.easing || config.defaultEasing;
+	const replay = animConfig.replay ?? false;
+
+	return {
+		trigger: trigger || 'load',
+		effect,
+		type,
+		direction,
+		duration,
+		delay,
+		easing,
+		replay,
+	};
+}
+
+/**
+ * Extract numeric value from a value that can be:
+ * - A plain number: 300
+ * - A size object: { size: 300, unit: 'ms' }
+ */
+function extractNumericValue( value, defaultValue = 0 ) {
+	if ( typeof value === 'number' ) {
+		return value;
+	}
+	if ( value && typeof value === 'object' && 'size' in value ) {
+		return value.size;
+	}
+	return defaultValue;
 }

@@ -1,12 +1,13 @@
 import {
 	config,
 	getKeyframes,
-	parseAnimationName,
-	extractAnimationId,
 	getAnimateFunction,
 	getInViewFunction,
 	waitForAnimateFunction,
-	parseInteractionsData,
+	getInteractionsData,
+	findElementByDataId,
+	extractAnimationConfig,
+	parseAnimationName,
 } from './interactions-utils.js';
 
 function scrollOutAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc ) {
@@ -20,7 +21,7 @@ function scrollOutAnimation( element, transition, animConfig, keyframes, options
 			animateFunc( element, keyframes, options ).then( () => {
 				element.style.transition = transition;
 			} );
-			if ( false === animConfig.replay ) {
+			if ( ! animConfig.replay ) {
 				stop();
 			}
 		};
@@ -33,7 +34,7 @@ function scrollInAnimation( element, transition, animConfig, keyframes, options,
 		animateFunc( element, keyframes, options ).then( () => {
 			element.style.transition = transition;
 		} );
-		if ( false === animConfig.replay ) {
+		if ( ! animConfig.replay ) {
 			stop();
 		}
 	}, viewOptions );
@@ -51,12 +52,13 @@ function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	const options = {
 		duration: animConfig.duration / 1000,
 		delay: animConfig.delay / 1000,
-		ease: config.defaultEasing,
+		ease: animConfig.easing || config.defaultEasing,
 	};
 
 	// WHY - Transition can be set on elements but once it sets it destroys all animations, so we basically put it aside.
 	const transition = element.style.transition;
 	element.style.transition = 'none';
+
 	if ( 'scrollOut' === animConfig.trigger ) {
 		scrollOutAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc );
 	} else if ( 'scrollIn' === animConfig.trigger ) {
@@ -66,7 +68,77 @@ function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	}
 }
 
+/**
+ * Initialize interactions from centralized script tag data.
+ * Format: [{ elementId, dataId, interactions: [...] }, ...]
+ */
+function initFromCentralizedData( animateFunc, inViewFunc ) {
+	console.log( 'initFromCentralizedData' );
+	const elementsData = getInteractionsData();
+
+	console.log( 'elementsData', elementsData );
+
+	if ( ! elementsData || ! Array.isArray( elementsData ) || elementsData.length === 0 ) {
+		return false;
+	}
+
+	elementsData.forEach( ( elementEntry ) => {
+		const { dataId, interactions } = elementEntry;
+		console.log( 'dataId', dataId );
+		console.log( 'interactions', interactions );
+
+		if ( ! dataId || ! interactions || ! Array.isArray( interactions ) ) {
+			return;
+		}
+
+		const element = findElementByDataId( dataId );
+		console.log( 'element', element );
+		if ( ! element ) {
+			return;
+		}
+
+		interactions.forEach( ( interaction ) => {
+			console.log( 'interaction', interaction );
+			const animConfig = extractAnimationConfig( interaction );
+			console.log( 'animConfig', animConfig );
+			if ( animConfig ) {
+				applyAnimation( element, animConfig, animateFunc, inViewFunc );
+			}
+		} );
+	} );
+
+	return true;
+}
+
+/**
+ * Fallback: Initialize interactions from data-interaction-id attributes on elements.
+ * Format: data-interaction-id="trigger-effect-type-direction-duration-delay--easing"
+ */
+function initFromElementAttributes( animateFunc, inViewFunc ) {
+	console.log( 'initFromElementAttributes' );
+	const elements = document.querySelectorAll( '[data-interaction-id]' );
+
+	if ( ! elements.length ) {
+		return false;
+	}
+
+	elements.forEach( ( element ) => {
+		const interactionId = element.getAttribute( 'data-interaction-id' );
+		if ( ! interactionId ) {
+			return;
+		}
+
+		const animConfig = parseAnimationName( interactionId );
+		if ( animConfig ) {
+			applyAnimation( element, animConfig, animateFunc, inViewFunc );
+		}
+	} );
+
+	return true;
+}
+
 function initInteractions() {
+	console.log( 'initInteractions' );
 	waitForAnimateFunction( () => {
 		const animateFunc = getAnimateFunction();
 		const inViewFunc = getInViewFunction();
@@ -75,64 +147,13 @@ function initInteractions() {
 			return;
 		}
 
-		const interactionsArray = getInteractionsData();
+		// Try centralized data first (from script tag)
+		const hasCentralizedData = initFromCentralizedData( animateFunc, inViewFunc );
 
-		if ( ! interactionsArray || ! Array.isArray( interactionsArray ) || interactionsArray.length === 0 ) {
-			return;
+		// Fallback to element attributes if no centralized data
+		if ( ! hasCentralizedData ) {
+			initFromElementAttributes( animateFunc, inViewFunc );
 		}
-
-		// Group interactions by element_id
-		const interactionsByElement = {};
-		interactionsArray.forEach( ( interaction ) => {
-			const elementId = interaction.element_id;
-			if ( ! elementId ) {
-				return;
-			}
-
-			if ( ! interactionsByElement[ elementId ] ) {
-				interactionsByElement[ elementId ] = [];
-			}
-
-			interactionsByElement[ elementId ].push( interaction );
-		} );
-
-		// Apply interactions to each element
-		Object.keys( interactionsByElement ).forEach( ( elementId ) => {
-			const element = findElementByInteractionId( elementId );
-			if ( ! element ) {
-				return;
-			}
-
-			const interactions = interactionsByElement[ elementId ];
-			interactions.forEach( ( interaction ) => {
-				const animationName = extractAnimationId( interaction );
-				const animConfig = animationName && parseAnimationName( animationName );
-
-				if ( animConfig ) {
-					applyAnimation( element, animConfig, animateFunc, inViewFunc );
-				}
-			} );
-		} );
-
-		// const elements = document.querySelectorAll( '[data-interactions]' );
-
-		// elements.forEach( ( element ) => {
-		// 	const interactionsData = element.getAttribute( 'data-interactions' );
-		// 	const parsedData = parseInteractionsData( interactionsData );
-
-		// 	if ( ! parsedData || ! Array.isArray( parsedData ) ) {
-		// 		return;
-		// 	}
-
-		// 	parsedData.forEach( ( interaction ) => {
-		// 		const animationName = extractAnimationId( interaction );
-		// 		const animConfig = animationName && parseAnimationName( animationName );
-
-		// 		if ( animConfig ) {
-		// 			applyAnimation( element, animConfig, animateFunc, inViewFunc );
-		// 		}
-		// 	} );
-		// } );
 	} );
 }
 

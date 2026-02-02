@@ -152,6 +152,36 @@ class Adapter {
 	}
 
 	/**
+	 * Recursively remove all $$type wrappers and extract plain values.
+	 * Used specifically for frontend script output where we want clean data.
+	 *
+	 * Transforms: {"$$type": "string", "value": "fade"} → "fade"
+	 * Transforms: {"$$type": "size", "value": {"size": 300, "unit": "ms"}} → {"size": 300, "unit": "ms"}
+	 *
+	 * @param mixed $data The data to clean.
+	 * @return mixed The cleaned data without $$type markers.
+	 */
+	public static function clean_prop_types( $data ) {
+		if ( ! is_array( $data ) ) {
+			return $data;
+		}
+
+		// If this is a PropType object (has $$type), extract and clean its value
+		if ( isset( $data['$$type'] ) ) {
+			$value = $data['value'] ?? null;
+			return self::clean_prop_types( $value );
+		}
+
+		// Otherwise, recursively clean all array elements
+		$cleaned = [];
+		foreach ( $data as $key => $value ) {
+			$cleaned[ $key ] = self::clean_prop_types( $value );
+		}
+
+		return $cleaned;
+	}
+
+	/**
 	 * Extract numeric value from a PropType that can be either 'number' or 'size'.
 	 * - number format: {$$type: 'number', value: 300} → returns 300
 	 * - size format: {$$type: 'size', value: {size: 300, unit: 'ms'}} → returns 300
