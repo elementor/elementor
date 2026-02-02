@@ -178,5 +178,4 @@ class API {
 
 		return update_option( $cache_key, $data, false );
 	}
-
 }

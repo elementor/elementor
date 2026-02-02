@@ -461,15 +461,24 @@ class Source_Local extends Source_Base {
 			$labels = $post_type_object->labels;
 			$labels->name = $template_plural;
 			$labels->singular_name = $template_singular;
+			/* translators: %s: Template label (plural). */
 			$labels->all_items = sprintf( esc_html__( 'All %s', 'elementor' ), $template_plural );
+			/* translators: %s: Template label (singular). */
 			$labels->add_new = sprintf( esc_html__( 'Add New %s', 'elementor' ), $template_singular );
 			$labels->add_new_item = $labels->add_new;
+			/* translators: %s: Template label (singular). */
 			$labels->edit_item = sprintf( esc_html__( 'Edit %s', 'elementor' ), $template_singular );
+			/* translators: %s: Template label (singular). */
 			$labels->new_item = sprintf( esc_html__( 'New %s', 'elementor' ), $template_singular );
+			/* translators: %s: Template label (singular). */
 			$labels->view_item = sprintf( esc_html__( 'View %s', 'elementor' ), $template_singular );
+			/* translators: %s: Template label (plural). */
 			$labels->search_items = sprintf( esc_html__( 'Search %s', 'elementor' ), $template_plural );
+			/* translators: %s: Template label (plural). */
 			$labels->not_found = sprintf( esc_html__( 'No %s found', 'elementor' ), $template_plural );
+			/* translators: %s: Template label (plural). */
 			$labels->not_found_in_trash = sprintf( esc_html__( 'No %s found in Trash', 'elementor' ), $template_plural );
+			/* translators: %s: Template label (singular). */
 			$labels->parent_item_colon = sprintf( esc_html__( 'Parent %s:', 'elementor' ), $template_singular );
 			$labels->menu_name = $template_plural;
 			$post_type_object->labels = $labels;
@@ -1053,6 +1062,7 @@ class Source_Local extends Source_Base {
 				$export_label = esc_html__( 'Export Template', 'elementor' );
 
 				if ( $template_labels['singular'] ) {
+					/* translators: %s: Template label (singular). */
 					$export_label = sprintf( esc_html__( 'Export %s', 'elementor' ), $template_labels['singular'] );
 				}
 
@@ -1087,11 +1097,13 @@ class Source_Local extends Source_Base {
 		$description = esc_html__( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' );
 
 		if ( $template_labels['plural'] ) {
+			/* translators: %s: Template label (plural). */
 			$import_label = sprintf( esc_html__( 'Import %s', 'elementor' ), $template_labels['plural'] );
 		}
 
 		if ( $template_labels['singular'] && $template_labels['plural'] ) {
 			$description = sprintf(
+				/* translators: 1: Template label (singular). 2: Template label (plural). */
 				esc_html__( 'Choose an Elementor %1$s JSON file or a .zip archive of Elementor %2$s, and add them to the list of %2$s available in your library.', 'elementor' ),
 				$template_labels['singular'],
 				$template_labels['plural']
@@ -1459,6 +1471,7 @@ class Source_Local extends Source_Base {
 
 		if ( $type_labels['plural'] ) {
 			$description = sprintf(
+				/* translators: %s: Template label (plural). */
 				esc_html__( 'Add %s and reuse them across your website. Easily export and import them to any other project, for an optimized workflow.', 'elementor' ),
 				$type_labels['plural']
 			);
@@ -1698,9 +1711,8 @@ class Source_Local extends Source_Base {
 			'singular' => '',
 			'plural' => '',
 		];
-
-
-		$template_type = filter_input( INPUT_GET, self::TAXONOMY_TYPE_SLUG, FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
+		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is not required to retrieve the value.
+		$template_type = Utils::get_super_global_value( $_REQUEST, self::TAXONOMY_TYPE_SLUG ) ?? '';
 
 		if ( $template_type ) {
 			return $this->get_template_labels_by_type( $template_type );
