@@ -31,12 +31,40 @@
 		a:not(.button),
 		.eps-button {
 			color: var(--e-one-palette-text-primary);
-			text-decoration: none;
+			text-decoration: underline;
 
 			&:hover,
 			&:focus {
-				text-decoration: underline;
+				color: var(--e-one-palette-primary-dark);
 			}
+		}
+	}
+
+	#elementor-publish {
+		.elementor-repeater-add {
+			background-color: var(--e-one-palette-primary-main);
+			border-color: var(--e-one-palette-primary-main);
+			color: var(--e-one-palette-primary-contrastText);
+
+			&:hover,
+			&:focus {
+				background-color: var(--e-one-palette-primary-dark);
+				border-color: var(--e-one-palette-primary-dark);
+			}
+		}
+	}
+
+	.e-site-editor-conditions__add-button {
+		background-color: var(--e-one-palette-primary-main) !important;
+		border-color: var(--e-one-palette-primary-main) !important;
+		color: var(--e-one-palette-primary-contrastText) !important;
+		text-decoration: none !important;
+
+		&:hover,
+		&:focus {
+			background-color: var(--e-one-palette-primary-dark) !important;
+			border-color: var(--e-one-palette-primary-dark) !important;
+			text-decoration: none !important;
 		}
 	}
 
