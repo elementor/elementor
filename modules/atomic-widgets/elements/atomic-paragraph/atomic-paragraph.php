@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_V2_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -17,7 +18,9 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Inline_Editing_Control;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -47,13 +50,20 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
+		$use_html_v2 = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_HTML_V2 );
+		$paragraph_prop_type = $use_html_v2
+			? Html_V2_Prop_Type::make()->default( [
+				'content' => __( 'Type your paragraph here', 'elementor' ),
+				'children' => [],
+			] )
+			: Html_Prop_Type::make()->default( __( 'Type your paragraph here', 'elementor' ) );
+		$paragraph_prop_type->description( 'The text content of the paragraph.' );
+
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
-			'paragraph' => Html_Prop_Type::make()
-				->default( __( 'Type your paragraph here', 'elementor' ) )
-				->description( 'The text content of the paragraph.' ),
+			'paragraph' => $paragraph_prop_type,
 
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'p', 'span' ] )

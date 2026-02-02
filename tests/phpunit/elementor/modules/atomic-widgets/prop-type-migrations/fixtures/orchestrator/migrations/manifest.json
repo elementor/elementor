@@ -38,6 +38,11 @@
       "toType": "html",
       "path": "string-to-html.json"
     },
+    "html-to-html-v2": {
+      "fromType": "html",
+      "toType": "html-v2",
+      "path": "html-to-html-v2.json"
+    },
     "number-to-string": {
       "fromType": "number",
       "toType": "string",

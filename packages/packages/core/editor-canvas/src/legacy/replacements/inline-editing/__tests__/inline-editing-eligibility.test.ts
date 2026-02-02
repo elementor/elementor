@@ -31,6 +31,15 @@ describe( 'isInlineEditingAllowed', () => {
 		).toBe( true );
 	} );
 
+	it( 'should allow inline editing for html-v2 prop values', () => {
+		expect(
+			isInlineEditingAllowed( {
+				rawValue: { $$type: 'html-v2', value: { content: 'Hello', children: [] } },
+				propTypeFromSchema: null,
+			} )
+		).toBe( true );
+	} );
+
 	it.each( [ 'dynamic', 'overridable', 'override' ] )( 'should disallow non-core wrappers: %s', ( $$type ) => {
 		expect(
 			isInlineEditingAllowed( {
@@ -45,6 +54,15 @@ describe( 'isInlineEditingAllowed', () => {
 			isInlineEditingAllowed( {
 				rawValue: undefined,
 				propTypeFromSchema: createPlainPropType( 'html' ),
+			} )
+		).toBe( true );
+	} );
+
+	it( 'should allow when value is unset but schema key is html-v2', () => {
+		expect(
+			isInlineEditingAllowed( {
+				rawValue: undefined,
+				propTypeFromSchema: createPlainPropType( 'html-v2' ),
 			} )
 		).toBe( true );
 	} );
@@ -72,6 +90,15 @@ describe( 'isInlineEditingAllowed', () => {
 			isInlineEditingAllowed( {
 				rawValue: undefined,
 				propTypeFromSchema: createUnionPropType( [ 'dynamic', 'html' ] ),
+			} )
+		).toBe( true );
+	} );
+
+	it( 'should allow when value is unset and union schema includes html-v2', () => {
+		expect(
+			isInlineEditingAllowed( {
+				rawValue: undefined,
+				propTypeFromSchema: createUnionPropType( [ 'dynamic', 'html-v2' ] ),
 			} )
 		).toBe( true );
 	} );

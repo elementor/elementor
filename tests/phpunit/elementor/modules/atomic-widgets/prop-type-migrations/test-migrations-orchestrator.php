@@ -5,6 +5,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\AtomicWidgets\PropTypeMigrat
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_V2_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -141,6 +142,29 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertTrue( $has_changes, 'Changes expected for widget-level migration' );
+		$this->assertMatchesJsonSnapshot( $settings );
+	}
+
+	public function test_html_to_html_v2_migration() {
+		// Arrange
+		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
+
+		$settings = [
+			'title' => [
+				'$$type' => 'html',
+				'value' => 'Hello <strong>World</strong>',
+			],
+		];
+
+		$schema = [
+			'title' => Html_V2_Prop_Type::make(),
+		];
+
+		// Act
+		$has_changes = $orchestrator->migrate_element( $settings, $schema, 'e-heading' );
+
+		// Assert
+		$this->assertTrue( $has_changes, 'Changes expected for html to html-v2 migration' );
 		$this->assertMatchesJsonSnapshot( $settings );
 	}
 

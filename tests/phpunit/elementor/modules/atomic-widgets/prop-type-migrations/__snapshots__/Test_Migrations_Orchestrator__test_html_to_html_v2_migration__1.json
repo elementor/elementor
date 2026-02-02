@@ -1,0 +1,6 @@
+{
+    "title": {
+        "$$type": "html-v2",
+        "value": "Hello <strong>World</strong>"
+    }
+}

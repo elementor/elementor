@@ -5,6 +5,11 @@
       "fromType": "string",
       "toType": "html",
       "path": "operations/string-to-html.json"
+    },
+    "html-to-html-v2": {
+      "fromType": "html",
+      "toType": "html-v2",
+      "path": "operations/html-to-html-v2.json"
     }
   }
 }
