@@ -24,7 +24,7 @@ class Kit_Stylesheet_Extended {
 
 		$v3_id = 'v4-' . $label;
 		$type = $variable['type'];
-		$global_type = $this->get_v3_global_type( $type );
+		$global_type = $this->get_v3_global_type( $type ?? '' );
 
 		return $css . " --e-global-{$global_type}-{$v3_id}:var(--{$label});";
 	}
