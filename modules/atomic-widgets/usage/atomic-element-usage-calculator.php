@@ -4,6 +4,9 @@ namespace Elementor\Modules\AtomicWidgets\Usage;
 
 use Elementor\Modules\AtomicWidgets\Controls\Base\Atomic_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Utils\Utils as Atomic_Utils;
 use Elementor\Modules\Usage\Contracts\Element_Usage_Calculator;
@@ -149,8 +152,18 @@ class Atomic_Element_Usage_Calculator implements Element_Usage_Calculator {
 
 		foreach ( $style_props as $prop_name => $value ) {
 			$section = $this->style_sections[ $prop_name ]['section'] ?? 'unknown';
-			$this->increment_control( $usage, $type, self::TAB_STYLE, $section, $prop_name );
-			$count++;
+			$prop_type = $this->style_sections[ $prop_name ]['prop_type'] ?? null;
+
+			if ( $prop_type ) {
+				$decomposed = $this->decompose_style_props( $prop_name, $value, $prop_type, $section );
+				foreach ( $decomposed as $control_data ) {
+					$this->increment_control( $usage, $type, self::TAB_STYLE, $control_data['section'], $control_data['control'] );
+					$count++;
+				}
+			} else {
+				$this->increment_control( $usage, $type, self::TAB_STYLE, $section, $prop_name );
+				$count++;
+			}
 		}
 
 		return $count;
@@ -217,5 +230,60 @@ class Atomic_Element_Usage_Calculator implements Element_Usage_Calculator {
 		}
 
 		$usage[ $type ]['controls'][ $tab ][ $section ][ $control ]++;
+	}
+
+	private function decompose_style_props( string $prop_name, $value, $prop_type, string $section, string $prefix = '' ): array {
+		$changed = [];
+		$control_name = $prefix ? "{$prefix}-{$prop_name}" : $prop_name;
+		$kind = $prop_type::$KIND;
+
+		if ( ! $value ) {
+			return $changed;
+		}
+
+		switch ( $kind ) {
+			case 'plain':
+				$changed[] = [
+					'section' => $section,
+					'control' => $control_name,
+				];
+				break;
+
+			case 'object':
+				$prop_shape = $prop_type->get_shape();
+				if ( isset( $value['value'] ) && is_array( $value['value'] ) ) {
+					foreach ( $value['value'] as $key => $nested_value ) {
+						if ( isset( $prop_shape[ $key ] ) ) {
+							$nested = $this->decompose_style_props( $key, $nested_value, $prop_shape[ $key ], $section, $control_name );
+							$changed = array_merge( $changed, $nested );
+						}
+					}
+				}
+				break;
+
+			case 'array':
+				$item_type = $prop_type->get_item_type();
+				if ( isset( $value['value'] ) && is_array( $value['value'] ) ) {
+					foreach ( $value['value'] as $item ) {
+						$item_name = $item['$$type'] ?? 'item';
+						$item_prop_type = $item_type->get_prop_type( $item_name );
+						if ( $item_prop_type ) {
+							$nested = $this->decompose_style_props( $item_name, $item, $item_prop_type, $section, $control_name );
+							$changed = array_merge( $changed, $nested );
+						}
+					}
+				}
+				break;
+
+			case 'union':
+				$union_prop_type = $prop_type->get_prop_type_from_value( $value );
+				if ( $union_prop_type ) {
+					$nested = $this->decompose_style_props( $prop_name, $value, $union_prop_type, $section, $prefix );
+					$changed = array_merge( $changed, $nested );
+				}
+				break;
+		}
+
+		return $changed;
 	}
 }

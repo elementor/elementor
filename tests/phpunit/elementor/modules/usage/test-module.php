@@ -618,7 +618,7 @@ class Test_Module extends Elementor_Test_Base {
 		// Arrange.
 		$document = $this->factory()->documents->publish_and_get( [
 			'meta_input' => [
-				'_elementor_data' => self::get_atomic_widget_payload_with_complex_styles(),
+				'_elementor_data' => self::get_atomic_widget_payload_with_background_overlay(),
 			]
 		] );
 
@@ -629,9 +629,13 @@ class Test_Module extends Elementor_Test_Base {
 		$style_controls = $usage['e-heading']['controls']['Style'];
 		$this->assertArrayHasKey( 'Background', $style_controls );
 
-		// The background prop should be counted.
+		// The background overlay has 3 items (2 images + 1 color), all should be counted.
 		$background_controls = $style_controls['Background'];
-		$this->assertArrayHasKey( 'background', $background_controls );
+		$this->assertTrue(
+			! empty( $background_controls['background-background-overlay-background-image-overlay-image-size'] ) ||
+			! empty( $background_controls['background-background-overlay-background-color-overlay-color'] ),
+			'Background overlay items should be counted'
+		);
 	}
 
 	public function test_atomic_widget_usage_counter_with_custom_css() {
@@ -864,6 +868,136 @@ class Test_Module extends Elementor_Test_Base {
 						'version' => '0.0',
 					],
 				],
+			],
+		];
+	}
+
+	private static function get_atomic_widget_payload_with_background_overlay() {
+		return [
+			[
+				'id' => '736802e',
+				'elType' => 'container',
+				'settings' => [],
+				'elements' => [
+					[
+						'id' => 'bf895cd',
+						'elType' => 'widget',
+						'settings' => [
+							'classes' => [
+								'$$type' => 'classes',
+								'value' => [
+									'e-bf895cd-acc0fb9',
+									'g-2095820',
+								],
+							],
+							'tag' => [
+								'$$type' => 'string',
+								'value' => 'h3',
+							],
+							'title' => [
+								'$$type' => 'string',
+								'value' => 'This is a title 123',
+							],
+						],
+						'elements' => [],
+						'widgetType' => 'e-heading',
+						'styles' => [
+							'e-bf895cd-acc0fb9' => [
+								'id' => 'e-bf895cd-acc0fb9',
+								'label' => 'local',
+								'type' => 'class',
+								'variants' => [
+									[
+										'meta' => [
+											'breakpoint' => 'desktop',
+											'state' => null,
+										],
+										'props' => [
+											'color' => [
+												'$$type' => 'color',
+												'value' => '#15ec2c',
+											],
+											'background' => [
+												'$$type' => 'background',
+												'value' => [
+													'color' => [
+														'$$type' => 'color',
+														'value' => '#d01414',
+													],
+													'background-overlay' => [
+														'$$type' => 'background-overlay',
+														'value' => [
+															[
+																'$$type' => 'background-image-overlay',
+																'value' => [
+																	'image' => [
+																		'$$type' => 'image',
+																		'value' => [
+																			'src' => [
+																				'$$type' => 'image-src',
+																				'value' => [
+																					'id' => [
+																						'$$type' => 'image-attachment-id',
+																						'value' => 108,
+																					],
+																					'url' => null,
+																				],
+																			],
+																			'size' => [
+																				'$$type' => 'string',
+																				'value' => 'large',
+																			],
+																		],
+																	],
+																],
+															],
+															[
+																'$$type' => 'background-image-overlay',
+																'value' => [
+																	'image' => [
+																		'$$type' => 'image',
+																		'value' => [
+																			'src' => [
+																				'$$type' => 'image-src',
+																				'value' => [
+																					'id' => [
+																						'$$type' => 'image-attachment-id',
+																						'value' => 12,
+																					],
+																					'url' => null,
+																				],
+																			],
+																			'size' => [
+																				'$$type' => 'string',
+																				'value' => 'large',
+																			],
+																		],
+																	],
+																],
+															],
+															[
+																'$$type' => 'background-color-overlay',
+																'value' => [
+																	'color' => [
+																		'$$type' => 'color',
+																		'value' => '#21a4b5cf',
+																	],
+																],
+															],
+														],
+													],
+												],
+											],
+										],
+									],
+								],
+							],
+						],
+						'editor_settings' => [],
+						'version' => '0.0',
+					],
+				],
+				'isInner' => false,
 			],
 		];
 	}
