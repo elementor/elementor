@@ -194,7 +194,6 @@ class Test_Local extends Elementor_Test_Base {
 	}
 
 	public function test_replace_admin_heading_updates_labels_for_template_type() {
-		// Arrange
 		$this->act_as_admin();
 
 		$original_documents_manager = Plugin::$instance->documents;
@@ -213,18 +212,14 @@ class Test_Local extends Elementor_Test_Base {
 		$typenow = Source_Local::CPT;
 		$post_type_object = get_post_type_object( Source_Local::CPT );
 
-		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is not required to retrieve the value.
-		$_REQUEST[ Source_Local::TAXONOMY_TYPE_SLUG ] = Extended_Library_Document::get_type();
+		$_GET[ Source_Local::TAXONOMY_TYPE_SLUG ] = Extended_Library_Document::get_type();
 
-		// Act
 		$this->source->replace_admin_heading();
 
-		// Assert
 		$this->assertEquals( 'Add New Extended Library Document', $post_type_object->labels->add_new );
 		$this->assertEquals( 'No Extended Library Documents found', $post_type_object->labels->not_found );
 
-		// Cleanup
-		unset( $_REQUEST[ Source_Local::TAXONOMY_TYPE_SLUG ] );
+		unset( $_GET[ Source_Local::TAXONOMY_TYPE_SLUG ] );
 		$pagenow = $original_pagenow;
 		$typenow = $original_typenow;
 		$post_type_object = $original_post_type_object;
@@ -232,7 +227,6 @@ class Test_Local extends Elementor_Test_Base {
 	}
 
 	public function test_admin_import_template_form_uses_template_labels() {
-		// Arrange
 		$this->act_as_admin();
 		set_current_screen( 'edit-elementor_library' );
 
@@ -243,26 +237,21 @@ class Test_Local extends Elementor_Test_Base {
 			Extended_Library_Document::class
 		);
 
-		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is not required to retrieve the value.
-		$_REQUEST[ Source_Local::TAXONOMY_TYPE_SLUG ] = Extended_Library_Document::get_type();
+		$_GET[ Source_Local::TAXONOMY_TYPE_SLUG ] = Extended_Library_Document::get_type();
 
-		// Act
 		ob_start();
 		$this->source->admin_import_template_form();
 		$output = ob_get_clean();
 
-		// Assert
 		$this->assertStringContainsString( 'Import Extended Library Documents', $output );
 		$this->assertStringContainsString( 'Elementor Extended Library Document JSON file', $output );
 		$this->assertStringContainsString( 'Elementor Extended Library Documents', $output );
 
-		// Cleanup
-		unset( $_REQUEST[ Source_Local::TAXONOMY_TYPE_SLUG ] );
+		unset( $_GET[ Source_Local::TAXONOMY_TYPE_SLUG ] );
 		Plugin::$instance->documents = $original_documents_manager;
 	}
 
 	public function test_post_row_actions_uses_template_label_for_export() {
-		// Arrange
 		$this->act_as_admin();
 		set_current_screen( 'edit-elementor_library' );
 
@@ -279,15 +268,12 @@ class Test_Local extends Elementor_Test_Base {
 		] );
 		update_post_meta( $template_id, Document::TYPE_META_KEY, Extended_Library_Document::get_type() );
 
-		// Act
 		$post = get_post( $template_id );
 		$actions = $this->source->post_row_actions( [], $post );
 
-		// Assert
 		$this->assertArrayHasKey( 'export-template', $actions );
 		$this->assertStringContainsString( 'Export Extended Library Document', $actions['export-template'] );
 
-		// Cleanup
 		Plugin::$instance->documents = $original_documents_manager;
 	}
 }

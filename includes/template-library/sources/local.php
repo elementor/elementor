@@ -1712,7 +1712,7 @@ class Source_Local extends Source_Base {
 			'plural' => '',
 		];
 
-		$template_type = filter_input( INPUT_GET, self::TAXONOMY_TYPE_SLUG, FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		$template_type = Utils::get_super_global_value( $_GET, self::TAXONOMY_TYPE_SLUG );
 
 		if ( $template_type ) {
 			return $this->get_template_labels_by_type( $template_type );
@@ -1890,10 +1890,8 @@ class Source_Local extends Source_Base {
 	}
 
 	public function get_current_tab_group() {
-		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
-		$current_tabs_group = Utils::get_super_global_value( $_REQUEST, 'tabs_group' ) ?? '';
-		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
-		$type_slug = Utils::get_super_global_value( $_REQUEST, self::TAXONOMY_TYPE_SLUG );
+		$current_tabs_group = Utils::get_super_global_value( $_GET, 'tabs_group' ) ?? '';
+		$type_slug = Utils::get_super_global_value( $_GET, self::TAXONOMY_TYPE_SLUG );
 
 		if ( $type_slug ) {
 			$doc_type = Plugin::$instance->documents->get_document_type( $type_slug, '' );
