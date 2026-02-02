@@ -1,5 +1,5 @@
 import { useEffect, useRef } from '@wordpress/element';
-import getIsRTL from '../shared/get-is-rtl';
+import isRTL from '../shared/is-rtl';
 
 const ADMIN_MENU_WRAP_ID = 'adminmenuwrap';
 const WPCONTENT_ID = 'wpcontent';
@@ -17,7 +17,7 @@ export const useAdminMenuOffset = () => {
 		}
 
 		const updateOffset = () => {
-			const isRTL = getIsRTL();
+			const isRTL = isRTL();
 			const rect = adminMenuWrap.getBoundingClientRect();
 
 			const offset = isRTL ? document.documentElement.clientWidth - rect.left : rect.right;

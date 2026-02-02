@@ -1,10 +1,10 @@
 import { Tooltip, ListItem } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import { MenuItemButton, MenuIcon } from '../shared';
-import getIsRTL from '../shared/get-is-rtl';
+import isRTL from '../shared/is-rtl';
 
 const CollapsedMenuItemTooltip = ( { item, isActive, onClick, IconComponent, onMouseEnter } ) => {
-	const isRtl = getIsRTL();
+	const isRtl = isRTL();
 
 	return (
 		<ListItem disablePadding dense disableGutters onMouseEnter={ onMouseEnter }>
