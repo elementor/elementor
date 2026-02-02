@@ -40,37 +40,6 @@ class Test_Filter_Plugins extends PHPUnit_TestCase {
 
 	private function mock_home_screen_data() {
 		return [
-			'add_ons' => [
-				'repeater' => [
-					[
-						'Name' => 'Elementor',
-						'Version' => '3.0.0',
-						'file_path' => 'elementor/elementor.php',
-						'url' => 'https://elementor.com',
-						'type' => 'wporg',
-					],
-					[
-						'Name' => 'Elementor Pro',
-						'Version' => '3.0.0',
-						'file_path' => 'elementor-pro/elementor-pro.php',
-						'url' => 'https://elementor.com',
-						'type' => 'ecom',
-					],
-					[
-						'Name' => 'Something Else',
-						'Version' => '3.0.0',
-						'file_path' => 'some/thing.php',
-						'url' => 'https://something.else',
-						'type' => 'wporg',
-					],
-					[
-						'Name' => 'Elementor AI',
-						'Version' => '3.0.0',
-						'url' => 'elementor-ai/elementor-ai.php',
-						'type' => 'link',
-					],
-				],
-			],
 			'misc' => [
 				'Name' => 'Microsoft',
 				'Version' => 'Windows',
@@ -80,33 +49,6 @@ class Test_Filter_Plugins extends PHPUnit_TestCase {
 
 	private function mock_home_screen_data_transformed() {
 		return [
-			'add_ons' => [
-				'repeater' => [
-					[
-						'Name' => 'Elementor Pro',
-						'Version' => '3.0.0',
-						'file_path' => 'elementor-pro/elementor-pro.php',
-						'url' => 'elementor-pro/elementor-pro.php?activate=true&nonce=123',
-						'type' => 'ecom',
-						'button_label' => 'Activate',
-						'target' => '_self'
-					],
-					[
-						'Name' => 'Something Else',
-						'Version' => '3.0.0',
-						'file_path' => 'some/thing.php',
-						'url' => 'some/thing.php?nonce=123',
-						'type' => 'wporg',
-						'target' => '_self'
-					],
-					[
-						'Name' => 'Elementor AI',
-						'Version' => '3.0.0',
-						'url' => 'elementor-ai/elementor-ai.php',
-						'type' => 'link'
-					],
-				],
-			],
 			'misc' => [
 				'Name' => 'Microsoft',
 				'Version' => 'Windows',
