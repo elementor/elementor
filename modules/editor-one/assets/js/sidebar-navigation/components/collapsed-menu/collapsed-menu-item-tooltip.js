@@ -4,11 +4,11 @@ import { MenuItemButton, MenuIcon } from '../shared';
 import isRTL from '../shared/is-rtl';
 
 const CollapsedMenuItemTooltip = ( { item, isActive, onClick, IconComponent, onMouseEnter } ) => {
-	const isRtl = isRTL();
+	const isRtlLanguage = isRTL();
 
 	return (
 		<ListItem disablePadding dense disableGutters onMouseEnter={ onMouseEnter }>
-			<Tooltip title={ item.label } placement={ isRtl ? 'left' : 'right' }>
+			<Tooltip title={ item.label } placement={ isRtlLanguage ? 'left' : 'right' }>
 				<MenuItemButton onClick={ onClick } selected={ isActive } sx={ { height: 36 } }>
 					<MenuIcon>
 						<IconComponent />

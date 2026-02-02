@@ -17,10 +17,10 @@ export const useAdminMenuOffset = () => {
 		}
 
 		const updateOffset = () => {
-			const isRTL = isRTL();
+			const isRtlLanguage = isRTL();
 			const rect = adminMenuWrap.getBoundingClientRect();
 
-			const offset = isRTL ? document.documentElement.clientWidth - rect.left : rect.right;
+			const offset = isRtlLanguage ? document.documentElement.clientWidth - rect.left : rect.right;
 
 			wpcontent.style.setProperty( '--editor-one-sidebar-left-offset', `${ offset }px` );
 		};
