@@ -10,6 +10,7 @@ class Adapter {
 	const VERSION_V1 = 1;
 	const VERSION_V2 = 2;
 	const ITEMS_TYPE = 'interactions-array';
+	const TIMING_PROPERTIES = [ 'duration', 'delay' ];
 
 	public static function wrap_for_db( $interactions ) {
 		$decoded = self::decode( $interactions );
@@ -161,7 +162,7 @@ class Adapter {
 	 * @param mixed $data The data to clean.
 	 * @return mixed The cleaned data without $$type markers.
 	 */
-	public static function clean_prop_types( $data ) {
+	public static function clean_prop_types( $data, $parent_key = null ) {
 		if ( ! is_array( $data ) ) {
 			return $data;
 		}
@@ -169,16 +170,38 @@ class Adapter {
 		// If this is a PropType object (has $$type), extract and clean its value
 		if ( isset( $data['$$type'] ) ) {
 			$value = $data['value'] ?? null;
-			return self::clean_prop_types( $value );
+
+			if ( 'size' === $data['$$type'] && in_array( $parent_key, self::TIMING_PROPERTIES, true ) ) {
+				return self::size_to_milliseconds( $value );
+			}
+
+			return self::clean_prop_types( $value, $parent_key );
 		}
 
 		// Otherwise, recursively clean all array elements
 		$cleaned = [];
 		foreach ( $data as $key => $value ) {
-			$cleaned[ $key ] = self::clean_prop_types( $value );
+			$cleaned[ $key ] = self::clean_prop_types( $value, $key );
 		}
 
 		return $cleaned;
+	}
+
+	private static function size_to_milliseconds( $size_value ) {
+		if ( ! is_array( $size_value ) || ! isset( $size_value['size'] ) ) {
+			return $size_value;
+		}
+		
+		$size = $size_value['size'];
+		$unit = $size_value['unit'] ?? 'ms';
+		
+		// Convert seconds to milliseconds
+		if ( 's' === $unit ) {
+			return $size * 1000;
+		}
+		
+		// Already in milliseconds
+		return $size;
 	}
 
 	/**
