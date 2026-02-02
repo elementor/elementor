@@ -4,7 +4,7 @@
     'default-active-tab': default_active_tab_id,
 } %}
 {% set classes = ['e-con', 'e-atomic-element', base_styles.base] | merge(settings.classes | default([])) | join(' ') %}
-<div class="{{ classes }} {{ editor_classes | default('') }}" data-id="{{ id }}" data-element_type="{{ type }}" data-e-type="{{ type }}" data-interaction-id="{{ id }}" data-interactions="{{ interactions | json_encode | e('html_attr') }}" x-data="eTabs{{ id }}" data-e-settings="{{ e_settings | json_encode | e('html_attr') }}" {{ editor_attributes | default('') | raw }}>
+<div class="{{ classes }} {{ editor_classes | default('') }}" data-id="{{ id }}" data-element_type="{{ type }}" data-e-type="{{ type }}" data-interaction-id="{{ id }}" x-data="eTabs{{ id }}" data-e-settings="{{ e_settings | json_encode | e('html_attr') }}" {{ editor_attributes | default('') | raw }}>
     <!-- elementor-children-placeholder -->
 </div>
 		
