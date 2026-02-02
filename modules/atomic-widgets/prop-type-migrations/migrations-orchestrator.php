@@ -192,11 +192,11 @@ class Migrations_Orchestrator {
 			if ( 'settings' === $context['key'] && isset( $context['parent'] ) ) {
 				return $this->get_settings_schema( $context['parent'] );
 			}
-	
+
 			if ( 'props' === $context['key'] ) {
 				return Style_Schema::get();
 			}
-	
+
 			if ( 'interactions' === $context['key'] ) {
 				return Interactions_Schema::get();
 			}

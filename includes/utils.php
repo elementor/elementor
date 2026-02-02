@@ -30,6 +30,7 @@ class Utils {
 		'article',
 		'aside',
 		'button',
+		'form',
 		'div',
 		'footer',
 		'h1',
