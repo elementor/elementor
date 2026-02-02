@@ -1711,8 +1711,8 @@ class Source_Local extends Source_Base {
 			'singular' => '',
 			'plural' => '',
 		];
-		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is not required to retrieve the value.
-		$template_type = Utils::get_super_global_value( $_REQUEST, self::TAXONOMY_TYPE_SLUG ) ?? '';
+
+		$template_type = filter_input( INPUT_GET, self::TAXONOMY_TYPE_SLUG, FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
 		if ( $template_type ) {
 			return $this->get_template_labels_by_type( $template_type );
