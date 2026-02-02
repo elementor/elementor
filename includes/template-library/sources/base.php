@@ -3,7 +3,6 @@ namespace Elementor\TemplateLibrary;
 
 use Elementor\Controls_Stack;
 use Elementor\Core\Settings\Page\Model;
-use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -450,7 +449,7 @@ abstract class Source_Base {
 	/**
 	 * @return array|\WP_Error
 	 */
-	public function import_template( $name, $path, $import_mode = Template_Library_Import_Export_Utils::IMPORT_MODE_MATCH_SITE ) {
+	public function import_template( $name, $path, $import_mode = 'match_site' ) {
 		return new \WP_Error( 'template_error', 'This source does not support import' );
 	}
 
@@ -482,22 +481,17 @@ abstract class Source_Base {
 			$content
 		);
 
-		$import_snapshots = apply_filters( 'elementor/template_library/import/snapshots', [], $data, $import_mode, $this );
-		if ( ! is_array( $import_snapshots ) ) {
-			$import_snapshots = [];
-		}
-
-		$global_classes_snapshot = $import_snapshots['global_classes'] ?? null;
-		$global_variables_snapshot = $import_snapshots['global_variables'] ?? null;
-
-		$import_result = Template_Library_Import_Export_Utils::apply_import_mode_to_content(
-			$content,
+		$import_result = apply_filters(
+			'elementor/template_library/import/process_content',
+			[ 'content' => $content ],
 			$import_mode,
-			$global_classes_snapshot,
-			$global_variables_snapshot
+			$data,
+			$this
 		);
 
-		$content = $import_result['content'];
+		if ( is_array( $import_result ) && isset( $import_result['content'] ) ) {
+			$content = $import_result['content'];
+		}
 
 		$page_settings = [];
 

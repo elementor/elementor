@@ -48,14 +48,27 @@ class Module extends BaseModule {
 			( new Import_Export() )->register_hooks();
 			( new Import_Export_Customization() )->register_hooks();
 			( new Global_Classes_Database_Updater() )->register();
-			add_filter( 'elementor/template_library/import/snapshots', function ( array $snapshots, array $data ) {
-				$snapshot = Template_Library_Global_Classes::prepare_import_snapshot( $data );
-				if ( null !== $snapshot ) {
-					$snapshots['global_classes'] = $snapshot;
-				}
 
-				return $snapshots;
-			}, 10, 2 );
+			add_filter(
+				'elementor/template_library/export/build_snapshots',
+				[ Template_Library_Global_Classes::class, 'add_global_classes_snapshot' ],
+				10,
+				4
+			);
+
+			add_filter(
+				'elementor/template_library/get_data/extract_snapshots',
+				[ Template_Library_Global_Classes::class, 'extract_global_classes_from_data' ],
+				10,
+				3
+			);
+
+			add_filter(
+				'elementor/template_library/import/process_content',
+				[ Template_Library_Global_Classes::class, 'process_global_classes_import' ],
+				20,
+				3
+			);
 		}
 	}
 

@@ -134,14 +134,33 @@ class Hooks {
 	}
 
 	private function register_template_library_import() {
-		add_filter( 'elementor/template_library/import/snapshots', function ( array $snapshots, array $data ) {
-			$snapshot = Template_Library_Variables::prepare_import_snapshot( $data );
-			if ( null !== $snapshot ) {
-				$snapshots['global_variables'] = $snapshot;
-			}
+		add_filter(
+			'elementor/template_library/export/build_snapshots',
+			[ Template_Library_Variables::class, 'add_variables_snapshot' ],
+			20,
+			4
+		);
 
-			return $snapshots;
-		}, 10, 2 );
+		add_filter(
+			'elementor/template_library/get_data/extract_snapshots',
+			[ Template_Library_Variables::class, 'extract_variables_from_data' ],
+			10,
+			3
+		);
+
+		add_filter(
+			'elementor/template_library/import/process_content',
+			[ Template_Library_Variables::class, 'process_variables_import' ],
+			10,
+			3
+		);
+
+		add_filter(
+			'elementor/global_classes/import/transform_snapshot',
+			[ Template_Library_Variables::class, 'transform_variables_in_classes_snapshot' ],
+			10,
+			4
+		);
 
 		return $this;
 	}

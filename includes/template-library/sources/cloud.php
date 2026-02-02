@@ -3,9 +3,6 @@ namespace Elementor\TemplateLibrary;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Exceptions;
-use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
-use Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes;
-use Elementor\Modules\Variables\Utils\Template_Library_Variables;
 use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
 use Elementor\Modules\CloudLibrary\Documents\Cloud_Template_Preview;
 use Elementor\Plugin;
@@ -84,12 +81,19 @@ class Source_Cloud extends Source_Base {
 			$data['page_settings'] = $decoded_data['page_settings'];
 		}
 
-		if ( ! empty( $decoded_data['global_classes'] ) && Template_Library_Import_Export_Utils::is_classes_feature_active() ) {
-			$data['global_classes'] = $decoded_data['global_classes'];
+		$snapshots = apply_filters(
+			'elementor/template_library/get_data/extract_snapshots',
+			[],
+			$decoded_data,
+			$data
+		);
+
+		if ( ! empty( $snapshots['global_classes'] ) ) {
+			$data['global_classes'] = $snapshots['global_classes'];
 		}
 
-		if ( ! empty( $decoded_data['global_variables'] ) && Template_Library_Import_Export_Utils::is_variables_feature_active() ) {
-			$data['global_variables'] = $decoded_data['global_variables'];
+		if ( ! empty( $snapshots['global_variables'] ) ) {
+			$data['global_variables'] = $snapshots['global_variables'];
 		}
 
 		// After the upload complete, set the elementor upload state back to false
@@ -118,51 +122,28 @@ class Source_Cloud extends Source_Base {
 			'page_settings' => $template_data['page_settings'],
 		];
 
-		// Embed Global Classes snapshot (only if used by the template).
-		if (
-			Template_Library_Import_Export_Utils::is_classes_feature_active() &&
-			is_array( $template_data['content'] ?? null )
-		) {
-			$snapshot = Template_Library_Global_Classes::build_snapshot_for_elements( $template_data['content'] );
-
-			/**
-			 * Filter embedded global classes snapshot for Template Library exports.
-			 *
-			 * @since 3.0.0
-			 *
-			 * @param array|null $snapshot
-			 * @param int        $template_id
-			 * @param array      $export_data
-			 */
-			$snapshot = apply_filters( 'elementor/template_library/export/global_classes_snapshot', $snapshot, 0, [
+		if ( is_array( $template_data['content'] ?? null ) ) {
+			$export_context = [
 				'content' => $template_data['content'],
 				'page_settings' => $template_data['page_settings'],
 				'title' => $template_data['title'] ?? '',
 				'type' => $template_data['type'] ?? '',
-			] );
+			];
 
-			if ( ! empty( $snapshot ) ) {
-				$content_payload['global_classes'] = $snapshot;
+			$snapshots = apply_filters(
+				'elementor/template_library/export/build_snapshots',
+				[],
+				$template_data['content'],
+				0,
+				$export_context
+			);
+
+			if ( ! empty( $snapshots['global_classes'] ) ) {
+				$content_payload['global_classes'] = $snapshots['global_classes'];
 			}
-		}
 
-		// Embed Global Variables snapshot (only if used by the template or global classes).
-		if (
-			Template_Library_Import_Export_Utils::is_variables_feature_active() &&
-			is_array( $template_data['content'] ?? null )
-		) {
-			$global_classes_for_variables = $content_payload['global_classes'] ?? null;
-			$variables_snapshot = Template_Library_Variables::build_snapshot_for_elements( $template_data['content'], $global_classes_for_variables );
-
-			$variables_snapshot = apply_filters( 'elementor/template_library/export/global_variables_snapshot', $variables_snapshot, 0, [
-				'content' => $template_data['content'],
-				'page_settings' => $template_data['page_settings'],
-				'title' => $template_data['title'] ?? '',
-				'type' => $template_data['type'] ?? '',
-			] );
-
-			if ( ! empty( $variables_snapshot ) ) {
-				$content_payload['global_variables'] = $variables_snapshot;
+			if ( ! empty( $snapshots['global_variables'] ) ) {
+				$content_payload['global_variables'] = $snapshots['global_variables'];
 			}
 		}
 
@@ -258,42 +239,25 @@ class Source_Cloud extends Source_Base {
 			'type' => $data['templateType'],
 		];
 
-		$classes_snapshot = $data['content']['global_classes'] ?? null;
+		$existing_snapshots = [
+			'global_classes' => $data['content']['global_classes'] ?? null,
+			'global_variables' => $data['content']['global_variables'] ?? null,
+		];
 
-		if ( Template_Library_Import_Export_Utils::is_classes_feature_active() ) {
-			if ( empty( $classes_snapshot ) && is_array( $export_data['content'] ?? null ) ) {
-				$classes_snapshot = Template_Library_Global_Classes::build_snapshot_for_elements( $export_data['content'] );
-			}
+		$snapshots = apply_filters(
+			'elementor/template_library/export/build_snapshots',
+			$existing_snapshots,
+			$export_data['content'],
+			(int) ( $data['id'] ?? 0 ),
+			$export_data
+		);
 
-			/**
-			 * Filter embedded global classes snapshot for Template Library exports.
-			 *
-			 * @since 3.0.0
-			 *
-			 * @param array|null $snapshot
-			 * @param int        $template_id
-			 * @param array      $export_data
-			 */
-			$classes_snapshot = apply_filters( 'elementor/template_library/export/global_classes_snapshot', $classes_snapshot, (int) ( $data['id'] ?? 0 ), $export_data );
+		if ( ! empty( $snapshots['global_classes'] ) ) {
+			$export_data['global_classes'] = $snapshots['global_classes'];
 		}
 
-		if ( ! empty( $classes_snapshot ) ) {
-			$export_data['global_classes'] = $classes_snapshot;
-		}
-
-		$variables_snapshot = $data['content']['global_variables'] ?? null;
-
-		if ( Template_Library_Import_Export_Utils::is_variables_feature_active() ) {
-			if ( empty( $variables_snapshot ) && is_array( $export_data['content'] ?? null ) ) {
-				$global_classes_for_variables = $export_data['global_classes'] ?? null;
-				$variables_snapshot = Template_Library_Variables::build_snapshot_for_elements( $export_data['content'], $global_classes_for_variables );
-			}
-
-			$variables_snapshot = apply_filters( 'elementor/template_library/export/global_variables_snapshot', $variables_snapshot, (int) ( $data['id'] ?? 0 ), $export_data );
-		}
-
-		if ( ! empty( $variables_snapshot ) ) {
-			$export_data['global_variables'] = $variables_snapshot;
+		if ( ! empty( $snapshots['global_variables'] ) ) {
+			$export_data['global_variables'] = $snapshots['global_variables'];
 		}
 
 		return [

@@ -21,9 +21,6 @@ use Elementor\Core\Isolation\Elementor_Adapter_Interface;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Editor_One_Saved_Templates_Menu;
 use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Editor_One_Templates_Menu;
-use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
-use Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes;
-use Elementor\Modules\Variables\Utils\Template_Library_Variables;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -776,24 +773,20 @@ class Source_Local extends Source_Base {
 		}
 
 		if ( ! empty( $content ) ) {
-			if ( Template_Library_Import_Export_Utils::is_classes_feature_active() ) {
-				$class_ids = Template_Library_Global_Classes::extract_used_class_ids_from_elements( $content );
-				if ( ! empty( $class_ids ) ) {
-					$snapshot = Template_Library_Global_Classes::build_snapshot_for_ids( $class_ids );
-					if ( $snapshot ) {
-						$data['global_classes'] = $snapshot;
-					}
-				}
+			$snapshots = apply_filters(
+				'elementor/template_library/export/build_snapshots',
+				[],
+				$content,
+				$template_id,
+				$data
+			);
+
+			if ( ! empty( $snapshots['global_classes'] ) ) {
+				$data['global_classes'] = $snapshots['global_classes'];
 			}
 
-			if ( Template_Library_Import_Export_Utils::is_variables_feature_active() ) {
-				$variable_ids = Template_Library_Variables::extract_used_variable_ids_from_elements( $content );
-				if ( ! empty( $variable_ids ) ) {
-					$snapshot = Template_Library_Variables::build_snapshot_for_ids( $variable_ids );
-					if ( $snapshot ) {
-						$data['global_variables'] = $snapshot;
-					}
-				}
+			if ( ! empty( $snapshots['global_variables'] ) ) {
+				$data['global_variables'] = $snapshots['global_variables'];
 			}
 		}
 
@@ -1588,36 +1581,20 @@ class Source_Local extends Source_Base {
 			'type' => self::get_template_type( $template_id ),
 		];
 
-		// Embed Global Classes snapshot (only if used by the template).
-		if ( Template_Library_Import_Export_Utils::is_classes_feature_active() ) {
-			$snapshot = Template_Library_Global_Classes::build_snapshot_for_elements( $content );
+		$snapshots = apply_filters(
+			'elementor/template_library/export/build_snapshots',
+			[],
+			$content,
+			$template_id,
+			$export_data
+		);
 
-			/**
-			 * Filter embedded global classes snapshot for Template Library exports.
-			 *
-			 * @since 3.0.0
-			 *
-			 * @param array|null $snapshot
-			 * @param int        $template_id
-			 * @param array      $export_data
-			 */
-			$snapshot = apply_filters( 'elementor/template_library/export/global_classes_snapshot', $snapshot, $template_id, $export_data );
-
-			if ( ! empty( $snapshot ) ) {
-				$export_data['global_classes'] = $snapshot;
-			}
+		if ( ! empty( $snapshots['global_classes'] ) ) {
+			$export_data['global_classes'] = $snapshots['global_classes'];
 		}
 
-		// Embed Global Variables snapshot (only if used by the template or global classes).
-		if ( Template_Library_Import_Export_Utils::is_variables_feature_active() ) {
-			$global_classes_for_variables = $export_data['global_classes'] ?? null;
-			$variables_snapshot = Template_Library_Variables::build_snapshot_for_elements( $content, $global_classes_for_variables );
-
-			$variables_snapshot = apply_filters( 'elementor/template_library/export/global_variables_snapshot', $variables_snapshot, $template_id, $export_data );
-
-			if ( ! empty( $variables_snapshot ) ) {
-				$export_data['global_variables'] = $variables_snapshot;
-			}
+		if ( ! empty( $snapshots['global_variables'] ) ) {
+			$export_data['global_variables'] = $snapshots['global_variables'];
 		}
 
 		return [
