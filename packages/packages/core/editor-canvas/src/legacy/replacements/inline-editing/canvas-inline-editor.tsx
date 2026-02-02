@@ -62,10 +62,8 @@ export const CanvasInlineEditor = ( {
 			.ProseMirror > * {
 				height: 100%;
 			}
-		.ProseMirror > button {
+		.${ EDITOR_WRAPPER_SELECTOR } .ProseMirror > button[contenteditable="true"] {
 			height: auto;
-			padding: inherit;
-			margin: inherit;
 			cursor: text;
 		}
 			` }
