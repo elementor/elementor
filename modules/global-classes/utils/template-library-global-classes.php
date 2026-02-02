@@ -2,11 +2,27 @@
 
 namespace Elementor\Modules\GlobalClasses\Utils;
 
+use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 class Template_Library_Global_Classes {
+
+	public static function prepare_import_snapshot( array $data ): ?array {
+		if ( ! Template_Library_Import_Export_Utils::is_classes_feature_active() ) {
+			return null;
+		}
+
+		$snapshot = $data['global_classes'] ?? null;
+
+		if ( empty( $snapshot ) || ! is_array( $snapshot ) ) {
+			return null;
+		}
+
+		return apply_filters( 'elementor/template_library/import/global_classes_snapshot', $snapshot, $data );
+	}
 
 	public static function extract_used_class_ids_from_elements( array $elements ): array {
 		return Template_Library_Global_Classes_Snapshot_Builder::extract_used_class_ids_from_elements( $elements );

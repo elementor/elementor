@@ -482,17 +482,21 @@ abstract class Source_Base {
 			$content
 		);
 
-		$snapshot = null;
-		if ( ! empty( $data['global_classes'] ) && is_array( $data['global_classes'] ) && Template_Library_Import_Export_Utils::is_classes_feature_active() ) {
-			$snapshot = apply_filters( 'elementor/template_library/import/global_classes_snapshot', $data['global_classes'], $data );
+		$import_snapshots = apply_filters( 'elementor/template_library/import/snapshots', [], $data, $import_mode, $this );
+		if ( ! is_array( $import_snapshots ) ) {
+			$import_snapshots = [];
 		}
 
-		$variables_snapshot = null;
-		if ( ! empty( $data['global_variables'] ) && is_array( $data['global_variables'] ) && Template_Library_Import_Export_Utils::is_variables_feature_active() ) {
-			$variables_snapshot = apply_filters( 'elementor/template_library/import/global_variables_snapshot', $data['global_variables'], $data );
-		}
+		$global_classes_snapshot = $import_snapshots['global_classes'] ?? null;
+		$global_variables_snapshot = $import_snapshots['global_variables'] ?? null;
 
-		$import_result = Template_Library_Import_Export_Utils::apply_import_mode_to_content( $content, $import_mode, $snapshot, $variables_snapshot );
+		$import_result = Template_Library_Import_Export_Utils::apply_import_mode_to_content(
+			$content,
+			$import_mode,
+			$global_classes_snapshot,
+			$global_variables_snapshot
+		);
+
 		$content = $import_result['content'];
 
 		$page_settings = [];

@@ -10,6 +10,7 @@ use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
+use Elementor\Modules\Variables\Utils\Template_Library_Variables;
 use Elementor\Plugin;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Modules\Variables\Classes\CSS_Renderer as Variables_CSS_Renderer;
@@ -36,7 +37,8 @@ class Hooks {
 			->register_fonts()
 			->register_api_endpoints()
 			->filter_for_style_schema()
-			->register_variable_types();
+			->register_variable_types()
+			->register_template_library_import();
 
 		return $this;
 	}
@@ -129,5 +131,18 @@ class Hooks {
 		);
 
 		return new Variables_Service( $repository, new Batch_Processor() );
+	}
+
+	private function register_template_library_import() {
+		add_filter( 'elementor/template_library/import/snapshots', function ( array $snapshots, array $data ) {
+			$snapshot = Template_Library_Variables::prepare_import_snapshot( $data );
+			if ( null !== $snapshot ) {
+				$snapshots['global_variables'] = $snapshot;
+			}
+
+			return $snapshots;
+		}, 10, 2 );
+
+		return $this;
 	}
 }

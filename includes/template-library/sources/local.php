@@ -22,6 +22,8 @@ use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Editor_One_Saved_Templates_Menu;
 use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Editor_One_Templates_Menu;
 use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
+use Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes;
+use Elementor\Modules\Variables\Utils\Template_Library_Variables;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -775,9 +777,9 @@ class Source_Local extends Source_Base {
 
 		if ( ! empty( $content ) ) {
 			if ( Template_Library_Import_Export_Utils::is_classes_feature_active() ) {
-				$class_ids = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::extract_used_class_ids_from_elements( $content );
+				$class_ids = Template_Library_Global_Classes::extract_used_class_ids_from_elements( $content );
 				if ( ! empty( $class_ids ) ) {
-					$snapshot = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::build_snapshot_for_ids( $class_ids );
+					$snapshot = Template_Library_Global_Classes::build_snapshot_for_ids( $class_ids );
 					if ( $snapshot ) {
 						$data['global_classes'] = $snapshot;
 					}
@@ -785,9 +787,9 @@ class Source_Local extends Source_Base {
 			}
 
 			if ( Template_Library_Import_Export_Utils::is_variables_feature_active() ) {
-				$variable_ids = \Elementor\Modules\Variables\Utils\Template_Library_Variables::extract_used_variable_ids_from_elements( $content );
+				$variable_ids = Template_Library_Variables::extract_used_variable_ids_from_elements( $content );
 				if ( ! empty( $variable_ids ) ) {
-					$snapshot = \Elementor\Modules\Variables\Utils\Template_Library_Variables::build_snapshot_for_ids( $variable_ids );
+					$snapshot = Template_Library_Variables::build_snapshot_for_ids( $variable_ids );
 					if ( $snapshot ) {
 						$data['global_variables'] = $snapshot;
 					}
@@ -1588,7 +1590,7 @@ class Source_Local extends Source_Base {
 
 		// Embed Global Classes snapshot (only if used by the template).
 		if ( Template_Library_Import_Export_Utils::is_classes_feature_active() ) {
-			$snapshot = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::build_snapshot_for_elements( $content );
+			$snapshot = Template_Library_Global_Classes::build_snapshot_for_elements( $content );
 
 			/**
 			 * Filter embedded global classes snapshot for Template Library exports.
@@ -1609,7 +1611,7 @@ class Source_Local extends Source_Base {
 		// Embed Global Variables snapshot (only if used by the template or global classes).
 		if ( Template_Library_Import_Export_Utils::is_variables_feature_active() ) {
 			$global_classes_for_variables = $export_data['global_classes'] ?? null;
-			$variables_snapshot = \Elementor\Modules\Variables\Utils\Template_Library_Variables::build_snapshot_for_elements( $content, $global_classes_for_variables );
+			$variables_snapshot = Template_Library_Variables::build_snapshot_for_elements( $content, $global_classes_for_variables );
 
 			$variables_snapshot = apply_filters( 'elementor/template_library/export/global_variables_snapshot', $variables_snapshot, $template_id, $export_data );
 

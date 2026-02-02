@@ -4,6 +4,8 @@ namespace Elementor\TemplateLibrary;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
+use Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes;
+use Elementor\Modules\Variables\Utils\Template_Library_Variables;
 use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
 use Elementor\Modules\CloudLibrary\Documents\Cloud_Template_Preview;
 use Elementor\Plugin;
@@ -121,7 +123,7 @@ class Source_Cloud extends Source_Base {
 			Template_Library_Import_Export_Utils::is_classes_feature_active() &&
 			is_array( $template_data['content'] ?? null )
 		) {
-			$snapshot = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::build_snapshot_for_elements( $template_data['content'] );
+			$snapshot = Template_Library_Global_Classes::build_snapshot_for_elements( $template_data['content'] );
 
 			/**
 			 * Filter embedded global classes snapshot for Template Library exports.
@@ -150,7 +152,7 @@ class Source_Cloud extends Source_Base {
 			is_array( $template_data['content'] ?? null )
 		) {
 			$global_classes_for_variables = $content_payload['global_classes'] ?? null;
-			$variables_snapshot = \Elementor\Modules\Variables\Utils\Template_Library_Variables::build_snapshot_for_elements( $template_data['content'], $global_classes_for_variables );
+			$variables_snapshot = Template_Library_Variables::build_snapshot_for_elements( $template_data['content'], $global_classes_for_variables );
 
 			$variables_snapshot = apply_filters( 'elementor/template_library/export/global_variables_snapshot', $variables_snapshot, 0, [
 				'content' => $template_data['content'],
@@ -256,12 +258,11 @@ class Source_Cloud extends Source_Base {
 			'type' => $data['templateType'],
 		];
 
-		// Prefer snapshot stored in cloud content; fallback to current site snapshot.
-		$snapshot = $data['content']['global_classes'] ?? null;
+		$classes_snapshot = $data['content']['global_classes'] ?? null;
 
 		if ( Template_Library_Import_Export_Utils::is_classes_feature_active() ) {
-			if ( empty( $snapshot ) && is_array( $export_data['content'] ?? null ) ) {
-				$snapshot = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::build_snapshot_for_elements( $export_data['content'] );
+			if ( empty( $classes_snapshot ) && is_array( $export_data['content'] ?? null ) ) {
+				$classes_snapshot = Template_Library_Global_Classes::build_snapshot_for_elements( $export_data['content'] );
 			}
 
 			/**
@@ -273,20 +274,19 @@ class Source_Cloud extends Source_Base {
 			 * @param int        $template_id
 			 * @param array      $export_data
 			 */
-			$snapshot = apply_filters( 'elementor/template_library/export/global_classes_snapshot', $snapshot, (int) ( $data['id'] ?? 0 ), $export_data );
+			$classes_snapshot = apply_filters( 'elementor/template_library/export/global_classes_snapshot', $classes_snapshot, (int) ( $data['id'] ?? 0 ), $export_data );
 		}
 
-		if ( ! empty( $snapshot ) ) {
-			$export_data['global_classes'] = $snapshot;
+		if ( ! empty( $classes_snapshot ) ) {
+			$export_data['global_classes'] = $classes_snapshot;
 		}
 
-		// Prefer variables snapshot stored in cloud content; fallback to current site snapshot.
 		$variables_snapshot = $data['content']['global_variables'] ?? null;
 
 		if ( Template_Library_Import_Export_Utils::is_variables_feature_active() ) {
 			if ( empty( $variables_snapshot ) && is_array( $export_data['content'] ?? null ) ) {
 				$global_classes_for_variables = $export_data['global_classes'] ?? null;
-				$variables_snapshot = \Elementor\Modules\Variables\Utils\Template_Library_Variables::build_snapshot_for_elements( $export_data['content'], $global_classes_for_variables );
+				$variables_snapshot = Template_Library_Variables::build_snapshot_for_elements( $export_data['content'], $global_classes_for_variables );
 			}
 
 			$variables_snapshot = apply_filters( 'elementor/template_library/export/global_variables_snapshot', $variables_snapshot, (int) ( $data['id'] ?? 0 ), $export_data );

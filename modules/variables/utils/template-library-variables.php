@@ -2,11 +2,26 @@
 
 namespace Elementor\Modules\Variables\Utils;
 
+use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 class Template_Library_Variables {
+	public static function prepare_import_snapshot( array $data ): ?array {
+		if ( ! Template_Library_Import_Export_Utils::is_variables_feature_active() ) {
+			return null;
+		}
+
+		$snapshot = $data['global_variables'] ?? null;
+
+		if ( empty( $snapshot ) || ! is_array( $snapshot ) ) {
+			return null;
+		}
+
+		return apply_filters( 'elementor/template_library/import/global_variables_snapshot', $snapshot, $data );
+	}
 	public static function extract_used_variable_ids_from_elements( array $elements ): array {
 		return Template_Library_Variables_Snapshot_Builder::extract_used_variable_ids_from_elements( $elements );
 	}

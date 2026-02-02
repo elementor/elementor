@@ -180,9 +180,11 @@ export default class Component extends ComponentModalBase {
 
 		this.manager.layout.showLoadingView();
 
+		const shouldFetchPageSettings = null === withPageSettings ? model.get( 'hasPageSettings' ) : withPageSettings;
+
 		this.manager.requestTemplateContent( model.get( 'source' ), model.get( 'template_id' ), {
 			data: {
-				with_page_settings: true,
+				with_page_settings: shouldFetchPageSettings,
 			},
 			success: async ( data ) => {
 				this.manager.layout.hideLoadingView();
