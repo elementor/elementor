@@ -31,7 +31,7 @@
 		a:not(.button),
 		.eps-button:not(.e-site-editor-conditions__add-button) {
 			color: var(--e-one-palette-text-primary);
-			text-decoration: none;
+			text-decoration: underline;
 
 			&:hover,
 			&:focus {
@@ -39,8 +39,7 @@
 			}
 		}
 
-		.edit-post-status,
-		.edit-timestamp {
+		#misc-publishing-actions a {
 			text-decoration: underline;
 		}
 	}
@@ -81,24 +80,10 @@
 			}
 		}
 
-		.taxonomy-add-new {
-			color: var(--e-one-palette-text-primary);
-			text-decoration: none;
-
-			&:hover,
-			&:focus {
-				text-decoration: underline;
-			}
-		}
-
+		.taxonomy-add-new,
 		#set-post-thumbnail {
 			color: var(--e-one-palette-text-primary);
-			text-decoration: none;
-
-			&:hover,
-			&:focus {
-				text-decoration: underline;
-			}
+			text-decoration: underline;
 		}
 	}
 
