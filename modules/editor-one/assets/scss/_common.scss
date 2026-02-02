@@ -31,11 +31,11 @@
 		a:not(.button),
 		.eps-button:not(.e-site-editor-conditions__add-button) {
 			color: var(--e-one-palette-text-primary);
-			text-decoration: underline;
+			text-decoration: none;
 
 			&:hover,
 			&:focus {
-				color: var(--e-one-palette-primary-dark);
+				text-decoration: underline;
 			}
 		}
 	}
