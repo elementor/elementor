@@ -1,5 +1,5 @@
 import { useEffect, useRef } from '@wordpress/element';
-import isRTL from '../shared/is-rtl';
+import isRTL from '../../../shared/is-rtl';
 
 const ADMIN_MENU_WRAP_ID = 'adminmenuwrap';
 const WPCONTENT_ID = 'wpcontent';

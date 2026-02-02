@@ -1,6 +1,6 @@
 import { Box, IconButton, List, ListItem, ListItemButton, ListItemIcon, Popover, ListSubheader, styled } from '@elementor/ui';
 import ChevronDownSmallIcon from '@elementor/icons/ChevronDownSmallIcon';
-import isRTL from './is-rtl';
+import isRTL from '../../../shared/is-rtl';
 
 export const NavContainer = styled( Box )( ( { theme } ) => ( {
 	display: 'flex',

@@ -1,7 +1,7 @@
 import { Tooltip, ListItem } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import { MenuItemButton, MenuIcon } from '../shared';
-import isRTL from '../shared/is-rtl';
+import isRTL from '../../../shared/is-rtl';
 
 const CollapsedMenuItemTooltip = ( { item, isActive, onClick, IconComponent, onMouseEnter } ) => {
 	const isRtlLanguage = isRTL();
