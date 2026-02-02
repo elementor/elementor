@@ -1,10 +1,21 @@
 import * as React from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { getContainer, getElementLabel, getElementType } from '@elementor/editor-elements';
-import { htmlPropTypeUtil, htmlV2PropTypeUtil, type PropType, type PropValue, stringPropTypeUtil } from '@elementor/editor-props';
-import { EXPERIMENTAL_FEATURES, isExperimentActive } from '@elementor/editor-v1-adapters';
+import {
+	htmlPropTypeUtil,
+	htmlV2PropTypeUtil,
+	type PropType,
+	type PropValue,
+	stringPropTypeUtil,
+} from '@elementor/editor-props';
+import {
+	__privateRunCommandSync as runCommandSync,
+	EXPERIMENTAL_FEATURES,
+	getCurrentEditMode,
+	isExperimentActive,
+	undoable,
+} from '@elementor/editor-v1-adapters';
 import { buildHtmlV2Value, type HtmlV2Value } from '@elementor/utils';
-import { __privateRunCommandSync as runCommandSync, getCurrentEditMode, undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { ReplacementBase, TRIGGER_TIMING } from '../base';

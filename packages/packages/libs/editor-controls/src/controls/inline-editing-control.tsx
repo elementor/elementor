@@ -2,8 +2,8 @@ import * as React from 'react';
 import { type ComponentProps } from 'react';
 import { htmlPropTypeUtil, htmlV2PropTypeUtil, type PropType } from '@elementor/editor-props';
 import { EXPERIMENTAL_FEATURES, isExperimentActive } from '@elementor/editor-v1-adapters';
-import { buildHtmlV2Value, type HtmlV2Value } from '@elementor/utils';
 import { Box, type SxProps, type Theme } from '@elementor/ui';
+import { buildHtmlV2Value, type HtmlV2Value } from '@elementor/utils';
 
 import { useBoundProp } from '../bound-prop-context';
 import { InlineEditor } from '../components/inline-editor';
@@ -45,7 +45,7 @@ export const InlineEditingControl = createControl(
 		return (
 			<ControlActions>
 				<Box sx={ getContainerStyles( sx ) } { ...attributes } { ...props }>
-				<InlineEditor value={ content ?? '' } setValue={ handleChange } />
+					<InlineEditor value={ content ?? '' } setValue={ handleChange } />
 				</Box>
 			</ControlActions>
 		);
@@ -111,4 +111,3 @@ const resolveContentValue = ( value: unknown, isHtmlV2: boolean ): string | null
 
 	return typeof value === 'string' || value === null ? value : '';
 };
-
