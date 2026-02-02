@@ -17,11 +17,15 @@ class Atomic_Element_Usage_Calculator implements Element_Usage_Calculator {
 
 	const TAB_GENERAL = 'General';
 	const TAB_STYLE = 'Style';
+	const SECTION_CLASSES = 'classes';
+	const SECTION_CUSTOM_CSS = 'Custom CSS';
 
 	private array $style_sections;
 
 	public function __construct() {
-		$this->style_sections = $this->get_style_section_by_control( Style_Schema::get_style_schema_with_sections() );
+		$this->style_sections = $this->build_style_section_map(
+			Style_Schema::get_style_schema_with_sections()
+		);
 	}
 
 	public function can_calculate( array $element, $element_instance ): bool {
@@ -32,92 +36,87 @@ class Atomic_Element_Usage_Calculator implements Element_Usage_Calculator {
 		return Atomic_Utils::is_atomic( $element_instance );
 	}
 
-	public function calculate( array $element, $element_instance, array $existing_usage ): array {
-		$type = $element['widgetType'] ?? $element['elType'];
+	public function calculate( array $element, $element_instance, array $usage ): array {
+		$type = $this->get_element_type( $element );
+		$usage = $this->ensure_usage_entry( $usage, $type );
+		$usage[ $type ]['count']++;
 
-		if ( ! isset( $existing_usage[ $type ] ) ) {
-			$existing_usage[ $type ] = [
+		if ( ! $element_instance ) {
+			return $usage;
+		}
+
+		$instance = Plugin::$instance->elements_manager->create_element_instance( $element );
+
+		if ( ! $instance ) {
+			return $usage;
+		}
+
+		$settings = $element['settings'] ?? [];
+		$styles = $element['styles'] ?? [];
+
+		$control_sections = $this->build_control_section_map( $instance->get_atomic_controls() );
+		$changed_props = $this->count_props_usage( $settings, $control_sections, $usage, $type );
+		$changed_styles = $this->count_styles_usage( $styles, $usage, $type );
+
+		$usage[ $type ]['control_percent'] = $this->calculate_control_percent(
+			$changed_props + $changed_styles,
+			$instance
+		);
+
+		return $usage;
+	}
+
+	private function get_element_type( array $element ): string {
+		return $element['widgetType'] ?? $element['elType'];
+	}
+
+	private function ensure_usage_entry( array $usage, string $type ): array {
+		if ( ! isset( $usage[ $type ] ) ) {
+			$usage[ $type ] = [
 				'count' => 0,
 				'control_percent' => 0,
 				'controls' => [],
 			];
 		}
 
-		$existing_usage[ $type ]['count']++;
-
-		if ( ! $element_instance ) {
-			return $existing_usage;
-		}
-
-		$element_ref = &$existing_usage[ $type ];
-
-		$instance = Plugin::$instance->elements_manager->create_element_instance( $element );
-
-		if ( ! $instance ) {
-			return $existing_usage;
-		}
-
-		$control_sections = $this->get_general_section_by_control( $instance->get_atomic_controls() );
-		$settings = $element['settings'] ?? [];
-		$styles = $element['styles'] ?? [];
-
-		$changed_props_count = $this->calculate_props_usage( $settings, $control_sections, $element_ref );
-		$changed_styles_count = $this->calculate_styles_usage( $styles, $element_ref );
-
-		$props_schema = $instance::get_props_schema();
-		$total_props_count = count( $props_schema );
-		$style_props = Style_Schema::get();
-		$total_style_count = count( $style_props );
-
-		$total_count = $total_props_count + $total_style_count;
-		$changed_count = $changed_props_count + $changed_styles_count;
-
-		$percent = $total_count > 0 ? ( $changed_count / $total_count ) * 100 : 0;
-
-		$element_ref['control_percent'] = (int) round( $percent );
-
-		return $existing_usage;
+		return $usage;
 	}
 
-	private function get_general_section_by_control( array $atomic_controls ): array {
-		return array_reduce( $atomic_controls, function ( $control_sections, $section ) {
-			if ( ! ( $section instanceof Section ) ) {
-				return $control_sections;
+	private function build_control_section_map( array $atomic_controls ): array {
+		$map = [];
+
+		foreach ( $atomic_controls as $item ) {
+			if ( ! ( $item instanceof Section ) ) {
+				continue;
 			}
 
-			return array_merge( $control_sections, $this->extract_section_by_control( $section ) );
-		}, [] );
-	}
-
-	private function extract_section_by_control( Section $section ): array {
-		$control_sections = [];
-
-		foreach ( $section->get_items() as $control ) {
-			if ( $control instanceof Atomic_Control_Base ) {
-				$control_sections[ $control->get_bind() ] = $section->get_label();
+			foreach ( $item->get_items() as $control ) {
+				if ( $control instanceof Atomic_Control_Base ) {
+					$map[ $control->get_bind() ] = $item->get_label();
+				}
 			}
 		}
 
-		return $control_sections;
+		return $map;
 	}
 
-	private function get_style_section_by_control( array $style_schema ): array {
-		$style_sections = [];
+	private function build_style_section_map( array $style_schema ): array {
+		$map = [];
 
 		foreach ( $style_schema as $section_name => $props ) {
 			foreach ( $props as $prop_name => $prop_type ) {
-				$style_sections[ $prop_name ] = [
+				$map[ $prop_name ] = [
 					'section' => $section_name,
 					'prop_type' => $prop_type,
 				];
 			}
 		}
 
-		return $style_sections;
+		return $map;
 	}
 
-	private function calculate_props_usage( array $settings, array $control_sections, array &$element_ref ): int {
-		$changed_count = 0;
+	private function count_props_usage( array $settings, array $control_sections, array &$usage, string $type ): int {
+		$count = 0;
 
 		foreach ( $settings as $prop_name => $value ) {
 			if ( '_cssid' === $prop_name ) {
@@ -125,23 +124,40 @@ class Atomic_Element_Usage_Calculator implements Element_Usage_Calculator {
 			}
 
 			if ( 'classes' === $prop_name ) {
-				$this->increase_controls_count( $element_ref, self::TAB_STYLE, 'classes', $prop_name, 1 );
-				$changed_count++;
+				$this->increment_control( $usage, $type, self::TAB_STYLE, self::SECTION_CLASSES, $prop_name );
+				$count++;
 				continue;
 			}
 
 			$section = $control_sections[ $prop_name ] ?? 'unknown';
-			$this->increase_controls_count( $element_ref, self::TAB_GENERAL, $section, $prop_name, 1 );
-			$changed_count++;
+			$this->increment_control( $usage, $type, self::TAB_GENERAL, $section, $prop_name );
+			$count++;
 		}
 
-		return $changed_count;
+		return $count;
 	}
 
-	private function calculate_styles_usage( array $styles, array &$element_ref ): int {
-		$changed_count = 0;
-		$style_props = [];
-		$has_custom_css = false;
+	private function count_styles_usage( array $styles, array &$usage, string $type ): int {
+		$count = 0;
+		$style_props = $this->collect_style_props( $styles );
+		$has_custom_css = $this->has_custom_css( $styles );
+
+		if ( $has_custom_css ) {
+			$this->increment_control( $usage, $type, self::TAB_STYLE, self::SECTION_CUSTOM_CSS, 'custom_css' );
+			$count++;
+		}
+
+		foreach ( $style_props as $prop_name => $value ) {
+			$section = $this->style_sections[ $prop_name ]['section'] ?? 'unknown';
+			$this->increment_control( $usage, $type, self::TAB_STYLE, $section, $prop_name );
+			$count++;
+		}
+
+		return $count;
+	}
+
+	private function collect_style_props( array $styles ): array {
+		$props = [];
 
 		foreach ( $styles as $style_data ) {
 			if ( empty( $style_data['variants'] ) ) {
@@ -150,42 +166,56 @@ class Atomic_Element_Usage_Calculator implements Element_Usage_Calculator {
 
 			foreach ( $style_data['variants'] as $variant ) {
 				if ( ! empty( $variant['props'] ) ) {
-					$style_props = array_merge( $style_props, $variant['props'] );
-				}
-
-				if ( ! empty( $variant['custom_css'] ) ) {
-					$has_custom_css = true;
+					$props = array_merge( $props, $variant['props'] );
 				}
 			}
 		}
 
-		if ( $has_custom_css ) {
-			$this->increase_controls_count( $element_ref, self::TAB_STYLE, 'Custom CSS', 'custom_css', 1 );
-			$changed_count++;
-		}
-
-		foreach ( $style_props as $prop_name => $value ) {
-			$section = $this->style_sections[ $prop_name ]['section'] ?? 'unknown';
-			$this->increase_controls_count( $element_ref, self::TAB_STYLE, $section, $prop_name, 1 );
-			$changed_count++;
-		}
-
-		return $changed_count;
+		return $props;
 	}
 
-	private function increase_controls_count( array &$element_ref, string $tab, string $section, string $control, int $count ): void {
-		if ( ! isset( $element_ref['controls'][ $tab ] ) ) {
-			$element_ref['controls'][ $tab ] = [];
+	private function has_custom_css( array $styles ): bool {
+		foreach ( $styles as $style_data ) {
+			if ( empty( $style_data['variants'] ) ) {
+				continue;
+			}
+
+			foreach ( $style_data['variants'] as $variant ) {
+				if ( ! empty( $variant['custom_css'] ) ) {
+					return true;
+				}
+			}
 		}
 
-		if ( ! isset( $element_ref['controls'][ $tab ][ $section ] ) ) {
-			$element_ref['controls'][ $tab ][ $section ] = [];
+		return false;
+	}
+
+	private function calculate_control_percent( int $changed_count, $instance ): int {
+		$props_schema = $instance::get_props_schema();
+		$style_props = Style_Schema::get();
+
+		$total = count( $props_schema ) + count( $style_props );
+
+		if ( 0 === $total ) {
+			return 0;
 		}
 
-		if ( ! isset( $element_ref['controls'][ $tab ][ $section ][ $control ] ) ) {
-			$element_ref['controls'][ $tab ][ $section ][ $control ] = 0;
+		return (int) round( ( $changed_count / $total ) * 100 );
+	}
+
+	private function increment_control( array &$usage, string $type, string $tab, string $section, string $control ): void {
+		if ( ! isset( $usage[ $type ]['controls'][ $tab ] ) ) {
+			$usage[ $type ]['controls'][ $tab ] = [];
 		}
 
-		$element_ref['controls'][ $tab ][ $section ][ $control ] += $count;
+		if ( ! isset( $usage[ $type ]['controls'][ $tab ][ $section ] ) ) {
+			$usage[ $type ]['controls'][ $tab ][ $section ] = [];
+		}
+
+		if ( ! isset( $usage[ $type ]['controls'][ $tab ][ $section ][ $control ] ) ) {
+			$usage[ $type ]['controls'][ $tab ][ $section ][ $control ] = 0;
+		}
+
+		$usage[ $type ]['controls'][ $tab ][ $section ][ $control ]++;
 	}
 }

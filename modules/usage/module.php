@@ -3,6 +3,7 @@ namespace Elementor\Modules\Usage;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Modules\AtomicWidgets\Logger\Logger;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\Usage\Atomic_Element_Usage_Calculator;
 use Elementor\Modules\System_Info\Module as System_Info;
@@ -458,15 +459,13 @@ class Module extends BaseModule {
 					$usage = $calculator->calculate( $element, $element_instance, $usage );
 				}
 			} catch ( \Exception $e ) {
-				if ( Plugin::$instance->logger ) {
-					Plugin::$instance->logger->get_logger()->error(
-						'Usage calculation failed: ' . $e->getMessage(),
-						[
-							'element_type' => $type,
-							'element_id' => $element['id'] ?? 'unknown',
-						]
-					);
-				}
+				Logger::error(
+					'Usage calculation failed: ' . $e->getMessage(),
+					[
+						'element_type' => $type,
+						'element_id' => $element['id'] ?? 'unknown',
+					]
+				);
 
 				if ( ! isset( $usage[ $type ] ) ) {
 					$usage[ $type ] = [
@@ -527,7 +526,7 @@ class Module extends BaseModule {
 
 				$this->add_to_global( $document->get_name(), $usage );
 			} catch ( \Exception $exception ) {
-				Plugin::$instance->logger->get_logger()->error( $exception->getMessage(), [
+				Logger::error( $exception->getMessage(), [
 					'document_id' => $document->get_id(),
 					'document_name' => $document->get_name(),
 				] );
