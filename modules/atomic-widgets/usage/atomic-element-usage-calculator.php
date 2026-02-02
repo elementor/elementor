@@ -213,7 +213,7 @@ class Atomic_Element_Usage_Calculator implements Element_Usage_Calculator {
 	private function decompose_style_props( string $prop_name, $value, $prop_type, string $prefix = '' ): array {
 		$control_names = [];
 		$control_name = $prefix ? "{$prefix}-{$prop_name}" : $prop_name;
-		$kind = $prop_type::KIND;
+		$kind = $prop_type::get_key();
 
 		if ( ! $value ) {
 			return $control_names;
