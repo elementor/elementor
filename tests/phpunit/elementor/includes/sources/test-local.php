@@ -2,6 +2,7 @@
 namespace Elementor\Testing\Includes;
 
 use Elementor\Core\Documents_Manager;
+use Elementor\Core\Base\Document;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Testing\Includes\Mocks\Extended_Library_Document;
@@ -190,5 +191,103 @@ class Test_Local extends Elementor_Test_Base {
 		$document = Plugin::$instance->documents->get( $document_id );
 
 		$this->assertEquals( 'publish', $document->get_post()->post_status );
+	}
+
+	public function test_replace_admin_heading_updates_labels_for_template_type() {
+		// Arrange
+		$this->act_as_admin();
+
+		$original_documents_manager = Plugin::$instance->documents;
+		Plugin::$instance->documents = new Documents_Manager();
+		Plugin::$instance->documents->register_document_type(
+			Extended_Library_Document::get_type(),
+			Extended_Library_Document::class
+		);
+
+		global $pagenow, $typenow, $post_type_object;
+		$original_pagenow = $pagenow;
+		$original_typenow = $typenow;
+		$original_post_type_object = $post_type_object;
+
+		$pagenow = 'edit.php';
+		$typenow = Source_Local::CPT;
+		$post_type_object = get_post_type_object( Source_Local::CPT );
+
+		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is not required to retrieve the value.
+		$_REQUEST[ Source_Local::TAXONOMY_TYPE_SLUG ] = Extended_Library_Document::get_type();
+
+		// Act
+		$this->source->replace_admin_heading();
+
+		// Assert
+		$this->assertEquals( 'Add New Extended Library Document', $post_type_object->labels->add_new );
+		$this->assertEquals( 'No Extended Library Documents found', $post_type_object->labels->not_found );
+
+		// Cleanup
+		unset( $_REQUEST[ Source_Local::TAXONOMY_TYPE_SLUG ] );
+		$pagenow = $original_pagenow;
+		$typenow = $original_typenow;
+		$post_type_object = $original_post_type_object;
+		Plugin::$instance->documents = $original_documents_manager;
+	}
+
+	public function test_admin_import_template_form_uses_template_labels() {
+		// Arrange
+		$this->act_as_admin();
+		set_current_screen( 'edit-elementor_library' );
+
+		$original_documents_manager = Plugin::$instance->documents;
+		Plugin::$instance->documents = new Documents_Manager();
+		Plugin::$instance->documents->register_document_type(
+			Extended_Library_Document::get_type(),
+			Extended_Library_Document::class
+		);
+
+		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is not required to retrieve the value.
+		$_REQUEST[ Source_Local::TAXONOMY_TYPE_SLUG ] = Extended_Library_Document::get_type();
+
+		// Act
+		ob_start();
+		$this->source->admin_import_template_form();
+		$output = ob_get_clean();
+
+		// Assert
+		$this->assertStringContainsString( 'Import Extended Library Documents', $output );
+		$this->assertStringContainsString( 'Elementor Extended Library Document JSON file', $output );
+		$this->assertStringContainsString( 'Elementor Extended Library Documents', $output );
+
+		// Cleanup
+		unset( $_REQUEST[ Source_Local::TAXONOMY_TYPE_SLUG ] );
+		Plugin::$instance->documents = $original_documents_manager;
+	}
+
+	public function test_post_row_actions_uses_template_label_for_export() {
+		// Arrange
+		$this->act_as_admin();
+		set_current_screen( 'edit-elementor_library' );
+
+		$original_documents_manager = Plugin::$instance->documents;
+		Plugin::$instance->documents = new Documents_Manager();
+		Plugin::$instance->documents->register_document_type(
+			Extended_Library_Document::get_type(),
+			Extended_Library_Document::class
+		);
+
+		$template_id = $this->factory()->post->create( [
+			'post_type' => Source_Local::CPT,
+			'post_status' => 'publish',
+		] );
+		update_post_meta( $template_id, Document::TYPE_META_KEY, Extended_Library_Document::get_type() );
+
+		// Act
+		$post = get_post( $template_id );
+		$actions = $this->source->post_row_actions( [], $post );
+
+		// Assert
+		$this->assertArrayHasKey( 'export-template', $actions );
+		$this->assertStringContainsString( 'Export Extended Library Document', $actions['export-template'] );
+
+		// Cleanup
+		Plugin::$instance->documents = $original_documents_manager;
 	}
 }
