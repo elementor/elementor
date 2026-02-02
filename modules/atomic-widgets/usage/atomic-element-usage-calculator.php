@@ -4,9 +4,6 @@ namespace Elementor\Modules\AtomicWidgets\Usage;
 
 use Elementor\Modules\AtomicWidgets\Controls\Base\Atomic_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Utils\Utils as Atomic_Utils;
 use Elementor\Modules\Usage\Contracts\Element_Usage_Calculator;
@@ -20,15 +17,12 @@ class Atomic_Element_Usage_Calculator implements Element_Usage_Calculator {
 
 	const TAB_GENERAL = 'General';
 	const TAB_STYLE = 'Style';
-	const SECTION_CLASSES = 'classes';
-	const SECTION_CUSTOM_CSS = 'Custom CSS';
+	const DEFAULT_SECTION = 'Styles';
 
-	private array $style_sections;
+	private array $style_props_schema;
 
 	public function __construct() {
-		$this->style_sections = $this->build_style_section_map(
-			Style_Schema::get_style_schema_with_sections()
-		);
+		$this->style_props_schema = Style_Schema::get_style_schema() ?? [];
 	}
 
 	public function can_calculate( array $element, $element_instance ): bool {
@@ -103,21 +97,6 @@ class Atomic_Element_Usage_Calculator implements Element_Usage_Calculator {
 		return $map;
 	}
 
-	private function build_style_section_map( array $style_schema ): array {
-		$map = [];
-
-		foreach ( $style_schema as $section_name => $props ) {
-			foreach ( $props as $prop_name => $prop_type ) {
-				$map[ $prop_name ] = [
-					'section' => $section_name,
-					'prop_type' => $prop_type,
-				];
-			}
-		}
-
-		return $map;
-	}
-
 	private function count_props_usage( array $settings, array $control_sections, array &$usage, string $type ): int {
 		$count = 0;
 
@@ -127,13 +106,13 @@ class Atomic_Element_Usage_Calculator implements Element_Usage_Calculator {
 			}
 
 			if ( 'classes' === $prop_name ) {
-				$this->increment_control( $usage, $type, self::TAB_STYLE, self::SECTION_CLASSES, $prop_name );
+				$this->increment_control( $usage, $type, self::TAB_STYLE, $prop_name );
 				$count++;
 				continue;
 			}
 
 			$section = $control_sections[ $prop_name ] ?? 'unknown';
-			$this->increment_control( $usage, $type, self::TAB_GENERAL, $section, $prop_name );
+			$this->increment_control( $usage, $type, self::TAB_GENERAL, $prop_name, $section );
 			$count++;
 		}
 
@@ -146,22 +125,21 @@ class Atomic_Element_Usage_Calculator implements Element_Usage_Calculator {
 		$has_custom_css = $this->has_custom_css( $styles );
 
 		if ( $has_custom_css ) {
-			$this->increment_control( $usage, $type, self::TAB_STYLE, self::SECTION_CUSTOM_CSS, 'custom_css' );
+			$this->increment_control( $usage, $type, self::TAB_STYLE, 'custom_css' );
 			$count++;
 		}
 
 		foreach ( $style_props as $prop_name => $value ) {
-			$section = $this->style_sections[ $prop_name ]['section'] ?? 'unknown';
-			$prop_type = $this->style_sections[ $prop_name ]['prop_type'] ?? null;
+			$prop_type = $this->style_props_schema[ $prop_name ] ?? null;
 
 			if ( $prop_type ) {
-				$decomposed = $this->decompose_style_props( $prop_name, $value, $prop_type, $section );
-				foreach ( $decomposed as $control_data ) {
-					$this->increment_control( $usage, $type, self::TAB_STYLE, $control_data['section'], $control_data['control'] );
+				$decomposed = $this->decompose_style_props( $prop_name, $value, $prop_type );
+				foreach ( $decomposed as $control_name ) {
+					$this->increment_control( $usage, $type, self::TAB_STYLE, $control_name );
 					$count++;
 				}
 			} else {
-				$this->increment_control( $usage, $type, self::TAB_STYLE, $section, $prop_name );
+				$this->increment_control( $usage, $type, self::TAB_STYLE, $prop_name );
 				$count++;
 			}
 		}
@@ -216,7 +194,7 @@ class Atomic_Element_Usage_Calculator implements Element_Usage_Calculator {
 		return (int) round( ( $changed_count / $total ) * 100 );
 	}
 
-	private function increment_control( array &$usage, string $type, string $tab, string $section, string $control ): void {
+	private function increment_control( array &$usage, string $type, string $tab, string $control, string $section = self::DEFAULT_SECTION ): void {
 		if ( ! isset( $usage[ $type ]['controls'][ $tab ] ) ) {
 			$usage[ $type ]['controls'][ $tab ] = [];
 		}
@@ -232,21 +210,18 @@ class Atomic_Element_Usage_Calculator implements Element_Usage_Calculator {
 		$usage[ $type ]['controls'][ $tab ][ $section ][ $control ]++;
 	}
 
-	private function decompose_style_props( string $prop_name, $value, $prop_type, string $section, string $prefix = '' ): array {
-		$changed = [];
+	private function decompose_style_props( string $prop_name, $value, $prop_type, string $prefix = '' ): array {
+		$control_names = [];
 		$control_name = $prefix ? "{$prefix}-{$prop_name}" : $prop_name;
 		$kind = $prop_type::$KIND;
 
 		if ( ! $value ) {
-			return $changed;
+			return $control_names;
 		}
 
 		switch ( $kind ) {
 			case 'plain':
-				$changed[] = [
-					'section' => $section,
-					'control' => $control_name,
-				];
+				$control_names[] = $control_name;
 				break;
 
 			case 'object':
@@ -254,8 +229,8 @@ class Atomic_Element_Usage_Calculator implements Element_Usage_Calculator {
 				if ( isset( $value['value'] ) && is_array( $value['value'] ) ) {
 					foreach ( $value['value'] as $key => $nested_value ) {
 						if ( isset( $prop_shape[ $key ] ) ) {
-							$nested = $this->decompose_style_props( $key, $nested_value, $prop_shape[ $key ], $section, $control_name );
-							$changed = array_merge( $changed, $nested );
+							$nested = $this->decompose_style_props( $key, $nested_value, $prop_shape[ $key ], $control_name );
+							$control_names = array_merge( $control_names, $nested );
 						}
 					}
 				}
@@ -268,8 +243,8 @@ class Atomic_Element_Usage_Calculator implements Element_Usage_Calculator {
 						$item_name = $item['$$type'] ?? 'item';
 						$item_prop_type = $item_type->get_prop_type( $item_name );
 						if ( $item_prop_type ) {
-							$nested = $this->decompose_style_props( $item_name, $item, $item_prop_type, $section, $control_name );
-							$changed = array_merge( $changed, $nested );
+							$nested = $this->decompose_style_props( $item_name, $item, $item_prop_type, $control_name );
+							$control_names = array_merge( $control_names, $nested );
 						}
 					}
 				}
@@ -278,12 +253,12 @@ class Atomic_Element_Usage_Calculator implements Element_Usage_Calculator {
 			case 'union':
 				$union_prop_type = $prop_type->get_prop_type_from_value( $value );
 				if ( $union_prop_type ) {
-					$nested = $this->decompose_style_props( $prop_name, $value, $union_prop_type, $section, $prefix );
-					$changed = array_merge( $changed, $nested );
+					$nested = $this->decompose_style_props( $prop_name, $value, $union_prop_type, $prefix );
+					$control_names = array_merge( $control_names, $nested );
 				}
 				break;
 		}
 
-		return $changed;
+		return $control_names;
 	}
 }

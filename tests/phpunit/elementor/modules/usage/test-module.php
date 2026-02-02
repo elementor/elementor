@@ -605,13 +605,15 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'controls', $usage['e-heading'] );
 		$this->assertArrayHasKey( 'General', $usage['e-heading']['controls'] );
 
-		// Assert - Check that style controls are counted.
+		// Assert - Check that style controls are counted under Styles section.
 		$this->assertArrayHasKey( 'Style', $usage['e-heading']['controls'] );
 		$style_controls = $usage['e-heading']['controls']['Style'];
+		$this->assertArrayHasKey( 'Styles', $style_controls );
 
-		// Assert - Check for basic style properties.
-		$this->assertArrayHasKey( 'Background', $style_controls );
-		$this->assertArrayHasKey( 'Typography', $style_controls );
+		// Assert - Check for basic style properties under Styles section.
+		$styles_section = $style_controls['Styles'];
+		$this->assertArrayHasKey( 'background-color', $styles_section );
+		$this->assertArrayHasKey( 'color', $styles_section );
 	}
 
 	public function test_atomic_widget_usage_counter_counts_array_items() {
@@ -625,15 +627,15 @@ class Test_Module extends Elementor_Test_Base {
 		// Act.
 		$usage = $document->get_meta( Module::META_KEY );
 
-		// Assert - Check that background-overlay array items are counted.
+		// Assert - Check that background-overlay array items are counted under Styles section.
 		$style_controls = $usage['e-heading']['controls']['Style'];
-		$this->assertArrayHasKey( 'Background', $style_controls );
+		$this->assertArrayHasKey( 'Styles', $style_controls );
 
 		// The background overlay has 3 items (2 images + 1 color), all should be counted.
-		$background_controls = $style_controls['Background'];
+		$styles_section = $style_controls['Styles'];
 		$this->assertTrue(
-			! empty( $background_controls['background-background-overlay-background-image-overlay-image-size'] ) ||
-			! empty( $background_controls['background-background-overlay-background-color-overlay-color'] ),
+			! empty( $styles_section['background-background-overlay-background-image-overlay-image-size'] ) ||
+			! empty( $styles_section['background-background-overlay-background-color-overlay-color'] ),
 			'Background overlay items should be counted'
 		);
 	}
@@ -649,11 +651,11 @@ class Test_Module extends Elementor_Test_Base {
 		// Act.
 		$usage = $document->get_meta( Module::META_KEY );
 
-		// Assert - Check that custom CSS is tracked in Style tab.
+		// Assert - Check that custom CSS is tracked in Style tab under Styles section.
 		$this->assertArrayHasKey( 'e-heading', $usage );
 		$style_controls = $usage['e-heading']['controls']['Style'];
-		$this->assertArrayHasKey( 'Custom CSS', $style_controls );
-		$this->assertEquals( 1, $style_controls['Custom CSS']['custom_css'] );
+		$this->assertArrayHasKey( 'Styles', $style_controls );
+		$this->assertEquals( 1, $style_controls['Styles']['custom_css'] );
 	}
 
 	public function test_atomic_widget_usage_counter_tracks_general_settings() {

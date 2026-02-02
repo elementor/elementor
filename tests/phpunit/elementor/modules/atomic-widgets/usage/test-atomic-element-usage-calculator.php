@@ -172,11 +172,11 @@ class Test_Atomic_Element_Usage_Calculator extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertArrayHasKey( 'Style', $usage['e-heading']['controls'] );
-		$this->assertArrayHasKey( 'classes', $usage['e-heading']['controls']['Style'] );
-		$this->assertEquals( 1, $usage['e-heading']['controls']['Style']['classes']['classes'] );
+		$this->assertArrayHasKey( 'Styles', $usage['e-heading']['controls']['Style'] );
+		$this->assertEquals( 1, $usage['e-heading']['controls']['Style']['Styles']['classes'] );
 	}
 
-	public function test_calculate_tracks_style_props_under_correct_section() {
+	public function test_calculate_tracks_style_props_under_styles_section() {
 		// Arrange.
 		$element = [
 			'id' => 'abc123',
@@ -223,11 +223,11 @@ class Test_Atomic_Element_Usage_Calculator extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'Style', $usage['e-heading']['controls'] );
 		$style_controls = $usage['e-heading']['controls']['Style'];
 
-		$this->assertArrayHasKey( 'Typography', $style_controls );
-		$this->assertArrayHasKey( 'color', $style_controls['Typography'] );
+		$this->assertArrayHasKey( 'Styles', $style_controls );
+		$styles_section = $style_controls['Styles'];
 
-		$this->assertArrayHasKey( 'Background', $style_controls );
-		$this->assertArrayHasKey( 'background', $style_controls['Background'] );
+		$this->assertArrayHasKey( 'color', $styles_section );
+		$this->assertArrayHasKey( 'background-color', $styles_section );
 	}
 
 	public function test_calculate_tracks_custom_css() {
@@ -264,8 +264,8 @@ class Test_Atomic_Element_Usage_Calculator extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertArrayHasKey( 'Style', $usage['e-heading']['controls'] );
-		$this->assertArrayHasKey( 'Custom CSS', $usage['e-heading']['controls']['Style'] );
-		$this->assertEquals( 1, $usage['e-heading']['controls']['Style']['Custom CSS']['custom_css'] );
+		$this->assertArrayHasKey( 'Styles', $usage['e-heading']['controls']['Style'] );
+		$this->assertEquals( 1, $usage['e-heading']['controls']['Style']['Styles']['custom_css'] );
 	}
 
 	public function test_calculate_returns_usage_with_only_count_when_element_instance_is_null() {
