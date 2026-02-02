@@ -3,7 +3,6 @@ import { Container, Box, Stack } from '@elementor/ui';
 import HeaderSection from './header-section';
 import TopSection from './top-section';
 import SideBarPromotion from './sidebar-promotion';
-import Addons from './addons-section';
 import ExternalLinksSection from './external-links-section';
 import GetStarted from './get-started-section';
 import CreateWithAIBanner from './create-with-ai-banner';
@@ -25,12 +24,6 @@ const EditorScreen = ( props ) => {
 							adminUrl={ props.adminUrl }
 							homeScreenData={ props.homeScreenData }
 						/>
-						{ props.homeScreenData.add_ons && (
-							<Addons
-								addonsData={ props.homeScreenData.add_ons }
-								adminUrl={ props.adminUrl }
-							/>
-						) }
 						<ExternalLinksSection externalLinksData={ props.homeScreenData.external_links } />
 					</Stack>
 					{ hasSidebarPromotion &&
