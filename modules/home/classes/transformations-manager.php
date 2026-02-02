@@ -15,7 +15,6 @@ class Transformations_Manager {
 	private const TRANSFORMATIONS = [
 		'Create_New_Page_Url',
 		'Create_Edit_Website_Url',
-		'Filter_Plugins',
 		'Filter_Get_Started_By_License',
 		'Filter_Sidebar_Promotion_By_License',
 		'Create_Site_Settings_Url',
