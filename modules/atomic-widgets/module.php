@@ -286,7 +286,7 @@ class Module extends BaseModule {
 		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
 		$transformers->register( Link_Prop_Type::get_key(), new Link_Transformer() );
-	$transformers->register( Html_V2_Prop_Type::get_key(), new Html_V2_Transformer() );
+		$transformers->register( Html_V2_Prop_Type::get_key(), new Html_V2_Transformer() );
 		$transformers->register( Query_Prop_Type::get_key(), new Query_Transformer() );
 		$transformers->register( Attributes_Prop_Type::get_key(), new Attributes_Transformer() );
 		$transformers->register( Date_Time_Prop_Type::get_key(), new Date_Time_Transformer() );
