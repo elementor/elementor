@@ -14,7 +14,6 @@ use Elementor\Core\Utils\Ab_Test;
 use Elementor\Core\Isolation\Elementor_Adapter;
 use Elementor\Core\Isolation\Elementor_Adapter_Interface;
 use Elementor\Modules\ElementorCounter\Module as Elementor_Counter;
-use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Utils;
 use Elementor\Plugin;
 
@@ -31,7 +30,6 @@ class Module extends BaseModule {
 	const AB_TEST_NAME = 'pro_free_trial_popup';
 	const REQUIRED_VISIT_COUNT = 4;
 	const EXTERNAL_DATA_URL = 'https://assets.elementor.com/pro-free-trial-popup/v1/pro-free-trial-popup.json';
-	const EXTERNAL_DATA_TRANSIENT_KEY = 'elementor_pro_free_trial_data';
 	const ACTIVE = 'active';
 
 	private Elementor_Adapter_Interface $elementor_adapter;
@@ -117,7 +115,7 @@ class Module extends BaseModule {
 	 */
 	private function is_feature_enabled(): bool {
 		$data = $this->get_external_data();
-		return ( self::ACTIVE === ( $data[0]['status'] ?? null ) );
+		return ( self::ACTIVE === $data['pro-free-trial-popup'][0]['status'] );
 	}
 
 	/**
@@ -126,13 +124,28 @@ class Module extends BaseModule {
 	 * @return array External data or empty array on failure
 	 */
 	private function get_external_data(): array {
-		$editor_assets_api = new EditorAssetsAPI( [
-			EditorAssetsAPI::ASSETS_DATA_URL => self::EXTERNAL_DATA_URL,
-			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => self::EXTERNAL_DATA_TRANSIENT_KEY,
-			EditorAssetsAPI::ASSETS_DATA_KEY => 'pro-free-trial-popup',
-		] );
+		$cached_data = get_transient( 'elementor_pro_free_trial_data' );
 
-		return $editor_assets_api->get_assets_data();
+		if ( false !== $cached_data ) {
+			return $cached_data;
+		}
+
+		$response = wp_remote_get( self::EXTERNAL_DATA_URL );
+
+		if ( is_wp_error( $response ) ) {
+			return [];
+		}
+
+		$body = wp_remote_retrieve_body( $response );
+		$data = json_decode( $body, true );
+
+		if ( ! is_array( $data ) ) {
+			return [];
+		}
+
+		set_transient( 'elementor_pro_free_trial_data', $data, HOUR_IN_SECONDS );
+
+		return $data;
 	}
 
 	/**

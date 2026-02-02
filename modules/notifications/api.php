@@ -1,13 +1,11 @@
 <?php
 namespace Elementor\Modules\Notifications;
 
-use Elementor\Includes\EditorAssetsAPI;
 use Elementor\User;
 
 class API {
 
 	const NOTIFICATIONS_URL = 'https://assets.elementor.com/notifications/v1/notifications.json';
-	const NOTIFICATIONS_TRANSIENT_KEY = '_elementor_notifications_data';
 
 	public static function get_notifications_by_conditions( $force_request = false ) {
 		$notifications = static::get_notifications( $force_request );
@@ -32,17 +30,33 @@ class API {
 	}
 
 	private static function get_notifications( $force_request = false ) {
-		$editor_assets_api = new EditorAssetsAPI( [
-			EditorAssetsAPI::ASSETS_DATA_URL => static::NOTIFICATIONS_URL,
-			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => static::NOTIFICATIONS_TRANSIENT_KEY,
-			EditorAssetsAPI::ASSETS_DATA_KEY => 'notifications',
-		] );
+		$notifications = self::get_transient( '_elementor_notifications_data' );
 
-		$notifications = $editor_assets_api->get_assets_data( $force_request );
+		if ( $force_request || false === $notifications ) {
+			$notifications = static::fetch_data();
+
+			static::set_transient( '_elementor_notifications_data', $notifications, '+1 hour' );
+		}
 
 		$notifications = apply_filters( 'elementor/core/admin/notifications', $notifications );
 
 		return $notifications;
+	}
+
+	private static function fetch_data(): array {
+		$response = wp_remote_get( self::NOTIFICATIONS_URL );
+
+		if ( is_wp_error( $response ) ) {
+			return [];
+		}
+
+		$data = json_decode( wp_remote_retrieve_body( $response ), true );
+
+		if ( empty( $data['notifications'] ) || ! is_array( $data['notifications'] ) ) {
+			return [];
+		}
+
+		return $data['notifications'];
 	}
 
 	private static function add_to_array( $filtered_notifications, $notification ) {
@@ -140,6 +154,29 @@ class API {
 		}
 
 		return $result;
+	}
+
+	private static function get_transient( $cache_key ) {
+		$cache = get_option( $cache_key );
+
+		if ( empty( $cache['timeout'] ) ) {
+			return false;
+		}
+
+		if ( current_time( 'timestamp' ) > $cache['timeout'] ) {
+			return false;
+		}
+
+		return json_decode( $cache['value'], true );
+	}
+
+	private static function set_transient( $cache_key, $value, $expiration = '+12 hours' ) {
+		$data = [
+			'timeout' => strtotime( $expiration, current_time( 'timestamp' ) ),
+			'value' => json_encode( $value ),
+		];
+
+		return update_option( $cache_key, $data, false );
 	}
 
 }

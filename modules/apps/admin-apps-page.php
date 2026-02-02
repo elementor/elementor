@@ -3,7 +3,6 @@ namespace Elementor\Modules\Apps;
 
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Plugin_Status_Adapter;
-use Elementor\Includes\EditorAssetsAPI;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -12,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Admin_Apps_Page {
 
 	const APPS_URL = 'https://assets.elementor.com/apps/v1/apps.json';
-	const APPS_TRANSIENT_KEY = '_elementor_apps_data';
 
 	private static ?Wordpress_Adapter $wordpress_adapter = null;
 
@@ -62,13 +60,19 @@ class Admin_Apps_Page {
 	}
 
 	private static function get_remote_apps() {
-		$editor_assets_api = new EditorAssetsAPI( [
-			EditorAssetsAPI::ASSETS_DATA_URL => static::APPS_URL,
-			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => static::APPS_TRANSIENT_KEY,
-			EditorAssetsAPI::ASSETS_DATA_KEY => 'apps',
-		] );
+		$apps = wp_remote_get( static::APPS_URL );
 
-		return $editor_assets_api->get_assets_data();
+		if ( is_wp_error( $apps ) ) {
+			return [];
+		}
+
+		$apps = json_decode( wp_remote_retrieve_body( $apps ), true );
+
+		if ( empty( $apps['apps'] ) || ! is_array( $apps['apps'] ) ) {
+			return [];
+		}
+
+		return $apps['apps'];
 	}
 
 	private static function filter_apps( $apps ) {
