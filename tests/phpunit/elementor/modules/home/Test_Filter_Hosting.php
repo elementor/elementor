@@ -149,17 +149,6 @@ class Test_Filter_Hosting extends PHPUnit_TestCase {
 					"repeater" => [],
 				],
 			],
-			"add_ons" => [
-				"header" => [
-					"title" => "Expand your design toolkit",
-					"description" => "These plugins, add-ons, and tools, have been selected to streamline your workflow and maximize your creativity.",
-				],
-				"repeater" => [],
-				"footer" => [
-					"label" => "Explore more add-ons",
-					"file_path" => "wp-admin/admin.php?page=elementor-apps",
-				],
-			],
 			"sidebar_upgrade" => [
 				[
 					"license" => [ "free" ],
