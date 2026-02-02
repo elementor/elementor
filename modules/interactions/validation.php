@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Interactions;
 
+use Elementor\Modules\Interactions\Validators\Breakpoints_Value as BreakpointsValueValidator;
+use Elementor\Modules\Interactions\Validators\String_Value as StringValueValidator;
 use Elementor\Modules\Interactions\Adapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -146,29 +148,27 @@ class Validation {
 			return false;
 		}
 
+		if ( ! $this->is_valid_breakpoints_prop( $value ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private function is_valid_breakpoints_prop( $data ) {
+		if ( isset( $data['breakpoints'] ) ) {
+			return BreakpointsValueValidator::is_valid( $data['breakpoints'] );
+		}
+
 		return true;
 	}
 
 	private function is_valid_string_prop( $data, $key, $allowed_values = null ) {
-		if ( ! isset( $data[ $key ] ) || ! is_array( $data[ $key ] ) ) {
+		if ( ! isset( $data[ $key ] ) ) {
 			return false;
 		}
 
-		$prop = $data[ $key ];
-
-		if ( ! isset( $prop['$$type'] ) || 'string' !== $prop['$$type'] ) {
-			return false;
-		}
-
-		if ( ! isset( $prop['value'] ) || ! is_string( $prop['value'] ) ) {
-			return false;
-		}
-
-		if ( null !== $allowed_values && ! in_array( $prop['value'], $allowed_values, true ) ) {
-			return false;
-		}
-
-		return true;
+		return StringValueValidator::is_valid( $data[ $key ], $allowed_values );
 	}
 
 	private function is_valid_boolean_prop( $data, $key ) {
