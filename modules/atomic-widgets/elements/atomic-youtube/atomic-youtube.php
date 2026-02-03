@@ -130,7 +130,7 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 		wp_register_script(
 			'elementor-youtube-handler',
 			"{$assets_url}js/youtube-handler{$min_suffix}.js",
-			[ Frontend_Assets_Loader::FRONTEND_HANDLERS_HANDLE ],
+			[ Frontend_Assets_Loader::FRONTEND_HANDLERS_HANDLE ], // We will only load this, if we have a YouTube atom.
 			ELEMENTOR_VERSION,
 			true
 		);

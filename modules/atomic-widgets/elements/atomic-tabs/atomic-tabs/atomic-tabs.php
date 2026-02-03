@@ -189,7 +189,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		wp_register_script(
 			'elementor-tabs-preview-handler',
 			"{$assets_url}js/tabs-preview-handler{$min_suffix}.js",
-			[ Frontend_Assets_Loader::FRONTEND_HANDLERS_HANDLE, Frontend_Assets_Loader::ALPINEJS_HANDLE ],
+			[ Frontend_Assets_Loader::FRONTEND_HANDLERS_HANDLE, Frontend_Assets_Loader::ALPINEJS_HANDLE ], // We will only load this, if we have a Tabs widget.
 			ELEMENTOR_VERSION,
 			true
 		);
