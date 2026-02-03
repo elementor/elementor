@@ -239,7 +239,7 @@ class Adapter {
 
 		if ( is_string( $interactions ) ) {
 			$decoded = json_decode( $interactions, true );
-			if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
+			if ( JSON_ERROR_NONE === json_last_error() && is_array( $decoded ) ) {
 				return $decoded;
 			}
 		}

@@ -44,7 +44,7 @@ export function parseAnimationName( name ) {
 		duration,
 		delay,
 		,
-		easing,
+		,
 	] = name.split( '-' );
 
 	return {
