@@ -37,11 +37,9 @@ export const useAdminMenuOffset = () => {
 
 			const wpadminbar = document.getElementById( WPADMINBAR_ID );
 			const topBarHeader = document.getElementById( EDITOR_ONE_TOP_BAR_ID )?.querySelector( ':scope > header' );
-			const windowHeightPx = `${ window.innerHeight }px`;
 			const adminBarHeightPx = wpadminbar ? `${ wpadminbar.clientHeight }px` : '0px';
 			const topBarHeaderHeightPx = topBarHeader ? `${ topBarHeader.clientHeight }px` : '0px';
 
-			wpcontent.style.setProperty( '--e-window-height', windowHeightPx );
 			wpcontent.style.setProperty( '--e-admin-bar-height', adminBarHeightPx );
 			wpcontent.style.setProperty( '--e-top-bar-header-height', topBarHeaderHeightPx );
 		};
