@@ -459,7 +459,7 @@ class Module extends BaseModule {
 					$usage = $calculator->calculate( $element, $element_instance, $usage );
 				}
 			} catch ( \Throwable $e ) {
-				Logger::error(
+				Logger::warning(
 					'Usage calculation failed: ' . $e->getMessage(),
 					[
 						'element_type' => $type,
@@ -526,7 +526,7 @@ class Module extends BaseModule {
 
 				$this->add_to_global( $document->get_name(), $usage );
 			} catch ( \Exception $exception ) {
-				Logger::error( $exception->getMessage(), [
+				Logger::warning( $exception->getMessage(), [
 					'document_id' => $document->get_id(),
 					'document_name' => $document->get_name(),
 				] );

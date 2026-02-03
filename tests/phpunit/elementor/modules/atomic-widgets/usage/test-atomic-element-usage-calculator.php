@@ -40,6 +40,7 @@ class Test_Atomic_Element_Usage_Calculator extends Elementor_Test_Base {
 	public function test_can_calculate_returns_false_for_non_atomic_widget() {
 		// Arrange.
 		$element = [ 'elType' => 'widget', 'widgetType' => 'button' ];
+
 		$widget_instance = Plugin::$instance->widgets_manager->get_widget_types( 'button' );
 
 		// Act.
@@ -57,6 +58,7 @@ class Test_Atomic_Element_Usage_Calculator extends Elementor_Test_Base {
 			'widgetType' => 'e-heading',
 			'settings' => [],
 		];
+
 		$widget_instance = Plugin::$instance->widgets_manager->get_widget_types( 'e-heading' );
 
 		// Act.
@@ -74,6 +76,7 @@ class Test_Atomic_Element_Usage_Calculator extends Elementor_Test_Base {
 			'widgetType' => 'e-heading',
 			'settings' => [],
 		];
+
 		$widget_instance = Plugin::$instance->widgets_manager->get_widget_types( 'e-heading' );
 
 		// Act.
@@ -94,6 +97,7 @@ class Test_Atomic_Element_Usage_Calculator extends Elementor_Test_Base {
 			'widgetType' => 'e-heading',
 			'settings' => [],
 		];
+
 		$widget_instance = Plugin::$instance->widgets_manager->get_widget_types( 'e-heading' );
 
 		$existing_usage = [
@@ -128,6 +132,7 @@ class Test_Atomic_Element_Usage_Calculator extends Elementor_Test_Base {
 				],
 			],
 		];
+
 		$widget_instance = Plugin::$instance->widgets_manager->get_widget_types( 'e-heading' );
 
 		// Act.
@@ -165,6 +170,7 @@ class Test_Atomic_Element_Usage_Calculator extends Elementor_Test_Base {
 				],
 			],
 		];
+
 		$widget_instance = Plugin::$instance->widgets_manager->get_widget_types( 'e-heading' );
 
 		// Act.
@@ -214,6 +220,7 @@ class Test_Atomic_Element_Usage_Calculator extends Elementor_Test_Base {
 				],
 			],
 		];
+
 		$widget_instance = Plugin::$instance->widgets_manager->get_widget_types( 'e-heading' );
 
 		// Act.
@@ -257,6 +264,7 @@ class Test_Atomic_Element_Usage_Calculator extends Elementor_Test_Base {
 				],
 			],
 		];
+
 		$widget_instance = Plugin::$instance->widgets_manager->get_widget_types( 'e-heading' );
 
 		// Act.
@@ -321,6 +329,7 @@ class Test_Atomic_Element_Usage_Calculator extends Elementor_Test_Base {
 				],
 			],
 		];
+
 		$widget_instance = Plugin::$instance->widgets_manager->get_widget_types( 'e-heading' );
 
 		// Act.
@@ -346,6 +355,7 @@ class Test_Atomic_Element_Usage_Calculator extends Elementor_Test_Base {
 				],
 			],
 		];
+
 		$widget_instance = Plugin::$instance->widgets_manager->get_widget_types( 'e-heading' );
 
 		// Act.
@@ -357,5 +367,118 @@ class Test_Atomic_Element_Usage_Calculator extends Elementor_Test_Base {
 		foreach ( $general_controls as $section => $controls ) {
 			$this->assertArrayNotHasKey( '_cssid', $controls, '_cssid should not be tracked' );
 		}
+	}
+
+	public function test_can_calculate_returns_true_for_e_flexbox_container() {
+		// Arrange.
+		$element = [
+			'id' => 'bfad749',
+			'elType' => 'e-flexbox',
+			'settings' => [],
+		];
+
+		$element_instance = Plugin::$instance->elements_manager->get_element_types( 'e-flexbox' );
+
+		// Act.
+		$result = $this->calculator->can_calculate( $element, $element_instance );
+
+		// Assert.
+		$this->assertTrue( $result );
+	}
+
+	public function test_calculate_tracks_e_flexbox_container_with_styles() {
+		// Arrange.
+		$element = [
+			'id' => 'bfad749',
+			'elType' => 'e-flexbox',
+			'settings' => [
+				'classes' => [
+					'$$type' => 'classes',
+					'value' => [ 'e-bfad749-cbb32d6' ],
+				],
+			],
+			'styles' => [
+				'e-bfad749-cbb32d6' => [
+					'id' => 'e-bfad749-cbb32d6',
+					'label' => 'local',
+					'type' => 'class',
+					'variants' => [
+						[
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+							'props' => [
+								'padding' => [
+									'$$type' => 'size',
+									'value' => [
+										'size' => 20,
+										'unit' => 'px',
+									],
+								],
+								'background' => [
+									'$$type' => 'background',
+									'value' => [
+										'background-overlay' => [
+											'$$type' => 'background-overlay',
+											'value' => [
+												[
+													'$$type' => 'background-image-overlay',
+													'value' => [
+														'image' => [
+															'$$type' => 'image',
+															'value' => [
+																'src' => [
+																	'$$type' => 'image-src',
+																	'value' => [
+																		'id' => null,
+																		'url' => 'https://example.com/image.jpg',
+																	],
+																],
+															],
+														],
+														'position' => [
+															'$$type' => 'string',
+															'value' => 'center center',
+														],
+														'repeat' => [
+															'$$type' => 'string',
+															'value' => 'no-repeat',
+														],
+														'size' => [
+															'$$type' => 'string',
+															'value' => 'cover',
+														],
+													],
+												],
+											],
+										],
+									],
+								],
+							],
+						],
+					],
+				],
+			],
+		];
+
+		$element_instance = Plugin::$instance->elements_manager->get_element_types( 'e-flexbox' );
+
+		// Act.
+		$usage = $this->calculator->calculate( $element, $element_instance, [] );
+
+		// Assert.
+		$this->assertArrayHasKey( 'e-flexbox', $usage );
+		$this->assertEquals( 1, $usage['e-flexbox']['count'] );
+
+		$this->assertArrayHasKey( 'Style', $usage['e-flexbox']['controls'] );
+		$style_controls = $usage['e-flexbox']['controls']['Style'];
+
+		$this->assertArrayHasKey( 'Styles', $style_controls );
+		$styles_section = $style_controls['Styles'];
+
+		$this->assertArrayHasKey( 'classes', $styles_section );
+		$this->assertArrayHasKey( 'padding', $styles_section );
+		$this->assertArrayHasKey( 'background-background-overlay-background-image-overlay', $styles_section );
 	}
 }
