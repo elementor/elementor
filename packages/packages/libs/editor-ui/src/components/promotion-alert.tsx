@@ -16,7 +16,7 @@ export const PromotionAlert = ( { message, upgradeUrl }: PromotionAlertProps ) =
 		role="dialog"
 		aria-label="promotion-alert"
 		size="small"
-		sx={ { m: 1.5, mt: 0 } }
+		sx={ { m: 2, mt: 1, mb: 1, pt: 0.25, pb: 1 } }
 	>
 		{ message }
 		<Box

@@ -87,30 +87,22 @@ class Module extends BaseModule {
 	}
 
 	private function get_quota_config(): array {
-		return [
+		$config = [
 			Color_Variable_Prop_Type::get_key() => 100000,
 			Font_Variable_Prop_Type::get_key() => 100000,
-			Size_Variable_Prop_Type::get_key() => 0,
+			// BC: Remove the check when 4.01 is released
+			Size_Variable_Prop_Type::get_key() => Utils::has_pro() ? 100000 : 0,
 		];
+
+		return apply_filters( 'elementor/variables/quota_config', $config );
 	}
 
 	public function enqueue_editor_scripts() {
-		if ( Utils::has_pro() && ! $this->is_pro_license_expired() ) {
-			return;
-		}
 
 		wp_add_inline_script(
 			'elementor-common',
 			'window.ElementorVariablesQuotaConfig = ' . wp_json_encode( $this->get_quota_config() ) . ';',
 			'before'
 		);
-	}
-
-	private function is_pro_license_expired(): bool {
-		if ( ! class_exists( 'ElementorPro\License\API' ) ) {
-			return false;
-		}
-
-		return \ElementorPro\License\API::is_license_expired();
 	}
 }
