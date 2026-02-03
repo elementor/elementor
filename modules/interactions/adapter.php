@@ -53,7 +53,7 @@ class Adapter {
 			$items = isset( $decoded['items']['value'] ) ? $decoded['items']['value'] : [];
 		}
 
-		$items = self::transform_items_timing_to_number( $items, $decoded['version'] );
+		$items = self::transform_items_timing_to_number( $items );
 
 		$unwrapped = [
 			'items' => $items,
@@ -99,7 +99,7 @@ class Adapter {
 		return $items;
 	}
 
-	private static function transform_items_timing_to_number( $items, $version ) {
+	private static function transform_items_timing_to_number( $items ) {
 		if ( ! is_array( $items ) ) {
 			return $items;
 		}
@@ -107,19 +107,6 @@ class Adapter {
 		foreach ( $items as &$item ) {
 			if ( ! isset( $item['$$type'] ) || 'interaction-item' !== $item['$$type'] ) {
 				continue;
-			}
-
-			if ( self::VERSION_V1 === $version ) {
-				$timing_config = $item['value']['animation']['value']['timing_config']['value'] ?? null;
-				if ( $timing_config ) {
-					if ( isset( $timing_config['duration'] ) && 'size' === ( $timing_config['duration']['$$type'] ?? null ) ) {
-						$item['value']['animation']['value']['timing_config']['value']['duration'] = self::size_to_number( $timing_config['duration'] );
-					}
-
-					if ( isset( $timing_config['delay'] ) && 'size' === ( $timing_config['delay']['$$type'] ?? null ) ) {
-						$item['value']['animation']['value']['timing_config']['value']['delay'] = self::size_to_number( $timing_config['delay'] );
-					}
-				}
 			}
 
 			$config = $item['value']['animation']['value']['config']['value'] ?? null;
