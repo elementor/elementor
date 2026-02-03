@@ -3,6 +3,8 @@ import isRTL from '../../../shared/is-rtl';
 
 const ADMIN_MENU_WRAP_ID = 'adminmenuwrap';
 const WPCONTENT_ID = 'wpcontent';
+const EDITOR_ONE_TOP_BAR_ID = 'editor-one-top-bar';
+const WPADMINBAR_ID = 'wpadminbar';
 const INITIALIZED_DATA_ATTR = 'data-editor-one-offset-initialized';
 const WPFOOTER_ID = 'wpfooter';
 const WPBODY_CONTENT_ID = 'wpbody-content';
@@ -22,13 +24,20 @@ export const useAdminMenuOffset = () => {
 		const wpbodyContent = document.getElementById( WPBODY_CONTENT_ID );
 		wpbodyContent?.insertBefore( wpfooter, wpbodyContent.querySelector( ':scope > .clear' ) );
 
+		const wpAdminBar = document.getElementById( WPADMINBAR_ID );
+		const topBarHeader = document.getElementById( EDITOR_ONE_TOP_BAR_ID )?.querySelector( ':scope > header' );
+
 		const updateOffset = () => {
 			const isRtlLanguage = isRTL();
 			const rect = adminMenuWrap.getBoundingClientRect();
 
 			const offset = isRtlLanguage ? document.documentElement.clientWidth - rect.left : rect.right;
+			const adminBarHeightPx = `${ wpAdminBar?.clientHeight ?? 0 }px`;
+			const topBarHeaderHeightPx = `${ topBarHeader?.clientHeight ?? 0 }px`;
 
 			wpcontent.style.setProperty( '--editor-one-sidebar-left-offset', `${ offset }px` );
+			wpcontent.style.setProperty( '--e-admin-bar-height', adminBarHeightPx );
+			wpcontent.style.setProperty( '--e-top-bar-header-height', topBarHeaderHeightPx );
 		};
 
 		updateOffset();
