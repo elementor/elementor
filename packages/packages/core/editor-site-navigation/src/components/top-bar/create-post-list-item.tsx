@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { __useNavigateToDocument as useNavigateToDocument } from '@elementor/editor-documents';
 import { PlusIcon } from '@elementor/icons';
+import { useMixpanel } from '@elementor/mixpanel';
 import { CircularProgress, ListItemIcon, ListItemText, MenuItem, type MenuItemProps } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import useCreatePage from '../../hooks/use-create-page';
 import useUser from '../../hooks/use-user';
-import { type ExtendedWindow } from '../../types';
-import { trackPageListAction } from '../../utils/tracking';
 
 type Props = MenuItemProps & {
 	closePopup: () => void;
@@ -17,14 +16,25 @@ export function CreatePostListItem( { closePopup, ...props }: Props ) {
 	const { create, isLoading } = useCreatePage();
 	const navigateToDocument = useNavigateToDocument();
 	const { data: user } = useUser();
-	const extendedWindow = window as unknown as ExtendedWindow;
-	const config = extendedWindow?.elementorCommon?.eventsManager?.config;
+	const { dispatchEvent, config } = useMixpanel();
 
 	return (
 		<MenuItem
 			disabled={ isLoading || ! user?.capabilities?.edit_pages }
 			onClick={ async () => {
-				trackPageListAction( config?.targetNames?.pageList?.addNewPage ?? 'add_new_page', true );
+				const eventName = config?.names?.editorOne?.topBarPageList;
+				if ( eventName ) {
+					dispatchEvent?.( eventName, {
+						app_type: config?.appTypes?.editor,
+						window_name: config?.appTypes?.editor,
+						interaction_type: config?.triggers?.click,
+						target_type: config?.targetTypes?.dropdownItem,
+						target_name: config?.targetNames?.pageList?.addNewPage,
+						interaction_result: config?.interactionResults?.create,
+						target_location: config?.locations?.topBar,
+						location_l1: config?.secondaryLocations?.pageListDropdown,
+					} );
+				}
 				const { id } = await create();
 				closePopup();
 				await navigateToDocument( id );

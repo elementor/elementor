@@ -1,26 +1,5 @@
 export type ExtendedWindow = Window & {
 	elementorCommon: {
-		eventsManager: {
-			dispatchEvent: ( name: string, data: Record< string, string > ) => void;
-			config: {
-				appTypes: Record< string, string >;
-				targetTypes: Record< string, string >;
-				interactionResults: Record< string, string >;
-				targetNames: {
-					publishDropdown: Record< string, string >;
-					pageList: Record< string, string >;
-				};
-				locations: Record< string, string >;
-				secondaryLocations: Record< string, string >;
-				triggers: Record< string, string >;
-				elements: Record< string, string >;
-				names: {
-					topBar: Record< string, string >;
-					editorOne: Record< string, string >;
-				};
-			};
-		};
-
 		ajax?: {
 			addRequest: ( action: string, options?: Record< string, unknown > ) => Promise< unknown >;
 		};

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { __useNavigateToDocument as useNavigateToDocument } from '@elementor/editor-documents';
+import { useMixpanel } from '@elementor/mixpanel';
 import { ListItemText, MenuItem, type MenuItemProps } from '@elementor/ui';
 
 import { useReverseHtmlEntities } from '../../hooks/use-reverse-html-entities';
 import { type RecentPost } from '../../types';
-import { trackPageListAction } from '../../utils/tracking';
 import DocTypeChip from './chip-doc-type';
 
 type Props = MenuItemProps & {
@@ -15,12 +15,25 @@ type Props = MenuItemProps & {
 export function PostListItem( { post, closePopup, ...props }: Props ) {
 	const navigateToDocument = useNavigateToDocument();
 	const postTitle = useReverseHtmlEntities( post.title );
+	const { dispatchEvent, config } = useMixpanel();
 
 	return (
 		<MenuItem
 			disabled={ ! post.user_can.edit }
 			onClick={ async () => {
-				trackPageListAction( postTitle );
+				const eventName = config?.names?.editorOne?.topBarPageList;
+				if ( eventName ) {
+					dispatchEvent?.( eventName, {
+						app_type: config?.appTypes?.editor,
+						window_name: config?.appTypes?.editor,
+						interaction_type: config?.triggers?.click,
+						target_type: config?.targetTypes?.dropdownItem,
+						target_name: postTitle,
+						interaction_result: config?.interactionResults?.navigate,
+						target_location: config?.locations?.topBar,
+						location_l1: config?.secondaryLocations?.pageListDropdown,
+					} );
+				}
 				closePopup();
 				await navigateToDocument( post.id );
 			} }
