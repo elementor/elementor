@@ -1,21 +1,16 @@
 import * as React from 'react';
-import { useState } from 'react';
-import { PromotionChip, PromotionInfotip } from '@elementor/editor-ui';
+import { useRef } from 'react';
 import { SitemapIcon } from '@elementor/icons';
-import { Box, IconButton, Stack, Tooltip } from '@elementor/ui';
+import { IconButton, Stack, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { createControl } from '../../create-control';
+import { PromotionTrigger, type PromotionTriggerRef } from './promotion-trigger';
 
 const ARIA_LABEL = __( 'Display Conditions', 'elementor' );
 
-function getDisplayConditionPromotion() {
-	return window.elementor?.config?.v4Promotions?.displayConditions;
-}
-
 export const DisplayConditionsControl = createControl( () => {
-	const [ isInfotipOpen, setIsInfotipOpen ] = useState( false );
-	const promotion = getDisplayConditionPromotion();
+	const triggerRef = useRef< PromotionTriggerRef >( null );
 
 	return (
 		<Stack
@@ -26,27 +21,13 @@ export const DisplayConditionsControl = createControl( () => {
 				alignItems: 'center',
 			} }
 		>
-			<PromotionInfotip
-				title={ promotion?.title ?? '' }
-				content={ promotion?.content ?? '' }
-				assetUrl={ promotion?.image ?? '' }
-				ctaUrl={ promotion?.ctaUrl ?? '' }
-				open={ isInfotipOpen }
-				onClose={ () => setIsInfotipOpen( false ) }
-			>
-				<Box
-					onClick={ () => setIsInfotipOpen( ( prev ) => ! prev ) }
-					sx={ { cursor: 'pointer', display: 'inline-flex' } }
-				>
-					<PromotionChip />
-				</Box>
-			</PromotionInfotip>
+			<PromotionTrigger ref={ triggerRef } promotionKey="displayConditions" />
 			<Tooltip title={ ARIA_LABEL } placement="top">
 				<IconButton
 					size="tiny"
 					aria-label={ ARIA_LABEL }
 					data-behavior="display-conditions"
-					onClick={ () => setIsInfotipOpen( ( prev ) => ! prev ) }
+					onClick={ () => triggerRef.current?.toggle() }
 					sx={ {
 						border: '1px solid',
 						borderColor: 'divider',
