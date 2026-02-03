@@ -55,7 +55,11 @@ class Module extends BaseModule {
 		add_action( 'current_screen', function () {
 			$menu_data_provider = Menu_Data_Provider::instance();
 
+<<<<<<< HEAD
 			if ( ! $menu_data_provider->is_editor_one_admin_page() || ! static::is_active() ) {
+=======
+			if ( ! $menu_data_provider->is_editor_one_admin_page() ) {
+>>>>>>> 597da26198 (Fix: Display Conditions in custom fonts [ED-22703] (#34568))
 				return;
 			}
 
