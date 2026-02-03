@@ -8,8 +8,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-
-
 class Html_V2_Prop_Type extends Html_Prop_Type {
 	public static function get_key(): string {
 		return 'html-v2';
@@ -24,23 +22,15 @@ class Html_V2_Prop_Type extends Html_Prop_Type {
 			return false;
 		}
 
-		if ( ! array_key_exists( 'content', $value ) || ! is_string( $value['content'] ) ) {
+		if ( ! is_string( $value['content'] ?? null ) ) {
 			return false;
 		}
 
-		if ( isset( $value['children'] ) && ! is_array( $value['children'] ) ) {
-			return false;
-		}
+		$children = $value['children'] ?? null;
 
-		if ( isset( $value['children'] ) ) {
-			foreach ( $value['children'] as $child ) {
-				if ( ! $this->validate_child( $child ) ) {
-					return false;
-				}
-			}
-		}
-
-		return true;
+		return null === $children
+			? true
+			: $this->validate_children( $children );
 	}
 
 	protected function sanitize_value( $value ) {
@@ -62,15 +52,7 @@ class Html_V2_Prop_Type extends Html_Prop_Type {
 			? $this->sanitize_html( $value['content'] )
 			: '';
 
-		$children = [];
-		if ( isset( $value['children'] ) && is_array( $value['children'] ) ) {
-			foreach ( $value['children'] as $child ) {
-				$sanitized = $this->sanitize_child( $child );
-				if ( null !== $sanitized ) {
-					$children[] = $sanitized;
-				}
-			}
-		}
+		$children = $this->sanitize_children( $value['children'] ?? null );
 
 		return [
 			'content' => $content,
@@ -87,15 +69,21 @@ class Html_V2_Prop_Type extends Html_Prop_Type {
 			return false;
 		}
 
-		if ( isset( $child['children'] ) ) {
-			if ( ! is_array( $child['children'] ) ) {
-				return false;
-			}
+		$children = $child['children'] ?? null;
 
-			foreach ( $child['children'] as $nested_child ) {
-				if ( ! $this->validate_child( $nested_child ) ) {
-					return false;
-				}
+		return null === $children
+			? true
+			: $this->validate_children( $children );
+	}
+
+	private function validate_children( $children ): bool {
+		if ( ! is_array( $children ) ) {
+			return false;
+		}
+
+		foreach ( $children as $child ) {
+			if ( ! $this->validate_child( $child ) ) {
+				return false;
 			}
 		}
 
@@ -117,18 +105,27 @@ class Html_V2_Prop_Type extends Html_Prop_Type {
 			$node['content'] = $this->sanitize_html( $child['content'] );
 		}
 
-		if ( isset( $child['children'] ) && is_array( $child['children'] ) ) {
-			$node_children = [];
-			foreach ( $child['children'] as $nested_child ) {
-				$sanitized_child = $this->sanitize_child( $nested_child );
-				if ( null !== $sanitized_child ) {
-					$node_children[] = $sanitized_child;
-				}
-			}
-			$node['children'] = $node_children;
+		if ( array_key_exists( 'children', $child ) ) {
+			$node['children'] = $this->sanitize_children( $child['children'] );
 		}
 
 		return $node;
+	}
+
+	private function sanitize_children( $children ): array {
+		if ( ! is_array( $children ) ) {
+			return [];
+		}
+
+		$sanitized_children = [];
+		foreach ( $children as $child ) {
+			$sanitized = $this->sanitize_child( $child );
+			if ( null !== $sanitized ) {
+				$sanitized_children[] = $sanitized;
+			}
+		}
+
+		return $sanitized_children;
 	}
 
 	private function get_child_base( $child ): ?array {

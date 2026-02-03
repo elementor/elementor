@@ -1,6 +1,7 @@
 import { type ExtendedWindow } from './types';
 
 export const EXPERIMENTAL_FEATURES = {
+	// Note: Add new experimental features here as needed
 	ATOMIC_HTML_CHILDREN: 'e_atomic_html_children',
 };
 

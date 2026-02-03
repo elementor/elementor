@@ -26,7 +26,7 @@ export const buildHtmlV2Value = ( content: string, previous: HtmlV2Value | null,
 
 export const parseHtmlChildren = ( html: string, previousChildren: HtmlV2Child[] = [] ): HtmlV2Child[] => {
 	if ( typeof window === 'undefined' ) {
-		return previousChildren ?? [];
+		return previousChildren;
 	}
 
 	if ( ! html ) {
@@ -36,7 +36,7 @@ export const parseHtmlChildren = ( html: string, previousChildren: HtmlV2Child[]
 	const container = window.document.createElement( 'div' );
 	container.innerHTML = html;
 
-	const reusedIds = flattenChildIds( previousChildren ?? [] );
+	const reusedIds = flattenChildIds( previousChildren );
 	let generatedIndex = 0;
 
 	const nextId = () => reusedIds.shift() ?? `elem${ ++generatedIndex }`;
@@ -70,15 +70,15 @@ export const parseHtmlChildren = ( html: string, previousChildren: HtmlV2Child[]
 const flattenChildIds = ( children: HtmlV2Child[] ): string[] => {
 	const ids: string[] = [];
 
-	children.forEach( ( child ) => {
-		if ( child?.id ) {
+	for ( const child of children ) {
+		if ( child.id ) {
 			ids.push( child.id );
 		}
 
-		if ( child?.children?.length ) {
+		if ( child.children?.length ) {
 			ids.push( ...flattenChildIds( child.children ) );
 		}
-	} );
+	}
 
 	return ids;
 };

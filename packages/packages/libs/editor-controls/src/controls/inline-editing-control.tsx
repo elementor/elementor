@@ -102,11 +102,7 @@ const resolveContentValue = ( value: unknown, isHtmlV2: boolean ): string | null
 			return value;
 		}
 
-		if ( typeof value === 'object' && value !== null && 'content' in value ) {
-			return ( value as HtmlV2Value ).content ?? '';
-		}
-
-		return '';
+		return normalizeHtmlV2Value( value )?.content ?? '';
 	}
 
 	return typeof value === 'string' || value === null ? value : '';
