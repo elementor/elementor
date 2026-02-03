@@ -22,7 +22,7 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 			'$$type' => 'override',
 			'value' => [
 				'override_key' => 'prop-uuid-1',
-				'override_value' => [ '$$type' => 'html', 'value' => 'New Title' ],
+				'override_value' => [ '$$type' => 'html-v2', 'value' => 'New Title' ],
 				'schema_source' => ['type' => 'component', 'id' => $this::VALID_COMPONENT_ID ],
 			]
 		] );
@@ -89,31 +89,31 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 		return [
 			'non-array value' => [ 'not-an-array' ],
 			'missing override_key' => [ [
-				'override_value' => [ '$$type' => 'html', 'value' => 'New Title' ],
-				'schema_source' => [ 'type' => 'component', 'id' => $this::VALID_COMPONENT_ID ] 
+				'override_value' => [ '$$type' => 'html-v2', 'value' => 'New Title' ],
+				'schema_source' => [ 'type' => 'component', 'id' => $this::VALID_COMPONENT_ID ]
 			] ],
-			`missing override_value` => [ [ 
+			`missing override_value` => [ [
 				'value' => [ 'override_key' => 'prop-uuid-1' ],
-				'schema_source' => [ 'type' => 'component', 'id' => $this::VALID_COMPONENT_ID ] 
+				'schema_source' => [ 'type' => 'component', 'id' => $this::VALID_COMPONENT_ID ]
 			] ],
-			'missing schema_source' => [ [ 
+			'missing schema_source' => [ [
 				'override_key' => 'prop-uuid-1',
-				'override_value' => [ '$$type' => 'html', 'value' => 'New Title' ] 
+				'override_value' => [ '$$type' => 'html-v2', 'value' => 'New Title' ]
 			] ],
-			'non-string override_key' => [ [ 
-				'value' => [ 
-					'override_key' => 123, 
-					'value' => [ '$$type' => 'html', 'value' => 'New Title' ] 
-				], 
+			'non-string override_key' => [ [
+				'value' => [
+					'override_key' => 123,
+					'value' => [ '$$type' => 'html-v2', 'value' => 'New Title' ]
+				],
 			] ],
-			`non-array override_value` => [ [ 
+			`non-array override_value` => [ [
 					'override_key' => 'prop-uuid-1',
-					'value' => 'not-an-array' 
+					'value' => 'not-an-array'
 			] ],
-			'non-array schema_source' => [ [ 
+			'non-array schema_source' => [ [
 				'override_key' => 'prop-uuid-1',
-				'override_value' => [ '$$type' => 'html', 'value' => 'New Title' ],
-				'schema_source' => 'not-an-array' 
+				'override_value' => [ '$$type' => 'html-v2', 'value' => 'New Title' ],
+				'schema_source' => 'not-an-array'
 			] ],
 		];
 	}
@@ -145,7 +145,7 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 			'value' => [
 				'override_key' => 'prop-uuid-1',
 				// number is not a valid html value
-				'override_value' => [ '$$type' => 'html', 'value' => 123 ],
+				'override_value' => [ '$$type' => 'html-v2', 'value' => 123 ],
 				'schema_source' => ['type' => 'component', 'id' => $this::VALID_COMPONENT_ID ],
 			]
 		] );
@@ -249,7 +249,13 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 			'$$type' => 'override',
 			'value' => [
 				'override_key' => 'prop-uuid-autosave-only',
-				'override_value' => [ '$$type' => 'html', 'value' => 'Override Value' ],
+				'override_value' => [
+					'$$type' => 'html-v2',
+					'value' => [
+						'content' => 'Override Value',
+						'children' => [],
+					],
+				],
 				'schema_source' => ['type' => 'component', 'id' => $this::VALID_COMPONENT_ID ],
 			]
 		] );
@@ -268,7 +274,13 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 			'$$type' => 'override',
 			'value' => [
 				'override_key' => 'prop-uuid-autosave-only',
-				'override_value' => [ '$$type' => 'html', 'value' => 'Override Value' ],
+				'override_value' => [
+					'$$type' => 'html-v2',
+					'value' => [
+						'content' => 'Override Value',
+						'children' => [],
+					],
+				],
 				'schema_source' => ['type' => 'component', 'id' => $this::VALID_COMPONENT_ID ],
 			],
 		] );
@@ -278,7 +290,13 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 			'$$type' => 'override',
 			'value' => [
 				'override_key' => 'prop-uuid-autosave-only',
-				'override_value' => [ '$$type' => 'html', 'value' => 'Override Value' ],
+				'override_value' => [
+					'$$type' => 'html-v2',
+					'value' => [
+						'content' => 'Override Value',
+						'children' => [],
+					],
+				],
 				'schema_source' => ['type' => 'component', 'id' => $this::VALID_COMPONENT_ID ],
 			],
 		], $result );

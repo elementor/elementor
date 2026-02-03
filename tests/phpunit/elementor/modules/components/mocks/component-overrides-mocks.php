@@ -19,7 +19,7 @@ class Component_Overrides_Mocks {
 					'widgetType' => 'e-heading',
 					'propKey' => 'title',
 					'originValue' => [
-						'$$type' => 'string',
+						'$$type' => 'html-v2',
 						'value' => 'Original Title',
 					],
 					'groupId' => 'group-1',
@@ -127,7 +127,7 @@ class Component_Overrides_Mocks {
 			'$$type' => 'override',
 			'value' => [
 				'override_key' => 'prop-uuid-1',
-				'override_value' => [ '$$type' => 'html', 'value' => 'New Title' ],
+				'override_value' => [ '$$type' => 'html-v2', 'value' => 'New Title' ],
 				'schema_source' => ['type' => 'component', 'id' => self::VALID_COMPONENT_ID ],
 			],
 		];
@@ -203,7 +203,7 @@ class Component_Overrides_Mocks {
 			'widgetType' => 'e-heading',
 			'propKey' => 'title',
 			'originValue' => [
-				'$$type' => 'html',
+				'$$type' => 'html-v2',
 				'value' => 'Autosave Title',
 			],
 			'groupId' => 'group-1',
@@ -215,8 +215,8 @@ class Component_Overrides_Mocks {
 	public function get_mock_image_image_component_override_to_sanitize(): array {
 		$before_sanitization = [
 			'override_key' => ' </>prop-uuid-3 ',
-			'override_value' => [ 
-				'$$type' => 'image', 
+			'override_value' => [
+				'$$type' => 'image',
 				'value' => [
 					'src' => [
 						'$$type' => 'image-src',
@@ -235,7 +235,7 @@ class Component_Overrides_Mocks {
 
 		$expected_after_sanitization = [
 			'override_key' => 'prop-uuid-3',
-			'override_value' => [ 
+			'override_value' => [
 				'$$type' => 'image',
 				'value' => [
 					'src' => [
@@ -248,7 +248,7 @@ class Component_Overrides_Mocks {
 							'url' => null,
 						],
 					],
-				] 
+				]
 			],
 			'schema_source' => ['type' => 'component', 'id' => self::VALID_COMPONENT_ID ],
 		];

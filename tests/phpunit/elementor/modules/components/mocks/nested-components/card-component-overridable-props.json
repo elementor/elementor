@@ -32,7 +32,7 @@
         "elType": "widget",
         "widgetType": "e-heading",
         "originValue": {
-          "$$type": "html",
+          "$$type": "html-v2",
           "value": "This is a title"
         },
         "groupId": "group-1"

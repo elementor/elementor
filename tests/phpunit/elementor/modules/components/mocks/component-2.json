@@ -17,8 +17,11 @@
 						"value": ["component-2-heading-local-class-id"]
 					},
 					"title": {
-						"$$type": "html",
-						"value": "Component 2 Heading"
+						"$$type": "html-v2",
+						"value": {
+							"content": "Component 2 Heading",
+							"children": []
+						}
 					}
 				},
 				"elements": [],

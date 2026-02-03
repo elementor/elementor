@@ -16,7 +16,7 @@ class Test_Component_Instance_Prop_Type extends Component_Prop_Type_Test_Base {
 		$prop_type = Component_Instance_Prop_Type::make();
 
 		// Act
-		$result = $prop_type->validate( 
+		$result = $prop_type->validate(
 			[
 				'$$type' => 'component-instance',
 				'value' => [
@@ -46,7 +46,7 @@ class Test_Component_Instance_Prop_Type extends Component_Prop_Type_Test_Base {
 		$prop_type = Component_Instance_Prop_Type::make();
 
 		// Act
-		$result = $prop_type->validate( 
+		$result = $prop_type->validate(
 			[
 				'$$type' => 'component-instance',
 				'value' => [
@@ -67,7 +67,7 @@ class Test_Component_Instance_Prop_Type extends Component_Prop_Type_Test_Base {
 		$prop_type = Component_Instance_Prop_Type::make();
 
 		// Act
-		$result = $prop_type->validate( 
+		$result = $prop_type->validate(
 			[
 				'$$type' => 'component-instance',
 				'value' => [
@@ -106,7 +106,7 @@ class Test_Component_Instance_Prop_Type extends Component_Prop_Type_Test_Base {
 								'$$type' => 'override',
 								'value' => [
 									'override_key' => 'prop-uuid-1',
-									'override_value' => [ '$$type' => 'html', 'value' => 'New Title' ],
+									'override_value' => [ '$$type' => 'html-v2', 'value' => 'New Title' ],
 									'schema_source' => ['type' => 'component', 'id' => self::VALID_COMPONENT_ID ],
 								],
 							],
@@ -173,7 +173,7 @@ class Test_Component_Instance_Prop_Type extends Component_Prop_Type_Test_Base {
 							'$$type' => 'override',
 							'value' => [
 								'override_key' => 'prop-uuid-1',
-								'override_value' => [ '$$type' => 'html', 'value' => 'New Title' ],
+								'override_value' => [ '$$type' => 'html-v2', 'value' => 'New Title' ],
 								'schema_source' => ['type' => 'component', 'id' => self::NON_EXISTENT_COMPONENT_ID ],
 							],
 						],

@@ -55,7 +55,7 @@
                                 "value": {
                                     "override_key": "prop-3",
                                     "origin_value": {
-                                        "$$type": "html",
+                                        "$$type": "html-v2",
                                         "value": "This is a title"
                                     }
                                 }

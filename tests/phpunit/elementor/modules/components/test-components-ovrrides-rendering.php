@@ -97,11 +97,11 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
 
         // Assert
         $a_elements = $dom->getElementsByTagName('a');
-    
+
         $this->assertEquals(1, $a_elements->length, 'No <a> tag found');
-        
+
         $button = $a_elements->item(0);
-        
+
         $this->assertEquals('https://test-link.com', $button->getAttribute('href'));
         $this->assertEquals('_self', $button->getAttribute('target'));
         $this->assertEquals('Click here', trim($button->textContent));
@@ -175,11 +175,11 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
 
         // Assert
         $a_elements = $dom->getElementsByTagName('a');
-    
+
         $this->assertEquals(1, $a_elements->length, 'No <a> tag found');
-        
+
         $button = $a_elements->item(0);
-        
+
         $this->assertEquals('https://new-link.com', $button->getAttribute('href'));
         $this->assertEquals('_blank', $button->getAttribute('target'));
         $this->assertEquals('New button text', trim($button->textContent));
@@ -223,7 +223,7 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
                                     'value' => [
                                         'override_key' => 'prop-6',
                                         'override_value' => [
-                                            '$$type' => 'html',
+                                            '$$type' => 'html-v2',
                                             'value' => $accordion_title,
                                         ],
                                         'schema_source' => [
@@ -237,7 +237,7 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
                                     'value' => [
                                         'override_key' => 'prop-7',
                                         'override_value' => [
-                                            '$$type' => 'html',
+                                            '$$type' => 'html-v2',
                                             'value' => $accordion_subtitle,
                                         ],
                                         'schema_source' => [
@@ -276,7 +276,7 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
                                     'value' => [
                                         'override_key' => 'prop-9',
                                         'override_value' => [
-                                            '$$type' => 'html',
+                                            '$$type' => 'html-v2',
                                             'value' => $first_card_title,
                                         ],
                                     ],
@@ -323,7 +323,7 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
                                     ],
                                 ],
                                 [
-                                    '$$type' => 'override', 
+                                    '$$type' => 'override',
                                     'value' => [
                                         'override_key' => 'prop-12',
                                         'override_value' => [
@@ -352,7 +352,7 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
                                     'value' => [
                                         'override_key' => 'prop-13',
                                         'override_value' => [
-                                            '$$type' => 'html',
+                                            '$$type' => 'html-v2',
                                             'value' => $second_card_title,
                                         ],
                                         'schema_source' => [
@@ -420,7 +420,7 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
 
         $first_card_button_link_element = $button_elements->item(0);
         $this->assertEquals($first_card_button_link, $first_card_button_link_element->getAttribute('href'));
-        
+
         // Second card
         $second_card_background_image_element = $image_elements->item(1);
         $this->assertEquals($second_card_background_image_url, $second_card_background_image_element->getAttribute('src'));

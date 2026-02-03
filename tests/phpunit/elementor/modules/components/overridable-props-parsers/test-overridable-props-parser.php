@@ -29,7 +29,7 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'propKey' => 'title',
 				'widgetType' => 'e-heading',
 				'elType' => 'widget',
-				'originValue' => [ '$$type' => 'html', 'value' => 'Original text' ],
+				'originValue' => [ '$$type' => 'html-v2', 'value' => 'Original text' ],
 				'groupId' => 'group-uuid-1',
 			]
 		];
@@ -51,7 +51,7 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'propKey' => 'override',
 				'widgetType' => 'e-component',
 				'elType' => 'widget',
-				'originValue' => [ '$$type' => 'html', 'value' => 'Original text' ],
+				'originValue' => [ '$$type' => 'html-v2', 'value' => 'Original text' ],
 				'groupId' => 'group-uuid-1',
 				'originPropFields' => [
 					'elType' => 'widget',
@@ -80,7 +80,7 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'widgetType' => 'e-heading',
 				'elType' => 'widget',
 				'originValue' => [
-					'$$type' => 'html',
+					'$$type' => 'html-v2',
 					'value' => '<strong>Original text</strong><script>alert("xss")</script>',
 				],
 				'groupId' => 'group-uuid-1',
@@ -95,7 +95,10 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 
 		$sanitized = $result->unwrap();
 		$this->assertEquals( 'User Name', $sanitized['prop-uuid-1']['label'] );
-		$this->assertEquals( '<strong>Original text</strong>alert("xss")', $sanitized['prop-uuid-1']['originValue']['value'] );
+		$this->assertEquals( [
+			'content' => '<strong>Original text</strong>alert("xss")',
+			'children' => [],
+		], $sanitized['prop-uuid-1']['originValue']['value'] );
 	}
 
 	public function test_parser__sanitizes_origin_value_by_origin_prop_fields() {
@@ -108,7 +111,7 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'propKey' => 'override',
 				'widgetType' => 'e-component',
 				'elType' => 'widget',
-				'originValue' => [ '$$type' => 'string', 'value' => '<script>alert("xss")</script>Click here' ],
+			'originValue' => [ '$$type' => 'string', 'value' => '<script>alert("xss")</script>Click here' ],
 				'originPropFields' => [
 					'elType' => 'widget',
 					'widgetType' => 'e-button',
@@ -141,7 +144,7 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 
 	public function invalid_single_prop_data_provider() {
 		return [
-			'non-array prop' => [ 
+			'non-array prop' => [
 				'data' => 'not-an-array',
 				'expected_error' => 'props.prop-uuid-1: invalid_structure',
 			],
@@ -149,11 +152,11 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'data' => $this->get_mock_prop_with_changed_fields( [ 'overrideKey' => null ] ),
 				'expected_error' => 'props.prop-uuid-1.overrideKey: missing_field',
 			],
-			'invalid_origin_value' => [ 
+			'invalid_origin_value' => [
 				'data' => $this->get_mock_prop_with_changed_fields( [ 'originValue' => "not a valid prop value" ] ),
 				'expected_error' => 'props.prop-uuid-1.originValue: invalid',
 			],
-			'mismatching_override_key' => [ 
+			'mismatching_override_key' => [
 				'data' => $this->get_mock_prop_with_changed_fields( [ 'overrideKey' => 'different-uuid' ] ),
 				'expected_error' => 'props.prop-uuid-1: mismatching_override_key',
 			],
@@ -174,14 +177,14 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 
 	public function invalid_props_data_provider() {
 		return [
-			'duplicate prop keys for same element' => [ 
+			'duplicate prop keys for same element' => [
 				'data' => [
-					'prop-uuid-1' => $this->get_mock_prop_with_changed_fields( [ 
+					'prop-uuid-1' => $this->get_mock_prop_with_changed_fields( [
 						'overrideKey' => 'prop-uuid-1',
 						'elementId' => 'element-123',
 						'propKey' => 'title',
 					] ),
-					'prop-uuid-2' => $this->get_mock_prop_with_changed_fields( [ 
+					'prop-uuid-2' => $this->get_mock_prop_with_changed_fields( [
 						'overrideKey' => 'prop-uuid-2',
 						'elementId' => 'element-123',
 						'propKey' => 'title',
@@ -200,8 +203,8 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 			'propKey' => 'title',
 			'widgetType' => 'e-heading',
 			'elType' => 'widget',
-			'originValue' => [ '$$type' => 'html', 'value' => 'Original text' ],
-			'groupId' => 'group-uuid-1' 
+			'originValue' => [ '$$type' => 'html-v2', 'value' => 'Original text' ],
+			'groupId' => 'group-uuid-1'
 		];
 
 		foreach ( $fields as $field => $value ) {
