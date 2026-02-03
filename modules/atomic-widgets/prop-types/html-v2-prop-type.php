@@ -146,5 +146,4 @@ class Html_V2_Prop_Type extends Html_Prop_Type {
 			'type' => $child['type'],
 		];
 	}
-
 }

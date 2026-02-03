@@ -52,7 +52,7 @@ class Html_V2_Transformer extends Transformer_Base {
 		libxml_use_internal_errors( $use_errors );
 
 		$index = 0;
-		$children = $this->build_children_from_nodes( $document->childNodes, $index );
+		$children = $this->build_children_from_nodes( $document->childNodes, $index ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 
 		if ( ! empty( $children ) ) {
 			return $children;
@@ -66,21 +66,21 @@ class Html_V2_Transformer extends Transformer_Base {
 		$children = [];
 
 		foreach ( $nodes as $node ) {
-			if ( XML_ELEMENT_NODE !== $node->nodeType ) {
+			if ( XML_ELEMENT_NODE !== $node->nodeType ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 				continue;
 			}
 
 			$child = [
-				'id' => 'elem' . ++$index,
-				'type' => strtolower( $node->nodeName ),
+				'id' => 'elem' . ( ++$index ),
+				'type' => strtolower( $node->nodeName ), // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 			];
 
-			$text = trim( $node->textContent ?? '' );
+			$text = trim( $node->textContent ?? '' ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 			if ( '' !== $text ) {
 				$child['content'] = $text;
 			}
 
-			$nested_children = $this->build_children_from_nodes( $node->childNodes, $index );
+			$nested_children = $this->build_children_from_nodes( $node->childNodes, $index ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 			if ( ! empty( $nested_children ) ) {
 				$child['children'] = $nested_children;
 			}
