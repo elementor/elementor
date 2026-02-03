@@ -214,10 +214,6 @@ class Atomic_Element_Usage_Calculator implements Element_Usage_Calculator {
 		}
 
 		switch ( $kind ) {
-			case 'plain':
-				$control_names[] = $control_name;
-				break;
-
 			case 'object':
 				$prop_shape = $prop_type->get_shape();
 				if ( isset( $value['value'] ) && is_array( $value['value'] ) ) {
@@ -250,6 +246,11 @@ class Atomic_Element_Usage_Calculator implements Element_Usage_Calculator {
 					$nested = $this->decompose_style_props( $prop_name, $value, $union_prop_type, $prefix );
 					$control_names = array_merge( $control_names, $nested );
 				}
+				break;
+
+			default:
+				// Leaf types (string, number, boolean, color, size, etc.) - record the control name.
+				$control_names[] = $control_name;
 				break;
 		}
 
