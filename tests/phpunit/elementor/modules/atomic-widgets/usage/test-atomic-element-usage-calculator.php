@@ -478,7 +478,10 @@ class Test_Atomic_Element_Usage_Calculator extends Elementor_Test_Base {
 		$styles_section = $style_controls['Styles'];
 
 		$this->assertArrayHasKey( 'classes', $styles_section );
-		$this->assertArrayHasKey( 'padding', $styles_section );
-		$this->assertArrayHasKey( 'background-background-overlay-background-image-overlay', $styles_section );
+		$this->assertArrayHasKey( 'padding-size', $styles_section );
+		$this->assertArrayHasKey( 'padding-unit', $styles_section );
+		$this->assertArrayHasKey( 'background-background-overlay-background-image-overlay-position', $styles_section );
+		$this->assertArrayHasKey( 'background-background-overlay-background-image-overlay-repeat', $styles_section );
+		$this->assertArrayHasKey( 'background-background-overlay-background-image-overlay-size', $styles_section );
 	}
 }
