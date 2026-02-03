@@ -10,14 +10,12 @@ use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V2_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
-use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Plugin;
 
@@ -49,12 +47,10 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		$title_prop_type = Atomic_Widgets_Module::is_html_v2_enabled()
-			? Html_V2_Prop_Type::make()->default( [
-				'content' => __( 'This is a title', 'elementor' ),
-				'children' => [],
-			] )
-			: Html_Prop_Type::make()->default( __( 'This is a title', 'elementor' ) );
+		$title_prop_type = Html_V2_Prop_Type::make()->default( [
+			'content' => __( 'This is a title', 'elementor' ),
+			'children' => [],
+		] );
 		$title_prop_type->description( 'The text content of the heading.' );
 
 		return [

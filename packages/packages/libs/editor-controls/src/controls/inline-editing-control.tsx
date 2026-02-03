@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { type ComponentProps } from 'react';
 import { htmlPropTypeUtil, htmlV2PropTypeUtil, type PropType } from '@elementor/editor-props';
-import { EXPERIMENTAL_FEATURES, isExperimentActive } from '@elementor/editor-v1-adapters';
 import { Box, type SxProps, type Theme } from '@elementor/ui';
 import { buildHtmlV2Value, type HtmlV2Value } from '@elementor/utils';
 
@@ -22,7 +21,6 @@ export const InlineEditingControl = createControl(
 	} ) => {
 		const { value: rawValue, setValue, propType } = useBoundProp();
 		const isHtmlV2 = isHtmlV2PropType( propType );
-		const isHtmlChildrenExperiment = isExperimentActive( EXPERIMENTAL_FEATURES.ATOMIC_HTML_CHILDREN );
 		const extractedValue = isHtmlV2
 			? htmlV2PropTypeUtil.extract( rawValue ?? null )
 			: htmlPropTypeUtil.extract( rawValue ?? null );
@@ -33,7 +31,7 @@ export const InlineEditingControl = createControl(
 
 			if ( isHtmlV2 ) {
 				const nextValue = buildHtmlV2Value( updatedContent, normalizeHtmlV2Value( extractedValue ), {
-					parseChildren: isHtmlChildrenExperiment,
+					parseChildren: true,
 				} );
 				setValue( htmlV2PropTypeUtil.create( nextValue ) );
 				return;

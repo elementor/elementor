@@ -2,7 +2,6 @@ import * as React from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { getContainer, getElementLabel, getElementType } from '@elementor/editor-elements';
 import {
-	htmlPropTypeUtil,
 	htmlV2PropTypeUtil,
 	type PropType,
 	type PropValue,
@@ -10,9 +9,7 @@ import {
 } from '@elementor/editor-props';
 import {
 	__privateRunCommandSync as runCommandSync,
-	EXPERIMENTAL_FEATURES,
 	getCurrentEditMode,
-	isExperimentActive,
 	undoable,
 } from '@elementor/editor-v1-adapters';
 import { buildHtmlV2Value, type HtmlV2Value } from '@elementor/utils';
@@ -134,29 +131,33 @@ export default class InlineEditingReplacement extends ReplacementBase {
 
 	getExtractedContentValue() {
 		const propValue = this.getInlineEditablePropValue();
+		const propTypeKey = this.getInlineEditablePropTypeKey();
 
-		const htmlV2Value = htmlV2PropTypeUtil.extract( propValue );
-		if ( htmlV2Value ) {
-			return typeof htmlV2Value === 'string' ? htmlV2Value : htmlV2Value.content ?? '';
+		if ( propTypeKey === htmlV2PropTypeUtil.key ) {
+			const htmlV2Value = htmlV2PropTypeUtil.extract( propValue );
+			if ( htmlV2Value ) {
+				return typeof htmlV2Value === 'string' ? htmlV2Value : htmlV2Value.content ?? '';
+			}
+
+			return '';
 		}
 
-		return htmlPropTypeUtil.extract( propValue ) ?? '';
+		return stringPropTypeUtil.extract( propValue ) ?? '';
 	}
 
 	setContentValue( value: string | null ) {
 		const settingKey = this.getInlineEditablePropertyName();
 		const propTypeKey = this.getInlineEditablePropTypeKey();
 		const previousValue = this.getInlineEditablePropValue();
-		const isHtmlChildrenExperiment = isExperimentActive( EXPERIMENTAL_FEATURES.ATOMIC_HTML_CHILDREN );
 		const previousExtracted = normalizeHtmlV2Value( htmlV2PropTypeUtil.extract( previousValue ) );
 		const valueToSave =
 			propTypeKey === htmlV2PropTypeUtil.key
 				? htmlV2PropTypeUtil.create(
 						buildHtmlV2Value( value || '', previousExtracted ?? null, {
-							parseChildren: isHtmlChildrenExperiment,
+							parseChildren: true,
 						} )
 				  )
-				: htmlPropTypeUtil.create( value || '' );
+				: stringPropTypeUtil.create( value || '' );
 
 		undoable(
 			{
@@ -193,10 +194,6 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		if ( propType.kind === 'union' ) {
 			if ( propType.prop_types[ htmlV2PropTypeUtil.key ] ) {
 				return htmlV2PropTypeUtil.key;
-			}
-
-			if ( propType.prop_types[ htmlPropTypeUtil.key ] ) {
-				return htmlPropTypeUtil.key;
 			}
 
 			if ( propType.prop_types[ stringPropTypeUtil.key ] ) {

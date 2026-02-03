@@ -121,7 +121,6 @@ class Module extends BaseModule {
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
 	const EXPERIMENT_BC_MIGRATIONS = 'e_bc_migrations';
-	const EXPERIMENT_HTML_V2 = 'e_atomic_html_children';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -189,10 +188,6 @@ class Module extends BaseModule {
 		];
 	}
 
-	public static function is_html_v2_enabled(): bool {
-		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_HTML_V2 );
-	}
-
 	private function register_experimental_features() {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => 'e_indications_popover',
@@ -229,14 +224,6 @@ class Module extends BaseModule {
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		]);
 
-		Plugin::$instance->experiments->add_feature( [
-			'name' => self::EXPERIMENT_HTML_V2,
-			'title' => esc_html__( 'HTML prop with child metadata', 'elementor' ),
-			'description' => esc_html__( 'Enable HTML prop child metadata for heading and paragraph.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		] );
 	}
 
 	private function add_packages( $packages ) {
