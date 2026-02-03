@@ -22,11 +22,11 @@ class Html_V2_Prop_Type extends Html_Prop_Type {
 			return false;
 		}
 
-		if ( ! is_string( $value['content'] ?? null ) ) {
+		[ $content, $children ] = $this->extract_value_parts( $value );
+
+		if ( ! is_string( $content ) ) {
 			return false;
 		}
-
-		$children = $value['children'] ?? null;
 
 		return null === $children
 			? true
@@ -48,11 +48,13 @@ class Html_V2_Prop_Type extends Html_Prop_Type {
 			];
 		}
 
-		$content = is_string( $value['content'] ?? null )
-			? $this->sanitize_html( $value['content'] )
+		[ $content, $children ] = $this->extract_value_parts( $value );
+
+		$content = is_string( $content )
+			? $this->sanitize_html( $content )
 			: '';
 
-		$children = $this->sanitize_children( $value['children'] ?? null );
+		$children = $this->sanitize_children( $children );
 
 		return [
 			'content' => $content,
@@ -145,5 +147,17 @@ class Html_V2_Prop_Type extends Html_Prop_Type {
 			'id' => $child['id'],
 			'type' => $child['type'],
 		];
+	}
+
+	private function extract_value_parts( array $value ): array {
+		if ( array_key_exists( 'content', $value ) ) {
+			return [ $value['content'] ?? null, $value['children'] ?? null ];
+		}
+
+		if ( array_key_exists( 0, $value ) ) {
+			return [ $value[0] ?? null, $value[1] ?? null ];
+		}
+
+		return [ null, null ];
 	}
 }

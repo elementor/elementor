@@ -11,8 +11,7 @@
       "op": {
         "fn": "move",
         "src": "value",
-        "dest": "value.content",
-        "clean": true
+        "dest": "value.content"
       }
     },
     {
@@ -33,17 +32,15 @@
       }
     },
     {
+      "condition": {
+        "fn": "is_object",
+        "path": "value"
+      },
       "op": {
-        "fn": "move",
-        "src": "value.content",
-        "dest": "value",
-        "clean": true
-      }
-    },
-    {
-      "op": {
-        "fn": "delete",
-        "path": "value.children"
+        "fn": "set",
+        "path": "value",
+        "merge": false,
+        "value": "$$current.content"
       }
     }
   ]
