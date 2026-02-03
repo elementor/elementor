@@ -7,7 +7,6 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Utils\Utils as Atomic_Utils;
 use Elementor\Modules\Usage\Contracts\Element_Usage_Calculator;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -42,22 +41,16 @@ class Atomic_Element_Usage_Calculator implements Element_Usage_Calculator {
 			return $usage;
 		}
 
-		$instance = Plugin::$instance->elements_manager->create_element_instance( $element );
-
-		if ( ! $instance ) {
-			return $usage;
-		}
-
 		$settings = $element['settings'] ?? [];
 		$styles = $element['styles'] ?? [];
 
-		$control_sections = $this->build_control_section_map( $instance->get_atomic_controls() );
+		$control_sections = $this->build_control_section_map( $element_instance->get_atomic_controls() );
 		$changed_props = $this->count_props_usage( $settings, $control_sections, $usage, $type );
 		$changed_styles = $this->count_styles_usage( $styles, $usage, $type );
 
 		$usage[ $type ]['control_percent'] = $this->calculate_control_percent(
 			$changed_props + $changed_styles,
-			$instance
+			$element_instance
 		);
 
 		return $usage;
