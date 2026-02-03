@@ -5,6 +5,15 @@
 
 @import "theme-light";
 
+:root {
+	--e-admin-bar-height: 0px;
+	--e-top-bar-header-height: 48px;
+
+	&:has(#wpadminbar) {
+		--e-admin-bar-height: 32px;
+	}
+}
+
 #wpwrap {
 	background-color: var(--e-one-palette-background-default);
 }
@@ -168,7 +177,7 @@
 	#screen-meta-links {
 		display: flex;
 		justify-content: flex-end;
-		margin-block-end: 10px;
+		margin-block: 1px 10px;
 		margin-inline: 32px;
 
 		.show-settings {
@@ -462,6 +471,7 @@ body:has(#editor-one-top-bar > *) {
 
 		@media screen and (min-width: 783px) {
 			position: fixed;
+			bottom: 0;
 			left: calc(var(--editor-one-sidebar-left-offset, 160px) + var(--editor-one-sidebar-navigation-width, 240px));
 			width: calc(100vw - var(--editor-one-sidebar-left-offset, 160px) - var(--editor-one-sidebar-navigation-width, 240px));
 		}
@@ -474,7 +484,7 @@ body:has(#editor-one-top-bar > *) {
 			display: flex;
 			flex-direction: column;
 			overflow-y: auto;
-			height: calc(100vh - var(--e-admin-bar-height, 0px) - var(--e-top-bar-header-height, 0px));
+			height: calc(100vh - var(--e-admin-bar-height) - var(--e-top-bar-header-height));
 		}
 	}
 }
