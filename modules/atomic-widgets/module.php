@@ -189,6 +189,10 @@ class Module extends BaseModule {
 		];
 	}
 
+	public static function is_html_v2_enabled(): bool {
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_HTML_V2 );
+	}
+
 	private function register_experimental_features() {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => 'e_indications_popover',

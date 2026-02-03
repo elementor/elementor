@@ -50,8 +50,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		$use_html_v2 = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_HTML_V2 );
-		$paragraph_prop_type = $use_html_v2
+		$paragraph_prop_type = Atomic_Widgets_Module::is_html_v2_enabled()
 			? Html_V2_Prop_Type::make()->default( [
 				'content' => __( 'Type your paragraph here', 'elementor' ),
 				'children' => [],

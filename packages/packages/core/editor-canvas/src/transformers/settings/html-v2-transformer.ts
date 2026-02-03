@@ -6,8 +6,8 @@ type HtmlV2Value = {
 };
 
 export const htmlV2Transformer = createTransformer( ( value: unknown ) => {
-	if ( typeof value === 'string' || value === null ) {
-		return value ?? '';
+	if ( typeof value === 'string' ) {
+		return value;
 	}
 
 	if ( typeof value === 'object' && value !== null && 'content' in value ) {

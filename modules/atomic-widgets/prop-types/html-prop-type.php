@@ -18,32 +18,36 @@ class Html_Prop_Type extends String_Prop_Type {
 	}
 
 	protected function sanitize_value( $value ) {
+		return $this->sanitize_html( $value );
+	}
+
+	protected function sanitize_html( string $value ): string {
 		return preg_replace_callback( '/^(\s*)(.*?)(\s*)$/', function ( $matches ) {
-			[, $leading, $value, $trailing ] = $matches;
+			[, $leading, $sanitizing, $trailing ] = $matches;
 
 			$allowed_tags = [
-				'b'          => [],
-				'i'          => [],
-				'em'         => [],
-				'u'          => [],
-				'ul'         => [],
-				'ol'         => [],
-				'li'         => [],
+				'b' => [],
+				'i' => [],
+				'em' => [],
+				'u' => [],
+				'ul' => [],
+				'ol' => [],
+				'li' => [],
 				'blockquote' => [],
-				'a'          => [
-					'href'   => true,
+				'a' => [
+					'href' => true,
 					'target' => true,
 				],
-				'del'        => [],
-				'span'       => [],
-				'br'         => [],
-				'strong'     => [],
-				'sup'        => [],
-				'sub'        => [],
-				's'          => [],
+				'del' => [],
+				'span' => [],
+				'br' => [],
+				'strong' => [],
+				'sup' => [],
+				'sub' => [],
+				's' => [],
 			];
 
-			$sanitized = wp_kses( $value, $allowed_tags );
+			$sanitized = wp_kses( $sanitizing, $allowed_tags );
 
 			return $leading . $sanitized . $trailing;
 		}, $value );

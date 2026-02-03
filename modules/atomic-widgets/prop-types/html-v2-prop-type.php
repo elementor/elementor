@@ -2,13 +2,13 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Html_V2_Prop_Type extends String_Prop_Type {
+class Html_V2_Prop_Type extends Html_Prop_Type {
 	public static function get_key(): string {
 		return 'html-v2';
 	}
@@ -77,15 +77,7 @@ class Html_V2_Prop_Type extends String_Prop_Type {
 	}
 
 	private function validate_child( $child ): bool {
-		if ( ! is_array( $child ) ) {
-			return false;
-		}
-
-		if ( empty( $child['id'] ) || ! is_string( $child['id'] ) ) {
-			return false;
-		}
-
-		if ( empty( $child['type'] ) || ! is_string( $child['type'] ) ) {
+		if ( ! $this->get_child_base( $child ) ) {
 			return false;
 		}
 
@@ -109,21 +101,14 @@ class Html_V2_Prop_Type extends String_Prop_Type {
 	}
 
 	private function sanitize_child( $child ): ?array {
-		if ( ! is_array( $child ) ) {
-			return null;
-		}
-
-		if ( empty( $child['id'] ) || ! is_string( $child['id'] ) ) {
-			return null;
-		}
-
-		if ( empty( $child['type'] ) || ! is_string( $child['type'] ) ) {
+		$base = $this->get_child_base( $child );
+		if ( ! $base ) {
 			return null;
 		}
 
 		$node = [
-			'id' => sanitize_text_field( $child['id'] ),
-			'type' => sanitize_text_field( $child['type'] ),
+			'id' => sanitize_text_field( $base['id'] ),
+			'type' => sanitize_text_field( $base['type'] ),
 		];
 
 		if ( isset( $child['content'] ) && is_string( $child['content'] ) ) {
@@ -144,35 +129,23 @@ class Html_V2_Prop_Type extends String_Prop_Type {
 		return $node;
 	}
 
-	private function sanitize_html( string $value ): string {
-		return preg_replace_callback( '/^(\s*)(.*?)(\s*)$/', function ( $matches ) {
-			[, $leading, $sanitizing, $trailing ] = $matches;
+	private function get_child_base( $child ): ?array {
+		if ( ! is_array( $child ) ) {
+			return null;
+		}
 
-			$allowed_tags = [
-				'b' => [],
-				'i' => [],
-				'em' => [],
-				'u' => [],
-				'ul' => [],
-				'ol' => [],
-				'li' => [],
-				'blockquote' => [],
-				'a' => [
-					'href' => true,
-					'target' => true,
-				],
-				'del' => [],
-				'span' => [],
-				'br' => [],
-				'strong' => [],
-				'sup' => [],
-				'sub' => [],
-				's' => [],
-			];
+		if ( ! isset( $child['id'] ) || ! is_string( $child['id'] ) || '' === $child['id'] ) {
+			return null;
+		}
 
-			$sanitized = wp_kses( $sanitizing, $allowed_tags );
+		if ( ! isset( $child['type'] ) || ! is_string( $child['type'] ) || '' === $child['type'] ) {
+			return null;
+		}
 
-			return $leading . $sanitized . $trailing;
-		}, $value );
+		return [
+			'id' => $child['id'],
+			'type' => $child['type'],
+		];
 	}
+
 }
