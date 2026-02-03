@@ -53,7 +53,7 @@ class Adapter {
 			$items = isset( $decoded['items']['value'] ) ? $decoded['items']['value'] : [];
 		}
 
-		$items = self::transform_items_timing_to_number( $items, $interactions['version'] );
+		$items = self::transform_items_timing_to_number( $items, $decoded['version'] );
 
 		$unwrapped = [
 			'items' => $items,
@@ -108,6 +108,7 @@ class Adapter {
 			if ( ! isset( $item['$$type'] ) || 'interaction-item' !== $item['$$type'] ) {
 				continue;
 			}
+// require_once $_SERVER['HOME'] . '/.composer/vendor/autoload.php';
 
 			if ( $version === self::VERSION_V1 ) {
 				$timing_config = $item['value']['animation']['value']['timing_config']['value'] ?? null;
