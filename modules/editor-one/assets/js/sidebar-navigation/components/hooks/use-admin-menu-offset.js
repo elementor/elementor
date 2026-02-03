@@ -45,10 +45,6 @@ export const useAdminMenuOffset = () => {
 		const resizeObserver = new ResizeObserver( updateOffset );
 
 		resizeObserver.observe( wpcontent );
-		const topBarForObserve = document.getElementById( EDITOR_ONE_TOP_BAR_ID );
-		if ( topBarForObserve ) {
-			resizeObserver.observe( topBarForObserve );
-		}
 		window.addEventListener( 'resize', updateOffset );
 
 		wpcontent.setAttribute( INITIALIZED_DATA_ATTR, 'true' );
