@@ -80,7 +80,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['base_styles'] = $this->get_base_styles();
 		$config['version'] = $this->version;
 		$config['show_in_panel'] = $this->should_show_in_panel();
-		$config['categories'] = [ 'v4-elements' ];
+		$config['categories'] = $this->define_panel_categories();
 		$config['hide_on_search'] = false;
 		$config['controls'] = [];
 		$config['keywords'] = $this->get_keywords();
@@ -96,6 +96,10 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 	protected function should_show_in_panel() {
 		return true;
+	}
+
+	protected function define_panel_categories(): array {
+		return [ 'v4-elements' ];
 	}
 
 	protected function define_default_children() {
