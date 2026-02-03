@@ -1800,6 +1800,12 @@ class Source_Local extends Source_Base {
 				return $elementor_post_types;
 			} );
 
+			add_filter( 'elementor/editor-one/admin-edit-post-types', function ( array $post_types ): array {
+				$post_types[] = self::CPT;
+
+				return $post_types;
+			} );
+
 			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 				$this->admin_menu_reorder( $admin_menu );
 			}, 800 );
