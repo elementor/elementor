@@ -454,4 +454,13 @@ trait Has_Atomic_Base {
 
 		return $result;
 	}
+
+	protected function needs_atomic_widgets_handler(): bool {
+		if ( 'e-form' === $this->get_type() ) {
+			return true;
+		}
+
+		$settings = $this->get_active_settings();
+		return ! empty( $settings['link']['href'] ) && ( $settings['link']['tag'] ?? 'a' ) === 'button';
+	}
 }
