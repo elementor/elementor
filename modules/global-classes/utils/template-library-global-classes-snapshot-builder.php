@@ -4,7 +4,7 @@ namespace Elementor\Modules\GlobalClasses\Utils;
 
 use Elementor\Core\Utils\Template_Library_Element_Iterator;
 use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
-use Elementor\Core\Utils\Template_Library_Snapshot_Utils;
+use Elementor\Core\Utils\Template_Library_Snapshot_Processor;
 use Elementor\Modules\GlobalClasses\Global_Classes_Parser;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_Rest_Api;
@@ -14,7 +14,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Template_Library_Global_Classes_Snapshot_Builder {
+class Template_Library_Global_Classes_Snapshot_Builder extends Template_Library_Snapshot_Processor {
+
+	private static ?self $instance = null;
+
+	public static function make(): self {
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
 
 	public static function extract_used_class_ids_from_elements( array $elements ): array {
 		$ids = [];
@@ -44,24 +53,24 @@ class Template_Library_Global_Classes_Snapshot_Builder {
 	}
 
 	public static function build_snapshot_for_ids( array $ids ): ?array {
-		if ( empty( $ids ) || ! self::can_access_repository() ) {
+		if ( empty( $ids ) || ! self::make()->can_access_repository() ) {
 			return null;
 		}
 
-		$ids = Template_Library_Snapshot_Utils::normalize_string_ids( $ids );
+		$ids = Template_Library_Import_Export_Utils::normalize_string_ids( $ids );
 
 		if ( empty( $ids ) ) {
 			return null;
 		}
 
-		$current = self::get_repository_data();
-		$filtered_items = Template_Library_Snapshot_Utils::filter_items_by_ids( $current['items'], $ids );
+		$current = self::make()->load_current_data();
+		$filtered_items = Template_Library_Import_Export_Utils::filter_items_by_ids( $current['items'], $ids );
 
 		if ( empty( $filtered_items ) ) {
 			return null;
 		}
 
-		$filtered_order = Template_Library_Snapshot_Utils::build_filtered_order( $current['order'], $filtered_items );
+		$filtered_order = Template_Library_Import_Export_Utils::build_filtered_order( $current['order'], $filtered_items );
 
 		return self::parse_snapshot_or_null( [
 			'items' => $filtered_items,
@@ -80,102 +89,74 @@ class Template_Library_Global_Classes_Snapshot_Builder {
 	}
 
 	public static function merge_snapshot_and_get_id_map( array $snapshot ): array {
-		return self::process_snapshot( $snapshot, function( $incoming_id, $incoming_item, $updated_items, $existing_ids ) {
-			if ( isset( $existing_ids[ $incoming_id ] ) ) {
-				$is_same = Template_Library_Import_Export_Utils::items_equal( $updated_items[ $incoming_id ], $incoming_item );
-
-				if ( $is_same ) {
-					return null; // Skip, it's the same
-				}
-
-				return Template_Library_Import_Export_Utils::generate_unique_id( array_keys( $updated_items ), 'g-' );
-			}
-			return $incoming_id;
-		} );
+		return self::make()->merge_and_get_id_map( $snapshot );
 	}
 
-	public static function create_all_as_new( array $snapshot ): array {
-		return self::process_snapshot( $snapshot, function( $incoming_id, $incoming_item, $updated_items, $existing_ids ) {
-			return Template_Library_Import_Export_Utils::generate_unique_id( array_keys( $updated_items ), 'g-' );
-		} );
+	public static function create_snapshot_as_new( array $snapshot ): array {
+		return self::make()->create_all_as_new( $snapshot );
 	}
 
-	private static function process_snapshot( array $snapshot, callable $id_strategy ): array {
-		if ( ! self::can_access_repository() ) {
-			return [
-				'id_map' => [],
-				'ids_to_flatten' => [],
-			];
-		}
+	protected function get_item_prefix(): string {
+		return 'g-';
+	}
 
-		$snapshot = self::parse_snapshot_or_null( $snapshot );
-		if ( null === $snapshot ) {
-			return [
-				'id_map' => [],
-				'ids_to_flatten' => [],
-			];
-		}
+	protected function get_max_items(): int {
+		return Global_Classes_Rest_Api::MAX_ITEMS;
+	}
 
-		$current = self::get_repository_data();
-		$current_items = $current['items'];
-		$current_order = $current['order'];
-		$existing_labels = Template_Library_Import_Export_Utils::extract_labels( $current_items );
+	protected function can_access_repository(): bool {
+		return class_exists( Global_Classes_Repository::class ) && $this->has_active_kit();
+	}
 
-		$id_map = [];
-		$ids_to_flatten = [];
-		$updated_items = $current_items;
-		$updated_order = $current_order;
-		$existing_ids = array_fill_keys( array_keys( $updated_items ), true );
-
-		foreach ( $snapshot['order'] as $incoming_id ) {
-			if ( empty( $snapshot['items'][ $incoming_id ] ) ) {
-				continue;
-			}
-
-			$incoming_item = $snapshot['items'][ $incoming_id ];
-
-			if ( count( $updated_items ) >= Global_Classes_Rest_Api::MAX_ITEMS ) {
-				$ids_to_flatten[] = $incoming_id;
-				continue;
-			}
-
-			$target_id = $id_strategy( $incoming_id, $incoming_item, $updated_items, $existing_ids );
-
-			if ( null === $target_id ) {
-				continue;
-			}
-
-			if ( $target_id !== $incoming_id ) {
-				$id_map[ $incoming_id ] = $target_id;
-			}
-
-			self::add_item_with_label(
-				$incoming_item,
-				$target_id,
-				$updated_items,
-				$updated_order,
-				$existing_ids,
-				$existing_labels
-			);
-		}
-
-		Global_Classes_Repository::make()->put( $updated_items, $updated_order );
+	protected function load_current_data(): array {
+		$current = Global_Classes_Repository::make()->all()->get();
 
 		return [
-			'id_map' => $id_map,
-			'ids_to_flatten' => $ids_to_flatten,
+			'items' => $current['items'] ?? [],
+			'order' => $current['order'] ?? [],
+		];
+	}
+
+	protected function parse_incoming_snapshot( array $snapshot ): ?array {
+		return self::parse_snapshot_or_null( $snapshot );
+	}
+
+	protected function get_incoming_items( array $parsed_snapshot ): array {
+		$items = [];
+		$order = $parsed_snapshot['order'] ?? array_keys( $parsed_snapshot['items'] ?? [] );
+
+		foreach ( $order as $id ) {
+			if ( isset( $parsed_snapshot['items'][ $id ] ) ) {
+				$items[ $id ] = $parsed_snapshot['items'][ $id ];
+			}
+		}
+
+		return $items;
+	}
+
+	protected function count_current_items( array $items ): int {
+		return count( $items );
+	}
+
+	protected function save_data( array $items, array $metadata ): array {
+		$order = $metadata['order'] ?? [];
+
+		Global_Classes_Repository::make()->put( $items, $order );
+
+		return [
 			'global_classes' => [
-				'items' => $updated_items,
-				'order' => $updated_order,
+				'items' => $items,
+				'order' => $order,
 			],
 		];
 	}
 
-	private static function can_access_repository(): bool {
-		return class_exists( Global_Classes_Repository::class ) && self::has_active_kit();
+	protected function prepare_item_for_save( array $item, string $target_id ): array {
+		$item['id'] = $target_id;
+		return $item;
 	}
 
-	private static function has_active_kit(): bool {
+	private function has_active_kit(): bool {
 		return (bool) Plugin::instance()->kits_manager->get_active_kit();
 	}
 
@@ -186,25 +167,5 @@ class Template_Library_Global_Classes_Snapshot_Builder {
 		}
 
 		return $parse_result->unwrap();
-	}
-
-	private static function get_repository_data(): array {
-		$current = Global_Classes_Repository::make()->all()->get();
-
-		return [
-			'items' => $current['items'] ?? [],
-			'order' => $current['order'] ?? [],
-		];
-	}
-
-	private static function add_item_with_label( array $item, string $target_id, array &$updated_items, array &$updated_order, array &$existing_ids, array &$existing_labels ): void {
-		$item['id'] = $target_id;
-		$item = Template_Library_Import_Export_Utils::apply_unique_label( $item, $existing_labels );
-		$updated_items[ $target_id ] = $item;
-		$existing_ids[ $target_id ] = true;
-
-		if ( ! in_array( $target_id, $updated_order, true ) ) {
-			$updated_order[] = $target_id;
-		}
 	}
 }

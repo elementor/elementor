@@ -128,7 +128,7 @@ class Template_Library_Variables {
 	}
 
 	public static function create_all_as_new( array $snapshot ): array {
-		return Template_Library_Variables_Snapshot_Builder::create_all_as_new( $snapshot );
+		return Template_Library_Variables_Snapshot_Builder::create_snapshot_as_new( $snapshot );
 	}
 
 	public static function transform_variables_in_classes_snapshot( array $classes_snapshot, string $import_mode, array $result, array $data ): array {

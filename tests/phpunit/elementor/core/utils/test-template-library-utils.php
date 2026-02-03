@@ -3,7 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Utils;
 
 use Elementor\Core\Utils\Template_Library_Element_Iterator;
-use Elementor\Core\Utils\Template_Library_Snapshot_Utils;
+use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,7 +18,7 @@ class Test_Template_Library_Utils extends Elementor_Test_Base {
 			'b' => [ 'id' => 'b' ],
 		];
 
-		$result = Template_Library_Snapshot_Utils::filter_items_by_ids( $items, [ 'b', 'missing' ] );
+		$result = Template_Library_Import_Export_Utils::filter_items_by_ids( $items, [ 'b', 'missing' ] );
 
 		$this->assertSame( [ 'b' => [ 'id' => 'b' ] ], $result );
 	}
@@ -30,7 +30,7 @@ class Test_Template_Library_Utils extends Elementor_Test_Base {
 			'b' => [ 'id' => 'b' ],
 		];
 
-		$result = Template_Library_Snapshot_Utils::build_filtered_order( $order, $items );
+		$result = Template_Library_Import_Export_Utils::build_filtered_order( $order, $items );
 
 		$this->assertSame( [ 'b', 'a' ], $result );
 	}

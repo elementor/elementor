@@ -125,6 +125,6 @@ class Template_Library_Global_Classes {
 	}
 
 	public static function create_all_as_new( array $snapshot ): array {
-		return Template_Library_Global_Classes_Snapshot_Builder::create_all_as_new( $snapshot );
+		return Template_Library_Global_Classes_Snapshot_Builder::create_snapshot_as_new( $snapshot );
 	}
 }

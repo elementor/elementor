@@ -4,7 +4,7 @@ namespace Elementor\Modules\Variables\Utils;
 
 use Elementor\Core\Utils\Template_Library_Element_Iterator;
 use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
-use Elementor\Core\Utils\Template_Library_Snapshot_Utils;
+use Elementor\Core\Utils\Template_Library_Snapshot_Processor;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Plugin;
@@ -13,7 +13,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Template_Library_Variables_Snapshot_Builder {
+class Template_Library_Variables_Snapshot_Builder extends Template_Library_Snapshot_Processor {
+
+	private static ?self $instance = null;
+	private ?Variables_Repository $repository = null;
+
+	public static function make(): self {
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
 
 	public static function extract_used_variable_ids_from_elements( array $elements ): array {
 		$ids = [];
@@ -39,19 +49,19 @@ class Template_Library_Variables_Snapshot_Builder {
 			return null;
 		}
 
-		$repository = self::get_repository_or_null();
-		if ( ! $repository ) {
+		$instance = self::make();
+		if ( ! $instance->can_access_repository() ) {
 			return null;
 		}
 
-		$ids = Template_Library_Snapshot_Utils::normalize_string_ids( $ids );
+		$ids = Template_Library_Import_Export_Utils::normalize_string_ids( $ids );
 		if ( empty( $ids ) ) {
 			return null;
 		}
 
-		$all_data = self::load_repository_data( $repository );
-		$all_variables = $all_data['data'] ?? [];
-		$filtered_data = Template_Library_Snapshot_Utils::filter_items_by_ids( $all_variables, $ids );
+		$all_data = $instance->load_current_data();
+		$all_variables = $all_data['items'] ?? [];
+		$filtered_data = Template_Library_Import_Export_Utils::filter_items_by_ids( $all_variables, $ids );
 
 		if ( empty( $filtered_data ) ) {
 			return null;
@@ -88,95 +98,85 @@ class Template_Library_Variables_Snapshot_Builder {
 	}
 
 	public static function merge_snapshot_and_get_id_map( array $snapshot ): array {
-		return self::process_snapshot( $snapshot, function( $incoming_id, $incoming_variable, $updated_variables, $existing_ids ) {
-			if ( isset( $existing_ids[ $incoming_id ] ) ) {
-				$is_same = Template_Library_Import_Export_Utils::items_equal( $updated_variables[ $incoming_id ], $incoming_variable );
-
-				if ( $is_same ) {
-					return null; // Skip, it's the same
-				}
-
-				return Template_Library_Import_Export_Utils::generate_unique_id( array_keys( $updated_variables ), 'e-gv-' );
-			}
-			return $incoming_id;
-		} );
+		return self::make()->merge_and_get_id_map( $snapshot );
 	}
 
-	public static function create_all_as_new( array $snapshot ): array {
-		return self::process_snapshot( $snapshot, function( $incoming_id, $incoming_variable, $updated_variables, $existing_ids ) {
-			return Template_Library_Import_Export_Utils::generate_unique_id( array_keys( $updated_variables ), 'e-gv-' );
-		} );
+	public static function create_snapshot_as_new( array $snapshot ): array {
+		return self::make()->create_all_as_new( $snapshot );
 	}
 
-	private static function process_snapshot( array $snapshot, callable $id_strategy ): array {
-		$repository = self::get_repository_or_null();
-		if ( ! $repository ) {
+	protected function get_item_prefix(): string {
+		return 'e-gv-';
+	}
+
+	protected function get_max_items(): int {
+		return Variables_Collection::TOTAL_VARIABLES_COUNT;
+	}
+
+	protected function can_access_repository(): bool {
+		$this->repository = $this->get_repository_or_null();
+		return null !== $this->repository;
+	}
+
+	protected function load_current_data(): array {
+		if ( ! $this->repository ) {
+			$this->repository = $this->get_repository_or_null();
+		}
+
+		if ( ! $this->repository ) {
 			return [
-				'id_map' => [],
-				'ids_to_flatten' => [],
+				'items' => [],
+				'order' => [],
+				'watermark' => 0,
+				'version' => Variables_Collection::FORMAT_VERSION_V1,
 			];
 		}
 
-		$incoming_data = $snapshot['data'] ?? [];
-		if ( empty( $incoming_data ) ) {
-			return [
-				'id_map' => [],
-				'ids_to_flatten' => [],
-			];
-		}
-
-		$current_data = self::load_repository_data( $repository );
-		$current_variables = $current_data['data'] ?? [];
-
-		$existing_labels = Template_Library_Import_Export_Utils::extract_labels( $current_variables );
-
-		$id_map = [];
-		$ids_to_flatten = [];
-		$updated_variables = $current_variables;
-		$existing_ids = array_fill_keys( array_keys( $updated_variables ), true );
-
-		foreach ( $incoming_data as $incoming_id => $incoming_variable ) {
-			if ( empty( $incoming_variable ) ) {
-				continue;
-			}
-
-			if ( self::count_active_variables( $updated_variables ) >= Variables_Collection::TOTAL_VARIABLES_COUNT ) {
-				$ids_to_flatten[] = $incoming_id;
-				continue;
-			}
-
-			$target_id = $id_strategy( $incoming_id, $incoming_variable, $updated_variables, $existing_ids );
-
-			if ( null === $target_id ) {
-				continue;
-			}
-
-			if ( $target_id !== $incoming_id ) {
-				$id_map[ $incoming_id ] = $target_id;
-			}
-
-			self::add_variable_with_label(
-				$incoming_variable,
-				$target_id,
-				$updated_variables,
-				$existing_ids,
-				$existing_labels
-			);
-		}
-
-		$updated_collection = Variables_Collection::hydrate( [
-			'data' => $updated_variables,
-			'watermark' => $current_data['watermark'] ?? 0,
-			'version' => $current_data['version'] ?? Variables_Collection::FORMAT_VERSION_V1,
-		] );
-
-		$repository->save( $updated_collection );
+		$collection = $this->repository->load();
+		$serialized = $collection->serialize();
 
 		return [
-			'id_map' => $id_map,
-			'ids_to_flatten' => $ids_to_flatten,
+			'items' => $serialized['data'] ?? [],
+			'order' => [],
+			'watermark' => $serialized['watermark'] ?? 0,
+			'version' => $serialized['version'] ?? Variables_Collection::FORMAT_VERSION_V1,
+		];
+	}
+
+	protected function parse_incoming_snapshot( array $snapshot ): ?array {
+		$incoming_data = $snapshot['data'] ?? [];
+		if ( empty( $incoming_data ) ) {
+			return null;
+		}
+		return $snapshot;
+	}
+
+	protected function get_incoming_items( array $parsed_snapshot ): array {
+		return $parsed_snapshot['data'] ?? [];
+	}
+
+	protected function count_current_items( array $items ): int {
+		$count = 0;
+		foreach ( $items as $item ) {
+			if ( empty( $item['deleted'] ) ) {
+				++$count;
+			}
+		}
+		return $count;
+	}
+
+	protected function save_data( array $items, array $metadata ): array {
+		$updated_collection = Variables_Collection::hydrate( [
+			'data' => $items,
+			'watermark' => $metadata['watermark'] ?? 0,
+			'version' => $metadata['version'] ?? Variables_Collection::FORMAT_VERSION_V1,
+		] );
+
+		$this->repository->save( $updated_collection );
+
+		return [
 			'variables' => [
-				'data' => $updated_variables,
+				'data' => $items,
 				'watermark' => $updated_collection->watermark(),
 			],
 		];
@@ -210,7 +210,7 @@ class Template_Library_Variables_Snapshot_Builder {
 		}
 	}
 
-	private static function get_repository_or_null(): ?Variables_Repository {
+	private function get_repository_or_null(): ?Variables_Repository {
 		$kit = Plugin::instance()->kits_manager->get_active_kit();
 		if ( ! $kit ) {
 			return null;
@@ -219,32 +219,11 @@ class Template_Library_Variables_Snapshot_Builder {
 		return new Variables_Repository( $kit );
 	}
 
-	private static function load_repository_data( Variables_Repository $repository ): array {
-		$collection = $repository->load();
-		return $collection->serialize();
-	}
-
 	private static function build_snapshot_from_data( array $data, int $version ): array {
 		return [
 			'data' => $data,
 			'watermark' => 0,
 			'version' => $version,
 		];
-	}
-
-	private static function add_variable_with_label( array $incoming_variable, string $target_id, array &$updated_variables, array &$existing_ids, array &$existing_labels ): void {
-		$incoming_variable = Template_Library_Import_Export_Utils::apply_unique_label( $incoming_variable, $existing_labels );
-		$updated_variables[ $target_id ] = $incoming_variable;
-		$existing_ids[ $target_id ] = true;
-	}
-
-	private static function count_active_variables( array $variables ): int {
-		$count = 0;
-		foreach ( $variables as $variable ) {
-			if ( empty( $variable['deleted'] ) ) {
-				++$count;
-			}
-		}
-		return $count;
 	}
 }
