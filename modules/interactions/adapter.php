@@ -109,7 +109,7 @@ class Adapter {
 				continue;
 			}
 
-			if ( $version === self::VERSION_V1 ) {
+			if ( self::VERSION_V1 === $version ) {
 				$timing_config = $item['value']['animation']['value']['timing_config']['value'] ?? null;
 				if ( $timing_config ) {
 					if ( isset( $timing_config['duration'] ) && 'size' === ( $timing_config['duration']['$$type'] ?? null ) ) {
