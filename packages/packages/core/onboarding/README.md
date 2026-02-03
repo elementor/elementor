@@ -9,7 +9,7 @@ New onboarding experience for Elementor 2026 with improved user journey and prog
 - Distinction between user-initiated exits and unexpected exits
 - Reusable header and footer components
 - Redux store for state management
-- REST API integration for data persistence
+- React Query hooks for API integration
 
 ## Installation
 
@@ -20,10 +20,59 @@ npm install @elementor/onboarding
 ## Usage
 
 ```typescript
-import { init } from '@elementor/onboarding';
+import { init, App } from '@elementor/onboarding';
 
 // Initialize the onboarding module
 init();
+
+// Use the App component
+<App onComplete={() => console.log('Done!')} />
+```
+
+## Hooks
+
+### useUserProgress
+
+Fetch user progress from the server.
+
+```typescript
+import { useUserProgress } from '@elementor/onboarding';
+
+const { data, isLoading, error } = useUserProgress();
+```
+
+### useUpdateUserProgress
+
+Update user progress on the server.
+
+```typescript
+import { useUpdateUserProgress } from '@elementor/onboarding';
+
+const { mutate } = useUpdateUserProgress();
+
+mutate({ complete_step: 0, total_steps: 14 });
+```
+
+### useUserChoices
+
+Fetch user choices from the server.
+
+```typescript
+import { useUserChoices } from '@elementor/onboarding';
+
+const { data, isLoading, error } = useUserChoices();
+```
+
+### useUpdateUserChoices
+
+Update user choices on the server.
+
+```typescript
+import { useUpdateUserChoices } from '@elementor/onboarding';
+
+const { mutate } = useUpdateUserChoices();
+
+mutate({ site_type: 'business' });
 ```
 
 ## Architecture
@@ -36,13 +85,13 @@ init();
 
 ### State Management
 
-Uses Redux Toolkit for state management with the following slice:
+Uses Redux Toolkit via `@elementor/store` with the following slice:
 
 - `onboardingSlice` - Manages current step, completed steps, user choices, and exit state
 
-### API Client
+### API
 
-REST API client for communicating with the WordPress backend:
+Uses `@wordpress/api-fetch` with `@elementor/query` for data fetching:
 
 - `GET /elementor/v2/onboarding-v2/user-progress` - Get user progress
 - `PATCH /elementor/v2/onboarding-v2/user-progress` - Update user progress

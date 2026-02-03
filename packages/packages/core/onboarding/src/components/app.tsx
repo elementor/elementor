@@ -2,7 +2,7 @@ import * as React from 'react';
 import { __useDispatch as useDispatch, __useSelector as useSelector } from '@elementor/store';
 import { Box, styled } from '@elementor/ui';
 
-import { completeStepOnServer, markUserExitOnServer } from '../api/client';
+import { useUpdateUserProgress } from '../hooks';
 import { BlankPage } from '../pages/blank-page';
 import {
 	clearUnexpectedExit,
@@ -81,25 +81,31 @@ export function App( { pages = [], onComplete, onClose }: AppProps ) {
 	const currentStep = useSelector( selectCurrentStep );
 	const hadUnexpectedExit = useSelector( selectHadUnexpectedExit );
 
+	const updateProgress = useUpdateUserProgress();
+
 	React.useEffect( () => {
 		if ( hadUnexpectedExit ) {
 			dispatch( clearUnexpectedExit() );
 		}
 	}, [ hadUnexpectedExit, dispatch ] );
 
-	const handleClose = React.useCallback( async () => {
-		try {
-			await markUserExitOnServer();
-			dispatch( onboardingSlice.actions.setExitType( 'user_exit' ) );
+	const handleClose = React.useCallback( () => {
+		window.dispatchEvent( new CustomEvent( 'onboarding-user-exit' ) );
 
-			if ( onClose ) {
-				onClose();
+		updateProgress.mutate(
+			{ user_exit: true },
+			{
+				onSuccess: () => {
+					dispatch( onboardingSlice.actions.setExitType( 'user_exit' ) );
+					onClose?.();
+				},
+				onError: ( error ) => {
+					// eslint-disable-next-line no-console
+					console.error( 'Failed to mark user exit:', error );
+				},
 			}
-		} catch ( error ) {
-			// eslint-disable-next-line no-console
-			console.error( 'Failed to mark user exit:', error );
-		}
-	}, [ dispatch, onClose ] );
+		);
+	}, [ dispatch, onClose, updateProgress ] );
 
 	const handleBack = React.useCallback( () => {
 		if ( currentStep > 0 ) {
@@ -113,21 +119,29 @@ export function App( { pages = [], onComplete, onClose }: AppProps ) {
 		}
 	}, [ currentStep, dispatch ] );
 
-	const handleContinue = React.useCallback( async () => {
-		try {
-			await completeStepOnServer( currentStep, TOTAL_STEPS );
-			dispatch( completeStep( currentStep ) );
+	const handleContinue = React.useCallback( () => {
+		updateProgress.mutate(
+			{
+				complete_step: currentStep,
+				total_steps: TOTAL_STEPS,
+			},
+			{
+				onSuccess: () => {
+					dispatch( completeStep( currentStep ) );
 
-			if ( currentStep < TOTAL_STEPS - 1 ) {
-				dispatch( onboardingSlice.actions.setCurrentStep( currentStep + 1 ) );
-			} else if ( onComplete ) {
-				onComplete();
+					if ( currentStep < TOTAL_STEPS - 1 ) {
+						dispatch( onboardingSlice.actions.setCurrentStep( currentStep + 1 ) );
+					} else {
+						onComplete?.();
+					}
+				},
+				onError: ( error ) => {
+					// eslint-disable-next-line no-console
+					console.error( 'Failed to complete step:', error );
+				},
 			}
-		} catch ( error ) {
-			// eslint-disable-next-line no-console
-			console.error( 'Failed to complete step:', error );
-		}
-	}, [ currentStep, dispatch, onComplete ] );
+		);
+	}, [ currentStep, dispatch, onComplete, updateProgress ] );
 
 	const handleSkipTo = React.useCallback(
 		( step: number ) => {
@@ -139,6 +153,7 @@ export function App( { pages = [], onComplete, onClose }: AppProps ) {
 	);
 
 	const PageComponent = pages[ currentStep ] || BlankPage;
+	const isLoading = updateProgress.isPending;
 
 	return (
 		<AppContainer>
@@ -164,6 +179,7 @@ export function App( { pages = [], onComplete, onClose }: AppProps ) {
 					showSkip={ currentStep < TOTAL_STEPS - 1 }
 					showContinue
 					continueLabel={ currentStep === TOTAL_STEPS - 1 ? 'Finish' : 'Continue' }
+					continueLoading={ isLoading }
 					onBack={ handleBack }
 					onSkip={ handleSkip }
 					onContinue={ handleContinue }

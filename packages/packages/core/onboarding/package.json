@@ -41,8 +41,10 @@
   },
   "dependencies": {
     "@elementor/icons": "^1.63.0",
+    "@elementor/query": "4.0.0",
     "@elementor/store": "4.0.0",
     "@elementor/ui": "1.36.17",
+    "@wordpress/api-fetch": "^7.13.0",
     "@wordpress/i18n": "^5.13.0"
   },
   "devDependencies": {
