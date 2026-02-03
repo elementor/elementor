@@ -3,6 +3,7 @@
  */
 
 import { __registerSlice } from '@elementor/store';
+
 import { onboardingV2Slice } from './store/slice';
 
 /**

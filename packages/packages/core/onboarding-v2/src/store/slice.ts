@@ -8,8 +8,9 @@
  * - Exit type (user-initiated vs unexpected)
  */
 
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { OnboardingV2State, UserProgress, UserChoices, ExitType } from '../types';
+import { __createSlice, type PayloadAction, type SliceState } from '@elementor/store';
+
+import type { ExitType, OnboardingV2State, UserChoices, UserProgress } from '../types';
 
 /**
  * Get initial state from window config or defaults.
@@ -50,7 +51,7 @@ function getInitialState(): OnboardingV2State {
 	};
 }
 
-export const onboardingV2Slice = createSlice( {
+export const onboardingV2Slice = __createSlice( {
 	name: 'onboardingV2',
 	initialState: getInitialState(),
 	reducers: {
@@ -186,33 +187,31 @@ export const {
 } = onboardingV2Slice.actions;
 
 // Selectors
-type RootState = { onboardingV2: OnboardingV2State };
+export type State = SliceState< typeof onboardingV2Slice >;
 
-export const selectCurrentStep = ( state: RootState ): number =>
+export const selectCurrentStep = ( state: State ): number =>
 	state.onboardingV2.progress.currentStep;
 
-export const selectCompletedSteps = ( state: RootState ): number[] =>
+export const selectCompletedSteps = ( state: State ): number[] =>
 	state.onboardingV2.progress.completedSteps;
 
-export const selectUserChoices = ( state: RootState ): UserChoices =>
+export const selectUserChoices = ( state: State ): UserChoices =>
 	state.onboardingV2.choices;
 
-export const selectHadUnexpectedExit = ( state: RootState ): boolean =>
+export const selectHadUnexpectedExit = ( state: State ): boolean =>
 	state.onboardingV2.hadUnexpectedExit;
 
-export const selectIsCompleted = ( state: RootState ): boolean =>
+export const selectIsCompleted = ( state: State ): boolean =>
 	state.onboardingV2.progress.completedAt !== null;
 
-export const selectIsLoading = ( state: RootState ): boolean =>
+export const selectIsLoading = ( state: State ): boolean =>
 	state.onboardingV2.isLoading;
 
-export const selectError = ( state: RootState ): string | null =>
+export const selectError = ( state: State ): string | null =>
 	state.onboardingV2.error;
 
-export const selectProgress = ( state: RootState ): UserProgress =>
+export const selectProgress = ( state: State ): UserProgress =>
 	state.onboardingV2.progress;
 
-export const selectExitType = ( state: RootState ): ExitType =>
+export const selectExitType = ( state: State ): ExitType =>
 	state.onboardingV2.progress.exitType;
-
-export default onboardingV2Slice.reducer;

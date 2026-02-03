@@ -8,40 +8,37 @@
 export { init } from './init';
 
 // Components
-export { Header } from './components/header';
-export { Footer } from './components/footer';
 export { App } from './components/app';
+export { Footer } from './components/footer';
+export { Header } from './components/header';
 
 // Pages
 export { BlankPage } from './pages/blank-page';
 
 // Store
 export {
+	completeStep,
 	onboardingV2Slice,
-	selectCurrentStep,
 	selectCompletedSteps,
-	selectUserChoices,
+	selectCurrentStep,
 	selectHadUnexpectedExit,
 	selectIsCompleted,
-	setCurrentStep,
-	completeStep,
-	setUserChoice,
-	setExitType,
-	resetOnboarding,
+	selectUserChoices,
+	type State,
 } from './store/slice';
 
 // API
 export {
-	fetchUserProgress,
-	updateUserProgress,
 	fetchUserChoices,
+	fetchUserProgress,
 	updateUserChoices,
+	updateUserProgress,
 } from './api/client';
 
 // Types
 export type {
-	OnboardingV2State,
-	UserProgress,
-	UserChoices,
 	ExitType,
+	OnboardingV2State,
+	UserChoices,
+	UserProgress,
 } from './types';

@@ -6,23 +6,20 @@
  */
 
 import * as React from 'react';
+import { __useDispatch as useDispatch, __useSelector as useSelector } from '@elementor/store';
 import { Box, styled } from '@elementor/ui';
-import { useSelector, useDispatch } from 'react-redux';
-import { Header } from './header';
-import { Footer } from './footer';
+
+import { completeStepOnServer, markUserExitOnServer } from '../api/client';
 import { BlankPage } from '../pages/blank-page';
 import {
+	clearUnexpectedExit,
+	completeStep,
+	onboardingV2Slice,
 	selectCurrentStep,
 	selectHadUnexpectedExit,
-	setCurrentStep,
-	completeStep,
-	setExitType,
-	clearUnexpectedExit,
 } from '../store/slice';
-import {
-	completeStepOnServer,
-	markUserExitOnServer,
-} from '../api/client';
+import { Footer } from './footer';
+import { Header } from './header';
 
 /**
  * Total number of onboarding steps.
@@ -80,7 +77,7 @@ interface AppProps {
 	 * Optional custom page components to render at each step.
 	 * If not provided, uses the default BlankPage component.
 	 */
-	pages?: React.ComponentType<PageProps>[];
+	pages?: React.ComponentType< PageProps >[];
 
 	/**
 	 * Callback when onboarding is completed.
@@ -122,6 +119,10 @@ export interface PageProps {
 
 /**
  * Main App component for the onboarding wizard.
+ * @param root0
+ * @param root0.pages
+ * @param root0.onComplete
+ * @param root0.onClose
  */
 export function App( { pages = [], onComplete, onClose }: AppProps ) {
 	const dispatch = useDispatch();
@@ -140,7 +141,7 @@ export function App( { pages = [], onComplete, onClose }: AppProps ) {
 	const handleClose = React.useCallback( async () => {
 		try {
 			await markUserExitOnServer();
-			dispatch( setExitType( 'user_exit' ) );
+			dispatch( onboardingV2Slice.actions.setExitType( 'user_exit' ) );
 
 			if ( onClose ) {
 				onClose();
@@ -153,24 +154,23 @@ export function App( { pages = [], onComplete, onClose }: AppProps ) {
 
 	const handleBack = React.useCallback( () => {
 		if ( currentStep > 0 ) {
-			dispatch( setCurrentStep( currentStep - 1 ) );
+			dispatch( onboardingV2Slice.actions.setCurrentStep( currentStep - 1 ) );
 		}
 	}, [ currentStep, dispatch ] );
 
 	const handleSkip = React.useCallback( () => {
 		if ( currentStep < TOTAL_STEPS - 1 ) {
-			dispatch( setCurrentStep( currentStep + 1 ) );
+			dispatch( onboardingV2Slice.actions.setCurrentStep( currentStep + 1 ) );
 		}
 	}, [ currentStep, dispatch ] );
 
 	const handleContinue = React.useCallback( async () => {
 		try {
-			// Mark current step as completed on server
 			await completeStepOnServer( currentStep, TOTAL_STEPS );
 			dispatch( completeStep( currentStep ) );
 
 			if ( currentStep < TOTAL_STEPS - 1 ) {
-				dispatch( setCurrentStep( currentStep + 1 ) );
+				dispatch( onboardingV2Slice.actions.setCurrentStep( currentStep + 1 ) );
 			} else if ( onComplete ) {
 				onComplete();
 			}
@@ -183,7 +183,7 @@ export function App( { pages = [], onComplete, onClose }: AppProps ) {
 	const handleSkipTo = React.useCallback(
 		( step: number ) => {
 			if ( step >= 0 && step < TOTAL_STEPS ) {
-				dispatch( setCurrentStep( step ) );
+				dispatch( onboardingV2Slice.actions.setCurrentStep( step ) );
 			}
 		},
 		[ dispatch ]
@@ -215,9 +215,7 @@ export function App( { pages = [], onComplete, onClose }: AppProps ) {
 					showBack={ currentStep > 0 }
 					showSkip={ currentStep < TOTAL_STEPS - 1 }
 					showContinue
-					continueLabel={
-						currentStep === TOTAL_STEPS - 1 ? 'Finish' : 'Continue'
-					}
+					continueLabel={ currentStep === TOTAL_STEPS - 1 ? 'Finish' : 'Continue' }
 					onBack={ handleBack }
 					onSkip={ handleSkip }
 					onContinue={ handleContinue }
