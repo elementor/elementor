@@ -9,7 +9,7 @@ use Elementor\Modules\Interactions\Adapter;
  * @group Elementor\Modules\Interactions
  * @group Elementor\Modules\Interactions\Adapter
  */
-class Test_Adapter55 extends TestCase {
+class Test_Adapter extends TestCase {
 
 	/**
 	 * Create a v1 format interaction item with 'number' type timing values.
