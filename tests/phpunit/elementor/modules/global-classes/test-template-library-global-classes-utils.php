@@ -4,7 +4,8 @@ namespace Elementor\Testing\Modules\GlobalClasses;
 
 use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
-use Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes;
+use Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes_Element_Transformer;
+use Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes_Snapshot_Builder;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -51,7 +52,7 @@ class Test_Template_Library_Global_Classes_Utils extends Elementor_Test_Base {
 			],
 		];
 
-		$result = Template_Library_Global_Classes::extract_used_class_ids_from_elements( $elements );
+		$result = Template_Library_Global_Classes_Snapshot_Builder::extract_used_class_ids_from_elements( $elements );
 
 		$this->assertSame( [ 'g-1', 'g-2', 'g-3' ], $result );
 	}
@@ -76,7 +77,7 @@ class Test_Template_Library_Global_Classes_Utils extends Elementor_Test_Base {
 
 		$this->seed_global_classes( $items, [ 'g-2' ] );
 
-		$snapshot = Template_Library_Global_Classes::build_snapshot_for_ids( [ 'g-1', 'g-2', 'g-missing', '' ] );
+		$snapshot = Template_Library_Global_Classes_Snapshot_Builder::build_snapshot_for_ids( [ 'g-1', 'g-2', 'g-missing', '' ] );
 
 		$this->assertIsArray( $snapshot );
 		$this->assertSame( [ 'g-2', 'g-1' ], $snapshot['order'] );
@@ -122,7 +123,7 @@ class Test_Template_Library_Global_Classes_Utils extends Elementor_Test_Base {
 			'order' => [ 'g-1' ],
 		];
 
-		$result = Template_Library_Global_Classes::merge_snapshot_and_get_id_map( $incoming );
+		$result = Template_Library_Global_Classes_Snapshot_Builder::merge_snapshot_and_get_id_map( $incoming );
 
 		$this->assertArrayHasKey( 'g-1', $result['id_map'] );
 		$new_id = $result['id_map']['g-1'];
@@ -148,7 +149,7 @@ class Test_Template_Library_Global_Classes_Utils extends Elementor_Test_Base {
 			],
 		];
 
-		$result = Template_Library_Global_Classes::rewrite_elements_classes_ids( $elements, [ 'g-1' => 'g-9' ] );
+		$result = Template_Library_Global_Classes_Element_Transformer::rewrite_elements_classes_ids( $elements, [ 'g-1' => 'g-9' ] );
 
 		$this->assertSame( [ 'g-9', 'g-2' ], $result[0]['settings']['classes']['value'] );
 	}
@@ -199,7 +200,7 @@ class Test_Template_Library_Global_Classes_Utils extends Elementor_Test_Base {
 			],
 		];
 
-		$result = Template_Library_Global_Classes::flatten_elements_classes( $elements, $global_classes );
+		$result = Template_Library_Global_Classes_Element_Transformer::flatten_elements_classes( $elements, $global_classes );
 
 		$classes = $result[0]['settings']['classes']['value'];
 		$this->assertCount( 2, $classes );
