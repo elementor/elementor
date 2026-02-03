@@ -34,13 +34,9 @@ export const useAdminMenuOffset = () => {
 			const isRTL = getIsRTL();
 			const rect = adminMenuWrap.getBoundingClientRect();
 
-<<<<<<< HEAD
 			const offset = isRTL ? window.innerWidth - rect.left : rect.right;
-=======
-			const offset = isRtlLanguage ? document.documentElement.clientWidth - rect.left : rect.right;
 			const adminBarHeightPx = `${ wpAdminBar?.clientHeight ?? 0 }px`;
 			const topBarHeaderHeightPx = `${ topBarHeader?.clientHeight ?? 0 }px`;
->>>>>>> 2c3d7f3785 (Internal: Chained scrolling between Left Toolbar and Editor home [ED-22462] (#34589))
 
 			wpcontent.style.setProperty( '--editor-one-sidebar-left-offset', `${ offset }px` );
 			wpcontent.style.setProperty( '--e-admin-bar-height', adminBarHeightPx );
