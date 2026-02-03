@@ -1,4 +1,3 @@
-
 import Component from './component';
 import AtomicElementBaseType from './atomic-element-base-type';
 import createAtomicElementViewBase from './create-atomic-element-base-view';
