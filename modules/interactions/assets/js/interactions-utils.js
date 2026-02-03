@@ -1,7 +1,7 @@
 'use strict';
 
 export const config = window.ElementorInteractionsConfig?.constants || {
-	defaultDuration: 300,
+	defaultDuration: 600,
 	defaultDelay: 0,
 	slideDistance: 100,
 	scaleStart: 0,
@@ -55,7 +55,7 @@ export function parseAnimationName( name ) {
 		duration: duration ? parseInt( duration, 10 ) : config.defaultDuration,
 		delay: delay ? parseInt( delay, 10 ) : config.defaultDelay,
 		replay: false,
-		easing: easing || config.defaultEasing,
+		easing: config.defaultEasing,
 	};
 }
 
