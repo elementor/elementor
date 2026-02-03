@@ -374,6 +374,13 @@
 	}
 }
 
-body:has(#editor-one-top-bar > *) #wpcontent #wpbody-content {
-	margin-block-start: 50px;
+body:has(#editor-one-top-bar > *) {
+
+	#wpcontent #wpbody-content {
+		margin-block-start: 50px;
+	}
+
+	#adminmenu {
+		position: sticky;
+	}
 }
