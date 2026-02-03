@@ -17,7 +17,7 @@
 						"value": ["component-1-button-local-class-id"]
 					},
 					"text": {
-						"$$type": "string",
+						"$$type": "html",
 						"value": "Component 2 Button"
 					},
                     "link": {
