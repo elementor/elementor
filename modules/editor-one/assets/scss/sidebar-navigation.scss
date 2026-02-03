@@ -42,10 +42,16 @@
 		display: none;
 	}
 
-	#footer-left {
-		float: none;
-		text-align: center;
-		margin: 0 auto;
+	#wpfooter {
+		position: initial;
+		margin-inline: 0;
+		margin-block-start: 65px;
+
+		#footer-left {
+			float: none;
+			text-align: center;
+			margin: 0 auto;
+		}
 	}
 
 	#adminmenu {

@@ -393,15 +393,8 @@ body:has(#editor-one-top-bar > *) {
 		padding-block-end: 0;
 
 		@media screen and (min-width: 783px) {
-			overflow-x: hidden;
 			overflow-y: auto;
 			height: calc(100vh - var(--e-admin-bar-height, 0px) - var(--e-top-bar-header-height, 0px));
-		}
-
-		#wpfooter {
-			position: initial;
-			margin-inline: 0;
-			margin-block-start: 65px;
 		}
 	}
 }

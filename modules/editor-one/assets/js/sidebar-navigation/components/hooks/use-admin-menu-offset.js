@@ -32,14 +32,10 @@ export const useAdminMenuOffset = () => {
 			const rect = adminMenuWrap.getBoundingClientRect();
 
 			const offset = isRTL ? window.innerWidth - rect.left : rect.right;
+			const adminBarHeightPx = `${ document.getElementById( WPADMINBAR_ID )?.clientHeight ?? 0 }px`;
+			const topBarHeaderHeightPx = `${ document.getElementById( EDITOR_ONE_TOP_BAR_ID )?.querySelector( ':scope > header' )?.clientHeight ?? 0 }px`;
 
 			wpcontent.style.setProperty( '--editor-one-sidebar-left-offset', `${ offset }px` );
-
-			const wpAdminBar = document.getElementById( WPADMINBAR_ID );
-			const topBarHeader = document.getElementById( EDITOR_ONE_TOP_BAR_ID )?.querySelector( ':scope > header' );
-			const adminBarHeightPx = wpAdminBar ? `${ wpAdminBar.clientHeight }px` : '0px';
-			const topBarHeaderHeightPx = topBarHeader ? `${ topBarHeader.clientHeight }px` : '0px';
-
 			wpcontent.style.setProperty( '--e-admin-bar-height', adminBarHeightPx );
 			wpcontent.style.setProperty( '--e-top-bar-header-height', topBarHeaderHeightPx );
 		};
