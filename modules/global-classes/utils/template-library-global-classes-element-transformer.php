@@ -83,6 +83,9 @@ class Template_Library_Global_Classes_Element_Transformer {
 			}
 
 			if ( ! self::should_flatten_class_id( $class_id, $items, $ids_to_flatten ) ) {
+				if ( self::is_global_class_id( $class_id ) ) {
+					continue;
+				}
 				$updated_values[] = $class_id;
 				continue;
 			}
@@ -94,6 +97,10 @@ class Template_Library_Global_Classes_Element_Transformer {
 		}
 
 		return [ $updated_values, $element_styles ];
+	}
+
+	private static function is_global_class_id( string $class_id ): bool {
+		return str_starts_with( $class_id, 'g-' );
 	}
 
 	private static function should_flatten_class_id( string $class_id, array $items, ?array $ids_to_flatten ): bool {

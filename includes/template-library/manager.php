@@ -708,7 +708,18 @@ class Manager {
 			return $global_variables;
 		}
 
-		$result = Template_Library_Import_Export_Utils::apply_import_mode_to_content( $content, $import_mode, $global_classes, $global_variables );
+		$data = [
+			'global_classes' => $global_classes,
+			'global_variables' => $global_variables,
+		];
+
+		$result = apply_filters(
+			'elementor/template_library/import/process_content',
+			[ 'content' => $content ],
+			$import_mode,
+			$data,
+			null
+		);
 
 		$response = [
 			'content' => $result['content'],
