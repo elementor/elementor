@@ -33,7 +33,6 @@ export { registerStyleProviderToColors } from './provider-colors-registry';
 export { stylesInheritanceTransformersRegistry } from './styles-inheritance/styles-inheritance-transformers-registry';
 export { getFieldIndicators, registerFieldIndicator, FIELD_TYPE } from './field-indicators-registry';
 export { registerEditingPanelReplacement } from './editing-panel-replacement-registry';
-export { type V4PromotionData } from './components/promotions/types';
 
 export { doApplyClasses, doGetAppliedClasses, doUnapplyClass } from './apply-unapply-actions';
 export { type DynamicTag, type DynamicTags, type DynamicTagsManager } from './dynamics/types';
