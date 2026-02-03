@@ -475,7 +475,7 @@ body:has(#editor-one-top-bar > *) {
 			display: flex;
 			flex-direction: column;
 			overflow-y: auto;
-			height: calc(100vh - var(--e-admin-bar-height) - var(--e-top-bar-header-height));
+			height: calc(100vh - var(--e-admin-bar-height, 0px) - var(--e-top-bar-header-height, 0px));
 		}
 	}
 }
