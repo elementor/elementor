@@ -41,7 +41,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 	}
 
 	protected function add_interactions_script_depends() {
-		foreach ( $this->get_interactions_script_handles() as $handle ) {
+		foreach ( $this->get_interactions_script_handle() as $handle ) {
 			$this->add_script_depends( $handle );
 		}
 	}

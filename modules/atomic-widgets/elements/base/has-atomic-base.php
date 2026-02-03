@@ -323,8 +323,8 @@ trait Has_Atomic_Base {
 		return $animation_ids;
 	}
 
-	protected function get_interactions_script_handles() {
-		$interactions_module = Plugin::$instance->modules_manager->get_modules( Interactions_Module::MODULE_NAME );
+	protected function get_interactions_script_handle() {
+		$interactions_module = Plugin::$instance->modules_manager->get_modules( 'interactions' );
 		if ( ! $interactions_module || ! $interactions_module->is_experiment_active() || empty( $this->get_interactions_ids() ) ) {
 			return [];
 		}
