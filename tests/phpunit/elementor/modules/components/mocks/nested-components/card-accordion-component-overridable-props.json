@@ -9,7 +9,10 @@
             "widgetType": "e-heading",
             "originValue": {
                 "$$type": "html-v2",
-                "value": "This is a title"
+                "value": {
+                    "content": "This is a title",
+                    "children": []
+                }
             },
             "groupId": "group-1"
         },
@@ -22,7 +25,10 @@
             "widgetType": "e-heading",
             "originValue": {
                 "$$type": "html-v2",
-                "value": "This is a subtitle"
+                "value": {
+                    "content": "This is a subtitle",
+                    "children": []
+                }
             },
             "groupId": "group-1"
         },
