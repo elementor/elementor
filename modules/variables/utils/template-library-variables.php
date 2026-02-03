@@ -2,14 +2,13 @@
 
 namespace Elementor\Modules\Variables\Utils;
 
+use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 class Template_Library_Variables {
-	const IMPORT_MODE_MATCH_SITE = 'match_site';
-	const IMPORT_MODE_KEEP_CREATE = 'keep_create';
-	const IMPORT_MODE_KEEP_FLATTEN = 'keep_flatten';
 
 	public static function add_variables_snapshot( array $snapshots, $content, $template_id, array $export_data ): array {
 		if ( ! is_array( $content ) ) {
@@ -50,11 +49,11 @@ class Template_Library_Variables {
 		$content = $result['content'];
 
 		switch ( $import_mode ) {
-			case self::IMPORT_MODE_KEEP_FLATTEN:
+			case Template_Library_Import_Export_Utils::IMPORT_MODE_KEEP_FLATTEN:
 				$content = self::flatten_elements_variables( $content, $snapshot );
 				break;
 
-			case self::IMPORT_MODE_KEEP_CREATE:
+			case Template_Library_Import_Export_Utils::IMPORT_MODE_KEEP_CREATE:
 				$create_result = self::create_all_as_new( $snapshot );
 				$id_map = $create_result['id_map'] ?? [];
 				$variables_to_flatten = $create_result['ids_to_flatten'] ?? [];
@@ -73,7 +72,7 @@ class Template_Library_Variables {
 				$result['variables_snapshot'] = $snapshot;
 				break;
 
-			case self::IMPORT_MODE_MATCH_SITE:
+			case Template_Library_Import_Export_Utils::IMPORT_MODE_MATCH_SITE:
 			default:
 				$merge_result = self::merge_snapshot_and_get_id_map( $snapshot );
 				$id_map = $merge_result['id_map'] ?? [];
@@ -136,7 +135,7 @@ class Template_Library_Variables {
 		$variables_to_flatten = $result['variables_to_flatten'] ?? [];
 		$variables_snapshot = $result['variables_snapshot'] ?? ( $data['global_variables'] ?? null );
 
-		if ( self::IMPORT_MODE_KEEP_FLATTEN ===	$import_mode && ! empty( $variables_snapshot ) ) {
+		if ( Template_Library_Import_Export_Utils::IMPORT_MODE_KEEP_FLATTEN ===	$import_mode && ! empty( $variables_snapshot ) ) {
 			$classes_snapshot = self::flatten_variables_in_classes_snapshot( $classes_snapshot, $variables_snapshot );
 		} else {
 			if ( ! empty( $variables_id_map ) ) {

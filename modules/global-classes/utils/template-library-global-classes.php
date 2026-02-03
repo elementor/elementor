@@ -2,14 +2,13 @@
 
 namespace Elementor\Modules\GlobalClasses\Utils;
 
+use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 class Template_Library_Global_Classes {
-	const IMPORT_MODE_MATCH_SITE = 'match_site';
-	const IMPORT_MODE_KEEP_CREATE = 'keep_create';
-	const IMPORT_MODE_KEEP_FLATTEN = 'keep_flatten';
 
 	public static function add_global_classes_snapshot( array $snapshots, $content, $template_id, array $export_data ): array {
 		if ( ! is_array( $content ) ) {
@@ -57,11 +56,11 @@ class Template_Library_Global_Classes {
 		$content = $result['content'];
 
 		switch ( $import_mode ) {
-			case self::IMPORT_MODE_KEEP_FLATTEN:
+			case Template_Library_Import_Export_Utils::IMPORT_MODE_KEEP_FLATTEN:
 				$content = self::flatten_elements_classes( $content, $snapshot );
 				break;
 
-			case self::IMPORT_MODE_KEEP_CREATE:
+			case Template_Library_Import_Export_Utils::IMPORT_MODE_KEEP_CREATE:
 				$create_result = self::create_all_as_new( $snapshot );
 				$id_map = $create_result['id_map'] ?? [];
 				$classes_to_flatten = $create_result['ids_to_flatten'] ?? [];
@@ -77,7 +76,7 @@ class Template_Library_Global_Classes {
 				$result['updated_global_classes'] = $create_result['global_classes'] ?? null;
 				break;
 
-			case self::IMPORT_MODE_MATCH_SITE:
+			case Template_Library_Import_Export_Utils::IMPORT_MODE_MATCH_SITE:
 			default:
 				$merge_result = self::merge_snapshot_and_get_id_map( $snapshot );
 				$id_map = $merge_result['id_map'] ?? [];
