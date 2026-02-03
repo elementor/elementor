@@ -50,7 +50,7 @@ class Atomic_Widget_Styles {
 			$post_styles = array_merge( $post_styles, $this->parse_element_style( $element_data ) );
 		} );
 
-		return self::should_remove_custom_css_from_styles($post_styles);
+		return self::should_remove_custom_css_from_styles( $post_styles );
 	}
 
 	private function parse_element_style( array $element_data ) {
@@ -87,7 +87,7 @@ class Atomic_Widget_Styles {
 		return $is_preview ? self::CONTEXT_PREVIEW : self::CONTEXT_FRONTEND;
 	}
 
-	// TODO: Remove in version 4.2
+	/* TODO: Remove in version 4.2 */
 	public static function should_remove_custom_css_from_styles( $styles ) {
 		if ( defined( '\ELEMENTOR_PRO_VERSION' ) && version_compare( ELEMENTOR_PRO_VERSION, '3.35', '>=' ) ) {
 			return apply_filters( 'elementor/atomic_widgets/editor_data/element_styles', self::remove_custom_css_from_styles( $styles ), $styles );
