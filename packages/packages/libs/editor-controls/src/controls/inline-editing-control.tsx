@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { type ComponentProps } from 'react';
-import { htmlPropTypeUtil, htmlV2PropTypeUtil, type PropType } from '@elementor/editor-props';
+import { htmlV2PropTypeUtil } from '@elementor/editor-props';
 import { Box, type SxProps, type Theme } from '@elementor/ui';
 import { buildHtmlV2Value, type HtmlV2Value } from '@elementor/utils';
 
@@ -19,25 +19,17 @@ export const InlineEditingControl = createControl(
 		attributes?: Record< string, string >;
 		props?: ComponentProps< 'div' >;
 	} ) => {
-		const { value: rawValue, setValue, propType } = useBoundProp();
-		const isHtmlV2 = isHtmlV2PropType( propType );
-		const extractedValue = isHtmlV2
-			? htmlV2PropTypeUtil.extract( rawValue ?? null )
-			: htmlPropTypeUtil.extract( rawValue ?? null );
-		const content = resolveContentValue( extractedValue, isHtmlV2 );
+		const { value: rawValue, setValue } = useBoundProp();
+		const extractedValue = htmlV2PropTypeUtil.extract( rawValue ?? null );
+		const content = resolveContentValue( extractedValue );
 
 		const handleChange = ( newValue: unknown ) => {
 			const updatedContent = ( newValue ?? '' ) as string;
 
-			if ( isHtmlV2 ) {
-				const nextValue = buildHtmlV2Value( updatedContent, normalizeHtmlV2Value( extractedValue ), {
-					parseChildren: true,
-				} );
-				setValue( htmlV2PropTypeUtil.create( nextValue ) );
-				return;
-			}
-
-			setValue( htmlPropTypeUtil.create( updatedContent ) );
+			const nextValue = buildHtmlV2Value( updatedContent, normalizeHtmlV2Value( extractedValue ), {
+				parseChildren: true,
+			} );
+			setValue( htmlV2PropTypeUtil.create( nextValue ) );
 		};
 
 		return (
@@ -83,25 +75,8 @@ const getContainerStyles = ( sx?: SxProps< Theme > ) => ( {
 	...sx,
 } );
 
-const isHtmlV2PropType = ( propType: PropType ): boolean => {
-	if ( propType.kind === 'union' ) {
-		return Boolean( propType.prop_types?.[ htmlV2PropTypeUtil.key ] );
-	}
-
-	return 'key' in propType && propType.key === htmlV2PropTypeUtil.key;
-};
-
 const normalizeHtmlV2Value = ( value: unknown ): HtmlV2Value | null =>
 	typeof value === 'object' && value !== null && 'content' in value ? ( value as HtmlV2Value ) : null;
 
-const resolveContentValue = ( value: unknown, isHtmlV2: boolean ): string | null => {
-	if ( isHtmlV2 ) {
-		if ( typeof value === 'string' || value === null ) {
-			return value;
-		}
-
-		return normalizeHtmlV2Value( value )?.content ?? '';
-	}
-
-	return typeof value === 'string' || value === null ? value : '';
-};
+const resolveContentValue = ( value: unknown ): string | null =>
+	typeof value === 'string' || value === null ? value : normalizeHtmlV2Value( value )?.content ?? '';
