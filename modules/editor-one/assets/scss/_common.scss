@@ -5,15 +5,6 @@
 
 @import "theme-light";
 
-:root {
-	--e-admin-bar-height: 0px;
-	--e-top-bar-header-height: 48px;
-
-	&:has(#wpadminbar) {
-		--e-admin-bar-height: 32px;
-	}
-}
-
 #wpwrap {
 	background-color: var(--e-one-palette-background-default);
 }
