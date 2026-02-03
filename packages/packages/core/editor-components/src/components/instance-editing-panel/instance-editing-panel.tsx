@@ -11,6 +11,7 @@ import { __ } from '@wordpress/i18n';
 import { useComponentInstanceSettings } from '../../hooks/use-component-instance-settings';
 import { useComponentsPermissions } from '../../hooks/use-components-permissions';
 import { useValidOverridableProps } from '../../hooks/use-valid-overridable-props';
+import { ComponentInstanceProvider } from '../../provider/component-instance-context';
 import { useComponent } from '../../store/store';
 import { type OverridablePropsGroup } from '../../types';
 import { switchToComponent } from '../../utils/switch-to-component';
@@ -49,7 +50,11 @@ export function InstanceEditingPanel() {
 	const isEmpty = groups.length === 0 || Object.keys( overridableProps.props ).length === 0;
 
 	return (
-		<>
+		<ComponentInstanceProvider
+			componentId={ componentId }
+			overrides={ overrides }
+			overridableProps={ overridableProps }
+		>
 			<PanelHeader sx={ { justifyContent: 'start', px: 2 } }>
 				<Stack direction="row" alignItems="center" flexGrow={ 1 } gap={ 1 } maxWidth="100%">
 					<ComponentsIcon fontSize="small" sx={ { color: 'text.tertiary' } } />
@@ -71,11 +76,7 @@ export function InstanceEditingPanel() {
 						<Stack direction="column" alignItems="stretch">
 							{ groups.map( ( group ) => (
 								<React.Fragment key={ group.id + componentInstanceId }>
-									<OverridePropsGroup
-										group={ group }
-										props={ overridableProps.props }
-										overrides={ overrides }
-									/>
+									<OverridePropsGroup group={ group } />
 									<Divider />
 								</React.Fragment>
 							) ) }
@@ -83,6 +84,6 @@ export function InstanceEditingPanel() {
 					) }
 				</ControlAdornmentsProvider>
 			</PanelBody>
-		</>
+		</ComponentInstanceProvider>
 	);
 }

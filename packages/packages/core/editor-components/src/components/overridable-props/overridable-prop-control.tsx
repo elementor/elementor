@@ -11,7 +11,6 @@ import {
 import { createTopLevelObjectType, useElement } from '@elementor/editor-editing-panel';
 import { type PropValue } from '@elementor/editor-props';
 
-import { useValidOverridableProps } from '../../hooks/use-valid-overridable-props';
 import { type ComponentInstanceOverridePropValue } from '../../prop-types/component-instance-override-prop-type';
 import {
 	componentOverridablePropTypeUtil,
@@ -19,7 +18,7 @@ import {
 } from '../../prop-types/component-overridable-prop-type';
 import { OverridablePropProvider } from '../../provider/overridable-prop-context';
 import { updateOverridableProp } from '../../store/actions/update-overridable-prop';
-import { useCurrentComponentId } from '../../store/store';
+import { useCurrentComponentId, useOverridableProps } from '../../store/store';
 import { getPropTypeForComponentOverride } from '../../utils/get-prop-type-for-component-override';
 import { OVERRIDABLE_PROP_REPLACEMENT_ID } from '../consts';
 
@@ -31,7 +30,7 @@ export function OverridablePropControl< T extends object >( {
 
 	const { value, bind, setValue, placeholder, ...propContext } = useBoundProp( componentOverridablePropTypeUtil );
 	const componentId = useCurrentComponentId();
-	const overridableProps = useValidOverridableProps( componentId );
+	const overridableProps = useOverridableProps( componentId );
 	const filteredReplacements = getControlReplacements().filter(
 		( r ) => ! r.id || r.id !== OVERRIDABLE_PROP_REPLACEMENT_ID
 	);

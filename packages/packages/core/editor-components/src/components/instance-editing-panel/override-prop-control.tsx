@@ -28,16 +28,20 @@ import {
 import {
 	type ComponentInstanceOverride,
 	componentInstanceOverridesPropTypeUtil,
-	type ComponentInstanceOverridesPropValue,
 } from '../../prop-types/component-instance-overrides-prop-type';
 import { componentInstancePropTypeUtil } from '../../prop-types/component-instance-prop-type';
 import {
 	type ComponentOverridableProp,
 	componentOverridablePropTypeUtil,
 } from '../../prop-types/component-overridable-prop-type';
+import {
+	useComponentId,
+	useComponentInstanceOverrides,
+	useComponentOverridableProps,
+} from '../../provider/component-instance-context';
 import { OverridablePropProvider } from '../../provider/overridable-prop-context';
 import { updateOverridableProp } from '../../store/actions/update-overridable-prop';
-import { useCurrentComponentId, useOverridableProps } from '../../store/store';
+import { useCurrentComponentId } from '../../store/store';
 import { type OriginPropFields, type OverridableProp, type OverridableProps } from '../../types';
 import { getPropTypeForComponentOverride } from '../../utils/get-prop-type-for-component-override';
 import { getMatchingOverride } from '../../utils/overridable-props-utils';
@@ -47,24 +51,36 @@ import { OverrideControlInnerElementNotFoundError } from '../errors';
 import { useResolvedOriginValue } from './use-resolved-origin-value';
 
 type Props = {
-	overridableProp: OverridableProp;
-	overrides?: ComponentInstanceOverridesPropValue;
+	overrideKey: string;
 };
 
-type OverridesSchema = Record< string, ComponentInstanceOverride >;
+export function OverridePropControl( { overrideKey }: Props ) {
+	const overridableProps = useComponentOverridableProps();
+	const overridableProp = overridableProps?.props[ overrideKey ];
 
-export function OverridePropControl( { overridableProp, overrides }: Props ) {
+	if ( ! overridableProp ) {
+		return null;
+	}
+
 	return (
 		<SettingsField bind="component_instance" propDisplayName={ overridableProp.label }>
-			<OverrideControl overridableProp={ overridableProp } overrides={ overrides } />
+			<OverrideControl overridableProp={ overridableProp } />
 		</SettingsField>
 	);
 }
 
-function OverrideControl( { overridableProp, overrides }: Props ) {
+type InternalProps = {
+	overridableProp: OverridableProp;
+};
+type OverridesSchema = Record< string, ComponentInstanceOverride >;
+
+function OverrideControl( { overridableProp }: InternalProps ) {
 	const componentInstanceElement = useElement();
-	const componentId = useCurrentComponentId();
 	const { value: instanceValue, setValue: setInstanceValue } = useBoundProp( componentInstancePropTypeUtil );
+	const wrappingComponentId = useCurrentComponentId();
+	const componentId = useComponentId();
+	const overridableProps = useComponentOverridableProps();
+	const overrides = useComponentInstanceOverrides();
 
 	const controls = useControlsByWidgetType(
 		overridableProp?.originPropFields?.widgetType ?? overridableProp.widgetType
@@ -75,12 +91,13 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 
 	const recursiveOriginValue = useResolvedOriginValue( matchingOverride, overridableProp );
 
-	const componentInstanceId = instanceValue.component_id?.value;
-
-	if ( ! componentInstanceId ) {
+	if ( ! componentId ) {
 		throw new Error( 'Component ID is required' );
 	}
-	const overridableProps = useOverridableProps( componentInstanceId );
+
+	if ( ! overridableProps ) {
+		throw new Error( 'Component has no overridable props' );
+	}
 
 	const propType = getPropTypeForComponentOverride( overridableProp );
 
@@ -115,15 +132,12 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 			matchingOverride,
 			overrideKey: overridableProp.overrideKey,
 			overrideValue: newPropValue,
-			componentId: componentInstanceId,
+			componentId,
 		} );
 
-		const initialOverrides = ( overrides ?? [] ).filter( ( override ) =>
-			isValidOverride( overridableProps, override )
-		);
-		let newOverrides = initialOverrides.map( ( override ) =>
-			override === matchingOverride ? newOverrideValue : override
-		);
+		let newOverrides = ( overrides ?? [] )
+			.filter( ( override ) => isValidOverride( overridableProps, override ) )
+			.map( ( override ) => ( override === matchingOverride ? newOverrideValue : override ) );
 
 		if ( ! matchingOverride ) {
 			newOverrides = [ ...newOverrides, newOverrideValue ];
@@ -135,15 +149,15 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 		} );
 
 		const overridableValue = componentOverridablePropTypeUtil.extract( newOverrideValue );
-		if ( overridableValue && componentId ) {
+		if ( overridableValue && wrappingComponentId ) {
 			if ( overridableProp.originPropFields ) {
-				updateOverridableProp( componentId, overridableValue, overridableProp.originPropFields );
+				updateOverridableProp( wrappingComponentId, overridableValue, overridableProp.originPropFields );
 
 				return;
 			}
 
 			const { elType, widgetType, propKey, elementId } = overridableProp;
-			updateOverridableProp( componentId, overridableValue, { elType, widgetType, propKey, elementId } );
+			updateOverridableProp( wrappingComponentId, overridableValue, { elType, widgetType, propKey, elementId } );
 		}
 	};
 
@@ -158,7 +172,7 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 	const elementContainer = getContainer( elementId );
 	if ( ! elementContainer ) {
 		throw new OverrideControlInnerElementNotFoundError( {
-			context: { componentId: componentInstanceId, elementId },
+			context: { componentId, elementId },
 		} );
 	}
 
@@ -307,10 +321,10 @@ function populateChildControlProps( props: Record< string, unknown > ) {
 	return props;
 }
 
-function isValidOverride( overrides: OverridableProps, override: ComponentInstanceOverride ): boolean {
+function isValidOverride( overridableProps: OverridableProps, override: ComponentInstanceOverride ): boolean {
 	const overridableKey = componentOverridablePropTypeUtil.isValid( override )
 		? ( override.value.origin_value as ComponentInstanceOverrideProp )?.value.override_key
 		: override.value.override_key;
 
-	return !! overrides.props[ overridableKey ];
+	return !! overridableProps.props[ overridableKey ];
 }

@@ -16,7 +16,7 @@ export function useValidOverridableProps( componentId: ComponentId | null ): Ove
 	const propsToDelete = originalPropsArray.filter( ( [ key ] ) => ! filteredOverridableProps.props[ key ] );
 
 	propsToDelete.forEach( ( [ key ] ) => {
-		deleteOverridableProp( { componentId, propKey: key, source: 'auto' }, false );
+		deleteOverridableProp( { componentId, propKey: key, source: 'system' }, false );
 	} );
 
 	return filteredOverridableProps;
