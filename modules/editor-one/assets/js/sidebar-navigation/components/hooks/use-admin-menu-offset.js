@@ -28,7 +28,7 @@ export const useAdminMenuOffset = () => {
 		const topBarHeader = document.getElementById( EDITOR_ONE_TOP_BAR_ID )?.querySelector( ':scope > header' );
 
 		const updateOffset = () => {
-			const isRtlLanguage = getIsRTL();
+			const isRtlLanguage = isRTL();
 			const rect = adminMenuWrap.getBoundingClientRect();
 
 			const offset = isRtlLanguage ? document.documentElement.clientWidth - rect.left : rect.right;
