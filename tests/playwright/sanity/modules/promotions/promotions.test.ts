@@ -191,6 +191,35 @@ test.describe.skip( 'Promotion tests @promotions', () => {
 		// Assert.
 		await expect.soft( navigatorPanel ).toHaveScreenshot( 'resized-navigator-panel.png' );
 	} );
+
+	test( 'Promotional banner visibility - Free version', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const promotionalBannerSelector = '#elementor-panel-get-pro-elements';
+
+		// Act
+		await wpAdmin.openNewPage();
+		const promotionalBanner = page.locator( promotionalBannerSelector );
+
+		// Assert
+		await promotionalBanner.waitFor( { state: 'visible' } );
+		await expect( promotionalBanner ).toBeVisible();
+		await expect( promotionalBanner.locator( '.elementor-nerd-box-message' ) ).toContainText( 'Get more with Elementor Pro' );
+		await expect( promotionalBanner.locator( '.elementor-button.go-pro' ) ).toBeVisible();
+	} );
+
+	test( 'Promotional banner visibility - Pro users', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const promotionalBannerSelector = '#elementor-panel-get-pro-elements';
+
+		// Act
+		await wpAdmin.openNewPage();
+		const promotionalBanner = page.locator( promotionalBannerSelector );
+
+		// Assert
+		await expect( promotionalBanner ).toBeHidden();
+	} );
 } );
 
 /**
