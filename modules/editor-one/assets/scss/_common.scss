@@ -379,9 +379,6 @@ body:has(#editor-one-top-bar > *) #wpbody {
 	margin-block-start: 50px;
 	padding-block-end: 0;
 	position: fixed;
-	right: 0;
-	top: 25px;
-	left: 0;
 	bottom: 0;
 	left: calc(var(--editor-one-sidebar-left-offset, 160px) + var(--editor-one-sidebar-navigation-width, 240px));
 	width: calc(100vw - var(--editor-one-sidebar-left-offset, 160px) - var(--editor-one-sidebar-navigation-width, 240px));
