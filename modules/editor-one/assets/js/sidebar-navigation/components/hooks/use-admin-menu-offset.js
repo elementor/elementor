@@ -27,13 +27,16 @@ export const useAdminMenuOffset = () => {
 		const wpbodyContent = document.getElementById( WPBODY_CONTENT_ID );
 		wpbodyContent?.insertBefore( wpfooter, wpbodyContent.querySelector( ':scope > .clear' ) );
 
+		const wpAdminBar = document.getElementById( WPADMINBAR_ID );
+		const topBarHeader = document.getElementById( EDITOR_ONE_TOP_BAR_ID )?.querySelector( ':scope > header' );
+
 		const updateOffset = () => {
-			const isRtlLanguage = isRTL();
+			const isRtlLanguage = getIsRTL();
 			const rect = adminMenuWrap.getBoundingClientRect();
 
 			const offset = isRtlLanguage ? document.documentElement.clientWidth - rect.left : rect.right;
-			const adminBarHeightPx = `${ document.getElementById( WPADMINBAR_ID )?.clientHeight ?? 0 }px`;
-			const topBarHeaderHeightPx = `${ document.getElementById( EDITOR_ONE_TOP_BAR_ID )?.querySelector( ':scope > header' )?.clientHeight ?? 0 }px`;
+			const adminBarHeightPx = `${ wpAdminBar?.clientHeight ?? 0 }px`;
+			const topBarHeaderHeightPx = `${ topBarHeader?.clientHeight ?? 0 }px`;
 
 			wpcontent.style.setProperty( '--editor-one-sidebar-left-offset', `${ offset }px` );
 			wpcontent.style.setProperty( '--e-admin-bar-height', adminBarHeightPx );
