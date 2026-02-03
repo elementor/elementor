@@ -11,7 +11,8 @@
       "op": {
         "fn": "move",
         "src": "value",
-        "dest": "value.content"
+        "dest": "value.content",
+        "clean": false
       }
     },
     {
