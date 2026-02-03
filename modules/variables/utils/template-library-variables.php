@@ -135,7 +135,7 @@ class Template_Library_Variables {
 		$variables_to_flatten = $result['variables_to_flatten'] ?? [];
 		$variables_snapshot = $result['variables_snapshot'] ?? ( $data['global_variables'] ?? null );
 
-		if ( Template_Library_Import_Export_Utils::IMPORT_MODE_KEEP_FLATTEN ===	$import_mode && ! empty( $variables_snapshot ) ) {
+		if ( Template_Library_Import_Export_Utils::IMPORT_MODE_KEEP_FLATTEN === $import_mode && ! empty( $variables_snapshot ) ) {
 			$classes_snapshot = self::flatten_variables_in_classes_snapshot( $classes_snapshot, $variables_snapshot );
 		} else {
 			if ( ! empty( $variables_id_map ) ) {
