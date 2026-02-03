@@ -29,7 +29,7 @@
 		}
 
 		a:not(.button),
-		.eps-button {
+		.eps-button:not(.e-site-editor-conditions__add-button) {
 			color: var(--e-one-palette-text-primary);
 			text-decoration: none;
 
@@ -166,7 +166,7 @@
 	.wp-core-ui .button-primary {
 		background-color: var(--e-one-palette-primary-main);
 		border-color: var(--e-one-palette-primary-main);
-		color: var(--e-one-palette-primary-contrastText);
+		color: var(--e-one-palette-primary-contrast-text);
 		font-weight: 500;
 		padding: 8px 16px;
 		border-radius: var(--e-a-border-radius);
@@ -180,7 +180,7 @@
 		&:focus {
 			background-color: var(--e-one-palette-primary-dark);
 			border-color: var(--e-one-palette-primary-dark);
-			color: var(--e-one-palette-primary-contrastText);
+			color: var(--e-one-palette-primary-contrast-text);
 		}
 
 		&:active {
