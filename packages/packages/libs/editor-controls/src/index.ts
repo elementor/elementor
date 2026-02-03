@@ -38,6 +38,9 @@ export { InlineEditingControl } from './controls/inline-editing-control';
 
 // components
 export { ControlFormLabel } from './components/control-form-label';
+export { DisplayConditionsControl } from './components/promotions/display-conditions-control';
+export { AttributesControl } from './components/promotions/attributes-control';
+export { PromotionTrigger } from './components/promotions/promotion-trigger';
 export { ControlToggleButtonGroup } from './components/control-toggle-button-group';
 export { ToggleButtonGroupUi } from './components/control-toggle-button-group';
 export { ClearIconButton } from './components/icon-buttons/clear-icon-button';
@@ -64,6 +67,8 @@ export type { ExtendedOption, Unit, LengthUnit, AngleUnit, TimeUnit } from './ut
 export type { ToggleControlProps } from './controls/toggle-control';
 export type { FontCategory } from './controls/font-family-control/font-family-control';
 export type { InlineEditorToolbarProps } from './components/inline-editor-toolbar';
+export type { V4PromotionData, V4PromotionKey } from './components/promotions/types';
+export type { PromotionTriggerRef } from './components/promotions/promotion-trigger';
 
 // providers
 export {

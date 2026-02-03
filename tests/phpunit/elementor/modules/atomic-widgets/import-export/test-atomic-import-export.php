@@ -2,6 +2,10 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\ImportExport;
 
+use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
 use Elementor\Modules\AtomicWidgets\ImportExport\Atomic_Import_Export;
@@ -17,21 +21,27 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+use Elementor\Modules\DynamicTags\Module as V1DynamicTags;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Manager;
+use Elementor\Testing\Modules\AtomicWidgets\DynamicTags\Mocks\Mock_Dynamic_Tag;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
 use Elementor\TemplateLibrary\Classes\Import_Images;
+
+require_once __DIR__ . '/../dynamic-tags/mocks/mock-dynamic-tag.php';
 
 class Test_Atomic_Import_Export extends Elementor_Test_Base {
 	use MatchesSnapshots;
 
 	private $old_templates_manager;
+	private $original_dynamic_tags;
 
 	public function set_up() {
 		parent::set_up();
 
 		$this->old_templates_manager = Plugin::$instance->templates_manager;
+		$this->original_dynamic_tags = Plugin::$instance->dynamic_tags;
 
 		remove_all_filters( 'elementor/template_library/sources/local/import/elements' );
 		remove_all_filters( 'elementor/template_library/sources/local/export/elements' );
@@ -42,6 +52,7 @@ class Test_Atomic_Import_Export extends Elementor_Test_Base {
 		parent::tear_down();
 
 		Plugin::$instance->templates_manager = $this->old_templates_manager;
+		Plugin::$instance->dynamic_tags = $this->original_dynamic_tags;
 	}
 
 	public function test_on_export() {
@@ -251,5 +262,155 @@ class Test_Atomic_Import_Export extends Elementor_Test_Base {
 				'title' => String_Prop_Type::generate( 'Test' ),
 			],
 		], $result );
+	}
+
+	public function test_on_export__dynamic_tag_includes_group() {
+		// Arrange.
+		Plugin::$instance->dynamic_tags = new Dynamic_Tags_Manager();
+		remove_all_actions( 'elementor/dynamic_tags/register_tags' );
+		remove_all_actions( 'elementor/dynamic_tags/register' );
+
+		$dynamic_tag = new Mock_Dynamic_Tag();
+		Plugin::$instance->dynamic_tags->register( $dynamic_tag );
+		Dynamic_Tags_Module::fresh();
+
+		( new Atomic_Import_Export() )->register_hooks();
+
+		$dynamic_value_without_group = Dynamic_Prop_Type::generate( [
+			'name' => 'mock-dynamic-tag',
+			'settings' => [],
+		] );
+
+		$data = [
+			[
+				'id' => 'test-container',
+				'elType' => 'container',
+				'elements' => [
+					[
+						'id' => 'test-button',
+						'elType' => 'widget',
+						'widgetType' => Atomic_Button::get_element_type(),
+						'settings' => [
+							'text' => $dynamic_value_without_group,
+							'classes' => Classes_Prop_Type::generate( [ 'test-class' ] ),
+						],
+						'styles' => [],
+					],
+				],
+			],
+		];
+
+		// Act.
+		$result = apply_filters( 'elementor/template_library/sources/local/export/elements', $data );
+
+		// Assert.
+		$exported_text = $result[0]['elements'][0]['settings']['text'];
+
+		$this->assertEquals( 'dynamic', $exported_text['$$type'] );
+		$this->assertEquals( 'mock-dynamic-tag', $exported_text['value']['name'] );
+		$this->assertArrayHasKey( 'group', $exported_text['value'] );
+		$this->assertEquals( V1DynamicTags::BASE_GROUP, $exported_text['value']['group'] );
+	}
+
+	public function test_on_import__dynamic_tag_adds_group_from_registry() {
+		// Arrange.
+		Plugin::$instance->dynamic_tags = new Dynamic_Tags_Manager();
+		remove_all_actions( 'elementor/dynamic_tags/register_tags' );
+		remove_all_actions( 'elementor/dynamic_tags/register' );
+
+		$dynamic_tag = new Mock_Dynamic_Tag();
+		Plugin::$instance->dynamic_tags->register( $dynamic_tag );
+		Dynamic_Tags_Module::fresh();
+
+		( new Atomic_Import_Export() )->register_hooks();
+
+		$dynamic_value_without_group = [
+			'$$type' => 'dynamic',
+			'value' => [
+				'name' => 'mock-dynamic-tag',
+				'settings' => [],
+			],
+		];
+
+		$data = [
+			[
+				'id' => 'test-container',
+				'elType' => 'container',
+				'elements' => [
+					[
+						'id' => 'test-button',
+						'elType' => 'widget',
+						'widgetType' => Atomic_Button::get_element_type(),
+						'settings' => [
+							'text' => $dynamic_value_without_group,
+							'classes' => Classes_Prop_Type::generate( [ 'test-class' ] ),
+						],
+						'styles' => [],
+					],
+				],
+			],
+		];
+
+		// Act.
+		$result = apply_filters( 'elementor/template_library/sources/local/import/elements', $data );
+
+		// Assert.
+		$imported_text = $result[0]['elements'][0]['settings']['text'];
+
+		$this->assertEquals( 'dynamic', $imported_text['$$type'] );
+		$this->assertEquals( 'mock-dynamic-tag', $imported_text['value']['name'] );
+		$this->assertArrayHasKey( 'group', $imported_text['value'] );
+		$this->assertEquals( V1DynamicTags::BASE_GROUP, $imported_text['value']['group'] );
+	}
+
+	public function test_on_import__dynamic_tag_preserves_existing_group() {
+		// Arrange.
+		Plugin::$instance->dynamic_tags = new Dynamic_Tags_Manager();
+		remove_all_actions( 'elementor/dynamic_tags/register_tags' );
+		remove_all_actions( 'elementor/dynamic_tags/register' );
+
+		$dynamic_tag = new Mock_Dynamic_Tag();
+		Plugin::$instance->dynamic_tags->register( $dynamic_tag );
+		Dynamic_Tags_Module::fresh();
+
+		( new Atomic_Import_Export() )->register_hooks();
+
+		$dynamic_value_with_group = [
+			'$$type' => 'dynamic',
+			'value' => [
+				'name' => 'mock-dynamic-tag',
+				'group' => 'custom-group',
+				'settings' => [],
+			],
+		];
+
+		$data = [
+			[
+				'id' => 'test-container',
+				'elType' => 'container',
+				'elements' => [
+					[
+						'id' => 'test-button',
+						'elType' => 'widget',
+						'widgetType' => Atomic_Button::get_element_type(),
+						'settings' => [
+							'text' => $dynamic_value_with_group,
+							'classes' => Classes_Prop_Type::generate( [ 'test-class' ] ),
+						],
+						'styles' => [],
+					],
+				],
+			],
+		];
+
+		// Act.
+		$result = apply_filters( 'elementor/template_library/sources/local/import/elements', $data );
+
+		// Assert.
+		$imported_text = $result[0]['elements'][0]['settings']['text'];
+
+		$this->assertEquals( 'dynamic', $imported_text['$$type'] );
+		$this->assertEquals( 'mock-dynamic-tag', $imported_text['value']['name'] );
+		$this->assertEquals( 'custom-group', $imported_text['value']['group'] );
 	}
 }
