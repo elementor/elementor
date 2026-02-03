@@ -9,7 +9,7 @@ use Elementor\Modules\Interactions\Adapter;
  * @group Elementor\Modules\Interactions
  * @group Elementor\Modules\Interactions\Adapter
  */
-class Test_Adapter extends TestCase {
+class Test_Adapter55 extends TestCase {
 
 	/**
 	 * Create a v1 format interaction item with 'number' type timing values.
@@ -480,6 +480,31 @@ class Test_Adapter extends TestCase {
 	// =========================================================================
 	// Round-trip / Idempotency Tests
 	// =========================================================================
+
+	public function test_round_trip__v1_wrap_unwrap_returns_equivalent_v1() {
+		$original_v1 = $this->create_v1_interactions( [
+			$this->create_v1_interaction_item( 400, 150 ),
+		] );
+
+		// v1 → wrap → v2
+		$wrapped = Adapter::wrap_for_db( $original_v1 );
+
+		// v2 → unwrap → v1
+		$unwrapped = Adapter::unwrap_for_frontend( $wrapped );
+		$result = json_decode( $unwrapped, true );
+
+		// Should be back to v1 format
+		$this->assertEquals( Adapter::VERSION_V1, $result['version'] );
+		$this->assertIsArray( $result['items'] );
+		$this->assertArrayNotHasKey( '$$type', $result['items'] );
+
+		// Values should be preserved
+		$timing = $result['items'][0]['value']['animation']['value']['timing_config']['value'];
+		$this->assertEquals( 'size', $timing['duration']['$$type'] );
+		$this->assertEquals( [ 'size' => 400, 'unit' => 'ms' ], $timing['duration']['value'] );
+		$this->assertEquals( 'size', $timing['delay']['$$type'] );
+		$this->assertEquals( [ 'size' => 150, 'unit' => 'ms' ], $timing['delay']['value'] );
+	}
 
 	public function test_round_trip__preserves_all_interaction_data() {
 		$original_v1 = $this->create_v1_interactions( [
