@@ -6,6 +6,22 @@
         "path": "$$type",
         "value": "html-v2"
       }
+    },
+    {
+      "op": {
+        "fn": "move",
+        "src": "value",
+        "dest": "value.content",
+        "clean": true
+      }
+    },
+    {
+      "op": {
+        "fn": "set",
+        "path": "value.children",
+        "merge": false,
+        "value": []
+      }
     }
   ],
   "down": [
@@ -14,6 +30,20 @@
         "fn": "set",
         "path": "$$type",
         "value": "html"
+      }
+    },
+    {
+      "op": {
+        "fn": "move",
+        "src": "value.content",
+        "dest": "value",
+        "clean": true
+      }
+    },
+    {
+      "op": {
+        "fn": "delete",
+        "path": "value.children"
       }
     }
   ]

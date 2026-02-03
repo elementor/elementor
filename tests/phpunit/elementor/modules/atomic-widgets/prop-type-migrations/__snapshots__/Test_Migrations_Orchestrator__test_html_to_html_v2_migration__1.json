@@ -1,6 +1,9 @@
 {
-    "title": {
-        "$$type": "html-v2",
-        "value": "Hello <strong>World</strong>"
-    }
+  "title": {
+      "$$type": "html-v2",
+      "value": {
+          "content": "Hello <strong>World</strong>",
+          "children": []
+      }
+  }
 }
