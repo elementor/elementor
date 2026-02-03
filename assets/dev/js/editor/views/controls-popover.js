@@ -52,6 +52,7 @@ export default class ControlsPopover {
 
 	onResetButtonClick() {
 		this.$popover.hide();
+		this.$popover.trigger( 'hide' );
 
 		const groupControlName = this.child.model.get( 'groupPrefix' ) + 'typography',
 			args = {

@@ -21,6 +21,7 @@ type RenderContentProps = { size: ToggleButtonProps[ 'size' ] };
 
 export type ToggleButtonGroupItem< TValue > = {
 	value: TValue;
+	disabled?: boolean;
 	label: string;
 	renderContent: ( { size }: RenderContentProps ) => React.ReactNode;
 	showTooltip?: boolean;
@@ -165,30 +166,39 @@ export const ToggleButtonGroupUi = React.forwardRef(
 					width: `100%`,
 				} }
 			>
-				{ fixedItems.map( ( { label, value: buttonValue, renderContent: Content, showTooltip } ) => {
-					const isPlaceholder =
-						placeholderArray.length > 0 &&
-						placeholderArray.includes( buttonValue as string ) &&
-						( shouldShowExclusivePlaceholder || shouldShowNonExclusivePlaceholder );
+				{ fixedItems.map(
+					( {
+						label,
+						value: buttonValue,
+						renderContent: Content,
+						showTooltip,
+						disabled: optionDisabled = false,
+					} ) => {
+						const isPlaceholder =
+							placeholderArray.length > 0 &&
+							placeholderArray.includes( buttonValue as string ) &&
+							( shouldShowExclusivePlaceholder || shouldShowNonExclusivePlaceholder );
 
-					return (
-						<ConditionalTooltip
-							key={ buttonValue as string }
-							label={ label }
-							showTooltip={ showTooltip || false }
-						>
-							<StyledToggleButton
-								value={ buttonValue }
-								aria-label={ label }
-								size={ size }
-								fullWidth={ fullWidth }
-								isPlaceholder={ isPlaceholder }
+						return (
+							<ConditionalTooltip
+								key={ buttonValue as string }
+								label={ label }
+								showTooltip={ showTooltip || false }
 							>
-								<Content size={ size } />
-							</StyledToggleButton>
-						</ConditionalTooltip>
-					);
-				} ) }
+								<StyledToggleButton
+									value={ buttonValue }
+									aria-label={ label }
+									size={ size }
+									fullWidth={ fullWidth }
+									isPlaceholder={ isPlaceholder }
+									disabled={ optionDisabled }
+								>
+									<Content size={ size } />
+								</StyledToggleButton>
+							</ConditionalTooltip>
+						);
+					}
+				) }
 
 				{ menuItems.length && exclusive && (
 					<SplitButtonGroup
