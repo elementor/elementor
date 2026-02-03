@@ -460,7 +460,12 @@ trait Has_Atomic_Base {
 			return true;
 		}
 
-		$settings = $this->get_active_settings();
-		return ! empty( $settings['link']['href'] ) && ( $settings['link']['tag'] ?? 'a' ) === 'button';
+		try {
+			$settings = $this->get_atomic_settings();
+		} catch ( \Throwable $e ) {
+			return false;
+		}
+
+		return ! empty( $settings['link']['href'] ) && 'button' === ( $settings['link']['tag'] ?? 'a' );
 	}
 }

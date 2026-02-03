@@ -94,6 +94,6 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		if ( $this->needs_atomic_widgets_handler() ) {
 			$depends[] = Frontend_Assets_Loader::ATOMIC_WIDGETS_HANDLER;
 		}
-		return array_merge( $depends, $this->get_interactions_script_handle() );
+		return $depends;
 	}
 }
