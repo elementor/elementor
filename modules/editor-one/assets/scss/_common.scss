@@ -318,6 +318,7 @@
 			border: 1px solid var(--e-one-palette-divider);
 			border-block-end: none;
 			border-width: 1px 1px 0;
+			border-radius: 3px 3px 0 0;
 			color: var(--e-one-palette-text-tab);
 			font-family: var(--e-one-typography-fontFamily);
 			font-weight: 500;
@@ -354,9 +355,9 @@
 					content: '';
 					position: absolute;
 					inset-block-end: -1px;
-					inset-inline-start: -1px;
-					inset-inline-end: -1px;
-					height: 1px;
+					inset-inline-start: 0;
+					inset-inline-end: 0;
+					height: 2px;
 					background-color: var(--e-one-palette-background-default);
 				}
 			}
