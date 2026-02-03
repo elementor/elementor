@@ -6,6 +6,7 @@ use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Modules\EditorOne\Classes\Active_Menu_Resolver;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Classes\Url_Matcher;
+use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
