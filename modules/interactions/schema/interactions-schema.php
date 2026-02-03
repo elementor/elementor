@@ -16,7 +16,7 @@ class Interactions_Schema {
 	public static function get_interactions_schema(): array {
 		return [
 			'version' => 1,
-			'items' => [Interaction_Item_Prop_Type::make()->description( 'The list of interaction items' )]
+			'items' => [Interaction_Item_Prop_Type::make()->description( 'Interaction item' )]
 		];
 	}
 }

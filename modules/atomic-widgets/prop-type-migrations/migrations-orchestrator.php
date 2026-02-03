@@ -197,8 +197,9 @@ class Migrations_Orchestrator {
 				return Style_Schema::get();
 			}
 
-			if ( 'interactions' === $context['key'] ) {
-				return Interactions_Schema::get();
+			// Interactions is a simple array from items, all the schema is defined in the Interaction_Item_Prop_Type
+			if ( 'items' === $context['key'] ) {
+				return Interactions_Schema::get()['items'];
 			}
 		}
 
