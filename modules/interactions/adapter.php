@@ -108,7 +108,6 @@ class Adapter {
 			if ( ! isset( $item['$$type'] ) || 'interaction-item' !== $item['$$type'] ) {
 				continue;
 			}
-// require_once $_SERVER['HOME'] . '/.composer/vendor/autoload.php';
 
 			if ( $version === self::VERSION_V1 ) {
 				$timing_config = $item['value']['animation']['value']['timing_config']['value'] ?? null;
