@@ -5,6 +5,7 @@ namespace Elementor\Modules\Promotions;
 use Elementor\Api;
 use Elementor\Controls_Manager;
 use Elementor\Core\Base\Module as Base_Module;
+use Elementor\Modules\Promotions\AdminMenuItems\Ally_Top_Bar_Link;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Custom_Code_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Custom_Elements_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Fonts_Menu;
@@ -80,7 +81,19 @@ class Module extends Base_Module {
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_editor_v4_alphachip' ] );
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
 
+		// Top bar link for accessibility scanner (will be initialized later)
+		Ally_Top_Bar_Link::init();
+
 		$this->register_atomic_promotions();
+	}
+
+	/**
+	 * Get Ally Scanner URL
+	 *
+	 * @return string
+	 */
+	public static function get_ally_external_scanner_url(): string {
+		return apply_filters( 'elementor/ally_external_scanner_url', 'https://elementor.com/tools/ally-accessibility-checker/scanner' );
 	}
 
 	private function handle_external_redirects() {
