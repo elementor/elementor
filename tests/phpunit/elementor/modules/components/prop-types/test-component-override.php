@@ -40,7 +40,7 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 			'$$type' => 'override',
 			'value' => [
 				'override_key' => 'prop-uuid-5',
-				'override_value' => [ '$$type' => 'string', 'value' => 'New button text' ],
+				'override_value' => [ '$$type' => 'html', 'value' => 'New button text' ],
 				'schema_source' => ['type' => 'component', 'id' => $this::VALID_COMPONENT_ID ],
 			]
 		] );
@@ -205,7 +205,7 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 			'$$type' => 'override',
 			'value' => [
 				'override_key' => 'prop-uuid-5',
-				'override_value' => [ '$$type' => 'string', 'value' => 'New button text <script>alert(1)</script>' ],
+				'override_value' => [ '$$type' => 'html', 'value' => 'New button text <script>alert(1)</script>' ],
 				'schema_source' => ['type' => 'component', 'id' => $this::VALID_COMPONENT_ID ],
 			],
 		] );
@@ -215,7 +215,7 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 			'$$type' => 'override',
 			'value' => [
 				'override_key' => 'prop-uuid-5',
-				'override_value' => [ '$$type' => 'string', 'value' => 'New button text' ],
+				'override_value' => [ '$$type' => 'html', 'value' => 'New button text alert(1)' ],
 				'schema_source' => ['type' => 'component', 'id' => $this::VALID_COMPONENT_ID ],
 			],
 		], $result );

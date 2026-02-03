@@ -131,7 +131,7 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
                                     'value' => [
                                         'override_key' => 'prop-0',
                                         'override_value' => [
-                                            '$$type' => 'string',
+                                            '$$type' => 'html',
                                             'value' => 'New button text',
                                         ],
                                         'schema_source' => [
@@ -290,7 +290,7 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
                                     'value' => [
                                         'override_key' => 'prop-10',
                                         'override_value' => [
-                                            '$$type' => 'string',
+                                            '$$type' => 'html',
                                             'value' => $first_card_button_text,
                                         ],
                                         'schema_source' => [

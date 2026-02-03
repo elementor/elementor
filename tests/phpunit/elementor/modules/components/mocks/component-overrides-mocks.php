@@ -92,7 +92,7 @@ class Component_Overrides_Mocks {
 					'widgetType' => 'e-component',
 					'propKey' => 'override',
 					'originValue' => [
-						'$$type' => 'string',
+						'$$type' => 'html',
 						'value' => 'Click here',
 					],
 					'originPropFields' => [
