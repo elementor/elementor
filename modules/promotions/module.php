@@ -18,8 +18,10 @@ use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Submissions_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Form_Submissions_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Popups_Promotion_Item;
+use Elementor\Modules\Promotions\Controls\Atomic_Promotion_Control;
 use Elementor\Modules\Promotions\Pointers\Birthday;
 use Elementor\Modules\Promotions\Pointers\Black_Friday;
+use Elementor\Modules\Promotions\PropTypes\Promotion_Prop_Type;
 use Elementor\Widgets_Manager;
 use Elementor\Utils;
 use Elementor\Includes\EditorAssetsAPI;
@@ -92,7 +94,7 @@ class Module extends Base_Module {
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_editor_v4_alphachip' ] );
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
 
-		$this->register_display_conditions_promo_hooks();
+		$this->register_atomic_promotions();
 	}
 
 	private function handle_external_redirects() {
@@ -227,46 +229,64 @@ class Module extends Base_Module {
 		return Plugin::$instance->experiments->is_feature_active( 'e_atomic_elements' );
 	}
 
-	private function register_display_conditions_promo_hooks(): void {
+	private function get_atomic_promotion_configs(): array {
+		return [
+			[
+				'key' => 'attributes',
+				'label' => __( 'Attributes', 'elementor' ),
+				'section' => 'settings',
+				'priority' => 40,
+			],
+			[
+				'key' => 'display-conditions',
+				'label' => __( 'Display Conditions', 'elementor' ),
+				'section' => 'settings',
+				'priority' => 50,
+			],
+		];
+	}
+
+	private function register_atomic_promotions(): void {
 		add_action( 'elementor/init', function() {
 			if ( ! $this->is_atomic_widgets_active() ) {
 				return;
 			}
 
-			require_once __DIR__ . '/prop-types/display-conditions-prop-type.php';
-			require_once __DIR__ . '/controls/display-conditions-promotion-control.php';
-
 			add_filter(
 				'elementor/atomic-widgets/props-schema',
-				[ $this, 'inject_display_conditions_promo_prop' ]
+				[ $this, 'inject_atomic_promotion_props' ]
 			);
 
-			add_filter(
-				'elementor/atomic-widgets/controls',
-				[ $this, 'inject_display_conditions_promo_control' ],
-				50,
-				2
-			);
+			foreach ( $this->get_atomic_promotion_configs() as $config ) {
+				add_filter(
+					'elementor/atomic-widgets/controls',
+					fn( array $controls, $element ) => $this->inject_atomic_promotion_control( $controls, $element, $config ),
+					$config['priority'],
+					2
+				);
+			}
 		} );
 	}
 
-	public function inject_display_conditions_promo_prop( array $schema ): array {
-		$prop_key = PropTypes\Display_Conditions_Prop_Type::get_key();
+	public function inject_atomic_promotion_props( array $schema ): array {
+		foreach ( $this->get_atomic_promotion_configs() as $config ) {
+			$key = $config['key'];
 
-		if ( isset( $schema[ $prop_key ] ) ) {
-			return $schema;
+			if ( isset( $schema[ $key ] ) ) {
+				continue;
+			}
+
+			$schema[ $key ] = Promotion_Prop_Type::make( $key );
 		}
-
-		$schema[ $prop_key ] = PropTypes\Display_Conditions_Prop_Type::make();
 
 		return $schema;
 	}
 
-	public function inject_display_conditions_promo_control( array $element_controls, $atomic_element ): array {
-		$prop_key = PropTypes\Display_Conditions_Prop_Type::get_key();
+	protected function inject_atomic_promotion_control( array $element_controls, $atomic_element, array $config ): array {
+		$key = $config['key'];
 		$schema = $atomic_element::get_props_schema();
 
-		if ( ! array_key_exists( $prop_key, $schema ) ) {
+		if ( ! array_key_exists( $key, $schema ) ) {
 			return $element_controls;
 		}
 
@@ -275,12 +295,12 @@ class Module extends Base_Module {
 				continue;
 			}
 
-			if ( $item->get_id() !== 'settings' ) {
+			if ( $item->get_id() !== $config['section'] ) {
 				continue;
 			}
 
-			$control = Controls\Display_Conditions_Promotion_Control::bind_to( $prop_key )
-				->set_label( __( 'Display Conditions', 'elementor' ) )
+			$control = Atomic_Promotion_Control::make( $key )
+				->set_label( $config['label'] )
 				->set_meta( [
 					'topDivider' => true,
 				] );
