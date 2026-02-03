@@ -28,8 +28,6 @@ class Adapter {
 			$items = isset( $decoded['items']['value'] ) ? $decoded['items']['value'] : [];
 		}
 
-		$items = self::transform_items_timing_to_size( $items );
-
 		$wrapped = [
 			'items' => [
 				'$$type' => self::ITEMS_TYPE,
@@ -53,7 +51,13 @@ class Adapter {
 			$items = isset( $decoded['items']['value'] ) ? $decoded['items']['value'] : [];
 		}
 
-		$items = self::transform_items_timing_to_number( $items );
+		$version = $decoded['version'] ?? self::VERSION_V1;
+
+		if ( self::VERSION_V1 === $version ) {
+			$items = self::transform_items_timing_to_size( $items );
+		}
+
+		$items = self::transform_items_offsets_to_number( $items );
 
 		$unwrapped = [
 			'items' => $items,
@@ -83,23 +87,12 @@ class Adapter {
 					$item['value']['animation']['value']['timing_config']['value']['delay'] = self::number_to_size( $timing_config['delay'], 'ms' );
 				}
 			}
-
-			$config = $item['value']['animation']['value']['config']['value'] ?? null;
-			if ( $config ) {
-				if ( isset( $config['offsetTop'] ) && 'number' === ( $config['offsetTop']['$$type'] ?? null ) ) {
-					$item['value']['animation']['value']['config']['value']['offsetTop'] = self::number_to_size( $config['offsetTop'], '%' );
-				}
-
-				if ( isset( $config['offsetBottom'] ) && 'number' === ( $config['offsetBottom']['$$type'] ?? null ) ) {
-					$item['value']['animation']['value']['config']['value']['offsetBottom'] = self::number_to_size( $config['offsetBottom'], '%' );
-				}
-			}
 		}
 
 		return $items;
 	}
 
-	private static function transform_items_timing_to_number( $items ) {
+	private static function transform_items_offsets_to_number( $items ) {
 		if ( ! is_array( $items ) ) {
 			return $items;
 		}
