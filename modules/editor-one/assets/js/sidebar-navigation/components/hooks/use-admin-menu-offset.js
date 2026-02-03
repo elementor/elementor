@@ -28,10 +28,10 @@ export const useAdminMenuOffset = () => {
 		wpbodyContent?.insertBefore( wpfooter, wpbodyContent.querySelector( ':scope > .clear' ) );
 
 		const updateOffset = () => {
-			const isRTL = getIsRTL();
+			const isRtlLanguage = isRTL();
 			const rect = adminMenuWrap.getBoundingClientRect();
 
-			const offset = isRTL ? window.innerWidth - rect.left : rect.right;
+			const offset = isRtlLanguage ? document.documentElement.clientWidth - rect.left : rect.right;
 			const adminBarHeightPx = `${ document.getElementById( WPADMINBAR_ID )?.clientHeight ?? 0 }px`;
 			const topBarHeaderHeightPx = `${ document.getElementById( EDITOR_ONE_TOP_BAR_ID )?.querySelector( ':scope > header' )?.clientHeight ?? 0 }px`;
 
