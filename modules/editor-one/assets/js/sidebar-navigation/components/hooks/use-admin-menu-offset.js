@@ -18,14 +18,14 @@ export const useAdminMenuOffset = () => {
 	useEffect( () => {
 		const adminMenuWrap = document.getElementById( ADMIN_MENU_WRAP_ID );
 		const wpcontent = document.getElementById( WPCONTENT_ID );
-		const wpFooter = document.getElementById( WPFOOTER_ID );
+		const wpfooter = document.getElementById( WPFOOTER_ID );
 
 		if ( ! adminMenuWrap || ! wpcontent || wpcontent.hasAttribute( INITIALIZED_DATA_ATTR ) ) {
 			return;
 		}
 
 		const wpbodyContent = document.getElementById( WPBODY_CONTENT_ID );
-		wpbodyContent?.insertBefore( wpFooter, wpbodyContent.querySelector( ':scope > .clear' ) );
+		wpbodyContent?.insertBefore( wpfooter, wpbodyContent.querySelector( ':scope > .clear' ) );
 
 		const updateOffset = () => {
 			const isRTL = getIsRTL();
