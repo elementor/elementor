@@ -119,6 +119,48 @@ class Migrations_Orchestrator {
 		}
 	}
 
+	public function migrate_global_classes(
+		array &$global_classes_data,
+		int $post_id,
+		callable $save_callback,
+		?array $schema = null
+	): void {
+		try {
+			if ( $this->is_migrated( $post_id ) ) {
+				return;
+			}
+
+			$has_changes = false;
+
+			if ( null === $schema ) {
+				$schema = Style_Schema::get();
+			}
+
+			if ( ! empty( $global_classes_data['items'] ) ) {
+				foreach ( $global_classes_data['items'] as &$item ) {
+					if ( ! isset( $item['props'] ) ) {
+						continue;
+					}
+
+					if ( $this->migrate_element( $item['props'], $schema, 'global-class' ) ) {
+						$has_changes = true;
+					}
+				}
+			}
+
+			if ( $has_changes ) {
+				$save_callback( $global_classes_data );
+			}
+
+			$this->mark_as_migrated( $post_id );
+		} catch ( \Exception $e ) {
+			Logger::warning( 'Global classes migration failed', [
+				'post_id' => $post_id,
+				'error' => $e->getMessage(),
+			] );
+		}
+	}
+
 	private function migrate_elements_recursive( array &$elements_data ): bool {
 		$has_changes = false;
 

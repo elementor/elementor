@@ -5,6 +5,8 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
+use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
 
@@ -34,13 +36,27 @@ class Global_Classes_Repository {
 
 	public function all() {
 		$meta_key = $this->get_meta_key();
-		$all = $this->get_kit()->get_json_meta( $meta_key );
+		$kit = $this->get_kit();
+		$all = $kit->get_json_meta( $meta_key );
 
 		$is_preview = static::META_KEY_PREVIEW === $meta_key;
 		$is_empty = empty( $all );
 
 		if ( $is_preview && $is_empty ) {
-			$all = $this->get_kit()->get_json_meta( static::META_KEY_FRONTEND );
+			$all = $kit->get_json_meta( static::META_KEY_FRONTEND );
+		}
+
+		if ( Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_BC_MIGRATIONS ) ) {
+			$path = defined( 'ELEMENTOR_MIGRATIONS_PATH' ) ? ELEMENTOR_MIGRATIONS_PATH : 'https://migrations.elementor.com/';
+			$orchestrator = Migrations_Orchestrator::make( $path );
+
+			$orchestrator->migrate_global_classes(
+				$all,
+				$kit->get_id(),
+				function( $migrated_data ) use ( $kit, $meta_key ) {
+					$kit->update_json_meta( $meta_key, $migrated_data );
+				}
+			);
 		}
 
 		return Global_Classes::make( $all['items'] ?? [], $all['order'] ?? [] );
