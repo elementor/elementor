@@ -462,7 +462,6 @@ body:has(#editor-one-top-bar > *) {
 
 		@media screen and (min-width: 783px) {
 			position: fixed;
-			bottom: 0;
 			left: calc(var(--editor-one-sidebar-left-offset, 160px) + var(--editor-one-sidebar-navigation-width, 240px));
 			width: calc(100vw - var(--editor-one-sidebar-left-offset, 160px) - var(--editor-one-sidebar-navigation-width, 240px));
 		}
