@@ -17,11 +17,8 @@ use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Popups_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Submissions_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Form_Submissions_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
-<<<<<<< HEAD
 use Elementor\Modules\Promotions\AdminMenuItems\Popups_Promotion_Item;
-=======
 use Elementor\Modules\Promotions\Controls\Atomic_Promotion_Control;
->>>>>>> 752d993d59 (Internal: Add Attributes promotion[ED-21157] (#34538))
 use Elementor\Modules\Promotions\Pointers\Birthday;
 use Elementor\Modules\Promotions\Pointers\Black_Friday;
 use Elementor\Modules\Promotions\PropTypes\Promotion_Prop_Type;
