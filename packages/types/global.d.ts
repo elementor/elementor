@@ -4,6 +4,33 @@ import type { PropsSchema } from '@elementor/editor-props';
 import type { SupportedFonts, EnqueueFont } from '@elementor/editor-v1-adapters';
 import type { V4PromotionData, V4PromotionKey } from '@elementor/editor-controls';
 
+interface OnboardingConfig {
+	version: string;
+	restUrl: string;
+	nonce: string;
+	progress: {
+		currentStep?: number;
+		current_step?: number;
+		completedSteps?: number[];
+		completed_steps?: number[];
+		exitType?: 'user_exit' | 'unexpected' | null;
+		exit_type?: 'user_exit' | 'unexpected' | null;
+		lastActiveTimestamp?: number | null;
+		last_active_timestamp?: number | null;
+		startedAt?: number | null;
+		started_at?: number | null;
+		completedAt?: number | null;
+		completed_at?: number | null;
+	};
+	choices: Record<string, unknown>;
+	hadUnexpectedExit: boolean;
+	totalSteps: number;
+	urls: {
+		dashboard: string;
+		editor: string;
+	};
+}
+
 declare global {
 	interface Window {
 		elementorCommon?: {
@@ -40,9 +67,6 @@ declare global {
 				v4Promotions?: Record< V4PromotionKey, V4PromotionData >;
 			};
 			dynamicTags?: DynamicTagsManager;
-			selection?: {
-				getElements: () => V1Element[];
-			};
 			widgetsCache?: Record<
 				string,
 				{
@@ -52,7 +76,6 @@ declare global {
 					title: string;
 				}
 			>;
-			getContainer?: ( id: string ) => V1Element;
 			helpers?: {
 				enqueueFont?: EnqueueFont;
 			};
@@ -67,6 +90,10 @@ declare global {
 				version?: string;
 			};
 		};
+		elementorAppConfig?: {
+			onboarding?: OnboardingConfig;
+		};
+		elementorOnboardingConfig?: OnboardingConfig;
 		ElementorInteractionsConfig?: InteractionsConfig;
 	}
 }

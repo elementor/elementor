@@ -23,6 +23,7 @@ use Elementor\App\Modules\KitLibrary\Module as KitLibraryModule;
 use Elementor\App\Modules\ImportExportCustomization\Module as ImportExportCustomizationModule;
 use Elementor\App\Modules\SiteEditor\Module as SiteEditorModule;
 use Elementor\App\Modules\Onboarding\Module as OnboardingModule;
+use Elementor\App\Modules\OnboardingV2\Module as OnboardingV2Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -297,8 +298,13 @@ class App extends BaseApp {
 		] );
 	}
 
+	private function register_onboarding_v2_experiment() {
+		Plugin::$instance->experiments->add_feature( OnboardingV2Module::get_experimental_data() );
+	}
+
 	public function __construct() {
 		$this->register_import_export_customization_experiment();
+		$this->register_onboarding_v2_experiment();
 
 		$this->add_component( 'site-editor', new SiteEditorModule() );
 
@@ -314,6 +320,10 @@ class App extends BaseApp {
 		}
 
 		$this->add_component( 'onboarding', new OnboardingModule() );
+
+		if ( Plugin::$instance->experiments->is_feature_active( OnboardingV2Module::EXPERIMENT_NAME ) ) {
+			$this->add_component( 'onboarding-v2', new OnboardingV2Module() );
+		}
 
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 			$this->register_editor_one_menu( $menu_data_provider );
