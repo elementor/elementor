@@ -29,12 +29,8 @@
 		}
 
 		a:not(.button),
-<<<<<<< HEAD
-		.eps-button {
-=======
 		.eps-button:not(.e-site-editor-conditions__add-button) {
 			font-weight: 600;
->>>>>>> a6e7b80573 (Fix: 'Edit' pages of templates haven't washed with new design [ED-22749] (#34571))
 			color: var(--e-one-palette-text-primary);
 			text-decoration: underline;
 
