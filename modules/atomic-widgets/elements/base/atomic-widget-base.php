@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 
-use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Meta;
 use Elementor\Widget_Base;
@@ -87,9 +86,5 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 	public static function generate() {
 		return Widget_Builder::make( static::get_element_type() );
-	}
-
-	public function get_script_depends() {
-		return [ Frontend_Assets_Loader::ATOMIC_WIDGETS_HANDLER ];
 	}
 }
