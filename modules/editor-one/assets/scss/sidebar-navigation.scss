@@ -42,10 +42,12 @@
 		display: none;
 	}
 
-	#wpfooter {
-		position: initial;
+	#wpcontent #wpfooter {
+		background-color: transparent;
+		position: relative;
 		margin-inline: 0;
-		margin-block-start: 65px;
+		margin-block-start: auto;
+		padding-block-start: 18px;
 
 		#footer-left {
 			float: none;
