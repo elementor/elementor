@@ -458,7 +458,7 @@ class Module extends BaseModule {
 				if ( $calculator ) {
 					$usage = $calculator->calculate( $element, $element_instance, $usage );
 				}
-			} catch ( \Exception $e ) {
+			} catch ( \Throwable $e ) {
 				Logger::error(
 					'Usage calculation failed: ' . $e->getMessage(),
 					[

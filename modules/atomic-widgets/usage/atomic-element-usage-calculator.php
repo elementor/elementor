@@ -124,16 +124,15 @@ class Atomic_Element_Usage_Calculator implements Element_Usage_Calculator {
 
 		foreach ( $style_props as $prop_name => $value ) {
 			$prop_type = $this->style_props_schema[ $prop_name ] ?? null;
+			$count++;
 
 			if ( $prop_type ) {
 				$decomposed = $this->decompose_style_props( $prop_name, $value, $prop_type );
 				foreach ( $decomposed as $control_name ) {
 					$this->increment_control( $usage, $type, self::TAB_STYLE, $control_name );
-					$count++;
 				}
 			} else {
 				$this->increment_control( $usage, $type, self::TAB_STYLE, $prop_name );
-				$count++;
 			}
 		}
 
@@ -231,7 +230,9 @@ class Atomic_Element_Usage_Calculator implements Element_Usage_Calculator {
 				if ( isset( $value['value'] ) && is_array( $value['value'] ) ) {
 					foreach ( $value['value'] as $item ) {
 						$item_name = $item['$$type'] ?? 'item';
-						$item_prop_type = $item_type->get_prop_type( $item_name );
+						// phpcs:ignore
+						$item_prop_type = 'union' === $item_type::$KIND ? $item_type->get_prop_type( $item_name ) : $item_type;
+
 						if ( $item_prop_type ) {
 							$nested = $this->decompose_style_props( $item_name, $item, $item_prop_type, $control_name );
 							$control_names = array_merge( $control_names, $nested );
@@ -249,7 +250,6 @@ class Atomic_Element_Usage_Calculator implements Element_Usage_Calculator {
 				break;
 
 			default:
-				// Leaf types (string, number, boolean, color, size, etc.) - record the control name.
 				$control_names[] = $control_name;
 				break;
 		}
