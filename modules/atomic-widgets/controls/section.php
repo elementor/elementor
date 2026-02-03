@@ -33,6 +33,10 @@ class Section implements JsonSerializable {
 		return $this;
 	}
 
+	public function get_label(): ?string {
+		return $this->label;
+	}
+
 	public function set_description( string $description ): self {
 		$this->description = html_entity_decode( $description );
 
