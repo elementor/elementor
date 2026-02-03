@@ -64,7 +64,7 @@ class Module extends BaseModule {
 
 		// Output centralized interaction data in head (similar to editor)
 		add_action( 'wp_footer', [ $this, 'print_interactions_data' ], 1 );
-		
+
 		add_filter( 'elementor/document/save/data',
 			/**
 			 * @throws \Exception
@@ -112,7 +112,7 @@ class Module extends BaseModule {
 	/**
 	 * Recursively iterate through all elements and collect interactions.
 	 *
-	 * @param array $elements Array of element data
+	 * @param array                  $elements Array of element data
 	 * @param Interactions_Collector $collector The collector instance
 	 */
 	private function collect_interactions_recursive( $elements, $collector ) {
@@ -250,10 +250,10 @@ class Module extends BaseModule {
 		// Check if interactions itself is a direct array of items
 		// (first element has interaction-related keys)
 		$first_item = reset( $interactions );
-		if ( is_array( $first_item ) && ( 
-			isset( $first_item['trigger'] ) || 
-			isset( $first_item['animation'] ) || 
-			isset( $first_item['$$type'] ) 
+		if ( is_array( $first_item ) && (
+			isset( $first_item['trigger'] ) ||
+			isset( $first_item['animation'] ) ||
+			isset( $first_item['$$type'] )
 		) ) {
 			return $interactions;
 		}

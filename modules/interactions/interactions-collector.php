@@ -55,7 +55,6 @@ class Interactions_Collector {
 	 */
 	public function get_all() {
 		return $this->interactions_data;
-
 	}
 
 	/**

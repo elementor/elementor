@@ -191,15 +191,15 @@ class Adapter {
 		if ( ! is_array( $size_value ) || ! isset( $size_value['size'] ) ) {
 			return $size_value;
 		}
-		
+
 		$size = $size_value['size'];
 		$unit = $size_value['unit'] ?? 'ms';
-		
+
 		// Convert seconds to milliseconds
 		if ( 's' === $unit ) {
 			return $size * 1000;
 		}
-		
+
 		// Already in milliseconds
 		return $size;
 	}
