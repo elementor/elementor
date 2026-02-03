@@ -11,7 +11,11 @@ class Template_Library_Variables {
 	const IMPORT_MODE_KEEP_CREATE = 'keep_create';
 	const IMPORT_MODE_KEEP_FLATTEN = 'keep_flatten';
 
-	public static function add_variables_snapshot( array $snapshots, array $content, int $template_id, array $export_data ): array {
+	public static function add_variables_snapshot( array $snapshots, $content, $template_id, array $export_data ): array {
+		if ( ! is_array( $content ) ) {
+			return $snapshots;
+		}
+
 		if ( ! empty( $snapshots['global_variables'] ) ) {
 			return $snapshots;
 		}
@@ -132,7 +136,7 @@ class Template_Library_Variables {
 		$variables_to_flatten = $result['variables_to_flatten'] ?? [];
 		$variables_snapshot = $result['variables_snapshot'] ?? ( $data['global_variables'] ?? null );
 
-		if ( $import_mode === self::IMPORT_MODE_KEEP_FLATTEN && ! empty( $variables_snapshot ) ) {
+		if ( self::IMPORT_MODE_KEEP_FLATTEN ===	$import_mode && ! empty( $variables_snapshot ) ) {
 			$classes_snapshot = self::flatten_variables_in_classes_snapshot( $classes_snapshot, $variables_snapshot );
 		} else {
 			if ( ! empty( $variables_id_map ) ) {
@@ -251,4 +255,3 @@ class Template_Library_Variables {
 		return $data;
 	}
 }
-

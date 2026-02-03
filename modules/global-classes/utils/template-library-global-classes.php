@@ -11,7 +11,11 @@ class Template_Library_Global_Classes {
 	const IMPORT_MODE_KEEP_CREATE = 'keep_create';
 	const IMPORT_MODE_KEEP_FLATTEN = 'keep_flatten';
 
-	public static function add_global_classes_snapshot( array $snapshots, array $content, int $template_id, array $export_data ): array {
+	public static function add_global_classes_snapshot( array $snapshots, $content, $template_id, array $export_data ): array {
+		if ( ! is_array( $content ) ) {
+			return $snapshots;
+		}
+
 		if ( ! empty( $snapshots['global_classes'] ) ) {
 			return $snapshots;
 		}
