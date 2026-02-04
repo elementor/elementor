@@ -105,7 +105,25 @@ class Group_Control_Image_Size extends Group_Control_Base {
 				'class' => trim( $image_class ),
 			];
 
+			/*
+			 * If you use the Jetpack plugin and its image CDN feature,
+			 * the image strings returned will use the CDN URL.
+			 * We don't want that.
+			 * The CDN URL will be added later on on the front end.
+			 *
+			 * @see https://ethitter.com/p/897/
+			 * @see https://github.com/Automattic/jetpack/issues/22052
+			 */
+			if ( class_exists( '\Automattic\Jetpack\Image_CDN\Image_CDN' ) ) {
+				remove_filter( 'image_downsize', array( \Automattic\Jetpack\Image_CDN\Image_CDN::instance(), 'filter_image_downsize' ) );
+			}
+
 			$html .= wp_get_attachment_image( $image['id'], $size, false, $image_attr );
+
+			// Re-enable Photon now that the image URL has been built.
+			if ( class_exists( '\Automattic\Jetpack\Image_CDN\Image_CDN' ) ) {
+				add_filter( 'image_downsize', array( \Automattic\Jetpack\Image_CDN\Image_CDN::instance(), 'filter_image_downsize' ), 10, 3 );
+			}
 		} else {
 			$image_src = self::get_attachment_image_src( $image['id'], $image_size_key, $settings );
 
