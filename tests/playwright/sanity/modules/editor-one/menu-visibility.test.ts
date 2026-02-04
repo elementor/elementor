@@ -149,4 +149,4 @@ test.describe( 'Editor One Menu Visibility', () => {
 
 		await contributorContext.close();
 	} );
-}
+} );
