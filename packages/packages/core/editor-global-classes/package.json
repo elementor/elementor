@@ -60,7 +60,11 @@
     "@elementor/ui": "1.36.17",
     "@elementor/utils": "3.35.0",
     "@wordpress/i18n": "^5.13.0",
+<<<<<<< HEAD
     "@elementor/mixpanel": "3.35.0"
+=======
+    "@elementor/events": "4.0.0"
+>>>>>>> 2079d2ae9d (Internal: Build fix [ED-22812] (#34638))
   },
   "peerDependencies": {
     "react": "^18.3.1",
