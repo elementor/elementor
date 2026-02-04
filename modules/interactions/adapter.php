@@ -12,6 +12,11 @@ class Adapter {
 	const ITEMS_TYPE = 'interactions-array';
 	const TIMING_PROPERTIES = [ 'duration', 'delay' ];
 
+	private const TO_MS = [
+		'ms'  => 1,
+		's'   => 1000,
+	];
+
 	public static function wrap_for_db( $interactions ) {
 		$decoded = self::decode( $interactions );
 
@@ -103,17 +108,6 @@ class Adapter {
 		foreach ( $items as &$item ) {
 			if ( ! isset( $item['$$type'] ) || 'interaction-item' !== $item['$$type'] ) {
 				continue;
-			}
-
-			$timing_config = $item['value']['animation']['value']['timing_config']['value'] ?? null;
-			if ( $timing_config ) {
-				if ( isset( $timing_config['duration'] ) && 'size' === ( $timing_config['duration']['$$type'] ?? null ) ) {
-					$item['value']['animation']['value']['timing_config']['value']['duration'] = self::size_to_number( $timing_config['duration'] );
-				}
-
-				if ( isset( $timing_config['delay'] ) && 'size' === ( $timing_config['delay']['$$type'] ?? null ) ) {
-					$item['value']['animation']['value']['timing_config']['value']['delay'] = self::size_to_number( $timing_config['delay'] );
-				}
 			}
 
 			$config = $item['value']['animation']['value']['config']['value'] ?? null;
@@ -227,6 +221,22 @@ class Adapter {
 		}
 
 		return $default;
+	}
+
+	public static function extract_time_value( $prop, $default ) {
+		$value = self::extract_numeric_value( $prop, $default );
+
+		if ( 'number' === $prop['$$type'] ) {
+			return $value;
+		}
+
+		return self::to_milliseconds( $value, $prop['value']['unit'] );
+	}
+
+	public static function to_milliseconds( int $value, string $unit ): int {
+		$multiplier = self::TO_MS[ $unit ] ?? 1;
+
+		return $value * $multiplier;
 	}
 
 	/**
