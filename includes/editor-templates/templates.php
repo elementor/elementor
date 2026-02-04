@@ -776,7 +776,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 			</label>
 			<label class="elementor-global-styles-dialog__radio-card elementor-global-styles-dialog__radio-card--keep">
-								<input type="radio" name="elementor-global-styles-mode" id="elementor-global-styles-keep" value="keep">
+				<input type="radio" name="elementor-global-styles-mode" id="elementor-global-styles-keep" value="keep">
 				<div class="elementor-global-styles-dialog__radio-card-content">
 					<div class="elementor-global-styles-dialog__radio-label"><?php echo esc_html__( 'Keep the template styles', 'elementor' ); ?></div>
 					<div class="elementor-global-styles-dialog__radio-description">
@@ -788,7 +788,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<label class="elementor-global-styles-dialog__checkbox-option">
 					<input type="checkbox" id="elementor-global-styles-create" checked>
 					<span class="elementor-global-styles-dialog__checkbox-label">
-						<?php echo esc_html__( 'Classes or variables included in the template will be added to your site.', 'elementor' ); ?>
+						<?php echo esc_html__( 'Add the template’s classes and variables to my site.', 'elementor' ); ?>
 						<a href="<?php echo esc_url( 'https://go.elementor.com/docs-global-styles-import/' ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html__( 'Learn more', 'elementor' ); ?></a>
 					</span>
 				</label>
