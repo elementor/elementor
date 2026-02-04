@@ -19,7 +19,7 @@ type ChipsControlProps = {
 export const ChipsControl = createControl( ( { options }: ChipsControlProps ) => {
 	const { value, setValue, disabled } = useBoundProp( classesPropTypeUtil );
 
-	const selectedValues: string[] = ( value as string[] ) || [];
+	const selectedValues: string[] = value || [];
 
 	const selectedOptions = selectedValues
 		.map( ( val ) => options.find( ( opt ) => opt.value === val ) )
@@ -40,7 +40,6 @@ export const ChipsControl = createControl( ( { options }: ChipsControlProps ) =>
 				value={ selectedOptions }
 				onChange={ handleChange }
 				options={ options }
-				disableCloseOnSelect
 				getOptionLabel={ ( option ) => option.label }
 				isOptionEqualToValue={ ( option, val ) => option.value === val.value }
 				renderInput={ ( params ) => <TextField { ...params } /> }
