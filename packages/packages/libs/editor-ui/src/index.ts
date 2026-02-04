@@ -15,6 +15,11 @@ export { CtaButton } from './components/cta-button';
 export { PromotionInfotip } from './components/promotion-infotip';
 export { PromotionPopover } from './components/promotion-popover';
 export { PromotionChip } from './components/promotion-chip';
+<<<<<<< HEAD
+=======
+export { PromotionAlert } from './components/promotion-alert';
+export { FloatingActionsBar, useFloatingActionsBar } from './components/floating-bar';
+>>>>>>> 8664d8edcf (Internal: Pro size variables - Panel - renew promotion [ED-21887] (#34570))
 
 export * from './components/popover';
 export * from './components/save-changes-dialog';
