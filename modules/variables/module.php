@@ -87,14 +87,10 @@ class Module extends BaseModule {
 		return [
 			Color_Variable_Prop_Type::get_key() => 100000,
 			Font_Variable_Prop_Type::get_key() => 100000,
-			Size_Variable_Prop_Type::get_key() => 0,
 		];
 	}
 
 	public function enqueue_editor_scripts() {
-		if ( Utils::has_pro() ) {
-			return;
-		}
 
 		wp_add_inline_script(
 			'elementor-common',
