@@ -30,6 +30,13 @@
 }
 
 .e-has-sidebar-navigation {
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
+
+	&::-webkit-scrollbar {
+		display: none; /* Hide scrollbar for Chrome, Safari and Opera */
+	}
+
 	&:has(.e-sidebar-collapsed) {
 		--editor-one-sidebar-navigation-width: var(--editor-one-sidebar-navigation-width-collapsed);
 	}
