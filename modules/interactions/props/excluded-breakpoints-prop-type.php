@@ -1,20 +1,18 @@
 <?php
-namespace Elementor\Modules\Promotions\PropTypes;
+
+namespace Elementor\Modules\Interactions\Props;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Display_Conditions_Prop_Type extends Array_Prop_Type {
-
-	private const KEY = 'display-conditions';
-
+class Excluded_Breakpoints_Prop_Type extends Array_Prop_Type {
 	public static function get_key(): string {
-		return self::KEY;
+		return 'excluded-breakpoints';
 	}
 
 	protected function define_item_type(): Prop_Type {
