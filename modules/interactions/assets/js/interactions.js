@@ -3,6 +3,7 @@ import {
 	getKeyframes,
 	parseAnimationName,
 	extractAnimationId,
+	extractAnimationConfig,
 	getAnimateFunction,
 	getInViewFunction,
 	waitForAnimateFunction,
@@ -66,6 +67,34 @@ function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	}
 }
 
+function processElementInteractions( element, interactions, animateFunc, inViewFunc ) {
+	if ( ! interactions || ! Array.isArray( interactions ) ) {
+		return;
+	}
+	interactions.forEach( ( interaction ) => {
+		const animConfig = extractAnimationConfig( interaction );
+
+		if ( animConfig ) {
+			applyAnimation( element, animConfig, animateFunc, inViewFunc );
+		}
+	} );
+}
+
+function processElementInteractionsLegacy( element, interactions, animateFunc, inViewFunc ) {
+	if ( ! interactions || ! Array.isArray( interactions ) ) {
+		return;
+	}
+
+	interactions.forEach( ( interaction ) => {
+		const animationName = extractAnimationId( interaction );
+		const animConfig = animationName && parseAnimationName( animationName );
+
+		if ( animConfig ) {
+			applyAnimation( element, animConfig, animateFunc, inViewFunc );
+		}
+	} );
+}
+
 function initInteractions() {
 	waitForAnimateFunction( () => {
 		const animateFunc = getAnimateFunction();
@@ -75,24 +104,38 @@ function initInteractions() {
 			return;
 		}
 
+		// New method: Read centralized interactions data from script tag
+		const dataScript = document.getElementById( 'elementor-interactions-data' );
+		if ( dataScript ) {
+			const elementsData = JSON.parse( dataScript.textContent );
+
+			elementsData.forEach( ( elementData ) => {
+				const { elementId, interactions } = elementData;
+
+				if ( ! elementId || ! interactions || ! Array.isArray( interactions ) ) {
+					return;
+				}
+
+				const element = document.querySelector( `[data-interaction-id="${ elementId }"]` );
+
+				if ( ! element ) {
+					return;
+				}
+
+				processElementInteractions( element, interactions, animateFunc, inViewFunc );
+			} );
+
+			return;
+		}
+
+		// Legacy fallback: parse data-interactions attributes
 		const elements = document.querySelectorAll( '[data-interactions]' );
 
 		elements.forEach( ( element ) => {
 			const interactionsData = element.getAttribute( 'data-interactions' );
 			const parsedData = parseInteractionsData( interactionsData );
 
-			if ( ! parsedData || ! Array.isArray( parsedData ) ) {
-				return;
-			}
-
-			parsedData.forEach( ( interaction ) => {
-				const animationName = extractAnimationId( interaction );
-				const animConfig = animationName && parseAnimationName( animationName );
-
-				if ( animConfig ) {
-					applyAnimation( element, animConfig, animateFunc, inViewFunc );
-				}
-			} );
+			processElementInteractionsLegacy( element, parsedData, animateFunc, inViewFunc );
 		} );
 	} );
 }
