@@ -2121,6 +2121,7 @@ label.elementor-template-library-order-label {
 .elementor-global-styles-dialog {
 	--gsd-color-text-primary: #0c0d0e;
 	--gsd-color-text-secondary: #3f444b;
+	--gsd-color-text-tertiary: #69727D;
 	--gsd-color-divider: rgba(0, 0, 0, 0.12);
 	--gsd-color-primary-main: #f0abfc;
 	--gsd-color-primary-hover: #e879f9;
@@ -2184,10 +2185,11 @@ label.elementor-template-library-order-label {
 			grid-column: 1;
 			align-self: start;
 			flex-shrink: 0;
-			width: 24px;
-			height: 24px;
+			width: 20px;
+			height: 20px;
 			margin: 9px;
 			cursor: pointer;
+			color: var(--gsd-color-text-tertiary);
 			accent-color: var(--gsd-color-text-primary);
 		}
 	}
@@ -2196,7 +2198,8 @@ label.elementor-template-library-order-label {
 		grid-row: 1;
 		grid-column: 2;
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
+		flex-direction: column;
 	}
 
 	&__radio-label {
@@ -2234,11 +2237,13 @@ label.elementor-template-library-order-label {
 		cursor: pointer;
 
 		input[type="checkbox"] {
-			width: 24px;
-			height: 24px;
+			width: 18px;
+			height: 18px;
 			margin: 4px;
 			cursor: pointer;
-			accent-color: var(--gsd-color-text-primary);
+			&:checked {
+				background-color: var(--gsd-color-text-tertiary);
+			}
 		}
 	}
 
@@ -2256,7 +2261,7 @@ label.elementor-template-library-order-label {
 			text-decoration: underline;
 
 			&:hover {
-				text-decoration: none;
+				color: #2563eb;
 			}
 		}
 	}

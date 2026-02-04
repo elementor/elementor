@@ -767,21 +767,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 		<div class="elementor-global-styles-dialog__options">
 			<label class="elementor-global-styles-dialog__radio-card">
+				<input type="radio" name="elementor-global-styles-mode" id="elementor-global-styles-match" value="match_site" checked>
 				<div class="elementor-global-styles-dialog__radio-card-content">
-					<input type="radio" name="elementor-global-styles-mode" id="elementor-global-styles-match" value="match_site" checked>
-					<span class="elementor-global-styles-dialog__radio-label"><?php echo esc_html__( 'Use this site’s style', 'elementor' ); ?></span>
-				</div>
-				<div class="elementor-global-styles-dialog__radio-description">
-					<?php echo esc_html__( 'Apply your site styles to the imported template.', 'elementor' ); ?>
+					<div class="elementor-global-styles-dialog__radio-label"><?php echo esc_html__( 'Use this site’s style', 'elementor' ); ?></div>
+					<div class="elementor-global-styles-dialog__radio-description">
+						<?php echo esc_html__( 'Apply your site styles to the imported template.', 'elementor' ); ?>
+					</div>
 				</div>
 			</label>
 			<label class="elementor-global-styles-dialog__radio-card elementor-global-styles-dialog__radio-card--keep">
+								<input type="radio" name="elementor-global-styles-mode" id="elementor-global-styles-keep" value="keep">
 				<div class="elementor-global-styles-dialog__radio-card-content">
-					<input type="radio" name="elementor-global-styles-mode" id="elementor-global-styles-keep" value="keep">
-					<span class="elementor-global-styles-dialog__radio-label"><?php echo esc_html__( 'Keep the template styles', 'elementor' ); ?></span>
-				</div>
-				<div class="elementor-global-styles-dialog__radio-description">
-					<?php echo esc_html__( 'The template will keep its original design.', 'elementor' ); ?>
+					<div class="elementor-global-styles-dialog__radio-label"><?php echo esc_html__( 'Keep the template styles', 'elementor' ); ?></div>
+					<div class="elementor-global-styles-dialog__radio-description">
+						<?php echo esc_html__( 'The template will keep its original design.', 'elementor' ); ?>
+					</div>
 				</div>
 			</label>
 			<div class="elementor-global-styles-dialog__checkbox-container" style="display: none;">
