@@ -30,12 +30,8 @@ export const useAdminMenuOffset = () => {
 		const wpAdminBar = document.getElementById( WPADMINBAR_ID );
 
 		const updateOffset = () => {
-<<<<<<< HEAD
-			const isRTL = getIsRTL();
-=======
 			const topBarHeader = document.getElementById( EDITOR_ONE_TOP_BAR_ID )?.querySelector( ':scope > header' );
-			const isRtlLanguage = isRTL();
->>>>>>> dacb0897ac (Internal: Update admin area scrolling [ED-22462[ (#34609))
+			const isRTL = getIsRTL();
 			const rect = adminMenuWrap.getBoundingClientRect();
 
 			const offset = isRTL ? window.innerWidth - rect.left : rect.right;
