@@ -83,7 +83,13 @@ test.describe( 'Editor One Menu Visibility', () => {
 		const templatesButton = sidebar.getByRole( 'button', { name: 'Templates' } ).first();
 		await expect( templatesButton ).toBeVisible();
 
-		await templatesButton.click();
+		const templatesListItem = templatesButton.locator( '..' ).locator( '..' );
+		const collapseElement = templatesListItem.locator( '+ div.MuiCollapse-root.MuiCollapse-entered' );
+		const isOpen = await collapseElement.count() > 0;
+
+		if ( ! isOpen ) {
+			await templatesButton.click();
+		}
 
 		await expect( sidebar.getByRole( 'button', { name: 'Quick Start' } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Settings' } ).first() ).not.toBeVisible();
@@ -122,7 +128,13 @@ test.describe( 'Editor One Menu Visibility', () => {
 		const templatesButton = sidebar.getByRole( 'button', { name: 'Templates' } ).first();
 		await expect( templatesButton ).toBeVisible();
 
-		await templatesButton.click();
+		const templatesListItem = templatesButton.locator( '..' ).locator( '..' );
+		const collapseElement = templatesListItem.locator( '+ div.MuiCollapse-root.MuiCollapse-entered' );
+		const isOpen = await collapseElement.count() > 0;
+
+		if ( ! isOpen ) {
+			await templatesButton.click();
+		}
 
 		await expect( sidebar.getByRole( 'button', { name: 'Quick Start' } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Settings' } ).first() ).not.toBeVisible();
