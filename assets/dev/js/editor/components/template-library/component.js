@@ -194,6 +194,7 @@ export default class Component extends ComponentModalBase {
 				if ( this.manager.hasGlobalStyles( data ) ) {
 					try {
 						const { mode } = await showGlobalStylesDialog();
+						withPageSettings = 'match_site' === mode;
 
 						this.manager.layout.showLoadingView();
 
@@ -235,19 +236,10 @@ export default class Component extends ComponentModalBase {
 						return;
 					}
 				}
-				const importOptions = jQuery.extend( {}, this.manager.modalConfig.importOptions );
-
-				if ( null === withPageSettings && model.get( 'hasPageSettings' ) ) {
-					const insertTemplateHandler = this.getImportSettingsDialog();
-					insertTemplateHandler.showImportDialogWithData( model, processedData, importOptions, callback );
-					return;
-				}
-
-				importOptions.withPageSettings = withPageSettings;
 
 				this.manager.layout.hideModal();
 
-				callback( processedData, { model, importOptions } );
+				callback( processedData, { model, withPageSettings } );
 			},
 			error: ( data ) => {
 				this.manager.showErrorDialog( data );
