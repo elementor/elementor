@@ -90,10 +90,27 @@ class Atomic_Widget_Styles {
 	/* TODO: Remove in version 4.2 */
 	public static function should_remove_custom_css_from_styles( $styles ) {
 		if ( defined( '\ELEMENTOR_PRO_VERSION' ) && version_compare( ELEMENTOR_PRO_VERSION, '3.35', '>=' ) ) {
+		
+			return apply_filters( 'elementor/atomic_widgets/editor_data/element_styles', self::remove_custom_css_from_styles( $styles ), $styles );
+		
+		} else if ( defined( '\ELEMENTOR_PRO_VERSION' ) && version_compare( ELEMENTOR_PRO_VERSION, '3.35', '<' ) ) {
+		
+			return $styles;
+		
+		} else {
+			// Elementor pro is not defined
+			add_action(
+				'update_option__elementor_pro_license_v2_data',
+				fn() => Plugin::$instance->files_manager->clear_cache()
+			);
+	
+			add_action(
+				'delete_option__elementor_pro_license_v2_data',
+				fn() => Plugin::$instance->files_manager->clear_cache()
+			);
+
 			return apply_filters( 'elementor/atomic_widgets/editor_data/element_styles', self::remove_custom_css_from_styles( $styles ), $styles );
 		}
-		
-		return $styles;
 	}
 
 	public static function remove_custom_css_from_styles( array $styles ) {
