@@ -1,7 +1,6 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import type { Locator } from '@playwright/test';
 
 test.describe( 'Editor One Menu Visibility', () => {
 	let editorUser: { id: string; username: string; password: string };
@@ -81,7 +80,8 @@ test.describe( 'Editor One Menu Visibility', () => {
 		const sidebar = editorPage.locator( '#editor-one-sidebar-navigation' );
 		await expect( sidebar ).toBeVisible();
 
-		await ensureTemplatesMenuIsOpen( sidebar );
+		const templatesButton = sidebar.getByRole( 'button', { name: 'Templates' } ).first();
+		await templatesButton.click();
 
 		await expect( sidebar.getByRole( 'button', { name: 'Quick Start' } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Settings' } ).first() ).not.toBeVisible();
@@ -90,7 +90,13 @@ test.describe( 'Editor One Menu Visibility', () => {
 		await expect( sidebar.getByRole( 'button', { name: 'Submissions' } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Templates' } ).first() ).toBeVisible();
 
-		await expect( sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first() ).toBeVisible();
+		try {
+			await expect( sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first() ).toBeVisible();
+		} catch {
+			await templatesButton.click();
+			await expect( sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first() ).toBeVisible();
+		}
+
 		await expect( sidebar.getByRole( 'link', { name: /Theme Builder/i } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'link', { name: /Floating Elements/i } ).first() ).not.toBeVisible();
 
@@ -117,7 +123,8 @@ test.describe( 'Editor One Menu Visibility', () => {
 		const sidebar = contributorPage.locator( '#editor-one-sidebar-navigation' );
 		await expect( sidebar ).toBeVisible();
 
-		await ensureTemplatesMenuIsOpen( sidebar );
+		const templatesButton = sidebar.getByRole( 'button', { name: 'Templates' } ).first();
+		await templatesButton.click();
 
 		await expect( sidebar.getByRole( 'button', { name: 'Quick Start' } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Settings' } ).first() ).not.toBeVisible();
@@ -126,22 +133,16 @@ test.describe( 'Editor One Menu Visibility', () => {
 		await expect( sidebar.getByRole( 'button', { name: 'Submissions' } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Templates' } ).first() ).toBeVisible();
 
-		await expect( sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first() ).toBeVisible();
+		try {
+			await expect( sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first() ).toBeVisible();
+		} catch {
+			await templatesButton.click();
+			await expect( sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first() ).toBeVisible();
+		}
+
 		await expect( sidebar.getByRole( 'link', { name: /Theme Builder/i } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'link', { name: /Floating Elements/i } ).first() ).not.toBeVisible();
 
 		await contributorContext.close();
 	} );
 } );
-
-async function ensureTemplatesMenuIsOpen( sidebar: Locator ): Promise<void> {
-	const templatesButton = sidebar.getByRole( 'button', { name: 'Templates' } ).first();
-	await expect( templatesButton ).toBeVisible();
-
-	const savedTemplatesLink = sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first();
-	const isOpen = await savedTemplatesLink.isVisible().catch( () => false );
-
-	if ( ! isOpen ) {
-		await templatesButton.click();
-	}
-}
