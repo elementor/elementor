@@ -33,7 +33,7 @@ export const useAdminMenuOffset = () => {
 			const topBarHeader = document.getElementById( EDITOR_ONE_TOP_BAR_ID )?.querySelector( ':scope > header' );
 			const isRTL = getIsRTL();
 			const rect = adminMenuWrap.getBoundingClientRect();
-
+			// Test
 			const offset = isRTL ? window.innerWidth - rect.left : rect.right;
 			const adminBarHeightPx = `${ wpAdminBar?.clientHeight ?? 0 }px`;
 			const topBarHeaderHeightPx = `${ topBarHeader?.clientHeight ?? 0 }px`;
