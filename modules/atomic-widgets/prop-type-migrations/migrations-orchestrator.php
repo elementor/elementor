@@ -398,7 +398,7 @@ class Migrations_Orchestrator {
 	private function migrate_prop_if_needed( $value, $prop_type, string $key ): array {
 		if ( is_array( $prop_type ) && ! isset( $prop_type['$$type'] ) && is_array( $value ) && ! isset( $value['$$type'] ) ) {
 			foreach ( $value as $index => $value_item ) {
-				$result = $this->migrate_prop_if_needed( $value_item, $prop_type[$index], $key );
+				$result = $this->migrate_prop_if_needed( $value_item, $prop_type[ $index ], $key );
 				if ( $result['has_changes'] ) {
 					return $result;
 				}
