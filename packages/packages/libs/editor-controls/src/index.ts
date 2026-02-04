@@ -8,6 +8,7 @@ export { BoxShadowRepeaterControl } from './controls/box-shadow-repeater-control
 export { FilterRepeaterControl } from './controls/filter-control/filter-repeater-control';
 export { SelectControl } from './controls/select-control';
 export { SelectControlWrapper } from './controls/select-control-wrapper';
+export { ChipsControl } from './controls/chips-control';
 export { ColorControl } from './controls/color-control';
 export { ToggleControl } from './controls/toggle-control';
 export { NumberControl } from './controls/number-control';
