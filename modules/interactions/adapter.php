@@ -10,6 +10,7 @@ class Adapter {
 	const VERSION_V1 = 1;
 	const VERSION_V2 = 2;
 	const ITEMS_TYPE = 'interactions-array';
+	const TIMING_PROPERTIES = [ 'duration', 'delay' ];
 
 	private const TO_MS = [
 		'ms'  => 1,
@@ -146,6 +147,58 @@ class Adapter {
 	}
 
 	/**
+	 * Recursively remove all $$type wrappers and extract plain values.
+	 * Used specifically for frontend script output where we want clean data.
+	 *
+	 * Transforms: {"$$type": "string", "value": "fade"} → "fade"
+	 * Transforms: {"$$type": "size", "value": {"size": 300, "unit": "ms"}} → {"size": 300, "unit": "ms"}
+	 *
+	 * @param mixed $data The data to clean.
+	 * @return mixed The cleaned data without $$type markers.
+	 */
+	public static function clean_prop_types( $data, $parent_key = null ) {
+		if ( ! is_array( $data ) ) {
+			return $data;
+		}
+
+		// If this is a PropType object (has $$type), extract and clean its value
+		if ( isset( $data['$$type'] ) ) {
+			$value = $data['value'] ?? null;
+
+			if ( 'size' === $data['$$type'] && in_array( $parent_key, self::TIMING_PROPERTIES, true ) ) {
+				return self::size_to_milliseconds( $value );
+			}
+
+			return self::clean_prop_types( $value, $parent_key );
+		}
+
+		// Otherwise, recursively clean all array elements
+		$cleaned = [];
+		foreach ( $data as $key => $value ) {
+			$cleaned[ $key ] = self::clean_prop_types( $value, $key );
+		}
+
+		return $cleaned;
+	}
+
+	private static function size_to_milliseconds( $size_value ) {
+		if ( ! is_array( $size_value ) || ! isset( $size_value['size'] ) ) {
+			return $size_value;
+		}
+
+		$size = $size_value['size'];
+		$unit = $size_value['unit'] ?? 'ms';
+
+		// Convert seconds to milliseconds
+		if ( 's' === $unit ) {
+			return $size * 1000;
+		}
+
+		// Already in milliseconds
+		return $size;
+	}
+
+	/**
 	 * Extract numeric value from a PropType that can be either 'number' or 'size'.
 	 * - number format: {$$type: 'number', value: 300} → returns 300
 	 * - size format: {$$type: 'size', value: {size: 300, unit: 'ms'}} → returns 300
@@ -196,7 +249,7 @@ class Adapter {
 
 		if ( is_string( $interactions ) ) {
 			$decoded = json_decode( $interactions, true );
-			if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
+			if ( JSON_ERROR_NONE === json_last_error() && is_array( $decoded ) ) {
 				return $decoded;
 			}
 		}
