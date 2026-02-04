@@ -93,6 +93,8 @@ describe( '<ComponentPanelHeader />', () => {
 
 		jest.mocked( useSuppressedMessage ).mockReturnValue( [ true, jest.fn() ] );
 		( __ as jest.Mock ).mockImplementation( ( str ) => str );
+
+		dispatch( slice.actions.addSanitizeComponent( MOCK_COMPONENT_ID ) );
 	} );
 
 	it( 'should not render when not editing a component', () => {
