@@ -16,6 +16,8 @@ type ChipsControlProps = {
 	options: ChipsOption[];
 };
 
+const SIZE = 'tiny';
+
 export const ChipsControl = createControl( ( { options }: ChipsControlProps ) => {
 	const { value, setValue, disabled } = useBoundProp( classesPropTypeUtil );
 
@@ -35,7 +37,7 @@ export const ChipsControl = createControl( ( { options }: ChipsControlProps ) =>
 			<Autocomplete
 				fullWidth
 				multiple
-				size="tiny"
+				size={ SIZE }
 				disabled={ disabled }
 				value={ selectedOptions }
 				onChange={ handleChange }
