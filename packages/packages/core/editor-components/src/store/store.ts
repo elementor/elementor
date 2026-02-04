@@ -31,6 +31,7 @@ type ComponentsState = {
 	path: ComponentsPathItem[];
 	currentComponentId: V1Document[ 'id' ] | null;
 	updatedComponentNames: Record< number, string >;
+	sanitizedComponents: Record< ComponentId, boolean >;
 };
 
 export type ComponentsSlice = SliceState< typeof slice >;
@@ -51,6 +52,7 @@ export const initialState: ComponentsState = {
 	path: [],
 	currentComponentId: null,
 	updatedComponentNames: {},
+	sanitizedComponents: {},
 };
 
 export const SLICE_NAME = 'components';
@@ -134,6 +136,12 @@ export const slice = createSlice( {
 		},
 		cleanUpdatedComponentNames: ( state ) => {
 			state.updatedComponentNames = {};
+		},
+		addSanitizeComponent: ( state, { payload }: PayloadAction< ComponentId > ) => {
+			state.sanitizedComponents[ payload ] = true;
+		},
+		resetSanitizedComponents: ( state ) => {
+			state.sanitizedComponents = {};
 		},
 	},
 	extraReducers: ( builder ) => {
@@ -248,3 +256,16 @@ export const selectUpdatedComponentNames = createSelector(
 			title,
 		} ) )
 );
+
+const useSanitizedComponents = () => {
+	return useSelector( ( state: ComponentsSlice ) => state[ SLICE_NAME ].sanitizedComponents );
+};
+export const useIsSanitizedComponent = ( componentId: ComponentId | null ) => {
+	const sanitizedComponents = useSanitizedComponents();
+
+	if ( ! componentId ) {
+		return false;
+	}
+
+	return !! sanitizedComponents[ componentId ];
+};

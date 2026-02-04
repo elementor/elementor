@@ -1,7 +1,4 @@
-import {
-	type ComponentInstanceOverrideProp,
-	componentInstanceOverridePropTypeUtil,
-} from '../prop-types/component-instance-override-prop-type';
+import { componentInstanceOverridePropTypeUtil } from '../prop-types/component-instance-override-prop-type';
 import {
 	type ComponentInstanceOverride,
 	type ComponentInstanceOverridesPropValue,
@@ -18,22 +15,18 @@ export function getMatchingOverride(
 	overrides: ComponentInstanceOverridesPropValue,
 	overrideKey: string
 ): ComponentInstanceOverride | null {
-	const result =
+	return (
 		overrides?.find( ( override ) => {
 			const overridableValue = componentOverridablePropTypeUtil.extract( override );
-			let comparedOverrideKey = null;
 
 			if ( overridableValue ) {
-				comparedOverrideKey = ( overridableValue.origin_value as ComponentInstanceOverrideProp )?.value
-					?.override_key;
-			} else {
-				comparedOverrideKey = override.value.override_key;
+				const overrideValue = componentInstanceOverridePropTypeUtil.extract( overridableValue.origin_value );
+				return overrideValue?.override_key === overrideKey;
 			}
 
-			return comparedOverrideKey === overrideKey;
-		} ) ?? null;
-
-	return result;
+			return override.value.override_key === overrideKey;
+		} ) ?? null
+	);
 }
 
 export function extractInnerOverrideInfo( override: ComponentInstanceOverride | null ): InnerOverrideInfo | null {
