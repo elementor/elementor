@@ -1,13 +1,7 @@
 {
-<<<<<<< HEAD:packages/packages/libs/mixpanel/package.json
-  "name": "@elementor/mixpanel",
-  "description": "Elementor Mixpanel package",
-  "version": "3.35.0",
-=======
   "name": "@elementor/events",
   "description": "Elementor Events package",
-  "version": "4.0.0",
->>>>>>> 2079d2ae9d (Internal: Build fix [ED-22812] (#34638)):packages/packages/libs/events/package.json
+  "version": "3.35.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
