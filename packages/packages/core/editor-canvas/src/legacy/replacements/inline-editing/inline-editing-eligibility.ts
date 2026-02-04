@@ -37,8 +37,5 @@ export const isInlineEditingAllowed = ( { rawValue, propTypeFromSchema }: Inline
 		return isAllowedBySchema( propTypeFromSchema );
 	}
 
-	return (
-		htmlV2PropTypeUtil.isValid( rawValue ) ||
-		stringPropTypeUtil.isValid( rawValue )
-	);
+	return htmlV2PropTypeUtil.isValid( rawValue ) || stringPropTypeUtil.isValid( rawValue );
 };
