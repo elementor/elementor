@@ -4,7 +4,7 @@ import type { PropsSchema } from '@elementor/editor-props';
 import type { SupportedFonts, EnqueueFont } from '@elementor/editor-v1-adapters';
 import type { V4PromotionData, V4PromotionKey } from '@elementor/editor-controls';
 
-interface OnboardingConfig {
+interface EOnboardingConfig {
 	version: string;
 	restUrl: string;
 	nonce: string;
@@ -91,9 +91,8 @@ declare global {
 			};
 		};
 		elementorAppConfig?: {
-			onboarding?: OnboardingConfig;
+			eOnboarding?: EOnboardingConfig;
 		};
-		elementorOnboardingConfig?: OnboardingConfig;
 		ElementorInteractionsConfig?: InteractionsConfig;
 		ElementorVariablesQuotaConfig?: Record< string, number >;
 		ElementorVariablesQuotaConfigExtended?: Record< string, number >;

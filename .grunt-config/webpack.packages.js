@@ -128,7 +128,7 @@ module.exports = {
 
 function getLocalRepoPackagesEntries() {
 	const repoPath = path.resolve( __dirname, '../packages' );
-	const relevantDirs = [ 'packages/core', 'packages/libs' ]
+	const relevantDirs = [ 'packages/apps', 'packages/core', 'packages/libs' ]
 
 	const packages = relevantDirs.flatMap( ( dir ) =>
 		fs.readdirSync( path.resolve( repoPath, dir ) )

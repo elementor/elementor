@@ -1,0 +1,123 @@
+<?php
+
+namespace Elementor\App\Modules\E_Onboarding;
+
+use Elementor\App\Modules\E_Onboarding\Data\Controller;
+use Elementor\App\Modules\E_Onboarding\Storage\Repository;
+use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Plugin;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+class Module extends BaseModule {
+
+	const VERSION = '1.0.0';
+	const EXPERIMENT_NAME = 'e_onboarding';
+
+	private Repository $repository;
+
+	public function get_name(): string {
+		return 'e-onboarding';
+	}
+
+	public static function get_experimental_data(): array {
+		return [
+			'name' => self::EXPERIMENT_NAME,
+			'title' => esc_html__( 'New Onboarding', 'elementor' ),
+			'description' => esc_html__( 'New onboarding experience for 2026 with improved user journey and progress tracking.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		];
+	}
+
+	public function __construct() {
+		$this->repository = Repository::instance();
+
+		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
+
+		add_action( 'elementor/init', [ $this, 'on_elementor_init' ], 12 );
+	}
+
+	public function on_elementor_init(): void {
+		if ( ! Plugin::$instance->app->is_current() ) {
+			return;
+		}
+
+		$this->set_onboarding_settings();
+	}
+
+	public function repository(): Repository {
+		return $this->repository;
+	}
+
+	private function set_onboarding_settings(): void {
+		if ( ! Plugin::$instance->common ) {
+			return;
+		}
+
+		$progress = $this->repository->get_progress();
+		$choices = $this->repository->get_choices();
+		$steps = $this->get_steps_config();
+
+		Plugin::$instance->app->set_settings( 'eOnboarding', [
+			'version' => self::VERSION,
+			'restUrl' => rest_url( 'elementor/v1/e-onboarding/' ),
+			'nonce' => wp_create_nonce( 'wp_rest' ),
+			'progress' => array_merge( $progress->to_array(), [
+				'current_step_id' => $progress->get_current_step_id() ?? $steps[0]['id'] ?? 'building_for',
+				'current_step_index' => $progress->get_current_step_index() ?? 0,
+			] ),
+			'choices' => $choices->to_array(),
+			'hadUnexpectedExit' => $progress->had_unexpected_exit(),
+			'isConnected' => $this->is_user_connected(),
+			'steps' => $steps,
+			'urls' => [
+				'dashboard' => admin_url(),
+				'editor' => admin_url( 'edit.php?post_type=elementor_library' ),
+				'connect' => $this->get_connect_url(),
+			],
+		] );
+	}
+
+	private function is_user_connected(): bool {
+		$library = $this->get_library_app();
+
+		return $library ? $library->is_connected() : false;
+	}
+
+	private function get_connect_url(): string {
+		$library = $this->get_library_app();
+
+		if ( ! $library ) {
+			return '';
+		}
+
+		return $library->get_admin_url( 'authorize' ) ?? '';
+	}
+
+	private function get_library_app() {
+		$connect = Plugin::$instance->common->get_component( 'connect' );
+
+		if ( ! $connect ) {
+			return null;
+		}
+
+		return $connect->get_app( 'library' );
+	}
+
+	private function get_steps_config(): array {
+		$steps = [
+			[ 'id' => 'building_for', 'label' => __( 'Who are you building for?', 'elementor' ) ],
+			[ 'id' => 'site_about', 'label' => __( 'What is your site about?', 'elementor' ) ],
+			[ 'id' => 'experience', 'label' => __( 'How much experience do you have with Elementor?', 'elementor' ) ],
+			[ 'id' => 'theme_select', 'label' => __( 'Start with a theme that fits your needs', 'elementor' ) ],
+			[ 'id' => 'site_features', 'label' => __( 'What do you want to include in your site?', 'elementor' ) ],
+		];
+
+		return apply_filters( 'elementor/e-onboarding/steps', $steps );
+	}
+}
