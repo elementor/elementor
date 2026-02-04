@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
+import type { Locator } from '@playwright/test';
 
 test.describe( 'Editor One Menu Visibility', () => {
 	let editorUser: { id: string; username: string; password: string };
@@ -41,7 +42,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 		await context.close();
 	} );
 
-	test.skip( 'Admin user: Elementor menu is visible with correct submenu items', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Admin user: Elementor menu is visible with correct submenu items', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.openWordPressDashboard();
@@ -62,7 +63,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 		await expect( sidebar.getByRole( 'button', { name: 'Templates' } ).first() ).toBeVisible();
 	} );
 
-	test.skip( 'Editor user: Elementor menu is visible with correct submenu items', async ( { browser, apiRequests }, testInfo ) => {
+	test( 'Editor user: Elementor menu is visible with correct submenu items', async ( { browser, apiRequests }, testInfo ) => {
 		const editorContext = await browser.newContext( { storageState: undefined } );
 		const editorPage = await editorContext.newPage();
 		const wpAdmin = new WpAdminPage( editorPage, testInfo, apiRequests );
@@ -80,16 +81,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 		const sidebar = editorPage.locator( '#editor-one-sidebar-navigation' );
 		await expect( sidebar ).toBeVisible();
 
-		const templatesButton = sidebar.getByRole( 'button', { name: 'Templates' } ).first();
-		await expect( templatesButton ).toBeVisible();
-
-		const templatesListItem = templatesButton.locator( '..' ).locator( '..' );
-		const collapseElement = templatesListItem.locator( '+ div.MuiCollapse-root.MuiCollapse-entered' );
-		const isOpen = await collapseElement.count() > 0;
-
-		if ( ! isOpen ) {
-			await templatesButton.click();
-		}
+		await ensureTemplatesMenuIsOpen( sidebar );
 
 		await expect( sidebar.getByRole( 'button', { name: 'Quick Start' } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Settings' } ).first() ).not.toBeVisible();
@@ -105,7 +97,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 		await editorContext.close();
 	} );
 
-	test.skip( 'Contributor user: Elementor menu is visible with correct submenu items', async ( { browser, apiRequests }, testInfo ) => {
+	test( 'Contributor user: Elementor menu is visible with correct submenu items', async ( { browser, apiRequests }, testInfo ) => {
 		const contributorContext = await browser.newContext( { storageState: undefined } );
 		const contributorPage = await contributorContext.newPage();
 		const wpAdmin = new WpAdminPage( contributorPage, testInfo, apiRequests );
@@ -125,16 +117,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 		const sidebar = contributorPage.locator( '#editor-one-sidebar-navigation' );
 		await expect( sidebar ).toBeVisible();
 
-		const templatesButton = sidebar.getByRole( 'button', { name: 'Templates' } ).first();
-		await expect( templatesButton ).toBeVisible();
-
-		const templatesListItem = templatesButton.locator( '..' ).locator( '..' );
-		const collapseElement = templatesListItem.locator( '+ div.MuiCollapse-root.MuiCollapse-entered' );
-		const isOpen = await collapseElement.count() > 0;
-
-		if ( ! isOpen ) {
-			await templatesButton.click();
-		}
+		await ensureTemplatesMenuIsOpen( sidebar );
 
 		await expect( sidebar.getByRole( 'button', { name: 'Quick Start' } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Settings' } ).first() ).not.toBeVisible();
@@ -150,3 +133,15 @@ test.describe( 'Editor One Menu Visibility', () => {
 		await contributorContext.close();
 	} );
 } );
+
+async function ensureTemplatesMenuIsOpen( sidebar: Locator ): Promise<void> {
+	const templatesButton = sidebar.getByRole( 'button', { name: 'Templates' } ).first();
+	await expect( templatesButton ).toBeVisible();
+
+	const savedTemplatesLink = sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first();
+	const isOpen = await savedTemplatesLink.isVisible().catch( () => false );
+
+	if ( ! isOpen ) {
+		await templatesButton.click();
+	}
+}
