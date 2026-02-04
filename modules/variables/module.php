@@ -87,14 +87,10 @@ class Module extends BaseModule {
 	}
 
 	private function get_quota_config(): array {
-		$config = [
+		return [
 			Color_Variable_Prop_Type::get_key() => 100000,
 			Font_Variable_Prop_Type::get_key() => 100000,
-			// BC: Remove the check when 4.01 is released
-			Size_Variable_Prop_Type::get_key() => Utils::has_pro() ? 100000 : 0,
 		];
-
-		return apply_filters( 'elementor/variables/quota_config', $config );
 	}
 
 	public function enqueue_editor_scripts() {
