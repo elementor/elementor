@@ -28,9 +28,9 @@ export const useAdminMenuOffset = () => {
 		wpbodyContent?.insertBefore( wpfooter, wpbodyContent.querySelector( ':scope > .clear' ) );
 
 		const wpAdminBar = document.getElementById( WPADMINBAR_ID );
-		const topBarHeader = document.getElementById( EDITOR_ONE_TOP_BAR_ID )?.querySelector( ':scope > header' );
 
 		const updateOffset = () => {
+			const topBarHeader = document.getElementById( EDITOR_ONE_TOP_BAR_ID )?.querySelector( ':scope > header' );
 			const isRTL = getIsRTL();
 			const rect = adminMenuWrap.getBoundingClientRect();
 
@@ -48,6 +48,12 @@ export const useAdminMenuOffset = () => {
 		const resizeObserver = new ResizeObserver( updateOffset );
 
 		resizeObserver.observe( wpcontent );
+
+		const topBar = document.getElementById( EDITOR_ONE_TOP_BAR_ID );
+		if ( topBar ) {
+			resizeObserver.observe( topBar );
+		}
+
 		window.addEventListener( 'resize', updateOffset );
 
 		wpcontent.setAttribute( INITIALIZED_DATA_ATTR, 'true' );
