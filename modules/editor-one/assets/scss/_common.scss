@@ -46,19 +46,34 @@
 		}
 	}
 
+	#elementor-editor {
+		#elementor-editor-button {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			font-weight: 600;
+			font-size: 16px;
+		}
+
+		#elementor-go-to-edit-page-link {
+			font-weight: 600;
+			text-decoration: none;
+		}
+	}
+
 	.postbox {
 		.category-tabs {
 			display: flex;
-			border-bottom: 1px solid var(--e-one-palette-divider);
-			margin-bottom: 10px;
+			border-block-end: 1px solid var(--e-one-palette-divider);
+			margin-block-end: 10px;
 
 			li {
 				margin: 0;
 				padding: 0;
 
 				&.tabs {
-					border-bottom: 2px solid var(--e-one-palette-text-primary);
-					margin-bottom: -1px;
+					border-block-end: 2px solid var(--e-one-palette-text-primary);
+					margin-block-end: -1px;
 
 					a {
 						color: var(--e-one-palette-text-primary);
@@ -87,78 +102,6 @@
 			font-weight: 600;
 			color: var(--e-one-palette-text-primary);
 			text-decoration: underline;
-		}
-	}
-
-	#elementor-editor {
-		#elementor-editor-button {
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-			font-weight: 600;
-			font-size: 16px;
-		}
-
-		#elementor-go-to-edit-page-link {
-			text-decoration: none;
-		}
-	}
-
-	.postbox {
-		.category-tabs {
-			display: flex;
-			border-bottom: 1px solid var(--e-one-palette-divider);
-			margin-bottom: 10px;
-
-			li {
-				margin: 0;
-				padding: 0;
-
-				&.tabs {
-					border-bottom: 2px solid var(--e-one-palette-text-primary);
-					margin-bottom: -1px;
-
-					a {
-						color: var(--e-one-palette-text-primary);
-						font-weight: 500;
-					}
-				}
-
-				a {
-					display: block;
-					padding: 8px 12px;
-					color: var(--e-one-palette-text-tertiary);
-					text-decoration: none;
-					transition: var(--e-a-transition-hover);
-
-					&:hover,
-					&:focus {
-						color: var(--e-one-palette-text-primary);
-						box-shadow: none;
-					}
-				}
-			}
-		}
-
-		.taxonomy-add-new,
-		#set-post-thumbnail {
-			font-weight: 600;
-			color: var(--e-one-palette-text-primary);
-			text-decoration: underline;
-		}
-	}
-
-	#elementor-editor {
-		#elementor-editor-button {
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-			font-weight: 600;
-			font-size: 16px;
-		}
-
-		#elementor-go-to-edit-page-link {
-			text-decoration: none;
 		}
 	}
 
