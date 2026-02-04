@@ -254,4 +254,3 @@ class Template_Library_Variables {
 		return $data;
 	}
 }
-
