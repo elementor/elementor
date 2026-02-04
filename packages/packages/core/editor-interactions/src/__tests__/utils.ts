@@ -11,6 +11,9 @@ type Props = {
 	delay?: number;
 	replay?: boolean;
 	easing?: string;
+	relativeTo?: string;
+	offsetTop?: number;
+	offsetBottom?: number;
 	excludedBreakpoints?: string[];
 };
 
@@ -25,6 +28,9 @@ export const createInteractionItemValue = ( overrides: Props = {} ): Interaction
 		delay = 0,
 		replay = false,
 		easing = 'easeIn',
+		relativeTo,
+		offsetTop,
+		offsetBottom,
 	} = overrides;
 
 	const baseValue: InteractionItemValue = {
@@ -38,6 +44,9 @@ export const createInteractionItemValue = ( overrides: Props = {} ): Interaction
 			delay,
 			replay,
 			easing,
+			relativeTo,
+			offsetTop,
+			offsetBottom,
 		} ),
 	};
 

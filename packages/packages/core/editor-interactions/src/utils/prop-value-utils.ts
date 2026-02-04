@@ -11,8 +11,8 @@ import {
 	type InteractionItemPropValue,
 	type InteractionItemValue,
 	type NumberPropValue,
+	type SizeStringValue,
 	type StringPropValue,
-	type TimeValue,
 	type TimingConfigPropValue,
 } from '../types';
 import { formatSizeValue, parseSizeValue } from '../utils/size-transform-utils';
@@ -28,7 +28,7 @@ export const createNumber = ( value: number ): NumberPropValue => ( {
 	value,
 } );
 
-export const createTimingConfig = ( duration: TimeValue, delay: TimeValue ): TimingConfigPropValue => ( {
+export const createTimingConfig = ( duration: SizeStringValue, delay: SizeStringValue ): TimingConfigPropValue => ( {
 	$$type: 'timing-config',
 	value: {
 		duration: sizePropTypeUtil.create( parseSizeValue( duration, TIME_UNITS, undefined, DEFAULT_TIME_UNIT ) ),
@@ -51,16 +51,16 @@ export const createConfig = ( {
 	replay: boolean;
 	easing?: string;
 	relativeTo?: string;
-	offsetTop?: number;
-	offsetBottom?: number;
+	offsetTop?: SizeStringValue;
+	offsetBottom?: SizeStringValue;
 } ): ConfigPropValue => ( {
 	$$type: 'config',
 	value: {
 		replay: createBoolean( replay ),
 		easing: createString( easing ),
 		relativeTo: createString( relativeTo ),
-		offsetTop: createNumber( offsetTop ),
-		offsetBottom: createNumber( offsetBottom ),
+		offsetTop: sizePropTypeUtil.create( parseSizeValue( offsetTop, TIME_UNITS, undefined, '%' ) ),
+		offsetBottom: sizePropTypeUtil.create( parseSizeValue( offsetBottom, TIME_UNITS, undefined, '%' ) ),
 	},
 } );
 
@@ -99,13 +99,13 @@ export const createAnimationPreset = ( {
 	effect: string;
 	type: string;
 	direction?: string;
-	duration: TimeValue;
-	delay: TimeValue;
+	duration: SizeStringValue;
+	delay: SizeStringValue;
 	replay: boolean;
 	easing?: string;
 	relativeTo?: string;
-	offsetTop?: number;
-	offsetBottom?: number;
+	offsetTop?: SizeStringValue;
+	offsetBottom?: SizeStringValue;
 } ): AnimationPresetPropValue => ( {
 	$$type: 'animation-preset-props',
 	value: {
@@ -142,8 +142,8 @@ export const createInteractionItem = ( {
 	effect: string;
 	type: string;
 	direction?: string;
-	duration: TimeValue;
-	delay: TimeValue;
+	duration: SizeStringValue;
+	delay: SizeStringValue;
 	interactionId?: string;
 	replay: boolean;
 	easing?: string;
@@ -197,12 +197,8 @@ export const extractString = ( prop: StringPropValue | undefined, fallback = '' 
 	return prop?.value ?? fallback;
 };
 
-export const extractSize = ( prop: SizePropValue ): TimeValue => {
+export const extractSize = ( prop: SizePropValue ): SizeStringValue => {
 	return formatSizeValue( prop?.value );
-};
-
-export const extractNumber = ( prop: NumberPropValue | undefined, fallback = 0 ): number => {
-	return prop?.value ?? fallback;
 };
 
 const TRIGGER_LABELS: Record< string, string > = {

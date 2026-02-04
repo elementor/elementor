@@ -9,6 +9,7 @@ export function Trigger( { value, onChange }: FieldProps ) {
 	const availableTriggers = Object.entries( {
 		load: __( 'Page load', 'elementor' ),
 		scrollIn: __( 'Scroll into view', 'elementor' ),
+		scrollOn: __( 'While Scrolling', 'elementor' ),
 	} ).map( ( [ key, label ] ) => ( {
 		key,
 		label,
