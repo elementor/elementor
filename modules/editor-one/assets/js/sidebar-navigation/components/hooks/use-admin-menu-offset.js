@@ -28,10 +28,14 @@ export const useAdminMenuOffset = () => {
 		wpbodyContent?.insertBefore( wpfooter, wpbodyContent.querySelector( ':scope > .clear' ) );
 
 		const wpAdminBar = document.getElementById( WPADMINBAR_ID );
-		const topBarHeader = document.getElementById( EDITOR_ONE_TOP_BAR_ID )?.querySelector( ':scope > header' );
 
 		const updateOffset = () => {
+<<<<<<< HEAD
 			const isRTL = getIsRTL();
+=======
+			const topBarHeader = document.getElementById( EDITOR_ONE_TOP_BAR_ID )?.querySelector( ':scope > header' );
+			const isRtlLanguage = isRTL();
+>>>>>>> dacb0897ac (Internal: Update admin area scrolling [ED-22462[ (#34609))
 			const rect = adminMenuWrap.getBoundingClientRect();
 
 			const offset = isRTL ? window.innerWidth - rect.left : rect.right;
@@ -48,6 +52,12 @@ export const useAdminMenuOffset = () => {
 		const resizeObserver = new ResizeObserver( updateOffset );
 
 		resizeObserver.observe( wpcontent );
+
+		const topBar = document.getElementById( EDITOR_ONE_TOP_BAR_ID );
+		if ( topBar ) {
+			resizeObserver.observe( topBar );
+		}
+
 		window.addEventListener( 'resize', updateOffset );
 
 		wpcontent.setAttribute( INITIALIZED_DATA_ATTR, 'true' );
