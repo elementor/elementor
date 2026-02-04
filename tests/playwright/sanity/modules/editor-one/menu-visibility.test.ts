@@ -82,7 +82,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 
 		const templatesButton = sidebar.getByRole( 'button', { name: 'Templates' } ).first();
 		await expect( templatesButton ).toBeVisible();
-	
+
 		await templatesButton.click();
 
 		await expect( sidebar.getByRole( 'button', { name: 'Quick Start' } ).first() ).not.toBeVisible();
