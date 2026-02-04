@@ -16,8 +16,11 @@
                         "value": {
                             "override_key": "prop-0",
                             "origin_value": {
-                                "$$type": "string",
-                                "value": "Click here"
+                                "$$type": "html-v2",
+                                "value": {
+                                    "content": "Click here",
+                                    "children": []
+                                }
                             }
                         }
                     },

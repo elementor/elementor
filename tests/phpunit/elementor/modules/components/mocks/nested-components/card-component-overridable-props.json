@@ -52,8 +52,11 @@
           "value": {
             "override_key": "prop-0",
             "override_value": {
-              "$$type": "string",
-              "value": "Learn more"
+              "$$type": "html-v2",
+              "value": {
+                "content": "Learn more",
+                "children": []
+              }
             },
             "schema_source": {
               "type": "component",

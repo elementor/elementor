@@ -29,7 +29,13 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'propKey' => 'title',
 				'widgetType' => 'e-heading',
 				'elType' => 'widget',
-				'originValue' => [ '$$type' => 'html-v2', 'value' => 'Original text' ],
+				'originValue' => [
+					'$$type' => 'html-v2',
+					'value' => [
+						'content' => 'Original text',
+						'children' => [],
+					],
+				],
 				'groupId' => 'group-uuid-1',
 			]
 		];
@@ -51,7 +57,13 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'propKey' => 'override',
 				'widgetType' => 'e-component',
 				'elType' => 'widget',
-				'originValue' => [ '$$type' => 'html-v2', 'value' => 'Original text' ],
+				'originValue' => [
+					'$$type' => 'html-v2',
+					'value' => [
+						'content' => 'Original text',
+						'children' => [],
+					],
+				],
 				'groupId' => 'group-uuid-1',
 				'originPropFields' => [
 					'elType' => 'widget',
@@ -111,7 +123,13 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'propKey' => 'override',
 				'widgetType' => 'e-component',
 				'elType' => 'widget',
-				'originValue' => [ '$$type' => 'html', 'value' => '<script>alert("xss")</script>Click here' ],
+				'originValue' => [
+					'$$type' => 'html-v2',
+					'value' => [
+						'content' => '<script>alert("xss")</script>Click here',
+						'children' => [],
+					],
+				],
 				'originPropFields' => [
 					'elType' => 'widget',
 					'widgetType' => 'e-button',
@@ -127,7 +145,13 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 
 		// Assert.
 		$sanitized = $result->unwrap();
-		$this->assertEquals( [ '$$type' => 'html', 'value' => 'alert("xss")Click here' ], $sanitized['prop-uuid-1']['originValue'] );
+		$this->assertEquals( [
+			'$$type' => 'html-v2',
+			'value' => [
+				'content' => 'alert("xss")Click here',
+				'children' => [],
+			],
+		], $sanitized['prop-uuid-1']['originValue'] );
 	}
 
 	/**
@@ -203,7 +227,13 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 			'propKey' => 'title',
 			'widgetType' => 'e-heading',
 			'elType' => 'widget',
-			'originValue' => [ '$$type' => 'html-v2', 'value' => 'Original text' ],
+			'originValue' => [
+				'$$type' => 'html-v2',
+				'value' => [
+					'content' => 'Original text',
+					'children' => [],
+				],
+			],
 			'groupId' => 'group-uuid-1'
 		];
 

@@ -213,7 +213,13 @@ class Test_Component_Overridable_Props_Parser extends Elementor_Test_Base {
 			'propKey' => 'title',
 			'widgetType' => 'e-heading',
 			'elType' => 'widget',
-			'originValue' => [ '$$type' => 'html-v2', 'value' => 'Original text' ],
+			'originValue' => [
+				'$$type' => 'html-v2',
+				'value' => [
+					'content' => 'Original text',
+					'children' => [],
+				],
+			],
 			'groupId' => 'group-uuid-1'
 		];
 

@@ -8,8 +8,11 @@
         "elType": "widget",
         "widgetType": "e-button",
         "originValue": {
-          "$$type": "string",
-          "value": "Click here"
+          "$$type": "html-v2",
+          "value": {
+            "content": "Click here",
+            "children": []
+          }
         },
         "groupId": "group-0"
       },

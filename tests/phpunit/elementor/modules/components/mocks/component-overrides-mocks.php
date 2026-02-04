@@ -95,8 +95,11 @@ class Component_Overrides_Mocks {
 					'widgetType' => 'e-component',
 					'propKey' => 'override',
 					'originValue' => [
-					'$$type' => 'string',
-						'value' => 'Click here',
+					'$$type' => 'html-v2',
+					'value' => [
+						'content' => 'Click here',
+						'children' => [],
+					],
 					],
 					'originPropFields' => [
 						'elType' => 'widget',
