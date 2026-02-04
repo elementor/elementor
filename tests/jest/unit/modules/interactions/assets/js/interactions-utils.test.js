@@ -91,6 +91,7 @@ describe( 'interactions-utils', () => {
                 direction: 'top',
                 duration: 300,
                 delay: 100,
+                replay: false,
                 easing: 'easeIn',
             } );
         } );
@@ -103,6 +104,7 @@ describe( 'interactions-utils', () => {
                 type: 'out',
                 direction: null,
                 duration: 500,
+                replay: false,
                 delay: 0,
                 easing: 'easeIn',
             } );
@@ -110,7 +112,7 @@ describe( 'interactions-utils', () => {
 
         it( 'should use default duration when missing', () => {
             const result = parseAnimationName( 'load-fade-in' );
-            expect( result.duration ).toBe( 300 );
+            expect( result.duration ).toBe( 600 );
         } );
 
         it( 'should use default delay when missing', () => {
@@ -161,7 +163,7 @@ describe( 'interactions-utils', () => {
                 },
             };
             const result = extractAnimationId( interaction );
-            expect( result ).toBe( 'load-fade-in--300-0--easeIn' );
+            expect( result ).toBe( 'load-fade-in--600-0--easeIn' );
         } );
 
         it( 'should return null for invalid interaction', () => {
