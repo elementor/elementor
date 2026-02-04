@@ -29,21 +29,35 @@
 		}
 
 		a:not(.button),
-		.eps-button {
+		.eps-button:not(.e-site-editor-conditions__add-button) {
+			font-weight: 600;
 			color: var(--e-one-palette-text-primary);
-			text-decoration: none;
+			text-decoration: underline;
 
 			&:hover,
 			&:focus {
 				text-decoration: underline;
 			}
 		}
-<<<<<<< HEAD
-=======
 
 		#misc-publishing-actions a {
 			font-weight: 600;
 			text-decoration: underline;
+		}
+	}
+
+	#elementor-editor {
+		#elementor-editor-button {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			font-weight: 600;
+			font-size: 16px;
+		}
+
+		#elementor-go-to-edit-page-link {
+			font-weight: 600;
+			text-decoration: none;
 		}
 	}
 
@@ -89,21 +103,6 @@
 			color: var(--e-one-palette-text-primary);
 			text-decoration: underline;
 		}
-	}
-
-	#elementor-editor {
-		#elementor-editor-button {
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-			font-weight: 600;
-			font-size: 16px;
-		}
-
-		#elementor-go-to-edit-page-link {
-			text-decoration: none;
-		}
->>>>>>> 8dbb338194 (Fix: 'Edit' pages of templates haven't washed with new design [ED-22749] (#34595))
 	}
 
 	.wrap {
@@ -232,7 +231,7 @@
 	.wp-core-ui .button-primary {
 		background-color: var(--e-one-palette-primary-main);
 		border-color: var(--e-one-palette-primary-main);
-		color: var(--e-one-palette-primary-contrastText);
+		color: var(--e-one-palette-primary-contrast-text);
 		font-weight: 500;
 		padding: 8px 16px;
 		border-radius: var(--e-a-border-radius);
@@ -246,7 +245,7 @@
 		&:focus {
 			background-color: var(--e-one-palette-primary-dark);
 			border-color: var(--e-one-palette-primary-dark);
-			color: var(--e-one-palette-primary-contrastText);
+			color: var(--e-one-palette-primary-contrast-text);
 		}
 
 		&:active {
@@ -320,6 +319,7 @@
 			border: 1px solid var(--e-one-palette-divider);
 			border-block-end: none;
 			border-width: 1px 1px 0;
+			border-radius: 3px 3px 0 0;
 			color: var(--e-one-palette-text-tab);
 			font-family: var(--e-one-typography-fontFamily);
 			font-weight: 500;
@@ -356,9 +356,9 @@
 					content: '';
 					position: absolute;
 					inset-block-end: -1px;
-					inset-inline-start: -1px;
-					inset-inline-end: -1px;
-					height: 1px;
+					inset-inline-start: 0;
+					inset-inline-end: 0;
+					height: 2px;
 					background-color: var(--e-one-palette-background-default);
 				}
 			}
@@ -393,6 +393,20 @@
 		font-size: 1em;
 		color: var(--e-one-palette-text-tertiary);
 		line-height: 1.4;
+	}
+
+	#post-body-content,
+	#revisionsdiv,
+	#elementor-settings-form {
+		a:not(.button):not(.elementor-button):not(.nav-tab) {
+			color: var(--e-one-palette-info-main);
+			text-decoration: none;
+
+			&:hover,
+			&:focus {
+				text-decoration: underline;
+			}
+		}
 	}
 
 	[dir="rtl"] {
