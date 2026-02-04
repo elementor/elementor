@@ -38,7 +38,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		'wp-media',
 		'editor-current-user',
 	];
-	
+
 	const EXTENSIONS = [
 		'events',
 		'editor-documents',
