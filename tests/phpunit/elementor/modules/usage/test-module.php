@@ -585,4 +585,422 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'css_print_method', $settings_usage );
 		$this->assertArrayNotHasKey( Settings::UPDATE_TIME_FIELD, $settings_usage );
 	}
+
+	public function test_atomic_widget_usage_counter_with_nested_styles() {
+		// Arrange.
+		$document = $this->factory()->documents->publish_and_get( [
+			'meta_input' => [
+				'_elementor_data' => self::get_atomic_widget_payload_with_complex_styles(),
+			]
+		] );
+
+		// Act.
+		$usage = $document->get_meta( Module::META_KEY );
+
+		// Assert - Check that e-heading widget is tracked.
+		$this->assertArrayHasKey( 'e-heading', $usage );
+		$this->assertEquals( 1, $usage['e-heading']['count'] );
+
+		// Assert - Check that general controls are counted.
+		$this->assertArrayHasKey( 'controls', $usage['e-heading'] );
+		$this->assertArrayHasKey( 'General', $usage['e-heading']['controls'] );
+
+		// Assert - Check that style controls are counted under Styles section.
+		$this->assertArrayHasKey( 'Style', $usage['e-heading']['controls'] );
+		$style_controls = $usage['e-heading']['controls']['Style'];
+		$this->assertArrayHasKey( 'Styles', $style_controls );
+
+		// Assert - Check for basic style properties under Styles section.
+		$styles_section = $style_controls['Styles'];
+		$this->assertArrayHasKey( 'background-color', $styles_section );
+		$this->assertArrayHasKey( 'color', $styles_section );
+	}
+
+	public function test_atomic_widget_usage_counter_counts_array_items() {
+		// Arrange.
+		$document = $this->factory()->documents->publish_and_get( [
+			'meta_input' => [
+				'_elementor_data' => self::get_atomic_widget_payload_with_background_overlay(),
+			]
+		] );
+
+		// Act.
+		$usage = $document->get_meta( Module::META_KEY );
+
+		// Assert - Check that background-overlay array items are counted under Styles section.
+		$style_controls = $usage['e-heading']['controls']['Style'];
+		$this->assertArrayHasKey( 'Styles', $style_controls );
+
+		// The background overlay has 3 items (2 images + 1 color), all should be counted.
+		$styles_section = $style_controls['Styles'];
+		$this->assertTrue(
+			! empty( $styles_section['background-background-overlay-background-image-overlay-image-size'] ) ||
+			! empty( $styles_section['background-background-overlay-background-color-overlay-color'] ),
+			'Background overlay items should be counted'
+		);
+	}
+
+	public function test_atomic_widget_usage_counter_with_custom_css() {
+		// Arrange.
+		$document = $this->factory()->documents->publish_and_get( [
+			'meta_input' => [
+				'_elementor_data' => self::get_atomic_widget_payload_with_custom_css(),
+			]
+		] );
+
+		// Act.
+		$usage = $document->get_meta( Module::META_KEY );
+
+		// Assert - Check that custom CSS is tracked in Style tab under Styles section.
+		$this->assertArrayHasKey( 'e-heading', $usage );
+		$style_controls = $usage['e-heading']['controls']['Style'];
+		$this->assertArrayHasKey( 'Styles', $style_controls );
+		$this->assertEquals( 1, $style_controls['Styles']['custom_css'] );
+	}
+
+	public function test_atomic_widget_usage_counter_tracks_general_settings() {
+		// Arrange.
+		$document = $this->factory()->documents->publish_and_get( [
+			'meta_input' => [
+				'_elementor_data' => self::get_atomic_widget_payload_with_complex_styles(),
+			]
+		] );
+
+		// Act.
+		$usage = $document->get_meta( Module::META_KEY );
+
+		// Assert - Check that general settings are tracked.
+		$general_controls = $usage['e-heading']['controls']['General'];
+		$this->assertNotEmpty( $general_controls );
+
+		// Tag and title should be in some section under General.
+		$found_tag = false;
+		$found_title = false;
+		foreach ( $general_controls as $section => $controls ) {
+			if ( isset( $controls['tag'] ) ) {
+				$found_tag = true;
+			}
+			if ( isset( $controls['title'] ) ) {
+				$found_title = true;
+			}
+		}
+		$this->assertTrue( $found_tag, 'Tag prop should be tracked under General tab' );
+		$this->assertTrue( $found_title, 'Title prop should be tracked under General tab' );
+	}
+
+	public function test_mixed_v3_and_v4_widgets_both_tracked() {
+		// Arrange.
+		$document = $this->factory()->documents->publish_and_get( [
+			'meta_input' => [
+				'_elementor_data' => self::get_mixed_widgets_payload(),
+			]
+		] );
+
+		// Act.
+		$usage = $document->get_meta( Module::META_KEY );
+
+		// Assert - v3 widget tracked with classic structure (lowercase tabs).
+		$this->assertArrayHasKey( 'button', $usage );
+		$this->assertArrayHasKey( 'content', $usage['button']['controls'] );
+
+		// Assert - v4 widget tracked with atomic structure (capitalized tabs).
+		$this->assertArrayHasKey( 'e-heading', $usage );
+		$this->assertArrayHasKey( 'General', $usage['e-heading']['controls'] );
+	}
+
+	private static function get_atomic_widget_payload_with_complex_styles() {
+		return [
+			[
+				'id' => '736802e',
+				'elType' => 'container',
+				'settings' => [],
+				'elements' => [
+					[
+						'id' => 'bf895cd',
+						'elType' => 'widget',
+						'settings' => [
+							'classes' => [
+								'$$type' => 'classes',
+								'value' => [
+									'e-bf895cd-acc0fb9',
+									'g-2095820',
+								],
+							],
+							'tag' => [
+								'$$type' => 'string',
+								'value' => 'h3',
+							],
+							'title' => [
+								'$$type' => 'string',
+								'value' => 'This is a title 123',
+							],
+						],
+						'elements' => [],
+						'widgetType' => 'e-heading',
+						'styles' => [
+							'e-bf895cd-acc0fb9' => [
+								'id' => 'e-bf895cd-acc0fb9',
+								'label' => 'local',
+								'type' => 'class',
+								'variants' => [
+									[
+										'meta' => [
+											'breakpoint' => 'desktop',
+											'state' => null,
+										],
+										'props' => [
+											'color' => [
+												'$$type' => 'color',
+												'value' => '#15ec2c',
+											],
+											'background' => [
+												'$$type' => 'background',
+												'value' => [
+													'color' => [
+														'$$type' => 'color',
+														'value' => '#d01414',
+													],
+												],
+											],
+										],
+										'custom_css' => [
+											'raw' => 'YmFja2dyb3VuZC1jb2xvcjogcmVkOw==',
+										],
+									],
+								],
+							],
+						],
+						'editor_settings' => [],
+						'version' => '0.0',
+					],
+				],
+				'isInner' => false,
+			],
+		];
+	}
+
+	private static function get_atomic_widget_payload_with_custom_css() {
+		return [
+			[
+				'id' => '736802e',
+				'elType' => 'container',
+				'settings' => [],
+				'elements' => [
+					[
+						'id' => 'bf895cd',
+						'elType' => 'widget',
+						'settings' => [
+							'tag' => [
+								'$$type' => 'string',
+								'value' => 'h2',
+							],
+							'title' => [
+								'$$type' => 'string',
+								'value' => 'Title with Custom CSS',
+							],
+						],
+						'elements' => [],
+						'widgetType' => 'e-heading',
+						'styles' => [
+							'e-bf895cd-css' => [
+								'id' => 'e-bf895cd-css',
+								'label' => 'local',
+								'type' => 'class',
+								'variants' => [
+									[
+										'meta' => [
+											'breakpoint' => 'desktop',
+											'state' => null,
+										],
+										'props' => [
+											'color' => [
+												'$$type' => 'color',
+												'value' => '#333333',
+											],
+										],
+										'custom_css' => [
+											'raw' => 'Zm9udC13ZWlnaHQ6IGJvbGQ7IHBhZGRpbmc6IDEwcHg7',
+										],
+									],
+								],
+							],
+						],
+						'editor_settings' => [],
+						'version' => '0.0',
+					],
+				],
+				'isInner' => false,
+			],
+		];
+	}
+
+	private static function get_mixed_widgets_payload() {
+		return [
+			[
+				'id' => 'd50d8c5',
+				'elType' => 'container',
+				'isInner' => false,
+				'settings' => [],
+				'elements' => [
+					[
+						'id' => '5a1e8e5',
+						'elType' => 'widget',
+						'isInner' => false,
+						'settings' => [ 'text' => 'I\'m not a default' ],
+						'elements' => [],
+						'widgetType' => 'button',
+					],
+					[
+						'id' => 'bf895cd',
+						'elType' => 'widget',
+						'settings' => [
+							'tag' => [
+								'$$type' => 'string',
+								'value' => 'h3',
+							],
+							'title' => [
+								'$$type' => 'string',
+								'value' => 'Atomic Heading',
+							],
+						],
+						'elements' => [],
+						'widgetType' => 'e-heading',
+						'styles' => [],
+						'editor_settings' => [],
+						'version' => '0.0',
+					],
+				],
+			],
+		];
+	}
+
+	private static function get_atomic_widget_payload_with_background_overlay() {
+		return [
+			[
+				'id' => '736802e',
+				'elType' => 'container',
+				'settings' => [],
+				'elements' => [
+					[
+						'id' => 'bf895cd',
+						'elType' => 'widget',
+						'settings' => [
+							'classes' => [
+								'$$type' => 'classes',
+								'value' => [
+									'e-bf895cd-acc0fb9',
+									'g-2095820',
+								],
+							],
+							'tag' => [
+								'$$type' => 'string',
+								'value' => 'h3',
+							],
+							'title' => [
+								'$$type' => 'string',
+								'value' => 'This is a title 123',
+							],
+						],
+						'elements' => [],
+						'widgetType' => 'e-heading',
+						'styles' => [
+							'e-bf895cd-acc0fb9' => [
+								'id' => 'e-bf895cd-acc0fb9',
+								'label' => 'local',
+								'type' => 'class',
+								'variants' => [
+									[
+										'meta' => [
+											'breakpoint' => 'desktop',
+											'state' => null,
+										],
+										'props' => [
+											'color' => [
+												'$$type' => 'color',
+												'value' => '#15ec2c',
+											],
+											'background' => [
+												'$$type' => 'background',
+												'value' => [
+													'color' => [
+														'$$type' => 'color',
+														'value' => '#d01414',
+													],
+													'background-overlay' => [
+														'$$type' => 'background-overlay',
+														'value' => [
+															[
+																'$$type' => 'background-image-overlay',
+																'value' => [
+																	'image' => [
+																		'$$type' => 'image',
+																		'value' => [
+																			'src' => [
+																				'$$type' => 'image-src',
+																				'value' => [
+																					'id' => [
+																						'$$type' => 'image-attachment-id',
+																						'value' => 108,
+																					],
+																					'url' => null,
+																				],
+																			],
+																			'size' => [
+																				'$$type' => 'string',
+																				'value' => 'large',
+																			],
+																		],
+																	],
+																],
+															],
+															[
+																'$$type' => 'background-image-overlay',
+																'value' => [
+																	'image' => [
+																		'$$type' => 'image',
+																		'value' => [
+																			'src' => [
+																				'$$type' => 'image-src',
+																				'value' => [
+																					'id' => [
+																						'$$type' => 'image-attachment-id',
+																						'value' => 12,
+																					],
+																					'url' => null,
+																				],
+																			],
+																			'size' => [
+																				'$$type' => 'string',
+																				'value' => 'large',
+																			],
+																		],
+																	],
+																],
+															],
+															[
+																'$$type' => 'background-color-overlay',
+																'value' => [
+																	'color' => [
+																		'$$type' => 'color',
+																		'value' => '#21a4b5cf',
+																	],
+																],
+															],
+														],
+													],
+												],
+											],
+										],
+									],
+								],
+							],
+						],
+						'editor_settings' => [],
+						'version' => '0.0',
+					],
+				],
+				'isInner' => false,
+			],
+		];
+	}
 }
