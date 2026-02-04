@@ -95,6 +95,8 @@ declare global {
 		};
 		elementorOnboardingConfig?: OnboardingConfig;
 		ElementorInteractionsConfig?: InteractionsConfig;
+		ElementorVariablesQuotaConfig?: Record< string, number >;
+		ElementorVariablesQuotaConfigExtended?: Record< string, number >;
 	}
 }
 
