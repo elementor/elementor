@@ -87,30 +87,25 @@ class Atomic_Widget_Styles {
 		return $is_preview ? self::CONTEXT_PREVIEW : self::CONTEXT_FRONTEND;
 	}
 
-	/* TODO: Remove in version 4.2 */
 	public static function should_remove_custom_css_from_styles( $styles ) {
-		if ( defined( '\ELEMENTOR_PRO_VERSION' ) && version_compare( ELEMENTOR_PRO_VERSION, '3.35', '>=' ) ) {
-		
-			return apply_filters( 'elementor/atomic_widgets/editor_data/element_styles', self::remove_custom_css_from_styles( $styles ), $styles );
-		
-		} else if ( defined( '\ELEMENTOR_PRO_VERSION' ) && version_compare( ELEMENTOR_PRO_VERSION, '3.35', '<' ) ) {
-		
-			return $styles;
-		
-		} else {
-			// Elementor pro is not defined
-			add_action(
-				'update_option__elementor_pro_license_v2_data',
-				fn() => Plugin::$instance->files_manager->clear_cache()
-			);
-	
-			add_action(
-				'delete_option__elementor_pro_license_v2_data',
-				fn() => Plugin::$instance->files_manager->clear_cache()
-			);
+		$is_pro_defined = defined( '\ELEMENTOR_PRO_VERSION' );
 
-			return apply_filters( 'elementor/atomic_widgets/editor_data/element_styles', self::remove_custom_css_from_styles( $styles ), $styles );
+		if ( $is_pro_defined && version_compare( ELEMENTOR_PRO_VERSION, '3.35', '<' ) ) {
+			return $styles;
 		}
+
+		if ( ! $is_pro_defined ) {
+			$clear_cache = fn() => Plugin::$instance->files_manager->clear_cache();
+
+			add_action( 'update_option__elementor_pro_license_v2_data', $clear_cache );
+			add_action( 'delete_option__elementor_pro_license_v2_data', $clear_cache );
+		}
+
+		return apply_filters(
+			'elementor/atomic_widgets/editor_data/element_styles',
+			self::remove_custom_css_from_styles( $styles ),
+			$styles
+		);
 	}
 
 	public static function remove_custom_css_from_styles( array $styles ) {
