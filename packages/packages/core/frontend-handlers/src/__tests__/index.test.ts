@@ -232,7 +232,7 @@ describe( 'Frontend Handlers', () => {
 
 			window.dispatchEvent(
 				new CustomEvent( 'elementor/element/destroy', {
-					detail: { id: ELEMENT_ID, type: WIDGET_ELEMENT_TYPE },
+					detail: { id: ELEMENT_ID, type: WIDGET_ELEMENT_TYPE, element },
 				} )
 			);
 
