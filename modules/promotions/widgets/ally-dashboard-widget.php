@@ -77,6 +77,9 @@ class Ally_Dashboard_Widget {
 	 */
 	public function handle_click() {
 		check_ajax_referer( self::ALLY_NONCE_KEY, 'nonce' );
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'Insufficient permissions' );
+		}
 		update_option( self::ALLY_SCANNER_RUN, true );
 		wp_send_json_success();
 	}
