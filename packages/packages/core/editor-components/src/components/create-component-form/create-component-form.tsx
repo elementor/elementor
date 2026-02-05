@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { getElementLabel, type V1ElementData } from '@elementor/editor-elements';
 import { type NotificationData, notify } from '@elementor/editor-notifications';
-import { Form as FormElement, ThemeProvider } from '@elementor/editor-ui';
+import { Form as FormElement, ThemeProvider, useTextFieldAutoSelect } from '@elementor/editor-ui';
 import { ComponentsIcon } from '@elementor/icons';
 import { __getState as getState } from '@elementor/store';
 import { Button, FormLabel, Grid, Popover, Stack, TextField, Typography } from '@elementor/ui';
@@ -196,6 +196,7 @@ const Form = ( {
 	closePopup: () => void;
 } ) => {
 	const { values, errors, isValid, handleChange, validateForm } = useForm< ComponentFormValues >( initialValues );
+	const nameInputRef = useTextFieldAutoSelect();
 
 	const { components } = useComponents();
 
@@ -262,6 +263,7 @@ const Form = ( {
 							inputProps={ { style: { color: 'text.primary', fontWeight: '600' } } }
 							error={ Boolean( errors.componentName ) }
 							helperText={ errors.componentName }
+							inputRef={ nameInputRef }
 						/>
 					</Grid>
 				</Grid>
