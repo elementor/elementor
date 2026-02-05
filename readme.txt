@@ -352,6 +352,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.35.2 - 2026-02-05 =
+
+* Fix: Editor menu in WordPress admin displays incorrectly in RTL
+
 = 3.35.1 - 2026-02-04 =
 
 * Fix: Editor Top Bar does not appear in various scenarios ([#34623](https://github.com/elementor/elementor/issues/34623))

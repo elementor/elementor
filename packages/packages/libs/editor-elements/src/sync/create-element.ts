@@ -1,6 +1,5 @@
 import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
 
-import { getContainer } from './get-container';
 import { type V1Element, type V1ElementModelProps, type V1ElementSettingsProps } from './types';
 
 type Options = {
@@ -10,18 +9,12 @@ type Options = {
 };
 
 export type CreateElementParams = {
-	containerId: string;
-	options?: Options;
+	container: V1Element;
 	model?: Omit< V1ElementModelProps, 'settings' | 'id' > & { settings?: V1ElementSettingsProps; id?: string };
+	options?: Options;
 };
 
-export function createElement( { containerId, model, options }: CreateElementParams ) {
-	const container = getContainer( containerId );
-
-	if ( ! container ) {
-		throw new Error( `Container with ID "${ containerId }" not found` );
-	}
-
+export function createElement( { container, model, options }: CreateElementParams ): V1Element {
 	return runCommandSync< V1Element >( 'document/elements/create', {
 		container,
 		model,
