@@ -1,6 +1,6 @@
 {
-  "name": "@elementor/mixpanel",
-  "description": "Elementor Mixpanel package",
+  "name": "@elementor/events",
+  "description": "Elementor Events package",
   "version": "3.35.0",
   "private": false,
   "author": "Elementor Team",
@@ -20,7 +20,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/elementor/elementor.git",
-    "directory": "packages/libs/mixpanel"
+    "directory": "packages/libs/events"
   },
   "bugs": {
     "url": "https://github.com/elementor/elementor/issues"
