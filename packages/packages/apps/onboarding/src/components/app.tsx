@@ -9,8 +9,12 @@ import { useUpdateProgress } from '../hooks/use-update-progress';
 import { Login } from '../steps/screens/login';
 import { getStepVisualConfig } from '../steps/step-visuals';
 import { registerOnboardingSlice } from '../store';
-import { Layout } from './ui/layout';
+import { BaseLayout } from './ui/base-layout';
+import { Footer } from './ui/footer';
+import { FooterActions } from './ui/footer-actions';
 import { SplitLayout } from './ui/split-layout';
+import { TopBar } from './ui/top-bar';
+import { TopBarContent } from './ui/top-bar-content';
 
 interface AppProps {
 	onComplete?: () => void;
@@ -57,8 +61,12 @@ function AppContent( { onComplete, onClose }: AppProps ) {
 	}, [ actions, onClose, updateProgress ] );
 
 	const handleBack = useCallback( () => {
-		actions.prevStep();
-	}, [ actions ] );
+		if ( isFirst ) {
+			actions.setConnected( false );
+		} else {
+			actions.prevStep();
+		}
+	}, [ actions, isFirst ] );
 
 	const handleSkip = useCallback( () => {
 		actions.nextStep();
@@ -89,51 +97,56 @@ function AppContent( { onComplete, onClose }: AppProps ) {
 	}, [ stepId, stepIndex, totalSteps, actions, isLast, onComplete, updateProgress ] );
 
 	const rightPanelConfig = useMemo( () => getStepVisualConfig( stepId ), [ stepId ] );
+	const isPending = updateProgress.isPending || isLoading;
 
+	// Login screen - no footer, minimal header
 	if ( ! isConnected ) {
 		return (
-			<Layout showHeader showFooter={ false } headerProps={ { showCloseButton: false } }>
+			<BaseLayout
+				topBar={
+					<TopBar>
+						<TopBarContent showUpgrade={ false } showClose={ false } />
+					</TopBar>
+				}
+			>
 				<Login
 					onConnect={ handleConnect }
 					onContinueAsGuest={ handleContinueAsGuest }
 					connectUrl={ urls.connect }
 				/>
-			</Layout>
+			</BaseLayout>
 		);
 	}
 
-	const isPending = updateProgress.isPending || isLoading;
-
-	const footerProps = {
-		showBack: ! isFirst,
-		showSkip: ! isLast,
-		showContinue: true,
-		continueLabel: isLast ? 'Finish' : 'Continue',
-		continueLoading: isPending,
-		onBack: handleBack,
-		onSkip: handleSkip,
-		onContinue: handleContinue,
-	};
-
-	const progressInfo = {
-		currentStep: stepIndex,
-		totalSteps,
-	};
-
+	// Onboarding steps
 	return (
-		<Layout
-			showHeader
-			showFooter
-			onClose={ handleClose }
-			headerProps={ { showCloseButton: false } }
-			footerProps={ footerProps }
+		<BaseLayout
+			topBar={
+				<TopBar>
+					<TopBarContent showClose={ false } onClose={ handleClose } />
+				</TopBar>
+			}
+			footer={
+				<Footer>
+					<FooterActions
+						showBack
+						showSkip={ ! isLast }
+						showContinue
+						continueLabel={ isLast ? 'Finish' : 'Continue' }
+						continueLoading={ isPending }
+						onBack={ handleBack }
+						onSkip={ handleSkip }
+						onContinue={ handleContinue }
+					/>
+				</Footer>
+			}
 		>
 			<SplitLayout
 				left={ <Box sx={ { flex: 1, width: '100%' } } /> }
 				rightConfig={ rightPanelConfig }
-				progress={ progressInfo }
+				progress={ { currentStep: stepIndex, totalSteps } }
 			/>
-		</Layout>
+		</BaseLayout>
 	);
 }
 

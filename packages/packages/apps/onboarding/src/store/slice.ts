@@ -1,15 +1,16 @@
 import { __createSlice, __registerSlice, type PayloadAction } from '@elementor/store';
+import { __ } from '@wordpress/i18n';
 
 import type { OnboardingChoices, OnboardingState, Step, StepIdType } from '../types';
 import { StepId } from '../types';
 
 function getDefaultSteps(): Step[] {
 	return [
-		{ id: StepId.BUILDING_FOR, label: 'Who are you building for?' },
-		{ id: StepId.SITE_ABOUT, label: 'What is your site about?' },
-		{ id: StepId.EXPERIENCE, label: 'How much experience do you have with Elementor?' },
-		{ id: StepId.THEME_SELECT, label: 'Start with a theme that fits your needs' },
-		{ id: StepId.SITE_FEATURES, label: 'What do you want to include in your site?' },
+		{ id: StepId.BUILDING_FOR, label: __( 'Who are you building for?', 'elementor' ) },
+		{ id: StepId.SITE_ABOUT, label: __( 'What is your site about?', 'elementor' ) },
+		{ id: StepId.EXPERIENCE, label: __( 'How much experience do you have with Elementor?', 'elementor' ) },
+		{ id: StepId.THEME_SELECT, label: __( 'Start with a theme that fits your needs', 'elementor' ) },
+		{ id: StepId.SITE_FEATURES, label: __( 'What do you want to include in your site?', 'elementor' ) },
 	];
 }
 
@@ -32,7 +33,7 @@ function parseCompletedSteps( completedSteps?: string[] ): StepIdType[] {
 }
 
 function getInitialState(): OnboardingState {
-	const config = window.elementorAppConfig?.eOnboarding;
+	const config = window.elementorAppConfig?.[ 'e-onboarding' ];
 	const steps = parseStepsFromConfig( config?.steps );
 	const firstStepId = steps[ 0 ]?.id ?? StepId.BUILDING_FOR;
 

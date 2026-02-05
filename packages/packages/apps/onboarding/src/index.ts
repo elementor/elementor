@@ -1,4 +1,4 @@
-export { App, Connect, Layout, Header, Footer } from './components';
+export { App, BaseLayout, TopBar, Footer } from './components';
 export { useOnboarding, useUpdateProgress } from './hooks';
 export {
 	registerOnboardingSlice,
@@ -50,7 +50,7 @@ export type {
 declare global {
 	interface Window {
 		elementorAppConfig?: {
-			eOnboarding?: {
+			'e-onboarding'?: {
 				version: string;
 				restUrl: string;
 				nonce: string;

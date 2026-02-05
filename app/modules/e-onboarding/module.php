@@ -35,6 +35,10 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
+		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
+			return;
+		}
+
 		$this->repository = Repository::instance();
 
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
@@ -63,7 +67,7 @@ class Module extends BaseModule {
 		$choices = $this->repository->get_choices();
 		$steps = $this->get_steps_config();
 
-		Plugin::$instance->app->set_settings( 'eOnboarding', [
+		Plugin::$instance->app->set_settings( 'e-onboarding', [
 			'version' => self::VERSION,
 			'restUrl' => rest_url( 'elementor/v1/e-onboarding/' ),
 			'nonce' => wp_create_nonce( 'wp_rest' ),

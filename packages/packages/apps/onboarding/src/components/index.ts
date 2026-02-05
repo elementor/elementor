@@ -1,5 +1,4 @@
 export { App } from './app';
+export { BaseLayout } from './ui/base-layout';
+export { TopBar } from './ui/top-bar';
 export { Footer } from './ui/footer';
-export { Header } from './ui/header';
-export { Login as Connect } from '../steps/screens/login';
-export { Layout } from './ui/layout';

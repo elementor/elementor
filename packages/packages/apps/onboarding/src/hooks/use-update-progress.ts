@@ -8,7 +8,7 @@ interface UpdateProgressParams {
 }
 
 function getConfig() {
-	return window.elementorAppConfig?.eOnboarding ?? null;
+	return window.elementorAppConfig?.[ 'e-onboarding' ] ?? null;
 }
 
 async function updateProgress( params: UpdateProgressParams ): Promise< void > {

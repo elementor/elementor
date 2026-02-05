@@ -2,7 +2,7 @@
   "name": "@elementor/onboarding",
   "description": "Onboarding wizard for Elementor",
   "version": "4.0.0",
-  "private": false,
+  "private": true,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
   "license": "GPL-3.0-or-later",
@@ -25,9 +25,6 @@
   "bugs": {
     "url": "https://github.com/elementor/elementor/issues"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "files": [
     "README.md",
     "CHANGELOG.md",
@@ -40,10 +37,11 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
+    "@elementor/icons": "1.68.0",
     "@elementor/query": "4.0.0",
     "@elementor/store": "4.0.0",
     "@elementor/ui": "1.36.17",
-    "@elementor/icons": "1.68.0"
+    "@wordpress/i18n": "^5.13.0"
   },
   "peerDependencies": {
     "react": "^18.3.1",

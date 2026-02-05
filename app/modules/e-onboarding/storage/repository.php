@@ -65,12 +65,12 @@ class Repository {
 		}
 
 		if ( isset( $params['start'] ) && $params['start'] ) {
-			$progress->set_started_at( time() );
+			$progress->set_started_at( current_time( 'timestamp' ) );
 			$progress->set_exit_type( null );
 		}
 
 		if ( isset( $params['complete'] ) && $params['complete'] ) {
-			$progress->set_completed_at( time() );
+			$progress->set_completed_at( current_time( 'timestamp' ) );
 			$progress->set_exit_type( 'user_exit' );
 		}
 
@@ -78,7 +78,7 @@ class Repository {
 			$progress->set_exit_type( 'user_exit' );
 		}
 
-		$progress->set_last_active_timestamp( time() );
+		$progress->set_last_active_timestamp( current_time( 'timestamp' ) );
 
 		return $this->save_progress( $progress );
 	}

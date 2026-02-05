@@ -91,7 +91,7 @@ declare global {
 			};
 		};
 		elementorAppConfig?: {
-			eOnboarding?: EOnboardingConfig;
+			'e-onboarding'?: EOnboardingConfig;
 		};
 		ElementorInteractionsConfig?: InteractionsConfig;
 		ElementorVariablesQuotaConfig?: Record< string, number >;

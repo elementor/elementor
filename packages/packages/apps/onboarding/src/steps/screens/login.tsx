@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ArrowRightIcon, BrandFacebookIcon } from '@elementor/icons';
 import { Box, Button, Divider, IconButton, Paper, Stack, styled, Typography } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 import { getOnboardingAssetUrl } from '../step-visuals';
 
@@ -100,7 +101,7 @@ export function Login( { onConnect, onContinueAsGuest, connectUrl }: LoginProps 
 			<Backdrop />
 			<AuthCard elevation={ 24 }>
 				<Typography variant="h5" align="center">
-					Let’s get to work.
+					{ __( "Let's get to work.", 'elementor' ) }
 				</Typography>
 				<Stack spacing={ 3 } width="100%">
 					<SignInButton
@@ -111,13 +112,13 @@ export function Login( { onConnect, onContinueAsGuest, connectUrl }: LoginProps 
 						href={ connectUrl || undefined }
 						onClick={ onConnect }
 					>
-						Sign in to Elementor
+						{ __( 'Sign in to Elementor', 'elementor' ) }
 					</SignInButton>
 
 					<Stack direction="row" alignItems="center" justifyContent="center" spacing={ 2 }>
 						<Divider sx={ { width: 80 } } />
 						<Typography variant="body2" color="text.tertiary">
-							OR
+							{ __( 'OR', 'elementor' ) }
 						</Typography>
 						<Divider sx={ { width: 80 } } />
 					</Stack>
@@ -131,7 +132,7 @@ export function Login( { onConnect, onContinueAsGuest, connectUrl }: LoginProps 
 								size="large"
 								endIcon={ <ArrowRightIcon fontSize="tiny" /> }
 							>
-								Continue another way
+								{ __( 'Continue another way', 'elementor' ) }
 							</SecondaryButton>
 
 							<Stack direction="row" spacing={ 0.5 }>
@@ -142,7 +143,7 @@ export function Login( { onConnect, onContinueAsGuest, connectUrl }: LoginProps 
 						</Stack>
 
 						<GuestButton variant="text" color="info" onClick={ onContinueAsGuest }>
-							Continue as a guest
+							{ __( 'Continue as a guest', 'elementor' ) }
 						</GuestButton>
 					</Stack>
 				</Stack>
