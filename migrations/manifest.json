@@ -9,7 +9,7 @@
     "number-to-size": {
       "fromType": "number",
       "toType": "size",
-      "path": "operations/timing-config-number-to-size.json"
+      "path": "operations/number-to-size.json"
     }
   }
 }
