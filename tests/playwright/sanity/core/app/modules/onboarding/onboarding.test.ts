@@ -41,38 +41,33 @@ test.describe.skip( 'On boarding @onBoarding', async () => {
 		await expect( goProPopover ).toBeVisible();
 	} );
 
+	// Todo: Study why the Elementor Connect screen is not always opening in a popup [ED-22821].
 	/**
 	 * Test the first onboarding page - Test that the Action button at the bottom shows the correct "Create my account"
 	 * text, And that clicking on it opens the popup to create an account in my.elementor.com
 	 */
-	test( 'Onboarding Create Account Popup Open', async ( { page } ) => {
+	test.skip( 'Onboarding Create Account Popup Open', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
-		await page.waitForLoadState( 'networkidle' );
 
 		const ctaButton = await page.waitForSelector( 'a.e-onboarding__button-action' );
 
 		expect( await ctaButton.innerText() ).toBe( 'Create my account' );
 
-		const popupPromise = page.waitForEvent( 'popup', { timeout: 3000 } ).catch( () => null );
-		const navigationPromise = page.waitForURL( /my\.elementor\.com/, { timeout: 3000 } ).then( () => true ).catch( () => false );
+		const [ popup ] = await Promise.all( [
+			page.waitForEvent( 'popup' ),
+			page.click( 'a.e-onboarding__button-action' ),
+		] );
 
-		await page.click( 'a.e-onboarding__button-action' );
+		await popup.waitForLoadState( 'domcontentloaded' );
 
-		const [ popup, navigated ] = await Promise.all( [ popupPromise, navigationPromise ] );
+		expect( popup.url() ).toContain( 'my.elementor.com/signup' );
 
-		if ( popup ) {
-			await popup.waitForLoadState( 'domcontentloaded' );
-			expect( popup.url() ).toContain( 'my.elementor.com/signup' );
-			const signupForm = popup.locator( '[data-test="signup-form"]' );
-			await expect( signupForm ).toBeVisible();
-			await popup.close();
-		} else if ( navigated ) {
-			expect( page.url() ).toContain( 'my.elementor.com/signup' );
-			const signupForm = page.locator( '[data-test="signup-form"]' );
-			await expect( signupForm ).toBeVisible();
-		} else {
-			throw new Error( 'Neither popup nor navigation occurred after clicking the button' );
-		}
+		const signupForm = popup.locator( '[data-test="signup-form"]' );
+
+		// Check that the popup opens the Elementor Connect screen.
+		await expect( signupForm ).toBeVisible();
+
+		await popup.close();
 	} );
 
 	/**
