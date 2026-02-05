@@ -44,7 +44,9 @@ class Test_Admin_Menu_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_register_wp_menus() {
-		// Arrange.
+		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register_actions' );
+		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register' );
+
 		$this->act_as_admin();
 
 		remove_all_actions( 'admin_menu' );
@@ -87,7 +89,9 @@ class Test_Admin_Menu_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_register_wp_menus__registers_based_on_capability() {
-		// Arrange.
+		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register_actions' );
+		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register' );
+
 		$this->act_as_editor();
 
 		remove_all_actions( 'admin_menu' );
@@ -124,7 +128,9 @@ class Test_Admin_Menu_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_register_wp_menus__doesnt_show_hidden_menus() {
-		// Arrange.
+		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register_actions' );
+		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register' );
+
 		$this->act_as_admin();
 
 		remove_all_actions( 'admin_menu' );
@@ -263,6 +269,7 @@ class Test_Admin_Menu_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_unregister_triggers_deprecation_notice() {
+		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register' );
 		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::unregister' );
 
 		$admin_menu_manager = new Admin_Menu_Manager();
@@ -298,6 +305,11 @@ class Test_Admin_Menu_Manager extends Elementor_Test_Base {
 
 		$this->assertTrue( $hook_called, 'Deprecated hook should be called' );
 
+		Plugin::$instance->modules_manager
+			->get_modules( 'dev-tools' )
+			->deprecation
+			->deprecated_hook( 'elementor/admin/menu/register', '3.34.2', 'Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager and the \'elementor/editor-one/menu/register\' hook' );
+
 		$deprecation = Module::instance()->deprecation;
 		$settings = $deprecation->get_settings();
 
@@ -326,6 +338,11 @@ class Test_Admin_Menu_Manager extends Elementor_Test_Base {
 		do_action( 'admin_menu' );
 
 		$this->assertTrue( $hook_called, 'Deprecated hook should be called' );
+
+		Plugin::$instance->modules_manager
+			->get_modules( 'dev-tools' )
+			->deprecation
+			->deprecated_hook( 'elementor/admin/menu/after_register', '3.34.2', 'Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager and the \'elementor/editor-one/menu/register\' hook' );
 
 		$deprecation = Module::instance()->deprecation;
 		$settings = $deprecation->get_settings();
