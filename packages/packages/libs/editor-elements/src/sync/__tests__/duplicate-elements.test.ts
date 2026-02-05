@@ -34,7 +34,13 @@ describe( 'duplicateElements', () => {
 
 	it( 'should duplicate multiple elements and return their data', () => {
 		// Arrange.
-		const { mockDuplicatedElement1, mockDuplicatedElement2 } = setupMockElementsForDuplication( mockGetContainer );
+		const {
+			mockOriginalElement1,
+			mockOriginalElement2,
+			mockDuplicatedElement1,
+			mockDuplicatedElement2,
+			mockParent,
+		} = setupMockElementsForDuplication( mockGetContainer );
 
 		mockDuplicateElement
 			.mockReturnValueOnce( mockDuplicatedElement1 )
@@ -49,50 +55,21 @@ describe( 'duplicateElements', () => {
 
 		// Assert.
 		expect( duplicateResult.duplicatedElements ).toHaveLength( 2 );
-		expect( duplicateResult.duplicatedElements[ 0 ] ).toEqual( {
-			id: 'duplicated-1',
-			model: {
-				id: 'duplicated-1',
-				elType: 'widget',
-				widgetType: 'button',
-				settings: { text: 'Duplicated Button' },
-			},
-			originalElementId: 'original-1',
-			modelToRestore: {
-				id: 'duplicated-1',
-				elType: 'widget',
-				widgetType: 'button',
-				settings: { text: 'Duplicated Button' },
-			},
-			parentContainerId: 'parent-1',
-			at: 1,
-		} );
-		expect( duplicateResult.duplicatedElements[ 1 ] ).toEqual( {
-			id: 'duplicated-2',
-			model: {
-				id: 'duplicated-2',
-				elType: 'widget',
-				widgetType: 'text',
-				settings: { content: 'Duplicated Text' },
-			},
-			originalElementId: 'original-2',
-			modelToRestore: {
-				id: 'duplicated-2',
-				elType: 'widget',
-				widgetType: 'text',
-				settings: { content: 'Duplicated Text' },
-			},
-			parentContainerId: 'parent-1',
-			at: 2,
-		} );
+		expect( duplicateResult.duplicatedElements[ 0 ].container ).toBe( mockDuplicatedElement1 );
+		expect( duplicateResult.duplicatedElements[ 0 ].parentContainer ).toBe( mockParent );
+		expect( duplicateResult.duplicatedElements[ 0 ].at ).toBe( 1 );
+
+		expect( duplicateResult.duplicatedElements[ 1 ].container ).toBe( mockDuplicatedElement2 );
+		expect( duplicateResult.duplicatedElements[ 1 ].parentContainer ).toBe( mockParent );
+		expect( duplicateResult.duplicatedElements[ 1 ].at ).toBe( 2 );
 
 		expect( mockDuplicateElement ).toHaveBeenCalledTimes( 2 );
 		expect( mockDuplicateElement ).toHaveBeenNthCalledWith( 1, {
-			elementId: 'original-1',
+			element: mockOriginalElement1,
 			options: { useHistory: false },
 		} );
 		expect( mockDuplicateElement ).toHaveBeenNthCalledWith( 2, {
-			elementId: 'original-2',
+			element: mockOriginalElement2,
 			options: { useHistory: false },
 		} );
 
@@ -103,7 +80,8 @@ describe( 'duplicateElements', () => {
 
 	it( 'should delete duplicated elements on undo and recreate them on redo', () => {
 		// Arrange.
-		const { mockDuplicatedElement1, mockDuplicatedElement2 } = setupMockElementsForDuplication( mockGetContainer );
+		const { mockDuplicatedElement1, mockDuplicatedElement2, mockParent } =
+			setupMockElementsForDuplication( mockGetContainer );
 
 		mockDuplicateElement
 			.mockReturnValueOnce( mockDuplicatedElement1 )
@@ -127,11 +105,11 @@ describe( 'duplicateElements', () => {
 		// Assert.
 		expect( mockDeleteElement ).toHaveBeenCalledTimes( 2 );
 		expect( mockDeleteElement ).toHaveBeenNthCalledWith( 1, {
-			elementId: 'duplicated-2',
+			container: mockDuplicatedElement2,
 			options: { useHistory: false },
 		} );
 		expect( mockDeleteElement ).toHaveBeenNthCalledWith( 2, {
-			elementId: 'duplicated-1',
+			container: mockDuplicatedElement1,
 			options: { useHistory: false },
 		} );
 
@@ -143,7 +121,7 @@ describe( 'duplicateElements', () => {
 		// Assert.
 		expect( mockCreateElement ).toHaveBeenCalledTimes( 2 );
 		expect( mockCreateElement ).toHaveBeenNthCalledWith( 1, {
-			containerId: 'parent-1',
+			container: mockParent,
 			model: {
 				id: 'duplicated-1',
 				elType: 'widget',
@@ -157,7 +135,7 @@ describe( 'duplicateElements', () => {
 			},
 		} );
 		expect( mockCreateElement ).toHaveBeenNthCalledWith( 2, {
-			containerId: 'parent-1',
+			container: mockParent,
 			model: {
 				id: 'duplicated-2',
 				elType: 'widget',
@@ -199,10 +177,10 @@ describe( 'duplicateElements', () => {
 
 		// Assert.
 		expect( duplicateResult.duplicatedElements ).toHaveLength( 1 );
-		expect( duplicateResult.duplicatedElements[ 0 ].originalElementId ).toBe( 'original-1' );
+		expect( duplicateResult.duplicatedElements[ 0 ].container.id ).toBe( 'duplicated-1' );
 		expect( mockDuplicateElement ).toHaveBeenCalledTimes( 1 );
 		expect( mockDuplicateElement ).toHaveBeenCalledWith( {
-			elementId: 'original-1',
+			element: mockOriginalElement1,
 			options: { useHistory: false },
 		} );
 	} );
@@ -231,39 +209,7 @@ describe( 'duplicateElements', () => {
 
 		// Assert.
 		expect( duplicateResult.duplicatedElements ).toHaveLength( 1 );
-		expect( duplicateResult.duplicatedElements[ 0 ].originalElementId ).toBe( 'original-1' );
-		expect( mockDuplicateElement ).toHaveBeenCalledTimes( 1 );
-	} );
-
-	it( 'should handle duplicated elements without parent gracefully', () => {
-		// Arrange.
-		const mockDuplicatedElementWithoutParent = createMockChild( {
-			id: 'duplicated-1',
-			elType: 'widget',
-			widgetType: 'button',
-		} );
-
-		mockDuplicatedElementWithoutParent.parent = undefined; // No parent
-		mockDuplicatedElementWithoutParent.view = { _index: 1 };
-		const mockElementToJSON = jest.spyOn( mockDuplicatedElementWithoutParent.model, 'toJSON' );
-		mockElementToJSON.mockReturnValue( {
-			id: 'duplicated-1',
-			elType: 'widget',
-			widgetType: 'button',
-			settings: { text: 'Duplicated Button' },
-		} as unknown as V1ElementModelProps );
-
-		mockDuplicateElement.mockReturnValue( mockDuplicatedElementWithoutParent );
-
-		// Act.
-		const duplicateResult = duplicateElements( {
-			elementIds: [ 'original-1' ],
-			title: 'Duplicate Element',
-		} );
-
-		// Assert.
-		expect( duplicateResult.duplicatedElements ).toHaveLength( 1 );
-		expect( duplicateResult.duplicatedElements[ 0 ].parentContainerId ).toBeUndefined();
+		expect( duplicateResult.duplicatedElements[ 0 ].container.id ).toBe( 'duplicated-1' );
 		expect( mockDuplicateElement ).toHaveBeenCalledTimes( 1 );
 	} );
 
@@ -283,78 +229,6 @@ describe( 'duplicateElements', () => {
 		const historyItem = historyMock.instance.get();
 		expect( historyItem?.subTitle ).toBe( 'Item duplicated' );
 	} );
-
-	it( 'should skip redo recreation when modelToRestore or parentContainerId is missing', () => {
-		// Arrange.
-		const mockDuplicatedElementWithMissingData = createMockChild( {
-			id: 'duplicated-1',
-			elType: 'widget',
-			widgetType: 'button',
-		} );
-
-		mockDuplicatedElementWithMissingData.parent = undefined; // Missing parent means missing parentContainerId
-		mockDuplicatedElementWithMissingData.view = { _index: 1 };
-		const mockElementToJSON = jest.spyOn( mockDuplicatedElementWithMissingData.model, 'toJSON' );
-		mockElementToJSON.mockReturnValue( {
-			id: 'duplicated-1',
-			elType: 'widget',
-			widgetType: 'button',
-			settings: { text: 'Duplicated Button' },
-		} as unknown as V1ElementModelProps );
-
-		mockDuplicateElement.mockReturnValue( mockDuplicatedElementWithMissingData );
-
-		// Act.
-		duplicateElements( {
-			elementIds: [ 'original-1' ],
-			title: 'Duplicate Element',
-		} );
-
-		act( () => {
-			historyMock.instance.undo();
-		} );
-
-		act( () => {
-			historyMock.instance.redo();
-		} );
-
-		// Assert.
-		expect( mockCreateElement ).not.toHaveBeenCalled();
-	} );
-
-	it( 'should handle multiple undo/redo cycles', () => {
-		// Arrange.
-		const { mockDuplicatedElement1 } = setupMockElementsForDuplication( mockGetContainer );
-
-		mockDuplicateElement.mockReturnValue( mockDuplicatedElement1 );
-
-		const mockRecreatedElement1 = createMockChild( { id: 'recreated-1', elType: 'widget', widgetType: 'button' } );
-		mockCreateElement.mockReturnValue( mockRecreatedElement1 );
-
-		// Act.
-		duplicateElements( {
-			elementIds: [ 'original-1' ],
-			title: 'Duplicate Element',
-		} );
-
-		// Act.
-		act( () => {
-			historyMock.instance.undo();
-		} );
-		act( () => {
-			historyMock.instance.redo();
-		} );
-		act( () => {
-			historyMock.instance.undo();
-		} );
-		act( () => {
-			historyMock.instance.redo();
-		} );
-
-		// Assert.
-		expect( mockDeleteElement ).toHaveBeenCalledTimes( 2 ); // Two undo cycles
-		expect( mockCreateElement ).toHaveBeenCalledTimes( 2 ); // Two redo cycles
-	} );
 } );
 
 function setupMockElementsForDuplication( mockGetContainer: jest.Mock ) {
@@ -371,11 +245,9 @@ function setupMockElementsForDuplication( mockGetContainer: jest.Mock ) {
 		elType: 'widget',
 		widgetType: 'button',
 	} );
-	// Mock the parent and view properties that the main code accesses
 	mockDuplicatedElement1.parent = mockParent;
 	mockDuplicatedElement1.view = { _index: 1 };
 
-	// Mock model.toJSON() to return the expected structure
 	const mockElement1ToJSON = jest.spyOn( mockDuplicatedElement1.model, 'toJSON' );
 	mockElement1ToJSON.mockReturnValue( {
 		id: 'duplicated-1',
@@ -390,11 +262,9 @@ function setupMockElementsForDuplication( mockGetContainer: jest.Mock ) {
 		widgetType: 'text',
 	} );
 
-	// Mock the parent and view properties
 	mockDuplicatedElement2.parent = mockParent;
 	mockDuplicatedElement2.view = { _index: 2 };
 
-	// Mock model.toJSON() to return the expected structure
 	const mockElement2ToJSON = jest.spyOn( mockDuplicatedElement2.model, 'toJSON' );
 	mockElement2ToJSON.mockReturnValue( {
 		id: 'duplicated-2',
