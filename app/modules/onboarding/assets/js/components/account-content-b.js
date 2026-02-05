@@ -51,7 +51,6 @@ export default function AccountContentB( {
 					ref={ actionButtonRef }
 					href={ elementorAppConfig.onboarding.urls.signUp + elementorAppConfig.onboarding.utms.connectCta }
 					className="e-onboarding101-variant-b-button e-onboarding101-variant-b-button--primary"
-					onClick={ handleConnectClick }
 					role="button"
 				>
 					{ __( 'Connect your account', 'elementor' ) }
@@ -68,6 +67,7 @@ export default function AccountContentB( {
 					buttonRef={ actionButtonRef }
 					successCallback={ ( event, data ) => connectSuccessCallback( event, data ) }
 					errorCallback={ connectFailureCallback }
+					onClickTracking={ handleConnectClick }
 				/>
 			}
 		</div>
