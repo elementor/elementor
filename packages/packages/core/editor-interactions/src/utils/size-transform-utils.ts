@@ -1,6 +1,7 @@
+import { type Unit } from '@elementor/editor-controls';
 import { type SizePropValue } from '@elementor/editor-props';
 
-import { type TimeUnit, type TimeValue } from '../types';
+import { type SizeStringValue } from '../types';
 
 type SizeValue = SizePropValue[ 'value' ];
 type SizeUnit = SizeValue[ 'unit' ];
@@ -8,15 +9,15 @@ type SizeUnit = SizeValue[ 'unit' ];
 const SIZE_REGEX = /^(?:(-?\d*\.?\d+)([a-z%]+)|([a-z%]+))$/i;
 
 export const parseSizeValue = (
-	value: TimeValue,
+	value: SizeStringValue,
 	allowedUnits: SizeUnit[],
-	defaultValue?: TimeValue,
-	defaultUnit?: TimeUnit
+	defaultValue?: SizeStringValue,
+	defaultUnit?: Unit
 ): SizeValue => {
 	if ( typeof value === 'number' ) {
 		return {
 			size: value,
-			unit: defaultUnit as TimeUnit,
+			unit: defaultUnit as Unit,
 		};
 	}
 
@@ -37,7 +38,7 @@ export const parseSizeValue = (
 	return createSizeValue( null, defaultUnit );
 };
 
-const tryParse = ( value: TimeValue, allowedUnits: SizeUnit[], defaultUnit?: TimeUnit ): SizeValue | null => {
+const tryParse = ( value: SizeStringValue, allowedUnits: SizeUnit[], defaultUnit?: Unit ): SizeValue | null => {
 	if ( typeof value === 'number' ) {
 		return createSizeValue( value, defaultUnit );
 	}
@@ -45,6 +46,13 @@ const tryParse = ( value: TimeValue, allowedUnits: SizeUnit[], defaultUnit?: Tim
 	const match = value && value.match( SIZE_REGEX );
 
 	if ( ! match ) {
+		if ( value ) {
+			return {
+				size: Number( value ),
+				unit: defaultUnit as Unit,
+			};
+		}
+
 		return null;
 	}
 
@@ -58,8 +66,8 @@ const tryParse = ( value: TimeValue, allowedUnits: SizeUnit[], defaultUnit?: Tim
 	return createSizeValue( size, unit );
 };
 
-export const formatSizeValue = ( { size, unit }: SizeValue ): TimeValue => {
-	return `${ size ?? '' }${ unit }` as TimeValue;
+export const formatSizeValue = ( { size, unit }: SizeValue ): SizeStringValue => {
+	return `${ size ?? '' }${ unit }` as SizeStringValue;
 };
 
 const createSizeValue = ( size: number | null, unit?: SizeUnit ): SizeValue => {
