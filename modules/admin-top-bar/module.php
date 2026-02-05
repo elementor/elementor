@@ -27,6 +27,9 @@ class Module extends BaseModule {
 		return is_admin();
 	}
 
+	/**
+	 * @return string
+	 */
 	public function get_name() {
 		return 'admin-top-bar';
 	}
