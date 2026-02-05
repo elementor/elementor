@@ -1,18 +1,8 @@
 import { useState } from 'react';
-<<<<<<< HEAD
+import * as React from 'react';
 import { PopoverBody } from '@elementor/editor-editing-panel';
 import { PopoverHeader, PopoverMenuList, SearchField, type VirtualizedItem } from '@elementor/editor-ui';
-=======
-import * as React from 'react';
-import {
-	PopoverHeader,
-	PopoverMenuList,
-	SearchField,
-	SectionPopoverBody,
-	type VirtualizedItem,
-} from '@elementor/editor-ui';
 import { PromotionAlert } from '@elementor/editor-ui';
->>>>>>> 8664d8edcf (Internal: Pro size variables - Panel - renew promotion [ED-21887] (#34570))
 import { ColorFilterIcon, PlusIcon, SettingsIcon } from '@elementor/icons';
 import { Divider, IconButton, Tooltip } from '@elementor/ui';
 import { __, sprintf } from '@wordpress/i18n';
