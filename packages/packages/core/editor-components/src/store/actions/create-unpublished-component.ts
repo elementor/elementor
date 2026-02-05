@@ -75,7 +75,17 @@ export async function createUnpublishedComponent( {
 }
 
 function restoreOriginalElement( originalElement: OriginalElementData, componentInstanceId: string ): void {
-	deleteElement( { elementId: componentInstanceId, options: { useHistory: false } } );
+	const componentContainer = getContainer( componentInstanceId );
+
+	if ( componentContainer ) {
+		deleteElement( { container: componentContainer, options: { useHistory: false } } );
+	}
+
+	const parentContainer = getContainer( originalElement.parentId );
+
+	if ( ! parentContainer ) {
+		return;
+	}
 
 	const clonedModel = structuredClone( originalElement.model );
 
@@ -83,7 +93,7 @@ function restoreOriginalElement( originalElement: OriginalElementData, component
 		title: __( 'Restore Element', 'elementor' ),
 		elements: [
 			{
-				containerId: originalElement.parentId,
+				container: parentContainer,
 				model: clonedModel as Parameters< typeof createElements >[ 0 ][ 'elements' ][ 0 ][ 'model' ],
 				options: { at: originalElement.index },
 			},
