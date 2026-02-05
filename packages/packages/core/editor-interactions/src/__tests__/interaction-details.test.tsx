@@ -731,32 +731,6 @@ describe( 'InteractionDetails', () => {
 		} );
 	} );
 
-	/**
-	 * Test case mind map: Offset Top / Offset Bottom — number → size
-	 *
-	 * 1. VISIBILITY
-	 *    - Offset Top and Offset Bottom controls are visible only when trigger === 'scrollOn'
-	 *    - Offset Top and Offset Bottom are not rendered when trigger is 'load' | 'scrollIn' | 'scrollOut'
-	 *
-	 * 2. VALUE SHAPE (controls receive size, not string of number)
-	 *    - OffsetTopControl receives `value` as SizePropValue (e.g. { size: number, unit: string } or wrapped $$type form)
-	 *    - OffsetBottomControl receives `value` as SizePropValue
-	 *    - Not as string (e.g. "15") so pro controls can work with size + unit
-	 *
-	 * 3. ONCHANGE SHAPE (pro controls send size; we store size)
-	 *    - OffsetTopControl onChange is called by pro with SizePropValue (size object)
-	 *    - OffsetBottomControl onChange is called by pro with SizePropValue
-	 *    - updateInteraction stores offsetTop / offsetBottom as size in animation config (not number)
-	 *
-	 * 4. EXTRACTION FROM INTERACTION
-	 *    - When config has offsetTop as number (legacy), extract to default size (e.g. 15, '%')
-	 *    - When config has offsetTop as size, use it as-is for control value
-	 *    - Same for offsetBottom (legacy number → default size; size → as-is)
-	 *
-	 * 5. DEFAULTS
-	 *    - Default offsetTop when missing: size { size: 15, unit: '%' }
-	 *    - Default offsetBottom when missing: size { size: 85, unit: '%' }
-	 */
 	describe( 'Offset Top / Offset Bottom (size)', () => {
 		let offsetTopControlProps: { value: unknown; onChange: ( v: unknown ) => void };
 		let offsetBottomControlProps: { value: unknown; onChange: ( v: unknown ) => void };
@@ -766,7 +740,7 @@ describe( 'InteractionDetails', () => {
 			return (
 				<div data-testid="offset-top-control">
 					<span data-value={ JSON.stringify( props.value ) } />
-					<button type="button" onClick={ () => props.onChange( { size: 25, unit: '%' } ) }>
+					<button type="button" onClick={ () => props.onChange( '25%' ) }>
 						Set offset top 25%
 					</button>
 				</div>
@@ -778,7 +752,7 @@ describe( 'InteractionDetails', () => {
 			return (
 				<div data-testid="offset-bottom-control">
 					<span data-value={ JSON.stringify( props.value ) } />
-					<button type="button" onClick={ () => props.onChange( { size: 75, unit: '%' } ) }>
+					<button type="button" onClick={ () => props.onChange( '75%' ) }>
 						Set offset bottom 75%
 					</button>
 				</div>
@@ -838,7 +812,7 @@ describe( 'InteractionDetails', () => {
 			expect( screen.queryByText( 'Offset Bottom' ) ).not.toBeInTheDocument();
 		} );
 
-		it( 'should pass value to OffsetTopControl as size object (not string)', () => {
+		it( 'should pass value to OffsetTopControl as size string value', () => {
 			const interaction = createInteractionItemValue( {
 				trigger: 'scrollOn',
 				offsetTop: 15,
@@ -848,38 +822,12 @@ describe( 'InteractionDetails', () => {
 			renderInteractionDetails( interaction );
 
 			expect( offsetTopControlProps ).toBeDefined();
-			// TDD: value should be size shape (e.g. { size: 15, unit: '%' } or $$type size), not string "15"
 			const value = offsetTopControlProps.value;
 
-			expect( typeof value === 'string' ).toBe( false );
-			expect( value ).toBeDefined();
-
-			if ( value && typeof value === 'object' && 'size' in value ) {
-				expect( ( value as { size: number; unit: string } ).size ).toBe( 15 );
-				expect( ( value as { size: number; unit: string } ).unit ).toBe( '%' );
-			}
+			expect( value ).toEqual( '15%' );
 		} );
 
-		it( 'should pass value to OffsetBottomControl as size object (not string)', () => {
-			const interaction = createInteractionItemValue( {
-				trigger: 'scrollOn',
-				offsetTop: 15,
-				offsetBottom: 85,
-			} );
-
-			renderInteractionDetails( interaction );
-
-			expect( offsetBottomControlProps ).toBeDefined();
-			const value = offsetBottomControlProps.value;
-			expect( typeof value === 'string' ).toBe( false );
-			expect( value ).toBeDefined();
-			if ( value && typeof value === 'object' && 'size' in value ) {
-				expect( ( value as { size: number; unit: string } ).size ).toBe( 85 );
-				expect( ( value as { size: number; unit: string } ).unit ).toBe( '%' );
-			}
-		} );
-
-		it( 'should call onChange with interaction containing offsetTop as size when OffsetTopControl onChange is called', () => {
+		it( 'should call onChange with size string value when OffsetTopControl onChange is called', () => {
 			const interaction = createInteractionItemValue( {
 				trigger: 'scrollOn',
 				offsetTop: 15,
@@ -891,18 +839,20 @@ describe( 'InteractionDetails', () => {
 			fireEvent.click( screen.getByRole( 'button', { name: /set offset top 25%/i } ) );
 
 			expect( mockOnChange ).toHaveBeenCalled();
+
 			const updated = mockOnChange.mock.calls[ 0 ][ 0 ];
-			const configOffsetTop = updated.animation.value.config?.value?.offsetTop;
-			// TDD: config should store size (e.g. $$type 'size' with value { size, unit } or raw { size, unit })
-			expect( configOffsetTop ).toBeDefined();
-			const raw = configOffsetTop?.value ?? configOffsetTop;
-			if ( raw && typeof raw === 'object' && 'size' in raw ) {
-				expect( ( raw as { size: number; unit: string } ).size ).toBe( 25 );
-				expect( ( raw as { size: number; unit: string } ).unit ).toBe( '%' );
-			}
+			const offsetTop = updated.animation.value.config?.value?.offsetTop;
+
+			expect( offsetTop ).toEqual( {
+				$$type: 'size',
+				value: {
+					size: 25,
+					unit: '%',
+				},
+			} );
 		} );
 
-		it( 'should call onChange with interaction containing offsetBottom as size when OffsetBottomControl onChange is called', () => {
+		it( 'should call onChange with size string when OffsetBottomControl onChange is called', () => {
 			const interaction = createInteractionItemValue( {
 				trigger: 'scrollOn',
 				offsetTop: 15,
@@ -914,14 +864,17 @@ describe( 'InteractionDetails', () => {
 			fireEvent.click( screen.getByRole( 'button', { name: /set offset bottom 75%/i } ) );
 
 			expect( mockOnChange ).toHaveBeenCalled();
+
 			const updated = mockOnChange.mock.calls[ 0 ][ 0 ];
-			const configOffsetBottom = updated.animation.value.config?.value?.offsetBottom;
-			expect( configOffsetBottom ).toBeDefined();
-			const raw = configOffsetBottom?.value ?? configOffsetBottom;
-			if ( raw && typeof raw === 'object' && 'size' in raw ) {
-				expect( ( raw as { size: number; unit: string } ).size ).toBe( 75 );
-				expect( ( raw as { size: number; unit: string } ).unit ).toBe( '%' );
-			}
+			const offsetBottom = updated.animation.value.config?.value?.offsetBottom;
+
+			expect( offsetBottom ).toEqual( {
+				$$type: 'size',
+				value: {
+					size: 75,
+					unit: '%',
+				},
+			} );
 		} );
 
 		it( 'should use default size for offsetTop when config has no offsetTop', () => {
@@ -929,15 +882,12 @@ describe( 'InteractionDetails', () => {
 				trigger: 'scrollOn',
 				offsetBottom: 85,
 			} );
-			// Ensure offsetTop is not set in config (default from createAnimationPreset may still set it)
+
 			renderInteractionDetails( interaction );
 
-			expect( offsetTopControlProps ).toBeDefined();
-			// TDD: value should reflect default offset top as size (e.g. 15, '%')
-			const value = offsetTopControlProps.value;
-			if ( value && typeof value === 'object' && 'size' in value ) {
-				expect( ( value as { size: number } ).size ).toBe( 15 );
-			}
+			const offsetTopValue = offsetTopControlProps.value;
+
+			expect( offsetTopValue ).toEqual( '15%' );
 		} );
 
 		it( 'should use default size for offsetBottom when config has no offsetBottom', () => {
@@ -948,11 +898,9 @@ describe( 'InteractionDetails', () => {
 
 			renderInteractionDetails( interaction );
 
-			expect( offsetBottomControlProps ).toBeDefined();
-			const value = offsetBottomControlProps.value;
-			if ( value && typeof value === 'object' && 'size' in value ) {
-				expect( ( value as { size: number } ).size ).toBe( 85 );
-			}
+			const offsetBottomValue = offsetBottomControlProps.value;
+
+			expect( offsetBottomValue ).toEqual( '85%' );
 		} );
 	} );
 } );

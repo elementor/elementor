@@ -1,3 +1,4 @@
+import { type Unit } from '@elementor/editor-controls';
 import { sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 
 import { DEFAULT_TIME_UNIT, TIME_UNITS } from '../configs/time-constants';
@@ -46,7 +47,7 @@ export const createConfig = ( {
 	easing = 'easeIn',
 	relativeTo = '',
 	offsetTop = 0,
-	offsetBottom = 100,
+	offsetBottom = 85,
 }: {
 	replay: boolean;
 	easing?: string;
@@ -59,10 +60,18 @@ export const createConfig = ( {
 		replay: createBoolean( replay ),
 		easing: createString( easing ),
 		relativeTo: createString( relativeTo ),
-		offsetTop: sizePropTypeUtil.create( parseSizeValue( offsetTop, TIME_UNITS, undefined, '%' ) ),
-		offsetBottom: sizePropTypeUtil.create( parseSizeValue( offsetBottom, TIME_UNITS, undefined, '%' ) ),
+		offsetTop: createSize( offsetTop, '%' ),
+		offsetBottom: createSize( offsetBottom, '%' ),
 	},
 } );
+
+const createSize = ( value?: SizeStringValue, defaultUnit?: Unit, defaultValue?: SizeStringValue ) => {
+	if ( ! value ) {
+		return;
+	}
+
+	return sizePropTypeUtil.create( parseSizeValue( value, [ '%' ], defaultValue, defaultUnit ) );
+};
 
 export const extractBoolean = ( prop: BooleanPropValue | undefined, fallback = false ): boolean => {
 	return prop?.value ?? fallback;
@@ -197,8 +206,12 @@ export const extractString = ( prop: StringPropValue | undefined, fallback = '' 
 	return prop?.value ?? fallback;
 };
 
-export const extractSize = ( prop: SizePropValue ): SizeStringValue => {
-	return formatSizeValue( prop?.value );
+export const extractSize = ( prop?: SizePropValue, defaultValue?: string ): SizeStringValue => {
+	if ( ! prop?.value ) {
+		return defaultValue as SizeStringValue;
+	}
+
+	return formatSizeValue( prop.value );
 };
 
 const TRIGGER_LABELS: Record< string, string > = {

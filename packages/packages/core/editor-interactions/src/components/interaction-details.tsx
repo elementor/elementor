@@ -30,8 +30,8 @@ const DEFAULT_VALUES = {
 	effect: 'fade',
 	type: 'in',
 	direction: '',
-	duration: 600,
-	delay: 0,
+	duration: '600ms',
+	delay: '0ms',
 	replay: false,
 	easing: 'easeIn',
 	relativeTo: 'viewport',
@@ -109,9 +109,11 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const easing = extractString( interaction.animation.value.config?.value.easing, DEFAULT_VALUES.easing );
 	const relativeTo = extractString( interaction.animation.value.config?.value.relativeTo, DEFAULT_VALUES.relativeTo );
 
-	const offsetTop = extractSize( interaction.animation.value.config?.value.offsetTop ) ?? DEFAULT_VALUES.offsetTop;
-	const offsetBottom =
-		extractSize( interaction.animation.value.config?.value.offsetBottom ) ?? DEFAULT_VALUES.offsetBottom;
+	const offsetTop = extractSize( interaction.animation.value.config?.value.offsetTop, DEFAULT_VALUES.offsetTop );
+	const offsetBottom = extractSize(
+		interaction.animation.value.config?.value.offsetBottom,
+		DEFAULT_VALUES.offsetBottom
+	);
 
 	const interactionValues = {
 		trigger,
@@ -240,7 +242,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 						<TimeFrameIndicator
 							value={ String( duration ) }
 							onChange={ ( v ) => updateInteraction( { duration: v as SizeStringValue } ) }
-							defaultValue={ DEFAULT_VALUES.duration }
+							defaultValue={ DEFAULT_VALUES.duration as SizeStringValue }
 						/>
 					</Field>
 				) }
@@ -250,7 +252,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 						<TimeFrameIndicator
 							value={ String( delay ) }
 							onChange={ ( v ) => updateInteraction( { delay: v as SizeStringValue } ) }
-							defaultValue={ DEFAULT_VALUES.delay }
+							defaultValue={ DEFAULT_VALUES.delay as SizeStringValue }
 						/>
 					</Field>
 				) }
@@ -325,7 +327,3 @@ function Field( { label, children }: FieldProps ) {
 		</Grid>
 	);
 }
-
-const createSizeValue = ( size: string, unit: Unit ) => {
-	return sizePropTypeUtil.create( { size: parseInt( size, 10 ), unit } );
-};

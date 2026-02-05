@@ -73,8 +73,8 @@ export type ConfigPropValue = {
 		replay: BooleanPropValue;
 		easing: StringPropValue;
 		relativeTo: StringPropValue;
-		offsetTop: SizePropValue;
-		offsetBottom: SizePropValue;
+		offsetTop?: SizePropValue;
+		offsetBottom?: SizePropValue;
 	};
 };
 
