@@ -9,6 +9,13 @@ export default function Connect( props ) {
 	const { buttonRef, successCallback, errorCallback } = props;
 	const isInitialized = useRef( false );
 
+	console.log( '[Connect] Component render', {
+		buttonRefExists: !!buttonRef?.current,
+		isInitialized: isInitialized.current,
+		successCallbackId: successCallback?.toString().substring(0, 50),
+		errorCallbackId: errorCallback?.toString().substring(0, 50),
+	} );
+
 	const handleCoreConnectionLogic = useCallback( ( event, data ) => {
 		const isTrackingOptedInConnect = data.tracking_opted_in && elementorCommon.config.editor_events;
 
@@ -28,11 +35,30 @@ export default function Connect( props ) {
 	}, [ state, getStateObjectToUpdate, updateState ] );
 
 	useEffect( () => {
+		console.log( '[Connect] useEffect triggered', {
+			buttonRefExists: !!buttonRef.current,
+			isInitialized: isInitialized.current,
+			buttonRefId: buttonRef.current?.id || buttonRef.current?.className || 'no-id',
+			href: buttonRef.current?.href || 'no-href',
+			successCallbackId: successCallback?.toString().substring(0, 50),
+			errorCallbackId: errorCallback?.toString().substring(0, 50),
+			handleCoreConnectionLogicId: handleCoreConnectionLogic?.toString().substring(0, 50),
+			defaultConnectSuccessCallbackId: defaultConnectSuccessCallback?.toString().substring(0, 50),
+		} );
+
 		if ( ! buttonRef.current || isInitialized.current ) {
+			console.log( '[Connect] useEffect skipped', {
+				reason: !buttonRef.current ? 'no buttonRef.current' : 'already initialized',
+			} );
 			return;
 		}
 
 		const $button = jQuery( buttonRef.current );
+		const originalHref = $button.attr( 'href' );
+		console.log( '[Connect] Calling elementorConnect', {
+			originalHref,
+			buttonElement: buttonRef.current,
+		} );
 
 		$button.elementorConnect( {
 			success: ( event, data ) => {
@@ -55,9 +81,20 @@ export default function Connect( props ) {
 			},
 		} );
 
+		const newHref = $button.attr( 'href' );
+		console.log( '[Connect] elementorConnect called', {
+			originalHref,
+			newHref,
+			hrefChanged: originalHref !== newHref,
+			callbackIdsInHref: ( newHref.match( /callback_id=cb\d+/g ) || [] ).length,
+		} );
+
 		isInitialized.current = true;
 
 		return () => {
+			console.log( '[Connect] Cleanup running', {
+				buttonRefId: buttonRef.current?.id || buttonRef.current?.className || 'no-id',
+			} );
 			$button.off( 'click' );
 			isInitialized.current = false;
 		};

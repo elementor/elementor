@@ -143,7 +143,9 @@ export default function Account() {
 		};
 	}
 
+	console.log( '[Account] Component render/re-render' );
 	const connectSuccessCallback = () => {
+		console.log( '[Account] connectSuccessCallback called' );
 		const stateToUpdate = getStateObjectToUpdate( state, 'steps', pageId, 'completed' );
 
 		stateToUpdate.isLibraryConnected = true;
@@ -180,6 +182,7 @@ export default function Account() {
 	}
 
 	const connectFailureCallback = () => {
+		console.log( '[Account] connectFailureCallback called' );
 		elementorCommon.events.dispatchEvent( {
 			event: 'indication prompt',
 			version: '',
