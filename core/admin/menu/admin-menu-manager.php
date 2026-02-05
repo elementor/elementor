@@ -5,13 +5,14 @@ namespace Elementor\Core\Admin\Menu;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_Has_Position;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * @deprecated 4.0.0 This class is deprecated. Use the new admin menu system instead.
+ * @deprecated 3.34.2 Elementor menu items are now registered inside Elementor\Core\Admin\EditorOneMenu. Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
  */
 class Admin_Menu_Manager {
 
@@ -20,27 +21,29 @@ class Admin_Menu_Manager {
 	 */
 	private $items = [];
 
+	private $deprecation_notice = 'Elementor menu items are now registered inside Elementor\Core\Admin\EditorOneMenu. Use the \'elementor/editor-one/menu/register\' hook instead.';
+
 	/**
-	 * @deprecated 4.0.0
+	 * @deprecated 3.34.2 Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
 	 */
 	public function register( $item_slug, Admin_Menu_Item $item ) {
-		$this->trigger_deprecation_notice( __METHOD__, '4.0.0' );
+		$this->trigger_deprecation_notice( __METHOD__, '3.34.2' );
 		$this->items[ $item_slug ] = $item;
 	}
 
 	/**
-	 * @deprecated 4.0.0
+	 * @deprecated 3.34.2 Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
 	 */
 	public function unregister( $item_slug ) {
-		$this->trigger_deprecation_notice( __METHOD__, '4.0.0' );
+		$this->trigger_deprecation_notice( __METHOD__, '3.34.2' );
 		unset( $this->items[ $item_slug ] );
 	}
 
 	/**
-	 * @deprecated 4.0.0
+	 * @deprecated 3.34.2 Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
 	 */
 	public function get( $item_slug ) {
-		$this->trigger_deprecation_notice( __METHOD__, '4.0.0' );
+		$this->trigger_deprecation_notice( __METHOD__, '3.34.2' );
 		if ( empty( $this->items[ $item_slug ] ) ) {
 			return null;
 		}
@@ -49,18 +52,18 @@ class Admin_Menu_Manager {
 	}
 
 	/**
-	 * @deprecated 4.0.0
+	 * @deprecated 3.34.2 Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
 	 */
 	public function get_all() {
-		$this->trigger_deprecation_notice( __METHOD__, '4.0.0' );
+		$this->trigger_deprecation_notice( __METHOD__, '3.34.2' );
 		return $this->items;
 	}
 
 	/**
-	 * @deprecated 4.0.0
+	 * @deprecated 3.34.2 Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
 	 */
 	public function register_actions() {
-		$this->trigger_deprecation_notice( __METHOD__, '4.0.0' );
+		$this->trigger_deprecation_notice( __METHOD__, '3.34.2' );
 
 		add_action( 'admin_menu', function () {
 			$this->register_wp_menus();
@@ -72,11 +75,11 @@ class Admin_Menu_Manager {
 	}
 
 	private function register_wp_menus() {
-		$this->trigger_deprecated_action( 'elementor/admin/menu/register', [ $this ], '4.0.0' );
+		$this->trigger_deprecated_action( 'elementor/admin/menu/register', [ $this ], '3.34.2' );
 
 		$hooks = [];
 
-		foreach ( $this->items as $item_slug => $item ) {
+		foreach ( $this->get_all() as $item_slug => $item ) {
 			$is_top_level = empty( $item->get_parent_slug() );
 
 			if ( $is_top_level ) {
@@ -86,7 +89,7 @@ class Admin_Menu_Manager {
 			}
 		}
 
-		$this->trigger_deprecated_action( 'elementor/admin/menu/after_register', [ $this, $hooks ], '4.0.0' );
+		$this->trigger_deprecated_action( 'elementor/admin/menu/after_register', [ $this, $hooks ], '3.34.2' );
 	}
 
 	private function register_top_level_menu( $item_slug, Admin_Menu_Item $item ) {
@@ -125,7 +128,7 @@ class Admin_Menu_Manager {
 	}
 
 	private function hide_invisible_menus() {
-		foreach ( $this->items as $item_slug => $item ) {
+		foreach ( $this->get_all() as $item_slug => $item ) {
 			if ( $item->is_visible() ) {
 				continue;
 			}
@@ -140,21 +143,21 @@ class Admin_Menu_Manager {
 		}
 	}
 
-	private function trigger_deprecation_notice( $function_name, $version, $replacement = '' ) {
-		\Elementor\Plugin::$instance->modules_manager
+	private function trigger_deprecation_notice( $function_name, $version ) {
+		Plugin::$instance->modules_manager
 			->get_modules( 'dev-tools' )
 			->deprecation
-			->deprecated_function( $function_name, $version, $replacement );
+			->deprecated_function( $function_name, $version, $this->deprecation_notice );
 	}
 
-	private function trigger_deprecated_action( $hook, $args, $version, $replacement = '' ) {
+	private function trigger_deprecated_action( $hook, $args, $version ) {
 		if ( ! has_action( $hook ) ) {
 			return;
 		}
 
-		\Elementor\Plugin::$instance->modules_manager
+		Plugin::$instance->modules_manager
 			->get_modules( 'dev-tools' )
 			->deprecation
-			->do_deprecated_action( $hook, $args, $version, $replacement );
+			->do_deprecated_action( $hook, $args, $version, $this->deprecation_notice );
 	}
 }
