@@ -354,7 +354,7 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 = 3.35.2 - 2026-02-05 =
 
-* Fix: Elementor menu content is displayed incorrectly on RTL display #34652
+* Fix: Editor menu in WordPress admin displays incorrectly in RTL
 
 = 3.35.1 - 2026-02-04 =
 
