@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { SnackbarProvider } from 'notistack';
-import { createMockElement, renderWithStore } from 'test-utils';
+import { createMockContainer, createMockElement, renderWithStore } from 'test-utils';
 import {
 	createElements,
 	deleteElement,
@@ -484,25 +484,14 @@ describe( 'CreateComponentForm', () => {
 				return Promise.resolve();
 			} );
 
-			const componentInstanceContainer = {
-				model: {
-					toJSON: () => ( { id: CREATED_COMPONENT_INSTANCE_ID } ),
-				},
-				parent: { id: 'parent-container-id' },
-				view: { _index: 0 },
-			} as ReturnType< typeof getContainer >;
+			const componentInstanceContainer = createMockContainer( CREATED_COMPONENT_INSTANCE_ID );
 
 			mockGetContainer.mockImplementation( ( id: string ) => {
 				if ( id === CREATED_COMPONENT_INSTANCE_ID ) {
 					return componentInstanceContainer;
 				}
-				return {
-					model: {
-						toJSON: () => mockElement,
-					},
-					parent: { id: 'parent-container-id' },
-					view: { _index: 0 },
-				} as ReturnType< typeof getContainer >;
+
+				return createMockContainer( id );
 			} );
 
 			const { openForm, fillComponentName, getCreateButton } = setupForm();

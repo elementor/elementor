@@ -25,8 +25,6 @@ type RemovedElementsResult = {
 	removedElements: RemovedElement[];
 };
 
-export type { RemoveElementsParams, RemovedElement, RemovedElementsResult };
-
 export const removeElements = ( {
 	elementIds,
 	title,

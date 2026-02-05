@@ -13,8 +13,6 @@ export const selectElement = ( elementId: string ) => {
 	try {
 		const container = getContainer( elementId );
 
-		if ( container ) {
-			runCommand( 'document/elements/select', { container } );
-		}
+		runCommand( 'document/elements/select', { container } );
 	} catch {}
 };

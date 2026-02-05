@@ -6,7 +6,6 @@ type Options = {
 	useHistory?: boolean;
 	at?: number;
 	clone?: boolean;
-	edit?: boolean;
 };
 
 export type CreateElementParams = {

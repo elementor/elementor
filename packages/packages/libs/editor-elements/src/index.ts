@@ -40,12 +40,7 @@ export { getElements } from './sync/get-elements';
 export { getSelectedElements } from './sync/get-selected-elements';
 export { getWidgetsCache } from './sync/get-widgets-cache';
 export { moveElement, type MoveElementParams } from './sync/move-element';
-export {
-	moveElements,
-	type MovedElement,
-	type MovedElementsResult,
-	type MoveElementsParams,
-} from './sync/move-elements';
+export { moveElements } from './sync/move-elements';
 export { removeElements } from './sync/remove-elements';
 export { replaceElement } from './sync/replace-element';
 export { updateElementEditorSettings } from './sync/update-element-editor-settings';
