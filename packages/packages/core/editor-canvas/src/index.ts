@@ -8,7 +8,14 @@ export {
 	createTemplatedElementView,
 	type CreateTemplatedElementTypeOptions,
 } from './legacy/create-templated-element-type';
-export { registerElementType } from './legacy/init-legacy-views';
+export {
+	canBeNestedTemplated,
+	createNestedTemplatedElementType,
+	createNestedTemplatedElementView,
+	type CreateNestedTemplatedElementTypeOptions,
+	type NestedTemplatedElementConfig,
+} from './legacy/create-nested-templated-element-type';
+export { registerElementType, registerModelExtensions } from './legacy/init-legacy-views';
 export * from './legacy/types';
 export { createPropsResolver, type PropsResolver } from './renderers/create-props-resolver';
 export { settingsTransformersRegistry } from './settings-transformers-registry';
@@ -18,6 +25,9 @@ export { DOCUMENT_STRUCTURE_URI } from './mcp/resources/document-structure-resou
 export { WIDGET_SCHEMA_URI } from './mcp/resources/widgets-schema-resource';
 export * from './legacy/types';
 export { createTransformer } from './transformers/create-transformer';
-export { createTransformersRegistry } from './transformers/create-transformers-registry';
+export {
+	createTransformersRegistry,
+	stylesInheritanceTransformersRegistry,
+} from './transformers/create-transformers-registry';
 export { type AnyTransformer, type TransformerOptions } from './transformers/types';
 export { UnknownStyleTypeError, UnknownStyleStateError } from './renderers/errors';

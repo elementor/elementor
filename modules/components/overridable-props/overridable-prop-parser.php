@@ -82,6 +82,7 @@ class Overridable_Prop_Parser {
 				'elType' => sanitize_text_field( $prop['originPropFields']['elType'] ),
 				'widgetType' => sanitize_text_field( $prop['originPropFields']['widgetType'] ),
 				'propKey' => sanitize_text_field( $prop['originPropFields']['propKey'] ),
+				'elementId' => sanitize_key( $prop['originPropFields']['elementId'] ),
 			] : null,
 		];
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { isDependencyMet, type PropsSchema, type PropType, type PropValue } from '@elementor/editor-props';
 
-import { type DynamicPropValue } from '../utils';
+import { type DynamicPropValue } from '../types';
 
 type DynamicConditionalControlProps = React.PropsWithChildren< {
 	propType?: PropType;

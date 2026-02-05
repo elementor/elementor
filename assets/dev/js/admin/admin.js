@@ -6,6 +6,7 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 import TemplateControls from './new-template/template-controls.js';
 import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-upload-warning-message';
 import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js/floating-buttons/admin/module';
+import 'elementor-app/event-track/wp-dashboard-tracking';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
@@ -29,7 +30,6 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 				$importFormFileInput: $( '#elementor-import-template-form input[type="file"]' ),
 				$settingsForm: $( '#elementor-settings-form' ),
 				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
-				$menuGetHelpLink: $( 'a[href="admin.php?page=go_knowledge_base_site"]' ),
 				$menuGoProLink: $( 'a[href="admin.php?page=go_elementor_pro"]' ),
 				$reMigrateGlobalsButton: $( '.elementor-re-migrate-globals-button' ),
 			};
@@ -407,7 +407,6 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 		 */
 		openLinksInNewTab() {
 			const elements = [
-				this.elements.$menuGetHelpLink,
 				this.elements.$menuGoProLink,
 			];
 

@@ -2,10 +2,12 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
+use Elementor\Plugin;
 use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -39,8 +41,11 @@ class Render_Props_Resolver extends Props_Resolver {
 				continue;
 			}
 
+			$prop_value = $props[ $key ] ?? null;
+			$actual_value = $this->get_validated_value( $prop_type, $prop_value );
+
 			$transformed = $this->resolve_item(
-				$props[ $key ] ?? $prop_type->get_default(),
+				$actual_value,
 				$key,
 				$prop_type
 			);
@@ -77,5 +82,22 @@ class Render_Props_Resolver extends Props_Resolver {
 		$transformed = $this->transform( $value, $key, $prop_type );
 
 		return $this->resolve_item( $transformed, $key, $prop_type, $depth + 1 );
+	}
+
+	private function get_validated_value( Prop_Type $prop_type, $prop_value ) {
+		$default = $prop_type->get_default() ?? null;
+
+		if ( null === $prop_value ) {
+			return $default;
+		}
+
+		if ( ! Dynamic_Prop_Type::is_dynamic_prop_value( $prop_value ) ) {
+			return $prop_value;
+		}
+
+		$tag_name = $prop_value['value']['name'] ?? null;
+		$tag = Plugin::$instance->dynamic_tags->get_tag_info( $tag_name );
+
+		return ! $tag ? $default : $prop_value;
 	}
 }

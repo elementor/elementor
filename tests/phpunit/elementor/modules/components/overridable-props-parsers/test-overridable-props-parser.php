@@ -57,6 +57,7 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 					'elType' => 'widget',
 					'widgetType' => 'e-heading',
 					'propKey' => 'title',
+					'elementId' => 'element-123',
 				],
 			]
 		];
@@ -107,11 +108,12 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'propKey' => 'override',
 				'widgetType' => 'e-component',
 				'elType' => 'widget',
-				'originValue' => [ '$$type' => 'string', 'value' => '<script>alert("xss")</script>Click here' ],
+				'originValue' => [ '$$type' => 'html', 'value' => '<script>alert("xss")</script>Click here' ],
 				'originPropFields' => [
 					'elType' => 'widget',
 					'widgetType' => 'e-button',
 					'propKey' => 'text',
+					'elementId' => 'button-123',
 				],
 				'groupId' => 'group-uuid-1',
 			],
@@ -122,7 +124,7 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 
 		// Assert.
 		$sanitized = $result->unwrap();
-		$this->assertEquals( [ '$$type' => 'string', 'value' => 'Click here' ], $sanitized['prop-uuid-1']['originValue'] );
+		$this->assertEquals( [ '$$type' => 'html', 'value' => 'alert("xss")Click here' ], $sanitized['prop-uuid-1']['originValue'] );
 	}
 
 	/**

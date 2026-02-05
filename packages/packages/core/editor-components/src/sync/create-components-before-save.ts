@@ -36,7 +36,10 @@ export async function createComponentsBeforeSave( {
 		);
 		dispatch( slice.actions.resetUnpublished() );
 	} catch ( error ) {
-		throw new Error( `Failed to publish components and update component instances: ${ error }` );
+		const failedUids = unpublishedComponents.map( ( component ) => component.uid );
+		dispatch( slice.actions.removeUnpublished( failedUids ) );
+
+		throw new Error( `Failed to publish components: ${ error }` );
 	}
 }
 

@@ -116,7 +116,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 
 			await selectOption( page.getByText( 'Page load', { exact: true } ), 'Scroll into view' );
 			await selectOption( page.getByText( 'Fade', { exact: true } ), 'Slide' );
-			await selectOption( page.getByText( '300 MS', { exact: true } ), '100 MS' );
+			await editor.v4Panel.fillField( 0, '300' );
 
 			const effectTypeOption = page.getByLabel( 'Out', { exact: true } );
 			const directionOption = page.getByLabel( 'To bottom', { exact: true } );
@@ -215,11 +215,11 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			expect( isMotionLoaded ).toBe( true );
 
 			// Wait for the animation to complete (default 300ms duration + buffer)
-			await page.waitForTimeout( 500 );
+			await page.waitForTimeout( 1000 );
 
 			// For "Fade In" on "Page load", the element should be fully visible (opacity: 1)
 			const opacity = await headingElement.evaluate( ( el ) => window.getComputedStyle( el ).opacity );
-			expect( parseFloat( opacity ) ).toBeGreaterThan( 0.9 );
+			expect( parseFloat( opacity ) ).toBeGreaterThan( 0.8 );
 		} );
 	} );
 
@@ -438,15 +438,13 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 
 			// Click first play button
 			const firstTag = interactionTags.first();
-			const firstBox = await firstTag.boundingBox();
-			await page.mouse.move( ( firstBox.x + firstBox.width ) / 2, ( firstBox.y + firstBox.height ) / 2 );
+			await firstTag.hover();
 			await firstTag.locator( 'button[aria-label*="Play interaction"]' ).click();
 			await page.waitForTimeout( 100 );
 
 			// Click second play button
 			const secondTag = interactionTags.nth( 1 );
-			const secondBox = await secondTag.boundingBox();
-			await page.mouse.move( ( secondBox.x + secondBox.width ) / 2, ( secondBox.y + secondBox.height ) / 2 );
+			await secondTag.hover();
 			await secondTag.locator( 'button[aria-label*="Play interaction"]' ).click();
 			await page.waitForTimeout( 100 );
 

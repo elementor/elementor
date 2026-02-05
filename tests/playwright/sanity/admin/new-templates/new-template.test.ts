@@ -8,8 +8,7 @@ const MODAL_SELECTOR = '#elementor-new-template-modal';
 const MODAL_CLOSE_SELECTOR = '.elementor-templates-modal__header__close';
 
 test.describe( 'New Template Modal', () => {
-	// TODO: Fix this test in [ED-22440].
-	test.skip( 'Opens modal when clicking Add New Template and closes when clicking close button', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Opens modal when clicking Add New Template and closes when clicking close button', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange
 		new WpAdminPage( page, testInfo, apiRequests );
 		await page.goto( TEMPLATE_LIBRARY_URL );

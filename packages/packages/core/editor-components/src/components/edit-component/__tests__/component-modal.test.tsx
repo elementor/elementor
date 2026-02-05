@@ -30,7 +30,7 @@ describe( '<ComponentModal />', () => {
 
 			// Act.
 			const mockElement = screen.getByLabelText( 'mock-widget' );
-			renderWithTheme( <ComponentModal element={ mockElement } onClose={ mockOnClose } /> );
+			renderWithTheme( <ComponentModal topLevelElementDom={ mockElement } onClose={ mockOnClose } /> );
 
 			// Assert.
 			expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
@@ -42,7 +42,7 @@ describe( '<ComponentModal />', () => {
 			const mockElement = screen.getByLabelText( 'mock-widget' );
 
 			// Act.
-			renderWithTheme( <ComponentModal element={ mockElement } onClose={ mockOnClose } /> );
+			renderWithTheme( <ComponentModal topLevelElementDom={ mockElement } onClose={ mockOnClose } /> );
 
 			const backdrop = screen.getByRole( 'button' );
 			fireEvent.click( backdrop );
@@ -57,7 +57,7 @@ describe( '<ComponentModal />', () => {
 			const mockElement = screen.getByLabelText( 'mock-widget' );
 
 			// Act.
-			renderWithTheme( <ComponentModal element={ mockElement } onClose={ mockOnClose } /> );
+			renderWithTheme( <ComponentModal topLevelElementDom={ mockElement } onClose={ mockOnClose } /> );
 
 			fireEvent.keyDown( mockElement.ownerDocument.body, { key: 'Escape' } );
 

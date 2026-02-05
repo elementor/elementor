@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
-import { fireEvent, screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 
 import { InlineEditor } from '../inline-editor';
 
@@ -74,5 +74,17 @@ describe( 'InlineEditor', () => {
 		expect( editor.innerHTML ).toContain( '<br>' );
 		expect( editor.innerHTML ).not.toContain( '<p>' );
 		expect( editor.innerHTML ).not.toContain( '</p>' );
+	} );
+
+	it( 'should apply elementClasses to rendered elements', () => {
+		// Arrange & Act.
+		const elementClasses = 'custom-padding custom-margin';
+		setup( { value: '<p>Test</p>', elementClasses, expectedTag: 'p' } );
+
+		// Assert.
+		const editor = screen.getByRole( 'textbox' );
+		const paragraph = within( editor ).getByText( 'Test' );
+		expect( paragraph ).toHaveClass( 'custom-padding' );
+		expect( paragraph ).toHaveClass( 'custom-margin' );
 	} );
 } );

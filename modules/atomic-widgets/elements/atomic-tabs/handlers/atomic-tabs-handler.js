@@ -38,7 +38,7 @@ register( {
 				':class'() {
 					const id = this.$el.id;
 
-					return this.activeTab === id ? SELECTED_CLASS : '';
+					return { [ SELECTED_CLASS ]: this.activeTab === id };
 				},
 				':aria-selected'() {
 					const id = this.$el.id;

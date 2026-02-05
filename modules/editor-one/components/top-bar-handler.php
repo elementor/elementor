@@ -24,7 +24,7 @@ class Top_Bar_Handler {
 	}
 
 	public function enqueue_assets(): void {
-		if ( ! $this->menu_data_provider->is_elementor_editor_page() ) {
+		if ( ! $this->menu_data_provider->is_editor_one_admin_page() ) {
 			return;
 		}
 
@@ -63,6 +63,10 @@ class Top_Bar_Handler {
 	}
 
 	public function render_top_bar_container(): void {
+		if ( ! $this->menu_data_provider->is_editor_one_admin_page() ) {
+			return;
+		}
+
 		echo '<div id="editor-one-top-bar"></div>';
 	}
 }

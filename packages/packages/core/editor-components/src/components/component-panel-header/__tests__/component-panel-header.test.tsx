@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { renderWithStore } from 'test-utils';
 import { useSuppressedMessage } from '@elementor/editor-current-user';
-import { getV1DocumentsManager, type V1DocumentsManager } from '@elementor/editor-documents';
-import { __privateRunCommand } from '@elementor/editor-v1-adapters';
+import { getV1DocumentsManager, switchToDocument, type V1DocumentsManager } from '@elementor/editor-documents';
 import {
 	__createStore,
 	__dispatch as dispatch,
@@ -19,14 +18,10 @@ import { ComponentPanelHeader } from '../component-panel-header';
 
 const mockOpenPropertiesPanel = jest.fn();
 
-jest.mock( '@elementor/editor-v1-adapters', () => ( {
-	...jest.requireActual( '@elementor/editor-v1-adapters' ),
-	__privateRunCommand: jest.fn(),
-} ) );
-
 jest.mock( '@elementor/editor-documents', () => ( {
-	...jest.requireActual( '@elementor/editor-documents' ),
 	getV1DocumentsManager: jest.fn(),
+	switchToDocument: jest.fn(),
+	invalidateDocumentData: jest.fn(),
 } ) );
 
 jest.mock( '../../component-properties-panel/component-properties-panel', () => ( {
@@ -93,10 +88,18 @@ describe( '<ComponentPanelHeader />', () => {
 				},
 			} ),
 			getInitialId: () => MOCK_INITIAL_DOCUMENT_ID,
+			invalidateCache: jest.fn(),
 		} as unknown as V1DocumentsManager );
 
 		jest.mocked( useSuppressedMessage ).mockReturnValue( [ true, jest.fn() ] );
 		( __ as jest.Mock ).mockImplementation( ( str ) => str );
+
+		dispatch(
+			slice.actions.updateComponentSanitizedAttribute( {
+				componentId: MOCK_COMPONENT_ID,
+				attribute: 'overridableProps',
+			} )
+		);
 	} );
 
 	it( 'should not render when not editing a component', () => {
@@ -192,7 +195,7 @@ describe( '<ComponentPanelHeader />', () => {
 		renderWithStore( <ComponentPanelHeader />, store );
 
 		// Act
-		const badgeButton = screen.getByLabelText( 'View overrides' );
+		const badgeButton = screen.getByLabelText( 'Component properties' );
 		fireEvent.click( badgeButton );
 
 		// Assert
@@ -209,8 +212,7 @@ describe( '<ComponentPanelHeader />', () => {
 		fireEvent.click( backButton );
 
 		// Assert
-		expect( __privateRunCommand ).toHaveBeenCalledWith( 'editor/documents/switch', {
-			id: MOCK_INITIAL_DOCUMENT_ID,
+		expect( switchToDocument ).toHaveBeenCalledWith( MOCK_INITIAL_DOCUMENT_ID, {
 			mode: 'autosave',
 			setAsInitial: false,
 			shouldScroll: false,
@@ -233,8 +235,7 @@ describe( '<ComponentPanelHeader />', () => {
 		fireEvent.click( backButton );
 
 		// Assert
-		expect( __privateRunCommand ).toHaveBeenCalledWith( 'editor/documents/switch', {
-			id: parentComponentId,
+		expect( switchToDocument ).toHaveBeenCalledWith( parentComponentId, {
 			selector: `[data-id="${ MOCK_INSTANCE_ID }"]`,
 			mode: 'autosave',
 			setAsInitial: false,

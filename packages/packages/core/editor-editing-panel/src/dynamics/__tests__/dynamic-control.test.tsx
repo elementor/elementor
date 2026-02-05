@@ -4,7 +4,7 @@ import { useBoundProp } from '@elementor/editor-controls';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { DynamicControl } from '../dynamic-control';
-import { usePropDynamicTags } from '../hooks/use-prop-dynamic-tags';
+import { useAllPropDynamicTags } from '../hooks/use-prop-dynamic-tags';
 
 jest.mock( '../hooks/use-prop-dynamic-tags' );
 
@@ -12,8 +12,9 @@ const propType = createMockPropType( { kind: 'object' } );
 
 describe( '<DynamicControl />', () => {
 	beforeEach( () => {
-		jest.mocked( usePropDynamicTags ).mockReturnValue( [
+		jest.mocked( useAllPropDynamicTags ).mockReturnValue( [
 			{
+				meta: { origin: 'elementor', required_license: 'dynamic-tags' },
 				name: 'author-info',
 				categories: [ 'text' ],
 				label: 'Author Info',

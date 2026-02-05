@@ -15,6 +15,13 @@ export type Component = PublishedComponent | UnpublishedComponent;
 
 export type PublishedComponent = BaseComponent & {
 	id: number;
+	isArchived?: boolean;
+};
+
+export type OriginalElementData = {
+	model: V1ElementData;
+	parentId: string;
+	index: number;
 };
 
 export type UnpublishedComponent = BaseComponent & {
@@ -58,6 +65,11 @@ type BaseComponent = {
 export type DocumentStatus = 'publish' | 'draft';
 export type DocumentSaveStatus = DocumentStatus | 'autosave';
 
+export type ElementorStorage = {
+	get: < T = unknown >( key: string ) => T | null;
+	set: < T >( key: string, data: T ) => void;
+};
+
 export type ExtendedWindow = Window & {
 	elementorCommon: Record< string, unknown > & {
 		eventsManager: {
@@ -67,6 +79,7 @@ export type ExtendedWindow = Window & {
 				triggers: Record< string, string >;
 			};
 		};
+		storage: ElementorStorage;
 	};
 };
 

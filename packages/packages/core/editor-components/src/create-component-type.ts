@@ -106,9 +106,10 @@ function createComponentView(
 		showLockedByModal?: ( lockedBy: string ) => void;
 	}
 ): typeof ElementView {
+	const legacyWindow = window as unknown as LegacyWindow & ExtendedWindow;
+
 	return class extends createTemplatedElementView( options ) {
-		legacyWindow = window as unknown as LegacyWindow & ExtendedWindow;
-		eventsManagerConfig = this.legacyWindow.elementorCommon.eventsManager.config;
+		eventsManagerConfig = legacyWindow.elementorCommon.eventsManager.config;
 		#componentRenderContext: ComponentRenderContext | undefined;
 
 		isComponentCurrentlyEdited() {
@@ -160,9 +161,7 @@ function createComponentView(
 					overrides: componentInstance.overrides ?? {},
 				};
 
-				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection(
-					componentInstance.elements
-				);
+				this.collection = legacyWindow.elementor.createBackboneElementsCollection( componentInstance.elements );
 
 				this.collection.models.forEach( setInactiveRecursively );
 
@@ -212,11 +211,7 @@ function createComponentView(
 		}
 
 		_getContextMenuConfig() {
-			const legacyWindow = this.legacyWindow || ( window as unknown as LegacyWindow & ExtendedWindow );
-			const elementorWithConfig = legacyWindow.elementor as typeof legacyWindow.elementor & {
-				config?: { user?: { is_administrator?: boolean } };
-			};
-			const isAdministrator = elementorWithConfig.config?.user?.is_administrator ?? false;
+			const isAdministrator = isUserAdministrator();
 
 			const addedGroup = {
 				general: {
@@ -262,6 +257,7 @@ function createComponentView(
 
 			trackComponentEvent( {
 				action: 'edited',
+				source: 'user',
 				component_uid: editorSettings?.component_uid,
 				component_name: editorSettings?.title,
 				location,
@@ -272,6 +268,12 @@ function createComponentView(
 
 		handleDblClick( e: MouseEvent ) {
 			e.stopPropagation();
+
+			const isAdministrator = isUserAdministrator();
+
+			if ( ! isAdministrator ) {
+				return;
+			}
 
 			const { triggers, locations, secondaryLocations } = this.eventsManagerConfig;
 
@@ -312,6 +314,12 @@ function setInactiveRecursively( model: BackboneModel< ElementModel > ) {
 			setInactiveRecursively( childModel );
 		} );
 	}
+}
+
+function isUserAdministrator() {
+	const legacyWindow = window as unknown as LegacyWindow;
+
+	return legacyWindow.elementor.config?.user?.is_administrator ?? false;
 }
 
 function createComponentModel(): BackboneModelConstructor< ComponentModel > {

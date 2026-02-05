@@ -17,6 +17,7 @@ type MultiSizePropValue = Record< PropKey, PropValue >;
 type Item = {
 	icon: ReactNode;
 	label: string;
+	ariaLabel?: string;
 	bind: PropKey;
 };
 
@@ -171,15 +172,17 @@ export function EqualUnequalSizesControl< TMultiPropType extends string, TPropVa
 }
 
 const MultiSizeValueControl = ( { item, rowRef }: { item: Item; rowRef: RefObject< HTMLDivElement > } ) => {
+	const { bind, label, icon, ariaLabel } = item;
+
 	return (
-		<PropKeyProvider bind={ item.bind }>
+		<PropKeyProvider bind={ bind }>
 			<Grid item xs={ 6 }>
 				<Grid container gap={ 0.75 } alignItems="center">
 					<Grid item xs={ 12 }>
-						<ControlLabel>{ item.label }</ControlLabel>
+						<ControlLabel>{ label }</ControlLabel>
 					</Grid>
 					<Grid item xs={ 12 }>
-						<SizeControl startIcon={ item.icon } anchorRef={ rowRef } />
+						<SizeControl startIcon={ icon } ariaLabel={ ariaLabel } anchorRef={ rowRef } />
 					</Grid>
 				</Grid>
 			</Grid>

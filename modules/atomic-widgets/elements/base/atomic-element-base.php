@@ -58,26 +58,6 @@ abstract class Atomic_Element_Base extends Element_Base {
 		return $interactions;
 	}
 
-	private function convert_prop_type_interactions_to_legacy_for_runtime( $interactions ) {
-		$legacy_items = [];
-
-		foreach ( $interactions['items'] as $item ) {
-			if ( isset( $item['$$type'] ) && 'interaction-item' === $item['$$type'] ) {
-				$legacy_item = $this->extract_legacy_interaction_from_prop_type( $item );
-				if ( $legacy_item ) {
-					$legacy_items[] = $legacy_item;
-				}
-			} else {
-				$legacy_items[] = $item;
-			}
-		}
-
-		return [
-			'version' => $interactions['version'] ?? 1,
-			'items' => $legacy_items,
-		];
-	}
-
 	abstract protected function define_atomic_controls(): array;
 
 	protected function define_atomic_style_states(): array {
@@ -88,10 +68,11 @@ abstract class Atomic_Element_Base extends Element_Base {
 		return [];
 	}
 
-	final public function get_initial_config() {
+	protected function get_initial_config() {
 		$config = parent::get_initial_config();
 		$props_schema = static::get_props_schema();
 
+		$config['atomic'] = true;
 		$config['atomic_controls'] = $this->get_atomic_controls();
 		$config['atomic_props_schema'] = $props_schema;
 		$config['atomic_style_states'] = $this->define_atomic_style_states();
@@ -99,7 +80,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['base_styles'] = $this->get_base_styles();
 		$config['version'] = $this->version;
 		$config['show_in_panel'] = $this->should_show_in_panel();
-		$config['categories'] = [ 'v4-elements' ];
+		$config['categories'] = $this->define_panel_categories();
 		$config['hide_on_search'] = false;
 		$config['controls'] = [];
 		$config['keywords'] = $this->get_keywords();
@@ -108,12 +89,17 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['include_in_widgets_config'] = true;
 		$config['default_html_tag'] = $this->define_default_html_tag();
 		$config['meta'] = $this->get_meta();
+		$config['allowed_child_types'] = $this->define_allowed_child_types();
 
 		return $config;
 	}
 
 	protected function should_show_in_panel() {
 		return true;
+	}
+
+	protected function define_panel_categories(): array {
+		return [ 'v4-elements' ];
 	}
 
 	protected function define_default_children() {
@@ -125,6 +111,10 @@ abstract class Atomic_Element_Base extends Element_Base {
 	}
 
 	protected function define_initial_attributes() {
+		return [];
+	}
+
+	protected function define_allowed_child_types() {
 		return [];
 	}
 

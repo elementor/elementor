@@ -77,6 +77,7 @@ describe( 'save-as-component-tool handler', () => {
 				const result = await handleSaveAsComponent( {
 					element_id: TEST_ELEMENT_ID,
 					component_name: TEST_COMPONENT_NAME,
+					groups: [],
 				} );
 
 				// Assert
@@ -97,13 +98,14 @@ describe( 'save-as-component-tool handler', () => {
 					} )
 				);
 
-				expect( mockCreateUnpublishedComponent ).toHaveBeenCalledWith(
-					TEST_COMPONENT_NAME,
-					expect.objectContaining( { elType } ),
-					null,
-					undefined,
-					expect.any( String )
-				);
+				expect( mockCreateUnpublishedComponent ).toHaveBeenCalledWith( {
+					name: TEST_COMPONENT_NAME,
+					element: expect.objectContaining( { elType } ),
+					eventData: null,
+					uid: expect.any( String ),
+					overridableProps: undefined,
+					source: 'mcp_tool',
+				} );
 			}
 		);
 
@@ -130,6 +132,7 @@ describe( 'save-as-component-tool handler', () => {
 			const result = await handleSaveAsComponent( {
 				element_id: TEST_ELEMENT_ID,
 				component_name: TEST_COMPONENT_NAME,
+				groups: [],
 				overridable_props: {
 					props: {
 						heading_text: {
@@ -164,16 +167,17 @@ describe( 'save-as-component-tool handler', () => {
 				} )
 			);
 
-			expect( mockCreateUnpublishedComponent ).toHaveBeenCalledWith(
-				TEST_COMPONENT_NAME,
-				expect.objectContaining( { elType: 'e-flexbox' } ),
-				null,
-				expect.objectContaining( {
+			expect( mockCreateUnpublishedComponent ).toHaveBeenCalledWith( {
+				name: TEST_COMPONENT_NAME,
+				element: expect.objectContaining( { elType: 'e-flexbox' } ),
+				eventData: null,
+				uid: expect.any( String ),
+				overridableProps: expect.objectContaining( {
 					props: expect.any( Object ),
 					groups: expect.any( Object ),
 				} ),
-				expect.any( String )
-			);
+				source: 'mcp_tool',
+			} );
 		} );
 	} );
 
@@ -187,6 +191,7 @@ describe( 'save-as-component-tool handler', () => {
 				handleSaveAsComponent( {
 					element_id: 'non-existent-id',
 					component_name: TEST_COMPONENT_NAME,
+					groups: [],
 				} )
 			).rejects.toThrow( ERROR_MESSAGES.ELEMENT_NOT_FOUND );
 			expect( mockApiClient.validate ).not.toHaveBeenCalled();

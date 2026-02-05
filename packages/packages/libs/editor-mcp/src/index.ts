@@ -8,6 +8,7 @@ export {
 } from '@modelcontextprotocol/sdk/server/mcp.js';
 export { SamplingMessageSchema } from '@modelcontextprotocol/sdk/types.js';
 export { init } from './init';
+export { isAngieAvailable } from './utils/is-angie-available';
 export * from './mcp-registry';
 export { createSampler } from './sampler';
 export { toolPrompts } from './utils/prompt-builder';

@@ -13,6 +13,11 @@ export default class extends elementorModules.Module {
 			return;
 		}
 
+		this.initializeMixpanel();
+		this.enableTracking();
+	}
+
+	initializeMixpanel() {
 		mixpanel.init(
 			elementorCommon.config.editor_events?.token,
 			{
@@ -28,8 +33,6 @@ export default class extends elementorModules.Module {
 				},
 			},
 		);
-
-		this.enableTracking();
 	}
 
 	enableTracking() {

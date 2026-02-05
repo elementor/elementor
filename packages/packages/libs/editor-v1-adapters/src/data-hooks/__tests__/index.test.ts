@@ -1,22 +1,14 @@
+import { createHooksRegistry, setupHooksRegistry, type WindowWithHooks } from 'test-utils';
+
 import { blockCommand } from '../block-command';
-import { type DataHook, registerDataHook, type WindowWithDataHooks } from '../register-data-hook';
+import { registerDataHook } from '../register-data-hook';
 
 describe( 'Data Hooks', () => {
-	const eWindow = window as unknown as WindowWithDataHooks;
-
 	const hooksRegistry = createHooksRegistry();
+	let eWindow: WindowWithHooks;
 
 	beforeEach( () => {
-		hooksRegistry.reset();
-
-		eWindow.$e = {
-			modules: {
-				hookData: {
-					Dependency: hooksRegistry.createClass(),
-					After: hooksRegistry.createClass(),
-				},
-			},
-		};
+		eWindow = setupHooksRegistry( hooksRegistry );
 	} );
 
 	describe( 'registerDataHook', () => {
@@ -39,9 +31,9 @@ describe( 'Data Hooks', () => {
 			expect( hook2.getCommand() ).toEqual( 'test-command-2' );
 			expect( hook3.getCommand() ).toEqual( 'test-command-3' );
 
-			expect( hook1.getId() ).toMatch( /^test-command-1--data--\d+$/ );
-			expect( hook2.getId() ).toMatch( /^test-command-2--data--\d+$/ );
-			expect( hook3.getId() ).toMatch( /^test-command-3--data--\d+$/ );
+			expect( hook1.getId?.() ).toMatch( /^test-command-1--data--\d+$/ );
+			expect( hook2.getId?.() ).toMatch( /^test-command-2--data--\d+$/ );
+			expect( hook3.getId?.() ).toMatch( /^test-command-3--data--\d+$/ );
 
 			hook1.apply( { id: 1 } );
 			hook2.apply( { id: 2 } );
@@ -52,7 +44,7 @@ describe( 'Data Hooks', () => {
 			expect( mockFn ).toHaveBeenNthCalledWith( 2, { id: 2 } );
 			expect( mockFn ).toHaveBeenNthCalledWith( 3, { id: 3 } );
 
-			expect( hook1.getId() ).not.toEqual( hook2.getId() );
+			expect( hook1.getId?.() ).not.toEqual( hook2.getId?.() );
 		} );
 
 		it( 'should throw when the hooks classes do not exist', () => {
@@ -84,23 +76,3 @@ describe( 'Data Hooks', () => {
 		} );
 	} );
 } );
-
-function createHooksRegistry() {
-	let hooks: DataHook[] = [];
-
-	return {
-		getAll: () => hooks,
-
-		reset: () => {
-			hooks = [];
-		},
-
-		createClass: () => {
-			return class {
-				register() {
-					hooks.push( this as never );
-				}
-			} as typeof DataHook;
-		},
-	};
-}

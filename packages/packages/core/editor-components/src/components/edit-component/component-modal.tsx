@@ -7,11 +7,11 @@ import { useCanvasDocument } from '../../hooks/use-canvas-document';
 import { useElementRect } from '../../hooks/use-element-rect';
 
 type ModalProps = {
-	element: HTMLElement;
+	topLevelElementDom: HTMLElement | null;
 	onClose: () => void;
 };
 
-export function ComponentModal( { element, onClose }: ModalProps ) {
+export function ComponentModal( { topLevelElementDom, onClose }: ModalProps ) {
 	const canvasDocument = useCanvasDocument();
 
 	useEffect( () => {
@@ -35,14 +35,23 @@ export function ComponentModal( { element, onClose }: ModalProps ) {
 	return createPortal(
 		<>
 			<BlockEditPage />
-			<Backdrop canvas={ canvasDocument } element={ element } onClose={ onClose } />
+			<Backdrop canvas={ canvasDocument } element={ topLevelElementDom } onClose={ onClose } />
 		</>,
 		canvasDocument.body
 	);
 }
 
-function Backdrop( { canvas, element, onClose }: { canvas: HTMLDocument; element: HTMLElement; onClose: () => void } ) {
+function Backdrop( {
+	canvas,
+	element,
+	onClose,
+}: {
+	canvas: HTMLDocument;
+	element: HTMLElement | null;
+	onClose: () => void;
+} ) {
 	const rect = useElementRect( element );
+	const clipPath = element ? getRectPath( rect, canvas.defaultView as Window ) : undefined;
 	const backdropStyle: CSSProperties = {
 		position: 'fixed',
 		top: 0,
@@ -53,7 +62,7 @@ function Backdrop( { canvas, element, onClose }: { canvas: HTMLDocument; element
 		zIndex: 999,
 		pointerEvents: 'painted',
 		cursor: 'pointer',
-		clipPath: getRectPath( rect, canvas.defaultView as Window ),
+		clipPath,
 	};
 
 	const handleKeyDown = ( event: React.KeyboardEvent ) => {
@@ -76,12 +85,7 @@ function Backdrop( { canvas, element, onClose }: { canvas: HTMLDocument; element
 }
 
 function getRectPath( rect: DOMRect, viewport: Window ) {
-	const { x: originalX, y: originalY, width: originalWidth, height: originalHeight } = rect;
-	const x = originalX;
-	const y = originalY;
-	const width = originalWidth;
-	const height = originalHeight;
-
+	const { x, y, width, height } = rect;
 	const { innerWidth: vw, innerHeight: vh } = viewport;
 
 	const path = `path(evenodd, 'M 0 0 

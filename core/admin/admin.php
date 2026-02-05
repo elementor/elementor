@@ -1128,31 +1128,37 @@ class Admin extends App {
 			return;
 		}
 
-		$dismissible = 'image_optimizer_hint';
-		$button_label = $is_installed ? esc_html__( 'Activate now', 'elementor' ) : esc_html__( 'Install now', 'elementor' );
-		$action_url = Hints::get_plugin_action_url( $plugin_slug );
-
 		if ( $one_subscription ) {
-			$title = esc_html__( 'Speed up your website with Image Optimizer', 'elementor' );
-			$description = esc_html__( 'Automatically optimize images to improve site speed and performance.', 'elementor' );
-			$subscription_text = esc_html__( 'Included with your ONE subscription.', 'elementor' );
-			$content = sprintf(
-				"<strong>%1\$s</strong><br>%2\$s<br>%3\$s <a class='e-btn-1' href='%4\$s' target='_blank'>%5\$s</a>!",
-				$title,
-				$description,
-				$subscription_text,
-				$action_url,
-				$button_label
-			);
+			if ( ! $is_installed ) {
+				$description = esc_html__( 'Automatically optimize images to improve site speed and performance. Included with your ONE subscription.', 'elementor' );
+				$button_text = esc_html__( 'Install now', 'elementor' );
+				$button_url = Hints::get_plugin_install_url( $plugin_slug );
+			} elseif ( ! $is_active ) {
+				$description = esc_html__( 'Image Optimizer is installed and included in your ONE subscription. Activate it to optimize images and improve site performance.', 'elementor' );
+				$button_text = esc_html__( 'Activate now', 'elementor' );
+				$button_url = Hints::get_plugin_activate_url( $plugin_slug );
+			}
 		} else {
 			$description = esc_html__( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' );
-			$content = sprintf(
-				"%1\$s <a class='e-btn-1' href='%2\$s' target='_blank'>%3\$s</a>!",
-				$description,
-				$action_url,
-				$button_label
-			);
+			if ( ! $is_installed ) {
+				$button_text = esc_html__( 'Install now', 'elementor' );
+				$button_url = Hints::get_plugin_install_url( $plugin_slug );
+			} elseif ( ! $is_active ) {
+				$button_text = esc_html__( 'Activate now', 'elementor' );
+				$button_url = Hints::get_plugin_activate_url( $plugin_slug );
+			}
 		}
+
+		$dismissible = 'image_optimizer_hint';
+
+		$title = esc_html__( 'Speed up your website with Image Optimizer', 'elementor' );
+		$content = sprintf(
+			"<strong>%1\$s</strong><br>%2\$s <a class='e-btn-1' href='%3\$s' target='_blank'>%4\$s</a>!",
+			$title,
+			$description,
+			$button_url,
+			$button_text
+		);
 
 		wp_localize_script( 'media-hints', 'elementorAdminHints', [
 			'mediaHint' => [
@@ -1165,7 +1171,7 @@ class Admin extends App {
 				'button_event' => $dismissible,
 				'button_data' => base64_encode(
 					wp_json_encode( [
-						'action_url' => $action_url,
+						'action_url' => $button_url,
 					] ),
 				),
 			],

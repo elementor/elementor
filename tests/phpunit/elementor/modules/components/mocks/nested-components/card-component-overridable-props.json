@@ -49,7 +49,7 @@
           "value": {
             "override_key": "prop-0",
             "override_value": {
-              "$$type": "string",
+              "$$type": "html",
               "value": "Learn more"
             },
             "schema_source": {
@@ -61,7 +61,8 @@
         "originPropFields": {
           "elType": "widget",
           "widgetType": "e-button",
-          "propKey": "text"
+          "propKey": "text",
+          "elementId": "07ac447"
         },
         "groupId": "group-1"
       },
@@ -86,7 +87,8 @@
         "originPropFields": {
           "elType": "widget",
           "widgetType": "e-button",
-          "propKey": "link"
+          "propKey": "link",
+          "elementId": "07ac447"
         },
         "groupId": "group-1"
       }

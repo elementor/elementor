@@ -15,10 +15,16 @@ export { CtaButton } from './components/cta-button';
 export { PromotionInfotip } from './components/promotion-infotip';
 export { PromotionPopover } from './components/promotion-popover';
 export { PromotionChip } from './components/promotion-chip';
+export { PromotionAlert } from './components/promotion-alert';
+export { FloatingActionsBar, useFloatingActionsBar } from './components/floating-bar';
 
 export * from './components/popover';
 export * from './components/save-changes-dialog';
 export { ConfirmationDialog } from './components/confirmation-dialog';
 
+// contexts
+export { SectionRefContext, useSectionWidth } from './contexts/section-context';
+
 // hooks
 export { useEditable } from './hooks/use-editable';
+export { useTextFieldAutoSelect } from './hooks/use-text-field-auto-select';

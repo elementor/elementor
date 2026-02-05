@@ -2,6 +2,7 @@ import { useEffect, useContext, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { OnboardingContext } from '../context/context';
 import { OnboardingEventTracking } from './onboarding-event-tracking';
+import EventDispatcher from './modules/event-dispatcher';
 
 export default function Connect( props ) {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext );
@@ -14,6 +15,7 @@ export default function Connect( props ) {
 
 		if ( isTrackingOptedInConnect ) {
 			elementorCommon.config.editor_events.can_send_events = true;
+			EventDispatcher.initializeAndEnableTracking();
 			OnboardingEventTracking.sendConnectionSuccessEvents( data );
 		}
 	}, [] );

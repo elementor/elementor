@@ -100,21 +100,23 @@ export const apiClient = {
 				},
 			} )
 			.then( ( res ) => res.data.data ),
-	updateArchivedComponents: async ( componentIds: number[] ) =>
+	updateArchivedComponents: async ( componentIds: number[], status: DocumentSaveStatus ) =>
 		await httpService()
 			.post< { data: { failedIds: number[]; successIds: number[]; success: boolean } } >(
 				`${ BASE_URL }/archive`,
 				{
 					componentIds,
+					status,
 				}
 			)
 			.then( ( res ) => res.data.data ),
-	updateComponentTitle: ( updatedComponentNames: UpdatedComponentName[] ) =>
+	updateComponentTitle: ( updatedComponentNames: UpdatedComponentName[], status: DocumentSaveStatus ) =>
 		httpService()
 			.post< { data: { failedIds: number[]; successIds: number[]; success: boolean } } >(
 				`${ BASE_URL }/update-titles`,
 				{
 					components: updatedComponentNames,
+					status,
 				}
 			)
 			.then( ( res ) => res.data.data ),

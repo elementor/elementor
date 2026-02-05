@@ -14,6 +14,7 @@ use Elementor\Modules\AtomicWidgets\Utils\Image\Placeholder_Image;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -54,7 +55,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 
 			'link' => Link_Prop_Type::make(),
 
-			'attributes' => Attributes_Prop_Type::make(),
+			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
 
 		return $props;

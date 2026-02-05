@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createMockPropType } from 'test-utils';
-import { useBoundProp } from '@elementor/editor-editing-panel';
+import { useBoundProp } from '@elementor/editor-controls';
 import type { PropTypeUtil } from '@elementor/editor-props';
 import { ColorFilterIcon, TextIcon } from '@elementor/icons';
 import { render, renderHook, screen } from '@testing-library/react';
@@ -12,7 +12,7 @@ import { usePropVariableAction } from '../use-prop-variable-action';
 const MockStartIcon = () => ( { type: 'div' } ) as JSX.Element;
 
 // Mock dependencies
-jest.mock( '@elementor/editor-editing-panel', () => ( {
+jest.mock( '@elementor/editor-controls', () => ( {
 	useBoundProp: jest.fn(),
 } ) );
 

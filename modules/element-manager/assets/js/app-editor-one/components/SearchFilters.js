@@ -6,9 +6,40 @@ import {
 	MenuItem,
 	FormControl,
 	Divider,
+	styled,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
+
+const FIELD_HEIGHT = 28;
+const FONT_SIZE = 12;
+const ICON_SIZE = 16;
+
+const StyledTextField = styled( TextField )( {
+	'& .MuiInputBase-root': {
+		height: FIELD_HEIGHT,
+		fontSize: FONT_SIZE,
+	},
+} );
+
+const StyledFormControl = styled( FormControl )( {
+	'& .MuiInputBase-root': {
+		height: FIELD_HEIGHT,
+		fontSize: FONT_SIZE,
+	},
+	'& .MuiSelect-icon': {
+		width: ICON_SIZE,
+		height: ICON_SIZE,
+		top: 'calc(50% - 8px)',
+	},
+} );
+
+const StyledButton = styled( Button )( {
+	height: FIELD_HEIGHT,
+	fontSize: FONT_SIZE,
+	minWidth: 'auto',
+	whiteSpace: 'nowrap',
+} );
 
 export const SearchFilters = ( {
 	searchKeyword,
@@ -30,24 +61,28 @@ export const SearchFilters = ( {
 } ) => {
 	return (
 		<Stack
-			direction="row"
-			alignItems="center"
-			justifyContent="space-between"
-			flexWrap="wrap"
-			gap={ 2 }
+			direction={ { xs: 'column', sm: 'row' } }
+			alignItems={ { xs: 'stretch', sm: 'flex-start' } }
+			gap={ 1.5 }
 			sx={ ( theme ) => ( {
 				position: 'sticky',
 				top: theme.spacing( 10 ),
 				backgroundColor: 'var(--e-one-palette-background-default)',
 				zIndex: 10,
-				paddingBlock: 2.5,
+				paddingBlock: 2,
 				paddingInline: 2,
 				boxShadow: 'rgba(0, 0, 0, 0.15) 0 5px 10px 0',
 				marginBottom: theme.spacing( 1 ),
 			} ) }
 		>
-			<Stack direction="row" alignItems="center" gap={ 2 } flexWrap="wrap">
-				<TextField
+			<Stack
+				direction="row"
+				alignItems="center"
+				flexWrap="wrap"
+				gap={ 1.5 }
+				sx={ { flex: 1 } }
+			>
+				<StyledTextField
 					color="secondary"
 					value={ searchKeyword }
 					size="small"
@@ -55,7 +90,7 @@ export const SearchFilters = ( {
 					onChange={ ( e ) => onSearchChange( e.target.value ) }
 					sx={ ( theme ) => ( { minWidth: theme.spacing( 14 ) } ) }
 				/>
-				<FormControl
+				<StyledFormControl
 					size="small"
 					sx={ ( theme ) => ( { width: theme.spacing( 20 ) } ) }
 					color="secondary"
@@ -81,8 +116,8 @@ export const SearchFilters = ( {
 							</MenuItem>
 						) ) }
 					</Select>
-				</FormControl>
-				<FormControl
+				</StyledFormControl>
+				<StyledFormControl
 					size="small"
 					sx={ ( theme ) => ( { width: theme.spacing( 20 ) } ) }
 					color="secondary"
@@ -97,67 +132,61 @@ export const SearchFilters = ( {
 						<MenuItem value="active">{ __( 'Active', 'elementor' ) }</MenuItem>
 						<MenuItem value="inactive">{ __( 'Inactive', 'elementor' ) }</MenuItem>
 					</Select>
-				</FormControl>
+				</StyledFormControl>
 				<Divider
 					orientation="vertical"
 					flexItem
 					sx={ {
-						height: 30,
+						height: FIELD_HEIGHT,
 						marginBlock: 0,
 						marginInline: 0.5,
 						alignSelf: 'center',
 						display: { xs: 'none', md: 'block' },
 					} }
 				/>
-			</Stack>
-			<Stack
-				direction="row"
-				alignItems="center"
-				gap={ 1 }
-				flexWrap="nowrap"
-				justifyContent="space-between"
-				sx={ { flex: 1, flexWrap: 'nowrap' } }
-			>
-				<Stack direction="row" alignItems="center" gap={ 1 } flexWrap="nowrap">
-					<Button
-						variant="outlined"
-						color="secondary"
-						disabled={ usageIsLoading }
-						onClick={ onScanUsage }
-						data-id="e-id-elementor-element-manager-button-scan-element-usage"
-						loading={ usageIsLoading }
-					>
-						{ __( 'Scan Element Usage', 'elementor' ) }
-					</Button>
-					<Button
-						variant="outlined"
-						color="secondary"
-						onClick={ onDeactivateUnused }
-						disabled={ null === usageData }
-						data-id="e-id-elementor-element-manager-button-deactivate-unused-elements"
-					>
-						{ __( 'Deactivate Unused Elements', 'elementor' ) }
-					</Button>
-					<Button
-						variant="outlined"
-						color="secondary"
-						disabled={ ! widgetsDisabledCount }
-						onClick={ onEnableAll }
-						data-id="e-id-elementor-element-manager-button-enable-all"
-					>
-						{ __( 'Enable All', 'elementor' ) }
-					</Button>
-				</Stack>
-				<Button
-					variant="contained"
-					disabled={ isSaving || ! hasUnsavedChanges }
-					onClick={ onSaveChanges }
-					data-id="e-id-elementor-element-manager-button-save-changes"
-					loading={ isSaving }
+				<StyledButton
+					variant="outlined"
+					color="secondary"
+					size="small"
+					disabled={ usageIsLoading }
+					onClick={ onScanUsage }
+					data-id="e-id-elementor-element-manager-button-scan-element-usage"
+					loading={ usageIsLoading }
 				>
-					{ __( 'Save Changes', 'elementor' ) }
-				</Button>
+					{ __( 'Scan Element Usage', 'elementor' ) }
+				</StyledButton>
+				<StyledButton
+					variant="outlined"
+					color="secondary"
+					size="small"
+					onClick={ onDeactivateUnused }
+					disabled={ null === usageData }
+					data-id="e-id-elementor-element-manager-button-deactivate-unused-elements"
+				>
+					{ __( 'Deactivate Unused Elements', 'elementor' ) }
+				</StyledButton>
+				<StyledButton
+					variant="outlined"
+					color="secondary"
+					size="small"
+					disabled={ ! widgetsDisabledCount }
+					onClick={ onEnableAll }
+					data-id="e-id-elementor-element-manager-button-enable-all"
+				>
+					{ __( 'Enable All', 'elementor' ) }
+				</StyledButton>
 			</Stack>
+			<StyledButton
+				variant="contained"
+				size="small"
+				disabled={ isSaving || ! hasUnsavedChanges }
+				onClick={ onSaveChanges }
+				data-id="e-id-elementor-element-manager-button-save-changes"
+				loading={ isSaving }
+				sx={ { alignSelf: 'flex-start' } }
+			>
+				{ __( 'Save Changes', 'elementor' ) }
+			</StyledButton>
 		</Stack>
 	);
 };
@@ -183,4 +212,3 @@ SearchFilters.propTypes = {
 	isSaving: PropTypes.bool,
 	hasUnsavedChanges: PropTypes.bool,
 };
-

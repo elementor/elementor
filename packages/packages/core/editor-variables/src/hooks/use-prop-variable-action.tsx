@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { type PopoverActionProps, useBoundProp } from '@elementor/editor-editing-panel';
+import { useBoundProp } from '@elementor/editor-controls';
 import { type PropType } from '@elementor/editor-props';
+import { type PopoverActionProps } from '@elementor/editor-ui';
 import { ColorFilterIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 

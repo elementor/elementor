@@ -3,14 +3,10 @@
 namespace Elementor\Modules\FloatingButtons;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
-use Elementor\Core\Experiments\Manager;
 use Elementor\Modules\FloatingButtons\Base\Widget_Floating_Bars_Base;
-use Elementor\Modules\FloatingButtons\AdminMenuItems\Floating_Buttons_Empty_View_Menu_Item;
-use Elementor\Modules\FloatingButtons\AdminMenuItems\Floating_Buttons_Menu_Item;
 use Elementor\Modules\FloatingButtons\Base\Widget_Contact_Button_Base;
 use Elementor\Modules\FloatingButtons\Classes\Action\Action_Handler;
 use Elementor\Modules\FloatingButtons\Control\Hover_Animation_Floating_Buttons;
@@ -62,24 +58,8 @@ class Module extends BaseModule {
 		];
 	}
 
-	private function register_admin_menu_legacy( Admin_Menu_Manager $admin_menu ) {
-		if ( ! $this->is_editor_one_active() ) {
-			$menu_args = $this->get_contact_menu_args();
-			$function = $menu_args['function'];
-			if ( is_callable( $function ) ) {
-				$admin_menu->register( $menu_args['menu_slug'], new Floating_Buttons_Empty_View_Menu_Item( $function ) );
-			} else {
-				$admin_menu->register( $menu_args['menu_slug'], new Floating_Buttons_Menu_Item() );
-			}
-		}
-	}
-
 	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
 		$menu_data_provider->register_menu( new Editor_One_Floating_Elements_Menu() );
-	}
-
-	private function is_editor_one_active(): bool {
-		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
 	}
 
 	public function __construct() {
@@ -172,10 +152,6 @@ class Module extends BaseModule {
 
 			return $is_top_bar_active;
 		}, 10, 2 );
-
-		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-			$this->register_admin_menu_legacy( $admin_menu );
-		}, Source_Local::ADMIN_MENU_PRIORITY + 20 );
 
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 			$this->register_editor_one_menu( $menu_data_provider );

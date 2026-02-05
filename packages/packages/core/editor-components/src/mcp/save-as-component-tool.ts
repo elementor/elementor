@@ -37,6 +37,7 @@ const InputSchema = {
 						.describe(
 							'A unique, user-friendly display name for this property (e.g., "Hero Headline", "CTA Button Text"). Must be unique within the same component.'
 						),
+					group: z.string().optional().describe( 'Non unique, optional property grouping' ),
 				} )
 			),
 		} )
@@ -45,6 +46,7 @@ const InputSchema = {
 			'Overridable properties configuration. Specify which CHILD element properties can be customized. ' +
 				'Only elementId and propKey are required; To get the available propKeys for a child element you must use the "get-element-type-config" tool.'
 		),
+	groups: z.array( z.string() ).describe( 'Property Groups, by order, unique values' ).optional(),
 };
 
 const OutputSchema = {
@@ -63,7 +65,12 @@ export const ERROR_MESSAGES = {
 };
 
 export const handleSaveAsComponent = async ( params: z.infer< z.ZodObject< typeof InputSchema > > ) => {
-	const { element_id: elementId, component_name: componentName, overridable_props: overridablePropsInput } = params;
+	const {
+		groups = [],
+		element_id: elementId,
+		component_name: componentName,
+		overridable_props: overridablePropsInput,
+	} = params;
 	const validElementTypes = getValidElementTypes();
 	const container = getContainer( elementId );
 
@@ -83,8 +90,15 @@ export const handleSaveAsComponent = async ( params: z.infer< z.ZodObject< typeo
 		throw new Error( ERROR_MESSAGES.ELEMENT_IS_LOCKED );
 	}
 
+	const groupsWithDefaultGroup = groups.indexOf( 'Default' ) >= 0 ? [ ...groups ] : [ 'Default', ...groups ];
+	const propertyGroups: PropertyGroup[] = groupsWithDefaultGroup.map( ( groupName ) => ( {
+		id: generateUniqueId( 'group' ),
+		label: groupName,
+		props: < string[] >[],
+	} ) );
+
 	const overridableProps = overridablePropsInput
-		? enrichOverridableProps( overridablePropsInput, element )
+		? enrichOverridableProps( overridablePropsInput, element, propertyGroups )
 		: undefined;
 
 	if ( overridableProps ) {
@@ -106,7 +120,14 @@ export const handleSaveAsComponent = async ( params: z.infer< z.ZodObject< typeo
 		throw new Error( 'Unknown error' );
 	}
 
-	createUnpublishedComponent( componentName, element, null, overridableProps, uid );
+	await createUnpublishedComponent( {
+		name: componentName,
+		element,
+		eventData: null,
+		uid,
+		overridableProps,
+		source: 'mcp_tool',
+	} );
 
 	return {
 		status: 'ok' as const,
@@ -115,15 +136,25 @@ export const handleSaveAsComponent = async ( params: z.infer< z.ZodObject< typeo
 	};
 };
 
+type PropertyGroup = OverridableProps[ 'groups' ][ 'items' ][ string ];
+
 function enrichOverridableProps(
-	input: { props: Record< string, { elementId: string; propKey: string; label: string } > },
-	rootElement: V1ElementData
+	input: { props: Record< string, { elementId: string; propKey: string; label: string; group?: string } > },
+	rootElement: V1ElementData,
+	propertGroups: PropertyGroup[]
 ): OverridableProps {
 	const enrichedProps: OverridableProps[ 'props' ] = {};
-	const defaultGroupId = generateUniqueId( 'group' );
+	const enrichedGroups: OverridableProps[ 'groups' ][ 'items' ] = {};
+	const defaultGroup = propertGroups.find( ( g ) => g.label === 'Default' );
+
+	if ( ! defaultGroup ) {
+		throw new Error( 'Internal mcp error: could not generate default group' );
+	}
 
 	Object.entries( input.props ).forEach( ( [ , prop ] ) => {
-		const { elementId, propKey, label } = prop;
+		const { elementId, propKey, label, group = 'Default' } = prop;
+		const targetGroup = propertGroups.find( ( g ) => g.label === group ) || defaultGroup;
+		const targetGroupId = targetGroup.id;
 		const element = findElementById( rootElement, elementId );
 
 		if ( ! element ) {
@@ -156,6 +187,15 @@ function enrichOverridableProps(
 			? ( element.settings[ propKey ] as PropValue )
 			: elementType.propsSchema[ propKey ].default ?? null;
 
+		if ( ! enrichedGroups[ targetGroupId ] ) {
+			enrichedGroups[ targetGroupId ] = {
+				id: targetGroupId,
+				label: targetGroup.label,
+				props: [],
+			};
+		}
+		enrichedGroups[ targetGroupId ].props.push( overrideKey );
+
 		enrichedProps[ overrideKey ] = {
 			overrideKey,
 			label,
@@ -164,21 +204,15 @@ function enrichOverridableProps(
 			elType,
 			widgetType,
 			originValue,
-			groupId: defaultGroupId,
+			groupId: targetGroupId,
 		};
 	} );
 
 	return {
 		props: enrichedProps,
 		groups: {
-			items: {
-				[ defaultGroupId ]: {
-					id: defaultGroupId,
-					label: 'Default',
-					props: Object.keys( enrichedProps ),
-				},
-			},
-			order: [ defaultGroupId ],
+			items: enrichedGroups,
+			order: [ defaultGroup.id ],
 		},
 	};
 }
@@ -359,17 +393,20 @@ Component with overridable properties:
       "heading-text": {
         "elementId": "heading-123",
         "propKey": "text",
-        "label": "Card Title"
+        "label": "Card Title",
+        "group": "Content"
       },
       "button-text": {
         "elementId": "button-456",
         "propKey": "text",
-        "label": "Button Text"
+        "label": "Button Text",
+        "group": "Content"
       },
       "button-link": {
         "elementId": "button-456",
         "propKey": "url",
-        "label": "Button Link"
+        "label": "Button Link",
+        "group": "Settings"
       }
     }
   }

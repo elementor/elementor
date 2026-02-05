@@ -55,13 +55,15 @@ export const LinkControl = createControl( ( props: Props ) => {
 		ariaLabel,
 	} = props || {};
 
-	const [ linkInLinkRestriction, setLinkInLinkRestriction ] = useState( getLinkInLinkRestriction( elementId ) );
+	const [ linkInLinkRestriction, setLinkInLinkRestriction ] = useState(
+		getLinkInLinkRestriction( elementId, value )
+	);
 	const shouldDisableAddingLink = ! isActive && linkInLinkRestriction.shouldRestrict;
 
 	const debouncedCheckRestriction = useMemo(
 		() =>
 			debounce( () => {
-				const newRestriction = getLinkInLinkRestriction( elementId );
+				const newRestriction = getLinkInLinkRestriction( elementId, value );
 
 				if ( newRestriction.shouldRestrict && isActive ) {
 					setIsActive( false );
@@ -69,7 +71,7 @@ export const LinkControl = createControl( ( props: Props ) => {
 
 				setLinkInLinkRestriction( newRestriction );
 			}, 300 ),
-		[ elementId, isActive ]
+		[ elementId, isActive, value ]
 	);
 
 	useEffect( () => {
@@ -92,7 +94,7 @@ export const LinkControl = createControl( ( props: Props ) => {
 	}, [ elementId, debouncedCheckRestriction ] );
 
 	const onEnabledChange = () => {
-		setLinkInLinkRestriction( getLinkInLinkRestriction( elementId ) );
+		setLinkInLinkRestriction( getLinkInLinkRestriction( elementId, value ) );
 
 		if ( linkInLinkRestriction.shouldRestrict && ! isActive ) {
 			return;

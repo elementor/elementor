@@ -11,23 +11,37 @@ import {
 	parseInteractionsData,
 } from './interactions-utils.js';
 
+/**
+ * @type {Record<string, Promise<void> & { cancel: () => void }>}
+ */
+const playingInteractionsToStop = {};
+
 function applyAnimation( element, animConfig, animateFunc ) {
+	const { id } = element;
+	if ( playingInteractionsToStop[ id ] ) {
+		playingInteractionsToStop[ id ].cancel();
+		delete playingInteractionsToStop[ id ];
+	}
 	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
+
 	const options = {
 		duration: animConfig.duration / 1000,
 		delay: animConfig.delay / 1000,
-		easing: config.easing,
+		ease: config.defaultEasing,
 	};
 
 	const initialKeyframes = {};
 	Object.keys( keyframes ).forEach( ( key ) => {
 		initialKeyframes[ key ] = keyframes[ key ][ 0 ];
 	} );
+
 	// WHY - Transition can be set on elements but once it sets it destroys all animations, so we basically put it aside.
 	const transition = element.style.transition;
 	element.style.transition = 'none';
 	animateFunc( element, initialKeyframes, { duration: 0 } ).then( () => {
-		animateFunc( element, keyframes, options ).then( () => {
+		const animations = animateFunc( element, keyframes, options );
+		playingInteractionsToStop[ id ] = animations;
+		animations.then( () => {
 			if ( 'out' === animConfig.type ) {
 				const resetValues = { opacity: 1, scale: 1, x: 0, y: 0 };
 				const resetKeyframes = {};
@@ -37,6 +51,7 @@ function applyAnimation( element, animConfig, animateFunc ) {
 				element.style.transition = transition;
 				animateFunc( element, resetKeyframes, { duration: 0 } );
 			}
+			delete playingInteractionsToStop[ id ];
 		} );
 	} );
 }

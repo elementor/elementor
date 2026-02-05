@@ -6,8 +6,8 @@ use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Custom_Url_Interface;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\App\App;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -28,7 +28,7 @@ class Editor_One_Theme_Builder_Menu implements Menu_Item_Interface, Admin_Menu_I
 	}
 
 	public function get_label(): string {
-		return esc_html__( 'Theme builder', 'elementor' );
+		return esc_html__( 'Theme Builder', 'elementor' );
 	}
 
 	public function get_position(): int {
@@ -40,14 +40,7 @@ class Editor_One_Theme_Builder_Menu implements Menu_Item_Interface, Admin_Menu_I
 	}
 
 	public function get_menu_url(): string {
-		$return_to = esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) );
-
-		return add_query_arg(
-			[
-				'return_to' => $return_to,
-			],
-			Plugin::instance()->app->get_base_url()
-		) . '#/site-editor/promotion';
+		return Menu_Data_Provider::instance()->get_theme_builder_url();
 	}
 
 	public function get_group_id(): string {

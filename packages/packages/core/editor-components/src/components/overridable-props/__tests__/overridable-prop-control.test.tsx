@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { type ComponentType } from 'react';
 import { createMockElementType, createMockPropType, renderControl } from 'test-utils';
-import { useBoundProp } from '@elementor/editor-controls';
+import { type ControlReplacement, useBoundProp } from '@elementor/editor-controls';
 import { ElementProvider, useElement } from '@elementor/editor-editing-panel';
-import { numberPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
+import { isTransformable, numberPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 import {
 	__createStore,
 	__dispatch as dispatch,
@@ -21,9 +21,16 @@ import { type ComponentsSlice, selectOverridableProps, slice } from '../../../st
 import { type OverridableProp, type OverridableProps, type PublishedComponent } from '../../../types';
 import { OverridablePropControl } from '../overridable-prop-control';
 
+const mockGetControlReplacements = jest.fn< ControlReplacement[], [] >( () => [] );
+
 jest.mock( '@elementor/editor-editing-panel', () => ( {
 	...jest.requireActual( '@elementor/editor-editing-panel' ),
 	useElement: jest.fn(),
+} ) );
+
+jest.mock( '@elementor/editor-controls', () => ( {
+	...jest.requireActual( '@elementor/editor-controls' ),
+	getControlReplacements: () => mockGetControlReplacements(),
 } ) );
 
 const MOCK_DOCUMENT_ID = 42;
@@ -333,5 +340,148 @@ function MockCustomControl() {
 			<div>{ overridablePropValue?.override_key as string }</div>
 			<input type="text" value={ value ?? '' } onChange={ ( e ) => setValue( e.target.value ) } />
 		</div>
+	);
+}
+
+const DYNAMIC_TYPE = 'dynamic';
+
+const isDynamicValue = ( value: unknown ) => isTransformable( value ) && value.$$type === DYNAMIC_TYPE;
+
+describe( 'OverridablePropControl with control replacements', () => {
+	let store: Store< ComponentsSlice >;
+
+	beforeEach( () => {
+		__registerSlice( slice );
+		store = __createStore();
+
+		const componentData: PublishedComponent = {
+			id: MOCK_DOCUMENT_ID,
+			uid: `component-${ MOCK_DOCUMENT_ID }`,
+			name: 'Test Component',
+			overridableProps: mockOverridableProps( { props: {} } ),
+		};
+
+		dispatch( slice.actions.load( [ componentData ] ) );
+		dispatch( slice.actions.setCurrentComponentId( MOCK_DOCUMENT_ID ) );
+
+		jest.mocked( useElement ).mockReturnValue( {
+			element: { id: 'test-widget-id', type: ELEMENT_TYPE },
+			elementType: mockElementType,
+		} );
+
+		mockGetControlReplacements.mockReturnValue( [] );
+	} );
+
+	afterEach( () => {
+		jest.clearAllMocks();
+	} );
+
+	it( 'should apply control replacement when inner value matches replacement condition', () => {
+		// Arrange
+		const dynamicReplacement: ControlReplacement = {
+			component: () => <div role="alert">Dynamic Control Replacement</div>,
+			condition: ( { value } ) => isDynamicValue( value ),
+		};
+
+		mockGetControlReplacements.mockReturnValue( [ dynamicReplacement ] );
+
+		const dynamicOriginValue = createMockDynamicValue( 'test-tag', 'test-group' );
+
+		const value = componentOverridablePropTypeUtil.create( {
+			override_key: MOCK_OVERRIDE_KEY,
+			origin_value: dynamicOriginValue,
+		} );
+
+		const props = { value, setValue: jest.fn(), bind: BIND, propType: mockPropType };
+
+		// Act
+		renderOverridableControlWithReplacements( store, props );
+
+		// Assert
+		expect( screen.getByRole( 'alert' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Dynamic Control Replacement' ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'textbox' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should render original control when inner value does not match any replacement condition', () => {
+		// Arrange
+		const dynamicReplacement: ControlReplacement = {
+			component: () => <div role="alert">Dynamic Control Replacement</div>,
+			condition: ( { value } ) => isDynamicValue( value ),
+		};
+
+		mockGetControlReplacements.mockReturnValue( [ dynamicReplacement ] );
+
+		const value = componentOverridablePropTypeUtil.create( {
+			override_key: MOCK_OVERRIDE_KEY,
+			origin_value: stringPropTypeUtil.create( 'Regular Text Value' ),
+		} );
+
+		const props = { value, setValue: jest.fn(), bind: BIND, propType: mockPropType };
+
+		// Act
+		renderOverridableControlWithReplacements( store, props );
+
+		// Assert
+		expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'Regular Text Value' );
+	} );
+
+	it( 'should pass OriginalControl to replacement component', () => {
+		// Arrange
+		const ReplacementWithOriginal = ( { OriginalControl }: { OriginalControl: ComponentType } ) => (
+			<div role="region" aria-label="replacement-wrapper">
+				<span>Replacement Header</span>
+				<OriginalControl />
+			</div>
+		);
+
+		const dynamicReplacement: ControlReplacement = {
+			component: ReplacementWithOriginal,
+			condition: ( { value } ) => isDynamicValue( value ),
+		};
+
+		mockGetControlReplacements.mockReturnValue( [ dynamicReplacement ] );
+
+		const dynamicOriginValue = createMockDynamicValue( 'test-tag', 'test-group' );
+
+		const value = componentOverridablePropTypeUtil.create( {
+			override_key: MOCK_OVERRIDE_KEY,
+			origin_value: dynamicOriginValue,
+		} );
+
+		const props = { value, setValue: jest.fn(), bind: BIND, propType: mockPropType };
+
+		// Act
+		renderOverridableControlWithReplacements( store, props );
+
+		// Assert
+		expect( screen.getByRole( 'region', { name: 'replacement-wrapper' } ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Replacement Header' ) ).toBeInTheDocument();
+	} );
+} );
+
+function createMockDynamicValue( name: string, group: string ) {
+	return {
+		$$type: 'dynamic' as const,
+		value: { name, group },
+	};
+}
+
+function renderOverridableControlWithReplacements(
+	storeInstance: Store< ComponentsSlice >,
+	props: Parameters< typeof renderControl >[ 1 ]
+) {
+	const OriginalControl = props.bind === BIND_NUMBER ? MockNumberControl : MockTextControl;
+
+	return renderControl(
+		<StoreProvider store={ storeInstance }>
+			<ElementProvider element={ { id: 'test-widget-id', type: ELEMENT_TYPE } } elementType={ mockElementType }>
+				<ErrorBoundary fallback={ null }>
+					<OverridablePropControl OriginalControl={ OriginalControl } />
+				</ErrorBoundary>
+			</ElementProvider>
+		</StoreProvider>,
+		props
 	);
 }

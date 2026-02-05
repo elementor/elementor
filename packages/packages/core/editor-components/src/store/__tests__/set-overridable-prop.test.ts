@@ -329,6 +329,7 @@ describe( 'setOverridableProp', () => {
 			propKey: MOCK_PROP_KEY,
 			...MOCK_WIDGET,
 			originValue: callParams.originValue ?? ORIGIN_VALUE,
+			source: 'user',
 		} );
 
 		// Assert
@@ -358,6 +359,7 @@ describe( 'setOverridableProp', () => {
 			propKey: MOCK_PROP_KEY,
 			...MOCK_WIDGET,
 			originValue: ORIGIN_VALUE,
+			source: 'user',
 		} );
 
 		// Assert

@@ -22,12 +22,6 @@ class Module extends BaseModule {
 
 		Admin_Pointer::add_hooks();
 
-		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-			if ( ! Plugin::instance()->modules_manager->get_modules( 'editor-one' ) ) {
-				$admin_menu->register( static::PAGE_ID, new Admin_Menu_Apps() );
-			}
-		}, 115 );
-
 		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
 			if ( ! empty( $hooks[ static::PAGE_ID ] ) ) {
 				add_action( "admin_print_scripts-{$hooks[ static::PAGE_ID ]}", [ $this, 'enqueue_assets' ] );

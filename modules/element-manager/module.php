@@ -26,12 +26,6 @@ class Module extends BaseModule {
 		$ajax = new Ajax();
 		$ajax->register_endpoints();
 
-		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-			if ( ! $this->is_editor_one_active() ) {
-				$admin_menu->register( static::PAGE_ID, new Admin_Menu_App() );
-			}
-		}, 25 );
-
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 			$this->register_editor_one_menu( $menu_data_provider );
 		} );
@@ -78,10 +72,6 @@ class Module extends BaseModule {
 
 	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ): void {
 		$menu_data_provider->register_menu( new Editor_One_Elements_Manager_Menu() );
-	}
-
-	private function is_editor_one_active(): bool {
-		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
 	}
 
 	public function enqueue_assets() {

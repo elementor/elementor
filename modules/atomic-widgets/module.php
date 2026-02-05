@@ -15,10 +15,10 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Divider\Atomic_Divider;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Content_Area;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs\Atomic_Tabs;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu\Atomic_Tabs_Menu;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab\Atomic_Tab;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Content_Area\Atomic_Tabs_Content_Area;
 use Elementor\Modules\AtomicWidgets\ImportExport\Atomic_Import_Export;
 use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
@@ -95,7 +95,8 @@ use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content\Atomic_Tab_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
@@ -117,7 +118,6 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
-	const EXPERIMENT_INLINE_EDITING = 'v4-inline-text-editing';
 	const EXPERIMENT_BC_MIGRATIONS = 'e_bc_migrations';
 
 	const PACKAGES = [
@@ -209,17 +209,8 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Editor MCP for atomic widgets', 'elementor' ),
 			'description' => esc_html__( 'Editor MCP for atomic widgets.', 'elementor' ),
 			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		]);
-
-		Plugin::$instance->experiments->add_feature([
-			'name' => self::EXPERIMENT_INLINE_EDITING,
-			'title' => esc_html__( 'V4 inline text editing', 'elementor' ),
-			'description' => esc_html__( 'New inline text editor for v4', 'elementor' ),
-			'hidden' => true,
 			'default' => Experiments_Manager::STATE_ACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		]);
 
 		Plugin::$instance->experiments->add_feature([
@@ -271,6 +262,10 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Atomic_Tab() );
 		$elements_manager->register_element_type( new Atomic_Tabs_Content_Area() );
 		$elements_manager->register_element_type( new Atomic_Tab_Content() );
+
+		if ( \Elementor\Utils::has_pro() && Plugin::$instance->experiments->is_feature_active( 'e_pro_atomic_form' ) ) {
+			$elements_manager->register_element_type( new Atomic_Form() );
+		}
 	}
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
@@ -287,6 +282,14 @@ class Module extends BaseModule {
 	private function register_styles_transformers( Transformers_Registry $transformers ) {
 		$transformers->register_fallback( new Plain_Transformer() );
 
+		$this->register_basic_styles_transformers( $transformers );
+		$this->register_background_styles_transformers( $transformers );
+		$this->register_filter_styles_transformers( $transformers );
+		$this->register_transform_styles_transformers( $transformers );
+		$this->register_layout_styles_transformers( $transformers );
+	}
+
+	private function register_basic_styles_transformers( Transformers_Registry $transformers ): void {
 		$transformers->register( Size_Prop_Type::get_key(), new Size_Transformer() );
 		$transformers->register( Box_Shadow_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Shadow_Prop_Type::get_key(), new Shadow_Transformer() );
@@ -294,6 +297,9 @@ class Module extends BaseModule {
 		$transformers->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
 		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
+	}
+
+	private function register_background_styles_transformers( Transformers_Registry $transformers ): void {
 		$transformers->register( Background_Image_Overlay_Prop_Type::get_key(), new Background_Image_Overlay_Transformer() );
 		$transformers->register( Background_Image_Overlay_Size_Scale_Prop_Type::get_key(), new Background_Image_Overlay_Size_Scale_Transformer() );
 		$transformers->register( Background_Image_Position_Offset_Prop_Type::get_key(), new Position_Transformer() );
@@ -301,12 +307,18 @@ class Module extends BaseModule {
 		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Background_Overlay_Transformer() );
 		$transformers->register( Background_Prop_Type::get_key(), new Background_Transformer() );
 		$transformers->register( Background_Gradient_Overlay_Prop_Type::get_key(), new Background_Gradient_Overlay_Transformer() );
+	}
+
+	private function register_filter_styles_transformers( Transformers_Registry $transformers ): void {
 		$transformers->register( Filter_Prop_Type::get_key(), new Filter_Transformer() );
 		$transformers->register( Backdrop_Filter_Prop_Type::get_key(), new Filter_Transformer() );
 		$transformers->register( Transition_Prop_Type::get_key(), new Transition_Transformer() );
 		$transformers->register( Color_Stop_Prop_Type::get_key(), new Color_Stop_Transformer() );
 		$transformers->register( Gradient_Color_Stop_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Position_Prop_Type::get_key(), new Position_Transformer() );
+	}
+
+	private function register_transform_styles_transformers( Transformers_Registry $transformers ): void {
 		$transformers->register( Transform_Move_Prop_Type::get_key(), new Transform_Move_Transformer() );
 		$transformers->register( Transform_Scale_Prop_Type::get_key(), new Transform_Scale_Transformer() );
 		$transformers->register( Transform_Rotate_Prop_Type::get_key(), new Transform_Rotate_Transformer() );
@@ -321,6 +333,9 @@ class Module extends BaseModule {
 				fn( $_, $key ) => 'transform-functions' === $key ? 'transform' : $key
 			)
 		);
+	}
+
+	private function register_layout_styles_transformers( Transformers_Registry $transformers ): void {
 		$transformers->register(
 			Border_Radius_Prop_Type::get_key(),
 			new Multi_Props_Transformer( [ 'start-start', 'start-end', 'end-start', 'end-end' ], fn ( $_, $key ) => "border-{$key}-radius" )
@@ -396,8 +411,16 @@ class Module extends BaseModule {
 	}
 
 	private function add_inline_styles() {
-		$inline_css = '.e-heading-base a, .e-paragraph-base a { all: unset; cursor: pointer; }';
+		$inline_css = implode( '', [
+			'.e-heading-base a, .e-paragraph-base a { all: unset; cursor: pointer; }',
+			'.elementor-element[data-element_type="e-form"][data-form-state="default"] [data-e-state="success"],',
+			'.elementor-element[data-element_type="e-form"][data-form-state="default"] [data-e-state="error"],',
+			'.elementor-element[data-element_type="e-form"][data-form-state="success"] [data-e-state="error"],',
+			'.elementor-element[data-element_type="e-form"][data-form-state="error"] [data-e-state="success"]',
+			'{ display: none; }',
+		] );
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
+		wp_add_inline_style( 'elementor-editor', $inline_css );
 	}
 
 	private function backward_compatibility_migrations( array $data, $document ): array {

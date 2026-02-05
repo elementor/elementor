@@ -4,7 +4,6 @@ namespace Elementor\Modules\EditorOne;
 
 use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\EditorOne\Classes\Editor_One_Pointer;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
@@ -16,30 +15,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 class Module extends BaseModule {
 
-	const EXPERIMENT_NAME = 'e_editor_one';
-
 	const CUSTOM_REACT_APP_PAGES = [
 		'elementor-element-manager',
 	];
 
 	public function get_name(): string {
 		return 'editor-one';
-	}
-
-	public static function is_active(): bool {
-		return Menu_Config::is_elementor_home_menu_available();
-	}
-
-	public static function get_experimental_data(): array {
-		return [
-			'name'           => static::EXPERIMENT_NAME,
-			'title'          => esc_html__( 'Editor one', 'elementor' ),
-			'description'    => esc_html__( 'General', 'elementor' ),
-			'hidden'         => true,
-			'default'        => Experiments_Manager::STATE_ACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
-			'mutable'        => false,
-		];
 	}
 
 	public function __construct() {
@@ -55,7 +36,7 @@ class Module extends BaseModule {
 		add_action( 'current_screen', function () {
 			$menu_data_provider = Menu_Data_Provider::instance();
 
-			if ( ! $menu_data_provider->is_elementor_editor_page() || ! static::is_active() ) {
+			if ( ! $menu_data_provider->is_editor_one_admin_page() ) {
 				return;
 			}
 
@@ -64,8 +45,8 @@ class Module extends BaseModule {
 			} );
 		} );
 
-		add_filter( 'elementor/admin-top-bar/is-active', function ( $is_active ) {
-			return static::is_active() ? false : $is_active;
+		add_filter( 'elementor/admin-top-bar/is-active', function ( $_is_active ) {
+			return false;
 		} );
 	}
 

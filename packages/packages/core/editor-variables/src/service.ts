@@ -186,8 +186,8 @@ export const service = {
 			} );
 	},
 
-	batchSave: ( originalVariables: TVariablesList, currentVariables: TVariablesList ) => {
-		const operations = buildOperationsArray( originalVariables, currentVariables );
+	batchSave: ( originalVariables: TVariablesList, currentVariables: TVariablesList, deletedVariables: string[] ) => {
+		const operations = buildOperationsArray( originalVariables, currentVariables, deletedVariables );
 		const batchPayload = { operations, watermark: storage.state.watermark };
 
 		if ( operations.length === 0 ) {

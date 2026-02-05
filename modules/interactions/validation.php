@@ -2,6 +2,10 @@
 
 namespace Elementor\Modules\Interactions;
 
+use Elementor\Modules\Interactions\Validators\Breakpoints_Value as BreakpointsValueValidator;
+use Elementor\Modules\Interactions\Validators\String_Value as StringValueValidator;
+use Elementor\Modules\Interactions\Adapter;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -10,7 +14,7 @@ class Validation {
 	private $elements_to_interactions_counter = [];
 	private $max_number_of_interactions = 5;
 
-	private const VALID_TRIGGERS = [ 'load', 'scrollIn', 'scrollOut' ];
+	private const VALID_TRIGGERS = [ 'load', 'scrollIn', 'scrollOut', 'scrollOn' ];
 	private const VALID_EFFECTS = [ 'fade', 'slide', 'scale' ];
 	private const VALID_TYPES = [ 'in', 'out' ];
 	private const VALID_DIRECTIONS = [ '', 'left', 'right', 'top', 'bottom' ];
@@ -64,12 +68,18 @@ class Validation {
 
 	private function decode_interactions( $interactions ) {
 		if ( is_array( $interactions ) ) {
+			if ( isset( $interactions['items']['$$type'] ) && Adapter::ITEMS_TYPE === $interactions['items']['$$type'] ) {
+				return isset( $interactions['items']['value'] ) ? $interactions['items']['value'] : [];
+			}
 			return isset( $interactions['items'] ) ? $interactions['items'] : [];
 		}
 
 		if ( is_string( $interactions ) ) {
 			$decoded = json_decode( $interactions, true );
 			if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
+				if ( isset( $decoded['items']['$$type'] ) && Adapter::ITEMS_TYPE === $decoded['items']['$$type'] ) {
+					return isset( $decoded['items']['value'] ) ? $decoded['items']['value'] : [];
+				}
 				return isset( $decoded['items'] ) ? $decoded['items'] : [];
 			}
 		}
@@ -138,29 +148,27 @@ class Validation {
 			return false;
 		}
 
+		if ( ! $this->is_valid_breakpoints_prop( $value ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private function is_valid_breakpoints_prop( $data ) {
+		if ( isset( $data['breakpoints'] ) ) {
+			return BreakpointsValueValidator::is_valid( $data['breakpoints'] );
+		}
+
 		return true;
 	}
 
 	private function is_valid_string_prop( $data, $key, $allowed_values = null ) {
-		if ( ! isset( $data[ $key ] ) || ! is_array( $data[ $key ] ) ) {
+		if ( ! isset( $data[ $key ] ) ) {
 			return false;
 		}
 
-		$prop = $data[ $key ];
-
-		if ( ! isset( $prop['$$type'] ) || 'string' !== $prop['$$type'] ) {
-			return false;
-		}
-
-		if ( ! isset( $prop['value'] ) || ! is_string( $prop['value'] ) ) {
-			return false;
-		}
-
-		if ( null !== $allowed_values && ! in_array( $prop['value'], $allowed_values, true ) ) {
-			return false;
-		}
-
-		return true;
+		return StringValueValidator::is_valid( $data[ $key ], $allowed_values );
 	}
 
 	private function is_valid_boolean_prop( $data, $key ) {
@@ -199,6 +207,24 @@ class Validation {
 		return true;
 	}
 
+	private function is_valid_number_prop_in_range( $data, $key, $min = null, $max = null ) {
+		if ( ! $this->is_valid_number_prop( $data, $key ) ) {
+			return false;
+		}
+
+		$value = (float) $data[ $key ]['value'];
+
+		if ( null !== $min && $value < $min ) {
+			return false;
+		}
+
+		if ( null !== $max && $value > $max ) {
+			return false;
+		}
+
+		return true;
+	}
+
 	private function is_valid_config_prop( $data ) {
 		if ( ! isset( $data['config'] ) || ! is_array( $data['config'] ) ) {
 			return false;
@@ -217,6 +243,22 @@ class Validation {
 		$config_value = $config['value'];
 
 		if ( isset( $config_value['replay'] ) && ! $this->is_valid_boolean_prop( $config_value, 'replay' ) ) {
+			return false;
+		}
+
+		if ( isset( $config_value['easing'] ) && ! $this->is_valid_string_prop( $config_value, 'easing' ) ) {
+			return false;
+		}
+
+		if ( isset( $config_value['relativeTo'] ) && ! $this->is_valid_string_prop( $config_value, 'relativeTo' ) ) {
+			return false;
+		}
+
+		if ( isset( $config_value['offsetTop'] ) && ! $this->is_valid_size_prop_in_range( $config_value, 'offsetTop', 0, 100 ) ) {
+			return false;
+		}
+
+		if ( isset( $config_value['offsetBottom'] ) && ! $this->is_valid_size_prop_in_range( $config_value, 'offsetBottom', 0, 100 ) ) {
 			return false;
 		}
 
@@ -284,13 +326,77 @@ class Validation {
 
 		$timing_value = $timing['value'];
 
-		// Validate duration
-		if ( ! $this->is_valid_number_prop( $timing_value, 'duration' ) ) {
+		// Validate duration (accepts both 'number' and 'size' formats)
+		if ( ! $this->is_valid_timing_value( $timing_value, 'duration', 0 ) ) {
 			return false;
 		}
 
-		// Validate delay
-		if ( ! $this->is_valid_number_prop( $timing_value, 'delay' ) ) {
+		// Validate delay (accepts both 'number' and 'size' formats)
+		if ( ! $this->is_valid_timing_value( $timing_value, 'delay', 0 ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Validate timing value that can be either 'number' or 'size' type.
+	 * - number format: {$$type: 'number', value: 123}
+	 * - size format: {$$type: 'size', value: {size: 123, unit: 'ms'}}
+	 */
+	private function is_valid_timing_value( $data, $key, $min = null, $max = null ) {
+		if ( ! isset( $data[ $key ] ) || ! is_array( $data[ $key ] ) ) {
+			return false;
+		}
+
+		$prop = $data[ $key ];
+
+		if ( ! isset( $prop['$$type'] ) ) {
+			return false;
+		}
+
+		// Accept 'number' format
+		if ( 'number' === $prop['$$type'] ) {
+			return $this->is_valid_number_prop_in_range( $data, $key, $min, $max );
+		}
+
+		// Accept 'size' format
+		if ( 'size' === $prop['$$type'] ) {
+			return $this->is_valid_size_prop_in_range( $data, $key, $min, $max );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Validate size prop: {$$type: 'size', value: {size: X, unit: 'ms'}}
+	 */
+	private function is_valid_size_prop_in_range( $data, $key, $min = null, $max = null ) {
+		if ( ! isset( $data[ $key ] ) || ! is_array( $data[ $key ] ) ) {
+			return false;
+		}
+
+		$prop = $data[ $key ];
+
+		if ( ! isset( $prop['$$type'] ) || 'size' !== $prop['$$type'] ) {
+			return false;
+		}
+
+		if ( ! isset( $prop['value'] ) || ! is_array( $prop['value'] ) ) {
+			return false;
+		}
+
+		if ( ! isset( $prop['value']['size'] ) || ! is_numeric( $prop['value']['size'] ) ) {
+			return false;
+		}
+
+		$value = (float) $prop['value']['size'];
+
+		if ( null !== $min && $value < $min ) {
+			return false;
+		}
+
+		if ( null !== $max && $value > $max ) {
 			return false;
 		}
 

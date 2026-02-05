@@ -1,11 +1,11 @@
 'use strict';
 
 export const config = window.ElementorInteractionsConfig?.constants || {
-	defaultDuration: 300,
+	defaultDuration: 600,
 	defaultDelay: 0,
 	slideDistance: 100,
 	scaleStart: 0,
-	easing: 'linear',
+	defaultEasing: 'easeIn',
 };
 
 export function getKeyframes( effect, type, direction ) {
@@ -36,7 +36,16 @@ export function getKeyframes( effect, type, direction ) {
 }
 
 export function parseAnimationName( name ) {
-	const [ trigger, effect, type, direction, duration, delay ] = name.split( '-' );
+	const [
+		trigger,
+		effect,
+		type,
+		direction,
+		duration,
+		delay,
+		,
+		,
+	] = name.split( '-' );
 
 	return {
 		trigger,
@@ -45,6 +54,8 @@ export function parseAnimationName( name ) {
 		direction: direction || null,
 		duration: duration ? parseInt( duration, 10 ) : config.defaultDuration,
 		delay: delay ? parseInt( delay, 10 ) : config.defaultDelay,
+		replay: false,
+		easing: config.defaultEasing,
 	};
 }
 
@@ -55,15 +66,30 @@ export function extractAnimationId( interaction ) {
 
 	if ( 'interaction-item' === interaction?.$$type && interaction?.value ) {
 		const { trigger, animation } = interaction.value;
+
 		if ( 'animation-preset-props' === animation?.$$type && animation?.value ) {
-			const { effect, type, direction, timing_config: timingConfig } = animation.value;
+			const { effect, type, direction, timing_config: timingConfig, config: animationConfig } = animation.value;
+
 			const triggerVal = trigger?.value || 'load';
 			const effectVal = effect?.value || 'fade';
 			const typeVal = type?.value || 'in';
 			const directionVal = direction?.value || '';
-			const duration = timingConfig?.value?.duration?.value ?? 300;
+
+			const duration = timingConfig?.value?.duration?.value ?? 600;
 			const delay = timingConfig?.value?.delay?.value ?? 0;
-			return `${ triggerVal }-${ effectVal }-${ typeVal }-${ directionVal }-${ duration }-${ delay }`;
+
+			const easing = animationConfig?.value?.easing?.value || config.defaultEasing;
+
+			return [
+				triggerVal,
+				effectVal,
+				typeVal,
+				directionVal,
+				duration,
+				delay,
+				'',
+				easing,
+			].join( '-' );
 		}
 	}
 
@@ -109,4 +135,55 @@ export function parseInteractionsData( data ) {
 		}
 	}
 	return data;
+}
+
+/**
+ * Get interactions data from the script tag injected by PHP.
+ * Returns array of { elementId, dataId, interactions: [...] }
+ */
+export function getInteractionsData() {
+	const scriptTag = document.getElementById( 'elementor-interactions-data' );
+	if ( ! scriptTag ) {
+		return null;
+	}
+
+	try {
+		return JSON.parse( scriptTag.textContent );
+	} catch {
+		return null;
+	}
+}
+
+export function findElementByDataId( dataId ) {
+	return document.querySelector( `[data-interaction-id="${ dataId }"]` );
+}
+
+export function extractAnimationConfig( interaction ) {
+	if ( ! interaction || ! interaction.animation ) {
+		return null;
+	}
+
+	const { trigger, animation } = interaction;
+
+	const effect = animation.effect || 'fade';
+	const type = animation.type || 'in';
+	const direction = animation.direction || '';
+
+	const timingConfig = animation.timing_config || {};
+	const duration = timingConfig.duration ?? config.defaultDuration;
+	const delay = timingConfig.delay ?? config.defaultDelay;
+
+	const easing = config.defaultEasing;
+	const replay = false;
+
+	return {
+		trigger: trigger || 'load',
+		effect,
+		type,
+		direction,
+		duration,
+		delay,
+		easing,
+		replay,
+	};
 }

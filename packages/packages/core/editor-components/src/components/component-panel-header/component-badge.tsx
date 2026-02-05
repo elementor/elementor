@@ -1,41 +1,44 @@
 import * as React from 'react';
 import { useEffect, useRef } from 'react';
 import { ComponentPropListIcon } from '@elementor/icons';
-import { Badge, Box, keyframes, styled, ToggleButton } from '@elementor/ui';
+import { Badge, Box, keyframes, styled, ToggleButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-export const ComponentsBadge = React.forwardRef< HTMLDivElement, { overridesCount: number; onClick: () => void } >(
-	( { overridesCount, onClick }, ref ) => {
-		const prevCount = usePrevious( overridesCount );
+export const ComponentsBadge = React.forwardRef<
+	HTMLDivElement,
+	{ overridablePropsCount: number; onClick: () => void }
+>( ( { overridablePropsCount, onClick }, ref ) => {
+	const prevCount = usePrevious( overridablePropsCount );
 
-		const isFirstOverride = prevCount === 0 && overridesCount === 1;
+	const isFirstExposedProperty = prevCount === 0 && overridablePropsCount === 1;
 
-		return (
-			<StyledBadge
-				ref={ ref }
-				color="primary"
-				key={ overridesCount }
-				invisible={ overridesCount === 0 }
-				animate={ isFirstOverride }
-				anchorOrigin={ { vertical: 'top', horizontal: 'right' } }
-				badgeContent={
-					<Box sx={ { animation: ! isFirstOverride ? `${ slideUp } 300ms ease-out` : 'none' } }>
-						{ overridesCount }
-					</Box>
-				}
-			>
+	return (
+		<StyledBadge
+			ref={ ref }
+			color="primary"
+			key={ overridablePropsCount }
+			invisible={ overridablePropsCount === 0 }
+			animate={ isFirstExposedProperty }
+			anchorOrigin={ { vertical: 'top', horizontal: 'right' } }
+			badgeContent={
+				<Box sx={ { animation: ! isFirstExposedProperty ? `${ slideUp } 300ms ease-out` : 'none' } }>
+					{ overridablePropsCount }
+				</Box>
+			}
+		>
+			<Tooltip title={ __( 'Component properties', 'elementor' ) }>
 				<ToggleButton
-					value="overrides"
+					value="exposed properties"
 					size="tiny"
 					onClick={ onClick }
-					aria-label={ __( 'View overrides', 'elementor' ) }
+					aria-label={ __( 'Component properties', 'elementor' ) }
 				>
 					<ComponentPropListIcon fontSize="tiny" />
 				</ToggleButton>
-			</StyledBadge>
-		);
-	}
-);
+			</Tooltip>
+		</StyledBadge>
+	);
+} );
 
 const StyledBadge = styled( Badge, { shouldForwardProp: ( prop ) => prop !== 'animate' } )(
 	( { theme, animate } ) => ( {

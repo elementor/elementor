@@ -1,7 +1,11 @@
+import { type LinkPropValue } from '@elementor/editor-props';
+
 import { getContainer } from './sync/get-container';
 import { getElementSetting } from './sync/get-element-setting';
 
 const ANCHOR_SELECTOR = 'a, [data-action-link]';
+
+type LinkValue = LinkPropValue[ 'value' ];
 
 export type LinkInLinkRestriction =
 	| {
@@ -15,7 +19,7 @@ export type LinkInLinkRestriction =
 			elementId?: never;
 	  };
 
-export function getLinkInLinkRestriction( elementId: string ): LinkInLinkRestriction {
+export function getLinkInLinkRestriction( elementId: string, resolvedValue?: LinkValue ): LinkInLinkRestriction {
 	const anchoredDescendantId = getAnchoredDescendantId( elementId );
 
 	if ( anchoredDescendantId ) {
@@ -26,7 +30,7 @@ export function getLinkInLinkRestriction( elementId: string ): LinkInLinkRestric
 		};
 	}
 
-	const hasInlineLink = checkForInlineLink( elementId );
+	const hasInlineLink = checkForInlineLink( elementId, resolvedValue );
 
 	if ( hasInlineLink ) {
 		return {
@@ -118,7 +122,7 @@ function findElementIdOf( element: Element ): string | null {
 	return element.closest< HTMLElement >( '[data-id]' )?.dataset.id || null;
 }
 
-function checkForInlineLink( elementId: string ): boolean {
+function checkForInlineLink( elementId: string, resolvedValue?: LinkValue ): boolean {
 	const element = getElementDOM( elementId );
 
 	if ( ! element ) {
@@ -129,9 +133,9 @@ function checkForInlineLink( elementId: string ): boolean {
 		return false;
 	}
 
-	const linkSetting = getElementSetting< { value?: { destination?: unknown } } >( elementId, 'link' );
+	const linkSetting = resolvedValue ?? getElementSetting< LinkPropValue >( elementId, 'link' )?.value;
 
-	if ( linkSetting?.value?.destination ) {
+	if ( linkSetting?.destination ) {
 		return false;
 	}
 

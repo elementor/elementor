@@ -142,11 +142,7 @@ const TextInput = ( {
 			} }
 			InputProps={ {
 				...params.InputProps,
-				startAdornment: startAdornment ? (
-					<InputAdornment position="start">{ startAdornment }</InputAdornment>
-				) : (
-					params.InputProps.startAdornment
-				),
+				startAdornment: startAdornment || params.InputProps.startAdornment,
 				endAdornment: <ClearButton params={ params } allowClear={ allowClear } handleChange={ handleChange } />,
 			} }
 		/>

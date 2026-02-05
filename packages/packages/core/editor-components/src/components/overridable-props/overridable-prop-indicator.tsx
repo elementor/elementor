@@ -2,28 +2,27 @@ import * as React from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
 import { useElement } from '@elementor/editor-editing-panel';
 import { getWidgetsCache } from '@elementor/editor-elements';
-import { type TransformablePropValue } from '@elementor/editor-props';
+import { type PropType, type TransformablePropValue } from '@elementor/editor-props';
 import { bindPopover, bindTrigger, Popover, Tooltip, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { useSanitizeOverridableProps } from '../../hooks/use-sanitize-overridable-props';
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
 import { useComponentInstanceElement, useOverridablePropValue } from '../../provider/overridable-prop-context';
 import { setOverridableProp } from '../../store/actions/set-overridable-prop';
-import { useCurrentComponentId, useOverridableProps } from '../../store/store';
+import { useCurrentComponentId } from '../../store/store';
 import { type OverridableProps } from '../../types';
 import { resolveOverridePropValue } from '../../utils/resolve-override-prop-value';
 import { Indicator } from './indicator';
 import { OverridablePropForm } from './overridable-prop-form';
 import { getOverridableProp } from './utils/get-overridable-prop';
 
-const FORBIDDEN_KEYS = [ '_cssid', 'attributes' ];
-
 export function OverridablePropIndicator() {
-	const { bind } = useBoundProp();
+	const { propType } = useBoundProp();
 	const componentId = useCurrentComponentId();
-	const overridableProps = useOverridableProps( componentId );
+	const overridableProps = useSanitizeOverridableProps( componentId );
 
-	if ( ! isPropAllowed( bind ) || ! componentId || ! overridableProps ) {
+	if ( ! isPropAllowed( propType ) || ! componentId || ! overridableProps ) {
 		return null;
 	}
 
@@ -83,6 +82,7 @@ export function Content( { componentId, overridableProps }: Props ) {
 			widgetType: componentInstanceElement?.elementType.key ?? elementType.key,
 			originValue,
 			originPropFields: matchingOverridableProp?.originPropFields,
+			source: 'user',
 		} );
 
 		if ( ! overridableValue && overridablePropConfig ) {
@@ -133,6 +133,6 @@ export function Content( { componentId, overridableProps }: Props ) {
 	);
 }
 
-function isPropAllowed( bind: string ) {
-	return ! FORBIDDEN_KEYS.includes( bind );
+function isPropAllowed( propType: PropType ) {
+	return propType.meta.overridable !== false;
 }

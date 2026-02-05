@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 
 use Elementor\Modules\AtomicWidgets\Elements\TemplateRenderer\Template_Renderer;
+use Elementor\Modules\Interactions\Adapter as Interactions_Adapter;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -54,9 +55,7 @@ trait Has_Template {
 	public function get_interactions_ids() {
 		$animation_ids = [];
 
-		$list_of_interactions = ( is_array( $this->interactions ) && isset( $this->interactions['items'] ) )
-			? $this->interactions['items']
-			: [];
+		$list_of_interactions = $this->extract_interactions_items( $this->interactions );
 
 		foreach ( $list_of_interactions as $interaction ) {
 
@@ -71,6 +70,26 @@ trait Has_Template {
 		}
 
 		return $animation_ids;
+	}
+
+	/**
+	 * Extract items array from interactions data.
+	 * Handles both v1 format (items is array) and v2 format (items is wrapped with $$type).
+	 */
+	private function extract_interactions_items( $interactions ) {
+		if ( ! is_array( $interactions ) || ! isset( $interactions['items'] ) ) {
+			return [];
+		}
+
+		$items = $interactions['items'];
+
+		// Handle v2 wrapped format: {$$type: 'interactions-array', value: [...]}
+		if ( isset( $items['$$type'] ) && Interactions_Adapter::ITEMS_TYPE === $items['$$type'] ) {
+			return isset( $items['value'] ) && is_array( $items['value'] ) ? $items['value'] : [];
+		}
+
+		// v1 format: items is direct array
+		return is_array( $items ) ? $items : [];
 	}
 
 	private function extract_animation_id_from_prop_type( $item ) {
@@ -93,25 +112,45 @@ trait Has_Template {
 		$timing_config = $this->extract_prop_value_simple( $animation, 'timing_config' );
 		$config = $this->extract_prop_value_simple( $animation, 'config' );
 
-		$duration = 300;
+		$duration = 600;
 		$delay = 0;
 		$replay = 0;
+		$easing = 'easeIn';
+		$relative_to = 'viewport';
+		$offset_top = 15;
+		$offset_bottom = 85;
 
 		if ( is_array( $timing_config ) ) {
-			$duration = $this->extract_prop_value_simple( $timing_config, 'duration', 300 );
-			$delay = $this->extract_prop_value_simple( $timing_config, 'delay', 0 );
+			$duration = Interactions_Adapter::extract_time_value( $timing_config['duration'] ?? null, 600 );
+			$delay = Interactions_Adapter::extract_time_value( $timing_config['delay'] ?? null, 0 );
 		}
 
 		if ( is_array( $config ) ) {
+			$relative_to = $this->extract_prop_value_simple( $config, 'relativeTo', 'viewport' );
+			$offset_top = Interactions_Adapter::extract_numeric_value( $config['offsetTop'] ?? null, 15 );
+			$offset_bottom = Interactions_Adapter::extract_numeric_value( $config['offsetBottom'] ?? null, 85 );
 			$replay = $this->extract_prop_value_simple( $config, 'replay', 0 );
 			if ( empty( $replay ) && 0 !== $replay && '0' !== $replay ) {
 				$replay = 0;
 			}
+			$easing = $this->extract_prop_value_simple( $config, 'easing', 'easeIn' );
 		} else {
 			$replay = 0;
 		}
 
-		return implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay, $replay ] );
+		return implode( '-', [
+			$trigger,
+			$effect,
+			$type,
+			$direction,
+			$duration,
+			$delay,
+			$replay,
+			$easing,
+			$relative_to,
+			$offset_top,
+			$offset_bottom,
+		] );
 	}
 
 	private function extract_prop_value_simple( $data, $key, $default = '' ) {

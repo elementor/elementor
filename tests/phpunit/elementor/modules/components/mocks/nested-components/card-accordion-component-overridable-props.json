@@ -47,7 +47,8 @@
             "originPropFields": {
                 "elType": "widget",
                 "widgetType": "e-image",
-                "propKey": "image"
+                "propKey": "image",
+                "elementId": "4aefcf4"
             },
             "groupId": "group-2"
         },
@@ -72,7 +73,8 @@
             "originPropFields": {
                 "elType": "widget",
                 "widgetType": "e-heading",
-                "propKey": "title"
+                "propKey": "title",
+                "elementId": "aac40b3"
             },
             "groupId": "group-2"
         },
@@ -97,7 +99,8 @@
             "originPropFields": {
                 "elType": "widget",
                 "widgetType": "e-button",
-                "propKey": "text"
+                "propKey": "text",
+                "elementId": "07ac447"
             },
             "groupId": "group-2"
         },
@@ -122,7 +125,8 @@
             "originPropFields": {
                 "elType": "widget",
                 "widgetType": "e-button",
-                "propKey": "link"
+                "propKey": "link",
+                "elementId": "07ac447"
             },
             "groupId": "group-2"
         },
@@ -147,7 +151,8 @@
             "originPropFields": {
                 "elType": "widget",
                 "widgetType": "e-image",
-                "propKey": "image"
+                "propKey": "image",
+                "elementId": "4aefcf4"
             },
             "groupId": "group-3"
         },
@@ -172,7 +177,8 @@
             "originPropFields": {
                 "elType": "widget",
                 "widgetType": "e-heading",
-                "propKey": "title"
+                "propKey": "title",
+                "elementId": "aac40b3"
             },
             "groupId": "group-3"
         },
@@ -197,7 +203,8 @@
             "originPropFields": {
                 "elType": "widget",
                 "widgetType": "e-button",
-                "propKey": "text"
+                "propKey": "text",
+                "elementId": "07ac447"
             },
             "groupId": "group-3"
         },
@@ -222,7 +229,8 @@
             "originPropFields": {
                 "elType": "widget",
                 "widgetType": "e-button",
-                "propKey": "link"
+                "propKey": "link",
+                "elementId": "07ac447"
             },
             "groupId": "group-3"
         }

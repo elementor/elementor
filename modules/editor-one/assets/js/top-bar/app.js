@@ -1,16 +1,17 @@
 import ReactUtils from 'elementor-utils/react';
 import { ElementorOneHeader, ElementorOneAssetsProvider } from '@elementor/elementor-one-assets';
 import { useAdminMenuOffset } from '../sidebar-navigation/components/hooks/use-admin-menu-offset';
+import isRTL from '../shared/is-rtl';
 
 const App = () => {
 	const { elementorOneTopBarConfig: { version, title, environment } } = window;
 
-	const isRTL = elementorCommon?.config?.isRTL ?? false;
+	const isRtlLanguage = isRTL();
 
 	useAdminMenuOffset();
 
 	return (
-		<ElementorOneAssetsProvider env={ environment } isRTL={ isRTL }>
+		<ElementorOneAssetsProvider env={ environment } isRTL={ isRtlLanguage }>
 			<ElementorOneHeader
 				appSettings={ { slug: 'elementor', version } }
 				isWithinWpAdmin

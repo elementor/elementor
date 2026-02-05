@@ -22,12 +22,22 @@ class Module extends BaseModule {
 
 	private $preset_animations;
 
+	private $frontend_handler;
+
 	private function get_presets() {
 		if ( ! $this->preset_animations ) {
 			$this->preset_animations = new Presets();
 		}
 
 		return $this->preset_animations;
+	}
+
+	private function get_frontend_handler() {
+		if ( ! $this->frontend_handler ) {
+			$this->frontend_handler = new Interactions_Frontend_Handler();
+		}
+
+		return $this->frontend_handler;
 	}
 
 	public static function get_experimental_data() {
@@ -59,6 +69,12 @@ class Module extends BaseModule {
 		add_action( 'elementor/preview/enqueue_scripts', fn () => $this->enqueue_preview_scripts() );
 		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
 
+		// Collect interactions from documents before they render (header, footer, post content)
+		add_filter( 'elementor/frontend/builder_content_data', [ $this->get_frontend_handler(), 'collect_document_interactions' ], 10, 2 );
+
+		// Output centralized interaction data in footer
+		add_action( 'wp_footer', [ $this->get_frontend_handler(), 'print_interactions_data' ], 1 );
+
 		add_filter( 'elementor/document/save/data',
 			/**
 			 * @throws \Exception
@@ -75,6 +91,14 @@ class Module extends BaseModule {
 		add_filter( 'elementor/document/save/data', function( $data, $document ) {
 			return ( new Parser( $document->get_main_id() ) )->assign_interaction_ids( $data );
 		}, 11, 2 );
+		add_filter( 'elementor/document/save/data', function( $data, $document ) {
+			return $this->wrap_interactions_for_db( $data );
+		}, 12, 2 ); // Priority 12 = after validation (10) and ID assignment (11)
+
+		// Unwrap data AFTER loading from DB for frontend/editor
+		add_filter( 'elementor/document/load/data', function( $elements, $document ) {
+			return $this->process_elements_unwrap( $elements );
+		}, 10, 2 );
 	}
 
 	private function get_config() {
@@ -141,5 +165,43 @@ class Module extends BaseModule {
 			'ElementorInteractionsConfig',
 			$this->get_config()
 		);
+	}
+
+	private function wrap_interactions_for_db( $data ) {
+		if ( isset( $data['elements'] ) && is_array( $data['elements'] ) ) {
+			$data['elements'] = $this->process_elements_wrap( $data['elements'] );
+		}
+		return $data;
+	}
+
+	private function unwrap_interactions_for_frontend( $data ) {
+		if ( isset( $data['elements'] ) && is_array( $data['elements'] ) ) {
+			$data['elements'] = $this->process_elements_unwrap( $data['elements'] );
+		}
+		return $data;
+	}
+
+	private function process_elements_wrap( $elements ) {
+		foreach ( $elements as &$element ) {
+			if ( isset( $element['interactions'] ) ) {
+				$element['interactions'] = Adapter::wrap_for_db( $element['interactions'] );
+			}
+			if ( isset( $element['elements'] ) && is_array( $element['elements'] ) ) {
+				$element['elements'] = $this->process_elements_wrap( $element['elements'] );
+			}
+		}
+		return $elements;
+	}
+
+	private function process_elements_unwrap( $elements ) {
+		foreach ( $elements as &$element ) {
+			if ( isset( $element['interactions'] ) ) {
+				$element['interactions'] = Adapter::unwrap_for_frontend( $element['interactions'] );
+			}
+			if ( isset( $element['elements'] ) && is_array( $element['elements'] ) ) {
+				$element['elements'] = $this->process_elements_unwrap( $element['elements'] );
+			}
+		}
+		return $elements;
 	}
 }

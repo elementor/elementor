@@ -49,10 +49,7 @@ export function KitCustomizationDialog( {
 				</Button>
 				<Button
 					disabled={ saveDisabled }
-					onClick={ () => {
-						handleSaveChanges();
-						handleClose();
-					} }
+					onClick={ handleSaveChanges }
 					variant="contained"
 					color="primary"
 				>

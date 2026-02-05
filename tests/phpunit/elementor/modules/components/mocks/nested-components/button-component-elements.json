@@ -16,7 +16,7 @@
                         "value": {
                             "override_key": "prop-0",
                             "origin_value": {
-                                "$$type": "string",
+                                "$$type": "html",
                                 "value": "Click here"
                             }
                         }

@@ -1,10 +1,14 @@
 import { type V1ElementConfig } from '@elementor/editor-elements';
 
 import { type DomRenderer } from '../renderers/create-dom-renderer';
-import { createPropsResolver } from '../renderers/create-props-resolver';
-import { settingsTransformersRegistry } from '../settings-transformers-registry';
 import { signalizedProcess } from '../utils/signalized-process';
 import { createElementViewClassDeclaration } from './create-element-type';
+import {
+	createAfterRender,
+	createBeforeRender,
+	setupTwigRenderer,
+	type TwigViewInterface,
+} from './twig-rendering-utils';
 import {
 	type ElementType,
 	type ElementView,
@@ -63,17 +67,10 @@ export function createTemplatedElementView( {
 }: CreateTemplatedElementTypeOptions ): typeof ElementView {
 	const BaseView = createElementViewClassDeclaration();
 
-	const templateKey = element.twig_main_template;
-
-	const baseStylesDictionary = element.base_styles_dictionary;
-
-	Object.entries( element.twig_templates ).forEach( ( [ key, template ] ) => {
-		renderer.register( key, template );
-	} );
-
-	const resolveProps = createPropsResolver( {
-		transformers: settingsTransformersRegistry,
-		schema: element.atomic_props_schema,
+	const { templateKey, baseStylesDictionary, resolveProps } = setupTwigRenderer( {
+		type,
+		renderer,
+		element,
 	} );
 
 	return class extends BaseView {
@@ -215,20 +212,22 @@ export function createTemplatedElementView( {
 		}
 
 		_beforeRender() {
-			this._ensureViewIsIntact();
-
-			this._isRendering = true;
-
-			this.resetChildViewContainer();
-
-			this.triggerMethod( 'before:render', this );
+			createBeforeRender( this as unknown as TwigViewInterface );
 		}
 
 		_afterRender() {
-			this._isRendering = false;
-			this.isRendered = true;
+			createAfterRender( this as unknown as TwigViewInterface );
+		}
 
-			this.triggerMethod( 'render', this );
+		_doAfterRender( callback: () => void ) {
+			if ( this.isRendered ) {
+				callback();
+			} else {
+				this.once( 'render', callback );
+			}
+		}
+		_openEditingPanel( options?: { scrollIntoView: boolean } ) {
+			this._doAfterRender( () => super._openEditingPanel( options ) );
 		}
 	};
 }

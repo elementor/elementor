@@ -68,7 +68,7 @@ class Elementor_One_Menu_Manager {
 			esc_html__( 'Editor', 'elementor' ),
 			esc_html__( 'Editor', 'elementor' ),
 			Menu_Config::CAPABILITY_EDIT_POSTS,
-			Menu_Config::EDITOR_MENU_SLUG,
+			Menu_Config::ELEMENTOR_MENU_SLUG,
 			[ $this, 'render_editor_page' ],
 			20
 		);
@@ -188,7 +188,8 @@ class Elementor_One_Menu_Manager {
 	public function hide_legacy_templates_menu(): void {
 		?>
 		<style type="text/css">
-			#menu-posts-elementor_library {
+			#menu-posts-elementor_library, 
+			#menu-posts-elementor_library + .wp-not-current-submenu.wp-menu-separator {
 				display: none !important;
 			}
 		</style>
@@ -198,7 +199,8 @@ class Elementor_One_Menu_Manager {
 	public function hide_old_elementor_menu(): void {
 		?>
 		<style type="text/css">
-			#toplevel_page_elementor {
+			#toplevel_page_elementor,
+			#toplevel_page_elementor + .wp-not-current-submenu.wp-menu-separator {
 				display: none !important;
 			}
 		</style>
@@ -313,7 +315,9 @@ class Elementor_One_Menu_Manager {
 		);
 
 		$config = [
-			'editorFlyout' => $this->get_editor_flyout_data(),
+			'editorFlyout' => $this->menu_data_provider->get_third_level_data(
+				Menu_Data_Provider::THIRD_LEVEL_FLYOUT_MENU
+			),
 		];
 
 		wp_enqueue_script(
@@ -329,10 +333,6 @@ class Elementor_One_Menu_Manager {
 			'editorOneMenuConfig',
 			$config
 		);
-	}
-
-	private function get_editor_flyout_data(): array {
-		return $this->menu_data_provider->get_editor_flyout_data();
 	}
 }
 

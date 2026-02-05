@@ -1,7 +1,7 @@
 {
   "name": "elementor",
   "slug": "elementor",
-  "version": "3.35.0",
+  "version": "4.0.0",
   "last_beta_version": "3.12.0-beta3",
   "last_cloud_version": "3.13.0-cloud2",
   "last_dev_version": "3.9.0-dev2",
@@ -51,7 +51,8 @@
     "packages:release": "cd packages && npm run release",
     "wp-playground": "npx -y @wp-playground/cli server --mount=.:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/local.json",
     "wp-playground:ci": "npx -y @wp-playground/cli server --mount=./build:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/ci.json",
-    "full-e2e-local": "npx concurrently \"npm run watch\" \"npm run wp-playground\" \"npm run test:playwright -- --ui\""
+    "full-e2e-local": "npx concurrently \"npm run watch\" \"npm run wp-playground\" \"npm run test:playwright -- --ui\"",
+    "prepare": "husky"
   },
   "engines": {
     "node": ">=20.19.0",
@@ -115,6 +116,7 @@
     "grunt-text-replace": "~0.4.0",
     "grunt-webpack": "^7.0.0",
     "grunt-wp-readme-to-markdown-with-extra": "~2.2.0",
+    "husky": "^9.1.7",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "karma": "^6.4.4",
@@ -127,6 +129,7 @@
     "karma-qunit": "^4.2.1",
     "karma-remap-coverage": "0.1.5",
     "lighthouse": "^12.3.0",
+    "lint-staged": "^16.2.7",
     "load-grunt-tasks": "^5.1.0",
     "mini-css-extract-plugin": "^2.9.2",
     "path": "^0.12.7",
@@ -144,7 +147,7 @@
     "write": "^2.0.0"
   },
   "dependencies": {
-    "@elementor/elementor-one-assets": "0.4.18",
+    "@elementor/elementor-one-assets": "0.4.26",
     "@elementor/icons": "1.63.0",
     "@elementor/ui": "1.36.17",
     "@reach/router": "1.3.4",
@@ -179,5 +182,13 @@
     "date-fns": "^3.6.0",
     "scheduler": "^0.20.0",
     "form-data": "4.0.4"
+  },
+  "lint-staged": {
+    "packages/**/*.{js,jsx,ts,tsx}": [
+      "node scripts/lint-packages-staged.js"
+    ],
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix"
+    ]
   }
 }

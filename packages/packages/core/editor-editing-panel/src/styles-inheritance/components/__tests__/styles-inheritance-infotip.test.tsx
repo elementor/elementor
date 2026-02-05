@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createMockPropType, initMockStylesTransformersRegistry, renderWithTheme } from 'test-utils';
-import { createTransformer } from '@elementor/editor-canvas';
+import { createTransformer, stylesInheritanceTransformersRegistry } from '@elementor/editor-canvas';
 import { useBreakpoints } from '@elementor/editor-responsive';
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 
@@ -13,8 +13,7 @@ import {
 	mockTestPropType,
 } from '../../__tests__/mock-inheritance-chain';
 import { initStylesInheritanceTransformers } from '../../init-styles-inheritance-transformers';
-import { stylesInheritanceTransformersRegistry } from '../../styles-inheritance-transformers-registry';
-import { StylesInheritanceInfotip } from '../styles-inheritance-infotip';
+import { calculatePopoverOffset, StylesInheritanceInfotip } from '../styles-inheritance-infotip';
 
 jest.mock( '@elementor/editor-responsive', () => ( {
 	...jest.requireActual( '@elementor/editor-responsive' ),
@@ -176,6 +175,62 @@ describe( 'StylesInheritanceInfotip', () => {
 
 			const valueText = within( boxItem ).getByText( item.value );
 			expect( valueText ).toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'calculatePopoverOffset', () => {
+		it( 'should center popover under trigger in LTR', () => {
+			const triggerRect = new DOMRect( 0, 0, 40, 40 );
+			const cardWidth = 400;
+			const isSiteRtl = false;
+
+			const offsetX = calculatePopoverOffset( triggerRect, cardWidth, isSiteRtl );
+
+			expect( offsetX ).toBe( -( 400 / 2 ) + 40 / 2 );
+			expect( offsetX ).toBe( -180 );
+		} );
+
+		it( 'should align popover to right edge in RTL', () => {
+			const triggerRect = new DOMRect( 0, 0, 40, 40 );
+			const cardWidth = 400;
+			const isSiteRtl = true;
+
+			const offsetX = calculatePopoverOffset( triggerRect, cardWidth, isSiteRtl );
+
+			expect( offsetX ).toBe( 40 - 400 );
+			expect( offsetX ).toBe( -360 );
+		} );
+
+		it( 'should handle null triggerRect gracefully', () => {
+			const triggerRect = undefined;
+			const cardWidth = 400;
+			const isSiteRtl = false;
+
+			const offsetX = calculatePopoverOffset( triggerRect, cardWidth, isSiteRtl );
+
+			expect( offsetX ).toBe( 0 );
+		} );
+
+		it( 'should calculate offset correctly with different card and trigger widths in LTR', () => {
+			const triggerRect = new DOMRect( 0, 0, 24, 24 );
+			const cardWidth = 496;
+			const isSiteRtl = false;
+
+			const offsetX = calculatePopoverOffset( triggerRect, cardWidth, isSiteRtl );
+
+			expect( offsetX ).toBe( -( 496 / 2 ) + 24 / 2 );
+			expect( offsetX ).toBe( -236 );
+		} );
+
+		it( 'should calculate offset correctly with different card and trigger widths in RTL', () => {
+			const triggerRect = new DOMRect( 0, 0, 24, 24 );
+			const cardWidth = 496;
+			const isSiteRtl = true;
+
+			const offsetX = calculatePopoverOffset( triggerRect, cardWidth, isSiteRtl );
+
+			expect( offsetX ).toBe( 24 - 496 );
+			expect( offsetX ).toBe( -472 );
 		} );
 	} );
 } );

@@ -1,11 +1,12 @@
-import { initCreateVariableTool } from './create-variable-tool';
-import { initDeleteVariableTool } from './delete-variable-tool';
-import { initUpdateVariableTool } from './update-variable-tool';
+import { isAngieAvailable } from '@elementor/editor-mcp';
+
+import { initManageVariableTool } from './manage-variable-tool';
 import { initVariablesResource } from './variables-resource';
 
 export function initMcp() {
-	initCreateVariableTool();
-	initUpdateVariableTool();
-	initDeleteVariableTool();
+	if ( ! isAngieAvailable() ) {
+		return;
+	}
+	initManageVariableTool();
 	initVariablesResource();
 }

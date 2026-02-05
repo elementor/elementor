@@ -3,11 +3,14 @@ import {
 	getKeyframes,
 	parseAnimationName,
 	extractAnimationId,
+	extractAnimationConfig,
 	getAnimateFunction,
 	getInViewFunction,
 	waitForAnimateFunction,
 	parseInteractionsData,
 } from './interactions-utils.js';
+
+import { initBreakpoints, getActiveBreakpoint } from './interactions-breakpoints.js';
 
 function scrollOutAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc ) {
 	const viewOptions = { amount: 0.85, root: null };
@@ -47,10 +50,11 @@ function defaultAnimation( element, transition, keyframes, options, animateFunc 
 
 function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
+
 	const options = {
 		duration: animConfig.duration / 1000,
 		delay: animConfig.delay / 1000,
-		easing: config.easing,
+		ease: config.defaultEasing,
 	};
 
 	// WHY - Transition can be set on elements but once it sets it destroys all animations, so we basically put it aside.
@@ -65,6 +69,47 @@ function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	}
 }
 
+function skipInteraction( interaction ) {
+	const activeBreakpoint = getActiveBreakpoint();
+	if ( interaction.breakpoints && interaction.breakpoints?.excluded?.includes( activeBreakpoint ) ) {
+		return true;
+	}
+	return false;
+}
+
+function processElementInteractions( element, interactions, animateFunc, inViewFunc ) {
+	if ( ! interactions || ! Array.isArray( interactions ) ) {
+		return;
+	}
+
+	interactions.forEach( ( interaction ) => {
+		if ( skipInteraction( interaction ) ) {
+			return;
+		}
+
+		const animConfig = extractAnimationConfig( interaction );
+
+		if ( animConfig ) {
+			applyAnimation( element, animConfig, animateFunc, inViewFunc );
+		}
+	} );
+}
+
+function processElementInteractionsLegacy( element, interactions, animateFunc, inViewFunc ) {
+	if ( ! interactions || ! Array.isArray( interactions ) ) {
+		return;
+	}
+
+	interactions.forEach( ( interaction ) => {
+		const animationName = extractAnimationId( interaction );
+		const animConfig = animationName && parseAnimationName( animationName );
+
+		if ( animConfig ) {
+			applyAnimation( element, animConfig, animateFunc, inViewFunc );
+		}
+	} );
+}
+
 function initInteractions() {
 	waitForAnimateFunction( () => {
 		const animateFunc = getAnimateFunction();
@@ -74,30 +119,49 @@ function initInteractions() {
 			return;
 		}
 
+		// New method: Read centralized interactions data from script tag
+		const dataScript = document.getElementById( 'elementor-interactions-data' );
+		if ( dataScript ) {
+			const elementsData = JSON.parse( dataScript.textContent );
+
+			elementsData.forEach( ( elementData ) => {
+				const { elementId, interactions } = elementData;
+
+				if ( ! elementId || ! interactions || ! Array.isArray( interactions ) ) {
+					return;
+				}
+
+				const element = document.querySelector( `[data-interaction-id="${ elementId }"]` );
+
+				if ( ! element ) {
+					return;
+				}
+
+				processElementInteractions( element, interactions, animateFunc, inViewFunc );
+			} );
+
+			return;
+		}
+
+		// Legacy fallback: parse data-interactions attributes
 		const elements = document.querySelectorAll( '[data-interactions]' );
 
 		elements.forEach( ( element ) => {
 			const interactionsData = element.getAttribute( 'data-interactions' );
 			const parsedData = parseInteractionsData( interactionsData );
 
-			if ( ! parsedData || ! Array.isArray( parsedData ) ) {
-				return;
-			}
-
-			parsedData.forEach( ( interaction ) => {
-				const animationName = extractAnimationId( interaction );
-				const animConfig = animationName && parseAnimationName( animationName );
-
-				if ( animConfig ) {
-					applyAnimation( element, animConfig, animateFunc, inViewFunc );
-				}
-			} );
+			processElementInteractionsLegacy( element, parsedData, animateFunc, inViewFunc );
 		} );
 	} );
 }
 
-if ( 'loading' === document.readyState ) {
-	document.addEventListener( 'DOMContentLoaded', initInteractions );
-} else {
+function init() {
+	initBreakpoints();
 	initInteractions();
+}
+
+if ( 'loading' === document.readyState ) {
+	document.addEventListener( 'DOMContentLoaded', init );
+} else {
+	init();
 }

@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { type KeyboardEvent, useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
-import { PopoverBody } from '@elementor/editor-editing-panel';
-import { PopoverHeader } from '@elementor/editor-ui';
+import { PopoverHeader, SectionPopoverBody } from '@elementor/editor-ui';
 import { Button, CardActions, Divider, FormHelperText, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -102,7 +101,7 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 
 	return (
 		<PopoverContentRefContextProvider>
-			<PopoverBody height="auto">
+			<SectionPopoverBody height="auto">
 				<PopoverHeader
 					icon={ <VariableIcon fontSize={ SIZE } /> }
 					title={ __( 'Restore variable', 'elementor' ) }
@@ -163,7 +162,7 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 						{ __( 'Restore', 'elementor' ) }
 					</Button>
 				</CardActions>
-			</PopoverBody>
+			</SectionPopoverBody>
 		</PopoverContentRefContextProvider>
 	);
 };

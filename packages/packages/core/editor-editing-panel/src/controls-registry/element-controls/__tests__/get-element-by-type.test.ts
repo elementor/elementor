@@ -13,10 +13,6 @@ describe( 'getElementByType', () => {
 	const ELEMENT_ID = 'test-element-id';
 	const TARGET_TYPE = 'widget';
 
-	beforeEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	it( 'should return the current element when it matches the target type', () => {
 		// Arrange
 		const mockElement = createMockElement( {
@@ -88,7 +84,7 @@ describe( 'getElementByType', () => {
 		expect( mockGetContainer ).toHaveBeenCalledWith( ELEMENT_ID );
 	} );
 
-	it( 'should throw error when no child element matches the type', () => {
+	it( 'should return null when no child element matches the type', () => {
 		// Arrange
 		const childElement1 = createMockChild( {
 			elType: 'section',
@@ -102,43 +98,33 @@ describe( 'getElementByType', () => {
 
 		mockGetContainer.mockReturnValue( createMockContainer( ELEMENT_ID, [ childElement1, childElement2 ] ) );
 
-		// Act & Assert
-		expect( () => getElementByType( ELEMENT_ID, TARGET_TYPE ) ).toThrow(
-			`Child element ${ TARGET_TYPE } not found`
-		);
-		expect( mockGetContainer ).toHaveBeenCalledWith( ELEMENT_ID );
+		// Act
+		const result = getElementByType( ELEMENT_ID, TARGET_TYPE );
+
+		// Assert
+		expect( result ).toBeNull();
 	} );
 
-	it( 'should throw error when container has no children', () => {
+	it( 'should return null when container has no children', () => {
 		// Arrange
 		mockGetContainer.mockReturnValue( createMockContainer( ELEMENT_ID, [] ) );
 
-		// Act & Assert
-		expect( () => getElementByType( ELEMENT_ID, TARGET_TYPE ) ).toThrow(
-			`Child element ${ TARGET_TYPE } not found`
-		);
-		expect( mockGetContainer ).toHaveBeenCalledWith( ELEMENT_ID );
+		// Act
+		const result = getElementByType( ELEMENT_ID, TARGET_TYPE );
+
+		// Assert
+		expect( result ).toBeNull();
 	} );
 
-	it( 'should throw error when getContainer returns null', () => {
+	it( 'should return null when getContainer returns null', () => {
 		// Arrange
 		mockGetContainer.mockReturnValue( null );
 
-		// Act & Assert
-		expect( () => getElementByType( ELEMENT_ID, TARGET_TYPE ) ).toThrow(
-			`Current element not found, elementId: ${ ELEMENT_ID }`
-		);
-		expect( mockGetContainer ).toHaveBeenCalledWith( ELEMENT_ID );
-	} );
+		// Act
+		const result = getElementByType( ELEMENT_ID, TARGET_TYPE );
 
-	it( 'should handle empty children array', () => {
-		// Arrange
-		mockGetContainer.mockReturnValue( createMockContainer( ELEMENT_ID, [] ) );
-
-		// Act & Assert
-		expect( () => getElementByType( ELEMENT_ID, TARGET_TYPE ) ).toThrow(
-			`Child element ${ TARGET_TYPE } not found`
-		);
+		// Assert
+		expect( result ).toBeNull();
 	} );
 
 	it( 'should handle children with undefined children property', () => {
@@ -152,10 +138,11 @@ describe( 'getElementByType', () => {
 
 		mockGetContainer.mockReturnValue( createMockContainer( ELEMENT_ID, [ childWithoutChildren ] ) );
 
-		// Act & Assert
-		expect( () => getElementByType( ELEMENT_ID, TARGET_TYPE ) ).toThrow(
-			`Child element ${ TARGET_TYPE } not found`
-		);
+		// Act
+		const result = getElementByType( ELEMENT_ID, TARGET_TYPE );
+
+		// Assert
+		expect( result ).toBeNull();
 	} );
 
 	it( 'should work with different element types', () => {

@@ -1,15 +1,13 @@
 <?php
 namespace Elementor\Modules\LandingPages;
 
-use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
-use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\LandingPages\Documents\Landing_Page;
-use Elementor\Modules\LandingPages\AdminMenuItems\Landing_Pages_Menu_Item;
-use Elementor\Modules\LandingPages\AdminMenuItems\Landing_Pages_Empty_View_Menu_Item;
+use Elementor\Modules\LandingPages\AdminMenuItems\Editor_One_Landing_Pages_Menu;
 use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 
@@ -144,7 +142,7 @@ class Module extends BaseModule {
 		return self::CPT === $post->post_type;
 	}
 
-	private function get_menu_args() {
+	public function get_menu_args() {
 		if ( $this->has_landing_pages() ) {
 			$menu_slug = self::ADMIN_PAGE_SLUG;
 			$function = null;
@@ -159,36 +157,8 @@ class Module extends BaseModule {
 		];
 	}
 
-	private function register_admin_menu( MainMenu $menu ) {
-		$landing_pages_title = esc_html__( 'Landing Pages', 'elementor' );
-
-		$menu_args = array_merge( $this->get_menu_args(), [
-			'page_title' => $landing_pages_title,
-			'menu_title' => $landing_pages_title,
-			'index' => 20,
-		] );
-
-		$menu->add_submenu( $menu_args );
-	}
-
-	/**
-	 * Add Submenu Page
-	 *
-	 * Adds the 'Landing Pages' submenu item to the 'Templates' menu item.
-	 *
-	 * @since 3.1.0
-	 */
-	private function register_admin_menu_legacy( Admin_Menu_Manager $admin_menu ) {
-		$menu_args = $this->get_menu_args();
-
-		$slug = $menu_args['menu_slug'];
-		$function = $menu_args['function'];
-
-		if ( is_callable( $function ) ) {
-			$admin_menu->register( $slug, new Landing_Pages_Empty_View_Menu_Item( $function ) );
-		} else {
-			$admin_menu->register( $slug, new Landing_Pages_Menu_Item() );
-		}
+	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ): void {
+		$menu_data_provider->register_menu( new Editor_One_Landing_Pages_Menu( $this ) );
 	}
 
 	/**
@@ -492,9 +462,17 @@ class Module extends BaseModule {
 			$documents_manager->register_document_type( self::DOCUMENT_TYPE, Landing_Page::get_class_full_name() );
 		} );
 
-		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-			$this->register_admin_menu_legacy( $admin_menu );
-		}, Source_Local::ADMIN_MENU_PRIORITY + 20 );
+		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+			$this->register_editor_one_menu( $menu_data_provider );
+		} );
+
+		add_filter( 'elementor/editor-one/menu/elementor_post_types', function ( array $elementor_post_types ): array {
+			$elementor_post_types[ static::CPT ] = [
+				'menu_slug' => 'elementor-editor-templates',
+				'child_slug' => 'edit.php?post_type=' . static::CPT,
+			];
+			return $elementor_post_types;
+		} );
 
 		// Add the custom 'Add New' link for Landing Pages into Elementor's admin config.
 		add_action( 'elementor/admin/localize_settings', function( array $settings ) {

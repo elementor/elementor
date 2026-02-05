@@ -55,6 +55,7 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	commandEndEvent: jest.fn(),
 	windowEvent: jest.fn(),
 	getCurrentEditMode: jest.fn().mockReturnValue( 'edit' ),
+	isExperimentActive: jest.fn().mockReturnValue( false ),
 } ) );
 
 jest.mock( '@elementor/ui', () => {
@@ -94,10 +95,12 @@ jest.mock( '../hooks/use-variables-manager-state', () => ( {
 
 jest.mock( '../variables-manager-table', () => {
 	const VariablesManagerTable = ( props: {
-		menuActions: unknown[];
+		menuActions: ( variableId: string ) => unknown[];
 		variables: Record< string, unknown >;
 		onChange: ( variables: Record< string, unknown > ) => void;
 	} ) => {
+		const menuActionsArray = props.menuActions( 'var-1' );
+
 		return (
 			<button
 				type="button"
@@ -114,7 +117,7 @@ jest.mock( '../variables-manager-table', () => {
 				} }
 				data-props={ JSON.stringify( {
 					...props,
-					menuActions: props.menuActions?.map( ( action ) => {
+					menuActions: menuActionsArray.map( ( action ) => {
 						const typedAction = action as { name: string; icon: unknown; color: string; onClick: unknown };
 						return {
 							...typedAction,

@@ -16,7 +16,7 @@
               "value": "h1"
             },
             "title": {
-              "$$type": "string",
+              "$$type": "html",
               "value": "H1 Main Heading - Large Size"
             }
           },

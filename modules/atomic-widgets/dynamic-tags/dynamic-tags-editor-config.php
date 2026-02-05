@@ -87,6 +87,7 @@ class Dynamic_Tags_Editor_Config {
 			'group'           => $tag['atomic_group'] ?? $tag['group'] ?? '',
 			'atomic_controls' => [],
 			'props_schema'    => $this->schemas->get( $tag['name'] ),
+			'meta'            => $tag['meta'] ?? [],
 		];
 
 		if ( ! isset( $tag['controls'] ) ) {

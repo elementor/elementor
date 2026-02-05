@@ -1,44 +1,6 @@
 import { OnboardingEventTracking } from './onboarding-event-tracking';
 
 /**
- * Checkboxes data.
- */
-const optionsWithoutOne = [
-	{
-		plan: 'essential',
-		text: __( 'Templates & Theme Builder', 'elementor' ),
-	},
-	{
-		plan: 'advanced',
-		text: __( 'WooCommerce Builder', 'elementor' ),
-	},
-	{
-		plan: 'essential',
-		text: __( 'Lead Collection & Form Builder', 'elementor' ),
-	},
-	{
-		plan: 'essential',
-		text: __( 'Dynamic Content', 'elementor' ),
-	},
-	{
-		plan: 'advanced',
-		text: __( 'Popup Builder', 'elementor' ),
-	},
-	{
-		plan: 'advanced',
-		text: __( 'Custom Code & CSS', 'elementor' ),
-	},
-	{
-		plan: 'essential',
-		text: __( 'Motion Effects & Animations', 'elementor' ),
-	},
-	{
-		plan: 'advanced',
-		text: __( 'Notes & Collaboration', 'elementor' ),
-	},
-];
-
-/**
  * Updated checkboxes data with ONE features (when editor_one is active).
  * Order matches Figma design: 2 columns, 4 rows
  * Row 1: Theme Builder | AI for code, images, & layouts
@@ -82,12 +44,10 @@ const optionsWithOne = [
 ];
 
 /**
- * Get checkboxes data based on editor_one feature status.
- * @param {boolean} isEditorOneActive - Whether editor_one feature is active.
  * @return {Array} Array of feature options.
  */
-export const getOptions = ( isEditorOneActive = false ) => {
-	return isEditorOneActive ? optionsWithOne : optionsWithoutOne;
+export const getOptions = () => {
+	return optionsWithOne;
 };
 
 /**

@@ -59,7 +59,7 @@ const areAllPropertiesUsed = ( value: SelectionSizePropValue[] = [] ) => {
 
 // this config needs to be loaded at runtime/render since it's the transitionProperties object will be mutated by the pro plugin.
 // See: https://elementor.atlassian.net/browse/ED-20285
-const getSelectionSizeProps = ( recentlyUsedList: string[], disabledItems?: string[] ) => {
+const getSelectionSizeProps = ( recentlyUsedList: string[], disabledItems?: string[], showPromotion?: boolean ) => {
 	return {
 		selectionLabel: __( 'Type', 'elementor' ),
 		sizeLabel: __( 'Duration', 'elementor' ),
@@ -68,6 +68,7 @@ const getSelectionSizeProps = ( recentlyUsedList: string[], disabledItems?: stri
 			props: {
 				recentlyUsedList,
 				disabledItems,
+				showPromotion,
 			},
 		},
 		sizeConfigMap: {
@@ -90,11 +91,11 @@ const isItemDisabled = ( item: TransitionItem[ 'value' ] ) => {
 	return ! property ? false : !! property.isDisabled;
 };
 
-const getChildControlConfig = ( recentlyUsedList: string[], disabledItems?: string[] ) => {
+const getChildControlConfig = ( recentlyUsedList: string[], disabledItems?: string[], showPromotion?: boolean ) => {
 	return {
 		propTypeUtil: selectionSizePropTypeUtil,
 		component: SelectionSizeControl as unknown as React.ComponentType< Record< string, unknown > >,
-		props: getSelectionSizeProps( recentlyUsedList, disabledItems ),
+		props: getSelectionSizeProps( recentlyUsedList, disabledItems, showPromotion ),
 		isItemDisabled: isItemDisabled as ( item: Item< RepeatablePropValue > ) => boolean,
 	};
 };
@@ -106,19 +107,23 @@ const isPropertyUsed = ( value: SelectionSizePropValue[], property: TransitionPr
 };
 
 const getDisabledItemLabels = ( values: SelectionSizePropValue[] = [] ) => {
-	const disabledLabels: string[] = ( values || [] ).map(
+	const selectedLabels: string[] = ( values || [] ).map(
 		( item ) => ( item.value?.selection as KeyValuePropValue )?.value?.key?.value
 	);
 
+	const proDisabledLabels: string[] = [];
 	transitionProperties.forEach( ( category ) => {
 		const disabledProperties = category.properties
-			.filter( ( property ) => property.isDisabled && ! disabledLabels.includes( property.label ) )
+			.filter( ( property ) => property.isDisabled && ! selectedLabels.includes( property.label ) )
 			.map( ( property ) => property.label );
 
-		disabledLabels.push( ...disabledProperties );
+		proDisabledLabels.push( ...disabledProperties );
 	} );
 
-	return disabledLabels;
+	return {
+		allDisabled: [ ...selectedLabels, ...proDisabledLabels ],
+		proDisabled: proDisabledLabels,
+	};
 };
 
 const getInitialValue = ( values: SelectionSizePropValue[] = [] ): TransitionValue => {
@@ -178,7 +183,10 @@ export const TransitionRepeaterControl = createControl(
 		const [ recentlyUsedList, setRecentlyUsedList ] = useState< string[] >( [] );
 
 		const { value, setValue } = useBoundProp( childArrayPropTypeUtil );
-		const disabledItems = useMemo( () => getDisabledItemLabels( value ), [ value ] );
+		const { allDisabled: disabledItems, proDisabled: proDisabledItems } = useMemo(
+			() => getDisabledItemLabels( value ),
+			[ value ]
+		);
 
 		const allowedTransitionSet = useMemo( () => {
 			const set = new Set< string >();
@@ -220,7 +228,11 @@ export const TransitionRepeaterControl = createControl(
 				showDuplicate={ false }
 				showToggle={ true }
 				initialValues={ getInitialValue( value ) }
-				childControlConfig={ getChildControlConfig( recentlyUsedList, disabledItems ) }
+				childControlConfig={ getChildControlConfig(
+					recentlyUsedList,
+					disabledItems,
+					proDisabledItems.length > 0
+				) }
 				propKey="transition"
 				addItemTooltipProps={ {
 					disabled: isAddItemDisabled,

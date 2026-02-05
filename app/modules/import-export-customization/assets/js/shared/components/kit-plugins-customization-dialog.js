@@ -13,7 +13,7 @@ import {
 	Stack,
 	Link,
 } from '@elementor/ui';
-import { ExternalLinkIcon } from './icons';
+import { ExternalLinkIcon } from '@elementor/icons';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import useKitPlugins from '../hooks/use-kit-plugins';

@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { createMockPropType, renderWithStore } from 'test-utils';
+import { createMockContainer, createMockPropType, mockCurrentUserCapabilities, renderWithStore } from 'test-utils';
 import { ControlActionsProvider, TextControl } from '@elementor/editor-controls';
 import { controlsRegistry, ElementProvider } from '@elementor/editor-editing-panel';
 import {
+	getContainer,
 	getElementLabel,
+	getElementSetting,
 	getElementType,
 	getWidgetsCache,
 	useElementSetting,
@@ -23,19 +25,9 @@ import { slice } from '../../../store/store';
 import { switchToComponent } from '../../../utils/switch-to-component';
 import { InstanceEditingPanel } from '../instance-editing-panel';
 
-jest.mock( '@elementor/editor-elements', () => ( {
-	...jest.requireActual( '@elementor/editor-elements' ),
-	useElementSetting: jest.fn(),
-	useSelectedElement: jest.fn(),
-	getElementLabel: jest.fn(),
-	getWidgetsCache: jest.fn(),
-	getElementType: jest.fn(),
-} ) );
+jest.mock( '@elementor/editor-elements' );
 
-jest.mock( '@elementor/session', () => ( {
-	getSessionStorageItem: jest.fn(),
-	setSessionStorageItem: jest.fn(),
-} ) );
+jest.mock( '@elementor/session' );
 
 jest.mock( '../../../utils/switch-to-component' );
 
@@ -46,8 +38,13 @@ jest.mock( '../../../prop-types/component-instance-prop-type', () => ( {
 	},
 } ) );
 
+jest.mock( '@elementor/editor-current-user' );
+
+mockCurrentUserCapabilities( true );
+
 const MOCK_ELEMENT_ID = 'element-123';
 const MOCK_COMPONENT_ID = 456;
+const MOCK_INNER_COMPONENT_ID = 789;
 const MOCK_COMPONENT_NAME = 'Test Component';
 const MOCK_INSTANCE_ID = 'instance-789';
 const MOCK_PROP_TYPE = createMockPropType( { kind: 'plain', key: 'string' } );
@@ -84,6 +81,27 @@ const MOCK_ORIGIN_OVERRIDABLE_PROP = {
 	widgetType: 'e-text',
 	elType: 'widget',
 	elementId: 'test-123',
+};
+
+const MOCK_INNER_COMPONENT_OVERRIDABLE_PROPS = {
+	props: {
+		'inner-prop-1': {
+			overrideKey: 'inner-prop-1',
+			label: 'Inner Title',
+			elementId: 'test-123',
+			propKey: 'title',
+			widgetType: 'e-text',
+			elType: 'widget',
+			groupId: 'inner-content',
+			originValue: { $$type: 'string', value: 'Inner Value' },
+		},
+	},
+	groups: {
+		items: {
+			'inner-content': { id: 'inner-content', label: 'Inner Content', props: [ 'inner-prop-1' ] },
+		},
+		order: [ 'inner-content' ],
+	},
 };
 
 const MOCK_OVERRIDABLE_PROPS = {
@@ -170,7 +188,14 @@ const MOCK_OVERRIDABLE_PROPS_WITH_NESTED = {
 			widgetType: 'e-component',
 			elType: 'widget',
 			groupId: 'nested',
-			originValue: { $$type: 'string', value: 'Nested Title Value' },
+			originValue: {
+				$$type: 'override',
+				value: {
+					override_key: 'inner-prop-1',
+					override_value: { $$type: 'string', value: 'Nested Title Value' },
+					schema_source: { type: 'component', id: MOCK_INNER_COMPONENT_ID },
+				},
+			},
 			originPropFields: MOCK_ORIGIN_OVERRIDABLE_PROP,
 		},
 	},
@@ -270,6 +295,7 @@ describe( '<InstanceEditingPanel />', () => {
 			createMockWidgetsCache() as unknown as ReturnType< typeof getWidgetsCache >
 		);
 		jest.mocked( getElementType ).mockImplementation( createMockElementType );
+		jest.mocked( getContainer ).mockReturnValue( createMockContainer( MOCK_ELEMENT_ID, [] ) );
 	} );
 
 	it( 'should render the component name in the header', () => {
@@ -321,6 +347,30 @@ describe( '<InstanceEditingPanel />', () => {
 		// Assert.
 		expect( switchToComponent ).toHaveBeenCalledTimes( 1 );
 		expect( switchToComponent ).toHaveBeenCalledWith( MOCK_COMPONENT_ID, MOCK_INSTANCE_ID );
+	} );
+
+	it( 'should show edit button when user is admin', () => {
+		// Arrange.
+		mockCurrentUserCapabilities( true );
+		setupComponent();
+
+		// Act.
+		renderEditInstancePanel( store );
+
+		// Assert.
+		expect( screen.getByLabelText( `Edit ${ MOCK_COMPONENT_NAME }` ) ).toBeInTheDocument();
+	} );
+
+	it( 'should not show edit button when user is not admin', () => {
+		// Arrange.
+		mockCurrentUserCapabilities( false );
+		setupComponent();
+
+		// Act.
+		renderEditInstancePanel( store );
+
+		// Assert.
+		expect( screen.queryByLabelText( `Edit ${ MOCK_COMPONENT_NAME }` ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'should not render when componentId is missing', () => {
@@ -386,17 +436,46 @@ describe( '<InstanceEditingPanel />', () => {
 		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'Empty Group' ) ).not.toBeInTheDocument();
 	} );
+
+	it( 'should render panel for archived component instance', () => {
+		// Arrange.
+		setupComponent( { isArchived: true } );
+
+		// Act.
+		renderEditInstancePanel( store );
+
+		// Assert.
+		expect( screen.getByText( MOCK_COMPONENT_NAME ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render panel for component archived during session', () => {
+		// Arrange.
+		setupComponent();
+		dispatch( slice.actions.archive( MOCK_COMPONENT_ID ) );
+
+		// Act.
+		renderEditInstancePanel( store );
+
+		// Assert.
+		expect( screen.getByText( MOCK_COMPONENT_NAME ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
+	} );
 } );
 
 type SetupComponentOptions = {
 	isWithOverridableProps?: boolean;
 	isWithNestedOverridableProps?: boolean;
 	isWithEmptyGroup?: boolean;
+	isArchived?: boolean;
 };
 
-function setupComponent( options: SetupComponentOptions = {} ) {
-	const { isWithOverridableProps = true, isWithNestedOverridableProps = false, isWithEmptyGroup = false } = options;
-
+function setupComponent( {
+	isWithOverridableProps = true,
+	isWithNestedOverridableProps = false,
+	isWithEmptyGroup = false,
+	isArchived = false,
+}: SetupComponentOptions = {} ) {
 	const getOverridableProps = () => {
 		if ( isWithNestedOverridableProps ) {
 			return MOCK_OVERRIDABLE_PROPS_WITH_NESTED;
@@ -414,9 +493,70 @@ function setupComponent( options: SetupComponentOptions = {} ) {
 		uid: 'component-uid',
 		name: MOCK_COMPONENT_NAME,
 		overridableProps: isWithOverridableProps ? overridableProps : undefined,
+		isArchived,
 	};
 
-	dispatch( slice.actions.load( [ componentData ] ) );
+	const componentsToLoad = [ componentData ];
+
+	if ( isWithNestedOverridableProps ) {
+		const innerComponentData = {
+			id: MOCK_INNER_COMPONENT_ID,
+			uid: 'inner-component-uid',
+			name: 'Inner Component',
+			overridableProps: MOCK_INNER_COMPONENT_OVERRIDABLE_PROPS,
+			isArchived: false,
+		};
+		componentsToLoad.push( innerComponentData as unknown as typeof componentData );
+
+		const nestedComponentInstanceValue = {
+			component_id: { $$type: 'number', value: MOCK_INNER_COMPONENT_ID },
+			overrides: {
+				$$type: 'overrides',
+				value: [
+					{
+						$$type: 'overridable',
+						value: {
+							override_key: 'nested-prop-1',
+							origin_value: {
+								$$type: 'override',
+								value: {
+									override_key: 'inner-prop-1',
+									override_value: null,
+									schema_source: { type: 'component', id: MOCK_INNER_COMPONENT_ID },
+								},
+							},
+						},
+					},
+				],
+			},
+		};
+
+		jest.mocked( getElementSetting ).mockImplementation( ( elementId, settingKey ) => {
+			if ( elementId === 'nested-instance-1' && settingKey === 'component_instance' ) {
+				return {
+					$$type: 'component-instance',
+					value: nestedComponentInstanceValue,
+				};
+			}
+			return undefined;
+		} );
+
+		jest.mocked( componentInstancePropTypeUtil.extract ).mockImplementation( ( value: unknown ) => {
+			const typedValue = value as { $$type?: string; value?: { component_id?: { value?: number } } } | undefined;
+			if (
+				typedValue?.$$type === 'component-instance' &&
+				typedValue?.value?.component_id?.value === MOCK_INNER_COMPONENT_ID
+			) {
+				return nestedComponentInstanceValue as ReturnType< typeof componentInstancePropTypeUtil.extract >;
+			}
+			return {
+				component_id: { $$type: 'number' as const, value: MOCK_COMPONENT_ID },
+				overrides: { $$type: 'overrides' as const, value: [] },
+			};
+		} );
+	}
+
+	dispatch( slice.actions.load( componentsToLoad ) );
 }
 
 function renderEditInstancePanel( store: Store< SliceState< typeof slice > > ) {

@@ -2,8 +2,17 @@ jest.mock( '@elementor/frontend-handlers', () => ( {
 	registerBySelector: jest.fn(),
 } ), { virtual: true } );
 
+jest.mock( '@elementor/alpinejs', () => ( {
+	Alpine: {
+		data: jest.fn(),
+		destroyTree: jest.fn(),
+	},
+} ), { virtual: true } );
+
 const HANDLER_ID = 'atomic-link-action-handler';
 const SELECTOR = '[data-action-link], :has(> [data-action-link])';
+const ATOMIC_FORM_HANDLER_ID = 'atomic-form-submit-handler';
+const REGISTRATIONS = [ 'action-link', 'form-prevention' ];
 
 const ALLOWED_ACTION = 'off_canvas';
 const BLOCKED_ACTION = 'popup';
@@ -19,11 +28,20 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		await import( 'elementor/modules/atomic-widgets/assets/js/frontend/handlers' );
 
 		const { registerBySelector: mockedRegisterBySelector } = jest.requireMock( '@elementor/frontend-handlers' );
-		const [ registration ] = mockedRegisterBySelector.mock.calls[ 0 ] ?? [];
+		const registrations = mockedRegisterBySelector.mock.calls
+			.map( ( [ registration ] ) => registration )
+			.filter( Boolean );
+		const getRegistration = ( id ) => registrations.find( ( registration ) => registration.id === id );
+		const registration = getRegistration( HANDLER_ID );
 
 		expect( registration ).toBeDefined();
 
-		return { registration, registerBySelector: mockedRegisterBySelector };
+		return {
+			registration,
+			registrations,
+			getRegistration,
+			registerBySelector: mockedRegisterBySelector,
+		};
 	};
 
 	beforeEach( () => {
@@ -39,15 +57,16 @@ describe( 'Atomic Widgets frontend handlers', () => {
 
 	it( 'registers link action handler by selector', async () => {
 		// Arrange
-		const { registration, registerBySelector } = await importHandlers();
+		const { registration, registerBySelector, getRegistration } = await importHandlers();
 
 		// Act
 		const { id, selector, callback } = registration;
 
 		// Assert
-		expect( registerBySelector ).toHaveBeenCalledTimes( 1 );
+		expect( registerBySelector ).toHaveBeenCalledTimes( REGISTRATIONS.length );
 		expect( { id, selector } ).toEqual( { id: HANDLER_ID, selector: SELECTOR } );
 		expect( typeof callback ).toBe( 'function' );
+		expect( getRegistration( ATOMIC_FORM_HANDLER_ID ) ).toBeDefined();
 	} );
 
 	it( 'does not attach listeners when action link is missing', async () => {
@@ -59,7 +78,7 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		const cleanup = registration.callback( { element } );
 		const event = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 
-        element.dispatchEvent( event );
+		element.dispatchEvent( event );
 
 		// Assert
 		expect( cleanup ).toBeUndefined();
@@ -72,18 +91,18 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		const { registration } = await importHandlers();
 		const element = document.createElement( 'button' );
 
-        element.dataset.actionLink = ALLOWED_ACTION_URL;
+		element.dataset.actionLink = ALLOWED_ACTION_URL;
 
-        const cleanup = registration.callback( { element } );
+		const cleanup = registration.callback( { element } );
 		const event = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 
 		// Act
 		element.dispatchEvent( event );
 		cleanup?.();
 
-        const secondEvent = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
+		const secondEvent = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 
-        element.dispatchEvent( secondEvent );
+		element.dispatchEvent( secondEvent );
 
 		// Assert
 		expect( event.defaultPrevented ).toBe( true );
@@ -114,10 +133,10 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		const { registration } = await importHandlers();
 		const element = document.createElement( 'button' );
 
-        element.dataset.actionLink = ANY_CONTEXT_URL;
+		element.dataset.actionLink = ANY_CONTEXT_URL;
 		registration.callback( { element } );
 
-        const event = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
+		const event = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 
 		// Act
 		element.dispatchEvent( event );

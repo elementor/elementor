@@ -330,6 +330,19 @@ class Elements_Manager {
 			],
 		];
 
+		if ( Utils::has_pro() && Plugin::$instance->experiments->is_feature_active( 'e_pro_atomic_form' ) ) {
+			$atomic_form_category = [
+				'title' => esc_html__( 'Atomic Form', 'elementor' ),
+				'hideIfEmpty' => true,
+			];
+
+			$this->categories = array_merge(
+				[ 'v4-elements' => $this->categories['v4-elements'] ],
+				[ 'atomic-form' => $atomic_form_category ],
+				array_diff_key( $this->categories, [ 'v4-elements' => true ] )
+			);
+		}
+
 		// Not using the `add_category` because it doesn't allow 3rd party to inject a category on top the others.
 		$this->categories = array_merge_recursive( [
 			'favorites' => [

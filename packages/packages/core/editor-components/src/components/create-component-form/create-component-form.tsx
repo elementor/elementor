@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { getElementLabel, type V1ElementData } from '@elementor/editor-elements';
-import { notify } from '@elementor/editor-notifications';
-import { Form as FormElement, ThemeProvider } from '@elementor/editor-ui';
+import { type NotificationData, notify } from '@elementor/editor-notifications';
+import { Form as FormElement, ThemeProvider, useTextFieldAutoSelect } from '@elementor/editor-ui';
 import { ComponentsIcon } from '@elementor/icons';
 import { __getState as getState } from '@elementor/store';
 import { Button, FormLabel, Grid, Popover, Stack, TextField, Typography } from '@elementor/ui';
@@ -29,6 +29,8 @@ type SaveAsComponentEventData = {
 	options?: ContextMenuEventOptions;
 };
 
+const MAX_COMPONENTS = 100;
+
 export function CreateComponentForm() {
 	const [ element, setElement ] = useState< {
 		element: V1ElementData;
@@ -36,6 +38,7 @@ export function CreateComponentForm() {
 	} | null >( null );
 
 	const [ anchorPosition, setAnchorPosition ] = useState< { top: number; left: number } >();
+	const { components } = useComponents();
 
 	const eventData = useRef< ComponentEventData | null >( null );
 
@@ -43,17 +46,10 @@ export function CreateComponentForm() {
 		const OPEN_SAVE_AS_COMPONENT_FORM_EVENT = 'elementor/editor/open-save-as-component-form';
 
 		const openPopup = ( event: CustomEvent< SaveAsComponentEventData > ) => {
-			const nonAtomicElements = findNonAtomicElementsInElement( event.detail.element );
+			const { shouldOpen, notification } = shouldOpenForm( event.detail.element, components?.length ?? 0 );
 
-			if ( nonAtomicElements.length > 0 ) {
-				notify( {
-					type: 'default',
-					message: __(
-						'Components require atomic elements only. Remove widgets to create this component.',
-						'elementor'
-					),
-					id: 'non-atomic-element-save-blocked',
-				} );
+			if ( ! shouldOpen ) {
+				notify( notification );
 				return;
 			}
 
@@ -63,6 +59,7 @@ export function CreateComponentForm() {
 			eventData.current = getComponentEventData( event.detail.element, event.detail.options );
 			trackComponentEvent( {
 				action: 'createClicked',
+				source: 'user',
 				...eventData.current,
 			} );
 		};
@@ -72,7 +69,7 @@ export function CreateComponentForm() {
 		return () => {
 			window.removeEventListener( OPEN_SAVE_AS_COMPONENT_FORM_EVENT, openPopup as EventListener );
 		};
-	}, [] );
+	}, [ components?.length ] );
 
 	const handleSave = async ( values: ComponentFormValues ) => {
 		try {
@@ -80,11 +77,12 @@ export function CreateComponentForm() {
 				throw new Error( `Can't save element as component: element not found` );
 			}
 
-			const { uid, instanceId } = await createUnpublishedComponent(
-				values.componentName,
-				element.element,
-				eventData.current
-			);
+			const { uid, instanceId } = await createUnpublishedComponent( {
+				name: values.componentName,
+				element: element.element,
+				eventData: eventData.current,
+				source: 'user',
+			} );
 
 			const publishedComponentId = ( selectComponentByUid( getState(), uid ) as PublishedComponent )?.id;
 
@@ -108,6 +106,7 @@ export function CreateComponentForm() {
 				message: errorMessage,
 				id: 'component-save-failed',
 			} );
+			resetAndClosePopup();
 		}
 	};
 
@@ -121,6 +120,7 @@ export function CreateComponentForm() {
 
 		trackComponentEvent( {
 			action: 'createCancelled',
+			source: 'user',
 			...eventData.current,
 		} );
 	};
@@ -145,6 +145,45 @@ export function CreateComponentForm() {
 	);
 }
 
+type ShouldOpenFormResult =
+	| { shouldOpen: true; notification: null }
+	| { shouldOpen: false; notification: NotificationData };
+
+function shouldOpenForm( element: V1ElementData, componentsCount: number ): ShouldOpenFormResult {
+	const nonAtomicElements = findNonAtomicElementsInElement( element );
+
+	if ( nonAtomicElements.length > 0 ) {
+		return {
+			shouldOpen: false,
+			notification: {
+				type: 'default',
+				message: __(
+					'Components require atomic elements only. Remove widgets to create this component.',
+					'elementor'
+				),
+				id: 'non-atomic-element-save-blocked',
+			},
+		};
+	}
+
+	if ( componentsCount >= MAX_COMPONENTS ) {
+		return {
+			shouldOpen: false,
+			notification: {
+				type: 'default',
+				/* translators: %s is the maximum number of components */
+				message: __(
+					`You've reached the limit of %s components. Please remove an existing one to create a new component.`,
+					'elementor'
+				).replace( '%s', MAX_COMPONENTS.toString() ),
+				id: 'maximum-number-of-components-exceeded',
+			},
+		};
+	}
+
+	return { shouldOpen: true, notification: null };
+}
+
 const FONT_SIZE = 'tiny';
 
 const Form = ( {
@@ -157,6 +196,7 @@ const Form = ( {
 	closePopup: () => void;
 } ) => {
 	const { values, errors, isValid, handleChange, validateForm } = useForm< ComponentFormValues >( initialValues );
+	const nameInputRef = useTextFieldAutoSelect();
 
 	const { components } = useComponents();
 
@@ -223,6 +263,7 @@ const Form = ( {
 							inputProps={ { style: { color: 'text.primary', fontWeight: '600' } } }
 							error={ Boolean( errors.componentName ) }
 							helperText={ errors.componentName }
+							inputRef={ nameInputRef }
 						/>
 					</Grid>
 				</Grid>

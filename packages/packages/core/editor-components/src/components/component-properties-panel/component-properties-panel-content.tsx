@@ -7,6 +7,7 @@ import { Divider, IconButton, List, Stack, Tooltip } from '@elementor/ui';
 import { generateUniqueId } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
+import { useSanitizeOverridableProps } from '../../hooks/use-sanitize-overridable-props';
 import { addOverridableGroup } from '../../store/actions/add-overridable-group';
 import { deleteOverridableGroup } from '../../store/actions/delete-overridable-group';
 import { deleteOverridableProp } from '../../store/actions/delete-overridable-prop';
@@ -14,7 +15,6 @@ import { reorderGroupProps } from '../../store/actions/reorder-group-props';
 import { reorderOverridableGroups } from '../../store/actions/reorder-overridable-groups';
 import { updateOverridablePropParams } from '../../store/actions/update-overridable-prop-params';
 import { useCurrentComponentId } from '../../store/store';
-import { useOverridableProps } from '../component-panel-header/use-overridable-props';
 import { PropertiesEmptyState } from './properties-empty-state';
 import { PropertiesGroup } from './properties-group';
 import { SortableItem, SortableProvider } from './sortable';
@@ -27,7 +27,7 @@ type Props = {
 
 export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 	const currentComponentId = useCurrentComponentId();
-	const overridableProps = useOverridableProps( currentComponentId );
+	const overridableProps = useSanitizeOverridableProps( currentComponentId );
 	const [ isAddingGroup, setIsAddingGroup ] = useState( false );
 	const introductionRef = useRef< HTMLButtonElement >( null );
 	const groupLabelEditable = useCurrentEditableItem();
@@ -63,7 +63,12 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 		const newGroupId = generateUniqueId( 'group' );
 		const newLabel = generateUniqueLabel( groups );
 
-		addOverridableGroup( { componentId: currentComponentId, groupId: newGroupId, label: newLabel } );
+		addOverridableGroup( {
+			componentId: currentComponentId,
+			groupId: newGroupId,
+			label: newLabel,
+			source: 'user',
+		} );
 		setDocumentModifiedStatus( true );
 		setIsAddingGroup( false );
 
@@ -81,7 +86,7 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 	};
 
 	const handlePropertyDelete = ( propKey: string ) => {
-		deleteOverridableProp( { componentId: currentComponentId, propKey } );
+		deleteOverridableProp( { componentId: currentComponentId, propKey, source: 'user' } );
 		setDocumentModifiedStatus( true );
 	};
 

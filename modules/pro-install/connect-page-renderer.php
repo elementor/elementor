@@ -176,9 +176,7 @@ class Connect_Page_Renderer {
 			$classes[] = $additional_classes;
 		}
 
-		if ( Plugin::$instance->experiments->is_feature_active( 'e_editor_one' ) ) {
-			$classes[] = 'e-one-section-outlined';
-		}
+		$classes[] = 'e-one-section-outlined';
 
 		return implode( ' ', $classes );
 	}

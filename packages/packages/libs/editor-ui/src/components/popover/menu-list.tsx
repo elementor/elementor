@@ -25,6 +25,7 @@ export type PopoverMenuListProps< T, V extends string > = {
 	onChange?: ( visibleItems: VirtualizedItem< T, V >[] ) => void;
 	menuListTemplate?: React.ComponentType< React.ComponentProps< typeof MenuList > >;
 	menuItemContentTemplate?: ( item: VirtualizedItem< T, V > ) => React.ReactNode;
+	categoryItemContentTemplate?: ( item: VirtualizedItem< T, V > ) => React.ReactNode;
 	noResultsComponent?: React.ReactNode;
 };
 
@@ -59,6 +60,7 @@ export const PopoverMenuList = < T, V extends string >( {
 	onChange,
 	'data-testid': dataTestId,
 	menuItemContentTemplate,
+	categoryItemContentTemplate,
 	noResultsComponent,
 	menuListTemplate: CustomMenuList,
 }: PopoverMenuListProps< T, V > ) => {
@@ -150,7 +152,9 @@ export const PopoverMenuList = < T, V extends string >( {
 									style={ shouldStick ? {} : menuSubHeaderAbsoluteStyling( virtualRow.start ) }
 									sx={ { fontWeight: '400', color: 'text.tertiary' } }
 								>
-									{ item.label || item.value }
+									{ categoryItemContentTemplate
+										? categoryItemContentTemplate( item )
+										: item.label || item.value }
 								</MenuSubheader>
 							);
 						}

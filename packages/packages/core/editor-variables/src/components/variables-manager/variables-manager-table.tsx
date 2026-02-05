@@ -25,7 +25,7 @@ import { VariableTableCell } from './ui/variable-table-cell';
 import { VariableEditableCell } from './variable-editable-cell';
 
 type Props = {
-	menuActions: VariableManagerMenuAction[];
+	menuActions: ( variableId: string ) => VariableManagerMenuAction[];
 	variables: TVariablesList;
 	onChange: ( variables: TVariablesList ) => void;
 	autoEditVariableId?: string;
@@ -159,7 +159,7 @@ export const VariablesManagerTable = ( {
 									return (
 										<TableRow
 											{ ...itemProps }
-											ref={ handleRowRef( 'table-ref-' + row.id ) }
+											ref={ itemProps.ref }
 											selected={ isDragged }
 											sx={ {
 												...( showIndicationBefore && {
@@ -264,11 +264,6 @@ export const VariablesManagerTable = ( {
 														error,
 													} ) =>
 														row.valueField?.( {
-															ref: {
-																current: variableRowRefs.current.get(
-																	'table-ref-' + row.id
-																) as HTMLElement,
-															},
 															value,
 															onChange,
 															onPropTypeKeyChange: ( type ) => {
@@ -311,7 +306,7 @@ export const VariablesManagerTable = ( {
 											>
 												<Stack role="toolbar" direction="row" justifyContent="flex-end">
 													<VariableEditMenu
-														menuActions={ menuActions }
+														menuActions={ menuActions( row.id ) }
 														disabled={ isSorting }
 														itemId={ row.id }
 													/>

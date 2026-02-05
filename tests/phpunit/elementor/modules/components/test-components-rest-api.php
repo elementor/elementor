@@ -427,8 +427,8 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					],
 				],
 				'expected' => [
-					'status_code' => 500,
-					'code' => 'unexpected_error',
+					'status_code' => 422,
+					'code' => 'settings_validation_failed',
 				],
 			],
 			'UID is missing' => [
@@ -704,7 +704,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'widgetType' => 'e-button',
 					'propKey' => 'text',
 					'originValue' => [
-						'$$type' => 'string',
+						'$$type' => 'html',
 						'value' => 'Component 2 Button',
 					],
 					'groupId' => 'group-1',
@@ -784,7 +784,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'prop-button-link', $decoded_props['props'] );
 		
 		// Verify the originValue structures are intact
-		$this->assertEquals( 'string', $decoded_props['props']['prop-button-text']['originValue']['$$type'] );
+		$this->assertEquals( 'html', $decoded_props['props']['prop-button-text']['originValue']['$$type'] );
 		$this->assertEquals( 'Component 2 Button', $decoded_props['props']['prop-button-text']['originValue']['value'] );
 		
 		$this->assertEquals( 'link', $decoded_props['props']['prop-button-link']['originValue']['$$type'] );
@@ -806,7 +806,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'widgetType' => 'e-button',
 					'propKey' => 'text',
 					'originValue' => [
-						'$$type' => 'string',
+						'$$type' => 'html',
 						'value' => 'Test Button Text',
 					],
 					'groupId' => 'group-1',
@@ -1079,6 +1079,11 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 				'endpoint' => '/elementor/v1/components/unlock',
 				'params' => [ 'componentId' => 123 ],
 			],
+			'GET overridable-props' => [
+				'method' => 'GET',
+				'endpoint' => '/elementor/v1/components/overridable-props',
+				'params' => [ 'componentId' => 123 ],
+			],
 		];
 	}
 
@@ -1298,7 +1303,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertEquals( [ $draft_id, $draft_id_2, $publish_id ], $response->get_data()['data']['success'] );
-		$this->assertEquals( [], $response->get_data()['data']['failed'] );
+		$this->assertEquals( [ $page_id ], $response->get_data()['data']['failed'], 'Non-component documents should be in failed array' );
 
 		foreach ( [ $draft_id, $draft_id_2, $publish_id ] as $id ) {
 			$doc = Plugin::$instance->documents->get( $id );
@@ -1386,6 +1391,28 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		// Assert
 		$this->assertEquals( 404, $response->get_status() );
 		$this->assertEquals( 'component_not_found', $response->get_data()['code'] );
+	}
+
+	public function test_get_overridable_props__succeeds_for_editor() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Component For Editor', $this->mock_component_1_content );
+
+		$mocks = new Component_Overrides_Mocks();
+		$overridable_props = $mocks->get_mock_component_overridable_props();
+		update_post_meta( $component_id, Component_Document::OVERRIDABLE_PROPS_META_KEY, json_encode( $overridable_props ) );
+
+		$this->act_as_editor();
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/overridable-props' );
+		$request->set_param( 'componentId', $component_id );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data()['data'];
+		$this->assertEquals( $overridable_props, $data );
 	}
 
 	public function test_post_validate_components__passes_with_valid_data() {
@@ -1711,6 +1738,64 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 201, $create_response->get_status(), 'Create endpoint should return 201. Response: ' . json_encode( $create_response->get_data() ) );
 	}
 
+	public function test_post_create_component__returns_validation_error_for_nested_element_with_invalid_settings() {
+		// Arrange
+		$this->act_as_admin();
+
+		$component_with_invalid_nested_element = [
+			[
+				'id' => 'wrapper-element-id',
+				'elType' => 'e-div-block',
+				'settings' => [],
+				'elements' => [
+					[
+						'id' => 'nested-button-id',
+						'elType' => 'widget',
+						'widgetType' => 'e-button',
+						'settings' => [
+							'text' => [
+								'$$type' => 'html',
+								'value' => 'Button Text',
+							],
+							'link' => [
+								'$$type' => 'link',
+								'value' => 'invalid-link-structure-should-be-object',
+							],
+						],
+						'elements' => [],
+						'styles' => [],
+						'editor_settings' => [],
+						'version' => '0.0',
+					],
+				],
+				'isInner' => false,
+				'styles' => [],
+				'editor_settings' => [],
+				'version' => '0.0',
+			],
+		];
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'publish',
+			'items' => [
+				[
+					'uid' => 'test-uid-nested-invalid',
+					'title' => 'Component With Invalid Nested Element',
+					'elements' => $component_with_invalid_nested_element,
+				],
+			],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 422, $response->get_status(), 'Response: ' . json_encode( $response->get_data() ) );
+		$this->assertEquals( 'settings_validation_failed', $response->get_data()['code'] );
+		$this->assertStringContainsString( 'test-uid-nested-invalid', $response->get_data()['message'] );
+	}
+
 	public function test_get_overridable_props__returns_autosave_version_when_exists() {
 		// Arrange
 		$this->act_as_admin();
@@ -1722,9 +1807,16 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 
 		update_post_meta( $component_id, Component_Document::OVERRIDABLE_PROPS_META_KEY, json_encode( $published_props ) );
 
-		$document = Plugin::$instance->documents->get( $component_id );
+		$document = Plugin::$instance->documents->get( $component_id, false );
 		$autosave = $document->get_autosave( get_current_user_id(), true );
-		update_post_meta( $autosave->get_post()->ID, Component_Document::OVERRIDABLE_PROPS_META_KEY, json_encode( $autosave_props ) );
+		$autosave_id = $autosave->get_post()->ID;
+
+		// Workaround - set autosave timestamp to future so it's detected as newer than published (required for autosave detection).
+		global $wpdb;
+		$future_time = gmdate( 'Y-m-d H:i:s', strtotime( '+1 day' ) );
+		$wpdb->update( $wpdb->posts, [ 'post_modified_gmt' => $future_time ], [ 'ID' => $autosave_id ] );
+
+		update_metadata( 'post', $autosave_id, Component_Document::OVERRIDABLE_PROPS_META_KEY, json_encode( $autosave_props ) );
 
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/overridable-props' );
@@ -1736,6 +1828,359 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 
 		$data = $response->get_data()['data'];
 		$this->assertEquals( $autosave_props, $data );
+	}
+
+	// =====================================================
+	// Tests for draft/autosave vs published handling
+	// =====================================================
+
+	public function test_update_statuses__preserves_overridable_props_from_autosave() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Component With Props', $this->mock_component_1_content );
+
+		$mocks = new Component_Overrides_Mocks();
+		$published_props = [ 'props' => [], 'groups' => [ 'items' => [], 'order' => [] ] ];
+		$autosave_props = $mocks->get_mock_component_overridable_props();
+
+		update_post_meta( $component_id, Component_Document::OVERRIDABLE_PROPS_META_KEY, wp_json_encode( $published_props ) );
+
+		$this->set_main_doc_as_older_than_autosave( $component_id );
+
+		$document = Plugin::$instance->documents->get( $component_id, false );
+		$autosave = $document->get_autosave( get_current_user_id(), true );
+		$autosave_id = $autosave->get_post()->ID;
+
+		update_metadata( 'post', $autosave_id, Component_Document::OVERRIDABLE_PROPS_META_KEY, wp_json_encode( $autosave_props ) );
+
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components/status' );
+		$request->set_param( 'ids', [ $component_id ] );
+		$request->set_param( 'status', 'publish' );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( [ $component_id ], $response->get_data()['data']['success'] );
+
+		$main_document = Plugin::$instance->documents->get( $component_id, false );
+		$saved_props = $main_document->get_json_meta( Component_Document::OVERRIDABLE_PROPS_META_KEY );
+
+		$this->assertEquals( $autosave_props, $saved_props, 'Published component should have overridable props from autosave' );
+	}
+
+	public function test_update_statuses__preserves_title_from_autosave() {
+		// Arrange
+		$this->act_as_admin();
+		$original_title = 'Original Title';
+		$autosave_title = 'Updated Title From Autosave';
+		$component_id = $this->create_test_component( $original_title, $this->mock_component_1_content );
+
+		$this->set_main_doc_as_older_than_autosave( $component_id );
+
+		$document = Plugin::$instance->documents->get( $component_id, false );
+		$autosave = $document->get_autosave( get_current_user_id(), true );
+		$autosave_id = $autosave->get_post()->ID;
+
+		wp_update_post( [ 'ID' => $autosave_id, 'post_title' => $autosave_title ] );
+		$autosave->refresh_post();
+
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components/status' );
+		$request->set_param( 'ids', [ $component_id ] );
+		$request->set_param( 'status', 'publish' );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+
+		$main_document = Plugin::$instance->documents->get( $component_id, false );
+		$this->assertEquals( $autosave_title, $main_document->get_post()->post_title, 'Published component should have title from autosave' );
+	}
+
+	public function test_update_statuses__preserves_elements_from_autosave() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Component', $this->mock_component_1_content );
+
+		$this->set_main_doc_as_older_than_autosave( $component_id );
+
+		$document = Plugin::$instance->documents->get( $component_id, false );
+		$autosave = $document->get_autosave( get_current_user_id(), true );
+
+		$autosave_elements = $this->mock_component_2_content;
+		$autosave->save( [ 'elements' => $autosave_elements ] );
+
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components/status' );
+		$request->set_param( 'ids', [ $component_id ] );
+		$request->set_param( 'status', 'publish' );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+
+		$main_document = Plugin::$instance->documents->get( $component_id, false );
+		$saved_elements = $main_document->get_elements_data();
+
+		$this->assertEquals( $autosave_elements, $saved_elements, 'Published component should have elements from autosave' );
+	}
+
+	public function test_update_statuses__publishes_main_document_when_no_autosave() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Draft Component', $this->mock_component_1_content, 'draft' );
+
+		$mocks = new Component_Overrides_Mocks();
+		$main_props = $mocks->get_mock_component_overridable_props();
+		update_post_meta( $component_id, Component_Document::OVERRIDABLE_PROPS_META_KEY, wp_json_encode( $main_props ) );
+
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components/status' );
+		$request->set_param( 'ids', [ $component_id ] );
+		$request->set_param( 'status', 'publish' );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( [ $component_id ], $response->get_data()['data']['success'] );
+
+		$main_document = Plugin::$instance->documents->get( $component_id, false );
+		$this->assertEquals( 'publish', $main_document->get_post()->post_status );
+		$this->assertEquals( $main_props, $main_document->get_json_meta( Component_Document::OVERRIDABLE_PROPS_META_KEY ) );
+	}
+
+	// ============================
+	// Tests for archive endpoint
+	// ============================
+
+	public function test_archive__with_publish_status_updates_main_document() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Component To Archive', $this->mock_component_1_content );
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/archive' );
+		$request->set_param( 'componentIds', [ $component_id ] );
+		$request->set_param( 'status', 'publish' );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( [ $component_id ], $response->get_data()['data']['successIds'] );
+
+		$main_document = Plugin::$instance->documents->get( $component_id, false );
+		/** @var Component_Document $main_document */
+		$this->assertTrue( $main_document->get_is_archived(), 'Main document should be archived' );
+	}
+
+	public function test_archive__with_autosave_status_and_no_existing_autosave_creates_autosave_and_updates_it_to_be_archived() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Component To Archive', $this->mock_component_1_content );
+
+		$this->set_main_doc_as_older_than_autosave( $component_id );
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/archive' );
+		$request->set_param( 'componentIds', [ $component_id ] );
+		$request->set_param( 'status', 'autosave' );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( [ $component_id ], $response->get_data()['data']['successIds'] );
+
+		$main_document = Plugin::$instance->documents->get( $component_id, false );
+		/** @var Component_Document $main_document */
+		$this->assertFalse( $main_document->get_is_archived(), 'Main document should NOT be archived' );
+
+		$autosave = $main_document->get_autosave( get_current_user_id() );
+		/** @var Component_Document $autosave */
+		$this->assertNotFalse( $autosave, 'Autosave should exist' );
+		$this->assertTrue( $autosave->get_is_archived(), 'Autosave should be archived' );
+	}
+
+	public function test_archive__with_autosave_status_updating_existing_autosave() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Component To Archive', $this->mock_component_1_content );
+
+		$this->set_main_doc_as_older_than_autosave( $component_id );
+
+		$main_document = Plugin::$instance->documents->get( $component_id, false );
+		$existing_autosave = $main_document->get_autosave( get_current_user_id(), true );
+		$existing_autosave_id = $existing_autosave->get_post()->ID;
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/archive' );
+		$request->set_param( 'componentIds', [ $component_id ] );
+		$request->set_param( 'status', 'autosave' );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		/** @var Component_Document $main_document */
+		$this->assertFalse( $main_document->get_is_archived(), 'Main document should NOT be archived' );
+
+		$autosave = $main_document->get_autosave( get_current_user_id() );
+		$this->assertNotFalse( $autosave, 'Autosave should exist' );
+		$this->assertEquals( $existing_autosave_id, $autosave->get_post()->ID, 'Should use existing autosave' );
+		/** @var Component_Document $autosave */
+		$this->assertTrue( $autosave->get_is_archived(), 'Autosave should be archived' );
+	}
+
+	// =================================
+	// Tests for update-titles endpoint
+	// =================================
+	public function test_update_titles__with_publish_status_updates_main_document() {
+		// Arrange
+		$this->act_as_admin();
+		$original_title = 'Original Title';
+		$new_title = 'New Title';
+		$component_id = $this->create_test_component( $original_title, $this->mock_component_1_content );
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/update-titles' );
+		$request->set_param( 'components', [
+			[ 'componentId' => $component_id, 'title' => $new_title ],
+		] );
+		$request->set_param( 'status', 'publish' );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( [ $component_id ], $response->get_data()['data']['successIds'] );
+
+		$main_document = Plugin::$instance->documents->get( $component_id, false );
+		$this->assertEquals( $new_title, $main_document->get_post()->post_title, 'Main document title should be updated' );
+	}
+
+	public function test_update_titles__with_autosave_status_and_no_existing_autosave_creates_autosave_and_updates_it() {
+		// Arrange
+		$this->act_as_admin();
+		$original_title = 'Original Title';
+		$new_title = 'New Title In Autosave';
+		$component_id = $this->create_test_component( $original_title, $this->mock_component_1_content );
+
+		$this->set_main_doc_as_older_than_autosave( $component_id );
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/update-titles' );
+		$request->set_param( 'components', [
+			[ 'componentId' => $component_id, 'title' => $new_title ],
+		] );
+		$request->set_param( 'status', 'autosave' );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( [ $component_id ], $response->get_data()['data']['successIds'] );
+
+		$main_document = Plugin::$instance->documents->get( $component_id, false );
+		$this->assertEquals( $original_title, $main_document->get_post()->post_title, 'Main document title should NOT be changed' );
+
+		$autosave = $main_document->get_autosave( get_current_user_id() );
+		$this->assertNotFalse( $autosave, 'Autosave should exist' );
+		$this->assertEquals( $new_title, $autosave->get_post()->post_title, 'Autosave title should be updated' );
+	}
+
+	public function test_update_titles__with_autosave_status_updates_existing_autosave() {
+		// Arrange
+		$this->act_as_admin();
+		$original_title = 'Original Title';
+		$new_title = 'New Title In Autosave';
+		$component_id = $this->create_test_component( $original_title, $this->mock_component_1_content );
+
+		$this->set_main_doc_as_older_than_autosave( $component_id );
+
+		$main_document = Plugin::$instance->documents->get( $component_id, false );
+		$existing_autosave = $main_document->get_autosave( get_current_user_id(), true );
+		$existing_autosave_id = $existing_autosave->get_post()->ID;
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/update-titles' );
+		$request->set_param( 'components', [
+			[ 'componentId' => $component_id, 'title' => $new_title ],
+		] );
+		$request->set_param( 'status', 'autosave' );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+
+		$main_document = Plugin::$instance->documents->get( $component_id, false );
+		$this->assertEquals( $original_title, $main_document->get_post()->post_title, 'Main document title should NOT be changed' );
+
+		$autosave = $main_document->get_autosave( get_current_user_id() );
+		$this->assertNotFalse( $autosave, 'Autosave should exist' );
+		$this->assertEquals( $existing_autosave_id, $autosave->get_post()->ID, 'Should use existing autosave' );
+		$this->assertEquals( $new_title, $autosave->get_post()->post_title, 'Autosave title should be updated' );
+	}
+
+	public function test_integration_update_titles_and_update_statuses__autosave_title_is_published_on_update_statuses() {
+		// Arrange
+		$this->act_as_admin();
+		$original_title = 'Original Title';
+		$autosave_title = 'Title Changed In Autosave';
+		$component_id = $this->create_test_component( $original_title, $this->mock_component_1_content );
+
+		$this->set_main_doc_as_older_than_autosave( $component_id );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/update-titles' );
+		$request->set_param( 'components', [
+			[ 'componentId' => $component_id, 'title' => $autosave_title ],
+		] );
+		$request->set_param( 'status', 'autosave' );
+		$update_response = rest_do_request( $request );
+		$this->assertEquals( 200, $update_response->get_status(), 'Update titles request should succeed' );
+
+		$main_document = Plugin::$instance->documents->get( $component_id, false );
+		$autosave = $main_document->get_autosave( get_current_user_id() );
+		$this->assertNotFalse( $autosave, 'Autosave should have been created by update-titles request' );
+
+		// Act
+		$publish_request = new \WP_REST_Request( 'PUT', '/elementor/v1/components/status' );
+		$publish_request->set_param( 'ids', [ $component_id ] );
+		$publish_request->set_param( 'status', 'publish' );
+		$response = rest_do_request( $publish_request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+
+		$main_document = Plugin::$instance->documents->get( $component_id, false );
+		$this->assertEquals( $autosave_title, $main_document->get_post()->post_title, 'Published component should have title from autosave' );
+	}
+
+	public function test_integration_archive_and_update_statuses__autosave_is_published_on_update_statuses() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Component', $this->mock_component_1_content );
+
+		$this->set_main_doc_as_older_than_autosave( $component_id );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/archive' );
+		$request->set_param( 'componentIds', [ $component_id ] );
+		$request->set_param( 'status', 'autosave' );
+		$archive_response = rest_do_request( $request );
+		$this->assertEquals( 200, $archive_response->get_status(), 'Archive request should succeed' );
+
+		$main_document = Plugin::$instance->documents->get( $component_id, false );
+		$autosave = $main_document->get_autosave( get_current_user_id() );
+		$this->assertNotFalse( $autosave, 'Autosave should have been created by archive request' );
+
+		// Act
+		$publish_request = new \WP_REST_Request( 'PUT', '/elementor/v1/components/status' );
+		$publish_request->set_param( 'ids', [ $component_id ] );
+		$publish_request->set_param( 'status', 'publish' );
+		$response = rest_do_request( $publish_request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+
+		$main_document = Plugin::$instance->documents->get( $component_id, false );
+		/** @var Component_Document $main_document */
+		$this->assertTrue( $main_document->get_is_archived(), 'Published component should be archived' );
 	}
 
 	// Helpers
@@ -1790,5 +2235,12 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		}
 
 		return true;
+	}
+
+	private function set_main_doc_as_older_than_autosave( int $main_doc_id ): void {
+		global $wpdb;
+		$past_time = gmdate( 'Y-m-d H:i:s', strtotime( '-1 day' ) );
+		$wpdb->update( $wpdb->posts, [ 'post_modified_gmt' => $past_time ], [ 'ID' => $main_doc_id ] );
+		clean_post_cache( $main_doc_id );
 	}
 }

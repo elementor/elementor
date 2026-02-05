@@ -24,12 +24,15 @@ const createMockElementConfig = () => ( {
 	base_styles_dictionary: {},
 } );
 
+type ComponentViewInstance = {
+	editComponent: jest.Mock;
+	handleDblClick: ( e: MouseEvent ) => void;
+};
+
 describe( 'createComponentType', () => {
 	let mockElementorWindow: LegacyWindow[ 'elementor' ];
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-
 		const mockBaseView = class {
 			getContextMenuGroups() {
 				return [
@@ -117,6 +120,10 @@ describe( 'createComponentType', () => {
 					},
 				},
 			},
+			storage: {
+				get: jest.fn(),
+				set: jest.fn(),
+			},
 		};
 	} );
 
@@ -125,15 +132,13 @@ describe( 'createComponentType', () => {
 	} );
 
 	const createMockViewInstance = ( isAdministrator: boolean ) => {
-		( window as unknown as LegacyWindow & ExtendedWindow ).elementor = {
+		( window as unknown as LegacyWindow ).elementor = {
 			...mockElementorWindow,
 			config: {
 				user: {
 					is_administrator: isAdministrator,
 				},
 			},
-		} as LegacyWindow[ 'elementor' ] & {
-			config?: { user?: { is_administrator?: boolean } };
 		};
 
 		const ComponentType = createComponentType( {
@@ -255,8 +260,6 @@ describe( 'createComponentType', () => {
 					is_administrator: true,
 				},
 			},
-		} as LegacyWindow[ 'elementor' ] & {
-			config?: { user?: { is_administrator?: boolean } };
 		};
 
 		const ComponentType = createComponentType( {
@@ -340,5 +343,37 @@ describe( 'createComponentType', () => {
 
 		// Assert
 		expect( viewClass1 ).toBe( viewClass2 );
+	} );
+
+	it( 'should call editComponent when user is administrator', () => {
+		// Arrange
+		const viewInstance = createMockViewInstance( true ) as unknown as ComponentViewInstance;
+		const mockEvent = { stopPropagation: jest.fn() } as unknown as MouseEvent;
+		viewInstance.editComponent = jest.fn();
+
+		// Act
+		viewInstance.handleDblClick( mockEvent );
+
+		// Assert
+		expect( mockEvent.stopPropagation ).toHaveBeenCalled();
+		expect( viewInstance.editComponent ).toHaveBeenCalledWith( {
+			trigger: 'doubleClick',
+			location: 'canvas',
+			secondaryLocation: 'canvasElement',
+		} );
+	} );
+
+	it( 'should not call editComponent when user is not administrator', () => {
+		// Arrange
+		const viewInstance = createMockViewInstance( false ) as unknown as ComponentViewInstance;
+		const mockEvent = { stopPropagation: jest.fn() } as unknown as MouseEvent;
+		viewInstance.editComponent = jest.fn();
+
+		// Act
+		viewInstance.handleDblClick( mockEvent );
+
+		// Assert
+		expect( mockEvent.stopPropagation ).toHaveBeenCalled();
+		expect( viewInstance.editComponent ).not.toHaveBeenCalled();
 	} );
 } );

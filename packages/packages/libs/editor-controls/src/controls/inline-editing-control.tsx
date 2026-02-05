@@ -19,7 +19,7 @@ export const InlineEditingControl = createControl(
 		props?: ComponentProps< 'div' >;
 	} ) => {
 		const { value, setValue } = useBoundProp( htmlPropTypeUtil );
-		const handleChange = ( newValue: unknown ) => setValue( newValue as string );
+		const handleChange = ( newValue: unknown ) => setValue( ( newValue ?? '' ) as string );
 
 		return (
 			<ControlActions>
@@ -45,6 +45,10 @@ export const InlineEditingControl = createControl(
 							fontSize: '12px',
 							'& a': {
 								color: 'inherit',
+							},
+							'& .elementor-inline-editor-reset': {
+								margin: 0,
+								padding: 0,
 							},
 						},
 						'.strip-styles *': {

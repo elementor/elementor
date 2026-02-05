@@ -235,6 +235,7 @@ export function KitContentCustomizationDialog( {
 			handleSaveChanges={ () => {
 				const transformedAnalytics = transformAnalyticsData( settings, customPostTypes );
 				handleSaveChanges( 'content', settings, true, transformedAnalytics );
+				handleClose();
 			} }
 		>
 			<Stack gap={ 2 }>
