@@ -124,7 +124,18 @@ describe( 'transitionProperties Pro version handling', () => {
 
 		expect( props.length ).toBeGreaterThan( 1 );
 		expect( props.map( ( cat: TransitionCategory ) => cat.label ) ).toEqual(
-			expect.arrayContaining( [ 'Default', 'Margin', 'Padding', 'Flex', 'Size', 'Position', 'Typography', 'Background', 'Border', 'Effects' ] )
+			expect.arrayContaining( [
+				'Default',
+				'Margin',
+				'Padding',
+				'Flex',
+				'Size',
+				'Position',
+				'Typography',
+				'Background',
+				'Border',
+				'Effects',
+			] )
 		);
 	} );
 
