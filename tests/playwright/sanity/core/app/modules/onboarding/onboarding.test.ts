@@ -47,26 +47,32 @@ test.describe.skip( 'On boarding @onBoarding', async () => {
 	 */
 	test( 'Onboarding Create Account Popup Open', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
+		await page.waitForLoadState( 'networkidle' );
 
 		const ctaButton = await page.waitForSelector( 'a.e-onboarding__button-action' );
 
 		expect( await ctaButton.innerText() ).toBe( 'Create my account' );
 
-		const [ popup ] = await Promise.all( [
-			page.waitForEvent( 'popup' ),
-			page.click( 'a.e-onboarding__button-action' ),
-		] );
+		const popupPromise = page.waitForEvent( 'popup', { timeout: 3000 } ).catch( () => null );
+		const navigationPromise = page.waitForURL( /my\.elementor\.com/, { timeout: 3000 } ).then( () => true ).catch( () => false );
 
-		await popup.waitForLoadState( 'domcontentloaded' );
+		await page.click( 'a.e-onboarding__button-action' );
 
-		expect( popup.url() ).toContain( 'my.elementor.com/signup' );
+		const [ popup, navigated ] = await Promise.all( [ popupPromise, navigationPromise ] );
 
-		const signupForm = popup.locator( '[data-test="signup-form"]' );
-
-		// Check that the popup opens the Elementor Connect screen.
-		await expect( signupForm ).toBeVisible();
-
-		await popup.close();
+		if ( popup ) {
+			await popup.waitForLoadState( 'domcontentloaded' );
+			expect( popup.url() ).toContain( 'my.elementor.com/signup' );
+			const signupForm = popup.locator( '[data-test="signup-form"]' );
+			await expect( signupForm ).toBeVisible();
+			await popup.close();
+		} else if ( navigated ) {
+			expect( page.url() ).toContain( 'my.elementor.com/signup' );
+			const signupForm = page.locator( '[data-test="signup-form"]' );
+			await expect( signupForm ).toBeVisible();
+		} else {
+			throw new Error( 'Neither popup nor navigation occurred after clicking the button' );
+		}
 	} );
 
 	/**
