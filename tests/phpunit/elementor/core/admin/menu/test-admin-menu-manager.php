@@ -6,6 +6,8 @@ use Elementor\Tests\Phpunit\Elementor\Core\Admin\Menu\Mock\First_Menu_Item;
 use Elementor\Tests\Phpunit\Elementor\Core\Admin\Menu\Mock\Hidden_Menu_Item;
 use Elementor\Tests\Phpunit\Elementor\Core\Admin\Menu\Mock\Second_Menu_Item;
 use Elementor\Tests\Phpunit\Elementor\Core\Admin\Menu\Mock\Top_Level_Menu_Item;
+use Elementor\Modules\DevTools\Module;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -244,5 +246,94 @@ class Test_Admin_Menu_Manager extends Elementor_Test_Base {
 			'first-menu-item' => $item1,
 			'second-menu-item' => $item2,
 		], $items_from_manager );
+	}
+
+	public function test_register_triggers_deprecation_notice() {
+		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register' );
+
+		$admin_menu_manager = new Admin_Menu_Manager();
+		$admin_menu_manager->register( 'test-menu', new Top_Level_Menu_Item() );
+
+		$deprecation = Module::instance()->deprecation;
+		$settings = $deprecation->get_settings();
+
+		$this->assertArrayHasKey( 'soft_notices', $settings );
+		$this->assertArrayHasKey( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register', $settings['soft_notices'] );
+		$this->assertEquals( '3.34.2', $settings['soft_notices']['Elementor\Core\Admin\Menu\Admin_Menu_Manager::register'][0] );
+	}
+
+	public function test_unregister_triggers_deprecation_notice() {
+		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::unregister' );
+
+		$admin_menu_manager = new Admin_Menu_Manager();
+		$admin_menu_manager->register( 'test-menu', new Top_Level_Menu_Item() );
+		$admin_menu_manager->unregister( 'test-menu' );
+
+		$deprecation = Module::instance()->deprecation;
+		$settings = $deprecation->get_settings();
+
+		$this->assertArrayHasKey( 'soft_notices', $settings );
+		$this->assertArrayHasKey( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::unregister', $settings['soft_notices'] );
+		$this->assertEquals( '3.34.2', $settings['soft_notices']['Elementor\Core\Admin\Menu\Admin_Menu_Manager::unregister'][0] );
+	}
+
+	public function test_deprecated_hook_elementor_admin_menu_register_triggers_notice() {
+		$this->setExpectedDeprecated( 'elementor/admin/menu/register' );
+		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register' );
+		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register_actions' );
+		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::get_all' );
+
+		$hook_called = false;
+		add_action( 'elementor/admin/menu/register', function() use ( &$hook_called ) {
+			$hook_called = true;
+		} );
+
+		remove_all_actions( 'admin_menu' );
+		remove_all_actions( 'admin_head' );
+
+		$admin_menu_manager = new Admin_Menu_Manager();
+		$admin_menu_manager->register_actions();
+		$admin_menu_manager->register( 'test-menu', new Top_Level_Menu_Item() );
+
+		do_action( 'admin_menu' );
+
+		$this->assertTrue( $hook_called, 'Deprecated hook should be called' );
+
+		$deprecation = Module::instance()->deprecation;
+		$settings = $deprecation->get_settings();
+
+		$this->assertArrayHasKey( 'soft_notices', $settings );
+		$this->assertArrayHasKey( 'elementor/admin/menu/register', $settings['soft_notices'] );
+		$this->assertEquals( '3.34.2', $settings['soft_notices']['elementor/admin/menu/register'][0] );
+	}
+
+	public function test_deprecated_hook_elementor_admin_menu_after_register_triggers_notice() {
+		$this->setExpectedDeprecated( 'elementor/admin/menu/after_register' );
+		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register' );
+		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register_actions' );
+		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::get_all' );
+
+		$hook_called = false;
+		add_action( 'elementor/admin/menu/after_register', function() use ( &$hook_called ) {
+			$hook_called = true;
+		} );
+
+		remove_all_actions( 'admin_menu' );
+		remove_all_actions( 'admin_head' );
+
+		$admin_menu_manager = new Admin_Menu_Manager();
+		$admin_menu_manager->register_actions();
+		$admin_menu_manager->register( 'test-menu', new Top_Level_Menu_Item() );
+
+		do_action( 'admin_menu' );
+
+		$this->assertTrue( $hook_called, 'Deprecated hook should be called' );
+
+		$deprecation = Module::instance()->deprecation;
+		$settings = $deprecation->get_settings();
+
+		$this->assertArrayHasKey( 'soft_notices', $settings );
+		$this->assertArrayHasKey( 'elementor/admin/menu/after_register', $settings['soft_notices'] );
+		$this->assertEquals( '3.34.2', $settings['soft_notices']['elementor/admin/menu/after_register'][0] );
 	}
 }
