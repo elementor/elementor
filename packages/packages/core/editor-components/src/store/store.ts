@@ -35,7 +35,7 @@ type ComponentsState = {
 	updatedComponentNames: Record< number, string >;
 
 	// We use this map to flag any sanitized attribute of a given component
-	// This map currently resets in response to איק `editor/documents/open` command
+	// This map currently resets in response to the `editor/documents/open` command
 	sanitized: Record< ComponentId, Partial< Record< SanitizeAttributes, boolean > > >;
 };
 
