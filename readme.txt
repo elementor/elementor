@@ -5,7 +5,7 @@ Requires at least: 6.7
 Tested up to: 6.9
 Requires PHP: 7.4
 Stable tag: 3.34.2
-Beta tag: 3.34.0-beta3
+Beta tag: 3.35.0-beta1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -377,6 +377,5 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 * Fix: Div Block and Flexbox base styles overriding user settings when viewed from another document - Editor V4
 * Fix: Flex and Div blocks lose selection when deleting an assigned class via the Class Manager - Editor V4
 * Fix: Container handles not visible when "Overflow: Hidden" is enabled
-
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)
