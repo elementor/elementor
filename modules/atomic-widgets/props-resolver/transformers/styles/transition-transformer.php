@@ -18,11 +18,9 @@ class Transition_Transformer extends Transformer_Base {
 	}
 
 	private function get_allowed_properties(): array {
-		$core_properties = [ 'all' ];
-
 		return apply_filters(
 			'elementor/atomic-widgets/styles/transitions/allowed-properties',
-			$core_properties
+			[]
 		);
 	}
 

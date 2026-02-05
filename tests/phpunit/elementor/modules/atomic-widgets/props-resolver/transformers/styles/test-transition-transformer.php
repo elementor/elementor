@@ -32,6 +32,15 @@ class Test_Transition_Transformer extends Elementor_Test_Base {
 		remove_all_filters( 'elementor/atomic-widgets/styles/transitions/allowed-properties' );
 	}
 
+	private function add_base_property_filter(): void {
+		add_filter(
+			'elementor/atomic-widgets/styles/transitions/allowed-properties',
+			function( $properties ) {
+				return array_merge( $properties, [ 'all' ] );
+			}
+		);
+	}
+
 	public function test_transform__returns_empty_when_pro_not_available() {
 		// Arrange.
 		$transformer = $this->getMockBuilder( Transition_Transformer::class )
@@ -39,6 +48,8 @@ class Test_Transition_Transformer extends Elementor_Test_Base {
 			->getMock();
 
 		$transformer->method( 'has_pro' )->willReturn( false );
+
+		$this->add_base_property_filter();
 
 		$transitions = [
 			[
@@ -57,8 +68,10 @@ class Test_Transition_Transformer extends Elementor_Test_Base {
 		$this->assertSame( '', $result );
 	}
 
-	public function test_transform__core_property_all_is_allowed() {
+	public function test_transform__property_all_is_allowed_when_filter_adds_it() {
 		// Arrange.
+		$this->add_base_property_filter();
+
 		$transitions = [
 			[
 				'selection' => [
@@ -76,8 +89,10 @@ class Test_Transition_Transformer extends Elementor_Test_Base {
 		$this->assertSame( 'all 200ms', $result );
 	}
 
-	public function test_transform__core_property_only_allows_core_properties() {
+	public function test_transform__only_allowed_properties_are_processed() {
 		// Arrange.
+		$this->add_base_property_filter();
+
 		$transitions = [
 			[
 				'selection' => [
@@ -106,7 +121,7 @@ class Test_Transition_Transformer extends Elementor_Test_Base {
 		add_filter(
 			'elementor/atomic-widgets/styles/transitions/allowed-properties',
 			function( $properties ) {
-				return array_merge( $properties, [ 'width', 'height', 'opacity' ] );
+				return array_merge( $properties, [ 'all', 'width', 'height', 'opacity' ] );
 			}
 		);
 
@@ -147,6 +162,8 @@ class Test_Transition_Transformer extends Elementor_Test_Base {
 
 	public function test_transform__empty_selection_value_returns_empty_string() {
 		// Arrange.
+		$this->add_base_property_filter();
+
 		$transitions = [
 			[
 				'selection' => [
@@ -165,7 +182,7 @@ class Test_Transition_Transformer extends Elementor_Test_Base {
 	}
 
 	public function test_transform__all_transitions_filtered_out_returns_empty_string() {
-		// Arrange.
+		// Arrange - no filter added, so no properties are allowed.
 		$transitions = [
 			[
 				'selection' => [
@@ -178,6 +195,25 @@ class Test_Transition_Transformer extends Elementor_Test_Base {
 					'value' => 'invalid-property-2',
 				],
 				'size' => '300ms',
+			],
+		];
+		$context = Props_Resolver_Context::make();
+
+		// Act.
+		$result = $this->transformer->transform( $transitions, $context );
+
+		// Assert.
+		$this->assertSame( '', $result );
+	}
+
+	public function test_transform__returns_empty_when_no_properties_allowed() {
+		// Arrange - no filter, so default is empty array.
+		$transitions = [
+			[
+				'selection' => [
+					'value' => 'all',
+				],
+				'size' => '200ms',
 			],
 		];
 		$context = Props_Resolver_Context::make();
