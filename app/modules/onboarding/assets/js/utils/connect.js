@@ -6,7 +6,7 @@ import EventDispatcher from './modules/event-dispatcher';
 
 export default function Connect( props ) {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext );
-	const { buttonRef, successCallback, errorCallback, onClickTracking } = props;
+	const { buttonRef, successCallback, errorCallback } = props;
 
 	const handleCoreConnectionLogic = useCallback( ( event, data ) => {
 		const isTrackingOptedInConnect = data.tracking_opted_in && elementorCommon.config.editor_events;
@@ -33,12 +33,6 @@ export default function Connect( props ) {
 
 		const $button = jQuery( buttonRef.current );
 
-		if ( onClickTracking ) {
-			$button.on( 'click', () => {
-				onClickTracking();
-			} );
-		}
-
 		$button.elementorConnect( {
 			success: ( event, data ) => {
 				handleCoreConnectionLogic( event, data );
@@ -59,7 +53,11 @@ export default function Connect( props ) {
 				height: 534,
 			},
 		} );
-	}, [ buttonRef, successCallback, errorCallback, onClickTracking, handleCoreConnectionLogic, defaultConnectSuccessCallback ] );
+
+		return () => {
+			$button.off( 'click' );
+		};
+	}, [ buttonRef, successCallback, errorCallback, handleCoreConnectionLogic, defaultConnectSuccessCallback ] );
 
 	return null;
 }
@@ -68,5 +66,4 @@ Connect.propTypes = {
 	buttonRef: PropTypes.object.isRequired,
 	successCallback: PropTypes.func,
 	errorCallback: PropTypes.func,
-	onClickTracking: PropTypes.func,
 };

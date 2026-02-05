@@ -124,6 +124,23 @@ export default function Account() {
 		actionButton.text = __( 'Start setup', 'elementor' );
 		actionButton.href = elementorAppConfig.onboarding.urls.signUp + elementorAppConfig.onboarding.utms.connectCta;
 		actionButton.ref = actionButtonRef;
+		actionButton.onClick = ( event ) => {
+			event.preventDefault();
+
+			OnboardingEventTracking.trackStepAction( 1, 'create' );
+			OnboardingEventTracking.sendEventOrStore( 'CREATE_MY_ACCOUNT', { currentStep: 1, createAccountClicked: 'main_cta' } );
+
+			safeDispatchEvent(
+				'new_account_connect',
+				{
+					location: 'plugin_onboarding',
+					trigger: elementorCommon.eventsManager?.config?.triggers?.click || 'click',
+					step_number: 1,
+					step_name: 'account_setup',
+					button_text: 'Start setup',
+				},
+			);
+		};
 	}
 
 	const connectSuccessCallback = () => {
@@ -207,21 +224,6 @@ export default function Account() {
 				navigate={ navigate }
 				nextStep={ nextStep }
 				pageId={ pageId }
-				actionButtonClickTracking={ ! state.isLibraryConnected ? () => {
-					OnboardingEventTracking.trackStepAction( 1, 'create' );
-					OnboardingEventTracking.sendEventOrStore( 'CREATE_MY_ACCOUNT', { currentStep: 1, createAccountClicked: 'main_cta' } );
-
-					safeDispatchEvent(
-						'new_account_connect',
-						{
-							location: 'plugin_onboarding',
-							trigger: elementorCommon.eventsManager?.config?.triggers?.click || 'click',
-							step_number: 1,
-							step_name: 'account_setup',
-							button_text: 'Start setup',
-						},
-					);
-				} : null }
 			/>
 			{
 				! state.isLibraryConnected && 'B' !== experiment101Variant && (
@@ -231,6 +233,23 @@ export default function Account() {
 							<a
 								ref={ alreadyHaveAccountLinkRef }
 								href={ elementorAppConfig.onboarding.urls.connect + elementorAppConfig.onboarding.utms.connectCtaLink }
+								onClick={ ( event ) => {
+									event.preventDefault();
+
+									OnboardingEventTracking.trackStepAction( 1, 'connect' );
+									OnboardingEventTracking.sendEventOrStore( 'STEP1_CLICKED_CONNECT', { currentStep: state.currentStep } );
+
+									safeDispatchEvent(
+										'existing_account_connect',
+										{
+											location: 'plugin_onboarding',
+											trigger: elementorCommon.eventsManager?.config?.triggers?.click || 'click',
+											step_number: 1,
+											step_name: 'account_setup',
+											button_text: 'Click here to connect',
+										},
+									);
+								} }
 							>
 								{ __( 'Click here to connect', 'elementor' ) }
 							</a>
@@ -239,21 +258,6 @@ export default function Account() {
 							buttonRef={ alreadyHaveAccountLinkRef }
 							successCallback={ connectSuccessCallback }
 							errorCallback={ connectFailureCallback }
-							onClickTracking={ () => {
-								OnboardingEventTracking.trackStepAction( 1, 'connect' );
-								OnboardingEventTracking.sendEventOrStore( 'STEP1_CLICKED_CONNECT', { currentStep: state.currentStep } );
-
-								safeDispatchEvent(
-									'existing_account_connect',
-									{
-										location: 'plugin_onboarding',
-										trigger: elementorCommon.eventsManager?.config?.triggers?.click || 'click',
-										step_number: 1,
-										step_name: 'account_setup',
-										button_text: 'Click here to connect',
-									},
-								);
-							} }
 						/>
 					</div>
 				)
