@@ -4,7 +4,7 @@ import { OnboardingContext } from '../context/context';
 import { OnboardingEventTracking } from './onboarding-event-tracking';
 import EventDispatcher from './modules/event-dispatcher';
 
-const initializedButtons = new WeakMap();
+let callbackCounter = 0;
 
 export default function Connect( props ) {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext );
@@ -12,41 +12,8 @@ export default function Connect( props ) {
 	const successCallbackRef = useRef( successCallback );
 	const errorCallbackRef = useRef( errorCallback );
 	const onClickTrackingRef = useRef( onClickTracking );
-
-	const buttonElement = buttonRef?.current;
-	
-	let isButtonInitialized = false;
-	let buttonText = 'no-text';
-	let buttonId = 'no-id';
-	let buttonHref = 'no-href';
-	let hasCallbackId = false;
-	
-	if ( buttonElement ) {
-		isButtonInitialized = initializedButtons.has( buttonElement );
-		buttonText = buttonElement.textContent?.trim() || buttonElement.innerText?.trim() || 'no-text';
-		buttonId = buttonElement.id || buttonElement.getAttribute('data-button-id') || 'no-id';
-		buttonHref = buttonElement.href || 'no-href';
-		
-		const $button = jQuery( buttonElement );
-		const hrefAttr = $button.attr( 'href' ) || '';
-		hasCallbackId = hrefAttr.includes( 'callback_id=' );
-		
-		if ( hasCallbackId && ! isButtonInitialized ) {
-			initializedButtons.set( buttonElement, true );
-			isButtonInitialized = true;
-		}
-	}
-
-	console.log( '[Connect] Component render', {
-		buttonRefExists: !!buttonElement,
-		isButtonInitialized,
-		hasCallbackId,
-		buttonText,
-		buttonId,
-		buttonHref: buttonHref.substring(0, 80),
-		successCallbackChanged: successCallbackRef.current !== successCallback,
-		errorCallbackChanged: errorCallbackRef.current !== errorCallback,
-	} );
+	const callbackIdRef = useRef( null );
+	const isInitializedRef = useRef( false );
 
 	successCallbackRef.current = successCallback;
 	errorCallbackRef.current = errorCallback;
@@ -71,115 +38,69 @@ export default function Connect( props ) {
 	}, [ state, getStateObjectToUpdate, updateState ] );
 
 	useEffect( () => {
-		const buttonElement = buttonRef.current;
-		if ( ! buttonElement ) {
+		const buttonElement = buttonRef?.current;
+		if ( ! buttonElement || isInitializedRef.current ) {
 			return;
 		}
 
-		if ( initializedButtons.has( buttonElement ) ) {
-			const buttonText = buttonElement.textContent?.trim() || buttonElement.innerText?.trim() || 'no-text';
-			console.log( '[Connect] useEffect skipped - already initialized in WeakMap', {
-				buttonText,
-			} );
-			return;
-		}
+		isInitializedRef.current = true;
+		callbackCounter++;
+		const callbackId = 'cb' + callbackCounter;
+		callbackIdRef.current = callbackId;
 
-		const buttonId = buttonElement?.id || buttonElement?.getAttribute('data-button-id') || 'no-id';
-		const buttonText = buttonElement?.textContent?.trim() || buttonElement?.innerText?.trim() || 'no-text';
-		const $button = jQuery( buttonElement );
-		const originalHref = $button.attr( 'href' ) || '';
-		
-		const hasCallbackId = originalHref.includes( 'callback_id=' );
-		
-		if ( hasCallbackId ) {
-			console.log( '[Connect] useEffect skipped - button already has callback_id', {
-				buttonId,
-				buttonText,
-				originalHref: originalHref.substring(0, 100),
-			} );
-			initializedButtons.set( buttonElement, true );
-			return;
-		}
+		const originalHref = buttonElement.getAttribute( 'href' ) || '';
+		const connectUrl = originalHref + '&mode=popup&callback_id=' + callbackId;
 
-		const wasSet = initializedButtons.has( buttonElement );
-		initializedButtons.set( buttonElement, true );
-		
-		if ( wasSet ) {
-			console.log( '[Connect] useEffect skipped - race condition detected, another component initialized first', {
-				buttonId,
-				buttonText,
-			} );
-			return;
-		}
+		const handleSuccess = ( event, data ) => {
+			handleCoreConnectionLogic( event, data );
 
-		console.log( '[Connect] useEffect proceeding - will call elementorConnect', {
-			buttonId,
-			buttonText,
-			originalHref: originalHref.substring(0, 100),
-		} );
-
-		if ( onClickTrackingRef.current ) {
-			$button.on( 'click.connectTracking', () => {
-				onClickTrackingRef.current();
-			} );
-		}
-
-		console.log( '[Connect] Calling elementorConnect', {
-			buttonId,
-			buttonText,
-			originalHref: originalHref.substring(0, 100),
-		} );
-
-		$button.elementorConnect( {
-			success: ( event, data ) => {
-				handleCoreConnectionLogic( event, data );
-
-				if ( successCallbackRef.current ) {
-					successCallbackRef.current( event, data );
-				} else {
-					defaultConnectSuccessCallback();
-				}
-			},
-			error: () => {
-				if ( errorCallbackRef.current ) {
-					errorCallbackRef.current();
-				}
-			},
-			popup: {
-				width: 726,
-				height: 534,
-			},
-		} );
-
-		const newHref = $button.attr( 'href' );
-		const callbackIds = ( newHref?.match( /callback_id=cb\d+/g ) || [] );
-		console.log( '[Connect] elementorConnect called', {
-			buttonId,
-			buttonText,
-			hrefChanged: originalHref !== newHref,
-			callbackIdsInHref: callbackIds.length,
-			callbackIds: callbackIds,
-		} );
-
-		initializedButtons.set( buttonElement, true );
-
-		return () => {
-			const cleanupButtonId = buttonRef.current?.id || buttonRef.current?.getAttribute('data-button-id') || 'no-id';
-			const cleanupButtonText = buttonRef.current?.textContent?.trim() || buttonRef.current?.innerText?.trim() || 'no-text';
-			const wasInitialized = buttonRef.current ? initializedButtons.has( buttonRef.current ) : false;
-			console.log( '[Connect] Cleanup running', {
-				buttonId: cleanupButtonId,
-				buttonText: cleanupButtonText,
-				wasInitialized,
-			} );
-			if ( buttonRef.current ) {
-				const $cleanupButton = jQuery( buttonRef.current );
-				$cleanupButton.off( 'click.connectTracking' );
-				$cleanupButton.off( 'click' );
-				initializedButtons.delete( buttonRef.current );
+			if ( successCallbackRef.current ) {
+				successCallbackRef.current( event, data );
+			} else {
+				defaultConnectSuccessCallback();
 			}
 		};
-	}, [ buttonRef ] );
+
+		const handleError = () => {
+			if ( errorCallbackRef.current ) {
+				errorCallbackRef.current();
+			}
+		};
+
+		const handleClick = ( event ) => {
+			event.preventDefault();
+
+			if ( onClickTrackingRef.current ) {
+				onClickTrackingRef.current();
+			}
+
+			const popup = window.open(
+				connectUrl,
+				'elementorConnect',
+				'toolbar=no, menubar=no, width=726, height=534, top=200, left=0'
+			);
+
+			if ( ! popup ) {
+				handleError();
+			}
+		};
+
+		elementorCommon.elements.$window
+			.on( 'elementor/connect/success/' + callbackId, handleSuccess )
+			.on( 'elementor/connect/error/' + callbackId, handleError );
+
+		buttonElement.addEventListener( 'click', handleClick );
+
+		return () => {
+			if ( callbackIdRef.current ) {
+				elementorCommon.elements.$window
+					.off( 'elementor/connect/success/' + callbackIdRef.current )
+					.off( 'elementor/connect/error/' + callbackIdRef.current );
+			}
+			buttonElement.removeEventListener( 'click', handleClick );
+			isInitializedRef.current = false;
+		};
+	}, [ buttonRef, handleCoreConnectionLogic, defaultConnectSuccessCallback ] );
 
 	return null;
 }
