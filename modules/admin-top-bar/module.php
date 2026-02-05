@@ -12,20 +12,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Admin Top Bar Module
  *
- * @deprecated 3.34.2 Use Editor One module instead
+ * @deprecated 3.34.2 Use Elementor One package instead
  */
 class Module extends BaseModule {
+
+	private $current_screen;
+
+	private const DEPRECATION_MESSAGE = 'The admin-top-bar module has been replaced by the Elementor One package.';
+
+	/**
+	 * @return bool
+	 */
+	public static function is_active() {
+		return is_admin();
+	}
 
 	public function get_name() {
 		return 'admin-top-bar';
 	}
 
-	public static function is_active() {
-		return is_admin();
-	}
-
 	public function __construct() {
-		_deprecated_function( __CLASS__, '3.34.2', 'Editor One module' );
+		_deprecated_function( __CLASS__, '3.34.2', 'Elementor One package' );
 
 		parent::__construct();
 
@@ -33,7 +40,9 @@ class Module extends BaseModule {
 	}
 
 	public function fire_deprecated_hooks() {
-		if ( ! Admin::is_elementor_admin_page() ) {
+		$this->current_screen = get_current_screen();
+
+		if ( ! Admin::is_elementor_admin_page( $this->current_screen ) ) {
 			return;
 		}
 
@@ -61,7 +70,7 @@ class Module extends BaseModule {
 			[ $deprecated_stub ],
 			'3.34.2',
 			'',
-			'The admin-top-bar module has been replaced by Editor One.'
+			self::DEPRECATION_MESSAGE
 		);
 	}
 
@@ -72,10 +81,10 @@ class Module extends BaseModule {
 
 		apply_filters_deprecated(
 			'elementor/admin-top-bar/is-active',
-			[ true, get_current_screen() ],
+			[ true, $this->current_screen ],
 			'3.34.2',
 			'',
-			'The admin-top-bar module has been replaced by Editor One.'
+			self::DEPRECATION_MESSAGE
 		);
 	}
 
@@ -89,7 +98,8 @@ class Module extends BaseModule {
 			[],
 			'3.34.2',
 			'',
-			'The admin-top-bar module has been replaced by Editor One.'
+			self::DEPRECATION_MESSAGE
 		);
 	}
 }
+
