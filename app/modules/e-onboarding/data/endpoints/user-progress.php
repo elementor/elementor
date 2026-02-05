@@ -91,7 +91,7 @@ class User_Progress extends Endpoint_Base {
 				return new \WP_Error( 'invalid_exit_type', 'Exit type is invalid.', [ 'status' => 400 ] );
 			}
 
-			$validated['exit_type'] = $exit_type ?: null;
+			$validated['exit_type'] = '' === $exit_type ? null : $exit_type;
 		}
 
 		if ( array_key_exists( 'complete_step', $params ) ) {

@@ -111,11 +111,26 @@ class Module extends BaseModule {
 
 	private function get_steps_config(): array {
 		$steps = [
-			[ 'id' => 'building_for', 'label' => __( 'Who are you building for?', 'elementor' ) ],
-			[ 'id' => 'site_about', 'label' => __( 'What is your site about?', 'elementor' ) ],
-			[ 'id' => 'experience', 'label' => __( 'How much experience do you have with Elementor?', 'elementor' ) ],
-			[ 'id' => 'theme_select', 'label' => __( 'Start with a theme that fits your needs', 'elementor' ) ],
-			[ 'id' => 'site_features', 'label' => __( 'What do you want to include in your site?', 'elementor' ) ],
+			[
+				'id' => 'building_for',
+				'label' => __( 'Who are you building for?', 'elementor' ),
+			],
+			[
+				'id' => 'site_about',
+				'label' => __( 'What is your site about?', 'elementor' ),
+			],
+			[
+				'id' => 'experience',
+				'label' => __( 'How much experience do you have with Elementor?', 'elementor' ),
+			],
+			[
+				'id' => 'theme_select',
+				'label' => __( 'Start with a theme that fits your needs', 'elementor' ),
+			],
+			[
+				'id' => 'site_features',
+				'label' => __( 'What do you want to include in your site?', 'elementor' ),
+			],
 		];
 
 		return apply_filters( 'elementor/e-onboarding/steps', $steps );
