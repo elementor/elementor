@@ -23,7 +23,7 @@ describe( 'ChipsControl', () => {
 			setValue,
 			disabled: false,
 			propType,
-			bind: 'classes',
+			bind: 'string-array',
 			path: [],
 			resetValue: jest.fn(),
 			restoreValue: jest.fn(),
@@ -41,7 +41,7 @@ describe( 'ChipsControl', () => {
 		const props = {
 			setValue,
 			value: [],
-			bind: 'classes',
+			bind: 'string-array',
 			propType,
 		};
 
@@ -58,7 +58,7 @@ describe( 'ChipsControl', () => {
 		const props = {
 			setValue,
 			value: [],
-			bind: 'classes',
+			bind: 'string-array',
 			propType,
 		};
 
@@ -81,7 +81,7 @@ describe( 'ChipsControl', () => {
 		const props = {
 			setValue,
 			value: [],
-			bind: 'classes',
+			bind: 'string-array',
 			propType,
 		};
 
@@ -99,7 +99,7 @@ describe( 'ChipsControl', () => {
 		const props = {
 			setValue,
 			value: null,
-			bind: 'classes',
+			bind: 'string-array',
 			propType,
 		};
 
@@ -120,7 +120,7 @@ describe( 'ChipsControl', () => {
 			setValue,
 			disabled: false,
 			propType,
-			bind: 'classes',
+			bind: 'string-array',
 			path: [],
 			resetValue: jest.fn(),
 			restoreValue: jest.fn(),
@@ -129,7 +129,7 @@ describe( 'ChipsControl', () => {
 		const props = {
 			setValue,
 			value: [ 'email', 'webhook' ],
-			bind: 'classes',
+			bind: 'string-array',
 			propType,
 		};
 
@@ -138,8 +138,7 @@ describe( 'ChipsControl', () => {
 
 		const chips = screen.getAllByRole( 'button' );
 		const emailChip = chips.find( ( chip ) => chip.textContent?.includes( 'Email' ) ) as HTMLElement;
-		// eslint-disable-next-line testing-library/no-node-access
-		const deleteIcon = emailChip.querySelector( '.MuiChip-deleteIcon' ) as HTMLElement;
+		const deleteIcon = within( emailChip ).getByTestId( 'CancelIcon' );
 		fireEvent.click( deleteIcon );
 
 		// Assert
@@ -153,7 +152,7 @@ describe( 'ChipsControl', () => {
 			setValue,
 			disabled: false,
 			propType,
-			bind: 'classes',
+			bind: 'string-array',
 			path: [],
 			resetValue: jest.fn(),
 			restoreValue: jest.fn(),
@@ -162,7 +161,7 @@ describe( 'ChipsControl', () => {
 		const props = {
 			setValue,
 			value: [ 'email' ],
-			bind: 'classes',
+			bind: 'string-array',
 			propType,
 		};
 
@@ -171,8 +170,7 @@ describe( 'ChipsControl', () => {
 
 		const chips = screen.getAllByRole( 'button' );
 		const emailChip = chips.find( ( chip ) => chip.textContent?.includes( 'Email' ) ) as HTMLElement;
-		// eslint-disable-next-line testing-library/no-node-access
-		const deleteIcon = emailChip.querySelector( '.MuiChip-deleteIcon' ) as HTMLElement;
+		const deleteIcon = within( emailChip ).getByTestId( 'CancelIcon' );
 		fireEvent.click( deleteIcon );
 
 		// Assert
