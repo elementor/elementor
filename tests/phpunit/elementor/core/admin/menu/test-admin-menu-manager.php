@@ -174,7 +174,10 @@ class Test_Admin_Menu_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_unregister() {
-		// Arrange.
+		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register' );
+		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::unregister' );
+		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::get_all' );
+
 		$admin_menu_manager = new Admin_Menu_Manager();
 
 		$item0 = new Top_Level_Menu_Item();
@@ -185,10 +188,8 @@ class Test_Admin_Menu_Manager extends Elementor_Test_Base {
 		$admin_menu_manager->register( 'first-menu-item', $item1 );
 		$admin_menu_manager->register( 'second-menu-item', $item2 );
 
-		// Act.
 		$admin_menu_manager->unregister( 'second-menu-item' );
 
-		// Assert.
 		$this->assertEqualSets( [
 			'top-level-menu-item' => $item0,
 			'first-menu-item' => $item1,
@@ -196,7 +197,9 @@ class Test_Admin_Menu_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_get() {
-		// Arrange.
+		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register' );
+		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::get' );
+
 		$admin_menu_manager = new Admin_Menu_Manager();
 
 		$item1 = new First_Menu_Item();
@@ -206,15 +209,15 @@ class Test_Admin_Menu_Manager extends Elementor_Test_Base {
 		$admin_menu_manager->register( 'first-menu-item', $item1 );
 		$admin_menu_manager->register( 'second-menu-item', $item2 );
 
-		// Act.
 		$item_from_manager = $admin_menu_manager->get( 'first-menu-item' );
 
-		// Assert.
 		$this->assertEquals( $item1, $item_from_manager );
 	}
 
 	public function test_get__non_existing_item() {
-		// Arrange.
+		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register' );
+		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::get' );
+
 		$admin_menu_manager = new Admin_Menu_Manager();
 
 		$item1 = new First_Menu_Item();
@@ -224,15 +227,15 @@ class Test_Admin_Menu_Manager extends Elementor_Test_Base {
 		$admin_menu_manager->register( 'first-menu-item', $item1 );
 		$admin_menu_manager->register( 'second-menu-item', $item2 );
 
-		// Act.
 		$item_from_manager = $admin_menu_manager->get( 'non-existing-item' );
 
-		// Assert.
 		$this->assertEquals( null, $item_from_manager );
 	}
 
 	public function test_get_all() {
-		// Arrange.
+		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register' );
+		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::get_all' );
+
 		$admin_menu_manager = new Admin_Menu_Manager();
 
 		$item0 = new Top_Level_Menu_Item();
@@ -243,10 +246,8 @@ class Test_Admin_Menu_Manager extends Elementor_Test_Base {
 		$admin_menu_manager->register( 'first-menu-item', $item1 );
 		$admin_menu_manager->register( 'second-menu-item', $item2 );
 
-		// Act.
 		$items_from_manager = $admin_menu_manager->get_all();
 
-		// Assert.
 		$this->assertEqualSets( [
 			'top-level-menu-item' => $item0,
 			'first-menu-item' => $item1,
