@@ -1,5 +1,6 @@
-import { type TimeUnit } from '../types';
+import { type Unit } from '@elementor/editor-controls';
 
+type TimeUnit = Extract< Unit, 'ms' | 's' >;
 const UNIT_TO_MS: Record< TimeUnit, number > = {
 	ms: 1,
 	s: 1000,
