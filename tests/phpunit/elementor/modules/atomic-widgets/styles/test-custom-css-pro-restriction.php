@@ -18,8 +18,6 @@ class Test_Custom_Css_Pro_Restriction extends Elementor_Test_Base {
 
 	public function tear_down() {
 		parent::tear_down();
-
-		remove_all_filters( 'elementor/atomic_widgets/styles/post_styles' );
 	}
 
 	public function test_remove_custom_css_from_styles__removes_all_custom_css() {
