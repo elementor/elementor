@@ -1,3 +1,4 @@
+import { type Unit } from '@elementor/editor-controls';
 import { sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 
 import { DEFAULT_TIME_UNIT, TIME_UNITS } from '../configs/time-constants';
@@ -11,8 +12,8 @@ import {
 	type InteractionItemPropValue,
 	type InteractionItemValue,
 	type NumberPropValue,
+	type SizeStringValue,
 	type StringPropValue,
-	type TimeValue,
 	type TimingConfigPropValue,
 } from '../types';
 import { formatSizeValue, parseSizeValue } from '../utils/size-transform-utils';
@@ -28,7 +29,7 @@ export const createNumber = ( value: number ): NumberPropValue => ( {
 	value,
 } );
 
-export const createTimingConfig = ( duration: TimeValue, delay: TimeValue ): TimingConfigPropValue => ( {
+export const createTimingConfig = ( duration: SizeStringValue, delay: SizeStringValue ): TimingConfigPropValue => ( {
 	$$type: 'timing-config',
 	value: {
 		duration: sizePropTypeUtil.create( parseSizeValue( duration, TIME_UNITS, undefined, DEFAULT_TIME_UNIT ) ),
@@ -46,23 +47,31 @@ export const createConfig = ( {
 	easing = 'easeIn',
 	relativeTo = '',
 	offsetTop = 0,
-	offsetBottom = 100,
+	offsetBottom = 85,
 }: {
 	replay: boolean;
 	easing?: string;
 	relativeTo?: string;
-	offsetTop?: number;
-	offsetBottom?: number;
+	offsetTop?: SizeStringValue;
+	offsetBottom?: SizeStringValue;
 } ): ConfigPropValue => ( {
 	$$type: 'config',
 	value: {
 		replay: createBoolean( replay ),
 		easing: createString( easing ),
 		relativeTo: createString( relativeTo ),
-		offsetTop: createNumber( offsetTop ),
-		offsetBottom: createNumber( offsetBottom ),
+		offsetTop: createSize( offsetTop, '%' ),
+		offsetBottom: createSize( offsetBottom, '%' ),
 	},
 } );
+
+const createSize = ( value?: SizeStringValue, defaultUnit?: Unit, defaultValue?: SizeStringValue ) => {
+	if ( ! value ) {
+		return;
+	}
+
+	return sizePropTypeUtil.create( parseSizeValue( value, [ '%' ], defaultValue, defaultUnit ) );
+};
 
 export const extractBoolean = ( prop: BooleanPropValue | undefined, fallback = false ): boolean => {
 	return prop?.value ?? fallback;
@@ -99,13 +108,13 @@ export const createAnimationPreset = ( {
 	effect: string;
 	type: string;
 	direction?: string;
-	duration: TimeValue;
-	delay: TimeValue;
+	duration: SizeStringValue;
+	delay: SizeStringValue;
 	replay: boolean;
 	easing?: string;
 	relativeTo?: string;
-	offsetTop?: number;
-	offsetBottom?: number;
+	offsetTop?: SizeStringValue;
+	offsetBottom?: SizeStringValue;
 } ): AnimationPresetPropValue => ( {
 	$$type: 'animation-preset-props',
 	value: {
@@ -142,8 +151,8 @@ export const createInteractionItem = ( {
 	effect: string;
 	type: string;
 	direction?: string;
-	duration: TimeValue;
-	delay: TimeValue;
+	duration: SizeStringValue;
+	delay: SizeStringValue;
 	interactionId?: string;
 	replay: boolean;
 	easing?: string;
@@ -197,12 +206,12 @@ export const extractString = ( prop: StringPropValue | undefined, fallback = '' 
 	return prop?.value ?? fallback;
 };
 
-export const extractSize = ( prop: SizePropValue ): TimeValue => {
-	return formatSizeValue( prop?.value );
-};
+export const extractSize = ( prop?: SizePropValue, defaultValue?: SizeStringValue ): SizeStringValue => {
+	if ( ! prop?.value ) {
+		return defaultValue as SizeStringValue;
+	}
 
-export const extractNumber = ( prop: NumberPropValue | undefined, fallback = 0 ): number => {
-	return prop?.value ?? fallback;
+	return formatSizeValue( prop.value );
 };
 
 const TRIGGER_LABELS: Record< string, string > = {
