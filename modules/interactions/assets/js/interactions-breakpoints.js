@@ -29,11 +29,13 @@ function matchBreakpoint( width ) {
 function attachEventListeners() {
 	let timeout = null;
 
-	window.addEventListener( 'resize', () => {
-		timeout && window.clearTimeout( timeout );
-		timeout = window.setTimeout( () => {
+	const onResize = () => {
+		if ( timeout ) {
+			window.clearTimeout( timeout );
 			timeout = null;
+		}
 
+		timeout = window.setTimeout( () => {
 			const currentBreakpoint = matchBreakpoint( window.innerWidth );
 
 			if ( currentBreakpoint === breakpoints.active ) {
@@ -46,7 +48,9 @@ function attachEventListeners() {
 				breakpoints.onChange( breakpoints.active );
 			}
 		}, 25 );
-	} );
+	};
+
+	window.addEventListener( 'resize', onResize );
 }
 
 export function initBreakpoints( { onChange } = {} ) {
