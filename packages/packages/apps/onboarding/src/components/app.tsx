@@ -2,24 +2,15 @@ import * as React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { createQueryClient, QueryClientProvider } from '@elementor/query';
 import { __createStore, __getStore, __StoreProvider as StoreProvider } from '@elementor/store';
-import { Box, DirectionProvider, styled, ThemeProvider } from '@elementor/ui';
+import { Box, DirectionProvider, ThemeProvider } from '@elementor/ui';
 
 import { useOnboarding } from '../hooks/use-onboarding';
 import { useUpdateProgress } from '../hooks/use-update-progress';
+import { getStepVisualConfig } from '../steps/step-visuals';
 import { registerOnboardingSlice } from '../store';
-import { Connect } from './connect';
-import { Layout } from './layout';
-
-const ContentArea = styled( Box )( ( { theme } ) => ( {
-	flex: 1,
-	display: 'flex',
-	flexDirection: 'column',
-	alignItems: 'center',
-	justifyContent: 'center',
-	padding: theme.spacing( 4 ),
-	margin: '0 auto',
-	width: '100%',
-} ) );
+import { Login } from '../steps/screens/login';
+import { Layout } from './ui/layout';
+import { SplitLayout } from './ui/split-layout';
 
 interface AppProps {
 	onComplete?: () => void;
@@ -97,10 +88,12 @@ function AppContent( { onComplete, onClose }: AppProps ) {
 		);
 	}, [ stepId, stepIndex, totalSteps, actions, isLast, onComplete, updateProgress ] );
 
+	const rightPanelConfig = useMemo( () => getStepVisualConfig( stepId ), [ stepId ] );
+
 	if ( ! isConnected ) {
 		return (
 			<Layout showHeader showFooter={ false } headerProps={ { showCloseButton: false } }>
-				<Connect
+				<Login
 					onConnect={ handleConnect }
 					onContinueAsGuest={ handleContinueAsGuest }
 					connectUrl={ urls.connect }
@@ -122,6 +115,11 @@ function AppContent( { onComplete, onClose }: AppProps ) {
 		onContinue: handleContinue,
 	};
 
+	const progressInfo = {
+		currentStep: stepIndex,
+		totalSteps,
+	};
+
 	return (
 		<Layout
 			showHeader
@@ -130,7 +128,11 @@ function AppContent( { onComplete, onClose }: AppProps ) {
 			headerProps={ { showCloseButton: false } }
 			footerProps={ footerProps }
 		>
-			<ContentArea>{ /* Step content will be rendered here */ }</ContentArea>
+			<SplitLayout
+				left={ <Box sx={ { flex: 1, width: '100%' } } /> }
+				rightConfig={ rightPanelConfig }
+				progress={ progressInfo }
+			/>
 		</Layout>
 	);
 }

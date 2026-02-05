@@ -36,12 +36,15 @@ export {
 } from './store';
 export { StepId } from './types';
 export type {
+	AssetAnimation,
 	StepIdType,
 	Step,
 	OnboardingProgress,
 	OnboardingChoices,
 	OnboardingConfig,
 	OnboardingState,
+	RightPanelAsset,
+	StepVisualConfig,
 } from './types';
 
 declare global {
@@ -60,10 +63,10 @@ declare global {
 					started_at?: number | null;
 					completed_at?: number | null;
 				};
-				choices: Record<string, unknown>;
+				choices: Record< string, unknown >;
 				hadUnexpectedExit: boolean;
 				isConnected: boolean;
-				steps: Array<{ id: string; label: string }>;
+				steps: Array< { id: string; label: string } >;
 				urls: {
 					dashboard: string;
 					editor: string;

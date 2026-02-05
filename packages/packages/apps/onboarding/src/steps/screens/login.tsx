@@ -1,32 +1,36 @@
 import * as React from 'react';
 import { ArrowRightIcon, BrandFacebookIcon } from '@elementor/icons';
-import {
-	Box,
-	Button,
-	Divider,
-	IconButton,
-	Paper,
-	Stack,
-	styled,
-	Typography,
-} from '@elementor/ui';
+import { Box, Button, Divider, IconButton, Paper, Stack, styled, Typography } from '@elementor/ui';
 
-const ConnectRoot = styled( Box )( ( { theme } ) => ( {
+import { getOnboardingAssetUrl } from '../step-visuals';
+
+const BACKDROP_OPACITY = 0.6;
+
+interface LoginRootProps {
+	backgroundUrl: string;
+}
+
+const LoginRoot = styled( Box, {
+	shouldForwardProp: ( prop ) => prop !== 'backgroundUrl',
+} )< LoginRootProps >( ( { theme, backgroundUrl } ) => ( {
 	position: 'relative',
 	minHeight: '100%',
 	width: '100%',
 	display: 'flex',
 	alignItems: 'center',
 	justifyContent: 'center',
-	backgroundColor: theme.palette.background.default,
 	padding: theme.spacing( 4 ),
+	backgroundImage: `url(${ backgroundUrl })`,
+	backgroundSize: 'cover',
+	backgroundPosition: 'center',
+	backgroundRepeat: 'no-repeat',
 } ) );
 
 const Backdrop = styled( Box )( ( { theme } ) => ( {
 	position: 'absolute',
 	inset: 0,
 	backgroundColor: theme.palette.text.primary,
-	opacity: 0.6,
+	opacity: BACKDROP_OPACITY,
 } ) );
 
 const AuthCard = styled( Paper )( ( { theme } ) => ( {
@@ -82,19 +86,17 @@ const SocialButton = styled( IconButton )( ( { theme } ) => ( {
 	},
 } ) );
 
-interface ConnectProps {
+interface LoginProps {
 	onConnect?: () => void;
 	onContinueAsGuest?: () => void;
 	connectUrl?: string;
 }
 
-export function Connect( {
-	onConnect,
-	onContinueAsGuest,
-	connectUrl,
-}: ConnectProps ) {
+const backgroundUrl = getOnboardingAssetUrl( 'login.png' );
+
+export function Login( { onConnect, onContinueAsGuest, connectUrl }: LoginProps ) {
 	return (
-		<ConnectRoot>
+		<LoginRoot backgroundUrl={ backgroundUrl }>
 			<Backdrop />
 			<AuthCard elevation={ 24 }>
 				<Typography variant="h5" align="center">
@@ -112,12 +114,7 @@ export function Connect( {
 						Sign in to Elementor
 					</SignInButton>
 
-					<Stack
-						direction="row"
-						alignItems="center"
-						justifyContent="center"
-						spacing={ 2 }
-					>
+					<Stack direction="row" alignItems="center" justifyContent="center" spacing={ 2 }>
 						<Divider sx={ { width: 80 } } />
 						<Typography variant="body2" color="text.tertiary">
 							OR
@@ -144,16 +141,12 @@ export function Connect( {
 							</Stack>
 						</Stack>
 
-						<GuestButton
-							variant="text"
-							color="info"
-							onClick={ onContinueAsGuest }
-						>
+						<GuestButton variant="text" color="info" onClick={ onContinueAsGuest }>
 							Continue as a guest
 						</GuestButton>
 					</Stack>
 				</Stack>
 			</AuthCard>
-		</ConnectRoot>
+		</LoginRoot>
 	);
 }
