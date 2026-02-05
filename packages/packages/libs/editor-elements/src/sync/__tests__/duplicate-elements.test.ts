@@ -83,10 +83,6 @@ describe( 'duplicateElements', () => {
 		const { mockDuplicatedElement1, mockDuplicatedElement2, mockParent } =
 			setupMockElementsForDuplication( mockGetContainer );
 
-		mockDuplicatedElement1.lookup = jest.fn().mockReturnValue( mockDuplicatedElement1 );
-		mockDuplicatedElement2.lookup = jest.fn().mockReturnValue( mockDuplicatedElement2 );
-		mockParent.lookup = jest.fn().mockReturnValue( mockParent );
-
 		mockDuplicateElement
 			.mockReturnValueOnce( mockDuplicatedElement1 )
 			.mockReturnValueOnce( mockDuplicatedElement2 );

@@ -92,10 +92,6 @@ describe( 'createElements', () => {
 		const mockElement1 = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
 		const mockElement2 = createMockChild( { id: 'element-2', elType: 'widget', widgetType: 'text' } );
 
-		mockElement1.lookup = jest.fn().mockReturnValue( mockElement1 );
-		mockElement2.lookup = jest.fn().mockReturnValue( mockElement2 );
-		mockParent.lookup = jest.fn().mockReturnValue( mockParent );
-
 		mockCreateElement
 			.mockReturnValueOnce( mockElement1 )
 			.mockReturnValueOnce( mockElement2 )

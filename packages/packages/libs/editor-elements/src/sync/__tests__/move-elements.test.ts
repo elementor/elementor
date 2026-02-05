@@ -32,11 +32,6 @@ describe( 'moveElements', () => {
 		// eslint-disable-next-line testing-library/no-node-access
 		mockParentA.children = [ mockElement1, mockElement2 ];
 
-		mockElement1.lookup = jest.fn().mockReturnValue( mockElement1 );
-		mockElement2.lookup = jest.fn().mockReturnValue( mockElement2 );
-		mockParentA.lookup = jest.fn().mockReturnValue( mockParentA );
-		mockParentB.lookup = jest.fn().mockReturnValue( mockParentB );
-
 		return { mockElement1, mockElement2, mockParentA, mockParentB };
 	};
 
@@ -97,9 +92,6 @@ describe( 'moveElements', () => {
 
 		const mockMovedElement1 = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
 		const mockMovedElement2 = createMockChild( { id: 'element-2', elType: 'widget', widgetType: 'text' } );
-
-		mockMovedElement1.lookup = jest.fn().mockReturnValue( mockMovedElement1 );
-		mockMovedElement2.lookup = jest.fn().mockReturnValue( mockMovedElement2 );
 
 		mockMoveElement
 			.mockReturnValueOnce( mockMovedElement1 )
@@ -196,10 +188,8 @@ describe( 'moveElements', () => {
 		// Arrange.
 		const mockElement = createMockContainer( 'element-1', [] );
 		mockElement.parent = undefined;
-		mockElement.lookup = jest.fn().mockReturnValue( mockElement );
 
 		const mockTarget = createMockContainer( 'parent-b', [] );
-		mockTarget.lookup = jest.fn().mockReturnValue( mockTarget );
 
 		// Act & Assert.
 		expect( () =>
@@ -273,12 +263,7 @@ describe( 'moveElements', () => {
 		// eslint-disable-next-line testing-library/no-node-access
 		mockParentA.children = [];
 
-		mockElement.lookup = jest.fn().mockReturnValue( mockElement );
-		mockParentA.lookup = jest.fn().mockReturnValue( mockParentA );
-		mockParentB.lookup = jest.fn().mockReturnValue( mockParentB );
-
 		const mockMovedElement = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
-		mockMovedElement.lookup = jest.fn().mockReturnValue( mockMovedElement );
 
 		mockMoveElement.mockReturnValueOnce( mockMovedElement ).mockReturnValueOnce( mockMovedElement );
 
@@ -307,13 +292,10 @@ describe( 'moveElements', () => {
 
 	it( 'should handle multiple undo/redo cycles correctly', () => {
 		// Arrange.
-		const { mockElement1, mockElement2, mockParentA, mockParentB } = setupMockElementsForMove();
+		const { mockElement1, mockElement2, mockParentB } = setupMockElementsForMove();
 
 		const mockMovedElement1 = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
 		const mockMovedElement2 = createMockChild( { id: 'element-2', elType: 'widget', widgetType: 'text' } );
-
-		mockMovedElement1.lookup = jest.fn().mockReturnValue( mockMovedElement1 );
-		mockMovedElement2.lookup = jest.fn().mockReturnValue( mockMovedElement2 );
 
 		mockMoveElement
 			.mockReturnValueOnce( mockMovedElement1 )

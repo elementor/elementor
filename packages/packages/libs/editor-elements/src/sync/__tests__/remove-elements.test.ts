@@ -251,13 +251,10 @@ describe( 'removeElements', () => {
 
 	it( 'should handle multiple undo/redo cycles correctly', () => {
 		// Arrange.
-		const { mockElement1, mockElement2, mockParent } = setupMockElementsForRemoval();
+		const { mockParent } = setupMockElementsForRemoval();
 
 		const mockRestoredElement1 = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
 		const mockRestoredElement2 = createMockChild( { id: 'element-2', elType: 'widget', widgetType: 'text' } );
-
-		mockRestoredElement1.lookup = jest.fn().mockReturnValue( mockElement1 );
-		mockRestoredElement2.lookup = jest.fn().mockReturnValue( mockElement2 );
 
 		mockCreateElement
 			.mockReturnValueOnce( mockRestoredElement2 )
