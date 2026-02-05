@@ -8,6 +8,7 @@ import { throttle } from '@elementor/utils';
 
 import { apiClient } from '../../api';
 import { useNavigateBack } from '../../hooks/use-navigate-back';
+import { resetSanitizedComponents } from '../../store/actions/reset-sanitized-components';
 import { updateCurrentComponent } from '../../store/actions/update-current-component';
 import { type ComponentsPathItem, selectPath, useCurrentComponentId } from '../../store/store';
 import { COMPONENT_DOCUMENT_TYPE } from '../consts';
@@ -47,6 +48,8 @@ function useHandleDocumentSwitches() {
 			if ( currentComponentId ) {
 				apiClient.unlockComponent( currentComponentId );
 			}
+
+			resetSanitizedComponents();
 
 			const isComponent = nextDocument.config.type === COMPONENT_DOCUMENT_TYPE;
 
