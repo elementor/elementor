@@ -4,17 +4,14 @@ import { useStateByElement } from '@elementor/editor-editing-panel';
 import { CollapseIcon } from '@elementor/editor-ui';
 import { Box, Collapse, ListItemButton, ListItemText, Stack } from '@elementor/ui';
 
-import { type ComponentInstanceOverridesPropValue } from '../../prop-types/component-instance-overrides-prop-type';
-import { type OverridableProp, type OverridablePropsGroup } from '../../types';
+import { type OverridablePropsGroup } from '../../types';
 import { OverridePropControl } from './override-prop-control';
 
 type Props = {
 	group: OverridablePropsGroup;
-	props: Record< string, OverridableProp >;
-	overrides: ComponentInstanceOverridesPropValue;
 };
 
-export function OverridePropsGroup( { group, props, overrides }: Props ) {
+export function OverridePropsGroup( { group }: Props ) {
 	const [ isOpen, setIsOpen ] = useStateByElement( group.id, true );
 
 	const handleClick = () => {
@@ -49,11 +46,7 @@ export function OverridePropsGroup( { group, props, overrides }: Props ) {
 			<Collapse id={ contentId } aria-labelledby={ labelId } in={ isOpen } timeout="auto">
 				<Stack direction="column" gap={ 1 } p={ 2 }>
 					{ group.props.map( ( overrideKey ) => (
-						<OverridePropControl
-							key={ overrideKey }
-							overridableProp={ props[ overrideKey ] }
-							overrides={ overrides }
-						/>
+						<OverridePropControl key={ overrideKey } overrideKey={ overrideKey } />
 					) ) }
 				</Stack>
 			</Collapse>
