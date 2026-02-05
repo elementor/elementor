@@ -8,9 +8,10 @@ const initializedButtons = new WeakMap();
 
 export default function Connect( props ) {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext );
-	const { buttonRef, successCallback, errorCallback } = props;
+	const { buttonRef, successCallback, errorCallback, onClickTracking } = props;
 	const successCallbackRef = useRef( successCallback );
 	const errorCallbackRef = useRef( errorCallback );
+	const onClickTrackingRef = useRef( onClickTracking );
 
 	const buttonElement = buttonRef?.current;
 	
@@ -49,6 +50,7 @@ export default function Connect( props ) {
 
 	successCallbackRef.current = successCallback;
 	errorCallbackRef.current = errorCallback;
+	onClickTrackingRef.current = onClickTracking;
 
 	const handleCoreConnectionLogic = useCallback( ( event, data ) => {
 		const isTrackingOptedInConnect = data.tracking_opted_in && elementorCommon.config.editor_events;
@@ -75,13 +77,12 @@ export default function Connect( props ) {
 		}
 
 		if ( initializedButtons.has( buttonElement ) ) {
+			const buttonText = buttonElement.textContent?.trim() || buttonElement.innerText?.trim() || 'no-text';
 			console.log( '[Connect] useEffect skipped - already initialized in WeakMap', {
-				buttonText: buttonElement.textContent?.trim() || 'no-text',
+				buttonText,
 			} );
 			return;
 		}
-
-		initializedButtons.set( buttonElement, true );
 
 		const buttonId = buttonElement?.id || buttonElement?.getAttribute('data-button-id') || 'no-id';
 		const buttonText = buttonElement?.textContent?.trim() || buttonElement?.innerText?.trim() || 'no-text';
@@ -90,36 +91,39 @@ export default function Connect( props ) {
 		
 		const hasCallbackId = originalHref.includes( 'callback_id=' );
 		
-		let hasJQueryHandlers = false;
-		let clickHandlersCount = 0;
-		try {
-			const events = jQuery._data && jQuery._data( buttonElement, 'events' );
-			if ( events?.click ) {
-				hasJQueryHandlers = events.click.length > 0;
-				clickHandlersCount = events.click.length;
-			}
-		} catch ( e ) {
+		if ( hasCallbackId ) {
+			console.log( '[Connect] useEffect skipped - button already has callback_id', {
+				buttonId,
+				buttonText,
+				originalHref: originalHref.substring(0, 100),
+			} );
+			initializedButtons.set( buttonElement, true );
+			return;
 		}
 
-		console.log( '[Connect] useEffect triggered', {
-			buttonRefExists: true,
-			hasCallbackId,
-			hasJQueryHandlers,
-			clickHandlersCount,
+		const wasSet = initializedButtons.has( buttonElement );
+		initializedButtons.set( buttonElement, true );
+		
+		if ( wasSet ) {
+			console.log( '[Connect] useEffect skipped - race condition detected, another component initialized first', {
+				buttonId,
+				buttonText,
+			} );
+			return;
+		}
+
+		console.log( '[Connect] useEffect proceeding - will call elementorConnect', {
 			buttonId,
 			buttonText,
 			originalHref: originalHref.substring(0, 100),
 		} );
 
-		if ( hasCallbackId || hasJQueryHandlers ) {
-			console.log( '[Connect] useEffect skipped', {
-				reason: hasCallbackId ? 'button already has callback_id in href' : 'button already has jQuery handlers',
-				buttonId,
-				buttonText,
-				handlersCount: clickHandlersCount,
+		if ( onClickTrackingRef.current ) {
+			$button.on( 'click.connectTracking', () => {
+				onClickTrackingRef.current();
 			} );
-			return;
 		}
+
 		console.log( '[Connect] Calling elementorConnect', {
 			buttonId,
 			buttonText,
@@ -169,7 +173,9 @@ export default function Connect( props ) {
 				wasInitialized,
 			} );
 			if ( buttonRef.current ) {
-				jQuery( buttonRef.current ).off( 'click' );
+				const $cleanupButton = jQuery( buttonRef.current );
+				$cleanupButton.off( 'click.connectTracking' );
+				$cleanupButton.off( 'click' );
 				initializedButtons.delete( buttonRef.current );
 			}
 		};
@@ -182,4 +188,5 @@ Connect.propTypes = {
 	buttonRef: PropTypes.object.isRequired,
 	successCallback: PropTypes.func,
 	errorCallback: PropTypes.func,
+	onClickTracking: PropTypes.func,
 };

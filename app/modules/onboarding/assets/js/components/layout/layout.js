@@ -78,29 +78,17 @@ export default function Layout( props ) {
 		}
 	}, [ state.currentStep, props.pageId, setupTopbarUpgradeTracking ] );
 
-	const
+		const createAccountButtonRef = useRef();
+		const
 		headerButtons = [],
 		createAccountButton = {
 			id: 'create-account',
 			text: __( 'Create Account', 'elementor' ),
 			hideText: false,
-			elRef: useRef(),
+			elRef: createAccountButtonRef,
 			url: elementorAppConfig.onboarding.urls.signUp + elementorAppConfig.onboarding.utms.connectTopBar,
 			target: '_blank',
 			rel: 'opener',
-			onClick: () => {
-				OnboardingEventTracking.sendEventOrStore( 'CREATE_MY_ACCOUNT', { currentStep: stepNumber, createAccountClicked: 'topbar' } );
-
-				elementorCommon.events.dispatchEvent( {
-					event: 'create account',
-					version: '',
-					details: {
-						placement: elementorAppConfig.onboarding.eventPlacement,
-						step: state.currentStep,
-						source: 'header',
-					},
-				} );
-			},
 		};
 
 	if ( state.isLibraryConnected ) {
@@ -160,6 +148,19 @@ export default function Layout( props ) {
 					<Connect
 						buttonRef={ createAccountButton.elRef }
 						successCallback={ handleTopbarConnectSuccess }
+						onClickTracking={ () => {
+							OnboardingEventTracking.sendEventOrStore( 'CREATE_MY_ACCOUNT', { currentStep: stepNumber, createAccountClicked: 'topbar' } );
+
+							elementorCommon.events.dispatchEvent( {
+								event: 'create account',
+								version: '',
+								details: {
+									placement: elementorAppConfig.onboarding.eventPlacement,
+									step: state.currentStep,
+									source: 'header',
+								},
+							} );
+						} }
 					/>
 				}
 				<Header
