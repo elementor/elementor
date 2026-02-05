@@ -373,11 +373,11 @@ class Test_Adapter extends TestCase {
 
 		$config = $decoded['items'][0]['value']['animation']['value']['config']['value'];
 
-		$this->assertEquals( 'number', $config['offsetTop']['$$type'] );
-		$this->assertEquals( 15, $config['offsetTop']['value'] );
+		$this->assertEquals( 'size', $config['offsetTop']['$$type'] );
+		$this->assertEquals( [ 'size' => 15, 'unit' => '%'], $config['offsetTop']['value'] );
 
-		$this->assertEquals( 'number', $config['offsetBottom']['$$type'] );
-		$this->assertEquals( 85, $config['offsetBottom']['value'] );
+		$this->assertEquals( 'size', $config['offsetBottom']['$$type'] );
+		$this->assertEquals( [ 'size' => 85, 'unit' => '%' ], $config['offsetBottom']['value'] );
 	}
 
 	// =========================================================================
