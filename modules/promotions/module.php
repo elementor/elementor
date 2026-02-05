@@ -87,6 +87,15 @@ class Module extends Base_Module {
 		$this->register_atomic_promotions();
 	}
 
+	/**
+	 * Get Ally Scanner URL
+	 *
+	 * @return string
+	 */
+	public static function get_ally_external_scanner_url(): string {
+		return apply_filters( 'elementor/ally_external_scanner_url', 'https://elementor.com/tools/ally-accessibility-checker/scanner' );
+	}
+
 	private function handle_external_redirects() {
 		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		if ( empty( $page ) ) {
