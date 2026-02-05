@@ -364,7 +364,7 @@ export default class Component extends ComponentModalBase {
 		const flattenedClassesCount = result.flattened_classes_count || 0;
 		const flattenedVariablesCount = result.flattened_variables_count || 0;
 
-		if ( flattenedClassesCount === 0 && flattenedVariablesCount === 0 ) {
+		if ( 0 === flattenedClassesCount && 0 === flattenedVariablesCount ) {
 			return;
 		}
 
