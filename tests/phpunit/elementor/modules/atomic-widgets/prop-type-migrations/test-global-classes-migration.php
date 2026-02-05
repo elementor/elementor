@@ -3,7 +3,6 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\AtomicWidgets\PropTypeMigrations;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -32,12 +31,31 @@ class Test_Global_Classes_Migration extends Elementor_Test_Base {
 		Migrations_Orchestrator::destroy();
 	}
 
+	public function setUp(): void {
+		parent::setUp();
+
+		$test_name = $this->getName();
+		$tests_needing_migration_schema = [
+			'test_global_classes_migration_performs_update',
+			'test_global_classes_migration_skips_malformed_items',
+		];
+
+		if ( in_array( $test_name, $tests_needing_migration_schema, true ) ) {
+			add_filter( 'elementor/atomic-widgets/styles/schema', [ $this, 'add_title_prop_to_style_schema' ], 999999 );
+		}
+	}
+
 	public function tearDown(): void {
+		remove_filter( 'elementor/atomic-widgets/styles/schema', [ $this, 'add_title_prop_to_style_schema' ], 999999 );
 		Migrations_Orchestrator::destroy();
 		parent::tearDown();
 	}
 
-	public function test_global_classes_migration_no_changes_needed() {
+	public function add_title_prop_to_style_schema(): array {
+		return [ 'title' => Mock_String_GC_V2_Prop_Type::make() ];
+	}
+
+	public function test_no_migration_needed_validation_passes() {
 		// Arrange
 		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
 		$post_id = 1001;

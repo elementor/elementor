@@ -58,7 +58,7 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 		];
 
 		// Act
-		$has_changes = $orchestrator->migrate_element( $settings, $schema, 'e-heading' );
+		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'e-heading' );
 
 		// Assert
 		$this->assertFalse( $has_changes, 'No changes expected when validation passes' );
@@ -81,7 +81,7 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 		];
 
 		// Act
-		$has_changes = $orchestrator->migrate_element( $settings, $schema, 'e-heading' );
+		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'e-heading' );
 
 		// Assert
 		$this->assertFalse( $has_changes, 'No changes when migration path does not exist' );
@@ -109,7 +109,7 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 		];
 
 		// Act
-		$has_changes = $orchestrator->migrate_element( $settings, $schema, 'e-heading' );
+		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'e-heading' );
 
 		// Assert
 		$this->assertTrue( $has_changes, 'Changes expected when prop type migration occurs' );
@@ -137,7 +137,7 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 		];
 
 		// Act
-		$has_changes = $orchestrator->migrate_element( $settings, $schema, 'e-heading' );
+		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'e-heading' );
 
 		// Assert
 		$this->assertTrue( $has_changes, 'Changes expected for widget-level migration' );
@@ -160,7 +160,7 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 		];
 
 		// Act
-		$has_changes = $orchestrator->migrate_element( $settings, $schema, 'e-paragraph' );
+		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'e-paragraph' );
 
 		// Assert
 		$this->assertTrue( $has_changes, 'Changes expected for chained migration' );
@@ -193,7 +193,7 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 		];
 
 		// Act
-		$has_changes = $orchestrator->migrate_element( $settings, $schema, 'e-widget' );
+		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'e-widget' );
 
 		// Assert
 		$this->assertTrue( $has_changes, 'Changes expected when multiple props migrate' );
@@ -216,7 +216,7 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 		];
 
 		// Act
-		$has_changes = $orchestrator->migrate_element( $settings, $schema, 'test-widget-key-upgrade' );
+		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'test-widget-key-upgrade' );
 
 		// Assert
 		$this->assertTrue( $has_changes, 'Changes expected for widget key migration' );
@@ -239,7 +239,7 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 		];
 
 		// Act
-		$has_changes = $orchestrator->migrate_element( $settings, $schema, 'test-widget-key-downgrade' );
+		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'test-widget-key-downgrade' );
 
 		// Assert
 		$this->assertTrue( $has_changes, 'Changes expected for widget key downgrade' );
@@ -262,7 +262,7 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 		];
 
 		// Act
-		$has_changes = $orchestrator->migrate_element( $settings, $schema, 'test-widget-key-and-type' );
+		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'test-widget-key-and-type' );
 
 		// Assert
 		$this->assertTrue( $has_changes, 'Changes expected for key and type migration' );
@@ -285,7 +285,7 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 		];
 
 		// Act
-		$has_changes = $orchestrator->migrate_element( $settings, $schema, 'test-no-migration-path' );
+		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'test-no-migration-path' );
 
 		// Assert
 		$this->assertFalse( $has_changes, 'No changes when no migration path exists' );
@@ -312,7 +312,7 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 		];
 
 		// Act
-		$has_changes = $orchestrator->migrate_element( $settings, $schema, 'test-multiple-to-one' );
+		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'test-multiple-to-one' );
 
 		// Assert
 		$this->assertFalse( $has_changes, 'No changes when multiple orphaned keys target one' );
@@ -336,7 +336,7 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 		];
 
 		// Act
-		$has_changes = $orchestrator->migrate_element( $settings, $schema, 'test-one-to-multiple' );
+		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'test-one-to-multiple' );
 
 		// Assert
 		$this->assertFalse( $has_changes, 'No changes when one orphaned key has multiple targets' );
@@ -364,7 +364,7 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 		];
 
 		// Act
-		$has_changes = $orchestrator->migrate_element( $settings, $schema, 'test-unambiguous-multiple' );
+		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'test-unambiguous-multiple' );
 
 		// Assert
 		$this->assertTrue( $has_changes, 'Changes expected for multiple unambiguous migrations' );

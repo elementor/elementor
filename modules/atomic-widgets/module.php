@@ -103,12 +103,9 @@ use Elementor\Widgets_Manager;
 use Elementor\Modules\AtomicWidgets\Library\Atomic_Widgets_Library;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Query_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Perspective_Origin_Transformer;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Perspective_Origin_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Utils\Utils;
-use Elementor\Core\Base\Document;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -118,7 +115,6 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
-	const EXPERIMENT_BC_MIGRATIONS = 'e_bc_migrations';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -140,7 +136,6 @@ class Module extends BaseModule {
 
 		if ( self::is_active() ) {
 			$this->register_experimental_features();
-			Migrations_Orchestrator::register_feature_flag_hooks();
 		}
 
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
@@ -154,13 +149,13 @@ class Module extends BaseModule {
 
 			( new Atomic_Import_Export() )->register_hooks();
 			( new Atomic_Widgets_Database_Updater() )->register();
+			Migrations_Orchestrator::make()->register_hooks();
 
 			add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 			add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_styles_schema( $settings ) );
 			add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_supported_units( $settings ) );
 			add_filter( 'elementor/widgets/register', fn ( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
 			add_filter( 'elementor/usage/elements/element_title', fn ( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
-			add_filter( 'elementor/document/load/data', fn ( $data, $document ) => $this->backward_compatibility_migrations( $data, $document ), 10, 2 );
 
 			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
 			add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_scripts() );
@@ -214,13 +209,19 @@ class Module extends BaseModule {
 		]);
 
 		Plugin::$instance->experiments->add_feature([
-			'name' => self::EXPERIMENT_BC_MIGRATIONS,
+			'name' => Migrations_Orchestrator::EXPERIMENT_BC_MIGRATIONS,
 			'title' => esc_html__( 'Backward compatibility migrations', 'elementor' ),
 			'description' => esc_html__( 'Enable automatic prop type migrations for atomic widgets', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_ACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		]);
+
+		// When a new feature affects settings or style schema, global class, interactions, variable, etc
+		// anything in need of addressing migration for BC purposes, add it here.
+		$migrations_affecting_features = [];
+
+		Migrations_Orchestrator::register_affecting_feature_flag_hooks( $migrations_affecting_features );
 	}
 
 	private function add_packages( $packages ) {
@@ -421,35 +422,5 @@ class Module extends BaseModule {
 		] );
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 		wp_add_inline_style( 'elementor-editor', $inline_css );
-	}
-
-	private function backward_compatibility_migrations( array $data, $document ): array {
-		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_BC_MIGRATIONS ) ) {
-			return $data;
-		}
-
-		$orchestrator = Migrations_Orchestrator::make( $this->get_migrations_base_path() );
-
-		$orchestrator->migrate_document(
-			$data,
-			$document->get_post()->ID,
-			function( $migrated_data ) use ( $document ) {
-				$document->update_json_meta(
-					Document::ELEMENTOR_DATA_META_KEY,
-					$migrated_data
-				);
-			}
-		);
-
-		return $data;
-	}
-
-	private function get_migrations_base_path(): string {
-		// define this in wp-config.php to use local migrations i.e. __DIR__ . '/wp-content/plugins/elementor/migrations/'
-		if ( defined( 'ELEMENTOR_MIGRATIONS_PATH' ) ) {
-			return ELEMENTOR_MIGRATIONS_PATH;
-		}
-
-		return 'https://migrations.elementor.com/';
 	}
 }
