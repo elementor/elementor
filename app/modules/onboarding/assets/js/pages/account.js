@@ -124,7 +124,9 @@ export default function Account() {
 		actionButton.text = __( 'Start setup', 'elementor' );
 		actionButton.href = elementorAppConfig.onboarding.urls.signUp + elementorAppConfig.onboarding.utms.connectCta;
 		actionButton.ref = actionButtonRef;
-		actionButton.onClick = () => {
+		actionButton.onClick = ( event ) => {
+			event.preventDefault();
+
 			OnboardingEventTracking.trackStepAction( 1, 'create' );
 			OnboardingEventTracking.sendEventOrStore( 'CREATE_MY_ACCOUNT', { currentStep: 1, createAccountClicked: 'main_cta' } );
 
@@ -231,7 +233,9 @@ export default function Account() {
 							<a
 								ref={ alreadyHaveAccountLinkRef }
 								href={ elementorAppConfig.onboarding.urls.connect + elementorAppConfig.onboarding.utms.connectCtaLink }
-								onClick={ () => {
+								onClick={ ( event ) => {
+									event.preventDefault();
+
 									OnboardingEventTracking.trackStepAction( 1, 'connect' );
 									OnboardingEventTracking.sendEventOrStore( 'STEP1_CLICKED_CONNECT', { currentStep: state.currentStep } );
 
