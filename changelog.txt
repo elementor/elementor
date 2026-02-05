@@ -1,5 +1,9 @@
 == Changelog ==
 
+= 3.35.3 - 2026-02-05 =
+
+* Fix: Fatal error appears in dashboard widget in WordPress Admin ([#34663](https://github.com/elementor/elementor/issues/34663), [#34659](https://github.com/elementor/elementor/issues/34659))
+
 = 3.35.2 - 2026-02-05 =
 
 * Fix: Editor menu in WordPress admin displays incorrectly in RTL
