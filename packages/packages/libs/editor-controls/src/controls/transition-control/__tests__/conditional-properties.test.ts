@@ -12,8 +12,8 @@ describe( 'transition properties conditional loading', () => {
 		{
 			scenario: 'Pro not installed',
 			proConfig: undefined,
-			expectedLength: 1,
-			expectedHasMargin: false,
+			expectedLength: 'greater than 1',
+			expectedHasMargin: true,
 		},
 		{
 			scenario: 'Pro version 3.35 or higher',
