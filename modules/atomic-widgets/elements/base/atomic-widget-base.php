@@ -92,7 +92,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 	public function get_script_depends() {
 		$depends = parent::get_script_depends();
-		
+
 		if ( $this->has_action_link() ) {
 			$depends[] = Frontend_Assets_Loader::ACTION_LINK_HANDLERS_HANDLE;
 		}
