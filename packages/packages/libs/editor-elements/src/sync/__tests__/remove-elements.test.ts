@@ -30,7 +30,6 @@ describe( 'removeElements', () => {
 
 	const setupMockElementsForRemoval = () => {
 		const mockParent = createMockContainer( 'parent-1', [] );
-		mockParent.lookup = jest.fn().mockReturnValue( mockParent );
 
 		const mockElement1 = createMockContainer( 'element-1', [] );
 		const mockElement1ToJSON = jest.spyOn( mockElement1.model, 'toJSON' );
@@ -42,7 +41,6 @@ describe( 'removeElements', () => {
 		} as unknown as V1ElementModelProps );
 		mockElement1.parent = mockParent;
 		mockElement1.view = { _index: 0 };
-		mockElement1.lookup = jest.fn().mockReturnValue( mockElement1 );
 
 		const mockElement2 = createMockContainer( 'element-2', [] );
 		const mockElement2ToJSON = jest.spyOn( mockElement2.model, 'toJSON' );
@@ -54,7 +52,6 @@ describe( 'removeElements', () => {
 		} as unknown as V1ElementModelProps );
 		mockElement2.parent = mockParent;
 		mockElement2.view = { _index: 1 };
-		mockElement2.lookup = jest.fn().mockReturnValue( mockElement2 );
 
 		mockGetContainer.mockImplementation( ( id ) => {
 			if ( id === 'element-1' ) {
@@ -213,7 +210,6 @@ describe( 'removeElements', () => {
 	it( 'should handle elements with missing view index', () => {
 		// Arrange.
 		const mockParent = createMockContainer( 'parent-1', [] );
-		mockParent.lookup = jest.fn().mockReturnValue( mockParent );
 
 		const mockElement = createMockContainer( 'element-1', [] );
 		const mockElementToJSON = jest.spyOn( mockElement.model, 'toJSON' );
@@ -225,7 +221,6 @@ describe( 'removeElements', () => {
 		} as unknown as V1ElementModelProps );
 		mockElement.parent = mockParent;
 		mockElement.view = {};
-		mockElement.lookup = jest.fn().mockReturnValue( mockElement );
 
 		mockGetContainer.mockReturnValue( mockElement );
 
@@ -311,7 +306,7 @@ describe( 'removeElements', () => {
 
 	it( 'should skip undo when parent container lookup returns null', () => {
 		// Arrange.
-		const { mockElement1, mockParent } = setupMockElementsForRemoval();
+		const { mockParent } = setupMockElementsForRemoval();
 
 		mockParent.lookup = jest.fn().mockReturnValue( null );
 
@@ -335,7 +330,7 @@ describe( 'removeElements', () => {
 
 	it( 'should skip redo when container lookup returns null', () => {
 		// Arrange.
-		const { mockElement1, mockParent } = setupMockElementsForRemoval();
+		const { mockElement1 } = setupMockElementsForRemoval();
 
 		const mockRestoredElement = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
 		mockCreateElement.mockReturnValue( mockRestoredElement );
@@ -363,7 +358,7 @@ describe( 'removeElements', () => {
 
 	it( 'should skip redo when parent lookup returns null', () => {
 		// Arrange.
-		const { mockElement1, mockParent } = setupMockElementsForRemoval();
+		const { mockParent } = setupMockElementsForRemoval();
 
 		const mockRestoredElement = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
 		mockCreateElement.mockReturnValue( mockRestoredElement );

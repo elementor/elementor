@@ -19,11 +19,11 @@ export function moveElement( { element, targetContainer, options = {} }: MoveEle
 	const resolvedTarget = targetContainer.lookup?.();
 
 	if ( ! resolvedElement ) {
-		throw new Error( 'Element not found' );
+		throw new Error( `Element not found: ${ element.id }` );
 	}
 
 	if ( ! resolvedTarget ) {
-		throw new Error( 'Target container not found' );
+		throw new Error( `Target container not found: ${ targetContainer.id }` );
 	}
 
 	const modelToRecreate = resolvedElement.model.toJSON();
