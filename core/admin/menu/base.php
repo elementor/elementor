@@ -2,12 +2,19 @@
 namespace Elementor\Core\Admin\Menu;
 
 use Elementor\Core\Base\Base_Object;
+use Elementor\Core\Admin\Menu\Deprecated;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
+	exit;
 }
 
+require_once __DIR__ . '/deprecated.php';
+
+/**
+ * @deprecated 3.34.2 Elementor menu items are now registered inside Elementor\Core\Admin\EditorOneMenu. Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
+ */
 abstract class Base extends Base_Object {
+	use Deprecated;
 
 	private $args;
 
@@ -16,6 +23,8 @@ abstract class Base extends Base_Object {
 	abstract protected function get_init_args();
 
 	public function __construct() {
+		$this->trigger_deprecation_notice( get_class( $this ) . '::__construct', '3.34.2' );
+
 		$this->init_args();
 
 		add_action( 'admin_menu', function() {
@@ -23,11 +32,21 @@ abstract class Base extends Base_Object {
 		} );
 	}
 
+	/**
+	 * @deprecated 3.34.2 Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
+	 */
 	public function get_args( $arg = null ) {
+		$this->trigger_deprecation_notice( __METHOD__, '3.34.2' );
+
 		return self::get_items( $this->args, $arg );
 	}
 
+	/**
+	 * @deprecated 3.34.2 Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
+	 */
 	public function add_submenu( $submenu_args ) {
+		$this->trigger_deprecation_notice( __METHOD__, '3.34.2' );
+
 		$default_submenu_args = [
 			'page_title' => '',
 			'capability' => $this->args['capability'],
@@ -47,7 +66,7 @@ abstract class Base extends Base_Object {
 
 		$this->register_default_submenus();
 
-		do_action( 'elementor/admin/menu_registered/' . $args['menu_slug'], $this );
+		$this->trigger_deprecated_action( 'elementor/admin/menu_registered/' . $args['menu_slug'], [ $this ], '3.34.2' );
 
 		usort( $this->submenus, function( $a, $b ) {
 			return $a['index'] - $b['index'];

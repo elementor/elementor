@@ -5,29 +5,31 @@ namespace Elementor\Core\Admin\Menu;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_Has_Position;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
-use Elementor\Plugin;
+use Elementor\Core\Admin\Menu\Deprecated;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once __DIR__ . '/deprecated.php';
+
 /**
  * @deprecated 3.34.2 Elementor menu items are now registered inside Elementor\Core\Admin\EditorOneMenu. Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
  */
 class Admin_Menu_Manager {
+	use Deprecated;
 
 	/**
 	 * @var Admin_Menu_Item[]
 	 */
 	private $items = [];
 
-	private $deprecation_notice = 'Elementor menu items are now registered inside Elementor\Core\Admin\EditorOneMenu. Use the \'elementor/editor-one/menu/register\' hook instead.';
-
 	/**
 	 * @deprecated 3.34.2 Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
 	 */
 	public function register( $item_slug, Admin_Menu_Item $item ) {
 		$this->trigger_deprecation_notice( __METHOD__, '3.34.2' );
+
 		$this->items[ $item_slug ] = $item;
 	}
 
@@ -36,6 +38,7 @@ class Admin_Menu_Manager {
 	 */
 	public function unregister( $item_slug ) {
 		$this->trigger_deprecation_notice( __METHOD__, '3.34.2' );
+
 		unset( $this->items[ $item_slug ] );
 	}
 
@@ -44,6 +47,7 @@ class Admin_Menu_Manager {
 	 */
 	public function get( $item_slug ) {
 		$this->trigger_deprecation_notice( __METHOD__, '3.34.2' );
+
 		if ( empty( $this->items[ $item_slug ] ) ) {
 			return null;
 		}
@@ -56,6 +60,7 @@ class Admin_Menu_Manager {
 	 */
 	public function get_all() {
 		$this->trigger_deprecation_notice( __METHOD__, '3.34.2' );
+
 		return $this->items;
 	}
 
@@ -141,23 +146,5 @@ class Admin_Menu_Manager {
 				remove_submenu_page( $item->get_parent_slug(), $item_slug );
 			}
 		}
-	}
-
-	private function trigger_deprecation_notice( $function_name, $version ) {
-		Plugin::$instance->modules_manager
-			->get_modules( 'dev-tools' )
-			->deprecation
-			->deprecated_function( $function_name, $version, $this->deprecation_notice );
-	}
-
-	private function trigger_deprecated_action( $hook, $args, $version ) {
-		if ( ! has_action( $hook ) ) {
-			return;
-		}
-
-		Plugin::$instance->modules_manager
-			->get_modules( 'dev-tools' )
-			->deprecation
-			->do_deprecated_action( $hook, $args, $version, $this->deprecation_notice );
 	}
 }
