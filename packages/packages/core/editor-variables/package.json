@@ -51,7 +51,7 @@
     "@elementor/menus": "4.0.0",
     "@elementor/http-client": "4.0.0",
     "@elementor/icons": "^1.63.0",
-    "@elementor/mixpanel": "4.0.0",
+    "@elementor/events": "4.0.0",
     "@elementor/schema": "4.0.0",
     "@elementor/ui": "1.37.2",
     "@elementor/utils": "4.0.0",
