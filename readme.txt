@@ -1,4 +1,4 @@
-cangelofd=== Elementor Website Builder - More Than Just a Page Builder ===
+=== Elementor Website Builder - More Than Just a Page Builder ===
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor,
 Requires at least: 6.7
