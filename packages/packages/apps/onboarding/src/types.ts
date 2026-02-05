@@ -9,7 +9,7 @@ export const StepId = {
 	SITE_FEATURES: 'site_features',
 } as const;
 
-export type StepIdType = typeof StepId[keyof typeof StepId];
+export type StepIdType = ( typeof StepId )[ keyof typeof StepId ];
 
 export interface Step {
 	id: StepIdType;
@@ -48,7 +48,7 @@ export interface OnboardingChoices {
 	experience?: 'beginner' | 'intermediate' | 'advanced';
 	theme?: string;
 	features?: string[];
-	[key: string]: unknown;
+	[ key: string ]: unknown;
 }
 
 export interface OnboardingConfig {

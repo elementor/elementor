@@ -42,18 +42,12 @@ const getAnimationStyle = ( animation: AssetAnimation, isVisible: boolean ) => {
 
 	const opacity = isVisible ? 1 : 0;
 	const transform =
-		animation === 'fade-up'
-			? `translateY(${ isVisible ? 0 : ANIMATION_OFFSET_PX }px)`
-			: 'translateY(0)';
+		animation === 'fade-up' ? `translateY(${ isVisible ? 0 : ANIMATION_OFFSET_PX }px)` : 'translateY(0)';
 
 	return { opacity, transform };
 };
 
-const RightPanelAssetItem = React.memo( function RightPanelAssetItem( {
-	asset,
-}: {
-	asset: RightPanelAsset;
-} ) {
+const RightPanelAssetItem = React.memo( function RightPanelAssetItem( { asset }: { asset: RightPanelAsset } ) {
 	const [ isVisible, setIsVisible ] = useState( false );
 
 	useEffect( () => {

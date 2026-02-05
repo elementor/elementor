@@ -23,8 +23,7 @@ interface ContentAreaProps {
 }
 
 const ContentArea = styled( Box, {
-	shouldForwardProp: ( prop ) =>
-		! [ 'hasHeader', 'hasFooter' ].includes( prop as string ),
+	shouldForwardProp: ( prop ) => ! [ 'hasHeader', 'hasFooter' ].includes( prop as string ),
 } )< ContentAreaProps >( ( { hasHeader, hasFooter } ) => ( {
 	flex: 1,
 	display: 'flex',

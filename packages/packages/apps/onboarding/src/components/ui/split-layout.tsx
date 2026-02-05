@@ -74,12 +74,7 @@ export function SplitLayout( { left, rightConfig, progress }: SplitLayoutProps )
 	return (
 		<SplitLayoutRoot leftRatio={ leftRatio } rightRatio={ rightRatio }>
 			<LeftPanel>
-				{ progress && (
-					<ProgressBar
-						currentStep={ progress.currentStep }
-						totalSteps={ progress.totalSteps }
-					/>
-				) }
+				{ progress && <ProgressBar currentStep={ progress.currentStep } totalSteps={ progress.totalSteps } /> }
 				{ left }
 			</LeftPanel>
 			<RightPanel config={ rightConfig } />

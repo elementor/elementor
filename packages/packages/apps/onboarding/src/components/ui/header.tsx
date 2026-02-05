@@ -1,13 +1,6 @@
 import * as React from 'react';
 import { XIcon } from '@elementor/icons';
-import {
-	Box,
-	Button,
-	IconButton,
-	Stack,
-	styled,
-	useTheme,
-} from '@elementor/ui';
+import { Box, Button, IconButton, Stack, styled, useTheme } from '@elementor/ui';
 
 import { ElementorLogo } from './elementor-logo';
 
@@ -65,12 +58,7 @@ interface HeaderProps {
 	onUpgrade?: () => void;
 }
 
-export function Header( {
-	showCloseButton = true,
-	showUpgradeButton = true,
-	onClose,
-	onUpgrade,
-}: HeaderProps ) {
+export function Header( { showCloseButton = true, showUpgradeButton = true, onClose, onUpgrade }: HeaderProps ) {
 	const theme = useTheme();
 	const logoColor = theme.palette.text.primary;
 	const textColor = theme.palette.text.primary;
@@ -78,12 +66,7 @@ export function Header( {
 	return (
 		<HeaderContainer component="header">
 			<Box display="flex" alignItems="center">
-				<ElementorLogo
-					width={ 116 }
-					height={ 20 }
-					logoColor={ logoColor }
-					textColor={ textColor }
-				/>
+				<ElementorLogo width={ 116 } height={ 20 } logoColor={ logoColor } textColor={ textColor } />
 			</Box>
 
 			<Stack direction="row" alignItems="center" spacing={ 2 }>

@@ -6,9 +6,9 @@ import { Box, DirectionProvider, ThemeProvider } from '@elementor/ui';
 
 import { useOnboarding } from '../hooks/use-onboarding';
 import { useUpdateProgress } from '../hooks/use-update-progress';
+import { Login } from '../steps/screens/login';
 import { getStepVisualConfig } from '../steps/step-visuals';
 import { registerOnboardingSlice } from '../store';
-import { Login } from '../steps/screens/login';
 import { Layout } from './ui/layout';
 import { SplitLayout } from './ui/split-layout';
 
