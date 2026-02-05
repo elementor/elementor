@@ -13,15 +13,38 @@ export default function Connect( props ) {
 	const errorCallbackRef = useRef( errorCallback );
 
 	const buttonElement = buttonRef?.current;
-	const isButtonInitialized = buttonElement ? initializedButtons.has( buttonElement ) : false;
+	
+	let isButtonInitialized = false;
+	let buttonText = 'no-text';
+	let buttonId = 'no-id';
+	let buttonHref = 'no-href';
+	let hasCallbackId = false;
+	
+	if ( buttonElement ) {
+		isButtonInitialized = initializedButtons.has( buttonElement );
+		buttonText = buttonElement.textContent?.trim() || buttonElement.innerText?.trim() || 'no-text';
+		buttonId = buttonElement.id || buttonElement.getAttribute('data-button-id') || 'no-id';
+		buttonHref = buttonElement.href || 'no-href';
+		
+		const $button = jQuery( buttonElement );
+		const hrefAttr = $button.attr( 'href' ) || '';
+		hasCallbackId = hrefAttr.includes( 'callback_id=' );
+		
+		if ( hasCallbackId && ! isButtonInitialized ) {
+			initializedButtons.set( buttonElement, true );
+			isButtonInitialized = true;
+		}
+	}
 
 	console.log( '[Connect] Component render', {
 		buttonRefExists: !!buttonElement,
 		isButtonInitialized,
+		hasCallbackId,
+		buttonText,
+		buttonId,
+		buttonHref: buttonHref.substring(0, 80),
 		successCallbackChanged: successCallbackRef.current !== successCallback,
 		errorCallbackChanged: errorCallbackRef.current !== errorCallback,
-		successCallbackId: successCallback?.toString().substring(0, 50),
-		errorCallbackId: errorCallback?.toString().substring(0, 50),
 	} );
 
 	successCallbackRef.current = successCallback;
@@ -47,32 +70,37 @@ export default function Connect( props ) {
 
 	useEffect( () => {
 		const buttonElement = buttonRef.current;
+		if ( ! buttonElement ) {
+			return;
+		}
+
 		const buttonId = buttonElement?.id || buttonElement?.getAttribute('data-button-id') || 'no-id';
 		const buttonText = buttonElement?.textContent?.trim() || buttonElement?.innerText?.trim() || 'no-text';
-		const buttonHref = buttonElement?.href || 'no-href';
-		const isButtonInitialized = buttonElement ? initializedButtons.has( buttonElement ) : false;
+		const $button = jQuery( buttonElement );
+		const originalHref = $button.attr( 'href' ) || '';
+		
+		const hasCallbackId = originalHref.includes( 'callback_id=' );
+		const isButtonInitialized = initializedButtons.has( buttonElement );
 
 		console.log( '[Connect] useEffect triggered', {
-			buttonRefExists: !!buttonElement,
+			buttonRefExists: true,
 			isButtonInitialized,
+			hasCallbackId,
 			buttonId,
 			buttonText,
-			buttonHref: buttonHref.substring(0, 100),
-			successCallbackChanged: successCallbackRef.current !== successCallback,
-			errorCallbackChanged: errorCallbackRef.current !== errorCallback,
+			originalHref: originalHref.substring(0, 100),
 		} );
 
-		if ( ! buttonElement || isButtonInitialized ) {
+		if ( hasCallbackId || isButtonInitialized ) {
 			console.log( '[Connect] useEffect skipped', {
-				reason: !buttonElement ? 'no buttonRef.current' : 'button already initialized',
+				reason: hasCallbackId ? 'button already has callback_id in href' : 'button already initialized in WeakMap',
 				buttonId,
 				buttonText,
 			} );
 			return;
 		}
 
-		const $button = jQuery( buttonElement );
-		const originalHref = $button.attr( 'href' );
+		initializedButtons.set( buttonElement, true );
 		console.log( '[Connect] Calling elementorConnect', {
 			buttonId,
 			buttonText,
