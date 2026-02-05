@@ -16,6 +16,8 @@ export { PromotionInfotip } from './components/promotion-infotip';
 export { PromotionPopover } from './components/promotion-popover';
 export { PromotionChip } from './components/promotion-chip';
 
+export { PromotionAlert } from './components/promotion-alert';
+
 export * from './components/popover';
 export * from './components/save-changes-dialog';
 export { ConfirmationDialog } from './components/confirmation-dialog';
