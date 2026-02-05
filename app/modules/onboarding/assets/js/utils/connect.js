@@ -34,7 +34,7 @@ export default function Connect( props ) {
 		const $button = jQuery( buttonRef.current );
 
 		if ( onClickTracking ) {
-			$button.on( 'click', ( event ) => {
+			$button.on( 'click', () => {
 				onClickTracking();
 			} );
 		}
