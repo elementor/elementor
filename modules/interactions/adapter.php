@@ -74,7 +74,6 @@ class Adapter {
 				continue;
 			}
 
-
 			$timing_config = $item['value']['animation']['value']['timing_config']['value'] ?? null;
 			if ( $timing_config ) {
 				if ( isset( $timing_config['duration'] ) && 'number' === ( $timing_config['duration']['$$type'] ?? null ) ) {
@@ -96,7 +95,6 @@ class Adapter {
 					$item['value']['animation']['value']['config']['value']['offsetBottom'] = self::number_to_size( $config['offsetBottom'], '%' );
 				}
 			}
-
 		}
 
 		return $items;
