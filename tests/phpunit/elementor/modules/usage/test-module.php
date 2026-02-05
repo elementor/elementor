@@ -641,7 +641,6 @@ class Test_Module extends Elementor_Test_Base {
 	}
 
 	public function test_atomic_widget_usage_counter_with_custom_css() {
-		// Restore original styles (with custom_css) since Pro is not active in tests
 		$restore_custom_css = fn( $filtered_styles, $original_styles ) => $original_styles;
 		add_filter( 'elementor/atomic_widgets/editor_data/element_styles', $restore_custom_css, 10, 2 );
 
