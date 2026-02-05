@@ -16,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+
 class Module extends BaseModule {
 	const MODULE_NAME = 'e-variables';
 	const EXPERIMENT_NAME = 'e_variables';
