@@ -1,5 +1,5 @@
 import { getSelectedElements } from '@elementor/editor-elements';
-import { trackEvent } from '@elementor/mixpanel';
+import { trackEvent } from '@elementor/events';
 
 import { eventBus } from '../../../services/event-bus';
 import { subscribeToTransitionEvent } from '../trainsition-events';
@@ -9,8 +9,8 @@ jest.mock( '@elementor/editor-elements', () => ( {
 	getSelectedElements: jest.fn(),
 } ) );
 
-jest.mock( '@elementor/mixpanel', () => ( {
-	...jest.requireActual( '@elementor/mixpanel' ),
+jest.mock( '@elementor/events', () => ( {
+	...jest.requireActual( '@elementor/events' ),
 	trackEvent: jest.fn(),
 } ) );
 
