@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { type PropsWithChildren, useMemo } from 'react';
-import { ControlFormLabel, PopoverContent, PopoverGridContainer, type Unit } from '@elementor/editor-controls';
-import { sizePropTypeUtil } from '@elementor/editor-props';
+import { ControlFormLabel, PopoverContent, PopoverGridContainer } from '@elementor/editor-controls';
 import { Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -14,6 +13,7 @@ import {
 	extractSize,
 	extractString,
 } from '../utils/prop-value-utils';
+import { parseSizeValue } from '../utils/size-transform-utils';
 import { Direction } from './controls/direction';
 import { Effect } from './controls/effect';
 import { EffectType } from './controls/effect-type';
@@ -30,13 +30,13 @@ const DEFAULT_VALUES = {
 	effect: 'fade',
 	type: 'in',
 	direction: '',
-	duration: '600ms',
-	delay: '0ms',
+	duration: 600,
+	delay: 0,
 	replay: false,
 	easing: 'easeIn',
 	relativeTo: 'viewport',
-	offsetTop: '15%',
-	offsetBottom: '85%',
+	offsetTop: 15,
+	offsetBottom: 85,
 };
 
 const TRIGGERS_WITHOUT_REPLAY = [ 'load', 'scrollOn' ];
@@ -271,7 +271,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 						{ OffsetTopControl && (
 							<Field label={ __( 'Offset Top', 'elementor' ) }>
 								<OffsetTopControl
-									value={ String( offsetTop ) }
+									value={ String( parseSizeValue( offsetTop, [ '%' ] ).size ) }
 									onChange={ ( v: string ) =>
 										updateInteraction( { offsetTop: v as SizeStringValue } )
 									}
@@ -281,7 +281,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 						{ OffsetBottomControl && (
 							<Field label={ __( 'Offset Bottom', 'elementor' ) }>
 								<OffsetBottomControl
-									value={ String( offsetBottom ) }
+									value={ String( parseSizeValue( offsetBottom, [ '%' ] ).size ) }
 									onChange={ ( v: string ) =>
 										updateInteraction( { offsetBottom: v as SizeStringValue } )
 									}

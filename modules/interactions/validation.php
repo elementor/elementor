@@ -254,11 +254,11 @@ class Validation {
 			return false;
 		}
 
-		if ( isset( $config_value['offsetTop'] ) && ! $this->is_valid_number_prop_in_range( $config_value, 'offsetTop', 0, 100 ) ) {
+		if ( isset( $config_value['offsetTop'] ) && ! $this->is_valid_size_prop_in_range( $config_value, 'offsetTop', 0, 100 ) ) {
 			return false;
 		}
 
-		if ( isset( $config_value['offsetBottom'] ) && ! $this->is_valid_number_prop_in_range( $config_value, 'offsetBottom', 0, 100 ) ) {
+		if ( isset( $config_value['offsetBottom'] ) && ! $this->is_valid_size_prop_in_range( $config_value, 'offsetBottom', 0, 100 ) ) {
 			return false;
 		}
 

@@ -206,7 +206,7 @@ export const extractString = ( prop: StringPropValue | undefined, fallback = '' 
 	return prop?.value ?? fallback;
 };
 
-export const extractSize = ( prop?: SizePropValue, defaultValue?: string ): SizeStringValue => {
+export const extractSize = ( prop?: SizePropValue, defaultValue?: SizeStringValue ): SizeStringValue => {
 	if ( ! prop?.value ) {
 		return defaultValue as SizeStringValue;
 	}

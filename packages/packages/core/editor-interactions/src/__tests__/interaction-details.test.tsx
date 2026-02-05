@@ -824,7 +824,7 @@ describe( 'InteractionDetails', () => {
 			expect( offsetTopControlProps ).toBeDefined();
 			const value = offsetTopControlProps.value;
 
-			expect( value ).toEqual( '15%' );
+			expect( value ).toEqual( '15' );
 		} );
 
 		it( 'should call onChange with size string value when OffsetTopControl onChange is called', () => {
@@ -887,7 +887,7 @@ describe( 'InteractionDetails', () => {
 
 			const offsetTopValue = offsetTopControlProps.value;
 
-			expect( offsetTopValue ).toEqual( '15%' );
+			expect( offsetTopValue ).toEqual( '15' );
 		} );
 
 		it( 'should use default size for offsetBottom when config has no offsetBottom', () => {
@@ -900,7 +900,7 @@ describe( 'InteractionDetails', () => {
 
 			const offsetBottomValue = offsetBottomControlProps.value;
 
-			expect( offsetBottomValue ).toEqual( '85%' );
+			expect( offsetBottomValue ).toEqual( '85' );
 		} );
 	} );
 } );

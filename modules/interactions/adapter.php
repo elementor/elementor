@@ -54,7 +54,7 @@ class Adapter {
 			$items = isset( $decoded['items']['value'] ) ? $decoded['items']['value'] : [];
 		}
 
-		$items = self::transform_items_timing_to_number( $items );
+		$items = self::transform_offsets_to_size( $items );
 
 		$unwrapped = [
 			'items' => $items,
@@ -73,6 +73,7 @@ class Adapter {
 			if ( ! isset( $item['$$type'] ) || 'interaction-item' !== $item['$$type'] ) {
 				continue;
 			}
+
 
 			$timing_config = $item['value']['animation']['value']['timing_config']['value'] ?? null;
 			if ( $timing_config ) {
@@ -95,12 +96,13 @@ class Adapter {
 					$item['value']['animation']['value']['config']['value']['offsetBottom'] = self::number_to_size( $config['offsetBottom'], '%' );
 				}
 			}
+
 		}
 
 		return $items;
 	}
 
-	private static function transform_items_timing_to_number( $items ) {
+	private static function transform_offsets_to_size( $items ) {
 		if ( ! is_array( $items ) ) {
 			return $items;
 		}
@@ -112,12 +114,12 @@ class Adapter {
 
 			$config = $item['value']['animation']['value']['config']['value'] ?? null;
 			if ( $config ) {
-				if ( isset( $config['offsetTop'] ) && 'size' === ( $config['offsetTop']['$$type'] ?? null ) ) {
-					$item['value']['animation']['value']['config']['value']['offsetTop'] = self::size_to_number( $config['offsetTop'] );
+				if ( isset( $config['offsetTop'] ) && 'number' === ( $config['offsetTop']['$$type'] ?? null ) ) {
+					$item['value']['animation']['value']['config']['value']['offsetTop'] = self::number_to_size( $config['offsetTop'], '%' );
 				}
 
-				if ( isset( $config['offsetBottom'] ) && 'size' === ( $config['offsetBottom']['$$type'] ?? null ) ) {
-					$item['value']['animation']['value']['config']['value']['offsetBottom'] = self::size_to_number( $config['offsetBottom'] );
+				if ( isset( $config['offsetBottom'] ) && 'number' === ( $config['offsetBottom']['$$type'] ?? null ) ) {
+					$item['value']['animation']['value']['config']['value']['offsetBottom'] = self::number_to_size( $config['offsetBottom'], '%' );
 				}
 			}
 		}
