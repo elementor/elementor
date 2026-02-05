@@ -5,7 +5,6 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Base\Atomic_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
@@ -459,24 +458,6 @@ trait Has_Atomic_Base {
 		}
 
 		return $result;
-	}
-
-	protected function add_conditional_scripts() {
-		if ( $this->has_action_link() ) {
-			add_filter( 'elementor/atomic/frontend/get_script_depends', function( $depends ) {
-				$depends[] = Frontend_Assets_Loader::ACTION_LINK_HANDLERS_HANDLE;
-
-				return $depends;
-			} );
-		}
-
-		if ( $this->is_form() ) {
-			add_filter( 'elementor/atomic/frontend/get_script_depends', function( $depends ) {
-				$depends[] = Frontend_Assets_Loader::FORM_HANDLERS_HANDLE;
-
-				return $depends;
-			} );
-		}
 	}
 
 	public function has_action_link() {
