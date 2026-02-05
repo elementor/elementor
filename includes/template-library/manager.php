@@ -733,6 +733,17 @@ class Manager {
 			$response['updated_global_variables'] = $result['updated_global_variables'];
 		}
 
+		$classes_to_flatten = $result['classes_to_flatten'] ?? [];
+		$variables_to_flatten = $result['variables_to_flatten'] ?? [];
+
+		if ( ! empty( $classes_to_flatten ) ) {
+			$response['flattened_classes_count'] = count( $classes_to_flatten );
+		}
+
+		if ( ! empty( $variables_to_flatten ) ) {
+			$response['flattened_variables_count'] = count( $variables_to_flatten );
+		}
+
 		return $response;
 	}
 

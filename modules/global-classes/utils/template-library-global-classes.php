@@ -74,6 +74,7 @@ class Template_Library_Global_Classes {
 				}
 
 				$result['updated_global_classes'] = $create_result['global_classes'] ?? null;
+				$result['classes_to_flatten'] = $classes_to_flatten;
 				break;
 
 			case Template_Library_Import_Export_Utils::IMPORT_MODE_MATCH_SITE:
@@ -91,6 +92,7 @@ class Template_Library_Global_Classes {
 				}
 
 				$result['updated_global_classes'] = $merge_result['global_classes'] ?? null;
+				$result['classes_to_flatten'] = $classes_to_flatten;
 				break;
 		}
 

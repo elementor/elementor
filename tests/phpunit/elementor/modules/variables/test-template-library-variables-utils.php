@@ -8,7 +8,8 @@ use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
-use Elementor\Modules\Variables\Utils\Template_Library_Variables;
+use Elementor\Modules\Variables\Utils\Template_Library_Variables_Element_Transformer;
+use Elementor\Modules\Variables\Utils\Template_Library_Variables_Snapshot_Builder;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -19,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Template_Library_Variables_Utils extends Elementor_Test_Base {
 
 	private function repository(): Variables_Repository {
-		$kit = Plugin::instance()->kits_manager->get_active_kit();
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
 		return new Variables_Repository( $kit );
 	}
 
@@ -64,7 +65,7 @@ class Test_Template_Library_Variables_Utils extends Elementor_Test_Base {
 			],
 		];
 
-		$result = Template_Library_Variables::extract_used_variable_ids_from_elements( $elements );
+		$result = Template_Library_Variables_Snapshot_Builder::extract_used_variable_ids_from_elements( $elements );
 		$expected = [ 'e-gv-1', 'e-gv-2', 'e-gv-3' ];
 		sort( $result );
 		sort( $expected );
@@ -90,7 +91,7 @@ class Test_Template_Library_Variables_Utils extends Elementor_Test_Base {
 			],
 		] );
 
-		$snapshot = Template_Library_Variables::build_snapshot_for_ids( [ 'e-gv-2', 'missing', '' ] );
+		$snapshot = Template_Library_Variables_Snapshot_Builder::build_snapshot_for_ids( [ 'e-gv-2', 'missing', '' ] );
 
 		$this->assertIsArray( $snapshot );
 		$this->assertArrayHasKey( 'data', $snapshot );
@@ -122,7 +123,7 @@ class Test_Template_Library_Variables_Utils extends Elementor_Test_Base {
 			],
 		];
 
-		$result = Template_Library_Variables::merge_snapshot_and_get_id_map( $incoming );
+		$result = Template_Library_Variables_Snapshot_Builder::merge_snapshot_and_get_id_map( $incoming );
 
 		$this->assertArrayHasKey( 'e-gv-1', $result['id_map'] );
 		$new_id = $result['id_map']['e-gv-1'];
@@ -165,7 +166,7 @@ class Test_Template_Library_Variables_Utils extends Elementor_Test_Base {
 			],
 		];
 
-		$result = Template_Library_Variables::rewrite_elements_variable_ids( $elements, [ 'e-gv-1' => 'e-gv-9' ] );
+		$result = Template_Library_Variables_Element_Transformer::rewrite_elements_variable_ids( $elements, [ 'e-gv-1' => 'e-gv-9' ] );
 
 		$this->assertSame( 'e-gv-9', $result[0]['settings']['text_color']['value'] );
 		$this->assertSame( 'e-gv-2', $result[0]['settings']['typography']['font']['value'] );
@@ -209,7 +210,7 @@ class Test_Template_Library_Variables_Utils extends Elementor_Test_Base {
 			],
 		];
 
-		$result = Template_Library_Variables::flatten_elements_variables( $elements, $global_variables, [ 'e-gv-1' ] );
+		$result = Template_Library_Variables_Element_Transformer::flatten_elements_variables( $elements, $global_variables, [ 'e-gv-1' ] );
 
 		$this->assertSame( 'color', $result[0]['settings']['text_color']['$$type'] );
 		$this->assertSame( '#123456', $result[0]['settings']['text_color']['value'] );

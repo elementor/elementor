@@ -225,6 +225,9 @@ export default class Component extends ComponentModalBase {
 									},
 								} ) );
 							}
+
+							processedData.flattened_classes_count = result.flattened_classes_count || 0;
+							processedData.flattened_variables_count = result.flattened_variables_count || 0;
 						} catch ( ajaxError ) {
 							this.manager.showErrorDialog( ajaxError );
 							this.manager.layout.hideLoadingView();
@@ -238,6 +241,8 @@ export default class Component extends ComponentModalBase {
 				}
 
 				this.manager.layout.hideModal();
+
+				this.showFlatteningWarningIfNeeded( processedData );
 
 				callback( processedData, { model, withPageSettings } );
 			},
@@ -353,5 +358,37 @@ export default class Component extends ComponentModalBase {
 
 			location.hash = '';
 		}
+	}
+
+	showFlatteningWarningIfNeeded( result ) {
+		const flattenedClassesCount = result.flattened_classes_count || 0;
+		const flattenedVariablesCount = result.flattened_variables_count || 0;
+
+		if ( flattenedClassesCount === 0 && flattenedVariablesCount === 0 ) {
+			return;
+		}
+
+		let message;
+
+		if ( flattenedClassesCount > 0 && flattenedVariablesCount > 0 ) {
+			message = __( 'Some styles were added as static values because the style limits were reached.', 'elementor' );
+		} else if ( flattenedClassesCount > 0 ) {
+			message = __( 'Some styles were added as static values because the class limit was reached.', 'elementor' );
+		} else {
+			message = __( 'Some styles were added as static values because the variable limit was reached.', 'elementor' );
+		}
+
+		elementor.notifications.showToast( {
+			message,
+			buttons: [
+				{
+					name: 'learn_more',
+					text: __( 'Learn more', 'elementor' ),
+					callback: () => {
+						window.open( 'https://go.elementor.com/global-styles-import-limit/', '_blank' );
+					},
+				},
+			],
+		} );
 	}
 }
