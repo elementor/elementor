@@ -7,7 +7,7 @@ import { Divider, IconButton, List, Stack, Tooltip } from '@elementor/ui';
 import { generateUniqueId } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
-import { useValidOverridableProps } from '../../hooks/use-valid-overridable-props';
+import { useSanitizedOverridableProps } from '../../hooks/use-sanitized-overridable-props';
 import { addOverridableGroup } from '../../store/actions/add-overridable-group';
 import { deleteOverridableGroup } from '../../store/actions/delete-overridable-group';
 import { deleteOverridableProp } from '../../store/actions/delete-overridable-prop';
@@ -27,7 +27,7 @@ type Props = {
 
 export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 	const currentComponentId = useCurrentComponentId();
-	const overridableProps = useValidOverridableProps( currentComponentId );
+	const overridableProps = useSanitizedOverridableProps( currentComponentId );
 	const [ isAddingGroup, setIsAddingGroup ] = useState( false );
 	const introductionRef = useRef< HTMLButtonElement >( null );
 	const groupLabelEditable = useCurrentEditableItem();

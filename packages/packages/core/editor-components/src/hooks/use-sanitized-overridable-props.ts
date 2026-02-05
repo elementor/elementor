@@ -1,12 +1,12 @@
-import { addSanitizedComponent } from '../store/actions/add-sanitized-component';
 import { deleteOverridableProp } from '../store/actions/delete-overridable-prop';
+import { updateComponentSanitizedAttribute } from '../store/actions/update-component-sanitized-attribute';
 import { useIsSanitizedComponent, useOverridableProps } from '../store/store';
 import { type ComponentId, type OverridableProps } from '../types';
 import { filterValidOverridableProps } from '../utils/filter-valid-overridable-props';
 
-export function useValidOverridableProps( componentId: ComponentId | null ): OverridableProps | undefined {
+export function useSanitizedOverridableProps( componentId: ComponentId | null ): OverridableProps | undefined {
 	const overridableProps = useOverridableProps( componentId );
-	const isSanitized = useIsSanitizedComponent( componentId );
+	const isSanitized = useIsSanitizedComponent( componentId, 'overridableProps' );
 
 	if ( ! overridableProps || ! componentId ) {
 		return undefined;
@@ -25,7 +25,7 @@ export function useValidOverridableProps( componentId: ComponentId | null ): Ove
 		deleteOverridableProp( { componentId, propKey: key, source: 'system' } );
 	} );
 
-	addSanitizedComponent( componentId );
+	updateComponentSanitizedAttribute( componentId, 'overridableProps' );
 
 	return filteredOverridableProps;
 }

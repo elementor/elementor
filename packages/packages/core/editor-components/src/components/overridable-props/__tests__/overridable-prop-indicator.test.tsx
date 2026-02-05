@@ -417,7 +417,7 @@ describe( 'OverridablePropIndicator with componentInstanceElement context', () =
 		dispatch( slice.actions.load( [ componentData, innerComponentData ] ) );
 		dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
 
-		// we need to mock it for the new useValidOverridableProps hook to retrieve the tested overridable
+		// we need to mock it for the new useSanitizedOverridableProps hook to retrieve the tested overridable
 		jest.mocked( getElementSetting ).mockImplementation( ( elementId, key ) => {
 			if ( elementId === COMPONENT_INSTANCE_ELEMENT_ID && key === 'component_instance' ) {
 				return componentInstancePropTypeUtil.create( {

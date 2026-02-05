@@ -94,7 +94,12 @@ describe( '<ComponentPanelHeader />', () => {
 		jest.mocked( useSuppressedMessage ).mockReturnValue( [ true, jest.fn() ] );
 		( __ as jest.Mock ).mockImplementation( ( str ) => str );
 
-		dispatch( slice.actions.addSanitizeComponent( MOCK_COMPONENT_ID ) );
+		dispatch(
+			slice.actions.updateComponentSanitizedAttribute( {
+				componentId: MOCK_COMPONENT_ID,
+				attribute: 'overridableProps',
+			} )
+		);
 	} );
 
 	it( 'should not render when not editing a component', () => {
