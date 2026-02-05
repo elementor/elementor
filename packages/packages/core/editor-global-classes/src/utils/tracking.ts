@@ -1,5 +1,5 @@
 import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
-import { getMixpanel } from '@elementor/mixpanel';
+import { getMixpanel } from '@elementor/events';
 import { __getState as getState } from '@elementor/store';
 
 import { fetchCssClassUsage } from '../../service/css-class-usage-service';
