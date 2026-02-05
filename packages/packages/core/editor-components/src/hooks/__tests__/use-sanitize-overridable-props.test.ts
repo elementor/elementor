@@ -10,7 +10,7 @@ import {
 import { slice } from '../../store/store';
 import { type OverridableProps, type PublishedComponent } from '../../types';
 import { filterValidOverridableProps } from '../../utils/filter-valid-overridable-props';
-import { useSanitizedOverridableProps } from '../use-sanitized-overridable-props';
+import { useSanitizeOverridableProps } from '../use-sanitize-overridable-props';
 
 jest.mock( '../../utils/filter-valid-overridable-props', () => ( {
 	filterValidOverridableProps: jest.fn(),
@@ -53,7 +53,7 @@ function createMockComponent( id: number, overridableProps?: OverridableProps ):
 	};
 }
 
-describe( 'useSanitizedOverridableProps', () => {
+describe( 'useSanitizeOverridableProps', () => {
 	let store: Store< SliceState< typeof slice > >;
 
 	beforeEach( () => {
@@ -73,20 +73,20 @@ describe( 'useSanitizedOverridableProps', () => {
 			mockFilterValidOverridableProps.mockReturnValue( mockOverridableProps );
 
 			// Act
-			renderHookWithStore( () => useSanitizedOverridableProps( MOCK_COMPONENT_ID ), store );
+			renderHookWithStore( () => useSanitizeOverridableProps( MOCK_COMPONENT_ID ), store );
 
 			// Assert
 			expect( mockFilterValidOverridableProps ).toHaveBeenCalledTimes( 1 );
 
 			// Act
-			renderHookWithStore( () => useSanitizedOverridableProps( MOCK_SECOND_COMPONENT_ID ), store );
+			renderHookWithStore( () => useSanitizeOverridableProps( MOCK_SECOND_COMPONENT_ID ), store );
 
 			// Assert
 			expect( mockFilterValidOverridableProps ).toHaveBeenCalledTimes( 2 );
 
 			// Act
-			renderHookWithStore( () => useSanitizedOverridableProps( MOCK_COMPONENT_ID ), store );
-			renderHookWithStore( () => useSanitizedOverridableProps( MOCK_SECOND_COMPONENT_ID ), store );
+			renderHookWithStore( () => useSanitizeOverridableProps( MOCK_COMPONENT_ID ), store );
+			renderHookWithStore( () => useSanitizeOverridableProps( MOCK_SECOND_COMPONENT_ID ), store );
 
 			// Assert
 			expect( mockFilterValidOverridableProps ).toHaveBeenCalledTimes( 2 );
@@ -101,8 +101,8 @@ describe( 'useSanitizedOverridableProps', () => {
 			mockFilterValidOverridableProps.mockReturnValue( mockOverridableProps );
 
 			// Act
-			renderHookWithStore( () => useSanitizedOverridableProps( MOCK_COMPONENT_ID ), store );
-			renderHookWithStore( () => useSanitizedOverridableProps( MOCK_SECOND_COMPONENT_ID ), store );
+			renderHookWithStore( () => useSanitizeOverridableProps( MOCK_COMPONENT_ID ), store );
+			renderHookWithStore( () => useSanitizeOverridableProps( MOCK_SECOND_COMPONENT_ID ), store );
 
 			// Assert
 			expect( mockFilterValidOverridableProps ).toHaveBeenCalledTimes( 2 );
@@ -110,10 +110,10 @@ describe( 'useSanitizedOverridableProps', () => {
 			// Act
 			dispatch( slice.actions.resetSanitizedComponents() );
 
-			renderHookWithStore( () => useSanitizedOverridableProps( MOCK_COMPONENT_ID ), store );
-			renderHookWithStore( () => useSanitizedOverridableProps( MOCK_COMPONENT_ID ), store ); // second invocation should be skipped
-			renderHookWithStore( () => useSanitizedOverridableProps( MOCK_SECOND_COMPONENT_ID ), store );
-			renderHookWithStore( () => useSanitizedOverridableProps( MOCK_SECOND_COMPONENT_ID ), store ); // second invocation should be skipped
+			renderHookWithStore( () => useSanitizeOverridableProps( MOCK_COMPONENT_ID ), store );
+			renderHookWithStore( () => useSanitizeOverridableProps( MOCK_COMPONENT_ID ), store ); // second invocation should be skipped
+			renderHookWithStore( () => useSanitizeOverridableProps( MOCK_SECOND_COMPONENT_ID ), store );
+			renderHookWithStore( () => useSanitizeOverridableProps( MOCK_SECOND_COMPONENT_ID ), store ); // second invocation should be skipped
 
 			// Assert
 			expect( mockFilterValidOverridableProps ).toHaveBeenCalledTimes( 4 );
@@ -123,7 +123,7 @@ describe( 'useSanitizedOverridableProps', () => {
 	describe( 'edge cases', () => {
 		it( 'should return undefined when componentId is null', () => {
 			// Act
-			const { result } = renderHookWithStore( () => useSanitizedOverridableProps( null ), store );
+			const { result } = renderHookWithStore( () => useSanitizeOverridableProps( null ), store );
 
 			// Assert
 			expect( result.current ).toBeUndefined();
@@ -132,7 +132,7 @@ describe( 'useSanitizedOverridableProps', () => {
 
 		it( 'should return undefined when component does not exist', () => {
 			// Act
-			const { result } = renderHookWithStore( () => useSanitizedOverridableProps( MOCK_COMPONENT_ID ), store );
+			const { result } = renderHookWithStore( () => useSanitizeOverridableProps( MOCK_COMPONENT_ID ), store );
 
 			// Assert
 			expect( result.current ).toBeUndefined();

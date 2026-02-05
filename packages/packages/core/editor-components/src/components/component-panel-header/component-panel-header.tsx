@@ -9,7 +9,7 @@ import { Box, Divider, IconButton, Tooltip, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useNavigateBack } from '../../hooks/use-navigate-back';
-import { useSanitizedOverridableProps } from '../../hooks/use-sanitized-overridable-props';
+import { useSanitizeOverridableProps } from '../../hooks/use-sanitize-overridable-props';
 import { type ComponentsSlice, SLICE_NAME, useCurrentComponent } from '../../store/store';
 import { trackComponentEvent } from '../../utils/tracking';
 import { usePanelActions } from '../component-properties-panel/component-properties-panel';
@@ -20,7 +20,7 @@ const MESSAGE_KEY = 'components-properties-introduction';
 
 export const ComponentPanelHeader = () => {
 	const { id: currentComponentId, uid: componentUid } = useCurrentComponent() ?? { id: null, uid: null };
-	const overridableProps = useSanitizedOverridableProps( currentComponentId );
+	const overridableProps = useSanitizeOverridableProps( currentComponentId );
 	const onBack = useNavigateBack();
 	const componentName = getComponentName();
 	const [ isMessageSuppressed, suppressMessage ] = useSuppressedMessage( MESSAGE_KEY );

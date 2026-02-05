@@ -4,7 +4,7 @@ import { useIsSanitizedComponent, useOverridableProps } from '../store/store';
 import { type ComponentId, type OverridableProps } from '../types';
 import { filterValidOverridableProps } from '../utils/filter-valid-overridable-props';
 
-export function useSanitizedOverridableProps( componentId: ComponentId | null ): OverridableProps | undefined {
+export function useSanitizeOverridableProps( componentId: ComponentId | null ): OverridableProps | undefined {
 	const overridableProps = useOverridableProps( componentId );
 	const isSanitized = useIsSanitizedComponent( componentId, 'overridableProps' );
 

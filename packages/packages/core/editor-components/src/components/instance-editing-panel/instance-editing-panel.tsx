@@ -10,7 +10,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useComponentInstanceSettings } from '../../hooks/use-component-instance-settings';
 import { useComponentsPermissions } from '../../hooks/use-components-permissions';
-import { useSanitizedOverridableProps } from '../../hooks/use-sanitized-overridable-props';
+import { useSanitizeOverridableProps } from '../../hooks/use-sanitize-overridable-props';
 import { ComponentInstanceProvider } from '../../provider/component-instance-context';
 import { useComponent } from '../../store/store';
 import { type OverridablePropsGroup } from '../../types';
@@ -28,7 +28,7 @@ export function InstanceEditingPanel() {
 	const overrides = settings?.overrides?.value;
 
 	const component = useComponent( componentId ?? null );
-	const overridableProps = useSanitizedOverridableProps( componentId ?? null );
+	const overridableProps = useSanitizeOverridableProps( componentId ?? null );
 
 	const componentInstanceId = useSelectedElement()?.element?.id ?? null;
 
