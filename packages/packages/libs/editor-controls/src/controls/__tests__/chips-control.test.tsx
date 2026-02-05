@@ -138,6 +138,7 @@ describe( 'ChipsControl', () => {
 
 		const chips = screen.getAllByRole( 'button' );
 		const emailChip = chips.find( ( chip ) => chip.textContent?.includes( 'Email' ) ) as HTMLElement;
+		// eslint-disable-next-line testing-library/no-test-id-queries
 		const deleteIcon = within( emailChip ).getByTestId( 'CancelIcon' );
 		fireEvent.click( deleteIcon );
 
@@ -170,6 +171,7 @@ describe( 'ChipsControl', () => {
 
 		const chips = screen.getAllByRole( 'button' );
 		const emailChip = chips.find( ( chip ) => chip.textContent?.includes( 'Email' ) ) as HTMLElement;
+		// eslint-disable-next-line testing-library/no-test-id-queries
 		const deleteIcon = within( emailChip ).getByTestId( 'CancelIcon' );
 		fireEvent.click( deleteIcon );
 
