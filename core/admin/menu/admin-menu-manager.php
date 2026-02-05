@@ -11,8 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once __DIR__ . '/deprecated.php';
-
 /**
  * @deprecated 3.34.2 Elementor menu items are now registered inside Elementor\Core\Admin\EditorOneMenu. Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
  */
@@ -27,8 +25,8 @@ class Admin_Menu_Manager {
 	/**
 	 * @deprecated 3.34.2 Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
 	 */
-	public function register( $item_slug, Admin_Menu_Item $item ) {
-		$this->trigger_deprecation_notice( __METHOD__, '3.34.2' );
+	public function register( $item_slug, Admin_Menu_Item $item, $internal = false ) {
+		$this->trigger_deprecation_notice( __METHOD__, '3.34.2', $internal );
 
 		$this->items[ $item_slug ] = $item;
 	}
@@ -36,8 +34,8 @@ class Admin_Menu_Manager {
 	/**
 	 * @deprecated 3.34.2 Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
 	 */
-	public function unregister( $item_slug ) {
-		$this->trigger_deprecation_notice( __METHOD__, '3.34.2' );
+	public function unregister( $item_slug, $internal = false ) {
+		$this->trigger_deprecation_notice( __METHOD__, '3.34.2', $internal );
 
 		unset( $this->items[ $item_slug ] );
 	}
@@ -45,8 +43,8 @@ class Admin_Menu_Manager {
 	/**
 	 * @deprecated 3.34.2 Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
 	 */
-	public function get( $item_slug ) {
-		$this->trigger_deprecation_notice( __METHOD__, '3.34.2' );
+	public function get( $item_slug, $internal = false ) {
+		$this->trigger_deprecation_notice( __METHOD__, '3.34.2', $internal );
 
 		if ( empty( $this->items[ $item_slug ] ) ) {
 			return null;
@@ -58,8 +56,8 @@ class Admin_Menu_Manager {
 	/**
 	 * @deprecated 3.34.2 Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
 	 */
-	public function get_all() {
-		$this->trigger_deprecation_notice( __METHOD__, '3.34.2' );
+	public function get_all( $internal = false ) {
+		$this->trigger_deprecation_notice( __METHOD__, '3.34.2', $internal );
 
 		return $this->items;
 	}
@@ -67,8 +65,8 @@ class Admin_Menu_Manager {
 	/**
 	 * @deprecated 3.34.2 Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
 	 */
-	public function register_actions() {
-		$this->trigger_deprecation_notice( __METHOD__, '3.34.2' );
+	public function register_actions( $internal = false ) {
+		$this->trigger_deprecation_notice( __METHOD__, '3.34.2', $internal );
 
 		add_action( 'admin_menu', function () {
 			$this->register_wp_menus();
@@ -80,11 +78,11 @@ class Admin_Menu_Manager {
 	}
 
 	private function register_wp_menus() {
-		$this->trigger_deprecated_action( 'elementor/admin/menu/register', [ $this ], '3.34.2' );
+		$this->trigger_deprecated_action( 'elementor/admin/menu/register', [ $this ], '3.34.2', true );
 
 		$hooks = [];
 
-		foreach ( $this->get_all() as $item_slug => $item ) {
+		foreach ( $this->get_all( true ) as $item_slug => $item ) {
 			$is_top_level = empty( $item->get_parent_slug() );
 
 			if ( $is_top_level ) {
@@ -94,7 +92,7 @@ class Admin_Menu_Manager {
 			}
 		}
 
-		$this->trigger_deprecated_action( 'elementor/admin/menu/after_register', [ $this, $hooks ], '3.34.2' );
+		$this->trigger_deprecated_action( 'elementor/admin/menu/after_register', [ $this, $hooks ], '3.34.2', true );
 	}
 
 	private function register_top_level_menu( $item_slug, Admin_Menu_Item $item ) {
@@ -133,7 +131,7 @@ class Admin_Menu_Manager {
 	}
 
 	private function hide_invisible_menus() {
-		foreach ( $this->get_all() as $item_slug => $item ) {
+		foreach ( $this->get_all( true ) as $item_slug => $item ) {
 			if ( $item->is_visible() ) {
 				continue;
 			}

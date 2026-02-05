@@ -281,7 +281,6 @@ class Test_Admin_Menu_Manager extends Elementor_Test_Base {
 		$this->setExpectedDeprecated( 'elementor/admin/menu/register' );
 		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register' );
 		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register_actions' );
-		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::get_all' );
 
 		$hook_called = false;
 		add_action( 'elementor/admin/menu/register', function() use ( &$hook_called ) {
@@ -311,7 +310,6 @@ class Test_Admin_Menu_Manager extends Elementor_Test_Base {
 		$this->setExpectedDeprecated( 'elementor/admin/menu/after_register' );
 		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register' );
 		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register_actions' );
-		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::get_all' );
 
 		$hook_called = false;
 		add_action( 'elementor/admin/menu/after_register', function() use ( &$hook_called ) {

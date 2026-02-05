@@ -12,13 +12,17 @@ trait Deprecated {
 
 	private $deprecation_notice = 'Elementor menu items are now registered inside Elementor\Core\Admin\EditorOneMenu. Use the \'elementor/editor-one/menu/register\' hook instead.';
 
-	private function trigger_deprecation_notice( $function_name, $version ) {
-		if ( ! $this->get_external_caller_info() ) {
+	private function trigger_deprecation_notice( $function_name, $version, $internal = false ) {
+		if ( $internal ) {
 			return;
 		}
 
+		$caller_info = $this->get_caller_info();
 		$replacement = $this->deprecation_notice;
-		$replacement .= sprintf( ' Called from: %s:%d', $external_caller_info['file'], $external_caller_info['line'] );
+
+		if ( $caller_info ) {
+			$replacement .= sprintf( ' Called from: %s:%d', $caller_info['file'], $caller_info['line'] );
+		}
 
 		Plugin::$instance->modules_manager
 			->get_modules( 'dev-tools' )
@@ -26,18 +30,22 @@ trait Deprecated {
 			->deprecated_function( $function_name, $version, $replacement );
 	}
 
-	private function trigger_deprecated_action( $hook, $args, $version ) {
+	private function trigger_deprecated_action( $hook, $args, $version, $internal = false ) {
 		if ( ! has_action( $hook ) ) {
 			return;
 		}
 
-		if ( ! $this->get_external_caller_info() ) {
+		if ( $internal ) {
 			do_action_ref_array( $hook, $args );
 			return;
 		}
 
+		$caller_info = $this->get_caller_info();
 		$replacement = $this->deprecation_notice;
-		$replacement .= sprintf( ' Hook registered in: %s:%d', $external_caller_info['file'], $external_caller_info['line'] );
+
+		if ( $caller_info ) {
+			$replacement .= sprintf( ' Hook registered in: %s:%d', $caller_info['file'], $caller_info['line'] );
+		}
 
 		Plugin::$instance->modules_manager
 			->get_modules( 'dev-tools' )
@@ -45,34 +53,20 @@ trait Deprecated {
 			->do_deprecated_action( $hook, $args, $version, $replacement );
 	}
 
-	private function get_external_caller_info() {
+	private function get_caller_info() {
 		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 15 );
-		$elementor_path = defined( 'ELEMENTOR_PATH' ) ? rtrim( ELEMENTOR_PATH, '/' ) : '';
-		$wp_content_path = defined( 'WP_CONTENT_DIR' ) ? rtrim( WP_CONTENT_DIR, '/' ) : '';
 
-		foreach ( $backtrace as $index => $trace ) {
+		foreach ( $backtrace as $trace ) {
 			if ( ! isset( $trace['file'] ) || ! isset( $trace['line'] ) ) {
 				continue;
 			}
 
 			$file = $trace['file'];
-			$line = $trace['line'];
 
-			$is_test_file = strpos( $file, '/tests/phpunit/' ) !== false;
-
-			$is_elementor_internal = $elementor_path && strpos( $file, $elementor_path ) === 0 && ! $is_test_file;
-
-			$is_wp_core = strpos( $file, 'wp-includes' ) !== false ||
-						  strpos( $file, 'wp-admin' ) !== false;
-
-			$is_wp_content = $wp_content_path && strpos( $file, $wp_content_path ) === 0;
-
-			if ( ! $is_elementor_internal && ! $is_wp_core && $is_wp_content ) {
-				return [
-					'file' => $this->normalize_file_path( $file ),
-					'line' => $line,
-				];
-			}
+			return [
+				'file' => $this->normalize_file_path( $file ),
+				'line' => $trace['line'],
+			];
 		}
 
 		return null;

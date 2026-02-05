@@ -22,8 +22,8 @@ abstract class Base extends Base_Object {
 
 	abstract protected function get_init_args();
 
-	public function __construct() {
-		$this->trigger_deprecation_notice( get_class( $this ) . '::__construct', '3.34.2' );
+	public function __construct( $internal = false ) {
+		$this->trigger_deprecation_notice( get_class( $this ) . '::__construct', '3.34.2', $internal );
 
 		$this->init_args();
 
@@ -35,8 +35,8 @@ abstract class Base extends Base_Object {
 	/**
 	 * @deprecated 3.34.2 Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
 	 */
-	public function get_args( $arg = null ) {
-		$this->trigger_deprecation_notice( __METHOD__, '3.34.2' );
+	public function get_args( $arg = null, $internal = false ) {
+		$this->trigger_deprecation_notice( __METHOD__, '3.34.2', $internal );
 
 		return self::get_items( $this->args, $arg );
 	}
@@ -44,8 +44,8 @@ abstract class Base extends Base_Object {
 	/**
 	 * @deprecated 3.34.2 Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
 	 */
-	public function add_submenu( $submenu_args ) {
-		$this->trigger_deprecation_notice( __METHOD__, '3.34.2' );
+	public function add_submenu( $submenu_args, $internal = false ) {
+		$this->trigger_deprecation_notice( __METHOD__, '3.34.2', $internal );
 
 		$default_submenu_args = [
 			'page_title' => '',
@@ -66,7 +66,7 @@ abstract class Base extends Base_Object {
 
 		$this->register_default_submenus();
 
-		$this->trigger_deprecated_action( 'elementor/admin/menu_registered/' . $args['menu_slug'], [ $this ], '3.34.2' );
+		$this->trigger_deprecated_action( 'elementor/admin/menu_registered/' . $args['menu_slug'], [ $this ], '3.34.2', true );
 
 		usort( $this->submenus, function( $a, $b ) {
 			return $a['index'] - $b['index'];

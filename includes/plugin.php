@@ -711,7 +711,7 @@ class Plugin {
 		$this->uploads_manager = new Uploads_Manager();
 
 		$this->admin_menu_manager = new Admin_Menu_Manager();
-		$this->admin_menu_manager->register_actions();
+		$this->admin_menu_manager->register_actions( true );
 
 		User::init();
 		User_Data::init();
