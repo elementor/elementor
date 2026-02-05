@@ -789,7 +789,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<input type="checkbox" id="elementor-global-styles-create" checked>
 					<span class="elementor-global-styles-dialog__checkbox-label">
 						<?php echo esc_html__( 'Add the template’s classes and variables to my site.', 'elementor' ); ?>
-						<a href="<?php echo esc_url( 'https://go.elementor.com/docs-global-styles-import/' ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html__( 'Learn more', 'elementor' ); ?></a>
+						<a href="<?php echo esc_url( 'https://elementor.com/help/variables-manager/' ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html__( 'Learn more', 'elementor' ); ?></a>
 					</span>
 				</label>
 			</div>

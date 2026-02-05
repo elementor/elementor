@@ -380,15 +380,6 @@ export default class Component extends ComponentModalBase {
 
 		elementor.notifications.showToast( {
 			message,
-			buttons: [
-				{
-					name: 'learn_more',
-					text: __( 'Learn more', 'elementor' ),
-					callback: () => {
-						window.open( 'https://go.elementor.com/global-styles-import-limit/', '_blank' );
-					},
-				},
-			],
 		} );
 	}
 }
