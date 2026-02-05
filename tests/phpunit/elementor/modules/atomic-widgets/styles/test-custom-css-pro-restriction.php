@@ -14,16 +14,12 @@ class Test_Custom_Css_Pro_Restriction extends Elementor_Test_Base {
 		parent::set_up();
 
 		update_option( 'elementor_experiment-e_atomic_elements', 'active' );
-
-		remove_all_filters( 'elementor/atomic_widgets/styles/post_styles' );
 	}
 
 	public function tear_down() {
 		parent::tear_down();
 
 		remove_all_filters( 'elementor/atomic_widgets/styles/post_styles' );
-
-		delete_option( 'elementor_experiment-e_atomic_elements' );
 	}
 
 	public function test_remove_custom_css_from_styles__removes_all_custom_css() {
