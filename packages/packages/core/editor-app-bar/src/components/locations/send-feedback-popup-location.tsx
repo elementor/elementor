@@ -2,9 +2,9 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
+import { useMixpanel } from '@elementor/events';
 import { httpService } from '@elementor/http-client';
 import { AlertCircleIcon, CheckIcon } from '@elementor/icons';
-import { useMixpanel } from '@elementor/mixpanel';
 import {
 	bindDialog,
 	Button,
