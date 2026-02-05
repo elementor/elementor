@@ -89,14 +89,23 @@ export default function Connect( props ) {
 		const originalHref = $button.attr( 'href' ) || '';
 		
 		const hasCallbackId = originalHref.includes( 'callback_id=' );
-		const events = $._data( buttonElement, 'events' );
-		const hasJQueryHandlers = events?.click && events.click.length > 0;
+		
+		let hasJQueryHandlers = false;
+		let clickHandlersCount = 0;
+		try {
+			const events = jQuery._data && jQuery._data( buttonElement, 'events' );
+			if ( events?.click ) {
+				hasJQueryHandlers = events.click.length > 0;
+				clickHandlersCount = events.click.length;
+			}
+		} catch ( e ) {
+		}
 
 		console.log( '[Connect] useEffect triggered', {
 			buttonRefExists: true,
 			hasCallbackId,
 			hasJQueryHandlers,
-			clickHandlersCount: events?.click?.length || 0,
+			clickHandlersCount,
 			buttonId,
 			buttonText,
 			originalHref: originalHref.substring(0, 100),
@@ -107,7 +116,7 @@ export default function Connect( props ) {
 				reason: hasCallbackId ? 'button already has callback_id in href' : 'button already has jQuery handlers',
 				buttonId,
 				buttonText,
-				handlersCount: events?.click?.length || 0,
+				handlersCount: clickHandlersCount,
 			} );
 			return;
 		}
