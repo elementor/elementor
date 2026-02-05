@@ -50,7 +50,7 @@ const shouldExtendTransitionProperties = (): boolean => {
 	const hasProInstalled = !! window.elementorPro;
 
 	if ( ! hasProInstalled ) {
-		return false;
+		return true;
 	}
 
 	const proVersion = window.elementorPro?.config?.version;
