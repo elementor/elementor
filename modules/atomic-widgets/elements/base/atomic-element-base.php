@@ -34,8 +34,15 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$this->interactions = $this->parse_atomic_interactions( $data['interactions'] ?? [] );
 		$this->editor_settings = $data['editor_settings'] ?? [];
 		$this->add_script_depends( Frontend_Assets_Loader::ATOMIC_WIDGETS_HANDLER );
+		$this->add_interactions_script_depends();
 		if ( static::$widget_description ) {
 			$this->description( static::$widget_description );
+		}
+	}
+
+	protected function add_interactions_script_depends() {
+		foreach ( $this->get_interactions_script_handle() as $handle ) {
+			$this->add_script_depends( $handle );
 		}
 	}
 

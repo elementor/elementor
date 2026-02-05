@@ -15,6 +15,8 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\Interactions\Adapter as Interactions_Adapter;
+use Elementor\Modules\Interactions\Module as Interactions_Module;
+use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
@@ -319,6 +321,14 @@ trait Has_Atomic_Base {
 		}
 
 		return $animation_ids;
+	}
+
+	protected function get_interactions_script_handle() {
+		$interactions_module = Plugin::$instance->modules_manager->get_modules( 'interactions' );
+		if ( ! $interactions_module || ! $interactions_module->is_experiment_active() || empty( $this->get_interactions_ids() ) ) {
+			return [];
+		}
+		return [ Interactions_Module::FRONTEND_SCRIPT_HANDLE ];
 	}
 
 	/**

@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const MODULE_NAME = 'e-interactions';
 	const EXPERIMENT_NAME = 'e_interactions';
+	const FRONTEND_SCRIPT_HANDLE = 'elementor-interactions';
 
 	public function get_name() {
 		return self::MODULE_NAME;
@@ -120,7 +121,7 @@ class Module extends BaseModule {
 		);
 
 		wp_register_script(
-			'elementor-interactions',
+			self::FRONTEND_SCRIPT_HANDLE,
 			$this->get_js_assets_url( 'interactions' ),
 			[ 'motion-js' ],
 			'1.0.0',
@@ -137,14 +138,18 @@ class Module extends BaseModule {
 	}
 
 	public function enqueue_interactions(): void {
-		wp_enqueue_script( 'motion-js' );
-		wp_enqueue_script( 'elementor-interactions' );
+		if ( Plugin::$instance->preview->is_preview_mode() ) {
+			wp_enqueue_script( 'motion-js' );
+			wp_enqueue_script( self::FRONTEND_SCRIPT_HANDLE );
+		}
 
-		wp_localize_script(
-			'elementor-interactions',
-			'ElementorInteractionsConfig',
-			$this->get_config()
-		);
+		if ( wp_script_is( self::FRONTEND_SCRIPT_HANDLE, 'enqueued' ) ) {
+			wp_localize_script(
+				self::FRONTEND_SCRIPT_HANDLE,
+				'ElementorInteractionsConfig',
+				$this->get_config()
+			);
+		}
 	}
 
 	public function enqueue_editor_scripts() {

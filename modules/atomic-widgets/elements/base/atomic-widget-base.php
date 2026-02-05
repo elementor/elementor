@@ -90,6 +90,8 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	}
 
 	public function get_script_depends() {
-		return [ Frontend_Assets_Loader::ATOMIC_WIDGETS_HANDLER ];
+		$atomic_widget_depends = [ Frontend_Assets_Loader::ATOMIC_WIDGETS_HANDLER ];
+		$interactions_handles = $this->get_interactions_script_handle();
+		return array_merge( $atomic_widget_depends, $interactions_handles );
 	}
 }
