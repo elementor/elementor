@@ -2,7 +2,7 @@ import * as React from 'react';
 import { createMockPropType, renderWithStore } from 'test-utils';
 import { useBoundProp } from '@elementor/editor-controls';
 import { useElement } from '@elementor/editor-editing-panel';
-import { getWidgetsCache } from '@elementor/editor-elements';
+import { getElementSetting, getWidgetsCache } from '@elementor/editor-elements';
 import { stringPropTypeUtil, type TransformablePropValue } from '@elementor/editor-props';
 import {
 	__createStore,
@@ -13,6 +13,9 @@ import {
 } from '@elementor/store';
 import { fireEvent, screen } from '@testing-library/react';
 
+import { componentInstanceOverridePropTypeUtil } from '../../../prop-types/component-instance-override-prop-type';
+import { componentInstanceOverridesPropTypeUtil } from '../../../prop-types/component-instance-overrides-prop-type';
+import { componentInstancePropTypeUtil } from '../../../prop-types/component-instance-prop-type';
 import { componentOverridablePropTypeUtil } from '../../../prop-types/component-overridable-prop-type';
 import { OverridablePropProvider } from '../../../provider/overridable-prop-context';
 import { type ComponentsSlice, selectOverridableProps, slice } from '../../../store/store';
@@ -30,6 +33,7 @@ jest.mock( '@elementor/editor-editing-panel', () => ( {
 jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
 	getWidgetsCache: jest.fn(),
+	getElementSetting: jest.fn(),
 } ) );
 
 const MOCK_ELEMENT_ID = 'test-element-123';
@@ -358,6 +362,34 @@ describe( 'OverridablePropIndicator with componentInstanceElement context', () =
 		} );
 		const bind = 'title';
 
+		const INNER_COMPONENT_ID = 789;
+		const INNER_OVERRIDE_KEY = 'inner-override-key';
+
+		// Inner component that the nested element belongs to
+		const innerComponentData: PublishedComponent = {
+			id: INNER_COMPONENT_ID,
+			uid: `component-${ INNER_COMPONENT_ID }`,
+			name: 'Inner Component',
+			overridableProps: {
+				props: {
+					[ INNER_OVERRIDE_KEY ]: {
+						overrideKey: INNER_OVERRIDE_KEY,
+						elementId: existingOriginPropFields.elementId,
+						propKey: existingOriginPropFields.propKey,
+						widgetType: existingOriginPropFields.widgetType,
+						elType: existingOriginPropFields.elType,
+						groupId: 'default',
+						label: 'Inner Prop',
+						originValue: { $$type: 'string', value: 'Inner Value' },
+					},
+				},
+				groups: {
+					items: { default: { id: 'default', label: 'Default', props: [ INNER_OVERRIDE_KEY ] } },
+					order: [ 'default' ],
+				},
+			},
+		};
+
 		const componentData: PublishedComponent = {
 			id: MOCK_COMPONENT_ID,
 			uid: `component-${ MOCK_COMPONENT_ID }`,
@@ -382,9 +414,28 @@ describe( 'OverridablePropIndicator with componentInstanceElement context', () =
 				},
 			},
 		};
-
-		dispatch( slice.actions.load( [ componentData ] ) );
+		dispatch( slice.actions.load( [ componentData, innerComponentData ] ) );
 		dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
+
+		// we need to mock it for the new useSanitizeOverridableProps hook to retrieve the tested overridable
+		jest.mocked( getElementSetting ).mockImplementation( ( elementId, key ) => {
+			if ( elementId === COMPONENT_INSTANCE_ELEMENT_ID && key === 'component_instance' ) {
+				return componentInstancePropTypeUtil.create( {
+					component_id: { $$type: 'number', value: INNER_COMPONENT_ID },
+					overrides: componentInstanceOverridesPropTypeUtil.create( [
+						componentOverridablePropTypeUtil.create( {
+							override_key: MOCK_OVERRIDABLE_KEY,
+							origin_value: componentInstanceOverridePropTypeUtil.create( {
+								override_key: INNER_OVERRIDE_KEY,
+								override_value: null,
+								schema_source: { type: 'component', id: INNER_COMPONENT_ID },
+							} ),
+						} ),
+					] ),
+				} );
+			}
+			return null;
+		} );
 
 		const boundProp = mockBoundProp( { bind, value: currentValue } );
 
