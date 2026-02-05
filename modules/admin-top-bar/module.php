@@ -1,9 +1,9 @@
 <?php
 namespace Elementor\Modules\AdminTopBar;
 
+use Elementor\Core\Admin\Admin;
 use Elementor\Core\Base\Base_Object;
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Admin Top Bar Module
  *
- * @deprecated 3.28.0 Use Editor One module instead
+ * @deprecated 3.34.2 Use Editor One module instead
  */
 class Module extends BaseModule {
 
@@ -20,8 +20,12 @@ class Module extends BaseModule {
 		return 'admin-top-bar';
 	}
 
+	public static function is_active() {
+		return is_admin();
+	}
+
 	public function __construct() {
-		_deprecated_function( __CLASS__, '3.28.0', 'Editor One module' );
+		_deprecated_function( __CLASS__, '3.34.2', 'Editor One module' );
 
 		parent::__construct();
 
@@ -29,9 +33,7 @@ class Module extends BaseModule {
 	}
 
 	public function fire_deprecated_hooks() {
-		$menu_data_provider = Menu_Data_Provider::instance();
-
-		if ( ! $menu_data_provider->is_editor_one_admin_page() ) {
+		if ( ! Admin::is_elementor_admin_page() ) {
 			return;
 		}
 
@@ -57,7 +59,7 @@ class Module extends BaseModule {
 		do_action_deprecated(
 			'elementor/admin-top-bar/init',
 			[ $deprecated_stub ],
-			'3.28.0',
+			'3.34.2',
 			'',
 			'The admin-top-bar module has been replaced by Editor One.'
 		);
@@ -71,7 +73,7 @@ class Module extends BaseModule {
 		apply_filters_deprecated(
 			'elementor/admin-top-bar/is-active',
 			[ true, get_current_screen() ],
-			'3.28.0',
+			'3.34.2',
 			'',
 			'The admin-top-bar module has been replaced by Editor One.'
 		);
@@ -85,7 +87,7 @@ class Module extends BaseModule {
 		do_action_deprecated(
 			'elementor/admin_top_bar/before_enqueue_scripts',
 			[],
-			'3.28.0',
+			'3.34.2',
 			'',
 			'The admin-top-bar module has been replaced by Editor One.'
 		);
