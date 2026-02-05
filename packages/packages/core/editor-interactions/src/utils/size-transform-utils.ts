@@ -46,6 +46,13 @@ const tryParse = ( value: SizeStringValue, allowedUnits: SizeUnit[], defaultUnit
 	const match = value && value.match( SIZE_REGEX );
 
 	if ( ! match ) {
+		if ( value ) {
+			return {
+				size: Number( value ),
+				unit: defaultUnit as Unit,
+			};
+		}
+
 		return null;
 	}
 

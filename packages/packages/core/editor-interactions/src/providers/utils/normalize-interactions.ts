@@ -7,7 +7,6 @@ import {
 	type TransformablePropValue,
 } from '@elementor/editor-props';
 
-import { type TimeUnit } from '../../types';
 import { convertTimeUnit } from '../../utils/time-conversion';
 
 type Normalizer = ( value: TransformablePropValue< string, unknown > ) => PropValue;
@@ -16,7 +15,7 @@ const FIELD_NORMALIZERS: Record< string, Normalizer > = {
 	size: ( value ) => {
 		const sizeProp = value as SizePropValue;
 		const { size, unit } = sizeProp.value;
-		const numberPropValue = convertTimeUnit( size as number, unit as TimeUnit, 'ms' );
+		const numberPropValue = convertTimeUnit( size as number, unit, 'ms' );
 
 		return numberPropTypeUtil.create( numberPropValue );
 	},

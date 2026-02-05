@@ -740,7 +740,7 @@ describe( 'InteractionDetails', () => {
 			return (
 				<div data-testid="offset-top-control">
 					<span data-value={ JSON.stringify( props.value ) } />
-					<button type="button" onClick={ () => props.onChange( '25%' ) }>
+					<button type="button" onClick={ () => props.onChange( '25' ) }>
 						Set offset top 25%
 					</button>
 				</div>
@@ -752,7 +752,7 @@ describe( 'InteractionDetails', () => {
 			return (
 				<div data-testid="offset-bottom-control">
 					<span data-value={ JSON.stringify( props.value ) } />
-					<button type="button" onClick={ () => props.onChange( '75%' ) }>
+					<button type="button" onClick={ () => props.onChange( '75' ) }>
 						Set offset bottom 75%
 					</button>
 				</div>
