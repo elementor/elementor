@@ -5,15 +5,15 @@ import { Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getInteractionsControl } from '../interactions-controls-registry';
-import type { InteractionItemValue, TimeValue } from '../types';
+import { type InteractionItemValue, type SizeStringValue } from '../types';
 import {
 	createAnimationPreset,
 	createString,
 	extractBoolean,
-	extractNumber,
 	extractSize,
 	extractString,
 } from '../utils/prop-value-utils';
+import { parseSizeValue } from '../utils/size-transform-utils';
 import { Direction } from './controls/direction';
 import { Effect } from './controls/effect';
 import { EffectType } from './controls/effect-type';
@@ -59,13 +59,13 @@ type InteractionValues = {
 	effect: string;
 	type: string;
 	direction: string;
-	duration: TimeValue;
-	delay: TimeValue;
+	duration: SizeStringValue;
+	delay: SizeStringValue;
 	replay: boolean;
 	easing: string;
 	relativeTo: string;
-	offsetTop: number;
-	offsetBottom: number;
+	offsetTop: SizeStringValue;
+	offsetBottom: SizeStringValue;
 };
 
 type ControlVisibilityConfig = {
@@ -108,8 +108,9 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const replay = extractBoolean( interaction.animation.value.config?.value.replay, DEFAULT_VALUES.replay );
 	const easing = extractString( interaction.animation.value.config?.value.easing, DEFAULT_VALUES.easing );
 	const relativeTo = extractString( interaction.animation.value.config?.value.relativeTo, DEFAULT_VALUES.relativeTo );
-	const offsetTop = extractNumber( interaction.animation.value.config?.value.offsetTop, DEFAULT_VALUES.offsetTop );
-	const offsetBottom = extractNumber(
+
+	const offsetTop = extractSize( interaction.animation.value.config?.value.offsetTop, DEFAULT_VALUES.offsetTop );
+	const offsetBottom = extractSize(
 		interaction.animation.value.config?.value.offsetBottom,
 		DEFAULT_VALUES.offsetBottom
 	);
@@ -159,13 +160,13 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			effect: string;
 			type: string;
 			direction: string;
-			duration: TimeValue;
-			delay: TimeValue;
+			duration: SizeStringValue;
+			delay: SizeStringValue;
 			replay: boolean;
 			easing?: string;
 			relativeTo: string;
-			offsetTop: number;
-			offsetBottom: number;
+			offsetTop: SizeStringValue;
+			offsetBottom: SizeStringValue;
 		} >
 	): void => {
 		const resolvedDirectionValue = resolveDirection( 'direction' in updates, updates.effect, updates.direction );
@@ -240,8 +241,8 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 					<Field label={ __( 'Duration', 'elementor' ) }>
 						<TimeFrameIndicator
 							value={ String( duration ) }
-							onChange={ ( v ) => updateInteraction( { duration: v as TimeValue } ) }
-							defaultValue={ DEFAULT_VALUES.duration }
+							onChange={ ( v ) => updateInteraction( { duration: v as SizeStringValue } ) }
+							defaultValue={ DEFAULT_VALUES.duration as SizeStringValue }
 						/>
 					</Field>
 				) }
@@ -250,8 +251,8 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 					<Field label={ __( 'Delay', 'elementor' ) }>
 						<TimeFrameIndicator
 							value={ String( delay ) }
-							onChange={ ( v ) => updateInteraction( { delay: v as TimeValue } ) }
-							defaultValue={ DEFAULT_VALUES.delay }
+							onChange={ ( v ) => updateInteraction( { delay: v as SizeStringValue } ) }
+							defaultValue={ DEFAULT_VALUES.delay as SizeStringValue }
 						/>
 					</Field>
 				) }
@@ -270,17 +271,19 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 						{ OffsetTopControl && (
 							<Field label={ __( 'Offset Top', 'elementor' ) }>
 								<OffsetTopControl
-									value={ String( offsetTop ) }
-									onChange={ ( v: string ) => updateInteraction( { offsetTop: parseInt( v, 10 ) } ) }
+									value={ String( parseSizeValue( offsetTop, [ '%' ] ).size ) }
+									onChange={ ( v: string ) =>
+										updateInteraction( { offsetTop: v as SizeStringValue } )
+									}
 								/>
 							</Field>
 						) }
 						{ OffsetBottomControl && (
 							<Field label={ __( 'Offset Bottom', 'elementor' ) }>
 								<OffsetBottomControl
-									value={ String( offsetBottom ) }
+									value={ String( parseSizeValue( offsetBottom, [ '%' ] ).size ) }
 									onChange={ ( v: string ) =>
-										updateInteraction( { offsetBottom: parseInt( v, 10 ) } )
+										updateInteraction( { offsetBottom: v as SizeStringValue } )
 									}
 								/>
 							</Field>
