@@ -1,4 +1,4 @@
-import { useEffect, useContext, useCallback } from 'react';
+import { useEffect, useContext, useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { OnboardingContext } from '../context/context';
 import { OnboardingEventTracking } from './onboarding-event-tracking';
@@ -7,6 +7,7 @@ import EventDispatcher from './modules/event-dispatcher';
 export default function Connect( props ) {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext );
 	const { buttonRef, successCallback, errorCallback } = props;
+	const isInitialized = useRef( false );
 
 	const handleCoreConnectionLogic = useCallback( ( event, data ) => {
 		const isTrackingOptedInConnect = data.tracking_opted_in && elementorCommon.config.editor_events;
@@ -27,7 +28,7 @@ export default function Connect( props ) {
 	}, [ state, getStateObjectToUpdate, updateState ] );
 
 	useEffect( () => {
-		if ( ! buttonRef.current ) {
+		if ( ! buttonRef.current || isInitialized.current ) {
 			return;
 		}
 
@@ -54,8 +55,11 @@ export default function Connect( props ) {
 			},
 		} );
 
+		isInitialized.current = true;
+
 		return () => {
 			$button.off( 'click' );
+			isInitialized.current = false;
 		};
 	}, [ buttonRef, successCallback, errorCallback, handleCoreConnectionLogic, defaultConnectSuccessCallback ] );
 
