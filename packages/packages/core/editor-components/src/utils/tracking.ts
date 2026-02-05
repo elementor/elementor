@@ -1,5 +1,5 @@
 import { type V1Element } from '@elementor/editor-elements';
-import { getMixpanel } from '@elementor/mixpanel';
+import { getMixpanel } from '@elementor/events';
 import { __getState as getState } from '@elementor/store';
 
 import { selectCreatedThisSession } from '../store/store';

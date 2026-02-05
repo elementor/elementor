@@ -115,8 +115,13 @@ export const ToggleButtonGroupUi = React.forwardRef(
 			const isOffLimits = menuItems?.length;
 			const itemsCount = isOffLimits ? fixedItems.length + 1 : fixedItems.length;
 			const templateColumnsSuffix = isOffLimits ? 'auto' : '';
+
+			if ( fullWidth ) {
+				return `repeat(${ itemsCount }, 1fr) ${ templateColumnsSuffix }`;
+			}
+
 			return `repeat(${ itemsCount }, minmax(0, 25%)) ${ templateColumnsSuffix }`;
-		}, [ menuItems?.length, fixedItems.length ] );
+		}, [ menuItems?.length, fixedItems.length, fullWidth ] );
 
 		const shouldShowExclusivePlaceholder = exclusive && ( value === null || value === undefined || value === '' );
 
