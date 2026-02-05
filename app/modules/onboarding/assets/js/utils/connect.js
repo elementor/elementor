@@ -74,37 +74,47 @@ export default function Connect( props ) {
 			return;
 		}
 
+		if ( initializedButtons.has( buttonElement ) ) {
+			console.log( '[Connect] useEffect skipped - already initialized in WeakMap', {
+				buttonText: buttonElement.textContent?.trim() || 'no-text',
+			} );
+			return;
+		}
+
+		initializedButtons.set( buttonElement, true );
+
 		const buttonId = buttonElement?.id || buttonElement?.getAttribute('data-button-id') || 'no-id';
 		const buttonText = buttonElement?.textContent?.trim() || buttonElement?.innerText?.trim() || 'no-text';
 		const $button = jQuery( buttonElement );
 		const originalHref = $button.attr( 'href' ) || '';
 		
 		const hasCallbackId = originalHref.includes( 'callback_id=' );
-		const isButtonInitialized = initializedButtons.has( buttonElement );
+		const events = $._data( buttonElement, 'events' );
+		const hasJQueryHandlers = events?.click && events.click.length > 0;
 
 		console.log( '[Connect] useEffect triggered', {
 			buttonRefExists: true,
-			isButtonInitialized,
 			hasCallbackId,
+			hasJQueryHandlers,
+			clickHandlersCount: events?.click?.length || 0,
 			buttonId,
 			buttonText,
 			originalHref: originalHref.substring(0, 100),
 		} );
 
-		if ( hasCallbackId || isButtonInitialized ) {
+		if ( hasCallbackId || hasJQueryHandlers ) {
 			console.log( '[Connect] useEffect skipped', {
-				reason: hasCallbackId ? 'button already has callback_id in href' : 'button already initialized in WeakMap',
+				reason: hasCallbackId ? 'button already has callback_id in href' : 'button already has jQuery handlers',
 				buttonId,
 				buttonText,
+				handlersCount: events?.click?.length || 0,
 			} );
 			return;
 		}
-
-		initializedButtons.set( buttonElement, true );
 		console.log( '[Connect] Calling elementorConnect', {
 			buttonId,
 			buttonText,
-			originalHref: originalHref?.substring(0, 100),
+			originalHref: originalHref.substring(0, 100),
 		} );
 
 		$button.elementorConnect( {
