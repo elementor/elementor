@@ -8,13 +8,20 @@ export default function Connect( props ) {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext );
 	const { buttonRef, successCallback, errorCallback } = props;
 	const isInitialized = useRef( false );
+	const successCallbackRef = useRef( successCallback );
+	const errorCallbackRef = useRef( errorCallback );
 
 	console.log( '[Connect] Component render', {
 		buttonRefExists: !!buttonRef?.current,
 		isInitialized: isInitialized.current,
+		successCallbackChanged: successCallbackRef.current !== successCallback,
+		errorCallbackChanged: errorCallbackRef.current !== errorCallback,
 		successCallbackId: successCallback?.toString().substring(0, 50),
 		errorCallbackId: errorCallback?.toString().substring(0, 50),
 	} );
+
+	successCallbackRef.current = successCallback;
+	errorCallbackRef.current = errorCallback;
 
 	const handleCoreConnectionLogic = useCallback( ( event, data ) => {
 		const isTrackingOptedInConnect = data.tracking_opted_in && elementorCommon.config.editor_events;
@@ -64,15 +71,15 @@ export default function Connect( props ) {
 			success: ( event, data ) => {
 				handleCoreConnectionLogic( event, data );
 
-				if ( successCallback ) {
-					successCallback( event, data );
+				if ( successCallbackRef.current ) {
+					successCallbackRef.current( event, data );
 				} else {
 					defaultConnectSuccessCallback();
 				}
 			},
 			error: () => {
-				if ( errorCallback ) {
-					errorCallback();
+				if ( errorCallbackRef.current ) {
+					errorCallbackRef.current();
 				}
 			},
 			popup: {
@@ -98,7 +105,7 @@ export default function Connect( props ) {
 			$button.off( 'click' );
 			isInitialized.current = false;
 		};
-	}, [ buttonRef, successCallback, errorCallback, handleCoreConnectionLogic, defaultConnectSuccessCallback ] );
+	}, [ buttonRef ] );
 
 	return null;
 }

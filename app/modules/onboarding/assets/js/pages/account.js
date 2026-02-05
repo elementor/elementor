@@ -144,7 +144,7 @@ export default function Account() {
 	}
 
 	console.log( '[Account] Component render/re-render' );
-	const connectSuccessCallback = () => {
+	const connectSuccessCallback = useCallback( () => {
 		console.log( '[Account] connectSuccessCallback called' );
 		const stateToUpdate = getStateObjectToUpdate( state, 'steps', pageId, 'completed' );
 
@@ -171,7 +171,7 @@ export default function Account() {
 
 		OnboardingEventTracking.sendStepEndState( 1 );
 		navigate( 'onboarding/' + nextStep );
-	};
+	}, [ state, getStateObjectToUpdate, updateState, pageId, nextStep, navigate ] );
 
 	function getNextStep() {
 		if ( ! state.isHelloThemeActivated ) {
@@ -181,7 +181,7 @@ export default function Account() {
 		return elementorAppConfig.onboarding.experiment ? 'chooseFeatures' : 'siteName';
 	}
 
-	const connectFailureCallback = () => {
+	const connectFailureCallback = useCallback( () => {
 		console.log( '[Account] connectFailureCallback called' );
 		elementorCommon.events.dispatchEvent( {
 			event: 'indication prompt',
@@ -203,7 +203,7 @@ export default function Account() {
 		} );
 
 		navigate( 'onboarding/' + nextStep );
-	};
+	}, [ state, nextStep, navigate ] );
 
 	const experiment101Variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT );
 	const ContentComponent = 'B' === experiment101Variant ? AccountContentB : AccountContentA;

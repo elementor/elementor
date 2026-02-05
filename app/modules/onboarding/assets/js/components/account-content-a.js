@@ -23,7 +23,7 @@ export default function AccountContentA( {
 			{ actionButton.ref && ! state.isLibraryConnected &&
 			<Connect
 				buttonRef={ actionButton.ref }
-				successCallback={ ( event, data ) => connectSuccessCallback( event, data ) }
+				successCallback={ connectSuccessCallback }
 				errorCallback={ connectFailureCallback }
 			/> }
 			<span>
