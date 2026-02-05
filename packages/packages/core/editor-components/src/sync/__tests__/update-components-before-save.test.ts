@@ -1,11 +1,14 @@
 import { createMockDocument } from 'test-utils';
+import { invalidateDocumentData } from '@elementor/editor-documents';
 
 import { apiClient } from '../../api';
-import { invalidateComponentDocumentData } from '../../utils/component-document-data';
 import { type ComponentDocumentsMap, getComponentDocuments } from '../../utils/get-component-documents';
 import { publishDraftComponentsInPageBeforeSave } from '../publish-draft-components-in-page-before-save';
 
-jest.mock( '../../utils/component-document-data' );
+jest.mock( '@elementor/editor-documents', () => ( {
+	...jest.requireActual( '@elementor/editor-documents' ),
+	invalidateDocumentData: jest.fn(),
+} ) );
 jest.mock( '../../utils/get-component-documents' );
 jest.mock( '../../api' );
 
@@ -113,10 +116,10 @@ describe( 'publishDraftComponentsInPageBeforeSave', () => {
 
 		// Assert
 		expect( apiClient.updateStatuses ).toHaveBeenCalledWith( [ 1000, 3000, 4000 ], 'publish' );
-		expect( invalidateComponentDocumentData ).toHaveBeenCalledTimes( 3 );
-		expect( invalidateComponentDocumentData ).toHaveBeenNthCalledWith( 1, 1000 );
-		expect( invalidateComponentDocumentData ).toHaveBeenNthCalledWith( 2, 3000 );
-		expect( invalidateComponentDocumentData ).toHaveBeenNthCalledWith( 3, 4000 );
+		expect( invalidateDocumentData ).toHaveBeenCalledTimes( 3 );
+		expect( invalidateDocumentData ).toHaveBeenNthCalledWith( 1, 1000 );
+		expect( invalidateDocumentData ).toHaveBeenNthCalledWith( 2, 3000 );
+		expect( invalidateDocumentData ).toHaveBeenNthCalledWith( 3, 4000 );
 	} );
 
 	it( 'should not update any components when not publishing', async () => {
@@ -147,7 +150,7 @@ describe( 'publishDraftComponentsInPageBeforeSave', () => {
 
 		// Assert
 		expect( apiClient.updateStatuses ).not.toHaveBeenCalled();
-		expect( invalidateComponentDocumentData ).not.toHaveBeenCalled();
+		expect( invalidateDocumentData ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should not update any components when all components are published', async () => {
@@ -178,6 +181,6 @@ describe( 'publishDraftComponentsInPageBeforeSave', () => {
 
 		// Assert
 		expect( apiClient.updateStatuses ).not.toHaveBeenCalled();
-		expect( invalidateComponentDocumentData ).not.toHaveBeenCalled();
+		expect( invalidateDocumentData ).not.toHaveBeenCalled();
 	} );
 } );

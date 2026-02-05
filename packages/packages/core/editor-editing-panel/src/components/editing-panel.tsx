@@ -9,12 +9,12 @@ import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/edit
 import { ThemeProvider } from '@elementor/editor-ui';
 import { AtomIcon } from '@elementor/icons';
 import { createLocation } from '@elementor/locations';
+import { controlActionsMenu } from '@elementor/menus';
 import { SessionStorageProvider } from '@elementor/session';
 import { ErrorBoundary } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { ElementProvider } from '../contexts/element-context';
-import { controlActionsMenu } from '../controls-actions';
 import { getEditingPanelReplacement } from '../editing-panel-replacement-registry';
 import { EditorPanelErrorFallback } from './editing-panel-error-fallback';
 import { EditingPanelTabs } from './editing-panel-tabs';

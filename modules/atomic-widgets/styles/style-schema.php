@@ -229,6 +229,21 @@ class Style_Schema {
 			'outline-width' => Size_Prop_Type::make()
 				->units( Size_Constants::border() )
 				->description( 'The width of the outline in Size PropType format' ),
+			'outline-color' => Color_Prop_Type::make()->description( 'The color of the outline, specified as a hex code, rgb(a), hsl(a), or a standard css color name.' ),
+			'outline-style' => String_Prop_Type::make()->enum( [
+				'none',
+				'hidden',
+				'dotted',
+				'dashed',
+				'solid',
+				'double',
+				'groove',
+				'ridge',
+				'inset',
+				'outset',
+			] )->description( 'The outline style in CSS values' ),
+			'outline-offset' => Size_Prop_Type::make()->units( Size_Constants::border() )->description( 'The offset of the outline, specified as a length in Size PropType format' ),
+
 		];
 	}
 

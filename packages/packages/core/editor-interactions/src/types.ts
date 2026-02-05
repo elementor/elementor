@@ -1,8 +1,11 @@
+import { type Unit } from '@elementor/editor-controls';
 import type {
 	AnimationPresetPropValue,
 	BooleanPropValue,
 	ConfigPropValue,
 	ElementInteractions,
+	ExcludedBreakpointsPropValue,
+	InteractionBreakpointsPropValue,
 	InteractionItemPropValue,
 	NumberPropValue,
 	StringPropValue,
@@ -18,6 +21,8 @@ export type {
 	AnimationPresetPropValue,
 	InteractionItemPropValue,
 	ElementInteractions,
+	ExcludedBreakpointsPropValue,
+	InteractionBreakpointsPropValue,
 };
 
 export type AnimationOption = {
@@ -71,3 +76,5 @@ export type InteractionsProvider = {
 };
 
 export type InteractionItemValue = InteractionItemPropValue[ 'value' ];
+
+export type SizeStringValue = `${ number }${ Unit }` | number;

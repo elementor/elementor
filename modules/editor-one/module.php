@@ -36,7 +36,7 @@ class Module extends BaseModule {
 		add_action( 'current_screen', function () {
 			$menu_data_provider = Menu_Data_Provider::instance();
 
-			if ( ! $menu_data_provider->is_elementor_editor_page() ) {
+			if ( ! $menu_data_provider->is_editor_one_admin_page() ) {
 				return;
 			}
 

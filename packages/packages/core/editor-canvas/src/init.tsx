@@ -6,10 +6,13 @@ import { ClassesRename } from './components/classes-rename';
 import { ElementsOverlays } from './components/elements-overlays';
 import { InteractionsRenderer } from './components/interactions-renderer';
 import { StyleRenderer } from './components/style-renderer';
+import { initFormAncestorEnforcement } from './form-structure/enforce-form-ancestor-commands';
+import { initFormNestingPrevention } from './form-structure/prevent-form-nesting-commands';
 import { initSettingsTransformers } from './init-settings-transformers';
 import { initStyleTransformers } from './init-style-transformers';
 import { initLegacyViews } from './legacy/init-legacy-views';
 import { initViewReplacements } from './legacy/replacements/manager';
+import { initTabsModelExtensions } from './legacy/tabs-model-extensions';
 import { initCanvasMcp } from './mcp/canvas-mcp';
 import { mcpDescription } from './mcp/mcp-description';
 import { initLinkInLinkPrevention } from './prevent-link-in-link-commands';
@@ -20,6 +23,8 @@ export function init() {
 	initStyleCommands();
 
 	initLinkInLinkPrevention();
+	initFormNestingPrevention();
+	initFormAncestorEnforcement();
 
 	initViewReplacements();
 
@@ -54,4 +59,6 @@ export function init() {
 			instructions: mcpDescription,
 		} )
 	);
+
+	initTabsModelExtensions();
 }

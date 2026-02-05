@@ -1,27 +1,40 @@
 import { type V1Element, type V1ElementModelProps, type V1ElementSettingsProps } from '@elementor/editor-elements';
 
-type V1Model< T > = {
-	get: < K extends keyof T >( key: K ) => T[ K ];
-	set: < K extends keyof T >( key: K, value: T[ K ] ) => void;
-	toJSON: () => T;
-};
+type V1Model = V1Element[ 'model' ];
+type V1Settings = V1Element[ 'settings' ];
 
-function createMockModel< T >( data: T ): V1Model< T > {
+type ModelData = V1ElementModelProps & { elements?: V1Model[] };
+
+function createMockModel( data: ModelData ): V1Model {
 	return {
-		get: < K extends keyof T >( key: K ): T[ K ] => data[ key ],
-		set: < K extends keyof T >( key: K, value: T[ K ] ): void => {
-			data[ key ] = value;
+		get: ( key: string ) => data[ key as keyof ModelData ],
+		set: ( key: string, value: unknown ) => {
+			( data as Record< string, unknown > )[ key ] = value;
 		},
-		toJSON: (): T => data,
-	};
+		toJSON: () => data,
+	} as V1Model;
+}
+
+function createMockSettings( data: V1ElementSettingsProps = {} ): V1Settings {
+	return {
+		get: ( key: string ) => data[ key as keyof V1ElementSettingsProps ],
+		set: ( key: string, value: unknown ) => {
+			( data as Record< string, unknown > )[ key ] = value;
+		},
+		toJSON: () => data,
+	} as V1Settings;
 }
 
 export function createMockChild( modelData: V1ElementModelProps ): V1Element {
-	return {
+	const mockChild: Partial< V1Element > = {
 		id: modelData.id,
 		model: createMockModel( modelData ),
-		settings: createMockModel< V1ElementSettingsProps >( {} ),
+		settings: createMockSettings(),
 	};
+
+	mockChild.lookup = jest.fn( () => mockChild as V1Element );
+
+	return mockChild as V1Element;
 }
 
 function createMockChildren( children: V1Element[] ): V1Element[ 'children' ] {
@@ -58,15 +71,22 @@ function createMockChildren( children: V1Element[] ): V1Element[ 'children' ] {
 }
 
 export function createMockContainer( id: string, children: V1Element[] = [], elType = 'container' ): V1Element {
-	const modelData: V1ElementModelProps = {
+	const childModels = children.map( ( child ) => child.model );
+
+	const modelData: ModelData = {
 		elType,
 		id,
+		elements: childModels,
 	};
 
-	return {
+	const mockContainer: Partial< V1Element > = {
 		id,
 		model: createMockModel( modelData ),
-		settings: createMockModel< V1ElementSettingsProps >( {} ),
+		settings: createMockSettings(),
 		children: createMockChildren( children ),
 	};
+
+	mockContainer.lookup = jest.fn( () => mockContainer as V1Element );
+
+	return mockContainer as V1Element;
 }

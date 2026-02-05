@@ -2,6 +2,7 @@ import type { InteractionsConfig, DynamicTags, DynamicTagsManager, DynamicTag } 
 import type { ControlItem, V1Element } from '@elementor/editor-elements';
 import type { PropsSchema } from '@elementor/editor-props';
 import type { SupportedFonts, EnqueueFont } from '@elementor/editor-v1-adapters';
+import type { V4PromotionData, V4PromotionKey } from '@elementor/editor-controls';
 
 declare global {
 	interface Window {
@@ -36,6 +37,7 @@ declare global {
 					tags: DynamicTags;
 					groups: Record< DynamicTag[ 'group' ], { title: string } >;
 				};
+				v4Promotions?: Record< V4PromotionKey, V4PromotionData >;
 			};
 			dynamicTags?: DynamicTagsManager;
 			selection?: {
@@ -66,6 +68,8 @@ declare global {
 			};
 		};
 		ElementorInteractionsConfig?: InteractionsConfig;
+		ElementorVariablesQuotaConfig?: Record< string, number >;
+		ElementorVariablesQuotaConfigExtended?: Record< string, number >;
 	}
 }
 

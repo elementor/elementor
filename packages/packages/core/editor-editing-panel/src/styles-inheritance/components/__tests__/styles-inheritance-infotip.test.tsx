@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createMockPropType, initMockStylesTransformersRegistry, renderWithTheme } from 'test-utils';
-import { createTransformer } from '@elementor/editor-canvas';
+import { createTransformer, stylesInheritanceTransformersRegistry } from '@elementor/editor-canvas';
 import { useBreakpoints } from '@elementor/editor-responsive';
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 
@@ -13,7 +13,6 @@ import {
 	mockTestPropType,
 } from '../../__tests__/mock-inheritance-chain';
 import { initStylesInheritanceTransformers } from '../../init-styles-inheritance-transformers';
-import { stylesInheritanceTransformersRegistry } from '../../styles-inheritance-transformers-registry';
 import { calculatePopoverOffset, StylesInheritanceInfotip } from '../styles-inheritance-infotip';
 
 jest.mock( '@elementor/editor-responsive', () => ( {

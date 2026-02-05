@@ -430,7 +430,7 @@ class Menu_Data_Provider {
 			}
 
 			$children_data[] = [
-				'url' => $this->get_item_url( $child_slug, $child_item->get_parent_slug() ),
+				'url' => $this->resolve_item_url( $child_item, $child_slug ),
 				'priority' => $this->get_item_priority( $child_item ),
 			];
 		}
@@ -535,7 +535,11 @@ class Menu_Data_Provider {
 	}
 
 	private function title_case( string $text ): string {
-		return mb_convert_case( $text, MB_CASE_TITLE, 'UTF-8' );
+		if ( function_exists( 'mb_convert_case' ) ) {
+			return mb_convert_case( $text, MB_CASE_TITLE, 'UTF-8' );
+		}
+
+		return ucwords( strtolower( $text ) );
 	}
 
 	private function invalidate_cache(): void {

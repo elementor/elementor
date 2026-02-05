@@ -294,6 +294,43 @@ class Test_Menu_Data_Provider extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( 'return_to=', $url );
 	}
 
+	public function test_get_third_level_data__parent_uses_first_child_custom_url() {
+		$this->set_admin_user();
+		
+		$parent = $this->createMock( Menu_Item_Third_Level_Interface::class );
+		$parent->method( 'get_slug' )->willReturn( 'elementor-templates' );
+		$parent->method( 'get_group_id' )->willReturn( Menu_Config::TEMPLATES_GROUP_ID );
+		$parent->method( 'get_label' )->willReturn( 'Templates' );
+		$parent->method( 'get_capability' )->willReturn( 'edit_posts' );
+		$parent->method( 'get_position' )->willReturn( 60 );
+		$parent->method( 'is_visible' )->willReturn( true );
+		$parent->method( 'get_parent_slug' )->willReturn( Menu_Config::ELEMENTOR_MENU_SLUG );
+		$parent->method( 'get_icon' )->willReturn( 'folder' );
+		$parent->method( 'has_children' )->willReturn( true );
+
+		$child_custom_url = admin_url( 'edit.php?post_type=elementor_library&tabs_group=library' );
+		$child = new Test_Custom_Url_Menu_Item(
+			'edit.php?post_type=elementor_library',
+			Menu_Config::TEMPLATES_GROUP_ID,
+			$child_custom_url,
+			false,
+			'Saved Templates',
+			10
+		);
+
+		$this->provider->register_level3_item( $parent );
+		$this->provider->register_level4_item( $child );
+
+		$data = $this->provider->get_third_level_data( Menu_Data_Provider::THIRD_LEVEL_EDITOR_FLYOUT );
+
+		$parent_item = array_values( array_filter( $data['items'], function( $item ) {
+			return $item['slug'] === 'elementor-templates';
+		} ) )[0] ?? null;
+
+		$this->assertNotNull( $parent_item, 'Parent item should be present in data' );
+		$this->assertEquals( $child_custom_url, $parent_item['url'], 'Parent should use first child custom URL' );
+	}
+
 	private function create_test_item( string $slug, string $group_id, bool $is_level3 ) {
 		if ( $is_level3 ) {
 			$item = $this->createMock( Menu_Item_Third_Level_Interface::class );
@@ -341,13 +378,15 @@ class Test_Custom_Url_Menu_Item implements Menu_Item_Third_Level_Interface, Menu
 	private string $url;
 	private bool $has_children;
 	private string $label;
+	private int $position;
 
-	public function __construct( string $slug, string $group_id, string $url, bool $has_children, string $label ) {
+	public function __construct( string $slug, string $group_id, string $url, bool $has_children, string $label, int $position = 100 ) {
 		$this->slug = $slug;
 		$this->group_id = $group_id;
 		$this->url = $url;
 		$this->has_children = $has_children;
 		$this->label = $label;
+		$this->position = $position;
 	}
 
 	public function get_capability(): string {
@@ -367,7 +406,7 @@ class Test_Custom_Url_Menu_Item implements Menu_Item_Third_Level_Interface, Menu
 	}
 
 	public function get_position(): int {
-		return 100;
+		return $this->position;
 	}
 
 	public function get_slug(): string {

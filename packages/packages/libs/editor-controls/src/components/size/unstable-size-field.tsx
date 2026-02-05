@@ -1,6 +1,6 @@
 import * as React from 'react';
 import type { PropValue, SizePropValue } from '@elementor/editor-props';
-import { InputAdornment } from '@elementor/ui';
+import { InputAdornment, type TextFieldProps } from '@elementor/ui';
 
 import { useSizeValue } from '../../hooks/use-size-value';
 import { type Unit } from '../../utils/size-control';
@@ -14,6 +14,7 @@ type Props< TValue > = {
 	onChange: ( value: TValue ) => void;
 	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 	disabled?: boolean;
+	InputProps?: TextFieldProps[ 'InputProps' ];
 };
 
 const DEFAULT_VALUE: SizePropValue[ 'value' ] = {
@@ -23,6 +24,7 @@ const DEFAULT_VALUE: SizePropValue[ 'value' ] = {
 
 export const UnstableSizeField = < T extends SizePropValue[ 'value' ] >( {
 	value,
+	InputProps,
 	defaultValue,
 	onChange,
 	onBlur,
@@ -44,6 +46,7 @@ export const UnstableSizeField = < T extends SizePropValue[ 'value' ] >( {
 			onBlur={ onBlur }
 			onChange={ ( event ) => setSize( event.target.value ) }
 			InputProps={ {
+				...InputProps,
 				endAdornment: (
 					<InputAdornment position="end">
 						<UnitSelect

@@ -1,14 +1,22 @@
-import type {
-	AnimationPresetPropValue,
-	BooleanPropValue,
-	ConfigPropValue,
-	ElementInteractions,
-	InteractionItemPropValue,
-	InteractionItemValue,
-	NumberPropValue,
-	StringPropValue,
-	TimingConfigPropValue,
+import { type Unit } from '@elementor/editor-controls';
+import { sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
+
+import { DEFAULT_TIME_UNIT, TIME_UNITS } from '../configs/time-constants';
+import {
+	type AnimationPresetPropValue,
+	type BooleanPropValue,
+	type ConfigPropValue,
+	type ElementInteractions,
+	type ExcludedBreakpointsPropValue,
+	type InteractionBreakpointsPropValue,
+	type InteractionItemPropValue,
+	type InteractionItemValue,
+	type NumberPropValue,
+	type SizeStringValue,
+	type StringPropValue,
+	type TimingConfigPropValue,
 } from '../types';
+import { formatSizeValue, parseSizeValue } from '../utils/size-transform-utils';
 import { generateTempInteractionId } from './temp-id-utils';
 
 export const createString = ( value: string ): StringPropValue => ( {
@@ -21,11 +29,11 @@ export const createNumber = ( value: number ): NumberPropValue => ( {
 	value,
 } );
 
-export const createTimingConfig = ( duration: number, delay: number ): TimingConfigPropValue => ( {
+export const createTimingConfig = ( duration: SizeStringValue, delay: SizeStringValue ): TimingConfigPropValue => ( {
 	$$type: 'timing-config',
 	value: {
-		duration: createNumber( duration ),
-		delay: createNumber( delay ),
+		duration: sizePropTypeUtil.create( parseSizeValue( duration, TIME_UNITS, undefined, DEFAULT_TIME_UNIT ) ),
+		delay: sizePropTypeUtil.create( parseSizeValue( delay, TIME_UNITS, undefined, DEFAULT_TIME_UNIT ) ),
 	},
 } );
 
@@ -39,26 +47,50 @@ export const createConfig = ( {
 	easing = 'easeIn',
 	relativeTo = '',
 	offsetTop = 0,
-	offsetBottom = 100,
+	offsetBottom = 85,
 }: {
 	replay: boolean;
 	easing?: string;
 	relativeTo?: string;
-	offsetTop?: number;
-	offsetBottom?: number;
+	offsetTop?: SizeStringValue;
+	offsetBottom?: SizeStringValue;
 } ): ConfigPropValue => ( {
 	$$type: 'config',
 	value: {
 		replay: createBoolean( replay ),
 		easing: createString( easing ),
 		relativeTo: createString( relativeTo ),
-		offsetTop: createNumber( offsetTop ),
-		offsetBottom: createNumber( offsetBottom ),
+		offsetTop: createSize( offsetTop, '%' ),
+		offsetBottom: createSize( offsetBottom, '%' ),
 	},
 } );
 
+const createSize = ( value?: SizeStringValue, defaultUnit?: Unit, defaultValue?: SizeStringValue ) => {
+	if ( ! value ) {
+		return;
+	}
+
+	return sizePropTypeUtil.create( parseSizeValue( value, [ '%' ], defaultValue, defaultUnit ) );
+};
+
 export const extractBoolean = ( prop: BooleanPropValue | undefined, fallback = false ): boolean => {
 	return prop?.value ?? fallback;
+};
+
+export const createExcludedBreakpoints = ( breakpoints: string[] ): ExcludedBreakpointsPropValue => ( {
+	$$type: 'excluded-breakpoints',
+	value: breakpoints.map( createString ),
+} );
+
+export const createInteractionBreakpoints = ( excluded: string[] ): InteractionBreakpointsPropValue => ( {
+	$$type: 'interaction-breakpoints',
+	value: {
+		excluded: createExcludedBreakpoints( excluded ),
+	},
+} );
+
+export const extractExcludedBreakpoints = ( breakpoints: InteractionBreakpointsPropValue | undefined ): string[] => {
+	return breakpoints?.value.excluded.value.map( ( bp: StringPropValue ) => bp.value ) ?? [];
 };
 
 export const createAnimationPreset = ( {
@@ -76,13 +108,13 @@ export const createAnimationPreset = ( {
 	effect: string;
 	type: string;
 	direction?: string;
-	duration: number;
-	delay: number;
+	duration: SizeStringValue;
+	delay: SizeStringValue;
 	replay: boolean;
 	easing?: string;
 	relativeTo?: string;
-	offsetTop?: number;
-	offsetBottom?: number;
+	offsetTop?: SizeStringValue;
+	offsetBottom?: SizeStringValue;
 } ): AnimationPresetPropValue => ( {
 	$$type: 'animation-preset-props',
 	value: {
@@ -113,19 +145,21 @@ export const createInteractionItem = ( {
 	relativeTo,
 	offsetTop,
 	offsetBottom,
+	excludedBreakpoints,
 }: {
 	trigger: string;
 	effect: string;
 	type: string;
 	direction?: string;
-	duration: number;
-	delay: number;
+	duration: SizeStringValue;
+	delay: SizeStringValue;
 	interactionId?: string;
 	replay: boolean;
 	easing?: string;
 	relativeTo?: string;
 	offsetTop?: number;
 	offsetBottom?: number;
+	excludedBreakpoints?: string[];
 } ): InteractionItemPropValue => ( {
 	$$type: 'interaction-item',
 	value: {
@@ -143,6 +177,10 @@ export const createInteractionItem = ( {
 			offsetTop,
 			offsetBottom,
 		} ),
+		...( excludedBreakpoints &&
+			excludedBreakpoints.length > 0 && {
+				breakpoints: createInteractionBreakpoints( excludedBreakpoints ),
+			} ),
 	},
 } );
 
@@ -168,8 +206,12 @@ export const extractString = ( prop: StringPropValue | undefined, fallback = '' 
 	return prop?.value ?? fallback;
 };
 
-export const extractNumber = ( prop: NumberPropValue | undefined, fallback = 0 ): number => {
-	return prop?.value ?? fallback;
+export const extractSize = ( prop?: SizePropValue, defaultValue?: SizeStringValue ): SizeStringValue => {
+	if ( ! prop?.value ) {
+		return defaultValue as SizeStringValue;
+	}
+
+	return formatSizeValue( prop.value );
 };
 
 const TRIGGER_LABELS: Record< string, string > = {

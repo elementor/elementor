@@ -19,6 +19,10 @@ export const getVariables = ( includeDeleted = true ) => {
 	return Object.fromEntries( Object.entries( variables ).filter( ( [ , variable ] ) => ! variable.deleted ) );
 };
 
+export const hasVariable = ( key: string ) => {
+	return getVariables()[ key ] !== undefined;
+};
+
 export const useVariable = ( key: string ) => {
 	const variables = getVariables();
 

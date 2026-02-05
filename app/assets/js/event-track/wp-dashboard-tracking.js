@@ -46,6 +46,10 @@ export default class WpDashboardTracking {
 	static navigationListeners = [];
 	static isNavigatingToElementor = false;
 
+	static getElementorCommon() {
+		return window.elementorCommon;
+	}
+
 	static init() {
 		if ( this.initialized ) {
 			return;
@@ -78,6 +82,11 @@ export default class WpDashboardTracking {
 
 		this.processPendingNavClick();
 		this.saveSessionToStorage();
+	}
+
+	static isEditorOneActive() {
+		const elementorCommon = this.getElementorCommon();
+		return elementorCommon?.config?.editor_events?.isEditorOneActive ?? false;
 	}
 
 	static processPendingNavClick() {
@@ -127,12 +136,15 @@ export default class WpDashboardTracking {
 	}
 
 	static isEventsManagerAvailable() {
+		const elementorCommon = this.getElementorCommon();
+
 		return elementorCommon?.eventsManager &&
 			'function' === typeof elementorCommon.eventsManager.dispatchEvent;
 	}
 
 	static canSendEvents() {
-		return elementorCommon?.config?.editor_events?.can_send_events || false;
+		const elementorCommon = this.getElementorCommon();
+		return elementorCommon?.config?.editor_events?.can_send_events ?? false;
 	}
 
 	static dispatchEvent( eventName, properties = {}, options = {} ) {
@@ -140,7 +152,8 @@ export default class WpDashboardTracking {
 			return;
 		}
 
-		elementorCommon.eventsManager.dispatchEvent( eventName, properties, options );
+		const elementorCommon = this.getElementorCommon();
+		elementorCommon?.eventsManager?.dispatchEvent( eventName, properties, options );
 	}
 
 	static updateActivity() {

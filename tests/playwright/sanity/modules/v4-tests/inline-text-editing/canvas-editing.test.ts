@@ -4,6 +4,8 @@ import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
 import { INLINE_EDITING_SELECTORS } from './selectors/selectors';
 import { getElementSelector } from '../../../../assets/elements-utils';
+import topBarSelectors from '../../../../selectors/top-bar-selectors';
+import EditorSelectors from '../../../../selectors/editor-selectors';
 
 const testedAttributes = Object.keys( INLINE_EDITING_SELECTORS.attributes ).filter( ( attribute ) => attribute !== 'link' );
 
@@ -59,7 +61,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		await inlineEditor.clear();
 		await page.keyboard.type( 'this is the first test' );
 		await editor.selectInlineEditedText( headingId, 'this' );
-		await editor.toggleInlineEditingAttribute( 'underline' );
+		await editor.toggleInlineEditingAttribute( INLINE_EDITING_SELECTORS.attributes.underline );
 		await page.keyboard.press( 'Escape', { delay: 100 } );
 		await editor.selectElement( headingId );
 
@@ -190,52 +192,109 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		await expect( headingElement ).toHaveText( 'Hello' );
 	} );
 
-	test( "ensure html tags for styling aren't stripped by twig", async ( ) => {
+	for ( const atom of supportedAtoms ) {
+		test( `ensure html tags for styling aren't stripped by twig for ${ atom } widget`, async ( ) => {
 		// Arrange
-		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
-		const atomIds: Partial< Record< typeof supportedAtoms[number], string > > = {};
-		const encodedExpectedOutput = '<strong draggable=\"true\">bold</strong>, <u>underline</u>, <s>strikethrough</s>, <sup>superscript</sup>, <sub>subscript</sub>';
+			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+			const atomIds: Partial< Record< typeof supportedAtoms[number], string > > = {};
+			const encodedExpectedOutput = '<strong draggable=\"true\">bold</strong>, <u>underline</u>, <s>strikethrough</s>, <sup>superscript</sup>, <sub>subscript</sub>, <em>italic</em>';
 
-		for ( const atom of supportedAtoms ) {
 			atomIds[ atom ] = await editor.addWidget( { widgetType: atom, container: containerId } );
 
 			await editor.previewFrame.locator( getElementSelector( atomIds[ atom ] ) ).waitFor();
 			await editor.v4Panel.fillInlineEditing( atomTexts[ atom ] );
-		}
 
-		// Unfocus.
-		await page.keyboard.press( 'Escape' );
+			// Unfocus.
+			await page.keyboard.press( 'Escape' );
 
-		// Act.
-		for ( const atom of supportedAtoms ) {
+			// Act.
 			for ( const attribute of testedAttributes ) {
 				await editor.selectInlineEditedText( atomIds[ atom ], attribute );
-				await editor.toggleInlineEditingAttribute( attribute );
+				await editor.toggleInlineEditingAttribute( INLINE_EDITING_SELECTORS.attributes[ attribute ] );
 				await page.keyboard.press( 'Escape' );
 			}
-		}
 
-		// Unfocus.
-		await page.keyboard.press( 'Escape' );
-
-		// Assert.
-		for ( const atom of supportedAtoms ) {
-			const queryString = getElementSelector( atomIds[ atom ] ) + ' ' + defaultAtomTags[ atom ];
+			// Assert.
+			let queryString = getElementSelector( atomIds[ atom ] ) + ' ' + defaultAtomTags[ atom ];
 
 			expect( await editor.previewFrame.locator( queryString ).innerHTML() )
 				.toContain( encodedExpectedOutput );
-		}
 
-		// Unfocus.
-		await page.keyboard.press( 'Escape' );
+			// Unfocus.
+			await page.keyboard.press( 'Escape' );
 
-		await editor.publishAndViewPage();
+			await editor.publishAndViewPage();
 
-		for ( const atom of supportedAtoms ) {
-			const queryString = `${ defaultAtomTags[ atom ] }[data-interaction-id="${ atomIds[ atom ] }"]`;
+			queryString = `${ defaultAtomTags[ atom ] }[data-interaction-id="${ atomIds[ atom ] }"]`;
 
 			expect( ( await page.locator( queryString ).innerHTML() ) )
 				.toContain( encodedExpectedOutput.replaceAll( ' draggable="true"', '' ) );
-		}
+		} );
+	}
+
+	test( 'Ensure relevant focusing unmounts the inline editor form frame', async () => {
+		// Arrange
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		const dummyDivBlockId = await editor.addElement( { elType: 'e-div-block' }, 'document' );
+
+		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
+		const headingElement = editor.previewFrame.locator( EditorSelectors.v4.atomSelectors.heading.wrapper + ' > ' + EditorSelectors.v4.atomSelectors.heading.base );
+		const inlineEditedHeading = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
+
+		// Act
+		await editor.triggerEditingElement( headingId );
+
+		// Assert
+		await expect( inlineEditedHeading ).toBeVisible();
+		await expect( headingElement ).not.toBeAttached();
+
+		// Arrange
+		await editor.triggerEditingElement( headingId );
+
+		await test.step( 'Clicking the panel', async () => {
+			// Act - click on a panel tab
+			await editor.v4Panel.openTab( 'style' );
+
+			// Assert
+			await expect( headingElement ).toBeVisible();
+			await expect( inlineEditedHeading ).not.toBeAttached();
+		} );
+
+		// Arrange.
+		await editor.closeNavigatorIfOpen();
+		await editor.triggerEditingElement( headingId );
+
+		await test.step( 'Clicking the topbar', async () => {
+			// Act - open navigator using topbar
+			await editor.clickTopBarItem( topBarSelectors.navigator );
+
+			// Assert
+			await expect( headingElement ).toBeVisible();
+			await expect( inlineEditedHeading ).not.toBeAttached();
+		} );
+
+		// Arrange.
+		await editor.triggerEditingElement( headingId );
+
+		await test.step( 'Clicking the navigator', async () => {
+			// Act - clicking on navigator
+			await editor.closeNavigatorIfOpen();
+
+			// Assert
+			await expect( headingElement ).toBeVisible();
+			await expect( inlineEditedHeading ).not.toBeAttached();
+		} );
+
+		// Arrange.
+		await editor.triggerEditingElement( headingId );
+
+		await test.step( 'Clicking a different element', async () => {
+			// Act - clicking on a different element
+			await editor.previewFrame.locator( editor.getWidgetSelector( dummyDivBlockId ) ).click();
+
+			// Assert
+			await expect( headingElement ).toBeVisible();
+			await expect( inlineEditedHeading ).not.toBeAttached();
+		} );
 	} );
 } );

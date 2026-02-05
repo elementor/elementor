@@ -151,4 +151,25 @@ class Utils {
 
 		return $space_between_widgets;
 	}
+
+	public static function resolve_label_conflict( string $label, array $existing_labels, int $max_length = 50 ): string {
+		$lower_label = strtolower( $label );
+
+		if ( ! in_array( $lower_label, $existing_labels, true ) ) {
+			return $label;
+		}
+
+		$suffix = 1;
+		$max_suffix_attempts = 1000;
+
+		do {
+			$suffix_str = '_' . $suffix;
+			$max_base_length = $max_length - strlen( $suffix_str );
+			$base_label = mb_substr( $label, 0, $max_base_length );
+			$new_label = $base_label . $suffix_str;
+			$suffix++;
+		} while ( in_array( strtolower( $new_label ), $existing_labels, true ) && $suffix < $max_suffix_attempts );
+
+		return $new_label;
+	}
 }

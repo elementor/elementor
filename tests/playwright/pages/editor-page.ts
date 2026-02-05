@@ -1373,13 +1373,13 @@ export default class EditorPage extends BasePage {
 	}
 
 	async triggerEditingElement( elementId: string ): Promise<Locator> {
+		const inlineEditor = this.previewFrame.locator( `.elementor-element-${ elementId } ${ INLINE_EDITING_SELECTORS.canvas.inlineEditor }` );
 		const element = this.previewFrame.locator( `.elementor-element-${ elementId }` );
 
+		await this.page.keyboard.press( 'Escape' );
+		await this.page.waitForTimeout( timeouts.veryShort );
+		await element.waitFor();
 		await element[ INLINE_EDITING_SELECTORS.triggerEvent ]();
-
-		const inlineEditor = this.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
-
-		await inlineEditor.waitFor();
 
 		return inlineEditor;
 	}
@@ -1404,23 +1404,21 @@ export default class EditorPage extends BasePage {
 
 		const startIndex = entireText.indexOf( substring );
 
-		await this.page.keyboard.press( 'Home', { delay: 100 } );
-
 		for ( let i = 0; i < startIndex; i++ ) {
-			await this.page.keyboard.press( 'ArrowRight', { delay: 100 } );
+			await this.page.keyboard.press( 'ArrowRight', { delay: timeouts.veryShort } );
 		}
 
 		for ( let i = 0; i < substring.length; i++ ) {
-			await this.page.keyboard.press( 'Shift+ArrowRight', { delay: 100 } );
+			await this.page.keyboard.press( 'Shift+ArrowRight', { delay: timeouts.veryShort } );
 		}
 	}
 
 	async toggleInlineEditingAttribute( attribute: string ): Promise<void> {
-		if ( ! Object.keys( INLINE_EDITING_SELECTORS.attributes ).includes( attribute ) ) {
+		if ( ! Object.values( INLINE_EDITING_SELECTORS.attributes ).includes( attribute ) ) {
 			return;
 		}
 
-		const button = this.page.locator( `[role="presentation"] button[value="${ INLINE_EDITING_SELECTORS.attributes[ attribute ] }"]` );
+		const button = this.page.locator( `[role="presentation"] button[value="${ attribute }"]` );
 
 		await button.click();
 	}

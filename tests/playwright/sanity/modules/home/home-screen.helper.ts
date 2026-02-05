@@ -23,18 +23,10 @@ export const transformMockDataByLicense = ( licenseType: LicenseType ) => {
 	const sidebarPromotionItem = homeScreenMockData.sidebar_promotion_variants.find(
 		( item ) => 'true' === item.is_enabled && item.license.includes( licenseType ),
 	);
-	const sidebarUpgradeItem = homeScreenMockData.sidebar_upgrade.find(
-		( item ) => item.license.includes( licenseType ),
-	);
-
-	const hideSection = homeScreenMockData.add_ons?.hide_section || [];
-	const addOns = hideSection.includes( licenseType ) ? null : homeScreenMockData.add_ons;
 
 	return {
 		top_with_licences: topItem,
 		get_started: getStartedItem,
-		add_ons: addOns,
-		sidebar_upgrade: sidebarUpgradeItem || null,
 		sidebar_promotion_variants: sidebarPromotionItem || null,
 		external_links: homeScreenMockData.external_links,
 	};

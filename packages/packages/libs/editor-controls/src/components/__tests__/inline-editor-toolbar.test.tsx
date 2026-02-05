@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
-import { getElementSetting } from '@elementor/editor-elements';
+import { getContainer, getElementSetting } from '@elementor/editor-elements';
 import { fireEvent, screen } from '@testing-library/react';
 import { type Editor } from '@tiptap/react';
 
 import { InlineEditorToolbar } from '../inline-editor-toolbar';
 
 jest.mock( '@elementor/editor-elements', () => ( {
+	getContainer: jest.fn(),
 	getElementSetting: jest.fn(),
 } ) );
 
@@ -43,6 +44,11 @@ const createMockEditor = ( options: MockEditorOptions = {} ): Editor => {
 };
 
 describe( 'InlineEditorToolbar', () => {
+	beforeEach( () => {
+		jest.mocked( getContainer ).mockReturnValue( null );
+		jest.mocked( getElementSetting ).mockReturnValue( null );
+	} );
+
 	it( 'should render all toolbar buttons', () => {
 		// Arrange.
 		const mockEditor = createMockEditor();
@@ -207,6 +213,7 @@ describe( 'InlineEditorToolbar', () => {
 			const mockEditor = createMockEditor();
 
 			jest.mocked( getElementSetting ).mockReturnValue( {
+				$$type: 'link',
 				value: {
 					destination: 'https://example.com',
 				},

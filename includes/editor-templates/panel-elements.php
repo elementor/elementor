@@ -23,10 +23,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-panel-categories">
 	<div id="elementor-panel-categories"></div>
 	<?php
+	$has_pro = Utils::has_pro();
 	$get_pro_details = apply_filters( 'elementor/editor/panel/get_pro_details', [
 		'link' => 'https://go.elementor.com/pro-widgets/',
 		'message' => __( 'Get more with Elementor Pro', 'elementor' ),
 		'button_text' => __( 'Upgrade Now', 'elementor' ),
+		'show_banner' => ! $has_pro,
 	] );
 	$promotion_data_sticky = [
 		'url' => 'https://go.elementor.com/go-pro-sticky-widget-panel/',
@@ -34,13 +36,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 		'button_text' => __( 'Upgrade Now', 'elementor' ),
 	];
 	$promotion_data_sticky = Filtered_Promotions_Manager::get_filtered_promotion_data( $promotion_data_sticky, 'elementor/editor/panel/get_pro_details-sticky', 'url' );
-	$has_pro = Utils::has_pro();
 	?>
+	<?php if ( $get_pro_details['show_banner'] ) : ?>
 	<div id="elementor-panel-get-pro-elements" class="elementor-nerd-box">
 		<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro.svg'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" loading="lazy" alt="<?php echo esc_attr__( 'Upgrade', 'elementor' ); ?>" />
 		<div class="elementor-nerd-box-message"><?php echo esc_html( $get_pro_details['message'] ); ?></div>
 		<a class="elementor-button go-pro" target="_blank" href="<?php echo esc_url( $get_pro_details['link'] ); ?>"><?php echo esc_html( $get_pro_details['button_text'] ); ?></a>
 	</div>
+	<?php endif; ?>
 	<?php if ( ! $has_pro ) : ?>
 	<div id="elementor-panel-get-pro-elements-sticky">
 		<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/unlock-sticky.svg'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" loading="lazy" alt="<?php echo esc_attr__( 'Upgrade', 'elementor' ); ?>"/>

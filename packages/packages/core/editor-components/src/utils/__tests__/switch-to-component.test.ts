@@ -1,4 +1,8 @@
-import { buildUniqueSelector } from '../switch-to-component';
+import { invalidateDocumentData, switchToDocument } from '@elementor/editor-documents';
+
+import { buildUniqueSelector, switchToComponent } from '../switch-to-component';
+
+jest.mock( '@elementor/editor-documents' );
 
 const COMPONENT_A_INSTANCE_1_ID = 'component-a-instance-1';
 const COMPONENT_A_INSTANCE_2_ID = 'component-a-instance-2';
@@ -160,5 +164,28 @@ describe( 'buildUniqueSelector', () => {
 		expect( result ).not.toContain( 'container-1' );
 		expect( result ).not.toContain( 'container-2' );
 		expect( result ).not.toContain( 'container-3' );
+	} );
+} );
+
+describe( 'switchToComponent', () => {
+	it( 'should invalidate document cache before switching to ensure fresh data is loaded', async () => {
+		// Arrange
+		const componentId = 1234;
+		const callOrder: string[] = [];
+
+		jest.mocked( invalidateDocumentData ).mockImplementation( () => {
+			callOrder.push( 'invalidateCache' );
+		} );
+		jest.mocked( switchToDocument ).mockImplementation( async () => {
+			callOrder.push( 'switch' );
+		} );
+
+		// Act
+		await switchToComponent( componentId );
+
+		// Assert
+		expect( invalidateDocumentData ).toHaveBeenCalledWith( componentId );
+		expect( switchToDocument ).toHaveBeenCalledWith( componentId, expect.objectContaining( { mode: 'autosave' } ) );
+		expect( callOrder ).toEqual( [ 'invalidateCache', 'switch' ] );
 	} );
 } );

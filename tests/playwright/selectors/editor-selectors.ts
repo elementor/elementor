@@ -1,9 +1,44 @@
+const V4_DIV_BLOCK = 'e-div-block';
+const V4_FLEXBOX = 'e-flexbox';
+const V4_TABS = 'e-tabs';
+const V4_HEADING = 'e-heading';
+const V4_PARAGRAPH = 'e-paragraph';
+const V4_IMAGE = 'e-image';
+const V4_SVG = 'e-svg';
+const V4_BUTTON = 'e-button';
+const V4_DIVIDER = 'e-divider';
+const V4_YOUTUBE = 'e-youtube';
+
+const V4_ATOM_SLUGS = {
+	divBlock: V4_DIV_BLOCK,
+	flexbox: V4_FLEXBOX,
+	tabs: V4_TABS,
+	heading: V4_HEADING,
+	paragraph: V4_PARAGRAPH,
+	image: V4_IMAGE,
+	svg: V4_SVG,
+	button: V4_BUTTON,
+	divider: V4_DIVIDER,
+	youtube: V4_YOUTUBE,
+} as const;
+
+const V4_ATOM_SELECTORS = {
+	divBlock: getElementSelectorBySlug( V4_DIV_BLOCK ),
+	flexbox: getElementSelectorBySlug( V4_FLEXBOX ),
+	tabs: getElementSelectorBySlug( V4_TABS ),
+	heading: getElementSelectorBySlug( V4_HEADING ),
+	paragraph: getElementSelectorBySlug( V4_PARAGRAPH ),
+	image: getElementSelectorBySlug( V4_IMAGE ),
+	svg: getElementSelectorBySlug( V4_SVG ),
+	button: getElementSelectorBySlug( V4_BUTTON ),
+	divider: getElementSelectorBySlug( V4_DIVIDER ),
+};
+
 const EditorSelectors = {
 	getWidgetByName: ( title: string ) => `[data-widget_type="${ title }.default"]`,
 	canvas: '#elementor-preview-iframe',
 	widget: '[data-element_type="widget"]',
 	container: '[data-element_type="container"]',
-	eflexbox: '[data-element_type="e-flexbox"]',
 	item: '.elementor-repeater-row-item-title',
 	plusIcon: '.eicon-plus-circle',
 	siteTitle: '.site-title >> nth=0',
@@ -14,7 +49,10 @@ const EditorSelectors = {
 	addNewSection: '#elementor-add-new-section',
 	addSectionInner: '.elementor-add-section-inner',
 	removeContainer: '.elementor-editor-element-setting.elementor-editor-element-remove',
-	eflexboxWidget: ( widgetType: string ) => `[data-widget_type="${ widgetType }.default"]`,
+	v4: {
+		atoms: V4_ATOM_SLUGS,
+		atomSelectors: V4_ATOM_SELECTORS,
+	},
 	panels: {
 		topBar: {
 			wrapper: '#elementor-editor-wrapper-v2',
@@ -251,5 +289,12 @@ const EditorSelectors = {
 		},
 	},
 };
+
+function getElementSelectorBySlug( slug: string ) {
+	return {
+		wrapper: `[data-widget_type="${ slug }.default"]`,
+		base: `.${ slug }-base`,
+	};
+}
 
 export default EditorSelectors;

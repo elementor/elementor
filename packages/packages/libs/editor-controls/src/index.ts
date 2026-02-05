@@ -8,6 +8,7 @@ export { BoxShadowRepeaterControl } from './controls/box-shadow-repeater-control
 export { FilterRepeaterControl } from './controls/filter-control/filter-repeater-control';
 export { SelectControl } from './controls/select-control';
 export { SelectControlWrapper } from './controls/select-control-wrapper';
+export { ChipsControl } from './controls/chips-control';
 export { ColorControl } from './controls/color-control';
 export { ToggleControl } from './controls/toggle-control';
 export { NumberControl } from './controls/number-control';
@@ -38,6 +39,9 @@ export { InlineEditingControl } from './controls/inline-editing-control';
 
 // components
 export { ControlFormLabel } from './components/control-form-label';
+export { DisplayConditionsControl } from './components/promotions/display-conditions-control';
+export { AttributesControl } from './components/promotions/attributes-control';
+export { PromotionTrigger } from './components/promotions/promotion-trigger';
 export { ControlToggleButtonGroup } from './components/control-toggle-button-group';
 export { ToggleButtonGroupUi } from './components/control-toggle-button-group';
 export { ClearIconButton } from './components/icon-buttons/clear-icon-button';
@@ -63,6 +67,9 @@ export type { SetValue, SetValueMeta } from './bound-prop-context/prop-context';
 export type { ExtendedOption, Unit, LengthUnit, AngleUnit, TimeUnit } from './utils/size-control';
 export type { ToggleControlProps } from './controls/toggle-control';
 export type { FontCategory } from './controls/font-family-control/font-family-control';
+export type { InlineEditorToolbarProps } from './components/inline-editor-toolbar';
+export type { V4PromotionData, V4PromotionKey } from './components/promotions/types';
+export type { PromotionTriggerRef } from './components/promotions/promotion-trigger';
 
 // providers
 export {

@@ -49,7 +49,7 @@
     "@elementor/icons": "^1.63.0",
     "@elementor/locations": "4.0.0",
     "@elementor/menus": "4.0.0",
-    "@elementor/mixpanel": "4.0.0",
+    "@elementor/events": "4.0.0",
     "@elementor/ui": "1.36.17",
     "@wordpress/i18n": "^5.13.0"
   },

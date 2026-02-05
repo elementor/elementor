@@ -12,8 +12,11 @@ use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Icons_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Popups_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Submissions_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
+use Elementor\Modules\Promotions\Controls\Atomic_Promotion_Control;
 use Elementor\Modules\Promotions\Pointers\Birthday;
 use Elementor\Modules\Promotions\Pointers\Black_Friday;
+use Elementor\Modules\Promotions\PropTypes\Promotion_Prop_Type;
+use Elementor\Modules\Promotions\Widgets\Ally_Dashboard_Widget;
 use Elementor\Widgets_Manager;
 use Elementor\Utils;
 use Elementor\Includes\EditorAssetsAPI;
@@ -77,6 +80,11 @@ class Module extends Base_Module {
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_editor_v4_alphachip' ] );
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
+
+		// Add Ally promo
+		Ally_Dashboard_Widget::init();
+
+		$this->register_atomic_promotions();
 	}
 
 	private function handle_external_redirects() {
@@ -185,5 +193,92 @@ class Module extends Base_Module {
 			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_v4_promotions',
 			EditorAssetsAPI::ASSETS_DATA_KEY => 'promotions',
 		];
+	}
+
+	private function is_atomic_widgets_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( 'e_atomic_elements' );
+	}
+
+	private function get_atomic_promotion_configs(): array {
+		return [
+			[
+				'key' => 'attributes',
+				'label' => __( 'Attributes', 'elementor' ),
+				'section' => 'settings',
+				'priority' => 40,
+			],
+			[
+				'key' => 'display-conditions',
+				'label' => __( 'Display Conditions', 'elementor' ),
+				'section' => 'settings',
+				'priority' => 50,
+			],
+		];
+	}
+
+	private function register_atomic_promotions(): void {
+		add_action( 'elementor/init', function() {
+			if ( ! $this->is_atomic_widgets_active() ) {
+				return;
+			}
+
+			add_filter(
+				'elementor/atomic-widgets/props-schema',
+				[ $this, 'inject_atomic_promotion_props' ]
+			);
+
+			foreach ( $this->get_atomic_promotion_configs() as $config ) {
+				add_filter(
+					'elementor/atomic-widgets/controls',
+					fn( array $controls, $element ) => $this->inject_atomic_promotion_control( $controls, $element, $config ),
+					$config['priority'],
+					2
+				);
+			}
+		} );
+	}
+
+	public function inject_atomic_promotion_props( array $schema ): array {
+		foreach ( $this->get_atomic_promotion_configs() as $config ) {
+			$key = $config['key'];
+
+			if ( isset( $schema[ $key ] ) ) {
+				continue;
+			}
+
+			$schema[ $key ] = Promotion_Prop_Type::make( $key );
+		}
+
+		return $schema;
+	}
+
+	protected function inject_atomic_promotion_control( array $element_controls, $atomic_element, array $config ): array {
+		$key = $config['key'];
+		$schema = $atomic_element::get_props_schema();
+
+		if ( ! array_key_exists( $key, $schema ) ) {
+			return $element_controls;
+		}
+
+		foreach ( $element_controls as $item ) {
+			if ( ! ( $item instanceof \Elementor\Modules\AtomicWidgets\Controls\Section ) ) {
+				continue;
+			}
+
+			if ( $item->get_id() !== $config['section'] ) {
+				continue;
+			}
+
+			$control = Atomic_Promotion_Control::make( $key )
+				->set_label( $config['label'] )
+				->set_meta( [
+					'topDivider' => true,
+				] );
+
+			$item->add_item( $control );
+			break;
+		}
+
+		return $element_controls;
 	}
 }

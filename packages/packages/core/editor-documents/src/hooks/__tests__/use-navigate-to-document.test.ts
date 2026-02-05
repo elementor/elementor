@@ -1,9 +1,9 @@
-import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { renderHook } from '@testing-library/react';
 
+import { switchToDocument } from '../../sync/utils';
 import { useNavigateToDocument } from '../index';
 
-jest.mock( '@elementor/editor-v1-adapters' );
+jest.mock( '../../sync/utils' );
 
 describe( '@elementor/editor-documents - useNavigateToDocument', () => {
 	const originalReplaceState = history.replaceState;
@@ -45,11 +45,7 @@ describe( '@elementor/editor-documents - useNavigateToDocument', () => {
 		await navigateToDocument( 123 );
 
 		// Assert.
-		expect( runCommand ).toHaveBeenCalledTimes( 1 );
-		expect( runCommand ).toHaveBeenCalledWith( 'editor/documents/switch', {
-			id: 123,
-			setAsInitial: true,
-		} );
+		expect( switchToDocument ).toHaveBeenNthCalledWith( 1, 123, { setAsInitial: true } );
 
 		expect( history.replaceState ).toHaveBeenCalledTimes( 1 );
 		expect( history.replaceState ).toHaveBeenCalledWith(

@@ -6,6 +6,7 @@ export type RenderContext< T = unknown > = Record< string, T >;
 export type NamespacedRenderContext< T = RenderContext > = Record< string, T | undefined >;
 
 export type LegacyWindow = Window & {
+	jQuery: JQueryStatic;
 	elementor: {
 		config: {
 			user: {
@@ -19,14 +20,23 @@ export type LegacyWindow = Window & {
 			elements: {
 				types: {
 					Widget: typeof ElementType;
+					Base: typeof ElementType;
 				};
 				views: {
 					Widget: typeof ElementView;
+					createAtomicElementBase: (
+						type: string
+					) => typeof ElementView & MarionetteExtendable< ElementView >;
+				};
+				models: {
+					AtomicElementBase: BackboneModelConstructor< ElementModel >;
 				};
 			};
 		};
 		elementsManager: {
 			registerElementType: ( type: ElementType ) => void;
+			getElementTypeClass: ( type: string ) => typeof ElementType | undefined;
+			_elementTypes: Record< string, ElementType >;
 		};
 		$preview: JQueryElement &
 			[
@@ -40,13 +50,23 @@ export type LegacyWindow = Window & {
 	};
 };
 
+type JQueryStatic = ( html: string ) => JQueryElement;
+
 export declare class ElementType {
 	getType(): string;
 
 	getView(): typeof ElementView;
 }
 
+type MarionetteExtendable< TBase = unknown > = {
+	extend: < TExtended extends object >(
+		properties: TExtended & ThisType< TBase & TExtended >
+	) => TBase & TExtended & MarionetteExtendable< TBase & TExtended >;
+};
+
 export declare class ElementView {
+	getChildType(): string[];
+
 	container: V1Element;
 
 	$el: JQueryElement;
@@ -75,6 +95,10 @@ export declare class ElementView {
 	getDomElement(): JQueryElement;
 
 	getHandlesOverlay(): JQueryElement | null;
+
+	setElement( element: JQueryElement ): void;
+
+	dispatchPreviewEvent( eventType: string ): void;
 
 	getContextMenuGroups(): ContextMenuGroup[];
 
@@ -107,6 +131,8 @@ export declare class ElementView {
 
 	resetChildViewContainer(): void;
 
+	childViewContainer: string;
+
 	isRendered: boolean;
 
 	_currentRenderPromise?: Promise< void >;
@@ -137,16 +163,22 @@ export declare class ElementView {
 type JQueryElement = {
 	find: ( selector: string ) => JQueryElement;
 	html: ( html: string ) => void;
-	get: ( index: number ) => HTMLElement;
-	attr: ( name: string ) => string;
+	get: ( index: number ) => HTMLElement | undefined;
+	attr: {
+		( name: string ): string;
+		( name: string, value: string ): JQueryElement;
+	};
+	prepend: ( element: JQueryElement ) => JQueryElement;
 	on: ( event: string, childrenSelectors: string, handler: ( event: Event ) => void ) => void;
 	off: ( event: string, childrenSelectors: string, handler?: ( event: Event ) => void ) => void;
 };
 
 export type BackboneModel< Model extends object > = {
+	cid?: string;
 	get: < T extends keyof Model >( key: T ) => Model[ T ];
 	set: < T extends keyof Model >( key: T, value: Model[ T ] ) => void;
 	toJSON: () => ToJSON< Model >;
+	trigger: ( event: string, ...args: unknown[] ) => void;
 };
 
 export type BackboneModelConstructor< Model extends object > = {
@@ -167,11 +199,15 @@ type BackboneCollection< Model extends object > = {
 
 export type ElementModel = {
 	id: string;
+	elType: string;
 	settings: BackboneModel< Props >;
 	editor_settings: Record< string, unknown >;
 	widgetType: string;
 	editSettings?: BackboneModel< { inactive?: boolean } >;
 	elements?: BackboneCollection< ElementModel >;
+	config: {
+		allowed_child_types?: string[];
+	};
 };
 
 type ToJSON< T > = {

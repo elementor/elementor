@@ -53,26 +53,6 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		return $interactions;
 	}
 
-	private function convert_prop_type_interactions_to_legacy_for_runtime( $interactions ) {
-		$legacy_items = [];
-
-		foreach ( $interactions['items'] as $item ) {
-			if ( isset( $item['$$type'] ) && 'interaction-item' === $item['$$type'] ) {
-				$legacy_item = $this->extract_legacy_interaction_from_prop_type( $item );
-				if ( $legacy_item ) {
-					$legacy_items[] = $legacy_item;
-				}
-			} else {
-				$legacy_items[] = $item;
-			}
-		}
-
-		return [
-			'version' => $interactions['version'] ?? 1,
-			'items' => $legacy_items,
-		];
-	}
-
 	abstract protected function define_atomic_controls(): array;
 
 	public function get_global_scripts() {

@@ -5,43 +5,12 @@ import { Easing } from '../components/controls/easing';
 import { Trigger } from '../components/controls/trigger';
 import { InteractionDetails } from '../components/interaction-details';
 import type { InteractionItemValue } from '../types';
-import { createAnimationPreset, createString } from '../utils/prop-value-utils';
+import { extractExcludedBreakpoints } from '../utils/prop-value-utils';
+import { createInteractionItemValue } from './utils';
 
 jest.mock( '../interactions-controls-registry', () => ( {
 	getInteractionsControl: jest.fn(),
 } ) );
-
-const createInteractionItemValue = ( {
-	trigger = 'load',
-	effect = 'fade',
-	type = 'in',
-	direction = '',
-	duration = 300,
-	delay = 0,
-	replay = false,
-	easing = 'easeIn',
-}: {
-	trigger?: string;
-	effect?: string;
-	type?: string;
-	direction?: string;
-	duration?: number;
-	delay?: number;
-	replay?: boolean;
-	easing?: string;
-} = {} ): InteractionItemValue => ( {
-	interaction_id: createString( 'test-id' ),
-	trigger: createString( trigger ),
-	animation: createAnimationPreset( {
-		effect,
-		type,
-		direction,
-		duration,
-		delay,
-		replay,
-		easing,
-	} ),
-} );
 
 const getEffectCombobox = (): HTMLElement => {
 	const allComboboxes = screen.getAllByRole( 'combobox' );
@@ -318,7 +287,10 @@ describe( 'InteractionDetails', () => {
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
-			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toBe( 354 );
+			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toEqual( {
+				size: 354,
+				unit: 'ms',
+			} );
 		} );
 
 		it( 'should call onChange when delay changes', () => {
@@ -341,7 +313,27 @@ describe( 'InteractionDetails', () => {
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
-			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toBe( 200 );
+			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toEqual( {
+				size: 200,
+				unit: 'ms',
+			} );
+		} );
+
+		it( 'should prevent negative values for duration', () => {
+			const interaction = createInteractionItemValue( {
+				trigger: 'load',
+				effect: 'fade',
+				type: 'in',
+				duration: 0,
+				delay: 0,
+			} );
+
+			renderInteractionDetails( interaction );
+
+			const sizeInputs = screen.getAllByRole( 'spinbutton' );
+			fireEvent.keyDown( sizeInputs[ 0 ], { key: '-' } );
+
+			expect( mockOnChange ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should call onChange when replay changes', () => {
@@ -552,7 +544,10 @@ describe( 'InteractionDetails', () => {
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
 			expect( updatedInteraction.animation.value.direction.value ).toBe( 'right' );
-			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toBe( 500 );
+			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toEqual( {
+				size: 500,
+				unit: 'ms',
+			} );
 		} );
 
 		it( 'should preserve direction when updating delay', () => {
@@ -576,7 +571,10 @@ describe( 'InteractionDetails', () => {
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
 			expect( updatedInteraction.animation.value.direction.value ).toBe( 'left' );
-			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toBe( 200 );
+			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toEqual( {
+				size: 200,
+				unit: 'ms',
+			} );
 		} );
 	} );
 
@@ -603,8 +601,38 @@ describe( 'InteractionDetails', () => {
 			expect( updatedInteraction.animation.value.effect.value ).toBe( 'fade' );
 			expect( updatedInteraction.animation.value.type.value ).toBe( 'in' );
 			expect( updatedInteraction.animation.value.direction.value ).toBe( 'left' );
-			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toBe( 500 );
-			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toBe( 200 );
+			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toEqual( {
+				size: 500,
+				unit: 'ms',
+			} );
+			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toEqual( {
+				size: 200,
+				unit: 'ms',
+			} );
+		} );
+
+		it( 'should preserve breakpoints when updating other properties', () => {
+			const interaction = createInteractionItemValue( {
+				trigger: 'load',
+				effect: 'fade',
+				type: 'in',
+				duration: 300,
+				delay: 0,
+				excludedBreakpoints: [ 'desktop', 'tablet' ],
+			} );
+
+			renderInteractionDetails( interaction );
+
+			const effectSelect = getEffectCombobox();
+			fireEvent.mouseDown( effectSelect );
+			const slideOption = screen.getByRole( 'option', { name: /slide/i } );
+			fireEvent.click( slideOption );
+
+			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
+			expect( updatedInteraction.breakpoints ).toBeDefined();
+
+			const excluded = extractExcludedBreakpoints( updatedInteraction.breakpoints );
+			expect( excluded ).toEqual( [ 'desktop', 'tablet' ] );
 		} );
 
 		it( 'should preserve all unchanged values when updating effect', () => {
@@ -628,8 +656,14 @@ describe( 'InteractionDetails', () => {
 			expect( updatedInteraction.trigger.value ).toBe( 'load' );
 			expect( updatedInteraction.animation.value.type.value ).toBe( 'out' );
 			expect( updatedInteraction.animation.value.direction.value ).toBe( 'right' );
-			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toBe( 750 );
-			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toBe( 100 );
+			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toEqual( {
+				size: 750,
+				unit: 'ms',
+			} );
+			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toEqual( {
+				size: 100,
+				unit: 'ms',
+			} );
 		} );
 
 		it( 'should preserve replay value when updating other properties', () => {
@@ -694,6 +728,179 @@ describe( 'InteractionDetails', () => {
 
 			expect( screen.queryByText( 'Replay' ) ).not.toBeInTheDocument();
 			expect( screen.queryByRole( 'button', { name: /toggle replay/i } ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'Offset Top / Offset Bottom (size)', () => {
+		let offsetTopControlProps: { value: unknown; onChange: ( v: unknown ) => void };
+		let offsetBottomControlProps: { value: unknown; onChange: ( v: unknown ) => void };
+
+		const MockOffsetTopControl = ( props: { value: unknown; onChange: ( v: unknown ) => void } ) => {
+			offsetTopControlProps = props;
+			return (
+				<div data-testid="offset-top-control">
+					<span data-value={ JSON.stringify( props.value ) } />
+					<button type="button" onClick={ () => props.onChange( '25' ) }>
+						Set offset top 25%
+					</button>
+				</div>
+			);
+		};
+
+		const MockOffsetBottomControl = ( props: { value: unknown; onChange: ( v: unknown ) => void } ) => {
+			offsetBottomControlProps = props;
+			return (
+				<div data-testid="offset-bottom-control">
+					<span data-value={ JSON.stringify( props.value ) } />
+					<button type="button" onClick={ () => props.onChange( '75' ) }>
+						Set offset bottom 75%
+					</button>
+				</div>
+			);
+		};
+
+		beforeEach( () => {
+			const { getInteractionsControl } = require( '../interactions-controls-registry' );
+			getInteractionsControl.mockImplementation( ( type: string ) => {
+				if ( type === 'trigger' ) {
+					return { component: Trigger };
+				}
+				if ( type === 'replay' ) {
+					return { component: mockReplayControl };
+				}
+				if ( type === 'easing' ) {
+					return { component: Easing };
+				}
+				if ( type === 'offsetTop' ) {
+					return { component: MockOffsetTopControl };
+				}
+				if ( type === 'offsetBottom' ) {
+					return { component: MockOffsetBottomControl };
+				}
+				if ( type === 'relativeTo' ) {
+					return { component: () => <div data-testid="relative-to" /> };
+				}
+				return null;
+			} );
+		} );
+
+		it( 'should render Offset Top and Offset Bottom when trigger is scrollOn', () => {
+			const interaction = createInteractionItemValue( {
+				trigger: 'scrollOn',
+				offsetTop: 15,
+				offsetBottom: 85,
+			} );
+
+			renderInteractionDetails( interaction );
+
+			expect( screen.getByText( 'Offset Top' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Offset Bottom' ) ).toBeInTheDocument();
+
+			// eslint-disable-next-line testing-library/no-test-id-queries
+			expect( screen.getByTestId( 'offset-top-control' ) ).toBeInTheDocument();
+
+			// eslint-disable-next-line testing-library/no-test-id-queries
+			expect( screen.getByTestId( 'offset-bottom-control' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should not render Offset Top or Offset Bottom when trigger is load', () => {
+			const interaction = createInteractionItemValue( { trigger: 'load' } );
+
+			renderInteractionDetails( interaction );
+
+			expect( screen.queryByText( 'Offset Top' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Offset Bottom' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should pass value to OffsetTopControl as size string value', () => {
+			const interaction = createInteractionItemValue( {
+				trigger: 'scrollOn',
+				offsetTop: 15,
+				offsetBottom: 85,
+			} );
+
+			renderInteractionDetails( interaction );
+
+			expect( offsetTopControlProps ).toBeDefined();
+			const value = offsetTopControlProps.value;
+
+			expect( value ).toEqual( '15' );
+		} );
+
+		it( 'should call onChange with size string value when OffsetTopControl onChange is called', () => {
+			const interaction = createInteractionItemValue( {
+				trigger: 'scrollOn',
+				offsetTop: 15,
+				offsetBottom: 85,
+			} );
+
+			renderInteractionDetails( interaction );
+
+			fireEvent.click( screen.getByRole( 'button', { name: /set offset top 25%/i } ) );
+
+			expect( mockOnChange ).toHaveBeenCalled();
+
+			const updated = mockOnChange.mock.calls[ 0 ][ 0 ];
+			const offsetTop = updated.animation.value.config?.value?.offsetTop;
+
+			expect( offsetTop ).toEqual( {
+				$$type: 'size',
+				value: {
+					size: 25,
+					unit: '%',
+				},
+			} );
+		} );
+
+		it( 'should call onChange with size string when OffsetBottomControl onChange is called', () => {
+			const interaction = createInteractionItemValue( {
+				trigger: 'scrollOn',
+				offsetTop: 15,
+				offsetBottom: 85,
+			} );
+
+			renderInteractionDetails( interaction );
+
+			fireEvent.click( screen.getByRole( 'button', { name: /set offset bottom 75%/i } ) );
+
+			expect( mockOnChange ).toHaveBeenCalled();
+
+			const updated = mockOnChange.mock.calls[ 0 ][ 0 ];
+			const offsetBottom = updated.animation.value.config?.value?.offsetBottom;
+
+			expect( offsetBottom ).toEqual( {
+				$$type: 'size',
+				value: {
+					size: 75,
+					unit: '%',
+				},
+			} );
+		} );
+
+		it( 'should use default size for offsetTop when config has no offsetTop', () => {
+			const interaction = createInteractionItemValue( {
+				trigger: 'scrollOn',
+				offsetBottom: 85,
+			} );
+
+			renderInteractionDetails( interaction );
+
+			const offsetTopValue = offsetTopControlProps.value;
+
+			expect( offsetTopValue ).toEqual( '15' );
+		} );
+
+		it( 'should use default size for offsetBottom when config has no offsetBottom', () => {
+			const interaction = createInteractionItemValue( {
+				trigger: 'scrollOn',
+				offsetTop: 15,
+			} );
+
+			renderInteractionDetails( interaction );
+
+			const offsetBottomValue = offsetBottomControlProps.value;
+
+			expect( offsetBottomValue ).toEqual( '85' );
 		} );
 	} );
 } );

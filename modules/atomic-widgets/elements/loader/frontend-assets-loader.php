@@ -28,7 +28,7 @@ class Frontend_Assets_Loader {
 		wp_register_script(
 			self::FRONTEND_HANDLERS_HANDLE,
 			"{$assets_url}js/packages/frontend-handlers/frontend-handlers{$min_suffix}.js",
-			[ 'jquery' ],
+			[],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -44,7 +44,7 @@ class Frontend_Assets_Loader {
 		wp_register_script(
 			self::ATOMIC_WIDGETS_HANDLER,
 			"{$assets_url}js/atomic-widgets-frontend-handler{$min_suffix}.js",
-			[ self::FRONTEND_HANDLERS_HANDLE ],
+			[ self::FRONTEND_HANDLERS_HANDLE, self::ALPINEJS_HANDLE ],
 			ELEMENTOR_VERSION,
 			true
 		);

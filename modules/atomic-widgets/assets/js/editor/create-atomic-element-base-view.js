@@ -159,7 +159,11 @@ export default function createAtomicElementBaseView( type ) {
 			}
 
 			if ( changed.classes ) {
+				// Preserve runtime state classes (e.g., e--selected) that are managed by Alpine
+				// and would be lost when replacing the class attribute.
+				const preservedClasses = Array.from( this.$el[ 0 ].classList ).filter( ( cls ) => cls.startsWith( 'e--' ) );
 				this.$el.attr( 'class', this.className() );
+				preservedClasses.forEach( ( cls ) => this.$el[ 0 ].classList.add( cls ) );
 
 				return;
 			}

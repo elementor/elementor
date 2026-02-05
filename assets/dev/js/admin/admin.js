@@ -6,6 +6,7 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 import TemplateControls from './new-template/template-controls.js';
 import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-upload-warning-message';
 import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js/floating-buttons/admin/module';
+import 'elementor-app/event-track/wp-dashboard-tracking';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {

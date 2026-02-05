@@ -242,4 +242,72 @@ class Test_Validation extends TestCase {
 
 		$this->assertTrue( true, 'No exception was thrown' );
 	}
+
+	public function test_validate__will_not_throw_if_breakpoints_prop_is_valid() {
+		$interaction = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0, '1' );
+
+		$interaction['value']['breakpoints'] = [
+			'$$type' => 'interaction-breakpoints',
+			'value' => [
+				'excluded' => [
+					'$$type' => 'excluded-breakpoints',
+					'value' => [
+						[ '$$type' => 'string', 'value' => 'desktop' ],
+						[ '$$type' => 'string', 'value' => 'tablet' ],
+					],
+				],
+			],
+		];
+
+		$document = [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( [
+						'items' => [
+							$interaction,
+						],
+						'version' => 1,
+					] ),
+				],
+			],
+		];
+
+		$validation = $this->validation();
+		$result = $validation->sanitize( $document );
+		$validation->validate();
+
+		$expected_interaction = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0, '1' );
+
+		$expected_interaction['value']['breakpoints'] = [
+			'$$type' => 'interaction-breakpoints',
+			'value' => [
+				'excluded' => [
+					'$$type' => 'excluded-breakpoints',
+					'value' => [
+						[ '$$type' => 'string', 'value' => 'desktop' ],
+						[ '$$type' => 'string', 'value' => 'tablet' ],
+					],
+				],
+			],
+		];
+
+		$this->assertEquals( [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( [
+						'items' => [
+							$expected_interaction
+						],
+						'version' => 1,
+					] ),
+				],
+			],
+		], $result );
+	}
 }
