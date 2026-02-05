@@ -7,6 +7,7 @@ describe( 'transition properties conditional loading', () => {
 		window.elementorPro = originalElementorPro;
 		jest.resetModules();
 	} );
+	
 
 	it.each( [
 		{
