@@ -1,3 +1,4 @@
+import { type Unit } from '@elementor/editor-controls';
 import type {
 	AnimationPresetPropValue,
 	BooleanPropValue,
@@ -75,3 +76,7 @@ export type InteractionsProvider = {
 };
 
 export type InteractionItemValue = InteractionItemPropValue[ 'value' ];
+
+export type TimeUnit = Extract< Unit, 'ms' | 's' >;
+
+export type TimeValue = `${ number }${ TimeUnit }` | number;
