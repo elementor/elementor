@@ -10,6 +10,8 @@ import {
 	parseInteractionsData,
 } from './interactions-utils.js';
 
+import { initBreakpoints, getActiveBreakpoint } from './interactions-breakpoints.js';
+
 function scrollOutAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc ) {
 	const viewOptions = { amount: 0.85, root: null };
 	const resetKeyframes = getKeyframes( animConfig.effect, 'in', animConfig.direction );
@@ -67,11 +69,24 @@ function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	}
 }
 
+function skipInteraction( interaction ) {
+	const activeBreakpoint = getActiveBreakpoint();
+	if ( interaction.breakpoints && interaction.breakpoints?.excluded?.includes( activeBreakpoint ) ) {
+		return true;
+	}
+	return false;
+}
+
 function processElementInteractions( element, interactions, animateFunc, inViewFunc ) {
 	if ( ! interactions || ! Array.isArray( interactions ) ) {
 		return;
 	}
+
 	interactions.forEach( ( interaction ) => {
+		if ( skipInteraction( interaction ) ) {
+			return;
+		}
+
 		const animConfig = extractAnimationConfig( interaction );
 
 		if ( animConfig ) {
@@ -140,8 +155,13 @@ function initInteractions() {
 	} );
 }
 
-if ( 'loading' === document.readyState ) {
-	document.addEventListener( 'DOMContentLoaded', initInteractions );
-} else {
+function init() {
+	initBreakpoints();
 	initInteractions();
+}
+
+if ( 'loading' === document.readyState ) {
+	document.addEventListener( 'DOMContentLoaded', init );
+} else {
+	init();
 }

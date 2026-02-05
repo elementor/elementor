@@ -27,3 +27,4 @@ export { SectionRefContext, useSectionWidth } from './contexts/section-context';
 
 // hooks
 export { useEditable } from './hooks/use-editable';
+export { useTextFieldAutoSelect } from './hooks/use-text-field-auto-select';
