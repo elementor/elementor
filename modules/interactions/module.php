@@ -22,12 +22,22 @@ class Module extends BaseModule {
 
 	private $preset_animations;
 
+	private $frontend_handler;
+
 	private function get_presets() {
 		if ( ! $this->preset_animations ) {
 			$this->preset_animations = new Presets();
 		}
 
 		return $this->preset_animations;
+	}
+
+	private function get_frontend_handler() {
+		if ( ! $this->frontend_handler ) {
+			$this->frontend_handler = new Interactions_Frontend_Handler();
+		}
+
+		return $this->frontend_handler;
 	}
 
 	public static function get_experimental_data() {
@@ -58,6 +68,12 @@ class Module extends BaseModule {
 		add_action( 'elementor/frontend/before_enqueue_scripts', fn () => $this->enqueue_interactions() );
 		add_action( 'elementor/preview/enqueue_scripts', fn () => $this->enqueue_preview_scripts() );
 		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
+
+		// Collect interactions from documents before they render (header, footer, post content)
+		add_filter( 'elementor/frontend/builder_content_data', [ $this->get_frontend_handler(), 'collect_document_interactions' ], 10, 2 );
+
+		// Output centralized interaction data in footer
+		add_action( 'wp_footer', [ $this->get_frontend_handler(), 'print_interactions_data' ], 1 );
 
 		add_filter( 'elementor/document/save/data',
 			/**

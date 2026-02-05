@@ -87,7 +87,8 @@ class Atomic_Form extends Atomic_Element_Base {
 				] )
 				->set_exclusive( true )
 				->set_convert_options( true )
-				->set_size( 'tiny' );
+				->set_size( 'tiny' )
+				->set_full_width( true );
 		}
 
 		return [
