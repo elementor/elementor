@@ -4,16 +4,20 @@ import { OnboardingContext } from '../context/context';
 import { OnboardingEventTracking } from './onboarding-event-tracking';
 import EventDispatcher from './modules/event-dispatcher';
 
+const initializedButtons = new WeakMap();
+
 export default function Connect( props ) {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext );
 	const { buttonRef, successCallback, errorCallback } = props;
-	const isInitialized = useRef( false );
 	const successCallbackRef = useRef( successCallback );
 	const errorCallbackRef = useRef( errorCallback );
 
+	const buttonElement = buttonRef?.current;
+	const isButtonInitialized = buttonElement ? initializedButtons.has( buttonElement ) : false;
+
 	console.log( '[Connect] Component render', {
-		buttonRefExists: !!buttonRef?.current,
-		isInitialized: isInitialized.current,
+		buttonRefExists: !!buttonElement,
+		isButtonInitialized,
 		successCallbackChanged: successCallbackRef.current !== successCallback,
 		errorCallbackChanged: errorCallbackRef.current !== errorCallback,
 		successCallbackId: successCallback?.toString().substring(0, 50),
@@ -42,29 +46,37 @@ export default function Connect( props ) {
 	}, [ state, getStateObjectToUpdate, updateState ] );
 
 	useEffect( () => {
+		const buttonElement = buttonRef.current;
+		const buttonId = buttonElement?.id || buttonElement?.getAttribute('data-button-id') || 'no-id';
+		const buttonText = buttonElement?.textContent?.trim() || buttonElement?.innerText?.trim() || 'no-text';
+		const buttonHref = buttonElement?.href || 'no-href';
+		const isButtonInitialized = buttonElement ? initializedButtons.has( buttonElement ) : false;
+
 		console.log( '[Connect] useEffect triggered', {
-			buttonRefExists: !!buttonRef.current,
-			isInitialized: isInitialized.current,
-			buttonRefId: buttonRef.current?.id || buttonRef.current?.className || 'no-id',
-			href: buttonRef.current?.href || 'no-href',
-			successCallbackId: successCallback?.toString().substring(0, 50),
-			errorCallbackId: errorCallback?.toString().substring(0, 50),
-			handleCoreConnectionLogicId: handleCoreConnectionLogic?.toString().substring(0, 50),
-			defaultConnectSuccessCallbackId: defaultConnectSuccessCallback?.toString().substring(0, 50),
+			buttonRefExists: !!buttonElement,
+			isButtonInitialized,
+			buttonId,
+			buttonText,
+			buttonHref: buttonHref.substring(0, 100),
+			successCallbackChanged: successCallbackRef.current !== successCallback,
+			errorCallbackChanged: errorCallbackRef.current !== errorCallback,
 		} );
 
-		if ( ! buttonRef.current || isInitialized.current ) {
+		if ( ! buttonElement || isButtonInitialized ) {
 			console.log( '[Connect] useEffect skipped', {
-				reason: !buttonRef.current ? 'no buttonRef.current' : 'already initialized',
+				reason: !buttonElement ? 'no buttonRef.current' : 'button already initialized',
+				buttonId,
+				buttonText,
 			} );
 			return;
 		}
 
-		const $button = jQuery( buttonRef.current );
+		const $button = jQuery( buttonElement );
 		const originalHref = $button.attr( 'href' );
 		console.log( '[Connect] Calling elementorConnect', {
-			originalHref,
-			buttonElement: buttonRef.current,
+			buttonId,
+			buttonText,
+			originalHref: originalHref?.substring(0, 100),
 		} );
 
 		$button.elementorConnect( {
@@ -89,21 +101,30 @@ export default function Connect( props ) {
 		} );
 
 		const newHref = $button.attr( 'href' );
+		const callbackIds = ( newHref?.match( /callback_id=cb\d+/g ) || [] );
 		console.log( '[Connect] elementorConnect called', {
-			originalHref,
-			newHref,
+			buttonId,
+			buttonText,
 			hrefChanged: originalHref !== newHref,
-			callbackIdsInHref: ( newHref.match( /callback_id=cb\d+/g ) || [] ).length,
+			callbackIdsInHref: callbackIds.length,
+			callbackIds: callbackIds,
 		} );
 
-		isInitialized.current = true;
+		initializedButtons.set( buttonElement, true );
 
 		return () => {
+			const cleanupButtonId = buttonRef.current?.id || buttonRef.current?.getAttribute('data-button-id') || 'no-id';
+			const cleanupButtonText = buttonRef.current?.textContent?.trim() || buttonRef.current?.innerText?.trim() || 'no-text';
+			const wasInitialized = buttonRef.current ? initializedButtons.has( buttonRef.current ) : false;
 			console.log( '[Connect] Cleanup running', {
-				buttonRefId: buttonRef.current?.id || buttonRef.current?.className || 'no-id',
+				buttonId: cleanupButtonId,
+				buttonText: cleanupButtonText,
+				wasInitialized,
 			} );
-			$button.off( 'click' );
-			isInitialized.current = false;
+			if ( buttonRef.current ) {
+				jQuery( buttonRef.current ).off( 'click' );
+				initializedButtons.delete( buttonRef.current );
+			}
 		};
 	}, [ buttonRef ] );
 
