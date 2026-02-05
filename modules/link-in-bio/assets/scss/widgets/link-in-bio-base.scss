@@ -1,7 +1,6 @@
 @import './link-in-bio-vars';
 
 .e-link-in-bio {
-
 	// Layout config
 	--e-link-in-bio-border-color: transparent;
 	--e-link-in-bio-border-style: none;
@@ -70,7 +69,9 @@
 
 	// Background config
 	--background-overlay-opacity: 0.5;
+}
 
+.elementor-widget-link-in-bio .e-link-in-bio {
 	align-items: var(--e-link-in-bio-content-align-h);
 	border-color: var(--e-link-in-bio-border-color);
 	border-style: var(--e-link-in-bio-border-style);

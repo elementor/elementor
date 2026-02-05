@@ -29,7 +29,9 @@
 	--e-floating-bars-cta-button-animation-duration: 1000ms;
 	--e-floating-bars-background-overlay-opacity: 0.5;
 	--e-floating-bars-close-icon-size: 24px;
+}
 
+[class^="elementor-widget-floating-bars-"] .e-floating-bars {
 	align-items: center;
 	background-color: var(--e-floating-bars-announcement-bg-color);
 	color: var(--e-floating-bars-announcement-text-color);
@@ -142,8 +144,8 @@
 		}
 	}
 
-	& .e-floating-bars__cta-button,
-	& .e-floating-bars__cta-button:not([href]):not([tabindex]) {
+	&__cta-button,
+	&__cta-button:not([href]):not([tabindex]) {
 		align-items: center;
 		color: var(--e-floating-bars-cta-button-text-color);
 		display: inline-flex;
