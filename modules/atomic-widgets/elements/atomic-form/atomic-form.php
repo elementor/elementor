@@ -3,6 +3,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Form;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Toggle_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
@@ -60,7 +61,11 @@ class Atomic_Form extends Atomic_Element_Base {
 			'form-state' => String_Prop_Type::make()
 				->enum( [ 'default', 'success', 'error' ] )
 				->default( 'default' ),
-			'attributes' => Attributes_Prop_Type::make(),
+		'email-to' => String_Prop_Type::make(),
+		'email-subject' => String_Prop_Type::make(),
+		'email-message' => String_Prop_Type::make(),
+		'email-from' => String_Prop_Type::make(),
+		'attributes' => Attributes_Prop_Type::make(),
 		];
 	}
 
@@ -87,6 +92,25 @@ class Atomic_Form extends Atomic_Element_Base {
 				->set_full_width( true );
 		}
 
+		$email_settings_controls = [
+			Text_Control::bind_to( 'email-to' )
+				->set_label( __( 'Send To', 'elementor' ) )
+				->set_placeholder( __( 'Where should we send new submissions?', 'elementor' ) )
+				->set_meta( [
+					'topDivider' => true,
+					'formLabel' => __( 'Email Settings', 'elementor' ),
+				] ),
+			Text_Control::bind_to( 'email-subject' )
+				->set_label( __( 'Email Subject', 'elementor' ) )
+				->set_placeholder( __( 'New form submission', 'elementor' ) ),
+			Textarea_Control::bind_to( 'email-message' )
+				->set_label( __( 'Message', 'elementor' ) )
+				->set_placeholder( __( 'By default, all form fields are sent via [all-fields] shortcode.', 'elementor' ) ),
+			Text_Control::bind_to( 'email-from' )
+				->set_label( __( 'From email', 'elementor' ) )
+				->set_placeholder( __( 'What email address should appear as the sender?', 'elementor' ) ),
+		];
+
 		return [
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
@@ -94,6 +118,7 @@ class Atomic_Form extends Atomic_Element_Base {
 					Text_Control::bind_to( 'form-name' )
 						->set_label( __( 'Form Name', 'elementor' ) ),
 					$state_control,
+					...$email_settings_controls,
 				] ),
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
