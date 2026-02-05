@@ -31,6 +31,9 @@ class Atomic_Widget_Styles {
 			'deleted_post',
 			fn( $post_id ) => $this->invalidate_cache( [ $post_id ] )
 		);
+
+		add_action( 'update_option__elementor_pro_license_v2_data', fn() => Plugin::$instance->files_manager->clear_cache() );
+		add_action( 'delete_option__elementor_pro_license_v2_data', fn() => Plugin::$instance->files_manager->clear_cache() );
 	}
 
 	private function register_styles( Atomic_Styles_Manager $styles_manager, array $post_ids ) {
@@ -50,7 +53,7 @@ class Atomic_Widget_Styles {
 			$post_styles = array_merge( $post_styles, $this->parse_element_style( $element_data ) );
 		} );
 
-		return self::should_remove_custom_css_from_styles( $post_styles );
+		return self::get_license_based_filtered_styles( $post_styles );
 	}
 
 	private function parse_element_style( array $element_data ) {
@@ -87,18 +90,11 @@ class Atomic_Widget_Styles {
 		return $is_preview ? self::CONTEXT_PREVIEW : self::CONTEXT_FRONTEND;
 	}
 
-	public static function should_remove_custom_css_from_styles( $styles ) {
+	public static function get_license_based_filtered_styles( $styles ) {
 		$is_pro_defined = defined( '\ELEMENTOR_PRO_VERSION' );
 
 		if ( $is_pro_defined && version_compare( ELEMENTOR_PRO_VERSION, '3.35', '<' ) ) {
 			return $styles;
-		}
-
-		if ( ! $is_pro_defined ) {
-			$clear_cache = fn() => Plugin::$instance->files_manager->clear_cache();
-
-			add_action( 'update_option__elementor_pro_license_v2_data', $clear_cache );
-			add_action( 'delete_option__elementor_pro_license_v2_data', $clear_cache );
 		}
 
 		return apply_filters(

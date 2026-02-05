@@ -225,7 +225,7 @@ trait Has_Atomic_Base {
 	final public function get_raw_data( $with_html_content = false ) {
 		$raw_data = parent::get_raw_data( $with_html_content );
 
-		$raw_data['styles'] = Atomic_Widget_Styles::should_remove_custom_css_from_styles( $this->styles ?? [] );
+		$raw_data['styles'] = Atomic_Widget_Styles::get_license_based_filtered_styles( $this->styles ?? [] );
 		$raw_data['interactions'] = $this->interactions ?? [];
 		$raw_data['editor_settings'] = $this->editor_settings;
 
