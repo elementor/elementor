@@ -33,6 +33,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$this->styles = $data['styles'] ?? [];
 		$this->interactions = $this->parse_atomic_interactions( $data['interactions'] ?? [] );
 		$this->editor_settings = $data['editor_settings'] ?? [];
+
 		if ( static::$widget_description ) {
 			$this->description( static::$widget_description );
 		}
@@ -40,9 +41,15 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 	public function get_script_depends() {
 		$depends = parent::get_script_depends();
-		if ( $this->needs_atomic_widgets_handler() ) {
-			$depends[] = Frontend_Assets_Loader::ATOMIC_WIDGETS_HANDLER;
+
+		if ( $this->has_action_link() ) {
+			$depends[] = Frontend_Assets_Loader::ACTION_LINK_HANDLERS_HANDLE;
 		}
+
+		if ( $this->is_form() ) {
+			$depends[] = Frontend_Assets_Loader::FORM_HANDLERS_HANDLE;
+		}
+
 		return $depends;
 	}
 
