@@ -12,12 +12,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Transition_Transformer extends Elementor_Test_Base {
 
-	private Transition_Transformer $transformer;
+	private $transformer;
 
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->transformer = new Transition_Transformer();
+		$this->transformer = $this->getMockBuilder( Transition_Transformer::class )
+			->onlyMethods( [ 'has_pro' ] )
+			->getMock();
+
+		$this->transformer->method( 'has_pro' )->willReturn( true );
+
 		remove_all_filters( 'elementor/atomic-widgets/styles/transitions/allowed-properties' );
 	}
 
@@ -25,6 +30,31 @@ class Test_Transition_Transformer extends Elementor_Test_Base {
 		parent::tearDown();
 
 		remove_all_filters( 'elementor/atomic-widgets/styles/transitions/allowed-properties' );
+	}
+
+	public function test_transform__returns_empty_when_pro_not_available() {
+		// Arrange.
+		$transformer = $this->getMockBuilder( Transition_Transformer::class )
+			->onlyMethods( [ 'has_pro' ] )
+			->getMock();
+
+		$transformer->method( 'has_pro' )->willReturn( false );
+
+		$transitions = [
+			[
+				'selection' => [
+					'value' => 'all',
+				],
+				'size' => '200ms',
+			],
+		];
+		$context = Props_Resolver_Context::make();
+
+		// Act.
+		$result = $transformer->transform( $transitions, $context );
+
+		// Assert.
+		$this->assertSame( '', $result );
 	}
 
 	public function test_transform__core_property_all_is_allowed() {
@@ -159,4 +189,3 @@ class Test_Transition_Transformer extends Elementor_Test_Base {
 		$this->assertSame( '', $result );
 	}
 }
-

@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles;
 
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -11,6 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Transition_Transformer extends Transformer_Base {
 	const EMPTY_STRING = '';
+
+	protected function has_pro(): bool {
+		return Utils::has_pro();
+	}
 
 	private function get_allowed_properties(): array {
 		$core_properties = [ 'all' ];
@@ -22,6 +27,10 @@ class Transition_Transformer extends Transformer_Base {
 	}
 
 	public function transform( $transitions, Props_Resolver_Context $context ) {
+		if ( ! $this->has_pro() ) {
+			return self::EMPTY_STRING;
+		}
+
 		if ( ! is_array( $transitions ) ) {
 			return self::EMPTY_STRING;
 		}

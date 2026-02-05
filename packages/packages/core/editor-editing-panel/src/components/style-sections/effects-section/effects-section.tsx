@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { isProUser } from '@elementor/editor-components';
 import {
 	BoxShadowRepeaterControl,
 	FilterRepeaterControl,
@@ -25,6 +26,7 @@ const TRANSITIONS_LABEL = __( 'Transitions', 'elementor' );
 export const EffectsSection = () => {
 	const { element } = useSelectedElement();
 	const { meta } = useStyle();
+	const showTransitions = isProUser();
 
 	return (
 		<SectionContent gap={ 1 }>
@@ -39,13 +41,17 @@ export const EffectsSection = () => {
 			<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
 				<TransformRepeaterControl />
 			</StylesField>
-			<PanelDivider />
-			<StylesField bind="transition" propDisplayName={ TRANSITIONS_LABEL }>
-				<TransitionRepeaterControl
-					currentStyleState={ meta.state }
-					recentlyUsedListGetter={ () => getRecentlyUsedList( element?.id ?? '' ) }
-				/>
-			</StylesField>
+			{ showTransitions && (
+				<>
+					<PanelDivider />
+					<StylesField bind="transition" propDisplayName={ TRANSITIONS_LABEL }>
+						<TransitionRepeaterControl
+							currentStyleState={ meta.state }
+							recentlyUsedListGetter={ () => getRecentlyUsedList( element?.id ?? '' ) }
+						/>
+					</StylesField>
+				</>
+			) }
 			<PanelDivider />
 			<StylesField bind="filter" propDisplayName={ FILTER_LABEL }>
 				<FilterRepeaterControl />
