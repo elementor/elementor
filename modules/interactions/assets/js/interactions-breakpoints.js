@@ -3,7 +3,7 @@
 const breakpoints = {
 	list: {},
 	active: {},
-	onChange: ( breakpoint ) => {},
+	onChange: () => {},
 };
 
 export function getActiveBreakpoint() {
