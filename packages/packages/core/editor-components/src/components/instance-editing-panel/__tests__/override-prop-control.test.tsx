@@ -13,8 +13,10 @@ import {
 import { fireEvent, screen } from '@testing-library/react';
 
 import { componentInstanceOverridePropTypeUtil } from '../../../prop-types/component-instance-override-prop-type';
+import { type ComponentInstanceOverridesPropValue } from '../../../prop-types/component-instance-overrides-prop-type';
 import { componentInstancePropTypeUtil } from '../../../prop-types/component-instance-prop-type';
 import { componentOverridablePropTypeUtil } from '../../../prop-types/component-overridable-prop-type';
+import { ComponentInstanceProvider } from '../../../provider/component-instance-context';
 import { slice } from '../../../store/store';
 import { type OverridableProp } from '../../../types';
 import { OverridePropControl } from '../override-prop-control';
@@ -112,6 +114,7 @@ describe( '<OverridePropControl />', () => {
 			{
 				should: 'create simple override structure when no matchingOverride',
 				currentComponentId: null,
+				currentComponentInstanceId: MOCK_COMPONENT_ID,
 				matchingOverride: null,
 				expectedOverrideStructure: {
 					$$type: 'override',
@@ -125,6 +128,7 @@ describe( '<OverridePropControl />', () => {
 			{
 				should: 'create simple override structure when updating existing plain override',
 				currentComponentId: MOCK_COMPONENT_ID_2,
+				currentComponentInstanceId: MOCK_COMPONENT_ID,
 				matchingOverride: componentInstanceOverridePropTypeUtil.create( {
 					override_key: 'prop-1',
 					override_value: { $$type: 'string', value: 'Existing' },
@@ -142,6 +146,7 @@ describe( '<OverridePropControl />', () => {
 			{
 				should: 'create nested overridable structure when matchingOverride is overridable',
 				currentComponentId: MOCK_COMPONENT_ID_2,
+				currentComponentInstanceId: MOCK_COMPONENT_ID,
 				matchingOverride: componentOverridablePropTypeUtil.create( {
 					override_key: 'outer-key',
 					origin_value: componentInstanceOverridePropTypeUtil.create( {
@@ -165,26 +170,29 @@ describe( '<OverridePropControl />', () => {
 					},
 				},
 			},
-		] )( 'should $should', ( { currentComponentId, matchingOverride, expectedOverrideStructure } ) => {
-			// Arrange
-			setupComponent( currentComponentId );
-			const overrides = matchingOverride ? [ matchingOverride ] : [];
+		] )(
+			'should $should',
+			( { currentComponentId, matchingOverride, expectedOverrideStructure, currentComponentInstanceId } ) => {
+				// Arrange
+				setupComponent( currentComponentId );
+				const overrides = matchingOverride ? [ matchingOverride ] : [];
 
-			// Act
-			renderOverridePropControl( store, MOCK_OVERRIDABLE_PROP, overrides );
+				// Act
+				renderOverridePropControl( store, MOCK_OVERRIDABLE_PROP, overrides, currentComponentInstanceId );
 
-			const input = screen.getByRole( 'textbox' );
-			fireEvent.change( input, { target: { value: 'New Value' } } );
+				const input = screen.getByRole( 'textbox' );
+				fireEvent.change( input, { target: { value: 'New Value' } } );
 
-			// Assert
-			expect( mockSetInstanceValue ).toHaveBeenCalled();
-			const setValueCall = mockSetInstanceValue.mock.calls[ 0 ][ 0 ];
-			const newOverrides = setValueCall.overrides.value;
+				// Assert
+				expect( mockSetInstanceValue ).toHaveBeenCalled();
+				const setValueCall = mockSetInstanceValue.mock.calls[ 0 ][ 0 ];
+				const newOverrides = setValueCall.overrides.value;
 
-			const [ createdOverride ] = newOverrides;
-			expect( createdOverride.$$type ).toBe( expectedOverrideStructure.$$type );
-			expect( createdOverride.value ).toEqual( expectedOverrideStructure.value );
-		} );
+				const [ createdOverride ] = newOverrides;
+				expect( createdOverride.$$type ).toBe( expectedOverrideStructure.$$type );
+				expect( createdOverride.value ).toEqual( expectedOverrideStructure.value );
+			}
+		);
 	} );
 
 	describe( 'inner control element context', () => {
@@ -210,7 +218,7 @@ describe( '<OverridePropControl />', () => {
 			setupComponent( MOCK_COMPONENT_ID_2 );
 
 			// Act
-			renderOverridePropControl( store, MOCK_NESTED_OVERRIDABLE_PROP, [] );
+			renderOverridePropControl( store, MOCK_NESTED_OVERRIDABLE_PROP, [], MOCK_COMPONENT_ID );
 
 			// Assert
 			expect( screen.getByText( 'Nested Title' ) ).toBeInTheDocument();
@@ -266,7 +274,7 @@ describe( '<OverridePropControl />', () => {
 			] );
 
 			// Act
-			renderOverridePropControl( store, overridableProp, [ overrideWithNullValue ] );
+			renderOverridePropControl( store, overridableProp, [ overrideWithNullValue ], INNER_COMPONENT_ID );
 
 			// Assert
 			const input = screen.getByRole( 'textbox' );
@@ -335,7 +343,12 @@ describe( '<OverridePropControl />', () => {
 			] );
 
 			// Act
-			renderOverridePropControl( store, overridablePropWithNullOrigin, [ nestedOverridableWithNullValue ] );
+			renderOverridePropControl(
+				store,
+				overridablePropWithNullOrigin,
+				[ nestedOverridableWithNullValue ],
+				MIDDLE_COMPONENT_ID
+			);
 
 			// Assert
 			const input = screen.getByRole( 'textbox' );
@@ -425,7 +438,7 @@ describe( '<OverridePropControl />', () => {
 			] );
 
 			// Act
-			renderOverridePropControl( store, linkOverridableProp, [ linkOverrideWithNullValue ] );
+			renderOverridePropControl( store, linkOverridableProp, [ linkOverrideWithNullValue ], MIDDLE_COMPONENT_ID );
 
 			// Assert
 			const input = screen.getByRole( 'textbox' );
@@ -598,14 +611,32 @@ function setupComponent( currentComponentId: number | null ) {
 function renderOverridePropControl(
 	storeInstance: Store< SliceState< typeof slice > >,
 	overridableProp: OverridableProp,
-	overrides: Parameters< typeof OverridePropControl >[ 0 ][ 'overrides' ]
+	overrides: ComponentInstanceOverridesPropValue,
+	componentId: number
 ) {
+	const overrideKey = 'prop-1';
+	const overridableProps = {
+		props: {
+			[ overrideKey ]: overridableProp,
+		},
+		groups: {
+			items: { content: { id: 'content', label: 'Content', props: [ overrideKey ] } },
+			order: [ 'content' ],
+		},
+	};
+
 	return renderWithStore(
-		<ControlActionsProvider items={ [] }>
-			<ElementProvider element={ MOCK_INSTANCE_ELEMENT } elementType={ MOCK_INSTANCE_ELEMENT_TYPE }>
-				<OverridePropControl overridableProp={ overridableProp } overrides={ overrides } />
-			</ElementProvider>
-		</ControlActionsProvider>,
+		<ComponentInstanceProvider
+			componentId={ componentId ?? 1 }
+			overrides={ overrides }
+			overridableProps={ overridableProps }
+		>
+			<ControlActionsProvider items={ [] }>
+				<ElementProvider element={ MOCK_INSTANCE_ELEMENT } elementType={ MOCK_INSTANCE_ELEMENT_TYPE }>
+					<OverridePropControl overrideKey={ overrideKey } />
+				</ElementProvider>
+			</ControlActionsProvider>
+		</ComponentInstanceProvider>,
 		storeInstance
 	);
 }
