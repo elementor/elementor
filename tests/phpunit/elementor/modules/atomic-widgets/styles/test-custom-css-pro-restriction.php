@@ -10,13 +10,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Custom_Css_Pro_Restriction extends Elementor_Test_Base {
 
+	private $saved_wp_filter;
+
 	public function set_up() {
 		parent::set_up();
+
+		// Save the current filter state
+		global $wp_filter;
+		$this->saved_wp_filter = $wp_filter;
 
 		update_option( 'elementor_experiment-e_atomic_elements', 'active' );
 	}
 
 	public function tear_down() {
+		// Restore the filter state
+		global $wp_filter;
+		$wp_filter = $this->saved_wp_filter;
+
 		parent::tear_down();
 	}
 
