@@ -13,9 +13,13 @@ export default function Button( props ) {
 		buttonSettings.className = buttonClasses;
 	}
 
-	const { elRef, ...buttonProps } = buttonSettings;
+	const { elRef, href, connectUrl, ...buttonProps } = buttonSettings;
 
-	if ( buttonSettings.href ) {
+	if ( connectUrl ) {
+		return <button ref={ elRef } data-connect-url={ connectUrl } { ...buttonProps }>{ buttonSettings.text }</button>;
+	}
+
+	if ( href ) {
 		return <a ref={ elRef } { ...buttonProps }>{ buttonSettings.text }</a>;
 	}
 

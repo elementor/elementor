@@ -86,9 +86,7 @@ export default function Layout( props ) {
 			text: __( 'Create Account', 'elementor' ),
 			hideText: false,
 			elRef: createAccountButtonRef,
-			url: elementorAppConfig.onboarding.urls.signUp + elementorAppConfig.onboarding.utms.connectTopBar,
-			target: '_blank',
-			rel: 'opener',
+			connectUrl: elementorAppConfig.onboarding.urls.signUp + elementorAppConfig.onboarding.utms.connectTopBar,
 		};
 
 	if ( state.isLibraryConnected ) {

@@ -21,9 +21,9 @@ export default function AccountContentA( {
 			skipButton={ skipButton }
 			noticeState={ noticeState }
 		>
-			{ actionButton.ref && ! state.isLibraryConnected &&
+			{ actionButton.elRef && ! state.isLibraryConnected &&
 			<Connect
-				buttonRef={ actionButton.ref }
+				buttonRef={ actionButton.elRef }
 				successCallback={ connectSuccessCallback }
 				errorCallback={ connectFailureCallback }
 				onClickTracking={ actionButtonClickTracking }

@@ -122,8 +122,8 @@ export default function Account() {
 		};
 	} else {
 		actionButton.text = __( 'Start setup', 'elementor' );
-		actionButton.href = elementorAppConfig.onboarding.urls.signUp + elementorAppConfig.onboarding.utms.connectCta;
-		actionButton.ref = actionButtonRef;
+		actionButton.connectUrl = elementorAppConfig.onboarding.urls.signUp + elementorAppConfig.onboarding.utms.connectCta;
+		actionButton.elRef = actionButtonRef;
 	}
 
 	console.log( '[Account] Component render/re-render' );
@@ -231,12 +231,13 @@ export default function Account() {
 					<div className="e-onboarding__footnote">
 						<p>
 							{ __( 'Already have an account?', 'elementor' ) + ' ' }
-							<a
+							<button
 								ref={ alreadyHaveAccountLinkRef }
-								href={ elementorAppConfig.onboarding.urls.connect + elementorAppConfig.onboarding.utms.connectCtaLink }
+								data-connect-url={ elementorAppConfig.onboarding.urls.connect + elementorAppConfig.onboarding.utms.connectCtaLink }
+								className="e-onboarding__link-button"
 							>
 								{ __( 'Click here to connect', 'elementor' ) }
-							</a>
+							</button>
 						</p>
 						<Connect
 							buttonRef={ alreadyHaveAccountLinkRef }
