@@ -97,7 +97,7 @@ class Test_Custom_Css_Pro_Restriction extends Elementor_Test_Base {
 	 */
 	public function test_remove_custom_css_from_styles__removes_custom_css_when_pro_version_is_3_35_or_higher() {
 		define( 'ELEMENTOR_PRO_VERSION', '3.35' );
-		$result = Atomic_Widget_Styles::should_remove_custom_css_from_styles( $this->styles_with_custom_css() );
+		$result = Atomic_Widget_Styles::remove_custom_css_from_styles( $this->styles_with_custom_css() );
 
 		$this->assertArrayNotHasKey( 'custom_css', $result['test-style']['variants'][0] );
 	}
@@ -108,7 +108,7 @@ class Test_Custom_Css_Pro_Restriction extends Elementor_Test_Base {
 	 */
 	public function test_remove_custom_css_from_styles__does_not_remove_custom_css_when_pro_version_is_under_3_35() {
 		define( 'ELEMENTOR_PRO_VERSION', '3.34' );
-		$result = Atomic_Widget_Styles::should_remove_custom_css_from_styles( $this->styles_with_custom_css() );
+		$result = Atomic_Widget_Styles::remove_custom_css_from_styles( $this->styles_with_custom_css() );
 
 		$this->assertArrayHasKey( 'custom_css', $result['test-style']['variants'][0] );
 	}
