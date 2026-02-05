@@ -535,7 +535,11 @@ class Menu_Data_Provider {
 	}
 
 	private function title_case( string $text ): string {
-		return mb_convert_case( $text, MB_CASE_TITLE, 'UTF-8' );
+		if ( function_exists( 'mb_convert_case' ) ) {
+			return mb_convert_case( $text, MB_CASE_TITLE, 'UTF-8' );
+		}
+
+		return ucwords( strtolower( $text ) );
 	}
 
 	private function invalidate_cache(): void {
