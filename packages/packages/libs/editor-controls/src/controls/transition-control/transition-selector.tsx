@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useMemo, useRef } from 'react';
 import { keyValuePropTypeUtil, type KeyValuePropValue, type StringPropValue } from '@elementor/editor-props';
-import { PromotionAlert, PromotionChip } from '@elementor/editor-ui';
-import { ChevronDownIcon, VariationsIcon } from '@elementor/icons';
-import { bindPopover, bindTrigger, Box, Popover, UnstableTag, usePopupState } from '@elementor/ui';
+import { PromotionChip } from '@elementor/editor-ui';
+import { ChevronDownIcon, CrownFilledIcon, VariationsIcon } from '@elementor/icons';
+import { Alert, bindPopover, bindTrigger, Box, Popover, UnstableTag, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useBoundProp } from '../../bound-prop-context';
@@ -164,13 +164,32 @@ export const TransitionSelector = ( {
 					) }
 					footer={
 						showPromotion ? (
-							<PromotionAlert
-								message={ __(
-									'Upgrade to customize transition properties and control effects.',
-									'elementor'
-								) }
-								upgradeUrl={ PRO_UPGRADE_URL }
-							/>
+							<Alert
+								variant="standard"
+								color="promotion"
+								icon={ false }
+								role="dialog"
+								aria-label="promotion-alert"
+								size="small"
+								sx={ { m: 1.5, mt: 0 } }
+							>
+								{ __( 'Upgrade to customize transition properties and control effects.', 'elementor' ) }
+								<Box
+									component="a"
+									href={ PRO_UPGRADE_URL }
+									target="_blank"
+									rel="noopener noreferrer"
+									sx={ {
+										display: 'flex',
+										alignItems: 'center',
+										gap: 0.5,
+										color: 'promotion.main',
+									} }
+								>
+									<CrownFilledIcon fontSize="tiny" />
+									{ __( 'Upgrade now', 'elementor' ) }
+								</Box>
+							</Alert>
 						) : null
 					}
 				/>

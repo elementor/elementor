@@ -1,17 +1,18 @@
+import { getLicenseInfo } from '../sync/license-info';
+
+declare global {
+	interface Window {
+		ElementorVariablesQuotaConfig: Record< string, number >;
+	}
+}
+
 export const useQuotaPermissions = ( variableType: string ) => {
-	const quotaConfig = {
-		...( window.ElementorVariablesQuotaConfig ?? {} ),
-		...( window.ElementorVariablesQuotaConfigExtended ?? {} ),
-	};
-
-	// BC: Remove when 4.01 is released
-	const hasLegacySupport = quotaConfig[ variableType ] === undefined && window.elementorPro;
-
+	const quotaConfig = window.ElementorVariablesQuotaConfig || {};
 	const limit = quotaConfig[ variableType ] || 0;
-	const hasPermission = hasLegacySupport || limit > 0;
+	const hasQuota = limit > 0;
 
 	return {
-		canAdd: () => hasPermission,
-		canEdit: () => hasPermission,
+		canAdd: () => hasQuota || getLicenseInfo().hasPro,
+		canEdit: () => hasQuota || getLicenseInfo().hasPro,
 	};
 };

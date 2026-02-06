@@ -1,8 +1,7 @@
-import { useState } from 'react';
 import * as React from 'react';
+import { useState } from 'react';
 import { PopoverBody } from '@elementor/editor-editing-panel';
 import { PopoverHeader, PopoverMenuList, SearchField, type VirtualizedItem } from '@elementor/editor-ui';
-import { PromotionAlert } from '@elementor/editor-ui';
 import { ColorFilterIcon, PlusIcon, SettingsIcon } from '@elementor/icons';
 import { Divider, IconButton, Tooltip } from '@elementor/ui';
 import { __, sprintf } from '@wordpress/i18n';
@@ -20,9 +19,6 @@ import { VariablesStyledMenuList } from './ui/styled-menu-list';
 const SIZE = 'tiny';
 const CREATE_LABEL = __( 'Create variable', 'elementor' );
 const MANAGER_LABEL = __( 'Variables Manager', 'elementor' );
-
-const getProUpgradeUrl = ( variableType: string ) =>
-	`https://go.elementor.com/go-pro-panel-${ variableType }-variable/`;
 
 type Props = {
 	closePopover: () => void;
@@ -147,29 +143,17 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, d
 			<Divider />
 
 			{ hasVariables && hasSearchResults && (
-				<>
-					<PopoverMenuList
-						items={ items }
-						onSelect={ disabled ? () => {} : handleSetVariable }
-						onClose={ () => {} }
-						selectedValue={ variable }
-						data-testid={ `${ variableType }-variables-list` }
-						menuListTemplate={ ( props ) => <VariablesStyledMenuList { ...props } disabled={ disabled } /> }
-						menuItemContentTemplate={ ( item: VirtualizedItem< 'item', string > ) => (
-							<MenuItemContent item={ item } disabled={ disabled } />
-						) }
-					/>
-					{ disabled && (
-						<PromotionAlert
-							message={ sprintf(
-								/* translators: %s: Variable Type. */
-								__( 'Upgrade to continue creating and editing %s variables.', 'elementor' ),
-								variableType
-							) }
-							upgradeUrl={ getProUpgradeUrl( variableType ) }
-						/>
+				<PopoverMenuList
+					items={ items }
+					onSelect={ handleSetVariable }
+					onClose={ () => {} }
+					selectedValue={ variable }
+					data-testid={ `${ variableType }-variables-list` }
+					menuListTemplate={ VariablesStyledMenuList }
+					menuItemContentTemplate={ ( item: VirtualizedItem< 'item', string > ) => (
+						<MenuItemContent item={ item } />
 					) }
-				</>
+				/>
 			) }
 
 			{ ! hasSearchResults && hasVariables && (
@@ -180,7 +164,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, d
 				/>
 			) }
 
-			{ disabled && ! hasVariables && (
+			{ disabled && (
 				<EmptyState
 					title={ sprintf(
 						/* translators: %s: Variable Type. */
