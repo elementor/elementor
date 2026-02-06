@@ -16,6 +16,8 @@ abstract class Test_Base extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
+
 		$this->repository = Repository::instance();
 		$this->repository->reset();
 	}

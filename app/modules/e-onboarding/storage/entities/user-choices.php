@@ -11,30 +11,40 @@ class User_Choices {
 	/**
 	 * Step 1: Who are you building for?
 	 * Single selection from: 'myself', 'client', 'employer', 'other'
+	 *
+	 * @var string|null
 	 */
 	private ?string $building_for = null;
 
 	/**
 	 * Step 2: What is your site about?
 	 * Multiple selection (e.g., 'blog', 'portfolio', 'ecommerce', 'business', etc.)
+	 *
+	 * @var array
 	 */
 	private array $site_about = [];
 
 	/**
 	 * Step 3: How much experience do you have with Elementor?
 	 * Single selection from: 'beginner', 'intermediate', 'advanced'
+	 *
+	 * @var string|null
 	 */
 	private ?string $experience_level = null;
 
 	/**
 	 * Step 4: Start with a theme that fits your needs
 	 * Single selection (theme identifier)
+	 *
+	 * @var string|null
 	 */
 	private ?string $theme_selection = null;
 
 	/**
 	 * Step 5: What do you want to include in your site?
 	 * Multiple selection (e.g., 'contact_form', 'gallery', 'blog', 'shop', etc.)
+	 *
+	 * @var array
 	 */
 	private array $site_features = [];
 

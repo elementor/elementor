@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\App\Modules\E_Onboarding\Data\Endpoints;
 
 use Elementor\App\Modules\E_Onboarding\Data\Endpoints\User_Progress;
+use Elementor\Data\V2\Manager as Data_V2_Manager;
 use Elementor\Tests\Phpunit\Elementor\App\Modules\E_Onboarding\Storage\Repository;
 use Elementor\Tests\Phpunit\Elementor\App\Modules\E_Onboarding\Test_Base;
 use WP_REST_Request;
@@ -19,6 +20,8 @@ class Test_User_Progress extends Test_Base {
 		parent::setUp();
 
 		$controller = $this->createMock( \Elementor\Data\V2\Base\Controller::class );
+		$controller->method( 'get_namespace' )->willReturn( Data_V2_Manager::ROOT_NAMESPACE . '/v' . Data_V2_Manager::VERSION );
+		$controller->method( 'get_base_route' )->willReturn( 'e-onboarding' );
 		$this->endpoint = new User_Progress( $controller );
 	}
 
