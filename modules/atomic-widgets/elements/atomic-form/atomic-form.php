@@ -178,7 +178,10 @@ class Atomic_Form extends Atomic_Element_Base {
 	}
 
 	private function build_status_message( string $message, string $state, string $title ): array {
-		$paragraph_value = Html_V2_Prop_Type::generate( [ 'content' => $message, 'children' => [] ] );
+		$paragraph_value = Html_V2_Prop_Type::generate( [
+			'content'  => $message,
+			'children' => [],
+		] );
 
 		return Element_Builder::make( Div_Block::get_element_type() )
 			->settings( [

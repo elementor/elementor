@@ -50,7 +50,10 @@ class Atomic_Button extends Atomic_Widget_Base {
 				->default( [] ),
 
 			'text' => Html_V2_Prop_Type::make()
-				->default( [ 'content' => __( 'Click here', 'elementor' ), 'children' => [] ] )
+				->default( [
+					'content'  => __( 'Click here', 'elementor' ),
+					'children' => [],
+				] )
 				->description( 'The text displayed on the button.' ),
 
 			'link' => Link_Prop_Type::make(),

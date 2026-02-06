@@ -52,7 +52,10 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 				->default( [] ),
 
 			'paragraph' => Html_V2_Prop_Type::make()
-				->default( [ 'content' => __( 'Type your paragraph here', 'elementor' ), 'children' => [] ] )
+				->default( [
+					'content'  => __( 'Type your paragraph here', 'elementor' ),
+					'children' => [],
+				] )
 				->description( 'The text content of the paragraph.' ),
 
 			'tag' => String_Prop_Type::make()
