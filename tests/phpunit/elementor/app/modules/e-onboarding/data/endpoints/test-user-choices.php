@@ -3,7 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\App\Modules\E_Onboarding\Data\Endpoints;
 
 use Elementor\App\Modules\E_Onboarding\Data\Endpoints\User_Choices;
-use Elementor\Data\V2\Manager as Data_V2_Manager;
+use Elementor\Plugin;
 use Elementor\Tests\Phpunit\Elementor\App\Modules\E_Onboarding\Test_Base;
 use WP_REST_Request;
 
@@ -18,10 +18,9 @@ class Test_User_Choices extends Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
-		$controller = $this->createMock( \Elementor\Data\V2\Base\Controller::class );
-		$controller->method( 'get_namespace' )->willReturn( Data_V2_Manager::ROOT_NAMESPACE . '/v' . Data_V2_Manager::VERSION );
-		$controller->method( 'get_base_route' )->willReturn( 'e-onboarding' );
-		$this->endpoint = new User_Choices( $controller );
+		Plugin::$instance->data_manager_v2->run_server();
+		$controller = Plugin::$instance->data_manager_v2->get_controller( 'e-onboarding' );
+		$this->endpoint = $controller->endpoints['e-onboarding/user-choices'];
 	}
 
 	public function test_get_items_returns_saved_choices() {
