@@ -1,8 +1,26 @@
 /* eslint-disable testing-library/no-test-id-queries */
 import * as React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { QueryClient } from '@tanstack/react-query';
+import { __deleteStore } from '@elementor/store';
 
 import { App } from '../app';
+
+jest.mock( '@elementor/query', () => {
+	const actual = jest.requireActual( '@elementor/query' );
+	return {
+		...actual,
+		createQueryClient: () =>
+			new QueryClient( {
+				defaultOptions: {
+					queries: {
+						refetchOnWindowFocus: false,
+						refetchOnReconnect: false,
+					},
+				},
+			} ),
+	};
+} );
 
 // Mock fetch for API calls
 const mockFetch = jest.fn();
@@ -80,9 +98,7 @@ const defaultConfig: OnboardingConfig = {
 
 type ConfigOverrides = Partial< OnboardingConfig >;
 
-const createMockConfig = (
-	overrides: ConfigOverrides = {}
-): { 'e-onboarding': OnboardingConfig } => ( {
+const createMockConfig = ( overrides: ConfigOverrides = {} ): { 'e-onboarding': OnboardingConfig } => ( {
 	'e-onboarding': {
 		...defaultConfig,
 		...overrides,
@@ -95,6 +111,7 @@ const createMockConfig = (
 
 describe( 'App', () => {
 	beforeEach( () => {
+		__deleteStore();
 		mockFetch.mockReset();
 		mockFetch.mockResolvedValue( {
 			ok: true,
@@ -104,6 +121,7 @@ describe( 'App', () => {
 
 	afterEach( () => {
 		window.elementorAppConfig = undefined;
+		__deleteStore();
 	} );
 
 	describe( 'Login flow', () => {
@@ -133,13 +151,9 @@ describe( 'App', () => {
 
 			// Assert - should now show the onboarding steps, not login
 			await waitFor( () => {
-				expect(
-					screen.queryByTestId( 'login-screen' )
-				).not.toBeInTheDocument();
+				expect( screen.queryByTestId( 'login-screen' ) ).not.toBeInTheDocument();
 			} );
-			expect(
-				screen.getByTestId( 'onboarding-steps' )
-			).toBeInTheDocument();
+			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
 		} );
 	} );
 
@@ -154,9 +168,7 @@ describe( 'App', () => {
 			render( <App /> );
 
 			// Assert
-			expect(
-				screen.getByTestId( 'onboarding-steps' )
-			).toBeInTheDocument();
+			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Continue' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Skip' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Back' ) ).toBeInTheDocument();
@@ -198,9 +210,7 @@ describe( 'App', () => {
 
 			// Assert - should return to login screen
 			await waitFor( () => {
-				expect(
-					screen.getByTestId( 'login-screen' )
-				).toBeInTheDocument();
+				expect( screen.getByTestId( 'login-screen' ) ).toBeInTheDocument();
 			} );
 		} );
 
@@ -211,12 +221,7 @@ describe( 'App', () => {
 				progress: {
 					current_step_id: 'site_features',
 					current_step_index: 4,
-					completed_steps: [
-						'building_for',
-						'site_about',
-						'experience_level',
-						'theme_selection',
-					],
+					completed_steps: [ 'building_for', 'site_about', 'experience_level', 'theme_selection' ],
 				},
 			} );
 
@@ -236,12 +241,7 @@ describe( 'App', () => {
 				progress: {
 					current_step_id: 'site_features',
 					current_step_index: 4,
-					completed_steps: [
-						'building_for',
-						'site_about',
-						'experience_level',
-						'theme_selection',
-					],
+					completed_steps: [ 'building_for', 'site_about', 'experience_level', 'theme_selection' ],
 				},
 			} );
 
@@ -277,9 +277,7 @@ describe( 'App', () => {
 			render( <App /> );
 
 			// Assert - should show onboarding steps, not login
-			expect(
-				screen.getByTestId( 'onboarding-steps' )
-			).toBeInTheDocument();
+			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
 			// And Skip should be visible since we're not on last step
 			expect( screen.getByText( 'Skip' ) ).toBeInTheDocument();
 		} );

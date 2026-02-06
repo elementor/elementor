@@ -76,7 +76,9 @@ function getEmptyState(): OnboardingState {
 	};
 }
 
-function buildStateFromConfig( config: NonNullable< typeof window.elementorAppConfig >[ 'e-onboarding' ] ): OnboardingState {
+function buildStateFromConfig(
+	config: NonNullable< typeof window.elementorAppConfig >[ 'e-onboarding' ]
+): OnboardingState {
 	if ( ! config ) {
 		return getEmptyState();
 	}

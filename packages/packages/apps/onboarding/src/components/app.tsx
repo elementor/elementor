@@ -1,11 +1,7 @@
 import * as React from 'react';
 import { useEffect, useMemo } from 'react';
 import { createQueryClient, QueryClientProvider } from '@elementor/query';
-import {
-	__createStore,
-	__getStore,
-	__StoreProvider as StoreProvider,
-} from '@elementor/store';
+import { __createStore, __getStore, __StoreProvider as StoreProvider } from '@elementor/store';
 import { DirectionProvider, ThemeProvider } from '@elementor/ui';
 
 import { initFromConfig, registerOnboardingSlice } from '../store';
