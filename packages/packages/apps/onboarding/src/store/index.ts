@@ -1,6 +1,7 @@
 export {
 	slice,
 	registerOnboardingSlice,
+	initFromConfig,
 	goToStep,
 	goToStepIndex,
 	nextStep,

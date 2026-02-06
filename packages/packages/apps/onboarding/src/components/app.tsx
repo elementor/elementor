@@ -1,10 +1,14 @@
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { createQueryClient, QueryClientProvider } from '@elementor/query';
-import { __createStore, __getStore, __StoreProvider as StoreProvider } from '@elementor/store';
+import {
+	__createStore,
+	__getStore,
+	__StoreProvider as StoreProvider,
+} from '@elementor/store';
 import { DirectionProvider, ThemeProvider } from '@elementor/ui';
 
-import { registerOnboardingSlice } from '../store';
+import { initFromConfig, registerOnboardingSlice } from '../store';
 import { AppContent } from './app-content';
 
 interface AppProps {
@@ -24,6 +28,11 @@ export function App( props: AppProps ) {
 
 		return existingStore;
 	}, [] );
+
+	// Initialize store from config after mount (config is now available)
+	useEffect( () => {
+		store.dispatch( initFromConfig() );
+	}, [ store ] );
 
 	const queryClient = useMemo( () => createQueryClient(), [] );
 

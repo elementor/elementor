@@ -55,36 +55,12 @@ function getDefaultChoices(): OnboardingChoices {
 	};
 }
 
-function getInitialState(): OnboardingState {
-	const config = window.elementorAppConfig?.[ 'e-onboarding' ];
-	const steps = parseStepsFromConfig( config?.steps );
-	const firstStepId = steps[ 0 ]?.id ?? StepId.BUILDING_FOR;
-
-	if ( config ) {
-		const progress = config.progress ?? {};
-		const currentStepId = ( progress.current_step_id as StepIdType ) || firstStepId;
-
-		return {
-			steps,
-			currentStepId,
-			currentStepIndex: progress.current_step_index ?? 0,
-			completedSteps: parseCompletedSteps( progress.completed_steps ),
-			exitType: progress.exit_type ?? null,
-			lastActiveTimestamp: progress.last_active_timestamp ?? null,
-			startedAt: progress.started_at ?? null,
-			completedAt: progress.completed_at ?? null,
-			choices: { ...getDefaultChoices(), ...config.choices },
-			isLoading: false,
-			error: null,
-			hadUnexpectedExit: config.hadUnexpectedExit ?? false,
-			isConnected: config.isConnected ?? false,
-			urls: config.urls ?? { dashboard: '', editor: '', connect: '' },
-		};
-	}
+function getEmptyState(): OnboardingState {
+	const steps = getDefaultSteps();
 
 	return {
 		steps,
-		currentStepId: firstStepId,
+		currentStepId: steps[ 0 ]?.id ?? StepId.BUILDING_FOR,
 		currentStepIndex: 0,
 		completedSteps: [],
 		exitType: null,
@@ -100,10 +76,49 @@ function getInitialState(): OnboardingState {
 	};
 }
 
+function buildStateFromConfig( config: NonNullable< typeof window.elementorAppConfig >[ 'e-onboarding' ] ): OnboardingState {
+	if ( ! config ) {
+		return getEmptyState();
+	}
+
+	const steps = parseStepsFromConfig( config.steps );
+	const firstStepId = steps[ 0 ]?.id ?? StepId.BUILDING_FOR;
+	const progress = config.progress ?? {};
+	const currentStepId = ( progress.current_step_id as StepIdType ) || firstStepId;
+
+	return {
+		steps,
+		currentStepId,
+		currentStepIndex: progress.current_step_index ?? 0,
+		completedSteps: parseCompletedSteps( progress.completed_steps ),
+		exitType: progress.exit_type ?? null,
+		lastActiveTimestamp: progress.last_active_timestamp ?? null,
+		startedAt: progress.started_at ?? null,
+		completedAt: progress.completed_at ?? null,
+		choices: { ...getDefaultChoices(), ...config.choices },
+		isLoading: false,
+		error: null,
+		hadUnexpectedExit: config.hadUnexpectedExit ?? false,
+		isConnected: config.isConnected ?? false,
+		urls: config.urls ?? { dashboard: '', editor: '', connect: '' },
+	};
+}
+
 export const slice = __createSlice( {
 	name: 'onboarding',
-	initialState: getInitialState(),
+	initialState: getEmptyState(),
 	reducers: {
+		initFromConfig: ( state ) => {
+			const config = window.elementorAppConfig?.[ 'e-onboarding' ];
+
+			if ( config ) {
+				const newState = buildStateFromConfig( config );
+				return newState;
+			}
+
+			return state;
+		},
+
 		goToStep: ( state, action: PayloadAction< StepIdType > ) => {
 			const stepId = action.payload;
 			const stepIndex = state.steps.findIndex( ( s ) => s.id === stepId );
@@ -192,6 +207,7 @@ export const slice = __createSlice( {
 } );
 
 export const {
+	initFromConfig,
 	goToStep,
 	goToStepIndex,
 	nextStep,
