@@ -158,9 +158,9 @@ class Atomic_Tab extends Atomic_Element_Base {
 			Atomic_Paragraph::generate()
 				->settings( [
 					'paragraph' => Html_V2_Prop_Type::generate( [
-					'content'  => 'Tab',
-					'children' => [],
-				] ),
+						'content'  => 'Tab',
+						'children' => [],
+					] ),
 					'tag' => String_Prop_Type::generate( 'span' ),
 				] )
 				->build(),
