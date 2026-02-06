@@ -19,8 +19,18 @@ interface AppContentProps {
 }
 
 export function AppContent( { onComplete, onClose }: AppContentProps ) {
-	const { stepId, stepIndex, isFirst, isLast, totalSteps, hadUnexpectedExit, isLoading, isConnected, urls, actions } =
-		useOnboarding();
+	const {
+		stepId,
+		stepIndex,
+		isFirst,
+		isLast,
+		totalSteps,
+		hadUnexpectedExit,
+		isLoading,
+		hasPassedLogin,
+		urls,
+		actions,
+	} = useOnboarding();
 
 	const updateProgress = useUpdateProgress();
 
@@ -37,7 +47,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 	}, [ urls.connect ] );
 
 	const handleContinueAsGuest = useCallback( () => {
-		actions.setConnected( true );
+		actions.setGuest( true );
 	}, [ actions ] );
 
 	const handleClose = useCallback( () => {
@@ -59,7 +69,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 
 	const handleBack = useCallback( () => {
 		if ( isFirst ) {
-			actions.setConnected( false );
+			actions.setGuest( false );
 		} else {
 			actions.prevStep();
 		}
@@ -97,7 +107,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 	const isPending = updateProgress.isPending || isLoading;
 
 	// Login screen - no footer, minimal header
-	if ( ! isConnected ) {
+	if ( ! hasPassedLogin ) {
 		return (
 			<BaseLayout
 				topBar={

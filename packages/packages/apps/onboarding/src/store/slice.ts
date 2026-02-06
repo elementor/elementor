@@ -72,6 +72,7 @@ function getEmptyState(): OnboardingState {
 		error: null,
 		hadUnexpectedExit: false,
 		isConnected: false,
+		isGuest: false,
 		urls: { dashboard: '', editor: '', connect: '' },
 	};
 }
@@ -102,6 +103,7 @@ function buildStateFromConfig(
 		error: null,
 		hadUnexpectedExit: config.hadUnexpectedExit ?? false,
 		isConnected: config.isConnected ?? false,
+		isGuest: false,
 		urls: config.urls ?? { dashboard: '', editor: '', connect: '' },
 	};
 }
@@ -205,6 +207,10 @@ export const slice = __createSlice( {
 		setConnected: ( state, action: PayloadAction< boolean > ) => {
 			state.isConnected = action.payload;
 		},
+
+		setGuest: ( state, action: PayloadAction< boolean > ) => {
+			state.isGuest = action.payload;
+		},
 	},
 } );
 
@@ -224,6 +230,7 @@ export const {
 	setError,
 	clearUnexpectedExit,
 	setConnected,
+	setGuest,
 } = slice.actions;
 
 export function registerOnboardingSlice() {

@@ -7,6 +7,23 @@ import { DirectionProvider, ThemeProvider } from '@elementor/ui';
 import { initFromConfig, registerOnboardingSlice } from '../store';
 import { AppContent } from './app-content';
 
+type ColorSchemePreference = 'auto' | 'dark' | 'light';
+type ResolvedColorScheme = 'dark' | 'light';
+
+function resolveColorScheme( preference: ColorSchemePreference ): ResolvedColorScheme {
+	if ( preference === 'dark' ) {
+		return 'dark';
+	}
+
+	if ( preference === 'light' ) {
+		return 'light';
+	}
+
+	const prefersDark = window.matchMedia?.( '(prefers-color-scheme: dark)' ).matches;
+
+	return prefersDark ? 'dark' : 'light';
+}
+
 interface AppProps {
 	onComplete?: () => void;
 	onClose?: () => void;
@@ -32,11 +49,14 @@ export function App( props: AppProps ) {
 
 	const queryClient = useMemo( () => createQueryClient(), [] );
 
+	const uiTheme = window.elementorAppConfig?.[ 'e-onboarding' ]?.uiTheme ?? 'auto';
+	const colorScheme = useMemo( () => resolveColorScheme( uiTheme ), [ uiTheme ] );
+
 	return (
 		<StoreProvider store={ store }>
 			<QueryClientProvider client={ queryClient }>
 				<DirectionProvider rtl={ window.document.dir === 'rtl' }>
-					<ThemeProvider palette="argon-beta">
+					<ThemeProvider colorScheme={ colorScheme } palette="argon-beta">
 						<AppContent { ...props } />
 					</ThemeProvider>
 				</DirectionProvider>

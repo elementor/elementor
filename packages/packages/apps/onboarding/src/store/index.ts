@@ -16,6 +16,7 @@ export {
 	setError,
 	clearUnexpectedExit,
 	setConnected,
+	setGuest,
 } from './slice';
 
 export {
@@ -29,10 +30,12 @@ export {
 	selectError,
 	selectHadUnexpectedExit,
 	selectIsConnected,
+	selectIsGuest,
 	selectUrls,
 	selectCurrentStep,
 	selectIsFirstStep,
 	selectIsLastStep,
 	selectTotalSteps,
 	selectIsStepCompleted,
+	selectHasPassedLogin,
 } from './selectors';

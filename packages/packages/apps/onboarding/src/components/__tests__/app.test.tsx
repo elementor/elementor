@@ -155,6 +155,60 @@ describe( 'App', () => {
 			} );
 			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
 		} );
+
+		it( 'should skip login screen when user is already connected', () => {
+			// Arrange
+			window.elementorAppConfig = createMockConfig( {
+				isConnected: true,
+			} );
+
+			// Act
+			render( <App /> );
+
+			// Assert - should go straight to steps, no login screen
+			expect( screen.queryByTestId( 'login-screen' ) ).not.toBeInTheDocument();
+			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should return guest user to login screen when clicking Back on first step', async () => {
+			// Arrange - user is not connected (guest flow)
+			window.elementorAppConfig = createMockConfig( {
+				isConnected: false,
+			} );
+
+			render( <App /> );
+
+			// First, continue as guest to get past login
+			fireEvent.click( screen.getByText( 'Continue as a guest' ) );
+
+			await waitFor( () => {
+				expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
+			} );
+
+			// Act - click Back on first step
+			fireEvent.click( screen.getByText( 'Back' ) );
+
+			// Assert - guest should return to login screen
+			await waitFor( () => {
+				expect( screen.getByTestId( 'login-screen' ) ).toBeInTheDocument();
+			} );
+		} );
+
+		it( 'should NOT return connected user to login screen when clicking Back on first step', () => {
+			// Arrange - user is genuinely connected
+			window.elementorAppConfig = createMockConfig( {
+				isConnected: true,
+			} );
+
+			render( <App /> );
+
+			// Act - click Back on first step
+			fireEvent.click( screen.getByText( 'Back' ) );
+
+			// Assert - connected user should stay on steps (hasPassedLogin still true via isConnected)
+			expect( screen.queryByTestId( 'login-screen' ) ).not.toBeInTheDocument();
+			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
+		} );
 	} );
 
 	describe( 'Step navigation', () => {
@@ -194,23 +248,6 @@ describe( 'App', () => {
 						body: expect.stringContaining( 'complete_step' ),
 					} )
 				);
-			} );
-		} );
-
-		it( 'should go back to login screen when clicking Back on first step', async () => {
-			// Arrange
-			window.elementorAppConfig = createMockConfig( {
-				isConnected: true,
-			} );
-
-			render( <App /> );
-
-			// Act
-			fireEvent.click( screen.getByText( 'Back' ) );
-
-			// Assert - should return to login screen
-			await waitFor( () => {
-				expect( screen.getByTestId( 'login-screen' ) ).toBeInTheDocument();
 			} );
 		} );
 

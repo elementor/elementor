@@ -6,6 +6,7 @@ use Elementor\App\Modules\E_Onboarding\Data\Controller;
 use Elementor\App\Modules\E_Onboarding\Storage\Repository;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -79,6 +80,7 @@ class Module extends BaseModule {
 			'hadUnexpectedExit' => $progress->had_unexpected_exit(),
 			'isConnected' => $this->is_user_connected(),
 			'steps' => $steps,
+			'uiTheme' => $this->get_ui_theme_preference(),
 			'urls' => [
 				'dashboard' => admin_url(),
 				'editor' => admin_url( 'edit.php?post_type=elementor_library' ),
@@ -111,6 +113,12 @@ class Module extends BaseModule {
 		}
 
 		return $connect->get_app( 'library' );
+	}
+
+	private function get_ui_theme_preference(): string {
+		$editor_preferences = SettingsManager::get_settings_managers( 'editorPreferences' );
+
+		return $editor_preferences->get_model()->get_settings( 'ui_theme' ) ?: 'auto';
 	}
 
 	private function get_steps_config(): array {

@@ -13,6 +13,7 @@ class Repository {
 
 	const PROGRESS_OPTION_KEY = 'elementor_e_onboarding_progress';
 	const CHOICES_OPTION_KEY = 'elementor_e_onboarding_choices';
+	const DEFAULT_TOTAL_STEPS = 5;
 
 	private static ?Repository $instance = null;
 
@@ -55,7 +56,7 @@ class Repository {
 			$step = $params['complete_step'];
 			$progress->add_completed_step( $step );
 
-			$total_steps = $params['total_steps'] ?? 5;
+			$total_steps = $params['total_steps'] ?? self::DEFAULT_TOTAL_STEPS;
 
 			for ( $i = 0; $i < $total_steps; $i++ ) {
 				if ( ! $progress->is_step_completed( $i ) ) {

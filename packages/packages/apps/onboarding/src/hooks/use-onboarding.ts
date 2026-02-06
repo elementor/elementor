@@ -15,8 +15,10 @@ import {
 	selectCurrentStepIndex,
 	selectError,
 	selectHadUnexpectedExit,
+	selectHasPassedLogin,
 	selectIsConnected,
 	selectIsFirstStep,
+	selectIsGuest,
 	selectIsLastStep,
 	selectIsLoading,
 	selectSteps,
@@ -25,6 +27,7 @@ import {
 	setConnected,
 	setError,
 	setExitType,
+	setGuest,
 	setLoading,
 	setUserChoice,
 	setUserChoices,
@@ -48,6 +51,8 @@ export function useOnboarding() {
 	const error = __useSelector( selectError );
 	const hadUnexpectedExit = __useSelector( selectHadUnexpectedExit );
 	const isConnected = __useSelector( selectIsConnected );
+	const isGuest = __useSelector( selectIsGuest );
+	const hasPassedLogin = __useSelector( selectHasPassedLogin );
 	const urls = __useSelector( selectUrls );
 
 	const actions = {
@@ -65,6 +70,7 @@ export function useOnboarding() {
 		setError: ( err: string | null ) => dispatch( setError( err ) ),
 		clearUnexpectedExit: () => dispatch( clearUnexpectedExit() ),
 		setConnected: ( connected: boolean ) => dispatch( setConnected( connected ) ),
+		setGuest: ( guest: boolean ) => dispatch( setGuest( guest ) ),
 	};
 
 	return {
@@ -81,6 +87,8 @@ export function useOnboarding() {
 		error,
 		hadUnexpectedExit,
 		isConnected,
+		isGuest,
+		hasPassedLogin,
 		urls,
 		actions,
 	};

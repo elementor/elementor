@@ -24,6 +24,8 @@ export const selectHadUnexpectedExit = ( state: State ) => state.onboarding.hadU
 
 export const selectIsConnected = ( state: State ) => state.onboarding.isConnected;
 
+export const selectIsGuest = ( state: State ) => state.onboarding.isGuest;
+
 export const selectUrls = ( state: State ) => state.onboarding.urls;
 
 export const selectCurrentStep = __createSelector(
@@ -43,4 +45,9 @@ export const selectTotalSteps = __createSelector( [ selectSteps ], ( steps ) => 
 export const selectIsStepCompleted = __createSelector(
 	[ selectCompletedSteps, ( _state: State, stepId: string ) => stepId ],
 	( completedSteps, stepId ) => completedSteps.includes( stepId as never )
+);
+
+export const selectHasPassedLogin = __createSelector(
+	[ selectIsConnected, selectIsGuest ],
+	( isConnected, isGuest ) => isConnected || isGuest
 );

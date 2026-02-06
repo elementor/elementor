@@ -25,6 +25,7 @@ declare global {
 				};
 				hadUnexpectedExit: boolean;
 				isConnected: boolean;
+				uiTheme?: 'auto' | 'dark' | 'light';
 				steps: Array< { id: string; label: string; type?: 'single' | 'multiple' } >;
 				urls: {
 					dashboard: string;
