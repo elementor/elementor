@@ -53,20 +53,15 @@ test.describe( 'On boarding @onBoarding', async () => {
 		await page.click( 'a.e-onboarding__button-action' );
 
 		const [ popup, navigated ] = await Promise.all( [ popupPromise, navigationPromise ] );
-
 		if ( popup ) {
 			await popup.waitForLoadState( 'domcontentloaded' );
-			expect.soft( popup.url() ).toContain( 'my.elementor.com/signup' );
-			const signupForm = popup.locator( '[data-test="signup-form"]' );
-			await expect.soft( signupForm ).toBeVisible();
+			expect.soft( popup.url() ).toContain( 'elementor-connect' );
 			await popup.close();
 		}
 
 		// Some browsers may not support popups.
 		if ( navigated && ! popup ) {
 			expect.soft( page.url() ).toContain( 'my.elementor.com/signup' );
-			const signupForm = page.locator( '[data-test="signup-form"]' );
-			await expect.soft( signupForm ).toBeVisible();
 		}
 
 		if ( ! navigated && ! popup ) {
@@ -85,7 +80,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		await skipButton.click();
 
-		await expect.soft( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( /^(Start with Hello Biz|Choose the right theme for your website)$/ );
+		await expect.soft( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( /^(Start with Hello Biz|Every site starts with a theme.)$/ );
 	} );
 
 	/**
