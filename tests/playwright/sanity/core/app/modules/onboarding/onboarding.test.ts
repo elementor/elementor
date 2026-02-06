@@ -69,6 +69,10 @@ test.describe.skip( 'On boarding @onBoarding', async () => {
 			const signupForm = page.locator( '[data-test="signup-form"]' );
 			await expect( signupForm ).toBeVisible();
 		}
+
+		if ( ! navigated && ! popup ) {
+			throw new Error( 'Neither popup nor navigation occurred after clicking the button' );
+		}
 	} );
 
 	/**
