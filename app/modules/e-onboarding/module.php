@@ -118,7 +118,9 @@ class Module extends BaseModule {
 	private function get_ui_theme_preference(): string {
 		$editor_preferences = SettingsManager::get_settings_managers( 'editorPreferences' );
 
-		return $editor_preferences->get_model()->get_settings( 'ui_theme' ) ?: 'auto';
+		$ui_theme = $editor_preferences->get_model()->get_settings( 'ui_theme' );
+
+		return $ui_theme ? $ui_theme : 'auto';
 	}
 
 	private function get_steps_config(): array {
