@@ -14,7 +14,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_V2_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -178,7 +178,7 @@ class Atomic_Form extends Atomic_Element_Base {
 	}
 
 	private function build_status_message( string $message, string $state, string $title ): array {
-		$paragraph_value = Html_Prop_Type::generate( $message );
+		$paragraph_value = Html_V2_Prop_Type::generate( [ 'content' => $message, 'children' => [] ] );
 
 		return Element_Builder::make( Div_Block::get_element_type() )
 			->settings( [
