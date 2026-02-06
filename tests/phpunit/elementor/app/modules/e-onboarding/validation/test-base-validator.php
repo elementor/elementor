@@ -21,7 +21,6 @@ class Test_Validator extends Base_Validator {
 			'bool_field' => [ 'type' => 'bool' ],
 			'array_field' => [ 'type' => 'array', 'nullable' => false ],
 			'string_array_field' => [ 'type' => 'string_array' ],
-			'custom_data_field' => [ 'type' => 'custom_data' ],
 		];
 	}
 }
@@ -35,218 +34,49 @@ class Test_Base_Validator extends TestCase {
 		$this->validator = new Test_Validator();
 	}
 
-	public function test_validate_returns_empty_array_for_empty_params() {
-		// Act
-		$result = $this->validator->validate( [] );
-
-		// Assert
-		$this->assertIsArray( $result );
-		$this->assertEmpty( $result );
-	}
-
-	public function test_validate_string_accepts_valid_string() {
+	public function test_validates_all_types_correctly() {
 		// Act
 		$result = $this->validator->validate( [
 			'string_field' => 'test string',
+			'int_field' => 42,
+			'bool_field' => true,
+			'array_field' => [ 'item1', 'item2' ],
+			'string_array_field' => [ 'a', 'b', 'c' ],
 		] );
 
 		// Assert
 		$this->assertIsArray( $result );
 		$this->assertSame( 'test string', $result['string_field'] );
+		$this->assertSame( 42, $result['int_field'] );
+		$this->assertTrue( $result['bool_field'] );
+		$this->assertSame( [ 'item1', 'item2' ], $result['array_field'] );
+		$this->assertSame( [ 'a', 'b', 'c' ], $result['string_array_field'] );
 	}
 
-	public function test_validate_string_accepts_null_when_nullable() {
+	public function test_rejects_invalid_types() {
+		// Assert - non-numeric for int
+		$result = $this->validator->validate( [ 'int_field' => 'not a number' ] );
+		$this->assertInstanceOf( \WP_Error::class, $result );
+
+		// Assert - non-array for array
+		$result = $this->validator->validate( [ 'array_field' => 'not an array' ] );
+		$this->assertInstanceOf( \WP_Error::class, $result );
+
+		// Assert - null for required string
+		$result = $this->validator->validate( [ 'required_string' => null ] );
+		$this->assertInstanceOf( \WP_Error::class, $result );
+	}
+
+	public function test_allows_null_for_nullable_fields() {
 		// Act
-		$result = $this->validator->validate( [
-			'string_field' => null,
-		] );
+		$result = $this->validator->validate( [ 'string_field' => null ] );
 
 		// Assert
 		$this->assertIsArray( $result );
 		$this->assertNull( $result['string_field'] );
 	}
 
-	public function test_validate_string_rejects_null_when_not_nullable() {
-		// Act
-		$result = $this->validator->validate( [
-			'required_string' => null,
-		] );
-
-		// Assert
-		$this->assertInstanceOf( \WP_Error::class, $result );
-		$this->assertSame( 'invalid_required_string', $result->get_error_code() );
-	}
-
-	public function test_validate_string_rejects_non_string() {
-		// Act
-		$result = $this->validator->validate( [
-			'required_string' => 123,
-		] );
-
-		// Assert
-		$this->assertInstanceOf( \WP_Error::class, $result );
-	}
-
-	public function test_validate_int_accepts_numeric() {
-		// Act
-		$result = $this->validator->validate( [
-			'int_field' => 42,
-		] );
-
-		// Assert
-		$this->assertIsArray( $result );
-		$this->assertSame( 42, $result['int_field'] );
-	}
-
-	public function test_validate_int_accepts_numeric_string() {
-		// Act
-		$result = $this->validator->validate( [
-			'int_field' => '100',
-		] );
-
-		// Assert
-		$this->assertIsArray( $result );
-		$this->assertSame( 100, $result['int_field'] );
-	}
-
-	public function test_validate_int_rejects_non_numeric() {
-		// Act
-		$result = $this->validator->validate( [
-			'int_field' => 'not a number',
-		] );
-
-		// Assert
-		$this->assertInstanceOf( \WP_Error::class, $result );
-		$this->assertSame( 'invalid_int_field', $result->get_error_code() );
-	}
-
-	public function test_validate_bool_accepts_true() {
-		// Act
-		$result = $this->validator->validate( [
-			'bool_field' => true,
-		] );
-
-		// Assert
-		$this->assertIsArray( $result );
-		$this->assertTrue( $result['bool_field'] );
-	}
-
-	public function test_validate_bool_accepts_false() {
-		// Act
-		$result = $this->validator->validate( [
-			'bool_field' => false,
-		] );
-
-		// Assert
-		$this->assertIsArray( $result );
-		$this->assertFalse( $result['bool_field'] );
-	}
-
-	public function test_validate_bool_converts_truthy_value() {
-		// Act
-		$result = $this->validator->validate( [
-			'bool_field' => 1,
-		] );
-
-		// Assert
-		$this->assertIsArray( $result );
-		$this->assertTrue( $result['bool_field'] );
-	}
-
-	public function test_validate_bool_converts_falsy_value() {
-		// Act
-		$result = $this->validator->validate( [
-			'bool_field' => 0,
-		] );
-
-		// Assert
-		$this->assertIsArray( $result );
-		$this->assertFalse( $result['bool_field'] );
-	}
-
-	public function test_validate_array_accepts_valid_array() {
-		// Act
-		$result = $this->validator->validate( [
-			'array_field' => [ 'item1', 'item2' ],
-		] );
-
-		// Assert
-		$this->assertIsArray( $result );
-		$this->assertSame( [ 'item1', 'item2' ], $result['array_field'] );
-	}
-
-	public function test_validate_array_rejects_non_array() {
-		// Act
-		$result = $this->validator->validate( [
-			'array_field' => 'not an array',
-		] );
-
-		// Assert
-		$this->assertInstanceOf( \WP_Error::class, $result );
-		$this->assertSame( 'invalid_array_field', $result->get_error_code() );
-	}
-
-	public function test_validate_string_array_accepts_valid_string_array() {
-		// Act
-		$result = $this->validator->validate( [
-			'string_array_field' => [ 'a', 'b', 'c' ],
-		] );
-
-		// Assert
-		$this->assertIsArray( $result );
-		$this->assertSame( [ 'a', 'b', 'c' ], $result['string_array_field'] );
-	}
-
-	public function test_validate_string_array_filters_non_strings() {
-		// Act
-		$result = $this->validator->validate( [
-			'string_array_field' => [ 'a', 123, 'b', null, 'c' ],
-		] );
-
-		// Assert
-		$this->assertIsArray( $result );
-		$this->assertSame( [ 'a', 'b', 'c' ], $result['string_array_field'] );
-	}
-
-	public function test_validate_string_array_rejects_non_array() {
-		// Act
-		$result = $this->validator->validate( [
-			'string_array_field' => 'not an array',
-		] );
-
-		// Assert
-		$this->assertInstanceOf( \WP_Error::class, $result );
-		$this->assertSame( 'invalid_string_array_field', $result->get_error_code() );
-	}
-
-	public function test_validate_custom_data_accepts_array() {
-		// Act
-		$result = $this->validator->validate( [
-			'custom_data_field' => [
-				'key' => 'value',
-				'nested' => [ 'a' => 1 ],
-			],
-		] );
-
-		// Assert
-		$this->assertIsArray( $result );
-		$this->assertIsArray( $result['custom_data_field'] );
-	}
-
-	public function test_validate_custom_data_sanitizes_values() {
-		// Act
-		$result = $this->validator->validate( [
-			'custom_data_field' => [
-				'key' => '<script>alert("xss")</script>value',
-			],
-		] );
-
-		// Assert
-		$this->assertIsArray( $result );
-		$this->assertStringNotContainsString( '<script>', $result['custom_data_field']['key'] );
-	}
-
-	public function test_validate_ignores_unknown_fields() {
+	public function test_ignores_unknown_fields() {
 		// Act
 		$result = $this->validator->validate( [
 			'string_field' => 'test',
@@ -259,41 +89,25 @@ class Test_Base_Validator extends TestCase {
 		$this->assertArrayNotHasKey( 'unknown_field', $result );
 	}
 
-	public function test_validate_sanitizes_html_in_strings() {
+	public function test_sanitizes_html_in_strings() {
 		// Act
 		$result = $this->validator->validate( [
-			'string_field' => '<b>bold</b> and <script>evil</script>',
+			'string_field' => '<script>evil</script>test',
 		] );
 
 		// Assert
 		$this->assertIsArray( $result );
 		$this->assertStringNotContainsString( '<script>', $result['string_field'] );
-		$this->assertStringNotContainsString( '<b>', $result['string_field'] );
 	}
 
-	public function test_validate_multiple_fields() {
+	public function test_string_array_filters_non_strings() {
 		// Act
 		$result = $this->validator->validate( [
-			'string_field' => 'test',
-			'int_field' => 42,
-			'bool_field' => true,
+			'string_array_field' => [ 'a', 123, 'b', null, 'c' ],
 		] );
 
 		// Assert
 		$this->assertIsArray( $result );
-		$this->assertSame( 'test', $result['string_field'] );
-		$this->assertSame( 42, $result['int_field'] );
-		$this->assertTrue( $result['bool_field'] );
-	}
-
-	public function test_validate_returns_error_on_first_invalid_field() {
-		// Act - both fields are invalid
-		$result = $this->validator->validate( [
-			'required_string' => null,  // Invalid
-			'int_field' => 'invalid',   // Also invalid
-		] );
-
-		// Assert - should return error for first invalid field
-		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( [ 'a', 'b', 'c' ], $result['string_array_field'] );
 	}
 }

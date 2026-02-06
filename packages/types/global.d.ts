@@ -9,25 +9,32 @@ interface EOnboardingConfig {
 	restUrl: string;
 	nonce: string;
 	progress: {
-		currentStep?: number;
-		current_step?: number;
-		completedSteps?: number[];
-		completed_steps?: number[];
-		exitType?: 'user_exit' | 'unexpected' | null;
+		current_step_id?: string;
+		current_step_index?: number;
+		completed_steps?: string[];
 		exit_type?: 'user_exit' | 'unexpected' | null;
-		lastActiveTimestamp?: number | null;
 		last_active_timestamp?: number | null;
-		startedAt?: number | null;
 		started_at?: number | null;
-		completedAt?: number | null;
 		completed_at?: number | null;
 	};
-	choices: Record<string, unknown>;
+	choices: {
+		building_for?: string | null;
+		site_about?: string[];
+		experience_level?: string | null;
+		theme_selection?: string | null;
+		site_features?: string[];
+	};
 	hadUnexpectedExit: boolean;
-	totalSteps: number;
+	isConnected: boolean;
+	steps: Array<{
+		id: string;
+		label: string;
+		type: 'single' | 'multiple';
+	}>;
 	urls: {
 		dashboard: string;
 		editor: string;
+		connect: string;
 	};
 }
 
