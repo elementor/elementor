@@ -5,30 +5,18 @@ import { ElementorIcon } from './elementor-icon';
 import { ElementorWordmark } from './elementor-wordmark';
 
 interface ElementorLogoProps extends Omit< StackProps, 'direction' > {
-	/**
-	 * Height of the logo. Width scales proportionally (~5.8:1 ratio).
-	 * @default 20
-	 */
 	height?: number;
 }
 
-/**
- * Full Elementor logo with icon and wordmark.
- * Uses theme text.primary color by default.
- * @param root0
- * @param root0.height
- * @param root0.sx
- */
 export function ElementorLogo( { height = 20, sx, ...props }: ElementorLogoProps ) {
 	const theme = useTheme();
 
 	// Icon is square
 	const iconSize = height;
 
-	// Wordmark viewBox is 143x23, aspect ratio ~6.2:1
-	// Height is slightly less than icon to align visually
+	// Wordmark viewBox is 90x15, aspect ratio 6
 	const wordmarkHeight = height * 0.8;
-	const wordmarkWidth = wordmarkHeight * ( 143 / 23 );
+	const wordmarkWidth = wordmarkHeight * 6;
 
 	return (
 		<Stack
