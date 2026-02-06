@@ -3,6 +3,7 @@
 namespace Elementor\App\Modules\E_Onboarding\Data\Endpoints;
 
 use Elementor\App\Modules\E_Onboarding\Storage\Repository;
+use Elementor\App\Modules\E_Onboarding\Validation\User_Choices_Validator;
 use Elementor\Data\V2\Base\Endpoint as Endpoint_Base;
 use WP_REST_Server;
 
@@ -36,10 +37,17 @@ class User_Choices extends Endpoint_Base {
 	}
 
 	public function update_items( $request ) {
-		$repository = Repository::instance();
 		$params = $request->get_json_params();
 
-		$choices = $repository->update_choices( $params );
+		$validator = new User_Choices_Validator();
+		$validated = $validator->validate( $params ?? [] );
+
+		if ( is_wp_error( $validated ) ) {
+			return $validated;
+		}
+
+		$repository = Repository::instance();
+		$choices = $repository->update_choices( $validated );
 
 		return [
 			'data' => 'success',

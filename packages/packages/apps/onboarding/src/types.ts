@@ -1,19 +1,21 @@
 import type { CSSProperties } from 'react';
 
 export const StepId = {
-	LOGIN: 'login',
 	BUILDING_FOR: 'building_for',
 	SITE_ABOUT: 'site_about',
-	EXPERIENCE: 'experience',
-	THEME_SELECT: 'theme_select',
+	EXPERIENCE_LEVEL: 'experience_level',
+	THEME_SELECTION: 'theme_selection',
 	SITE_FEATURES: 'site_features',
 } as const;
 
 export type StepIdType = ( typeof StepId )[ keyof typeof StepId ];
 
+export type StepType = 'single' | 'multiple';
+
 export interface Step {
 	id: StepIdType;
 	label: string;
+	type: StepType;
 }
 
 export type AssetAnimation = 'fade-in' | 'fade-up' | 'none';
@@ -42,13 +44,21 @@ export interface OnboardingProgress {
 	completedAt: number | null;
 }
 
+/**
+ * User choices for each onboarding step.
+ *
+ * Step 1: building_for - single selection
+ * Step 2: site_about - multiple selection
+ * Step 3: experience_level - single selection
+ * Step 4: theme_selection - single selection
+ * Step 5: site_features - multiple selection
+ */
 export interface OnboardingChoices {
-	buildingFor?: 'myself' | 'business' | 'client';
-	siteAbout?: string[];
-	experience?: 'beginner' | 'intermediate' | 'advanced';
-	theme?: string;
-	features?: string[];
-	[ key: string ]: unknown;
+	building_for: string | null;
+	site_about: string[];
+	experience_level: string | null;
+	theme_selection: string | null;
+	site_features: string[];
 }
 
 export interface OnboardingConfig {

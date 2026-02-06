@@ -118,22 +118,27 @@ class Module extends BaseModule {
 			[
 				'id' => 'building_for',
 				'label' => __( 'Who are you building for?', 'elementor' ),
+				'type' => 'single',
 			],
 			[
 				'id' => 'site_about',
 				'label' => __( 'What is your site about?', 'elementor' ),
+				'type' => 'multiple',
 			],
 			[
-				'id' => 'experience',
+				'id' => 'experience_level',
 				'label' => __( 'How much experience do you have with Elementor?', 'elementor' ),
+				'type' => 'single',
 			],
 			[
-				'id' => 'theme_select',
+				'id' => 'theme_selection',
 				'label' => __( 'Start with a theme that fits your needs', 'elementor' ),
+				'type' => 'single',
 			],
 			[
 				'id' => 'site_features',
 				'label' => __( 'What do you want to include in your site?', 'elementor' ),
+				'type' => 'multiple',
 			],
 		];
 

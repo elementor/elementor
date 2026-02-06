@@ -1,20 +1,32 @@
 import { __createSlice, __registerSlice, type PayloadAction } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
-import type { OnboardingChoices, OnboardingState, Step, StepIdType } from '../types';
+import type { OnboardingChoices, OnboardingState, Step, StepIdType, StepType } from '../types';
 import { StepId } from '../types';
 
 function getDefaultSteps(): Step[] {
 	return [
-		{ id: StepId.BUILDING_FOR, label: __( 'Who are you building for?', 'elementor' ) },
-		{ id: StepId.SITE_ABOUT, label: __( 'What is your site about?', 'elementor' ) },
-		{ id: StepId.EXPERIENCE, label: __( 'How much experience do you have with Elementor?', 'elementor' ) },
-		{ id: StepId.THEME_SELECT, label: __( 'Start with a theme that fits your needs', 'elementor' ) },
-		{ id: StepId.SITE_FEATURES, label: __( 'What do you want to include in your site?', 'elementor' ) },
+		{ id: StepId.BUILDING_FOR, label: __( 'Who are you building for?', 'elementor' ), type: 'single' },
+		{ id: StepId.SITE_ABOUT, label: __( 'What is your site about?', 'elementor' ), type: 'multiple' },
+		{
+			id: StepId.EXPERIENCE_LEVEL,
+			label: __( 'How much experience do you have with Elementor?', 'elementor' ),
+			type: 'single',
+		},
+		{
+			id: StepId.THEME_SELECTION,
+			label: __( 'Start with a theme that fits your needs', 'elementor' ),
+			type: 'single',
+		},
+		{
+			id: StepId.SITE_FEATURES,
+			label: __( 'What do you want to include in your site?', 'elementor' ),
+			type: 'multiple',
+		},
 	];
 }
 
-function parseStepsFromConfig( configSteps?: Array< { id: string; label: string } > ): Step[] {
+function parseStepsFromConfig( configSteps?: Array< { id: string; label: string; type?: string } > ): Step[] {
 	if ( ! configSteps || configSteps.length === 0 ) {
 		return getDefaultSteps();
 	}
@@ -22,6 +34,7 @@ function parseStepsFromConfig( configSteps?: Array< { id: string; label: string 
 	return configSteps.map( ( step ) => ( {
 		id: step.id as StepIdType,
 		label: step.label,
+		type: ( step.type as StepType ) || 'single',
 	} ) );
 }
 
@@ -30,6 +43,16 @@ function parseCompletedSteps( completedSteps?: string[] ): StepIdType[] {
 		return [];
 	}
 	return completedSteps as StepIdType[];
+}
+
+function getDefaultChoices(): OnboardingChoices {
+	return {
+		building_for: null,
+		site_about: [],
+		experience_level: null,
+		theme_selection: null,
+		site_features: [],
+	};
 }
 
 function getInitialState(): OnboardingState {
@@ -50,7 +73,7 @@ function getInitialState(): OnboardingState {
 			lastActiveTimestamp: progress.last_active_timestamp ?? null,
 			startedAt: progress.started_at ?? null,
 			completedAt: progress.completed_at ?? null,
-			choices: config.choices ?? {},
+			choices: { ...getDefaultChoices(), ...config.choices },
 			isLoading: false,
 			error: null,
 			hadUnexpectedExit: config.hadUnexpectedExit ?? false,
@@ -68,7 +91,7 @@ function getInitialState(): OnboardingState {
 		lastActiveTimestamp: null,
 		startedAt: null,
 		completedAt: null,
-		choices: {},
+		choices: getDefaultChoices(),
 		isLoading: false,
 		error: null,
 		hadUnexpectedExit: false,
@@ -126,11 +149,12 @@ export const slice = __createSlice( {
 			}
 		},
 
-		setUserChoice: ( state, action: PayloadAction< { key: string; value: unknown } > ) => {
-			state.choices[ action.payload.key ] = action.payload.value;
+		setUserChoice: ( state, action: PayloadAction< { key: keyof OnboardingChoices; value: unknown } > ) => {
+			const { key, value } = action.payload;
+			( state.choices as Record< string, unknown > )[ key ] = value;
 		},
 
-		setUserChoices: ( state, action: PayloadAction< OnboardingChoices > ) => {
+		setUserChoices: ( state, action: PayloadAction< Partial< OnboardingChoices > > ) => {
 			state.choices = { ...state.choices, ...action.payload };
 		},
 

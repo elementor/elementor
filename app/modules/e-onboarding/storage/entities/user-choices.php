@@ -8,30 +8,44 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class User_Choices {
 
+	/**
+	 * Step 1: Who are you building for?
+	 * Single selection from: 'myself', 'client', 'employer', 'other'
+	 */
 	private ?string $building_for = null;
-	private ?string $site_type = null;
+
+	/**
+	 * Step 2: What is your site about?
+	 * Multiple selection (e.g., 'blog', 'portfolio', 'ecommerce', 'business', etc.)
+	 */
+	private array $site_about = [];
+
+	/**
+	 * Step 3: How much experience do you have with Elementor?
+	 * Single selection from: 'beginner', 'intermediate', 'advanced'
+	 */
 	private ?string $experience_level = null;
-	private array $goals = [];
-	private array $features = [];
-	private ?string $design_preference = null;
-	private ?string $template_choice = null;
-	private ?bool $connected_account = null;
-	private ?string $site_name = null;
-	private array $custom_data = [];
+
+	/**
+	 * Step 4: Start with a theme that fits your needs
+	 * Single selection (theme identifier)
+	 */
+	private ?string $theme_selection = null;
+
+	/**
+	 * Step 5: What do you want to include in your site?
+	 * Multiple selection (e.g., 'contact_form', 'gallery', 'blog', 'shop', etc.)
+	 */
+	private array $site_features = [];
 
 	public static function from_array( array $data ): self {
 		$instance = new self();
 
 		$instance->building_for = $data['building_for'] ?? null;
-		$instance->site_type = $data['site_type'] ?? null;
+		$instance->site_about = $data['site_about'] ?? [];
 		$instance->experience_level = $data['experience_level'] ?? null;
-		$instance->goals = $data['goals'] ?? [];
-		$instance->features = $data['features'] ?? [];
-		$instance->design_preference = $data['design_preference'] ?? null;
-		$instance->template_choice = $data['template_choice'] ?? null;
-		$instance->connected_account = $data['connected_account'] ?? null;
-		$instance->site_name = $data['site_name'] ?? null;
-		$instance->custom_data = $data['custom_data'] ?? [];
+		$instance->theme_selection = $data['theme_selection'] ?? null;
+		$instance->site_features = $data['site_features'] ?? [];
 
 		return $instance;
 	}
@@ -39,15 +53,10 @@ class User_Choices {
 	public function to_array(): array {
 		return [
 			'building_for' => $this->building_for,
-			'site_type' => $this->site_type,
+			'site_about' => $this->site_about,
 			'experience_level' => $this->experience_level,
-			'goals' => $this->goals,
-			'features' => $this->features,
-			'design_preference' => $this->design_preference,
-			'template_choice' => $this->template_choice,
-			'connected_account' => $this->connected_account,
-			'site_name' => $this->site_name,
-			'custom_data' => $this->custom_data,
+			'theme_selection' => $this->theme_selection,
+			'site_features' => $this->site_features,
 		];
 	}
 
@@ -59,12 +68,12 @@ class User_Choices {
 		$this->building_for = $value;
 	}
 
-	public function get_site_type(): ?string {
-		return $this->site_type;
+	public function get_site_about(): array {
+		return $this->site_about;
 	}
 
-	public function set_site_type( ?string $value ): void {
-		$this->site_type = $value;
+	public function set_site_about( array $value ): void {
+		$this->site_about = $value;
 	}
 
 	public function get_experience_level(): ?string {
@@ -75,59 +84,19 @@ class User_Choices {
 		$this->experience_level = $value;
 	}
 
-	public function get_goals(): array {
-		return $this->goals;
+	public function get_theme_selection(): ?string {
+		return $this->theme_selection;
 	}
 
-	public function set_goals( array $value ): void {
-		$this->goals = $value;
+	public function set_theme_selection( ?string $value ): void {
+		$this->theme_selection = $value;
 	}
 
-	public function get_features(): array {
-		return $this->features;
+	public function get_site_features(): array {
+		return $this->site_features;
 	}
 
-	public function set_features( array $value ): void {
-		$this->features = $value;
-	}
-
-	public function get_design_preference(): ?string {
-		return $this->design_preference;
-	}
-
-	public function set_design_preference( ?string $value ): void {
-		$this->design_preference = $value;
-	}
-
-	public function get_template_choice(): ?string {
-		return $this->template_choice;
-	}
-
-	public function set_template_choice( ?string $value ): void {
-		$this->template_choice = $value;
-	}
-
-	public function get_connected_account(): ?bool {
-		return $this->connected_account;
-	}
-
-	public function set_connected_account( ?bool $value ): void {
-		$this->connected_account = $value;
-	}
-
-	public function get_site_name(): ?string {
-		return $this->site_name;
-	}
-
-	public function set_site_name( ?string $value ): void {
-		$this->site_name = $value;
-	}
-
-	public function get_custom_data(): array {
-		return $this->custom_data;
-	}
-
-	public function set_custom_data( array $value ): void {
-		$this->custom_data = $value;
+	public function set_site_features( array $value ): void {
+		$this->site_features = $value;
 	}
 }

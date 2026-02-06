@@ -52,10 +52,11 @@ class Repository {
 		}
 
 		if ( isset( $params['complete_step'] ) ) {
-			$step = (int) $params['complete_step'];
+			$step = $params['complete_step'];
 			$progress->add_completed_step( $step );
 
-			$total_steps = $params['total_steps'] ?? 14;
+			$total_steps = $params['total_steps'] ?? 5;
+
 			for ( $i = 0; $i < $total_steps; $i++ ) {
 				if ( ! $progress->is_step_completed( $i ) ) {
 					$progress->set_current_step( $i );
@@ -98,44 +99,29 @@ class Repository {
 	public function update_choices( array $params ): User_Choices {
 		$choices = $this->get_choices();
 
+		// Step 1: Who are you building for? (single)
 		if ( isset( $params['building_for'] ) ) {
 			$choices->set_building_for( $params['building_for'] );
 		}
 
-		if ( isset( $params['site_type'] ) ) {
-			$choices->set_site_type( $params['site_type'] );
+		// Step 2: What is your site about? (multiple)
+		if ( isset( $params['site_about'] ) ) {
+			$choices->set_site_about( (array) $params['site_about'] );
 		}
 
+		// Step 3: Experience level (single)
 		if ( isset( $params['experience_level'] ) ) {
 			$choices->set_experience_level( $params['experience_level'] );
 		}
 
-		if ( isset( $params['goals'] ) ) {
-			$choices->set_goals( (array) $params['goals'] );
+		// Step 4: Theme selection (single)
+		if ( isset( $params['theme_selection'] ) ) {
+			$choices->set_theme_selection( $params['theme_selection'] );
 		}
 
-		if ( isset( $params['features'] ) ) {
-			$choices->set_features( (array) $params['features'] );
-		}
-
-		if ( isset( $params['design_preference'] ) ) {
-			$choices->set_design_preference( $params['design_preference'] );
-		}
-
-		if ( isset( $params['template_choice'] ) ) {
-			$choices->set_template_choice( $params['template_choice'] );
-		}
-
-		if ( isset( $params['connected_account'] ) ) {
-			$choices->set_connected_account( (bool) $params['connected_account'] );
-		}
-
-		if ( isset( $params['site_name'] ) ) {
-			$choices->set_site_name( $params['site_name'] );
-		}
-
-		if ( isset( $params['custom_data'] ) ) {
-			$choices->set_custom_data( (array) $params['custom_data'] );
+		// Step 5: Site features (multiple)
+		if ( isset( $params['site_features'] ) ) {
+			$choices->set_site_features( (array) $params['site_features'] );
 		}
 
 		return $this->save_choices( $choices );

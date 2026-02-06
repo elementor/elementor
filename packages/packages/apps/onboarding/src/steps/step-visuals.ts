@@ -47,7 +47,7 @@ const DEFAULT_CONFIG: StepVisualConfig = {
 	assets: [],
 };
 
-const LOGIN_CONFIG: StepVisualConfig = {
+export const LOGIN_CONFIG: StepVisualConfig = {
 	rightWidthRatio: DEFAULT_RIGHT_PANEL_RATIO,
 	background: buildBackground( 'login.png' ),
 	assets: [],
@@ -65,13 +65,13 @@ const SITE_ABOUT_CONFIG: StepVisualConfig = {
 	assets: [],
 };
 
-const EXPERIENCE_CONFIG: StepVisualConfig = {
+const EXPERIENCE_LEVEL_CONFIG: StepVisualConfig = {
 	rightWidthRatio: DEFAULT_RIGHT_PANEL_RATIO,
 	background: buildBackground( 'step-3.png' ),
 	assets: [],
 };
 
-const THEME_SELECT_CONFIG: StepVisualConfig = {
+const THEME_SELECTION_CONFIG: StepVisualConfig = {
 	rightWidthRatio: DEFAULT_RIGHT_PANEL_RATIO,
 	background: buildBackground( 'step-4.png' ),
 	assets: [],
@@ -83,12 +83,11 @@ const SITE_FEATURES_CONFIG: StepVisualConfig = {
 	assets: [],
 };
 
-const stepVisuals: Partial< Record< StepIdType, StepVisualConfig > > = {
-	[ StepId.LOGIN ]: LOGIN_CONFIG,
+const stepVisuals: Record< StepIdType, StepVisualConfig > = {
 	[ StepId.BUILDING_FOR ]: BUILDING_FOR_CONFIG,
 	[ StepId.SITE_ABOUT ]: SITE_ABOUT_CONFIG,
-	[ StepId.EXPERIENCE ]: EXPERIENCE_CONFIG,
-	[ StepId.THEME_SELECT ]: THEME_SELECT_CONFIG,
+	[ StepId.EXPERIENCE_LEVEL ]: EXPERIENCE_LEVEL_CONFIG,
+	[ StepId.THEME_SELECTION ]: THEME_SELECTION_CONFIG,
 	[ StepId.SITE_FEATURES ]: SITE_FEATURES_CONFIG,
 };
 
