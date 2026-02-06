@@ -2,19 +2,18 @@
 namespace Elementor\Core\Admin\Menu;
 
 use Elementor\Core\Base\Base_Object;
-use Elementor\Core\Admin\Menu\Deprecated;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once __DIR__ . '/deprecated.php';
-
 /**
  * @deprecated 3.34.2 Elementor menu items are now registered inside Elementor\Core\Admin\EditorOneMenu. Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
  */
 abstract class Base extends Base_Object {
-	use Deprecated;
+
+	private $deprecation_notice = 'Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager and the \'elementor/editor-one/menu/register\' hook';
 
 	private $args;
 
@@ -22,8 +21,11 @@ abstract class Base extends Base_Object {
 
 	abstract protected function get_init_args();
 
-	public function __construct( $internal = false ) {
-		$this->trigger_deprecation_notice( get_class( $this ) . '::__construct', '3.34.2', $internal );
+	public function __construct() {
+		Plugin::$instance->modules_manager
+			->get_modules( 'dev-tools' )
+			->deprecation
+			->deprecated_function( get_class( $this ) . '::__construct', '3.34.2', $this->deprecation_notice );
 
 		$this->init_args();
 
@@ -35,8 +37,11 @@ abstract class Base extends Base_Object {
 	/**
 	 * @deprecated 3.34.2 Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
 	 */
-	public function get_args( $arg = null, $internal = false ) {
-		$this->trigger_deprecation_notice( __METHOD__, '3.34.2', $internal );
+	public function get_args( $arg = null ) {
+		Plugin::$instance->modules_manager
+			->get_modules( 'dev-tools' )
+			->deprecation
+			->deprecated_function( __METHOD__, '3.34.2', $this->deprecation_notice );
 
 		return self::get_items( $this->args, $arg );
 	}
@@ -44,8 +49,11 @@ abstract class Base extends Base_Object {
 	/**
 	 * @deprecated 3.34.2 Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
 	 */
-	public function add_submenu( $submenu_args, $internal = false ) {
-		$this->trigger_deprecation_notice( __METHOD__, '3.34.2', $internal );
+	public function add_submenu( $submenu_args ) {
+		Plugin::$instance->modules_manager
+			->get_modules( 'dev-tools' )
+			->deprecation
+			->deprecated_function( __METHOD__, '3.34.2', $this->deprecation_notice );
 
 		$default_submenu_args = [
 			'page_title' => '',
@@ -66,7 +74,10 @@ abstract class Base extends Base_Object {
 
 		$this->register_default_submenus();
 
-		$this->trigger_deprecated_action( 'elementor/admin/menu_registered/' . $args['menu_slug'], [ $this ], '3.34.2', true );
+		Plugin::$instance->modules_manager
+			->get_modules( 'dev-tools' )
+			->deprecation
+			->do_deprecated_action( 'elementor/admin/menu_registered/' . $args['menu_slug'], [ $this ], '3.34.2', $this->deprecation_notice );
 
 		usort( $this->submenus, function( $a, $b ) {
 			return $a['index'] - $b['index'];

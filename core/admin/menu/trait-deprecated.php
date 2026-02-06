@@ -10,26 +10,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 trait Deprecated {
 
-	private $deprecation_notice = 'Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager and the \'elementor/editor-one/menu/register\' hook';
+	private $deprecation_notice = 'Elementor menu items are now registered inside Elementor\Core\Admin\EditorOneMenu. Use the \'elementor/editor-one/menu/register\' hook instead.';
 
-	private function trigger_deprecation_notice( $function_name, $version, $internal = false ) {
-		if ( $internal ) {
-			return;
-		}
-
+	private function trigger_deprecation_notice( $function_name, $version ) {
 		Plugin::$instance->modules_manager
 			->get_modules( 'dev-tools' )
 			->deprecation
 			->deprecated_function( $function_name, $version, $this->deprecation_notice );
 	}
 
-	private function trigger_deprecated_action( $hook, $args, $version, $internal = false ) {
+	private function trigger_deprecated_action( $hook, $args, $version ) {
 		if ( ! has_action( $hook ) ) {
-			return;
-		}
-
-		if ( $internal ) {
-			do_action_ref_array( $hook, $args );
 			return;
 		}
 

@@ -4,6 +4,7 @@ namespace Elementor\Modules\AdminTopBar;
 use Elementor\Core\Admin\Admin;
 use Elementor\Core\Base\Base_Object;
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -18,7 +19,7 @@ class Module extends BaseModule {
 
 	private $current_screen;
 
-	private const DEPRECATION_MESSAGE = 'The admin-top-bar module has been replaced by the Elementor One package.';
+	private $deprecation_notice = 'The admin-top-bar module has been replaced by the Elementor One package.';
 
 	/**
 	 * @return bool
@@ -35,9 +36,14 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
-		_deprecated_function( __CLASS__, '3.34.2', 'Elementor One package' );
-
 		parent::__construct();
+
+		add_action( 'elementor/init', function() {
+			Plugin::$instance->modules_manager
+				->get_modules( 'dev-tools' )
+				->deprecation
+				->deprecated_function( __CLASS__, '3.34.2', $this->deprecation_notice );
+		}, 20 );
 
 		add_action( 'current_screen', [ $this, 'fire_deprecated_hooks' ] );
 	}
@@ -50,15 +56,19 @@ class Module extends BaseModule {
 		}
 
 		$this->fire_init_hook();
-		$this->fire_is_active_filter();
-		$this->fire_before_enqueue_scripts_hook();
+
+		Plugin::$instance->modules_manager
+			->get_modules( 'dev-tools' )
+			->deprecation
+			->apply_deprecated_filter( 'elementor/admin-top-bar/is-active', [ true, $this->current_screen ], '3.34.2', $this->deprecation_notice );
+
+		Plugin::$instance->modules_manager
+			->get_modules( 'dev-tools' )
+			->deprecation
+			->do_deprecated_action( 'elementor/admin_top_bar/before_enqueue_scripts', [], '3.34.2', $this->deprecation_notice );
 	}
 
 	private function fire_init_hook() {
-		if ( ! has_action( 'elementor/admin-top-bar/init' ) ) {
-			return;
-		}
-
 		$deprecated_stub = new class() extends Base_Object {
 			protected function get_init_settings() {
 				return [
@@ -68,40 +78,9 @@ class Module extends BaseModule {
 			}
 		};
 
-		do_action_deprecated(
-			'elementor/admin-top-bar/init',
-			[ $deprecated_stub ],
-			'3.34.2',
-			'',
-			self::DEPRECATION_MESSAGE
-		);
-	}
-
-	private function fire_is_active_filter() {
-		if ( ! has_filter( 'elementor/admin-top-bar/is-active' ) ) {
-			return;
-		}
-
-		apply_filters_deprecated(
-			'elementor/admin-top-bar/is-active',
-			[ true, $this->current_screen ],
-			'3.34.2',
-			'',
-			self::DEPRECATION_MESSAGE
-		);
-	}
-
-	private function fire_before_enqueue_scripts_hook() {
-		if ( ! has_action( 'elementor/admin_top_bar/before_enqueue_scripts' ) ) {
-			return;
-		}
-
-		do_action_deprecated(
-			'elementor/admin_top_bar/before_enqueue_scripts',
-			[],
-			'3.34.2',
-			'',
-			self::DEPRECATION_MESSAGE
-		);
+		Plugin::$instance->modules_manager
+			->get_modules( 'dev-tools' )
+			->deprecation
+			->do_deprecated_action( 'elementor/admin-top-bar/init', [ $deprecated_stub ], '3.34.2', $this->deprecation_notice );
 	}
 }
