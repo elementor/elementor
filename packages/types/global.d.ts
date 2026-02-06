@@ -76,6 +76,7 @@ declare global {
 					title: string;
 				}
 			>;
+			getContainer?: ( id: string ) => V1Element;
 			helpers?: {
 				enqueueFont?: EnqueueFont;
 			};
