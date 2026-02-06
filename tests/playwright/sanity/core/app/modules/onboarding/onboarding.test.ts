@@ -8,6 +8,8 @@ const BUTTON_CLASSES = {
 	disabled: /e-onboarding__button--disabled/,
 };
 
+const POPUP_NAVIGATION_TIMEOUT = 3000;
+
 test.describe( 'On boarding @onBoarding', async () => {
 	let originalActiveTheme: string;
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -37,7 +39,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		const goProPopover = page.locator( '.e-app__popover.e-onboarding__go-pro' );
 
-		await expect.soft( goProPopover ).toBeVisible();
+		await expect( goProPopover ).toBeVisible();
 	} );
 
 	test( 'Onboarding Create Account Popup Open', async ( { page } ) => {
@@ -45,23 +47,23 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		const ctaButton = await page.waitForSelector( 'a.e-onboarding__button-action' );
 
-		expect.soft( await ctaButton.innerText() ).toBe( 'Start setup' );
+		expect( await ctaButton.innerText() ).toBe( 'Start setup' );
 
-		const popupPromise = page.waitForEvent( 'popup', { timeout: 3000 } ).catch( () => null );
-		const navigationPromise = page.waitForURL( /my\.elementor\.com/, { timeout: 3000 } ).then( () => true ).catch( () => false );
+		const popupPromise = page.waitForEvent( 'popup', { timeout: POPUP_NAVIGATION_TIMEOUT } ).catch( () => null );
+		const navigationPromise = page.waitForURL( /my\.elementor\.com/, { timeout: POPUP_NAVIGATION_TIMEOUT } ).then( () => true ).catch( () => false );
 
 		await page.click( 'a.e-onboarding__button-action' );
 
 		const [ popup, navigated ] = await Promise.all( [ popupPromise, navigationPromise ] );
 		if ( popup ) {
 			await popup.waitForLoadState( 'domcontentloaded' );
-			expect.soft( popup.url() ).toContain( 'elementor-connect' );
+			expect( popup.url() ).toContain( 'elementor-connect' );
 			await popup.close();
 		}
 
 		// Some browsers may not support popups.
 		if ( navigated && ! popup ) {
-			expect.soft( page.url() ).toContain( 'my.elementor.com/signup' );
+			expect( page.url() ).toContain( 'my.elementor.com/signup' );
 		}
 
 		if ( ! navigated && ! popup ) {
@@ -80,7 +82,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		await skipButton.click();
 
-		await expect.soft( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( /^(Start with Hello Biz|Every site starts with a theme.)$/ );
+		await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( /^(Start with Hello Biz|Every site starts with a theme.)$/ );
 	} );
 
 	/**
@@ -97,16 +99,16 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		const nextButton = page.locator( 'text=Next' );
 
-		await expect.soft( nextButton ).toHaveClass( BUTTON_CLASSES.disabled );
+		await expect( nextButton ).toHaveClass( BUTTON_CLASSES.disabled );
 
 		await page.fill( 'input[type="text"]', 'Test' );
 
-		await expect.soft( nextButton ).toHaveClass( BUTTON_CLASSES.active );
+		await expect( nextButton ).toHaveClass( BUTTON_CLASSES.active );
 
 		await page.locator( EditorSelectors.onboarding.skipButton ).click();
 
 		const pageTitle = page.locator( EditorSelectors.onboarding.screenTitle );
-		await expect.soft( pageTitle ).toHaveText( 'Have a logo? Add it here.' );
+		await expect( pageTitle ).toHaveText( 'Have a logo? Add it here.' );
 	} );
 
 	/**
@@ -129,14 +131,14 @@ test.describe( 'On boarding @onBoarding', async () => {
 		const siteLogoId = await page.evaluate( () => elementorAppConfig.onboarding.siteLogo.id );
 
 		if ( siteLogoId ) {
-			await expect.soft( nextButton ).toHaveClass( BUTTON_CLASSES.active );
+			await expect( nextButton ).toHaveClass( BUTTON_CLASSES.active );
 			await removeButton.click();
 		}
 
-		await expect.soft( nextButton ).toHaveClass( BUTTON_CLASSES.disabled );
+		await expect( nextButton ).toHaveClass( BUTTON_CLASSES.disabled );
 		await skipButton.click();
 
-		await expect.soft( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Welcome aboard! What\'s next?' );
+		await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Welcome aboard! What\'s next?' );
 	} );
 
 	/**
@@ -151,7 +153,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		const kitLibraryTitle = page.getByText( 'Website Templates' ).first();
 
-		await expect.soft( kitLibraryTitle ).toBeVisible();
+		await expect( kitLibraryTitle ).toBeVisible();
 	} );
 } );
 
@@ -175,42 +177,42 @@ test.describe( 'Onboarding @onBoarding', async () => {
 		await expect.soft( chooseFeaturesScreen ).toHaveScreenshot( 'chooseFeaturesScreen.png' );
 
 		await test.step( 'Check that Upgrade Now button is disabled', async () => {
-			await expect.soft( upgradeNowBtn ).toHaveClass( BUTTON_CLASSES.disabled );
+			await expect( upgradeNowBtn ).toHaveClass( BUTTON_CLASSES.disabled );
 		} );
 
 		await test.step( 'Check that tier changes to Essential when checking an Essential item', async () => {
 			await page.locator( '#essential-2' ).check();
-			await expect.soft( tierLocator ).toHaveText( tiers.essential );
+			await expect( tierLocator ).toHaveText( tiers.essential );
 		} );
 
 		await test.step( 'Check that Upgrade Now button is not disabled', async () => {
-			await expect.soft( upgradeNowBtn ).not.toHaveClass( BUTTON_CLASSES.disabled );
+			await expect( upgradeNowBtn ).not.toHaveClass( BUTTON_CLASSES.disabled );
 		} );
 
 		await test.step( 'Check that tier changes to Advanced when checking an Advanced item', async () => {
 			await page.locator( '#advanced-4' ).check();
-			await expect.soft( tierLocator ).toHaveText( tiers.advanced );
+			await expect( tierLocator ).toHaveText( tiers.advanced );
 		} );
 
 		await test.step( 'Check that tier changes to Essential when unchecking all Advanced items but an Essential Item Is checked.', async () => {
 			await page.locator( '#advanced-4' ).uncheck();
-			await expect.soft( tierLocator ).toHaveText( tiers.essential );
+			await expect( tierLocator ).toHaveText( tiers.essential );
 		} );
 
 		await test.step( 'Check that is not visible when unchecking all items', async () => {
 			await page.locator( '#essential-2' ).uncheck();
-			await expect.soft( tierLocator ).not.toBeVisible();
+			await expect( tierLocator ).not.toBeVisible();
 		} );
 
 		await test.step( 'Check that tier changes to Advanced when checking only and Advanced item', async () => {
 			await page.locator( '#advanced-4' ).check();
-			await expect.soft( tierLocator ).toHaveText( tiers.advanced );
+			await expect( tierLocator ).toHaveText( tiers.advanced );
 		} );
 
 		await test.step( 'Check that tier changes to ONE when checking a ONE item', async () => {
 			await page.locator( '#advanced-4' ).uncheck();
 			await page.locator( '#one-1' ).check();
-			await expect.soft( tierLocator ).toHaveText( tiers.one );
+			await expect( tierLocator ).toHaveText( tiers.one );
 		} );
 	} );
 
@@ -223,7 +225,7 @@ test.describe( 'Onboarding @onBoarding', async () => {
 
 		await test.step( 'Activate upgrade button', async () => {
 			await page.locator( `${ EditorSelectors.onboarding.features.essential }-0` ).check();
-			await expect.soft( upgradeNowBtn ).not.toHaveClass( BUTTON_CLASSES.disabled );
+			await expect( upgradeNowBtn ).not.toHaveClass( BUTTON_CLASSES.disabled );
 		} );
 
 		await test.step( 'Check that Upgrade button opens elementor.com store', async () => {
@@ -232,13 +234,13 @@ test.describe( 'Onboarding @onBoarding', async () => {
 				upgradeNowBtn.click(),
 			] );
 
-			expect.soft( newTab.url() ).toContain( 'elementor.com' );
+			expect( newTab.url() ).toContain( 'elementor.com' );
 		} );
 
 		await test.step( 'Check that step was changed to Good to Go', async () => {
-			expect.soft( page.url() ).toContain( 'onboarding/goodToGo' );
-			await expect.soft( page.locator( EditorSelectors.onboarding.progressBar.completedItem ) ).toContainText( 'Choose Features' );
-			await expect.soft( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Welcome aboard! What\'s next?' );
+			expect( page.url() ).toContain( 'onboarding/goodToGo' );
+			await expect( page.locator( EditorSelectors.onboarding.progressBar.completedItem ) ).toContainText( 'Choose Features' );
+			await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Welcome aboard! What\'s next?' );
 		} );
 	} );
 
@@ -251,9 +253,9 @@ test.describe( 'Onboarding @onBoarding', async () => {
 
 		await test.step( 'Check that Skip button leads to the Good to Go screen', async () => {
 			await skipButton.click();
-			expect.soft( page.url() ).toContain( 'onboarding/goodToGo' );
-			await expect.soft( page.locator( EditorSelectors.onboarding.progressBar.skippedItem ) ).toContainText( 'Choose Features' );
-			await expect.soft( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Welcome aboard! What\'s next?' );
+			expect( page.url() ).toContain( 'onboarding/goodToGo' );
+			await expect( page.locator( EditorSelectors.onboarding.progressBar.skippedItem ) ).toContainText( 'Choose Features' );
+			await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Welcome aboard! What\'s next?' );
 		} );
 	} );
 } );
