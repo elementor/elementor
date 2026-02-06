@@ -1,8 +1,8 @@
 /* eslint-disable testing-library/no-test-id-queries */
 import * as React from 'react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { QueryClient } from '@tanstack/react-query';
 import { __deleteStore } from '@elementor/store';
+import { QueryClient } from '@tanstack/react-query';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { App } from '../app';
 
