@@ -97,7 +97,7 @@ const backgroundUrl = getOnboardingAssetUrl( 'login.png' );
 
 export function Login( { onConnect, onContinueAsGuest, connectUrl }: LoginProps ) {
 	return (
-		<LoginRoot backgroundUrl={ backgroundUrl }>
+		<LoginRoot backgroundUrl={ backgroundUrl } data-testid="login-screen">
 			<Backdrop />
 			<AuthCard elevation={ 24 }>
 				<Typography variant="h5" align="center">

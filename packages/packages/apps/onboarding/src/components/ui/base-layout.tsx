@@ -34,14 +34,15 @@ interface BaseLayoutProps {
 	children: ReactNode;
 	topBar?: ReactNode;
 	footer?: ReactNode;
+	'data-testid'?: string;
 }
 
-export function BaseLayout( { children, topBar, footer }: BaseLayoutProps ) {
+export function BaseLayout( { children, topBar, footer, 'data-testid': testId }: BaseLayoutProps ) {
 	const topBarHeight = topBar ? TOPBAR_HEIGHT : 0;
 	const footerHeight = footer ? FOOTER_HEIGHT : 0;
 
 	return (
-		<LayoutRoot>
+		<LayoutRoot data-testid={ testId }>
 			{ topBar }
 			<ContentArea topBarHeight={ topBarHeight } footerHeight={ footerHeight }>
 				{ children }

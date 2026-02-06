@@ -118,6 +118,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 	// Onboarding steps
 	return (
 		<BaseLayout
+			data-testid="onboarding-steps"
 			topBar={
 				<TopBar>
 					<TopBarContent showClose={ false } onClose={ handleClose } />
