@@ -9,13 +9,10 @@ const hasKey = ( propType: PropType ): propType is PropType & { key: unknown } =
 	return 'key' in propType;
 };
 
-const TEXT_PROP_TYPE_KEYS = new Set( [
-	htmlV2PropTypeUtil.key,
-	stringPropTypeUtil.key,
-] );
+const TEXT_PROP_TYPE_KEYS = new Set( [ htmlV2PropTypeUtil.key, stringPropTypeUtil.key ] );
 
 const isCoreTextPropTypeKey = ( key: unknown ): boolean => {
-	return ( TEXT_PROP_TYPE_KEYS as Set<unknown> ).has( key );
+	return ( TEXT_PROP_TYPE_KEYS as Set< unknown > ).has( key );
 };
 
 const isAllowedBySchema = ( propTypeFromSchema: PropType | null ): boolean => {

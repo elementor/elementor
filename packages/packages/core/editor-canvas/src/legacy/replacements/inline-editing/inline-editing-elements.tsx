@@ -1,7 +1,13 @@
 import * as React from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { getContainer, getElementLabel, getElementType } from '@elementor/editor-elements';
-import { htmlV2PropTypeUtil, parseHtmlChildren, type PropType, type PropValue, stringPropTypeUtil } from '@elementor/editor-props';
+import {
+	htmlV2PropTypeUtil,
+	parseHtmlChildren,
+	type PropType,
+	type PropValue,
+	stringPropTypeUtil,
+} from '@elementor/editor-props';
 import { __privateRunCommandSync as runCommandSync, getCurrentEditMode, undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 

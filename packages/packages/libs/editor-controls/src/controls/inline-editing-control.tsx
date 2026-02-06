@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { type ComponentProps, useCallback, useEffect, useRef } from 'react';
-import { htmlV2PropTypeUtil, parseHtmlChildren, type HtmlV2Value } from '@elementor/editor-props';
+import { htmlV2PropTypeUtil, parseHtmlChildren } from '@elementor/editor-props';
 import { Box, type SxProps, type Theme } from '@elementor/ui';
 
 import { useBoundProp } from '../bound-prop-context';
@@ -24,25 +24,28 @@ export const InlineEditingControl = createControl(
 		const content = value?.content ?? '';
 		const parseTimerRef = useRef< ReturnType< typeof setTimeout > >();
 
-		const handleChange = useCallback( ( newValue: unknown ) => {
-			const html = ( newValue ?? '' ) as string;
-
-			setValue( {
-				content: html || null,
-				children: value?.children ?? [],
-			} );
-
-			clearTimeout( parseTimerRef.current );
-
-			parseTimerRef.current = setTimeout( () => {
-				const parsed = parseHtmlChildren( html );
+		const handleChange = useCallback(
+			( newValue: unknown ) => {
+				const html = ( newValue ?? '' ) as string;
 
 				setValue( {
-					content: parsed.content || null,
-					children: parsed.children,
+					content: html || null,
+					children: value?.children ?? [],
 				} );
-			}, CHILDREN_PARSE_DEBOUNCE_MS );
-		}, [ setValue, value?.children ] );
+
+				clearTimeout( parseTimerRef.current );
+
+				parseTimerRef.current = setTimeout( () => {
+					const parsed = parseHtmlChildren( html );
+
+					setValue( {
+						content: parsed.content || null,
+						children: parsed.children,
+					} );
+				}, CHILDREN_PARSE_DEBOUNCE_MS );
+			},
+			[ setValue, value?.children ]
+		);
 
 		useEffect( () => () => clearTimeout( parseTimerRef.current ), [] );
 

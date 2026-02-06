@@ -97,9 +97,10 @@ describe( 'parseHtmlChildren', () => {
 			expect( result.children ).toHaveLength( 1 );
 			expect( result.children[ 0 ].id ).toBe( 'outer' );
 			expect( result.children[ 0 ].type ).toBe( 'span' );
-			expect( result.children[ 0 ].children ).toHaveLength( 1 );
-			expect( result.children[ 0 ].children![ 0 ].id ).toBe( 'inner' );
-			expect( result.children[ 0 ].children![ 0 ].content ).toBe( 'asaf' );
+			const nestedChildren = result.children[ 0 ].children ?? [];
+			expect( nestedChildren ).toHaveLength( 1 );
+			expect( nestedChildren[ 0 ].id ).toBe( 'inner' );
+			expect( nestedChildren[ 0 ].content ).toBe( 'asaf' );
 		} );
 	} );
 

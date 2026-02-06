@@ -5,9 +5,7 @@ export interface ParseResult {
 	children: ChildElement[];
 }
 
-const INLINE_ELEMENTS = new Set( [
-	'span', 'b', 'strong', 'i', 'em', 'u', 'a', 'del', 'sup', 'sub', 's',
-] );
+const INLINE_ELEMENTS = new Set( [ 'span', 'b', 'strong', 'i', 'em', 'u', 'a', 'del', 'sup', 'sub', 's' ] );
 
 function generateElementId(): string {
 	return `e-${ Math.random().toString( 36 ).substring( 2, 9 ) }`;
