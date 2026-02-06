@@ -45,7 +45,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		const ctaButton = await page.waitForSelector( 'a.e-onboarding__button-action' );
 
-		expect( await ctaButton.innerText() ).toBe( 'Create my account' );
+		expect( await ctaButton.innerText() ).toBe( 'Start setup' );
 
 		const popupPromise = page.waitForEvent( 'popup', { timeout: 3000 } ).catch( () => null );
 		const navigationPromise = page.waitForURL( /my\.elementor\.com/, { timeout: 3000 } ).then( () => true ).catch( () => false );
@@ -154,7 +154,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		await nextButton.click();
 
-		const kitLibraryTitle = page.locator( 'text=Kit Library' );
+		const kitLibraryTitle = page.getByText( 'Website Templates' );
 
 		await expect( kitLibraryTitle ).toBeVisible();
 	} );
