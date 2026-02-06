@@ -65,7 +65,7 @@ class Module extends BaseModule {
 		Plugin::$instance->modules_manager
 			->get_modules( 'dev-tools' )
 			->deprecation
-			->do_deprecated_action( 'elementor/admin_top_bar/before_enqueue_scripts', [], '3.34.2', $this->deprecation_notice );
+			->do_deprecated_action( 'elementor/admin_top_bar/before_enqueue_scripts', [ $this ], '3.34.2', $this->deprecation_notice );
 	}
 
 	private function fire_init_hook() {
