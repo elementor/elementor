@@ -69,6 +69,10 @@ class Source_Local extends Source_Base {
 
 	const ADMIN_MENU_SLUG = 'edit.php?post_type=elementor_library';
 
+	const ADMIN_MENU_PRIORITY = 10;
+
+	const ADMIN_SCREEN_ID = 'edit-elementor_library';
+
 	/**
 	 * Template types.
 	 *
