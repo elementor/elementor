@@ -8,8 +8,7 @@ const BUTTON_CLASSES = {
 	disabled: /e-onboarding__button--disabled/,
 };
 
-// Unskip: ED-18816 - Refactor onboarding test
-test.describe.skip( 'On boarding @onBoarding', async () => {
+test.describe( 'On boarding @onBoarding', async () => {
 	let originalActiveTheme: string;
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
