@@ -91,14 +91,14 @@ class Module extends BaseModule {
 		add_filter( 'elementor/document/save/data', function( $data, $document ) {
 			return ( new Parser( $document->get_main_id() ) )->assign_interaction_ids( $data );
 		}, 11, 2 );
-		add_filter( 'elementor/document/save/data', function( $data, $document ) {
-			return $this->wrap_interactions_for_db( $data );
-		}, 12, 2 ); // Priority 12 = after validation (10) and ID assignment (11)
+		// add_filter( 'elementor/document/save/data', function( $data, $document ) {
+		// 	return $this->wrap_interactions_for_db( $data );
+		// }, 12, 2 ); // Priority 12 = after validation (10) and ID assignment (11)
 
 		// Unwrap data AFTER loading from DB for frontend/editor
-		add_filter( 'elementor/document/load/data', function( $elements, $document ) {
-			return $this->process_elements_unwrap( $elements );
-		}, 10, 2 );
+		// add_filter( 'elementor/document/load/data', function( $elements, $document ) {
+		// 	return $this->process_elements_unwrap( $elements );
+		// }, 10, 2 );
 	}
 
 	private function get_config() {

@@ -17,52 +17,52 @@ class Adapter {
 		's'   => 1000,
 	];
 
-	public static function wrap_for_db( $interactions ) {
-		$decoded = self::decode( $interactions );
+	// public static function wrap_for_db( $interactions ) {
+	// 	$decoded = self::decode( $interactions );
 
-		if ( empty( $decoded ) || ! isset( $decoded['items'] ) ) {
-			return $interactions;
-		}
+	// 	if ( empty( $decoded ) || ! isset( $decoded['items'] ) ) {
+	// 		return $interactions;
+	// 	}
 
-		$items = $decoded['items'];
-		if ( isset( $decoded['items']['$$type'] ) && self::ITEMS_TYPE === $decoded['items']['$$type'] ) {
-			$items = isset( $decoded['items']['value'] ) ? $decoded['items']['value'] : [];
-		}
+	// 	$items = $decoded['items'];
+	// 	if ( isset( $decoded['items']['$$type'] ) && self::ITEMS_TYPE === $decoded['items']['$$type'] ) {
+	// 		$items = isset( $decoded['items']['value'] ) ? $decoded['items']['value'] : [];
+	// 	}
 
-		$items = self::transform_items_timing_to_size( $items );
+	// 	$items = self::transform_items_timing_to_size( $items );
 
-		$wrapped = [
-			'items' => [
-				'$$type' => self::ITEMS_TYPE,
-				'value' => $items,
-			],
-			'version' => self::VERSION_V2,
-		];
+	// 	$wrapped = [
+	// 		'items' => [
+	// 			'$$type' => self::ITEMS_TYPE,
+	// 			'value' => $items,
+	// 		],
+	// 		'version' => self::VERSION_V2,
+	// 	];
 
-		return wp_json_encode( $wrapped );
-	}
+	// 	return wp_json_encode( $wrapped );
+	// }
 
-	public static function unwrap_for_frontend( $interactions ) {
-		$decoded = self::decode( $interactions );
+	// public static function unwrap_for_frontend( $interactions ) {
+	// 	$decoded = self::decode( $interactions );
 
-		if ( empty( $decoded ) || ! isset( $decoded['items'] ) ) {
-			return $interactions;
-		}
+	// 	if ( empty( $decoded ) || ! isset( $decoded['items'] ) ) {
+	// 		return $interactions;
+	// 	}
 
-		$items = $decoded['items'];
-		if ( isset( $decoded['items']['$$type'] ) && self::ITEMS_TYPE === $decoded['items']['$$type'] ) {
-			$items = isset( $decoded['items']['value'] ) ? $decoded['items']['value'] : [];
-		}
+	// 	$items = $decoded['items'];
+	// 	if ( isset( $decoded['items']['$$type'] ) && self::ITEMS_TYPE === $decoded['items']['$$type'] ) {
+	// 		$items = isset( $decoded['items']['value'] ) ? $decoded['items']['value'] : [];
+	// 	}
 
-		$items = self::transform_offsets_to_size( $items );
+	// 	$items = self::transform_items_timing_to_number( $items );
 
-		$unwrapped = [
-			'items' => $items,
-			'version' => self::VERSION_V1,
-		];
+	// 	$unwrapped = [
+	// 		'items' => $items,
+	// 		'version' => self::VERSION_V1,
+	// 	];
 
-		return wp_json_encode( $unwrapped );
-	}
+	// 	return wp_json_encode( $unwrapped );
+	// }
 
 	private static function transform_items_timing_to_size( $items ) {
 		if ( ! is_array( $items ) ) {
@@ -156,30 +156,30 @@ class Adapter {
 	 * @param mixed $data The data to clean.
 	 * @return mixed The cleaned data without $$type markers.
 	 */
-	public static function clean_prop_types( $data, $parent_key = null ) {
-		if ( ! is_array( $data ) ) {
-			return $data;
-		}
+	// public static function clean_prop_types( $data, $parent_key = null ) {
+	// 	if ( ! is_array( $data ) ) {
+	// 		return $data;
+	// 	}
 
-		// If this is a PropType object (has $$type), extract and clean its value
-		if ( isset( $data['$$type'] ) ) {
-			$value = $data['value'] ?? null;
+	// 	// If this is a PropType object (has $$type), extract and clean its value
+	// 	if ( isset( $data['$$type'] ) ) {
+	// 		$value = $data['value'] ?? null;
 
-			if ( 'size' === $data['$$type'] && in_array( $parent_key, self::TIMING_PROPERTIES, true ) ) {
-				return self::size_to_milliseconds( $value );
-			}
+	// 		if ( 'size' === $data['$$type'] && in_array( $parent_key, self::TIMING_PROPERTIES, true ) ) {
+	// 			return self::size_to_milliseconds( $value );
+	// 		}
 
-			return self::clean_prop_types( $value, $parent_key );
-		}
+	// 		return self::clean_prop_types( $value, $parent_key );
+	// 	}
 
-		// Otherwise, recursively clean all array elements
-		$cleaned = [];
-		foreach ( $data as $key => $value ) {
-			$cleaned[ $key ] = self::clean_prop_types( $value, $key );
-		}
+	// 	// Otherwise, recursively clean all array elements
+	// 	$cleaned = [];
+	// 	foreach ( $data as $key => $value ) {
+	// 		$cleaned[ $key ] = self::clean_prop_types( $value, $key );
+	// 	}
 
-		return $cleaned;
-	}
+	// 	return $cleaned;
+	// }
 
 	private static function size_to_milliseconds( $size_value ) {
 		if ( ! is_array( $size_value ) || ! isset( $size_value['size'] ) ) {

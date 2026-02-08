@@ -1,8 +1,6 @@
 import {
 	config,
 	getKeyframes,
-	parseAnimationName,
-	extractAnimationId,
 	extractAnimationConfig,
 	getAnimateFunction,
 	getInViewFunction,
@@ -95,21 +93,6 @@ function processElementInteractions( element, interactions, animateFunc, inViewF
 	} );
 }
 
-function processElementInteractionsLegacy( element, interactions, animateFunc, inViewFunc ) {
-	if ( ! interactions || ! Array.isArray( interactions ) ) {
-		return;
-	}
-
-	interactions.forEach( ( interaction ) => {
-		const animationName = extractAnimationId( interaction );
-		const animConfig = animationName && parseAnimationName( animationName );
-
-		if ( animConfig ) {
-			applyAnimation( element, animConfig, animateFunc, inViewFunc );
-		}
-	} );
-}
-
 function initInteractions() {
 	waitForAnimateFunction( () => {
 		const animateFunc = getAnimateFunction();
@@ -150,7 +133,7 @@ function initInteractions() {
 			const interactionsData = element.getAttribute( 'data-interactions' );
 			const parsedData = parseInteractionsData( interactionsData );
 
-			processElementInteractionsLegacy( element, parsedData, animateFunc, inViewFunc );
+			processElementInteractions( element, parsedData, animateFunc, inViewFunc );
 		} );
 	} );
 }
