@@ -5,12 +5,19 @@ import { __ } from '@wordpress/i18n';
 
 import { useInteractionItemContext } from '../contexts/interactions-item-context';
 import type { InteractionItemPropValue, InteractionItemValue } from '../types';
+import { extractString } from '../utils/prop-value-utils';
 import { InteractionDetails } from './interaction-details';
 import { InteractionSettings } from './interaction-settings';
 
 type InteractionTabValue = 'details' | 'settings';
 
-export const InteractionsListItem = ( { index, value }: { index: number; value: InteractionItemPropValue } ) => {
+export const InteractionsListItem = ( {
+	index,
+	value: interaction,
+}: {
+	index: number;
+	value: InteractionItemPropValue;
+} ) => {
 	const { getTabsProps, getTabProps, getTabPanelProps } = useTabs< InteractionTabValue >( 'details' );
 
 	const context = useInteractionItemContext();
@@ -29,6 +36,8 @@ export const InteractionsListItem = ( { index, value }: { index: number; value: 
 		[ context ]
 	);
 
+	const interactionId = extractString( interaction.value.interaction_id );
+
 	return (
 		<>
 			<Tabs
@@ -45,14 +54,19 @@ export const InteractionsListItem = ( { index, value }: { index: number; value: 
 
 			<TabPanel sx={ { p: 0 } } { ...getTabPanelProps( 'details' ) }>
 				<InteractionDetails
-					interaction={ value.value }
+					key={ interactionId }
+					interaction={ interaction.value }
 					onChange={ handleChange }
 					onPlayInteraction={ handlePlayInteraction }
 				/>
 			</TabPanel>
 
 			<TabPanel sx={ { p: 0 } } { ...getTabPanelProps( 'settings' ) }>
-				<InteractionSettings interaction={ value.value } onChange={ handleChange } />
+				<InteractionSettings
+					key={ interactionId }
+					interaction={ interaction.value }
+					onChange={ handleChange }
+				/>
 			</TabPanel>
 		</>
 	);

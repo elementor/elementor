@@ -7,13 +7,11 @@
 			class="{{ base_styles['link-base'] }}"
 			target="{{ settings.link.target }}"
 			data-interaction-id="{{ id }}"
-			data-interactions="{{ interactions | json_encode | e('html_attr') }}"
 		>
 	{% endif %}
 	<img class="{{ base_styles['base'] }} {{ settings.classes | join(' ') }}" 
 		{% if not settings.link.href %}
 			data-interaction-id="{{ id }}" 
-			data-interactions="{{ interactions | json_encode | e('html_attr') }}"
 		{% endif %} 
 		{{ id_attribute }} {{ settings.attributes | raw }}
 		{% for attr, value in settings.image %}
