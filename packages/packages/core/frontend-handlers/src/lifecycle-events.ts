@@ -34,16 +34,10 @@ export const onElementRender = ( {
 	elementType: string;
 	elementId: string;
 } ) => {
-	const existingEntry = unmountCallbacks.get( element );
-	if ( existingEntry ) {
-		existingEntry.controller.abort();
-		existingEntry.manualUnmount.forEach( ( callback ) => callback() );
-	}
+	cleanupUnmountCallbacks( element );
 
 	const controller = new AbortController();
 	const manualUnmount: ( () => void )[] = [];
-
-	unmountCallbacks.set( element, { controller, manualUnmount } );
 
 	const dispatchRenderedEvent = () => {
 		onElementSelectorRender( { element, controller } );
@@ -72,6 +66,8 @@ export const onElementRender = ( {
 	if ( ! elementTypeHandlers.has( elementType ) ) {
 		return;
 	}
+
+	unmountCallbacks.set( element, { controller, manualUnmount } );
 
 	Array.from( elementTypeHandlers.get( elementType )?.values() ?? [] ).forEach( ( handler ) => {
 		const settings = element.getAttribute( 'data-e-settings' );
@@ -113,16 +109,15 @@ export const onElementSelectorRender = ( {
 	element: Element;
 	controller: AbortController;
 } ) => {
-	const entry = unmountCallbacks.get( element );
-
-	if ( ! entry ) {
-		return;
-	}
+	let requiresCleanup = false;
+	const manualUnmount: ( () => void )[] = [];
 
 	Array.from( elementSelectorHandlers.entries() ?? [] ).forEach( ( [ selector, handlers ] ) => {
 		if ( ! element.matches( selector ) ) {
 			return;
 		}
+
+		requiresCleanup = true;
 
 		Array.from( handlers.values() ?? [] ).forEach( ( handler ) => {
 			const settings = element.getAttribute( 'data-e-settings' );
@@ -134,10 +129,20 @@ export const onElementSelectorRender = ( {
 			} );
 
 			if ( typeof unmount === 'function' ) {
-				entry.manualUnmount.push( unmount );
+				manualUnmount.push( unmount );
 			}
 		} );
 	} );
+
+	if ( requiresCleanup ) {
+		const existingEntry = unmountCallbacks.get( element );
+
+		if ( existingEntry ) {
+			existingEntry.manualUnmount.push( ...manualUnmount );
+		} else {
+			unmountCallbacks.set( element, { controller, manualUnmount } );
+		}
+	}
 };
 
 export const onElementDestroy = ( {
@@ -153,9 +158,13 @@ export const onElementDestroy = ( {
 		return;
 	}
 
-	const entry = unmountCallbacks.get( element );
+	cleanupUnmountCallbacks( element );
 
 	dispatchDestroyedEvent( { element, elementType, elementId } );
+};
+
+const cleanupUnmountCallbacks = ( element: Element ) => {
+	const entry = unmountCallbacks.get( element );
 
 	if ( entry ) {
 		entry.controller.abort();
