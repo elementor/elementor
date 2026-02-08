@@ -8,7 +8,9 @@ export interface ParseResult {
 const INLINE_ELEMENTS = new Set( [ 'span', 'b', 'strong', 'i', 'em', 'u', 'a', 'del', 'sup', 'sub', 's' ] );
 
 function generateElementId(): string {
-	return `e-${ Math.random().toString( 36 ).substring( 2, 9 ) }`;
+	const timestamp = Date.now().toString( 36 );
+	const randomPart = Math.random().toString( 36 ).substring( 2, 9 );
+	return `e-${ timestamp }-${ randomPart }`;
 }
 
 function traverseChildren( node: Element ): ChildElement[] {
@@ -59,8 +61,15 @@ export function parseHtmlChildren( html: string ): ParseResult {
 
 	const parser = new DOMParser();
 	const doc = parser.parseFromString( `<body>${ html }</body>`, 'text/html' );
-	const body = doc.body;
 
+	const parserError = doc.querySelector( 'parsererror' );
+	if ( parserError ) {
+		// eslint-disable-next-line no-console
+		console.warn( 'HTML parsing error, returning original content:', parserError.textContent );
+		return { content: html, children: [] };
+	}
+
+	const body = doc.body;
 	const children = traverseChildren( body );
 
 	return {

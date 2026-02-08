@@ -19,6 +19,8 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_Prop_Type;
+
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {

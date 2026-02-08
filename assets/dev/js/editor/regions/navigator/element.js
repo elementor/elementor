@@ -417,6 +417,8 @@ export default class extends Marionette.CompositeView {
 	}
 
 	renderInlineChildren() {
+		const INLINE_CHILD_INDENT_INCREMENT = 10;
+
 		this.ui.elements.find( '.elementor-navigator__inline-child' ).remove();
 
 		const inlineChildren = this.getInlineChildren();
@@ -425,10 +427,11 @@ export default class extends Marionette.CompositeView {
 			return;
 		}
 
-		this.appendInlineChildItems( inlineChildren, this.getIndent() + 10 );
+		this.appendInlineChildItems( inlineChildren, this.getIndent() + INLINE_CHILD_INDENT_INCREMENT );
 	}
 
 	appendInlineChildItems( children, indent ) {
+		const INLINE_CHILD_INDENT_INCREMENT = 10;
 		const $container = this.ui.elements;
 
 		children.forEach( ( child ) => {
@@ -459,7 +462,7 @@ export default class extends Marionette.CompositeView {
 			$container.append( $item );
 
 			if ( Array.isArray( child.children ) && child.children.length > 0 ) {
-				this.appendInlineChildItems( child.children, indent + 10 );
+				this.appendInlineChildItems( child.children, indent + INLINE_CHILD_INDENT_INCREMENT );
 			}
 		} );
 	}
