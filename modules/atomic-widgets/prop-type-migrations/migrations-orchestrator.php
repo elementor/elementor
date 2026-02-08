@@ -304,7 +304,7 @@ class Migrations_Orchestrator {
 			return [];
 		}
 
-    if ( 'settings' === $context['key'] && isset( $context['parent']['elType'] ) ) {
+		if ( 'settings' === $context['key'] && isset( $context['parent']['elType'] ) ) {
 			return $this->get_props_schema( $context['parent'] );
 		}
 
@@ -490,15 +490,15 @@ class Migrations_Orchestrator {
 				];
 			}
 		}
-		
+
 		$trigger = $this->type_mismatch( $value, $actual_prop_type, $prop_name );
-		
+
 		if ( $trigger ) {
 			$path_result = $this->loader->find_migration_path(
 				$trigger['found_type'],
 				$trigger['expected_type']
 			);
-			
+
 			if ( $path_result ) {
 				$value = $this->execute_prop_migration( $value, $path_result['migrations'], $path_result['direction'] );
 				return [
@@ -507,11 +507,11 @@ class Migrations_Orchestrator {
 				];
 			}
 		}
-		
+
 		if ( $actual_prop_type instanceof Object_Prop_Type && is_array( $value['value'] ) ) {
 			$shape = $actual_prop_type->get_shape();
 			$nested_result = $this->migrate_nested_object( $value['value'], $shape );
-			
+
 			if ( $nested_result['has_changes'] ) {
 				$value['value'] = $nested_result['value'];
 				$has_changes = true;
@@ -519,7 +519,7 @@ class Migrations_Orchestrator {
 		} elseif ( $actual_prop_type instanceof Array_Prop_Type && is_array( $value['value'] ) ) {
 			$item_type = $actual_prop_type->get_item_type();
 			$nested_result = $this->migrate_nested_array( $value['value'], $item_type );
-			
+
 			if ( $nested_result['has_changes'] ) {
 				$value['value'] = $nested_result['value'];
 				$has_changes = true;
