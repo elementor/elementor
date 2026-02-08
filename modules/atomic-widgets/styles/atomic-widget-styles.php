@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\Styles;
 use Elementor\Core\Base\Document;
 use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
+use Elementor\Utils as ElementorUtils;
 use Elementor\Plugin;
 
 class Atomic_Widget_Styles {
@@ -91,9 +92,7 @@ class Atomic_Widget_Styles {
 	}
 
 	public static function get_license_based_filtered_styles( $styles ) {
-		$is_pro_defined = defined( '\ELEMENTOR_PRO_VERSION' );
-
-		if ( $is_pro_defined && version_compare( ELEMENTOR_PRO_VERSION, '3.35', '<' ) ) {
+		if ( ElementorUtils::has_pro() && version_compare( ELEMENTOR_PRO_VERSION, '3.35', '<' ) ) {
 			return $styles;
 		}
 
