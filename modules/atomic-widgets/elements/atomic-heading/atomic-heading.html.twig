@@ -5,9 +5,6 @@
 		class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}" 
 		{{ id_attribute }} 
 		{{ settings.attributes | raw }}
-		{% if interactions and interactions is not empty %}
-    data-interactions="{{ interactions | json_encode | e('html_attr') }}"
-{% endif %}
 	>
 	{% set allowed_tags = '<b><strong><sup><sub><s><em><i><u><a><del><span><br>' %}
 
