@@ -74,17 +74,21 @@ abstract class WP_Background_Process extends WP_Async_Request {
 	 * Dispatch
 	 *
 	 * @access public
-	 * @return true
+	 * @return array|\WP_Error
 	 */
 	public function dispatch() {
 		// Schedule the cron healthcheck.
 		$this->schedule_event();
 
-		// Use WordPress spawn_cron() for more reliable loopback handling
-		// instead of custom HTTP request which can fail on remote servers.
-		spawn_cron();
+		// On admin requests, also process on shutdown as fallback.
+		// This ensures updates run even if loopback requests are blocked.
+		// Similar to how WooCommerce Action Scheduler handles this.
+		if ( is_admin() ) {
+			add_action( 'shutdown', [ $this, 'handle_cron_healthcheck' ] );
+		}
 
-		return true;
+		// Perform remote post.
+		return parent::dispatch();
 	}
 
 	/**
