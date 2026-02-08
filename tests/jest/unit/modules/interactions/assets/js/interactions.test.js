@@ -34,7 +34,7 @@ function installMotionMocks( { animate, inView, scroll } ) {
 	};
 }
 
-describe( 'Pro interactions: interactions-pro.js', () => {
+describe( 'Interactions', () => {
 	beforeAll( () => {
 		initBreakpoints();
 	} );
