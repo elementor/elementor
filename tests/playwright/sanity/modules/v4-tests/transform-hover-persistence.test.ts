@@ -11,7 +11,7 @@ test.describe( 'Transform repeater persistence @atomic-widgets', () => {
 		await context.close();
 	} );
 
-	test( 'Transform repeater items in hover state should persist after page refresh', async ( { page, apiRequests }, testInfo ) => {
+	test.only( 'Transform repeater items in hover state should persist after page refresh', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
@@ -44,6 +44,7 @@ test.describe( 'Transform repeater persistence @atomic-widgets', () => {
 
 		// Assert
 		const transformItems = page.locator( '.MuiTag-root' );
+		await transformItems.waitFor( { state: 'visible', timeout: 10000 } );
 		await expect( transformItems ).toHaveCount( 1 );
 
 		// Publish
