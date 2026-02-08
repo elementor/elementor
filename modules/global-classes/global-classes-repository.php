@@ -40,13 +40,13 @@ class Global_Classes_Repository {
 			$all = $kit->get_json_meta( static::META_KEY_FRONTEND );
 		}
 
-		// Migrations_Orchestrator::make()->migrate_global_classes(
-		// 	$all,
-		// 	$kit->get_id(),
-		// 	function( $migrated_data ) use ( $kit, $meta_key ) {
-		// 		$kit->update_json_meta( $meta_key, $migrated_data );
-		// 	}
-		// );
+		Migrations_Orchestrator::make()->migrate_global_classes(
+			$all,
+			$kit->get_id(),
+			function( $migrated_data ) use ( $kit, $meta_key ) {
+				$kit->update_json_meta( $meta_key, $migrated_data );
+			}
+		);
 
 		return Global_Classes::make( $all['items'] ?? [], $all['order'] ?? [] );
 	}
