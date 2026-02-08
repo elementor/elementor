@@ -132,7 +132,7 @@ jobs:
           edit-mode: replace
 
       - name: Print artifact info once PR is non Elementor repo
-        if: github.event_name == 'pull_request' && startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
+        if: github.event_name == 'pull_request' && !startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
         run: |
           echo "Artifact info:"
           echo "  Name: ${{ env.PLUGIN_FOLDER_FILENAME }}"
