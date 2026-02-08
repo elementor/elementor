@@ -10,8 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Frontend_Assets_Loader {
 	const ALPINEJS_HANDLE = 'elementor-v2-alpinejs';
 	const FRONTEND_HANDLERS_HANDLE = 'elementor-v2-frontend-handlers';
-	const ACTION_LINK_HANDLERS_HANDLE = 'elementor-v2-action-link-handlers';
-	const FORM_HANDLERS_HANDLE = 'elementor-v2-form-handlers';
+	const ATOMIC_WIDGETS_HANDLER = 'elementor-v2-widgets-frontend';
 
 	/**
 	 * @return void
@@ -43,9 +42,9 @@ class Frontend_Assets_Loader {
 		);
 
 		wp_register_script(
-			self::FRONTEND_HANDLERS_HANDLE,
-			"{$assets_url}js/packages/frontend-handlers/frontend-handlers{$min_suffix}.js",
-			[],
+			self::ATOMIC_WIDGETS_HANDLER,
+			"{$assets_url}js/atomic-widgets-frontend-handler{$min_suffix}.js",
+			[ self::FRONTEND_HANDLERS_HANDLE, self::ALPINEJS_HANDLE ],
 			ELEMENTOR_VERSION,
 			true
 		);
