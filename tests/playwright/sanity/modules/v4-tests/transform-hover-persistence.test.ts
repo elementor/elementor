@@ -23,8 +23,17 @@ test.describe( 'Transform repeater persistence @atomic-widgets', () => {
 
 		// Act
 		await editor.v4Panel.openTab( 'style' );
-		await page.getByRole( 'button', { name: 'Open CSS Class Menu' } ).click();
-		await page.getByRole( 'menuitem', { name: 'hover' } ).click();
+		
+		// Wait for the CSS Class Menu button to be fully rendered and stable
+		const cssClassMenuButton = page.getByRole( 'button', { name: 'Open CSS Class Menu' } );
+		await cssClassMenuButton.waitFor( { state: 'visible' } );
+		await page.waitForTimeout( 500 ); // Let the panel stabilize after opening Style tab
+		await cssClassMenuButton.click();
+		
+		// Wait for the menu to open and click hover
+		const hoverMenuItem = page.getByRole( 'menuitem', { name: 'hover' } );
+		await hoverMenuItem.waitFor( { state: 'visible', timeout: 10000 } );
+		await hoverMenuItem.click();
 		await editor.openV2Section( 'effects' );
 
 		const addTransformButton = page.getByRole( 'button', { name: 'Add transform item' } );
@@ -49,8 +58,18 @@ test.describe( 'Transform repeater persistence @atomic-widgets', () => {
 
 		await editor.selectElement( headingId );
 		await editor.v4Panel.openTab( 'style' );
-		await page.getByRole( 'button', { name: 'Open CSS Class Menu' } ).click();
-		await page.getByRole( 'menuitem', { name: 'hover' } ).click();
+		
+		// Wait for the CSS Class Menu button to be fully rendered and stable (after refresh)
+		const cssClassMenuButtonAfterRefresh = page.getByRole( 'button', { name: 'Open CSS Class Menu' } );
+		await cssClassMenuButtonAfterRefresh.waitFor( { state: 'visible' } );
+		await page.waitForTimeout( 500 ); // Let the panel stabilize after opening Style tab
+		await cssClassMenuButtonAfterRefresh.click();
+		
+		// Wait for the menu to open and click hover
+		const hoverMenuItemAfterRefresh = page.getByRole( 'menuitem', { name: 'hover' } );
+		await hoverMenuItemAfterRefresh.waitFor( { state: 'visible', timeout: 10000 } );
+		await hoverMenuItemAfterRefresh.click();
+		
 		await editor.openV2Section( 'effects' );
 
 		// Assert
