@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { __useNavigateToDocument as useNavigateToDocument } from '@elementor/editor-documents';
-import { useMixpanel } from '@elementor/mixpanel';
+import { useMixpanel } from '@elementor/events';
 import { ListItemText, MenuItem, type MenuItemProps } from '@elementor/ui';
 
 import { useReverseHtmlEntities } from '../../hooks/use-reverse-html-entities';

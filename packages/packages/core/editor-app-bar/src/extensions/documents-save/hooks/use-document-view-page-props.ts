@@ -1,7 +1,7 @@
 import { __useActiveDocument as useActiveDocument } from '@elementor/editor-documents';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { EyeIcon } from '@elementor/icons';
-import { useMixpanel } from '@elementor/mixpanel';
+import { useMixpanel } from '@elementor/events';
 import { __ } from '@wordpress/i18n';
 
 export default function useDocumentViewPageProps() {
