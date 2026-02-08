@@ -16,7 +16,6 @@ on:
       - '.vscode/**'
       - '**/package.json'
   schedule:
-  
     - cron: '30 08 * * 0,1,2,3,4,5'
   workflow_dispatch:
     inputs:
