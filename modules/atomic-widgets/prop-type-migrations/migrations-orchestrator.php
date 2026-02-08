@@ -26,7 +26,6 @@ class Migrations_Orchestrator {
 	private Migrations_Loader $loader;
 
 	private function __construct( ?string $migrations_base_path ) {
-		$this->clear_migration_cache();
 		$migrations_base_path = $migrations_base_path ?? $this->get_migrations_base_path();
 
 		$this->loader = Migrations_Loader::make( $migrations_base_path );
@@ -161,6 +160,7 @@ class Migrations_Orchestrator {
 		?array $schema = null
 	): void {
 		$schema = $schema ?? $this->get_style_schema();
+
 		$this->migrate_entity(
 			$global_classes_data,
 			$post_id,
