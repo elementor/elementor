@@ -156,46 +156,51 @@ class Migrations_Orchestrator {
 
 	public function migrate_global_classes(
 		array &$global_classes_data,
-		int $kit_id,
+		int $post_id,
 		callable $save_callback,
 		?array $schema = null
 	): void {
-		if ( ! self::is_active() ) {
-			return;
-		}
-
-		$schema = $this->get_style_schema();
-		$migrate_logic = function( array &$data ) use ( $schema ) {
-			if ( empty( $data['items'] ) ) {
-				return false;
-			}
-
-			$has_changes = false;
-
-			foreach ( $data['items'] as &$item ) {
-				foreach( $item['variants'] as &$variant ) {
-					if ( ! isset( $variant['props'] ) ) {
-						continue;
-					}
-					
-					var_dump($variant['props']);
-					if ( $this->migrate_node( $variant['props'], $schema, 'global-class' ) ) {
-						$has_changes = true;
-					}
-				}
-			}
-
-			return $has_changes;
-		};
-
+		$schema = $schema ?? $this->get_style_schema();
 		$this->migrate_entity(
 			$global_classes_data,
-			$kit_id,
-			$migrate_logic,
+			$post_id,
+			fn( array &$data ) => $this->migrate_global_classes_items( $data, $schema ),
 			$save_callback,
 			'Global classes',
-			'kit_id'
+			'post_id'
 		);
+	}
+
+	private function migrate_global_classes_items( array &$data, array $schema ): bool {
+		$has_changes = false;
+
+		if ( empty( $data['items'] ) ) {
+			return $has_changes;
+		}
+
+		foreach ( $data['items'] as &$item ) {
+			if ( isset( $item['props'] ) && $this->migrate_node( $item['props'], $schema, 'global-class' ) ) {
+				$has_changes = true;
+			}
+
+			if ( empty( $item['variants'] ) ) {
+				continue;
+			}
+
+			foreach ( $item['variants'] as &$variant ) {
+				if ( ! isset( $variant['props'] ) ) {
+					continue;
+				}
+
+				if ( $this->migrate_node( $variant['props'], $schema, 'global-class' ) ) {
+					$has_changes = true;
+				}
+			}
+			unset( $variant );
+		}
+		unset( $item );
+
+		return $has_changes;
 	}
 
 	private function migrate_entity(
@@ -212,8 +217,6 @@ class Migrations_Orchestrator {
 			}
 
 			$has_changes = $migrate_logic( $data );
-			// //var_dump($data);
-			//// die();
 
 			if ( $has_changes ) {
 				$save_callback( $data );
@@ -296,7 +299,7 @@ class Migrations_Orchestrator {
 	}
 
 	private function try_get_schema( array $data, ?array $context ): array {
-		if ( isset( $context['key'] ) && 'settings' === $context['key'] && isset( $context['parent'] ) ) {
+		if ( isset( $context['key'] ) && 'settings' === $context['key'] && isset( $context['parent']['elType'] ) ) {
 			return $this->get_props_schema( $context['parent'] );
 		}
 
@@ -374,9 +377,6 @@ class Migrations_Orchestrator {
 		$pending_migrations = [];
 		$has_changes = false;
 		foreach ( $settings as $key => $value ) {
-			// //var_dump($key);
-			// //var_dump($value);
-			//// die();
 			if ( ! isset( $schema[ $key ] ) ) {
 				$this->process_missing_key( $key, $value, $type, $missing_keys, $pending_migrations );
 			} else {
@@ -506,9 +506,7 @@ class Migrations_Orchestrator {
 				$has_changes = true;
 			}
 		}
-		//var_dump($value);
-		//die();
-		
+
 		return [
 			'value' => $value,
 			'has_changes' => $has_changes,
@@ -630,10 +628,6 @@ class Migrations_Orchestrator {
 			'expected_type' => $expected_type,
 			'reason' => 'type_mismatch',
 		];
-	}
-
-	private function iterate_through_global_class( &$data ) {
-
 	}
 
 	public static function is_active() {

@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Base\Atomic_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
@@ -361,7 +362,7 @@ trait Has_Atomic_Base {
 		$timing_config = $this->extract_prop_value( $animation, 'timing_config' );
 		$config = $this->extract_prop_value( $animation, 'config' );
 
-		$duration = 300;
+		$duration = 600;
 		$delay = 0;
 		$replay = 0;
 		$easing = 'easeIn';
@@ -370,8 +371,8 @@ trait Has_Atomic_Base {
 		$offset_bottom = 85;
 
 		if ( is_array( $timing_config ) ) {
-			$duration = Interactions_Adapter::extract_numeric_value( $timing_config['duration'] ?? null, 300 );
-			$delay = Interactions_Adapter::extract_numeric_value( $timing_config['delay'] ?? null, 0 );
+			$duration = Interactions_Adapter::extract_time_value( $timing_config['duration'] ?? null, 600 );
+			$delay = Interactions_Adapter::extract_time_value( $timing_config['delay'] ?? null, 0 );
 		}
 
 		if ( is_array( $config ) ) {
@@ -436,8 +437,13 @@ trait Has_Atomic_Base {
 	}
 
 	protected function get_link_attributes( $link_settings, $add_key_to_result = false ) {
+		$href = $link_settings['href'] ?? null;
+
+		if ( ! $href ) {
+			return [];
+		}
+
 		$tag = $link_settings['tag'] ?? Link_Prop_Type::DEFAULT_TAG;
-		$href = $link_settings['href'];
 		$target = $link_settings['target'] ?? '_self';
 
 		$is_button = 'button' === $tag;
@@ -453,5 +459,38 @@ trait Has_Atomic_Base {
 		}
 
 		return $result;
+	}
+
+	protected function add_conditional_scripts() {
+		if ( $this->has_action_link() ) {
+			add_filter( 'elementor/atomic/frontend/get_script_depends', function( $depends ) {
+				$depends[] = Frontend_Assets_Loader::ACTION_LINK_HANDLERS_HANDLE;
+
+				return $depends;
+			} );
+		}
+
+		if ( $this->is_form() ) {
+			add_filter( 'elementor/atomic/frontend/get_script_depends', function( $depends ) {
+				$depends[] = Frontend_Assets_Loader::FORM_HANDLERS_HANDLE;
+
+				return $depends;
+			} );
+		}
+	}
+
+	public function has_action_link() {
+		if ( ! $this->get_id() ) {
+			return true;
+		}
+
+		$link_settings = $this->get_atomic_setting( 'link' ) ?? null;
+		$attributes = $this->get_link_attributes( $link_settings );
+
+		return isset( $attributes['data-action-link'] );
+	}
+
+	public function is_form() {
+		return 'e-form' === $this->get_type();
 	}
 }

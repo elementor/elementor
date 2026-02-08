@@ -5,6 +5,11 @@
       "fromType": "string",
       "toType": "html",
       "path": "operations/string-to-html.json"
+    },
+    "color-to-color-v2": {
+      "fromType": "color",
+      "toType": "color-v2",
+      "path": "operations/color-to-color-v2.json"
     }
   }
 }
