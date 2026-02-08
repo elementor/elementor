@@ -37,7 +37,7 @@ jobs:
   build-plugin:
     name: Build plugin
     runs-on: ubuntu-22.04
-    # if: startsWith( github.repository, 'elementor/' )
+    if: startsWith( github.repository, 'elementor/' )
     outputs:
       artifact_name: ${{ env.PLUGIN_FOLDER_FILENAME}}
       changelog_diff: ${{ steps.changelog_diff_files.outputs.diff }}
