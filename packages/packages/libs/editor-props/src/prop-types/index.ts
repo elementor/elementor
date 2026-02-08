@@ -12,6 +12,7 @@ export * from './number';
 export * from './shadow';
 export * from './size';
 export * from './string';
+export * from './string-array';
 export * from './stroke';
 export * from './url';
 export * from './layout-direction';

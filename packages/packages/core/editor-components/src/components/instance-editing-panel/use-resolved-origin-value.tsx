@@ -1,11 +1,12 @@
 import { type PropValue } from '@elementor/editor-props';
 import { __useSelector as useSelector } from '@elementor/store';
 
-import { componentInstanceOverridePropTypeUtil } from '../../prop-types/component-instance-override-prop-type';
 import { type ComponentInstanceOverride } from '../../prop-types/component-instance-overrides-prop-type';
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
 import { selectData } from '../../store/store';
 import { type OverridableProp, type PublishedComponent } from '../../types';
+import { extractInnerOverrideInfo } from '../../utils/overridable-props-utils';
+import { getOverridableProp } from '../overridable-props/utils/get-overridable-prop';
 
 export function useResolvedOriginValue( override: ComponentInstanceOverride | null, overridableProp: OverridableProp ) {
 	const components = useSelector( selectData );
@@ -42,23 +43,15 @@ function resolveOriginValue(
 }
 
 function getOriginFromOverride( components: PublishedComponent[], override: ComponentInstanceOverride ): PropValue {
-	const overridableValue = componentOverridablePropTypeUtil.extract( override );
-	const innerOverride = overridableValue
-		? componentInstanceOverridePropTypeUtil.extract( overridableValue.origin_value )
-		: componentInstanceOverridePropTypeUtil.extract( override );
+	const innerOverrideInfo = extractInnerOverrideInfo( override );
 
-	if ( ! innerOverride ) {
+	if ( ! innerOverrideInfo ) {
 		return null;
 	}
 
-	const { schema_source: schemaSource, override_key: overrideKey, override_value: overrideValue } = innerOverride;
-	const componentId = schemaSource?.id;
+	const { componentId, innerOverrideKey, overrideValue } = innerOverrideInfo;
 
-	if ( ! componentId || ! overrideKey ) {
-		return null;
-	}
-
-	const prop = getOverridableProp( components, componentId, overrideKey );
+	const prop = getOverridableProp( { componentId, overrideKey: innerOverrideKey } );
 
 	if ( hasValue( prop?.originValue ) ) {
 		return prop.originValue;
@@ -123,10 +116,4 @@ function findOriginValueByElementId(
 
 function hasValue< T >( value: T | null | undefined ): value is T {
 	return value !== null && value !== undefined;
-}
-
-function getOverridableProp( components: PublishedComponent[], componentId: number, overrideKey: string ) {
-	const component = components.find( ( { id } ) => id === componentId );
-
-	return component?.overridableProps?.props?.[ overrideKey ];
 }

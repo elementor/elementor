@@ -42,6 +42,7 @@ export type V1Element = {
 		};
 	};
 	parent?: V1Element;
+	lookup?: () => V1Element;
 };
 
 export type StringPropValue = {
@@ -73,8 +74,8 @@ export type ConfigPropValue = {
 		replay: BooleanPropValue;
 		easing: StringPropValue;
 		relativeTo: StringPropValue;
-		offsetTop: NumberPropValue;
-		offsetBottom: NumberPropValue;
+		offsetTop?: SizePropValue;
+		offsetBottom?: SizePropValue;
 	};
 };
 

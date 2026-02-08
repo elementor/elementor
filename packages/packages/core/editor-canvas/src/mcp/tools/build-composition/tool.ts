@@ -82,7 +82,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 			if ( errors.length ) {
 				rootContainers.forEach( ( rootContainer ) => {
 					deleteElement( {
-						elementId: rootContainer.id,
+						container: rootContainer,
 						options: { useHistory: false },
 					} );
 				} );

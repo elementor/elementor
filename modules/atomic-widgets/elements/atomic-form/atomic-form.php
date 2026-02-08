@@ -2,6 +2,7 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Form;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Chips_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Email_Advanced_Settings_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
@@ -17,6 +18,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Email_Advanced_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
@@ -63,18 +65,21 @@ class Atomic_Form extends Atomic_Element_Base {
 			'form-state' => String_Prop_Type::make()
 				->enum( [ 'default', 'success', 'error' ] )
 				->default( 'default' ),
-		'email-to' => String_Prop_Type::make(),
-		'email-subject' => String_Prop_Type::make(),
-		'email-message' => String_Prop_Type::make(),
-		'email-from' => String_Prop_Type::make(),
-		'email-advanced' => Email_Advanced_Prop_Type::make(),
-		'attributes' => Attributes_Prop_Type::make(),
+			'actions-after-submit' => String_Array_Prop_Type::make()
+				->default( [] ),
+			'email-to' => String_Prop_Type::make(),
+			'email-subject' => String_Prop_Type::make(),
+			'email-message' => String_Prop_Type::make(),
+			'email-from' => String_Prop_Type::make(),
+			'email-advanced' => Email_Advanced_Prop_Type::make(),
+			'attributes' => Attributes_Prop_Type::make(),
 		];
 	}
 
 	protected function define_atomic_controls(): array {
 		$state_control = Toggle_Control::bind_to( 'form-state' )
-			->set_label( __( 'States', 'elementor' ) );
+			->set_label( __( 'States', 'elementor' ) )
+			->set_meta( [ 'topDivider' => true ] );
 
 		if ( $state_control instanceof Toggle_Control ) {
 			$state_control
@@ -123,6 +128,23 @@ class Atomic_Form extends Atomic_Element_Base {
 					Text_Control::bind_to( 'form-name' )
 						->set_label( __( 'Form Name', 'elementor' ) ),
 					$state_control,
+					Chips_Control::bind_to( 'actions-after-submit' )
+						->set_label( __( 'Actions after submit', 'elementor' ) )
+						->set_meta( [ 'topDivider' => true ] )
+						->set_options( [
+							[
+								'label' => __( 'Collect submissions', 'elementor' ),
+								'value' => 'collect-submissions',
+							],
+							[
+								'label' => __( 'Email', 'elementor' ),
+								'value' => 'email',
+							],
+							[
+								'label' => __( 'Webhook', 'elementor' ),
+								'value' => 'webhook',
+							],
+						] ),
 					...$email_settings_controls,
 				] ),
 			Section::make()
@@ -162,7 +184,7 @@ class Atomic_Form extends Atomic_Element_Base {
 				->build(),
 			Widget_Builder::make( Atomic_Button::get_element_type() )
 				->settings( [
-					'text' => String_Prop_Type::generate( __( 'Submit', 'elementor' ) ),
+					'text' => Html_Prop_Type::generate( __( 'Submit', 'elementor' ) ),
 					'attributes' => Attributes_Prop_Type::generate( [
 						Key_Value_Prop_Type::generate( [
 							'key' => String_Prop_Type::generate( 'type' ),
