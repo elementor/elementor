@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { CrownFilledIcon } from '@elementor/icons';
-import { Alert, Box } from '@elementor/ui';
+import { Alert, Button } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 type PromotionAlertProps = {
@@ -16,23 +16,19 @@ export const PromotionAlert = ( { message, upgradeUrl }: PromotionAlertProps ) =
 		role="dialog"
 		aria-label="promotion-alert"
 		size="small"
-		sx={ { m: 2, mt: 1, mb: 1, pt: 0.25, pb: 1 } }
+		sx={ { m: 2, mt: 1, pt: 0.5, pb: 0.5 } }
 	>
 		{ message }
-		<Box
-			component="a"
-			href={ upgradeUrl }
+		<Button
+			size={ 'tiny' }
+			variant={ 'text' }
+			color={ 'promotion' }
 			target="_blank"
+			href={ upgradeUrl }
 			rel="noopener noreferrer"
-			sx={ {
-				display: 'flex',
-				alignItems: 'center',
-				gap: 0.5,
-				color: 'promotion.main',
-			} }
+			startIcon={ <CrownFilledIcon fontSize="tiny" /> }
 		>
-			<CrownFilledIcon fontSize="tiny" />
 			{ __( 'Upgrade now', 'elementor' ) }
-		</Box>
+		</Button>
 	</Alert>
 );
