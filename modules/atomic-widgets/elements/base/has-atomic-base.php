@@ -22,7 +22,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-
 /**
  * @mixin Element_Base
  */
