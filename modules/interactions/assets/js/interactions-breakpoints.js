@@ -1,5 +1,7 @@
 'use strict';
 
+const RESIZE_DEBOUNCE_TIMEOUT = 100;
+
 const breakpoints = {
 	list: {},
 	active: {},
@@ -47,7 +49,7 @@ function attachEventListeners() {
 			if ( 'function' === typeof breakpoints.onChange ) {
 				breakpoints.onChange( breakpoints.active );
 			}
-		}, 25 );
+		}, RESIZE_DEBOUNCE_TIMEOUT );
 	};
 
 	window.addEventListener( 'resize', onResize );
