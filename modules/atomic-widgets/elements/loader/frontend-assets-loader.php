@@ -28,7 +28,7 @@ class Frontend_Assets_Loader {
 		wp_register_script(
 			self::FRONTEND_HANDLERS_HANDLE,
 			"{$assets_url}js/packages/frontend-handlers/frontend-handlers{$min_suffix}.js",
-			[ 'jquery' ],
+			[],
 			ELEMENTOR_VERSION,
 			true
 		);

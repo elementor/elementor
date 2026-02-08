@@ -26,11 +26,15 @@ function createMockSettings( data: V1ElementSettingsProps = {} ): V1Settings {
 }
 
 export function createMockChild( modelData: V1ElementModelProps ): V1Element {
-	return {
+	const mockChild: Partial< V1Element > = {
 		id: modelData.id,
 		model: createMockModel( modelData ),
 		settings: createMockSettings(),
 	};
+
+	mockChild.lookup = jest.fn( () => mockChild as V1Element );
+
+	return mockChild as V1Element;
 }
 
 function createMockChildren( children: V1Element[] ): V1Element[ 'children' ] {
@@ -75,10 +79,14 @@ export function createMockContainer( id: string, children: V1Element[] = [], elT
 		elements: childModels,
 	};
 
-	return {
+	const mockContainer: Partial< V1Element > = {
 		id,
 		model: createMockModel( modelData ),
 		settings: createMockSettings(),
 		children: createMockChildren( children ),
 	};
+
+	mockContainer.lookup = jest.fn( () => mockContainer as V1Element );
+
+	return mockContainer as V1Element;
 }
