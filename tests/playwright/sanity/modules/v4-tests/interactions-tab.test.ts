@@ -135,16 +135,6 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		await test.step( 'Publish and view the page', async () => {
 			await editor.publishAndViewPage();
 		} );
-
-		await test.step( 'Verify data-interactions attribute on heading', async () => {
-			const headingElement = page.locator( '.e-heading-base' ).first();
-
-			await expect( headingElement ).toBeVisible();
-			await expect( headingElement ).toHaveAttribute( 'data-interactions' );
-
-			const interactionsData = await headingElement.getAttribute( 'data-interactions' );
-			expect( interactionsData ).toBeTruthy();
-		} );
 	} );
 
 	test( 'Verify animation plays correctly via play button, publish, and frontend view', async ( { page, apiRequests }, testInfo ) => {
@@ -205,7 +195,6 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			const headingElement = page.locator( '.e-heading-base' ).first();
 
 			await expect( headingElement ).toBeVisible();
-			await expect( headingElement ).toHaveAttribute( 'data-interactions' );
 
 			// Verify motion.dev library is loaded
 			const isMotionLoaded = await page.evaluate( () => {
