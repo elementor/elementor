@@ -352,58 +352,35 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.34.4 - 2026-01-29 =
+= 3.35.3 - 2026-02-05 =
 
-* Tweak: Updated import and export flow for Website Templates
-* Tweak: Optimized configuration loading behavior ([#34206](https://github.com/elementor/elementor/issues/34206))
-* Fix: Editor errors occur when references are undefined ([#34411](https://github.com/elementor/elementor/issues/34411))
-* Security Fix: Improved code security enforcement in request handling
-* Fix: Importing a site containing elements with dynamic tags fails - Editor V4
+* Fix: Fatal error appears in dashboard widget in WordPress Admin ([#34663](https://github.com/elementor/elementor/issues/34663), [#34659](https://github.com/elementor/elementor/issues/34659))
 
-= 3.34.3 - 2026-01-26 =
+= 3.35.2 - 2026-02-05 =
 
-* Tweak: Editor home page renamed to Quick Start
-* Fix: Video background does not play on Mobile in Safari browser
-* Fix: Landing Pages do not appear in Editor menu in WordPress Admin
-* Fix: Theme Builder WordPress view does not work as expected
+* Fix: Editor menu in WordPress admin displays incorrectly in RTL
+
+= 3.35.1 - 2026-02-04 =
+
+* Fix: Editor Top Bar does not appear in various scenarios ([#34623](https://github.com/elementor/elementor/issues/34623))
+* Fix: Fatal error when the PHP `mbstring` module is missing
 * Fix: General UI issues in Editor screens in WordPress Admin
-* Fix: Save as Template modal appears blank in some scenarios
-* Fix: Clicking the Templates menu item leads to an incorrect URL
 
-= 3.34.2 - 2026-01-20 =
+= 3.35.0 - 2026-02-02 =
 
-* Tweak: Unified the Elementor interface into a single place to manage, optimize, and configure Elementor capabilities in WordPress Admin
-* Tweak: Moved editor-related entry points under the unified Elementor menu in WordPress Admin
+* New: Introducing Components - reusable layout building blocks with global sync and per-instance content overrides - Editor V4
+* New: Introducing Inline Editing - edit Atomic Heading and Paragraph text directly on the canvas - Editor V4
+* New: Introducing a contextual formatting toolbar for inline text editing, including links and common text styles - Editor V4
+* Tweak: Version 4 status updated to Beta and production-ready - Editor V4
+* Tweak: Children perspective controls available only for relevant parent elements - Editor V4
+* Tweak: `:hover` styling automatically applies to `:focus-visible` for improved accessibility - Editor V4
+* Tweak: Dynamic tags support added to color picker controls - Editor V4
+* Tweak: Link and Button accessibility improvements in Dynamic Tags - Editor V4
+* Tweak: Nested Accordion optimizations with Grid in Chrome browser
+* Fix: Size link-unlink operations not applying consistently - Editor V4
+* Fix: Div Block and Flexbox base styles overriding user settings when viewed from another document - Editor V4
+* Fix: Flex and Div blocks lose selection when deleting an assigned class via the Class Manager - Editor V4
+* Fix: Container handles not visible when "Overflow: Hidden" is enabled
 
-= 3.34.1 - 2026-01-07 =
-
-* Fix: RTL issues in Icon Box widget ([#33963](https://github.com/elementor/elementor/issues/33963))
-* Fix: Incorrect `space_between_widgets` spacing in columns ([#34033](https://github.com/elementor/elementor/issues/34033))
-* Fix: User settings not applied correctly ([#34065](https://github.com/elementor/elementor/issues/34065))
-* Fix: Flex Grow is not applied correctly to child containers in the Flexbox element - Editor V4
-* Fix: Deleting a Tab breaks the content–tab relationship in Tabs element - Editor V4
-* Fix: Appearance badge in Site Templates is misaligned and not centered
-
-= 3.34.0 - 2025-12-22 =
-
-* New: Introducing Atomic Tabs - enabling flexible and fully customizable tab layouts with nested Atomic Elements - Editor V4
-* New: Introducing Entrance Interactions to add lightweight motion and bring elements to life as they appear - Editor V4
-* Tweak: Replaced the legacy V3 container wrapper with the optimized V4 wrapper for improved markup - Editor V4
-* Tweak: Improved frontend link control output to ensure consistent rendering - Editor V4 ([#32233](https://github.com/elementor/elementor/issues/32233))
-* Tweak: Added reset option inside popovers - Editor V4
-* Tweak: Updated Border control layout for a clearer and more consistent editing workflow - Editor V4
-* Tweak: Added `span` option inside the Paragraph atom - Editor V4
-* Tweak: Improved transitions to better support logical properties - Editor V4
-* Tweak: Improved dropdown folder behavior and resolved related UI issues in Template Library
-* Tweak: Merged "Import/Export Customization" feature into the version
-* Tweak: Added `builder_content_data` filter for extending Template Library and Global Widget content (props [@dgwatkins](https://github.com/dgwatkins))
-* Tweak: Applied CSS logical properties in Icon Box widget
-* Tweak: Applied CSS logical properties in Icon List widget
-* Tweak: Applied CSS logical properties in text alignment controls and fixed RTL rendering in the Editor
-* Fix: Local Transform values overridden Class-level Transform defaults even when unchanged - Editor V4
-* Fix: Fatal error when opening pages containing atomic elements while the V4 experiment is deactivated - Editor V4
-* Fix: Hover Scale transform set through Class did not save correctly - Editor V4
-* Fix: PHP 8.4 deprecation notices related to deprecated `E_STRICT` constant
-* Fix: Missing CSS regeneration after clearing cached files on pages containing dynamic tags
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)

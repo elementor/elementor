@@ -9,6 +9,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Modules\Interactions\Schema\Interactions_Schema;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
 
@@ -299,12 +300,21 @@ class Migrations_Orchestrator {
 	}
 
 	private function try_get_schema( array $data, ?array $context ): array {
-		if ( isset( $context['key'] ) && 'settings' === $context['key'] && isset( $context['parent']['elType'] ) ) {
+		if ( ! isset( $context['key'] ) ) {
+			return [];
+		}
+
+    if ( 'settings' === $context['key'] && isset( $context['parent']['elType'] ) ) {
 			return $this->get_props_schema( $context['parent'] );
 		}
 
-		if ( isset( $context['key'] ) && 'props' === $context['key'] ) {
+		if ( 'props' === $context['key'] ) {
 			return $this->get_style_schema();
+		}
+
+		// Interactions is a simple array from items, all the schema is defined in the Interaction_Item_Prop_Type
+		if ( 'items' === $context['key'] ) {
+			return Interactions_Schema::get()['items'];
 		}
 
 		return [];
@@ -439,6 +449,15 @@ class Migrations_Orchestrator {
 	}
 
 	private function migrate_prop_if_needed( $value, $prop_type, string $key ): array {
+		if ( is_array( $prop_type ) && ! isset( $prop_type['$$type'] ) && is_array( $value ) && ! isset( $value['$$type'] ) ) {
+			foreach ( $value as $index => $value_item ) {
+				$result = $this->migrate_prop_if_needed( $value_item, $prop_type[ $index ], $key );
+				if ( $result['has_changes'] ) {
+					return $result;
+				}
+			}
+		}
+
 		if ( ! ( $prop_type instanceof Prop_Type ) ) {
 			return [
 				'value' => $value,

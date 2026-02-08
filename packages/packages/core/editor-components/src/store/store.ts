@@ -21,6 +21,8 @@ type GetComponentResponse = PublishedComponent[];
 
 type Status = 'idle' | 'pending' | 'error';
 
+export type SanitizeAttributes = 'overridableProps';
+
 type ComponentsState = {
 	data: PublishedComponent[];
 	unpublishedData: UnpublishedComponent[];
@@ -31,6 +33,10 @@ type ComponentsState = {
 	path: ComponentsPathItem[];
 	currentComponentId: V1Document[ 'id' ] | null;
 	updatedComponentNames: Record< number, string >;
+
+	// We use this map to flag any sanitized attribute of a given component
+	// This map currently resets in response to the `editor/documents/open` command
+	sanitized: Record< ComponentId, Partial< Record< SanitizeAttributes, boolean > > >;
 };
 
 export type ComponentsSlice = SliceState< typeof slice >;
@@ -51,6 +57,7 @@ export const initialState: ComponentsState = {
 	path: [],
 	currentComponentId: null,
 	updatedComponentNames: {},
+	sanitized: {},
 };
 
 export const SLICE_NAME = 'components';
@@ -134,6 +141,21 @@ export const slice = createSlice( {
 		},
 		cleanUpdatedComponentNames: ( state ) => {
 			state.updatedComponentNames = {};
+		},
+		updateComponentSanitizedAttribute: (
+			state,
+			{
+				payload: { componentId, attribute },
+			}: PayloadAction< { componentId: ComponentId; attribute: SanitizeAttributes } >
+		) => {
+			if ( ! state.sanitized[ componentId ] ) {
+				state.sanitized[ componentId ] = {};
+			}
+
+			state.sanitized[ componentId ][ attribute ] = true;
+		},
+		resetSanitizedComponents: ( state ) => {
+			state.sanitized = {};
 		},
 	},
 	extraReducers: ( builder ) => {
@@ -248,3 +270,16 @@ export const selectUpdatedComponentNames = createSelector(
 			title,
 		} ) )
 );
+
+const useSanitizedComponents = () => {
+	return useSelector( ( state: ComponentsSlice ) => state[ SLICE_NAME ].sanitized );
+};
+export const useIsSanitizedComponent = ( componentId: ComponentId | null, key: SanitizeAttributes ) => {
+	const sanitizedComponents = useSanitizedComponents();
+
+	if ( ! componentId ) {
+		return false;
+	}
+
+	return !! sanitizedComponents[ componentId ]?.[ key ];
+};

@@ -27,17 +27,9 @@ class Frontend_Assets_Loader {
 		$min_suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
 
 		wp_register_script(
-			self::ACTION_LINK_HANDLERS_HANDLE,
-			"{$assets_url}js/atomic-widgets-action-link-handler{$min_suffix}.js",
-			[ 'jquery', self::FRONTEND_HANDLERS_HANDLE ],
-			ELEMENTOR_VERSION,
-			true
-		);
-
-		wp_register_script(
-			self::FORM_HANDLERS_HANDLE,
-			"{$assets_url}js/atomic-widgets-form-handler{$min_suffix}.js",
-			[ 'jquery', self::FRONTEND_HANDLERS_HANDLE, self::ALPINEJS_HANDLE ],
+			self::FRONTEND_HANDLERS_HANDLE,
+			"{$assets_url}js/packages/frontend-handlers/frontend-handlers{$min_suffix}.js",
+			[],
 			ELEMENTOR_VERSION,
 			true
 		);

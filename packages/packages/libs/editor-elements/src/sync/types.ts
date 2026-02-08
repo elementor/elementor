@@ -1,4 +1,4 @@
-import { type PropsSchema, type PropValue } from '@elementor/editor-props';
+import { type PropsSchema, type PropValue, type SizePropValue } from '@elementor/editor-props';
 import { type ClassState, type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 
 import { type ControlItem } from '../types';
@@ -42,6 +42,7 @@ export type V1Element = {
 		};
 	};
 	parent?: V1Element;
+	lookup?: () => V1Element;
 };
 
 export type StringPropValue = {
@@ -62,8 +63,8 @@ export type BooleanPropValue = {
 export type TimingConfigPropValue = {
 	$$type: 'timing-config';
 	value: {
-		duration: NumberPropValue;
-		delay: NumberPropValue;
+		duration: SizePropValue;
+		delay: SizePropValue;
 	};
 };
 
@@ -73,8 +74,8 @@ export type ConfigPropValue = {
 		replay: BooleanPropValue;
 		easing: StringPropValue;
 		relativeTo: StringPropValue;
-		offsetTop: NumberPropValue;
-		offsetBottom: NumberPropValue;
+		offsetTop?: SizePropValue;
+		offsetBottom?: SizePropValue;
 	};
 };
 

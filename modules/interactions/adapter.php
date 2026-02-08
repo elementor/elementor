@@ -10,6 +10,12 @@ class Adapter {
 	const VERSION_V1 = 1;
 	const VERSION_V2 = 2;
 	const ITEMS_TYPE = 'interactions-array';
+	const TIMING_PROPERTIES = [ 'duration', 'delay' ];
+
+	private const TO_MS = [
+		'ms'  => 1,
+		's'   => 1000,
+	];
 
 	public static function wrap_for_db( $interactions ) {
 		$decoded = self::decode( $interactions );
@@ -48,7 +54,7 @@ class Adapter {
 			$items = isset( $decoded['items']['value'] ) ? $decoded['items']['value'] : [];
 		}
 
-		$items = self::transform_items_timing_to_number( $items );
+		$items = self::transform_offsets_to_size( $items );
 
 		$unwrapped = [
 			'items' => $items,
@@ -94,7 +100,7 @@ class Adapter {
 		return $items;
 	}
 
-	private static function transform_items_timing_to_number( $items ) {
+	private static function transform_offsets_to_size( $items ) {
 		if ( ! is_array( $items ) ) {
 			return $items;
 		}
@@ -104,25 +110,14 @@ class Adapter {
 				continue;
 			}
 
-			$timing_config = $item['value']['animation']['value']['timing_config']['value'] ?? null;
-			if ( $timing_config ) {
-				if ( isset( $timing_config['duration'] ) && 'size' === ( $timing_config['duration']['$$type'] ?? null ) ) {
-					$item['value']['animation']['value']['timing_config']['value']['duration'] = self::size_to_number( $timing_config['duration'] );
-				}
-
-				if ( isset( $timing_config['delay'] ) && 'size' === ( $timing_config['delay']['$$type'] ?? null ) ) {
-					$item['value']['animation']['value']['timing_config']['value']['delay'] = self::size_to_number( $timing_config['delay'] );
-				}
-			}
-
 			$config = $item['value']['animation']['value']['config']['value'] ?? null;
 			if ( $config ) {
-				if ( isset( $config['offsetTop'] ) && 'size' === ( $config['offsetTop']['$$type'] ?? null ) ) {
-					$item['value']['animation']['value']['config']['value']['offsetTop'] = self::size_to_number( $config['offsetTop'] );
+				if ( isset( $config['offsetTop'] ) && 'number' === ( $config['offsetTop']['$$type'] ?? null ) ) {
+					$item['value']['animation']['value']['config']['value']['offsetTop'] = self::number_to_size( $config['offsetTop'], '%' );
 				}
 
-				if ( isset( $config['offsetBottom'] ) && 'size' === ( $config['offsetBottom']['$$type'] ?? null ) ) {
-					$item['value']['animation']['value']['config']['value']['offsetBottom'] = self::size_to_number( $config['offsetBottom'] );
+				if ( isset( $config['offsetBottom'] ) && 'number' === ( $config['offsetBottom']['$$type'] ?? null ) ) {
+					$item['value']['animation']['value']['config']['value']['offsetBottom'] = self::number_to_size( $config['offsetBottom'], '%' );
 				}
 			}
 		}
@@ -152,6 +147,58 @@ class Adapter {
 	}
 
 	/**
+	 * Recursively remove all $$type wrappers and extract plain values.
+	 * Used specifically for frontend script output where we want clean data.
+	 *
+	 * Transforms: {"$$type": "string", "value": "fade"} → "fade"
+	 * Transforms: {"$$type": "size", "value": {"size": 300, "unit": "ms"}} → {"size": 300, "unit": "ms"}
+	 *
+	 * @param mixed $data The data to clean.
+	 * @return mixed The cleaned data without $$type markers.
+	 */
+	public static function clean_prop_types( $data, $parent_key = null ) {
+		if ( ! is_array( $data ) ) {
+			return $data;
+		}
+
+		// If this is a PropType object (has $$type), extract and clean its value
+		if ( isset( $data['$$type'] ) ) {
+			$value = $data['value'] ?? null;
+
+			if ( 'size' === $data['$$type'] && in_array( $parent_key, self::TIMING_PROPERTIES, true ) ) {
+				return self::size_to_milliseconds( $value );
+			}
+
+			return self::clean_prop_types( $value, $parent_key );
+		}
+
+		// Otherwise, recursively clean all array elements
+		$cleaned = [];
+		foreach ( $data as $key => $value ) {
+			$cleaned[ $key ] = self::clean_prop_types( $value, $key );
+		}
+
+		return $cleaned;
+	}
+
+	private static function size_to_milliseconds( $size_value ) {
+		if ( ! is_array( $size_value ) || ! isset( $size_value['size'] ) ) {
+			return $size_value;
+		}
+
+		$size = $size_value['size'];
+		$unit = $size_value['unit'] ?? 'ms';
+
+		// Convert seconds to milliseconds
+		if ( 's' === $unit ) {
+			return $size * 1000;
+		}
+
+		// Already in milliseconds
+		return $size;
+	}
+
+	/**
 	 * Extract numeric value from a PropType that can be either 'number' or 'size'.
 	 * - number format: {$$type: 'number', value: 300} → returns 300
 	 * - size format: {$$type: 'size', value: {size: 300, unit: 'ms'}} → returns 300
@@ -176,6 +223,22 @@ class Adapter {
 		return $default;
 	}
 
+	public static function extract_time_value( $prop, $default ) {
+		$value = self::extract_numeric_value( $prop, $default );
+
+		if ( 'number' === $prop['$$type'] ) {
+			return $value;
+		}
+
+		return self::to_milliseconds( $value, $prop['value']['unit'] );
+	}
+
+	public static function to_milliseconds( int $value, string $unit ): int {
+		$multiplier = self::TO_MS[ $unit ] ?? 1;
+
+		return $value * $multiplier;
+	}
+
 	/**
 	 * Decode interactions from string or return as-is if array.
 	 */
@@ -186,7 +249,7 @@ class Adapter {
 
 		if ( is_string( $interactions ) ) {
 			$decoded = json_decode( $interactions, true );
-			if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
+			if ( JSON_ERROR_NONE === json_last_error() && is_array( $decoded ) ) {
 				return $decoded;
 			}
 		}

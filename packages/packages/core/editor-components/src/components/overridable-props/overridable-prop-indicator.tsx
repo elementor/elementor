@@ -6,10 +6,11 @@ import { type PropType, type TransformablePropValue } from '@elementor/editor-pr
 import { bindPopover, bindTrigger, Popover, Tooltip, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { useSanitizeOverridableProps } from '../../hooks/use-sanitize-overridable-props';
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
 import { useComponentInstanceElement, useOverridablePropValue } from '../../provider/overridable-prop-context';
 import { setOverridableProp } from '../../store/actions/set-overridable-prop';
-import { useCurrentComponentId, useOverridableProps } from '../../store/store';
+import { useCurrentComponentId } from '../../store/store';
 import { type OverridableProps } from '../../types';
 import { resolveOverridePropValue } from '../../utils/resolve-override-prop-value';
 import { Indicator } from './indicator';
@@ -19,7 +20,7 @@ import { getOverridableProp } from './utils/get-overridable-prop';
 export function OverridablePropIndicator() {
 	const { propType } = useBoundProp();
 	const componentId = useCurrentComponentId();
-	const overridableProps = useOverridableProps( componentId );
+	const overridableProps = useSanitizeOverridableProps( componentId );
 
 	if ( ! isPropAllowed( propType ) || ! componentId || ! overridableProps ) {
 		return null;

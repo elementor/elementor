@@ -13,6 +13,7 @@ export type Offsets = {
 };
 
 export const INLINE_EDITING_PROPERTY_PER_TYPE: Record< string, string > = {
+	'e-button': 'text',
 	'e-form-label': 'text',
 	'e-heading': 'title',
 	'e-paragraph': 'paragraph',

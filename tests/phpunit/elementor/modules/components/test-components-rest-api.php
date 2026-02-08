@@ -704,7 +704,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'widgetType' => 'e-button',
 					'propKey' => 'text',
 					'originValue' => [
-						'$$type' => 'string',
+						'$$type' => 'html',
 						'value' => 'Component 2 Button',
 					],
 					'groupId' => 'group-1',
@@ -784,7 +784,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'prop-button-link', $decoded_props['props'] );
 		
 		// Verify the originValue structures are intact
-		$this->assertEquals( 'string', $decoded_props['props']['prop-button-text']['originValue']['$$type'] );
+		$this->assertEquals( 'html', $decoded_props['props']['prop-button-text']['originValue']['$$type'] );
 		$this->assertEquals( 'Component 2 Button', $decoded_props['props']['prop-button-text']['originValue']['value'] );
 		
 		$this->assertEquals( 'link', $decoded_props['props']['prop-button-link']['originValue']['$$type'] );
@@ -806,7 +806,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'widgetType' => 'e-button',
 					'propKey' => 'text',
 					'originValue' => [
-						'$$type' => 'string',
+						'$$type' => 'html',
 						'value' => 'Test Button Text',
 					],
 					'groupId' => 'group-1',
@@ -1754,7 +1754,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 						'widgetType' => 'e-button',
 						'settings' => [
 							'text' => [
-								'$$type' => 'string',
+								'$$type' => 'html',
 								'value' => 'Button Text',
 							],
 							'link' => [
