@@ -3,9 +3,11 @@
 namespace Elementor\Modules\Components\Transformers;
 
 use Elementor\Core\Base\Document as Component_Document;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Render_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Modules\Components\Components_Repository;
+use Elementor\Modules\Components\Transformers\Overridable_Transformer;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,13 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Component_Instance_Transformer extends Transformer_Base {
-	private static array $nested_path_stack = [];
 	private static array $rendering_stack = [];
 	private static $repository;
 
 	public static function reset_rendering_stack(): void {
 		self::$rendering_stack = [];
-		self::$nested_path_stack = [];
 	}
 
 	public function transform( $value, Props_Resolver_Context $context ) {
@@ -29,7 +29,7 @@ class Component_Instance_Transformer extends Transformer_Base {
 			return '';
 		}
 
-		$instance_element_id = $context->get_element_id();
+		$instance_element_id = Render_Context::get( Overridable_Transformer::class )['instance_id'] ?? null;
 
 		self::$rendering_stack[] = $component_id;
 		$content = $this->get_rendered_content( $component_id, $instance_element_id );
@@ -49,17 +49,11 @@ class Component_Instance_Transformer extends Transformer_Base {
 		if ( ! $component || ! $this->should_render_content( $component ) ) {
 			return '';
 		}
-		$parent_path = ! empty( self::$nested_path_stack ) ? end( self::$nested_path_stack ) : [];
-		$nested_path = $instance_element_id !== null && $instance_element_id !== ''
-			? array_merge( $parent_path, [ $instance_element_id ] )
-			: $parent_path;
 
 		Plugin::$instance->documents->switch_to_document( $component );
 
-		self::$nested_path_stack[] = $nested_path;
-
 		try {
-			$data = $component->get_nested_document_elements_data( $nested_path );
+			$data = $component->get_nested_document_elements_data( $instance_element_id );
 
 			$data = apply_filters( 'elementor/frontend/builder_content_data', $data, $component_id );
 
@@ -77,7 +71,6 @@ class Component_Instance_Transformer extends Transformer_Base {
 
 			return $content;
 		} finally {
-			array_pop( self::$nested_path_stack );
 			Plugin::$instance->documents->restore_document();
 		}
 	}

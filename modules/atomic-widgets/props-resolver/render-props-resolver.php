@@ -33,18 +33,7 @@ class Render_Props_Resolver extends Props_Resolver {
 		return static::instance( self::CONTEXT_SETTINGS );
 	}
 
-	public function resolve( array $schema, array $props, array $options = [] ): array {
-		$previous_options = $this->current_resolve_options;
-		$this->current_resolve_options = ! empty( $options ) ? $options : $previous_options;
-
-		try {
-			return $this->do_resolve( $schema, $props );
-		} finally {
-			$this->current_resolve_options = $previous_options;
-		}
-	}
-
-	private function do_resolve( array $schema, array $props ): array {
+	public function resolve( array $schema, array $props ): array {
 		$resolved = [];
 
 		foreach ( $schema as $key => $prop_type ) {
