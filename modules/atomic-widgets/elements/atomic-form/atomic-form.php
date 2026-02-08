@@ -19,7 +19,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_Prop_Type;
 
 use Elementor\Plugin;
 
@@ -156,7 +155,10 @@ class Atomic_Form extends Atomic_Element_Base {
 				->build(),
 			Widget_Builder::make( Atomic_Button::get_element_type() )
 				->settings( [
-					'text' => Html_Prop_Type::generate( __( 'Submit', 'elementor' ) ),
+					'text' => Html_V2_Prop_Type::generate( [
+						'content'  => __( 'Submit', 'elementor' ),
+						'children' => [],
+					] ),
 					'attributes' => Attributes_Prop_Type::generate( [
 						Key_Value_Prop_Type::generate( [
 							'key' => String_Prop_Type::generate( 'type' ),
