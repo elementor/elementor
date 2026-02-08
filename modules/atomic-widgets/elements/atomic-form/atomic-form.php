@@ -154,7 +154,7 @@ class Atomic_Form extends Atomic_Element_Base {
 				->build(),
 			Widget_Builder::make( Atomic_Button::get_element_type() )
 				->settings( [
-					'text' => String_Prop_Type::generate( __( 'Submit', 'elementor' ) ),
+					'text' => Html_Prop_Type::generate( __( 'Submit', 'elementor' ) ),
 					'attributes' => Attributes_Prop_Type::generate( [
 						Key_Value_Prop_Type::generate( [
 							'key' => String_Prop_Type::generate( 'type' ),
