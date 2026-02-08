@@ -2,6 +2,7 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Form;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Email_Advanced_Settings_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Toggle_Control;
@@ -13,6 +14,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Base\Widget_Builder;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Email_Advanced_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
@@ -65,6 +67,7 @@ class Atomic_Form extends Atomic_Element_Base {
 		'email-subject' => String_Prop_Type::make(),
 		'email-message' => String_Prop_Type::make(),
 		'email-from' => String_Prop_Type::make(),
+		'email-advanced' => Email_Advanced_Prop_Type::make(),
 		'attributes' => Attributes_Prop_Type::make(),
 		];
 	}
@@ -109,6 +112,8 @@ class Atomic_Form extends Atomic_Element_Base {
 			Text_Control::bind_to( 'email-from' )
 				->set_label( __( 'From email', 'elementor' ) )
 				->set_placeholder( __( 'What email address should appear as the sender?', 'elementor' ) ),
+			Email_Advanced_Settings_Control::bind_to( 'email-advanced' )
+				->set_label( __( 'Advanced Settings', 'elementor' ) ),
 		];
 
 		return [

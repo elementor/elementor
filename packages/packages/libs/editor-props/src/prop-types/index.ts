@@ -16,6 +16,7 @@ export * from './stroke';
 export * from './url';
 export * from './layout-direction';
 export * from './link';
+export * from './email-advanced';
 export * from './selection-size';
 export * from './background-prop-types/background';
 export * from './background-prop-types/background-overlay';
