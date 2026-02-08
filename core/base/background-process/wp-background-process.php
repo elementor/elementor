@@ -80,15 +80,41 @@ abstract class WP_Background_Process extends WP_Async_Request {
 		// Schedule the cron healthcheck.
 		$this->schedule_event();
 
-		// On admin requests, also process on shutdown as fallback.
+		// On admin page requests (not AJAX/cron), process on shutdown as fallback.
 		// This ensures updates run even if loopback requests are blocked.
-		// Similar to how WooCommerce Action Scheduler handles this.
-		if ( is_admin() ) {
-			add_action( 'shutdown', [ $this, 'handle_cron_healthcheck' ] );
+		// Similar to WordPress ALTERNATE_WP_CRON - flush output first, then run directly.
+		if ( is_admin() && ! wp_doing_ajax() && ! wp_doing_cron() ) {
+			add_action( 'shutdown', [ $this, 'dispatch_on_shutdown' ], 0 );
 		}
 
 		// Perform remote post.
 		return parent::dispatch();
+	}
+
+	/**
+	 * Dispatch on shutdown
+	 *
+	 * Flush output to browser first, then run handler directly.
+	 * This mimics WordPress ALTERNATE_WP_CRON behavior - no HTTP loopback needed.
+	 *
+	 * @access public
+	 */
+	public function dispatch_on_shutdown() {
+		// Flush output to browser so admin page loads immediately.
+		if ( ob_get_level() ) {
+			wp_ob_end_flush_all();
+		}
+
+		if ( function_exists( 'fastcgi_finish_request' ) ) {
+			fastcgi_finish_request();
+		} elseif ( function_exists( 'litespeed_finish_request' ) ) {
+			litespeed_finish_request();
+		} else {
+			flush();
+		}
+
+		// Now run handler directly in this process (no HTTP request).
+		$this->handle_cron_healthcheck();
 	}
 
 	/**
