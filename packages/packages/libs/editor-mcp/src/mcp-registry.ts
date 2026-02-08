@@ -125,16 +125,14 @@ type ResourceList = {
 type ToolRegistrationOptions<
 	InputArgs extends undefined | z.ZodRawShape = undefined,
 	OutputSchema extends undefined | z.ZodRawShape = undefined,
-	ExpectedOutput = OutputSchema extends z.ZodRawShape
-		? z.objectOutputType< OutputSchema, z.ZodTypeAny >
-		: string,
+	ExpectedOutput = OutputSchema extends z.ZodRawShape ? z.objectOutputType< OutputSchema, z.ZodTypeAny > : string,
 > = {
 	name: string;
 	description: string;
 	schema?: InputArgs;
 	/**
 	 * Auto added fields:
-	 * @param errors           z.string().optional().describe('Error message if the tool failed')
+	 * @param errors z.string().optional().describe('Error message if the tool failed')
 	 */
 	outputSchema?: OutputSchema;
 	handler: InputArgs extends z.ZodRawShape

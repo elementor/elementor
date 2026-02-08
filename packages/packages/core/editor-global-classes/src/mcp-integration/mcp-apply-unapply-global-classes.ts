@@ -10,7 +10,9 @@ export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEnt
 		},
 		outputSchema: {
 			result: z.string().describe( 'Result message indicating the success of the apply operation' ),
-			llm_instructions: z.string().describe( 'Instructions what to do next, Important to follow these instructions!' ),
+			llm_instructions: z
+				.string()
+				.describe( 'Instructions what to do next, Important to follow these instructions!' ),
 		},
 		name: 'apply-global-class',
 		modelPreferences: {
