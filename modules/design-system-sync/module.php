@@ -4,9 +4,10 @@ namespace Elementor\Modules\DesignSystemSync;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as ExperimentsManager;
+use Elementor\Modules\DesignSystemSync\Classes\Kit_Stylesheet_Extended;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
+	exit;
 }
 
 class Module extends BaseModule {
@@ -26,5 +27,23 @@ class Module extends BaseModule {
 			'default' => ExperimentsManager::STATE_INACTIVE,
 			'release_status' => ExperimentsManager::RELEASE_STATUS_ALPHA,
 		];
+	}
+
+	public function __construct() {
+		parent::__construct();
+
+		if ( ! $this->is_experiment_active() ) {
+			return;
+		}
+
+		$this->register_hooks();
+	}
+
+	private function is_experiment_active(): bool {
+		return \Elementor\Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
+	}
+
+	private function register_hooks() {
+		( new Kit_Stylesheet_Extended() )->register_hooks();
 	}
 }

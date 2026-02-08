@@ -1,6 +1,12 @@
 @import "sidebar-variables";
 
 #editor-one-top-bar {
+	--editor-one-sidebar-admin-top-bar-height: 48px;
+
+	&:not(:has(header)) {
+		height: var(--editor-one-sidebar-admin-top-bar-height);
+	}
+
 	> * {
 		inset-block-start: var(--editor-one-wordpress-admin-bar-height, 32px);
 		inset-inline-start: var(--editor-one-sidebar-left-offset, 160px);

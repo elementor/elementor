@@ -1,4 +1,5 @@
 import {
+	ChipsControl,
 	type ControlComponent,
 	DateTimeControl,
 	HtmlTagControl,
@@ -31,6 +32,7 @@ import {
 	type PropTypeUtil,
 	queryPropTypeUtil,
 	sizePropTypeUtil,
+	stringArrayPropTypeUtil,
 	stringPropTypeUtil,
 } from '@elementor/editor-props';
 
@@ -49,6 +51,7 @@ const controlTypes = {
 	textarea: { component: TextAreaControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	size: { component: SizeControl, layout: 'two-columns', propTypeUtil: sizePropTypeUtil },
 	select: { component: SelectControlWrapper, layout: 'two-columns', propTypeUtil: stringPropTypeUtil },
+	chips: { component: ChipsControl, layout: 'full', propTypeUtil: stringArrayPropTypeUtil },
 	link: { component: LinkControl, layout: 'custom', propTypeUtil: linkPropTypeUtil },
 	query: { component: QueryControl, layout: 'full', propTypeUtil: queryPropTypeUtil },
 	url: { component: UrlControl, layout: 'full', propTypeUtil: stringPropTypeUtil },

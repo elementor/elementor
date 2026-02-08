@@ -72,6 +72,8 @@ declare global {
 			};
 		};
 		ElementorInteractionsConfig?: InteractionsConfig;
+		ElementorVariablesQuotaConfig?: Record< string, number >;
+		ElementorVariablesQuotaConfigExtended?: Record< string, number >;
 	}
 }
 

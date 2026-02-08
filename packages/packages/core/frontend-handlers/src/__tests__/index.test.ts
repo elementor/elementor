@@ -232,7 +232,7 @@ describe( 'Frontend Handlers', () => {
 
 			window.dispatchEvent(
 				new CustomEvent( 'elementor/element/destroy', {
-					detail: { id: ELEMENT_ID, type: WIDGET_ELEMENT_TYPE },
+					detail: { id: ELEMENT_ID, type: WIDGET_ELEMENT_TYPE, element },
 				} )
 			);
 
@@ -685,6 +685,52 @@ describe( 'Frontend Handlers', () => {
 			// Assert
 			expect( callbackCounts.get( PARENT_1_ID ) ).toBe( 1 );
 			expect( callbackCounts.get( PARENT_2_ID ) ).toBe( 1 );
+		} );
+
+		it( 'should not abort handlers of first element when rendering second element with same ID', () => {
+			// Arrange
+			const SHARED_ID = 'shared-internal-id';
+			let element1Signal: AbortSignal | undefined;
+			let element2Signal: AbortSignal | undefined;
+
+			const element1 = document.createElement( 'div' );
+			element1.setAttribute( 'data-e-type', WIDGET_ELEMENT_TYPE );
+			element1.setAttribute( 'data-id', SHARED_ID );
+			document.body.appendChild( element1 );
+
+			const element2 = document.createElement( 'div' );
+			element2.setAttribute( 'data-e-type', WIDGET_ELEMENT_TYPE );
+			element2.setAttribute( 'data-id', SHARED_ID );
+			document.body.appendChild( element2 );
+
+			register( {
+				elementType: WIDGET_ELEMENT_TYPE,
+				id: HANDLER_IDS.handler_1,
+				callback: ( { element, signal } ) => {
+					if ( element === element1 ) {
+						element1Signal = signal;
+					} else if ( element === element2 ) {
+						element2Signal = signal;
+					}
+					return undefined;
+				},
+			} );
+
+			// Act - Render elements
+			window.dispatchEvent(
+				new CustomEvent( 'elementor/element/render', {
+					detail: { id: SHARED_ID, type: WIDGET_ELEMENT_TYPE, element: element1 },
+				} )
+			);
+			window.dispatchEvent(
+				new CustomEvent( 'elementor/element/render', {
+					detail: { id: SHARED_ID, type: WIDGET_ELEMENT_TYPE, element: element2 },
+				} )
+			);
+
+			// Assert - Both signals should be active (not aborted)
+			expect( element1Signal?.aborted ).toBe( false );
+			expect( element2Signal?.aborted ).toBe( false );
 		} );
 	} );
 

@@ -5,6 +5,11 @@
       "fromType": "string",
       "toType": "html",
       "path": "operations/string-to-html.json"
+    },
+    "number-to-size": {
+      "fromType": "number",
+      "toType": "size",
+      "path": "operations/number-to-size.json"
     }
   }
 }

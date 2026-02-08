@@ -17,6 +17,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\Interactions\Adapter as Interactions_Adapter;
 use Elementor\Utils;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -224,7 +225,7 @@ trait Has_Atomic_Base {
 	final public function get_raw_data( $with_html_content = false ) {
 		$raw_data = parent::get_raw_data( $with_html_content );
 
-		$raw_data['styles'] = $this->styles;
+		$raw_data['styles'] = Atomic_Widget_Styles::get_license_based_filtered_styles( $this->styles ?? [] );
 		$raw_data['interactions'] = $this->interactions ?? [];
 		$raw_data['editor_settings'] = $this->editor_settings;
 
@@ -361,7 +362,7 @@ trait Has_Atomic_Base {
 		$timing_config = $this->extract_prop_value( $animation, 'timing_config' );
 		$config = $this->extract_prop_value( $animation, 'config' );
 
-		$duration = 300;
+		$duration = 600;
 		$delay = 0;
 		$replay = 0;
 		$easing = 'easeIn';
@@ -370,8 +371,8 @@ trait Has_Atomic_Base {
 		$offset_bottom = 85;
 
 		if ( is_array( $timing_config ) ) {
-			$duration = Interactions_Adapter::extract_numeric_value( $timing_config['duration'] ?? null, 300 );
-			$delay = Interactions_Adapter::extract_numeric_value( $timing_config['delay'] ?? null, 0 );
+			$duration = Interactions_Adapter::extract_time_value( $timing_config['duration'] ?? null, 600 );
+			$delay = Interactions_Adapter::extract_time_value( $timing_config['delay'] ?? null, 0 );
 		}
 
 		if ( is_array( $config ) ) {

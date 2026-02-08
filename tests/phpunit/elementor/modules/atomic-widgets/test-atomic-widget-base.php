@@ -921,6 +921,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 	private function filter_out_extra_fields( array $data ): array {
 		unset( $data['_cssid'] );
 		unset( $data['display-conditions'] );
+		unset( $data['attributes'] );
 
 		return $data;
 	}

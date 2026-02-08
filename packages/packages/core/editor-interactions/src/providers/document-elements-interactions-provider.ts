@@ -2,6 +2,7 @@ import { getCurrentDocumentId, getElementInteractions, getElements } from '@elem
 import { __privateListenTo as listenTo, windowEvent } from '@elementor/editor-v1-adapters';
 
 import { createInteractionsProvider } from '../utils/create-interactions-provider';
+import { normalizeInteractions } from './utils/normalize-interactions';
 
 export const ELEMENTS_INTERACTIONS_PROVIDER_KEY_PREFIX = 'document-elements-interactions-';
 
@@ -35,10 +36,13 @@ export const documentElementsInteractionsProvider = createInteractionsProvider( 
 
 			return filtered.map( ( element ) => {
 				const interactions = getElementInteractions( element.id );
+
+				const normalizedInteractions = normalizeInteractions( interactions );
+
 				return {
 					elementId: element.id,
 					dataId: element.id,
-					interactions: interactions || { version: 1, items: [] },
+					interactions: normalizedInteractions || { version: 1, items: [] },
 				};
 			} );
 		},

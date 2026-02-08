@@ -5,6 +5,7 @@ import { controlsRegistry, ElementProvider } from '@elementor/editor-editing-pan
 import {
 	getContainer,
 	getElementLabel,
+	getElementSetting,
 	getElementType,
 	getWidgetsCache,
 	useElementSetting,
@@ -43,6 +44,7 @@ mockCurrentUserCapabilities( true );
 
 const MOCK_ELEMENT_ID = 'element-123';
 const MOCK_COMPONENT_ID = 456;
+const MOCK_INNER_COMPONENT_ID = 789;
 const MOCK_COMPONENT_NAME = 'Test Component';
 const MOCK_INSTANCE_ID = 'instance-789';
 const MOCK_PROP_TYPE = createMockPropType( { kind: 'plain', key: 'string' } );
@@ -79,6 +81,27 @@ const MOCK_ORIGIN_OVERRIDABLE_PROP = {
 	widgetType: 'e-text',
 	elType: 'widget',
 	elementId: 'test-123',
+};
+
+const MOCK_INNER_COMPONENT_OVERRIDABLE_PROPS = {
+	props: {
+		'inner-prop-1': {
+			overrideKey: 'inner-prop-1',
+			label: 'Inner Title',
+			elementId: 'test-123',
+			propKey: 'title',
+			widgetType: 'e-text',
+			elType: 'widget',
+			groupId: 'inner-content',
+			originValue: { $$type: 'string', value: 'Inner Value' },
+		},
+	},
+	groups: {
+		items: {
+			'inner-content': { id: 'inner-content', label: 'Inner Content', props: [ 'inner-prop-1' ] },
+		},
+		order: [ 'inner-content' ],
+	},
 };
 
 const MOCK_OVERRIDABLE_PROPS = {
@@ -165,7 +188,14 @@ const MOCK_OVERRIDABLE_PROPS_WITH_NESTED = {
 			widgetType: 'e-component',
 			elType: 'widget',
 			groupId: 'nested',
-			originValue: { $$type: 'string', value: 'Nested Title Value' },
+			originValue: {
+				$$type: 'override',
+				value: {
+					override_key: 'inner-prop-1',
+					override_value: { $$type: 'string', value: 'Nested Title Value' },
+					schema_source: { type: 'component', id: MOCK_INNER_COMPONENT_ID },
+				},
+			},
 			originPropFields: MOCK_ORIGIN_OVERRIDABLE_PROP,
 		},
 	},
@@ -466,7 +496,67 @@ function setupComponent( {
 		isArchived,
 	};
 
-	dispatch( slice.actions.load( [ componentData ] ) );
+	const componentsToLoad = [ componentData ];
+
+	if ( isWithNestedOverridableProps ) {
+		const innerComponentData = {
+			id: MOCK_INNER_COMPONENT_ID,
+			uid: 'inner-component-uid',
+			name: 'Inner Component',
+			overridableProps: MOCK_INNER_COMPONENT_OVERRIDABLE_PROPS,
+			isArchived: false,
+		};
+		componentsToLoad.push( innerComponentData as unknown as typeof componentData );
+
+		const nestedComponentInstanceValue = {
+			component_id: { $$type: 'number', value: MOCK_INNER_COMPONENT_ID },
+			overrides: {
+				$$type: 'overrides',
+				value: [
+					{
+						$$type: 'overridable',
+						value: {
+							override_key: 'nested-prop-1',
+							origin_value: {
+								$$type: 'override',
+								value: {
+									override_key: 'inner-prop-1',
+									override_value: null,
+									schema_source: { type: 'component', id: MOCK_INNER_COMPONENT_ID },
+								},
+							},
+						},
+					},
+				],
+			},
+		};
+
+		jest.mocked( getElementSetting ).mockImplementation( ( elementId, settingKey ) => {
+			if ( elementId === 'nested-instance-1' && settingKey === 'component_instance' ) {
+				return {
+					$$type: 'component-instance',
+					value: nestedComponentInstanceValue,
+				};
+			}
+			return undefined;
+		} );
+
+		jest.mocked( componentInstancePropTypeUtil.extract ).mockImplementation( ( value: unknown ) => {
+			const typedValue = value as { $$type?: string; value?: { component_id?: { value?: number } } } | undefined;
+			if (
+				typedValue?.$$type === 'component-instance' &&
+				typedValue?.value?.component_id?.value === MOCK_INNER_COMPONENT_ID
+			) {
+				return nestedComponentInstanceValue as ReturnType< typeof componentInstancePropTypeUtil.extract >;
+			}
+			return {
+				component_id: { $$type: 'number' as const, value: MOCK_COMPONENT_ID },
+				overrides: { $$type: 'overrides' as const, value: [] },
+			};
+		} );
+	}
+
+	dispatch( slice.actions.load( componentsToLoad ) );
 }
 
 function renderEditInstancePanel( store: Store< SliceState< typeof slice > > ) {

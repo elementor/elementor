@@ -5,4 +5,4 @@ export type V4PromotionData = {
 	ctaUrl: string;
 };
 
-export type V4PromotionKey = 'displayConditions' | 'customCss';
+export type V4PromotionKey = 'displayConditions' | 'customCss' | 'attributes';

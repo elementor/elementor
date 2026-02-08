@@ -31,8 +31,20 @@ const createInteraction = (
 						timing_config: {
 							$$type: 'timing-config',
 							value: {
-								duration: { $$type: 'number', value: duration },
-								delay: { $$type: 'number', value: delay },
+								duration: {
+									$$type: 'size',
+									value: {
+										size: duration,
+										unit: 'ms',
+									},
+								},
+								delay: {
+									$$type: 'size',
+									value: {
+										size: delay,
+										unit: 'ms',
+									},
+								},
 							},
 						},
 						config: {
@@ -41,8 +53,8 @@ const createInteraction = (
 								replay: { $$type: 'boolean', value: false },
 								easing: { $$type: 'string', value: 'easeIn' },
 								relativeTo: { $$type: 'string', value: 'viewport' },
-								offsetTop: { $$type: 'number', value: 15 },
-								offsetBottom: { $$type: 'number', value: 85 },
+								offsetTop: { $$type: 'size', value: { size: 15, unit: '%' } },
+								offsetBottom: { $$type: 'size', value: { size: 85, unit: '%' } },
 							},
 						},
 					},
@@ -126,8 +138,20 @@ describe( 'InteractionsList onPlayInteraction', () => {
 								timing_config: {
 									$$type: 'timing-config',
 									value: {
-										duration: { $$type: 'number', value: 300 },
-										delay: { $$type: 'number', value: 0 },
+										duration: {
+											$$type: 'size',
+											value: {
+												size: 300,
+												unit: 'ms',
+											},
+										},
+										delay: {
+											$$type: 'size',
+											value: {
+												size: 0,
+												unit: 'ms',
+											},
+										},
 									},
 								},
 							},
@@ -148,8 +172,20 @@ describe( 'InteractionsList onPlayInteraction', () => {
 								timing_config: {
 									$$type: 'timing-config',
 									value: {
-										duration: { $$type: 'number', value: 500 },
-										delay: { $$type: 'number', value: 0 },
+										duration: {
+											$$type: 'number',
+											value: {
+												size: 500,
+												unit: 'ms',
+											},
+										},
+										delay: {
+											$$type: 'number',
+											value: {
+												size: 0,
+												unit: 'ms',
+											},
+										},
 									},
 								},
 							},
@@ -196,8 +232,20 @@ describe( 'InteractionsList onPlayInteraction', () => {
 								timing_config: {
 									$$type: 'timing-config',
 									value: {
-										duration: { $$type: 'number', value: 300 },
-										delay: { $$type: 'number', value: 0 },
+										duration: {
+											$$type: 'size',
+											value: {
+												size: 300,
+												unit: 'ms',
+											},
+										},
+										delay: {
+											$$type: 'size',
+											value: {
+												size: 0,
+												unit: 'ms',
+											},
+										},
 									},
 								},
 							},

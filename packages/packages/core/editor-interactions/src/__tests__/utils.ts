@@ -11,6 +11,9 @@ type Props = {
 	delay?: number;
 	replay?: boolean;
 	easing?: string;
+	relativeTo?: string;
+	offsetTop?: number;
+	offsetBottom?: number;
 	excludedBreakpoints?: string[];
 };
 
