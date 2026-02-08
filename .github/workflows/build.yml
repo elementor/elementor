@@ -37,7 +37,7 @@ jobs:
   build-plugin:
     name: Build plugin
     runs-on: ubuntu-22.04
-    if: startsWith( github.repository, 'elementor/' )
+    # if: startsWith( github.repository, 'elementor/' )
     outputs:
       artifact_name: ${{ env.PLUGIN_FOLDER_FILENAME}}
       changelog_diff: ${{ steps.changelog_diff_files.outputs.diff }}
@@ -102,7 +102,7 @@ jobs:
           retention-days: 3
 
       - name: Find existing comment on PR (Elementor repo)
-        if: github.event_name == 'pull_request' && startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
+        if: github.event_name == 'pull_request'
         uses: peter-evans/find-comment@v3
         id: find
         with:
@@ -111,7 +111,7 @@ jobs:
           body-includes: 'Elementor Build'
 
       - name: Comment build info on PR (Elementor repo)
-        if: github.event_name == 'pull_request' && startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
+        if: github.event_name == 'pull_request'
         uses: peter-evans/create-or-update-comment@v4
         with:
           comment-id: ${{ steps.find.outputs.comment-id }}
@@ -132,7 +132,7 @@ jobs:
           edit-mode: replace
 
       - name: Print artifact info once PR is non Elementor repo
-        if: github.event_name == 'pull_request' && !startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
+        if: github.event_name == 'pull_request'
         run: |
           echo "Artifact info:"
           echo "  Name: ${{ env.PLUGIN_FOLDER_FILENAME }}"
