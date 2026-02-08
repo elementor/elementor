@@ -248,7 +248,9 @@ trait Has_Atomic_Base {
 			$props['attributes']['value'] ?? []
 		) );
 
-		return Render_Props_Resolver::for_settings()->resolve( $schema, $props );
+		return Render_Props_Resolver::for_settings()->resolve( $schema, $props, [
+			'element_id' => $this->get_id(),
+		] );
 	}
 
 	protected function get_initial_attributes() {
@@ -277,7 +279,9 @@ trait Has_Atomic_Base {
 		$single_schema = [ $key => $schema[ $key ] ];
 		$single_props = [ $key => $prop_value ];
 
-		$resolved = Render_Props_Resolver::for_settings()->resolve( $single_schema, $single_props );
+		$resolved = Render_Props_Resolver::for_settings()->resolve( $single_schema, $single_props, [
+			'element_id' => $this->get_id(),
+		] );
 
 		return $resolved[ $key ] ?? null;
 	}

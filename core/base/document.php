@@ -2112,15 +2112,20 @@ abstract class Document extends Controls_Stack {
 
 	public function get_nested_document_elements_data( $nested_path = [] ) {
 		$elements = $this->get_elements_data();
-		return $this->add_nested_path_to_elements_data( $elements, $nested_path );
+		$elements_copy = json_decode( wp_json_encode( $elements ), true );
+
+		return $this->add_nested_path_to_elements_data( $elements_copy, $nested_path );
 	}
 
-	private function add_nested_path_to_elements_data( &$elements_data, $nested_path ) {
+	private function add_nested_path_to_elements_data( array $elements_data, array $nested_path ): array {
+		if ( empty( $nested_path ) ) {
+			return $elements_data;
+		}
 
-		$stringified_nested_path = implode( '-', $nested_path );
+		$prefix = implode( '_', $nested_path );
 
 		foreach ( $elements_data as &$element_data ) {
-			$element_data['id'] = $stringified_nested_path . '-' . $element_data['id'];
+			$element_data['id'] = $prefix . '_' . $element_data['id'];
 			$element_data['elements'] = $this->add_nested_path_to_elements_data( $element_data['elements'], $nested_path );
 		}
 		unset( $element_data );

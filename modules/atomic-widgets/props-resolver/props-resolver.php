@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Props_Resolver {
+	protected array $current_resolve_options = [];
+
 	protected static array $instances = [];
 
 	protected Transformers_Registry $transformers_registry;
@@ -90,6 +92,7 @@ abstract class Props_Resolver {
 			$context = Props_Resolver_Context::make()
 				->set_key( $key )
 				->set_disabled( (bool) ( $value['disabled'] ?? false ) )
+				->set_element_id( $this->current_resolve_options['element_id'] ?? null )
 				->set_prop_type( $prop_type );
 
 			return $transformer->transform( $value['value'], $context );
