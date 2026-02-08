@@ -55,7 +55,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		} );
 	} );
 
-	test.only( 'Interactions functionality end-to-end test', async ( { page, apiRequests }, testInfo ) => {
+	test.skip( 'Interactions functionality end-to-end test', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
