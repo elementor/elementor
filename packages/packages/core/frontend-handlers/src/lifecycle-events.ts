@@ -34,7 +34,7 @@ export const onElementRender = ( {
 	elementType: string;
 	elementId: string;
 } ) => {
-	cleanupUnmountCallbacks( element );
+	cleanupOnUnmount( element );
 
 	const controller = new AbortController();
 	const manualUnmount: ( () => void )[] = [];
@@ -67,7 +67,7 @@ export const onElementRender = ( {
 		return;
 	}
 
-	unmountCallbacks.set( element, { controller, manualUnmount } );
+	setUnmountEntry( { element, controller, manualUnmount } );
 
 	Array.from( elementTypeHandlers.get( elementType )?.values() ?? [] ).forEach( ( handler ) => {
 		const settings = element.getAttribute( 'data-e-settings' );
@@ -135,13 +135,7 @@ export const onElementSelectorRender = ( {
 	} );
 
 	if ( requiresCleanup ) {
-		const existingEntry = unmountCallbacks.get( element );
-
-		if ( existingEntry ) {
-			existingEntry.manualUnmount.push( ...manualUnmount );
-		} else {
-			unmountCallbacks.set( element, { controller, manualUnmount } );
-		}
+		setUnmountEntry( { element, controller, manualUnmount } );
 	}
 };
 
@@ -158,12 +152,30 @@ export const onElementDestroy = ( {
 		return;
 	}
 
-	cleanupUnmountCallbacks( element );
+	cleanupOnUnmount( element );
 
 	dispatchDestroyedEvent( { element, elementType, elementId } );
 };
 
-const cleanupUnmountCallbacks = ( element: Element ) => {
+const setUnmountEntry = ( {
+	element,
+	controller,
+	manualUnmount,
+}: {
+	element: Element;
+	controller: AbortController;
+	manualUnmount: ( () => void )[];
+} ) => {
+	const existingEntry = unmountCallbacks.get( element );
+
+	if ( existingEntry ) {
+		existingEntry.manualUnmount.push( ...manualUnmount );
+	} else {
+		unmountCallbacks.set( element, { controller, manualUnmount } );
+	}
+};
+
+const cleanupOnUnmount = ( element: Element ) => {
 	const entry = unmountCallbacks.get( element );
 
 	if ( entry ) {
