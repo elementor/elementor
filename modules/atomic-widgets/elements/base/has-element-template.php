@@ -84,7 +84,6 @@ trait Has_Element_Template {
 			'type' => $this->get_name(),
 			'settings' => $this->get_atomic_settings(),
 			'base_styles' => $this->get_base_styles_dictionary(),
-			'interactions' => $this->get_interactions_ids(),
 			'children_placeholder' => $this->get_children_placeholder(),
 		];
 	}

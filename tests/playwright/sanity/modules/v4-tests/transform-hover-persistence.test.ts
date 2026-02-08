@@ -11,7 +11,7 @@ test.describe( 'Transform repeater persistence @atomic-widgets', () => {
 		await context.close();
 	} );
 
-	test.only( 'Transform repeater items in hover state should persist after page refresh', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Transform repeater items in hover state should persist after page refresh', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 

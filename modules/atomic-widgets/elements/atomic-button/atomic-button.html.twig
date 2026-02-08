@@ -9,14 +9,13 @@
         target="{{ settings.link.target }}"
             class="{{ classes }}"
             data-interaction-id="{{ id }}"
-            data-interactions="{{ interactions | json_encode | e('html_attr') }}"
             {{ id_attribute }} {{ settings.attributes | raw }}
         >
             {{ settings.text | striptags(allowed_tags) | raw }}
         </{{ settings.link.tag | e('html_tag') }}>
     {% else %}
-        <button class="{{ classes }}" data-interaction-id="{{ id }}" data-interactions="{{ interactions | json_encode | e('html_attr') }}" {{ id_attribute }} {{ settings.attributes | raw }}>
-            {{ settings.text | striptags(allowed_tags) | raw }}
+        <button class="{{ classes }}" data-interaction-id="{{ id }}" {{ id_attribute }} {{ settings.attributes | raw }}>
+            {{ settings.text  | striptags(allowed_tags) | raw }}
         </button>
     {% endif %}
 {% endif %}
