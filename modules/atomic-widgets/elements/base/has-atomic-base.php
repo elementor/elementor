@@ -14,7 +14,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-use Elementor\Modules\Interactions\Adapter as Interactions_Adapter;
 use Elementor\Utils;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
@@ -301,108 +300,6 @@ trait Has_Atomic_Base {
 			'elementor/atomic-widgets/props-schema',
 			$schema
 		);
-	}
-
-	public function get_interactions_ids() {
-		$animation_ids = [];
-
-		$list_of_interactions = $this->extract_interactions_items( $this->interactions );
-
-		foreach ( $list_of_interactions as $interaction ) {
-			if ( isset( $interaction['$$type'] ) && 'interaction-item' === $interaction['$$type'] ) {
-				$animation_id = $this->extract_animation_id_from_prop_type( $interaction );
-				if ( $animation_id ) {
-					$animation_ids[] = $animation_id;
-				}
-			} elseif ( isset( $interaction['animation']['animation_id'] ) ) {
-				$animation_ids[] = $interaction['animation']['animation_id'];
-			}
-		}
-
-		return $animation_ids;
-	}
-
-	/**
-	 * Extract items array from interactions data.
-	 * Handles both v1 format (items is array) and v2 format (items is wrapped with $$type).
-	 */
-	private function extract_interactions_items( $interactions ) {
-		if ( ! is_array( $interactions ) || ! isset( $interactions['items'] ) ) {
-			return [];
-		}
-
-		$items = $interactions['items'];
-
-		// Handle v2 wrapped format: {$$type: 'interactions-array', value: [...]}
-		if ( isset( $items['$$type'] ) && Interactions_Adapter::ITEMS_TYPE === $items['$$type'] ) {
-			return isset( $items['value'] ) && is_array( $items['value'] ) ? $items['value'] : [];
-		}
-
-		// v1 format: items is direct array
-		return is_array( $items ) ? $items : [];
-	}
-
-	private function extract_animation_id_from_prop_type( $item ) {
-		if ( ! isset( $item['value'] ) || ! is_array( $item['value'] ) ) {
-			return null;
-		}
-
-		$item_value = $item['value'];
-
-		$trigger = $this->extract_prop_value( $item_value, 'trigger' );
-		$animation = $this->extract_prop_value( $item_value, 'animation' );
-
-		if ( ! is_array( $animation ) ) {
-			return null;
-		}
-
-		$effect = $this->extract_prop_value( $animation, 'effect' );
-		$type = $this->extract_prop_value( $animation, 'type' );
-		$direction = $this->extract_prop_value( $animation, 'direction' );
-		$timing_config = $this->extract_prop_value( $animation, 'timing_config' );
-		$config = $this->extract_prop_value( $animation, 'config' );
-
-		$duration = 600;
-		$delay = 0;
-		$replay = 0;
-		$easing = 'easeIn';
-		$relative_to = 'viewport';
-		$offset_top = 15;
-		$offset_bottom = 85;
-
-		if ( is_array( $timing_config ) ) {
-			$duration = Interactions_Adapter::extract_time_value( $timing_config['duration'] ?? null, 600 );
-			$delay = Interactions_Adapter::extract_time_value( $timing_config['delay'] ?? null, 0 );
-		}
-
-		if ( is_array( $config ) ) {
-			$relative_to = $this->extract_prop_value( $config, 'relativeTo', 'viewport' );
-			$offset_top = Interactions_Adapter::extract_numeric_value( $config['offsetTop'] ?? null, 15 );
-			$offset_bottom = Interactions_Adapter::extract_numeric_value( $config['offsetBottom'] ?? null, 85 );
-
-			$replay = $this->extract_prop_value( $config, 'replay', 0 );
-			if ( empty( $replay ) && 0 !== $replay && '0' !== $replay ) {
-				$replay = 0;
-			}
-
-			$easing = $this->extract_prop_value( $config, 'easing', 'easeIn' );
-		} else {
-			$replay = 0;
-		}
-
-		return implode( '-', [
-			$trigger,
-			$effect,
-			$type,
-			$direction,
-			$duration,
-			$delay,
-			$replay,
-			$easing,
-			$relative_to,
-			$offset_top,
-			$offset_bottom,
-		] );
 	}
 
 	public function print_content() {
