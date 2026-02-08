@@ -48,7 +48,7 @@ class Component_Instance_Transformer extends Transformer_Base {
 
 		Plugin::$instance->documents->switch_to_document( $component );
 
-		$data = $component->get_elements_data();
+		$data = $component->get_nested_document_elements_data( [ 'test'] );
 
 		$data = apply_filters( 'elementor/frontend/builder_content_data', $data, $component_id );
 

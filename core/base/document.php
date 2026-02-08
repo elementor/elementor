@@ -2109,4 +2109,23 @@ abstract class Document extends Controls_Stack {
 
 		return $this->elements_iteration_actions;
 	}
+
+	public function get_nested_document_elements_data( $nested_path = [] ) {
+		$elements = $this->get_elements_data();
+		return $this->add_nested_path_to_elements_data( $elements, $nested_path );
+	}
+
+	private function add_nested_path_to_elements_data( &$elements_data, $nested_path ) {
+
+		$stringified_nested_path = implode( '-', $nested_path );
+
+		foreach ( $elements_data as &$element_data ) {
+			$element_data['id'] = $stringified_nested_path . '-' . $element_data['id'];
+			$element_data['elements'] = $this->add_nested_path_to_elements_data( $element_data['elements'], $nested_path );
+		}
+		unset( $element_data );
+
+		return $elements_data;
+	}
+
 }
