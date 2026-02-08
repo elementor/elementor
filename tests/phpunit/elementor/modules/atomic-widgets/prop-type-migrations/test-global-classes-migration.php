@@ -41,18 +41,18 @@ class Test_Global_Classes_Migration extends Elementor_Test_Base {
 		];
 
 		if ( in_array( $test_name, $tests_needing_migration_schema, true ) ) {
-			add_filter( 'elementor/atomic-widgets/styles/schema', [ $this, 'add_title_prop_to_style_schema' ], 999999 );
+			add_filter( 'elementor/atomic-widgets/styles/schema', [ $this, 'add_css_prop_prop_to_style_schema' ], 999999 );
 		}
 	}
 
 	public function tearDown(): void {
-		remove_filter( 'elementor/atomic-widgets/styles/schema', [ $this, 'add_title_prop_to_style_schema' ], 999999 );
+		remove_filter( 'elementor/atomic-widgets/styles/schema', [ $this, 'add_css_prop_prop_to_style_schema' ], 999999 );
 		Migrations_Orchestrator::destroy();
 		parent::tearDown();
 	}
 
-	public function add_title_prop_to_style_schema(): array {
-		return [ 'title' => Mock_String_GC_V2_Prop_Type::make() ];
+	public function add_css_prop_prop_to_style_schema(): array {
+		return [ 'css_prop' => Mock_String_GC_V2_Prop_Type::make() ];
 	}
 
 	public function test_no_migration_needed_validation_passes() {
@@ -68,7 +68,7 @@ class Test_Global_Classes_Migration extends Elementor_Test_Base {
 					'props' => [
 						'css_prop' => [
 							'$$type' => 'string',
-							'value' => 'pretty style',
+							'value' => 'Pretty style',
 						],
 					],
 				],
@@ -90,7 +90,7 @@ class Test_Global_Classes_Migration extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertFalse( $save_callback_called, 'Save callback should not be called when no changes are needed' );
-		$this->assertEquals( 'Hello', $global_classes_data['items'][0]['props']['title']['value'] );
+		$this->assertEquals( 'Pretty style', $global_classes_data['items'][0]['props']['css_prop']['value'] );
 	}
 
 	public function test_global_classes_migration_performs_update() {
@@ -133,7 +133,7 @@ class Test_Global_Classes_Migration extends Elementor_Test_Base {
 		// Assert
 		$this->assertTrue( $save_callback_called, 'Save callback should be called when migration occurs' );
 		
-		$migrated_prop = $global_classes_data['items'][0]['props']['title'];
+		$migrated_prop = $global_classes_data['items'][0]['props']['css_prop'];
 		$this->assertEquals( 'string_v2', $migrated_prop['$$type'], 'Type should be updated to string_v2' );
 		// The migration string-to-string_v2.json usually sets/updates value or keeps it. 
 		// Assuming the migration just changes type or keeps value. 
@@ -180,6 +180,6 @@ class Test_Global_Classes_Migration extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertTrue( $save_callback_called, 'Should still migrate valid items even if some are malformed' );
-		$this->assertEquals( 'string_v2', $global_classes_data['items'][1]['props']['title']['$$type'] );
+		$this->assertEquals( 'string_v2', $global_classes_data['items'][1]['props']['css_prop']['$$type'] );
 	}
 }
