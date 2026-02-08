@@ -85,6 +85,9 @@ abstract class WP_Background_Process extends WP_Async_Request {
 		// Similar to WordPress ALTERNATE_WP_CRON - flush output first, then run directly.
 		if ( is_admin() && ! wp_doing_ajax() && ! wp_doing_cron() ) {
 			add_action( 'shutdown', [ $this, 'dispatch_on_shutdown' ], 0 );
+			error_log( 'Elementor BG Process: shutdown hook registered for ' . $this->identifier );
+		} else {
+			error_log( 'Elementor BG Process: shutdown hook NOT registered - is_admin=' . ( is_admin() ? 'yes' : 'no' ) . ', ajax=' . ( wp_doing_ajax() ? 'yes' : 'no' ) . ', cron=' . ( wp_doing_cron() ? 'yes' : 'no' ) );
 		}
 
 		// Perform remote post.
@@ -100,6 +103,11 @@ abstract class WP_Background_Process extends WP_Async_Request {
 	 * @access public
 	 */
 	public function dispatch_on_shutdown() {
+		error_log( 'Elementor BG Process: dispatch_on_shutdown called for ' . $this->identifier );
+
+		// Check state before running
+		error_log( 'Elementor BG Process: is_process_running=' . ( $this->is_process_running() ? 'yes' : 'no' ) . ', is_queue_empty=' . ( $this->is_queue_empty() ? 'yes' : 'no' ) );
+
 		// Flush output to browser so admin page loads immediately.
 		if ( ob_get_level() ) {
 			wp_ob_end_flush_all();
@@ -107,14 +115,18 @@ abstract class WP_Background_Process extends WP_Async_Request {
 
 		if ( function_exists( 'fastcgi_finish_request' ) ) {
 			fastcgi_finish_request();
+			error_log( 'Elementor BG Process: fastcgi_finish_request called' );
 		} elseif ( function_exists( 'litespeed_finish_request' ) ) {
 			litespeed_finish_request();
+			error_log( 'Elementor BG Process: litespeed_finish_request called' );
 		} else {
 			flush();
+			error_log( 'Elementor BG Process: flush called' );
 		}
 
 		// Now run handler directly in this process (no HTTP request).
 		$this->handle_cron_healthcheck();
+		error_log( 'Elementor BG Process: handle_cron_healthcheck completed' );
 	}
 
 	/**
