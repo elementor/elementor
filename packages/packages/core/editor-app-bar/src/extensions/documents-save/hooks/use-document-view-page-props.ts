@@ -1,7 +1,7 @@
 import { __useActiveDocument as useActiveDocument } from '@elementor/editor-documents';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
-import { EyeIcon } from '@elementor/icons';
 import { useMixpanel } from '@elementor/events';
+import { EyeIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
 export default function useDocumentViewPageProps() {
@@ -20,8 +20,7 @@ export default function useDocumentViewPageProps() {
 					interaction_type: config?.triggers?.click,
 					target_type: config?.targetTypes?.dropdownItem,
 					target_name: config?.targetNames?.publishDropdown?.viewPage,
-					interaction_result:
-						config?.interactionResults?.actionSelected,
+					interaction_result: config?.interactionResults?.actionSelected,
 					target_location: config?.locations?.topBar,
 					location_l1: config?.secondaryLocations?.publishDropdown,
 				} );

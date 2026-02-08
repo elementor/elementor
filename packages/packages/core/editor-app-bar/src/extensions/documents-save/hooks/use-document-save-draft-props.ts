@@ -2,8 +2,8 @@ import {
 	__useActiveDocument as useActiveDocument,
 	__useActiveDocumentActions as useActiveDocumentActions,
 } from '@elementor/editor-documents';
-import { FileReportIcon } from '@elementor/icons';
 import { useMixpanel } from '@elementor/events';
+import { FileReportIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
 import { type ActionProps } from '../../../types';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { __useNavigateToDocument as useNavigateToDocument } from '@elementor/editor-documents';
-import { PlusIcon } from '@elementor/icons';
 import { useMixpanel } from '@elementor/events';
+import { PlusIcon } from '@elementor/icons';
 import { CircularProgress, ListItemIcon, ListItemText, MenuItem, type MenuItemProps } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
