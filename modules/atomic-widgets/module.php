@@ -135,40 +135,29 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		if ( self::is_active() ) {
-			$this->register_experimental_features();
+		if ( ! self::is_active() ) {
+			return;
 		}
 
-		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
-			Dynamic_Tags_Module::instance()->register_hooks();
+		$this->register_experimental_features();
+		$this->register_hooks();
 
-			( new Atomic_Widget_Styles() )->register_hooks();
-			( new Atomic_Widget_Base_Styles() )->register_hooks();
-			( new Atomic_Widgets_Library() )->register_hooks();
+		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
+		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_styles_schema( $settings ) );
+		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_supported_units( $settings ) );
+		add_filter( 'elementor/widgets/register', fn ( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
+		add_filter( 'elementor/usage/elements/element_title', fn ( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
 
-			Atomic_Styles_Manager::instance()->register_hooks();
+		add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
+		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_scripts() );
+		add_action( 'elementor/frontend/before_register_scripts', fn () => $this->register_frontend_scripts() );
+		add_action( 'elementor/frontend/after_enqueue_styles', fn () => $this->add_inline_styles() );
 
-			( new Atomic_Import_Export() )->register_hooks();
-			( new Atomic_Widgets_Database_Updater() )->register();
-			Migrations_Orchestrator::make()->register_hooks();
-
-			add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
-			add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_styles_schema( $settings ) );
-			add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_supported_units( $settings ) );
-			add_filter( 'elementor/widgets/register', fn ( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
-			add_filter( 'elementor/usage/elements/element_title', fn ( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
-
-			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
-			add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_scripts() );
-			add_action( 'elementor/frontend/before_register_scripts', fn () => $this->register_frontend_scripts() );
-			add_action( 'elementor/frontend/after_enqueue_styles', fn () => $this->add_inline_styles() );
-
-			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
-			add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
-			add_action( 'elementor/atomic-widgets/import/transformers/register', fn ( $transformers ) => $this->register_import_transformers( $transformers ) );
-			add_action( 'elementor/atomic-widgets/export/transformers/register', fn ( $transformers ) => $this->register_export_transformers( $transformers ) );
-			add_action( 'elementor/editor/templates/panel/category', fn () => $this->render_panel_category_chip() );
-		}
+		add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
+		add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
+		add_action( 'elementor/atomic-widgets/import/transformers/register', fn ( $transformers ) => $this->register_import_transformers( $transformers ) );
+		add_action( 'elementor/atomic-widgets/export/transformers/register', fn ( $transformers ) => $this->register_export_transformers( $transformers ) );
+		add_action( 'elementor/editor/templates/panel/category', fn () => $this->render_panel_category_chip() );
 	}
 
 	public static function get_experimental_data() {
@@ -223,6 +212,17 @@ class Module extends BaseModule {
 		$migrations_affecting_features = [];
 
 		Migrations_Orchestrator::register_affecting_feature_flag_hooks( $migrations_affecting_features );
+	}
+
+	private function register_hooks() {
+		Dynamic_Tags_Module::instance()->register_hooks();
+		Atomic_Styles_Manager::instance()->register_hooks();
+		Migrations_Orchestrator::make()->register_hooks();
+		( new Atomic_Widget_Styles() )->register_hooks();
+		( new Atomic_Widget_Base_Styles() )->register_hooks();
+		( new Atomic_Widgets_Library() )->register_hooks();
+		( new Atomic_Import_Export() )->register_hooks();
+		( new Atomic_Widgets_Database_Updater() )->register();
 	}
 
 	private function add_packages( $packages ) {

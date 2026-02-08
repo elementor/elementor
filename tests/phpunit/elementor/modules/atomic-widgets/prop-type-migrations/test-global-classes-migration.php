@@ -66,9 +66,9 @@ class Test_Global_Classes_Migration extends Elementor_Test_Base {
 					'id' => 'gc_1',
 					'title' => 'My Class',
 					'props' => [
-						'title' => [
+						'css_prop' => [
 							'$$type' => 'string',
-							'value' => 'Hello',
+							'value' => 'pretty style',
 						],
 					],
 				],
@@ -77,7 +77,7 @@ class Test_Global_Classes_Migration extends Elementor_Test_Base {
 		];
 
 		$schema = [
-			'title' => String_Prop_Type::make(),
+			'css_prop' => String_Prop_Type::make(),
 		];
 
 		$save_callback_called = false;
@@ -104,7 +104,7 @@ class Test_Global_Classes_Migration extends Elementor_Test_Base {
 					'id' => 'gc_1',
 					'title' => 'Migrate Me',
 					'props' => [
-						'title' => [
+						'css_prop' => [
 							'$$type' => 'string',
 							'value' => 'Old Value',
 						],
@@ -117,7 +117,7 @@ class Test_Global_Classes_Migration extends Elementor_Test_Base {
 		// We use Mock_String_GC_V2_Prop_Type which corresponds to 'string_v2'
 		// The manifest has a migration 'string-to-string_v2'
 		$schema = [
-			'title' => Mock_String_GC_V2_Prop_Type::make(),
+			'css_prop' => Mock_String_GC_V2_Prop_Type::make(),
 		];
 
 		$save_callback_called = false;
@@ -156,7 +156,7 @@ class Test_Global_Classes_Migration extends Elementor_Test_Base {
 				[
 					'id' => 'gc_2',
 					'props' => [
-						'title' => [
+						'css_prop' => [
 							'$$type' => 'string',
 							'value' => 'Valid',
 						],
@@ -167,7 +167,7 @@ class Test_Global_Classes_Migration extends Elementor_Test_Base {
 		];
 
 		$schema = [
-			'title' => Mock_String_GC_V2_Prop_Type::make(),
+			'css_prop' => Mock_String_GC_V2_Prop_Type::make(),
 		];
 
 		$save_callback_called = false;

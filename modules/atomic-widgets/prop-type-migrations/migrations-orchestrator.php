@@ -19,6 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Migrations_Orchestrator {
 	const EXPERIMENT_BC_MIGRATIONS = 'e_bc_migrations';
+	const MIGRATIONS_URL = 'https://migrations.elementor.com/';
+
 	private const MIGRATIONS_STATE_META_KEY = '_elementor_migrations_state';
 	private ?array $style_schema = null;
 
@@ -61,7 +63,7 @@ class Migrations_Orchestrator {
 			return ELEMENTOR_MIGRATIONS_PATH;
 		}
 
-		return 'https://migrations.elementor.com/';
+		return self::MIGRATIONS_URL;
 	}
 
 	public static function make( ?string $migrations_base_path = null ): self {
@@ -156,24 +158,22 @@ class Migrations_Orchestrator {
 
 	public function migrate_global_classes(
 		array &$global_classes_data,
-		int $post_id,
-		callable $save_callback,
-		?array $schema = null
+		int $kit_id,
+		callable $save_callback
 	): void {
-		$schema = $schema ?? $this->get_style_schema();
-
 		$this->migrate_entity(
 			$global_classes_data,
-			$post_id,
-			fn( array &$data ) => $this->migrate_global_classes_items( $data, $schema ),
+			$kit_id,
+			fn( array &$data ) => $this->migrate_global_classes_items( $data ),
 			$save_callback,
 			'Global classes',
-			'post_id'
+			'kit_id'
 		);
 	}
 
-	private function migrate_global_classes_items( array &$data, array $schema ): bool {
+	private function migrate_global_classes_items( array &$data ): bool {
 		$has_changes = false;
+		$schema = $this->get_style_schema();
 
 		if ( empty( $data['items'] ) ) {
 			return $has_changes;
@@ -197,8 +197,10 @@ class Migrations_Orchestrator {
 					$has_changes = true;
 				}
 			}
+
 			unset( $variant );
 		}
+
 		unset( $item );
 
 		return $has_changes;
@@ -210,7 +212,7 @@ class Migrations_Orchestrator {
 		callable $migrate_logic,
 		callable $save_callback,
 		string $entity_type,
-		string $entity_id_key = 'entity_id'
+		string $entity_id_key
 	): void {
 		try {
 			if ( $this->is_migrated( $entity_id ) ) {
@@ -386,6 +388,7 @@ class Migrations_Orchestrator {
 		$missing_keys = array_keys( $schema );
 		$pending_migrations = [];
 		$has_changes = false;
+
 		foreach ( $settings as $key => $value ) {
 			if ( ! isset( $schema[ $key ] ) ) {
 				$this->process_missing_key( $key, $value, $type, $missing_keys, $pending_migrations );
