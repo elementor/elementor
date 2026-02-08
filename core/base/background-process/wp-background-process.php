@@ -74,14 +74,17 @@ abstract class WP_Background_Process extends WP_Async_Request {
 	 * Dispatch
 	 *
 	 * @access public
-	 * @return array|\WP_Error
+	 * @return true
 	 */
 	public function dispatch() {
 		// Schedule the cron healthcheck.
 		$this->schedule_event();
 
-		// Perform remote post.
-		return parent::dispatch();
+		// Use WordPress spawn_cron() for more reliable loopback handling
+		// instead of custom HTTP request which can fail on remote servers.
+		spawn_cron();
+
+		return true;
 	}
 
 	/**
