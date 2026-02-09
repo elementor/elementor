@@ -13,6 +13,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Widget_Builder;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Email_Advanced_Prop_Type;
@@ -57,6 +58,14 @@ class Atomic_Form extends Atomic_Element_Base {
 	}
 
 	protected static function define_props_schema(): array {
+		$email_dependencies = Dependency_Manager::make()
+			->where( [
+				'operator' => 'contains',
+				'path' => [ 'actions-after-submit' ],
+				'value' => 'email',
+			] )
+			->get();
+
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
@@ -67,11 +76,16 @@ class Atomic_Form extends Atomic_Element_Base {
 				->default( 'default' ),
 			'actions-after-submit' => String_Array_Prop_Type::make()
 				->default( [] ),
-			'email-to' => String_Prop_Type::make(),
-			'email-subject' => String_Prop_Type::make(),
-			'email-message' => String_Prop_Type::make(),
-			'email-from' => String_Prop_Type::make(),
-			'email-advanced' => Email_Advanced_Prop_Type::make(),
+			'email-to' => String_Prop_Type::make()
+				->set_dependencies( $email_dependencies ),
+			'email-subject' => String_Prop_Type::make()
+				->set_dependencies( $email_dependencies ),
+			'email-message' => String_Prop_Type::make()
+				->set_dependencies( $email_dependencies ),
+			'email-from' => String_Prop_Type::make()
+				->set_dependencies( $email_dependencies ),
+			'email-advanced' => Email_Advanced_Prop_Type::make()
+				->set_dependencies( $email_dependencies ),
 			'attributes' => Attributes_Prop_Type::make(),
 		];
 	}

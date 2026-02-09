@@ -22,6 +22,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
 import { extractOrderedDependencies, getUpdatedValues, type Values } from '../utils/prop-dependency-utils';
+import { ConditionalSettingsField } from './conditional-settings-field';
 import { createTopLevelObjectType } from './create-top-level-object-type';
 
 type SettingsFieldProps = {
@@ -66,7 +67,9 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 
 	return (
 		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>
-			<PropKeyProvider bind={ bind }>{ children }</PropKeyProvider>
+			<PropKeyProvider bind={ bind }>
+				<ConditionalSettingsField>{ children }</ConditionalSettingsField>
+			</PropKeyProvider>
 		</PropProvider>
 	);
 };
