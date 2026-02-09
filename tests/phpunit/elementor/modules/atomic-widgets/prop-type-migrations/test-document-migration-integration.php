@@ -3,7 +3,9 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\AtomicWidgets\PropTypeMigrations;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
-use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Loader;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
+use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
+use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -22,33 +24,65 @@ class Test_Document_Migration_Integration extends Elementor_Test_Base {
 
 	private string $fixtures_path = __DIR__ . '/fixtures/document-migrations/';
 
-	// public function setUp(): void {
-	// 	parent::setUp();
+	private array $registered_widgets = [];
 
-	// 	Plugin::$instance->widgets_manager->register( new Atomic_Heading( [], [] ) );
-	// 	Plugin::$instance->widgets_manager->register( new \Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image( [], [] ) );
-	// 	Plugin::$instance->elements_manager->register_element_type( new \Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox( [], [] ) );
-	// 	Plugin::$instance->elements_manager->register_element_type( new \Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block( [], [] ) );
+	private array $registered_elements = [];
 
-	// 	Migrations_Orchestrator::clear_migration_cache();
-	// }
+	public static function setUpBeforeClass(): void {
+		parent::setUpBeforeClass();
+		Migrations_Orchestrator::destroy();
+	}
 
-	// public function tearDown(): void {
-	// 	Plugin::$instance->widgets_manager->unregister( 'e-heading' );
-	// 	Plugin::$instance->widgets_manager->unregister( 'e-image' );
-	// 	Plugin::$instance->elements_manager->unregister_element_type( 'e-flexbox' );
-	// 	Plugin::$instance->elements_manager->unregister_element_type( 'e-div-block' );
+	public function setUp(): void {
+		parent::setUp();
 
-	// 	Migrations_Orchestrator::destroy();
-	// 	Migrations_Loader::destroy();
+		$widgets_manager = Plugin::$instance->widgets_manager;
+		$elements_manager = Plugin::$instance->elements_manager;
 
-	// 	parent::tearDown();
-	// }
+		if ( ! $widgets_manager->get_widget_types( 'e-heading' ) ) {
+			$widgets_manager->register( new Atomic_Heading( [], [] ) );
+			$this->registered_widgets[] = 'e-heading';
+		}
 
+		if ( ! $widgets_manager->get_widget_types( 'e-image' ) ) {
+			$widgets_manager->register( new Atomic_Image( [], [] ) );
+			$this->registered_widgets[] = 'e-image';
+		}
+
+		if ( ! $elements_manager->get_element_types( 'e-flexbox' ) ) {
+			$elements_manager->register_element_type( new Flexbox( [], [] ) );
+			$this->registered_elements[] = 'e-flexbox';
+		}
+
+		if ( ! $elements_manager->get_element_types( 'e-div-block' ) ) {
+			$elements_manager->register_element_type( new Div_Block( [], [] ) );
+			$this->registered_elements[] = 'e-div-block';
+		}
+
+		Migrations_Orchestrator::clear_migration_cache();
+	}
+
+	public function tearDown(): void {
+		$widgets_manager = Plugin::$instance->widgets_manager;
+		$elements_manager = Plugin::$instance->elements_manager;
+
+		foreach ( $this->registered_widgets as $widget_name ) {
+			$widgets_manager->unregister( $widget_name );
+		}
+
+		foreach ( $this->registered_elements as $element_name ) {
+			$elements_manager->unregister_element_type( $element_name );
+		}
+
+		$this->registered_widgets = [];
+		$this->registered_elements = [];
+
+		Migrations_Orchestrator::destroy();
+
+		parent::tearDown();
+	}
 
 	public function test_migrate_real_site_data_with_multiple_prop_types() {
-		$this->markTestSkipped( 'Test disabled: widget registration pollutes global state and breaks other tests. Needs investigation into proper isolation strategy.' );
-		return;
 		// Arrange
 		$data = json_decode(
 			file_get_contents( $this->fixtures_path . 'old-schema-data.json' ),
