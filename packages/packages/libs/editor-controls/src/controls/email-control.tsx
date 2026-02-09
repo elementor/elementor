@@ -1,12 +1,15 @@
 import * as React from 'react';
 import { emailPropTypeUtil } from '@elementor/editor-props';
-import { Grid, Stack } from '@elementor/ui';
+import { Box, Grid, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 import { ControlFormLabel } from '../components/control-form-label';
+import { ControlLabel } from '../components/control-label';
 import { createControl } from '../create-control';
+import { ChipsControl } from './chips-control';
 import { CollapsibleContent } from './collapsible-content';
+import { SelectControl } from './select-control';
 import { TextAreaControl } from './text-area-control';
 import { TextControl } from './text-control';
 
@@ -18,15 +21,15 @@ export const EmailControl = createControl( () => {
 			<Stack gap={ 1.5 }>
 				<ControlFormLabel>{ __( 'Email settings', 'elementor' ) }</ControlFormLabel>
 				<PropKeyProvider bind="to">
-				<Grid container direction="column" gap={ 0.5 }>
-					<Grid item>
-						<ControlFormLabel>{ __( 'Send To', 'elementor' ) }</ControlFormLabel>
+					<Grid container direction="column" gap={ 0.5 }>
+						<Grid item>
+							<ControlFormLabel>{ __( 'Send To', 'elementor' ) }</ControlFormLabel>
+						</Grid>
+						<Grid item>
+							<TextControl placeholder={ __( 'Where should we send new submissions?', 'elementor' ) } />
+						</Grid>
 					</Grid>
-					<Grid item>
-						<TextControl placeholder={ __( 'Where should we send new submissions?', 'elementor' ) } />
-					</Grid>
-				</Grid>
-			</PropKeyProvider>
+				</PropKeyProvider>
 
 				<PropKeyProvider bind="subject">
 					<Grid container direction="column" gap={ 0.5 }>
@@ -64,51 +67,84 @@ export const EmailControl = createControl( () => {
 				</PropKeyProvider>
 
 				<CollapsibleContent defaultOpen={ false }>
-					<Stack gap={ 1.5 }>
-						<PropKeyProvider bind="from-name">
-							<Grid container direction="column" gap={ 0.5 }>
-								<Grid item>
-									<ControlFormLabel>{ __( 'From name', 'elementor' ) }</ControlFormLabel>
+					<Box sx={ { pt: 1.5 } }>
+						<Stack gap={ 1.5 }>
+							<PropKeyProvider bind="from-name">
+								<Grid container direction="column" gap={ 0.5 }>
+									<Grid item>
+										<ControlFormLabel>{ __( 'From name', 'elementor' ) }</ControlFormLabel>
+									</Grid>
+									<Grid item>
+										<TextControl placeholder={ __( '....', 'elementor' ) } />
+									</Grid>
 								</Grid>
-								<Grid item>
-									<TextControl placeholder={ __( '....', 'elementor' ) } />
-								</Grid>
-							</Grid>
-						</PropKeyProvider>
+							</PropKeyProvider>
 
-						<PropKeyProvider bind="reply-to">
-							<Grid container direction="column" gap={ 0.5 }>
-								<Grid item>
-									<ControlFormLabel>{ __( 'Reply-to', 'elementor' ) }</ControlFormLabel>
+							<PropKeyProvider bind="reply-to">
+								<Grid container direction="column" gap={ 0.5 }>
+									<Grid item>
+										<ControlFormLabel>{ __( 'Reply-to', 'elementor' ) }</ControlFormLabel>
+									</Grid>
+									<Grid item>
+										<TextControl placeholder={ __( '....', 'elementor' ) } />
+									</Grid>
 								</Grid>
-								<Grid item>
-									<TextControl placeholder={ __( '....', 'elementor' ) } />
-								</Grid>
-							</Grid>
-						</PropKeyProvider>
+							</PropKeyProvider>
 
-						<PropKeyProvider bind="cc">
-							<Grid container direction="column" gap={ 0.5 }>
-								<Grid item>
-									<ControlFormLabel>{ __( 'Cc', 'elementor' ) }</ControlFormLabel>
+							<PropKeyProvider bind="cc">
+								<Grid container direction="column" gap={ 0.5 }>
+									<Grid item>
+										<ControlFormLabel>{ __( 'Cc', 'elementor' ) }</ControlFormLabel>
+									</Grid>
+									<Grid item>
+										<TextControl placeholder={ __( '....', 'elementor' ) } />
+									</Grid>
 								</Grid>
-								<Grid item>
-									<TextControl placeholder={ __( '....', 'elementor' ) } />
-								</Grid>
-							</Grid>
-						</PropKeyProvider>
+							</PropKeyProvider>
 
-						<PropKeyProvider bind="bcc">
-							<Grid container direction="column" gap={ 0.5 }>
-								<Grid item>
-									<ControlFormLabel>{ __( 'Bcc', 'elementor' ) }</ControlFormLabel>
+							<PropKeyProvider bind="bcc">
+								<Grid container direction="column" gap={ 0.5 }>
+									<Grid item>
+										<ControlFormLabel>{ __( 'Bcc', 'elementor' ) }</ControlFormLabel>
+									</Grid>
+									<Grid item>
+										<TextControl placeholder={ __( '....', 'elementor' ) } />
+									</Grid>
 								</Grid>
-								<Grid item>
-									<TextControl placeholder={ __( '....', 'elementor' ) } />
+							</PropKeyProvider>
+
+							<PropKeyProvider bind="meta-data">
+								<Stack gap={ 0.5 }>
+									<ControlLabel>{ __( 'Meta data', 'elementor' ) }</ControlLabel>
+									<ChipsControl
+										options={ [
+											{ label: __( 'Date', 'elementor' ), value: 'date' },
+											{ label: __( 'Time', 'elementor' ), value: 'time' },
+											{ label: __( 'Page URL', 'elementor' ), value: 'page-url' },
+											{ label: __( 'User agent', 'elementor' ), value: 'user-agent' },
+											{ label: __( 'Credit', 'elementor' ), value: 'credit' },
+										] }
+									/>
+								</Stack>
+							</PropKeyProvider>
+
+							<PropKeyProvider bind="send-as">
+								<Grid container direction="column" gap={ 0.5 }>
+									<Grid item>
+										<ControlFormLabel>{ __( 'Send as', 'elementor' ) }</ControlFormLabel>
+									</Grid>
+									<Grid item>
+										<SelectControl
+											options={ [
+												{ label: __( 'HTML', 'elementor' ), value: 'html' },
+												{ label: __( 'Plain Text', 'elementor' ), value: 'plain' },
+											] }
+										/>
+									</Grid>
 								</Grid>
-							</Grid>
-						</PropKeyProvider>
-					</Stack>
+							</PropKeyProvider>
+						</Stack>
+					</Box>
 				</CollapsibleContent>
 			</Stack>
 		</PropProvider>

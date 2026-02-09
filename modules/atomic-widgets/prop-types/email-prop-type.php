@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -24,6 +25,11 @@ class Email_Prop_Type extends Object_Prop_Type {
 				->default( '' ),
 			'from' => String_Prop_Type::make()
 				->default( '' ),
+			'meta-data' => String_Array_Prop_Type::make()
+				->default( [] ),
+			'send-as' => String_Prop_Type::make()
+				->enum( [ 'html', 'plain' ] )
+				->default( 'html' ),
 			'from-name' => String_Prop_Type::make()
 				->default( '' ),
 			'reply-to' => String_Prop_Type::make()

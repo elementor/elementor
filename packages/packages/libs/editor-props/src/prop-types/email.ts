@@ -10,6 +10,8 @@ export const emailPropTypeUtil = createPropUtils(
 		subject: unknownChildrenSchema,
 		message: unknownChildrenSchema,
 		from: unknownChildrenSchema,
+		'meta-data': unknownChildrenSchema,
+		'send-as': unknownChildrenSchema,
 		'from-name': unknownChildrenSchema,
 		'reply-to': unknownChildrenSchema,
 		cc: unknownChildrenSchema,
