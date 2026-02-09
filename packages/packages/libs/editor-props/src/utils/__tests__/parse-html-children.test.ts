@@ -88,7 +88,7 @@ describe( 'parseHtmlChildren', () => {
 	describe( 'nested elements', () => {
 		test( 'should extract nested children recursively', () => {
 			// Arrange.
-			const html = 'Hi <span id="outer">name is <span id="inner">asaf</span></span>';
+			const html = 'Hi <span id="outer">name is <span id="inner">Rocky</span></span>';
 
 			// Act.
 			const result = parseHtmlChildren( html );
@@ -97,10 +97,12 @@ describe( 'parseHtmlChildren', () => {
 			expect( result.children ).toHaveLength( 1 );
 			expect( result.children[ 0 ].id ).toBe( 'outer' );
 			expect( result.children[ 0 ].type ).toBe( 'span' );
+
 			const nestedChildren = result.children[ 0 ].children ?? [];
+
 			expect( nestedChildren ).toHaveLength( 1 );
 			expect( nestedChildren[ 0 ].id ).toBe( 'inner' );
-			expect( nestedChildren[ 0 ].content ).toBe( 'asaf' );
+			expect( nestedChildren[ 0 ].content ).toBe( 'Rocky' );
 		} );
 	} );
 

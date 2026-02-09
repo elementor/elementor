@@ -2,6 +2,7 @@ import ElementEmpty from './element-empty';
 import RootEmpty from './root-empty';
 
 const NEW_NESTABLE_CLASS = 'elementor-navigator__element-new-nestable';
+const INLINE_CHILD_INDENT_INCREMENT = 10;
 
 export default class extends Marionette.CompositeView {
 	getTemplate() {
@@ -180,9 +181,9 @@ export default class extends Marionette.CompositeView {
 
 		const allChildren = [];
 
-		Object.entries( settings.attributes ).forEach( ( [ , val ] ) => {
-			if ( val && 'html-v2' === val.$$type && Array.isArray( val.value?.children ) ) {
-				allChildren.push( ...val.value.children );
+		Object.values( settings.attributes ).forEach( ( setting ) => {
+			if ( 'html-v2' === setting?.$$type && Array.isArray( setting?.value?.children ) ) {
+				allChildren.push( ...setting.value.children );
 			}
 		} );
 
@@ -417,8 +418,6 @@ export default class extends Marionette.CompositeView {
 	}
 
 	renderInlineChildren() {
-		const INLINE_CHILD_INDENT_INCREMENT = 10;
-
 		this.ui.elements.find( '.elementor-navigator__inline-child' ).remove();
 
 		const inlineChildren = this.getInlineChildren();
@@ -427,11 +426,11 @@ export default class extends Marionette.CompositeView {
 			return;
 		}
 
-		this.appendInlineChildItems( inlineChildren, this.getIndent() + INLINE_CHILD_INDENT_INCREMENT );
+		this.appendInlineChildItems( inlineChildren, this.getIndent() );
 	}
 
 	appendInlineChildItems( children, indent ) {
-		const INLINE_CHILD_INDENT_INCREMENT = 10;
+		indent += INLINE_CHILD_INDENT_INCREMENT;
 		const $container = this.ui.elements;
 
 		children.forEach( ( child ) => {
@@ -462,7 +461,7 @@ export default class extends Marionette.CompositeView {
 			$container.append( $item );
 
 			if ( Array.isArray( child.children ) && child.children.length > 0 ) {
-				this.appendInlineChildItems( child.children, indent + INLINE_CHILD_INDENT_INCREMENT );
+				this.appendInlineChildItems( child.children, indent );
 			}
 		} );
 	}
@@ -498,7 +497,7 @@ export default class extends Marionette.CompositeView {
 		} );
 
 		const hasHtmlV2Change = Object.values( settingsModel.changed ).some(
-			( val ) => val && 'html-v2' === val.$$type,
+			( attribute ) => attribute && 'html-v2' === attribute.$$type,
 		);
 
 		if ( hasHtmlV2Change ) {

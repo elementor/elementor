@@ -15,6 +15,9 @@
       "op": { "fn": "move", "src": "value.content", "dest": "value", "clean": false }
     },
     {
+      "op": { "fn": "delete", "path": "value.children" }
+    },
+    {
       "op": { "fn": "set", "path": "$$type", "value": "html" }
     }
   ]

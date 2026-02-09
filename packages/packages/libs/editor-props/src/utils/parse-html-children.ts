@@ -10,6 +10,7 @@ const INLINE_ELEMENTS = new Set( [ 'span', 'b', 'strong', 'i', 'em', 'u', 'a', '
 function generateElementId(): string {
 	const timestamp = Date.now().toString( 36 );
 	const randomPart = Math.random().toString( 36 ).substring( 2, 9 );
+
 	return `e-${ timestamp }-${ randomPart }`;
 }
 
@@ -21,6 +22,7 @@ function traverseChildren( node: Element ): ChildElement[] {
 
 		if ( ! INLINE_ELEMENTS.has( tagName ) ) {
 			result.push( ...traverseChildren( child ) );
+
 			continue;
 		}
 

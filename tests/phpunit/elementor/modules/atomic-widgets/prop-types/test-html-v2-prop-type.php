@@ -207,7 +207,7 @@ class Test_Html_V2_Prop_Type extends TestCase {
 		$this->assertSame( 'bold text', $result['value']['children'][0]['content'] );
 	}
 
-	public function test_sanitize__sanitizes_nested_children() {
+	public function test_sanitize__traverses_nested_children() {
 		// Arrange.
 		$prop_type = Html_V2_Prop_Type::make();
 
