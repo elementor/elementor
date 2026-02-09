@@ -85,9 +85,6 @@ abstract class WP_Background_Process extends WP_Async_Request {
 		// Similar to WordPress ALTERNATE_WP_CRON - flush output first, then run directly.
 		if ( is_admin() && ! wp_doing_ajax() && ! wp_doing_cron() ) {
 			add_action( 'shutdown', [ $this, 'dispatch_on_shutdown' ], 0 );
-			update_option( '_elementor_bg_debug', 'dispatch: shutdown hook registered at ' . gmdate( 'Y-m-d H:i:s' ) );
-		} else {
-			update_option( '_elementor_bg_debug', 'dispatch: shutdown hook NOT registered - is_admin=' . ( is_admin() ? 'yes' : 'no' ) . ', ajax=' . ( wp_doing_ajax() ? 'yes' : 'no' ) . ', cron=' . ( wp_doing_cron() ? 'yes' : 'no' ) . ' at ' . gmdate( 'Y-m-d H:i:s' ) );
 		}
 
 		// Perform remote post.
@@ -103,10 +100,6 @@ abstract class WP_Background_Process extends WP_Async_Request {
 	 * @access public
 	 */
 	public function dispatch_on_shutdown() {
-		// Log state before running
-		$state = 'is_running=' . ( $this->is_process_running() ? 'yes' : 'no' ) . ', is_empty=' . ( $this->is_queue_empty() ? 'yes' : 'no' );
-		update_option( '_elementor_bg_debug', 'dispatch_on_shutdown: ' . $state . ' at ' . gmdate( 'Y-m-d H:i:s' ) );
-
 		// Flush output to browser so admin page loads immediately.
 		if ( ob_get_level() ) {
 			wp_ob_end_flush_all();
@@ -122,8 +115,6 @@ abstract class WP_Background_Process extends WP_Async_Request {
 
 		// Now run handler directly in this process (no HTTP request).
 		$this->handle_cron_healthcheck();
-
-		update_option( '_elementor_bg_debug', 'dispatch_on_shutdown: completed at ' . gmdate( 'Y-m-d H:i:s' ) );
 	}
 
 	/**
