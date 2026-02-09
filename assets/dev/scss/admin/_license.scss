@@ -4,16 +4,13 @@
 	align-items: flex-start;
 	flex-wrap: nowrap;
 
-	*, *::before, *::after {
-		box-sizing: border-box;
-	}
-
 	.elementor-license-box {
 		width: 100%;
 		max-width: 600px;
 		background: white;
 		margin: 20px 0;
 		padding: 20px 20px;
+		box-sizing: border-box;
 
 	h3 {
 		display: flex;
