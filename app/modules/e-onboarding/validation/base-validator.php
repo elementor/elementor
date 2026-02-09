@@ -14,10 +14,6 @@ abstract class Base_Validator {
 
 	abstract protected function get_rules(): array;
 
-	/**
-	 * @param array $params
-	 * @return array|WP_Error
-	 */
 	public function validate( array $params ) {
 		if ( ! is_array( $params ) ) {
 			return new WP_Error( 'invalid_params', 'Parameters must be an array.', [ 'status' => 400 ] );
@@ -43,12 +39,6 @@ abstract class Base_Validator {
 		return $validated;
 	}
 
-	/**
-	 * @param string $field
-	 * @param mixed  $value
-	 * @param array  $rule
-	 * @return mixed|WP_Error
-	 */
 	protected function validate_field( string $field, $value, array $rule ) {
 		$type = $rule['type'] ?? 'string';
 		$nullable = $rule['nullable'] ?? false;
@@ -79,11 +69,6 @@ abstract class Base_Validator {
 		}
 	}
 
-	/**
-	 * @param string $field
-	 * @param mixed  $value
-	 * @return string|WP_Error
-	 */
 	protected function validate_string( string $field, $value ) {
 		if ( ! is_string( $value ) ) {
 			return $this->error( $field, "{$field} must be a string." );
@@ -92,11 +77,6 @@ abstract class Base_Validator {
 		return sanitize_text_field( $value );
 	}
 
-	/**
-	 * @param string $field
-	 * @param mixed  $value
-	 * @return int|WP_Error
-	 */
 	protected function validate_int( string $field, $value ) {
 		if ( ! is_numeric( $value ) ) {
 			return $this->error( $field, "{$field} must be a number." );
@@ -105,11 +85,6 @@ abstract class Base_Validator {
 		return (int) $value;
 	}
 
-	/**
-	 * @param string $field
-	 * @param mixed  $value
-	 * @return bool|WP_Error
-	 */
 	protected function validate_bool( string $field, $value ) {
 		if ( ! is_bool( $value ) ) {
 			return $this->error( $field, "{$field} must be a boolean." );
@@ -118,12 +93,6 @@ abstract class Base_Validator {
 		return $value;
 	}
 
-	/**
-	 * @param string $field
-	 * @param mixed  $value
-	 * @param array  $rule
-	 * @return array|WP_Error
-	 */
 	protected function validate_array( string $field, $value, array $rule ) {
 		if ( ! is_array( $value ) ) {
 			return $this->error( $field, "{$field} must be an array." );
@@ -138,11 +107,6 @@ abstract class Base_Validator {
 		return $value;
 	}
 
-	/**
-	 * @param string $field
-	 * @param mixed  $value
-	 * @return array|WP_Error
-	 */
 	protected function validate_string_array( string $field, $value ) {
 		if ( ! is_array( $value ) ) {
 			return $this->error( $field, "{$field} must be an array." );
@@ -163,11 +127,6 @@ abstract class Base_Validator {
 		);
 	}
 
-	/**
-	 * @param string $field
-	 * @param mixed  $value
-	 * @return array|WP_Error
-	 */
 	protected function validate_custom_data( string $field, $value ) {
 		if ( ! is_array( $value ) ) {
 			return $this->error( $field, "{$field} must be an array." );

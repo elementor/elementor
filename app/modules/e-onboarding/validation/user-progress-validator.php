@@ -2,8 +2,6 @@
 
 namespace Elementor\App\Modules\E_Onboarding\Validation;
 
-use WP_Error;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -42,12 +40,6 @@ class User_Progress_Validator extends Base_Validator {
 		];
 	}
 
-	/**
-	 * @param string $field
-	 * @param mixed  $value
-	 * @param array  $rule
-	 * @return mixed|WP_Error
-	 */
 	protected function validate_field( string $field, $value, array $rule ) {
 		$type = $rule['type'] ?? 'string';
 
@@ -63,10 +55,6 @@ class User_Progress_Validator extends Base_Validator {
 		}
 	}
 
-	/**
-	 * @param mixed $value
-	 * @return string|null|WP_Error
-	 */
 	private function validate_exit_type( $value ) {
 		if ( ! in_array( $value, self::ALLOWED_EXIT_TYPES, true ) ) {
 			return $this->error( 'exit_type', 'Exit type is invalid.' );
@@ -75,11 +63,6 @@ class User_Progress_Validator extends Base_Validator {
 		return '' === $value ? null : $value;
 	}
 
-	/**
-	 * @param string $field
-	 * @param mixed  $value
-	 * @return string|int|WP_Error
-	 */
 	private function validate_string_or_int( string $field, $value ) {
 		if ( is_numeric( $value ) ) {
 			return (int) $value;
@@ -92,11 +75,6 @@ class User_Progress_Validator extends Base_Validator {
 		return $this->error( $field, "{$field} must be a number or string." );
 	}
 
-	/**
-	 * @param string $field
-	 * @param mixed  $value
-	 * @return array|WP_Error
-	 */
 	private function validate_mixed_array( string $field, $value ) {
 		if ( ! is_array( $value ) ) {
 			return $this->error( $field, "{$field} must be an array." );

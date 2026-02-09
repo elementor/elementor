@@ -42,7 +42,6 @@ export function App( props: AppProps ) {
 		return existingStore;
 	}, [] );
 
-	// Initialize store from config after mount (config is now available)
 	useEffect( () => {
 		store.dispatch( initFromConfig() );
 	}, [ store ] );

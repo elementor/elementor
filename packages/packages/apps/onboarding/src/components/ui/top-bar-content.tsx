@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { XIcon } from '@elementor/icons';
 import { Button, IconButton, Stack, styled, useTheme } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 import { ElementorLogo } from './elementor-logo';
 
@@ -43,7 +44,7 @@ export function TopBarContent( { showUpgrade = true, showClose = true, onUpgrade
 			<Stack direction="row" alignItems="center" spacing={ 2 }>
 				{ showUpgrade && (
 					<UpgradeButton variant="contained" onClick={ onUpgrade }>
-						Upgrade
+						{ __( 'Upgrade', 'elementor' ) }
 					</UpgradeButton>
 				) }
 
@@ -51,7 +52,7 @@ export function TopBarContent( { showUpgrade = true, showClose = true, onUpgrade
 					<Stack direction="row" alignItems="center" spacing={ 1.5 }>
 						<Divider />
 						<IconButton
-							aria-label="Close onboarding"
+							aria-label={ __( 'Close onboarding', 'elementor' ) }
 							onClick={ onClose }
 							size="small"
 							sx={ {

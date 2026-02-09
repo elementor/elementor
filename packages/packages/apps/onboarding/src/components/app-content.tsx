@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { Box } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 import { useOnboarding } from '../hooks/use-onboarding';
 import { useUpdateProgress } from '../hooks/use-update-progress';
@@ -61,7 +62,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 					onClose?.();
 				},
 				onError: () => {
-					actions.setError( 'Failed to mark user exit.' );
+					actions.setError( __( 'Failed to mark user exit.', 'elementor' ) );
 				},
 			}
 		);
@@ -97,7 +98,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 					}
 				},
 				onError: () => {
-					actions.setError( 'Failed to complete step.' );
+					actions.setError( __( 'Failed to complete step.', 'elementor' ) );
 				},
 			}
 		);
@@ -106,7 +107,6 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 	const rightPanelConfig = useMemo( () => getStepVisualConfig( stepId ), [ stepId ] );
 	const isPending = updateProgress.isPending || isLoading;
 
-	// Login screen - no footer, minimal header
 	if ( ! hasPassedLogin ) {
 		return (
 			<BaseLayout
@@ -125,10 +125,9 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 		);
 	}
 
-	// Onboarding steps
 	return (
 		<BaseLayout
-			data-testid="onboarding-steps"
+			testId="onboarding-steps"
 			topBar={
 				<TopBar>
 					<TopBarContent showClose={ false } onClose={ handleClose } />
@@ -140,7 +139,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 						showBack
 						showSkip={ ! isLast }
 						showContinue
-						continueLabel={ isLast ? 'Finish' : 'Continue' }
+						continueLabel={ isLast ? __( 'Finish', 'elementor' ) : __( 'Continue', 'elementor' ) }
 						continueLoading={ isPending }
 						onBack={ handleBack }
 						onSkip={ handleSkip }

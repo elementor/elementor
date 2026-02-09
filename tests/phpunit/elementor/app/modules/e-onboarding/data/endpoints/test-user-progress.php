@@ -25,7 +25,7 @@ class Test_User_Progress extends Test_Base {
 
 	public function test_get_items_returns_saved_progress() {
 		// Arrange
-		$this->repository->update_progress( [
+		$this->progress_manager->update_progress( [
 			'current_step' => 2,
 			'completed_steps' => [ 'building_for', 'site_about' ],
 		] );

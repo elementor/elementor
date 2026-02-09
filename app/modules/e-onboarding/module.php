@@ -3,7 +3,7 @@
 namespace Elementor\App\Modules\E_Onboarding;
 
 use Elementor\App\Modules\E_Onboarding\Data\Controller;
-use Elementor\App\Modules\E_Onboarding\Storage\Repository;
+use Elementor\App\Modules\E_Onboarding\Storage\Onboarding_Progress_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
@@ -18,7 +18,7 @@ class Module extends BaseModule {
 	const VERSION = '1.0.0';
 	const EXPERIMENT_NAME = 'e_onboarding';
 
-	private Repository $repository;
+	private Onboarding_Progress_Manager $progress_manager;
 
 	public function get_name(): string {
 		return 'e-onboarding';
@@ -40,7 +40,7 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$this->repository = Repository::instance();
+		$this->progress_manager = Onboarding_Progress_Manager::instance();
 
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 
@@ -55,8 +55,8 @@ class Module extends BaseModule {
 		$this->set_onboarding_settings();
 	}
 
-	public function repository(): Repository {
-		return $this->repository;
+	public function progress_manager(): Onboarding_Progress_Manager {
+		return $this->progress_manager;
 	}
 
 	private function set_onboarding_settings(): void {
@@ -64,8 +64,8 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$progress = $this->repository->get_progress();
-		$choices = $this->repository->get_choices();
+		$progress = $this->progress_manager->get_progress();
+		$choices = $this->progress_manager->get_choices();
 		$steps = $this->get_steps_config();
 
 		Plugin::$instance->app->set_settings( 'e-onboarding', [

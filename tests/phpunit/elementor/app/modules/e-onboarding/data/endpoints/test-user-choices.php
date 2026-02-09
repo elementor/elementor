@@ -25,7 +25,7 @@ class Test_User_Choices extends Test_Base {
 
 	public function test_get_items_returns_saved_choices() {
 		// Arrange
-		$this->repository->update_choices( [
+		$this->progress_manager->update_choices( [
 			'building_for' => 'myself',
 			'site_about' => [ 'blog' ],
 		] );

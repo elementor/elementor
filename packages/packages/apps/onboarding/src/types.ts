@@ -44,15 +44,6 @@ export interface OnboardingProgress {
 	completedAt: number | null;
 }
 
-/**
- * User choices for each onboarding step.
- *
- * Step 1: building_for - single selection
- * Step 2: site_about - multiple selection
- * Step 3: experience_level - single selection
- * Step 4: theme_selection - single selection
- * Step 5: site_features - multiple selection
- */
 export interface OnboardingChoices {
 	building_for: string | null;
 	site_about: string[];

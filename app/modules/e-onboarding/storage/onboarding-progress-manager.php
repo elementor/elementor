@@ -9,15 +9,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Repository {
+class Onboarding_Progress_Manager {
 
 	const PROGRESS_OPTION_KEY = 'elementor_e_onboarding_progress';
 	const CHOICES_OPTION_KEY = 'elementor_e_onboarding_choices';
 	const DEFAULT_TOTAL_STEPS = 5;
 
-	private static ?Repository $instance = null;
+	private static ?Onboarding_Progress_Manager $instance = null;
 
-	public static function instance(): Repository {
+	public static function instance(): Onboarding_Progress_Manager {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
 		}
@@ -100,27 +100,22 @@ class Repository {
 	public function update_choices( array $params ): User_Choices {
 		$choices = $this->get_choices();
 
-		// Step 1: Who are you building for? (single)
 		if ( isset( $params['building_for'] ) ) {
 			$choices->set_building_for( $params['building_for'] );
 		}
 
-		// Step 2: What is your site about? (multiple)
 		if ( isset( $params['site_about'] ) ) {
 			$choices->set_site_about( (array) $params['site_about'] );
 		}
 
-		// Step 3: Experience level (single)
 		if ( isset( $params['experience_level'] ) ) {
 			$choices->set_experience_level( $params['experience_level'] );
 		}
 
-		// Step 4: Theme selection (single)
 		if ( isset( $params['theme_selection'] ) ) {
 			$choices->set_theme_selection( $params['theme_selection'] );
 		}
 
-		// Step 5: Site features (multiple)
 		if ( isset( $params['site_features'] ) ) {
 			$choices->set_site_features( (array) $params['site_features'] );
 		}
