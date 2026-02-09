@@ -92,7 +92,7 @@ export type RenderCachedTwigTemplateOptions< TView extends TwigViewInterface > =
 	transformSettings?: ( settings: Record< string, unknown > ) => Record< string, unknown >;
 };
 
-export async function renderCachedTwigTemplate< TView extends TwigViewInterface >( {
+export async function renderTwigTemplate< TView extends TwigViewInterface >( {
 	view,
 	signal,
 	setup,

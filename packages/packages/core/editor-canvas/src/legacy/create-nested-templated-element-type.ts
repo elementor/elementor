@@ -7,8 +7,8 @@ import {
 	createAfterRender,
 	createBeforeRender,
 	createTwigRenderSetup,
-	renderCachedTwigTemplate,
 	renderChildrenWithOptimization,
+	renderTwigTemplate,
 } from './twig-rendering-utils';
 import { type ElementType, type ElementView, type LegacyWindow } from './types';
 
@@ -149,7 +149,7 @@ export function createNestedTemplatedElementView( {
 		async _renderTemplate() {
 			const model = this.model;
 
-			await renderCachedTwigTemplate( {
+			await renderTwigTemplate( {
 				view: this,
 				signal: this._abortController?.signal,
 				setup,

@@ -7,8 +7,8 @@ import {
 	createAfterRender,
 	createBeforeRender,
 	createTwigRenderSetup,
-	renderCachedTwigTemplate,
 	renderChildrenWithOptimization,
+	renderTwigTemplate,
 	type TwigViewInterface,
 } from './twig-rendering-utils';
 import {
@@ -122,7 +122,7 @@ export function createTemplatedElementView( {
 		}
 
 		async _renderTemplate() {
-			await renderCachedTwigTemplate( {
+			await renderTwigTemplate( {
 				view: this,
 				signal: this._abortController?.signal,
 				setup,
