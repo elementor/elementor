@@ -1,0 +1,9 @@
+{% set classes = ['e-con', 'e-atomic-element'] | merge(settings.classes | default([])) | join(' ') %}
+
+<div data-active-tab="{{ settings.active_tab }}" class="{{ classes }} {{ editor_classes | default('') }}" data-id="{{ id }}" data-e-type="{{ type }}" data-element_type="{{ type }}">
+	<slot name="tabs-menu"></slot>
+	<div data-role="tabs-content"><empty></empty></div>
+	<template>
+		<slot name="tabs-content-area"></slot>
+	</template>
+</div>

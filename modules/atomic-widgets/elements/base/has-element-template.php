@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 
+use Elementor\Modules\AtomicWidgets\Builder\Renderer;
 use Elementor\Modules\AtomicWidgets\Elements\TemplateRenderer\Template_Renderer;
 use Elementor\Utils;
 
@@ -17,6 +18,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @mixin Atomic_Element_Base
  */
 trait Has_Element_Template {
+
+	/* static $requires_xml_parser = false; */
 
 	public function get_initial_config() {
 		$config = parent::get_initial_config();
@@ -50,6 +53,14 @@ trait Has_Element_Template {
 
 			$context = $this->build_template_context();
 			$template_html = $renderer->render( $this->get_main_template(), $context );
+			if ( true === ( self::$requires_xml_parser ?? false ) ) {
+				$xml_renderer = new Renderer( $this );
+				$template_html = $xml_renderer->render( $template_html );
+
+				echo $template_html;
+				return;
+			}
+
 			$children_html = $this->render_children_to_html();
 			$output = str_replace( $this->get_children_placeholder(), $children_html, $template_html );
 

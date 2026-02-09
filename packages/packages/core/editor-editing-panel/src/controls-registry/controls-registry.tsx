@@ -31,6 +31,7 @@ import {
 	imageSrcPropTypeUtil,
 	keyValuePropTypeUtil,
 	linkPropTypeUtil,
+	mediaSrcPropTypeUtil,
 	numberPropTypeUtil,
 	type PropTypeUtil,
 	queryPropTypeUtil,

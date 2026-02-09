@@ -31,7 +31,6 @@ class Flexbox extends Atomic_Element_Base {
 	public static function get_type() {
 		return 'e-flexbox';
 	}
-
 	public static function get_element_type(): string {
 		return 'e-flexbox';
 	}

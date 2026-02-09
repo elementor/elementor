@@ -259,6 +259,45 @@ export function createNestedTemplatedElementView( {
 
 			await waitForChildrenToComplete( this );
 			this._removeChildrenPlaceholder();
+			requestAnimationFrame(() => {
+				this._arrageChildrenInSlots();
+			})
+		},
+
+		_arrageChildrenInSlots() {
+			const allSlots: HTMLSlotElement[] = [];
+			// @ts-ignore Reason: incorrect inference from jQuery
+			const rootElement = this.$el?.[ 0 ] as HTMLElement | undefined;
+			if ( ! rootElement ) {
+				return;
+			}
+			const allTemplates = rootElement.querySelectorAll( 'template' );
+			if ( allTemplates ) {
+				for ( const template of allTemplates ) {
+					const slot = template.content.querySelector( 'slot' );
+					if ( slot ) {
+						allSlots.push( slot );
+					}
+				}
+			}
+			const nonTemplatedSlot = Array.from( rootElement.querySelectorAll( 'slot' ) ?? [] ) as HTMLSlotElement[];
+			allSlots.push( ...nonTemplatedSlot );
+			const childElements = this.children
+				.map( ( childView: ElementView ) => {
+					// @ts-ignore Reason: incorrect inference from jQuery
+					return childView.$el?.[ 0 ] as HTMLElement | undefined;
+				} )
+				.filter( Boolean );
+			[ ...childElements ].forEach( ( el: HTMLElement | undefined ) => {
+				if ( el?.hasAttribute( 'slot' ) ) {
+					const targetSlot = allSlots.find(
+						( slot ) => slot.getAttribute( 'name' ) === el.getAttribute( 'slot' )
+					);
+					if ( targetSlot ) {
+						targetSlot.append( el );
+					}
+				}
+			} );
 		},
 
 		_shouldReuseChildren() {

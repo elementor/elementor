@@ -5,16 +5,19 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 use Elementor\Modules\AtomicWidgets\Elements\TemplateRenderer\Template_Renderer;
 use Elementor\Utils;
 
-if ( ! defined( 'ABSPATH' ) ) {
+if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
 /**
  * @mixin Has_Atomic_Base
  */
-trait Has_Template {
+trait Has_Template
+{
+	static $requires_xml_parser = false;
 
-	public function get_initial_config() {
+	public function get_initial_config()
+	{
 		$config = parent::get_initial_config();
 
 		$config['twig_main_template'] = $this->get_main_template();
@@ -22,16 +25,17 @@ trait Has_Template {
 		return $config;
 	}
 
-	protected function render() {
+	protected function render()
+	{
 		try {
 			$renderer = Template_Renderer::instance();
 
-			foreach ( $this->get_templates() as $name => $path ) {
-				if ( $renderer->is_registered( $name ) ) {
+			foreach ($this->get_templates() as $name => $path) {
+				if ($renderer->is_registered($name)) {
 					continue;
 				}
 
-				$renderer->register( $name, $path );
+				$renderer->register($name, $path);
 			}
 
 			$context = [
@@ -43,9 +47,9 @@ trait Has_Template {
 			];
 
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			echo $renderer->render( $this->get_main_template(), $context );
-		} catch ( \Exception $e ) {
-			if ( Utils::is_elementor_debug() ) {
+			echo $renderer->render($this->get_main_template(), $context);
+		} catch (\Exception $e) {
+			if (Utils::is_elementor_debug()) {
 				throw $e;
 			}
 		}
@@ -53,21 +57,22 @@ trait Has_Template {
 
 	protected function get_templates_contents() {
 		return array_map(
-			fn ( $path ) => Utils::file_get_contents( $path ),
+			fn($path) => Utils::file_get_contents($path),
 			$this->get_templates()
 		);
 	}
 
-	protected function get_main_template() {
+	protected function get_main_template()
+	{
 		$templates = $this->get_templates();
 
-		if ( count( $templates ) > 1 ) {
-			Utils::safe_throw( 'When having more than one template, you should override this method to return the main template.' );
+		if (count($templates) > 1) {
+			Utils::safe_throw('When having more than one template, you should override this method to return the main template.');
 
 			return null;
 		}
 
-		foreach ( $templates as $key => $path ) {
+		foreach ($templates as $key => $path) {
 			// Returns first key in the array.
 			return $key;
 		}

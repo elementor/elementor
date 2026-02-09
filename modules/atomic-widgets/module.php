@@ -115,6 +115,7 @@ use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Self_Hosted_Video\Atomic_Self_Hosted_Video;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Video_Src_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Video_Src_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Elements\V4_Tabs\V4Tabs;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -274,7 +275,7 @@ class Module extends BaseModule {
 	private function register_elements( Elements_Manager $elements_manager ) {
 		$elements_manager->register_element_type( new Div_Block() );
 		$elements_manager->register_element_type( new Flexbox() );
-
+		$elements_manager->register_element_type( new V4Tabs() );
 		$elements_manager->register_element_type( new Atomic_Tabs() );
 		$elements_manager->register_element_type( new Atomic_Tabs_Menu() );
 		$elements_manager->register_element_type( new Atomic_Tab() );
