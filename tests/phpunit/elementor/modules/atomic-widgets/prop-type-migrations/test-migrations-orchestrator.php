@@ -25,10 +25,17 @@ class Mock_String_V2_Prop_Type extends String_Prop_Type {
 class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 	use MatchesSnapshots;
 
-	private string $fixtures_path = __DIR__ . '/fixtures/orchestrator/migrations/';
+	private const WIDGET_TYPE_HEADING = 'e-heading';
+	private const WIDGET_TYPE_PARAGRAPH = 'e-paragraph';
+	private const WIDGET_TYPE_GENERIC = 'e-widget';
 
 	public static function setUpBeforeClass(): void {
 		parent::setUpBeforeClass();
+
+		if ( ! defined( 'ELEMENTOR_MIGRATIONS_PATH' ) ) {
+			define( 'ELEMENTOR_MIGRATIONS_PATH', __DIR__ . '/fixtures/orchestrator/migrations/' );
+		}
+
 		Migrations_Orchestrator::destroy();
 	}
 
@@ -37,9 +44,22 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
+	private function create_element_data( string $widget_type, array $settings ): array {
+		return [
+			[
+				'elType' => 'widget',
+				'widgetType' => $widget_type,
+				'settings' => $settings,
+			],
+		];
+	}
+
+	private function extract_settings( array $data ): array {
+		return $data[0]['settings'] ?? [];
+	}
+
 	public function test_no_migration_needed_validation_passes() {
-		// Arrange
-		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
+		$orchestrator = Migrations_Orchestrator::make();
 
 		$settings = [
 			'title' => [
@@ -52,22 +72,20 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 			],
 		];
 
-		$schema = [
-			'title' => String_Prop_Type::make(),
-			'count' => Number_Prop_Type::make(),
-		];
+		$data = $this->create_element_data( self::WIDGET_TYPE_HEADING, $settings );
+		$saved_data = null;
+		$save_callback = function( $migrated ) use ( &$saved_data ) {
+			$saved_data = $migrated;
+		};
 
-		// Act
-		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'e-heading' );
+		$orchestrator->migrate( $data, 1, $save_callback );
 
-		// Assert
-		$this->assertFalse( $has_changes, 'No changes expected when validation passes' );
-		$this->assertMatchesJsonSnapshot( $settings );
+		$this->assertNull( $saved_data, 'No changes expected when validation passes' );
+		$this->assertMatchesJsonSnapshot( $this->extract_settings( $data ) );
 	}
 
 	public function test_migration_needed_but_no_path_exists() {
-		// Arrange
-		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
+		$orchestrator = Migrations_Orchestrator::make();
 
 		$settings = [
 			'title' => [
@@ -76,21 +94,20 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 			],
 		];
 
-		$schema = [
-			'title' => String_Prop_Type::make(),
-		];
+		$data = $this->create_element_data( self::WIDGET_TYPE_HEADING, $settings );
+		$saved_data = null;
+		$save_callback = function( $migrated ) use ( &$saved_data ) {
+			$saved_data = $migrated;
+		};
 
-		// Act
-		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'e-heading' );
+		$orchestrator->migrate( $data, 2, $save_callback );
 
-		// Assert
-		$this->assertFalse( $has_changes, 'No changes when migration path does not exist' );
-		$this->assertMatchesJsonSnapshot( $settings );
+		$this->assertNull( $saved_data, 'No changes when migration path does not exist' );
+		$this->assertMatchesJsonSnapshot( $this->extract_settings( $data ) );
 	}
 
 	public function test_single_prop_migration_direct_path() {
-		// Arrange
-		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
+		$orchestrator = Migrations_Orchestrator::make();
 
 		$settings = [
 			'title' => [
@@ -103,22 +120,20 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 			],
 		];
 
-		$schema = [
-			'title' => Mock_String_V2_Prop_Type::make(),
-			'count' => Number_Prop_Type::make(),
-		];
+		$data = $this->create_element_data( self::WIDGET_TYPE_HEADING, $settings );
+		$saved_data = null;
+		$save_callback = function( $migrated ) use ( &$saved_data ) {
+			$saved_data = $migrated;
+		};
 
-		// Act
-		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'e-heading' );
+		$orchestrator->migrate( $data, 3, $save_callback );
 
-		// Assert
-		$this->assertTrue( $has_changes, 'Changes expected when prop type migration occurs' );
-		$this->assertMatchesJsonSnapshot( $settings );
+		$this->assertNotNull( $saved_data, 'Changes expected when prop type migration occurs' );
+		$this->assertMatchesJsonSnapshot( $this->extract_settings( $data ) );
 	}
 
 	public function test_widget_level_migration_direct_path() {
-		// Arrange
-		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
+		$orchestrator = Migrations_Orchestrator::make();
 
 		$settings = [
 			'title' => [
@@ -131,22 +146,20 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 			],
 		];
 
-		$schema = [
-			'title' => Html_Prop_Type::make(),
-			'subtitle' => String_Prop_Type::make(),
-		];
+		$data = $this->create_element_data( self::WIDGET_TYPE_HEADING, $settings );
+		$saved_data = null;
+		$save_callback = function( $migrated ) use ( &$saved_data ) {
+			$saved_data = $migrated;
+		};
 
-		// Act
-		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'e-heading' );
+		$orchestrator->migrate( $data, 4, $save_callback );
 
-		// Assert
-		$this->assertTrue( $has_changes, 'Changes expected for widget-level migration' );
-		$this->assertMatchesJsonSnapshot( $settings );
+		$this->assertNotNull( $saved_data, 'Changes expected for widget-level migration' );
+		$this->assertMatchesJsonSnapshot( $this->extract_settings( $data ) );
 	}
 
 	public function test_single_prop_migration_chained_path() {
-		// Arrange
-		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
+		$orchestrator = Migrations_Orchestrator::make();
 
 		$settings = [
 			'description' => [
@@ -155,21 +168,20 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 			],
 		];
 
-		$schema = [
-			'description' => Html_Prop_Type::make(),
-		];
+		$data = $this->create_element_data( self::WIDGET_TYPE_PARAGRAPH, $settings );
+		$saved_data = null;
+		$save_callback = function( $migrated ) use ( &$saved_data ) {
+			$saved_data = $migrated;
+		};
 
-		// Act
-		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'e-paragraph' );
+		$orchestrator->migrate( $data, 5, $save_callback );
 
-		// Assert
-		$this->assertTrue( $has_changes, 'Changes expected for chained migration' );
-		$this->assertMatchesJsonSnapshot( $settings );
+		$this->assertNotNull( $saved_data, 'Changes expected for chained migration' );
+		$this->assertMatchesJsonSnapshot( $this->extract_settings( $data ) );
 	}
 
 	public function test_multiple_props_migration() {
-		// Arrange
-		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
+		$orchestrator = Migrations_Orchestrator::make();
 
 		$settings = [
 			'title' => [
@@ -186,23 +198,20 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 			],
 		];
 
-		$schema = [
-			'title' => Mock_String_V2_Prop_Type::make(),
-			'count' => String_Prop_Type::make(),
-			'unchanged' => String_Prop_Type::make(),
-		];
+		$data = $this->create_element_data( self::WIDGET_TYPE_GENERIC, $settings );
+		$saved_data = null;
+		$save_callback = function( $migrated ) use ( &$saved_data ) {
+			$saved_data = $migrated;
+		};
 
-		// Act
-		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'e-widget' );
+		$orchestrator->migrate( $data, 6, $save_callback );
 
-		// Assert
-		$this->assertTrue( $has_changes, 'Changes expected when multiple props migrate' );
-		$this->assertMatchesJsonSnapshot( $settings );
+		$this->assertNotNull( $saved_data, 'Changes expected when multiple props migrate' );
+		$this->assertMatchesJsonSnapshot( $this->extract_settings( $data ) );
 	}
 
 	public function test_widget_key_migration_upgrade() {
-		// Arrange
-		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
+		$orchestrator = Migrations_Orchestrator::make();
 
 		$settings = [
 			'text' => [
@@ -211,21 +220,20 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 			],
 		];
 
-		$schema = [
-			'content' => String_Prop_Type::make(),
-		];
+		$data = $this->create_element_data( 'test-widget-key-upgrade', $settings );
+		$saved_data = null;
+		$save_callback = function( $migrated ) use ( &$saved_data ) {
+			$saved_data = $migrated;
+		};
 
-		// Act
-		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'test-widget-key-upgrade' );
+		$orchestrator->migrate( $data, 7, $save_callback );
 
-		// Assert
-		$this->assertTrue( $has_changes, 'Changes expected for widget key migration' );
-		$this->assertMatchesJsonSnapshot( $settings );
+		$this->assertNotNull( $saved_data, 'Changes expected for widget key migration' );
+		$this->assertMatchesJsonSnapshot( $this->extract_settings( $data ) );
 	}
 
 	public function test_widget_key_migration_downgrade() {
-		// Arrange
-		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
+		$orchestrator = Migrations_Orchestrator::make();
 
 		$settings = [
 			'icon' => [
@@ -234,21 +242,20 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 			],
 		];
 
-		$schema = [
-			'svg' => String_Prop_Type::make(),
-		];
+		$data = $this->create_element_data( 'test-widget-key-downgrade', $settings );
+		$saved_data = null;
+		$save_callback = function( $migrated ) use ( &$saved_data ) {
+			$saved_data = $migrated;
+		};
 
-		// Act
-		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'test-widget-key-downgrade' );
+		$orchestrator->migrate( $data, 8, $save_callback );
 
-		// Assert
-		$this->assertTrue( $has_changes, 'Changes expected for widget key downgrade' );
-		$this->assertMatchesJsonSnapshot( $settings );
+		$this->assertNotNull( $saved_data, 'Changes expected for widget key downgrade' );
+		$this->assertMatchesJsonSnapshot( $this->extract_settings( $data ) );
 	}
 
 	public function test_widget_key_and_prop_type_migration() {
-		// Arrange
-		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
+		$orchestrator = Migrations_Orchestrator::make();
 
 		$settings = [
 			'text' => [
@@ -257,21 +264,20 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 			],
 		];
 
-		$schema = [
-			'content' => Mock_String_V2_Prop_Type::make(),
-		];
+		$data = $this->create_element_data( 'test-widget-key-and-type', $settings );
+		$saved_data = null;
+		$save_callback = function( $migrated ) use ( &$saved_data ) {
+			$saved_data = $migrated;
+		};
 
-		// Act
-		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'test-widget-key-and-type' );
+		$orchestrator->migrate( $data, 9, $save_callback );
 
-		// Assert
-		$this->assertTrue( $has_changes, 'Changes expected for key and type migration' );
-		$this->assertMatchesJsonSnapshot( $settings );
+		$this->assertNotNull( $saved_data, 'Changes expected for key and type migration' );
+		$this->assertMatchesJsonSnapshot( $this->extract_settings( $data ) );
 	}
 
 	public function test_no_widget_key_migration_when_no_path_exists() {
-		// Arrange
-		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
+		$orchestrator = Migrations_Orchestrator::make();
 
 		$settings = [
 			'unknown' => [
@@ -280,21 +286,20 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 			],
 		];
 
-		$schema = [
-			'content' => String_Prop_Type::make(),
-		];
+		$data = $this->create_element_data( 'test-no-migration-path', $settings );
+		$saved_data = null;
+		$save_callback = function( $migrated ) use ( &$saved_data ) {
+			$saved_data = $migrated;
+		};
 
-		// Act
-		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'test-no-migration-path' );
+		$orchestrator->migrate( $data, 10, $save_callback );
 
-		// Assert
-		$this->assertFalse( $has_changes, 'No changes when no migration path exists' );
-		$this->assertMatchesJsonSnapshot( $settings );
+		$this->assertNull( $saved_data, 'No changes when no migration path exists' );
+		$this->assertMatchesJsonSnapshot( $this->extract_settings( $data ) );
 	}
 
 	public function test_multiple_orphaned_keys_to_one_missing_key_skips_migration() {
-		// Arrange
-		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
+		$orchestrator = Migrations_Orchestrator::make();
 
 		$settings = [
 			'text' => [
@@ -307,21 +312,20 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 			],
 		];
 
-		$schema = [
-			'content' => String_Prop_Type::make(),
-		];
+		$data = $this->create_element_data( 'test-multiple-to-one', $settings );
+		$saved_data = null;
+		$save_callback = function( $migrated ) use ( &$saved_data ) {
+			$saved_data = $migrated;
+		};
 
-		// Act
-		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'test-multiple-to-one' );
+		$orchestrator->migrate( $data, 11, $save_callback );
 
-		// Assert
-		$this->assertFalse( $has_changes, 'No changes when multiple orphaned keys target one' );
-		$this->assertMatchesJsonSnapshot( $settings );
+		$this->assertNull( $saved_data, 'No changes when multiple orphaned keys target one' );
+		$this->assertMatchesJsonSnapshot( $this->extract_settings( $data ) );
 	}
 
 	public function test_one_orphaned_key_with_multiple_targets_skips_migration() {
-		// Arrange
-		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
+		$orchestrator = Migrations_Orchestrator::make();
 
 		$settings = [
 			'text' => [
@@ -330,22 +334,20 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 			],
 		];
 
-		$schema = [
-			'content' => String_Prop_Type::make(),
-			'size' => String_Prop_Type::make(),
-		];
+		$data = $this->create_element_data( 'test-one-to-multiple', $settings );
+		$saved_data = null;
+		$save_callback = function( $migrated ) use ( &$saved_data ) {
+			$saved_data = $migrated;
+		};
 
-		// Act
-		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'test-one-to-multiple' );
+		$orchestrator->migrate( $data, 12, $save_callback );
 
-		// Assert
-		$this->assertFalse( $has_changes, 'No changes when one orphaned key has multiple targets' );
-		$this->assertMatchesJsonSnapshot( $settings );
+		$this->assertNull( $saved_data, 'No changes when one orphaned key has multiple targets' );
+		$this->assertMatchesJsonSnapshot( $this->extract_settings( $data ) );
 	}
 
 	public function test_multiple_unambiguous_widget_key_migrations() {
-		// Arrange
-		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
+		$orchestrator = Migrations_Orchestrator::make();
 
 		$settings = [
 			'text' => [
@@ -358,17 +360,16 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 			],
 		];
 
-		$schema = [
-			'content' => String_Prop_Type::make(),
-			'size' => String_Prop_Type::make(),
-		];
+		$data = $this->create_element_data( 'test-unambiguous-multiple', $settings );
+		$saved_data = null;
+		$save_callback = function( $migrated ) use ( &$saved_data ) {
+			$saved_data = $migrated;
+		};
 
-		// Act
-		$has_changes = $orchestrator->migrate_node( $settings, $schema, 'test-unambiguous-multiple' );
+		$orchestrator->migrate( $data, 13, $save_callback );
 
-		// Assert
-		$this->assertTrue( $has_changes, 'Changes expected for multiple unambiguous migrations' );
-		$this->assertMatchesJsonSnapshot( $settings );
+		$this->assertNotNull( $saved_data, 'Changes expected for multiple unambiguous migrations' );
+		$this->assertMatchesJsonSnapshot( $this->extract_settings( $data ) );
 	}
 }
 

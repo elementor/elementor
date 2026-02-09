@@ -28,10 +28,8 @@ class Migrations_Orchestrator {
 
 	private Migrations_Loader $loader;
 
-	private function __construct( ?string $migrations_base_path ) {
-		$migrations_base_path = $migrations_base_path ?? $this->get_migrations_base_path();
-
-		$this->loader = Migrations_Loader::make( $migrations_base_path );
+	private function __construct() {
+		$this->loader = Migrations_Loader::make( $this->get_migrations_base_path() );
 	}
 
 	public function register_hooks() {
@@ -43,7 +41,7 @@ class Migrations_Orchestrator {
 	}
 
 	private function backward_compatibility_migrations( array $data, $document ): array {
-		$this->migrate_document(
+		$this->migrate(
 			$data,
 			$document->get_post()->ID,
 			function( $migrated_data ) use ( $document ) {
@@ -58,17 +56,16 @@ class Migrations_Orchestrator {
 	}
 
 	private function get_migrations_base_path(): string {
-		// define this in wp-config.php to use local migrations i.e. __DIR__ . '/wp-content/plugins/elementor/migrations/'
 		if ( defined( 'ELEMENTOR_MIGRATIONS_PATH' ) ) {
-			return ELEMENTOR_MIGRATIONS_PATH;
+			return constant( 'ELEMENTOR_MIGRATIONS_PATH' );
 		}
 
 		return self::MIGRATIONS_URL;
 	}
 
-	public static function make( ?string $migrations_base_path = null ): self {
+	public static function make(): self {
 		if ( null === self::$instance ) {
-			self::$instance = new self( $migrations_base_path );
+			self::$instance = new self();
 		}
 
 		return self::$instance;
@@ -81,24 +78,6 @@ class Migrations_Orchestrator {
 
 	/**
 	 * Registers hooks to listen for experiment flag state changes.
-	 *
-	 * Usage example:
-	 * ```
-	 * static $registered = false;
-	 * if ( $registered ) {
-	 *     return;
-	 * }
-	 *
-	 * add_action(
-	 *     'elementor/experiments/feature-state-change/' . Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING,
-	 *     [ __CLASS__, 'clear_migration_cache' ],
-	 *     10,
-	 *     2
-	 * );
-	 *
-	 * $registered = true;
-	 * ```
-	 *
 	 * This ensures that when the inline editing experiment is enabled or disabled, all
 	 * migration state metadata is cleared, forcing documents to be re-migrated with the
 	 * new feature flag state.
@@ -141,85 +120,13 @@ class Migrations_Orchestrator {
 		] );
 	}
 
-	public function migrate_document(
-		array &$elements_data,
-		int $post_id,
-		callable $save_callback
-	): void {
-		$this->migrate_entity(
-			$elements_data,
-			$post_id,
-			[ $this, 'migrate_elements_recursive' ],
-			$save_callback,
-			'Document',
-			'post_id'
-		);
-	}
-
-	public function migrate_global_classes(
-		array &$global_classes_data,
-		int $kit_id,
-		callable $save_callback
-	): void {
-		$this->migrate_entity(
-			$global_classes_data,
-			$kit_id,
-			fn( array &$data ) => $this->migrate_global_classes_items( $data ),
-			$save_callback,
-			'Global classes',
-			'kit_id'
-		);
-	}
-
-	private function migrate_global_classes_items( array &$data ): bool {
-		$has_changes = false;
-		$schema = $this->get_style_schema();
-
-		if ( empty( $data['items'] ) ) {
-			return $has_changes;
-		}
-
-		foreach ( $data['items'] as &$item ) {
-			if ( isset( $item['props'] ) && $this->migrate_node( $item['props'], $schema, 'global-class' ) ) {
-				$has_changes = true;
-			}
-
-			if ( empty( $item['variants'] ) ) {
-				continue;
-			}
-
-			foreach ( $item['variants'] as &$variant ) {
-				if ( ! isset( $variant['props'] ) ) {
-					continue;
-				}
-
-				if ( $this->migrate_node( $variant['props'], $schema, 'global-class' ) ) {
-					$has_changes = true;
-				}
-			}
-
-			unset( $variant );
-		}
-
-		unset( $item );
-
-		return $has_changes;
-	}
-
-	private function migrate_entity(
-		array &$data,
-		int $entity_id,
-		callable $migrate_logic,
-		callable $save_callback,
-		string $entity_type,
-		string $entity_id_key
-	): void {
+	public function migrate( array &$data, int $entity_id, callable $save_callback ): void {
 		try {
 			if ( $this->is_migrated( $entity_id ) ) {
 				return;
 			}
 
-			$has_changes = $migrate_logic( $data );
+			$has_changes = $this->walk_and_migrate( $data );
 
 			if ( $has_changes ) {
 				$save_callback( $data );
@@ -227,42 +134,11 @@ class Migrations_Orchestrator {
 
 			$this->mark_as_migrated( $entity_id );
 		} catch ( \Exception $e ) {
-			Logger::warning( $entity_type . ' migration failed', [
-				$entity_id_key => $entity_id,
+			Logger::warning( 'Migration failed', [
+				'entity_id' => $entity_id,
 				'error' => $e->getMessage(),
 			] );
 		}
-	}
-
-	private function migrate_elements_recursive( array &$elements_data ): bool {
-		$has_changes = false;
-
-		foreach ( $elements_data as &$element ) {
-			$element_type = $element['widgetType'] ?? $element['elType'] ?? '';
-
-			try {
-				$element_has_changes = $this->walk_and_migrate( $element );
-
-				if ( $element_has_changes ) {
-					$has_changes = true;
-				}
-			} catch ( \Exception $e ) {
-				Logger::warning( 'Element migration failed', [
-					'element_type' => $element_type,
-					'error' => $e->getMessage(),
-				] );
-			}
-
-			if ( isset( $element['elements'] ) && is_array( $element['elements'] ) ) {
-				$nested_has_changes = $this->migrate_elements_recursive( $element['elements'] );
-
-				if ( $nested_has_changes ) {
-					$has_changes = true;
-				}
-			}
-		}
-
-		return $has_changes;
 	}
 
 	private function walk_and_migrate( array &$data, ?array $schema = null, ?array $context = null ): bool {
@@ -384,7 +260,7 @@ class Migrations_Orchestrator {
 		return $this->style_schema;
 	}
 
-	public function migrate_node( array &$settings, array $schema, string $type ): bool {
+	private function migrate_node( array &$settings, array $schema, string $type ): bool {
 		$missing_keys = array_keys( $schema );
 		$pending_migrations = [];
 		$has_changes = false;

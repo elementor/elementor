@@ -22,6 +22,14 @@ class Test_Document_Migration_Integration extends Elementor_Test_Base {
 
 	private string $fixtures_path = __DIR__ . '/fixtures/document-migrations/';
 
+	public static function setUpBeforeClass(): void {
+		parent::setUpBeforeClass();
+		
+		if ( ! defined( 'ELEMENTOR_MIGRATIONS_PATH' ) ) {
+			define( 'ELEMENTOR_MIGRATIONS_PATH', __DIR__ . '/fixtures/document-migrations/' );
+		}
+	}
+
 	// public function setUp(): void {
 	// 	parent::setUp();
 
@@ -49,24 +57,22 @@ class Test_Document_Migration_Integration extends Elementor_Test_Base {
 	public function test_migrate_real_site_data_with_multiple_prop_types() {
 		$this->markTestSkipped( 'Test disabled: widget registration pollutes global state and breaks other tests. Needs investigation into proper isolation strategy.' );
 		return;
-		// Arrange
+
 		$data = json_decode(
 			file_get_contents( $this->fixtures_path . 'old-schema-data.json' ),
 			true
 		);
 
-		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
+		$orchestrator = Migrations_Orchestrator::make();
 
 		$post_id = 999;
 
-		// Act
-		$orchestrator->migrate_document(
+		$orchestrator->migrate(
 			$data,
 			$post_id,
 			function() {}
 		);
 
-		// Assert
 		$this->assertMatchesJsonSnapshot( $data );
 	}
 }
