@@ -139,8 +139,6 @@ export declare class ElementView {
 
 	_currentRenderPromise?: Promise< void >;
 
-	#childrenRenderPromises?: Promise< void >[];
-
 	options?: {
 		model: BackboneModel< ElementModel >;
 	};
