@@ -219,24 +219,63 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 	}
 
 	public function __construct() {
+		$this->log_debug( 'constructor_start', [
+			'current_version' => $this->get_current_version(),
+			'new_version' => $this->get_new_version(),
+			'is_admin' => is_admin(),
+		] );
+
 		// If upgrade is completed - show the notice only for admins.
 		// Note: in this case `should_upgrade` returns false, because it's already upgraded.
 		if ( is_admin() && current_user_can( 'update_plugins' ) && $this->get_flag( 'completed' ) ) {
 			add_action( 'admin_notices', [ $this, 'admin_notice_upgrade_is_completed' ] );
 		}
 
-		if ( ! $this->should_upgrade() ) {
+		$should_upgrade = $this->should_upgrade();
+		$this->log_debug( 'should_upgrade_check', [ 'result' => $should_upgrade ] );
+
+		if ( ! $should_upgrade ) {
 			return;
 		}
 
 		$updater = $this->get_task_runner();
 
+		$this->log_debug( 'before_start_run', [
+			'updater_running' => $updater->is_running(),
+		] );
+
 		$this->start_run();
+
+		$this->log_debug( 'after_start_run', [] );
 
 		if ( $updater->is_running() && current_user_can( 'update_plugins' ) ) {
 			add_action( 'admin_notices', [ $this, 'admin_notice_upgrade_is_running' ] );
 		}
 
 		parent::__construct();
+	}
+
+	/**
+	 * Log debug information to WordPress option.
+	 *
+	 * @param string $step The step name.
+	 * @param array  $data Additional data to log.
+	 */
+	protected function log_debug( $step, $data ) {
+		$log = get_option( '_elementor_bg_process_log', [] );
+
+		if ( count( $log ) >= 50 ) {
+			$log = array_slice( $log, -49 );
+		}
+
+		$log[] = [
+			'index' => count( $log ) + 1,
+			'time' => gmdate( 'Y-m-d H:i:s' ),
+			'step' => $step,
+			'class' => static::class,
+			'data' => $data,
+		];
+
+		update_option( '_elementor_bg_process_log', $log, false );
 	}
 }
