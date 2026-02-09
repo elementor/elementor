@@ -79,6 +79,7 @@ class Module extends BaseModule {
 			'choices' => $choices->to_array(),
 			'hadUnexpectedExit' => $progress->had_unexpected_exit(),
 			'isConnected' => $this->is_user_connected(),
+			'userName' => $this->get_user_display_name(),
 			'steps' => $steps,
 			'uiTheme' => $this->get_ui_theme_preference(),
 			'urls' => [
@@ -121,6 +122,22 @@ class Module extends BaseModule {
 		$ui_theme = $editor_preferences->get_model()->get_settings( 'ui_theme' );
 
 		return $ui_theme ? $ui_theme : 'auto';
+	}
+
+	private function get_user_display_name(): string {
+		$current_user = wp_get_current_user();
+
+		if ( ! $current_user || 0 === $current_user->ID ) {
+			return '';
+		}
+
+		$first_name = $current_user->first_name;
+
+		if ( ! empty( $first_name ) ) {
+			return $first_name;
+		}
+
+		return $current_user->display_name ?? '';
 	}
 
 	private function get_steps_config(): array {
