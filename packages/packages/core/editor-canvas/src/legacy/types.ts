@@ -74,6 +74,8 @@ export declare class ElementView {
 
 	model: BackboneModel< ElementModel >;
 
+	_abortController: AbortController | null;
+
 	collection: BackboneCollection< ElementModel >;
 
 	children: {
@@ -136,6 +138,8 @@ export declare class ElementView {
 	isRendered: boolean;
 
 	_currentRenderPromise?: Promise< void >;
+
+	#childrenRenderPromises?: Promise< void >[];
 
 	options?: {
 		model: BackboneModel< ElementModel >;
