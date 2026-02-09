@@ -1,4 +1,5 @@
 import DOMPurify from 'dompurify';
+
 import { type ChildElement } from '../prop-types/html-v2';
 
 export interface ParseResult {
