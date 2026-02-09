@@ -21,6 +21,18 @@ jest.mock( '@wordpress/i18n', () => ( {
 	sprintf: jest.fn( ( format: string ) => format ),
 } ) );
 
+const mockCanEdit = jest.fn( () => true );
+const mockCanCreate = jest.fn( () => true );
+const mockCanDelete = jest.fn( () => true );
+
+jest.mock( '../../../hooks/use-quota-permissions', () => ( {
+	useQuotaPermissions: jest.fn( () => ( {
+		canEdit: mockCanEdit,
+		canCreate: mockCanCreate,
+		canDelete: mockCanDelete,
+	} ) ),
+} ) );
+
 describe( 'VariablesManagerTable', () => {
 	const mockOnChange = jest.fn();
 	const mockOnAutoEditComplete = jest.fn();
@@ -75,6 +87,10 @@ describe( 'VariablesManagerTable', () => {
 		mockGetVariableType.mockImplementation( ( type: string ) => {
 			return createMockVariableType( type );
 		} );
+
+		mockCanEdit.mockReturnValue( true );
+		mockCanCreate.mockReturnValue( true );
+		mockCanDelete.mockReturnValue( true );
 
 		Element.prototype.scrollIntoView = jest.fn();
 	} );
@@ -302,6 +318,34 @@ describe( 'VariablesManagerTable', () => {
 			} );
 
 			expect( mockOnChange ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should not allow editing when quota permissions deny edit', async () => {
+			mockCanEdit.mockReturnValue( false );
+
+			renderComponent();
+
+			// eslint-disable-next-line testing-library/no-node-access
+			const nameCell = screen.getByText( 'PrimaryColor' ).closest( '[role="button"]' );
+			expect( nameCell ).toBeInTheDocument();
+
+			if ( nameCell ) {
+				fireEvent.doubleClick( nameCell );
+			}
+
+			await waitFor( () => {
+				const input = screen.queryByRole( 'textbox' );
+				expect( input ).toBeDisabled();
+			} );
+
+			const input = screen.getByRole( 'textbox' ) as HTMLInputElement;
+
+			fireEvent.change( input, { target: { value: 'UpdatedColor' } } );
+			fireEvent.keyDown( input, { key: 'Enter' } );
+
+			await waitFor( () => {
+				expect( mockOnChange ).not.toHaveBeenCalled();
+			} );
 		} );
 	} );
 
