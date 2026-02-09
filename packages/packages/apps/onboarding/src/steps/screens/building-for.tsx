@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
 import { ChevronRightSmallIcon } from '@elementor/icons';
-import { Box, Stack, styled, Typography, withDirection } from '@elementor/ui';
+import { Box, Button, Stack, styled, Typography, withDirection } from '@elementor/ui';
 import { __, sprintf } from '@wordpress/i18n';
 
 import { useOnboarding } from '../../hooks/use-onboarding';
@@ -22,36 +22,41 @@ const GreetingBanner = styled( Box )( ( { theme } ) => ( {
 	alignSelf: 'flex-start',
 } ) );
 
-interface OptionButtonProps {
-	isSelected: boolean;
-}
-
-const OptionButton = styled( Box, {
-	shouldForwardProp: ( prop ) => prop !== 'isSelected',
-} )< OptionButtonProps >( ( { theme, isSelected } ) => ( {
-	display: 'flex',
-	alignItems: 'center',
+const OptionButton = styled( Button )( ( { theme } ) => ( {
 	justifyContent: 'space-between',
 	height: 56,
+	borderRadius: 8,
+	textTransform: 'none',
+	fontWeight: theme.typography.body1.fontWeight,
+	fontSize: theme.typography.body1.fontSize,
+	letterSpacing: theme.typography.body1.letterSpacing,
+	lineHeight: theme.typography.body1.lineHeight,
+	color: theme.palette.text.secondary,
+	borderColor: theme.palette.divider,
 	paddingInlineStart: 20,
 	paddingInlineEnd: 12,
-	paddingBlock: 7,
-	borderRadius: theme.shape.borderRadius,
-	border: isSelected ? `2px solid ${ theme.palette.text.primary }` : `1px solid ${ theme.palette.divider }`,
-	cursor: 'pointer',
-	transition: theme.transitions.create( [ 'background-color', 'border-color', 'border-width' ], {
-		duration: theme.transitions.duration.shortest,
-	} ),
-	'& .option-chevron': {
-		opacity: isSelected ? 1 : 0,
-		transition: theme.transitions.create( 'opacity', {
-			duration: theme.transitions.duration.shortest,
-		} ),
+	'& .MuiButton-endIcon': {
+		opacity: 0,
 	},
 	'&:hover': {
-		backgroundColor: theme.palette.action.hover,
-		'& .option-chevron': {
+		borderColor: theme.palette.divider,
+		'& .MuiButton-endIcon': {
 			opacity: 1,
+		},
+	},
+	'&:focus, &:active, &.Mui-focusVisible': {
+		outline: 'none',
+		backgroundColor: 'transparent',
+		borderColor: theme.palette.divider,
+	},
+	'&.Mui-selected': {
+		borderWidth: 2,
+		borderColor: theme.palette.text.primary,
+		'& .MuiButton-endIcon': {
+			opacity: 1,
+		},
+		'&:hover': {
+			borderColor: theme.palette.text.primary,
 		},
 	},
 } ) );
@@ -117,27 +122,23 @@ export function BuildingFor( { onComplete }: BuildingForProps ) {
 				</Typography>
 
 				<Stack spacing={ 2 } width="100%">
-					{ BUILDING_FOR_OPTIONS.map( ( option ) => (
-						<OptionButton
-							key={ option.value }
-							role="button"
-							tabIndex={ 0 }
-							isSelected={ selectedValue === option.value }
-							onClick={ () => handleSelect( option.value ) }
-							onKeyDown={ ( e: React.KeyboardEvent ) => {
-								if ( e.key === 'Enter' || e.key === ' ' ) {
-									e.preventDefault();
-									handleSelect( option.value );
-								}
-							} }
-							aria-pressed={ selectedValue === option.value }
-						>
-							<Typography variant="body1" color="text.secondary" dir="auto">
+					{ BUILDING_FOR_OPTIONS.map( ( option ) => {
+						const isSelected = selectedValue === option.value;
+
+						return (
+							<OptionButton
+								key={ option.value }
+								variant="outlined"
+								fullWidth
+								className={ isSelected ? 'Mui-selected' : undefined }
+								endIcon={ <DirectionalChevronIcon /> }
+								onClick={ () => handleSelect( option.value ) }
+								aria-pressed={ isSelected }
+							>
 								{ option.label }
-							</Typography>
-							<DirectionalChevronIcon className="option-chevron" sx={ { color: 'text.secondary' } } />
-						</OptionButton>
-					) ) }
+							</OptionButton>
+						);
+					} ) }
 				</Stack>
 			</Stack>
 		</Stack>
