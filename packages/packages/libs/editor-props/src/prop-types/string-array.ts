@@ -1,7 +1,8 @@
 import { z } from '@elementor/schema';
 
-import { createPropUtils } from '../utils/create-prop-utils';
+import { createArrayPropUtils } from '../utils/create-prop-utils';
+import { stringPropTypeUtil } from './string';
 
-export const stringArrayPropTypeUtil = createPropUtils( 'string-array', z.array( z.string() ) );
+export const stringArrayPropTypeUtil = createArrayPropUtils( stringPropTypeUtil.key, stringPropTypeUtil.schema );
 
 export type StringArrayPropValue = z.infer< typeof stringArrayPropTypeUtil.schema >;

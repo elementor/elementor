@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { type SyntheticEvent } from 'react';
-import { createArrayPropUtils, stringPropTypeUtil } from '@elementor/editor-props';
+import { stringArrayPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 import { Autocomplete, Chip, TextField } from '@elementor/ui';
 
 import { useBoundProp } from '../bound-prop-context';
@@ -18,10 +18,8 @@ type ChipsControlProps = {
 
 const SIZE = 'tiny';
 
-export const stringArrayPropUtil = createArrayPropUtils( stringPropTypeUtil.key, stringPropTypeUtil.schema );
-
 export const ChipsControl = createControl( ( { options }: ChipsControlProps ) => {
-	const { value, setValue, disabled } = useBoundProp( stringArrayPropUtil );
+	const { value, setValue, disabled } = useBoundProp( stringArrayPropTypeUtil );
 
 	const selectedValues: string[] = ( value || [] )
 		.map( ( item ) => stringPropTypeUtil.extract( item ) )
