@@ -16,5 +16,8 @@ test.describe( 'Ally dashboard widget @promotions', () => {
 		await expect( allyWidget ).toBeVisible();
 		await expect( allyWidget ).toContainText( 'Accessibility' );
 		await expect( allyWidget.getByRole( 'link', { name: /Run free scan|Get it free/ } ) ).toBeVisible();
+
+		// Assert 2.
+		await expect( page.locator( ALLY_WIDGET_SELECTOR ) ).toHaveScreenshot( 'ally-dashboard-widget.png' );
 	} );
 } );
