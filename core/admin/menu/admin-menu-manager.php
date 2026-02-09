@@ -79,11 +79,6 @@ class Admin_Menu_Manager {
 	 * @deprecated 3.34.2 Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
 	 */
 	public function register_actions() {
-		Plugin::$instance->modules_manager
-			->get_modules( 'dev-tools' )
-			->deprecation
-			->deprecated_function( __METHOD__, '3.34.2', $this->deprecation_notice );
-
 		add_action( 'admin_menu', function () {
 			$this->register_wp_menus();
 		}, 20 );
@@ -101,7 +96,7 @@ class Admin_Menu_Manager {
 
 		$hooks = [];
 
-		foreach ( $this->get_all() as $item_slug => $item ) {
+		foreach ( $this->items as $item_slug => $item ) {
 			$is_top_level = empty( $item->get_parent_slug() );
 
 			if ( $is_top_level ) {
@@ -153,7 +148,7 @@ class Admin_Menu_Manager {
 	}
 
 	private function hide_invisible_menus() {
-		foreach ( $this->get_all() as $item_slug => $item ) {
+		foreach ( $this->items as $item_slug => $item ) {
 			if ( $item->is_visible() ) {
 				continue;
 			}

@@ -38,13 +38,6 @@ class Module extends BaseApp {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'elementor/init', function() {
-			Plugin::$instance->modules_manager
-				->get_modules( 'dev-tools' )
-				->deprecation
-				->deprecated_function( __CLASS__, '3.34.2', $this->deprecation_notice );
-		}, 20 );
-
 		add_action( 'current_screen', [ $this, 'fire_deprecated_hooks' ] );
 	}
 
