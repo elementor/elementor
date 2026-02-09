@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import { type ChildElement } from '../prop-types/html-v2';
 
 export interface ParseResult {
@@ -61,8 +62,9 @@ export function parseHtmlChildren( html: string ): ParseResult {
 		return { content: html, children: [] };
 	}
 
+	const sanitized = DOMPurify.sanitize( html );
 	const parser = new DOMParser();
-	const doc = parser.parseFromString( `<body>${ html }</body>`, 'text/html' );
+	const doc = parser.parseFromString( `<body>${ sanitized }</body>`, 'text/html' );
 
 	const parserError = doc.querySelector( 'parsererror' );
 	if ( parserError ) {
