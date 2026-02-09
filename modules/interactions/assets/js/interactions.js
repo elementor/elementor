@@ -69,10 +69,7 @@ function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 
 function skipInteraction( interaction ) {
 	const activeBreakpoint = getActiveBreakpoint();
-	if ( interaction.breakpoints && interaction.breakpoints?.excluded?.includes( activeBreakpoint ) ) {
-		return true;
-	}
-	return false;
+	return interaction.breakpoints?.excluded?.includes( activeBreakpoint );
 }
 
 function processElementInteractions( element, interactions, animateFunc, inViewFunc ) {
