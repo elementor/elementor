@@ -4,7 +4,6 @@ namespace Elementor\Modules\DesignSystemSync\Classes;
 
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
-use Elementor\Modules\Variables\Storage\Repository;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -12,22 +11,39 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * @group design-system-sync
+ */
 class Test_Global_Colors_Extension extends Elementor_Test_Base {
 	private $extension;
-	private $kit_id;
 
 	public function setUp(): void {
 		parent::setUp();
 
 		$this->extension = new Global_Colors_Extension();
-		$this->kit_id = Plugin::$instance->kits_manager->get_active_id();
+		Variables_Provider::clear_cache();
+		$this->clear_kit_variables();
+	}
+
+	public function tearDown(): void {
+		Variables_Provider::clear_cache();
+		$this->clear_kit_variables();
+
+		parent::tearDown();
+	}
+
+	private function clear_kit_variables() {
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		if ( $kit ) {
+			$kit->delete_meta( '_elementor_global_variables' );
+		}
 	}
 
 	public function test_get_v4_color_variables__returns_empty_when_no_variables() {
 		// Arrange
-		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
-		$repository = new Repository( $kit );
-		
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
 		$db_record = [
 			'data' => [],
 			'watermark' => 0,
@@ -44,10 +60,10 @@ class Test_Global_Colors_Extension extends Elementor_Test_Base {
 		$this->assertEmpty( $result );
 	}
 
-	public function test_get_v4_color_variables__filters_by_color_type() {
+	public function test_get_v4_color_variables__formats_variables_correctly() {
 		// Arrange
-		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
-		
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
 		$db_record = [
 			'data' => [
 				'var-1' => [
@@ -58,13 +74,39 @@ class Test_Global_Colors_Extension extends Elementor_Test_Base {
 						'value' => '#ff0000',
 					],
 					'sync_to_v3' => true,
+					'order' => 0,
 				],
-				'var-2' => [
-					'type' => 'global-font-variable',
-					'label' => 'Heading',
+			],
+			'watermark' => 1,
+		];
+		$kit->update_json_meta( '_elementor_global_variables', $db_record );
+
+		// Act
+		$reflection = new \ReflectionClass( $this->extension );
+		$method = $reflection->getMethod( 'get_v4_color_variables' );
+		$method->setAccessible( true );
+		$result = $method->invoke( $this->extension );
+
+		// Assert
+		$this->assertCount( 1, $result );
+		$this->assertEquals( 'var-1', $result[0]['id'] );
+		$this->assertEquals( 'Primary', $result[0]['label'] );
+		$this->assertEquals( '#ff0000', $result[0]['value'] );
+		$this->assertEquals( 0, $result[0]['order'] );
+	}
+
+	public function test_get_v4_color_variables__extracts_nested_color_value() {
+		// Arrange
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		$db_record = [
+			'data' => [
+				'var-1' => [
+					'type' => 'global-color-variable',
+					'label' => 'Primary',
 					'value' => [
-						'$$type' => 'font',
-						'value' => 'Roboto',
+						'$$type' => 'color',
+						'value' => '#ff0000',
 					],
 					'sync_to_v3' => true,
 				],
@@ -80,76 +122,44 @@ class Test_Global_Colors_Extension extends Elementor_Test_Base {
 		$result = $method->invoke( $this->extension );
 
 		// Assert
-		$this->assertCount( 1, $result );
-		$this->assertEquals( 'Primary', $result[0]['label'] );
 		$this->assertEquals( '#ff0000', $result[0]['value'] );
 	}
 
-	public function test_get_v4_color_variables__filters_by_sync_to_v3_flag() {
+	public function test_get_v4_color_variables__sorts_by_order() {
 		// Arrange
-		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
-		
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
 		$db_record = [
 			'data' => [
 				'var-1' => [
 					'type' => 'global-color-variable',
-					'label' => 'Primary',
+					'label' => 'Third',
 					'value' => [
 						'$$type' => 'color',
 						'value' => '#ff0000',
 					],
 					'sync_to_v3' => true,
+					'order' => 2,
 				],
 				'var-2' => [
 					'type' => 'global-color-variable',
-					'label' => 'Secondary',
-					'value' => [
-						'$$type' => 'color',
-						'value' => '#00ff00',
-					],
-					'sync_to_v3' => false,
-				],
-			],
-			'watermark' => 1,
-		];
-		$kit->update_json_meta( '_elementor_global_variables', $db_record );
-
-		// Act
-		$reflection = new \ReflectionClass( $this->extension );
-		$method = $reflection->getMethod( 'get_v4_color_variables' );
-		$method->setAccessible( true );
-		$result = $method->invoke( $this->extension );
-
-		// Assert
-		$this->assertCount( 1, $result );
-		$this->assertEquals( 'Primary', $result[0]['label'] );
-		$this->assertEquals( '#ff0000', $result[0]['value'] );
-	}
-
-	public function test_get_v4_color_variables__excludes_deleted_variables() {
-		// Arrange
-		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
-		
-		$db_record = [
-			'data' => [
-				'var-1' => [
-					'type' => 'global-color-variable',
-					'label' => 'Primary',
-					'value' => [
-						'$$type' => 'color',
-						'value' => '#ff0000',
-					],
-					'sync_to_v3' => true,
-				],
-				'var-2' => [
-					'type' => 'global-color-variable',
-					'label' => 'Deleted',
+					'label' => 'First',
 					'value' => [
 						'$$type' => 'color',
 						'value' => '#00ff00',
 					],
 					'sync_to_v3' => true,
-					'deleted' => true,
+					'order' => 0,
+				],
+				'var-3' => [
+					'type' => 'global-color-variable',
+					'label' => 'Second',
+					'value' => [
+						'$$type' => 'color',
+						'value' => '#0000ff',
+					],
+					'sync_to_v3' => true,
+					'order' => 1,
 				],
 			],
 			'watermark' => 1,
@@ -163,54 +173,10 @@ class Test_Global_Colors_Extension extends Elementor_Test_Base {
 		$result = $method->invoke( $this->extension );
 
 		// Assert
-		$this->assertCount( 1, $result );
-		$this->assertEquals( 'Primary', $result[0]['label'] );
-		$this->assertEquals( '#ff0000', $result[0]['value'] );
-	}
-
-	public function test_render_v4_variables__generates_html() {
-		// Arrange
-		$variables = [
-			[
-				'id' => 'var-1',
-				'label' => 'Primary',
-				'value' => '#ff0000',
-				'order' => 0,
-			],
-		];
-
-		// Act
-		$reflection = new \ReflectionClass( $this->extension );
-		$method = $reflection->getMethod( 'render_v4_variables' );
-		$method->setAccessible( true );
-		$result = $method->invoke( $this->extension, $variables );
-
-		// Assert
-		$this->assertStringContainsString( 'elementor-repeater-fields-readonly', $result );
-		$this->assertStringContainsString( 'Primary', $result );
-		$this->assertStringContainsString( '#ff0000', $result );
-	}
-
-	public function test_render_v4_variables__escapes_html() {
-		// Arrange
-		$variables = [
-			[
-				'id' => 'var-1',
-				'label' => '<script>alert("xss")</script>',
-				'value' => '#ff0000',
-				'order' => 0,
-			],
-		];
-
-		// Act
-		$reflection = new \ReflectionClass( $this->extension );
-		$method = $reflection->getMethod( 'render_v4_variables' );
-		$method->setAccessible( true );
-		$result = $method->invoke( $this->extension, $variables );
-
-		// Assert
-		$this->assertStringNotContainsString( '<script>', $result );
-		$this->assertStringContainsString( '&lt;script&gt;', $result );
+		$this->assertEquals( 'First', $result[0]['label'] );
+		$this->assertEquals( 'Second', $result[1]['label'] );
+		$this->assertEquals( 'Third', $result[2]['label'] );
 	}
 }
+
 

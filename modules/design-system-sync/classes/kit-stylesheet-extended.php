@@ -2,31 +2,49 @@
 
 namespace Elementor\Modules\DesignSystemSync\Classes;
 
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 class Kit_Stylesheet_Extended {
 	public function register_hooks() {
-		add_filter( 'elementor/variables/css_entry_additional', [ $this, 'add_v3_mapping_for_variable' ], 10, 3 );
+		add_action( 'elementor/css-file/post/parse', [ $this, 'add_v3_mapping_css' ] );
 	}
 
-	public function add_v3_mapping_for_variable( string $css, array $variable, string $id ): string {
-		if ( empty( $variable['sync_to_v3'] ) ) {
-			return $css;
+	public function add_v3_mapping_css( $post_css ) {
+		if ( ! Plugin::$instance->kits_manager->is_kit( $post_css->get_post_id() ) ) {
+			return;
 		}
 
-		$label = sanitize_text_field( $variable['label'] ?? '' );
+		$synced_variables = Variables_Provider::get_synced_color_variables();
 
-		if ( empty( $label ) ) {
-			return $css;
+		if ( empty( $synced_variables ) ) {
+			return;
 		}
 
-		$v3_id = 'v4-' . $label;
-		$type = $variable['type'];
-		$global_type = $this->get_v3_global_type( $type ?? '' );
+		$css_entries = [];
 
-		return $css . " --e-global-{$global_type}-{$v3_id}:var(--{$label});";
+		foreach ( $synced_variables as $id => $variable ) {
+			$label = sanitize_text_field( $variable['label'] ?? '' );
+
+			if ( empty( $label ) ) {
+				continue;
+			}
+
+			$v3_id = 'v4-' . $label;
+			$type = $variable['type'];
+			$global_type = $this->get_v3_global_type( $type ?? '' );
+
+			$css_entries[] = "--e-global-{$global_type}-{$v3_id}:var(--{$label});";
+		}
+
+		if ( ! empty( $css_entries ) ) {
+			$post_css->get_stylesheet()->add_raw_css(
+				':root { ' . implode( ' ', $css_entries ) . ' }'
+			);
+		}
 	}
 
 	private function get_v3_global_type( string $type ): string {
@@ -38,3 +56,4 @@ class Kit_Stylesheet_Extended {
 		return $type_map[ $type ] ?? 'color';
 	}
 }
+

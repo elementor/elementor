@@ -1,52 +1,5 @@
-/* V4 Variables Read-only Styling */
-.elementor-control-v4-variables-readonly .elementor-repeater-fields {
-	opacity: 0.7;
-}
-
-/* Match System Colors layout exactly */
-.elementor-control-v4-variables-readonly .elementor-control-title input {
-	background: transparent !important;
-	border: none !important;
-	cursor: default !important;
-	pointer-events: none !important;
-	padding: 0 !important;
-	font-weight: normal !important;
-}
-
-/* Disable all interactions */
-.elementor-control-v4-variables-readonly .pickr,
-.elementor-control-v4-variables-readonly .pcr-button {
-	pointer-events: none !important;
-}
-
-/* Hide all tool buttons and sort handles */
-.elementor-control-v4-variables-readonly .elementor-repeater-row-tool-sort,
-.elementor-control-v4-variables-readonly .elementor-repeater-row-tool-remove,
-.elementor-control-v4-variables-readonly .elementor-repeater-tool-sort,
-.elementor-control-v4-variables-readonly .elementor-repeater-tool-remove,
-.elementor-control-v4-variables-readonly .elementor-repeater-tool-remove--disabled,
-.elementor-control-v4-variables-readonly .elementor-repeater-tool-duplicate {
-	display: none !important;
-}
-
-/* Ensure tools stay hidden on hover */
-.elementor-control-v4-variables-readonly .elementor-control-input-wrapper:hover .elementor-repeater-row-tool,
-.elementor-control-v4-variables-readonly .elementor-control-input-wrapper:hover .elementor-repeater-tool {
-	display: none !important;
-}
-
-/* Force color value to always show (like system colors) */
-.elementor-control-v4-variables-readonly .e-global-colors__color-value {
-	display: block !important;
-}
-
-/* Prevent hover effects */
-.elementor-control-v4-variables-readonly .elementor-control-input-wrapper:hover .e-global-colors__color-value {
-	display: block !important;
-}
-
-/* Disable sorting */
-.elementor-control-v4-variables-readonly .elementor-repeater-fields {
-	cursor: default !important;
+/* Disable all interactions on V4 Variables */
+.elementor-control-v4_color_variables .elementor-repeater-fields {
+	pointer-events: none;
 }
 

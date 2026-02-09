@@ -4,8 +4,9 @@ namespace Elementor\Modules\DesignSystemSync\Classes;
 
 use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
-use Elementor\Modules\Variables\Storage\Repository;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Global_Style_Repeater;
 use Elementor\Plugin;
+use Elementor\Repeater;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -15,7 +16,6 @@ class Global_Colors_Extension {
 	public function register_hooks() {
 		add_action( 'elementor/kit/global-colors/register_controls', [ $this, 'add_v4_variables_section' ] );
 		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_editor_styles' ] );
-		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_editor_scripts' ] );
 	}
 
 	public function enqueue_editor_styles() {
@@ -24,16 +24,6 @@ class Global_Colors_Extension {
 			plugins_url( '../assets/css/editor.css', __FILE__ ),
 			[],
 			ELEMENTOR_VERSION
-		);
-	}
-
-	public function enqueue_editor_scripts() {
-		wp_enqueue_script(
-			'elementor-design-system-sync-editor',
-			plugins_url( '../assets/js/editor.js', __FILE__ ),
-			[ 'jquery', 'elementor-editor' ],
-			ELEMENTOR_VERSION,
-			true
 		);
 	}
 
@@ -64,6 +54,7 @@ class Global_Colors_Extension {
 			[
 				'type' => Controls_Manager::TEXT,
 				'label_block' => true,
+				'required' => true,
 			]
 		);
 
@@ -72,6 +63,12 @@ class Global_Colors_Extension {
 			[
 				'type' => Controls_Manager::COLOR,
 				'label_block' => true,
+				'selectors' => [
+					'{{WRAPPER}}' => '--e-global-color-{{_id.VALUE}}: {{VALUE}}',
+				],
+				'global' => [
+					'active' => false,
+				],
 			]
 		);
 
@@ -80,7 +77,7 @@ class Global_Colors_Extension {
 			$default_values[] = [
 				'_id' => $variable['id'],
 				'title' => $variable['label'],
-				'color' => $variable['value'],
+				'color' => strtoupper( $variable['value'] ),
 			];
 		}
 
@@ -92,39 +89,24 @@ class Global_Colors_Extension {
 				'default' => $default_values,
 				'item_actions' => [
 					'add' => false,
-					'remove' => false,
 					'duplicate' => false,
+					'remove' => false,
+					'sort' => false,
 				],
-				'classes' => 'elementor-control-v4-variables-readonly',
 			]
 		);
 	}
 
 	private function get_v4_color_variables(): array {
-		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
+		$synced_variables = Variables_Provider::get_synced_color_variables();
 
-		if ( ! $kit ) {
+		if ( empty( $synced_variables ) ) {
 			return [];
 		}
 
-		$repository = new Repository( $kit );
-		$all_variables = $repository->variables();
-
 		$color_variables = [];
 
-		foreach ( $all_variables as $id => $variable ) {
-			if ( isset( $variable['deleted'] ) && $variable['deleted'] ) {
-				continue;
-			}
-
-			if ( empty( $variable['type'] ) || 'global-color-variable' !== $variable['type'] ) {
-				continue;
-			}
-
-			if ( empty( $variable['sync_to_v3'] ) ) {
-				continue;
-			}
-
+		foreach ( $synced_variables as $id => $variable ) {
 			$value = $variable['value'] ?? '';
 
 			if ( is_array( $value ) && isset( $value['value'] ) ) {
