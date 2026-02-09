@@ -16,6 +16,7 @@ export const EmailControl = createControl( () => {
 	return (
 		<PropProvider { ...propContext } value={ value } setValue={ setValue }>
 			<Stack gap={ 1.5 }>
+				<ControlFormLabel>{ __( 'Email settings', 'elementor' ) }</ControlFormLabel>
 				<PropKeyProvider bind="to">
 				<Grid container direction="column" gap={ 0.5 }>
 					<Grid item>
