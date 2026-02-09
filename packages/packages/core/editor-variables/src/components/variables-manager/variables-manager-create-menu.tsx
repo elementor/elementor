@@ -9,7 +9,7 @@ import { useQuotaPermissions } from '../../hooks/use-quota-permissions';
 import { type TVariablesList } from '../../storage';
 import { trackVariablesManagerEvent } from '../../utils/tracking';
 import { getVariableTypes } from '../../variables-registry/variable-type-registry';
-import { type VariablePromotionChipRef, VariablePromotionChip } from '../ui/variable-promotion-chip';
+import { VariablePromotionChip,type VariablePromotionChipRef } from '../ui/variable-promotion-chip';
 
 export const SIZE = 'tiny';
 
