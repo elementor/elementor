@@ -183,6 +183,7 @@ const externals = [
 		'@elementor/frontend-handlers': 'elementorV2.frontendHandlers',
 		'@elementor/alpinejs': 'elementorV2.alpinejs',
 		'@elementor/query': 'elementorV2.query',
+		'@elementor/onboarding': 'elementorV2.onboarding',
 		'@wordpress/dom-ready': 'wp.domReady',
 		'@wordpress/components': 'wp.components',
 		'@wordpress/core-data': 'wp.coreData',
