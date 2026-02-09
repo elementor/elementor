@@ -91,7 +91,6 @@ class Module extends BaseModule {
 		add_filter( 'elementor/document/save/data', function( $data, $document ) {
 			return ( new Parser( $document->get_main_id() ) )->assign_interaction_ids( $data );
 		}, 11, 2 );
-
 	}
 
 	private function get_config() {
