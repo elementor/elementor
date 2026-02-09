@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { type MouseEvent } from 'react';
 import { CrownFilledIcon } from '@elementor/icons';
 import {
 	Alert,
