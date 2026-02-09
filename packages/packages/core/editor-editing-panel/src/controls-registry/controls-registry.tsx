@@ -12,6 +12,7 @@ import {
 	RepeatableControl,
 	SelectControlWrapper,
 	SizeControl,
+	stringArrayPropUtil,
 	SvgMediaControl,
 	SwitchControl,
 	TextAreaControl,
@@ -32,7 +33,6 @@ import {
 	type PropTypeUtil,
 	queryPropTypeUtil,
 	sizePropTypeUtil,
-	stringArrayPropTypeUtil,
 	stringPropTypeUtil,
 } from '@elementor/editor-props';
 
@@ -51,7 +51,7 @@ const controlTypes = {
 	textarea: { component: TextAreaControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	size: { component: SizeControl, layout: 'two-columns', propTypeUtil: sizePropTypeUtil },
 	select: { component: SelectControlWrapper, layout: 'two-columns', propTypeUtil: stringPropTypeUtil },
-	chips: { component: ChipsControl, layout: 'full', propTypeUtil: stringArrayPropTypeUtil },
+	chips: { component: ChipsControl, layout: 'full', propTypeUtil: stringArrayPropUtil },
 	link: { component: LinkControl, layout: 'custom', propTypeUtil: linkPropTypeUtil },
 	query: { component: QueryControl, layout: 'full', propTypeUtil: queryPropTypeUtil },
 	url: { component: UrlControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
