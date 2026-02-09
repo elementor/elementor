@@ -29,7 +29,7 @@ class Component_Instance_Transformer extends Transformer_Base {
 			return '';
 		}
 
-		$instance_element_id = Render_Context::get( Overridable_Transformer::class )['instance_id'] ?? null;
+		$instance_element_id = Render_Context::get( Overridable_Transformer::class )['instance_id'] ?? '';
 
 		self::$rendering_stack[] = $component_id;
 		$content = $this->get_rendered_content( $component_id, $instance_element_id );

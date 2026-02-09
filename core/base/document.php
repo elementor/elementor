@@ -2117,12 +2117,12 @@ abstract class Document extends Controls_Stack {
 		return $this->add_nested_path_to_elements_data( $elements_copy, $nested_path );
 	}
 
-	private function add_nested_path_to_elements_data( array $elements_data, string $nested_path ): array {
+	private function add_nested_path_to_elements_data( array &$elements_data, string $nested_path ): array {
 		foreach ( $elements_data as &$element_data ) {
 			$element_data['id'] = $nested_path . '_' . $element_data['id'];
 			$element_data['elements'] = $this->add_nested_path_to_elements_data( $element_data['elements'], $nested_path );
 		}
-		unset( $element_data );
+		// unset( $element_data );
 
 		return $elements_data;
 	}
