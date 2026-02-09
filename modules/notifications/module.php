@@ -20,6 +20,18 @@ class Module extends BaseModule {
 		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_editor_scripts' ] );
 
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+
+		add_action( 'admin_enqueue_scripts', [ $this, 'register_deprecated_notification_center_stub' ] );
+	}
+
+	public function register_deprecated_notification_center_stub() {
+		wp_enqueue_script(
+			'e-admin-notifications',
+			$this->get_js_assets_url( 'admin-notifications' ),
+			[ 'elementor-common' ],
+			ELEMENTOR_VERSION,
+			true
+		);
 	}
 
 	public function enqueue_editor_scripts() {
