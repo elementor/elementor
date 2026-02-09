@@ -1,25 +1,21 @@
 import { useMutation } from '@elementor/query';
 
-interface UpdateProgressParams {
-	complete_step?: string;
-	skip_step?: boolean;
-	step_index?: number;
-	total_steps?: number;
-	user_exit?: boolean;
-}
+import type { OnboardingChoices } from '../types';
+
+type UpdateChoicesParams = Partial< OnboardingChoices >;
 
 function getConfig() {
 	return window.elementorAppConfig?.[ 'e-onboarding' ] ?? null;
 }
 
-async function updateProgress( params: UpdateProgressParams ): Promise< void > {
+async function updateChoices( params: UpdateChoicesParams ): Promise< void > {
 	const config = getConfig();
 
 	if ( ! config ) {
 		throw new Error( 'Onboarding config not found' );
 	}
 
-	const response = await fetch( `${ config.restUrl }user-progress`, {
+	const response = await fetch( `${ config.restUrl }user-choices`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -29,12 +25,12 @@ async function updateProgress( params: UpdateProgressParams ): Promise< void > {
 	} );
 
 	if ( ! response.ok ) {
-		throw new Error( 'Failed to update progress' );
+		throw new Error( 'Failed to update choices' );
 	}
 }
 
-export function useUpdateProgress() {
+export function useUpdateChoices() {
 	return useMutation( {
-		mutationFn: updateProgress,
+		mutationFn: updateChoices,
 	} );
 }

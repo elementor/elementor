@@ -87,12 +87,13 @@ function buildStateFromConfig(
 	const steps = parseStepsFromConfig( config.steps );
 	const firstStepId = steps[ 0 ]?.id ?? StepId.BUILDING_FOR;
 	const progress = config.progress ?? {};
-	const currentStepId = ( progress.current_step_id as StepIdType ) || firstStepId;
+	const currentStepIndex = progress.current_step_index ?? 0;
+	const currentStepId = steps[ currentStepIndex ]?.id ?? ( progress.current_step_id as StepIdType ) ?? firstStepId;
 
 	return {
 		steps,
 		currentStepId,
-		currentStepIndex: progress.current_step_index ?? 0,
+		currentStepIndex,
 		completedSteps: parseCompletedSteps( progress.completed_steps ),
 		exitType: progress.exit_type ?? null,
 		lastActiveTimestamp: progress.last_active_timestamp ?? null,

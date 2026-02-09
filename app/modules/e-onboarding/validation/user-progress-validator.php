@@ -25,6 +25,12 @@ class User_Progress_Validator extends Base_Validator {
 			'complete_step' => [
 				'type' => 'string_or_int',
 			],
+			'skip_step' => [
+				'type' => 'bool',
+			],
+			'step_index' => [
+				'type' => 'int',
+			],
 			'total_steps' => [
 				'type' => 'int',
 			],

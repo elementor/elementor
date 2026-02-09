@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { __useDispatch, __useSelector } from '@elementor/store';
 
 import {
@@ -55,23 +56,27 @@ export function useOnboarding() {
 	const hasPassedLogin = __useSelector( selectHasPassedLogin );
 	const urls = __useSelector( selectUrls );
 
-	const actions = {
-		goToStep: ( id: StepIdType ) => dispatch( goToStep( id ) ),
-		goToStepIndex: ( index: number ) => dispatch( goToStepIndex( index ) ),
-		nextStep: () => dispatch( nextStep() ),
-		prevStep: () => dispatch( prevStep() ),
-		completeStep: ( id: StepIdType ) => dispatch( completeStep( id ) ),
-		setUserChoice: ( key: keyof OnboardingChoices, value: unknown ) => dispatch( setUserChoice( { key, value } ) ),
-		setUserChoices: ( data: Partial< OnboardingChoices > ) => dispatch( setUserChoices( data ) ),
-		setExitType: ( type: string | null ) => dispatch( setExitType( type ) ),
-		startOnboarding: () => dispatch( startOnboarding() ),
-		completeOnboarding: () => dispatch( completeOnboarding() ),
-		setLoading: ( loading: boolean ) => dispatch( setLoading( loading ) ),
-		setError: ( err: string | null ) => dispatch( setError( err ) ),
-		clearUnexpectedExit: () => dispatch( clearUnexpectedExit() ),
-		setConnected: ( connected: boolean ) => dispatch( setConnected( connected ) ),
-		setGuest: ( guest: boolean ) => dispatch( setGuest( guest ) ),
-	};
+	const actions = useMemo(
+		() => ( {
+			goToStep: ( id: StepIdType ) => dispatch( goToStep( id ) ),
+			goToStepIndex: ( index: number ) => dispatch( goToStepIndex( index ) ),
+			nextStep: () => dispatch( nextStep() ),
+			prevStep: () => dispatch( prevStep() ),
+			completeStep: ( id: StepIdType ) => dispatch( completeStep( id ) ),
+			setUserChoice: ( key: keyof OnboardingChoices, value: unknown ) =>
+				dispatch( setUserChoice( { key, value } ) ),
+			setUserChoices: ( data: Partial< OnboardingChoices > ) => dispatch( setUserChoices( data ) ),
+			setExitType: ( type: string | null ) => dispatch( setExitType( type ) ),
+			startOnboarding: () => dispatch( startOnboarding() ),
+			completeOnboarding: () => dispatch( completeOnboarding() ),
+			setLoading: ( loading: boolean ) => dispatch( setLoading( loading ) ),
+			setError: ( err: string | null ) => dispatch( setError( err ) ),
+			clearUnexpectedExit: () => dispatch( clearUnexpectedExit() ),
+			setConnected: ( connected: boolean ) => dispatch( setConnected( connected ) ),
+			setGuest: ( guest: boolean ) => dispatch( setGuest( guest ) ),
+		} ),
+		[ dispatch ]
+	);
 
 	return {
 		stepId,

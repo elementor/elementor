@@ -4,6 +4,7 @@ import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useOnboarding } from '../hooks/use-onboarding';
+import { useUpdateChoices } from '../hooks/use-update-choices';
 import { useUpdateProgress } from '../hooks/use-update-progress';
 import { Login } from '../steps/screens/login';
 import { getStepVisualConfig } from '../steps/step-visuals';
@@ -29,11 +30,13 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 		hadUnexpectedExit,
 		isLoading,
 		hasPassedLogin,
+		choices,
 		urls,
 		actions,
 	} = useOnboarding();
 
 	const updateProgress = useUpdateProgress();
+	const updateChoices = useUpdateChoices();
 
 	useEffect( () => {
 		if ( hadUnexpectedExit ) {
@@ -77,10 +80,34 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 	}, [ actions, isFirst ] );
 
 	const handleSkip = useCallback( () => {
-		actions.nextStep();
-	}, [ actions ] );
+		updateProgress.mutate(
+			{
+				skip_step: true,
+				step_index: stepIndex,
+				total_steps: totalSteps,
+			},
+			{
+				onSuccess: () => {
+					actions.nextStep();
+				},
+				onError: () => {
+					actions.nextStep();
+				},
+			}
+		);
+	}, [ actions, stepIndex, totalSteps, updateProgress ] );
 
 	const handleContinue = useCallback( () => {
+		const choiceForStep = choices[ stepId as keyof typeof choices ];
+		const hasChoice =
+			choiceForStep !== null &&
+			choiceForStep !== undefined &&
+			( ! Array.isArray( choiceForStep ) || choiceForStep.length > 0 );
+
+		if ( hasChoice ) {
+			updateChoices.mutate( { [ stepId ]: choiceForStep } );
+		}
+
 		updateProgress.mutate(
 			{
 				complete_step: stepId,
@@ -102,7 +129,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 				},
 			}
 		);
-	}, [ stepId, stepIndex, totalSteps, actions, isLast, onComplete, updateProgress ] );
+	}, [ stepId, stepIndex, totalSteps, choices, actions, isLast, onComplete, updateProgress, updateChoices ] );
 
 	const rightPanelConfig = useMemo( () => getStepVisualConfig( stepId ), [ stepId ] );
 	const isPending = updateProgress.isPending || isLoading;

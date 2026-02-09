@@ -56,13 +56,24 @@ class Onboarding_Progress_Manager {
 			$step = $params['complete_step'];
 			$progress->add_completed_step( $step );
 
+			$step_index = $params['step_index'] ?? $progress->get_current_step_index();
 			$total_steps = $params['total_steps'] ?? self::DEFAULT_TOTAL_STEPS;
+			$next_index = $step_index + 1;
 
-			for ( $i = 0; $i < $total_steps; $i++ ) {
-				if ( ! $progress->is_step_completed( $i ) ) {
-					$progress->set_current_step( $i );
-					break;
-				}
+			if ( $next_index < $total_steps ) {
+				$progress->set_current_step_index( $next_index );
+				$progress->set_current_step_id( null );
+			}
+		}
+
+		if ( ! empty( $params['skip_step'] ) ) {
+			$step_index = $params['step_index'] ?? $progress->get_current_step_index();
+			$total_steps = $params['total_steps'] ?? self::DEFAULT_TOTAL_STEPS;
+			$next_index = $step_index + 1;
+
+			if ( $next_index < $total_steps ) {
+				$progress->set_current_step_index( $next_index );
+				$progress->set_current_step_id( null );
 			}
 		}
 
