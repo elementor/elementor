@@ -9,7 +9,7 @@ import { useQuotaPermissions } from '../../hooks/use-quota-permissions';
 import { type TVariablesList } from '../../storage';
 import { trackVariablesManagerEvent } from '../../utils/tracking';
 import { getVariableTypes } from '../../variables-registry/variable-type-registry';
-import { VariablePromotionChip } from '../ui/variable-promotion-chip';
+import { type VariablePromotionChipRef, VariablePromotionChip } from '../ui/variable-promotion-chip';
 
 export const SIZE = 'tiny';
 
@@ -103,6 +103,7 @@ const MenuOption = ( {
 	onCreate: VariableManagerCreateMenuProps[ 'onCreate' ];
 	onClose: () => void;
 } ) => {
+	const promotionRef = useRef< VariablePromotionChipRef >( null );
 	const userQuotaPermissions = useQuotaPermissions( config.propTypeKey );
 
 	const displayName = capitalize( config.variableType );
@@ -110,6 +111,7 @@ const MenuOption = ( {
 
 	const handleClick = () => {
 		if ( isDisabled ) {
+			promotionRef.current?.toggle();
 			return;
 		}
 
@@ -130,6 +132,7 @@ const MenuOption = ( {
 				<VariablePromotionChip
 					variableType={ config.variableType }
 					upgradeUrl={ `https://go.elementor.com/go-pro-manager-${ config.variableType }-variable/` }
+					ref={ promotionRef }
 				/>
 			) }
 		</MenuItem>

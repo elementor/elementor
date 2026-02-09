@@ -16,7 +16,7 @@ type PromotionPopoverCardProps = {
 	content: string;
 	ctaUrl: string;
 	ctaText?: string;
-	onClose: () => void;
+	onClose: ( e: MouseEvent ) => void;
 };
 
 type PromotionPopoverProps = React.PropsWithChildren<
