@@ -3,7 +3,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Form;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Chips_Control;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Email_Advanced_Settings_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Email_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Toggle_Control;
@@ -16,7 +16,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Email_Advanced_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Email_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Array_Prop_Type;
@@ -76,16 +76,9 @@ class Atomic_Form extends Atomic_Element_Base {
 				->default( 'default' ),
 			'actions-after-submit' => String_Array_Prop_Type::make()
 				->default( [] ),
-			'email-to' => String_Prop_Type::make()
-				->set_dependencies( $email_dependencies ),
-			'email-subject' => String_Prop_Type::make()
-				->set_dependencies( $email_dependencies ),
-			'email-message' => String_Prop_Type::make()
-				->set_dependencies( $email_dependencies ),
-			'email-from' => String_Prop_Type::make()
-				->set_dependencies( $email_dependencies ),
-			'email-advanced' => Email_Advanced_Prop_Type::make()
-				->set_dependencies( $email_dependencies ),
+			'email' => Email_Prop_Type::make()
+				->set_dependencies( $email_dependencies )
+				->default( [] ),
 			'attributes' => Attributes_Prop_Type::make(),
 		];
 	}
@@ -114,27 +107,6 @@ class Atomic_Form extends Atomic_Element_Base {
 				->set_full_width( true );
 		}
 
-		$email_settings_controls = [
-			Text_Control::bind_to( 'email-to' )
-				->set_label( __( 'Send To', 'elementor' ) )
-				->set_placeholder( __( 'Where should we send new submissions?', 'elementor' ) )
-				->set_meta( [
-					'topDivider' => true,
-					'formLabel' => __( 'Email Settings', 'elementor' ),
-				] ),
-			Text_Control::bind_to( 'email-subject' )
-				->set_label( __( 'Email Subject', 'elementor' ) )
-				->set_placeholder( __( 'New form submission', 'elementor' ) ),
-			Textarea_Control::bind_to( 'email-message' )
-				->set_label( __( 'Message', 'elementor' ) )
-				->set_placeholder( __( 'By default, all form fields are sent via [all-fields] shortcode.', 'elementor' ) ),
-			Text_Control::bind_to( 'email-from' )
-				->set_label( __( 'From email', 'elementor' ) )
-				->set_placeholder( __( 'What email address should appear as the sender?', 'elementor' ) ),
-			Email_Advanced_Settings_Control::bind_to( 'email-advanced' )
-				->set_label( __( 'Advanced Settings', 'elementor' ) ),
-		];
-
 		return [
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
@@ -159,7 +131,11 @@ class Atomic_Form extends Atomic_Element_Base {
 								'value' => 'webhook',
 							],
 						] ),
-					...$email_settings_controls,
+					Email_Control::bind_to( 'email' )
+						->set_meta( [
+							'topDivider' => true,
+							'formLabel' => __( 'Email Settings', 'elementor' ),
+						] ),
 				] ),
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
