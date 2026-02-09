@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createElement } from 'react';
+import { createElement, useRef } from 'react';
 import { EllipsisWithTooltip } from '@elementor/editor-ui';
 import { GripVerticalIcon } from '@elementor/icons';
 import { IconButton, Stack, TableRow, type UnstableSortableItemRenderProps } from '@elementor/ui';
@@ -8,7 +8,7 @@ import { useQuotaPermissions } from '../../../hooks/use-quota-permissions';
 import { type TVariablesList } from '../../../storage';
 import { type getVariableType } from '../../../variables-registry/variable-type-registry';
 import { LabelField } from '../../fields/label-field';
-import { VariablePromotionChip } from '../../ui/variable-promotion-chip';
+import { VariablePromotionChip, type VariablePromotionChipRef } from '../../ui/variable-promotion-chip';
 import { VariableEditableCell } from '../variable-editable-cell';
 import { VariableEditMenu, type VariableManagerMenuAction } from './variable-edit-menu';
 import { VariableTableCell } from './variable-table-cell';
@@ -50,6 +50,7 @@ export const VariableRow = (
 		setTriggerRef,
 		isSorting,
 	} = props;
+	const promotionRef = useRef< VariablePromotionChipRef >( null );
 	const isDisabled = ! useQuotaPermissions( row.type ).canEdit();
 
 	const showIndicationBefore = showDropIndication && dropPosition === 'before';
@@ -89,6 +90,11 @@ export const VariableRow = (
 				},
 			} }
 			style={ { ...itemStyle, ...triggerStyle } }
+			onClick={ () => {
+				if ( isDisabled ) {
+					promotionRef.current?.toggle();
+				}
+			} }
 		>
 			<VariableTableCell noPadding width={ 10 } maxWidth={ 10 }>
 				<IconButton size="small" ref={ setTriggerRef } { ...triggerProps } disabled={ isSorting } draggable>
@@ -125,13 +131,13 @@ export const VariableRow = (
 							selectOnShow={ autoEditVariableId === row.id }
 							showWarningInfotip={ true }
 							variables={ variables }
-							disabled={ isDisabled }
 						/>
 					) }
 					autoEdit={ autoEditVariableId === row.id && ! isDisabled }
 					onRowRef={ handleRowRef( row.id ) }
 					onAutoEditComplete={ autoEditVariableId === row.id ? onAutoEditComplete : undefined }
 					fieldType="label"
+					disabled={ isDisabled }
 				>
 					<EllipsisWithTooltip title={ row.name } sx={ { border: '4px solid transparent' } }>
 						{ row.name }
@@ -167,12 +173,12 @@ export const VariableRow = (
 								onFieldError?.( !! errorMsg );
 							},
 							error,
-							disabled: isDisabled,
 						} ) ?? <></>
 					}
 					onRowRef={ handleRowRef( row.id ) }
 					gap={ 0.25 }
 					fieldType="value"
+					disabled={ isDisabled }
 				>
 					{ row.startIcon && row.startIcon( { value: row.value } ) }
 					<EllipsisWithTooltip
@@ -193,6 +199,7 @@ export const VariableRow = (
 						<VariablePromotionChip
 							variableType={ row.variableType }
 							upgradeUrl={ `https://go.elementor.com/renew-license-manager-${ row.variableType }-variable` }
+							ref={ promotionRef }
 						/>
 					) }
 					<VariableEditMenu menuActions={ menuActions( row.id ) } disabled={ isSorting } itemId={ row.id } />

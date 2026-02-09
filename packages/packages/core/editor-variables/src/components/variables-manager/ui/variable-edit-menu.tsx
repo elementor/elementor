@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createElement } from 'react';
+import { createElement, type MouseEvent } from 'react';
 import { DotsVerticalIcon } from '@elementor/icons';
 import { bindMenu, bindTrigger, IconButton, Menu, MenuItem, type SvgIconProps, usePopupState } from '@elementor/ui';
 
@@ -21,9 +21,19 @@ export const VariableEditMenu = ( { menuActions, disabled, itemId }: VariableEdi
 		variant: 'popover',
 	} );
 
+	const triggerProps = bindTrigger( menuState );
+
 	return (
 		<>
-			<IconButton { ...bindTrigger( menuState ) } disabled={ disabled } size="tiny">
+			<IconButton
+				{ ...triggerProps }
+				disabled={ disabled }
+				size="tiny"
+				onClick={ ( e: MouseEvent ) => {
+					e.stopPropagation();
+					triggerProps.onClick?.( e );
+				} }
+			>
 				<DotsVerticalIcon fontSize="tiny" />
 			</IconButton>
 

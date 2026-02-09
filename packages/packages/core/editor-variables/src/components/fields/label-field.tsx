@@ -35,7 +35,6 @@ export type LabelFieldProps = {
 	showWarningInfotip?: boolean;
 	variables?: TVariablesList;
 	onKeyDown?: ( event: KeyboardEvent< HTMLInputElement > ) => void;
-	disabled?: boolean;
 };
 
 export const LabelField = ( {
@@ -50,7 +49,6 @@ export const LabelField = ( {
 	showWarningInfotip = false,
 	variables,
 	onKeyDown,
-	disabled,
 }: LabelFieldProps ) => {
 	const [ label, setLabel ] = useState( value );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
@@ -92,7 +90,6 @@ export const LabelField = ( {
 			} }
 			// eslint-disable-next-line jsx-a11y/no-autofocus
 			autoFocus={ focusOnShow }
-			disabled={ disabled }
 		/>
 	);
 
