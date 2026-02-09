@@ -102,7 +102,7 @@ class V4Tabs extends Atomic_Element_Base
 				->editor_settings([
 					'title' => 'Tabs menu',
 				])
-				/* ->is_locked( true ) */
+				->is_locked( true )
 				->build(),
 			Div_Block::generate()->settings([
 				'attributes' => Attributes_Prop_Type::generate([
@@ -115,7 +115,7 @@ class V4Tabs extends Atomic_Element_Base
 				->editor_settings([
 					'title' => 'Tabs content',
 				])
-				/* ->is_locked( true ) */
+				->is_locked( true )
 				->build(),
 		];
 	}
