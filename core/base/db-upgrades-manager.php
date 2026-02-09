@@ -152,16 +152,12 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 		// Only skip if process is actively running (has lock), not just if queue has items.
 		// Queue may have items from a failed previous attempt that never processed.
 		if ( $updater->is_process_locked() ) {
-			$this->log_debug( 'start_run_skipped', [ 'reason' => 'process_locked' ] );
 			return;
 		}
 
 		$upgrade_callbacks = $this->get_upgrade_callbacks();
 
-		$this->log_debug( 'start_run_callbacks', [ 'count' => count( $upgrade_callbacks ) ] );
-
 		if ( empty( $upgrade_callbacks ) ) {
-			$this->log_debug( 'start_run_no_callbacks', [] );
 			$this->on_runner_complete();
 			return;
 		}
@@ -174,11 +170,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 			] );
 		}
 
-		$this->log_debug( 'start_run_before_dispatch', [] );
-
 		$updater->save()->dispatch();
-
-		$this->log_debug( 'start_run_after_dispatch', [] );
 
 		Plugin::$instance->logger->get_logger()->info( 'Elementor data updater process has been queued.', [
 			'meta' => [
@@ -229,12 +221,6 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 	}
 
 	public function __construct() {
-		$this->log_debug( 'constructor_start', [
-			'current_version' => $this->get_current_version(),
-			'new_version' => $this->get_new_version(),
-			'is_admin' => is_admin(),
-		] );
-
 		// If upgrade is completed - show the notice only for admins.
 		// Note: in this case `should_upgrade` returns false, because it's already upgraded.
 		if ( is_admin() && current_user_can( 'update_plugins' ) && $this->get_flag( 'completed' ) ) {
@@ -245,41 +231,23 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 		// The AJAX handler (maybe_handle) will process the queue.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$ajax_action = isset( $_REQUEST['action'] ) ? sanitize_text_field( $_REQUEST['action'] ) : '';
-		$this->log_debug( 'ajax_check', [
-			'wp_doing_ajax' => wp_doing_ajax(),
-			'action' => $ajax_action,
-			'is_updater' => false !== strpos( $ajax_action, 'updater' ),
-		] );
 
 		if ( wp_doing_ajax() && $ajax_action && false !== strpos( $ajax_action, 'updater' ) ) {
-			$this->log_debug( 'skip_ajax_updater_request', [ 'action' => $ajax_action ] );
 			return;
 		}
 
-		$should_upgrade = $this->should_upgrade();
-		$this->log_debug( 'should_upgrade_check', [ 'result' => $should_upgrade ] );
-
-		if ( ! $should_upgrade ) {
+		if ( ! $this->should_upgrade() ) {
 			return;
 		}
 
 		$updater = $this->get_task_runner();
 
-		$this->log_debug( 'before_start_run', [
-			'has_queue_items' => $updater->is_running(),
-			'is_process_locked' => $updater->is_process_locked(),
-		] );
-
 		$this->start_run();
-
-		$this->log_debug( 'after_start_run', [] );
 
 		// If queue has items but process is not locked, it's stuck - try to process on shutdown.
 		if ( $updater->is_running() && ! $updater->is_process_locked() ) {
-			$this->log_debug( 'stuck_queue_detected', [] );
 			if ( is_admin() && ! wp_doing_ajax() && ! wp_doing_cron() ) {
 				add_action( 'shutdown', [ $updater, 'maybe_handle_on_shutdown' ], 0 );
-				$this->log_debug( 'stuck_queue_shutdown_registered', [] );
 			}
 		}
 
@@ -288,29 +256,5 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 		}
 
 		parent::__construct();
-	}
-
-	/**
-	 * Log debug information to WordPress option.
-	 *
-	 * @param string $step The step name.
-	 * @param array  $data Additional data to log.
-	 */
-	protected function log_debug( $step, $data ) {
-		$log = get_option( '_elementor_bg_process_log', [] );
-
-		if ( count( $log ) >= 50 ) {
-			$log = array_slice( $log, -49 );
-		}
-
-		$log[] = [
-			'index' => count( $log ) + 1,
-			'time' => gmdate( 'Y-m-d H:i:s' ),
-			'step' => $step,
-			'class' => static::class,
-			'data' => $data,
-		];
-
-		update_option( '_elementor_bg_process_log', $log, false );
 	}
 }

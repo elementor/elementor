@@ -77,15 +77,6 @@ abstract class WP_Background_Process extends WP_Async_Request {
 	 * @return array|\WP_Error
 	 */
 	public function dispatch() {
-		$this->log_debug( 'dispatch_start', [
-			'identifier' => $this->identifier,
-			'is_admin' => is_admin(),
-			'is_ajax' => wp_doing_ajax(),
-			'is_cron' => wp_doing_cron(),
-			'queue_empty' => $this->is_queue_empty(),
-			'process_running' => $this->is_process_running(),
-		] );
-
 		// Schedule the cron healthcheck.
 		$this->schedule_event();
 
@@ -93,18 +84,10 @@ abstract class WP_Background_Process extends WP_Async_Request {
 		// This ensures background tasks run even if HTTP loopback requests are blocked.
 		if ( is_admin() && ! wp_doing_ajax() && ! wp_doing_cron() ) {
 			add_action( 'shutdown', [ $this, 'maybe_handle_on_shutdown' ], 0 );
-			$this->log_debug( 'shutdown_hook_registered', [] );
 		}
 
 		// Perform remote post.
-		$result = parent::dispatch();
-
-		$this->log_debug( 'dispatch_end', [
-			'loopback_result' => is_wp_error( $result ) ? $result->get_error_message() : 'success',
-			'response_code' => is_array( $result ) ? wp_remote_retrieve_response_code( $result ) : null,
-		] );
-
-		return $result;
+		return parent::dispatch();
 	}
 
 	/**
@@ -116,19 +99,12 @@ abstract class WP_Background_Process extends WP_Async_Request {
 	 * @access public
 	 */
 	public function maybe_handle_on_shutdown() {
-		$this->log_debug( 'shutdown_start', [
-			'process_running' => $this->is_process_running(),
-			'queue_empty' => $this->is_queue_empty(),
-		] );
-
 		// Don't run if already processed via loopback or if queue is empty.
 		if ( $this->is_process_running() ) {
-			$this->log_debug( 'shutdown_skip', [ 'reason' => 'process_running' ] );
 			return;
 		}
 
 		if ( $this->is_queue_empty() ) {
-			$this->log_debug( 'shutdown_skip', [ 'reason' => 'queue_empty' ] );
 			return;
 		}
 
@@ -138,47 +114,14 @@ abstract class WP_Background_Process extends WP_Async_Request {
 		}
 
 		// Finish the request - browser gets response, PHP continues.
-		$finish_method = 'none';
 		if ( function_exists( 'fastcgi_finish_request' ) ) {
 			fastcgi_finish_request();
-			$finish_method = 'fastcgi';
 		} elseif ( function_exists( 'litespeed_finish_request' ) ) {
 			litespeed_finish_request();
-			$finish_method = 'litespeed';
 		}
-
-		$this->log_debug( 'shutdown_processing', [ 'finish_method' => $finish_method ] );
 
 		// Process the queue directly.
 		$this->handle();
-
-		$this->log_debug( 'shutdown_complete', [
-			'queue_empty_after' => $this->is_queue_empty(),
-		] );
-	}
-
-	/**
-	 * Log debug information to WordPress option.
-	 *
-	 * @param string $step The step name.
-	 * @param array  $data Additional data to log.
-	 */
-	protected function log_debug( $step, $data ) {
-		$log = get_option( '_elementor_bg_process_log', [] );
-
-		// Keep only last 50 entries to prevent bloat.
-		if ( count( $log ) >= 50 ) {
-			$log = array_slice( $log, -49 );
-		}
-
-		$log[] = [
-			'index' => count( $log ) + 1,
-			'time' => gmdate( 'Y-m-d H:i:s' ),
-			'step' => $step,
-			'data' => $data,
-		];
-
-		update_option( '_elementor_bg_process_log', $log, false );
 	}
 
 	/**

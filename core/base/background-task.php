@@ -170,8 +170,6 @@ abstract class Background_Task extends WP_Background_Process {
 	 * within server memory and time limit constraints.
 	 */
 	protected function handle() {
-		$this->log_debug( 'handle_start', [] );
-
 		$this->manager->on_runner_start();
 
 		$this->lock_process();
@@ -179,17 +177,8 @@ abstract class Background_Task extends WP_Background_Process {
 		do {
 			$batch = $this->get_batch();
 
-			$this->log_debug( 'handle_batch', [
-				'batch_key' => $batch->key ?? 'none',
-				'batch_count' => isset( $batch->data ) ? count( $batch->data ) : 0,
-			] );
-
 			foreach ( $batch->data as $key => $value ) {
 				$task = $this->task( $value );
-
-				$this->log_debug( 'handle_task', [
-					'task_result' => false !== $task ? 'continue' : 'done',
-				] );
 
 				if ( false !== $task ) {
 					$batch->data[ $key ] = $task;
@@ -199,55 +188,26 @@ abstract class Background_Task extends WP_Background_Process {
 
 				if ( $this->batch_limit_exceeded() ) {
 					// Batch limits reached.
-					$this->log_debug( 'handle_batch_limit_exceeded', [] );
 					break;
 				}
 			}
 
 			// Update or delete current batch.
 			if ( ! empty( $batch->data ) ) {
-				$this->log_debug( 'handle_batch_update', [ 'remaining' => count( $batch->data ) ] );
 				$this->update( $batch->key, $batch->data );
 			} else {
-				$this->log_debug( 'handle_batch_delete', [ 'key' => $batch->key ] );
 				$this->delete( $batch->key );
 			}
 		} while ( ! $this->batch_limit_exceeded() && ! $this->is_queue_empty() );
 
 		$this->unlock_process();
 
-		$queue_empty = $this->is_queue_empty();
-		$this->log_debug( 'handle_end', [ 'queue_empty' => $queue_empty ] );
-
 		// Start next batch or complete process.
-		if ( ! $queue_empty ) {
+		if ( ! $this->is_queue_empty() ) {
 			$this->dispatch();
 		} else {
 			$this->complete();
 		}
-	}
-
-	/**
-	 * Log debug information to WordPress option.
-	 *
-	 * @param string $step The step name.
-	 * @param array  $data Additional data to log.
-	 */
-	protected function log_debug( $step, $data ) {
-		$log = get_option( '_elementor_bg_process_log', [] );
-
-		if ( count( $log ) >= 50 ) {
-			$log = array_slice( $log, -49 );
-		}
-
-		$log[] = [
-			'index' => count( $log ) + 1,
-			'time' => gmdate( 'Y-m-d H:i:s' ),
-			'step' => $step,
-			'data' => $data,
-		];
-
-		update_option( '_elementor_bg_process_log', $log, false );
 	}
 
 	/**
