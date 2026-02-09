@@ -8,7 +8,7 @@ import { ControlFormLabel } from '../components/control-form-label';
 import { ControlLabel } from '../components/control-label';
 import { createControl } from '../create-control';
 import { ChipsControl } from './chips-control';
-import { CollapsibleContent } from './collapsible-content';
+import { CollapsibleContent } from '@elementor/editor-ui';
 import { SelectControl } from './select-control';
 import { TextAreaControl } from './text-area-control';
 import { TextControl } from './text-control';

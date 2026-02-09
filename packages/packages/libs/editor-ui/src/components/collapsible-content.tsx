@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { type ReactNode, useState } from 'react';
-import { CollapseIcon } from '@elementor/editor-ui';
+import { CollapseIcon } from './collapse-icon';
 import { Button, Collapse, Stack, styled } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 

@@ -3,7 +3,7 @@ import { renderWithTheme } from 'test-utils';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
-import { CollapsibleContent } from '../collapsible-content';
+import { CollapsibleContent } from '@elementor/editor-ui';
 
 jest.mock( '@elementor/editor-v1-adapters' );
 

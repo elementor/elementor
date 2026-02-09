@@ -4,7 +4,7 @@ import { CollapseIcon, SectionRefContext } from '@elementor/editor-ui';
 import { Collapse, Divider, ListItemButton, ListItemText, Stack } from '@elementor/ui';
 
 import { useStateByElement } from '../hooks/use-state-by-element';
-import { type CollapsibleValue, getCollapsibleValue } from './collapsible-content';
+import { type CollapsibleValue, getCollapsibleValue } from '@elementor/editor-ui';
 
 type Props = PropsWithChildren< {
 	title: string;
