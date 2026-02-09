@@ -11,6 +11,7 @@ import {
 } from '@elementor/editor-elements';
 import {
 	type CreateOptions,
+	createTopLevelObjectType,
 	isDependencyMet,
 	type PropKey,
 	type Props,
@@ -22,7 +23,6 @@ import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
 import { extractOrderedDependencies, getUpdatedValues, type Values } from '../utils/prop-dependency-utils';
-import { createTopLevelObjectType } from './create-top-level-object-type';
 
 type SettingsFieldProps = {
 	bind: PropKey;

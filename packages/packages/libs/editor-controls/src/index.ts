@@ -35,6 +35,15 @@ export { enqueueFont } from './controls/font-family-control/enqueue-font';
 export { transitionProperties, transitionsItemsList } from './controls/transition-control/data';
 export { DateTimeControl } from './controls/date-time-control';
 export { InlineEditingControl } from './controls/inline-editing-control';
+export {
+	ControlRepeater,
+	ItemsContainer as ControlRepeaterContainer,
+	EditItemPopover as ControlRepeaterPopover,
+	Item as ControlRepeaterItem,
+	RemoveItemAction,
+	TooltipAddItemAction,
+} from './components/control-repeater';
+export { RepeaterHeader } from './components/repeater/repeater-header';
 
 // components
 export { ControlFormLabel } from './components/control-form-label';

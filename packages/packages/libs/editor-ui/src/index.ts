@@ -15,6 +15,7 @@ export { CtaButton } from './components/cta-button';
 export { PromotionInfotip } from './components/promotion-infotip';
 export { PromotionPopover } from './components/promotion-popover';
 export { PromotionChip } from './components/promotion-chip';
+export { FeatureFlag } from './components/feature-flag';
 export { PromotionAlert } from './components/promotion-alert';
 export { FloatingActionsBar, useFloatingActionsBar } from './components/floating-bar';
 

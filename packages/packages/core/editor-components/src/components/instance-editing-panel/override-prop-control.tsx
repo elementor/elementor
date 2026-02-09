@@ -10,14 +10,13 @@ import {
 	BaseControl,
 	controlsRegistry,
 	type ControlType,
-	createTopLevelObjectType,
 	ElementProvider,
 	isDynamicPropValue,
 	SettingsField,
 	useElement,
 } from '@elementor/editor-editing-panel';
 import { type Control, getContainer, getElementType } from '@elementor/editor-elements';
-import { type PropType, type PropValue } from '@elementor/editor-props';
+import { createTopLevelObjectType, type PropType, type PropValue } from '@elementor/editor-props';
 import { Stack } from '@elementor/ui';
 
 import { useControlsByWidgetType } from '../../hooks/use-controls-by-widget-type';

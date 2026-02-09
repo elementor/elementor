@@ -5,17 +5,12 @@ import { SessionStorageProvider } from '@elementor/session';
 import { Stack } from '@elementor/ui';
 
 import { InteractionsProvider, useInteractionsContext } from '../contexts/interactions-context';
-import { PopupStateProvider } from '../contexts/popup-state-context';
 import type { ElementInteractions } from '../types';
 import { EmptyState } from './empty-state';
 import { InteractionsList } from './interactions-list';
 
-export const InteractionsTab = ( { elementId }: { elementId: string } ) => {
-	return (
-		<PopupStateProvider>
-			<InteractionsTabContent elementId={ elementId } />
-		</PopupStateProvider>
-	);
+export const Interactions = ( { elementId }: { elementId: string } ) => {
+	return <InteractionsTabContent elementId={ elementId } />;
 };
 
 function InteractionsTabContent( { elementId }: { elementId: string } ) {

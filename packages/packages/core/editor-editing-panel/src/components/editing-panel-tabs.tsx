@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import * as React from 'react';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
+import { FeatureFlag } from '@elementor/editor-ui';
 import { Divider, Stack, Tab, TabPanel, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -28,10 +28,10 @@ export const EditingPanelTabs = () => {
 const PanelTabContent = () => {
 	const editorDefaults = useDefaultPanelSettings();
 	const defaultComponentTab = editorDefaults.defaultTab as TabValue;
-	const isInteractionsActive = isExperimentActive( 'e_interactions' );
 
 	const [ currentTab, setCurrentTab ] = useStateByElement< TabValue >( 'tab', defaultComponentTab );
 	const { getTabProps, getTabPanelProps, getTabsProps } = useTabs< TabValue >( currentTab );
+
 	return (
 		<ScrollProvider>
 			<Stack direction="column" sx={ { width: '100%' } }>
@@ -48,9 +48,9 @@ const PanelTabContent = () => {
 					>
 						<Tab label={ __( 'General', 'elementor' ) } { ...getTabProps( 'settings' ) } />
 						<Tab label={ __( 'Style', 'elementor' ) } { ...getTabProps( 'style' ) } />
-						{ isInteractionsActive && (
-							<Tab label={ __( 'Interactions', 'elementor' ) } { ...getTabProps( 'interactions' ) } />
-						) }
+						{ /* <FeatureFlag experiment="e_interactions"> */ }
+						<Tab label={ __( 'Interactions', 'elementor' ) } { ...getTabProps( 'interactions' ) } />
+						{ /* </FeatureFlag> */ }
 					</Tabs>
 					<Divider />
 				</Stack>
@@ -60,11 +60,11 @@ const PanelTabContent = () => {
 				<TabPanel { ...getTabPanelProps( 'style' ) } disablePadding>
 					<StyleTab />
 				</TabPanel>
-				{ isInteractionsActive && (
+				<FeatureFlag experiment="e_interactions">
 					<TabPanel { ...getTabPanelProps( 'interactions' ) } disablePadding>
 						<InteractionsTab />
 					</TabPanel>
-				) }
+				</FeatureFlag>
 			</Stack>
 		</ScrollProvider>
 	);

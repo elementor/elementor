@@ -78,3 +78,8 @@ export type InteractionsProvider = {
 export type InteractionItemValue = InteractionItemPropValue[ 'value' ];
 
 export type SizeStringValue = `${ number }${ Unit }` | number;
+
+export type SelectOption = {
+	label: string;
+	value: string;
+};

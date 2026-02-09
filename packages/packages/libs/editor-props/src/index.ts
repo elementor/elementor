@@ -25,6 +25,7 @@ export { filterEmptyValues, isEmpty } from './utils/filter-empty-values';
 export { isTransformable } from './utils/is-transformable';
 export { mergeProps } from './utils/merge-props';
 export { evaluateTerm, extractValue, isDependency, isDependencyMet } from './utils/prop-dependency-utils';
+export { createTopLevelObjectType } from './utils/create-top-level-object-type';
 
 export const Schema = {
 	jsonSchemaToPropType,

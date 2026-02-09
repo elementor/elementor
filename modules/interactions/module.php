@@ -4,6 +4,7 @@ namespace Elementor\Modules\Interactions;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\Interactions\PropTypes\Interactions;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -68,6 +69,7 @@ class Module extends BaseModule {
 		add_action( 'elementor/frontend/before_enqueue_scripts', fn () => $this->enqueue_interactions() );
 		add_action( 'elementor/preview/enqueue_scripts', fn () => $this->enqueue_preview_scripts() );
 		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
+		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_interactions_schema( $settings ) );
 
 		// Collect interactions from documents before they render (header, footer, post content)
 		add_filter( 'elementor/frontend/builder_content_data', [ $this->get_frontend_handler(), 'collect_document_interactions' ], 10, 2 );
@@ -99,6 +101,14 @@ class Module extends BaseModule {
 		add_filter( 'elementor/document/load/data', function( $elements, $document ) {
 			return $this->process_elements_unwrap( $elements );
 		}, 10, 2 );
+	}
+
+	private function add_interactions_schema( $settings ) {
+		$settings['atomic']['interactions_schema'] = [
+			'interactions' => Interactions::make()
+		];
+
+		return $settings;
 	}
 
 	private function get_config() {

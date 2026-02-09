@@ -7,6 +7,7 @@ import {
 	useBoundProp,
 } from '@elementor/editor-controls';
 import type { Control, ControlLayout, ControlsSection } from '@elementor/editor-elements';
+import { createTopLevelObjectType } from '@elementor/editor-props';
 import { PopoverHeader, SectionPopoverBody } from '@elementor/editor-ui';
 import { DatabaseIcon, SettingsIcon, XIcon } from '@elementor/icons';
 import {
@@ -29,7 +30,6 @@ import { __ } from '@wordpress/i18n';
 
 import { Control as BaseControl } from '../../controls-registry/control';
 import { controlsRegistry, type ControlType } from '../../controls-registry/controls-registry';
-import { createTopLevelObjectType } from '../../controls-registry/create-top-level-object-type';
 import { useLicenseConfig } from '../../hooks/use-license-config';
 import { usePersistDynamicValue } from '../../hooks/use-persist-dynamic-value';
 import { DynamicControl } from '../dynamic-control';

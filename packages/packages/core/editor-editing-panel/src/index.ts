@@ -15,7 +15,6 @@ export { useStyle } from './contexts/style-context';
 export { Control as BaseControl } from './controls-registry/control';
 export { controlsRegistry, type ControlType } from './controls-registry/controls-registry';
 export { StylesProviderCannotUpdatePropsError } from './errors';
-export { createTopLevelObjectType } from './controls-registry/create-top-level-object-type';
 export { useCustomCss } from './hooks/use-custom-css';
 export { useStateByElement } from './hooks/use-state-by-element';
 export { getSubtitle, getTitle, HISTORY_DEBOUNCE_WAIT } from './hooks/use-styles-fields';

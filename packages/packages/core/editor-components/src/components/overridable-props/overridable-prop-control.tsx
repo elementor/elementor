@@ -8,8 +8,8 @@ import {
 	useBoundProp,
 	useControlReplacement,
 } from '@elementor/editor-controls';
-import { createTopLevelObjectType, useElement } from '@elementor/editor-editing-panel';
-import { type PropValue } from '@elementor/editor-props';
+import { useElement } from '@elementor/editor-editing-panel';
+import { createTopLevelObjectType, type PropValue } from '@elementor/editor-props';
 
 import { type ComponentInstanceOverridePropValue } from '../../prop-types/component-instance-override-prop-type';
 import {

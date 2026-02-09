@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { PropKeyProvider, PropProvider, type SetValue, useBoundProp } from '@elementor/editor-controls';
-import { type PropKey } from '@elementor/editor-props';
+import { createTopLevelObjectType, type PropKey } from '@elementor/editor-props';
 
-import { createTopLevelObjectType } from '../controls-registry/create-top-level-object-type';
 import { DynamicConditionalControl } from './components/dynamic-conditional-control';
 import { useDynamicTag } from './hooks/use-dynamic-tag';
 import { type DynamicPropValue } from './types';

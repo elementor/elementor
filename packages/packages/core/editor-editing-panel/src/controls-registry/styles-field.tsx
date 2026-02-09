@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { ControlAdornmentsProvider, PropKeyProvider, PropProvider } from '@elementor/editor-controls';
-import { type PropKey, type PropValue } from '@elementor/editor-props';
+import { createTopLevelObjectType, type PropKey, type PropValue } from '@elementor/editor-props';
 import { getStylesSchema } from '@elementor/editor-styles';
 
 import { useStylesInheritanceChain } from '../contexts/styles-inheritance-context';
 import { getFieldIndicators } from '../field-indicators-registry';
 import { useStylesField } from '../hooks/use-styles-field';
 import { ConditionalField } from './conditional-field';
-import { createTopLevelObjectType } from './create-top-level-object-type';
 
 export type StylesFieldProps = {
 	bind: PropKey;
