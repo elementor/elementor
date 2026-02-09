@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { emailPropTypeUtil } from '@elementor/editor-props';
-import { Box, Grid, Stack } from '@elementor/ui';
+import { Box, Divider, Grid, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
@@ -18,7 +18,7 @@ export const EmailControl = createControl( () => {
 
 	return (
 		<PropProvider { ...propContext } value={ value } setValue={ setValue }>
-			<Stack gap={ 1.5 }>
+			<Stack gap={ 2 }>
 				<ControlFormLabel>{ __( 'Email settings', 'elementor' ) }</ControlFormLabel>
 				<PropKeyProvider bind="to">
 					<Grid container direction="column" gap={ 0.5 }>
@@ -66,9 +66,9 @@ export const EmailControl = createControl( () => {
 					</Grid>
 				</PropKeyProvider>
 
-				<CollapsibleContent defaultOpen={ false }>
-					<Box sx={ { pt: 1.5 } }>
-						<Stack gap={ 1.5 }>
+			<CollapsibleContent defaultOpen={ false }>
+				<Box sx={ { pt: 2 } }>
+					<Stack gap={ 2 }>
 							<PropKeyProvider bind="from-name">
 								<Grid container direction="column" gap={ 0.5 }>
 									<Grid item>
@@ -112,6 +112,8 @@ export const EmailControl = createControl( () => {
 									</Grid>
 								</Grid>
 							</PropKeyProvider>
+
+							<Divider />
 
 							<PropKeyProvider bind="meta-data">
 								<Stack gap={ 0.5 }>
