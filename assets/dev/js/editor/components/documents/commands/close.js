@@ -4,7 +4,7 @@ export class Close extends $e.modules.CommandBase {
 	}
 
 	async apply( args ) {
-		const { id, mode, onClose } = args,
+		const { id, mode, onClose, targetDocumentId } = args,
 			document = elementor.documents.get( id );
 
 		// Already closed.
@@ -12,8 +12,26 @@ export class Close extends $e.modules.CommandBase {
 			return jQuery.Deferred().resolve();
 		}
 
+		let isTargetComponent = false;
+		const isCurrentComponent = 'elementor_component' === document.config.type;
+
+		if ( targetDocumentId ) {
+			const targetDocument = elementor.documents.get( targetDocumentId );
+
+			if ( targetDocument ) {
+				isTargetComponent = 'elementor_component' === targetDocument.config.type;
+			} else {
+				try {
+					const targetConfig = await elementor.documents.request( targetDocumentId );
+					isTargetComponent = 'elementor_component' === targetConfig.type;
+				} catch ( e ) {
+				}
+			}
+		}
+
+		const isComponentFlow = ( ! isTargetComponent && isCurrentComponent ) || ( isTargetComponent && ! isCurrentComponent );
 		// TODO: Move to an hook.
-		if ( ! mode && ( document.editor.isChanged || document.isDraft() ) ) {
+		if ( ! mode && ! isComponentFlow && ( document.editor.isChanged || document.isDraft() ) ) {
 			const deferred = jQuery.Deferred();
 			this.getConfirmDialog( deferred ).show();
 			return deferred.promise();
