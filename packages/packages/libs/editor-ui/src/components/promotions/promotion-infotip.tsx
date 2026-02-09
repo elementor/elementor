@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useCanvasClickHandler } from '@elementor/editor-ui';
 import {
 	Card,
 	CardActions,
@@ -12,6 +11,7 @@ import {
 	Typography,
 } from '@elementor/ui';
 
+import { useCanvasClickHandler } from '../../hooks';
 import { CtaButton } from '../cta-button';
 
 type InfotipCardProps = {
