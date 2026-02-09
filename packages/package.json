@@ -25,6 +25,7 @@
     "release": "npm run build && node scripts/version-manager/index.js publish"
   },
   "workspaces": [
+    "packages/apps/*",
     "packages/core/*",
     "packages/libs/*",
     "packages/tools/*"

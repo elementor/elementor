@@ -12,16 +12,14 @@ function setReadyStateComplete() {
 }
 
 function initBreakpoints() {
-	window.elementorFrontendConfig = {
-		responsive: {
-			activeBreakpoints: {
-				mobile: { value: 768, direction: 'max' },
-				mobile_extra: { value: 880, direction: 'max' },
-				tablet: { value: 1024, direction: 'max' },
-				tablet_extra: { value: 1200, direction: 'max' },
-				laptop: { value: 1366, direction: 'max' },
-				widescreen: { value: 2440, direction: 'min' },
-			},
+	window.ElementorInteractionsConfig = {
+		breakpoints: {
+			mobile: { value: 768, direction: 'max' },
+			mobile_extra: { value: 880, direction: 'max' },
+			tablet: { value: 1024, direction: 'max' },
+			tablet_extra: { value: 1200, direction: 'max' },
+			laptop: { value: 1366, direction: 'max' },
+			widescreen: { value: 2440, direction: 'min' },
 		},
 	};
 }
