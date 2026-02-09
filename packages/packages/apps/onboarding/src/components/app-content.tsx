@@ -32,9 +32,6 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 		hadUnexpectedExit,
 		isLoading,
 		hasPassedLogin,
-		isConnected,
-		isGuest,
-		userName,
 		choices,
 		urls,
 		actions,
@@ -136,13 +133,6 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 		);
 	}, [ stepId, stepIndex, totalSteps, choices, actions, isLast, onComplete, updateProgress, updateChoices ] );
 
-	const handleBuildingForChange = useCallback(
-		( value: string ) => {
-			actions.setUserChoice( 'building_for', value );
-		},
-		[ actions ]
-	);
-
 	const rightPanelConfig = useMemo( () => getStepVisualConfig( stepId ), [ stepId ] );
 	const isPending = updateProgress.isPending || isLoading;
 
@@ -155,15 +145,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 	const renderStepContent = () => {
 		switch ( stepId ) {
 			case StepId.BUILDING_FOR:
-				return (
-					<BuildingFor
-						userName={ userName }
-						isConnected={ isConnected }
-						isGuest={ isGuest }
-						value={ choices.building_for }
-						onChange={ handleBuildingForChange }
-					/>
-				);
+				return <BuildingFor onComplete={ handleContinue } />;
 			default:
 				return <Box sx={ { flex: 1, width: '100%' } } />;
 		}
