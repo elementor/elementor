@@ -83,7 +83,7 @@ type TwigRenderContext = {
 	[ key: string ]: unknown;
 };
 
-export type RenderCachedTwigTemplateOptions< TView extends TwigViewInterface > = {
+export type RenderTwigTemplateOptions< TView extends TwigViewInterface > = {
 	view: TView;
 	signal?: AbortSignal;
 	setup: TwigRenderSetup;
@@ -99,7 +99,7 @@ export async function renderTwigTemplate< TView extends TwigViewInterface >( {
 	buildContext,
 	attachContent,
 	transformSettings,
-}: RenderCachedTwigTemplateOptions< TView > ): Promise< void > {
+}: RenderTwigTemplateOptions< TView > ): Promise< void > {
 	view.triggerMethod( 'before:render:template' );
 
 	if ( signal?.aborted ) {
