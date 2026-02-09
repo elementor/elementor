@@ -165,14 +165,6 @@ export function createNestedTemplatedElementView( {
 			} );
 		},
 
-		getRenderContext() {
-			return this._parent?.getRenderContext?.();
-		},
-
-		getResolverRenderContext() {
-			return this._parent?.getResolverRenderContext?.();
-		},
-
 		getChildType(): string[] {
 			const allowedTypes = element.allowed_child_types ?? [];
 
