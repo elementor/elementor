@@ -80,11 +80,10 @@ abstract class WP_Background_Process extends WP_Async_Request {
 		// Schedule the cron healthcheck.
 		$this->schedule_event();
 
-		// On admin page requests (not AJAX/cron), process on shutdown as fallback.
-		// This ensures updates run even if loopback requests are blocked.
-		// Similar to WordPress ALTERNATE_WP_CRON - flush output first, then run directly.
+		// On admin page requests (not AJAX/cron), also process on shutdown as fallback.
+		// This ensures background tasks run even if HTTP loopback requests are blocked.
 		if ( is_admin() && ! wp_doing_ajax() && ! wp_doing_cron() ) {
-			add_action( 'shutdown', [ $this, 'dispatch_on_shutdown' ], 0 );
+			add_action( 'shutdown', [ $this, 'maybe_handle_on_shutdown' ], 0 );
 		}
 
 		// Perform remote post.
@@ -92,29 +91,33 @@ abstract class WP_Background_Process extends WP_Async_Request {
 	}
 
 	/**
-	 * Dispatch on shutdown
+	 * Maybe handle on shutdown
 	 *
-	 * Flush output to browser first, then run handler directly.
-	 * This mimics WordPress ALTERNATE_WP_CRON behavior - no HTTP loopback needed.
+	 * Fallback handler for when HTTP loopback requests are blocked.
+	 * Flushes output to browser first, then processes the queue directly.
 	 *
 	 * @access public
 	 */
-	public function dispatch_on_shutdown() {
-		// Flush output to browser so admin page loads immediately.
+	public function maybe_handle_on_shutdown() {
+		// Don't run if already processed via loopback or if queue is empty.
+		if ( $this->is_process_running() || $this->is_queue_empty() ) {
+			return;
+		}
+
+		// Flush output to browser so page loads immediately.
 		if ( ob_get_level() ) {
 			wp_ob_end_flush_all();
 		}
 
+		// Finish the request - browser gets response, PHP continues.
 		if ( function_exists( 'fastcgi_finish_request' ) ) {
 			fastcgi_finish_request();
 		} elseif ( function_exists( 'litespeed_finish_request' ) ) {
 			litespeed_finish_request();
-		} else {
-			flush();
 		}
 
-		// Now run handler directly in this process (no HTTP request).
-		$this->handle_cron_healthcheck();
+		// Process the queue directly.
+		$this->handle();
 	}
 
 	/**
