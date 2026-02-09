@@ -101,7 +101,7 @@ class Admin_Menu_Manager {
 
 		$hooks = [];
 
-		foreach ( $this->get_all() as $item_slug => $item ) {
+		foreach ( $this->items as $item_slug => $item ) {
 			$is_top_level = empty( $item->get_parent_slug() );
 
 			if ( $is_top_level ) {
@@ -153,7 +153,7 @@ class Admin_Menu_Manager {
 	}
 
 	private function hide_invisible_menus() {
-		foreach ( $this->get_all() as $item_slug => $item ) {
+		foreach ( $this->items as $item_slug => $item ) {
 			if ( $item->is_visible() ) {
 				continue;
 			}
