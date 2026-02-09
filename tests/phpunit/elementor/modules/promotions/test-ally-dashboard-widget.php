@@ -74,9 +74,11 @@ class Test_Ally_Dashboard_Widget extends Elementor_Test_Base {
 		$this->assertFalse( get_option( Ally_Dashboard_Widget::ALLY_SCANNER_RUN ) );
 
 		// Act.
+		ob_start();
 		try {
 			Ally_Dashboard_Widget::handle_click();
 		} catch ( \WPDieException $e ) {
+			ob_end_clean();
 			$response = json_decode( $e->getMessage(), true );
 			$this->assertIsArray( $response );
 			$this->assertTrue( $response['success'] );
@@ -97,8 +99,15 @@ class Test_Ally_Dashboard_Widget extends Elementor_Test_Base {
 		} );
 
 		// Act & Assert.
-		$this->expectException( \WPDieException::class );
-		Ally_Dashboard_Widget::handle_click();
+		ob_start();
+		try {
+			$this->expectException( \WPDieException::class );
+			Ally_Dashboard_Widget::handle_click();
+		} finally {
+			if ( ob_get_level() ) {
+				ob_end_clean();
+			}
+		}
 	}
 
 	public function test_handle_click_rejects_user_without_manage_options() {
@@ -113,9 +122,11 @@ class Test_Ally_Dashboard_Widget extends Elementor_Test_Base {
 		} );
 
 		// Act.
+		ob_start();
 		try {
 			Ally_Dashboard_Widget::handle_click();
 		} catch ( \WPDieException $e ) {
+			ob_end_clean();
 			$response = json_decode( $e->getMessage(), true );
 			$this->assertIsArray( $response );
 			$this->assertFalse( $response['success'] );
