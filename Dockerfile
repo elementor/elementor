@@ -1,7 +1,5 @@
-# Build stage
 FROM node:20.19-bookworm AS builder
 
-# Install PHP 7.4 and Composer (matching CI setup)
 RUN apt-get update && apt-get install -y \
     lsb-release apt-transport-https ca-certificates software-properties-common \
     && curl -fsSL https://packages.sury.org/php/apt.gpg | gpg --dearmor -o /usr/share/keyrings/sury-php.gpg \
@@ -20,16 +18,9 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 COPY . .
 
-# Install dependencies (matching CI: prepare-environment:ci + composer:no-dev)
-RUN npm ci && \
-    cd packages && npm ci && cd .. && \
-    composer install --optimize-autoloader --prefer-dist && \
-    composer install --no-scripts --no-dev && \
-    composer dump-autoload
+RUN npm run prepare-environment:ci && npm run composer:no-dev
 
-# Build (run turbo with concurrency=1 to avoid race conditions in DTS generation)
-RUN cd packages && npx turbo build --concurrency=1 && cd .. && npx grunt build --force
+RUN npm run build
 
-# Output stage - only the build folder
 FROM scratch AS output
-COPY --from=builder /app/build /build
+COPY --from=builder /app/build /elementor
