@@ -1,0 +1,53 @@
+{
+  "name": "@elementor/onboarding",
+  "description": "Onboarding wizard for Elementor",
+  "version": "4.0.0",
+  "private": true,
+  "author": "Elementor Team",
+  "homepage": "https://elementor.com/",
+  "license": "GPL-3.0-or-later",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elementor/elementor.git",
+    "directory": "packages/apps/onboarding"
+  },
+  "bugs": {
+    "url": "https://github.com/elementor/elementor/issues"
+  },
+  "files": [
+    "README.md",
+    "CHANGELOG.md",
+    "/dist",
+    "/src",
+    "!**/__tests__"
+  ],
+  "scripts": {
+    "build": "tsup --config=../../tsup.build.ts",
+    "dev": "tsup --config=../../tsup.dev.ts"
+  },
+  "dependencies": {
+    "@elementor/icons": "1.68.0",
+    "@elementor/query": "4.0.0",
+    "@elementor/store": "4.0.0",
+    "@elementor/ui": "1.36.17",
+    "@wordpress/i18n": "^5.13.0"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5"
+  }
+}
