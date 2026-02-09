@@ -101,7 +101,7 @@ class Module extends BaseModule {
 		}, 10, 2 );
 	}
 
-	private function get_config() {
+	public function get_config() {
 		return [
 			'constants' => $this->get_presets()->defaults(),
 			'animationOptions' => $this->get_presets()->list(),
@@ -116,7 +116,7 @@ class Module extends BaseModule {
 		$breakpoints = [];
 
 		foreach ( array_keys( $active_breakpoints ) as $breakpoint_label ) {
-			$breakpoints[ $breakpoint_label ] = $breakpoints_config[ $breakpoint_label ]['value'];
+			$breakpoints[ $breakpoint_label ] = $breakpoints_config[ $breakpoint_label ];
 		}
 
 		return $breakpoints;
