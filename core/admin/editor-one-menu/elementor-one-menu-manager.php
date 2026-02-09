@@ -76,9 +76,6 @@ class Elementor_One_Menu_Manager {
 		do_action( 'elementor/editor-one/menu/register_submenus' );
 	}
 
-	/**
-	 * TODO: This can be removed in v4.1.0 [ED-22806]
-	 */
 	public function register_pro_submenus(): void {
 		if ( ! $this->is_pro_module_enabled &&
 			Utils::has_pro() &&
