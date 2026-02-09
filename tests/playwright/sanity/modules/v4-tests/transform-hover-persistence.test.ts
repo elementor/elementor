@@ -23,8 +23,15 @@ test.describe( 'Transform repeater persistence @atomic-widgets', () => {
 
 		// Act
 		await editor.v4Panel.openTab( 'style' );
-		await page.getByRole( 'button', { name: 'Open CSS Class Menu' } ).click();
-		await page.getByRole( 'menuitem', { name: 'hover' } ).click();
+
+		const cssClassMenuButton = page.getByRole( 'button', { name: 'Open CSS Class Menu' } );
+		await cssClassMenuButton.waitFor( { state: 'visible' } );
+		await page.waitForTimeout( 500 );
+		await cssClassMenuButton.click();
+
+		const hoverMenuItem = page.getByRole( 'menuitem', { name: 'hover' } );
+		await hoverMenuItem.waitFor( { state: 'visible', timeout: 10000 } );
+		await hoverMenuItem.click();
 		await editor.openV2Section( 'effects' );
 
 		const addTransformButton = page.getByRole( 'button', { name: 'Add transform item' } );
@@ -37,6 +44,7 @@ test.describe( 'Transform repeater persistence @atomic-widgets', () => {
 
 		// Assert
 		const transformItems = page.locator( '.MuiTag-root' );
+		await transformItems.waitFor( { state: 'visible', timeout: 10000 } );
 		await expect( transformItems ).toHaveCount( 1 );
 
 		// Publish
@@ -49,8 +57,16 @@ test.describe( 'Transform repeater persistence @atomic-widgets', () => {
 
 		await editor.selectElement( headingId );
 		await editor.v4Panel.openTab( 'style' );
-		await page.getByRole( 'button', { name: 'Open CSS Class Menu' } ).click();
-		await page.getByRole( 'menuitem', { name: 'hover' } ).click();
+
+		const cssClassMenuButtonAfterRefresh = page.getByRole( 'button', { name: 'Open CSS Class Menu' } );
+		await cssClassMenuButtonAfterRefresh.waitFor( { state: 'visible' } );
+		await page.waitForTimeout( 500 );
+		await cssClassMenuButtonAfterRefresh.click();
+
+		const hoverMenuItemAfterRefresh = page.getByRole( 'menuitem', { name: 'hover' } );
+		await hoverMenuItemAfterRefresh.waitFor( { state: 'visible', timeout: 10000 } );
+		await hoverMenuItemAfterRefresh.click();
+
 		await editor.openV2Section( 'effects' );
 
 		// Assert
