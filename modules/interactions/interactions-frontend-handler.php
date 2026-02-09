@@ -135,24 +135,11 @@ class Interactions_Frontend_Handler {
 				continue;
 			}
 
-			// Clean $$type markers from all interaction items
-			$cleaned_items = [];
-			foreach ( $items as $item ) {
-				if ( ! is_array( $item ) ) {
-					continue;
-				}
-				$cleaned_items[] = Adapter::clean_prop_types( $item );
-			}
-
-			if ( empty( $cleaned_items ) ) {
-				continue;
-			}
-
 			// Build element entry with elementId, dataId, and cleaned interactions array
 			$elements_with_interactions[] = [
 				'elementId' => $element_id,
 				'dataId' => $element_id,
-				'interactions' => $cleaned_items,
+				'interactions' => $items,
 			];
 		}
 
@@ -186,11 +173,6 @@ class Interactions_Frontend_Handler {
 		// Check if it has 'items' key (standard format)
 		if ( isset( $interactions['items'] ) ) {
 			$items = $interactions['items'];
-
-			// If items is wrapped with $$type (v2 format), extract the value
-			if ( isset( $items['$$type'] ) && Adapter::ITEMS_TYPE === $items['$$type'] ) {
-				return isset( $items['value'] ) && is_array( $items['value'] ) ? $items['value'] : [];
-			}
 
 			return is_array( $items ) ? $items : [];
 		}
