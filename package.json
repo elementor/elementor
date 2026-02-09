@@ -14,7 +14,7 @@
     "watch": "npm run build:tools && npm run composer:no-dev && npx concurrently \"npm run watch:packages\" \"npm run styles:watch\" \"npm run scripts:watch\"",
     "watch:packages": "cd packages && npm run dev",
     "build": "npm run build:packages && grunt build",
-    "build:docker": "rm -rf docker-output && docker build --target output --output type=local,dest=./docker-output . && cd docker-output/elementor && zip -r elementor.zip . && echo 'Build output available in ./docker-output/elementor/elementor.zip' && cd ../../",
+    "build:docker": "rm -rf docker-output && docker build --target output --output type=local,dest=./docker-output . && cd docker-output/elementor && zip -r elementor.zip . && echo 'Build output available in ./docker-output/elementor/elementor.zip'",
     "build:packages": "cd packages && npm run build",
     "build:tools": "cd packages && npm run build:tools",
     "build:ci": "cd packages && npm run build && cd .. && npx grunt webpack:production",
