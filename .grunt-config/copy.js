@@ -58,6 +58,7 @@ const getBuildFiles = [
 	'!hello-elementor/**',
 	'!.env',
 	'!Dockerfile',
+	'!.dockerignore',
 
 	// Conflict with above rule.
 	'core/files/assets/**',
