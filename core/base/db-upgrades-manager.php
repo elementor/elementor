@@ -230,7 +230,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 		// Don't run upgrade logic during background process AJAX requests.
 		// The AJAX handler (maybe_handle) will process the queue.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$ajax_action = isset( $_REQUEST['action'] ) ? sanitize_text_field( $_REQUEST['action'] ) : '';
+		$ajax_action = isset( $_REQUEST['action'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['action'] ) ) : '';
 
 		if ( wp_doing_ajax() && $ajax_action && false !== strpos( $ajax_action, 'updater' ) ) {
 			return;
