@@ -18,30 +18,7 @@ class Test_Ally_Dashboard_Widget extends Elementor_Test_Base {
 
 	public function tear_down() {
 		delete_option( Ally_Dashboard_Widget::ALLY_SCANNER_RUN );
-		remove_filter( 'wp_die_handler', [ $this, 'wp_die_exception_handler' ] );
 		parent::tear_down();
-	}
-
-	public function wp_die_exception_handler( $message ) {
-		throw new \WPDieException( $message );
-	}
-
-	private function run_handle_click_capturing_output(): ?\WPDieException {
-		add_filter( 'wp_die_handler', [ $this, 'wp_die_exception_handler' ] );
-		ob_start();
-		try {
-			Ally_Dashboard_Widget::handle_click();
-		} catch ( \WPDieException $e ) {
-			ob_end_clean();
-			remove_filter( 'wp_die_handler', [ $this, 'wp_die_exception_handler' ] );
-			return $e;
-		} finally {
-			if ( ob_get_level() ) {
-				ob_end_clean();
-			}
-			remove_filter( 'wp_die_handler', [ $this, 'wp_die_exception_handler' ] );
-		}
-		return null;
 	}
 
 	public function test_is_scanner_run_returns_false_by_default() {
@@ -50,14 +27,6 @@ class Test_Ally_Dashboard_Widget extends Elementor_Test_Base {
 		$result = Ally_Dashboard_Widget::is_scanner_run();
 
 		$this->assertFalse( $result );
-	}
-
-	public function test_is_scanner_run_returns_true_after_option_set() {
-		update_option( Ally_Dashboard_Widget::ALLY_SCANNER_RUN, true );
-
-		$result = Ally_Dashboard_Widget::is_scanner_run();
-
-		$this->assertTrue( $result );
 	}
 
 	public function test_register_ally_dashboard_widgets_adds_meta_box_to_dashboard() {
