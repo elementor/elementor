@@ -77,10 +77,7 @@ class Migrations_Orchestrator {
 	}
 
 	/**
-	 * Registers hooks to listen for experiment flag state changes.
-	 * This ensures that when the inline editing experiment is enabled or disabled, all
-	 * migration state metadata is cleared, forcing documents to be re-migrated with the
-	 * new feature flag state.
+	 * Registers hooks to listen for experiment flag state changes. Forcing documents to be re-migrated with the new feature flag state.
 	 */
 	public static function register_affecting_feature_flag_hooks( array $features ): void {
 		if ( ! self::is_active() ) {
