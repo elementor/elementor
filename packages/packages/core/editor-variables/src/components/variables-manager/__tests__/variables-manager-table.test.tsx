@@ -18,6 +18,7 @@ const mockGetVariableType = jest.mocked( getVariableType );
 
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
+	sprintf: jest.fn( ( format: string ) => format ),
 } ) );
 
 describe( 'VariablesManagerTable', () => {
