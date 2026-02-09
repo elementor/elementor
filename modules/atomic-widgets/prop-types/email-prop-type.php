@@ -17,27 +17,18 @@ class Email_Prop_Type extends Object_Prop_Type {
 
 	protected function define_shape(): array {
 		return [
-			'to' => String_Prop_Type::make()
-				->default( '' ),
-			'subject' => String_Prop_Type::make()
-				->default( '' ),
-			'message' => String_Prop_Type::make()
-				->default( '' ),
-			'from' => String_Prop_Type::make()
-				->default( '' ),
-			'meta-data' => String_Array_Prop_Type::make()
-				->default( [] ),
+			'to' => String_Prop_Type::make(),
+			'subject' => String_Prop_Type::make(),
+			'message' => String_Prop_Type::make(),
+			'from' => String_Prop_Type::make(),
+			'meta-data' => String_Array_Prop_Type::make(),
 			'send-as' => String_Prop_Type::make()
 				->enum( [ 'html', 'plain' ] )
 				->default( 'html' ),
-			'from-name' => String_Prop_Type::make()
-				->default( '' ),
-			'reply-to' => String_Prop_Type::make()
-				->default( '' ),
-			'cc' => String_Prop_Type::make()
-				->default( '' ),
-			'bcc' => String_Prop_Type::make()
-				->default( '' ),
+			'from-name' => String_Prop_Type::make(),
+			'reply-to' => String_Prop_Type::make(),
+			'cc' => String_Prop_Type::make(),
+			'bcc' => String_Prop_Type::make(),
 		];
 	}
 }
