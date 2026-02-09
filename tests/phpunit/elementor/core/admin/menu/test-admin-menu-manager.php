@@ -43,10 +43,7 @@ class Test_Admin_Menu_Manager extends Elementor_Test_Base {
 
 	public function test_register_wp_menus() {
 		// Arrange.
-		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register_actions' );
 		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register' );
-		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::get_all' );
-		$this->setExpectedDeprecated( 'elementor/admin/menu/after_register' );
 
 		$this->act_as_admin();
 
@@ -91,10 +88,7 @@ class Test_Admin_Menu_Manager extends Elementor_Test_Base {
 
 	public function test_register_wp_menus__registers_based_on_capability() {
 		// Arrange.
-		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register_actions' );
 		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register' );
-		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::get_all' );
-		$this->setExpectedDeprecated( 'elementor/admin/menu/after_register' );
 
 		$this->act_as_editor();
 
@@ -133,10 +127,7 @@ class Test_Admin_Menu_Manager extends Elementor_Test_Base {
 
 	public function test_register_wp_menus__doesnt_show_hidden_menus() {
 		// Arrange.
-		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register_actions' );
 		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::register' );
-		$this->setExpectedDeprecated( 'Elementor\Core\Admin\Menu\Admin_Menu_Manager::get_all' );
-		$this->setExpectedDeprecated( 'elementor/admin/menu/after_register' );
 
 		$this->act_as_admin();
 
