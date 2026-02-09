@@ -75,7 +75,7 @@ class Ally_Dashboard_Widget {
 	 *
 	 * @access public
 	 */
-	public function handle_click() {
+	public static function handle_click() {
 		check_ajax_referer( self::ALLY_NONCE_KEY, 'nonce' );
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( 'Insufficient permissions' );
