@@ -101,11 +101,25 @@ class Module extends BaseModule {
 		}, 10, 2 );
 	}
 
-	private function get_config() {
+	public function get_config() {
 		return [
 			'constants' => $this->get_presets()->defaults(),
 			'animationOptions' => $this->get_presets()->list(),
+			'breakpoints' => $this->get_active_breakpoints(),
 		];
+	}
+
+	private function get_active_breakpoints() {
+		$breakpoints_config = Plugin::$instance->breakpoints->get_breakpoints_config();
+		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
+
+		$breakpoints = [];
+
+		foreach ( array_keys( $active_breakpoints ) as $breakpoint_label ) {
+			$breakpoints[ $breakpoint_label ] = $breakpoints_config[ $breakpoint_label ];
+		}
+
+		return $breakpoints;
 	}
 
 	private function register_frontend_scripts() {
