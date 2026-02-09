@@ -75,7 +75,7 @@ export const EmailControl = createControl( () => {
 										<ControlFormLabel>{ __( 'From name', 'elementor' ) }</ControlFormLabel>
 									</Grid>
 									<Grid item>
-										<TextControl placeholder={ __( '....', 'elementor' ) } />
+										<TextControl placeholder={ __( 'What name should appear as the sender?', 'elementor' ) } />
 									</Grid>
 								</Grid>
 							</PropKeyProvider>
@@ -86,7 +86,7 @@ export const EmailControl = createControl( () => {
 										<ControlFormLabel>{ __( 'Reply-to', 'elementor' ) }</ControlFormLabel>
 									</Grid>
 									<Grid item>
-										<TextControl placeholder={ __( '....', 'elementor' ) } />
+										<TextControl />
 									</Grid>
 								</Grid>
 							</PropKeyProvider>
@@ -97,7 +97,7 @@ export const EmailControl = createControl( () => {
 										<ControlFormLabel>{ __( 'Cc', 'elementor' ) }</ControlFormLabel>
 									</Grid>
 									<Grid item>
-										<TextControl placeholder={ __( '....', 'elementor' ) } />
+										<TextControl  />
 									</Grid>
 								</Grid>
 							</PropKeyProvider>
@@ -108,7 +108,7 @@ export const EmailControl = createControl( () => {
 										<ControlFormLabel>{ __( 'Bcc', 'elementor' ) }</ControlFormLabel>
 									</Grid>
 									<Grid item>
-										<TextControl placeholder={ __( '....', 'elementor' ) } />
+										<TextControl placeholder={ __( '', 'elementor' ) } />
 									</Grid>
 								</Grid>
 							</PropKeyProvider>

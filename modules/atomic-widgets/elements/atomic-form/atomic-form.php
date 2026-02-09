@@ -134,7 +134,6 @@ class Atomic_Form extends Atomic_Element_Base {
 					Email_Control::bind_to( 'email' )
 						->set_meta( [
 							'topDivider' => true,
-							'formLabel' => __( 'Email Settings', 'elementor' ),
 						] ),
 				] ),
 			Section::make()
