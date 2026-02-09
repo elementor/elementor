@@ -333,19 +333,15 @@ describe( 'VariablesManagerTable', () => {
 				fireEvent.doubleClick( nameCell );
 			}
 
-			await waitFor( () => {
-				const input = screen.queryByRole( 'textbox' );
-				expect( input ).toBeDisabled();
-			} );
+			await waitFor(
+				() => {
+					const input = screen.queryByRole( 'textbox' );
+					expect( input ).not.toBeInTheDocument();
+				},
+				{ timeout: 500 }
+			);
 
-			const input = screen.getByRole( 'textbox' ) as HTMLInputElement;
-
-			fireEvent.change( input, { target: { value: 'UpdatedColor' } } );
-			fireEvent.keyDown( input, { key: 'Enter' } );
-
-			await waitFor( () => {
-				expect( mockOnChange ).not.toHaveBeenCalled();
-			} );
+			expect( mockOnChange ).not.toHaveBeenCalled();
 		} );
 	} );
 

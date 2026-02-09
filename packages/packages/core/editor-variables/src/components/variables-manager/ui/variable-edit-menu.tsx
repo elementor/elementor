@@ -61,7 +61,8 @@ export const VariableEditMenu = ( { menuActions, disabled, itemId }: VariableEdi
 				{ menuActions.map( ( action ) => (
 					<MenuItem
 						key={ action.name }
-						onClick={ () => {
+						onClick={ ( e: MouseEvent ) => {
+							e.stopPropagation();
 							action.onClick?.( itemId );
 							menuState.close();
 						} }
