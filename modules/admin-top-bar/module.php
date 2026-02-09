@@ -2,8 +2,8 @@
 namespace Elementor\Modules\AdminTopBar;
 
 use Elementor\Core\Admin\Admin;
+use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Base\Base_Object;
-use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @deprecated 3.34.2 Use Elementor One package instead
  */
-class Module extends BaseModule {
+class Module extends BaseApp {
 
 	private $current_screen;
 
