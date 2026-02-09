@@ -149,13 +149,19 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 	protected function start_run() {
 		$updater = $this->get_task_runner();
 
-		if ( $updater->is_running() ) {
+		// Only skip if process is actively running (has lock), not just if queue has items.
+		// Queue may have items from a failed previous attempt that never processed.
+		if ( $updater->is_process_locked() ) {
+			$this->log_debug( 'start_run_skipped', [ 'reason' => 'process_locked' ] );
 			return;
 		}
 
 		$upgrade_callbacks = $this->get_upgrade_callbacks();
 
+		$this->log_debug( 'start_run_callbacks', [ 'count' => count( $upgrade_callbacks ) ] );
+
 		if ( empty( $upgrade_callbacks ) ) {
+			$this->log_debug( 'start_run_no_callbacks', [] );
 			$this->on_runner_complete();
 			return;
 		}
@@ -168,7 +174,11 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 			] );
 		}
 
+		$this->log_debug( 'start_run_before_dispatch', [] );
+
 		$updater->save()->dispatch();
+
+		$this->log_debug( 'start_run_after_dispatch', [] );
 
 		Plugin::$instance->logger->get_logger()->info( 'Elementor data updater process has been queued.', [
 			'meta' => [
@@ -241,12 +251,22 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 		$updater = $this->get_task_runner();
 
 		$this->log_debug( 'before_start_run', [
-			'updater_running' => $updater->is_running(),
+			'has_queue_items' => $updater->is_running(),
+			'is_process_locked' => $updater->is_process_locked(),
 		] );
 
 		$this->start_run();
 
 		$this->log_debug( 'after_start_run', [] );
+
+		// If queue has items but process is not locked, it's stuck - try to process on shutdown.
+		if ( $updater->is_running() && ! $updater->is_process_locked() ) {
+			$this->log_debug( 'stuck_queue_detected', [] );
+			if ( is_admin() && ! wp_doing_ajax() && ! wp_doing_cron() ) {
+				add_action( 'shutdown', [ $updater, 'maybe_handle_on_shutdown' ], 0 );
+				$this->log_debug( 'stuck_queue_shutdown_registered', [] );
+			}
+		}
 
 		if ( $updater->is_running() && current_user_can( 'update_plugins' ) ) {
 			add_action( 'admin_notices', [ $this, 'admin_notice_upgrade_is_running' ] );
