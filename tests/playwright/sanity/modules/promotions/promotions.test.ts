@@ -119,6 +119,14 @@ test.describe.skip( 'Promotion tests @promotions', () => {
 		await expect.soft( saveAsGlobalPromotionLinkContainer ).toHaveAttribute( 'href', saveAsGlobalHref );
 	} );
 
+	test( 'Promotions - Free to Pro - Admin top bar', async ( { page } ) => {
+		// Arrange.
+		const promotionContainer = '.e-admin-top-bar__secondary-area';
+
+		// Act.
+		await promotionPageScreenshotTest( page, promotionContainer, 'elementor_custom_icons', 'admin-to-bar-desktop' );
+	} );
+
 	test( 'Promotions - Free to Pro - Navigator', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
