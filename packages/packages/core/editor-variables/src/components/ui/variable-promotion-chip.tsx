@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { forwardRef, type MouseEvent, useEffect, useImperativeHandle, useState } from 'react';
-import { PromotionChip, PromotionPopover } from '@elementor/editor-ui';
-import { getCanvasIframeDocument } from '@elementor/editor-v1-adapters';
+import { forwardRef, type MouseEvent, useImperativeHandle, useState } from 'react';
+import { PromotionChip, PromotionPopover, useCanvasClickHandler } from '@elementor/editor-ui';
 import { Box } from '@elementor/ui';
 import { capitalize } from '@elementor/utils';
 import { __, sprintf } from '@wordpress/i18n';
@@ -19,17 +18,7 @@ export const VariablePromotionChip = forwardRef< VariablePromotionChipRef, Varia
 	( { variableType, upgradeUrl }, ref ) => {
 		const [ isOpen, setIsOpen ] = useState( false );
 
-		useEffect( () => {
-			const canvasDocument = isOpen ? getCanvasIframeDocument() : null;
-
-			if ( ! canvasDocument ) {
-				return;
-			}
-
-			canvasDocument.addEventListener( 'mousedown', () => setIsOpen( false ) );
-
-			return () => canvasDocument.removeEventListener( 'mousedown', () => setIsOpen( false ) );
-		}, [ isOpen ] );
+		useCanvasClickHandler( isOpen, () => setIsOpen( false ) );
 
 		const toggle = () => setIsOpen( ( prev ) => ! prev );
 
