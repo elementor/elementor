@@ -1,4 +1,4 @@
-import { z } from '@elementor/schema';
+import { type z } from '@elementor/schema';
 
 import { createArrayPropUtils } from '../utils/create-prop-utils';
 import { stringPropTypeUtil } from './string';
