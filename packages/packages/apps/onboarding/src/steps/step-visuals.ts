@@ -8,21 +8,7 @@ const BACKGROUND_POSITION = 'center';
 const BACKGROUND_SIZE = 'cover';
 const BACKGROUND_REPEAT = 'no-repeat';
 
-type ElementorCommonConfig = {
-	urls?: {
-		assets?: string;
-	};
-};
-
-type ElementorCommon = {
-	config?: ElementorCommonConfig;
-};
-
-type ExtendedWindow = Window & {
-	elementorCommon?: ElementorCommon;
-};
-
-const getAssetsBaseUrl = () => ( window as ExtendedWindow ).elementorCommon?.config?.urls?.assets ?? '';
+const getAssetsBaseUrl = () => window.elementorCommon?.config?.urls?.assets ?? '';
 
 export const getOnboardingAssetUrl = ( fileName: string ) => {
 	const baseUrl = getAssetsBaseUrl();

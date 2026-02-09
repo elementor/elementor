@@ -26,6 +26,7 @@ interface EOnboardingConfig {
 	};
 	hadUnexpectedExit: boolean;
 	isConnected: boolean;
+	uiTheme?: 'auto' | 'dark' | 'light';
 	steps: Array<{
 		id: string;
 		label: string;
@@ -53,6 +54,9 @@ declare global {
 			};
 			config?: {
 				experimentalFeatures?: Record< string, boolean >;
+				urls?: {
+					assets?: string;
+				};
 			};
 		};
 		elementor?: {
