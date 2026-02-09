@@ -2,19 +2,29 @@ import * as React from 'react';
 import type { ReactNode } from 'react';
 import { Box, styled } from '@elementor/ui';
 
-import type { StepVisualConfig } from '../../types';
+import type { ImageLayout, StepVisualConfig } from '../../types';
 import { ProgressBar } from './progress-bar';
 import { RightPanel } from './right-panel';
+
+/**
+ * Layout ratios per Figma spec:
+ *   wide  → 1:1 (left and right share space equally)
+ *   narrow → 3:1 (left gets 3 parts, right gets 1 part)
+ */
+const LAYOUT_RATIOS: Record< ImageLayout, { left: number; right: number } > = {
+	wide: { left: 1, right: 1 },
+	narrow: { left: 3, right: 1 },
+};
 
 const LAYOUT_GAP = 4;
 const LAYOUT_PADDING = 4;
 const LAYOUT_TRANSITION_MS = 300;
-const MIN_RIGHT_RATIO = 0.3;
-const MAX_RIGHT_RATIO = 0.6;
-const DEFAULT_RIGHT_RATIO = 0.42;
-const LEFT_PANEL_GAP = 60;
+const LEFT_PANEL_CONTENT_WIDTH = 386;
 const LEFT_PANEL_PADDING_X = 80;
 const LEFT_PANEL_PADDING_TOP = 40;
+const LEFT_PANEL_GAP = 60;
+const IMAGE_MIN_WIDTH = 464;
+const CONTENT_IMAGE_MIN_GAP = 80;
 
 interface SplitLayoutRootProps {
 	leftRatio: number;
@@ -23,28 +33,36 @@ interface SplitLayoutRootProps {
 
 const SplitLayoutRoot = styled( Box, {
 	shouldForwardProp: ( prop ) => ! [ 'leftRatio', 'rightRatio' ].includes( prop as string ),
-} )< SplitLayoutRootProps >( ( { theme, leftRatio, rightRatio } ) => ( {
-	flex: 1,
-	display: 'grid',
-	gridTemplateColumns: `${ leftRatio }fr ${ rightRatio }fr`,
-	gap: theme.spacing( LAYOUT_GAP ),
-	padding: theme.spacing( LAYOUT_PADDING ),
-	minHeight: 0,
-	transition: `grid-template-columns ${ LAYOUT_TRANSITION_MS }ms ease`,
-	[ theme.breakpoints.down( 'md' ) ]: {
-		gridTemplateColumns: '1fr',
-		gridTemplateRows: 'auto auto',
-	},
-} ) );
+} )< SplitLayoutRootProps >( ( { theme, leftRatio, rightRatio } ) => {
+	const hideImageBreakpoint =
+		LEFT_PANEL_CONTENT_WIDTH + LEFT_PANEL_PADDING_X * 2 + CONTENT_IMAGE_MIN_GAP + IMAGE_MIN_WIDTH + LAYOUT_GAP * 8;
 
-const LeftPanel = styled( Box )( ( { theme } ) => ( {
+	return {
+		flex: 1,
+		display: 'grid',
+		gridTemplateColumns: `${ leftRatio }fr ${ rightRatio }fr`,
+		gap: theme.spacing( LAYOUT_GAP ),
+		padding: theme.spacing( LAYOUT_PADDING ),
+		minHeight: 0,
+		transition: `grid-template-columns ${ LAYOUT_TRANSITION_MS }ms ease`,
+		[ `@media (max-width: ${ hideImageBreakpoint }px)` ]: {
+			gridTemplateColumns: '1fr',
+			'& > *:last-child': {
+				display: 'none',
+			},
+		},
+	};
+} );
+
+const LeftPanel = styled( Box )( () => ( {
 	display: 'flex',
 	flexDirection: 'column',
+	alignItems: 'center',
 	gap: LEFT_PANEL_GAP,
-	minWidth: 0,
 	padding: `${ LEFT_PANEL_PADDING_TOP }px ${ LEFT_PANEL_PADDING_X }px`,
-	[ theme.breakpoints.down( 'md' ) ]: {
-		padding: theme.spacing( 4 ),
+	'& > *': {
+		maxWidth: LEFT_PANEL_CONTENT_WIDTH,
+		width: '100%',
 	},
 } ) );
 
@@ -59,20 +77,11 @@ interface SplitLayoutProps {
 	progress?: ProgressInfo;
 }
 
-const clampRightRatio = ( ratio: number | undefined ) => {
-	if ( typeof ratio !== 'number' || Number.isNaN( ratio ) ) {
-		return DEFAULT_RIGHT_RATIO;
-	}
-
-	return Math.min( MAX_RIGHT_RATIO, Math.max( MIN_RIGHT_RATIO, ratio ) );
-};
-
 export function SplitLayout( { left, rightConfig, progress }: SplitLayoutProps ) {
-	const rightRatio = clampRightRatio( rightConfig.rightWidthRatio );
-	const leftRatio = 1 - rightRatio;
+	const ratio = LAYOUT_RATIOS[ rightConfig.imageLayout ] ?? LAYOUT_RATIOS.wide;
 
 	return (
-		<SplitLayoutRoot leftRatio={ leftRatio } rightRatio={ rightRatio }>
+		<SplitLayoutRoot leftRatio={ ratio.left } rightRatio={ ratio.right }>
 			<LeftPanel>
 				{ progress && <ProgressBar currentStep={ progress.currentStep } totalSteps={ progress.totalSteps } /> }
 				{ left }
