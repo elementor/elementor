@@ -55,8 +55,13 @@ function attachEventListeners() {
 	window.addEventListener( 'resize', onResize );
 }
 
+function getBreakpointsList() {
+	return ElementorInteractionsConfig?.breakpoints || {};
+}
+
 export function initBreakpoints( { onChange } = {} ) {
-	breakpoints.list = window.elementorFrontendConfig.responsive.activeBreakpoints;
+	breakpoints.list = getBreakpointsList();
+
 	breakpoints.active = matchBreakpoint( window.innerWidth );
 
 	if ( 'function' === typeof onChange ) {

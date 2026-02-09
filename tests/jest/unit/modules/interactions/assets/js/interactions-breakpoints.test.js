@@ -15,8 +15,8 @@ const BREAKPOINTS_CONFIG = {
 };
 
 function setBreakpointsConfig() {
-	window.elementorFrontendConfig = {
-		responsive: { activeBreakpoints: BREAKPOINTS_CONFIG },
+	window.ElementorInteractionsConfig = {
+		breakpoints: BREAKPOINTS_CONFIG,
 	};
 }
 
