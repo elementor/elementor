@@ -63,7 +63,11 @@ registerElementorElement( {
 
 			arrange();
 			listenToChildren( [ 'e-flexbox', 'e-div-block' ] )
-				.render( () => arrange() );
+				.render( () => {
+					window.parent?.$e?.run( 'document/elements/deselect-all' );
+
+					arrange();
+				} );
 		} );
 	},
 } );
