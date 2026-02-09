@@ -1,15 +1,15 @@
 import * as React from 'react';
-import { createElement, useMemo, useRef, useState } from 'react';
-import { PromotionChip, PromotionPopover } from '@elementor/editor-ui';
+import { createElement, useMemo, useRef } from 'react';
 import { PlusIcon } from '@elementor/icons';
 import { bindMenu, bindTrigger, IconButton, Menu, MenuItem, type PopupState, Typography } from '@elementor/ui';
 import { capitalize } from '@elementor/utils';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 
 import { useQuotaPermissions } from '../../hooks/use-quota-permissions';
 import { type TVariablesList } from '../../storage';
 import { trackVariablesManagerEvent } from '../../utils/tracking';
 import { getVariableTypes } from '../../variables-registry/variable-type-registry';
+import { VariablePromotionChip } from '../ui/variable-promotion-chip';
 
 export const SIZE = 'tiny';
 
@@ -28,12 +28,7 @@ type VariableManagerCreateMenuProps = {
 	menuState: PopupState;
 };
 
-export const VariableManagerCreateMenu = ( {
-	variables,
-	onCreate,
-	disabled,
-	menuState,
-}: VariableManagerCreateMenuProps ) => {
+export const VariableManagerCreateMenu = ( { variables, onCreate, menuState }: VariableManagerCreateMenuProps ) => {
 	const buttonRef = useRef< HTMLButtonElement >( null );
 
 	const variableTypes = getVariableTypes();
@@ -57,7 +52,6 @@ export const VariableManagerCreateMenu = ( {
 			<IconButton
 				{ ...bindTrigger( menuState ) }
 				ref={ buttonRef }
-				disabled={ disabled }
 				size={ SIZE }
 				aria-label={ __( 'Add variable', 'elementor' ) }
 			>
@@ -109,7 +103,6 @@ const MenuOption = ( {
 	onCreate: VariableManagerCreateMenuProps[ 'onCreate' ];
 	onClose: () => void;
 } ) => {
-	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
 	const userQuotaPermissions = useQuotaPermissions( config.propTypeKey );
 
 	const displayName = capitalize( config.variableType );
@@ -117,9 +110,6 @@ const MenuOption = ( {
 
 	const handleClick = () => {
 		if ( isDisabled ) {
-			if ( ! isPopoverOpen ) {
-				setIsPopoverOpen( true );
-			}
 			return;
 		}
 
@@ -130,18 +120,6 @@ const MenuOption = ( {
 		onClose();
 	};
 
-	const title = sprintf(
-		/* translators: %s: Variable Type. */
-		__( '%s variables', 'elementor' ),
-		capitalize( config.variableType )
-	);
-
-	const content = sprintf(
-		/* translators: %s: Variable Type. */
-		__( 'Upgrade to continue creating and editing %s variables.', 'elementor' ),
-		config.variableType
-	);
-
 	return (
 		<MenuItem onClick={ handleClick } sx={ { gap: 1.5, cursor: 'pointer' } }>
 			{ createElement( config.icon, { fontSize: SIZE, color: isDisabled ? 'disabled' : 'action' } ) }
@@ -149,18 +127,10 @@ const MenuOption = ( {
 				{ displayName }
 			</Typography>
 			{ isDisabled && (
-				<PromotionPopover
-					open={ isPopoverOpen }
-					title={ title }
-					content={ content }
-					ctaText={ __( 'Upgrade now', 'elementor' ) }
-					ctaUrl={ `https://go.elementor.com/go-pro-manager-${ config.variableType }-variable/` }
-					onClose={ () => {
-						setIsPopoverOpen( false );
-					} }
-				>
-					<PromotionChip />
-				</PromotionPopover>
+				<VariablePromotionChip
+					variableType={ config.variableType }
+					upgradeUrl={ `https://go.elementor.com/go-pro-manager-${ config.variableType }-variable/` }
+				/>
 			) }
 		</MenuItem>
 	);

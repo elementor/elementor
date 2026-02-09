@@ -13,7 +13,7 @@ import {
 	Typography,
 } from '@elementor/ui';
 
-import { CtaButton } from './cta-button';
+import { CtaButton } from '../cta-button';
 
 type InfotipCardProps = {
 	title: string;

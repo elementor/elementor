@@ -38,6 +38,7 @@ export type ValueFieldProps = {
 	propType?: PropType;
 	error?: { value: string; message: string };
 	onKeyDown?: ( event: KeyboardEvent< HTMLElement > ) => void;
+	disabled?: boolean;
 };
 
 type FallbackPropTypeUtil = ReturnType< typeof createPropUtils >;
