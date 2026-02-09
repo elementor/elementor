@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Modules\Home;
 
-use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Settings;
