@@ -137,32 +137,21 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 		( value: string ) => {
 			actions.setUserChoice( 'experience_level', value );
 
-			updateChoices.mutate(
-				{ experience_level: value },
-				{
-					onSuccess: () => {
-						updateProgress.mutate(
-							{
-								complete_step: stepId,
-								step_index: stepIndex,
-								total_steps: totalSteps,
-							},
-							{
-								onSuccess: () => {
-									actions.completeStep( stepId );
-									actions.nextStep();
-								},
-								onError: () => {
-									actions.setError( __( 'Failed to save experience level.', 'elementor' ) );
-								},
-							}
-						);
-					},
-					onError: () => {
-						actions.setError( __( 'Failed to save experience level.', 'elementor' ) );
-					},
-				}
-			);
+			Promise.all( [
+				updateChoices.mutateAsync( { experience_level: value } ),
+				updateProgress.mutateAsync( {
+					complete_step: stepId,
+					step_index: stepIndex,
+					total_steps: totalSteps,
+				} ),
+			] )
+				.then( () => {
+					actions.completeStep( stepId );
+					actions.nextStep();
+				} )
+				.catch( () => {
+					actions.setError( __( 'Failed to save experience level.', 'elementor' ) );
+				} );
 		},
 		[ stepId, stepIndex, totalSteps, actions, updateChoices, updateProgress ]
 	);

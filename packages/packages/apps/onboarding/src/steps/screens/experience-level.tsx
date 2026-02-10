@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ChevronRightIcon } from '@elementor/icons';
-import { Box, Stack, styled, Typography, type Theme } from '@elementor/ui';
+import { Box, Stack, styled, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 interface OptionCardProps {
