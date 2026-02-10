@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ColorFilterIcon } from '@elementor/icons';
 import { type IconButtonProps, type StackProps, type TableCellProps } from '@elementor/ui';
-import { fireEvent,render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 import { type TVariablesList } from '../../../storage';
 import { VariablesManagerTable } from '../variables-manager-table';
@@ -135,8 +135,12 @@ jest.mock( '../variable-editable-cell', () => ( {
 jest.mock( '@elementor/editor-ui', () => ( {
 	EllipsisWithTooltip: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
 	useCanvasClickHandler: jest.fn(),
-	PromotionChip: ( props: { children?: React.ReactNode } ) => <div data-testid="promotion-chip">{ props.children }</div>,
-	PromotionPopover: ( props: { children?: React.ReactNode } ) => <div data-testid="promotion-popover">{ props.children }</div>,
+	PromotionChip: ( props: { children?: React.ReactNode } ) => (
+		<div data-testid="promotion-chip">{ props.children }</div>
+	),
+	PromotionPopover: ( props: { children?: React.ReactNode } ) => (
+		<div data-testid="promotion-popover">{ props.children }</div>
+	),
 } ) );
 
 jest.mock(
