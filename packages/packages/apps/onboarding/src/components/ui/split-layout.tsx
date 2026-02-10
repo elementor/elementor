@@ -6,6 +6,26 @@ import type { ImageLayout, StepVisualConfig } from '../../types';
 import { ProgressBar } from './progress-bar';
 import { RightPanel } from './right-panel';
 
+interface SplitLayoutRootProps {
+	leftRatio: number;
+	rightRatio: number;
+}
+
+interface ContentWrapperProps {
+	contentMaxWidth: number;
+}
+
+interface ProgressInfo {
+	currentStep: number;
+	totalSteps: number;
+}
+
+interface SplitLayoutProps {
+	left: ReactNode;
+	rightConfig: StepVisualConfig;
+	progress?: ProgressInfo;
+}
+
 /**
  * Layout ratios per Figma spec:
  *   wide  → 1:1 (left and right share space equally)
@@ -18,18 +38,16 @@ const LAYOUT_RATIOS: Record< ImageLayout, { left: number; right: number } > = {
 
 const LAYOUT_GAP = 4;
 const LAYOUT_PADDING = 4;
+const LAYOUT_PADDING_SM = 2.5;
 const LAYOUT_TRANSITION_MS = 300;
 const LEFT_PANEL_CONTENT_WIDTH = 386;
 const LEFT_PANEL_PADDING_X = 80;
+const LEFT_PANEL_PADDING_X_SM = 20;
 const LEFT_PANEL_PADDING_TOP = 40;
+const LEFT_PANEL_PADDING_TOP_SM = 20;
 const LEFT_PANEL_GAP = 60;
 const IMAGE_MIN_WIDTH = 464;
 const CONTENT_IMAGE_MIN_GAP = 80;
-
-interface SplitLayoutRootProps {
-	leftRatio: number;
-	rightRatio: number;
-}
 
 const SplitLayoutRoot = styled( Box, {
 	shouldForwardProp: ( prop ) => ! [ 'leftRatio', 'rightRatio' ].includes( prop as string ),
@@ -45,6 +63,9 @@ const SplitLayoutRoot = styled( Box, {
 		padding: theme.spacing( LAYOUT_PADDING ),
 		minHeight: 0,
 		transition: `grid-template-columns ${ LAYOUT_TRANSITION_MS }ms ease`,
+		[ theme.breakpoints.down( 'sm' ) ]: {
+			padding: theme.spacing( LAYOUT_PADDING_SM ),
+		},
 		[ `@media (max-width: ${ hideImageBreakpoint }px)` ]: {
 			gridTemplateColumns: '1fr',
 			'& > *:last-child': {
@@ -54,12 +75,15 @@ const SplitLayoutRoot = styled( Box, {
 	};
 } );
 
-const LeftPanel = styled( Box )( () => ( {
+const LeftPanel = styled( Box )( ( { theme } ) => ( {
 	display: 'flex',
 	flexDirection: 'column',
 	alignItems: 'center',
 	gap: LEFT_PANEL_GAP,
 	padding: `${ LEFT_PANEL_PADDING_TOP }px ${ LEFT_PANEL_PADDING_X }px`,
+	[ theme.breakpoints.down( 'sm' ) ]: {
+		padding: `${ LEFT_PANEL_PADDING_TOP_SM }px ${ LEFT_PANEL_PADDING_X_SM }px`,
+	},
 } ) );
 
 const ProgressBarWrapper = styled( Box )( () => ( {
@@ -67,27 +91,12 @@ const ProgressBarWrapper = styled( Box )( () => ( {
 	width: '100%',
 } ) );
 
-interface ContentWrapperProps {
-	contentMaxWidth: number;
-}
-
 const ContentWrapper = styled( Box, {
 	shouldForwardProp: ( prop ) => 'contentMaxWidth' !== prop,
 } )< ContentWrapperProps >( ( { contentMaxWidth } ) => ( {
 	maxWidth: contentMaxWidth,
 	width: '100%',
 } ) );
-
-interface ProgressInfo {
-	currentStep: number;
-	totalSteps: number;
-}
-
-interface SplitLayoutProps {
-	left: ReactNode;
-	rightConfig: StepVisualConfig;
-	progress?: ProgressInfo;
-}
 
 export function SplitLayout( { left, rightConfig, progress }: SplitLayoutProps ) {
 	const ratio = LAYOUT_RATIOS[ rightConfig.imageLayout ] ?? LAYOUT_RATIOS.wide;
