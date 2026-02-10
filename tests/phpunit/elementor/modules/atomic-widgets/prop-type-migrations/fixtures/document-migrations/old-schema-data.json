@@ -8,33 +8,11 @@
       },
       "title": {
         "$$type": "a-string",
-        "value": "This needs upgrade from a-string to html"
+        "value": "This needs upgrade from a-string to html-v2"
       },
       "tag": {
         "$$type": "string",
         "value": "h2"
-      }
-    },
-    "elements": [],
-    "isInner": false,
-    "widgetType": "e-heading",
-    "elType": "widget",
-    "version": "0.0"
-  },
-  {
-    "id": "heading-downgrade",
-    "settings": {
-      "classes": {
-        "$$type": "classes",
-        "value": []
-      },
-      "title": {
-        "$$type": "html-v2",
-        "value": "This needs downgrade from html-v2 to html"
-      },
-      "tag": {
-        "$$type": "string",
-        "value": "h3"
       }
     },
     "elements": [],
