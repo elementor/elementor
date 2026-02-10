@@ -10,6 +10,10 @@ import { ExperienceLevel } from '../steps/screens/experience-level';
 import { Login } from '../steps/screens/login';
 import { getStepVisualConfig } from '../steps/step-visuals';
 import { StepId, type StepIdType } from '../types';
+import { BuildingFor } from '../steps/screens/building-for';
+import { Login } from '../steps/screens/login';
+import { getStepVisualConfig } from '../steps/step-visuals';
+import { StepId } from '../types';
 import { BaseLayout } from './ui/base-layout';
 import { Footer } from './ui/footer';
 import { FooterActions } from './ui/footer-actions';
@@ -147,6 +151,8 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 		switch ( stepId ) {
 			case StepId.EXPERIENCE_LEVEL:
 				return <ExperienceLevel onComplete={ handleContinue } />;
+			case StepId.BUILDING_FOR:
+				return <BuildingFor onComplete={ handleContinue } />;
 			default:
 				return <Box sx={ { flex: 1, width: '100%' } } />;
 		}

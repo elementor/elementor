@@ -31,6 +31,7 @@ export {
 	selectHadUnexpectedExit,
 	selectIsConnected,
 	selectIsGuest,
+	selectUserName,
 	selectUrls,
 	selectCurrentStep,
 	selectIsFirstStep,
