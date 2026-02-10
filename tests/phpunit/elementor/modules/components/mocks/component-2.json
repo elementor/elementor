@@ -16,10 +16,10 @@
 						"$$type": "classes",
 						"value": ["component-2-heading-local-class-id"]
 					},
-					"title": {
-						"$$type": "html",
-						"value": "Component 2 Heading"
-					}
+				"title": {
+					"$$type": "html-v2",
+					"value": { "content": "Component 2 Heading", "children": [] }
+				}
 				},
 				"elements": [],
 				"widgetType": "e-heading",

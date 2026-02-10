@@ -1,14 +1,14 @@
 import {
 	config,
 	getKeyframes,
-	parseAnimationName,
-	extractAnimationId,
 	extractAnimationConfig,
 	getAnimateFunction,
 	getInViewFunction,
 	waitForAnimateFunction,
 	parseInteractionsData,
 } from './interactions-utils.js';
+
+import { initBreakpoints, getActiveBreakpoint } from './interactions-breakpoints.js';
 
 function scrollOutAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc ) {
 	const viewOptions = { amount: 0.85, root: null };
@@ -67,27 +67,22 @@ function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	}
 }
 
+function skipInteraction( interaction ) {
+	const activeBreakpoint = getActiveBreakpoint();
+	return interaction.breakpoints?.excluded?.includes( activeBreakpoint );
+}
+
 function processElementInteractions( element, interactions, animateFunc, inViewFunc ) {
 	if ( ! interactions || ! Array.isArray( interactions ) ) {
 		return;
 	}
-	interactions.forEach( ( interaction ) => {
-		const animConfig = extractAnimationConfig( interaction );
 
-		if ( animConfig ) {
-			applyAnimation( element, animConfig, animateFunc, inViewFunc );
+	interactions.forEach( ( interaction ) => {
+		if ( skipInteraction( interaction ) ) {
+			return;
 		}
-	} );
-}
 
-function processElementInteractionsLegacy( element, interactions, animateFunc, inViewFunc ) {
-	if ( ! interactions || ! Array.isArray( interactions ) ) {
-		return;
-	}
-
-	interactions.forEach( ( interaction ) => {
-		const animationName = extractAnimationId( interaction );
-		const animConfig = animationName && parseAnimationName( animationName );
+		const animConfig = extractAnimationConfig( interaction );
 
 		if ( animConfig ) {
 			applyAnimation( element, animConfig, animateFunc, inViewFunc );
@@ -135,13 +130,18 @@ function initInteractions() {
 			const interactionsData = element.getAttribute( 'data-interactions' );
 			const parsedData = parseInteractionsData( interactionsData );
 
-			processElementInteractionsLegacy( element, parsedData, animateFunc, inViewFunc );
+			processElementInteractions( element, parsedData, animateFunc, inViewFunc );
 		} );
 	} );
 }
 
-if ( 'loading' === document.readyState ) {
-	document.addEventListener( 'DOMContentLoaded', initInteractions );
-} else {
+function init() {
+	initBreakpoints();
 	initInteractions();
+}
+
+if ( 'loading' === document.readyState ) {
+	document.addEventListener( 'DOMContentLoaded', init );
+} else {
+	init();
 }

@@ -3,6 +3,7 @@
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_V2_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -26,7 +27,10 @@ class Test_Atomic_Form extends Elementor_Test_Base {
 		$this->assertTrue( $button['isLocked'] ?? false );
 
 		$expected_button_settings = [
-			'text' => String_Prop_Type::generate( __( 'Submit', 'elementor' ) ),
+			'text' => Html_V2_Prop_Type::generate( [
+				'content'  => __( 'Submit', 'elementor' ),
+				'children' => [],
+			] ),
 			'attributes' => Attributes_Prop_Type::generate( [
 				Key_Value_Prop_Type::generate( [
 					'key' => String_Prop_Type::generate( 'type' ),
