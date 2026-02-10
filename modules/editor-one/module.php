@@ -44,6 +44,10 @@ class Module extends BaseModule {
 				$this->enqueue_styles();
 			} );
 		} );
+
+		add_filter( 'elementor/admin-top-bar/is-active', function ( $_is_active ) {
+			return false;
+		} );
 	}
 
 	/**
