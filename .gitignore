@@ -53,3 +53,4 @@ tests/playwright/blob-report
 **/allure-results
 playwright-test-results
 **/.env
+docker-output/
