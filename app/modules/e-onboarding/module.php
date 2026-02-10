@@ -137,7 +137,7 @@ class Module extends BaseModule {
 			return $first_name;
 		}
 
-		return $current_user->display_name ?? '';
+		return $current_user->display_name;
 	}
 
 	private function get_steps_config(): array {
