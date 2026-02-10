@@ -56,9 +56,6 @@ export const CanvasInlineEditor = ( {
 			<InlineEditingOverlay expectedTag={ expectedTag } rootElement={ rootElement } id={ id } />
 			<style>
 				{ `
-			.${ EDITOR_WRAPPER_SELECTOR }, .${ EDITOR_WRAPPER_SELECTOR } > * {
-				height: 100%;
-			}
 			.ProseMirror > * {
 				height: 100%;
 			}
