@@ -13,7 +13,8 @@ class Presets {
 	const DEFAULT_SCALE_START = 0;
 	const DEFAULT_EASING = 'easeIn';
 
-	const TRIGGERS = [ 'load', 'scrollIn', 'scrollOn' ]; // 'scrollOut' is not supported yet.
+	const TRIGGERS = [ 'load', 'scrollIn', 'scrollOut', 'scrollOn', 'hover', 'click' ];
+
 	const EFFECTS = [ 'fade', 'slide', 'scale' ];
 	const TYPES = [ 'in', 'out' ];
 	const DIRECTIONS = [ 'left', 'right', 'top', 'bottom' ];
@@ -38,6 +39,9 @@ class Presets {
 				'load' => __( 'On page load', 'elementor' ),
 				'scrollIn' => __( 'Scroll into view', 'elementor' ),
 				'scrollOut' => __( 'Scroll out of view', 'elementor' ),
+				'scrollOn' => __( 'While scrolling', 'elementor' ),
+				'hover' => __( 'Hover', 'elementor' ),
+				'click' => __( 'Click', 'elementor' ),
 			],
 		];
 
