@@ -7,11 +7,10 @@ import { useOnboarding } from '../hooks/use-onboarding';
 import { useUpdateChoices } from '../hooks/use-update-choices';
 import { useUpdateProgress } from '../hooks/use-update-progress';
 import { BuildingFor } from '../steps/screens/building-for';
-import { ExperienceLevel } from '../steps/screens/experience-level';
 import { Login } from '../steps/screens/login';
 import { SiteFeatures } from '../steps/screens/site-features';
 import { getStepVisualConfig } from '../steps/step-visuals';
-import { StepId, type StepIdType } from '../types';
+import { StepId } from '../types';
 import { BaseLayout } from './ui/base-layout';
 import { Footer } from './ui/footer';
 import { FooterActions } from './ui/footer-actions';
@@ -19,12 +18,7 @@ import { SplitLayout } from './ui/split-layout';
 import { TopBar } from './ui/top-bar';
 import { TopBarContent } from './ui/top-bar-content';
 
-const STEPS_ALLOWING_EMPTY_CHOICE: StepIdType[] = [ StepId.SITE_FEATURES ];
-
-const isChoiceEmpty = ( choice: unknown, stepId: StepIdType ): boolean => {
-	if ( STEPS_ALLOWING_EMPTY_CHOICE.includes( stepId ) && Array.isArray( choice ) ) {
-		return false;
-	}
+const isChoiceEmpty = ( choice: unknown ): boolean => {
 	return choice === null || choice === undefined || ( Array.isArray( choice ) && choice.length === 0 );
 };
 
@@ -177,36 +171,13 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 	const rightPanelConfig = useMemo( () => getStepVisualConfig( stepId ), [ stepId ] );
 	const isPending = updateProgress.isPending || isLoading;
 
-	const isContinueDisabled = () => {
-		if ( isPending ) {
-			return true;
-		}
-
-		const stepsWithDisabledContinue: StepIdType[] = [ StepId.EXPERIENCE_LEVEL ];
-		return stepsWithDisabledContinue.includes( stepId );
-	};
-
 	const choiceForStep = choices[ stepId as keyof typeof choices ];
-	const continueDisabled = isChoiceEmpty( choiceForStep, stepId );
+	const continueDisabled = isChoiceEmpty( choiceForStep );
 
 	const renderStepContent = () => {
 		switch ( stepId ) {
-			case StepId.EXPERIENCE_LEVEL:
-				return (
-					<ExperienceLevel
-						selectedValue={ choices.experience_level }
-						onSelect={ handleExperienceLevelSelect }
-					/>
-				);
 			case StepId.BUILDING_FOR:
 				return <BuildingFor onComplete={ handleContinue } />;
-			case StepId.SITE_FEATURES:
-				return (
-					<SiteFeatures
-						selectedValues={ choices.site_features ?? [] }
-						onChange={ handleSiteFeaturesChange }
-					/>
-				);
 			default:
 				return <Box sx={ { flex: 1, width: '100%' } } />;
 		}
@@ -245,7 +216,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 						showSkip={ ! isLast }
 						showContinue
 						continueLabel={ isLast ? __( 'Finish', 'elementor' ) : __( 'Continue', 'elementor' ) }
-						continueDisabled={ isContinueDisabled() || continueDisabled }
+						continueDisabled={ continueDisabled }
 						continueLoading={ isPending }
 						onBack={ handleBack }
 						onSkip={ handleSkip }
