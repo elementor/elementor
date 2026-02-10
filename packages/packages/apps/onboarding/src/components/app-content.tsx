@@ -104,39 +104,42 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 		);
 	}, [ actions, stepIndex, totalSteps, updateProgress ] );
 
-	const handleContinue = useCallback( ( directChoice?: Record< string, unknown > ) => {
-		if ( directChoice ) {
-			updateChoices.mutate( directChoice );
-		} else {
-			const storedChoice = choices[ stepId as keyof typeof choices ];
+	const handleContinue = useCallback(
+		( directChoice?: Record< string, unknown > ) => {
+			if ( directChoice ) {
+				updateChoices.mutate( directChoice );
+			} else {
+				const storedChoice = choices[ stepId as keyof typeof choices ];
 
-			if ( ! isChoiceEmpty( storedChoice ) ) {
-				updateChoices.mutate( { [ stepId ]: storedChoice } );
+				if ( ! isChoiceEmpty( storedChoice ) ) {
+					updateChoices.mutate( { [ stepId ]: storedChoice } );
+				}
 			}
-		}
 
-		updateProgress.mutate(
-			{
-				complete_step: stepId,
-				step_index: stepIndex,
-				total_steps: totalSteps,
-			},
-			{
-				onSuccess: () => {
-					actions.completeStep( stepId );
+			updateProgress.mutate(
+				{
+					complete_step: stepId,
+					step_index: stepIndex,
+					total_steps: totalSteps,
+				},
+				{
+					onSuccess: () => {
+						actions.completeStep( stepId );
 
-					if ( ! isLast ) {
-						actions.nextStep();
-					} else {
-						onComplete?.();
-					}
-				},
-				onError: () => {
-					actions.setError( __( 'Failed to complete step.', 'elementor' ) );
-				},
-			}
-		);
-	}, [ stepId, stepIndex, totalSteps, choices, actions, isLast, onComplete, updateProgress, updateChoices ] );
+						if ( ! isLast ) {
+							actions.nextStep();
+						} else {
+							onComplete?.();
+						}
+					},
+					onError: () => {
+						actions.setError( __( 'Failed to complete step.', 'elementor' ) );
+					},
+				}
+			);
+		},
+		[ stepId, stepIndex, totalSteps, choices, actions, isLast, onComplete, updateProgress, updateChoices ]
+	);
 
 	const rightPanelConfig = useMemo( () => getStepVisualConfig( stepId ), [ stepId ] );
 	const isPending = updateProgress.isPending || isLoading;
