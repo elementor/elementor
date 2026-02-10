@@ -79,7 +79,11 @@ export function evaluateTerm( term: DependencyTerm, actualValue: unknown ) {
 				return false;
 			}
 
-			return ( 'contains' === operator ) === actualValue.includes( valueToCompare as never );
+			const arrayToCheck = Array.isArray( actualValue )
+				? actualValue.map( ( item ) => ( isTransformable( item ) ? item.value : item ) )
+				: actualValue;
+
+			return ( 'contains' === operator ) === arrayToCheck.includes( valueToCompare as never );
 
 		case 'exists':
 		case 'not_exist':
