@@ -192,6 +192,59 @@ Move nested object structure
 
 ## Examples
 
+### Widget Key Migration: Rename Settings Key
+
+**Context**: Rename a widget settings key from `tag` → `htmlTag`. Paths start at **widget settings root**.
+
+```json
+{
+  "up": [
+    { "op": { "fn": "set", "path": "tag", "key": "htmlTag" } }
+  ],
+  "down": [
+    { "op": { "fn": "set", "path": "htmlTag", "key": "tag" } }
+  ]
+}
+```
+
+**Before**:
+```json
+{
+  "id": "heading-1",
+  "elType": "widget",
+  "widgetType": "e-heading",
+  "settings": {
+    "tag": {
+      "$$type": "string",
+      "value": "h2"
+    },
+    "title": {
+      "$$type": "string",
+      "value": "Hello"
+    }
+  }
+}
+```
+
+**After**:
+```json
+{
+  "id": "heading-1",
+  "elType": "widget",
+  "widgetType": "e-heading",
+  "settings": {
+    "htmlTag": {
+      "$$type": "string",
+      "value": "h2"
+    },
+    "title": {
+      "$$type": "string",
+      "value": "Hello"
+    }
+  }
+}
+```
+
 ### Prop Type Migration: Change Type
 
 **Context**: Migrate `string` → `html` type. Paths start at **prop root**.
@@ -377,9 +430,9 @@ Move nested object structure
   "$$type": "list",
   "value": {
     "items": [
-      { "type": "enhanced", "data": { "content": "Item 1" }, "migrated": true },
-      { "type": "enhanced", "data": { "content": "Item 2" }, "migrated": true },
-      { "type": "new", "data": { "content": "Item 3" }, "migrated": true }
+      { "type": "enhanced", "data": { "content": "Item 1" } },
+      { "type": "enhanced", "data": { "content": "Item 2" } },
+      { "type": "new", "data": { "content": "Item 3" } }
     ]
   }
 }
