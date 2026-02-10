@@ -21,7 +21,7 @@ export const VariablePromotionChip = forwardRef< VariablePromotionChipRef, Varia
 		useCanvasClickHandler( isOpen, () => setIsOpen( false ) );
 
 		const toggle = () => setIsOpen( ( prev ) => ! prev );
-
+		useImperativeHandle( ref, () => ( { toggle } ), [ toggle ] );
 		useImperativeHandle( ref, () => ( { toggle } ), [] );
 
 		const title = sprintf(
