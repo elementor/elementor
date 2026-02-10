@@ -22,12 +22,6 @@ class Module extends BaseModule {
 
 		Admin_Pointer::add_hooks();
 
-		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
-			if ( ! empty( $hooks[ static::PAGE_ID ] ) ) {
-				add_action( "admin_print_scripts-{$hooks[ static::PAGE_ID ]}", [ $this, 'enqueue_assets' ] );
-			}
-		}, 10, 2 );
-
 		add_filter( 'elementor/finder/categories', function( array $categories ) {
 			$categories['site']['items']['apps'] = [
 				'title' => esc_html__( 'Add-ons', 'elementor' ),
