@@ -4,6 +4,7 @@ import BaseTracking from './base-tracking';
 
 const EXCLUDED_SELECTORS = {
 	ADMIN_MENU: '#adminmenu',
+	TOP_BAR: '.e-admin-top-bar',
 	TOP_BAR_EDITOR_ONE: '#editor-one-top-bar',
 	WP_ADMIN_BAR: '#wpadminbar',
 	SUBMENU: '.wp-submenu',
@@ -205,7 +206,7 @@ class ActionControlTracking extends BaseTracking {
 			return true;
 		}
 
-		const isInNavigation = link.closest( '.wp-submenu, #adminmenu, #wpadminbar' );
+		const isInNavigation = link.closest( '.wp-submenu, #adminmenu, .e-admin-top-bar, #wpadminbar' );
 
 		return !! isInNavigation;
 	}
