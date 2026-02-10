@@ -302,7 +302,7 @@ describe( 'SiteAbout', () => {
 					expect.objectContaining( {
 						method: 'POST',
 						body: expect.stringContaining( 'blog' ),
-					} ),
+					} )
 				);
 			} );
 		} );
@@ -320,7 +320,7 @@ describe( 'SiteAbout', () => {
 					expect.objectContaining( {
 						method: 'POST',
 						body: expect.stringContaining( 'skip_step' ),
-					} ),
+					} )
 				);
 			} );
 		} );
