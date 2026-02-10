@@ -1,5 +1,6 @@
 import { Box, ButtonBase, styled } from '@elementor/ui';
 
+// One-off brand color from design
 const GREETING_BANNER_BG_COLOR = '#fae4fa';
 
 export const GreetingBannerRoot = styled( Box )( ( { theme } ) => ( {

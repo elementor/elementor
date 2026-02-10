@@ -1,14 +1,13 @@
 import * as React from 'react';
-import type { ComponentType } from 'react';
+import type { ElementType } from 'react';
 import { CheckIcon } from '@elementor/icons';
-import type { SvgIconProps } from '@elementor/ui';
 import { Typography } from '@elementor/ui';
 
 import { CheckBadge, OptionCardRoot } from './styled-components';
 
 interface OptionCardProps {
 	label: string;
-	icon: ComponentType< SvgIconProps >;
+	icon: ElementType;
 	selected: boolean;
 	onClick: () => void;
 }
