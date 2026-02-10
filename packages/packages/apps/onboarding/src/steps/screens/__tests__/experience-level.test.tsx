@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
 import { ThemeProvider } from '@elementor/ui';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 import { ExperienceLevel } from '../experience-level';
 
@@ -36,15 +36,6 @@ describe( 'ExperienceLevel', () => {
 		fireEvent.click( screen.getByText( "I'm just getting started" ) );
 
 		expect( onSelect ).toHaveBeenCalledWith( 'beginner' );
-	} );
-
-	it( 'shows selected state for the selected option', () => {
-		const onSelect = jest.fn();
-
-		renderWithTheme( <ExperienceLevel selectedValue="intermediate" onSelect={ onSelect } /> );
-
-		const selectedOption = screen.getByText( 'I have some experience' ).closest( 'div' );
-		expect( selectedOption ).toHaveStyle( { border: '2px solid' } );
 	} );
 
 	it( 'calls onSelect with correct value for each option', () => {

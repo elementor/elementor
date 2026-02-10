@@ -40,9 +40,9 @@ interface ExperienceLevelOption {
 }
 
 const OPTIONS: ExperienceLevelOption[] = [
-	{ id: 'beginner', label: __( 'I\'m just getting started', 'elementor' ) },
+	{ id: 'beginner', label: __( "I'm just getting started", 'elementor' ) },
 	{ id: 'intermediate', label: __( 'I have some experience', 'elementor' ) },
-	{ id: 'advanced', label: __( 'I\'m very comfortable with Elementor', 'elementor' ) },
+	{ id: 'advanced', label: __( "I'm very comfortable with Elementor", 'elementor' ) },
 ];
 
 interface ExperienceLevelProps {
@@ -72,7 +72,11 @@ export function ExperienceLevel( { selectedValue, onSelect }: ExperienceLevelPro
 						<Typography variant="body1" color="text.secondary">
 							{ option.label }
 						</Typography>
-						<ChevronIcon className="chevron-icon" isSelected={ selectedValue === option.id } fontSize="small" />
+						<ChevronIcon
+							className="chevron-icon"
+							isSelected={ selectedValue === option.id }
+							fontSize="small"
+						/>
 					</OptionCard>
 				) ) }
 			</Stack>
