@@ -17,6 +17,10 @@ import { SplitLayout } from './ui/split-layout';
 import { TopBar } from './ui/top-bar';
 import { TopBarContent } from './ui/top-bar-content';
 
+const isChoiceEmpty = ( choice: unknown ): boolean => {
+	return choice === null || choice === undefined || ( Array.isArray( choice ) && choice.length === 0 );
+};
+
 interface AppContentProps {
 	onComplete?: () => void;
 	onClose?: () => void;
@@ -133,50 +137,16 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 		);
 	}, [ stepId, stepIndex, totalSteps, choices, actions, isLast, onComplete, updateProgress, updateChoices ] );
 
-	const handleExperienceLevelSelect = useCallback(
-		( value: string ) => {
-			actions.setUserChoice( 'experience_level', value );
-
-			Promise.all( [
-				updateChoices.mutateAsync( { experience_level: value } ),
-				updateProgress.mutateAsync( {
-					complete_step: stepId,
-					step_index: stepIndex,
-					total_steps: totalSteps,
-				} ),
-			] )
-				.then( () => {
-					actions.completeStep( stepId );
-					actions.nextStep();
-				} )
-				.catch( () => {
-					actions.setError( __( 'Failed to save experience level.', 'elementor' ) );
-				} );
-		},
-		[ stepId, stepIndex, totalSteps, actions, updateChoices, updateProgress ]
-	);
-
 	const rightPanelConfig = useMemo( () => getStepVisualConfig( stepId ), [ stepId ] );
 	const isPending = updateProgress.isPending || isLoading;
 
-	const isContinueDisabled = () => {
-		if ( isPending ) {
-			return true;
-		}
-
-		const stepsWithDisabledContinue: StepIdType[] = [ StepId.EXPERIENCE_LEVEL ];
-		return stepsWithDisabledContinue.includes( stepId );
-	};
+	const choiceForStep = choices[ stepId as keyof typeof choices ];
+	const continueDisabled = isChoiceEmpty( choiceForStep );
 
 	const renderStepContent = () => {
 		switch ( stepId ) {
 			case StepId.EXPERIENCE_LEVEL:
-				return (
-					<ExperienceLevel
-						selectedValue={ choices.experience_level }
-						onSelect={ handleExperienceLevelSelect }
-					/>
-				);
+				return <ExperienceLevel onComplete={ handleContinue } />;
 			default:
 				return <Box sx={ { flex: 1, width: '100%' } } />;
 		}
@@ -215,7 +185,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 						showSkip={ ! isLast }
 						showContinue
 						continueLabel={ isLast ? __( 'Finish', 'elementor' ) : __( 'Continue', 'elementor' ) }
-						continueDisabled={ isContinueDisabled() }
+						continueDisabled={ continueDisabled }
 						continueLoading={ isPending }
 						onBack={ handleBack }
 						onSkip={ handleSkip }

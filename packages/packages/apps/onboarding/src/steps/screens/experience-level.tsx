@@ -1,7 +1,11 @@
 import * as React from 'react';
+import { useCallback } from 'react';
 import { ChevronRightIcon } from '@elementor/icons';
 import { Box, Stack, styled, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
+
+import { useOnboarding } from '../../hooks/use-onboarding';
+import { useUpdateChoices } from '../../hooks/use-update-choices';
 
 interface OptionCardProps {
 	isSelected: boolean;
@@ -13,8 +17,7 @@ interface ExperienceLevelOption {
 }
 
 interface ExperienceLevelProps {
-	selectedValue?: string | null;
-	onSelect: ( value: string ) => void;
+	onComplete: () => void;
 }
 
 const OptionCard = styled( Box, {
@@ -50,7 +53,21 @@ const OPTIONS: ExperienceLevelOption[] = [
 	{ id: 'advanced', label: __( "I'm very comfortable with Elementor", 'elementor' ) },
 ];
 
-export function ExperienceLevel( { selectedValue, onSelect }: ExperienceLevelProps ) {
+export function ExperienceLevel( { onComplete }: ExperienceLevelProps ) {
+	const { choices, actions } = useOnboarding();
+	const updateChoices = useUpdateChoices();
+
+	const selectedValue = choices.experience_level;
+
+	const handleSelect = useCallback(
+		async ( value: string ) => {
+			actions.setUserChoice( 'experience_level', value );
+			await updateChoices.mutateAsync( { experience_level: value } );
+			onComplete();
+		},
+		[ actions, updateChoices, onComplete ]
+	);
+
 	return (
 		<Stack spacing={ 4 } width="100%">
 			<Stack spacing={ 1 } textAlign="center" alignItems="center">
@@ -67,7 +84,7 @@ export function ExperienceLevel( { selectedValue, onSelect }: ExperienceLevelPro
 					<OptionCard
 						key={ option.id }
 						isSelected={ selectedValue === option.id }
-						onClick={ () => onSelect( option.id ) }
+						onClick={ () => handleSelect( option.id ) }
 					>
 						<Typography variant="body1" color="text.secondary">
 							{ option.label }
