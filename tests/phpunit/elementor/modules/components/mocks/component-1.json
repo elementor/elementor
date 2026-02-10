@@ -16,10 +16,10 @@
 						"$$type": "classes",
 						"value": ["component-1-button-local-class-id"]
 					},
-					"text": {
-						"$$type": "html",
-						"value": "Component 2 Button"
-					},
+				"text": {
+					"$$type": "html-v2",
+					"value": { "content": "Component 2 Button", "children": [] }
+				},
                     "link": {
             "$$type": "link",
             "value": {
