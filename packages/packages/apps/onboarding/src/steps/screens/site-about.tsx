@@ -11,7 +11,7 @@ export function SiteAbout() {
 
 	const selectedValues: string[] = useMemo(
 		() => ( Array.isArray( choices.site_about ) ? choices.site_about : [] ),
-		[ choices.site_about ],
+		[ choices.site_about ]
 	);
 
 	const handleToggle = useCallback(
@@ -22,7 +22,7 @@ export function SiteAbout() {
 
 			actions.setUserChoice( 'site_about', next );
 		},
-		[ selectedValues, actions ],
+		[ selectedValues, actions ]
 	);
 
 	return (

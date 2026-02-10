@@ -107,7 +107,7 @@ export function BuildingFor( { onComplete }: BuildingForProps ) {
 			await updateChoices.mutateAsync( { building_for: value } );
 			onComplete();
 		},
-		[ actions, updateChoices, onComplete ],
+		[ actions, updateChoices, onComplete ]
 	);
 
 	return (
