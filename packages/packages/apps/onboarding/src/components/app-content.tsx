@@ -17,6 +17,10 @@ import { SplitLayout } from './ui/split-layout';
 import { TopBar } from './ui/top-bar';
 import { TopBarContent } from './ui/top-bar-content';
 
+const isChoiceEmpty = ( choice: unknown ): boolean => {
+	return choice === null || choice === undefined || ( Array.isArray( choice ) && choice.length === 0 );
+};
+
 interface AppContentProps {
 	onComplete?: () => void;
 	onClose?: () => void;
@@ -137,10 +141,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 	const isPending = updateProgress.isPending || isLoading;
 
 	const choiceForStep = choices[ stepId as keyof typeof choices ];
-	const continueDisabled =
-		choiceForStep === null ||
-		choiceForStep === undefined ||
-		( Array.isArray( choiceForStep ) && choiceForStep.length === 0 );
+	const continueDisabled = isChoiceEmpty( choiceForStep );
 
 	const renderStepContent = () => {
 		switch ( stepId ) {

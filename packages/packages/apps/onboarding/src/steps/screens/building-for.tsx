@@ -11,6 +11,8 @@ const GREETING_WAVE = '\uD83D\uDC4B';
 
 const DirectionalChevronIcon = withDirection( ChevronRightSmallIcon );
 
+const GREETING_BANNER_BG_COLOR = '#fae4fa';
+
 const GreetingBanner = styled( Box )( ( { theme } ) => ( {
 	display: 'inline-flex',
 	alignItems: 'center',
@@ -18,7 +20,7 @@ const GreetingBanner = styled( Box )( ( { theme } ) => ( {
 	paddingInline: theme.spacing( 3 ),
 	paddingBlock: theme.spacing( 1.5 ),
 	borderRadius: 16,
-	backgroundColor: '#fae4fa',
+	backgroundColor: GREETING_BANNER_BG_COLOR,
 	alignSelf: 'flex-start',
 } ) );
 
@@ -100,9 +102,9 @@ export function BuildingFor( { onComplete }: BuildingForProps ) {
 	}, [ userName, isConnected, isGuest ] );
 
 	const handleSelect = useCallback(
-		( value: BuildingForValue ) => {
+		async ( value: BuildingForValue ) => {
 			actions.setUserChoice( 'building_for', value );
-			updateChoices.mutate( { building_for: value } );
+			await updateChoices.mutateAsync( { building_for: value } );
 			onComplete();
 		},
 		[ actions, updateChoices, onComplete ]
