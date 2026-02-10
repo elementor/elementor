@@ -6,11 +6,8 @@ import { __ } from '@wordpress/i18n';
 import { useOnboarding } from '../hooks/use-onboarding';
 import { useUpdateChoices } from '../hooks/use-update-choices';
 import { useUpdateProgress } from '../hooks/use-update-progress';
-import { ExperienceLevel } from '../steps/screens/experience-level';
-import { Login } from '../steps/screens/login';
-import { getStepVisualConfig } from '../steps/step-visuals';
-import { StepId, type StepIdType } from '../types';
 import { BuildingFor } from '../steps/screens/building-for';
+import { ExperienceLevel } from '../steps/screens/experience-level';
 import { Login } from '../steps/screens/login';
 import { getStepVisualConfig } from '../steps/step-visuals';
 import { StepId } from '../types';
@@ -149,10 +146,10 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 
 	const renderStepContent = () => {
 		switch ( stepId ) {
-			case StepId.EXPERIENCE_LEVEL:
-				return <ExperienceLevel onComplete={ handleContinue } />;
 			case StepId.BUILDING_FOR:
 				return <BuildingFor onComplete={ handleContinue } />;
+			case StepId.EXPERIENCE_LEVEL:
+				return <ExperienceLevel onComplete={ handleContinue } />;
 			default:
 				return <Box sx={ { flex: 1, width: '100%' } } />;
 		}
