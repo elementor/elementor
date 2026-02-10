@@ -178,5 +178,3 @@ class Test_Global_Colors_Extension extends Elementor_Test_Base {
 		$this->assertEquals( 'Third', $result[2]['label'] );
 	}
 }
-
-

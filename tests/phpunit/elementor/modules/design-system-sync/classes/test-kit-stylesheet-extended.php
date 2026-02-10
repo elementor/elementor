@@ -247,4 +247,3 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 		// Assert - expectations verified by mock
 	}
 }
-

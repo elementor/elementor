@@ -59,4 +59,3 @@ class Variables_Provider {
 		self::$cached_variables = null;
 	}
 }
-

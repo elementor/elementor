@@ -282,4 +282,3 @@ class Test_Variables_Provider extends Elementor_Test_Base {
 		$this->assertCount( 2, $result2 );
 	}
 }
-

@@ -128,4 +128,3 @@ class Global_Colors_Extension {
 		return $color_variables;
 	}
 }
-
