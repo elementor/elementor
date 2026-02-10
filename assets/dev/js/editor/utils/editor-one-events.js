@@ -28,6 +28,21 @@ export class EditorOneEventManager {
 		}
 	}
 
+	static toLowerSnake( value ) {
+		if ( ! value || 'string' !== typeof value ) {
+			return value;
+		}
+		return value.replace( /\s+/g, '_' ).toLowerCase();
+	}
+
+	static decodeHtmlEntities( text ) {
+		if ( ! text || 'string' !== typeof text ) {
+			return text;
+		}
+		const doc = new DOMParser().parseFromString( text, 'text/html' );
+		return doc.body.textContent || text;
+	}
+
 	static isInEditorContext() {
 		return 'undefined' !== typeof window.elementor && !! window.elementor?.documents;
 	}
@@ -38,7 +53,7 @@ export class EditorOneEventManager {
 
 		return {
 			windowName: isEditor ? config?.appTypes?.editor : config?.appTypes?.wpAdmin,
-			targetLocation: isEditor ? config?.locations?.topBar : config?.locations?.sidebar,
+			targetLocation: this.toLowerSnake( isEditor ? config?.locations?.topBar : config?.locations?.sidebar ),
 		};
 	}
 
@@ -54,12 +69,12 @@ export class EditorOneEventManager {
 	static sendTopBarPublishDropdown( targetName ) {
 		const config = this.getConfig();
 		return this.dispatchEvent( config?.names?.editorOne?.topBarPublishDropdown, this.createBasePayload( {
-			interaction_type: config?.triggers?.click,
+			interaction_type: this.toLowerSnake( config?.triggers?.click ),
 			target_type: config?.targetTypes?.dropdownItem,
 			target_name: targetName,
 			interaction_result: config?.interactionResults?.actionSelected,
-			target_location: config?.locations?.topBar,
-			location_l1: config?.secondaryLocations?.publishDropdown,
+			target_location: this.toLowerSnake( config?.locations?.topBar ),
+			location_l1: this.toLowerSnake( config?.secondaryLocations?.publishDropdown ),
 			location_l2: config?.targetTypes?.dropdownItem,
 			interaction_description: 'User selected an action from the publish dropdown',
 		} ) );
@@ -68,12 +83,12 @@ export class EditorOneEventManager {
 	static sendTopBarPageList( targetName, isCreate = false ) {
 		const config = this.getConfig();
 		return this.dispatchEvent( config?.names?.editorOne?.topBarPageList, this.createBasePayload( {
-			interaction_type: config?.triggers?.click,
+			interaction_type: this.toLowerSnake( config?.triggers?.click ),
 			target_type: config?.targetTypes?.dropdownItem,
 			target_name: targetName,
 			interaction_result: isCreate ? config?.interactionResults?.create : config?.interactionResults?.navigate,
-			target_location: config?.locations?.topBar,
-			location_l1: config?.secondaryLocations?.pageListDropdown,
+			target_location: this.toLowerSnake( config?.locations?.topBar ),
+			location_l1: this.toLowerSnake( config?.secondaryLocations?.pageListDropdown ),
 			location_l2: config?.targetTypes?.dropdownItem,
 			interaction_description: 'User selected an action from the page list dropdown',
 		} ) );
@@ -82,12 +97,12 @@ export class EditorOneEventManager {
 	static sendSiteSettingsSession( { targetType, visitedItems = [], savedItems = [], state } ) {
 		const config = this.getConfig();
 		return this.dispatchEvent( config?.names?.editorOne?.siteSettingsSession, this.createBasePayload( {
-			interaction_type: config?.triggers?.click,
+			interaction_type: this.toLowerSnake( config?.triggers?.click ),
 			target_type: targetType,
 			target_name: 'site_settings',
 			interaction_result: config?.interactionResults?.sessionEnd,
-			target_location: config?.locations?.leftPanel,
-			location_l1: config?.secondaryLocations?.siteSettings,
+			target_location: this.toLowerSnake( config?.locations?.leftPanel ),
+			location_l1: this.toLowerSnake( config?.secondaryLocations?.siteSettings ),
 			interaction_description: 'Records areas visited as part of the site setting session',
 			metadata: {
 				visited_items: visitedItems,
@@ -100,79 +115,95 @@ export class EditorOneEventManager {
 	static sendELibraryNav( tabName ) {
 		const config = this.getConfig();
 		return this.dispatchEvent( config?.names?.editorOne?.eLibraryNav, this.createBasePayload( {
-			interaction_type: config?.triggers?.tabSelect,
+			interaction_type: this.toLowerSnake( config?.triggers?.tabSelect ),
 			target_type: config?.targetTypes?.tab,
-			target_name: tabName,
+			target_name: this.toLowerSnake( tabName ),
 			interaction_result: config?.interactionResults?.tabChanged,
-			target_location: config?.locations?.elementorLibrary,
-			location_l1: config?.secondaryLocations?.libraryTabs,
+			target_location: this.toLowerSnake( config?.locations?.elementorLibrary ),
+			location_l1: this.toLowerSnake( config?.secondaryLocations?.libraryTabs ),
 			interaction_description: 'User navigates within elementor library',
 		} ) );
 	}
 
 	static sendELibraryInsert( { assetId, assetName, libraryType, proRequired = false } ) {
 		const config = this.getConfig();
-		return this.dispatchEvent( config?.names?.editorOne?.eLibraryInsert, this.createBasePayload( {
-			interaction_type: config?.triggers?.insert,
+		const payload = this.createBasePayload( {
+			interaction_type: this.toLowerSnake( config?.triggers?.insert ),
 			target_type: config?.targetTypes?.button,
-			target_name: assetName || assetId,
+			target_name: this.decodeHtmlEntities( assetName ) || assetId,
 			interaction_result: config?.interactionResults?.assetInserted,
-			target_location: config?.locations?.elementorLibrary,
-			location_l1: libraryType,
-			location_l2: config?.secondaryLocations?.assetCard,
+			target_location: this.toLowerSnake( config?.locations?.elementorLibrary ),
+			location_l1: this.toLowerSnake( libraryType ),
+			location_l2: this.toLowerSnake( config?.secondaryLocations?.assetCard ),
 			interaction_description: 'User inserts block/pages from elementor library',
-			state: proRequired ? 'pro_plan_required' : null,
-		} ) );
+		} );
+
+		if ( proRequired ) {
+			payload.state = 'pro_plan_required';
+		}
+
+		return this.dispatchEvent( config?.names?.editorOne?.eLibraryInsert, payload );
 	}
 
 	static sendELibraryFavorite( { assetId, assetName, libraryType, isFavorite, proRequired = false } ) {
 		const config = this.getConfig();
-		return this.dispatchEvent( config?.names?.editorOne?.eLibraryFavorite, this.createBasePayload( {
-			interaction_type: config?.triggers?.click,
+		const payload = this.createBasePayload( {
+			interaction_type: this.toLowerSnake( config?.triggers?.click ),
 			target_type: config?.targetTypes?.toggle,
-			target_name: assetName || assetId,
+			target_name: this.decodeHtmlEntities( assetName ) || assetId,
 			interaction_result: config?.interactionResults?.assetFavorite,
-			target_value: isFavorite,
-			target_location: config?.locations?.elementorLibrary,
-			location_l1: libraryType,
-			location_l2: config?.secondaryLocations?.assetCard,
+			target_value: Boolean( isFavorite ),
+			target_location: this.toLowerSnake( config?.locations?.elementorLibrary ),
+			location_l1: this.toLowerSnake( libraryType ),
+			location_l2: this.toLowerSnake( config?.secondaryLocations?.assetCard ),
 			interaction_description: 'User favorite block/pages from elementor library',
-			state: proRequired ? 'pro_plan_required' : null,
-		} ) );
+		} );
+
+		if ( proRequired ) {
+			payload.state = 'pro_plan_required';
+		}
+
+		return this.dispatchEvent( config?.names?.editorOne?.eLibraryFavorite, payload );
 	}
 
 	static sendELibraryGenerateAi( { assetId, assetName, libraryType } ) {
 		const config = this.getConfig();
 		return this.dispatchEvent( config?.names?.editorOne?.eLibraryGenerateAi, this.createBasePayload( {
-			interaction_type: config?.triggers?.click,
+			interaction_type: this.toLowerSnake( config?.triggers?.click ),
 			target_type: config?.targetTypes?.button,
-			target_name: assetName || assetId,
+			target_name: this.decodeHtmlEntities( assetName ) || assetId,
 			interaction_result: config?.interactionResults?.aiGenerate,
-			target_location: config?.locations?.elementorLibrary,
-			location_l1: libraryType,
-			location_l2: config?.secondaryLocations?.assetCard,
+			target_location: this.toLowerSnake( config?.locations?.elementorLibrary ),
+			location_l1: this.toLowerSnake( libraryType ),
+			location_l2: this.toLowerSnake( config?.secondaryLocations?.assetCard ),
 			interaction_description: 'User generated block/page based on a library asset',
 		} ) );
 	}
 
-	static sendFinderSearchInput( { resultsCount } ) {
+	static sendFinderSearchInput( { resultsCount, searchTerm = null } ) {
 		const config = this.getConfig();
 		const hasResults = resultsCount > 0;
 		const finderContext = this.getFinderContext();
 
-		return this.dispatchEvent( config?.names?.editorOne?.finderSearchInput, this.createBasePayload( {
+		const payload = this.createBasePayload( {
 			window_name: finderContext.windowName,
-			interaction_type: config?.triggers?.typing,
+			interaction_type: this.toLowerSnake( config?.triggers?.typing ),
 			target_type: config?.targetTypes?.searchInput,
 			target_name: 'finder',
 			interaction_result: hasResults ? config?.interactionResults?.resultsUpdated : config?.interactionResults?.noResults,
 			target_location: finderContext.targetLocation,
-			location_l1: config?.secondaryLocations?.finder,
+			location_l1: this.toLowerSnake( config?.secondaryLocations?.finder ),
 			interaction_description: 'Finder search input, follows debounce behavior',
 			metadata: {
 				results_count: resultsCount,
 			},
-		} ) );
+		} );
+
+		if ( ! hasResults && searchTerm ) {
+			payload.metadata.search_term = searchTerm;
+		}
+
+		return this.dispatchEvent( config?.names?.editorOne?.finderSearchInput, payload );
 	}
 
 	static sendFinderResultSelect( choice ) {
@@ -181,13 +212,13 @@ export class EditorOneEventManager {
 
 		return this.dispatchEvent( config?.names?.editorOne?.finderResultSelect, this.createBasePayload( {
 			window_name: finderContext.windowName,
-			interaction_type: config?.triggers?.click,
+			interaction_type: this.toLowerSnake( config?.triggers?.click ),
 			target_type: config?.targetTypes?.searchResult,
 			target_name: choice,
 			interaction_result: config?.interactionResults?.selected,
 			target_location: finderContext.targetLocation,
-			location_l1: config?.secondaryLocations?.finder,
-			location_l2: config?.secondaryLocations?.finderResults,
+			location_l1: this.toLowerSnake( config?.secondaryLocations?.finder ),
+			location_l2: this.toLowerSnake( config?.secondaryLocations?.finderResults ),
 			interaction_description: 'Finder search results was selected',
 		} ) );
 	}
@@ -195,12 +226,12 @@ export class EditorOneEventManager {
 	static sendCanvasEmptyBoxAction( { targetName, metadata = {}, containerCreated = null } ) {
 		const config = this.getConfig();
 		const payload = this.createBasePayload( {
-			interaction_type: config?.triggers?.click,
+			interaction_type: this.toLowerSnake( config?.triggers?.click ),
 			target_type: config?.targetTypes?.buttons,
 			target_name: targetName,
 			interaction_result: config?.interactionResults?.selected,
-			target_location: config?.locations?.canvas,
-			location_l1: config?.secondaryLocations?.emptyBox,
+			target_location: this.toLowerSnake( config?.locations?.canvas ),
+			location_l1: this.toLowerSnake( config?.secondaryLocations?.emptyBox ),
 			interaction_description: 'Empty box on canvas actions',
 		} );
 
@@ -219,13 +250,13 @@ export class EditorOneEventManager {
 		const config = this.getConfig();
 		const hasResults = resultsCount > 0;
 		const payload = this.createBasePayload( {
-			interaction_type: config?.triggers?.typing,
+			interaction_type: this.toLowerSnake( config?.triggers?.typing ),
 			target_type: config?.targetTypes?.searchWidget,
 			target_name: 'search_widget',
 			interaction_result: hasResults ? config?.interactionResults?.resultsUpdated : config?.interactionResults?.noResults,
-			target_location: config?.locations?.leftPanel,
-			location_l1: config?.locations?.widgetPanel,
-			location_l2: config?.secondaryLocations?.searchBar,
+			target_location: this.toLowerSnake( config?.locations?.leftPanel ),
+			location_l1: this.toLowerSnake( config?.locations?.widgetPanel ),
+			location_l2: this.toLowerSnake( config?.secondaryLocations?.searchBar ),
 			interaction_description: 'Widget search input, follows debounce behavior',
 		} );
 
@@ -238,8 +269,8 @@ export class EditorOneEventManager {
 }
 
 export const createDebouncedFinderSearch = ( delay = 300 ) => {
-	return _.debounce( ( resultsCount ) => {
-		EditorOneEventManager.sendFinderSearchInput( { resultsCount } );
+	return _.debounce( ( resultsCount, searchTerm ) => {
+		EditorOneEventManager.sendFinderSearchInput( { resultsCount, searchTerm } );
 	}, delay );
 };
 

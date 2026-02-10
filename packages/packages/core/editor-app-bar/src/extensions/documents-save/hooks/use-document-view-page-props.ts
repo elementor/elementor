@@ -17,12 +17,13 @@ export default function useDocumentViewPageProps() {
 				dispatchEvent?.( eventName, {
 					app_type: config?.appTypes?.editor,
 					window_name: config?.appTypes?.editor,
-					interaction_type: config?.triggers?.click,
+					interaction_type: config?.triggers?.click?.toLowerCase(),
 					target_type: config?.targetTypes?.dropdownItem,
 					target_name: config?.targetNames?.publishDropdown?.viewPage,
 					interaction_result: config?.interactionResults?.actionSelected,
-					target_location: config?.locations?.topBar,
-					location_l1: config?.secondaryLocations?.publishDropdown,
+					target_location: config?.locations?.topBar?.replace( /\s+/g, '_' ).toLowerCase(),
+					location_l1: config?.secondaryLocations?.publishDropdown?.replace( /\s+/g, '_' ).toLowerCase(),
+					location_l2: config?.targetTypes?.dropdownItem,
 				} );
 			}
 			if ( document?.id ) {

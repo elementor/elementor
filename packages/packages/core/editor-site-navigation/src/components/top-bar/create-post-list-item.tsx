@@ -27,12 +27,13 @@ export function CreatePostListItem( { closePopup, ...props }: Props ) {
 					dispatchEvent?.( eventName, {
 						app_type: config?.appTypes?.editor,
 						window_name: config?.appTypes?.editor,
-						interaction_type: config?.triggers?.click,
+						interaction_type: config?.triggers?.click?.toLowerCase(),
 						target_type: config?.targetTypes?.dropdownItem,
 						target_name: config?.targetNames?.pageList?.addNewPage,
 						interaction_result: config?.interactionResults?.create,
-						target_location: config?.locations?.topBar,
-						location_l1: config?.secondaryLocations?.pageListDropdown,
+						target_location: config?.locations?.topBar?.replace( /\s+/g, '_' ).toLowerCase(),
+						location_l1: config?.secondaryLocations?.pageListDropdown?.replace( /\s+/g, '_' ).toLowerCase(),
+						location_l2: config?.targetTypes?.dropdownItem,
 					} );
 				}
 				const { id } = await create();

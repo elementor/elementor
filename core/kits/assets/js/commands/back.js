@@ -1,3 +1,5 @@
+import { EditorOneEventManager } from 'elementor-editor-utils/editor-one-events';
+
 export class Back extends $e.modules.CommandBase {
 	document = null;
 	confirmDialog = null;
@@ -31,6 +33,19 @@ export class Back extends $e.modules.CommandBase {
 		return $e.routes.back( 'panel' );
 	}
 
+	trackSiteSettingsSession( targetType, state ) {
+		const sessionData = this.component.getSiteSettingsSessionData?.() || {};
+
+		EditorOneEventManager.sendSiteSettingsSession( {
+			targetType,
+			visitedItems: sessionData.visitedItems || [],
+			savedItems: sessionData.savedItems || [],
+			state,
+		} );
+
+		this.component.resetSiteSettingsSession?.();
+	}
+
 	getCloseConfirmDialog( event ) {
 		if ( ! this.confirmDialog ) {
 			const modalOptions = {
@@ -46,6 +61,7 @@ export class Back extends $e.modules.CommandBase {
 					cancel: __( 'Cancel', 'elementor' ),
 				},
 				onConfirm: () => {
+					this.trackSiteSettingsSession( 'back', 'discard' );
 					$e.run( 'panel/global/close' );
 				},
 			};
@@ -98,11 +114,13 @@ export class Back extends $e.modules.CommandBase {
 					cancel: __( 'Discard', 'elementor' ),
 				},
 				onConfirm: () => {
+					this.trackSiteSettingsSession( 'save', 'saved' );
 					$e.run( 'document/save/update' ).then( () => {
 						resolve();
 					} );
 				},
 				onCancel: () => {
+					this.trackSiteSettingsSession( 'back', 'discard' );
 					$e.run( 'document/save/discard', { document } ).then( () => {
 						resolve();
 					} );

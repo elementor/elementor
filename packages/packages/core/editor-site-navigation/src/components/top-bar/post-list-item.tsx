@@ -26,12 +26,13 @@ export function PostListItem( { post, closePopup, ...props }: Props ) {
 					dispatchEvent?.( eventName, {
 						app_type: config?.appTypes?.editor,
 						window_name: config?.appTypes?.editor,
-						interaction_type: config?.triggers?.click,
+						interaction_type: config?.triggers?.click?.toLowerCase(),
 						target_type: config?.targetTypes?.dropdownItem,
 						target_name: postTitle,
 						interaction_result: config?.interactionResults?.navigate,
-						target_location: config?.locations?.topBar,
-						location_l1: config?.secondaryLocations?.pageListDropdown,
+						target_location: config?.locations?.topBar?.replace( /\s+/g, '_' ).toLowerCase(),
+						location_l1: config?.secondaryLocations?.pageListDropdown?.replace( /\s+/g, '_' ).toLowerCase(),
+						location_l2: config?.targetTypes?.dropdownItem,
 					} );
 				}
 				closePopup();

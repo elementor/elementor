@@ -61,7 +61,7 @@ export default class extends Marionette.LayoutView {
 
 			setTimeout( () => {
 				const resultsCount = this.getResultsCount();
-				this.debouncedTrackSearch( resultsCount );
+				this.debouncedTrackSearch( resultsCount, value );
 			}, 50 );
 		}
 

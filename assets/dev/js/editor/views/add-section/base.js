@@ -1,5 +1,6 @@
 import ContainerHelper from 'elementor-editor-utils/container-helper';
 import environment from 'elementor-common/utils/environment';
+import { EditorOneEventManager } from 'elementor-editor-utils/editor-one-events';
 
 /**
  * @typedef {import('../../container/container')} Container
@@ -162,10 +163,16 @@ class AddSectionBase extends Marionette.ItemView {
 	}
 
 	onAddSectionButtonClick() {
+		EditorOneEventManager.sendCanvasEmptyBoxAction( {
+			targetName: 'add_container',
+		} );
 		this.showSelectPresets();
 	}
 
 	onAddTemplateButtonClick() {
+		EditorOneEventManager.sendCanvasEmptyBoxAction( {
+			targetName: 'e_library',
+		} );
 		$e.run( 'library/open', this.getTemplatesModalOptions() );
 	}
 
@@ -201,6 +208,15 @@ class AddSectionBase extends Marionette.ItemView {
 		const selectedStructure = event.currentTarget.dataset.structure,
 			parsedStructure = elementor.presetsFactory.getParsedGridStructure( selectedStructure ),
 			isAddedAboveAnotherContainer = !! this.options.at || 0 === this.options.at;
+
+		EditorOneEventManager.sendCanvasEmptyBoxAction( {
+			targetName: 'add_container',
+			metadata: {
+				container_type: 'grid',
+				structure_type: selectedStructure,
+			},
+			containerCreated: true,
+		} );
 
 		const newContainer = ContainerHelper.createContainer(
 			{
@@ -265,8 +281,19 @@ class AddSectionBase extends Marionette.ItemView {
 	onFlexPresetSelected( e ) {
 		this.closeSelectPresets();
 
+		const preset = e.currentTarget.dataset.preset;
+
+		EditorOneEventManager.sendCanvasEmptyBoxAction( {
+			targetName: 'add_container',
+			metadata: {
+				container_type: 'flexbox',
+				structure_type: preset,
+			},
+			containerCreated: true,
+		} );
+
 		return ContainerHelper.createContainerFromPreset(
-			e.currentTarget.dataset.preset,
+			preset,
 			elementor.getPreviewContainer(),
 			this.options,
 		);
