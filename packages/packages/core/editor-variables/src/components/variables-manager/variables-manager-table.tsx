@@ -1,10 +1,6 @@
 import * as React from 'react';
-import { createElement, useEffect, useRef } from 'react';
-import { EllipsisWithTooltip } from '@elementor/editor-ui';
-import { GripVerticalIcon } from '@elementor/icons';
+import { useEffect, useRef } from 'react';
 import {
-	IconButton,
-	Stack,
 	type SxProps,
 	Table,
 	TableBody,
@@ -19,10 +15,9 @@ import { __ } from '@wordpress/i18n';
 
 import { type TVariablesList } from '../../storage';
 import { getVariableType } from '../../variables-registry/variable-type-registry';
-import { LabelField } from '../fields/label-field';
-import { VariableEditMenu, type VariableManagerMenuAction } from './ui/variable-edit-menu';
+import { type VariableManagerMenuAction } from './ui/variable-edit-menu';
 import { VariableTableCell } from './ui/variable-table-cell';
-import { VariableEditableCell } from './variable-editable-cell';
+import { type Row, VariableRow } from './ui/variable-table-row';
 
 type Props = {
 	menuActions: VariableManagerMenuAction[];
@@ -31,13 +26,6 @@ type Props = {
 	autoEditVariableId?: string;
 	onAutoEditComplete?: () => void;
 	onFieldError?: ( hasError: boolean ) => void;
-};
-
-type Row = ReturnType< typeof getVariableType > & {
-	id: string;
-	type: string;
-	name: string;
-	value: string;
 };
 
 export const VariablesManagerTable = ( {
@@ -142,6 +130,7 @@ export const VariablesManagerTable = ( {
 							<UnstableSortableItem
 								key={ row.id }
 								id={ row.id }
+<<<<<<< HEAD
 								render={ ( {
 									itemProps,
 									showDropIndication,
@@ -315,6 +304,21 @@ export const VariablesManagerTable = ( {
 										</TableRow>
 									);
 								} }
+=======
+								render={ ( props: UnstableSortableItemRenderProps ) => (
+									<VariableRow
+										{ ...props }
+										row={ row }
+										variables={ variables }
+										handleOnChange={ handleOnChange }
+										autoEditVariableId={ autoEditVariableId }
+										onAutoEditComplete={ onAutoEditComplete }
+										onFieldError={ onFieldError }
+										menuActions={ menuActions }
+										handleRowRef={ handleRowRef }
+									/>
+								) }
+>>>>>>> 10d9820496 (Internal: Enhances variable manager with renew promotions [ED-21889] (#34699))
 							/>
 						) ) }
 					</UnstableSortableProvider>
@@ -323,6 +327,7 @@ export const VariablesManagerTable = ( {
 		</TableContainer>
 	);
 };
+
 function sortVariablesOrder( variables: TVariablesList ): ( a: string, b: string ) => number {
 	return ( a, b ) => {
 		const orderA = variables[ a ]?.order ?? Number.MAX_SAFE_INTEGER;
