@@ -5,7 +5,7 @@ import { useSelectedElement } from '@elementor/editor-elements';
 import { PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { EllipsisWithTooltip } from '@elementor/editor-ui';
 import { ComponentsIcon, PencilIcon } from '@elementor/icons';
-import { Divider, IconButton, Stack, Tooltip } from '@elementor/ui';
+import { Box, Divider, IconButton, Stack, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useComponentInstanceSettings } from '../../hooks/use-component-instance-settings';
@@ -48,7 +48,7 @@ export function InstanceEditingPanel() {
 	const isEmpty = groups.length === 0 || Object.keys( overridableProps.props ).length === 0;
 
 	return (
-		<>
+		<Box data-type="instance-editing-panel">
 			<PanelHeader sx={ { justifyContent: 'start', px: 2 } }>
 				<Stack direction="row" alignItems="center" flexGrow={ 1 } gap={ 1 } maxWidth="100%">
 					<ComponentsIcon fontSize="small" sx={ { color: 'text.tertiary' } } />
@@ -82,6 +82,6 @@ export function InstanceEditingPanel() {
 					) }
 				</ControlAdornmentsProvider>
 			</PanelBody>
-		</>
+		</Box>
 	);
 }

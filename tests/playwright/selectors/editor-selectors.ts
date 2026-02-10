@@ -262,6 +262,18 @@ const EditorSelectors = {
 		saveAsGlobal: '.elementor-context-menu-list__item.elementor-context-menu-list__item-save.elementor-context-menu-list__item--disabled',
 		notes: '.elementor-context-menu-list__item.elementor-context-menu-list__item-open_notes.elementor-context-menu-list__item--disabled',
 	},
+	components: {
+		createPopup: '.MuiPopover-root',
+		nameInput: '#component-name',
+		componentsTab: '[data-tab="components"]',
+		componentsList: '#elementor-panel-elements-wrapper',
+		instanceWidget: '[data-widget_type="e-component.default"]',
+		editModeHeader: '[data-type="component-panel-header"] [data-type="panel-header"]',
+		exitEditModeButton: '[data-type="component-panel-header"] [aria-label="Back"]',
+		overridableIndicator: '[aria-label="Make prop overridable"]',
+		overridableIndicatorActive: '[aria-label="Overridable property"]',
+		instanceEditingPanel: '[class*="InstanceEditingPanel"]',
+	},
 	dialog: {
 		lightBox: '.elementor-lightbox',
 	},
