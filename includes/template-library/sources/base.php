@@ -449,7 +449,7 @@ abstract class Source_Base {
 	/**
 	 * @return array|\WP_Error
 	 */
-	public function import_template( $name, $path ) {
+	public function import_template( $name, $path, $import_mode = 'match_site' ) {
 		return new \WP_Error( 'template_error', 'This source does not support import' );
 	}
 
@@ -461,7 +461,7 @@ abstract class Source_Base {
 		return new \WP_Error( 'quota_error', 'This source does not support quota validation' );
 	}
 
-	public function prepare_import_template_data( $file_path ) {
+	public function prepare_import_template_data( $file_path, $import_mode = 'match_site' ) {
 		$data = json_decode( Utils::file_get_contents( $file_path ), true );
 
 		if ( empty( $data ) ) {
@@ -480,6 +480,18 @@ abstract class Source_Base {
 			"elementor/template_library/sources/{$this->get_id()}/import/elements",
 			$content
 		);
+
+		$import_result = apply_filters(
+			'elementor/template_library/import/process_content',
+			[ 'content' => $content ],
+			$import_mode,
+			$data,
+			$this
+		);
+
+		if ( is_array( $import_result ) && isset( $import_result['content'] ) ) {
+			$content = $import_result['content'];
+		}
 
 		$page_settings = [];
 
