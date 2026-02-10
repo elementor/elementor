@@ -260,9 +260,9 @@ describe( 'SiteAbout', () => {
 
 			expect( continueButton ).toBeDisabled();
 
-			fireEvent.click( screen.getByRole( 'button', { name: 'Blog' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Blog' } ) );
 
-			expect( continueButton ).not.toBeDisabled();
+		expect( continueButton ).toBeEnabled();
 		} );
 	} );
 

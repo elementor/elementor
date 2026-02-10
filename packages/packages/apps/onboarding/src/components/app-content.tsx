@@ -64,18 +64,18 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 	const handleClose = useCallback( () => {
 		window.dispatchEvent( new CustomEvent( 'e-onboarding-user-exit' ) );
 
-		updateProgress.mutate(
-			{ user_exit: true },
-			{
-				onSuccess: () => {
-					actions.setExitType( 'user_exit' );
-					onClose?.();
-				},
-				onError: () => {
-					actions.setError( __( 'Failed to mark user exit.', 'elementor' ) );
+			updateProgress.mutate(
+				{ user_exit: true },
+				{
+					onSuccess: () => {
+						actions.setExitType( 'user_exit' );
+						onClose?.();
+					},
+					onError: () => {
+						actions.setError( __( 'Failed to mark user exit.', 'elementor' ) );
+					},
 				}
-			},
-		);
+			);
 	}, [ actions, onClose, updateProgress ] );
 
 	const handleBack = useCallback( () => {
@@ -99,8 +99,8 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 				},
 				onError: () => {
 					actions.nextStep();
-				}
-			},
+				},
+			}
 		);
 	}, [ actions, stepIndex, totalSteps, updateProgress ] );
 
@@ -133,8 +133,8 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 				},
 				onError: () => {
 					actions.setError( __( 'Failed to complete step.', 'elementor' ) );
-				}
-			},
+				},
+			}
 		);
 	}, [ stepId, stepIndex, totalSteps, choices, actions, isLast, onComplete, updateProgress, updateChoices ] );
 
