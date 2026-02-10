@@ -196,6 +196,54 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 		} );
 	} );
 
+	test( 'Heading height should not change when entering inline edit mode in a flex row layout', async () => {
+		editor = await wpAdminPage.openNewPage();
+
+		const outerFlexboxId = await editor.addElement( { elType: EditorSelectors.v4.atoms.flexbox }, 'document' );
+
+		const leftFlexboxId = await editor.addElement( { elType: EditorSelectors.v4.atoms.flexbox }, outerFlexboxId );
+		const rightFlexboxId = await editor.addElement( { elType: EditorSelectors.v4.atoms.flexbox }, outerFlexboxId );
+
+		await test.step( 'Set left flexbox to column direction', async () => {
+			await editor.selectElement( leftFlexboxId );
+			await editor.v4Panel.openTab( 'style' );
+			await editor.v4Panel.style.openSection( 'Layout' );
+
+			const layoutSection = await editor.v4Panel.style.getSectionContentByLabel( 'Layout' );
+			await layoutSection.getByRole( 'button', { name: 'Column', exact: true } ).click();
+
+			await editor.v4Panel.style.closeSection( 'Layout' );
+		} );
+
+		const headingId = await editor.addWidget( { widgetType: EditorSelectors.v4.atoms.heading, container: leftFlexboxId } );
+		await editor.addWidget( { widgetType: EditorSelectors.v4.atoms.paragraph, container: leftFlexboxId } );
+		await editor.addWidget( { widgetType: EditorSelectors.v4.atoms.button, container: leftFlexboxId } );
+		await editor.addWidget( { widgetType: EditorSelectors.v4.atoms.image, container: rightFlexboxId } );
+
+		await editor.closeNavigatorIfOpen();
+
+		const headingH2 = editor.previewFrame.locator( `.elementor-element-${ headingId } ${ EditorSelectors.v4.atomSelectors.heading.base }` );
+
+		await headingH2.waitFor();
+
+		const heightBeforeEditing = await headingH2.boundingBox().then( ( box ) => box?.height ?? 0 );
+
+		expect( heightBeforeEditing ).toBeGreaterThan( 0 );
+
+		await editor.triggerEditingElement( headingId );
+
+		const inlineEditor = editor.previewFrame.locator( `.elementor-element-${ headingId } ${ INLINE_EDITING_SELECTORS.canvas.inlineEditor }` );
+		await expect( inlineEditor ).toBeAttached();
+
+		const editedH2 = editor.previewFrame.locator( `.elementor-element-${ headingId } h2` );
+		await editedH2.waitFor();
+
+		const heightDuringEditing = await editedH2.boundingBox().then( ( box ) => box?.height ?? 0 );
+
+		expect( heightDuringEditing ).toBeGreaterThan( 0 );
+		expect( heightDuringEditing ).toEqual( heightBeforeEditing );
+	} );
+
 	test( 'Validate inheritance of dimension while editing', async () => {
 		// Arrange
 		editor = await wpAdminPage.openNewPage();
