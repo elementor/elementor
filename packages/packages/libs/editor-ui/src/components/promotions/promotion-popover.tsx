@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { type MouseEvent } from 'react';
 import { CrownFilledIcon } from '@elementor/icons';
 import {
 	Alert,
@@ -16,7 +17,7 @@ type PromotionPopoverCardProps = {
 	content: string;
 	ctaUrl: string;
 	ctaText?: string;
-	onClose: () => void;
+	onClose: ( e: MouseEvent ) => void;
 };
 
 type PromotionPopoverProps = React.PropsWithChildren<

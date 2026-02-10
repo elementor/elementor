@@ -5,15 +5,11 @@ namespace Elementor\Core\Admin\Menu;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_Has_Position;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+	exit; // Exit if accessed directly.
 }
 
-/**
- * @deprecated 3.34.2 Elementor menu items are now registered inside Elementor\Core\Admin\EditorOneMenu. Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
- */
 class Admin_Menu_Manager {
 
 	/**
@@ -21,41 +17,15 @@ class Admin_Menu_Manager {
 	 */
 	private $items = [];
 
-	private $deprecation_notice = 'Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager and the \'elementor/editor-one/menu/register\' hook';
-
-	/**
-	 * @deprecated 3.34.2 Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
-	 */
 	public function register( $item_slug, Admin_Menu_Item $item ) {
-		Plugin::$instance->modules_manager
-			->get_modules( 'dev-tools' )
-			->deprecation
-			->deprecated_function( __METHOD__, '3.34.2', $this->deprecation_notice );
-
 		$this->items[ $item_slug ] = $item;
 	}
 
-	/**
-	 * @deprecated 3.34.2 Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
-	 */
 	public function unregister( $item_slug ) {
-		Plugin::$instance->modules_manager
-			->get_modules( 'dev-tools' )
-			->deprecation
-			->deprecated_function( __METHOD__, '3.34.2', $this->deprecation_notice );
-
 		unset( $this->items[ $item_slug ] );
 	}
 
-	/**
-	 * @deprecated 3.34.2 Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
-	 */
 	public function get( $item_slug ) {
-		Plugin::$instance->modules_manager
-			->get_modules( 'dev-tools' )
-			->deprecation
-			->deprecated_function( __METHOD__, '3.34.2', $this->deprecation_notice );
-
 		if ( empty( $this->items[ $item_slug ] ) ) {
 			return null;
 		}
@@ -63,27 +33,11 @@ class Admin_Menu_Manager {
 		return $this->items[ $item_slug ];
 	}
 
-	/**
-	 * @deprecated 3.34.2 Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
-	 */
 	public function get_all() {
-		Plugin::$instance->modules_manager
-			->get_modules( 'dev-tools' )
-			->deprecation
-			->deprecated_function( __METHOD__, '3.34.2', $this->deprecation_notice );
-
 		return $this->items;
 	}
 
-	/**
-	 * @deprecated 3.34.2 Use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager instead.
-	 */
 	public function register_actions() {
-		Plugin::$instance->modules_manager
-			->get_modules( 'dev-tools' )
-			->deprecation
-			->deprecated_function( __METHOD__, '3.34.2', $this->deprecation_notice );
-
 		add_action( 'admin_menu', function () {
 			$this->register_wp_menus();
 		}, 20 );
@@ -94,10 +48,7 @@ class Admin_Menu_Manager {
 	}
 
 	private function register_wp_menus() {
-		Plugin::$instance->modules_manager
-			->get_modules( 'dev-tools' )
-			->deprecation
-			->do_deprecated_action( 'elementor/admin/menu/register', [ $this ], '3.34.2', $this->deprecation_notice );
+		do_action( 'elementor/admin/menu/register', $this );
 
 		$hooks = [];
 
@@ -111,10 +62,7 @@ class Admin_Menu_Manager {
 			}
 		}
 
-		Plugin::$instance->modules_manager
-			->get_modules( 'dev-tools' )
-			->deprecation
-			->do_deprecated_action( 'elementor/admin/menu/after_register', [ $this, $hooks ], '3.34.2', $this->deprecation_notice );
+		do_action( 'elementor/admin/menu/after_register', $this, $hooks );
 	}
 
 	private function register_top_level_menu( $item_slug, Admin_Menu_Item $item ) {

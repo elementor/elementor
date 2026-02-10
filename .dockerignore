@@ -7,9 +7,9 @@ tmp
 .vscode
 .cursor
 .run
-tests
 docs
 local-site
 vendor
 *.log
 *.map
+docker-output/
