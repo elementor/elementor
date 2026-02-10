@@ -85,6 +85,7 @@ export interface OnboardingState {
 	hadUnexpectedExit: boolean;
 	isConnected: boolean;
 	isGuest: boolean;
+	userName: string;
 	urls: {
 		dashboard: string;
 		editor: string;

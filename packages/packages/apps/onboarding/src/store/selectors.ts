@@ -26,6 +26,8 @@ export const selectIsConnected = ( state: State ) => state.onboarding.isConnecte
 
 export const selectIsGuest = ( state: State ) => state.onboarding.isGuest;
 
+export const selectUserName = ( state: State ) => state.onboarding.userName;
+
 export const selectUrls = ( state: State ) => state.onboarding.urls;
 
 export const selectCurrentStep = __createSelector(
