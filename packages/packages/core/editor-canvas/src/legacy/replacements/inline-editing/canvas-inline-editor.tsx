@@ -15,6 +15,7 @@ import {
 	type Offsets,
 } from './inline-editing-utils';
 
+
 const TOP_BAR_SELECTOR = '#elementor-editor-wrapper-v2';
 const NAVIGATOR_SELECTOR = '#elementor-navigator';
 const EDITING_PANEL = '#elementor-panel';
