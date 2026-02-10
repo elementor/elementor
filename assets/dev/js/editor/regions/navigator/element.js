@@ -411,9 +411,7 @@ export default class extends Marionette.CompositeView {
 		this.ui.item.css( 'padding-inline-start', this.getIndent() + 'px' );
 
 		this.toggleHiddenClass();
-
 		this.renderIndicators();
-
 		this.renderInlineChildren();
 	}
 

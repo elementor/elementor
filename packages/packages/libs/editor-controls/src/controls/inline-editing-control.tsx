@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { type ComponentProps, useCallback, useEffect, useRef } from 'react';
+import { type ComponentProps, useCallback, useEffect, useMemo } from 'react';
 import { htmlV2PropTypeUtil, parseHtmlChildren } from '@elementor/editor-props';
 import { Box, type SxProps, type Theme } from '@elementor/ui';
+import { debounce } from '@elementor/utils';
 
 import { useBoundProp } from '../bound-prop-context';
 import { InlineEditor } from '../components/inline-editor';
@@ -22,7 +23,19 @@ export const InlineEditingControl = createControl(
 	} ) => {
 		const { value, setValue } = useBoundProp( htmlV2PropTypeUtil );
 		const content = value?.content ?? '';
-		const parseTimerRef = useRef< ReturnType< typeof setTimeout > >();
+
+		const debouncedParse = useMemo(
+			() =>
+				debounce( ( html: string ) => {
+					const parsed = parseHtmlChildren( html );
+
+					setValue( {
+						content: parsed.content || null,
+						children: parsed.children,
+					} );
+				}, CHILDREN_PARSE_DEBOUNCE_MS ),
+			[ setValue ]
+		);
 
 		const handleChange = useCallback(
 			( newValue: unknown ) => {
@@ -33,21 +46,12 @@ export const InlineEditingControl = createControl(
 					children: value?.children ?? [],
 				} );
 
-				clearTimeout( parseTimerRef.current );
-
-				parseTimerRef.current = setTimeout( () => {
-					const parsed = parseHtmlChildren( html );
-
-					setValue( {
-						content: parsed.content || null,
-						children: parsed.children,
-					} );
-				}, CHILDREN_PARSE_DEBOUNCE_MS );
+				debouncedParse( html );
 			},
-			[ setValue, value?.children ]
+			[ setValue, value?.children, debouncedParse ]
 		);
 
-		useEffect( () => () => clearTimeout( parseTimerRef.current ), [] );
+		useEffect( () => () => debouncedParse.cancel(), [ debouncedParse ] );
 
 		return (
 			<ControlActions>

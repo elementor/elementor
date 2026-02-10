@@ -65,6 +65,7 @@ export function parseHtmlChildren( html: string ): ParseResult {
 	const doc = parser.parseFromString( `<body>${ html }</body>`, 'text/html' );
 
 	const parserError = doc.querySelector( 'parsererror' );
+
 	if ( parserError ) {
 		// eslint-disable-next-line no-console
 		console.warn( 'HTML parsing error, returning original content:', parserError.textContent );
