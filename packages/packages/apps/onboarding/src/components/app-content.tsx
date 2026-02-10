@@ -8,6 +8,7 @@ import { useUpdateChoices } from '../hooks/use-update-choices';
 import { useUpdateProgress } from '../hooks/use-update-progress';
 import { BuildingFor } from '../steps/screens/building-for';
 import { Login } from '../steps/screens/login';
+import { SiteAbout } from '../steps/screens/site-about';
 import { getStepVisualConfig } from '../steps/step-visuals';
 import { StepId } from '../types';
 import { BaseLayout } from './ui/base-layout';
@@ -147,6 +148,8 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 		switch ( stepId ) {
 			case StepId.BUILDING_FOR:
 				return <BuildingFor onComplete={ handleContinue } />;
+			case StepId.SITE_ABOUT:
+				return <SiteAbout />;
 			default:
 				return <Box sx={ { flex: 1, width: '100%' } } />;
 		}
