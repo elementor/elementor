@@ -7,6 +7,16 @@ interface OptionCardProps {
 	isSelected: boolean;
 }
 
+interface ExperienceLevelOption {
+	id: string;
+	label: string;
+}
+
+interface ExperienceLevelProps {
+	selectedValue?: string | null;
+	onSelect: ( value: string ) => void;
+}
+
 const OptionCard = styled( Box, {
 	shouldForwardProp: ( prop ) => prop !== 'isSelected',
 } )< OptionCardProps >( ( { theme, isSelected } ) => ( {
@@ -34,21 +44,11 @@ const ChevronIcon = styled( ChevronRightIcon, {
 	transition: 'opacity 0.2s ease',
 } ) );
 
-interface ExperienceLevelOption {
-	id: string;
-	label: string;
-}
-
 const OPTIONS: ExperienceLevelOption[] = [
 	{ id: 'beginner', label: __( "I'm just getting started", 'elementor' ) },
 	{ id: 'intermediate', label: __( 'I have some experience', 'elementor' ) },
 	{ id: 'advanced', label: __( "I'm very comfortable with Elementor", 'elementor' ) },
 ];
-
-interface ExperienceLevelProps {
-	selectedValue?: string | null;
-	onSelect: ( value: string ) => void;
-}
 
 export function ExperienceLevel( { selectedValue, onSelect }: ExperienceLevelProps ) {
 	return (
