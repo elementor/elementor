@@ -6,8 +6,10 @@ import { __ } from '@wordpress/i18n';
 import { useOnboarding } from '../hooks/use-onboarding';
 import { useUpdateChoices } from '../hooks/use-update-choices';
 import { useUpdateProgress } from '../hooks/use-update-progress';
+import { ExperienceLevel } from '../steps/screens/experience-level';
 import { Login } from '../steps/screens/login';
 import { getStepVisualConfig } from '../steps/step-visuals';
+import { StepId, type StepIdType } from '../types';
 import { BaseLayout } from './ui/base-layout';
 import { Footer } from './ui/footer';
 import { FooterActions } from './ui/footer-actions';
@@ -131,8 +133,65 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 		);
 	}, [ stepId, stepIndex, totalSteps, choices, actions, isLast, onComplete, updateProgress, updateChoices ] );
 
+	const handleExperienceLevelSelect = useCallback(
+		( value: string ) => {
+			actions.setUserChoice( 'experience_level', value );
+
+			updateChoices.mutate(
+				{ experience_level: value },
+				{
+					onSuccess: () => {
+						updateProgress.mutate(
+							{
+								complete_step: stepId,
+								step_index: stepIndex,
+								total_steps: totalSteps,
+							},
+							{
+								onSuccess: () => {
+									actions.completeStep( stepId );
+									actions.nextStep();
+								},
+								onError: () => {
+									actions.setError( __( 'Failed to save experience level.', 'elementor' ) );
+								},
+							}
+						);
+					},
+					onError: () => {
+						actions.setError( __( 'Failed to save experience level.', 'elementor' ) );
+					},
+				}
+			);
+		},
+		[ stepId, stepIndex, totalSteps, actions, updateChoices, updateProgress ]
+	);
+
 	const rightPanelConfig = useMemo( () => getStepVisualConfig( stepId ), [ stepId ] );
 	const isPending = updateProgress.isPending || isLoading;
+
+	const isContinueDisabled = () => {
+		if ( isPending ) {
+			return true;
+		}
+
+		const stepsWithDisabledContinue: StepIdType[] = [ StepId.EXPERIENCE_LEVEL ];
+		return stepsWithDisabledContinue.includes( stepId );
+	};
+
+	const renderStepContent = () => {
+		switch ( stepId ) {
+			case StepId.EXPERIENCE_LEVEL:
+				return (
+					<ExperienceLevel
+						selectedValue={ choices.experience_level }
+						onSelect={ handleExperienceLevelSelect }
+					/>
+				);
+			default:
+				return <Box sx={ { flex: 1, width: '100%' } } />;
+		}
+	};
 
 	if ( ! hasPassedLogin ) {
 		return (
@@ -167,6 +226,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 						showSkip={ ! isLast }
 						showContinue
 						continueLabel={ isLast ? __( 'Finish', 'elementor' ) : __( 'Continue', 'elementor' ) }
+						continueDisabled={ isContinueDisabled() }
 						continueLoading={ isPending }
 						onBack={ handleBack }
 						onSkip={ handleSkip }
@@ -176,7 +236,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 			}
 		>
 			<SplitLayout
-				left={ <Box sx={ { flex: 1, width: '100%' } } /> }
+				left={ renderStepContent() }
 				rightConfig={ rightPanelConfig }
 				progress={ { currentStep: stepIndex, totalSteps } }
 			/>
