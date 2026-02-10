@@ -6,7 +6,6 @@ import { __, sprintf } from '@wordpress/i18n';
 
 import { OptionButton } from '../../components/ui/option-button';
 import { useOnboarding } from '../../hooks/use-onboarding';
-import { useUpdateChoices } from '../../hooks/use-update-choices';
 
 const GREETING_WAVE = '\uD83D\uDC4B';
 
@@ -35,12 +34,11 @@ const BUILDING_FOR_OPTIONS = [
 type BuildingForValue = ( typeof BUILDING_FOR_OPTIONS )[ number ][ 'value' ];
 
 interface BuildingForProps {
-	onComplete: () => void;
+	onComplete: ( choice: Record< string, unknown > ) => void;
 }
 
 export function BuildingFor( { onComplete }: BuildingForProps ) {
 	const { userName, isConnected, isGuest, choices, actions } = useOnboarding();
-	const updateChoices = useUpdateChoices();
 
 	const selectedValue = choices.building_for;
 
@@ -64,12 +62,11 @@ export function BuildingFor( { onComplete }: BuildingForProps ) {
 	}, [ userName, isConnected, isGuest ] );
 
 	const handleSelect = useCallback(
-		async ( value: BuildingForValue ) => {
+		( value: BuildingForValue ) => {
 			actions.setUserChoice( 'building_for', value );
-			await updateChoices.mutateAsync( { building_for: value } );
-			onComplete();
+			onComplete( { building_for: value } );
 		},
-		[ actions, updateChoices, onComplete ]
+		[ actions, onComplete ]
 	);
 
 	return (

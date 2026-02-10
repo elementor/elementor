@@ -6,7 +6,6 @@ import { __ } from '@wordpress/i18n';
 
 import { OptionButton } from '../../components/ui/option-button';
 import { useOnboarding } from '../../hooks/use-onboarding';
-import { useUpdateChoices } from '../../hooks/use-update-choices';
 
 const DirectionalChevronIcon = withDirection( ChevronRightSmallIcon );
 
@@ -16,7 +15,7 @@ interface ExperienceLevelOption {
 }
 
 interface ExperienceLevelProps {
-	onComplete: () => void;
+	onComplete: ( choice: Record< string, unknown > ) => void;
 }
 
 const OPTIONS: ExperienceLevelOption[] = [
@@ -27,17 +26,15 @@ const OPTIONS: ExperienceLevelOption[] = [
 
 export function ExperienceLevel( { onComplete }: ExperienceLevelProps ) {
 	const { choices, actions } = useOnboarding();
-	const updateChoices = useUpdateChoices();
 
 	const selectedValue = choices.experience_level;
 
 	const handleSelect = useCallback(
-		async ( value: string ) => {
+		( value: string ) => {
 			actions.setUserChoice( 'experience_level', value );
-			await updateChoices.mutateAsync( { experience_level: value } );
-			onComplete();
+			onComplete( { experience_level: value } );
 		},
-		[ actions, updateChoices, onComplete ]
+		[ actions, onComplete ]
 	);
 
 	return (

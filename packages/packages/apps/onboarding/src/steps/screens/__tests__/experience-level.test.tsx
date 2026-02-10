@@ -140,6 +140,24 @@ describe( 'ExperienceLevel', () => {
 		} );
 	} );
 
+	it( 'navigates to next step after successful selection', async () => {
+		window.elementorAppConfig = createMockConfig( { isConnected: true } );
+
+		render( <App /> );
+
+		fireEvent.click( screen.getByText( "I'm very comfortable with Elementor" ) );
+
+		await waitFor( () => {
+			expect( mockFetch ).toHaveBeenCalledWith(
+				expect.stringContaining( 'user-progress' ),
+				expect.objectContaining( {
+					method: 'POST',
+					body: expect.stringContaining( 'complete_step' ),
+				} )
+			);
+		} );
+	} );
+
 	it( 'shows previously selected option from saved choices', () => {
 		window.elementorAppConfig = createMockConfig( {
 			isConnected: true,
@@ -148,7 +166,7 @@ describe( 'ExperienceLevel', () => {
 
 		render( <App /> );
 
-		const intermediateOption = screen.getByText( 'I have some experience' ).closest( 'div' );
-		expect( intermediateOption ).toHaveStyle( { border: '2px solid' } );
+		const intermediateButton = screen.getByRole( 'button', { name: 'I have some experience' } );
+		expect( intermediateButton ).toHaveAttribute( 'aria-pressed', 'true' );
 	} );
 } );

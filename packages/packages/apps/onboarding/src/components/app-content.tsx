@@ -104,15 +104,15 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 		);
 	}, [ actions, stepIndex, totalSteps, updateProgress ] );
 
-	const handleContinue = useCallback( () => {
-		const choiceForStep = choices[ stepId as keyof typeof choices ];
-		const hasChoice =
-			choiceForStep !== null &&
-			choiceForStep !== undefined &&
-			( ! Array.isArray( choiceForStep ) || choiceForStep.length > 0 );
+	const handleContinue = useCallback( ( directChoice?: Record< string, unknown > ) => {
+		if ( directChoice ) {
+			updateChoices.mutate( directChoice );
+		} else {
+			const storedChoice = choices[ stepId as keyof typeof choices ];
 
-		if ( hasChoice ) {
-			updateChoices.mutate( { [ stepId ]: choiceForStep } );
+			if ( ! isChoiceEmpty( storedChoice ) ) {
+				updateChoices.mutate( { [ stepId ]: storedChoice } );
+			}
 		}
 
 		updateProgress.mutate(
@@ -192,7 +192,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 						continueLoading={ isPending }
 						onBack={ handleBack }
 						onSkip={ handleSkip }
-						onContinue={ handleContinue }
+						onContinue={ () => handleContinue() }
 					/>
 				</Footer>
 			}
