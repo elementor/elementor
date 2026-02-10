@@ -169,12 +169,12 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 
 	const { elementId, widgetType, elType, propKey } = overridableProp.originPropFields ?? overridableProp;
 
-	const elementContainer = getContainer( elementId );
-	if ( ! elementContainer ) {
-		throw new OverrideControlInnerElementNotFoundError( {
-			context: { componentId, elementId },
-		} );
-	}
+	// const elementContainer = getContainer( elementId );
+	// if ( ! elementContainer ) {
+	// 	throw new OverrideControlInnerElementNotFoundError( {
+	// 		context: { componentId, elementId },
+	// 	} );
+	// }
 
 	const type = elType === 'widget' ? widgetType : elType;
 	const elementType = getElementType( type );
@@ -194,8 +194,8 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 			value={ componentOverridablePropTypeUtil.extract( matchingOverride ) ?? undefined }
 			componentInstanceElement={ componentInstanceElement }
 		>
-			<ElementProvider element={ { id: elementId, type } } elementType={ elementType }>
-				<SettingsField bind={ propKey } propDisplayName={ overridableProp.label }>
+			{/* <ElementProvider element={ { id: elementId, type } } elementType={ elementType }>
+				<SettingsField bind={ propKey } propDisplayName={ overridableProp.label }> */}
 					<PropProvider
 						propType={ propTypeSchema }
 						value={ value }
@@ -213,8 +213,8 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 							</ControlReplacementsProvider>
 						</PropKeyProvider>
 					</PropProvider>
-				</SettingsField>
-			</ElementProvider>
+				{/* </SettingsField>
+			</ElementProvider> */}
 		</OverridablePropProvider>
 	);
 }

@@ -8,6 +8,7 @@ import { type OverridableProp, type PublishedComponent } from '../../types';
 import { extractInnerOverrideInfo } from '../../utils/overridable-props-utils';
 import { getOverridableProp } from '../overridable-props/utils/get-overridable-prop';
 
+// this whole file i'm afraid ):
 export function useResolvedOriginValue( override: ComponentInstanceOverride | null, overridableProp: OverridableProp ) {
 	const components = useSelector( selectData );
 
@@ -75,6 +76,7 @@ function getOriginFromOverride( components: PublishedComponent[], override: Comp
 	return null;
 }
 
+// here?):
 function findOriginValueByElementId(
 	components: PublishedComponent[],
 	targetElementId: string,

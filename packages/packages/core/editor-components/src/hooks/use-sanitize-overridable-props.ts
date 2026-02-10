@@ -12,6 +12,8 @@ export function useSanitizeOverridableProps( componentId: ComponentId | null ): 
 		return undefined;
 	}
 
+	return overridableProps;
+
 	if ( isSanitized ) {
 		return overridableProps;
 	}
