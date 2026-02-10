@@ -139,22 +139,25 @@ export function VariablesManagerPanel() {
 		[ handleDeleteVariable ]
 	);
 
-	const menuActions = [
-		{
-			name: __( 'Delete', 'elementor' ),
-			icon: TrashIcon,
-			color: 'error.main',
-			onClick: ( itemId: string ) => {
-				const variable = variables[ itemId ];
-				if ( variable ) {
-					setDeleteConfirmation( { id: itemId, label: variable.label } );
+	const buildMenuActions = useCallback(
+		() => [
+			{
+				name: __( 'Delete', 'elementor' ),
+				icon: TrashIcon,
+				color: 'error.main',
+				onClick: ( itemId: string ) => {
+					const variable = variables[ itemId ];
+					if ( variable ) {
+						setDeleteConfirmation( { id: itemId, label: variable.label } );
 
-					const variableTypeOptions = getVariableType( variable.type );
-					trackVariablesManagerEvent( { action: 'delete', varType: variableTypeOptions?.variableType } );
-				}
+						const variableTypeOptions = getVariableType( variable.type );
+						trackVariablesManagerEvent( { action: 'delete', varType: variableTypeOptions?.variableType } );
+					}
+				},
 			},
-		},
-	];
+		],
+		[ variables ]
+	);
 
 	const hasVariables = Object.keys( variables ).length > 0;
 
@@ -210,16 +213,16 @@ export function VariablesManagerPanel() {
 						height: '100%',
 					} }
 				>
-					{ hasVariables && (
-						<VariablesManagerTable
-							menuActions={ menuActions }
-							variables={ variables }
-							onChange={ handleOnChange }
-							autoEditVariableId={ autoEditVariableId }
-							onAutoEditComplete={ handleAutoEditComplete }
-							onFieldError={ setIsSaveDisabled }
-						/>
-					) }
+				{ hasVariables && (
+					<VariablesManagerTable
+						menuActions={ buildMenuActions }
+						variables={ variables }
+						onChange={ handleOnChange }
+						autoEditVariableId={ autoEditVariableId }
+						onAutoEditComplete={ handleAutoEditComplete }
+						onFieldError={ setIsSaveDisabled }
+					/>
+				) }
 
 					{ ! hasVariables && searchValue && (
 						<NoSearchResults

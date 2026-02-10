@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ColorFilterIcon } from '@elementor/icons';
 import { type IconButtonProps, type StackProps, type TableCellProps } from '@elementor/ui';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
 import { type TVariablesList } from '../../../storage';
 import { VariablesManagerTable } from '../variables-manager-table';
@@ -79,7 +79,6 @@ jest.mock( '../ui/variable-edit-menu', () => ( {
 	),
 } ) );
 
-<<<<<<< HEAD
 jest.mock( '../ui/variable-table-cell', () => ( {
 	VariableTableCell: ( { children, ...props }: TableCellProps ) => {
 		const safeProps = {
@@ -94,25 +93,6 @@ jest.mock( '../ui/variable-table-cell', () => ( {
 		};
 		return <td data-props={ JSON.stringify( safeProps ) }>{ children }</td>;
 	},
-=======
-const mockGetVariableType = jest.mocked( getVariableType );
-
-jest.mock( '@wordpress/i18n', () => ( {
-	__: ( text: string ) => text,
-	sprintf: jest.fn( ( format: string ) => format ),
-} ) );
-
-const mockCanEdit = jest.fn( () => true );
-const mockCanCreate = jest.fn( () => true );
-const mockCanDelete = jest.fn( () => true );
-
-jest.mock( '../../../hooks/use-quota-permissions', () => ( {
-	useQuotaPermissions: jest.fn( () => ( {
-		canEdit: mockCanEdit,
-		canCreate: mockCanCreate,
-		canDelete: mockCanDelete,
-	} ) ),
->>>>>>> 10d9820496 (Internal: Enhances variable manager with renew promotions [ED-21889] (#34699))
 } ) );
 
 jest.mock( '../variable-editable-cell', () => ( {
@@ -120,6 +100,7 @@ jest.mock( '../variable-editable-cell', () => ( {
 		initialValue: string;
 		prefixElement?: React.ReactNode;
 		children: React.ReactNode;
+		disabled?: boolean;
 	} ) => {
 		const [ isEditing, setIsEditing ] = React.useState( false );
 		return isEditing ? (
@@ -131,16 +112,19 @@ jest.mock( '../variable-editable-cell', () => ( {
 				data-props={ JSON.stringify( {
 					initialValue: props.initialValue,
 					prefixElement: !! props.prefixElement,
+					disabled: props.disabled,
 				} ) }
 			/>
 		) : (
 			<button
 				type="button"
-				onClick={ () => setIsEditing( true ) }
+				onClick={ () => ! props.disabled && setIsEditing( true ) }
 				data-props={ JSON.stringify( {
 					initialValue: props.initialValue,
 					prefixElement: !! props.prefixElement,
+					disabled: props.disabled,
 				} ) }
+				disabled={ props.disabled }
 			>
 				{ props.children }
 			</button>
@@ -150,18 +134,39 @@ jest.mock( '../variable-editable-cell', () => ( {
 
 jest.mock( '@elementor/editor-ui', () => ( {
 	EllipsisWithTooltip: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
+	useCanvasClickHandler: jest.fn(),
+	PromotionChip: ( props: { children?: React.ReactNode } ) => <div data-testid="promotion-chip">{ props.children }</div>,
+	PromotionPopover: ( props: { children?: React.ReactNode } ) => <div data-testid="promotion-popover">{ props.children }</div>,
 } ) );
 
 jest.mock(
 	'../../../variables-registry/variable-type-registry',
 	() => ( {
-		getVariableType: () => ( {
+		getVariableType: ( type: string ) => ( {
 			icon: ColorFilterIcon,
 			valueField: () => <input />,
+			variableType: type,
 		} ),
 	} ),
 	{ virtual: true }
 );
+
+jest.mock( '@wordpress/i18n', () => ( {
+	__: ( text: string ) => text,
+	sprintf: jest.fn( ( format: string ) => format ),
+} ) );
+
+const mockCanEdit = jest.fn< boolean, [ string ] >( () => true );
+const mockCanCreate = jest.fn< boolean, [ string ] >( () => true );
+const mockCanDelete = jest.fn< boolean, [ string ] >( () => true );
+
+jest.mock( '../../../hooks/use-quota-permissions', () => ( {
+	useQuotaPermissions: jest.fn( ( type: string ) => ( {
+		canEdit: () => mockCanEdit( type ),
+		canCreate: () => mockCanCreate( type ),
+		canDelete: () => mockCanDelete( type ),
+	} ) ),
+} ) );
 
 describe( 'VariablesManagerTable', () => {
 	const mockVariables: TVariablesList = {
@@ -186,13 +191,13 @@ describe( 'VariablesManagerTable', () => {
 		},
 	];
 
+	const mockMenuActionsFunction = jest.fn( () => mockMenuActions );
+
 	const renderTable = ( props = {} ) => {
 		const defaultProps = {
 			variables: mockVariables,
-			menuActions: mockMenuActions,
+			menuActions: mockMenuActionsFunction,
 			onChange: jest.fn(),
-			ids: Object.keys( mockVariables ),
-			onIdsChange: jest.fn(),
 		};
 
 		return render( <VariablesManagerTable { ...defaultProps } { ...props } /> );
@@ -203,20 +208,13 @@ describe( 'VariablesManagerTable', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-<<<<<<< HEAD
+		jest.restoreAllMocks();
 		// Suppress error for expected React warnings
 		window.console.error = mockConsoleError;
-=======
-		mockGetVariableType.mockImplementation( ( type: string ) => {
-			return createMockVariableType( type );
-		} );
 
 		mockCanEdit.mockReturnValue( true );
 		mockCanCreate.mockReturnValue( true );
 		mockCanDelete.mockReturnValue( true );
-
-		Element.prototype.scrollIntoView = jest.fn();
->>>>>>> 10d9820496 (Internal: Enhances variable manager with renew promotions [ED-21889] (#34699))
 	} );
 
 	afterEach( () => {
@@ -245,132 +243,10 @@ describe( 'VariablesManagerTable', () => {
 		const editableCells = screen.getAllByRole( 'button' );
 		const cellProps = editableCells.map( ( cell ) => JSON.parse( cell.getAttribute( 'data-props' ) || '{}' ) );
 
-<<<<<<< HEAD
 		expect( cellProps ).toContainEqual( expect.objectContaining( { initialValue: 'Variable 1' } ) );
 		expect( cellProps ).toContainEqual( expect.objectContaining( { initialValue: 'Variable 2' } ) );
 		expect( cellProps ).toContainEqual( expect.objectContaining( { initialValue: 'value 1' } ) );
 		expect( cellProps ).toContainEqual( expect.objectContaining( { initialValue: 'value 2' } ) );
-=======
-			if ( nameCell ) {
-				fireEvent.doubleClick( nameCell );
-			}
-
-			const input = await screen.findByRole( 'textbox' );
-			expect( input ).toHaveAttribute( 'id', 'variable-label-var-1' );
-
-			fireEvent.change( input, { target: { value: 'UpdatedColor' } } );
-
-			await waitFor( () => {
-				expect( input ).toHaveValue( 'UpdatedColor' );
-			} );
-
-			fireEvent.keyDown( input, { key: 'Enter' } );
-
-			await waitFor(
-				() => {
-					expect( mockOnChange ).toHaveBeenCalledWith(
-						expect.objectContaining( {
-							'var-1': expect.objectContaining( {
-								label: 'UpdatedColor',
-							} ),
-						} )
-					);
-				},
-				{ timeout: 2000 }
-			);
-		} );
-
-		it( 'should allow editing variable value', async () => {
-			renderComponent();
-
-			// eslint-disable-next-line testing-library/no-node-access
-			const valueCell = screen.getByText( '#ff0000' ).closest( '[role="button"]' );
-			expect( valueCell ).toBeInTheDocument();
-
-			if ( valueCell ) {
-				fireEvent.doubleClick( valueCell );
-			}
-
-			const input = await screen.findByLabelText( /Edit color value/i );
-			expect( input ).toBeInTheDocument();
-
-			fireEvent.change( input, { target: { value: '#0000ff' } } );
-			fireEvent.keyDown( input, { key: 'Enter' } );
-
-			await waitFor( () => {
-				expect( mockOnChange ).toHaveBeenCalledWith( {
-					...defaultVariables,
-					'var-1': {
-						...defaultVariables[ 'var-1' ],
-						value: '#0000ff',
-					},
-				} );
-			} );
-		} );
-
-		it( 'should not call onChange when value is unchanged', async () => {
-			renderComponent();
-
-			// eslint-disable-next-line testing-library/no-node-access
-			const nameCell = screen.getByText( 'PrimaryColor' ).closest( '[role="button"]' );
-			if ( nameCell ) {
-				fireEvent.doubleClick( nameCell );
-			}
-
-			const input = await screen.findByRole( 'textbox' );
-			expect( input ).toHaveAttribute( 'id', 'variable-label-var-1' );
-			fireEvent.keyDown( input, { key: 'Enter' } );
-
-			await waitFor( () => {
-				expect( mockOnChange ).not.toHaveBeenCalled();
-			} );
-		} );
-
-		it( 'should cancel editing on Escape key', async () => {
-			renderComponent();
-
-			// eslint-disable-next-line testing-library/no-node-access
-			const nameCell = screen.getByText( 'PrimaryColor' ).closest( '[role="button"]' );
-			if ( nameCell ) {
-				fireEvent.doubleClick( nameCell );
-			}
-
-			const input = await screen.findByRole( 'textbox' );
-			expect( input ).toHaveAttribute( 'id', 'variable-label-var-1' );
-			fireEvent.change( input, { target: { value: 'ChangedName' } } );
-			fireEvent.keyDown( input, { key: 'Escape' } );
-
-			await waitFor( () => {
-				expect( screen.getByText( 'PrimaryColor' ) ).toBeInTheDocument();
-			} );
-
-			expect( mockOnChange ).not.toHaveBeenCalled();
-		} );
-
-		it( 'should not allow editing when quota permissions deny edit', async () => {
-			mockCanEdit.mockReturnValue( false );
-
-			renderComponent();
-
-			// eslint-disable-next-line testing-library/no-node-access
-			const nameCell = screen.getByText( 'PrimaryColor' ).closest( '[role="button"]' );
-			expect( nameCell ).toBeInTheDocument();
-
-			if ( nameCell ) {
-				fireEvent.doubleClick( nameCell );
-			}
-
-			await waitFor(
-				() => {
-					const input = screen.queryByRole( 'textbox' );
-					expect( input ).not.toBeInTheDocument();
-				},
-				{ timeout: 500 }
-			);
-
-			expect( mockOnChange ).not.toHaveBeenCalled();
-		} );
->>>>>>> 10d9820496 (Internal: Enhances variable manager with renew promotions [ED-21889] (#34699))
 	} );
 
 	it( 'should render edit menu for each row', () => {
@@ -464,5 +340,39 @@ describe( 'VariablesManagerTable', () => {
 		const provider = screen.getByLabelText( 'Sortable variables list' );
 		const currentOrder = JSON.parse( provider.getAttribute( 'data-value' ) || '[]' );
 		expect( currentOrder ).toEqual( [ 'var-1', 'var-2' ] );
+	} );
+
+	it( 'should not allow editing when quota permissions deny edit', () => {
+		// Arrange
+		const mixedVariables: TVariablesList = {
+			'var-color': {
+				label: 'Color Variable',
+				value: 'red',
+				type: 'color',
+			},
+			'var-size': {
+				label: 'Size Variable',
+				value: '16px',
+				type: 'size',
+			},
+		};
+
+		mockCanEdit.mockImplementation( ( type: string ) => type !== 'size' );
+
+		// Act
+		renderTable( { variables: mixedVariables } );
+
+		// Assert
+		const sizeNameButton = screen.getByRole( 'button', { name: 'Size Variable' } );
+		expect( sizeNameButton ).toBeDisabled();
+
+		fireEvent.dblClick( sizeNameButton );
+		expect( screen.queryByLabelText( 'Edit value' ) ).not.toBeInTheDocument();
+
+		const colorNameButton = screen.getByRole( 'button', { name: 'Color Variable' } );
+		expect( colorNameButton ).toBeEnabled();
+
+		fireEvent.click( colorNameButton );
+		expect( screen.getByLabelText( 'Edit value' ) ).toBeInTheDocument();
 	} );
 } );
