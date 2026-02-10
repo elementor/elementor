@@ -70,6 +70,7 @@ class Test_Document_Migration_Integration extends Elementor_Test_Base {
 		$orchestrator->migrate(
 			$data,
 			$post_id,
+			'test_document_data',
 			function() {}
 		);
 
