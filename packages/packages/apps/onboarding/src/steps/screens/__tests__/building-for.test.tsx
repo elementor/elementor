@@ -286,9 +286,9 @@ describe( 'BuildingFor', () => {
 			// Act
 			render( <App /> );
 
-			// Assert - the business option should have Mui-selected class
-			const businessButton = screen.getByText( 'My business or workplace' ).closest( 'button' );
-			expect( businessButton ).toHaveClass( 'Mui-selected' );
+			// Assert - the business option should be pressed
+			const businessButton = screen.getByRole( 'button', { name: 'My business or workplace' } );
+			expect( businessButton ).toHaveAttribute( 'aria-pressed', 'true' );
 		} );
 	} );
 } );
