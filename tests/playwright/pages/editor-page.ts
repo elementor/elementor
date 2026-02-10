@@ -979,9 +979,7 @@ export default class EditorPage extends BasePage {
 	async publishPage(): Promise<void> {
 		await this.clickTopBarItem( TopBarSelectors.publish );
 		await this.page.waitForLoadState();
-		await this.page.waitForResponse( ( response ) =>
-			response.url().includes( '/wp-admin/admin-ajax.php' ) && 200 === response.status(),
-		);
+		await this.page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor( { timeout: timeouts.longAction } );
 	}
 
 	/**
