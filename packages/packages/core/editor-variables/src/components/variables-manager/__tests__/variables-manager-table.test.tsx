@@ -213,7 +213,6 @@ describe( 'VariablesManagerTable', () => {
 
 		mockCanEdit.mockReturnValue( true );
 		mockCanCreate.mockReturnValue( true );
-		mockCanDelete.mockReturnValue( true );
 	} );
 
 	afterEach( () => {
