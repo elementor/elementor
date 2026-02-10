@@ -213,16 +213,16 @@ export function VariablesManagerPanel() {
 						height: '100%',
 					} }
 				>
-				{ hasVariables && (
-					<VariablesManagerTable
-						menuActions={ buildMenuActions }
-						variables={ variables }
-						onChange={ handleOnChange }
-						autoEditVariableId={ autoEditVariableId }
-						onAutoEditComplete={ handleAutoEditComplete }
-						onFieldError={ setIsSaveDisabled }
-					/>
-				) }
+					{ hasVariables && (
+						<VariablesManagerTable
+							menuActions={ buildMenuActions }
+							variables={ variables }
+							onChange={ handleOnChange }
+							autoEditVariableId={ autoEditVariableId }
+							onAutoEditComplete={ handleAutoEditComplete }
+							onFieldError={ setIsSaveDisabled }
+						/>
+					) }
 
 					{ ! hasVariables && searchValue && (
 						<NoSearchResults
