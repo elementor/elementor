@@ -22,6 +22,28 @@
     "version": "0.0"
   },
   {
+    "id": "heading-downgrade",
+    "settings": {
+      "classes": {
+        "$$type": "classes",
+        "value": []
+      },
+      "title": {
+        "$$type": "html-v3",
+        "value": "This needs downgrade from html-v3 to html-v2"
+      },
+      "tag": {
+        "$$type": "string",
+        "value": "h3"
+      }
+    },
+    "elements": [],
+    "isInner": false,
+    "widgetType": "e-heading",
+    "elType": "widget",
+    "version": "0.0"
+  },
+  {
     "id": "image-nested-ops",
     "settings": {
       "classes": {
