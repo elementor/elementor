@@ -1,4 +1,14 @@
 # Prop Type Migrations
+
+## System Overview
+This is a **prop type migration system**, not a general data migration system.
+
+**Trigger**: Migrations run when it finds a mismatch between data prop type, and actual schema (code) (e.g., `string` → `string-v2`). Without a type change, there's no trigger and no migration.
+
+**Scope**: Having mismatch of type (e.g., `string` → `string-v2`) will find all instances of mismatch, and send the object to run migration script on. 
+
+See [Migration Scope](#migration-scope) for details.
+
 ## Appendix
 - [Structure](#structure)
 - [Language Design](https://elementor.atlassian.net/wiki/spaces/UE/pages/1999110146/Prop+Types+Migration+Schema+Design+Investigation)
@@ -53,7 +63,14 @@ Prop type migrations support wildcard paths and conditions (see below)
 ```
 
 ## Paths
-Path parameter works with wildcard, starting from the **root of prop type or widget** (depending on the type of migration)
+Path parameter works with wildcard, starting from the **root of the prop object**.
+
+**Important**: For **prop type migrations** (the primary use case), paths always start at the prop root—not the widget or document root. For example:
+- `$$type` refers to the type field at the prop root
+- `value.nested` refers to `propObject.value.nested`
+- Wildcards like `value.*` or `value.items[*]` match children within the prop
+
+**Widget key migrations** (rare) start at the widget/element root instead. See [Migration Scope](#migration-scope) for details.
 
 ## Conditions
 Conditions check whether to run the migration or not, with many helper functions such as `exists`, conditions can be compounded by `AND` and `OR`.  
@@ -72,6 +89,40 @@ Handle transformations in transformer code
 - **Prop Type Migrations**: Operate on a single prop instance, paths start at prop root
 - **Widget Key Migrations**: Operate on entire widget element, paths start at element root
 - Migrations run **before** validation and transformation in the data processing pipeline
+
+**Example widget:**
+
+```json
+{
+  "id": "heading-1",
+  "elType": "widget",
+  "widgetType": "e-heading",
+  "settings": {
+    "title": {
+      "$$type": "string",
+      "value": "Hello"
+    },
+    "tag": {
+      "$$type": "string",
+      "value": "h2"
+    }
+  }
+}
+```
+
+**Prop Type Migration** (e.g., `title` migrating from `string` → `string-v2`):
+- Operates on **just the prop object**:
+  ```json
+  {
+    "$$type": "string",
+    "value": "Hello"
+  }
+  ```
+- Paths are relative to prop root: `$$type`, `value`
+
+**Widget Key Migration** (e.g., renaming `tag` → `htmlTag`):
+- Operates on **the entire widget/element**
+- Paths are relative to widget **settings** root: `tag`, `title.value`
 
 ### Performance Considerations
 - Migration state is cached per document with version + manifest hash
