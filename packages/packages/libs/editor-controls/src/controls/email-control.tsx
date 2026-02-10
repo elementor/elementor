@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { emailPropTypeUtil } from '@elementor/editor-props';
+import { CollapsibleContent } from '@elementor/editor-ui';
 import { Box, Divider, Grid, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -8,7 +9,6 @@ import { ControlFormLabel } from '../components/control-form-label';
 import { ControlLabel } from '../components/control-label';
 import { createControl } from '../create-control';
 import { ChipsControl } from './chips-control';
-import { CollapsibleContent } from '@elementor/editor-ui';
 import { SelectControl } from './select-control';
 import { TextAreaControl } from './text-area-control';
 import { TextControl } from './text-control';
@@ -49,7 +49,10 @@ export const EmailControl = createControl( () => {
 						</Grid>
 						<Grid item>
 							<TextAreaControl
-								placeholder={ __( 'By default, all form fields are sent via [all-fields] shortcode.', 'elementor' ) }
+								placeholder={ __(
+									'By default, all form fields are sent via [all-fields] shortcode.',
+									'elementor'
+								) }
 							/>
 						</Grid>
 					</Grid>
@@ -61,21 +64,25 @@ export const EmailControl = createControl( () => {
 							<ControlFormLabel>{ __( 'From email', 'elementor' ) }</ControlFormLabel>
 						</Grid>
 						<Grid item>
-							<TextControl placeholder={ __( 'What email address should appear as the sender?', 'elementor' ) } />
+							<TextControl
+								placeholder={ __( 'What email address should appear as the sender?', 'elementor' ) }
+							/>
 						</Grid>
 					</Grid>
 				</PropKeyProvider>
 
-			<CollapsibleContent defaultOpen={ false }>
-				<Box sx={ { pt: 2 } }>
-					<Stack gap={ 2 }>
+				<CollapsibleContent defaultOpen={ false }>
+					<Box sx={ { pt: 2 } }>
+						<Stack gap={ 2 }>
 							<PropKeyProvider bind="from-name">
 								<Grid container direction="column" gap={ 0.5 }>
 									<Grid item>
 										<ControlFormLabel>{ __( 'From name', 'elementor' ) }</ControlFormLabel>
 									</Grid>
 									<Grid item>
-										<TextControl placeholder={ __( 'What name should appear as the sender?', 'elementor' ) } />
+										<TextControl
+											placeholder={ __( 'What name should appear as the sender?', 'elementor' ) }
+										/>
 									</Grid>
 								</Grid>
 							</PropKeyProvider>
@@ -97,7 +104,7 @@ export const EmailControl = createControl( () => {
 										<ControlFormLabel>{ __( 'Cc', 'elementor' ) }</ControlFormLabel>
 									</Grid>
 									<Grid item>
-										<TextControl  />
+										<TextControl />
 									</Grid>
 								</Grid>
 							</PropKeyProvider>

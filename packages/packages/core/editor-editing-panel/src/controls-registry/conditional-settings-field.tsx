@@ -1,7 +1,8 @@
-import * as React from 'react';
+import type * as React from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
 import { useElementSettings } from '@elementor/editor-elements';
-import { isDependency, isDependencyMet, type PropKey, type PropType, type PropValue } from '@elementor/editor-props';
+import type { PropKey, PropType, PropValue } from '@elementor/editor-props';
+import { isDependency, isDependencyMet } from '@elementor/editor-props';
 
 import { useElement } from '../contexts/element-context';
 
@@ -16,9 +17,14 @@ export const ConditionalSettingsField: React.FC< {
 
 	const elementSettingValues = useElementSettings< PropValue >( elementId, Object.keys( propsSchema ) );
 
-	const isHidden = ! isDependencyMet( propType?.dependencies, elementSettingValues ).isMet;
+	const dependencyBehavior = propType?.settings?.dependencyBehavior ?? 'disable';
+	const dependencyNotMet = ! isDependencyMet( propType?.dependencies, elementSettingValues ).isMet;
 
-	return isHidden ? null : children;
+	if ( dependencyBehavior === 'hide' && dependencyNotMet ) {
+		return null;
+	}
+
+	return children;
 };
 
 export function getDependencies( propType?: PropType ): PropKey[] {

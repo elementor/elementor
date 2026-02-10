@@ -78,6 +78,7 @@ class Atomic_Form extends Atomic_Element_Base {
 				->default( [] ),
 			'email' => Email_Prop_Type::make()
 				->set_dependencies( $email_dependencies )
+				->setting( 'dependencyBehavior', 'hide' )
 				->default( [] ),
 			'attributes' => Attributes_Prop_Type::make(),
 		];
