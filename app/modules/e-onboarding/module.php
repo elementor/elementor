@@ -125,19 +125,15 @@ class Module extends BaseModule {
 	}
 
 	private function get_user_display_name(): string {
-		$current_user = wp_get_current_user();
+		$library = $this->get_library_app();
 
-		if ( ! $current_user || 0 === $current_user->ID ) {
+		if ( ! $library || ! $library->is_connected() ) {
 			return '';
 		}
 
-		$first_name = $current_user->first_name;
+		$user = $library->get( 'user' );
 
-		if ( ! empty( $first_name ) ) {
-			return $first_name;
-		}
-
-		return $current_user->display_name;
+		return $user->first_name ?? '';
 	}
 
 	private function get_steps_config(): array {
