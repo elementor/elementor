@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ColorFilterIcon } from '@elementor/icons';
 import { type IconButtonProps, type StackProps, type TableCellProps } from '@elementor/ui';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { fireEvent,render, screen } from '@testing-library/react';
 
 import { type TVariablesList } from '../../../storage';
 import { VariablesManagerTable } from '../variables-manager-table';
@@ -158,13 +158,11 @@ jest.mock( '@wordpress/i18n', () => ( {
 
 const mockCanEdit = jest.fn< boolean, [ string ] >( () => true );
 const mockCanCreate = jest.fn< boolean, [ string ] >( () => true );
-const mockCanDelete = jest.fn< boolean, [ string ] >( () => true );
 
 jest.mock( '../../../hooks/use-quota-permissions', () => ( {
 	useQuotaPermissions: jest.fn( ( type: string ) => ( {
 		canEdit: () => mockCanEdit( type ),
 		canCreate: () => mockCanCreate( type ),
-		canDelete: () => mockCanDelete( type ),
 	} ) ),
 } ) );
 
@@ -209,6 +207,7 @@ describe( 'VariablesManagerTable', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		jest.restoreAllMocks();
+
 		// Suppress error for expected React warnings
 		window.console.error = mockConsoleError;
 
