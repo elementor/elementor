@@ -59,47 +59,6 @@ export function parseAnimationName( name ) {
 	};
 }
 
-export function extractAnimationId( interaction ) {
-	if ( 'string' === typeof interaction ) {
-		return interaction;
-	}
-
-	if ( 'interaction-item' === interaction?.$$type && interaction?.value ) {
-		const { trigger, animation } = interaction.value;
-
-		if ( 'animation-preset-props' === animation?.$$type && animation?.value ) {
-			const { effect, type, direction, timing_config: timingConfig, config: animationConfig } = animation.value;
-
-			const triggerVal = trigger?.value || 'load';
-			const effectVal = effect?.value || 'fade';
-			const typeVal = type?.value || 'in';
-			const directionVal = direction?.value || '';
-
-			const duration = timingConfig?.value?.duration?.value ?? 600;
-			const delay = timingConfig?.value?.delay?.value ?? 0;
-
-			const easing = animationConfig?.value?.easing?.value || config.defaultEasing;
-
-			return [
-				triggerVal,
-				effectVal,
-				typeVal,
-				directionVal,
-				duration,
-				delay,
-				'',
-				easing,
-			].join( '-' );
-		}
-	}
-
-	if ( interaction?.animation?.animation_id ) {
-		return interaction.animation.animation_id;
-	}
-
-	return null;
-}
-
 export function extractInteractionId( interaction ) {
 	if ( 'interaction-item' === interaction?.$$type && interaction?.value ) {
 		return interaction.value.interaction_id?.value || null;
@@ -137,6 +96,39 @@ export function parseInteractionsData( data ) {
 	return data;
 }
 
+function unwrapInteractionValue( interaction ) {
+	// Supports Elementor's typed wrapper shape: { $$type: '...', value: ... }.
+	return ( interaction && 'object' === typeof interaction && '$$type' in interaction )
+		? interaction.value
+		: interaction;
+}
+
+function timingValueToMs( timingValue, fallbackMs ) {
+	if ( null === timingValue || undefined === timingValue ) {
+		return fallbackMs;
+	}
+
+	const unwrapped = unwrapInteractionValue( timingValue );
+
+	if ( 'number' === typeof unwrapped ) {
+		return unwrapped;
+	}
+
+	const sizeObj = unwrapInteractionValue( unwrapped );
+	const size = sizeObj?.size;
+	const unit = sizeObj?.unit || 'ms';
+
+	if ( 'number' !== typeof size ) {
+		return fallbackMs;
+	}
+
+	if ( 's' === unit ) {
+		return size * 1000;
+	}
+
+	return size;
+}
+
 /**
  * Get interactions data from the script tag injected by PHP.
  * Returns array of { elementId, dataId, interactions: [...] }
@@ -159,25 +151,40 @@ export function findElementByDataId( dataId ) {
 }
 
 export function extractAnimationConfig( interaction ) {
-	if ( ! interaction || ! interaction.animation ) {
+	if ( 'string' === typeof interaction ) {
+		return parseAnimationName( interaction );
+	}
+
+	const payload = ( 'interaction-item' === interaction?.$$type && interaction?.value ) ? interaction.value : interaction;
+	if ( ! payload ) {
 		return null;
 	}
 
-	const { trigger, animation } = interaction;
+	if ( payload?.animation?.animation_id ) {
+		return parseAnimationName( payload.animation.animation_id );
+	}
 
-	const effect = animation.effect || 'fade';
-	const type = animation.type || 'in';
-	const direction = animation.direction || '';
+	const trigger = unwrapInteractionValue( payload.trigger ) || payload.trigger || 'load';
 
-	const timingConfig = animation.timing_config || {};
-	const duration = timingConfig.duration ?? config.defaultDuration;
-	const delay = timingConfig.delay ?? config.defaultDelay;
+	let animation = payload.animation;
+	animation = unwrapInteractionValue( animation );
 
+	if ( ! animation ) {
+		return null;
+	}
+
+	const effect = unwrapInteractionValue( animation.effect ) || animation.effect || 'fade';
+	const type = unwrapInteractionValue( animation.type ) || animation.type || 'in';
+	const direction = unwrapInteractionValue( animation.direction ) || animation.direction || '';
 	const easing = config.defaultEasing;
 	const replay = false;
 
+	const timingConfig = unwrapInteractionValue( animation.timing_config ) || animation.timing_config || {};
+	const duration = timingValueToMs( timingConfig?.duration, config.defaultDuration );
+	const delay = timingValueToMs( timingConfig?.delay, config.defaultDelay );
+
 	return {
-		trigger: trigger || 'load',
+		trigger,
 		effect,
 		type,
 		direction,

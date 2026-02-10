@@ -10,6 +10,11 @@
       "fromType": "number",
       "toType": "size",
       "path": "operations/number-to-size.json"
+    },
+    "html-to-html-v2": {
+      "fromType": "html",
+      "toType": "html-v2",
+      "path": "operations/html-to-html-v2.json"
     }
   }
 }
