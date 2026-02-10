@@ -54,7 +54,7 @@ const SplitLayoutRoot = styled( Box, {
 	};
 } );
 
-const LeftPanel = styled( Box )( () => ( {
+const LeftPanel = styled( Box )( ( { theme } ) => ( {
 	display: 'flex',
 	flexDirection: 'column',
 	alignItems: 'center',
@@ -63,6 +63,13 @@ const LeftPanel = styled( Box )( () => ( {
 	'& > *': {
 		maxWidth: LEFT_PANEL_CONTENT_WIDTH,
 		width: '100%',
+	},
+	[ theme.breakpoints.down( 'sm' ) ]: {
+		padding: `${ LEFT_PANEL_PADDING_TOP }px ${ theme.spacing( 2 ) }`,
+		gap: LEFT_PANEL_GAP / 2,
+		'& > *': {
+			maxWidth: 'none',
+		},
 	},
 } ) );
 

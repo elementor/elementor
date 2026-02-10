@@ -20,7 +20,7 @@ export const OptionCardRoot = styled( ButtonBase )( ( { theme } ) => ( {
 	alignItems: 'center',
 	justifyContent: 'center',
 	gap: 24,
-	width: 132,
+	minWidth: 0,
 	height: 128,
 	borderRadius: 8,
 	border: `1px solid ${ theme.palette.divider }`,
@@ -52,8 +52,11 @@ export const CheckBadge = styled( Box )( ( { theme } ) => ( {
 	justifyContent: 'center',
 } ) );
 
-export const CardGrid = styled( Box )( {
+export const CardGrid = styled( Box )( ( { theme } ) => ( {
 	display: 'grid',
 	gridTemplateColumns: 'repeat(4, 132px)',
 	gap: 16,
-} );
+	[ theme.breakpoints.down( 'sm' ) ]: {
+		gridTemplateColumns: 'repeat(2, 1fr)',
+	},
+} ) );

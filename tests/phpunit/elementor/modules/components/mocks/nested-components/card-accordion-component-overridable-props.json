@@ -8,8 +8,8 @@
             "elType": "widget",
             "widgetType": "e-heading",
             "originValue": {
-                "$$type": "html",
-                "value": "This is a title"
+                "$$type": "html-v2",
+                "value": { "content": "This is a title", "children": [] }
             },
             "groupId": "group-1"
         },
@@ -21,8 +21,8 @@
             "elType": "widget",
             "widgetType": "e-heading",
             "originValue": {
-                "$$type": "html",
-                "value": "This is a subtitle"
+                "$$type": "html-v2",
+                "value": { "content": "This is a subtitle", "children": [] }
             },
             "groupId": "group-1"
         },

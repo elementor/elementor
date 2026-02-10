@@ -74,7 +74,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 				onError: () => {
 					actions.setError( __( 'Failed to mark user exit.', 'elementor' ) );
 				},
-			}
+			},
 		);
 	}, [ actions, onClose, updateProgress ] );
 
@@ -100,7 +100,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 				onError: () => {
 					actions.nextStep();
 				},
-			}
+			},
 		);
 	}, [ actions, stepIndex, totalSteps, updateProgress ] );
 
@@ -134,7 +134,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 				onError: () => {
 					actions.setError( __( 'Failed to complete step.', 'elementor' ) );
 				},
-			}
+			},
 		);
 	}, [ stepId, stepIndex, totalSteps, choices, actions, isLast, onComplete, updateProgress, updateChoices ] );
 

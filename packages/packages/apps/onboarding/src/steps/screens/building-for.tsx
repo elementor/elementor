@@ -90,14 +90,14 @@ export function BuildingFor( { onComplete }: BuildingForProps ) {
 				/* translators: 1: User's first name, 2: Waving hand emoji. */
 				__( "Hey %1$s %2$s Let's get your site set up.", 'elementor' ),
 				userName,
-				GREETING_WAVE
+				GREETING_WAVE,
 			);
 		}
 
 		return sprintf(
 			/* translators: %s: Waving hand emoji. */
 			__( "Hey%s Let's get your site set up.", 'elementor' ),
-			GREETING_WAVE
+			GREETING_WAVE,
 		);
 	}, [ userName, isConnected, isGuest ] );
 
@@ -107,7 +107,7 @@ export function BuildingFor( { onComplete }: BuildingForProps ) {
 			await updateChoices.mutateAsync( { building_for: value } );
 			onComplete();
 		},
-		[ actions, updateChoices, onComplete ]
+		[ actions, updateChoices, onComplete ],
 	);
 
 	return (
