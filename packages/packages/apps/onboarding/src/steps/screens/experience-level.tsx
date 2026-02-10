@@ -1,15 +1,14 @@
 import * as React from 'react';
 import { useCallback } from 'react';
-import { ChevronRightIcon } from '@elementor/icons';
-import { Box, Stack, styled, Typography } from '@elementor/ui';
+import { ChevronRightSmallIcon } from '@elementor/icons';
+import { Stack, Typography, withDirection } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { OptionButton } from '../../components/ui/option-button';
 import { useOnboarding } from '../../hooks/use-onboarding';
 import { useUpdateChoices } from '../../hooks/use-update-choices';
 
-interface OptionCardProps {
-	isSelected: boolean;
-}
+const DirectionalChevronIcon = withDirection( ChevronRightSmallIcon );
 
 interface ExperienceLevelOption {
 	id: string;
@@ -19,33 +18,6 @@ interface ExperienceLevelOption {
 interface ExperienceLevelProps {
 	onComplete: () => void;
 }
-
-const OptionCard = styled( Box, {
-	shouldForwardProp: ( prop ) => prop !== 'isSelected',
-} )< OptionCardProps >( ( { theme, isSelected } ) => ( {
-	display: 'flex',
-	alignItems: 'center',
-	justifyContent: 'space-between',
-	height: 56,
-	padding: theme.spacing( 0.875, 1.5, 0.875, 2.5 ),
-	borderRadius: theme.shape.borderRadius,
-	border: isSelected ? `2px solid ${ theme.palette.text.primary }` : `1px solid ${ theme.palette.divider }`,
-	cursor: 'pointer',
-	transition: 'background-color 0.2s ease',
-	'&:hover': {
-		backgroundColor: theme.palette.action.hover,
-	},
-	'&:hover .chevron-icon': {
-		opacity: 1,
-	},
-} ) );
-
-const ChevronIcon = styled( ChevronRightIcon, {
-	shouldForwardProp: ( prop ) => prop !== 'isSelected',
-} )< OptionCardProps >( ( { isSelected } ) => ( {
-	opacity: isSelected ? 1 : 0,
-	transition: 'opacity 0.2s ease',
-} ) );
 
 const OPTIONS: ExperienceLevelOption[] = [
 	{ id: 'beginner', label: __( "I'm just getting started", 'elementor' ) },
@@ -80,22 +52,23 @@ export function ExperienceLevel( { onComplete }: ExperienceLevelProps ) {
 			</Stack>
 
 			<Stack spacing={ 2 }>
-				{ OPTIONS.map( ( option ) => (
-					<OptionCard
-						key={ option.id }
-						isSelected={ selectedValue === option.id }
-						onClick={ () => handleSelect( option.id ) }
-					>
-						<Typography variant="body1" color="text.secondary">
+				{ OPTIONS.map( ( option ) => {
+					const isSelected = selectedValue === option.id;
+
+					return (
+						<OptionButton
+							key={ option.id }
+							variant="outlined"
+							fullWidth
+							className={ isSelected ? 'Mui-selected' : undefined }
+							endIcon={ <DirectionalChevronIcon /> }
+							onClick={ () => handleSelect( option.id ) }
+							aria-pressed={ isSelected }
+						>
 							{ option.label }
-						</Typography>
-						<ChevronIcon
-							className="chevron-icon"
-							isSelected={ selectedValue === option.id }
-							fontSize="small"
-						/>
-					</OptionCard>
-				) ) }
+						</OptionButton>
+					);
+				} ) }
 			</Stack>
 		</Stack>
 	);
