@@ -232,6 +232,7 @@ describe( 'App', () => {
 			// Arrange
 			window.elementorAppConfig = createMockConfig( {
 				isConnected: true,
+				choices: { building_for: 'myself' },
 			} );
 
 			render( <App /> );
@@ -275,6 +276,7 @@ describe( 'App', () => {
 			const onComplete = jest.fn();
 			window.elementorAppConfig = createMockConfig( {
 				isConnected: true,
+				choices: { site_features: [ 'contact_form' ] },
 				progress: {
 					current_step_id: 'site_features',
 					current_step_index: 4,

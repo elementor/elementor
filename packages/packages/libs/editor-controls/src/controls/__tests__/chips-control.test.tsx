@@ -8,6 +8,8 @@ import { ChipsControl } from '../chips-control';
 const propType = createMockPropType( { kind: 'array' } );
 const setValue = jest.fn();
 
+const wrap = ( val: string ) => ( { $$type: 'string' as const, value: val } );
+
 jest.mock( '../../bound-prop-context', () => ( {
 	...jest.requireActual( '../../bound-prop-context' ),
 	useBoundProp: jest.fn(),
@@ -73,7 +75,7 @@ describe( 'ChipsControl', () => {
 		fireEvent.click( emailOption );
 
 		// Assert
-		expect( setValue ).toHaveBeenCalledWith( [ 'email' ] );
+		expect( setValue ).toHaveBeenCalledWith( [ wrap( 'email' ) ] );
 	} );
 
 	it( 'should handle empty options array', () => {
@@ -116,7 +118,7 @@ describe( 'ChipsControl', () => {
 	it( 'should remove a chip when clicking delete button', () => {
 		// Arrange
 		mockUseBoundProp.mockReturnValue( {
-			value: [ 'email', 'webhook' ],
+			value: [ wrap( 'email' ), wrap( 'webhook' ) ],
 			setValue,
 			disabled: false,
 			propType,
@@ -128,7 +130,7 @@ describe( 'ChipsControl', () => {
 
 		const props = {
 			setValue,
-			value: [ 'email', 'webhook' ],
+			value: [ wrap( 'email' ), wrap( 'webhook' ) ],
 			bind: 'string-array',
 			propType,
 		};
@@ -143,13 +145,13 @@ describe( 'ChipsControl', () => {
 		fireEvent.click( deleteIcon );
 
 		// Assert
-		expect( setValue ).toHaveBeenCalledWith( [ 'webhook' ] );
+		expect( setValue ).toHaveBeenCalledWith( [ wrap( 'webhook' ) ] );
 	} );
 
 	it( 'should set null when removing the last chip', () => {
 		// Arrange
 		mockUseBoundProp.mockReturnValue( {
-			value: [ 'email' ],
+			value: [ wrap( 'email' ) ],
 			setValue,
 			disabled: false,
 			propType,
@@ -161,7 +163,7 @@ describe( 'ChipsControl', () => {
 
 		const props = {
 			setValue,
-			value: [ 'email' ],
+			value: [ wrap( 'email' ) ],
 			bind: 'string-array',
 			propType,
 		};

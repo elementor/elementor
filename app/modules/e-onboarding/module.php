@@ -79,6 +79,7 @@ class Module extends BaseModule {
 			'choices' => $choices->to_array(),
 			'hadUnexpectedExit' => $progress->had_unexpected_exit(),
 			'isConnected' => $this->is_user_connected(),
+			'userName' => $this->get_user_display_name(),
 			'steps' => $steps,
 			'uiTheme' => $this->get_ui_theme_preference(),
 			'urls' => [
@@ -121,6 +122,18 @@ class Module extends BaseModule {
 		$ui_theme = $editor_preferences->get_model()->get_settings( 'ui_theme' );
 
 		return $ui_theme ? $ui_theme : 'auto';
+	}
+
+	private function get_user_display_name(): string {
+		$library = $this->get_library_app();
+
+		if ( ! $library || ! $library->is_connected() ) {
+			return '';
+		}
+
+		$user = $library->get( 'user' );
+
+		return $user->first_name ?? '';
 	}
 
 	private function get_steps_config(): array {
