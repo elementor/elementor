@@ -260,9 +260,9 @@ describe( 'SiteAbout', () => {
 
 			expect( continueButton ).toBeDisabled();
 
-		fireEvent.click( screen.getByRole( 'button', { name: 'Blog' } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: 'Blog' } ) );
 
-		expect( continueButton ).toBeEnabled();
+			expect( continueButton ).toBeEnabled();
 		} );
 	} );
 
@@ -302,7 +302,7 @@ describe( 'SiteAbout', () => {
 					expect.objectContaining( {
 						method: 'POST',
 						body: expect.stringContaining( 'blog' ),
-					} )
+					} ),
 				);
 			} );
 		} );
@@ -320,7 +320,7 @@ describe( 'SiteAbout', () => {
 					expect.objectContaining( {
 						method: 'POST',
 						body: expect.stringContaining( 'skip_step' ),
-					} )
+					} ),
 				);
 			} );
 		} );
