@@ -1,7 +1,15 @@
 import * as React from 'react';
 import { PopoverContent } from '@elementor/editor-controls';
 import { PopoverHeader } from '@elementor/editor-ui';
-import { Box, Button, Image, Link, Popover, Stack, Typography } from '@elementor/ui';
+import {
+	Box,
+	Button,
+	Image,
+	Link,
+	Popover,
+	Stack,
+	Typography,
+} from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 export const ComponentIntroduction = ( {
@@ -32,16 +40,24 @@ export const ComponentIntroduction = ( {
 			onClose={ onClose }
 		>
 			<Box sx={ { width: '296px' } }>
-				<PopoverHeader title={ __( 'Add your first property', 'elementor' ) } onClose={ onClose } />
+				<PopoverHeader
+					title={ __( 'Add your first property', 'elementor' ) }
+					onClose={ onClose }
+				/>
 				<Image
 					sx={ { width: '296px', height: '160px' } }
-					src={ 'https://assets.elementor.com/packages/v1/images/components-properties-intro.png' }
+					src={
+						'https://broken-assets.elementor.com/packages/v1/images/components-properties-intro.png'
+					}
 					alt={ '' }
 				/>
 				<PopoverContent>
 					<Stack sx={ { p: 2 } }>
 						<Typography variant={ 'body2' }>
-							{ __( 'Properties make instances flexible.', 'elementor' ) }
+							{ __(
+								'Properties make instances flexible.',
+								'elementor'
+							) }
 						</Typography>
 						<Typography variant={ 'body2' }>
 							{ __(
@@ -64,8 +80,17 @@ export const ComponentIntroduction = ( {
 						>
 							{ __( 'Learn more', 'elementor' ) }
 						</Link>
-						<Stack direction="row" alignItems="center" justifyContent="flex-end" sx={ { pt: 1 } }>
-							<Button size="medium" variant="contained" onClick={ onClose }>
+						<Stack
+							direction="row"
+							alignItems="center"
+							justifyContent="flex-end"
+							sx={ { pt: 1 } }
+						>
+							<Button
+								size="medium"
+								variant="contained"
+								onClick={ onClose }
+							>
 								{ __( 'Got it', 'elementor' ) }
 							</Button>
 						</Stack>

@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseApp {
 
-	const AI_ASSETS_BASE_URL = 'https://assets.elementor.com/ai/v1/';
+	const AI_ASSETS_BASE_URL = 'https://broken-assets.elementor.com/ai/v1/';
 
 	/**
 	 * @return bool

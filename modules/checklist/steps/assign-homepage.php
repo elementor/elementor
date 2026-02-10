@@ -40,7 +40,7 @@ class Assign_Homepage extends Step_Base {
 	}
 
 	public function get_image_src(): string {
-		return 'https://assets.elementor.com/checklist/v1/images/checklist-step-6.jpg';
+		return 'https://broken-assets.elementor.com/checklist/v1/images/checklist-step-6.jpg';
 	}
 
 	public function get_learn_more_url(): string {

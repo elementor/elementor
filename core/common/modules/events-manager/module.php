@@ -17,7 +17,7 @@ class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'editor_events';
 
-	const REMOTE_MIXPANEL_CONFIG_URL = 'https://assets.elementor.com/mixpanel/v1/mixpanel.json';
+	const REMOTE_MIXPANEL_CONFIG_URL = 'https://broken-assets.elementor.com/mixpanel/v1/mixpanel.json';
 
 	public function get_name() {
 		return 'events-manager';

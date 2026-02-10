@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin_Apps_Page {
 
-	const APPS_URL = 'https://assets.elementor.com/apps/v1/apps.json';
+	const APPS_URL = 'https://broken-assets.elementor.com/apps/v1/apps.json';
 
 	private static ?Wordpress_Adapter $wordpress_adapter = null;
 

@@ -87,7 +87,7 @@ class Module extends BaseApp {
 
 	private function get_api_config(): array {
 		return [
-			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.elementor.com/home-screen/v1/home-screen.json',
+			EditorAssetsAPI::ASSETS_DATA_URL => 'https://broken-assets.elementor.com/home-screen/v1/home-screen.json',
 			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_home_screen_data',
 			EditorAssetsAPI::ASSETS_DATA_KEY => 'home-screen',
 		];

@@ -164,7 +164,7 @@ class Module extends Base_Module {
 
 	private function get_api_config(): array {
 		return [
-			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.elementor.com/free-to-pro-upsell/v1/free-to-pro-upsell.json',
+			EditorAssetsAPI::ASSETS_DATA_URL => 'https://broken-assets.elementor.com/free-to-pro-upsell/v1/free-to-pro-upsell.json',
 			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_free_to_pro_upsell',
 			EditorAssetsAPI::ASSETS_DATA_KEY => 'free-to-pro-upsell',
 		];
@@ -185,7 +185,7 @@ class Module extends Base_Module {
 
 	private function get_v4_promotions_api_config(): array {
 		return [
-			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.elementor.com/packages/v1/promotions.json',
+			EditorAssetsAPI::ASSETS_DATA_URL => 'https://broken-assets.elementor.com/packages/v1/promotions.json',
 			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_v4_promotions',
 			EditorAssetsAPI::ASSETS_DATA_KEY => 'promotions',
 		];

@@ -47,7 +47,7 @@ export const WelcomeDialog = ( { doClose } ) => {
 		>
 			<Box sx={ {
 				aspectRatio: '2',
-				backgroundImage: 'url(https://assets.elementor.com/v4-promotion/v1/images/v4_welcome.png)',
+				backgroundImage: 'url(https://broken-assets.elementor.com/v4-promotion/v1/images/v4_welcome.png)',
 				backgroundSize: 'cover',
 				backgroundPosition: 'center',
 			} } />

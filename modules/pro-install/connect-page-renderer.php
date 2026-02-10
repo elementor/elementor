@@ -138,7 +138,7 @@ class Connect_Page_Renderer {
 					</a>
 				</div>
 			</div>
-			<img src="https://assets.elementor.com/free-to-pro-upsell/v1/images/connect-pro-upgrade.jpg" alt="<?php echo esc_attr__( 'Pro Upgrade', 'elementor' ); ?>" />
+			<img src="https://broken-assets.elementor.com/free-to-pro-upsell/v1/images/connect-pro-upgrade.jpg" alt="<?php echo esc_attr__( 'Pro Upgrade', 'elementor' ); ?>" />
 		</div>
 		<?php
 	}

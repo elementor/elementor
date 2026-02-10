@@ -77,7 +77,7 @@ class Module extends BaseModule {
 
 	private function get_editor_assets_api_config(): array {
 		return [
-			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.elementor.com/ab-testing/v1/ab-testing.json',
+			EditorAssetsAPI::ASSETS_DATA_URL => 'https://broken-assets.elementor.com/ab-testing/v1/ab-testing.json',
 			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_ab_testing_data',
 			EditorAssetsAPI::ASSETS_DATA_KEY => 'ab-testing',
 		];

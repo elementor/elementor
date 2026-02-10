@@ -8,8 +8,11 @@ import { __ } from '@wordpress/i18n';
 const MESSAGE_KEY = 'global-class-manager';
 
 export const ClassManagerIntroduction = () => {
-	const [ isMessageSuppressed, suppressMessage ] = useSuppressedMessage( MESSAGE_KEY );
-	const [ shouldShowIntroduction, setShouldShowIntroduction ] = useState( ! isMessageSuppressed );
+	const [ isMessageSuppressed, suppressMessage ] =
+		useSuppressedMessage( MESSAGE_KEY );
+	const [ shouldShowIntroduction, setShouldShowIntroduction ] = useState(
+		! isMessageSuppressed
+	);
 
 	return (
 		<IntroductionModal
@@ -25,7 +28,9 @@ export const ClassManagerIntroduction = () => {
 		>
 			<Image
 				sx={ { width: '100%', aspectRatio: '16 / 9' } }
-				src={ 'https://assets.elementor.com/packages/v1/images/class-manager-intro.svg' }
+				src={
+					'https://broken-assets.elementor.com/packages/v1/images/class-manager-intro.svg'
+				}
 				alt={ '' }
 			/>
 			<IntroductionContent />
