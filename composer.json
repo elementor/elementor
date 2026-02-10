@@ -44,7 +44,7 @@
         "coverage:test": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover coverage-report/clover.xml",
         "coverage:check": "phpunit-coverage-check -t 64 coverage-report/clover.xml",
         "php-scoper": [
-            "php-scoper add-prefix --output-dir=./vendor_prefixed/twig --config=php-scoper/twig-inc.php --force"
+            "php -d error_reporting=24575 vendor/bin/php-scoper add-prefix --output-dir=./vendor_prefixed/twig --config=php-scoper/twig-inc.php --force"
         ],
         "post-install-cmd": [
             "@php composer run php-scoper",

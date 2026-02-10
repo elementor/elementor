@@ -34,6 +34,7 @@ export interface StepVisualConfig {
 	imageLayout: ImageLayout;
 	background: string;
 	assets: RightPanelAsset[];
+	contentMaxWidth?: number;
 }
 
 export interface OnboardingProgress {

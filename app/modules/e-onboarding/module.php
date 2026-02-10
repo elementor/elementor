@@ -45,6 +45,7 @@ class Module extends BaseModule {
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 
 		add_action( 'elementor/init', [ $this, 'on_elementor_init' ], 12 );
+		add_action( 'elementor/app/init', [ $this, 'enqueue_fonts' ] );
 	}
 
 	public function on_elementor_init(): void {
@@ -53,6 +54,15 @@ class Module extends BaseModule {
 		}
 
 		$this->set_onboarding_settings();
+	}
+
+	public function enqueue_fonts(): void {
+		wp_enqueue_style(
+			'elementor-onboarding-fonts',
+			'https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap',
+			[],
+			ELEMENTOR_VERSION
+		);
 	}
 
 	public function progress_manager(): Onboarding_Progress_Manager {

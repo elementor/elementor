@@ -60,10 +60,22 @@ const LeftPanel = styled( Box )( () => ( {
 	alignItems: 'center',
 	gap: LEFT_PANEL_GAP,
 	padding: `${ LEFT_PANEL_PADDING_TOP }px ${ LEFT_PANEL_PADDING_X }px`,
-	'& > *': {
-		maxWidth: LEFT_PANEL_CONTENT_WIDTH,
-		width: '100%',
-	},
+} ) );
+
+const ProgressBarWrapper = styled( Box )( () => ( {
+	maxWidth: LEFT_PANEL_CONTENT_WIDTH,
+	width: '100%',
+} ) );
+
+interface ContentWrapperProps {
+	contentMaxWidth: number;
+}
+
+const ContentWrapper = styled( Box, {
+	shouldForwardProp: ( prop ) => 'contentMaxWidth' !== prop,
+} )< ContentWrapperProps >( ( { contentMaxWidth } ) => ( {
+	maxWidth: contentMaxWidth,
+	width: '100%',
 } ) );
 
 interface ProgressInfo {
@@ -79,12 +91,17 @@ interface SplitLayoutProps {
 
 export function SplitLayout( { left, rightConfig, progress }: SplitLayoutProps ) {
 	const ratio = LAYOUT_RATIOS[ rightConfig.imageLayout ] ?? LAYOUT_RATIOS.wide;
+	const contentWidth = rightConfig.contentMaxWidth ?? LEFT_PANEL_CONTENT_WIDTH;
 
 	return (
 		<SplitLayoutRoot leftRatio={ ratio.left } rightRatio={ ratio.right }>
 			<LeftPanel>
-				{ progress && <ProgressBar currentStep={ progress.currentStep } totalSteps={ progress.totalSteps } /> }
-				{ left }
+				{ progress && (
+					<ProgressBarWrapper>
+						<ProgressBar currentStep={ progress.currentStep } totalSteps={ progress.totalSteps } />
+					</ProgressBarWrapper>
+				) }
+				<ContentWrapper contentMaxWidth={ contentWidth }>{ left }</ContentWrapper>
 			</LeftPanel>
 			<RightPanel config={ rightConfig } />
 		</SplitLayoutRoot>

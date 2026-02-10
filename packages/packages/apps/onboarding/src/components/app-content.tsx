@@ -9,9 +9,9 @@ import { useUpdateProgress } from '../hooks/use-update-progress';
 import { ExperienceLevel } from '../steps/screens/experience-level';
 import { BuildingFor } from '../steps/screens/building-for';
 import { Login } from '../steps/screens/login';
+import { SiteFeatures } from '../steps/screens/site-features';
 import { getStepVisualConfig } from '../steps/step-visuals';
 import { StepId, type StepIdType } from '../types';
-import { StepId } from '../types';
 import { BaseLayout } from './ui/base-layout';
 import { Footer } from './ui/footer';
 import { FooterActions } from './ui/footer-actions';
@@ -19,7 +19,12 @@ import { SplitLayout } from './ui/split-layout';
 import { TopBar } from './ui/top-bar';
 import { TopBarContent } from './ui/top-bar-content';
 
-const isChoiceEmpty = ( choice: unknown ): boolean => {
+const STEPS_ALLOWING_EMPTY_CHOICE: StepIdType[] = [ StepId.SITE_FEATURES ];
+
+const isChoiceEmpty = ( choice: unknown, stepId: StepIdType ): boolean => {
+	if ( STEPS_ALLOWING_EMPTY_CHOICE.includes( stepId ) && Array.isArray( choice ) ) {
+		return false;
+	}
 	return choice === null || choice === undefined || ( Array.isArray( choice ) && choice.length === 0 );
 };
 
@@ -139,6 +144,13 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 		);
 	}, [ stepId, stepIndex, totalSteps, choices, actions, isLast, onComplete, updateProgress, updateChoices ] );
 
+	const handleSiteFeaturesChange = useCallback(
+		( values: string[] ) => {
+			actions.setUserChoice( 'site_features', values );
+		},
+		[ actions ]
+	);
+
 	const handleExperienceLevelSelect = useCallback(
 		( value: string ) => {
 			actions.setUserChoice( 'experience_level', value );
@@ -174,6 +186,9 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 		return stepsWithDisabledContinue.includes( stepId );
 	};
 
+	const choiceForStep = choices[ stepId as keyof typeof choices ];
+	const continueDisabled = isChoiceEmpty( choiceForStep, stepId );
+
 	const renderStepContent = () => {
 		switch ( stepId ) {
 			case StepId.EXPERIENCE_LEVEL:
@@ -183,18 +198,15 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 						onSelect={ handleExperienceLevelSelect }
 					/>
 				);
-			default:
-				return <Box sx={ { flex: 1, width: '100%' } } />;
-		}
-	};
-
-	const choiceForStep = choices[ stepId as keyof typeof choices ];
-	const continueDisabled = isChoiceEmpty( choiceForStep );
-
-	const renderStepContent = () => {
-		switch ( stepId ) {
 			case StepId.BUILDING_FOR:
 				return <BuildingFor onComplete={ handleContinue } />;
+			case StepId.SITE_FEATURES:
+				return (
+					<SiteFeatures
+						selectedValues={ choices.site_features ?? [] }
+						onChange={ handleSiteFeaturesChange }
+					/>
+				);
 			default:
 				return <Box sx={ { flex: 1, width: '100%' } } />;
 		}
@@ -233,8 +245,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 						showSkip={ ! isLast }
 						showContinue
 						continueLabel={ isLast ? __( 'Finish', 'elementor' ) : __( 'Continue', 'elementor' ) }
-						continueDisabled={ isContinueDisabled() }
-						continueDisabled={ continueDisabled }
+						continueDisabled={ isContinueDisabled() || continueDisabled }
 						continueLoading={ isPending }
 						onBack={ handleBack }
 						onSkip={ handleSkip }
