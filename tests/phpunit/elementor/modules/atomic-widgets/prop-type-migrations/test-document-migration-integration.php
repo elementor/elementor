@@ -174,4 +174,61 @@ class Test_Document_Migration_Integration extends Elementor_Test_Base {
 
 		remove_filter( 'elementor/atomic-widgets/styles/schema', [ $this, 'add_css_prop_to_style_schema' ], 999999 );
 	}
+
+	public function test_interactions_migrations() {
+		// Arrange
+		$post_id = 1001;
+
+		$document_data = [
+			[
+				'id' => 'element_with_interactions',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'settings' => [
+					'title' => [
+						'$$type' => 'html',
+						'value' => 'Interactive Element',
+					],
+				],
+				'interactions' => [
+					'items' => [
+						[
+							'$$type' => 'interaction-item',
+							'value' => [
+								'interaction_id' => [
+									'$$type' => 'old-string',
+									'value' => 'test-interaction',
+								],
+								'trigger' => [
+									'$$type' => 'string',
+									'value' => 'click',
+								],
+								'animation' => [
+									'$$type' => 'animation-preset',
+									'value' => 'fade-in',
+								],
+							],
+						],
+					],
+				],
+			],
+		];
+
+		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
+
+		// Act
+		$orchestrator->migrate(
+			$document_data,
+			$post_id,
+			'_elementor_data',
+			function() {}
+		);
+
+		// Assert
+		$this->assertArrayHasKey( 'interactions', $document_data[0] );
+		$this->assertArrayHasKey( 'items', $document_data[0]['interactions'] );
+		$this->assertCount( 1, $document_data[0]['interactions']['items'] );
+		$this->assertEquals( 'interaction-item', $document_data[0]['interactions']['items'][0]['$$type'] );
+		$this->assertEquals( 'string', $document_data[0]['interactions']['items'][0]['value']['interaction_id']['$$type'], 'interaction_id should be migrated from old-string to string' );
+	}
 }
