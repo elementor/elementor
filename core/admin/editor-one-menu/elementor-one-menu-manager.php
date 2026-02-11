@@ -51,7 +51,7 @@ class Elementor_One_Menu_Manager {
 		add_action( 'admin_head', [ $this, 'hide_legacy_templates_menu' ] );
 		add_action( 'admin_head', [ $this, 'hide_old_elementor_menu' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_menu_assets' ] );
-		add_action( 'admin_print_scripts-elementor_page_elementor-editor', [ $this, 'enqueue_home_screen_on_editor_page' ] );
+		add_action( 'admin_print_scripts-toplevel_page_elementor', [ $this, 'enqueue_home_screen_on_editor_page' ] );
 	}
 
 	public function check_if_pro_module_is_enabled(): void {

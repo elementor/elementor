@@ -131,8 +131,11 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
                                     'value' => [
                                         'override_key' => 'prop-0',
                                         'override_value' => [
-                                            '$$type' => 'html',
-                                            'value' => 'New button text',
+                                            '$$type' => 'html-v2',
+                                            'value' => [
+                                                'content' => 'New button text',
+                                                'children' => [],
+                                            ],
                                         ],
                                         'schema_source' => [
                                             'type' => 'component',
@@ -223,8 +226,11 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
                                     'value' => [
                                         'override_key' => 'prop-6',
                                         'override_value' => [
-                                            '$$type' => 'html',
-                                            'value' => $accordion_title,
+                                            '$$type' => 'html-v2',
+                                            'value' => [
+                                                'content' => $accordion_title,
+                                                'children' => [],
+                                            ],
                                         ],
                                         'schema_source' => [
                                             'type' => 'component',
@@ -237,8 +243,11 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
                                     'value' => [
                                         'override_key' => 'prop-7',
                                         'override_value' => [
-                                            '$$type' => 'html',
-                                            'value' => $accordion_subtitle,
+                                            '$$type' => 'html-v2',
+                                            'value' => [
+                                                'content' => $accordion_subtitle,
+                                                'children' => [],
+                                            ],
                                         ],
                                         'schema_source' => [
                                             'type' => 'component',
@@ -276,8 +285,11 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
                                     'value' => [
                                         'override_key' => 'prop-9',
                                         'override_value' => [
-                                            '$$type' => 'html',
-                                            'value' => $first_card_title,
+                                            '$$type' => 'html-v2',
+                                            'value' => [
+                                                'content' => $first_card_title,
+                                                'children' => [],
+                                            ],
                                         ],
                                     ],
                                     'schema_source' => [
@@ -290,8 +302,11 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
                                     'value' => [
                                         'override_key' => 'prop-10',
                                         'override_value' => [
-                                            '$$type' => 'html',
-                                            'value' => $first_card_button_text,
+                                            '$$type' => 'html-v2',
+                                            'value' => [
+                                                'content' => $first_card_button_text,
+                                                'children' => [],
+                                            ],
                                         ],
                                         'schema_source' => [
                                             'type' => 'component',
@@ -352,8 +367,11 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
                                     'value' => [
                                         'override_key' => 'prop-13',
                                         'override_value' => [
-                                            '$$type' => 'html',
-                                            'value' => $second_card_title,
+                                            '$$type' => 'html-v2',
+                                            'value' => [
+                                                'content' => $second_card_title,
+                                                'children' => [],
+                                            ],
                                         ],
                                         'schema_source' => [
                                             'type' => 'component',

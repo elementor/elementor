@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Modules\Home;
 
-use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Settings;
@@ -22,11 +21,6 @@ class Module extends BaseApp {
 
 	public function __construct() {
 		parent::__construct();
-
-		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
-			$hook_suffix = 'toplevel_page_elementor';
-			add_action( "admin_print_scripts-{$hook_suffix}", [ $this, 'enqueue_home_screen_scripts' ] );
-		}, 10, 2 );
 
 		add_filter( 'elementor/document/urls/edit', [ $this, 'add_active_document_to_edit_link' ] );
 	}
