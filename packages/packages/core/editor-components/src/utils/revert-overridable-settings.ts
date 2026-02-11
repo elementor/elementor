@@ -36,6 +36,7 @@ export function revertElementOverridableSetting(
 	originValue: unknown,
 	overrideKey: string
 ): void {
+	// not sure - should check.
 	const container = getContainer( elementId );
 
 	if ( ! container ) {

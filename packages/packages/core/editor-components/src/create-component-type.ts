@@ -14,10 +14,13 @@ import { getCurrentDocument } from '@elementor/editor-documents';
 import { __getState as getState } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
+import { type V1ElementData } from '@elementor/editor-elements';
+
 import { apiClient } from './api';
 import { type ComponentInstanceProp } from './prop-types/component-instance-prop-type';
 import { type ComponentsSlice, selectComponentByUid } from './store/store';
 import { type ComponentRenderContext, type ExtendedWindow } from './types';
+import { prefixElementIds } from './utils/prefix-element-ids';
 import { switchToComponent } from './utils/switch-to-component';
 import { trackComponentEvent } from './utils/tracking';
 
@@ -152,7 +155,7 @@ function createComponentView(
 			const componentInstance = settings.component_instance as
 				| {
 						overrides?: Record< string, unknown >;
-						elements?: unknown[];
+						elements?: V1ElementData[];
 				  }
 				| undefined;
 
@@ -161,7 +164,11 @@ function createComponentView(
 					overrides: componentInstance.overrides ?? {},
 				};
 
-				this.collection = legacyWindow.elementor.createBackboneElementsCollection( componentInstance.elements );
+				const instanceId = this.model.get( 'id' );
+				const elements = componentInstance.elements ?? [];
+				const prefixedElements = instanceId ? prefixElementIds( elements, instanceId ) : elements;
+
+				this.collection = legacyWindow.elementor.createBackboneElementsCollection( prefixedElements );
 
 				this.collection.models.forEach( setInactiveRecursively );
 

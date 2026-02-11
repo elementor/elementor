@@ -167,14 +167,22 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 		overridableProp.label
 	);
 
-	const { elementId, widgetType, elType, propKey } = overridableProp.originPropFields ?? overridableProp;
+	const {
+		elementId: originElementId,
+		widgetType,
+		elType,
+		propKey,
+	} = overridableProp.originPropFields ?? overridableProp;
 
-	const elementContainer = getContainer( elementId );
+	const thisInstanceContainer = getContainer( componentInstanceElement.element.id );
+	const elementContainer = window.elementor.getContainerByKeyValue( { key: 'originId', value: originElementId, parent: thisInstanceContainer?.view } );
 	if ( ! elementContainer ) {
 		throw new OverrideControlInnerElementNotFoundError( {
-			context: { componentId, elementId },
+			context: { componentId, elementId: originElementId },
 		} );
 	}
+
+	const elementId = elementContainer.model.get( 'id' );
 
 	const type = elType === 'widget' ? widgetType : elType;
 	const elementType = getElementType( type );

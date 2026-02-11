@@ -130,11 +130,16 @@ function useComponentDOMElement( id: V1Document[ 'id' ] | undefined ) {
 		}
 
 		const mutationObserver = new MutationObserver( () => {
-			const newElementDom = componentContainerDomElement.children[ 0 ] as HTMLElement | null;
+			console.log( 'mutationObserver' );
+			console.log( componentContainerDomElement );
+			console.log( componentContainerDomElement.children[ 0 ].children[ 0 ] );
+			const newElementDom = componentContainerDomElement.children[ 0 ].children[ 0 ] as HTMLElement | null;
 			setCurrentElementDom( newElementDom );
 		} );
-
-		mutationObserver.observe( componentContainerDomElement, { childList: true } );
+		console.log( 'connecting mutationObserver' );
+		console.log( componentContainerDomElement );
+		console.log( componentContainerDomElement.children[ 0 ].children[ 0 ] );
+		mutationObserver.observe( componentContainerDomElement, { childList: true, subtree: true, attributes: true, characterData: true } );
 
 		return () => {
 			mutationObserver.disconnect();
@@ -159,8 +164,8 @@ function getComponentDOMElements( id: V1Document[ 'id' ] | undefined ): Componen
 	const currentComponent = documentsManager.get( id );
 
 	const componentContainer = currentComponent?.container as V1Element;
-	const componentContainerDomElement = ( componentContainer?.view?.el?.children?.[ 0 ] as HTMLElement ) ?? null;
-	const topLevelElementDom = ( componentContainerDomElement?.children[ 0 ] as HTMLElement ) ?? null;
+	const componentContainerDomElement = ( componentContainer?.view?.el as HTMLElement ) ?? null;
+	const topLevelElementDom = ( componentContainerDomElement?.children[ 0 ].children[ 0 ] as HTMLElement ) ?? null;
 
 	return { componentContainerDomElement, topLevelElementDom };
 }

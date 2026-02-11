@@ -37,6 +37,7 @@ export function isExposedPropValid( prop: OverridableProp ): boolean {
 		return true;
 	}
 
+	// here?
 	const setting = getElementSetting( prop.elementId, 'component_instance' );
 	const componentInstance = componentInstancePropTypeUtil.extract( setting );
 

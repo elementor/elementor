@@ -2,11 +2,13 @@
 
 namespace Elementor\Modules\Components\Transformers;
 
+use Elementor\Core\Base\Document as Component_Document;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Render_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
-use Elementor\Plugin;
-use Elementor\Core\Base\Document as Component_Document;
 use Elementor\Modules\Components\Components_Repository;
+use Elementor\Modules\Components\Transformers\Overridable_Transformer;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -27,8 +29,10 @@ class Component_Instance_Transformer extends Transformer_Base {
 			return '';
 		}
 
+		$instance_element_id = Render_Context::get( Overridable_Transformer::class )['instance_id'] ?? '';
+
 		self::$rendering_stack[] = $component_id;
-		$content = $this->get_rendered_content( $component_id );
+		$content = $this->get_rendered_content( $component_id, $instance_element_id );
 		array_pop( self::$rendering_stack );
 
 		return $content;
@@ -38,7 +42,7 @@ class Component_Instance_Transformer extends Transformer_Base {
 		return in_array( $component_id, self::$rendering_stack, true );
 	}
 
-	private function get_rendered_content( int $component_id ): string {
+	private function get_rendered_content( int $component_id, ?string $instance_element_id ): string {
 		$should_show_autosave = is_preview();
 		$component = $this->get_repository()->get( $component_id, $should_show_autosave );
 
@@ -48,25 +52,27 @@ class Component_Instance_Transformer extends Transformer_Base {
 
 		Plugin::$instance->documents->switch_to_document( $component );
 
-		$data = $component->get_elements_data();
+		try {
+			$data = $component->get_nested_document_elements_data( $instance_element_id );
 
-		$data = apply_filters( 'elementor/frontend/builder_content_data', $data, $component_id );
+			$data = apply_filters( 'elementor/frontend/builder_content_data', $data, $component_id );
 
-		$content = '';
+			$content = '';
 
-		if ( ! empty( $data ) ) {
-			ob_start();
+			if ( ! empty( $data ) ) {
+				ob_start();
 
-			$component->print_elements( $data );
+				$this->print_elements_without_cache( $data );
 
-			$content = ob_get_clean();
+				$content = ob_get_clean();
 
-			$content = apply_filters( 'elementor/frontend/the_content', $content );
+				$content = apply_filters( 'elementor/frontend/the_content', $content );
+			}
+
+			return $content;
+		} finally {
+			Plugin::$instance->documents->restore_document();
 		}
-
-		Plugin::$instance->documents->restore_document();
-
-		return $content;
 	}
 
 	private function should_render_content( Component_Document $document ): bool {
@@ -76,6 +82,18 @@ class Component_Instance_Transformer extends Transformer_Base {
 
 	private function is_password_protected( $document ) {
 		return post_password_required( $document->get_post()->ID );
+	}
+
+	private function print_elements_without_cache( array $elements_data ): void {
+		foreach ( $elements_data as $element_data ) {
+			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
+
+			if ( ! $element ) {
+				continue;
+			}
+
+			$element->print_element();
+		}
 	}
 
 	private function get_repository(): Components_Repository {
