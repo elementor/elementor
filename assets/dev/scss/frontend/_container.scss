@@ -90,14 +90,14 @@
 		flex: var(--flex-grow) var(--flex-shrink) var(--flex-basis);
 	}
 
-	&-full,
+	&:where(.e-con-full),
 	& > .e-con-inner {
 		text-align: var(--text-align);
 		padding-block-start: var(--padding-block-start);
 		padding-block-end: var(--padding-block-end);
 	}
 
-	&-full.e-flex,
+	&:where(.e-con-full).e-flex,
 	&.e-flex > .e-con-inner {
 		flex-direction: var(--flex-direction);
 	}
@@ -125,7 +125,7 @@
 	}
 
 	// Set default values to the outer div of the boxed container.
-	&-boxed.e-flex {
+	&:where(.e-con-boxed).e-flex {
 		flex-direction: column;
 		flex-wrap: initial;
 		justify-content: initial;
@@ -133,13 +133,13 @@
 		align-content: initial;
 	}
 
-	&-boxed.e-grid {
+	&:where(.e-con-boxed).e-grid {
 		justify-items: initial;
 		grid-template-columns: 1fr;
 		grid-template-rows: 1fr;
 	}
 
-	&-boxed {
+	&:where(.e-con-boxed) {
 		text-align: initial;
 		gap: initial;
 	}
