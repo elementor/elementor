@@ -6,14 +6,21 @@ import { __ } from '@wordpress/i18n';
 import { useOnboarding } from '../hooks/use-onboarding';
 import { useUpdateChoices } from '../hooks/use-update-choices';
 import { useUpdateProgress } from '../hooks/use-update-progress';
+import { BuildingFor } from '../steps/screens/building-for';
+import { ExperienceLevel } from '../steps/screens/experience-level';
 import { Login } from '../steps/screens/login';
 import { getStepVisualConfig } from '../steps/step-visuals';
+import { StepId } from '../types';
 import { BaseLayout } from './ui/base-layout';
 import { Footer } from './ui/footer';
 import { FooterActions } from './ui/footer-actions';
 import { SplitLayout } from './ui/split-layout';
 import { TopBar } from './ui/top-bar';
 import { TopBarContent } from './ui/top-bar-content';
+
+const isChoiceEmpty = ( choice: unknown ): boolean => {
+	return choice === null || choice === undefined || ( Array.isArray( choice ) && choice.length === 0 );
+};
 
 interface AppContentProps {
 	onComplete?: () => void;
@@ -97,42 +104,59 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 		);
 	}, [ actions, stepIndex, totalSteps, updateProgress ] );
 
-	const handleContinue = useCallback( () => {
-		const choiceForStep = choices[ stepId as keyof typeof choices ];
-		const hasChoice =
-			choiceForStep !== null &&
-			choiceForStep !== undefined &&
-			( ! Array.isArray( choiceForStep ) || choiceForStep.length > 0 );
+	const handleContinue = useCallback(
+		( directChoice?: Record< string, unknown > ) => {
+			if ( directChoice ) {
+				updateChoices.mutate( directChoice );
+			} else {
+				const storedChoice = choices[ stepId as keyof typeof choices ];
 
-		if ( hasChoice ) {
-			updateChoices.mutate( { [ stepId ]: choiceForStep } );
-		}
-
-		updateProgress.mutate(
-			{
-				complete_step: stepId,
-				step_index: stepIndex,
-				total_steps: totalSteps,
-			},
-			{
-				onSuccess: () => {
-					actions.completeStep( stepId );
-
-					if ( ! isLast ) {
-						actions.nextStep();
-					} else {
-						onComplete?.();
-					}
-				},
-				onError: () => {
-					actions.setError( __( 'Failed to complete step.', 'elementor' ) );
-				},
+				if ( ! isChoiceEmpty( storedChoice ) ) {
+					updateChoices.mutate( { [ stepId ]: storedChoice } );
+				}
 			}
-		);
-	}, [ stepId, stepIndex, totalSteps, choices, actions, isLast, onComplete, updateProgress, updateChoices ] );
+
+			updateProgress.mutate(
+				{
+					complete_step: stepId,
+					step_index: stepIndex,
+					total_steps: totalSteps,
+				},
+				{
+					onSuccess: () => {
+						actions.completeStep( stepId );
+
+						if ( ! isLast ) {
+							actions.nextStep();
+						} else {
+							onComplete?.();
+						}
+					},
+					onError: () => {
+						actions.setError( __( 'Failed to complete step.', 'elementor' ) );
+					},
+				}
+			);
+		},
+		[ stepId, stepIndex, totalSteps, choices, actions, isLast, onComplete, updateProgress, updateChoices ]
+	);
 
 	const rightPanelConfig = useMemo( () => getStepVisualConfig( stepId ), [ stepId ] );
 	const isPending = updateProgress.isPending || isLoading;
+
+	const choiceForStep = choices[ stepId as keyof typeof choices ];
+	const continueDisabled = isChoiceEmpty( choiceForStep );
+
+	const renderStepContent = () => {
+		switch ( stepId ) {
+			case StepId.BUILDING_FOR:
+				return <BuildingFor onComplete={ handleContinue } />;
+			case StepId.EXPERIENCE_LEVEL:
+				return <ExperienceLevel onComplete={ handleContinue } />;
+			default:
+				return <Box sx={ { flex: 1, width: '100%' } } />;
+		}
+	};
 
 	if ( ! hasPassedLogin ) {
 		return (
@@ -167,16 +191,17 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 						showSkip={ ! isLast }
 						showContinue
 						continueLabel={ isLast ? __( 'Finish', 'elementor' ) : __( 'Continue', 'elementor' ) }
+						continueDisabled={ continueDisabled }
 						continueLoading={ isPending }
 						onBack={ handleBack }
 						onSkip={ handleSkip }
-						onContinue={ handleContinue }
+						onContinue={ () => handleContinue() }
 					/>
 				</Footer>
 			}
 		>
 			<SplitLayout
-				left={ <Box sx={ { flex: 1, width: '100%' } } /> }
+				left={ renderStepContent() }
 				rightConfig={ rightPanelConfig }
 				progress={ { currentStep: stepIndex, totalSteps } }
 			/>
