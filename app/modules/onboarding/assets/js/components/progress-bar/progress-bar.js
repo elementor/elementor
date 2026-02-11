@@ -9,7 +9,7 @@ export default function ProgressBar() {
 	const { state } = useContext( OnboardingContext ),
 		navigate = useNavigate(),
 		experiment202Variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT202_VARIANT ),
-		hasStepMultipleThemeChoices = 'B' !== experiment202Variant,
+		isExperiment202VariantB = 'B' === experiment202Variant,
 		experiment401Variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT401_VARIANT ),
 		isExperiment401VariantB = 'B' === experiment401Variant,
 		experiment402Variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT402_VARIANT ),
@@ -26,7 +26,7 @@ export default function ProgressBar() {
 	if ( ! elementorAppConfig.onboarding.helloActivated ) {
 		progressBarItemsConfig.push( {
 			id: 'hello',
-			title: hasStepMultipleThemeChoices ? __( 'Choose Theme', 'elementor' ) : __( 'Hello Biz Theme', 'elementor' ),
+			title: isExperiment202VariantB ? __( 'Hello Biz Theme', 'elementor' ) : __( 'Choose Theme', 'elementor' ),
 			route: 'hello',
 		} );
 	}
