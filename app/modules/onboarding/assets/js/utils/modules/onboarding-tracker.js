@@ -146,9 +146,6 @@ class OnboardingTracker {
 		this.setupUrlChangeDetection();
 	}
 
-	onDestroy() {
-	}
-
 	setupUrlChangeDetection() {
 		let lastUrl = window.location.href;
 		const urlChangeDetector = () => {
@@ -625,18 +622,14 @@ class OnboardingTracker {
 			StorageManager.setString( endStateSentKey, 'true' );
 			TimingManager.clearStepStartTime( stepNumber );
 			this.sendStoredEventsIfConnected();
-			return;
-		}
-
-		if ( ONBOARDING_STEP_NAMES.CONNECT === stepName ) {
+		} else if ( 1 === stepNumber ) {
 			this.storeStep1EndStateForLater( eventData, storageKey );
-			return;
+		} else {
+			this.dispatchEventWithoutTrigger( eventName, eventData );
+			StorageManager.remove( storageKey );
+			StorageManager.setString( endStateSentKey, 'true' );
+			TimingManager.clearStepStartTime( stepNumber );
 		}
-
-		this.dispatchEventWithoutTrigger( eventName, eventData );
-		StorageManager.remove( storageKey );
-		StorageManager.setString( endStateSentKey, 'true' );
-		TimingManager.clearStepStartTime( stepNumber );
 	}
 
 	getStepNumber( pageId ) {

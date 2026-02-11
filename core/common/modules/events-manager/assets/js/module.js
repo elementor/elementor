@@ -17,21 +17,7 @@ export default class extends elementorModules.Module {
 	}
 
 	initializeMixpanel() {
-		mixpanel.init(
-			elementorCommon.config.editor_events?.token,
-			{
-				persistence: 'localStorage',
-				autocapture: false,
-				record_sessions_percent: 0,
-				record_idle_timeout_ms: 60000,
-				record_max_ms: 300000,
-				record_mask_text_selector: '',
-				flags: true,
-				api_hosts: {
-					flags: 'https://api-eu.mixpanel.com',
-				},
-			},
-		);
+		mixpanel.init( elementorCommon.config.editor_events?.token, { persistence: 'localStorage', autocapture: false } );
 	}
 
 	enableTracking() {

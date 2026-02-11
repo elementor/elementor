@@ -39,17 +39,6 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		};
 	},
 
-	initialize() {
-		elementorModules.common.views.modal.Layout.prototype.initialize.call( this );
-	},
-
-	initModal() {
-		elementorModules.common.views.modal.Layout.prototype.initModal.call( this );
-	},
-
-	onDestroy() {
-	},
-
 	getLogoOptions() {
 		return {
 			title: __( 'Library', 'elementor' ),
