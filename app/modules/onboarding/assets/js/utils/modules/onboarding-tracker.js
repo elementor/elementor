@@ -5,8 +5,6 @@ import TimingManager from './timing-manager.js';
 import PostOnboardingTracker from './post-onboarding-tracker.js';
 
 class OnboardingTracker {
-	#hasAttemptedSessionRecording = false;
-
 	constructor() {
 		this.initializeEventConfigs();
 		this.initializeEventListeners();
@@ -146,21 +144,6 @@ class OnboardingTracker {
 		}, true );
 
 		this.setupUrlChangeDetection();
-		this.setupSessionRecordingCleanup();
-	}
-
-	setupSessionRecordingCleanup() {
-		this.handleBeforeUnload = this.handleBeforeUnload.bind( this );
-		window.addEventListener( 'beforeunload', this.handleBeforeUnload );
-	}
-
-	handleBeforeUnload() {
-		this.stopSessionRecordingIfNeeded();
-	}
-
-	onDestroy() {
-		this.stopSessionRecordingIfNeeded();
-		window.removeEventListener( 'beforeunload', this.handleBeforeUnload );
 	}
 
 	setupUrlChangeDetection() {
@@ -633,10 +616,6 @@ class OnboardingTracker {
 		eventData = TimingManager.addTimingToEventData( eventData, stepNumber );
 		eventData[ endStateProperty ] = actions;
 
-		if ( ONBOARDING_STEP_NAMES.SITE_STARTER === stepName ) {
-			this.stopSessionRecordingIfNeeded();
-		}
-
 		if ( EventDispatcher.canSendEvents() ) {
 			this.dispatchEventWithoutTrigger( eventName, eventData );
 			StorageManager.remove( storageKey );
@@ -1083,58 +1062,6 @@ class OnboardingTracker {
 		StorageManager.remove( storageKey );
 	}
 
-	startSessionRecordingIfNeeded() {
-		if ( this.#hasAttemptedSessionRecording ) {
-			return;
-		}
-
-		if ( ! elementorCommon?.config?.editor_events?.session_replays?.coreOnboarding ) {
-			return;
-		}
-
-		const featureFlagPromise = elementorCommon?.eventsManager?.featureFlagIsActive?.( 'core-onboarding-session-replays' );
-		if ( ! featureFlagPromise ) {
-			return;
-		}
-
-		this.#hasAttemptedSessionRecording = true;
-
-		featureFlagPromise
-			.then( ( isFeatureFlagActive ) => {
-				if ( ! isFeatureFlagActive ) {
-					return;
-				}
-
-				this.startSessionRecording();
-			} )
-			.catch( () => {} );
-	}
-
-	startSessionRecording() {
-		if ( ! EventDispatcher.canSendEvents() ) {
-			return;
-		}
-
-		if ( elementorCommon?.eventsManager?.isSessionRecordingInProgress?.() ) {
-			return;
-		}
-
-		elementorCommon.eventsManager?.dispatchEvent( ONBOARDING_EVENTS_MAP.SESSION_REPLAY_START, {
-			location: 'plugin_onboarding',
-		} );
-
-		elementorCommon.eventsManager?.startSessionRecording();
-	}
-
-	stopSessionRecordingIfNeeded() {
-		if ( ! this.#hasAttemptedSessionRecording ) {
-			return;
-		}
-
-		elementorCommon.eventsManager?.stopSessionRecording();
-		this.#hasAttemptedSessionRecording = false;
-	}
-
 	onStepLoad( currentStep ) {
 		const stepNumber = this.getStepNumber( currentStep );
 
@@ -1145,7 +1072,6 @@ class OnboardingTracker {
 		}
 
 		if ( 2 === stepNumber || 'hello' === currentStep || 'hello_biz' === currentStep ) {
-			this.startSessionRecordingIfNeeded();
 			this.sendStoredStep1EventsOnStep2();
 			this.sendExperimentStarted( 201 );
 			this.sendExperimentStarted( 202 );
