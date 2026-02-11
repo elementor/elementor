@@ -17,7 +17,17 @@ export default class extends elementorModules.Module {
 	}
 
 	initializeMixpanel() {
-		mixpanel.init( elementorCommon.config.editor_events?.token, { persistence: 'localStorage', autocapture: false } );
+		mixpanel.init(
+			elementorCommon.config.editor_events?.token,
+			{
+				persistence: 'localStorage',
+				autocapture: false,
+				flags: true,
+				api_hosts: {
+					flags: 'https://api-eu.mixpanel.com',
+				},
+			},
+		);
 	}
 
 	enableTracking() {
