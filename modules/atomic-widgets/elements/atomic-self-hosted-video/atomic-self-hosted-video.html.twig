@@ -1,0 +1,23 @@
+{% if settings.source.url is not empty %}
+	{% set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') %}
+	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
+	{% set video_classes = base_styles.base %}
+	{% set aspect_ratio = settings.aspect_ratio != 'auto' ? settings.aspect_ratio : null %}
+
+<div data-id="{{ id }}" data-interaction-id="{{ id }}" data-e-type="{{ type }}" data-interactions="{{ interactions | json_encode | e('html_attr') }}" {{ id_attribute }} class="{{ classes }}" {{ settings.attributes | raw }} {% if aspect_ratio %}style="aspect-ratio: {{ aspect_ratio }}"{% endif %}>
+		<video
+			style="width:100%; height:100%"
+			class="{{ video_classes }}"
+			{% if settings.poster_enabled %}poster="{{ settings.poster.src | e('full_url') }}"{% endif %}
+			{% if settings.autoplay %}autoplay{% endif %}
+			{% if settings.mute %}muted{% endif %}
+			{% if settings.loop %}loop{% endif %}
+			{% if settings.controls %}controls{% endif %}
+			{% if settings.playsinline %}playsinline{% endif %}
+			{% if not settings.download %}controlslist="nodownload"{% endif %}
+			preload="{{ settings.preload }}"
+		>
+			<source src="{{ settings.source.url | e('full_url') }}">
+		</video>
+	</div>
+{% endif %}
