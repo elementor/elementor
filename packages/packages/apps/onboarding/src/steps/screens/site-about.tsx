@@ -26,7 +26,7 @@ export function SiteAbout() {
 	);
 
 	return (
-		<Stack spacing={ 7.5 } sx={ { marginTop: -3.5 } } data-testid="site-about-step">
+		<Stack spacing={ 7.5 } data-testid="site-about-step">
 			<Stack spacing={ 4 } alignItems="flex-start" sx={ { width: '100%' } }>
 				<GreetingBanner buildingFor={ choices.building_for } />
 			</Stack>

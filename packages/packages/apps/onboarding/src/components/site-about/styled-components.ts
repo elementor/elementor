@@ -1,43 +1,18 @@
 import { Box, ButtonBase, styled } from '@elementor/ui';
 
-// One-off brand color from design
-const GREETING_BANNER_BG_COLOR = '#fae4fa';
-
-export const GreetingBannerRoot = styled( Box )( ( { theme } ) => ( {
-	display: 'inline-flex',
-	alignItems: 'center',
-	justifyContent: 'center',
-	paddingInline: theme.spacing( 3 ),
-	paddingBlock: theme.spacing( 1.5 ),
-	borderRadius: 16,
-	backgroundColor: GREETING_BANNER_BG_COLOR,
-	alignSelf: 'flex-start',
-} ) );
-
 export const OptionCardRoot = styled( ButtonBase )( ( { theme } ) => ( {
 	position: 'relative',
 	display: 'flex',
 	flexDirection: 'column',
 	alignItems: 'center',
 	justifyContent: 'center',
-	gap: 24,
+	gap: theme.spacing(3),
 	minWidth: 0,
-	height: 128,
+	height: theme.spacing(16),
 	borderRadius: 8,
 	border: `1px solid ${ theme.palette.divider }`,
 	cursor: 'pointer',
-	transition: 'border-color 150ms ease, background-color 150ms ease',
-	'&:hover': {
-		backgroundColor: theme.palette.action.hover,
-	},
-	'&:focus-visible': {
-		outline: 'none',
-		backgroundColor: theme.palette.action.hover,
-	},
-	'&.Mui-selected': {
-		borderWidth: 2,
-		borderColor: theme.palette.text.primary,
-	},
+	transition: 'border-color 150ms ease, background-color 150ms ease'
 } ) );
 
 export const CheckBadge = styled( Box )( ( { theme } ) => ( {

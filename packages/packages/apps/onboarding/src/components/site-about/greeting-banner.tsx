@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { Typography } from '@elementor/ui';
 
 import { GREETING_FALLBACK, GREETING_MAP } from './constants';
-import { GreetingBannerRoot } from './styled-components';
+import { GreetingBannerRoot } from '../ui/styled-components';
 
 interface GreetingBannerProps {
 	buildingFor: string | null;
