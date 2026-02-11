@@ -175,16 +175,12 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 		propKey,
 	} = overridableProp.originPropFields ?? overridableProp;
 
-	const instanceElementId = componentInstanceElement.element.id;
-	const elementContainer = getContainerByOriginId( originElementId, instanceElementId );
+	const element = getContainerByOriginId( originElementId, componentInstanceElement.element.id );
 
-	if ( ! elementContainer ) {
-		throw new OverrideControlInnerElementNotFoundError( {
-			context: { componentId, elementId: originElementId },
-		} );
+	if ( ! element ) {
+		throw new OverrideControlInnerElementNotFoundError( { context: { componentId, elementId: originElementId } } );
 	}
-
-	const elementId = elementContainer.id;
+	const elementId = element.id;
 
 	const type = elType === 'widget' ? widgetType : elType;
 	const elementType = getElementType( type );

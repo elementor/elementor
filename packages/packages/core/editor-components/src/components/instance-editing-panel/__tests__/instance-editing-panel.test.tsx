@@ -307,7 +307,9 @@ describe( '<InstanceEditingPanel />', () => {
 		);
 		jest.mocked( getElementType ).mockImplementation( createMockElementType );
 		jest.mocked( getContainer ).mockReturnValue( createMockContainer( MOCK_ELEMENT_ID, [] ) );
-		jest.mocked( getContainerByOriginId ).mockImplementation( ( originId ) => createMockContainer( originId, [] ) );
+		jest.mocked( getComponentInnerElement ).mockImplementation( ( originId ) =>
+			createMockContainer( originId, [] )
+		);
 	} );
 
 	it( 'should render the component name in the header', () => {

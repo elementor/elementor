@@ -195,6 +195,105 @@ describe( 'filter-valid-overridable-props', () => {
 			// Assert
 			expect( result ).toBe( false );
 		} );
+
+		describe( 'Handle originId-runtimeId replacement when ', () => {
+			it( 'should use instanceElementId to resolve container for exposed props', () => {
+				// Arrange
+				const INSTANCE_ID = 'instance-123';
+				const prop = createExposedProp( 'prop-4', 'prop-0' );
+				const innerOverridableProps = createInnerOverridableProps( [ 'prop-0' ] );
+				const setting = createComponentInstanceSetting( [ { outerKey: 'prop-4', innerKey: 'prop-0' } ] );
+
+				mockGetContainerByOriginId.mockImplementation( ( originId, instanceId ) => {
+					if ( originId === COMPONENT_INSTANCE_ELEMENT_ID && instanceId === INSTANCE_ID ) {
+						return createContainerWithComponentInstance( setting );
+					}
+					return null;
+				} );
+
+				jest.mocked( getOverridableProp ).mockImplementation( ( { overrideKey } ) => {
+					return innerOverridableProps.props[ overrideKey ];
+				} );
+
+				// Act
+				const result = isExposedPropValid( prop, INSTANCE_ID );
+
+				// Assert
+				expect( mockGetContainerByOriginId ).toHaveBeenCalledWith( COMPONENT_INSTANCE_ELEMENT_ID, INSTANCE_ID );
+				expect( result ).toBe( true );
+			} );
+
+			it( 'should pass container.id (runtime ID) when recursively validating nested components', () => {
+				// Arrange
+				const OUTER_INSTANCE_ID = 'outer-instance';
+				const INNER_RUNTIME_ID = `${ OUTER_INSTANCE_ID }_inner-component`;
+				const INNER_COMPONENT_ID = 9999;
+
+				const outerProp: OverridableProp = {
+					overrideKey: 'outer-prop',
+					label: 'Outer Prop',
+					elementId: INNER_RUNTIME_ID,
+					propKey: 'text',
+					elType: 'widget',
+					widgetType: 'e-component',
+					originValue: { $$type: 'override', value: {} },
+					groupId: 'group-1',
+					originPropFields: {
+						propKey: 'content',
+						widgetType: 'e-text',
+						elType: 'widget',
+						elementId: 'text-element',
+					},
+				};
+
+				const innerProp: OverridableProp = {
+					overrideKey: 'inner-prop',
+					label: 'Inner Prop',
+					elementId: 'text-element',
+					propKey: 'content',
+					elType: 'widget',
+					widgetType: 'e-text',
+					originValue: { $$type: 'string', value: 'Hello' },
+					groupId: 'group-1',
+				};
+
+				mockGetContainerByOriginId.mockImplementation( ( originId, instanceId ) => {
+					if ( originId === INNER_RUNTIME_ID && instanceId === OUTER_INSTANCE_ID ) {
+						return createMockElement( {
+							model: { id: INNER_RUNTIME_ID, widgetType: 'e-component' },
+							settings: {
+								component_instance: componentInstancePropTypeUtil.create( {
+									component_id: { $$type: 'number', value: INNER_COMPONENT_ID },
+									overrides: componentInstanceOverridesPropTypeUtil.create( [
+										componentOverridablePropTypeUtil.create( {
+											override_key: 'outer-prop',
+											origin_value: componentInstanceOverridePropTypeUtil.create( {
+												override_key: 'inner-prop',
+												override_value: null,
+												schema_source: { type: 'component', id: INNER_COMPONENT_ID },
+											} ),
+										} ),
+									] ),
+								} ),
+							},
+						} );
+					}
+					return null;
+				} );
+
+				jest.mocked( getOverridableProp ).mockReturnValue( innerProp );
+
+				// Act
+				isExposedPropValid( outerProp, OUTER_INSTANCE_ID );
+
+				// Assert - verify recursive call receives runtime ID (container.id)
+				expect( mockGetContainerByOriginId ).toHaveBeenNthCalledWith( 1, INNER_RUNTIME_ID, OUTER_INSTANCE_ID );
+				expect( getOverridableProp ).toHaveBeenCalledWith( {
+					componentId: INNER_COMPONENT_ID,
+					overrideKey: 'inner-prop',
+				} );
+			} );
+		} );
 	} );
 
 	describe( 'filterValidOverridableProps', () => {

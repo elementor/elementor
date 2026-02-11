@@ -9,6 +9,8 @@ import { extractInnerOverrideInfo } from './overridable-props-utils';
 
 export function filterValidOverridableProps(
 	overridableProps: OverridableProps,
+	// instanceElementId is used to find the component inner elements,
+	// and should be passed when editing component instance (not in component edit mode)
 	instanceElementId?: string
 ): OverridableProps {
 	const validProps: Record< string, OverridableProp > = {};
@@ -35,6 +37,7 @@ export function filterValidOverridableProps(
 
 export function isExposedPropValid( prop: OverridableProp, instanceElementId?: string ): boolean {
 	if ( ! prop.originPropFields ) {
+		// if no originPropFields - the prop is on the widget level itself, therefore no need to lookup for a corresponding component's overridables
 		return true;
 	}
 
@@ -66,7 +69,7 @@ export function isExposedPropValid( prop: OverridableProp, instanceElementId?: s
 		return false;
 	}
 
-	return isExposedPropValid( innerOverridableProp, container.id );
+	return isExposedPropValid( innerOverridableProp, innerComponentInstanceElement.id );
 }
 
 function findOverrideByOuterKey(

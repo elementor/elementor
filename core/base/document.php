@@ -2117,9 +2117,24 @@ abstract class Document extends Controls_Stack {
 		return $this->add_nested_path_to_elements_data( $elements_copy, $nested_path );
 	}
 
+	/**
+	 * Adds a hashed prefix to element IDs to avoid long ID chains in nested components.
+	 *
+	 * Instead of concatenating the full path (which can become very long with nested components),
+	 * this function hashes the path to create a short, deterministic identifier.
+	 *
+	 * IMPORTANT: This implementation must match the TypeScript version in
+	 * packages/packages/core/editor-components/src/utils/prefix-element-ids.ts
+	 *
+	 * @param array  $elements_data Elements to process
+	 * @param string $nested_path   Instance ID or chain of instance IDs (e.g., "inst-a" or "inst-a_inst-b")
+	 * @return array Modified elements with prefixed IDs
+	 */
 	private function add_nested_path_to_elements_data( array &$elements_data, string $nested_path ): array {
+		$short_prefix = \Elementor\Core\Utils\Str::generate_short_hash( $nested_path, 7 );
+
 		foreach ( $elements_data as &$element_data ) {
-			$element_data['id'] = $nested_path . '_' . $element_data['id'];
+			$element_data['id'] = $short_prefix . '_' . $element_data['id'];
 			$element_data['elements'] = $this->add_nested_path_to_elements_data( $element_data['elements'], $nested_path );
 		}
 		// unset( $element_data );
