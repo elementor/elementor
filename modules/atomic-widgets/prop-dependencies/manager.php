@@ -53,7 +53,7 @@ class Manager {
 		return new self( $relation );
 	}
 
-	public function shouldHide( bool $should_hide = true ): self {
+	public function should_hide( bool $should_hide = true ): self {
 		if ( ! empty( $this->dependencies ) ) {
 			$this->dependencies['shouldHide'] = $should_hide;
 		}

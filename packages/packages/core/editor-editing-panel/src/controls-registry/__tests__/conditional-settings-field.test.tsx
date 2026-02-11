@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { createMockElementType, createMockPropType, renderWithTheme } from 'test-utils';
+
 import { screen } from '@testing-library/react';
 import { useElementSettings } from '@elementor/editor-elements';
 import { type PropValue } from '@elementor/editor-props';
+import { createMockElementType, createMockPropType, renderWithTheme } from 'test-utils';
 import { __ } from '@wordpress/i18n';
 
 import { mockElement } from '../../__tests__/utils';
@@ -70,13 +71,13 @@ describe( 'ConditionalSettingsField with shouldHide', () => {
 		renderWithTheme(
 			<ElementProvider element={ element } elementType={ elementType }>
 				<SettingsField bind="email" propDisplayName={ __( 'Email', 'elementor' ) }>
-					<div data-testid="email-fields">Email Control Content</div>
+					<div>Email Control Content</div>
 				</SettingsField>
 			</ElementProvider>
 		);
 
 		// Assert
-		expect( screen.queryByTestId( 'email-fields' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Email Control Content' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'should show email fields when email is in actions-after-submit', () => {
@@ -121,13 +122,13 @@ describe( 'ConditionalSettingsField with shouldHide', () => {
 		renderWithTheme(
 			<ElementProvider element={ element } elementType={ elementType }>
 				<SettingsField bind="email" propDisplayName={ __( 'Email', 'elementor' ) }>
-					<div data-testid="email-fields">Email Control Content</div>
+					<div>Email Control Content</div>
 				</SettingsField>
 			</ElementProvider>
 		);
 
 		// Assert
-		expect( screen.getByTestId( 'email-fields' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Email Control Content' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should hide email fields when dependency is not met', () => {
@@ -170,13 +171,13 @@ describe( 'ConditionalSettingsField with shouldHide', () => {
 		renderWithTheme(
 			<ElementProvider element={ element } elementType={ elementType }>
 				<SettingsField bind="email" propDisplayName={ __( 'Email', 'elementor' ) }>
-					<div data-testid="email-fields">Email Control Content</div>
+					<div>Email Control Content</div>
 				</SettingsField>
 			</ElementProvider>
 		);
 
 		// Assert
-		expect( screen.queryByTestId( 'email-fields' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Email Control Content' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'should show email fields when adding email chip to actions-after-submit', () => {
@@ -220,12 +221,12 @@ describe( 'ConditionalSettingsField with shouldHide', () => {
 		const { rerender } = renderWithTheme(
 			<ElementProvider element={ element } elementType={ elementType }>
 				<SettingsField bind="email" propDisplayName={ __( 'Email', 'elementor' ) }>
-					<div data-testid="email-fields">Email Control Content</div>
+					<div>Email Control Content</div>
 				</SettingsField>
 			</ElementProvider>
 		);
 
-		expect( screen.queryByTestId( 'email-fields' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Email Control Content' ) ).not.toBeInTheDocument();
 
 		// Act
 		jest.mocked( useElementSettings ).mockReturnValue( {
@@ -238,12 +239,12 @@ describe( 'ConditionalSettingsField with shouldHide', () => {
 		rerender(
 			<ElementProvider element={ element } elementType={ elementType }>
 				<SettingsField bind="email" propDisplayName={ __( 'Email', 'elementor' ) }>
-					<div data-testid="email-fields">Email Control Content</div>
+					<div>Email Control Content</div>
 				</SettingsField>
 			</ElementProvider>
 		);
 
 		// Assert
-		expect( screen.getByTestId( 'email-fields' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Email Control Content' ) ).toBeInTheDocument();
 	} );
 } );
