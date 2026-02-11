@@ -39,6 +39,7 @@ export default function HelloTheme() {
 		nextStep = elementorAppConfig.onboarding.experiment ? 'chooseFeatures' : 'siteName',
 		goToNextScreen = useCallback( () => navigate( 'onboarding/' + nextStep ), [ navigate, nextStep ] ),
 		isVariant202B = 'B' === variant202,
+		themeToActivate = selectedTheme || ( isVariant202B ? 'hello-biz' : null ),
 		continueWithHelloThemeText = getContinueButtonText( state.isHelloThemeActivated, isVariant202B ),
 		[ actionButtonText, setActionButtonText ] = useState( continueWithHelloThemeText );
 
@@ -63,9 +64,9 @@ export default function HelloTheme() {
 		const storedVariant202 = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT202_VARIANT );
 		setVariant202( storedVariant202 );
 
-		const currentIsVariant201B = 'B' !== storedVariant202;
+		const currentIsVariant202B = 'B' === storedVariant202;
 
-		const shouldAutoSelectHelloBiz = ! currentIsVariant201B && ! selectedTheme;
+		const shouldAutoSelectHelloBiz = currentIsVariant202B && ! selectedTheme;
 
 		if ( shouldAutoSelectHelloBiz ) {
 			setSelectedTheme( 'hello-biz' );
@@ -150,8 +151,7 @@ export default function HelloTheme() {
 
 		updateState( { isHelloThemeInstalled: true } );
 
-		const currentTheme = selectedTheme || ( isVariant202B ? 'hello-biz' : null );
-		const themeSlug = 'hello-theme' === currentTheme ? 'hello-elementor' : 'hello-biz';
+		const themeSlug = 'hello-theme' === themeToActivate ? 'hello-elementor' : 'hello-biz';
 
 		setActivateHelloThemeAjaxState( {
 			data: {
@@ -166,8 +166,7 @@ export default function HelloTheme() {
 			setIsInstalling( true );
 		}
 
-		const currentTheme = selectedTheme || ( isVariant202B ? 'hello-biz' : null );
-		const themeSlug = 'hello-theme' === currentTheme ? 'hello-elementor' : 'hello-biz';
+		const themeSlug = 'hello-theme' === themeToActivate ? 'hello-elementor' : 'hello-biz';
 
 		wp.updates.ajax( 'install-theme', {
 			slug: themeSlug,
@@ -227,10 +226,7 @@ export default function HelloTheme() {
 				return;
 			}
 
-			// For non-variant B, ensure hello-biz is selected if no theme is set
-			const currentTheme = selectedTheme || ( isVariant202B ? 'hello-biz' : null );
-
-			if ( ! currentTheme ) {
+			if ( ! themeToActivate ) {
 				return;
 			}
 
