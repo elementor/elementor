@@ -7,15 +7,15 @@ type FieldProps = {
 	label: string;
 } & PropsWithChildren;
 
-export function Field({ label, children }: FieldProps) {
+export function Field( { label, children }: FieldProps ) {
 	return (
-		<Grid item xs={12}>
+		<Grid item xs={ 12 }>
 			<PopoverGridContainer>
-				<Grid item xs={6}>
-					<ControlFormLabel>{label}</ControlFormLabel>
+				<Grid item xs={ 6 }>
+					<ControlFormLabel>{ label }</ControlFormLabel>
 				</Grid>
-				<Grid item xs={6}>
-					{children}
+				<Grid item xs={ 6 }>
+					{ children }
 				</Grid>
 			</PopoverGridContainer>
 		</Grid>

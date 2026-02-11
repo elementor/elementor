@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo, ComponentType } from 'react';
+import { type ComponentType, useMemo } from 'react';
 import { PopoverContent } from '@elementor/editor-controls';
 import { Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -17,9 +17,9 @@ import {
 	createAnimationPreset,
 	createString,
 	extractBoolean,
+	extractCustomEffect,
 	extractSize,
 	extractString,
-	extractCustomEffect,
 } from '../utils/prop-value-utils';
 import { parseSizeValue } from '../utils/size-transform-utils';
 import { Direction } from './controls/direction';
@@ -342,4 +342,3 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		</PopoverContent>
 	);
 };
-

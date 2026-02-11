@@ -1,12 +1,24 @@
 import { type Unit } from '@elementor/editor-controls';
-import { sizePropTypeUtil, type SizePropValue, type BooleanPropValue, type NumberPropValue, type StringPropValue } from '@elementor/editor-props';
+import {
+	type CustomEffectProperties,
+	type CustomEffectPropertiesPropValue,
+	type MovementDimensions,
+	type MovementDimensionsPropValue,
+} from '@elementor/editor-elements';
+import {
+	type BooleanPropValue,
+	type NumberPropValue,
+	sizePropTypeUtil,
+	type SizePropValue,
+	type StringPropValue,
+} from '@elementor/editor-props';
 
 import { DEFAULT_TIME_UNIT, TIME_UNITS } from '../configs/time-constants';
 import {
 	type AnimationPresetPropValue,
+	type ConfigPropValue,
 	type CustomEffect,
 	type CustomEffectPropValue,
-	type ConfigPropValue,
 	type ElementInteractions,
 	type ExcludedBreakpointsPropValue,
 	type InteractionBreakpointsPropValue,
@@ -17,7 +29,6 @@ import {
 } from '../types';
 import { formatSizeValue, parseSizeValue } from '../utils/size-transform-utils';
 import { generateTempInteractionId } from './temp-id-utils';
-import { CustomEffectProperties, CustomEffectPropertiesPropValue, MovementDimensions, MovementDimensionsPropValue } from '@elementor/editor-elements';
 
 export const createString = ( value: string ): StringPropValue => ( {
 	$$type: 'string',
@@ -154,7 +165,9 @@ export const createCustomEffect = ( custom?: CustomEffect ): CustomEffectPropVal
 	};
 };
 
-export const createCustomEffectProperties = ( custom?: CustomEffectProperties ): CustomEffectPropertiesPropValue | undefined => {
+export const createCustomEffectProperties = (
+	custom?: CustomEffectProperties
+): CustomEffectPropertiesPropValue | undefined => {
 	if ( ! custom ) {
 		return undefined;
 	}
@@ -275,37 +288,47 @@ export const extractNumber = ( prop: NumberPropValue | undefined, fallback = 0 )
 	return prop?.value ?? fallback;
 };
 
-export const extractMovementDimensions = ( prop: MovementDimensionsPropValue | undefined, fallback?: MovementDimensions ): MovementDimensions | undefined => {
+export const extractMovementDimensions = (
+	prop: MovementDimensionsPropValue | undefined,
+	fallback?: MovementDimensions
+): MovementDimensions | undefined => {
 	if ( ! prop?.value ) {
 		return fallback;
 	}
 
 	return {
-		x: extractNumber(prop.value.x),
-		y: extractNumber(prop.value.y),
-		z: extractNumber(prop.value.z),
+		x: extractNumber( prop.value.x ),
+		y: extractNumber( prop.value.y ),
+		z: extractNumber( prop.value.z ),
 	};
 };
 
-export const extractCustomEffect = ( prop: CustomEffectPropValue | undefined, fallback?: CustomEffect ): CustomEffect | undefined => {
+export const extractCustomEffect = (
+	prop: CustomEffectPropValue | undefined,
+	fallback?: CustomEffect
+): CustomEffect | undefined => {
 	if ( ! prop?.value ) {
 		return fallback;
 	}
 
-	const from = prop.value.from ? {
-		opacity: extractNumber(prop.value.from.value.opacity),
-		scale: extractMovementDimensions(prop.value.from.value.scale),
-		move: extractMovementDimensions(prop.value.from.value.move),
-		rotate: extractMovementDimensions(prop.value.from.value.rotate),
-		skew: extractMovementDimensions(prop.value.from.value.skew),
-	} : undefined;
-	const to = prop.value.to ? {
-		opacity: extractNumber(prop.value.to.value.opacity),
-		scale: extractMovementDimensions(prop.value.to.value.scale),
-		move: extractMovementDimensions(prop.value.to.value.move),
-		rotate: extractMovementDimensions(prop.value.to.value.rotate),
-		skew: extractMovementDimensions(prop.value.to.value.skew),
-	} : undefined;
+	const from = prop.value.from
+		? {
+				opacity: extractNumber( prop.value.from.value.opacity ),
+				scale: extractMovementDimensions( prop.value.from.value.scale ),
+				move: extractMovementDimensions( prop.value.from.value.move ),
+				rotate: extractMovementDimensions( prop.value.from.value.rotate ),
+				skew: extractMovementDimensions( prop.value.from.value.skew ),
+		  }
+		: undefined;
+	const to = prop.value.to
+		? {
+				opacity: extractNumber( prop.value.to.value.opacity ),
+				scale: extractMovementDimensions( prop.value.to.value.scale ),
+				move: extractMovementDimensions( prop.value.to.value.move ),
+				rotate: extractMovementDimensions( prop.value.to.value.rotate ),
+				skew: extractMovementDimensions( prop.value.to.value.skew ),
+		  }
+		: undefined;
 
 	return {
 		from,

@@ -31,10 +31,7 @@ type InteractionsControlPropsMap = {
 	offsetBottom: FieldProps;
 };
 
-type AnyInteractionsControlProps = Exclude<
-	InteractionsControlPropsMap[ InteractionsControlType ],
-	undefined
->;
+type AnyInteractionsControlProps = Exclude< InteractionsControlPropsMap[ InteractionsControlType ], undefined >;
 
 type ControlOptions< T extends InteractionsControlType > = {
 	type: T;

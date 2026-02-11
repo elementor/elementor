@@ -2,15 +2,15 @@ import { type Unit } from '@elementor/editor-controls';
 import type {
 	AnimationPresetPropValue,
 	ConfigPropValue,
+	CustomEffect,
+	CustomEffectProperties,
+	CustomEffectPropValue,
 	ElementInteractions,
 	ExcludedBreakpointsPropValue,
 	InteractionBreakpointsPropValue,
 	InteractionItemPropValue,
-	TimingConfigPropValue,
-	CustomEffectPropValue,
-	CustomEffect,
-	CustomEffectProperties,
 	MovementDimensions,
+	TimingConfigPropValue,
 } from '@elementor/editor-elements';
 
 export type {

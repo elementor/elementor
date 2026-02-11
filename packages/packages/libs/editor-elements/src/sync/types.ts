@@ -1,4 +1,11 @@
-import { type StringPropValue, type NumberPropValue, type BooleanPropValue, type PropsSchema, type PropValue, type SizePropValue } from '@elementor/editor-props';
+import {
+	type BooleanPropValue,
+	type NumberPropValue,
+	type PropsSchema,
+	type PropValue,
+	type SizePropValue,
+	type StringPropValue,
+} from '@elementor/editor-props';
 import { type ClassState, type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 
 import { type ControlItem } from '../types';
