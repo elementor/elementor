@@ -622,14 +622,18 @@ class OnboardingTracker {
 			StorageManager.setString( endStateSentKey, 'true' );
 			TimingManager.clearStepStartTime( stepNumber );
 			this.sendStoredEventsIfConnected();
-		} else if ( 1 === stepNumber ) {
-			this.storeStep1EndStateForLater( eventData, storageKey );
-		} else {
-			this.dispatchEventWithoutTrigger( eventName, eventData );
-			StorageManager.remove( storageKey );
-			StorageManager.setString( endStateSentKey, 'true' );
-			TimingManager.clearStepStartTime( stepNumber );
+			return;
 		}
+
+		if ( ONBOARDING_STEP_NAMES.CONNECT === stepName ) {
+			this.storeStep1EndStateForLater( eventData, storageKey );
+			return;
+		}
+
+		this.dispatchEventWithoutTrigger( eventName, eventData );
+		StorageManager.remove( storageKey );
+		StorageManager.setString( endStateSentKey, 'true' );
+		TimingManager.clearStepStartTime( stepNumber );
 	}
 
 	getStepNumber( pageId ) {
