@@ -14,14 +14,19 @@ import {
 import { Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { FeatureGrid, type FeatureOption, ProPlanNotice } from '../../components/screens/site-features';
+import {
+	FeatureGrid,
+	type FeatureOption,
+	ProPlanNotice,
+} from '../../components/screens/site-features';
 
 interface SiteFeaturesProps {
 	selectedValues: string[];
 	onChange: ( values: string[] ) => void;
 }
 
-const EXPLORE_FEATURES_URL = 'https://elementor.com/features/?utm_source=onboarding&utm_medium=wp-dash';
+const EXPLORE_FEATURES_URL =
+	'https://elementor.com/features/?utm_source=onboarding&utm_medium=wp-dash';
 
 const STEP_TITLE_SX = {
 	color: '#0C0D0E',
@@ -90,13 +95,22 @@ const FEATURE_OPTIONS: FeatureOption[] = [
 	},
 ];
 
-const PRO_FEATURE_IDS = new Set( FEATURE_OPTIONS.filter( ( option ) => option.isPro ).map( ( option ) => option.id ) );
+const PRO_FEATURE_IDS = new Set(
+	FEATURE_OPTIONS.filter( ( option ) => option.isPro ).map(
+		( option ) => option.id
+	)
+);
 
-export function SiteFeatures( { selectedValues, onChange }: SiteFeaturesProps ) {
+export function SiteFeatures( {
+	selectedValues,
+	onChange,
+}: SiteFeaturesProps ) {
 	const handleFeatureClick = useCallback(
 		( id: string ) => {
 			const isSelected = selectedValues.includes( id );
-			const nextValues = isSelected ? selectedValues.filter( ( v ) => v !== id ) : [ ...selectedValues, id ];
+			const nextValues = isSelected
+				? selectedValues.filter( ( v ) => v !== id )
+				: [ ...selectedValues, id ];
 
 			onChange( nextValues );
 		},
@@ -116,10 +130,16 @@ export function SiteFeatures( { selectedValues, onChange }: SiteFeaturesProps ) 
 		<Stack spacing={ 4 } width="100%" sx={ { mb: '100px' } }>
 			<Stack spacing={ 1 } textAlign="center" alignItems="center">
 				<Typography component="h2" sx={ STEP_TITLE_SX }>
-					{ __( 'What do you want to include in your site?', 'elementor' ) }
+					{ __(
+						'What do you want to include in your site?',
+						'elementor'
+					) }
 				</Typography>
 				<Typography variant="body1" color="text.secondary">
-					{ __( "We'll use this to tailor suggestions for you.", 'elementor' ) }
+					{ __(
+						"We'll use this to tailor suggestions for you.",
+						'elementor'
+					) }
 				</Typography>
 			</Stack>
 

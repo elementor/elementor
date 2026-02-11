@@ -50,10 +50,15 @@ const IMAGE_MIN_WIDTH = 464;
 const CONTENT_IMAGE_MIN_GAP = 80;
 
 const SplitLayoutRoot = styled( Box, {
-	shouldForwardProp: ( prop ) => ! [ 'leftRatio', 'rightRatio' ].includes( prop as string ),
+	shouldForwardProp: ( prop ) =>
+		! [ 'leftRatio', 'rightRatio' ].includes( prop as string ),
 } )< SplitLayoutRootProps >( ( { theme, leftRatio, rightRatio } ) => {
 	const hideImageBreakpoint =
-		LEFT_PANEL_CONTENT_WIDTH + LEFT_PANEL_PADDING_X * 2 + CONTENT_IMAGE_MIN_GAP + IMAGE_MIN_WIDTH + LAYOUT_GAP * 8;
+		LEFT_PANEL_CONTENT_WIDTH +
+		LEFT_PANEL_PADDING_X * 2 +
+		CONTENT_IMAGE_MIN_GAP +
+		IMAGE_MIN_WIDTH +
+		LAYOUT_GAP * 8;
 
 	return {
 		flex: 1,
@@ -98,19 +103,30 @@ const ContentWrapper = styled( Box, {
 	width: '100%',
 } ) );
 
-export function SplitLayout( { left, rightConfig, progress }: SplitLayoutProps ) {
-	const ratio = LAYOUT_RATIOS[ rightConfig.imageLayout ] ?? LAYOUT_RATIOS.wide;
-	const contentWidth = rightConfig.contentMaxWidth ?? LEFT_PANEL_CONTENT_WIDTH;
+export function SplitLayout( {
+	left,
+	rightConfig,
+	progress,
+}: SplitLayoutProps ) {
+	const ratio =
+		LAYOUT_RATIOS[ rightConfig.imageLayout ] ?? LAYOUT_RATIOS.wide;
+	const contentWidth =
+		rightConfig.contentMaxWidth ?? LEFT_PANEL_CONTENT_WIDTH;
 
 	return (
 		<SplitLayoutRoot leftRatio={ ratio.left } rightRatio={ ratio.right }>
 			<LeftPanel>
 				{ progress && (
 					<ProgressBarWrapper>
-						<ProgressBar currentStep={ progress.currentStep } totalSteps={ progress.totalSteps } />
+						<ProgressBar
+							currentStep={ progress.currentStep }
+							totalSteps={ progress.totalSteps }
+						/>
 					</ProgressBarWrapper>
 				) }
-				<ContentWrapper contentMaxWidth={ contentWidth }>{ left }</ContentWrapper>
+				<ContentWrapper contentMaxWidth={ contentWidth }>
+					{ left }
+				</ContentWrapper>
 			</LeftPanel>
 			<RightPanel config={ rightConfig } />
 		</SplitLayoutRoot>

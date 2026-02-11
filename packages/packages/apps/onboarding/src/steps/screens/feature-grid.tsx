@@ -55,9 +55,7 @@ const SelectionBadge = styled( Box, {
 	width: SELECTION_BADGE_SIZE,
 	height: SELECTION_BADGE_SIZE,
 	borderRadius: 25,
-	backgroundColor: isPro
-		? theme.palette.promotion.main
-		: theme.palette.text.primary,
+	backgroundColor: isPro ? theme.palette.promotion.main : theme.palette.text.primary,
 	color: theme.palette.common.white,
 	'& .MuiSvgIcon-root': {
 		fontSize: SELECTION_BADGE_ICON_SIZE,
@@ -65,8 +63,7 @@ const SelectionBadge = styled( Box, {
 } ) );
 
 const FeatureCard = styled( Box, {
-	shouldForwardProp: ( prop ) =>
-		! [ 'isSelected', 'isExploreMore' ].includes( prop as string ),
+	shouldForwardProp: ( prop ) => ! [ 'isSelected', 'isExploreMore' ].includes( prop as string ),
 } )< FeatureCardProps >( ( { theme, isSelected, isExploreMore } ) => ( {
 	position: 'relative',
 	display: 'flex',
@@ -77,9 +74,7 @@ const FeatureCard = styled( Box, {
 	minHeight: 96,
 	padding: theme.spacing( 2 ),
 	borderRadius: 8,
-	border: isSelected
-		? '2px solid #1F2124'
-		: `1px solid ${ theme.palette.divider }`,
+	border: isSelected ? '2px solid #1F2124' : `1px solid ${ theme.palette.divider }`,
 	cursor: 'pointer',
 	transition: 'border-color 0.2s ease, background-color 0.2s ease',
 	'&:hover': {
@@ -99,21 +94,13 @@ const FeatureCard = styled( Box, {
 	} ),
 } ) );
 
-export function FeatureGrid( {
-	options,
-	selectedValues,
-	onFeatureClick,
-	onExploreMoreClick,
-}: FeatureGridProps ) {
-	const handleKeyDown = useCallback(
-		( e: React.KeyboardEvent, handler: () => void ) => {
-			if ( 'Enter' === e.key || ' ' === e.key ) {
-				e.preventDefault();
-				handler();
-			}
-		},
-		[]
-	);
+export function FeatureGrid( { options, selectedValues, onFeatureClick, onExploreMoreClick }: FeatureGridProps ) {
+	const handleKeyDown = useCallback( ( e: React.KeyboardEvent, handler: () => void ) => {
+		if ( 'Enter' === e.key || ' ' === e.key ) {
+			e.preventDefault();
+			handler();
+		}
+	}, [] );
 
 	return (
 		<Box
@@ -140,9 +127,7 @@ export function FeatureGrid( {
 						role="button"
 						tabIndex={ 0 }
 						onKeyDown={ ( e: React.KeyboardEvent ) =>
-							handleKeyDown( e, () =>
-								onFeatureClick( option.id )
-							)
+							handleKeyDown( e, () => onFeatureClick( option.id ) )
 						}
 						aria-pressed={ isSelected }
 					>
@@ -154,11 +139,7 @@ export function FeatureGrid( {
 						<Box className="feature-icon" sx={ { mb: 1 } }>
 							<Icon fontSize="medium" />
 						</Box>
-						<Typography
-							variant="body2"
-							color="text.secondary"
-							textAlign="center"
-						>
+						<Typography variant="body2" color="text.secondary" textAlign="center">
 							{ option.label }
 						</Typography>
 					</FeatureCard>
@@ -170,18 +151,12 @@ export function FeatureGrid( {
 				onClick={ onExploreMoreClick }
 				role="button"
 				tabIndex={ 0 }
-				onKeyDown={ ( e: React.KeyboardEvent ) =>
-					handleKeyDown( e, onExploreMoreClick )
-				}
+				onKeyDown={ ( e: React.KeyboardEvent ) => handleKeyDown( e, onExploreMoreClick ) }
 			>
 				<Box className="feature-icon" sx={ { mb: 1 } }>
 					<EXPLORE_MORE_OPTION.Icon fontSize="small" />
 				</Box>
-				<Typography
-					variant="body2"
-					color="text.secondary"
-					textAlign="center"
-				>
+				<Typography variant="body2" color="text.secondary" textAlign="center">
 					{ EXPLORE_MORE_OPTION.label }
 				</Typography>
 			</FeatureCard>

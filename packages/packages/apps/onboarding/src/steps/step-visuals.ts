@@ -2,7 +2,8 @@ import { StepId, type StepIdType, type StepVisualConfig } from '../types';
 
 const ONBOARDING_ASSETS_PATH = 'images/app/e-onboarding/';
 
-const getAssetsBaseUrl = () => window.elementorCommon?.config?.urls?.assets ?? '';
+const getAssetsBaseUrl = () =>
+	window.elementorCommon?.config?.urls?.assets ?? '';
 
 export const getOnboardingAssetUrl = ( fileName: string ) => {
 	const baseUrl = getAssetsBaseUrl();
@@ -60,4 +61,5 @@ const stepVisuals: Record< StepIdType, StepVisualConfig > = {
 
 export const getLoginVisualConfig = (): StepVisualConfig => LOGIN_CONFIG;
 
-export const getStepVisualConfig = ( stepId: StepIdType ): StepVisualConfig => stepVisuals[ stepId ] ?? DEFAULT_CONFIG;
+export const getStepVisualConfig = ( stepId: StepIdType ): StepVisualConfig =>
+	stepVisuals[ stepId ] ?? DEFAULT_CONFIG;
