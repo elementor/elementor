@@ -26,6 +26,7 @@ export type Dependency = {
 	relation: 'or' | 'and';
 	terms: ( DependencyTerm | Dependency )[];
 	newValue?: TransformablePropValue< string >;
+	shouldHide?: boolean;
 };
 
 type BasePropTypeMeta = {

@@ -17,10 +17,10 @@ export const ConditionalSettingsField: React.FC< {
 
 	const elementSettingValues = useElementSettings< PropValue >( elementId, Object.keys( propsSchema ) );
 
-	const dependencyBehavior = propType?.settings?.dependencyBehavior ?? 'disable';
+	const shouldHide = propType?.dependencies?.shouldHide === true;
 	const dependencyNotMet = ! isDependencyMet( propType?.dependencies, elementSettingValues ).isMet;
 
-	if ( dependencyBehavior === 'hide' && dependencyNotMet ) {
+	if ( shouldHide && dependencyNotMet ) {
 		return null;
 	}
 

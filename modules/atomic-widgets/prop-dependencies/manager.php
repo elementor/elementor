@@ -37,7 +37,8 @@ class Manager {
 	 *             path: array<string>,
 	 *             value?: mixed,
 	 *             newValue?: array
-	 *         }
+	 *         },
+	 *         shouldHide?: bool
 	 *     }
 	 */
 	private ?array $dependencies;
@@ -50,6 +51,14 @@ class Manager {
 
 	public static function make( string $relation = self::RELATION_OR ): self {
 		return new self( $relation );
+	}
+
+	public function shouldHide( bool $should_hide = true ): self {
+		if ( ! empty( $this->dependencies ) ) {
+			$this->dependencies['shouldHide'] = $should_hide;
+		}
+
+		return $this;
 	}
 
 	/**
