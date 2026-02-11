@@ -149,9 +149,10 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 	protected function start_run() {
 		$updater = $this->get_task_runner();
 
-		// Only skip if process is actively running (has lock), not just if queue has items.
-		// Queue may have items from a failed previous attempt that never processed.
-		if ( $updater->is_process_locked() ) {
+		// Skip if process is actively running (has lock) or queue already has items.
+		// Stuck queues (items exist but no lock) are handled by the shutdown fallback
+		// registered in the constructor, so we don't need to re-push callbacks here.
+		if ( $updater->is_process_locked() || $updater->is_running() ) {
 			return;
 		}
 
