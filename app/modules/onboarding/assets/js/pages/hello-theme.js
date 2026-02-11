@@ -40,6 +40,7 @@ export default function HelloTheme() {
 		goToNextScreen = useCallback( () => navigate( 'onboarding/' + nextStep ), [ navigate, nextStep ] ),
 		isVariant202B = 'B' === variant202,
 		themeToActivate = selectedTheme || ( isVariant202B ? 'hello-biz' : null ),
+		themeSlug = 'hello-theme' === themeToActivate ? 'hello-elementor' : 'hello-biz',
 		continueWithHelloThemeText = getContinueButtonText( state.isHelloThemeActivated, isVariant202B ),
 		[ actionButtonText, setActionButtonText ] = useState( continueWithHelloThemeText );
 
@@ -151,8 +152,6 @@ export default function HelloTheme() {
 
 		updateState( { isHelloThemeInstalled: true } );
 
-		const themeSlug = 'hello-theme' === themeToActivate ? 'hello-elementor' : 'hello-biz';
-
 		setActivateHelloThemeAjaxState( {
 			data: {
 				action: 'elementor_activate_hello_theme',
@@ -165,8 +164,6 @@ export default function HelloTheme() {
 		if ( ! isInstalling ) {
 			setIsInstalling( true );
 		}
-
-		const themeSlug = 'hello-theme' === themeToActivate ? 'hello-elementor' : 'hello-biz';
 
 		wp.updates.ajax( 'install-theme', {
 			slug: themeSlug,
