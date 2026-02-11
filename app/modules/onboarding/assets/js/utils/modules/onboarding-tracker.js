@@ -1147,7 +1147,6 @@ class OnboardingTracker {
 		if ( 2 === stepNumber || 'hello' === currentStep || 'hello_biz' === currentStep ) {
 			this.startSessionRecordingIfNeeded();
 			this.sendStoredStep1EventsOnStep2();
-			this.sendExperimentStarted( 201 );
 			this.sendExperimentStarted( 202 );
 			this.sendStep2ThemesLoaded();
 		}
@@ -1250,12 +1249,6 @@ class OnboardingTracker {
 				enabledKey: 'isExperiment101Enabled',
 				variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT,
 				startedKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT101_STARTED,
-			},
-			201: {
-				name: 'core_onboarding_experiment201',
-				enabledKey: 'isExperiment201Enabled',
-				variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT,
-				startedKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT201_STARTED,
 			},
 			202: {
 				name: 'core_onboarding_experiment202',

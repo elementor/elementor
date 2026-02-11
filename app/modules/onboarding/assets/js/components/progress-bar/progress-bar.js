@@ -8,8 +8,7 @@ import { OnboardingEventTracking, ONBOARDING_STORAGE_KEYS } from '../../utils/on
 export default function ProgressBar() {
 	const { state } = useContext( OnboardingContext ),
 		navigate = useNavigate(),
-		experiment201Variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT ),
-		isExperiment201VariantB = 'B' === experiment201Variant,
+		isExperiment201VariantB = true,
 		experiment401Variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT401_VARIANT ),
 		isExperiment401VariantB = 'B' === experiment401Variant,
 		experiment402Variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT402_VARIANT ),

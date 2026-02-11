@@ -42,14 +42,13 @@ export default function HelloTheme() {
 	const [ noticeState, setNoticeState ] = useState( state.isHelloThemeActivated ? noticeStateSuccess : null );
 
 	const [ activeTimeouts, setActiveTimeouts ] = useState( [] ),
-		[ variant201, setVariant201 ] = useState( null ),
 		[ variant202, setVariant202 ] = useState( null ),
 		navigate = useNavigate(),
 		pageId = 'hello',
 		nextStep = elementorAppConfig.onboarding.experiment ? 'chooseFeatures' : 'siteName',
 		goToNextScreen = useCallback( () => navigate( 'onboarding/' + nextStep ), [ navigate, nextStep ] ),
-		isVariant201B = 'B' === variant201,
 		isVariant202B = 'B' === variant202,
+		isVariant201B = ! isVariant202B,
 		continueWithHelloThemeText = getContinueButtonText( state.isHelloThemeActivated, isVariant201B, isVariant202B ),
 		[ actionButtonText, setActionButtonText ] = useState( continueWithHelloThemeText );
 
@@ -71,12 +70,10 @@ export default function HelloTheme() {
 		OnboardingEventTracking.setupAllUpgradeButtons( state.currentStep );
 		OnboardingEventTracking.onStepLoad( 2 );
 
-		const storedVariant201 = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT );
 		const storedVariant202 = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT202_VARIANT );
-		setVariant201( storedVariant201 );
 		setVariant202( storedVariant202 );
 
-		const currentIsVariant201B = 'B' === storedVariant201;
+		const currentIsVariant201B = 'B' !== storedVariant202;
 
 		const shouldAutoSelectHelloBiz = ! currentIsVariant201B && ! selectedTheme;
 
