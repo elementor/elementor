@@ -124,7 +124,10 @@ class Onboarding_Progress_Manager {
 		}
 
 		if ( isset( $params['theme_selection'] ) ) {
-			$choices->set_theme_selection( $params['theme_selection'] );
+			$theme_slug = $params['theme_selection'];
+			$choices->set_theme_selection( $theme_slug );
+
+			$this->install_and_activate_theme( $theme_slug );
 		}
 
 		if ( isset( $params['site_features'] ) ) {
@@ -132,6 +135,35 @@ class Onboarding_Progress_Manager {
 		}
 
 		return $this->save_choices( $choices );
+	}
+
+	private function install_and_activate_theme( string $theme_slug ): void {
+		$allowed_themes = [ 'hello-elementor', 'hello-biz' ];
+
+		if ( ! in_array( $theme_slug, $allowed_themes, true ) ) {
+			return;
+		}
+
+		if ( ! current_user_can( 'install_themes' ) || ! current_user_can( 'switch_themes' ) ) {
+			return;
+		}
+
+		$theme = wp_get_theme( $theme_slug );
+
+		if ( ! $theme->exists() ) {
+			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader-skin.php';
+
+			$skin = new \WP_Ajax_Upgrader_Skin();
+			$upgrader = new \Theme_Upgrader( $skin );
+			$result = $upgrader->install( "https://downloads.wordpress.org/theme/{$theme_slug}.latest-stable.zip" );
+
+			if ( is_wp_error( $result ) || ! $result ) {
+				return;
+			}
+		}
+
+		switch_theme( $theme_slug );
 	}
 
 	public function reset(): void {
