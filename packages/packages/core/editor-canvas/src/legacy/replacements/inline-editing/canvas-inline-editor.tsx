@@ -53,7 +53,8 @@ export const CanvasInlineEditor = ( {
 
 	return (
 		<ThemeProvider>
-			<InlineEditingOverlay expectedTag={ expectedTag } rootElement={ rootElement } id={ id } />			<style>
+			<InlineEditingOverlay expectedTag={ expectedTag } rootElement={ rootElement } id={ id } />			
+			<style>
 				{ `
 			.ProseMirror > * {
 				height: 100%;
