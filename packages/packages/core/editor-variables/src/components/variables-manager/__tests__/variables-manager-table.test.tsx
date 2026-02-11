@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ColorFilterIcon } from '@elementor/icons';
 import { type IconButtonProps, type StackProps, type TableCellProps } from '@elementor/ui';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 import { type TVariablesList } from '../../../storage';
 import { VariablesManagerTable } from '../variables-manager-table';
@@ -100,6 +100,7 @@ jest.mock( '../variable-editable-cell', () => ( {
 		initialValue: string;
 		prefixElement?: React.ReactNode;
 		children: React.ReactNode;
+		disabled?: boolean;
 	} ) => {
 		const [ isEditing, setIsEditing ] = React.useState( false );
 		return isEditing ? (
@@ -111,16 +112,19 @@ jest.mock( '../variable-editable-cell', () => ( {
 				data-props={ JSON.stringify( {
 					initialValue: props.initialValue,
 					prefixElement: !! props.prefixElement,
+					disabled: props.disabled,
 				} ) }
 			/>
 		) : (
 			<button
 				type="button"
-				onClick={ () => setIsEditing( true ) }
+				onClick={ () => ! props.disabled && setIsEditing( true ) }
 				data-props={ JSON.stringify( {
 					initialValue: props.initialValue,
 					prefixElement: !! props.prefixElement,
+					disabled: props.disabled,
 				} ) }
+				disabled={ props.disabled }
 			>
 				{ props.children }
 			</button>
@@ -130,18 +134,41 @@ jest.mock( '../variable-editable-cell', () => ( {
 
 jest.mock( '@elementor/editor-ui', () => ( {
 	EllipsisWithTooltip: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
+	useCanvasClickHandler: jest.fn(),
+	PromotionChip: ( props: { children?: React.ReactNode } ) => (
+		<div data-testid="promotion-chip">{ props.children }</div>
+	),
+	PromotionPopover: ( props: { children?: React.ReactNode } ) => (
+		<div data-testid="promotion-popover">{ props.children }</div>
+	),
 } ) );
 
 jest.mock(
 	'../../../variables-registry/variable-type-registry',
 	() => ( {
-		getVariableType: () => ( {
+		getVariableType: ( type: string ) => ( {
 			icon: ColorFilterIcon,
 			valueField: () => <input />,
+			variableType: type,
 		} ),
 	} ),
 	{ virtual: true }
 );
+
+jest.mock( '@wordpress/i18n', () => ( {
+	__: ( text: string ) => text,
+	sprintf: jest.fn( ( format: string ) => format ),
+} ) );
+
+const mockCanEdit = jest.fn< boolean, [ string ] >( () => true );
+const mockCanCreate = jest.fn< boolean, [ string ] >( () => true );
+
+jest.mock( '../../../hooks/use-quota-permissions', () => ( {
+	useQuotaPermissions: jest.fn( ( type: string ) => ( {
+		canEdit: () => mockCanEdit( type ),
+		canCreate: () => mockCanCreate( type ),
+	} ) ),
+} ) );
 
 describe( 'VariablesManagerTable', () => {
 	const mockVariables: TVariablesList = {
@@ -166,13 +193,13 @@ describe( 'VariablesManagerTable', () => {
 		},
 	];
 
+	const mockMenuActionsFunction = jest.fn( () => mockMenuActions );
+
 	const renderTable = ( props = {} ) => {
 		const defaultProps = {
 			variables: mockVariables,
-			menuActions: mockMenuActions,
+			menuActions: mockMenuActionsFunction,
 			onChange: jest.fn(),
-			ids: Object.keys( mockVariables ),
-			onIdsChange: jest.fn(),
 		};
 
 		return render( <VariablesManagerTable { ...defaultProps } { ...props } /> );
@@ -183,8 +210,13 @@ describe( 'VariablesManagerTable', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		jest.restoreAllMocks();
+
 		// Suppress error for expected React warnings
 		window.console.error = mockConsoleError;
+
+		mockCanEdit.mockReturnValue( true );
+		mockCanCreate.mockReturnValue( true );
 	} );
 
 	afterEach( () => {
@@ -310,5 +342,39 @@ describe( 'VariablesManagerTable', () => {
 		const provider = screen.getByLabelText( 'Sortable variables list' );
 		const currentOrder = JSON.parse( provider.getAttribute( 'data-value' ) || '[]' );
 		expect( currentOrder ).toEqual( [ 'var-1', 'var-2' ] );
+	} );
+
+	it( 'should not allow editing when quota permissions deny edit', () => {
+		// Arrange
+		const mixedVariables: TVariablesList = {
+			'var-color': {
+				label: 'Color Variable',
+				value: 'red',
+				type: 'color',
+			},
+			'var-size': {
+				label: 'Size Variable',
+				value: '16px',
+				type: 'size',
+			},
+		};
+
+		mockCanEdit.mockImplementation( ( type: string ) => type !== 'size' );
+
+		// Act
+		renderTable( { variables: mixedVariables } );
+
+		// Assert
+		const sizeNameButton = screen.getByRole( 'button', { name: 'Size Variable' } );
+		expect( sizeNameButton ).toBeDisabled();
+
+		fireEvent.dblClick( sizeNameButton );
+		expect( screen.queryByLabelText( 'Edit value' ) ).not.toBeInTheDocument();
+
+		const colorNameButton = screen.getByRole( 'button', { name: 'Color Variable' } );
+		expect( colorNameButton ).toBeEnabled();
+
+		fireEvent.click( colorNameButton );
+		expect( screen.getByLabelText( 'Edit value' ) ).toBeInTheDocument();
 	} );
 } );

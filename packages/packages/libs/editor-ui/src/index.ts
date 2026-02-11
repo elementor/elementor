@@ -12,10 +12,10 @@ export { GlobalDialog, openDialog, closeDialog } from './components/global-dialo
 export { SearchField } from './components/search-field';
 export { Form } from './components/form';
 export { CtaButton } from './components/cta-button';
-export { PromotionInfotip } from './components/promotion-infotip';
-export { PromotionPopover } from './components/promotion-popover';
-export { PromotionChip } from './components/promotion-chip';
-export { PromotionAlert } from './components/promotion-alert';
+export { PromotionInfotip } from './components/promotions/promotion-infotip';
+export { PromotionPopover } from './components/promotions/promotion-popover';
+export { PromotionChip } from './components/promotions/promotion-chip';
+export { PromotionAlert } from './components/promotions/promotion-alert';
 
 export * from './components/popover';
 export * from './components/save-changes-dialog';
@@ -23,3 +23,4 @@ export { ConfirmationDialog } from './components/confirmation-dialog';
 
 // hooks
 export { useEditable } from './hooks/use-editable';
+export { useCanvasClickHandler } from './hooks/use-canvas-click-handler';
