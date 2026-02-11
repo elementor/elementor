@@ -116,7 +116,7 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 
 			'poster_enabled' => Boolean_Prop_Type::make()->default( false ),
 			'poster' => Image_Prop_Type::make()
-				->default_size( 'full' )
+				->default_size( 'medium_large' )
 				->default_url( Placeholder_Image::get_placeholder_image() )
 				->set_dependencies( $poster_dependencies ),
 
