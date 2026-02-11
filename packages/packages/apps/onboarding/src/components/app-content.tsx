@@ -7,6 +7,7 @@ import { useOnboarding } from '../hooks/use-onboarding';
 import { useUpdateChoices } from '../hooks/use-update-choices';
 import { useUpdateProgress } from '../hooks/use-update-progress';
 import { BuildingFor } from '../steps/screens/building-for';
+import { ExperienceLevel } from '../steps/screens/experience-level';
 import { Login } from '../steps/screens/login';
 import { getStepVisualConfig } from '../steps/step-visuals';
 import { StepId } from '../types';
@@ -103,39 +104,42 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 		);
 	}, [ actions, stepIndex, totalSteps, updateProgress ] );
 
-	const handleContinue = useCallback( () => {
-		const choiceForStep = choices[ stepId as keyof typeof choices ];
-		const hasChoice =
-			choiceForStep !== null &&
-			choiceForStep !== undefined &&
-			( ! Array.isArray( choiceForStep ) || choiceForStep.length > 0 );
+	const handleContinue = useCallback(
+		( directChoice?: Record< string, unknown > ) => {
+			if ( directChoice ) {
+				updateChoices.mutate( directChoice );
+			} else {
+				const storedChoice = choices[ stepId as keyof typeof choices ];
 
-		if ( hasChoice ) {
-			updateChoices.mutate( { [ stepId ]: choiceForStep } );
-		}
-
-		updateProgress.mutate(
-			{
-				complete_step: stepId,
-				step_index: stepIndex,
-				total_steps: totalSteps,
-			},
-			{
-				onSuccess: () => {
-					actions.completeStep( stepId );
-
-					if ( ! isLast ) {
-						actions.nextStep();
-					} else {
-						onComplete?.();
-					}
-				},
-				onError: () => {
-					actions.setError( __( 'Failed to complete step.', 'elementor' ) );
-				},
+				if ( ! isChoiceEmpty( storedChoice ) ) {
+					updateChoices.mutate( { [ stepId ]: storedChoice } );
+				}
 			}
-		);
-	}, [ stepId, stepIndex, totalSteps, choices, actions, isLast, onComplete, updateProgress, updateChoices ] );
+
+			updateProgress.mutate(
+				{
+					complete_step: stepId,
+					step_index: stepIndex,
+					total_steps: totalSteps,
+				},
+				{
+					onSuccess: () => {
+						actions.completeStep( stepId );
+
+						if ( ! isLast ) {
+							actions.nextStep();
+						} else {
+							onComplete?.();
+						}
+					},
+					onError: () => {
+						actions.setError( __( 'Failed to complete step.', 'elementor' ) );
+					},
+				}
+			);
+		},
+		[ stepId, stepIndex, totalSteps, choices, actions, isLast, onComplete, updateProgress, updateChoices ]
+	);
 
 	const rightPanelConfig = useMemo( () => getStepVisualConfig( stepId ), [ stepId ] );
 	const isPending = updateProgress.isPending || isLoading;
@@ -147,6 +151,8 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 		switch ( stepId ) {
 			case StepId.BUILDING_FOR:
 				return <BuildingFor onComplete={ handleContinue } />;
+			case StepId.EXPERIENCE_LEVEL:
+				return <ExperienceLevel onComplete={ handleContinue } />;
 			default:
 				return <Box sx={ { flex: 1, width: '100%' } } />;
 		}
@@ -189,7 +195,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 						continueLoading={ isPending }
 						onBack={ handleBack }
 						onSkip={ handleSkip }
-						onContinue={ handleContinue }
+						onContinue={ () => handleContinue() }
 					/>
 				</Footer>
 			}
