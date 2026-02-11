@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
 import { ChevronRightSmallIcon } from '@elementor/icons';
-import { Box, Button, Stack, styled, Typography, withDirection } from '@elementor/ui';
+import { Box, Stack, styled, Typography, withDirection } from '@elementor/ui';
 import { __, sprintf } from '@wordpress/i18n';
 
+import { OptionButton } from '../../components/ui/option-button';
 import { useOnboarding } from '../../hooks/use-onboarding';
-import { useUpdateChoices } from '../../hooks/use-update-choices';
 
 const GREETING_WAVE = '\uD83D\uDC4B';
 
@@ -24,45 +24,6 @@ const GreetingBanner = styled( Box )( ( { theme } ) => ( {
 	alignSelf: 'flex-start',
 } ) );
 
-const OptionButton = styled( Button )( ( { theme } ) => ( {
-	justifyContent: 'space-between',
-	height: 56,
-	borderRadius: 8,
-	textTransform: 'none',
-	fontWeight: theme.typography.body1.fontWeight,
-	fontSize: theme.typography.body1.fontSize,
-	letterSpacing: theme.typography.body1.letterSpacing,
-	lineHeight: theme.typography.body1.lineHeight,
-	color: theme.palette.text.secondary,
-	borderColor: theme.palette.divider,
-	paddingInlineStart: 20,
-	paddingInlineEnd: 12,
-	'& .MuiButton-endIcon': {
-		opacity: 0,
-	},
-	'&:hover': {
-		borderColor: theme.palette.divider,
-		'& .MuiButton-endIcon': {
-			opacity: 1,
-		},
-	},
-	'&:focus, &:active, &.Mui-focusVisible': {
-		outline: 'none',
-		backgroundColor: 'transparent',
-		borderColor: theme.palette.divider,
-	},
-	'&.Mui-selected': {
-		borderWidth: 2,
-		borderColor: theme.palette.text.primary,
-		'& .MuiButton-endIcon': {
-			opacity: 1,
-		},
-		'&:hover': {
-			borderColor: theme.palette.text.primary,
-		},
-	},
-} ) );
-
 const BUILDING_FOR_OPTIONS = [
 	{ value: 'myself', label: __( 'Myself or someone I know', 'elementor' ) },
 	{ value: 'business', label: __( 'My business or workplace', 'elementor' ) },
@@ -73,12 +34,11 @@ const BUILDING_FOR_OPTIONS = [
 type BuildingForValue = ( typeof BUILDING_FOR_OPTIONS )[ number ][ 'value' ];
 
 interface BuildingForProps {
-	onComplete: () => void;
+	onComplete: ( choice: Record< string, unknown > ) => void;
 }
 
 export function BuildingFor( { onComplete }: BuildingForProps ) {
 	const { userName, isConnected, isGuest, choices, actions } = useOnboarding();
-	const updateChoices = useUpdateChoices();
 
 	const selectedValue = choices.building_for;
 
@@ -102,12 +62,11 @@ export function BuildingFor( { onComplete }: BuildingForProps ) {
 	}, [ userName, isConnected, isGuest ] );
 
 	const handleSelect = useCallback(
-		async ( value: BuildingForValue ) => {
+		( value: BuildingForValue ) => {
 			actions.setUserChoice( 'building_for', value );
-			await updateChoices.mutateAsync( { building_for: value } );
-			onComplete();
+			onComplete( { building_for: value } );
 		},
-		[ actions, updateChoices, onComplete ]
+		[ actions, onComplete ]
 	);
 
 	return (
