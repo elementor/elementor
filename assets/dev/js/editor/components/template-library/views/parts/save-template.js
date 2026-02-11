@@ -84,14 +84,6 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary[ `${ context }Modal` ],
 		} );
 
-		const shouldStartSessionRecording = elementorCommon.config.editor_events.session_replays?.cloudTemplates &&
-		! elementor.templates.eventManager.isSessionRecordingInProgress();
-
-		if ( shouldStartSessionRecording ) {
-			elementor.templates.eventManager.startSessionRecording();
-			elementor.templates.eventManager.sendCloudTemplatesSessionRecordingStartEvent();
-		}
-
 		if ( SAVE_CONTEXTS.SAVE === context ) {
 			this.handleSaveAction();
 		}
