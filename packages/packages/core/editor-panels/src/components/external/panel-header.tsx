@@ -12,7 +12,7 @@ const Header = styled( Box )( ( { theme } ) => ( {
 export default function PanelHeader( { children, ...props }: BoxProps ) {
 	return (
 		<>
-			<Header component="header" { ...props } data-type="panel-header">
+			<Header component="header" { ...props }>
 				{ children }
 			</Header>
 		</>

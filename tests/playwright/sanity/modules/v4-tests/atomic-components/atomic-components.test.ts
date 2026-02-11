@@ -1,56 +1,15 @@
 import { BrowserContext, expect, Page } from '@playwright/test';
-import { parallelTest as test } from '../../../parallelTest';
-import WpAdminPage from '../../../pages/wp-admin-page';
-import EditorPage from '../../../pages/editor-page';
-import EditorSelectors from '../../../selectors/editor-selectors';
-import { timeouts } from '../../../config/timeouts';
+import { parallelTest as test } from '../../../../parallelTest';
+import WpAdminPage from '../../../../pages/wp-admin-page';
+import EditorPage from '../../../../pages/editor-page';
+import EditorSelectors from '../../../../selectors/editor-selectors';
+import { timeouts } from '../../../../config/timeouts';
 
-const OVERRIDABLE_PROP_FORM_TITLE = 'Create new property';
+import { exitComponentEditMode, openComponentsTab } from './utils/navigation';
+import { createComponent, createOverridableProp, uniqueName } from './utils/creation';
+import { getInstancePanelPropInput, selectComponentInstance } from './utils/selection';
 
-const uniqueName = ( baseName: string ) => `${ baseName } ${ Date.now() }`;
-
-const getOverridablePropFormNameInput = ( page: Page ) => {
-	const popover = page.locator( EditorSelectors.components.createPopup ).filter( { hasText: OVERRIDABLE_PROP_FORM_TITLE } );
-	return popover.getByRole( 'textbox' ).first();
-};
-
-const dismissOnboardingDialog = async ( page: Page ) => {
-	try {
-		const onboardingDismiss = page.getByRole( 'button', { name: 'Got it' } );
-		await onboardingDismiss.waitFor( { state: 'visible', timeout: timeouts.longAction } );
-		onboardingDismiss.click();
-	} catch {}
-};
-
-const exitComponentEditMode = async ( editor: EditorPage ) => {
-	const backButton = editor.page.locator( EditorSelectors.components.exitEditModeButton );
-	await backButton.click();
-	const backdrop = editor.getPreviewFrame().getByRole( 'button', { name: 'Exit component editing mode' } );
-	await expect( backdrop ).not.toBeVisible( { timeout: timeouts.longAction } );
-};
-
-const INSTANCE_PANEL_SELECTOR = '[data-type="instance-editing-panel"]';
-
-const selectComponentInstance = async ( editor: EditorPage, index: 'first' | 'last' = 'first' ) => {
-	const instanceSelector = EditorSelectors.components.instanceWidget;
-	const topLevelSelector = `${ instanceSelector }:not(${ instanceSelector } ${ instanceSelector })`;
-	const locator = editor.getPreviewFrame().locator( topLevelSelector );
-	const instance = 'first' === index ? locator.first() : locator.last();
-	await instance.waitFor( { state: 'visible', timeout: timeouts.longAction } );
-	const elementId = await instance.getAttribute( 'data-id' );
-	await expect( async () => {
-		await editor.selectElement( elementId );
-	} ).toPass( { timeout: timeouts.longAction } );
-};
-
-const getInstancePanelPropInput = async ( page: Page, propLabel: string ) => {
-	const instancePanel = page.locator( INSTANCE_PANEL_SELECTOR );
-	await expect( instancePanel ).toBeVisible( { timeout: timeouts.longAction } );
-	await expect( instancePanel.getByText( propLabel, { exact: true } ) ).toBeVisible();
-	return instancePanel.getByRole( 'textbox' ).first();
-};
-
-test.describe.serial( 'Atomic Components @v4-tests', () => {
+test.describe( 'Atomic Components @v4-tests', () => {
 	let wpAdminPage: WpAdminPage;
 	let editor: EditorPage;
 	let context: BrowserContext;
@@ -93,26 +52,13 @@ test.describe.serial( 'Atomic Components @v4-tests', () => {
 		} );
 
 		await test.step( 'Fill component name and create', async () => {
-			const nameInput = page.locator( EditorSelectors.components.nameInput );
-			await expect( nameInput ).toBeVisible();
-			await nameInput.clear();
-			await nameInput.fill( componentName );
-
-			const createButton = page.getByRole( 'button', { name: 'Create' } );
-			await createButton.click();
-
-			await dismissOnboardingDialog( page );
-
-			const panelHeader = page.locator( EditorSelectors.components.editModeHeader );
-			await expect( panelHeader ).toBeVisible( { timeout: timeouts.longAction } );
+			await createComponent( page, componentName );
 
 			await exitComponentEditMode( editor );
 		} );
 
 		await test.step( 'Verify component appears in Components tab', async () => {
-			await editor.openElementsPanel();
-			const componentsTab = page.locator( EditorSelectors.components.componentsTab );
-			await componentsTab.click();
+			await openComponentsTab( editor, page );
 
 			const componentItem = page.locator( EditorSelectors.components.componentsList ).getByText( componentName );
 			await expect( componentItem ).toBeVisible();
@@ -148,21 +94,14 @@ test.describe.serial( 'Atomic Components @v4-tests', () => {
 			await page.waitForSelector( EditorSelectors.contextMenu.menu );
 			await page.getByRole( 'menuitem', { name: 'Create component' } ).click();
 
-			const nameInput = page.locator( EditorSelectors.components.nameInput );
-			await nameInput.clear();
-			await nameInput.fill( componentName );
-			await page.getByRole( 'button', { name: 'Create' } ).click();
-			const panelHeader = page.locator( EditorSelectors.components.editModeHeader );
-			await expect( panelHeader ).toBeVisible( { timeout: timeouts.longAction } );
-
-			await dismissOnboardingDialog( page );
+			await createComponent( page, componentName );
 
 			await exitComponentEditMode( editor );
 		} );
 
 		await test.step( 'Edit via double-click', async () => {
 			const componentInstance = editor.getPreviewFrame().locator( EditorSelectors.components.instanceWidget ).first();
-			await componentInstance.dblclick( { force: true } );
+			await componentInstance.dblclick();
 
 			const panelHeader = page.locator( EditorSelectors.components.editModeHeader );
 			await expect( panelHeader ).toBeVisible( { timeout: timeouts.longAction } );
@@ -186,7 +125,7 @@ test.describe.serial( 'Atomic Components @v4-tests', () => {
 			await exitComponentEditMode( editor );
 		} );
 
-		await test.step( 'Edit via panel button and modify heading', async () => {
+		await test.step( 'Edit via panel edit button', async () => {
 			await selectComponentInstance( editor );
 
 			const editButton = page.getByLabel( `Edit ${ componentName }` );
@@ -195,7 +134,9 @@ test.describe.serial( 'Atomic Components @v4-tests', () => {
 
 			const panelHeader = page.locator( EditorSelectors.components.editModeHeader );
 			await expect( panelHeader ).toBeVisible( { timeout: timeouts.longAction } );
+		} );
 
+		await test.step( 'Modify heading', async () => {
 			const heading = editor.getPreviewFrame().locator( EditorSelectors.v4.atomSelectors.heading.wrapper ).first();
 			await heading.click();
 			await editor.v4Panel.openTab( 'general' );
@@ -233,14 +174,7 @@ test.describe.serial( 'Atomic Components @v4-tests', () => {
 			await page.waitForSelector( EditorSelectors.contextMenu.menu );
 			await page.getByRole( 'menuitem', { name: 'Create component' } ).click();
 
-			const nameInput = page.locator( EditorSelectors.components.nameInput );
-			await nameInput.clear();
-			await nameInput.fill( componentName );
-			await page.getByRole( 'button', { name: 'Create' } ).click();
-			const panelHeader = page.locator( EditorSelectors.components.editModeHeader );
-			await expect( panelHeader ).toBeVisible( { timeout: timeouts.longAction } );
-
-			await dismissOnboardingDialog( page );
+			await createComponent( page, componentName );
 		} );
 
 		await test.step( 'Expose heading text prop', async () => {
@@ -249,18 +183,7 @@ test.describe.serial( 'Atomic Components @v4-tests', () => {
 
 			await editor.v4Panel.openTab( 'general' );
 
-			const exposeIndicator = page.locator( EditorSelectors.components.overridableIndicator ).first();
-			await exposeIndicator.click();
-
-			await page.waitForSelector( EditorSelectors.components.createPopup );
-			const overridableFormPopover = page.locator( EditorSelectors.components.createPopup ).filter( { hasText: OVERRIDABLE_PROP_FORM_TITLE } );
-			await overridableFormPopover.waitFor( { state: 'visible' } );
-			const labelInput = getOverridablePropFormNameInput( page );
-			await labelInput.fill( propLabel );
-
-			const confirmButton = page.getByRole( 'button', { name: 'Create' } );
-			await confirmButton.click();
-			await overridableFormPopover.waitFor( { state: 'hidden', timeout: timeouts.longAction } );
+			await createOverridableProp( page, propLabel );
 		} );
 
 		await test.step( 'Exit edit mode and select component instance', async () => {
@@ -282,9 +205,8 @@ test.describe.serial( 'Atomic Components @v4-tests', () => {
 		await test.step( 'Create outer component wrapping inner component instance', async () => {
 			const outerFlexboxId = await editor.addElement( { elType: EditorSelectors.v4.atoms.flexbox }, 'document' );
 
-			await editor.openElementsPanel();
-			const componentsTab = page.locator( EditorSelectors.components.componentsTab );
-			await componentsTab.click();
+			await openComponentsTab( editor, page );
+
 			const componentItem = page.locator( EditorSelectors.components.componentsList ).getByText( componentName );
 			await componentItem.click();
 
@@ -293,14 +215,10 @@ test.describe.serial( 'Atomic Components @v4-tests', () => {
 			await page.waitForSelector( EditorSelectors.contextMenu.menu );
 			await page.getByRole( 'menuitem', { name: 'Create component' } ).click();
 
-			const nameInput = page.locator( EditorSelectors.components.nameInput );
-			await nameInput.clear();
-			await nameInput.fill( outerComponentName );
-			await page.getByRole( 'button', { name: 'Create' } ).click();
+			await createComponent( page, outerComponentName );
+
 			const backButton = page.locator( EditorSelectors.components.exitEditModeButton );
 			await expect( backButton ).toBeVisible( { timeout: timeouts.longAction } );
-
-			await dismissOnboardingDialog( page );
 		} );
 
 		await test.step( 'Expose inner component prop in outer component', async () => {
@@ -308,22 +226,7 @@ test.describe.serial( 'Atomic Components @v4-tests', () => {
 			const innerComponentNavItem = navigatorWrapper.locator( '.elementor-navigator__item' ).filter( { hasText: componentName } );
 			await innerComponentNavItem.click();
 
-			const instancePanel = page.locator( INSTANCE_PANEL_SELECTOR );
-			await expect( instancePanel ).toBeVisible( { timeout: timeouts.longAction } );
-			await expect( instancePanel.getByText( propLabel, { exact: true } ) ).toBeVisible();
-
-			const exposeIndicator = page.locator( EditorSelectors.components.overridableIndicator ).first();
-			await exposeIndicator.click();
-
-			await page.waitForSelector( EditorSelectors.components.createPopup );
-			const overridableFormPopover = page.locator( EditorSelectors.components.createPopup ).filter( { hasText: OVERRIDABLE_PROP_FORM_TITLE } );
-			await overridableFormPopover.waitFor( { state: 'visible' } );
-			const labelInput = getOverridablePropFormNameInput( page );
-			await labelInput.fill( propLabel );
-
-			const confirmButton = page.getByRole( 'button', { name: 'Create' } );
-			await confirmButton.click();
-			await overridableFormPopover.waitFor( { state: 'hidden', timeout: timeouts.longAction } );
+			await createOverridableProp( page, propLabel );
 
 			const autosavePromise = page.waitForResponse(
 				( response ) => response.url().includes( '/wp-admin/admin-ajax.php' ) && 200 === response.status(),
@@ -377,22 +280,13 @@ test.describe.serial( 'Atomic Components @v4-tests', () => {
 			await page.waitForSelector( EditorSelectors.contextMenu.menu );
 			await page.getByRole( 'menuitem', { name: 'Create component' } ).click();
 
-			const nameInput = page.locator( EditorSelectors.components.nameInput );
-			await nameInput.clear();
-			await nameInput.fill( componentName );
-			await page.getByRole( 'button', { name: 'Create' } ).click();
-			const panelHeader = page.locator( EditorSelectors.components.editModeHeader );
-			await expect( panelHeader ).toBeVisible( { timeout: timeouts.longAction } );
-
-			await dismissOnboardingDialog( page );
+			await createComponent( page, componentName );
 		} );
 
 		await test.step( 'Open a new page and add component instance', async () => {
 			editor = await wpAdminPage.openNewPage();
 
-			await editor.openElementsPanel();
-			const componentsTab = page.locator( EditorSelectors.components.componentsTab );
-			await componentsTab.click();
+			await openComponentsTab( editor, page );
 
 			const componentItem = page.locator( EditorSelectors.components.componentsList ).getByText( componentName );
 			await componentItem.click();
@@ -401,12 +295,17 @@ test.describe.serial( 'Atomic Components @v4-tests', () => {
 			await expect( componentWidget.first() ).toBeVisible();
 		} );
 
+		await test.step( 'Verify styles are applied in editor canvas', async () => {
+			const heading = editor.getPreviewFrame().locator( 'h2' ).first();
+			await expect( heading ).toBeVisible();
+			await expect( heading ).toHaveCSS( 'background-color', backgroundColor );
+		} );
+
 		await test.step( 'Publish and verify styles on frontend', async () => {
 			await editor.publishAndViewPage();
 
 			const heading = page.locator( 'h2' ).first();
 			await expect( heading ).toBeVisible();
-
 			await expect( heading ).toHaveCSS( 'background-color', backgroundColor );
 		} );
 	} );

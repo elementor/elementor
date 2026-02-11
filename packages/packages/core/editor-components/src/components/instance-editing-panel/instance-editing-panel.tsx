@@ -50,7 +50,7 @@ export function InstanceEditingPanel() {
 	const isEmpty = groups.length === 0 || Object.keys( overridableProps.props ).length === 0;
 
 	return (
-		<Box data-type="instance-editing-panel">
+		<Box data-testid="instance-editing-panel">
 			<ComponentInstanceProvider
 				componentId={ componentId }
 				overrides={ overrides }
