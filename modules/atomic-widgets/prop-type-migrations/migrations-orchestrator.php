@@ -261,7 +261,9 @@ class Migrations_Orchestrator {
 		update_post_meta( $id, $cache_meta_key, $this->get_migration_state() );
 	}
 
-	// We use a suffix to cache multiple migrations, each "type" of migration should run once.
+	/**
+	 * We use a suffix to cache multiple migrations, each "type" of migration should run once.
+	 */
 	private function get_cache_meta_key( string $data_identifier ): string {
 		return self::MIGRATIONS_STATE_META_KEY . '_' . substr( md5( $data_identifier ), 0, 4 );
 	}
