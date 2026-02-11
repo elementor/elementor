@@ -183,10 +183,10 @@ export default function HelloTheme() {
 		} );
 	};
 
-	const handleThemeSelection = ( themeSlug ) => {
-		setSelectedTheme( themeSlug );
+	const handleThemeSelection = ( selectedSlug ) => {
+		setSelectedTheme( selectedSlug );
 
-		const themeValue = 'hello-theme' === themeSlug ? 'hello' : 'hellobiz';
+		const themeValue = 'hello-theme' === selectedSlug ? 'hello' : 'hellobiz';
 
 		if ( ! isVariant202B ) {
 			OnboardingEventTracking.sendThemeMarked( themeValue );
