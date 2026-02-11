@@ -82,6 +82,62 @@ class Test_Onboarding_Progress_Manager extends Test_Base {
 		$this->assertSame( [ 'blog' ], $choices->get_site_about() );
 	}
 
+	public function test_update_choices_saves_theme_selection() {
+		// Arrange & Act
+		$choices = $this->progress_manager->update_choices( [
+			'theme_selection' => 'hello-elementor',
+		] );
+
+		// Assert
+		$this->assertSame( 'hello-elementor', $choices->get_theme_selection() );
+	}
+
+	public function test_update_choices_theme_selection_persists_across_loads() {
+		// Arrange
+		$this->progress_manager->update_choices( [
+			'theme_selection' => 'hello-biz',
+		] );
+
+		// Act
+		$loaded_choices = $this->progress_manager->get_choices();
+
+		// Assert
+		$this->assertSame( 'hello-biz', $loaded_choices->get_theme_selection() );
+	}
+
+	public function test_update_choices_theme_selection_preserves_other_choices() {
+		// Arrange
+		$this->progress_manager->update_choices( [
+			'building_for' => 'myself',
+			'experience_level' => 'beginner',
+		] );
+
+		// Act
+		$choices = $this->progress_manager->update_choices( [
+			'theme_selection' => 'hello-elementor',
+		] );
+
+		// Assert
+		$this->assertSame( 'myself', $choices->get_building_for() );
+		$this->assertSame( 'beginner', $choices->get_experience_level() );
+		$this->assertSame( 'hello-elementor', $choices->get_theme_selection() );
+	}
+
+	public function test_update_choices_theme_selection_can_be_changed() {
+		// Arrange
+		$this->progress_manager->update_choices( [
+			'theme_selection' => 'hello-elementor',
+		] );
+
+		// Act
+		$choices = $this->progress_manager->update_choices( [
+			'theme_selection' => 'hello-biz',
+		] );
+
+		// Assert
+		$this->assertSame( 'hello-biz', $choices->get_theme_selection() );
+	}
+
 	public function test_reset_clears_all_data() {
 		// Arrange
 		$this->progress_manager->update_progress( [ 'current_step' => 3 ] );

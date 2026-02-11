@@ -52,22 +52,22 @@ const ThemeCardRoot = styled( Box, {
 		} ),
 } ) );
 
-const ThemePreview = styled( Box )< { bgColor: string; previewImage?: string } >(
-	( { theme, bgColor, previewImage } ) => ( {
-		inlineSize: '100%',
-		blockSize: theme.spacing( 14 ),
-		overflow: 'hidden',
-		borderStartStartRadius: theme.spacing( 1.75 ),
-		borderStartEndRadius: theme.spacing( 1.75 ),
-		backgroundColor: bgColor,
-		position: 'relative',
-		...( previewImage && {
-			backgroundImage: `url(${ previewImage })`,
-			backgroundSize: 'cover',
-			backgroundPosition: 'center',
-		} ),
-	} )
-);
+const ThemePreview = styled( Box, {
+	shouldForwardProp: ( prop ) => ! [ 'bgColor', 'previewImage' ].includes( prop as string ),
+} )< { bgColor: string; previewImage?: string } >( ( { theme, bgColor, previewImage } ) => ( {
+	inlineSize: '100%',
+	blockSize: theme.spacing( 14 ),
+	overflow: 'hidden',
+	borderStartStartRadius: theme.spacing( 1.75 ),
+	borderStartEndRadius: theme.spacing( 1.75 ),
+	backgroundColor: bgColor,
+	position: 'relative',
+	...( previewImage && {
+		backgroundImage: `url(${ previewImage })`,
+		backgroundSize: 'cover',
+		backgroundPosition: 'center',
+	} ),
+} ) );
 
 const InstalledChip = styled( Chip )( ( { theme } ) => ( {
 	position: 'absolute',
