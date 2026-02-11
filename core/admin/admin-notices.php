@@ -898,7 +898,7 @@ class Admin_Notices extends Module {
 				$button_url = $this->get_plugin_button_install_url( $plugin_slug );
 				$campaign_data = [
 					'name' => 'elementor_image_optimization_campaign',
-					'campaign' => 'image-optimization-plg-wp-media-library-one-install',
+					'campaign' => 'io-plg-one',
 					'source' => 'io-wp-media-library-one-install',
 					'medium' => 'wp-dash-one',
 				];
@@ -908,7 +908,7 @@ class Admin_Notices extends Module {
 				$button_url = $this->get_plugin_button_activate_url( $plugin_file_path );
 				$campaign_data = [
 					'name' => 'elementor_image_optimization_campaign',
-					'campaign' => 'image-optimization-plg-wp-media-library-one-activate',
+					'campaign' => 'io-plg-one',
 					'source' => 'io-wp-media-library-one-activate',
 					'medium' => 'wp-dash-one',
 				];
@@ -921,7 +921,7 @@ class Admin_Notices extends Module {
 				$button_url = $this->get_plugin_button_install_url( $plugin_slug );
 				$campaign_data = [
 					'name' => 'elementor_image_optimization_campaign',
-					'campaign' => 'image-optimization-plg-wp-media-library-install',
+					'campaign' => 'io-plg',
 					'source' => 'io-wp-media-library-install',
 					'medium' => 'wp-dash',
 				];
@@ -930,7 +930,7 @@ class Admin_Notices extends Module {
 				$button_url = $this->get_plugin_button_activate_url( $plugin_file_path );
 				$campaign_data = [
 					'name' => 'elementor_image_optimization_campaign',
-					'campaign' => 'image-optimization-plg-wp-media-library-activate',
+					'campaign' => 'io-plg',
 					'source' => 'io-wp-media-library-activate',
 					'medium' => 'wp-dash',
 				];
