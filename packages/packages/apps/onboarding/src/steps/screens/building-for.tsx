@@ -4,7 +4,7 @@ import { ChevronRightSmallIcon } from '@elementor/icons';
 import { Stack, Typography, withDirection } from '@elementor/ui';
 import { __, sprintf } from '@wordpress/i18n';
 
-import { GreetingBannerRoot } from '../../components/ui/styled-components';
+import { GreetingBanner } from '../../components/ui/greeting-banner';
 import { OptionButton } from '../../components/ui/option-button';
 import { useOnboarding } from '../../hooks/use-onboarding';
 
@@ -59,11 +59,9 @@ export function BuildingFor( { onComplete }: BuildingForProps ) {
 
 	return (
 		<Stack spacing={ 7.5 } data-testid="building-for-step">
-			<GreetingBannerRoot>
-				<Typography variant="body1" color="text.primary" align="center">
-					{ greetingText }
-				</Typography>
-			</GreetingBannerRoot>
+			<GreetingBanner>
+				{ greetingText }
+			</GreetingBanner>
 
 			<Stack spacing={ 4 } alignItems="center">
 				<Typography variant="h5" align="center">

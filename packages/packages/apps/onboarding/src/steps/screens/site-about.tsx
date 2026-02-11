@@ -3,7 +3,9 @@ import { useCallback, useMemo } from 'react';
 import { Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { GreetingBanner, OptionsGrid } from '../../components/site-about';
+import { GREETING_FALLBACK, GREETING_MAP } from '../../components/site-about/constants';
+import { OptionsGrid } from '../../components/site-about';
+import { GreetingBanner } from '../../components/ui/greeting-banner';
 import { useOnboarding } from '../../hooks/use-onboarding';
 
 export function SiteAbout() {
@@ -13,6 +15,12 @@ export function SiteAbout() {
 		() => ( Array.isArray( choices.site_about ) ? choices.site_about : [] ),
 		[ choices.site_about ]
 	);
+
+	const greetingText = useMemo( () => {
+		const key = choices.building_for ?? '';
+
+		return GREETING_MAP[ key ] ?? GREETING_FALLBACK;
+	}, [ choices.building_for ] );
 
 	const handleToggle = useCallback(
 		( value: string ) => {
@@ -27,9 +35,9 @@ export function SiteAbout() {
 
 	return (
 		<Stack spacing={ 7.5 } data-testid="site-about-step">
-			<Stack spacing={ 4 } alignItems="flex-start" sx={ { width: '100%' } }>
-				<GreetingBanner buildingFor={ choices.building_for } />
-			</Stack>
+			<GreetingBanner>
+				{ greetingText }
+			</GreetingBanner>
 
 			<Stack spacing={ 4 } alignItems="center">
 				<Stack spacing={ 1 } alignItems="center">

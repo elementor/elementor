@@ -13,56 +13,68 @@ describe( 'SiteAbout', () => {
 
 	describe( 'Greeting banner', () => {
 		it( 'should show correct greeting for "myself" choice', () => {
+			// Arrange & Act
 			renderApp( {
 				...SITE_ABOUT_STEP,
 				choices: { building_for: 'myself' },
 			} );
 
+			// Assert
 			expect( screen.getByTestId( 'site-about-step' ) ).toBeInTheDocument();
 			expect( screen.getByText( "Got it! We'll keep things simple." ) ).toBeInTheDocument();
 		} );
 
 		it( 'should show correct greeting for "business" choice', () => {
+			// Arrange & Act
 			renderApp( {
 				...SITE_ABOUT_STEP,
 				choices: { building_for: 'business' },
 			} );
 
+			// Assert
 			expect( screen.getByText( "Great! Let's set up your business site." ) ).toBeInTheDocument();
 		} );
 
 		it( 'should show correct greeting for "client" choice', () => {
+			// Arrange & Act
 			renderApp( {
 				...SITE_ABOUT_STEP,
 				choices: { building_for: 'client' },
 			} );
 
+			// Assert
 			expect( screen.getByText( "Nice! Let's create something for your client." ) ).toBeInTheDocument();
 		} );
 
 		it( 'should show correct greeting for "exploring" choice', () => {
+			// Arrange & Act
 			renderApp( {
 				...SITE_ABOUT_STEP,
 				choices: { building_for: 'exploring' },
 			} );
 
+			// Assert
 			expect( screen.getByText( "Got it! We'll keep things simple." ) ).toBeInTheDocument();
 		} );
 
 		it( 'should show fallback greeting when building_for is unrecognised', () => {
+			// Arrange & Act
 			renderApp( {
 				...SITE_ABOUT_STEP,
 				choices: { building_for: 'unknown_value' },
 			} );
 
+			// Assert
 			expect( screen.getByText( "Let's get started!" ) ).toBeInTheDocument();
 		} );
 	} );
 
 	describe( 'Option rendering', () => {
 		it( 'should render all 8 site-about options', () => {
+			// Arrange & Act
 			renderApp( SITE_ABOUT_STEP );
 
+			// Assert
 			expect( screen.getByText( 'Small business' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Online store' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Company site' ) ).toBeInTheDocument();
@@ -74,8 +86,10 @@ describe( 'SiteAbout', () => {
 		} );
 
 		it( 'should render the step title and subtitle', () => {
+			// Arrange & Act
 			renderApp( SITE_ABOUT_STEP );
 
+			// Assert
 			expect( screen.getByText( 'What is your site about?' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Choose anything that applies.' ) ).toBeInTheDocument();
 		} );
@@ -83,57 +97,64 @@ describe( 'SiteAbout', () => {
 
 	describe( 'Multi-select behavior', () => {
 		it( 'should toggle selection on click', () => {
+			// Arrange
 			renderApp( SITE_ABOUT_STEP );
-
 			const blogButton = screen.getByRole( 'button', { name: 'Blog' } );
-
 			expect( blogButton ).toHaveAttribute( 'aria-pressed', 'false' );
 
+			// Act
 			fireEvent.click( blogButton );
 
+			// Assert
 			expect( blogButton ).toHaveAttribute( 'aria-pressed', 'true' );
 		} );
 
 		it( 'should allow multiple selections', () => {
+			// Arrange
 			renderApp( SITE_ABOUT_STEP );
-
 			const blogButton = screen.getByRole( 'button', { name: 'Blog' } );
 			const portfolioButton = screen.getByRole( 'button', { name: 'Portfolio' } );
 
+			// Act
 			fireEvent.click( blogButton );
 			fireEvent.click( portfolioButton );
 
+			// Assert
 			expect( blogButton ).toHaveAttribute( 'aria-pressed', 'true' );
 			expect( portfolioButton ).toHaveAttribute( 'aria-pressed', 'true' );
 		} );
 
 		it( 'should deselect on second click', () => {
+			// Arrange
 			renderApp( SITE_ABOUT_STEP );
-
 			const blogButton = screen.getByRole( 'button', { name: 'Blog' } );
-
 			fireEvent.click( blogButton );
 			expect( blogButton ).toHaveAttribute( 'aria-pressed', 'true' );
 
+			// Act
 			fireEvent.click( blogButton );
+
+			// Assert
 			expect( blogButton ).toHaveAttribute( 'aria-pressed', 'false' );
 		} );
 
 		it( 'should enable Continue button when at least one option is selected', () => {
+			// Arrange
 			renderApp( SITE_ABOUT_STEP );
-
 			const continueButton = screen.getByRole( 'button', { name: 'Continue' } );
-
 			expect( continueButton ).toBeDisabled();
 
+			// Act
 			fireEvent.click( screen.getByRole( 'button', { name: 'Blog' } ) );
 
+			// Assert
 			expect( continueButton ).toBeEnabled();
 		} );
 	} );
 
 	describe( 'Pre-selected state', () => {
 		it( 'should show previously selected options from saved choices', () => {
+			// Arrange & Act
 			renderApp( {
 				...SITE_ABOUT_STEP,
 				choices: {
@@ -142,6 +163,7 @@ describe( 'SiteAbout', () => {
 				},
 			} );
 
+			// Assert
 			const blogButton = screen.getByRole( 'button', { name: 'Blog' } );
 			const portfolioButton = screen.getByRole( 'button', { name: 'Portfolio' } );
 			const otherButton = screen.getByRole( 'button', { name: 'Other' } );
@@ -154,11 +176,14 @@ describe( 'SiteAbout', () => {
 
 	describe( 'Continue and Skip', () => {
 		it( 'should call user-choices API when clicking Continue', async () => {
+			// Arrange
 			renderApp( SITE_ABOUT_STEP );
 
+			// Act
 			fireEvent.click( screen.getByRole( 'button', { name: 'Blog' } ) );
 			fireEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 
+			// Assert
 			await waitFor( () => {
 				expect( mockFetch ).toHaveBeenCalledWith(
 					expect.stringContaining( 'user-choices' ),
@@ -171,10 +196,13 @@ describe( 'SiteAbout', () => {
 		} );
 
 		it( 'should call user-progress API when clicking Skip', async () => {
+			// Arrange
 			renderApp( SITE_ABOUT_STEP );
 
+			// Act
 			fireEvent.click( screen.getByRole( 'button', { name: 'Skip' } ) );
 
+			// Assert
 			await waitFor( () => {
 				expect( mockFetch ).toHaveBeenCalledWith(
 					expect.stringContaining( 'user-progress' ),
