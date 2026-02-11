@@ -6,13 +6,13 @@ export const OptionCardRoot = styled( ButtonBase )( ( { theme } ) => ( {
 	flexDirection: 'column',
 	alignItems: 'center',
 	justifyContent: 'center',
-	gap: theme.spacing(3),
+	gap: theme.spacing( 3 ),
 	minWidth: 0,
-	height: theme.spacing(16),
+	height: theme.spacing( 16 ),
 	borderRadius: 8,
 	border: `1px solid ${ theme.palette.divider }`,
 	cursor: 'pointer',
-	transition: 'border-color 150ms ease, background-color 150ms ease'
+	transition: 'border-color 150ms ease, background-color 150ms ease',
 } ) );
 
 export const CheckBadge = styled( Box )( ( { theme } ) => ( {

@@ -59,9 +59,7 @@ export function BuildingFor( { onComplete }: BuildingForProps ) {
 
 	return (
 		<Stack spacing={ 7.5 } data-testid="building-for-step">
-			<GreetingBanner>
-				{ greetingText }
-			</GreetingBanner>
+			<GreetingBanner>{ greetingText }</GreetingBanner>
 
 			<Stack spacing={ 4 } alignItems="center">
 				<Typography variant="h5" align="center">

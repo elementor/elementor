@@ -3,8 +3,8 @@ import { useCallback, useMemo } from 'react';
 import { Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { GREETING_FALLBACK, GREETING_MAP } from '../../components/site-about/constants';
 import { OptionsGrid } from '../../components/site-about';
+import { GREETING_FALLBACK, GREETING_MAP } from '../../components/site-about/constants';
 import { GreetingBanner } from '../../components/ui/greeting-banner';
 import { useOnboarding } from '../../hooks/use-onboarding';
 
@@ -35,9 +35,7 @@ export function SiteAbout() {
 
 	return (
 		<Stack spacing={ 7.5 } data-testid="site-about-step">
-			<GreetingBanner>
-				{ greetingText }
-			</GreetingBanner>
+			<GreetingBanner>{ greetingText }</GreetingBanner>
 
 			<Stack spacing={ 4 } alignItems="center">
 				<Stack spacing={ 1 } alignItems="center">
