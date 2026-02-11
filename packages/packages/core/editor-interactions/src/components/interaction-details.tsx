@@ -1,23 +1,32 @@
 import * as React from 'react';
-import { type PropsWithChildren, useMemo } from 'react';
-import { ControlFormLabel, PopoverContent, PopoverGridContainer } from '@elementor/editor-controls';
+import { useMemo, ComponentType } from 'react';
+import { PopoverContent } from '@elementor/editor-controls';
 import { Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getInteractionsControl } from '../interactions-controls-registry';
-import { type InteractionItemValue, type SizeStringValue } from '../types';
+import {
+	type CustomEffect,
+	type DirectionFieldProps,
+	type FieldProps,
+	type InteractionItemValue,
+	type ReplayFieldProps,
+	type SizeStringValue,
+} from '../types';
 import {
 	createAnimationPreset,
 	createString,
 	extractBoolean,
 	extractSize,
 	extractString,
+	extractCustomEffect,
 } from '../utils/prop-value-utils';
 import { parseSizeValue } from '../utils/size-transform-utils';
 import { Direction } from './controls/direction';
 import { Effect } from './controls/effect';
 import { EffectType } from './controls/effect-type';
 import { TimeFrameIndicator } from './controls/time-frame-indicator';
+import { Field } from './field';
 
 type InteractionDetailsProps = {
 	interaction: InteractionItemValue;
@@ -37,6 +46,7 @@ const DEFAULT_VALUES = {
 	relativeTo: 'viewport',
 	offsetTop: 15,
 	offsetBottom: 85,
+	custom: undefined,
 };
 
 const TRIGGERS_WITHOUT_REPLAY = [ 'load', 'scrollOn' ];
@@ -52,7 +62,8 @@ type InteractionsControlType =
 	| 'easing'
 	| 'relativeTo'
 	| 'offsetTop'
-	| 'offsetBottom';
+	| 'offsetBottom'
+	| 'custom';
 
 type InteractionValues = {
 	trigger: string;
@@ -66,6 +77,7 @@ type InteractionValues = {
 	relativeTo: string;
 	offsetTop: SizeStringValue;
 	offsetBottom: SizeStringValue;
+	custom?: CustomEffect;
 };
 
 type ControlVisibilityConfig = {
@@ -74,6 +86,7 @@ type ControlVisibilityConfig = {
 
 const controlVisibilityConfig: ControlVisibilityConfig = {
 	replay: ( values ) => ! TRIGGERS_WITHOUT_REPLAY.includes( values.trigger ),
+	custom: ( values ) => values.effect === 'custom',
 
 	relativeTo: ( values ) => values.trigger === 'scrollOn',
 	offsetTop: ( values ) => values.trigger === 'scrollOn',
@@ -89,7 +102,14 @@ const controlVisibilityConfig: ControlVisibilityConfig = {
 	},
 };
 
-function useControlComponent( controlName: InteractionsControlType, isVisible: boolean = true ) {
+type AnyControlComponent = ComponentType<
+	FieldProps | FieldProps< CustomEffect > | DirectionFieldProps | ReplayFieldProps
+>;
+
+function useControlComponent(
+	controlName: InteractionsControlType,
+	isVisible: boolean = true
+): AnyControlComponent | null {
 	return useMemo( () => {
 		if ( ! isVisible ) {
 			return null;
@@ -101,6 +121,7 @@ function useControlComponent( controlName: InteractionsControlType, isVisible: b
 export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }: InteractionDetailsProps ) => {
 	const trigger = extractString( interaction.trigger, DEFAULT_VALUES.trigger );
 	const effect = extractString( interaction.animation.value.effect, DEFAULT_VALUES.effect );
+	const custom = extractCustomEffect( interaction.animation.value.custom, DEFAULT_VALUES.custom );
 	const type = extractString( interaction.animation.value.type, DEFAULT_VALUES.type );
 	const direction = extractString( interaction.animation.value.direction, DEFAULT_VALUES.direction );
 	const duration = extractSize( interaction.animation.value.timing_config.value.duration );
@@ -127,6 +148,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		relativeTo,
 		offsetTop,
 		offsetBottom,
+		custom,
 	};
 
 	const TriggerControl = useControlComponent( 'trigger', true );
@@ -140,6 +162,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		'offsetBottom',
 		controlVisibilityConfig.offsetBottom( interactionValues )
 	);
+	const CustomEffectControl = useControlComponent( 'custom', controlVisibilityConfig.custom( interactionValues ) );
 
 	const EasingControl = useControlComponent( 'easing' );
 
@@ -167,6 +190,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			relativeTo: string;
 			offsetTop: SizeStringValue;
 			offsetBottom: SizeStringValue;
+			custom?: CustomEffect;
 		} >
 	): void => {
 		const resolvedDirectionValue = resolveDirection( 'direction' in updates, updates.effect, updates.direction );
@@ -186,6 +210,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 				relativeTo: updates.relativeTo ?? relativeTo,
 				offsetTop: updates.offsetTop ?? offsetTop,
 				offsetBottom: updates.offsetBottom ?? offsetBottom,
+				custom: updates.custom ?? custom,
 			} ),
 		};
 
@@ -211,7 +236,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 					<Field label={ __( 'Replay', 'elementor' ) }>
 						<ReplayControl
 							value={ replay }
-							onChange={ ( v ) => updateInteraction( { replay: v } ) }
+							onChange={ ( v: boolean ) => updateInteraction( { replay: v } ) }
 							disabled={ true }
 						/>
 					</Field>
@@ -224,6 +249,15 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 				<Field label={ __( 'Effect', 'elementor' ) }>
 					<Effect value={ effect } onChange={ ( v ) => updateInteraction( { effect: v } ) } />
 				</Field>
+
+				{ CustomEffectControl && (
+					<Field label={ __( 'Custom Effect', 'elementor' ) }>
+						<CustomEffectControl
+							value={ custom ?? {} }
+							onChange={ ( v: CustomEffect ) => updateInteraction( { custom: v } ) }
+						/>
+					</Field>
+				) }
 
 				<Field label={ __( 'Type', 'elementor' ) }>
 					<EffectType value={ type } onChange={ ( v ) => updateInteraction( { type: v } ) } />
@@ -309,21 +343,3 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	);
 };
 
-type FieldProps = {
-	label: string;
-} & PropsWithChildren;
-
-function Field( { label, children }: FieldProps ) {
-	return (
-		<Grid item xs={ 12 }>
-			<PopoverGridContainer>
-				<Grid item xs={ 6 }>
-					<ControlFormLabel>{ label }</ControlFormLabel>
-				</Grid>
-				<Grid item xs={ 6 }>
-					{ children }
-				</Grid>
-			</PopoverGridContainer>
-		</Grid>
-	);
-}

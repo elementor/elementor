@@ -1,4 +1,4 @@
-import { type PropsSchema, type PropValue, type SizePropValue } from '@elementor/editor-props';
+import { type StringPropValue, type NumberPropValue, type BooleanPropValue, type PropsSchema, type PropValue, type SizePropValue } from '@elementor/editor-props';
 import { type ClassState, type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 
 import { type ControlItem } from '../types';
@@ -45,21 +45,6 @@ export type V1Element = {
 	lookup?: () => V1Element;
 };
 
-export type StringPropValue = {
-	$$type: 'string';
-	value: string;
-};
-
-export type NumberPropValue = {
-	$$type: 'number';
-	value: number;
-};
-
-export type BooleanPropValue = {
-	$$type: 'boolean';
-	value: boolean;
-};
-
 export type TimingConfigPropValue = {
 	$$type: 'timing-config';
 	value: {
@@ -79,10 +64,58 @@ export type ConfigPropValue = {
 	};
 };
 
+export type MovementDimensions = {
+	x: number;
+	y: number;
+	z: number;
+};
+
+export type CustomEffectProperties = {
+	opacity?: number;
+	scale?: MovementDimensions;
+	move?: MovementDimensions;
+	rotate?: MovementDimensions;
+	skew?: MovementDimensions;
+};
+
+export type CustomEffect = {
+	from?: CustomEffectProperties;
+	to?: CustomEffectProperties;
+};
+
+export type CustomEffectPropertiesPropValue = {
+	$$type: 'custom-effect-properties';
+	value: {
+		opacity?: NumberPropValue;
+		scale?: MovementDimensionsPropValue;
+		move?: MovementDimensionsPropValue;
+		rotate?: MovementDimensionsPropValue;
+		skew?: MovementDimensionsPropValue;
+	};
+};
+
+export type MovementDimensionsPropValue = {
+	$$type: 'movement-dimensions';
+	value: {
+		x: NumberPropValue;
+		y: NumberPropValue;
+		z: NumberPropValue;
+	};
+};
+
+export type CustomEffectPropValue = {
+	$$type: 'custom-effect';
+	value: {
+		from?: CustomEffectPropertiesPropValue;
+		to?: CustomEffectPropertiesPropValue;
+	};
+};
+
 export type AnimationPresetPropValue = {
 	$$type: 'animation-preset-props';
 	value: {
 		effect: StringPropValue;
+		custom: CustomEffectPropValue;
 		type: StringPropValue;
 		direction: StringPropValue;
 		timing_config: TimingConfigPropValue;

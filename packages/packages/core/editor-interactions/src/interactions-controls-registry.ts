@@ -1,10 +1,11 @@
 import { type ComponentType } from 'react';
 
-import { type DirectionFieldProps, type FieldProps, type ReplayFieldProps } from './types';
+import { type CustomEffect, type DirectionFieldProps, type FieldProps, type ReplayFieldProps } from './types';
 
 type InteractionsControlType =
 	| 'trigger'
 	| 'effect'
+	| 'custom'
 	| 'effectType'
 	| 'direction'
 	| 'duration'
@@ -18,6 +19,7 @@ type InteractionsControlType =
 type InteractionsControlPropsMap = {
 	trigger: FieldProps;
 	effect: FieldProps;
+	custom?: FieldProps< CustomEffect >;
 	effectType: FieldProps;
 	direction: DirectionFieldProps;
 	duration: FieldProps;
@@ -29,6 +31,11 @@ type InteractionsControlPropsMap = {
 	offsetBottom: FieldProps;
 };
 
+type AnyInteractionsControlProps = Exclude<
+	InteractionsControlPropsMap[ InteractionsControlType ],
+	undefined
+>;
+
 type ControlOptions< T extends InteractionsControlType > = {
 	type: T;
 	component: ComponentType< InteractionsControlPropsMap[ T ] >;
@@ -37,7 +44,7 @@ type ControlOptions< T extends InteractionsControlType > = {
 
 type StoredControlOptions = {
 	type: InteractionsControlType;
-	component: ComponentType< FieldProps | DirectionFieldProps | ReplayFieldProps >;
+	component: ComponentType< AnyInteractionsControlProps >;
 	options?: string[];
 };
 
@@ -48,7 +55,11 @@ export function registerInteractionsControl< T extends InteractionsControlType >
 	component,
 	options,
 }: ControlOptions< T > ) {
-	controlsRegistry.set( type, { type, component: component as StoredControlOptions[ 'component' ], options } );
+	controlsRegistry.set( type, {
+		type,
+		component: component as ComponentType< AnyInteractionsControlProps >,
+		options,
+	} );
 }
 
 export function getInteractionsControl( type: InteractionsControlType ) {

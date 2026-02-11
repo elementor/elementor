@@ -1,23 +1,23 @@
 import { type Unit } from '@elementor/editor-controls';
-import { sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
+import { sizePropTypeUtil, type SizePropValue, type BooleanPropValue, type NumberPropValue, type StringPropValue } from '@elementor/editor-props';
 
 import { DEFAULT_TIME_UNIT, TIME_UNITS } from '../configs/time-constants';
 import {
 	type AnimationPresetPropValue,
-	type BooleanPropValue,
+	type CustomEffect,
+	type CustomEffectPropValue,
 	type ConfigPropValue,
 	type ElementInteractions,
 	type ExcludedBreakpointsPropValue,
 	type InteractionBreakpointsPropValue,
 	type InteractionItemPropValue,
 	type InteractionItemValue,
-	type NumberPropValue,
 	type SizeStringValue,
-	type StringPropValue,
 	type TimingConfigPropValue,
 } from '../types';
 import { formatSizeValue, parseSizeValue } from '../utils/size-transform-utils';
 import { generateTempInteractionId } from './temp-id-utils';
+import { CustomEffectProperties, CustomEffectPropertiesPropValue, MovementDimensions, MovementDimensionsPropValue } from '@elementor/editor-elements';
 
 export const createString = ( value: string ): StringPropValue => ( {
 	$$type: 'string',
@@ -90,7 +90,7 @@ export const createInteractionBreakpoints = ( excluded: string[] ): InteractionB
 } );
 
 export const extractExcludedBreakpoints = ( breakpoints: InteractionBreakpointsPropValue | undefined ): string[] => {
-	return breakpoints?.value.excluded.value.map( ( bp: StringPropValue ) => bp.value ) ?? [];
+	return breakpoints?.value.excluded.value.map( ( bp: StringPropValue ) => bp.value ?? '' ) ?? [];
 };
 
 export const createAnimationPreset = ( {
@@ -104,6 +104,7 @@ export const createAnimationPreset = ( {
 	relativeTo,
 	offsetTop,
 	offsetBottom,
+	custom,
 }: {
 	effect: string;
 	type: string;
@@ -115,6 +116,7 @@ export const createAnimationPreset = ( {
 	relativeTo?: string;
 	offsetTop?: SizeStringValue;
 	offsetBottom?: SizeStringValue;
+	custom?: CustomEffect;
 } ): AnimationPresetPropValue => ( {
 	$$type: 'animation-preset-props',
 	value: {
@@ -129,8 +131,60 @@ export const createAnimationPreset = ( {
 			offsetTop,
 			offsetBottom,
 		} ),
+		custom: createCustomEffect( custom ),
 	},
 } );
+
+const EMPTY_CUSTOM_EFFECT_PROP_VALUE: CustomEffectPropValue = {
+	$$type: 'custom-effect',
+	value: {},
+};
+
+export const createCustomEffect = ( custom?: CustomEffect ): CustomEffectPropValue => {
+	if ( ! custom ) {
+		return EMPTY_CUSTOM_EFFECT_PROP_VALUE;
+	}
+
+	return {
+		$$type: 'custom-effect',
+		value: {
+			from: createCustomEffectProperties( custom.from ),
+			to: createCustomEffectProperties( custom.to ),
+		},
+	};
+};
+
+export const createCustomEffectProperties = ( custom?: CustomEffectProperties ): CustomEffectPropertiesPropValue | undefined => {
+	if ( ! custom ) {
+		return undefined;
+	}
+
+	return {
+		$$type: 'custom-effect-properties',
+		value: {
+			opacity: custom.opacity ? createNumber( custom.opacity ) : undefined,
+			scale: custom.scale ? createMovementDimensions( custom.scale ) : undefined,
+			move: custom.move ? createMovementDimensions( custom.move ) : undefined,
+			rotate: custom.rotate ? createMovementDimensions( custom.rotate ) : undefined,
+			skew: custom.skew ? createMovementDimensions( custom.skew ) : undefined,
+		},
+	};
+};
+
+export const createMovementDimensions = ( custom?: MovementDimensions ): MovementDimensionsPropValue | undefined => {
+	if ( ! custom ) {
+		return undefined;
+	}
+
+	return {
+		$$type: 'movement-dimensions',
+		value: {
+			x: createNumber( custom.x ),
+			y: createNumber( custom.y ),
+			z: createNumber( custom.z ),
+		},
+	};
+};
 
 export const createInteractionItem = ( {
 	trigger,
@@ -146,6 +200,7 @@ export const createInteractionItem = ( {
 	offsetTop,
 	offsetBottom,
 	excludedBreakpoints,
+	custom,
 }: {
 	trigger: string;
 	effect: string;
@@ -160,6 +215,7 @@ export const createInteractionItem = ( {
 	offsetTop?: number;
 	offsetBottom?: number;
 	excludedBreakpoints?: string[];
+	custom?: CustomEffect;
 } ): InteractionItemPropValue => ( {
 	$$type: 'interaction-item',
 	value: {
@@ -176,6 +232,7 @@ export const createInteractionItem = ( {
 			relativeTo,
 			offsetTop,
 			offsetBottom,
+			custom,
 		} ),
 		...( excludedBreakpoints &&
 			excludedBreakpoints.length > 0 && {
@@ -212,6 +269,48 @@ export const extractSize = ( prop?: SizePropValue, defaultValue?: SizeStringValu
 	}
 
 	return formatSizeValue( prop.value );
+};
+
+export const extractNumber = ( prop: NumberPropValue | undefined, fallback = 0 ): number => {
+	return prop?.value ?? fallback;
+};
+
+export const extractMovementDimensions = ( prop: MovementDimensionsPropValue | undefined, fallback?: MovementDimensions ): MovementDimensions | undefined => {
+	if ( ! prop?.value ) {
+		return fallback;
+	}
+
+	return {
+		x: extractNumber(prop.value.x),
+		y: extractNumber(prop.value.y),
+		z: extractNumber(prop.value.z),
+	};
+};
+
+export const extractCustomEffect = ( prop: CustomEffectPropValue | undefined, fallback?: CustomEffect ): CustomEffect | undefined => {
+	if ( ! prop?.value ) {
+		return fallback;
+	}
+
+	const from = prop.value.from ? {
+		opacity: extractNumber(prop.value.from.value.opacity),
+		scale: extractMovementDimensions(prop.value.from.value.scale),
+		move: extractMovementDimensions(prop.value.from.value.move),
+		rotate: extractMovementDimensions(prop.value.from.value.rotate),
+		skew: extractMovementDimensions(prop.value.from.value.skew),
+	} : undefined;
+	const to = prop.value.to ? {
+		opacity: extractNumber(prop.value.to.value.opacity),
+		scale: extractMovementDimensions(prop.value.to.value.scale),
+		move: extractMovementDimensions(prop.value.to.value.move),
+		rotate: extractMovementDimensions(prop.value.to.value.rotate),
+		skew: extractMovementDimensions(prop.value.to.value.skew),
+	} : undefined;
+
+	return {
+		from,
+		to,
+	};
 };
 
 const TRIGGER_LABELS: Record< string, string > = {

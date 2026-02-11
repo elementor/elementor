@@ -1,28 +1,30 @@
 import { type Unit } from '@elementor/editor-controls';
 import type {
 	AnimationPresetPropValue,
-	BooleanPropValue,
 	ConfigPropValue,
 	ElementInteractions,
 	ExcludedBreakpointsPropValue,
 	InteractionBreakpointsPropValue,
 	InteractionItemPropValue,
-	NumberPropValue,
-	StringPropValue,
 	TimingConfigPropValue,
+	CustomEffectPropValue,
+	CustomEffect,
+	CustomEffectProperties,
+	MovementDimensions,
 } from '@elementor/editor-elements';
 
 export type {
-	BooleanPropValue,
 	ConfigPropValue,
-	StringPropValue,
-	NumberPropValue,
 	TimingConfigPropValue,
 	AnimationPresetPropValue,
 	InteractionItemPropValue,
 	ElementInteractions,
 	ExcludedBreakpointsPropValue,
 	InteractionBreakpointsPropValue,
+	CustomEffectPropValue,
+	CustomEffect,
+	CustomEffectProperties,
+	MovementDimensions,
 };
 
 export type AnimationOption = {
@@ -43,18 +45,15 @@ export type InteractionsConfig = {
 	animationOptions: AnimationOption[];
 };
 
-export type FieldProps = {
-	value: string;
-	onChange: ( value: string ) => void;
+export type FieldProps< T = string > = {
+	value: T;
+	onChange: ( value: T ) => void;
 	label?: string;
-};
-
-export type ReplayFieldProps = {
-	value: boolean;
-	onChange: ( value: boolean ) => void;
 	disabled?: boolean;
 };
-export type DirectionFieldProps = FieldProps & {
+
+export type ReplayFieldProps = FieldProps< boolean >;
+export type DirectionFieldProps = FieldProps< string > & {
 	interactionType: string;
 };
 
