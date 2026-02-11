@@ -6,16 +6,16 @@ import { unknownChildrenSchema } from './utils';
 export const emailPropTypeUtil = createPropUtils(
 	'email',
 	z.strictObject( {
-		to: z.string().email(),
+		to: unknownChildrenSchema,
 		subject: unknownChildrenSchema,
 		message: unknownChildrenSchema,
 		from: unknownChildrenSchema,
 		'meta-data': unknownChildrenSchema,
 		'send-as': unknownChildrenSchema,
 		'from-name': unknownChildrenSchema,
-		'reply-to': z.string().email(),
-		cc: z.string().email(),
-		bcc: z.string().email(),
+		'reply-to': unknownChildrenSchema,
+		cc: unknownChildrenSchema,
+		bcc: unknownChildrenSchema,
 	} )
 );
 
