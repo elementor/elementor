@@ -73,6 +73,7 @@ function getEmptyState(): OnboardingState {
 		hadUnexpectedExit: false,
 		isConnected: false,
 		isGuest: false,
+		userName: '',
 		urls: { dashboard: '', editor: '', connect: '' },
 	};
 }
@@ -105,6 +106,7 @@ function buildStateFromConfig(
 		hadUnexpectedExit: config.hadUnexpectedExit ?? false,
 		isConnected: config.isConnected ?? false,
 		isGuest: false,
+		userName: config.userName ?? '',
 		urls: config.urls ?? { dashboard: '', editor: '', connect: '' },
 	};
 }
