@@ -81,7 +81,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-element-library-element">
 	<# const v4Categories = ['v4-elements', 'atomic-form']; #>
-	<button class="elementor-element" data-element-library-element-type="{{ elType === 'widget' ? widgetType : elType }}">
+	<button class="elementor-element" data-library-element-type="{{ elType === 'widget' ? widgetType : elType }}">
 	<# if ( obj.integration ) { #>
 			<i class="eicon-plug"></i>
 		<# } else if ( false === obj.editable ) { #>
