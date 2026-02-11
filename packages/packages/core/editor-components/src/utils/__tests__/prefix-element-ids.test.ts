@@ -16,10 +16,7 @@ describe( 'prefixElementIds', () => {
 
 	it( 'should prefix IDs of flat elements', () => {
 		// Arrange
-		const elements = [
-			createMockElementData( { id: 'aaa' } ),
-			createMockElementData( { id: 'bbb' } ),
-		];
+		const elements = [ createMockElementData( { id: 'aaa' } ), createMockElementData( { id: 'bbb' } ) ];
 
 		// Act
 		const result = prefixElementIds( elements, 'inst1' );
@@ -37,9 +34,7 @@ describe( 'prefixElementIds', () => {
 				elements: [
 					createMockElementData( {
 						id: 'child',
-						elements: [
-							createMockElementData( { id: 'grandchild' } ),
-						],
+						elements: [ createMockElementData( { id: 'grandchild' } ) ],
 					} ),
 				],
 			} ),
@@ -86,9 +81,7 @@ describe( 'prefixElementIds', () => {
 
 	it( 'should handle chained prefix for nested components', () => {
 		// Arrange
-		const elements = [
-			createMockElementData( { id: 'elem1' } ),
-		];
+		const elements = [ createMockElementData( { id: 'elem1' } ) ];
 
 		// Act
 		const result = prefixElementIds( elements, 'instA_instB' );

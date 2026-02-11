@@ -11,10 +11,9 @@ import {
 	type RenderContext,
 } from '@elementor/editor-canvas';
 import { getCurrentDocument } from '@elementor/editor-documents';
+import { type V1ElementData } from '@elementor/editor-elements';
 import { __getState as getState } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
-
-import { type V1ElementData } from '@elementor/editor-elements';
 
 import { apiClient } from './api';
 import { type ComponentInstanceProp } from './prop-types/component-instance-prop-type';

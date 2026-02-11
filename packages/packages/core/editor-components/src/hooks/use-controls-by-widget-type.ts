@@ -1,7 +1,6 @@
 import { type Control, type ControlItem, getElementType } from '@elementor/editor-elements';
 
 export function useControlsByWidgetType( type: string ): Record< string, Control > {
-	// that's ok!
 	const elementType = getElementType( type );
 
 	if ( ! elementType ) {

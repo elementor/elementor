@@ -1,4 +1,4 @@
-import { getElementSetting } from '@elementor/editor-elements';
+import { createMockElement } from 'test-utils';
 
 import { getOverridableProp } from '../../components/overridable-props/utils/get-overridable-prop';
 import { componentInstanceOverridePropTypeUtil } from '../../prop-types/component-instance-override-prop-type';
@@ -7,15 +7,16 @@ import { componentInstancePropTypeUtil } from '../../prop-types/component-instan
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
 import { type OverridableProp, type OverridableProps } from '../../types';
 import { filterValidOverridableProps, isExposedPropValid } from '../filter-valid-overridable-props';
+import { getContainerByOriginId } from '../get-container-by-origin-id';
 
-jest.mock( '@elementor/editor-elements', () => ( {
-	getElementSetting: jest.fn(),
+jest.mock( '../get-container-by-origin-id', () => ( {
+	getContainerByOriginId: jest.fn(),
 } ) );
 jest.mock( '../../components/overridable-props/utils/get-overridable-prop', () => ( {
 	getOverridableProp: jest.fn(),
 } ) );
 
-const mockGetElementSetting = jest.mocked( getElementSetting );
+const mockGetContainerByOriginId = jest.mocked( getContainerByOriginId );
 
 const INNER_COMPONENT_ID = 1111;
 const COMPONENT_INSTANCE_ELEMENT_ID = '61b83e7';
@@ -77,6 +78,13 @@ function createComponentInstanceSetting( overrides: Array< { outerKey: string; i
 	} );
 }
 
+function createContainerWithComponentInstance( componentInstanceSetting: unknown ) {
+	return createMockElement( {
+		model: { id: COMPONENT_INSTANCE_ELEMENT_ID, widgetType: 'e-component' },
+		settings: { component_instance: componentInstanceSetting },
+	} );
+}
+
 function createInnerOverridableProps( propKeys: string[] ): OverridableProps {
 	const props: Record< string, OverridableProp > = {};
 
@@ -118,10 +126,9 @@ describe( 'filter-valid-overridable-props', () => {
 			// Arrange
 			const prop = createExposedProp( 'prop-4', 'prop-0' );
 			const innerOverridableProps = createInnerOverridableProps( [ 'prop-0', 'prop-1' ] );
+			const setting = createComponentInstanceSetting( [ { outerKey: 'prop-4', innerKey: 'prop-0' } ] );
 
-			mockGetElementSetting.mockReturnValue(
-				createComponentInstanceSetting( [ { outerKey: 'prop-4', innerKey: 'prop-0' } ] )
-			);
+			mockGetContainerByOriginId.mockReturnValue( createContainerWithComponentInstance( setting ) );
 
 			jest.mocked( getOverridableProp ).mockImplementation( ( { overrideKey } ) => {
 				return innerOverridableProps.props[ overrideKey ];
@@ -142,10 +149,9 @@ describe( 'filter-valid-overridable-props', () => {
 			// Arrange
 			const prop = createExposedProp( 'prop-4', 'prop-0' );
 			const innerOverridableProps = createInnerOverridableProps( [ 'prop-1' ] );
+			const setting = createComponentInstanceSetting( [ { outerKey: 'prop-4', innerKey: 'prop-0' } ] );
 
-			mockGetElementSetting.mockReturnValue(
-				createComponentInstanceSetting( [ { outerKey: 'prop-4', innerKey: 'prop-0' } ] )
-			);
+			mockGetContainerByOriginId.mockReturnValue( createContainerWithComponentInstance( setting ) );
 
 			jest.mocked( getOverridableProp ).mockImplementation(
 				( { overrideKey } ) => innerOverridableProps.props[ overrideKey ]
@@ -158,11 +164,11 @@ describe( 'filter-valid-overridable-props', () => {
 			expect( result ).toBe( false );
 		} );
 
-		it( 'should return false when component instance element not found', () => {
+		it( 'should return false when container is not found', () => {
 			// Arrange
 			const prop = createExposedProp( 'prop-4', 'prop-0' );
 
-			mockGetElementSetting.mockReturnValue( null );
+			mockGetContainerByOriginId.mockReturnValue( null );
 
 			jest.mocked( getOverridableProp ).mockReturnValue( undefined );
 
@@ -177,10 +183,9 @@ describe( 'filter-valid-overridable-props', () => {
 		it( 'should return false when inner component not found in store', () => {
 			// Arrange
 			const prop = createExposedProp( 'prop-4', 'prop-0' );
+			const setting = createComponentInstanceSetting( [ { outerKey: 'prop-4', innerKey: 'prop-0' } ] );
 
-			mockGetElementSetting.mockReturnValue(
-				createComponentInstanceSetting( [ { outerKey: 'prop-4', innerKey: 'prop-0' } ] )
-			);
+			mockGetContainerByOriginId.mockReturnValue( createContainerWithComponentInstance( setting ) );
 
 			jest.mocked( getOverridableProp ).mockReturnValue( undefined );
 
@@ -237,13 +242,12 @@ describe( 'filter-valid-overridable-props', () => {
 			};
 
 			const innerOverridableProps = createInnerOverridableProps( [ 'prop-1' ] );
+			const setting = createComponentInstanceSetting( [
+				{ outerKey: 'prop-4', innerKey: 'prop-0' },
+				{ outerKey: 'prop-5', innerKey: 'prop-1' },
+			] );
 
-			mockGetElementSetting.mockReturnValue(
-				createComponentInstanceSetting( [
-					{ outerKey: 'prop-4', innerKey: 'prop-0' },
-					{ outerKey: 'prop-5', innerKey: 'prop-1' },
-				] )
-			);
+			mockGetContainerByOriginId.mockReturnValue( createContainerWithComponentInstance( setting ) );
 
 			jest.mocked( getOverridableProp ).mockImplementation( ( { overrideKey } ) => {
 				return innerOverridableProps.props[ overrideKey ];
@@ -306,35 +310,45 @@ describe( 'filter-valid-overridable-props', () => {
 				},
 			};
 
-			mockGetElementSetting.mockImplementation( ( elementId ) => {
-				if ( elementId === 'outer-component-instance' ) {
-					return componentInstancePropTypeUtil.create( {
-						component_id: { $$type: 'number', value: middleComponentId },
-						overrides: componentInstanceOverridesPropTypeUtil.create( [
-							componentOverridablePropTypeUtil.create( {
-								override_key: 'prop-10',
-								origin_value: componentInstanceOverridePropTypeUtil.create( {
-									override_key: 'prop-4',
-									override_value: null,
-									schema_source: { type: 'component', id: middleComponentId },
-								} ),
+			mockGetContainerByOriginId.mockImplementation( ( originId ) => {
+				if ( originId === 'outer-component-instance' ) {
+					return createMockElement( {
+						model: { id: 'outer-component-instance', widgetType: 'e-component' },
+						settings: {
+							component_instance: componentInstancePropTypeUtil.create( {
+								component_id: { $$type: 'number', value: middleComponentId },
+								overrides: componentInstanceOverridesPropTypeUtil.create( [
+									componentOverridablePropTypeUtil.create( {
+										override_key: 'prop-10',
+										origin_value: componentInstanceOverridePropTypeUtil.create( {
+											override_key: 'prop-4',
+											override_value: null,
+											schema_source: { type: 'component', id: middleComponentId },
+										} ),
+									} ),
+								] ),
 							} ),
-						] ),
+						},
 					} );
 				}
-				if ( elementId === 'middle-component-instance' ) {
-					return componentInstancePropTypeUtil.create( {
-						component_id: { $$type: 'number', value: innerComponentId },
-						overrides: componentInstanceOverridesPropTypeUtil.create( [
-							componentOverridablePropTypeUtil.create( {
-								override_key: 'prop-4',
-								origin_value: componentInstanceOverridePropTypeUtil.create( {
-									override_key: 'prop-0',
-									override_value: null,
-									schema_source: { type: 'component', id: innerComponentId },
-								} ),
+				if ( originId === 'middle-component-instance' ) {
+					return createMockElement( {
+						model: { id: 'middle-component-instance', widgetType: 'e-component' },
+						settings: {
+							component_instance: componentInstancePropTypeUtil.create( {
+								component_id: { $$type: 'number', value: innerComponentId },
+								overrides: componentInstanceOverridesPropTypeUtil.create( [
+									componentOverridablePropTypeUtil.create( {
+										override_key: 'prop-4',
+										origin_value: componentInstanceOverridePropTypeUtil.create( {
+											override_key: 'prop-0',
+											override_value: null,
+											schema_source: { type: 'component', id: innerComponentId },
+										} ),
+									} ),
+								] ),
 							} ),
-						] ),
+						},
 					} );
 				}
 				return null;

@@ -16,7 +16,7 @@ import {
 	SettingsField,
 	useElement,
 } from '@elementor/editor-editing-panel';
-import { type Control, getContainer, getElementType } from '@elementor/editor-elements';
+import { type Control, getElementType } from '@elementor/editor-elements';
 import { type PropType, type PropValue } from '@elementor/editor-props';
 import { Stack } from '@elementor/ui';
 
@@ -43,6 +43,7 @@ import { OverridablePropProvider } from '../../provider/overridable-prop-context
 import { updateOverridableProp } from '../../store/actions/update-overridable-prop';
 import { useCurrentComponentId } from '../../store/store';
 import { type OriginPropFields, type OverridableProp, type OverridableProps } from '../../types';
+import { getContainerByOriginId } from '../../utils/get-container-by-origin-id';
 import { getPropTypeForComponentOverride } from '../../utils/get-prop-type-for-component-override';
 import { getMatchingOverride } from '../../utils/overridable-props-utils';
 import { resolveOverridePropValue } from '../../utils/resolve-override-prop-value';
@@ -174,15 +175,16 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 		propKey,
 	} = overridableProp.originPropFields ?? overridableProp;
 
-	const thisInstanceContainer = getContainer( componentInstanceElement.element.id );
-	const elementContainer = window.elementor.getContainerByKeyValue( { key: 'originId', value: originElementId, parent: thisInstanceContainer?.view } );
+	const instanceElementId = componentInstanceElement.element.id;
+	const elementContainer = getContainerByOriginId( originElementId, instanceElementId );
+
 	if ( ! elementContainer ) {
 		throw new OverrideControlInnerElementNotFoundError( {
 			context: { componentId, elementId: originElementId },
 		} );
 	}
 
-	const elementId = elementContainer.model.get( 'id' );
+	const elementId = elementContainer.id;
 
 	const type = elType === 'widget' ? widgetType : elType;
 	const elementType = getElementType( type );

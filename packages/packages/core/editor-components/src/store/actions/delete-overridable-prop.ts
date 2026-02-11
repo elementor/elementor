@@ -10,6 +10,7 @@ type DeletePropParams = {
 	componentId: ComponentId;
 	propKey: string;
 	source: Source;
+	instanceElementId?: string;
 };
 
 export function deleteOverridableProp( { componentId, propKey, source }: DeletePropParams ): void {

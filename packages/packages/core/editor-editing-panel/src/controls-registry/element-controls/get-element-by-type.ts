@@ -1,7 +1,6 @@
 import { getContainer } from '@elementor/editor-elements';
 
 export const getElementByType = ( elementId: string, type: string ) => {
-	//?
 	const currentElement = getContainer( elementId );
 
 	if ( ! currentElement ) {

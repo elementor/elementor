@@ -20,6 +20,7 @@ import { componentOverridablePropTypeUtil } from '../../../prop-types/component-
 import { OverridablePropProvider } from '../../../provider/overridable-prop-context';
 import { type ComponentsSlice, selectOverridableProps, slice } from '../../../store/store';
 import { type PublishedComponent } from '../../../types';
+import { getContainerByOriginId } from '../../../utils/get-container-by-origin-id';
 import { OverridablePropIndicator } from '../overridable-prop-indicator';
 
 jest.mock( '@elementor/editor-controls', () => ( {
@@ -34,6 +35,9 @@ jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
 	getWidgetsCache: jest.fn(),
 	getElementSetting: jest.fn(),
+} ) );
+jest.mock( '../../../utils/get-container-by-origin-id', () => ( {
+	getContainerByOriginId: jest.fn(),
 } ) );
 
 const MOCK_ELEMENT_ID = 'test-element-123';
@@ -418,21 +422,40 @@ describe( 'OverridablePropIndicator with componentInstanceElement context', () =
 		dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
 
 		// we need to mock it for the new useSanitizeOverridableProps hook to retrieve the tested overridable
+		const mockComponentInstanceSettings = componentInstancePropTypeUtil.create( {
+			component_id: { $$type: 'number', value: INNER_COMPONENT_ID },
+			overrides: componentInstanceOverridesPropTypeUtil.create( [
+				componentOverridablePropTypeUtil.create( {
+					override_key: MOCK_OVERRIDABLE_KEY,
+					origin_value: componentInstanceOverridePropTypeUtil.create( {
+						override_key: INNER_OVERRIDE_KEY,
+						override_value: null,
+						schema_source: { type: 'component', id: INNER_COMPONENT_ID },
+					} ),
+				} ),
+			] ),
+		} );
+
 		jest.mocked( getElementSetting ).mockImplementation( ( elementId, key ) => {
 			if ( elementId === COMPONENT_INSTANCE_ELEMENT_ID && key === 'component_instance' ) {
-				return componentInstancePropTypeUtil.create( {
-					component_id: { $$type: 'number', value: INNER_COMPONENT_ID },
-					overrides: componentInstanceOverridesPropTypeUtil.create( [
-						componentOverridablePropTypeUtil.create( {
-							override_key: MOCK_OVERRIDABLE_KEY,
-							origin_value: componentInstanceOverridePropTypeUtil.create( {
-								override_key: INNER_OVERRIDE_KEY,
-								override_value: null,
-								schema_source: { type: 'component', id: INNER_COMPONENT_ID },
-							} ),
-						} ),
-					] ),
-				} );
+				return mockComponentInstanceSettings;
+			}
+			return null;
+		} );
+
+		jest.mocked( getContainerByOriginId ).mockImplementation( ( originId, instanceId ) => {
+			if ( originId === COMPONENT_INSTANCE_ELEMENT_ID ) {
+				return {
+					id: COMPONENT_INSTANCE_ELEMENT_ID,
+					settings: {
+						get: ( key: string ) => {
+							if ( key === 'component_instance' ) {
+								return mockComponentInstanceSettings;
+							}
+							return null;
+						},
+					},
+				} as any;
 			}
 			return null;
 		} );
