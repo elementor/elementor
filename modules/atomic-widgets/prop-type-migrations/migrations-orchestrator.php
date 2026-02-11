@@ -21,8 +21,6 @@ class Migrations_Orchestrator {
 	const EXPERIMENT_BC_MIGRATIONS = 'e_bc_migrations';
 	const MIGRATIONS_URL = 'https://migrations.elementor.com/';
 
-	private const MIGRATIONS_STATE_META_KEY = '_elementor_migrations_state';
-
 	private static ?self $instance = null;
 
 	private Migrations_Loader $loader;
@@ -38,7 +36,7 @@ class Migrations_Orchestrator {
 			return;
 		}
 
-		add_filter( 'elementor/document/load/data', fn ( $data, $document ) => $this->backward_compatibility_migrations( $data, $document ), 10, 2 );
+		add_filter( 'elementor/document/load/data', fn ( $data, $document ) => $this->migrate_doc( $data, $document ), 10, 2 );
 	}
 
 	public static function is_active() {
@@ -70,32 +68,8 @@ class Migrations_Orchestrator {
 		}
 	}
 
-	public static function clear_migration_cache( $old_state = null, $new_state = null ): void {
-		global $wpdb;
-
-		$deleted = $wpdb->query(
-			$wpdb->prepare(
-				"DELETE FROM {$wpdb->postmeta} WHERE meta_key LIKE %s",
-				$wpdb->esc_like( self::MIGRATIONS_STATE_META_KEY ) . '%'
-			)
-		);
-
-		if ( false === $deleted ) {
-			Logger::error( 'Failed to clear migration caches', [
-				'error' => $wpdb->last_error,
-				'reason' => 'feature_flag_change',
-				'old_state' => $old_state,
-				'new_state' => $new_state,
-			] );
-			return;
-		}
-
-		Logger::info( 'Cleared migration caches', [
-			'deleted_count' => $deleted,
-			'reason' => 'feature_flag_change',
-			'old_state' => $old_state,
-			'new_state' => $new_state,
-		] );
+	public static function clear_migration_cache(): void {
+		Migrations_Cache::clear_all();
 	}
 
 	public function migrate( array &$data, int $entity_id, string $data_identifier, callable $save_callback ): void {
@@ -106,7 +80,7 @@ class Migrations_Orchestrator {
 		];
 
 		try {
-			if ( $this->is_migrated( $entity_id, $data_identifier ) ) {
+			if ( Migrations_Cache::is_migrated( $entity_id, $data_identifier, $this->loader->get_manifest_hash() ) ) {
 				return;
 			}
 
@@ -116,7 +90,7 @@ class Migrations_Orchestrator {
 				$save_callback( $data );
 			}
 
-			$this->mark_as_migrated( $entity_id, $data_identifier );
+			Migrations_Cache::mark_as_migrated( $entity_id, $data_identifier, $this->loader->get_manifest_hash() );
 		} catch ( \Exception $e ) {
 			Logger::warning( 'Migration failed', [
 				'entity_id' => $entity_id,
@@ -124,32 +98,6 @@ class Migrations_Orchestrator {
 				'error' => $e->getMessage(),
 			] );
 		}
-	}
-
-	public function migrate_node( array &$data, array $schema, array $context ): bool {
-		$missing_keys = array_keys( $schema );
-		$pending_widget_key_migrations = [];
-		$has_changes = false;
-
-		foreach ( $data as $key => $value ) {
-			if ( ! isset( $schema[ $key ] ) ) {
-				if ( 'widget' === $context['type'] ) {
-					$this->process_missing_widget_key( $key, $value, $context, $missing_keys, $pending_widget_key_migrations );
-				}
-			} else {
-				$missing_keys = array_diff( $missing_keys, [ $key ] );
-
-				if ( $this->process_prop_key( $key, $value, $schema, $data ) ) {
-					$has_changes = true;
-				}
-			}
-		}
-
-		if ( 'widget' === $context['type'] ) {
-			$this->apply_pending_widget_key_migrations( $pending_widget_key_migrations, $schema, $data, $has_changes );
-		}
-
-		return $has_changes;
 	}
 
 	private function walk_and_migrate( array &$data, array $context, ?array $schema = null ): bool {
@@ -181,26 +129,6 @@ class Migrations_Orchestrator {
 		}
 
 		return $has_changes;
-	}
-
-	private function try_get_schema( array $context ): array {
-		if ( ! isset( $context['type'] ) || null === $context['type'] ) {
-			return [];
-		}
-
-		if ( 'widget' === $context['type'] ) {
-			return $this->get_props_schema_by_type( $context['element_type'] );
-		}
-
-		if ( 'style' === $context['type'] ) {
-			return Style_Schema::get();
-		}
-
-		if ( 'interactions' === $context['type'] ) {
-			return Interactions_Schema::get()['items'];
-		}
-
-		return [];
 	}
 
 	private function build_context( array $parent, $key, array $existing_context ): array {
@@ -243,39 +171,50 @@ class Migrations_Orchestrator {
 		return $type;
 	}
 
-	private function is_migrated( int $id, string $data_identifier ): bool {
-		$cache_meta_key = $this->get_cache_meta_key( $data_identifier );
-		$current_state = $this->get_migration_state();
-
-		if ( empty( $current_state ) ) {
-			return false;
+	private function try_get_schema( array $context ): array {
+		if ( ! isset( $context['type'] ) || null === $context['type'] ) {
+			return [];
 		}
 
-		$stored_state = get_post_meta( $id, $cache_meta_key, true );
-
-		return $current_state === $stored_state;
-	}
-
-	private function mark_as_migrated( int $id, string $data_identifier ): void {
-		$cache_meta_key = $this->get_cache_meta_key( $data_identifier );
-		update_post_meta( $id, $cache_meta_key, $this->get_migration_state() );
-	}
-
-	/**
-	 * We use a suffix to cache multiple migrations, each "type" of migration should run once.
-	 */
-	private function get_cache_meta_key( string $data_identifier ): string {
-		return self::MIGRATIONS_STATE_META_KEY . '_' . substr( md5( $data_identifier ), 0, 4 );
-	}
-
-	private function get_migration_state(): string {
-		$hash = $this->loader->get_manifest_hash();
-
-		if ( empty( $hash ) ) {
-			return '';
+		if ( 'widget' === $context['type'] ) {
+			return $this->get_props_schema_by_type( $context['element_type'] );
 		}
 
-		return ELEMENTOR_VERSION . ':' . $hash;
+		if ( 'style' === $context['type'] ) {
+			return Style_Schema::get();
+		}
+
+		if ( 'interactions' === $context['type'] ) {
+			return Interactions_Schema::get()['items'];
+		}
+
+		return [];
+	}
+
+	public function migrate_node( array &$data, array $schema, array $context ): bool {
+		$missing_keys = array_keys( $schema );
+		$pending_widget_key_migrations = [];
+		$has_changes = false;
+
+		foreach ( $data as $key => $value ) {
+			if ( ! isset( $schema[ $key ] ) ) {
+				if ( 'widget' === $context['type'] ) {
+					$this->process_missing_widget_key( $key, $value, $context, $missing_keys, $pending_widget_key_migrations );
+				}
+			} else {
+				$missing_keys = array_diff( $missing_keys, [ $key ] );
+
+				if ( $this->process_prop_key( $key, $value, $schema, $data ) ) {
+					$has_changes = true;
+				}
+			}
+		}
+
+		if ( 'widget' === $context['type'] ) {
+			$this->apply_pending_widget_key_migrations( $pending_widget_key_migrations, $schema, $data, $has_changes );
+		}
+
+		return $has_changes;
 	}
 
 	private function get_props_schema_by_type( ?string $element_type ): array {
@@ -541,7 +480,7 @@ class Migrations_Orchestrator {
 		];
 	}
 
-	private function backward_compatibility_migrations( array $data, $document ): array {
+	private function migrate_doc( array $data, $document ): array {
 		$this->migrate(
 			$data,
 			$document->get_post()->ID,

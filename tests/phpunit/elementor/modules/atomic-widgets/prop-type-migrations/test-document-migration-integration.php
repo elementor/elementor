@@ -15,11 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// class Mock_String_V2_Integration_Prop_Type extends \Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type {
-// 	public static function get_key(): string {
-// 		return 'string_v2';
-// 	}
-// }
+class Mock_String_V2_Integration_Prop_Type extends \Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type {
+	public static function get_key(): string {
+		return 'string';
+	}
+}
 
 /**
  * @group prop-type-migrations
@@ -88,9 +88,9 @@ class Test_Document_Migration_Integration extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	// public function add_css_prop_to_style_schema( $schema ): array {
-	// 	return array_merge( $schema, [ 'css_prop' => Mock_String_V2_Integration_Prop_Type::make() ] );
-	// }
+	public function add_css_prop_to_style_schema( $schema ): array {
+		return array_merge( $schema, [ 'css_prop' => Mock_String_V2_Integration_Prop_Type::make() ] );
+	}
 
 	public function test_migrate_real_site_data_with_multiple_prop_types() {
 		// Arrange
@@ -99,7 +99,7 @@ class Test_Document_Migration_Integration extends Elementor_Test_Base {
 			true
 		);
 
-		$orchestrator = Migrations_Orchestrator::make();
+		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
 
 		$post_id = 999;
 
@@ -115,74 +115,63 @@ class Test_Document_Migration_Integration extends Elementor_Test_Base {
 		$this->assertMatchesJsonSnapshot( $data );
 	}
 
-	// public function test_document_and_global_classes_migrations_do_not_interfere() {
-	// 	// Arrange
-	// 	add_filter( 'elementor/atomic-widgets/styles/schema', [ $this, 'add_css_prop_to_style_schema' ], 999999 );
+	public function test_document_and_global_classes_migrations_do_not_interfere() {
+		// Arrange
+		add_filter( 'elementor/atomic-widgets/styles/schema', [ $this, 'add_css_prop_to_style_schema' ], 999999 );
 
-	// 	$post_id = 1000;
+		$post_id = 1000;
 
-	// 	$document_data = [
-	// 		'elements' => [
-	// 			[
-	// 				'id' => 'element_1',
-	// 				'elType' => 'widget',
-	// 				'widgetType' => 'e-heading',
-	// 				'settings' => [
-	// 					'title' => [
-	// 						'$$type' => 'string',
-	// 						'value' => 'Document Title',
-	// 					],
-	// 				],
-	// 			],
-	// 		],
-	// 	];
+		$document_data = [
+			[
+				'id' => 'element_1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'settings' => [
+					'title' => [
+						'$$type' => 'html',
+						'value' => 'Document Title',
+					],
+				],
+			],
+		];
 
-	// 	$global_classes_data = [
-	// 		'items' => [
-	// 			[
-	// 				'id' => 'gc_1',
-	// 				'title' => 'Global Class',
-	// 				'props' => [
-	// 					'css_prop' => [
-	// 						'$$type' => 'string',
-	// 						'value' => 'Global Style',
-	// 					],
-	// 				],
-	// 			],
-	// 		],
-	// 		'order' => ['gc_1'],
-	// 	];
+		$global_classes_data = [
+			'items' => [
+				[
+					'id' => 'gc_1',
+					'title' => 'Global Class',
+					'props' => [
+						'css_prop' => [
+							'$$type' => 'old-string',
+							'value' => 'Global Style',
+						],
+					],
+				],
+			],
+			'order' => ['gc_1'],
+		];
 
-	// 	$document_saved = false;
-	// 	$global_classes_saved = false;
+		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
 
-	// 	$orchestrator = Migrations_Orchestrator::make();
+		// Act
+		$orchestrator->migrate(
+			$document_data,
+			$post_id,
+			'_elementor_data',
+			function() {}
+		);
 
-	// 	// Act
-	// 	$orchestrator->migrate(
-	// 		$document_data,
-	// 		$post_id,
-	// 		'_elementor_data',
-	// 		function() use ( &$document_saved ) {
-	// 			$document_saved = true;
-	// 		}
-	// 	);
+		$orchestrator->migrate(
+			$global_classes_data,
+			$post_id,
+			'_elementor_global_classes',
+			function() {}
+		);
 
-	// 	$orchestrator->migrate(
-	// 		$global_classes_data,
-	// 		$post_id,
-	// 		'_elementor_global_classes',
-	// 		function() use ( &$global_classes_saved ) {
-	// 			$global_classes_saved = true;
-	// 		}
-	// 	);
+		// Assert
+		$this->assertEquals( 'html-v2', $document_data[0]['settings']['title']['$$type'] );
+		$this->assertEquals( 'string', $global_classes_data['items'][0]['props']['css_prop']['$$type'] );
 
-	// 	// Assert
-	// 	$this->assertTrue( $document_saved, 'Document should be migrated and saved' );
-	// 	$this->assertTrue( $global_classes_saved, 'Global classes should be migrated and saved' );
-	// 	$this->assertEquals( 'string_v2', $document_data['elements'][0]['settings']['title']['$$type'] );
-	// 	$this->assertEquals( 'string_v2', $global_classes_data['items'][0]['props']['css_prop']['$$type'] );
-
-	// 	remove_filter( 'elementor/atomic-widgets/styles/schema', [ $this, 'add_css_prop_to_style_schema' ], 999999 );
-	// }
+		remove_filter( 'elementor/atomic-widgets/styles/schema', [ $this, 'add_css_prop_to_style_schema' ], 999999 );
+	}
 }
