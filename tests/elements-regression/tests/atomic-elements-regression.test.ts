@@ -42,6 +42,9 @@ test.describe( 'Elementor regression tests with templates for CORE - V4', () => 
 			await editor.loadTemplate( filePath, true );
 			await editor.waitForIframeToLoaded( widgetType );
 
+			const previewFrame = editor.getPreviewFrame();
+			await previewFrame.locator( '[data-interaction-id]' ).first().waitFor( { state: 'visible', timeout: 15000 } );
+
 			await page.setViewportSize( { width: 1920, height: 3080 } );
 			await editor.page.waitForLoadState( 'domcontentloaded' );
 			await helper.doScreenshot( widgetType, false );
@@ -52,6 +55,7 @@ test.describe( 'Elementor regression tests with templates for CORE - V4', () => 
 			await editor.publishAndViewPage();
 
 			await editor.waitForIframeToLoaded( widgetType, true );
+			await page.locator( '[data-interaction-id]' ).first().waitFor( { state: 'visible', timeout: 15000 } );
 			await editor.removeWpAdminBar();
 			await page.setViewportSize( { width: 1920, height: 1080 } );
 			await helper.doScreenshot( widgetType, true );
