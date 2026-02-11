@@ -44,6 +44,10 @@ coverage/
 .phpunit.result.cache
 .npmrc
 
+# Code agents
+.cursor/
+.claude/
+
 # playwright
 test-results/
 **/storageState-*.json
