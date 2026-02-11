@@ -1,10 +1,9 @@
 import * as React from 'react';
-
-import { screen } from '@testing-library/react';
+import { createMockElementType, createMockPropType, renderWithTheme } from 'test-utils';
 import { useElementSettings } from '@elementor/editor-elements';
 import { type PropValue } from '@elementor/editor-props';
+import { screen } from '@testing-library/react';
 import { __ } from '@wordpress/i18n';
-import { createMockElementType, createMockPropType, renderWithTheme } from 'test-utils';
 
 import { mockElement } from '../../__tests__/utils';
 import { ElementProvider } from '../../contexts/element-context';

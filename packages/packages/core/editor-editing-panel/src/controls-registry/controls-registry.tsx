@@ -1,4 +1,3 @@
-import { type ControlLayout } from '@elementor/editor-elements';
 import {
 	ChipsControl,
 	type ControlComponent,
@@ -21,11 +20,12 @@ import {
 	ToggleControl,
 	UrlControl,
 } from '@elementor/editor-controls';
+import { type ControlLayout } from '@elementor/editor-elements';
 import {
 	booleanPropTypeUtil,
 	DateTimePropTypeUtil,
-	htmlV2PropTypeUtil,
 	emailPropTypeUtil,
+	htmlV2PropTypeUtil,
 	imagePropTypeUtil,
 	imageSrcPropTypeUtil,
 	keyValuePropTypeUtil,

@@ -1,7 +1,6 @@
 import * as React from 'react';
-
-import { fireEvent, screen } from '@testing-library/react';
 import { createMockPropType, renderControl } from 'test-utils';
+import { fireEvent, screen } from '@testing-library/react';
 
 import * as boundPropContext from '../../bound-prop-context';
 import { EmailControl } from '../email-control';
