@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Switch_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Video_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
@@ -116,7 +117,8 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 			'poster_enabled' => Boolean_Prop_Type::make()->default( false ),
 			'poster' => Image_Prop_Type::make()
 				->default_size( 'full' )
-				->default_url( Placeholder_Image::get_placeholder_image() ),
+				->default_url( Placeholder_Image::get_placeholder_image() )
+				->set_dependencies( $poster_dependencies ),
 
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];

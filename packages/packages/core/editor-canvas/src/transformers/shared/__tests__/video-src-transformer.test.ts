@@ -145,7 +145,7 @@ describe( 'videoSrcTransformer', () => {
 		const value = {
 			id: 123,
 			url: undefined,
-		} as { id: number; url: null };
+		} as unknown as { id: number; url: null };
 
 		// Act.
 		const result = await videoSrcTransformer( value, { key: 'source' } );
