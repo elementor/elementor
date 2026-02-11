@@ -25,6 +25,7 @@ import {
 	selectSteps,
 	selectTotalSteps,
 	selectUrls,
+	selectUserName,
 	setConnected,
 	setError,
 	setExitType,
@@ -54,6 +55,7 @@ export function useOnboarding() {
 	const isConnected = __useSelector( selectIsConnected );
 	const isGuest = __useSelector( selectIsGuest );
 	const hasPassedLogin = __useSelector( selectHasPassedLogin );
+	const userName = __useSelector( selectUserName );
 	const urls = __useSelector( selectUrls );
 
 	const actions = useMemo(
@@ -94,6 +96,7 @@ export function useOnboarding() {
 		isConnected,
 		isGuest,
 		hasPassedLogin,
+		userName,
 		urls,
 		actions,
 	};
