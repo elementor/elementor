@@ -60,6 +60,12 @@ class Button extends Base_Object {
 			}
 		}
 
+		if ( ! empty( $options['data'] ) && is_array( $options['data'] ) ) {
+			foreach ( $options['data'] as $key => $value ) {
+				$attributes[ 'data-' . $key ] = $value;
+			}
+		}
+
 		$attributes['class'] = $classes;
 
 		$html = $before . '<' . $html_tag . ' ' . Utils::render_html_attributes( $attributes ) . '>';
@@ -92,6 +98,7 @@ class Button extends Base_Object {
 			'url' => '',
 			'variant' => '',
 			'before' => '',
+			'data' => [],
 		];
 
 		if ( null !== $option && -1 !== in_array( $option, $default_options, true ) ) {

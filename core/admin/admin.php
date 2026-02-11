@@ -1191,14 +1191,14 @@ class Admin extends App {
 			return;
 		}
 
-		if ( empty( $request['source'] ) ) {
+		if ( empty( $request['campaign'] ) && empty( $request['source'] ) && empty( $request['medium'] ) ) {
 			return;
 		}
 
 		$campaign_data = [
+			'campaign' => sanitize_key( $request['campaign'] ),
 			'source' => sanitize_key( $request['source'] ),
-			'campaign' => 'ally-plg',
-			'medium' => 'wp-dash',
+			'medium' => sanitize_key( $request['medium'] ),
 		];
 
 		set_transient( 'elementor_ea11y_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
@@ -1237,14 +1237,16 @@ class Admin extends App {
 			return;
 		}
 
-		if ( empty( $request['source'] ) ) {
+		if ( empty( $request['campaign'] ) && empty( $request['source'] ) && empty( $request['medium'] ) ) {
 			return;
 		}
 
+		error_log( print_r( $request, true ) );
+
 		$campaign_data = [
+			'campaign' => sanitize_key( $request['campaign'] ),
 			'source' => sanitize_key( $request['source'] ),
-			'campaign' => 'sm-plg',
-			'medium' => 'wp-dash',
+			'medium' => sanitize_key( $request['medium'] ),
 		];
 
 		set_transient( 'elementor_site_mailer_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
