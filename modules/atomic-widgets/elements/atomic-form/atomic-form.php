@@ -51,7 +51,7 @@ class Atomic_Form extends Atomic_Element_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-form-horizontal';
+		return 'eicon-atomic-form';
 	}
 
 	protected static function define_props_schema(): array {
