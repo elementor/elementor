@@ -17,7 +17,7 @@ const GreetingBanner = styled( Box )( ( { theme } ) => ( {
 	justifyContent: 'center',
 	paddingInline: theme.spacing( 3 ),
 	paddingBlock: theme.spacing( 1.5 ),
-	borderRadius: 16,
+	borderRadius: theme.spacing( 2 ),
 	backgroundColor: GREETING_BANNER_BG_COLOR,
 	alignSelf: 'flex-start',
 } ) );
@@ -34,11 +34,11 @@ const ThemeCardRoot = styled( Box, {
 	flexDirection: 'column',
 	alignItems: 'center',
 	gap: theme.spacing( 2 ),
-	paddingBottom: theme.spacing( 3 ),
-	borderRadius: 16,
+	paddingBlockEnd: theme.spacing( 3 ),
+	borderRadius: theme.spacing( 2 ),
 	border: selected ? `2px solid ${ theme.palette.text.primary }` : `1px solid ${ theme.palette.divider }`,
 	cursor: disabled ? 'default' : 'pointer',
-	width: 240,
+	inlineSize: theme.spacing( 30 ),
 	flexShrink: 0,
 	position: 'relative',
 	overflow: 'visible',
@@ -52,27 +52,28 @@ const ThemeCardRoot = styled( Box, {
 		} ),
 } ) );
 
-const ThemePreview = styled( Box )< { bgColor: string; previewImage?: string } >( ( { bgColor, previewImage } ) => ( {
-	width: '100%',
-	height: 112,
-	overflow: 'hidden',
-	borderTopLeftRadius: 14,
-	borderTopRightRadius: 14,
-	backgroundColor: bgColor,
-	position: 'relative',
-	...( previewImage && {
-		backgroundImage: `url(${ previewImage })`,
-		backgroundSize: 'cover',
-		backgroundPosition: 'center',
-	} ),
-} ) );
+const ThemePreview = styled( Box )< { bgColor: string; previewImage?: string } >(
+	( { theme, bgColor, previewImage } ) => ( {
+		inlineSize: '100%',
+		blockSize: theme.spacing( 14 ),
+		overflow: 'hidden',
+		borderStartStartRadius: theme.spacing( 1.75 ),
+		borderStartEndRadius: theme.spacing( 1.75 ),
+		backgroundColor: bgColor,
+		position: 'relative',
+		...( previewImage && {
+			backgroundImage: `url(${ previewImage })`,
+			backgroundSize: 'cover',
+			backgroundPosition: 'center',
+		} ),
+	} )
+);
 
 const InstalledChip = styled( Chip )( ( { theme } ) => ( {
 	position: 'absolute',
-	top: 9,
-	left: 9,
+	insetBlockStart: theme.spacing( 1 ),
+	insetInlineStart: theme.spacing( 1 ),
 	zIndex: 1,
-	height: 20,
 	backgroundColor: theme.palette.success.main,
 	color: theme.palette.success.contrastText,
 	'& .MuiChip-icon': {
@@ -80,12 +81,11 @@ const InstalledChip = styled( Chip )( ( { theme } ) => ( {
 	},
 } ) );
 
-const RecommendedChip = styled( Chip )( () => ( {
+const RecommendedChip = styled( Chip )( ( { theme } ) => ( {
 	position: 'absolute',
-	top: 9,
-	left: 9,
+	insetBlockStart: theme.spacing( 1 ),
+	insetInlineStart: theme.spacing( 1 ),
 	zIndex: 1,
-	height: 20,
 } ) );
 
 interface ThemeCardProps {
@@ -263,7 +263,7 @@ export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
 	const effectiveSelection = selectedValue ?? recommendedTheme;
 
 	return (
-		<Stack spacing={ 7.5 } sx={ { marginTop: -3.5 } } data-testid="theme-selection-step">
+		<Stack spacing={ 7.5 } sx={ { marginBlockStart: -3.5 } } data-testid="theme-selection-step">
 			<GreetingBanner>
 				<Typography variant="body1" color="text.primary" align="center">
 					{ greetingText }
