@@ -4,8 +4,7 @@ export function prefixElementIds( elements: V1ElementData[], prefix: string ): V
 	return elements.map( ( element ) => ( {
 		...element,
 		id: `${ prefix }_${ element.id }`,
-		elements: element.elements
-			? prefixElementIds( element.elements, prefix )
-			: undefined,
+		originId: element.id,
+		elements: element.elements ? prefixElementIds( element.elements, prefix ) : undefined,
 	} ) );
 }
