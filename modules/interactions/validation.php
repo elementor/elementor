@@ -3,8 +3,9 @@
 namespace Elementor\Modules\Interactions;
 
 use Elementor\Modules\Interactions\Validators\Breakpoints_Value as BreakpointsValueValidator;
-use Elementor\Modules\Interactions\Validators\Trigger_Value as TriggerValueValidator;
+use Elementor\Modules\Interactions\Validators\Custom_Effect_Value as CustomEffectValueValidator;
 use Elementor\Modules\Interactions\Validators\String_Value as StringValueValidator;
+use Elementor\Modules\Interactions\Validators\Trigger_Value as TriggerValueValidator;
 use Elementor\Modules\Interactions\Adapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,7 +16,7 @@ class Validation {
 	private $elements_to_interactions_counter = [];
 	private $max_number_of_interactions = 5;
 
-	private const VALID_EFFECTS = [ 'fade', 'slide', 'scale' ];
+	private const VALID_EFFECTS = [ 'fade', 'slide', 'scale', 'custom' ];
 	private const VALID_TYPES = [ 'in', 'out' ];
 	private const VALID_DIRECTIONS = [ '', 'left', 'right', 'top', 'bottom' ];
 
@@ -311,6 +312,15 @@ class Validation {
 		}
 
 		if ( isset( $animation_value['config'] ) && ! $this->is_valid_config_prop( $animation_value ) ) {
+			return false;
+		}
+
+		$effect_value = isset( $animation_value['effect']['value'] ) ? $animation_value['effect']['value'] : null;
+		if ( 'custom' === $effect_value ) {
+			if ( ! array_key_exists( 'custom', $animation_value ) || ! CustomEffectValueValidator::is_valid( $animation_value['custom'] ) ) {
+				return false;
+			}
+		} elseif ( array_key_exists( 'custom', $animation_value ) && ! CustomEffectValueValidator::is_valid( $animation_value['custom'] ) ) {
 			return false;
 		}
 

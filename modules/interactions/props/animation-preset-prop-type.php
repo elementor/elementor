@@ -17,6 +17,7 @@ class Animation_Preset_Prop_Type extends Object_Prop_Type {
 	protected function define_shape(): array {
 		return [
 			'effect' => String_Prop_Type::make()->description( 'The effect to use for the animation' ),
+			'custom' => Custom_Effect_Prop_Type::make()->description( 'The custom effect definition' ),
 			'type' => String_Prop_Type::make()->enum( [
 				'in',
 				'out',
