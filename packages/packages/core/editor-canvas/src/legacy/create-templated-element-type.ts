@@ -6,7 +6,9 @@ import { createElementViewClassDeclaration } from './create-element-type';
 import {
 	createAfterRender,
 	createBeforeRender,
-	setupTwigRenderer,
+	createTwigRenderState,
+	renderChildrenWithOptimization,
+	renderTwigTemplate,
 	type TwigViewInterface,
 } from './twig-rendering-utils';
 import {
@@ -67,17 +69,10 @@ export function createTemplatedElementView( {
 }: CreateTemplatedElementTypeOptions ): typeof ElementView {
 	const BaseView = createElementViewClassDeclaration();
 
-	const { templateKey, baseStylesDictionary, resolveProps } = setupTwigRenderer( {
-		type,
-		renderer,
-		element,
-	} );
+	const renderState = createTwigRenderState( { renderer, element } );
 
 	return class extends BaseView {
-		#abortController: AbortController | null = null;
-		#childrenRenderPromises: Promise< void >[] = [];
-		#lastResolvedSettingsHash: string | null = null;
-		#domUpdateWasSkipped = false;
+		_abortController: AbortController | null = null;
 
 		getTemplateType() {
 			return 'twig';
@@ -100,14 +95,14 @@ export function createTemplatedElementView( {
 		}
 
 		invalidateRenderCache() {
-			this.#lastResolvedSettingsHash = null;
+			renderState.cacheState.invalidate();
 		}
 
 		render() {
-			this.#abortController?.abort();
-			this.#abortController = new AbortController();
+			this._abortController?.abort();
+			this._abortController = new AbortController();
 
-			const process = signalizedProcess( this.#abortController.signal )
+			const process = signalizedProcess( this._abortController.signal )
 				.then( () => this._beforeRender() )
 				.then( () => this._renderTemplate() )
 				.then( () => this._renderChildren() )
@@ -119,92 +114,27 @@ export function createTemplatedElementView( {
 		}
 
 		async _renderChildren() {
-			this.#childrenRenderPromises = [];
-
-			// Optimize rendering by reusing existing child views instead of recreating them.
-			if ( this.#shouldReuseChildren() ) {
-				this.#rerenderExistingChildren();
-			} else {
-				super._renderChildren();
-			}
-
-			this.#collectChildrenRenderPromises();
-			await this._waitForChildrenToComplete();
-		}
-
-		#shouldReuseChildren() {
-			return this.#domUpdateWasSkipped && this.children?.length > 0;
-		}
-
-		#rerenderExistingChildren() {
-			this.children?.each( ( childView: ElementView ) => {
-				childView.render();
+			await renderChildrenWithOptimization( {
+				children: this.children,
+				domUpdateWasSkipped: renderState.cacheState.domUpdateWasSkipped,
+				renderChildren: () => super._renderChildren(),
 			} );
-		}
-
-		#collectChildrenRenderPromises() {
-			this.children?.each( ( childView: ElementView ) => {
-				if ( childView._currentRenderPromise ) {
-					this.#childrenRenderPromises.push( childView._currentRenderPromise );
-				}
-			} );
-		}
-
-		async _waitForChildrenToComplete() {
-			if ( this.#childrenRenderPromises.length > 0 ) {
-				await Promise.all( this.#childrenRenderPromises );
-			}
 		}
 
 		async _renderTemplate() {
-			this.triggerMethod( 'before:render:template' );
-
-			const process = signalizedProcess( this.#abortController?.signal as AbortSignal )
-				.then( ( _, signal ) => {
-					const settings = this.model.get( 'settings' ).toJSON();
-					return resolveProps( {
-						props: settings,
-						signal,
-						renderContext: this.getResolverRenderContext(),
-					} );
-				} )
-				.then( ( settings ) => {
-					return this.afterSettingsResolve( settings );
-				} )
-				.then( async ( settings ) => {
-					const settingsHash = JSON.stringify( settings );
-					const settingsChanged = settingsHash !== this.#lastResolvedSettingsHash;
-
-					if ( ! settingsChanged && this.isRendered ) {
-						this.#domUpdateWasSkipped = true;
-						return null;
-					}
-					this.#domUpdateWasSkipped = false;
-
-					this.#lastResolvedSettingsHash = settingsHash;
-
-					const context = {
-						id: this.model.get( 'id' ),
-						type,
-						settings,
-						base_styles: baseStylesDictionary,
-					};
-
-					return renderer.render( templateKey, context );
-				} )
-				.then( ( html ) => {
-					if ( html === null ) {
-						return;
-					}
-
-					this.$el.html( html );
-				} );
-
-			await process.execute();
-
-			this.bindUIElements();
-
-			this.triggerMethod( 'render:template' );
+			await renderTwigTemplate( {
+				view: this,
+				signal: this._abortController?.signal,
+				renderState,
+				buildContext: ( resolvedSettings ) => ( {
+					id: this.model.get( 'id' ),
+					type,
+					settings: resolvedSettings,
+					base_styles: element.base_styles_dictionary,
+				} ),
+				attachContent: ( html: string ) => this.$el.html( html ),
+				afterSettingsResolve: ( settings ) => this.afterSettingsResolve( settings ),
+			} );
 		}
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
