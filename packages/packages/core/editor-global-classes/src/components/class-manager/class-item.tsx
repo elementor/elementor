@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useRef, useState } from 'react';
 import { validateStyleLabel } from '@elementor/editor-styles-repository';
 import { EditableField, EllipsisWithTooltip, MenuListItem, useEditable, WarningInfotip } from '@elementor/editor-ui';
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { DotsVerticalIcon } from '@elementor/icons';
 import {
 	bindMenu,
@@ -23,6 +24,7 @@ import { __ } from '@wordpress/i18n';
 import { CssClassUsageTrigger } from '../css-class-usage/components';
 import { useDeleteConfirmation } from './delete-confirmation-dialog';
 import { SortableTrigger, type SortableTriggerProps } from './sortable';
+import { StopSyncConfirmationDialog } from './stop-sync-confirmation-dialog';
 
 type ClassItemProps = React.PropsWithChildren< {
 	id: string;
@@ -56,6 +58,7 @@ export const ClassItem = ( {
 		validation: validateLabel,
 	} );
 	const [ selectedCssUsage, setSelectedCssUsage ] = useState( '' );
+	const [ stopSyncConfirmation, setStopSyncConfirmation ] = useState( false );
 	const { openDialog } = useDeleteConfirmation();
 
 	const popupState = usePopupState( {
@@ -137,6 +140,36 @@ export const ClassItem = ( {
 						{ __( 'Rename', 'elementor' ) }
 					</Typography>
 				</MenuListItem>
+				{ isExperimentActive( 'e_design_system_sync' ) && (
+					<>
+						{ id.charCodeAt( 0 ) % 2 === 0 && (
+							<MenuListItem
+								sx={ { minWidth: '160px' } }
+								onClick={ () => {
+									popupState.close();
+									setStopSyncConfirmation( true );
+								} }
+							>
+								<Typography variant="caption" sx={ { color: 'text.primary' } }>
+									{ __( 'Stop syncing to Version 3', 'elementor' ) }
+								</Typography>
+							</MenuListItem>
+						) }
+						{ id.charCodeAt( 0 ) % 2 !== 0 && (
+							<MenuListItem
+								sx={ { minWidth: '160px' } }
+								onClick={ () => {
+									popupState.close();
+									setStopSyncConfirmation( true );
+								} }
+							>
+								<Typography variant="caption" sx={ { color: 'text.primary' } }>
+									{ __( 'Sync to Version 3', 'elementor' ) }
+								</Typography>
+							</MenuListItem>
+						) }
+					</>
+				) }
 				<MenuListItem
 					onClick={ () => {
 						popupState.close();
@@ -148,6 +181,15 @@ export const ClassItem = ( {
 					</Typography>
 				</MenuListItem>
 			</Menu>
+			{ stopSyncConfirmation && (
+				<StopSyncConfirmationDialog
+					open
+					closeDialog={ () => setStopSyncConfirmation( false ) }
+					onConfirm={ () => {
+						setStopSyncConfirmation( false );
+					} }
+				/>
+			) }
 		</>
 	);
 };
