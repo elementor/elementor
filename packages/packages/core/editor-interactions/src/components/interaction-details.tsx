@@ -13,12 +13,12 @@ import {
 	extractSize,
 	extractString,
 } from '../utils/prop-value-utils';
+import { resolveDirection } from '../utils/resolve-direction';
 import { parseSizeValue } from '../utils/size-transform-utils';
 import { Direction } from './controls/direction';
 import { EffectType } from './controls/effect-type';
 import { TimeFrameIndicator } from './controls/time-frame-indicator';
 import { Field } from './field';
-import { resolveDirection } from '../utils/resolve-direction';
 
 type InteractionDetailsProps = {
 	interaction: InteractionItemValue;
@@ -160,7 +160,13 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			offsetBottom: SizeStringValue;
 		} >
 	): void => {
-		const resolvedDirectionValue = resolveDirection( 'direction' in updates, updates.effect, updates.direction, direction, effect );
+		const resolvedDirectionValue = resolveDirection(
+			'direction' in updates,
+			updates.effect,
+			updates.direction,
+			direction,
+			effect
+		);
 
 		const updatedInteraction = {
 			...interaction,
@@ -301,4 +307,3 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		</PopoverContent>
 	);
 };
-
