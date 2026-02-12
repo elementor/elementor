@@ -35,16 +35,18 @@ export function ProPlanNotice() {
 			<Typography
 				variant="body2"
 				color="text.secondary"
-				sx={ ( theme: Theme ) => ( { fontSize: theme.spacing( 1.625 ) } ) }
+				sx={ ( theme: Theme ) => ( {
+					fontSize: theme.spacing( 1.625 ),
+				} ) }
 			>
 				{ __( 'Some features you selected are available in Pro plan.', 'elementor' ) }
 			</Typography>
 			<Button
 				variant="text"
 				size="small"
+				color="promotion"
 				onClick={ handleComparePlansClick }
 				sx={ ( theme: Theme ) => ( {
-					color: 'promotion.main',
 					fontSize: theme.spacing( 1.625 ),
 					textTransform: 'none',
 					padding: theme.spacing( 0.5, 0.625 ),

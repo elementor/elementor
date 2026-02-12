@@ -70,7 +70,9 @@ const SelectionBadge = styled( Box, {
 
 const FeatureCard = styled( Box, {
 	shouldForwardProp: ( prop ) =>
-		! [ 'isSelected', 'isExploreMore', 'isCore' ].includes( prop as string ),
+		! [ 'isSelected', 'isExploreMore', 'isCore' ].includes(
+			prop as string
+		),
 } )< FeatureCardProps >( ( { theme, isSelected, isExploreMore, isCore } ) => ( {
 	position: 'relative',
 	display: 'flex',
@@ -84,15 +86,12 @@ const FeatureCard = styled( Box, {
 	border: isSelected
 		? '2px solid #1F2124'
 		: `1px solid ${ theme.palette.divider }`,
-	cursor: isCore && isSelected ? 'not-allowed' : 'pointer',
+	cursor: isCore ? 'default' : 'pointer',
 	transition: 'border-color 0.2s ease, background-color 0.2s ease',
-	...( ! ( isCore && isSelected ) && {
+	...( ! isCore && {
 		'&:hover': {
 			backgroundColor: theme.palette.action.hover,
 		},
-	} ),
-	...( isCore && isSelected && {
-		opacity: 0.7,
 	} ),
 	...( isExploreMore && {
 		'& .feature-icon': {
@@ -141,13 +140,8 @@ export function FeatureGrid( {
 				const Icon = option.Icon;
 				const BadgeIcon = option.isPro ? CrownFilledIcon : CheckIcon;
 				const isCore = ! option.isPro;
-				const isDisabled = isCore && isSelected;
 
-				const handleClick = () => {
-					if ( ! isDisabled ) {
-						onFeatureClick( option.id );
-					}
-				};
+				const handleClick = () => onFeatureClick( option.id );
 
 				return (
 					<FeatureCard
@@ -161,7 +155,6 @@ export function FeatureGrid( {
 							handleKeyDown( e, handleClick )
 						}
 						aria-pressed={ isSelected }
-						aria-disabled={ isDisabled }
 					>
 						{ isCore && (
 							<Chip
