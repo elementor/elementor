@@ -356,7 +356,7 @@ export function VariablesManagerPanel() {
 						'This will disconnect the variable color from version 3. Existing uses on your site will automatically switch to a default color.',
 						'elementor'
 					) }
-					icon={ <BrushIcon color="secondary" /> }
+					icon={ <BrushIcon color="primary" /> }
 				/>
 			) }
 

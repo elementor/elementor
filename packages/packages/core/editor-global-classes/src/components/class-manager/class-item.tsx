@@ -3,7 +3,9 @@ import { useRef, useState } from 'react';
 import { validateStyleLabel } from '@elementor/editor-styles-repository';
 import { EditableField, EllipsisWithTooltip, MenuListItem, StopSyncConfirmationDialog, useEditable, WarningInfotip } from '@elementor/editor-ui';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
-import { ColorSwatchIcon, DotsVerticalIcon } from '@elementor/icons';
+import { DotsVerticalIcon } from '@elementor/icons';
+import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
+
 import {
 	bindMenu,
 	bindTrigger,
@@ -192,7 +194,7 @@ export const ClassItem = ( {
 						"You're about to stop syncing a typography class to Version 3. Note that if it's being used anywhere on your site, it will inherit a default font.",
 						'elementor'
 					) }
-					icon={ <ColorSwatchIcon color="secondary" /> }
+					icon={ <FlippedColorSwatchIcon color="primary" /> }
 				/>
 			) }
 		</>

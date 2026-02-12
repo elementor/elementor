@@ -63,7 +63,7 @@ export const StopSyncConfirmationDialog = ( {
 							size="small"
 						/>
 					}
-					label={ <Typography variant="body2">{ __( "Don't show this again", 'elementor' ) }</Typography> }
+					label={ <Typography variant="body2" color="secondary">{ __( "Don't show this again", 'elementor' ) }</Typography> }
 				/>
 				<div>
 					<Button color="secondary" onClick={ closeDialog }>
