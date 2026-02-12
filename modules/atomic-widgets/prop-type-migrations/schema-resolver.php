@@ -29,7 +29,7 @@ class Schema_Resolver {
 		if ( in_array( 'settings', $path, true ) && self::$widget_context ) {
 			$widget_context = self::make_widget_context( self::$widget_context );
 			return $widget_context['schema'][ $key ] ?? null;
-		} elseif ( in_array( 'variants', $path, true ) && in_array( 'props', $path, true ) ) {
+		} elseif ( in_array( 'variants', $path, true) && in_array( 'props', $path, true ) ) {
 			$style_schema = Style_Schema::get();
 			return $style_schema[ $key ] ?? null;
 		} elseif ( in_array( 'interactions', $path, true ) && in_array( 'items', $path, true ) ) {
