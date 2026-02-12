@@ -14,10 +14,6 @@ export const createContentForComponent = async ( editor: EditorPage ) => {
 };
 
 export const createComponent = async ( page: Page, componentName: string ) => {
-	const autosavePromise = page.waitForResponse(
-		( response ) => response.url().includes( '/wp-admin/admin-ajax.php' ) && 200 === response.status(),
-	);
-
 	const createComponentForm = page.locator( EditorSelectors.components.createComponentForm );
 	await expect( createComponentForm ).toBeVisible();
 
@@ -27,7 +23,7 @@ export const createComponent = async ( page: Page, componentName: string ) => {
 
 	const createButton = createComponentForm.getByRole( 'button', { name: 'Create' } );
 	await createButton.click();
-	await autosavePromise;
+	await waitForAutosave( page );
 
 	const panelHeader = page.locator( EditorSelectors.components.editModeHeader );
 	await expect( panelHeader ).toBeVisible( { timeout: timeouts.longAction } );
@@ -49,6 +45,12 @@ export const createOverridableProp = async ( page: Page, propLabel: string ) => 
 	await confirmButton.click();
 
 	await overridablePropForm.waitFor( { state: 'hidden', timeout: timeouts.longAction } );
+};
+
+export const waitForAutosave = async ( page: Page ) => {
+	return page.waitForResponse(
+		( response ) => response.url().includes( '/wp-admin/admin-ajax.php' ) && 200 === response.status(),
+	);
 };
 
 const dismissOnboardingDialog = async ( page: Page ) => {
