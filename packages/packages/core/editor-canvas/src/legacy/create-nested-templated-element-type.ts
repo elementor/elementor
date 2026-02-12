@@ -6,7 +6,7 @@ import { canBeTemplated, type TemplatedElementConfig } from './create-templated-
 import {
 	createAfterRender,
 	createBeforeRender,
-	createTwigRenderSetup,
+	createTwigRenderState,
 	renderChildrenWithOptimization,
 	renderTwigTemplate,
 } from './twig-rendering-utils';
@@ -91,7 +91,7 @@ export function createNestedTemplatedElementView( {
 }: CreateNestedTemplatedElementViewOptions ): typeof ElementView {
 	const legacyWindow = window as unknown as LegacyWindow;
 
-	const setup = createTwigRenderSetup( { renderer, element } );
+	const renderState = createTwigRenderState( { renderer, element } );
 
 	const AtomicElementBaseView = legacyWindow.elementor.modules.elements.views.createAtomicElementBase( type );
 	const parentRenderChildren = AtomicElementBaseView.prototype._renderChildren;
@@ -107,7 +107,7 @@ export function createNestedTemplatedElementView( {
 		},
 
 		invalidateRenderCache() {
-			setup.cacheState.invalidate();
+			renderState.cacheState.invalidate();
 		},
 
 		render() {
@@ -152,12 +152,12 @@ export function createNestedTemplatedElementView( {
 			await renderTwigTemplate( {
 				view: this,
 				signal: this._abortController?.signal,
-				setup,
+				renderState,
 				buildContext: ( resolvedSettings ) => ( {
 					id: model.get( 'id' ),
 					type,
 					settings: resolvedSettings,
-					base_styles: setup.baseStylesDictionary,
+					base_styles: element.base_styles_dictionary,
 					editor_attributes: buildEditorAttributes( model ),
 					editor_classes: buildEditorClasses( model ),
 				} ),
@@ -199,8 +199,8 @@ export function createNestedTemplatedElementView( {
 		async _renderChildren() {
 			await renderChildrenWithOptimization( {
 				children: this.children,
-				domUpdateWasSkipped: setup.cacheState.domUpdateWasSkipped,
-				renderNewChildren: () => parentRenderChildren.call( this ),
+				domUpdateWasSkipped: renderState.cacheState.domUpdateWasSkipped,
+				renderChildren: () => parentRenderChildren.call( this ),
 			} );
 
 			this._removeChildrenPlaceholder();

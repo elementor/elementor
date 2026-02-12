@@ -55,22 +55,22 @@ describe( 'twig-rendering-utils', () => {
 	describe( 'renderChildrenWithOptimization', () => {
 		it( 'should render new children when DOM was not skipped', () => {
 			// Arrange
-			const renderNewChildren = jest.fn();
+			const renderChildren = jest.fn();
 
 			// Act
 			renderChildrenWithOptimization( {
 				children: createMockChildren( [] ),
 				domUpdateWasSkipped: false,
-				renderNewChildren,
+				renderChildren,
 			} );
 
 			// Assert
-			expect( renderNewChildren ).toHaveBeenCalled();
+			expect( renderChildren ).toHaveBeenCalled();
 		} );
 
 		it( 'should rerender existing children when DOM update was skipped', () => {
 			// Arrange
-			const renderNewChildren = jest.fn();
+			const renderChildren = jest.fn();
 			const childView1 = { render: jest.fn() };
 			const childView2 = { render: jest.fn() };
 
@@ -78,28 +78,28 @@ describe( 'twig-rendering-utils', () => {
 			renderChildrenWithOptimization( {
 				children: createMockChildren( [ childView1, childView2 ] ),
 				domUpdateWasSkipped: true,
-				renderNewChildren,
+				renderChildren,
 			} );
 
 			// Assert
-			expect( renderNewChildren ).not.toHaveBeenCalled();
+			expect( renderChildren ).not.toHaveBeenCalled();
 			expect( childView1.render ).toHaveBeenCalled();
 			expect( childView2.render ).toHaveBeenCalled();
 		} );
 
-		it( 'should fall back to renderNewChildren when skipped but no children exist', () => {
+		it( 'should safely fall back to renderChildren when skipped but children are empty to handle emptyView', () => {
 			// Arrange
-			const renderNewChildren = jest.fn();
+			const renderChildren = jest.fn();
 
 			// Act
 			renderChildrenWithOptimization( {
 				children: undefined,
 				domUpdateWasSkipped: true,
-				renderNewChildren,
+				renderChildren,
 			} );
 
 			// Assert
-			expect( renderNewChildren ).toHaveBeenCalled();
+			expect( renderChildren ).toHaveBeenCalled();
 		} );
 	} );
 } );

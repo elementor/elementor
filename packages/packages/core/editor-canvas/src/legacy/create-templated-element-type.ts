@@ -6,7 +6,7 @@ import { createElementViewClassDeclaration } from './create-element-type';
 import {
 	createAfterRender,
 	createBeforeRender,
-	createTwigRenderSetup,
+	createTwigRenderState,
 	renderChildrenWithOptimization,
 	renderTwigTemplate,
 	type TwigViewInterface,
@@ -69,7 +69,7 @@ export function createTemplatedElementView( {
 }: CreateTemplatedElementTypeOptions ): typeof ElementView {
 	const BaseView = createElementViewClassDeclaration();
 
-	const setup = createTwigRenderSetup( { renderer, element } );
+	const renderState = createTwigRenderState( { renderer, element } );
 
 	return class extends BaseView {
 		_abortController: AbortController | null = null;
@@ -95,7 +95,7 @@ export function createTemplatedElementView( {
 		}
 
 		invalidateRenderCache() {
-			setup.cacheState.invalidate();
+			renderState.cacheState.invalidate();
 		}
 
 		render() {
@@ -116,8 +116,8 @@ export function createTemplatedElementView( {
 		async _renderChildren() {
 			await renderChildrenWithOptimization( {
 				children: this.children,
-				domUpdateWasSkipped: setup.cacheState.domUpdateWasSkipped,
-				renderNewChildren: () => super._renderChildren(),
+				domUpdateWasSkipped: renderState.cacheState.domUpdateWasSkipped,
+				renderChildren: () => super._renderChildren(),
 			} );
 		}
 
@@ -125,12 +125,12 @@ export function createTemplatedElementView( {
 			await renderTwigTemplate( {
 				view: this,
 				signal: this._abortController?.signal,
-				setup,
+				renderState,
 				buildContext: ( resolvedSettings ) => ( {
 					id: this.model.get( 'id' ),
 					type,
 					settings: resolvedSettings,
-					base_styles: setup.baseStylesDictionary,
+					base_styles: element.base_styles_dictionary,
 				} ),
 				attachContent: ( html: string ) => this.$el.html( html ),
 				afterSettingsResolve: ( settings ) => this.afterSettingsResolve( settings ),

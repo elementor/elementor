@@ -9,22 +9,20 @@ type TwigElementConfig = Required<
 	Pick< V1ElementConfig, 'twig_templates' | 'twig_main_template' | 'atomic_props_schema' | 'base_styles_dictionary' >
 >;
 
-type TwigRenderSetup = {
+type TwigRenderState = {
 	templateKey: string;
-	baseStylesDictionary: Record< string, unknown >;
 	resolveProps: PropsResolver;
 	renderer: DomRenderer;
 	cacheState: RenderCacheState;
 };
 
-type CreateTwigRenderSetupOptions = {
+type CreateTwigRenderStateOptions = {
 	renderer: DomRenderer;
 	element: TwigElementConfig;
 };
 
-export function createTwigRenderSetup( { renderer, element }: CreateTwigRenderSetupOptions ): TwigRenderSetup {
+export function createTwigRenderState( { renderer, element }: CreateTwigRenderStateOptions ): TwigRenderState {
 	const templateKey = element.twig_main_template;
-	const baseStylesDictionary = element.base_styles_dictionary;
 
 	const cacheState = createRenderCacheState();
 
@@ -37,7 +35,7 @@ export function createTwigRenderSetup( { renderer, element }: CreateTwigRenderSe
 		schema: element.atomic_props_schema,
 	} );
 
-	return { templateKey, baseStylesDictionary, resolveProps, renderer, cacheState };
+	return { templateKey, resolveProps, renderer, cacheState };
 }
 
 export interface TwigViewInterface extends Omit< ElementView, 'getResolverRenderContext' > {
@@ -86,7 +84,7 @@ type TwigRenderContext = {
 export type RenderTwigTemplateOptions< TView extends TwigViewInterface > = {
 	view: TView;
 	signal?: AbortSignal;
-	setup: TwigRenderSetup;
+	renderState: TwigRenderState;
 	buildContext: ( resolvedSettings: Record< string, unknown > ) => TwigRenderContext;
 	attachContent: ( html: string ) => void;
 	afterSettingsResolve?: ( settings: Record< string, unknown > ) => Record< string, unknown >;
@@ -95,19 +93,20 @@ export type RenderTwigTemplateOptions< TView extends TwigViewInterface > = {
 export async function renderTwigTemplate< TView extends TwigViewInterface >( {
 	view,
 	signal,
-	setup,
+	renderState,
 	buildContext,
 	attachContent,
 	afterSettingsResolve,
 }: RenderTwigTemplateOptions< TView > ): Promise< void > {
 	view.triggerMethod( 'before:render:template' );
+	const { resolveProps, cacheState, renderer, templateKey } = renderState;
 
 	if ( signal?.aborted ) {
 		return;
 	}
 
 	const settings = view.model.get( 'settings' ).toJSON();
-	let resolvedSettings = await setup.resolveProps( {
+	let resolvedSettings = await resolveProps( {
 		props: settings,
 		signal,
 		renderContext: view.getResolverRenderContext?.(),
@@ -121,7 +120,6 @@ export async function renderTwigTemplate< TView extends TwigViewInterface >( {
 		resolvedSettings = afterSettingsResolve( resolvedSettings );
 	}
 
-	const { cacheState } = setup;
 	const settingsHash = JSON.stringify( resolvedSettings );
 	const settingsChanged = settingsHash !== cacheState.lastResolvedSettingsHash;
 
@@ -136,7 +134,7 @@ export async function renderTwigTemplate< TView extends TwigViewInterface >( {
 	cacheState.lastResolvedSettingsHash = settingsHash;
 
 	const context = buildContext( resolvedSettings );
-	const html = await setup.renderer.render( setup.templateKey, context );
+	const html = await renderer.render( templateKey, context );
 
 	if ( signal?.aborted ) {
 		return;
@@ -165,20 +163,21 @@ export function collectChildrenRenderPromises( children: ChildrenCollection | un
 type RenderChildrenOptions = {
 	children: ChildrenCollection | undefined;
 	domUpdateWasSkipped: boolean;
-	renderNewChildren: () => void;
+	renderChildren: () => void;
 };
 
 export async function renderChildrenWithOptimization( {
 	children,
 	domUpdateWasSkipped,
-	renderNewChildren,
+	renderChildren,
 }: RenderChildrenOptions ): Promise< void > {
+	// Safe side: when children is empty, fall back to original renderChildren function to handle emptyView.
 	const shouldReuseChildren = domUpdateWasSkipped && !! children?.length;
 
 	if ( shouldReuseChildren ) {
 		rerenderExistingChildViews( children );
 	} else {
-		renderNewChildren();
+		renderChildren();
 	}
 
 	const promises = collectChildrenRenderPromises( children );
