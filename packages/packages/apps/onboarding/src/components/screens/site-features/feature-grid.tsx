@@ -9,6 +9,7 @@ export interface FeatureOption {
 	label: string;
 	Icon: React.ElementType;
 	isPro?: boolean;
+	isCore?: boolean;
 }
 
 interface ExploreMoreOption extends FeatureOption {
@@ -19,6 +20,7 @@ interface ExploreMoreOption extends FeatureOption {
 interface FeatureCardProps {
 	isSelected: boolean;
 	isExploreMore?: boolean;
+	isCore?: boolean;
 }
 
 interface SelectionBadgeProps {
@@ -66,8 +68,8 @@ const SelectionBadge = styled( Box, {
 
 const FeatureCard = styled( Box, {
 	shouldForwardProp: ( prop ) =>
-		! [ 'isSelected', 'isExploreMore' ].includes( prop as string ),
-} )< FeatureCardProps >( ( { theme, isSelected, isExploreMore } ) => ( {
+		! [ 'isSelected', 'isExploreMore', 'isCore' ].includes( prop as string ),
+} )< FeatureCardProps >( ( { theme, isSelected, isExploreMore, isCore } ) => ( {
 	position: 'relative',
 	display: 'flex',
 	flexDirection: 'column',
@@ -80,11 +82,16 @@ const FeatureCard = styled( Box, {
 	border: isSelected
 		? '2px solid #1F2124'
 		: `1px solid ${ theme.palette.divider }`,
-	cursor: 'pointer',
+	cursor: isCore && isSelected ? 'not-allowed' : 'pointer',
 	transition: 'border-color 0.2s ease, background-color 0.2s ease',
-	'&:hover': {
-		backgroundColor: theme.palette.action.hover,
-	},
+	...( ! ( isCore && isSelected ) && {
+		'&:hover': {
+			backgroundColor: theme.palette.action.hover,
+		},
+	} ),
+	...( isCore && isSelected && {
+		opacity: 0.7,
+	} ),
 	...( isExploreMore && {
 		'& .feature-icon': {
 			display: 'flex',
@@ -131,20 +138,28 @@ export function FeatureGrid( {
 				const isSelected = selectedValues.includes( option.id );
 				const Icon = option.Icon;
 				const BadgeIcon = option.isPro ? CrownFilledIcon : CheckIcon;
+				const isCore = !! option.isCore;
+				const isDisabled = isCore && isSelected;
+
+				const handleClick = () => {
+					if ( ! isDisabled ) {
+						onFeatureClick( option.id );
+					}
+				};
 
 				return (
 					<FeatureCard
 						key={ option.id }
 						isSelected={ isSelected }
-						onClick={ () => onFeatureClick( option.id ) }
+						isCore={ isCore }
+						onClick={ handleClick }
 						role="button"
 						tabIndex={ 0 }
 						onKeyDown={ ( e: React.KeyboardEvent ) =>
-							handleKeyDown( e, () =>
-								onFeatureClick( option.id )
-							)
+							handleKeyDown( e, handleClick )
 						}
 						aria-pressed={ isSelected }
+						aria-disabled={ isDisabled }
 					>
 						{ isSelected && (
 							<SelectionBadge isPro={ !! option.isPro }>

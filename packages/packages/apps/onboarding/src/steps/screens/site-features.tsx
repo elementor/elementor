@@ -44,6 +44,7 @@ const FEATURE_OPTIONS: FeatureOption[] = [
 		id: 'posts',
 		label: __( 'Posts', 'elementor' ),
 		Icon: ListIcon,
+		isCore: true,
 	},
 	{
 		id: 'form',
@@ -62,6 +63,7 @@ const FEATURE_OPTIONS: FeatureOption[] = [
 		label: __( 'Slides', 'elementor' ),
 		Icon: SwipeIcon,
 		isPro: false,
+		isCore: true,
 	},
 	{
 		id: 'loop_carousel',
@@ -101,6 +103,12 @@ const PRO_FEATURE_IDS = new Set(
 	)
 );
 
+const CORE_FEATURE_IDS = new Set(
+	FEATURE_OPTIONS.filter( ( option ) => option.isCore ).map(
+		( option ) => option.id
+	)
+);
+
 export function SiteFeatures( {
 	selectedValues,
 	onChange,
@@ -108,6 +116,12 @@ export function SiteFeatures( {
 	const handleFeatureClick = useCallback(
 		( id: string ) => {
 			const isSelected = selectedValues.includes( id );
+			const isCore = CORE_FEATURE_IDS.has( id );
+
+			if ( isCore && isSelected ) {
+				return;
+			}
+
 			const nextValues = isSelected
 				? selectedValues.filter( ( v ) => v !== id )
 				: [ ...selectedValues, id ];
