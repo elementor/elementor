@@ -2,13 +2,22 @@
     "items": [
         {
             "id": "gc_1",
-            "title": "Migrate Me",
-            "props": {
-                "css_prop": {
-                    "$$type": "string_v2",
-                    "value": "Old Value"
+            "type": "class",
+            "label": "Migrate Me",
+            "variants": [
+                {
+                    "meta": {
+                        "breakpoint": "desktop",
+                        "state": null
+                    },
+                    "props": {
+                        "css_prop": {
+                            "$$type": "string_v2",
+                            "value": "Old Value"
+                        }
+                    }
                 }
-            }
+            ]
         }
     ],
     "order": [

@@ -139,11 +139,20 @@ class Test_Document_Migration_Integration extends Elementor_Test_Base {
 			'items' => [
 				[
 					'id' => 'gc_1',
-					'title' => 'Global Class',
-					'props' => [
-						'css_prop' => [
-							'$$type' => 'old-string',
-							'value' => 'Global Style',
+					'type' => 'class',
+					'label' => 'Global Class',
+					'variants' => [
+						[
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+							'props' => [
+								'css_prop' => [
+									'$$type' => 'old-string',
+									'value' => 'Global Style',
+								],
+							],
 						],
 					],
 				],
@@ -170,7 +179,7 @@ class Test_Document_Migration_Integration extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEquals( 'html-v2', $document_data[0]['settings']['title']['$$type'] );
-		$this->assertEquals( 'string', $global_classes_data['items'][0]['props']['css_prop']['$$type'] );
+		$this->assertEquals( 'string', $global_classes_data['items'][0]['variants'][0]['props']['css_prop']['$$type'] );
 
 		remove_filter( 'elementor/atomic-widgets/styles/schema', [ $this, 'add_css_prop_to_style_schema' ], 999999 );
 	}
@@ -230,5 +239,27 @@ class Test_Document_Migration_Integration extends Elementor_Test_Base {
 		$this->assertCount( 1, $document_data[0]['interactions']['items'] );
 		$this->assertEquals( 'interaction-item', $document_data[0]['interactions']['items'][0]['$$type'] );
 		$this->assertEquals( 'string', $document_data[0]['interactions']['items'][0]['value']['interaction_id']['$$type'], 'interaction_id should be migrated from old-string to string' );
+	}
+
+	public function test_widget_migration_edge_cases() {
+		// Arrange
+		$data = json_decode(
+			file_get_contents( $this->fixtures_path . 'widget-edge-cases.json' ),
+			true
+		);
+
+		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
+		$post_id = 2000;
+
+		// Act
+		$orchestrator->migrate(
+			$data,
+			$post_id,
+			'test_widget_edge_cases',
+			function() {}
+		);
+
+		// Assert
+		$this->assertMatchesJsonSnapshot( $data );
 	}
 }

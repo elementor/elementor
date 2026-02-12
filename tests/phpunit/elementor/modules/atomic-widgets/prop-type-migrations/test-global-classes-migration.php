@@ -63,11 +63,20 @@ class Test_Global_Classes_Migration extends Elementor_Test_Base {
 			'items' => [
 				[
 					'id' => 'gc_1',
-					'title' => 'My Class',
-					'props' => [
-						'css_prop' => [
-							'$$type' => 'string',
-							'value' => 'Pretty style',
+					'type' => 'class',
+					'label' => 'My Class',
+					'variants' => [
+						[
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+							'props' => [
+								'css_prop' => [
+									'$$type' => 'string',
+									'value' => 'Pretty style',
+								],
+							],
 						],
 					],
 				],
@@ -83,7 +92,7 @@ class Test_Global_Classes_Migration extends Elementor_Test_Base {
 		$orchestrator->migrate( $global_classes_data, $post_id, 'test_data_no_migration', $save_callback );
 
 		$this->assertFalse( $save_callback_called, 'Save callback should not be called when no changes are needed' );
-		$this->assertEquals( 'Pretty style', $global_classes_data['items'][0]['props']['css_prop']['value'] );
+		$this->assertEquals( 'Pretty style', $global_classes_data['items'][0]['variants'][0]['props']['css_prop']['value'] );
 	}
 
 	public function test_global_classes_migration_performs_update() {
@@ -94,11 +103,20 @@ class Test_Global_Classes_Migration extends Elementor_Test_Base {
 			'items' => [
 				[
 					'id' => 'gc_1',
-					'title' => 'Migrate Me',
-					'props' => [
-						'css_prop' => [
-							'$$type' => 'string',
-							'value' => 'Old Value',
+					'type' => 'class',
+					'label' => 'Migrate Me',
+					'variants' => [
+						[
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+							'props' => [
+								'css_prop' => [
+									'$$type' => 'string',
+									'value' => 'Old Value',
+								],
+							],
 						],
 					],
 				],
@@ -117,7 +135,7 @@ class Test_Global_Classes_Migration extends Elementor_Test_Base {
 
 		$this->assertTrue( $save_callback_called, 'Save callback should be called when migration occurs' );
 
-		$migrated_prop = $global_classes_data['items'][0]['props']['css_prop'];
+		$migrated_prop = $global_classes_data['items'][0]['variants'][0]['props']['css_prop'];
 		$this->assertEquals( 'string_v2', $migrated_prop['$$type'], 'Type should be updated to string_v2' );
 		$this->assertMatchesJsonSnapshot( $global_classes_data );
 	}
@@ -130,14 +148,25 @@ class Test_Global_Classes_Migration extends Elementor_Test_Base {
 			'items' => [
 				[
 					'id' => 'gc_1',
-					'title' => 'Broken Item',
+					'type' => 'class',
+					'label' => 'Broken Item',
 				],
 				[
 					'id' => 'gc_2',
-					'props' => [
-						'css_prop' => [
-							'$$type' => 'string',
-							'value' => 'Valid',
+					'type' => 'class',
+					'label' => 'Valid Item',
+					'variants' => [
+						[
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+							'props' => [
+								'css_prop' => [
+									'$$type' => 'string',
+									'value' => 'Valid',
+								],
+							],
 						],
 					],
 				],
@@ -153,6 +182,6 @@ class Test_Global_Classes_Migration extends Elementor_Test_Base {
 		$orchestrator->migrate( $global_classes_data, $post_id, 'test_data_malformed', $save_callback );
 
 		$this->assertTrue( $save_callback_called, 'Should still migrate valid items even if some are malformed' );
-		$this->assertEquals( 'string_v2', $global_classes_data['items'][1]['props']['css_prop']['$$type'] );
+		$this->assertEquals( 'string_v2', $global_classes_data['items'][1]['variants'][0]['props']['css_prop']['$$type'] );
 	}
 }

@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Migrations orchestrator should follow the following steps:
  * 1. Check cache to see if the data is already migrated
  * 2. Resolve the schema for the current element
- * 3. Walk through the data and migrate the props if type mismatch is found
+ * 3. Walk through the data and migrate the props if type mismatch (between data and schema) is found
  * 4. Migrate the widget keys
  * 5. Save migrated data to the database
  * 6. Save the migrated state to the cache
@@ -82,7 +82,7 @@ class Migrations_Orchestrator {
 				return;
 			}
 
-			$has_changes = $this->walk_and_migrate( $data );
+			$has_changes = $this->walk_and_migrate( $data, [] );
 
 			if ( $has_changes ) {
 				$save_callback( $data );
@@ -98,90 +98,85 @@ class Migrations_Orchestrator {
 		}
 	}
 
-	public function walk_and_migrate( array &$data, ?array $schema = null, ?string $element_type = null ): bool {
+	private function walk_and_migrate( array &$data, array $path ): bool {
 		$has_changes = false;
-		$missing_keys = $schema ? array_keys( $schema ) : [];
-		$pending_widget_key_migrations = [];
+
+		Schema_Resolver::update_widget_context( $data );
+
+		if ( $this->handle_widget_key_migrations( $data, $path ) ) {
+			$has_changes = true;
+		}
 
 		foreach ( $data as $key => &$value ) {
 			if ( ! is_array( $value ) || empty( $value ) ) {
 				continue;
 			}
 
-			$resolved = Schema_Resolver::resolve( $key, $data );
+			$path[] = $key;
 
-			if ( $resolved ) {
-				if ( $this->walk_and_migrate( $value, $resolved['schema'], $resolved['element_type'] ) ) {
+			if ( isset( $value['$$type'] ) ) {
+				$prop_type = Schema_Resolver::resolve( $key, $path );
+
+				if ( $prop_type instanceof Prop_Type && $this->migrate_prop( $value, $prop_type ) ) {
 					$has_changes = true;
 				}
-
-				continue;
+			} else {
+				if ( $this->walk_and_migrate( $value, $path ) ) {
+					$has_changes = true;
+				}
 			}
 
-			if ( $schema ) {
-				// interactions is not properly defined with props, so a bit of a special case
-				if ( $key === 'items' && is_array( $schema ) && isset( $schema[0] ) && $schema[0] instanceof Prop_Type ) {
-					$item_type = $schema[0];
-
-					foreach ( $value as &$item ) {
-						if ( $this->migrate_prop( $item, $item_type ) ) {
-							$has_changes = true;
-						}
-					}
-
-					continue;
-				}
-
-				if ( ! isset( $value['$$type'] ) ) {
-					continue;
-				}
-
-				$prop_type = $schema[ $key ] ?? null;
-
-				if ( $prop_type instanceof Prop_Type ) {
-					$missing_keys = array_diff( $missing_keys, [ $key ] );
-
-					if ( $this->migrate_prop( $value, $prop_type ) ) {
-						$has_changes = true;
-					}
-				} elseif ( $element_type ) {
-					$target_key = $this->loader->find_widget_key_migration( $key, $missing_keys, $element_type );
-
-					if ( $target_key ) {
-						$pending_widget_key_migrations[ $target_key ][] = [
-							'from' => $key,
-							'value' => $value,
-						];
-					}
-				}
-
-				continue;
-			}
-
-			if ( $this->walk_and_migrate( $value ) ) {
-				$has_changes = true;
-			}
-		}
-
-		if ( $element_type && ! empty( $pending_widget_key_migrations ) && $this->migrate_pending_widget_keys( $data, $pending_widget_key_migrations, $schema ) ) {
-			$has_changes = true;
+			array_pop( $path );
 		}
 
 		return $has_changes;
 	}
 
-	private function migrate_pending_widget_keys( array &$data, array $pending_widget_key_migrations, array $schema ): bool {
+	private function handle_widget_key_migrations( array &$data, array $path ): bool {
+		if ( end( $path ) !== 'settings' ) {
+			return false;
+		}
+
+		$element_type = Schema_Resolver::get_widget_context();
+
+		if ( ! $element_type ) {
+			return false;
+		}
+
+		$schema = Schema_Resolver::get_widget_schema( $element_type );
+
+		if ( ! $schema ) {
+			return false;
+		}
+
+		$schema_keys = array_keys( $schema );
+		$data_keys_with_type = array_keys( array_filter( $data, fn( $value ) => is_array( $value ) && isset( $value['$$type'] ) ) );
+
+		$orphaned_keys = array_diff( $data_keys_with_type, $schema_keys );
+		$missing_keys = array_diff( $schema_keys, $data_keys_with_type );
+
+		$pending_widget_key_migrations = [];
+
+		foreach ( $orphaned_keys as $orphaned_key ) {
+			$target_key = $this->loader->find_widget_key_migration( $orphaned_key, $missing_keys, $element_type );
+
+			if ( $target_key ) {
+				$pending_widget_key_migrations[ $target_key ][] = [
+					'from' => $orphaned_key,
+					'value' => $data[ $orphaned_key ],
+				];
+			}
+		}
+
+		return $this->migrate_pending_widget_keys( $data, $pending_widget_key_migrations );
+	}
+
+	private function migrate_pending_widget_keys( array &$data, array $pending_widget_key_migrations ): bool {
 		$has_changes = false;
 
 		foreach ( $pending_widget_key_migrations as $target_key => $sources ) {
 			if ( count( $sources ) !== 1 ) {
 				continue;
-			}
-
-			$prop_type = $schema[ $target_key ] ?? null;
-
-			if ( $prop_type instanceof Prop_Type ) {
-				$this->migrate_prop( $sources[0]['value'], $prop_type );
 			}
 
 			$data[ $target_key ] = $sources[0]['value'];
