@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useCallback } from 'react';
 import { InfoCircleIcon } from '@elementor/icons';
+import type { Theme } from '@elementor/ui';
 import { Box, Button, styled, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -9,12 +10,12 @@ const COMPARE_PLANS_URL =
 
 const PRO_PLAN_NOTICE_BG = 'rgba(250, 228, 250, 0.6)';
 
-const ProPlanNoticeRoot = styled( Box )( () => ( {
+const ProPlanNoticeRoot = styled( Box )( ( { theme } ) => ( {
 	display: 'flex',
 	alignItems: 'center',
-	gap: 8,
-	padding: '8px 16px',
-	borderRadius: 8,
+	gap: theme.spacing( 1 ),
+	padding: theme.spacing( 1, 2 ),
+	borderRadius: theme.spacing( 1 ),
 	backgroundColor: PRO_PLAN_NOTICE_BG,
 } ) );
 
@@ -25,28 +26,30 @@ export function ProPlanNotice() {
 
 	return (
 		<ProPlanNoticeRoot>
-			<InfoCircleIcon sx={ { fontSize: 20, color: 'text.secondary' } } />
+			<InfoCircleIcon
+				sx={ ( theme: Theme ) => ( {
+					fontSize: theme.spacing( 2.5 ),
+					color: 'text.secondary',
+				} ) }
+			/>
 			<Typography
 				variant="body2"
 				color="text.secondary"
-				sx={ { fontSize: 13 } }
+				sx={ ( theme: Theme ) => ( { fontSize: theme.spacing( 1.625 ) } ) }
 			>
-				{ __(
-					'Some features you selected are available in Pro plan.',
-					'elementor'
-				) }
+				{ __( 'Some features you selected are available in Pro plan.', 'elementor' ) }
 			</Typography>
 			<Button
 				variant="text"
 				size="small"
 				onClick={ handleComparePlansClick }
-				sx={ {
+				sx={ ( theme: Theme ) => ( {
 					color: 'promotion.main',
-					fontSize: 13,
+					fontSize: theme.spacing( 1.625 ),
 					textTransform: 'none',
-					padding: '4px 5px',
+					padding: theme.spacing( 0.5, 0.625 ),
 					minWidth: 'auto',
-				} }
+				} ) }
 			>
 				{ __( 'Compare plans', 'elementor' ) }
 			</Button>

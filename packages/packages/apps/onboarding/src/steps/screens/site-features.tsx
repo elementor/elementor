@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
 	BriefcaseIcon,
 	ChecklistIcon,
@@ -96,59 +96,37 @@ const FEATURE_OPTIONS: FeatureOption[] = [
 	},
 ];
 
-const PRO_FEATURE_IDS = new Set(
-	FEATURE_OPTIONS.filter( ( option ) => option.isPro ).map(
-		( option ) => option.id
-	)
-);
-
 const CORE_FEATURE_IDS = new Set(
-	FEATURE_OPTIONS.filter( ( option ) => ! option.isPro ).map(
-		( option ) => option.id
+	FEATURE_OPTIONS.flatMap( ( option ) =>
+		option.isPro ? [] : [ option.id ]
 	)
 );
 
-export function SiteFeatures( _props: SiteFeaturesProps ) {
+export function SiteFeatures( {}: SiteFeaturesProps ) {
 	const { choices, actions } = useOnboarding();
 
+	const storedProFeatures = useMemo( () => 
+		( choices.site_features as string[] ) || [],
+		[ choices.site_features ]
+	);
+
 	const selectedValues = useMemo( () => {
-		const stored = ( choices.site_features as string[] ) || [];
-		return [ ...new Set( [ ...CORE_FEATURE_IDS, ...stored ] ) ];
-	}, [ choices.site_features ] );
+		const combined = [ ...CORE_FEATURE_IDS, ...storedProFeatures ];
+		return combined.filter( ( id, index ) => combined.indexOf( id ) === index );
+	}, [ storedProFeatures ] );
 
-	useEffect( () => {
-		const stored = ( choices.site_features as string[] ) || [];
-		const hasAllCore = [ ...CORE_FEATURE_IDS ].every( ( id ) =>
-			stored.includes( id )
-		);
-		if ( ! hasAllCore ) {
-			const merged = [ ...new Set( [ ...CORE_FEATURE_IDS, ...stored ] ) ];
-			actions.setUserChoice( 'site_features', merged );
+	const handleFeatureClick = useCallback( ( id: string ) => {
+		if ( CORE_FEATURE_IDS.has( id ) && selectedValues.includes( id ) ) {
+			return;
 		}
-	}, [ choices.site_features, actions ] );
 
-	const handleFeatureClick = useCallback(
-		( id: string ) => {
-			const isSelected = selectedValues.includes( id );
-			const isCore = CORE_FEATURE_IDS.has( id );
+		const isProSelected = storedProFeatures.includes( id );
+		const updatedProSelection = isProSelected
+			? storedProFeatures.filter( ( featureId ) => featureId !== id )
+			: [ ...storedProFeatures, id ];
 
-			if ( isCore && isSelected ) {
-				return;
-			}
-
-			const nextValues = isSelected
-				? selectedValues.filter( ( v ) => v !== id )
-				: [ ...selectedValues, id ];
-
-			actions.setUserChoice( 'site_features', nextValues );
-		},
-		[ selectedValues, actions ]
-	);
-
-	const hasProSelection = useMemo(
-		() => selectedValues.some( ( id ) => PRO_FEATURE_IDS.has( id ) ),
-		[ selectedValues ]
-	);
+		actions.setUserChoice( 'site_features', updatedProSelection );
+	}, [ storedProFeatures, selectedValues, actions ] );
 
 	const handleExploreMoreClick = useCallback( () => {
 		window.open( EXPLORE_FEATURES_URL, '_blank' );
@@ -158,16 +136,10 @@ export function SiteFeatures( _props: SiteFeaturesProps ) {
 		<Stack spacing={ 4 } width="100%" sx={ { mb: '100px' } }>
 			<Stack spacing={ 1 } textAlign="center" alignItems="center">
 				<Typography component="h2" sx={ STEP_TITLE_SX }>
-					{ __(
-						'What do you want to include in your site?',
-						'elementor'
-					) }
+					{ __( 'What do you want to include in your site?', 'elementor' ) }
 				</Typography>
 				<Typography variant="body1" color="text.secondary">
-					{ __(
-						"We'll use this to tailor suggestions for you.",
-						'elementor'
-					) }
+					{ __( "We'll use this to tailor suggestions for you.", 'elementor' ) }
 				</Typography>
 			</Stack>
 
@@ -178,7 +150,7 @@ export function SiteFeatures( _props: SiteFeaturesProps ) {
 				onExploreMoreClick={ handleExploreMoreClick }
 			/>
 
-			{ hasProSelection && <ProPlanNotice /> }
+			{ storedProFeatures.length > 0 && <ProPlanNotice /> }
 		</Stack>
 	);
 }

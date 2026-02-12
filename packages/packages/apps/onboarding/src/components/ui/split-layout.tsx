@@ -6,11 +6,26 @@ import type { ImageLayout, StepVisualConfig } from '../../types';
 import { ProgressBar } from './progress-bar';
 import { RightPanel } from './right-panel';
 
-/**
- * Layout ratios per Figma spec:
- *   wide  → 1:1 (left and right share space equally)
- *   narrow → 3:1 (left gets 3 parts, right gets 1 part)
- */
+interface SplitLayoutRootProps {
+	leftRatio: number;
+	rightRatio: number;
+}
+
+interface LeftPanelProps {
+	contentMaxWidth: number;
+}
+
+interface ProgressInfo {
+	currentStep: number;
+	totalSteps: number;
+}
+
+interface SplitLayoutProps {
+	left: ReactNode;
+	rightConfig: StepVisualConfig;
+	progress?: ProgressInfo;
+}
+
 const LAYOUT_RATIOS: Record< ImageLayout, { left: number; right: number } > = {
 	wide: { left: 1, right: 1 },
 	narrow: { left: 3, right: 1 },
@@ -34,11 +49,6 @@ const NARROW_BREAKPOINT =
 	IMAGE_MIN_WIDTH +
 	LAYOUT_GAP * 8;
 
-interface SplitLayoutRootProps {
-	leftRatio: number;
-	rightRatio: number;
-}
-
 const SplitLayoutRoot = styled( Box, {
 	shouldForwardProp: ( prop ) =>
 		! [ 'leftRatio', 'rightRatio' ].includes( prop as string ),
@@ -59,10 +69,6 @@ const SplitLayoutRoot = styled( Box, {
 	},
 } ) );
 
-interface LeftPanelProps {
-	contentMaxWidth: number;
-}
-
 const LeftPanel = styled( Box, {
 	shouldForwardProp: ( prop ) => 'contentMaxWidth' !== prop,
 } )< LeftPanelProps >( ( { theme, contentMaxWidth } ) => ( {
@@ -82,22 +88,7 @@ const LeftPanel = styled( Box, {
 	},
 } ) );
 
-interface ProgressInfo {
-	currentStep: number;
-	totalSteps: number;
-}
-
-interface SplitLayoutProps {
-	left: ReactNode;
-	rightConfig: StepVisualConfig;
-	progress?: ProgressInfo;
-}
-
-export function SplitLayout( {
-	left,
-	rightConfig,
-	progress,
-}: SplitLayoutProps ) {
+export function SplitLayout( { left, rightConfig, progress }: SplitLayoutProps ) {
 	const ratio =
 		LAYOUT_RATIOS[ rightConfig.imageLayout ] ?? LAYOUT_RATIOS.wide;
 	const contentMaxWidth =
@@ -107,16 +98,8 @@ export function SplitLayout( {
 		<SplitLayoutRoot leftRatio={ ratio.left } rightRatio={ ratio.right }>
 			<LeftPanel contentMaxWidth={ contentMaxWidth }>
 				{ progress && (
-					<Box
-						sx={ {
-							maxWidth: LEFT_PANEL_CONTENT_WIDTH,
-							width: '100%',
-						} }
-					>
-						<ProgressBar
-							currentStep={ progress.currentStep }
-							totalSteps={ progress.totalSteps }
-						/>
+					<Box sx={ { maxWidth: LEFT_PANEL_CONTENT_WIDTH, width: '100%' } }>
+						<ProgressBar currentStep={ progress.currentStep }totalSteps={ progress.totalSteps }/>
 					</Box>
 				) }
 				{ left }
