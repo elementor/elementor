@@ -14,6 +14,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Migrations orchestrator should follow the following steps:
+ * 1. Check cache to see if the data is already migrated
+ * 2. Resolve the schema for the current element
+ * 3. Walk through the data and migrate the props if type mismatch is found
+ * 4. Migrate the widget keys
+ * 5. Save migrated data to the database
+ * 6. Save the migrated state to the cache
+ */
 class Migrations_Orchestrator {
 	const EXPERIMENT_BC_MIGRATIONS = 'e_bc_migrations';
 	const MIGRATIONS_URL = 'https://migrations.elementor.com/';
