@@ -163,8 +163,8 @@ class Migrations_Orchestrator {
 			}
 		}
 
-		if ( $element_type && ! empty( $pending_widget_key_migrations ) ) {
-			return $this->migrate_pending_widget_keys( $data, $pending_widget_key_migrations, $schema );
+		if ( $element_type && ! empty( $pending_widget_key_migrations ) && $this->migrate_pending_widget_keys( $data, $pending_widget_key_migrations, $schema ) ) {
+			$has_changes = true;
 		}
 
 		return $has_changes;
