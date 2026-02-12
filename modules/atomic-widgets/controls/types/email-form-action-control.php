@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Email_Control extends Atomic_Control_Base {
+class Email_Form_Action_Control extends Atomic_Control_Base {
 	public function get_type(): string {
 		return 'email';
 	}

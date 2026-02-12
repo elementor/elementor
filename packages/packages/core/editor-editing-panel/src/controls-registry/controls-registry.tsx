@@ -2,7 +2,7 @@ import {
 	ChipsControl,
 	type ControlComponent,
 	DateTimeControl,
-	EmailControl,
+	EmailFormActionControl,
 	HtmlTagControl,
 	ImageControl,
 	InlineEditingControl,
@@ -65,7 +65,7 @@ const controlTypes = {
 	toggle: { component: ToggleControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	'date-time': { component: DateTimeControl, layout: 'full', propTypeUtil: DateTimePropTypeUtil },
 	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: htmlV2PropTypeUtil },
-	email: { component: EmailControl, layout: 'custom', propTypeUtil: emailPropTypeUtil },
+	email: { component: EmailFormActionControl, layout: 'custom', propTypeUtil: emailPropTypeUtil },
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;

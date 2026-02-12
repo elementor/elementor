@@ -13,7 +13,7 @@ import { SelectControl } from './select-control';
 import { TextAreaControl } from './text-area-control';
 import { TextControl } from './text-control';
 
-export const EmailControl = createControl( () => {
+export const EmailFormActionControl = createControl( () => {
 	const { value, setValue, ...propContext } = useBoundProp( emailPropTypeUtil );
 
 	return (

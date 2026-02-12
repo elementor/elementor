@@ -3,7 +3,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Form;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Chips_Control;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Email_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Email_Form_Action_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Toggle_Control;
@@ -133,7 +133,7 @@ class Atomic_Form extends Atomic_Element_Base {
 								'value' => 'webhook',
 							],
 						] ),
-					Email_Control::bind_to( 'email' )
+					Email_Form_Action_Control::bind_to( 'email' )
 						->set_meta( [
 							'topDivider' => true,
 						] ),

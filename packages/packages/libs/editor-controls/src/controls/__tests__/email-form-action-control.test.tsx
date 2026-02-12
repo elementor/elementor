@@ -3,7 +3,7 @@ import { createMockPropType, renderControl } from 'test-utils';
 import { fireEvent, screen } from '@testing-library/react';
 
 import * as boundPropContext from '../../bound-prop-context';
-import { EmailControl } from '../email-control';
+import { EmailFormActionControl } from '../email-form-action-control';
 
 const propType = createMockPropType( { kind: 'object' } );
 const setValue = jest.fn();
@@ -17,7 +17,7 @@ jest.mock( '../../bound-prop-context', () => ( {
 
 const mockUseBoundProp = boundPropContext.useBoundProp as jest.MockedFunction< typeof boundPropContext.useBoundProp >;
 
-describe( 'EmailControl', () => {
+describe( 'EmailFormActionControl', () => {
 	beforeEach( () => {
 		setValue.mockClear();
 		mockUseBoundProp.mockReturnValue( {
@@ -45,7 +45,7 @@ describe( 'EmailControl', () => {
 
 	it( 'should render email control with all required fields', () => {
 		// Arrange & Act
-		renderControl( <EmailControl />, {
+		renderControl( <EmailFormActionControl />, {
 			setValue,
 			value: {
 				to: wrap( '' ),
@@ -70,7 +70,7 @@ describe( 'EmailControl', () => {
 	it( 'should allow filling in email values', () => {
 		// Arrange
 		const testEmail = 'test@example.com';
-		renderControl( <EmailControl />, {
+		renderControl( <EmailFormActionControl />, {
 			setValue,
 			value: {
 				to: wrap( '' ),
@@ -95,7 +95,7 @@ describe( 'EmailControl', () => {
 
 	it( 'should toggle show-more section', () => {
 		// Arrange
-		renderControl( <EmailControl />, {
+		renderControl( <EmailFormActionControl />, {
 			setValue,
 			value: {
 				to: wrap( '' ),
@@ -124,7 +124,7 @@ describe( 'EmailControl', () => {
 
 	it( 'should allow filling values in show-more fields', () => {
 		// Arrange
-		renderControl( <EmailControl />, {
+		renderControl( <EmailFormActionControl />, {
 			setValue,
 			value: {
 				to: wrap( '' ),
@@ -152,7 +152,7 @@ describe( 'EmailControl', () => {
 
 	it( 'should show collapsed fields after clicking show more', () => {
 		// Arrange
-		renderControl( <EmailControl />, {
+		renderControl( <EmailFormActionControl />, {
 			setValue,
 			value: {
 				to: wrap( '' ),
