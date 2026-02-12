@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { type PropsWithChildren, useMemo } from 'react';
-import { ControlFormLabel, PopoverContent, PopoverGridContainer } from '@elementor/editor-controls';
+import { useMemo } from 'react';
+import { PopoverContent } from '@elementor/editor-controls';
 import { Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -15,9 +15,10 @@ import {
 } from '../utils/prop-value-utils';
 import { parseSizeValue } from '../utils/size-transform-utils';
 import { Direction } from './controls/direction';
-import { Effect } from './controls/effect';
 import { EffectType } from './controls/effect-type';
 import { TimeFrameIndicator } from './controls/time-frame-indicator';
+import { Field } from './field';
+import { resolveDirection } from '../utils/resolve-direction';
 
 type InteractionDetailsProps = {
 	interaction: InteractionItemValue;
@@ -130,6 +131,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	};
 
 	const TriggerControl = useControlComponent( 'trigger', true );
+	const EffectControl = useControlComponent( 'effect' );
 	const ReplayControl = useControlComponent( 'replay', controlVisibilityConfig.replay( interactionValues ) );
 	const RelativeToControl = useControlComponent(
 		'relativeTo',
@@ -142,17 +144,6 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	);
 
 	const EasingControl = useControlComponent( 'easing' );
-
-	const resolveDirection = ( hasDirection: boolean, newEffect?: string, newDirection?: string ) => {
-		if ( newEffect === 'slide' && ! newDirection ) {
-			return 'top';
-		}
-		// Why? - New direction can be undefined when the effect is not slide, so if the updates object includes direction, we take it always!
-		if ( hasDirection ) {
-			return newDirection;
-		}
-		return direction;
-	};
 
 	const updateInteraction = (
 		updates: Partial< {
@@ -169,7 +160,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			offsetBottom: SizeStringValue;
 		} >
 	): void => {
-		const resolvedDirectionValue = resolveDirection( 'direction' in updates, updates.effect, updates.direction );
+		const resolvedDirectionValue = resolveDirection( 'direction' in updates, updates.effect, updates.direction, direction );
 
 		const updatedInteraction = {
 			...interaction,
@@ -221,9 +212,11 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			<Divider />
 
 			<Grid container spacing={ 1.5 }>
-				<Field label={ __( 'Effect', 'elementor' ) }>
-					<Effect value={ effect } onChange={ ( v ) => updateInteraction( { effect: v } ) } />
-				</Field>
+				{ EffectControl && (
+					<Field label={ __( 'Effect', 'elementor' ) }>
+						<EffectControl value={ effect } onChange={ ( v ) => updateInteraction( { effect: v } ) } />
+					</Field>
+				) }
 
 				<Field label={ __( 'Type', 'elementor' ) }>
 					<EffectType value={ type } onChange={ ( v ) => updateInteraction( { type: v } ) } />
@@ -309,21 +302,3 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	);
 };
 
-type FieldProps = {
-	label: string;
-} & PropsWithChildren;
-
-function Field( { label, children }: FieldProps ) {
-	return (
-		<Grid item xs={ 12 }>
-			<PopoverGridContainer>
-				<Grid item xs={ 6 }>
-					<ControlFormLabel>{ label }</ControlFormLabel>
-				</Grid>
-				<Grid item xs={ 6 }>
-					{ children }
-				</Grid>
-			</PopoverGridContainer>
-		</Grid>
-	);
-}
