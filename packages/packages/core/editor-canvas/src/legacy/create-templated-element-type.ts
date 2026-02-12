@@ -133,7 +133,7 @@ export function createTemplatedElementView( {
 					base_styles: setup.baseStylesDictionary,
 				} ),
 				attachContent: ( html: string ) => this.$el.html( html ),
-				transformSettings: ( settings ) => this.afterSettingsResolve( settings ),
+				afterSettingsResolve: ( settings ) => this.afterSettingsResolve( settings ),
 			} );
 		}
 

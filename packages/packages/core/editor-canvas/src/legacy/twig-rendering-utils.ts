@@ -89,7 +89,7 @@ export type RenderTwigTemplateOptions< TView extends TwigViewInterface > = {
 	setup: TwigRenderSetup;
 	buildContext: ( resolvedSettings: Record< string, unknown > ) => TwigRenderContext;
 	attachContent: ( html: string ) => void;
-	transformSettings?: ( settings: Record< string, unknown > ) => Record< string, unknown >;
+	afterSettingsResolve?: ( settings: Record< string, unknown > ) => Record< string, unknown >;
 };
 
 export async function renderTwigTemplate< TView extends TwigViewInterface >( {
@@ -98,7 +98,7 @@ export async function renderTwigTemplate< TView extends TwigViewInterface >( {
 	setup,
 	buildContext,
 	attachContent,
-	transformSettings,
+	afterSettingsResolve,
 }: RenderTwigTemplateOptions< TView > ): Promise< void > {
 	view.triggerMethod( 'before:render:template' );
 
@@ -117,8 +117,8 @@ export async function renderTwigTemplate< TView extends TwigViewInterface >( {
 		return;
 	}
 
-	if ( transformSettings ) {
-		resolvedSettings = transformSettings( resolvedSettings );
+	if ( afterSettingsResolve ) {
+		resolvedSettings = afterSettingsResolve( resolvedSettings );
 	}
 
 	const { cacheState } = setup;

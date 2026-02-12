@@ -14,6 +14,7 @@ export default class AtomicElementEmptyView extends Marionette.ItemView {
 	}
 
 	onBeforeRender() {
+		// In case the element is being rendered again, we need to unmount the previous React component.
 		if ( this.unmount ) {
 			this.unmount();
 			this.unmount = null;
