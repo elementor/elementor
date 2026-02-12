@@ -9,19 +9,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <script type="text/template" id="tmpl-elementor-template-library-header-actions">
 	<?php if ( User::is_current_user_can_upload_json() ) { ?>
-		<div id="elementor-template-library-header-import" class="elementor-templates-modal__header__item">
+		<button type="button" id="elementor-template-library-header-import" class="elementor-templates-modal__header__item" aria-label="<?php echo esc_attr__( 'Import Template', 'elementor' ); ?>">
 			<i class="eicon-upload-circle-o" aria-hidden="true"></i>
 			<span class="elementor-screen-only"><?php echo esc_html__( 'Import Template', 'elementor' ); ?></span>
-		</div>
+		</button>
 	<?php } ?>
-	<div id="elementor-template-library-header-sync" class="elementor-templates-modal__header__item">
+	<button type="button" id="elementor-template-library-header-sync" class="elementor-templates-modal__header__item" aria-label="<?php echo esc_attr__( 'Sync Library', 'elementor' ); ?>">
 		<i class="eicon-sync" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Sync Library', 'elementor' ); ?></span>
-	</div>
-	<div id="elementor-template-library-header-save" class="elementor-templates-modal__header__item">
+	</button>
+	<button type="button" id="elementor-template-library-header-save" class="elementor-templates-modal__header__item" aria-label="<?php echo esc_attr__( 'Save', 'elementor' ); ?>">
 		<i class="eicon-save-o" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Save', 'elementor' ); ?></span>
-	</div>
+	</button>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-menu">
@@ -47,8 +47,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-back">
-	<i class="eicon-chevron-left" aria-hidden="true"></i>
-	<span><?php echo esc_html__( 'Back to Library', 'elementor' ); ?></span>
+	<button type="button" class="elementor-template-library-header-back-button" aria-label="<?php echo esc_attr__( 'Back to Library', 'elementor' ); ?>">
+		<i class="eicon-chevron-left" aria-hidden="true"></i>
+		<span><?php echo esc_html__( 'Back to Library', 'elementor' ); ?></span>
+	</button>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-loading">

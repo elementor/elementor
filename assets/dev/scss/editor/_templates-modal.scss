@@ -11,6 +11,26 @@ $remote-templates-items-space: 30px;
 
 #elementor-template-library-modal {
 
+	// Global focus-visible styles for accessibility (QA #4)
+	button:focus-visible,
+	a:focus-visible,
+	input:focus-visible,
+	select:focus-visible,
+	[tabindex="0"]:focus-visible,
+	[role="tab"]:focus-visible,
+	[role="radio"]:focus-visible,
+	[role="menuitem"]:focus-visible {
+		outline: 2px solid var(--e-a-border-color-focus);
+		outline-offset: 2px;
+		border-radius: 2px;
+	}
+
+	// Reset button styles for the close button changed from div to button
+	button.elementor-templates-modal__header__close {
+		@include button-reset;
+		cursor: pointer;
+	}
+
 	a.elementor-template-library-blank-footer-link {
 		font-style: normal;
 		text-decoration: underline;
@@ -71,8 +91,17 @@ $remote-templates-items-space: 30px;
 #elementor-template-library-header-actions {
 	display: flex;
 
-	> div {
+	> div,
+	> button {
+		@include button-reset;
 		padding-inline-end: 16px;
+		cursor: pointer;
+
+		&:focus-visible {
+			outline: 2px solid var(--e-a-border-color-focus);
+			outline-offset: -2px;
+			border-radius: 2px;
+		}
 	}
 }
 
@@ -100,6 +129,20 @@ $remote-templates-items-space: 30px;
 	border-inline-end: var(--e-a-border);
 	cursor: pointer;
 	transition: color .5s;
+
+	.elementor-template-library-header-back-button {
+		@include button-reset;
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		cursor: pointer;
+
+		&:focus-visible {
+			outline: 2px solid var(--e-a-border-color-focus);
+			outline-offset: 2px;
+			border-radius: 2px;
+		}
+	}
 
 	&:hover {
 		color: var(--e-a-color-txt-hover);

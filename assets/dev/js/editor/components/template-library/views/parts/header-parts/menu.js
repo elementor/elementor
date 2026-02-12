@@ -59,7 +59,13 @@ module.exports = Marionette.ItemView.extend( {
 				const libraryComponent = $e.components.get( 'library' );
 				if ( libraryComponent ) {
 					libraryComponent.activateTab( targetTabName );
-					$targetTab.trigger( 'focus' );
+
+					// Re-query from the global DOM after activateTab re-renders the entire menu view.
+					// The old view instance and its $el are detached after re-render.
+					const $freshTab = jQuery( '#elementor-template-library-header-menu [data-tab="' + targetTabName + '"]' );
+					if ( $freshTab.length ) {
+						$freshTab.trigger( 'focus' );
+					}
 				}
 			}
 		}
