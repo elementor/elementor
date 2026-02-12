@@ -10,7 +10,6 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Switch_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Video_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
@@ -46,7 +45,7 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 	const PRELOAD_OPTIONS = [
 		'auto' => 'Auto',
 		'metadata' => 'Metadata',
-		'none' => 'None',
+		'none' => 'None (Lazy Load)',
 	];
 
 	protected function get_css_id_control_meta(): array {
@@ -61,7 +60,7 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Self Hosted Video', 'elementor' );
+		return esc_html__( 'Video', 'elementor' );
 	}
 
 	public function get_keywords() {
@@ -69,7 +68,7 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-video-camera';
+		return 'eicon-video';
 	}
 
 	protected static function define_props_schema(): array {
@@ -89,6 +88,14 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 			] )
 			->get();
 
+		$allow_download_dependencies = Dependency_Manager::make()
+			->where( [
+				'operator' => 'eq',
+				'path' => [ 'controls' ],
+				'value' => true,
+			])
+			->get();
+
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
@@ -100,16 +107,17 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 				->enum( array_keys( self::ASPECT_RATIOS ) ),
 
 			'autoplay' => Boolean_Prop_Type::make()->default( false ),
-			'mute' => Boolean_Prop_Type::make()->default( false ),
-			'loop' => Boolean_Prop_Type::make()->default( false ),
-			'controls' => Boolean_Prop_Type::make()->default( true ),
 			'playsinline' => Boolean_Prop_Type::make()
 				->default( false )
 				->set_dependencies( $playsinline_dependencies ),
+			'mute' => Boolean_Prop_Type::make()->default( false ),
+			'loop' => Boolean_Prop_Type::make()->default( false ),
+			'controls' => Boolean_Prop_Type::make()->default( true ),
 			'preload' => String_Prop_Type::make()
 				->default( 'metadata' )
 				->enum( array_keys( self::PRELOAD_OPTIONS ) ),
-			'download' => Boolean_Prop_Type::make()->default( true ),
+			'download' => Boolean_Prop_Type::make()->default( true )
+				->set_dependencies( $allow_download_dependencies ),
 
 			'start_time' => Number_Prop_Type::make()->default( null ),
 			'end_time' => Number_Prop_Type::make()->default( null ),
@@ -136,17 +144,24 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 				->set_label( __( 'Playback', 'elementor' ) )
 				->set_items( [
 					Switch_Control::bind_to( 'autoplay' )->set_label( esc_html__( 'Autoplay', 'elementor' ) ),
+					Switch_Control::bind_to( 'playsinline' )
+						->set_label( esc_html__( 'Play Inline (Mobile)', 'elementor' ) )
+						->set_meta( [ 'hideWhenDisabled' => true ] ),
 					Switch_Control::bind_to( 'mute' )->set_label( esc_html__( 'Mute', 'elementor' ) ),
 					Switch_Control::bind_to( 'loop' )->set_label( esc_html__( 'Loop', 'elementor' ) ),
 					Switch_Control::bind_to( 'controls' )->set_label( esc_html__( 'Player Controls', 'elementor' ) ),
-					Switch_Control::bind_to( 'playsinline' )->set_label( esc_html__( 'Play Inline (Mobile)', 'elementor' ) ),
-					Switch_Control::bind_to( 'download' )->set_label( esc_html__( 'Allow Download', 'elementor' ) ),
+					Switch_Control::bind_to( 'download' )->set_label( esc_html__( 'Allow Download', 'elementor' ) )
+						->set_meta( [ 'hideWhenDisabled' => true ] ),
 					Select_Control::bind_to( 'preload' )
 						->set_label( esc_html__( 'Preload', 'elementor' ) )
 						->set_options( self::format_options( self::PRELOAD_OPTIONS ) ),
 					Number_Control::bind_to( 'start_time' )
 						->set_label( esc_html__( 'Start Time (seconds)', 'elementor' ) )
-						->set_meta( [ 'topDivider' => true ] ),
+						->set_meta( [
+							'topDivider' => true,
+							'layout' => 'two-columns',
+						] ),
+
 					Number_Control::bind_to( 'end_time' )
 						->set_label( esc_html__( 'End Time (seconds)', 'elementor' ) ),
 				] ),
@@ -158,6 +173,7 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 						->set_options( self::format_options( self::ASPECT_RATIOS ) ),
 					Switch_Control::bind_to( 'poster_enabled' )
 						->set_label( esc_html__( 'Poster Image', 'elementor' ) )
+						->set_meta( [ 'hideWhenDisabled' => true ] )
 						->set_meta( [ 'topDivider' => true ] ),
 					Image_Control::bind_to( 'poster' )
 						->set_label( esc_html__( 'Image', 'elementor' ) ),

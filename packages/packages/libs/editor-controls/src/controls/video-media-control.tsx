@@ -52,6 +52,8 @@ export const VideoMediaControl = createControl( () => {
 			);
 		}
 
+		return null;
+
 		return (
 			<Typography variant="caption" color="text.secondary">
 				{ __( 'No video selected', 'elementor' ) }
@@ -63,15 +65,12 @@ export const VideoMediaControl = createControl( () => {
 		<ControlActions>
 			<Card variant="outlined">
 				<CardMedia
+					image={ '/wp-content/plugins/elementor/assets/images/placeholder-v4.svg' }
 					sx={ {
-						height: 100,
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-						backgroundColor: 'action.hover',
+						height: 150,
 					} }
 				>
-					{ renderMediaContent() }
+					{ videoUrl ? renderMediaContent() : <></> }
 				</CardMedia>
 				<CardOverlay>
 					<Stack gap={ 1 }>
