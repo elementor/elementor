@@ -154,5 +154,45 @@
     },
     "widgetType": "e-heading",
     "elType": "widget"
+  },
+  {
+    "id": "interactions-with-nested-migration",
+    "settings": {
+      "title": {
+        "$$type": "html-v2",
+        "value": {
+          "content": "Element with interactions",
+          "children": []
+        }
+      },
+      "tag": {
+        "$$type": "string",
+        "value": "h2"
+      }
+    },
+    "interactions": {
+      "items": [
+        {
+          "$$type": "interaction-item",
+          "value": {
+            "interaction_id": {
+              "$$type": "old-string",
+              "value": "click-interaction"
+            },
+            "trigger": {
+              "$$type": "string",
+              "value": "click"
+            },
+            "animation": {
+              "$$type": "animation-preset",
+              "value": "fade-in"
+            }
+          }
+        }
+      ],
+      "version": 1
+    },
+    "widgetType": "e-heading",
+    "elType": "widget"
   }
 ]
