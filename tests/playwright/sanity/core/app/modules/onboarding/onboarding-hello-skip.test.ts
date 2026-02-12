@@ -2,7 +2,6 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../../parallelTest';
 import EditorSelectors from '../../../../../selectors/editor-selectors';
 import WpAdminPage from '../../../../../pages/wp-admin-page';
-import { hasActiveOnboardingExperiment } from './ab-testing-utils';
 
 test.describe( 'Onboarding Skip disabled until Hello Theme loaded', async () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -20,16 +19,19 @@ test.describe( 'Onboarding Skip disabled until Hello Theme loaded', async () => 
 	} );
 
 	test( 'Onboarding Skip disabled until Hello Theme loaded', async ( { page } ) => {
-		if ( await hasActiveOnboardingExperiment() ) {
-			test.skip();
-		}
-
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding/hello' );
 		await page.waitForSelector( 'text=Skip' );
 
-		const skipButton = page.locator( 'text=Skip' );
+		const upgradeButton = page.locator( EditorSelectors.onboarding.upgradeButton );
+		const themeSelectionCard = page.locator( '[data-theme="hello-biz"]' );
+		const hasThemeSelectionCard = await themeSelectionCard.count() > 0;
 
-		await page.locator( EditorSelectors.onboarding.upgradeButton ).click();
-		await expect( skipButton ).toHaveClass( /e-onboarding__button-skip--disabled/ );
+		if ( hasThemeSelectionCard && await upgradeButton.evaluate( ( el ) => el.hasAttribute( 'disabled' ) ) ) {
+			await themeSelectionCard.click();
+			await expect( upgradeButton ).not.toHaveClass( /e-onboarding__button--disabled/ );
+		}
+
+		await upgradeButton.click();
+		await expect( page.locator( EditorSelectors.onboarding.skipButton ) ).toHaveClass( /e-onboarding__button-skip--disabled/ );
 	} );
 } );
