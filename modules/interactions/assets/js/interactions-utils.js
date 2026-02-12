@@ -68,7 +68,7 @@ export function extractInteractionId( interaction ) {
 
 function motionFunc( name ) {
 	if ( 'function' !== typeof window?.Motion?.[ name ] ) {
-		return null;
+		return undefined;
 	}
 	return window?.Motion?.[ name ];
 }
