@@ -1,16 +1,21 @@
 import { type Unit } from '@elementor/editor-controls';
 import type {
+	AnimationKeyframe,
+	AnimationKeyframesPropValue,
+	AnimationKeyframeStopPropValue,
 	AnimationPresetPropValue,
 	ConfigPropValue,
 	CustomEffect,
-	CustomEffectProperties,
 	CustomEffectPropValue,
 	ElementInteractions,
 	ExcludedBreakpointsPropValue,
 	InteractionBreakpointsPropValue,
 	InteractionItemPropValue,
-	MovementDimensions,
+	KeyframeStopSettings,
+	KeyframeStopSettingsPropValue,
 	TimingConfigPropValue,
+	Transform3d,
+	Transform3dPropValue,
 } from '@elementor/editor-elements';
 
 export type {
@@ -23,8 +28,13 @@ export type {
 	InteractionBreakpointsPropValue,
 	CustomEffectPropValue,
 	CustomEffect,
-	CustomEffectProperties,
-	MovementDimensions,
+	AnimationKeyframe,
+	AnimationKeyframesPropValue,
+	AnimationKeyframeStopPropValue,
+	KeyframeStopSettings,
+	KeyframeStopSettingsPropValue,
+	Transform3d,
+	Transform3dPropValue,
 };
 
 export type AnimationOption = {

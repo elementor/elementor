@@ -253,7 +253,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 				{ CustomEffectControl && (
 					<Field label={ __( 'Custom Effect', 'elementor' ) }>
 						<CustomEffectControl
-							value={ custom ?? {} }
+							value={ custom ?? { keyframes: [] } }
 							onChange={ ( v: CustomEffect ) => updateInteraction( { custom: v } ) }
 						/>
 					</Field>

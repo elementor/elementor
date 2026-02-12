@@ -57,7 +57,6 @@ const createInteraction = (
 								offsetBottom: { $$type: 'size', value: { size: 85, unit: '%' } },
 							},
 						},
-						custom: { $$type: 'custom-effect', value: {} },
 					},
 				},
 			},

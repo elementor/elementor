@@ -1,6 +1,5 @@
 import {
 	type BooleanPropValue,
-	type NumberPropValue,
 	type PropsSchema,
 	type PropValue,
 	type SizePropValue,
@@ -71,58 +70,75 @@ export type ConfigPropValue = {
 	};
 };
 
-export type MovementDimensions = {
+export type Transform3d = {
 	x: number;
 	y: number;
 	z: number;
 };
 
-export type CustomEffectProperties = {
+export type KeyframeStopSettings = {
 	opacity?: number;
-	scale?: MovementDimensions;
-	move?: MovementDimensions;
-	rotate?: MovementDimensions;
-	skew?: MovementDimensions;
+	scale?: Transform3d;
+	move?: Transform3d;
+	rotate?: Transform3d;
+	skew?: Transform3d;
+};
+
+export type AnimationKeyframe = {
+	stop: number;
+	settings: KeyframeStopSettings;
 };
 
 export type CustomEffect = {
-	from?: CustomEffectProperties;
-	to?: CustomEffectProperties;
+	keyframes: AnimationKeyframe[];
 };
 
-export type CustomEffectPropertiesPropValue = {
-	$$type: 'custom-effect-properties';
+export type Transform3dPropValue = {
+	$$type: 'transform-3d';
 	value: {
-		opacity?: NumberPropValue;
-		scale?: MovementDimensionsPropValue;
-		move?: MovementDimensionsPropValue;
-		rotate?: MovementDimensionsPropValue;
-		skew?: MovementDimensionsPropValue;
+		x: SizePropValue;
+		y: SizePropValue;
+		z: SizePropValue;
 	};
 };
 
-export type MovementDimensionsPropValue = {
-	$$type: 'movement-dimensions';
+export type KeyframeStopSettingsPropValue = {
+	$$type: 'keyframe-stop-settings';
 	value: {
-		x: NumberPropValue;
-		y: NumberPropValue;
-		z: NumberPropValue;
+		opacity?: SizePropValue;
+		scale?: Transform3dPropValue;
+		move?: Transform3dPropValue;
+		rotate?: Transform3dPropValue;
+		skew?: Transform3dPropValue;
 	};
+};
+
+export type AnimationKeyframeStopPropValue = {
+	$$type: 'animation-keyframe-stop';
+	value: {
+		stop: SizePropValue;
+		settings: KeyframeStopSettingsPropValue;
+	};
+};
+
+export type AnimationKeyframesPropValue = {
+	$$type: 'animation-keyframes';
+	value: AnimationKeyframeStopPropValue[];
 };
 
 export type CustomEffectPropValue = {
 	$$type: 'custom-effect';
 	value: {
-		from?: CustomEffectPropertiesPropValue;
-		to?: CustomEffectPropertiesPropValue;
+		keyframes: AnimationKeyframesPropValue;
 	};
 };
 
 export type AnimationPresetPropValue = {
 	$$type: 'animation-preset-props';
 	value: {
+		animation_id?: StringPropValue;
 		effect: StringPropValue;
-		custom: CustomEffectPropValue;
+		custom?: CustomEffectPropValue;
 		type: StringPropValue;
 		direction: StringPropValue;
 		timing_config: TimingConfigPropValue;

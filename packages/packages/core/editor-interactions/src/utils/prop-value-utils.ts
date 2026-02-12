@@ -1,13 +1,14 @@
 import { type Unit } from '@elementor/editor-controls';
 import {
-	type CustomEffectProperties,
-	type CustomEffectPropertiesPropValue,
-	type MovementDimensions,
-	type MovementDimensionsPropValue,
+	type AnimationKeyframe,
+	type AnimationKeyframeStopPropValue,
+	type KeyframeStopSettings,
+	type KeyframeStopSettingsPropValue,
+	type Transform3d,
+	type Transform3dPropValue,
 } from '@elementor/editor-elements';
 import {
 	type BooleanPropValue,
-	type NumberPropValue,
 	sizePropTypeUtil,
 	type SizePropValue,
 	type StringPropValue,
@@ -35,10 +36,8 @@ export const createString = ( value: string ): StringPropValue => ( {
 	value,
 } );
 
-export const createNumber = ( value: number ): NumberPropValue => ( {
-	$$type: 'number',
-	value,
-} );
+const createSizeValue = ( size: number, unit: Unit ): SizePropValue =>
+	sizePropTypeUtil.create( { size, unit } as SizePropValue[ 'value' ] );
 
 export const createTimingConfig = ( duration: SizeStringValue, delay: SizeStringValue ): TimingConfigPropValue => ( {
 	$$type: 'timing-config',
@@ -132,6 +131,7 @@ export const createAnimationPreset = ( {
 	$$type: 'animation-preset-props',
 	value: {
 		effect: createString( effect ),
+		...( custom && { custom: createCustomEffect( custom ) } ),
 		type: createString( type ),
 		direction: createString( direction ?? '' ),
 		timing_config: createTimingConfig( duration, delay ),
@@ -142,62 +142,46 @@ export const createAnimationPreset = ( {
 			offsetTop,
 			offsetBottom,
 		} ),
-		custom: createCustomEffect( custom ),
 	},
 } );
 
-const EMPTY_CUSTOM_EFFECT_PROP_VALUE: CustomEffectPropValue = {
+export const createTransform3d = ( t: Transform3d, unit: Unit ): Transform3dPropValue => ( {
+	$$type: 'transform-3d',
+	value: {
+		x: createSizeValue( t.x, unit ),
+		y: createSizeValue( t.y, unit ),
+		z: createSizeValue( t.z, unit ),
+	},
+} );
+
+export const createKeyframeStopSettings = ( settings: KeyframeStopSettings ): KeyframeStopSettingsPropValue => ( {
+	$$type: 'keyframe-stop-settings',
+	value: {
+		opacity: settings.opacity !== undefined ? createSizeValue( settings.opacity, '%' ) : undefined,
+		scale: settings.scale ? createTransform3d( settings.scale, '%' ) : undefined,
+		move: settings.move ? createTransform3d( settings.move, 'px' ) : undefined,
+		rotate: settings.rotate ? createTransform3d( settings.rotate, 'deg' ) : undefined,
+		skew: settings.skew ? createTransform3d( settings.skew, 'deg' ) : undefined,
+	},
+} );
+
+export const createAnimationKeyframeStop = ( kf: AnimationKeyframe ): AnimationKeyframeStopPropValue => ( {
+	$$type: 'animation-keyframe-stop',
+	value: {
+		stop: createSizeValue( kf.stop, '%' ),
+		settings: createKeyframeStopSettings( kf.settings ),
+	},
+} );
+
+export const createCustomEffect = ( custom: CustomEffect ): CustomEffectPropValue => ( {
 	$$type: 'custom-effect',
-	value: {},
-};
-
-export const createCustomEffect = ( custom?: CustomEffect ): CustomEffectPropValue => {
-	if ( ! custom ) {
-		return EMPTY_CUSTOM_EFFECT_PROP_VALUE;
-	}
-
-	return {
-		$$type: 'custom-effect',
-		value: {
-			from: createCustomEffectProperties( custom.from ),
-			to: createCustomEffectProperties( custom.to ),
+	value: {
+		keyframes: {
+			$$type: 'animation-keyframes',
+			value: custom.keyframes.map( createAnimationKeyframeStop ),
 		},
-	};
-};
-
-export const createCustomEffectProperties = (
-	custom?: CustomEffectProperties
-): CustomEffectPropertiesPropValue | undefined => {
-	if ( ! custom ) {
-		return undefined;
-	}
-
-	return {
-		$$type: 'custom-effect-properties',
-		value: {
-			opacity: custom.opacity ? createNumber( custom.opacity ) : undefined,
-			scale: custom.scale ? createMovementDimensions( custom.scale ) : undefined,
-			move: custom.move ? createMovementDimensions( custom.move ) : undefined,
-			rotate: custom.rotate ? createMovementDimensions( custom.rotate ) : undefined,
-			skew: custom.skew ? createMovementDimensions( custom.skew ) : undefined,
-		},
-	};
-};
-
-export const createMovementDimensions = ( custom?: MovementDimensions ): MovementDimensionsPropValue | undefined => {
-	if ( ! custom ) {
-		return undefined;
-	}
-
-	return {
-		$$type: 'movement-dimensions',
-		value: {
-			x: createNumber( custom.x ),
-			y: createNumber( custom.y ),
-			z: createNumber( custom.z ),
-		},
-	};
-};
+	},
+} );
 
 export const createInteractionItem = ( {
 	trigger,
@@ -284,55 +268,59 @@ export const extractSize = ( prop?: SizePropValue, defaultValue?: SizeStringValu
 	return formatSizeValue( prop.value );
 };
 
-export const extractNumber = ( prop: NumberPropValue | undefined, fallback = 0 ): number => {
-	return prop?.value ?? fallback;
+const extractSizeNumber = ( prop?: SizePropValue, fallback = 0 ): number => {
+	if ( ! prop?.value || typeof prop.value.size !== 'number' ) {
+		return fallback;
+	}
+	return prop.value.size;
 };
 
-export const extractMovementDimensions = (
-	prop: MovementDimensionsPropValue | undefined,
-	fallback?: MovementDimensions
-): MovementDimensions | undefined => {
+export const extractTransform3d = (
+	prop: Transform3dPropValue | undefined,
+	fallback?: Transform3d
+): Transform3d | undefined => {
 	if ( ! prop?.value ) {
 		return fallback;
 	}
 
 	return {
-		x: extractNumber( prop.value.x ),
-		y: extractNumber( prop.value.y ),
-		z: extractNumber( prop.value.z ),
+		x: extractSizeNumber( prop.value.x ),
+		y: extractSizeNumber( prop.value.y ),
+		z: extractSizeNumber( prop.value.z ),
 	};
 };
+
+export const extractKeyframeStopSettings = (
+	prop: KeyframeStopSettingsPropValue | undefined
+): KeyframeStopSettings => {
+	if ( ! prop?.value ) {
+		return {};
+	}
+
+	return {
+		opacity: prop.value.opacity ? extractSizeNumber( prop.value.opacity ) : undefined,
+		scale: extractTransform3d( prop.value.scale ),
+		move: extractTransform3d( prop.value.move ),
+		rotate: extractTransform3d( prop.value.rotate ),
+		skew: extractTransform3d( prop.value.skew ),
+	};
+};
+
+export const extractAnimationKeyframe = ( prop: AnimationKeyframeStopPropValue ): AnimationKeyframe => ( {
+	stop: extractSizeNumber( prop.value.stop ),
+	settings: extractKeyframeStopSettings( prop.value.settings ),
+} );
 
 export const extractCustomEffect = (
 	prop: CustomEffectPropValue | undefined,
 	fallback?: CustomEffect
 ): CustomEffect | undefined => {
-	if ( ! prop?.value ) {
+	if ( ! prop?.value?.keyframes ) {
 		return fallback;
 	}
 
-	const from = prop.value.from
-		? {
-				opacity: extractNumber( prop.value.from.value.opacity ),
-				scale: extractMovementDimensions( prop.value.from.value.scale ),
-				move: extractMovementDimensions( prop.value.from.value.move ),
-				rotate: extractMovementDimensions( prop.value.from.value.rotate ),
-				skew: extractMovementDimensions( prop.value.from.value.skew ),
-		  }
-		: undefined;
-	const to = prop.value.to
-		? {
-				opacity: extractNumber( prop.value.to.value.opacity ),
-				scale: extractMovementDimensions( prop.value.to.value.scale ),
-				move: extractMovementDimensions( prop.value.to.value.move ),
-				rotate: extractMovementDimensions( prop.value.to.value.rotate ),
-				skew: extractMovementDimensions( prop.value.to.value.skew ),
-		  }
-		: undefined;
-
 	return {
-		from,
-		to,
+		keyframes: prop.value.keyframes.value.map( extractAnimationKeyframe ),
 	};
 };
 
