@@ -14,6 +14,7 @@ class Onboarding_Progress_Manager {
 	const PROGRESS_OPTION_KEY = 'elementor_e_onboarding_progress';
 	const CHOICES_OPTION_KEY = 'elementor_e_onboarding_choices';
 	const DEFAULT_TOTAL_STEPS = 5;
+	const ALLOWED_THEMES = [ 'hello-elementor', 'hello-biz' ];
 
 	private static ?Onboarding_Progress_Manager $instance = null;
 
@@ -138,9 +139,7 @@ class Onboarding_Progress_Manager {
 	}
 
 	private function install_and_activate_theme( string $theme_slug ): void {
-		$allowed_themes = [ 'hello-elementor', 'hello-biz' ];
-
-		if ( ! in_array( $theme_slug, $allowed_themes, true ) ) {
+		if ( ! in_array( $theme_slug, self::ALLOWED_THEMES, true ) ) {
 			return;
 		}
 

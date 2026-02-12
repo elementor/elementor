@@ -151,17 +151,20 @@ class Module extends BaseModule {
 
 		$active_theme = get_stylesheet();
 
-		if ( $selected_theme !== $active_theme ) {
-			$completed = $progress->get_completed_steps();
-			$completed = array_values( array_filter( $completed, function ( $step ) {
-				return $step !== 'theme_selection';
-			} ) );
+		if ( $active_theme !== $selected_theme ) {
+			$completed = $this->filter_out_theme_selection_step( $progress->get_completed_steps() );
 			$progress->set_completed_steps( $completed );
 			$this->progress_manager->save_progress( $progress );
 
 			$choices->set_theme_selection( null );
 			$this->progress_manager->save_choices( $choices );
 		}
+	}
+
+	private function filter_out_theme_selection_step( array $steps ): array {
+		return array_values( array_filter( $steps, function ( $step ) {
+			return 'theme_selection' !== $step;
+		} ) );
 	}
 
 	private function get_steps_config(): array {
