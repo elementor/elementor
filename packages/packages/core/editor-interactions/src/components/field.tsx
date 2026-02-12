@@ -3,11 +3,7 @@ import { type PropsWithChildren } from 'react';
 import { ControlFormLabel, PopoverGridContainer } from '@elementor/editor-controls';
 import { Grid } from '@elementor/ui';
 
-type FieldProps = {
-	label: string;
-} & PropsWithChildren;
-
-export function Field( { label, children }: FieldProps ) {
+export const Field = ( { label, children }: { label: string } & PropsWithChildren ) => {
 	return (
 		<Grid item xs={ 12 }>
 			<PopoverGridContainer>

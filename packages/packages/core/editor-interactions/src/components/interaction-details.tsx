@@ -21,9 +21,9 @@ import {
 	extractSize,
 	extractString,
 } from '../utils/prop-value-utils';
+import { resolveDirection } from '../utils/resolve-direction';
 import { parseSizeValue } from '../utils/size-transform-utils';
 import { Direction } from './controls/direction';
-import { Effect } from './controls/effect';
 import { EffectType } from './controls/effect-type';
 import { TimeFrameIndicator } from './controls/time-frame-indicator';
 import { Field } from './field';
@@ -152,6 +152,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	};
 
 	const TriggerControl = useControlComponent( 'trigger', true );
+	const EffectControl = useControlComponent( 'effect' );
 	const ReplayControl = useControlComponent( 'replay', controlVisibilityConfig.replay( interactionValues ) );
 	const RelativeToControl = useControlComponent(
 		'relativeTo',
@@ -165,17 +166,6 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const CustomEffectControl = useControlComponent( 'custom', controlVisibilityConfig.custom( interactionValues ) );
 
 	const EasingControl = useControlComponent( 'easing' );
-
-	const resolveDirection = ( hasDirection: boolean, newEffect?: string, newDirection?: string ) => {
-		if ( newEffect === 'slide' && ! newDirection ) {
-			return 'top';
-		}
-		// Why? - New direction can be undefined when the effect is not slide, so if the updates object includes direction, we take it always!
-		if ( hasDirection ) {
-			return newDirection;
-		}
-		return direction;
-	};
 
 	const updateInteraction = (
 		updates: Partial< {
@@ -193,7 +183,13 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			custom?: CustomEffect;
 		} >
 	): void => {
-		const resolvedDirectionValue = resolveDirection( 'direction' in updates, updates.effect, updates.direction );
+		const resolvedDirectionValue = resolveDirection(
+			'direction' in updates,
+			updates.effect,
+			updates.direction,
+			direction,
+			effect
+		);
 
 		const updatedInteraction = {
 			...interaction,
@@ -246,9 +242,11 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			<Divider />
 
 			<Grid container spacing={ 1.5 }>
-				<Field label={ __( 'Effect', 'elementor' ) }>
-					<Effect value={ effect } onChange={ ( v ) => updateInteraction( { effect: v } ) } />
-				</Field>
+				{ EffectControl && (
+					<Field label={ __( 'Effect', 'elementor' ) }>
+						<EffectControl value={ effect } onChange={ ( v ) => updateInteraction( { effect: v } ) } />
+					</Field>
+				) }
 
 				{ CustomEffectControl && (
 					<Field label={ __( 'Custom Effect', 'elementor' ) }>
