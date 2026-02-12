@@ -215,14 +215,37 @@ export default class extends ControlBaseDataView {
 
 	// Create the markup for the colors in the global select dropdown.
 	buildGlobalsList( globalColors, $globalPreviewItemsContainer ) {
+		const v4Colors = [];
+		const v3Colors = [];
+
 		Object.values( globalColors ).forEach( ( color ) => {
 			if ( ! color.value ) {
 				return;
 			}
 
-			const $color = this.createGlobalItemMarkup( color );
+			if ( 'v4' === color.group ) {
+				v4Colors.push( color );
+			} else {
+				v3Colors.push( color );
+			}
+		} );
 
-			$globalPreviewItemsContainer.append( $color );
+		if ( v4Colors.length ) {
+			const $v4Header = jQuery( '<div>', { class: 'e-global__group-header' } )
+				.text( __( 'Version 4 Variables', 'elementor' ) );
+			$globalPreviewItemsContainer.append( $v4Header );
+
+			v4Colors.forEach( ( color ) => {
+				$globalPreviewItemsContainer.append( this.createGlobalItemMarkup( color ) );
+			} );
+
+			const $v3Header = jQuery( '<div>', { class: 'e-global__group-header' } )
+				.text( __( 'Version 3 Global Colors', 'elementor' ) );
+			$globalPreviewItemsContainer.append( $v3Header );
+		}
+
+		v3Colors.forEach( ( color ) => {
+			$globalPreviewItemsContainer.append( this.createGlobalItemMarkup( color ) );
 		} );
 	}
 
