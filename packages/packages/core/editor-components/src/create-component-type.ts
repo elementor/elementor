@@ -19,7 +19,7 @@ import { apiClient } from './api';
 import { type ComponentInstanceProp } from './prop-types/component-instance-prop-type';
 import { type ComponentsSlice, selectComponentByUid } from './store/store';
 import { type ComponentRenderContext, type ExtendedWindow } from './types';
-import { prefixElementIds } from './utils/prefix-element-ids';
+import { formatComponentElementsId } from './utils/format-component-elements-id';
 import { switchToComponent } from './utils/switch-to-component';
 import { trackComponentEvent } from './utils/tracking';
 
@@ -165,9 +165,9 @@ function createComponentView(
 
 				const instanceId = this.model.get( 'id' );
 				const elements = componentInstance.elements ?? [];
-				const prefixedElements = instanceId ? prefixElementIds( elements, instanceId ) : elements;
+				const formattedElements = formatComponentElementsId( elements, [ instanceId ] );
 
-				this.collection = legacyWindow.elementor.createBackboneElementsCollection( prefixedElements );
+				this.collection = legacyWindow.elementor.createBackboneElementsCollection( formattedElements );
 
 				this.collection.models.forEach( setInactiveRecursively );
 
