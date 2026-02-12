@@ -7,6 +7,8 @@ const LOAD_MORE_ID = 0;
 import { SAVE_CONTEXTS } from './../../constants';
 
 const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
+	tagName: 'main',
+
 	id: 'elementor-template-library-save-template',
 
 	template: '#tmpl-elementor-template-library-save-template',

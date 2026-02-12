@@ -6,6 +6,8 @@ import Select2 from 'elementor-editor-utils/select2.js';
 import { SAVE_CONTEXTS, QUOTA_WARNINGS, QUOTA_BAR_STATES } from './../../constants';
 
 const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
+	tagName: 'main',
+
 	template: '#tmpl-elementor-template-library-templates',
 
 	id: 'elementor-template-library-templates',
@@ -28,13 +30,14 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		orderLabels: 'label.elementor-template-library-order-label',
 		searchInputIcon: '#elementor-template-library-filter-text-wrapper i',
 		loadMoreAnchor: '#elementor-template-library-load-more-anchor',
+		sourceFilterRadiogroup: '.elementor-template-library-filter-select-source',
 		selectSourceFilter: '.elementor-template-library-filter-select-source .source-option',
 		addNewFolder: '#elementor-template-library-add-new-folder',
 		addNewFolderDivider: '.elementor-template-library-filter-toolbar-side-actions .divider',
 		selectGridView: '#elementor-template-library-view-grid',
 		selectListView: '#elementor-template-library-view-list',
 		bulkSelectionActionBar: '.bulk-selection-action-bar',
-		bulkActionBarDelete: '.bulk-selection-action-bar .bulk-delete i',
+		bulkActionBarDelete: '.bulk-selection-action-bar .bulk-delete',
 		bulkSelectedCount: '.bulk-selection-action-bar .selected-count',
 		bulkSelectAllCheckbox: '#bulk-select-all',
 		clearBulkSelections: '.bulk-selection-action-bar .clear-bulk-selections',
@@ -45,10 +48,13 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		quotaValue: '.quota-progress-container .quota-progress-bar-value',
 		quotaWarning: '.quota-progress-container .progress-bar-container .quota-warning',
 		quotaUpgrade: '.quota-progress-container .progress-bar-container .quota-warning a',
+		quotaStatus: '#elementor-template-library-quota-status',
 		navigationContainer: '#elementor-template-library-navigation-container',
 		sourceOptionBadges: '.source-option-badge.variant-b-only',
 		cloudBadge: '.source-option-badge.cloud-badge',
 		siteBadge: '.source-option-badge.site-badge',
+		sortStatus: '#elementor-template-library-sort-status',
+		loadStatus: '#elementor-template-library-load-status',
 	},
 
 	events: {
@@ -57,6 +63,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		'change @ui.myFavoritesFilter': 'onMyFavoritesFilterChange',
 		'mousedown @ui.orderLabels': 'onOrderLabelsClick',
 		'click @ui.selectSourceFilter': 'onSelectSourceFilterChange',
+		'keydown @ui.selectSourceFilter': 'onSelectSourceFilterKeyDown',
 		'click @ui.addNewFolder': 'onCreateNewFolderClick',
 		'click @ui.selectGridView': 'onSelectGridViewClick',
 		'click @ui.selectListView': 'onSelectListViewClick',
@@ -123,6 +130,23 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.handleQuotaWarning( quotaState, value );
 
 		this.setQuotaBarStyles( quotaState );
+
+		if ( this.ui.quota.length ) {
+			this.ui.quota.attr( {
+				'aria-valuenow': value,
+			} );
+		}
+
+		if ( quota && this.ui.quotaStatus.length ) {
+			// Translators: %1$s: current usage number, %2$s: threshold number
+			const statusText = sprintf(
+				// Translators: %1$s: current usage number, %2$s: threshold number
+				__( '%1$s of %2$s templates used', 'elementor' ),
+				quota.currentUsage.toLocaleString(),
+				quota.threshold.toLocaleString(),
+			);
+			this.ui.quotaStatus.text( statusText );
+		}
 	},
 
 	resolveQuotaState( value ) {
@@ -240,8 +264,10 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	initialize() {
 		this.handleQuotaBar = this.handleQuotaBar.bind( this );
 		this.handleQuotaUpdate = this.handleQuotaUpdate.bind( this );
+		this.handleSourceFilterChange = this.handleSourceFilterChange.bind( this );
 		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
 		this.listenTo( elementor.channels.templates, 'filter:change', this.handleSourceOptionBadges );
+		this.listenTo( elementor.channels.templates, 'filter:change', this.handleSourceFilterChange );
 		this.listenTo( elementor.channels.templates, 'quota:updated', this.handleQuotaUpdate );
 		this.debouncedSearchTemplates = _.debounce( this.searchTemplates, 300 );
 	},
@@ -255,6 +281,30 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 					this.handleQuotaBar();
 				} );
 		}
+	},
+
+	handleSourceFilterChange( filterName ) {
+		if ( 'source' === filterName ) {
+			const activeSource = elementor.templates.getFilter( 'source' ) ?? 'local';
+			this.updateSourceFilterAriaAttributes( activeSource );
+		}
+	},
+
+	updateSourceFilterAriaAttributes( selectedSource ) {
+		if ( ! this.ui.selectSourceFilter.length ) {
+			return;
+		}
+
+		this.ui.selectSourceFilter.each( function() {
+			const $option = jQuery( this ),
+				source = $option.data( 'source' ),
+				isSelected = source === selectedSource;
+
+			$option.attr( {
+				'aria-checked': isSelected ? 'true' : 'false',
+				tabindex: isSelected ? '0' : '-1',
+			} );
+		} );
 	},
 
 	filter( childModel ) {
@@ -312,6 +362,33 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.collection.comparator = comparator;
 
 		this.collection.sort();
+
+		this.announceSortStatus( by, reverseOrder );
+	},
+
+	announceSortStatus( by, reverseOrder ) {
+		const orderLabels = {
+			title: __( 'Name', 'elementor' ),
+			type: __( 'Type', 'elementor' ),
+			author: __( 'Created By', 'elementor' ),
+			date: __( 'Creation Date', 'elementor' ),
+		};
+
+		const orderDirection = reverseOrder ? __( 'descending', 'elementor' ) : __( 'ascending', 'elementor' );
+		const sortLabel = orderLabels[ by ] || by;
+		const message = __( 'Sorted by', 'elementor' ) + ' ' + sortLabel + ', ' + orderDirection;
+
+		if ( this.ui.sortStatus.length ) {
+			this.ui.sortStatus.text( message );
+		}
+	},
+
+	announceLoadStatus( count ) {
+		const message = count + ' ' + __( 'more templates loaded', 'elementor' );
+
+		if ( this.ui.loadStatus.length ) {
+			this.ui.loadStatus.text( message );
+		}
 	},
 
 	handleCloudOrder( by, reverseOrder ) {
@@ -327,6 +404,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		elementor.templates.loadMore( {
 			onUpdate: () => {
 				elementor.templates.layout.hideLoadingView();
+				this.announceSortStatus( by, reverseOrder );
 			},
 			search: this.ui.textFilter.val(),
 			refresh: true,
@@ -540,6 +618,31 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		elementor.templates.onSelectSourceFilterChange( event );
 	},
 
+	onSelectSourceFilterKeyDown( event ) {
+		const $currentOption = jQuery( event.currentTarget ),
+			$allOptions = this.ui.selectSourceFilter,
+			currentIndex = $allOptions.index( $currentOption );
+
+		let targetIndex = currentIndex;
+
+		if ( 'ArrowLeft' === event.key || 'ArrowUp' === event.key ) {
+			event.preventDefault();
+			targetIndex = currentIndex > 0 ? currentIndex - 1 : $allOptions.length - 1;
+		} else if ( 'ArrowRight' === event.key || 'ArrowDown' === event.key ) {
+			event.preventDefault();
+			targetIndex = currentIndex < $allOptions.length - 1 ? currentIndex + 1 : 0;
+		} else if ( ' ' === event.key || 'Enter' === event.key ) {
+			event.preventDefault();
+			$currentOption.trigger( 'click' );
+			return;
+		} else {
+			return;
+		}
+
+		const $targetOption = $allOptions.eq( targetIndex );
+		$targetOption.trigger( 'focus' ).trigger( 'click' );
+	},
+
 	onSelectGridViewClick() {
 		elementor.templates.onSelectViewChange( 'grid' );
 	},
@@ -592,9 +695,16 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
 			elementor.templates.layout.selectAllCheckboxMinus();
 
+			const previousCount = this.collection.length;
+
 			elementor.templates.loadMore( {
 				onUpdate: () => {
 					this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
+					const newCount = this.collection.length;
+					const loadedCount = newCount - previousCount;
+					if ( loadedCount > 0 ) {
+						this.announceLoadStatus( loadedCount );
+					}
 				},
 				search: this.ui.textFilter.val(),
 			} );
