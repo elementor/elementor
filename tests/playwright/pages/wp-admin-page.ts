@@ -428,6 +428,17 @@ export default class WpAdminPage extends BasePage {
 		} );
 	}
 
+	async dismissEditorOnePointerIfVisible(): Promise<void> {
+		const pointer = this.page.locator( '#wp-pointer-0' );
+		if ( ! await pointer.isVisible() ) {
+			return;
+		}
+
+		await pointer.locator( '.wp-pointer-buttons a.close' ).click();
+		await pointer.waitFor( { state: 'hidden' } );
+	}
+
+
 	/**
 	 * Edit the page with Elementor.
 	 *
