@@ -42,7 +42,7 @@ export const StopSyncConfirmationDialog = ( {
 	};
 
 	return (
-		<Dialog open={ open } onClose={ closeDialog } maxWidth="xs">
+		<Dialog open={ open } onClose={ closeDialog } maxWidth="sm">
 			<DialogTitle display="flex" alignItems="center" gap={ 1 }>
 				{ icon }
 				{ title }
