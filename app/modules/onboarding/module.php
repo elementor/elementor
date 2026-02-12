@@ -28,7 +28,6 @@ class Module extends BaseModule {
 	const ONBOARDING_OPTION = 'elementor_onboarded';
 
 	const EXPERIMENT_EMPHASIZE_CONNECT_BENEFITS = 'emphasizeConnectBenefits101';
-	const EXPERIMENT_OFFER_THEME_CHOICES_HELLO_BIZ = 'offerThemeChoicesHelloBiz201';
 	const EXPERIMENT_EMPHASIZE_THEME_VALUE_AUDIENCE_202 = 'emphasizeThemeValueAudience202';
 	const EXPERIMENT_UPDATE_COPY_VISUALS = 'updateCopyVisuals401';
 	const EXPERIMENT_REDUCE_HIERARCHY_BLANK_OPTION = 'reduceHierarchyBlankOption402';
@@ -169,13 +168,11 @@ class Module extends BaseModule {
 			'nonce' => wp_create_nonce( 'onboarding' ),
 			'experiment' => true,
 			'isExperiment101Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_EMPHASIZE_CONNECT_BENEFITS ),
-			'isExperiment201Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_OFFER_THEME_CHOICES_HELLO_BIZ ),
 			'isExperiment202Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_EMPHASIZE_THEME_VALUE_AUDIENCE_202 ),
 			'isExperiment401Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_UPDATE_COPY_VISUALS ),
 			'isExperiment402Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_REDUCE_HIERARCHY_BLANK_OPTION ),
 			'experimentNames' => [
 				'101' => self::EXPERIMENT_EMPHASIZE_CONNECT_BENEFITS,
-				'201' => self::EXPERIMENT_OFFER_THEME_CHOICES_HELLO_BIZ,
 				'202' => self::EXPERIMENT_EMPHASIZE_THEME_VALUE_AUDIENCE_202,
 				'401' => self::EXPERIMENT_UPDATE_COPY_VISUALS,
 				'402' => self::EXPERIMENT_REDUCE_HIERARCHY_BLANK_OPTION,
