@@ -5,7 +5,6 @@ export const resolveDirection = (
 	currentDirection?: string,
 	currentEffect?: string
 ) => {
-	debugger;
 	if ( newEffect === 'slide' && ! newDirection ) {
 		return 'top';
 	}

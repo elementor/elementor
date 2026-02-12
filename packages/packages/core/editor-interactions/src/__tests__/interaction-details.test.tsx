@@ -2,6 +2,7 @@ import * as React from 'react';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 
 import { Easing } from '../components/controls/easing';
+import { Effect } from '../components/controls/effect';
 import { Trigger } from '../components/controls/trigger';
 import { InteractionDetails } from '../components/interaction-details';
 import type { InteractionItemValue } from '../types';
@@ -66,6 +67,12 @@ describe( 'InteractionDetails', () => {
 			if ( type === 'trigger' ) {
 				return {
 					component: Trigger,
+				};
+			}
+
+			if ( type === 'effect' ) {
+				return {
+					component: Effect,
 				};
 			}
 
@@ -539,6 +546,9 @@ describe( 'InteractionDetails', () => {
 			getInteractionsControl.mockImplementation( ( type: string ) => {
 				if ( type === 'trigger' ) {
 					return { component: Trigger };
+				}
+				if ( type === 'effect' ) {
+					return { component: Effect };
 				}
 				if ( type === 'replay' ) {
 					return { component: mockReplayControl };
