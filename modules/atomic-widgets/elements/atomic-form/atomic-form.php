@@ -14,11 +14,12 @@ use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_V2_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -50,7 +51,7 @@ class Atomic_Form extends Atomic_Element_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-form-horizontal';
+		return 'eicon-atomic-form';
 	}
 
 	protected static function define_props_schema(): array {
@@ -154,7 +155,10 @@ class Atomic_Form extends Atomic_Element_Base {
 				->build(),
 			Widget_Builder::make( Atomic_Button::get_element_type() )
 				->settings( [
-					'text' => Html_Prop_Type::generate( __( 'Submit', 'elementor' ) ),
+					'text' => Html_V2_Prop_Type::generate( [
+						'content'  => __( 'Submit', 'elementor' ),
+						'children' => [],
+					] ),
 					'attributes' => Attributes_Prop_Type::generate( [
 						Key_Value_Prop_Type::generate( [
 							'key' => String_Prop_Type::generate( 'type' ),
@@ -178,7 +182,10 @@ class Atomic_Form extends Atomic_Element_Base {
 	}
 
 	private function build_status_message( string $message, string $state, string $title ): array {
-		$paragraph_value = Html_Prop_Type::generate( $message );
+		$paragraph_value = Html_V2_Prop_Type::generate( [
+			'content'  => $message,
+			'children' => [],
+		] );
 
 		return Element_Builder::make( Div_Block::get_element_type() )
 			->settings( [
