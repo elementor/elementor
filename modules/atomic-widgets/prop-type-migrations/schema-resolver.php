@@ -22,15 +22,21 @@ class Schema_Resolver {
 			$schema = Style_Schema::get();
 
 			return ! empty( $schema )
-				? [ 'schema' => $schema, 'element_type' => null ]
+				? [
+					'schema' => $schema,
+					'element_type' => null,
+				]
 				: null;
 		}
 
 		if ( $key === 'interactions' ) {
-			$schema = Interactions_Schema::get()[ 'items' ];
+			$schema = Interactions_Schema::get()['items'];
 
 			return ! empty( $schema )
-				? [ 'schema' => $schema, 'element_type' => null ]
+				? [
+					'schema' => $schema,
+					'element_type' => null,
+				]
 				: null;
 		}
 
@@ -56,4 +62,3 @@ class Schema_Resolver {
 		];
 	}
 }
-

@@ -65,4 +65,3 @@ class Migrations_Cache {
 		return ELEMENTOR_VERSION . ':' . $manifest_hash;
 	}
 }
-
