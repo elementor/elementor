@@ -8,17 +8,22 @@ import { timeouts } from '../../../../config/timeouts';
 import { exitComponentEditMode, openComponentsTab, openCreateComponentFromContextMenu } from './utils/navigation';
 import { createOverridableProp, createContentForComponent, uniqueName, createComponent } from './utils/creation';
 import { getInstancePanelPropInput, getNavigationItem, selectComponentInstance } from './utils/selection';
+import { AtomicHelper } from '../../atomic-widgets/helper';
 
 test.describe( 'Atomic Components @v4-tests', () => {
 	let wpAdminPage: WpAdminPage;
 	let editor: EditorPage;
 	let context: BrowserContext;
 	let page: Page;
+	let helper: AtomicHelper;
+
+	const headingControlLabel = 'Title';
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		context = await browser.newContext();
 		page = await context.newPage();
 		wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
+		helper = new AtomicHelper( page, editor, wpAdminPage );
 
 		await wpAdminPage.setExperiments( {
 			e_atomic_elements: 'active',
@@ -31,8 +36,11 @@ test.describe( 'Atomic Components @v4-tests', () => {
 		await context?.close();
 	} );
 
-	test( 'should allow converting an atomic container into a component', async () => {
+	test.beforeEach( async () => {
 		editor = await wpAdminPage.openNewPage();
+	} );
+
+	test( 'should allow converting an atomic container into a component', async () => {
 		const componentName = uniqueName( 'Test Component' );
 		let flexbox: Locator;
 
@@ -75,7 +83,6 @@ test.describe( 'Atomic Components @v4-tests', () => {
 	} );
 
 	test( 'should allow editing a component instance', async () => {
-		editor = await wpAdminPage.openNewPage();
 		const componentName = uniqueName( 'Editable Component' );
 		const editedHeadingText = 'Edited Heading Text';
 		let flexboxId: string;
@@ -134,11 +141,17 @@ test.describe( 'Atomic Components @v4-tests', () => {
 			await heading.click();
 			await editor.v4Panel.openTab( 'general' );
 
-			const titleInput = page.getByRole( 'tabpanel', { name: 'General' } ).getByRole( 'textbox' ).first();
+			const titleInput = helper.getSettingsField( headingControlLabel ).getByRole( 'textbox' ).first();
 			await titleInput.clear();
 			await titleInput.fill( editedHeadingText );
 
 			await exitComponentEditMode( editor );
+		} );
+
+		await test.step( 'Verify component renders correctly on canvas after exit edit mode', async () => {
+			const heading = editor.getPreviewFrame().locator( EditorSelectors.v4.atomSelectors.heading.wrapper ).first();
+			await expect( heading ).toBeVisible();
+			await expect( heading ).toHaveText( editedHeadingText );
 		} );
 
 		await test.step( 'Verify component renders correctly on frontend after edits', async () => {
@@ -150,15 +163,18 @@ test.describe( 'Atomic Components @v4-tests', () => {
 		} );
 	} );
 
-	test( 'should allow exposing props and overriding at instance and nested component level', async () => {
-		editor = await wpAdminPage.openNewPage();
+	test( 'should allow exposing props and overriding at instance and nested component level', async ( {}, testInfo ) => {
 		const componentName = uniqueName( 'Props Component' );
 		const outerComponentName = uniqueName( 'Outer Component' );
+
 		const propLabel = 'Heading Text';
+		const nestedDefaultValue = 'Nested Default';
 		const overrideValue = 'Overridden Heading';
 		const nestedOverrideValue = 'Nested Override';
+
 		let flexboxId: string;
 		let outerFlexboxId: string;
+		let originalHeadingValue: string;
 
 		await test.step( 'Create a component with heading', async () => {
 			const { locator: flexbox, id } = await createContentForComponent( editor );
@@ -170,6 +186,7 @@ test.describe( 'Atomic Components @v4-tests', () => {
 
 		await test.step( 'Expose heading text prop', async () => {
 			const heading = editor.getPreviewFrame().locator( EditorSelectors.v4.atomSelectors.heading.wrapper ).first();
+			originalHeadingValue = await heading.textContent();
 			await heading.click();
 
 			await editor.v4Panel.openTab( 'general' );
@@ -177,13 +194,41 @@ test.describe( 'Atomic Components @v4-tests', () => {
 			await createOverridableProp( page, propLabel );
 		} );
 
+		await test.step( 'Verify original value is displayed in instance panel', async () => {
+			const headingText = editor.getPreviewFrame().locator( EditorSelectors.v4.atomSelectors.heading.wrapper ).first();
+			expect( headingText ).toContainText( originalHeadingValue );
+		} );
+
+		await test.step( 'Verify changing the title still affects the rendered value on canvas', async () => {
+			const input = helper.getSettingsField( headingControlLabel ).getByRole( 'textbox' ).first();
+			await input.fill( nestedDefaultValue );
+
+			const headingText = editor.getPreviewFrame().locator( EditorSelectors.v4.atomSelectors.heading.wrapper ).first();
+			await expect( headingText ).toContainText( nestedDefaultValue );
+		} );
+
 		await test.step( 'Exit edit mode and select component instance', async () => {
 			await exitComponentEditMode( editor );
+		} );
 
-			await selectComponentInstance( editor, flexboxId );
+		await test.step( 'Verify component default value is rendered on canvas', async () => {
+			const headingText = editor.getPreviewFrame().locator( EditorSelectors.v4.atomSelectors.heading.wrapper ).first();
+			await expect( headingText ).toContainText( nestedDefaultValue );
+		} );
+
+		await test.step( 'Verify component default value is rendered on frontend', async () => {
+			const pageId = await editor.getPageId();
+			await editor.publishAndViewPage();
+
+			const headingText = page.locator( 'h2' ).first();
+			await expect( headingText ).toContainText( nestedDefaultValue );
+
+			await wpAdminPage.editExistingPostWithElementor( pageId, { page, testInfo } );
 		} );
 
 		await test.step( 'Verify exposed prop appears in instance panel and override it', async () => {
+			await selectComponentInstance( editor, flexboxId );
+
 			const propControl = await getInstancePanelPropInput( page, propLabel );
 
 			await propControl.clear();
@@ -225,7 +270,9 @@ test.describe( 'Atomic Components @v4-tests', () => {
 			const propControl = await getInstancePanelPropInput( page, propLabel );
 			await propControl.clear();
 			await propControl.fill( nestedOverrideValue );
+		} );
 
+		await test.step( 'Verify nested prop is overridden on canvas', async () => {
 			const headingText = editor.getPreviewFrame().locator( EditorSelectors.v4.atomSelectors.heading.wrapper ).last();
 			await expect( headingText ).toContainText( nestedOverrideValue );
 		} );
@@ -243,7 +290,6 @@ test.describe( 'Atomic Components @v4-tests', () => {
 	} );
 
 	test( 'should load local styles used within a component on page', async () => {
-		editor = await wpAdminPage.openNewPage();
 		const componentName = uniqueName( 'Styled Component' );
 		const backgroundColor = 'rgb(255, 0, 0)';
 
