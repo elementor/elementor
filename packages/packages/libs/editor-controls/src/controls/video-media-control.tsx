@@ -15,7 +15,6 @@ export const VideoMediaControl = createControl( () => {
 
 	const { data: attachment, isFetching } = useWpMediaAttachment( id?.value || null );
 	const videoUrl = attachment?.url ?? url?.value ?? null;
-	const videoFilename = attachment?.filename ?? ( videoUrl ? videoUrl.split( '/' ).pop() : null );
 
 	const { open } = useWpMediaFrame( {
 		mediaTypes: [ 'video' ],
@@ -39,21 +38,17 @@ export const VideoMediaControl = createControl( () => {
 
 		if ( videoUrl ) {
 			return (
-				<Stack alignItems="center" gap={ 0.5 }>
-					<Typography
-						variant="caption"
-						color="text.secondary"
-						sx={ {
-							maxWidth: '100%',
-							overflow: 'hidden',
-							textOverflow: 'ellipsis',
-							whiteSpace: 'nowrap',
-							px: 1,
-						} }
-					>
-						{ videoFilename }
-					</Typography>
-				</Stack>
+				<video
+					src={ videoUrl }
+					muted
+					preload="metadata"
+					style={ {
+						width: '100%',
+						height: '100%',
+						objectFit: 'cover',
+						pointerEvents: 'none',
+					} }
+				/>
 			);
 		}
 
