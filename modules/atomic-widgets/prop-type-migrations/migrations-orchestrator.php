@@ -120,10 +120,8 @@ class Migrations_Orchestrator {
 				if ( $prop_type instanceof Prop_Type && $this->migrate_prop( $value, $prop_type ) ) {
 					$has_changes = true;
 				}
-			} else {
-				if ( $this->walk_and_migrate( $value, $path ) ) {
-					$has_changes = true;
-				}
+			} elseif ( $this->walk_and_migrate( $value, $path ) ) {
+				$has_changes = true;
 			}
 
 			array_pop( $path );
