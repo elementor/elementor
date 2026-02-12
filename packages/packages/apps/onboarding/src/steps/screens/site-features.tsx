@@ -1,28 +1,28 @@
 import * as React from 'react';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import {
 	BriefcaseIcon,
+	ChecklistIcon,
 	GridDotsIcon,
-	ListIcon,
 	LockFilledIcon,
 	MapPinIcon,
 	Menu2Icon,
-	MessageLinesIcon,
-	RepeatIcon,
+	PageTypeIcon,
+	PostTypeIcon,
 	SwipeIcon,
 } from '@elementor/icons';
 import { Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { useOnboarding } from '../../hooks/use-onboarding';
 import {
 	FeatureGrid,
 	type FeatureOption,
 	ProPlanNotice,
-} from '../../components/screens/site-features';
+} from '../components/site-features';
 
 interface SiteFeaturesProps {
-	selectedValues: string[];
-	onChange: ( values: string[] ) => void;
+	onComplete?: ( choice: Record< string, unknown > ) => void;
 }
 
 const EXPLORE_FEATURES_URL =
@@ -42,56 +42,55 @@ const STEP_TITLE_SX = {
 const FEATURE_OPTIONS: FeatureOption[] = [
 	{
 		id: 'posts',
-		label: __( 'Posts', 'elementor' ),
-		Icon: ListIcon,
-		isCore: true,
+		label: __( 'Core feature', 'elementor' ),
+		Icon: PostTypeIcon,
+		isPro: false,
 	},
 	{
-		id: 'form',
-		label: __( 'Form', 'elementor' ),
-		Icon: MessageLinesIcon,
-		isPro: true,
+		id: 'pages',
+		label: __( 'Core feature', 'elementor' ),
+		Icon: PageTypeIcon,
+		isPro: false,
 	},
 	{
 		id: 'gallery',
-		label: __( 'Gallery', 'elementor' ),
+		label: __( 'Pro/One', 'elementor' ),
 		Icon: GridDotsIcon,
 		isPro: true,
 	},
 	{
 		id: 'slides',
-		label: __( 'Slides', 'elementor' ),
+		label: __( 'Pro/One', 'elementor' ),
 		Icon: SwipeIcon,
-		isPro: false,
-		isCore: true,
+		isPro: true,
 	},
 	{
-		id: 'loop_carousel',
-		label: __( 'Loop carousel', 'elementor' ),
-		Icon: RepeatIcon,
+		id: 'form',
+		label: __( 'Pro/One', 'elementor' ),
+		Icon: ChecklistIcon,
 		isPro: true,
 	},
 	{
 		id: 'hotspot',
-		label: __( 'Hotspot', 'elementor' ),
+		label: __( 'Pro/One', 'elementor' ),
 		Icon: MapPinIcon,
 		isPro: true,
 	},
 	{
 		id: 'portfolio',
-		label: __( 'Portfolio', 'elementor' ),
+		label: __( 'Pro/One', 'elementor' ),
 		Icon: BriefcaseIcon,
 		isPro: true,
 	},
 	{
 		id: 'login',
-		label: __( 'Login', 'elementor' ),
+		label: __( 'Pro/One', 'elementor' ),
 		Icon: LockFilledIcon,
 		isPro: true,
 	},
 	{
 		id: 'mega_menu',
-		label: __( 'Mega menu', 'elementor' ),
+		label: __( 'Pro/One', 'elementor' ),
 		Icon: Menu2Icon,
 		isPro: true,
 	},
@@ -104,15 +103,30 @@ const PRO_FEATURE_IDS = new Set(
 );
 
 const CORE_FEATURE_IDS = new Set(
-	FEATURE_OPTIONS.filter( ( option ) => option.isCore ).map(
+	FEATURE_OPTIONS.filter( ( option ) => ! option.isPro ).map(
 		( option ) => option.id
 	)
 );
 
-export function SiteFeatures( {
-	selectedValues,
-	onChange,
-}: SiteFeaturesProps ) {
+export function SiteFeatures( _props: SiteFeaturesProps ) {
+	const { choices, actions } = useOnboarding();
+
+	const selectedValues = useMemo( () => {
+		const stored = ( choices.site_features as string[] ) || [];
+		return [ ...new Set( [ ...CORE_FEATURE_IDS, ...stored ] ) ];
+	}, [ choices.site_features ] );
+
+	useEffect( () => {
+		const stored = ( choices.site_features as string[] ) || [];
+		const hasAllCore = [ ...CORE_FEATURE_IDS ].every( ( id ) =>
+			stored.includes( id )
+		);
+		if ( ! hasAllCore ) {
+			const merged = [ ...new Set( [ ...CORE_FEATURE_IDS, ...stored ] ) ];
+			actions.setUserChoice( 'site_features', merged );
+		}
+	}, [ choices.site_features, actions ] );
+
 	const handleFeatureClick = useCallback(
 		( id: string ) => {
 			const isSelected = selectedValues.includes( id );
@@ -126,9 +140,9 @@ export function SiteFeatures( {
 				? selectedValues.filter( ( v ) => v !== id )
 				: [ ...selectedValues, id ];
 
-			onChange( nextValues );
+			actions.setUserChoice( 'site_features', nextValues );
 		},
-		[ selectedValues, onChange ]
+		[ selectedValues, actions ]
 	);
 
 	const hasProSelection = useMemo(

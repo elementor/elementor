@@ -45,13 +45,15 @@ function parseCompletedSteps( completedSteps?: string[] ): StepIdType[] {
 	return completedSteps as StepIdType[];
 }
 
+const DEFAULT_SITE_FEATURES_CORE = [ 'posts', 'pages' ] as const;
+
 function getDefaultChoices(): OnboardingChoices {
 	return {
 		building_for: null,
 		site_about: [],
 		experience_level: null,
 		theme_selection: null,
-		site_features: [],
+		site_features: [ ...DEFAULT_SITE_FEATURES_CORE ],
 	};
 }
 

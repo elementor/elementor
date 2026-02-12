@@ -9,6 +9,7 @@ import { useUpdateProgress } from '../hooks/use-update-progress';
 import { BuildingFor } from '../steps/screens/building-for';
 import { ExperienceLevel } from '../steps/screens/experience-level';
 import { Login } from '../steps/screens/login';
+import { SiteFeatures } from '../steps/screens/site-features';
 import { getStepVisualConfig } from '../steps/step-visuals';
 import { StepId } from '../types';
 import { BaseLayout } from './ui/base-layout';
@@ -19,7 +20,11 @@ import { TopBar } from './ui/top-bar';
 import { TopBarContent } from './ui/top-bar-content';
 
 const isChoiceEmpty = ( choice: unknown ): boolean => {
-	return choice === null || choice === undefined || ( Array.isArray( choice ) && choice.length === 0 );
+	return (
+		choice === null ||
+		choice === undefined ||
+		( Array.isArray( choice ) && choice.length === 0 )
+	);
 };
 
 interface AppContentProps {
@@ -72,7 +77,9 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 					onClose?.();
 				},
 				onError: () => {
-					actions.setError( __( 'Failed to mark user exit.', 'elementor' ) );
+					actions.setError(
+						__( 'Failed to mark user exit.', 'elementor' )
+					);
 				},
 			}
 		);
@@ -133,15 +140,30 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 						}
 					},
 					onError: () => {
-						actions.setError( __( 'Failed to complete step.', 'elementor' ) );
+						actions.setError(
+							__( 'Failed to complete step.', 'elementor' )
+						);
 					},
 				}
 			);
 		},
-		[ stepId, stepIndex, totalSteps, choices, actions, isLast, onComplete, updateProgress, updateChoices ]
+		[
+			stepId,
+			stepIndex,
+			totalSteps,
+			choices,
+			actions,
+			isLast,
+			onComplete,
+			updateProgress,
+			updateChoices,
+		]
 	);
 
-	const rightPanelConfig = useMemo( () => getStepVisualConfig( stepId ), [ stepId ] );
+	const rightPanelConfig = useMemo(
+		() => getStepVisualConfig( stepId ),
+		[ stepId ]
+	);
 	const isPending = updateProgress.isPending || isLoading;
 
 	const choiceForStep = choices[ stepId as keyof typeof choices ];
@@ -153,6 +175,8 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 				return <BuildingFor onComplete={ handleContinue } />;
 			case StepId.EXPERIENCE_LEVEL:
 				return <ExperienceLevel onComplete={ handleContinue } />;
+			case StepId.SITE_FEATURES:
+				return <SiteFeatures onComplete={ handleContinue } />;
 			default:
 				return <Box sx={ { flex: 1, width: '100%' } } />;
 		}
@@ -163,7 +187,10 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 			<BaseLayout
 				topBar={
 					<TopBar>
-						<TopBarContent showUpgrade={ false } showClose={ false } />
+						<TopBarContent
+							showUpgrade={ false }
+							showClose={ false }
+						/>
 					</TopBar>
 				}
 			>
@@ -181,7 +208,10 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 			testId="onboarding-steps"
 			topBar={
 				<TopBar>
-					<TopBarContent showClose={ false } onClose={ handleClose } />
+					<TopBarContent
+						showClose={ false }
+						onClose={ handleClose }
+					/>
 				</TopBar>
 			}
 			footer={
@@ -190,7 +220,11 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 						showBack
 						showSkip={ ! isLast }
 						showContinue
-						continueLabel={ isLast ? __( 'Finish', 'elementor' ) : __( 'Continue', 'elementor' ) }
+						continueLabel={
+							isLast
+								? __( 'Finish', 'elementor' )
+								: __( 'Continue', 'elementor' )
+						}
 						continueDisabled={ continueDisabled }
 						continueLoading={ isPending }
 						onBack={ handleBack }

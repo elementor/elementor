@@ -1,15 +1,14 @@
 import * as React from 'react';
 import { useCallback } from 'react';
 import { ArrowRightIcon, CheckIcon, CrownFilledIcon } from '@elementor/icons';
-import { Box, styled, Typography } from '@elementor/ui';
+import { Box, Chip, styled, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 export interface FeatureOption {
 	id: string;
 	label: string;
 	Icon: React.ElementType;
-	isPro?: boolean;
-	isCore?: boolean;
+	isPro: boolean;
 }
 
 interface ExploreMoreOption extends FeatureOption {
@@ -22,6 +21,8 @@ interface FeatureCardProps {
 	isExploreMore?: boolean;
 	isCore?: boolean;
 }
+
+const BUILT_IN_CHIP_LABEL = __( 'Built-in', 'elementor' );
 
 interface SelectionBadgeProps {
 	isPro: boolean;
@@ -42,6 +43,7 @@ const EXPLORE_MORE_OPTION: ExploreMoreOption = {
 	id: 'explore_more',
 	label: __( 'Explore more', 'elementor' ),
 	Icon: ArrowRightIcon,
+	isPro: false,
 	isExploreMore: true,
 };
 
@@ -138,7 +140,7 @@ export function FeatureGrid( {
 				const isSelected = selectedValues.includes( option.id );
 				const Icon = option.Icon;
 				const BadgeIcon = option.isPro ? CrownFilledIcon : CheckIcon;
-				const isCore = !! option.isCore;
+				const isCore = ! option.isPro;
 				const isDisabled = isCore && isSelected;
 
 				const handleClick = () => {
@@ -161,8 +163,26 @@ export function FeatureGrid( {
 						aria-pressed={ isSelected }
 						aria-disabled={ isDisabled }
 					>
+						{ isCore && (
+							<Chip
+								label={ BUILT_IN_CHIP_LABEL }
+								size="small"
+								sx={ {
+									position: 'absolute',
+									top: '6px',
+									left: '6px',
+									height: 18,
+									display: { xs: 'none', md: 'inline-flex' },
+									'& .MuiChip-label': {
+										fontSize: 12,
+										px: '8px',
+										py: '3px',
+									},
+								} }
+							/>
+						) }
 						{ isSelected && (
-							<SelectionBadge isPro={ !! option.isPro }>
+							<SelectionBadge isPro={ option.isPro }>
 								<BadgeIcon />
 							</SelectionBadge>
 						) }

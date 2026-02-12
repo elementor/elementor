@@ -18,6 +18,7 @@ const LAYOUT_RATIOS: Record< ImageLayout, { left: number; right: number } > = {
 
 const LAYOUT_GAP = 4;
 const LAYOUT_PADDING = 4;
+const LAYOUT_PADDING_SM = 20;
 const LAYOUT_TRANSITION_MS = 300;
 const LEFT_PANEL_CONTENT_WIDTH = 386;
 const LEFT_PANEL_PADDING_X = 80;
@@ -26,43 +27,58 @@ const LEFT_PANEL_GAP = 60;
 const IMAGE_MIN_WIDTH = 464;
 const CONTENT_IMAGE_MIN_GAP = 80;
 
+const NARROW_BREAKPOINT =
+	LEFT_PANEL_CONTENT_WIDTH +
+	LEFT_PANEL_PADDING_X * 2 +
+	CONTENT_IMAGE_MIN_GAP +
+	IMAGE_MIN_WIDTH +
+	LAYOUT_GAP * 8;
+
 interface SplitLayoutRootProps {
 	leftRatio: number;
 	rightRatio: number;
 }
 
 const SplitLayoutRoot = styled( Box, {
-	shouldForwardProp: ( prop ) => ! [ 'leftRatio', 'rightRatio' ].includes( prop as string ),
-} )< SplitLayoutRootProps >( ( { theme, leftRatio, rightRatio } ) => {
-	const hideImageBreakpoint =
-		LEFT_PANEL_CONTENT_WIDTH + LEFT_PANEL_PADDING_X * 2 + CONTENT_IMAGE_MIN_GAP + IMAGE_MIN_WIDTH + LAYOUT_GAP * 8;
-
-	return {
-		flex: 1,
-		display: 'grid',
-		gridTemplateColumns: `${ leftRatio }fr ${ rightRatio }fr`,
-		gap: theme.spacing( LAYOUT_GAP ),
-		padding: theme.spacing( LAYOUT_PADDING ),
-		minHeight: 0,
-		transition: `grid-template-columns ${ LAYOUT_TRANSITION_MS }ms ease`,
-		[ `@media (max-width: ${ hideImageBreakpoint }px)` ]: {
-			gridTemplateColumns: '1fr',
-			'& > *:last-child': {
-				display: 'none',
-			},
+	shouldForwardProp: ( prop ) =>
+		! [ 'leftRatio', 'rightRatio' ].includes( prop as string ),
+} )< SplitLayoutRootProps >( ( { theme, leftRatio, rightRatio } ) => ( {
+	flex: 1,
+	display: 'grid',
+	gridTemplateColumns: `${ leftRatio }fr ${ rightRatio }fr`,
+	gap: theme.spacing( LAYOUT_GAP ),
+	padding: theme.spacing( LAYOUT_PADDING ),
+	minHeight: 0,
+	transition: `grid-template-columns ${ LAYOUT_TRANSITION_MS }ms ease`,
+	[ `@media (max-width: ${ NARROW_BREAKPOINT }px)` ]: {
+		gridTemplateColumns: '1fr',
+		padding: LAYOUT_PADDING_SM,
+		'& > *:last-child': {
+			display: 'none',
 		},
-	};
-} );
+	},
+} ) );
 
-const LeftPanel = styled( Box )( () => ( {
+interface LeftPanelProps {
+	contentMaxWidth: number;
+}
+
+const LeftPanel = styled( Box, {
+	shouldForwardProp: ( prop ) => 'contentMaxWidth' !== prop,
+} )< LeftPanelProps >( ( { theme, contentMaxWidth } ) => ( {
 	display: 'flex',
 	flexDirection: 'column',
 	alignItems: 'center',
 	gap: LEFT_PANEL_GAP,
 	padding: `${ LEFT_PANEL_PADDING_TOP }px ${ LEFT_PANEL_PADDING_X }px`,
 	'& > *': {
-		maxWidth: LEFT_PANEL_CONTENT_WIDTH,
 		width: '100%',
+	},
+	'& > *:last-of-type': {
+		maxWidth: contentMaxWidth,
+	},
+	[ theme.breakpoints.down( 'sm' ) ]: {
+		padding: 0,
 	},
 } ) );
 
@@ -77,13 +93,32 @@ interface SplitLayoutProps {
 	progress?: ProgressInfo;
 }
 
-export function SplitLayout( { left, rightConfig, progress }: SplitLayoutProps ) {
-	const ratio = LAYOUT_RATIOS[ rightConfig.imageLayout ] ?? LAYOUT_RATIOS.wide;
+export function SplitLayout( {
+	left,
+	rightConfig,
+	progress,
+}: SplitLayoutProps ) {
+	const ratio =
+		LAYOUT_RATIOS[ rightConfig.imageLayout ] ?? LAYOUT_RATIOS.wide;
+	const contentMaxWidth =
+		rightConfig.contentMaxWidth ?? LEFT_PANEL_CONTENT_WIDTH;
 
 	return (
 		<SplitLayoutRoot leftRatio={ ratio.left } rightRatio={ ratio.right }>
-			<LeftPanel>
-				{ progress && <ProgressBar currentStep={ progress.currentStep } totalSteps={ progress.totalSteps } /> }
+			<LeftPanel contentMaxWidth={ contentMaxWidth }>
+				{ progress && (
+					<Box
+						sx={ {
+							maxWidth: LEFT_PANEL_CONTENT_WIDTH,
+							width: '100%',
+						} }
+					>
+						<ProgressBar
+							currentStep={ progress.currentStep }
+							totalSteps={ progress.totalSteps }
+						/>
+					</Box>
+				) }
 				{ left }
 			</LeftPanel>
 			<RightPanel config={ rightConfig } />
