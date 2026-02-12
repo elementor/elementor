@@ -26,8 +26,6 @@ export const ONBOARDING_STORAGE_KEYS = {
 	PENDING_TOP_UPGRADE_MOUSEOVER: 'elementor_onboarding_pending_top_upgrade_mouseover',
 	EXPERIMENT101_VARIANT: 'elementor_onboarding_experiment101_variant',
 	EXPERIMENT101_STARTED: 'elementor_onboarding_experiment101_started',
-	EXPERIMENT201_VARIANT: 'elementor_onboarding_experiment201_variant',
-	EXPERIMENT201_STARTED: 'elementor_onboarding_experiment201_started',
 	EXPERIMENT202_VARIANT: 'elementor_onboarding_experiment202_variant',
 	EXPERIMENT202_STARTED: 'elementor_onboarding_experiment202_started',
 	EXPERIMENT401_VARIANT: 'elementor_onboarding_experiment401_variant',
@@ -169,8 +167,6 @@ export function clearExperimentData() {
 	const experimentKeys = [
 		ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT,
 		ONBOARDING_STORAGE_KEYS.EXPERIMENT101_STARTED,
-		ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT,
-		ONBOARDING_STORAGE_KEYS.EXPERIMENT201_STARTED,
 		ONBOARDING_STORAGE_KEYS.EXPERIMENT202_VARIANT,
 		ONBOARDING_STORAGE_KEYS.EXPERIMENT202_STARTED,
 		ONBOARDING_STORAGE_KEYS.EXPERIMENT401_VARIANT,
