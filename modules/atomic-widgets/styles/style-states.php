@@ -95,4 +95,13 @@ class Style_States {
 			],
 		];
 	}
+
+	public static function get_pseudo_states_map(): array {
+		return [
+			'checked' => [
+				'name' => 'checked',
+				'value' => self::CHECKED,
+			],
+		];
+	}
 }

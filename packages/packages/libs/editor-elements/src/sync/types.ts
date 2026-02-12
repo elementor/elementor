@@ -1,7 +1,7 @@
 import { type PropsSchema, type PropValue, type SizePropValue } from '@elementor/editor-props';
 import { type ClassState, type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 
-import { type ControlItem } from '../types';
+import { type ControlItem, type PseudoState } from '../types';
 
 export type ExtendedWindow = Window & {
 	elementor?: {
@@ -158,6 +158,7 @@ export type V1ElementConfig< T = object > = {
 	base_styles?: Record< string, StyleDefinition >;
 	base_styles_dictionary?: Record< string, string >;
 	atomic_style_states?: ClassState[];
+	atomic_pseudo_states?: PseudoState[];
 	show_in_panel?: boolean;
 	meta?: { [ key: string ]: string | number | boolean | null | NonNullable< V1ElementConfig[ 'meta' ] > };
 } & T;

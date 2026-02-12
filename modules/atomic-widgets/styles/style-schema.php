@@ -45,6 +45,7 @@ class Style_Schema {
 			self::get_effects_props(),
 			self::get_layout_props(),
 			self::get_alignment_props(),
+			self::get_special_props(),
 		);
 	}
 
@@ -379,6 +380,13 @@ class Style_Schema {
 				'stretch',
 			] )->description( 'Allows the default alignment (or the one specified by align-items) to be overridden for individual flex items. CSS values: auto, normal, center, start, end, self-start, self-end, flex-start, flex-end, anchor-center, baseline, first baseline, last baseline, stretch' ),
 			'order' => Number_Prop_Type::make()->description( 'Specifies the order of the flex items. Items with lower order values are displayed first.' ),
+		];
+	}
+
+	private static function get_special_props() {
+		return [
+			'content' => String_Prop_Type::make()->description( 'The string content for pseudo-element content property' ),
+			'appearance' => String_Prop_Type::make()->enum( [ 'none', 'auto' ] )->description( 'The appearance of the element. CSS values: none, auto' ),
 		];
 	}
 }
