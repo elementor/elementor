@@ -1,11 +1,7 @@
 import * as React from 'react';
 import { useEffect, useMemo } from 'react';
 import { createQueryClient, QueryClientProvider } from '@elementor/query';
-import {
-	__createStore,
-	__getStore,
-	__StoreProvider as StoreProvider,
-} from '@elementor/store';
+import { __createStore, __getStore, __StoreProvider as StoreProvider } from '@elementor/store';
 import { DirectionProvider, ThemeProvider } from '@elementor/ui';
 
 import { initFromConfig, registerOnboardingSlice } from '../store';
@@ -14,9 +10,7 @@ import { AppContent } from './app-content';
 type ColorSchemePreference = 'auto' | 'dark' | 'light';
 type ResolvedColorScheme = 'dark' | 'light';
 
-function resolveColorScheme(
-	preference: ColorSchemePreference
-): ResolvedColorScheme {
+function resolveColorScheme( preference: ColorSchemePreference ): ResolvedColorScheme {
 	if ( preference === 'dark' ) {
 		return 'dark';
 	}
@@ -25,8 +19,7 @@ function resolveColorScheme(
 		return 'light';
 	}
 
-	const prefersDark = window.matchMedia?.( '(prefers-color-scheme: dark)' )
-		.matches;
+	const prefersDark = window.matchMedia?.( '(prefers-color-scheme: dark)' ).matches;
 
 	return prefersDark ? 'dark' : 'light';
 }
@@ -55,21 +48,14 @@ export function App( props: AppProps ) {
 
 	const queryClient = useMemo( () => createQueryClient(), [] );
 
-	const uiTheme =
-		window.elementorAppConfig?.[ 'e-onboarding' ]?.uiTheme ?? 'auto';
-	const colorScheme = useMemo(
-		() => resolveColorScheme( uiTheme ),
-		[ uiTheme ]
-	);
+	const uiTheme = window.elementorAppConfig?.[ 'e-onboarding' ]?.uiTheme ?? 'auto';
+	const colorScheme = useMemo( () => resolveColorScheme( uiTheme ), [ uiTheme ] );
 
 	return (
 		<StoreProvider store={ store }>
 			<QueryClientProvider client={ queryClient }>
 				<DirectionProvider rtl={ window.document.dir === 'rtl' }>
-					<ThemeProvider
-						colorScheme={ colorScheme }
-						palette="argon-beta"
-					>
+					<ThemeProvider colorScheme={ colorScheme } palette="argon-beta">
 						<AppContent { ...props } />
 					</ThemeProvider>
 				</DirectionProvider>

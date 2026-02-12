@@ -9,7 +9,6 @@ import { useUpdateProgress } from '../hooks/use-update-progress';
 import { BuildingFor } from '../steps/screens/building-for';
 import { ExperienceLevel } from '../steps/screens/experience-level';
 import { Login } from '../steps/screens/login';
-import { SiteFeatures } from '../steps/screens/site-features';
 import { getStepVisualConfig } from '../steps/step-visuals';
 import { StepId } from '../types';
 import { BaseLayout } from './ui/base-layout';
@@ -140,36 +139,6 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 			);
 		},
 		[ stepId, stepIndex, totalSteps, choices, actions, isLast, onComplete, updateProgress, updateChoices ]
-	);
-
-	const handleSiteFeaturesChange = useCallback(
-		( values: string[] ) => {
-			actions.setUserChoice( 'site_features', values );
-		},
-		[ actions ]
-	);
-
-	const handleExperienceLevelSelect = useCallback(
-		( value: string ) => {
-			actions.setUserChoice( 'experience_level', value );
-
-			Promise.all( [
-				updateChoices.mutateAsync( { experience_level: value } ),
-				updateProgress.mutateAsync( {
-					complete_step: stepId,
-					step_index: stepIndex,
-					total_steps: totalSteps,
-				} ),
-			] )
-				.then( () => {
-					actions.completeStep( stepId );
-					actions.nextStep();
-				} )
-				.catch( () => {
-					actions.setError( __( 'Failed to save experience level.', 'elementor' ) );
-				} );
-		},
-		[ stepId, stepIndex, totalSteps, actions, updateChoices, updateProgress ]
 	);
 
 	const rightPanelConfig = useMemo( () => getStepVisualConfig( stepId ), [ stepId ] );
