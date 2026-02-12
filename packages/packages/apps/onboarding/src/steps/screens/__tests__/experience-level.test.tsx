@@ -1,55 +1,89 @@
-import * as React from 'react';
-import { ThemeProvider } from '@elementor/ui';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 
-import { ExperienceLevel } from '../experience-level';
-
-const renderWithTheme = ( ui: React.ReactElement ) => {
-	return render( <ThemeProvider colorScheme="light">{ ui }</ThemeProvider> );
-};
+import { mockFetch, renderApp, setupOnboardingTests } from '../../../__tests__/test-utils';
 
 describe( 'ExperienceLevel', () => {
+	setupOnboardingTests();
+
 	it( 'renders title and subtitle', () => {
-		const onSelect = jest.fn();
+		// Arrange & Act
+		renderApp( {
+			isConnected: true,
+			progress: { current_step_id: 'experience_level', current_step_index: 2 },
+		} );
 
-		renderWithTheme( <ExperienceLevel onSelect={ onSelect } /> );
-
+		// Assert
 		expect( screen.getByText( 'How much experience do you have with Elementor?' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'This helps us adjust the editor to your workflow.' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders all three options', () => {
-		const onSelect = jest.fn();
+		// Arrange & Act
+		renderApp( {
+			isConnected: true,
+			progress: { current_step_id: 'experience_level', current_step_index: 2 },
+		} );
 
-		renderWithTheme( <ExperienceLevel onSelect={ onSelect } /> );
-
+		// Assert
 		expect( screen.getByText( "I'm just getting started" ) ).toBeInTheDocument();
 		expect( screen.getByText( 'I have some experience' ) ).toBeInTheDocument();
 		expect( screen.getByText( "I'm very comfortable with Elementor" ) ).toBeInTheDocument();
 	} );
 
-	it( 'calls onSelect when an option is clicked', () => {
-		const onSelect = jest.fn();
+	it( 'calls API with correct value when selecting an option', async () => {
+		// Arrange
+		renderApp( {
+			isConnected: true,
+			progress: { current_step_id: 'experience_level', current_step_index: 2 },
+		} );
 
-		renderWithTheme( <ExperienceLevel onSelect={ onSelect } /> );
-
+		// Act
 		fireEvent.click( screen.getByText( "I'm just getting started" ) );
 
-		expect( onSelect ).toHaveBeenCalledWith( 'beginner' );
+		// Assert
+		await waitFor( () => {
+			expect( mockFetch ).toHaveBeenCalledWith(
+				expect.stringContaining( 'user-choices' ),
+				expect.objectContaining( {
+					method: 'POST',
+					body: expect.stringContaining( 'beginner' ),
+				} )
+			);
+		} );
 	} );
 
-	it( 'calls onSelect with correct value for each option', () => {
-		const onSelect = jest.fn();
+	it( 'navigates to next step after successful selection', async () => {
+		// Arrange
+		renderApp( {
+			isConnected: true,
+			progress: { current_step_id: 'experience_level', current_step_index: 2 },
+		} );
 
-		renderWithTheme( <ExperienceLevel onSelect={ onSelect } /> );
-
-		fireEvent.click( screen.getByText( "I'm just getting started" ) );
-		expect( onSelect ).toHaveBeenCalledWith( 'beginner' );
-
-		fireEvent.click( screen.getByText( 'I have some experience' ) );
-		expect( onSelect ).toHaveBeenCalledWith( 'intermediate' );
-
+		// Act
 		fireEvent.click( screen.getByText( "I'm very comfortable with Elementor" ) );
-		expect( onSelect ).toHaveBeenCalledWith( 'advanced' );
+
+		// Assert
+		await waitFor( () => {
+			expect( mockFetch ).toHaveBeenCalledWith(
+				expect.stringContaining( 'user-progress' ),
+				expect.objectContaining( {
+					method: 'POST',
+					body: expect.stringContaining( 'complete_step' ),
+				} )
+			);
+		} );
+	} );
+
+	it( 'shows previously selected option from saved choices', () => {
+		// Arrange & Act
+		renderApp( {
+			isConnected: true,
+			progress: { current_step_id: 'experience_level', current_step_index: 2 },
+			choices: { experience_level: 'intermediate' },
+		} );
+
+		// Assert
+		const intermediateButton = screen.getByRole( 'button', { name: 'I have some experience' } );
+		expect( intermediateButton ).toHaveAttribute( 'aria-pressed', 'true' );
 	} );
 } );
