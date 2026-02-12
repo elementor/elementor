@@ -66,12 +66,19 @@ export function extractInteractionId( interaction ) {
 	return null;
 }
 
+function motionFunc( name ) {
+	if ( 'function' !== typeof window?.Motion?.[ name ] ) {
+		return null;
+	}
+	return window?.Motion?.[ name ];
+}
+
 export function getAnimateFunction() {
-	return 'undefined' !== typeof animate ? animate : window.Motion?.animate;
+	return motionFunc( 'animate' );
 }
 
 export function getInViewFunction() {
-	return 'undefined' !== typeof inView ? inView : window.Motion?.inView;
+	return motionFunc( 'inView' );
 }
 
 export function waitForAnimateFunction( callback, maxAttempts = 10 ) {

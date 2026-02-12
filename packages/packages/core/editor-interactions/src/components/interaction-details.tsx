@@ -39,7 +39,7 @@ const DEFAULT_VALUES = {
 	offsetBottom: 85,
 };
 
-const TRIGGERS_WITHOUT_REPLAY = [ 'load', 'scrollOn' ];
+const TRIGGERS_WITHOUT_REPLAY = [ 'load', 'scrollOn', 'hover', 'click' ];
 
 type InteractionsControlType =
 	| 'trigger'

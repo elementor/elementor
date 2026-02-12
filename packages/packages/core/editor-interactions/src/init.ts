@@ -9,7 +9,9 @@ import { documentElementsInteractionsProvider } from './providers/document-eleme
 export function init() {
 	try {
 		interactionsRepository.register( documentElementsInteractionsProvider );
+
 		initCleanInteractionIdsOnDuplicate();
+
 		registerInteractionsControl( {
 			type: 'trigger',
 			component: Trigger,
@@ -21,6 +23,7 @@ export function init() {
 			component: Easing,
 			options: [ 'easeIn' ],
 		} );
+
 		registerInteractionsControl( {
 			type: 'replay',
 			component: Replay,
