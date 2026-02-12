@@ -438,7 +438,6 @@ export default class WpAdminPage extends BasePage {
 		await pointer.waitFor( { state: 'hidden' } );
 	}
 
-
 	/**
 	 * Edit the page with Elementor.
 	 *
