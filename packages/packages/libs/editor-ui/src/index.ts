@@ -21,6 +21,7 @@ export { FloatingActionsBar, useFloatingActionsBar } from './components/floating
 export * from './components/popover';
 export * from './components/save-changes-dialog';
 export { ConfirmationDialog } from './components/confirmation-dialog';
+export { StopSyncConfirmationDialog } from './components/stop-sync-confirmation-dialog';
 
 // contexts
 export { SectionRefContext, useSectionWidth } from './contexts/section-context';

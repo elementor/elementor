@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { BrushIcon } from '@elementor/icons';
 import {
 	Button,
 	Checkbox,
@@ -19,6 +18,9 @@ type StopSyncConfirmationDialogProps = {
 	closeDialog: () => void;
 	onConfirm: () => void;
 	onSuppressMessage?: () => void;
+	title: string;
+	message: string;
+	icon?: React.ReactNode;
 };
 
 export const StopSyncConfirmationDialog = ( {
@@ -26,6 +28,9 @@ export const StopSyncConfirmationDialog = ( {
 	closeDialog,
 	onConfirm,
 	onSuppressMessage,
+	title,
+	message,
+	icon,
 }: StopSyncConfirmationDialogProps ) => {
 	const [ dontShowAgain, setDontShowAgain ] = useState( false );
 
@@ -39,15 +44,12 @@ export const StopSyncConfirmationDialog = ( {
 	return (
 		<Dialog open={ open } onClose={ closeDialog } maxWidth="xs">
 			<DialogTitle display="flex" alignItems="center" gap={ 1 }>
-				<BrushIcon color="secondary" />
-				{ __( 'Stop syncing variable color', 'elementor' ) }
+				{ icon }
+				{ title }
 			</DialogTitle>
 			<DialogContent>
-				<DialogContentText variant="body2" color="textPrimary">
-					{ __(
-						'This will disconnect the variable color from version 3. Existing uses on your site will automatically switch to a default color.',
-						'elementor'
-					) }
+				<DialogContentText variant="body2" color="secondary">
+					{ message }
 				</DialogContentText>
 			</DialogContent>
 			<DialogActions sx={ { justifyContent: 'space-between', alignItems: 'center' } }>
@@ -67,7 +69,7 @@ export const StopSyncConfirmationDialog = ( {
 					<Button color="secondary" onClick={ closeDialog }>
 						{ __( 'Cancel', 'elementor' ) }
 					</Button>
-					<Button variant="contained" color="secondary" onClick={ handleConfirm } sx={ { ml: 1 } }>
+					<Button variant="contained" color="primary" onClick={ handleConfirm } sx={ { ml: 1 } }>
 						{ __( 'Got it', 'elementor' ) }
 					</Button>
 				</div>

@@ -30,7 +30,8 @@ import { getMenuActionsForVariable, getVariableType } from '../../variables-regi
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
 import { EmptyState } from '../ui/empty-state';
 import { NoSearchResults } from '../ui/no-search-results';
-import { StopSyncConfirmationDialog } from '../ui/stop-sync-confirmation-dialog';
+import { StopSyncConfirmationDialog } from '@elementor/editor-ui';
+import { BrushIcon } from '@elementor/icons';
 import { useAutoEdit } from './hooks/use-auto-edit';
 import { useErrorNavigation } from './hooks/use-error-navigation';
 import { useVariablesManagerState } from './hooks/use-variables-manager-state';
@@ -350,6 +351,12 @@ export function VariablesManagerPanel() {
 					open
 					closeDialog={ () => setStopSyncConfirmation( null ) }
 					onConfirm={ () => handleStopSyncWithConfirmation( stopSyncConfirmation ) }
+					title={ __( 'Stop syncing variable color', 'elementor' ) }
+					message={ __(
+						'This will disconnect the variable color from version 3. Existing uses on your site will automatically switch to a default color.',
+						'elementor'
+					) }
+					icon={ <BrushIcon color="secondary" /> }
 				/>
 			) }
 

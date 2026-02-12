@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useRef, useState } from 'react';
 import { validateStyleLabel } from '@elementor/editor-styles-repository';
-import { EditableField, EllipsisWithTooltip, MenuListItem, useEditable, WarningInfotip } from '@elementor/editor-ui';
+import { EditableField, EllipsisWithTooltip, MenuListItem, StopSyncConfirmationDialog, useEditable, WarningInfotip } from '@elementor/editor-ui';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
-import { DotsVerticalIcon } from '@elementor/icons';
+import { ColorSwatchIcon, DotsVerticalIcon } from '@elementor/icons';
 import {
 	bindMenu,
 	bindTrigger,
@@ -24,7 +24,6 @@ import { __ } from '@wordpress/i18n';
 import { CssClassUsageTrigger } from '../css-class-usage/components';
 import { useDeleteConfirmation } from './delete-confirmation-dialog';
 import { SortableTrigger, type SortableTriggerProps } from './sortable';
-import { StopSyncConfirmationDialog } from './stop-sync-confirmation-dialog';
 
 type ClassItemProps = React.PropsWithChildren< {
 	id: string;
@@ -188,6 +187,12 @@ export const ClassItem = ( {
 					onConfirm={ () => {
 						setStopSyncConfirmation( false );
 					} }
+					title={ __( 'Un-sync typography class', 'elementor' ) }
+					message={ __(
+						"You're about to stop syncing a typography class to Version 3. Note that if it's being used anywhere on your site, it will inherit a default font.",
+						'elementor'
+					) }
+					icon={ <ColorSwatchIcon color="secondary" /> }
 				/>
 			) }
 		</>
