@@ -1,13 +1,13 @@
-import { BrowserContext, expect, Page } from '@playwright/test';
+import { BrowserContext, expect, Locator, Page } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
 import EditorSelectors from '../../../../selectors/editor-selectors';
 import { timeouts } from '../../../../config/timeouts';
 
-import { exitComponentEditMode, openComponentsTab } from './utils/navigation';
-import { createComponent, createOverridableProp, uniqueName } from './utils/creation';
-import { getInstancePanelPropInput, selectComponentInstance } from './utils/selection';
+import { exitComponentEditMode, openComponentsTab, openCreateComponentFromContextMenu } from './utils/navigation';
+import { createOverridableProp, createContentForComponent, uniqueName, createComponent } from './utils/creation';
+import { getInstancePanelPropInput, getNavigationItem, selectComponentInstance } from './utils/selection';
 
 test.describe( 'Atomic Components @v4-tests', () => {
 	let wpAdminPage: WpAdminPage;
@@ -34,21 +34,15 @@ test.describe( 'Atomic Components @v4-tests', () => {
 	test( 'should allow converting an atomic container into a component', async () => {
 		editor = await wpAdminPage.openNewPage();
 		const componentName = uniqueName( 'Test Component' );
-		let flexboxId: string;
+		let flexbox: Locator;
 
 		await test.step( 'Create a flexbox container with a heading widget', async () => {
-			flexboxId = await editor.addElement( { elType: EditorSelectors.v4.atoms.flexbox }, 'document' );
-			await editor.addWidget( { widgetType: EditorSelectors.v4.atoms.heading, container: flexboxId } );
+			const { locator } = await createContentForComponent( editor );
+			flexbox = locator;
 		} );
 
 		await test.step( 'Right-click on flexbox and create component', async () => {
-			const flexbox = editor.getPreviewFrame().locator( `[data-id="${ flexboxId }"]` );
-			await flexbox.click( { button: 'right' } );
-
-			await page.waitForSelector( EditorSelectors.contextMenu.menu );
-			const createComponentMenuItem = page.getByRole( 'menuitem', { name: 'Create component' } );
-			await expect( createComponentMenuItem ).toBeVisible();
-			await createComponentMenuItem.click();
+			await openCreateComponentFromContextMenu( flexbox, page );
 		} );
 
 		await test.step( 'Fill component name and create', async () => {
@@ -84,16 +78,15 @@ test.describe( 'Atomic Components @v4-tests', () => {
 		editor = await wpAdminPage.openNewPage();
 		const componentName = uniqueName( 'Editable Component' );
 		const editedHeadingText = 'Edited Heading Text';
+		let flexboxId: string;
 
-		await test.step( 'Create a component', async () => {
-			const flexboxId = await editor.addElement( { elType: EditorSelectors.v4.atoms.flexbox }, 'document' );
-			await editor.addWidget( { widgetType: EditorSelectors.v4.atoms.heading, container: flexboxId } );
+		await test.step( 'Create a component from navigation panel', async () => {
+			const { id } = await createContentForComponent( editor );
+			flexboxId = id;
 
-			const flexbox = editor.getPreviewFrame().locator( `[data-id="${ flexboxId }"]` );
-			await flexbox.click( { button: 'right' } );
-			await page.waitForSelector( EditorSelectors.contextMenu.menu );
-			await page.getByRole( 'menuitem', { name: 'Create component' } ).click();
+			const navigatorItem = await getNavigationItem( page, flexboxId );
 
+			await openCreateComponentFromContextMenu( navigatorItem, page );
 			await createComponent( page, componentName );
 
 			await exitComponentEditMode( editor );
@@ -126,7 +119,7 @@ test.describe( 'Atomic Components @v4-tests', () => {
 		} );
 
 		await test.step( 'Edit via panel edit button', async () => {
-			await selectComponentInstance( editor );
+			await selectComponentInstance( editor, flexboxId );
 
 			const editButton = page.getByLabel( `Edit ${ componentName }` );
 			await expect( editButton ).toBeVisible();
@@ -164,16 +157,14 @@ test.describe( 'Atomic Components @v4-tests', () => {
 		const propLabel = 'Heading Text';
 		const overrideValue = 'Overridden Heading';
 		const nestedOverrideValue = 'Nested Override';
+		let flexboxId: string;
+		let outerFlexboxId: string;
 
 		await test.step( 'Create a component with heading', async () => {
-			const flexboxId = await editor.addElement( { elType: EditorSelectors.v4.atoms.flexbox }, 'document' );
-			await editor.addWidget( { widgetType: EditorSelectors.v4.atoms.heading, container: flexboxId } );
+			const { locator: flexbox, id } = await createContentForComponent( editor );
+			flexboxId = id;
 
-			const flexbox = editor.getPreviewFrame().locator( `[data-id="${ flexboxId }"]` );
-			await flexbox.click( { button: 'right' } );
-			await page.waitForSelector( EditorSelectors.contextMenu.menu );
-			await page.getByRole( 'menuitem', { name: 'Create component' } ).click();
-
+			await openCreateComponentFromContextMenu( flexbox, page );
 			await createComponent( page, componentName );
 		} );
 
@@ -189,7 +180,7 @@ test.describe( 'Atomic Components @v4-tests', () => {
 		await test.step( 'Exit edit mode and select component instance', async () => {
 			await exitComponentEditMode( editor );
 
-			await selectComponentInstance( editor );
+			await selectComponentInstance( editor, flexboxId );
 		} );
 
 		await test.step( 'Verify exposed prop appears in instance panel and override it', async () => {
@@ -203,18 +194,15 @@ test.describe( 'Atomic Components @v4-tests', () => {
 		} );
 
 		await test.step( 'Create outer component wrapping inner component instance', async () => {
-			const outerFlexboxId = await editor.addElement( { elType: EditorSelectors.v4.atoms.flexbox }, 'document' );
+			outerFlexboxId = await editor.addElement( { elType: EditorSelectors.v4.atoms.flexbox }, 'document' );
 
 			await openComponentsTab( editor, page );
 
 			const componentItem = page.locator( EditorSelectors.components.componentsList ).getByText( componentName );
 			await componentItem.click();
 
-			const navigatorItem = page.locator( EditorSelectors.panels.navigator.getElementItem( outerFlexboxId ) ).first();
-			await navigatorItem.click( { button: 'right' } );
-			await page.waitForSelector( EditorSelectors.contextMenu.menu );
-			await page.getByRole( 'menuitem', { name: 'Create component' } ).click();
-
+			const navigatorItem = await getNavigationItem( page, outerFlexboxId );
+			await openCreateComponentFromContextMenu( navigatorItem, page );
 			await createComponent( page, outerComponentName );
 
 			const backButton = page.locator( EditorSelectors.components.exitEditModeButton );
@@ -228,15 +216,11 @@ test.describe( 'Atomic Components @v4-tests', () => {
 
 			await createOverridableProp( page, propLabel );
 
-			const autosavePromise = page.waitForResponse(
-				( response ) => response.url().includes( '/wp-admin/admin-ajax.php' ) && 200 === response.status(),
-			);
 			await exitComponentEditMode( editor );
-			await autosavePromise;
 		} );
 
 		await test.step( 'Override nested prop on outer component instance', async () => {
-			await selectComponentInstance( editor, 'last' );
+			await selectComponentInstance( editor, outerFlexboxId );
 
 			const propControl = await getInstancePanelPropInput( page, propLabel );
 			await propControl.clear();
@@ -264,10 +248,9 @@ test.describe( 'Atomic Components @v4-tests', () => {
 		const backgroundColor = 'rgb(255, 0, 0)';
 
 		await test.step( 'Create a component with styled heading', async () => {
-			const flexboxId = await editor.addElement( { elType: EditorSelectors.v4.atoms.flexbox }, 'document' );
-			await editor.addWidget( { widgetType: EditorSelectors.v4.atoms.heading, container: flexboxId } );
+			const { locator: flexbox } = await createContentForComponent( editor );
 
-			const heading = editor.getPreviewFrame().locator( EditorSelectors.v4.atomSelectors.heading.wrapper ).first();
+			const heading = flexbox.locator( EditorSelectors.v4.atomSelectors.heading.wrapper ).first();
 			await heading.click();
 
 			await editor.v4Panel.openTab( 'style' );
@@ -275,11 +258,7 @@ test.describe( 'Atomic Components @v4-tests', () => {
 			await editor.v4Panel.style.setBackgroundColor( '#ff0000' );
 			await editor.v4Panel.style.closeSection( 'Background' );
 
-			const flexbox = editor.getPreviewFrame().locator( `[data-id="${ flexboxId }"]` );
-			await flexbox.click( { button: 'right' } );
-			await page.waitForSelector( EditorSelectors.contextMenu.menu );
-			await page.getByRole( 'menuitem', { name: 'Create component' } ).click();
-
+			await openCreateComponentFromContextMenu( flexbox, page );
 			await createComponent( page, componentName );
 		} );
 

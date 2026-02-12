@@ -1,10 +1,23 @@
 import { expect, Locator, Page } from '@playwright/test';
 import EditorSelectors from '../../../../../selectors/editor-selectors';
 import { timeouts } from '../../../../../config/timeouts';
+import EditorPage from '../../../../../pages/editor-page';
 
 export const uniqueName = ( baseName: string ) => `${ baseName } ${ Date.now() }`;
 
+export const createContentForComponent = async ( editor: EditorPage ) => {
+	const flexboxId = await editor.addElement( { elType: EditorSelectors.v4.atoms.flexbox }, 'document' );
+	await editor.addWidget( { widgetType: EditorSelectors.v4.atoms.heading, container: flexboxId } );
+
+	const locator = editor.getPreviewFrame().locator( `[data-id="${ flexboxId }"]` );
+	return { id: flexboxId, locator };
+};
+
 export const createComponent = async ( page: Page, componentName: string ) => {
+	const autosavePromise = page.waitForResponse(
+		( response ) => response.url().includes( '/wp-admin/admin-ajax.php' ) && 200 === response.status(),
+	);
+
 	const createComponentForm = page.locator( EditorSelectors.components.createComponentForm );
 	await expect( createComponentForm ).toBeVisible();
 
@@ -14,6 +27,7 @@ export const createComponent = async ( page: Page, componentName: string ) => {
 
 	const createButton = createComponentForm.getByRole( 'button', { name: 'Create' } );
 	await createButton.click();
+	await autosavePromise;
 
 	const panelHeader = page.locator( EditorSelectors.components.editModeHeader );
 	await expect( panelHeader ).toBeVisible( { timeout: timeouts.longAction } );
@@ -21,8 +35,8 @@ export const createComponent = async ( page: Page, componentName: string ) => {
 	await dismissOnboardingDialog( page );
 };
 
-export const createOverridableProp = async ( page: Page, propLabel: string, index: number = 0 ) => {
-	const exposeIndicator = page.locator( EditorSelectors.components.overridableIndicator ).nth( index );
+export const createOverridableProp = async ( page: Page, propLabel: string ) => {
+	const exposeIndicator = page.locator( EditorSelectors.components.overridableIndicator ).first();
 	await exposeIndicator.click();
 
 	const overridablePropForm = page.locator( EditorSelectors.components.overridablePropForm );
