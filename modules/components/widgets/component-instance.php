@@ -66,8 +66,13 @@ class Component_Instance extends Atomic_Widget_Base {
 		$merged_overrides = $this->get_merged_overrides( $resolved_overrides );
 
 		return [
-			'context_key' => Overridable_Transformer::class,
-			'context' => [ 'overrides' => $merged_overrides, 'instance_id' => $this->get_id() ],
+			[
+				'context_key' => Overridable_Transformer::class,
+				'context' => [ 'overrides' => $merged_overrides ],
+			],
+			[
+				'context' => [ 'instance_id' => $this->get_id() ],
+			],
 		];
 	}
 

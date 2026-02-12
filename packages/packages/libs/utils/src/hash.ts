@@ -24,9 +24,9 @@ function isPlainObject( value: unknown ): value is UnknownObject {
 // Inspired by:
 // https://github.com/darkskyapp/string-hash/blob/master/index.js
 export function hashString( str: string, maxLength?: number ): string {
-	let hashBasis = 5381,
-		i = str.length;
+	let hashBasis = 5381;
 
+	let i = str.length;
 	while ( i ) {
 		hashBasis = ( hashBasis * 33 ) ^ str.charCodeAt( --i );
 	}
@@ -39,5 +39,5 @@ export function hashString( str: string, maxLength?: number ): string {
 	if ( maxLength === undefined ) {
 		return result;
 	}
-	return result.padStart( maxLength, '0' ).slice( -maxLength );
+	return result.slice( -maxLength );
 }

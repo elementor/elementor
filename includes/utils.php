@@ -973,4 +973,24 @@ class Utils {
 	public static function encode_string( string $decoded_string ): string {
 		return base64_encode( $decoded_string );
 	}
+
+	public static function hash_string( string $str, ?int $max_length ): string {
+		$hash_basis = 5381;
+
+		$i = strlen( $str );
+		while ( $i > 0 ) {
+			$i--;
+			$hash_basis = ( $hash_basis * 33 ) ^ ord( $str[ $i ] );
+			// Keep hash within 32-bit range to match JavaScript bitwise operations.
+			$hash_basis = $hash_basis & 0xFFFFFFFF;
+		}
+
+		$result = base_convert( (string) $hash_basis, 10, 36 );
+
+		if ( ! isset( $max_length ) ) {
+			return $result;
+		}
+
+		return substr( $result, -$max_length );
+	}
 }
