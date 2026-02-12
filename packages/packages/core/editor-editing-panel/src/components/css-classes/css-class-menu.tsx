@@ -30,6 +30,7 @@ const STATES: State[] = [
 	{ key: 'hover', value: 'hover', label: __( 'hover', 'elementor' ) },
 	{ key: 'focus', value: 'focus', label: __( 'focus', 'elementor' ) },
 	{ key: 'active', value: 'active', label: __( 'active', 'elementor' ) },
+	{ key: 'checked', value: 'checked', label: __( 'checked', 'elementor' ) },
 ];
 
 type CssClassMenuProps = {

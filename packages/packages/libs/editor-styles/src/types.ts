@@ -8,7 +8,7 @@ export type ClassState = {
 
 export type StyleDefinitionAdditionalPseudoState = 'focus-visible';
 
-export type StyleDefinitionPseudoState = 'hover' | 'focus' | 'active' | StyleDefinitionAdditionalPseudoState;
+export type StyleDefinitionPseudoState = 'hover' | 'focus' | 'active' | 'checked' | StyleDefinitionAdditionalPseudoState;
 
 export type StyleDefinitionClassState = ClassState[ 'value' ];
 
