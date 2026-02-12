@@ -160,7 +160,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			offsetBottom: SizeStringValue;
 		} >
 	): void => {
-		const resolvedDirectionValue = resolveDirection( 'direction' in updates, updates.effect, updates.direction, direction );
+		const resolvedDirectionValue = resolveDirection( 'direction' in updates, updates.effect, updates.direction, direction, effect );
 
 		const updatedInteraction = {
 			...interaction,
