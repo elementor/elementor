@@ -76,6 +76,10 @@ const LeftPanel = styled( Box, {
 	},
 	[ theme.breakpoints.down( 'sm' ) ]: {
 		padding: 0,
+		gap: LEFT_PANEL_GAP / 2,
+		'& > *': {
+			maxWidth: 'none',
+		},
 	},
 } ) );
 
@@ -91,8 +95,7 @@ interface SplitLayoutProps {
 }
 
 export function SplitLayout( { left, rightConfig, progress }: SplitLayoutProps ) {
-	const ratio =
-		LAYOUT_RATIOS[ rightConfig.imageLayout ] ?? LAYOUT_RATIOS.wide;
+	const ratio = LAYOUT_RATIOS[ rightConfig.imageLayout ] ?? LAYOUT_RATIOS.wide;
 	const contentMaxWidth =
 		rightConfig.contentMaxWidth ?? LEFT_PANEL_CONTENT_WIDTH;
 
