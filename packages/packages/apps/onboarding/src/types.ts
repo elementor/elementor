@@ -55,6 +55,8 @@ export interface OnboardingChoices {
 	site_features: string[];
 }
 
+export type ThemeSlug = 'hello-elementor' | 'hello-biz';
+
 export interface OnboardingConfig {
 	version: string;
 	restUrl: string;

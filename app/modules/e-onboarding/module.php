@@ -3,6 +3,8 @@
 namespace Elementor\App\Modules\E_Onboarding;
 
 use Elementor\App\Modules\E_Onboarding\Data\Controller;
+use Elementor\App\Modules\E_Onboarding\Storage\Entities\User_Choices;
+use Elementor\App\Modules\E_Onboarding\Storage\Entities\User_Progress;
 use Elementor\App\Modules\E_Onboarding\Storage\Onboarding_Progress_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
@@ -67,6 +69,10 @@ class Module extends BaseModule {
 		$progress = $this->progress_manager->get_progress();
 		$choices = $this->progress_manager->get_choices();
 		$steps = $this->get_steps_config();
+
+		// If the user previously selected a theme but it's no longer the active theme,
+		// clear the theme selection so the user can re-select.
+		$this->maybe_invalidate_theme_selection( $progress, $choices );
 
 		Plugin::$instance->app->set_settings( 'e-onboarding', [
 			'version' => self::VERSION,
@@ -136,6 +142,31 @@ class Module extends BaseModule {
 		$user = $library->get( 'user' );
 
 		return $user->first_name ?? '';
+	}
+
+	private function maybe_invalidate_theme_selection( User_Progress $progress, User_Choices $choices ): void {
+		$selected_theme = $choices->get_theme_selection();
+
+		if ( empty( $selected_theme ) ) {
+			return;
+		}
+
+		$active_theme = get_stylesheet();
+
+		if ( $active_theme !== $selected_theme ) {
+			$completed = $this->filter_out_theme_selection_step( $progress->get_completed_steps() );
+			$progress->set_completed_steps( $completed );
+			$this->progress_manager->save_progress( $progress );
+
+			$choices->set_theme_selection( null );
+			$this->progress_manager->save_choices( $choices );
+		}
+	}
+
+	private function filter_out_theme_selection_step( array $steps ): array {
+		return array_values( array_filter( $steps, function ( $step ) {
+			return 'theme_selection' !== $step;
+		} ) );
 	}
 
 	private function get_steps_config(): array {
