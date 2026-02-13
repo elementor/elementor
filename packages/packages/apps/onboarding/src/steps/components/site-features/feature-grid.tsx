@@ -148,13 +148,13 @@ export function FeatureGrid( {
 						key={ option.id }
 						isSelected={ isSelected }
 						isCore={ isCore }
-						onClick={ handleClick }
-						role="button"
-						tabIndex={ 0 }
-						onKeyDown={ ( e: React.KeyboardEvent ) =>
+						onClick={ isCore ? undefined : handleClick }
+						role={ isCore ? undefined : 'button' }
+						tabIndex={ isCore ? undefined : 0 }
+						onKeyDown={ isCore ? undefined : ( e: React.KeyboardEvent ) =>
 							handleKeyDown( e, handleClick )
 						}
-						aria-pressed={ isSelected }
+						aria-pressed={ isCore ? undefined : isSelected }
 					>
 						{ isCore && (
 							<Chip

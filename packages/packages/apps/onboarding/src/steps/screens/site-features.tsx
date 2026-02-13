@@ -39,58 +39,58 @@ const STEP_TITLE_SX = {
 	fontFeatureSettings: "'liga' off, 'clig' off",
 };
 
-const FEATURE_OPTIONS: FeatureOption[] = [
+export const FEATURE_OPTIONS: FeatureOption[] = [
 	{
 		id: 'posts',
-		label: __( 'Core feature', 'elementor' ),
+		label: __( 'Posts', 'elementor' ),
 		Icon: PostTypeIcon,
 		isPro: false,
 	},
 	{
 		id: 'pages',
-		label: __( 'Core feature', 'elementor' ),
+		label: __( 'Pages', 'elementor' ),
 		Icon: PageTypeIcon,
 		isPro: false,
 	},
 	{
 		id: 'gallery',
-		label: __( 'Pro/One', 'elementor' ),
+		label: __( 'Gallery', 'elementor' ),
 		Icon: GridDotsIcon,
 		isPro: true,
 	},
 	{
 		id: 'slides',
-		label: __( 'Pro/One', 'elementor' ),
+		label: __( 'Slides', 'elementor' ),
 		Icon: SwipeIcon,
 		isPro: true,
 	},
 	{
 		id: 'form',
-		label: __( 'Pro/One', 'elementor' ),
+		label: __( 'Form', 'elementor' ),
 		Icon: ChecklistIcon,
 		isPro: true,
 	},
 	{
 		id: 'hotspot',
-		label: __( 'Pro/One', 'elementor' ),
+		label: __( 'Hotspot', 'elementor' ),
 		Icon: MapPinIcon,
 		isPro: true,
 	},
 	{
 		id: 'portfolio',
-		label: __( 'Pro/One', 'elementor' ),
+		label: __( 'Portfolio', 'elementor' ),
 		Icon: BriefcaseIcon,
 		isPro: true,
 	},
 	{
 		id: 'login',
-		label: __( 'Pro/One', 'elementor' ),
+		label: __( 'Login', 'elementor' ),
 		Icon: LockFilledIcon,
 		isPro: true,
 	},
 	{
 		id: 'mega_menu',
-		label: __( 'Pro/One', 'elementor' ),
+		label: __( 'Mega Menu', 'elementor' ),
 		Icon: Menu2Icon,
 		isPro: true,
 	},
