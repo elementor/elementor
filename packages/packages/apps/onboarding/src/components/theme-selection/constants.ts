@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
-import type { ThemeSlug } from '../../types';
 import { getOnboardingAssetUrl } from '../../steps/step-visuals';
+import type { ThemeSlug } from '../../types';
 
 export interface ThemeDefinition {
 	slug: ThemeSlug;

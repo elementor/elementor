@@ -9,6 +9,7 @@ import { useUpdateProgress } from '../hooks/use-update-progress';
 import { BuildingFor } from '../steps/screens/building-for';
 import { ExperienceLevel } from '../steps/screens/experience-level';
 import { Login } from '../steps/screens/login';
+import { SiteAbout } from '../steps/screens/site-about';
 import { ThemeSelection } from '../steps/screens/theme-selection';
 import { getStepVisualConfig } from '../steps/step-visuals';
 import { StepId } from '../types';
@@ -165,6 +166,8 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 		switch ( stepId ) {
 			case StepId.BUILDING_FOR:
 				return <BuildingFor onComplete={ handleContinue } />;
+			case StepId.SITE_ABOUT:
+				return <SiteAbout />;
 			case StepId.EXPERIENCE_LEVEL:
 				return <ExperienceLevel onComplete={ handleContinue } />;
 			case StepId.THEME_SELECTION:
