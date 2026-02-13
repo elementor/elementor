@@ -96,15 +96,14 @@ interface SplitLayoutProps {
 
 export function SplitLayout( { left, rightConfig, progress }: SplitLayoutProps ) {
 	const ratio = LAYOUT_RATIOS[ rightConfig.imageLayout ] ?? LAYOUT_RATIOS.wide;
-	const contentMaxWidth =
-		rightConfig.contentMaxWidth ?? LEFT_PANEL_CONTENT_WIDTH;
+	const contentMaxWidth = rightConfig.contentMaxWidth ?? LEFT_PANEL_CONTENT_WIDTH;
 
 	return (
 		<SplitLayoutRoot leftRatio={ ratio.left } rightRatio={ ratio.right }>
 			<LeftPanel contentMaxWidth={ contentMaxWidth }>
 				{ progress && (
 					<Box sx={ { maxWidth: LEFT_PANEL_CONTENT_WIDTH, width: '100%' } }>
-						<ProgressBar currentStep={ progress.currentStep }totalSteps={ progress.totalSteps }/>
+						<ProgressBar currentStep={ progress.currentStep } totalSteps={ progress.totalSteps } />
 					</Box>
 				) }
 				{ left }

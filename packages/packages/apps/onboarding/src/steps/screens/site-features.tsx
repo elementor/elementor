@@ -15,18 +15,13 @@ import { Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useOnboarding } from '../../hooks/use-onboarding';
-import {
-	FeatureGrid,
-	type FeatureOption,
-	ProPlanNotice,
-} from '../components/site-features';
+import { FeatureGrid, type FeatureOption, ProPlanNotice } from '../components/site-features';
 
 interface SiteFeaturesProps {
 	onComplete?: ( choice: Record< string, unknown > ) => void;
 }
 
-const EXPLORE_FEATURES_URL =
-	'https://elementor.com/features/?utm_source=onboarding&utm_medium=wp-dash';
+const EXPLORE_FEATURES_URL = 'https://elementor.com/features/?utm_source=onboarding&utm_medium=wp-dash';
 
 export const FEATURE_OPTIONS: FeatureOption[] = [
 	{
@@ -85,11 +80,7 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 	},
 ];
 
-const CORE_FEATURE_IDS = new Set(
-	FEATURE_OPTIONS.flatMap( ( option ) =>
-		option.isPro ? [] : [ option.id ]
-	)
-);
+const CORE_FEATURE_IDS = new Set( FEATURE_OPTIONS.flatMap( ( option ) => ( option.isPro ? [] : [ option.id ] ) ) );
 
 const STEP_TITLE = __( 'What do you want to include in your site?', 'elementor' );
 const STEP_SUBTITLE = __( "We'll use this to tailor suggestions for you.", 'elementor' );
@@ -97,28 +88,28 @@ const STEP_SUBTITLE = __( "We'll use this to tailor suggestions for you.", 'elem
 export function SiteFeatures( {}: SiteFeaturesProps ) {
 	const { choices, actions } = useOnboarding();
 
-	const storedProFeatures = useMemo( () => 
-		( choices.site_features as string[] ) || [],
-		[ choices.site_features ]
-	);
+	const storedProFeatures = useMemo( () => ( choices.site_features as string[] ) || [], [ choices.site_features ] );
 
 	const selectedValues = useMemo( () => {
 		const combined = [ ...CORE_FEATURE_IDS, ...storedProFeatures ];
 		return combined.filter( ( id, index ) => combined.indexOf( id ) === index );
 	}, [ storedProFeatures ] );
 
-	const handleFeatureClick = useCallback( ( id: string ) => {
-		if ( CORE_FEATURE_IDS.has( id ) && selectedValues.includes( id ) ) {
-			return;
-		}
+	const handleFeatureClick = useCallback(
+		( id: string ) => {
+			if ( CORE_FEATURE_IDS.has( id ) && selectedValues.includes( id ) ) {
+				return;
+			}
 
-		const isProSelected = storedProFeatures.includes( id );
-		const updatedProSelection = isProSelected
-			? storedProFeatures.filter( ( featureId ) => featureId !== id )
-			: [ ...storedProFeatures, id ];
+			const isProSelected = storedProFeatures.includes( id );
+			const updatedProSelection = isProSelected
+				? storedProFeatures.filter( ( featureId ) => featureId !== id )
+				: [ ...storedProFeatures, id ];
 
-		actions.setUserChoice( 'site_features', updatedProSelection );
-	}, [ storedProFeatures, selectedValues, actions ] );
+			actions.setUserChoice( 'site_features', updatedProSelection );
+		},
+		[ storedProFeatures, selectedValues, actions ]
+	);
 
 	const handleExploreMoreClick = useCallback( () => {
 		window.open( EXPLORE_FEATURES_URL, '_blank' );

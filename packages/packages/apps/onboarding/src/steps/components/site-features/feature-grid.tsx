@@ -76,9 +76,7 @@ const SelectionBadge = styled( Box, {
 	width: SELECTION_BADGE_SIZE,
 	height: SELECTION_BADGE_SIZE,
 	borderRadius: '50%',
-	backgroundColor: isPro
-		? theme.palette.promotion.main
-		: theme.palette.text.primary,
+	backgroundColor: isPro ? theme.palette.promotion.main : theme.palette.text.primary,
 	color: theme.palette.common.white,
 	'& .MuiSvgIcon-root': {
 		fontSize: SELECTION_BADGE_ICON_SIZE,
@@ -86,10 +84,7 @@ const SelectionBadge = styled( Box, {
 } ) );
 
 const FeatureCard = styled( Box, {
-	shouldForwardProp: ( prop ) =>
-		! [ 'isSelected', 'isExploreMore', 'isCore' ].includes(
-			prop as string
-		),
+	shouldForwardProp: ( prop ) => ! [ 'isSelected', 'isExploreMore', 'isCore' ].includes( prop as string ),
 } )< FeatureCardProps >( ( { theme, isSelected, isExploreMore, isCore } ) => ( {
 	position: 'relative',
 	display: 'flex',
@@ -100,9 +95,7 @@ const FeatureCard = styled( Box, {
 	minHeight: theme.spacing( 12 ),
 	padding: theme.spacing( 2 ),
 	borderRadius: theme.spacing( 1 ),
-	border: isSelected
-		? '2px solid #1F2124'
-		: `1px solid ${ theme.palette.divider }`,
+	border: isSelected ? '2px solid #1F2124' : `1px solid ${ theme.palette.divider }`,
 	cursor: isCore ? 'default' : 'pointer',
 	transition: 'border-color 0.2s ease, background-color 0.2s ease',
 	...( ! isCore && {
@@ -137,34 +130,20 @@ function ExploreMoreCard( { onClick, onKeyDown }: ExploreMoreCardProps ) {
 			onClick={ onClick }
 			role="button"
 			tabIndex={ 0 }
-			onKeyDown={ ( event: React.KeyboardEvent ) =>
-				onKeyDown( event, onClick )
-			}
+			onKeyDown={ ( event: React.KeyboardEvent ) => onKeyDown( event, onClick ) }
 		>
 			<Box className="feature-icon" sx={ { mb: 1 } }>
 				<EXPLORE_MORE_OPTION.Icon fontSize="small" />
 			</Box>
-			<Typography
-				variant="body2"
-				color="text.secondary"
-				textAlign="center"
-			>
+			<Typography variant="body2" color="text.secondary" textAlign="center">
 				{ EXPLORE_MORE_OPTION.label }
 			</Typography>
 		</FeatureCard>
 	);
 }
 
-export function FeatureGrid( {
-	options,
-	selectedValues,
-	onFeatureClick,
-	onExploreMoreClick,
-}: FeatureGridProps ) {
-	const handleKeyDown = (
-		event: React.KeyboardEvent,
-		handler: () => void
-	) => {
+export function FeatureGrid( { options, selectedValues, onFeatureClick, onExploreMoreClick }: FeatureGridProps ) {
+	const handleKeyDown = ( event: React.KeyboardEvent, handler: () => void ) => {
 		if ( [ 'Enter', ' ' ].includes( event.key ) ) {
 			event.preventDefault();
 			handler();
@@ -184,34 +163,29 @@ export function FeatureGrid( {
 			} }
 		>
 			{ options.map( ( option ) => {
-			const isSelected = selectedValues.includes( option.id );
-			const Icon = option.Icon;
-			const BadgeIcon = option.isPro ? CrownFilledIcon : CheckIcon;
-			const isCore = ! option.isPro;
+				const isSelected = selectedValues.includes( option.id );
+				const Icon = option.Icon;
+				const BadgeIcon = option.isPro ? CrownFilledIcon : CheckIcon;
+				const isCore = ! option.isPro;
 
-			const handleClick = () => onFeatureClick( option.id );
+				const handleClick = () => onFeatureClick( option.id );
 
-			const handleKeyDownEvent = isCore
-				? undefined
-				: ( event: React.KeyboardEvent ) => handleKeyDown( event, handleClick );
+				const handleKeyDownEvent = isCore
+					? undefined
+					: ( event: React.KeyboardEvent ) => handleKeyDown( event, handleClick );
 
-			return (
-				<FeatureCard
-					key={ option.id }
-					isSelected={ isSelected }
-					isCore={ isCore }
-					onClick={ isCore ? undefined : handleClick }
-					role={ isCore ? undefined : 'button' }
-					tabIndex={ isCore ? undefined : 0 }
-					onKeyDown={ handleKeyDownEvent }
-					aria-pressed={ isCore ? undefined : isSelected }
-				>
-						{ isCore && (
-							<BuiltInChip
-								label={ BUILT_IN_CHIP_LABEL }
-								size="small"
-							/>
-						) }
+				return (
+					<FeatureCard
+						key={ option.id }
+						isSelected={ isSelected }
+						isCore={ isCore }
+						onClick={ isCore ? undefined : handleClick }
+						role={ isCore ? undefined : 'button' }
+						tabIndex={ isCore ? undefined : 0 }
+						onKeyDown={ handleKeyDownEvent }
+						aria-pressed={ isCore ? undefined : isSelected }
+					>
+						{ isCore && <BuiltInChip label={ BUILT_IN_CHIP_LABEL } size="small" /> }
 						{ isSelected && (
 							<SelectionBadge isPro={ option.isPro }>
 								<BadgeIcon />
@@ -220,20 +194,13 @@ export function FeatureGrid( {
 						<Box className="feature-icon" sx={ { mb: 1 } }>
 							<Icon fontSize="medium" />
 						</Box>
-						<Typography
-							variant="body2"
-							color="text.secondary"
-							textAlign="center"
-						>
+						<Typography variant="body2" color="text.secondary" textAlign="center">
 							{ option.label }
 						</Typography>
 					</FeatureCard>
 				);
 			} ) }
-			<ExploreMoreCard
-				onClick={ onExploreMoreClick }
-				onKeyDown={ handleKeyDown }
-			/>
+			<ExploreMoreCard onClick={ onExploreMoreClick } onKeyDown={ handleKeyDown } />
 		</Box>
 	);
 }

@@ -52,7 +52,9 @@ describe( 'SiteFeatures', () => {
 				progress: SITE_FEATURES_PROGRESS,
 			} );
 
-			const coreFeatureLabels = FEATURE_OPTIONS.filter( ( option ) => ! option.isPro ).map( ( option ) => option.label );
+			const coreFeatureLabels = FEATURE_OPTIONS.filter( ( option ) => ! option.isPro ).map(
+				( option ) => option.label
+			);
 			coreFeatureLabels.forEach( ( label ) => {
 				const card = screen.getByText( label ).closest( 'div' );
 				expect( within( card! ).getByText( BUILT_IN_LABEL ) ).toBeInTheDocument();
@@ -85,7 +87,7 @@ describe( 'SiteFeatures', () => {
 			const firstProOption = FEATURE_OPTIONS.find( ( option ) => option.isPro );
 			fireEvent.click( screen.getByRole( 'button', { name: firstProOption!.label } ) );
 			await waitFor( () => {
-				expect( screen.getByRole( 'button', { name: FINISH_BUTTON_LABEL } ) ).not.toBeDisabled();
+				expect( screen.getByRole( 'button', { name: FINISH_BUTTON_LABEL } ) ).toBeEnabled();
 			} );
 			fireEvent.click( screen.getByRole( 'button', { name: FINISH_BUTTON_LABEL } ) );
 
