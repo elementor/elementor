@@ -19,6 +19,9 @@ const ProPlanNoticeRoot = styled( Box )( ( { theme } ) => ( {
 	padding: theme.spacing( 1, 2 ),
 	borderRadius: theme.spacing( 1 ),
 	backgroundColor: PRO_PLAN_NOTICE_BG,
+	[ theme.breakpoints.down( 'sm' ) ]: {
+		marginBottom: theme.spacing( 10 ),
+	},
 } ) );
 
 export function ProPlanNotice() {
