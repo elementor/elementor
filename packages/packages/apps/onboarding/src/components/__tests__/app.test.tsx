@@ -272,7 +272,7 @@ describe( 'App', () => {
 
 			// Assert
 			expect( screen.getByText( 'Finish' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Skip' ) ).not.toBeInTheDocument();
+			expect( screen.getByText( 'Skip' ) ).toBeInTheDocument();
 		} );
 
 		it( 'should call onComplete when finishing last step', async () => {
