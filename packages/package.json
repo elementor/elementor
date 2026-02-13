@@ -14,6 +14,7 @@
     "test": "jest --config='./jest.config.js'",
     "test:coverage": "npm run test -- --coverage",
     "lint": "concurrently -n eslint,tsc -c magenta,blue \"eslint . --report-unused-disable-directives-severity error\" \"tsc\"",
+    "lint:fix": "eslint . --fix --report-unused-disable-directives-severity error",
     "check-unused": "knip",
     "spell-check": "cspell . --quiet",
     "format": "eslint . --fix",
