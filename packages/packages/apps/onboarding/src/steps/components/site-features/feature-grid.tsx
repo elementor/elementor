@@ -177,6 +177,7 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick, onExplor
 				return (
 					<FeatureCard
 						key={ option.id }
+						data-testid={ `feature-card-${ option.id }` }
 						isSelected={ isSelected }
 						isCore={ isCore }
 						onClick={ isCore ? undefined : handleClick }

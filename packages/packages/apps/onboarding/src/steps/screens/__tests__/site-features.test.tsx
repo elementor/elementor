@@ -1,3 +1,4 @@
+/* eslint-disable testing-library/no-test-id-queries */
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 
 import { mockFetch, renderApp, setupOnboardingTests } from '../../../__tests__/test-utils';
@@ -19,6 +20,17 @@ const COMPARE_PLANS_BUTTON_LABEL = 'Compare plans';
 const FEATURES_URL = 'https://elementor.com/features/?utm_source=onboarding&utm_medium=wp-dash';
 const PRICING_URL = 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash';
 const TARGET_BLANK = '_blank';
+
+const getFirstProOption = () => {
+	const option = FEATURE_OPTIONS.find(
+		( featureOption ) => featureOption.isPro
+	);
+
+	if ( ! option ) {
+		throw new Error( 'No pro option in FEATURE_OPTIONS' );
+	}
+	return option;
+};
 
 describe( 'SiteFeatures', () => {
 	setupOnboardingTests();
@@ -52,12 +64,10 @@ describe( 'SiteFeatures', () => {
 				progress: SITE_FEATURES_PROGRESS,
 			} );
 
-			const coreFeatureLabels = FEATURE_OPTIONS.filter( ( option ) => ! option.isPro ).map(
-				( option ) => option.label
-			);
-			coreFeatureLabels.forEach( ( label ) => {
-				const card = screen.getByText( label ).closest( 'div' );
-				expect( within( card! ).getByText( BUILT_IN_LABEL ) ).toBeInTheDocument();
+			const coreOptions = FEATURE_OPTIONS.filter( ( option ) => ! option.isPro );
+			coreOptions.forEach( ( option ) => {
+				const card = screen.getByTestId( `feature-card-${ option.id }` );
+				expect( within( card ).getByText( BUILT_IN_LABEL ) ).toBeInTheDocument();
 			} );
 		} );
 	} );
@@ -84,8 +94,8 @@ describe( 'SiteFeatures', () => {
 				progress: SITE_FEATURES_PROGRESS,
 			} );
 
-			const firstProOption = FEATURE_OPTIONS.find( ( option ) => option.isPro );
-			fireEvent.click( screen.getByRole( 'button', { name: firstProOption!.label } ) );
+			const firstProOption = getFirstProOption();
+			fireEvent.click( screen.getByRole( 'button', { name: firstProOption.label } ) );
 			await waitFor( () => {
 				expect( screen.getByRole( 'button', { name: FINISH_BUTTON_LABEL } ) ).toBeEnabled();
 			} );
@@ -96,7 +106,7 @@ describe( 'SiteFeatures', () => {
 					expect.stringContaining( USER_CHOICES_ENDPOINT ),
 					expect.objectContaining( {
 						method: 'POST',
-						body: expect.stringContaining( firstProOption!.id ),
+						body: expect.stringContaining( firstProOption.id ),
 					} )
 				);
 			} );
@@ -111,11 +121,8 @@ describe( 'SiteFeatures', () => {
 			const coreOptions = FEATURE_OPTIONS.filter( ( option ) => ! option.isPro );
 			coreOptions.forEach( ( option ) => {
 				mockFetch.mockClear();
-				const card = screen.getByText( option.label ).closest( 'div' );
-				expect( card ).toBeTruthy();
-				if ( card ) {
-					fireEvent.click( card );
-				}
+				const card = screen.getByTestId( `feature-card-${ option.id }` );
+				fireEvent.click( card );
 				expect( mockFetch ).not.toHaveBeenCalledWith(
 					expect.stringContaining( USER_CHOICES_ENDPOINT ),
 					expect.anything()
@@ -135,7 +142,7 @@ describe( 'SiteFeatures', () => {
 		} );
 
 		it( 'is shown when pro features are pre-selected', () => {
-			const firstProOption = FEATURE_OPTIONS.find( ( option ) => option.isPro )!;
+			const firstProOption = getFirstProOption();
 			renderApp( {
 				isConnected: true,
 				progress: SITE_FEATURES_PROGRESS,
@@ -151,8 +158,8 @@ describe( 'SiteFeatures', () => {
 				progress: SITE_FEATURES_PROGRESS,
 			} );
 
-			const firstProOption = FEATURE_OPTIONS.find( ( option ) => option.isPro );
-			fireEvent.click( screen.getByRole( 'button', { name: firstProOption!.label } ) );
+			const firstProOption = getFirstProOption();
+			fireEvent.click( screen.getByRole( 'button', { name: firstProOption.label } ) );
 
 			await waitFor( () => {
 				expect( screen.getByText( PRO_PLAN_NOTICE_TEXT ) ).toBeInTheDocument();
@@ -175,7 +182,7 @@ describe( 'SiteFeatures', () => {
 		} );
 
 		it( '"Compare plans" opens pricing URL in new tab', () => {
-			const firstProOption = FEATURE_OPTIONS.find( ( option ) => option.isPro )!;
+			const firstProOption = getFirstProOption();
 			const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
 			renderApp( {
 				isConnected: true,
@@ -196,6 +203,10 @@ describe( 'SiteFeatures', () => {
 			const preSelectedCount = 2;
 			const selectedIds = proOptions.slice( 0, preSelectedCount ).map( ( option ) => option.id );
 			const unselectedOption = proOptions[ preSelectedCount ];
+			if ( ! unselectedOption ) {
+				throw new Error( 'Expected unselected option' );
+			}
+
 			renderApp( {
 				isConnected: true,
 				progress: SITE_FEATURES_PROGRESS,
@@ -203,7 +214,10 @@ describe( 'SiteFeatures', () => {
 			} );
 
 			selectedIds.forEach( ( id ) => {
-				const option = FEATURE_OPTIONS.find( ( opt ) => opt.id === id )!;
+				const option = FEATURE_OPTIONS.find( ( opt ) => opt.id === id );
+				if ( ! option ) {
+					throw new Error( 'Expected option for selected id' );
+				}
 				const button = screen.getByRole( 'button', { name: option.label } );
 				expect( button ).toHaveAttribute( 'aria-pressed', 'true' );
 			} );
