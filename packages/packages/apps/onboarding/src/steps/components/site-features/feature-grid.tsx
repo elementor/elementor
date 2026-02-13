@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useCallback } from 'react';
 import { ArrowRightIcon, CheckIcon, CrownFilledIcon } from '@elementor/icons';
 import { Box, Chip, styled, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -47,6 +46,24 @@ const EXPLORE_MORE_OPTION: ExploreMoreOption = {
 	isExploreMore: true,
 };
 
+const BuiltInChip = styled( Chip )( ( { theme } ) => ( {
+	position: 'absolute',
+	top: '6px',
+	left: '6px',
+	height: 18,
+	display: 'none',
+	'& .MuiChip-label': {
+		fontSize: 12,
+		paddingLeft: '8px',
+		paddingRight: '8px',
+		paddingTop: '3px',
+		paddingBottom: '3px',
+	},
+	[ theme.breakpoints.up( 'md' ) ]: {
+		display: 'inline-flex',
+	},
+} ) );
+
 const SelectionBadge = styled( Box, {
 	shouldForwardProp: ( prop ) => 'isPro' !== prop,
 } )< SelectionBadgeProps >( ( { theme, isPro } ) => ( {
@@ -58,7 +75,7 @@ const SelectionBadge = styled( Box, {
 	justifyContent: 'center',
 	width: SELECTION_BADGE_SIZE,
 	height: SELECTION_BADGE_SIZE,
-	borderRadius: 25,
+	borderRadius: '50%',
 	backgroundColor: isPro
 		? theme.palette.promotion.main
 		: theme.palette.text.primary,
@@ -80,9 +97,9 @@ const FeatureCard = styled( Box, {
 	alignItems: 'center',
 	justifyContent: 'center',
 	aspectRatio: '1',
-	minHeight: 96,
+	minHeight: theme.spacing( 12 ),
 	padding: theme.spacing( 2 ),
-	borderRadius: 8,
+	borderRadius: theme.spacing( 1 ),
 	border: isSelected
 		? '2px solid #1F2124'
 		: `1px solid ${ theme.palette.divider }`,
@@ -98,7 +115,7 @@ const FeatureCard = styled( Box, {
 			display: 'flex',
 			alignItems: 'center',
 			justifyContent: 'center',
-			width: 30,
+			width: theme.spacing( 3.75 ),
 			borderRadius: '50%',
 			backgroundColor: theme.palette.text.primary,
 			color: theme.palette.background.paper,
@@ -113,15 +130,15 @@ export function FeatureGrid( {
 	onFeatureClick,
 	onExploreMoreClick,
 }: FeatureGridProps ) {
-	const handleKeyDown = useCallback(
-		( e: React.KeyboardEvent, handler: () => void ) => {
-			if ( 'Enter' === e.key || ' ' === e.key ) {
-				e.preventDefault();
-				handler();
-			}
-		},
-		[]
-	);
+	const handleKeyDown = (
+		event: React.KeyboardEvent,
+		handler: () => void
+	) => {
+		if ( [ 'Enter', ' ' ].includes( event.key ) ) {
+			event.preventDefault();
+			handler();
+		}
+	};
 
 	return (
 		<Box
@@ -151,27 +168,18 @@ export function FeatureGrid( {
 						onClick={ isCore ? undefined : handleClick }
 						role={ isCore ? undefined : 'button' }
 						tabIndex={ isCore ? undefined : 0 }
-						onKeyDown={ isCore ? undefined : ( e: React.KeyboardEvent ) =>
-							handleKeyDown( e, handleClick )
+						onKeyDown={
+							isCore
+								? undefined
+								: ( event: React.KeyboardEvent ) =>
+										handleKeyDown( event, handleClick )
 						}
 						aria-pressed={ isCore ? undefined : isSelected }
 					>
 						{ isCore && (
-							<Chip
+							<BuiltInChip
 								label={ BUILT_IN_CHIP_LABEL }
 								size="small"
-								sx={ {
-									position: 'absolute',
-									top: '6px',
-									left: '6px',
-									height: 18,
-									display: { xs: 'none', md: 'inline-flex' },
-									'& .MuiChip-label': {
-										fontSize: 12,
-										px: '8px',
-										py: '3px',
-									},
-								} }
 							/>
 						) }
 						{ isSelected && (
@@ -198,8 +206,8 @@ export function FeatureGrid( {
 				onClick={ onExploreMoreClick }
 				role="button"
 				tabIndex={ 0 }
-				onKeyDown={ ( e: React.KeyboardEvent ) =>
-					handleKeyDown( e, onExploreMoreClick )
+				onKeyDown={ ( event: React.KeyboardEvent ) =>
+					handleKeyDown( event, onExploreMoreClick )
 				}
 			>
 				<Box className="feature-icon" sx={ { mb: 1 } }>

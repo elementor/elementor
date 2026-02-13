@@ -20,7 +20,7 @@ import { TopBar } from './ui/top-bar';
 import { TopBarContent } from './ui/top-bar-content';
 
 const isChoiceEmpty = ( choice: unknown ): boolean => {
-	return ( choice === null || choice === undefined || ( Array.isArray( choice ) && choice.length === 0 ) );
+	return choice === null || choice === undefined || ( Array.isArray( choice ) && choice.length === 0 );
 };
 
 interface AppContentProps {

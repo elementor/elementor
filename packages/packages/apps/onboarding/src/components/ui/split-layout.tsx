@@ -6,26 +6,11 @@ import type { ImageLayout, StepVisualConfig } from '../../types';
 import { ProgressBar } from './progress-bar';
 import { RightPanel } from './right-panel';
 
-interface SplitLayoutRootProps {
-	leftRatio: number;
-	rightRatio: number;
-}
-
-interface LeftPanelProps {
-	contentMaxWidth: number;
-}
-
-interface ProgressInfo {
-	currentStep: number;
-	totalSteps: number;
-}
-
-interface SplitLayoutProps {
-	left: ReactNode;
-	rightConfig: StepVisualConfig;
-	progress?: ProgressInfo;
-}
-
+/**
+ * Layout ratios per Figma spec:
+ *   wide  → 1:1 (left and right share space equally)
+ *   narrow → 3:1 (left gets 3 parts, right gets 1 part)
+ */
 const LAYOUT_RATIOS: Record< ImageLayout, { left: number; right: number } > = {
 	wide: { left: 1, right: 1 },
 	narrow: { left: 3, right: 1 },
@@ -41,6 +26,11 @@ const LEFT_PANEL_PADDING_TOP = 40;
 const LEFT_PANEL_GAP = 60;
 const IMAGE_MIN_WIDTH = 464;
 const CONTENT_IMAGE_MIN_GAP = 80;
+
+interface SplitLayoutRootProps {
+	leftRatio: number;
+	rightRatio: number;
+}
 
 const SplitLayoutRoot = styled( Box, {
 	shouldForwardProp: ( prop ) => ! [ 'leftRatio', 'rightRatio' ].includes( prop as string ),
@@ -66,6 +56,10 @@ const SplitLayoutRoot = styled( Box, {
 	};
 } );
 
+interface LeftPanelProps {
+	contentMaxWidth: number;
+}
+
 const LeftPanel = styled( Box, {
 	shouldForwardProp: ( prop ) => 'contentMaxWidth' !== prop,
 } )< LeftPanelProps >( ( { theme, contentMaxWidth } ) => ( {
@@ -84,6 +78,17 @@ const LeftPanel = styled( Box, {
 		padding: 0,
 	},
 } ) );
+
+interface ProgressInfo {
+	currentStep: number;
+	totalSteps: number;
+}
+
+interface SplitLayoutProps {
+	left: ReactNode;
+	rightConfig: StepVisualConfig;
+	progress?: ProgressInfo;
+}
 
 export function SplitLayout( { left, rightConfig, progress }: SplitLayoutProps ) {
 	const ratio =

@@ -10,6 +10,9 @@ const COMPARE_PLANS_URL =
 
 const PRO_PLAN_NOTICE_BG = 'rgba(250, 228, 250, 0.6)';
 
+const PRO_PLAN_NOTICE_TEXT = __( 'Some features you selected are available in Pro plan.', 'elementor' );
+const COMPARE_PLANS_BUTTON_TEXT = __( 'Compare plans', 'elementor' );
+
 const ProPlanNoticeRoot = styled( Box )( ( { theme } ) => ( {
 	display: 'flex',
 	alignItems: 'center',
@@ -39,7 +42,7 @@ export function ProPlanNotice() {
 					fontSize: theme.spacing( 1.625 ),
 				} ) }
 			>
-				{ __( 'Some features you selected are available in Pro plan.', 'elementor' ) }
+				{ PRO_PLAN_NOTICE_TEXT }
 			</Typography>
 			<Button
 				variant="text"
@@ -53,7 +56,7 @@ export function ProPlanNotice() {
 					minWidth: 'auto',
 				} ) }
 			>
-				{ __( 'Compare plans', 'elementor' ) }
+				{ COMPARE_PLANS_BUTTON_TEXT }
 			</Button>
 		</ProPlanNoticeRoot>
 	);
