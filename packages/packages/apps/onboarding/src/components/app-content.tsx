@@ -10,6 +10,7 @@ import { BuildingFor } from '../steps/screens/building-for';
 import { ExperienceLevel } from '../steps/screens/experience-level';
 import { Login } from '../steps/screens/login';
 import { SiteAbout } from '../steps/screens/site-about';
+import { ThemeSelection } from '../steps/screens/theme-selection';
 import { getStepVisualConfig } from '../steps/step-visuals';
 import { StepId } from '../types';
 import { BaseLayout } from './ui/base-layout';
@@ -39,6 +40,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 		isLoading,
 		hasPassedLogin,
 		choices,
+		completedSteps,
 		urls,
 		actions,
 	} = useOnboarding();
@@ -148,6 +150,18 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 	const choiceForStep = choices[ stepId as keyof typeof choices ];
 	const continueDisabled = isChoiceEmpty( choiceForStep );
 
+	const getContinueLabel = () => {
+		if ( isLast ) {
+			return __( 'Finish', 'elementor' );
+		}
+
+		if ( stepId === StepId.THEME_SELECTION && ! completedSteps.includes( StepId.THEME_SELECTION ) ) {
+			return __( 'Continue with this theme', 'elementor' );
+		}
+
+		return __( 'Continue', 'elementor' );
+	};
+
 	const renderStepContent = () => {
 		switch ( stepId ) {
 			case StepId.BUILDING_FOR:
@@ -156,6 +170,8 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 				return <SiteAbout />;
 			case StepId.EXPERIENCE_LEVEL:
 				return <ExperienceLevel onComplete={ handleContinue } />;
+			case StepId.THEME_SELECTION:
+				return <ThemeSelection onComplete={ handleContinue } />;
 			default:
 				return <Box sx={ { flex: 1, width: '100%' } } />;
 		}
@@ -193,7 +209,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 						showBack
 						showSkip={ ! isLast }
 						showContinue
-						continueLabel={ isLast ? __( 'Finish', 'elementor' ) : __( 'Continue', 'elementor' ) }
+						continueLabel={ getContinueLabel() }
 						continueDisabled={ continueDisabled }
 						continueLoading={ isPending }
 						onBack={ handleBack }
