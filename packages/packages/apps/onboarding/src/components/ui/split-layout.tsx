@@ -42,32 +42,29 @@ const LEFT_PANEL_GAP = 60;
 const IMAGE_MIN_WIDTH = 464;
 const CONTENT_IMAGE_MIN_GAP = 80;
 
-const NARROW_BREAKPOINT =
-	LEFT_PANEL_CONTENT_WIDTH +
-	LEFT_PANEL_PADDING_X * 2 +
-	CONTENT_IMAGE_MIN_GAP +
-	IMAGE_MIN_WIDTH +
-	LAYOUT_GAP * 8;
-
 const SplitLayoutRoot = styled( Box, {
-	shouldForwardProp: ( prop ) =>
-		! [ 'leftRatio', 'rightRatio' ].includes( prop as string ),
-} )< SplitLayoutRootProps >( ( { theme, leftRatio, rightRatio } ) => ( {
-	flex: 1,
-	display: 'grid',
-	gridTemplateColumns: `${ leftRatio }fr ${ rightRatio }fr`,
-	gap: theme.spacing( LAYOUT_GAP ),
-	padding: theme.spacing( LAYOUT_PADDING ),
-	minHeight: 0,
-	transition: `grid-template-columns ${ LAYOUT_TRANSITION_MS }ms ease`,
-	[ `@media (max-width: ${ NARROW_BREAKPOINT }px)` ]: {
-		gridTemplateColumns: '1fr',
-		padding: LAYOUT_PADDING_SM,
-		'& > *:last-child': {
-			display: 'none',
+	shouldForwardProp: ( prop ) => ! [ 'leftRatio', 'rightRatio' ].includes( prop as string ),
+} )< SplitLayoutRootProps >( ( { theme, leftRatio, rightRatio } ) => {
+	const hideImageBreakpoint =
+		LEFT_PANEL_CONTENT_WIDTH + LEFT_PANEL_PADDING_X * 2 + CONTENT_IMAGE_MIN_GAP + IMAGE_MIN_WIDTH + LAYOUT_GAP * 8;
+
+	return {
+		flex: 1,
+		display: 'grid',
+		gridTemplateColumns: `${ leftRatio }fr ${ rightRatio }fr`,
+		gap: theme.spacing( LAYOUT_GAP ),
+		padding: theme.spacing( LAYOUT_PADDING ),
+		minHeight: 0,
+		transition: `grid-template-columns ${ LAYOUT_TRANSITION_MS }ms ease`,
+		[ `@media (max-width: ${ hideImageBreakpoint }px)` ]: {
+			gridTemplateColumns: '1fr',
+			padding: LAYOUT_PADDING_SM,
+			'& > *:last-child': {
+				display: 'none',
+			},
 		},
-	},
-} ) );
+	};
+} );
 
 const LeftPanel = styled( Box, {
 	shouldForwardProp: ( prop ) => 'contentMaxWidth' !== prop,
