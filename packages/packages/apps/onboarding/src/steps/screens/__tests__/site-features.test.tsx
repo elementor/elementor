@@ -22,9 +22,7 @@ const PRICING_URL = 'https://elementor.com/pricing/?utm_source=onboarding&utm_me
 const TARGET_BLANK = '_blank';
 
 const getFirstProOption = () => {
-	const option = FEATURE_OPTIONS.find(
-		( featureOption ) => featureOption.isPro
-	);
+	const option = FEATURE_OPTIONS.find( ( featureOption ) => featureOption.isPro );
 
 	if ( ! option ) {
 		throw new Error( 'No pro option in FEATURE_OPTIONS' );
