@@ -39,13 +39,6 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		};
 	},
 
-	initialize() {
-		elementorModules.common.views.modal.Layout.prototype.initialize.call( this );
-
-		this.handleBeforeUnload = this.handleBeforeUnload.bind( this );
-		window.addEventListener( 'beforeunload', this.handleBeforeUnload );
-	},
-
 	initModal() {
 		elementorModules.common.views.modal.Layout.prototype.initModal.call( this );
 
@@ -53,19 +46,6 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		if ( $widget.length && 'true' === $widget.attr( 'aria-modal' ) ) {
 			$widget.attr( 'role', 'dialog' );
 		}
-
-		this.modal.on( 'hide', () => {
-			elementor.templates.eventManager.stopSessionRecording();
-		} );
-	},
-
-	onDestroy() {
-		elementor.templates.eventManager.stopSessionRecording();
-		window.removeEventListener( 'beforeunload', this.handleBeforeUnload );
-	},
-
-	handleBeforeUnload() {
-		elementor.templates.eventManager.stopSessionRecording();
 	},
 
 	getLogoOptions() {
@@ -131,6 +111,18 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	updateViewCollection( models ) {
 		this.modalContent.currentView.collection.reset( models );
 		this.modalContent.currentView.ui.navigationContainer.html( ( new TemplateLibraryNavigationContainerView() ).render()?.el );
+
+		// Restore focus within the modal after re-render to prevent focus escaping to BODY
+		const $widget = this.modal.getElements( 'widget' );
+		if ( $widget.length && ! $widget[ 0 ].contains( $widget[ 0 ].ownerDocument.activeElement ) ) {
+			// Focus the first focusable element in the template list, or the modal widget itself
+			const $firstFocusable = $widget.find( 'button, a, input, select, [tabindex="0"]' ).filter( ':visible' ).first();
+			if ( $firstFocusable.length ) {
+				$firstFocusable.trigger( 'focus' );
+			} else {
+				$widget.attr( 'tabindex', '-1' ).trigger( 'focus' );
+			}
+		}
 	},
 
 	addTemplates( models ) {

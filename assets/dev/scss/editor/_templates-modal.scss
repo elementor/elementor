@@ -191,6 +191,12 @@ $remote-templates-items-space: 30px;
 			.quota-progress-container {
 				display: flex;
 				align-items: baseline;
+				border-radius: 3px;
+
+				&:focus-visible {
+					outline: 2px solid var(--e-a-border-color-focus);
+					outline-offset: 2px;
+				}
 			}
 
 			.quota-progress-info {
@@ -422,31 +428,38 @@ $remote-templates-items-space: 30px;
 				grid-column: 1 / -1;
 			}
 
-			.elementor-template-library-template-view-grid {
-				display: flex;
-				position: relative;
-				flex-direction: column;
-				height: 158px;
-				padding: 8px;
-				border: var(--e-a-border);
-				border-radius: 3px;
+		.elementor-template-library-template-view-grid {
+			display: flex;
+			position: relative;
+			flex-direction: column;
+			height: 158px;
+			padding: 8px;
+			border: var(--e-a-border);
+			border-radius: 3px;
 
-				&:not([data-status="locked"]):hover {
-					.elementor-template-library-template-preview {
-						display: flex;
+			&:focus-visible {
+				outline: 2px solid var(--e-a-border-color-focus);
+				outline-offset: 2px;
+			}
+
+			&:not([data-status="locked"]):hover,
+			&:not([data-status="locked"]):focus,
+			&:not([data-status="locked"]):focus-within {
+				.elementor-template-library-template-preview {
+					display: flex;
+				}
+
+				.elementor-template-library-card-footer {
+
+					.elementor-template-library-template-name {
+						display: none;
 					}
 
-					.elementor-template-library-card-footer {
-
-						.elementor-template-library-template-name {
-							display: none;
-						}
-
-						.elementor-template-library-template-card-footer-overlay {
-							display: flex !important;
-						}
+					.elementor-template-library-template-card-footer-overlay {
+						display: flex !important;
 					}
 				}
+			}
 
 				.elementor-template-library-template-thumbnail {
 					width: 190px;
@@ -1238,7 +1251,8 @@ label.elementor-template-library-order-label {
 		display: flex;
 		align-items: center;
 
-		> div {
+		> div,
+		> button {
 			cursor: pointer;
 			transition: color .5s;
 		}
@@ -1377,12 +1391,22 @@ label.elementor-template-library-order-label {
 			display: inline;
 			background: var(--e-a-bg-hover);
 			padding: 0 2px 1px;
+			border: none;
 			border-radius: 2px;
 			vertical-align: bottom;
 			cursor: pointer;
+			font-family: inherit;
+			font-size: inherit;
+			color: inherit;
+			line-height: inherit;
 
 			&:hover {
 				background: var(--e-a-bg-active);
+			}
+
+			&:focus-visible {
+				outline: 2px solid var(--e-a-border-color-focus);
+				outline-offset: 2px;
 			}
 		}
 
@@ -1460,6 +1484,7 @@ label.elementor-template-library-order-label {
 			&.cloud,
 			&.local {
 				@include ellipsis;
+				overflow: visible; // Override ellipsis mixin to prevent clipping focus outlines
 				display: inline-flex;
 				align-items: baseline;
 				line-height: 27px;
@@ -1550,6 +1575,7 @@ label.elementor-template-library-order-label {
 			.folder-item {
 				padding: 5px 15px;
 				cursor: pointer;
+				list-style: none;
 
 				&[data-id="0"] .eicon-folder-o {
 					display: none;
@@ -1564,8 +1590,14 @@ label.elementor-template-library-order-label {
 				}
 
 				&:hover,
-				&.selected {
+				&.selected,
+				&:focus {
 					background: var(--e-a-border-color);
+				}
+
+				&:focus-visible {
+					outline: 2px solid var(--e-a-border-color-focus);
+					outline-offset: -2px;
 				}
 
 				&.disabled {

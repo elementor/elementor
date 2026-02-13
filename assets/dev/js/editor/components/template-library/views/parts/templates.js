@@ -544,6 +544,19 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.handleSourceOptionBadges();
 	},
 
+	// QA #10: Restore focus to the selected source filter after re-render.
+	// Called after the view is rendered AND attached to the DOM, so focus calls work.
+	// Flag is set in onSelectSourceFilterKeyDown before triggering click that causes re-render.
+	onDomRefresh() {
+		if ( elementor.templates._restoreFocusToSourceFilter ) {
+			elementor.templates._restoreFocusToSourceFilter = false;
+			const $selected = this.ui.selectSourceFilter.filter( '[aria-checked="true"]' );
+			if ( $selected.length ) {
+				$selected.trigger( 'focus' );
+			}
+		}
+	},
+
 	onRenderCollection() {
 		this.addSourceData();
 
@@ -633,11 +646,15 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			targetIndex = currentIndex < $allOptions.length - 1 ? currentIndex + 1 : 0;
 		} else if ( ' ' === event.key || 'Enter' === event.key ) {
 			event.preventDefault();
+			elementor.templates._restoreFocusToSourceFilter = true;
 			$currentOption.trigger( 'click' );
 			return;
 		} else {
 			return;
 		}
+
+		// Flag for onRender to restore focus after the re-render triggered by click
+		elementor.templates._restoreFocusToSourceFilter = true;
 
 		const $targetOption = $allOptions.eq( targetIndex );
 		$targetOption.trigger( 'focus' ).trigger( 'click' );
@@ -712,7 +729,55 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		scrollableContainer.on( 'scroll', listener );
 
-		this.removeScrollListener = () => scrollableContainer.off( 'scroll', listener );
+		// QA #13: Also trigger load-more when keyboard focus reaches the last few items
+		const focusListener = ( event ) => {
+			const canLoadMore = elementor.templates.canLoadMore() && ! elementor.templates.isLoading();
+
+			if ( ! canLoadMore ) {
+				return;
+			}
+
+			if ( ! this.$childViewContainer || ! this.$childViewContainer.length ) {
+				return;
+			}
+
+			const $children = this.$childViewContainer.children();
+			const totalChildren = $children.length;
+
+			if ( totalChildren < 2 ) {
+				return;
+			}
+
+			// Check if focus target is within one of the last 2 template items
+			const $target = jQuery( event.target );
+			const focusedIndex = $children.index( $target.closest( $children ) );
+
+			if ( focusedIndex >= totalChildren - 2 ) {
+				this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
+				elementor.templates.layout.selectAllCheckboxMinus();
+
+				const previousCount = this.collection.length;
+
+				elementor.templates.loadMore( {
+					onUpdate: () => {
+						this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
+						const newCount = this.collection.length;
+						const loadedCount = newCount - previousCount;
+						if ( loadedCount > 0 ) {
+							this.announceLoadStatus( loadedCount );
+						}
+					},
+					search: this.ui.textFilter.val(),
+				} );
+			}
+		};
+
+		scrollableContainer.on( 'focusin', focusListener );
+
+		this.removeScrollListener = () => {
+			scrollableContainer.off( 'scroll', listener );
+			scrollableContainer.off( 'focusin', focusListener );
+		};
 	},
 
 	onCreateNewFolderClick() {

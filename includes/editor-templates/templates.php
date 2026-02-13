@@ -199,7 +199,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div id="elementor-template-library-navigation-container"></div>
 
 			<# if ( 'cloud' === activeSource ) { #>
-				<div class="quota-progress-container">
+				<div class="quota-progress-container" tabindex="0" role="group" aria-label="<?php echo esc_attr__( 'Cloud library usage', 'elementor' ); ?>">
 					<span class="quota-progress-info">
 						<?php echo esc_html__( 'Usage', 'elementor' ); ?>
 					</span>
@@ -210,7 +210,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<span class="quota-warning"></span>
 					</div>
 					<div class="quota-progress-bar-value"></div>
-					<span class="elementor-screen-only" id="elementor-template-library-quota-status"></span>
+					<span class="elementor-screen-only" id="elementor-template-library-quota-status" aria-live="polite" aria-atomic="true"></span>
 				</div>
 			<# } #>
 		</div>
@@ -315,7 +315,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				? 'elementor-hidden'
 				: '';
 		#>
-		<div class="elementor-template-library-template-preview elementor-button e-btn-txt {{{previewClass}}}">
+		<button type="button" class="elementor-template-library-template-preview elementor-button e-btn-txt {{{previewClass}}}">
 		<#
 			const actionText = typeof subType === 'undefined' || 'FOLDER' !== subType
 				? '<?php echo esc_html__( 'Preview', 'elementor' ); ?>'
@@ -323,7 +323,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		#>
 			<i class="eicon-preview-medium" aria-hidden="true"></i>
 			<span class="elementor-template-library-template-control-title">{{{ actionText }}}</span>
-		</div>
+		</button>
 		<# if ( typeof subType === 'undefined' || 'FOLDER' !== subType ) { #>
 		<button class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button e-primary e-btn-txt">
 			<i class="eicon-library-download" aria-hidden="true"></i>
@@ -538,7 +538,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 				<div class="source-selections-input cloud">
 					<input type="checkbox" id="cloud" name="cloud" value="cloud">
-					<label for="cloud"> <?php echo esc_html__( 'Cloud Templates', 'elementor' ); ?></label> <span class="divider">/</span>  <div class="ellipsis-container"><i class="eicon-ellipsis-h"></i></div>
+					<label for="cloud"> <?php echo esc_html__( 'Cloud Templates', 'elementor' ); ?></label> <span class="divider">/</span>  <button type="button" class="ellipsis-container" aria-label="<?php echo esc_attr__( 'Select folder', 'elementor' ); ?>" aria-haspopup="listbox" aria-expanded="false"><i class="eicon-ellipsis-h" aria-hidden="true"></i></button>
 					<span class="selected-folder">
 						<span class="selected-folder-text"></span>
 						<i class="eicon-editor-close" aria-hidden="true"></i>
@@ -632,9 +632,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</svg>
 					<label for="cloud-variant-b"><?php echo esc_html__( 'Cloud Templates', 'elementor' ); ?></label>
 					<span class="divider">/</span>
-					<div class="ellipsis-container">
+					<button type="button" class="ellipsis-container" aria-label="<?php echo esc_attr__( 'Select folder', 'elementor' ); ?>" aria-haspopup="listbox" aria-expanded="false">
 						<?php echo esc_html__( 'Select folder', 'elementor' ); ?>
-					</div>
+					</button>
 					<span class="selected-folder">
 						<span class="selected-folder-text"></span>
 						<i class="eicon-editor-close" aria-hidden="true"></i>

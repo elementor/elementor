@@ -41,7 +41,9 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		return {
 			'submit @ui.form': 'onFormSubmit',
 			'click @ui.ellipsisIcon': 'onEllipsisIconClick',
+			'keydown @ui.ellipsisIcon': 'onEllipsisIconKeyDown',
 			'click @ui.foldersList': 'onFoldersListClick',
+			'keydown @ui.foldersListContainer': 'onFoldersListKeyDown',
 			'click @ui.removeFolderSelection': 'onRemoveFolderSelectionClick',
 			'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
 			'click @ui.upgradeBadge': 'onUpgradeBadgeClicked',
@@ -203,6 +205,109 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			saveContext = this.getOption( 'context' );
 
 		return templateType[ `${ saveContext }Dialog` ];
+	},
+
+	onEllipsisIconKeyDown( event ) {
+		if ( 'Escape' === event.key ) {
+			event.preventDefault();
+			event.stopPropagation();
+			if ( this.ui.foldersDropdown.is( ':visible' ) ) {
+				this.hideFoldersDropdown();
+				// Suppress the upcoming keyup to prevent the modal from closing
+				const suppressKeyUp = ( e ) => {
+					if ( 'Escape' === e.key ) {
+						e.stopImmediatePropagation();
+						window.removeEventListener( 'keyup', suppressKeyUp, true );
+					}
+				};
+				window.addEventListener( 'keyup', suppressKeyUp, true );
+			}
+			return;
+		}
+
+		// When dropdown is open and user presses Tab or ArrowDown, move focus into the folder list
+		if ( ( 'Tab' === event.key && ! event.shiftKey ) || 'ArrowDown' === event.key ) {
+			if ( this.ui.foldersDropdown.is( ':visible' ) ) {
+				event.preventDefault();
+				event.stopPropagation();
+				this.focusFirstFolderItem();
+			}
+		}
+	},
+
+	onFoldersListKeyDown( event ) {
+		const $items = this.getFolderItems();
+		const currentIndex = $items.index( event.target );
+
+		switch ( event.key ) {
+			case 'ArrowDown':
+			case 'Tab':
+				if ( 'Tab' === event.key && event.shiftKey ) {
+					// Shift+Tab on first item: close dropdown and focus the ellipsis button
+					if ( currentIndex <= 0 ) {
+						event.preventDefault();
+						event.stopPropagation();
+						this.hideFoldersDropdown();
+						this.ui.ellipsisIcon.trigger( 'focus' );
+					} else {
+						event.preventDefault();
+						event.stopPropagation();
+						$items.eq( currentIndex - 1 ).trigger( 'focus' );
+					}
+					break;
+				}
+				event.preventDefault();
+				event.stopPropagation();
+				if ( currentIndex < $items.length - 1 ) {
+					$items.eq( currentIndex + 1 ).trigger( 'focus' );
+				} else if ( 'Tab' === event.key ) {
+					// Tab past the last item: close dropdown and move focus forward
+					this.hideFoldersDropdown();
+					this.ui.ellipsisIcon.trigger( 'focus' );
+				} else {
+					// ArrowDown wraps to first
+					$items.first().trigger( 'focus' );
+				}
+				break;
+
+			case 'ArrowUp':
+				event.preventDefault();
+				event.stopPropagation();
+				if ( currentIndex > 0 ) {
+					$items.eq( currentIndex - 1 ).trigger( 'focus' );
+				} else {
+					$items.last().trigger( 'focus' );
+				}
+				break;
+
+			case 'Enter':
+			case ' ':
+				event.preventDefault();
+				event.stopPropagation();
+				jQuery( event.target ).trigger( 'click' );
+				break;
+
+			case 'Escape':
+				event.preventDefault();
+				event.stopPropagation();
+				this.hideFoldersDropdown();
+				this.ui.ellipsisIcon.trigger( 'focus' );
+				// Suppress the upcoming keyup to prevent the modal from closing
+				{
+					const suppressKeyUp = ( e ) => {
+						if ( 'Escape' === e.key ) {
+							e.stopImmediatePropagation();
+							window.removeEventListener( 'keyup', suppressKeyUp, true );
+						}
+					};
+					window.addEventListener( 'keyup', suppressKeyUp, true );
+				}
+				break;
+		}
+	},
+
+	updateEllipsisAriaExpanded( expanded ) {
+		this.ui.ellipsisIcon.attr( 'aria-expanded', expanded ? 'true' : 'false' );
 	},
 
 	onFormSubmit( event ) {
@@ -391,11 +496,13 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	async onEllipsisIconClick() {
 		if ( this.ui.foldersDropdown.is( ':visible' ) ) {
 			this.hideFoldersDropdown();
+			this.updateEllipsisAriaExpanded( false );
 
 			return;
 		}
 
 		this.ui.foldersDropdown.show();
+		this.updateEllipsisAriaExpanded( true );
 
 		if ( ! this.folderCollectionView ) {
 			this.folderCollectionView = new FolderCollectionView( {
@@ -410,12 +517,28 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			} finally {
 				this.removeSpinner();
 				this.disableSelectedFolder();
+				this.focusFirstFolderItem();
 			}
+		} else {
+			this.focusFirstFolderItem();
 		}
 
 		elementor.templates.eventManager.sendPageViewEvent( {
 			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.saveModalSelectFolder,
 		} );
+	},
+
+	getFolderItems() {
+		// Must query the DOM fresh because the folder list is rendered dynamically
+		// after the view's initial render, so this.ui.foldersList may be stale.
+		return this.$( '.cloud-folder-selection-dropdown ul li:visible' );
+	},
+
+	focusFirstFolderItem() {
+		const $firstItem = this.getFolderItems().first();
+		if ( $firstItem.length ) {
+			$firstItem.trigger( 'focus' );
+		}
 	},
 
 	renderFolderDropdown() {
@@ -725,6 +848,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	hideFoldersDropdown() {
 		this.ui.foldersDropdown.hide();
+		this.updateEllipsisAriaExpanded( false );
 	},
 
 	bindDocumentClickHandler() {
