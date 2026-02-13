@@ -125,7 +125,7 @@ export function SiteFeatures( {}: SiteFeaturesProps ) {
 	}, [] );
 
 	return (
-		<Stack spacing={ 4 } width="100%" sx={ { mb: '100px' } }>
+		<Stack spacing={ 4 } width="100%">
 			<Stack spacing={ 1 } textAlign="center" alignItems="center">
 				<Typography
 					variant="h5"
