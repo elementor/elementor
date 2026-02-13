@@ -45,6 +45,11 @@ class Module extends BaseModule {
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 
 		add_action( 'elementor/init', [ $this, 'on_elementor_init' ], 12 );
+
+		if ( $this->should_show_starter() ) {
+			add_filter( 'elementor/editor/v2/packages', [ $this, 'add_editor_packages' ] );
+			add_filter( 'elementor/editor/v2/scripts/env', [ $this, 'add_editor_env' ] );
+		}
 	}
 
 	public function on_elementor_init(): void {
@@ -134,6 +139,32 @@ class Module extends BaseModule {
 		$user = $library->get( 'user' );
 
 		return $user->first_name ?? '';
+	}
+
+	private function should_show_starter(): bool {
+		return true;
+		$progress = $this->progress_manager->get_progress();
+
+		return null !== $progress->get_completed_at() && ! $progress->is_starter_dismissed();
+	}
+
+	public function add_editor_packages( array $packages ): array {
+		$packages[] = 'editor-starter';
+
+		return array_unique( $packages );
+	}
+
+	public function add_editor_env( array $env ): array {
+		$env['@elementor/editor-starter'] = array_merge(
+			$env['@elementor/editor-starter'] ?? [],
+			[
+				'welcome_screen' => [
+					'show' => true,
+				],
+			]
+		);
+
+		return $env;
 	}
 
 	private function get_steps_config(): array {
