@@ -72,9 +72,15 @@ class Form_Success_Message extends Div_Block {
 								'color' => Color_Prop_Type::generate( '#D4E9D6' ),
 							] ),
 							'color' => Color_Prop_Type::generate( '#2F532E' ),
-							'padding' => Size_Prop_Type::generate( [ 'size' => 12, 'unit' => 'px' ] ),
+							'padding' => Size_Prop_Type::generate( [
+								'size' => 12,
+								'unit' => 'px',
+							] ),
 							'text-align' => String_Prop_Type::generate( 'center' ),
-							'font-size' => Size_Prop_Type::generate( [ 'size' => 12, 'unit' => 'px' ] ),
+							'font-size' => Size_Prop_Type::generate( [
+								'size' => 12,
+								'unit' => 'px',
+							] ),
 						] )
 				),
 		];

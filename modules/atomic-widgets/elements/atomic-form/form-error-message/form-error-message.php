@@ -72,9 +72,15 @@ class Form_Error_Message extends Div_Block {
 								'color' => Color_Prop_Type::generate( '#ffdede' ),
 							] ),
 							'color' => Color_Prop_Type::generate( '#870000' ),
-							'padding' => Size_Prop_Type::generate( [ 'size' => 12, 'unit' => 'px' ] ),
+							'padding' => Size_Prop_Type::generate( [
+								'size' => 12,
+								'unit' => 'px',
+							] ),
 							'text-align' => String_Prop_Type::generate( 'center' ),
-							'font-size' => Size_Prop_Type::generate( [ 'size' => 12, 'unit' => 'px' ] ),
+							'font-size' => Size_Prop_Type::generate( [
+								'size' => 12,
+								'unit' => 'px',
+							] ),
 						] )
 				),
 		];
