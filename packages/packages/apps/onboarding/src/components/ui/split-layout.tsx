@@ -75,7 +75,7 @@ const LeftPanel = styled( Box, {
 		maxWidth: contentMaxWidth,
 	},
 	[ theme.breakpoints.down( 'sm' ) ]: {
-		padding: 0,
+		padding: `${ LEFT_PANEL_PADDING_TOP }px 0`,
 		gap: LEFT_PANEL_GAP / 2,
 		'& > *': {
 			maxWidth: 'none',
