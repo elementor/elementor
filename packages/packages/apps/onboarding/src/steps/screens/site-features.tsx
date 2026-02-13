@@ -121,10 +121,7 @@ export function SiteFeatures( {}: SiteFeaturesProps ) {
 				<Typography
 					variant="h5"
 					align="center"
-					sx={ {
-						fontFamily: "'Poppins', sans-serif",
-						fontWeight: 500,
-					} }
+					sx={ { fontWeight: 500 } }
 				>
 					{ STEP_TITLE }
 				</Typography>
