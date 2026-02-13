@@ -544,12 +544,9 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.handleSourceOptionBadges();
 	},
 
-	// QA #10: Restore focus to the selected source filter after re-render.
-	// Called after the view is rendered AND attached to the DOM, so focus calls work.
-	// Flag is set in onSelectSourceFilterKeyDown before triggering click that causes re-render.
 	onDomRefresh() {
-		if ( elementor.templates._restoreFocusToSourceFilter ) {
-			elementor.templates._restoreFocusToSourceFilter = false;
+		if ( this._restoreFocusToSourceFilter ) {
+			this._restoreFocusToSourceFilter = false;
 			const $selected = this.ui.selectSourceFilter.filter( '[aria-checked="true"]' );
 			if ( $selected.length ) {
 				$selected.trigger( 'focus' );
@@ -646,15 +643,14 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			targetIndex = currentIndex < $allOptions.length - 1 ? currentIndex + 1 : 0;
 		} else if ( ' ' === event.key || 'Enter' === event.key ) {
 			event.preventDefault();
-			elementor.templates._restoreFocusToSourceFilter = true;
+			this._restoreFocusToSourceFilter = true;
 			$currentOption.trigger( 'click' );
 			return;
 		} else {
 			return;
 		}
 
-		// Flag for onRender to restore focus after the re-render triggered by click
-		elementor.templates._restoreFocusToSourceFilter = true;
+		this._restoreFocusToSourceFilter = true;
 
 		const $targetOption = $allOptions.eq( targetIndex );
 		$targetOption.trigger( 'focus' ).trigger( 'click' );

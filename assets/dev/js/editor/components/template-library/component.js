@@ -123,7 +123,7 @@ export default class Component extends ComponentModalBase {
 		// Update ARIA attributes for accessibility
 		const $tabsWrapper = jQuery( this.getTabsWrapperSelector() );
 		const $tabs = $tabsWrapper.find( '[role="tab"]' );
-		const $activeTab = $tabs.filter( '[data-tab="' + tab + '"]' );
+		const $activeTab = $tabs.filter( `[data-tab="${ tab }"]` );
 
 		const $templatesContainer = this.manager?.layout?.modalContent?.currentView?.$childViewContainer;
 
@@ -140,7 +140,7 @@ export default class Component extends ComponentModalBase {
 		if ( $templatesContainer?.length ) {
 			$templatesContainer.attr( {
 				role: 'tabpanel',
-				'aria-labelledby': 'tab-' + tab,
+				'aria-labelledby': `tab-${ tab }`,
 			} );
 		}
 	}

@@ -1,3 +1,10 @@
+const KEYBOARD_KEYS = {
+	ARROW_LEFT: 'ArrowLeft',
+	ARROW_RIGHT: 'ArrowRight',
+	HOME: 'Home',
+	END: 'End',
+};
+
 module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-template-library-header-menu',
 
@@ -31,19 +38,19 @@ module.exports = Marionette.ItemView.extend( {
 		let targetIndex = -1;
 
 		switch ( event.key ) {
-			case 'ArrowLeft':
+			case KEYBOARD_KEYS.ARROW_LEFT:
 				event.preventDefault();
 				targetIndex = currentIndex > 0 ? currentIndex - 1 : $tabs.length - 1;
 				break;
-			case 'ArrowRight':
+			case KEYBOARD_KEYS.ARROW_RIGHT:
 				event.preventDefault();
 				targetIndex = currentIndex < $tabs.length - 1 ? currentIndex + 1 : 0;
 				break;
-			case 'Home':
+			case KEYBOARD_KEYS.HOME:
 				event.preventDefault();
 				targetIndex = 0;
 				break;
-			case 'End':
+			case KEYBOARD_KEYS.END:
 				event.preventDefault();
 				targetIndex = $tabs.length - 1;
 				break;
@@ -58,13 +65,16 @@ module.exports = Marionette.ItemView.extend( {
 			if ( targetTabName ) {
 				const libraryComponent = $e.components.get( 'library' );
 				if ( libraryComponent ) {
-					libraryComponent.activateTab( targetTabName );
+					try {
+						libraryComponent.activateTab( targetTabName );
 
-					// Re-query from the global DOM after activateTab re-renders the entire menu view.
-					// The old view instance and its $el are detached after re-render.
-					const $freshTab = jQuery( '#elementor-template-library-header-menu [data-tab="' + targetTabName + '"]' );
-					if ( $freshTab.length ) {
-						$freshTab.trigger( 'focus' );
+						const $tabAfterRerender = jQuery( `#elementor-template-library-header-menu [data-tab="${ targetTabName }"]` );
+						if ( $tabAfterRerender.length ) {
+							$tabAfterRerender.trigger( 'focus' );
+						}
+					} catch ( error ) {
+						// eslint-disable-next-line no-console
+						console.error( 'Tab activation failed:', error );
 					}
 				}
 			}
