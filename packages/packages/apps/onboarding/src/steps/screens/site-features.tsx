@@ -28,17 +28,6 @@ interface SiteFeaturesProps {
 const EXPLORE_FEATURES_URL =
 	'https://elementor.com/features/?utm_source=onboarding&utm_medium=wp-dash';
 
-const STEP_TITLE_SX = {
-	// color: '#0C0D0E',
-	// textAlign: 'center',
-	fontFamily: "'Poppins', sans-serif",
-	// fontSize: 24,
-	fontWeight: 500,
-	// lineHeight: 1.33,
-	// letterSpacing: 0,
-	// fontFeatureSettings: "'liga' off, 'clig' off",
-};
-
 export const FEATURE_OPTIONS: FeatureOption[] = [
 	{
 		id: 'posts',
@@ -138,7 +127,14 @@ export function SiteFeatures( {}: SiteFeaturesProps ) {
 	return (
 		<Stack spacing={ 4 } width="100%" sx={ { mb: '100px' } }>
 			<Stack spacing={ 1 } textAlign="center" alignItems="center">
-				<Typography component="h2" sx={ STEP_TITLE_SX }>
+				<Typography
+					variant="h5"
+					align="center"
+					sx={ {
+						fontFamily: "'Poppins', sans-serif",
+						fontWeight: 500,
+					} }
+				>
 					{ STEP_TITLE }
 				</Typography>
 				<Typography variant="body1" color="text.secondary">
