@@ -194,7 +194,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 				<Footer>
 					<FooterActions
 						showBack
-						showSkip={ ! isLast }
+						showSkip
 						showContinue
 						continueLabel={ isLast ? __( 'Finish', 'elementor' ) : __( 'Continue', 'elementor' ) }
 						continueDisabled={ continueDisabled }

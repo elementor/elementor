@@ -11,6 +11,7 @@ import {
 	PostTypeIcon,
 	SwipeIcon,
 } from '@elementor/icons';
+import type { Theme } from '@elementor/ui';
 import { Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -116,7 +117,16 @@ export function SiteFeatures( {}: SiteFeaturesProps ) {
 	}, [] );
 
 	return (
-		<Stack spacing={ 4 } width="100%">
+		<Stack
+			spacing={ 4 }
+			width="100%"
+			marginBottom={ 10 }
+			sx={ ( theme: Theme ) => ( {
+				[ theme.breakpoints.down( 'sm' ) ]: {
+					marginBottom: theme.spacing( 10 ),
+				},
+			} ) }
+		>
 			<Stack spacing={ 1 } textAlign="center" alignItems="center">
 				<Typography
 					variant="h5"

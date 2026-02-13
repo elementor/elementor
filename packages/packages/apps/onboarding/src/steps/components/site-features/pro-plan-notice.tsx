@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useCallback } from 'react';
 import { InfoCircleIcon } from '@elementor/icons';
 import type { Theme } from '@elementor/ui';
-import { Box, Button, styled, Typography } from '@elementor/ui';
+import { Box, Button, Stack, styled, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 const COMPARE_PLANS_URL = 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash';
@@ -20,7 +20,8 @@ const ProPlanNoticeRoot = styled( Box )( ( { theme } ) => ( {
 	borderRadius: theme.spacing( 1 ),
 	backgroundColor: PRO_PLAN_NOTICE_BG,
 	[ theme.breakpoints.down( 'sm' ) ]: {
-		marginBottom: theme.spacing( 10 ),
+		flexDirection: 'column',
+		justifyContent: 'center',
 	},
 } ) );
 
@@ -31,21 +32,30 @@ export function ProPlanNotice() {
 
 	return (
 		<ProPlanNoticeRoot>
-			<InfoCircleIcon
+			<Stack
 				sx={ ( theme: Theme ) => ( {
-					fontSize: theme.spacing( 2.5 ),
-					color: 'text.secondary',
-				} ) }
-			/>
-			<Typography
-				variant="body2"
-				color="text.secondary"
-				sx={ ( theme: Theme ) => ( {
-					fontSize: theme.spacing( 1.625 ),
+					display: 'flex',
+					flexDirection: 'row',
+					gap: theme.spacing( 1.5 ),
+					alignItems: 'center',
 				} ) }
 			>
-				{ PRO_PLAN_NOTICE_TEXT }
-			</Typography>
+				<InfoCircleIcon
+					sx={ ( theme: Theme ) => ( {
+						fontSize: theme.spacing( 2.5 ),
+						color: 'text.secondary',
+					} ) }
+				/>
+				<Typography
+					variant="body2"
+					color="text.secondary"
+					sx={ ( theme: Theme ) => ( {
+						fontSize: theme.spacing( 1.625 ),
+					} ) }
+				>
+					{ PRO_PLAN_NOTICE_TEXT }
+				</Typography>
+			</Stack>
 			<Button
 				variant="text"
 				size="small"

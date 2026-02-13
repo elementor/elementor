@@ -18,7 +18,6 @@ const LAYOUT_RATIOS: Record< ImageLayout, { left: number; right: number } > = {
 
 const LAYOUT_GAP = 4;
 const LAYOUT_PADDING = 4;
-const LAYOUT_PADDING_SM = 20;
 const LAYOUT_TRANSITION_MS = 300;
 const LEFT_PANEL_CONTENT_WIDTH = 386;
 const LEFT_PANEL_PADDING_X = 80;
@@ -48,7 +47,6 @@ const SplitLayoutRoot = styled( Box, {
 		transition: `grid-template-columns ${ LAYOUT_TRANSITION_MS }ms ease`,
 		[ `@media (max-width: ${ hideImageBreakpoint }px)` ]: {
 			gridTemplateColumns: '1fr',
-			padding: LAYOUT_PADDING_SM,
 			'& > *:last-child': {
 				display: 'none',
 			},
@@ -75,7 +73,7 @@ const LeftPanel = styled( Box, {
 		maxWidth: contentMaxWidth,
 	},
 	[ theme.breakpoints.down( 'sm' ) ]: {
-		padding: `${ LEFT_PANEL_PADDING_TOP }px 0`,
+		padding: `${ LEFT_PANEL_PADDING_TOP }px ${ theme.spacing( 2 ) }`,
 		gap: LEFT_PANEL_GAP / 2,
 		'& > *': {
 			maxWidth: 'none',

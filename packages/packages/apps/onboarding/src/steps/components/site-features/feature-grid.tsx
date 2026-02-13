@@ -156,7 +156,8 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick, onExplor
 				display: 'grid',
 				gridTemplateColumns: {
 					xs: 'repeat(3, 1fr)',
-					sm: 'repeat(5, 1fr)',
+					sm: 'repeat(4, 1fr)',
+					md: 'repeat(5, 1fr)',
 				},
 				gap: 2,
 				width: '100%',
