@@ -86,6 +86,8 @@ class Module extends BaseModule {
 				'dashboard' => admin_url(),
 				'editor' => admin_url( 'edit.php?post_type=elementor_library' ),
 				'connect' => $this->get_connect_url(),
+				'comparePlans' => apply_filters( 'elementor/e-onboarding/compare-plans-url', 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash' ),
+				'exploreFeatures' => apply_filters( 'elementor/e-onboarding/explore-features-url', 'https://elementor.com/features/?utm_source=onboarding&utm_medium=wp-dash' ),
 			],
 		] );
 	}

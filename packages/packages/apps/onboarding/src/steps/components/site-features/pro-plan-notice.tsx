@@ -5,7 +5,7 @@ import type { Theme } from '@elementor/ui';
 import { Box, Button, Stack, styled, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-const COMPARE_PLANS_URL = 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash';
+import { useOnboarding } from '../../../hooks/use-onboarding';
 
 const PRO_PLAN_NOTICE_BG = 'rgba(250, 228, 250, 0.6)';
 
@@ -26,9 +26,12 @@ const ProPlanNoticeRoot = styled( Box )( ( { theme } ) => ( {
 } ) );
 
 export function ProPlanNotice() {
+	const { urls } = useOnboarding();
+	const comparePlansUrl = urls.comparePlans;
+
 	const handleComparePlansClick = useCallback( () => {
-		window.open( COMPARE_PLANS_URL, '_blank' );
-	}, [] );
+		window.open( comparePlansUrl, '_blank' );
+	}, [ comparePlansUrl ] );
 
 	return (
 		<ProPlanNoticeRoot>

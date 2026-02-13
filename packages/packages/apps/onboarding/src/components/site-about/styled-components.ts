@@ -15,19 +15,6 @@ export const OptionCardRoot = styled( ButtonBase )( ( { theme } ) => ( {
 	transition: 'border-color 150ms ease, background-color 150ms ease',
 } ) );
 
-export const CheckBadge = styled( Box )( ( { theme } ) => ( {
-	position: 'absolute',
-	top: -8,
-	insetInlineEnd: -8,
-	width: 18,
-	height: 18,
-	borderRadius: '50%',
-	backgroundColor: theme.palette.text.primary,
-	display: 'flex',
-	alignItems: 'center',
-	justifyContent: 'center',
-} ) );
-
 export const CardGrid = styled( Box )( ( { theme } ) => ( {
 	display: 'grid',
 	gridTemplateColumns: 'repeat(4, 132px)',

@@ -46,6 +46,8 @@ interface OnboardingConfig {
 		dashboard: string;
 		editor: string;
 		connect: string;
+		comparePlans?: string;
+		exploreFeatures?: string;
 	};
 }
 
@@ -56,6 +58,11 @@ const DEFAULT_STEPS = [
 	{ id: 'theme_selection', label: 'Theme selection', type: 'single' as const },
 	{ id: 'site_features', label: 'Site features', type: 'multiple' as const },
 ];
+
+export const DEFAULT_TEST_URLS = {
+	exploreFeatures: 'https://elementor.com/features/?utm_source=onboarding&utm_medium=wp-dash',
+	comparePlans: 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash',
+} as const;
 
 const defaultConfig: OnboardingConfig = {
 	version: '1.0.0',
@@ -74,6 +81,7 @@ const defaultConfig: OnboardingConfig = {
 		dashboard: 'https://test.local/wp-admin/',
 		editor: 'https://test.local/editor',
 		connect: 'https://test.local/connect',
+		...DEFAULT_TEST_URLS,
 	},
 };
 

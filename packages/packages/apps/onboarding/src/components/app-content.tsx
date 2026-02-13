@@ -158,7 +158,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 			case StepId.EXPERIENCE_LEVEL:
 				return <ExperienceLevel onComplete={ handleContinue } />;
 			case StepId.SITE_FEATURES:
-				return <SiteFeatures onComplete={ handleContinue } />;
+				return <SiteFeatures />;
 			default:
 				return <Box sx={ { flex: 1, width: '100%' } } />;
 		}

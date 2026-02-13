@@ -18,12 +18,6 @@ import { __ } from '@wordpress/i18n';
 import { useOnboarding } from '../../hooks/use-onboarding';
 import { FeatureGrid, type FeatureOption, ProPlanNotice } from '../components/site-features';
 
-interface SiteFeaturesProps {
-	onComplete?: ( choice: Record< string, unknown > ) => void;
-}
-
-const EXPLORE_FEATURES_URL = 'https://elementor.com/features/?utm_source=onboarding&utm_medium=wp-dash';
-
 export const FEATURE_OPTIONS: FeatureOption[] = [
 	{
 		id: 'posts',
@@ -86,8 +80,9 @@ const CORE_FEATURE_IDS = new Set( FEATURE_OPTIONS.flatMap( ( option ) => ( optio
 const STEP_TITLE = __( 'What do you want to include in your site?', 'elementor' );
 const STEP_SUBTITLE = __( "We'll use this to tailor suggestions for you.", 'elementor' );
 
-export function SiteFeatures( {}: SiteFeaturesProps ) {
-	const { choices, actions } = useOnboarding();
+export function SiteFeatures() {
+	const { choices, actions, urls } = useOnboarding();
+	const exploreFeaturesUrl = urls.exploreFeatures;
 
 	const storedProFeatures = useMemo( () => ( choices.site_features as string[] ) || [], [ choices.site_features ] );
 
@@ -113,8 +108,8 @@ export function SiteFeatures( {}: SiteFeaturesProps ) {
 	);
 
 	const handleExploreMoreClick = useCallback( () => {
-		window.open( EXPLORE_FEATURES_URL, '_blank' );
-	}, [] );
+		window.open( exploreFeaturesUrl, '_blank' );
+	}, [ exploreFeaturesUrl ] );
 
 	return (
 		<Stack
@@ -128,11 +123,7 @@ export function SiteFeatures( {}: SiteFeaturesProps ) {
 			} ) }
 		>
 			<Stack spacing={ 1 } textAlign="center" alignItems="center">
-				<Typography
-					variant="h5"
-					align="center"
-					sx={ { fontWeight: 500 } }
-				>
+				<Typography variant="h5" align="center" fontWeight={ 500 }>
 					{ STEP_TITLE }
 				</Typography>
 				<Typography variant="body1" color="text.secondary">

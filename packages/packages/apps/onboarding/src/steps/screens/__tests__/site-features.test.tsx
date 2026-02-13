@@ -1,7 +1,7 @@
 /* eslint-disable testing-library/no-test-id-queries */
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 
-import { mockFetch, renderApp, setupOnboardingTests } from '../../../__tests__/test-utils';
+import { DEFAULT_TEST_URLS, mockFetch, renderApp, setupOnboardingTests } from '../../../__tests__/test-utils';
 import { FEATURE_OPTIONS } from '../site-features';
 
 const SITE_FEATURES_PROGRESS = {
@@ -17,8 +17,6 @@ const FINISH_BUTTON_LABEL = 'Finish';
 const USER_CHOICES_ENDPOINT = 'user-choices';
 const PRO_PLAN_NOTICE_TEXT = 'Some features you selected are available in Pro plan.';
 const COMPARE_PLANS_BUTTON_LABEL = 'Compare plans';
-const FEATURES_URL = 'https://elementor.com/features/?utm_source=onboarding&utm_medium=wp-dash';
-const PRICING_URL = 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash';
 const TARGET_BLANK = '_blank';
 
 const getFirstProOption = () => {
@@ -175,7 +173,7 @@ describe( 'SiteFeatures', () => {
 
 			fireEvent.click( screen.getByRole( 'button', { name: EXPLORE_MORE_LABEL } ) );
 
-			expect( openSpy ).toHaveBeenCalledWith( FEATURES_URL, TARGET_BLANK );
+			expect( openSpy ).toHaveBeenCalledWith( DEFAULT_TEST_URLS.exploreFeatures, TARGET_BLANK );
 			openSpy.mockRestore();
 		} );
 
@@ -190,7 +188,7 @@ describe( 'SiteFeatures', () => {
 
 			fireEvent.click( screen.getByRole( 'button', { name: COMPARE_PLANS_BUTTON_LABEL } ) );
 
-			expect( openSpy ).toHaveBeenCalledWith( PRICING_URL, TARGET_BLANK );
+			expect( openSpy ).toHaveBeenCalledWith( DEFAULT_TEST_URLS.comparePlans, TARGET_BLANK );
 			openSpy.mockRestore();
 		} );
 	} );

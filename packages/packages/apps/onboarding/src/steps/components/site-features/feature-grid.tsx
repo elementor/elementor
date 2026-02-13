@@ -3,6 +3,8 @@ import { ArrowRightIcon, CheckIcon, CrownFilledIcon } from '@elementor/icons';
 import { Box, Chip, styled, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { SelectionBadge } from '../../../components/ui/selection-badge';
+
 export interface FeatureOption {
 	id: string;
 	label: string;
@@ -21,22 +23,12 @@ interface FeatureCardProps {
 	isCore?: boolean;
 }
 
-interface SelectionBadgeProps {
-	isPro: boolean;
-}
-
 interface FeatureGridProps {
 	options: FeatureOption[];
 	selectedValues: string[];
 	onFeatureClick: ( id: string ) => void;
 	onExploreMoreClick: () => void;
 }
-
-const BUILT_IN_CHIP_LABEL = __( 'Built-in', 'elementor' );
-
-const SELECTION_BADGE_SIZE = 18;
-const SELECTION_BADGE_OFFSET = -6;
-const SELECTION_BADGE_ICON_SIZE = 14;
 
 const EXPLORE_MORE_OPTION: ExploreMoreOption = {
 	id: 'explore_more',
@@ -64,25 +56,6 @@ const BuiltInChip = styled( Chip )( ( { theme } ) => ( {
 	},
 } ) );
 
-const SelectionBadge = styled( Box, {
-	shouldForwardProp: ( prop ) => 'isPro' !== prop,
-} )< SelectionBadgeProps >( ( { theme, isPro } ) => ( {
-	position: 'absolute',
-	top: SELECTION_BADGE_OFFSET,
-	right: SELECTION_BADGE_OFFSET,
-	display: 'flex',
-	alignItems: 'center',
-	justifyContent: 'center',
-	width: SELECTION_BADGE_SIZE,
-	height: SELECTION_BADGE_SIZE,
-	borderRadius: '50%',
-	backgroundColor: isPro ? theme.palette.promotion.main : theme.palette.text.primary,
-	color: theme.palette.common.white,
-	'& .MuiSvgIcon-root': {
-		fontSize: SELECTION_BADGE_ICON_SIZE,
-	},
-} ) );
-
 const FeatureCard = styled( Box, {
 	shouldForwardProp: ( prop ) => ! [ 'isSelected', 'isExploreMore', 'isCore' ].includes( prop as string ),
 } )< FeatureCardProps >( ( { theme, isSelected, isExploreMore, isCore } ) => ( {
@@ -95,7 +68,7 @@ const FeatureCard = styled( Box, {
 	minHeight: theme.spacing( 12 ),
 	padding: theme.spacing( 2 ),
 	borderRadius: theme.spacing( 1 ),
-	border: isSelected ? '2px solid #1F2124' : `1px solid ${ theme.palette.divider }`,
+	border: isSelected ? `2px solid ${ theme.palette.text.primary }` : `1px solid ${ theme.palette.divider }`,
 	cursor: isCore ? 'default' : 'pointer',
 	transition: 'border-color 0.2s ease, background-color 0.2s ease',
 	...( ! isCore && {
@@ -187,11 +160,9 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick, onExplor
 						onKeyDown={ handleKeyDownEvent }
 						aria-pressed={ isCore ? undefined : isSelected }
 					>
-						{ isCore && <BuiltInChip label={ BUILT_IN_CHIP_LABEL } size="small" /> }
+						{ isCore && <BuiltInChip label={ __( 'Built-in', 'elementor' ) } size="small" /> }
 						{ isSelected && (
-							<SelectionBadge isPro={ option.isPro }>
-								<BadgeIcon />
-							</SelectionBadge>
+							<SelectionBadge icon={ BadgeIcon } variant={ option.isPro ? 'pro' : 'default' } />
 						) }
 						<Box className="feature-icon" sx={ { mb: 1 } }>
 							<Icon fontSize="medium" />

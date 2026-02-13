@@ -74,7 +74,7 @@ function getEmptyState(): OnboardingState {
 		isConnected: false,
 		isGuest: false,
 		userName: '',
-		urls: { dashboard: '', editor: '', connect: '' },
+		urls: { dashboard: '', editor: '', connect: '', comparePlans: '', exploreFeatures: '' },
 	};
 }
 
@@ -107,7 +107,7 @@ function buildStateFromConfig(
 		isConnected: config.isConnected ?? false,
 		isGuest: false,
 		userName: config.userName ?? '',
-		urls: config.urls ?? { dashboard: '', editor: '', connect: '' },
+		urls: config.urls ?? { dashboard: '', editor: '', connect: '', comparePlans: '', exploreFeatures: '' },
 	};
 }
 

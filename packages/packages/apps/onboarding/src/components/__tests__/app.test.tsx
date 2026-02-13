@@ -47,6 +47,8 @@ interface OnboardingConfig {
 		dashboard: string;
 		editor: string;
 		connect: string;
+		comparePlans?: string;
+		exploreFeatures?: string;
 	};
 }
 
@@ -93,6 +95,8 @@ const defaultConfig: OnboardingConfig = {
 		dashboard: 'https://test.local/wp-admin/',
 		editor: 'https://test.local/editor',
 		connect: 'https://test.local/connect',
+		comparePlans: 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash',
+		exploreFeatures: 'https://elementor.com/features/?utm_source=onboarding&utm_medium=wp-dash',
 	},
 };
 
