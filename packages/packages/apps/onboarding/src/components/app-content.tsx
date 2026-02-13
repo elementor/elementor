@@ -171,7 +171,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 				return <SiteAbout />;
 			case StepId.EXPERIENCE_LEVEL:
 				return <ExperienceLevel onComplete={ handleContinue } />;
-      case StepId.THEME_SELECTION:
+			case StepId.THEME_SELECTION:
 				return <ThemeSelection onComplete={ handleContinue } />;
 			case StepId.SITE_FEATURES:
 				return <SiteFeatures />;
