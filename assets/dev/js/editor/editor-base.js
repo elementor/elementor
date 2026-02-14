@@ -422,6 +422,23 @@ export default class EditorBase extends Marionette.Application {
 		return $e.components.get( 'document' ).utils.findContainerById( id );
 	}
 
+	getContainerByKeyValue( args ) {
+		const { key, value, parent = this.getPreviewView() } = args;
+
+		if ( this.getPreviewContainer().model.get( key ) === value ) {
+			return this.getPreviewContainer();
+		}
+
+		const view = $e.components.get( 'document' ).utils.findViewRecursive(
+			parent.children,
+			key,
+			value,
+			false,
+		);
+
+		return view ? view[ 0 ]?.getContainer() : null;
+	}
+
 	initComponents() {
 		const EventManager = require( 'elementor-utils/hooks' ),
 			DynamicTags = require( 'elementor-dynamic-tags/manager' ),

@@ -2,11 +2,15 @@
 
 namespace Elementor\Modules\Components\Transformers;
 
+use Elementor\Modules\AtomicWidgets\Elements\Base\Render_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Plugin;
 use Elementor\Core\Base\Document as Component_Document;
 use Elementor\Modules\Components\Components_Repository;
+use Elementor\Modules\Components\Transformers\Overridable_Transformer;
+use Elementor\Modules\Components\Utils\Format_Component_Elements_Id;
+use Elementor\Modules\Components\Widgets\Component_Instance;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -27,8 +31,10 @@ class Component_Instance_Transformer extends Transformer_Base {
 			return '';
 		}
 
+		$instance_element_id = Render_Context::get( Component_Instance::class )['instance_id'] ?? '';
+
 		self::$rendering_stack[] = $component_id;
-		$content = $this->get_rendered_content( $component_id );
+		$content = $this->get_rendered_content( $component_id, $instance_element_id );
 		array_pop( self::$rendering_stack );
 
 		return $content;
@@ -38,7 +44,7 @@ class Component_Instance_Transformer extends Transformer_Base {
 		return in_array( $component_id, self::$rendering_stack, true );
 	}
 
-	private function get_rendered_content( int $component_id ): string {
+	private function get_rendered_content( int $component_id, ?string $instance_element_id ): string {
 		$should_show_autosave = is_preview();
 		$component = $this->get_repository()->get( $component_id, $should_show_autosave );
 
@@ -52,12 +58,14 @@ class Component_Instance_Transformer extends Transformer_Base {
 
 		$data = apply_filters( 'elementor/frontend/builder_content_data', $data, $component_id );
 
+		$data = Format_Component_Elements_Id::format( $data, [ $instance_element_id ] );
+
 		$content = '';
 
 		if ( ! empty( $data ) ) {
 			ob_start();
 
-			$component->print_elements( $data );
+			$component->print_elements_without_cache( $data );
 
 			$content = ob_get_clean();
 
