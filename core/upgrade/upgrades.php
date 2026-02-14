@@ -868,6 +868,17 @@ class Upgrades {
 		delete_option( 'elementor_experiment-taxonomy-filter' );
 	}
 
+	/**
+	 * Upgrade Elementor 3.35.0 - Merge Nested Elements into Container.
+	 *
+	 * @since 3.35.0
+	 * @static
+	 * @access public
+	 */
+	public static function _v_3_35_0() {
+		delete_option( Experiments_Manager::OPTION_PREFIX . 'nested-elements' );
+	}
+
 	private static function maybe_add_gap_control_data( $option_name ) {
 		$kit_id = get_option( $option_name );
 
