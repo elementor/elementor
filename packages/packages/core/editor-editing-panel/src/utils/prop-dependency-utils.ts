@@ -160,7 +160,10 @@ function handleUnmetCondition( props: {
 	elementId: string;
 } ) {
 	const { failingDependencies, dependency, elementValues, defaultValue, elementId } = props;
-	const newValue = failingDependencies.find( ( term ) => term.newValue )?.newValue ?? null;
+	const termWithNewValue = failingDependencies.find(
+		( term ): term is Dependency => 'newValue' in term && !! term.newValue
+	) as Dependency | undefined;
+	const newValue = termWithNewValue?.newValue ?? null;
 	const currentValue = extractValue( dependency.split( '.' ), elementValues ) ?? defaultValue;
 
 	savePreviousValueToStorage( {
