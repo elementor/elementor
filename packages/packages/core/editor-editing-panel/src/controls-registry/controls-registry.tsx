@@ -2,6 +2,7 @@ import {
 	ChipsControl,
 	type ControlComponent,
 	DateTimeControl,
+	EmailFormActionControl,
 	HtmlTagControl,
 	ImageControl,
 	InlineEditingControl,
@@ -23,6 +24,7 @@ import { type ControlLayout } from '@elementor/editor-elements';
 import {
 	booleanPropTypeUtil,
 	DateTimePropTypeUtil,
+	emailPropTypeUtil,
 	htmlV2PropTypeUtil,
 	imagePropTypeUtil,
 	imageSrcPropTypeUtil,
@@ -63,6 +65,7 @@ const controlTypes = {
 	toggle: { component: ToggleControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	'date-time': { component: DateTimeControl, layout: 'full', propTypeUtil: DateTimePropTypeUtil },
 	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: htmlV2PropTypeUtil },
+	email: { component: EmailFormActionControl, layout: 'custom', propTypeUtil: emailPropTypeUtil },
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;
