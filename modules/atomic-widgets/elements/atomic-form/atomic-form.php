@@ -64,8 +64,8 @@ class Atomic_Form extends Atomic_Element_Base {
 				'operator' => 'contains',
 				'path' => [ 'actions-after-submit' ],
 				'value' => 'email',
+				'effect' => 'hide',
 			] )
-			->should_hide()
 			->get();
 
 		return [

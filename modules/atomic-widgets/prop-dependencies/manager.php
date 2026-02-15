@@ -36,7 +36,8 @@ class Manager {
 	 *             operator: string,
 	 *             path: array<string>,
 	 *             value?: mixed,
-	 *             newValue?: array
+	 *             newValue?: array,
+	 *             effect?: 'hide'|'disable'
 	 *         },
 	 *         shouldHide?: bool
 	 *     }
@@ -81,6 +82,7 @@ class Manager {
 	 *  path: array<string>,
 	 *  value?: mixed,
 	 *  newValue?: array,
+	 *  effect?: 'hide'|'disable'
 	 * }
 	 * @return self
 	 */
@@ -114,6 +116,7 @@ class Manager {
 			'nestedPath' => $config['nestedPath'] ?? null,
 			'value' => $config['value'] ?? null,
 			'newValue' => $config['newValue'] ?? null,
+			'effect' => $config['effect'] ?? 'disable',
 		];
 
 		if ( empty( $this->dependencies ) ) {
