@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { PropKeyProvider, PropProvider, type SetValueMeta, useBoundProp } from '@elementor/editor-controls';
+import { PropKeyProvider, PropProvider, type SetValueMeta } from '@elementor/editor-controls';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
 	type ElementID,
@@ -32,24 +32,6 @@ type SettingsFieldProps = {
 };
 
 const HISTORY_DEBOUNCE_WAIT = 800;
-
-function ConditionalContent( { children }: { children: React.ReactNode } ) {
-	const { propType } = useBoundProp();
-	const {
-		element: { id: elementId },
-		elementType: { propsSchema },
-	} = useElement();
-
-	const elementSettingValues = useElementSettings< PropValue >( elementId, Object.keys( propsSchema ) );
-
-	const dependenciesResult = isDependencyMet( propType?.dependencies, elementSettingValues );
-	const shouldHide =
-		! dependenciesResult.isMet &&
-		! isDependency( dependenciesResult.failingDependencies[ 0 ] ) &&
-		dependenciesResult.failingDependencies[ 0 ]?.effect === 'hide';
-
-	return ! shouldHide && children;
-}
 
 export const SettingsField = ( { bind, children, propDisplayName }: SettingsFieldProps ) => {
 	const {
@@ -83,11 +65,20 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 
 	const isDisabled = ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, elementSettingValues ).isMet;
 
+	const propTypeToBind = propsSchema[ bind ];
+	const dependenciesResult = isDependencyMet( propTypeToBind?.dependencies, elementSettingValues );
+	const shouldHide =
+		! dependenciesResult.isMet &&
+		! isDependency( dependenciesResult.failingDependencies[ 0 ] ) &&
+		dependenciesResult.failingDependencies[ 0 ]?.effect === 'hide';
+
+	if ( shouldHide ) {
+		return null;
+	}
+
 	return (
 		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>
-			<PropKeyProvider bind={ bind }>
-				<ConditionalContent>{ children }</ConditionalContent>
-			</PropKeyProvider>
+			<PropKeyProvider bind={ bind }>{ children }</PropKeyProvider>
 		</PropProvider>
 	);
 };
