@@ -213,6 +213,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 								value={ replay }
 								onChange={ ( v ) => updateInteraction( { replay: v } ) }
 								disabled={ true }
+								anchorRef={ containerRef }
 							/>
 						</Field>
 					) }
