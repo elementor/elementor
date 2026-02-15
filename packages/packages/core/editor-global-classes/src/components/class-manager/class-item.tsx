@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useRef, useState } from 'react';
+import { createElement, useRef, useState } from 'react';
 import { validateStyleLabel } from '@elementor/editor-styles-repository';
 import { EditableField, EllipsisWithTooltip, MenuListItem, useEditable, WarningInfotip } from '@elementor/editor-ui';
 import { DotsVerticalIcon } from '@elementor/icons';
@@ -32,6 +32,12 @@ type ClassItemProps = React.PropsWithChildren< {
 	disabled?: boolean;
 	sortableTriggerProps: SortableTriggerProps;
 	showSortIndicator?: boolean;
+	menuActions?: Array< {
+		name: string;
+		icon?: React.ComponentType;
+		color?: string;
+		onClick: ( id: string ) => void;
+	} >;
 } >;
 
 export const ClassItem = ( {
@@ -42,6 +48,7 @@ export const ClassItem = ( {
 	disabled,
 	sortableTriggerProps,
 	showSortIndicator,
+	menuActions = [],
 }: ClassItemProps ) => {
 	const itemRef = useRef< HTMLElement >( null );
 	const {
@@ -137,6 +144,20 @@ export const ClassItem = ( {
 						{ __( 'Rename', 'elementor' ) }
 					</Typography>
 				</MenuListItem>
+				{ menuActions.map( ( action, index ) => (
+					<MenuListItem
+						key={ index }
+						onClick={ () => {
+							popupState.close();
+							action.onClick( id );
+						} }
+					>
+						<Typography variant="caption" sx={ { color: action.color || 'text.primary', gap: 1, display: 'flex', alignItems: 'center' } }>
+							{ action.icon && createElement( action.icon, { fontSize: 'inherit' } ) }
+							{ action.name }
+						</Typography>
+					</MenuListItem>
+				) ) }
 				<MenuListItem
 					onClick={ () => {
 						popupState.close();

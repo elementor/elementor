@@ -19,9 +19,15 @@ import { SortableItem, SortableProvider } from './sortable';
 
 type GlobalClassesListProps = {
 	disabled?: boolean;
+	menuActions?: ( id: string ) => Array< {
+		name: string;
+		icon?: React.ComponentType;
+		color?: string;
+		onClick: ( id: string ) => void;
+	} >;
 };
 
-export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
+export const GlobalClassesList = ( { disabled, menuActions }: GlobalClassesListProps ) => {
 	const {
 		search: { debouncedValue: searchValue },
 	} = useSearchAndFilters();
@@ -79,36 +85,37 @@ export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
 								if ( isDragged && ! draggedItemId ) {
 									setDraggedItemId( id );
 								}
-								return (
-									<ClassItem
-										id={ id }
-										label={ label }
-										renameClass={ ( newLabel: string ) => {
-											trackGlobalClasses( {
-												event: 'classRenamed',
-												classId: id,
-												oldValue: label,
-												newValue: newLabel,
-												source: 'class-manager',
-											} );
-											dispatch(
-												slice.actions.update( {
-													style: {
-														id,
-														label: newLabel,
-													},
-												} )
-											);
-										} }
-										selected={ isDragged }
-										disabled={ disabled || isDragPlaceholder }
-										sortableTriggerProps={ {
-											...triggerProps,
-											style: triggerStyle,
-										} }
-										showSortIndicator={ allowSorting }
-									/>
-								);
+							return (
+								<ClassItem
+									id={ id }
+									label={ label }
+									renameClass={ ( newLabel: string ) => {
+										trackGlobalClasses( {
+											event: 'classRenamed',
+											classId: id,
+											oldValue: label,
+											newValue: newLabel,
+											source: 'class-manager',
+										} );
+										dispatch(
+											slice.actions.update( {
+												style: {
+													id,
+													label: newLabel,
+												},
+											} )
+										);
+									} }
+									selected={ isDragged }
+									disabled={ disabled || isDragPlaceholder }
+									sortableTriggerProps={ {
+										...triggerProps,
+										style: triggerStyle,
+									} }
+									showSortIndicator={ allowSorting }
+									menuActions={ menuActions?.( id ) || [] }
+								/>
+							);
 							} }
 						</SortableItem>
 					) ) }
