@@ -125,74 +125,77 @@ jobs:
             ${{ env.CHANGELOG_FILE }}
           body_path: ${{ env.CHANGELOG_FILE }}
       - name: Validate Build Files
-        if: github.repository_owner == 'elementor'
+        # if: github.repository_owner == 'elementor'
         env:
           PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
           CHANNEL: ${{ env.CHANNEL }}
           PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
         run: |
-            bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
-      - name: Publish to WordPress.org SVN
-        if: github.repository_owner == 'elementor' && github.event.inputs.dry_run == 'false'
-        env:
-          PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
-          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-          CHANNEL: ${{ env.CHANNEL }}
-          PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
-        run: |
-          bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
-      - name: Release Dev From Beta
-        if: env.CHANNEL == 'beta' && github.event.inputs.dry_run == 'false'
-        uses: ./.github/workflows/release-dev-from-beta
-        with:
-          BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
-          PLUGIN_NAME: ${{ github.event.repository.name }}
-          REPOSITORY_OWNER: ${{ github.repository_owner }}
-          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-          DRY_RUN: ${{ github.event.inputs.dry_run }}
-          PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
+          echo "PLUGIN_VERSION: ${{ env.RELEASE_NAME }}"
+          echo "CHANNEL: ${{ env.CHANNEL }}"
+          echo "PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}"
+          bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
+      # - name: Publish to WordPress.org SVN
+      #   if: github.repository_owner == 'elementor' && github.event.inputs.dry_run == 'false'
+      #   env:
+      #     PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
+      #     SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+      #     SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+      #     CHANNEL: ${{ env.CHANNEL }}
+      #     PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
+      #   run: |
+      #     bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
+      # - name: Release Dev From Beta
+      #   if: env.CHANNEL == 'beta' && github.event.inputs.dry_run == 'false'
+      #   uses: ./.github/workflows/release-dev-from-beta
+      #   with:
+      #     BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
+      #     PLUGIN_NAME: ${{ github.event.repository.name }}
+      #     REPOSITORY_OWNER: ${{ github.repository_owner }}
+      #     SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+      #     SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+      #     DRY_RUN: ${{ github.event.inputs.dry_run }}
+      #     PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
 
-      - name: Post To Slack Created Release
-        if: github.event.inputs.dry_run == 'false'
-        uses : ./.github/workflows/post-to-slack
-        with:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
-          SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASE }}
-          PAYLOAD: |
-                    {
-                      "blocks": [
-                        {
-                          "type": "section",
-                          "text": {
-                            "type": "mrkdwn",
-                            "text": "Hi All :smile:\n\nWe just released *Elementor*\n`${{ env.RELEASE_NAME }}`"
-                          }
-                        },
-                        {
-                          "type": "divider"
-                        },
-                        {
-                          "type": "section",
-                          "text": {
-                            "type": "mrkdwn",
-                            "text": "GitHub Release *${{ env.RELEASE_NAME }}* \nCreated by ${{ github.actor }}"
-                          },
-                          "accessory": {
-                            "type": "button",
-                            "text": {
-                              "type": "plain_text",
-                              "text": "Open :point_left:",
-                              "emoji": true
-                            },
-                            "value": "open-release",
-                            "url": "https://github.com/${{ github.repository }}/releases/tag/${{ env.RELEASE_NAME }}",
-                            "action_id": "button-action"
-                          }
-                        }
-                      ]
-                    }
+      # - name: Post To Slack Created Release
+      #   if: github.event.inputs.dry_run == 'false'
+      #   uses : ./.github/workflows/post-to-slack
+      #   with:
+      #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+      #     SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASE }}
+      #     PAYLOAD: |
+      #               {
+      #                 "blocks": [
+      #                   {
+      #                     "type": "section",
+      #                     "text": {
+      #                       "type": "mrkdwn",
+      #                       "text": "Hi All :smile:\n\nWe just released *Elementor*\n`${{ env.RELEASE_NAME }}`"
+      #                     }
+      #                   },
+      #                   {
+      #                     "type": "divider"
+      #                   },
+      #                   {
+      #                     "type": "section",
+      #                     "text": {
+      #                       "type": "mrkdwn",
+      #                       "text": "GitHub Release *${{ env.RELEASE_NAME }}* \nCreated by ${{ github.actor }}"
+      #                     },
+      #                     "accessory": {
+      #                       "type": "button",
+      #                       "text": {
+      #                         "type": "plain_text",
+      #                         "text": "Open :point_left:",
+      #                         "emoji": true
+      #                       },
+      #                       "value": "open-release",
+      #                       "url": "https://github.com/${{ github.repository }}/releases/tag/${{ env.RELEASE_NAME }}",
+      #                       "action_id": "button-action"
+      #                     }
+      #                   }
+      #                 ]
+      #               }
 
       - name: Determine Package Tag
         id: package-tag
@@ -211,13 +214,13 @@ jobs:
           echo "PACKAGE_VERSION=${{ env.PACKAGE_VERSION }}" >> $GITHUB_OUTPUT
           echo "PACKAGE_TAG=${{ steps.package-tag.outputs.tag }}" >> $GITHUB_OUTPUT
 
-  publish-packages:
-    needs: release
-    if: github.event.inputs.dry_run == 'false'
-    uses: ./.github/workflows/publish-packages.yml
-    with:
-      version: ${{ needs.release.outputs.PACKAGE_VERSION }}
-      tag: ${{ needs.release.outputs.PACKAGE_TAG }}
-    secrets:
-      NPMJS_CLOUD_DEVOPS_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
-      MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+  # publish-packages:
+  #   needs: release
+  #   if: github.event.inputs.dry_run == 'false'
+  #   uses: ./.github/workflows/publish-packages.yml
+  #   with:
+  #     version: ${{ needs.release.outputs.PACKAGE_VERSION }}
+  #     tag: ${{ needs.release.outputs.PACKAGE_TAG }}
+  #   secrets:
+  #     NPMJS_CLOUD_DEVOPS_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
+  #     MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
