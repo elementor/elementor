@@ -87,6 +87,7 @@ class Manager {
 				'terms' => $config['terms'],
 				'relation' => $config['relation'] ?? self::RELATION_OR,
 				'newValue' => $new_value ?? null,
+				'effect' => $config['effect'] ?? 'disable',
 			];
 			$this->dependencies['terms'][] = $term;
 

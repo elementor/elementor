@@ -19,6 +19,7 @@ export type DependencyTerm = {
 	path: string[];
 	nestedPath?: string[];
 	value: PropValue;
+	newValue?: TransformablePropValue< string >;
 	effect?: 'disable' | 'hide';
 };
 
