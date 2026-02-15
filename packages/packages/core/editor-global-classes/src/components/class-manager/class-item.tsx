@@ -24,8 +24,10 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { CssClassUsageTrigger } from '../css-class-usage/components';
+import { ClassManagerIntroduction } from './class-manager-introduction';
 import { useDeleteConfirmation } from './delete-confirmation-dialog';
 import { SortableTrigger, type SortableTriggerProps } from './sortable';
+import { StartSyncToV3Modal } from './start-sync-to-v3-modal';
 
 type ClassItemProps = React.PropsWithChildren< {
 	id: string;
@@ -60,6 +62,7 @@ export const ClassItem = ( {
 	} );
 	const [ selectedCssUsage, setSelectedCssUsage ] = useState( '' );
 	const [ stopSyncConfirmation, setStopSyncConfirmation ] = useState( false );
+	const [ showSyncToV3Modal, setShowSyncToV3Modal ] = useState( false );
 	const { openDialog } = useDeleteConfirmation();
 
 	const popupState = usePopupState( {
@@ -156,19 +159,19 @@ export const ClassItem = ( {
 								</Typography>
 							</MenuListItem>
 						) }
-						{ id.charCodeAt( 0 ) % 2 !== 0 && (
-							<MenuListItem
-								sx={ { minWidth: '160px' } }
-								onClick={ () => {
-									popupState.close();
-									setStopSyncConfirmation( true );
-								} }
-							>
-								<Typography variant="caption" sx={ { color: 'text.primary' } }>
-									{ __( 'Sync to Version 3', 'elementor' ) }
-								</Typography>
-							</MenuListItem>
-						) }
+					{ id.charCodeAt( 0 ) % 2 !== 0 && (
+						<MenuListItem
+							sx={ { minWidth: '160px' } }
+							onClick={ () => {
+								popupState.close();
+								setShowSyncToV3Modal( true );
+							} }
+						>
+							<Typography variant="caption" sx={ { color: 'text.primary' } }>
+								{ __( 'Sync to Version 3', 'elementor' ) }
+							</Typography>
+						</MenuListItem>
+					) }
 					</>
 				) }
 				<MenuListItem
@@ -196,6 +199,9 @@ export const ClassItem = ( {
 					) }
 					icon={ <FlippedColorSwatchIcon color="primary" /> }
 				/>
+			) }
+			{ showSyncToV3Modal && (
+				<StartSyncToV3Modal externalOpen={ true } onExternalClose={ () => setShowSyncToV3Modal( false ) } />
 			) }
 		</>
 	);
