@@ -17,7 +17,7 @@ class Schema_Resolver {
 		'style_variants' => 'variants',
 		'style_props' => 'props',
 		'interactions_items' => 'items',
-		'interaction' => 'interactions',
+		'interactions' => 'interactions',
 	];
 
 	private static ?string $widget_context = null;
