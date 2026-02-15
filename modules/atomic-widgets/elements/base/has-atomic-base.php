@@ -302,6 +302,21 @@ trait Has_Atomic_Base {
 		);
 	}
 
+	protected function set_render_context(array $context_pairs): void {
+		foreach ($context_pairs as $context_pair) {
+			$context_key = $context_pair['context_key'] ?? static::class;
+			$context = $context_pair['context'];
+			Render_Context::push( $context_key, $context );
+		}
+	}
+
+	protected function clear_render_context(array $context_pairs): void {
+		foreach ($context_pairs as $context_pair) {
+			$context_key = $context_pair['context_key'] ?? static::class;
+			Render_Context::pop( $context_key );
+		}
+	}
+
 	public function print_content() {
 		$defined_context = $this->define_render_context();
 
@@ -309,18 +324,11 @@ trait Has_Atomic_Base {
 			return parent::print_content();
 		}
 
-		foreach ($defined_context as $context_pair) {
-			$context_key = $context_pair['context_key'] ?? static::class;
-			$context = $context_pair['context'];
-			Render_Context::push( $context_key, $context );
-		}
+		$this->set_render_context( $defined_context );
 
 		parent::print_content();
 
-		foreach ($defined_context as $context_pair) {
-			$context_key = $context_pair['context_key'] ?? static::class;
-			Render_Context::pop( $context_key );
-		}
+		$this->clear_render_context( $defined_context );
 	}
 
 	/**
