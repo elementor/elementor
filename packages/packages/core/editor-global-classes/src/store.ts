@@ -115,53 +115,53 @@ export const slice = createSlice( {
 			state.isDirty = true;
 		},
 
-	updateMultiple( state, { payload }: PayloadAction< ModifiedLabels > ) {
-		localHistory.next( state.data );
-		Object.entries( payload ).forEach( ( [ id, { modified } ] ) => {
-			state.data.items[ id ].label = modified;
-		} );
+		updateMultiple( state, { payload }: PayloadAction< ModifiedLabels > ) {
+			localHistory.next( state.data );
+			Object.entries( payload ).forEach( ( [ id, { modified } ] ) => {
+				state.data.items[ id ].label = modified;
+			} );
 
-		state.isDirty = false;
-	},
-	updateProps(
-		state,
-		{
-			payload,
-		}: PayloadAction< {
-			id: StyleDefinitionID;
-			meta: StyleDefinitionVariant[ 'meta' ];
-			props: Props;
-			custom_css?: CustomCss | null;
-		} >
-	) {
-		const style = state.data.items[ payload.id ];
+			state.isDirty = false;
+		},
+		updateProps(
+			state,
+			{
+				payload,
+			}: PayloadAction< {
+				id: StyleDefinitionID;
+				meta: StyleDefinitionVariant[ 'meta' ];
+				props: Props;
+				custom_css?: CustomCss | null;
+			} >
+		) {
+			const style = state.data.items[ payload.id ];
 
-		if ( ! style ) {
-			throw new GlobalClassNotFoundError( { context: { styleId: payload.id } } );
-		}
+			if ( ! style ) {
+				throw new GlobalClassNotFoundError( { context: { styleId: payload.id } } );
+			}
 
-		localHistory.next( state.data );
+			localHistory.next( state.data );
 
-		const variant = getVariantByMeta( style, payload.meta );
-		let customCss = ( 'custom_css' in payload ? payload.custom_css : variant?.custom_css ) ?? null;
-		customCss = customCss?.raw ? customCss : null;
+			const variant = getVariantByMeta( style, payload.meta );
+			let customCss = ( 'custom_css' in payload ? payload.custom_css : variant?.custom_css ) ?? null;
+			customCss = customCss?.raw ? customCss : null;
 
-		if ( variant ) {
-			// mergeProps fails with Proxy objects from store, manually re-create clones
-			const variantProps = JSON.parse( JSON.stringify( variant.props ) ) as Props;
-			const payloadProps = JSON.parse( JSON.stringify( payload.props ) ) as Props;
-			variant.props = mergeProps( variantProps, payloadProps );
-			variant.custom_css = customCss;
+			if ( variant ) {
+				// mergeProps fails with Proxy objects from store, manually re-create clones
+				const variantProps = JSON.parse( JSON.stringify( variant.props ) ) as Props;
+				const payloadProps = JSON.parse( JSON.stringify( payload.props ) ) as Props;
+				variant.props = mergeProps( variantProps, payloadProps );
+				variant.custom_css = customCss;
 
-			style.variants = getNonEmptyVariants( style );
-		} else {
-			style.variants.push( { meta: payload.meta, props: payload.props, custom_css: customCss } );
-		}
+				style.variants = getNonEmptyVariants( style );
+			} else {
+				style.variants.push( { meta: payload.meta, props: payload.props, custom_css: customCss } );
+			}
 
-		state.isDirty = true;
-	},
+			state.isDirty = true;
+		},
 
-	reset( state, { payload: { context } }: PayloadAction< { context: ApiContext } > ) {
+		reset( state, { payload: { context } }: PayloadAction< { context: ApiContext } > ) {
 			if ( context === 'frontend' ) {
 				localHistory.reset();
 				state.initialData.frontend = state.data;
