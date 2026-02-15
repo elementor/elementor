@@ -143,9 +143,17 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 			Section::make()
 				->set_label( __( 'Playback', 'elementor' ) )
 				->set_items( [
+					Number_Control::bind_to( 'start_time' )
+						->set_label( esc_html__( 'Start Time (seconds)', 'elementor' ) )
+						->set_meta( [
+							'topDivider' => true,
+							'layout' => 'two-columns',
+						] ),
+					Number_Control::bind_to( 'end_time' )
+						->set_label( esc_html__( 'End Time (seconds)', 'elementor' ) ),
 					Switch_Control::bind_to( 'autoplay' )->set_label( esc_html__( 'Autoplay', 'elementor' ) ),
 					Switch_Control::bind_to( 'playsinline' )
-						->set_label( esc_html__( 'Play Inline (Mobile)', 'elementor' ) )
+						->set_label( esc_html__( 'Play on mobile', 'elementor' ) )
 						->set_meta( [ 'hideWhenDisabled' => true ] ),
 					Switch_Control::bind_to( 'mute' )->set_label( esc_html__( 'Mute', 'elementor' ) ),
 					Switch_Control::bind_to( 'loop' )->set_label( esc_html__( 'Loop', 'elementor' ) ),
@@ -155,15 +163,6 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 					Select_Control::bind_to( 'preload' )
 						->set_label( esc_html__( 'Preload', 'elementor' ) )
 						->set_options( self::format_options( self::PRELOAD_OPTIONS ) ),
-					Number_Control::bind_to( 'start_time' )
-						->set_label( esc_html__( 'Start Time (seconds)', 'elementor' ) )
-						->set_meta( [
-							'topDivider' => true,
-							'layout' => 'two-columns',
-						] ),
-
-					Number_Control::bind_to( 'end_time' )
-						->set_label( esc_html__( 'End Time (seconds)', 'elementor' ) ),
 				] ),
 			Section::make()
 				->set_label( __( 'Display', 'elementor' ) )
