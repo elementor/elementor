@@ -16,6 +16,7 @@ import {
 import { resolveDirection } from '../utils/resolve-direction';
 import { parseSizeValue } from '../utils/size-transform-utils';
 import { Direction } from './controls/direction';
+import { Effect } from './controls/effect';
 import { EffectType } from './controls/effect-type';
 import { TimeFrameIndicator } from './controls/time-frame-indicator';
 import { Field } from './field';
@@ -161,13 +162,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			offsetBottom: SizeStringValue;
 		} >
 	): void => {
-		const resolvedDirectionValue = resolveDirection(
-			'direction' in updates,
-			updates.effect,
-			updates.direction,
-			direction,
-			effect
-		);
+		const resolvedDirectionValue = resolveDirection( 'direction' in updates, updates.effect, updates.direction );
 
 		const updatedInteraction = {
 			...interaction,
@@ -202,10 +197,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 				<Grid container spacing={ 1.5 }>
 					{ TriggerControl && (
 						<Field label={ __( 'Trigger', 'elementor' ) }>
-							<TriggerControl
-								value={ trigger }
-								onChange={ ( v ) => updateInteraction( { trigger: v } ) }
-							/>
+							<TriggerControl value={ trigger } onChange={ ( v ) => updateInteraction( { trigger: v } ) }/>
 						</Field>
 					) }
 
@@ -223,12 +215,10 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 
 				<Divider />
 
-				<Grid container spacing={ 1.5 }>
-					{ EffectControl && (
-						<Field label={ __( 'Effect', 'elementor' ) }>
-							<EffectControl value={ effect } onChange={ ( v ) => updateInteraction( { effect: v } ) } />
-						</Field>
-					) }
+			<Grid container spacing={ 1.5 }>
+				<Field label={ __( 'Effect', 'elementor' ) }>
+					<Effect value={ effect } onChange={ ( v ) => updateInteraction( { effect: v } ) } />
+				</Field>
 
 					<Field label={ __( 'Type', 'elementor' ) }>
 						<EffectType value={ type } onChange={ ( v ) => updateInteraction( { type: v } ) } />
