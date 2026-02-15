@@ -232,10 +232,6 @@ class Style_Parser {
 			$style['id'] = sanitize_key( $style['id'] );
 		}
 
-		if ( isset( $style['sync_to_v3'] ) ) {
-			$style['sync_to_v3'] = (bool) $style['sync_to_v3'];
-		}
-
 		if ( ! empty( $style['variants'] ) ) {
 			foreach ( $style['variants'] as $variant_index => $variant ) {
 				$style['variants'][ $variant_index ]['props'] = $props_parser->sanitize( $variant['props'] )->unwrap();
