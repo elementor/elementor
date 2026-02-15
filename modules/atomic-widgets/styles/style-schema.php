@@ -342,6 +342,18 @@ class Style_Schema {
 				'stretch',
 			] )
 			->description( 'Defines how the browser distributes space between and around content items along the main-axis of a flex container. CSS values: center, start, end, flex-start, flex-end, left, right, normal, space-between, space-around, space-evenly, stretch' ),
+			'justify-items' => String_Prop_Type::make()->enum( [
+				'normal',
+				'stretch',
+				'center',
+				'start',
+				'end',
+				'flex-start',
+				'flex-end',
+				'left',
+				'right',
+				'anchor-center',
+			] )->description( 'Defines how the browser distributes space between and around content items along the inline axis of a grid container. CSS values: center, start, end, flex-start, flex-end, left, right' ),
 			'align-content' => String_Prop_Type::make()->enum( [
 				'center',
 				'start',
@@ -387,6 +399,7 @@ class Style_Schema {
 		return [
 			'content' => String_Prop_Type::make()->description( 'The string content for pseudo-element content property' ),
 			'appearance' => String_Prop_Type::make()->enum( [ 'none', 'auto' ] )->description( 'The appearance of the element. CSS values: none, auto' ),
+			'clip-path' => String_Prop_Type::make()->description( 'The clip-path CSS property defines a shape to be used as clipping region.' ),
 		];
 	}
 }
