@@ -133,7 +133,7 @@ export const createAnimationPreset = ( {
 	$$type: 'animation-preset-props',
 	value: {
 		effect: createString( effect ),
-		...( custom && { custom: createCustomEffect( custom ) } ),
+		...( ( custom || effect === 'custom' ) && { custom: createCustomEffect( custom ?? { keyframes: [] } ) } ),
 		type: createString( type ),
 		direction: createString( direction ?? '' ),
 		timing_config: createTimingConfig( duration, delay ),
