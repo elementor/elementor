@@ -18,11 +18,12 @@ export const ConditionalSettingsField: React.FC< {
 	const elementSettingValues = useElementSettings< PropValue >( elementId, Object.keys( propsSchema ) );
 
 	const dependenciesResult = isDependencyMet( propType?.dependencies, elementSettingValues );
-	const shouldHide = ! dependenciesResult.isMet && 
-		! isDependency( dependenciesResult.failingDependencies[ 0 ] ) && 
+	const shouldHide =
+		! dependenciesResult.isMet &&
+		! isDependency( dependenciesResult.failingDependencies[ 0 ] ) &&
 		dependenciesResult.failingDependencies[ 0 ]?.effect === 'hide';
 
-	return  ! shouldHide && children;
+	return ! shouldHide && children;
 };
 
 export function getDependencies( propType?: PropType ): PropKey[] {
