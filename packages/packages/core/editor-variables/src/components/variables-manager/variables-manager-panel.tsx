@@ -345,26 +345,11 @@ export function VariablesManagerPanel() {
 			) }
 
 			{ stopSyncConfirmation && (
-				<ConfirmationDialog open onClose={ () => setStopSyncConfirmation( null ) }>
-					<ConfirmationDialog.Title icon={ ColorFilterIcon } iconColor="secondary">
-						{ __( 'Stop syncing variable color', 'elementor' ) }
-					</ConfirmationDialog.Title>
-					<ConfirmationDialog.Content>
-						<ConfirmationDialog.ContentText>
-							{ __(
-								'This will disconnect the variable color from version 3. Existing uses on your site will automatically switch to a default color.',
-								'elementor'
-							) }
-						</ConfirmationDialog.ContentText>
-					</ConfirmationDialog.Content>
-					<ConfirmationDialog.Actions
-						onClose={ () => setStopSyncConfirmation( null ) }
-						onConfirm={ () => handleStopSyncWithConfirmation( stopSyncConfirmation ) }
-						cancelLabel={ __( 'Cancel', 'elementor' ) }
-						confirmLabel={ __( 'Got it', 'elementor' ) }
-						color="secondary"
-					/>
-				</ConfirmationDialog>
+				<StopSyncConfirmationDialog
+					open
+					onClose={ () => setStopSyncConfirmation( null ) }
+					onConfirm={ () => handleStopSyncWithConfirmation( stopSyncConfirmation ) }
+				/>
 			) }
 
 			{ isSaveChangesDialogOpen && (
@@ -419,3 +404,32 @@ const usePreventUnload = ( isDirty: boolean ) => {
 		};
 	}, [ isDirty ] );
 };
+
+type StopSyncConfirmationDialogProps = {
+	open: boolean;
+	onClose: () => void;
+	onConfirm: () => void;
+};
+
+const StopSyncConfirmationDialog = ( { open, onClose, onConfirm }: StopSyncConfirmationDialogProps ) => (
+	<ConfirmationDialog open={ open } onClose={ onClose }>
+		<ConfirmationDialog.Title icon={ ColorFilterIcon } iconColor="secondary">
+			{ __( 'Stop syncing variable color', 'elementor' ) }
+		</ConfirmationDialog.Title>
+		<ConfirmationDialog.Content>
+			<ConfirmationDialog.ContentText>
+				{ __(
+					'This will disconnect the variable color from version 3. Existing uses on your site will automatically switch to a default color.',
+					'elementor'
+				) }
+			</ConfirmationDialog.ContentText>
+		</ConfirmationDialog.Content>
+		<ConfirmationDialog.Actions
+			onClose={ onClose }
+			onConfirm={ onConfirm }
+			cancelLabel={ __( 'Cancel', 'elementor' ) }
+			confirmLabel={ __( 'Got it', 'elementor' ) }
+			color="secondary"
+		/>
+	</ConfirmationDialog>
+);
