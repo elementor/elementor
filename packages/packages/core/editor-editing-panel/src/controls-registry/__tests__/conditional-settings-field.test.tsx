@@ -44,9 +44,9 @@ describe( 'ConditionalSettingsField with shouldHide', () => {
 							operator: 'contains',
 							path: [ 'actions-after-submit' ],
 							value: 'email',
+							effect: 'hide',
 						},
 					],
-					shouldHide: true,
 				},
 				shape: {
 					to: createMockPropType( { kind: 'plain' } ),
@@ -86,36 +86,36 @@ describe( 'ConditionalSettingsField with shouldHide', () => {
 				kind: 'array',
 				item_prop_type: createMockPropType( { kind: 'plain' } ),
 			} ),
-			email: createMockPropType( {
-				kind: 'object',
-				dependencies: {
-					relation: 'or',
-					terms: [
-						{
-							operator: 'contains',
-							path: [ 'actions-after-submit' ],
-							value: 'email',
-						},
-					],
-					shouldHide: true,
-				},
-				shape: {
-					to: createMockPropType( { kind: 'plain' } ),
-					from: createMockPropType( { kind: 'plain' } ),
-					subject: createMockPropType( { kind: 'plain' } ),
-				},
-			} ),
-		};
-
-		const elementType = createMockElementType( { propsSchema } );
-		const element = mockElement();
-
-		jest.mocked( useElementSettings ).mockReturnValue( {
-			'actions-after-submit': {
-				$$type: 'array',
-				value: [ wrap( 'collect-submissions' ), wrap( 'email' ) ],
+		email: createMockPropType( {
+			kind: 'object',
+			dependencies: {
+				relation: 'or',
+				terms: [
+					{
+						operator: 'contains',
+						path: [ 'actions-after-submit' ],
+						value: 'email',
+						effect: 'hide',
+					},
+				],
 			},
-		} as Record< string, PropValue > );
+			shape: {
+				to: createMockPropType( { kind: 'plain' } ),
+				from: createMockPropType( { kind: 'plain' } ),
+				subject: createMockPropType( { kind: 'plain' } ),
+			},
+		} ),
+	};
+
+	const elementType = createMockElementType( { propsSchema } );
+	const element = mockElement();
+
+	jest.mocked( useElementSettings ).mockReturnValue( {
+		'actions-after-submit': {
+			$$type: 'array',
+			value: [ wrap( 'collect-submissions' ), wrap( 'email' ) ],
+		},
+	} as Record< string, PropValue > );
 
 		// Act
 		renderWithTheme(
@@ -137,34 +137,34 @@ describe( 'ConditionalSettingsField with shouldHide', () => {
 				kind: 'array',
 				item_prop_type: createMockPropType( { kind: 'plain' } ),
 			} ),
-			email: createMockPropType( {
-				kind: 'object',
-				dependencies: {
-					relation: 'or',
-					terms: [
-						{
-							operator: 'contains',
-							path: [ 'actions-after-submit' ],
-							value: 'email',
-						},
-					],
-					shouldHide: true,
-				},
-				shape: {
-					to: createMockPropType( { kind: 'plain' } ),
-				},
-			} ),
-		};
-
-		const elementType = createMockElementType( { propsSchema } );
-		const element = mockElement();
-
-		jest.mocked( useElementSettings ).mockReturnValue( {
-			'actions-after-submit': {
-				$$type: 'array',
-				value: [ wrap( 'webhook' ) ],
+		email: createMockPropType( {
+			kind: 'object',
+			dependencies: {
+				relation: 'or',
+				terms: [
+					{
+						operator: 'contains',
+						path: [ 'actions-after-submit' ],
+						value: 'email',
+						effect: 'hide',
+					},
+				],
 			},
-		} as Record< string, PropValue > );
+			shape: {
+				to: createMockPropType( { kind: 'plain' } ),
+			},
+		} ),
+	};
+
+	const elementType = createMockElementType( { propsSchema } );
+	const element = mockElement();
+
+	jest.mocked( useElementSettings ).mockReturnValue( {
+		'actions-after-submit': {
+			$$type: 'array',
+			value: [ wrap( 'webhook' ) ],
+		},
+	} as Record< string, PropValue > );
 
 		// Act
 		renderWithTheme(
@@ -195,9 +195,9 @@ describe( 'ConditionalSettingsField with shouldHide', () => {
 							operator: 'contains',
 							path: [ 'actions-after-submit' ],
 							value: 'email',
+							effect: 'hide',
 						},
 					],
-					shouldHide: true,
 				},
 				shape: {
 					to: createMockPropType( { kind: 'plain' } ),

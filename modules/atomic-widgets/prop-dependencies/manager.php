@@ -38,8 +38,7 @@ class Manager {
 	 *             value?: mixed,
 	 *             newValue?: array,
 	 *             effect?: 'hide'|'disable'
-	 *         },
-	 *         shouldHide?: bool
+	 *         }
 	 *     }
 	 */
 	private ?array $dependencies;
@@ -52,14 +51,6 @@ class Manager {
 
 	public static function make( string $relation = self::RELATION_OR ): self {
 		return new self( $relation );
-	}
-
-	public function should_hide( bool $should_hide = true ): self {
-		if ( ! empty( $this->dependencies ) ) {
-			$this->dependencies['shouldHide'] = $should_hide;
-		}
-
-		return $this;
 	}
 
 	/**
