@@ -19,15 +19,10 @@ import { SortableItem, SortableProvider } from './sortable';
 
 type GlobalClassesListProps = {
 	disabled?: boolean;
-	menuActions?: ( id: string ) => Array< {
-		name: string;
-		icon?: React.ComponentType;
-		color?: string;
-		onClick: ( id: string ) => void;
-	} >;
+	onStopSyncRequest?: ( id: string ) => void;
 };
 
-export const GlobalClassesList = ( { disabled, menuActions }: GlobalClassesListProps ) => {
+export const GlobalClassesList = ( { disabled, onStopSyncRequest }: GlobalClassesListProps ) => {
 	const {
 		search: { debouncedValue: searchValue },
 	} = useSearchAndFilters();
@@ -79,43 +74,57 @@ export const GlobalClassesList = ( { disabled, menuActions }: GlobalClassesListP
 					onChange={ reorderClasses }
 					disableDragOverlay={ ! allowSorting }
 				>
-					{ filteredCssClasses?.map( ( { id, label } ) => (
-						<SortableItem key={ id } id={ id }>
+					{ filteredCssClasses?.map( ( cssClass ) => (
+						<SortableItem key={ cssClass.id } id={ cssClass.id }>
 							{ ( { isDragged, isDragPlaceholder, triggerProps, triggerStyle } ) => {
 								if ( isDragged && ! draggedItemId ) {
-									setDraggedItemId( id );
+									setDraggedItemId( cssClass.id );
 								}
-							return (
-								<ClassItem
-									id={ id }
-									label={ label }
-									renameClass={ ( newLabel: string ) => {
-										trackGlobalClasses( {
-											event: 'classRenamed',
-											classId: id,
-											oldValue: label,
-											newValue: newLabel,
-											source: 'class-manager',
-										} );
-										dispatch(
-											slice.actions.update( {
-												style: {
-													id,
-													label: newLabel,
-												},
-											} )
-										);
-									} }
-									selected={ isDragged }
-									disabled={ disabled || isDragPlaceholder }
-									sortableTriggerProps={ {
-										...triggerProps,
-										style: triggerStyle,
-									} }
-									showSortIndicator={ allowSorting }
-									menuActions={ menuActions?.( id ) || [] }
-								/>
-							);
+								return (
+									<ClassItem
+										id={ cssClass.id }
+										label={ cssClass.label }
+										renameClass={ ( newLabel: string ) => {
+											trackGlobalClasses( {
+												event: 'classRenamed',
+												classId: cssClass.id,
+												oldValue: cssClass.label,
+												newValue: newLabel,
+												source: 'class-manager',
+											} );
+											dispatch(
+												slice.actions.update( {
+													style: {
+														id: cssClass.id,
+														label: newLabel,
+													},
+												} )
+											);
+										} }
+										selected={ isDragged }
+										disabled={ disabled || isDragPlaceholder }
+										sortableTriggerProps={ {
+											...triggerProps,
+											style: triggerStyle,
+										} }
+										showSortIndicator={ allowSorting }
+										syncToV3={ cssClass.sync_to_v3 }
+										onToggleSync={ ( id, newValue ) => {
+											if ( ! newValue && onStopSyncRequest ) {
+												onStopSyncRequest( id );
+											} else {
+												dispatch(
+													slice.actions.update( {
+														style: {
+															id,
+															sync_to_v3: newValue,
+														},
+													} )
+												);
+											}
+										} }
+									/>
+								);
 							} }
 						</SortableItem>
 					) ) }

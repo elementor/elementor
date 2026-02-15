@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { FlippedColorSwatchIcon } from '@elementor/icons';
 import {
 	Button,
 	Checkbox,
@@ -13,6 +12,8 @@ import {
 	Typography,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
+
+import { FlippedColorSwatchIcon } from '../class-manager/flipped-color-swatch-icon';
 
 type StopSyncConfirmationDialogProps = {
 	open: boolean;
@@ -40,12 +41,18 @@ export const StopSyncConfirmationDialog = ( {
 		<Dialog open={ open } onClose={ closeDialog } maxWidth="xs">
 			<DialogTitle display="flex" alignItems="center" gap={ 1 }>
 				<FlippedColorSwatchIcon color="secondary" />
-				{ __( 'Stop syncing global class', 'elementor' ) }
+				{ __( 'Un-sync typography class', 'elementor' ) }
 			</DialogTitle>
 			<DialogContent>
 				<DialogContentText variant="body2" color="textPrimary">
 					{ __(
-						'This will disconnect the global class from version 3. Existing uses on your site will automatically switch to a default class.',
+						"You're about to stop syncing a typography class to Version 3.",
+						'elementor'
+					) }
+				</DialogContentText>
+				<DialogContentText variant="body2" color="textPrimary" sx={ { mt: 1 } }>
+					{ __(
+						"Note that if it's being used anywhere, the affected elements will inherit the default typography.",
 						'elementor'
 					) }
 				</DialogContentText>

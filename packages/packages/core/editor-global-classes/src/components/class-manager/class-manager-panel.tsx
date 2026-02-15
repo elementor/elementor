@@ -10,10 +10,10 @@ import {
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
 import { SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
-import { isExperimentActive, __privateRunCommand as runCommand, changeEditMode } from '@elementor/editor-v1-adapters';
-import { ResetIcon, XIcon } from '@elementor/icons';
+import { __privateRunCommand as runCommand, changeEditMode } from '@elementor/editor-v1-adapters';
+import { XIcon } from '@elementor/icons';
 import { useMutation } from '@elementor/query';
-import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
+import { __dispatch as dispatch } from '@elementor/store';
 import {
 	Alert,
 	Box,
@@ -32,7 +32,7 @@ import { useClassesOrder } from '../../hooks/use-classes-order';
 import { useDirtyState } from '../../hooks/use-dirty-state';
 import { useFilters } from '../../hooks/use-filters';
 import { saveGlobalClasses } from '../../save-global-classes';
-import { selectClass, slice } from '../../store';
+import { slice } from '../../store';
 import { ActiveFilters } from '../search-and-filter/components/filter/active-filters';
 import { CssClassFilter } from '../search-and-filter/components/filter/css-class-filter';
 import { ClassManagerSearch } from '../search-and-filter/components/search/class-manager-search';
@@ -93,49 +93,17 @@ export function ClassManagerPanel() {
 		closeSaveChangesDialog();
 	};
 
-	const handleStartSync = useCallback( ( classId: string ) => {
-		dispatch( slice.actions.startSync( classId ) );
-	}, [] );
-
 	const handleStopSync = useCallback( ( classId: string ) => {
-		dispatch( slice.actions.stopSync( classId ) );
+		dispatch(
+			slice.actions.update( {
+				style: {
+					id: classId,
+					sync_to_v3: false,
+				},
+			} )
+		);
 		setStopSyncConfirmation( null );
 	}, [] );
-
-	const buildMenuActions = useCallback(
-		( classId: string ) => {
-			const classItem = selectClass( getState(), classId );
-
-			if ( ! classItem ) {
-				return [];
-			}
-
-			if ( ! isExperimentActive( 'e_design_system_sync' ) ) {
-				return [];
-			}
-
-			const actions = [];
-
-			if ( classItem.sync_to_v3 ) {
-				actions.push( {
-					name: __( 'Stop syncing to Version 3', 'elementor' ),
-					icon: ResetIcon,
-					color: 'text.primary',
-					onClick: () => setStopSyncConfirmation( classId ),
-				} );
-			} else {
-				actions.push( {
-					name: __( 'Sync to Version 3', 'elementor' ),
-					icon: ResetIcon,
-					color: 'text.primary',
-					onClick: () => handleStartSync( classId ),
-				} );
-			}
-
-			return actions;
-		},
-		[ handleStartSync ]
-	);
 
 	usePreventUnload();
 
@@ -191,7 +159,10 @@ export function ClassManagerPanel() {
 								overflowY: 'auto',
 							} }
 						>
-							<GlobalClassesList disabled={ isPublishing } menuActions={ buildMenuActions } />
+							<GlobalClassesList
+								disabled={ isPublishing }
+								onStopSyncRequest={ ( id ) => setStopSyncConfirmation( id ) }
+							/>
 						</Box>
 						</PanelBody>
 

@@ -161,31 +161,7 @@ export const slice = createSlice( {
 		state.isDirty = true;
 	},
 
-	startSync( state, { payload }: PayloadAction< StyleDefinitionID > ) {
-		const style = state.data.items[ payload ];
-
-		if ( ! style ) {
-			throw new GlobalClassNotFoundError( { context: { styleId: payload } } );
-		}
-
-		localHistory.next( state.data );
-		state.data.items[ payload ] = { ...style, sync_to_v3: true };
-		state.isDirty = true;
-	},
-
-	stopSync( state, { payload }: PayloadAction< StyleDefinitionID > ) {
-		const style = state.data.items[ payload ];
-
-		if ( ! style ) {
-			throw new GlobalClassNotFoundError( { context: { styleId: payload } } );
-		}
-
-		localHistory.next( state.data );
-		state.data.items[ payload ] = { ...style, sync_to_v3: false };
-		state.isDirty = true;
-	},
-
-		reset( state, { payload: { context } }: PayloadAction< { context: ApiContext } > ) {
+	reset( state, { payload: { context } }: PayloadAction< { context: ApiContext } > ) {
 			if ( context === 'frontend' ) {
 				localHistory.reset();
 				state.initialData.frontend = state.data;

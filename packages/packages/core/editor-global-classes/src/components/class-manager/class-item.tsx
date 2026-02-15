@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { createElement, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { validateStyleLabel } from '@elementor/editor-styles-repository';
 import { EditableField, EllipsisWithTooltip, MenuListItem, useEditable, WarningInfotip } from '@elementor/editor-ui';
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { DotsVerticalIcon } from '@elementor/icons';
 import {
 	bindMenu,
@@ -32,12 +33,8 @@ type ClassItemProps = React.PropsWithChildren< {
 	disabled?: boolean;
 	sortableTriggerProps: SortableTriggerProps;
 	showSortIndicator?: boolean;
-	menuActions?: Array< {
-		name: string;
-		icon?: React.ComponentType;
-		color?: string;
-		onClick: ( id: string ) => void;
-	} >;
+	syncToV3?: boolean;
+	onToggleSync?: ( id: string, newValue: boolean ) => void;
 } >;
 
 export const ClassItem = ( {
@@ -48,7 +45,8 @@ export const ClassItem = ( {
 	disabled,
 	sortableTriggerProps,
 	showSortIndicator,
-	menuActions = [],
+	syncToV3,
+	onToggleSync,
 }: ClassItemProps ) => {
 	const itemRef = useRef< HTMLElement >( null );
 	const {
@@ -144,20 +142,20 @@ export const ClassItem = ( {
 						{ __( 'Rename', 'elementor' ) }
 					</Typography>
 				</MenuListItem>
-				{ menuActions.map( ( action, index ) => (
+				{ isExperimentActive( 'e_design_system_sync' ) && onToggleSync && (
 					<MenuListItem
-						key={ index }
 						onClick={ () => {
 							popupState.close();
-							action.onClick( id );
+							onToggleSync( id, ! syncToV3 );
 						} }
 					>
-						<Typography variant="caption" sx={ { color: action.color || 'text.primary', gap: 1, display: 'flex', alignItems: 'center' } }>
-							{ action.icon && createElement( action.icon, { fontSize: 'inherit' } ) }
-							{ action.name }
+						<Typography variant="caption" sx={ { color: 'text.primary' } }>
+							{ syncToV3
+								? __( 'Stop syncing to Version 3', 'elementor' )
+								: __( 'Sync to Version 3', 'elementor' ) }
 						</Typography>
 					</MenuListItem>
-				) ) }
+				) }
 				<MenuListItem
 					onClick={ () => {
 						popupState.close();
