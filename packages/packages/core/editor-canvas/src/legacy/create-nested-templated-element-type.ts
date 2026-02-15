@@ -6,9 +6,9 @@ import { canBeTemplated, type TemplatedElementConfig } from './create-templated-
 import {
 	createAfterRender,
 	createBeforeRender,
-	createTwigRenderState,
-	renderChildrenWithOptimization,
 	renderTwigTemplate,
+	setupTwigRenderer,
+	type TwigRenderContext,
 } from './twig-rendering-utils';
 import { type ElementType, type ElementView, type LegacyWindow } from './types';
 
@@ -91,7 +91,11 @@ export function createNestedTemplatedElementView( {
 }: CreateNestedTemplatedElementViewOptions ): typeof ElementView {
 	const legacyWindow = window as unknown as LegacyWindow;
 
-	const renderState = createTwigRenderState( { renderer, element } );
+	const { templateKey, baseStylesDictionary, resolveProps } = setupTwigRenderer( {
+		type,
+		renderer,
+		element,
+	} );
 
 	const AtomicElementBaseView = legacyWindow.elementor.modules.elements.views.createAtomicElementBase( type );
 	const parentRenderChildren = AtomicElementBaseView.prototype._renderChildren;
@@ -106,10 +110,6 @@ export function createNestedTemplatedElementView( {
 			return 'twig';
 		},
 
-		invalidateRenderCache() {
-			renderState.cacheState.invalidate();
-		},
-
 		render() {
 			this._abortController?.abort();
 			this._abortController = new AbortController();
@@ -117,6 +117,7 @@ export function createNestedTemplatedElementView( {
 			const process = signalizedProcess( this._abortController.signal )
 				.then( () => this._beforeRender() )
 				.then( () => this._renderTemplate() )
+				// Dispatch the render event after the template is ready
 				.then( () => this._onTemplateReady() )
 				.then( () => this._renderChildren() )
 				.then( () => this._afterRender() );
@@ -151,13 +152,14 @@ export function createNestedTemplatedElementView( {
 
 			await renderTwigTemplate( {
 				view: this,
-				signal: this._abortController?.signal,
-				renderState,
-				buildContext: ( resolvedSettings ) => ( {
-					id: model.get( 'id' ),
-					type,
-					settings: resolvedSettings,
-					base_styles: element.base_styles_dictionary,
+				signal: this._abortController?.signal as AbortSignal,
+				resolveProps,
+				templateKey,
+				baseStylesDictionary,
+				type,
+				renderer,
+				buildContext: ( context: TwigRenderContext ) => ( {
+					...context,
 					editor_attributes: buildEditorAttributes( model ),
 					editor_classes: buildEditorClasses( model ),
 				} ),
@@ -197,11 +199,17 @@ export function createNestedTemplatedElementView( {
 		},
 
 		async _renderChildren() {
-			await renderChildrenWithOptimization( {
-				children: this.children,
-				domUpdateWasSkipped: renderState.cacheState.domUpdateWasSkipped,
-				renderChildren: () => parentRenderChildren.call( this ),
+			parentRenderChildren.call( this );
+
+			const renderPromises: Promise< void >[] = [];
+
+			this.children.each( ( childView: ElementView ) => {
+				if ( childView._currentRenderPromise ) {
+					renderPromises.push( childView._currentRenderPromise );
+				}
 			} );
+
+			await Promise.all( renderPromises );
 
 			this._removeChildrenPlaceholder();
 		},
