@@ -44,6 +44,7 @@ class Migrations_Cache {
 				'error' => $wpdb->last_error,
 				'reason' => 'clear migration cache called',
 			] );
+
 			return;
 		}
 
