@@ -25,8 +25,8 @@ describe( 'Replay', () => {
 		renderWithTheme( <Replay { ...defaultProps } /> );
 
 		// Assert.
-		const noButton = screen.getByLabelText( 'No' );
-		const yesButton = screen.getByLabelText( 'Yes' );
+		const noButton = screen.getByRole( 'button', { name: 'No' } );
+		const yesButton = screen.getByRole( 'button', { name: 'Yes' } );
 
 		expect( noButton ).toBeInTheDocument();
 		expect( noButton ).toBeEnabled();
@@ -39,7 +39,7 @@ describe( 'Replay', () => {
 		renderWithTheme( <Replay { ...defaultProps } /> );
 
 		// Act.
-		const noButton = screen.getByLabelText( 'No' );
+		const noButton = screen.getByRole( 'button', { name: 'No' } );
 		fireEvent.click( noButton );
 
 		// Assert.
