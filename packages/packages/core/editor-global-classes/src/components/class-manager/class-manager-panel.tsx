@@ -9,7 +9,7 @@ import {
 	PanelHeader,
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
-import { SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
+import { ConfirmationDialog, SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { __privateRunCommand as runCommand, changeEditMode } from '@elementor/editor-v1-adapters';
 import { XIcon } from '@elementor/icons';
 import { useMutation } from '@elementor/query';
@@ -37,7 +37,6 @@ import { ActiveFilters } from '../search-and-filter/components/filter/active-fil
 import { CssClassFilter } from '../search-and-filter/components/filter/css-class-filter';
 import { ClassManagerSearch } from '../search-and-filter/components/search/class-manager-search';
 import { SearchAndFilterProvider } from '../search-and-filter/context';
-import { StopSyncConfirmationDialog } from '../ui/stop-sync-confirmation-dialog';
 import { ClassManagerIntroduction } from './class-manager-introduction';
 import { hasDeletedItems, onDelete } from './delete-class';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
@@ -184,11 +183,29 @@ export function ClassManagerPanel() {
 			</ErrorBoundary>
 			<ClassManagerIntroduction />
 			{ stopSyncConfirmation && (
-				<StopSyncConfirmationDialog
-					open
-					closeDialog={ () => setStopSyncConfirmation( null ) }
-					onConfirm={ () => handleStopSync( stopSyncConfirmation ) }
-				/>
+				<ConfirmationDialog open onClose={ () => setStopSyncConfirmation( null ) }>
+					<ConfirmationDialog.Title icon={ FlippedColorSwatchIcon } iconColor="secondary">
+						{ __( 'Un-sync typography class', 'elementor' ) }
+					</ConfirmationDialog.Title>
+					<ConfirmationDialog.Content>
+						<ConfirmationDialog.ContentText>
+							{ __( "You're about to stop syncing a typography class to Version 3.", 'elementor' ) }
+						</ConfirmationDialog.ContentText>
+						<ConfirmationDialog.ContentText sx={ { mt: 1 } }>
+							{ __(
+								"Note that if it's being used anywhere, the affected elements will inherit the default typography.",
+								'elementor'
+							) }
+						</ConfirmationDialog.ContentText>
+					</ConfirmationDialog.Content>
+					<ConfirmationDialog.Actions
+						onClose={ () => setStopSyncConfirmation( null ) }
+						onConfirm={ () => handleStopSync( stopSyncConfirmation ) }
+						cancelLabel={ __( 'Cancel', 'elementor' ) }
+						confirmLabel={ __( 'Got it', 'elementor' ) }
+						color="secondary"
+					/>
+				</ConfirmationDialog>
 			) }
 			{ isSaveChangesDialogOpen && (
 				<SaveChangesDialog>
