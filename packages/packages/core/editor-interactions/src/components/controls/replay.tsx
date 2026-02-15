@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { type MouseEvent, useRef } from 'react';
 import { type ToggleButtonGroupItem, ToggleButtonGroupUi } from '@elementor/editor-controls';
 import { CheckIcon, MinusIcon } from '@elementor/icons';
 import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type ReplayFieldProps } from '../../types';
-import { InteractionsPromotionChip, type InteractionsPromotionChipRef } from '../../ui/interactions-promotion-chip';
+import { InteractionsPromotionChip } from '../../ui/interactions-promotion-chip';
 
 export function Replay( { onChange, anchorRef }: ReplayFieldProps ) {
 	const options: ToggleButtonGroupItem< boolean >[] = [
