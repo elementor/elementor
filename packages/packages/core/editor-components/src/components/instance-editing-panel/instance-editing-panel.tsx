@@ -5,7 +5,7 @@ import { useSelectedElement } from '@elementor/editor-elements';
 import { PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { EllipsisWithTooltip } from '@elementor/editor-ui';
 import { ComponentsIcon, PencilIcon } from '@elementor/icons';
-import { Divider, IconButton, Stack, Tooltip } from '@elementor/ui';
+import { Box, Divider, IconButton, Stack, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useComponentInstanceSettings } from '../../hooks/use-component-instance-settings';
@@ -51,40 +51,42 @@ export function InstanceEditingPanel() {
 	const isEmpty = groups.length === 0 || Object.keys( overridableProps.props ).length === 0;
 
 	return (
-		<ComponentInstanceProvider
-			componentId={ componentId }
-			overrides={ overrides }
-			overridableProps={ overridableProps }
-		>
-			<PanelHeader sx={ { justifyContent: 'start', px: 2 } }>
-				<Stack direction="row" alignItems="center" flexGrow={ 1 } gap={ 1 } maxWidth="100%">
-					<ComponentsIcon fontSize="small" sx={ { color: 'text.tertiary' } } />
-					<EllipsisWithTooltip title={ component.name } as={ PanelHeaderTitle } sx={ { flexGrow: 1 } } />
-					{ canEdit && (
-						<Tooltip title={ panelTitle }>
-							<IconButton size="tiny" onClick={ handleEditComponent } aria-label={ panelTitle }>
-								<PencilIcon fontSize="tiny" />
-							</IconButton>
-						</Tooltip>
-					) }
-				</Stack>
-			</PanelHeader>
-			<PanelBody>
-				<ControlAdornmentsProvider items={ getFieldIndicators( 'settings' ) }>
-					{ isEmpty ? (
-						<EmptyState onEditComponent={ handleEditComponent } />
-					) : (
-						<Stack direction="column" alignItems="stretch">
-							{ groups.map( ( group ) => (
-								<React.Fragment key={ group.id + componentInstanceId }>
-									<OverridePropsGroup group={ group } />
-									<Divider />
-								</React.Fragment>
-							) ) }
-						</Stack>
-					) }
-				</ControlAdornmentsProvider>
-			</PanelBody>
-		</ComponentInstanceProvider>
+		<Box data-testid="instance-editing-panel">
+			<ComponentInstanceProvider
+				componentId={ componentId }
+				overrides={ overrides }
+				overridableProps={ overridableProps }
+			>
+				<PanelHeader sx={ { justifyContent: 'start', px: 2 } }>
+					<Stack direction="row" alignItems="center" flexGrow={ 1 } gap={ 1 } maxWidth="100%">
+						<ComponentsIcon fontSize="small" sx={ { color: 'text.tertiary' } } />
+						<EllipsisWithTooltip title={ component.name } as={ PanelHeaderTitle } sx={ { flexGrow: 1 } } />
+						{ canEdit && (
+							<Tooltip title={ panelTitle }>
+								<IconButton size="tiny" onClick={ handleEditComponent } aria-label={ panelTitle }>
+									<PencilIcon fontSize="tiny" />
+								</IconButton>
+							</Tooltip>
+						) }
+					</Stack>
+				</PanelHeader>
+				<PanelBody>
+					<ControlAdornmentsProvider items={ getFieldIndicators( 'settings' ) }>
+						{ isEmpty ? (
+							<EmptyState onEditComponent={ handleEditComponent } />
+						) : (
+							<Stack direction="column" alignItems="stretch">
+								{ groups.map( ( group ) => (
+									<React.Fragment key={ group.id + componentInstanceId }>
+										<OverridePropsGroup group={ group } />
+										<Divider />
+									</React.Fragment>
+								) ) }
+							</Stack>
+						) }
+					</ControlAdornmentsProvider>
+				</PanelBody>
+			</ComponentInstanceProvider>
+		</Box>
 	);
 }
