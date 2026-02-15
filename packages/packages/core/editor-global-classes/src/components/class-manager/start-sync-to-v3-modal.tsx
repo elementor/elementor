@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
-import { useSuppressedMessage } from '@elementor/editor-current-user';
+import { useState } from 'react';
 import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -17,52 +16,31 @@ export const StartSyncToV3Modal = ( {
 	onExternalClose,
 	onConfirm,
 }: StartSyncToV3ModalProps = {} ) => {
-	const [ isMessageSuppressed, suppressMessage ] = useSuppressedMessage( MESSAGE_KEY );
-	const [ internalOpen, setInternalOpen ] = useState( ! isMessageSuppressed );
 	const [ shouldShowAgain, setShouldShowAgain ] = useState( true );
 
-	const isOpen = ( externalOpen !== undefined ? externalOpen : internalOpen ) && ! isMessageSuppressed;
-
-	useEffect( () => {
-		if ( externalOpen && isMessageSuppressed && onExternalClose ) {
-			onExternalClose();
-		}
-	}, [ externalOpen, isMessageSuppressed, onExternalClose ] );
-
 	const handleClose = () => {
-		if ( ! shouldShowAgain ) {
-			suppressMessage();
-		}
-
 		if ( onExternalClose ) {
 			onExternalClose();
-		} else {
-			setInternalOpen( false );
 		}
 	};
 
 	const handleConfirm = () => {
-		if ( ! shouldShowAgain ) {
-			suppressMessage();
-		}
-
 		if ( onConfirm ) {
 			onConfirm();
 		}
 
 		if ( onExternalClose ) {
 			onExternalClose();
-		} else {
-			setInternalOpen( false );
 		}
 	};
 
 	return (
 		<Dialog
-			open={ isOpen }
+			open={ externalOpen ?? false }
 			onClose={ handleClose }
 			maxWidth="sm"
-			fullWidth>
+			fullWidth
+		>
 			<DialogContent sx={ { p: 0 } }>
 				<Box
 					component="img"
