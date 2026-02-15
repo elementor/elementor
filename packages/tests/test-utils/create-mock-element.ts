@@ -58,6 +58,7 @@ export function createMockElementType( {
 	propsSchema = {},
 	dependenciesPerTargetMapping = {},
 	styleStates = [],
+	pseudoStates = [],
 }: Partial< ElementType > = {} ) {
 	return {
 		key,
@@ -66,5 +67,6 @@ export function createMockElementType( {
 		propsSchema,
 		dependenciesPerTargetMapping,
 		styleStates,
+		pseudoStates,
 	} as ElementType;
 }
