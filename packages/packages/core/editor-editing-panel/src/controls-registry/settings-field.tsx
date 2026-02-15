@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { PropKeyProvider, PropProvider, type SetValueMeta } from '@elementor/editor-controls';
+import { PropKeyProvider, PropProvider, type SetValueMeta, useBoundProp } from '@elementor/editor-controls';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
 	type ElementID,
@@ -11,6 +11,7 @@ import {
 } from '@elementor/editor-elements';
 import {
 	type CreateOptions,
+	isDependency,
 	isDependencyMet,
 	type PropKey,
 	type Props,
@@ -22,7 +23,6 @@ import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
 import { extractOrderedDependencies, getUpdatedValues, type Values } from '../utils/prop-dependency-utils';
-import { ConditionalSettingsField } from './conditional-settings-field';
 import { createTopLevelObjectType } from './create-top-level-object-type';
 
 type SettingsFieldProps = {
@@ -32,6 +32,24 @@ type SettingsFieldProps = {
 };
 
 const HISTORY_DEBOUNCE_WAIT = 800;
+
+function ConditionalContent( { children }: { children: React.ReactNode } ) {
+	const { propType } = useBoundProp();
+	const {
+		element: { id: elementId },
+		elementType: { propsSchema },
+	} = useElement();
+
+	const elementSettingValues = useElementSettings< PropValue >( elementId, Object.keys( propsSchema ) );
+
+	const dependenciesResult = isDependencyMet( propType?.dependencies, elementSettingValues );
+	const shouldHide =
+		! dependenciesResult.isMet &&
+		! isDependency( dependenciesResult.failingDependencies[ 0 ] ) &&
+		dependenciesResult.failingDependencies[ 0 ]?.effect === 'hide';
+
+	return ! shouldHide && children;
+}
 
 export const SettingsField = ( { bind, children, propDisplayName }: SettingsFieldProps ) => {
 	const {
@@ -68,7 +86,7 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 	return (
 		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>
 			<PropKeyProvider bind={ bind }>
-				<ConditionalSettingsField>{ children }</ConditionalSettingsField>
+				<ConditionalContent>{ children }</ConditionalContent>
 			</PropKeyProvider>
 		</PropProvider>
 	);
