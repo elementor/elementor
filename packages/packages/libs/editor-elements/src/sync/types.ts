@@ -70,18 +70,22 @@ export type ConfigPropValue = {
 	};
 };
 
-export type Transform3d = {
+export type Transform2d = {
 	x: number;
 	y: number;
+};
+
+export type Transform3d = Transform2d & {
 	z: number;
 };
+
 
 export type KeyframeStopSettings = {
 	opacity?: number;
 	scale?: Transform3d;
 	move?: Transform3d;
 	rotate?: Transform3d;
-	skew?: Transform3d;
+	skew?: Transform2d;
 };
 
 export type AnimationKeyframe = {
@@ -102,6 +106,14 @@ export type Transform3dPropValue = {
 	};
 };
 
+export type Transform2dPropValue = {
+	$$type: 'transform-2d';
+	value: {
+		x: SizePropValue;
+		y: SizePropValue;
+	};
+};
+
 export type KeyframeStopSettingsPropValue = {
 	$$type: 'keyframe-stop-settings';
 	value: {
@@ -109,7 +121,7 @@ export type KeyframeStopSettingsPropValue = {
 		scale?: Transform3dPropValue;
 		move?: Transform3dPropValue;
 		rotate?: Transform3dPropValue;
-		skew?: Transform3dPropValue;
+		skew?: Transform2dPropValue;
 	};
 };
 

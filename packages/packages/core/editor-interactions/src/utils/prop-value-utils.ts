@@ -6,6 +6,8 @@ import {
 	type KeyframeStopSettingsPropValue,
 	type Transform3d,
 	type Transform3dPropValue,
+	type Transform2d,
+	type Transform2dPropValue,
 } from '@elementor/editor-elements';
 import {
 	type BooleanPropValue,
@@ -154,6 +156,14 @@ export const createTransform3d = ( t: Transform3d, unit: Unit ): Transform3dProp
 	},
 } );
 
+export const createTransform2d = ( t: Transform2d, unit: Unit ): Transform2dPropValue => ( {
+	$$type: 'transform-2d',
+	value: {
+		x: createSizeValue( t.x, unit ),
+		y: createSizeValue( t.y, unit ),
+	},
+} );
+
 export const createKeyframeStopSettings = ( settings: KeyframeStopSettings ): KeyframeStopSettingsPropValue => ( {
 	$$type: 'keyframe-stop-settings',
 	value: {
@@ -161,7 +171,7 @@ export const createKeyframeStopSettings = ( settings: KeyframeStopSettings ): Ke
 		scale: settings.scale ? createTransform3d( settings.scale, '%' ) : undefined,
 		move: settings.move ? createTransform3d( settings.move, 'px' ) : undefined,
 		rotate: settings.rotate ? createTransform3d( settings.rotate, 'deg' ) : undefined,
-		skew: settings.skew ? createTransform3d( settings.skew, 'deg' ) : undefined,
+		skew: settings.skew ? createTransform2d( settings.skew, 'deg' ) : undefined,
 	},
 } );
 
@@ -290,6 +300,20 @@ export const extractTransform3d = (
 	};
 };
 
+export const extractTransform2d = (
+	prop: Transform2dPropValue | undefined,
+	fallback?: Transform2d
+): Transform2d | undefined => {
+	if ( ! prop?.value ) {
+		return fallback;
+	}
+
+	return {
+		x: extractSizeNumber( prop.value.x ),
+		y: extractSizeNumber( prop.value.y ),
+	};
+};
+
 export const extractKeyframeStopSettings = (
 	prop: KeyframeStopSettingsPropValue | undefined
 ): KeyframeStopSettings => {
@@ -302,7 +326,7 @@ export const extractKeyframeStopSettings = (
 		scale: extractTransform3d( prop.value.scale ),
 		move: extractTransform3d( prop.value.move ),
 		rotate: extractTransform3d( prop.value.rotate ),
-		skew: extractTransform3d( prop.value.skew ),
+		skew: extractTransform2d( prop.value.skew ),
 	};
 };
 
