@@ -203,7 +203,10 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 				<Grid container spacing={ 1.5 }>
 					{ TriggerControl && (
 						<Field label={ __( 'Trigger', 'elementor' ) }>
-							<TriggerControl value={ trigger } onChange={ ( v ) => updateInteraction( { trigger: v } ) } />
+							<TriggerControl
+								value={ trigger }
+								onChange={ ( v ) => updateInteraction( { trigger: v } ) }
+							/>
 						</Field>
 					) }
 
