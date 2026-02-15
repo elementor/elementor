@@ -2,6 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\App\Modules\E_Onboarding\Storage;
 
+use Elementor\App\Modules\E_Onboarding\Storage\Onboarding_Progress_Manager;
 use Elementor\Tests\Phpunit\Elementor\App\Modules\E_Onboarding\Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -9,6 +10,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Onboarding_Progress_Manager extends Test_Base {
+
+	/**
+	 * Invoke the private install_and_activate_theme method via reflection.
+	 */
+	private function invoke_install_and_activate_theme( string $theme_slug ): void {
+		$method = new \ReflectionMethod( Onboarding_Progress_Manager::class, 'install_and_activate_theme' );
+		$method->setAccessible( true );
+		$method->invoke( $this->progress_manager, $theme_slug );
+	}
 
 	public function test_save_and_load_progress() {
 		// Arrange
@@ -80,6 +90,103 @@ class Test_Onboarding_Progress_Manager extends Test_Base {
 		$this->assertSame( 'myself', $choices->get_building_for() );
 		$this->assertSame( 'beginner', $choices->get_experience_level() );
 		$this->assertSame( [ 'blog' ], $choices->get_site_about() );
+	}
+
+	public function test_update_choices_saves_theme_selection() {
+		// Arrange & Act
+		$choices = $this->progress_manager->update_choices( [
+			'theme_selection' => 'hello-elementor',
+		] );
+
+		// Assert
+		$this->assertSame( 'hello-elementor', $choices->get_theme_selection() );
+	}
+
+	public function test_update_choices_theme_selection_persists_across_loads() {
+		// Arrange
+		$this->progress_manager->update_choices( [
+			'theme_selection' => 'hello-biz',
+		] );
+
+		// Act
+		$loaded_choices = $this->progress_manager->get_choices();
+
+		// Assert
+		$this->assertSame( 'hello-biz', $loaded_choices->get_theme_selection() );
+	}
+
+	public function test_update_choices_theme_selection_preserves_other_choices() {
+		// Arrange
+		$this->progress_manager->update_choices( [
+			'building_for' => 'myself',
+			'experience_level' => 'beginner',
+		] );
+
+		// Act
+		$choices = $this->progress_manager->update_choices( [
+			'theme_selection' => 'hello-elementor',
+		] );
+
+		// Assert
+		$this->assertSame( 'myself', $choices->get_building_for() );
+		$this->assertSame( 'beginner', $choices->get_experience_level() );
+		$this->assertSame( 'hello-elementor', $choices->get_theme_selection() );
+	}
+
+	public function test_update_choices_theme_selection_can_be_changed() {
+		// Arrange
+		$this->progress_manager->update_choices( [
+			'theme_selection' => 'hello-elementor',
+		] );
+
+		// Act
+		$choices = $this->progress_manager->update_choices( [
+			'theme_selection' => 'hello-biz',
+		] );
+
+		// Assert
+		$this->assertSame( 'hello-biz', $choices->get_theme_selection() );
+	}
+
+	public function test_install_theme_rejects_invalid_slug() {
+		// Arrange
+		$active_theme_before = get_stylesheet();
+
+		// Act
+		$this->invoke_install_and_activate_theme( 'invalid-theme-slug' );
+
+		// Assert - theme should not have changed
+		$this->assertSame( $active_theme_before, get_stylesheet() );
+	}
+
+	public function test_install_theme_rejects_non_allowed_theme() {
+		// Arrange
+		$active_theme_before = get_stylesheet();
+
+		// Act
+		$this->invoke_install_and_activate_theme( 'twentytwentyfive' );
+
+		// Assert - theme should not have changed (not in allowed list)
+		$this->assertSame( $active_theme_before, get_stylesheet() );
+	}
+
+	public function test_install_theme_requires_permissions() {
+		// Arrange - switch to subscriber role (no install_themes/switch_themes caps)
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'subscriber' ] ) );
+		$active_theme_before = get_stylesheet();
+
+		// Act
+		$this->invoke_install_and_activate_theme( 'hello-elementor' );
+
+		// Assert - theme should not have changed due to insufficient permissions
+		$this->assertSame( $active_theme_before, get_stylesheet() );
+	}
+
+	public function test_allowed_themes_constant_contains_expected_themes() {
+		// Assert
+		$this->assertContains( 'hello-elementor', Onboarding_Progress_Manager::ALLOWED_THEMES );
+		$this->assertContains( 'hello-biz', Onboarding_Progress_Manager::ALLOWED_THEMES );
+		$this->assertCount( 2, Onboarding_Progress_Manager::ALLOWED_THEMES );
 	}
 
 	public function test_reset_clears_all_data() {
