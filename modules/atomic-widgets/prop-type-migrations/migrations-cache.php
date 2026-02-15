@@ -31,6 +31,13 @@ class Migrations_Cache {
 		return $current_state === $stored_state;
 	}
 
+	/**
+	 * Mark data as migrated
+	 * @param int $id Meta ID, can be post ID or any other unique ID
+	 * @param string $data_identifier Unique identifier for Data. Different DB tables migrate separately, and therefore cached individually
+	 * @param string $manifest_hash Manifest can change independently from code version (pulled from remote), we need to rerun migrations if it changes
+	 * @return void
+	 */
 	public static function mark_as_migrated( int $id, string $data_identifier, string $manifest_hash ): void {
 		$cache_meta_key = self::get_cache_meta_key( $data_identifier );
 		update_post_meta( $id, $cache_meta_key, self::get_migration_state( $manifest_hash ) );
