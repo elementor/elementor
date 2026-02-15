@@ -87,7 +87,8 @@ type ControlVisibilityConfig = {
 const controlVisibilityConfig: ControlVisibilityConfig = {
 	replay: ( values ) => ! TRIGGERS_WITHOUT_REPLAY.includes( values.trigger ),
 	custom: ( values ) => values.effect === 'custom',
-
+	effectType: ( values ) => values.effect !== 'custom',
+	direction: ( values ) => values.effect !== 'custom',
 	relativeTo: ( values ) => values.trigger === 'scrollOn',
 	offsetTop: ( values ) => values.trigger === 'scrollOn',
 	offsetBottom: ( values ) => values.trigger === 'scrollOn',
@@ -164,7 +165,8 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		controlVisibilityConfig.offsetBottom( interactionValues )
 	);
 	const CustomEffectControl = useControlComponent( 'custom', controlVisibilityConfig.custom( interactionValues ) );
-
+	const EffectTypeControl = useControlComponent( 'effectType', controlVisibilityConfig.effectType( interactionValues ) );
+	const DirectionControl = useControlComponent( 'direction', controlVisibilityConfig.direction( interactionValues ) );
 	const EasingControl = useControlComponent( 'easing' );
 
 	const updateInteraction = (
@@ -257,17 +259,17 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 					</Field>
 				) }
 
-				<Field label={ __( 'Type', 'elementor' ) }>
-					<EffectType value={ type } onChange={ ( v ) => updateInteraction( { type: v } ) } />
-				</Field>
+				{ EffectTypeControl && (<Field label={ __( 'Type', 'elementor' ) }>
+					<EffectTypeControl value={ type } onChange={ ( v ) => updateInteraction( { type: v } ) } />
+				</Field>)}
 
-				<Field label={ __( 'Direction', 'elementor' ) }>
-					<Direction
+				{DirectionControl && (<Field label={ __( 'Direction', 'elementor' ) }>
+					<DirectionControl
 						value={ direction }
 						onChange={ ( v ) => updateInteraction( { direction: v } ) }
 						interactionType={ type }
 					/>
-				</Field>
+				</Field>)}
 
 				{ controlVisibilityConfig.duration( interactionValues ) && (
 					<Field label={ __( 'Duration', 'elementor' ) }>
