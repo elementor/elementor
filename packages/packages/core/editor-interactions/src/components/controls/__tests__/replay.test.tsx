@@ -29,7 +29,7 @@ describe( 'Replay', () => {
 		const yesButton = screen.getByLabelText( 'Yes' );
 
 		expect( noButton ).toBeInTheDocument();
-		expect( noButton ).not.toBeDisabled();
+		expect( noButton ).toBeEnabled();
 		expect( yesButton ).toBeInTheDocument();
 		expect( yesButton ).toBeDisabled();
 	} );

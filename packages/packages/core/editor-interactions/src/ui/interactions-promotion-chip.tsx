@@ -31,10 +31,7 @@ export function InteractionsPromotionChip( { content, upgradeUrl, anchorRef }: I
 			placement={ anchorRef ? 'right-start' : undefined }
 			onClose={ handleToggle }
 		>
-			<Box
-				onClick={ handleToggle }
-				sx={ { cursor: 'pointer', display: 'inline-flex', mr: 1 } }
-			>
+			<Box onClick={ handleToggle } sx={ { cursor: 'pointer', display: 'inline-flex', mr: 1 } }>
 				<PromotionChip />
 			</Box>
 		</PromotionPopover>
