@@ -12,13 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Schema_Resolver {
-	const UNIQUE_PATHS_IDENTIFIERS = [
-		'widget_settings' => 'settings',
-		'style_variants' => 'variants',
-		'style_props' => 'props',
-		'interactions_items' => 'items',
-		'interactions' => 'interactions',
-	];
+	const WIDGET_SETTINGS_PATH = 'settings';
+	const STYLE_VARIANTS_PATH = 'variants';
+	const STYLE_PROPS_PATH = 'props';
+	const INTERACTIONS_ITEMS_PATH = 'items';
+	const INTERACTIONS_PATH = 'interactions';
 
 	private static ?string $widget_context = null;
 
@@ -33,15 +31,15 @@ class Schema_Resolver {
 	}
 
 	public static function resolve( string $key, array $path ): ?Prop_Type {
-		if ( in_array( self::UNIQUE_PATHS_IDENTIFIERS['widget_settings'], $path, true ) && self::$widget_context ) {
+		if ( in_array( self::WIDGET_SETTINGS_PATH, $path, true ) && self::$widget_context ) {
 			$widget_context = self::make_widget_context( self::$widget_context );
 			return $widget_context['schema'][ $key ] ?? null;
-		} elseif ( in_array( self::UNIQUE_PATHS_IDENTIFIERS['style_variants'], $path, true ) && in_array( self::UNIQUE_PATHS_IDENTIFIERS['style_props'], $path, true ) ) {
+		} elseif ( in_array( self::STYLE_VARIANTS_PATH, $path, true ) && in_array( self::STYLE_PROPS_PATH, $path, true ) ) {
 			$style_schema = Style_Schema::get();
 			return $style_schema[ $key ] ?? null;
-		} elseif ( in_array( self::UNIQUE_PATHS_IDENTIFIERS['interactions'], $path, true ) && in_array( self::UNIQUE_PATHS_IDENTIFIERS['interactions_items'], $path, true ) ) {
+		} elseif ( in_array( self::INTERACTIONS_PATH, $path, true ) && in_array( self::INTERACTIONS_ITEMS_PATH, $path, true ) ) {
 			$interactions_schema = Interactions_Schema::get();
-			return $interactions_schema[ self::UNIQUE_PATHS_IDENTIFIERS['interactions_items'] ][0] ?? null;
+			return $interactions_schema[ self::INTERACTIONS_ITEMS_PATH ][0] ?? null;
 		}
 
 		return null;
