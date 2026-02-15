@@ -368,6 +368,20 @@ class Elements_Manager {
 		 */
 		do_action( 'elementor/elements/categories_registered', $this );
 
+		// Promote angie widgets category if registered
+		if ( isset( $this->categories['angie-widgets'] ) ) {
+			$angie_category = $this->categories['angie-widgets'];
+			unset( $this->categories['angie-widgets'] );
+
+			$angie_insert_after = isset( $this->categories['atomic-form'] ) ? 'atomic-form' : 'v4-elements';
+			$angie_insert_position = array_search( $angie_insert_after, array_keys( $this->categories ), true ) + 1;
+			$this->categories = array_merge(
+				array_slice( $this->categories, 0, $angie_insert_position, true ),
+				[ 'angie-widgets' => $angie_category ],
+				array_slice( $this->categories, $angie_insert_position, null, true )
+			);
+		}
+
 		$this->categories['wordpress'] = [
 			'title' => esc_html__( 'WordPress', 'elementor' ),
 			'icon' => 'eicon-wordpress',
