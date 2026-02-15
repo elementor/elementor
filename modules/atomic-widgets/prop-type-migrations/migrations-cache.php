@@ -11,6 +11,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Migrations_Cache {
 	private const MIGRATIONS_STATE_META_KEY = '_elementor_migrations_state';
 
+	/**
+	 * Is data already migrated?
+	 * @param int $id Meta ID, can be post ID or any other unique ID
+	 * @param string $data_identifier Unique identifier for Data. Different DB tables migrate separately, and therefore cached individually
+	 * @param string $manifest_hash Manifest can change independently from code version (pulled from remote), we need to rerun migrations if it changes
+	 * @return bool
+	 */
 	public static function is_migrated( int $id, string $data_identifier, string $manifest_hash ): bool {
 		$cache_meta_key = self::get_cache_meta_key( $data_identifier );
 		$current_state = self::get_migration_state( $manifest_hash );
