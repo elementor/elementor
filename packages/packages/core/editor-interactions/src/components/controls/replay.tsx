@@ -7,6 +7,9 @@ import { __ } from '@wordpress/i18n';
 import { type ReplayFieldProps } from '../../types';
 import { InteractionsPromotionChip } from '../../ui/interactions-promotion-chip';
 
+const OVERLAY_GRID = '1 / 1';
+const CHIP_OFFSET = '50%';
+
 export function Replay( { onChange, anchorRef }: ReplayFieldProps ) {
 	const options: ToggleButtonGroupItem< boolean >[] = [
 		{
@@ -27,10 +30,10 @@ export function Replay( { onChange, anchorRef }: ReplayFieldProps ) {
 
 	return (
 		<Box sx={ { display: 'grid', alignItems: 'center' } }>
-			<Box sx={ { gridArea: '1 / 1' } }>
+			<Box sx={ { gridArea: OVERLAY_GRID } }>
 				<ToggleButtonGroupUi items={ options } exclusive onChange={ onChange } value={ false } />
 			</Box>
-			<Box sx={ { gridArea: '1 / 1', justifySelf: 'end', marginInlineEnd: '50%' } }>
+			<Box sx={ { gridArea: OVERLAY_GRID, marginInlineEnd: CHIP_OFFSET, justifySelf: 'end' } }>
 				<InteractionsPromotionChip
 					content={ __( 'Upgrade to run the animation every time its trigger occurs.', 'elementor' ) }
 					upgradeUrl={ 'https://go.elementor.com/go-pro-interactions-replay-modal/' }
