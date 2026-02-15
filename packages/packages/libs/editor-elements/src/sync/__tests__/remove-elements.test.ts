@@ -78,27 +78,42 @@ describe( 'removeElements', () => {
 		} );
 
 		// Assert.
+		expect( removeResult.elementIds ).toEqual( [ 'element-1', 'element-2' ] );
 		expect( removeResult.removedElements ).toHaveLength( 2 );
 
-		expect( removeResult.removedElements[ 0 ].container ).toBe( mockElement1 );
-		expect( removeResult.removedElements[ 0 ].model ).toEqual( {
-			id: 'element-1',
-			elType: 'widget',
-			widgetType: 'button',
-			settings: { text: 'Button 1' },
+		// Check collected data.
+		expect( removeResult.removedElements[ 0 ] ).toEqual( {
+			elementId: 'element-1',
+			model: {
+				id: 'element-1',
+				elType: 'widget',
+				widgetType: 'button',
+				settings: { text: 'Button 1' },
+			},
+			parent: mockElement1.parent,
+			at: 0,
 		} );
-		expect( removeResult.removedElements[ 0 ].at ).toBe( 0 );
 
-		expect( removeResult.removedElements[ 1 ].container ).toBe( mockElement2 );
-		expect( removeResult.removedElements[ 1 ].at ).toBe( 1 );
+		expect( removeResult.removedElements[ 1 ] ).toEqual( {
+			elementId: 'element-2',
+			model: {
+				id: 'element-2',
+				elType: 'widget',
+				widgetType: 'text',
+				settings: { content: 'Text content' },
+			},
+			parent: mockElement2.parent,
+			at: 1,
+		} );
 
+		// Check deletions.
 		expect( mockDeleteElement ).toHaveBeenCalledTimes( 2 );
 		expect( mockDeleteElement ).toHaveBeenNthCalledWith( 1, {
-			container: mockElement1,
+			elementId: 'element-1',
 			options: { useHistory: false },
 		} );
 		expect( mockDeleteElement ).toHaveBeenNthCalledWith( 2, {
-			container: mockElement2,
+			elementId: 'element-2',
 			options: { useHistory: false },
 		} );
 
@@ -109,7 +124,7 @@ describe( 'removeElements', () => {
 
 	it( 'should restore deleted elements on undo and delete them again on redo', () => {
 		// Arrange.
-		const { mockElement1, mockElement2, mockParent } = setupMockElementsForRemoval();
+		setupMockElementsForRemoval();
 
 		const mockRestoredElement1 = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
 		const mockRestoredElement2 = createMockChild( { id: 'element-2', elType: 'widget', widgetType: 'text' } );
@@ -129,7 +144,7 @@ describe( 'removeElements', () => {
 		// Assert.
 		expect( mockCreateElement ).toHaveBeenCalledTimes( 2 );
 		expect( mockCreateElement ).toHaveBeenNthCalledWith( 1, {
-			container: mockParent,
+			containerId: 'parent-1',
 			model: {
 				id: 'element-2',
 				elType: 'widget',
@@ -139,7 +154,7 @@ describe( 'removeElements', () => {
 			options: { useHistory: false, at: 1 },
 		} );
 		expect( mockCreateElement ).toHaveBeenNthCalledWith( 2, {
-			container: mockParent,
+			containerId: 'parent-1',
 			model: {
 				id: 'element-1',
 				elType: 'widget',
@@ -155,13 +170,13 @@ describe( 'removeElements', () => {
 		} );
 
 		// Assert.
-		expect( mockDeleteElement ).toHaveBeenCalledTimes( 4 );
+		expect( mockDeleteElement ).toHaveBeenCalledTimes( 4 ); // 2 from initial removal + 2 from redo
 		expect( mockDeleteElement ).toHaveBeenNthCalledWith( 3, {
-			container: mockElement1,
+			elementId: 'element-1',
 			options: { useHistory: false },
 		} );
 		expect( mockDeleteElement ).toHaveBeenNthCalledWith( 4, {
-			container: mockElement2,
+			elementId: 'element-2',
 			options: { useHistory: false },
 		} );
 	} );
@@ -177,11 +192,15 @@ describe( 'removeElements', () => {
 		} );
 
 		// Assert.
+		expect( removeResult.elementIds ).toEqual( [ 'non-existent-element' ] );
 		expect( removeResult.removedElements ).toHaveLength( 0 );
-		expect( mockDeleteElement ).not.toHaveBeenCalled();
+		expect( mockDeleteElement ).toHaveBeenCalledWith( {
+			elementId: 'non-existent-element',
+			options: { useHistory: false },
+		} );
 	} );
 
-	it( 'should handle elements without parent containers', () => {
+	it( 'should handle elements without parent containers on undo', () => {
 		// Arrange.
 		const mockElement = createMockContainer( 'element-1', [] );
 		const mockElementToJSON = jest.spyOn( mockElement.model, 'toJSON' );
@@ -197,20 +216,23 @@ describe( 'removeElements', () => {
 		mockGetContainer.mockReturnValue( mockElement );
 
 		// Act.
-		const removeResult = removeElements( {
+		removeElements( {
 			elementIds: [ 'element-1' ],
 			title: 'Remove Element',
 		} );
 
+		// Act.
+		act( () => {
+			historyMock.instance.undo();
+		} );
+
 		// Assert.
-		expect( removeResult.removedElements ).toHaveLength( 0 );
-		expect( mockDeleteElement ).not.toHaveBeenCalled();
+		expect( mockCreateElement ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should handle elements with missing view index', () => {
 		// Arrange.
 		const mockParent = createMockContainer( 'parent-1', [] );
-
 		const mockElement = createMockContainer( 'element-1', [] );
 		const mockElementToJSON = jest.spyOn( mockElement.model, 'toJSON' );
 		mockElementToJSON.mockReturnValue( {
@@ -249,18 +271,18 @@ describe( 'removeElements', () => {
 		expect( historyItem?.subTitle ).toBe( 'Item removed' );
 	} );
 
-	it( 'should handle multiple undo/redo cycles correctly', () => {
+	it( 'should handle redo after multiple undo/redo cycles', () => {
 		// Arrange.
-		const { mockParent } = setupMockElementsForRemoval();
+		setupMockElementsForRemoval();
 
 		const mockRestoredElement1 = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
 		const mockRestoredElement2 = createMockChild( { id: 'element-2', elType: 'widget', widgetType: 'text' } );
 
 		mockCreateElement
-			.mockReturnValueOnce( mockRestoredElement2 )
-			.mockReturnValueOnce( mockRestoredElement1 )
-			.mockReturnValueOnce( mockRestoredElement2 )
-			.mockReturnValueOnce( mockRestoredElement1 );
+			.mockReturnValueOnce( mockRestoredElement1 ) // First undo
+			.mockReturnValueOnce( mockRestoredElement2 ) // First undo
+			.mockReturnValueOnce( mockRestoredElement1 ) // Second undo
+			.mockReturnValueOnce( mockRestoredElement2 ); // Second undo
 
 		// Act.
 		removeElements( {
@@ -270,114 +292,144 @@ describe( 'removeElements', () => {
 
 		act( () => {
 			historyMock.instance.undo();
+		} );
+
+		act( () => {
 			historyMock.instance.redo();
+		} );
+
+		// Act - Second undo/redo cycle.
+		act( () => {
 			historyMock.instance.undo();
+		} );
+		act( () => {
 			historyMock.instance.redo();
 		} );
 
 		// Assert.
-		expect( mockDeleteElement ).toHaveBeenCalledTimes( 6 );
-		expect( mockCreateElement ).toHaveBeenCalledTimes( 4 );
+		expect( mockDeleteElement ).toHaveBeenCalledTimes( 6 ); // Initial + 2 redos = 6 total calls
+		expect( mockCreateElement ).toHaveBeenCalledTimes( 4 ); // 2 undos = 4 total calls
 
-		expect( mockCreateElement ).toHaveBeenNthCalledWith( 3, {
-			container: mockParent,
-			model: {
-				id: 'element-2',
-				elType: 'widget',
-				widgetType: 'text',
-				settings: { content: 'Text content' },
-			},
-			options: { useHistory: false, at: 1 },
+		// Verify the last redo calls delete with correct IDs.
+		expect( mockDeleteElement ).toHaveBeenNthCalledWith( 5, {
+			elementId: 'element-1',
+			options: { useHistory: false },
 		} );
-		expect( mockCreateElement ).toHaveBeenNthCalledWith( 4, {
-			container: mockParent,
-			model: {
-				id: 'element-1',
-				elType: 'widget',
-				widgetType: 'button',
-				settings: { text: 'Button 1' },
-			},
-			options: { useHistory: false, at: 0 },
+		expect( mockDeleteElement ).toHaveBeenNthCalledWith( 6, {
+			elementId: 'element-2',
+			options: { useHistory: false },
 		} );
 	} );
 
-	it( 'should skip undo when parent container lookup returns null', () => {
+	it( 'should gracefully handle redo when elements no longer exist', () => {
 		// Arrange.
-		const { mockParent } = setupMockElementsForRemoval();
+		setupMockElementsForRemoval();
 
-		mockParent.lookup = jest.fn().mockReturnValue( null );
+		// Act - Remove elements.
+		removeElements( {
+			elementIds: [ 'element-1', 'element-2' ],
+			title: 'Remove Elements',
+		} );
 
-		const mockRestoredElement = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
-		mockCreateElement.mockReturnValue( mockRestoredElement );
+		// Simulate elements no longer existing during redo (e.g., undid past their creation).
+		mockGetContainer.mockImplementation( ( id ) => {
+			if ( id === 'element-1' ) {
+				return null; // Element 1 no longer exists
+			}
+			if ( id === 'element-2' ) {
+				// Element 2 still exists
+				const mockElement2 = createMockContainer( 'element-2', [] );
+				mockElement2.parent = createMockContainer( 'parent-1', [] );
+				mockElement2.view = { _index: 1 };
+				return mockElement2;
+			}
+			return null;
+		} );
 
 		// Act.
-		removeElements( {
-			elementIds: [ 'element-1' ],
-			title: 'Remove Element',
-		} );
-
-		act( () => {
-			historyMock.instance.undo();
-		} );
-
-		// Assert.
-		expect( mockDeleteElement ).toHaveBeenCalledTimes( 1 );
-		expect( mockCreateElement ).not.toHaveBeenCalled();
-	} );
-
-	it( 'should skip redo when container lookup returns null', () => {
-		// Arrange.
-		const { mockElement1 } = setupMockElementsForRemoval();
-
-		const mockRestoredElement = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
-		mockCreateElement.mockReturnValue( mockRestoredElement );
-
-		// Act.
-		removeElements( {
-			elementIds: [ 'element-1' ],
-			title: 'Remove Element',
-		} );
-
-		act( () => {
-			historyMock.instance.undo();
-		} );
-
-		mockElement1.lookup = jest.fn().mockReturnValue( null );
-
 		act( () => {
 			historyMock.instance.redo();
 		} );
 
 		// Assert.
-		expect( mockDeleteElement ).toHaveBeenCalledTimes( 1 );
-		expect( mockCreateElement ).toHaveBeenCalledTimes( 1 );
+		expect( mockDeleteElement ).toHaveBeenCalledTimes( 4 ); // Initial 2 + redo 2
+		expect( mockDeleteElement ).toHaveBeenNthCalledWith( 3, {
+			elementId: 'element-1',
+			options: { useHistory: false },
+		} );
+		expect( mockDeleteElement ).toHaveBeenNthCalledWith( 4, {
+			elementId: 'element-2',
+			options: { useHistory: false },
+		} );
 	} );
 
-	it( 'should skip redo when parent lookup returns null', () => {
+	it( 'should handle redo with relational elements', () => {
 		// Arrange.
-		const { mockParent } = setupMockElementsForRemoval();
+		const mockParent = createMockContainer( 'parent-1', [] );
 
-		const mockRestoredElement = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
-		mockCreateElement.mockReturnValue( mockRestoredElement );
+		const mockHeading = createMockContainer( 'heading-1', [] );
+		const mockHeadingToJSON = jest.spyOn( mockHeading.model, 'toJSON' );
+		mockHeadingToJSON.mockReturnValue( {
+			id: 'heading-1',
+			elType: 'widget',
+			widgetType: 'e-heading',
+			settings: { 'tab-content-id': { value: 'button-1' } },
+		} as unknown as V1ElementModelProps );
+		mockHeading.parent = mockParent;
+		mockHeading.view = { _index: 0 };
+
+		const mockButton = createMockContainer( 'button-1', [] );
+		const mockButtonToJSON = jest.spyOn( mockButton.model, 'toJSON' );
+		mockButtonToJSON.mockReturnValue( {
+			id: 'button-1',
+			elType: 'widget',
+			widgetType: 'e-button',
+			settings: {},
+		} as unknown as V1ElementModelProps );
+		mockButton.parent = mockParent;
+		mockButton.view = { _index: 1 };
+
+		mockGetContainer.mockImplementation( ( id ) => {
+			if ( id === 'heading-1' ) {
+				return mockHeading;
+			}
+			if ( id === 'button-1' ) {
+				return mockButton;
+			}
+			return null;
+		} );
 
 		// Act.
 		removeElements( {
-			elementIds: [ 'element-1' ],
-			title: 'Remove Element',
+			elementIds: [ 'heading-1', 'button-1' ],
+			title: 'Remove Tab',
 		} );
 
-		act( () => {
-			historyMock.instance.undo();
+		// Arrange.
+		mockGetContainer.mockImplementation( ( id ) => {
+			if ( id === 'heading-1' ) {
+				return mockHeading;
+			} // Heading exists
+			if ( id === 'button-1' ) {
+				return null;
+			} // Button no longer exists
+			return null;
 		} );
 
-		mockParent.lookup = jest.fn().mockReturnValue( null );
-
+		// Act.
 		act( () => {
 			historyMock.instance.redo();
 		} );
 
 		// Assert.
-		expect( mockDeleteElement ).toHaveBeenCalledTimes( 1 );
-		expect( mockCreateElement ).toHaveBeenCalledTimes( 1 );
+		expect( mockDeleteElement ).toHaveBeenCalledTimes( 4 ); // Initial 2 + redo 2
+		expect( mockDeleteElement ).toHaveBeenNthCalledWith( 3, {
+			elementId: 'heading-1',
+			options: { useHistory: false },
+		} );
+		expect( mockDeleteElement ).toHaveBeenNthCalledWith( 4, {
+			elementId: 'button-1',
+			options: { useHistory: false },
+		} );
 	} );
 } );

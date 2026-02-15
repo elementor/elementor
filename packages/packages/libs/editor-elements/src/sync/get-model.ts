@@ -1,16 +1,30 @@
-import { type V1Element } from './types';
+import { type ExtendedWindow, type V1Element } from './types';
 
-export type V1Model = V1Element[ 'model' ];
-
-export type V1Collection = V1Model[] & {
-	remove: ( model: V1Model ) => void;
-	add: ( model: V1Model, options?: { at?: number }, silent?: boolean ) => void;
-	indexOf: ( model: V1Model ) => number;
-};
+type V1Model = V1Element[ 'model' ];
 
 export type ModelResult = {
 	model: V1Model;
 };
+
+export function getModel( id: string, parentModel?: V1Model ): ModelResult | null {
+	const extendedWindow = window as unknown as ExtendedWindow;
+	const container = extendedWindow.elementor?.getContainer?.( id ) ?? null;
+
+	if ( container ) {
+		return { model: container.model };
+	}
+
+	if ( parentModel ) {
+		const childModels = parentModel.get( 'elements' ) ?? [];
+		const model = childModels.find( ( m ) => m.get( 'id' ) === id );
+
+		if ( model ) {
+			return { model };
+		}
+	}
+
+	return null;
+}
 
 export function findChildRecursive( model: V1Model, predicate: ( model: V1Model ) => boolean ): ModelResult | null {
 	const childModels = ( model.get( 'elements' ) ?? [] ) as V1Model[];

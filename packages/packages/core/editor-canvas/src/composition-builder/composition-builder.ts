@@ -79,16 +79,16 @@ export class CompositionBuilder {
 		const elementTag = node.tagName;
 		const isContainer = this.containerElements.includes( elementTag );
 		const parentElType = containerElement.model.get( 'elType' );
-		let targetContainer =
+		let targetContainerId =
 			parentElType === 'e-tabs'
-				? containerElement.children?.[ 1 ].children?.[ childIndex ] || containerElement.children?.[ 1 ]
-				: containerElement;
-		if ( ! targetContainer ) {
-			targetContainer = containerElement;
+				? containerElement.children?.[ 1 ].children?.[ childIndex ]?.id || containerElement.children?.[ 1 ].id
+				: containerElement.id;
+		if ( ! targetContainerId ) {
+			targetContainerId = containerElement.id;
 		}
 		const newElement = isContainer
 			? this.api.createElement( {
-					container: targetContainer,
+					containerId: targetContainerId,
 					model: {
 						elType: elementTag,
 						id: generateElementId(),
@@ -96,7 +96,7 @@ export class CompositionBuilder {
 					options: { useHistory: false },
 			  } )
 			: this.api.createElement( {
-					container: targetContainer,
+					containerId: targetContainerId,
 					model: {
 						elType: 'widget',
 						widgetType: elementTag,

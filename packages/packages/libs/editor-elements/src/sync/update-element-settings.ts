@@ -13,10 +13,6 @@ export type UpdateElementSettingsArgs = {
 export const updateElementSettings = ( { id, props, withHistory = true }: UpdateElementSettingsArgs ) => {
 	const container = getContainer( id );
 
-	if ( ! container ) {
-		return;
-	}
-
 	const args = {
 		container,
 		settings: { ...props },

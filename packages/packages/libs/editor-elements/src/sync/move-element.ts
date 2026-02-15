@@ -1,6 +1,6 @@
 import { createElement } from './create-element';
 import { deleteElement } from './delete-element';
-import { type V1Element } from './types';
+import { getContainer } from './get-container';
 
 type Options = {
 	useHistory?: boolean;
@@ -9,33 +9,35 @@ type Options = {
 };
 
 export type MoveElementParams = {
-	element: V1Element;
-	targetContainer: V1Element;
+	elementId: string;
+	targetContainerId: string;
 	options?: Options;
 };
 
-export function moveElement( { element, targetContainer, options = {} }: MoveElementParams ): V1Element {
-	const resolvedElement = element.lookup?.();
-	const resolvedTarget = targetContainer.lookup?.();
+export function moveElement( { elementId, targetContainerId, options = {} }: MoveElementParams ) {
+	const container = getContainer( elementId );
+	const target = getContainer( targetContainerId );
 
-	if ( ! resolvedElement ) {
-		throw new Error( `Element not found: ${ element.id }` );
+	if ( ! container ) {
+		throw new Error( `Element with ID "${ elementId }" not found` );
 	}
 
-	if ( ! resolvedTarget ) {
-		throw new Error( `Target container not found: ${ targetContainer.id }` );
+	if ( ! target ) {
+		throw new Error( `Target container with ID "${ targetContainerId }" not found` );
 	}
 
-	const modelToRecreate = resolvedElement.model.toJSON();
+	const modelToRecreate = container.model.toJSON();
 
 	deleteElement( {
-		container: resolvedElement,
+		elementId,
+		// prevent inner history from being created
 		options: { ...options, useHistory: false },
 	} );
 
 	const newContainer = createElement( {
-		container: resolvedTarget,
+		containerId: targetContainerId,
 		model: modelToRecreate,
+		// prevent inner history from being created
 		options: { edit: false, ...options, useHistory: false },
 	} );
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { SnackbarProvider } from 'notistack';
-import { createMockContainer, createMockElement, renderWithStore } from 'test-utils';
+import { createMockElement, renderWithStore } from 'test-utils';
 import {
 	createElements,
 	deleteElement,
@@ -484,16 +484,6 @@ describe( 'CreateComponentForm', () => {
 				return Promise.resolve();
 			} );
 
-			const componentInstanceContainer = createMockContainer( CREATED_COMPONENT_INSTANCE_ID );
-
-			mockGetContainer.mockImplementation( ( id: string ) => {
-				if ( id === CREATED_COMPONENT_INSTANCE_ID ) {
-					return componentInstanceContainer;
-				}
-
-				return createMockContainer( id );
-			} );
-
 			const { openForm, fillComponentName, getCreateButton } = setupForm();
 			openForm();
 
@@ -504,7 +494,7 @@ describe( 'CreateComponentForm', () => {
 			// Assert.
 			await waitFor( () => {
 				expect( mockDeleteElement ).toHaveBeenCalledWith( {
-					container: componentInstanceContainer,
+					elementId: CREATED_COMPONENT_INSTANCE_ID,
 					options: { useHistory: false },
 				} );
 			} );

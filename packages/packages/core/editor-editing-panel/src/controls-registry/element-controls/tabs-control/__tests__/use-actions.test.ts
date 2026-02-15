@@ -511,13 +511,13 @@ describe( 'tabs-control actions', () => {
 				expect.objectContaining( {
 					elements: expect.arrayContaining( [
 						expect.objectContaining( {
-							container: expect.anything(),
+							containerId: 'tab-content-area-123',
 							model: expect.objectContaining( {
 								elType: 'e-tab-content',
 							} ),
 						} ),
 						expect.objectContaining( {
-							container: expect.anything(),
+							containerId: 'tabs-menu-123',
 							model: expect.objectContaining( {
 								elType: 'e-tab',
 							} ),

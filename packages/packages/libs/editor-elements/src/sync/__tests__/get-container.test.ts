@@ -28,7 +28,8 @@ describe( 'getContainer', () => {
 	it( 'should return null if the container is not found', () => {
 		// Arrange.
 		const elementID = '1-heading';
-		mockGetContainer.mockReturnValue( undefined );
+		const container = undefined;
+		mockGetContainer.mockReturnValue( container );
 
 		// Act.
 		const result = getContainer( elementID );

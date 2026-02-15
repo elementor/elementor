@@ -1,18 +1,25 @@
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 
-import { type V1Element } from './types';
+import { getContainer } from './get-container';
 
 type Options = {
 	useHistory?: boolean;
 	at?: number;
 };
 
-type DeleteElementParams = {
-	container: V1Element;
+export function deleteElement( {
+	elementId,
+	options = {},
+}: {
+	elementId: string;
 	options?: Options;
-};
+} ): Promise< void > {
+	const container = getContainer( elementId );
 
-export function deleteElement( { container, options = {} }: DeleteElementParams ): Promise< void > {
+	if ( ! container ) {
+		throw new Error( `Element with ID "${ elementId }" not found` );
+	}
+
 	return runCommand( 'document/elements/delete', {
 		container,
 		options,

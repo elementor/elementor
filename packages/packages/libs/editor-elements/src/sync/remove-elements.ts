@@ -6,7 +6,7 @@ import { deleteElement } from './delete-element';
 import { getContainer } from './get-container';
 import { type V1Element, type V1ElementModelProps } from './types';
 
-type RemoveElementsParams = {
+type RemoveNestedElementsParams = {
 	elementIds: string[];
 	title: string;
 	subtitle?: string;
@@ -15,15 +15,18 @@ type RemoveElementsParams = {
 };
 
 type RemovedElement = {
-	container: V1Element;
-	parent: V1Element;
+	elementId: string;
 	model: V1ElementModelProps;
+	parent: V1Element | null;
 	at: number;
 };
 
 type RemovedElementsResult = {
+	elementIds: string[];
 	removedElements: RemovedElement[];
 };
+
+export type { RemoveNestedElementsParams, RemovedElement, RemovedElementsResult };
 
 export const removeElements = ( {
 	elementIds,
@@ -31,7 +34,7 @@ export const removeElements = ( {
 	subtitle = __( 'Item removed', 'elementor' ),
 	onRemoveElements,
 	onRestoreElements,
-}: RemoveElementsParams ): RemovedElementsResult => {
+}: RemoveNestedElementsParams ): RemovedElementsResult => {
 	const undoableRemove = undoable(
 		{
 			do: ( { elementIds: elementIdsParam }: { elementIds: string[] } ): RemovedElementsResult => {
@@ -40,36 +43,41 @@ export const removeElements = ( {
 				elementIdsParam.forEach( ( elementId ) => {
 					const container = getContainer( elementId );
 
-					if ( container?.parent ) {
+					if ( container ) {
+						const model = container.model.toJSON();
+						const parent = container.parent;
+
+						const at = container.view?._index ?? 0;
+
 						removedElements.push( {
-							container,
-							parent: container.parent,
-							model: container.model.toJSON(),
-							at: container.view?._index ?? 0,
+							elementId,
+							model,
+							parent: parent ?? null,
+							at,
 						} );
 					}
 				} );
 
+				// Call onRemoveElements before deleting elements to avoid conflicts between commands
 				onRemoveElements?.();
 
-				removedElements.forEach( ( { container } ) => {
+				elementIdsParam.forEach( ( elementId ) => {
 					deleteElement( {
-						container,
+						elementId,
 						options: { useHistory: false },
 					} );
 				} );
 
-				return { removedElements };
+				return { elementIds: elementIdsParam, removedElements };
 			},
 			undo: ( _: { elementIds: string[] }, { removedElements }: RemovedElementsResult ) => {
 				onRestoreElements?.();
 
-				[ ...removedElements ].reverse().forEach( ( { parent, model, at } ) => {
-					const freshParent = parent.lookup?.();
-
-					if ( freshParent ) {
+				// Restore elements in reverse order to maintain proper hierarchy
+				[ ...removedElements ].reverse().forEach( ( { model, parent, at } ) => {
+					if ( parent && model ) {
 						createElement( {
-							container: freshParent,
+							containerId: parent.id,
 							model,
 							options: { useHistory: false, at },
 						} );
@@ -78,34 +86,18 @@ export const removeElements = ( {
 			},
 			redo: (
 				_: { elementIds: string[] },
-				{ removedElements }: RemovedElementsResult
+				{ elementIds: originalElementIds, removedElements }: RemovedElementsResult
 			): RemovedElementsResult => {
 				onRemoveElements?.();
 
-				const newRemovedElements: RemovedElement[] = [];
-
-				removedElements.forEach( ( { container, parent, model, at } ) => {
-					const freshContainer = container.lookup?.();
-					const freshParent = parent.lookup?.();
-
-					if ( ! freshContainer || ! freshParent ) {
-						return;
-					}
-
+				originalElementIds.forEach( ( elementId ) => {
 					deleteElement( {
-						container: freshContainer,
+						elementId,
 						options: { useHistory: false },
-					} );
-
-					newRemovedElements.push( {
-						container: freshContainer,
-						parent: freshParent,
-						model,
-						at,
 					} );
 				} );
 
-				return { removedElements: newRemovedElements };
+				return { elementIds: originalElementIds, removedElements };
 			},
 		},
 		{

@@ -20,5 +20,9 @@ export const updateElementEditorSettings = ( {
 
 	element.model.set( 'editor_settings', { ...editorSettings, ...settings } );
 
-	runCommandSync( 'document/save/set-is-modified', { status: true }, { internal: true } );
+	setDocumentModifiedStatus( true );
 };
+
+function setDocumentModifiedStatus( status: boolean ) {
+	runCommandSync( 'document/save/set-is-modified', { status }, { internal: true } );
+}
