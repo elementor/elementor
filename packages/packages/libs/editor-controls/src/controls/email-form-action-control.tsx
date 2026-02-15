@@ -35,7 +35,11 @@ const SendToField = () => (
 );
 
 const SubjectField = () => (
-	<EmailField bind="subject" label={ __( 'Email Subject', 'elementor' ) } placeholder={ __( 'New form submission', 'elementor' ) } />
+	<EmailField
+		bind="subject"
+		label={ __( 'Email Subject', 'elementor' ) }
+		placeholder={ __( 'New form submission', 'elementor' ) }
+	/>
 );
 
 const MessageField = () => (
@@ -45,7 +49,12 @@ const MessageField = () => (
 				<ControlFormLabel>{ __( 'Message', 'elementor' ) }</ControlFormLabel>
 			</Grid>
 			<Grid item>
-				<TextAreaControl placeholder={ __( 'By default, all form fields are sent via [all-fields] shortcode.', 'elementor' ) } />
+				<TextAreaControl
+					placeholder={ __(
+						'By default, all form fields are sent via [all-fields] shortcode.',
+						'elementor'
+					) }
+				/>
 			</Grid>
 		</Grid>
 	</PropKeyProvider>
