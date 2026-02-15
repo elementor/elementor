@@ -1,8 +1,6 @@
 import {
 	config,
 	getKeyframes,
-	parseAnimationName,
-	extractAnimationId,
 	extractAnimationConfig,
 	getAnimateFunction,
 	getInViewFunction,
@@ -71,10 +69,7 @@ function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 
 function skipInteraction( interaction ) {
 	const activeBreakpoint = getActiveBreakpoint();
-	if ( interaction.breakpoints && interaction.breakpoints?.excluded?.includes( activeBreakpoint ) ) {
-		return true;
-	}
-	return false;
+	return interaction.breakpoints?.excluded?.includes( activeBreakpoint );
 }
 
 function processElementInteractions( element, interactions, animateFunc, inViewFunc ) {
@@ -88,21 +83,6 @@ function processElementInteractions( element, interactions, animateFunc, inViewF
 		}
 
 		const animConfig = extractAnimationConfig( interaction );
-
-		if ( animConfig ) {
-			applyAnimation( element, animConfig, animateFunc, inViewFunc );
-		}
-	} );
-}
-
-function processElementInteractionsLegacy( element, interactions, animateFunc, inViewFunc ) {
-	if ( ! interactions || ! Array.isArray( interactions ) ) {
-		return;
-	}
-
-	interactions.forEach( ( interaction ) => {
-		const animationName = extractAnimationId( interaction );
-		const animConfig = animationName && parseAnimationName( animationName );
 
 		if ( animConfig ) {
 			applyAnimation( element, animConfig, animateFunc, inViewFunc );
@@ -150,7 +130,7 @@ function initInteractions() {
 			const interactionsData = element.getAttribute( 'data-interactions' );
 			const parsedData = parseInteractionsData( interactionsData );
 
-			processElementInteractionsLegacy( element, parsedData, animateFunc, inViewFunc );
+			processElementInteractions( element, parsedData, animateFunc, inViewFunc );
 		} );
 	} );
 }

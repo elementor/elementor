@@ -91,21 +91,27 @@ class Module extends BaseModule {
 		add_filter( 'elementor/document/save/data', function( $data, $document ) {
 			return ( new Parser( $document->get_main_id() ) )->assign_interaction_ids( $data );
 		}, 11, 2 );
-		add_filter( 'elementor/document/save/data', function( $data, $document ) {
-			return $this->wrap_interactions_for_db( $data );
-		}, 12, 2 ); // Priority 12 = after validation (10) and ID assignment (11)
-
-		// Unwrap data AFTER loading from DB for frontend/editor
-		add_filter( 'elementor/document/load/data', function( $elements, $document ) {
-			return $this->process_elements_unwrap( $elements );
-		}, 10, 2 );
 	}
 
-	private function get_config() {
+	public function get_config() {
 		return [
 			'constants' => $this->get_presets()->defaults(),
 			'animationOptions' => $this->get_presets()->list(),
+			'breakpoints' => $this->get_active_breakpoints(),
 		];
+	}
+
+	private function get_active_breakpoints() {
+		$breakpoints_config = Plugin::$instance->breakpoints->get_breakpoints_config();
+		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
+
+		$breakpoints = [];
+
+		foreach ( array_keys( $active_breakpoints ) as $breakpoint_label ) {
+			$breakpoints[ $breakpoint_label ] = $breakpoints_config[ $breakpoint_label ];
+		}
+
+		return $breakpoints;
 	}
 
 	private function register_frontend_scripts() {
@@ -165,43 +171,5 @@ class Module extends BaseModule {
 			'ElementorInteractionsConfig',
 			$this->get_config()
 		);
-	}
-
-	private function wrap_interactions_for_db( $data ) {
-		if ( isset( $data['elements'] ) && is_array( $data['elements'] ) ) {
-			$data['elements'] = $this->process_elements_wrap( $data['elements'] );
-		}
-		return $data;
-	}
-
-	private function unwrap_interactions_for_frontend( $data ) {
-		if ( isset( $data['elements'] ) && is_array( $data['elements'] ) ) {
-			$data['elements'] = $this->process_elements_unwrap( $data['elements'] );
-		}
-		return $data;
-	}
-
-	private function process_elements_wrap( $elements ) {
-		foreach ( $elements as &$element ) {
-			if ( isset( $element['interactions'] ) ) {
-				$element['interactions'] = Adapter::wrap_for_db( $element['interactions'] );
-			}
-			if ( isset( $element['elements'] ) && is_array( $element['elements'] ) ) {
-				$element['elements'] = $this->process_elements_wrap( $element['elements'] );
-			}
-		}
-		return $elements;
-	}
-
-	private function process_elements_unwrap( $elements ) {
-		foreach ( $elements as &$element ) {
-			if ( isset( $element['interactions'] ) ) {
-				$element['interactions'] = Adapter::unwrap_for_frontend( $element['interactions'] );
-			}
-			if ( isset( $element['elements'] ) && is_array( $element['elements'] ) ) {
-				$element['elements'] = $this->process_elements_unwrap( $element['elements'] );
-			}
-		}
-		return $elements;
 	}
 }

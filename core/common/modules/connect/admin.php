@@ -114,12 +114,6 @@ class Admin {
 
 		add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ] );
 
-		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
-			if ( ! empty( $hooks[ static::PAGE_ID ] ) ) {
-				add_action( 'load-' . $hooks[ static::PAGE_ID ], [ $this, 'on_load_page' ] );
-			}
-		}, 10, 2 );
-
 		add_action( 'elementor/editor-one/menu/after_register_hidden_submenus', function ( array $hooks ) {
 			if ( ! empty( $hooks[ static::PAGE_ID ] ) ) {
 				add_action( 'load-' . $hooks[ static::PAGE_ID ], [ $this, 'on_load_page' ] );

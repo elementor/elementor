@@ -16,8 +16,8 @@
                         "value": {
                             "override_key": "prop-6",
                             "origin_value": {
-                                "$$type": "html",
-                                "value": "This is a title"
+                                "$$type": "html-v2",
+                                "value": { "content": "This is a title", "children": [] }
                             }
                         }
                     }
@@ -34,8 +34,8 @@
                         "value": {
                             "override_key": "prop-7",
                             "origin_value": {
-                                "$$type": "html",
-                                "value": "This is a subtitle"
+                                "$$type": "html-v2",
+                                "value": { "content": "This is a subtitle", "children": [] }
                             }
                         }
                     },

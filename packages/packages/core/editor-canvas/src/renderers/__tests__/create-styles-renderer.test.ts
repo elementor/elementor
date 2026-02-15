@@ -1,4 +1,3 @@
-/* eslint-disable testing-library/render-result-naming-convention */
 import type { BreakpointsMap } from '@elementor/editor-responsive';
 import { encodeString } from '@elementor/utils';
 

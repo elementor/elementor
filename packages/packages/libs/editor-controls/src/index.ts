@@ -36,6 +36,7 @@ export { enqueueFont } from './controls/font-family-control/enqueue-font';
 export { transitionProperties, transitionsItemsList } from './controls/transition-control/data';
 export { DateTimeControl } from './controls/date-time-control';
 export { InlineEditingControl } from './controls/inline-editing-control';
+export { EmailFormActionControl } from './controls/email-form-action-control';
 
 // components
 export { ControlFormLabel } from './components/control-form-label';

@@ -12,8 +12,11 @@
               "value": ["e-28fdd576-c6296f2"]
             },
             "text": {
-              "$$type": "html",
-              "value": "I have a shadow"
+              "$$type": "html-v2",
+              "value": {
+                "content": "I have a shadow",
+                "children": []
+              }
             }
           },
           "elements": [],

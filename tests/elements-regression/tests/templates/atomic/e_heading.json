@@ -16,8 +16,11 @@
               "value": "h1"
             },
             "title": {
-              "$$type": "html",
-              "value": "H1 Main Heading - Large Size"
+              "$$type": "html-v2",
+              "value": {
+                "content": "H1 Main Heading - Large Size",
+                "children": []
+              }
             }
           },
           "elements": [],

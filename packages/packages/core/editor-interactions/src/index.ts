@@ -12,3 +12,4 @@ export {
 export { ELEMENTS_INTERACTIONS_PROVIDER_KEY_PREFIX } from './providers/document-elements-interactions-provider';
 export { init } from './init';
 export { registerInteractionsControl } from './interactions-controls-registry';
+export type { InteractionItemPropValue, FieldProps } from './types';

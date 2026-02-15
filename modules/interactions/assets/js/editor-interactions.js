@@ -3,8 +3,7 @@
 import {
 	config,
 	getKeyframes,
-	parseAnimationName,
-	extractAnimationId,
+	extractAnimationConfig,
 	extractInteractionId,
 	getAnimateFunction,
 	waitForAnimateFunction,
@@ -88,8 +87,7 @@ function applyInteractionsToElement( element, interactionsData ) {
 	const interactions = Object.values( parsedData?.items || [] );
 
 	interactions.forEach( ( interaction ) => {
-		const animationName = extractAnimationId( interaction );
-		const animConfig = animationName && parseAnimationName( animationName );
+		const animConfig = extractAnimationConfig( interaction );
 
 		if ( animConfig ) {
 			applyAnimation( element, animConfig, animateFunc );

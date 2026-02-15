@@ -4,6 +4,42 @@ import type { PropsSchema } from '@elementor/editor-props';
 import type { SupportedFonts, EnqueueFont } from '@elementor/editor-v1-adapters';
 import type { V4PromotionData, V4PromotionKey } from '@elementor/editor-controls';
 
+interface EOnboardingConfig {
+	version: string;
+	restUrl: string;
+	nonce: string;
+	progress: {
+		current_step_id?: string;
+		current_step_index?: number;
+		completed_steps?: string[];
+		exit_type?: 'user_exit' | 'unexpected' | null;
+		last_active_timestamp?: number | null;
+		started_at?: number | null;
+		completed_at?: number | null;
+	};
+	choices: {
+		building_for?: string | null;
+		site_about?: string[];
+		experience_level?: string | null;
+		theme_selection?: string | null;
+		site_features?: string[];
+	};
+	hadUnexpectedExit: boolean;
+	isConnected: boolean;
+	userName?: string;
+	uiTheme?: 'auto' | 'dark' | 'light';
+	steps: Array<{
+		id: string;
+		label: string;
+		type: 'single' | 'multiple';
+	}>;
+	urls: {
+		dashboard: string;
+		editor: string;
+		connect: string;
+	};
+}
+
 declare global {
 	interface Window {
 		elementorCommon?: {
@@ -19,6 +55,9 @@ declare global {
 			};
 			config?: {
 				experimentalFeatures?: Record< string, boolean >;
+				urls?: {
+					assets?: string;
+				};
 			};
 		};
 		elementor?: {
@@ -40,9 +79,6 @@ declare global {
 				v4Promotions?: Record< V4PromotionKey, V4PromotionData >;
 			};
 			dynamicTags?: DynamicTagsManager;
-			selection?: {
-				getElements: () => V1Element[];
-			};
 			widgetsCache?: Record<
 				string,
 				{
@@ -66,6 +102,9 @@ declare global {
 			config?: {
 				version?: string;
 			};
+		};
+		elementorAppConfig?: {
+			'e-onboarding'?: EOnboardingConfig;
 		};
 		ElementorInteractionsConfig?: InteractionsConfig;
 		ElementorVariablesQuotaConfig?: Record< string, number >;

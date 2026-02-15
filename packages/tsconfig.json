@@ -26,7 +26,8 @@
       "@elementor/*": [
         "./packages/core/*/src",
         "./packages/libs/*/src",
-        "./packages/tools/*/src"
+        "./packages/tools/*/src",
+        "./packages/apps/*/src"
       ],
       "test-utils": [
         "./tests/test-utils"

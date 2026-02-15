@@ -34,10 +34,6 @@ class Module extends BaseModule {
 			$this->enqueue_assets_for_editor_one_menu( $hooks );
 		} );
 
-		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
-			$this->enqueue_assets_for_editor_one_menu( $hooks );
-		}, 10, 2 );
-
 		add_filter( 'elementor/widgets/is_widget_enabled', function( $should_register, Widget_Base $widget_instance ) {
 			return ! Options::is_element_disabled( $widget_instance->get_name() );
 		}, 10, 2 );

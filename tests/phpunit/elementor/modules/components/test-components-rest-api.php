@@ -704,8 +704,11 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'widgetType' => 'e-button',
 					'propKey' => 'text',
 					'originValue' => [
-						'$$type' => 'html',
-						'value' => 'Component 2 Button',
+						'$$type' => 'html-v2',
+						'value' => [
+							'content' => 'Component 2 Button',
+							'children' => [],
+						],
 					],
 					'groupId' => 'group-1',
 				],
@@ -784,8 +787,8 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'prop-button-link', $decoded_props['props'] );
 		
 		// Verify the originValue structures are intact
-		$this->assertEquals( 'html', $decoded_props['props']['prop-button-text']['originValue']['$$type'] );
-		$this->assertEquals( 'Component 2 Button', $decoded_props['props']['prop-button-text']['originValue']['value'] );
+		$this->assertEquals( 'html-v2', $decoded_props['props']['prop-button-text']['originValue']['$$type'] );
+		$this->assertEquals( 'Component 2 Button', $decoded_props['props']['prop-button-text']['originValue']['value']['content'] );
 		
 		$this->assertEquals( 'link', $decoded_props['props']['prop-button-link']['originValue']['$$type'] );
 		$this->assertEquals( '#inner-link', $decoded_props['props']['prop-button-link']['originValue']['value']['destination']['value'] );
@@ -806,8 +809,11 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'widgetType' => 'e-button',
 					'propKey' => 'text',
 					'originValue' => [
-						'$$type' => 'html',
-						'value' => 'Test Button Text',
+						'$$type' => 'html-v2',
+						'value' => [
+							'content' => 'Test Button Text',
+							'children' => [],
+						],
 					],
 					'groupId' => 'group-1',
 				],
@@ -1754,8 +1760,11 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 						'widgetType' => 'e-button',
 						'settings' => [
 							'text' => [
-								'$$type' => 'html',
-								'value' => 'Button Text',
+								'$$type' => 'html-v2',
+								'value' => [
+									'content' => 'Button Text',
+									'children' => [],
+								],
 							],
 							'link' => [
 								'$$type' => 'link',

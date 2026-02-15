@@ -352,6 +352,12 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.35.4 - 2026-02-11 =
+
+* Fix: License activation issues in various scenarios
+* Fix: General UI issues in Editor screens in WordPress Admin
+* Fix: Inline editing UI issues on canvas - Editor V4
+
 = 3.35.3 - 2026-02-05 =
 
 * Fix: Fatal error appears in dashboard widget in WordPress Admin ([#34663](https://github.com/elementor/elementor/issues/34663), [#34659](https://github.com/elementor/elementor/issues/34659))

@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\TemplateLibrary;
 
-use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Editor\Editor;
 use Elementor\Core\Utils\Collection;
@@ -354,72 +353,6 @@ class Source_Local extends Source_Base {
 		register_taxonomy( self::TAXONOMY_CATEGORY_SLUG, self::CPT, $args );
 	}
 
-	/**
-	 * Remove Add New item from admin menu.
-	 *
-	 * Fired by `admin_menu` action.
-	 *
-	 * @since 2.4.0
-	 * @access public
-	 */
-	private function admin_menu_reorder( Admin_Menu_Manager $admin_menu ) {
-		global $submenu;
-
-		if ( ! isset( $submenu[ static::ADMIN_MENU_SLUG ] ) ) {
-			return;
-		}
-
-		remove_submenu_page( static::ADMIN_MENU_SLUG, static::ADMIN_MENU_SLUG );
-
-		$add_new_slug = 'post-new.php?post_type=' . static::CPT;
-		$category_slug = 'edit-tags.php?taxonomy=' . static::TAXONOMY_CATEGORY_SLUG . '&amp;post_type=' . static::CPT;
-
-		$library_submenu = new Collection( $submenu[ static::ADMIN_MENU_SLUG ] );
-
-		$add_new_item = $library_submenu->find( function ( $item ) use ( $add_new_slug ) {
-			return $add_new_slug === $item[2];
-		} );
-
-		$categories_item = $library_submenu->find( function ( $item ) use ( $category_slug ) {
-			return $category_slug === $item[2];
-		} );
-
-		if ( $add_new_item ) {
-			remove_submenu_page( static::ADMIN_MENU_SLUG, $add_new_slug );
-
-			$admin_menu->register( admin_url( static::ADMIN_MENU_SLUG . '#add_new' ), new Add_New_Template_Menu_Item() );
-		}
-
-		if ( $categories_item ) {
-			remove_submenu_page( static::ADMIN_MENU_SLUG, $category_slug );
-
-			$admin_menu->register( $category_slug, new Templates_Categories_Menu_Item() );
-		}
-	}
-
-	/**
-	 * Add a `current` CSS class to the `Saved Templates` submenu page when it's active.
-	 * It should work by default, but since we interfere with WordPress' builtin CPT menus it doesn't work properly.
-	 *
-	 * @return void
-	 */
-	private function admin_menu_set_current() {
-		global $submenu;
-
-		if ( $this->is_current_screen() ) {
-			$library_submenu = &$submenu[ static::ADMIN_MENU_SLUG ];
-			$library_title = $this->get_library_title();
-
-			foreach ( $library_submenu as &$item ) {
-				if ( $library_title === $item[0] ) {
-					if ( ! isset( $item[4] ) ) {
-						$item[4] = '';
-					}
-					$item[4] .= ' current';
-				}
-			}
-		}
-	}
 
 	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
 		$menu_data_provider->register_menu( new Editor_One_Templates_Menu() );
@@ -1804,14 +1737,6 @@ class Source_Local extends Source_Base {
 				$post_types[] = self::CPT;
 
 				return $post_types;
-			} );
-
-			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
-				$this->admin_menu_reorder( $admin_menu );
-			}, 800 );
-
-			add_action( 'elementor/admin/menu/after_register', function () {
-				$this->admin_menu_set_current();
 			} );
 
 			add_filter( 'admin_title', [ $this, 'admin_title' ], 10, 2 );

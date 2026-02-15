@@ -125,17 +125,14 @@ type ResourceList = {
 type ToolRegistrationOptions<
 	InputArgs extends undefined | z.ZodRawShape = undefined,
 	OutputSchema extends undefined | z.ZodRawShape = undefined,
-	ExpectedOutput = OutputSchema extends z.ZodRawShape
-		? z.objectOutputType< OutputSchema & { llm_instructions?: string }, z.ZodTypeAny >
-		: string,
+	ExpectedOutput = OutputSchema extends z.ZodRawShape ? z.objectOutputType< OutputSchema, z.ZodTypeAny > : string,
 > = {
 	name: string;
 	description: string;
 	schema?: InputArgs;
 	/**
 	 * Auto added fields:
-	 * @param llm_instructions z.string().optional().describe('Instructions what to do next, Important to follow these instructions!')
-	 * @param errors           z.string().optional().describe('Error message if the tool failed')
+	 * @param errors z.string().optional().describe('Error message if the tool failed')
 	 */
 	outputSchema?: OutputSchema;
 	handler: InputArgs extends z.ZodRawShape
@@ -159,15 +156,6 @@ function createToolRegistry( server: McpServer ) {
 	>( opts: ToolRegistrationOptions< T, O > ) {
 		const outputSchema = opts.outputSchema as ZodRawShape | undefined;
 		if ( outputSchema ) {
-			Object.assign(
-				outputSchema,
-				outputSchema.llm_instructions ?? {
-					llm_instruction: z
-						.string()
-						.optional()
-						.describe( 'Instructions for what to do next, Important to follow these Instructions!' ),
-				}
-			);
 			Object.assign(
 				outputSchema,
 				outputSchema.errors ?? {

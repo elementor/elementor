@@ -197,7 +197,14 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		// Arrange
 			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 			const atomIds: Partial< Record< typeof supportedAtoms[number], string > > = {};
-			const encodedExpectedOutput = '<strong draggable=\"true\">bold</strong>, <u>underline</u>, <s>strikethrough</s>, <sup>superscript</sup>, <sub>subscript</sub>, <em>italic</em>';
+			const expectedTags = [
+				{ tag: 'strong', text: 'bold' },
+				{ tag: 'u', text: 'underline' },
+				{ tag: 's', text: 'strikethrough' },
+				{ tag: 'sup', text: 'superscript' },
+				{ tag: 'sub', text: 'subscript' },
+				{ tag: 'em', text: 'italic' },
+			];
 
 			atomIds[ atom ] = await editor.addWidget( { widgetType: atom, container: containerId } );
 
@@ -217,8 +224,11 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 			// Assert.
 			let queryString = getElementSelector( atomIds[ atom ] ) + ' ' + defaultAtomTags[ atom ];
 
-			expect( await editor.previewFrame.locator( queryString ).innerHTML() )
-				.toContain( encodedExpectedOutput );
+			const editorHtml = await editor.previewFrame.locator( queryString ).innerHTML();
+
+			for ( const { tag, text } of expectedTags ) {
+				expect( editorHtml ).toMatch( new RegExp( `<${ tag }[^>]*>${ text }</${ tag }>` ) );
+			}
 
 			// Unfocus.
 			await page.keyboard.press( 'Escape' );
@@ -227,8 +237,11 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 
 			queryString = `${ defaultAtomTags[ atom ] }[data-interaction-id="${ atomIds[ atom ] }"]`;
 
-			expect( ( await page.locator( queryString ).innerHTML() ) )
-				.toContain( encodedExpectedOutput.replaceAll( ' draggable="true"', '' ) );
+			const publishedHtml = await page.locator( queryString ).innerHTML();
+
+			for ( const { tag, text } of expectedTags ) {
+				expect( publishedHtml ).toMatch( new RegExp( `<${ tag }[^>]*>${ text }</${ tag }>` ) );
+			}
 		} );
 	}
 

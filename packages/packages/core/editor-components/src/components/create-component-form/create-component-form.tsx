@@ -132,6 +132,7 @@ export function CreateComponentForm() {
 				onClose={ cancelSave }
 				anchorReference="anchorPosition"
 				anchorPosition={ anchorPosition }
+				data-testid="create-component-form"
 			>
 				{ element !== null && (
 					<Form

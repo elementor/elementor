@@ -1,7 +1,13 @@
 import * as React from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { getContainer, getElementLabel, getElementType } from '@elementor/editor-elements';
-import { htmlPropTypeUtil, type PropType, type PropValue, stringPropTypeUtil } from '@elementor/editor-props';
+import {
+	htmlV2PropTypeUtil,
+	parseHtmlChildren,
+	type PropType,
+	type PropValue,
+	stringPropTypeUtil,
+} from '@elementor/editor-props';
 import { __privateRunCommandSync as runCommandSync, getCurrentEditMode, undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
@@ -122,12 +128,18 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	getExtractedContentValue() {
 		const propValue = this.getInlineEditablePropValue();
 
-		return htmlPropTypeUtil.extract( propValue ) ?? '';
+		return htmlV2PropTypeUtil.extract( propValue )?.content ?? '';
 	}
 
 	setContentValue( value: string | null ) {
 		const settingKey = this.getInlineEditablePropertyName();
-		const valueToSave = htmlPropTypeUtil.create( value || '' );
+		const html = value || '';
+		const parsed = parseHtmlChildren( html );
+
+		const valueToSave = htmlV2PropTypeUtil.create( {
+			content: parsed.content || null,
+			children: parsed.children,
+		} );
 
 		undoable(
 			{
@@ -162,12 +174,12 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		}
 
 		if ( propType.kind === 'union' ) {
-			if ( propType.prop_types[ htmlPropTypeUtil.key ] ) {
-				return htmlPropTypeUtil.key;
-			}
+			const textKeys = [ htmlV2PropTypeUtil.key, stringPropTypeUtil.key ];
 
-			if ( propType.prop_types[ stringPropTypeUtil.key ] ) {
-				return stringPropTypeUtil.key;
+			for ( const key of textKeys ) {
+				if ( propType.prop_types[ key ] ) {
+					return key;
+				}
 			}
 
 			return null;

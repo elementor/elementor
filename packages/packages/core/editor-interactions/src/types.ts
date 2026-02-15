@@ -1,3 +1,4 @@
+import { type RefObject } from 'react';
 import { type Unit } from '@elementor/editor-controls';
 import type {
 	AnimationPresetPropValue,
@@ -53,6 +54,7 @@ export type ReplayFieldProps = {
 	value: boolean;
 	onChange: ( value: boolean ) => void;
 	disabled?: boolean;
+	anchorRef?: RefObject< HTMLElement | null >;
 };
 export type DirectionFieldProps = FieldProps & {
 	interactionType: string;

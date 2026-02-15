@@ -41,7 +41,7 @@ export const addElement = ( props: { model: unknown, container: null | string, i
 		},
 	);
 
-	if ( 'object' === typeof element && 'id' in element && 'string' === typeof element.id ) {
+	if ( element !== null && 'object' === typeof element && 'id' in element && 'string' === typeof element.id ) {
 		return element.id;
 	}
 	return undefined;

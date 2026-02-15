@@ -1,0 +1,15 @@
+node_modules
+packages/node_modules
+build
+tmp
+.git
+.github
+.vscode
+.cursor
+.run
+docs
+local-site
+vendor
+*.log
+*.map
+docker-output/

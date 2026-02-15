@@ -55,8 +55,8 @@
                                 "value": {
                                     "override_key": "prop-3",
                                     "origin_value": {
-                                        "$$type": "html",
-                                        "value": "This is a title"
+                                        "$$type": "html-v2",
+                                        "value": { "content": "This is a title", "children": [] }
                                     }
                                 }
                             }
@@ -87,8 +87,8 @@
                                                         "value": {
                                                             "override_key": "prop-0",
                                                             "override_value": {
-                                                                "$$type": "html",
-                                                                "value": "Learn more"
+                                                "$$type": "html-v2",
+                                                "value": { "content": "Learn more", "children": [] }
                                                             },
                                                             "schema_source": {
                                                                 "type": "component",

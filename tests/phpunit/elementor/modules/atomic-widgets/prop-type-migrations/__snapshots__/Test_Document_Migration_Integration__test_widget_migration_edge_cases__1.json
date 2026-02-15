@@ -1,0 +1,198 @@
+[
+    {
+        "id": "no-migration-needed",
+        "settings": {
+            "title": {
+                "$$type": "html-v2",
+                "value": {
+                    "content": "Already correct type",
+                    "children": []
+                }
+            },
+            "tag": {
+                "$$type": "string",
+                "value": "h1"
+            }
+        },
+        "widgetType": "e-heading",
+        "elType": "widget"
+    },
+    {
+        "id": "migration-no-path",
+        "settings": {
+            "title": {
+                "$$type": "nonexistent_type",
+                "value": "No migration path exists for this type"
+            },
+            "tag": {
+                "$$type": "string",
+                "value": "h2"
+            }
+        },
+        "widgetType": "e-heading",
+        "elType": "widget"
+    },
+    {
+        "id": "chained-migration-upgrade",
+        "settings": {
+            "title": {
+                "$$type": "html-v2",
+                "value": "Should chain: a-string -> string -> html -> html-v2"
+            },
+            "tag": {
+                "$$type": "string",
+                "value": "h2"
+            }
+        },
+        "widgetType": "e-heading",
+        "elType": "widget"
+    },
+    {
+        "id": "chained-migration-downgrade",
+        "settings": {
+            "title": {
+                "$$type": "html-v2",
+                "value": {
+                    "content": "Should chain: html-v3 -> html-v2",
+                    "children": []
+                }
+            },
+            "tag": {
+                "$$type": "string",
+                "value": "h3"
+            }
+        },
+        "widgetType": "e-heading",
+        "elType": "widget"
+    },
+    {
+        "id": "container-with-old-string",
+        "settings": {
+            "tag": {
+                "$$type": "string",
+                "value": "div"
+            }
+        },
+        "elType": "e-div-block"
+    },
+    {
+        "id": "image-with-nested-migration",
+        "settings": {
+            "image": {
+                "$$type": "image",
+                "value": {
+                    "src": {
+                        "$$type": "image-src",
+                        "value": {
+                            "id": {
+                                "$$type": "image-attachment-id",
+                                "value": 456
+                            },
+                            "url": {
+                                "$$type": "url",
+                                "value": "https:\/\/example.com\/test.jpg"
+                            }
+                        }
+                    },
+                    "size": {
+                        "$$type": "string",
+                        "value": "full"
+                    }
+                }
+            }
+        },
+        "widgetType": "e-image",
+        "elType": "widget"
+    },
+    {
+        "id": "widget-key-migration",
+        "settings": {
+            "tag": {
+                "$$type": "string",
+                "value": "h2"
+            },
+            "title": {
+                "$$type": "html-v2",
+                "value": {
+                    "content": "Key should migrate: old-title -> title",
+                    "children": []
+                }
+            }
+        },
+        "widgetType": "e-heading",
+        "elType": "widget"
+    },
+    {
+        "id": "widget-key-and-type-migration",
+        "settings": {
+            "tag": {
+                "$$type": "string",
+                "value": "h3"
+            },
+            "title": {
+                "$$type": "html-v2",
+                "value": "Both key (old-title->title) AND type (html->html-v2) migration"
+            }
+        },
+        "widgetType": "e-heading",
+        "elType": "widget"
+    },
+    {
+        "id": "multiple-key-migrations",
+        "settings": {
+            "title": {
+                "$$type": "html-v2",
+                "value": {
+                    "content": "Migrate old-title -> title",
+                    "children": []
+                }
+            },
+            "tag": {
+                "$$type": "string",
+                "value": "h4"
+            }
+        },
+        "widgetType": "e-heading",
+        "elType": "widget"
+    },
+    {
+        "id": "interactions-with-nested-migration",
+        "settings": {
+            "title": {
+                "$$type": "html-v2",
+                "value": {
+                    "content": "Element with interactions",
+                    "children": []
+                }
+            },
+            "tag": {
+                "$$type": "string",
+                "value": "h2"
+            }
+        },
+        "interactions": {
+            "items": [
+                {
+                    "$$type": "interaction-item",
+                    "value": {
+                        "interaction_id": {
+                            "$$type": "string",
+                            "value": "click-interaction"
+                        },
+                        "trigger": {
+                            "$$type": "string",
+                            "value": "click"
+                        },
+                        "animation": {
+                            "$$type": "animation-preset",
+                            "value": "fade-in"
+                        }
+                    }
+                }
+            ],
+            "version": 1
+        },
+        "widgetType": "e-heading",
+        "elType": "widget"
+    }
+]

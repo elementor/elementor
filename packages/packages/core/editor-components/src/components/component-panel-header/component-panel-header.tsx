@@ -52,7 +52,7 @@ export const ComponentPanelHeader = () => {
 	};
 
 	return (
-		<Box>
+		<Box data-testid="component-panel-header">
 			<PanelHeader sx={ { justifyContent: 'start', px: 2 } }>
 				<Tooltip title={ __( 'Back', 'elementor' ) }>
 					<IconButton size="tiny" onClick={ onBack } aria-label={ __( 'Back', 'elementor' ) }>

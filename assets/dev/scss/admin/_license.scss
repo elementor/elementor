@@ -1,11 +1,16 @@
 // License Page
-.wrap.elementor-admin-page-license {
+#wpcontent .wrap.elementor-admin-page-license {
+	flex-direction: column;
+	align-items: flex-start;
+	flex-wrap: nowrap;
 
 	.elementor-license-box {
+		width: 100%;
 		max-width: 600px;
 		background: white;
 		margin: 20px 0;
 		padding: 20px 20px;
+		box-sizing: border-box;
 
 	h3 {
 		display: flex;
@@ -40,12 +45,12 @@
 		}
 
 	.button {
-		height: 30px;
 		margin-inline-start: 15px;
 		margin-block-end: 0;
 
 		@media screen and (max-width: 782px) {
 			margin-inline: 0;
+			min-height: auto;
 		}
 	}
 
