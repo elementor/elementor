@@ -3,6 +3,7 @@ namespace Elementor\Modules\Home\Classes;
 
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Plugin_Status_Adapter;
+use Elementor\Includes\EditorAssetsAPI;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -37,8 +38,8 @@ class Transformations_Manager {
 	}
 
 	public function run_transformations(): array {
-		if ( empty( $this->home_screen_data ) || ! is_array( $this->home_screen_data ) ) {
-			return $this->home_screen_data;
+		if ( ! EditorAssetsAPI::has_valid_nested_array( $this->home_screen_data, [] ) ) {
+			return [];
 		}
 
 		if ( ! empty( self::$cached_data ) ) {

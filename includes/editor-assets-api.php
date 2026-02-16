@@ -18,8 +18,19 @@ class EditorAssetsAPI {
 		return $this->config[ $key ] ?? '';
 	}
 
-	public static function has_valid_nested_array( array $data, array $nested_array_keys, bool $require_non_empty = true ): bool {
+	public static function has_valid_nested_array( $data, array $nested_array_keys, bool $require_non_empty = true ): bool {
 		if ( empty( $nested_array_keys ) ) {
+			if ( ! is_array( $data ) ) {
+				return false;
+			}
+			if ( $require_non_empty && empty( $data ) ) {
+				return false;
+			}
+
+			return true;
+		}
+
+		if ( ! is_array( $data ) ) {
 			return false;
 		}
 
@@ -104,5 +115,3 @@ class EditorAssetsAPI {
 		return update_option( $cache_key, $data, false );
 	}
 }
-
-
