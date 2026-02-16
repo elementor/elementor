@@ -18,6 +18,36 @@ class EditorAssetsAPI {
 		return $this->config[ $key ] ?? '';
 	}
 
+	public static function has_valid_nested_array( array $data, array $nested_array_keys, bool $require_non_empty = true ): bool {
+		if ( empty( $nested_array_keys ) ) {
+			return false;
+		}
+
+		$current = $data;
+		$depth = count( $nested_array_keys );
+
+		foreach ( $nested_array_keys as $index => $nested_key ) {
+			if ( ! is_array( $current ) || ! array_key_exists( $nested_key, $current ) ) {
+				return false;
+			}
+
+			$current = $current[ $nested_key ];
+			if ( $index === $depth - 1 ) {
+				if ( ! is_array( $current ) ) {
+					return false;
+				}
+
+				if ( $require_non_empty && empty( $current ) ) {
+					return false;
+				}
+
+				return true;
+			}
+		}
+
+		return true;
+	}
+
 	public function get_assets_data( $force_request = false ): array {
 		$assets_data = $this->get_transient( $this->config( static::ASSETS_DATA_TRANSIENT_KEY ) );
 
@@ -74,4 +104,5 @@ class EditorAssetsAPI {
 		return update_option( $cache_key, $data, false );
 	}
 }
+
 
