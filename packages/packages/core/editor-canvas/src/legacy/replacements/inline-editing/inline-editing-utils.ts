@@ -13,9 +13,9 @@ const EDITOR_ELEMENTS_OUT_OF_IFRAME = [ TOP_BAR_SELECTOR, NAVIGATOR_SELECTOR, ED
 
 export const EDITOR_WRAPPER_SELECTOR = 'inline-editor-wrapper';
 
-const SELECTION_PSEUDO_ELEMENT_ID_PREFIX = 'selection-pseudo-element';
+const TOOLBAR_REFERENCE_ELEMENT_ID_PREFIX = 'inline-editing-toolbar-reference';
 
-const SELECTION_PSEUDO_ELEMENT_STYLES: CSSProperties = {
+const TOOLBAR_REFERENCE_ELEMENT_STYLES: CSSProperties = {
 	backgroundColor: 'transparent',
 	border: 'none',
 	outline: 'none',
@@ -77,25 +77,24 @@ export const useOnClickOutsideIframe = ( handleUnmount: () => void ) => {
 };
 
 export const useOnSelectionEnd = ( ownerDocument: Document, id: string ) => {
-	const [ selectionPseudoElement, setSelectionPseudoElement ] = useState< HTMLElement | null >( null );
+	const [ toolbarReferenceElement, setToolbarReferenceElement ] = useState< HTMLElement | null >( null );
 
 	const onSelectionEnd = ( view: EditorView ) => {
 		const hasSelection = ! view.state.selection.empty;
 
-		removeSelectionPseudoElement( ownerDocument, id );
+		removeToolbarReferenceElement( ownerDocument, id );
 
 		if ( hasSelection ) {
-			setSelectionPseudoElement( createAndAttachSelectionPseudoElement( ownerDocument, id ) );
+			setToolbarReferenceElement( createAndAttachToolbarReferenceElement( ownerDocument, id ) );
 		} else {
-			removeSelectionPseudoElement( ownerDocument, id );
-			setSelectionPseudoElement( null );
+			setToolbarReferenceElement( null );
 		}
 	};
 
-	return { onSelectionEnd, selectionPseudoElement };
+	return { onSelectionEnd, toolbarReferenceElement };
 };
 
-const createAndAttachSelectionPseudoElement = ( ownerDocument: Document, id: string ): HTMLElement | null => {
+const createAndAttachToolbarReferenceElement = ( ownerDocument: Document, id: string ): HTMLElement | null => {
 	const frameWindow = ownerDocument.defaultView;
 	const selection = frameWindow?.getSelection();
 
@@ -106,33 +105,33 @@ const createAndAttachSelectionPseudoElement = ( ownerDocument: Document, id: str
 	const range = selection.getRangeAt( 0 );
 	const selectionRect = range.getBoundingClientRect();
 	const bodyRect = ownerDocument.body.getBoundingClientRect();
-	const selectionPseudoElement = ownerDocument.createElement( 'span' );
+	const toolbarReferenceElement = ownerDocument.createElement( 'span' );
 
-	setSelectionPseudoElementStyles( selectionPseudoElement, selectionRect, bodyRect );
-	selectionPseudoElement.setAttribute( 'id', getSelectionElementId( id ) );
+	setToolbarReferenceElementStyles( toolbarReferenceElement, selectionRect, bodyRect );
+	toolbarReferenceElement.setAttribute( 'id', getToolbarReferenceElementId( id ) );
 
-	ownerDocument.body.appendChild( selectionPseudoElement );
+	ownerDocument.body.appendChild( toolbarReferenceElement );
 
-	return selectionPseudoElement;
+	return toolbarReferenceElement;
 };
 
-export const removeSelectionPseudoElement = ( ownerDocument: Document, id: string ) => {
-	const selectionPseudoElement = getSelectionPseudoElement( ownerDocument, id );
+export const removeToolbarReferenceElement = ( ownerDocument: Document, id: string ) => {
+	const toolbarReferenceElement = getToolbarReferenceElement( ownerDocument, id );
 
-	if ( selectionPseudoElement ) {
-		ownerDocument.body.removeChild( selectionPseudoElement );
+	if ( toolbarReferenceElement ) {
+		ownerDocument.body.removeChild( toolbarReferenceElement );
 	}
 };
 
-const getSelectionElementId = ( id: string ) => `${ SELECTION_PSEUDO_ELEMENT_ID_PREFIX }-${ id }`;
+const getToolbarReferenceElementId = ( id: string ) => `${ TOOLBAR_REFERENCE_ELEMENT_ID_PREFIX }-${ id }`;
 
-export const getSelectionPseudoElement = ( ownerDocument: Document, id: string ) =>
-	ownerDocument.getElementById( getSelectionElementId( id ) ) as HTMLDivElement | null;
+export const getToolbarReferenceElement = ( ownerDocument: Document, id: string ) =>
+	ownerDocument.getElementById( getToolbarReferenceElementId( id ) ) as HTMLDivElement | null;
 
-const setSelectionPseudoElementStyles = ( element: HTMLElement, selectionRect: DOMRect, bodyRect: DOMRect ) => {
+const setToolbarReferenceElementStyles = ( element: HTMLElement, selectionRect: DOMRect, bodyRect: DOMRect ) => {
 	const { width, height } = selectionRect;
 
-	Object.assign( element.style, SELECTION_PSEUDO_ELEMENT_STYLES );
+	Object.assign( element.style, TOOLBAR_REFERENCE_ELEMENT_STYLES );
 	element.style.top = `${ selectionRect.top - bodyRect.top }px`;
 	element.style.left = `${ selectionRect.left - bodyRect.left }px`;
 	element.style.width = `${ width }px`;
@@ -145,11 +144,11 @@ export const horizontalShifterMiddleware: {
 } = {
 	name: 'horizontalShifter',
 	fn( state ) {
-		const { x: left, y: top } = state;
-		const { reference, floating } = state.elements;
-
-		const referenceRect = reference.getBoundingClientRect();
-		const floatingRect = floating.getBoundingClientRect();
+		const {
+			x: left,
+			y: top,
+			elements: { reference, floating },
+		} = state;
 
 		const newState: MiddlewareReturn = {
 			...state,
@@ -157,17 +156,18 @@ export const horizontalShifterMiddleware: {
 			y: top,
 		};
 
-		const isLeftOverflown = state.x < 0 && referenceRect.left > state.x;
+		const isLeftOverflown = left < 0;
 
 		if ( isLeftOverflown ) {
-			newState.x = referenceRect.left;
+			newState.x = 0;
 
 			return newState;
 		}
 
-		const right = left + floatingRect.width;
+		const referenceRect = reference.getBoundingClientRect();
+		const right = left + floating.offsetWidth;
 		const documentWidth = ( reference as HTMLElement ).ownerDocument.body.offsetWidth;
-		const isRightOverflown = right > documentWidth && referenceRect.right < floatingRect.right;
+		const isRightOverflown = right > documentWidth && referenceRect.right < right;
 
 		if ( isRightOverflown ) {
 			const diff = right - documentWidth;

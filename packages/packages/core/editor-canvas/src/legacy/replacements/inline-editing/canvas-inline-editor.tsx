@@ -8,9 +8,9 @@ import { CANVAS_WRAPPER_ID, OutlineOverlay } from '../../../components/outline-o
 import {
 	type Editor,
 	getInlineEditorElement,
-	getSelectionPseudoElement,
+	getToolbarReferenceElement,
 	horizontalShifterMiddleware as horizontalShifter,
-	removeSelectionPseudoElement,
+	removeToolbarReferenceElement,
 	useOnClickOutsideIframe,
 	useOnSelectionEnd,
 } from './inline-editing-utils';
@@ -35,11 +35,11 @@ export const CanvasInlineEditor = ( {
 	onBlur: () => void;
 } ) => {
 	const [ editor, setEditor ] = useState< Editor | null >( null );
-	const { onSelectionEnd, selectionPseudoElement } = useOnSelectionEnd( rootElement.ownerDocument, id );
+	const { onSelectionEnd, toolbarReferenceElement } = useOnSelectionEnd( rootElement.ownerDocument, id );
 
 	const onBlur = () => {
-		if ( getSelectionPseudoElement( rootElement.ownerDocument, id ) ) {
-			removeSelectionPseudoElement( rootElement.ownerDocument, id );
+		if ( getToolbarReferenceElement( rootElement.ownerDocument, id ) ) {
+			removeToolbarReferenceElement( rootElement.ownerDocument, id );
 		}
 
 		props.onBlur();
@@ -76,8 +76,8 @@ export const CanvasInlineEditor = ( {
 				expectedTag={ expectedTag }
 				onSelectionEnd={ onSelectionEnd }
 			/>
-			{ selectionPseudoElement && editor && (
-				<InlineEditingToolbar element={ selectionPseudoElement } editor={ editor } id={ id } />
+			{ toolbarReferenceElement && editor && (
+				<InlineEditingToolbar element={ toolbarReferenceElement } editor={ editor } id={ id } />
 			) }
 		</ThemeProvider>
 	);
