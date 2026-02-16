@@ -21,6 +21,12 @@ describe( 'dispatchers', () => {
 			routes: {
 				register: jest.fn(),
 			},
+			components: {
+				get: jest.fn(),
+			},
+			data: {
+				deleteCache: jest.fn(),
+			},
 		};
 	} );
 
