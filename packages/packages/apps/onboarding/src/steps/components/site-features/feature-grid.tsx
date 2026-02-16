@@ -45,7 +45,7 @@ const BuiltInChip = styled( Chip )( ( { theme } ) => ( {
 	height: theme.spacing( 2.25 ),
 	'& .MuiChip-label': {
 		fontSize: theme.spacing( 1.5 ),
-		padding: `${theme.spacing(0.375)} ${theme.spacing(1)}`
+		padding: `${ theme.spacing( 0.375 ) } ${ theme.spacing( 1 ) }`,
 	},
 } ) );
 

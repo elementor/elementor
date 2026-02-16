@@ -271,7 +271,7 @@ describe( 'App', () => {
 			render( <App /> );
 
 			// Assert
-			expect( screen.getByText( 'Finish' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Continue with Free' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Skip' ) ).toBeInTheDocument();
 		} );
 
