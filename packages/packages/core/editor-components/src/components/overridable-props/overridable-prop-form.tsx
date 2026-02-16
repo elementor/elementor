@@ -46,7 +46,7 @@ export function OverridablePropForm( { onSubmit, groups, currentValue, existingL
 	};
 
 	return (
-		<Form onSubmit={ handleSubmit }>
+		<Form onSubmit={ handleSubmit } data-testid="overridable-prop-form">
 			<Stack alignItems="start" sx={ { width: '268px', ...sx } }>
 				<Stack
 					direction="row"
