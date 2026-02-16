@@ -135,7 +135,9 @@ class Module extends BaseModule {
 			return [];
 		}
 
-		$data = json_decode( wp_remote_retrieve_body( $response ), true );
+		$body = wp_remote_retrieve_body( $response );
+
+		$data = json_decode( $body, true );
 
 		if ( ! is_array( $data ) ) {
 			return [];

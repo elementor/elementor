@@ -137,4 +137,3 @@ class API {
 		return $result;
 	}
 }
-
