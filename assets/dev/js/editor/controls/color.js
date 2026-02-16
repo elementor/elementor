@@ -197,6 +197,11 @@ export default class extends ControlBaseDataView {
 		return $color;
 	}
 
+	createHeaderItemMarkup( text ) {
+		return jQuery( '<div>', { class: 'e-global__group-header' } )
+			.text( text );
+	}
+
 	createColorPreviewBox( color ) {
 		const $colorPreviewContainer = jQuery( '<div>', { class: 'e-global__color-preview-container' } ),
 			$colorPreviewColor = jQuery( '<div>', { class: 'e-global__color-preview-color', style: 'background-color: ' + color } ),
@@ -231,17 +236,15 @@ export default class extends ControlBaseDataView {
 		} );
 
 		if ( v4Colors.length ) {
-			const $v4Header = jQuery( '<div>', { class: 'e-global__group-header' } )
-				.text( __( 'Version 4 Variables', 'elementor' ) );
-			$globalPreviewItemsContainer.append( $v4Header );
+			$globalPreviewItemsContainer.append(
+				this.createHeaderItemMarkup( __( 'Version 4 Variables', 'elementor' ) ),
+			);
 
 			v4Colors.forEach( ( color ) => {
 				$globalPreviewItemsContainer.append( this.createGlobalItemMarkup( color ) );
 			} );
 
-			const $v3Header = jQuery( '<div>', { class: 'e-global__group-header' } )
-				.text( __( 'Version 3 Global Colors', 'elementor' ) );
-			$globalPreviewItemsContainer.append( $v3Header );
+			$globalPreviewItemsContainer.append( this.createHeaderItemMarkup( __( 'Version 3 Global Colors', 'elementor' ) ) );
 		}
 
 		v3Colors.forEach( ( color ) => {

@@ -1,5 +1,5 @@
-import { __privateRefreshGlobalsCache as refreshGlobalsCache } from '@elementor/editor-v1-adapters';
 import { useCallback, useState } from 'react';
+import { __privateRefreshGlobalsCache as refreshGlobalsCache } from '@elementor/editor-v1-adapters';
 
 import { generateTempId } from '../../../batch-operations';
 import { getVariables } from '../../../hooks/use-prop-variables';
@@ -29,7 +29,9 @@ const hasSyncRelatedChanges = (
 			return true;
 		}
 
-		if ( variable.sync_to_v3 && ( original.label !== variable.label || original.value !== variable.value ) ) {
+		const changedLabelOrValue = original.label !== variable.label || original.value !== variable.value;
+
+		if ( variable.sync_to_v3 && changedLabelOrValue ) {
 			return true;
 		}
 	}

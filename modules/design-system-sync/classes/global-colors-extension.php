@@ -16,6 +16,7 @@ class Global_Colors_Extension {
 	public function register_hooks() {
 		add_action( 'elementor/kit/global-colors/register_controls', [ $this, 'add_v4_variables_section' ] );
 		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_editor_styles' ] );
+		add_filter( 'elementor/globals/colors/items', [ $this, 'add_v4_variables_section_to_color_selector' ] );
 	}
 
 	public function enqueue_editor_styles() {
@@ -95,6 +96,36 @@ class Global_Colors_Extension {
 				],
 			]
 		);
+	}
+
+
+	public function add_v4_variables_section_to_color_selector( array $items ): array {
+		$v4_colors = $this->get_v4_color_variables();
+
+		if ( empty( $v4_colors ) ) {
+			return $items;
+		}
+
+		$v4_items = [];
+
+		foreach ( $v4_colors as $variable ) {
+			$label = sanitize_text_field( $variable['label'] ?? '' );
+
+			if ( empty( $label ) ) {
+				continue;
+			}
+
+			$v3_id = 'v4-' . $label;
+
+			$v4_items[ $v3_id ] = [
+				'id'    => $v3_id,
+				'title' => $label,
+				'value' => strtoupper( $variable['value'] ?? '' ),
+				'group' => 'v4',
+			];
+		}
+
+		return array_merge( $v4_items, $items );
 	}
 
 	private function get_v4_color_variables(): array {

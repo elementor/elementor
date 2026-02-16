@@ -50,7 +50,11 @@ export function openRoute( route: string ) {
 export function refreshGlobalsCache() {
 	const extendedWindow = window as unknown as ExtendedWindow;
 
-	extendedWindow.$e?.components?.get?.( 'globals' )?.refreshGlobalData?.();
+	try {
+		extendedWindow.$e?.components?.get?.( 'globals' )?.refreshGlobalData?.();
+	} catch ( error ) {
+		console.warn( 'Failed to refresh globals cache:', error );
+	}
 }
 
 export function registerRoute( route: string ) {

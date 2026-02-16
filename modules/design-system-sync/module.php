@@ -46,6 +46,5 @@ class Module extends BaseModule {
 	private function register_hooks() {
 		( new Kit_Stylesheet_Extended() )->register_hooks();
 		( new Classes\Global_Colors_Extension() )->register_hooks();
-		( new Classes\Global_Colors_Injector() )->register_hooks();
 	}
 }
