@@ -69,7 +69,7 @@ export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
 
 			<Stack spacing={ 4 }>
 				<Stack spacing={ 1 }>
-					<Typography variant="h5">
+					<Typography variant="h5" align="center" fontWeight={ 500 } sx={ { fontFamily: "'Poppins', sans-serif" } }>
 						{ __( 'Start with a theme that fits your needs', 'elementor' ) }
 					</Typography>
 					<Typography variant="body1" color="text.secondary">
