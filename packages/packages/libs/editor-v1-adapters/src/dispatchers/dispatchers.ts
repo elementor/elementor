@@ -52,8 +52,8 @@ export function refreshGlobalsCache() {
 
 	try {
 		extendedWindow.$e?.components?.get?.( 'globals' )?.refreshGlobalData?.();
-	} catch ( error ) {
-	}
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	} catch ( error ) {}
 }
 
 export function registerRoute( route: string ) {

@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react';
-import { __privateRefreshGlobalsCache as refreshGlobalsCache } from '@elementor/editor-v1-adapters';
 
 import { generateTempId } from '../../../batch-operations';
 import { getVariables } from '../../../hooks/use-prop-variables';
@@ -8,42 +7,6 @@ import { type TVariablesList } from '../../../storage';
 import { filterBySearch } from '../../../utils/filter-by-search';
 import { applySelectionFilters, variablesToList } from '../../../utils/variables-to-list';
 import { getVariableTypes } from '../../../variables-registry/variable-type-registry';
-
-const hasSyncRelatedChanges = (
-	originalVariables: TVariablesList,
-	currentVariables: TVariablesList,
-	deleted: string[]
-): boolean => {
-	for ( const [ id, variable ] of Object.entries( currentVariables ) ) {
-		const original = originalVariables[ id ];
-
-		if ( ! original && variable.sync_to_v3 ) {
-			return true;
-		}
-
-		if ( ! original ) {
-			continue;
-		}
-
-		if ( original.sync_to_v3 !== variable.sync_to_v3 ) {
-			return true;
-		}
-
-		const changedLabelOrValue = original.label !== variable.label || original.value !== variable.value;
-
-		if ( variable.sync_to_v3 && changedLabelOrValue ) {
-			return true;
-		}
-	}
-
-	for ( const id of deleted ) {
-		if ( originalVariables[ id ]?.sync_to_v3 ) {
-			return true;
-		}
-	}
-
-	return false;
-};
 
 export const useVariablesManagerState = () => {
 	const [ variables, setVariables ] = useState( () => getVariables( false ) );
@@ -110,9 +73,11 @@ export const useVariablesManagerState = () => {
 		if ( result.success ) {
 			await service.load();
 
-			if ( hasSyncRelatedChanges( originalVariables, variables, deletedVariables ) ) {
-				refreshGlobalsCache();
-			}
+			window.dispatchEvent(
+				new CustomEvent( 'elementor/editor-variables/saved-with-sync', {
+					detail: { originalVariables, variables, deletedVariables },
+				} )
+			);
 
 			const updatedVariables = service.variables();
 
