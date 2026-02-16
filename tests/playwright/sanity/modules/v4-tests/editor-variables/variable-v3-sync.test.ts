@@ -43,6 +43,34 @@ test.describe( 'V4-V3 Color Variable Sync @v4-tests', () => {
 		await context.close();
 	} );
 
+	test( 'Synced V4 color variable appears in Site Settings > Global Colors', async () => {
+		await test.step( 'Create a V4 color variable in the Variables Manager', async () => {
+			const variableRow = await variablesManagerPage.createVariableFromManager( {
+				name: syncedColorName,
+				value: syncedColorValue,
+				type: 'color',
+			} );
+			await expect( variableRow ).toBeVisible();
+			await expect( variableRow.getByText( syncedColorValue ) ).toBeVisible();
+		} );
+
+		await test.step( 'Enable sync_to_v3 on the variable', async () => {
+			const variableRow = page.locator( 'tr', { hasText: syncedColorName } );
+			await variableRow.hover();
+			await variableRow.getByRole( 'toolbar' ).click();
+			await page.getByRole( 'menuitem', { name: 'Sync to Version 3', includeHidden: true } ).click();
+			await variablesManagerPage.saveAndExitVariableManager( false );
+		} );
+
+		await test.step( 'Verify synced color appears in Site Settings > Global Colors', async () => {
+			await editor.openSiteSettings( 'global-colors' );
+			const syncedColorSection = page.locator( '.elementor-control-v4_color_variables' );
+			await expect( syncedColorSection ).toBeVisible();
+			await expect( syncedColorSection.locator( 'input[data-setting="title"]' ) ).toHaveValue( syncedColorName );
+			await expect( syncedColorSection.getByText( syncedColorValue, { exact: false } ) ).toBeVisible();
+		} );
+	} );
+
 	test( 'Synced V4 color variable appears in V3 widget color picker and renders correctly on frontend', async () => {
 		await test.step( 'Create a V4 color variable in the Variables Manager', async () => {
 			const variableRow = await variablesManagerPage.createVariableFromManager( {
@@ -58,19 +86,13 @@ test.describe( 'V4-V3 Color Variable Sync @v4-tests', () => {
 			const variableRow = page.locator( 'tr', { hasText: syncedColorName } );
 			await variableRow.hover();
 			await variableRow.getByRole( 'toolbar' ).click();
-			await page.getByRole( 'menuitem', { name: 'Sync to Version 3' } ).click();
-			await page.locator( '#elementor-panel' ).getByRole( 'button', { name: /Save/ } ).click();
-			await page.waitForRequest( ( response ) => response.url().includes( 'list' ) && null === response.failure() );
-		} );
-
-		await test.step( 'Verify synced color appears in Site Settings > Global Colors', async () => {
+			await page.getByRole( 'menuitem', { name: 'Sync to Version 3', includeHidden: true } ).click();
 			await variablesManagerPage.saveAndExitVariableManager( false );
-			await editor.openSiteSettings( 'global-colors' );
-			await expect( page.getByText( syncedColorName ) ).toBeVisible();
 		} );
 
 		await test.step( 'Add a V3 Heading widget and verify synced color in picker', async () => {
-			await page.locator( '#elementor-panel-header-kit-back' ).click();
+			// Switch to Add Element panel (after closing Variables Manager we may be on Style tab of v4 widget)
+			await page.locator( 'header' ).getByRole( 'button', { name: 'Add Element' } ).click();
 			await editor.addWidget( { widgetType: 'heading' } );
 			await editor.openPanelTab( 'style' );
 			await page.locator( '.elementor-control-title_color .pickr' ).click();
