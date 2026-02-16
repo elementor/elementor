@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
+import { CollapsibleContent } from '@elementor/editor-ui';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
-
-import { CollapsibleContent } from '../collapsible-content';
 
 jest.mock( '@elementor/editor-v1-adapters' );
 
