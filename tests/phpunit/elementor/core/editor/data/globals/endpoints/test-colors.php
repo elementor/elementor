@@ -2,7 +2,6 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Core\Editor\Data\Globals\Endpoints;
 
-
 use Elementor\Plugin;
 use Elementor\Core\Editor\Data;
 
