@@ -33,6 +33,32 @@ export class Back extends $e.modules.CommandBase {
 		return $e.routes.back( 'panel' );
 	}
 
+	markSessionSaved() {
+		const globalComponent = this.component;
+
+		if ( ! globalComponent ) {
+			return;
+		}
+
+		globalComponent.siteSettingsSession.hasSaved = true;
+
+		const currentTab = globalComponent.currentTab;
+		let activeSection = null;
+
+		try {
+			const panelView = elementor.getPanelView();
+			const currentPage = panelView?.getCurrentPageView?.();
+			const contentView = currentPage?.content?.currentView;
+			activeSection = contentView?.activeSection || null;
+		} catch ( e ) {}
+
+		const savedItem = activeSection ? `${ currentTab } - ${ activeSection }` : currentTab;
+
+		if ( savedItem ) {
+			globalComponent.trackSavedItem( savedItem );
+		}
+	}
+
 	trackSiteSettingsSession( targetType, state ) {
 		const sessionData = this.component.getSiteSettingsSessionData?.() || {};
 
@@ -114,14 +140,15 @@ export class Back extends $e.modules.CommandBase {
 					cancel: __( 'Discard', 'elementor' ),
 				},
 				onConfirm: () => {
-					this.trackSiteSettingsSession( 'save', 'saved' );
+					this.markSessionSaved();
 					$e.run( 'document/save/update' ).then( () => {
+						this.trackSiteSettingsSession( 'save', 'saved' );
 						resolve();
 					} );
 				},
 				onCancel: () => {
-					this.trackSiteSettingsSession( 'back', 'discard' );
 					$e.run( 'document/save/discard', { document } ).then( () => {
+						this.trackSiteSettingsSession( 'back', 'discard' );
 						resolve();
 					} );
 				},

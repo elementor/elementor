@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useEffect, useRef } from 'react';
-import { EditorOneEventManager } from 'elementor-editor-utils/editor-one-events';
 
 export default function AddSectionArea( props ) {
 	const addAreaElementRef = useRef(),
@@ -23,9 +22,6 @@ export default function AddSectionArea( props ) {
 
 	const handleAddContainerClick = ( event ) => {
 		event.stopPropagation();
-		EditorOneEventManager.sendCanvasEmptyBoxAction( {
-			targetName: 'add_container',
-		} );
 		props.setIsRenderPresets( true );
 	};
 

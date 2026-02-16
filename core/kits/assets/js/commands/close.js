@@ -3,8 +3,9 @@ import { EditorOneEventManager } from 'elementor-editor-utils/editor-one-events'
 export class Close extends $e.modules.CommandBase {
 	apply( args ) {
 		const { mode } = args;
+		const hasSaved = this.component.siteSettingsSession?.hasSaved || false;
 
-		this.trackSiteSettingsSession( 'close', 'saved' === mode ? 'saved' : 'discard' );
+		this.trackSiteSettingsSession( 'close', hasSaved ? 'saved' : 'discard' );
 
 		// The kit is opened directly.
 

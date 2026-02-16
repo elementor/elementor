@@ -8,6 +8,7 @@ export default class extends ComponentBase {
 	siteSettingsSession = {
 		visitedItems: [],
 		savedItems: [],
+		hasSaved: false,
 	};
 
 	__construct( args ) {
@@ -96,6 +97,7 @@ export default class extends ComponentBase {
 		this.siteSettingsSession = {
 			visitedItems: [],
 			savedItems: [],
+			hasSaved: false,
 		};
 	}
 }

@@ -125,12 +125,12 @@ export class EditorOneEventManager {
 		} ) );
 	}
 
-	static sendELibraryInsert( { assetId, assetName, libraryType, proRequired = false } ) {
+	static sendELibraryInsert( { assetId, libraryType, proRequired = false } ) {
 		const config = this.getConfig();
 		const payload = this.createBasePayload( {
 			interaction_type: this.toLowerSnake( config?.triggers?.insert ),
 			target_type: config?.targetTypes?.button,
-			target_name: this.decodeHtmlEntities( assetName ) || assetId,
+			target_name: String( assetId ),
 			interaction_result: config?.interactionResults?.assetInserted,
 			target_location: this.toLowerSnake( config?.locations?.elementorLibrary ),
 			location_l1: this.toLowerSnake( libraryType ),
@@ -145,12 +145,12 @@ export class EditorOneEventManager {
 		return this.dispatchEvent( config?.names?.editorOne?.eLibraryInsert, payload );
 	}
 
-	static sendELibraryFavorite( { assetId, assetName, libraryType, isFavorite, proRequired = false } ) {
+	static sendELibraryFavorite( { assetId, libraryType, isFavorite, proRequired = false } ) {
 		const config = this.getConfig();
 		const payload = this.createBasePayload( {
 			interaction_type: this.toLowerSnake( config?.triggers?.click ),
 			target_type: config?.targetTypes?.toggle,
-			target_name: this.decodeHtmlEntities( assetName ) || assetId,
+			target_name: String( assetId ),
 			interaction_result: config?.interactionResults?.assetFavorite,
 			target_value: Boolean( isFavorite ),
 			target_location: this.toLowerSnake( config?.locations?.elementorLibrary ),
@@ -166,12 +166,12 @@ export class EditorOneEventManager {
 		return this.dispatchEvent( config?.names?.editorOne?.eLibraryFavorite, payload );
 	}
 
-	static sendELibraryGenerateAi( { assetId, assetName, libraryType } ) {
+	static sendELibraryGenerateAi( { assetId, libraryType } ) {
 		const config = this.getConfig();
 		return this.dispatchEvent( config?.names?.editorOne?.eLibraryGenerateAi, this.createBasePayload( {
 			interaction_type: this.toLowerSnake( config?.triggers?.click ),
 			target_type: config?.targetTypes?.button,
-			target_name: this.decodeHtmlEntities( assetName ) || assetId,
+			target_name: String( assetId ),
 			interaction_result: config?.interactionResults?.aiGenerate,
 			target_location: this.toLowerSnake( config?.locations?.elementorLibrary ),
 			location_l1: this.toLowerSnake( libraryType ),

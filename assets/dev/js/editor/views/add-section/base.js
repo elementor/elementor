@@ -163,9 +163,6 @@ class AddSectionBase extends Marionette.ItemView {
 	}
 
 	onAddSectionButtonClick() {
-		EditorOneEventManager.sendCanvasEmptyBoxAction( {
-			targetName: 'add_container',
-		} );
 		this.showSelectPresets();
 	}
 
