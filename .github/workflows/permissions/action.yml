@@ -17,6 +17,21 @@ runs:
   steps:
     - shell: bash
       run: |
+        echo "deployment repo owner: ${{ inputs.DEPLOYMENT_REPOSITORY_OWNER }}"
+        echo "repository.owner.login: ${{ github.event.repository.owner.login }}"
+        echo "actor: ${{ github.actor }}"
+        echo "deployment permitted: ${{ inputs.DEPLOYMENT_PERMITTED }}"
+        echo "environment: ${{ inputs.ENVIRONMENT }}"
+        echo "github.ref: ${{ github.ref }}"
+        echo "github.ref_name: ${{ github.ref_name }}"
+        echo "github.ref_type: ${{ github.ref_type }}"
+        echo "github.ref_source: ${{ github.ref_source }}"
+        echo "github.ref_source_repository: ${{ github.ref_source_repository }}"
+        echo "github.ref_source_repository_owner: ${{ github.ref_source_repository_owner }}"
+        echo "github.ref_source_repository_owner_name: ${{ github.ref_source_repository_owner_name }}"
+        echo "github.ref_source_repository_owner_email: ${{ github.ref_source_repository_owner_email }}"
+
+        
         if [[ "${{ inputs.DEPLOYMENT_REPOSITORY_OWNER }}" != "${{ github.event.repository.owner.login }}" ]];then
           echo "Pass validation outside of main repo owner"
           exit 0
