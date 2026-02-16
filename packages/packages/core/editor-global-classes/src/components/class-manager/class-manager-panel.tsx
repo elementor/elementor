@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
+import { useSuppressedMessage } from '@elementor/editor-current-user';
 import { getCurrentDocument, getV1DocumentsManager, setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
 	__createPanel as createPanel,
@@ -90,6 +91,7 @@ export function ClassManagerPanel() {
 	const { close: closePanel } = usePanelActions();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 	const [ stopSyncConfirmation, setStopSyncConfirmation ] = useState< string | null >( null );
+	const [ isStopSyncSuppressed, suppressStopSyncMessage ] = useSuppressedMessage( 'stop-sync-class' );
 
 	const { mutateAsync: publish, isPending: isPublishing } = usePublish();
 
@@ -109,6 +111,17 @@ export function ClassManagerPanel() {
 		);
 		setStopSyncConfirmation( null );
 	}, [] );
+
+	const handleStopSyncRequest = useCallback(
+		( classId: string ) => {
+			if ( ! isStopSyncSuppressed ) {
+				setStopSyncConfirmation( classId );
+			} else {
+				handleStopSync( classId );
+			}
+		},
+		[ isStopSyncSuppressed, handleStopSync ]
+	);
 
 	usePreventUnload();
 
@@ -166,7 +179,7 @@ export function ClassManagerPanel() {
 							>
 								<GlobalClassesList
 									disabled={ isPublishing }
-									onStopSyncRequest={ ( classId ) => setStopSyncConfirmation( classId ) }
+									onStopSyncRequest={ handleStopSyncRequest }
 								/>
 							</Box>
 						</PanelBody>
@@ -291,28 +304,34 @@ const TotalCssClassCounter = () => {
 	);
 };
 
-const StopSyncConfirmationDialog = ( { open, onClose, onConfirm }: StopSyncConfirmationDialogProps ) => (
-	<ConfirmationDialog open={ open } onClose={ onClose }>
-		<ConfirmationDialog.Title icon={ FlippedColorSwatchIcon } iconColor="secondary">
-			{ __( 'Un-sync typography class', 'elementor' ) }
-		</ConfirmationDialog.Title>
-		<ConfirmationDialog.Content>
-			<ConfirmationDialog.ContentText>
-				{ __( "You're about to stop syncing a typography class to Version 3.", 'elementor' ) }
-			</ConfirmationDialog.ContentText>
-			<ConfirmationDialog.ContentText sx={ { mt: 1 } }>
-				{ __(
-					"Note that if it's being used anywhere, the affected elements will inherit the default typography.",
-					'elementor'
-				) }
-			</ConfirmationDialog.ContentText>
-		</ConfirmationDialog.Content>
-		<ConfirmationDialog.Actions
-			onClose={ onClose }
-			onConfirm={ onConfirm }
-			cancelLabel={ __( 'Cancel', 'elementor' ) }
-			confirmLabel={ __( 'Got it', 'elementor' ) }
-			color="secondary"
-		/>
-	</ConfirmationDialog>
-);
+const StopSyncConfirmationDialog = ( { open, onClose, onConfirm }: StopSyncConfirmationDialogProps ) => {
+	const [ , suppressStopSyncMessage ] = useSuppressedMessage( 'stop-sync-class' );
+
+	return (
+		<ConfirmationDialog open={ open } onClose={ onClose }>
+			<ConfirmationDialog.Title icon={ FlippedColorSwatchIcon } iconColor="primary">
+				{ __( 'Un-sync typography class', 'elementor' ) }
+			</ConfirmationDialog.Title>
+			<ConfirmationDialog.Content>
+				<ConfirmationDialog.ContentText>
+					{ __( "You're about to stop syncing a typography class to Version 3.", 'elementor' ) }
+				</ConfirmationDialog.ContentText>
+				<ConfirmationDialog.ContentText sx={ { mt: 1 } }>
+					{ __(
+						"Note that if it's being used anywhere, the affected elements will inherit the default typography.",
+						'elementor'
+					) }
+				</ConfirmationDialog.ContentText>
+			</ConfirmationDialog.Content>
+			<ConfirmationDialog.Actions
+				onClose={ onClose }
+				onConfirm={ onConfirm }
+				cancelLabel={ __( 'Cancel', 'elementor' ) }
+				confirmLabel={ __( 'Got it', 'elementor' ) }
+				color="primary"
+				onSuppressMessage={ suppressStopSyncMessage }
+				suppressLabel={ __( "Don't show again", 'elementor' ) }
+			/>
+		</ConfirmationDialog>
+	);
+};

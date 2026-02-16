@@ -21,14 +21,14 @@ const TITLE_ID = 'confirmation-dialog';
 type ConfirmationDialogProps = Pick< DialogProps, 'open' | 'onClose' | 'children' >;
 
 export const ConfirmationDialog = ( { open, onClose, children }: ConfirmationDialogProps ) => (
-	<Dialog open={ open } onClose={ onClose } aria-labelledby={ TITLE_ID } maxWidth="xs">
+	<Dialog open={ open } onClose={ onClose } aria-labelledby={ TITLE_ID } maxWidth="sm">
 		{ children }
 	</Dialog>
 );
 
 type ConfirmationDialogTitleProps = React.PropsWithChildren< {
 	icon?: React.ElementType;
-	iconColor?: 'error' | 'secondary';
+	iconColor?: 'error' | 'secondary' | 'primary';
 } >;
 
 const ConfirmationDialogTitle = ( {
@@ -43,11 +43,11 @@ const ConfirmationDialogTitle = ( {
 );
 
 const ConfirmationDialogContent = ( { children }: React.PropsWithChildren ) => (
-	<DialogContent>{ children }</DialogContent>
+	<DialogContent sx={ { mt: 2 } }>{ children }</DialogContent>
 );
 
 const ConfirmationDialogContentText = ( props: DialogContentTextProps ) => (
-	<DialogContentText variant="body2" color="textPrimary" { ...props } />
+	<DialogContentText variant="body2" color="secondary" { ...props } />
 );
 
 type ConfirmationDialogActionsProps = {
@@ -55,7 +55,7 @@ type ConfirmationDialogActionsProps = {
 	onConfirm: () => void;
 	cancelLabel?: string;
 	confirmLabel?: string;
-	color?: 'error' | 'secondary';
+	color?: 'error' | 'secondary' | 'primary';
 	onSuppressMessage?: () => void;
 	suppressLabel?: string;
 };
@@ -88,10 +88,11 @@ const ConfirmationDialogActions = ( {
 							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
 								setDontShowAgain( event.target.checked )
 							}
-							size="small"
+							size="medium"
+							color="secondary"
 						/>
 					}
-					label={ <Typography variant="body2">{ suppressLabel }</Typography> }
+					label={ <Typography variant="body2" color="text.secondary">{ suppressLabel }</Typography> }
 				/>
 			) }
 			<div>
