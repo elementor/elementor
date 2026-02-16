@@ -22,6 +22,10 @@ class Test_Module extends Test_Base {
 		parent::tearDown();
 	}
 
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
 	public function test_steps_exclude_site_features_when_pro_active() {
 		$this->ensure_pro_defined();
 
