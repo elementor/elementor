@@ -43,6 +43,7 @@ import { hasDeletedItems, onDelete } from './delete-class';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 import { GlobalClassesList } from './global-classes-list';
 import { blockPanelInteractions, unblockPanelInteractions } from './panel-interactions';
+import { StartSyncToV3Modal } from './start-sync-to-v3-modal';
 
 type StopSyncConfirmationDialogProps = {
 	open: boolean;
@@ -91,6 +92,7 @@ export function ClassManagerPanel() {
 	const { close: closePanel } = usePanelActions();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 	const [ stopSyncConfirmation, setStopSyncConfirmation ] = useState< string | null >( null );
+	const [ startSyncConfirmation, setStartSyncConfirmation ] = useState< string | null >( null );
 	const [ isStopSyncSuppressed, suppressStopSyncMessage ] = useSuppressedMessage( 'stop-sync-class' );
 
 	const { mutateAsync: publish, isPending: isPublishing } = usePublish();
@@ -110,6 +112,18 @@ export function ClassManagerPanel() {
 			} )
 		);
 		setStopSyncConfirmation( null );
+	}, [] );
+
+	const handleStartSync = useCallback( ( classId: string ) => {
+		dispatch(
+			slice.actions.update( {
+				style: {
+					id: classId,
+					sync_to_v3: true,
+				},
+			} )
+		);
+		setStartSyncConfirmation( null );
 	}, [] );
 
 	const handleStopSyncRequest = useCallback(
@@ -180,6 +194,7 @@ export function ClassManagerPanel() {
 								<GlobalClassesList
 									disabled={ isPublishing }
 									onStopSyncRequest={ handleStopSyncRequest }
+									onStartSyncRequest={ ( classId ) => setStartSyncConfirmation( classId ) }
 								/>
 							</Box>
 						</PanelBody>
@@ -201,6 +216,13 @@ export function ClassManagerPanel() {
 				</Panel>
 			</ErrorBoundary>
 			<ClassManagerIntroduction />
+			{ startSyncConfirmation && (
+				<StartSyncToV3Modal
+					externalOpen
+					onExternalClose={ () => setStartSyncConfirmation( null ) }
+					onConfirm={ () => handleStartSync( startSyncConfirmation ) }
+				/>
+			) }
 			{ stopSyncConfirmation && (
 				<StopSyncConfirmationDialog
 					open
