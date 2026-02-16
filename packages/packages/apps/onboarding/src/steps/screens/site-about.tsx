@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { Stack, Typography } from '@elementor/ui';
 
 import { OptionsGrid } from '../../components/site-about';
+import { StepTitle } from '../../components/ui/styled-components';
 import { getGreeting } from '../../components/site-about/constants';
 import { GreetingBanner } from '../../components/ui/greeting-banner';
 import { useOnboarding } from '../../hooks/use-onboarding';
@@ -37,9 +38,9 @@ export function SiteAbout() {
 
 			<Stack spacing={ 4 } alignItems="center">
 				<Stack spacing={ 1 } alignItems="center">
-					<Typography variant="h5" align="center">
+					<StepTitle variant="h5" align="center">
 						{ t( 'steps.site_about.title' ) }
-					</Typography>
+					</StepTitle>
 					<Typography variant="body1" color="text.secondary" align="center">
 						{ t( 'steps.site_about.subtitle' ) }
 					</Typography>

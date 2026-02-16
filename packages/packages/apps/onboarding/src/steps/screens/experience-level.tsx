@@ -4,6 +4,7 @@ import { ChevronRightSmallIcon } from '@elementor/icons';
 import { Stack, Typography, withDirection } from '@elementor/ui';
 
 import { OptionButton } from '../../components/ui/option-button';
+import { StepTitle } from '../../components/ui/styled-components';
 import { useOnboarding } from '../../hooks/use-onboarding';
 import { t } from '../../utils/translations';
 
@@ -40,9 +41,9 @@ export function ExperienceLevel( { onComplete }: ExperienceLevelProps ) {
 	return (
 		<Stack spacing={ 4 } width="100%">
 			<Stack spacing={ 1 } textAlign="center" alignItems="center">
-				<Typography variant="h5" align="center" sx={ { maxWidth: 300, fontWeight: 500 } }>
+				<StepTitle variant="h5" align="center" maxWidth={ 325 }>
 					{ t( 'steps.experience_level.title' ) }
-				</Typography>
+				</StepTitle>
 				<Typography variant="body1" color="text.secondary">
 					{ t( 'steps.experience_level.subtitle' ) }
 				</Typography>

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ArrowRightIcon, BrandFacebookIcon } from '@elementor/icons';
 import { Box, Button, Divider, IconButton, Paper, Stack, styled, Typography } from '@elementor/ui';
 
+import { StepTitle } from '../../components/ui/styled-components';
 import { t } from '../../utils/translations';
 import { getOnboardingAssetUrl } from '../step-visuals';
 
@@ -100,9 +101,9 @@ export function Login( { onConnect, onContinueAsGuest, connectUrl }: LoginProps 
 		<LoginRoot backgroundUrl={ backgroundUrl } data-testid="login-screen">
 			<Backdrop />
 			<AuthCard elevation={ 24 }>
-				<Typography variant="h5" align="center">
+				<StepTitle variant="h5" align="center">
 					{ t( 'login.title' ) }
-				</Typography>
+				</StepTitle>
 				<Stack spacing={ 3 } width="100%">
 					<SignInButton
 						variant="contained"

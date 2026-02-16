@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
 import { ChevronRightSmallIcon } from '@elementor/icons';
-import { Stack, Typography, withDirection } from '@elementor/ui';
+import { Stack, withDirection } from '@elementor/ui';
 
 import { GreetingBanner } from '../../components/ui/greeting-banner';
+import { StepTitle } from '../../components/ui/styled-components';
 import { OptionButton } from '../../components/ui/option-button';
 import { useOnboarding } from '../../hooks/use-onboarding';
 import { t } from '../../utils/translations';
@@ -53,9 +54,9 @@ export function BuildingFor( { onComplete }: BuildingForProps ) {
 			<GreetingBanner>{ greetingText }</GreetingBanner>
 
 			<Stack spacing={ 4 } alignItems="center">
-				<Typography variant="h5" align="center">
+				<StepTitle variant="h5" align="center">
 					{ t( 'steps.building_for.title' ) }
-				</Typography>
+				</StepTitle>
 
 				<Stack spacing={ 2 } width="100%">
 					{ BUILDING_FOR_OPTIONS.map( ( option ) => {

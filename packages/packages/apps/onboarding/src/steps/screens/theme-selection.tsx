@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { Stack, Typography } from '@elementor/ui';
 
+import { StepTitle } from '../../components/ui/styled-components';
 import {
 	getGreetingText,
 	getRecommendedTheme,
@@ -69,7 +70,9 @@ export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
 
 			<Stack spacing={ 4 }>
 				<Stack spacing={ 1 }>
-					<Typography variant="h5">{ t( 'steps.theme_selection.title' ) }</Typography>
+					<StepTitle variant="h5" align="center">
+						{ t( 'steps.theme_selection.title' ) }
+					</StepTitle>
 					<Typography variant="body1" color="text.secondary">
 						{ t( 'steps.theme_selection.subtitle' ) }
 					</Typography>
