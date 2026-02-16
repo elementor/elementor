@@ -5,6 +5,11 @@ interface SelectionBadgeRootProps {
 	variant: 'default' | 'pro';
 }
 
+interface SelectionBadgeProps {
+	icon: React.ElementType;
+	variant?: 'default' | 'pro';
+}
+
 const SelectionBadgeRoot = styled( Box, {
 	shouldForwardProp: ( prop ) => 'variant' !== prop,
 } )< SelectionBadgeRootProps >( ( { theme, variant } ) => ( {
@@ -23,11 +28,6 @@ const SelectionBadgeRoot = styled( Box, {
 		fontSize: theme.typography.pxToRem( 14 ),
 	},
 } ) );
-
-interface SelectionBadgeProps {
-	icon: React.ElementType;
-	variant?: 'default' | 'pro';
-}
 
 export function SelectionBadge( { icon: Icon, variant = 'default' }: SelectionBadgeProps ) {
 	return (

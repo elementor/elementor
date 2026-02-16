@@ -152,12 +152,16 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 	const continueDisabled = isChoiceEmpty( choiceForStep );
 
 	const getContinueLabel = () => {
-		if ( isLast ) {
-			return __( 'Finish', 'elementor' );
-		}
-
 		if ( stepId === StepId.THEME_SELECTION && ! completedSteps.includes( StepId.THEME_SELECTION ) ) {
 			return __( 'Continue with this theme', 'elementor' );
+		}
+
+		if ( stepId === StepId.SITE_FEATURES && ! completedSteps.includes( StepId.SITE_FEATURES ) ) {
+			return __( 'Continue with Free', 'elementor' );
+		}
+
+		if ( isLast ) {
+			return __( 'Finish', 'elementor' );
 		}
 
 		return __( 'Continue', 'elementor' );
