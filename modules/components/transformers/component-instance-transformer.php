@@ -8,7 +8,6 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Plugin;
 use Elementor\Core\Base\Document as Component_Document;
 use Elementor\Modules\Components\Components_Repository;
-use Elementor\Modules\Components\Transformers\Overridable_Transformer;
 use Elementor\Modules\Components\Utils\Format_Component_Elements_Id;
 use Elementor\Modules\Components\Widgets\Component_Instance;
 

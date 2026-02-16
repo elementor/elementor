@@ -302,16 +302,16 @@ trait Has_Atomic_Base {
 		);
 	}
 
-	protected function set_render_context(array $context_pairs): void {
-		foreach ($context_pairs as $context_pair) {
+	protected function set_render_context( array $context_pairs ): void {
+		foreach ( $context_pairs as $context_pair ) {
 			$context_key = $context_pair['context_key'] ?? static::class;
 			$context = $context_pair['context'];
 			Render_Context::push( $context_key, $context );
 		}
 	}
 
-	protected function clear_render_context(array $context_pairs): void {
-		foreach ($context_pairs as $context_pair) {
+	protected function clear_render_context( array $context_pairs ): void {
+		foreach ( $context_pairs as $context_pair ) {
 			$context_key = $context_pair['context_key'] ?? static::class;
 			Render_Context::pop( $context_key );
 		}
@@ -337,7 +337,7 @@ trait Has_Atomic_Base {
 	 * @return array Array of context pairs. Each pair is an associative array with:
 	 *               - 'context_key' (optional): The context key. Defaults to static::class if not provided.
 	 *               - 'context' (required): The context value (can be any type).
-	 * 
+	 *
 	 * @example
 	 * [
 	 *     [

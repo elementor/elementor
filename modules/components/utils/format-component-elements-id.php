@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Format_Component_Elements_Id {
 	public static function format( array $elements, array $path ) {
 		return array_map( function( $element ) use ( $path ) {
-            $nesting_path = [ ...$path, $element['id'] ];
+			$nesting_path = [ ...$path, $element['id'] ];
 
 			$element['id'] = self::hash_string( implode( '', $nesting_path ), 7 );
 			$element['elements'] = self::format( $element['elements'], $nesting_path );
@@ -26,12 +26,12 @@ class Format_Component_Elements_Id {
 	// This is a copy of the hashString function in ts utils package.
 	// It's important to keep it in synced with the ts implementation
 	// to make component inner elements ids consistent between the editor and the frontend.
-    public static function hash_string( string $str, ?int $length ): string {
+	public static function hash_string( string $str, ?int $length ): string {
 		$hash_basis = 5381;
 
 		$i = strlen( $str );
 		while ( $i > 0 ) {
-			$i--;
+			--$i;
 			$hash_basis = ( $hash_basis * 33 ) ^ ord( $str[ $i ] );
 			// Keep hash within 32-bit range to match JavaScript bitwise operations.
 			$hash_basis = $hash_basis & 0xFFFFFFFF;
