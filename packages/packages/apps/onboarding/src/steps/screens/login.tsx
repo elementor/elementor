@@ -100,7 +100,7 @@ export function Login( { onConnect, onContinueAsGuest, connectUrl }: LoginProps 
 		<LoginRoot backgroundUrl={ backgroundUrl } data-testid="login-screen">
 			<Backdrop />
 			<AuthCard elevation={ 24 }>
-				<Typography variant="h5" align="center">
+				<Typography variant="h5" align="center" fontWeight={ 500 } fontFamily="Poppins">
 					{ __( "Let's get to work.", 'elementor' ) }
 				</Typography>
 				<Stack spacing={ 3 } width="100%">
