@@ -17,12 +17,10 @@ import { initCanvasMcp } from './mcp/canvas-mcp';
 import { mcpDescription } from './mcp/mcp-description';
 import { initLinkInLinkPrevention } from './prevent-link-in-link-commands';
 import { initStyleCommands } from './style-commands/init-style-commands';
-import { initSubDocumentsStyles } from './sub-documents/init-sub-documents-styles';
 
 export function init() {
 	initStyleTransformers();
 	initStyleCommands();
-	initSubDocumentsStyles();
 
 	initLinkInLinkPrevention();
 	initFormNestingPrevention();
