@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useCallback } from 'react';
 import { ChevronRightSmallIcon } from '@elementor/icons';
 import { Stack, Typography, withDirection } from '@elementor/ui';
+
 import { OptionButton } from '../../components/ui/option-button';
 import { useOnboarding } from '../../hooks/use-onboarding';
 import { t } from '../../utils/translations';

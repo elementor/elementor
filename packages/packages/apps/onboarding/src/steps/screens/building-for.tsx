@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useCallback, useMemo } from 'react';
 import { ChevronRightSmallIcon } from '@elementor/icons';
 import { Stack, Typography, withDirection } from '@elementor/ui';
+
 import { GreetingBanner } from '../../components/ui/greeting-banner';
 import { OptionButton } from '../../components/ui/option-button';
 import { useOnboarding } from '../../hooks/use-onboarding';
@@ -18,7 +19,7 @@ const BUILDING_FOR_OPTIONS = [
 	{ value: 'exploring', labelKey: 'steps.building_for.option_exploring' },
 ] as const;
 
-type BuildingForValue = ( typeof BUILDING_FOR_OPTIONS )[number]['value'];
+type BuildingForValue = ( typeof BUILDING_FOR_OPTIONS )[ number ][ 'value' ];
 
 interface BuildingForProps {
 	onComplete: ( choice: Record< string, unknown > ) => void;

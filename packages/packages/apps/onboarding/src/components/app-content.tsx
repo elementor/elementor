@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { Box } from '@elementor/ui';
+
 import { useOnboarding } from '../hooks/use-onboarding';
 import { useUpdateChoices } from '../hooks/use-update-choices';
 import { useUpdateProgress } from '../hooks/use-update-progress';
@@ -11,13 +12,13 @@ import { SiteAbout } from '../steps/screens/site-about';
 import { ThemeSelection } from '../steps/screens/theme-selection';
 import { getStepVisualConfig } from '../steps/step-visuals';
 import { StepId } from '../types';
+import { t } from '../utils/translations';
 import { BaseLayout } from './ui/base-layout';
 import { Footer } from './ui/footer';
 import { FooterActions } from './ui/footer-actions';
 import { SplitLayout } from './ui/split-layout';
 import { TopBar } from './ui/top-bar';
 import { TopBarContent } from './ui/top-bar-content';
-import { t } from '../utils/translations';
 
 const isChoiceEmpty = ( choice: unknown ): boolean => {
 	return choice === null || choice === undefined || ( Array.isArray( choice ) && choice.length === 0 );

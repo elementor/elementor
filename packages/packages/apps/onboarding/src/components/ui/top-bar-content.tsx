@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { XIcon } from '@elementor/icons';
 import { Button, IconButton, Stack, styled, useTheme } from '@elementor/ui';
-import { ElementorLogo } from './elementor-logo';
+
 import { t } from '../../utils/translations';
+import { ElementorLogo } from './elementor-logo';
 
 const UpgradeButton = styled( Button )( ( { theme } ) => ( {
 	backgroundColor: theme.palette.promotion.main,

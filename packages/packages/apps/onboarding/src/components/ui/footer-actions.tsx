@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ArrowLeftIcon } from '@elementor/icons';
 import { Box, Button, styled } from '@elementor/ui';
+
 import { t } from '../../utils/translations';
 
 const LeftActions = styled( Box )( {

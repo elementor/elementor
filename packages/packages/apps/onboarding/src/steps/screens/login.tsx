@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { ArrowRightIcon, BrandFacebookIcon } from '@elementor/icons';
 import { Box, Button, Divider, IconButton, Paper, Stack, styled, Typography } from '@elementor/ui';
-import { getOnboardingAssetUrl } from '../step-visuals';
+
 import { t } from '../../utils/translations';
+import { getOnboardingAssetUrl } from '../step-visuals';
 
 const BACKDROP_OPACITY = 0.6;
 
