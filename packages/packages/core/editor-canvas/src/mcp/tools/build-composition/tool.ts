@@ -11,7 +11,7 @@ import { CompositionBuilder } from '../../../composition-builder/composition-bui
 import { BEST_PRACTICES_URI, STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 import { doUpdateElementProperty } from '../../utils/do-update-element-property';
 import { generatePrompt } from './prompt';
-import { inputSchema as schema, outputSchema } from './schema';
+import { inputSchema as schema } from './schema';
 
 export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 	const { addTool } = reg;
@@ -27,7 +27,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 			{ description: 'Global Variables', uri: 'elementor://global-variables' },
 			{ description: 'Styles best practices', uri: BEST_PRACTICES_URI },
 		],
-		outputSchema,
+		// outputSchema: '',
 		modelPreferences: {
 			hints: [ { name: 'claude-sonnet-4-5' } ],
 		},
@@ -116,12 +116,11 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				) }\n\n"Missing $$type" errors indicate that the configuration objects are invalid. Try again and apply **ALL** object entries with correct $$type.\nNow that you have these errors, fix them and try again. Errors regarding configuration objects, please check against the PropType schemas`;
 				throw new Error( errorText );
 			}
-			return {
-				xmlStructure: generatedXML,
-				errors: errors?.length
-					? errors.map( ( e ) => ( typeof e === 'string' ? e : e.message ) ).join( '\n\n' )
-					: undefined,
-				llm_instructions: `The composition was built successfully with element IDs embedded in the XML.
+			if ( errors.length ) {
+				throw new Error( errors.map( ( e ) => ( typeof e === 'string' ? e : e.message ) ).join( '\n' ) );
+			}
+			// Why text? Until there will be a stable versioning to OutputSchema, it is better to send string to the response.
+return `The composition was built successfully with element IDs embedded in the XML.
 
 **CRITICAL NEXT STEPS** (Follow in order):
 1. **Apply Global Classes**: Use "apply-global-class" tool to apply the global classes you created BEFORE building this composition
@@ -131,8 +130,10 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 2. **Fine-tune if needed**: Use "configure-element" tool only for element-specific adjustments that don't warrant global classes
 
 Remember: Global classes ensure design consistency and reusability. Don't skip applying them!
-`,
-			};
+
+Updated XML structure:
+${ generatedXML }
+`;
 		},
 	} );
 };
