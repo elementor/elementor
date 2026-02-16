@@ -11,11 +11,5 @@ export type ExtendedWindow = Window & {
 		routes?: {
 			register?: ( component: string, route: string, callback: () => unknown ) => unknown;
 		};
-		components?: {
-			get?: ( namespace: string ) => { refreshGlobalData?: () => void } | undefined;
-		};
-		data?: {
-			deleteCache?: ( component: object, command: string ) => void;
-		};
 	};
 };

@@ -47,15 +47,6 @@ export function openRoute( route: string ) {
 	}
 }
 
-export function refreshGlobalsCache() {
-	const extendedWindow = window as unknown as ExtendedWindow;
-
-	try {
-		extendedWindow.$e?.components?.get?.( 'globals' )?.refreshGlobalData?.();
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	} catch ( error ) {}
-}
-
 export function registerRoute( route: string ) {
 	const extendedWindow = window as unknown as ExtendedWindow;
 
