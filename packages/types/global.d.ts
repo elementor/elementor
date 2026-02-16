@@ -28,6 +28,7 @@ interface EOnboardingConfig {
 	isConnected: boolean;
 	userName?: string;
 	uiTheme?: 'auto' | 'dark' | 'light';
+    strings?: Record< string, string >;
 	steps: Array<{
 		id: string;
 		label: string;

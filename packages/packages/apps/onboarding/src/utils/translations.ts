@@ -1,15 +1,3 @@
-declare global {
-	interface Window {
-		elementorAppConfig?: {
-			'e-onboarding'?: {
-				strings?: Record< string, string >;
-				[ key: string ]: unknown;
-			};
-			[ key: string ]: unknown;
-		};
-	}
-}
-
 function getStrings(): Record< string, string > {
 	return window.elementorAppConfig?.[ 'e-onboarding' ]?.strings ?? {};
 }
