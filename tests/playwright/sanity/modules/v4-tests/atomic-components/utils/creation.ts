@@ -2,6 +2,7 @@ import { expect, Locator, Page } from '@playwright/test';
 import EditorSelectors from '../../../../../selectors/editor-selectors';
 import { timeouts } from '../../../../../config/timeouts';
 import EditorPage from '../../../../../pages/editor-page';
+import { captureNextElementCreation } from '../../../../../assets/elements-utils';
 
 export const uniqueName = ( baseName: string ) => `${ baseName } ${ Date.now() }`;
 
@@ -13,7 +14,7 @@ export const createContentForComponent = async ( editor: EditorPage ) => {
 	return { id: flexboxId, locator };
 };
 
-export const createComponent = async ( page: Page, componentName: string ) => {
+export const createComponent = async ( page: Page, editor: EditorPage, componentName: string ): Promise<string> => {
 	const createComponentForm = page.locator( EditorSelectors.components.createComponentForm );
 	await expect( createComponentForm ).toBeVisible();
 
@@ -21,14 +22,21 @@ export const createComponent = async ( page: Page, componentName: string ) => {
 	await nameInput.clear();
 	await nameInput.fill( componentName );
 
+	const instanceIdPromise = captureNextElementCreation( editor );
+
 	const createButton = createComponentForm.getByRole( 'button', { name: 'Create' } );
 	await createButton.click();
+
+	const instanceId = await instanceIdPromise;
+
 	await waitForAutosave( page );
 
 	const panelHeader = page.locator( EditorSelectors.components.editModeHeader );
 	await expect( panelHeader ).toBeVisible( { timeout: timeouts.longAction } );
 
 	await dismissOnboardingDialog( page );
+
+	return instanceId;
 };
 
 export const createOverridableProp = async ( page: Page, propLabel: string ) => {

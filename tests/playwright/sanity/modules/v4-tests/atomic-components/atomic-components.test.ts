@@ -54,7 +54,7 @@ test.describe( 'Atomic Components @v4-tests', () => {
 		} );
 
 		await test.step( 'Fill component name and create', async () => {
-			await createComponent( page, componentName );
+			await createComponent( page, editor, componentName );
 
 			await exitComponentEditMode( editor );
 		} );
@@ -86,6 +86,7 @@ test.describe( 'Atomic Components @v4-tests', () => {
 		const componentName = uniqueName( 'Editable Component' );
 		const editedHeadingText = 'Edited Heading Text';
 		let flexboxId: string;
+		let instanceId: string;
 
 		await test.step( 'Create a component from navigation panel', async () => {
 			const { id } = await createContentForComponent( editor );
@@ -94,7 +95,7 @@ test.describe( 'Atomic Components @v4-tests', () => {
 			const navigatorItem = await getNavigationItem( page, flexboxId );
 
 			await openCreateComponentFromContextMenu( navigatorItem, page );
-			await createComponent( page, componentName );
+			instanceId = await createComponent( page, editor, componentName );
 
 			await exitComponentEditMode( editor );
 		} );
@@ -126,7 +127,7 @@ test.describe( 'Atomic Components @v4-tests', () => {
 		} );
 
 		await test.step( 'Edit via panel edit button', async () => {
-			await selectComponentInstance( editor, flexboxId );
+			await selectComponentInstance( editor, instanceId );
 
 			const editButton = page.getByLabel( `Edit ${ componentName }` );
 			await expect( editButton ).toBeVisible();
@@ -173,7 +174,9 @@ test.describe( 'Atomic Components @v4-tests', () => {
 		const nestedOverrideValue = 'Nested Override';
 
 		let flexboxId: string;
+		let instanceId: string;
 		let outerFlexboxId: string;
+		let outerInstanceId: string;
 		let originalHeadingValue: string;
 
 		await test.step( 'Create a component with heading', async () => {
@@ -181,7 +184,7 @@ test.describe( 'Atomic Components @v4-tests', () => {
 			flexboxId = id;
 
 			await openCreateComponentFromContextMenu( flexbox, page );
-			await createComponent( page, componentName );
+			instanceId = await createComponent( page, editor, componentName );
 		} );
 
 		await test.step( 'Expose heading text prop', async () => {
@@ -227,7 +230,7 @@ test.describe( 'Atomic Components @v4-tests', () => {
 		} );
 
 		await test.step( 'Verify exposed prop appears in instance panel and override it', async () => {
-			await selectComponentInstance( editor, flexboxId );
+			await selectComponentInstance( editor, instanceId );
 
 			const propControl = await getInstancePanelPropInput( page, propLabel );
 
@@ -248,7 +251,7 @@ test.describe( 'Atomic Components @v4-tests', () => {
 
 			const navigatorItem = await getNavigationItem( page, outerFlexboxId );
 			await openCreateComponentFromContextMenu( navigatorItem, page );
-			await createComponent( page, outerComponentName );
+			outerInstanceId = await createComponent( page, editor, outerComponentName );
 
 			const backButton = page.locator( EditorSelectors.components.exitEditModeButton );
 			await expect( backButton ).toBeVisible( { timeout: timeouts.longAction } );
@@ -265,7 +268,7 @@ test.describe( 'Atomic Components @v4-tests', () => {
 		} );
 
 		await test.step( 'Override nested prop on outer component instance', async () => {
-			await selectComponentInstance( editor, outerFlexboxId );
+			await selectComponentInstance( editor, outerInstanceId );
 
 			const propControl = await getInstancePanelPropInput( page, propLabel );
 			await propControl.clear();
@@ -305,7 +308,7 @@ test.describe( 'Atomic Components @v4-tests', () => {
 			await editor.v4Panel.style.closeSection( 'Background' );
 
 			await openCreateComponentFromContextMenu( flexbox, page );
-			await createComponent( page, componentName );
+			await createComponent( page, editor, componentName );
 		} );
 
 		await test.step( 'Open a new page and add component instance', async () => {

@@ -1,4 +1,5 @@
 import { $eType, ElementorType } from '../types/types';
+import EditorPage from '../pages/editor-page';
 
 /**
  * Add element to the page using model and parent container.
@@ -56,4 +57,21 @@ export const addElement = ( props: { model: unknown, container: null | string, i
  */
 export const getElementSelector = ( id: string ) => {
 	return `[data-id="${ id }"]`;
+};
+
+/**
+ * Capture the ID of the next element created via document/elements/create hook.
+ *
+ * @param {EditorPage} editor - Editor page instance.
+ *
+ * @return {Promise<string>} The ID of the created element
+ */
+export const captureNextElementCreation = async ( editor: EditorPage ): Promise<string> => {
+	return editor.page.evaluate( () => {
+		return new Promise( ( resolve ) => {
+			window.$e.hooks.addAction( 'document/elements/create', ( element: { id: string } ) => {
+				resolve( element.id );
+			}, { once: true } );
+		} );
+	} );
 };

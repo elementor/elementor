@@ -76,6 +76,9 @@ export type Post = {
 export type WindowType = Window & {
 	$e?: {
 		run: ( s: string, o: object )=> unknown
+		hooks: {
+			addAction: ( hook: string, callback: ( ...args: any[] ) => void, options?: { once?: boolean } ) => void
+		}
 	}
 	wpApiSettings?: { nonce: string }
 };
@@ -85,6 +88,9 @@ export type BackboneType = {
 
 export type $eType = {
 	run: ( s: string, o: object )=> unknown
+	hooks: {
+		addAction: ( hook: string, callback: ( ...args: any[] ) => void, options?: { once?: boolean } ) => void
+	}
 }
 
 export type ElementorType = {
