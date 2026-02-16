@@ -2,24 +2,23 @@ import * as React from 'react';
 import { useCallback, useMemo } from 'react';
 import { ChevronRightSmallIcon } from '@elementor/icons';
 import { Stack, Typography, withDirection } from '@elementor/ui';
-import { __, sprintf } from '@wordpress/i18n';
-
 import { GreetingBanner } from '../../components/ui/greeting-banner';
 import { OptionButton } from '../../components/ui/option-button';
 import { useOnboarding } from '../../hooks/use-onboarding';
+import { t } from '../../utils/translations';
 
 const GREETING_WAVE = '\uD83D\uDC4B';
 
 const DirectionalChevronIcon = withDirection( ChevronRightSmallIcon );
 
 const BUILDING_FOR_OPTIONS = [
-	{ value: 'myself', label: __( 'Myself or someone I know', 'elementor' ) },
-	{ value: 'business', label: __( 'My business or workplace', 'elementor' ) },
-	{ value: 'client', label: __( 'A client', 'elementor' ) },
-	{ value: 'exploring', label: __( 'Just exploring', 'elementor' ) },
+	{ value: 'myself', labelKey: 'steps.building_for.option_myself' },
+	{ value: 'business', labelKey: 'steps.building_for.option_business' },
+	{ value: 'client', labelKey: 'steps.building_for.option_client' },
+	{ value: 'exploring', labelKey: 'steps.building_for.option_exploring' },
 ] as const;
 
-type BuildingForValue = ( typeof BUILDING_FOR_OPTIONS )[ number ][ 'value' ];
+type BuildingForValue = ( typeof BUILDING_FOR_OPTIONS )[number]['value'];
 
 interface BuildingForProps {
 	onComplete: ( choice: Record< string, unknown > ) => void;
@@ -34,19 +33,10 @@ export function BuildingFor( { onComplete }: BuildingForProps ) {
 		const showName = isConnected && ! isGuest && userName;
 
 		if ( showName ) {
-			return sprintf(
-				/* translators: 1: User's first name, 2: Waving hand emoji. */
-				__( "Hey %1$s %2$s Let's get your site set up.", 'elementor' ),
-				userName,
-				GREETING_WAVE
-			);
+			return t( 'steps.building_for.greeting_with_name', userName, GREETING_WAVE );
 		}
 
-		return sprintf(
-			/* translators: %s: Waving hand emoji. */
-			__( "Hey%s Let's get your site set up.", 'elementor' ),
-			GREETING_WAVE
-		);
+		return t( 'steps.building_for.greeting_without_name', GREETING_WAVE );
 	}, [ userName, isConnected, isGuest ] );
 
 	const handleSelect = useCallback(
@@ -63,7 +53,7 @@ export function BuildingFor( { onComplete }: BuildingForProps ) {
 
 			<Stack spacing={ 4 } alignItems="center">
 				<Typography variant="h5" align="center">
-					{ __( 'Who are you building for?', 'elementor' ) }
+					{ t( 'steps.building_for.title' ) }
 				</Typography>
 
 				<Stack spacing={ 2 } width="100%">
@@ -80,7 +70,7 @@ export function BuildingFor( { onComplete }: BuildingForProps ) {
 								onClick={ () => handleSelect( option.value ) }
 								aria-pressed={ isSelected }
 							>
-								{ option.label }
+								{ t( option.labelKey ) }
 							</OptionButton>
 						);
 					} ) }

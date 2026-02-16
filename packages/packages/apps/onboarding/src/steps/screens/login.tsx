@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { ArrowRightIcon, BrandFacebookIcon } from '@elementor/icons';
 import { Box, Button, Divider, IconButton, Paper, Stack, styled, Typography } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
-
 import { getOnboardingAssetUrl } from '../step-visuals';
+import { t } from '../../utils/translations';
 
 const BACKDROP_OPACITY = 0.6;
 
@@ -101,7 +100,7 @@ export function Login( { onConnect, onContinueAsGuest, connectUrl }: LoginProps 
 			<Backdrop />
 			<AuthCard elevation={ 24 }>
 				<Typography variant="h5" align="center">
-					{ __( "Let's get to work.", 'elementor' ) }
+					{ t( 'login.title' ) }
 				</Typography>
 				<Stack spacing={ 3 } width="100%">
 					<SignInButton
@@ -112,13 +111,13 @@ export function Login( { onConnect, onContinueAsGuest, connectUrl }: LoginProps 
 						href={ connectUrl || undefined }
 						onClick={ onConnect }
 					>
-						{ __( 'Sign in to Elementor', 'elementor' ) }
+						{ t( 'login.sign_in' ) }
 					</SignInButton>
 
 					<Stack direction="row" alignItems="center" justifyContent="center" spacing={ 2 }>
 						<Divider sx={ { width: 80 } } />
 						<Typography variant="body2" color="text.tertiary">
-							{ __( 'OR', 'elementor' ) }
+							{ t( 'common.or' ) }
 						</Typography>
 						<Divider sx={ { width: 80 } } />
 					</Stack>
@@ -132,7 +131,7 @@ export function Login( { onConnect, onContinueAsGuest, connectUrl }: LoginProps 
 								size="large"
 								endIcon={ <ArrowRightIcon fontSize="tiny" /> }
 							>
-								{ __( 'Continue another way', 'elementor' ) }
+								{ t( 'login.continue_another_way' ) }
 							</SecondaryButton>
 
 							<Stack direction="row" spacing={ 0.5 }>
@@ -143,7 +142,7 @@ export function Login( { onConnect, onContinueAsGuest, connectUrl }: LoginProps 
 						</Stack>
 
 						<GuestButton variant="text" color="info" onClick={ onContinueAsGuest }>
-							{ __( 'Continue as a guest', 'elementor' ) }
+							{ t( 'login.continue_as_guest' ) }
 						</GuestButton>
 					</Stack>
 				</Stack>

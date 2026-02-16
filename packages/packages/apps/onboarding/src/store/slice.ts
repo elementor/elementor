@@ -1,26 +1,26 @@
 import { __createSlice, __registerSlice, type PayloadAction } from '@elementor/store';
-import { __ } from '@wordpress/i18n';
 
 import type { OnboardingChoices, OnboardingState, Step, StepIdType, StepType } from '../types';
 import { StepId } from '../types';
+import { t } from '../utils/translations';
 
 function getDefaultSteps(): Step[] {
 	return [
-		{ id: StepId.BUILDING_FOR, label: __( 'Who are you building for?', 'elementor' ), type: 'single' },
-		{ id: StepId.SITE_ABOUT, label: __( 'What is your site about?', 'elementor' ), type: 'multiple' },
+		{ id: StepId.BUILDING_FOR, label: t( 'steps.building_for.title' ), type: 'single' },
+		{ id: StepId.SITE_ABOUT, label: t( 'steps.site_about.title' ), type: 'multiple' },
 		{
 			id: StepId.EXPERIENCE_LEVEL,
-			label: __( 'How much experience do you have with Elementor?', 'elementor' ),
+			label: t( 'steps.experience_level.title' ),
 			type: 'single',
 		},
 		{
 			id: StepId.THEME_SELECTION,
-			label: __( 'Start with a theme that fits your needs', 'elementor' ),
+			label: t( 'steps.theme_selection.title' ),
 			type: 'single',
 		},
 		{
 			id: StepId.SITE_FEATURES,
-			label: __( 'What do you want to include in your site?', 'elementor' ),
+			label: t( 'steps.site_features.title' ),
 			type: 'multiple',
 		},
 	];

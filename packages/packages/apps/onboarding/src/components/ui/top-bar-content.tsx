@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { XIcon } from '@elementor/icons';
 import { Button, IconButton, Stack, styled, useTheme } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
-
 import { ElementorLogo } from './elementor-logo';
+import { t } from '../../utils/translations';
 
 const UpgradeButton = styled( Button )( ( { theme } ) => ( {
 	backgroundColor: theme.palette.promotion.main,
@@ -44,7 +43,7 @@ export function TopBarContent( { showUpgrade = true, showClose = true, onUpgrade
 			<Stack direction="row" alignItems="center" spacing={ 2 }>
 				{ showUpgrade && (
 					<UpgradeButton variant="contained" onClick={ onUpgrade }>
-						{ __( 'Upgrade', 'elementor' ) }
+						{ t( 'common.upgrade' ) }
 					</UpgradeButton>
 				) }
 
@@ -52,7 +51,7 @@ export function TopBarContent( { showUpgrade = true, showClose = true, onUpgrade
 					<Stack direction="row" alignItems="center" spacing={ 1.5 }>
 						<Divider />
 						<IconButton
-							aria-label={ __( 'Close onboarding', 'elementor' ) }
+							aria-label={ t( 'common.close_onboarding' ) }
 							onClick={ onClose }
 							size="small"
 							sx={ {

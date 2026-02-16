@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { Box } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
-
 import { useOnboarding } from '../hooks/use-onboarding';
 import { useUpdateChoices } from '../hooks/use-update-choices';
 import { useUpdateProgress } from '../hooks/use-update-progress';
@@ -19,6 +17,7 @@ import { FooterActions } from './ui/footer-actions';
 import { SplitLayout } from './ui/split-layout';
 import { TopBar } from './ui/top-bar';
 import { TopBarContent } from './ui/top-bar-content';
+import { t } from '../utils/translations';
 
 const isChoiceEmpty = ( choice: unknown ): boolean => {
 	return choice === null || choice === undefined || ( Array.isArray( choice ) && choice.length === 0 );
@@ -75,7 +74,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 					onClose?.();
 				},
 				onError: () => {
-					actions.setError( __( 'Failed to mark user exit.', 'elementor' ) );
+					actions.setError( t( 'error.failed_mark_exit' ) );
 				},
 			}
 		);
@@ -136,7 +135,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 						}
 					},
 					onError: () => {
-						actions.setError( __( 'Failed to complete step.', 'elementor' ) );
+						actions.setError( t( 'error.failed_complete_step' ) );
 					},
 				}
 			);
@@ -152,14 +151,14 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 
 	const getContinueLabel = () => {
 		if ( isLast ) {
-			return __( 'Finish', 'elementor' );
+			return t( 'common.finish' );
 		}
 
 		if ( stepId === StepId.THEME_SELECTION && ! completedSteps.includes( StepId.THEME_SELECTION ) ) {
-			return __( 'Continue with this theme', 'elementor' );
+			return t( 'steps.theme_selection.continue_with_theme' );
 		}
 
-		return __( 'Continue', 'elementor' );
+		return t( 'common.continue' );
 	};
 
 	const renderStepContent = () => {

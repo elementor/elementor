@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
 import { Stack, Typography } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
 
 import { OptionsGrid } from '../../components/site-about';
-import { GREETING_FALLBACK, GREETING_MAP } from '../../components/site-about/constants';
+import { getGreeting } from '../../components/site-about/constants';
 import { GreetingBanner } from '../../components/ui/greeting-banner';
 import { useOnboarding } from '../../hooks/use-onboarding';
+import { t } from '../../utils/translations';
 
 export function SiteAbout() {
 	const { choices, actions } = useOnboarding();
@@ -17,9 +17,7 @@ export function SiteAbout() {
 	);
 
 	const greetingText = useMemo( () => {
-		const key = choices.building_for ?? '';
-
-		return GREETING_MAP[ key ] ?? GREETING_FALLBACK;
+		return getGreeting( choices.building_for ?? '' );
 	}, [ choices.building_for ] );
 
 	const handleToggle = useCallback(
@@ -40,10 +38,10 @@ export function SiteAbout() {
 			<Stack spacing={ 4 } alignItems="center">
 				<Stack spacing={ 1 } alignItems="center">
 					<Typography variant="h5" align="center">
-						{ __( 'What is your site about?', 'elementor' ) }
+						{ t( 'steps.site_about.title' ) }
 					</Typography>
 					<Typography variant="body1" color="text.secondary" align="center">
-						{ __( 'Choose anything that applies.', 'elementor' ) }
+						{ t( 'steps.site_about.subtitle' ) }
 					</Typography>
 				</Stack>
 

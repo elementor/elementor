@@ -2,16 +2,15 @@ import * as React from 'react';
 import { useCallback } from 'react';
 import { ChevronRightSmallIcon } from '@elementor/icons';
 import { Stack, Typography, withDirection } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
-
 import { OptionButton } from '../../components/ui/option-button';
 import { useOnboarding } from '../../hooks/use-onboarding';
+import { t } from '../../utils/translations';
 
 const DirectionalChevronIcon = withDirection( ChevronRightSmallIcon );
 
 interface ExperienceLevelOption {
 	id: string;
-	label: string;
+	labelKey: string;
 }
 
 interface ExperienceLevelProps {
@@ -19,9 +18,9 @@ interface ExperienceLevelProps {
 }
 
 const OPTIONS: ExperienceLevelOption[] = [
-	{ id: 'beginner', label: __( "I'm just getting started", 'elementor' ) },
-	{ id: 'intermediate', label: __( 'I have some experience', 'elementor' ) },
-	{ id: 'advanced', label: __( "I'm very comfortable with Elementor", 'elementor' ) },
+	{ id: 'beginner', labelKey: 'steps.experience_level.option_beginner' },
+	{ id: 'intermediate', labelKey: 'steps.experience_level.option_intermediate' },
+	{ id: 'advanced', labelKey: 'steps.experience_level.option_advanced' },
 ];
 
 export function ExperienceLevel( { onComplete }: ExperienceLevelProps ) {
@@ -41,10 +40,10 @@ export function ExperienceLevel( { onComplete }: ExperienceLevelProps ) {
 		<Stack spacing={ 4 } width="100%">
 			<Stack spacing={ 1 } textAlign="center" alignItems="center">
 				<Typography variant="h5" align="center" sx={ { maxWidth: 300, fontWeight: 500 } }>
-					{ __( 'How much experience do you have with Elementor?', 'elementor' ) }
+					{ t( 'steps.experience_level.title' ) }
 				</Typography>
 				<Typography variant="body1" color="text.secondary">
-					{ __( 'This helps us adjust the editor to your workflow.', 'elementor' ) }
+					{ t( 'steps.experience_level.subtitle' ) }
 				</Typography>
 			</Stack>
 
@@ -62,7 +61,7 @@ export function ExperienceLevel( { onComplete }: ExperienceLevelProps ) {
 							onClick={ () => handleSelect( option.id ) }
 							aria-pressed={ isSelected }
 						>
-							{ option.label }
+							{ t( option.labelKey ) }
 						</OptionButton>
 					);
 				} ) }
