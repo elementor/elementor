@@ -78,6 +78,9 @@ module.exports = elementorModules.Module.extend( {
 
 		toast.getElements( 'buttonsWrapper' ).empty();
 
+		toast.focusedButton = null;
+		toast.buttons = [];
+
 		const isPositionValid = this.isPositionValid( options?.position );
 
 		if ( ! isPositionValid ) {

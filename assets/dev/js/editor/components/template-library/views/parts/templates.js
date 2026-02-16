@@ -544,16 +544,6 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.handleSourceOptionBadges();
 	},
 
-	onDomRefresh() {
-		if ( this._restoreFocusToSourceFilter ) {
-			this._restoreFocusToSourceFilter = false;
-			const $selected = this.ui.selectSourceFilter.filter( '[aria-checked="true"]' );
-			if ( $selected.length ) {
-				$selected.trigger( 'focus' );
-			}
-		}
-	},
-
 	onRenderCollection() {
 		this.addSourceData();
 

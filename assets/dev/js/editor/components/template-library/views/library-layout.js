@@ -103,9 +103,22 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	},
 
 	showTemplatesView( templatesCollection ) {
+		const prevView = this.modalContent.currentView;
+		const shouldRestoreFocus = prevView && prevView._restoreFocusToSourceFilter;
+
 		this.modalContent.show( new TemplateLibraryCollectionView( {
 			collection: templatesCollection,
 		} ) );
+
+		if ( shouldRestoreFocus ) {
+			const newView = this.modalContent.currentView;
+			if ( newView && newView.ui.selectSourceFilter ) {
+				const $selected = newView.ui.selectSourceFilter.filter( '[aria-checked="true"]' );
+				if ( $selected.length ) {
+					$selected.trigger( 'focus' );
+				}
+			}
+		}
 	},
 
 	updateViewCollection( models ) {
