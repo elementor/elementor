@@ -235,5 +235,3 @@ class Module extends BaseModule {
 		return $current_user->ID ?? 0;
 	}
 }
-
-
