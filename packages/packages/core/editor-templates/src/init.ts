@@ -4,7 +4,7 @@ import { __registerSlice as registerSlice } from '@elementor/store';
 
 import { loadTemplatesStyles } from './load-templates-styles';
 import { slice } from './store';
-import { templatesStylesProvider } from './templates-styles-provider';
+import { clearTemplatesStyles, templatesStylesProvider } from './templates-styles-provider';
 
 export function init() {
 	registerSlice( slice );
@@ -12,6 +12,7 @@ export function init() {
 	stylesRepository.register( templatesStylesProvider );
 
 	registerDataHook( 'after', 'editor/documents/attach-preview', async () => {
+		clearTemplatesStyles();
 		await loadTemplatesStyles();
 	} );
 }

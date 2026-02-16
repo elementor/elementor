@@ -16,7 +16,7 @@ export function clearTemplatesStyles() {
 
 export const templatesStylesProvider = createStylesProvider( {
 	key: 'templates-styles',
-	priority: 100,
+	priority: 50,
 	subscribe: ( cb ) => {
 		listeners.add( cb );
 
