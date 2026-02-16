@@ -1,11 +1,7 @@
 <?php
 namespace Elementor\Modules\GlobalClasses;
 
-use Elementor\Core\Base\Document;
-use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
-use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
+use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -34,14 +30,24 @@ class Global_Classes_Repository {
 
 	public function all() {
 		$meta_key = $this->get_meta_key();
-		$all = $this->get_kit()->get_json_meta( $meta_key );
+		$kit = $this->get_kit();
+		$all = $kit->get_json_meta( $meta_key );
 
 		$is_preview = static::META_KEY_PREVIEW === $meta_key;
 		$is_empty = empty( $all );
 
 		if ( $is_preview && $is_empty ) {
-			$all = $this->get_kit()->get_json_meta( static::META_KEY_FRONTEND );
+			$all = $kit->get_json_meta( static::META_KEY_FRONTEND );
 		}
+
+		Migrations_Orchestrator::make()->migrate(
+			$all,
+			$kit->get_id(),
+			$meta_key,
+			function( $migrated_data ) use ( $kit, $meta_key ) {
+				$kit->update_json_meta( $meta_key, $migrated_data );
+			}
+		);
 
 		return Global_Classes::make( $all['items'] ?? [], $all['order'] ?? [] );
 	}
