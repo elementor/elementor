@@ -43,13 +43,9 @@ const BuiltInChip = styled( Chip )( ( { theme } ) => ( {
 	insetBlockStart: theme.spacing( 0.75 ),
 	insetInlineStart: theme.spacing( 0.75 ),
 	height: theme.spacing( 2.25 ),
-	display: 'none',
 	'& .MuiChip-label': {
 		fontSize: theme.spacing( 1.5 ),
 		padding: `${theme.spacing(0.375)} ${theme.spacing(1)}`
-	},
-	[ theme.breakpoints.up( 'md' ) ]: {
-		display: 'inline-flex',
 	},
 } ) );
 
@@ -122,10 +118,11 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick, onExplor
 
 	return (
 		<Box
+			justifyContent="center"
 			sx={ {
 				display: 'grid',
 				gridTemplateColumns: {
-					xs: 'repeat(3, 1fr)',
+					xs: 'repeat(auto-fit, minmax(100px, 135px))',
 					sm: 'repeat(4, 1fr)',
 					md: 'repeat(5, 1fr)',
 				},
