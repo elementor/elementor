@@ -53,8 +53,6 @@ export function refreshGlobalsCache() {
 	try {
 		extendedWindow.$e?.components?.get?.( 'globals' )?.refreshGlobalData?.();
 	} catch ( error ) {
-		// eslint-disable-next-line no-console
-		console.warn( 'Failed to refresh globals cache:', error );
 	}
 }
 
