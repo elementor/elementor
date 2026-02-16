@@ -1,8 +1,34 @@
-import { type CSSProperties } from 'react';
+import { type CSSProperties, useCallback, useEffect, useState } from 'react';
 import { type InlineEditorToolbarProps } from '@elementor/editor-controls';
 import { type V1Element } from '@elementor/editor-elements';
+import { type MiddlewareReturn, type MiddlewareState } from '@floating-ui/react';
 
 import { type LegacyWindow } from '../../types';
+
+const TOP_BAR_SELECTOR = '#elementor-editor-wrapper-v2';
+const NAVIGATOR_SELECTOR = '#elementor-navigator';
+const EDITING_PANEL = '#elementor-panel';
+
+const EDITOR_ELEMENTS_OUT_OF_IFRAME = [ TOP_BAR_SELECTOR, NAVIGATOR_SELECTOR, EDITING_PANEL ];
+
+export const EDITOR_WRAPPER_SELECTOR = 'inline-editor-wrapper';
+
+const SELECTION_PSEUDO_ELEMENT_ID_PREFIX = 'selection-pseudo-element';
+
+const SELECTION_PSEUDO_ELEMENT_STYLES: CSSProperties = {
+	backgroundColor: 'transparent',
+	border: 'none',
+	outline: 'none',
+	boxShadow: 'none',
+	padding: '0',
+	margin: '0',
+	borderRadius: '0',
+	overflow: 'hidden',
+	opacity: '0',
+	pointerEvents: 'none',
+	position: 'absolute',
+	display: 'block',
+};
 
 export type Editor = InlineEditorToolbarProps[ 'editor' ];
 export type EditorView = Editor[ 'view' ];
@@ -25,62 +51,132 @@ export const getWidgetType = ( container: V1Element | null ) => {
 	return container?.model?.get( 'widgetType' ) ?? container?.model?.get( 'elType' ) ?? null;
 };
 
-export const calcSelectionCenterOffsets = ( view: EditorView ): Offsets | null => {
-	const frameWindow = ( view.root as Document )?.defaultView;
-	const selection = frameWindow?.getSelection();
-	const editorContainer = view.dom;
+export const getInlineEditorElement = ( elementWrapper: HTMLElement, expectedTag: string | null ) => {
+	return ! expectedTag ? null : ( elementWrapper.querySelector( expectedTag ) as HTMLDivElement );
+};
 
-	if ( ! selection || ! editorContainer ) {
+// Elements out of iframe and canvas don't trigger "onClickAway" which unmounts the editor
+// since they are not part of the iframes owner document.
+// We need to manually add listeners to these elements to unmount the editor when they are clicked.
+export const useOnClickOutsideIframe = ( handleUnmount: () => void ) => {
+	const asyncUnmountInlineEditor = useCallback( () => queueMicrotask( handleUnmount ), [ handleUnmount ] );
+
+	useEffect( () => {
+		EDITOR_ELEMENTS_OUT_OF_IFRAME.forEach(
+			( selector ) =>
+				document?.querySelector( selector )?.addEventListener( 'mousedown', asyncUnmountInlineEditor )
+		);
+
+		return () =>
+			EDITOR_ELEMENTS_OUT_OF_IFRAME.forEach(
+				( selector ) =>
+					document?.querySelector( selector )?.removeEventListener( 'mousedown', asyncUnmountInlineEditor )
+			);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+};
+
+export const useOnSelectionEnd = ( ownerDocument: Document, id: string ) => {
+	const [ selectionPseudoElement, setSelectionPseudoElement ] = useState< HTMLElement | null >( null );
+
+	const onSelectionEnd = ( view: EditorView ) => {
+		const hasSelection = ! view.state.selection.empty;
+
+		removeSelectionPseudoElement( ownerDocument, id );
+
+		if ( hasSelection ) {
+			setSelectionPseudoElement( createAndAttachSelectionPseudoElement( ownerDocument, id ) );
+		} else {
+			removeSelectionPseudoElement( ownerDocument, id );
+			setSelectionPseudoElement( null );
+		}
+	};
+
+	return { onSelectionEnd, selectionPseudoElement };
+};
+
+const createAndAttachSelectionPseudoElement = ( ownerDocument: Document, id: string ): HTMLElement | null => {
+	const frameWindow = ownerDocument.defaultView;
+	const selection = frameWindow?.getSelection();
+
+	if ( ! selection ) {
 		return null;
 	}
 
 	const range = selection.getRangeAt( 0 );
 	const selectionRect = range.getBoundingClientRect();
-	const editorContainerRect = editorContainer.getBoundingClientRect();
+	const bodyRect = ownerDocument.body.getBoundingClientRect();
+	const selectionPseudoElement = ownerDocument.createElement( 'span' );
 
-	if ( ! selectionRect || ! editorContainerRect ) {
-		return null;
-	}
+	setSelectionPseudoElementStyles( selectionPseudoElement, selectionRect, bodyRect );
+	selectionPseudoElement.setAttribute( 'id', getSelectionElementId( id ) );
 
-	const verticalOffset = selectionRect.top - editorContainerRect.top;
+	ownerDocument.body.appendChild( selectionPseudoElement );
 
-	const selectionCenter = selectionRect?.left + selectionRect?.width / 2;
-	const horizontalOffset = selectionCenter - editorContainerRect.left;
-
-	return { left: horizontalOffset, top: verticalOffset };
+	return selectionPseudoElement;
 };
 
-export const getComputedStyle = ( styles: CSSProperties, offsets: Offsets ): CSSProperties => {
-	const transform = extractTransformValue( styles );
+export const removeSelectionPseudoElement = ( ownerDocument: Document, id: string ) => {
+	const selectionPseudoElement = getSelectionPseudoElement( ownerDocument, id );
 
-	return transform
-		? {
-				...styles,
-				marginLeft: `${ offsets.left }px`,
-				marginTop: `${ offsets.top }px`,
-				pointerEvents: 'none',
-		  }
-		: {
-				display: 'none',
-		  };
+	if ( selectionPseudoElement ) {
+		ownerDocument.body.removeChild( selectionPseudoElement );
+	}
 };
 
-const extractTransformValue = ( styles: CSSProperties ) => {
-	const translateRegex = /translate\([^)]*\)\s?/g;
-	const numericValuesRegex = /(-?\d+\.?\d*)/g;
+const getSelectionElementId = ( id: string ) => `${ SELECTION_PSEUDO_ELEMENT_ID_PREFIX }-${ id }`;
 
-	const translateValue = styles?.transform?.match( translateRegex )?.[ 0 ];
-	const values = translateValue?.match( numericValuesRegex );
+export const getSelectionPseudoElement = ( ownerDocument: Document, id: string ) =>
+	ownerDocument.getElementById( getSelectionElementId( id ) ) as HTMLDivElement | null;
 
-	if ( ! translateValue || ! values ) {
-		return null;
-	}
+const setSelectionPseudoElementStyles = ( element: HTMLElement, selectionRect: DOMRect, bodyRect: DOMRect ) => {
+	const { width, height } = selectionRect;
 
-	const [ numericX, numericY ] = values.map( Number );
+	Object.assign( element.style, SELECTION_PSEUDO_ELEMENT_STYLES );
+	element.style.top = `${ selectionRect.top - bodyRect.top }px`;
+	element.style.left = `${ selectionRect.left - bodyRect.left }px`;
+	element.style.width = `${ width }px`;
+	element.style.height = `${ height }px`;
+};
 
-	if ( ! numericX || ! numericY ) {
-		return null;
-	}
+export const horizontalShifterMiddleware: {
+	name: string;
+	fn: ( state: MiddlewareState ) => MiddlewareReturn;
+} = {
+	name: 'horizontalShifter',
+	fn( state ) {
+		const { x: left, y: top } = state;
+		const { reference, floating } = state.elements;
 
-	return styles.transform;
+		const referenceRect = reference.getBoundingClientRect();
+		const floatingRect = floating.getBoundingClientRect();
+
+		const newState: MiddlewareReturn = {
+			...state,
+			x: left,
+			y: top,
+		};
+
+		const isLeftOverflown = state.x < 0 && referenceRect.left > state.x;
+
+		if ( isLeftOverflown ) {
+			newState.x = referenceRect.left;
+
+			return newState;
+		}
+
+		const right = left + floatingRect.width;
+		const documentWidth = ( reference as HTMLElement ).ownerDocument.body.offsetWidth;
+		const isRightOverflown = right > documentWidth && referenceRect.right < floatingRect.right;
+
+		if ( isRightOverflown ) {
+			const diff = right - documentWidth;
+
+			newState.x = left - diff;
+
+			return newState;
+		}
+
+		return newState;
+	},
 };
