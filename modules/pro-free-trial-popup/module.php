@@ -17,7 +17,6 @@ use Elementor\Modules\ElementorCounter\Module as Elementor_Counter;
 use Elementor\Utils;
 use Elementor\Plugin;
 
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -30,6 +29,7 @@ class Module extends BaseModule {
 	const AB_TEST_NAME = 'pro_free_trial_popup';
 	const REQUIRED_VISIT_COUNT = 4;
 	const EXTERNAL_DATA_URL = 'https://assets.elementor.com/pro-free-trial-popup/v1/pro-free-trial-popup.json';
+	const TRANSIENT_KEY = 'elementor_pro_free_trial_data';
 	const ACTIVE = 'active';
 
 	private Elementor_Adapter_Interface $elementor_adapter;
@@ -115,16 +115,14 @@ class Module extends BaseModule {
 	 */
 	private function is_feature_enabled(): bool {
 		$data = $this->get_external_data();
-		return ( self::ACTIVE === $data['pro-free-trial-popup'][0]['status'] );
+		if ( empty( $data['pro-free-trial-popup'][0]['status'] ) ) {
+			return false;
+		}
+		return self::ACTIVE === $data['pro-free-trial-popup'][0]['status'];
 	}
 
-	/**
-	 * Get external JSON data
-	 *
-	 * @return array External data or empty array on failure
-	 */
 	private function get_external_data(): array {
-		$cached_data = get_transient( 'elementor_pro_free_trial_data' );
+		$cached_data = get_transient( self::TRANSIENT_KEY );
 
 		if ( false !== $cached_data ) {
 			return $cached_data;
@@ -132,18 +130,22 @@ class Module extends BaseModule {
 
 		$response = wp_remote_get( self::EXTERNAL_DATA_URL );
 
-		if ( is_wp_error( $response ) ) {
+		if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
 			return [];
 		}
 
-		$body = wp_remote_retrieve_body( $response );
-		$data = json_decode( $body, true );
+		$data = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( ! is_array( $data ) ) {
 			return [];
 		}
 
-		set_transient( 'elementor_pro_free_trial_data', $data, HOUR_IN_SECONDS );
+		$is_valid = isset( $data['pro-free-trial-popup'] ) && is_array( $data['pro-free-trial-popup'] ) && ! empty( $data['pro-free-trial-popup'][0] );
+		if ( ! $is_valid ) {
+			return [];
+		}
+
+		set_transient( self::TRANSIENT_KEY, $data, HOUR_IN_SECONDS );
 
 		return $data;
 	}
@@ -214,7 +216,7 @@ class Module extends BaseModule {
 	 * @return array Popup data or empty array if not found
 	 */
 	private function extract_popup_data( array $external_data ): array {
-		if ( ! isset( $external_data['pro-free-trial-popup'] ) || ! is_array( $external_data['pro-free-trial-popup'] ) ) {
+		if ( ! isset( $external_data['pro-free-trial-popup'][0] ) || ! is_array( $external_data['pro-free-trial-popup'][0] ) ) {
 			return [];
 		}
 
@@ -231,3 +233,5 @@ class Module extends BaseModule {
 		return $current_user->ID ?? 0;
 	}
 }
+
+

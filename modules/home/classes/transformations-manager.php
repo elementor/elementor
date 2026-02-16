@@ -37,6 +37,10 @@ class Transformations_Manager {
 	}
 
 	public function run_transformations(): array {
+		if ( empty( $this->home_screen_data ) || ! is_array( $this->home_screen_data ) ) {
+			return $this->home_screen_data;
+		}
+
 		if ( ! empty( self::$cached_data ) ) {
 			return self::$cached_data;
 		}

@@ -22,7 +22,13 @@ class EditorAssetsAPI {
 		$assets_data = $this->get_transient( $this->config( static::ASSETS_DATA_TRANSIENT_KEY ) );
 
 		if ( $force_request || false === $assets_data ) {
-			$assets_data = $this->fetch_data();
+			$fresh_data = $this->fetch_data();
+
+			if ( empty( $fresh_data ) ) {
+				return ! empty( $assets_data ) ? $assets_data : [];
+			}
+
+			$assets_data = $fresh_data;
 			$this->set_transient( $this->config( static::ASSETS_DATA_TRANSIENT_KEY ), $assets_data, '+1 hour' );
 		}
 
@@ -32,7 +38,7 @@ class EditorAssetsAPI {
 	private function fetch_data(): array {
 		$response = wp_remote_get( $this->config( static::ASSETS_DATA_URL ) );
 
-		if ( is_wp_error( $response ) ) {
+		if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
 			return [];
 		}
 
@@ -68,3 +74,4 @@ class EditorAssetsAPI {
 		return update_option( $cache_key, $data, false );
 	}
 }
+

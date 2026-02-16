@@ -57,6 +57,10 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 	}
 
 	public function transform( array $home_screen_data ): array {
+		if ( empty( $home_screen_data['top_with_licences'] ) || ! is_array( $home_screen_data['top_with_licences'] ) ) {
+			return $home_screen_data;
+		}
+
 		$new_top = [];
 
 		foreach ( $home_screen_data['top_with_licences'] as $index => $item ) {

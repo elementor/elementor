@@ -10,6 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Filter_Sidebar_Promotion_By_License extends Transformations_Abstract {
 
 	public function transform( array $home_screen_data ): array {
+		if ( empty( $home_screen_data['sidebar_promotion_variants'] ) || ! is_array( $home_screen_data['sidebar_promotion_variants'] ) ) {
+			return $home_screen_data;
+		}
+
 		$user_tier = $this->get_tier();
 
 		$new_sidebar_promotion = array_filter( $home_screen_data['sidebar_promotion_variants'], function( $item ) use ( $user_tier ) {

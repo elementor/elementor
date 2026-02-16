@@ -13,7 +13,7 @@ class Create_Site_Settings_Url extends Base\Transformations_Abstract {
 	const SITE_SETTINGS_ITEMS = [ 'Site Settings', 'Site Logo', 'Global Colors', 'Global Fonts' ];
 
 	public function transform( array $home_screen_data ): array {
-		if ( empty( $home_screen_data['get_started'] ) ) {
+		if ( empty( $home_screen_data['get_started'] ) || empty( $home_screen_data['get_started']['repeater'] ) || ! is_array( $home_screen_data['get_started']['repeater'] ) ) {
 			return $home_screen_data;
 		}
 

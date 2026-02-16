@@ -47,6 +47,10 @@ class Filter_Get_Started_By_License extends Transformations_Abstract {
 	}
 
 	public function transform( array $home_screen_data ): array {
+		if ( empty( $home_screen_data['get_started'] ) || ! is_array( $home_screen_data['get_started'] ) ) {
+			return $home_screen_data;
+		}
+
 		$new_get_started = [];
 
 		foreach ( $home_screen_data['get_started'] as $index => $item ) {
