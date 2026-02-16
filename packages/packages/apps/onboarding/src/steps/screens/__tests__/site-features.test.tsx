@@ -11,7 +11,7 @@ const SITE_FEATURES_PROGRESS = {
 
 const STEP_TITLE = 'What do you want to include in your site?';
 const STEP_SUBTITLE = "We'll use this to tailor suggestions for you.";
-const BUILT_IN_LABEL = 'Built-in';
+const BUILT_IN_LABEL = 'Included';
 const EXPLORE_MORE_LABEL = 'Explore more';
 const FINISH_BUTTON_LABEL = 'Finish';
 const USER_CHOICES_ENDPOINT = 'user-choices';
@@ -54,7 +54,7 @@ describe( 'SiteFeatures', () => {
 			expect( screen.getByText( EXPLORE_MORE_LABEL ) ).toBeInTheDocument();
 		} );
 
-		it( 'renders Built-in chip on core features', () => {
+		it( 'renders Included chip on core features', () => {
 			renderApp( {
 				isConnected: true,
 				progress: SITE_FEATURES_PROGRESS,

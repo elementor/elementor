@@ -38,7 +38,7 @@ const EXPLORE_MORE_OPTION: ExploreMoreOption = {
 	isExploreMore: true,
 };
 
-const BuiltInChip = styled( Chip )( ( { theme } ) => ( {
+const IncludedInCoreChip = styled( Chip )( ( { theme } ) => ( {
 	position: 'absolute',
 	insetBlockStart: theme.spacing( 0.75 ),
 	insetInlineStart: theme.spacing( 0.75 ),
@@ -154,7 +154,7 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick, onExplor
 						onKeyDown={ handleKeyDownEvent }
 						aria-pressed={ isCore ? undefined : isSelected }
 					>
-						{ isCore && <BuiltInChip label={ __( 'Built-in', 'elementor' ) } size="small" /> }
+						{ isCore && <IncludedInCoreChip label={ __( 'Included', 'elementor' ) } size="small" /> }
 						{ isSelected && (
 							<SelectionBadge icon={ BadgeIcon } variant={ option.isPro ? 'pro' : 'default' } />
 						) }
