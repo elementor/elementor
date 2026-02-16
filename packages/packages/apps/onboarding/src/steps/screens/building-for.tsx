@@ -62,7 +62,7 @@ export function BuildingFor( { onComplete }: BuildingForProps ) {
 			<GreetingBanner>{ greetingText }</GreetingBanner>
 
 			<Stack spacing={ 4 } alignItems="center">
-				<Typography variant="h5" align="center" fontWeight={ 500 } sx={ { fontFamily: "'Poppins', sans-serif" } }>
+				<Typography variant="h5" align="center" fontWeight={ 500 } fontFamily="Poppins">
 					{ __( 'Who are you building for?', 'elementor' ) }
 				</Typography>
 
