@@ -38,6 +38,12 @@ import { VariablesManagerTable } from './variables-manager-table';
 
 const id = 'variables-manager';
 
+type StopSyncConfirmationDialogProps = {
+	open: boolean;
+	onClose: () => void;
+	onConfirm: () => void;
+};
+
 export const { panel, usePanelActions } = createPanel( {
 	id,
 	component: VariablesManagerPanel,
@@ -403,12 +409,6 @@ const usePreventUnload = ( isDirty: boolean ) => {
 			window.removeEventListener( 'beforeunload', handleBeforeUnload );
 		};
 	}, [ isDirty ] );
-};
-
-type StopSyncConfirmationDialogProps = {
-	open: boolean;
-	onClose: () => void;
-	onConfirm: () => void;
 };
 
 const StopSyncConfirmationDialog = ( { open, onClose, onConfirm }: StopSyncConfirmationDialogProps ) => (
