@@ -12,6 +12,7 @@ import {
 	type DialogProps,
 	DialogTitle,
 	FormControlLabel,
+	type SvgIconProps,
 	Typography,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -27,12 +28,12 @@ export const ConfirmationDialog = ( { open, onClose, children }: ConfirmationDia
 );
 
 type ConfirmationDialogTitleProps = React.PropsWithChildren< {
-	icon?: React.ComponentType< any >;
+	icon?: React.ComponentType< SvgIconProps >;
 	iconColor?: 'error' | 'secondary';
 } >;
 
-const ConfirmationDialogTitle = ( { 
-	children, 
+const ConfirmationDialogTitle = ( {
+	children,
 	icon: Icon = AlertOctagonFilledIcon,
 	iconColor = 'error',
 }: ConfirmationDialogTitleProps ) => (

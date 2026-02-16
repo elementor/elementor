@@ -8,7 +8,7 @@ import {
 	PanelHeader,
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
-import { SaveChangesDialog, SearchField, ThemeProvider, useDialog, ConfirmationDialog } from '@elementor/editor-ui';
+import { ConfirmationDialog, SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { AlertTriangleFilledIcon, ColorFilterIcon, TrashIcon } from '@elementor/icons';
 import {

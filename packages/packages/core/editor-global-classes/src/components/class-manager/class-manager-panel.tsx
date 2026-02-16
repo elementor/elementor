@@ -157,18 +157,18 @@ export function ClassManagerPanel() {
 								<ActiveFilters />
 							</Box>
 							<Divider />
-						<Box
-							px={ 2 }
-							sx={ {
-								flexGrow: 1,
-								overflowY: 'auto',
-							} }
-						>
-							<GlobalClassesList
-								disabled={ isPublishing }
-								onStopSyncRequest={ ( id ) => setStopSyncConfirmation( id ) }
-							/>
-						</Box>
+							<Box
+								px={ 2 }
+								sx={ {
+									flexGrow: 1,
+									overflowY: 'auto',
+								} }
+							>
+								<GlobalClassesList
+									disabled={ isPublishing }
+									onStopSyncRequest={ ( classId ) => setStopSyncConfirmation( classId ) }
+								/>
+							</Box>
 						</PanelBody>
 
 						<PanelFooter>
