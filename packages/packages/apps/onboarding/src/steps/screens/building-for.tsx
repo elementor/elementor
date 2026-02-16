@@ -4,8 +4,8 @@ import { ChevronRightSmallIcon } from '@elementor/icons';
 import { Stack, withDirection } from '@elementor/ui';
 
 import { GreetingBanner } from '../../components/ui/greeting-banner';
-import { StepTitle } from '../../components/ui/styled-components';
 import { OptionButton } from '../../components/ui/option-button';
+import { StepTitle } from '../../components/ui/styled-components';
 import { useOnboarding } from '../../hooks/use-onboarding';
 import { t } from '../../utils/translations';
 

@@ -3,9 +3,9 @@ import { useCallback, useMemo } from 'react';
 import { Stack, Typography } from '@elementor/ui';
 
 import { OptionsGrid } from '../../components/site-about';
-import { StepTitle } from '../../components/ui/styled-components';
 import { getGreeting } from '../../components/site-about/constants';
 import { GreetingBanner } from '../../components/ui/greeting-banner';
+import { StepTitle } from '../../components/ui/styled-components';
 import { useOnboarding } from '../../hooks/use-onboarding';
 import { t } from '../../utils/translations';
 

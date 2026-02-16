@@ -43,6 +43,7 @@ interface OnboardingConfig {
 	choices: Record< string, unknown >;
 	hadUnexpectedExit: boolean;
 	isConnected: boolean;
+	strings?: Record< string, string >;
 	urls: {
 		dashboard: string;
 		editor: string;
@@ -81,6 +82,29 @@ const defaultConfig: OnboardingConfig = {
 			type: 'multiple',
 		},
 	],
+	strings: {
+		'common.continue': 'Continue',
+		'common.skip': 'Skip',
+		'common.back': 'Back',
+		'common.finish': 'Finish',
+		'common.upgrade': 'Upgrade',
+		'common.or': 'OR',
+		'login.title': "Let's get to work.",
+		'login.sign_in': 'Sign in to Elementor',
+		'login.continue_another_way': 'Continue another way',
+		'login.continue_as_guest': 'Continue as a guest',
+		'steps.building_for.title': 'Who are you building for?',
+		'steps.building_for.greeting_with_name': "Hey %1$s %2$s Let's get your site set up.",
+		'steps.building_for.greeting_without_name': "Hey%s Let's get your site set up.",
+		'steps.building_for.option_myself': 'Myself or someone I know',
+		'steps.building_for.option_business': 'My business or workplace',
+		'steps.building_for.option_client': 'A client',
+		'steps.building_for.option_exploring': 'Just exploring',
+		'steps.site_features.title': 'What do you want to include in your site?',
+		'error.failed_mark_exit': 'Failed to mark user exit.',
+		'error.failed_complete_step': 'Failed to complete step.',
+		'steps.theme_selection.continue_with_theme': 'Continue with this theme',
+	},
 	progress: {
 		current_step_id: 'building_for',
 		current_step_index: 0,

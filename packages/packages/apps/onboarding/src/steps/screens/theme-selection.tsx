@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { Stack, Typography } from '@elementor/ui';
 
-import { StepTitle } from '../../components/ui/styled-components';
 import {
 	getGreetingText,
 	getRecommendedTheme,
@@ -11,6 +10,7 @@ import {
 	ThemeCard,
 } from '../../components/theme-selection';
 import { GreetingBanner } from '../../components/ui/greeting-banner';
+import { StepTitle } from '../../components/ui/styled-components';
 import { useOnboarding } from '../../hooks/use-onboarding';
 import type { ThemeSlug } from '../../types';
 import { StepId } from '../../types';
