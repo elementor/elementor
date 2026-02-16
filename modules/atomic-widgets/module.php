@@ -108,7 +108,6 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Perspectiv
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Perspective_Origin_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Utils\Utils;
-use Elementor\Core\Base\Document;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Self_Hosted_Video\Atomic_Self_Hosted_Video;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Video_Src_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Video_Src_Prop_Type;
