@@ -10,6 +10,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -191,12 +192,15 @@ class Module extends BaseModule {
 				'label' => __( 'Start with a theme that fits your needs', 'elementor' ),
 				'type' => 'single',
 			],
-			[
+		];
+
+		if ( ! Utils::has_pro() ) {
+			$steps[] = [
 				'id' => 'site_features',
 				'label' => __( 'What do you want to include in your site?', 'elementor' ),
 				'type' => 'multiple',
-			],
-		];
+			];
+		}
 
 		return apply_filters( 'elementor/e-onboarding/steps', $steps );
 	}
