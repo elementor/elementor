@@ -47,6 +47,11 @@ class Module extends BaseModule {
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 
 		add_action( 'elementor/init', [ $this, 'on_elementor_init' ], 12 );
+
+		if ( $this->should_show_starter() ) {
+			add_filter( 'elementor/editor/show_starter', '__return_true' );
+			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_starter_settings' ] );
+		}
 	}
 
 	public function on_elementor_init(): void {
@@ -150,6 +155,26 @@ class Module extends BaseModule {
 		$user = $library->get( 'user' );
 
 		return $user->first_name ?? '';
+	}
+
+	public function should_show_starter(): bool {
+		if ( ! Plugin::instance()->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
+			return false;
+		}
+
+		$progress = $this->progress_manager->get_progress();
+
+		return null !== $progress->get_completed_at() && ! $progress->is_starter_dismissed();
+	}
+
+	public function add_starter_settings( array $settings ): array {
+		$settings['starter'] = [
+			'restUrl' => rest_url( 'elementor/v1/e-onboarding/user-progress' ),
+			'nonce' => wp_create_nonce( 'wp_rest' ),
+			'aiPlannerUrl' => 'https://planner.elementor.com/home.html',
+		];
+
+		return $settings;
 	}
 
 	private function maybe_invalidate_theme_selection( User_Progress $progress, User_Choices $choices ): void {
