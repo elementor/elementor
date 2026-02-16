@@ -13,6 +13,7 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Utils\Ab_Test;
 use Elementor\Core\Isolation\Elementor_Adapter;
 use Elementor\Core\Isolation\Elementor_Adapter_Interface;
+use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Modules\ElementorCounter\Module as Elementor_Counter;
 use Elementor\Utils;
 use Elementor\Plugin;
@@ -140,8 +141,7 @@ class Module extends BaseModule {
 			return [];
 		}
 
-		$is_valid = isset( $data['pro-free-trial-popup'] ) && is_array( $data['pro-free-trial-popup'] ) && ! empty( $data['pro-free-trial-popup'][0] );
-		if ( ! $is_valid ) {
+		if ( ! EditorAssetsAPI::has_valid_nested_array( $data, [ 'pro-free-trial-popup', 0 ] ) ) {
 			return [];
 		}
 
