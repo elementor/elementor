@@ -16,14 +16,14 @@ describe( 'hashString', () => {
 			expect( hash1 ).toBe( hash2 );
 		} );
 
-		it( 'should return the same hash with maxLength for the same input', () => {
+		it( 'should return the same hash for the same input when passing a length parameter', () => {
 			// Arrange
 			const input = 'test-string-123';
-			const maxLength = 6;
+			const length = 6;
 
 			// Act
-			const hash1 = hashString( input, maxLength );
-			const hash2 = hashString( input, maxLength );
+			const hash1 = hashString( input, length );
+			const hash2 = hashString( input, length );
 
 			// Assert
 			expect( hash1 ).toBe( hash2 );
@@ -69,13 +69,13 @@ describe( 'hashString', () => {
 		}
 	);
 
-	it( 'should return a string with the maximum length of maxLength parameter', () => {
+	it( 'should return a string with the maximum length of length parameter', () => {
 		// Arrange
 		const input = 'test-string-123';
-		const maxLength = 5;
+		const length = 5;
 
 		// Act
-		const result = hashString( input, maxLength );
+		const result = hashString( input, length );
 
 		// Assert
 		expect( result ).toHaveLength( 5 );

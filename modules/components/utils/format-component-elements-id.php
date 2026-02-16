@@ -16,7 +16,7 @@ class Format_Component_Elements_Id {
 		return array_map( function( $element ) use ( $path ) {
 			$nesting_path = [ ...$path, $element['id'] ];
 
-			$element['id'] = self::hash_string( implode( '', $nesting_path ), 7 );
+			$element['id'] = self::hash_string( implode( '_', $nesting_path ), 7 );
 			$element['elements'] = self::format( $element['elements'], $nesting_path );
 
 			return $element;

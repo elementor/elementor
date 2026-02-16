@@ -11,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Format_Component_Elements_Id extends Elementor_Test_Base {
 
+	const ELEMENT_IDS = [ '32975a4', '3ddd07a', 'ff531ef', '8f7a2dc', 'b559a00' ];
+
 	public function test_hash_string__returns_same_hash_for_same_input() {
 		// Arrange
 		$input = 'test-string-123';
@@ -23,14 +25,14 @@ class Test_Format_Component_Elements_Id extends Elementor_Test_Base {
 		$this->assertEquals( $hash1, $hash2 );
 	}
 
-	public function test_hash_string__returns_same_hash_with_max_length_for_same_input() {
+	public function test_hash_string__returns_same_hash_for_same_input_when_passing_a_length_parameter() {
 		// Arrange
 		$input = 'test-string-123';
-		$max_length = 6;
+		$length = 6;
 
 		// Act
-		$hash1 = Format_Component_Elements_Id::hash_string( $input, $max_length );
-		$hash2 = Format_Component_Elements_Id::hash_string( $input, $max_length );
+		$hash1 = Format_Component_Elements_Id::hash_string( $input, $length );
+		$hash2 = Format_Component_Elements_Id::hash_string( $input, $length );
 
 		// Assert
 		$this->assertEquals( $hash1, $hash2 );
@@ -82,13 +84,13 @@ class Test_Format_Component_Elements_Id extends Elementor_Test_Base {
 		];
 	}
 
-	public function test_hash_string__returns_string_with_maximum_length() {
+	public function test_hash_string__returns_string_with_length_parameter() {
 		// Arrange
 		$input = 'test-string-123';
-		$max_length = 5;
+		$length = 5;
 
 		// Act
-		$result = Format_Component_Elements_Id::hash_string( $input, $max_length );
+		$result = Format_Component_Elements_Id::hash_string( $input, $length );
 
 		// Assert
 		$this->assertEquals( 5, strlen( $result ) );
@@ -140,28 +142,28 @@ class Test_Format_Component_Elements_Id extends Elementor_Test_Base {
 		$this->assertMatchesRegularExpression( '/^[0-9a-z]+$/', $result );
 	}
 
-	public function test_hash_string__handles_max_length_larger_than_hash_length() {
+	public function test_hash_string__handles_length_larger_than_hash_length() {
 		// Arrange
 		$input = 'a';
-		$max_length = 20;
+		$length = 20;
 
 		// Act
-		$result = Format_Component_Elements_Id::hash_string( $input, $max_length );
+		$result = Format_Component_Elements_Id::hash_string( $input, $length );
 
 		// Assert
-		$this->assertLessThanOrEqual( $max_length, strlen( $result ) );
+		$this->assertLessThanOrEqual( $length, strlen( $result ) );
 	}
 
 	public function test_hash_string__pads_with_zeros_when_hash_is_shorter_than_max_length() {
 		// Arrange
 		$input = 'b559a00_32975a4_ff531ef';
-		$max_length = 7;
+		$length = 7;
 
 		// Act
-		$result = Format_Component_Elements_Id::hash_string( $input, $max_length );
+		$result = Format_Component_Elements_Id::hash_string( $input, $length );
 
 		// Assert
-		$this->assertEquals( '0dr8u4k', $result );
+		$this->assertEquals( '0dr4k', $result );
 		$this->assertEquals( 7, strlen( $result ) );
 	}
 
@@ -184,8 +186,8 @@ class Test_Format_Component_Elements_Id extends Elementor_Test_Base {
 
 	public function test_format__formats_single_element_with_hashed_id() {
 		// Arrange
-		$element_id = '32975a4';
-		$instance_id = '3ddd07a';
+		$element_id = self::ELEMENT_IDS[0];
+		$instance_id = self::ELEMENT_IDS[1];
 
 		$elements = [
 			[
@@ -205,13 +207,42 @@ class Test_Format_Component_Elements_Id extends Elementor_Test_Base {
 		$this->assertIsArray( $result[0]['elements'] );
 	}
 
+	public function test_format__preserves_all_element_properties_except_id() {
+		// Arrange
+		$element_id = self::ELEMENT_IDS[0];
+		$instance_id = self::ELEMENT_IDS[1];
+
+		$elements = [
+			[
+				'id' => $element_id,
+				'elType' => 'widget',
+				'widgetType' => 'button',
+				'settings' => [ 'text' => 'Click me' ],
+				'editor_settings' => [ 'title' => 'My Button' ],
+				'elements' => [],
+			],
+		];
+		$path = [ $instance_id ];
+
+		// Act
+		$result = Format_Component_Elements_Id::format( $elements, $path );
+
+		// Assert
+		$this->assertEquals( '1e00vc4', $result[0]['id'] );
+		$this->assertEquals( 'widget', $result[0]['elType'] );
+		$this->assertEquals( 'button', $result[0]['widgetType'] );
+		$this->assertEquals( [ 'text' => 'Click me' ], $result[0]['settings'] );
+		$this->assertEquals( [ 'title' => 'My Button' ], $result[0]['editor_settings'] );
+		$this->assertIsArray( $result[0]['elements'] );
+	}
+
 	public function test_format__recursively_formats_nested_elements() {
 		// Arrange
-		$parent_id = '32975a4';
-		$child_id1 = '3ddd07a';
-		$child_id2 = 'ff531ef';
-		$child_id3 = '8f7a2dc';
-		$instance_id = 'b559a00';
+		$parent_id = self::ELEMENT_IDS[0];
+		$child_id1 = self::ELEMENT_IDS[1];
+		$child_id2 = self::ELEMENT_IDS[2];
+		$child_id3 = self::ELEMENT_IDS[3];
+		$instance_id = self::ELEMENT_IDS[4];
 
 		$elements = [
 			[
@@ -251,9 +282,9 @@ class Test_Format_Component_Elements_Id extends Elementor_Test_Base {
 
 	public function test_format__creates_same_id_for_same_element_with_same_path() {
 		// Arrange
-		$element_id = '32975a4';
-		$inner_instance_id = '3ddd07a';
-		$outer_instance_id = 'ff531ef';
+		$element_id = self::ELEMENT_IDS[0];
+		$inner_instance_id = self::ELEMENT_IDS[1];
+		$outer_instance_id = self::ELEMENT_IDS[2];
 
 		$elements = [
 			[
@@ -274,10 +305,10 @@ class Test_Format_Component_Elements_Id extends Elementor_Test_Base {
 
 	public function test_format__creates_unique_ids_for_same_element_with_different_paths() {
 		// Arrange
-		$element_id = '32975a4';
-		$outer_instance_id = '3ddd07a';
-		$inner_instance_id1 = 'ff531ef';
-		$inner_instance_id2 = '8f7a2dc';
+		$element_id = self::ELEMENT_IDS[0];
+		$outer_instance_id = self::ELEMENT_IDS[1];
+		$inner_instance_id1 = self::ELEMENT_IDS[2];
+		$inner_instance_id2 = self::ELEMENT_IDS[3];
 
 		$elements = [
 			[

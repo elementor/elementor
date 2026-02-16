@@ -8,7 +8,7 @@ const ELEMENT_ID_LENGTH = 7;
 export function formatComponentElementsId( elements: V1ElementData[], path: string[] ): V1ElementData[] {
 	return elements.map( ( element ) => {
 		const nestingPath = [ ...path, element.id ];
-		const id = hashString( nestingPath.join( '' ), ELEMENT_ID_LENGTH );
+		const id = hashString( nestingPath.join( '_' ), ELEMENT_ID_LENGTH );
 
 		return {
 			...element,
