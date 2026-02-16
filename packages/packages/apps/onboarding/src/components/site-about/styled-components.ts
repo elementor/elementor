@@ -20,6 +20,6 @@ export const CardGrid = styled( Box )( ( { theme } ) => ( {
 	gridTemplateColumns: 'repeat(4, 132px)',
 	gap: 16,
 	[ theme.breakpoints.down( 'sm' ) ]: {
-		gridTemplateColumns: 'repeat(2, 1fr)',
+		gridTemplateColumns: 'repeat(2, minmax(100px, 132px))',
 	},
 } ) );
