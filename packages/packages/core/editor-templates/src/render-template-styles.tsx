@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect } from 'react';
 import { type Document } from '@elementor/editor-documents';
 import { type V1ElementData } from '@elementor/editor-elements';
 import { type StyleDefinition } from '@elementor/editor-styles';
@@ -9,7 +9,7 @@ import { useLoadedTemplates } from './use-loaded-templates';
 export const RenderTemplateStyles = () => {
 	const templates = useLoadedTemplates();
 
-	useMemo( () => {
+	useEffect( () => {
 		const styles = templates.flatMap( extractStylesFromDocument );
 
 		addTemplateStyles( styles );
