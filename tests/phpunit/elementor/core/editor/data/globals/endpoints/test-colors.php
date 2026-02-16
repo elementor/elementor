@@ -65,7 +65,7 @@ class Test_Colors extends Base {
 			],
 			[
 				'input' => '<script>alert("xss")</script>',
-				'expected' => 'alert("xss")',
+				'expected' => '',
 				'description' => 'Malicious script tags should be stripped'
 			],
 			[

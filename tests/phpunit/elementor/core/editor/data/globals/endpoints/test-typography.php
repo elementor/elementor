@@ -75,9 +75,9 @@ class Test_Typography extends Base {
 				'value' => [
 					'font_family' => '<script>alert("xss")</script>',
 				],
-				'expected_title' => 'alert("xss")',
+				'expected_title' => '',
 				'expected_values' => [
-					'font_family' => 'alert("xss")',
+					'font_family' => '',
 				],
 				'description' => 'Malicious script tags should be stripped',
 			],
