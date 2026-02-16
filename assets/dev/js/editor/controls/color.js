@@ -190,7 +190,7 @@ export default class extends ControlBaseDataView {
 			$colorTitle = jQuery( '<span>', { class: 'e-global__color-title' } )
 				.html( _.escape( globalData.title ) ),
 			$colorHex = jQuery( '<span>', { class: 'e-global__color-hex' } )
-				.html( globalData.value );
+				.text( globalData.value );
 
 		$color.append( $colorPreview, $colorTitle, $colorHex );
 
