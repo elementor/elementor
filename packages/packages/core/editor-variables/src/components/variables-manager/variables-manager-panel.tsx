@@ -8,7 +8,7 @@ import {
 	PanelHeader,
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
-import { SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
+import { ConfirmationDialog, SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { AlertTriangleFilledIcon, ColorFilterIcon, TrashIcon } from '@elementor/icons';
 import {
@@ -30,7 +30,6 @@ import { getMenuActionsForVariable, getVariableType } from '../../variables-regi
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
 import { EmptyState } from '../ui/empty-state';
 import { NoSearchResults } from '../ui/no-search-results';
-import { StopSyncConfirmationDialog } from '../ui/stop-sync-confirmation-dialog';
 import { useAutoEdit } from './hooks/use-auto-edit';
 import { useErrorNavigation } from './hooks/use-error-navigation';
 import { useVariablesManagerState } from './hooks/use-variables-manager-state';
@@ -38,6 +37,12 @@ import { SIZE, VariableManagerCreateMenu } from './variables-manager-create-menu
 import { VariablesManagerTable } from './variables-manager-table';
 
 const id = 'variables-manager';
+
+type StopSyncConfirmationDialogProps = {
+	open: boolean;
+	onClose: () => void;
+	onConfirm: () => void;
+};
 
 export const { panel, usePanelActions } = createPanel( {
 	id,
@@ -348,7 +353,7 @@ export function VariablesManagerPanel() {
 			{ stopSyncConfirmation && (
 				<StopSyncConfirmationDialog
 					open
-					closeDialog={ () => setStopSyncConfirmation( null ) }
+					onClose={ () => setStopSyncConfirmation( null ) }
 					onConfirm={ () => handleStopSyncWithConfirmation( stopSyncConfirmation ) }
 				/>
 			) }
@@ -405,3 +410,26 @@ const usePreventUnload = ( isDirty: boolean ) => {
 		};
 	}, [ isDirty ] );
 };
+
+const StopSyncConfirmationDialog = ( { open, onClose, onConfirm }: StopSyncConfirmationDialogProps ) => (
+	<ConfirmationDialog open={ open } onClose={ onClose }>
+		<ConfirmationDialog.Title icon={ ColorFilterIcon } iconColor="secondary">
+			{ __( 'Stop syncing variable color', 'elementor' ) }
+		</ConfirmationDialog.Title>
+		<ConfirmationDialog.Content>
+			<ConfirmationDialog.ContentText>
+				{ __(
+					'This will disconnect the variable color from version 3. Existing uses on your site will automatically switch to a default color.',
+					'elementor'
+				) }
+			</ConfirmationDialog.ContentText>
+		</ConfirmationDialog.Content>
+		<ConfirmationDialog.Actions
+			onClose={ onClose }
+			onConfirm={ onConfirm }
+			cancelLabel={ __( 'Cancel', 'elementor' ) }
+			confirmLabel={ __( 'Got it', 'elementor' ) }
+			color="secondary"
+		/>
+	</ConfirmationDialog>
+);
