@@ -220,7 +220,7 @@ class Module extends BaseModule {
 			],
 		];
 
-		if ( ! Utils::has_pro() ) {
+		if ( ! $this->is_elementor_pro_active() ) {
 			$steps[] = [
 				'id' => 'site_features',
 				'label' => __( 'What do you want to include in your site?', 'elementor' ),
@@ -229,5 +229,9 @@ class Module extends BaseModule {
 		}
 
 		return apply_filters( 'elementor/e-onboarding/steps', $steps );
+	}
+
+	private function is_elementor_pro_active(): bool {
+		return (bool) apply_filters( 'elementor/e-onboarding/is_elementor_pro_active', Utils::has_pro() );
 	}
 }
