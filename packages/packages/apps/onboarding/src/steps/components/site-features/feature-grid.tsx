@@ -40,16 +40,13 @@ const EXPLORE_MORE_OPTION: ExploreMoreOption = {
 
 const BuiltInChip = styled( Chip )( ( { theme } ) => ( {
 	position: 'absolute',
-	top: theme.spacing( 0.75 ),
-	left: theme.spacing( 0.75 ),
+	insetBlockStart: theme.spacing( 0.75 ),
+	insetInlineStart: theme.spacing( 0.75 ),
 	height: theme.spacing( 2.25 ),
 	display: 'none',
 	'& .MuiChip-label': {
 		fontSize: theme.spacing( 1.5 ),
-		paddingLeft: theme.spacing( 1 ),
-		paddingRight: theme.spacing( 1 ),
-		paddingTop: theme.spacing( 0.375 ),
-		paddingBottom: theme.spacing( 0.375 ),
+		padding: `${theme.spacing(0.375)} ${theme.spacing(1)}`
 	},
 	[ theme.breakpoints.up( 'md' ) ]: {
 		display: 'inline-flex',
