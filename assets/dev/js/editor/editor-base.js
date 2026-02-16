@@ -436,7 +436,7 @@ export default class EditorBase extends Marionette.Application {
 			false,
 		);
 
-		return view ? view[ 0 ]?.getContainer() : null;
+		return view?.[ 0 ]?.getContainer() ?? null;
 	}
 
 	initComponents() {
