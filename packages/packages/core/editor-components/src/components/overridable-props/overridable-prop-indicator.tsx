@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
 import { useElement } from '@elementor/editor-editing-panel';
-import { getContainer, getWidgetsCache } from '@elementor/editor-elements';
+import { getWidgetsCache } from '@elementor/editor-elements';
 import { type PropType, type TransformablePropValue } from '@elementor/editor-props';
 import { bindPopover, bindTrigger, Popover, Tooltip, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -71,17 +71,10 @@ export function Content( { componentId, overridableProps }: Props ) {
 			? overridableProps?.props?.[ overridableValue.override_key ]
 			: undefined;
 
-		let propElementId = elementId;
-		if ( componentInstanceElement ) {
-			const instanceElement = getContainer( componentInstanceElement.element.id );
-			if ( instanceElement ) {
-				propElementId = instanceElement.model.get( 'originId' );
-			}
-		}
 		const overridablePropConfig = setOverridableProp( {
 			componentId,
 			overrideKey: overridableValue?.override_key ?? null,
-			elementId: propElementId,
+			elementId: componentInstanceElement?.element.id ?? elementId,
 			label,
 			groupId: group,
 			propKey: bind,
