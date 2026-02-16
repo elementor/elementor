@@ -210,7 +210,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<span class="quota-warning"></span>
 					</div>
 					<div class="quota-progress-bar-value"></div>
-					<span class="elementor-screen-only" id="elementor-template-library-quota-status" aria-live="polite" aria-atomic="true"></span>
+					<span class="elementor-screen-only" id="elementor-template-library-quota-status" role="status" aria-live="polite" aria-atomic="true"></span>
 				</div>
 			<# } #>
 		</div>

@@ -46,6 +46,14 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		if ( $widget.length && 'true' === $widget.attr( 'aria-modal' ) ) {
 			$widget.attr( 'role', 'dialog' );
 		}
+
+		// Move focus inside the modal when it opens (WAI-ARIA dialog pattern)
+		this.modal.on( 'show', () => {
+			const $modalWidget = this.modal.getElements( 'widget' );
+			if ( $modalWidget.length ) {
+				$modalWidget.trigger( 'focus' );
+			}
+		} );
 	},
 
 	getLogoOptions() {
@@ -105,10 +113,13 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	showTemplatesView( templatesCollection ) {
 		const prevView = this.modalContent.currentView;
 		const shouldRestoreFocus = prevView && prevView._restoreFocusToSourceFilter;
+		const isInitialOpen = ! prevView;
 
 		this.modalContent.show( new TemplateLibraryCollectionView( {
 			collection: templatesCollection,
 		} ) );
+
+		this.syncTabpanelAriaLabelledby();
 
 		if ( shouldRestoreFocus ) {
 			const newView = this.modalContent.currentView;
@@ -118,6 +129,36 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 					$selected.trigger( 'focus' );
 				}
 			}
+		} else if ( isInitialOpen ) {
+			this.focusFirstElement();
+		}
+	},
+
+	syncTabpanelAriaLabelledby() {
+		const activeTab = $e.components.get( 'library' )?.currentTab;
+		const $container = this.modalContent.currentView?.$childViewContainer;
+
+		if ( activeTab && $container?.length ) {
+			$container.attr( 'aria-labelledby', `tab-${ activeTab }` );
+		}
+	},
+
+	focusFirstElement() {
+		const $widget = this.modal.getElements( 'widget' );
+
+		if ( ! $widget.length ) {
+			return;
+		}
+
+		const $firstFocusable = $widget
+			.find( 'button, a, input, select, [tabindex="0"]' )
+			.filter( ':visible' )
+			.first();
+
+		if ( $firstFocusable.length ) {
+			$firstFocusable.trigger( 'focus' );
+		} else {
+			$widget.attr( 'tabindex', '-1' ).trigger( 'focus' );
 		}
 	},
 
@@ -128,13 +169,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		// Restore focus within the modal after re-render to prevent focus escaping to BODY
 		const $widget = this.modal.getElements( 'widget' );
 		if ( $widget.length && ! $widget[ 0 ].contains( $widget[ 0 ].ownerDocument.activeElement ) ) {
-			// Focus the first focusable element in the template list, or the modal widget itself
-			const $firstFocusable = $widget.find( 'button, a, input, select, [tabindex="0"]' ).filter( ':visible' ).first();
-			if ( $firstFocusable.length ) {
-				$firstFocusable.trigger( 'focus' );
-			} else {
-				$widget.attr( 'tabindex', '-1' ).trigger( 'focus' );
-			}
+			this.focusFirstElement();
 		}
 	},
 
