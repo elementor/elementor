@@ -291,7 +291,7 @@ describe( 'App', () => {
 			render( <App onComplete={ onComplete } /> );
 
 			// Act
-			fireEvent.click( screen.getByText( 'Finish' ) );
+			fireEvent.click( screen.getByText( 'Continue with Free' ) );
 
 			// Assert
 			await waitFor( () => {
