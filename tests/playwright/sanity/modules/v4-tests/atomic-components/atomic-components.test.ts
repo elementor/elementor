@@ -173,15 +173,13 @@ test.describe( 'Atomic Components @v4-tests', () => {
 		const overrideValue = 'Overridden Heading';
 		const nestedOverrideValue = 'Nested Override';
 
-		let flexboxId: string;
 		let instanceId: string;
 		let outerFlexboxId: string;
 		let outerInstanceId: string;
 		let originalHeadingValue: string;
 
 		await test.step( 'Create a component with heading', async () => {
-			const { locator: flexbox, id } = await createContentForComponent( editor );
-			flexboxId = id;
+			const { locator: flexbox } = await createContentForComponent( editor );
 
 			await openCreateComponentFromContextMenu( flexbox, page );
 			instanceId = await createComponent( page, editor, componentName );

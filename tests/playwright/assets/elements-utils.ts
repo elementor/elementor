@@ -1,4 +1,4 @@
-import { $eType, ElementorType } from '../types/types';
+import { $eType, ElementorType, WindowType } from '../types/types';
 import EditorPage from '../pages/editor-page';
 
 /**
@@ -60,18 +60,29 @@ export const getElementSelector = ( id: string ) => {
 };
 
 /**
- * Capture the ID of the next element created via document/elements/create hook.
+ * Capture the ID of the next element created via document/elements/create command.
  *
- * @param {EditorPage} editor - Editor page instance.
+ * @param {EditorPage}       editor     - Editor page instance.
+ * @param {string|undefined} widgetType - Optional widget type to filter (e.g., 'e-component').
  *
  * @return {Promise<string>} The ID of the created element
  */
-export const captureNextElementCreation = async ( editor: EditorPage ): Promise<string> => {
-	return editor.page.evaluate( () => {
-		return new Promise( ( resolve ) => {
-			window.$e.hooks.addAction( 'document/elements/create', ( element: { id: string } ) => {
-				resolve( element.id );
-			}, { once: true } );
+export const captureNextElementCreation = async ( editor: EditorPage, widgetType?: string ): Promise<string> => {
+	return editor.page.evaluate( ( widgetTypeFilter?: string ) => {
+		return new Promise< string >( ( resolve ) => {
+			const extendedWindow = window as unknown as WindowType;
+
+			const callback = ( component: unknown, command: string, args: unknown, result: { model?: { get?: ( key: string ) => string }, id: string } ) => {
+				if ( 'document/elements/create' === command ) {
+					const createdWidgetType = result?.model?.get?.( 'widgetType' );
+
+					if ( ! widgetTypeFilter || createdWidgetType === widgetTypeFilter ) {
+						extendedWindow.$e.commands.off( 'run:after', callback );
+						resolve( result.id );
+					}
+				}
+			};
+			extendedWindow.$e.commands.on( 'run:after', callback );
 		} );
-	} );
+	}, widgetType );
 };

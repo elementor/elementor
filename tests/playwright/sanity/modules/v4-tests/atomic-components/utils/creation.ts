@@ -4,9 +4,9 @@ import { timeouts } from '../../../../../config/timeouts';
 import EditorPage from '../../../../../pages/editor-page';
 import { captureNextElementCreation } from '../../../../../assets/elements-utils';
 
-export const uniqueName = ( baseName: string ) => `${ baseName } ${ Date.now() }`;
+export const uniqueName = ( baseName: string ): string => `${ baseName } ${ Date.now() }`;
 
-export const createContentForComponent = async ( editor: EditorPage ) => {
+export const createContentForComponent = async ( editor: EditorPage ): Promise< { id: string, locator: Locator } > => {
 	const flexboxId = await editor.addElement( { elType: EditorSelectors.v4.atoms.flexbox }, 'document' );
 	await editor.addWidget( { widgetType: EditorSelectors.v4.atoms.heading, container: flexboxId } );
 
@@ -22,7 +22,7 @@ export const createComponent = async ( page: Page, editor: EditorPage, component
 	await nameInput.clear();
 	await nameInput.fill( componentName );
 
-	const instanceIdPromise = captureNextElementCreation( editor );
+	const instanceIdPromise = captureNextElementCreation( editor, 'e-component' );
 
 	const createButton = createComponentForm.getByRole( 'button', { name: 'Create' } );
 	await createButton.click();
@@ -39,7 +39,7 @@ export const createComponent = async ( page: Page, editor: EditorPage, component
 	return instanceId;
 };
 
-export const createOverridableProp = async ( page: Page, propLabel: string ) => {
+export const createOverridableProp = async ( page: Page, propLabel: string ): Promise< void > => {
 	const exposeIndicator = page.locator( EditorSelectors.components.overridableIndicator ).first();
 	await exposeIndicator.click();
 
@@ -55,13 +55,13 @@ export const createOverridableProp = async ( page: Page, propLabel: string ) => 
 	await overridablePropForm.waitFor( { state: 'hidden', timeout: timeouts.longAction } );
 };
 
-export const waitForAutosave = async ( page: Page ) => {
-	return page.waitForResponse(
+export const waitForAutosave = async ( page: Page ): Promise< void > => {
+	await page.waitForResponse(
 		( response ) => response.url().includes( '/wp-admin/admin-ajax.php' ) && 200 === response.status(),
 	);
 };
 
-const dismissOnboardingDialog = async ( page: Page ) => {
+const dismissOnboardingDialog = async ( page: Page ): Promise< void > => {
 	const onboardingDismiss = page.getByRole( 'button', { name: 'Got it' } );
 
 	const isVisible = await isOnboardingDialogDisplayed( onboardingDismiss );
@@ -70,7 +70,7 @@ const dismissOnboardingDialog = async ( page: Page ) => {
 	}
 };
 
-const isOnboardingDialogDisplayed = async ( onboardingDismiss: Locator ) => {
+const isOnboardingDialogDisplayed = async ( onboardingDismiss: Locator ): Promise< boolean > => {
 	return onboardingDismiss.isVisible( { timeout: timeouts.longAction } ).catch( () => false );
 };
 
