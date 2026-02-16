@@ -163,7 +163,7 @@ class Test_Format_Component_Elements_Id extends Elementor_Test_Base {
 		$result = Format_Component_Elements_Id::hash_string( $input, $length );
 
 		// Assert
-		$this->assertEquals( '0dr4k', $result );
+		$this->assertEquals( '0dr8u4k', $result );
 		$this->assertEquals( 7, strlen( $result ) );
 	}
 

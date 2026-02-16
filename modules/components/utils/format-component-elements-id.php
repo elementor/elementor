@@ -23,9 +23,15 @@ class Format_Component_Elements_Id {
 		}, $elements );
 	}
 
-	// This is a copy of the hashString function in ts utils package.
-	// It's important to keep it in synced with the ts implementation
-	// to make component inner elements ids consistent between the editor and the frontend.
+	/**
+	 * This is a copy of the hashString function in ts utils package.
+	 * It's important to keep it in synced with the ts implementation
+	 * to make component inner elements ids consistent between the editor and the frontend.
+	 *
+	 * @param string $str - The string to hash.
+	 * @param $length - The length of the hash to return, optional.
+	 * @return string - The hashed string.
+	 */
 	public static function hash_string( string $str, ?int $length ): string {
 		$hash_basis = 5381;
 
