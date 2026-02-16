@@ -40,7 +40,7 @@ export function ExperienceLevel( { onComplete }: ExperienceLevelProps ) {
 	return (
 		<Stack spacing={ 4 } width="100%">
 			<Stack spacing={ 1 } textAlign="center" alignItems="center">
-				<Typography variant="h5" align="center" fontWeight={ 500 } fontFamily="Poppins" maxWidth={ 300 }>
+				<Typography variant="h5" align="center" fontWeight={ 500 } fontFamily="Poppins" maxWidth={ 325 }>
 					{ __( 'How much experience do you have with Elementor?', 'elementor' ) }
 				</Typography>
 				<Typography variant="body1" color="text.secondary">
