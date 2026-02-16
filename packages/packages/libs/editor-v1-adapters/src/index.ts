@@ -3,6 +3,7 @@ export {
 	runCommandSync as __privateRunCommandSync,
 	openRoute as __privateOpenRoute,
 	registerRoute as __privateRegisterRoute,
+	refreshGlobalsCache as __privateRefreshGlobalsCache,
 } from './dispatchers/dispatchers';
 
 export {

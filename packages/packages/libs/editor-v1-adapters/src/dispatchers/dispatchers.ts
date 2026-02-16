@@ -47,6 +47,12 @@ export function openRoute( route: string ) {
 	}
 }
 
+export function refreshGlobalsCache() {
+	const extendedWindow = window as unknown as ExtendedWindow;
+
+	extendedWindow.$e?.components?.get?.( 'globals' )?.refreshGlobalData?.();
+}
+
 export function registerRoute( route: string ) {
 	const extendedWindow = window as unknown as ExtendedWindow;
 
