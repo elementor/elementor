@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type MouseEvent } from 'react';
+import { type MouseEvent, type RefObject } from 'react';
 import { CrownFilledIcon } from '@elementor/icons';
 import {
 	Alert,
@@ -25,6 +25,7 @@ type PromotionPopoverProps = React.PropsWithChildren<
 		open: boolean;
 		placement?: InfotipProps[ 'placement' ];
 		slotProps?: InfotipProps[ 'slotProps' ];
+		anchorRef?: RefObject< HTMLElement | null >;
 	}
 >;
 
@@ -33,15 +34,19 @@ export const PromotionPopover = ( {
 	open,
 	placement = 'right',
 	slotProps,
+	anchorRef,
 	...cardProps
 }: PromotionPopoverProps ) => {
+	const anchorEl = anchorRef?.current;
+
 	const defaultSlotProps: InfotipProps[ 'slotProps' ] = {
 		popper: {
+			...( anchorEl && { anchorEl } ),
 			modifiers: [
 				{
 					name: 'offset',
 					options: {
-						offset: [ 0, 10 ],
+						offset: anchorRef ? [ 0, 4 ] : [ 0, 10 ],
 					},
 				},
 			],

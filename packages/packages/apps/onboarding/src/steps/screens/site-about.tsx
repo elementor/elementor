@@ -39,7 +39,7 @@ export function SiteAbout() {
 
 			<Stack spacing={ 4 } alignItems="center">
 				<Stack spacing={ 1 } alignItems="center">
-					<Typography variant="h5" align="center">
+					<Typography variant="h5" align="center" fontWeight={ 500 } fontFamily="Poppins">
 						{ __( 'What is your site about?', 'elementor' ) }
 					</Typography>
 					<Typography variant="body1" color="text.secondary" align="center">

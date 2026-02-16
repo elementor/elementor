@@ -55,6 +55,16 @@ class Module extends BaseModule {
 		}
 
 		$this->set_onboarding_settings();
+		$this->enqueue_fonts();
+	}
+
+	public function enqueue_fonts(): void {
+		wp_enqueue_style(
+			'elementor-onboarding-fonts',
+			'https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap',
+			[],
+			ELEMENTOR_VERSION
+		);
 	}
 
 	public function progress_manager(): Onboarding_Progress_Manager {

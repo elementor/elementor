@@ -74,8 +74,6 @@ export declare class ElementView {
 
 	model: BackboneModel< ElementModel >;
 
-	_abortController: AbortController | null;
-
 	collection: BackboneCollection< ElementModel >;
 
 	children: {
