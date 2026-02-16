@@ -120,7 +120,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				throw new Error( errors.map( ( e ) => ( typeof e === 'string' ? e : e.message ) ).join( '\n' ) );
 			}
 			// Why text? Until there will be a stable versioning to OutputSchema, it is better to send string to the response.
-return `The composition was built successfully with element IDs embedded in the XML.
+			return `The composition was built successfully with element IDs embedded in the XML.
 
 **CRITICAL NEXT STEPS** (Follow in order):
 1. **Apply Global Classes**: Use "apply-global-class" tool to apply the global classes you created BEFORE building this composition

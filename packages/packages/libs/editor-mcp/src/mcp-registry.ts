@@ -166,21 +166,19 @@ function createToolRegistry( server: McpServer ) {
 		// @ts-ignore: TS is unable to infer the type here
 		const inputSchema: ZodRawShape = opts.schema ? opts.schema : {};
 		const toolCallback: ToolCallback< ZodRawShape > = async function ( args, extra ) {
-			
-				const invocationResult = await opts.handler( opts.schema ? args : {}, extra );
-				return {
-					structuredContent: typeof invocationResult === 'string' ? undefined : invocationResult,
-					content: [
-						{
-							type: 'text',
-							text:
-								typeof invocationResult === 'string'
-									? invocationResult
-									: JSON.stringify( invocationResult ),
-						},
-					],
-				};
-			
+			const invocationResult = await opts.handler( opts.schema ? args : {}, extra );
+			return {
+				structuredContent: typeof invocationResult === 'string' ? undefined : invocationResult,
+				content: [
+					{
+						type: 'text',
+						text:
+							typeof invocationResult === 'string'
+								? invocationResult
+								: JSON.stringify( invocationResult ),
+					},
+				],
+			};
 		};
 		const annotations: Record< string, unknown > = {
 			destructiveHint: opts.isDestructive,
