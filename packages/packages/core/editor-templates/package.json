@@ -39,6 +39,7 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
+    "@elementor/editor": "4.0.0",
     "@elementor/editor-documents": "4.0.0",
     "@elementor/editor-styles-repository": "4.0.0",
     "@elementor/editor-v1-adapters": "4.0.0",
@@ -46,5 +47,8 @@
   },
   "devDependencies": {
     "tsup": "^8.3.5"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1"
   }
 }

@@ -1,12 +1,11 @@
-import { createDOMElement, createMockStyleDefinition } from 'test-utils';
+import { createDOMElement } from 'test-utils';
 import { type Document, getV1CurrentDocument } from '@elementor/editor-documents';
 import { type V1ElementData } from '@elementor/editor-elements';
 import { ajax, getCanvasIframeDocument } from '@elementor/editor-v1-adapters';
 import { __dispatch as dispatch } from '@elementor/store';
 
-import { loadTemplatesStyles } from '../load-templates-styles';
+import { loadTemplates, unloadTemplates } from '../load-templates';
 import { slice } from '../store';
-import { clearTemplatesStyles, templatesStylesProvider } from '../templates-styles-provider';
 
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	...jest.requireActual( '@elementor/editor-v1-adapters' ),
@@ -29,18 +28,6 @@ function createMockDocument( id: number, elements: V1ElementData[] = [] ): Docum
 	return { id, elements } as unknown as Document;
 }
 
-function createMockElementData( overrides: Partial< V1ElementData > = {} ): V1ElementData {
-	return {
-		id: '1',
-		elType: 'widget',
-		widgetType: 'heading',
-		settings: {},
-		styles: {},
-		elements: [],
-		...overrides,
-	} as V1ElementData;
-}
-
 function createTemplateElement( documentId: string ) {
 	return createDOMElement( {
 		tag: 'div',
@@ -51,12 +38,11 @@ function createTemplateElement( documentId: string ) {
 	} );
 }
 
-describe( 'loadTemplatesStyles', () => {
+describe( 'loadTemplates', () => {
 	const mockLoad = jest.mocked( ajax.load );
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-		clearTemplatesStyles();
 
 		jest.mocked( getV1CurrentDocument ).mockReturnValue( { id: 100 } as ReturnType< typeof getV1CurrentDocument > );
 	} );
@@ -66,11 +52,11 @@ describe( 'loadTemplatesStyles', () => {
 		jest.mocked( getCanvasIframeDocument ).mockReturnValue( null );
 
 		// Act.
-		await loadTemplatesStyles();
+		await loadTemplates();
 
 		// Assert.
-		expect( templatesStylesProvider.actions.all() ).toEqual( [] );
 		expect( mockLoad ).not.toHaveBeenCalled();
+		expect( dispatch ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should do nothing when no templates exist in canvas', async () => {
@@ -83,17 +69,17 @@ describe( 'loadTemplatesStyles', () => {
 		jest.mocked( getCanvasIframeDocument ).mockReturnValue( { body } as unknown as globalThis.Document );
 
 		// Act.
-		await loadTemplatesStyles();
+		await loadTemplates();
 
 		// Assert.
-		expect( templatesStylesProvider.actions.all() ).toEqual( [] );
 		expect( mockLoad ).not.toHaveBeenCalled();
+		expect( dispatch ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should load styles from templates in the canvas', async () => {
+	it( 'should fetch documents and dispatch setTemplates', async () => {
 		// Arrange.
-		const style1 = createMockStyleDefinition( { id: 'style-1' } );
-		const style2 = createMockStyleDefinition( { id: 'style-2' } );
+		const document200 = createMockDocument( 200 );
+		const document300 = createMockDocument( 300 );
 
 		const body = createDOMElement( {
 			tag: 'body',
@@ -113,22 +99,18 @@ describe( 'loadTemplatesStyles', () => {
 			const { id } = params.data as { id: number };
 
 			if ( id === 200 ) {
-				return Promise.resolve(
-					createMockDocument( 200, [ createMockElementData( { styles: { 'style-1': style1 } } ) ] )
-				);
+				return Promise.resolve( document200 );
 			}
 
 			if ( id === 300 ) {
-				return Promise.resolve(
-					createMockDocument( 300, [ createMockElementData( { styles: { 'style-2': style2 } } ) ] )
-				);
+				return Promise.resolve( document300 );
 			}
 
 			return Promise.reject( new Error( 'Not found' ) );
 		} );
 
 		// Act.
-		await loadTemplatesStyles();
+		await loadTemplates();
 
 		// Assert.
 		expect( mockLoad ).toHaveBeenCalledTimes( 2 );
@@ -138,11 +120,7 @@ describe( 'loadTemplatesStyles', () => {
 		expect( mockLoad ).toHaveBeenCalledWith(
 			expect.objectContaining( { data: { id: 300 }, action: 'get_document_config' } )
 		);
-
-		const styles = templatesStylesProvider.actions.all();
-		expect( styles ).toHaveLength( 2 );
-		expect( styles ).toContainEqual( style1 );
-		expect( styles ).toContainEqual( style2 );
+		expect( dispatch ).toHaveBeenCalledWith( slice.actions.setTemplates( [ document200, document300 ] ) );
 	} );
 
 	it( 'should only discover elements with library post type', async () => {
@@ -163,10 +141,10 @@ describe( 'loadTemplatesStyles', () => {
 		} );
 
 		jest.mocked( getCanvasIframeDocument ).mockReturnValue( { body } as unknown as globalThis.Document );
-		mockLoad.mockResolvedValue( createMockDocument( 200, [] ) );
+		mockLoad.mockResolvedValue( createMockDocument( 200 ) );
 
 		// Act.
-		await loadTemplatesStyles();
+		await loadTemplates();
 
 		// Assert.
 		expect( mockLoad ).toHaveBeenCalledTimes( 1 );
@@ -174,78 +152,9 @@ describe( 'loadTemplatesStyles', () => {
 		expect( mockLoad ).not.toHaveBeenCalledWith( expect.objectContaining( { data: { id: 500 } } ) );
 	} );
 
-	it( 'should extract styles from nested elements', async () => {
-		// Arrange.
-		const parentStyle = createMockStyleDefinition( { id: 'parent-style' } );
-		const childStyle = createMockStyleDefinition( { id: 'child-style' } );
-
-		const body = createDOMElement( {
-			tag: 'body',
-			children: [
-				createDOMElement( {
-					tag: 'div',
-					attrs: { 'data-elementor-id': '100' },
-				} ),
-				createTemplateElement( '200' ),
-			],
-		} );
-
-		jest.mocked( getCanvasIframeDocument ).mockReturnValue( { body } as unknown as globalThis.Document );
-
-		mockLoad.mockResolvedValue(
-			createMockDocument( 200, [
-				createMockElementData( {
-					styles: { 'parent-style': parentStyle },
-					elements: [
-						createMockElementData( {
-							id: '2',
-							styles: { 'child-style': childStyle },
-						} ),
-					],
-				} ),
-			] )
-		);
-
-		// Act.
-		await loadTemplatesStyles();
-
-		// Assert.
-		const styles = templatesStylesProvider.actions.all();
-		expect( styles ).toHaveLength( 2 );
-		expect( styles ).toContainEqual( parentStyle );
-		expect( styles ).toContainEqual( childStyle );
-	} );
-
-	it( 'should dispatch setTemplates with fetched documents', async () => {
-		// Arrange.
-		const document200 = createMockDocument( 200, [
-			createMockElementData( { styles: { s: createMockStyleDefinition( { id: 's' } ) } } ),
-		] );
-
-		const body = createDOMElement( {
-			tag: 'body',
-			children: [
-				createDOMElement( {
-					tag: 'div',
-					attrs: { 'data-elementor-id': '100' },
-				} ),
-				createTemplateElement( '200' ),
-			],
-		} );
-
-		jest.mocked( getCanvasIframeDocument ).mockReturnValue( { body } as unknown as globalThis.Document );
-		mockLoad.mockResolvedValue( document200 );
-
-		// Act.
-		await loadTemplatesStyles();
-
-		// Assert.
-		expect( dispatch ).toHaveBeenCalledWith( slice.actions.setTemplates( [ document200 ] ) );
-	} );
-
 	it( 'should gracefully handle failed document requests', async () => {
 		// Arrange.
-		const style1 = createMockStyleDefinition( { id: 'style-1' } );
+		const document200 = createMockDocument( 200 );
 
 		const body = createDOMElement( {
 			tag: 'body',
@@ -265,21 +174,17 @@ describe( 'loadTemplatesStyles', () => {
 			const { id } = params.data as { id: number };
 
 			if ( id === 200 ) {
-				return Promise.resolve(
-					createMockDocument( 200, [ createMockElementData( { styles: { 'style-1': style1 } } ) ] )
-				);
+				return Promise.resolve( document200 );
 			}
 
 			return Promise.reject( new Error( 'Not found' ) );
 		} );
 
 		// Act.
-		await loadTemplatesStyles();
+		await loadTemplates();
 
 		// Assert.
-		const styles = templatesStylesProvider.actions.all();
-		expect( styles ).toHaveLength( 1 );
-		expect( styles ).toContainEqual( style1 );
+		expect( dispatch ).toHaveBeenCalledWith( slice.actions.setTemplates( [ document200 ] ) );
 	} );
 
 	it( 'should deduplicate document IDs', async () => {
@@ -297,12 +202,26 @@ describe( 'loadTemplatesStyles', () => {
 		} );
 
 		jest.mocked( getCanvasIframeDocument ).mockReturnValue( { body } as unknown as globalThis.Document );
-		mockLoad.mockResolvedValue( createMockDocument( 200, [] ) );
+		mockLoad.mockResolvedValue( createMockDocument( 200 ) );
 
 		// Act.
-		await loadTemplatesStyles();
+		await loadTemplates();
 
 		// Assert.
 		expect( mockLoad ).toHaveBeenCalledTimes( 1 );
+	} );
+} );
+
+describe( 'unloadTemplates', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
+	it( 'should dispatch clearTemplates', () => {
+		// Act.
+		unloadTemplates();
+
+		// Assert.
+		expect( dispatch ).toHaveBeenCalledWith( slice.actions.clearTemplates() );
 	} );
 } );

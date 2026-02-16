@@ -25,9 +25,9 @@ export const slice = __createSlice( {
 	},
 } );
 
-type RootState = SliceState< typeof slice >;
+export type Slice = SliceState< typeof slice >;
 
-const selectEntities = ( state: RootState ) => state.templates.entities;
+const selectEntities = ( state: Slice ) => state.templates.entities;
 
 export const selectTemplates = __createSelector( [ selectEntities ], ( entities ): Document[] =>
 	Object.values( entities )
