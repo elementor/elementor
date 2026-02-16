@@ -3,7 +3,9 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Form;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Chips_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Email_Form_Action_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Toggle_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
@@ -12,8 +14,10 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Error_Message\Form
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Widget_Builder;
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Email_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V2_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Array_Prop_Type;
@@ -56,6 +60,15 @@ class Atomic_Form extends Atomic_Element_Base {
 	}
 
 	protected static function define_props_schema(): array {
+		$email_dependencies = Dependency_Manager::make()
+			->where( [
+				'operator' => 'contains',
+				'path' => [ 'actions-after-submit' ],
+				'value' => 'email',
+				'effect' => 'hide',
+			] )
+			->get();
+
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
@@ -65,6 +78,9 @@ class Atomic_Form extends Atomic_Element_Base {
 				->enum( [ 'default', 'success', 'error' ] )
 				->default( 'default' ),
 			'actions-after-submit' => String_Array_Prop_Type::make()
+				->default( [] ),
+			'email' => Email_Prop_Type::make()
+				->set_dependencies( $email_dependencies )
 				->default( [] ),
 			'attributes' => Attributes_Prop_Type::make(),
 		];
@@ -117,6 +133,10 @@ class Atomic_Form extends Atomic_Element_Base {
 								'label' => __( 'Webhook', 'elementor' ),
 								'value' => 'webhook',
 							],
+						] ),
+					Email_Form_Action_Control::bind_to( 'email' )
+						->set_meta( [
+							'topDivider' => true,
 						] ),
 				] ),
 			Section::make()
