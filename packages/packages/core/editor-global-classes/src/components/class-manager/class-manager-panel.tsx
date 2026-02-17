@@ -45,6 +45,8 @@ import { GlobalClassesList } from './global-classes-list';
 import { blockPanelInteractions, unblockPanelInteractions } from './panel-interactions';
 import { StartSyncToV3Modal } from './start-sync-to-v3-modal';
 
+const STOP_SYNC_MESSAGE_KEY = 'stop-sync-class';
+
 type StopSyncConfirmationDialogProps = {
 	open: boolean;
 	onClose: () => void;
@@ -93,7 +95,7 @@ export function ClassManagerPanel() {
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 	const [ stopSyncConfirmation, setStopSyncConfirmation ] = useState< string | null >( null );
 	const [ startSyncConfirmation, setStartSyncConfirmation ] = useState< string | null >( null );
-	const [ isStopSyncSuppressed ] = useSuppressedMessage( 'stop-sync-class' );
+	const [ isStopSyncSuppressed ] = useSuppressedMessage( STOP_SYNC_MESSAGE_KEY );
 
 	const { mutateAsync: publish, isPending: isPublishing } = usePublish();
 
@@ -327,7 +329,7 @@ const TotalCssClassCounter = () => {
 };
 
 const StopSyncConfirmationDialog = ( { open, onClose, onConfirm }: StopSyncConfirmationDialogProps ) => {
-	const [ , suppressStopSyncMessage ] = useSuppressedMessage( 'stop-sync-class' );
+	const [ , suppressStopSyncMessage ] = useSuppressedMessage( STOP_SYNC_MESSAGE_KEY );
 
 	return (
 		<ConfirmationDialog open={ open } onClose={ onClose }>

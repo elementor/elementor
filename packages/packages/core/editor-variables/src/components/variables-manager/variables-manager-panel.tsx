@@ -38,6 +38,7 @@ import { SIZE, VariableManagerCreateMenu } from './variables-manager-create-menu
 import { VariablesManagerTable } from './variables-manager-table';
 
 const id = 'variables-manager';
+const STOP_SYNC_MESSAGE_KEY = 'stop-sync-variable';
 
 type StopSyncConfirmationDialogProps = {
 	open: boolean;
@@ -61,7 +62,7 @@ export const { panel, usePanelActions } = createPanel( {
 export function VariablesManagerPanel() {
 	const { close: closePanel } = usePanelActions();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
-	const [ isStopSyncSuppressed ] = useSuppressedMessage( 'stop-sync-variable' );
+	const [ isStopSyncSuppressed ] = useSuppressedMessage( STOP_SYNC_MESSAGE_KEY );
 
 	const createMenuState = usePopupState( {
 		variant: 'popover',
@@ -425,7 +426,7 @@ const usePreventUnload = ( isDirty: boolean ) => {
 };
 
 const StopSyncConfirmationDialog = ( { open, onClose, onConfirm }: StopSyncConfirmationDialogProps ) => {
-	const [ , suppressStopSyncMessage ] = useSuppressedMessage( 'stop-sync-variable' );
+	const [ , suppressStopSyncMessage ] = useSuppressedMessage( STOP_SYNC_MESSAGE_KEY );
 
 	return (
 		<ConfirmationDialog open={ open } onClose={ onClose }>

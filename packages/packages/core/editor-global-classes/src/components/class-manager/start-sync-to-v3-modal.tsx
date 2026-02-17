@@ -12,6 +12,8 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+const IMAGE_URL = 'https://assets.elementor.com/packages/v1/images/class-manager-sync-modal.png';
+
 type StartSyncToV3ModalProps = {
 	externalOpen?: boolean;
 	onExternalClose?: () => void;
@@ -22,30 +24,18 @@ export const StartSyncToV3Modal = ( { externalOpen, onExternalClose, onConfirm }
 	const [ shouldShowAgain, setShouldShowAgain ] = useState( true );
 
 	const handleClose = () => {
-		if ( onExternalClose ) {
-			onExternalClose();
-		}
+		onExternalClose?.();
 	};
 
 	const handleConfirm = () => {
-		if ( onConfirm ) {
-			onConfirm();
-		}
-
-		if ( onExternalClose ) {
-			onExternalClose();
-		}
+		onConfirm?.();
+		onExternalClose?.();
 	};
 
 	return (
 		<Dialog open={ externalOpen ?? false } onClose={ handleClose } maxWidth="sm" fullWidth>
 			<DialogContent sx={ { p: 0 } }>
-				<Box
-					component="img"
-					src="https://assets.elementor.com/packages/v1/images/class-manager-sync-modal.png"
-					alt=""
-					sx={ { width: '100%', display: 'block' } }
-				/>
+				<Box component="img" src={ IMAGE_URL } alt="" sx={ { width: '100%', display: 'block' } } />
 				<Box sx={ { px: 3, pt: 4, pb: 1 } }>
 					<Typography variant="h6">{ __( 'Sync class to version 3 Global Fonts', 'elementor' ) }</Typography>
 					<Typography variant="body2" color="secondary" sx={ { mb: 2, pt: 1 } }>
