@@ -31,6 +31,7 @@ import { CreateComponentForm } from './components/create-component-form/create-c
 import { EditComponent } from './components/edit-component/edit-component';
 import { openEditModeDialog } from './components/in-edit-mode';
 import { InstanceEditingPanel } from './components/instance-editing-panel/instance-editing-panel';
+import { LoadTemplateComponents } from './components/load-template-components';
 import { OverridablePropControl } from './components/overridable-props/overridable-prop-control';
 import { OverridablePropIndicator } from './components/overridable-props/overridable-prop-indicator';
 import { COMPONENT_WIDGET_TYPE, createComponentType } from './create-component-type';
@@ -108,6 +109,11 @@ export function init() {
 		}
 
 		await loadComponentsAssets( ( config?.elements as V1ElementData[] ) ?? [] );
+	} );
+
+	injectIntoLogic( {
+		id: 'templates',
+		component: LoadTemplateComponents,
 	} );
 
 	registerFieldIndicator( {
