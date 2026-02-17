@@ -28,9 +28,10 @@ export function InstanceEditingPanel() {
 	const overrides = settings?.overrides?.value;
 
 	const component = useComponent( componentId ?? null );
-	const overridableProps = useSanitizeOverridableProps( componentId ?? null );
 
-	const componentInstanceId = useSelectedElement()?.element?.id ?? null;
+	const componentInstanceId = useSelectedElement()?.element?.id;
+
+	const overridableProps = useSanitizeOverridableProps( componentId ?? null, componentInstanceId );
 
 	if ( ! componentId || ! overridableProps || ! component ) {
 		return null;
