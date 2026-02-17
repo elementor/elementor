@@ -78,7 +78,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		} );
 	} );
 
-	test( 'Core trigger menu does not expose "While scrolling" and scrollOn-only controls stay hidden', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Core trigger menu shows "While scrolling" as disabled and scrollOn-only controls stay hidden', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
@@ -108,12 +108,14 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			await expect( triggerSelect ).toBeVisible();
 			await triggerSelect.click();
 
-			// Core trigger control offers only two options.
+			// Core trigger control enables only these two options.
 			await expect( page.getByRole( 'option', { name: 'Page load' } ) ).toBeVisible();
 			await expect( page.getByRole( 'option', { name: 'Scroll into view' } ) ).toBeVisible();
 
-			// Pro-only option must not exist in core runs.
-			await expect( page.getByRole( 'option', { name: 'While scrolling' } ) ).toHaveCount( 0 );
+			// Pro-only option is present but disabled in core runs.
+			const scrollOnOption = page.getByRole( 'option', { name: 'While scrolling' } );
+			await expect( scrollOnOption ).toBeVisible();
+			await expect( scrollOnOption ).toBeDisabled();
 
 			// Close menu without changing selection.
 			await page.keyboard.press( 'Escape' );

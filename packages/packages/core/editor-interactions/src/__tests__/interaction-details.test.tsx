@@ -195,7 +195,7 @@ describe( 'InteractionDetails', () => {
 	} );
 
 	describe( 'Trigger menu options', () => {
-		it( 'should not include "While scrolling" option in the trigger menu', () => {
+		it( 'should show "While scrolling" option as disabled in the trigger menu', () => {
 			const interaction = createInteractionItemValue( { trigger: 'load' } );
 
 			renderInteractionDetails( interaction );
@@ -205,12 +205,14 @@ describe( 'InteractionDetails', () => {
 
 			fireEvent.mouseDown( triggerSelect );
 
-			// Sanity: core UI exposes only these trigger options.
+			// Sanity: core UI enables only these trigger options.
 			expect( screen.getByRole( 'option', { name: /page load/i } ) ).toBeInTheDocument();
 			expect( screen.getByRole( 'option', { name: /scroll into view/i } ) ).toBeInTheDocument();
 
-			// Guard: Pro-only trigger should not be offered by core trigger control.
-			expect( screen.queryByRole( 'option', { name: /while scrolling/i } ) ).not.toBeInTheDocument();
+			// Guard: Pro-only trigger should be present but disabled in the core trigger control.
+			const scrollOnOption = screen.getByRole( 'option', { name: /while scrolling/i } );
+			expect( scrollOnOption ).toBeInTheDocument();
+			expect( scrollOnOption ).toHaveAttribute( 'aria-disabled', 'true' );
 		} );
 	} );
 
