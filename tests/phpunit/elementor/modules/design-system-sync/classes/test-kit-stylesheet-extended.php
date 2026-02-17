@@ -575,6 +575,7 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 			],
 			'order' => [ 'g-1' ],
 		];
+
 		$kit->update_json_meta( '_elementor_global_classes', $classes_data );
 
 		$stylesheet = $this->createMock( \Elementor\Stylesheet::class );
