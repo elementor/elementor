@@ -52,8 +52,8 @@ export function Easing( {}: FieldProps ) {
 					color: 'text.tertiary',
 					fontWeight: '400',
 					display: 'flex',
-					alignItems: 'center' ,
-			} }
+					alignItems: 'center',
+				} }
 				ref={ anchorRef }
 				onMouseDown={ ( e: MouseEvent ) => {
 					e.stopPropagation();

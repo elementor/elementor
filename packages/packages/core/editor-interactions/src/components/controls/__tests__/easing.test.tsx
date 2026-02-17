@@ -35,11 +35,10 @@ describe( 'Easing', () => {
 		fireEvent.mouseDown( select );
 
 		// Assert.
-		const [ , easeInOptionText ] = screen.getAllByText( 'Ease In' );
-		const easeInOption = easeInOptionText.closest( 'li' );
+		const easeInOption = screen.getByRole( 'option', { name: 'Ease In', hidden: true } );
 		expect( easeInOption ).not.toHaveAttribute( 'aria-disabled', 'true' );
 
-		const easeInOutOption = screen.getByText( 'Ease In Out' ).closest( 'li' );
+		const easeInOutOption = screen.getByRole( 'option', { name: 'Ease In Out', hidden: true } );
 		expect( easeInOutOption ).toHaveAttribute( 'aria-disabled', 'true' );
 	} );
 
