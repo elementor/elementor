@@ -92,7 +92,11 @@ const ConfirmationDialogActions = ( {
 							color="secondary"
 						/>
 					}
-					label={ <Typography variant="body2" color="text.secondary">{ suppressLabel }</Typography> }
+					label={
+						<Typography variant="body2" color="text.secondary">
+							{ suppressLabel }
+						</Typography>
+					}
 				/>
 			) }
 			<div>

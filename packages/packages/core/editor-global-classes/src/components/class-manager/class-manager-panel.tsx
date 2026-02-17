@@ -93,7 +93,7 @@ export function ClassManagerPanel() {
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 	const [ stopSyncConfirmation, setStopSyncConfirmation ] = useState< string | null >( null );
 	const [ startSyncConfirmation, setStartSyncConfirmation ] = useState< string | null >( null );
-	const [ isStopSyncSuppressed, suppressStopSyncMessage ] = useSuppressedMessage( 'stop-sync-class' );
+	const [ isStopSyncSuppressed ] = useSuppressedMessage( 'stop-sync-class' );
 
 	const { mutateAsync: publish, isPending: isPublishing } = usePublish();
 

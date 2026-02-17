@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
+import { useSuppressedMessage } from '@elementor/editor-current-user';
 import {
 	__createPanel as createPanel,
 	Panel,
@@ -8,7 +9,6 @@ import {
 	PanelHeader,
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
-import { useSuppressedMessage } from '@elementor/editor-current-user';
 import { ConfirmationDialog, SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { AlertTriangleFilledIcon, ColorFilterIcon, TrashIcon } from '@elementor/icons';
@@ -61,7 +61,7 @@ export const { panel, usePanelActions } = createPanel( {
 export function VariablesManagerPanel() {
 	const { close: closePanel } = usePanelActions();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
-	const [ isStopSyncSuppressed, suppressStopSyncMessage ] = useSuppressedMessage( 'stop-sync-variable' );
+	const [ isStopSyncSuppressed ] = useSuppressedMessage( 'stop-sync-variable' );
 
 	const createMenuState = usePopupState( {
 		variant: 'popover',
