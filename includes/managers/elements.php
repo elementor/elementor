@@ -400,15 +400,6 @@ class Elements_Manager {
 		}
 	}
 
-	/**
-	 * Require files.
-	 *
-	 * Require Elementor element base class and column, section and repeater
-	 * elements.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 */
 	private function promote_category_after( string $category_name, array $after_candidates ): void {
 		if ( ! isset( $this->categories[ $category_name ] ) ) {
 			return;
@@ -438,6 +429,15 @@ class Elements_Manager {
 		);
 	}
 
+	/**
+	 * Require files.
+	 *
+	 * Require Elementor element base class and column, section and repeater
+	 * elements.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 */
 	private function require_files() {
 		require_once ELEMENTOR_PATH . 'includes/base/element-base.php';
 
