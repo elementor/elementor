@@ -196,14 +196,12 @@ class Atomic_Form extends Atomic_Element_Base {
 				__( 'your@mail.com', 'elementor' )
 			),
 
-			// Third row - Message field (textarea)
 			$this->build_textarea_group(
 				__( 'Message', 'elementor' ),
 				'message',
 				__( 'Your message', 'elementor' )
 			),
 
-			// Submit button
 			Widget_Builder::make( Atomic_Button::get_element_type() )
 				->settings( [
 					'text' => Html_V2_Prop_Type::generate( [
