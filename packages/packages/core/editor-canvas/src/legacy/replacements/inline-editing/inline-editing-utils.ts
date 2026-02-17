@@ -126,16 +126,18 @@ export const removeToolbarAnchor = ( ownerDocument: Document, id: string ) => {
 const getToolbarAnchorId = ( id: string ) => `${ TOOLBAR_ANCHOR_ID_PREFIX }-${ id }`;
 
 export const getToolbarAnchor = ( ownerDocument: Document, id: string ) =>
-	ownerDocument.getElementById( getToolbarAnchorId( id ) ) as HTMLDivElement | null;
+	ownerDocument.getElementById( getToolbarAnchorId( id ) ) as HTMLElement | null;
 
 const styleToolbarAnchor = ( anchor: HTMLElement, selectionRect: DOMRect, bodyRect: DOMRect ) => {
 	const { width, height } = selectionRect;
 
-	Object.assign( anchor.style, TOOLBAR_ANCHOR_STATIC_STYLES );
-	anchor.style.top = `${ selectionRect.top - bodyRect.top }px`;
-	anchor.style.left = `${ selectionRect.left - bodyRect.left }px`;
-	anchor.style.width = `${ width }px`;
-	anchor.style.height = `${ height }px`;
+	Object.assign( anchor.style, {
+		...TOOLBAR_ANCHOR_STATIC_STYLES,
+		top: `${ selectionRect.top - bodyRect.top }px`,
+		left: `${ selectionRect.left - bodyRect.left }px`,
+		width: `${ width }px`,
+		height: `${ height }px`,
+	} );
 };
 
 export const horizontalShifterMiddleware: {
