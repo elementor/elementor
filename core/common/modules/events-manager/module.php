@@ -95,12 +95,6 @@ class Module extends BaseModule {
 			EditorAssetsAPI::ASSETS_DATA_KEY => 'mixpanel',
 		] );
 
-		$mixpanel = $editor_assets_api->get_assets_data( false, true );
-
-		if ( ! EditorAssetsAPI::has_valid_nested_array( $mixpanel, [], false ) ) {
-			return [];
-		}
-
-		return $mixpanel;
+		return $editor_assets_api->get_assets_data( false, true );
 	}
 }

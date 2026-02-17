@@ -67,13 +67,7 @@ class Admin_Apps_Page {
 			EditorAssetsAPI::ASSETS_DATA_KEY => 'apps',
 		] );
 
-		$apps = $editor_assets_api->get_assets_data();
-
-		if ( ! EditorAssetsAPI::has_valid_nested_array( $apps, [], false ) ) {
-			return [];
-		}
-
-		return $apps;
+		return $editor_assets_api->get_assets_data();
 	}
 
 	private static function filter_apps( $apps ) {
