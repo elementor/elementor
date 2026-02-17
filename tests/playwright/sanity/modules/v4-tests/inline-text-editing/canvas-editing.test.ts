@@ -242,7 +242,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		} );
 	}
 
-	test( 'Ensure relevant focusing unmounts the inline editor form frame', async () => {
+	test( 'Ensure relevant focusing unmounts the inline editor from frame', async () => {
 		// Arrange
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const dummyDivBlockId = await editor.addElement( { elType: 'e-div-block' }, 'document' );

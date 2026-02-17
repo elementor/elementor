@@ -34,7 +34,7 @@ export const CanvasInlineEditor = ( {
 	onBlur: () => void;
 } ) => {
 	const [ editor, setEditor ] = useState< Editor | null >( null );
-	const { onSelectionEnd, toolbarAnchor } = useRenderToolbar( rootElement.ownerDocument, id );
+	const { onSelectionEnd, anchor: toolbarAnchor } = useRenderToolbar( rootElement.ownerDocument, id );
 
 	const onBlur = () => {
 		removeToolbarAnchor( rootElement.ownerDocument, id );
@@ -73,9 +73,7 @@ export const CanvasInlineEditor = ( {
 				expectedTag={ expectedTag }
 				onSelectionEnd={ onSelectionEnd }
 			/>
-			{ toolbarAnchor && editor && (
-				<InlineEditingToolbar element={ toolbarAnchor } editor={ editor } id={ id } />
-			) }
+			{ toolbarAnchor && editor && <InlineEditingToolbar anchor={ toolbarAnchor } editor={ editor } id={ id } /> }
 		</ThemeProvider>
 	);
 };
@@ -99,7 +97,7 @@ const InlineEditingOverlay = ( {
 	return overlayRefElement ? <OutlineOverlay element={ overlayRefElement } id={ id } isSelected /> : null;
 };
 
-const InlineEditingToolbar = ( { element, editor, id }: { element: HTMLElement; editor: Editor; id: string } ) => {
+const InlineEditingToolbar = ( { anchor, editor, id }: { anchor: HTMLElement; editor: Editor; id: string } ) => {
 	const { refs, floatingStyles } = useFloating( {
 		placement: 'top',
 		strategy: 'fixed',
@@ -109,10 +107,10 @@ const InlineEditingToolbar = ( { element, editor, id }: { element: HTMLElement; 
 	} );
 
 	useLayoutEffect( () => {
-		refs.setReference( element );
+		refs.setReference( anchor );
 
 		return () => refs.setReference( null );
-	}, [ element, refs ] );
+	}, [ anchor, refs ] );
 
 	return (
 		<FloatingPortal id={ CANVAS_WRAPPER_ID }>
