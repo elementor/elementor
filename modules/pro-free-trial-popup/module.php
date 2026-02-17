@@ -31,6 +31,7 @@ class Module extends BaseModule {
 	const AB_TEST_NAME = 'pro_free_trial_popup';
 	const REQUIRED_VISIT_COUNT = 4;
 	const EXTERNAL_DATA_URL = 'https://assets.elementor.com/pro-free-trial-popup/v1/pro-free-trial-popup.json';
+	const HTTP_STATUS_OK = 200;
 	const ACTIVE = 'active';
 
 	private Elementor_Adapter_Interface $elementor_adapter;
@@ -119,6 +120,7 @@ class Module extends BaseModule {
 		if ( ! EditorAssetsAPI::has_valid_nested_array( $data, [ 'pro-free-trial-popup', 0 ] ) ) {
 			return false;
 		}
+
 		$status = $data['pro-free-trial-popup'][0]['status'] ?? '';
 		return ! empty( $status ) && self::ACTIVE === $status;
 	}
@@ -137,7 +139,7 @@ class Module extends BaseModule {
 
 		$response = wp_remote_get( self::EXTERNAL_DATA_URL );
 
-		if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
+		if ( is_wp_error( $response ) || self::HTTP_STATUS_OK !== (int) wp_remote_retrieve_response_code( $response ) ) {
 			return [];
 		}
 

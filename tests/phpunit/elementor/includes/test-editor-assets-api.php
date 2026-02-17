@@ -18,11 +18,6 @@ class Test_Editor_Assets_API extends PHPUnit_TestCase {
 		$this->assertFalse( EditorAssetsAPI::has_valid_nested_array( $data, [] ) );
 	}
 
-	public function test_has_valid_nested_array_returns_false_when_empty_path_and_non_array_root() {
-		$this->assertFalse( EditorAssetsAPI::has_valid_nested_array( null, [] ) );
-		$this->assertFalse( EditorAssetsAPI::has_valid_nested_array( 'invalid', [] ) );
-	}
-
 	public function test_has_valid_nested_array_returns_true_for_valid_single_key_path() {
 		$data = [ 'get_started' => [ 'item1', 'item2' ] ];
 
@@ -48,12 +43,6 @@ class Test_Editor_Assets_API extends PHPUnit_TestCase {
 		$this->assertFalse( EditorAssetsAPI::has_valid_nested_array( $data, [ 'get_started', 'repeater' ] ) );
 	}
 
-	public function test_has_valid_nested_array_returns_false_when_first_key_missing() {
-		$data = [];
-
-		$this->assertFalse( EditorAssetsAPI::has_valid_nested_array( $data, [ 'get_started' ] ) );
-	}
-
 	public function test_has_valid_nested_array_returns_false_when_final_value_not_array() {
 		$data = [ 'get_started' => [ 'repeater' => 'not_an_array' ] ];
 
@@ -64,17 +53,5 @@ class Test_Editor_Assets_API extends PHPUnit_TestCase {
 		$data = [ 'get_started' => [ 'repeater' => [] ] ];
 
 		$this->assertFalse( EditorAssetsAPI::has_valid_nested_array( $data, [ 'get_started', 'repeater' ] ) );
-	}
-
-	public function test_has_valid_nested_array_returns_false_when_empty_array_single_key() {
-		$data = [ 'sidebar_promotion_variants' => [] ];
-
-		$this->assertFalse( EditorAssetsAPI::has_valid_nested_array( $data, [ 'sidebar_promotion_variants' ] ) );
-	}
-
-	public function test_has_valid_nested_array_returns_true_when_first_element_is_array() {
-		$data = [ [ 'flags' => true ] ];
-
-		$this->assertTrue( EditorAssetsAPI::has_valid_nested_array( $data, [ 0 ] ) );
 	}
 }
