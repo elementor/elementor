@@ -436,7 +436,7 @@ const StopSyncConfirmationDialog = ( { open, onClose, onConfirm }: StopSyncConfi
 			<ConfirmationDialog.Content>
 				<ConfirmationDialog.ContentText>
 					{ __(
-						'This will disconnect the variable color from Version 3. Existing uses on your site will automatically switch to a default color.',
+						'This will disconnect the variable color from version 3. Existing uses on your site will automatically switch to a default color.',
 						'elementor'
 					) }
 				</ConfirmationDialog.ContentText>
