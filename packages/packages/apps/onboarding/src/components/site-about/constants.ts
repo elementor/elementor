@@ -9,30 +9,37 @@ import {
 	PostTypeIcon,
 	SearchIcon,
 } from '@elementor/icons';
-import { __ } from '@wordpress/i18n';
+
+import { t } from '../../utils/translations';
 
 export interface SiteAboutOption {
 	value: string;
-	label: string;
+	labelKey: string;
 	icon: ElementType;
 }
 
 export const SITE_ABOUT_OPTIONS: SiteAboutOption[] = [
-	{ value: 'small_business', label: __( 'Small business', 'elementor' ), icon: BriefcaseIcon },
-	{ value: 'online_store', label: __( 'Online store', 'elementor' ), icon: CartIcon },
-	{ value: 'company_site', label: __( 'Company site', 'elementor' ), icon: DomainIcon },
-	{ value: 'blog', label: __( 'Blog', 'elementor' ), icon: PostTypeIcon },
-	{ value: 'landing_page', label: __( 'Landing page', 'elementor' ), icon: LandingPageTemplateIcon },
-	{ value: 'booking', label: __( 'Booking', 'elementor' ), icon: CalendarIcon },
-	{ value: 'portfolio', label: __( 'Portfolio', 'elementor' ), icon: GridDotsIcon },
-	{ value: 'other', label: __( 'Other', 'elementor' ), icon: SearchIcon },
+	{ value: 'small_business', labelKey: 'steps.site_about.option_small_business', icon: BriefcaseIcon },
+	{ value: 'online_store', labelKey: 'steps.site_about.option_online_store', icon: CartIcon },
+	{ value: 'company_site', labelKey: 'steps.site_about.option_company_site', icon: DomainIcon },
+	{ value: 'blog', labelKey: 'steps.site_about.option_blog', icon: PostTypeIcon },
+	{ value: 'landing_page', labelKey: 'steps.site_about.option_landing_page', icon: LandingPageTemplateIcon },
+	{ value: 'booking', labelKey: 'steps.site_about.option_booking', icon: CalendarIcon },
+	{ value: 'portfolio', labelKey: 'steps.site_about.option_portfolio', icon: GridDotsIcon },
+	{ value: 'other', labelKey: 'steps.site_about.option_other', icon: SearchIcon },
 ];
 
-export const GREETING_MAP: Record< string, string > = {
-	myself: __( "Got it! We'll keep things simple.", 'elementor' ),
-	business: __( "Great! Let's set up your business site.", 'elementor' ),
-	client: __( "Nice! Let's create something for your client.", 'elementor' ),
-	exploring: __( "Got it! We'll keep things simple.", 'elementor' ),
+export const GREETING_KEY_MAP: Record< string, string > = {
+	myself: 'steps.site_about.greeting_myself',
+	business: 'steps.site_about.greeting_business',
+	client: 'steps.site_about.greeting_client',
+	exploring: 'steps.site_about.greeting_myself',
 };
 
-export const GREETING_FALLBACK = __( "Let's get started!", 'elementor' );
+export const GREETING_FALLBACK_KEY = 'steps.site_about.greeting_fallback';
+
+export function getGreeting( buildingFor: string ): string {
+	const key = GREETING_KEY_MAP[ buildingFor ] ?? GREETING_FALLBACK_KEY;
+
+	return t( key );
+}

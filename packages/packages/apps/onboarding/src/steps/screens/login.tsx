@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { ArrowRightIcon, BrandFacebookIcon } from '@elementor/icons';
 import { Box, Button, Divider, IconButton, Paper, Stack, styled, Typography } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
 
+import { StepTitle } from '../../components/ui/styled-components';
+import { t } from '../../utils/translations';
 import { getOnboardingAssetUrl } from '../step-visuals';
 
 const BACKDROP_OPACITY = 0.6;
@@ -100,9 +101,9 @@ export function Login( { onConnect, onContinueAsGuest, connectUrl }: LoginProps 
 		<LoginRoot backgroundUrl={ backgroundUrl } data-testid="login-screen">
 			<Backdrop />
 			<AuthCard elevation={ 24 }>
-				<Typography variant="h5" align="center" fontWeight={ 500 } fontFamily="Poppins">
-					{ __( "Let's get to work.", 'elementor' ) }
-				</Typography>
+				<StepTitle variant="h5" align="center">
+					{ t( 'login.title' ) }
+				</StepTitle>
 				<Stack spacing={ 3 } width="100%">
 					<SignInButton
 						variant="contained"
@@ -112,13 +113,13 @@ export function Login( { onConnect, onContinueAsGuest, connectUrl }: LoginProps 
 						href={ connectUrl || undefined }
 						onClick={ onConnect }
 					>
-						{ __( 'Sign in to Elementor', 'elementor' ) }
+						{ t( 'login.sign_in' ) }
 					</SignInButton>
 
 					<Stack direction="row" alignItems="center" justifyContent="center" spacing={ 2 }>
 						<Divider sx={ { width: 80 } } />
 						<Typography variant="body2" color="text.tertiary">
-							{ __( 'OR', 'elementor' ) }
+							{ t( 'common.or' ) }
 						</Typography>
 						<Divider sx={ { width: 80 } } />
 					</Stack>
@@ -132,7 +133,7 @@ export function Login( { onConnect, onContinueAsGuest, connectUrl }: LoginProps 
 								size="large"
 								endIcon={ <ArrowRightIcon fontSize="tiny" /> }
 							>
-								{ __( 'Continue another way', 'elementor' ) }
+								{ t( 'login.continue_another_way' ) }
 							</SecondaryButton>
 
 							<Stack direction="row" spacing={ 0.5 }>
@@ -143,7 +144,7 @@ export function Login( { onConnect, onContinueAsGuest, connectUrl }: LoginProps 
 						</Stack>
 
 						<GuestButton variant="text" color="info" onClick={ onContinueAsGuest }>
-							{ __( 'Continue as a guest', 'elementor' ) }
+							{ t( 'login.continue_as_guest' ) }
 						</GuestButton>
 					</Stack>
 				</Stack>
