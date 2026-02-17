@@ -142,7 +142,7 @@ class Module extends BaseModule {
 		return $connect->get_app( 'library' );
 	}
 
-	private function should_show_pro_install_screen(): bool {
+	public static function should_show_pro_install_screen(): bool {
 		if ( Utils::has_pro() || Utils::is_pro_installed_and_not_active() ) {
 			return false;
 		}
