@@ -5,6 +5,7 @@ const FolderCollectionView = require( './folders/folders-list' );
 const LOAD_MORE_ID = 0;
 
 import { SAVE_CONTEXTS } from './../../constants';
+import { rovingTabindex, suppressEscapeKeyUp } from 'elementor-editor-utils/keyboard-nav';
 
 const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	tagName: 'main',
@@ -210,10 +211,9 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	onEllipsisIconKeyDown( event ) {
 		if ( 'Escape' === event.key ) {
 			event.preventDefault();
-			event.stopPropagation();
 			if ( this.ui.foldersDropdown.is( ':visible' ) ) {
 				this.hideFoldersDropdown();
-				this.suppressEscapeKeyUp();
+				suppressEscapeKeyUp( event );
 			}
 			return;
 		}
@@ -228,42 +228,43 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	onFoldersListKeyDown( event ) {
-		const handlers = {
-			ArrowDown: () => this.handleFolderArrowDown( event ),
-			Tab: () => this.handleFolderTab( event ),
-			ArrowUp: () => this.handleFolderArrowUp( event ),
-			Enter: () => this.handleFolderEnterOrSpace( event ),
-			' ': () => this.handleFolderEnterOrSpace( event ),
-			Escape: () => this.handleFolderEscape( event ),
-		};
-
-		const handler = handlers[ event.key ];
-		if ( handler ) {
-			handler();
+		if ( 'Escape' === event.key ) {
+			event.preventDefault();
+			this.hideFoldersDropdown();
+			this.ui.ellipsisIcon.trigger( 'focus' );
+			suppressEscapeKeyUp( event );
+			return;
 		}
-	},
 
-	handleFolderArrowDown( event ) {
+		if ( 'Tab' === event.key ) {
+			this.handleFolderTab( event );
+			return;
+		}
+
 		const $items = this.getFolderItems();
-		const currentIndex = $items.index( event.target );
 
-		event.preventDefault();
+		rovingTabindex( {
+			event,
+			$items,
+			orientation: 'vertical',
+			homeEnd: false,
+			onActivate: ( e, $item ) => {
+				e.stopPropagation();
+				$item.trigger( 'click' );
+			},
+		} );
+
 		event.stopPropagation();
-
-		if ( currentIndex < $items.length - 1 ) {
-			$items.eq( currentIndex + 1 ).trigger( 'focus' );
-		} else {
-			$items.first().trigger( 'focus' );
-		}
 	},
 
 	handleFolderTab( event ) {
 		const $items = this.getFolderItems();
 		const currentIndex = $items.index( event.target );
 
+		event.preventDefault();
+		event.stopPropagation();
+
 		if ( event.shiftKey ) {
-			event.preventDefault();
-			event.stopPropagation();
 			if ( currentIndex <= 0 ) {
 				this.hideFoldersDropdown();
 				this.ui.ellipsisIcon.trigger( 'focus' );
@@ -273,43 +274,12 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			return;
 		}
 
-		event.preventDefault();
-		event.stopPropagation();
-
 		if ( currentIndex < $items.length - 1 ) {
 			$items.eq( currentIndex + 1 ).trigger( 'focus' );
 		} else {
 			this.hideFoldersDropdown();
 			this.ui.ellipsisIcon.trigger( 'focus' );
 		}
-	},
-
-	handleFolderArrowUp( event ) {
-		const $items = this.getFolderItems();
-		const currentIndex = $items.index( event.target );
-
-		event.preventDefault();
-		event.stopPropagation();
-
-		if ( currentIndex > 0 ) {
-			$items.eq( currentIndex - 1 ).trigger( 'focus' );
-		} else {
-			$items.last().trigger( 'focus' );
-		}
-	},
-
-	handleFolderEnterOrSpace( event ) {
-		event.preventDefault();
-		event.stopPropagation();
-		jQuery( event.target ).trigger( 'click' );
-	},
-
-	handleFolderEscape( event ) {
-		event.preventDefault();
-		event.stopPropagation();
-		this.hideFoldersDropdown();
-		this.ui.ellipsisIcon.trigger( 'focus' );
-		this.suppressEscapeKeyUp();
 	},
 
 	updateEllipsisAriaExpanded( expanded ) {
@@ -850,16 +820,6 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	updateSubmitButtonState( shouldDisableSubmitButton ) {
 		this.ui.submitButton.toggleClass( 'e-primary', ! shouldDisableSubmitButton );
 		this.ui.submitButton.prop( 'disabled', shouldDisableSubmitButton );
-	},
-
-	suppressEscapeKeyUp() {
-		const suppressKeyUp = ( e ) => {
-			if ( 'Escape' === e.key ) {
-				e.stopImmediatePropagation();
-				window.removeEventListener( 'keyup', suppressKeyUp, true );
-			}
-		};
-		window.addEventListener( 'keyup', suppressKeyUp, true );
 	},
 
 	hideFoldersDropdown() {

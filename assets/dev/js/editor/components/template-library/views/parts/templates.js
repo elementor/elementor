@@ -3,6 +3,7 @@ const TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/te
 const TemplateLibraryTemplateCloudView = require( 'elementor-templates/views/template/cloud' );
 
 import Select2 from 'elementor-editor-utils/select2.js';
+import { rovingTabindex } from 'elementor-editor-utils/keyboard-nav';
 import { SAVE_CONTEXTS, QUOTA_WARNINGS, QUOTA_BAR_STATES } from './../../constants';
 
 const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
@@ -619,31 +620,21 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onSelectSourceFilterKeyDown( event ) {
-		const $currentOption = jQuery( event.currentTarget ),
-			$allOptions = this.ui.selectSourceFilter,
-			currentIndex = $allOptions.index( $currentOption );
+		const handled = rovingTabindex( {
+			event,
+			$items: this.ui.selectSourceFilter,
+			orientation: 'both',
+			activateOnFocus: true,
+			homeEnd: false,
+			onActivate: ( e, $item ) => {
+				this._restoreFocusToSourceFilter = true;
+				$item.trigger( 'click' );
+			},
+		} );
 
-		let targetIndex = currentIndex;
-
-		if ( 'ArrowLeft' === event.key || 'ArrowUp' === event.key ) {
-			event.preventDefault();
-			targetIndex = currentIndex > 0 ? currentIndex - 1 : $allOptions.length - 1;
-		} else if ( 'ArrowRight' === event.key || 'ArrowDown' === event.key ) {
-			event.preventDefault();
-			targetIndex = currentIndex < $allOptions.length - 1 ? currentIndex + 1 : 0;
-		} else if ( ' ' === event.key || 'Enter' === event.key ) {
-			event.preventDefault();
+		if ( handled ) {
 			this._restoreFocusToSourceFilter = true;
-			$currentOption.trigger( 'click' );
-			return;
-		} else {
-			return;
 		}
-
-		this._restoreFocusToSourceFilter = true;
-
-		const $targetOption = $allOptions.eq( targetIndex );
-		$targetOption.trigger( 'focus' ).trigger( 'click' );
 	},
 
 	onSelectGridViewClick() {

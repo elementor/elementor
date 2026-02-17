@@ -1,9 +1,4 @@
-const KEYBOARD_KEYS = {
-	ARROW_LEFT: 'ArrowLeft',
-	ARROW_RIGHT: 'ArrowRight',
-	HOME: 'Home',
-	END: 'End',
-};
+import { rovingTabindex } from 'elementor-editor-utils/keyboard-nav';
 
 module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-template-library-header-menu',
@@ -32,52 +27,39 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onTabKeyDown( event ) {
-		const $tabs = this.ui.tabs;
-		const $currentTab = jQuery( event.currentTarget );
-		const currentIndex = $tabs.index( $currentTab );
-		let targetIndex = -1;
+		rovingTabindex( {
+			event,
+			$items: this.ui.tabs,
+			orientation: 'horizontal',
+			onActivate: () => {
+				// Tabs activate on arrow navigation, not Enter/Space.
+			},
+		} );
 
-		switch ( event.key ) {
-			case KEYBOARD_KEYS.ARROW_LEFT:
-				event.preventDefault();
-				targetIndex = currentIndex > 0 ? currentIndex - 1 : $tabs.length - 1;
-				break;
-			case KEYBOARD_KEYS.ARROW_RIGHT:
-				event.preventDefault();
-				targetIndex = currentIndex < $tabs.length - 1 ? currentIndex + 1 : 0;
-				break;
-			case KEYBOARD_KEYS.HOME:
-				event.preventDefault();
-				targetIndex = 0;
-				break;
-			case KEYBOARD_KEYS.END:
-				event.preventDefault();
-				targetIndex = $tabs.length - 1;
-				break;
-			default:
-				return;
+		// After rovingTabindex moves focus to the new tab, activate it.
+		// activateTab triggers a re-render, so we must re-query the DOM afterwards.
+		const $focused = jQuery( event.currentTarget.ownerDocument.activeElement );
+		const targetTabName = $focused.data( 'tab' );
+
+		if ( ! targetTabName ) {
+			return;
 		}
 
-		if ( targetIndex >= 0 && targetIndex < $tabs.length ) {
-			const $targetTab = $tabs.eq( targetIndex );
-			const targetTabName = $targetTab.data( 'tab' );
+		const libraryComponent = $e.components.get( 'library' );
+		if ( ! libraryComponent ) {
+			return;
+		}
 
-			if ( targetTabName ) {
-				const libraryComponent = $e.components.get( 'library' );
-				if ( libraryComponent ) {
-					try {
-						libraryComponent.activateTab( targetTabName );
+		try {
+			libraryComponent.activateTab( targetTabName );
 
-						const $tabAfterRerender = jQuery( `#elementor-template-library-header-menu [data-tab="${ targetTabName }"]` );
-						if ( $tabAfterRerender.length ) {
-							$tabAfterRerender.trigger( 'focus' );
-						}
-					} catch ( error ) {
-						// eslint-disable-next-line no-console
-						console.error( 'Tab activation failed:', error );
-					}
-				}
+			const $tabAfterRerender = jQuery( `#elementor-template-library-header-menu [data-tab="${ targetTabName }"]` );
+			if ( $tabAfterRerender.length ) {
+				$tabAfterRerender.trigger( 'focus' );
 			}
+		} catch ( error ) {
+			// eslint-disable-next-line no-console
+			console.error( 'Tab activation failed:', error );
 		}
 	},
 } );

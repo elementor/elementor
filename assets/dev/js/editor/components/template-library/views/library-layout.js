@@ -54,6 +54,37 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 				$modalWidget.trigger( 'focus' );
 			}
 		} );
+
+		// Focus trap: keep Tab/Shift+Tab cycling within the modal (WAI-ARIA dialog pattern)
+		if ( $widget.length ) {
+			$widget.on( 'keydown', ( event ) => {
+				if ( 'Tab' !== event.key ) {
+					return;
+				}
+
+				const $focusable = $widget
+					.find( 'a[href], button, input, select, textarea, [tabindex]' )
+					.filter( ':visible' )
+					.not( '[tabindex="-1"], [disabled]' );
+
+				if ( ! $focusable.length ) {
+					return;
+				}
+
+				const $first = $focusable.first();
+				const $last = $focusable.last();
+
+				if ( event.shiftKey ) {
+					if ( $first[ 0 ] === event.target || $widget[ 0 ] === event.target ) {
+						event.preventDefault();
+						$last.trigger( 'focus' );
+					}
+				} else if ( $last[ 0 ] === event.target ) {
+					event.preventDefault();
+					$first.trigger( 'focus' );
+				}
+			} );
+		}
 	},
 
 	getLogoOptions() {

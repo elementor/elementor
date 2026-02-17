@@ -1,6 +1,7 @@
 const TemplateLibraryTemplateView = require( 'elementor-templates/views/template/base' );
 
 import { SAVE_CONTEXTS } from './../../constants';
+import { rovingTabindex, suppressEscapeKeyUp } from 'elementor-editor-utils/keyboard-nav';
 
 const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	template: '#tmpl-elementor-template-library-template-local',
@@ -97,26 +98,14 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	onToggleMoreKeyDown( event ) {
 		if ( 'Escape' === event.key ) {
 			event.preventDefault();
-			event.stopPropagation();
 
 			if ( 'true' === this.ui.toggleMore.attr( 'aria-expanded' ) ) {
 				this.closeContextMenu();
-
-				// Suppress the upcoming keyup to prevent the modal from closing.
-				const suppressKeyUp = ( e ) => {
-					if ( 'Escape' === e.key ) {
-						e.stopImmediatePropagation();
-						window.removeEventListener( 'keyup', suppressKeyUp, true );
-					}
-				};
-				window.addEventListener( 'keyup', suppressKeyUp, true );
+				suppressEscapeKeyUp( event );
 			}
 			return;
 		}
 
-		// Open menu and focus first item on ArrowDown, Enter, or Space.
-		// We must preventDefault to stop the browser from also firing a native click
-		// on the <button>, which would cause a double-toggle (open then close).
 		if ( 'ArrowDown' === event.key || 'Enter' === event.key || ' ' === event.key ) {
 			event.preventDefault();
 			event.stopPropagation();
@@ -133,79 +122,53 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	},
 
 	onMenuKeyDown( event ) {
+		if ( 'Escape' === event.key ) {
+			event.preventDefault();
+			this.closeContextMenu();
+			this.ui.toggleMore.trigger( 'focus' );
+			suppressEscapeKeyUp( event );
+			return;
+		}
+
+		if ( 'Tab' === event.key ) {
+			this.handleMenuTab( event );
+			return;
+		}
+
+		const $items = this.getMenuItems();
+
+		rovingTabindex( {
+			event,
+			$items,
+			orientation: 'vertical',
+			homeEnd: true,
+		} );
+
+		event.stopPropagation();
+	},
+
+	handleMenuTab( event ) {
 		const $items = this.getMenuItems();
 		const currentIndex = $items.index( event.target );
 
-		switch ( event.key ) {
-			case 'Escape':
-				event.preventDefault();
-				event.stopPropagation();
+		event.preventDefault();
+		event.stopPropagation();
+
+		if ( event.shiftKey ) {
+			if ( currentIndex <= 0 ) {
 				this.closeContextMenu();
 				this.ui.toggleMore.trigger( 'focus' );
+			} else {
+				$items.eq( currentIndex - 1 ).trigger( 'focus' );
+			}
+			return;
+		}
 
-				// The modal's dialog library listens for Escape on keyup (window level).
-				// We must suppress the upcoming keyup to prevent the modal from closing.
-				const suppressKeyUp = ( e ) => {
-					if ( 'Escape' === e.key ) {
-						e.stopImmediatePropagation();
-						window.removeEventListener( 'keyup', suppressKeyUp, true );
-					}
-				};
-				window.addEventListener( 'keyup', suppressKeyUp, true );
-				break;
-
-			case 'ArrowDown':
-			case 'Tab':
-				if ( 'Tab' === event.key && event.shiftKey ) {
-					// Shift+Tab: move backwards; at the first item, close menu and let focus go back
-					if ( currentIndex <= 0 ) {
-						this.closeContextMenu();
-						this.ui.toggleMore.trigger( 'focus' );
-						event.preventDefault();
-						event.stopPropagation();
-					} else {
-						event.preventDefault();
-						event.stopPropagation();
-						$items.eq( currentIndex - 1 ).trigger( 'focus' );
-					}
-					break;
-				}
-				event.preventDefault();
-				event.stopPropagation();
-				if ( currentIndex < $items.length - 1 ) {
-					$items.eq( currentIndex + 1 ).trigger( 'focus' );
-				} else if ( 'Tab' === event.key ) {
-					// Tab past the last item: close menu and move focus to the toggle,
-					// then let the next Tab naturally advance to the following element
-					this.closeContextMenu();
-					this.ui.toggleMore.trigger( 'focus' );
-				} else {
-					// ArrowDown wraps to first item
-					$items.first().trigger( 'focus' );
-				}
-				break;
-
-			case 'ArrowUp':
-				event.preventDefault();
-				event.stopPropagation();
-				if ( currentIndex > 0 ) {
-					$items.eq( currentIndex - 1 ).trigger( 'focus' );
-				} else {
-					$items.last().trigger( 'focus' );
-				}
-				break;
-
-			case 'Home':
-				event.preventDefault();
-				event.stopPropagation();
-				$items.first().trigger( 'focus' );
-				break;
-
-			case 'End':
-				event.preventDefault();
-				event.stopPropagation();
-				$items.last().trigger( 'focus' );
-				break;
+		if ( currentIndex < $items.length - 1 ) {
+			$items.eq( currentIndex + 1 ).trigger( 'focus' );
+		} else {
+			this.closeContextMenu();
+			this.ui.toggleMore.trigger( 'focus' );
 		}
 	},
 
