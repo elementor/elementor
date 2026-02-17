@@ -66,9 +66,7 @@ export function ProInstall() {
 					disabled={ isInstalling }
 					startIcon={ isInstalling ? <CircularProgress size={ 18 } color="inherit" /> : undefined }
 				>
-					{ isInstalling
-						? __( 'Installing…', 'elementor' )
-						: __( 'Install Pro on this site', 'elementor' ) }
+					{ isInstalling ? __( 'Installing…', 'elementor' ) : __( 'Install Pro on this site', 'elementor' ) }
 				</PrimaryButton>
 
 				<TextButton variant="text" color="info" onClick={ handleDismiss } disabled={ isInstalling }>
