@@ -475,7 +475,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-insert-button">
-	<a class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button e-primary">
+	<a class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button e-primary" role="button" tabindex="0">
 		<i class="eicon-library-download" aria-hidden="true"></i>
 		<span class="elementor-button-title"><?php echo esc_html__( 'Insert', 'elementor' ); ?></span>
 	</a>
@@ -489,11 +489,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-insert-and-ai-variations-buttons">
-	<a class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button e-primary">
+	<a class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button e-primary" role="button" tabindex="0">
 		<i class="eicon-library-download" aria-hidden="true"></i>
 		<span class="elementor-button-title"><?php echo esc_html__( 'Insert', 'elementor' ); ?></span>
 	</a>
-	<a class="elementor-template-library-template-action elementor-template-library-template-generate-variation elementor-button e-btn-txt e-btn-txt-border">
+	<a class="elementor-template-library-template-action elementor-template-library-template-generate-variation elementor-button e-btn-txt e-btn-txt-border" role="button" tabindex="0">
 		<i class="eicon-ai" aria-hidden="true"></i>
 		<span class="elementor-button-title"><?php echo esc_html__( 'Generate Variations', 'elementor' ); ?></span>
 	</a>

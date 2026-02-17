@@ -887,15 +887,28 @@ label.elementor-template-library-order-label {
 	border: var(--e-a-border);
 	border-radius: 3px;
 
-	&:hover {
+	@include focus-outline;
+
+	&:hover,
+	&:focus,
+	&:focus-within {
 		background-color: var(--e-a-bg-hover);
+
+		.elementor-template-library-template-preview {
+			opacity: 1;
+		}
 
 		.elementor-template-library-template-name {
 			display: none;
 		}
+
+		.elementor-template-library-favorite,
+		.elementor-template-library-template-action {
+			display: initial;
+		}
 	}
 
-	&:not(:hover) {
+	&:not(:hover):not(:focus):not(:focus-within) {
 
 		.elementor-template-library-template-preview {
 			opacity: 0;
@@ -949,7 +962,7 @@ label.elementor-template-library-order-label {
 			display: none;
 		}
 
-		&:not(:hover) {
+		&:not(:hover):not(:focus):not(:focus-within) {
 
 			.elementor-template-library-template-footer {
 				transform: translateY(100%)
@@ -1009,7 +1022,20 @@ label.elementor-template-library-order-label {
 	}
 
 	.elementor-template-library-template-favorite-input {
-		display: none;
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+
+		&:focus-visible + .elementor-template-library-template-favorite-label {
+			outline: 2px solid var(--e-a-border-color-focus);
+			outline-offset: 2px;
+		}
 
 		&:checked {
 
