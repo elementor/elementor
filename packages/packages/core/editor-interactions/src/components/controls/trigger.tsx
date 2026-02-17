@@ -5,13 +5,21 @@ import { __ } from '@wordpress/i18n';
 
 import { type FieldProps } from '../../types';
 
+const TRIGGER_OPTIONS = {
+	load: __( 'Page load', 'elementor' ),
+	scrollIn: __( 'Scroll into view', 'elementor' ),
+	scrollOn: __( 'While scrolling', 'elementor' ),
+	hover: __( 'On hover', 'elementor' ),
+	click: __( 'On click', 'elementor' ),
+};
+
+const SUPPORTED_TRIGGERS = ['load', 'scrollIn'];
+
 export function Trigger( { value, onChange }: FieldProps ) {
-	const availableTriggers = Object.entries( {
-		load: __( 'Page load', 'elementor' ),
-		scrollIn: __( 'Scroll into view', 'elementor' ),
-	} ).map( ( [ key, label ] ) => ( {
+	const availableTriggers = Object.entries( TRIGGER_OPTIONS ).map( ( [ key, label ] ) => ( {
 		key,
 		label,
+		disabled: ! SUPPORTED_TRIGGERS.includes( key ),
 	} ) );
 
 	return (
@@ -24,7 +32,7 @@ export function Trigger( { value, onChange }: FieldProps ) {
 		>
 			{ availableTriggers.map( ( trigger ) => {
 				return (
-					<MenuListItem key={ trigger.key } value={ trigger.key }>
+					<MenuListItem key={ trigger.key } value={ trigger.key } disabled={ trigger.disabled }>
 						{ trigger.label }
 					</MenuListItem>
 				);
