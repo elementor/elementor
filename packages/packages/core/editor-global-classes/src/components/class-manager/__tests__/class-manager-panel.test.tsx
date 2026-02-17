@@ -20,8 +20,13 @@ import { ClassManagerPanel, usePanelActions } from '../class-manager-panel';
 
 jest.mock( '@elementor/editor-documents' );
 jest.mock( '../class-manager-introduction' );
+jest.mock( '../start-sync-to-v3-modal' );
 
 jest.mock( '../../../api' );
+
+jest.mock( '@elementor/editor-current-user', () => ( {
+	useSuppressedMessage: jest.fn().mockReturnValue( [ false, jest.fn() ] ),
+} ) );
 
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	...jest.requireActual( '@elementor/editor-v1-adapters' ),
