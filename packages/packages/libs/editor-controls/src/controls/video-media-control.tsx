@@ -1,13 +1,16 @@
 import * as React from 'react';
 import { videoSrcPropTypeUtil } from '@elementor/editor-props';
 import { UploadIcon } from '@elementor/icons';
-import { Button, Card, CardMedia, CardOverlay, CircularProgress, Stack, Typography } from '@elementor/ui';
+import { Button, Card, CardMedia, CardOverlay, CircularProgress, Stack } from '@elementor/ui';
 import { useWpMediaAttachment, useWpMediaFrame } from '@elementor/wp-media';
 import { __ } from '@wordpress/i18n';
 
 import { useBoundProp } from '../bound-prop-context';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
+import { TILES_GRADIENT_FORMULA } from './svg-media-control';
+
+const PLACEHOLDER_IMAGE = window.elementorCommon?.config?.urls?.assets + '/shapes/play-triangle.svg';
 
 export const VideoMediaControl = createControl( () => {
 	const { value, setValue } = useBoundProp( videoSrcPropTypeUtil );
@@ -53,24 +56,25 @@ export const VideoMediaControl = createControl( () => {
 		}
 
 		return null;
-
-		return (
-			<Typography variant="caption" color="text.secondary">
-				{ __( 'No video selected', 'elementor' ) }
-			</Typography>
-		);
 	};
 
 	return (
 		<ControlActions>
 			<Card variant="outlined">
 				<CardMedia
-					image={ '/wp-content/plugins/elementor/assets/images/placeholder-v4.svg' }
 					sx={ {
-						height: 150,
+						height: 140,
+						backgroundColor: 'white',
+						backgroundSize: '8px 8px',
+						backgroundPosition: '0 0, 4px 4px',
+						backgroundRepeat: 'repeat',
+						backgroundImage: `${ TILES_GRADIENT_FORMULA }, ${ TILES_GRADIENT_FORMULA }`,
+						display: 'flex',
+						justifyContent: 'center',
+						alignItems: 'center',
 					} }
 				>
-					{ videoUrl ? renderMediaContent() : <></> }
+					{ videoUrl ? renderMediaContent() : <img src={ PLACEHOLDER_IMAGE } alt="No video selected" /> }
 				</CardMedia>
 				<CardOverlay>
 					<Stack gap={ 1 }>

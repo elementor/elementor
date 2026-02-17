@@ -30,6 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
+
 	use Has_Template;
 
 	const ASPECT_RATIOS = [
@@ -73,26 +74,29 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 
 	protected static function define_props_schema(): array {
 		$playsinline_dependencies = Dependency_Manager::make()
-			->where( [
+			->where([
 				'operator' => 'eq',
 				'path' => [ 'autoplay' ],
 				'value' => true,
-			] )
+				'effect' => 'hide',
+			])
 			->get();
 
 		$poster_dependencies = Dependency_Manager::make()
-			->where( [
+			->where([
 				'operator' => 'eq',
 				'path' => [ 'poster_enabled' ],
 				'value' => true,
-			] )
+				'effect' => 'hide',
+			])
 			->get();
 
 		$allow_download_dependencies = Dependency_Manager::make()
-			->where( [
+			->where([
 				'operator' => 'eq',
 				'path' => [ 'controls' ],
 				'value' => true,
+				'effect' => 'hide',
 			])
 			->get();
 
@@ -110,7 +114,7 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 			'preload' => String_Prop_Type::make()
 				->default( 'metadata' )
 				->enum( array_keys( self::PRELOAD_OPTIONS ) ),
-			'download' => Boolean_Prop_Type::make()->default( true )
+			'download' => Boolean_Prop_Type::make()->default( false )
 				->set_dependencies( $allow_download_dependencies ),
 			'start_time' => Number_Prop_Type::make()->default( null ),
 			'end_time' => Number_Prop_Type::make()->default( null ),
@@ -127,44 +131,37 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 		return [
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
-				->set_items( [
+				->set_items([
 					Video_Control::bind_to( 'source' )
 						->set_label( esc_html__( 'Video', 'elementor' ) ),
-				] ),
-			Section::make()
-				->set_label( __( 'Playback', 'elementor' ) )
-				->set_items( [
 					Number_Control::bind_to( 'start_time' )
 						->set_label( esc_html__( 'Start Time (seconds)', 'elementor' ) )
-						->set_meta( [
-							'topDivider' => true,
-							'layout' => 'two-columns',
-						] ),
+						->set_min( 0 )
+						->set_max( 10000 ),
 					Number_Control::bind_to( 'end_time' )
-						->set_label( esc_html__( 'End Time (seconds)', 'elementor' ) ),
+						->set_label( esc_html__( 'End Time (seconds)', 'elementor' ) )
+						->set_min( 0 )
+						->set_max( 10000 ),
 					Switch_Control::bind_to( 'autoplay' )->set_label( esc_html__( 'Autoplay', 'elementor' ) ),
 					Switch_Control::bind_to( 'playsinline' )
-						->set_label( esc_html__( 'Play on mobile', 'elementor' ) )
-						->set_meta( [ 'hideWhenDisabled' => true ] ),
+						->set_label( esc_html__( 'Play on mobile', 'elementor' ) ),
 					Switch_Control::bind_to( 'mute' )->set_label( esc_html__( 'Mute', 'elementor' ) ),
 					Switch_Control::bind_to( 'loop' )->set_label( esc_html__( 'Loop', 'elementor' ) ),
 					Switch_Control::bind_to( 'controls' )->set_label( esc_html__( 'Player Controls', 'elementor' ) ),
-					Switch_Control::bind_to( 'download' )->set_label( esc_html__( 'Allow Download', 'elementor' ) )
-						->set_meta( [ 'hideWhenDisabled' => true ] ),
+					Switch_Control::bind_to( 'download' )->set_label( esc_html__( 'Allow Download', 'elementor' ) ),
 					Select_Control::bind_to( 'preload' )
 						->set_label( esc_html__( 'Preload', 'elementor' ) )
 						->set_options( self::format_options( self::PRELOAD_OPTIONS ) ),
-				] ),
+				]),
 			Section::make()
 				->set_label( __( 'Display', 'elementor' ) )
-				->set_items( [
+				->set_items([
 					Switch_Control::bind_to( 'poster_enabled' )
 						->set_label( esc_html__( 'Poster Image', 'elementor' ) )
-						->set_meta( [ 'hideWhenDisabled' => true ] )
 						->set_meta( [ 'topDivider' => true ] ),
 					Image_Control::bind_to( 'poster' )
 						->set_label( esc_html__( 'Image', 'elementor' ) ),
-				] ),
+				]),
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
@@ -181,21 +178,23 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 	}
 
 	protected function define_base_styles(): array {
-		$max_width = Size_Prop_Type::generate( [
+		$max_width = Size_Prop_Type::generate([
 			'unit' => 'vw',
 			'size' => 100,
-		] );
-		$width = Size_Prop_Type::generate( [
-			'unit' => '%',
-			'size' => 100,
+		]);
+		$auto_size = Size_Prop_Type::generate([
+			'unit' => 'custom',
+			'size' => 'auto',
 		]);
 		return [
 			'base' => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'max-width', $max_width )
-						->add_prop( 'width', $width )
+						->add_prop( 'width', $auto_size )
+						->add_prop( 'height', $auto_size )
 						->add_prop( 'display', String_Prop_Type::generate( 'inline-block' ) )
+						->add_prop( 'aspect-ratio', String_Prop_Type::generate( '16/9' ) )
 				),
 		];
 	}

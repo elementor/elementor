@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ControlAdornmentsProvider, useBoundProp } from '@elementor/editor-controls';
+import { ControlAdornmentsProvider } from '@elementor/editor-controls';
 import { type Control, type ControlLayout, type ElementControl } from '@elementor/editor-elements';
 import { Divider, styled } from '@elementor/ui';
 
@@ -32,12 +32,7 @@ export const SettingsControl = ( { control: { value, type } }: { control: Contro
 
 	return (
 		<SettingsField bind={ value.bind } propDisplayName={ value.label || value.bind }>
-			<ControlLayout
-				control={ value }
-				layout={ layout }
-				controlProps={ controlProps }
-				controlMeta={ value.meta }
-			/>
+			<ControlLayout control={ value } layout={ layout } controlProps={ controlProps } />
 		</SettingsField>
 	);
 };
@@ -46,18 +41,12 @@ const ControlLayout = ( {
 	control,
 	layout,
 	controlProps,
-	controlMeta,
 }: {
 	control: Control[ 'value' ] | ElementControl[ 'value' ];
 	layout: ControlLayout;
 	controlProps: Record< string, unknown >;
-	controlMeta?: Record< string, unknown >;
 } ) => {
 	const controlType = control.type as ControlType;
-	const { disabled } = useBoundProp();
-	if ( disabled && controlMeta?.hideWhenDisabled ) {
-		return null;
-	}
 	return (
 		<ControlAdornmentsProvider items={ getFieldIndicators( 'settings' ) }>
 			{ control.meta?.topDivider && <Divider /> }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { PropKeyProvider, PropProvider, type SetValueMeta } from '@elementor/editor-controls';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
@@ -39,6 +39,7 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 		elementType: { propsSchema, dependenciesPerTargetMapping = {} },
 	} = useElement();
 
+	const [ shouldHide, setShouldHide ] = useState( false );
 	const elementSettingValues = useElementSettings< PropValue >( elementId, Object.keys( propsSchema ) ) as Values;
 
 	const value = { [ bind ]: elementSettingValues?.[ bind ] ?? null };
@@ -63,21 +64,25 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 		}
 	};
 
-	const isDisabled = ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, elementSettingValues ).isMet;
+	const propCheckDisabled = ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, elementSettingValues ).isMet;
 
 	const propTypeToBind = propsSchema[ bind ];
-	const dependenciesResult = isDependencyMet( propTypeToBind?.dependencies, elementSettingValues );
-	const shouldHide =
-		! dependenciesResult.isMet &&
-		! isDependency( dependenciesResult.failingDependencies[ 0 ] ) &&
-		dependenciesResult.failingDependencies[ 0 ]?.effect === 'hide';
 
+	useEffect( () => {
+		const depCheck = isDependencyMet( propTypeToBind?.dependencies, elementSettingValues );
+		setShouldHide(
+			! depCheck.isMet &&
+				! isDependency( depCheck.failingDependencies[ 0 ] ) &&
+				depCheck.failingDependencies[ 0 ]?.effect === 'hide'
+		);
+	}, [ elementSettingValues, propTypeToBind?.dependencies, bind ] );
 	if ( shouldHide ) {
+		debugger;
 		return null;
 	}
 
 	return (
-		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>
+		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ propCheckDisabled }>
 			<PropKeyProvider bind={ bind }>{ children }</PropKeyProvider>
 		</PropProvider>
 	);
