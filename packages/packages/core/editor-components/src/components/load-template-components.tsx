@@ -7,7 +7,7 @@ export const LoadTemplateComponents = () => {
 	const templates = useLoadedTemplates();
 
 	useEffect( () => {
-		loadComponentsAssets( templates.flatMap( ( doc ) => doc.elements ?? [] ) );
+		loadComponentsAssets( templates.flatMap( ( elements ) => elements ?? [] ) );
 	}, [ templates ] );
 
 	return null;
