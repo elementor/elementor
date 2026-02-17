@@ -113,7 +113,9 @@ class Kit_Stylesheet_Extended {
 
 	private function get_default_breakpoint_props( array $variants ): array {
 		foreach ( $variants as $variant ) {
-			if ( ! isset( $variant['meta'] ) && ! isset( $variant['meta']['breakpoint'] ) && ! isset( $variant['meta']['state'] ) ) {
+		if ( ! isset( $variant['meta'] ) || ! isset( $variant['meta']['breakpoint'] ) || ! isset( $variant['meta']['state'] ) ) {
+			continue;
+		}
 				continue;
 			}
 
