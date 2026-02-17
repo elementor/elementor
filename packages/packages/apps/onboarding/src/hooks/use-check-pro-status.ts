@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 interface ProStatusResponse {
 	data: {
-		hasProSubscription: boolean;
+		shouldShowProInstallScreen: boolean;
 	};
 }
 
@@ -16,11 +16,11 @@ function getConfig() {
  * since the subscription check requires an active connection.
  */
 export function useCheckProStatus() {
-	const checkProStatus = useCallback( async (): Promise< { hasProSubscription: boolean } > => {
+	const checkProStatus = useCallback( async (): Promise< { shouldShowProInstallScreen: boolean } > => {
 		const config = getConfig();
 
 		if ( ! config ) {
-			return { hasProSubscription: false };
+			return { shouldShowProInstallScreen: false };
 		}
 
 		const response = await fetch( `${ config.restUrl }pro-status`, {
@@ -31,13 +31,13 @@ export function useCheckProStatus() {
 		} );
 
 		if ( ! response.ok ) {
-			return { hasProSubscription: false };
+			return { shouldShowProInstallScreen: false };
 		}
 
 		const json = ( await response.json() ) as ProStatusResponse;
 
 		return {
-			hasProSubscription: json.data?.hasProSubscription ?? false,
+			shouldShowProInstallScreen: json.data?.shouldShowProInstallScreen ?? false,
 		};
 	}, [] );
 

@@ -27,15 +27,10 @@ class Pro_Status extends Endpoint_Base {
 	}
 
 	public function get_items( $request ) {
-		$permission = $this->check_permission();
-		if ( is_wp_error( $permission ) ) {
-			return $permission;
-		}
-
 		if ( Utils::has_pro() || Utils::is_pro_installed_and_not_active() ) {
 			return [
 				'data' => [
-					'hasProSubscription' => false,
+					'shouldShowProInstallScreen' => false,
 				],
 			];
 		}
@@ -54,19 +49,8 @@ class Pro_Status extends Endpoint_Base {
 
 		return [
 			'data' => [
-				'hasProSubscription' => $has_pro_subscription,
+				'shouldShowProInstallScreen' => $has_pro_subscription,
 			],
 		];
-	}
-
-	private function check_permission() {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return new \WP_Error(
-				'rest_forbidden',
-				__( 'Sorry, you are not allowed to access e-onboarding data.', 'elementor' ),
-				[ 'status' => 403 ]
-			);
-		}
-		return true;
 	}
 }

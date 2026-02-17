@@ -63,7 +63,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 
 	const handleConnectSuccess = useCallback( async () => {
 		const proStatus = await checkProStatus();
-		actions.setHasProSubscription( proStatus.hasProSubscription );
+		actions.setShouldShowProInstallScreen( proStatus.shouldShowProInstallScreen );
 		actions.setConnected( true );
 	}, [ actions, checkProStatus ] );
 

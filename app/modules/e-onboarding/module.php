@@ -107,7 +107,7 @@ class Module extends BaseModule {
 			'userName' => $this->get_user_display_name(),
 			'steps' => $steps,
 			'uiTheme' => $this->get_ui_theme_preference(),
-			'hasProSubscription' => $is_connected ? $this->has_pro_subscription() : false,
+			'shouldShowProInstallScreen' => $is_connected ? $this->has_pro_subscription() : false,
 			'urls' => [
 				'dashboard' => admin_url(),
 				'editor' => admin_url( 'edit.php?post_type=elementor_library' ),

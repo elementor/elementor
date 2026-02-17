@@ -31,7 +31,7 @@ import {
 	setError,
 	setExitType,
 	setGuest,
-	setHasProSubscription,
+	setShouldShowProInstallScreen,
 	setLoading,
 	setUserChoice,
 	setUserChoices,
@@ -80,7 +80,7 @@ export function useOnboarding() {
 			clearUnexpectedExit: () => dispatch( clearUnexpectedExit() ),
 			setConnected: ( connected: boolean ) => dispatch( setConnected( connected ) ),
 			setGuest: ( guest: boolean ) => dispatch( setGuest( guest ) ),
-			setHasProSubscription: ( value: boolean ) => dispatch( setHasProSubscription( value ) ),
+			setShouldShowProInstallScreen: ( value: boolean ) => dispatch( setShouldShowProInstallScreen( value ) ),
 			skipProInstall: () => dispatch( skipProInstall() ),
 		} ),
 		[ dispatch ]

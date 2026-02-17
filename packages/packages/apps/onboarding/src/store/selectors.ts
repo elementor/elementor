@@ -30,7 +30,7 @@ export const selectUserName = ( state: State ) => state.onboarding.userName;
 
 export const selectUrls = ( state: State ) => state.onboarding.urls;
 
-export const selectHasProSubscription = ( state: State ) => state.onboarding.hasProSubscription;
+export const selectShouldShowProInstallScreen = ( state: State ) => state.onboarding.shouldShowProInstallScreen;
 
 export const selectHasSkippedProInstall = ( state: State ) => state.onboarding.hasSkippedProInstall;
 
@@ -59,7 +59,7 @@ export const selectHasPassedLogin = __createSelector(
 );
 
 export const selectShouldShowProInstall = __createSelector(
-	[ selectIsConnected, selectHasProSubscription, selectHasSkippedProInstall ],
-	( isConnected, hasProSubscription, hasSkipped ) =>
-		isConnected && hasProSubscription && ! hasSkipped
+	[ selectIsConnected, selectShouldShowProInstallScreen, selectHasSkippedProInstall ],
+	( isConnected, shouldShowProInstallScreen, hasSkipped ) =>
+		isConnected && shouldShowProInstallScreen && ! hasSkipped
 );

@@ -29,14 +29,6 @@ class Install_Pro extends Endpoint_Base {
 	}
 
 	public function create_items( $request ) {
-		if ( ! current_user_can( 'install_plugins' ) ) {
-			return new \WP_Error(
-				'rest_forbidden',
-				__( 'You do not have sufficient permissions to install plugins.', 'elementor' ),
-				[ 'status' => 403 ]
-			);
-		}
-
 		if ( Utils::has_pro() || Utils::is_pro_installed_and_not_active() ) {
 			return [
 				'data' => [
