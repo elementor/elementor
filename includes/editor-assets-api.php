@@ -83,10 +83,10 @@ class EditorAssetsAPI {
 			return false;
 		}
 		$key = $this->config( static::ASSETS_DATA_KEY );
-		return ! empty( $data[ $key ] ) && is_array( $data[ $key ] );
+		return static::is_non_empty_array( $data[ $key ] ?? null );
 	}
 
-	public static function has_valid_nested_value( $data, array $nested_array_path ): bool {
+	public static function has_valid_nested_array( $data, array $nested_array_path ): bool {
 		$current = $data;
 
 		foreach ( $nested_array_path as $nested_key ) {
@@ -96,10 +96,14 @@ class EditorAssetsAPI {
 			$current = $current[ $nested_key ];
 		}
 
-		if ( ! is_array( $current ) || empty( $current ) ) {
+		if ( ! static::is_non_empty_array( $current ) ) {
 			return false;
 		}
 
 		return true;
+	}
+
+	private static function is_non_empty_array( $value ): bool {
+		return is_array( $value ) && ! empty( $value );
 	}
 }

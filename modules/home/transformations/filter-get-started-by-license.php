@@ -48,7 +48,7 @@ class Filter_Get_Started_By_License extends Transformations_Abstract {
 	}
 
 	public function transform( array $home_screen_data ): array {
-		if ( ! EditorAssetsAPI::has_valid_nested_value( $home_screen_data, [ 'get_started' ] ) ) {
+		if ( ! EditorAssetsAPI::has_valid_nested_array( $home_screen_data, [ 'get_started' ] ) ) {
 			return $home_screen_data;
 		}
 

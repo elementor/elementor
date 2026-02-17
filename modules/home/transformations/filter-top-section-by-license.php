@@ -58,7 +58,7 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 	}
 
 	public function transform( array $home_screen_data ): array {
-		if ( ! EditorAssetsAPI::has_valid_nested_value( $home_screen_data, [ 'top_with_licences' ] ) ) {
+		if ( ! EditorAssetsAPI::has_valid_nested_array( $home_screen_data, [ 'top_with_licences' ] ) ) {
 			return $home_screen_data;
 		}
 

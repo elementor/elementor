@@ -34,7 +34,7 @@ class Module extends BaseModule {
 
 		if ( $can_send_events ) {
 			$mixpanel_config = self::get_remote_mixpanel_config();
-			$is_flags_enabled = EditorAssetsAPI::has_valid_nested_value( $mixpanel_config, [ 0 ] )
+			$is_flags_enabled = EditorAssetsAPI::has_valid_nested_array( $mixpanel_config, [ 0 ] )
 				? (bool) ( $mixpanel_config[0]['flags'] ?? false )
 				: false;
 		}
