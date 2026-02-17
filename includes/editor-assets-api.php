@@ -10,6 +10,10 @@ class EditorAssetsAPI {
 
 	const ASSETS_DATA_KEY = 'ASSETS_DATA_KEY';
 
+	const ASSETS_DATA_EXPIRATION = 'ASSETS_DATA_EXPIRATION';
+
+	const HTTP_STATUS_OK = 200;
+
 	public function __construct( array $config ) {
 		$this->config = $config;
 	}
@@ -33,7 +37,8 @@ class EditorAssetsAPI {
 			}
 
 			$assets_data = $fresh_data;
-			$this->set_transient( $this->config( static::ASSETS_DATA_TRANSIENT_KEY ), $assets_data, '+1 hour' );
+			$expiration = $this->config( static::ASSETS_DATA_EXPIRATION ) ?: '+1 hour';
+			$this->set_transient( $this->config( static::ASSETS_DATA_TRANSIENT_KEY ), $assets_data, $expiration );
 		}
 
 		return $assets_data;
@@ -42,7 +47,7 @@ class EditorAssetsAPI {
 	private function fetch_data(): array {
 		$response = wp_remote_get( $this->config( static::ASSETS_DATA_URL ) );
 
-		if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
+		if ( is_wp_error( $response ) || static::HTTP_STATUS_OK !== (int) wp_remote_retrieve_response_code( $response ) ) {
 			return [];
 		}
 
@@ -82,6 +87,7 @@ class EditorAssetsAPI {
 		if ( ! is_array( $data ) ) {
 			return false;
 		}
+
 		$key = $this->config( static::ASSETS_DATA_KEY );
 		return static::is_non_empty_array( $data[ $key ] ?? null );
 	}

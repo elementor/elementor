@@ -33,6 +33,7 @@ class API {
 			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.elementor.com/notifications/v1/notifications.json',
 			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_notifications_data',
 			EditorAssetsAPI::ASSETS_DATA_KEY => 'notifications',
+			EditorAssetsAPI::ASSETS_DATA_EXPIRATION => '+12 hours',
 		] );
 		$notifications = $editor_assets_api->get_assets_data( $force_request );
 		$notifications = apply_filters( 'elementor/core/admin/notifications', $notifications );
