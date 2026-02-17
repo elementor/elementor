@@ -85,9 +85,7 @@ export function FullscreenCard( { children, 'data-testid': testId }: FullscreenC
 	return (
 		<FullscreenCardRoot backgroundUrl={ backgroundUrl } data-testid={ testId }>
 			<Backdrop />
-			<Card elevation={ 24 }>
-				{ children }
-			</Card>
+			<Card elevation={ 24 }>{ children }</Card>
 		</FullscreenCardRoot>
 	);
 }

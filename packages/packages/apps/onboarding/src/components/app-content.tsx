@@ -197,10 +197,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 					</TopBar>
 				}
 			>
-				<Login
-					onConnect={ handleConnect }
-					onContinueAsGuest={ handleContinueAsGuest }
-				/>
+				<Login onConnect={ handleConnect } onContinueAsGuest={ handleContinueAsGuest } />
 			</BaseLayout>
 		);
 	}

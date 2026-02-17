@@ -28,13 +28,7 @@ export function Login( { onConnect, onContinueAsGuest }: LoginProps ) {
 				{ __( "Let's get to work.", 'elementor' ) }
 			</Typography>
 			<Stack spacing={ 3 } width="100%">
-				<PrimaryButton
-					variant="contained"
-					color="primary"
-					fullWidth
-					size="large"
-					onClick={ onConnect }
-				>
+				<PrimaryButton variant="contained" color="primary" fullWidth size="large" onClick={ onConnect }>
 					{ __( 'Sign in to Elementor', 'elementor' ) }
 				</PrimaryButton>
 
@@ -61,11 +55,7 @@ export function Login( { onConnect, onContinueAsGuest }: LoginProps ) {
 
 						<Stack direction="row">
 							<SocialIcon>
-								<Image
-									src={ getOnboardingAssetUrl( 'google.svg' ) }
-									alt="Google"
-									variant="circle"
-								/>
+								<Image src={ getOnboardingAssetUrl( 'google.svg' ) } alt="Google" variant="circle" />
 							</SocialIcon>
 							<SocialIcon sx={ { marginInlineStart: '-10px' } }>
 								<Image
@@ -75,11 +65,7 @@ export function Login( { onConnect, onContinueAsGuest }: LoginProps ) {
 								/>
 							</SocialIcon>
 							<SocialIcon sx={ { marginInlineStart: '-10px' } }>
-								<Image
-									src={ getOnboardingAssetUrl( 'apple.svg' ) }
-									alt="Apple"
-									variant="circle"
-								/>
+								<Image src={ getOnboardingAssetUrl( 'apple.svg' ) } alt="Apple" variant="circle" />
 							</SocialIcon>
 						</Stack>
 					</Stack>

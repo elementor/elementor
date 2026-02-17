@@ -1,7 +1,7 @@
 import { useMutation } from '@elementor/query';
 
-import { getConfig } from '../utils/get-config';
 import type { OnboardingChoices } from '../types';
+import { getConfig } from '../utils/get-config';
 
 type UpdateChoicesParams = Partial< OnboardingChoices >;
 

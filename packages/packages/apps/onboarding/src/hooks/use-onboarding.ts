@@ -5,6 +5,7 @@ import {
 	clearUnexpectedExit,
 	completeOnboarding,
 	completeStep,
+	dismissProInstallScreen,
 	goToStep,
 	goToStepIndex,
 	nextStep,
@@ -31,11 +32,10 @@ import {
 	setError,
 	setExitType,
 	setGuest,
-	setShouldShowProInstallScreen,
 	setLoading,
+	setShouldShowProInstallScreen,
 	setUserChoice,
 	setUserChoices,
-	dismissProInstallScreen,
 	startOnboarding,
 } from '../store';
 import type { OnboardingChoices, StepIdType } from '../types';

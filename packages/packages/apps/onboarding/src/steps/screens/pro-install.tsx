@@ -41,7 +41,7 @@ export function ProInstall() {
 
 			<Typography variant="body2" align="center" color="text.secondary">
 				{ isInstalling
-					? __( 'Installing Elementor Pro...', 'elementor' )
+					? __( 'Installing Elementor Pro…', 'elementor' )
 					: __( 'Would you like to install it on this site now?', 'elementor' ) }
 			</Typography>
 
@@ -67,7 +67,7 @@ export function ProInstall() {
 					startIcon={ isInstalling ? <CircularProgress size={ 18 } color="inherit" /> : undefined }
 				>
 					{ isInstalling
-						? __( 'Installing...', 'elementor' )
+						? __( 'Installing…', 'elementor' )
 						: __( 'Install Pro on this site', 'elementor' ) }
 				</PrimaryButton>
 
