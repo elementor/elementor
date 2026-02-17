@@ -77,7 +77,7 @@ export const StartSyncToV3Modal = ( { externalOpen, onExternalClose, onConfirm }
 						{ __( 'Cancel', 'elementor' ) }
 					</Button>
 					<Button onClick={ handleConfirm } variant="contained" size="small">
-						{ __( 'Sync to version 3', 'elementor' ) }
+						{ __( 'Sync to Version 3', 'elementor' ) }
 					</Button>
 				</Box>
 			</DialogActions>
