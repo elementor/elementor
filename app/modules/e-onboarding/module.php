@@ -51,6 +51,7 @@ class Module extends BaseModule {
 		if ( $this->should_show_starter() ) {
 			add_filter( 'elementor/editor/show_starter', '__return_true' );
 			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_starter_settings' ] );
+			add_action( 'elementor/preview/enqueue_styles', [ $this, 'enqueue_fonts' ] );
 		}
 	}
 
