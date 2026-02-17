@@ -180,9 +180,10 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		// Act.
 		const inlineEditor = await editor.triggerEditingElement( headingId );
 		headingElement = inlineEditor.locator( defaultAtomTags[ 'e-heading' ] );
-
-		await headingElement.click( { clickCount: 3, delay: 100 } );
-		await page.keyboard.type( 'Hello' );
+		await headingElement.click( { delay: 50 } );
+		await headingElement.click( { delay: 50 } );
+		await headingElement.click( { delay: 50 } );
+		await inlineEditor.fill( 'Hello' );
 
 		// Assert
 		await expect( headingElement ).toHaveText( 'Hello' );

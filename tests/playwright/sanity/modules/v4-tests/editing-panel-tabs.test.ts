@@ -83,7 +83,7 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 	} );
 
 	test( 'should show/hide tabs header when scrolling up/down in the panel', async () => {
-		const panelHeader = editor.page.locator( 'button', { hasText: 'Style' } ).locator( '../../../..' );
+		const panelHeader = editor.page.locator( 'button', { hasText: /^Style$/g } ).locator( '../../../..' );
 
 		await openScrollableStylePanel();
 
@@ -103,7 +103,7 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 	test( 'should maintain header tabs visibility during inner component scrolling', async () => {
 		await openScrollableStylePanel();
 
-		const panelHeader = editor.page.locator( 'button', { hasText: 'Style' } ).locator( '../../../..' );
+		const panelHeader = editor.page.locator( 'button', { hasText: /^Style$/g } ).locator( '../../../..' );
 		const fontFamilyControl = editor.page
 			.locator( 'div.MuiGrid-container' )
 			.filter( { has: editor.page.locator( 'label', { hasText: 'Font family' } ) } );

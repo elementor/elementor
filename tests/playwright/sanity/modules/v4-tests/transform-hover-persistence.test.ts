@@ -40,7 +40,7 @@ test.describe( 'Transform repeater persistence @atomic-widgets', () => {
 		await moveItem.waitFor( { state: 'visible', timeout: 15000 } );
 		await moveItem.click( { force: true } );
 
-		await page.locator( 'body' ).click();
+		await page.keyboard.press( 'Escape' );
 
 		// Assert
 		const transformItems = page.locator( '.MuiTag-root' );
