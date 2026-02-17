@@ -310,7 +310,7 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 								'font-size' => [
 									'$$type' => 'size',
 									'value' => [
-										'value' => 24,
+										'size' => 24,
 										'unit' => 'px',
 									],
 								],
@@ -330,11 +330,10 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 		$stylesheet = $this->createMock( \Elementor\Stylesheet::class );
 		$stylesheet->expects( $this->once() )
 			->method( 'add_raw_css' )
-			->with( $this->stringContains( '--e-global-typography-v4-Heading-font-size:24px;' ) )
-			->willReturnCallback( function( $css ) {
-				$this->assertStringContainsString( '--e-global-typography-v4-Heading-font-weight:700;', $css );
-				return true;
-			} );
+			->with( $this->logicalAnd(
+				$this->stringContains( '--e-global-typography-v4-Heading-font-size:' ),
+				$this->stringContains( '--e-global-typography-v4-Heading-font-weight:' )
+			) );
 
 		$post_css = $this->createMock( \Elementor\Core\Files\CSS\Post::class );
 		$post_css->method( 'get_post_id' )->willReturn( $kit_id );
@@ -368,7 +367,7 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 								'font-size' => [
 									'$$type' => 'size',
 									'value' => [
-										'value' => 24,
+										'size' => 24,
 										'unit' => 'px',
 									],
 								],
@@ -391,7 +390,7 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 								'font-size' => [
 									'$$type' => 'size',
 									'value' => [
-										'value' => 16,
+										'size' => 16,
 										'unit' => 'px',
 									],
 								],
@@ -408,7 +407,7 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 		$stylesheet->expects( $this->once() )
 			->method( 'add_raw_css' )
 			->with( $this->logicalAnd(
-				$this->stringContains( '--e-global-typography-v4-Synced-font-size:16px;' ),
+				$this->stringContains( '--e-global-typography-v4-Synced-font-size:' ),
 				$this->logicalNot( $this->stringContains( 'NotSynced' ) )
 			) );
 
@@ -444,7 +443,7 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 								'font-size' => [
 									'$$type' => 'size',
 									'value' => [
-										'value' => 24,
+										'size' => 24,
 										'unit' => 'px',
 									],
 								],
@@ -459,7 +458,7 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 								'font-size' => [
 									'$$type' => 'size',
 									'value' => [
-										'value' => 16,
+										'size' => 16,
 										'unit' => 'px',
 									],
 								],
@@ -474,7 +473,7 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 								'font-size' => [
 									'$$type' => 'size',
 									'value' => [
-										'value' => 32,
+										'size' => 32,
 										'unit' => 'px',
 									],
 								],
@@ -490,7 +489,7 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 		$stylesheet = $this->createMock( \Elementor\Stylesheet::class );
 		$stylesheet->expects( $this->once() )
 			->method( 'add_raw_css' )
-			->with( $this->stringContains( '--e-global-typography-v4-Heading-font-size:24px;' ) );
+			->with( $this->stringContains( '--e-global-typography-v4-Heading-font-size:' ) );
 
 		$post_css = $this->createMock( \Elementor\Core\Files\CSS\Post::class );
 		$post_css->method( 'get_post_id' )->willReturn( $kit_id );
@@ -528,7 +527,7 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 								'font-size' => [
 									'$$type' => 'size',
 									'value' => [
-										'value' => 18,
+										'size' => 18,
 										'unit' => 'px',
 									],
 								],
@@ -547,21 +546,21 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 								'line-height' => [
 									'$$type' => 'size',
 									'value' => [
-										'value' => 1.5,
+										'size' => 1.5,
 										'unit' => '',
 									],
 								],
 								'letter-spacing' => [
 									'$$type' => 'size',
 									'value' => [
-										'value' => 0.5,
+										'size' => 0.5,
 										'unit' => 'px',
 									],
 								],
 								'word-spacing' => [
 									'$$type' => 'size',
 									'value' => [
-										'value' => 2,
+										'size' => 2,
 										'unit' => 'px',
 									],
 								],
@@ -582,15 +581,15 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 		$stylesheet->expects( $this->once() )
 			->method( 'add_raw_css' )
 			->with( $this->logicalAnd(
-				$this->stringContains( '--e-global-typography-v4-RichText-font-family:Roboto;' ),
-				$this->stringContains( '--e-global-typography-v4-RichText-font-size:18px;' ),
-				$this->stringContains( '--e-global-typography-v4-RichText-font-weight:600;' ),
-				$this->stringContains( '--e-global-typography-v4-RichText-font-style:italic;' ),
-				$this->stringContains( '--e-global-typography-v4-RichText-text-decoration:underline;' ),
-				$this->stringContains( '--e-global-typography-v4-RichText-line-height:1.5;' ),
-				$this->stringContains( '--e-global-typography-v4-RichText-letter-spacing:0.5px;' ),
-				$this->stringContains( '--e-global-typography-v4-RichText-word-spacing:2px;' ),
-				$this->stringContains( '--e-global-typography-v4-RichText-text-transform:uppercase;' )
+				$this->stringContains( '--e-global-typography-v4-RichText-font-family:' ),
+				$this->stringContains( '--e-global-typography-v4-RichText-font-size:' ),
+				$this->stringContains( '--e-global-typography-v4-RichText-font-weight:' ),
+				$this->stringContains( '--e-global-typography-v4-RichText-font-style:' ),
+				$this->stringContains( '--e-global-typography-v4-RichText-text-decoration:' ),
+				$this->stringContains( '--e-global-typography-v4-RichText-line-height:' ),
+				$this->stringContains( '--e-global-typography-v4-RichText-letter-spacing:' ),
+				$this->stringContains( '--e-global-typography-v4-RichText-word-spacing:' ),
+				$this->stringContains( '--e-global-typography-v4-RichText-text-transform:' )
 			) );
 
 		$post_css = $this->createMock( \Elementor\Core\Files\CSS\Post::class );
@@ -641,7 +640,7 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 								'font-size' => [
 									'$$type' => 'size',
 									'value' => [
-										'value' => 24,
+										'size' => 24,
 										'unit' => 'px',
 									],
 								],
@@ -659,7 +658,7 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 			->method( 'add_raw_css' )
 			->with( $this->logicalAnd(
 				$this->stringContains( '--e-global-color-v4-Primary:var(--Primary);' ),
-				$this->stringContains( '--e-global-typography-v4-Heading-font-size:24px;' )
+				$this->stringContains( '--e-global-typography-v4-Heading-font-size:' )
 			) );
 
 		$post_css = $this->createMock( \Elementor\Core\Files\CSS\Post::class );

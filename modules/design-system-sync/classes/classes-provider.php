@@ -46,4 +46,3 @@ class Classes_Provider {
 		self::$cached_classes = null;
 	}
 }
-
