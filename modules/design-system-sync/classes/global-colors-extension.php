@@ -16,7 +16,6 @@ class Global_Colors_Extension {
 	public function register_hooks() {
 		add_action( 'elementor/kit/global-colors/register_controls', [ $this, 'add_v4_variables_section' ] );
 		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_editor_styles' ] );
-		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_editor_variables_sync_script' ] );
 		add_filter( 'elementor/globals/colors/items', [ $this, 'add_v4_variables_section_to_color_selector' ] );
 	}
 
@@ -27,17 +26,6 @@ class Global_Colors_Extension {
 			[],
 			ELEMENTOR_VERSION
 		);
-	}
-
-	public function enqueue_editor_variables_sync_script() {
-		wp_register_script(
-			'elementor-design-system-sync-editor-variables-sync',
-			plugins_url( '../assets/js/editor-variables-sync.js', __FILE__ ),
-			[ 'elementor-editor' ],
-			ELEMENTOR_VERSION,
-			true
-		);
-		wp_enqueue_script( 'elementor-design-system-sync-editor-variables-sync' );
 	}
 
 	public function add_v4_variables_section( Global_Colors $tab ) {
@@ -110,7 +98,6 @@ class Global_Colors_Extension {
 		);
 	}
 
-
 	public function add_v4_variables_section_to_color_selector( array $items ): array {
 		$v4_colors = $this->get_v4_color_variables();
 
@@ -118,26 +105,18 @@ class Global_Colors_Extension {
 			return $items;
 		}
 
-		$v4_items = [];
+		foreach ( $v4_colors as $color ) {
+			$id = 'v4-' . $color['label'];
 
-		foreach ( $v4_colors as $variable ) {
-			$label = sanitize_text_field( $variable['label'] ?? '' );
-
-			if ( empty( $label ) ) {
-				continue;
-			}
-
-			$v3_id = 'v4-' . $label;
-
-			$v4_items[ $v3_id ] = [
-				'id'    => $v3_id,
-				'title' => $label,
-				'value' => strtoupper( $variable['value'] ?? '' ),
+			$items[ $id ] = [
+				'id' => $id,
+				'title' => $color['label'],
+				'value' => strtoupper( $color['value'] ),
 				'group' => 'v4',
 			];
 		}
 
-		return array_merge( $v4_items, $items );
+		return $items;
 	}
 
 	private function get_v4_color_variables(): array {

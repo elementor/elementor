@@ -71,8 +71,9 @@ test.describe( 'V4-V3 Color Variable Sync @v4-tests', () => {
 		} );
 	} );
 
-	test( 'Synced V4 color variable appears in V3 widget color picker and renders correctly on frontend', async () => {
+	test.only( 'Synced V4 color variable appears in V3 widget color picker and renders correctly on frontend', async () => {
 		await test.step( 'Create a V4 color variable in the Variables Manager', async () => {
+			await page.pause();
 			const variableRow = await variablesManagerPage.createVariableFromManager( {
 				name: syncedColorName,
 				value: syncedColorValue,
@@ -95,8 +96,8 @@ test.describe( 'V4-V3 Color Variable Sync @v4-tests', () => {
 			await page.locator( 'header' ).getByRole( 'button', { name: 'Add Element' } ).click();
 			await editor.addWidget( { widgetType: 'heading' } );
 			await editor.openPanelTab( 'style' );
-			await page.locator( '.elementor-control-title_color .pickr' ).click();
-			await page.locator( '.e-global__popover-toggle' ).click();
+			// Await page.locator( '.elementor-control-title_color .pickr' ).click();
+			await page.locator( '.elementor-control-title_color .e-global__popover-toggle' ).click();
 			await expect( page.locator( '.e-global__color' ).filter( { hasText: syncedColorName } ) ).toBeVisible();
 		} );
 

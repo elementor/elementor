@@ -42,6 +42,7 @@
 
 			if ( hasSyncRelatedChanges( originalVariables, variables, deletedVariables ) ) {
 				globals?.refreshGlobalData();
+				$e.data.deleteCache( $e.components.get( 'globals' ), 'globals/colors' );
 			}
 		} catch ( error ) {}
 	} );
