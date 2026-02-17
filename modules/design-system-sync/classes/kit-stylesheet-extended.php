@@ -11,6 +11,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Kit_Stylesheet_Extended {
+	const TYPOGRAPHY_PROPS = [
+		'font-family',
+		'font-size',
+		'font-weight',
+		'font-style',
+		'text-decoration',
+		'line-height',
+		'letter-spacing',
+		'word-spacing',
+		'text-transform',
+	];
+
 	public function register_hooks() {
 		add_action( 'elementor/css-file/post/parse', [ $this, 'add_v3_mapping_css' ] );
 	}
@@ -72,17 +84,6 @@ class Kit_Stylesheet_Extended {
 
 	private function get_classes_css_entries( array $synced_classes ): array {
 		$css_entries = [];
-		$typography_props = [
-			'font-family',
-			'font-size',
-			'font-weight',
-			'font-style',
-			'text-decoration',
-			'line-height',
-			'letter-spacing',
-			'word-spacing',
-			'text-transform',
-		];
 
 		$schema = Style_Schema::get();
 		$props_resolver = Render_Props_Resolver::for_styles();
@@ -96,37 +97,53 @@ class Kit_Stylesheet_Extended {
 
 			$variants = $class['variants'] ?? [];
 
-			foreach ( $variants as $variant ) {
-				$breakpoint = $variant['meta']['breakpoint'] ?? null;
-				$state = $variant['meta']['state'] ?? null;
+			$props = $this->get_default_breakpoint_props( $variants );
 
-				if ( ! in_array( $breakpoint, [ null, 'desktop' ], true ) ) {
-					continue;
-				}
-
-				if ( ! in_array( $state, [ null, 'normal' ], true ) ) {
-					continue;
-				}
-
-				$props = $variant['props'] ?? [];
-
-				$resolved_props = $props_resolver->resolve( $schema, $props );
-
-				foreach ( $typography_props as $prop_name ) {
-					if ( ! isset( $resolved_props[ $prop_name ] ) || empty( $resolved_props[ $prop_name ] ) ) {
-						continue;
-					}
-
-					$css_value = $resolved_props[ $prop_name ];
-					$v3_id = 'v4-' . $label;
-
-					$css_entries[] = "--e-global-typography-{$v3_id}-{$prop_name}:{$css_value};";
-				}
-
-				break;
+			if ( empty( $props ) ) {
+				continue;
 			}
+
+			$resolved_props = $props_resolver->resolve( $schema, $props );
+
+			$this->add_typography_css_entries( $label, $resolved_props, $css_entries );
 		}
 
 		return $css_entries;
+	}
+
+	private function get_default_breakpoint_props( array $variants ): array {
+		foreach ( $variants as $variant ) {
+			if ( ! isset( $variant['meta'] ) && ! isset( $variant['meta']['breakpoint'] ) && ! isset( $variant['meta']['state'] ) ) {
+				continue;
+			}
+
+			$breakpoint = $variant['meta']['breakpoint'];
+			$state = $variant['meta']['state'];
+
+			if ( ! in_array( $breakpoint, [ null, 'desktop' ], true ) ) {
+				continue;
+			}
+
+			if ( ! in_array( $state, [ null, 'normal' ], true ) ) {
+				continue;
+			}
+
+			return $variant['props'];
+		}
+
+		return [];
+	}
+
+	private function add_typography_css_entries( string $label, array $resolved_props, array &$css_entries ): void {
+		foreach ( self::TYPOGRAPHY_PROPS as $prop_name ) {
+			if ( ! isset( $resolved_props[ $prop_name ] ) || empty( $resolved_props[ $prop_name ] ) ) {
+				continue;
+			}
+
+			$css_value = $resolved_props[ $prop_name ];
+			$v3_id = 'v4-' . $label;
+
+			$css_entries[] = "--e-global-typography-{$v3_id}-{$prop_name}:{$css_value};";
+		}
 	}
 }
