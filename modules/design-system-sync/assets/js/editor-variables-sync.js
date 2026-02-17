@@ -38,12 +38,12 @@
 	window.addEventListener( 'elementor/editor-variables/saved-with-sync', function( event ) {
 		try {
 			const { originalVariables = {}, variables = {}, deletedVariables = [] } = event.detail;
-			const globals = $e.components.get( 'globals' );
 
 			if ( hasSyncRelatedChanges( originalVariables, variables, deletedVariables ) ) {
+				const globals = $e.components.get( 'globals' );
+
 				globals?.refreshGlobalData();
-				$e.data.deleteCache( $e.components.get( 'globals' ), 'globals/colors' );
-				$e.data.get( 'globals/index' );
+				globals?.populateGlobalData();
 			}
 		} catch ( error ) {}
 	} );
