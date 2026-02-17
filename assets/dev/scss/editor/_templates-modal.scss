@@ -9,20 +9,29 @@ $remote-templates-items-space: 30px;
 	border: none;
 }
 
+@mixin focus-outline($offset: 2px, $radius: null) {
+	&:focus-visible {
+		outline: 2px solid var(--e-a-border-color-focus);
+		outline-offset: $offset;
+
+		@if $radius {
+			border-radius: $radius;
+		}
+	}
+}
+
 #elementor-template-library-modal {
 
 	// Global focus-visible styles for accessibility (QA #4)
-	button:focus-visible,
-	a:focus-visible,
-	input:focus-visible,
-	select:focus-visible,
-	[tabindex="0"]:focus-visible,
-	[role="tab"]:focus-visible,
-	[role="radio"]:focus-visible,
-	[role="menuitem"]:focus-visible {
-		outline: 2px solid var(--e-a-border-color-focus);
-		outline-offset: 2px;
-		border-radius: 2px;
+	button,
+	a,
+	input,
+	select,
+	[tabindex="0"],
+	[role="tab"],
+	[role="radio"],
+	[role="menuitem"] {
+		@include focus-outline($radius: 2px);
 	}
 
 	// Reset button styles for the close button changed from div to button
@@ -96,12 +105,7 @@ $remote-templates-items-space: 30px;
 		@include button-reset;
 		padding-inline-end: 16px;
 		cursor: pointer;
-
-		&:focus-visible {
-			outline: 2px solid var(--e-a-border-color-focus);
-			outline-offset: -2px;
-			border-radius: 2px;
-		}
+		@include focus-outline($offset: -2px, $radius: 2px);
 	}
 }
 
@@ -136,12 +140,7 @@ $remote-templates-items-space: 30px;
 		align-items: center;
 		gap: 10px;
 		cursor: pointer;
-
-		&:focus-visible {
-			outline: 2px solid var(--e-a-border-color-focus);
-			outline-offset: 2px;
-			border-radius: 2px;
-		}
+		@include focus-outline($radius: 2px);
 	}
 
 	&:hover {
@@ -192,11 +191,7 @@ $remote-templates-items-space: 30px;
 				display: flex;
 				align-items: baseline;
 				border-radius: 3px;
-
-				&:focus-visible {
-					outline: 2px solid var(--e-a-border-color-focus);
-					outline-offset: 2px;
-				}
+				@include focus-outline;
 			}
 
 			.quota-progress-info {
@@ -436,11 +431,7 @@ $remote-templates-items-space: 30px;
 			padding: 8px;
 			border: var(--e-a-border);
 			border-radius: 3px;
-
-			&:focus-visible {
-				outline: 2px solid var(--e-a-border-color-focus);
-				outline-offset: 2px;
-			}
+			@include focus-outline;
 
 			&:not([data-status="locked"]):hover,
 			&:not([data-status="locked"]):focus,
@@ -1404,10 +1395,7 @@ label.elementor-template-library-order-label {
 				background: var(--e-a-bg-active);
 			}
 
-			&:focus-visible {
-				outline: 2px solid var(--e-a-border-color-focus);
-				outline-offset: 2px;
-			}
+			@include focus-outline;
 		}
 
 		&.promotion,
@@ -1595,10 +1583,7 @@ label.elementor-template-library-order-label {
 					background: var(--e-a-border-color);
 				}
 
-				&:focus-visible {
-					outline: 2px solid var(--e-a-border-color-focus);
-					outline-offset: -2px;
-				}
+				@include focus-outline($offset: -2px);
 
 				&.disabled {
 					pointer-events: none;
