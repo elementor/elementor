@@ -175,10 +175,10 @@ class Atomic_Form extends Atomic_Element_Base {
 				->build(),
 			Widget_Builder::make( Atomic_Button::get_element_type() )
 				->settings( [
-				'text' => Html_V3_Prop_Type::generate( [
-					'content'  => String_Prop_Type::generate( __( 'Submit', 'elementor' ) ),
-					'children' => [],
-				] ),
+					'text' => Html_V3_Prop_Type::generate( [
+						'content'  => String_Prop_Type::generate( __( 'Submit', 'elementor' ) ),
+						'children' => [],
+					] ),
 					'attributes' => Attributes_Prop_Type::generate( [
 						Key_Value_Prop_Type::generate( [
 							'key' => String_Prop_Type::generate( 'type' ),
