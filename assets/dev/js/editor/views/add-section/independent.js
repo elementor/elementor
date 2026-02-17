@@ -68,13 +68,10 @@ export default class AddSectionView extends BaseAddSectionView {
 
 		delete elementor.config.starter;
 
-		fetch( config.restUrl, {
+		wp.apiFetch( {
+			path: config.restPath,
 			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'X-WP-Nonce': config.nonce,
-			},
-			body: JSON.stringify( { starter_dismissed: true } ),
-		} ).catch( () => {} );
+			data: { starter_dismissed: true },
+		} );
 	}
 }

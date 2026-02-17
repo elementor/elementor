@@ -169,8 +169,7 @@ class Module extends BaseModule {
 
 	public function add_starter_settings( array $settings ): array {
 		$settings['starter'] = [
-			'restUrl' => rest_url( 'elementor/v1/e-onboarding/user-progress' ),
-			'nonce' => wp_create_nonce( 'wp_rest' ),
+			'restPath' => 'elementor/v1/e-onboarding/user-progress',
 			'aiPlannerUrl' => 'https://planner.elementor.com/home.html',
 		];
 
