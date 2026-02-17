@@ -14,6 +14,11 @@ on:
         type: boolean
         description: 'Was the Custom Core process executed and completed successful?'
         required: true
+      pre_release:
+        type: boolean
+        description: 'Pre-release mode (adds -test postfix, skips SVN, Slack, and package publishing)'
+        required: false
+        default: false
       dry_run:
         type: boolean
         description: 'Run in dry-run mode (no actual release will be created)'
@@ -72,14 +77,14 @@ jobs:
         with:
           CHANNEL: ${{ env.CHANNEL }}
           REF: ${{ github.ref }}
-          POSTFIX: ''
+          POSTFIX: ${{ github.event.inputs.pre_release == 'true' && '-test' || '' }}
       - name: Bump Channel Version
         id: bump_channel_version
         uses: ./.github/workflows/bump-channel-version
         with:
           CLEAN_PACKAGE_VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
           CHANNEL: ${{ env.CHANNEL }}
-          POSTFIX: ''
+          POSTFIX: ${{ github.event.inputs.pre_release == 'true' && '-test' || '' }}
           OVERRIDE_PACKAGE_VERSION: true
       - name: Update Readme.txt
         uses: ./.github/workflows/update-readme-txt
@@ -132,92 +137,94 @@ jobs:
           PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
         run: |
             bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
-      # - name: Publish to WordPress.org SVN
-      #   if: github.repository_owner == 'elementor' && github.event.inputs.dry_run == 'false'
-      #   env:
-      #     PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
-      #     SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-      #     SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-      #     CHANNEL: ${{ env.CHANNEL }}
-      #     PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
-      #   run: |
-      #     bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
-      # - name: Release Dev From Beta
-      #   if: env.CHANNEL == 'beta' && github.event.inputs.dry_run == 'false'
-      #   uses: ./.github/workflows/release-dev-from-beta
-      #   with:
-      #     BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
-      #     PLUGIN_NAME: ${{ github.event.repository.name }}
-      #     REPOSITORY_OWNER: ${{ github.repository_owner }}
-      #     SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-      #     SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-      #     DRY_RUN: ${{ github.event.inputs.dry_run }}
-      #     PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
+      - name: Publish to WordPress.org SVN
+        if: github.repository_owner == 'elementor' && github.event.inputs.dry_run == 'false' && github.event.inputs.pre_release == 'false'
+        env:
+          PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          CHANNEL: ${{ env.CHANNEL }}
+          PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
+      - name: Release Dev From Beta
+        if: env.CHANNEL == 'beta' && github.event.inputs.dry_run == 'false' && github.event.inputs.pre_release == 'false'
+        uses: ./.github/workflows/release-dev-from-beta
+        with:
+          BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
+          PLUGIN_NAME: ${{ github.event.repository.name }}
+          REPOSITORY_OWNER: ${{ github.repository_owner }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+          PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
 
-      # - name: Post To Slack Created Release
-      #   if: github.event.inputs.dry_run == 'false'
-      #   uses : ./.github/workflows/post-to-slack
-      #   with:
-      #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
-      #     SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASE }}
-      #     PAYLOAD: |
-      #               {
-      #                 "blocks": [
-      #                   {
-      #                     "type": "section",
-      #                     "text": {
-      #                       "type": "mrkdwn",
-      #                       "text": "Hi All :smile:\n\nWe just released *Elementor*\n`${{ env.RELEASE_NAME }}`"
-      #                     }
-      #                   },
-      #                   {
-      #                     "type": "divider"
-      #                   },
-      #                   {
-      #                     "type": "section",
-      #                     "text": {
-      #                       "type": "mrkdwn",
-      #                       "text": "GitHub Release *${{ env.RELEASE_NAME }}* \nCreated by ${{ github.actor }}"
-      #                     },
-      #                     "accessory": {
-      #                       "type": "button",
-      #                       "text": {
-      #                         "type": "plain_text",
-      #                         "text": "Open :point_left:",
-      #                         "emoji": true
-      #                       },
-      #                       "value": "open-release",
-      #                       "url": "https://github.com/${{ github.repository }}/releases/tag/${{ env.RELEASE_NAME }}",
-      #                       "action_id": "button-action"
-      #                     }
-      #                   }
-      #                 ]
-      #               }
+      - name: Post To Slack Created Release
+        if: github.event.inputs.dry_run == 'false' && github.event.inputs.pre_release == 'false'
+        uses : ./.github/workflows/post-to-slack
+        with:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASE }}
+          PAYLOAD: |
+                    {
+                      "blocks": [
+                        {
+                          "type": "section",
+                          "text": {
+                            "type": "mrkdwn",
+                            "text": "Hi All :smile:\n\nWe just released *Elementor*\n`${{ env.RELEASE_NAME }}`"
+                          }
+                        },
+                        {
+                          "type": "divider"
+                        },
+                        {
+                          "type": "section",
+                          "text": {
+                            "type": "mrkdwn",
+                            "text": "GitHub Release *${{ env.RELEASE_NAME }}* \nCreated by ${{ github.actor }}"
+                          },
+                          "accessory": {
+                            "type": "button",
+                            "text": {
+                              "type": "plain_text",
+                              "text": "Open :point_left:",
+                              "emoji": true
+                            },
+                            "value": "open-release",
+                            "url": "https://github.com/${{ github.repository }}/releases/tag/${{ env.RELEASE_NAME }}",
+                            "action_id": "button-action"
+                          }
+                        }
+                      ]
+                    }
 
-      # - name: Determine Package Tag
-      #   id: package-tag
-      #   run: |
-      #     if [ "${{ env.CHANNEL }}" == "ga" ]; then
-      #       echo "tag=latest" >> $GITHUB_OUTPUT
-      #     else
-      #       LATEST_BETA_NUM=$(git tag -l "v${{ env.PACKAGE_VERSION }}-*" | sed 's/.*-//' | sort -nr | head -n1 || echo "0")
-      #       NEXT_BETA_NUM=$((LATEST_BETA_NUM + 1))
-      #       echo "tag=${NEXT_BETA_NUM}" >> $GITHUB_OUTPUT
-      #     fi
+      - name: Determine Package Tag
+        if: github.event.inputs.pre_release == 'false'
+        id: package-tag
+        run: |
+          if [ "${{ env.CHANNEL }}" == "ga" ]; then
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          else
+            LATEST_BETA_NUM=$(git tag -l "v${{ env.PACKAGE_VERSION }}-*" | sed 's/.*-//' | sort -nr | head -n1 || echo "0")
+            NEXT_BETA_NUM=$((LATEST_BETA_NUM + 1))
+            echo "tag=${NEXT_BETA_NUM}" >> $GITHUB_OUTPUT
+          fi
 
-      # - name: Output Package Data for Next Job
-      #   id: output-data
-      #   run: |
-      #     echo "PACKAGE_VERSION=${{ env.PACKAGE_VERSION }}" >> $GITHUB_OUTPUT
-      #     echo "PACKAGE_TAG=${{ steps.package-tag.outputs.tag }}" >> $GITHUB_OUTPUT
+      - name: Output Package Data for Next Job
+        if: github.event.inputs.pre_release == 'false'
+        id: output-data
+        run: |
+          echo "PACKAGE_VERSION=${{ env.PACKAGE_VERSION }}" >> $GITHUB_OUTPUT
+          echo "PACKAGE_TAG=${{ steps.package-tag.outputs.tag }}" >> $GITHUB_OUTPUT
 
-  # publish-packages:
-  #   needs: release
-  #   if: github.event.inputs.dry_run == 'false'
-  #   uses: ./.github/workflows/publish-packages.yml
-  #   with:
-  #     version: ${{ needs.release.outputs.PACKAGE_VERSION }}
-  #     tag: ${{ needs.release.outputs.PACKAGE_TAG }}
-  #   secrets:
-  #     NPMJS_CLOUD_DEVOPS_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
-  #     MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+  publish-packages:
+    needs: release
+    if: github.event.inputs.dry_run == 'false' && github.event.inputs.pre_release == 'false'
+    uses: ./.github/workflows/publish-packages.yml
+    with:
+      version: ${{ needs.release.outputs.PACKAGE_VERSION }}
+      tag: ${{ needs.release.outputs.PACKAGE_TAG }}
+    secrets:
+      NPMJS_CLOUD_DEVOPS_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
+      MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
