@@ -26,3 +26,17 @@ export const inputSchema = {
 		)
 		.default( {} ),
 };
+
+export const outputSchema = {
+	errors: z.string().describe( 'Error message if the composition building failed' ).optional(),
+	xmlStructure: z
+		.string()
+		.describe(
+			'The built XML structure as a string. Must use this XML after completion of building the composition, it contains real IDs.'
+		)
+		.optional(),
+	llm_instructions: z
+		.string()
+		.describe( 'Instructions what to do next, Important to follow these instructions!' )
+		.optional(),
+};
