@@ -84,6 +84,7 @@ test.describe( 'Inline editing toolbar placement @v4-tests', () => {
 			}, `[data-id="${ flexboxId }"].e-flexbox-base` );
 
 			// Act.
+			await editor.selectInlineEditedText( headingId2, 'This' );
 			await page.mouse.wheel( 0, scrollAmount );
 
 			// Assert.

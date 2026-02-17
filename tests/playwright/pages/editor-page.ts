@@ -1380,6 +1380,7 @@ export default class EditorPage extends BasePage {
 		await this.page.waitForTimeout( timeouts.veryShort );
 		await element.waitFor();
 		await element[ INLINE_EDITING_SELECTORS.triggerEvent ]();
+		await inlineEditor.waitFor();
 
 		return inlineEditor;
 	}

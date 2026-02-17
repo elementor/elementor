@@ -179,13 +179,9 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 
 		// Act.
 		const inlineEditor = await editor.triggerEditingElement( headingId );
-
-		await inlineEditor.waitFor();
-		await page.waitForTimeout( 1000 );
-
 		headingElement = inlineEditor.locator( defaultAtomTags[ 'e-heading' ] );
 
-		await headingElement.click( { clickCount: 3 } );
+		await headingElement.click( { clickCount: 3, delay: 100 } );
 		await page.keyboard.type( 'Hello' );
 
 		// Assert
