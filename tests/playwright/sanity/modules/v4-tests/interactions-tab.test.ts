@@ -78,6 +78,63 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		} );
 	} );
 
+	test( 'Core trigger menu shows "While scrolling" as disabled and scrollOn-only controls stay hidden', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		await test.step( 'Add heading widget and navigate to interactions tab', async () => {
+			const container = await editor.addElement( { elType: 'container' }, 'document' );
+			await editor.addWidget( { widgetType: 'e-heading', container } );
+
+			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
+			await interactionsTab.click();
+			await expect( interactionsTab ).toHaveAttribute( 'aria-selected', 'true' );
+		} );
+
+		await test.step( 'Create an interaction and open popover', async () => {
+			const addInteractionButton = page.getByRole( 'button', { name: 'Create an interaction' } );
+			await expect( addInteractionButton ).toBeVisible();
+			await addInteractionButton.click();
+
+			await page.waitForSelector( '.MuiPopover-root' );
+			await expect( page.locator( '.MuiPopover-root' ) ).toBeVisible();
+		} );
+
+		await test.step( 'Assert trigger options and hidden scrollOn-only controls', async () => {
+			const popover = page.locator( '.MuiPopover-root' ).first();
+
+			// Open trigger menu (default is "Page load").
+			const triggerSelect = popover.getByText( 'Page load', { exact: true } );
+			await expect( triggerSelect ).toBeVisible();
+			await triggerSelect.click();
+
+			// Core trigger control enables only these two options.
+			await expect( page.getByRole( 'option', { name: 'Page load' } ) ).toBeVisible();
+			await expect( page.getByRole( 'option', { name: 'Scroll into view' } ) ).toBeVisible();
+
+			// Pro-only option is present but disabled in core runs.
+			const scrollOnOption = page.getByRole( 'option', { name: 'While scrolling' } );
+			await expect( scrollOnOption ).toBeVisible();
+			await expect( scrollOnOption ).toBeDisabled();
+
+			// Close menu without changing selection.
+			await page.keyboard.press( 'Escape' );
+
+			// ScrollOn-only controls should not render for "Page load".
+			await expect( popover.getByText( 'Relative To', { exact: true } ) ).toHaveCount( 0 );
+			await expect( popover.getByText( 'Offset Top', { exact: true } ) ).toHaveCount( 0 );
+			await expect( popover.getByText( 'Offset Bottom', { exact: true } ) ).toHaveCount( 0 );
+
+			// Switch to "Scroll into view" and ensure scrollOn-only controls still do not render.
+			await triggerSelect.click();
+			await page.getByRole( 'option', { name: 'Scroll into view' } ).click();
+
+			await expect( popover.getByText( 'Relative To', { exact: true } ) ).toHaveCount( 0 );
+			await expect( popover.getByText( 'Offset Top', { exact: true } ) ).toHaveCount( 0 );
+			await expect( popover.getByText( 'Offset Bottom', { exact: true } ) ).toHaveCount( 0 );
+		} );
+	} );
+
 	test( 'Interactions functionality end-to-end test', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
