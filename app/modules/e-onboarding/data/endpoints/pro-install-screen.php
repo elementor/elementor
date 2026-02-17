@@ -10,10 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Pro_Status extends Endpoint_Base {
+class Pro_Install_Screen extends Endpoint_Base {
 
 	public function get_name(): string {
-		return 'pro-status';
+		return 'pro-install-screen';
 	}
 
 	public function get_format(): string {

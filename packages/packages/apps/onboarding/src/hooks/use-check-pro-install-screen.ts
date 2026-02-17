@@ -1,13 +1,11 @@
 import { useCallback } from 'react';
 
-interface ProStatusResponse {
+import { getConfig } from '../utils/get-config';
+
+interface ProInstallScreenResponse {
 	data: {
 		shouldShowProInstallScreen: boolean;
 	};
-}
-
-function getConfig() {
-	return window.elementorAppConfig?.[ 'e-onboarding' ] ?? null;
 }
 
 export function useCheckProInstallScreen() {
@@ -18,7 +16,7 @@ export function useCheckProInstallScreen() {
 			return { shouldShowProInstallScreen: false };
 		}
 
-		const response = await fetch( `${ config.restUrl }pro-status`, {
+		const response = await fetch( `${ config.restUrl }pro-install-screen`, {
 			method: 'GET',
 			headers: {
 				'X-WP-Nonce': config.nonce,
@@ -29,7 +27,7 @@ export function useCheckProInstallScreen() {
 			return { shouldShowProInstallScreen: false };
 		}
 
-		const json = ( await response.json() ) as ProStatusResponse;
+		const json = ( await response.json() ) as ProInstallScreenResponse;
 
 		return {
 			shouldShowProInstallScreen: json.data?.shouldShowProInstallScreen ?? false,

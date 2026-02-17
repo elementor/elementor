@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useCheckProInstallScreen } from '../hooks/use-check-pro-status';
+import { useCheckProInstallScreen } from '../hooks/use-check-pro-install-screen';
 import { useElementorConnect } from '../hooks/use-elementor-connect';
 import { useOnboarding } from '../hooks/use-onboarding';
 import { useUpdateChoices } from '../hooks/use-update-choices';

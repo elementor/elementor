@@ -1,12 +1,9 @@
 import { useMutation } from '@elementor/query';
 
+import { getConfig } from '../utils/get-config';
 import type { OnboardingChoices } from '../types';
 
 type UpdateChoicesParams = Partial< OnboardingChoices >;
-
-function getConfig() {
-	return window.elementorAppConfig?.[ 'e-onboarding' ] ?? null;
-}
 
 async function updateChoices( params: UpdateChoicesParams ): Promise< void > {
 	const config = getConfig();

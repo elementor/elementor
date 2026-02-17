@@ -1,8 +1,6 @@
 import { useMutation } from '@elementor/query';
 
-function getConfig() {
-	return window.elementorAppConfig?.[ 'e-onboarding' ] ?? null;
-}
+import { getConfig } from '../utils/get-config';
 
 async function installPro(): Promise< { success: boolean; message: string } > {
 	const config = getConfig();
