@@ -73,12 +73,6 @@ export const useVariablesManagerState = () => {
 		if ( result.success ) {
 			await service.load();
 
-			window.dispatchEvent(
-				new CustomEvent( 'elementor/editor-variables/save', {
-					detail: { originalVariables, variables, deletedVariables },
-				} )
-			);
-
 			const updatedVariables = service.variables();
 
 			setVariables( updatedVariables );

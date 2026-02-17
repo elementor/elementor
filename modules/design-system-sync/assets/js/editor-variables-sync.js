@@ -1,33 +1,37 @@
 ( function() {
 	'use strict';
 
-	function hasSyncRelatedChanges( originalVariables, currentVariables, deleted ) {
-		var id, variable, original, changedLabelOrValue;
-
-		for ( id in currentVariables ) {
+	function hasSyncRelatedChanges( previousVariables, currentVariables ) {
+		for ( const id in currentVariables ) {
 			if ( ! currentVariables.hasOwnProperty( id ) ) {
 				continue;
 			}
-			variable = currentVariables[ id ];
-			original = originalVariables[ id ];
 
-			if ( ! original && variable.sync_to_v3 ) {
+			const variable = currentVariables[ id ];
+			const previous = previousVariables[ id ];
+
+			if ( ! previous && variable.sync_to_v3 ) {
 				return true;
 			}
-			if ( ! original ) {
+
+			if ( ! previous ) {
 				continue;
 			}
-			if ( original.sync_to_v3 !== variable.sync_to_v3 ) {
-				return true;
-			}
-			changedLabelOrValue = original.label !== variable.label || original.value !== variable.value;
-			if ( variable.sync_to_v3 && changedLabelOrValue ) {
+
+			const isSyncEnabledOrDisabled = previous.sync_to_v3 !== variable.sync_to_v3;
+			const isLabelOrValueChanged = previous.label !== variable.label || previous.value !== variable.value;
+
+			if ( isSyncEnabledOrDisabled || isLabelOrValueChanged ) {
 				return true;
 			}
 		}
 
-		for ( var i = 0; i < deleted.length; i++ ) {
-			if ( originalVariables[ deleted[ i ] ]?.sync_to_v3 ) {
+		for ( const id in previousVariables ) {
+			if ( ! previousVariables.hasOwnProperty( id ) ) {
+				continue;
+			}
+
+			if ( previousVariables[ id ].sync_to_v3 && ! currentVariables[ id ] ) {
 				return true;
 			}
 		}
@@ -35,11 +39,15 @@
 		return false;
 	}
 
-	window.addEventListener( 'elementor/editor-variables/save', function( event ) {
-		try {
-			const { originalVariables = {}, variables = {}, deletedVariables = [] } = event.detail;
+	window.addEventListener( 'variables:updated', function( event ) {
+		if ( ! event?.detail ) {
+			return;
+		}
 
-			if ( hasSyncRelatedChanges( originalVariables, variables, deletedVariables ) ) {
+		try {
+			const { variables = {}, previousVariables = {} } = event.detail;
+
+			if ( hasSyncRelatedChanges( previousVariables, variables ) ) {
 				const globals = $e.components.get( 'globals' );
 
 				globals?.refreshGlobalData();
