@@ -5,7 +5,6 @@ import { __ } from '@wordpress/i18n';
 
 import { useCheckProInstallScreen } from '../hooks/use-check-pro-status';
 import { useElementorConnect } from '../hooks/use-elementor-connect';
-import { useInstallPro } from '../hooks/use-install-pro';
 import { useOnboarding } from '../hooks/use-onboarding';
 import { useUpdateChoices } from '../hooks/use-update-choices';
 import { useUpdateProgress } from '../hooks/use-update-progress';
@@ -74,20 +73,6 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 
 	const handleContinueAsGuest = useCallback( () => {
 		actions.setGuest( true );
-	}, [ actions ] );
-
-	const installPro = useInstallPro();
-
-	const handleProInstall = useCallback( () => {
-		installPro.mutate( undefined, {
-			onSuccess: () => {
-				actions.dismissProInstallScreen();
-			},
-		} );
-	}, [ installPro, actions ] );
-
-	const handleDismissProInstall = useCallback( () => {
-		actions.dismissProInstallScreen();
 	}, [ actions ] );
 
 	const handleClose = useCallback( () => {
@@ -229,12 +214,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 					</TopBar>
 				}
 			>
-				<ProInstall
-					onInstall={ handleProInstall }
-					onSkip={ handleDismissProInstall }
-					isInstalling={ installPro.isPending }
-					error={ installPro.error?.message ?? null }
-				/>
+				<ProInstall />
 			</BaseLayout>
 		);
 	}
