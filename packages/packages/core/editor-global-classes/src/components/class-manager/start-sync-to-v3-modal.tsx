@@ -33,7 +33,7 @@ export const StartSyncToV3Modal = ( { externalOpen, onExternalClose, onConfirm }
 	};
 
 	return (
-		<Dialog open={ externalOpen ?? false } onClose={ handleClose } maxWidth="sm" fullWidth>
+		<Dialog open={ !! externalOpen } onClose={ handleClose } maxWidth="sm" fullWidth>
 			<DialogContent sx={ { p: 0 } }>
 				<Box component="img" src={ IMAGE_URL } alt="" sx={ { width: '100%', display: 'block' } } />
 				<Box sx={ { px: 3, pt: 4, pb: 1 } }>
