@@ -169,7 +169,8 @@ function createToolRegistry( server: McpServer ) {
 			try {
 				const invocationResult = await opts.handler( opts.schema ? args : {}, extra );
 				return {
-					structuredContent: typeof invocationResult === 'string' ? undefined : invocationResult,
+					// TODO: Uncomment this when the outputSchema is stable
+					// structuredContent: typeof invocationResult === 'string' ? undefined : invocationResult,
 					content: [
 						{
 							type: 'text',
@@ -211,7 +212,8 @@ function createToolRegistry( server: McpServer ) {
 			{
 				description: opts.description,
 				inputSchema,
-				outputSchema,
+				// TODO: Uncomment this when the outputSchema is stable
+				// outputSchema,
 				title: opts.name,
 				annotations,
 			},
