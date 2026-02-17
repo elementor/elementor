@@ -37,8 +37,7 @@ class EditorAssetsAPI {
 			}
 
 			$assets_data = $fresh_data;
-			$expiration = $this->config( static::ASSETS_DATA_EXPIRATION ) ?: '+1 hour';
-			$this->set_transient( $this->config( static::ASSETS_DATA_TRANSIENT_KEY ), $assets_data, $expiration );
+			$this->set_transient( $this->config( static::ASSETS_DATA_TRANSIENT_KEY ), $assets_data, $this->get_expiration_time() );
 		}
 
 		return $assets_data;
@@ -81,6 +80,11 @@ class EditorAssetsAPI {
 		];
 
 		return update_option( $cache_key, $data, false );
+	}
+
+	private function get_expiration_time(): string {
+		$expiration = $this->config( static::ASSETS_DATA_EXPIRATION );
+		return $expiration ? $expiration : '+1 hour';
 	}
 
 	private function has_valid_data( $data ): bool {
