@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { type Document } from '@elementor/editor-documents';
 import { type V1ElementData } from '@elementor/editor-elements';
 import { type StyleDefinition } from '@elementor/editor-styles';
 
@@ -18,12 +17,12 @@ export const RenderTemplateStyles = () => {
 	return null;
 };
 
-function extractStylesFromDocument( document: Document ): StyleDefinition[] {
-	if ( ! document.elements?.length ) {
+function extractStylesFromDocument( elements: V1ElementData[] ): StyleDefinition[] {
+	if ( ! elements.length ) {
 		return [];
 	}
 
-	return document.elements.flatMap( extractStylesFromElement );
+	return elements.flatMap( extractStylesFromElement );
 }
 
 function extractStylesFromElement( element: V1ElementData ): StyleDefinition[] {

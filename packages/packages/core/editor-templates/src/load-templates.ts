@@ -44,6 +44,7 @@ async function fetchDocuments( ids: number[] ): Promise< Document[] > {
 	const results = await Promise.all(
 		ids.map( async ( id ) => {
 			try {
+				// using ajax.load instead of the document-manager as the latter causes an issue when trying to edit a template
 				return await ajax.load< { id: number }, Document >( {
 					data: { id },
 					action: 'get_document_config',
