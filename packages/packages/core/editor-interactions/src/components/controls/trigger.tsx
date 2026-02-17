@@ -13,7 +13,7 @@ const TRIGGER_OPTIONS = {
 	click: __( 'On click', 'elementor' ),
 };
 
-const SUPPORTED_TRIGGERS = ['load', 'scrollIn'];
+const SUPPORTED_TRIGGERS = [ 'load', 'scrollIn' ];
 
 export function Trigger( { value, onChange }: FieldProps ) {
 	const availableTriggers = Object.entries( TRIGGER_OPTIONS ).map( ( [ key, label ] ) => ( {
