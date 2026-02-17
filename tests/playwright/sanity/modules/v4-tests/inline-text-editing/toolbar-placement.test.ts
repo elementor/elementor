@@ -36,8 +36,8 @@ test.describe( 'Inline editing toolbar placement @v4-tests', () => {
 		await test.step( 'Style flexbox to have height so vertical scroll is available', async () => {
 			await editor.selectElement( flexboxId );
 			await editor.v4Panel.openTab( 'style' );
-			await editor.v4Panel.style.openSection( 'Size' );
 
+			await editor.v4Panel.style.openSection( 'Size' );
 			const heightControl = await editor.v4Panel.style.getControlByLabel( 'Size', 'Height' );
 			await editor.v4Panel.style.changeSizeControl( heightControl, 1000, 'px' );
 			await editor.v4Panel.style.closeSection( 'Size' );
@@ -52,6 +52,7 @@ test.describe( 'Inline editing toolbar placement @v4-tests', () => {
 		// Arrange.
 		await test.step( 'Style heading 1 to be positioned on far left', async () => {
 			await editor.selectElement( headingId1 );
+			await editor.v4Panel.openTab( 'style' );
 
 			await editor.v4Panel.style.openSection( 'Position' );
 			await editor.v4Panel.style.setPositionSectionValue( 'absolute', { left: { size: 0, unit: 'px' } } );
@@ -61,6 +62,7 @@ test.describe( 'Inline editing toolbar placement @v4-tests', () => {
 		// Arrange.
 		await test.step( 'Style heading 32 to be positioned on far right', async () => {
 			await editor.selectElement( headingId3 );
+			await editor.v4Panel.openTab( 'style' );
 
 			await editor.v4Panel.style.openSection( 'Position' );
 			await editor.v4Panel.style.setPositionSectionValue( 'absolute', { right: { size: 0, unit: 'px' } } );
