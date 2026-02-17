@@ -40,7 +40,7 @@ export const StartSyncToV3Modal = ( { externalOpen, onExternalClose, onConfirm }
 					<Typography variant="h6">{ __( 'Sync class to version 3 Global Fonts', 'elementor' ) }</Typography>
 					<Typography variant="body2" color="secondary" sx={ { mb: 2, pt: 1 } }>
 						{ __(
-							'Only typography settings supported in version 3 will be applied, including: font family, responsive font sizes, weight, text transform, decoration, line height, letter spacing, and word spacing. Changes made in the class will automatically apply to version 3.',
+							'Only typography settings supported in Version 3 will be applied, including: font family, responsive font sizes, weight, text transform, decoration, line height, letter spacing, and word spacing. Changes made in the class will automatically apply to Version 3.',
 							'elementor'
 						) }
 					</Typography>
@@ -67,7 +67,7 @@ export const StartSyncToV3Modal = ( { externalOpen, onExternalClose, onConfirm }
 						{ __( 'Cancel', 'elementor' ) }
 					</Button>
 					<Button onClick={ handleConfirm } variant="contained" size="small">
-						{ __( 'Sync to version 3', 'elementor' ) }
+						{ __( 'Sync to Version 3', 'elementor' ) }
 					</Button>
 				</Box>
 			</DialogActions>
