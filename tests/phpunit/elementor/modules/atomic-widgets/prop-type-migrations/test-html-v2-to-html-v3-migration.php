@@ -16,7 +16,7 @@ class Test_Html_V2_To_Html_V3_Migration extends Elementor_Test_Base {
 
 	private array $migration;
 
-	protected function setUp(): void {
+	public function setUp(): void {
 		parent::setUp();
 
 		$path = ELEMENTOR_PATH . 'migrations/operations/html-v2-to-html-v3.json';
