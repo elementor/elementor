@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<button
 			role="tab"
 			id="tab-{{{ tab }}}"
-			aria-controls="panel-{{{ tab }}}"
+			aria-controls="elementor-template-library-templates-container"
 			aria-selected="false"
 			tabindex="-1"
 			class="elementor-component-tab elementor-template-library-menu-item"

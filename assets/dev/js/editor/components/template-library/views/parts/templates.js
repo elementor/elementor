@@ -173,6 +173,14 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		} else {
 			document.querySelectorAll( '.bulk-selected-item' ).forEach( function( item ) {
 				item.classList.remove( 'bulk-selected-item' );
+				item.setAttribute( 'aria-selected', 'false' );
+				item.setAttribute( 'tabindex', '-1' );
+
+				const checkbox = item.querySelector( '.bulk-selection-item-checkbox' );
+				if ( checkbox ) {
+					checkbox.checked = false;
+					checkbox.setAttribute( 'aria-checked', 'false' );
+				}
 			} );
 		}
 	},
@@ -192,6 +200,8 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	updateBulkSelectedItems( isChecked ) {
 		document.querySelectorAll( '.bulk-selection-item-checkbox' ).forEach( function( checkbox ) {
 			checkbox.checked = isChecked;
+			checkbox.setAttribute( 'aria-checked', String( isChecked ) );
+
 			const templateId = checkbox.dataset.template_id;
 			const type = checkbox.dataset.type;
 			const parentDiv = checkbox.closest( '.elementor-template-library-template' );
@@ -202,6 +212,11 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			} else {
 				elementor.templates.removeBulkSelectionItem( templateId, type );
 				parentDiv?.classList.remove( 'bulk-selected-item' );
+			}
+
+			if ( parentDiv ) {
+				parentDiv.setAttribute( 'aria-selected', String( isChecked ) );
+				parentDiv.setAttribute( 'tabindex', isChecked ? '0' : '-1' );
 			}
 		} );
 	},

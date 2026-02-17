@@ -261,22 +261,25 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		const $items = this.getFolderItems();
 		const currentIndex = $items.index( event.target );
 
-		event.preventDefault();
-		event.stopPropagation();
-
 		if ( event.shiftKey ) {
 			if ( currentIndex <= 0 ) {
+				// Close dropdown and let the browser naturally move focus backwards.
 				this.hideFoldersDropdown();
 				this.ui.ellipsisIcon.trigger( 'focus' );
 			} else {
+				event.preventDefault();
+				event.stopPropagation();
 				$items.eq( currentIndex - 1 ).trigger( 'focus' );
 			}
 			return;
 		}
 
 		if ( currentIndex < $items.length - 1 ) {
+			event.preventDefault();
+			event.stopPropagation();
 			$items.eq( currentIndex + 1 ).trigger( 'focus' );
 		} else {
+			// Close dropdown and let the browser naturally advance focus forward.
 			this.hideFoldersDropdown();
 			this.ui.ellipsisIcon.trigger( 'focus' );
 		}

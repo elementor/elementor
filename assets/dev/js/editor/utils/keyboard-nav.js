@@ -20,7 +20,12 @@ export function rovingTabindex( {
 	onActivate,
 	homeEnd = true,
 } ) {
-	const currentIndex = $items.index( event.currentTarget );
+	// Use event.currentTarget when the event is bound directly to items,
+	// fall back to event.target when the event is bound to a container.
+	const current = $items.index( event.currentTarget ) !== -1
+		? event.currentTarget
+		: event.target;
+	const currentIndex = $items.index( current );
 	let targetIndex = currentIndex;
 
 	const isHorizontal = 'horizontal' === orientation || 'both' === orientation;

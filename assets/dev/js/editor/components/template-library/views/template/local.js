@@ -151,22 +151,25 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		const $items = this.getMenuItems();
 		const currentIndex = $items.index( event.target );
 
-		event.preventDefault();
-		event.stopPropagation();
-
 		if ( event.shiftKey ) {
 			if ( currentIndex <= 0 ) {
+				// Close menu and let the browser naturally move focus backwards.
 				this.closeContextMenu();
 				this.ui.toggleMore.trigger( 'focus' );
 			} else {
+				event.preventDefault();
+				event.stopPropagation();
 				$items.eq( currentIndex - 1 ).trigger( 'focus' );
 			}
 			return;
 		}
 
 		if ( currentIndex < $items.length - 1 ) {
+			event.preventDefault();
+			event.stopPropagation();
 			$items.eq( currentIndex + 1 ).trigger( 'focus' );
 		} else {
+			// Close menu and let the browser naturally advance focus forward.
 			this.closeContextMenu();
 			this.ui.toggleMore.trigger( 'focus' );
 		}
