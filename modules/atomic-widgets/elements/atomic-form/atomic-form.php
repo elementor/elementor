@@ -19,6 +19,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Email_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V2_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -171,8 +172,38 @@ class Atomic_Form extends Atomic_Element_Base {
 
 	protected function define_default_children() {
 		return [
-			Widget_Builder::make( 'e-form-input' )
-				->build(),
+			// First row - two columns (Name and Last name)
+			$this->build_form_row( [
+				$this->build_field_group(
+					__( 'Name', 'elementor' ),
+					'name',
+					'text',
+					__( 'Placeholder', 'elementor' )
+				),
+				$this->build_field_group(
+					__( 'Last name', 'elementor' ),
+					'last-name',
+					'text',
+					__( 'your@mail.com', 'elementor' )
+				),
+			], 'two-columns' ),
+
+			// Second row - Email field (full width)
+			$this->build_field_group(
+				__( 'Email', 'elementor' ),
+				'email',
+				'email',
+				__( 'your@mail.com', 'elementor' )
+			),
+
+			// Third row - Message field (textarea)
+			$this->build_textarea_group(
+				__( 'Message', 'elementor' ),
+				'message',
+				__( 'Your message', 'elementor' )
+			),
+
+			// Submit button
 			Widget_Builder::make( Atomic_Button::get_element_type() )
 				->settings( [
 					'text' => Html_V2_Prop_Type::generate( [
@@ -188,6 +219,8 @@ class Atomic_Form extends Atomic_Element_Base {
 				] )
 				->is_locked( true )
 				->build(),
+
+			// Status messages
 			$this->build_status_message(
 				__( 'Thank you! Your submission has been received.', 'elementor' ),
 				'success',
@@ -227,6 +260,117 @@ class Atomic_Form extends Atomic_Element_Base {
 					->build(),
 			] )
 			->is_locked( true )
+			->build();
+	}
+
+	private function build_field_group( string $label_text, string $field_id, string $input_type, string $placeholder ): array {
+		$children = [];
+		
+		// Add Label widget with Html_V2_Prop_Type format
+		$children[] = Widget_Builder::make( 'e-form-label' )
+			->settings( [
+				'text' => Html_V2_Prop_Type::generate( [
+					'content'  => $label_text,
+					'children' => [],
+				] ),
+				'input-id' => String_Prop_Type::generate( $field_id ),
+			] )
+			->build();
+		
+		// Add input field
+		$children[] = Widget_Builder::make( 'e-form-input' )
+			->settings( [
+				'placeholder' => String_Prop_Type::generate( $placeholder ),
+				'type' => String_Prop_Type::generate( $input_type ),
+				'attributes' => Attributes_Prop_Type::generate( [
+					Key_Value_Prop_Type::generate( [
+						'key' => String_Prop_Type::generate( 'id' ),
+						'value' => String_Prop_Type::generate( $field_id ),
+					] ),
+					Key_Value_Prop_Type::generate( [
+						'key' => String_Prop_Type::generate( 'name' ),
+						'value' => String_Prop_Type::generate( $field_id ),
+					] ),
+				] ),
+			] )
+			->build();
+		
+		return Element_Builder::make( Div_Block::get_element_type() )
+			->settings( [
+				'attributes' => Attributes_Prop_Type::generate( [
+					Key_Value_Prop_Type::generate( [
+						'key' => String_Prop_Type::generate( 'style' ),
+						'value' => String_Prop_Type::generate( 'flex: 1;' ),
+					] ),
+				] ),
+			] )
+			->editor_settings( [
+				'title' => $label_text . ' ' . __( 'Field', 'elementor' ),
+			] )
+			->children( $children )
+			->build();
+	}
+
+	private function build_textarea_group( string $label_text, string $field_id, string $placeholder ): array {
+		$children = [];
+		
+		// Add Label widget with Html_V2_Prop_Type format
+		$children[] = Widget_Builder::make( 'e-form-label' )
+			->settings( [
+				'text' => Html_V2_Prop_Type::generate( [
+					'content'  => $label_text,
+					'children' => [],
+				] ),
+				'input-id' => String_Prop_Type::generate( $field_id ),
+			] )
+			->build();
+		
+		// Add textarea field
+		$children[] = Widget_Builder::make( 'e-form-textarea' )
+			->settings( [
+				'placeholder' => String_Prop_Type::generate( $placeholder ),
+				'rows' => Number_Prop_Type::generate( 4 ),
+				'attributes' => Attributes_Prop_Type::generate( [
+					Key_Value_Prop_Type::generate( [
+						'key' => String_Prop_Type::generate( 'id' ),
+						'value' => String_Prop_Type::generate( $field_id ),
+					] ),
+					Key_Value_Prop_Type::generate( [
+						'key' => String_Prop_Type::generate( 'name' ),
+						'value' => String_Prop_Type::generate( $field_id ),
+					] ),
+				] ),
+			] )
+			->build();
+		
+		return Element_Builder::make( Div_Block::get_element_type() )
+			->editor_settings( [
+				'title' => $label_text . ' ' . __( 'Field', 'elementor' ),
+			] )
+			->children( $children )
+			->build();
+	}
+
+	private function build_form_row( array $children, string $layout_type = 'single' ): array {
+		$row_settings = [
+			'attributes' => Attributes_Prop_Type::generate( [
+				Key_Value_Prop_Type::generate( [
+					'key' => String_Prop_Type::generate( 'data-layout' ),
+					'value' => String_Prop_Type::generate( $layout_type ),
+				] ),
+				Key_Value_Prop_Type::generate( [
+					'key' => String_Prop_Type::generate( 'style' ),
+					'value' => String_Prop_Type::generate( 'display: flex; gap: 10px;' ),
+				] ),
+			] ),
+		];
+
+		return Element_Builder::make( Div_Block::get_element_type() )
+			->settings( $row_settings )
+			->editor_settings( [
+				'title' => __( 'Form Row', 'elementor' ),
+			] )
+			->children( $children )
 			->build();
 	}
 
