@@ -42,6 +42,14 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 	const [ shouldHide, setShouldHide ] = useState( false );
 	const elementSettingValues = useElementSettings< PropValue >( elementId, Object.keys( propsSchema ) ) as Values;
 
+	Object.keys( propsSchema ).forEach( ( key ) => {
+		if ( ! Object.hasOwn( elementSettingValues || {}, key ) ) {
+			if ( propsSchema[ key ].default !== null ) {
+				elementSettingValues[ key ] = propsSchema[ key ].default as Values[ keyof Values ];
+			}
+		}
+	} );
+
 	const value = { [ bind ]: elementSettingValues?.[ bind ] ?? null };
 
 	const propType = createTopLevelObjectType( { schema: propsSchema } );
@@ -77,7 +85,6 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 		);
 	}, [ elementSettingValues, propTypeToBind?.dependencies, bind ] );
 	if ( shouldHide ) {
-		debugger;
 		return null;
 	}
 

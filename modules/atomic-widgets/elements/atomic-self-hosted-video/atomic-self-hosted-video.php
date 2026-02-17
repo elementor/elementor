@@ -116,8 +116,8 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 				->enum( array_keys( self::PRELOAD_OPTIONS ) ),
 			'download' => Boolean_Prop_Type::make()->default( false )
 				->set_dependencies( $allow_download_dependencies ),
-			'start_time' => Number_Prop_Type::make()->default( null ),
-			'end_time' => Number_Prop_Type::make()->default( null ),
+			'start_time' => Number_Prop_Type::make()->default( null )->meta( 'suffix', 'sec' ),
+			'end_time' => Number_Prop_Type::make()->default( null )->meta( 'suffix', 'sec' ),
 			'poster_enabled' => Boolean_Prop_Type::make()->default( false ),
 			'poster' => Image_Prop_Type::make()
 				->default_size( 'medium_large' )
@@ -135,11 +135,11 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 					Video_Control::bind_to( 'source' )
 						->set_label( esc_html__( 'Video', 'elementor' ) ),
 					Number_Control::bind_to( 'start_time' )
-						->set_label( esc_html__( 'Start Time (seconds)', 'elementor' ) )
+						->set_label( esc_html__( 'Start Time', 'elementor' ) )
 						->set_min( 0 )
 						->set_max( 10000 ),
 					Number_Control::bind_to( 'end_time' )
-						->set_label( esc_html__( 'End Time (seconds)', 'elementor' ) )
+						->set_label( esc_html__( 'End Time', 'elementor' ) )
 						->set_min( 0 )
 						->set_max( 10000 ),
 					Switch_Control::bind_to( 'autoplay' )->set_label( esc_html__( 'Autoplay', 'elementor' ) ),
@@ -157,8 +157,7 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 				->set_label( __( 'Display', 'elementor' ) )
 				->set_items([
 					Switch_Control::bind_to( 'poster_enabled' )
-						->set_label( esc_html__( 'Poster Image', 'elementor' ) )
-						->set_meta( [ 'topDivider' => true ] ),
+						->set_label( esc_html__( 'Poster Image', 'elementor' ) ),
 					Image_Control::bind_to( 'poster' )
 						->set_label( esc_html__( 'Image', 'elementor' ) ),
 				]),
