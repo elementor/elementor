@@ -43,6 +43,9 @@ class User_Progress_Validator extends Base_Validator {
 			'user_exit' => [
 				'type' => 'bool',
 			],
+			'starter_dismissed' => [
+				'type' => 'bool',
+			],
 		];
 	}
 
