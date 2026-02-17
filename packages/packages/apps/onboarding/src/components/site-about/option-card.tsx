@@ -3,7 +3,8 @@ import type { ElementType } from 'react';
 import { CheckIcon } from '@elementor/icons';
 import { Typography } from '@elementor/ui';
 
-import { CheckBadge, OptionCardRoot } from './styled-components';
+import { SelectionBadge } from '../ui/selection-badge';
+import { OptionCardRoot } from './styled-components';
 
 interface OptionCardProps {
 	label: string;
@@ -19,11 +20,7 @@ export function OptionCard( { label, icon: Icon, selected, onClick }: OptionCard
 			onClick={ onClick }
 			aria-pressed={ selected }
 		>
-			{ selected && (
-				<CheckBadge>
-					<CheckIcon sx={ { fontSize: 14, color: 'common.white' } } />
-				</CheckBadge>
-			) }
+			{ selected && <SelectionBadge icon={ CheckIcon } /> }
 			<Icon sx={ { fontSize: 32, color: 'text.secondary' } } />
 			<Typography variant="body2" color="text.secondary" align="center">
 				{ label }

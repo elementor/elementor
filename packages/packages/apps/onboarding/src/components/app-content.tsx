@@ -10,6 +10,7 @@ import { BuildingFor } from '../steps/screens/building-for';
 import { ExperienceLevel } from '../steps/screens/experience-level';
 import { Login } from '../steps/screens/login';
 import { SiteAbout } from '../steps/screens/site-about';
+import { SiteFeatures } from '../steps/screens/site-features';
 import { ThemeSelection } from '../steps/screens/theme-selection';
 import { getStepVisualConfig } from '../steps/step-visuals';
 import { StepId } from '../types';
@@ -151,12 +152,16 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 	const continueDisabled = isChoiceEmpty( choiceForStep );
 
 	const getContinueLabel = () => {
-		if ( isLast ) {
-			return __( 'Finish', 'elementor' );
-		}
-
 		if ( stepId === StepId.THEME_SELECTION && ! completedSteps.includes( StepId.THEME_SELECTION ) ) {
 			return __( 'Continue with this theme', 'elementor' );
+		}
+
+		if ( stepId === StepId.SITE_FEATURES && ! completedSteps.includes( StepId.SITE_FEATURES ) ) {
+			return __( 'Continue with Free', 'elementor' );
+		}
+
+		if ( isLast ) {
+			return __( 'Finish', 'elementor' );
 		}
 
 		return __( 'Continue', 'elementor' );
@@ -172,6 +177,8 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 				return <ExperienceLevel onComplete={ handleContinue } />;
 			case StepId.THEME_SELECTION:
 				return <ThemeSelection onComplete={ handleContinue } />;
+			case StepId.SITE_FEATURES:
+				return <SiteFeatures />;
 			default:
 				return <Box sx={ { flex: 1, width: '100%' } } />;
 		}
@@ -207,7 +214,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 				<Footer>
 					<FooterActions
 						showBack
-						showSkip={ ! isLast }
+						showSkip
 						showContinue
 						continueLabel={ getContinueLabel() }
 						continueDisabled={ continueDisabled }

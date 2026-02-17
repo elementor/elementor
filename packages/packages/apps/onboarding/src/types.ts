@@ -34,6 +34,7 @@ export interface StepVisualConfig {
 	imageLayout: ImageLayout;
 	background: string;
 	assets: RightPanelAsset[];
+	contentMaxWidth?: number;
 }
 
 export interface OnboardingProgress {
@@ -69,6 +70,8 @@ export interface OnboardingConfig {
 		dashboard: string;
 		editor: string;
 		connect: string;
+		comparePlans?: string;
+		exploreFeatures?: string;
 	};
 }
 
@@ -92,5 +95,7 @@ export interface OnboardingState {
 		dashboard: string;
 		editor: string;
 		connect: string;
+		comparePlans?: string;
+		exploreFeatures?: string;
 	};
 }

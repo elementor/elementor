@@ -37,6 +37,8 @@ interface EOnboardingConfig {
 		dashboard: string;
 		editor: string;
 		connect: string;
+		comparePlans?: string;
+		exploreFeatures?: string;
 	};
 }
 
