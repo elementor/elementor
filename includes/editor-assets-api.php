@@ -59,7 +59,11 @@ class EditorAssetsAPI {
 		return true;
 	}
 
-	public function get_assets_data( $force_request = false ): array {
+	public function get_assets_data( $force_request = false, bool $skip_cache = false ): array {
+		if ( $skip_cache ) {
+			return $this->fetch_data();
+		}
+
 		$assets_data = $this->get_transient( $this->config( static::ASSETS_DATA_TRANSIENT_KEY ) );
 
 		if ( $force_request || false === $assets_data ) {
