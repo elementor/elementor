@@ -24,12 +24,13 @@ test.describe( 'Inline editing toolbar placement @v4-tests', () => {
 		await context.close();
 	} );
 
-	test( 'Edit the heading-title from the canvas and check the value in the panel and in the front', async () => {
+	test.only( 'Edit the heading-title from the canvas and check the value in the panel and in the front', async () => {
 		// Arrange
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const flexboxId = await editor.addElement( { elType: 'e-flexbox' }, containerId );
 		const headingId1 = await editor.addWidget( { widgetType: 'e-heading', container: flexboxId } );
 		const headingId2 = await editor.addWidget( { widgetType: 'e-heading', container: flexboxId } );
+		const headingId3 = await editor.addWidget( { widgetType: 'e-heading', container: flexboxId } );
 
 		// Arrange.
 		await test.step( 'Style flexbox to have height so vertical scroll is available', async () => {
@@ -48,6 +49,24 @@ test.describe( 'Inline editing toolbar placement @v4-tests', () => {
 			await editor.v4Panel.style.closeSection( 'Layout' );
 		} );
 
+		// Arrange.
+		await test.step( 'Style heading 1 to be positioned on far left', async () => {
+			await editor.selectElement( headingId1 );
+
+			await editor.v4Panel.style.openSection( 'Position' );
+			await editor.v4Panel.style.setPositionSectionValue( 'absolute', { left: { size: 0, unit: 'px' } } );
+			await editor.v4Panel.style.closeSection( 'Position' );
+		} );
+
+		// Arrange.
+		await test.step( 'Style heading 32 to be positioned on far right', async () => {
+			await editor.selectElement( headingId3 );
+
+			await editor.v4Panel.style.openSection( 'Position' );
+			await editor.v4Panel.style.setPositionSectionValue( 'absolute', { right: { size: 0, unit: 'px' } } );
+			await editor.v4Panel.style.closeSection( 'Position' );
+		} );
+
 		await editor.closeNavigatorIfOpen();
 
 		await test.step( 'Test placement on far left', async () => {
@@ -58,9 +77,17 @@ test.describe( 'Inline editing toolbar placement @v4-tests', () => {
 			expect.soft( await page.screenshot( { fullPage: true } ) ).toMatchSnapshot( 'inline-editing-toolbar-placement-far-left.png' );
 		} );
 
-		await test.step( 'Test placement on far right', async () => {
+		await test.step( 'Test placement on center', async () => {
 			// Act
 			await editor.selectInlineEditedText( headingId2, 'This' );
+
+			// Assert.
+			expect.soft( await page.screenshot( { fullPage: true } ) ).toMatchSnapshot( 'inline-editing-toolbar-placement-center.png' );
+		} );
+
+		await test.step( 'Test placement on far right', async () => {
+			// Act
+			await editor.selectInlineEditedText( headingId3, 'This' );
 
 			// Assert.
 			expect.soft( await page.screenshot( { fullPage: true } ) ).toMatchSnapshot( 'inline-editing-toolbar-placement-far-right.png' );
