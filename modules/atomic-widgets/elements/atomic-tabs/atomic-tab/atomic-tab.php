@@ -10,7 +10,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Styles\Style_States;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_V2_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
@@ -157,10 +157,10 @@ class Atomic_Tab extends Atomic_Element_Base {
 		return [
 			Atomic_Paragraph::generate()
 				->settings( [
-					'paragraph' => Html_V2_Prop_Type::generate( [
-						'content'  => 'Tab',
-						'children' => [],
-					] ),
+				'paragraph' => Html_V3_Prop_Type::generate( [
+					'content'  => String_Prop_Type::generate( 'Tab' ),
+					'children' => [],
+				] ),
 					'tag' => String_Prop_Type::generate( 'span' ),
 				] )
 				->build(),
