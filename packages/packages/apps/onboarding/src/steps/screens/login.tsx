@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { ArrowRightIcon, BrandFacebookIcon } from '@elementor/icons';
-import { Box, Button, Divider, IconButton, Paper, Stack, styled, Typography } from '@elementor/ui';
+import { ArrowRightIcon } from '@elementor/icons';
+import { Box, Button, Divider, Image, Paper, Stack, styled, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getOnboardingAssetUrl } from '../step-visuals';
@@ -76,15 +76,14 @@ const GuestButton = styled( Button )( ( { theme } ) => ( {
 	lineHeight: theme.typography.pxToRem( 22 ),
 } ) );
 
-const SocialButton = styled( IconButton )( ( { theme } ) => ( {
+const SocialIcon = styled( Box )( ( { theme } ) => ( {
 	borderRadius: 100,
 	border: `1px solid ${ theme.palette.divider }`,
 	padding: theme.spacing( 1 ),
-	backgroundColor: theme.palette.background.paper,
-	color: theme.palette.text.primary,
-	'&:hover': {
-		backgroundColor: theme.palette.background.paper,
-	},
+	backgroundColor: theme.palette.common.white,
+	display: 'inline-flex',
+	alignItems: 'center',
+	justifyContent: 'center',
 } ) );
 
 interface LoginProps {
@@ -134,10 +133,28 @@ export function Login( { onConnect, onContinueAsGuest }: LoginProps ) {
 								{ __( 'Continue another way', 'elementor' ) }
 							</SecondaryButton>
 
-							<Stack direction="row" spacing={ 0.5 }>
-								<SocialButton>
-									<BrandFacebookIcon fontSize="small" />
-								</SocialButton>
+							<Stack direction="row">
+								<SocialIcon>
+									<Image
+										src={ getOnboardingAssetUrl( 'google.svg' ) }
+										alt="Google"
+										variant="circle"
+									/>
+								</SocialIcon>
+								<SocialIcon sx={ { marginInlineStart: '-10px' } }>
+									<Image
+										src={ getOnboardingAssetUrl( 'facebook.svg' ) }
+										alt="Facebook"
+										variant="circle"
+									/>
+								</SocialIcon>
+								<SocialIcon sx={ { marginInlineStart: '-10px' } }>
+									<Image
+										src={ getOnboardingAssetUrl( 'apple.svg' ) }
+										alt="Apple"
+										variant="circle"
+									/>
+								</SocialIcon>
 							</Stack>
 						</Stack>
 
