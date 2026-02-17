@@ -47,7 +47,13 @@ export function Easing( {}: FieldProps ) {
 			) ) }
 
 			<MenuSubheader
-				sx={ { cursor: 'pointer', color: 'text.tertiary', fontWeight: '400', display: 'flex', alignItems: 'center' } }
+				sx={ {
+					cursor: 'pointer',
+					color: 'text.tertiary',
+					fontWeight: '400',
+					display: 'flex',
+					alignItems: 'center' ,
+			} }
 				ref={ anchorRef }
 				onMouseDown={ ( e: MouseEvent ) => {
 					e.stopPropagation();
