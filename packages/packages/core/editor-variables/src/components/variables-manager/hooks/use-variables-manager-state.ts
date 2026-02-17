@@ -74,7 +74,7 @@ export const useVariablesManagerState = () => {
 			await service.load();
 
 			window.dispatchEvent(
-				new CustomEvent( 'elementor/editor-variables/saved-with-sync', {
+				new CustomEvent( 'elementor/editor-variables/save', {
 					detail: { originalVariables, variables, deletedVariables },
 				} )
 			);

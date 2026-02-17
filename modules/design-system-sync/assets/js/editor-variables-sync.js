@@ -35,7 +35,7 @@
 		return false;
 	}
 
-	window.addEventListener( 'elementor/editor-variables/saved-with-sync', function( event ) {
+	window.addEventListener( 'elementor/editor-variables/save', function( event ) {
 		try {
 			const { originalVariables = {}, variables = {}, deletedVariables = [] } = event.detail;
 
