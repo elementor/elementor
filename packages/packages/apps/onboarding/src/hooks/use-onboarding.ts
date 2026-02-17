@@ -35,7 +35,7 @@ import {
 	setLoading,
 	setUserChoice,
 	setUserChoices,
-	skipProInstall,
+	dismissProInstallScreen,
 	startOnboarding,
 } from '../store';
 import type { OnboardingChoices, StepIdType } from '../types';
@@ -81,7 +81,7 @@ export function useOnboarding() {
 			setConnected: ( connected: boolean ) => dispatch( setConnected( connected ) ),
 			setGuest: ( guest: boolean ) => dispatch( setGuest( guest ) ),
 			setShouldShowProInstallScreen: ( value: boolean ) => dispatch( setShouldShowProInstallScreen( value ) ),
-			skipProInstall: () => dispatch( skipProInstall() ),
+			dismissProInstallScreen: () => dispatch( dismissProInstallScreen() ),
 		} ),
 		[ dispatch ]
 	);

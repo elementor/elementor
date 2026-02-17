@@ -81,13 +81,13 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 	const handleProInstall = useCallback( () => {
 		installPro.mutate( undefined, {
 			onSuccess: () => {
-				actions.skipProInstall();
+				actions.dismissProInstallScreen();
 			},
 		} );
 	}, [ installPro, actions ] );
 
-	const handleSkipProInstall = useCallback( () => {
-		actions.skipProInstall();
+	const handleDismissProInstall = useCallback( () => {
+		actions.dismissProInstallScreen();
 	}, [ actions ] );
 
 	const handleClose = useCallback( () => {
@@ -231,7 +231,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 			>
 				<ProInstall
 					onInstall={ handleProInstall }
-					onSkip={ handleSkipProInstall }
+					onSkip={ handleDismissProInstall }
 					isInstalling={ installPro.isPending }
 					error={ installPro.error?.message ?? null }
 				/>

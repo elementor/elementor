@@ -32,7 +32,7 @@ export const selectUrls = ( state: State ) => state.onboarding.urls;
 
 export const selectShouldShowProInstallScreen = ( state: State ) => state.onboarding.shouldShowProInstallScreen;
 
-export const selectHasSkippedProInstall = ( state: State ) => state.onboarding.hasSkippedProInstall;
+export const selectHasProInstallScreenDismissed = ( state: State ) => state.onboarding.hasProInstallScreenDismissed;
 
 export const selectCurrentStep = __createSelector(
 	[ selectSteps, selectCurrentStepIndex ],
@@ -59,7 +59,7 @@ export const selectHasPassedLogin = __createSelector(
 );
 
 export const selectShouldShowProInstall = __createSelector(
-	[ selectIsConnected, selectShouldShowProInstallScreen, selectHasSkippedProInstall ],
-	( isConnected, shouldShowProInstallScreen, hasSkipped ) =>
-		isConnected && shouldShowProInstallScreen && ! hasSkipped
+	[ selectIsConnected, selectShouldShowProInstallScreen, selectHasProInstallScreenDismissed ],
+	( isConnected, shouldShowProInstallScreen, isDismissed ) =>
+		isConnected && shouldShowProInstallScreen && ! isDismissed
 );

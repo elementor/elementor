@@ -90,7 +90,7 @@ export interface OnboardingState {
 	isGuest: boolean;
 	userName: string;
 	shouldShowProInstallScreen: boolean;
-	hasSkippedProInstall: boolean;
+	hasProInstallScreenDismissed: boolean;
 	urls: {
 		dashboard: string;
 		editor: string;

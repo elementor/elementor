@@ -18,7 +18,7 @@ export {
 	setConnected,
 	setGuest,
 	setShouldShowProInstallScreen,
-	skipProInstall,
+	dismissProInstallScreen,
 } from './slice';
 
 export {
@@ -42,6 +42,6 @@ export {
 	selectIsStepCompleted,
 	selectHasPassedLogin,
 	selectShouldShowProInstallScreen,
-	selectHasSkippedProInstall,
+	selectHasProInstallScreenDismissed,
 	selectShouldShowProInstall,
 } from './selectors';
