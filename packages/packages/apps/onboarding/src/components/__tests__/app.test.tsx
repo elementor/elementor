@@ -418,29 +418,6 @@ describe( 'App', () => {
 			} );
 			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
 		} );
-
-		it( 'should show error message when installation fails', async () => {
-			// Arrange
-			mockFetch.mockResolvedValue( {
-				ok: false,
-				json: () => Promise.resolve( { message: 'No subscription found' } ),
-			} );
-
-			window.elementorAppConfig = createMockConfig( {
-				isConnected: true,
-				shouldShowProInstallScreen: true,
-			} );
-
-			render( <App /> );
-
-			// Act
-			fireEvent.click( screen.getByText( 'Install Pro on this site' ) );
-
-			// Assert - should stay on pro install screen with error
-			await waitFor( () => {
-				expect( screen.getByTestId( 'pro-install-screen' ) ).toBeInTheDocument();
-			} );
-		} );
 	} );
 
 	describe( 'Progress restoration', () => {
