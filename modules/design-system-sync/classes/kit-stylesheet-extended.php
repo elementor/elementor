@@ -23,6 +23,7 @@ class Kit_Stylesheet_Extended {
 		$css_entries = [];
 
 		$synced_variables = Variables_Provider::get_synced_color_variables();
+
 		if ( ! empty( $synced_variables ) ) {
 			$css_entries = array_merge( $css_entries, $this->get_variables_css_entries( $synced_variables ) );
 		}
