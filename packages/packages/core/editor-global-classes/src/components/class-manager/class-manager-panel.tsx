@@ -338,7 +338,7 @@ const StopSyncConfirmationDialog = ( { open, onClose, onConfirm }: StopSyncConfi
 			</ConfirmationDialog.Title>
 			<ConfirmationDialog.Content>
 				<ConfirmationDialog.ContentText>
-					{ __( "You're about to stop syncing a typography class to Version 3.", 'elementor' ) }
+					{ __( "You're about to stop syncing a typography class to version 3.", 'elementor' ) }
 				</ConfirmationDialog.ContentText>
 				<ConfirmationDialog.ContentText sx={ { mt: 1 } }>
 					{ __(
