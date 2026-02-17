@@ -41,6 +41,9 @@ test.describe( 'Transform repeater persistence @atomic-widgets', () => {
 		await moveItem.click( { force: true } );
 
 		await page.keyboard.press( 'Escape' );
+		await editor.selectElement( headingId );
+		await editor.v4Panel.openTab( 'style' );
+		await editor.openV2Section( 'effects' );
 
 		// Assert
 		const transformItems = page.locator( '.MuiTag-root' );
