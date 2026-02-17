@@ -41,7 +41,6 @@ export {
 	selectTotalSteps,
 	selectIsStepCompleted,
 	selectHasPassedLogin,
-	selectShouldShowProInstallScreen,
 	selectHasProInstallScreenDismissed,
 	selectShouldShowProInstall,
 } from './selectors';

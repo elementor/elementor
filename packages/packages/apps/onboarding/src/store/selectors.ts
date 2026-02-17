@@ -30,7 +30,7 @@ export const selectUserName = ( state: State ) => state.onboarding.userName;
 
 export const selectUrls = ( state: State ) => state.onboarding.urls;
 
-export const selectShouldShowProInstallScreen = ( state: State ) => state.onboarding.shouldShowProInstallScreen;
+const selectShouldShowProInstallScreen = ( state: State ) => state.onboarding.shouldShowProInstallScreen;
 
 export const selectHasProInstallScreenDismissed = ( state: State ) => state.onboarding.hasProInstallScreenDismissed;
 

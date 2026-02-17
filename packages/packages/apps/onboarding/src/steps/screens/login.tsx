@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ArrowRightIcon } from '@elementor/icons';
+import { ChevronRightIcon } from '@elementor/icons';
 import { Box, Divider, Image, Stack, styled, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -53,7 +53,7 @@ export function Login( { onConnect, onContinueAsGuest }: LoginProps ) {
 							color="secondary"
 							fullWidth
 							size="large"
-							endIcon={ <ArrowRightIcon fontSize="tiny" /> }
+							endIcon={ <ChevronRightIcon fontSize="tiny" /> }
 							onClick={ onConnect }
 						>
 							{ __( 'Continue another way', 'elementor' ) }
