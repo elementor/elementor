@@ -29,6 +29,7 @@ class Kit_Stylesheet_Extended {
 		}
 
 		$synced_classes = Classes_Provider::get_synced_classes();
+
 		if ( ! empty( $synced_classes ) ) {
 			$css_entries = array_merge( $css_entries, $this->get_classes_css_entries( $synced_classes ) );
 		}
