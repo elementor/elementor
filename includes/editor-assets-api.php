@@ -86,42 +86,18 @@ class EditorAssetsAPI {
 		return ! empty( $data[ $key ] ) && is_array( $data[ $key ] );
 	}
 
-	public static function has_valid_nested_array( $data, array $nested_array_keys, bool $require_non_empty = true ): bool {
-		if ( empty( $nested_array_keys ) ) {
-			if ( ! is_array( $data ) ) {
-				return false;
-			}
-			if ( $require_non_empty && empty( $data ) ) {
-				return false;
-			}
-
-			return true;
-		}
-
-		if ( ! is_array( $data ) ) {
-			return false;
-		}
-
+	public static function has_valid_nested_value( $data, array $nested_array_path ): bool {
 		$current = $data;
-		$depth = count( $nested_array_keys );
 
-		foreach ( $nested_array_keys as $index => $nested_key ) {
+		foreach ( $nested_array_path as $nested_key ) {
 			if ( ! is_array( $current ) || ! array_key_exists( $nested_key, $current ) ) {
 				return false;
 			}
-
 			$current = $current[ $nested_key ];
-			if ( $index === $depth - 1 ) {
-				if ( ! is_array( $current ) ) {
-					return false;
-				}
+		}
 
-				if ( $require_non_empty && empty( $current ) ) {
-					return false;
-				}
-
-				return true;
-			}
+		if ( ! is_array( $current ) || empty( $current ) ) {
+			return false;
 		}
 
 		return true;

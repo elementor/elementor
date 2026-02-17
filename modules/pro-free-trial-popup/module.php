@@ -143,7 +143,7 @@ class Module extends BaseModule {
 			return [];
 		}
 
-		if ( ! EditorAssetsAPI::has_valid_nested_array( $data, [ 'pro-free-trial-popup', 0 ] ) ) {
+		if ( ! EditorAssetsAPI::has_valid_nested_value( $data, [ 'pro-free-trial-popup', 0 ] ) ) {
 			return [];
 		}
 

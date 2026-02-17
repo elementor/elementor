@@ -38,7 +38,7 @@ class Transformations_Manager {
 	}
 
 	public function run_transformations(): array {
-		if ( ! EditorAssetsAPI::has_valid_nested_array( $this->home_screen_data, [] ) ) {
+		if ( ! EditorAssetsAPI::has_valid_nested_value( $this->home_screen_data, [] ) ) {
 			return [];
 		}
 
