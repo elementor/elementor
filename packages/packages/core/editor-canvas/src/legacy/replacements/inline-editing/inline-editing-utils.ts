@@ -13,9 +13,9 @@ const EDITOR_ELEMENTS_OUT_OF_IFRAME = [ TOP_BAR_SELECTOR, NAVIGATOR_SELECTOR, ED
 
 export const EDITOR_WRAPPER_SELECTOR = 'inline-editor-wrapper';
 
-const TOOLBAR_REFERENCE_ELEMENT_ID_PREFIX = 'inline-editing-toolbar-reference';
+const TOOLBAR_ANCHOR_ID_PREFIX = 'inline-editing-toolbar-anchor';
 
-const TOOLBAR_REFERENCE_ELEMENT_STYLES: CSSProperties = {
+const TOOLBAR_ANCHOR_STATIC_STYLES: CSSProperties = {
 	backgroundColor: 'transparent',
 	border: 'none',
 	outline: 'none',
@@ -76,25 +76,25 @@ export const useOnClickOutsideIframe = ( handleUnmount: () => void ) => {
 	}, [] );
 };
 
-export const useOnSelectionEnd = ( ownerDocument: Document, id: string ) => {
-	const [ toolbarReferenceElement, setToolbarReferenceElement ] = useState< HTMLElement | null >( null );
+export const useRenderToolbar = ( ownerDocument: Document, id: string ) => {
+	const [ toolbarAnchor, setToolbarAnchor ] = useState< HTMLElement | null >( null );
 
 	const onSelectionEnd = ( view: EditorView ) => {
 		const hasSelection = ! view.state.selection.empty;
 
-		removeToolbarReferenceElement( ownerDocument, id );
+		removeToolbarAnchor( ownerDocument, id );
 
 		if ( hasSelection ) {
-			setToolbarReferenceElement( createAndAttachToolbarReferenceElement( ownerDocument, id ) );
+			setToolbarAnchor( createAnchorBasedOnSelection( ownerDocument, id ) );
 		} else {
-			setToolbarReferenceElement( null );
+			setToolbarAnchor( null );
 		}
 	};
 
-	return { onSelectionEnd, toolbarReferenceElement };
+	return { onSelectionEnd, toolbarAnchor };
 };
 
-const createAndAttachToolbarReferenceElement = ( ownerDocument: Document, id: string ): HTMLElement | null => {
+const createAnchorBasedOnSelection = ( ownerDocument: Document, id: string ): HTMLElement | null => {
 	const frameWindow = ownerDocument.defaultView;
 	const selection = frameWindow?.getSelection();
 
@@ -105,37 +105,37 @@ const createAndAttachToolbarReferenceElement = ( ownerDocument: Document, id: st
 	const range = selection.getRangeAt( 0 );
 	const selectionRect = range.getBoundingClientRect();
 	const bodyRect = ownerDocument.body.getBoundingClientRect();
-	const toolbarReferenceElement = ownerDocument.createElement( 'span' );
+	const toolbarAnchor = ownerDocument.createElement( 'span' );
 
-	setToolbarReferenceElementStyles( toolbarReferenceElement, selectionRect, bodyRect );
-	toolbarReferenceElement.setAttribute( 'id', getToolbarReferenceElementId( id ) );
+	styleToolbarAnchor( toolbarAnchor, selectionRect, bodyRect );
+	toolbarAnchor.setAttribute( 'id', getToolbarAnchorId( id ) );
 
-	ownerDocument.body.appendChild( toolbarReferenceElement );
+	ownerDocument.body.appendChild( toolbarAnchor );
 
-	return toolbarReferenceElement;
+	return toolbarAnchor;
 };
 
-export const removeToolbarReferenceElement = ( ownerDocument: Document, id: string ) => {
-	const toolbarReferenceElement = getToolbarReferenceElement( ownerDocument, id );
+export const removeToolbarAnchor = ( ownerDocument: Document, id: string ) => {
+	const toolbarAnchor = getToolbarAnchor( ownerDocument, id );
 
-	if ( toolbarReferenceElement ) {
-		ownerDocument.body.removeChild( toolbarReferenceElement );
+	if ( toolbarAnchor ) {
+		ownerDocument.body.removeChild( toolbarAnchor );
 	}
 };
 
-const getToolbarReferenceElementId = ( id: string ) => `${ TOOLBAR_REFERENCE_ELEMENT_ID_PREFIX }-${ id }`;
+const getToolbarAnchorId = ( id: string ) => `${ TOOLBAR_ANCHOR_ID_PREFIX }-${ id }`;
 
-export const getToolbarReferenceElement = ( ownerDocument: Document, id: string ) =>
-	ownerDocument.getElementById( getToolbarReferenceElementId( id ) ) as HTMLDivElement | null;
+export const getToolbarAnchor = ( ownerDocument: Document, id: string ) =>
+	ownerDocument.getElementById( getToolbarAnchorId( id ) ) as HTMLDivElement | null;
 
-const setToolbarReferenceElementStyles = ( element: HTMLElement, selectionRect: DOMRect, bodyRect: DOMRect ) => {
+const styleToolbarAnchor = ( anchor: HTMLElement, selectionRect: DOMRect, bodyRect: DOMRect ) => {
 	const { width, height } = selectionRect;
 
-	Object.assign( element.style, TOOLBAR_REFERENCE_ELEMENT_STYLES );
-	element.style.top = `${ selectionRect.top - bodyRect.top }px`;
-	element.style.left = `${ selectionRect.left - bodyRect.left }px`;
-	element.style.width = `${ width }px`;
-	element.style.height = `${ height }px`;
+	Object.assign( anchor.style, TOOLBAR_ANCHOR_STATIC_STYLES );
+	anchor.style.top = `${ selectionRect.top - bodyRect.top }px`;
+	anchor.style.left = `${ selectionRect.left - bodyRect.left }px`;
+	anchor.style.width = `${ width }px`;
+	anchor.style.height = `${ height }px`;
 };
 
 export const horizontalShifterMiddleware: {
@@ -147,7 +147,7 @@ export const horizontalShifterMiddleware: {
 		const {
 			x: left,
 			y: top,
-			elements: { reference, floating },
+			elements: { reference: anchor, floating },
 		} = state;
 
 		const newState: MiddlewareReturn = {
@@ -164,10 +164,10 @@ export const horizontalShifterMiddleware: {
 			return newState;
 		}
 
-		const referenceRect = reference.getBoundingClientRect();
+		const anchorRect = anchor.getBoundingClientRect();
 		const right = left + floating.offsetWidth;
-		const documentWidth = ( reference as HTMLElement ).ownerDocument.body.offsetWidth;
-		const isRightOverflown = right > documentWidth && referenceRect.right < right;
+		const documentWidth = ( anchor as HTMLElement ).ownerDocument.body.offsetWidth;
+		const isRightOverflown = right > documentWidth && anchorRect.right < right;
 
 		if ( isRightOverflown ) {
 			const diff = right - documentWidth;
