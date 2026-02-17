@@ -10,13 +10,8 @@ function getConfig() {
 	return window.elementorAppConfig?.[ 'e-onboarding' ] ?? null;
 }
 
-/**
- * Returns a callback that fetches the user's Pro subscription status
- * from the server. Intended to be called after a successful connect flow,
- * since the subscription check requires an active connection.
- */
-export function useCheckProStatus() {
-	const checkProStatus = useCallback( async (): Promise< { shouldShowProInstallScreen: boolean } > => {
+export function useCheckProInstallScreen() {
+	const checkProInstallScreen = useCallback( async (): Promise< { shouldShowProInstallScreen: boolean } > => {
 		const config = getConfig();
 
 		if ( ! config ) {
@@ -41,5 +36,5 @@ export function useCheckProStatus() {
 		};
 	}, [] );
 
-	return checkProStatus;
+	return checkProInstallScreen;
 }

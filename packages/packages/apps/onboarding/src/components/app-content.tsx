@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useCheckProStatus } from '../hooks/use-check-pro-status';
+import { useCheckProInstallScreen } from '../hooks/use-check-pro-status';
 import { useElementorConnect } from '../hooks/use-elementor-connect';
 import { useInstallPro } from '../hooks/use-install-pro';
 import { useOnboarding } from '../hooks/use-onboarding';
@@ -59,13 +59,13 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 		}
 	}, [ hadUnexpectedExit, actions ] );
 
-	const checkProStatus = useCheckProStatus();
+	const checkProInstallScreen = useCheckProInstallScreen();
 
 	const handleConnectSuccess = useCallback( async () => {
-		const proStatus = await checkProStatus();
-		actions.setShouldShowProInstallScreen( proStatus.shouldShowProInstallScreen );
+		const result = await checkProInstallScreen();
+		actions.setShouldShowProInstallScreen( result.shouldShowProInstallScreen );
 		actions.setConnected( true );
-	}, [ actions, checkProStatus ] );
+	}, [ actions, checkProInstallScreen ] );
 
 	const handleConnect = useElementorConnect( {
 		connectUrl: urls.connect,

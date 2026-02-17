@@ -107,7 +107,7 @@ class Module extends BaseModule {
 			'userName' => $this->get_user_display_name(),
 			'steps' => $steps,
 			'uiTheme' => $this->get_ui_theme_preference(),
-			'shouldShowProInstallScreen' => $is_connected ? $this->has_pro_subscription() : false,
+			'shouldShowProInstallScreen' => $is_connected ? $this->should_show_pro_install_screen() : false,
 			'urls' => [
 				'dashboard' => admin_url(),
 				'editor' => admin_url( 'edit.php?post_type=elementor_library' ),
@@ -142,7 +142,7 @@ class Module extends BaseModule {
 		return $connect->get_app( 'library' );
 	}
 
-	private function has_pro_subscription(): bool {
+	private function should_show_pro_install_screen(): bool {
 		if ( Utils::has_pro() || Utils::is_pro_installed_and_not_active() ) {
 			return false;
 		}

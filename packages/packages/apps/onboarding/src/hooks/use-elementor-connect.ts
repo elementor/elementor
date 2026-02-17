@@ -10,9 +10,6 @@ const POPUP_HEIGHT = 700;
 const POPUP_TOP = 200;
 const POPUP_LEFT = 0;
 
-/**
- * Opens the Elementor Connect flow in a popup window.
- */
 export function useElementorConnect( { connectUrl, onSuccess }: ConnectOptions ) {
 	const onSuccessRef = useRef( onSuccess );
 	onSuccessRef.current = onSuccess;
