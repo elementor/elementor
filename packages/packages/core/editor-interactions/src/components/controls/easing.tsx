@@ -7,11 +7,11 @@ import { __ } from '@wordpress/i18n';
 import { type FieldProps } from '../../types';
 import { InteractionsPromotionChip, type InteractionsPromotionChipRef } from '../../ui/interactions-promotion-chip';
 
-const FREE_EASING_OPTIONS = {
+const BASE_EASING_OPTIONS = {
 	easeIn: __( 'Ease In', 'elementor' ),
 };
 
-const PRO_EASING_OPTIONS = {
+const EXTENDED_EASING_OPTIONS = {
 	easeInOut: __( 'Ease In Out', 'elementor' ),
 	easeOut: __( 'Ease Out', 'elementor' ),
 	backIn: __( 'Back In', 'elementor' ),
@@ -26,8 +26,8 @@ export function Easing( {}: FieldProps ) {
 	const promotionRef = useRef< InteractionsPromotionChipRef >( null );
 	const anchorRef = useRef< HTMLElement >( null );
 
-	const freeOptions = Object.entries( FREE_EASING_OPTIONS ).map( ( [ key, label ] ) => ( { key, label } ) );
-	const proOptions = Object.entries( PRO_EASING_OPTIONS ).map( ( [ key, label ] ) => ( { key, label } ) );
+	const baseOptions = Object.entries( BASE_EASING_OPTIONS ).map( ( [ key, label ] ) => ( { key, label } ) );
+	const extendedOptions = Object.entries( EXTENDED_EASING_OPTIONS ).map( ( [ key, label ] ) => ( { key, label } ) );
 
 	return (
 		<Select
@@ -40,7 +40,7 @@ export function Easing( {}: FieldProps ) {
 				disablePortal: true,
 			} }
 		>
-			{ freeOptions.map( ( option ) => (
+			{ baseOptions.map( ( option ) => (
 				<MenuListItem key={ option.key } value={ option.key }>
 					{ option.label }
 				</MenuListItem>
@@ -63,7 +63,7 @@ export function Easing( {}: FieldProps ) {
 				/>
 			</MenuSubheader>
 
-			{ proOptions.map( ( option ) => (
+			{ extendedOptions.map( ( option ) => (
 				<MenuListItem key={ option.key } value={ option.key } disabled sx={ { pl: 3 } }>
 					{ option.label }
 				</MenuListItem>
