@@ -22,6 +22,7 @@ import {
 	selectIsGuest,
 	selectIsLastStep,
 	selectIsLoading,
+	selectShouldShowProInstall,
 	selectSteps,
 	selectTotalSteps,
 	selectUrls,
@@ -30,9 +31,11 @@ import {
 	setError,
 	setExitType,
 	setGuest,
+	setHasProSubscription,
 	setLoading,
 	setUserChoice,
 	setUserChoices,
+	skipProInstall,
 	startOnboarding,
 } from '../store';
 import type { OnboardingChoices, StepIdType } from '../types';
@@ -55,6 +58,7 @@ export function useOnboarding() {
 	const isConnected = __useSelector( selectIsConnected );
 	const isGuest = __useSelector( selectIsGuest );
 	const hasPassedLogin = __useSelector( selectHasPassedLogin );
+	const shouldShowProInstall = __useSelector( selectShouldShowProInstall );
 	const userName = __useSelector( selectUserName );
 	const urls = __useSelector( selectUrls );
 
@@ -76,6 +80,8 @@ export function useOnboarding() {
 			clearUnexpectedExit: () => dispatch( clearUnexpectedExit() ),
 			setConnected: ( connected: boolean ) => dispatch( setConnected( connected ) ),
 			setGuest: ( guest: boolean ) => dispatch( setGuest( guest ) ),
+			setHasProSubscription: ( value: boolean ) => dispatch( setHasProSubscription( value ) ),
+			skipProInstall: () => dispatch( skipProInstall() ),
 		} ),
 		[ dispatch ]
 	);
@@ -96,6 +102,7 @@ export function useOnboarding() {
 		isConnected,
 		isGuest,
 		hasPassedLogin,
+		shouldShowProInstall,
 		userName,
 		urls,
 		actions,

@@ -10,6 +10,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -90,6 +91,8 @@ class Module extends BaseModule {
 		// clear the theme selection so the user can re-select.
 		$this->maybe_invalidate_theme_selection( $progress, $choices );
 
+		$is_connected = $this->is_user_connected();
+
 		Plugin::$instance->app->set_settings( 'e-onboarding', [
 			'version' => self::VERSION,
 			'restUrl' => rest_url( 'elementor/v1/e-onboarding/' ),
@@ -100,10 +103,11 @@ class Module extends BaseModule {
 			] ),
 			'choices' => $choices->to_array(),
 			'hadUnexpectedExit' => $progress->had_unexpected_exit(),
-			'isConnected' => $this->is_user_connected(),
+			'isConnected' => $is_connected,
 			'userName' => $this->get_user_display_name(),
 			'steps' => $steps,
 			'uiTheme' => $this->get_ui_theme_preference(),
+			'hasProSubscription' => $is_connected ? $this->has_pro_subscription() : false,
 			'urls' => [
 				'dashboard' => admin_url(),
 				'editor' => admin_url( 'edit.php?post_type=elementor_library' ),
@@ -136,6 +140,28 @@ class Module extends BaseModule {
 		}
 
 		return $connect->get_app( 'library' );
+	}
+
+	private function has_pro_subscription(): bool {
+		if ( Utils::has_pro() || Utils::is_pro_installed_and_not_active() ) {
+			return false;
+		}
+
+		$connect = Plugin::$instance->common->get_component( 'connect' );
+
+		if ( ! $connect ) {
+			return false;
+		}
+
+		$pro_install_app = $connect->get_app( 'pro-install' );
+
+		if ( ! $pro_install_app || ! $pro_install_app->is_connected() ) {
+			return false;
+		}
+
+		$download_link = $pro_install_app->get_download_link();
+
+		return ! empty( $download_link );
 	}
 
 	private function get_ui_theme_preference(): string {

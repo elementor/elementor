@@ -65,6 +65,7 @@ export interface OnboardingConfig {
 	hadUnexpectedExit: boolean;
 	steps: Step[];
 	isConnected: boolean;
+	hasProSubscription: boolean;
 	urls: {
 		dashboard: string;
 		editor: string;
@@ -88,6 +89,8 @@ export interface OnboardingState {
 	isConnected: boolean;
 	isGuest: boolean;
 	userName: string;
+	hasProSubscription: boolean;
+	hasSkippedProInstall: boolean;
 	urls: {
 		dashboard: string;
 		editor: string;

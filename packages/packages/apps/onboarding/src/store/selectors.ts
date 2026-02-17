@@ -30,6 +30,10 @@ export const selectUserName = ( state: State ) => state.onboarding.userName;
 
 export const selectUrls = ( state: State ) => state.onboarding.urls;
 
+export const selectHasProSubscription = ( state: State ) => state.onboarding.hasProSubscription;
+
+export const selectHasSkippedProInstall = ( state: State ) => state.onboarding.hasSkippedProInstall;
+
 export const selectCurrentStep = __createSelector(
 	[ selectSteps, selectCurrentStepIndex ],
 	( steps, index ) => steps[ index ] ?? null
@@ -52,4 +56,10 @@ export const selectIsStepCompleted = __createSelector(
 export const selectHasPassedLogin = __createSelector(
 	[ selectIsConnected, selectIsGuest ],
 	( isConnected, isGuest ) => isConnected || isGuest
+);
+
+export const selectShouldShowProInstall = __createSelector(
+	[ selectIsConnected, selectHasProSubscription, selectHasSkippedProInstall ],
+	( isConnected, hasProSubscription, hasSkipped ) =>
+		isConnected && hasProSubscription && ! hasSkipped
 );

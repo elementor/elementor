@@ -90,12 +90,11 @@ const SocialButton = styled( IconButton )( ( { theme } ) => ( {
 interface LoginProps {
 	onConnect?: () => void;
 	onContinueAsGuest?: () => void;
-	connectUrl?: string;
 }
 
 const backgroundUrl = getOnboardingAssetUrl( 'login.png' );
 
-export function Login( { onConnect, onContinueAsGuest, connectUrl }: LoginProps ) {
+export function Login( { onConnect, onContinueAsGuest }: LoginProps ) {
 	return (
 		<LoginRoot backgroundUrl={ backgroundUrl } data-testid="login-screen">
 			<Backdrop />
@@ -109,7 +108,6 @@ export function Login( { onConnect, onContinueAsGuest, connectUrl }: LoginProps 
 						color="primary"
 						fullWidth
 						size="large"
-						href={ connectUrl || undefined }
 						onClick={ onConnect }
 					>
 						{ __( 'Sign in to Elementor', 'elementor' ) }
@@ -131,6 +129,7 @@ export function Login( { onConnect, onContinueAsGuest, connectUrl }: LoginProps 
 								fullWidth
 								size="large"
 								endIcon={ <ArrowRightIcon fontSize="tiny" /> }
+								onClick={ onConnect }
 							>
 								{ __( 'Continue another way', 'elementor' ) }
 							</SecondaryButton>

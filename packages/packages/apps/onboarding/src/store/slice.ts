@@ -74,6 +74,8 @@ function getEmptyState(): OnboardingState {
 		isConnected: false,
 		isGuest: false,
 		userName: '',
+		hasProSubscription: false,
+		hasSkippedProInstall: false,
 		urls: { dashboard: '', editor: '', connect: '' },
 	};
 }
@@ -107,6 +109,8 @@ function buildStateFromConfig(
 		isConnected: config.isConnected ?? false,
 		isGuest: false,
 		userName: config.userName ?? '',
+		hasProSubscription: config.hasProSubscription ?? false,
+		hasSkippedProInstall: false,
 		urls: config.urls ?? { dashboard: '', editor: '', connect: '' },
 	};
 }
@@ -214,6 +218,14 @@ export const slice = __createSlice( {
 		setGuest: ( state, action: PayloadAction< boolean > ) => {
 			state.isGuest = action.payload;
 		},
+
+		setHasProSubscription: ( state, action: PayloadAction< boolean > ) => {
+			state.hasProSubscription = action.payload;
+		},
+
+		skipProInstall: ( state ) => {
+			state.hasSkippedProInstall = true;
+		},
 	},
 } );
 
@@ -234,6 +246,8 @@ export const {
 	clearUnexpectedExit,
 	setConnected,
 	setGuest,
+	setHasProSubscription,
+	skipProInstall,
 } = slice.actions;
 
 export function registerOnboardingSlice() {

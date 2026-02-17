@@ -26,6 +26,7 @@ interface EOnboardingConfig {
 	};
 	hadUnexpectedExit: boolean;
 	isConnected: boolean;
+	hasProSubscription?: boolean;
 	userName?: string;
 	uiTheme?: 'auto' | 'dark' | 'light';
 	steps: Array<{
