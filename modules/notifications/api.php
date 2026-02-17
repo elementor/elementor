@@ -5,7 +5,7 @@ use Elementor\User;
 
 class API {
 
-	const NOTIFICATIONS_URL = 'https://assets.elementor.com/notifications/v1/notifications.json';
+	const NOTIFICATIONS_URL = 'https://broken-assets.elementor.com/notifications/v1/notifications.json';
 
 	public static function get_notifications_by_conditions( $force_request = false ) {
 		$notifications = static::get_notifications( $force_request );

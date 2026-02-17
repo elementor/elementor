@@ -48,7 +48,7 @@ class Set_Fonts_And_Colors extends Step_Base {
 	}
 
 	public function get_image_src(): string {
-		return 'https://assets.elementor.com/checklist/v1/images/checklist-step-2.jpg';
+		return 'https://broken-assets.elementor.com/checklist/v1/images/checklist-step-2.jpg';
 	}
 
 	public function get_learn_more_url(): string {

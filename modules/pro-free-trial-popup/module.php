@@ -29,7 +29,7 @@ class Module extends BaseModule {
 	const POPUP_DISPLAYED_OPTION = '_e_pro_free_trial_popup_displayed';
 	const AB_TEST_NAME = 'pro_free_trial_popup';
 	const REQUIRED_VISIT_COUNT = 4;
-	const EXTERNAL_DATA_URL = 'https://assets.elementor.com/pro-free-trial-popup/v1/pro-free-trial-popup.json';
+	const EXTERNAL_DATA_URL = 'https://broken-assets.elementor.com/pro-free-trial-popup/v1/pro-free-trial-popup.json';
 	const ACTIVE = 'active';
 
 	private Elementor_Adapter_Interface $elementor_adapter;
