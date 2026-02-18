@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { fireEvent, screen, within } from '@testing-library/react';
 import { renderWithTheme } from 'test-utils';
+import { fireEvent, screen, within } from '@testing-library/react';
 
 import { Direction } from '../components/controls/direction';
 import { Easing } from '../components/controls/easing';

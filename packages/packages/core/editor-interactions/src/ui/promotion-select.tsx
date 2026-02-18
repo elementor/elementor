@@ -44,7 +44,13 @@ export function PromotionSelect( {
 
 			<MenuSubheader
 				ref={ anchorRef }
-				sx={ { cursor: 'pointer', color: 'text.tertiary', fontWeight: '400', display: 'flex', alignItems: 'center' } }
+				sx={ {
+					cursor: 'pointer',
+					color: 'text.tertiary',
+					fontWeight: '400',
+					display: 'flex',
+					alignItems: 'center',
+				} }
 				onMouseDown={ ( e: MouseEvent ) => {
 					e.stopPropagation();
 					promotionRef.current?.toggle();
