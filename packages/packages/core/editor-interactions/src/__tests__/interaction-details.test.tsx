@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 
+import { Direction } from '../components/controls/direction';
 import { Easing } from '../components/controls/easing';
 import { Effect } from '../components/controls/effect';
 import { Trigger } from '../components/controls/trigger';
@@ -8,6 +9,7 @@ import { InteractionDetails } from '../components/interaction-details';
 import type { InteractionItemValue } from '../types';
 import { extractExcludedBreakpoints } from '../utils/prop-value-utils';
 import { createInteractionItemValue } from './utils';
+import { EffectType } from '../components/controls/effect-type';
 
 jest.mock( '../interactions-controls-registry', () => ( {
 	getInteractionsControl: jest.fn(),
@@ -85,6 +87,18 @@ describe( 'InteractionDetails', () => {
 			if ( type === 'easing' ) {
 				return {
 					component: Easing,
+				};
+			}
+
+			if ( type === 'direction' ) {
+				return {
+					component: Direction,
+				};
+			}
+
+			if ( type === 'effectType' ) {
+				return {
+					component: EffectType,
 				};
 			}
 
