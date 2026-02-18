@@ -117,7 +117,7 @@ class Global_Colors_Extension {
 
 		if ( empty( $v4_colors ) ) {
 			return $items;
-		}	
+		}
 
 		foreach ( $v4_colors as $color ) {
 			$label = sanitize_text_field( $color['label'] ?? '' );
