@@ -97,6 +97,7 @@ class Module extends BaseModule {
 			EditorAssetsAPI::ASSETS_DATA_KEY => 'mixpanel',
 		] );
 
+		// We are bypassing the cache, because we want to get the latest data from the API.
 		return $editor_assets_api->get_assets_data( false, true );
 	}
 }

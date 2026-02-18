@@ -6,6 +6,8 @@ use Elementor\User;
 
 class API {
 
+	const NOTIFICATIONS_URL = 'https://assets.elementor.com/notifications/v1/notifications.json';
+
 	public static function get_notifications_by_conditions( $force_request = false ) {
 		$notifications = static::get_notifications( $force_request );
 
@@ -30,7 +32,7 @@ class API {
 
 	private static function get_notifications( $force_request = false ) {
 		$editor_assets_api = new EditorAssetsAPI( [
-			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.elementor.com/notifications/v1/notifications.json',
+			EditorAssetsAPI::ASSETS_DATA_URL => self::NOTIFICATIONS_URL,
 			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_notifications_data',
 			EditorAssetsAPI::ASSETS_DATA_KEY => 'notifications',
 			EditorAssetsAPI::ASSETS_DATA_EXPIRATION => '+12 hours',

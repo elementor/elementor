@@ -12,8 +12,6 @@ class EditorAssetsAPI {
 
 	const ASSETS_DATA_EXPIRATION = 'ASSETS_DATA_EXPIRATION';
 
-	const HTTP_STATUS_OK = 200;
-
 	public function __construct( array $config ) {
 		$this->config = $config;
 	}
@@ -46,7 +44,7 @@ class EditorAssetsAPI {
 	private function fetch_data(): array {
 		$response = wp_remote_get( $this->config( static::ASSETS_DATA_URL ) );
 
-		if ( is_wp_error( $response ) || static::HTTP_STATUS_OK !== (int) wp_remote_retrieve_response_code( $response ) ) {
+		if ( is_wp_error( $response ) || WP_Http::OK !== (int) wp_remote_retrieve_response_code( $response ) ) {
 			return [];
 		}
 
@@ -111,6 +109,10 @@ class EditorAssetsAPI {
 		}
 
 		return true;
+	}
+
+	public static function is_valid_data( $data ): bool {
+		return static::is_non_empty_array( $data );
 	}
 
 	private static function is_non_empty_array( $value ): bool {
