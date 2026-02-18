@@ -70,7 +70,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</span>
 		<# } #>
 	</button>
-	<div class="elementor-panel-category-items elementor-responsive-panel"></div>
+	<div class="elementor-panel-category-items elementor-responsive-panel">
+		<?php do_action( 'elementor/editor/templates/panel/category/content' ); ?>
+	</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-element-search">

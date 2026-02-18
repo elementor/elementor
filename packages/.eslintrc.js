@@ -136,7 +136,6 @@ module.exports = {
 				],
 
 				'testing-library/no-test-id-queries': 'error',
-				'testing-library/render-result-naming-convention': 'off',
 
 				// Add support for `@jest-environment` in JSDocs.
 				'jsdoc/check-tag-names': [
