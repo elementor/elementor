@@ -35,6 +35,7 @@ export * from './position';
 export * from './query';
 export * from './html';
 export * from './html-v2';
+export * from './html-v3';
 export * from './filter-prop-types/filter';
 export * from './transform-prop-types/transform';
 export * from './transform-prop-types/transform-functions';
