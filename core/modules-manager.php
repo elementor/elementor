@@ -136,6 +136,7 @@ class Modules_Manager {
 			'components',
 			'interactions',
 			'feedback',
+			'angie-entrypoints',
 			'editor-one',
 		];
 	}
