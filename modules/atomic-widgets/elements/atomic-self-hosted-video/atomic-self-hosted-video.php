@@ -107,7 +107,8 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 			'autoplay' => Boolean_Prop_Type::make()->default( false ),
 			'playsinline' => Boolean_Prop_Type::make()
 				->default( false )
-				->set_dependencies( $playsinline_dependencies ),
+				->set_dependencies( $playsinline_dependencies )
+				->meta( Overridable_Prop_Type::ignore() ),
 			'mute' => Boolean_Prop_Type::make()->default( false ),
 			'loop' => Boolean_Prop_Type::make()->default( false ),
 			'controls' => Boolean_Prop_Type::make()->default( true ),
@@ -121,8 +122,9 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 			'poster_enabled' => Boolean_Prop_Type::make()->default( false ),
 			'poster' => Image_Prop_Type::make()
 				->default_size( 'medium_large' )
-				->default_url( Placeholder_Image::get_placeholder_image() )
-				->set_dependencies( $poster_dependencies ),
+				->default_url( Placeholder_Image::get_placeholder_image() ),
+				// TODO: restore the dependency when dependencies works in overridables
+				// ->set_dependencies( $poster_dependencies ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
 	}
@@ -152,10 +154,6 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 					Select_Control::bind_to( 'preload' )
 						->set_label( esc_html__( 'Preload', 'elementor' ) )
 						->set_options( self::format_options( self::PRELOAD_OPTIONS ) ),
-				]),
-			Section::make()
-				->set_label( __( 'Display', 'elementor' ) )
-				->set_items([
 					Switch_Control::bind_to( 'poster_enabled' )
 						->set_label( esc_html__( 'Poster Image', 'elementor' ) ),
 					Image_Control::bind_to( 'poster' )
