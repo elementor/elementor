@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, screen, within } from '@testing-library/react';
+import { renderWithTheme } from 'test-utils';
 
 import { Direction } from '../components/controls/direction';
 import { Easing } from '../components/controls/easing';
@@ -52,7 +53,7 @@ describe( 'InteractionDetails', () => {
 	const mockOnPlayInteraction = jest.fn();
 
 	const renderInteractionDetails = ( interaction: InteractionItemValue ) => {
-		return render(
+		return renderWithTheme(
 			<InteractionDetails
 				interaction={ interaction }
 				onChange={ mockOnChange }
@@ -220,11 +221,11 @@ describe( 'InteractionDetails', () => {
 			fireEvent.mouseDown( triggerSelect );
 
 			// Sanity: core UI enables only these trigger options.
-			expect( screen.getByRole( 'option', { name: /page load/i } ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'option', { name: /scroll into view/i } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'option', { name: /page load/i, hidden: true } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'option', { name: /scroll into view/i, hidden: true } ) ).toBeInTheDocument();
 
 			// Guard: Pro-only trigger should be present but disabled in the core trigger control.
-			const scrollOnOption = screen.getByRole( 'option', { name: /while scrolling/i } );
+			const scrollOnOption = screen.getByRole("option", { name: /while scrolling/i, hidden: true } );
 			expect( scrollOnOption ).toBeInTheDocument();
 			expect( scrollOnOption ).toHaveAttribute( 'aria-disabled', 'true' );
 		} );
@@ -245,7 +246,7 @@ describe( 'InteractionDetails', () => {
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const triggerSelect = comboboxes[ 0 ];
 			fireEvent.mouseDown( triggerSelect );
-			const scrollInOption = screen.getByRole( 'option', { name: /scroll into view/i } );
+			const scrollInOption = screen.getByRole("option", { name: /scroll into view/i, hidden: true } );
 			fireEvent.click( scrollInOption );
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
@@ -426,7 +427,7 @@ describe( 'InteractionDetails', () => {
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const triggerSelect = comboboxes[ 0 ];
 			fireEvent.mouseDown( triggerSelect );
-			const scrollInOption = screen.getByRole( 'option', { name: /scroll into view/i } );
+			const scrollInOption = screen.getByRole("option", { name: /scroll into view/i, hidden: true } );
 			fireEvent.click( scrollInOption );
 
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
