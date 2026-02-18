@@ -56,6 +56,13 @@ export { PopoverGridContainer } from './components/popover-grid-container';
 export { InlineEditor } from './components/inline-editor';
 export { InlineEditorToolbar } from './components/inline-editor-toolbar';
 export { UnstableSizeField } from './components/size/unstable-size-field';
+export { NumberInput } from './components/number-input';
+
+// Pro Interactions utilising these function for keyframe controls
+export { Skew as SkewTransform } from './controls/transform-control/functions/skew';
+export { Scale as ScaleTransform } from './controls/transform-control/functions/scale';
+export { Move as MoveTransform } from './controls/transform-control/functions/move';
+export { Rotate as RotateTransform } from './controls/transform-control/functions/rotate';
 
 // types
 export type { ControlComponent } from './create-control';

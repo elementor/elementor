@@ -4,6 +4,7 @@ namespace Elementor\Modules\Interactions;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\Interactions\Props\Custom_Effect_Prop_Type;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -68,6 +69,13 @@ class Module extends BaseModule {
 		add_action( 'elementor/frontend/before_enqueue_scripts', fn () => $this->enqueue_interactions() );
 		add_action( 'elementor/preview/enqueue_scripts', fn () => $this->enqueue_preview_scripts() );
 		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
+		add_filter( 'elementor/editor/localize_settings', function ( $settings ) {
+			$settings['atomic']['custom_effects_schema'] = [
+				'custom-effect' => Custom_Effect_Prop_Type::make()
+			];
+
+			return $settings;
+		} );
 
 		// Collect interactions from documents before they render (header, footer, post content)
 		add_filter( 'elementor/frontend/builder_content_data', [ $this->get_frontend_handler(), 'collect_document_interactions' ], 10, 2 );
