@@ -108,7 +108,7 @@ class Component_Instance extends Atomic_Widget_Base {
 			$overrides_value = $data['settings']['component_instance']['value']['overrides']['value'];
 			// Format overrides to indexed array (fixes data corrupted by bug ED-22999)
 			$formatted_overrides = array_values( $overrides_value );
-	
+
 			$data['settings']['component_instance']['value']['overrides']['value'] = $formatted_overrides;
 		}
 
