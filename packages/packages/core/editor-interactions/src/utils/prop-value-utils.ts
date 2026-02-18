@@ -1,5 +1,5 @@
 import { type Unit } from '@elementor/editor-controls';
-import { PropValue, sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
+import { type PropValue, sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 
 import { DEFAULT_TIME_UNIT, TIME_UNITS } from '../configs/time-constants';
 import {
