@@ -8,13 +8,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Untyped_Prop_Type implements Prop_Type {
+class Unknown_Prop_Type implements Prop_Type {
 	public static function get_key(): string {
-		return 'untyped';
+		return 'unknown';
 	}
 
 	public function get_type(): string {
-		return 'untyped';
+		return 'unknown';
 	}
 
 	public function get_default() {
@@ -59,7 +59,7 @@ class Untyped_Prop_Type implements Prop_Type {
 
 	public function jsonSerialize(): array {
 		return [
-			'kind' => 'untyped',
+			'kind' => 'unknown',
 			'key' => static::get_key(),
 		];
 	}

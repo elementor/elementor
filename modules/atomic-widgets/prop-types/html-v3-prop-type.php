@@ -3,7 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Base\Untyped_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Unknown_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
@@ -19,7 +19,7 @@ class Html_V3_Prop_Type extends Object_Prop_Type {
 	protected function define_shape(): array {
 		return [
 			'content' => String_Prop_Type::make(),
-			'children' => Untyped_Prop_Type::make(),
+			'children' => Unknown_Prop_Type::make(),
 		];
 	}
 
