@@ -1,5 +1,6 @@
 // components
 export { CollapseIcon } from './components/collapse-icon';
+export { CollapsibleContent, getCollapsibleValue, type CollapsibleValue } from './components/collapsible-content';
 export { EllipsisWithTooltip } from './components/ellipsis-with-tooltip';
 export { EditableField } from './components/editable-field';
 export { IntroductionModal } from './components/introduction-modal';
@@ -12,10 +13,10 @@ export { GlobalDialog, openDialog, closeDialog } from './components/global-dialo
 export { SearchField } from './components/search-field';
 export { Form } from './components/form';
 export { CtaButton } from './components/cta-button';
-export { PromotionInfotip } from './components/promotion-infotip';
-export { PromotionPopover } from './components/promotion-popover';
-export { PromotionChip } from './components/promotion-chip';
-export { PromotionAlert } from './components/promotion-alert';
+export { PromotionInfotip } from './components/promotions/promotion-infotip';
+export { PromotionPopover } from './components/promotions/promotion-popover';
+export { PromotionChip } from './components/promotions/promotion-chip';
+export { PromotionAlert } from './components/promotions/promotion-alert';
 export { FloatingActionsBar, useFloatingActionsBar } from './components/floating-bar';
 
 export * from './components/popover';
@@ -28,3 +29,4 @@ export { SectionRefContext, useSectionWidth } from './contexts/section-context';
 // hooks
 export { useEditable } from './hooks/use-editable';
 export { useTextFieldAutoSelect } from './hooks/use-text-field-auto-select';
+export { useCanvasClickHandler } from './hooks/use-canvas-click-handler';

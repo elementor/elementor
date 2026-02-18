@@ -5,6 +5,7 @@ import {
 	clearUnexpectedExit,
 	completeOnboarding,
 	completeStep,
+	dismissProInstallScreen,
 	goToStep,
 	goToStepIndex,
 	nextStep,
@@ -22,14 +23,17 @@ import {
 	selectIsGuest,
 	selectIsLastStep,
 	selectIsLoading,
+	selectShouldShowProInstall,
 	selectSteps,
 	selectTotalSteps,
 	selectUrls,
+	selectUserName,
 	setConnected,
 	setError,
 	setExitType,
 	setGuest,
 	setLoading,
+	setShouldShowProInstallScreen,
 	setUserChoice,
 	setUserChoices,
 	startOnboarding,
@@ -54,6 +58,8 @@ export function useOnboarding() {
 	const isConnected = __useSelector( selectIsConnected );
 	const isGuest = __useSelector( selectIsGuest );
 	const hasPassedLogin = __useSelector( selectHasPassedLogin );
+	const shouldShowProInstall = __useSelector( selectShouldShowProInstall );
+	const userName = __useSelector( selectUserName );
 	const urls = __useSelector( selectUrls );
 
 	const actions = useMemo(
@@ -74,6 +80,8 @@ export function useOnboarding() {
 			clearUnexpectedExit: () => dispatch( clearUnexpectedExit() ),
 			setConnected: ( connected: boolean ) => dispatch( setConnected( connected ) ),
 			setGuest: ( guest: boolean ) => dispatch( setGuest( guest ) ),
+			setShouldShowProInstallScreen: ( value: boolean ) => dispatch( setShouldShowProInstallScreen( value ) ),
+			dismissProInstallScreen: () => dispatch( dismissProInstallScreen() ),
 		} ),
 		[ dispatch ]
 	);
@@ -94,6 +102,8 @@ export function useOnboarding() {
 		isConnected,
 		isGuest,
 		hasPassedLogin,
+		shouldShowProInstall,
+		userName,
 		urls,
 		actions,
 	};

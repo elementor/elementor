@@ -50,6 +50,25 @@ jest.mock( '@elementor/editor-ui', () => {
 	};
 } );
 
+jest.mock( '@elementor/editor-current-user', () => ( {
+	useSuppressedMessage: jest.fn().mockReturnValue( [ false, jest.fn() ] ),
+} ) );
+
+jest.mock( '../hooks/use-auto-edit', () => ( {
+	useAutoEdit: jest.fn().mockReturnValue( {
+		autoEditVariableId: null,
+		startAutoEdit: jest.fn(),
+		handleAutoEditComplete: jest.fn(),
+	} ),
+} ) );
+
+jest.mock( '../hooks/use-error-navigation', () => ( {
+	useErrorNavigation: jest.fn().mockReturnValue( {
+		createNavigationCallback: jest.fn(),
+		resetNavigation: jest.fn(),
+	} ),
+} ) );
+
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	changeEditMode: jest.fn(),
 	commandEndEvent: jest.fn(),
@@ -144,12 +163,18 @@ describe( 'VariablesManagerPanel', () => {
 		isDirty: false,
 		hasValidationErrors: false,
 		searchValue: '',
+		isSaveDisabled: false,
+		isSaving: false,
 		handleOnChange: jest.fn(),
 		createVariable: jest.fn(),
 		handleDeleteVariable: jest.fn(),
+		handleStartSync: jest.fn(),
+		handleStopSync: jest.fn(),
 		handleSave: jest.fn(),
 		handleSearch: mockHandleSearch,
 		setHasValidationErrors: jest.fn(),
+		setIsSaving: jest.fn(),
+		setIsSaveDisabled: jest.fn(),
 	};
 
 	beforeEach( () => {

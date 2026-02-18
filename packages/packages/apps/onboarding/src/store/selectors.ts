@@ -26,7 +26,13 @@ export const selectIsConnected = ( state: State ) => state.onboarding.isConnecte
 
 export const selectIsGuest = ( state: State ) => state.onboarding.isGuest;
 
+export const selectUserName = ( state: State ) => state.onboarding.userName;
+
 export const selectUrls = ( state: State ) => state.onboarding.urls;
+
+const selectShouldShowProInstallScreen = ( state: State ) => state.onboarding.shouldShowProInstallScreen;
+
+export const selectHasProInstallScreenDismissed = ( state: State ) => state.onboarding.hasProInstallScreenDismissed;
 
 export const selectCurrentStep = __createSelector(
 	[ selectSteps, selectCurrentStepIndex ],
@@ -50,4 +56,10 @@ export const selectIsStepCompleted = __createSelector(
 export const selectHasPassedLogin = __createSelector(
 	[ selectIsConnected, selectIsGuest ],
 	( isConnected, isGuest ) => isConnected || isGuest
+);
+
+export const selectShouldShowProInstall = __createSelector(
+	[ selectIsConnected, selectShouldShowProInstallScreen, selectHasProInstallScreenDismissed ],
+	( isConnected, shouldShowProInstallScreen, isDismissed ) =>
+		isConnected && shouldShowProInstallScreen && ! isDismissed
 );

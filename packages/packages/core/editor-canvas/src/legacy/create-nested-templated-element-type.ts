@@ -6,9 +6,9 @@ import { canBeTemplated, type TemplatedElementConfig } from './create-templated-
 import {
 	createAfterRender,
 	createBeforeRender,
-	renderTwigTemplate,
+	rerenderExistingChildren,
 	setupTwigRenderer,
-	type TwigRenderContext,
+	waitForChildrenToComplete,
 } from './twig-rendering-utils';
 import { type ElementType, type ElementView, type LegacyWindow } from './types';
 
@@ -103,11 +103,17 @@ export function createNestedTemplatedElementView( {
 
 	return AtomicElementBaseView.extend( {
 		_abortController: null as AbortController | null,
+		_lastResolvedSettingsHash: null as string | null,
+		_domUpdateWasSkipped: false,
 
 		template: false,
 
 		getTemplateType() {
 			return 'twig';
+		},
+
+		invalidateRenderCache() {
+			this._lastResolvedSettingsHash = null;
 		},
 
 		render() {
@@ -150,21 +156,61 @@ export function createNestedTemplatedElementView( {
 		async _renderTemplate() {
 			const model = this.model;
 
-			await renderTwigTemplate( {
-				view: this,
-				signal: this._abortController?.signal as AbortSignal,
-				resolveProps,
-				templateKey,
-				baseStylesDictionary,
-				type,
-				renderer,
-				buildContext: ( context: TwigRenderContext ) => ( {
-					...context,
-					editor_attributes: buildEditorAttributes( model ),
-					editor_classes: buildEditorClasses( model ),
-				} ),
-				attachContent: ( html: string ) => this._attachTwigContent( html ),
-			} );
+			this.triggerMethod( 'before:render:template' );
+
+			const process = signalizedProcess( this._abortController?.signal as AbortSignal )
+				.then( ( _, signal ) => {
+					const settings = model.get( 'settings' ).toJSON();
+					return resolveProps( {
+						props: settings,
+						signal,
+						renderContext: this.getResolverRenderContext?.(),
+					} );
+				} )
+				.then( async ( settings ) => {
+					const settingsHash = JSON.stringify( settings );
+					const settingsChanged = settingsHash !== this._lastResolvedSettingsHash;
+
+					if ( ! settingsChanged && this.isRendered ) {
+						this._domUpdateWasSkipped = true;
+						return null;
+					}
+					this._domUpdateWasSkipped = false;
+
+					this._lastResolvedSettingsHash = settingsHash;
+
+					const context = {
+						id: model.get( 'id' ),
+						type,
+						settings,
+						base_styles: baseStylesDictionary,
+						editor_attributes: buildEditorAttributes( model ),
+						editor_classes: buildEditorClasses( model ),
+					};
+
+					return renderer.render( templateKey, context );
+				} )
+				.then( ( html ) => {
+					if ( html === null ) {
+						return;
+					}
+
+					this._attachTwigContent( html );
+				} );
+
+			await process.execute();
+
+			this.bindUIElements();
+
+			this.triggerMethod( 'render:template' );
+		},
+
+		getRenderContext() {
+			return this._parent?.getRenderContext?.();
+		},
+
+		getResolverRenderContext() {
+			return this._parent?.getResolverRenderContext?.();
 		},
 
 		getChildType(): string[] {
@@ -199,19 +245,18 @@ export function createNestedTemplatedElementView( {
 		},
 
 		async _renderChildren() {
-			parentRenderChildren.call( this );
+			if ( this._shouldReuseChildren() ) {
+				rerenderExistingChildren( this );
+			} else {
+				parentRenderChildren.call( this );
+			}
 
-			const renderPromises: Promise< void >[] = [];
-
-			this.children.each( ( childView: ElementView ) => {
-				if ( childView._currentRenderPromise ) {
-					renderPromises.push( childView._currentRenderPromise );
-				}
-			} );
-
-			await Promise.all( renderPromises );
-
+			await waitForChildrenToComplete( this );
 			this._removeChildrenPlaceholder();
+		},
+
+		_shouldReuseChildren() {
+			return this._domUpdateWasSkipped && this.children?.length > 0;
 		},
 
 		_removeChildrenPlaceholder() {
