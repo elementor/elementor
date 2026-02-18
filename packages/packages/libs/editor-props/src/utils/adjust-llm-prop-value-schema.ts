@@ -60,6 +60,19 @@ export const adjustLlmPropValueSchema = (
 				},
 			};
 		}
+		case 'html-v3': {
+			const { value: rawHtmlV3PropValue } = transformablePropValue as TransformablePropValue<
+				string,
+				{ content: StringPropValue; children: PropValue[] }
+			>;
+			return {
+				$$type: 'html-v3',
+				value: {
+					content: rawHtmlV3PropValue.content,
+					children: rawHtmlV3PropValue.children ?? [],
+				},
+			};
+		}
 		default:
 			const transformer = transformers?.[ transformablePropValue.$$type ];
 			if ( transformer ) {
