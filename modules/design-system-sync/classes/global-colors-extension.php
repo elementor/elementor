@@ -36,7 +36,7 @@ class Global_Colors_Extension {
 		wp_enqueue_script(
 			'elementor-design-system-sync-editor',
 			plugins_url( '../assets/js/editor-variables-sync' . $min_suffix . '.js', __FILE__ ),
-			[ 'elementor-v2-utils' ],
+			[],
 			ELEMENTOR_VERSION,
 			true
 		);
