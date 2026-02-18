@@ -34,6 +34,7 @@ class Module extends BaseModule {
 	const ACTIVE = 'active';
 
 	private Elementor_Adapter_Interface $elementor_adapter;
+	private array $external_data;
 
 	public function __construct() {
 		parent::__construct();
@@ -50,7 +51,9 @@ class Module extends BaseModule {
 			return;
 		}
 
-		if ( ! EditorAssetsAPI::has_valid_nested_array( $data, [ self::MODULE_NAME, 0 ] ) ) {
+		$this->external_data = $this->get_external_data();
+
+		if ( ! EditorAssetsAPI::has_valid_nested_array( $this->external_data, [ self::MODULE_NAME, 0 ] ) ) {
 			return false;
 		}
 
@@ -119,9 +122,7 @@ class Module extends BaseModule {
 	 * @return bool True if feature is enabled
 	 */
 	private function is_feature_enabled(): bool {
-		$data = $this->get_external_data();
-
-		$popup_data = $this->extract_popup_data( $data );
+		$popup_data = $this->extract_popup_data( $this->external_data );
 
 		$status = $popup_data['status'] ?? '';
 		return ! empty( $status ) && self::ACTIVE === $status;
@@ -196,8 +197,7 @@ class Module extends BaseModule {
 			true
 		);
 
-		$external_data = $this->get_external_data();
-		$popup_data = $this->extract_popup_data( $external_data );
+		$popup_data = $this->extract_popup_data( $this->external_data );
 
 		wp_localize_script( self::MODULE_NAME, 'elementorProFreeTrialData', $popup_data );
 
