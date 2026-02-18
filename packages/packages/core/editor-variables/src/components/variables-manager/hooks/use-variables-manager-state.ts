@@ -72,7 +72,6 @@ export const useVariablesManagerState = () => {
 
 		if ( result.success ) {
 			await service.load();
-
 			const updatedVariables = service.variables();
 
 			setVariables( updatedVariables );
