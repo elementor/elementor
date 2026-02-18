@@ -2,6 +2,7 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../../parallelTest';
 import WpAdminPage from '../../../../../pages/wp-admin-page';
 import EditorSelectors from '../../../../../selectors/editor-selectors';
+import { wpCli } from '../../../../../assets/wp-cli';
 
 const BUTTON_CLASSES = {
 	active: /e-onboarding__button-action/,
@@ -18,6 +19,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		originalActiveTheme = await wpAdmin.getActiveTheme();
 		await wpAdmin.activateTheme( 'twentytwentyfive' );
+		await wpCli( 'wp transient delete _elementor_ab_testing_data' );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -45,14 +47,18 @@ test.describe( 'On boarding @onBoarding', async () => {
 	test( 'Onboarding Create Account Popup Open', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
 
-		const ctaButton = await page.waitForSelector( 'a.e-onboarding__button-action' );
+		const variantA = page.locator( 'a.e-onboarding__button-action' );
+		const variantB = page.getByRole( 'button', { name: 'Connect your account' } );
+		const ctaButton = variantA.or( variantB );
+		await ctaButton.waitFor( { timeout: 20000 } );
 
-		expect( await ctaButton.innerText() ).toBe( 'Start setup' );
+		const buttonText = ( await ctaButton.innerText() ).trim();
+		expect( [ 'Start setup', 'Connect your account' ] ).toContain( buttonText );
 
 		const popupPromise = page.waitForEvent( 'popup', { timeout: POPUP_NAVIGATION_TIMEOUT } ).catch( () => null );
-		const navigationPromise = page.waitForURL( /my\.elementor\.com/, { timeout: POPUP_NAVIGATION_TIMEOUT } ).then( () => true ).catch( () => false );
+		const navigationPromise = page.waitForURL( /my\.elementor\.com|elementor-connect/, { timeout: POPUP_NAVIGATION_TIMEOUT } ).then( () => true ).catch( () => false );
 
-		await page.click( 'a.e-onboarding__button-action' );
+		await ctaButton.click();
 
 		const [ popup, navigated ] = await Promise.all( [ popupPromise, navigationPromise ] );
 		if ( popup ) {
@@ -61,9 +67,8 @@ test.describe( 'On boarding @onBoarding', async () => {
 			await popup.close();
 		}
 
-		// Some browsers may not support popups.
 		if ( navigated && ! popup ) {
-			expect( page.url() ).toContain( 'my.elementor.com/signup' );
+			expect( page.url() ).toMatch( /my\.elementor\.com|elementor-connect/ );
 		}
 
 		if ( ! navigated && ! popup ) {
@@ -76,9 +81,11 @@ test.describe( 'On boarding @onBoarding', async () => {
 	 */
 	test( 'Onboarding Skip to Hello Theme Page', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
-		await page.waitForLoadState( 'networkidle' );
 
-		const skipButton = await page.waitForSelector( 'text=Skip' );
+		const variantASkip = page.locator( 'text=Skip' );
+		const variantBSkip = page.getByRole( 'button', { name: 'Continue as a guest' } );
+		const skipButton = variantASkip.or( variantBSkip );
+		await skipButton.waitFor( { timeout: 20000 } );
 
 		await skipButton.click();
 

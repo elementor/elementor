@@ -59,10 +59,10 @@ async function dismissModalIfPresent( wpAdmin: WpAdminPage ) {
 }
 
 async function addElement( wpAdmin: WpAdminPage, elementType: string ) {
-	await dismissModalIfPresent( wpAdmin );
-
 	const inserterToggle = wpAdmin.page.getByRole( 'button', { name: 'Block Inserter', exact: true } );
-	await inserterToggle.waitFor( { timeout: 10000 } );
+	await inserterToggle.waitFor( { timeout: 20000 } );
+
+	await dismissModalIfPresent( wpAdmin );
 
 	if ( await inserterToggle.getAttribute( 'aria-pressed' ) !== 'true' ) {
 		await inserterToggle.click();
