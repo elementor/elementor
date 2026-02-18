@@ -44,7 +44,7 @@ class EditorAssetsAPI {
 	private function fetch_data(): array {
 		$response = wp_remote_get( $this->config( static::ASSETS_DATA_URL ) );
 
-		if ( is_wp_error( $response ) || WP_Http::OK !== (int) wp_remote_retrieve_response_code( $response ) ) {
+		if ( is_wp_error( $response ) || \WP_Http::OK !== (int) wp_remote_retrieve_response_code( $response ) ) {
 			return [];
 		}
 
