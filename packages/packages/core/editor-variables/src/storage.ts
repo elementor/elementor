@@ -22,8 +22,8 @@ export class Storage {
 		variables: TVariablesList;
 	};
 
-	notifyChange( detail?: { variables: TVariablesList; previousVariables: TVariablesList } ) {
-		window.dispatchEvent( new CustomEvent( 'variables:updated', { detail } ) );
+	notifyChange() {
+		window.dispatchEvent( new Event( 'variables:updated' ) );
 	}
 
 	constructor() {
@@ -40,8 +40,6 @@ export class Storage {
 	}
 
 	fill( variables: TVariablesList, watermark: number ) {
-		const previousVariables = { ...this.state.variables };
-
 		this.state.variables = {};
 		if ( variables && Object.keys( variables ).length ) {
 			this.state.variables = variables;
@@ -51,26 +49,21 @@ export class Storage {
 
 		localStorage.setItem( STORAGE_WATERMARK_KEY, this.state.watermark.toString() );
 		localStorage.setItem( STORAGE_KEY, JSON.stringify( this.state.variables ) );
-
-		this.notifyChange( { variables: this.state.variables, previousVariables } );
+		this.notifyChange();
 	}
 
 	add( id: string, variable: TVariable ) {
 		this.load();
-		const previousVariables = { ...this.state.variables };
 		this.state.variables[ id ] = variable;
 		localStorage.setItem( STORAGE_KEY, JSON.stringify( this.state.variables ) );
-
-		this.notifyChange( { variables: this.state.variables, previousVariables } );
+		this.notifyChange();
 	}
 
 	update( id: string, variable: TVariable ) {
 		this.load();
-		const previousVariables = { ...this.state.variables };
 		this.state.variables[ id ] = variable;
 		localStorage.setItem( STORAGE_KEY, JSON.stringify( this.state.variables ) );
-
-		this.notifyChange( { variables: this.state.variables, previousVariables } );
+		this.notifyChange();
 	}
 
 	watermark( watermark: number ) {
