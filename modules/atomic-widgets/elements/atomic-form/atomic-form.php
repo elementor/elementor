@@ -190,12 +190,12 @@ class Atomic_Form extends Atomic_Element_Base {
 				->is_locked( true )
 				->build(),
 			$this->build_status_message(
-				__( 'Thank you! Your submission has been received.', 'elementor' ),
+				__( 'Great! We’ve received your information.', 'elementor' ),
 				'success',
 				__( 'Success message', 'elementor' )
 			),
 			$this->build_status_message(
-				__( 'Oops! Something went wrong.', 'elementor' ),
+				__( 'We couldn’t process your submission. Please retry', 'elementor' ),
 				'error',
 				__( 'Error message', 'elementor' )
 			),
