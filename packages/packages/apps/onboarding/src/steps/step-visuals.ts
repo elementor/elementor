@@ -25,34 +25,34 @@ const DEFAULT_CONFIG: StepVisualConfig = {
 
 export const LOGIN_CONFIG: StepVisualConfig = {
 	imageLayout: 'wide',
-	background: buildBackground( 'login.png' ),
+	background: buildBackground( 'login.webp' ),
 	assets: [],
 };
 
 const stepVisuals: Record< StepIdType, StepVisualConfig > = {
 	[ StepId.BUILDING_FOR ]: {
 		imageLayout: 'wide',
-		background: buildBackground( 'step-1.png' ),
+		background: buildBackground( 'step-1.webp' ),
 		assets: [],
 	},
 	[ StepId.SITE_ABOUT ]: {
 		imageLayout: 'narrow',
-		background: buildBackground( 'step-2.png' ),
+		background: buildBackground( 'step-2.webp' ),
 		assets: [],
 	},
 	[ StepId.EXPERIENCE_LEVEL ]: {
 		imageLayout: 'wide',
-		background: buildBackground( 'step-3.png' ),
+		background: buildBackground( 'step-3.webp' ),
 		assets: [],
 	},
 	[ StepId.THEME_SELECTION ]: {
 		imageLayout: 'narrow',
-		background: buildBackground( 'step-4.png' ),
+		background: buildBackground( 'step-4.webp' ),
 		assets: [],
 	},
 	[ StepId.SITE_FEATURES ]: {
 		imageLayout: 'narrow',
-		background: buildBackground( 'step-5.png' ),
+		background: buildBackground( 'step-5.webp' ),
 		assets: [],
 	},
 };
