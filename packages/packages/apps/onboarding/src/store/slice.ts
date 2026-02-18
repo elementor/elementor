@@ -74,6 +74,8 @@ function getEmptyState(): OnboardingState {
 		isConnected: false,
 		isGuest: false,
 		userName: '',
+		shouldShowProInstallScreen: false,
+		hasProInstallScreenDismissed: false,
 		urls: { dashboard: '', editor: '', connect: '' },
 	};
 }
@@ -107,6 +109,8 @@ function buildStateFromConfig(
 		isConnected: config.isConnected ?? false,
 		isGuest: false,
 		userName: config.userName ?? '',
+		shouldShowProInstallScreen: config.shouldShowProInstallScreen ?? false,
+		hasProInstallScreenDismissed: false,
 		urls: config.urls ?? { dashboard: '', editor: '', connect: '' },
 	};
 }
@@ -214,6 +218,14 @@ export const slice = __createSlice( {
 		setGuest: ( state, action: PayloadAction< boolean > ) => {
 			state.isGuest = action.payload;
 		},
+
+		setShouldShowProInstallScreen: ( state, action: PayloadAction< boolean > ) => {
+			state.shouldShowProInstallScreen = action.payload;
+		},
+
+		dismissProInstallScreen: ( state ) => {
+			state.hasProInstallScreenDismissed = true;
+		},
 	},
 } );
 
@@ -234,6 +246,8 @@ export const {
 	clearUnexpectedExit,
 	setConnected,
 	setGuest,
+	setShouldShowProInstallScreen,
+	dismissProInstallScreen,
 } = slice.actions;
 
 export function registerOnboardingSlice() {

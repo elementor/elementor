@@ -23,15 +23,7 @@ test.describe( 'Transform repeater persistence @atomic-widgets', () => {
 
 		// Act
 		await editor.v4Panel.openTab( 'style' );
-
-		const cssClassMenuButton = page.getByRole( 'button', { name: 'Open CSS Class Menu' } );
-		await cssClassMenuButton.waitFor( { state: 'visible' } );
-		await page.waitForTimeout( 500 );
-		await cssClassMenuButton.click();
-
-		const hoverMenuItem = page.getByRole( 'menuitem', { name: 'hover' } );
-		await hoverMenuItem.waitFor( { state: 'visible', timeout: 10000 } );
-		await hoverMenuItem.click();
+		await editor.v4Panel.style.selectClassState( 'hover', 'local' );
 		await editor.openV2Section( 'effects' );
 
 		const addTransformButton = page.getByRole( 'button', { name: 'Add transform item' } );
@@ -40,7 +32,11 @@ test.describe( 'Transform repeater persistence @atomic-widgets', () => {
 		await moveItem.waitFor( { state: 'visible', timeout: 15000 } );
 		await moveItem.click( { force: true } );
 
-		await page.locator( 'body' ).click();
+		await page.keyboard.press( 'Escape' );
+		await editor.selectElement( headingId );
+		await editor.v4Panel.openTab( 'style' );
+		await editor.v4Panel.style.selectClassState( 'hover', 'local' );
+		await editor.openV2Section( 'effects' );
 
 		// Assert
 		const transformItems = page.locator( '.MuiTag-root' );
@@ -57,16 +53,7 @@ test.describe( 'Transform repeater persistence @atomic-widgets', () => {
 
 		await editor.selectElement( headingId );
 		await editor.v4Panel.openTab( 'style' );
-
-		const cssClassMenuButtonAfterRefresh = page.getByRole( 'button', { name: 'Open CSS Class Menu' } );
-		await cssClassMenuButtonAfterRefresh.waitFor( { state: 'visible' } );
-		await page.waitForTimeout( 500 );
-		await cssClassMenuButtonAfterRefresh.click();
-
-		const hoverMenuItemAfterRefresh = page.getByRole( 'menuitem', { name: 'hover' } );
-		await hoverMenuItemAfterRefresh.waitFor( { state: 'visible', timeout: 10000 } );
-		await hoverMenuItemAfterRefresh.click();
-
+		await editor.v4Panel.style.selectClassState( 'hover', 'local' );
 		await editor.openV2Section( 'effects' );
 
 		// Assert
