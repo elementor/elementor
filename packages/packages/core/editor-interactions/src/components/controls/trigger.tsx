@@ -5,7 +5,6 @@ import { type FieldProps } from '../../types';
 import { PromotionSelect } from '../../ui/promotion-select';
 import { DEFAULT_VALUES } from '../interaction-details';
 
-
 const BASE_OPTIONS = {
 	load: __( 'Page load', 'elementor' ),
 	scrollIn: __( 'Scroll into view', 'elementor' ),

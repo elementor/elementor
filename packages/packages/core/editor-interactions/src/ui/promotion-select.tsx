@@ -3,7 +3,7 @@ import { type MouseEvent, useRef } from 'react';
 import { MenuListItem } from '@elementor/editor-ui';
 import { MenuSubheader, Select, type SelectChangeEvent } from '@elementor/ui';
 
-import { InteractionsPromotionChip, type InteractionsPromotionChipRef } from "./interactions-promotion-chip";
+import { InteractionsPromotionChip, type InteractionsPromotionChipRef } from './interactions-promotion-chip';
 
 type PromotionSelectProps = {
 	value: string;
@@ -44,13 +44,7 @@ export function PromotionSelect( {
 
 			<MenuSubheader
 				ref={ anchorRef }
-				sx={ {
-						cursor: 'pointer',
-						color: 'text.tertiary',
-						fontWeight: '400',
-						display: 'flex',
-						alignItems: 'center',
-				} }
+				sx={ { cursor: 'pointer', color: 'text.tertiary', fontWeight: '400', display: 'flex', alignItems: 'center' } }
 				onMouseDown={ ( e: MouseEvent ) => {
 					e.stopPropagation();
 					promotionRef.current?.toggle();
