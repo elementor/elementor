@@ -277,6 +277,7 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 			'order' => [ 'g-1' ],
 		];
 		$kit->update_json_meta( '_elementor_global_classes', $classes_data );
+		Classes_Provider::clear_cache();
 
 		$post_css = $this->createMock( \Elementor\Core\Files\CSS\Post::class );
 		$post_css->method( 'get_post_id' )->willReturn( $kit_id );
@@ -326,6 +327,7 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 			'order' => [ 'g-1' ],
 		];
 		$kit->update_json_meta( '_elementor_global_classes', $classes_data );
+		Classes_Provider::clear_cache();
 
 		$stylesheet = $this->createMock( \Elementor\Stylesheet::class );
 		$stylesheet->expects( $this->once() )
@@ -398,18 +400,19 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 						],
 					],
 				],
-			],
-			'order' => [ 'g-1', 'g-2' ],
-		];
+		],
+		'order' => [ 'g-1', 'g-2' ],
+	];
 
-		$kit->update_json_meta( '_elementor_global_classes', $classes_data );
+	$kit->update_json_meta( '_elementor_global_classes', $classes_data );
+	Classes_Provider::clear_cache();
 
-		$stylesheet = $this->createMock( \Elementor\Stylesheet::class );
-		$stylesheet->expects( $this->once() )
-			->method( 'add_raw_css' )
-			->with( $this->logicalAnd(
-				$this->stringContains( '--e-global-typography-v4-Synced-font-size:' ),
-				$this->logicalNot( $this->stringContains( 'NotSynced' ) )
+	$stylesheet = $this->createMock( \Elementor\Stylesheet::class );
+	$stylesheet->expects( $this->once() )
+		->method( 'add_raw_css' )
+		->with( $this->logicalAnd(
+			$this->stringContains( '--e-global-typography-v4-Synced-font-size:' ),
+			$this->logicalNot( $this->stringContains( 'NotSynced' ) )
 			) );
 
 		$post_css = $this->createMock( \Elementor\Core\Files\CSS\Post::class );
@@ -482,16 +485,17 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 						],
 					],
 				],
-			],
-			'order' => [ 'g-1' ],
-		];
+		],
+		'order' => [ 'g-1' ],
+	];
 
-		$kit->update_json_meta( '_elementor_global_classes', $classes_data );
+	$kit->update_json_meta( '_elementor_global_classes', $classes_data );
+	Classes_Provider::clear_cache();
 
-		$stylesheet = $this->createMock( \Elementor\Stylesheet::class );
-		$stylesheet->expects( $this->once() )
-			->method( 'add_raw_css' )
-			->with( $this->stringContains( '--e-global-typography-v4-Heading-font-size:' ) );
+	$stylesheet = $this->createMock( \Elementor\Stylesheet::class );
+	$stylesheet->expects( $this->once() )
+		->method( 'add_raw_css' )
+		->with( $this->stringContains( '--e-global-typography-v4-Heading-font-size:' ) );
 
 		$post_css = $this->createMock( \Elementor\Core\Files\CSS\Post::class );
 		$post_css->method( 'get_post_id' )->willReturn( $kit_id );
@@ -574,18 +578,19 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 						],
 					],
 				],
-			],
-			'order' => [ 'g-1' ],
-		];
+		],
+		'order' => [ 'g-1' ],
+	];
 
-		$kit->update_json_meta( '_elementor_global_classes', $classes_data );
+	$kit->update_json_meta( '_elementor_global_classes', $classes_data );
+	Classes_Provider::clear_cache();
 
-		$stylesheet = $this->createMock( \Elementor\Stylesheet::class );
-		$stylesheet->expects( $this->once() )
-			->method( 'add_raw_css' )
-			->with( $this->logicalAnd(
-				$this->stringContains( '--e-global-typography-v4-RichText-font-family:' ),
-				$this->stringContains( '--e-global-typography-v4-RichText-font-size:' ),
+	$stylesheet = $this->createMock( \Elementor\Stylesheet::class );
+	$stylesheet->expects( $this->once() )
+		->method( 'add_raw_css' )
+		->with( $this->logicalAnd(
+			$this->stringContains( '--e-global-typography-v4-RichText-font-family:' ),
+			$this->stringContains( '--e-global-typography-v4-RichText-font-size:' ),
 				$this->stringContains( '--e-global-typography-v4-RichText-font-weight:' ),
 				$this->stringContains( '--e-global-typography-v4-RichText-font-style:' ),
 				$this->stringContains( '--e-global-typography-v4-RichText-text-decoration:' ),
@@ -655,6 +660,7 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 			'order' => [ 'g-1' ],
 		];
 		$kit->update_json_meta( '_elementor_global_classes', $classes_data );
+		Classes_Provider::clear_cache();
 
 		$stylesheet = $this->createMock( \Elementor\Stylesheet::class );
 		$stylesheet->expects( $this->once() )

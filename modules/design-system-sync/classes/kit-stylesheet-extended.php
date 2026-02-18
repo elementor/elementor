@@ -113,12 +113,18 @@ class Kit_Stylesheet_Extended {
 
 	private function get_default_breakpoint_props( array $variants ): array {
 		foreach ( $variants as $variant ) {
-			if ( ! isset( $variant['meta'] ) || ! isset( $variant['meta']['breakpoint'] ) || ! isset( $variant['meta']['state'] ) ) {
+			if ( ! isset( $variant['meta'] ) ) {
 				continue;
 			}
 
-			$breakpoint = $variant['meta']['breakpoint'];
-			$state = $variant['meta']['state'];
+			$meta = $variant['meta'];
+
+			if ( ! array_key_exists( 'breakpoint', $meta ) || ! array_key_exists( 'state', $meta ) ) {
+				continue;
+			}
+
+			$breakpoint = $meta['breakpoint'];
+			$state = $meta['state'];
 
 			if ( ! in_array( $breakpoint, [ null, 'desktop' ], true ) ) {
 				continue;
@@ -128,7 +134,7 @@ class Kit_Stylesheet_Extended {
 				continue;
 			}
 
-			return $variant['props'];
+			return $variant['props'] ?? [];
 		}
 
 		return [];
