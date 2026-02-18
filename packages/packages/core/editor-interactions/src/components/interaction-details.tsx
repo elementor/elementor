@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { type ComponentType, useMemo } from 'react';
+import { type ComponentType, useMemo, useRef } from 'react';
 import { PopoverContent } from '@elementor/editor-controls';
 import { type PropValue } from '@elementor/editor-props';
-import { Divider, Grid } from '@elementor/ui';
+import { Box, Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getInteractionsControl } from '../interactions-controls-registry';
@@ -159,6 +159,8 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const DirectionControl = useControlComponent( 'direction', controlVisibilityConfig.direction( interactionValues ) );
 	const EasingControl = useControlComponent( 'easing' );
 
+	const containerRef = useRef< HTMLDivElement >( null );
+
 	const updateInteraction = (
 		updates: Partial< {
 			trigger: string;
@@ -212,127 +214,133 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	};
 
 	return (
-		<PopoverContent p={ 1.5 }>
-			<Grid container spacing={ 1.5 }>
-				{ TriggerControl && (
-					<Field label={ __( 'Trigger', 'elementor' ) }>
-						<TriggerControl value={ trigger } onChange={ ( v ) => updateInteraction( { trigger: v } ) } />
-					</Field>
-				) }
-
-				{ ReplayControl && (
-					<Field label={ __( 'Replay', 'elementor' ) }>
-						<ReplayControl
-							value={ replay }
-							onChange={ ( v: boolean ) => updateInteraction( { replay: v } ) }
-							disabled={ true }
-						/>
-					</Field>
-				) }
-			</Grid>
-
-			<Divider />
-
-			<Grid container spacing={ 1.5 }>
-				{ EffectControl && (
-					<Field label={ __( 'Effect', 'elementor' ) }>
-						<EffectControl value={ effect } onChange={ ( v ) => updateInteraction( { effect: v } ) } />
-					</Field>
-				) }
-
-				{ CustomEffectControl && (
-					<Field label={ __( 'Custom Effect', 'elementor' ) }>
-						<CustomEffectControl
-							value={ customEffects }
-							onChange={ ( v: PropValue ) => updateInteraction( { customEffects: v } ) }
-						/>
-					</Field>
-				) }
-
-				{ EffectTypeControl && (
-					<Field label={ __( 'Type', 'elementor' ) }>
-						<EffectTypeControl value={ type } onChange={ ( v ) => updateInteraction( { type: v } ) } />
-					</Field>
-				) }
-
-				{ DirectionControl && (
-					<Field label={ __( 'Direction', 'elementor' ) }>
-						<DirectionControl
-							value={ direction }
-							onChange={ ( v ) => updateInteraction( { direction: v } ) }
-							interactionType={ type }
-						/>
-					</Field>
-				) }
-
-				{ controlVisibilityConfig.duration( interactionValues ) && (
-					<Field label={ __( 'Duration', 'elementor' ) }>
-						<TimeFrameIndicator
-							value={ String( duration ) }
-							onChange={ ( v ) => updateInteraction( { duration: v as SizeStringValue } ) }
-							defaultValue={ DEFAULT_VALUES.duration as SizeStringValue }
-						/>
-					</Field>
-				) }
-
-				{ controlVisibilityConfig.delay( interactionValues ) && (
-					<Field label={ __( 'Delay', 'elementor' ) }>
-						<TimeFrameIndicator
-							value={ String( delay ) }
-							onChange={ ( v ) => updateInteraction( { delay: v as SizeStringValue } ) }
-							defaultValue={ DEFAULT_VALUES.delay as SizeStringValue }
-						/>
-					</Field>
-				) }
-			</Grid>
-
-			{ controlVisibilityConfig.relativeTo( interactionValues ) && RelativeToControl && (
-				<>
-					<Divider />
-					<Grid container spacing={ 1.5 }>
-						<Field label={ __( 'Relative To', 'elementor' ) }>
-							<RelativeToControl
-								value={ relativeTo }
-								onChange={ ( v ) => updateInteraction( { relativeTo: v } ) }
+		<Box ref={ containerRef }>
+			<PopoverContent p={ 1.5 }>
+				<Grid container spacing={ 1.5 }>
+					{ TriggerControl && (
+						<Field label={ __( 'Trigger', 'elementor' ) }>
+							<TriggerControl
+								value={ trigger }
+								onChange={ ( v ) => updateInteraction( { trigger: v } ) }
 							/>
 						</Field>
-						{ OffsetTopControl && (
-							<Field label={ __( 'Offset Top', 'elementor' ) }>
-								<OffsetTopControl
-									value={ String( parseSizeValue( offsetTop, [ '%' ] ).size ) }
-									onChange={ ( v: string ) =>
-										updateInteraction( { offsetTop: v as SizeStringValue } )
-									}
-								/>
-							</Field>
-						) }
-						{ OffsetBottomControl && (
-							<Field label={ __( 'Offset Bottom', 'elementor' ) }>
-								<OffsetBottomControl
-									value={ String( parseSizeValue( offsetBottom, [ '%' ] ).size ) }
-									onChange={ ( v: string ) =>
-										updateInteraction( { offsetBottom: v as SizeStringValue } )
-									}
-								/>
-							</Field>
-						) }
-					</Grid>
-					<Divider />
-				</>
-			) }
+					) }
 
-			{ EasingControl && (
-				<Grid container spacing={ 1.5 }>
-					<Field label={ __( 'Easing', 'elementor' ) }>
-						<EasingControl
-							value={ easing }
-							onChange={ ( v ) => {
-								updateInteraction( { easing: v } );
-							} }
-						/>
-					</Field>
+					{ ReplayControl && (
+						<Field label={ __( 'Replay', 'elementor' ) }>
+							<ReplayControl
+								value={ replay }
+								onChange={ ( v ) => updateInteraction( { replay: v } ) }
+								disabled={ true }
+								anchorRef={ containerRef }
+							/>
+						</Field>
+					) }
 				</Grid>
-			) }
-		</PopoverContent>
+
+				<Divider />
+
+				<Grid container spacing={ 1.5 }>
+					{ EffectControl && (
+						<Field label={ __( 'Effect', 'elementor' ) }>
+							<EffectControl value={ effect } onChange={ ( v ) => updateInteraction( { effect: v } ) } />
+						</Field>
+					) }
+
+					{ CustomEffectControl && (
+						<Field label={ __( 'Custom Effect', 'elementor' ) }>
+							<CustomEffectControl
+								value={ customEffects }
+								onChange={ ( v: PropValue ) => updateInteraction( { customEffects: v } ) }
+							/>
+						</Field>
+					) }
+
+					{ EffectTypeControl && (
+						<Field label={ __( 'Type', 'elementor' ) }>
+							<EffectTypeControl value={ type } onChange={ ( v ) => updateInteraction( { type: v } ) } />
+						</Field>
+					) }
+
+					{ DirectionControl && (
+						<Field label={ __( 'Direction', 'elementor' ) }>
+							<DirectionControl
+								value={ direction }
+								onChange={ ( v ) => updateInteraction( { direction: v } ) }
+								interactionType={ type }
+							/>
+						</Field>
+					) }
+
+					{ controlVisibilityConfig.duration( interactionValues ) && (
+						<Field label={ __( 'Duration', 'elementor' ) }>
+							<TimeFrameIndicator
+								value={ String( duration ) }
+								onChange={ ( v ) => updateInteraction( { duration: v as SizeStringValue } ) }
+								defaultValue={ DEFAULT_VALUES.duration as SizeStringValue }
+							/>
+						</Field>
+					) }
+
+					{ controlVisibilityConfig.delay( interactionValues ) && (
+						<Field label={ __( 'Delay', 'elementor' ) }>
+							<TimeFrameIndicator
+								value={ String( delay ) }
+								onChange={ ( v ) => updateInteraction( { delay: v as SizeStringValue } ) }
+								defaultValue={ DEFAULT_VALUES.delay as SizeStringValue }
+							/>
+						</Field>
+					) }
+				</Grid>
+
+				{ controlVisibilityConfig.relativeTo( interactionValues ) && RelativeToControl && (
+					<>
+						<Divider />
+						<Grid container spacing={ 1.5 }>
+							<Field label={ __( 'Relative To', 'elementor' ) }>
+								<RelativeToControl
+									value={ relativeTo }
+									onChange={ ( v ) => updateInteraction( { relativeTo: v } ) }
+								/>
+							</Field>
+							{ OffsetTopControl && (
+								<Field label={ __( 'Offset Top', 'elementor' ) }>
+									<OffsetTopControl
+										value={ String( parseSizeValue( offsetTop, [ '%' ] ).size ) }
+										onChange={ ( v: string ) =>
+											updateInteraction( { offsetTop: v as SizeStringValue } )
+										}
+									/>
+								</Field>
+							) }
+							{ OffsetBottomControl && (
+								<Field label={ __( 'Offset Bottom', 'elementor' ) }>
+									<OffsetBottomControl
+										value={ String( parseSizeValue( offsetBottom, [ '%' ] ).size ) }
+										onChange={ ( v: string ) =>
+											updateInteraction( { offsetBottom: v as SizeStringValue } )
+										}
+									/>
+								</Field>
+							) }
+						</Grid>
+						<Divider />
+					</>
+				) }
+
+				{ EasingControl && (
+					<Grid container spacing={ 1.5 }>
+						<Field label={ __( 'Easing', 'elementor' ) }>
+							<EasingControl
+								value={ easing }
+								onChange={ ( v ) => {
+									updateInteraction( { easing: v } );
+								} }
+							/>
+						</Field>
+					</Grid>
+				) }
+			</PopoverContent>
+		</Box>
 	);
 };
