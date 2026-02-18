@@ -89,6 +89,7 @@ export default class Content {
 		await this.editor.waitForPreviewFrame();
 		const frame: Frame = this.editor.getPreviewFrame();
 		await frame.locator( args.widget ).click();
+		await this.page.locator( `.elementor-control-${ args.select } select` ).waitFor();
 		await this.editor.setSelectControlValue( args.select, args.imageSize );
 		await frame.locator( EditorSelectors.pageTitle ).click();
 	}

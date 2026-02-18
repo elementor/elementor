@@ -47,15 +47,31 @@ test.describe( 'Document tests', async () => {
 		} );
 } );
 
+async function dismissModalIfPresent( wpAdmin: WpAdminPage ) {
+	const modalOverlay = wpAdmin.page.locator( '.components-modal__screen-overlay' );
+	try {
+		await modalOverlay.waitFor( { state: 'visible', timeout: 3000 } );
+		await wpAdmin.page.keyboard.press( 'Escape' );
+		await modalOverlay.waitFor( { state: 'hidden' } );
+	} catch {
+		// No modal appeared
+	}
+}
+
 async function addElement( wpAdmin: WpAdminPage, elementType: string ) {
-	const frame = wpAdmin.page.frame( { name: 'editor-canvas' } );
-	if ( ! await wpAdmin.page.frameLocator( 'iframe[name="editor-canvas"]' ).locator( 'p[role="document"]' ).isVisible() ) {
-		await frame.locator( '.block-editor-inserter__toggle' ).click();
-	} else {
-		await wpAdmin.page.frameLocator( 'iframe[name="editor-canvas"]' ).locator( 'p[role="document"]' ).click();
-		await wpAdmin.page.click( '.block-editor-inserter__toggle' );
+	await dismissModalIfPresent( wpAdmin );
+
+	const inserterToggle = wpAdmin.page.getByRole( 'button', { name: 'Block Inserter', exact: true } );
+	await inserterToggle.waitFor( { timeout: 10000 } );
+
+	if ( await inserterToggle.getAttribute( 'aria-pressed' ) !== 'true' ) {
+		await inserterToggle.click();
 	}
 
-	await wpAdmin.page.click( `[class*="editor-block-list-item-${ elementType }"]` );
-	await frame.click( '.editor-styles-wrapper' );
+	const blockItemSelector = [
+		`[class*="editor-block-list-item-core-${ elementType }"]`,
+		`[class*="editor-block-list-item-${ elementType }"]`,
+	].join( ', ' );
+
+	await wpAdmin.page.locator( blockItemSelector ).first().click();
 }
