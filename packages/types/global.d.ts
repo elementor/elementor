@@ -26,6 +26,7 @@ interface EOnboardingConfig {
 	};
 	hadUnexpectedExit: boolean;
 	isConnected: boolean;
+	shouldShowProInstallScreen?: boolean;
 	userName?: string;
 	uiTheme?: 'auto' | 'dark' | 'light';
 	steps: Array<{
