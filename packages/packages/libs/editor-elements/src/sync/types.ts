@@ -70,87 +70,12 @@ export type ConfigPropValue = {
 	};
 };
 
-export type Transform2d = {
-	x: number;
-	y: number;
-};
-
-export type Transform3d = Transform2d & {
-	z: number;
-};
-
-
-export type KeyframeStopSettings = {
-	opacity?: number;
-	scale?: Transform3d;
-	move?: Transform3d;
-	rotate?: Transform3d;
-	skew?: Transform2d;
-};
-
-export type AnimationKeyframe = {
-	stop: number;
-	settings: KeyframeStopSettings;
-};
-
-export type CustomEffect = {
-	keyframes: AnimationKeyframe[];
-};
-
-export type Transform3dPropValue = {
-	$$type: 'transform-3d';
-	value: {
-		x: SizePropValue;
-		y: SizePropValue;
-		z: SizePropValue;
-	};
-};
-
-export type Transform2dPropValue = {
-	$$type: 'transform-2d';
-	value: {
-		x: SizePropValue;
-		y: SizePropValue;
-	};
-};
-
-export type KeyframeStopSettingsPropValue = {
-	$$type: 'keyframe-stop-settings';
-	value: {
-		opacity?: SizePropValue;
-		scale?: Transform3dPropValue;
-		move?: Transform3dPropValue;
-		rotate?: Transform3dPropValue;
-		skew?: Transform2dPropValue;
-	};
-};
-
-export type AnimationKeyframeStopPropValue = {
-	$$type: 'animation-keyframe-stop';
-	value: {
-		stop: SizePropValue;
-		settings: KeyframeStopSettingsPropValue;
-	};
-};
-
-export type AnimationKeyframesPropValue = {
-	$$type: 'animation-keyframes';
-	value: AnimationKeyframeStopPropValue[];
-};
-
-export type CustomEffectPropValue = {
-	$$type: 'custom-effect';
-	value: {
-		keyframes: AnimationKeyframesPropValue;
-	};
-};
-
 export type AnimationPresetPropValue = {
 	$$type: 'animation-preset-props';
 	value: {
 		animation_id?: StringPropValue;
 		effect: StringPropValue;
-		custom?: CustomEffectPropValue;
+		'custom-effects'?: PropValue;
 		type: StringPropValue;
 		direction: StringPropValue;
 		timing_config: TimingConfigPropValue;

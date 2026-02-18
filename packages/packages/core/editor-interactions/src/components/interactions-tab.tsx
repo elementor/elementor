@@ -60,6 +60,8 @@ function InteractionsContent( {
 		[ setInteractions, firstInteractionState ]
 	);
 
+	console.log( interactions );
+
 	return (
 		<Stack sx={ { m: 1, p: 1.5 } } gap={ 2 }>
 			<InteractionsList

@@ -1,30 +1,21 @@
 import * as React from 'react';
 import { type ComponentType, useMemo } from 'react';
 import { PopoverContent } from '@elementor/editor-controls';
+import { type PropValue } from '@elementor/editor-props';
 import { Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getInteractionsControl } from '../interactions-controls-registry';
-import {
-	type CustomEffect,
-	type DirectionFieldProps,
-	type FieldProps,
-	type InteractionItemValue,
-	type ReplayFieldProps,
-	type SizeStringValue,
-} from '../types';
+import { type FieldProps, type InteractionItemValue, type SizeStringValue } from '../types';
 import {
 	createAnimationPreset,
 	createString,
 	extractBoolean,
-	extractCustomEffect,
 	extractSize,
 	extractString,
 } from '../utils/prop-value-utils';
 import { resolveDirection } from '../utils/resolve-direction';
 import { parseSizeValue } from '../utils/size-transform-utils';
-import { Direction } from './controls/direction';
-import { EffectType } from './controls/effect-type';
 import { TimeFrameIndicator } from './controls/time-frame-indicator';
 import { Field } from './field';
 
@@ -63,7 +54,7 @@ type InteractionsControlType =
 	| 'relativeTo'
 	| 'offsetTop'
 	| 'offsetBottom'
-	| 'custom';
+	| 'customEffect';
 
 type InteractionValues = {
 	trigger: string;
@@ -77,7 +68,7 @@ type InteractionValues = {
 	relativeTo: string;
 	offsetTop: SizeStringValue;
 	offsetBottom: SizeStringValue;
-	custom?: CustomEffect;
+	customEffects?: PropValue;
 };
 
 type ControlVisibilityConfig = {
@@ -103,14 +94,7 @@ const controlVisibilityConfig: ControlVisibilityConfig = {
 	},
 };
 
-type AnyControlComponent = ComponentType<
-	FieldProps | FieldProps< CustomEffect > | DirectionFieldProps | ReplayFieldProps
->;
-
-function useControlComponent(
-	controlName: InteractionsControlType,
-	isVisible: boolean = true
-): AnyControlComponent | null {
+function useControlComponent( controlName: InteractionsControlType, isVisible: boolean = true ) {
 	return useMemo( () => {
 		if ( ! isVisible ) {
 			return null;
@@ -122,7 +106,7 @@ function useControlComponent(
 export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }: InteractionDetailsProps ) => {
 	const trigger = extractString( interaction.trigger, DEFAULT_VALUES.trigger );
 	const effect = extractString( interaction.animation.value.effect, DEFAULT_VALUES.effect );
-	const custom = extractCustomEffect( interaction.animation.value.custom, DEFAULT_VALUES.custom );
+	const customEffects = interaction.animation.value[ 'custom-effects' ];
 	const type = extractString( interaction.animation.value.type, DEFAULT_VALUES.type );
 	const direction = extractString( interaction.animation.value.direction, DEFAULT_VALUES.direction );
 	const duration = extractSize( interaction.animation.value.timing_config.value.duration );
@@ -149,7 +133,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		relativeTo,
 		offsetTop,
 		offsetBottom,
-		custom,
+		customEffects,
 	};
 
 	const TriggerControl = useControlComponent( 'trigger', true );
@@ -164,8 +148,15 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		'offsetBottom',
 		controlVisibilityConfig.offsetBottom( interactionValues )
 	);
-	const CustomEffectControl = useControlComponent( 'custom', controlVisibilityConfig.custom( interactionValues ) );
-	const EffectTypeControl = useControlComponent( 'effectType', controlVisibilityConfig.effectType( interactionValues ) );
+	const CustomEffectControl = useControlComponent(
+		'customEffect',
+		controlVisibilityConfig.custom( interactionValues )
+	) as ComponentType< FieldProps< PropValue > >;
+
+	const EffectTypeControl = useControlComponent(
+		'effectType',
+		controlVisibilityConfig.effectType( interactionValues )
+	);
 	const DirectionControl = useControlComponent( 'direction', controlVisibilityConfig.direction( interactionValues ) );
 	const EasingControl = useControlComponent( 'easing' );
 
@@ -182,7 +173,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			relativeTo: string;
 			offsetTop: SizeStringValue;
 			offsetBottom: SizeStringValue;
-			custom?: CustomEffect;
+			customEffects?: PropValue;
 		} >
 	): void => {
 		const resolvedDirectionValue = resolveDirection(
@@ -208,7 +199,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 				relativeTo: updates.relativeTo ?? relativeTo,
 				offsetTop: updates.offsetTop ?? offsetTop,
 				offsetBottom: updates.offsetBottom ?? offsetBottom,
-				custom: updates.custom ?? custom,
+				customEffects: updates.customEffects ?? customEffects,
 			} ),
 		};
 
@@ -253,23 +244,27 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 				{ CustomEffectControl && (
 					<Field label={ __( 'Custom Effect', 'elementor' ) }>
 						<CustomEffectControl
-							value={ custom ?? { keyframes: [] } }
-							onChange={ ( v: CustomEffect ) => updateInteraction( { custom: v } ) }
+							value={ customEffects }
+							onChange={ ( v: PropValue ) => updateInteraction( { customEffects: v } ) }
 						/>
 					</Field>
 				) }
 
-				{ EffectTypeControl && (<Field label={ __( 'Type', 'elementor' ) }>
-					<EffectTypeControl value={ type } onChange={ ( v ) => updateInteraction( { type: v } ) } />
-				</Field>)}
+				{ EffectTypeControl && (
+					<Field label={ __( 'Type', 'elementor' ) }>
+						<EffectTypeControl value={ type } onChange={ ( v ) => updateInteraction( { type: v } ) } />
+					</Field>
+				) }
 
-				{DirectionControl && (<Field label={ __( 'Direction', 'elementor' ) }>
-					<DirectionControl
-						value={ direction }
-						onChange={ ( v ) => updateInteraction( { direction: v } ) }
-						interactionType={ type }
-					/>
-				</Field>)}
+				{ DirectionControl && (
+					<Field label={ __( 'Direction', 'elementor' ) }>
+						<DirectionControl
+							value={ direction }
+							onChange={ ( v ) => updateInteraction( { direction: v } ) }
+							interactionType={ type }
+						/>
+					</Field>
+				) }
 
 				{ controlVisibilityConfig.duration( interactionValues ) && (
 					<Field label={ __( 'Duration', 'elementor' ) }>

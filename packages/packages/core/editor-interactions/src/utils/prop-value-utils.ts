@@ -1,16 +1,7 @@
 import { type Unit } from '@elementor/editor-controls';
 import {
-	type AnimationKeyframe,
-	type AnimationKeyframeStopPropValue,
-	type KeyframeStopSettings,
-	type KeyframeStopSettingsPropValue,
-	type Transform3d,
-	type Transform3dPropValue,
-	type Transform2d,
-	type Transform2dPropValue,
-} from '@elementor/editor-elements';
-import {
 	type BooleanPropValue,
+	type PropValue,
 	sizePropTypeUtil,
 	type SizePropValue,
 	type StringPropValue,
@@ -20,8 +11,6 @@ import { DEFAULT_TIME_UNIT, TIME_UNITS } from '../configs/time-constants';
 import {
 	type AnimationPresetPropValue,
 	type ConfigPropValue,
-	type CustomEffect,
-	type CustomEffectPropValue,
 	type ElementInteractions,
 	type ExcludedBreakpointsPropValue,
 	type InteractionBreakpointsPropValue,
@@ -37,9 +26,6 @@ export const createString = ( value: string ): StringPropValue => ( {
 	$$type: 'string',
 	value,
 } );
-
-const createSizeValue = ( size: number, unit: Unit ): SizePropValue =>
-	sizePropTypeUtil.create( { size, unit } as SizePropValue[ 'value' ] );
 
 export const createTimingConfig = ( duration: SizeStringValue, delay: SizeStringValue ): TimingConfigPropValue => ( {
 	$$type: 'timing-config',
@@ -116,7 +102,7 @@ export const createAnimationPreset = ( {
 	relativeTo,
 	offsetTop,
 	offsetBottom,
-	custom,
+	customEffects,
 }: {
 	effect: string;
 	type: string;
@@ -128,12 +114,12 @@ export const createAnimationPreset = ( {
 	relativeTo?: string;
 	offsetTop?: SizeStringValue;
 	offsetBottom?: SizeStringValue;
-	custom?: CustomEffect;
+	customEffects?: PropValue;
 } ): AnimationPresetPropValue => ( {
 	$$type: 'animation-preset-props',
 	value: {
 		effect: createString( effect ),
-		...( ( custom || effect === 'custom' ) && { custom: createCustomEffect( custom ?? { keyframes: [] } ) } ),
+		'custom-effects': customEffects,
 		type: createString( type ),
 		direction: createString( direction ?? '' ),
 		timing_config: createTimingConfig( duration, delay ),
@@ -144,52 +130,6 @@ export const createAnimationPreset = ( {
 			offsetTop,
 			offsetBottom,
 		} ),
-	},
-} );
-
-export const createTransform3d = ( t: Transform3d, unit: Unit ): Transform3dPropValue => ( {
-	$$type: 'transform-3d',
-	value: {
-		x: createSizeValue( t.x, unit ),
-		y: createSizeValue( t.y, unit ),
-		z: createSizeValue( t.z, unit ),
-	},
-} );
-
-export const createTransform2d = ( t: Transform2d, unit: Unit ): Transform2dPropValue => ( {
-	$$type: 'transform-2d',
-	value: {
-		x: createSizeValue( t.x, unit ),
-		y: createSizeValue( t.y, unit ),
-	},
-} );
-
-export const createKeyframeStopSettings = ( settings: KeyframeStopSettings ): KeyframeStopSettingsPropValue => ( {
-	$$type: 'keyframe-stop-settings',
-	value: {
-		opacity: settings.opacity !== undefined ? createSizeValue( settings.opacity, '%' ) : undefined,
-		scale: settings.scale ? createTransform3d( settings.scale, '%' ) : undefined,
-		move: settings.move ? createTransform3d( settings.move, 'px' ) : undefined,
-		rotate: settings.rotate ? createTransform3d( settings.rotate, 'deg' ) : undefined,
-		skew: settings.skew ? createTransform2d( settings.skew, 'deg' ) : undefined,
-	},
-} );
-
-export const createAnimationKeyframeStop = ( kf: AnimationKeyframe ): AnimationKeyframeStopPropValue => ( {
-	$$type: 'animation-keyframe-stop',
-	value: {
-		stop: createSizeValue( kf.stop, '%' ),
-		settings: createKeyframeStopSettings( kf.settings ),
-	},
-} );
-
-export const createCustomEffect = ( custom: CustomEffect ): CustomEffectPropValue => ( {
-	$$type: 'custom-effect',
-	value: {
-		keyframes: {
-			$$type: 'animation-keyframes',
-			value: custom.keyframes.map( createAnimationKeyframeStop ),
-		},
 	},
 } );
 
@@ -207,7 +147,7 @@ export const createInteractionItem = ( {
 	offsetTop,
 	offsetBottom,
 	excludedBreakpoints,
-	custom,
+	customEffects,
 }: {
 	trigger: string;
 	effect: string;
@@ -222,7 +162,7 @@ export const createInteractionItem = ( {
 	offsetTop?: number;
 	offsetBottom?: number;
 	excludedBreakpoints?: string[];
-	custom?: CustomEffect;
+	customEffects?: PropValue;
 } ): InteractionItemPropValue => ( {
 	$$type: 'interaction-item',
 	value: {
@@ -239,7 +179,7 @@ export const createInteractionItem = ( {
 			relativeTo,
 			offsetTop,
 			offsetBottom,
-			custom,
+			customEffects,
 		} ),
 		...( excludedBreakpoints &&
 			excludedBreakpoints.length > 0 && {
@@ -276,76 +216,6 @@ export const extractSize = ( prop?: SizePropValue, defaultValue?: SizeStringValu
 	}
 
 	return formatSizeValue( prop.value );
-};
-
-const extractSizeNumber = ( prop?: SizePropValue, fallback = 0 ): number => {
-	if ( ! prop?.value || typeof prop.value.size !== 'number' ) {
-		return fallback;
-	}
-	return prop.value.size;
-};
-
-export const extractTransform3d = (
-	prop: Transform3dPropValue | undefined,
-	fallback?: Transform3d
-): Transform3d | undefined => {
-	if ( ! prop?.value ) {
-		return fallback;
-	}
-
-	return {
-		x: extractSizeNumber( prop.value.x ),
-		y: extractSizeNumber( prop.value.y ),
-		z: extractSizeNumber( prop.value.z ),
-	};
-};
-
-export const extractTransform2d = (
-	prop: Transform2dPropValue | undefined,
-	fallback?: Transform2d
-): Transform2d | undefined => {
-	if ( ! prop?.value ) {
-		return fallback;
-	}
-
-	return {
-		x: extractSizeNumber( prop.value.x ),
-		y: extractSizeNumber( prop.value.y ),
-	};
-};
-
-export const extractKeyframeStopSettings = (
-	prop: KeyframeStopSettingsPropValue | undefined
-): KeyframeStopSettings => {
-	if ( ! prop?.value ) {
-		return {};
-	}
-
-	return {
-		opacity: prop.value.opacity ? extractSizeNumber( prop.value.opacity ) : undefined,
-		scale: extractTransform3d( prop.value.scale ),
-		move: extractTransform3d( prop.value.move ),
-		rotate: extractTransform3d( prop.value.rotate ),
-		skew: extractTransform2d( prop.value.skew ),
-	};
-};
-
-export const extractAnimationKeyframe = ( prop: AnimationKeyframeStopPropValue ): AnimationKeyframe => ( {
-	stop: extractSizeNumber( prop.value.stop ),
-	settings: extractKeyframeStopSettings( prop.value.settings ),
-} );
-
-export const extractCustomEffect = (
-	prop: CustomEffectPropValue | undefined,
-	fallback?: CustomEffect
-): CustomEffect | undefined => {
-	if ( ! prop?.value?.keyframes ) {
-		return fallback;
-	}
-
-	return {
-		keyframes: prop.value.keyframes.value.map( extractAnimationKeyframe ),
-	};
 };
 
 const TRIGGER_LABELS: Record< string, string > = {
