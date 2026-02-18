@@ -12,6 +12,8 @@ class EditorAssetsAPI {
 
 	const ASSETS_DATA_EXPIRATION = 'ASSETS_DATA_EXPIRATION';
 
+	const DEFAULT_EXPIRATION_TIME = '+1 hour';
+
 	public function __construct( array $config ) {
 		$this->config = $config;
 	}
@@ -20,11 +22,7 @@ class EditorAssetsAPI {
 		return $this->config[ $key ] ?? '';
 	}
 
-	public function get_assets_data( $force_request = false, bool $skip_cache = false ): array {
-		if ( $skip_cache ) {
-			return $this->fetch_data();
-		}
-
+	public function get_assets_data( $force_request = false ): array {
 		$assets_data = $this->get_transient( $this->config( static::ASSETS_DATA_TRANSIENT_KEY ) );
 
 		if ( $force_request || false === $assets_data ) {
@@ -71,7 +69,7 @@ class EditorAssetsAPI {
 		return json_decode( $cache['value'], true );
 	}
 
-	private function set_transient( $cache_key, $value, $expiration = '+12 hours' ): bool {
+	private function set_transient( $cache_key, $value, $expiration ): bool {
 		$data = [
 			'timeout' => strtotime( $expiration, current_time( 'timestamp' ) ),
 			'value' => wp_json_encode( $value ),
@@ -82,7 +80,7 @@ class EditorAssetsAPI {
 
 	private function get_expiration_time(): string {
 		$expiration = $this->config( static::ASSETS_DATA_EXPIRATION );
-		return $expiration ? $expiration : '+1 hour';
+		return $expiration ? $expiration : static::DEFAULT_EXPIRATION_TIME;
 	}
 
 	private function has_valid_data( $data ): bool {
