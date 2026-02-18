@@ -349,6 +349,29 @@ body {
 				opacity: .5;
 			}
 		}
+
+		&.elementor-navigator__inline-child {
+
+			.elementor-navigator__element__list-toggle {
+				display: none;
+			}
+
+			.elementor-navigator__element__toggle {
+				display: none;
+			}
+
+			.elementor-navigator__element__indicators {
+				display: none;
+			}
+
+			.elementor-navigator__item {
+				cursor: pointer;
+
+				&.elementor-editing {
+					background-color: var(--e-a-bg-active);
+				}
+			}
+		}
 	}
 
 	&__promotion-text {

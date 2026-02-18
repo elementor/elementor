@@ -135,6 +135,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		const settingKey = this.getInlineEditablePropertyName();
 		const html = value || '';
 		const parsed = parseHtmlChildren( html );
+		console.log( '[DEBUG-NAV] 2. setContentValue, key:', settingKey, 'children:', parsed.children.length, 'content:', parsed.content?.substring( 0, 80 ) );
 
 		const valueToSave = htmlV2PropTypeUtil.create( {
 			content: parsed.content || null,
@@ -193,6 +194,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	}
 
 	runCommand( key: string, value: PropValue | null ) {
+		console.log( '[DEBUG-NAV] 3. runCommand, key:', key, 'value $$type:', ( value as any )?.$$type, 'children:', ( value as any )?.value?.children?.length );
 		runCommandSync(
 			'document/elements/set-settings',
 			{

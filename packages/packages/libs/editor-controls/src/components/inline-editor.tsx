@@ -72,6 +72,7 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 
 	const onUpdate = ( { editor: updatedEditor }: { editor: Editor } ) => {
 		const newValue: string | null = updatedEditor.getHTML();
+		console.log( '[DEBUG-NAV] 1. onUpdate fired, HTML:', newValue );
 
 		setValue( isEmpty( newValue ) ? null : newValue );
 	};

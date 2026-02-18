@@ -3,6 +3,20 @@ import RootEmpty from './root-empty';
 
 const NEW_NESTABLE_CLASS = 'elementor-navigator__element-new-nestable';
 const INLINE_CHILD_INDENT_INCREMENT = 10;
+const INLINE_CHILD_ICON_MAP = {
+	b: 'eicon-editor-bold',
+	strong: 'eicon-editor-bold',
+	i: 'eicon-editor-italic',
+	em: 'eicon-editor-italic',
+	u: 'eicon-editor-underline',
+	a: 'eicon-editor-link',
+	del: 'eicon-editor-strikethrough',
+	s: 'eicon-editor-strikethrough',
+	sup: 'eicon-editor-list-ol',
+	sub: 'eicon-editor-list-ol',
+	span: 'eicon-edit',
+};
+const INLINE_CHILD_DEFAULT_ICON = 'eicon-edit';
 
 export default class extends Marionette.CompositeView {
 	getTemplate() {
@@ -399,6 +413,10 @@ export default class extends Marionette.CompositeView {
 	 */
 	deselect() {
 		this.removeEditingClass();
+
+		this.ui.elements
+			.find( '.elementor-navigator__inline-child .elementor-navigator__item' )
+			.removeClass( 'elementor-editing' );
 	}
 
 	onRender() {
@@ -419,6 +437,7 @@ export default class extends Marionette.CompositeView {
 		this.ui.elements.find( '.elementor-navigator__inline-child' ).remove();
 
 		const inlineChildren = this.getInlineChildren();
+		console.log( '[DEBUG-NAV] 5. renderInlineChildren, found:', inlineChildren?.length ?? 0, 'children:', JSON.stringify( inlineChildren?.map( ( c ) => ( { type: c.type, id: c.id?.substring( 0, 10 ) } ) ) ) );
 
 		if ( ! inlineChildren ) {
 			return;
@@ -433,6 +452,7 @@ export default class extends Marionette.CompositeView {
 
 		children.forEach( ( child ) => {
 			const title = child.content || child.type;
+			const iconClass = INLINE_CHILD_ICON_MAP[ child.type ] || INLINE_CHILD_DEFAULT_ICON;
 
 			const $item = jQuery( '<div>', {
 				class: 'elementor-navigator__element elementor-navigator__inline-child',
@@ -445,15 +465,29 @@ export default class extends Marionette.CompositeView {
 
 			$inner.append(
 				jQuery( '<div>', { class: 'elementor-navigator__element__element-type' } )
-					.html( '<i class="eicon-code-bold" aria-hidden="true"></i>' ),
+					.html( '<i class="' + iconClass + '" aria-hidden="true"></i>' ),
 				jQuery( '<div>', { class: 'elementor-navigator__element__title' } )
 					.append(
 						jQuery( '<span>', {
 							class: 'elementor-navigator__element__title__text',
-							text: '<' + child.type + '> ' + title,
+							text: title,
 						} ),
 					),
 			);
+
+			$inner.on( 'click', ( event ) => {
+				event.stopPropagation();
+				this.onInlineChildClick( child.id );
+			} );
+
+			$inner.on( 'contextmenu', ( event ) => {
+				event.preventDefault();
+				event.stopPropagation();
+			} );
+
+			$inner.on( 'dblclick', ( event ) => {
+				event.stopPropagation();
+			} );
 
 			$item.append( $inner );
 			$container.append( $item );
@@ -462,6 +496,21 @@ export default class extends Marionette.CompositeView {
 				this.appendInlineChildItems( child.children, indent );
 			}
 		} );
+	}
+
+	onInlineChildClick( inlineId ) {
+		this.clearInlineChildHighlights();
+
+		this.ui.elements
+			.find( '.elementor-navigator__inline-child[data-inline-id="' + inlineId + '"] > .elementor-navigator__item' )
+			.addClass( 'elementor-editing' );
+
+		this.model.trigger( 'request:edit', { scrollIntoView: true } );
+	}
+
+	clearInlineChildHighlights() {
+		jQuery( '.elementor-navigator__inline-child .elementor-navigator__item' )
+			.removeClass( 'elementor-editing' );
 	}
 
 	onModelChange() {
@@ -497,6 +546,7 @@ export default class extends Marionette.CompositeView {
 		const hasHtmlV2Change = Object.values( settingsModel.changed ).some(
 			( attribute ) => attribute && 'html-v2' === attribute.$$type,
 		);
+		console.log( '[DEBUG-NAV] 4. onModelSettingsChange, hasHtmlV2Change:', hasHtmlV2Change, 'changedKeys:', Object.keys( settingsModel.changed ), 'changedValues $$types:', Object.values( settingsModel.changed ).map( ( v ) => v?.$$type ) );
 
 		if ( hasHtmlV2Change ) {
 			this.invalidateInlineChildrenCache();
