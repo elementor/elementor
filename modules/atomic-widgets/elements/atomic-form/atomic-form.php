@@ -19,7 +19,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Email_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_V2_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -176,8 +176,8 @@ class Atomic_Form extends Atomic_Element_Base {
 				->build(),
 			Widget_Builder::make( Atomic_Button::get_element_type() )
 				->settings( [
-					'text' => Html_V2_Prop_Type::generate( [
-						'content'  => __( 'Submit', 'elementor' ),
+					'text' => Html_V3_Prop_Type::generate( [
+						'content'  => String_Prop_Type::generate( __( 'Submit', 'elementor' ) ),
 						'children' => [],
 					] ),
 					'attributes' => Attributes_Prop_Type::generate( [
@@ -203,8 +203,8 @@ class Atomic_Form extends Atomic_Element_Base {
 	}
 
 	private function build_status_message( string $message, string $state, string $title ): array {
-		$paragraph_value = Html_V2_Prop_Type::generate( [
-			'content'  => $message,
+		$paragraph_value = Html_V3_Prop_Type::generate( [
+			'content'  => String_Prop_Type::generate( $message ),
 			'children' => [],
 		] );
 
