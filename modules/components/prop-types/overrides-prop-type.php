@@ -22,15 +22,28 @@ class Overrides_Prop_Type extends Array_Prop_Type {
 
 	public function sanitize_value( $value ): array {
 		$sanitized = parent::sanitize_value( $value );
+		$filtered = [];
 
-		return array_filter( $sanitized, function( $item ) {
-			switch ( $item['$$type'] ) {
-				case 'override':
-					return null !== $item['value'];
-				case 'overridable':
-					$override = $item['value']['origin_value'];
-					return null !== $override['value'];
+		// todo: test
+		foreach ( $sanitized as $item ) {
+			if ( $this->is_item_nullish( $item ) ) {
+				continue;
 			}
-		} );
+
+			$filtered[] = $item;
+		}
+
+		return $filtered;
+	}
+
+	private function is_item_nullish( $item ): bool {
+		switch ( $item['$$type'] ) {
+			case 'override':
+				return null === $item['value'];
+			case 'overridable':
+				return null === $item['value']['origin_value'];
+		}
+
+		return true;
 	}
 }
