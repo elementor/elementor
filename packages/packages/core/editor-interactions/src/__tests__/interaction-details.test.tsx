@@ -4,12 +4,12 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 import { Direction } from '../components/controls/direction';
 import { Easing } from '../components/controls/easing';
 import { Effect } from '../components/controls/effect';
+import { EffectType } from '../components/controls/effect-type';
 import { Trigger } from '../components/controls/trigger';
 import { InteractionDetails } from '../components/interaction-details';
 import type { InteractionItemValue } from '../types';
 import { extractExcludedBreakpoints } from '../utils/prop-value-utils';
 import { createInteractionItemValue } from './utils';
-import { EffectType } from '../components/controls/effect-type';
 
 jest.mock( '../interactions-controls-registry', () => ( {
 	getInteractionsControl: jest.fn(),
