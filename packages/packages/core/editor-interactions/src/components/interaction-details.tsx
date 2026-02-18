@@ -105,7 +105,7 @@ function useControlComponent( controlName: InteractionsControlType, isVisible: b
 export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }: InteractionDetailsProps ) => {
 	const trigger = extractString( interaction.trigger, DEFAULT_VALUES.trigger );
 	const effect = extractString( interaction.animation.value.effect, DEFAULT_VALUES.effect );
-	const customEffects = interaction.animation.value[ 'custom-effects' ];
+	const customEffects = interaction.animation.value.custom_effect;
 	const type = extractString( interaction.animation.value.type, DEFAULT_VALUES.type );
 	const direction = extractString( interaction.animation.value.direction, DEFAULT_VALUES.direction );
 	const duration = extractSize( interaction.animation.value.timing_config.value.duration );
