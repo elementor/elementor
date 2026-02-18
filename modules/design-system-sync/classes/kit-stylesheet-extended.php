@@ -72,7 +72,7 @@ class Kit_Stylesheet_Extended {
 				continue;
 			}
 
-			$v3_id = 'v4-' . $label;
+			$v3_id = Variables_Provider::get_v4_variable_id( $label );
 			$type = $variable['type'];
 			$global_type = $this->get_v3_global_type( $type ?? '' );
 
