@@ -1,15 +1,13 @@
 import { useMutation } from '@elementor/query';
 
+import { getConfig } from '../utils/get-config';
+
 interface UpdateProgressParams {
 	complete_step?: string;
 	skip_step?: boolean;
 	step_index?: number;
 	total_steps?: number;
 	user_exit?: boolean;
-}
-
-function getConfig() {
-	return window.elementorAppConfig?.[ 'e-onboarding' ] ?? null;
 }
 
 async function updateProgress( params: UpdateProgressParams ): Promise< void > {
