@@ -114,14 +114,20 @@ class Global_Colors_Extension {
 
 		if ( empty( $v4_colors ) ) {
 			return $items;
-		}
+		}	
 
 		foreach ( $v4_colors as $color ) {
-			$id = 'v4-' . $color['label'];
+			$label = sanitize_text_field( $color['label'] ?? '' );
+
+			if ( empty( $label ) ) {
+				continue;
+			}
+
+			$id = Variables_Provider::get_v4_variable_id( $label );
 
 			$items[ $id ] = [
 				'id' => $id,
-				'title' => $color['label'],
+				'title' => $label,
 				'value' => strtoupper( $color['value'] ),
 				'group' => 'v4',
 			];
