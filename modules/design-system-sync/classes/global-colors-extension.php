@@ -7,6 +7,7 @@ use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Global_Style_Repeater;
 use Elementor\Plugin;
 use Elementor\Repeater;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -30,10 +31,12 @@ class Global_Colors_Extension {
 	}
 
 	public function enqueue_editor_scripts() {
+		$min_suffix = Utils::is_script_debug() ? '' : '.min';
+
 		wp_enqueue_script(
 			'elementor-design-system-sync-editor',
-			plugins_url( '../assets/js/editor-variables-sync.js', __FILE__ ),
-			[],
+			plugins_url( '../assets/js/editor-variables-sync' . $min_suffix . '.js', __FILE__ ),
+			[ 'elementor-v2-utils' ],
 			ELEMENTOR_VERSION,
 			true
 		);

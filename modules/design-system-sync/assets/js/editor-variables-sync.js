@@ -1,14 +1,22 @@
 ( function() {
 	'use strict';
 
-	let refreshTimeout;
+	const debounce = window.elementorV2?.utils?.debounce;
+	const refresh = () => {
+		const globals = $e.components.get( 'globals' );
+		globals?.refreshGlobalData();
+		globals?.populateGlobalData();
+	};
 
-	window.addEventListener( 'variables:updated', () => {
-		clearTimeout( refreshTimeout );
-		refreshTimeout = setTimeout( () => {
-			const globals = $e.components.get( 'globals' );
-			globals?.refreshGlobalData();
-			globals?.populateGlobalData();
-		}, 100 );
-	} );
+	const scheduleRefresh = debounce
+		? debounce( refresh, 100 )
+		: ( function() {
+			let refreshTimeout;
+			return function() {
+				clearTimeout( refreshTimeout );
+				refreshTimeout = setTimeout( refresh, 100 );
+			};
+		}() );
+
+	window.addEventListener( 'variables:updated', scheduleRefresh );
 }() );
