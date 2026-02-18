@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 
+import { Direction } from '../components/controls/direction';
 import { Easing } from '../components/controls/easing';
 import { Effect } from '../components/controls/effect';
+import { EffectType } from '../components/controls/effect-type';
 import { Trigger } from '../components/controls/trigger';
 import { InteractionDetails } from '../components/interaction-details';
 import type { InteractionItemValue } from '../types';
@@ -85,6 +87,18 @@ describe( 'InteractionDetails', () => {
 			if ( type === 'easing' ) {
 				return {
 					component: Easing,
+				};
+			}
+
+			if ( type === 'direction' ) {
+				return {
+					component: Direction,
+				};
+			}
+
+			if ( type === 'effectType' ) {
+				return {
+					component: EffectType,
 				};
 			}
 
