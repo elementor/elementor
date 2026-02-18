@@ -19,7 +19,9 @@ class Html_V3_Prop_Type extends Object_Prop_Type {
 	protected function define_shape(): array {
 		return [
 			'content' => String_Prop_Type::make(),
-			'children' => Unknown_Prop_Type::make(),
+			'children' => Unknown_Prop_Type::make()
+				->optional()
+				->description( 'Array of child element objects, each with id, type, optional content, and optional nested children.' ),
 		];
 	}
 

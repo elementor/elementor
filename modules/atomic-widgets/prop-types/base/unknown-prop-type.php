@@ -2,6 +2,9 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes\Base;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Meta;
+use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Required_Setting;
+use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Settings;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -9,6 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Unknown_Prop_Type implements Prop_Type {
+	use Has_Meta;
+	use Has_Settings;
+	use Has_Required_Setting;
+
 	public static function get_key(): string {
 		return 'unknown';
 	}
@@ -29,22 +36,6 @@ class Unknown_Prop_Type implements Prop_Type {
 		return $value;
 	}
 
-	public function get_meta(): array {
-		return [];
-	}
-
-	public function get_meta_item( string $key, $default_value = null ) {
-		return $default_value;
-	}
-
-	public function get_settings(): array {
-		return [];
-	}
-
-	public function get_setting( string $key, $default_value = null ) {
-		return $default_value;
-	}
-
 	public function set_dependencies( ?array $dependencies ): self {
 		return $this;
 	}
@@ -61,6 +52,8 @@ class Unknown_Prop_Type implements Prop_Type {
 		return [
 			'kind' => 'unknown',
 			'key' => static::get_key(),
+			'settings' => (object) $this->get_settings(),
+			'meta' => (object) $this->get_meta(),
 		];
 	}
 
