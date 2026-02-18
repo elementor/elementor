@@ -43,6 +43,7 @@ interface OnboardingConfig {
 	choices: Record< string, unknown >;
 	hadUnexpectedExit: boolean;
 	isConnected: boolean;
+	shouldShowProInstallScreen?: boolean;
 	urls: {
 		dashboard: string;
 		editor: string;
@@ -89,6 +90,7 @@ const defaultConfig: OnboardingConfig = {
 	choices: {},
 	hadUnexpectedExit: false,
 	isConnected: false,
+	shouldShowProInstallScreen: false,
 	urls: {
 		dashboard: 'https://test.local/wp-admin/',
 		editor: 'https://test.local/editor',
@@ -297,6 +299,124 @@ describe( 'App', () => {
 			await waitFor( () => {
 				expect( onComplete ).toHaveBeenCalled();
 			} );
+		} );
+	} );
+
+	describe( 'Pro install flow', () => {
+		it( 'should show Pro install screen when connected and eligible', () => {
+			// Arrange
+			window.elementorAppConfig = createMockConfig( {
+				isConnected: true,
+				shouldShowProInstallScreen: true,
+			} );
+
+			// Act
+			render( <App /> );
+
+			// Assert
+			expect( screen.getByTestId( 'pro-install-screen' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'You already have a Pro subscription' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Install Pro on this site' ) ).toBeInTheDocument();
+			expect( screen.getByText( "I'll do it later" ) ).toBeInTheDocument();
+		} );
+
+		it( 'should skip Pro install screen when not eligible', () => {
+			// Arrange
+			window.elementorAppConfig = createMockConfig( {
+				isConnected: true,
+				shouldShowProInstallScreen: false,
+			} );
+
+			// Act
+			render( <App /> );
+
+			// Assert
+			expect( screen.queryByTestId( 'pro-install-screen' ) ).not.toBeInTheDocument();
+			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should not show Pro install screen for guest users', () => {
+			// Arrange
+			window.elementorAppConfig = createMockConfig( {
+				isConnected: false,
+				shouldShowProInstallScreen: true,
+			} );
+
+			render( <App /> );
+
+			// Act - continue as guest
+			fireEvent.click( screen.getByText( 'Continue as a guest' ) );
+
+			// Assert - should go to steps, not pro install (guests are not connected)
+			expect( screen.queryByTestId( 'pro-install-screen' ) ).not.toBeInTheDocument();
+			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should dismiss Pro install screen when clicking "I\'ll do it later"', async () => {
+			// Arrange
+			window.elementorAppConfig = createMockConfig( {
+				isConnected: true,
+				shouldShowProInstallScreen: true,
+			} );
+
+			render( <App /> );
+			expect( screen.getByTestId( 'pro-install-screen' ) ).toBeInTheDocument();
+
+			// Act
+			fireEvent.click( screen.getByText( "I'll do it later" ) );
+
+			// Assert - should navigate to onboarding steps
+			await waitFor( () => {
+				expect( screen.queryByTestId( 'pro-install-screen' ) ).not.toBeInTheDocument();
+			} );
+			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should call install-pro endpoint when clicking install button', async () => {
+			// Arrange
+			window.elementorAppConfig = createMockConfig( {
+				isConnected: true,
+				shouldShowProInstallScreen: true,
+			} );
+
+			render( <App /> );
+
+			// Act
+			fireEvent.click( screen.getByText( 'Install Pro on this site' ) );
+
+			// Assert
+			await waitFor( () => {
+				expect( mockFetch ).toHaveBeenCalledWith(
+					expect.stringContaining( 'install-pro' ),
+					expect.objectContaining( {
+						method: 'POST',
+					} )
+				);
+			} );
+		} );
+
+		it( 'should dismiss Pro install screen after successful installation', async () => {
+			// Arrange
+			mockFetch.mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( { data: { success: true, message: 'installed' } } ),
+			} );
+
+			window.elementorAppConfig = createMockConfig( {
+				isConnected: true,
+				shouldShowProInstallScreen: true,
+			} );
+
+			render( <App /> );
+
+			// Act
+			fireEvent.click( screen.getByText( 'Install Pro on this site' ) );
+
+			// Assert - should transition to onboarding steps
+			await waitFor( () => {
+				expect( screen.queryByTestId( 'pro-install-screen' ) ).not.toBeInTheDocument();
+			} );
+			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
 		} );
 	} );
 
