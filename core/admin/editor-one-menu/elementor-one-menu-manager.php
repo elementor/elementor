@@ -191,8 +191,12 @@ class Elementor_One_Menu_Manager {
 	public function hide_legacy_templates_menu(): void {
 		?>
 		<style type="text/css">
+<<<<<<< HEAD
 			#menu-posts-elementor_library, 
 			#menu-posts-elementor_library + .wp-not-current-submenu.wp-menu-separator {
+=======
+			#menu-posts-elementor_library {
+>>>>>>> e8d7fc1090 (Fix: Extra separator space in WP Admin Menu [ED-22959] (#34824))
 				display: none !important;
 			}
 		</style>
@@ -200,15 +204,31 @@ class Elementor_One_Menu_Manager {
 	}
 
 	public function hide_old_elementor_menu(): void {
+		$this->remove_elementor_separator();
 		?>
 		<style type="text/css">
+<<<<<<< HEAD
 			#toplevel_page_elementor,
 			#toplevel_page_elementor + .wp-not-current-submenu.wp-menu-separator,
 			#toplevel_page_elementor-home + .wp-not-current-submenu.wp-menu-separator {
+=======
+			#toplevel_page_elementor {
+>>>>>>> e8d7fc1090 (Fix: Extra separator space in WP Admin Menu [ED-22959] (#34824))
 				display: none !important;
 			}
 		</style>
 		<?php
+	}
+
+	private function remove_elementor_separator(): void {
+		global $menu;
+
+		foreach ( $menu as $key => $item ) {
+			if ( isset( $item[2] ) && 'separator-elementor' === $item[2] ) {
+				unset( $menu[ $key ] );
+				break;
+			}
+		}
 	}
 
 	public function register_flyout_items_as_hidden_submenus(): void {
