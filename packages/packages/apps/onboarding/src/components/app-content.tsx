@@ -3,12 +3,15 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { useCheckProInstallScreen } from '../hooks/use-check-pro-install-screen';
+import { useElementorConnect } from '../hooks/use-elementor-connect';
 import { useOnboarding } from '../hooks/use-onboarding';
 import { useUpdateChoices } from '../hooks/use-update-choices';
 import { useUpdateProgress } from '../hooks/use-update-progress';
 import { BuildingFor } from '../steps/screens/building-for';
 import { ExperienceLevel } from '../steps/screens/experience-level';
 import { Login } from '../steps/screens/login';
+import { ProInstall } from '../steps/screens/pro-install';
 import { SiteAbout } from '../steps/screens/site-about';
 import { ThemeSelection } from '../steps/screens/theme-selection';
 import { getStepVisualConfig } from '../steps/step-visuals';
@@ -39,6 +42,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 		hadUnexpectedExit,
 		isLoading,
 		hasPassedLogin,
+		shouldShowProInstall,
 		choices,
 		completedSteps,
 		urls,
@@ -54,11 +58,18 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 		}
 	}, [ hadUnexpectedExit, actions ] );
 
-	const handleConnect = useCallback( () => {
-		if ( urls.connect ) {
-			window.location.href = urls.connect;
-		}
-	}, [ urls.connect ] );
+	const checkProInstallScreen = useCheckProInstallScreen();
+
+	const handleConnectSuccess = useCallback( async () => {
+		const result = await checkProInstallScreen();
+		actions.setShouldShowProInstallScreen( result.shouldShowProInstallScreen );
+		actions.setConnected( true );
+	}, [ actions, checkProInstallScreen ] );
+
+	const handleConnect = useElementorConnect( {
+		connectUrl: urls.connect,
+		onSuccess: handleConnectSuccess,
+	} );
 
 	const handleContinueAsGuest = useCallback( () => {
 		actions.setGuest( true );
@@ -186,11 +197,21 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 					</TopBar>
 				}
 			>
-				<Login
-					onConnect={ handleConnect }
-					onContinueAsGuest={ handleContinueAsGuest }
-					connectUrl={ urls.connect }
-				/>
+				<Login onConnect={ handleConnect } onContinueAsGuest={ handleContinueAsGuest } />
+			</BaseLayout>
+		);
+	}
+
+	if ( shouldShowProInstall ) {
+		return (
+			<BaseLayout
+				topBar={
+					<TopBar>
+						<TopBarContent showUpgrade={ false } showClose={ false } />
+					</TopBar>
+				}
+			>
+				<ProInstall />
 			</BaseLayout>
 		);
 	}
