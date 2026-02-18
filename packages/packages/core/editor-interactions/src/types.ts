@@ -2,16 +2,22 @@ import { type RefObject } from 'react';
 import { type Unit } from '@elementor/editor-controls';
 import type {
 	AnimationPresetPropValue,
+	BooleanPropValue,
 	ConfigPropValue,
 	ElementInteractions,
 	ExcludedBreakpointsPropValue,
 	InteractionBreakpointsPropValue,
 	InteractionItemPropValue,
+	NumberPropValue,
+	StringPropValue,
 	TimingConfigPropValue,
 } from '@elementor/editor-elements';
 
 export type {
+	BooleanPropValue,
 	ConfigPropValue,
+	StringPropValue,
+	NumberPropValue,
 	TimingConfigPropValue,
 	AnimationPresetPropValue,
 	InteractionItemPropValue,

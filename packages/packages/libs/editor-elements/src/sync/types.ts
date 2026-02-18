@@ -1,10 +1,4 @@
-import {
-	type BooleanPropValue,
-	type PropsSchema,
-	type PropValue,
-	type SizePropValue,
-	type StringPropValue,
-} from '@elementor/editor-props';
+import { type PropsSchema, type PropValue, type SizePropValue } from '@elementor/editor-props';
 import { type ClassState, type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 
 import { type ControlItem } from '../types';
@@ -51,6 +45,21 @@ export type V1Element = {
 	lookup?: () => V1Element;
 };
 
+export type StringPropValue = {
+	$$type: 'string';
+	value: string;
+};
+
+export type NumberPropValue = {
+	$$type: 'number';
+	value: number;
+};
+
+export type BooleanPropValue = {
+	$$type: 'boolean';
+	value: boolean;
+};
+
 export type TimingConfigPropValue = {
 	$$type: 'timing-config';
 	value: {
@@ -73,7 +82,6 @@ export type ConfigPropValue = {
 export type AnimationPresetPropValue = {
 	$$type: 'animation-preset-props';
 	value: {
-		animation_id?: StringPropValue;
 		effect: StringPropValue;
 		'custom-effects'?: PropValue;
 		type: StringPropValue;

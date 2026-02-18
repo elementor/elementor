@@ -1,22 +1,19 @@
 import { type Unit } from '@elementor/editor-controls';
-import {
-	type BooleanPropValue,
-	type PropValue,
-	sizePropTypeUtil,
-	type SizePropValue,
-	type StringPropValue,
-} from '@elementor/editor-props';
+import { sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 
 import { DEFAULT_TIME_UNIT, TIME_UNITS } from '../configs/time-constants';
 import {
 	type AnimationPresetPropValue,
+	type BooleanPropValue,
 	type ConfigPropValue,
 	type ElementInteractions,
 	type ExcludedBreakpointsPropValue,
 	type InteractionBreakpointsPropValue,
 	type InteractionItemPropValue,
 	type InteractionItemValue,
+	type NumberPropValue,
 	type SizeStringValue,
+	type StringPropValue,
 	type TimingConfigPropValue,
 } from '../types';
 import { formatSizeValue, parseSizeValue } from '../utils/size-transform-utils';
@@ -24,6 +21,11 @@ import { generateTempInteractionId } from './temp-id-utils';
 
 export const createString = ( value: string ): StringPropValue => ( {
 	$$type: 'string',
+	value,
+} );
+
+export const createNumber = ( value: number ): NumberPropValue => ( {
+	$$type: 'number',
 	value,
 } );
 
@@ -88,7 +90,7 @@ export const createInteractionBreakpoints = ( excluded: string[] ): InteractionB
 } );
 
 export const extractExcludedBreakpoints = ( breakpoints: InteractionBreakpointsPropValue | undefined ): string[] => {
-	return breakpoints?.value.excluded.value.map( ( bp: StringPropValue ) => bp.value ?? '' ) ?? [];
+	return breakpoints?.value.excluded.value.map( ( bp: StringPropValue ) => bp.value ) ?? [];
 };
 
 export const createAnimationPreset = ( {
