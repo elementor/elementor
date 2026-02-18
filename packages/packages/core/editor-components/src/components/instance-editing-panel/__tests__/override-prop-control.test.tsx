@@ -19,6 +19,7 @@ import { componentOverridablePropTypeUtil } from '../../../prop-types/component-
 import { ComponentInstanceProvider } from '../../../provider/component-instance-context';
 import { slice } from '../../../store/store';
 import { type OverridableProp } from '../../../types';
+import { getContainerByOriginId } from '../../../utils/get-container-by-origin-id';
 import { OverridePropControl } from '../override-prop-control';
 
 jest.mock( '@elementor/editor-controls', () => ( {
@@ -29,6 +30,10 @@ jest.mock( '@elementor/editor-controls', () => ( {
 jest.mock( '@elementor/editor-elements' );
 
 jest.mock( '../../../prop-types/component-instance-prop-type' );
+
+jest.mock( '../../../utils/get-container-by-origin-id', () => ( {
+	getContainerByOriginId: jest.fn(),
+} ) );
 
 const MOCK_COMPONENT_ID = 456;
 const MOCK_COMPONENT_ID_2 = 789;
@@ -526,6 +531,7 @@ function setupElementsMocks() {
 	};
 
 	jest.mocked( getContainer ).mockImplementation( ( id ) => createMockContainer( id, [] ) );
+	jest.mocked( getContainerByOriginId ).mockImplementation( ( originId ) => createMockContainer( originId, [] ) );
 
 	jest.mocked( getElementType ).mockImplementation( ( type ) => {
 		const def = widgetDefinitions[ type ];
