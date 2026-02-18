@@ -225,7 +225,7 @@ describe( 'InteractionDetails', () => {
 			expect( screen.getByRole( 'option', { name: /scroll into view/i, hidden: true } ) ).toBeInTheDocument();
 
 			// Guard: Pro-only trigger should be present but disabled in the core trigger control.
-			const scrollOnOption = screen.getByRole("option", { name: /while scrolling/i, hidden: true } );
+			const scrollOnOption = screen.getByRole( 'option', { name: /while scrolling/i, hidden: true } );
 			expect( scrollOnOption ).toBeInTheDocument();
 			expect( scrollOnOption ).toHaveAttribute( 'aria-disabled', 'true' );
 		} );
@@ -246,7 +246,7 @@ describe( 'InteractionDetails', () => {
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const triggerSelect = comboboxes[ 0 ];
 			fireEvent.mouseDown( triggerSelect );
-			const scrollInOption = screen.getByRole("option", { name: /scroll into view/i, hidden: true } );
+			const scrollInOption = screen.getByRole( 'option', { name: /scroll into view/i, hidden: true } );
 			fireEvent.click( scrollInOption );
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
@@ -427,7 +427,7 @@ describe( 'InteractionDetails', () => {
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const triggerSelect = comboboxes[ 0 ];
 			fireEvent.mouseDown( triggerSelect );
-			const scrollInOption = screen.getByRole("option", { name: /scroll into view/i, hidden: true } );
+			const scrollInOption = screen.getByRole( 'option', { name: /scroll into view/i, hidden: true } );
 			fireEvent.click( scrollInOption );
 
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
