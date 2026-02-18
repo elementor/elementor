@@ -227,10 +227,10 @@ class Test_Global_Colors_Extension extends Elementor_Test_Base {
 		$result = $this->extension->add_v4_variables_section_to_color_selector( $items );
 
 		// Assert
-		$this->assertArrayHasKey( 'v4-Primary', $result );
-		$this->assertEquals( 'v4-Primary', $result['v4-Primary']['id'] );
-		$this->assertEquals( 'Primary', $result['v4-Primary']['title'] );
-		$this->assertEquals( '#FF0000', $result['v4-Primary']['value'] );
-		$this->assertEquals( 'v4', $result['v4-Primary']['group'] );
+		$this->assertArrayHasKey( 'v4-primary', $result );
+		$this->assertEquals( 'v4-primary', $result['v4-primary']['id'] );
+		$this->assertEquals( 'Primary', $result['v4-primary']['title'] );
+		$this->assertEquals( '#FF0000', $result['v4-primary']['value'] );
+		$this->assertEquals( 'v4', $result['v4-primary']['group'] );
 	}
 }
