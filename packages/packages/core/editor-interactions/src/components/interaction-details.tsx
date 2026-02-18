@@ -37,7 +37,6 @@ const DEFAULT_VALUES = {
 	relativeTo: 'viewport',
 	offsetTop: 15,
 	offsetBottom: 85,
-	custom: undefined,
 };
 
 const TRIGGERS_WITHOUT_REPLAY = [ 'load', 'scrollOn', 'hover', 'click' ];
@@ -54,7 +53,7 @@ type InteractionsControlType =
 	| 'relativeTo'
 	| 'offsetTop'
 	| 'offsetBottom'
-	| 'customEffect';
+	| 'customEffects';
 
 type InteractionValues = {
 	trigger: string;
@@ -149,7 +148,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		controlVisibilityConfig.offsetBottom( interactionValues )
 	);
 	const CustomEffectControl = useControlComponent(
-		'customEffect',
+		'customEffects',
 		controlVisibilityConfig.custom( interactionValues )
 	) as ComponentType< FieldProps< PropValue > >;
 

@@ -6,7 +6,6 @@ import { type DirectionFieldProps, type FieldProps, type ReplayFieldProps } from
 type InteractionsControlType =
 	| 'trigger'
 	| 'effect'
-	| 'customEffect'
 	| 'effectType'
 	| 'direction'
 	| 'duration'
@@ -15,12 +14,13 @@ type InteractionsControlType =
 	| 'easing'
 	| 'relativeTo'
 	| 'offsetTop'
-	| 'offsetBottom';
+	| 'offsetBottom'
+	| 'customEffects';
 
 type InteractionsControlPropsMap = {
 	trigger: FieldProps;
 	effect: FieldProps;
-	customEffect?: FieldProps< PropValue >;
+	customEffects?: FieldProps< PropValue >;
 	effectType: FieldProps;
 	direction: DirectionFieldProps;
 	duration: FieldProps;
