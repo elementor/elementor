@@ -8,7 +8,9 @@ import { __ } from '@wordpress/i18n';
 import { InteractionItemContextProvider } from '../contexts/interactions-item-context';
 import type { ElementInteractions, InteractionItemPropValue, InteractionItemValue } from '../types';
 import { buildDisplayLabel, createDefaultInteractionItem, extractString } from '../utils/prop-value-utils';
+import { isProInteraction } from '../utils/is-pro-interaction';
 import { InteractionsListItem } from './interactions-list-item';
+import { ProInteractionDisabledContent } from './pro-interaction-disabled-content';
 export const MAX_NUMBER_OF_INTERACTIONS = 5;
 
 export type InteractionListProps = {
@@ -109,20 +111,32 @@ export function InteractionsList( props: InteractionListProps ) {
 				addButtonInfotipContent={ infotipContent }
 				itemSettings={ {
 					initialValues: createDefaultInteractionItem(),
-					Label: ( { value }: { value: InteractionItemPropValue } ) => buildDisplayLabel( value.value ),
+					isOpenDisabled: ( value: InteractionItemPropValue ) => isProInteraction( value ),
+					Label: ({ value }: { value: InteractionItemPropValue }) => {
+						if (isProInteraction(value)) {
+							return <ProInteractionDisabledContent value={value} />;
+						}
+						return buildDisplayLabel(value.value);
+					},
 					Icon: () => null,
 					Content: InteractionsListItem,
-					actions: ( value: InteractionItemPropValue ) => (
-						<Tooltip key="preview" placement="top" title={ __( 'Preview', 'elementor' ) }>
-							<IconButton
-								aria-label={ __( 'Play interaction', 'elementor' ) }
-								size="tiny"
-								onClick={ () => onPlayInteraction( extractString( value.value.interaction_id ) ) }
-							>
-								<PlayerPlayIcon fontSize="tiny" />
-							</IconButton>
-						</Tooltip>
-					),
+					actions: ( value: InteractionItemPropValue ) => {
+						if (isProInteraction(value)) {
+							// Only show remove (X) button - no preview button for Pro items
+							return null;
+						}
+						return (
+							<Tooltip key="preview" placement="top" title={__('Preview', 'elementor')}>
+								<IconButton
+									aria-label={__('Play interaction', 'elementor')}
+									size="tiny"
+									onClick={() => onPlayInteraction(extractString(value.value.interaction_id))}
+								>
+									<PlayerPlayIcon fontSize="tiny" />
+								</IconButton>
+							</Tooltip>
+						);
+					},
 				} }
 			/>
 		</InteractionItemContextProvider>
