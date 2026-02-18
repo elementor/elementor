@@ -1372,14 +1372,19 @@ export default class EditorPage extends BasePage {
 		expect( vwAndPxValuesAreEqual ).toBeTruthy();
 	}
 
-	async triggerEditingElement( elementId: string ): Promise<Locator> {
-		const inlineEditor = this.previewFrame.locator( `.elementor-element-${ elementId } ${ INLINE_EDITING_SELECTORS.canvas.inlineEditor }` );
+	async triggerEditingElement( elementId: string, waitFor: boolean = true ): Promise<Locator> {
 		const element = this.previewFrame.locator( `.elementor-element-${ elementId }` );
 
 		await this.page.keyboard.press( 'Escape' );
 		await this.page.waitForTimeout( timeouts.veryShort );
 		await element.waitFor();
 		await element[ INLINE_EDITING_SELECTORS.triggerEvent ]();
+
+		const inlineEditor = this.previewFrame.locator( `.elementor-element-${ elementId } ${ INLINE_EDITING_SELECTORS.canvas.inlineEditor }` );
+
+		if ( waitFor ) {
+			await inlineEditor.waitFor( { timeout: timeouts.action } );
+		}
 
 		return inlineEditor;
 	}
