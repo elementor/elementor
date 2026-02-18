@@ -19,7 +19,7 @@ const buildBackground = ( fileName: string ) => {
 
 const DEFAULT_CONFIG: StepVisualConfig = {
 	imageLayout: 'wide',
-	background: buildBackground( 'step-1.png' ),
+	background: buildBackground( 'step-1.webp' ),
 	assets: [],
 };
 
