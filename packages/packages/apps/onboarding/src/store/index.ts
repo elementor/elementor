@@ -17,6 +17,8 @@ export {
 	clearUnexpectedExit,
 	setConnected,
 	setGuest,
+	setShouldShowProInstallScreen,
+	dismissProInstallScreen,
 } from './slice';
 
 export {
@@ -39,4 +41,6 @@ export {
 	selectTotalSteps,
 	selectIsStepCompleted,
 	selectHasPassedLogin,
+	selectHasProInstallScreenDismissed,
+	selectShouldShowProInstall,
 } from './selectors';
