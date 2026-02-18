@@ -21,7 +21,7 @@ class Html_V3_Prop_Type extends Object_Prop_Type {
 			'content' => String_Prop_Type::make(),
 			'children' => Unknown_Prop_Type::make()
 				->optional()
-				->description( 'Array of child element objects, each with id, type, optional content, and optional nested children.' ),
+				->description( 'Plain array of child element objects (no prop type wrapping). Example: [{"id": "abc1", "type": "span", "content": "hello", "children": []}]' ),
 		];
 	}
 
