@@ -1,11 +1,16 @@
 import * as React from 'react';
-import { createMockContainer, createMockPropType, mockCurrentUserCapabilities, renderWithStore } from 'test-utils';
+import {
+	createMockContainer,
+	createMockElement,
+	createMockPropType,
+	mockCurrentUserCapabilities,
+	renderWithStore,
+} from 'test-utils';
 import { ControlActionsProvider, TextControl } from '@elementor/editor-controls';
 import { controlsRegistry, ElementProvider } from '@elementor/editor-editing-panel';
 import {
 	getContainer,
 	getElementLabel,
-	getElementSetting,
 	getElementType,
 	getWidgetsCache,
 	useElementSetting,
@@ -22,6 +27,7 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { componentInstancePropTypeUtil } from '../../../prop-types/component-instance-prop-type';
 import { slice } from '../../../store/store';
+import { getContainerByOriginId } from '../../../utils/get-container-by-origin-id';
 import { switchToComponent } from '../../../utils/switch-to-component';
 import { InstanceEditingPanel } from '../instance-editing-panel';
 
@@ -39,6 +45,10 @@ jest.mock( '../../../prop-types/component-instance-prop-type', () => ( {
 } ) );
 
 jest.mock( '@elementor/editor-current-user' );
+
+jest.mock( '../../../utils/get-container-by-origin-id', () => ( {
+	getContainerByOriginId: jest.fn(),
+} ) );
 
 mockCurrentUserCapabilities( true );
 
@@ -296,6 +306,7 @@ describe( '<InstanceEditingPanel />', () => {
 		);
 		jest.mocked( getElementType ).mockImplementation( createMockElementType );
 		jest.mocked( getContainer ).mockReturnValue( createMockContainer( MOCK_ELEMENT_ID, [] ) );
+		jest.mocked( getContainerByOriginId ).mockImplementation( ( originId ) => createMockContainer( originId, [] ) );
 	} );
 
 	it( 'should render the component name in the header', () => {
@@ -531,14 +542,19 @@ function setupComponent( {
 			},
 		};
 
-		jest.mocked( getElementSetting ).mockImplementation( ( elementId, settingKey ) => {
-			if ( elementId === 'nested-instance-1' && settingKey === 'component_instance' ) {
-				return {
-					$$type: 'component-instance',
-					value: nestedComponentInstanceValue,
-				};
+		jest.mocked( getContainerByOriginId ).mockImplementation( ( originId ) => {
+			if ( originId === 'nested-instance-1' ) {
+				return createMockElement( {
+					model: { id: 'nested-instance-1', widgetType: 'e-component' },
+					settings: {
+						component_instance: {
+							$$type: 'component-instance',
+							value: nestedComponentInstanceValue,
+						},
+					},
+				} );
 			}
-			return undefined;
+			return createMockContainer( originId, [] );
 		} );
 
 		jest.mocked( componentInstancePropTypeUtil.extract ).mockImplementation( ( value: unknown ) => {

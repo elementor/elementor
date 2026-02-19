@@ -1,28 +1,16 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
 import { ChevronRightSmallIcon } from '@elementor/icons';
-import { Box, Stack, styled, Typography, withDirection } from '@elementor/ui';
+import { Stack, Typography, withDirection } from '@elementor/ui';
 import { __, sprintf } from '@wordpress/i18n';
 
+import { GreetingBanner } from '../../components/ui/greeting-banner';
 import { OptionButton } from '../../components/ui/option-button';
 import { useOnboarding } from '../../hooks/use-onboarding';
 
 const GREETING_WAVE = '\uD83D\uDC4B';
 
 const DirectionalChevronIcon = withDirection( ChevronRightSmallIcon );
-
-const GREETING_BANNER_BG_COLOR = '#fae4fa';
-
-const GreetingBanner = styled( Box )( ( { theme } ) => ( {
-	display: 'inline-flex',
-	alignItems: 'center',
-	justifyContent: 'center',
-	paddingInline: theme.spacing( 3 ),
-	paddingBlock: theme.spacing( 1.5 ),
-	borderRadius: 16,
-	backgroundColor: GREETING_BANNER_BG_COLOR,
-	alignSelf: 'flex-start',
-} ) );
 
 const BUILDING_FOR_OPTIONS = [
 	{ value: 'myself', label: __( 'Myself or someone I know', 'elementor' ) },
@@ -70,15 +58,11 @@ export function BuildingFor( { onComplete }: BuildingForProps ) {
 	);
 
 	return (
-		<Stack spacing={ 7.5 } sx={ { marginTop: -3.5 } } data-testid="building-for-step">
-			<GreetingBanner>
-				<Typography variant="body1" color="text.primary" align="center">
-					{ greetingText }
-				</Typography>
-			</GreetingBanner>
+		<Stack spacing={ 7.5 } data-testid="building-for-step">
+			<GreetingBanner>{ greetingText }</GreetingBanner>
 
 			<Stack spacing={ 4 } alignItems="center">
-				<Typography variant="h5" align="center">
+				<Typography variant="h5" align="center" fontWeight={ 500 } fontFamily="Poppins">
 					{ __( 'Who are you building for?', 'elementor' ) }
 				</Typography>
 

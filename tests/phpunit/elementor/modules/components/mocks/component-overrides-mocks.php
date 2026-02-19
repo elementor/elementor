@@ -92,9 +92,9 @@ class Component_Overrides_Mocks {
 					'widgetType' => 'e-component',
 					'propKey' => 'override',
 				'originValue' => [
-					'$$type' => 'html-v2',
+					'$$type' => 'html-v3',
 					'value' => [
-						'content' => 'Click here',
+						'content' => ['$$type' => 'string', 'value' => 'Click here'],
 						'children' => [],
 					],
 				],
@@ -131,9 +131,9 @@ class Component_Overrides_Mocks {
 			'value' => [
 			'override_key' => 'prop-uuid-1',
 			'override_value' => [
-				'$$type' => 'html-v2',
+				'$$type' => 'html-v3',
 				'value' => [
-					'content' => 'New Title',
+					'content' => ['$$type' => 'string', 'value' => 'New Title'],
 					'children' => [],
 				],
 			],
@@ -212,9 +212,9 @@ class Component_Overrides_Mocks {
 			'widgetType' => 'e-heading',
 			'propKey' => 'title',
 			'originValue' => [
-				'$$type' => 'html-v2',
+				'$$type' => 'html-v3',
 				'value' => [
-					'content' => 'Autosave Title',
+					'content' => ['$$type' => 'string', 'value' => 'Autosave Title'],
 					'children' => [],
 				],
 			],

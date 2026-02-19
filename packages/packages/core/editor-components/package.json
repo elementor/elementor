@@ -48,6 +48,7 @@
     "@elementor/editor-elements": "4.0.0",
     "@elementor/editor-elements-panel": "4.0.0",
     "@elementor/editor-mcp": "4.0.0",
+    "@elementor/editor-templates": "4.0.0",
     "@elementor/editor-panels": "4.0.0",
     "@elementor/editor-props": "4.0.0",
     "@elementor/editor-styles-repository": "4.0.0",
