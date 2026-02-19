@@ -107,9 +107,9 @@ class Test_Component_Instance_Prop_Type extends Component_Prop_Type_Test_Base {
 								'value' => [
 									'override_key' => 'prop-uuid-1',
 								'override_value' => [
-									'$$type' => 'html-v2',
+									'$$type' => 'html-v3',
 									'value' => [
-										'content' => 'New Title',
+										'content' => ['$$type' => 'string', 'value' => 'New Title'],
 										'children' => [],
 									],
 								],
@@ -180,9 +180,9 @@ class Test_Component_Instance_Prop_Type extends Component_Prop_Type_Test_Base {
 							'value' => [
 								'override_key' => 'prop-uuid-1',
 								'override_value' => [
-									'$$type' => 'html-v2',
+									'$$type' => 'html-v3',
 									'value' => [
-										'content' => 'New Title',
+										'content' => ['$$type' => 'string', 'value' => 'New Title'],
 										'children' => [],
 									],
 								],

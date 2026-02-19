@@ -2,14 +2,12 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypeMigrations;
 
+use Elementor\Core\Base\Document;
 use Elementor\Modules\AtomicWidgets\Logger\Logger;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
-use Elementor\Modules\Interactions\Schema\Interactions_Schema;
-use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,19 +15,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Migrations_Orchestrator {
-	private const MIGRATIONS_STATE_META_KEY = '_elementor_migrations_state';
+	const EXPERIMENT_BC_MIGRATIONS = 'e_bc_migrations';
+	const MIGRATIONS_URL = 'https://migrations.elementor.com/';
 
 	private static ?self $instance = null;
 
 	private Migrations_Loader $loader;
+	private ?string $migrations_path = null;
 
-	private function __construct( string $migrations_base_path ) {
-		$this->loader = Migrations_Loader::make( $migrations_base_path );
+	private function __construct( ?string $migrations_path = null ) {
+		$this->migrations_path = $migrations_path;
+		$this->loader = Migrations_Loader::make( $this->get_migrations_base_path() );
 	}
 
-	public static function make( string $migrations_base_path ): self {
+	public function register_hooks() {
+		if ( ! self::is_active() ) {
+			return;
+		}
+
+		add_filter( 'elementor/document/load/data', fn ( $data, $document ) => $this->migrate_doc( $data, $document ), 10, 2 );
+	}
+
+	public static function is_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_BC_MIGRATIONS );
+	}
+
+	public static function make( ?string $migrations_path = null ): self {
 		if ( null === self::$instance ) {
-			self::$instance = new self( $migrations_base_path );
+			self::$instance = new self( $migrations_path );
 		}
 
 		return self::$instance;
@@ -40,389 +53,146 @@ class Migrations_Orchestrator {
 		self::$instance = null;
 	}
 
-	/**
-	 * Registers hooks to listen for experiment flag state changes.
-	 *
-	 * Usage example:
-	 * ```
-	 * static $registered = false;
-	 * if ( $registered ) {
-	 *     return;
-	 * }
-	 *
-	 * add_action(
-	 *     'elementor/experiments/feature-state-change/' . Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING,
-	 *     [ __CLASS__, 'clear_migration_cache' ],
-	 *     10,
-	 *     2
-	 * );
-	 *
-	 * $registered = true;
-	 * ```
-	 *
-	 * This ensures that when the inline editing experiment is enabled or disabled, all
-	 * migration state metadata is cleared, forcing documents to be re-migrated with the
-	 * new feature flag state.
-	 */
-	public static function register_feature_flag_hooks(): void {
-	}
-
-	public static function clear_migration_cache( $old_state = null, $new_state = null ): void {
-		global $wpdb;
-
-		$deleted = $wpdb->query(
-			$wpdb->prepare(
-				"DELETE FROM {$wpdb->postmeta} WHERE meta_key = %s",
-				self::MIGRATIONS_STATE_META_KEY
-			)
-		);
-
-		if ( false === $deleted ) {
-			Logger::error( 'Failed to clear migration caches', [
-				'error' => $wpdb->last_error,
-				'reason' => 'feature_flag_change',
-				'old_state' => $old_state,
-				'new_state' => $new_state,
-			] );
+	public static function register_affecting_feature_flag_hooks( array $features ): void {
+		if ( ! self::is_active() ) {
 			return;
 		}
 
-		Logger::info( 'Cleared migration caches', [
-			'deleted_count' => $deleted,
-			'reason' => 'feature_flag_change',
-			'old_state' => $old_state,
-			'new_state' => $new_state,
-		] );
+		foreach ( $features as $feature ) {
+			add_action( 'elementor/experiments/feature-state-change/' . $feature, [ __CLASS__, 'clear_migration_cache' ], 10, 2 );
+		}
 	}
 
-	public function migrate_document(
-		array &$elements_data,
-		int $post_id,
-		callable $save_callback
-	): void {
+	public static function clear_migration_cache(): void {
+		Migrations_Cache::clear_all();
+	}
+
+	/**
+	 * Migrations orchestrator should follow the following steps:
+	 * 1. Check cache to see if the data is already migrated
+	 * 2. Resolve the schema for the current element
+	 * 3. Walk through the data and migrate the props if type mismatch (between data and schema) is found
+	 * 4. Migrate the widget keys
+	 * 5. Save migrated data to the database
+	 * 6. Save the migrated state to the cache
+	 *
+	 * @param array    $data            Data structure to migrate will return modified data by reference
+	 * @param int      $entity_id       Unique ID for caching mechanism, so we don't run the migration again for the same data
+	 * @param string   $data_identifier Unique identifier for DB table, the data type (e.g., '_elementor_data', '_elementor_global_classes')
+	 * @param callable $save_callback   Function to persist migrated data if changes occurred
+	 */
+	public function migrate( array &$data, int $entity_id, string $data_identifier, callable $save_callback ): void {
 		try {
-			if ( $this->is_migrated( $post_id ) ) {
+			if ( Migrations_Cache::is_migrated( $entity_id, $data_identifier, $this->loader->get_manifest_hash() ) ) {
 				return;
 			}
 
-			$has_changes = $this->migrate_elements_recursive( $elements_data );
+			$has_changes = $this->walk_and_migrate( $data, [] );
 
 			if ( $has_changes ) {
-				$save_callback( $elements_data );
+				$save_callback( $data );
 			}
 
-			$this->mark_as_migrated( $post_id );
+			Migrations_Cache::mark_as_migrated( $entity_id, $data_identifier, $this->loader->get_manifest_hash() );
 		} catch ( \Exception $e ) {
-			Logger::warning( 'Document migration failed', [
-				'post_id' => $post_id,
+			Logger::warning( 'Migration failed', [
+				'entity_id' => $entity_id,
+				'data_identifier' => $data_identifier,
 				'error' => $e->getMessage(),
 			] );
 		}
 	}
 
-	private function migrate_elements_recursive( array &$elements_data ): bool {
+	private function walk_and_migrate( array &$data, array $path ): bool {
 		$has_changes = false;
 
-		foreach ( $elements_data as &$element ) {
-			$element_type = $element['widgetType'] ?? $element['elType'] ?? '';
+		Schema_Resolver::update_widget_context( $data );
 
-			try {
-				$element_has_changes = $this->walk_and_migrate( $element );
-
-				if ( $element_has_changes ) {
-					$has_changes = true;
-				}
-			} catch ( \Exception $e ) {
-				Logger::warning( 'Element migration failed', [
-					'element_type' => $element_type,
-					'error' => $e->getMessage(),
-				] );
-			}
-
-			if ( isset( $element['elements'] ) && is_array( $element['elements'] ) ) {
-				$nested_has_changes = $this->migrate_elements_recursive( $element['elements'] );
-
-				if ( $nested_has_changes ) {
-					$has_changes = true;
-				}
-			}
-		}
-
-		return $has_changes;
-	}
-
-	private function walk_and_migrate( array &$data, ?array $schema = null, ?array $context = null ): bool {
-		$has_changes = false;
-
-		if ( null === $schema ) {
-			$schema = $this->try_get_schema( $data, $context );
-		}
-
-		if ( ! empty( $schema ) ) {
-			$element_type = $context['element_type'] ?? 'unknown';
-			$migrate_changes = $this->migrate_element( $data, $schema, $element_type );
-
-			if ( $migrate_changes ) {
-				$has_changes = true;
-			}
+		if ( $this->handle_widget_key_migrations( $data, $path ) ) {
+			$has_changes = true;
 		}
 
 		foreach ( $data as $key => &$value ) {
-			if ( 'elements' === $key ) {
-				continue;
-			}
-
 			if ( ! is_array( $value ) || empty( $value ) ) {
 				continue;
 			}
 
-			$nested_context = $this->build_context( $data, $key, $context );
-			$nested_changes = $this->walk_and_migrate( $value, null, $nested_context );
+			$path[] = $key;
 
-			if ( $nested_changes ) {
-				$has_changes = true;
-			}
-		}
+			if ( isset( $value['$$type'] ) ) {
+				$prop_type = Schema_Resolver::resolve( $key, $path );
 
-		return $has_changes;
-	}
-
-	private function try_get_schema( array $data, ?array $context ): array {
-		if ( isset( $context['key'] ) ) {
-			if ( 'settings' === $context['key'] && isset( $context['parent'] ) ) {
-				return $this->get_settings_schema( $context['parent'] );
-			}
-
-			if ( 'props' === $context['key'] ) {
-				return Style_Schema::get();
-			}
-
-			// Interactions is a simple array from items, all the schema is defined in the Interaction_Item_Prop_Type
-			if ( 'items' === $context['key'] ) {
-				return Interactions_Schema::get()['items'];
-			}
-		}
-
-		return [];
-	}
-
-	private function build_context( array $parent, $key, ?array $existing_context ): array {
-		$context = [
-			'key' => $key,
-			'parent' => $parent,
-		];
-
-		if ( isset( $existing_context['element_type'] ) ) {
-			$context['element_type'] = $existing_context['element_type'];
-		} elseif ( isset( $parent['widgetType'] ) || isset( $parent['elType'] ) ) {
-			$context['element_type'] = $parent['widgetType'] ?? $parent['elType'] ?? 'unknown';
-		}
-
-		return $context;
-	}
-
-	private function get_settings_schema( array $element ): array {
-		if ( $this->is_atomic_widget( $element ) ) {
-			return $this->get_widget_schema( $element['widgetType'] );
-		}
-
-		if ( $this->is_atomic_element( $element ) ) {
-			return $this->get_element_schema( $element['elType'] );
-		}
-
-		return [];
-	}
-
-	private function is_migrated( int $post_id ): bool {
-		$current_state = $this->get_migration_state();
-
-		if ( empty( $current_state ) ) {
-			return false;
-		}
-
-		$stored_state = get_post_meta( $post_id, self::MIGRATIONS_STATE_META_KEY, true );
-
-		return $current_state === $stored_state;
-	}
-
-	private function mark_as_migrated( int $post_id ): void {
-		update_post_meta( $post_id, self::MIGRATIONS_STATE_META_KEY, $this->get_migration_state() );
-	}
-
-	private function get_migration_state(): string {
-		$hash = $this->loader->get_manifest_hash();
-
-		if ( empty( $hash ) ) {
-			return '';
-		}
-
-		return ELEMENTOR_VERSION . ':' . $hash;
-	}
-
-	private function get_schema( array $element ): array {
-		if ( $this->is_atomic_widget( $element ) ) {
-			return $this->get_widget_schema( $element['widgetType'] );
-		}
-
-		if ( $this->is_atomic_element( $element ) ) {
-			return $this->get_element_schema( $element['elType'] );
-		}
-
-		return [];
-	}
-
-	private function get_widget_schema( string $widget_type ): array {
-		$widget = Plugin::$instance->widgets_manager->get_widget_types( $widget_type );
-
-		if ( ! $widget ) {
-			return [];
-		}
-
-		if ( ! method_exists( $widget, 'get_props_schema' ) ) {
-			return [];
-		}
-
-		$schema = call_user_func( [ $widget, 'get_props_schema' ] );
-
-		return is_array( $schema ) ? $schema : [];
-	}
-
-	private function is_atomic_widget( array $element ): bool {
-		if ( ! isset( $element['elType'] ) || 'widget' !== $element['elType'] ) {
-			return false;
-		}
-
-		if ( ! isset( $element['widgetType'] ) ) {
-			return false;
-		}
-
-		$widget = Plugin::$instance->widgets_manager->get_widget_types( $element['widgetType'] );
-
-		return Atomic_Elements_Utils::is_atomic_element( $widget );
-	}
-
-	private function is_atomic_element( array $element ): bool {
-		$el_type = $element['elType'] ?? '';
-
-		if ( empty( $el_type ) || 'widget' === $el_type ) {
-			return false;
-		}
-
-		$element_instance = Plugin::$instance->elements_manager->get_element_types( $el_type );
-
-		return Atomic_Elements_Utils::is_atomic_element( $element_instance );
-	}
-
-	private function get_element_schema( string $element_type ): array {
-		$element = Plugin::$instance->elements_manager->get_element_types( $element_type );
-
-		if ( ! $element ) {
-			return [];
-		}
-
-		if ( ! method_exists( $element, 'get_props_schema' ) ) {
-			return [];
-		}
-
-		$schema = call_user_func( [ $element, 'get_props_schema' ] );
-
-		return is_array( $schema ) ? $schema : [];
-	}
-
-	public function migrate_element( array &$settings, array $schema, string $widget_type ): bool {
-		$missing_keys = array_keys( $schema );
-		$pending_migrations = [];
-		$has_changes = false;
-
-		foreach ( $settings as $key => $value ) {
-			if ( ! isset( $schema[ $key ] ) ) {
-				$this->process_missing_key( $key, $value, $widget_type, $missing_keys, $pending_migrations );
-			} else {
-				$missing_keys = array_diff( $missing_keys, [ $key ] );
-
-				if ( $this->process_setting_key( $key, $value, $schema, $settings ) ) {
+				if ( $prop_type instanceof Prop_Type && $this->migrate_prop( $value, $prop_type ) ) {
 					$has_changes = true;
 				}
+			} elseif ( $this->walk_and_migrate( $value, $path ) ) {
+				$has_changes = true;
 			}
-		}
 
-		$this->apply_pending_key_migrations( $pending_migrations, $schema, $settings, $has_changes );
+			array_pop( $path );
+		}
 
 		return $has_changes;
 	}
 
-	private function process_setting_key(
-		string $key,
-		$value,
-		array $schema,
-		array &$settings
-	): bool {
-		$result = $this->migrate_prop_if_needed( $value, $schema[ $key ], $key );
-		$settings[ $key ] = $result['value'];
-
-		return $result['has_changes'];
-	}
-
-	private function process_missing_key(
-		string $key,
-		$value,
-		string $widget_type,
-		array $missing_keys,
-		array &$pending_migrations
-	): void {
-		$target_key = $this->loader->find_widget_key_migration( $key, $missing_keys, $widget_type );
-
-		if ( $target_key ) {
-			$pending_migrations[ $target_key ][] = [
-				'from' => $key,
-				'value' => $value,
-			];
+	private function handle_widget_key_migrations( array &$data, array $path ): bool {
+		if ( end( $path ) !== 'settings' ) {
+			return false;
 		}
-	}
-	private function apply_pending_key_migrations( array $pending_migrations, array $schema, array &$settings, bool &$has_changes ): void {
-		foreach ( $pending_migrations as $target_key => $sources ) {
-			if ( count( $sources ) === 1 ) { // sanity check for only one key source, otherwise no-op
-				$result = $this->migrate_prop_if_needed(
-					$sources[0]['value'],
-					$schema[ $target_key ],
-					$target_key
-				);
 
-				$settings[ $target_key ] = $result['value'];
-				unset( $settings[ $sources[0]['from'] ] );
-				$has_changes = true;
-			}
+		$element_type = Schema_Resolver::get_widget_context();
+
+		if ( ! $element_type ) {
+			return false;
 		}
-	}
 
-	private function migrate_prop_if_needed( $value, $prop_type, string $key ): array {
-		if ( is_array( $prop_type ) && ! isset( $prop_type['$$type'] ) && is_array( $value ) && ! isset( $value['$$type'] ) ) {
-			foreach ( $value as $index => $value_item ) {
-				$result = $this->migrate_prop_if_needed( $value_item, $prop_type[ $index ], $key );
-				if ( $result['has_changes'] ) {
-					return $result;
-				}
+		$schema = Schema_Resolver::get_widget_schema( $element_type );
+
+		if ( ! $schema ) {
+			return false;
+		}
+
+		$schema_keys = array_keys( $schema );
+		$data_keys_with_type = array_keys( array_filter( $data, fn( $value ) => is_array( $value ) && isset( $value['$$type'] ) ) );
+
+		$orphaned_keys = array_diff( $data_keys_with_type, $schema_keys );
+		$missing_keys = array_diff( $schema_keys, $data_keys_with_type );
+
+		$pending_widget_key_migrations = [];
+
+		foreach ( $orphaned_keys as $orphaned_key ) {
+			$target_key = $this->loader->find_widget_key_migration( $orphaned_key, $missing_keys, $element_type );
+
+			if ( $target_key ) {
+				$pending_widget_key_migrations[ $target_key ][] = [
+					'from' => $orphaned_key,
+					'value' => $data[ $orphaned_key ],
+				];
 			}
 		}
 
-		if ( ! ( $prop_type instanceof Prop_Type ) ) {
-			return [
-				'value' => $value,
-				'has_changes' => false,
-			];
-		}
-
-		return $this->migrate_prop( $value, $prop_type, $key );
+		return $this->migrate_pending_widget_keys( $data, $pending_widget_key_migrations );
 	}
 
-	private function migrate_prop( $value, Prop_Type $prop_type, string $prop_name ): array {
+	private function migrate_pending_widget_keys( array &$data, array $pending_widget_key_migrations ): bool {
 		$has_changes = false;
 
+		foreach ( $pending_widget_key_migrations as $target_key => $sources ) {
+			if ( count( $sources ) !== 1 ) {
+				continue;
+			}
+
+			$data[ $target_key ] = $sources[0]['value'];
+			unset( $data[ $sources[0]['from'] ] );
+			$has_changes = true;
+		}
+
+		return $has_changes;
+	}
+
+	private function migrate_prop( &$value, Prop_Type $prop_type ): bool {
 		if ( ! is_array( $value ) || ! isset( $value['$$type'] ) || ! isset( $value['value'] ) ) {
-			return [
-				'value' => $value,
-				'has_changes' => false,
-			];
+			return false;
 		}
 
 		$actual_prop_type = $prop_type;
@@ -431,52 +201,45 @@ class Migrations_Orchestrator {
 			$actual_prop_type = $this->resolve_union_type( $value, $prop_type );
 
 			if ( ! $actual_prop_type ) {
-				return [
-					'value' => $value,
-					'has_changes' => false,
-				];
+				return false;
 			}
 		}
 
-		$trigger = $this->type_mismatch( $value, $actual_prop_type, $prop_name );
-
-		if ( $trigger ) {
-			$path_result = $this->loader->find_migration_path(
-				$trigger['found_type'],
-				$trigger['expected_type']
-			);
-
-			if ( $path_result ) {
-				$value = $this->execute_prop_migration( $value, $path_result['migrations'], $path_result['direction'] );
-				return [
-					'value' => $value,
-					'has_changes' => true,
-				];
-			}
-		}
+		$has_changes = false;
 
 		if ( $actual_prop_type instanceof Object_Prop_Type && is_array( $value['value'] ) ) {
 			$shape = $actual_prop_type->get_shape();
-			$nested_result = $this->migrate_nested_object( $value['value'], $shape );
 
-			if ( $nested_result['has_changes'] ) {
-				$value['value'] = $nested_result['value'];
-				$has_changes = true;
+			foreach ( $value['value'] as $child_key => &$child ) {
+				if ( isset( $shape[ $child_key ] ) && $shape[ $child_key ] instanceof Prop_Type ) {
+					if ( $this->migrate_prop( $child, $shape[ $child_key ] ) ) {
+						$has_changes = true;
+					}
+				}
 			}
 		} elseif ( $actual_prop_type instanceof Array_Prop_Type && is_array( $value['value'] ) ) {
 			$item_type = $actual_prop_type->get_item_type();
-			$nested_result = $this->migrate_nested_array( $value['value'], $item_type );
 
-			if ( $nested_result['has_changes'] ) {
-				$value['value'] = $nested_result['value'];
+			foreach ( $value['value'] as &$item ) {
+				if ( $this->migrate_prop( $item, $item_type ) ) {
+					$has_changes = true;
+				}
+			}
+		}
+
+		$found_type = $value['$$type'];
+		$expected_type = $actual_prop_type::get_key();
+
+		if ( $found_type !== $expected_type ) {
+			$path_result = $this->loader->find_migration_path( $found_type, $expected_type );
+
+			if ( $path_result ) {
+				$value = $this->execute_prop_migration( $value, $path_result['migrations'], $path_result['direction'] );
 				$has_changes = true;
 			}
 		}
 
-		return [
-			'value' => $value,
-			'has_changes' => $has_changes,
-		];
+		return $has_changes;
 	}
 
 	private function resolve_union_type( array $value, Union_Prop_Type $union_prop_type ): ?Prop_Type {
@@ -493,59 +256,12 @@ class Migrations_Orchestrator {
 		}
 
 		foreach ( $union_prop_type->get_prop_types() as $variant_type ) {
-			$expected_key = $variant_type::get_key();
-
-			$path_exists = $this->loader->find_migration_path( $found_type, $expected_key );
-
-			if ( $path_exists ) {
+			if ( $this->loader->find_migration_path( $found_type, $variant_type::get_key() ) ) {
 				return $variant_type;
 			}
 		}
 
 		return null;
-	}
-
-	private function migrate_nested_object( array $values, array $shape ): array {
-		$has_changes = false;
-		$migrated = [];
-
-		foreach ( $values as $key => $value ) {
-			if ( ! isset( $shape[ $key ] ) || ! ( $shape[ $key ] instanceof Prop_Type ) ) {
-				$migrated[ $key ] = $value;
-				continue;
-			}
-
-			$result = $this->migrate_prop( $value, $shape[ $key ], $key );
-			$migrated[ $key ] = $result['value'];
-
-			if ( $result['has_changes'] ) {
-				$has_changes = true;
-			}
-		}
-
-		return [
-			'value' => $migrated,
-			'has_changes' => $has_changes,
-		];
-	}
-
-	private function migrate_nested_array( array $items, Prop_Type $item_type ): array {
-		$has_changes = false;
-		$migrated = [];
-
-		foreach ( $items as $index => $item ) {
-			$result = $this->migrate_prop( $item, $item_type, (string) $index );
-			$migrated[ $index ] = $result['value'];
-
-			if ( $result['has_changes'] ) {
-				$has_changes = true;
-			}
-		}
-
-		return [
-			'value' => $migrated,
-			'has_changes' => $has_changes,
-		];
 	}
 
 	private function execute_prop_migration( $prop_value, array $migrations, string $direction ) {
@@ -576,23 +292,31 @@ class Migrations_Orchestrator {
 		return $prop_value;
 	}
 
-	private function type_mismatch( $value, Prop_Type $prop_type, string $prop_name ): ?array {
-		if ( ! is_array( $value ) || ! isset( $value['$$type'] ) ) {
-			return null;
+	private function migrate_doc( array $data, Document $document ): array {
+		$this->migrate(
+			$data,
+			$document->get_post()->ID,
+			Document::ELEMENTOR_DATA_META_KEY,
+			function( $migrated_data ) use ( $document ) {
+				$document->update_json_meta(
+					Document::ELEMENTOR_DATA_META_KEY,
+					$migrated_data
+				);
+			}
+		);
+
+		return $data;
+	}
+
+	private function get_migrations_base_path(): string {
+		if ( $this->migrations_path ) {
+			return $this->migrations_path;
 		}
 
-		$expected_type = $prop_type::get_key();
-		$found_type = $value['$$type'];
-
-		if ( $found_type === $expected_type ) {
-			return null;
+		if ( defined( 'ELEMENTOR_MIGRATIONS_PATH' ) ) {
+			return constant( 'ELEMENTOR_MIGRATIONS_PATH' );
 		}
 
-		return [
-			'prop_name' => $prop_name,
-			'found_type' => $found_type,
-			'expected_type' => $expected_type,
-			'reason' => 'type_mismatch',
-		];
+		return self::MIGRATIONS_URL;
 	}
 }
