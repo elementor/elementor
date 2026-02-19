@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Repeater } from '@elementor/editor-controls';
 import { InfoCircleFilledIcon, PlayerPlayIcon } from '@elementor/icons';
 import { Alert, AlertTitle, Box, IconButton, Tooltip } from '@elementor/ui';
@@ -10,6 +10,7 @@ import type { ElementInteractions, InteractionItemPropValue, InteractionItemValu
 import { buildDisplayLabel, createDefaultInteractionItem, extractString } from '../utils/prop-value-utils';
 import { isProInteraction } from '../utils/is-pro-interaction';
 import { InteractionsListItem } from './interactions-list-item';
+import { PromotionPopover } from '@elementor/editor-ui';
 import { ProInteractionDisabledContent } from './pro-interaction-disabled-content';
 export const MAX_NUMBER_OF_INTERACTIONS = 5;
 
@@ -96,6 +97,14 @@ export function InteractionsList( props: InteractionListProps ) {
 		[ handleInteractionChange, onPlayInteraction ]
 	);
 
+	const [promoPopover, setPromoPopover] = useState<{
+		open: boolean;
+		anchorEl: HTMLElement | null;
+	}>({ open: false, anchorEl: null });
+	
+	const promoAnchorRef = useRef<HTMLElement | null>(null);
+	promoAnchorRef.current = promoPopover.anchorEl;
+
 	return (
 		<InteractionItemContextProvider value={ contextValue }>
 			<Repeater
@@ -112,12 +121,10 @@ export function InteractionsList( props: InteractionListProps ) {
 				itemSettings={ {
 					initialValues: createDefaultInteractionItem(),
 					isOpenDisabled: ( value: InteractionItemPropValue ) => isProInteraction( value ),
-					Label: ({ value }: { value: InteractionItemPropValue }) => {
-						if (isProInteraction(value)) {
-							return <ProInteractionDisabledContent value={value} />;
-						}
-						return buildDisplayLabel(value.value);
+					onDisabledItemClick: (value, anchorEl) => {
+						setPromoPopover({ open: true, anchorEl });
 					},
+					Label: ({ value }) => buildDisplayLabel(value.value),
 					Icon: () => null,
 					Content: InteractionsListItem,
 					actions: ( value: InteractionItemPropValue ) => {
@@ -139,6 +146,18 @@ export function InteractionsList( props: InteractionListProps ) {
 					},
 				} }
 			/>
+			<PromotionPopover
+        open={promoPopover.open}
+        title={__('Interactions', 'elementor')}
+        content={__('This interaction is currently inactive and not showing on your website. Activate your Pro plugin to use it again.', 'elementor')}
+        ctaText={__('Upgrade now', 'elementor')}
+        ctaUrl={'https://go.elementor.com/go-pro-interactions/'}
+        onClose={() => setPromoPopover({ open: false, anchorEl: null })}
+        anchorRef={promoAnchorRef}
+        placement="right-start"
+    >
+        <span />
+    </PromotionPopover>
 		</InteractionItemContextProvider>
 	);
 }

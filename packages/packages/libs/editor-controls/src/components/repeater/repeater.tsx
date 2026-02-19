@@ -80,7 +80,7 @@ type BaseItemSettings< T > = {
 	Content: RepeaterItemContent< T >;
 	actions?: ( value: T ) => React.ReactNode;
 	isOpenDisabled?: (value: T) => boolean;
-	TagWrapper?: React.ComponentType<{ value: T; tagRef: HTMLElement | null; children: React.ReactNode }>;
+    onDisabledItemClick?: (value: T, anchorEl: HTMLElement | null) => void;
 };
 
 type SortableItemSettings< T > = BaseItemSettings< T > & {
@@ -261,6 +261,11 @@ export const Repeater = < T, >( {
 									disabled={ disabled }
 									propDisabled={ value?.disabled }
 									disableOpen={itemSettings.isOpenDisabled?.(value) ?? false}
+									onDisabledItemClick={
+										itemSettings.isOpenDisabled?.(value)
+											? (anchorEl) => itemSettings.onDisabledItemClick?.(value, anchorEl)
+											: undefined
+									}
 									label={
 										<RepeaterItemLabelSlot value={ value }>
 											<itemSettings.Label value={ value } index={ index } />
@@ -303,7 +308,8 @@ export const Repeater = < T, >( {
 type RepeaterItemProps< T > = {
 	label: React.ReactNode;
 	propDisabled?: boolean;
-	disableOpen?: boolean;  
+	disableOpen?: boolean; 
+	onDisabledItemClick?: (anchorEl: HTMLElement | null) => void;
 	startIcon: UnstableTagProps[ 'startIcon' ];
 	removeItem: () => void;
 	duplicateItem: () => void;
@@ -323,6 +329,7 @@ const RepeaterItem = < T, >( {
 	label,
 	propDisabled,
 	disableOpen,
+	onDisabledItemClick,
 	startIcon,
 	children,
 	removeItem,
@@ -350,7 +357,7 @@ const RepeaterItem = < T, >( {
 				label={ label }
 				ref={ setRef }
 				aria-label={ __( 'Open item', 'elementor' ) }
-				{ ...( disableOpen ? {} : bindTrigger( popoverState ) ) }
+				{ ...( disableOpen ? { onClick: () => onDisabledItemClick?.(ref) } : bindTrigger( popoverState ) ) }
 				startIcon={ startIcon }
 				sx={disableOpen ? { opacity: 0.5, pointerEvents: 'auto' } : undefined}
 				actions={
