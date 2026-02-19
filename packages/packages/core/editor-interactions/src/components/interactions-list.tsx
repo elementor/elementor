@@ -107,6 +107,8 @@ export function InteractionsList( props: InteractionListProps ) {
 	promoAnchorRef.current = promoPopover.anchorEl;
 
 	const { isAdmin } = useCurrentUserCapabilities();
+	const adminUrl = (window as any).elementorAppConfig?.admin_url;
+	const ctaUrl = adminUrl ? `${adminUrl}plugins.php` : 'https://go.elementor.com/go-pro-interactions/';
 
 	return (
 		<InteractionItemContextProvider value={ contextValue }>
@@ -154,7 +156,7 @@ export function InteractionsList( props: InteractionListProps ) {
         title={__('Interactions', 'elementor')}
         content={__('This interaction is currently inactive and not showing on your website. Activate your Pro plugin to use it again.', 'elementor')}
         ctaText={isAdmin ? __('Upgrade now', 'elementor') : undefined}
-        ctaUrl={'https://go.elementor.com/go-pro-interactions/'}
+        ctaUrl={ ctaUrl }
         onClose={() => setPromoPopover({ open: false, anchorEl: null })}
         anchorRef={promoAnchorRef}
         placement="right-start"
