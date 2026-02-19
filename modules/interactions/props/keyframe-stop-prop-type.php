@@ -21,7 +21,7 @@ class Keyframe_Stop_Prop_Type extends Object_Prop_Type {
 				->default_unit( Size_Constants::UNIT_PERCENT )
 				->required(),
 			'settings' => Keyframe_Stop_Settings_Prop_Type::make()
-				->required()
+				->required(),
 		];
 	}
 }

@@ -314,7 +314,7 @@ class Validation {
 			return false;
 		}
 
-		if ( ! Custom_Effect_Value::is_valid( $animation_value )) {
+		if ( ! Custom_Effect_Value::is_valid( $animation_value ) ) {
 			return false;
 		}
 
