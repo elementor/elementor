@@ -318,15 +318,6 @@ class Validation {
 			return false;
 		}
 
-//		$effect_value = isset( $animation_value['effect']['value'] ) ? $animation_value['effect']['value'] : null;
-//		if ( 'custom' === $effect_value ) {
-//			if ( ! array_key_exists( 'custom', $animation_value ) || ! CustomEffectValueValidator::is_valid( $animation_value['custom'] ) ) {
-//				return false;
-//			}
-//		} elseif ( array_key_exists( 'custom', $animation_value ) && ! CustomEffectValueValidator::is_valid( $animation_value['custom'] ) ) {
-//			return false;
-//		}
-
 		return true;
 	}
 

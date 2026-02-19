@@ -17,8 +17,15 @@ class Keyframe_Stop_Prop_Type extends Object_Prop_Type {
 
 	protected function define_shape(): array {
 		return [
-			'stop' => Size_Prop_Type::make()->default_unit( Size_Constants::UNIT_PERCENT ),
+			'stop' => Size_Prop_Type::make()
+				->default_unit( Size_Constants::UNIT_PERCENT )
+				->required(),
 			'settings' => Keyframe_Stop_Settings_Prop_Type::make()
+				->required()
 		];
 	}
+// check settings too && isset( $value['stop'] )
+//	protected function validate_value( $value ): bool {
+//		return ! empty( $value ) && parent::validate_value( $value );
+//	}
 }

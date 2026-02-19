@@ -19,6 +19,6 @@ class Keyframes_Prop_Type extends Array_Prop_Type {
 	}
 
 	protected function validate_value( $value ): bool {
-		return ! empty( $value ) && is_array( $value );
+		return ! empty( $value ) && is_array( $value ) && parent::validate_value( $value );
 	}
 }
