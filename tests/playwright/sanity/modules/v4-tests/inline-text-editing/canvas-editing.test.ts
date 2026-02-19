@@ -179,14 +179,11 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 
 		// Act.
 		const inlineEditor = await editor.triggerEditingElement( headingId );
-
-		await inlineEditor.waitFor();
-		await page.waitForTimeout( 1000 );
-
 		headingElement = inlineEditor.locator( defaultAtomTags[ 'e-heading' ] );
-
-		await headingElement.click( { clickCount: 3 } );
-		await page.keyboard.type( 'Hello' );
+		await headingElement.click( { delay: 50 } );
+		await headingElement.click( { delay: 50 } );
+		await headingElement.click( { delay: 50 } );
+		await inlineEditor.fill( 'Hello' );
 
 		// Assert
 		await expect( headingElement ).toHaveText( 'Hello' );
@@ -245,7 +242,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		} );
 	}
 
-	test( 'Ensure relevant focusing unmounts the inline editor form frame', async () => {
+	test( 'Ensure relevant focusing unmounts the inline editor from frame', async () => {
 		// Arrange
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const dummyDivBlockId = await editor.addElement( { elType: 'e-div-block' }, 'document' );
