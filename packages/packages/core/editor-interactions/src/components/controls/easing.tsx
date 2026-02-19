@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { PromotionSelect } from '../../ui/promotion-select';
 import { __ } from '@wordpress/i18n';
 
 import { type FieldProps } from '../../types';
+import { PromotionSelect } from '../../ui/promotion-select';
 import { DEFAULT_VALUES } from '../interaction-details';
 
 const BASE_OPTIONS = {
