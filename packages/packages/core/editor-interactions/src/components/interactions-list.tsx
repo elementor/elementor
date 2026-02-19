@@ -11,7 +11,8 @@ import { buildDisplayLabel, createDefaultInteractionItem, extractString } from '
 import { isProInteraction } from '../utils/is-pro-interaction';
 import { InteractionsListItem } from './interactions-list-item';
 import { PromotionPopover } from '@elementor/editor-ui';
-import { ProInteractionDisabledContent } from './pro-interaction-disabled-content';
+import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
+
 export const MAX_NUMBER_OF_INTERACTIONS = 5;
 
 export type InteractionListProps = {
@@ -105,6 +106,8 @@ export function InteractionsList( props: InteractionListProps ) {
 	const promoAnchorRef = useRef<HTMLElement | null>(null);
 	promoAnchorRef.current = promoPopover.anchorEl;
 
+	const { isAdmin } = useCurrentUserCapabilities();
+
 	return (
 		<InteractionItemContextProvider value={ contextValue }>
 			<Repeater
@@ -150,7 +153,7 @@ export function InteractionsList( props: InteractionListProps ) {
         open={promoPopover.open}
         title={__('Interactions', 'elementor')}
         content={__('This interaction is currently inactive and not showing on your website. Activate your Pro plugin to use it again.', 'elementor')}
-        ctaText={__('Upgrade now', 'elementor')}
+        ctaText={isAdmin ? __('Upgrade now', 'elementor') : undefined}
         ctaUrl={'https://go.elementor.com/go-pro-interactions/'}
         onClose={() => setPromoPopover({ open: false, anchorEl: null })}
         anchorRef={promoAnchorRef}

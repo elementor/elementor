@@ -82,15 +82,17 @@ function PopoverAlert( { title, content, ctaUrl, ctaText, onClose }: PromotionPo
 				role="dialog"
 				aria-label="promotion-popover-title"
 				action={
-					<AlertAction
-						variant="contained"
-						color="promotion"
-						href={ ctaUrl }
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						{ ctaText }
-					</AlertAction>
+					ctaText ? (
+						<AlertAction
+							variant="contained"
+							color="promotion"
+							href={ ctaUrl }
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							{ ctaText }
+						</AlertAction>
+					) : null
 				}
 				sx={ { maxWidth: 296 } }
 			>
