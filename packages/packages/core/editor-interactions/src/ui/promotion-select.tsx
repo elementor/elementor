@@ -9,9 +9,9 @@ type PromotionSelectProps = {
 	value: string;
 	onChange?: ( value: string ) => void;
 	baseOptions: Record< string, string >;
-	extendedOptions: Record< string, string >;
-	proLabel: string;
-	proContent: string;
+	disabledOptions: Record< string, string >;
+	promotionLabel: string;
+	promotionContent: string;
 	upgradeUrl: string;
 };
 
@@ -19,9 +19,9 @@ export function PromotionSelect( {
 	value,
 	onChange,
 	baseOptions,
-	extendedOptions,
-	proLabel,
-	proContent,
+	disabledOptions,
+	promotionLabel,
+	promotionContent,
 	upgradeUrl,
 }: PromotionSelectProps ) {
 	const promotionRef = useRef< InteractionsPromotionChipRef >( null );
@@ -56,16 +56,16 @@ export function PromotionSelect( {
 					promotionRef.current?.toggle();
 				} }
 			>
-				{ proLabel }
+				{ promotionLabel }
 				<InteractionsPromotionChip
-					content={ proContent }
+					content={ promotionContent }
 					upgradeUrl={ upgradeUrl }
 					ref={ promotionRef }
 					anchorRef={ anchorRef }
 				/>
 			</MenuSubheader>
 
-			{ Object.entries( extendedOptions ).map( ( [ key, label ] ) => (
+			{ Object.entries( disabledOptions ).map( ( [ key, label ] ) => (
 				<MenuListItem key={ key } value={ key } disabled sx={ { pl: 3 } }>
 					{ label }
 				</MenuListItem>
