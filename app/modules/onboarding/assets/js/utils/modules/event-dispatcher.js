@@ -64,13 +64,18 @@ export function initializeAndEnableTracking() {
 		return;
 	}
 
-	if ( ! isMixpanelInitialized() ) {
-		elementorCommon.eventsManager.initializeMixpanel();
+	if ( elementorCommon.eventsManager.trackingEnabled ) {
+		return;
 	}
 
-	if ( ! elementorCommon.eventsManager.trackingEnabled ) {
+	if ( isMixpanelInitialized() ) {
 		elementorCommon.eventsManager.enableTracking();
+		return;
 	}
+
+	elementorCommon.eventsManager.initializeMixpanel(
+		() => elementorCommon.eventsManager.enableTracking(),
+	);
 }
 
 export function dispatch( eventName, payload = {} ) {

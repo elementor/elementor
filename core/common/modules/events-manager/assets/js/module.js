@@ -12,11 +12,10 @@ export default class extends elementorModules.Module {
 			return;
 		}
 
-		this.initializeMixpanel();
-		this.enableTracking();
+		this.initializeMixpanel( () => this.enableTracking() );
 	}
 
-	initializeMixpanel() {
+	initializeMixpanel( onLoaded ) {
 		mixpanel.init(
 			elementorCommon.config.editor_events?.token,
 			{
@@ -26,6 +25,7 @@ export default class extends elementorModules.Module {
 				api_hosts: {
 					flags: 'https://api-eu.mixpanel.com',
 				},
+				loaded: onLoaded,
 			},
 		);
 	}
@@ -130,6 +130,14 @@ export default class extends elementorModules.Module {
 		}
 
 		mixpanel.track( '$experiment_started', { 'Experiment name': experimentName, 'Variant name': experimentVariant } );
+	}
+
+	isMixpanelReady() {
+		try {
+			return mixpanel.get_distinct_id() !== undefined;
+		} catch ( error ) {
+			return false;
+		}
 	}
 
 	canSendEvents() {
