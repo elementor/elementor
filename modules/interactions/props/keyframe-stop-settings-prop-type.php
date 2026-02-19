@@ -35,6 +35,7 @@ class Keyframe_Stop_Settings_Prop_Type extends Object_Prop_Type {
 
 		$allowed_keys = array_keys( $this->get_shape() );
 		$value_keys = array_keys( $value );
+
 		if ( array_diff( $value_keys, $allowed_keys ) !== [] ) {
 			return false;
 		}

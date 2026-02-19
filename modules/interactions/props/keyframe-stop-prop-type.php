@@ -24,8 +24,4 @@ class Keyframe_Stop_Prop_Type extends Object_Prop_Type {
 				->required()
 		];
 	}
-// check settings too && isset( $value['stop'] )
-//	protected function validate_value( $value ): bool {
-//		return ! empty( $value ) && parent::validate_value( $value );
-//	}
 }
