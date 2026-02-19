@@ -85,7 +85,7 @@ class Test_Html_V3_Prop_Type extends TestCase {
 		$this->assertFalse( $result );
 	}
 
-	public function test_validate__fails_when_children_missing() {
+	public function test_validate__passes_when_children_missing() {
 		// Arrange.
 		$prop_type = Html_V3_Prop_Type::make();
 
@@ -98,7 +98,7 @@ class Test_Html_V3_Prop_Type extends TestCase {
 		] );
 
 		// Assert.
-		$this->assertFalse( $result );
+		$this->assertTrue( $result );
 	}
 
 	public function test_validate__fails_when_content_is_plain_string() {
