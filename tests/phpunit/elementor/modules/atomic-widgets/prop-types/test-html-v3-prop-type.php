@@ -309,4 +309,21 @@ class Test_Html_V3_Prop_Type extends TestCase {
 		// Assert.
 		$this->assertNull( $result['value']['content'] );
 	}
+
+	public function test_sanitize__handles_missing_children() {
+		// Arrange.
+		$prop_type = Html_V3_Prop_Type::make();
+
+		// Act.
+		$result = $prop_type->sanitize( [
+			'$$type' => 'html-v3',
+			'value' => [
+				'content' => String_Prop_Type::generate( 'Hello' ),
+			],
+		] );
+
+		// Assert.
+		$this->assertSame( 'Hello', $result['value']['content']['value'] );
+		$this->assertArrayNotHasKey( 'children', $result['value'] );
+	}
 }
