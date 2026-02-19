@@ -24,6 +24,7 @@ class Animation_Preset_Prop_Type extends Object_Prop_Type {
 			'direction' => String_Prop_Type::make()->description( 'The direction to use for the animation' ),
 			'timing_config' => Timing_Config_Prop_Type::make()->description( 'The timing config to use for the animation' ),
 			'config' => Animation_Config_Prop_Type::make()->description( 'The config to use for the animation' ),
+			'custom_effect' => Custom_Effect_Prop_Type::make(),
 		];
 	}
 }

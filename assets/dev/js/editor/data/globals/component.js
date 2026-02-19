@@ -29,4 +29,8 @@ export default class Component extends ComponentBase {
 	refreshGlobalData() {
 		$e.data.deleteCache( $e.components.get( 'globals' ), 'globals/index' );
 	}
+
+	populateGlobalData() {
+		$e.data.get( 'globals/index' );
+	}
 }
