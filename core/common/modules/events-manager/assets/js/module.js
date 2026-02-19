@@ -31,6 +31,10 @@ export default class extends elementorModules.Module {
 	}
 
 	enableTracking() {
+		if ( ! this.isMixpanelReady() ) {
+			return;
+		}
+
 		const userId = elementorCommon.config.library_connect?.user_id;
 
 		if ( userId ) {
@@ -133,8 +137,13 @@ export default class extends elementorModules.Module {
 	}
 
 	isMixpanelReady() {
+		if ( 'undefined' === typeof mixpanel || ! mixpanel ) {
+			return false;
+		}
+
 		try {
-			return mixpanel.get_distinct_id() !== undefined;
+			const distinctId = mixpanel.get_distinct_id();
+			return distinctId !== undefined && distinctId !== null;
 		} catch ( error ) {
 			return false;
 		}
