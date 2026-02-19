@@ -2,107 +2,34 @@
 
 namespace Elementor\Modules\Interactions\Validators;
 
+use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
+use Elementor\Modules\Interactions\Props\Custom_Effect_Prop_Type;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * TODO: At least a value validator interface to enforce is_valid fxn for consistency
+ */
 class Custom_Effect_Value {
-	public static function is_valid( $prop_value ) {
-		if ( ! is_array( $prop_value ) ) {
+	public static function is_valid( array $animation_value ): bool {
+		$effect_value = $animation_value['effect']['value'] ?? null;
+
+		if ( 'custom' !== $effect_value ) {
+			return true;
+		}
+
+		if ( ! isset( $animation_value['custom_effect'] ) ) {
 			return false;
 		}
 
-		if ( ! isset( $prop_value['$$type'] ) || 'custom-effect' !== $prop_value['$$type'] ) {
-			return false;
-		}
+		$props_parser = Props_Parser::make( [
+			'custom_effect' => Custom_Effect_Prop_Type::make(),
+		] );
 
-		if ( ! isset( $prop_value['value'] ) || ! is_array( $prop_value['value'] ) ) {
-			return false;
-		}
+		$result = $props_parser->parse( [ 'custom_effect' => $animation_value['custom_effect'] ] );
 
-		$value = $prop_value['value'];
-
-		if ( isset( $value['from'] ) && ! self::is_valid_custom_effect_properties( $value['from'] ) ) {
-			return false;
-		}
-
-		if ( isset( $value['to'] ) && ! self::is_valid_custom_effect_properties( $value['to'] ) ) {
-			return false;
-		}
-
-		return true;
-	}
-
-	private static function is_valid_custom_effect_properties( $prop_value ) {
-		if ( ! is_array( $prop_value ) ) {
-			return false;
-		}
-
-		if ( ! isset( $prop_value['$$type'] ) || 'custom-effect-properties' !== $prop_value['$$type'] ) {
-			return false;
-		}
-
-		if ( ! isset( $prop_value['value'] ) || ! is_array( $prop_value['value'] ) ) {
-			return false;
-		}
-
-		$value = $prop_value['value'];
-
-		if ( isset( $value['opacity'] ) && ! self::is_valid_number_prop( $value['opacity'] ) ) {
-			return false;
-		}
-
-		$dimension_keys = [ 'scale', 'move', 'rotate', 'skew' ];
-		foreach ( $dimension_keys as $key ) {
-			if ( isset( $value[ $key ] ) && ! self::is_valid_movement_dimensions( $value[ $key ] ) ) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	private static function is_valid_movement_dimensions( $prop_value ) {
-		if ( ! is_array( $prop_value ) ) {
-			return false;
-		}
-
-		if ( ! isset( $prop_value['$$type'] ) || 'movement-dimensions' !== $prop_value['$$type'] ) {
-			return false;
-		}
-
-		if ( ! isset( $prop_value['value'] ) || ! is_array( $prop_value['value'] ) ) {
-			return false;
-		}
-
-		$value = $prop_value['value'];
-
-		if ( isset( $value['x'] ) && ! self::is_valid_number_prop( $value['x'] ) ) {
-			return false;
-		}
-		if ( isset( $value['y'] ) && ! self::is_valid_number_prop( $value['y'] ) ) {
-			return false;
-		}
-		if ( isset( $value['z'] ) && ! self::is_valid_number_prop( $value['z'] ) ) {
-			return false;
-		}
-
-		return true;
-	}
-
-	private static function is_valid_number_prop( $prop_value ) {
-		if ( ! is_array( $prop_value ) ) {
-			return false;
-		}
-
-		if ( ! isset( $prop_value['$$type'] ) || 'number' !== $prop_value['$$type'] ) {
-			return false;
-		}
-
-		if ( ! array_key_exists( 'value', $prop_value ) || ! is_numeric( $prop_value['value'] ) ) {
-			return false;
-		}
-
-		return true;
+		return $result->is_valid();
 	}
 }

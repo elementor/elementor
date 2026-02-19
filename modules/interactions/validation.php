@@ -3,10 +3,9 @@
 namespace Elementor\Modules\Interactions;
 
 use Elementor\Modules\Interactions\Validators\Breakpoints_Value as BreakpointsValueValidator;
-use Elementor\Modules\Interactions\Validators\Custom_Effect_Value as CustomEffectValueValidator;
+use Elementor\Modules\Interactions\Validators\Custom_Effect_Value;
 use Elementor\Modules\Interactions\Validators\String_Value as StringValueValidator;
 use Elementor\Modules\Interactions\Validators\Trigger_Value as TriggerValueValidator;
-use Elementor\Modules\Interactions\Adapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -315,14 +314,18 @@ class Validation {
 			return false;
 		}
 
-		$effect_value = isset( $animation_value['effect']['value'] ) ? $animation_value['effect']['value'] : null;
-		if ( 'custom' === $effect_value ) {
-			if ( ! array_key_exists( 'custom', $animation_value ) || ! CustomEffectValueValidator::is_valid( $animation_value['custom'] ) ) {
-				return false;
-			}
-		} elseif ( array_key_exists( 'custom', $animation_value ) && ! CustomEffectValueValidator::is_valid( $animation_value['custom'] ) ) {
+		if ( ! Custom_Effect_Value::is_valid( $animation_value )) {
 			return false;
 		}
+
+//		$effect_value = isset( $animation_value['effect']['value'] ) ? $animation_value['effect']['value'] : null;
+//		if ( 'custom' === $effect_value ) {
+//			if ( ! array_key_exists( 'custom', $animation_value ) || ! CustomEffectValueValidator::is_valid( $animation_value['custom'] ) ) {
+//				return false;
+//			}
+//		} elseif ( array_key_exists( 'custom', $animation_value ) && ! CustomEffectValueValidator::is_valid( $animation_value['custom'] ) ) {
+//			return false;
+//		}
 
 		return true;
 	}
