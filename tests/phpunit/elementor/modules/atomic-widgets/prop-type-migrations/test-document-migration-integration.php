@@ -178,7 +178,7 @@ class Test_Document_Migration_Integration extends Elementor_Test_Base {
 		);
 
 		// Assert
-		$this->assertEquals( 'html-v2', $document_data[0]['settings']['title']['$$type'] );
+		$this->assertEquals( 'html-v3', $document_data[0]['settings']['title']['$$type'] );
 		$this->assertEquals( 'string', $global_classes_data['items'][0]['variants'][0]['props']['css_prop']['$$type'] );
 
 		remove_filter( 'elementor/atomic-widgets/styles/schema', [ $this, 'add_css_prop_to_style_schema' ], 999999 );
