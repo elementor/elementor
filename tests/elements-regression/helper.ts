@@ -1,6 +1,10 @@
 import EditorPage from '../playwright/pages/editor-page';
 import EditorSelectors from '../playwright/selectors/editor-selectors';
 import { expect, type Frame, type Page, type TestInfo } from '@playwright/test';
+
+const CONTENT_READY_TIMEOUT = 15_000;
+const MIN_RENDERED_HEIGHT = 30;
+
 type ScreenShot = {
 	device: string,
 	isPublished: boolean,
@@ -20,10 +24,29 @@ export default class ElementRegressionHelper {
 		return isPublished ? 'published' : 'editor';
 	}
 
+	private async waitForContainerContent( pageOrFrame: Page | Frame ): Promise<void> {
+		const selector = EditorSelectors.container;
+		await pageOrFrame.waitForFunction(
+			( { sel, minHeight } ) => {
+				const el = document.querySelector( sel );
+				return el && el.getBoundingClientRect().height > minHeight;
+			},
+			{ sel: selector, minHeight: MIN_RENDERED_HEIGHT },
+			{ timeout: CONTENT_READY_TIMEOUT },
+		);
+	}
+
 	private async waitForPublishedContentReady(): Promise<void> {
 		await this.page.waitForLoadState( 'load' );
 		const container = this.page.locator( EditorSelectors.container ).first();
-		await container.waitFor( { state: 'visible' } );
+		await container.waitFor( { state: 'visible', timeout: CONTENT_READY_TIMEOUT } );
+		await this.waitForContainerContent( this.page );
+	}
+
+	private async waitForEditorContentReady(): Promise<void> {
+		const frame = this.editor.getPreviewFrame();
+		await frame.locator( EditorSelectors.container ).first().waitFor( { state: 'visible', timeout: CONTENT_READY_TIMEOUT } );
+		await this.waitForContainerContent( frame );
 	}
 
 	async doScreenshot( widgetType: string, isPublished: boolean ) {
@@ -49,6 +72,7 @@ export default class ElementRegressionHelper {
 				const iframe = document.getElementById( 'elementor-preview-iframe' );
 				iframe.style.height = '3000px';
 			} );
+			await this.waitForEditorContentReady();
 		}
 		await expect.soft( locator )
 			.toHaveScreenshot( `${ widgetType }_${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
@@ -111,6 +135,7 @@ export default class ElementRegressionHelper {
 				wrapper.style.overflow = 'visible';
 				wrapper.style.maxHeight = 'none';
 			} );
+			await this.waitForEditorContentReady();
 			await expect.soft( page.locator( EditorSelectors.container + ' >> nth=0' ) )
 				.toHaveScreenshot( `${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
 		}
