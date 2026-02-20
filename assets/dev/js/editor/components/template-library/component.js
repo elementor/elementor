@@ -5,6 +5,7 @@ import { SAVE_CONTEXTS } from './constants';
 import { EditorOneEventManager } from 'elementor-editor-utils/editor-one-events';
 
 const TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layout' );
+const { isTierAtLeast } = require( 'elementor-utils/tiers' );
 
 export default class Component extends ComponentModalBase {
 	__construct( args ) {
@@ -166,6 +167,8 @@ export default class Component extends ComponentModalBase {
 			const templateType = model.get( 'type' );
 			const templateTitle = model.get( 'title' );
 			const templateId = model.get( 'template_id' );
+			const userTier = elementor.config.library_connect?.current_access_tier;
+			const templateTier = model.get( 'accessTier' );
 
 			$e.run( 'document/elements/import', {
 				model,
@@ -180,7 +183,7 @@ export default class Component extends ComponentModalBase {
 						assetId: templateId,
 						assetName: templateTitle,
 						libraryType: templateType || source,
-						proRequired: false,
+						proRequired: ! isTierAtLeast( userTier, templateTier ),
 					} );
 				},
 			} );

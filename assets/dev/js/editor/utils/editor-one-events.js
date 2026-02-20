@@ -125,7 +125,7 @@ export class EditorOneEventManager {
 		} ) );
 	}
 
-	static sendELibraryInsert( { assetId, libraryType, proRequired = false } ) {
+	static sendELibraryInsert( { assetId, assetName, libraryType, proRequired = false } ) {
 		const config = this.getConfig();
 		const payload = this.createBasePayload( {
 			interaction_type: this.toLowerSnake( config?.triggers?.insert ),
@@ -136,6 +136,10 @@ export class EditorOneEventManager {
 			location_l1: this.toLowerSnake( libraryType ),
 			location_l2: this.toLowerSnake( config?.secondaryLocations?.assetCard ),
 			interaction_description: 'User inserts block/pages from elementor library',
+			metadata: {
+				template_id: String( assetId ),
+				template_name: this.decodeHtmlEntities( assetName ) || '',
+			},
 		} );
 
 		if ( proRequired ) {
@@ -145,7 +149,7 @@ export class EditorOneEventManager {
 		return this.dispatchEvent( config?.names?.editorOne?.eLibraryInsert, payload );
 	}
 
-	static sendELibraryFavorite( { assetId, libraryType, isFavorite, proRequired = false } ) {
+	static sendELibraryFavorite( { assetId, assetName, libraryType, isFavorite, proRequired = false } ) {
 		const config = this.getConfig();
 		const payload = this.createBasePayload( {
 			interaction_type: this.toLowerSnake( config?.triggers?.click ),
@@ -157,6 +161,10 @@ export class EditorOneEventManager {
 			location_l1: this.toLowerSnake( libraryType ),
 			location_l2: this.toLowerSnake( config?.secondaryLocations?.assetCard ),
 			interaction_description: 'User favorite block/pages from elementor library',
+			metadata: {
+				template_id: String( assetId ),
+				template_name: this.decodeHtmlEntities( assetName ) || '',
+			},
 		} );
 
 		if ( proRequired ) {
@@ -166,7 +174,7 @@ export class EditorOneEventManager {
 		return this.dispatchEvent( config?.names?.editorOne?.eLibraryFavorite, payload );
 	}
 
-	static sendELibraryGenerateAi( { assetId, libraryType } ) {
+	static sendELibraryGenerateAi( { assetId, assetName, libraryType } ) {
 		const config = this.getConfig();
 		return this.dispatchEvent( config?.names?.editorOne?.eLibraryGenerateAi, this.createBasePayload( {
 			interaction_type: this.toLowerSnake( config?.triggers?.click ),
@@ -177,6 +185,10 @@ export class EditorOneEventManager {
 			location_l1: this.toLowerSnake( libraryType ),
 			location_l2: this.toLowerSnake( config?.secondaryLocations?.assetCard ),
 			interaction_description: 'User generated block/page based on a library asset',
+			metadata: {
+				template_id: String( assetId ),
+				template_name: this.decodeHtmlEntities( assetName ) || '',
+			},
 		} ) );
 	}
 

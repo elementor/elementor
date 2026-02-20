@@ -3,15 +3,25 @@ import { EditorOneEventManager } from 'elementor-editor-utils/editor-one-events'
 export class Close extends $e.modules.CommandBase {
 	apply( args ) {
 		const { mode } = args;
-		const hasSaved = this.component.siteSettingsSession?.hasSaved || false;
 
-		this.trackSiteSettingsSession( 'close', hasSaved ? 'saved' : 'discard' );
-
-		// The kit is opened directly.
-
+		// The kit is opened directly — no document switch needed, safe to track immediately.
 		if ( elementor.config.initial_document.id === parseInt( elementor.config.kit_id ) ) {
+			const hasSaved = this.component.siteSettingsSession?.hasSaved || false;
+			const sessionData = this.component.getSiteSettingsSessionData?.() || {};
+
+			EditorOneEventManager.sendSiteSettingsSession( {
+				targetType: 'close',
+				visitedItems: sessionData.visitedItems || [],
+				savedItems: sessionData.savedItems || [],
+				state: hasSaved ? 'saved' : 'discard',
+			} );
+
+			this.component.resetSiteSettingsSession?.();
 			return $e.run( 'panel/global/exit' );
 		}
+
+		// Capture session data before the switch (it may be reset during onClose).
+		const sessionSnapshot = this.component.getSiteSettingsSessionData?.() || {};
 
 		$e.internal( 'panel/state-loading' );
 
@@ -30,20 +40,25 @@ export class Close extends $e.modules.CommandBase {
 				// The kit shouldn't be cached for next open. (it may be changed via create colors/typography).
 				elementor.documents.invalidateCache( elementor.config.kit_id );
 			},
-		} ).finally( () => $e.internal( 'panel/state-ready' ) );
-	}
+		} ).then( () => {
+			// Skip if session was already tracked and reset (e.g. by back.js dialog).
+			if ( ! sessionSnapshot.visitedItems?.length ) {
+				return;
+			}
 
-	trackSiteSettingsSession( targetType, state ) {
-		const sessionData = this.component.getSiteSettingsSessionData?.() || {};
+			// Re-read hasSaved in case a save happened during the switch (e.g. "Save & leave").
+			const hasSaved = sessionSnapshot.hasSaved || this.component.siteSettingsSession?.hasSaved || false;
+			const state = hasSaved ? 'saved' : 'discard';
 
-		EditorOneEventManager.sendSiteSettingsSession( {
-			targetType,
-			visitedItems: sessionData.visitedItems || [],
-			savedItems: sessionData.savedItems || [],
-			state,
-		} );
+			EditorOneEventManager.sendSiteSettingsSession( {
+				targetType: 'close',
+				visitedItems: sessionSnapshot.visitedItems,
+				savedItems: sessionSnapshot.savedItems || [],
+				state,
+			} );
 
-		this.component.resetSiteSettingsSession?.();
+			this.component.resetSiteSettingsSession?.();
+		} ).catch( () => {} ).finally( () => $e.internal( 'panel/state-ready' ) );
 	}
 }
 

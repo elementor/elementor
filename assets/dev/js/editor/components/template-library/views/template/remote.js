@@ -1,4 +1,5 @@
 import { EditorOneEventManager } from 'elementor-editor-utils/editor-one-events';
+const { isTierAtLeast } = require( 'elementor-utils/tiers' );
 
 var TemplateLibraryTemplateView = require( 'elementor-templates/views/template/base' ),
 	TemplateLibraryTemplateRemoteView;
@@ -31,12 +32,15 @@ TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend( {
 
 		elementor.templates.markAsFavorite( this.model, isFavorite );
 
+		const userTier = elementor.config.library_connect?.current_access_tier;
+		const templateTier = this.model.get( 'accessTier' );
+
 		EditorOneEventManager.sendELibraryFavorite( {
 			assetId: this.model.get( 'template_id' ),
 			assetName: this.model.get( 'title' ),
 			libraryType: this.model.get( 'type' ) || this.model.get( 'source' ),
 			isFavorite,
-			proRequired: false,
+			proRequired: ! isTierAtLeast( userTier, templateTier ),
 		} );
 
 		if ( ! isFavorite && elementor.templates.getFilter( 'favorite' ) ) {
