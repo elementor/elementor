@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Repeater } from '@elementor/editor-controls';
 import { InfoCircleFilledIcon, PlayerPlayIcon } from '@elementor/icons';
 import { Alert, AlertTitle, Box, IconButton, Tooltip } from '@elementor/ui';
@@ -8,7 +8,11 @@ import { __ } from '@wordpress/i18n';
 import { InteractionItemContextProvider } from '../contexts/interactions-item-context';
 import type { ElementInteractions, InteractionItemPropValue, InteractionItemValue } from '../types';
 import { buildDisplayLabel, createDefaultInteractionItem, extractString } from '../utils/prop-value-utils';
+import { isProInteraction } from '../utils/is-pro-interaction';
 import { InteractionsListItem } from './interactions-list-item';
+import { PromotionPopover } from '@elementor/editor-ui';
+import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
+
 export const MAX_NUMBER_OF_INTERACTIONS = 5;
 
 export type InteractionListProps = {
@@ -94,6 +98,18 @@ export function InteractionsList( props: InteractionListProps ) {
 		[ handleInteractionChange, onPlayInteraction ]
 	);
 
+	const [promoPopover, setPromoPopover] = useState<{
+		open: boolean;
+		anchorEl: HTMLElement | null;
+	}>({ open: false, anchorEl: null });
+	
+	const promoAnchorRef = useRef<HTMLElement | null>(null);
+	promoAnchorRef.current = promoPopover.anchorEl;
+
+	const { isAdmin } = useCurrentUserCapabilities();
+	const adminUrl = (window as any).elementorAppConfig?.admin_url;
+	const ctaUrl = adminUrl ? `${adminUrl}plugins.php` : 'https://go.elementor.com/go-pro-interactions/';
+
 	return (
 		<InteractionItemContextProvider value={ contextValue }>
 			<Repeater
@@ -109,22 +125,44 @@ export function InteractionsList( props: InteractionListProps ) {
 				addButtonInfotipContent={ infotipContent }
 				itemSettings={ {
 					initialValues: createDefaultInteractionItem(),
-					Label: ( { value }: { value: InteractionItemPropValue } ) => buildDisplayLabel( value.value ),
+					isOpenDisabled: ( value: InteractionItemPropValue ) => isProInteraction( value ),
+					onDisabledItemClick: (value, anchorEl) => {
+						setPromoPopover({ open: true, anchorEl });
+					},
+					Label: ({ value }) => buildDisplayLabel(value.value),
 					Icon: () => null,
 					Content: InteractionsListItem,
-					actions: ( value: InteractionItemPropValue ) => (
-						<Tooltip key="preview" placement="top" title={ __( 'Preview', 'elementor' ) }>
-							<IconButton
-								aria-label={ __( 'Play interaction', 'elementor' ) }
-								size="tiny"
-								onClick={ () => onPlayInteraction( extractString( value.value.interaction_id ) ) }
-							>
-								<PlayerPlayIcon fontSize="tiny" />
-							</IconButton>
-						</Tooltip>
-					),
+					actions: ( value: InteractionItemPropValue ) => {
+						if (isProInteraction(value)) {
+							// Only show remove (X) button - no preview button for Pro items
+							return null;
+						}
+						return (
+							<Tooltip key="preview" placement="top" title={__('Preview', 'elementor')}>
+								<IconButton
+									aria-label={__('Play interaction', 'elementor')}
+									size="tiny"
+									onClick={() => onPlayInteraction(extractString(value.value.interaction_id))}
+								>
+									<PlayerPlayIcon fontSize="tiny" />
+								</IconButton>
+							</Tooltip>
+						);
+					},
 				} }
 			/>
+			<PromotionPopover
+        open={promoPopover.open}
+        title={__('Interactions', 'elementor')}
+        content={__('This interaction is currently inactive and not showing on your website. Activate your Pro plugin to use it again.', 'elementor')}
+        ctaText={isAdmin ? __('Upgrade now', 'elementor') : undefined}
+        ctaUrl={ ctaUrl }
+        onClose={() => setPromoPopover({ open: false, anchorEl: null })}
+        anchorRef={promoAnchorRef}
+        placement="right-start"
+    >
+        <span />
+    </PromotionPopover>
 		</InteractionItemContextProvider>
 	);
 }
