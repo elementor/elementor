@@ -3,6 +3,9 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { wpCli } from '../../../assets/wp-cli';
 
+const MODAL_PROBE_TIMEOUT = 3_000;
+const INSERTER_READY_TIMEOUT = 20_000;
+
 test.describe( 'Document tests', async () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
@@ -50,21 +53,20 @@ test.describe( 'Document tests', async () => {
 async function dismissModalIfPresent( wpAdmin: WpAdminPage ) {
 	const modalOverlay = wpAdmin.page.locator( '.components-modal__screen-overlay' );
 	try {
-		await modalOverlay.waitFor( { state: 'visible', timeout: 3000 } );
+		await modalOverlay.waitFor( { state: 'visible', timeout: MODAL_PROBE_TIMEOUT } );
 		await wpAdmin.page.keyboard.press( 'Escape' );
 		await modalOverlay.waitFor( { state: 'hidden' } );
 	} catch {
-		// No modal appeared
 	}
 }
 
 async function addElement( wpAdmin: WpAdminPage, elementType: string ) {
 	const inserterToggle = wpAdmin.page.getByRole( 'button', { name: 'Block Inserter', exact: true } );
-	await inserterToggle.waitFor( { timeout: 20000 } );
+	await inserterToggle.waitFor( { timeout: INSERTER_READY_TIMEOUT } );
 
 	await dismissModalIfPresent( wpAdmin );
 
-	if ( await inserterToggle.getAttribute( 'aria-pressed' ) !== 'true' ) {
+	if ( 'true' !== await inserterToggle.getAttribute( 'aria-pressed' ) ) {
 		await inserterToggle.click();
 	}
 
@@ -74,4 +76,8 @@ async function addElement( wpAdmin: WpAdminPage, elementType: string ) {
 	].join( ', ' );
 
 	await wpAdmin.page.locator( blockItemSelector ).first().click();
+
+	if ( 'true' === await inserterToggle.getAttribute( 'aria-pressed' ) ) {
+		await inserterToggle.click();
+	}
 }

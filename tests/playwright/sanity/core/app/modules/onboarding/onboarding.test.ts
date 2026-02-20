@@ -9,7 +9,8 @@ const BUTTON_CLASSES = {
 	disabled: /e-onboarding__button--disabled/,
 };
 
-const POPUP_NAVIGATION_TIMEOUT = 3000;
+const POPUP_NAVIGATION_TIMEOUT = 3_000;
+const PAGE_READY_TIMEOUT = 20_000;
 
 test.describe( 'On boarding @onBoarding', async () => {
 	let originalActiveTheme: string;
@@ -50,7 +51,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 		const variantA = page.locator( 'a.e-onboarding__button-action' );
 		const variantB = page.getByRole( 'button', { name: 'Connect your account' } );
 		const ctaButton = variantA.or( variantB );
-		await ctaButton.waitFor( { timeout: 20000 } );
+		await ctaButton.waitFor( { timeout: PAGE_READY_TIMEOUT } );
 
 		const buttonText = ( await ctaButton.innerText() ).trim();
 		expect( [ 'Start setup', 'Connect your account' ] ).toContain( buttonText );
@@ -85,7 +86,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 		const variantASkip = page.locator( 'text=Skip' );
 		const variantBSkip = page.getByRole( 'button', { name: 'Continue as a guest' } );
 		const skipButton = variantASkip.or( variantBSkip );
-		await skipButton.waitFor( { timeout: 20000 } );
+		await skipButton.waitFor( { timeout: PAGE_READY_TIMEOUT } );
 
 		await skipButton.click();
 
