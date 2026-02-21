@@ -434,22 +434,19 @@ export default class extends Marionette.CompositeView {
 	}
 
 	renderInlineChildren() {
-		this.ui.elements.find( '.elementor-navigator__inline-child' ).remove();
+		this.ui.elements.children( '.elementor-navigator__inline-child' ).remove();
 
 		const inlineChildren = this.getInlineChildren();
 
+		this.$el.toggleClass( 'elementor-navigator__element--has-children', !! this.hasChildren() );
+
 		if ( ! inlineChildren ) {
-			this.$el.toggleClass( 'elementor-navigator__element--has-children', this.hasChildren() );
 			return;
 		}
 
-		const hadChildren = this.$el.hasClass( 'elementor-navigator__element--has-children' );
-		this.$el.toggleClass( 'elementor-navigator__element--has-children', this.hasChildren() );
 		this.appendInlineChildItems( inlineChildren, this.getIndent() );
-
-		if ( ! hadChildren ) {
-			this.toggleList( true );
-		}
+		this.ui.item.addClass( 'elementor-active' );
+		this.ui.elements.css( 'display', 'block' );
 	}
 
 	appendInlineChildItems( children, indent ) {
