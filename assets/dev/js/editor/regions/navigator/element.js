@@ -437,13 +437,19 @@ export default class extends Marionette.CompositeView {
 		this.ui.elements.find( '.elementor-navigator__inline-child' ).remove();
 
 		const inlineChildren = this.getInlineChildren();
-		console.log( '[DEBUG-NAV] 5. renderInlineChildren, found:', inlineChildren?.length ?? 0, 'children:', JSON.stringify( inlineChildren?.map( ( c ) => ( { type: c.type, id: c.id?.substring( 0, 10 ) } ) ) ) );
 
 		if ( ! inlineChildren ) {
+			this.$el.toggleClass( 'elementor-navigator__element--has-children', this.hasChildren() );
 			return;
 		}
 
+		const hadChildren = this.$el.hasClass( 'elementor-navigator__element--has-children' );
+		this.$el.toggleClass( 'elementor-navigator__element--has-children', this.hasChildren() );
 		this.appendInlineChildItems( inlineChildren, this.getIndent() );
+
+		if ( ! hadChildren ) {
+			this.toggleList( true );
+		}
 	}
 
 	appendInlineChildItems( children, indent ) {
@@ -546,7 +552,6 @@ export default class extends Marionette.CompositeView {
 		const hasHtmlV2Change = Object.values( settingsModel.changed ).some(
 			( attribute ) => attribute && 'html-v2' === attribute.$$type,
 		);
-		console.log( '[DEBUG-NAV] 4. onModelSettingsChange, hasHtmlV2Change:', hasHtmlV2Change, 'changedKeys:', Object.keys( settingsModel.changed ), 'changedValues $$types:', Object.values( settingsModel.changed ).map( ( v ) => v?.$$type ) );
 
 		if ( hasHtmlV2Change ) {
 			this.invalidateInlineChildrenCache();
