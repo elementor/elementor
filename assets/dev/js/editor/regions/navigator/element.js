@@ -1,22 +1,8 @@
 import ElementEmpty from './element-empty';
+import InlineChildren from './inline-children';
 import RootEmpty from './root-empty';
 
 const NEW_NESTABLE_CLASS = 'elementor-navigator__element-new-nestable';
-const INLINE_CHILD_INDENT_INCREMENT = 10;
-const INLINE_CHILD_ICON_MAP = {
-	b: 'eicon-editor-bold',
-	strong: 'eicon-editor-bold',
-	i: 'eicon-editor-italic',
-	em: 'eicon-editor-italic',
-	u: 'eicon-editor-underline',
-	a: 'eicon-editor-link',
-	del: 'eicon-editor-strikethrough',
-	s: 'eicon-editor-strikethrough',
-	sup: 'eicon-editor-list-ol',
-	sub: 'eicon-editor-list-ol',
-	span: 'eicon-edit',
-};
-const INLINE_CHILD_DEFAULT_ICON = 'eicon-edit';
 
 export default class extends Marionette.CompositeView {
 	getTemplate() {
@@ -61,7 +47,7 @@ export default class extends Marionette.CompositeView {
 			return RootEmpty;
 		}
 
-		if ( this.getInlineChildren() ) {
+		if ( this.inlineChildren.getChildren() ) {
 			return null;
 		}
 
@@ -131,7 +117,7 @@ export default class extends Marionette.CompositeView {
 
 		this.childViewContainer = '.elementor-navigator__elements';
 
-		this._cachedInlineChildren = undefined;
+		this.inlineChildren = new InlineChildren( this );
 
 		this.listenTo( this.model, 'change', this.onModelChange )
 			.listenTo( this.model.get( 'settings' ), 'change', this.onModelSettingsChange );
@@ -169,43 +155,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	hasChildren() {
-		return this.model.get( 'elements' )?.length || 'widget' !== this.model.get( 'elType' ) || !! this.getInlineChildren();
-	}
-
-	getInlineChildren() {
-		if ( undefined !== this._cachedInlineChildren ) {
-			return this._cachedInlineChildren;
-		}
-
-		this._cachedInlineChildren = this._computeInlineChildren();
-
-		return this._cachedInlineChildren;
-	}
-
-	_computeInlineChildren() {
-		if ( 'widget' !== this.model.get( 'elType' ) ) {
-			return null;
-		}
-
-		const settings = this.model.get( 'settings' );
-
-		if ( ! settings ) {
-			return null;
-		}
-
-		const allChildren = [];
-
-		Object.values( settings.attributes ).forEach( ( setting ) => {
-			if ( 'html-v3' === setting?.$$type && Array.isArray( setting?.value?.children ) ) {
-				allChildren.push( ...setting.value.children );
-			}
-		} );
-
-		return allChildren.length > 0 ? allChildren : null;
-	}
-
-	invalidateInlineChildrenCache() {
-		this._cachedInlineChildren = undefined;
+		return this.model.get( 'elements' )?.length || 'widget' !== this.model.get( 'elType' ) || !! this.inlineChildren?.getChildren();
 	}
 
 	toggleList( state, callback ) {
@@ -414,9 +364,7 @@ export default class extends Marionette.CompositeView {
 	deselect() {
 		this.removeEditingClass();
 
-		this.ui.elements
-			.find( '.elementor-navigator__inline-child .elementor-navigator__item' )
-			.removeClass( 'elementor-editing' );
+		this.inlineChildren.clearHighlights();
 	}
 
 	onRender() {
@@ -430,90 +378,7 @@ export default class extends Marionette.CompositeView {
 
 		this.toggleHiddenClass();
 		this.renderIndicators();
-		this.renderInlineChildren();
-	}
-
-	renderInlineChildren() {
-		this.ui.elements.children( '.elementor-navigator__inline-child' ).remove();
-
-		const inlineChildren = this.getInlineChildren();
-
-		this.$el.toggleClass( 'elementor-navigator__element--has-children', !! this.hasChildren() );
-
-		if ( ! inlineChildren ) {
-			return;
-		}
-
-		this.appendInlineChildItems( inlineChildren, this.getIndent() );
-		this.ui.item.addClass( 'elementor-active' );
-		this.ui.elements.css( 'display', 'block' );
-	}
-
-	appendInlineChildItems( children, indent ) {
-		indent += INLINE_CHILD_INDENT_INCREMENT;
-		const $container = this.ui.elements;
-
-		children.forEach( ( child ) => {
-			const title = child.content || child.type;
-			const iconClass = INLINE_CHILD_ICON_MAP[ child.type ] || INLINE_CHILD_DEFAULT_ICON;
-
-			const $item = jQuery( '<div>', {
-				class: 'elementor-navigator__element elementor-navigator__inline-child',
-				'data-inline-id': child.id,
-			} );
-
-			const $inner = jQuery( '<div>', {
-				class: 'elementor-navigator__item',
-			} ).css( 'padding-inline-start', indent + 'px' );
-
-			$inner.append(
-				jQuery( '<div>', { class: 'elementor-navigator__element__element-type' } )
-					.html( '<i class="' + iconClass + '" aria-hidden="true"></i>' ),
-				jQuery( '<div>', { class: 'elementor-navigator__element__title' } )
-					.append(
-						jQuery( '<span>', {
-							class: 'elementor-navigator__element__title__text',
-							text: title,
-						} ),
-					),
-			);
-
-			$inner.on( 'click', ( event ) => {
-				event.stopPropagation();
-				this.onInlineChildClick( child.id );
-			} );
-
-			$inner.on( 'contextmenu', ( event ) => {
-				event.preventDefault();
-				event.stopPropagation();
-			} );
-
-			$inner.on( 'dblclick', ( event ) => {
-				event.stopPropagation();
-			} );
-
-			$item.append( $inner );
-			$container.append( $item );
-
-			if ( Array.isArray( child.children ) && child.children.length > 0 ) {
-				this.appendInlineChildItems( child.children, indent );
-			}
-		} );
-	}
-
-	onInlineChildClick( inlineId ) {
-		this.clearInlineChildHighlights();
-
-		this.ui.elements
-			.find( '.elementor-navigator__inline-child[data-inline-id="' + inlineId + '"] > .elementor-navigator__item' )
-			.addClass( 'elementor-editing' );
-
-		this.model.trigger( 'request:edit', { scrollIntoView: true } );
-	}
-
-	clearInlineChildHighlights() {
-		jQuery( '.elementor-navigator__inline-child .elementor-navigator__item' )
-			.removeClass( 'elementor-editing' );
+		this.inlineChildren.render();
 	}
 
 	onModelChange() {
@@ -551,8 +416,8 @@ export default class extends Marionette.CompositeView {
 		);
 
 		if ( hasHtmlV3Change ) {
-			this.invalidateInlineChildrenCache();
-			this.renderInlineChildren();
+			this.inlineChildren.invalidateCache();
+			this.inlineChildren.render();
 		}
 	}
 

@@ -353,7 +353,11 @@ body {
 		&.elementor-navigator__inline-child {
 
 			.elementor-navigator__element__list-toggle {
-				display: none;
+				visibility: hidden;
+			}
+
+			.elementor-navigator__element__element-type i {
+				font-size: 14px;
 			}
 
 			.elementor-navigator__element__toggle {
