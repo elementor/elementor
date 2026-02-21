@@ -1,4 +1,4 @@
-.e-con {
+.e-con:where(:not(.e-atomic-element)) {
 	// Set to initial values in order to avoid inheritance which might cause unexpected behavior.
 	--border-radius: 0;
 	--border-top-width: 0px;
@@ -38,6 +38,7 @@
 	--overlay-transition: 0.3s;
 	--e-con-grid-template-columns: repeat(3, 1fr);
 	--e-con-grid-template-rows: repeat(2, 1fr);
+	--flex-wrap-mobile: wrap;
 	position: var(--position);
 	width: var(--width);
 	// Set `min-width` to fix nested Containers shrink bug (ED-4964).
@@ -48,11 +49,7 @@
 	border-radius: var(--border-radius);
 	z-index: var(--z-index);
 	overflow: var(--overflow);
-	--flex-wrap-mobile: wrap;
-
-	&:where(:not(.e-div-block-base)) {
-		transition: background var(--background-transition, 0.3s), border var(--border-transition, 0.3s), box-shadow var(--border-transition, 0.3s), transform var(--e-con-transform-transition-duration, 0.4s);
-	}
+	transition: background var(--background-transition, 0.3s), border var(--border-transition, 0.3s), box-shadow var(--border-transition, 0.3s), transform var(--e-con-transform-transition-duration, 0.4s);
 
 	& {
 		--margin-block-start: var(--margin-top);
@@ -93,14 +90,14 @@
 		flex: var(--flex-grow) var(--flex-shrink) var(--flex-basis);
 	}
 
-	&-full,
+	&:where(.e-con-full),
 	& > .e-con-inner {
 		text-align: var(--text-align);
 		padding-block-start: var(--padding-block-start);
 		padding-block-end: var(--padding-block-end);
 	}
 
-	&-full.e-flex,
+	&:where(.e-con-full).e-flex,
 	&.e-flex > .e-con-inner {
 		flex-direction: var(--flex-direction);
 	}
@@ -128,7 +125,7 @@
 	}
 
 	// Set default values to the outer div of the boxed container.
-	&-boxed.e-flex {
+	&:where(.e-con-boxed).e-flex {
 		flex-direction: column;
 		flex-wrap: initial;
 		justify-content: initial;
@@ -136,13 +133,13 @@
 		align-content: initial;
 	}
 
-	&-boxed.e-grid {
+	&:where(.e-con-boxed).e-grid {
 		justify-items: initial;
 		grid-template-columns: 1fr;
 		grid-template-rows: 1fr;
 	}
 
-	&-boxed {
+	&:where(.e-con-boxed) {
 		text-align: initial;
 		gap: initial;
 	}
