@@ -2,7 +2,7 @@ import * as React from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { getContainer, getElementLabel, getElementType } from '@elementor/editor-elements';
 import {
-	htmlV2PropTypeUtil,
+	htmlV3PropTypeUtil,
 	parseHtmlChildren,
 	type PropType,
 	type PropValue,
@@ -127,8 +127,9 @@ export default class InlineEditingReplacement extends ReplacementBase {
 
 	getExtractedContentValue() {
 		const propValue = this.getInlineEditablePropValue();
+		const extracted = htmlV3PropTypeUtil.extract( propValue );
 
-		return htmlV2PropTypeUtil.extract( propValue )?.content ?? '';
+		return stringPropTypeUtil.extract( extracted?.content ?? null ) ?? '';
 	}
 
 	setContentValue( value: string | null ) {
@@ -137,8 +138,8 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		const parsed = parseHtmlChildren( html );
 		console.log( '[DEBUG-NAV] 2. setContentValue, key:', settingKey, 'children:', parsed.children.length, 'content:', parsed.content?.substring( 0, 80 ) );
 
-		const valueToSave = htmlV2PropTypeUtil.create( {
-			content: parsed.content || null,
+		const valueToSave = htmlV3PropTypeUtil.create( {
+			content: parsed.content ? stringPropTypeUtil.create( parsed.content ) : null,
 			children: parsed.children,
 		} );
 
@@ -175,7 +176,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		}
 
 		if ( propType.kind === 'union' ) {
-			const textKeys = [ htmlV2PropTypeUtil.key, stringPropTypeUtil.key ];
+			const textKeys = [ htmlV3PropTypeUtil.key, stringPropTypeUtil.key ];
 
 			for ( const key of textKeys ) {
 				if ( propType.prop_types[ key ] ) {

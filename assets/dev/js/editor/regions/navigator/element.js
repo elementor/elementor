@@ -196,7 +196,7 @@ export default class extends Marionette.CompositeView {
 		const allChildren = [];
 
 		Object.values( settings.attributes ).forEach( ( setting ) => {
-			if ( 'html-v2' === setting?.$$type && Array.isArray( setting?.value?.children ) ) {
+			if ( 'html-v3' === setting?.$$type && Array.isArray( setting?.value?.children ) ) {
 				allChildren.push( ...setting.value.children );
 			}
 		} );
@@ -549,11 +549,11 @@ export default class extends Marionette.CompositeView {
 			}
 		} );
 
-		const hasHtmlV2Change = Object.values( settingsModel.changed ).some(
-			( attribute ) => attribute && 'html-v2' === attribute.$$type,
+		const hasHtmlV3Change = Object.values( settingsModel.changed ).some(
+			( attribute ) => attribute && 'html-v3' === attribute.$$type,
 		);
 
-		if ( hasHtmlV2Change ) {
+		if ( hasHtmlV3Change ) {
 			this.invalidateInlineChildrenCache();
 			this.renderInlineChildren();
 		}
