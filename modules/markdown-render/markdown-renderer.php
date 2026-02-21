@@ -75,7 +75,7 @@ class Markdown_Renderer {
 
 		$excerpt = get_the_excerpt( $post_id );
 
-		return $excerpt ?: '';
+		return ! empty( $excerpt ) ? $excerpt : '';
 	}
 
 	private function render_element( array $element_data ): string {

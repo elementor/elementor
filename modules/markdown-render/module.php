@@ -107,7 +107,7 @@ class Module extends BaseModule {
 			return false;
 		}
 
-		$preview_id = (int) ( $_GET['preview_id'] ?? 0 ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$preview_id = isset( $_GET['preview_id'] ) ? absint( wp_unslash( $_GET['preview_id'] ) ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$preview_nonce = sanitize_text_field( wp_unslash( $_GET['preview_nonce'] ?? '' ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		if ( ! $preview_id || ! wp_verify_nonce( $preview_nonce, 'post_preview_' . $preview_id ) ) {

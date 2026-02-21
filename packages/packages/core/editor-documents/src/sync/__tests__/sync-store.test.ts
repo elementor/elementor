@@ -5,7 +5,7 @@ import { slice } from '../../store';
 import { selectActiveDocument } from '../../store/selectors';
 import { type Document, type ExitTo, type ExtendedWindow, type V1Document, type V1DocumentsManager } from '../../types';
 import { syncStore } from '../index';
-	import { getV1DocumentPermalink, getV1DocumentsExitTo, getV1DocumentWpPreview } from '../utils';
+import { getV1DocumentPermalink, getV1DocumentsExitTo, getV1DocumentWpPreview } from '../utils';
 import { makeDocumentsManager } from './test-utils';
 
 type WindowWithOptionalElementor = Omit< ExtendedWindow, 'elementor' > & {
