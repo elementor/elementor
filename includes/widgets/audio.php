@@ -342,4 +342,11 @@ class Widget_Audio extends Widget_Base {
 	 * @access protected
 	 */
 	protected function content_template() {}
+
+	public function render_markdown(): string {
+		$settings = $this->get_settings_for_display();
+		$url = $settings['link']['url'] ?? '';
+		if ( empty( $url ) ) { return ''; }
+		return '[Audio](' . esc_url( $url ) . ')';
+	}
 }
