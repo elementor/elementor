@@ -12,7 +12,13 @@ import { debounce } from '@elementor/utils';
 import { slice } from '../store';
 import { selectActiveDocument } from '../store/selectors';
 import { type Document } from '../types';
-import { getV1DocumentPermalink, getV1DocumentsExitTo, getV1DocumentsManager, getV1DocumentWpPreview, normalizeV1Document } from './utils';
+import {
+	getV1DocumentPermalink,
+	getV1DocumentsExitTo,
+	getV1DocumentsManager,
+	getV1DocumentWpPreview,
+	normalizeV1Document,
+} from './utils';
 
 export function syncStore() {
 	syncInitialization();
