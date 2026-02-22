@@ -1,9 +1,10 @@
-import { createHooksRegistry, createMockElement, setupHooksRegistry } from 'test-utils';
+import { createHooksRegistry, createMockElement, setupHooksRegistry, type WindowWithHooks } from 'test-utils';
 import { getAllDescendants, type V1Element } from '@elementor/editor-elements';
-import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
+import { __getState as getState } from '@elementor/store';
 
 import { SLICE_NAME } from '../../../store/store';
 import type { OverridableProps, PublishedComponent } from '../../../types';
+import { deleteOverridableProp } from '../../store/actions/delete-overridable-prop';
 import { initCleanupOverridablePropsOnDelete } from '../cleanup-overridable-props-on-delete';
 
 jest.mock( '@elementor/store', () => ( {
@@ -16,6 +17,10 @@ jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
 	getContainer: jest.fn(),
 	getAllDescendants: jest.fn(),
+} ) );
+
+jest.mock( '../../store/actions/delete-overridable-prop', () => ( {
+	deleteOverridableProp: jest.fn(),
 } ) );
 
 describe( 'initCleanupOverridablePropsOnDelete', () => {
@@ -127,9 +132,12 @@ describe( 'initCleanupOverridablePropsOnDelete', () => {
 		},
 	} );
 
+	let originalWindow: WindowWithHooks;
+
 	beforeEach( () => {
 		jest.clearAllMocks();
 		setupHooksRegistry( hooksRegistry );
+		originalWindow = { ...( window as unknown as WindowWithHooks ) };
 
 		mockState = {
 			data: [
@@ -148,6 +156,11 @@ describe( 'initCleanupOverridablePropsOnDelete', () => {
 		} ) );
 
 		jest.mocked( getAllDescendants ).mockReturnValue( [] );
+		jest.mocked( deleteOverridableProp ).mockReturnValue( undefined );
+	} );
+
+	afterEach( () => {
+		( window as unknown as WindowWithHooks ) = originalWindow;
 	} );
 
 	it( 'should register a hook for document/elements/delete command', () => {
@@ -162,7 +175,7 @@ describe( 'initCleanupOverridablePropsOnDelete', () => {
 		expect( registeredHooks[ 0 ].getCommand() ).toBe( 'document/elements/delete' );
 	} );
 
-	it( 'should dispatch setOverridableProps with prop removed when element is deleted', () => {
+	it( 'should call deleteOverridableProp with prop removed when element is deleted', () => {
 		// Arrange
 		initCleanupOverridablePropsOnDelete();
 		const registeredHooks = hooksRegistry.getAll();
@@ -176,24 +189,11 @@ describe( 'initCleanupOverridablePropsOnDelete', () => {
 		hook.apply( { container: deletedElement }, deletedElement );
 
 		// Assert
-		expect( dispatch ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				type: `${ SLICE_NAME }/setOverridableProps`,
-				payload: expect.objectContaining( {
-					componentId: MOCK_COMPONENT_ID,
-					overridableProps: expect.objectContaining( {
-						props: {},
-						groups: expect.objectContaining( {
-							items: expect.objectContaining( {
-								[ GROUP_ID ]: expect.objectContaining( {
-									props: [],
-								} ),
-							} ),
-						} ),
-					} ),
-				} ),
-			} )
-		);
+		expect( deleteOverridableProp ).toHaveBeenCalledWith( {
+			componentId: MOCK_COMPONENT_ID,
+			propKey: [ PROP_KEY_1 ],
+			source: 'system',
+		} );
 	} );
 
 	it( 'should remove multiple props when deleting multiple elements', () => {
@@ -210,15 +210,11 @@ describe( 'initCleanupOverridablePropsOnDelete', () => {
 		hook.apply( { containers: [ deletedElement1, deletedElement2 ] }, [ deletedElement1, deletedElement2 ] );
 
 		// Assert
-		expect( dispatch ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				payload: expect.objectContaining( {
-					overridableProps: expect.objectContaining( {
-						props: {},
-					} ),
-				} ),
-			} )
-		);
+		expect( deleteOverridableProp ).toHaveBeenCalledWith( {
+			componentId: MOCK_COMPONENT_ID,
+			propKey: [ PROP_KEY_1, PROP_KEY_2 ],
+			source: 'system',
+		} );
 	} );
 
 	it( 'should remove props for parent and descendant elements', () => {
@@ -240,22 +236,11 @@ describe( 'initCleanupOverridablePropsOnDelete', () => {
 		hook.apply( { container: parentElement }, parentElement );
 
 		// Assert
-		expect( dispatch ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				payload: expect.objectContaining( {
-					overridableProps: expect.objectContaining( {
-						props: {},
-						groups: expect.objectContaining( {
-							items: expect.objectContaining( {
-								[ GROUP_ID ]: expect.objectContaining( {
-									props: [],
-								} ),
-							} ),
-						} ),
-					} ),
-				} ),
-			} )
-		);
+		expect( deleteOverridableProp ).toHaveBeenCalledWith( {
+			componentId: MOCK_COMPONENT_ID,
+			propKey: [ PROP_KEY_1, PROP_KEY_CHILD ],
+			source: 'system',
+		} );
 	} );
 
 	it( 'should only remove props for matching elements', () => {
@@ -271,27 +256,14 @@ describe( 'initCleanupOverridablePropsOnDelete', () => {
 		hook.apply( { container: deletedElement1 }, deletedElement1 );
 
 		// Assert
-		expect( dispatch ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				payload: expect.objectContaining( {
-					overridableProps: expect.objectContaining( {
-						props: {
-							[ PROP_KEY_2 ]: expect.anything(),
-						},
-						groups: expect.objectContaining( {
-							items: expect.objectContaining( {
-								[ GROUP_ID ]: expect.objectContaining( {
-									props: [ PROP_KEY_2 ],
-								} ),
-							} ),
-						} ),
-					} ),
-				} ),
-			} )
-		);
+		expect( deleteOverridableProp ).toHaveBeenCalledWith( {
+			componentId: MOCK_COMPONENT_ID,
+			propKey: [ PROP_KEY_1 ],
+			source: 'system',
+		} );
 	} );
 
-	it( 'should not dispatch when no matching elements', () => {
+	it( 'should not call deleteOverridableProp when no matching elements', () => {
 		// Arrange
 		initCleanupOverridablePropsOnDelete();
 		const registeredHooks = hooksRegistry.getAll();
@@ -303,10 +275,10 @@ describe( 'initCleanupOverridablePropsOnDelete', () => {
 		hook.apply( { container: deletedElement }, deletedElement );
 
 		// Assert
-		expect( dispatch ).not.toHaveBeenCalled();
+		expect( deleteOverridableProp ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should not dispatch when component has no overridable props', () => {
+	it( 'should not call deleteOverridableProp when component has no overridable props', () => {
 		// Arrange
 		mockState.data[ 0 ].overridableProps = { props: {}, groups: { items: {}, order: [] } };
 		initCleanupOverridablePropsOnDelete();
@@ -319,10 +291,10 @@ describe( 'initCleanupOverridablePropsOnDelete', () => {
 		hook.apply( { container: deletedElement }, deletedElement );
 
 		// Assert
-		expect( dispatch ).not.toHaveBeenCalled();
+		expect( deleteOverridableProp ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should not dispatch when not editing a component', () => {
+	it( 'should not call deleteOverridableProp when not editing a component', () => {
 		// Arrange
 		mockState.currentComponentId = null;
 		initCleanupOverridablePropsOnDelete();
@@ -335,10 +307,10 @@ describe( 'initCleanupOverridablePropsOnDelete', () => {
 		hook.apply( { container: deletedElement }, deletedElement );
 
 		// Assert
-		expect( dispatch ).not.toHaveBeenCalled();
+		expect( deleteOverridableProp ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should not dispatch when container is null', () => {
+	it( 'should not call deleteOverridableProp when container is null', () => {
 		// Arrange
 		initCleanupOverridablePropsOnDelete();
 		const registeredHooks = hooksRegistry.getAll();
@@ -348,6 +320,25 @@ describe( 'initCleanupOverridablePropsOnDelete', () => {
 		hook.apply( { container: null }, null );
 
 		// Assert
-		expect( dispatch ).not.toHaveBeenCalled();
+		expect( deleteOverridableProp ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should not call deleteOverridableProp when part of move command', () => {
+		// Arrange
+		initCleanupOverridablePropsOnDelete();
+		const registeredHooks = hooksRegistry.getAll();
+		const hook = registeredHooks[ 0 ];
+
+		( window as unknown as WindowWithHooks ).$e.commands = {
+			currentTrace: [ 'document/elements/move' ],
+		};
+
+		const deletedElement = createMockElement( { model: { id: ELEMENT_ID_1 } } );
+
+		// Act
+		hook.apply( { container: deletedElement }, { commandsCurrentTrace: [ 'document/elements/move' ] } );
+
+		// Assert
+		expect( deleteOverridableProp ).not.toHaveBeenCalled();
 	} );
 } );

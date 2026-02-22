@@ -1,33 +1,45 @@
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { selectCurrentComponent, selectOverridableProps, slice } from '../../../store/store';
-import { type ComponentId } from '../../../types';
+import { type ComponentId, type OverridableProp } from '../../../types';
 import { type Source, trackComponentEvent } from '../../../utils/tracking';
 import { revertElementOverridableSetting } from '../../utils/revert-overridable-settings';
 import { removePropFromAllGroups } from '../utils/groups-transformers';
 
 type DeletePropParams = {
 	componentId: ComponentId;
-	propKey: string;
+	propKey: string | string[];
 	source: Source;
 };
 
 export function deleteOverridableProp( { componentId, propKey, source }: DeletePropParams ): void {
 	const overridableProps = selectOverridableProps( getState(), componentId );
 
-	if ( ! overridableProps ) {
+	if ( ! overridableProps || Object.keys( overridableProps.props ).length === 0 ) {
 		return;
 	}
 
-	const prop = overridableProps.props[ propKey ];
+	const propKeysToDelete = Array.isArray( propKey ) ? propKey : [ propKey ];
+	const deletedProps: OverridableProp[] = [];
 
-	if ( ! prop ) {
+	for ( const key of propKeysToDelete ) {
+		const prop = overridableProps.props[ key ];
+
+		if ( ! prop ) {
+			continue;
+		}
+
+		deletedProps.push( prop );
+		revertElementOverridableSetting( prop.elementId, prop.propKey, prop.originValue, key );
+	}
+
+	if ( deletedProps.length === 0 ) {
 		return;
 	}
 
-	revertElementOverridableSetting( prop.elementId, prop.propKey, prop.originValue, propKey );
-
-	const { [ propKey ]: removedProp, ...remainingProps } = overridableProps.props;
+	const remainingProps = Object.fromEntries(
+		Object.entries( overridableProps.props ).filter( ( [ key ] ) => ! propKeysToDelete.includes( key ) )
+	);
 
 	const updatedGroups = removePropFromAllGroups( overridableProps.groups, propKey );
 
@@ -44,13 +56,15 @@ export function deleteOverridableProp( { componentId, propKey, source }: DeleteP
 
 	const currentComponent = selectCurrentComponent( getState() );
 
-	trackComponentEvent( {
-		action: 'propertyRemoved',
-		source,
-		component_uid: currentComponent?.uid,
-		property_id: removedProp.overrideKey,
-		property_path: removedProp.propKey,
-		property_name: removedProp.label,
-		element_type: removedProp.widgetType ?? removedProp.elType,
-	} );
+	for ( const prop of deletedProps ) {
+		trackComponentEvent( {
+			action: 'propertyRemoved',
+			source,
+			component_uid: currentComponent?.uid,
+			property_id: prop.overrideKey,
+			property_path: prop.propKey,
+			property_name: prop.label,
+			element_type: prop.widgetType ?? prop.elType,
+		} );
+	}
 }
