@@ -4,7 +4,7 @@ import { __createStore, __dispatch, __registerSlice } from '@elementor/store';
 
 import { apiClient } from '../../../api';
 import { slice } from '../../../store/store';
-import { updateArchivedComponentBeforeSave } from '../update-archived-component-before-save';
+import { updateArchivedComponentBeforeSave } from '../../sync/update-archived-component-before-save';
 
 jest.mock( '../../../api' );
 jest.mock( '@elementor/editor-notifications' );

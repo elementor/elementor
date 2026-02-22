@@ -3,7 +3,7 @@ import { __createStore, __dispatch, __getState as getState, __registerSlice } fr
 
 import { apiClient } from '../../../api';
 import { selectUnpublishedComponents, slice } from '../../../store/store';
-import { createComponentsBeforeSave } from '../create-components-before-save';
+import { createComponentsBeforeSave } from '../../sync/create-components-before-save';
 
 jest.mock( '@elementor/editor-elements' );
 jest.mock( '../../../api' );
