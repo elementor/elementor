@@ -18,6 +18,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 		{ name: 'e-button', title: 'Button' },
 		{ name: 'e-divider', title: 'Divider' },
 		{ name: 'e-youtube', title: 'YouTube' },
+		{ name: 'e-self-hosted-video', title: 'Video' },
 	];
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
