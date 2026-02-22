@@ -3,3 +3,13 @@
 	pointer-events: none;
 }
 
+/* Disable all interactions on V4 Typography Classes */
+.elementor-control-v4_typography_classes .elementor-repeater-fields {
+	pointer-events: none;
+}
+
+/* Make only the edit button look disabled with opacity */
+.elementor-control-v4_typography_classes .elementor-control-popover-toggle-toggle-label {
+	opacity: 0.5;
+}
+
