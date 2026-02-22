@@ -24,5 +24,6 @@ export function getElementType( type: string ): ElementType | null {
 		dependenciesPerTargetMapping: elementType.dependencies_per_target_mapping ?? {},
 		title: elementType.title,
 		styleStates: elementType.atomic_style_states ?? [],
+		pseudoStates: elementType.atomic_pseudo_states ?? [],
 	};
 }
