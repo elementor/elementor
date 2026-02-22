@@ -354,8 +354,13 @@ trait Has_Atomic_Base {
 	}
 
 	protected function get_link_attributes( $link_settings, $add_key_to_result = false ) {
+		$href = $link_settings['href'] ?? null;
+
+		if ( ! $href ) {
+			return [];
+		}
+
 		$tag = $link_settings['tag'] ?? Link_Prop_Type::DEFAULT_TAG;
-		$href = $link_settings['href'];
 		$target = $link_settings['target'] ?? '_self';
 
 		$is_button = 'button' === $tag;
@@ -371,5 +376,20 @@ trait Has_Atomic_Base {
 		}
 
 		return $result;
+	}
+
+	public function has_action_link() {
+		if ( ! $this->get_id() ) {
+			return true;
+		}
+
+		$link_settings = $this->get_atomic_setting( 'link' ) ?? null;
+		$attributes = $this->get_link_attributes( $link_settings );
+
+		return isset( $attributes['data-action-link'] );
+	}
+
+	public function is_form() {
+		return 'e-form' === $this->get_type();
 	}
 }

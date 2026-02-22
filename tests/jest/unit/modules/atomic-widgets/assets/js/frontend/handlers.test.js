@@ -25,7 +25,8 @@ describe( 'Atomic Widgets frontend handlers', () => {
 	let runAction;
 
 	const importHandlers = async () => {
-		await import( 'elementor/modules/atomic-widgets/assets/js/frontend/handlers' );
+		await import( 'elementor/modules/atomic-widgets/assets/js/frontend/action-link-handlers' );
+		await import( 'elementor/modules/atomic-widgets/assets/js/frontend/form-handlers' );
 
 		const { registerBySelector: mockedRegisterBySelector } = jest.requireMock( '@elementor/frontend-handlers' );
 		const registrations = mockedRegisterBySelector.mock.calls
@@ -78,7 +79,7 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		const cleanup = registration.callback( { element } );
 		const event = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 
-        element.dispatchEvent( event );
+		element.dispatchEvent( event );
 
 		// Assert
 		expect( cleanup ).toBeUndefined();
@@ -91,18 +92,18 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		const { registration } = await importHandlers();
 		const element = document.createElement( 'button' );
 
-        element.dataset.actionLink = ALLOWED_ACTION_URL;
+		element.dataset.actionLink = ALLOWED_ACTION_URL;
 
-        const cleanup = registration.callback( { element } );
+		const cleanup = registration.callback( { element } );
 		const event = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 
 		// Act
 		element.dispatchEvent( event );
 		cleanup?.();
 
-        const secondEvent = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
+		const secondEvent = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 
-        element.dispatchEvent( secondEvent );
+		element.dispatchEvent( secondEvent );
 
 		// Assert
 		expect( event.defaultPrevented ).toBe( true );
@@ -133,10 +134,10 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		const { registration } = await importHandlers();
 		const element = document.createElement( 'button' );
 
-        element.dataset.actionLink = ANY_CONTEXT_URL;
+		element.dataset.actionLink = ANY_CONTEXT_URL;
 		registration.callback( { element } );
 
-        const event = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
+		const event = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 
 		// Act
 		element.dispatchEvent( event );
