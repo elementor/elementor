@@ -7,6 +7,13 @@ import { __ } from '@wordpress/i18n';
 import { type ReplayFieldProps } from '../../types';
 import { InteractionsPromotionChip } from '../../ui/interactions-promotion-chip';
 
+export const REPLAY_OPTIONS = {
+	no: __( 'No', 'elementor' ),
+	yes: __( 'Yes', 'elementor' ),
+};
+
+export const BASE_REPLAY: string[] = [ 'no' ];
+
 const OVERLAY_GRID = '1 / 1';
 const CHIP_OFFSET = '50%';
 
@@ -14,15 +21,15 @@ export function Replay( { onChange, anchorRef }: ReplayFieldProps ) {
 	const options: ToggleButtonGroupItem< boolean >[] = [
 		{
 			value: false,
-			disabled: false,
-			label: __( 'No', 'elementor' ),
+			disabled: ! BASE_REPLAY.includes( 'no' ),
+			label: REPLAY_OPTIONS.no,
 			renderContent: ( { size } ) => <MinusIcon fontSize={ size } />,
 			showTooltip: true,
 		},
 		{
 			value: true,
-			disabled: true,
-			label: __( 'Yes', 'elementor' ),
+			disabled: ! BASE_REPLAY.includes( 'yes' ),
+			label: REPLAY_OPTIONS.yes,
 			renderContent: ( { size } ) => <CheckIcon fontSize={ size } />,
 			showTooltip: true,
 		},
