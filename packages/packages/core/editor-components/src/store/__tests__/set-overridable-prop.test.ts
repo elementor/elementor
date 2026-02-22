@@ -1,8 +1,8 @@
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 import { generateUniqueId } from '@elementor/utils';
 
+import { setOverridableProp } from '../../extended/store/actions/set-overridable-prop';
 import type { PublishedComponent } from '../../types';
-import { setOverridableProp } from '../actions/set-overridable-prop';
 import { SLICE_NAME } from '../store';
 
 jest.mock( '@elementor/store', () => ( {
