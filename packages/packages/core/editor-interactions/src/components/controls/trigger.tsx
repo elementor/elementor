@@ -11,7 +11,7 @@ const BASE_OPTIONS = {
 };
 
 const DISABLED_OPTIONS = {
-	scrollOn: __( 'While Scrolling', 'elementor' ),
+	scrollOn: __( 'While scrolling', 'elementor' ),
 	hover: __( 'On hover', 'elementor' ),
 	click: __( 'On click', 'elementor' ),
 };
