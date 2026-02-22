@@ -137,6 +137,7 @@ class Modules_Manager {
 			'interactions',
 			'feedback',
 			'editor-one',
+			'markdown-render',
 		];
 	}
 
