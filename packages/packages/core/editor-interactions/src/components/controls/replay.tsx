@@ -21,14 +21,14 @@ export function Replay( { onChange, anchorRef }: ReplayFieldProps ) {
 	const options: ToggleButtonGroupItem< boolean >[] = [
 		{
 			value: false,
-			disabled: ! BASE_REPLAY.includes( 'no' ),
+			disabled: false,
 			label: REPLAY_OPTIONS.no,
 			renderContent: ( { size } ) => <MinusIcon fontSize={ size } />,
 			showTooltip: true,
 		},
 		{
 			value: true,
-			disabled: ! BASE_REPLAY.includes( 'yes' ),
+			disabled: true,
 			label: REPLAY_OPTIONS.yes,
 			renderContent: ( { size } ) => <CheckIcon fontSize={ size } />,
 			showTooltip: true,
