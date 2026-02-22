@@ -39,12 +39,15 @@ export default class AddSectionView extends BaseAddSectionView {
 	}
 
 	onAiPlannerClick() {
-		const url = elementor.config.starter?.aiPlannerUrl;
+		const config = elementor.config.starter;
 
 		this.dismissStarter();
 
-		if ( url ) {
-			window.open( url, '_blank', 'noopener,noreferrer' );
+		if ( config?.aiPlannerAction ) {
+			const args = config.aiPlannerActionArgs ? JSON.parse( config.aiPlannerActionArgs ) : {};
+			$e.run( config.aiPlannerAction, args );
+		} else if ( config?.aiPlannerUrl && config.aiPlannerUrl !== '#' ) {
+			window.open( config.aiPlannerUrl, '_blank', 'noopener,noreferrer' );
 		}
 	}
 

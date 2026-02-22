@@ -45,10 +45,17 @@ export default function GoodToGoContentExperiment401B( { skipButton } ) {
 					imageAlt={ __( 'Click here to go to Elementor\'s Site Planner', 'elementor' ) }
 					title={ __( 'AI Site Planner', 'elementor' ) }
 					text={ __( 'Get a head start with AI-powered site planning', 'elementor' ) }
-					link={ addExperimentTrackingToUrl( elementorAppConfig.onboarding.urls.sitePlanner, 'site-planner-step4' ) }
-					target="_blank"
-					clickAction={ () => {
+					link={ elementorAppConfig.onboarding.urls.sitePlanner }
+					clickAction={ ( e ) => {
 						OnboardingEventTracking.handleSiteStarterChoice( 'site_planner' );
+						const action = elementorAppConfig.onboarding.urls.sitePlannerAction;
+						if ( action && window.$e ) {
+							e.preventDefault();
+							const args = elementorAppConfig.onboarding.urls.sitePlannerActionArgs
+								? JSON.parse( elementorAppConfig.onboarding.urls.sitePlannerActionArgs )
+								: {};
+							window.$e.run( action, args );
+						}
 					} }
 				/>
 			</Grid>

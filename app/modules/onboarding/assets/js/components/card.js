@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 
 export default function Card( { image, imageAlt, title, text, link, clickAction, target = '_self' } ) {
-	const onClick = () => {
+	const onClick = ( e ) => {
 		if ( clickAction ) {
-			clickAction();
+			clickAction( e );
 		}
 	};
 

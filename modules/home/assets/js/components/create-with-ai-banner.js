@@ -18,6 +18,8 @@ const CreateWithAIBanner = ( { ...props } ) => {
 		input_placeholder: inputPlaceholder,
 		button_title: buttonTitle,
 		button_cta_url: buttonCtaUrl,
+		button_cta_action: buttonCtaAction,
+		button_cta_action_args: buttonCtaActionArgs,
 		background_image: backgroundImage,
 		utm_source: utmSource,
 		utm_medium: utmMedium,
@@ -44,6 +46,16 @@ const CreateWithAIBanner = ( { ...props } ) => {
 		if ( ! inputValue ) {
 			return;
 		}
+
+		if ( buttonCtaAction && window.$e ) {
+			const args = buttonCtaActionArgs ? JSON.parse( buttonCtaActionArgs ) : {};
+			args.prompt = inputValue;
+			trackPromoClick( title, buttonCtaAction, getHomeScreenPath( 'ai_banner' ) );
+			window.$e.run( buttonCtaAction, args );
+			setInputValue( '' );
+			return;
+		}
+
 		const destination = getButtonHref();
 		trackPromoClick( title, destination, getHomeScreenPath( 'ai_banner' ) );
 		window.open( destination, '_blank' );

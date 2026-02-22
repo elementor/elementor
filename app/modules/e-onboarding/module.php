@@ -197,7 +197,9 @@ class Module extends BaseModule {
 	public function add_starter_settings( array $settings ): array {
 		$settings['starter'] = [
 			'restPath' => 'elementor/v1/e-onboarding/user-progress',
-			'aiPlannerUrl' => 'https://planner.elementor.com/home.html',
+			'aiPlannerUrl' => '#',
+			'aiPlannerAction' => 'ai-integration/open-site-planner',
+			'aiPlannerActionArgs' => '{"path":"website-planner/home"}',
 		];
 
 		return $settings;
