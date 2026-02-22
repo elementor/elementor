@@ -2,11 +2,14 @@ import { createMockElement, createMockElementData } from 'test-utils';
 import { getAllDescendants, getContainer, updateElementSettings, type V1Element } from '@elementor/editor-elements';
 import { numberPropTypeUtil } from '@elementor/editor-props';
 
+import {
+	revertAllOverridablesInContainer,
+	revertAllOverridablesInElementData,
+} from '../../extended/utils/revert-overridable-settings';
 import { componentInstanceOverridePropTypeUtil } from '../../prop-types/component-instance-override-prop-type';
 import { componentInstanceOverridesPropTypeUtil } from '../../prop-types/component-instance-overrides-prop-type';
 import { componentInstancePropTypeUtil } from '../../prop-types/component-instance-prop-type';
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
-import { revertAllOverridablesInContainer, revertAllOverridablesInElementData } from '../../extended/utils/revert-overridable-settings';
 
 jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
