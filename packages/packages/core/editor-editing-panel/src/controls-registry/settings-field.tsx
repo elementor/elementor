@@ -11,6 +11,7 @@ import {
 } from '@elementor/editor-elements';
 import {
 	type CreateOptions,
+	isDependency,
 	isDependencyMet,
 	type PropKey,
 	type Props,
@@ -63,6 +64,17 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 	};
 
 	const isDisabled = ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, elementSettingValues ).isMet;
+
+	const propTypeToBind = propsSchema[ bind ];
+	const dependenciesResult = isDependencyMet( propTypeToBind?.dependencies, elementSettingValues );
+	const shouldHide =
+		! dependenciesResult.isMet &&
+		! isDependency( dependenciesResult.failingDependencies[ 0 ] ) &&
+		dependenciesResult.failingDependencies[ 0 ]?.effect === 'hide';
+
+	if ( shouldHide ) {
+		return null;
+	}
 
 	return (
 		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>

@@ -1,5 +1,5 @@
 import { type Unit } from '@elementor/editor-controls';
-import { sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
+import { type PropValue, sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 
 import { DEFAULT_TIME_UNIT, TIME_UNITS } from '../configs/time-constants';
 import {
@@ -104,6 +104,7 @@ export const createAnimationPreset = ( {
 	relativeTo,
 	offsetTop,
 	offsetBottom,
+	customEffects,
 }: {
 	effect: string;
 	type: string;
@@ -115,10 +116,12 @@ export const createAnimationPreset = ( {
 	relativeTo?: string;
 	offsetTop?: SizeStringValue;
 	offsetBottom?: SizeStringValue;
+	customEffects?: PropValue;
 } ): AnimationPresetPropValue => ( {
 	$$type: 'animation-preset-props',
 	value: {
 		effect: createString( effect ),
+		custom_effect: customEffects,
 		type: createString( type ),
 		direction: createString( direction ?? '' ),
 		timing_config: createTimingConfig( duration, delay ),
@@ -146,6 +149,7 @@ export const createInteractionItem = ( {
 	offsetTop,
 	offsetBottom,
 	excludedBreakpoints,
+	customEffects,
 }: {
 	trigger: string;
 	effect: string;
@@ -160,6 +164,7 @@ export const createInteractionItem = ( {
 	offsetTop?: number;
 	offsetBottom?: number;
 	excludedBreakpoints?: string[];
+	customEffects?: PropValue;
 } ): InteractionItemPropValue => ( {
 	$$type: 'interaction-item',
 	value: {
@@ -176,6 +181,7 @@ export const createInteractionItem = ( {
 			relativeTo,
 			offsetTop,
 			offsetBottom,
+			customEffects,
 		} ),
 		...( excludedBreakpoints &&
 			excludedBreakpoints.length > 0 && {

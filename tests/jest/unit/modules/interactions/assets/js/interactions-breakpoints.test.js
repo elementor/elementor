@@ -5,6 +5,8 @@ import {
 	initBreakpoints,
 } from 'elementor/modules/interactions/assets/js/interactions-breakpoints.js';
 
+const ADVANCE_TIME_BY = 120;
+
 const BREAKPOINTS_CONFIG = {
 	mobile: { value: 768, direction: 'max' },
 	mobile_extra: { value: 880, direction: 'max' },
@@ -32,37 +34,37 @@ describe( 'interactions-breakpoints', () => {
 	} );
 
 	describe( 'filtering (matchBreakpoint via getActiveBreakpoint)', () => {
-		it( 'returns mobile for width 600', () => {
+		it( 'detects mobile breakpoint', () => {
 			window.innerWidth = 600;
 			initBreakpoints();
 			expect( getActiveBreakpoint() ).toBe( 'mobile' );
 		} );
 
-		it( 'returns mobile_extra for width 780', () => {
+		it( 'detects mobile_extra breakpoint', () => {
 			window.innerWidth = 780;
 			initBreakpoints();
 			expect( getActiveBreakpoint() ).toBe( 'mobile_extra' );
 		} );
 
-		it( 'returns tablet for width 900', () => {
+		it( 'detects tablet breakpoint', () => {
 			window.innerWidth = 900;
 			initBreakpoints();
 			expect( getActiveBreakpoint() ).toBe( 'tablet' );
 		} );
 
-		it( 'returns desktop for width >= 1366', () => {
+		it( 'detects laptop breakpoint', () => {
 			window.innerWidth = 1366;
 			initBreakpoints();
 			expect( getActiveBreakpoint() ).toBe( 'laptop' );
 		} );
 
-		it( 'returns desktop when width is between laptop and widescreen', () => {
+		it( 'detects desktop when width is between laptop and widescreen', () => {
 			window.innerWidth = 1600;
 			initBreakpoints();
 			expect( getActiveBreakpoint() ).toBe( 'desktop' );
 		} );
 
-		it( 'returns laptop for width 2440', () => {
+		it( 'detects widescreen breakpoint', () => {
 			window.innerWidth = 2440;
 			initBreakpoints();
 			expect( getActiveBreakpoint() ).toBe( 'widescreen' );
@@ -81,7 +83,7 @@ describe( 'interactions-breakpoints', () => {
 			window.dispatchEvent( new Event( 'resize' ) );
 			expect( onChange ).not.toHaveBeenCalled();
 
-			jest.advanceTimersByTime( 100 );
+			jest.advanceTimersByTime( ADVANCE_TIME_BY );
 			expect( onChange ).toHaveBeenCalledTimes( 1 );
 			expect( onChange ).toHaveBeenCalledWith( 'mobile_extra' );
 			expect( getActiveBreakpoint() ).toBe( 'mobile_extra' );
@@ -96,7 +98,7 @@ describe( 'interactions-breakpoints', () => {
 			initBreakpoints( { onChange } );
 			window.innerWidth = 1024;
 			window.dispatchEvent( new Event( 'resize' ) );
-			jest.advanceTimersByTime( 100 );
+			jest.advanceTimersByTime( ADVANCE_TIME_BY );
 			expect( onChange ).not.toHaveBeenCalled();
 			jest.useRealTimers();
 		} );

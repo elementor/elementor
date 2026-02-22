@@ -70,7 +70,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</span>
 		<# } #>
 	</button>
-	<div class="elementor-panel-category-items elementor-responsive-panel"></div>
+	<div class="elementor-panel-category-items elementor-responsive-panel">
+		<?php do_action( 'elementor/editor/templates/panel/category/content' ); ?>
+	</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-element-search">
@@ -81,7 +83,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-element-library-element">
 	<# const v4Categories = ['v4-elements', 'atomic-form']; #>
-	<button class="elementor-element">
+	<button class="elementor-element" data-library-element-type="{{ elType === 'widget' ? widgetType : elType }}">
 	<# if ( obj.integration ) { #>
 			<i class="eicon-plug"></i>
 		<# } else if ( false === obj.editable ) { #>

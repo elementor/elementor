@@ -67,13 +67,16 @@ type Props = {
 	isOpen: boolean;
 };
 export const Indicator = forwardRef< HTMLDivElement, Props >( ( { isOpen, isOverridable, ...props }, ref ) => (
-	<Content ref={ ref } { ...props } className={ isOpen || isOverridable ? 'enlarged' : '' }>
-		<IconContainer
-			className="icon"
-			aria-label={
-				isOverridable ? __( 'Overridable property', 'elementor' ) : __( 'Make prop overridable', 'elementor' )
-			}
-		>
+	<Content
+		role="button"
+		ref={ ref }
+		{ ...props }
+		className={ isOpen || isOverridable ? 'enlarged' : '' }
+		aria-label={
+			isOverridable ? __( 'Overridable property', 'elementor' ) : __( 'Make prop overridable', 'elementor' )
+		}
+	>
+		<IconContainer className="icon">
 			{ isOverridable ? <CheckIcon fontSize={ SIZE } /> : <PlusIcon fontSize={ SIZE } /> }
 		</IconContainer>
 	</Content>

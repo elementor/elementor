@@ -16,6 +16,7 @@ type VariableEditableCellProps = {
 	onAutoEditComplete?: () => void;
 	gap?: number;
 	fieldType?: 'label' | 'value';
+	disabled?: boolean;
 };
 
 export const VariableEditableCell = React.memo(
@@ -30,6 +31,7 @@ export const VariableEditableCell = React.memo(
 		onAutoEditComplete,
 		gap = 1,
 		fieldType,
+		disabled = false,
 	}: VariableEditableCellProps ) => {
 		const [ value, setValue ] = useState( initialValue );
 		const [ isEditing, setIsEditing ] = useState( false );
@@ -54,17 +56,23 @@ export const VariableEditableCell = React.memo(
 		}, [ onRowRef ] );
 
 		useEffect( () => {
-			if ( autoEdit && ! isEditing ) {
+			if ( autoEdit && ! isEditing && ! disabled ) {
 				setIsEditing( true );
 				onAutoEditComplete?.();
 			}
-		}, [ autoEdit, isEditing, onAutoEditComplete ] );
+		}, [ autoEdit, isEditing, onAutoEditComplete, disabled ] );
 
 		const handleDoubleClick = () => {
+			if ( disabled ) {
+				return;
+			}
 			setIsEditing( true );
 		};
 
 		const handleKeyDown = ( event: React.KeyboardEvent< HTMLDivElement > ) => {
+			if ( disabled ) {
+				return;
+			}
 			if ( event.key === 'Enter' ) {
 				handleSave();
 			} else if ( event.key === 'Escape' ) {
@@ -137,9 +145,9 @@ export const VariableEditableCell = React.memo(
 				gap={ gap }
 				onDoubleClick={ handleDoubleClick }
 				onKeyDown={ handleKeyDown }
-				tabIndex={ 0 }
+				tabIndex={ disabled ? -1 : 0 }
 				role="button"
-				aria-label="Double click or press Space to edit"
+				aria-label={ disabled ? '' : 'Double click or press Space to edit' }
 			>
 				{ prefixElement }
 				{ children }

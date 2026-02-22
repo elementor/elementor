@@ -6,8 +6,10 @@ import { createElementViewClassDeclaration } from './create-element-type';
 import {
 	createAfterRender,
 	createBeforeRender,
+	rerenderExistingChildren,
 	setupTwigRenderer,
 	type TwigViewInterface,
+	waitForChildrenToComplete,
 } from './twig-rendering-utils';
 import {
 	type ElementType,
@@ -74,10 +76,9 @@ export function createTemplatedElementView( {
 	} );
 
 	return class extends BaseView {
-		#abortController: AbortController | null = null;
-		#childrenRenderPromises: Promise< void >[] = [];
-		#lastResolvedSettingsHash: string | null = null;
-		#domUpdateWasSkipped = false;
+		_abortController: AbortController | null = null;
+		_lastResolvedSettingsHash: string | null = null;
+		_domUpdateWasSkipped = false;
 
 		getTemplateType() {
 			return 'twig';
@@ -100,14 +101,14 @@ export function createTemplatedElementView( {
 		}
 
 		invalidateRenderCache() {
-			this.#lastResolvedSettingsHash = null;
+			this._lastResolvedSettingsHash = null;
 		}
 
 		render() {
-			this.#abortController?.abort();
-			this.#abortController = new AbortController();
+			this._abortController?.abort();
+			this._abortController = new AbortController();
 
-			const process = signalizedProcess( this.#abortController.signal )
+			const process = signalizedProcess( this._abortController.signal )
 				.then( () => this._beforeRender() )
 				.then( () => this._renderTemplate() )
 				.then( () => this._renderChildren() )
@@ -119,47 +120,23 @@ export function createTemplatedElementView( {
 		}
 
 		async _renderChildren() {
-			this.#childrenRenderPromises = [];
-
-			// Optimize rendering by reusing existing child views instead of recreating them.
-			if ( this.#shouldReuseChildren() ) {
-				this.#rerenderExistingChildren();
+			if ( this._shouldReuseChildren() ) {
+				rerenderExistingChildren( this );
 			} else {
 				super._renderChildren();
 			}
 
-			this.#collectChildrenRenderPromises();
-			await this._waitForChildrenToComplete();
+			await waitForChildrenToComplete( this );
 		}
 
-		#shouldReuseChildren() {
-			return this.#domUpdateWasSkipped && this.children?.length > 0;
-		}
-
-		#rerenderExistingChildren() {
-			this.children?.each( ( childView: ElementView ) => {
-				childView.render();
-			} );
-		}
-
-		#collectChildrenRenderPromises() {
-			this.children?.each( ( childView: ElementView ) => {
-				if ( childView._currentRenderPromise ) {
-					this.#childrenRenderPromises.push( childView._currentRenderPromise );
-				}
-			} );
-		}
-
-		async _waitForChildrenToComplete() {
-			if ( this.#childrenRenderPromises.length > 0 ) {
-				await Promise.all( this.#childrenRenderPromises );
-			}
+		_shouldReuseChildren() {
+			return this._domUpdateWasSkipped && this.children?.length > 0;
 		}
 
 		async _renderTemplate() {
 			this.triggerMethod( 'before:render:template' );
 
-			const process = signalizedProcess( this.#abortController?.signal as AbortSignal )
+			const process = signalizedProcess( this._abortController?.signal as AbortSignal )
 				.then( ( _, signal ) => {
 					const settings = this.model.get( 'settings' ).toJSON();
 					return resolveProps( {
@@ -173,15 +150,15 @@ export function createTemplatedElementView( {
 				} )
 				.then( async ( settings ) => {
 					const settingsHash = JSON.stringify( settings );
-					const settingsChanged = settingsHash !== this.#lastResolvedSettingsHash;
+					const settingsChanged = settingsHash !== this._lastResolvedSettingsHash;
 
 					if ( ! settingsChanged && this.isRendered ) {
-						this.#domUpdateWasSkipped = true;
+						this._domUpdateWasSkipped = true;
 						return null;
 					}
-					this.#domUpdateWasSkipped = false;
+					this._domUpdateWasSkipped = false;
 
-					this.#lastResolvedSettingsHash = settingsHash;
+					this._lastResolvedSettingsHash = settingsHash;
 
 					const context = {
 						id: this.model.get( 'id' ),

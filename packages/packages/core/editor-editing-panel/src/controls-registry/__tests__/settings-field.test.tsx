@@ -398,6 +398,233 @@ describe( 'Test <SettingsField /> isDisabled logic propagating correctly', () =>
 	} );
 } );
 
+describe( 'ConditionalContent with shouldHide effect', () => {
+	const wrap = ( val: string ) => ( { $$type: 'string' as const, value: val } );
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
+	it( 'should hide email fields when email is not in actions-after-submit', () => {
+		// Arrange
+		const propsSchema = {
+			'actions-after-submit': createMockPropType( {
+				kind: 'array',
+				item_prop_type: createMockPropType( { kind: 'plain' } ),
+			} ),
+			email: createMockPropType( {
+				kind: 'object',
+				dependencies: {
+					relation: 'or',
+					terms: [
+						{
+							operator: 'contains',
+							path: [ 'actions-after-submit' ],
+							value: 'email',
+							effect: 'hide',
+						},
+					],
+				},
+				shape: {
+					to: createMockPropType( { kind: 'plain' } ),
+					from: createMockPropType( { kind: 'plain' } ),
+					subject: createMockPropType( { kind: 'plain' } ),
+				},
+			} ),
+		};
+
+		const elementType = createMockElementType( { propsSchema } );
+		const element = mockElement();
+
+		jest.mocked( useElementSettings ).mockReturnValue( {
+			'actions-after-submit': {
+				$$type: 'array',
+				value: [ wrap( 'collect-submissions' ) ],
+			},
+		} as Record< string, PropValue > );
+
+		// Act
+		renderWithTheme(
+			<ElementProvider element={ element } elementType={ elementType }>
+				<SettingsField bind="email" propDisplayName={ __( 'Email', 'elementor' ) }>
+					<div>Email Control Content</div>
+				</SettingsField>
+			</ElementProvider>
+		);
+
+		// Assert
+		expect( screen.queryByText( 'Email Control Content' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should show email fields when email is in actions-after-submit', () => {
+		// Arrange
+		const propsSchema = {
+			'actions-after-submit': createMockPropType( {
+				kind: 'array',
+				item_prop_type: createMockPropType( { kind: 'plain' } ),
+			} ),
+			email: createMockPropType( {
+				kind: 'object',
+				dependencies: {
+					relation: 'or',
+					terms: [
+						{
+							operator: 'contains',
+							path: [ 'actions-after-submit' ],
+							value: 'email',
+							effect: 'hide',
+						},
+					],
+				},
+				shape: {
+					to: createMockPropType( { kind: 'plain' } ),
+					from: createMockPropType( { kind: 'plain' } ),
+					subject: createMockPropType( { kind: 'plain' } ),
+				},
+			} ),
+		};
+
+		const elementType = createMockElementType( { propsSchema } );
+		const element = mockElement();
+
+		jest.mocked( useElementSettings ).mockReturnValue( {
+			'actions-after-submit': {
+				$$type: 'array',
+				value: [ wrap( 'collect-submissions' ), wrap( 'email' ) ],
+			},
+		} as Record< string, PropValue > );
+
+		// Act
+		renderWithTheme(
+			<ElementProvider element={ element } elementType={ elementType }>
+				<SettingsField bind="email" propDisplayName={ __( 'Email', 'elementor' ) }>
+					<div>Email Control Content</div>
+				</SettingsField>
+			</ElementProvider>
+		);
+
+		// Assert
+		expect( screen.getByText( 'Email Control Content' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should hide email fields when dependency is not met', () => {
+		// Arrange
+		const propsSchema = {
+			'actions-after-submit': createMockPropType( {
+				kind: 'array',
+				item_prop_type: createMockPropType( { kind: 'plain' } ),
+			} ),
+			email: createMockPropType( {
+				kind: 'object',
+				dependencies: {
+					relation: 'or',
+					terms: [
+						{
+							operator: 'contains',
+							path: [ 'actions-after-submit' ],
+							value: 'email',
+							effect: 'hide',
+						},
+					],
+				},
+				shape: {
+					to: createMockPropType( { kind: 'plain' } ),
+				},
+			} ),
+		};
+
+		const elementType = createMockElementType( { propsSchema } );
+		const element = mockElement();
+
+		jest.mocked( useElementSettings ).mockReturnValue( {
+			'actions-after-submit': {
+				$$type: 'array',
+				value: [ wrap( 'webhook' ) ],
+			},
+		} as Record< string, PropValue > );
+
+		// Act
+		renderWithTheme(
+			<ElementProvider element={ element } elementType={ elementType }>
+				<SettingsField bind="email" propDisplayName={ __( 'Email', 'elementor' ) }>
+					<div>Email Control Content</div>
+				</SettingsField>
+			</ElementProvider>
+		);
+
+		// Assert
+		expect( screen.queryByText( 'Email Control Content' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should show email fields when adding email chip to actions-after-submit', () => {
+		// Arrange
+		const propsSchema = {
+			'actions-after-submit': createMockPropType( {
+				kind: 'array',
+				item_prop_type: createMockPropType( { kind: 'plain' } ),
+			} ),
+			email: createMockPropType( {
+				kind: 'object',
+				dependencies: {
+					relation: 'or',
+					terms: [
+						{
+							operator: 'contains',
+							path: [ 'actions-after-submit' ],
+							value: 'email',
+							effect: 'hide',
+						},
+					],
+				},
+				shape: {
+					to: createMockPropType( { kind: 'plain' } ),
+					from: createMockPropType( { kind: 'plain' } ),
+					subject: createMockPropType( { kind: 'plain' } ),
+				},
+			} ),
+		};
+
+		const elementType = createMockElementType( { propsSchema } );
+		const element = mockElement();
+
+		jest.mocked( useElementSettings ).mockReturnValue( {
+			'actions-after-submit': {
+				$$type: 'array',
+				value: [ wrap( 'collect-submissions' ) ],
+			},
+		} as Record< string, PropValue > );
+
+		const { rerender } = renderWithTheme(
+			<ElementProvider element={ element } elementType={ elementType }>
+				<SettingsField bind="email" propDisplayName={ __( 'Email', 'elementor' ) }>
+					<div>Email Control Content</div>
+				</SettingsField>
+			</ElementProvider>
+		);
+
+		expect( screen.queryByText( 'Email Control Content' ) ).not.toBeInTheDocument();
+
+		// Act
+		jest.mocked( useElementSettings ).mockReturnValue( {
+			'actions-after-submit': {
+				$$type: 'array',
+				value: [ wrap( 'collect-submissions' ), wrap( 'email' ) ],
+			},
+		} as Record< string, PropValue > );
+
+		rerender(
+			<ElementProvider element={ element } elementType={ elementType }>
+				<SettingsField bind="email" propDisplayName={ __( 'Email', 'elementor' ) }>
+					<div>Email Control Content</div>
+				</SettingsField>
+			</ElementProvider>
+		);
+
+		// Assert
+		expect( screen.getByText( 'Email Control Content' ) ).toBeInTheDocument();
+	} );
+} );
+
 describe( 'SettingsField dependency logic', () => {
 	const historyMock = mockHistoryManager();
 

@@ -83,6 +83,7 @@ export type AnimationPresetPropValue = {
 	$$type: 'animation-preset-props';
 	value: {
 		effect: StringPropValue;
+		custom_effect?: PropValue;
 		type: StringPropValue;
 		direction: StringPropValue;
 		timing_config: TimingConfigPropValue;

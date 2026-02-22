@@ -207,13 +207,7 @@ describe( 'interactions-utils', () => {
 			delete window.Motion;
 		} );
 
-		it( 'should return native animate function when available', () => {
-			const mockAnimate = jest.fn();
-			global.animate = mockAnimate;
-			expect( getAnimateFunction() ).toBe( mockAnimate );
-		} );
-
-		it( 'should return Motion.animate when native animate is not available', () => {
+		it( 'should return Motion.animate', () => {
 			const mockMotion = { animate: jest.fn() };
 			window.Motion = mockMotion;
 			expect( getAnimateFunction() ).toBe( mockMotion.animate );
@@ -230,13 +224,7 @@ describe( 'interactions-utils', () => {
 			delete window.Motion;
 		} );
 
-		it( 'should return native inView function when available', () => {
-			const mockInView = jest.fn();
-			global.inView = mockInView;
-			expect( getInViewFunction() ).toBe( mockInView );
-		} );
-
-		it( 'should return Motion.inView when native inView is not available', () => {
+		it( 'should return Motion.inView', () => {
 			const mockMotion = { inView: jest.fn() };
 			window.Motion = mockMotion;
 			expect( getInViewFunction() ).toBe( mockMotion.inView );
@@ -256,23 +244,6 @@ describe( 'interactions-utils', () => {
 
 		afterEach( () => {
 			jest.useRealTimers();
-		} );
-
-		it( 'should call callback immediately if animate function exists', () => {
-			const callback = jest.fn();
-			global.animate = jest.fn();
-			waitForAnimateFunction( callback );
-			expect( callback ).toHaveBeenCalledTimes( 1 );
-		} );
-
-		it( 'should poll for animate function and call callback when available', () => {
-			const callback = jest.fn();
-			waitForAnimateFunction( callback, 5 );
-			expect( callback ).not.toHaveBeenCalled();
-			jest.advanceTimersByTime( 100 );
-			global.animate = jest.fn();
-			jest.advanceTimersByTime( 100 );
-			expect( callback ).toHaveBeenCalled();
 		} );
 
 		it( 'should stop polling after maxAttempts', () => {
@@ -306,6 +277,7 @@ describe( 'interactions-utils', () => {
 			expect( result ).toBeNull();
 		} );
 	} );
+
 	describe( 'extractInteractionId', () => {
 		it( 'should extract interaction_id from valid interaction item', () => {
 			const interaction = {

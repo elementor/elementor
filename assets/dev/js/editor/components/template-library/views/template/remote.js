@@ -4,6 +4,13 @@ var TemplateLibraryTemplateView = require( 'elementor-templates/views/template/b
 TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend( {
 	template: '#tmpl-elementor-template-library-template-remote',
 
+	attributes() {
+		return jQuery.extend( TemplateLibraryTemplateView.prototype.attributes.apply( this, arguments ), {
+			tabindex: '0',
+			'aria-label': this.model.get( 'title' ) || '',
+		} );
+	},
+
 	ui() {
 		return jQuery.extend( TemplateLibraryTemplateView.prototype.ui.apply( this, arguments ), {
 			favoriteCheckbox: '.elementor-template-library-template-favorite-input',

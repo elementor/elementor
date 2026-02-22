@@ -17,6 +17,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Elements_Manager {
 
+	const CATEGORY_ATOMIC_ELEMENTS = 'v4-elements';
+	const CATEGORY_ATOMIC_FORM = 'atomic-form';
+	const CATEGORY_FAVORITES = 'favorites';
+	const CATEGORY_ANGIE_WIDGETS = 'angie-widgets';
+
 	/**
 	 * Element types.
 	 *
@@ -284,7 +289,7 @@ class Elements_Manager {
 	 */
 	private function init_categories() {
 		$this->categories = [
-			'v4-elements' => [
+			self::CATEGORY_ATOMIC_ELEMENTS => [
 				'title' => esc_html__( 'Atomic Elements', 'elementor' ),
 				'hideIfEmpty' => true,
 			],
@@ -337,15 +342,15 @@ class Elements_Manager {
 			];
 
 			$this->categories = array_merge(
-				[ 'v4-elements' => $this->categories['v4-elements'] ],
-				[ 'atomic-form' => $atomic_form_category ],
-				array_diff_key( $this->categories, [ 'v4-elements' => true ] )
+				[ self::CATEGORY_ATOMIC_ELEMENTS => $this->categories[ self::CATEGORY_ATOMIC_ELEMENTS ] ],
+				[ self::CATEGORY_ATOMIC_FORM => $atomic_form_category ],
+				array_diff_key( $this->categories, [ self::CATEGORY_ATOMIC_ELEMENTS => true ] )
 			);
 		}
 
 		// Not using the `add_category` because it doesn't allow 3rd party to inject a category on top the others.
 		$this->categories = array_merge_recursive( [
-			'favorites' => [
+			self::CATEGORY_FAVORITES => [
 				'title' => esc_html__( 'Favorites', 'elementor' ),
 				'icon' => 'eicon-heart',
 				'sort' => 'a-z',
@@ -367,6 +372,8 @@ class Elements_Manager {
 		 * @param Elements_Manager $this Elements manager instance.
 		 */
 		do_action( 'elementor/elements/categories_registered', $this );
+
+		$this->promote_category_after( self::CATEGORY_ANGIE_WIDGETS, [ self::CATEGORY_ATOMIC_FORM, self::CATEGORY_ATOMIC_ELEMENTS ] );
 
 		$this->categories['wordpress'] = [
 			'title' => esc_html__( 'WordPress', 'elementor' ),
@@ -391,6 +398,35 @@ class Elements_Manager {
 		foreach ( $this->get_element_types() as $element ) {
 			$element->register_frontend_handlers();
 		}
+	}
+
+	private function promote_category_after( string $category_name, array $after_candidates ): void {
+		if ( ! isset( $this->categories[ $category_name ] ) ) {
+			return;
+		}
+
+		$after = null;
+
+		foreach ( $after_candidates as $candidate ) {
+			if ( isset( $this->categories[ $candidate ] ) ) {
+				$after = $candidate;
+				break;
+			}
+		}
+
+		if ( ! $after ) {
+			return;
+		}
+
+		$category = $this->categories[ $category_name ];
+		unset( $this->categories[ $category_name ] );
+
+		$position = array_search( $after, array_keys( $this->categories ), true ) + 1;
+		$this->categories = array_merge(
+			array_slice( $this->categories, 0, $position, true ),
+			[ $category_name => $category ],
+			array_slice( $this->categories, $position, null, true )
+		);
 	}
 
 	/**

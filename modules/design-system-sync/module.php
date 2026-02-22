@@ -46,5 +46,11 @@ class Module extends BaseModule {
 	private function register_hooks() {
 		( new Kit_Stylesheet_Extended() )->register_hooks();
 		( new Classes\Global_Colors_Extension() )->register_hooks();
+
+		add_action( 'elementor/global_classes/update', [ $this, 'clear_classes_cache' ] );
+	}
+
+	public function clear_classes_cache() {
+		Classes\Classes_Provider::clear_cache();
 	}
 }

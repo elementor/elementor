@@ -22,7 +22,7 @@ const LAYOUT_TRANSITION_MS = 300;
 const LEFT_PANEL_CONTENT_WIDTH = 386;
 const LEFT_PANEL_PADDING_X = 80;
 const LEFT_PANEL_PADDING_TOP = 40;
-const LEFT_PANEL_GAP = 60;
+const LEFT_PANEL_GAP = 32;
 const IMAGE_MIN_WIDTH = 464;
 const CONTENT_IMAGE_MIN_GAP = 80;
 
@@ -54,7 +54,7 @@ const SplitLayoutRoot = styled( Box, {
 	};
 } );
 
-const LeftPanel = styled( Box )( () => ( {
+const LeftPanel = styled( Box )( ( { theme } ) => ( {
 	display: 'flex',
 	flexDirection: 'column',
 	alignItems: 'center',
@@ -63,6 +63,13 @@ const LeftPanel = styled( Box )( () => ( {
 	'& > *': {
 		maxWidth: LEFT_PANEL_CONTENT_WIDTH,
 		width: '100%',
+	},
+	[ theme.breakpoints.down( 'sm' ) ]: {
+		padding: `${ LEFT_PANEL_PADDING_TOP }px ${ theme.spacing( 2 ) }`,
+		gap: LEFT_PANEL_GAP / 2,
+		'& > *': {
+			maxWidth: 'none',
+		},
 	},
 } ) );
 

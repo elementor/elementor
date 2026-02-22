@@ -11,6 +11,7 @@ import {
 	type RenderContext,
 } from '@elementor/editor-canvas';
 import { getCurrentDocument } from '@elementor/editor-documents';
+import { type V1ElementData } from '@elementor/editor-elements';
 import { __getState as getState } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
@@ -18,6 +19,7 @@ import { apiClient } from './api';
 import { type ComponentInstanceProp } from './prop-types/component-instance-prop-type';
 import { type ComponentsSlice, selectComponentByUid } from './store/store';
 import { type ComponentRenderContext, type ExtendedWindow } from './types';
+import { formatComponentElementsId } from './utils/format-component-elements-id';
 import { switchToComponent } from './utils/switch-to-component';
 import { trackComponentEvent } from './utils/tracking';
 
@@ -152,7 +154,7 @@ function createComponentView(
 			const componentInstance = settings.component_instance as
 				| {
 						overrides?: Record< string, unknown >;
-						elements?: unknown[];
+						elements?: V1ElementData[];
 				  }
 				| undefined;
 
@@ -161,7 +163,11 @@ function createComponentView(
 					overrides: componentInstance.overrides ?? {},
 				};
 
-				this.collection = legacyWindow.elementor.createBackboneElementsCollection( componentInstance.elements );
+				const instanceId = this.model.get( 'id' );
+				const elements = componentInstance.elements ?? [];
+				const formattedElements = formatComponentElementsId( elements, [ instanceId ] );
+
+				this.collection = legacyWindow.elementor.createBackboneElementsCollection( formattedElements );
 
 				this.collection.models.forEach( setInactiveRecursively );
 

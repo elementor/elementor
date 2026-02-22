@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useSuppressedMessage } from '@elementor/editor-current-user';
 import { getCurrentDocument, getV1DocumentsManager, setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
 	__createPanel as createPanel,
@@ -9,7 +10,7 @@ import {
 	PanelHeader,
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
-import { SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
+import { ConfirmationDialog, SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { __privateRunCommand as runCommand, changeEditMode } from '@elementor/editor-v1-adapters';
 import { XIcon } from '@elementor/icons';
 import { useMutation } from '@elementor/query';
@@ -42,6 +43,15 @@ import { hasDeletedItems, onDelete } from './delete-class';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 import { GlobalClassesList } from './global-classes-list';
 import { blockPanelInteractions, unblockPanelInteractions } from './panel-interactions';
+import { StartSyncToV3Modal } from './start-sync-to-v3-modal';
+
+const STOP_SYNC_MESSAGE_KEY = 'stop-sync-class';
+
+type StopSyncConfirmationDialogProps = {
+	open: boolean;
+	onClose: () => void;
+	onConfirm: () => void;
+};
 
 const id = 'global-classes-manager';
 
@@ -83,6 +93,9 @@ export function ClassManagerPanel() {
 	const isDirty = useDirtyState();
 	const { close: closePanel } = usePanelActions();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
+	const [ stopSyncConfirmation, setStopSyncConfirmation ] = useState< string | null >( null );
+	const [ startSyncConfirmation, setStartSyncConfirmation ] = useState< string | null >( null );
+	const [ isStopSyncSuppressed ] = useSuppressedMessage( STOP_SYNC_MESSAGE_KEY );
 
 	const { mutateAsync: publish, isPending: isPublishing } = usePublish();
 
@@ -90,6 +103,41 @@ export function ClassManagerPanel() {
 		dispatch( slice.actions.resetToInitialState( { context: 'frontend' } ) );
 		closeSaveChangesDialog();
 	};
+
+	const handleStopSync = useCallback( ( classId: string ) => {
+		dispatch(
+			slice.actions.update( {
+				style: {
+					id: classId,
+					sync_to_v3: false,
+				},
+			} )
+		);
+		setStopSyncConfirmation( null );
+	}, [] );
+
+	const handleStartSync = useCallback( ( classId: string ) => {
+		dispatch(
+			slice.actions.update( {
+				style: {
+					id: classId,
+					sync_to_v3: true,
+				},
+			} )
+		);
+		setStartSyncConfirmation( null );
+	}, [] );
+
+	const handleStopSyncRequest = useCallback(
+		( classId: string ) => {
+			if ( ! isStopSyncSuppressed ) {
+				setStopSyncConfirmation( classId );
+			} else {
+				handleStopSync( classId );
+			}
+		},
+		[ isStopSyncSuppressed, handleStopSync ]
+	);
 
 	usePreventUnload();
 
@@ -145,7 +193,11 @@ export function ClassManagerPanel() {
 									overflowY: 'auto',
 								} }
 							>
-								<GlobalClassesList disabled={ isPublishing } />
+								<GlobalClassesList
+									disabled={ isPublishing }
+									onStopSyncRequest={ handleStopSyncRequest }
+									onStartSyncRequest={ ( classId ) => setStartSyncConfirmation( classId ) }
+								/>
 							</Box>
 						</PanelBody>
 
@@ -166,6 +218,20 @@ export function ClassManagerPanel() {
 				</Panel>
 			</ErrorBoundary>
 			<ClassManagerIntroduction />
+			{ startSyncConfirmation && (
+				<StartSyncToV3Modal
+					externalOpen
+					onExternalClose={ () => setStartSyncConfirmation( null ) }
+					onConfirm={ () => handleStartSync( startSyncConfirmation ) }
+				/>
+			) }
+			{ stopSyncConfirmation && (
+				<StopSyncConfirmationDialog
+					open
+					onClose={ () => setStopSyncConfirmation( null ) }
+					onConfirm={ () => handleStopSync( stopSyncConfirmation ) }
+				/>
+			) }
 			{ isSaveChangesDialogOpen && (
 				<SaveChangesDialog>
 					<DialogHeader onClose={ closeSaveChangesDialog } logo={ false }>
@@ -259,5 +325,37 @@ const TotalCssClassCounter = () => {
 			size={ 'small' }
 			label={ filters ? `${ filters.length } / ${ cssClasses?.length }` : cssClasses?.length }
 		/>
+	);
+};
+
+const StopSyncConfirmationDialog = ( { open, onClose, onConfirm }: StopSyncConfirmationDialogProps ) => {
+	const [ , suppressStopSyncMessage ] = useSuppressedMessage( STOP_SYNC_MESSAGE_KEY );
+
+	return (
+		<ConfirmationDialog open={ open } onClose={ onClose }>
+			<ConfirmationDialog.Title icon={ FlippedColorSwatchIcon } iconColor="primary">
+				{ __( 'Un-sync typography class', 'elementor' ) }
+			</ConfirmationDialog.Title>
+			<ConfirmationDialog.Content>
+				<ConfirmationDialog.ContentText>
+					{ __( "You're about to stop syncing a typography class to version 3.", 'elementor' ) }
+				</ConfirmationDialog.ContentText>
+				<ConfirmationDialog.ContentText sx={ { mt: 1 } }>
+					{ __(
+						"Note that if it's being used anywhere, the affected elements will inherit the default typography.",
+						'elementor'
+					) }
+				</ConfirmationDialog.ContentText>
+			</ConfirmationDialog.Content>
+			<ConfirmationDialog.Actions
+				onClose={ onClose }
+				onConfirm={ onConfirm }
+				cancelLabel={ __( 'Cancel', 'elementor' ) }
+				confirmLabel={ __( 'Got it', 'elementor' ) }
+				color="primary"
+				onSuppressMessage={ suppressStopSyncMessage }
+				suppressLabel={ __( "Don't show again", 'elementor' ) }
+			/>
+		</ConfirmationDialog>
 	);
 };

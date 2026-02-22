@@ -302,35 +302,55 @@ trait Has_Atomic_Base {
 		);
 	}
 
+	protected function set_render_context( array $context_pairs ): void {
+		foreach ( $context_pairs as $context_pair ) {
+			$context_key = $context_pair['context_key'] ?? static::class;
+			$context = $context_pair['context'];
+			Render_Context::push( $context_key, $context );
+		}
+	}
+
+	protected function clear_render_context( array $context_pairs ): void {
+		foreach ( $context_pairs as $context_pair ) {
+			$context_key = $context_pair['context_key'] ?? static::class;
+			Render_Context::pop( $context_key );
+		}
+	}
+
 	public function print_content() {
 		$defined_context = $this->define_render_context();
 
-		$context_key = $defined_context['context_key'] ?? static::class;
-		$element_context = $defined_context['context'] ?? [];
-
-		$has_context = ! empty( $element_context );
-
-		if ( ! $has_context ) {
+		if ( empty( $defined_context ) ) {
 			return parent::print_content();
 		}
 
-		Render_Context::push( $context_key, $element_context );
+		$this->set_render_context( $defined_context );
 
 		parent::print_content();
 
-		Render_Context::pop( $context_key );
+		$this->clear_render_context( $defined_context );
 	}
 
 	/**
 	 * Define the context for element's Render_Context.
 	 *
-	 * @return array{context_key: ?string, context: array}
+	 * @return array Array of context pairs. Each pair is an associative array with:
+	 *               - 'context_key' (optional): The context key. Defaults to static::class if not provided.
+	 *               - 'context' (required): The context value (can be any type).
+	 *
+	 * @example
+	 * [
+	 *     [
+	 *         'context_key' => 'custom-key',
+	 *         'context' => ['some' => 'data'],
+	 *     ],
+	 *     [
+	 *         'context' => ['instance_id' => $this->get_id()],
+	 *     ],
+	 * ]
 	 */
 	protected function define_render_context(): array {
-		return [
-			'context_key' => null,
-			'context' => [],
-		];
+		return [];
 	}
 
 	protected function get_link_attributes( $link_settings, $add_key_to_result = false ) {

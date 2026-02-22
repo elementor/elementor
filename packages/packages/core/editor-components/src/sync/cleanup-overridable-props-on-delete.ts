@@ -1,9 +1,9 @@
 import { getAllDescendants, type V1Element } from '@elementor/editor-elements';
-import { registerDataHook } from '@elementor/editor-v1-adapters';
-import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
+import { type HookOptions, registerDataHook } from '@elementor/editor-v1-adapters';
+import { __getState as getState } from '@elementor/store';
 
-import { type ComponentsSlice, selectCurrentComponentId, selectOverridableProps, slice } from '../store/store';
-import { removePropFromAllGroups } from '../store/utils/groups-transformers';
+import { deleteOverridableProp } from '../store/actions/delete-overridable-prop';
+import { type ComponentsSlice, selectCurrentComponentId, selectOverridableProps } from '../store/store';
 
 type DeleteCommandArgs = {
 	container?: V1Element;
@@ -11,7 +11,14 @@ type DeleteCommandArgs = {
 };
 
 export function initCleanupOverridablePropsOnDelete() {
-	registerDataHook( 'dependency', 'document/elements/delete', ( args: DeleteCommandArgs ) => {
+	// This hook is not a real dependency - it doesn't block the execution of the command in any case, only perform side effect.
+	// We use `dependency` and not `after` hook because the `after` hook doesn't include the children of a deleted container
+	// in the callback parameters (as they already were deleted).
+	registerDataHook( 'dependency', 'document/elements/delete', ( args: DeleteCommandArgs, options?: HookOptions ) => {
+		if ( isPartOfMoveCommand( options ) ) {
+			return true;
+		}
+
 		const state = getState() as ComponentsSlice | undefined;
 
 		if ( ! state ) {
@@ -50,25 +57,7 @@ export function initCleanupOverridablePropsOnDelete() {
 			return true;
 		}
 
-		const remainingProps = Object.fromEntries(
-			Object.entries( overridableProps.props ).filter( ( [ propKey ] ) => ! propKeysToDelete.includes( propKey ) )
-		);
-
-		let updatedGroups = overridableProps.groups;
-		for ( const propKey of propKeysToDelete ) {
-			updatedGroups = removePropFromAllGroups( updatedGroups, propKey );
-		}
-
-		dispatch(
-			slice.actions.setOverridableProps( {
-				componentId: currentComponentId,
-				overridableProps: {
-					...overridableProps,
-					props: remainingProps,
-					groups: updatedGroups,
-				},
-			} )
-		);
+		deleteOverridableProp( { componentId: currentComponentId, propKey: propKeysToDelete, source: 'system' } );
 
 		return true;
 	} );
@@ -82,4 +71,15 @@ function collectDeletedElementIds( containers: V1Element[] ): string[] {
 		.filter( ( id ): id is string => Boolean( id ) );
 
 	return elementIds;
+}
+
+function isPartOfMoveCommand( options?: HookOptions ): boolean {
+	// Skip cleanup if this delete is part of a move command
+	// Move = delete + create, and we don't want to delete the overridable prop in this case.
+	// See assets/dev/js/editor/document/elements/commands/move.js
+	const isMoveCommandInTrace =
+		options?.commandsCurrentTrace?.includes( 'document/elements/move' ) ||
+		options?.commandsCurrentTrace?.includes( 'document/repeater/move' );
+
+	return Boolean( isMoveCommandInTrace );
 }

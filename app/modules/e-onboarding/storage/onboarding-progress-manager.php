@@ -14,6 +14,7 @@ class Onboarding_Progress_Manager {
 	const PROGRESS_OPTION_KEY = 'elementor_e_onboarding_progress';
 	const CHOICES_OPTION_KEY = 'elementor_e_onboarding_choices';
 	const DEFAULT_TOTAL_STEPS = 5;
+	const ALLOWED_THEMES = [ 'hello-elementor', 'hello-biz' ];
 
 	private static ?Onboarding_Progress_Manager $instance = null;
 
@@ -91,6 +92,10 @@ class Onboarding_Progress_Manager {
 			$progress->set_exit_type( 'user_exit' );
 		}
 
+		if ( isset( $params['starter_dismissed'] ) && $params['starter_dismissed'] ) {
+			$progress->set_starter_dismissed( true );
+		}
+
 		$progress->set_last_active_timestamp( current_time( 'timestamp' ) );
 
 		return $this->save_progress( $progress );
@@ -124,7 +129,10 @@ class Onboarding_Progress_Manager {
 		}
 
 		if ( isset( $params['theme_selection'] ) ) {
-			$choices->set_theme_selection( $params['theme_selection'] );
+			$theme_slug = $params['theme_selection'];
+			$choices->set_theme_selection( $theme_slug );
+
+			$this->install_and_activate_theme( $theme_slug );
 		}
 
 		if ( isset( $params['site_features'] ) ) {
@@ -132,6 +140,33 @@ class Onboarding_Progress_Manager {
 		}
 
 		return $this->save_choices( $choices );
+	}
+
+	private function install_and_activate_theme( string $theme_slug ): void {
+		if ( ! in_array( $theme_slug, self::ALLOWED_THEMES, true ) ) {
+			return;
+		}
+
+		if ( ! current_user_can( 'install_themes' ) || ! current_user_can( 'switch_themes' ) ) {
+			return;
+		}
+
+		$theme = wp_get_theme( $theme_slug );
+
+		if ( ! $theme->exists() ) {
+			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader-skin.php';
+
+			$skin = new \WP_Ajax_Upgrader_Skin();
+			$upgrader = new \Theme_Upgrader( $skin );
+			$result = $upgrader->install( "https://downloads.wordpress.org/theme/{$theme_slug}.latest-stable.zip" );
+
+			if ( is_wp_error( $result ) || ! $result ) {
+				return;
+			}
+		}
+
+		switch_theme( $theme_slug );
 	}
 
 	public function reset(): void {

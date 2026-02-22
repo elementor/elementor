@@ -4,7 +4,7 @@ export { useDebounceState, type UseDebounceStateOptions, type UseDebounceStateRe
 export { debounce } from './debounce';
 export { throttle } from './throttle';
 export { encodeString, decodeString } from './encoding';
-export { hash } from './hash';
+export { hash, hashString } from './hash';
 export { useSearchState, type UseSearchStateResult } from './use-search-state';
 export { generateUniqueId } from './generate-unique-id';
 export { capitalize } from './string-helpers';
