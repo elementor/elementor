@@ -322,4 +322,12 @@ class Widget_Rating extends Widget_Base {
 		</div>
 		<?php
 	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_settings_for_display();
+		$value = $settings['rating_value'] ?? '';
+		$scale = $settings['rating_scale']['size'] ?? ( $settings['rating_scale'] ?? '5' );
+		if ( empty( $value ) ) { return ''; }
+		return $value . '/' . $scale;
+	}
 }

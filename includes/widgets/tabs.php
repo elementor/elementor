@@ -586,6 +586,36 @@ class Widget_Tabs extends Widget_Base {
 	 * @since 2.9.0
 	 * @access protected
 	 */
+
+	public function render_markdown(): string {
+		$tabs = $this->get_settings_for_display( 'tabs' );
+
+		if ( empty( $tabs ) ) {
+			return '';
+		}
+
+		$sections = [];
+
+		foreach ( $tabs as $item ) {
+			$title = Utils::html_to_plain_text( $item['tab_title'] ?? '' );
+			$content = Utils::html_to_plain_text( $item['tab_content'] ?? '' );
+
+			if ( empty( $title ) && empty( $content ) ) {
+				continue;
+			}
+
+			$section = '### ' . $title;
+
+			if ( ! empty( $content ) ) {
+				$section .= "\n\n" . $content;
+			}
+
+			$sections[] = $section;
+		}
+
+		return implode( "\n\n", $sections );
+	}
+
 	protected function content_template() {
 		?>
 		<div class="elementor-tabs" role="tablist" aria-orientation="vertical">

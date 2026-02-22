@@ -227,4 +227,8 @@ class Atomic_Svg extends Atomic_Widget_Base {
 
 		$svg->set_attribute( 'style', $svg_style );
 	}
+
+	public function render_markdown(): string {
+		return '';
+	}
 }

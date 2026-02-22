@@ -147,4 +147,19 @@ class Atomic_Button extends Atomic_Widget_Base {
 			'elementor/elements/atomic-button' => __DIR__ . '/atomic-button.html.twig',
 		];
 	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_atomic_settings();
+		$text = wp_strip_all_tags( $settings['text'] ?? '' );
+
+		if ( empty( $text ) ) {
+			return '';
+		}
+
+		if ( ! empty( $settings['link']['href'] ) ) {
+			return '[' . $text . '](' . esc_url( $settings['link']['href'] ) . ')';
+		}
+
+		return '**' . $text . '**';
+	}
 }

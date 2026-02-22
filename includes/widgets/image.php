@@ -774,6 +774,62 @@ class Widget_Image extends Widget_Base {
 		<?php
 	}
 
+	public function render_markdown(): string {
+		$settings = $this->get_settings_for_display();
+
+		if ( empty( $settings['image']['url'] ) ) {
+			return '';
+		}
+
+		$url = esc_url( $settings['image']['url'] );
+		$alt = $this->get_image_alt_text( $settings );
+		$image_md = '![' . $alt . '](' . $url . ')';
+
+		$link = $this->get_link_url( $settings );
+
+		if ( ! empty( $link['url'] ) && $link['url'] !== $url ) {
+			$image_md = '[' . $image_md . '](' . esc_url( $link['url'] ) . ')';
+		}
+
+		$caption = $this->get_visible_caption( $settings );
+
+		if ( ! empty( $caption ) ) {
+			$image_md .= "\n*" . $caption . '*';
+		}
+
+		return $image_md;
+	}
+
+	private function get_image_alt_text( array $settings ): string {
+		if ( empty( $settings['image']['id'] ) ) {
+			return '';
+		}
+
+		$attachment_id = $settings['image']['id'];
+
+		$alt = get_post_meta( $attachment_id, '_wp_attachment_image_alt', true );
+
+		if ( ! empty( $alt ) ) {
+			return $alt;
+		}
+
+		$attachment = get_post( $attachment_id );
+
+		if ( ! $attachment ) {
+			return '';
+		}
+
+		return $attachment->post_title ?? '';
+	}
+
+	private function get_visible_caption( array $settings ): string {
+		if ( ! $this->has_caption( $settings ) ) {
+			return '';
+		}
+
+		return Utils::html_to_plain_text( $this->get_caption( $settings ) );
+	}
+
 	/**
 	 * Render image widget output in the editor.
 	 *

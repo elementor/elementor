@@ -523,4 +523,8 @@ class Widget_Icon extends Widget_Base {
 		</div>
 		<?php
 	}
+
+	public function render_markdown(): string {
+		return '';
+	}
 }

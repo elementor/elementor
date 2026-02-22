@@ -525,6 +525,28 @@ class Widget_Alert extends Widget_Base {
 	 * @since 2.9.0
 	 * @access protected
 	 */
+
+	public function render_markdown(): string {
+		$settings = $this->get_settings_for_display();
+
+		$title = Utils::html_to_plain_text( $settings['alert_title'] ?? '' );
+		$description = Utils::html_to_plain_text( $settings['alert_description'] ?? '' );
+
+		if ( empty( $title ) && empty( $description ) ) {
+			return '';
+		}
+
+		if ( ! empty( $title ) && ! empty( $description ) ) {
+			return '> **' . $title . ':** ' . $description;
+		}
+
+		if ( ! empty( $title ) ) {
+			return '> **' . $title . '**';
+		}
+
+		return '> ' . $description;
+	}
+
 	protected function content_template() {
 		?>
 		<#

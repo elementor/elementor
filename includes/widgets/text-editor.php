@@ -636,6 +636,18 @@ class Widget_Text_Editor extends Widget_Base {
 	 * @since 2.9.0
 	 * @access protected
 	 */
+
+	public function render_markdown(): string {
+		$editor_content = $this->get_settings_for_display( 'editor' );
+		$editor_content = $this->parse_text_editor( $editor_content );
+
+		if ( empty( $editor_content ) ) {
+			return '';
+		}
+
+		return \Elementor\Modules\MarkdownRender\Html_To_Markdown::convert( $editor_content );
+	}
+
 	protected function content_template() {
 		?>
 		<#

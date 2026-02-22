@@ -39,6 +39,7 @@ export function createMockDocumentData( {
 				main_dashboard: `https://localhost/wp-admin/`,
 				all_post_type: `https://localhost/wp-admin/post.php`,
 				permalink: `https://localhost/?p=${ id }`,
+				wp_preview: `https://localhost/?p=${ id }&preview_id=${ id }&preview_nonce=mock_nonce&preview=true`,
 			},
 			elements
 		},

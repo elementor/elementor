@@ -108,4 +108,17 @@ class Atomic_Image extends Atomic_Widget_Base {
 			'elementor/elements/atomic-image' => __DIR__ . '/atomic-image.html.twig',
 		];
 	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_atomic_settings();
+		$src = $settings['image']['src'] ?? '';
+
+		if ( empty( $src ) ) {
+			return '';
+		}
+
+		$alt = $settings['image']['alt'] ?? '';
+
+		return '![' . $alt . '](' . esc_url( $src ) . ')';
+	}
 }

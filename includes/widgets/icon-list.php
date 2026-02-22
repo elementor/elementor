@@ -803,6 +803,33 @@ class Widget_Icon_List extends Widget_Base {
 	 * @since 2.9.0
 	 * @access protected
 	 */
+
+	public function render_markdown(): string {
+		$settings = $this->get_settings_for_display();
+
+		if ( empty( $settings['icon_list'] ) ) {
+			return '';
+		}
+
+		$lines = [];
+
+		foreach ( $settings['icon_list'] as $item ) {
+			$text = Utils::html_to_plain_text( $item['text'] ?? '' );
+
+			if ( empty( $text ) ) {
+				continue;
+			}
+
+			if ( ! empty( $item['link']['url'] ) ) {
+				$text = '[' . $text . '](' . esc_url( $item['link']['url'] ) . ')';
+			}
+
+			$lines[] = '- ' . $text;
+		}
+
+		return implode( "\n", $lines );
+	}
+
 	protected function content_template() {
 		?>
 		<#

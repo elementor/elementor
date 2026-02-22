@@ -136,4 +136,15 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 			'elementor/elements/atomic-paragraph' => __DIR__ . '/atomic-paragraph.html.twig',
 		];
 	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_atomic_settings();
+		$content = $settings['paragraph'] ?? '';
+
+		if ( empty( $content ) ) {
+			return '';
+		}
+
+		return \Elementor\Modules\MarkdownRender\Html_To_Markdown::convert( $content );
+	}
 }

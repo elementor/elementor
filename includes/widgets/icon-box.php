@@ -967,4 +967,21 @@ class Widget_Icon_Box extends Widget_Base {
 	public function on_import( $element ) {
 		return Icons_Manager::on_import_migration( $element, 'icon', 'selected_icon', true );
 	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_settings_for_display();
+		$title = Utils::html_to_plain_text( $settings['title_text'] ?? '' );
+		$description = Utils::html_to_plain_text( $settings['description_text'] ?? '' );
+		if ( empty( $title ) && empty( $description ) ) { return ''; }
+		$parts = [];
+		if ( ! empty( $title ) ) {
+			if ( ! empty( $settings['link']['url'] ) ) {
+				$parts[] = '### [' . $title . '](' . esc_url( $settings['link']['url'] ) . ')';
+			} else {
+				$parts[] = '### ' . $title;
+			}
+		}
+		if ( ! empty( $description ) ) { $parts[] = $description; }
+		return implode( "\n\n", $parts );
+	}
 }

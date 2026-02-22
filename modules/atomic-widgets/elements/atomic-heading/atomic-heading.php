@@ -154,4 +154,25 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			'elementor/elements/atomic-heading' => __DIR__ . '/atomic-heading.html.twig',
 		];
 	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_atomic_settings();
+		$title = wp_strip_all_tags( $settings['title'] ?? '' );
+
+		if ( empty( $title ) ) {
+			return '';
+		}
+
+		$tag = $settings['tag'] ?? 'h2';
+		$level_map = [ 'h1' => 1, 'h2' => 2, 'h3' => 3, 'h4' => 4, 'h5' => 5, 'h6' => 6 ];
+		$level = $level_map[ $tag ] ?? 2;
+
+		$md = str_repeat( '#', $level ) . ' ' . $title;
+
+		if ( ! empty( $settings['link']['href'] ) ) {
+			$md = str_repeat( '#', $level ) . ' [' . $title . '](' . esc_url( $settings['link']['href'] ) . ')';
+		}
+
+		return $md;
+	}
 }
