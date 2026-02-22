@@ -33,20 +33,10 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 
 	use Has_Template;
 
-	const ASPECT_RATIOS = [
-		'auto' => 'Auto',
-		'16/9' => '16:9',
-		'4/3' => '4:3',
-		'21/9' => '21:9',
-		'1/1' => '1:1',
-		'9/16' => '9:16',
-		'3/2' => '3:2',
-	];
-
 	const PRELOAD_OPTIONS = [
-		'auto' => 'Auto',
-		'metadata' => 'Metadata',
-		'none' => 'None (Lazy Load)',
+		'auto' => __( 'Auto', 'elementor' ),
+		'metadata' => __( 'Metadata', 'elementor' ),
+		'none' => __( 'None (Lazy Load)', 'elementor' ),
 	];
 
 	protected function get_css_id_control_meta(): array {
@@ -123,9 +113,9 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 			'poster' => Image_Prop_Type::make()
 				->default_size( 'medium_large' )
 				->default_url( Placeholder_Image::get_placeholder_image() ),
-				// TODO: restore the dependency when dependencies works in overridables
-				// ->set_dependencies( $poster_dependencies ),
-			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
+			// TODO: restore the dependency when dependencies works in overridables
+			// ->set_dependencies( $poster_dependencies ),
+		'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
 	}
 

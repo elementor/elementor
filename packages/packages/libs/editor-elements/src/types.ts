@@ -50,7 +50,6 @@ export type ElementControl = {
 		meta?: {
 			layout?: ControlLayout;
 			topDivider?: boolean;
-			[ key: string ]: unknown;
 		};
 	};
 };
