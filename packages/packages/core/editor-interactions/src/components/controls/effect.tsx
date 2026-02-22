@@ -20,6 +20,7 @@ export function Effect( { value, onChange }: FieldProps ) {
 			size="tiny"
 			value={ value }
 			onChange={ ( event: SelectChangeEvent< string > ) => onChange( event.target.value ) }
+			MenuProps={ { disablePortal: true } }
 		>
 			{ availableEffects.map( ( effect ) => {
 				return (
