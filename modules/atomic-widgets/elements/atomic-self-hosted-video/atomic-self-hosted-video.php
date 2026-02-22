@@ -33,11 +33,12 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 
 	use Has_Template;
 
-	const PRELOAD_OPTIONS = [
-		'auto' => __( 'Auto', 'elementor' ),
-		'metadata' => __( 'Metadata', 'elementor' ),
-		'none' => __( 'None (Lazy Load)', 'elementor' ),
-	];
+	protected static function get_preload_options() {
+		return [
+			'auto' => esc_html__( 'Auto', 'elementor' ),
+			'metadata' => esc_html__( 'Metadata', 'elementor' ),
+			'none' => esc_html__( 'None (Lazy Load)', 'elementor' ),
+		]; }
 
 	protected function get_css_id_control_meta(): array {
 		return [
@@ -104,7 +105,7 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 			'controls' => Boolean_Prop_Type::make()->default( true ),
 			'preload' => String_Prop_Type::make()
 				->default( 'metadata' )
-				->enum( array_keys( self::PRELOAD_OPTIONS ) ),
+				->enum( array_keys( self::get_preload_options() ) ),
 			'download' => Boolean_Prop_Type::make()->default( false )
 				->set_dependencies( $allow_download_dependencies ),
 			'start_time' => Number_Prop_Type::make()->default( null )->meta( 'suffix', 'sec' ),
@@ -143,7 +144,7 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 					Switch_Control::bind_to( 'download' )->set_label( esc_html__( 'Allow Download', 'elementor' ) ),
 					Select_Control::bind_to( 'preload' )
 						->set_label( esc_html__( 'Preload', 'elementor' ) )
-						->set_options( self::format_options( self::PRELOAD_OPTIONS ) ),
+						->set_options( self::format_options( self::get_preload_options() ) ),
 					Switch_Control::bind_to( 'poster_enabled' )
 						->set_label( esc_html__( 'Poster Image', 'elementor' ) ),
 					Image_Control::bind_to( 'poster' )

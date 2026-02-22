@@ -34,30 +34,6 @@ export const VideoMediaControl = createControl( () => {
 		},
 	} );
 
-	const renderMediaContent = () => {
-		if ( isFetching ) {
-			return <CircularProgress />;
-		}
-
-		if ( videoUrl ) {
-			return (
-				<video
-					src={ videoUrl }
-					muted
-					preload="metadata"
-					style={ {
-						width: '100%',
-						height: '100%',
-						objectFit: 'cover',
-						pointerEvents: 'none',
-					} }
-				/>
-			);
-		}
-
-		return null;
-	};
-
 	return (
 		<ControlActions>
 			<Card variant="outlined">
@@ -74,7 +50,7 @@ export const VideoMediaControl = createControl( () => {
 						alignItems: 'center',
 					} }
 				>
-					{ videoUrl ? renderMediaContent() : <img src={ PLACEHOLDER_IMAGE } alt="No video selected" /> }
+					<VideoPreview isFetching={ isFetching } videoUrl={ videoUrl } />
 				</CardMedia>
 				<CardOverlay>
 					<Stack gap={ 1 }>
@@ -101,3 +77,26 @@ export const VideoMediaControl = createControl( () => {
 		</ControlActions>
 	);
 } );
+
+const VideoPreview = ( { isFetching = false, videoUrl }: { isFetching?: boolean; videoUrl?: string } ) => {
+	if ( isFetching ) {
+		return <CircularProgress />;
+	}
+
+	if ( videoUrl ) {
+		return (
+			<video
+				src={ videoUrl }
+				muted
+				preload="metadata"
+				style={ {
+					width: '100%',
+					height: '100%',
+					objectFit: 'cover',
+					pointerEvents: 'none',
+				} }
+			/>
+		);
+	}
+	return <img src={ PLACEHOLDER_IMAGE } alt="No video selected" />;
+};
