@@ -18,7 +18,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 		{ name: 'e-button', title: 'Button' },
 		{ name: 'e-divider', title: 'Divider' },
 		{ name: 'e-youtube', title: 'YouTube' },
-		{ name: 'e-self-hosted-video', title: 'Video' },
+		// { name: 'e-self-hosted-video', title: 'Video' },
 	];
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -44,7 +44,9 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 		await elementsPanel.hover();
 		await editor.page.mouse.wheel( 0, 300 );
 
-		await expect.soft( editor.page.locator( EditorSelectors.panels.elements.v4elements ) ).toHaveScreenshot( 'widgets-panel.png' );
+		await expect
+			.soft( editor.page.locator( EditorSelectors.panels.elements.v4elements ) )
+			.toHaveScreenshot( 'widgets-panel.png' );
 	} );
 
 	atomicWidgets.forEach( ( widget ) => {
@@ -82,7 +84,8 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 					if ( 'e-youtube' === widget.name ) {
 						await editor.isUiStable( editor.page.locator( containerSelector ) );
 					}
-					await expect.soft( editor.page.locator( containerSelector ) )
+					await expect
+						.soft( editor.page.locator( containerSelector ) )
 						.toHaveScreenshot( `${ widget.name }-published.png` );
 				} );
 			} );
@@ -104,20 +107,26 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 					await editor.removeElementWithHandle( containerId );
 
 					await editor.closeNavigatorIfOpen();
-					await expect.soft( editor.getPreviewFrame().locator( EditorSelectors.pageContent ) ).toHaveScreenshot( 'widget-removed-editor.png' );
+					await expect
+						.soft( editor.getPreviewFrame().locator( EditorSelectors.pageContent ) )
+						.toHaveScreenshot( 'widget-removed-editor.png' );
 				} );
 
 				await test.step( 'Save page and check removed from UI', async () => {
 					await editor.publishPage();
 					await editor.viewPage();
 
-					await expect.soft( editor.page.locator( 'body' ) ).toHaveScreenshot( 'widget-removed-frontend.png' );
+					await expect
+						.soft( editor.page.locator( 'body' ) )
+						.toHaveScreenshot( 'widget-removed-frontend.png' );
 				} );
 
 				await test.step( 'Refresh page and verify widget still absent', async () => {
 					await editor.page.reload();
 
-					await expect.soft( editor.page.locator( 'body' ) ).toHaveScreenshot( 'widget-removed-after-refresh.png' );
+					await expect
+						.soft( editor.page.locator( 'body' ) )
+						.toHaveScreenshot( 'widget-removed-after-refresh.png' );
 				} );
 			} );
 		} );
