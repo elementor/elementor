@@ -269,7 +269,7 @@ describe( 'InteractionDetails', () => {
 
 			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
-			const slideOption = screen.getByRole( 'option', { name: /slide/i } );
+			const slideOption = screen.getByRole( 'option', { name: /slide/i, hidden: true } );
 			fireEvent.click( slideOption );
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
@@ -458,7 +458,7 @@ describe( 'InteractionDetails', () => {
 
 			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
-			const slideOption = screen.getByRole( 'option', { name: /slide/i } );
+			const slideOption = screen.getByRole( 'option', { name: /slide/i, hidden: true } );
 			fireEvent.click( slideOption );
 
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
@@ -482,7 +482,7 @@ describe( 'InteractionDetails', () => {
 
 			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
-			const scaleOption = screen.getByRole( 'option', { name: /scale/i } );
+			const scaleOption = screen.getByRole( 'option', { name: /scale/i, hidden: true } );
 			fireEvent.click( scaleOption );
 
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
@@ -513,7 +513,7 @@ describe( 'InteractionDetails', () => {
 
 			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
-			const slideOption = screen.getByRole( 'option', { name: /slide/i } );
+			const slideOption = screen.getByRole( 'option', { name: /slide/i, hidden: true } );
 			fireEvent.click( slideOption );
 
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
