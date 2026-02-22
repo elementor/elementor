@@ -19,11 +19,11 @@ export const BASE_EASINGS: string[] = [ 'easeIn' ];
 
 export function Easing( {}: FieldProps ) {
 	const baseOptions = Object.fromEntries(
-		Object.entries( EASING_OPTIONS ).filter( ( [ key ] ) => BASE_EASINGS.includes( key ) ),
+		Object.entries( EASING_OPTIONS ).filter( ( [ key ] ) => BASE_EASINGS.includes( key ) )
 	);
 
 	const disabledOptions = Object.fromEntries(
-		Object.entries( EASING_OPTIONS ).filter( ( [ key ] ) => ! BASE_EASINGS.includes( key ) ),
+		Object.entries( EASING_OPTIONS ).filter( ( [ key ] ) => ! BASE_EASINGS.includes( key ) )
 	);
 
 	return (

@@ -17,11 +17,11 @@ export const BASE_TRIGGERS: string[] = [ 'load', 'scrollIn' ];
 
 export function Trigger( { value, onChange }: FieldProps ) {
 	const baseOptions = Object.fromEntries(
-		Object.entries( TRIGGER_OPTIONS ).filter( ( [ key ] ) => BASE_TRIGGERS.includes( key ) ),
+		Object.entries( TRIGGER_OPTIONS ).filter( ( [ key ] ) => BASE_TRIGGERS.includes( key ) )
 	);
 
 	const disabledOptions = Object.fromEntries(
-		Object.entries( TRIGGER_OPTIONS ).filter( ( [ key ] ) => ! BASE_TRIGGERS.includes( key ) ),
+		Object.entries( TRIGGER_OPTIONS ).filter( ( [ key ] ) => ! BASE_TRIGGERS.includes( key ) )
 	);
 
 	return (
