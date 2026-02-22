@@ -51,6 +51,7 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 			elements,
 			isLocked: element.isLocked || false,
 			editor_settings: element.editor_settings || {},
+			styles: element.styles || {},
 		};
 	}
 }

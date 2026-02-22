@@ -7,7 +7,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Email_Form_Action_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Toggle_Control;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
+use ElementorPro\Modules\AtomicForm\Submit_Button\Submit_Button;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
@@ -20,11 +20,13 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Email_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V2_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
-
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -33,6 +35,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Form extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
+	const FIELD_CONTAINER_STYLE_KEY = 'input-container';
+
+	private static $field_container_global_class_filter_registered = false;
+
+	/** Used by field-container divs to add the Settings panel global class at render time. */
+	private static $current_form_global_class = '';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -45,6 +53,16 @@ class Atomic_Form extends Atomic_Element_Base {
 
 	public static function get_element_type(): string {
 		return self::get_type();
+	}
+
+	/**
+	 * Returns the field container global class for the form currently rendering its children.
+	 * Used by Div_Block when rendering a form field container so the class appears in frontend output.
+	 *
+	 * @return string
+	 */
+	public static function get_current_form_global_class(): string {
+		return self::$current_form_global_class;
 	}
 
 	public function get_title() {
@@ -72,6 +90,8 @@ class Atomic_Form extends Atomic_Element_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
+			'field_container_global_class' => String_Prop_Type::make()
+				->default( '' ),
 			'form-name' => String_Prop_Type::make()
 				->default( __( 'Form', 'elementor' ) ),
 			'form-state' => String_Prop_Type::make()
@@ -143,6 +163,9 @@ class Atomic_Form extends Atomic_Element_Base {
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
 				->set_items( [
+					Text_Control::bind_to( 'field_container_global_class' )
+						->set_label( __( 'Field container global class', 'elementor' ) )
+						->set_placeholder( __( 'e.g. my-global-class', 'elementor' ) ),
 					Text_Control::bind_to( '_cssid' )
 						->set_label( __( 'ID', 'elementor' ) )
 						->set_meta( $this->get_css_id_control_meta() ),
@@ -151,15 +174,39 @@ class Atomic_Form extends Atomic_Element_Base {
 	}
 
 	protected function define_base_styles(): array {
-		$display = String_Prop_Type::generate( 'block' );
-
-		return [
+		$styles = [
 			static::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
-						->add_prop( 'display', $display )
+						->set_breakpoint( Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP )
+						->add_prop( 'display', String_Prop_Type::generate( 'flex' ) )
+						->add_prop( 'flex', String_Prop_Type::generate( '1' ) )
+						->add_prop( 'flex-direction', String_Prop_Type::generate( 'row' ) )
+						->add_prop( 'flex-wrap', String_Prop_Type::generate( 'wrap' ) )
+						->add_prop( 'gap', Size_Prop_Type::generate( [
+							'size' => 1,
+							'unit' => '%',
+						] ) )
+				),
+			static::FIELD_CONTAINER_STYLE_KEY => Style_Definition::make()
+				->set_label( 'field-container' )
+				->add_variant(
+					Style_Variant::make()
+						->set_breakpoint( Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP )
+						->add_prop( 'padding', Size_Prop_Type::generate( [
+							'size' => 0,
+							'unit' => 'px',
+						] ) )
+						->add_prop( 'gap', Size_Prop_Type::generate( [
+							'size' => 1,
+							'unit' => '%',
+						] ) )
+						->add_prop( 'flex-direction', String_Prop_Type::generate( 'column' ) )
+						->add_prop( 'flex-wrap', String_Prop_Type::generate( 'wrap' ) )
 				),
 		];
+
+		return $styles;
 	}
 
 	protected function define_panel_categories(): array {
@@ -172,52 +219,54 @@ class Atomic_Form extends Atomic_Element_Base {
 
 	protected function define_default_children() {
 		return [
-			// First row - two columns (Name and Last name)
-			$this->build_form_row( [
-				$this->build_field_group(
-					__( 'Name', 'elementor' ),
-					'name',
-					'text',
-					__( 'Placeholder', 'elementor' )
-				),
-				$this->build_field_group(
-					__( 'Last name', 'elementor' ),
-					'last-name',
-					'text',
-					__( 'your@mail.com', 'elementor' )
-				),
-			], 'two-columns' ),
+			// First row - two field containers side by side
+		
+			$this->build_field_container(
+				__( 'Name', 'elementor' ),
+				'name',
+				'text',
+				__( 'Placeholder', 'elementor' ),
+				[ 
+					'size' => 49.5,
+					'global_class' => 'input-container-aaa',
+				]
+			),
+			$this->build_field_container(
+				__( 'Last name', 'elementor' ),
+				'last-name',
+				'text',
+				__( 'your@mail.com', 'elementor' ),
+				[ 
+					'size' => 49.5,
+					'global_class' => 'input-container-aaa',
+				]
+			),
 
-			// Second row - Email field (full width)
-			$this->build_field_group(
+			$this->build_field_container(
 				__( 'Email', 'elementor' ),
 				'email',
 				'email',
 				__( 'your@mail.com', 'elementor' )
 			),
 
-			$this->build_textarea_group(
+			$this->build_field_container(
 				__( 'Message', 'elementor' ),
 				'message',
+				'textarea',
 				__( 'Your message', 'elementor' )
 			),
 
-			Widget_Builder::make( Atomic_Button::get_element_type() )
+			// Submit button
+			Widget_Builder::make( Submit_Button::get_element_type() )
 				->settings( [
 					'text' => Html_V2_Prop_Type::generate( [
 						'content'  => __( 'Submit', 'elementor' ),
 						'children' => [],
 					] ),
-					'attributes' => Attributes_Prop_Type::generate( [
-						Key_Value_Prop_Type::generate( [
-							'key' => String_Prop_Type::generate( 'type' ),
-							'value' => String_Prop_Type::generate( 'submit' ),
-						] ),
-					] ),
 				] )
 				->is_locked( true )
 				->build(),
-
+	
 			// Status messages
 			$this->build_status_message(
 				__( 'Thank you! Your submission has been received.', 'elementor' ),
@@ -230,6 +279,49 @@ class Atomic_Form extends Atomic_Element_Base {
 				__( 'Error message', 'elementor' )
 			),
 		];
+	}
+	
+	// Helper methods
+	private function build_label( string $text, string $input_id ): array {
+		return Widget_Builder::make( 'e-form-label' )
+			->settings( [
+				'text' => Html_V2_Prop_Type::generate( [
+					'content'  => $text,
+					'children' => [],
+				] ),
+				'input-id' => String_Prop_Type::generate( $input_id ),
+			] )
+			->build();
+	}
+
+	private function build_input( string $placeholder, string $field_id, string $type = 'text', array $options = [] ): array {
+		if ( $type === 'textarea' ) {
+			return Widget_Builder::make( 'e-form-textarea' )
+				->settings( [
+					'placeholder' => String_Prop_Type::generate( $placeholder ),
+					'rows' => Number_Prop_Type::generate( $options['rows'] ?? 4 ),
+				] )
+				->build();
+		}
+
+		return Widget_Builder::make( 'e-form-input' )
+			->settings( [
+				'placeholder' => String_Prop_Type::generate( $placeholder ),
+				'type' => String_Prop_Type::generate( $type ),
+			] )
+			->build();
+	}
+
+	private function build_field_container( string $label_text, string $field_id, string $input_type, string $placeholder, array $options = [] ): array {
+		return Element_Builder::make( Div_Block::get_element_type() )
+			->editor_settings( [
+				'title' => $label_text . ' Field',
+			] )
+			->children( [
+				$this->build_label( $label_text, $field_id ),
+				$this->build_input( $placeholder, $field_id, $input_type ),
+			] )
+			->build();
 	}
 
 	private function build_status_message( string $message, string $state, string $title ): array {
@@ -261,115 +353,17 @@ class Atomic_Form extends Atomic_Element_Base {
 			->build();
 	}
 
-	private function build_field_group( string $label_text, string $field_id, string $input_type, string $placeholder ): array {
-		$children = [];
-		
-		// Add Label widget with Html_V2_Prop_Type format
-		$children[] = Widget_Builder::make( 'e-form-label' )
-			->settings( [
-				'text' => Html_V2_Prop_Type::generate( [
-					'content'  => $label_text,
-					'children' => [],
-				] ),
-				'input-id' => String_Prop_Type::generate( $field_id ),
-			] )
-			->build();
-		
-		// Add input field
-		$children[] = Widget_Builder::make( 'e-form-input' )
-			->settings( [
-				'placeholder' => String_Prop_Type::generate( $placeholder ),
-				'type' => String_Prop_Type::generate( $input_type ),
-				'attributes' => Attributes_Prop_Type::generate( [
-					Key_Value_Prop_Type::generate( [
-						'key' => String_Prop_Type::generate( 'id' ),
-						'value' => String_Prop_Type::generate( $field_id ),
-					] ),
-					Key_Value_Prop_Type::generate( [
-						'key' => String_Prop_Type::generate( 'name' ),
-						'value' => String_Prop_Type::generate( $field_id ),
-					] ),
-				] ),
-			] )
-			->build();
-		
-		return Element_Builder::make( Div_Block::get_element_type() )
-			->settings( [
-				'attributes' => Attributes_Prop_Type::generate( [
-					Key_Value_Prop_Type::generate( [
-						'key' => String_Prop_Type::generate( 'style' ),
-						'value' => String_Prop_Type::generate( 'flex: 1;' ),
-					] ),
-				] ),
-			] )
-			->editor_settings( [
-				'title' => $label_text . ' ' . __( 'Field', 'elementor' ),
-			] )
-			->children( $children )
-			->build();
-	}
-
-	private function build_textarea_group( string $label_text, string $field_id, string $placeholder ): array {
-		$children = [];
-		
-		// Add Label widget with Html_V2_Prop_Type format
-		$children[] = Widget_Builder::make( 'e-form-label' )
-			->settings( [
-				'text' => Html_V2_Prop_Type::generate( [
-					'content'  => $label_text,
-					'children' => [],
-				] ),
-				'input-id' => String_Prop_Type::generate( $field_id ),
-			] )
-			->build();
-		
-		// Add textarea field
-		$children[] = Widget_Builder::make( 'e-form-textarea' )
-			->settings( [
-				'placeholder' => String_Prop_Type::generate( $placeholder ),
-				'rows' => Number_Prop_Type::generate( 4 ),
-				'attributes' => Attributes_Prop_Type::generate( [
-					Key_Value_Prop_Type::generate( [
-						'key' => String_Prop_Type::generate( 'id' ),
-						'value' => String_Prop_Type::generate( $field_id ),
-					] ),
-					Key_Value_Prop_Type::generate( [
-						'key' => String_Prop_Type::generate( 'name' ),
-						'value' => String_Prop_Type::generate( $field_id ),
-					] ),
-				] ),
-			] )
-			->build();
-		
-		return Element_Builder::make( Div_Block::get_element_type() )
-			->editor_settings( [
-				'title' => $label_text . ' ' . __( 'Field', 'elementor' ),
-			] )
-			->children( $children )
-			->build();
-	}
-
-	private function build_form_row( array $children, string $layout_type = 'single' ): array {
-		$row_settings = [
-			'attributes' => Attributes_Prop_Type::generate( [
-				Key_Value_Prop_Type::generate( [
-					'key' => String_Prop_Type::generate( 'data-layout' ),
-					'value' => String_Prop_Type::generate( $layout_type ),
-				] ),
-				Key_Value_Prop_Type::generate( [
-					'key' => String_Prop_Type::generate( 'style' ),
-					'value' => String_Prop_Type::generate( 'display: flex; gap: 10px;' ),
-				] ),
-			] ),
-		];
-
-		return Element_Builder::make( Div_Block::get_element_type() )
-			->settings( $row_settings )
-			->editor_settings( [
-				'title' => __( 'Form Row', 'elementor' ),
-			] )
-			->children( $children )
-			->build();
+	public function print_content() {
+		$raw = $this->get_settings( 'field_container_global_class' );
+		$prev = self::$current_form_global_class;
+		self::$current_form_global_class = is_array( $raw ) && isset( $raw['value'] )
+			? (string) $raw['value']
+			: ( is_string( $raw ) ? $raw : '' );
+		try {
+			parent::print_content();
+		} finally {
+			self::$current_form_global_class = $prev;
+		}
 	}
 
 	protected function add_render_attributes() {
