@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 
+import { Direction } from '../components/controls/direction';
 import { Easing } from '../components/controls/easing';
 import { Effect } from '../components/controls/effect';
+import { EffectType } from '../components/controls/effect-type';
 import { Trigger } from '../components/controls/trigger';
 import { InteractionDetails } from '../components/interaction-details';
 import type { InteractionItemValue } from '../types';
@@ -88,6 +90,18 @@ describe( 'InteractionDetails', () => {
 				};
 			}
 
+			if ( type === 'direction' ) {
+				return {
+					component: Direction,
+				};
+			}
+
+			if ( type === 'effectType' ) {
+				return {
+					component: EffectType,
+				};
+			}
+
 			return null;
 		} );
 	} );
@@ -105,6 +119,20 @@ describe( 'InteractionDetails', () => {
 			expect( screen.getByText( 'Duration' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Delay' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Easing' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should not render scrollOn-only controls for load or scrollIn triggers', () => {
+			// Arrange + Assert (load)
+			renderInteractionDetails( createInteractionItemValue( { trigger: 'load' } ) );
+			expect( screen.queryByText( 'Relative To' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Offset Top' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Offset Bottom' ) ).not.toBeInTheDocument();
+
+			// Arrange + Assert (scrollIn)
+			renderInteractionDetails( createInteractionItemValue( { trigger: 'scrollIn' } ) );
+			expect( screen.queryByText( 'Relative To' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Offset Top' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Offset Bottom' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'should render with custom values', () => {
@@ -177,6 +205,28 @@ describe( 'InteractionDetails', () => {
 			renderInteractionDetails( interaction );
 
 			expect( screen.getByText( 'Disabled: true' ) ).toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'Trigger menu options', () => {
+		it( 'should show "While scrolling" option as disabled in the trigger menu', () => {
+			const interaction = createInteractionItemValue( { trigger: 'load' } );
+
+			renderInteractionDetails( interaction );
+
+			const comboboxes = screen.getAllByRole( 'combobox' );
+			const triggerSelect = comboboxes[ 0 ];
+
+			fireEvent.mouseDown( triggerSelect );
+
+			// Sanity: core UI enables only these trigger options.
+			expect( screen.getByRole( 'option', { name: /page load/i } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'option', { name: /scroll into view/i } ) ).toBeInTheDocument();
+
+			// Guard: Pro-only trigger should be present but disabled in the core trigger control.
+			const scrollOnOption = screen.getByRole( 'option', { name: /while scrolling/i } );
+			expect( scrollOnOption ).toBeInTheDocument();
+			expect( scrollOnOption ).toHaveAttribute( 'aria-disabled', 'true' );
 		} );
 	} );
 

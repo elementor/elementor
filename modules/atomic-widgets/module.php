@@ -30,6 +30,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Import_Export_Pla
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Classes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Date_Time_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Html_V2_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Html_V3_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Link_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Plain_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Color_Overlay_Transformer;
@@ -72,6 +73,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Backdrop_Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Gradient_Color_Stop_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V2_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Layout_Direction_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Flex_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
@@ -99,6 +101,8 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content\Atomic_Tab_Content;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Success_Message\Form_Success_Message;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Error_Message\Form_Error_Message;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
@@ -130,6 +134,7 @@ class Module extends BaseModule {
 		'editor-styles', // TODO: Need to be registered and not enqueued.
 		'editor-styles-repository',
 		'editor-interactions',
+		'editor-templates',
 	];
 
 	public function get_name() {
@@ -272,6 +277,8 @@ class Module extends BaseModule {
 
 		if ( \Elementor\Utils::has_pro() && Plugin::$instance->experiments->is_feature_active( 'e_pro_atomic_form' ) ) {
 			$elements_manager->register_element_type( new Atomic_Form() );
+			$elements_manager->register_element_type( new Form_Success_Message() );
+			$elements_manager->register_element_type( new Form_Error_Message() );
 		}
 	}
 
@@ -286,6 +293,7 @@ class Module extends BaseModule {
 		$transformers->register( Attributes_Prop_Type::get_key(), new Attributes_Transformer() );
 		$transformers->register( Date_Time_Prop_Type::get_key(), new Date_Time_Transformer() );
 		$transformers->register( Html_V2_Prop_Type::get_key(), new Html_V2_Transformer() );
+		$transformers->register( Html_V3_Prop_Type::get_key(), new Html_V3_Transformer() );
 	}
 
 	private function register_styles_transformers( Transformers_Registry $transformers ) {

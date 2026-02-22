@@ -26,7 +26,7 @@ import {
 	booleanPropTypeUtil,
 	DateTimePropTypeUtil,
 	emailPropTypeUtil,
-	htmlV2PropTypeUtil,
+	htmlV3PropTypeUtil,
 	imagePropTypeUtil,
 	imageSrcPropTypeUtil,
 	keyValuePropTypeUtil,
@@ -67,7 +67,7 @@ const controlTypes = {
 	toggle: { component: ToggleControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	'date-time': { component: DateTimeControl, layout: 'full', propTypeUtil: DateTimePropTypeUtil },
 	video: { component: VideoMediaControl, layout: 'full', propTypeUtil: videoSrcPropTypeUtil },
-	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: htmlV2PropTypeUtil },
+	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: htmlV3PropTypeUtil },
 	email: { component: EmailFormActionControl, layout: 'custom', propTypeUtil: emailPropTypeUtil },
 } as const satisfies ControlRegistry;
 

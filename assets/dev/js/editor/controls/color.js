@@ -197,6 +197,11 @@ export default class extends ControlBaseDataView {
 		return $color;
 	}
 
+	createHeaderItemMarkup( text ) {
+		return jQuery( '<div>', { class: 'e-global__group-header' } )
+			.text( text );
+	}
+
 	createColorPreviewBox( color ) {
 		const $colorPreviewContainer = jQuery( '<div>', { class: 'e-global__color-preview-container' } ),
 			$colorPreviewColor = jQuery( '<div>', { class: 'e-global__color-preview-color', style: 'background-color: ' + color } ),
@@ -215,14 +220,35 @@ export default class extends ControlBaseDataView {
 
 	// Create the markup for the colors in the global select dropdown.
 	buildGlobalsList( globalColors, $globalPreviewItemsContainer ) {
+		const v4Colors = [];
+		const v3Colors = [];
+
 		Object.values( globalColors ).forEach( ( color ) => {
 			if ( ! color.value ) {
 				return;
 			}
 
-			const $color = this.createGlobalItemMarkup( color );
+			if ( 'v4' === color.group ) {
+				v4Colors.push( color );
+			} else {
+				v3Colors.push( color );
+			}
+		} );
 
-			$globalPreviewItemsContainer.append( $color );
+		if ( v4Colors.length ) {
+			$globalPreviewItemsContainer.append(
+				this.createHeaderItemMarkup( __( 'Version 4 Variables', 'elementor' ) ),
+			);
+
+			v4Colors.forEach( ( color ) => {
+				$globalPreviewItemsContainer.append( this.createGlobalItemMarkup( color ) );
+			} );
+
+			$globalPreviewItemsContainer.append( this.createHeaderItemMarkup( __( 'Version 3 Global Colors', 'elementor' ) ) );
+		}
+
+		v3Colors.forEach( ( color ) => {
+			$globalPreviewItemsContainer.append( this.createGlobalItemMarkup( color ) );
 		} );
 	}
 
