@@ -100,18 +100,4 @@ class Component_Instance extends Atomic_Widget_Base {
 
 		return $overrides;
 	}
-
-	public function get_data( $item = null ) {
-		$data = parent::get_data( $item );
-
-		if ( isset( $data['settings']['component_instance']['value']['overrides']['value'] ) ) {
-			$overrides_value = $data['settings']['component_instance']['value']['overrides']['value'];
-			// Format overrides to indexed array (fixes data corrupted by bug ED-22999)
-			$formatted_overrides = array_values( $overrides_value );
-
-			$data['settings']['component_instance']['value']['overrides']['value'] = $formatted_overrides;
-		}
-
-		return $data;
-	}
 }
