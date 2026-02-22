@@ -5,8 +5,8 @@ import { type ComponentInstanceOverride } from '../../prop-types/component-insta
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
 import { selectData } from '../../store/store';
 import { type OverridableProp, type PublishedComponent } from '../../types';
+import { getOverridableProp } from '../../utils/get-overridable-prop';
 import { extractInnerOverrideInfo } from '../../utils/overridable-props-utils';
-import { getOverridableProp } from '../overridable-props/utils/get-overridable-prop';
 
 export function useResolvedOriginValue( override: ComponentInstanceOverride | null, overridableProp: OverridableProp ) {
 	const components = useSelector( selectData );

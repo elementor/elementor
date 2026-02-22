@@ -64,7 +64,7 @@ jest.mock( '../../utils/get-container-for-new-element', () => ( {
 	} ) ),
 } ) );
 
-jest.mock( '../create-component-form/utils/replace-element-with-component', () => ( {
+jest.mock( '../../utils/create-component-model', () => ( {
 	createComponentModel: jest.fn( ( { id, name } ) => ( { id, name, elType: 'component' } ) ),
 } ) );
 
@@ -159,7 +159,7 @@ describe( 'ComponentsTab', () => {
 			const buttonComponent = mockComponents[ 0 ];
 
 			// Act
-			renderWithStore( <ComponentItem component={ buttonComponent } renameComponent={ jest.fn() } />, store );
+			renderWithStore( <ComponentItem component={ buttonComponent } />, store );
 
 			// Assert
 			const componentItem = screen.getByRole( 'button', { name: /Button Component/ } );
@@ -172,7 +172,7 @@ describe( 'ComponentsTab', () => {
 			const [ buttonComponent ] = mockComponents;
 
 			// Act
-			renderWithStore( <ComponentItem component={ buttonComponent } renameComponent={ jest.fn() } />, store );
+			renderWithStore( <ComponentItem component={ buttonComponent } />, store );
 
 			const componentItem = screen.getByRole( 'button', { name: /Button Component/ } );
 			fireEvent.dragStart( componentItem );

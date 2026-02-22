@@ -6,7 +6,7 @@ import { componentInstanceOverridePropTypeUtil } from '../../prop-types/componen
 import { componentInstanceOverridesPropTypeUtil } from '../../prop-types/component-instance-overrides-prop-type';
 import { componentInstancePropTypeUtil } from '../../prop-types/component-instance-prop-type';
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
-import { revertAllOverridablesInContainer, revertAllOverridablesInElementData } from '../revert-overridable-settings';
+import { revertAllOverridablesInContainer, revertAllOverridablesInElementData } from '../../extended/utils/revert-overridable-settings';
 
 jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
