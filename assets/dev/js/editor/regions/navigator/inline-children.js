@@ -21,7 +21,7 @@ export default class InlineChildren {
 		this.invalidateCache();
 	}
 
-	getChildren() {
+	get() {
 		if ( undefined !== this._cache ) {
 			return this._cache;
 		}
@@ -64,7 +64,7 @@ export default class InlineChildren {
 
 		view.ui.elements.children( '.elementor-navigator__inline-child' ).remove();
 
-		const inlineChildren = this.getChildren();
+		const inlineChildren = this.get();
 
 		view.$el.toggleClass( 'elementor-navigator__element--has-children', !! view.hasChildren() );
 
@@ -108,7 +108,7 @@ export default class InlineChildren {
 
 			$inner.on( 'click', ( event ) => {
 				event.stopPropagation();
-				this.onChildClick( child.id );
+				this.onClick( child.id );
 			} );
 
 			this.clearEvents( $inner );
@@ -133,7 +133,7 @@ export default class InlineChildren {
 		} );
 	}
 
-	onChildClick( inlineId ) {
+	onClick( inlineId ) {
 		this.clearHighlights();
 
 		this.elementView.ui.elements

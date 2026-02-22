@@ -47,7 +47,7 @@ export default class extends Marionette.CompositeView {
 			return RootEmpty;
 		}
 
-		if ( this.inlineChildren.getChildren() ) {
+		if ( this.inlineChildren.get() ) {
 			return null;
 		}
 
@@ -155,7 +155,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	hasChildren() {
-		return this.model.get( 'elements' )?.length || 'widget' !== this.model.get( 'elType' ) || !! this.inlineChildren?.getChildren();
+		return this.model.get( 'elements' )?.length || 'widget' !== this.model.get( 'elType' ) || !! this.inlineChildren?.get();
 	}
 
 	toggleList( state, callback ) {
