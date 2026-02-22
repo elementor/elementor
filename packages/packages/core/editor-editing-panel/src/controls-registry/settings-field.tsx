@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { PropKeyProvider, PropProvider, type SetValueMeta } from '@elementor/editor-controls';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
@@ -15,6 +15,7 @@ import {
 	isDependencyMet,
 	type PropKey,
 	type Props,
+	type PropsSchema,
 	type PropType,
 	type PropValue,
 } from '@elementor/editor-props';
@@ -33,22 +34,34 @@ type SettingsFieldProps = {
 
 const HISTORY_DEBOUNCE_WAIT = 800;
 
+const useDependencyEffect = ( bind: string, elementId: ElementID, propsSchema: PropsSchema ) => {
+	const elementSettingsForDepCheck = useElementSettings< PropValue >( elementId, Object.keys( propsSchema ) );
+
+	Object.keys( propsSchema ).forEach( ( key ) => {
+		if ( ! Object.hasOwn( elementSettingsForDepCheck || {}, key ) ) {
+			if ( propsSchema[ key ].default !== null ) {
+				elementSettingsForDepCheck[ key ] = propsSchema[ key ].default as Values[ keyof Values ];
+			}
+		}
+	} );
+	const propType = propsSchema[ bind ];
+	const depCheck = isDependencyMet( propType?.dependencies, elementSettingsForDepCheck );
+	return {
+		isDisabled: ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, elementSettingsForDepCheck ).isMet,
+		isHidden:
+			! depCheck.isMet &&
+			! isDependency( depCheck.failingDependencies[ 0 ] ) &&
+			depCheck.failingDependencies[ 0 ]?.effect === 'hide',
+	};
+};
+
 export const SettingsField = ( { bind, children, propDisplayName }: SettingsFieldProps ) => {
 	const {
 		element: { id: elementId },
 		elementType: { propsSchema, dependenciesPerTargetMapping = {} },
 	} = useElement();
 
-	const [ shouldHide, setShouldHide ] = useState( false );
 	const elementSettingValues = useElementSettings< PropValue >( elementId, Object.keys( propsSchema ) ) as Values;
-
-	Object.keys( propsSchema ).forEach( ( key ) => {
-		if ( ! Object.hasOwn( elementSettingValues || {}, key ) ) {
-			if ( propsSchema[ key ].default !== null ) {
-				elementSettingValues[ key ] = propsSchema[ key ].default as Values[ keyof Values ];
-			}
-		}
-	} );
 
 	const value = { [ bind ]: elementSettingValues?.[ bind ] ?? null };
 
@@ -72,22 +85,10 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 		}
 	};
 
-	const propCheckDisabled = ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, elementSettingValues ).isMet;
-
-	const propTypeToBind = propsSchema[ bind ];
-
-	useEffect( () => {
-		const depCheck = isDependencyMet( propTypeToBind?.dependencies, elementSettingValues );
-		setShouldHide(
-			! depCheck.isMet &&
-				! isDependency( depCheck.failingDependencies[ 0 ] ) &&
-				depCheck.failingDependencies[ 0 ]?.effect === 'hide'
-		);
-	}, [ elementSettingValues, propTypeToBind?.dependencies, bind ] );
-	if ( shouldHide ) {
+	const { isDisabled: propCheckDisabled, isHidden } = useDependencyEffect( bind, elementId, propsSchema );
+	if ( isHidden ) {
 		return null;
 	}
-
 	return (
 		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ propCheckDisabled }>
 			<PropKeyProvider bind={ bind }>{ children }</PropKeyProvider>

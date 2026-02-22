@@ -170,17 +170,11 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 			'unit' => 'vw',
 			'size' => 100,
 		]);
-		$auto_size = Size_Prop_Type::generate([
-			'unit' => 'custom',
-			'size' => 'auto',
-		]);
 		return [
 			'base' => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'max-width', $max_width )
-						->add_prop( 'width', $auto_size )
-						->add_prop( 'height', $auto_size )
 						->add_prop( 'display', String_Prop_Type::generate( 'inline-block' ) )
 						->add_prop( 'aspect-ratio', String_Prop_Type::generate( '16/9' ) )
 				),
