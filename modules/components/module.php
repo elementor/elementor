@@ -3,6 +3,8 @@ namespace Elementor\Modules\Components;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Plugin;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\Components\Styles\Component_Styles;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
@@ -27,8 +29,17 @@ class Module extends BaseModule {
 		return 'components';
 	}
 
+	public function is_experiment_active() {
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME )
+			&& Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
+	}
+
 	public function __construct() {
 		parent::__construct();
+
+		if ( ! $this->is_experiment_active() ) {
+			return;
+		}
 
 		$this->register_component_post_type();
 
