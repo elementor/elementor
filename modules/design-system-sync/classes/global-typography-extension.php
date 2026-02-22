@@ -85,6 +85,7 @@ class Global_Typography_Extension {
 				continue;
 			}
 
+			// This is for the control edit button to be shown, no control values no edit button. ¯\_(ツ)_/¯
 			$default_values[] = [
 				'_id' => 'v4-' . $label,
 				'title' => $label,
