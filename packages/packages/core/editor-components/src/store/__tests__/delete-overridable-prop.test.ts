@@ -3,6 +3,7 @@ import { getContainer, getElementSetting, updateElementSettings, type V1ElementD
 import { numberPropTypeUtil, type PropValue, type TransformablePropValue } from '@elementor/editor-props';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
+import { deleteOverridableProp } from '../../extended/store/actions/delete-overridable-prop';
 import { componentInstanceOverridePropTypeUtil } from '../../prop-types/component-instance-override-prop-type';
 import {
 	componentInstanceOverridesPropTypeUtil,
@@ -11,7 +12,6 @@ import {
 import { componentInstancePropTypeUtil } from '../../prop-types/component-instance-prop-type';
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
 import type { OverridableProp, OverridableProps, PublishedComponent } from '../../types';
-import { deleteOverridableProp } from '../actions/delete-overridable-prop';
 import { SLICE_NAME } from '../store';
 
 jest.mock( '@elementor/editor-elements' );
