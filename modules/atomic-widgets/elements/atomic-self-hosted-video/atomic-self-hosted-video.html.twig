@@ -1,7 +1,18 @@
 {% set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') %}
 {% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
 {% set video_classes = base_styles.base %}
+{% set video_start_time = settings.start_time %}
+{% set video_end_time = settings.end_time %}
+{% if video_start_time is not empty %}
+	{% set video_timings = '#t=' ~ video_start_time %}
+{% else %}
+	{% set video_timings = '#t=0' %}
+{% endif %}
+{% if video_end_time is not empty and video_end_time > video_start_time %}
+	{% set video_timings = video_timings ~ ',' ~ video_end_time %}
+{% endif %}
 {% if settings.source.url is not empty %}
+  {% set video_url = settings.source.url | e('full_url') %}
 	<video
     data-id="{{ id }}" data-interaction-id="{{ id }}"
     data-e-type="{{ type }}" data-interactions="{{ interactions | json_encode | e('html_attr') }}"
@@ -18,7 +29,7 @@
 		{% if not settings.download %}controlslist="nodownload"{% endif %}
 		preload="{{ settings.preload }}"
 	>
-		<source src="{{ settings.source.url | e('full_url') }}">
+		<source src="{{ video_url ~ video_timings }}">
 	</video>
 {% else %}
 	{% if settings.poster_enabled %}
