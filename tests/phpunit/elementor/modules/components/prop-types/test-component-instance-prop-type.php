@@ -140,15 +140,25 @@ class Test_Component_Instance_Prop_Type extends Component_Prop_Type_Test_Base {
 				'overrides' => [
 					'$$type' => 'overrides',
 					'value' => [
-						$this->mocks->get_mock_valid_heading_title_component_override(),
 						[
 							'$$type' => 'override',
 							'value' => [
-								'override_key' => 'non-existent-key',
+								'override_key' => 'non-existent-key-1',
 								'override_value' => [ '$$type' => 'string', 'value' => 'Should be removed' ],
 								'schema_source' => ['type' => 'component', 'id' => self::VALID_COMPONENT_ID ],
 							],
 						],
+						$this->mocks->get_mock_valid_heading_title_component_override(),
+						$this->mocks->get_mock_valid_heading_tag_component_override(),
+						[
+							'$$type' => 'override',
+							'value' => [
+								'override_key' => 'non-existent-key-2',
+								'override_value' => [ '$$type' => 'string', 'value' => 'Should be removed' ],
+								'schema_source' => ['type' => 'component', 'id' => self::VALID_COMPONENT_ID ],
+							],
+						],
+						$this->mocks->get_mock_valid_image_image_component_override(),
 					],
 				],
 			],
@@ -156,8 +166,10 @@ class Test_Component_Instance_Prop_Type extends Component_Prop_Type_Test_Base {
 
 		// Assert
 		$overrides_array = $result['value']['overrides']['value'];
-		$this->assertCount( 1, $overrides_array );
+		$this->assertCount( 3, $overrides_array );
 		$this->assertEquals( 'prop-uuid-1', $overrides_array[0]['value']['override_key'] );
+		$this->assertEquals( 'prop-uuid-2', $overrides_array[1]['value']['override_key'] );
+		$this->assertEquals( 'prop-uuid-3', $overrides_array[2]['value']['override_key'] );
 	}
 
 	public function test_sanitize__handles_component_not_found() {
