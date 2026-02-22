@@ -45,4 +45,33 @@ class Classes_Provider {
 	public static function clear_cache() {
 		self::$cached_classes = null;
 	}
+
+	public static function get_default_breakpoint_props( array $variants ): array {
+		foreach ( $variants as $variant ) {
+			if ( ! isset( $variant['meta'] ) ) {
+				continue;
+			}
+
+			$meta = $variant['meta'];
+
+			if ( ! array_key_exists( 'breakpoint', $meta ) || ! array_key_exists( 'state', $meta ) ) {
+				continue;
+			}
+
+			$breakpoint = $meta['breakpoint'];
+			$state = $meta['state'];
+
+			if ( ! in_array( $breakpoint, [ null, 'desktop' ], true ) ) {
+				continue;
+			}
+
+			if ( ! in_array( $state, [ null, 'normal' ], true ) ) {
+				continue;
+			}
+
+			return $variant['props'] ?? [];
+		}
+
+		return [];
+	}
 }

@@ -121,7 +121,7 @@ class Global_Typography_Extension {
 
 		foreach ( $synced_classes as $id => $class ) {
 			$variants = $class['variants'] ?? [];
-			$default_props = $this->get_default_breakpoint_props( $variants );
+			$default_props = Classes_Provider::get_default_breakpoint_props( $variants );
 
 			if ( empty( $default_props ) ) {
 				continue;
@@ -139,35 +139,6 @@ class Global_Typography_Extension {
 		}
 
 		return $typography_classes;
-	}
-
-	private function get_default_breakpoint_props( array $variants ): array {
-		foreach ( $variants as $variant ) {
-			if ( ! isset( $variant['meta'] ) ) {
-				continue;
-			}
-
-			$meta = $variant['meta'];
-
-			if ( ! array_key_exists( 'breakpoint', $meta ) || ! array_key_exists( 'state', $meta ) ) {
-				continue;
-			}
-
-			$breakpoint = $meta['breakpoint'];
-			$state = $meta['state'];
-
-			if ( ! in_array( $breakpoint, [ null, 'desktop' ], true ) ) {
-				continue;
-			}
-
-			if ( ! in_array( $state, [ null, 'normal' ], true ) ) {
-				continue;
-			}
-
-			return $variant['props'] ?? [];
-		}
-
-		return [];
 	}
 
 	private function has_typography_props( array $props ): bool {
