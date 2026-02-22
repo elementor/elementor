@@ -34,10 +34,18 @@
 		border-radius: var(--e-a-border-radius);
 		transition: var(--e-a-transition-hover);
 		cursor: pointer;
+		background: none;
+		border: none;
+		font-family: inherit;
 
 		&:hover {
 			background: var(--e-a-bg-hover);
 			color: var(--e-a-color-txt-hover);
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--e-a-border-color-focus, #4F46E5);
+			outline-offset: 2px;
 		}
 
 		&:last-child {

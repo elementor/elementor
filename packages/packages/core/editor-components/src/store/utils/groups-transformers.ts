@@ -5,7 +5,9 @@ import { type OverridableProp, type OverridableProps, type OverridablePropsGroup
 
 type Groups = OverridableProps[ 'groups' ];
 
-export function removePropFromAllGroups( groups: Groups, propKey: string ): Groups {
+export function removePropFromAllGroups( groups: Groups, propKey: string | string[] ): Groups {
+	const propKeys = Array.isArray( propKey ) ? propKey : [ propKey ];
+
 	return {
 		...groups,
 		items: Object.fromEntries(
@@ -13,7 +15,7 @@ export function removePropFromAllGroups( groups: Groups, propKey: string ): Grou
 				groupId,
 				{
 					...group,
-					props: group.props.filter( ( p ) => p !== propKey ),
+					props: group.props.filter( ( p ) => ! propKeys.includes( p ) ),
 				},
 			] )
 		),

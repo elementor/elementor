@@ -43,6 +43,7 @@ export type StyleDefinition = {
 	variants: StyleDefinitionVariant[];
 	label: string;
 	type: StyleDefinitionType;
+	sync_to_v3?: boolean;
 };
 
 export type StyleDefinitionsMap = Record< StyleDefinition[ 'id' ], StyleDefinition >;

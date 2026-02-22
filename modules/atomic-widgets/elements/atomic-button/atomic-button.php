@@ -11,7 +11,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_V2_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
@@ -49,9 +49,9 @@ class Atomic_Button extends Atomic_Widget_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
-			'text' => Html_V2_Prop_Type::make()
+			'text' => Html_V3_Prop_Type::make()
 				->default( [
-					'content'  => __( 'Click here', 'elementor' ),
+					'content'  => String_Prop_Type::generate( __( 'Click here', 'elementor' ) ),
 					'children' => [],
 				] )
 				->description( 'The text displayed on the button.' ),

@@ -78,7 +78,64 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		} );
 	} );
 
-	test.skip( 'Interactions functionality end-to-end test', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Core trigger menu shows "While scrolling" as disabled and scrollOn-only controls stay hidden', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		await test.step( 'Add heading widget and navigate to interactions tab', async () => {
+			const container = await editor.addElement( { elType: 'container' }, 'document' );
+			await editor.addWidget( { widgetType: 'e-heading', container } );
+
+			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
+			await interactionsTab.click();
+			await expect( interactionsTab ).toHaveAttribute( 'aria-selected', 'true' );
+		} );
+
+		await test.step( 'Create an interaction and open popover', async () => {
+			const addInteractionButton = page.getByRole( 'button', { name: 'Create an interaction' } );
+			await expect( addInteractionButton ).toBeVisible();
+			await addInteractionButton.click();
+
+			await page.waitForSelector( '.MuiPopover-root' );
+			await expect( page.locator( '.MuiPopover-root' ) ).toBeVisible();
+		} );
+
+		await test.step( 'Assert trigger options and hidden scrollOn-only controls', async () => {
+			const popover = page.locator( '.MuiPopover-root' ).first();
+
+			// Open trigger menu (default is "Page load").
+			const triggerSelect = popover.getByText( 'Page load', { exact: true } );
+			await expect( triggerSelect ).toBeVisible();
+			await triggerSelect.click();
+
+			// Core trigger control enables only these two options.
+			await expect( page.getByRole( 'option', { name: 'Page load' } ) ).toBeVisible();
+			await expect( page.getByRole( 'option', { name: 'Scroll into view' } ) ).toBeVisible();
+
+			// Pro-only option is present but disabled in core runs.
+			const scrollOnOption = page.getByRole( 'option', { name: 'While scrolling' } );
+			await expect( scrollOnOption ).toBeVisible();
+			await expect( scrollOnOption ).toBeDisabled();
+
+			// Close menu without changing selection.
+			await page.keyboard.press( 'Escape' );
+
+			// ScrollOn-only controls should not render for "Page load".
+			await expect( popover.getByText( 'Relative To', { exact: true } ) ).toHaveCount( 0 );
+			await expect( popover.getByText( 'Offset Top', { exact: true } ) ).toHaveCount( 0 );
+			await expect( popover.getByText( 'Offset Bottom', { exact: true } ) ).toHaveCount( 0 );
+
+			// Switch to "Scroll into view" and ensure scrollOn-only controls still do not render.
+			await triggerSelect.click();
+			await page.getByRole( 'option', { name: 'Scroll into view' } ).click();
+
+			await expect( popover.getByText( 'Relative To', { exact: true } ) ).toHaveCount( 0 );
+			await expect( popover.getByText( 'Offset Top', { exact: true } ) ).toHaveCount( 0 );
+			await expect( popover.getByText( 'Offset Bottom', { exact: true } ) ).toHaveCount( 0 );
+		} );
+	} );
+
+	test( 'Interactions functionality end-to-end test', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
@@ -103,33 +160,46 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			const interactionTag = page.locator( '.MuiTag-root' ).first();
 
 			await expect( interactionTag ).toBeVisible();
-			await page.waitForSelector( '.MuiPopover-root' );
+			const popover = page.locator( '.MuiPopover-root' );
+			await popover.waitFor( { state: 'visible' } );
 
-			const selectOption = async ( openSelector, optionName ) => {
-				await expect( openSelector ).toBeVisible();
-				await openSelector.click();
+			// Helper function to select from a dropdown
+			const selectOption = async ( currentText, optionName ) => {
+				const button = popover.getByText( currentText, { exact: true } );
+				await expect( button ).toBeVisible();
+				await button.click();
 
 				const option = page.getByRole( 'option', { name: optionName } );
 				await expect( option ).toBeVisible();
 				await option.click();
 			};
 
-			await selectOption( page.getByText( 'Page load', { exact: true } ), 'Scroll into view' );
-			await selectOption( page.getByText( 'Fade', { exact: true } ), 'Slide' );
-			await editor.v4Panel.fillField( 0, '300' );
+			// Change trigger from "Page load" to "Scroll into view"
+			await selectOption( 'Page load', 'Scroll into view' );
 
-			const effectTypeOption = page.getByLabel( 'Out', { exact: true } );
-			const directionOption = page.getByLabel( 'To bottom', { exact: true } );
+			// Change animation from "Fade" to "Slide"
+			await selectOption( 'Fade', 'Slide' );
 
-			await expect( effectTypeOption ).toBeVisible();
-			await effectTypeOption.click();
+			// Set duration to 300ms
+			const durationInput = popover.locator( 'input[type="number"]' ).first();
+			await expect( durationInput ).toBeVisible();
+			await durationInput.fill( '300' );
 
-			await expect( directionOption ).toBeVisible();
-			await directionOption.click();
+			// Change effect type to "Out"
+			const effectTypeButton = popover.getByLabel( 'Out', { exact: true } );
+			await expect( effectTypeButton ).toBeVisible();
+			await effectTypeButton.click();
 
-			await expect( interactionTag ).toContainText( 'Scroll into view: Slide Out' );
+			// Change direction to "To bottom"
+			const directionButton = popover.getByLabel( 'To bottom', { exact: true } );
+			await expect( directionButton ).toBeVisible();
+			await directionButton.click();
 
+			// Close the popover by clicking outside
 			await page.locator( 'body' ).click();
+
+			// Verify the tag shows the correct text
+			await expect( interactionTag ).toContainText( 'Scroll into view: Slide Out' );
 		} );
 
 		await test.step( 'Publish and view the page', async () => {
@@ -212,13 +282,12 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		} );
 	} );
 
-	// Skipped until promotion control is added ED-21615
-	test.skip( 'Replay control is visible and disabled in interactions popover', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Replay control is visible and disabled in interactions popover', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Add heading widget and navigate to interactions tab', async () => {
-			const container = await editor.addElement( { elType: 'e-div-block' }, 'document' );
+			const container = await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.addWidget( { widgetType: 'e-heading', container } );
 
 			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
@@ -242,7 +311,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			await expect( replayLabel ).not.toBeVisible();
 		} );
 
-		await test.step( 'Verify Replay control is visible and disabled', async () => {
+		await test.step( 'Verify Replay control is visible with Yes button disabled', async () => {
 			// Arrange
 			const selectOption = async ( openSelector, optionName ) => {
 				await openSelector.click();
@@ -265,9 +334,9 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			await expect( yesButton ).toBeVisible();
 			await expect( noButton ).toBeVisible();
 
-			// Assert - buttons are disabled
+			// Assert - Yes button is disabled (promotion), No button is enabled
 			await expect( yesButton ).toBeDisabled();
-			await expect( noButton ).toBeDisabled();
+			await expect( noButton ).not.toBeDisabled();
 		} );
 	} );
 
