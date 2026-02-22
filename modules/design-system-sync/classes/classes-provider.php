@@ -12,6 +12,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Classes_Provider {
 	private static $cached_classes = null;
 
+	const TYPOGRAPHY_PROPS = [
+		'font-family',
+		'font-size',
+		'font-weight',
+		'font-style',
+		'text-decoration',
+		'line-height',
+		'letter-spacing',
+		'word-spacing',
+		'text-transform',
+	];
+
 	public static function get_all_classes(): array {
 		if ( null !== self::$cached_classes ) {
 			return self::$cached_classes;
@@ -73,5 +85,46 @@ class Classes_Provider {
 		}
 
 		return [];
+	}
+
+	public static function has_typography_props( array $props ): bool {
+		foreach ( self::TYPOGRAPHY_PROPS as $key ) {
+			if ( isset( $props[ $key ] ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public static function get_typography_classes(): array {
+		$synced_classes = self::get_synced_classes();
+
+		if ( empty( $synced_classes ) ) {
+			return [];
+		}
+
+		$typography_classes = [];
+
+		foreach ( $synced_classes as $id => $class ) {
+			$variants = $class['variants'] ?? [];
+			$default_props = self::get_default_breakpoint_props( $variants );
+
+			if ( empty( $default_props ) ) {
+				continue;
+			}
+
+			if ( ! self::has_typography_props( $default_props ) ) {
+				continue;
+			}
+
+			$typography_classes[] = [
+				'id' => $id,
+				'label' => $class['label'] ?? '',
+				'props' => $default_props,
+			];
+		}
+
+		return $typography_classes;
 	}
 }

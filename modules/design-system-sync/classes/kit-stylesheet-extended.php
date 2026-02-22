@@ -11,18 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Kit_Stylesheet_Extended {
-	const TYPOGRAPHY_PROPS = [
-		'font-family',
-		'font-size',
-		'font-weight',
-		'font-style',
-		'text-decoration',
-		'line-height',
-		'letter-spacing',
-		'word-spacing',
-		'text-transform',
-	];
-
 	public function register_hooks() {
 		add_action( 'elementor/css-file/post/parse', [ $this, 'add_v3_mapping_css' ] );
 	}
@@ -103,6 +91,10 @@ class Kit_Stylesheet_Extended {
 				continue;
 			}
 
+			if ( ! Classes_Provider::has_typography_props( $props ) ) {
+				continue;
+			}
+
 			$resolved_props = $props_resolver->resolve( $schema, $props );
 
 			$this->add_typography_css_entries( $label, $resolved_props, $css_entries );
@@ -112,7 +104,7 @@ class Kit_Stylesheet_Extended {
 	}
 
 	private function add_typography_css_entries( string $label, array $resolved_props, array &$css_entries ): void {
-		foreach ( self::TYPOGRAPHY_PROPS as $prop_name ) {
+		foreach ( Classes_Provider::TYPOGRAPHY_PROPS as $prop_name ) {
 			if ( ! isset( $resolved_props[ $prop_name ] ) || empty( $resolved_props[ $prop_name ] ) ) {
 				continue;
 			}

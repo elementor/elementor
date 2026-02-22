@@ -32,7 +32,7 @@ class Global_Typography_Extension {
 			return;
 		}
 
-		$v4_typography_classes = $this->get_v4_typography_classes();
+		$v4_typography_classes = Classes_Provider::get_typography_classes();
 
 		if ( empty( $v4_typography_classes ) ) {
 			return;
@@ -108,58 +108,5 @@ class Global_Typography_Extension {
 				],
 			]
 		);
-	}
-
-	private function get_v4_typography_classes(): array {
-		$synced_classes = Classes_Provider::get_synced_classes();
-
-		if ( empty( $synced_classes ) ) {
-			return [];
-		}
-
-		$typography_classes = [];
-
-		foreach ( $synced_classes as $id => $class ) {
-			$variants = $class['variants'] ?? [];
-			$default_props = Classes_Provider::get_default_breakpoint_props( $variants );
-
-			if ( empty( $default_props ) ) {
-				continue;
-			}
-
-			if ( ! $this->has_typography_props( $default_props ) ) {
-				continue;
-			}
-
-			$typography_classes[] = [
-				'id' => $id,
-				'label' => $class['label'] ?? '',
-				'props' => $default_props,
-			];
-		}
-
-		return $typography_classes;
-	}
-
-	private function has_typography_props( array $props ): bool {
-		$typography_prop_keys = [
-			'font-family',
-			'font-size',
-			'font-weight',
-			'font-style',
-			'text-decoration',
-			'line-height',
-			'letter-spacing',
-			'word-spacing',
-			'text-transform',
-		];
-
-		foreach ( $typography_prop_keys as $key ) {
-			if ( isset( $props[ $key ] ) ) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 }
