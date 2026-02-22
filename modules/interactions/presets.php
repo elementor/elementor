@@ -15,7 +15,7 @@ class Presets {
 
 	const TRIGGERS = [ 'load', 'scrollIn', 'scrollOut', 'scrollOn', 'hover', 'click' ];
 
-	const EFFECTS = [ 'fade', 'slide', 'scale' ];
+	const EFFECTS = [ 'fade', 'slide', 'scale', 'custom' ];
 	const TYPES = [ 'in', 'out' ];
 	const DIRECTIONS = [ 'left', 'right', 'top', 'bottom' ];
 
