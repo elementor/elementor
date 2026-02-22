@@ -1,7 +1,7 @@
 type MockHook = {
 	getCommand: () => string;
 	getId?: () => string;
-	apply: ( args: unknown, result?: unknown ) => unknown;
+	apply: ( args: unknown, result?: unknown, options?: unknown ) => unknown;
 };
 
 type HooksRegistry = ReturnType< typeof createHooksRegistry >;
@@ -13,6 +13,9 @@ export type WindowWithHooks = Window & {
 				After: ReturnType< HooksRegistry[ 'createClass' ] >;
 				Dependency: ReturnType< HooksRegistry[ 'createClass' ] >;
 			};
+		};
+		commands?: {
+			currentTrace?: string[];
 		};
 	};
 };
