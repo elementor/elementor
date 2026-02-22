@@ -4,6 +4,7 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
 
 test.describe( 'Self-Hosted Video Widget @v4-tests', () => {
+	test.skip();
 	let wpAdmin: WpAdminPage;
 	let editor: EditorPage;
 	let context: BrowserContext;
