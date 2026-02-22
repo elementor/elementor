@@ -38,7 +38,7 @@ class Colors extends Base {
 			];
 		}
 
-		return $result;
+		return apply_filters( 'elementor/globals/colors/items', $result );
 	}
 
 	protected function convert_db_format( $item ) {

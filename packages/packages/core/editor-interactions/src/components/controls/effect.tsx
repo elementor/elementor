@@ -10,6 +10,7 @@ export function Effect( { value, onChange }: FieldProps ) {
 		{ key: 'fade', label: __( 'Fade', 'elementor' ) },
 		{ key: 'slide', label: __( 'Slide', 'elementor' ) },
 		{ key: 'scale', label: __( 'Scale', 'elementor' ) },
+		{ key: 'custom', label: __( 'Custom', 'elementor' ), disabled: true },
 	];
 
 	return (
@@ -19,10 +20,11 @@ export function Effect( { value, onChange }: FieldProps ) {
 			size="tiny"
 			value={ value }
 			onChange={ ( event: SelectChangeEvent< string > ) => onChange( event.target.value ) }
+			MenuProps={ { disablePortal: true } }
 		>
 			{ availableEffects.map( ( effect ) => {
 				return (
-					<MenuListItem key={ effect.key } value={ effect.key }>
+					<MenuListItem key={ effect.key } value={ effect.key } disabled={ effect.disabled }>
 						{ effect.label }
 					</MenuListItem>
 				);

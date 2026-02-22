@@ -9,16 +9,17 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Toggle_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Success_Message\Form_Success_Message;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Error_Message\Form_Error_Message;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Widget_Builder;
-use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Email_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_V2_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -175,8 +176,8 @@ class Atomic_Form extends Atomic_Element_Base {
 				->build(),
 			Widget_Builder::make( Atomic_Button::get_element_type() )
 				->settings( [
-					'text' => Html_V2_Prop_Type::generate( [
-						'content'  => __( 'Submit', 'elementor' ),
+					'text' => Html_V3_Prop_Type::generate( [
+						'content'  => String_Prop_Type::generate( __( 'Submit', 'elementor' ) ),
 						'children' => [],
 					] ),
 					'attributes' => Attributes_Prop_Type::generate( [
@@ -189,12 +190,12 @@ class Atomic_Form extends Atomic_Element_Base {
 				->is_locked( true )
 				->build(),
 			$this->build_status_message(
-				__( 'Thank you! Your submission has been received.', 'elementor' ),
+				__( 'Great! We’ve received your information.', 'elementor' ),
 				'success',
 				__( 'Success message', 'elementor' )
 			),
 			$this->build_status_message(
-				__( 'Oops! Something went wrong.', 'elementor' ),
+				__( 'We couldn’t process your submission. Please retry', 'elementor' ),
 				'error',
 				__( 'Error message', 'elementor' )
 			),
@@ -202,12 +203,16 @@ class Atomic_Form extends Atomic_Element_Base {
 	}
 
 	private function build_status_message( string $message, string $state, string $title ): array {
-		$paragraph_value = Html_V2_Prop_Type::generate( [
-			'content'  => $message,
+		$paragraph_value = Html_V3_Prop_Type::generate( [
+			'content'  => String_Prop_Type::generate( $message ),
 			'children' => [],
 		] );
 
-		return Element_Builder::make( Div_Block::get_element_type() )
+		$element_type = 'success' === $state
+			? Form_Success_Message::get_element_type()
+			: Form_Error_Message::get_element_type();
+
+		return Element_Builder::make( $element_type )
 			->settings( [
 				'attributes' => Attributes_Prop_Type::generate( [
 					Key_Value_Prop_Type::generate( [
@@ -255,7 +260,9 @@ class Atomic_Form extends Atomic_Element_Base {
 			$attributes['data-form-name'] = esc_attr( $settings['form-name'] );
 		}
 
-		$form_state = $settings['form-state'] ?? 'default';
+		$form_state = Plugin::$instance->editor->is_edit_mode()
+			? ( $settings['form-state'] ?? 'default' )
+			: 'default';
 		$attributes['data-form-state'] = esc_attr( $form_state );
 
 		$this->add_render_attribute( '_wrapper', $attributes );
