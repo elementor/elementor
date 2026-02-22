@@ -37,6 +37,11 @@ export const register = ( { elementType, id, callback }: { elementType: string; 
 	}
 };
 
+Object.defineProperty( window, 'registerElementorElement', {
+	value: register,
+	enumerable: true,
+} );
+
 export const unregister = ( { elementType, id }: { elementType: string; id?: string } ) => {
 	if ( ! elementTypeHandlers.has( elementType ) ) {
 		return;
