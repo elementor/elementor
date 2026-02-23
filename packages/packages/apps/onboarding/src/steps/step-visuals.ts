@@ -54,6 +54,7 @@ const stepVisuals: Record< StepIdType, StepVisualConfig > = {
 		imageLayout: 'narrow',
 		background: buildBackground( 'step-5.webp' ),
 		assets: [],
+		contentMaxWidth: 724,
 	},
 };
 
