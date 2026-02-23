@@ -35,9 +35,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Form extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
-	private static $field_container_global_class_filter_registered = false;
-
-	/** Used by field-container divs to add the Settings panel global class at render time. */
 	private static $current_form_global_class = '';
 
 	public function __construct( $data = [], $args = null ) {
@@ -205,8 +202,6 @@ class Atomic_Form extends Atomic_Element_Base {
 
 	protected function define_default_children() {
 		return [
-			// First row - two field containers side by side
-		
 			...$this->build_field_pair(
 				__( 'First name', 'elementor' ),
 				'first-name',
@@ -244,8 +239,7 @@ class Atomic_Form extends Atomic_Element_Base {
 				] )
 				->is_locked( true )
 				->build(),
-	
-			// Status messages
+
 			$this->build_status_message(
 				__( 'Great! We’ve received your information.', 'elementor' ),
 				'success',
@@ -258,8 +252,6 @@ class Atomic_Form extends Atomic_Element_Base {
 			),
 		];
 	}
-	
-	// Helper methods
 	private function build_label( string $text, string $input_id ): array {
 		return Widget_Builder::make( 'e-form-label' )
 			->settings( [
@@ -273,7 +265,7 @@ class Atomic_Form extends Atomic_Element_Base {
 	}
 
 	private function build_input( string $placeholder, string $field_id, string $type = 'text', array $options = [] ): array {
-		if ( $type === 'textarea' ) {
+		if ( 'textarea' === $type ) {
 			$style_id = 'e-form-textarea-width';
 
 			return Widget_Builder::make( 'e-form-textarea' )
@@ -331,19 +323,6 @@ class Atomic_Form extends Atomic_Element_Base {
 			] )
 			->is_locked( true )
 			->build();
-	}
-
-	public function print_content() {
-		$raw = $this->get_settings( 'field_container_global_class' );
-		$prev = self::$current_form_global_class;
-		self::$current_form_global_class = is_array( $raw ) && isset( $raw['value'] )
-			? (string) $raw['value']
-			: ( is_string( $raw ) ? $raw : '' );
-		try {
-			parent::print_content();
-		} finally {
-			self::$current_form_global_class = $prev;
-		}
 	}
 
 	protected function add_render_attributes() {
