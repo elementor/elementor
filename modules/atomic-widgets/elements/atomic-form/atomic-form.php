@@ -231,13 +231,10 @@ class Atomic_Form extends Atomic_Element_Base {
 
 	private function build_input( string $placeholder, string $type = 'text' ): array {
 		if ( 'textarea' === $type ) {
-			$style_id = 'e-form-textarea-width';
-
 			return Widget_Builder::make( 'e-form-textarea' )
 				->settings( [
 					'placeholder' => String_Prop_Type::generate( $placeholder ),
 					'rows' => Number_Prop_Type::generate( 4 ),
-					'classes' => Classes_Prop_Type::generate( [ $style_id ] ),
 				] )
 				->build();
 		}
