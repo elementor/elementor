@@ -5,7 +5,6 @@ import {
 	Box,
 	Stack,
 	Image,
-	Chip,
 	Link,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -27,17 +26,15 @@ const OPT_IN_MSG = 'e-editor-v4-opt-in-message';
 const OPT_OUT_MSG = 'e-editor-v4-opt-out-message';
 
 const i18n = {
-	title: __( 'The next generation of web creation', 'elementor' ),
-	chip: __( 'Beta', 'elementor' ),
+	title: __( 'Activate Atomic Editor features', 'elementor' ),
 
-	welcomeText: __( 'Welcome to version 4 of Elementor\'s Editor. It’s faster, more flexible, and built on a fully atomic approach to structure & styling.', 'elementor' ),
+	welcomeText: __( 'The Atomic Editor presents a new generation of high-performance, flexible building blocks designed for less bloat and precise styling with a unified interface.', 'elementor' ),
 
-	advantagesHeader: __( 'Here’s what’s inside the beta version:', 'elementor' ),
 	advantages: [
-		__( 'Unparalleled performance - Cleaner code & a lighter CSS footprint with single-div wrappers.', 'elementor' ),
-		__( 'Professional tools at your fingertips - Variables, Classes and States.', 'elementor' ),
-		__( 'Consistent styling experience - A unified Style tab for all atomic elements.', 'elementor' ),
-		__( 'Fully responsive design - Customize any style property per screen.', 'elementor' ),
+		[ __( 'Combine legacy widgets & new elements', 'elementor' ), __( 'Your current and new workflows work together on the same page.', 'elementor' ) ],
+		[ __( 'Build reusable design systems', 'elementor' ), __( 'Classes, Variables and Components give you a clear path for scale.', 'elementor' ) ],
+		[ __( 'Consistent styling experience', 'elementor' ), __( 'A unified Style tab for all Atomic Elements with full control over responsive design.', 'elementor' ) ],
+		[ __( 'Unparalleled performance', 'elementor' ), __( 'Cleaner code and a lighter CSS footprint with single-div wrappers.', 'elementor' ) ],
 	],
 	andMore: __( 'And much more!', 'elementor' ),
 	readMore: __( 'Learn more', 'elementor' ),
@@ -51,13 +48,13 @@ const i18n = {
 	buttons: {
 		tryOut: __( 'Try out the new experience', 'elementor' ),
 		optIn: __( 'Activate the new experience', 'elementor' ),
-		optOut: __( 'Deactivate V4', 'elementor' ),
+		optOut: __( 'Deactivate', 'elementor' ),
 	},
 
 	messages: {
 		optInSuccess: __( 'Welcome! You’ve got the newest version of the editor.', 'elementor' ),
 		optOut: __( 'You’ve deactivated the new Editor. Have feedback?', 'elementor' ),
-		error: __( 'Ouch, there was a glitch. Try activating V4 again soon.', 'elementor' ),
+		error: __( 'Ouch, there was a glitch. Try activating again soon.', 'elementor' ),
 	},
 };
 
@@ -156,24 +153,16 @@ export const OptIn = ( { state } ) => {
 			<Stack sx={ { flex: 1, maxWidth: { md: '580px', sm: '600px' }, gap: 2.5, mx: 'auto' } }>
 				<TextNode variant="h4" width="fit-content" >
 					<span>{ i18n.title }</span>
-					<Chip
-						size="small"
-						color="secondary"
-						variant="filled"
-						label={ i18n.chip }
-						sx={ { verticalAlign: 'baseline', transform: 'translateY(-4px)', ml: 1 } }
-					/>
 				</TextNode>
-				<Stack direction="column" gap={ 3 }>
+				<Stack direction="column" gap={ 1 }>
 					<Box>
 						<TextNode>{ i18n.welcomeText }</TextNode>
 					</Box>
 
 					<Box>
-						<TextNode variant="subtitle1" sx={ { mb: 1.5 } }>{ i18n.advantagesHeader }</TextNode>
-						<AdvantagesList>
+						<AdvantagesList sx={ { gap: 0.5 } }>
 							{ i18n.advantages.map( ( entry, i ) => (
-								<AdvantagesListItem key={ i }>{ entry }</AdvantagesListItem>
+								<AdvantagesListItem key={ i }><b>{ entry[ 0 ] }</b> - { entry[ 1 ] }</AdvantagesListItem>
 							) ) }
 							<AdvantagesListItem key={ i18n.advantages.length }>
 								{ i18n.andMore } <Link color="text.primary" href={ optInLinks.readMoreUrl } target="_blank">{ i18n.readMore }</Link>
@@ -262,7 +251,18 @@ export const OptIn = ( { state } ) => {
 			) }
 
 			{ optInMessage && (
-				<Message onClose={ () => setOptInMessage( '' ) } >{ optInMessage }</Message>
+				<Message
+					onClose={ () => setOptInMessage( '' ) }
+					action={
+						<Link
+							href={ optInLinks.tryOutUrl }
+							color="#FFFFFF"
+							sx={ { cursor: 'pointer', textDecoration: 'none', pl: 3 } }
+						>
+							{ i18n.buttons.tryOut }
+						</Link>
+					}
+				>{ optInMessage }</Message>
 			) }
 
 			{ optOutMessage && (
@@ -272,7 +272,7 @@ export const OptIn = ( { state } ) => {
 						<Link
 							href={ optInLinks.feedbackUrl }
 							target="_blank"
-							color="inherit"
+							color="#FFFFFF"
 							sx={ { cursor: 'pointer', textDecoration: 'none', pl: 3 } }
 						>
 							{ i18n.tellUsWhy }
