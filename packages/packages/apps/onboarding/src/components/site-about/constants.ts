@@ -19,13 +19,13 @@ export interface SiteAboutOption {
 }
 
 export const SITE_ABOUT_OPTIONS: SiteAboutOption[] = [
-	{ value: 'small_business', label: __( 'Small-Med Business', 'elementor' ), icon: BriefcaseIcon },
+	{ value: 'small_business', label: __( 'Small business', 'elementor' ), icon: BriefcaseIcon },
 	{ value: 'online_store', label: __( 'Online store', 'elementor' ), icon: CartIcon },
 	{ value: 'company_site', label: __( 'Company site', 'elementor' ), icon: DomainIcon },
 	{ value: 'blog', label: __( 'Blog', 'elementor' ), icon: PostTypeIcon },
 	{ value: 'landing_page', label: __( 'Landing page', 'elementor' ), icon: LandingPageTemplateIcon },
 	{ value: 'booking', label: __( 'Booking', 'elementor' ), icon: CalendarIcon },
-	{ value: 'organization', label: __( 'Organization', 'elementor' ), icon: OrganizationIcon },
+	{ value: 'portfolio', label: __( 'Portfolio', 'elementor' ), icon: OrganizationIcon },
 	{ value: 'other', label: __( 'Other', 'elementor' ), icon: SearchIcon },
 ];
 
