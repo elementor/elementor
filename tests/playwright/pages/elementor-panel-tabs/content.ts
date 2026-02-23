@@ -2,6 +2,7 @@ import EditorSelectors from '../../selectors/editor-selectors';
 import { expect, type Frame, Locator, type Page, type TestInfo } from '@playwright/test';
 import EditorPage from '../editor-page';
 import { LinkOptions } from '../../types/types';
+import { timeouts } from '../../config/timeouts';
 
 export default class Content {
 	readonly page: Page;
@@ -89,7 +90,9 @@ export default class Content {
 		await this.editor.waitForPreviewFrame();
 		const frame: Frame = this.editor.getPreviewFrame();
 		await frame.locator( args.widget ).click();
-		await this.page.locator( `.elementor-control-${ args.select } select` ).waitFor();
+		await this.editor.openPanelTab( 'content' );
+		await this.editor.waitForPanelToLoad();
+		await this.page.locator( `.elementor-control-${ args.select } select` ).waitFor( { timeout: timeouts.longAction } );
 		await this.editor.setSelectControlValue( args.select, args.imageSize );
 		await frame.locator( EditorSelectors.pageTitle ).click();
 	}
