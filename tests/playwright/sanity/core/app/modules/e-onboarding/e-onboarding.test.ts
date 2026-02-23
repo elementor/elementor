@@ -48,7 +48,7 @@ async function mockOnboardingApi( page: Page ) {
 async function doAndWaitForProgress( page: Page, action: () => Promise< void > ) {
 	await Promise.all( [
 		page.waitForResponse(
-			( r ) => r.url().includes( USER_PROGRESS_ENDPOINT ) && r.request().method() === 'POST',
+			( r ) => r.url().includes( USER_PROGRESS_ENDPOINT ) && 'POST' === r.request().method(),
 		),
 		action(),
 	] );
