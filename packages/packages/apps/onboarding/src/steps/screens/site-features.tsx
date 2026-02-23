@@ -9,7 +9,7 @@ import {
 	ElementorImageOptimizerIcon,
 	ThemeBuilderIcon,
 } from '@elementor/icons';
-import { type Theme, Stack, Typography } from '@elementor/ui';
+import { Stack, type Theme, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { CorePlaceholderIcon } from '../../components/ui/core-placeholder-icon';
