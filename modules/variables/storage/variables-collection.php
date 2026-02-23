@@ -15,9 +15,6 @@ use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
  * we will see if we need to extend collection as time goes on
  */
 class Variables_Collection extends Collection {
-	const FORMAT_VERSION_V1 = 1;
-	const FORMAT_VERSION_V2 = 2;
-	const TOTAL_VARIABLES_COUNT = 100;
 
 	private int $watermark;
 
@@ -28,7 +25,7 @@ class Variables_Collection extends Collection {
 
 		$this->items = $items;
 		$this->watermark = $watermark;
-		$this->version = $version ?? self::FORMAT_VERSION_V1;
+		$this->version = $version ?? Constants::FORMAT_VERSION_V1;
 	}
 
 	public static function hydrate( array $record ): self {
@@ -76,7 +73,7 @@ class Variables_Collection extends Collection {
 		return new self(
 			[],
 			0,
-			self::FORMAT_VERSION_V1
+			Constants::FORMAT_VERSION_V1
 		);
 	}
 
@@ -144,7 +141,7 @@ class Variables_Collection extends Collection {
 			}
 		}
 
-		if ( self::TOTAL_VARIABLES_COUNT <= $active_count ) {
+		if ( Constants::TOTAL_VARIABLES_COUNT <= $active_count ) {
 			throw new VariablesLimitReached( 'Total variables count limit reached' );
 		}
 	}

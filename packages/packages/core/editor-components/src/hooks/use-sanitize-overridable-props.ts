@@ -1,5 +1,5 @@
-import { deleteOverridableProp } from '../store/actions/delete-overridable-prop';
-import { updateComponentSanitizedAttribute } from '../store/actions/update-component-sanitized-attribute';
+import { deleteOverridableProp } from '../extended/store/actions/delete-overridable-prop';
+import { updateComponentSanitizedAttribute } from '../extended/store/actions/update-component-sanitized-attribute';
 import { useIsSanitizedComponent, useOverridableProps } from '../store/store';
 import { type ComponentId, type OverridableProps } from '../types';
 import { filterValidOverridableProps } from '../utils/filter-valid-overridable-props';
