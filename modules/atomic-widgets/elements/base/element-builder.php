@@ -42,7 +42,7 @@ class Element_Builder {
 			'settings' => $this->settings,
 			'isLocked' => $this->is_locked,
 			'editor_settings' => $this->editor_settings,
-			'elements' => $this->children
+			'elements' => $this->children,
 		];
 
 		return $element_data;
