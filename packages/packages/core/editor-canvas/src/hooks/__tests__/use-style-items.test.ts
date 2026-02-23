@@ -39,10 +39,12 @@ describe( 'useStyleItems', () => {
 	beforeEach( () => {
 		jest.mocked( useStyleRenderer ).mockReturnValue(
 			jest.fn().mockImplementation( ( { styles } ) =>
-				styles.map( ( style: StyleDefinition ) => ( {
-					id: style.id,
-					breakpoint: style?.variants[ 0 ]?.meta.breakpoint || 'desktop',
-				} ) )
+				Promise.resolve(
+					styles.map( ( style: StyleDefinition ) => ( {
+						id: style.id,
+						breakpoint: style?.variants[ 0 ]?.meta.breakpoint || 'desktop',
+					} ) )
+				)
 			)
 		);
 	} );
