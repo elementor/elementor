@@ -59,9 +59,8 @@ export function ProPlanNotice( { planName }: LicenseNoticeProps ) {
 						fontSize: theme.spacing( 1.625 ),
 					} ) }
 				>
-					{ __( 'Based on the features you chose, we recommend the', 'elementor' ) }
-					{ ' ' }<strong>{ planName }</strong>{ ' ' }
-					{ __( 'plan', 'elementor' ) }
+					{ __( 'Based on the features you chose, we recommend the', 'elementor' ) }{ ' ' }
+					<strong>{ planName }</strong> { __( 'plan', 'elementor' ) }
 				</Typography>
 			</Stack>
 			<Button
