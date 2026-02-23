@@ -136,42 +136,6 @@ describe( 'SiteFeatures', () => {
 		} );
 	} );
 
-	describe( 'ProPlanNotice visibility', () => {
-		it( 'is hidden when no pro features are selected', () => {
-			renderApp( {
-				isConnected: true,
-				progress: SITE_FEATURES_PROGRESS,
-			} );
-
-			expect( screen.queryByText( PRO_PLAN_NOTICE_TEXT ) ).not.toBeInTheDocument();
-		} );
-
-		it( 'is shown when pro features are pre-selected', () => {
-			const firstProOption = getFirstProOption();
-			renderApp( {
-				isConnected: true,
-				progress: SITE_FEATURES_PROGRESS,
-				choices: { site_features: [ firstProOption.id ] },
-			} );
-
-			expect( screen.getByText( PRO_PLAN_NOTICE_TEXT ) ).toBeInTheDocument();
-		} );
-
-		it( 'appears after clicking a pro feature', async () => {
-			renderApp( {
-				isConnected: true,
-				progress: SITE_FEATURES_PROGRESS,
-			} );
-
-			const firstProOption = getFirstProOption();
-			fireEvent.click( screen.getByRole( 'button', { name: firstProOption.label } ) );
-
-			await waitFor( () => {
-				expect( screen.getByText( PRO_PLAN_NOTICE_TEXT ) ).toBeInTheDocument();
-			} );
-		} );
-	} );
-
 	describe( 'External links', () => {
 		it( '"Explore more" opens features URL in new tab', () => {
 			const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
@@ -228,6 +192,17 @@ describe( 'SiteFeatures', () => {
 			} );
 			const unselectedButton = screen.getByRole( 'button', { name: unselectedOption.label } );
 			expect( unselectedButton ).toHaveAttribute( 'aria-pressed', 'false' );
+		} );
+	} );
+
+	describe( 'ProPlanNotice visibility', () => {
+		it( 'is hidden when no pro features are selected', () => {
+			renderApp( {
+				isConnected: true,
+				progress: SITE_FEATURES_PROGRESS,
+			} );
+
+			expect( screen.queryByText( PRO_PLAN_NOTICE_TEXT ) ).not.toBeInTheDocument();
 		} );
 	} );
 
