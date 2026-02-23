@@ -216,7 +216,7 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 
 			await expect( page.getByRole( 'radiogroup', { name: 'Theme selection' } ) ).toBeVisible();
 
-			const helloRadio = page.getByRole( 'radio', { name: 'Hello' } );
+			const helloRadio = page.getByRole( 'radio', { name: 'Hello', exact: true } );
 			await expect( helloRadio ).toBeVisible();
 			await expect( helloRadio ).toHaveAttribute( 'aria-checked', 'true' );
 
@@ -226,7 +226,7 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 				page.getByText( 'A flexible canvas theme you can shape from the ground up' ),
 			).toBeVisible();
 
-			const helloBizRadio = page.getByRole( 'radio', { name: 'Hello Biz' } );
+			const helloBizRadio = page.getByRole( 'radio', { name: 'Hello Biz', exact: true } );
 			await expect( helloBizRadio ).toBeVisible();
 			await expect( helloBizRadio ).toHaveAttribute( 'aria-checked', 'false' );
 			await expect(
