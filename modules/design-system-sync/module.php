@@ -49,6 +49,7 @@ class Module extends BaseModule {
 		( new Classes\Global_Typography_Extension() )->register_hooks();
 
 		add_action( 'elementor/controls/register', [ $this, 'register_controls' ] );
+		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_editor_styles' ] );
 		add_action( 'elementor/global_classes/update', [ $this, 'clear_classes_cache' ] );
 	}
 
@@ -58,6 +59,15 @@ class Module extends BaseModule {
 
 		$controls_manager->register( new Controls\V4_Color_Variable_List() );
 		$controls_manager->register( new Controls\V4_Typography_List() );
+	}
+
+	public function enqueue_editor_styles() {
+		wp_enqueue_style(
+			'elementor-design-system-sync-editor',
+			plugins_url( 'assets/css/editor.css', __FILE__ ),
+			[],
+			ELEMENTOR_VERSION
+		);
 	}
 
 	public function clear_classes_cache() {

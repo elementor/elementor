@@ -16,18 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Global_Colors_Extension {
 	public function register_hooks() {
 		add_action( 'elementor/kit/global-colors/register_controls', [ $this, 'add_v4_variables_section' ] );
-		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_editor_styles' ] );
 		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_editor_scripts' ] );
 		add_filter( 'elementor/globals/colors/items', [ $this, 'add_v4_variables_section_to_color_selector' ] );
-	}
-
-	public function enqueue_editor_styles() {
-		wp_enqueue_style(
-			'elementor-design-system-sync-editor',
-			plugins_url( '../assets/css/editor.css', __FILE__ ),
-			[],
-			ELEMENTOR_VERSION
-		);
 	}
 
 	public function enqueue_editor_scripts() {

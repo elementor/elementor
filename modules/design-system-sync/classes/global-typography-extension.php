@@ -14,16 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Global_Typography_Extension {
 	public function register_hooks() {
 		add_action( 'elementor/kit/global-typography/register_controls', [ $this, 'add_v4_classes_section' ] );
-		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_editor_styles' ] );
-	}
-
-	public function enqueue_editor_styles() {
-		wp_enqueue_style(
-			'elementor-design-system-sync-editor',
-			plugins_url( '../assets/css/editor.css', __FILE__ ),
-			[],
-			ELEMENTOR_VERSION
-		);
 	}
 
 	public function add_v4_classes_section( Global_Typography $tab ) {
