@@ -153,7 +153,6 @@ export function SiteFeatures() {
 			/>
 
 			{ storedPaidFeatures.length > 0 && <ProPlanNotice planName={ planName } /> }
-			{ console.log( 'storedPaidFeatures', storedPaidFeatures ) }
 		</Stack>
 	);
 }

@@ -9,7 +9,7 @@ export interface FeatureOption {
 	id: string;
 	label: string;
 	Icon: React.ElementType;
-	licenseType: 'core' | 'pro' | 'one';
+	licenseType: 'core' | 'pro' | 'one' | 'other';
 }
 
 interface ExploreMoreOption extends FeatureOption {
@@ -34,7 +34,7 @@ const EXPLORE_MORE_OPTION: ExploreMoreOption = {
 	id: 'explore_more',
 	label: __( 'Explore more', 'elementor' ),
 	Icon: ArrowRightIcon,
-	licenseType: 'core',
+	licenseType: 'other',
 	isExploreMore: true,
 };
 

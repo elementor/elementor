@@ -97,7 +97,7 @@ class Module extends BaseModule {
 			'version' => self::VERSION,
 			'restUrl' => rest_url( 'elementor/v1/e-onboarding/' ),
 			'nonce' => wp_create_nonce( 'wp_rest' ),
-			'progress' => $progress_data,
+			'progress' => $this->validate_progress_for_steps( $progress, $steps ),
 			'choices' => $choices->to_array(),
 			'hadUnexpectedExit' => $progress->had_unexpected_exit(),
 			'isConnected' => $is_connected,
