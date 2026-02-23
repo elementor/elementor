@@ -1,6 +1,6 @@
 import { getInteractionsControlOptions } from '../interactions-controls-registry';
 import type { InteractionItemPropValue } from '../types';
-import { extractBoolean, extractString } from '../utils/prop-value-utils';
+import { extractString } from '../utils/prop-value-utils';
 
 export function isProInteraction( interaction: InteractionItemPropValue ): boolean {
 	const value = interaction.value;
