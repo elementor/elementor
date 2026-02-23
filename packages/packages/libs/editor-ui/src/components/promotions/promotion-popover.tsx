@@ -79,6 +79,7 @@ function PopoverAlert( { title, content, ctaUrl, ctaText, onClose }: PromotionPo
 				color="promotion"
 				icon={ <CrownFilledIcon fontSize="tiny" /> }
 				onClose={ onClose }
+				onMouseDown={ ( e: MouseEvent ) => e.stopPropagation() }
 				role="dialog"
 				aria-label="promotion-popover-title"
 				action={

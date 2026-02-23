@@ -704,9 +704,9 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'widgetType' => 'e-button',
 					'propKey' => 'text',
 					'originValue' => [
-						'$$type' => 'html-v2',
+						'$$type' => 'html-v3',
 						'value' => [
-							'content' => 'Component 2 Button',
+							'content' => ['$$type' => 'string', 'value' => 'Component 2 Button'],
 							'children' => [],
 						],
 					],
@@ -787,8 +787,8 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'prop-button-link', $decoded_props['props'] );
 		
 		// Verify the originValue structures are intact
-		$this->assertEquals( 'html-v2', $decoded_props['props']['prop-button-text']['originValue']['$$type'] );
-		$this->assertEquals( 'Component 2 Button', $decoded_props['props']['prop-button-text']['originValue']['value']['content'] );
+		$this->assertEquals( 'html-v3', $decoded_props['props']['prop-button-text']['originValue']['$$type'] );
+		$this->assertEquals( 'Component 2 Button', $decoded_props['props']['prop-button-text']['originValue']['value']['content']['value'] );
 		
 		$this->assertEquals( 'link', $decoded_props['props']['prop-button-link']['originValue']['$$type'] );
 		$this->assertEquals( '#inner-link', $decoded_props['props']['prop-button-link']['originValue']['value']['destination']['value'] );
@@ -809,9 +809,9 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'widgetType' => 'e-button',
 					'propKey' => 'text',
 					'originValue' => [
-						'$$type' => 'html-v2',
+						'$$type' => 'html-v3',
 						'value' => [
-							'content' => 'Test Button Text',
+							'content' => ['$$type' => 'string', 'value' => 'Test Button Text'],
 							'children' => [],
 						],
 					],
@@ -1760,9 +1760,9 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 						'widgetType' => 'e-button',
 						'settings' => [
 							'text' => [
-								'$$type' => 'html-v2',
+								'$$type' => 'html-v3',
 								'value' => [
-									'content' => 'Button Text',
+									'content' => ['$$type' => 'string', 'value' => 'Button Text'],
 									'children' => [],
 								],
 							],

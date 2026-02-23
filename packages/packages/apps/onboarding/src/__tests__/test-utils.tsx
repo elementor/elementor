@@ -41,6 +41,7 @@ interface OnboardingConfig {
 	choices: Record< string, unknown >;
 	hadUnexpectedExit: boolean;
 	isConnected: boolean;
+	shouldShowProInstallScreen?: boolean;
 	userName?: string;
 	urls: {
 		dashboard: string;
@@ -70,6 +71,7 @@ const defaultConfig: OnboardingConfig = {
 	choices: {},
 	hadUnexpectedExit: false,
 	isConnected: true,
+	shouldShowProInstallScreen: false,
 	urls: {
 		dashboard: 'https://test.local/wp-admin/',
 		editor: 'https://test.local/editor',
