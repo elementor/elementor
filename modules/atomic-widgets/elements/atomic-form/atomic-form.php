@@ -209,16 +209,16 @@ class Atomic_Form extends Atomic_Element_Base {
 			// First row - two field containers side by side
 		
 			...$this->build_field_pair(
-				__( 'Fist name', 'elementor' ),
+				__( 'First name', 'elementor' ),
 				'first-name',
 				'text',
-				__( 'First', 'elementor' ),
+				__( 'First name', 'elementor' ),
 			),
 			...$this->build_field_pair(
 				__( 'Last name', 'elementor' ),
 				'last-name',
 				'text',
-				__( 'Last', 'elementor' )
+				__( 'Last name', 'elementor' )
 			),
 
 			...$this->build_field_pair(
