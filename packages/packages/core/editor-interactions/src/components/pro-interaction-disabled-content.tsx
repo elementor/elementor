@@ -15,7 +15,8 @@ export const ProInteractionDisabledContent = ( {
 	promoAnchorRef.current = promoPopover.anchorEl;
 
 	const { isAdmin } = useCurrentUserCapabilities();
-	const adminUrl = ( window as any ).elementorAppConfig?.admin_url;
+	const adminUrl = ( window as unknown as { elementorAppConfig: { admin_url: string } } ).elementorAppConfig
+		?.admin_url;
 	const ctaUrl = adminUrl ? `${ adminUrl }plugins.php` : 'https://go.elementor.com/go-pro-interactions/';
 	return (
 		<PromotionPopover

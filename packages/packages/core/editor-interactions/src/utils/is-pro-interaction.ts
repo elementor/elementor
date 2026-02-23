@@ -1,4 +1,4 @@
-import { getInteractionsControlOptions } from '../interactions-controls-registry';
+import { getInteractionsControlOptions, type InteractionsControlType } from '../interactions-controls-registry';
 import type { InteractionItemPropValue } from '../types';
 import { extractString } from '../utils/prop-value-utils';
 
@@ -13,7 +13,7 @@ export function isProInteraction( interaction: InteractionItemPropValue ): boole
 	];
 
 	return checks.some( ( [ controlType, controlValue ] ) => {
-		const supportedOptions = getInteractionsControlOptions( controlType as any );
+		const supportedOptions = getInteractionsControlOptions( controlType as InteractionsControlType );
 		// If no options registered (empty array), skip - the control doesn't filter by options
 		return supportedOptions.length > 0 && ! supportedOptions.includes( controlValue );
 	} );
