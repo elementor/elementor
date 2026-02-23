@@ -7,11 +7,10 @@ import { __ } from '@wordpress/i18n';
 
 import { InteractionItemContextProvider } from '../contexts/interactions-item-context';
 import type { ElementInteractions, InteractionItemPropValue, InteractionItemValue } from '../types';
-import { buildDisplayLabel, createDefaultInteractionItem, extractString } from '../utils/prop-value-utils';
 import { isProInteraction } from '../utils/is-pro-interaction';
+import { buildDisplayLabel, createDefaultInteractionItem, extractString } from '../utils/prop-value-utils';
 import { InteractionsListItem } from './interactions-list-item';
-import { PromotionPopover } from '@elementor/editor-ui';
-import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
+import { ProInteractionDisabledContent } from './pro-interaction-disabled-content';
 
 export const MAX_NUMBER_OF_INTERACTIONS = 5;
 
@@ -98,17 +97,10 @@ export function InteractionsList( props: InteractionListProps ) {
 		[ handleInteractionChange, onPlayInteraction ]
 	);
 
-	const [promoPopover, setPromoPopover] = useState<{
+	const [ promoPopover, setPromoPopover ] = useState< {
 		open: boolean;
 		anchorEl: HTMLElement | null;
-	}>({ open: false, anchorEl: null });
-	
-	const promoAnchorRef = useRef<HTMLElement | null>(null);
-	promoAnchorRef.current = promoPopover.anchorEl;
-
-	const { isAdmin } = useCurrentUserCapabilities();
-	const adminUrl = (window as any).elementorAppConfig?.admin_url;
-	const ctaUrl = adminUrl ? `${adminUrl}plugins.php` : 'https://go.elementor.com/go-pro-interactions/';
+	} >( { open: false, anchorEl: null } );
 
 	return (
 		<InteractionItemContextProvider value={ contextValue }>
@@ -126,23 +118,20 @@ export function InteractionsList( props: InteractionListProps ) {
 				itemSettings={ {
 					initialValues: createDefaultInteractionItem(),
 					isOpenDisabled: ( value: InteractionItemPropValue ) => isProInteraction( value ),
-					onDisabledItemClick: (value, anchorEl) => {
-						setPromoPopover({ open: true, anchorEl });
+					onDisabledItemClick: ( value, anchorEl ) => {
+						setPromoPopover( { open: true, anchorEl } );
 					},
-					Label: ({ value }) => buildDisplayLabel(value.value),
+					Label: ( { value } ) => buildDisplayLabel( value.value ),
 					Icon: () => null,
 					Content: InteractionsListItem,
 					actions: ( value: InteractionItemPropValue ) => {
-						if (isProInteraction(value)) {
-							// Only show remove (X) button - no preview button for Pro items
-							return null;
-						}
 						return (
-							<Tooltip key="preview" placement="top" title={__('Preview', 'elementor')}>
+							<Tooltip key="preview" placement="top" title={ __( 'Preview', 'elementor' ) }>
 								<IconButton
-									aria-label={__('Play interaction', 'elementor')}
+									aria-label={ __( 'Play interaction', 'elementor' ) }
 									size="tiny"
-									onClick={() => onPlayInteraction(extractString(value.value.interaction_id))}
+									onClick={ () => onPlayInteraction( extractString( value.value.interaction_id ) ) }
+									disabled={ isProInteraction( value ) }
 								>
 									<PlayerPlayIcon fontSize="tiny" />
 								</IconButton>
@@ -151,18 +140,7 @@ export function InteractionsList( props: InteractionListProps ) {
 					},
 				} }
 			/>
-			<PromotionPopover
-        open={promoPopover.open}
-        title={__('Interactions', 'elementor')}
-        content={__('This interaction is currently inactive and not showing on your website. Activate your Pro plugin to use it again.', 'elementor')}
-        ctaText={isAdmin ? __('Upgrade now', 'elementor') : undefined}
-        ctaUrl={ ctaUrl }
-        onClose={() => setPromoPopover({ open: false, anchorEl: null })}
-        anchorRef={promoAnchorRef}
-        placement="right-start"
-    >
-        <span />
-    </PromotionPopover>
+			<ProInteractionDisabledContent promoPopover={ promoPopover } setPromoPopover={ setPromoPopover } />
 		</InteractionItemContextProvider>
 	);
 }

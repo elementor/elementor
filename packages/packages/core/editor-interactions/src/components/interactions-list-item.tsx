@@ -8,9 +8,6 @@ import type { InteractionItemPropValue, InteractionItemValue } from '../types';
 import { extractString } from '../utils/prop-value-utils';
 import { InteractionDetails } from './interaction-details';
 import { InteractionSettings } from './interaction-settings';
-import { isProInteraction } from '../utils/is-pro-interaction';
-import { ProInteractionDisabledContent } from './pro-interaction-disabled-content';
-
 
 type InteractionTabValue = 'details' | 'settings';
 
@@ -40,9 +37,6 @@ export const InteractionsListItem = ( {
 	);
 
 	const interactionId = extractString( interaction.value.interaction_id );
-	if (isProInteraction(interaction)) {
-		return <ProInteractionDisabledContent value={interaction} />;
-	}
 
 	return (
 		<>
