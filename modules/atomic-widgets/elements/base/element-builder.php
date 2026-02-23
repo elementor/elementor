@@ -8,7 +8,6 @@ class Element_Builder {
 	protected $is_locked = false;
 	protected $children = [];
 	protected $editor_settings = [];
-	protected $styles = [];
 	public static function make( string $element_type ) {
 		return new self( $element_type );
 	}
@@ -37,19 +36,13 @@ class Element_Builder {
 		return $this;
 	}
 
-	public function styles( array $styles ) {
-		$this->styles = $styles;
-		return $this;
-	}
-
 	public function build() {
 		$element_data = [
 			'elType' => $this->element_type,
 			'settings' => $this->settings,
 			'isLocked' => $this->is_locked,
 			'editor_settings' => $this->editor_settings,
-			'elements' => $this->children,
-			'styles' => $this->styles,
+			'elements' => $this->children
 		];
 
 		return $element_data;
