@@ -240,8 +240,6 @@ class Module extends BaseModule {
 		}
 	}
 
-	
-
 	private function filter_out_theme_selection_step( array $steps ): array {
 		return array_values( array_filter( $steps, function ( $step ) {
 			return 'theme_selection' !== $step;
