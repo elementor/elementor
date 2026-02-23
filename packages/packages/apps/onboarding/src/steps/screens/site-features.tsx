@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
 import {
-	BriefcaseIcon,
-	ChecklistIcon,
-	GridDotsIcon,
-	LockFilledIcon,
-	MapPinIcon,
-	Menu2Icon,
-	PageTypeIcon,
-	PostTypeIcon,
-	SwipeIcon,
+	AIIcon,
+	CodeIcon,
+	ColorSwatchIcon,
+	ElementorAccessibilityIcon,
+	ElementorEmailDeliverabilityIcon,
+	ElementorImageOptimizerIcon,
+	ThemeBuilderIcon,
 } from '@elementor/icons';
+
+import { CorePlaceholderIcon } from '../../components/ui/core-placeholder-icon';
 import type { Theme } from '@elementor/ui';
 import { Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -20,62 +20,62 @@ import { FeatureGrid, type FeatureOption, ProPlanNotice } from '../components/si
 
 export const FEATURE_OPTIONS: FeatureOption[] = [
 	{
-		id: 'posts',
-		label: __( 'Posts', 'elementor' ),
-		Icon: PostTypeIcon,
-		isPro: false,
+		id: 'classes_variables',
+		label: __( 'Classes & variables', 'elementor' ),
+		Icon: ( props ) => <ColorSwatchIcon { ...props } sx={ { transform: 'rotate(90deg)' } } />,
+		licenseType: 'core',
 	},
 	{
-		id: 'pages',
-		label: __( 'Pages', 'elementor' ),
-		Icon: PageTypeIcon,
-		isPro: false,
+		id: 'core_placeholder',
+		label: __( 'Core Placeholder', 'elementor' ),
+		Icon: CorePlaceholderIcon,
+		licenseType: 'core',
 	},
 	{
-		id: 'gallery',
-		label: __( 'Gallery', 'elementor' ),
-		Icon: GridDotsIcon,
-		isPro: true,
+		id: 'theme_builder',
+		label: __( 'Theme Builder', 'elementor' ),
+		Icon: ThemeBuilderIcon,
+		licenseType: 'pro',
 	},
 	{
-		id: 'slides',
-		label: __( 'Slides', 'elementor' ),
-		Icon: SwipeIcon,
-		isPro: true,
+		id: 'lead_collection',
+		label: __( 'Lead Collection', 'elementor' ),
+		Icon: CorePlaceholderIcon,
+		licenseType: 'pro',
 	},
 	{
-		id: 'form',
-		label: __( 'Form', 'elementor' ),
-		Icon: ChecklistIcon,
-		isPro: true,
+		id: 'custom_code_css',
+		label: __( 'Custom Code & CSS', 'elementor' ),
+		Icon: CodeIcon,
+		licenseType: 'pro',
 	},
 	{
-		id: 'hotspot',
-		label: __( 'Hotspot', 'elementor' ),
-		Icon: MapPinIcon,
-		isPro: true,
+		id: 'email_deliverability',
+		label: __( 'Email deliverability', 'elementor' ),
+		Icon: ElementorEmailDeliverabilityIcon,
+		licenseType: 'one',
 	},
 	{
-		id: 'portfolio',
-		label: __( 'Portfolio', 'elementor' ),
-		Icon: BriefcaseIcon,
-		isPro: true,
+		id: 'ai_features',
+		label: __( 'AI for code, images, & layouts', 'elementor' ),
+		Icon: AIIcon,
+		licenseType: 'one',
 	},
 	{
-		id: 'login',
-		label: __( 'Login', 'elementor' ),
-		Icon: LockFilledIcon,
-		isPro: true,
+		id: 'image_optimization',
+		label: __( 'Image optimization', 'elementor' ),
+		Icon: ElementorImageOptimizerIcon,
+		licenseType: 'one',
 	},
 	{
-		id: 'mega_menu',
-		label: __( 'Mega Menu', 'elementor' ),
-		Icon: Menu2Icon,
-		isPro: true,
+		id: 'accessibility',
+		label: __( 'Accessibility scans and fixes', 'elementor' ),
+		Icon: ElementorAccessibilityIcon,
+		licenseType: 'one',
 	},
 ];
 
-const CORE_FEATURE_IDS = new Set( FEATURE_OPTIONS.flatMap( ( option ) => ( option.isPro ? [] : [ option.id ] ) ) );
+const CORE_FEATURE_IDS = new Set( FEATURE_OPTIONS.flatMap( ( option ) => ( option.licenseType === 'core' ? [ option.id ] : [] ) ) );
 
 const STEP_TITLE = __( 'What do you want to include in your site?', 'elementor' );
 const STEP_SUBTITLE = __( "We'll use this to tailor suggestions for you.", 'elementor' );
@@ -84,12 +84,17 @@ export function SiteFeatures() {
 	const { choices, actions, urls } = useOnboarding();
 	const exploreFeaturesUrl = urls.exploreFeatures;
 
-	const storedProFeatures = useMemo( () => ( choices.site_features as string[] ) || [], [ choices.site_features ] );
+	const FEATURE_OPTION_IDS = new Set( FEATURE_OPTIONS.map( ( featureOption ) => featureOption.id ) );
+
+	const storedPaidFeatures = useMemo(
+		() => ( ( choices.site_features as string[] ) || [] ).filter( ( id ) => FEATURE_OPTION_IDS.has( id ) ),
+		[ choices.site_features ]
+	);
 
 	const selectedValues = useMemo( () => {
-		const combined = [ ...CORE_FEATURE_IDS, ...storedProFeatures ];
+		const combined = [ ...CORE_FEATURE_IDS, ...storedPaidFeatures ];
 		return combined.filter( ( id, index ) => combined.indexOf( id ) === index );
-	}, [ storedProFeatures ] );
+	}, [ storedPaidFeatures ] );
 
 	const handleFeatureClick = useCallback(
 		( id: string ) => {
@@ -97,15 +102,24 @@ export function SiteFeatures() {
 				return;
 			}
 
-			const isProSelected = storedProFeatures.includes( id );
-			const updatedProSelection = isProSelected
-				? storedProFeatures.filter( ( featureId ) => featureId !== id )
-				: [ ...storedProFeatures, id ];
+			const hasPaidFeaturesSelected = storedPaidFeatures.includes( id );
+			const updatedPaidFeatureSelection = hasPaidFeaturesSelected
+				? storedPaidFeatures.filter( ( featureId ) => featureId !== id )
+				: [ ...storedPaidFeatures, id ];
 
-			actions.setUserChoice( 'site_features', updatedProSelection );
+			actions.setUserChoice( 'site_features', updatedPaidFeatureSelection );
 		},
-		[ storedProFeatures, selectedValues, actions ]
+		[ storedPaidFeatures, selectedValues, actions ]
 	);
+
+	const planName = useMemo( () => {
+		const hasOneFeature = storedPaidFeatures.some( ( optionId ) => {
+			const option = FEATURE_OPTIONS.find( ( featureOption ) => featureOption.id === optionId );
+			return option?.licenseType === 'one';
+		} );
+
+		return hasOneFeature ? 'One' : 'Pro';
+	}, [ storedPaidFeatures ] );
 
 	const handleExploreMoreClick = useCallback( () => {
 		window.open( exploreFeaturesUrl, '_blank' );
@@ -138,7 +152,8 @@ export function SiteFeatures() {
 				onExploreMoreClick={ handleExploreMoreClick }
 			/>
 
-			{ storedProFeatures.length > 0 && <ProPlanNotice /> }
+			{ storedPaidFeatures.length > 0 && <ProPlanNotice planName={ planName } /> }
+			{ console.log( 'storedPaidFeatures', storedPaidFeatures ) }
 		</Stack>
 	);
 }

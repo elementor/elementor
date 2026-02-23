@@ -9,7 +9,7 @@ export interface FeatureOption {
 	id: string;
 	label: string;
 	Icon: React.ElementType;
-	isPro: boolean;
+	licenseType: 'core' | 'pro' | 'one';
 }
 
 interface ExploreMoreOption extends FeatureOption {
@@ -34,7 +34,7 @@ const EXPLORE_MORE_OPTION: ExploreMoreOption = {
 	id: 'explore_more',
 	label: __( 'Explore more', 'elementor' ),
 	Icon: ArrowRightIcon,
-	isPro: false,
+	licenseType: 'core',
 	isExploreMore: true,
 };
 
@@ -133,8 +133,8 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick, onExplor
 			{ options.map( ( option ) => {
 				const isSelected = selectedValues.includes( option.id );
 				const Icon = option.Icon;
-				const BadgeIcon = option.isPro ? CrownFilledIcon : CheckIcon;
-				const isCore = ! option.isPro;
+				const BadgeIcon = option.licenseType !== 'core' ? CrownFilledIcon : CheckIcon;
+				const isCore = option.licenseType === 'core';
 
 				const handleClick = () => onFeatureClick( option.id );
 
@@ -156,7 +156,7 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick, onExplor
 					>
 						{ isCore && <IncludedInCoreChip label={ __( 'Included', 'elementor' ) } size="small" /> }
 						{ isSelected && (
-							<SelectionBadge icon={ BadgeIcon } variant={ option.isPro ? 'pro' : 'default' } />
+							<SelectionBadge icon={ BadgeIcon } variant={ option.licenseType !== 'core' ? 'paid' : 'free' } />
 						) }
 						<Box className="feature-icon" sx={ { mb: 1 } }>
 							<Icon fontSize="medium" />

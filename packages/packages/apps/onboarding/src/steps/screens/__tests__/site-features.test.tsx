@@ -20,10 +20,19 @@ const COMPARE_PLANS_BUTTON_LABEL = 'Compare plans';
 const TARGET_BLANK = '_blank';
 
 const getFirstProOption = () => {
-	const option = FEATURE_OPTIONS.find( ( featureOption ) => featureOption.isPro );
+	const option = FEATURE_OPTIONS.find( ( featureOption ) => featureOption.licenseType === 'pro' );
 
 	if ( ! option ) {
 		throw new Error( 'No pro option in FEATURE_OPTIONS' );
+	}
+	return option;
+};
+
+const getFirstOneOption = () => {
+	const option = FEATURE_OPTIONS.find( ( featureOption ) => featureOption.licenseType === 'one' );
+
+	if ( ! option ) {
+		throw new Error( 'No one option in FEATURE_OPTIONS' );
 	}
 	return option;
 };
@@ -60,7 +69,7 @@ describe( 'SiteFeatures', () => {
 				progress: SITE_FEATURES_PROGRESS,
 			} );
 
-			const coreOptions = FEATURE_OPTIONS.filter( ( option ) => ! option.isPro );
+			const coreOptions = FEATURE_OPTIONS.filter( ( option ) => option.licenseType === 'core' );
 			coreOptions.forEach( ( option ) => {
 				const card = screen.getByTestId( `feature-card-${ option.id }` );
 				expect( within( card ).getByText( BUILT_IN_LABEL ) ).toBeInTheDocument();
@@ -75,7 +84,7 @@ describe( 'SiteFeatures', () => {
 				progress: SITE_FEATURES_PROGRESS,
 			} );
 
-			const proOptions = FEATURE_OPTIONS.filter( ( option ) => option.isPro );
+			const proOptions = FEATURE_OPTIONS.filter( ( option ) => option.licenseType === 'pro' );
 			proOptions.forEach( ( option ) => {
 				const button = screen.getByRole( 'button', { name: option.label } );
 				expect( button ).toHaveAttribute( 'aria-pressed', 'false' );
@@ -114,7 +123,7 @@ describe( 'SiteFeatures', () => {
 				progress: SITE_FEATURES_PROGRESS,
 			} );
 
-			const coreOptions = FEATURE_OPTIONS.filter( ( option ) => ! option.isPro );
+			const coreOptions = FEATURE_OPTIONS.filter( ( option ) => option.licenseType === 'core' );
 			coreOptions.forEach( ( option ) => {
 				mockFetch.mockClear();
 				const card = screen.getByTestId( `feature-card-${ option.id }` );
@@ -195,7 +204,7 @@ describe( 'SiteFeatures', () => {
 
 	describe( 'Pre-selected state', () => {
 		it( 'restores previously selected pro features from saved choices', () => {
-			const proOptions = FEATURE_OPTIONS.filter( ( option ) => option.isPro );
+			const proOptions = FEATURE_OPTIONS.filter( ( option ) => option.licenseType === 'pro' );
 			const preSelectedCount = 2;
 			const selectedIds = proOptions.slice( 0, preSelectedCount ).map( ( option ) => option.id );
 			const unselectedOption = proOptions[ preSelectedCount ];
@@ -219,6 +228,42 @@ describe( 'SiteFeatures', () => {
 			} );
 			const unselectedButton = screen.getByRole( 'button', { name: unselectedOption.label } );
 			expect( unselectedButton ).toHaveAttribute( 'aria-pressed', 'false' );
+		} );
+	} );
+
+	describe( 'ProPlanNotice plan name', () => {
+		it( 'shows "Pro" plan name when only pro features are selected', () => {
+			const firstProOption = getFirstProOption();
+			renderApp( {
+				isConnected: true,
+				progress: SITE_FEATURES_PROGRESS,
+				choices: { site_features: [ firstProOption.id ] },
+			} );
+
+			expect( screen.getByText( /recommend the Pro plan/ ) ).toBeInTheDocument();
+		} );
+
+		it( 'shows "One" plan name when a one-license feature is selected', () => {
+			const firstOneOption = getFirstOneOption();
+			renderApp( {
+				isConnected: true,
+				progress: SITE_FEATURES_PROGRESS,
+				choices: { site_features: [ firstOneOption.id ] },
+			} );
+
+			expect( screen.getByText( /recommend the One plan/ ) ).toBeInTheDocument();
+		} );
+
+		it( 'shows "One" plan name when both pro and one-license features are selected', () => {
+			const firstProOption = getFirstProOption();
+			const firstOneOption = getFirstOneOption();
+			renderApp( {
+				isConnected: true,
+				progress: SITE_FEATURES_PROGRESS,
+				choices: { site_features: [ firstProOption.id, firstOneOption.id ] },
+			} );
+
+			expect( screen.getByText( /recommend the One plan/ ) ).toBeInTheDocument();
 		} );
 	} );
 } );

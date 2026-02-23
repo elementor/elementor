@@ -2,12 +2,12 @@ import * as React from 'react';
 import { Box, styled } from '@elementor/ui';
 
 interface SelectionBadgeRootProps {
-	variant: 'default' | 'pro';
+	variant: 'free' | 'paid';
 }
 
 interface SelectionBadgeProps {
 	icon: React.ElementType;
-	variant?: 'default' | 'pro';
+	variant?: 'free' | 'paid';
 }
 
 const SelectionBadgeRoot = styled( Box, {
@@ -22,14 +22,14 @@ const SelectionBadgeRoot = styled( Box, {
 	width: theme.spacing( 2.25 ),
 	height: theme.spacing( 2.25 ),
 	borderRadius: '50%',
-	backgroundColor: variant === 'pro' ? theme.palette.promotion.main : theme.palette.text.primary,
+	backgroundColor: variant === 'paid' ? theme.palette.promotion.main : theme.palette.text.primary,
 	color: theme.palette.common.white,
 	'& .MuiSvgIcon-root': {
 		fontSize: theme.typography.pxToRem( 14 ),
 	},
 } ) );
 
-export function SelectionBadge( { icon: Icon, variant = 'default' }: SelectionBadgeProps ) {
+export function SelectionBadge( { icon: Icon, variant = 'free' }: SelectionBadgeProps ) {
 	return (
 		<SelectionBadgeRoot variant={ variant }>
 			<Icon />

@@ -3,13 +3,12 @@ import { useCallback } from 'react';
 import { InfoCircleIcon } from '@elementor/icons';
 import type { Theme } from '@elementor/ui';
 import { Box, Button, Stack, styled, Typography } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 import { useOnboarding } from '../../../hooks/use-onboarding';
 
 const PRO_PLAN_NOTICE_BG = 'rgba(250, 228, 250, 0.6)';
 
-const PRO_PLAN_NOTICE_TEXT = __( 'Some features you selected are available in Pro plan.', 'elementor' );
 const COMPARE_PLANS_BUTTON_TEXT = __( 'Compare plans', 'elementor' );
 
 const ProPlanNoticeRoot = styled( Box )( ( { theme } ) => ( {
@@ -25,7 +24,11 @@ const ProPlanNoticeRoot = styled( Box )( ( { theme } ) => ( {
 	},
 } ) );
 
-export function ProPlanNotice() {
+interface LicenseNoticeProps {
+	planName: 'Pro' | 'One';
+}
+
+export function ProPlanNotice( { planName }: LicenseNoticeProps ) {
 	const { urls } = useOnboarding();
 	const comparePlansUrl = urls.comparePlans;
 
@@ -56,7 +59,11 @@ export function ProPlanNotice() {
 						fontSize: theme.spacing( 1.625 ),
 					} ) }
 				>
-					{ PRO_PLAN_NOTICE_TEXT }
+					{ sprintf(
+						/* translators: %s: plan name (e.g. "Pro" or "One") */
+						__( 'Based on the features you chose, we recommend the %s plan, or higher.', 'elementor' ),
+						planName
+					) }
 				</Typography>
 			</Stack>
 			<Button
