@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Toggle_Control;
 use ElementorPro\Modules\AtomicForm\Submit_Button\Submit_Button;
+use ElementorPro\Modules\AtomicForm\Row_Container\Row_Container;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
@@ -35,8 +36,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Form extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
-	const FIELD_CONTAINER_STYLE_KEY = 'input-container';
-
 	private static $field_container_global_class_filter_registered = false;
 
 	/** Used by field-container divs to add the Settings panel global class at render time. */
@@ -184,25 +183,13 @@ class Atomic_Form extends Atomic_Element_Base {
 						->add_prop( 'flex-direction', String_Prop_Type::generate( 'row' ) )
 						->add_prop( 'flex-wrap', String_Prop_Type::generate( 'wrap' ) )
 						->add_prop( 'gap', Size_Prop_Type::generate( [
-							'size' => 1,
-							'unit' => '%',
-						] ) )
-				),
-			static::FIELD_CONTAINER_STYLE_KEY => Style_Definition::make()
-				->set_label( 'field-container' )
-				->add_variant(
-					Style_Variant::make()
-						->set_breakpoint( Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP )
-						->add_prop( 'padding', Size_Prop_Type::generate( [
-							'size' => 0,
+							'size' => 10,
 							'unit' => 'px',
 						] ) )
-						->add_prop( 'gap', Size_Prop_Type::generate( [
-							'size' => 1,
-							'unit' => '%',
+						->add_prop( 'padding', Size_Prop_Type::generate( [
+							'size' => 20,
+							'unit' => 'px',
 						] ) )
-						->add_prop( 'flex-direction', String_Prop_Type::generate( 'column' ) )
-						->add_prop( 'flex-wrap', String_Prop_Type::generate( 'wrap' ) )
 				),
 		];
 
@@ -221,39 +208,31 @@ class Atomic_Form extends Atomic_Element_Base {
 		return [
 			// First row - two field containers side by side
 		
-			$this->build_field_container(
-				__( 'Name', 'elementor' ),
-				'name',
+			...$this->build_field_pair(
+				__( 'Fist name', 'elementor' ),
+				'first-name',
 				'text',
-				__( 'Placeholder', 'elementor' ),
-				[ 
-					'size' => 49.5,
-					'global_class' => 'input-container-aaa',
-				]
+				__( 'First', 'elementor' ),
 			),
-			$this->build_field_container(
+			...$this->build_field_pair(
 				__( 'Last name', 'elementor' ),
 				'last-name',
 				'text',
-				__( 'your@mail.com', 'elementor' ),
-				[ 
-					'size' => 49.5,
-					'global_class' => 'input-container-aaa',
-				]
+				__( 'Last', 'elementor' )
 			),
 
-			$this->build_field_container(
+			...$this->build_field_pair(
 				__( 'Email', 'elementor' ),
 				'email',
 				'email',
 				__( 'your@mail.com', 'elementor' )
 			),
 
-			$this->build_field_container(
+			...$this->build_field_pair(
 				__( 'Message', 'elementor' ),
 				'message',
 				'textarea',
-				__( 'Your message', 'elementor' )
+				__( 'Your message', 'elementor' ),
 			),
 
 			// Submit button
@@ -296,10 +275,13 @@ class Atomic_Form extends Atomic_Element_Base {
 
 	private function build_input( string $placeholder, string $field_id, string $type = 'text', array $options = [] ): array {
 		if ( $type === 'textarea' ) {
+			$style_id = 'e-form-textarea-width';
+
 			return Widget_Builder::make( 'e-form-textarea' )
 				->settings( [
 					'placeholder' => String_Prop_Type::generate( $placeholder ),
-					'rows' => Number_Prop_Type::generate( $options['rows'] ?? 4 ),
+					'rows' => Number_Prop_Type::generate( 4 ),
+					'classes' => Classes_Prop_Type::generate( [ $style_id ] ),
 				] )
 				->build();
 		}
@@ -312,16 +294,11 @@ class Atomic_Form extends Atomic_Element_Base {
 			->build();
 	}
 
-	private function build_field_container( string $label_text, string $field_id, string $input_type, string $placeholder, array $options = [] ): array {
-		return Element_Builder::make( Div_Block::get_element_type() )
-			->editor_settings( [
-				'title' => $label_text . ' Field',
-			] )
-			->children( [
-				$this->build_label( $label_text, $field_id ),
-				$this->build_input( $placeholder, $field_id, $input_type ),
-			] )
-			->build();
+	private function build_field_pair( string $label_text, string $field_id, string $input_type, string $placeholder ): array {
+		return [
+			$this->build_label( $label_text, $field_id ),
+			$this->build_input( $placeholder, $field_id, $input_type ),
+		];
 	}
 
 	private function build_status_message( string $message, string $state, string $title ): array {
