@@ -3,13 +3,15 @@ import { parallelTest as test } from '../../../../../parallelTest';
 import WpAdminPage from '../../../../../pages/wp-admin-page';
 
 const ONBOARDING_URL = '/wp-admin/admin.php?page=elementor-app&ver=4.0.0#onboarding';
+const USER_CHOICES_ENDPOINT = '/wp-json/elementor/v1/e-onboarding/user-choices';
+const USER_PROGRESS_ENDPOINT = '/wp-json/elementor/v1/e-onboarding/user-progress';
 
 async function mockOnboardingApi( page: Page ) {
 	const choicesRequests: Record< string, unknown >[] = [];
 	const progressRequests: Record< string, unknown >[] = [];
 
 	await page.route(
-		( url ) => url.pathname.includes( '/wp-json/elementor/v1/e-onboarding/user-choices' ),
+		( url ) => url.pathname.includes( USER_CHOICES_ENDPOINT ),
 		async ( route ) => {
 			const body = route.request().postData();
 			if ( body ) {
@@ -25,7 +27,7 @@ async function mockOnboardingApi( page: Page ) {
 	);
 
 	await page.route(
-		( url ) => url.pathname.includes( '/wp-json/elementor/v1/e-onboarding/user-progress' ),
+		( url ) => url.pathname.includes( USER_PROGRESS_ENDPOINT ),
 		async ( route ) => {
 			const body = route.request().postData();
 			if ( body ) {
@@ -46,12 +48,17 @@ async function mockOnboardingApi( page: Page ) {
 async function doAndWaitForProgress( page: Page, action: () => Promise< void > ) {
 	await Promise.all( [
 		page.waitForResponse(
-			( r ) =>
-				r.url().includes( '/wp-json/elementor/v1/e-onboarding/user-progress' ) &&
-				r.request().method() === 'POST',
+			( r ) => r.url().includes( USER_PROGRESS_ENDPOINT ) && r.request().method() === 'POST',
 		),
 		action(),
 	] );
+}
+
+async function navigateAndPassLogin( page: Page ) {
+	await page.goto( ONBOARDING_URL );
+	await expect( page.getByTestId( 'login-screen' ) ).toBeVisible();
+	await page.getByRole( 'button', { name: 'Continue as a guest' } ).click();
+	await expect( page.getByTestId( 'building-for-step' ) ).toBeVisible();
 }
 
 test.describe( 'E-Onboarding @e-onboarding', () => {
@@ -77,7 +84,6 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 		const { choicesRequests, progressRequests } = await mockOnboardingApi( page );
 
 		await page.goto( ONBOARDING_URL );
-		await page.waitForLoadState( 'networkidle' );
 
 		await test.step( 'Login screen', async () => {
 			await expect( page.getByTestId( 'login-screen' ) ).toBeVisible();
@@ -256,12 +262,7 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 
 	test( 'Back from site_about returns to building_for with selection preserved', async ( { page } ) => {
 		await mockOnboardingApi( page );
-
-		await page.goto( ONBOARDING_URL );
-		await page.waitForLoadState( 'networkidle' );
-
-		await page.getByRole( 'button', { name: 'Continue as a guest' } ).click();
-		await expect( page.getByTestId( 'building-for-step' ) ).toBeVisible();
+		await navigateAndPassLogin( page );
 
 		await doAndWaitForProgress( page, () =>
 			page.getByRole( 'button', { name: 'Just exploring' } ).click(),
@@ -297,12 +298,7 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 
 	test( 'Back from theme_selection shows experience_level Continue enabled', async ( { page } ) => {
 		await mockOnboardingApi( page );
-
-		await page.goto( ONBOARDING_URL );
-		await page.waitForLoadState( 'networkidle' );
-
-		await page.getByRole( 'button', { name: 'Continue as a guest' } ).click();
-		await expect( page.getByTestId( 'building-for-step' ) ).toBeVisible();
+		await navigateAndPassLogin( page );
 
 		await doAndWaitForProgress( page, () =>
 			page.getByRole( 'button', { name: 'Just exploring' } ).click(),
