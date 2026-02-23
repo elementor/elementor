@@ -2,7 +2,6 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../../parallelTest';
 import WpAdminPage from '../../../../../pages/wp-admin-page';
 import EditorSelectors from '../../../../../selectors/editor-selectors';
-import { wpCli } from '../../../../../assets/wp-cli';
 import { timeouts } from '../../../../../config/timeouts';
 
 const BUTTON_CLASSES = {
@@ -18,7 +17,6 @@ test.describe( 'On boarding @onBoarding', async () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		originalActiveTheme = await wpAdmin.getActiveTheme();
 		await wpAdmin.activateTheme( 'twentytwentyfive' );
-		await wpCli( 'wp transient delete _elementor_ab_testing_data' );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
