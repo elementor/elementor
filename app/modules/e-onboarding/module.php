@@ -121,15 +121,19 @@ class Module extends BaseModule {
 		$current_step_index = $progress->get_current_step_index() ?? 0;
 		$current_step_id = $progress->get_current_step_id() ?? $steps[0]['id'] ?? 'building_for';
 
-		if ( $current_step_index < 0 || $current_step_index >= $step_count ) {
-			$current_step_id = $steps[0]['id'];
-			$current_step_index = 0;
-		}
+		$this->maybe_reset_invalid_step_data( $current_step_index, $current_step_id, $step_count, $steps );
 
 		$progress_data['current_step_id'] = $current_step_id;
 		$progress_data['current_step_index'] = $current_step_index;
 
 		return $progress_data;
+	}
+
+	private function maybe_reset_invalid_step_data( int &$current_step_index, string &$current_step_id, int $step_count, array $steps ): void {
+		if ( $current_step_index < 0 || $current_step_index >= $step_count ) {
+			$current_step_index = 0;
+			$current_step_id = $steps[0]['id'];
+		}
 	}
 
 	private function is_user_connected(): bool {
