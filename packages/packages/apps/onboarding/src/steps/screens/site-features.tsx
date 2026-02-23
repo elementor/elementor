@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
 import {
-	AIIcon,
 	CodeIcon,
 	ColorSwatchIcon,
 	ElementorAccessibilityIcon,
+	ElementorAIIcon,
 	ElementorEmailDeliverabilityIcon,
 	ElementorImageOptimizerIcon,
 	ThemeBuilderIcon,
@@ -56,7 +56,7 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 	{
 		id: 'ai_features',
 		label: __( 'AI for code, images, & layouts', 'elementor' ),
-		Icon: AIIcon,
+		Icon: ElementorAIIcon,
 		licenseType: 'one',
 	},
 	{
