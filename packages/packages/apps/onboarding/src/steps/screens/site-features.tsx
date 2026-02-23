@@ -16,6 +16,20 @@ import { CorePlaceholderIcon } from '../../components/ui/core-placeholder-icon';
 import { useOnboarding } from '../../hooks/use-onboarding';
 import { FeatureGrid, type FeatureOption, ProPlanNotice } from '../components/site-features';
 
+// eslint-disable-next-line no-console
+console.log( '[onboarding] site-features imports', {
+	AIIcon,
+	CodeIcon,
+	ColorSwatchIcon,
+	ElementorAccessibilityIcon,
+	ElementorEmailDeliverabilityIcon,
+	ElementorImageOptimizerIcon,
+	ThemeBuilderIcon,
+	CorePlaceholderIcon,
+	FeatureGrid,
+	ProPlanNotice,
+} );
+
 export const FEATURE_OPTIONS: FeatureOption[] = [
 	{
 		id: 'classes_variables',
@@ -83,6 +97,9 @@ const STEP_TITLE = __( 'What do you want to include in your site?', 'elementor' 
 const STEP_SUBTITLE = __( "We'll use this to tailor suggestions for you.", 'elementor' );
 
 export function SiteFeatures() {
+	// eslint-disable-next-line no-console
+	console.log( '[onboarding] SiteFeatures render', { FeatureGrid, ProPlanNotice, CorePlaceholderIcon } );
+
 	const { choices, actions, urls } = useOnboarding();
 	const exploreFeaturesUrl = urls.exploreFeatures;
 

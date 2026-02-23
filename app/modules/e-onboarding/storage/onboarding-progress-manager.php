@@ -151,22 +151,27 @@ class Onboarding_Progress_Manager {
 			return;
 		}
 
-		$theme = wp_get_theme( $theme_slug );
+		try {
+			$theme = wp_get_theme( $theme_slug );
 
-		if ( ! $theme->exists() ) {
-			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
-			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader-skin.php';
+			if ( ! $theme->exists() ) {
+				require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+				require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader-skin.php';
 
-			$skin = new \WP_Ajax_Upgrader_Skin();
-			$upgrader = new \Theme_Upgrader( $skin );
-			$result = $upgrader->install( "https://downloads.wordpress.org/theme/{$theme_slug}.latest-stable.zip" );
+				$skin = new \WP_Ajax_Upgrader_Skin();
+				$upgrader = new \Theme_Upgrader( $skin );
+				$result = $upgrader->install( "https://downloads.wordpress.org/theme/{$theme_slug}.latest-stable.zip" );
 
-			if ( is_wp_error( $result ) || ! $result ) {
-				return;
+				if ( is_wp_error( $result ) || ! $result ) {
+					error_log( "[e-onboarding] Theme install failed for '{$theme_slug}': " . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown error' ) );
+					return;
+				}
 			}
-		}
 
-		switch_theme( $theme_slug );
+			switch_theme( $theme_slug );
+		} catch ( \Throwable $e ) {
+			error_log( "[e-onboarding] Exception during theme install/activate for '{$theme_slug}': " . $e->getMessage() );
+		}
 	}
 
 	public function reset(): void {
