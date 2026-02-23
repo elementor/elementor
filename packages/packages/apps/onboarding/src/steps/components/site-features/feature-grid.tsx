@@ -109,9 +109,6 @@ function ExploreMoreCard( { onClick, onKeyDown }: ExploreMoreCardProps ) {
 }
 
 export function FeatureGrid( { options, selectedValues, onFeatureClick, onExploreMoreClick }: FeatureGridProps ) {
-	// eslint-disable-next-line no-console
-	console.log( '[onboarding] FeatureGrid render — options icons:', options.map( ( o ) => ( { id: o.id, Icon: o.Icon } ) ) );
-
 	const handleKeyDown = ( event: React.KeyboardEvent, handler: () => void ) => {
 		if ( [ 'Enter', ' ' ].includes( event.key ) ) {
 			event.preventDefault();
