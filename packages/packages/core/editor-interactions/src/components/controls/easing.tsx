@@ -1,17 +1,12 @@
 import * as React from 'react';
-import { type MouseEvent, useRef } from 'react';
-import { MenuListItem } from '@elementor/editor-ui';
-import { MenuSubheader, Select } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type FieldProps } from '../../types';
-import { InteractionsPromotionChip, type InteractionsPromotionChipRef } from '../../ui/interactions-promotion-chip';
+import { PromotionSelect } from '../../ui/promotion-select';
+import { DEFAULT_VALUES } from '../interaction-details';
 
-const BASE_EASING_OPTIONS = {
+export const EASING_OPTIONS = {
 	easeIn: __( 'Ease In', 'elementor' ),
-};
-
-const EXTENDED_EASING_OPTIONS = {
 	easeInOut: __( 'Ease In Out', 'elementor' ),
 	easeOut: __( 'Ease Out', 'elementor' ),
 	backIn: __( 'Back In', 'elementor' ),
@@ -20,60 +15,25 @@ const EXTENDED_EASING_OPTIONS = {
 	linear: __( 'Linear', 'elementor' ),
 };
 
-const DEFAULT_EASING = 'easeIn';
+export const BASE_EASINGS: string[] = [ 'easeIn' ];
 
 export function Easing( {}: FieldProps ) {
-	const promotionRef = useRef< InteractionsPromotionChipRef >( null );
-	const anchorRef = useRef< HTMLElement >( null );
+	const baseOptions = Object.fromEntries(
+		Object.entries( EASING_OPTIONS ).filter( ( [ key ] ) => BASE_EASINGS.includes( key ) )
+	);
 
-	const baseOptions = Object.entries( BASE_EASING_OPTIONS ).map( ( [ key, label ] ) => ( { key, label } ) );
-	const extendedOptions = Object.entries( EXTENDED_EASING_OPTIONS ).map( ( [ key, label ] ) => ( { key, label } ) );
+	const disabledOptions = Object.fromEntries(
+		Object.entries( EASING_OPTIONS ).filter( ( [ key ] ) => ! BASE_EASINGS.includes( key ) )
+	);
 
 	return (
-		<Select
-			value={ DEFAULT_EASING }
-			onChange={ () => {} }
-			fullWidth
-			displayEmpty
-			size="tiny"
-			MenuProps={ {
-				disablePortal: true,
-			} }
-		>
-			{ baseOptions.map( ( option ) => (
-				<MenuListItem key={ option.key } value={ option.key }>
-					{ option.label }
-				</MenuListItem>
-			) ) }
-
-			<MenuSubheader
-				sx={ {
-					cursor: 'pointer',
-					color: 'text.tertiary',
-					fontWeight: '400',
-					display: 'flex',
-					alignItems: 'center',
-				} }
-				ref={ anchorRef }
-				onMouseDown={ ( e: MouseEvent ) => {
-					e.stopPropagation();
-					promotionRef.current?.toggle();
-				} }
-			>
-				{ __( 'PRO features', 'elementor' ) }
-				<InteractionsPromotionChip
-					content={ __( 'Upgrade to control the smoothness of the interaction.', 'elementor' ) }
-					upgradeUrl="https://go.elementor.com/go-pro-interactions-easing-modal/"
-					ref={ promotionRef }
-					anchorRef={ anchorRef }
-				/>
-			</MenuSubheader>
-
-			{ extendedOptions.map( ( option ) => (
-				<MenuListItem key={ option.key } value={ option.key } disabled sx={ { pl: 3 } }>
-					{ option.label }
-				</MenuListItem>
-			) ) }
-		</Select>
+		<PromotionSelect
+			value={ DEFAULT_VALUES.easing }
+			baseOptions={ baseOptions }
+			disabledOptions={ disabledOptions }
+			promotionLabel={ __( 'PRO features', 'elementor' ) }
+			promotionContent={ __( 'Upgrade to control the smoothness of the interaction.', 'elementor' ) }
+			upgradeUrl="https://go.elementor.com/go-pro-interactions-easing-modal/"
+		/>
 	);
 }

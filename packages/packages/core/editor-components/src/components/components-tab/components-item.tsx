@@ -23,18 +23,18 @@ import { __ } from '@wordpress/i18n';
 import { useComponentsPermissions } from '../../hooks/use-components-permissions';
 import { archiveComponent } from '../../store/actions/archive-component';
 import { loadComponentsAssets } from '../../store/actions/load-components-assets';
+import { renameComponent } from '../../store/actions/rename-component';
 import { type Component } from '../../types';
 import { validateComponentName } from '../../utils/component-name-validation';
+import { createComponentModel } from '../../utils/create-component-model';
 import { getContainerForNewElement } from '../../utils/get-container-for-new-element';
-import { createComponentModel } from '../create-component-form/utils/replace-element-with-component';
 import { DeleteConfirmationDialog } from './delete-confirmation-dialog';
 
 type ComponentItemProps = {
 	component: Omit< Component, 'id' > & { id?: number };
-	renameComponent: ( newName: string ) => void;
 };
 
-export const ComponentItem = ( { component, renameComponent }: ComponentItemProps ) => {
+export const ComponentItem = ( { component }: ComponentItemProps ) => {
 	const itemRef = useRef< HTMLElement >( null );
 	const [ isDeleteDialogOpen, setIsDeleteDialogOpen ] = useState( false );
 	const { canRename, canDelete } = useComponentsPermissions();
@@ -49,9 +49,10 @@ export const ComponentItem = ( { component, renameComponent }: ComponentItemProp
 		getProps: getEditableProps,
 	} = useEditable( {
 		value: component.name,
-		onSubmit: renameComponent,
+		onSubmit: ( newName: string ) => renameComponent( component.uid, newName ),
 		validation: validateComponentTitle,
 	} );
+
 	const componentModel = createComponentModel( component );
 
 	const popupState = usePopupState( {
