@@ -9,7 +9,7 @@ import {
 	useControlReplacement,
 } from '@elementor/editor-controls';
 import { createTopLevelObjectType, useElement } from '@elementor/editor-editing-panel';
-import { type PropValue } from '@elementor/editor-props';
+import { isDependencyMet, type PropValue } from '@elementor/editor-props';
 
 import { type ComponentInstanceOverridePropValue } from '../../../prop-types/component-instance-override-prop-type';
 import {
@@ -94,6 +94,7 @@ export function OverridablePropControl< T extends object >( {
 					[ bind ]: propValue,
 				} }
 				placeholder={ objectPlaceholder }
+				isDisabled={ ( prop ) => ! isDependencyMet( prop?.dependencies, { [ bind ]: propValue } ).isMet }
 			>
 				<PropKeyProvider bind={ bind }>
 					<ControlReplacementsProvider replacements={ filteredReplacements }>

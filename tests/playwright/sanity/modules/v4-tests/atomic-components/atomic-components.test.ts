@@ -290,6 +290,61 @@ test.describe( 'Atomic Components @v4-tests', () => {
 		} );
 	} );
 
+	test( 'Open in a new tab toggle should be enabled and changeable when link is exposed as prop in Flexbox component @ED-22975', async () => {
+		const LINK_URL = 'https://example.com';
+		const linkFieldLabel = 'Link';
+
+		await test.step( 'Create a component with a Flexbox', async () => {
+			const { locator: flexbox } = await createContentForComponent( editor );
+			await openCreateComponentFromContextMenu( flexbox, page );
+			await createComponent( page, editor, uniqueName( 'Link Component' ) );
+		} );
+
+		await test.step( 'Select heading and expose link as prop', async () => {
+			const heading = editor.getPreviewFrame().locator( EditorSelectors.v4.atomSelectors.heading.wrapper ).first();
+			await heading.click();
+			await editor.v4Panel.openTab( 'general' );
+
+			const linkField = helper.getSettingsField( linkFieldLabel );
+			const exposeIndicator = linkField.locator( EditorSelectors.components.overridableIndicator ).first();
+			await exposeIndicator.click();
+
+			const overridablePropForm = page.locator( EditorSelectors.components.overridablePropForm );
+			await overridablePropForm.waitFor( { state: 'visible', timeout: timeouts.longAction } );
+
+			const labelInput = overridablePropForm.getByRole( 'textbox' ).first();
+			await labelInput.fill( linkFieldLabel );
+
+			const confirmButton = page.getByRole( 'button', { name: 'Create' } );
+			await confirmButton.click();
+
+			await overridablePropForm.waitFor( { state: 'hidden', timeout: timeouts.longAction } );
+		} );
+
+		await test.step( 'Fill in the link URL', async () => {
+			await helper.setLinkControl( {
+				toggleMode: true,
+				value: LINK_URL,
+				isTargetBlank: false,
+			} );
+		} );
+
+		await test.step( 'Verify open in a new tab toggle is enabled and changeable', async () => {
+			const newTabSwitch = helper.getNewTabSwitch();
+
+			await expect( newTabSwitch ).toBeVisible();
+			await expect( newTabSwitch ).toBeEnabled();
+
+			const initialState = await helper.isNewTabSwitchOn();
+			await newTabSwitch.click();
+
+			const toggledState = await helper.isNewTabSwitchOn();
+			expect( toggledState ).not.toBe( initialState );
+		} );
+
+		await exitComponentEditMode( editor );
+	} );
+
 	test( 'should load local styles used within a component on page', async () => {
 		const componentName = uniqueName( 'Styled Component' );
 		const backgroundColor = 'rgb(255, 0, 0)';
