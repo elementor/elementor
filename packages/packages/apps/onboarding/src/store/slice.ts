@@ -74,9 +74,9 @@ function getEmptyState(): OnboardingState {
 		isConnected: false,
 		isGuest: false,
 		userName: '',
+		urls: { dashboard: '', editor: '', connect: '', comparePlans: '', exploreFeatures: '' },
 		shouldShowProInstallScreen: false,
 		hasProInstallScreenDismissed: false,
-		urls: { dashboard: '', editor: '', connect: '' },
 	};
 }
 
@@ -90,8 +90,13 @@ function buildStateFromConfig(
 	const steps = parseStepsFromConfig( config.steps );
 	const firstStepId = steps[ 0 ]?.id ?? StepId.BUILDING_FOR;
 	const progress = config.progress ?? {};
-	const currentStepIndex = progress.current_step_index ?? 0;
-	const currentStepId = steps[ currentStepIndex ]?.id ?? ( progress.current_step_id as StepIdType ) ?? firstStepId;
+	let currentStepIndex = progress.current_step_index ?? 0;
+
+	if ( currentStepIndex < 0 || currentStepIndex >= steps.length ) {
+		currentStepIndex = 0;
+	}
+
+	const currentStepId = steps[ currentStepIndex ]?.id ?? firstStepId;
 
 	return {
 		steps,
@@ -109,9 +114,9 @@ function buildStateFromConfig(
 		isConnected: config.isConnected ?? false,
 		isGuest: false,
 		userName: config.userName ?? '',
+		urls: config.urls ?? { dashboard: '', editor: '', connect: '', comparePlans: '', exploreFeatures: '' },
 		shouldShowProInstallScreen: config.shouldShowProInstallScreen ?? false,
 		hasProInstallScreenDismissed: false,
-		urls: config.urls ?? { dashboard: '', editor: '', connect: '' },
 	};
 }
 
