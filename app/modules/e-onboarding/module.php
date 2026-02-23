@@ -122,7 +122,9 @@ class Module extends BaseModule {
 		$current_step_index = $progress->get_current_step_index() ?? 0;
 		$current_step_id = $progress->get_current_step_id() ?? $steps[0]['id'] ?? 'building_for';
 
-		if ( $current_step_index < 0 || $current_step_index >= $step_count ) {
+		$is_invalid_step_index = $current_step_index < 0 || $current_step_index >= $step_count;
+
+		if ( $is_invalid_step_index ) {
 			$current_step_id = $steps[0]['id'];
 			$current_step_index = 0;
 		}
