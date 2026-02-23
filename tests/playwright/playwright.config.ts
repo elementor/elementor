@@ -24,6 +24,11 @@ _config( {
 
 export default defineConfig( {
 	testDir: './sanity',
+	testIgnore: [
+		'**/packages/**/__tests__/**',
+		'**/packages/**/*.test.tsx',
+		'**/packages/**/*.test.ts',
+	],
 	timeout: timeouts.singleTest,
 	globalTimeout: timeouts.global,
 	grepInvert: /elements-regression/,

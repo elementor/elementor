@@ -1,0 +1,47 @@
+name: "Playwright Agents Environment Setup"
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/playwright-agents-setup.yml
+  pull_request:
+    paths:
+      - .github/workflows/playwright-agents-setup.yml
+
+jobs:
+  playwright-agents-setup:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+
+    - name: Setup test environment
+      run: npm run env:setup
+
+    - name: Build application
+      run: npm run build
+
+    - name: Setup Playwright test environment
+      run: npm run test:setup:playwright
+
+    - name: Verify agents environment
+      run: |
+        echo "✅ Environment ready for Cursor Playwright agents"
+        echo "Available agents:"
+        echo "  - playwright-test-planner"
+        echo "  - playwright-test-generator" 
+        echo "  - playwright-test-healer"
