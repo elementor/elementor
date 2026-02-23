@@ -5,24 +5,25 @@ export default function AddSectionArea( props ) {
 	const addAreaElementRef = useRef(),
 		containerHelper = elementor.helpers.container;
 
-	// Make droppable area.
 	useEffect( () => {
 		const $addAreaElementRef = jQuery( addAreaElementRef.current ),
 			defaultDroppableOptions = props.container.view.getDroppableOptions();
 
-		// Make some adjustments to behave like 'AddSectionArea', use default droppable options from container element.
 		defaultDroppableOptions.placeholder = false;
 		defaultDroppableOptions.items = '> .elementor-add-section-inner';
 		defaultDroppableOptions.hasDraggingOnChildClass = 'elementor-dragging-on-child';
 
-		// Make element drop-able.
 		$addAreaElementRef.html5Droppable( defaultDroppableOptions );
 
-		// Cleanup.
 		return () => {
 			$addAreaElementRef.html5Droppable( 'destroy' );
 		};
 	}, [] );
+
+	const handleAddContainerClick = ( event ) => {
+		event.stopPropagation();
+		props.setIsRenderPresets( true );
+	};
 
 	return (
 		<div
@@ -38,7 +39,7 @@ export default function AddSectionArea( props ) {
 						type="button"
 						className="elementor-add-section-area-button elementor-add-section-button"
 						aria-label={ __( 'Add new container', 'elementor' ) }
-						onClick={ () => props.setIsRenderPresets( true ) }
+						onClick={ handleAddContainerClick }
 					>
 						<i className="eicon-plus" aria-hidden="true" />
 					</button>

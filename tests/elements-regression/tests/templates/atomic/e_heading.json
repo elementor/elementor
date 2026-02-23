@@ -16,9 +16,9 @@
               "value": "h1"
             },
             "title": {
-              "$$type": "html-v2",
+              "$$type": "html-v3",
               "value": {
-                "content": "H1 Main Heading - Large Size",
+                "content": {"$$type": "string", "value": "H1 Main Heading - Large Size"},
                 "children": []
               }
             }

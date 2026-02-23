@@ -56,6 +56,7 @@ export { PopoverGridContainer } from './components/popover-grid-container';
 export { InlineEditor } from './components/inline-editor';
 export { InlineEditorToolbar } from './components/inline-editor-toolbar';
 export { UnstableSizeField } from './components/size/unstable-size-field';
+export { NumberInput } from './components/number-input';
 
 // types
 export type { ControlComponent } from './create-control';

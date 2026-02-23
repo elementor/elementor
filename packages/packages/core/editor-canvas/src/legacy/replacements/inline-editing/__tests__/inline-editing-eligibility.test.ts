@@ -13,10 +13,10 @@ const createUnionPropType = ( keys: string[] ): PropType =>
 	} ) as PropType;
 
 describe( 'isInlineEditingAllowed', () => {
-	it( 'should allow inline editing for html-v2 prop values', () => {
+	it( 'should allow inline editing for html-v3 prop values', () => {
 		expect(
 			isInlineEditingAllowed( {
-				rawValue: { $$type: 'html-v2', value: { content: 'Hello', children: [] } },
+				rawValue: { $$type: 'html-v3', value: { content: { $$type: 'string', value: 'Hello' }, children: [] } },
 				propTypeFromSchema: null,
 			} )
 		).toBe( true );
@@ -40,11 +40,11 @@ describe( 'isInlineEditingAllowed', () => {
 		).toBe( false );
 	} );
 
-	it( 'should allow when value is unset but schema key is html-v2', () => {
+	it( 'should allow when value is unset but schema key is html-v3', () => {
 		expect(
 			isInlineEditingAllowed( {
 				rawValue: undefined,
-				propTypeFromSchema: createPlainPropType( 'html-v2' ),
+				propTypeFromSchema: createPlainPropType( 'html-v3' ),
 			} )
 		).toBe( true );
 	} );
@@ -67,16 +67,16 @@ describe( 'isInlineEditingAllowed', () => {
 		).toBe( false );
 	} );
 
-	it( 'should allow when value is unset and union schema includes html-v2', () => {
+	it( 'should allow when value is unset and union schema includes html-v3', () => {
 		expect(
 			isInlineEditingAllowed( {
 				rawValue: undefined,
-				propTypeFromSchema: createUnionPropType( [ 'dynamic', 'html-v2' ] ),
+				propTypeFromSchema: createUnionPropType( [ 'dynamic', 'html-v3' ] ),
 			} )
 		).toBe( true );
 	} );
 
-	it( 'should disallow when value is unset and union schema does not include html-v2/string', () => {
+	it( 'should disallow when value is unset and union schema does not include html-v3/string', () => {
 		expect(
 			isInlineEditingAllowed( {
 				rawValue: undefined,

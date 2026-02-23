@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { MenuListItem } from '@elementor/editor-ui';
-import { Select } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type FieldProps } from '../../types';
+import { PromotionSelect } from '../../ui/promotion-select';
+import { DEFAULT_VALUES } from '../interaction-details';
 
-const EASING_OPTIONS = {
+export const EASING_OPTIONS = {
 	easeIn: __( 'Ease In', 'elementor' ),
 	easeInOut: __( 'Ease In Out', 'elementor' ),
 	easeOut: __( 'Ease Out', 'elementor' ),
@@ -15,24 +15,25 @@ const EASING_OPTIONS = {
 	linear: __( 'Linear', 'elementor' ),
 };
 
-const DEFAULT_EASING = 'easeIn';
+export const BASE_EASINGS: string[] = [ 'easeIn' ];
 
 export function Easing( {}: FieldProps ) {
-	const availableOptions = Object.entries( EASING_OPTIONS ).map( ( [ key, label ] ) => ( {
-		key,
-		label,
-	} ) );
+	const baseOptions = Object.fromEntries(
+		Object.entries( EASING_OPTIONS ).filter( ( [ key ] ) => BASE_EASINGS.includes( key ) )
+	);
+
+	const disabledOptions = Object.fromEntries(
+		Object.entries( EASING_OPTIONS ).filter( ( [ key ] ) => ! BASE_EASINGS.includes( key ) )
+	);
 
 	return (
-		<Select value={ DEFAULT_EASING } onChange={ () => {} } fullWidth displayEmpty size="tiny">
-			{ availableOptions.map( ( option ) => {
-				const isDisabled = DEFAULT_EASING !== option.key;
-				return (
-					<MenuListItem key={ option.key } value={ option.key } disabled={ isDisabled }>
-						{ option.label }
-					</MenuListItem>
-				);
-			} ) }
-		</Select>
+		<PromotionSelect
+			value={ DEFAULT_VALUES.easing }
+			baseOptions={ baseOptions }
+			disabledOptions={ disabledOptions }
+			promotionLabel={ __( 'PRO features', 'elementor' ) }
+			promotionContent={ __( 'Upgrade to control the smoothness of the interaction.', 'elementor' ) }
+			upgradeUrl="https://go.elementor.com/go-pro-interactions-easing-modal/"
+		/>
 	);
 }

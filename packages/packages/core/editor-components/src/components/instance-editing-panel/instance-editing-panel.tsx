@@ -1,16 +1,19 @@
 import * as React from 'react';
 import { ControlAdornmentsProvider } from '@elementor/editor-controls';
-import { getFieldIndicators } from '@elementor/editor-editing-panel';
-import { useSelectedElement } from '@elementor/editor-elements';
+import { getFieldIndicators, useElement } from '@elementor/editor-editing-panel';
+import { useElementSetting, useSelectedElement } from '@elementor/editor-elements';
 import { PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { EllipsisWithTooltip } from '@elementor/editor-ui';
 import { ComponentsIcon, PencilIcon } from '@elementor/icons';
 import { Box, Divider, IconButton, Stack, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useComponentInstanceSettings } from '../../hooks/use-component-instance-settings';
 import { useComponentsPermissions } from '../../hooks/use-components-permissions';
 import { useSanitizeOverridableProps } from '../../hooks/use-sanitize-overridable-props';
+import {
+	componentInstancePropTypeUtil,
+	type ComponentInstancePropValue,
+} from '../../prop-types/component-instance-prop-type';
 import { ComponentInstanceProvider } from '../../provider/component-instance-context';
 import { useComponent } from '../../store/store';
 import { type OverridablePropsGroup } from '../../types';
@@ -28,9 +31,10 @@ export function InstanceEditingPanel() {
 	const overrides = settings?.overrides?.value;
 
 	const component = useComponent( componentId ?? null );
-	const overridableProps = useSanitizeOverridableProps( componentId ?? null );
 
-	const componentInstanceId = useSelectedElement()?.element?.id ?? null;
+	const componentInstanceId = useSelectedElement()?.element?.id;
+
+	const overridableProps = useSanitizeOverridableProps( componentId ?? null, componentInstanceId );
 
 	if ( ! componentId || ! overridableProps || ! component ) {
 		return null;
@@ -88,4 +92,12 @@ export function InstanceEditingPanel() {
 			</ComponentInstanceProvider>
 		</Box>
 	);
+}
+
+function useComponentInstanceSettings() {
+	const { element } = useElement();
+
+	const settings = useElementSetting< ComponentInstancePropValue >( element.id, 'component_instance' );
+
+	return componentInstancePropTypeUtil.extract( settings );
 }
