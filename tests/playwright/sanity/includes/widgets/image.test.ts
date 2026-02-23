@@ -128,79 +128,22 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 
 		await editor.getPreviewFrame().locator( EditorSelectors.image.link ).waitFor( { state: 'visible' } );
 
-		expect( await editor.getPreviewFrame().locator( EditorSelectors.image.link ).
-			getAttribute( 'data-elementor-open-lightbox' ) ).toEqual( 'yes' );
+		await expect( editor.getPreviewFrame().locator( EditorSelectors.image.link ) )
+			.toHaveAttribute( 'data-elementor-open-lightbox', 'yes' );
 
 		await editor.getPreviewFrame().locator( EditorSelectors.image.image ).click( );
 		await expect( editor.getPreviewFrame().locator( '.elementor-lightbox' ).first() ).toBeVisible( { timeout: 5000 } );
 
-		const titleSelectors = [ '.elementor-slideshow__title', '.elementor-lightbox__title', '.lightbox-title' ];
-		const descriptionSelectors = [ '.elementor-slideshow__description', '.elementor-lightbox__description', '.lightbox-description' ];
-
-		for ( const selector of titleSelectors ) {
-			try {
-				const title = editor.getPreviewFrame().locator( selector );
-				await title.waitFor( { state: 'attached', timeout: 1000 } );
-
-				const titleCount = await title.count();
-				if ( titleCount > 0 ) {
-					const titleText = await title.textContent();
-					if ( titleText && titleText.trim() ) {
-						await expect( title ).toHaveCSS( 'text-align', 'center' );
-						break;
-					}
-				}
-			} catch ( error ) {
-				// Continue to next selector
-			}
-		}
-
-		for ( const selector of descriptionSelectors ) {
-			try {
-				const description = editor.getPreviewFrame().locator( selector );
-				await description.waitFor( { state: 'attached', timeout: 1000 } );
-
-				const descriptionCount = await description.count();
-				if ( descriptionCount > 0 ) {
-					const descriptionText = await description.textContent();
-					if ( descriptionText && descriptionText.trim() ) {
-						await expect( description ).toHaveCSS( 'text-align', 'center' );
-						break;
-					}
-				}
-			} catch ( error ) {
-				// Continue to next selector
-			}
-		}
-
 		const imageSrc = await editor.getPreviewFrame().locator( EditorSelectors.image.image ).getAttribute( 'src' );
 
-		try {
-			await editor.getPreviewFrame().locator( 'body' ).press( 'Escape' );
-			await page.waitForTimeout( 500 );
-
-			const lightboxVisible = await editor.getPreviewFrame().locator( '.elementor-lightbox' ).first().isVisible();
-			if ( lightboxVisible ) {
-				const closeButton = editor.getPreviewFrame().locator( '.dialog-close-button, .elementor-lightbox-close, .lightbox-close' );
-				if ( await closeButton.count() > 0 ) {
-					await closeButton.first().click();
-				} else {
-					await editor.getPreviewFrame().locator( '.elementor-lightbox' ).first().press( 'Escape' );
-				}
-			}
-
-			await expect( editor.getPreviewFrame().locator( '.elementor-lightbox' ).first() ).not.toBeVisible( { timeout: 3000 } );
-		} catch ( error ) {
-			// Continue with test even if lightbox doesn't close properly
-		}
+		await editor.getPreviewFrame().locator( '.elementor-lightbox' ).first().press( 'Escape' );
+		await expect( editor.getPreviewFrame().locator( '.elementor-lightbox' ).first() ).not.toBeVisible();
 
 		await editor.removeElement( widgetId );
 		await editor.addWidget( { widgetType: 'heading' } );
 		await editor.setTextControlValue( 'link', imageSrc );
 
 		await editor.publishAndViewPage();
-
-		// Wait for published page to load completely
 		await page.waitForLoadState( 'domcontentloaded' );
 		await page.locator( EditorSelectors.widget ).locator( 'a' ).waitFor( { state: 'visible' } );
 
