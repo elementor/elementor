@@ -237,7 +237,7 @@ export default class extends ControlBaseDataView {
 
 		if ( v4Colors.length ) {
 			$globalPreviewItemsContainer.append(
-				this.createHeaderItemMarkup( __( 'Version 4 Variables', 'elementor' ) ),
+				this.createHeaderItemMarkup( __( 'Atomic Variables', 'elementor' ) ),
 			);
 
 			v4Colors.forEach( ( color ) => {

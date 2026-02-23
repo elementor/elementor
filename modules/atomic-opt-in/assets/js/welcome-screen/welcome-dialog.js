@@ -11,7 +11,7 @@ import { useEffect, useRef, useState } from 'react';
 
 const i18n = {
 	heading: __( 'Say hello to a new experience!', 'elementor' ),
-	introduction: __( 'You now have access to the beta of version 4, ready to use on production.', 'elementor' ),
+	introduction: __( 'You now have access to Atomic Editor, ready to use on production.', 'elementor' ),
 	listItems: [
 		__( 'Try out Atomic Elements such as: Flexbox, Heading, Button & Paragraph.', 'elementor' ),
 		__( 'Apply Variables and Classes site-wide for perfect consistency.', 'elementor' ),
