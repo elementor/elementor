@@ -1,18 +1,5 @@
 const INLINE_CHILD_INDENT_INCREMENT = 20;
-const INLINE_CHILD_ICON_MAP = {
-	b: 'eicon-editor-bold',
-	strong: 'eicon-editor-bold',
-	i: 'eicon-editor-italic',
-	em: 'eicon-editor-italic',
-	u: 'eicon-editor-underline',
-	a: 'eicon-editor-link',
-	del: 'eicon-editor-strikethrough',
-	s: 'eicon-editor-strikethrough',
-	sup: 'eicon-editor-list-ol',
-	sub: 'eicon-editor-list-ol',
-	span: 'eicon-edit',
-};
-const INLINE_CHILD_DEFAULT_ICON = 'eicon-edit';
+const INLINE_CHILD_ICON = 'eicon-atomic-label';
 const HTML_V3_TYPE = 'html-v3';
 
 export default class InlineChildren {
@@ -83,7 +70,7 @@ export default class InlineChildren {
 
 		children.forEach( ( child ) => {
 			const title = child.content || child.type;
-			const iconClass = INLINE_CHILD_ICON_MAP[ child.type ] || INLINE_CHILD_DEFAULT_ICON;
+			const iconClass = INLINE_CHILD_ICON;
 
 			const $item = jQuery( '<div>', {
 				class: 'elementor-navigator__element elementor-navigator__inline-child',
