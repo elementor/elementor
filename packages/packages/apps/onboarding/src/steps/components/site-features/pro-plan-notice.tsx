@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { InfoCircleIcon } from '@elementor/icons';
 import type { Theme } from '@elementor/ui';
 import { Box, Button, Stack, styled, Typography } from '@elementor/ui';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 
 import { useOnboarding } from '../../../hooks/use-onboarding';
 
@@ -59,11 +59,9 @@ export function ProPlanNotice( { planName }: LicenseNoticeProps ) {
 						fontSize: theme.spacing( 1.625 ),
 					} ) }
 				>
-					{ sprintf(
-						/* translators: %s: plan name (e.g. "Pro" or "One") */
-						__( 'Based on the features you chose, we recommend the %s plan, or higher.', 'elementor' ),
-						planName
-					) }
+					{ __( 'Based on the features you chose, we recommend the', 'elementor' ) }
+					{ ' ' }<strong>{ planName }</strong>{ ' ' }
+					{ __( 'plan', 'elementor' ) }
 				</Typography>
 			</Stack>
 			<Button
