@@ -35,7 +35,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Form extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
-	private static $current_form_global_class = '';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -48,9 +47,6 @@ class Atomic_Form extends Atomic_Element_Base {
 
 	public static function get_element_type(): string {
 		return self::get_type();
-	}
-	public static function get_current_form_global_class(): string {
-		return self::$current_form_global_class;
 	}
 
 	public function get_title() {
@@ -78,8 +74,6 @@ class Atomic_Form extends Atomic_Element_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
-			'field_container_global_class' => String_Prop_Type::make()
-				->default( '' ),
 			'form-name' => String_Prop_Type::make()
 				->default( __( 'Form', 'elementor' ) ),
 			'form-state' => String_Prop_Type::make()
@@ -151,9 +145,6 @@ class Atomic_Form extends Atomic_Element_Base {
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
 				->set_items( [
-					Text_Control::bind_to( 'field_container_global_class' )
-						->set_label( __( 'Field container global class', 'elementor' ) )
-						->set_placeholder( __( 'e.g. my-global-class', 'elementor' ) ),
 					Text_Control::bind_to( '_cssid' )
 						->set_label( __( 'ID', 'elementor' ) )
 						->set_meta( $this->get_css_id_control_meta() ),
@@ -162,7 +153,7 @@ class Atomic_Form extends Atomic_Element_Base {
 	}
 
 	protected function define_base_styles(): array {
-		$styles = [
+		return [
 			static::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
@@ -181,8 +172,6 @@ class Atomic_Form extends Atomic_Element_Base {
 						] ) )
 				),
 		];
-
-		return $styles;
 	}
 
 	protected function define_panel_categories(): array {
@@ -195,34 +184,18 @@ class Atomic_Form extends Atomic_Element_Base {
 
 	protected function define_default_children() {
 		return [
-			...$this->build_field_pair(
-				__( 'First name', 'elementor' ),
-				'first-name',
-				'text',
-				__( 'First name', 'elementor' ),
-			),
-			...$this->build_field_pair(
-				__( 'Last name', 'elementor' ),
-				'last-name',
-				'text',
-				__( 'Last name', 'elementor' )
-			),
+			$this->build_label( __( 'First name', 'elementor' ), 'first-name' ),
+			$this->build_input( __( 'First name', 'elementor' ), 'text' ),
 
-			...$this->build_field_pair(
-				__( 'Email', 'elementor' ),
-				'email',
-				'email',
-				__( 'your@mail.com', 'elementor' )
-			),
+			$this->build_label( __( 'Last name', 'elementor' ), 'last-name' ),
+			$this->build_input( __( 'Last name', 'elementor' ), 'text' ),
 
-			...$this->build_field_pair(
-				__( 'Message', 'elementor' ),
-				'message',
-				'textarea',
-				__( 'Your message', 'elementor' ),
-			),
+			$this->build_label( __( 'Email', 'elementor' ), 'email' ),
+			$this->build_input( __( 'your@mail.com', 'elementor' ), 'email' ),
 
-			// Submit button
+			$this->build_label( __( 'Message', 'elementor' ), 'message' ),
+			$this->build_input( __( 'Your message', 'elementor' ), 'textarea' ),
+
 			Widget_Builder::make( Submit_Button::get_element_type() )
 				->settings( [
 					'text' => Html_V3_Prop_Type::generate( [
@@ -232,7 +205,6 @@ class Atomic_Form extends Atomic_Element_Base {
 				] )
 				->is_locked( true )
 				->build(),
-
 			$this->build_status_message(
 				__( 'Great! We’ve received your information.', 'elementor' ),
 				'success',
@@ -257,7 +229,7 @@ class Atomic_Form extends Atomic_Element_Base {
 			->build();
 	}
 
-	private function build_input( string $placeholder, string $field_id, string $type = 'text', array $options = [] ): array {
+	private function build_input( string $placeholder, string $type = 'text' ): array {
 		if ( 'textarea' === $type ) {
 			$style_id = 'e-form-textarea-width';
 
@@ -276,13 +248,6 @@ class Atomic_Form extends Atomic_Element_Base {
 				'type' => String_Prop_Type::generate( $type ),
 			] )
 			->build();
-	}
-
-	private function build_field_pair( string $label_text, string $field_id, string $input_type, string $placeholder ): array {
-		return [
-			$this->build_label( $label_text, $field_id ),
-			$this->build_input( $placeholder, $field_id, $input_type ),
-		];
 	}
 
 	private function build_status_message( string $message, string $state, string $title ): array {
