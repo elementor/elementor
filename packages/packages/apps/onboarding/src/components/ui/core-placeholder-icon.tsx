@@ -20,10 +20,34 @@ export function CorePlaceholderIcon( props: SvgIconProps ) {
 				strokeLinecap="round"
 				strokeLinejoin="round"
 			/>
-			<path d="M12.75 0.75V3.41667" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-			<path d="M0.75 12.75H3.41667" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-			<path d="M12.75 22.083V24.7497" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-			<path d="M22.0835 12.75H24.7502" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+			<path
+				d="M12.75 0.75V3.41667"
+				stroke="currentColor"
+				strokeWidth="1.5"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			/>
+			<path
+				d="M0.75 12.75H3.41667"
+				stroke="currentColor"
+				strokeWidth="1.5"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			/>
+			<path
+				d="M12.75 22.083V24.7497"
+				stroke="currentColor"
+				strokeWidth="1.5"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			/>
+			<path
+				d="M22.0835 12.75H24.7502"
+				stroke="currentColor"
+				strokeWidth="1.5"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			/>
 		</SvgIcon>
 	);
 }

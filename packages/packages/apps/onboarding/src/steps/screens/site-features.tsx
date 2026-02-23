@@ -9,12 +9,10 @@ import {
 	ElementorImageOptimizerIcon,
 	ThemeBuilderIcon,
 } from '@elementor/icons';
-
-import { CorePlaceholderIcon } from '../../components/ui/core-placeholder-icon';
-import type { Theme } from '@elementor/ui';
-import { Stack, Typography } from '@elementor/ui';
+import { type Theme, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { CorePlaceholderIcon } from '../../components/ui/core-placeholder-icon';
 import { useOnboarding } from '../../hooks/use-onboarding';
 import { FeatureGrid, type FeatureOption, ProPlanNotice } from '../components/site-features';
 
@@ -75,7 +73,11 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 	},
 ];
 
-const CORE_FEATURE_IDS = new Set( FEATURE_OPTIONS.flatMap( ( option ) => ( option.licenseType === 'core' ? [ option.id ] : [] ) ) );
+const CORE_FEATURE_IDS = new Set(
+	FEATURE_OPTIONS.flatMap( ( option ) => ( option.licenseType === 'core' ? [ option.id ] : [] ) )
+);
+
+const FEATURE_OPTION_IDS = new Set( FEATURE_OPTIONS.map( ( featureOption ) => featureOption.id ) );
 
 const STEP_TITLE = __( 'What do you want to include in your site?', 'elementor' );
 const STEP_SUBTITLE = __( "We'll use this to tailor suggestions for you.", 'elementor' );
@@ -83,8 +85,6 @@ const STEP_SUBTITLE = __( "We'll use this to tailor suggestions for you.", 'elem
 export function SiteFeatures() {
 	const { choices, actions, urls } = useOnboarding();
 	const exploreFeaturesUrl = urls.exploreFeatures;
-
-	const FEATURE_OPTION_IDS = new Set( FEATURE_OPTIONS.map( ( featureOption ) => featureOption.id ) );
 
 	const storedPaidFeatures = useMemo(
 		() => ( ( choices.site_features as string[] ) || [] ).filter( ( id ) => FEATURE_OPTION_IDS.has( id ) ),

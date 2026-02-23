@@ -156,7 +156,10 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick, onExplor
 					>
 						{ isCore && <IncludedInCoreChip label={ __( 'Included', 'elementor' ) } size="small" /> }
 						{ isSelected && (
-							<SelectionBadge icon={ BadgeIcon } variant={ option.licenseType !== 'core' ? 'paid' : 'free' } />
+							<SelectionBadge
+								icon={ BadgeIcon }
+								variant={ option.licenseType !== 'core' ? 'paid' : 'free' }
+							/>
 						) }
 						<Box className="feature-icon" sx={ { mb: 1 } }>
 							<Icon fontSize="medium" />
