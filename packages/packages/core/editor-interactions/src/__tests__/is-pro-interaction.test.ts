@@ -141,6 +141,22 @@ describe( 'isProInteraction', () => {
 		expect( isProInteraction( proItem ) ).toBe( true );
 	} );
 
+	it( 'should not flag as pro when easing is empty (missing config)', () => {
+		mockedGetOptions.mockImplementation( ( type ) => {
+			if ( type === 'trigger' ) {
+				return [ 'load' ];
+			}
+			if ( type === 'easing' ) {
+				return [ 'easeIn' ];
+			}
+			return [];
+		} );
+
+		const item = wrapAsItem( createInteractionItemValue( { trigger: 'load', easing: '' } ) );
+
+		expect( isProInteraction( item ) ).toBe( false );
+	} );
+
 	it( 'should flag as pro only when a concrete easing value is outside the registered set', () => {
 		mockedGetOptions.mockImplementation( ( type ) => {
 			if ( type === 'trigger' ) {

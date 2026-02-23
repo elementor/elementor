@@ -13,7 +13,7 @@ export function isProInteraction( interaction: InteractionItemPropValue ): boole
 	];
 
 	return checks.some( ( [ controlType, controlValue ] ) => {
-		if ( ! controlValue ) {
+		if ( controlValue === '' || controlValue === null ) {
 			return false;
 		}
 
