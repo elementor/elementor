@@ -89,12 +89,31 @@ export default class Content {
 	async selectImageSize( args: { widget: string, select: string, imageSize: string } ): Promise<void> {
 		await this.editor.waitForPreviewFrame();
 		const frame: Frame = this.editor.getPreviewFrame();
+
+		await frame.locator( args.widget ).waitFor( { state: 'visible' } );
 		await frame.locator( args.widget ).click();
+
 		await this.editor.openPanelTab( 'content' );
 		await this.editor.waitForPanelToLoad();
-		await this.page.locator( `.elementor-control-${ args.select } select` ).waitFor( { timeout: timeouts.longAction } );
-		await this.editor.setSelectControlValue( args.select, args.imageSize );
+
+		const selectControl = this.page.locator( `.elementor-control-${ args.select } select` );
+		await selectControl.waitFor( { state: 'visible', timeout: timeouts.longAction } );
+
+		const currentValue = await selectControl.inputValue();
+
+		if ( currentValue !== args.imageSize ) {
+			await this.editor.setSelectControlValue( args.select, args.imageSize );
+
+			await this.page.waitForTimeout( timeouts.short );
+
+			const newValue = await selectControl.inputValue();
+			if ( newValue !== args.imageSize ) {
+				throw new Error( `Failed to set image size. Expected: ${ args.imageSize }, Got: ${ newValue }` );
+			}
+		}
+
 		await frame.locator( EditorSelectors.pageTitle ).click();
+		await this.page.waitForTimeout( timeouts.short );
 	}
 
 	/**
@@ -110,9 +129,12 @@ export default class Content {
 	async verifyImageSrc( args: { selector: string, imageTitle: string, isPublished: boolean } ): Promise<void> {
 		const image = args.isPublished
 			? this.page.locator( args.selector )
-			: await this.editor.getPreviewFrame().waitForSelector( args.selector );
+			: this.editor.getPreviewFrame().locator( args.selector );
+
+		await image.waitFor( { state: 'visible' } );
+
 		const src = await image.getAttribute( 'src' );
-		expect( src.includes( args.imageTitle ) ).toEqual( true );
+		expect( src ).toContain( args.imageTitle );
 	}
 
 	/**
