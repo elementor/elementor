@@ -5,7 +5,7 @@ import { __getState as getState } from '@elementor/store';
 import { selectCreatedThisSession } from '../store/store';
 import { type ExtendedWindow } from '../types';
 
-export type Source = 'user' | 'mcp_tool';
+export type Source = 'user' | 'mcp_tool' | 'system';
 
 type ComponentEventData = Record< string, unknown > & {
 	action:
