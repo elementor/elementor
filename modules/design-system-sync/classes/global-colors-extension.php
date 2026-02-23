@@ -4,7 +4,7 @@ namespace Elementor\Modules\DesignSystemSync\Classes;
 
 use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Global_Style_Repeater;
+use Elementor\Modules\DesignSystemSync\Controls\V4_Color_Variable_List;
 use Elementor\Plugin;
 use Elementor\Repeater;
 use Elementor\Utils;
@@ -53,6 +53,15 @@ class Global_Colors_Extension {
 			return;
 		}
 
+		$items = [];
+		foreach ( $v4_colors as $variable ) {
+			$items[] = [
+				'_id' => $variable['id'],
+				'title' => $variable['label'],
+				'color' => strtoupper( $variable['value'] ),
+			];
+		}
+
 		$tab->add_control(
 			'heading_v4_variables',
 			[
@@ -62,52 +71,11 @@ class Global_Colors_Extension {
 			]
 		);
 
-		$repeater = new \Elementor\Repeater();
-
-		$repeater->add_control(
-			'title',
-			[
-				'type' => Controls_Manager::TEXT,
-				'label_block' => true,
-				'required' => true,
-			]
-		);
-
-		$repeater->add_control(
-			'color',
-			[
-				'type' => Controls_Manager::COLOR,
-				'label_block' => true,
-				'selectors' => [
-					'{{WRAPPER}}' => '--e-global-color-{{_id.VALUE}}: {{VALUE}}',
-				],
-				'global' => [
-					'active' => false,
-				],
-			]
-		);
-
-		$default_values = [];
-		foreach ( $v4_colors as $variable ) {
-			$default_values[] = [
-				'_id' => $variable['id'],
-				'title' => $variable['label'],
-				'color' => strtoupper( $variable['value'] ),
-			];
-		}
-
 		$tab->add_control(
-			'v4_color_variables',
+			'v4_color_variables_display',
 			[
-				'type' => \Elementor\Core\Kits\Controls\Repeater::CONTROL_TYPE,
-				'fields' => $repeater->get_controls(),
-				'default' => $default_values,
-				'item_actions' => [
-					'add' => false,
-					'duplicate' => false,
-					'remove' => false,
-					'sort' => false,
-				],
+				'type' => V4_Color_Variable_List::TYPE,
+				'items' => $items,
 			]
 		);
 	}

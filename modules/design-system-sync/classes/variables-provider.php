@@ -6,6 +6,7 @@ use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Plugin;
+use Elementor\Modules\AtomicWidgets\Logger\Logger;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -51,7 +52,6 @@ class Variables_Provider {
 
 			$color_variables[ $id ] = $variable;
 		}
-
 		return $color_variables;
 	}
 

@@ -4,9 +4,8 @@ namespace Elementor\Modules\DesignSystemSync\Classes;
 
 use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
-use Elementor\Group_Control_Typography;
+use Elementor\Modules\DesignSystemSync\Controls\V4_Typography_List;
 use Elementor\Plugin;
-use Elementor\Repeater;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -56,57 +55,20 @@ class Global_Typography_Extension {
 			]
 		);
 
-		$repeater = new Repeater();
-
-		$repeater->add_control(
-			'title',
-			[
-				'type' => Controls_Manager::TEXT,
-				'label_block' => true,
-				'required' => true,
-			]
-		);
-
-		$repeater->add_group_control(
-			Group_Control_Typography::get_type(),
-			[
-				'name' => 'typography',
-				'label' => '',
-				'global' => [
-					'active' => false,
-				],
-			]
-		);
-
-		$default_values = [];
+		$items = [];
 		foreach ( $v4_typography_classes as $class ) {
 			$label = sanitize_text_field( $class['label'] ?? '' );
 			if ( empty( $label ) ) {
 				continue;
 			}
-
-			// This is for the control edit button to be shown, no control values no edit button. ¯\_(ツ)_/¯
-			$default_values[] = [
-				'_id' => 'v4-' . $label,
-				'title' => $label,
-				'typography_typography' => 'custom',
-				'typography_font_family' => 'Roboto',
-				'typography_font_weight' => '500',
-			];
+			$items[] = [ 'title' => $label ];
 		}
 
 		$tab->add_control(
-			'v4_typography_classes',
+			'v4_typography_classes_display',
 			[
-				'type' => \Elementor\Core\Kits\Controls\Repeater::CONTROL_TYPE,
-				'fields' => $repeater->get_controls(),
-				'default' => $default_values,
-				'item_actions' => [
-					'add' => false,
-					'duplicate' => false,
-					'remove' => false,
-					'sort' => false,
-				],
+				'type' => V4_Typography_List::TYPE,
+				'items' => $items,
 			]
 		);
 	}

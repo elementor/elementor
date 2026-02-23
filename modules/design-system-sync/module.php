@@ -48,7 +48,16 @@ class Module extends BaseModule {
 		( new Classes\Global_Colors_Extension() )->register_hooks();
 		( new Classes\Global_Typography_Extension() )->register_hooks();
 
+		add_action( 'elementor/controls/register', [ $this, 'register_controls' ] );
 		add_action( 'elementor/global_classes/update', [ $this, 'clear_classes_cache' ] );
+	}
+
+	public function register_controls( $controls_manager ) {
+		require_once __DIR__ . '/controls/v4-color-variable-list.php';
+		require_once __DIR__ . '/controls/v4-typography-list.php';
+
+		$controls_manager->register( new Controls\V4_Color_Variable_List() );
+		$controls_manager->register( new Controls\V4_Typography_List() );
 	}
 
 	public function clear_classes_cache() {
