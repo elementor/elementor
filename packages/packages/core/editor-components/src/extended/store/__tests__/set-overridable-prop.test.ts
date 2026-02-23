@@ -1,9 +1,9 @@
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 import { generateUniqueId } from '@elementor/utils';
 
-import { setOverridableProp } from '../../extended/store/actions/set-overridable-prop';
-import type { PublishedComponent } from '../../types';
-import { SLICE_NAME } from '../store';
+import { SLICE_NAME } from '../../../store/store';
+import type { PublishedComponent } from '../../../types';
+import { setOverridableProp } from '../actions/set-overridable-prop';
 
 jest.mock( '@elementor/store', () => ( {
 	...jest.requireActual( '@elementor/store' ),
