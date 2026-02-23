@@ -179,15 +179,6 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 	};
 
 	const renderStepContent = () => {
-		// eslint-disable-next-line no-console
-		console.log( '[onboarding] renderStepContent — stepId:', stepId, {
-			BuildingFor,
-			SiteAbout,
-			ExperienceLevel,
-			ThemeSelection,
-			SiteFeatures,
-		} );
-
 		switch ( stepId ) {
 			case StepId.BUILDING_FOR:
 				return <BuildingFor onComplete={ handleContinue } />;

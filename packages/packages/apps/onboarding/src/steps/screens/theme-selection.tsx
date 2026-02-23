@@ -20,9 +20,6 @@ interface ThemeSelectionProps {
 }
 
 export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
-	// eslint-disable-next-line no-console
-	console.log( '[onboarding] ThemeSelection render', { ThemeCard, GreetingBanner, getGreetingText, getRecommendedTheme } );
-
 	const { choices, completedSteps, actions } = useOnboarding();
 
 	const selectedValue = choices.theme_selection as ThemeSlug | null;
