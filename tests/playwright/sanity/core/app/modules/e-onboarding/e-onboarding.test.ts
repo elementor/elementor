@@ -99,7 +99,7 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 			await expect( page.getByRole( 'button', { name: 'Continue as a guest' } ) ).toBeVisible();
 
 			await expect( page.getByRole( 'button', { name: 'Back' } ) ).not.toBeVisible();
-			await expect( page.getByRole( 'button', { name: 'Continue' } ) ).not.toBeVisible();
+			await expect( page.getByRole( 'button', { name: 'Continue', exact: true } ) ).not.toBeVisible();
 
 			await page.getByRole( 'button', { name: 'Continue as a guest' } ).click();
 		} );
