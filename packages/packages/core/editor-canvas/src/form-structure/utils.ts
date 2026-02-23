@@ -32,7 +32,13 @@ export type StorageContent = {
 };
 
 export const FORM_ELEMENT_TYPE = 'e-form';
-export const FORM_FIELD_ELEMENT_TYPES = new Set( [ 'e-form-input', 'e-form-textarea', 'e-form-label' ] );
+export const FORM_FIELD_ELEMENT_TYPES = new Set( [
+	'e-form-input',
+	'e-form-textarea',
+	'e-form-label',
+	'e-form-checkbox',
+	'e-form-submit-button',
+] );
 
 export function getArgsElementType( args: CreateArgs ): string | undefined {
 	return args.model?.widgetType || args.model?.elType;
