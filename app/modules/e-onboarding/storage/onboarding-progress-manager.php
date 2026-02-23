@@ -92,6 +92,10 @@ class Onboarding_Progress_Manager {
 			$progress->set_exit_type( 'user_exit' );
 		}
 
+		if ( isset( $params['starter_dismissed'] ) && $params['starter_dismissed'] ) {
+			$progress->set_starter_dismissed( true );
+		}
+
 		$progress->set_last_active_timestamp( current_time( 'timestamp' ) );
 
 		return $this->save_progress( $progress );

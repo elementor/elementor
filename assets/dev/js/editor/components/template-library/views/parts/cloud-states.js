@@ -1,4 +1,6 @@
 module.exports = Marionette.ItemView.extend( {
+	tagName: 'main',
+
 	template: '#tmpl-elementor-template-library-connect-states',
 
 	id: 'elementor-template-library-connect-states',

@@ -26,6 +26,7 @@ interface EOnboardingConfig {
 	};
 	hadUnexpectedExit: boolean;
 	isConnected: boolean;
+	shouldShowProInstallScreen?: boolean;
 	userName?: string;
 	uiTheme?: 'auto' | 'dark' | 'light';
 	steps: Array<{
@@ -45,16 +46,20 @@ interface EOnboardingConfig {
 declare global {
 	interface Window {
 		elementorCommon?: {
-			eventsManager?: {
-				dispatchEvent?: (name: string, data: unknown) => void;
-				config?: {
-					locations?: Record<string, string>;
-					secondaryLocations?: Record<string, string>;
-					names?: Record<string, Record<string, string>>;
-					triggers?: Record<string, string>;
-					elements?: Record<string, string>;
-				};
+		eventsManager?: {
+			dispatchEvent?: (name: string, data: unknown) => void;
+			config?: {
+				locations?: Record<string, string>;
+				secondaryLocations?: Record<string, string>;
+				names?: Record<string, Record<string, string>>;
+				triggers?: Record<string, string>;
+				elements?: Record<string, string>;
+				appTypes?: Record<string, string>;
+				targetTypes?: Record<string, string>;
+				interactionResults?: Record<string, string>;
+				targetNames?: Record<string, Record<string, string>>;
 			};
+		};
 			config?: {
 				experimentalFeatures?: Record< string, boolean >;
 				urls?: {

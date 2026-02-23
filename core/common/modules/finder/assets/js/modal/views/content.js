@@ -1,4 +1,7 @@
 import CategoriesView from './categories';
+import { createDebouncedFinderSearch } from 'elementor-editor-utils/editor-one-events';
+
+const FINDER_SEARCH_DEBOUNCE_MS = 300;
 
 export default class extends Marionette.LayoutView {
 	id() {
@@ -27,8 +30,21 @@ export default class extends Marionette.LayoutView {
 		};
 	}
 
+	initialize() {
+		this.debouncedTrackSearch = createDebouncedFinderSearch( FINDER_SEARCH_DEBOUNCE_MS );
+	}
+
 	showCategoriesView() {
 		this.content.show( new CategoriesView() );
+	}
+
+	getResultsCount() {
+		if ( ! this.content.currentView ) {
+			return 0;
+		}
+
+		const $visibleItems = this.content.currentView.$el.find( '.elementor-finder__results__item:visible' );
+		return $visibleItems.length;
 	}
 
 	onSearchInputInput() {
@@ -42,8 +58,19 @@ export default class extends Marionette.LayoutView {
 			if ( ! ( this.content.currentView instanceof CategoriesView ) ) {
 				this.showCategoriesView();
 			}
+
+			setTimeout( () => {
+				const resultsCount = this.getResultsCount();
+				this.debouncedTrackSearch( resultsCount, value );
+			}, 50 );
 		}
 
 		this.content.currentView.$el.toggle( ! ! value );
+	}
+
+	onDestroy() {
+		if ( this.debouncedTrackSearch?.cancel ) {
+			this.debouncedTrackSearch.cancel();
+		}
 	}
 }

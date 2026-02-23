@@ -48,6 +48,12 @@ class Module extends BaseModule {
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 
 		add_action( 'elementor/init', [ $this, 'on_elementor_init' ], 12 );
+
+		if ( $this->should_show_starter() ) {
+			add_filter( 'elementor/editor/show_starter', '__return_true' );
+			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_starter_settings' ] );
+			add_action( 'elementor/preview/enqueue_styles', [ $this, 'enqueue_fonts' ] );
+		}
 	}
 
 	public function on_elementor_init(): void {
@@ -85,7 +91,7 @@ class Module extends BaseModule {
 		// clear the theme selection so the user can re-select.
 		$this->maybe_invalidate_theme_selection( $progress, $choices );
 
-		$progress_data = $this->validate_progress_for_steps( $progress, $steps );
+		$is_connected = $this->is_user_connected();
 
 		Plugin::$instance->app->set_settings( 'e-onboarding', [
 			'version' => self::VERSION,
@@ -94,10 +100,11 @@ class Module extends BaseModule {
 			'progress' => $progress_data,
 			'choices' => $choices->to_array(),
 			'hadUnexpectedExit' => $progress->had_unexpected_exit(),
-			'isConnected' => $this->is_user_connected(),
+			'isConnected' => $is_connected,
 			'userName' => $this->get_user_display_name(),
 			'steps' => $steps,
 			'uiTheme' => $this->get_ui_theme_preference(),
+			'shouldShowProInstallScreen' => $is_connected ? $this->should_show_pro_install_screen() : false,
 			'urls' => [
 				'dashboard' => admin_url(),
 				'editor' => admin_url( 'edit.php?post_type=elementor_library' ),
@@ -151,6 +158,28 @@ class Module extends BaseModule {
 		return $connect->get_app( 'library' );
 	}
 
+	public static function should_show_pro_install_screen(): bool {
+		if ( Utils::has_pro() || Utils::is_pro_installed_and_not_active() ) {
+			return false;
+		}
+
+		$connect = Plugin::$instance->common->get_component( 'connect' );
+
+		if ( ! $connect ) {
+			return false;
+		}
+
+		$pro_install_app = $connect->get_app( 'pro-install' );
+
+		if ( ! $pro_install_app || ! $pro_install_app->is_connected() ) {
+			return false;
+		}
+
+		$download_link = $pro_install_app->get_download_link();
+
+		return ! empty( $download_link );
+	}
+
 	private function get_ui_theme_preference(): string {
 		$editor_preferences = SettingsManager::get_settings_managers( 'editorPreferences' );
 
@@ -169,6 +198,25 @@ class Module extends BaseModule {
 		$user = $library->get( 'user' );
 
 		return $user->first_name ?? '';
+	}
+
+	public function should_show_starter(): bool {
+		if ( ! Plugin::instance()->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
+			return false;
+		}
+
+		$progress = $this->progress_manager->get_progress();
+
+		return null !== $progress->get_completed_at() && ! $progress->is_starter_dismissed();
+	}
+
+	public function add_starter_settings( array $settings ): array {
+		$settings['starter'] = [
+			'restPath' => 'elementor/v1/e-onboarding/user-progress',
+			'aiPlannerUrl' => 'https://planner.elementor.com/home.html',
+		];
+
+		return $settings;
 	}
 
 	private function maybe_invalidate_theme_selection( User_Progress $progress, User_Choices $choices ): void {
