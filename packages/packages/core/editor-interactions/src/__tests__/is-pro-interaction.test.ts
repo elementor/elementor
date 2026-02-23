@@ -123,10 +123,28 @@ describe( 'isProInteraction', () => {
 		expect( isProInteraction( item ) ).toBe( true );
 	} );
 
-	it( 'should handle missing config (undefined easing) gracefully', () => {
+	it( 'should flag as pro only when a concrete trigger value is outside the registered set', () => {
 		mockedGetOptions.mockImplementation( ( type ) => {
 			if ( type === 'trigger' ) {
-				return [ 'load' ];
+				return [ 'load', 'scrollIn' ];
+			}
+			if ( type === 'easing' ) {
+				return [ 'easeIn', 'easeOut' ];
+			}
+			return [];
+		} );
+
+		const freeItem = wrapAsItem( createInteractionItemValue( { trigger: 'scrollIn', easing: 'easeOut' } ) );
+		expect( isProInteraction( freeItem ) ).toBe( false );
+
+		const proItem = wrapAsItem( createInteractionItemValue( { trigger: 'click', easing: 'easeOut' } ) );
+		expect( isProInteraction( proItem ) ).toBe( true );
+	} );
+
+	it( 'should flag as pro only when a concrete easing value is outside the registered set', () => {
+		mockedGetOptions.mockImplementation( ( type ) => {
+			if ( type === 'trigger' ) {
+				return [ 'load', 'scrollIn' ];
 			}
 			if ( type === 'easing' ) {
 				return [ 'easeIn' ];
@@ -134,11 +152,10 @@ describe( 'isProInteraction', () => {
 			return [];
 		} );
 
-		const value = createInteractionItemValue( { trigger: 'load' } );
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		( value.animation.value as any ).config = undefined;
-		const item = wrapAsItem( value );
+		const freeItem = wrapAsItem( createInteractionItemValue( { trigger: 'load', easing: 'easeIn' } ) );
+		expect( isProInteraction( freeItem ) ).toBe( false );
 
-		expect( isProInteraction( item ) ).toBe( false );
+		const proItem = wrapAsItem( createInteractionItemValue( { trigger: 'load', easing: 'cubicBezier' } ) );
+		expect( isProInteraction( proItem ) ).toBe( true );
 	} );
 } );

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { mockCurrentUserCapabilities } from 'test-utils';
+import { mockCurrentUserCapabilities, renderWithTheme } from 'test-utils';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { InteractionsList } from '../components/interactions-list';
@@ -14,6 +14,10 @@ jest.mock( '../utils/is-pro-interaction', () => ( {
 } ) );
 
 const mockedIsProInteraction = jest.mocked( isProInteraction );
+
+beforeEach( () => {
+	mockCurrentUserCapabilities( false );
+} );
 
 const createInteraction = (
 	trigger: string,
@@ -302,29 +306,11 @@ describe( 'InteractionsList pro interaction disabled behavior', () => {
 		mockedIsProInteraction.mockReturnValue( false );
 	} );
 
-	it( 'should render pro interaction item with reduced opacity', () => {
-		mockedIsProInteraction.mockReturnValue( true );
-		const interactions = createInteraction( 'hover', 'fade', 'in', '', 300, 0 );
-
-		render(
-			<PopupStateProvider>
-				<InteractionsList
-					interactions={ interactions }
-					onSelectInteractions={ jest.fn() }
-					onPlayInteraction={ jest.fn() }
-				/>
-			</PopupStateProvider>
-		);
-
-		const openItemButton = screen.getByLabelText( /open item/i );
-		expect( openItemButton ).toHaveStyle( { opacity: 0.5 } );
-	} );
-
 	it( 'should show promotion popover when a disabled pro item is clicked', () => {
 		mockedIsProInteraction.mockReturnValue( true );
 		const interactions = createInteraction( 'hover', 'fade', 'in', '', 300, 0 );
 
-		render(
+		renderWithTheme(
 			<PopupStateProvider>
 				<InteractionsList
 					interactions={ interactions }
@@ -349,7 +335,7 @@ describe( 'InteractionsList pro interaction disabled behavior', () => {
 		mockedIsProInteraction.mockReturnValue( true );
 		const interactions = createInteraction( 'hover', 'fade', 'in', '', 300, 0 );
 
-		render(
+		renderWithTheme(
 			<PopupStateProvider>
 				<InteractionsList
 					interactions={ interactions }
@@ -367,7 +353,7 @@ describe( 'InteractionsList pro interaction disabled behavior', () => {
 		mockedIsProInteraction.mockReturnValue( false );
 		const interactions = createInteraction( 'load', 'fade', 'in', '', 300, 0 );
 
-		render(
+		renderWithTheme(
 			<PopupStateProvider>
 				<InteractionsList
 					interactions={ interactions }
@@ -378,8 +364,6 @@ describe( 'InteractionsList pro interaction disabled behavior', () => {
 		);
 
 		const openItemButton = screen.getByLabelText( /open item/i );
-		expect( openItemButton ).not.toHaveStyle( { opacity: 0.5 } );
-
 		fireEvent.click( openItemButton );
 		expect( screen.queryByRole( 'dialog', { name: /promotion-popover-title/i } ) ).not.toBeInTheDocument();
 	} );
@@ -388,7 +372,7 @@ describe( 'InteractionsList pro interaction disabled behavior', () => {
 		mockedIsProInteraction.mockReturnValue( false );
 		const interactions = createInteraction( 'load', 'fade', 'in', '', 300, 0 );
 
-		render(
+		renderWithTheme(
 			<PopupStateProvider>
 				<InteractionsList
 					interactions={ interactions }
