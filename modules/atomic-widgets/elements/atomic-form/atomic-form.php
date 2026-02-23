@@ -49,13 +49,6 @@ class Atomic_Form extends Atomic_Element_Base {
 	public static function get_element_type(): string {
 		return self::get_type();
 	}
-
-	/**
-	 * Returns the field container global class for the form currently rendering its children.
-	 * Used by Div_Block when rendering a form field container so the class appears in frontend output.
-	 *
-	 * @return string
-	 */
 	public static function get_current_form_global_class(): string {
 		return self::$current_form_global_class;
 	}
