@@ -1,11 +1,19 @@
 import * as React from 'react';
+import { mockCurrentUserCapabilities } from 'test-utils';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { InteractionsList } from '../components/interactions-list';
 import { PopupStateProvider } from '../contexts/popup-state-context';
 import { type ElementInteractions } from '../types';
+import { isProInteraction } from '../utils/is-pro-interaction';
 
 jest.mock( '../utils/get-interactions-config' );
+jest.mock( '@elementor/editor-current-user' );
+jest.mock( '../utils/is-pro-interaction', () => ( {
+	isProInteraction: jest.fn( () => false ),
+} ) );
+
+const mockedIsProInteraction = jest.mocked( isProInteraction );
 
 const createInteraction = (
 	trigger: string,
@@ -278,5 +286,119 @@ describe( 'InteractionsList onPlayInteraction', () => {
 		);
 
 		expect( screen.getByText( 'On page load: Fade In' ) ).toBeInTheDocument();
+	} );
+} );
+
+describe( 'InteractionsList pro interaction disabled behavior', () => {
+	beforeEach( () => {
+		mockCurrentUserCapabilities( true );
+		( window as unknown as { elementorAppConfig: { admin_url: string } } ).elementorAppConfig = {
+			admin_url: 'https://example.com/wp-admin/',
+		};
+	} );
+
+	afterEach( () => {
+		jest.clearAllMocks();
+		mockedIsProInteraction.mockReturnValue( false );
+	} );
+
+	it( 'should render pro interaction item with reduced opacity', () => {
+		mockedIsProInteraction.mockReturnValue( true );
+		const interactions = createInteraction( 'hover', 'fade', 'in', '', 300, 0 );
+
+		render(
+			<PopupStateProvider>
+				<InteractionsList
+					interactions={ interactions }
+					onSelectInteractions={ jest.fn() }
+					onPlayInteraction={ jest.fn() }
+				/>
+			</PopupStateProvider>
+		);
+
+		const openItemButton = screen.getByLabelText( /open item/i );
+		expect( openItemButton ).toHaveStyle( { opacity: 0.5 } );
+	} );
+
+	it( 'should show promotion popover when a disabled pro item is clicked', () => {
+		mockedIsProInteraction.mockReturnValue( true );
+		const interactions = createInteraction( 'hover', 'fade', 'in', '', 300, 0 );
+
+		render(
+			<PopupStateProvider>
+				<InteractionsList
+					interactions={ interactions }
+					onSelectInteractions={ jest.fn() }
+					onPlayInteraction={ jest.fn() }
+				/>
+			</PopupStateProvider>
+		);
+
+		const openItemButton = screen.getByLabelText( /open item/i );
+		fireEvent.click( openItemButton );
+
+		expect( screen.getByRole( 'dialog', { name: /promotion-popover-title/i } ) ).toBeInTheDocument();
+		expect(
+			screen.getByText(
+				'This interaction is currently inactive and not showing on your website. Activate your Pro plugin to use it again.'
+			)
+		).toBeInTheDocument();
+	} );
+
+	it( 'should disable the preview button for pro interactions', () => {
+		mockedIsProInteraction.mockReturnValue( true );
+		const interactions = createInteraction( 'hover', 'fade', 'in', '', 300, 0 );
+
+		render(
+			<PopupStateProvider>
+				<InteractionsList
+					interactions={ interactions }
+					onSelectInteractions={ jest.fn() }
+					onPlayInteraction={ jest.fn() }
+				/>
+			</PopupStateProvider>
+		);
+
+		const previewButton = screen.getByLabelText( /play interaction/i );
+		expect( previewButton ).toBeDisabled();
+	} );
+
+	it( 'should NOT show promotion popover for non-pro interaction items', () => {
+		mockedIsProInteraction.mockReturnValue( false );
+		const interactions = createInteraction( 'load', 'fade', 'in', '', 300, 0 );
+
+		render(
+			<PopupStateProvider>
+				<InteractionsList
+					interactions={ interactions }
+					onSelectInteractions={ jest.fn() }
+					onPlayInteraction={ jest.fn() }
+				/>
+			</PopupStateProvider>
+		);
+
+		const openItemButton = screen.getByLabelText( /open item/i );
+		expect( openItemButton ).not.toHaveStyle( { opacity: 0.5 } );
+
+		fireEvent.click( openItemButton );
+		expect( screen.queryByRole( 'dialog', { name: /promotion-popover-title/i } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should not disable the preview button for non-pro interactions', () => {
+		mockedIsProInteraction.mockReturnValue( false );
+		const interactions = createInteraction( 'load', 'fade', 'in', '', 300, 0 );
+
+		render(
+			<PopupStateProvider>
+				<InteractionsList
+					interactions={ interactions }
+					onSelectInteractions={ jest.fn() }
+					onPlayInteraction={ jest.fn() }
+				/>
+			</PopupStateProvider>
+		);
+
+		const previewButton = screen.getByLabelText( /play interaction/i );
+		expect( previewButton ).not.toBeDisabled();
 	} );
 } );
