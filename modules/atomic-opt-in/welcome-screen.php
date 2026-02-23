@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicOptIn;
 use Elementor\Core\Isolation\Elementor_Adapter;
 use Elementor\Core\Isolation\Elementor_Adapter_Interface;
 use Elementor\Modules\ElementorCounter\Module as Elementor_Counter;
+use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Utils;
 
 class WelcomeScreen {
@@ -26,7 +27,10 @@ class WelcomeScreen {
 		if ( $this->has_welcome_popover_been_displayed() ) {
 			return;
 		}
-
+		if ( Upgrade_Manager::is_new_installation() ) {
+			return;
+		}
+		
 		$this->enqueue_scripts();
 		$this->set_welcome_popover_as_displayed();
 	}
