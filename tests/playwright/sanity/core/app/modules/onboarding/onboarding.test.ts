@@ -3,14 +3,12 @@ import { parallelTest as test } from '../../../../../parallelTest';
 import WpAdminPage from '../../../../../pages/wp-admin-page';
 import EditorSelectors from '../../../../../selectors/editor-selectors';
 import { wpCli } from '../../../../../assets/wp-cli';
+import { timeouts } from '../../../../../config/timeouts';
 
 const BUTTON_CLASSES = {
 	active: /e-onboarding__button-action/,
 	disabled: /e-onboarding__button--disabled/,
 };
-
-const POPUP_NAVIGATION_TIMEOUT = 3_000;
-const PAGE_READY_TIMEOUT = 20_000;
 
 test.describe( 'On boarding @onBoarding', async () => {
 	let originalActiveTheme: string;
@@ -51,13 +49,13 @@ test.describe( 'On boarding @onBoarding', async () => {
 		const variantA = page.locator( 'a.e-onboarding__button-action' );
 		const variantB = page.getByRole( 'button', { name: 'Connect your account' } );
 		const ctaButton = variantA.or( variantB );
-		await ctaButton.waitFor( { timeout: PAGE_READY_TIMEOUT } );
+		await ctaButton.waitFor( { timeout: timeouts.longAction } );
 
 		const buttonText = ( await ctaButton.innerText() ).trim();
 		expect( [ 'Start setup', 'Connect your account' ] ).toContain( buttonText );
 
-		const popupPromise = page.waitForEvent( 'popup', { timeout: POPUP_NAVIGATION_TIMEOUT } ).catch( () => null );
-		const navigationPromise = page.waitForURL( /my\.elementor\.com|elementor-connect/, { timeout: POPUP_NAVIGATION_TIMEOUT } ).then( () => true ).catch( () => false );
+		const popupPromise = page.waitForEvent( 'popup', { timeout: timeouts.action } ).catch( () => null );
+		const navigationPromise = page.waitForURL( /my\.elementor\.com|elementor-connect/, { timeout: timeouts.action } ).then( () => true ).catch( () => false );
 
 		await ctaButton.click();
 
@@ -86,7 +84,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 		const variantASkip = page.locator( 'text=Skip' );
 		const variantBSkip = page.getByRole( 'button', { name: 'Continue as a guest' } );
 		const skipButton = variantASkip.or( variantBSkip );
-		await skipButton.waitFor( { timeout: PAGE_READY_TIMEOUT } );
+		await skipButton.waitFor( { timeout: timeouts.longAction } );
 
 		await skipButton.click();
 

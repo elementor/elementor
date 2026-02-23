@@ -1,8 +1,8 @@
 import EditorPage from '../playwright/pages/editor-page';
 import EditorSelectors from '../playwright/selectors/editor-selectors';
+import { timeouts } from '../playwright/config/timeouts';
 import { expect, type Frame, type Page, type TestInfo } from '@playwright/test';
 
-const CONTENT_READY_TIMEOUT = 15_000;
 const MIN_RENDERED_HEIGHT = 30;
 
 type ScreenShot = {
@@ -32,20 +32,20 @@ export default class ElementRegressionHelper {
 				return el && el.getBoundingClientRect().height > minHeight;
 			},
 			{ sel: selector, minHeight: MIN_RENDERED_HEIGHT },
-			{ timeout: CONTENT_READY_TIMEOUT },
+			{ timeout: timeouts.longAction },
 		);
 	}
 
 	private async waitForPublishedContentReady(): Promise<void> {
 		await this.page.waitForLoadState( 'load' );
 		const container = this.page.locator( EditorSelectors.container ).first();
-		await container.waitFor( { state: 'visible', timeout: CONTENT_READY_TIMEOUT } );
+		await container.waitFor( { state: 'visible', timeout: timeouts.longAction } );
 		await this.waitForContainerContent( this.page );
 	}
 
 	private async waitForEditorContentReady(): Promise<void> {
 		const frame = this.editor.getPreviewFrame();
-		await frame.locator( EditorSelectors.container ).first().waitFor( { state: 'visible', timeout: CONTENT_READY_TIMEOUT } );
+		await frame.locator( EditorSelectors.container ).first().waitFor( { state: 'visible', timeout: timeouts.longAction } );
 		await this.waitForContainerContent( frame );
 	}
 
