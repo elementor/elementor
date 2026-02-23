@@ -8,6 +8,7 @@ class Element_Builder {
 	protected $is_locked = false;
 	protected $children = [];
 	protected $editor_settings = [];
+
 	public static function make( string $element_type ) {
 		return new self( $element_type );
 	}
