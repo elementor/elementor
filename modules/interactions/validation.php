@@ -3,8 +3,9 @@
 namespace Elementor\Modules\Interactions;
 
 use Elementor\Modules\Interactions\Validators\Breakpoints_Value as BreakpointsValueValidator;
+use Elementor\Modules\Interactions\Validators\Custom_Effect_Value;
 use Elementor\Modules\Interactions\Validators\String_Value as StringValueValidator;
-use Elementor\Modules\Interactions\Adapter;
+use Elementor\Modules\Interactions\Validators\Trigger_Value as TriggerValueValidator;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -14,8 +15,7 @@ class Validation {
 	private $elements_to_interactions_counter = [];
 	private $max_number_of_interactions = 5;
 
-	private const VALID_TRIGGERS = [ 'load', 'scrollIn', 'scrollOut', 'scrollOn' ];
-	private const VALID_EFFECTS = [ 'fade', 'slide', 'scale' ];
+	private const VALID_EFFECTS = [ 'fade', 'slide', 'scale', 'custom' ];
 	private const VALID_TYPES = [ 'in', 'out' ];
 	private const VALID_DIRECTIONS = [ '', 'left', 'right', 'top', 'bottom' ];
 
@@ -140,7 +140,7 @@ class Validation {
 			return false;
 		}
 
-		if ( ! $this->is_valid_string_prop( $value, 'trigger', self::VALID_TRIGGERS ) ) {
+		if ( ! $this->is_valid_trigger_prop( $value ) ) {
 			return false;
 		}
 
@@ -155,8 +155,16 @@ class Validation {
 		return true;
 	}
 
+	private function is_valid_trigger_prop( $data ) {
+		if ( ! array_key_exists( 'trigger', $data ) ) {
+			return false;
+		}
+
+		return TriggerValueValidator::is_valid( $data['trigger'] );
+	}
+
 	private function is_valid_breakpoints_prop( $data ) {
-		if ( isset( $data['breakpoints'] ) ) {
+		if ( array_key_exists( 'breakpoints', $data ) ) {
 			return BreakpointsValueValidator::is_valid( $data['breakpoints'] );
 		}
 
@@ -303,6 +311,10 @@ class Validation {
 		}
 
 		if ( isset( $animation_value['config'] ) && ! $this->is_valid_config_prop( $animation_value ) ) {
+			return false;
+		}
+
+		if ( ! Custom_Effect_Value::is_valid( $animation_value ) ) {
 			return false;
 		}
 

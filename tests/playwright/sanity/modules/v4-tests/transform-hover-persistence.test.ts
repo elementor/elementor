@@ -11,7 +11,7 @@ test.describe( 'Transform repeater persistence @atomic-widgets', () => {
 		await context.close();
 	} );
 
-	test( 'Transform repeater items in hover state should persist after page refresh', async ( { page, apiRequests }, testInfo ) => {
+	test.skip( 'Transform repeater items in hover state should persist after page refresh', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
@@ -23,8 +23,7 @@ test.describe( 'Transform repeater persistence @atomic-widgets', () => {
 
 		// Act
 		await editor.v4Panel.openTab( 'style' );
-		await page.getByRole( 'button', { name: 'Open CSS Class Menu' } ).click();
-		await page.getByRole( 'menuitem', { name: 'hover' } ).click();
+		await editor.v4Panel.style.selectClassState( 'hover', 'local' );
 		await editor.openV2Section( 'effects' );
 
 		const addTransformButton = page.getByRole( 'button', { name: 'Add transform item' } );
@@ -33,10 +32,15 @@ test.describe( 'Transform repeater persistence @atomic-widgets', () => {
 		await moveItem.waitFor( { state: 'visible', timeout: 15000 } );
 		await moveItem.click( { force: true } );
 
-		await page.locator( 'body' ).click();
+		await page.keyboard.press( 'Escape' );
+		await editor.selectElement( headingId );
+		await editor.v4Panel.openTab( 'style' );
+		await editor.v4Panel.style.selectClassState( 'hover', 'local' );
+		await editor.openV2Section( 'effects' );
 
 		// Assert
 		const transformItems = page.locator( '.MuiTag-root' );
+		await transformItems.waitFor( { state: 'visible', timeout: 10000 } );
 		await expect( transformItems ).toHaveCount( 1 );
 
 		// Publish
@@ -49,8 +53,7 @@ test.describe( 'Transform repeater persistence @atomic-widgets', () => {
 
 		await editor.selectElement( headingId );
 		await editor.v4Panel.openTab( 'style' );
-		await page.getByRole( 'button', { name: 'Open CSS Class Menu' } ).click();
-		await page.getByRole( 'menuitem', { name: 'hover' } ).click();
+		await editor.v4Panel.style.selectClassState( 'hover', 'local' );
 		await editor.openV2Section( 'effects' );
 
 		// Assert

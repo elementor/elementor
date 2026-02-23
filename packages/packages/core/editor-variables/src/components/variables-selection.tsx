@@ -27,7 +27,7 @@ const CREATE_LABEL = __( 'Create variable', 'elementor' );
 const MANAGER_LABEL = __( 'Variables Manager', 'elementor' );
 
 const getProUpgradeUrl = ( variableType: string ) =>
-	`https://go.elementor.com/go-pro-panel-${ variableType }-variable/`;
+	`https://go.elementor.com/renew-license-panel-${ variableType }-variable`;
 
 type Props = {
 	closePopover: () => void;

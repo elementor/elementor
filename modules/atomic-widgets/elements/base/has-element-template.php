@@ -84,7 +84,6 @@ trait Has_Element_Template {
 			'type' => $this->get_name(),
 			'settings' => $this->get_atomic_settings(),
 			'base_styles' => $this->get_base_styles_dictionary(),
-			'interactions' => $this->get_interactions_ids(),
 			'children_placeholder' => $this->get_children_placeholder(),
 		];
 	}
@@ -100,27 +99,15 @@ trait Has_Element_Template {
 	public function print_content() {
 		$defined_context = $this->define_render_context();
 
-		$context_key = $defined_context['context_key'] ?? static::class;
-		$element_context = $defined_context['context'] ?? [];
-
-		$has_context = ! empty( $element_context );
-
-		if ( $has_context ) {
-			Render_Context::push( $context_key, $element_context );
+		if ( empty( $defined_context ) ) {
+			return $this->render();
 		}
+
+		$this->set_render_context( $defined_context );
 
 		$this->render();
 
-		if ( $has_context ) {
-			Render_Context::pop( $context_key );
-		}
-	}
-
-	protected function define_render_context(): array {
-		return [
-			'context_key' => null,
-			'context' => [],
-		];
+		$this->clear_render_context( $defined_context );
 	}
 
 	protected function get_main_template(): string {

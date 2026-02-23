@@ -1,7 +1,7 @@
 export const useQuotaPermissions = ( variableType: string ) => {
 	const quotaConfig = {
-		...( window.ElementorVariablesQuotaConfig || {} ),
-		...( window.ElementorVariablesQuotaConfigExtended || {} ),
+		...( window.ElementorVariablesQuotaConfig ?? {} ),
+		...( window.ElementorVariablesQuotaConfigExtended ?? {} ),
 	};
 
 	// BC: Remove when 4.01 is released
