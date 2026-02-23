@@ -6,7 +6,7 @@ import {
 	findNonAtomicElementsInElement,
 	hasNonAtomicElementsInTree,
 	isElementAtomic,
-} from '../prevent-non-atomic-nesting';
+} from '../extended/prevent-non-atomic-nesting';
 
 jest.mock( '@elementor/editor-documents', () => ( {
 	getV1CurrentDocument: jest.fn(),
