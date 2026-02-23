@@ -1,4 +1,4 @@
-import { injectIntoTop } from '@elementor/editor';
+import { injectIntoLogic, injectIntoTop } from '@elementor/editor';
 import { registerControlReplacement } from '@elementor/editor-controls';
 import { getV1CurrentDocument } from '@elementor/editor-documents';
 import { FIELD_TYPE, injectIntoPanelHeaderTop, registerFieldIndicator } from '@elementor/editor-editing-panel';
@@ -21,6 +21,7 @@ import { initCleanupOverridablePropsOnDelete } from './sync/cleanup-overridable-
 import { initHandleComponentEditModeContainer } from './sync/handle-component-edit-mode-container';
 import { initNonAtomicNestingPrevention } from './sync/prevent-non-atomic-nesting';
 import { initRevertOverridablesOnCopyOrDuplicate } from './sync/revert-overridables-on-copy-or-duplicate';
+import { SanitizeOverridableProps } from './sync/sanitize-overridable-props';
 
 export function initExtended() {
 	registerPanel( componentPropertiesPanel );
@@ -74,4 +75,9 @@ export function initExtended() {
 	initHandleComponentEditModeContainer();
 
 	initRevertOverridablesOnCopyOrDuplicate();
+
+	injectIntoLogic( {
+		id: 'sanitize-overridable-props',
+		component: SanitizeOverridableProps,
+	} );
 }
