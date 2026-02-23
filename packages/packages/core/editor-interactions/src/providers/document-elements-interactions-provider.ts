@@ -37,12 +37,12 @@ export const documentElementsInteractionsProvider = createInteractionsProvider( 
 			return filtered.map( ( element ) => {
 				const interactions = getElementInteractions( element.id );
 
-				const normalizedInteractions = normalizeInteractions( interactions );
+				// const normalizedInteractions = normalizeInteractions( interactions );
 
 				return {
 					elementId: element.id,
 					dataId: element.id,
-					interactions: normalizedInteractions || { version: 1, items: [] },
+					interactions: interactions || { version: 1, items: [] },
 				};
 			} );
 		},
