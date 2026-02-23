@@ -1,10 +1,8 @@
 import { expect } from '@playwright/test';
+import { timeouts } from '../../../config/timeouts';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { wpCli } from '../../../assets/wp-cli';
-
-const MODAL_PROBE_TIMEOUT = 3_000;
-const INSERTER_READY_TIMEOUT = 20_000;
 
 test.describe( 'Document tests', async () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -53,7 +51,7 @@ test.describe( 'Document tests', async () => {
 async function dismissModalIfPresent( wpAdmin: WpAdminPage ) {
 	const modalOverlay = wpAdmin.page.locator( '.components-modal__screen-overlay' );
 	try {
-		await modalOverlay.waitFor( { state: 'visible', timeout: MODAL_PROBE_TIMEOUT } );
+		await modalOverlay.waitFor( { state: 'visible', timeout: timeouts.action } );
 		await wpAdmin.page.keyboard.press( 'Escape' );
 		await modalOverlay.waitFor( { state: 'hidden' } );
 	} catch {
@@ -62,7 +60,7 @@ async function dismissModalIfPresent( wpAdmin: WpAdminPage ) {
 
 async function addElement( wpAdmin: WpAdminPage, elementType: string ) {
 	const inserterToggle = wpAdmin.page.getByRole( 'button', { name: 'Block Inserter', exact: true } );
-	await inserterToggle.waitFor( { timeout: INSERTER_READY_TIMEOUT } );
+	await inserterToggle.waitFor( { timeout: timeouts.longAction } );
 
 	await dismissModalIfPresent( wpAdmin );
 
