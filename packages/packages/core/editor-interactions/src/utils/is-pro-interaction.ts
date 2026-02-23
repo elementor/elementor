@@ -13,8 +13,12 @@ export function isProInteraction( interaction: InteractionItemPropValue ): boole
 	];
 
 	return checks.some( ( [ controlType, controlValue ] ) => {
+		if ( ! controlValue ) {
+			return false;
+		}
+
 		const supportedOptions = getInteractionsControlOptions( controlType as InteractionsControlType );
-		// If no options registered (empty array), skip - the control doesn't filter by options
+
 		return supportedOptions.length > 0 && ! supportedOptions.includes( controlValue );
 	} );
 }
