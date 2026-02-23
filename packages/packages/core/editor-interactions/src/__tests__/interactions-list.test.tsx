@@ -383,6 +383,6 @@ describe( 'InteractionsList pro interaction disabled behavior', () => {
 		);
 
 		const previewButton = screen.getByLabelText( /play interaction/i );
-		expect( previewButton ).not.toBeDisabled();
+		expect( previewButton ).toBeEnabled();
 	} );
 } );

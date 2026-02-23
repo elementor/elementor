@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { renderWithTheme, mockCurrentUserCapabilities } from 'test-utils';
-import { screen, fireEvent } from '@testing-library/react';
+import { mockCurrentUserCapabilities, renderWithTheme } from 'test-utils';
+import { fireEvent, screen } from '@testing-library/react';
 
 import { ProInteractionDisabledContent } from '../components/pro-interaction-disabled-content';
 
@@ -109,7 +109,7 @@ describe( 'ProInteractionDisabledContent', () => {
 				/>
 			);
 
-			const link = screen.getByText( 'Upgrade now' ).closest( 'a' );
+			const link = screen.getByRole( 'link', { name: 'Upgrade now' } );
 			expect( link ).toHaveAttribute( 'href', 'https://example.com/wp-admin/plugins.php' );
 		} );
 
@@ -127,7 +127,7 @@ describe( 'ProInteractionDisabledContent', () => {
 				/>
 			);
 
-			const link = screen.getByText( 'Upgrade now' ).closest( 'a' );
+			const link = screen.getByRole( 'link', { name: 'Upgrade now' } );
 			expect( link ).toHaveAttribute( 'href', 'https://go.elementor.com/go-pro-interactions/' );
 		} );
 	} );

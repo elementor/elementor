@@ -1,6 +1,6 @@
-import { isProInteraction } from '../utils/is-pro-interaction';
 import { getInteractionsControlOptions } from '../interactions-controls-registry';
 import type { InteractionItemPropValue } from '../types';
+import { isProInteraction } from '../utils/is-pro-interaction';
 import { createInteractionItemValue } from './utils';
 
 jest.mock( '../interactions-controls-registry', () => ( {
