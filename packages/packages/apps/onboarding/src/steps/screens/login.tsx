@@ -61,7 +61,12 @@ export function Login( { onConnect, onContinueAsGuest }: LoginProps ) {
 							<SocialIcon sx={ { marginInlineStart: '-10px' } }>
 								<FacebookIcon />
 							</SocialIcon>
-							<SocialIcon sx={ ( theme: Theme ) => ( { marginInlineStart: '-10px', color: theme.palette.text.primary } ) }>
+							<SocialIcon
+								sx={ ( theme: Theme ) => ( {
+									marginInlineStart: '-10px',
+									color: theme.palette.text.primary,
+								} ) }
+							>
 								<AppleIcon />
 							</SocialIcon>
 						</Stack>

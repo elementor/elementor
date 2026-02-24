@@ -34,7 +34,9 @@ export function SelectionBadge( { icon: Icon, variant = 'free' }: SelectionBadge
 
 	return (
 		<SelectionBadgeRoot variant={ variant }>
-			<Icon sx={ { fill: variant === 'paid' ? theme.palette.common.white : theme.palette.secondary.contrastText } } />
+			<Icon
+				sx={ { fill: variant === 'paid' ? theme.palette.common.white : theme.palette.secondary.contrastText } }
+			/>
 		</SelectionBadgeRoot>
 	);
 }
