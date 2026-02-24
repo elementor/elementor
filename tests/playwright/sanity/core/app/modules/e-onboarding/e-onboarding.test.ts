@@ -6,6 +6,7 @@ import {
 	mockOnboardingApi,
 	doAndWaitForProgress,
 	navigateAndPassLogin,
+	navigateToSiteFeaturesStep,
 } from './e-onboarding-utils';
 
 test.describe( 'E-Onboarding @e-onboarding', () => {
@@ -190,8 +191,6 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 			expect( choicesRequests[ 3 ] ).toMatchObject( { theme_selection: 'hello-elementor' } );
 			expect( progressRequests[ 3 ] ).toMatchObject( {
 				complete_step: 'theme_selection',
-				step_index: 3,
-				total_steps: 5,
 			} );
 		} );
 
@@ -206,25 +205,33 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 			await expect( page.getByTestId( 'feature-card-core_placeholder' ) ).toBeVisible();
 
 			const continueWithFreeBtn = page.getByRole( 'button', { name: 'Continue with Free' } );
-			await expect( continueWithFreeBtn ).toBeDisabled();
+			await expect( continueWithFreeBtn ).not.toBeDisabled();
 
 			await expect( page.getByRole( 'button', { name: 'Skip' } ) ).toBeVisible();
 			await expect( page.getByRole( 'button', { name: 'Back' } ) ).toBeVisible();
 
 			await page.getByTestId( 'feature-card-theme_builder' ).click();
-			await expect( continueWithFreeBtn ).not.toBeDisabled();
 			await expect(
 				page.getByText( /Based on the features you chose, we recommend the/ ),
 			).toContainText( 'Pro' );
 
+			// Intercept the createNewPage navigation so the test environment doesn't
+			// actually create a post.
+			let redirectedUrl = '';
+			await page.route( '**/edit.php**', async ( route ) => {
+				redirectedUrl = route.request().url();
+				await route.fulfill( { status: 200, contentType: 'text/html', body: '<html></html>' } );
+			} );
+
 			await doAndWaitForProgress( page, () => continueWithFreeBtn.click() );
 
 			expect( choicesRequests[ 4 ] ).toMatchObject( { site_features: [ 'theme_builder' ] } );
-			expect( progressRequests[ 4 ] ).toMatchObject( {
+			expect( progressRequests.at( -1 ) ).toMatchObject( {
 				complete_step: 'site_features',
-				step_index: 4,
-				total_steps: 5,
+				complete: true,
 			} );
+
+			expect( redirectedUrl ).toContain( 'action=elementor_new_post' );
 		} );
 	} );
 
@@ -262,6 +269,28 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 		).toHaveAttribute( 'aria-pressed', 'true' );
 
 		await expect( page.getByRole( 'button', { name: 'Continue' } ) ).not.toBeDisabled();
+	} );
+
+	test( 'Skip on site_features shows completion screen and redirects to new page', async ( { page } ) => {
+		const { progressRequests } = await mockOnboardingApi( page );
+		await navigateToSiteFeaturesStep( page );
+
+		let redirectedUrl = '';
+		await page.route( '**/edit.php**', async ( route ) => {
+			redirectedUrl = route.request().url();
+			await route.fulfill( { status: 200, contentType: 'text/html', body: '<html></html>' } );
+		} );
+
+		await doAndWaitForProgress( page, () =>
+			page.getByRole( 'button', { name: 'Skip' } ).click(),
+		);
+
+		expect( progressRequests.at( -1 ) ).toMatchObject( {
+			skip_step: true,
+			complete: true,
+		} );
+
+		expect( redirectedUrl ).toContain( 'action=elementor_new_post' );
 	} );
 
 	test( 'Back from theme_selection shows experience_level Continue enabled', async ( { page } ) => {
