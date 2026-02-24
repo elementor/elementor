@@ -22,11 +22,11 @@ const schema = {
 		{ value: 'out', label: 'Out' },
 	],
 	directions: [
-		{ value: 'top', label: 'Top', note: 'Only relevant for slide effect' },
-		{ value: 'bottom', label: 'Bottom', note: 'Only relevant for slide effect' },
-		{ value: 'left', label: 'Left', note: 'Only relevant for slide effect' },
-		{ value: 'right', label: 'Right', note: 'Only relevant for slide effect' },
-		{ value: '', label: 'None', note: 'Use empty string for effects without direction (e.g. fade, scale)' },
+		{ value: 'top', label: 'Top', note: '' },
+		{ value: 'bottom', label: 'Bottom', note: '' },
+		{ value: 'left', label: 'Left', note: '' },
+		{ value: 'right', label: 'Right', note: '' },
+		{ value: '', label: 'None', note: 'Slide animation must have a direction' },
 	],
 	easings: Object.entries( EASING_OPTIONS ).map( ( [ value, label ] ) => ( { value, label } ) ),
 	timing: {
@@ -36,7 +36,6 @@ const schema = {
 	excludedBreakpoints: {
 		type: 'string[]',
 		description: 'List of breakpoint IDs on which this interaction is disabled. Omit to enable on all breakpoints.',
-		note: 'Replay is a PRO-only feature and cannot be set via this tool.',
 	},
 	maxInteractionsPerElement: MAX_INTERACTIONS_PER_ELEMENT,
 };

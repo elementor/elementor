@@ -59,8 +59,7 @@ Use excludedBreakpoints to disable the animation on specific responsive breakpoi
 				.describe( 'Whether the animation plays in or out' ),
 			direction: z
 				.enum( [ 'top', 'bottom', 'left', 'right', '' ] )
-				.optional()
-				.describe( 'Direction for slide effect. Use empty string for fade/scale.' ),
+				.optional(),
 			duration: z
 				.number()
 				.min( 0 )
