@@ -24,7 +24,13 @@ export { createArrayPropUtils, createPropUtils, getPropSchemaFromCache } from '.
 export { filterEmptyValues, isEmpty } from './utils/filter-empty-values';
 export { isTransformable } from './utils/is-transformable';
 export { mergeProps } from './utils/merge-props';
-export { evaluateTerm, extractValue, isDependency, isDependencyMet } from './utils/prop-dependency-utils';
+export {
+	evaluateTerm,
+	extractValue,
+	isDependency,
+	isDependencyMet,
+	propDependenciesMet,
+} from './utils/prop-dependency-utils';
 export { parseHtmlChildren, type ParseResult } from './utils/parse-html-children';
 
 export const Schema = {

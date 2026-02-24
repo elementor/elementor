@@ -26,6 +26,11 @@ export { registerStyleProviderToColors } from './provider-colors-registry';
 export { getFieldIndicators, registerFieldIndicator, FIELD_TYPE } from './field-indicators-registry';
 export { registerEditingPanelReplacement } from './editing-panel-replacement-registry';
 
+export {
+	extractOrderedDependencies,
+	getUpdatedValues,
+	type Values,
+} from './utils/prop-dependency-utils';
 export { doApplyClasses, doGetAppliedClasses, doUnapplyClass } from './apply-unapply-actions';
 export { setLicenseConfig } from './hooks/use-license-config';
 export { type DynamicTag, type DynamicTags, type DynamicTagsManager } from './dynamics/types';

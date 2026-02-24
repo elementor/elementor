@@ -63,7 +63,7 @@ test.describe( 'Atomic link control dependencies @atomic-widgets @link-dependenc
 				await expect( helper.getHtmlTagControl( '[role="combobox"]' ) ).toHaveCSS( 'cursor', 'not-allowed' );
 			} );
 
-			await test.step( 'Assert new tab switch is disabled', async () => {
+			await test.step( 'Assert new tab switch is enabled', async () => {
 				expect( await helper.isNewTabSwitchOn() ).toBeTruthy();
 			} );
 

@@ -12,12 +12,15 @@ import {
 	type ControlType,
 	createTopLevelObjectType,
 	ElementProvider,
+	extractOrderedDependencies,
+	getUpdatedValues,
 	isDynamicPropValue,
 	SettingsField,
 	useElement,
+	type Values,
 } from '@elementor/editor-editing-panel';
 import { type Control, getElementType } from '@elementor/editor-elements';
-import { type PropType, type PropValue } from '@elementor/editor-props';
+import { propDependenciesMet, type PropType, type PropValue } from '@elementor/editor-props';
 import { Stack } from '@elementor/ui';
 
 import { useControlsByWidgetType } from '../../hooks/use-controls-by-widget-type';
@@ -123,11 +126,43 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 			return;
 		}
 
-		const newPropValue = getTempNewValueForDynamicProp(
+		let newPropValue = getTempNewValueForDynamicProp(
 			propType,
 			propValue,
 			newValue[ overridableProp.overrideKey ]
 		);
+
+		const element = getContainerByOriginId(
+			overridableProp.originPropFields?.elementId ?? overridableProp.elementId,
+			componentInstanceElement.element.id
+		);
+
+		if ( element ) {
+			const { widgetType, elType, propKey } = overridableProp.originPropFields ?? overridableProp;
+			const innerElementId = element.id;
+			const type = elType === 'widget' ? widgetType : elType;
+			const elementType = getElementType( type );
+			const dependenciesPerTargetMapping = elementType?.dependenciesPerTargetMapping ?? {};
+			const filteredMapping = filterDependenciesForProp( dependenciesPerTargetMapping, propKey );
+			const dependents = extractOrderedDependencies( filteredMapping );
+
+			if ( dependents.length > 0 ) {
+				const propsSchema = { [ propKey ]: propType };
+				const elementValues = { [ propKey ]: propValue } as Values;
+				const mergedNewPropValue = mergePropValueForOverride( propValue, newPropValue );
+				const values = { [ propKey ]: mergedNewPropValue } as Values;
+				const updatedValues = getUpdatedValues(
+					values,
+					dependents,
+					propsSchema,
+					elementValues,
+					innerElementId
+				);
+				newPropValue = ( updatedValues[ propKey ] ?? newPropValue ) as
+					| ComponentInstanceOverrideProp
+					| ComponentOverridableProp;
+			}
+		}
 
 		const newOverrideValue = createOverrideValue( {
 			matchingOverride,
@@ -206,9 +241,7 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 						propType={ propTypeSchema }
 						value={ value }
 						setValue={ setValue }
-						isDisabled={ () => {
-							return false;
-						} }
+						isDisabled={ ( prop ) => ! propDependenciesMet( propKey, propValue )( prop ) }
 					>
 						<PropKeyProvider bind={ overridableProp.overrideKey }>
 							<ControlReplacementsProvider replacements={ controlReplacements }>
@@ -225,7 +258,50 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 	);
 }
 
-// temp solution to allow dynamic values to be overridden, will be removed once placeholder is implemented
+function filterDependenciesForProp(
+	dependenciesPerTargetMapping: Record< string, string[] >,
+	propKey: string
+): Record< string, string[] > {
+	const prefix = `${ propKey }.`;
+
+	return Object.fromEntries(
+		Object.entries( dependenciesPerTargetMapping ).filter( ( [ target, dependents ] ) => {
+			const targetUnderProp = target === propKey || target.startsWith( prefix );
+			const dependentsUnderProp = dependents.every( ( d ) => d === propKey || d.startsWith( prefix ) );
+
+			return targetUnderProp && dependentsUnderProp;
+		} )
+	);
+}
+
+function mergePropValueForOverride( propValue: PropValue, newPropValue: PropValue ): PropValue {
+	if ( ! newPropValue ) {
+		return propValue;
+	}
+
+	if ( ! propValue ) {
+		return newPropValue;
+	}
+
+	const propVal =
+		propValue && typeof propValue === 'object' && 'value' in propValue
+			? ( propValue as { value: unknown } ).value
+			: propValue;
+	const newVal =
+		newPropValue && typeof newPropValue === 'object' && 'value' in newPropValue
+			? ( newPropValue as { value: unknown } ).value
+			: newPropValue;
+
+	if ( typeof propVal === 'object' && propVal !== null && typeof newVal === 'object' && newVal !== null ) {
+		return {
+			...( newPropValue as object ),
+			value: { ...( propVal as object ), ...( newVal as object ) },
+		} as PropValue;
+	}
+
+	return newPropValue;
+}
+
 function getTempNewValueForDynamicProp( propType: PropType, propValue: PropValue, newPropValue: PropValue ) {
 	const isRemovingOverride = newPropValue === null;
 

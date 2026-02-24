@@ -292,12 +292,14 @@ test.describe( 'Atomic Components @v4-tests', () => {
 
 	test( 'Open in a new tab toggle should be enabled and changeable when link is exposed as prop in Flexbox component @ED-22975', async () => {
 		const LINK_URL = 'https://example.com';
+		const instanceOverrideUrl = 'https://elementor.com';
 		const linkFieldLabel = 'Link';
+		let instanceId: string;
 
 		await test.step( 'Create a component with a Flexbox', async () => {
 			const { locator: flexbox } = await createContentForComponent( editor );
 			await openCreateComponentFromContextMenu( flexbox, page );
-			await createComponent( page, editor, uniqueName( 'Link Component' ) );
+			instanceId = await createComponent( page, editor, uniqueName( 'Link Component' ) );
 		} );
 
 		await test.step( 'Select heading and expose link as prop', async () => {
@@ -343,6 +345,37 @@ test.describe( 'Atomic Components @v4-tests', () => {
 		} );
 
 		await exitComponentEditMode( editor );
+
+		await test.step( 'Verify link behaves correctly in instance panel', async () => {
+			await selectComponentInstance( editor, instanceId );
+
+			const instancePanel = page.locator( EditorSelectors.components.instanceEditingPanel );
+			await expect( instancePanel ).toBeVisible( { timeout: timeouts.longAction } );
+			await expect( instancePanel.getByText( linkFieldLabel, { exact: true } ) ).toBeVisible();
+
+			await helper.setLinkControl( { value: '' } );
+
+			const newTabSwitch = helper.getNewTabSwitch();
+			await expect( newTabSwitch ).toBeVisible();
+			expect( await helper.isNewTabSwitchOn() ).toBe( false );
+			expect( await helper.isControlDisabled( newTabSwitch ) ).toBeTruthy();
+
+			await helper.setLinkControl( {
+				value: instanceOverrideUrl,
+			} );
+
+			expect( await helper.isControlDisabled( newTabSwitch ) ).toBeFalsy();
+			expect( await helper.isNewTabSwitchOn() ).toBe( true );
+		} );
+
+		await test.step( 'Verify link override renders on frontend', async () => {
+			await editor.publishAndViewPage();
+
+			const headingLink = page.locator( 'h2 a' ).first();
+			await expect( headingLink ).toBeVisible();
+			await expect( headingLink ).toHaveAttribute( 'href', instanceOverrideUrl );
+			await expect( headingLink ).toHaveAttribute( 'target', '_blank' );
+		} );
 	} );
 
 	test( 'should load local styles used within a component on page', async () => {

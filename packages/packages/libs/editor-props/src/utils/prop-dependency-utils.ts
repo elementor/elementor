@@ -2,6 +2,7 @@ import {
 	type Dependency,
 	type DependencyTerm,
 	type PropKey,
+	type PropType,
 	type PropValue,
 	type TransformablePropValue,
 } from '../types';
@@ -141,4 +142,11 @@ export function extractValue(
 
 export function isDependency( term: DependencyTerm | Dependency ): term is Dependency {
 	return 'terms' in term;
+}
+
+export function propDependenciesMet(
+	bind: string,
+	propValue: PropValue
+): ( prop: PropType ) => boolean {
+	return ( prop ) => isDependencyMet( prop?.dependencies, { [ bind ]: propValue } ).isMet;
 }

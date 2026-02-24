@@ -1,5 +1,5 @@
 import EditorPage from '../../../pages/editor-page';
-import { Page } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
 export type ElementType = 'e-button' | 'e-divider' | 'e-heading' | 'e-image' | 'e-paragraph' | 'e-svg' | 'e-tabs' | 'e-youtube' |'e-div-block' | 'e-flexbox';
@@ -22,29 +22,30 @@ export class AtomicHelper {
 
 	public async setLinkControl( config: { toggleMode?: boolean; value?: string; isTargetBlank?: boolean; } = {} ) {
 		const {
-			value = '',
-			isTargetBlank = false,
+			toggleMode,
+			value,
+			isTargetBlank,
 		} = config;
 		await this.page.locator( LINK_SECTION_BASE_SELECTOR ).waitFor( { timeout: 600 } );
 
-		const toggleMode = config.toggleMode ?? !! value;
 		const linkInput = this.page.locator( '.MuiCollapse-root .MuiAutocomplete-root input[placeholder="Type or paste your URL"]' );
 		const isToggled = await linkInput.isVisible();
+		const shouldToggleLink = toggleMode !== undefined ? isToggled !== toggleMode : ! isToggled;
 
-		if ( isToggled !== toggleMode ) {
+		if ( shouldToggleLink ) {
 			await this.page.locator( LINK_SECTION_BASE_SELECTOR + TOGGLE_LINK_SELECTOR ).click();
 		}
 
-		if ( ! toggleMode ) {
-			return;
+		if ( value !== undefined ) {
+			await linkInput.fill( value );
 		}
 
-		await linkInput.fill( value );
+		if ( isTargetBlank !== undefined ) {
+			const newTabSwitch = this.getNewTabSwitch();
 
-		const newTabSwitch = this.page.locator( `${ LINK_SECTION_BASE_SELECTOR } .MuiSwitch-switchBase` );
-
-		if ( await this.isNewTabSwitchOn() !== isTargetBlank ) {
-			await newTabSwitch.click();
+			if ( await this.isNewTabSwitchOn() !== isTargetBlank ) {
+				await newTabSwitch.click();
+			}
 		}
 	}
 
@@ -72,9 +73,9 @@ export class AtomicHelper {
 	}
 
 	public async isHtmlTagControlDisabled() {
-		const classList = await this.getHtmlTagControl( '.MuiInputBase-root' ).getAttribute( 'class' );
+		const htmlTagControl = this.getHtmlTagControl( '.MuiInputBase-root' );
 
-		return !! classList.split( ' ' ).includes( 'Mui-disabled' );
+		return this.isControlDisabled( htmlTagControl );
 	}
 
 	public getNewTabSwitch() {
@@ -89,5 +90,9 @@ export class AtomicHelper {
 
 	public async addAtomicElement( elementType: ElementType, container: string = 'document' ) {
 		return await this.editor.addElement( { elType: elementType }, container );
+	}
+
+	public async isControlDisabled( control: Locator ): Promise<boolean> {
+		return control.getAttribute( 'class' ).then( ( classList: string ) => classList.split( ' ' ).includes( 'Mui-disabled' ) );
 	}
 }
