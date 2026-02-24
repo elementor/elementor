@@ -281,6 +281,10 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 			await route.fulfill( { status: 200, contentType: 'text/html', body: '<html></html>' } );
 		} );
 
+		const redirectPromise = page.waitForResponse(
+			( r ) => r.url().includes( 'edit.php' ),
+		);
+
 		await doAndWaitForProgress( page, () =>
 			page.getByRole( 'button', { name: 'Skip' } ).click(),
 		);
@@ -290,6 +294,7 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 			complete: true,
 		} );
 
+		await redirectPromise;
 		expect( redirectedUrl ).toContain( 'action=elementor_new_post' );
 	} );
 
