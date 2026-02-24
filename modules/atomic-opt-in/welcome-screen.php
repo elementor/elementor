@@ -30,7 +30,7 @@ class WelcomeScreen {
 		if ( Upgrade_Manager::is_new_installation() ) {
 			return;
 		}
-		
+
 		$this->enqueue_scripts();
 		$this->set_welcome_popover_as_displayed();
 	}
