@@ -1,10 +1,7 @@
 import { useMemo } from 'react';
-import { getContainer, useSelectedElement } from '@elementor/editor-elements';
+import { getContainer } from '@elementor/editor-elements';
 
-export const useElementCanHaveChildren = (): boolean => {
-	const { element } = useSelectedElement();
-	const elementId = element?.id || '';
-
+export const useElementCanHaveChildren = ( elementId: string ): boolean => {
 	return useMemo( () => {
 		const container = getContainer( elementId );
 

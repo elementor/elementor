@@ -31,7 +31,7 @@ export function usePanelElementSetting< TValue = AnyTransformable | null >( prop
 	const context = useContext( Context );
 
 	if ( ! context ) {
-		throw new Error( 'useElementSetting must be used within a ElementProvider' );
+		throw new Error( 'usePanelElementSetting must be used within a ElementProvider' );
 	}
 
 	return ( context.settings[ propKey ] ?? null ) as TValue | null;

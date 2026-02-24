@@ -57,25 +57,21 @@ type UseSelectedElementSettingsResult< TValue > =
 	  };
 
 export function useSelectedElementSettings< TValue >(): UseSelectedElementSettingsResult< TValue > {
-	return useListenTo(
-		getEventsForSelectedElementSettings(),
-		() => {
-			const { element, elementType } = getSelectedElement();
+	return useListenTo( getEventsForSelectedElementSettings(), () => {
+		const { element, elementType } = getSelectedElement();
 
-			if ( ! element || ! elementType ) {
-				return { element: null, elementType: null, settings: null };
-			}
+		if ( ! element || ! elementType ) {
+			return { element: null, elementType: null, settings: null };
+		}
 
-			const settings = getElementSettings< TValue >( element.id, Object.keys( elementType.propsSchema ) );
+		const settings = getElementSettings< TValue >( element.id, Object.keys( elementType.propsSchema ) );
 
-			return {
-				element,
-				elementType,
-				settings,
-			};
-		},
-		[]
-	);
+		return {
+			element,
+			elementType,
+			settings,
+		};
+	} );
 }
 
 function getEventsForSelectedElementSettings() {

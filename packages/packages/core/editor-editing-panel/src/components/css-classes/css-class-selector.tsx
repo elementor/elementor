@@ -287,9 +287,8 @@ function hasReachedLimit( provider: StylesProvider ) {
 
 function useAppliedOptions( options: StyleDefOption[] ) {
 	const currentClassesProp = useClassesProp();
-	const classes = usePanelElementSetting< ClassesPropValue >( currentClassesProp );
 
-	const appliedIds = classes?.value ?? [];
+	const appliedIds = usePanelElementSetting< ClassesPropValue >( currentClassesProp )?.value ?? [];
 	const appliedOptions = options.filter( ( option ) => option.value && appliedIds.includes( option.value ) );
 
 	const hasElementsProviderStyleApplied = appliedOptions.some(

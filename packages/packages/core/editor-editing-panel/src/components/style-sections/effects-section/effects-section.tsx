@@ -4,10 +4,11 @@ import {
 	FilterRepeaterControl,
 	TransformRepeaterControl,
 	TransitionRepeaterControl,
+	useElementCanHaveChildren,
 } from '@elementor/editor-controls';
-import { useSelectedElement } from '@elementor/editor-elements';
 import { __ } from '@wordpress/i18n';
 
+import { useElement } from '../../../contexts/element-context';
 import { useStyle } from '../../../contexts/style-context';
 import { StylesField } from '../../../controls-registry/styles-field';
 import { getRecentlyUsedList } from '../../../utils/get-recently-used-styles';
@@ -23,8 +24,10 @@ const BACKDROP_FILTER_LABEL = __( 'Backdrop filters', 'elementor' );
 const TRANSITIONS_LABEL = __( 'Transitions', 'elementor' );
 
 export const EffectsSection = () => {
-	const { element } = useSelectedElement();
+	const { element } = useElement();
 	const { meta } = useStyle();
+
+	const canElementHaveChildren = useElementCanHaveChildren( element?.id ?? '' );
 
 	return (
 		<SectionContent gap={ 1 }>
@@ -37,7 +40,7 @@ export const EffectsSection = () => {
 			</StylesField>
 			<PanelDivider />
 			<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
-				<TransformRepeaterControl />
+				<TransformRepeaterControl showChildrenPerspective={ canElementHaveChildren } />
 			</StylesField>
 			<PanelDivider />
 			<StylesField bind="transition" propDisplayName={ TRANSITIONS_LABEL }>
