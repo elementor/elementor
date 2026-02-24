@@ -64,7 +64,7 @@ test.describe( 'V4-V3 Color Variable Sync @v4-tests', () => {
 
 		await test.step( 'Verify synced color appears in Site Settings > Global Colors', async () => {
 			await editor.openSiteSettings( 'global-colors' );
-			const syncedColorSection = page.locator( '.elementor-control-v4_color_variables' );
+			const syncedColorSection = page.locator( '.elementor-control-v4_color_variables_display' );
 			await expect( syncedColorSection ).toBeVisible();
 			await expect( syncedColorSection.locator( 'input[data-setting="title"]' ) ).toHaveValue( syncedColorName );
 			await expect( syncedColorSection.getByText( syncedColorValue, { exact: false } ) ).toBeVisible();
