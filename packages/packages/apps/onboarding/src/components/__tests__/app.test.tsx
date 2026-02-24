@@ -48,6 +48,8 @@ interface OnboardingConfig {
 		dashboard: string;
 		editor: string;
 		connect: string;
+		comparePlans?: string;
+		exploreFeatures?: string;
 	};
 }
 
@@ -95,6 +97,8 @@ const defaultConfig: OnboardingConfig = {
 		dashboard: 'https://test.local/wp-admin/',
 		editor: 'https://test.local/editor',
 		connect: 'https://test.local/connect',
+		comparePlans: 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash',
+		exploreFeatures: 'https://elementor.com/features/?utm_source=onboarding&utm_medium=wp-dash',
 	},
 };
 
@@ -269,8 +273,8 @@ describe( 'App', () => {
 			render( <App /> );
 
 			// Assert
-			expect( screen.getByText( 'Finish' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Skip' ) ).not.toBeInTheDocument();
+			expect( screen.getByText( 'Continue with Free' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Skip' ) ).toBeInTheDocument();
 		} );
 
 		it( 'should call onComplete when finishing last step', async () => {
@@ -289,7 +293,7 @@ describe( 'App', () => {
 			render( <App onComplete={ onComplete } /> );
 
 			// Act
-			fireEvent.click( screen.getByText( 'Finish' ) );
+			fireEvent.click( screen.getByText( 'Continue with Free' ) );
 
 			// Assert
 			await waitFor( () => {
