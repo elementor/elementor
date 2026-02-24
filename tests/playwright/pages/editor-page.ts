@@ -163,8 +163,8 @@ export default class EditorPage extends BasePage {
 				return false;
 			}
 		}, {
-			timeout: 5000,
 			polling: 100,
+			timeout: timeouts.longAction,
 		} );
 	}
 
@@ -558,7 +558,9 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setSelectControlValue( controlId: string, value: string ): Promise<void> {
-		await this.page.selectOption( `.elementor-control-${ controlId } select`, value );
+		const selectLocator = this.page.locator( `.elementor-control-${ controlId } select` );
+		await selectLocator.waitFor( { state: 'visible', timeout: timeouts.longAction } );
+		await selectLocator.selectOption( value, { timeout: timeouts.longAction } );
 	}
 
 	/**
