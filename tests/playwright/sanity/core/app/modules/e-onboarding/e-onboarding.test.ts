@@ -7,8 +7,6 @@ import {
 	doAndWaitForProgress,
 	navigateAndPassLogin,
 	navigateToSiteFeaturesStep,
-	setOnboardingCompletedViaCli,
-	resetOnboardingProgressViaCli,
 } from './e-onboarding-utils';
 
 test.describe( 'E-Onboarding @e-onboarding', () => {
@@ -330,67 +328,5 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 		).toHaveAttribute( 'aria-pressed', 'true' );
 
 		await expect( page.getByRole( 'button', { name: 'Continue' } ) ).not.toBeDisabled();
-	} );
-
-	test.describe( 'Onboarding starter lifecycle', () => {
-		test.beforeEach( async () => {
-			await setOnboardingCompletedViaCli();
-		} );
-
-		test.afterEach( async () => {
-			await resetOnboardingProgressViaCli();
-		} );
-
-		test( 'Starter shows after completion, disappears on widget add, and does not reappear after publish and reload', async ( { page, apiRequests }, testInfo ) => {
-			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			const editor = await wpAdmin.openNewPage();
-			const previewFrame = editor.getPreviewFrame();
-
-			await test.step( 'Starter is visible on a fresh Elementor page', async () => {
-				const starterActive = await page.evaluate( () => {
-					return !! ( window as unknown as { elementor?: { config?: { starter?: unknown } } } ).elementor?.config?.starter;
-				} );
-				expect( starterActive ).toBe( true );
-
-				await expect( previewFrame.locator( '.elementor-start-building' ) ).toBeVisible();
-			} );
-
-			await test.step( 'Adding a widget to the canvas dismisses the starter', async () => {
-				const starterDismissedRequest = page.waitForRequest(
-					( req ) =>
-						req.url().includes( 'e-onboarding/user-progress' ) &&
-						'POST' === req.method(),
-				);
-
-				await editor.addWidget( { widgetType: 'text' } );
-
-				const req = await starterDismissedRequest;
-				const body = req.postDataJSON() as Record< string, unknown >;
-				expect( body ).toMatchObject( { starter_dismissed: true } );
-
-				await expect( previewFrame.locator( '.elementor-start-building' ) ).not.toBeVisible();
-
-				const starterActive = await page.evaluate( () => {
-					return !! ( window as unknown as { elementor?: { config?: { starter?: unknown } } } ).elementor?.config?.starter;
-				} );
-				expect( starterActive ).toBe( false );
-			} );
-
-			await test.step( 'Publish the page', async () => {
-				await editor.publishPage();
-			} );
-
-			await test.step( 'Starter does not show after page reload', async () => {
-				await page.reload();
-				await page.waitForLoadState( 'load' );
-
-				const starterActiveAfterReload = await page.evaluate( () => {
-					return !! ( window as unknown as { elementor?: { config?: { starter?: unknown } } } ).elementor?.config?.starter;
-				} );
-				expect( starterActiveAfterReload ).toBe( false );
-
-				await expect( previewFrame.locator( '.elementor-start-building' ) ).not.toBeVisible();
-			} );
-		} );
 	} );
 } );

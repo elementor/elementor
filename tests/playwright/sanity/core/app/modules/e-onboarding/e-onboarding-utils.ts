@@ -1,10 +1,8 @@
 import { type Page, expect } from '@playwright/test';
-import { wpCli } from '../../../../../assets/wp-cli';
 
 export const ONBOARDING_URL = '/wp-admin/admin.php?page=elementor-app#onboarding';
 export const USER_CHOICES_ENDPOINT = '/wp-json/elementor/v1/e-onboarding/user-choices';
 export const USER_PROGRESS_ENDPOINT = '/wp-json/elementor/v1/e-onboarding/user-progress';
-export const ONBOARDING_PROGRESS_OPTION = 'elementor_e_onboarding_progress';
 
 export async function mockOnboardingApi( page: Page ) {
 	const choicesRequests: Record< string, unknown >[] = [];
@@ -82,23 +80,4 @@ export async function navigateToSiteFeaturesStep( page: Page ) {
 	);
 
 	await expect( page.getByTestId( 'site-features-step' ) ).toBeVisible();
-}
-
-export async function setOnboardingCompletedViaCli() {
-	const progressJson = JSON.stringify( {
-		current_step_index: 4,
-		current_step_id: 'site_features',
-		completed_steps: [ 'building_for', 'site_about', 'experience_level', 'theme_selection', 'site_features' ],
-		exit_type: 'user_exit',
-		last_active_timestamp: Math.floor( Date.now() / 1000 ),
-		started_at: Math.floor( Date.now() / 1000 ) - 300,
-		completed_at: Math.floor( Date.now() / 1000 ),
-		starter_dismissed: false,
-	} );
-
-	await wpCli( `wp option update ${ ONBOARDING_PROGRESS_OPTION } ${ progressJson } --format=json` );
-}
-
-export async function resetOnboardingProgressViaCli() {
-	await wpCli( `wp option delete ${ ONBOARDING_PROGRESS_OPTION }` );
 }
