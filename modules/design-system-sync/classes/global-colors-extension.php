@@ -56,7 +56,7 @@ class Global_Colors_Extension {
 			'heading_v4_variables',
 			[
 				'type' => Controls_Manager::HEADING,
-				'label' => esc_html__( 'Version 4 Variables', 'elementor' ),
+				'label' => esc_html__( 'Atomic Variables', 'elementor' ),
 				'separator' => 'before',
 			]
 		);
