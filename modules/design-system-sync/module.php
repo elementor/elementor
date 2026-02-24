@@ -64,7 +64,7 @@ class Module extends BaseModule {
 	public function enqueue_editor_styles() {
 		wp_enqueue_style(
 			'elementor-design-system-sync-editor',
-			plugins_url( 'assets/css/editor.css', __FILE__ ),
+			$this->get_css_assets_url( 'modules/design-system-sync/design-system-sync' ),
 			[],
 			ELEMENTOR_VERSION
 		);
