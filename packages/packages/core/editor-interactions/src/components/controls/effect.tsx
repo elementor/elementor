@@ -1,34 +1,40 @@
 import * as React from 'react';
-import { MenuListItem } from '@elementor/editor-ui';
-import { Select, type SelectChangeEvent } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type FieldProps } from '../../types';
+import { PromotionSelect } from '../../ui/promotion-select';
+import { DEFAULT_VALUES } from '../interaction-details';
+
+export const EFFECT_OPTIONS = {
+	fade: __( 'Fade', 'elementor' ),
+	slide: __( 'Slide', 'elementor' ),
+	scale: __( 'Scale', 'elementor' ),
+	custom: __( 'Custom', 'elementor' ),
+};
+
+export const BASE_EFFECTS: string[] = [ 'fade', 'slide', 'scale' ];
 
 export function Effect( { value, onChange }: FieldProps ) {
-	const availableEffects = [
-		{ key: 'fade', label: __( 'Fade', 'elementor' ) },
-		{ key: 'slide', label: __( 'Slide', 'elementor' ) },
-		{ key: 'scale', label: __( 'Scale', 'elementor' ) },
-		{ key: 'custom', label: __( 'Custom', 'elementor' ), disabled: true },
-	];
+	const baseOptions = Object.fromEntries(
+		Object.entries( EFFECT_OPTIONS ).filter( ( [ key ] ) => BASE_EFFECTS.includes( key ) )
+	);
+
+	const disabledOptions = Object.fromEntries(
+		Object.entries( EFFECT_OPTIONS ).filter( ( [ key ] ) => ! BASE_EFFECTS.includes( key ) )
+	);
 
 	return (
-		<Select
-			fullWidth
-			displayEmpty
-			size="tiny"
-			value={ value }
-			onChange={ ( event: SelectChangeEvent< string > ) => onChange( event.target.value ) }
-			MenuProps={ { disablePortal: true } }
-		>
-			{ availableEffects.map( ( effect ) => {
-				return (
-					<MenuListItem key={ effect.key } value={ effect.key } disabled={ effect.disabled }>
-						{ effect.label }
-					</MenuListItem>
-				);
-			} ) }
-		</Select>
+		<PromotionSelect
+			value={ value in baseOptions ? value : DEFAULT_VALUES.effect }
+			onChange={ onChange }
+			baseOptions={ baseOptions }
+			disabledOptions={ disabledOptions }
+			promotionLabel={ __( 'PRO effects', 'elementor' ) }
+			promotionContent={ __(
+				'Upgrade to further customize your animation with opacity, scale, move, rotate and more.',
+				'elementor'
+			) }
+			upgradeUrl="https://go.elementor.com/go-pro-interactions-custom-effect-modal/"
+		/>
 	);
 }
