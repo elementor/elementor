@@ -1,6 +1,5 @@
 import * as React from 'react';
-
-import { Box, Stack, Typography, styled } from '@elementor/ui';
+import { Box, Stack, styled, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 const PROGRESS_BAR_WIDTH = 192;
