@@ -46,11 +46,14 @@ class Global_Typography_Extension {
 		);
 
 		$items = [];
+
 		foreach ( $v4_typography_classes as $class ) {
 			$label = sanitize_text_field( $class['label'] ?? '' );
+
 			if ( empty( $label ) ) {
 				continue;
 			}
+
 			$items[] = [ 'title' => $label ];
 		}
 
