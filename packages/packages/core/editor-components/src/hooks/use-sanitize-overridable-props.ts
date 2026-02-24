@@ -17,6 +17,8 @@ export function useSanitizeOverridableProps(
 		return undefined;
 	}
 
+	// return overridableProps;
+
 	if ( isSanitized ) {
 		return overridableProps;
 	}
