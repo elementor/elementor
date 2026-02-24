@@ -11,7 +11,7 @@ interface GreetingBannerProps {
 export function GreetingBanner( { children }: GreetingBannerProps ) {
 	return (
 		<GreetingBannerRoot>
-			<Typography variant="body1" color="text.primary" align="center">
+			<Typography variant="body1" color="#0c0d0e" align="center">
 				{ children }
 			</Typography>
 		</GreetingBannerRoot>

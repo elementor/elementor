@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, styled } from '@elementor/ui';
+import { Box, styled, useTheme } from '@elementor/ui';
 
 interface SelectionBadgeRootProps {
 	variant: 'free' | 'paid';
@@ -30,9 +30,11 @@ const SelectionBadgeRoot = styled( Box, {
 } ) );
 
 export function SelectionBadge( { icon: Icon, variant = 'free' }: SelectionBadgeProps ) {
+	const theme = useTheme();
+
 	return (
 		<SelectionBadgeRoot variant={ variant }>
-			<Icon />
+			<Icon sx={ { fill: variant === 'paid' ? 'white' : theme.palette.secondary.contrastText } } />
 		</SelectionBadgeRoot>
 	);
 }
