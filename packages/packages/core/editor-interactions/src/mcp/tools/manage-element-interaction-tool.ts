@@ -2,6 +2,7 @@ import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { updateElementInteractions } from '@elementor/editor-elements';
 import { z } from '@elementor/schema';
 
+import { DEFAULT_VALUES } from '../../components/interaction-details';
 import { type ElementInteractions } from '../../types';
 import { interactionsRepository } from '../../interactions-repository';
 import {
@@ -11,9 +12,8 @@ import {
 	extractSize,
 } from '../../utils/prop-value-utils';
 import { generateTempInteractionId } from '../../utils/temp-id-utils';
+import { MAX_INTERACTIONS_PER_ELEMENT } from '../constants';
 import { INTERACTIONS_SCHEMA_URI } from '../resources/interactions-schema-resource';
-
-const MAX_INTERACTIONS_PER_ELEMENT = 5;
 
 const EMPTY_INTERACTIONS: ElementInteractions = {
 	version: 1,
@@ -59,7 +59,8 @@ Use excludedBreakpoints to disable the animation on specific responsive breakpoi
 				.describe( 'Whether the animation plays in or out' ),
 			direction: z
 				.enum( [ 'top', 'bottom', 'left', 'right', '' ] )
-				.optional(),
+				.optional()
+				.describe( 'Direction for slide effect. Use empty string for fade/scale.' ),
 			duration: z
 				.number()
 				.min( 0 )
@@ -145,14 +146,14 @@ Use excludedBreakpoints to disable the animation on specific responsive breakpoi
 
 					const newItem = createInteractionItem( {
 						interactionId: generateTempInteractionId(),
-						trigger: trigger ?? 'load',
-						effect: effect ?? 'fade',
-						type: effectType ?? 'in',
-						direction: direction ?? '',
-						duration: duration ?? 600,
-						delay: delay ?? 0,
-						replay: false,
-						easing: easing ?? 'easeIn',
+						trigger: trigger ?? DEFAULT_VALUES.trigger,
+						effect: effect ?? DEFAULT_VALUES.effect,
+						type: effectType ?? DEFAULT_VALUES.type,
+						direction: direction ?? DEFAULT_VALUES.direction,
+						duration: duration ?? DEFAULT_VALUES.duration,
+						delay: delay ?? DEFAULT_VALUES.delay,
+						replay: DEFAULT_VALUES.replay,
+						easing: easing ?? DEFAULT_VALUES.easing,
 						excludedBreakpoints,
 					} );
 
@@ -188,7 +189,7 @@ Use excludedBreakpoints to disable the animation on specific responsive breakpoi
 						direction: direction !== undefined ? direction : extractString( existingAnimation.direction ),
 						duration: duration !== undefined ? duration : ( extractSize( existingTiming.duration ) as number ),
 						delay: delay !== undefined ? delay : ( extractSize( existingTiming.delay ) as number ),
-						replay: existingConfig.replay?.value ?? false,
+						replay: existingConfig.replay?.value ?? DEFAULT_VALUES.replay,
 						easing: easing ?? extractString( existingConfig.easing ),
 						excludedBreakpoints: excludedBreakpoints !== undefined ? excludedBreakpoints : existingExcludedBreakpoints,
 					} );
@@ -228,7 +229,13 @@ Use excludedBreakpoints to disable the animation on specific responsive breakpoi
 				items: updatedItems,
 			};
 
-			updateElementInteractions( { elementId, interactions: updatedInteractions } );
+			try {
+				updateElementInteractions( { elementId, interactions: updatedInteractions } );
+			} catch ( error ) {
+				throw new Error(
+					`Failed to update interactions for element "${ elementId }": ${ error instanceof Error ? error.message : 'Unknown error' }`
+				);
+			}
 
 			return JSON.stringify( {
 				success: true,

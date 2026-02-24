@@ -2,10 +2,9 @@ import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
 import { EASING_OPTIONS } from '../../components/controls/easing';
 import { TRIGGER_OPTIONS, BASE_TRIGGERS } from '../../components/controls/trigger';
+import { MAX_INTERACTIONS_PER_ELEMENT } from '../constants';
 
 export const INTERACTIONS_SCHEMA_URI = 'elementor://interactions/schema';
-
-const MAX_INTERACTIONS_PER_ELEMENT = 5;
 
 const schema = {
 	triggers: BASE_TRIGGERS.map( ( key ) => ( {

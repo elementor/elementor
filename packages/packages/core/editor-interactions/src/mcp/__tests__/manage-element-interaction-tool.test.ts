@@ -1,7 +1,7 @@
 import { updateElementInteractions } from '@elementor/editor-elements';
 
 import { interactionsRepository } from '../../interactions-repository';
-import { createInteractionItem, createInteractionBreakpoints } from '../../utils/prop-value-utils';
+import { createInteractionItem } from '../../utils/prop-value-utils';
 import { initManageElementInteractionTool } from '../tools/manage-element-interaction-tool';
 
 jest.mock( '../../interactions-repository', () => ( {
@@ -497,6 +497,34 @@ describe( 'manage-element-interaction tool', () => {
 
 			expect( result.success ).toBe( true );
 			expect( result.interactionCount ).toBe( 0 );
+		} );
+	} );
+
+	describe( 'error handling', () => {
+		it( 'wraps updateElementInteractions errors with element context', () => {
+			mockAll.mockReturnValue( [] );
+			mockUpdateElementInteractions.mockImplementationOnce( () => {
+				throw new Error( 'Element not found' );
+			} );
+
+			const callHandler = createRegistryAndGetHandler();
+
+			expect( () =>
+				callHandler( { elementId: 'el-missing', action: 'add', trigger: 'load', effect: 'fade', effectType: 'in' } )
+			).toThrow( /Failed to update interactions for element "el-missing"/ );
+		} );
+
+		it( 'includes the original error message in the thrown error', () => {
+			mockAll.mockReturnValue( [] );
+			mockUpdateElementInteractions.mockImplementationOnce( () => {
+				throw new Error( 'Element not found' );
+			} );
+
+			const callHandler = createRegistryAndGetHandler();
+
+			expect( () =>
+				callHandler( { elementId: 'el-missing', action: 'add', trigger: 'load', effect: 'fade', effectType: 'in' } )
+			).toThrow( /Element not found/ );
 		} );
 	} );
 } );

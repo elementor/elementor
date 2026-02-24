@@ -1,0 +1,1 @@
+export const MAX_INTERACTIONS_PER_ELEMENT = 5;
