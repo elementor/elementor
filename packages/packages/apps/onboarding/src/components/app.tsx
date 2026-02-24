@@ -25,7 +25,6 @@ function resolveColorScheme( preference: ColorSchemePreference ): ResolvedColorS
 }
 
 interface AppProps {
-	onComplete?: () => void;
 	onClose?: () => void;
 }
 
