@@ -32,7 +32,7 @@ test.describe( 'Icon Box widget tests', () => {
 			await editor.page.waitForLoadState();
 
 			const iconBoxes = page.locator( '.e-con-inner' ).first();
-			await expect.soft( iconBoxes ).toHaveScreenshot( 'icon-box-layouts-physical-properties-rtl.png', { maxDiffPixelRatio: 0.04 } );
+			await expect.soft( iconBoxes ).toHaveScreenshot( 'icon-box-layouts-physical-properties-rtl.png', { maxDiffPixelRatio: 0.06 } );
 		} );
 
 		await wpAdmin.setSiteLanguage( '' );

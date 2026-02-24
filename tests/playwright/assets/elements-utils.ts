@@ -10,14 +10,16 @@ import EditorPage from '../pages/editor-page';
  * @return {string | undefined}
  */
 
-let parent: unknown;
-let elementor: ElementorType;
-let $e: $eType;
 export const addElement = ( props: { model: unknown, container: null | string, isContainerASection: boolean } ): string | undefined => {
+	const extendedWindow = window as unknown as Window & { elementor?: ElementorType; $e?: $eType };
+	const elementor = extendedWindow.elementor;
+	const $e = extendedWindow.$e;
+
+	let parent: unknown;
+
 	if ( props.container ) {
 		parent = elementor.getContainer( props.container );
 	} else {
-		// If a `container` isn't supplied - create a new Section.
 		parent = $e.run(
 			'document/elements/create',
 			{
@@ -30,8 +32,8 @@ export const addElement = ( props: { model: unknown, container: null | string, i
 		props.isContainerASection = true;
 	}
 
-	if ( props.isContainerASection && 'object' === typeof parent && 'children' in parent ) {
-		parent = parent.children[ 0 ];
+	if ( props.isContainerASection && 'object' === typeof parent && parent !== null && 'children' in parent ) {
+		parent = ( parent as { children: unknown[] } ).children[ 0 ];
 	}
 
 	const element = $e.run(
@@ -42,8 +44,8 @@ export const addElement = ( props: { model: unknown, container: null | string, i
 		},
 	);
 
-	if ( element !== null && 'object' === typeof element && 'id' in element && 'string' === typeof element.id ) {
-		return element.id;
+	if ( element !== null && 'object' === typeof element && 'id' in element && 'string' === typeof ( element as { id: string } ).id ) {
+		return ( element as { id: string } ).id;
 	}
 	return undefined;
 };

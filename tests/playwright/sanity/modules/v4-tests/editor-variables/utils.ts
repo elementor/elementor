@@ -8,6 +8,7 @@ export const initTemplate = async ( page: Page, testInfo: TestInfo, apiRequests:
 	await wpAdminPage.setExperiments( { e_variables_manager: 'active' } );
 	const editorPage = await wpAdminPage.openNewPage();
 	await editorPage.loadTemplate( 'tests/playwright/sanity/modules/v4-tests/editor-variables/variables-manager-template.json' );
+	await editorPage.waitForPanelToLoad();
 	return wpAdminPage;
 };
 

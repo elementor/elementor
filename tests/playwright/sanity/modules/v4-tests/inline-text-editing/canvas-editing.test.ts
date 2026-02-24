@@ -37,6 +37,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		await wpAdminPage.setExperiments( { e_atomic_elements: 'active', e_classes: 'active' } );
 
 		editor = await wpAdminPage.openNewPage();
+		await editor.waitForPanelToLoad();
 	} );
 
 	test.afterAll( async () => {

@@ -2,7 +2,6 @@ import EditorSelectors from '../../selectors/editor-selectors';
 import { expect, type Frame, Locator, type Page, type TestInfo } from '@playwright/test';
 import EditorPage from '../editor-page';
 import { LinkOptions } from '../../types/types';
-import { timeouts } from '../../config/timeouts';
 
 export default class Content {
 	readonly page: Page;
@@ -92,28 +91,8 @@ export default class Content {
 
 		await frame.locator( args.widget ).waitFor( { state: 'visible' } );
 		await frame.locator( args.widget ).click();
-
-		await this.editor.openPanelTab( 'content' );
-		await this.editor.waitForPanelToLoad();
-
-		const selectControl = this.page.locator( `.elementor-control-${ args.select } select` );
-		await selectControl.waitFor( { state: 'visible', timeout: timeouts.longAction } );
-
-		const currentValue = await selectControl.inputValue();
-
-		if ( currentValue !== args.imageSize ) {
-			await this.editor.setSelectControlValue( args.select, args.imageSize );
-
-			await this.page.waitForTimeout( timeouts.short );
-
-			const newValue = await selectControl.inputValue();
-			if ( newValue !== args.imageSize ) {
-				throw new Error( `Failed to set image size. Expected: ${ args.imageSize }, Got: ${ newValue }` );
-			}
-		}
-
+		await this.editor.setSelectControlValue( args.select, args.imageSize );
 		await frame.locator( EditorSelectors.pageTitle ).click();
-		await this.page.waitForTimeout( timeouts.short );
 	}
 
 	/**

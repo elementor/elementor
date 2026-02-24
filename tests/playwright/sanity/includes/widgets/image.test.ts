@@ -132,13 +132,17 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 			.toHaveAttribute( 'data-elementor-open-lightbox', 'yes' );
 
 		await editor.getPreviewFrame().locator( EditorSelectors.image.image ).click( );
-		await expect( editor.getPreviewFrame().locator( '.elementor-lightbox' ).first() ).toBeVisible( { timeout: 5000 } );
+		await expect( editor.getPreviewFrame().locator( EditorSelectors.image.lightBox ) ).toBeVisible();
+
+		const title = editor.getPreviewFrame().locator( '.elementor-slideshow__title' );
+		const description = editor.getPreviewFrame().locator( '.elementor-slideshow__description' );
+		await expect( title ).toHaveCSS( 'text-align', 'center' );
+		await expect( description ).toHaveCSS( 'text-align', 'center' );
 
 		const imageSrc = await editor.getPreviewFrame().locator( EditorSelectors.image.image ).getAttribute( 'src' );
 
 		await editor.getPreviewFrame().locator( '.elementor-lightbox' ).first().press( 'Escape' );
 		await expect( editor.getPreviewFrame().locator( '.elementor-lightbox' ).first() ).not.toBeVisible();
-
 		await editor.removeElement( widgetId );
 		await editor.addWidget( { widgetType: 'heading' } );
 		await editor.setTextControlValue( 'link', imageSrc );

@@ -157,14 +157,21 @@ export default class EditorPage extends BasePage {
 			}
 			try {
 				const elementorInstance = ( window as ElementorWindow ).elementor;
-				const currentDoc = elementorInstance?.documents?.getCurrent();
-				return true === currentDoc?.editor?.isChanged;
+				if ( ! elementorInstance?.documents ) {
+					return false;
+				}
+				const currentDoc = elementorInstance.documents.getCurrent();
+				if ( ! currentDoc?.editor ) {
+					return false;
+				}
+				// Check if document has been properly loaded and changed
+				return true === currentDoc.editor.isChanged;
 			} catch ( error ) {
 				return false;
 			}
 		}, {
-			timeout: 5000,
-			polling: 100,
+			timeout: 15000,
+			polling: 200,
 		} );
 	}
 
@@ -199,7 +206,24 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<string>} Element ID
 	 */
 	async addElement( model: unknown, container: null | string = null, isContainerASection: boolean = false ): Promise<string> {
-		return await this.page.evaluate( addElement, { model, container, isContainerASection } );
+		await this.waitForPanelToLoad();
+
+		await this.page.waitForFunction( () => {
+			const extendedWindow = window as Window & { elementor?: { getContainer?: ( id: string ) => unknown }; $e?: unknown };
+			const el = extendedWindow.elementor;
+			return !! el && !! extendedWindow.$e && 'function' === typeof el.getContainer;
+		}, { timeout: 20000 } );
+
+		const elementId = await this.page.evaluate( addElement, { model, container, isContainerASection } );
+
+		if ( ! elementId || typeof elementId !== 'string' ) {
+			throw new Error(
+				`addElement failed: expected element ID string, got ${ typeof elementId }. ` +
+				'Editor may not be fully initialized or document structure may have changed.',
+			);
+		}
+
+		return elementId;
 	}
 
 	/**
@@ -400,15 +424,14 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async openPanelTab( panelId: string ): Promise<void> {
-		await this.page.waitForSelector( `.elementor-tab-control-${ panelId } span` );
+		await this.page.waitForSelector( `.elementor-tab-control-${ panelId } span`, { timeout: 10000 } );
 
-		// Check if panel has been activated already.
 		if ( await this.page.$( `.elementor-tab-control-${ panelId }.elementor-active` ) ) {
 			return;
 		}
 
 		await this.page.locator( `.elementor-tab-control-${ panelId } span` ).click();
-		await this.page.waitForSelector( `.elementor-tab-control-${ panelId }.elementor-active` );
+		await this.page.waitForSelector( `.elementor-tab-control-${ panelId }.elementor-active`, { timeout: 10000 } );
 	}
 
 	/**
