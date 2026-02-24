@@ -6,7 +6,6 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Chips_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Email_Form_Action_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Toggle_Control;
-use ElementorPro\Modules\AtomicForm\Submit_Button\Submit_Button;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Success_Message\Form_Success_Message;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Error_Message\Form_Error_Message;
@@ -195,7 +194,7 @@ class Atomic_Form extends Atomic_Element_Base {
 			$this->build_label( __( 'Message', 'elementor' ), 'message' ),
 			$this->build_input( __( 'Your message', 'elementor' ), 'textarea' ),
 
-			Widget_Builder::make( Submit_Button::get_element_type() )
+			Widget_Builder::make( 'e-form-submit-button' )
 				->settings( [
 					'text' => Html_V3_Prop_Type::generate( [
 						'content'  => String_Prop_Type::generate( __( 'Submit', 'elementor' ) ),
