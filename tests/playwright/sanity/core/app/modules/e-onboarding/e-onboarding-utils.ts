@@ -96,7 +96,7 @@ export async function setOnboardingCompletedViaCli() {
 		starter_dismissed: false,
 	} );
 
-	await wpCli( `wp option update ${ ONBOARDING_PROGRESS_OPTION } '${ progressJson }'` );
+	await wpCli( `wp option update ${ ONBOARDING_PROGRESS_OPTION } '${ progressJson }' --format=json` );
 }
 
 export async function resetOnboardingProgressViaCli() {

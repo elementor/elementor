@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 import { Box, Stack, Typography, styled } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -33,7 +34,7 @@ const ProgressFill = styled( Box )( ( { theme } ) => ( {
 } ) );
 
 const LOADING_TITLE = __( 'Getting things ready', 'elementor' );
-const LOADING_SUBTITLE = __( 'Tailoring the editor to your goals and workflow...', 'elementor' );
+const LOADING_SUBTITLE = __( 'Tailoring the editor to your goals and workflow\u2026', 'elementor' );
 
 export function CompletionScreen() {
 	return (

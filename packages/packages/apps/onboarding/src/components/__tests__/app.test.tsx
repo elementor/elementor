@@ -284,7 +284,12 @@ describe( 'App', () => {
 			let capturedHref = '';
 			Object.defineProperty( window, 'location', {
 				writable: true,
-				value: { ...window.location, set href( url: string ) { capturedHref = url; } },
+				value: {
+					...window.location,
+					set href( url: string ) {
+						capturedHref = url;
+					},
+				},
 			} );
 
 			window.elementorAppConfig = createMockConfig( {
@@ -308,7 +313,7 @@ describe( 'App', () => {
 					expect.stringContaining( 'user-progress' ),
 					expect.objectContaining( {
 						body: expect.stringContaining( '"complete":true' ),
-					} ),
+					} )
 				);
 			} );
 
