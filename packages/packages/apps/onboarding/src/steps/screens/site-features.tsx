@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
 import {
-	AIIcon,
 	CodeIcon,
 	ColorSwatchIcon,
 	ElementorAccessibilityIcon,
+	ElementorAIIcon,
 	ElementorEmailDeliverabilityIcon,
 	ElementorImageOptimizerIcon,
 	ThemeBuilderIcon,
@@ -25,13 +25,13 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 	},
 	{
 		id: 'core_placeholder',
-		label: __( 'Core Placeholder', 'elementor' ),
+		label: __( 'Core placeholder', 'elementor' ),
 		Icon: CorePlaceholderIcon,
 		licenseType: 'core',
 	},
 	{
 		id: 'theme_builder',
-		label: __( 'Theme Builder', 'elementor' ),
+		label: __( 'Theme builder', 'elementor' ),
 		Icon: ThemeBuilderIcon,
 		licenseType: 'pro',
 	},
@@ -43,7 +43,7 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 	},
 	{
 		id: 'custom_code_css',
-		label: __( 'Custom Code & CSS', 'elementor' ),
+		label: __( 'Custom Code', 'elementor' ),
 		Icon: CodeIcon,
 		licenseType: 'pro',
 	},
@@ -55,8 +55,8 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 	},
 	{
 		id: 'ai_features',
-		label: __( 'AI for code, images, & layouts', 'elementor' ),
-		Icon: AIIcon,
+		label: __( 'AI generator', 'elementor' ),
+		Icon: ElementorAIIcon,
 		licenseType: 'one',
 	},
 	{
@@ -67,7 +67,7 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 	},
 	{
 		id: 'accessibility',
-		label: __( 'Accessibility scans and fixes', 'elementor' ),
+		label: __( 'Accessibility tools', 'elementor' ),
 		Icon: ElementorAccessibilityIcon,
 		licenseType: 'one',
 	},
@@ -130,6 +130,7 @@ export function SiteFeatures() {
 			spacing={ 4 }
 			width="100%"
 			marginBottom={ 10 }
+			data-testid="site-features-step"
 			sx={ ( theme: Theme ) => ( {
 				[ theme.breakpoints.down( 'sm' ) ]: {
 					marginBottom: theme.spacing( 10 ),
