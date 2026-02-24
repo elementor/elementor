@@ -6,7 +6,6 @@ use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Modules\DesignSystemSync\Controls\V4_Color_Variable_List;
 use Elementor\Plugin;
-use Elementor\Repeater;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
