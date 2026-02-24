@@ -11,6 +11,8 @@ const PRO_PLAN_NOTICE_BG_LIGHT = 'rgba(250, 228, 250, 0.6)';
 const PRO_PLAN_NOTICE_BG_DARK = '#fae4fa';
 const PRO_PLAN_NOTICE_TEXT_COLOR = '#3f444b';
 
+const COMPARE_PLANS_BUTTON_TEXT = __( 'Compare plans', 'elementor' );
+
 const ProPlanNoticeRoot = styled( Box )( ( { theme } ) => ( {
 	display: 'flex',
 	alignItems: 'center',
@@ -75,7 +77,7 @@ export function ProPlanNotice( { planName }: LicenseNoticeProps ) {
 					minWidth: 'auto',
 				} ) }
 			>
-				{ __( 'Compare plans', 'elementor' ) }
+				{ COMPARE_PLANS_BUTTON_TEXT }
 			</Button>
 		</ProPlanNoticeRoot>
 	);
