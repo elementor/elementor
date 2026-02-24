@@ -1,5 +1,0 @@
-/* Disable all interactions on V4 Variables */
-.elementor-control-v4_color_variables .elementor-repeater-fields {
-	pointer-events: none;
-}
-
