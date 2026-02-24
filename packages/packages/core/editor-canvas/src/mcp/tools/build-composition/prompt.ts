@@ -10,6 +10,7 @@ export const generatePrompt = () => {
 1. [${ WIDGET_SCHEMA_URI }] - Widget types, configuration schemas, and PropType definitions
 2. [${ STYLE_SCHEMA_URI }] - Common styles schema shared by all widgets
 3. [elementor://global-classes] - Existing global classes (check FIRST to reuse)
+4. [elementor://global-variables] - Existing global variables
 
 # THREE-PHASE WORKFLOW (MANDATORY)
 
@@ -45,6 +46,10 @@ export const generatePrompt = () => {
 - NO LINKS in any configuration
 - Retry on errors up to 10x, reading error messages carefully
 
+**Usage of variables and classes**
+Using variables from global context will throw error - THIS IS IMPORTANT
+Use existing global classes, or create if none matches the requirements
+
 # DESIGN QUALITY: AVOID AI SLOP
 
 **Problem:** LLMs default to generic patterns (purple gradients, #333 grays, 24px headings, uniform spacing)
@@ -79,6 +84,7 @@ export const generatePrompt = () => {
 - NEVER use Inter, Roboto, Arial, Helvetica as primary display fonts
 - NEVER use font-size ratios < 2.5x between headlines and body
 - NEVER use font-weight 500-700 for headlines (go lighter or heavier)
+- USE VARIABLES ONLY FROM [elementor://global-variables]
 
 **Color:**
 - PREFER not to use pure grays - use tinted neutrals (#2d2622, #faf8f6, not #333/#f5f5f5)

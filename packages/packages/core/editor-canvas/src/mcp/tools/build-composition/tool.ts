@@ -113,7 +113,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 
 				const errorText = `Failed to build composition with the following errors:\n\n${ errorMessages.join(
 					'\n\n'
-				) }\n\n"Missing $$type" errors indicate that the configuration objects are invalid. Try again and apply **ALL** object entries with correct $$type.\nNow that you have these errors, fix them and try again. Errors regarding configuration objects, please check against the PropType schemas`;
+				) }`;
 				throw new Error( errorText );
 			}
 			return {

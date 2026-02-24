@@ -160,12 +160,16 @@ export class CompositionBuilder {
 				} else {
 					validStylesPropValues[ styleName ] = stylePropValue;
 				}
-				this.api.doUpdateElementProperty( {
-					elementId: element.id,
-					propertyName: '_styles',
-					propertyValue: validStylesPropValues,
-					elementType: node.tagName,
-				} );
+				try {
+					this.api.doUpdateElementProperty( {
+						elementId: element.id,
+						propertyName: '_styles',
+						propertyValue: validStylesPropValues,
+						elementType: node.tagName,
+					} );
+				} catch ( error ) {
+					errors.push( String( error ) );
+				}
 			}
 		}
 		return {
