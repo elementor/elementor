@@ -220,7 +220,6 @@ export function extractAnimationConfig( interaction ) {
 	return {
 		trigger,
 		breakpoints,
-
 		effect,
 		type,
 		direction,
