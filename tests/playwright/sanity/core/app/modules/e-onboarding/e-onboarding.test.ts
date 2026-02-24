@@ -195,15 +195,36 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 			} );
 		} );
 
-		await test.step( 'Final screen', async () => {
-			await expect( page.getByTestId( 'onboarding-steps' ) ).toBeVisible();
+		await test.step( 'Site features step', async () => {
+			await expect( page.getByTestId( 'site-features-step' ) ).toBeVisible();
 
-			const finishBtn = page.getByRole( 'button', { name: 'Finish' } );
-			await expect( finishBtn ).toBeVisible();
-			await expect( finishBtn ).toBeDisabled();
+			await expect(
+				page.getByRole( 'heading', { name: 'What do you want to include in your site?' } ),
+			).toBeVisible();
 
-			await expect( page.getByRole( 'button', { name: 'Skip' } ) ).not.toBeVisible();
+			await expect( page.getByTestId( 'feature-card-classes_variables' ) ).toBeVisible();
+			await expect( page.getByTestId( 'feature-card-core_placeholder' ) ).toBeVisible();
+
+			const continueWithFreeBtn = page.getByRole( 'button', { name: 'Continue with Free' } );
+			await expect( continueWithFreeBtn ).toBeDisabled();
+
+			await expect( page.getByRole( 'button', { name: 'Skip' } ) ).toBeVisible();
 			await expect( page.getByRole( 'button', { name: 'Back' } ) ).toBeVisible();
+
+			await page.getByTestId( 'feature-card-theme_builder' ).click();
+			await expect( continueWithFreeBtn ).not.toBeDisabled();
+			await expect(
+				page.getByText( /Based on the features you chose, we recommend the/ ),
+			).toContainText( 'Pro' );
+
+			await doAndWaitForProgress( page, () => continueWithFreeBtn.click() );
+
+			expect( choicesRequests[ 4 ] ).toMatchObject( { site_features: [ 'theme_builder' ] } );
+			expect( progressRequests[ 4 ] ).toMatchObject( {
+				complete_step: 'site_features',
+				step_index: 4,
+				total_steps: 5,
+			} );
 		} );
 	} );
 
