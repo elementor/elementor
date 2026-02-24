@@ -13,6 +13,14 @@ const ProgressTrack = styled( Box )( ( { theme } ) => ( {
 	overflow: 'hidden',
 } ) );
 
+const FAKE_PROGRESS_KEYFRAMES = {
+	'0%': { width: '0%' },
+	'30%': { width: '35%' },
+	'60%': { width: '55%' },
+	'80%': { width: '68%' },
+	'100%': { width: '75%' },
+} as const;
+
 const ProgressFill = styled( Box )( ( { theme } ) => ( {
 	position: 'absolute',
 	left: 0,
@@ -21,13 +29,7 @@ const ProgressFill = styled( Box )( ( { theme } ) => ( {
 	borderRadius: 22,
 	backgroundColor: theme.palette.text.primary,
 	animation: 'e-onboarding-fake-progress 3s ease-out forwards',
-	'@keyframes e-onboarding-fake-progress': {
-		'0%': { width: '0%' },
-		'30%': { width: '35%' },
-		'60%': { width: '55%' },
-		'80%': { width: '68%' },
-		'100%': { width: '75%' },
-	},
+	'@keyframes e-onboarding-fake-progress': FAKE_PROGRESS_KEYFRAMES,
 } ) );
 
 const LOADING_TITLE = __( 'Getting things ready', 'elementor' );

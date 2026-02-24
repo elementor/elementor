@@ -30,7 +30,6 @@ const isChoiceEmpty = ( choice: unknown ): boolean => {
 };
 
 interface AppContentProps {
-	onComplete?: () => void;
 	onClose?: () => void;
 }
 
