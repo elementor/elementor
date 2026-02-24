@@ -215,7 +215,7 @@ describe( 'SiteFeatures', () => {
 				choices: { site_features: [ firstProOption.id ] },
 			} );
 
-			expect( screen.getByText( /recommend the Pro plan/ ) ).toBeInTheDocument();
+			expect( screen.getByText( /recommend the/, { selector: 'p' } ) ).toHaveTextContent( /Pro plan/ );
 		} );
 
 		it( 'shows "One" plan name when a one-license feature is selected', () => {
@@ -226,7 +226,7 @@ describe( 'SiteFeatures', () => {
 				choices: { site_features: [ firstOneOption.id ] },
 			} );
 
-			expect( screen.getByText( /recommend the One plan/ ) ).toBeInTheDocument();
+			expect( screen.getByText( /recommend the/, { selector: 'p' } ) ).toHaveTextContent( /One plan/ );
 		} );
 
 		it( 'shows "One" plan name when both pro and one-license features are selected', () => {
@@ -238,7 +238,7 @@ describe( 'SiteFeatures', () => {
 				choices: { site_features: [ firstProOption.id, firstOneOption.id ] },
 			} );
 
-			expect( screen.getByText( /recommend the One plan/ ) ).toBeInTheDocument();
+			expect( screen.getByText( /recommend the/, { selector: 'p' } ) ).toHaveTextContent( /One plan/ );
 		} );
 	} );
 } );
