@@ -58,3 +58,26 @@ export async function navigateAndPassLogin( page: Page ) {
 	await page.getByRole( 'button', { name: 'Continue as a guest' } ).click();
 	await expect( page.getByTestId( 'building-for-step' ) ).toBeVisible();
 }
+
+export async function navigateToSiteFeaturesStep( page: Page ) {
+	await navigateAndPassLogin( page );
+
+	await doAndWaitForProgress( page, () =>
+		page.getByRole( 'button', { name: 'Just exploring' } ).click(),
+	);
+
+	await page.getByRole( 'button', { name: 'Small business' } ).click();
+	await doAndWaitForProgress( page, () =>
+		page.getByRole( 'button', { name: 'Continue' } ).click(),
+	);
+
+	await doAndWaitForProgress( page, () =>
+		page.getByRole( 'button', { name: 'I have some experience' } ).click(),
+	);
+
+	await doAndWaitForProgress( page, () =>
+		page.getByRole( 'button', { name: 'Continue with this theme' } ).click(),
+	);
+
+	await expect( page.getByTestId( 'site-features-step' ) ).toBeVisible();
+}
