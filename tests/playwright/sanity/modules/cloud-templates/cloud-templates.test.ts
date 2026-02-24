@@ -162,7 +162,7 @@ test.describe( 'Cloud Templates', () => {
 				} catch { }
 			}
 
-			await route.continue();
+			await route.fallback();
 		} );
 	};
 
@@ -250,10 +250,35 @@ test.describe( 'Cloud Templates', () => {
 		);
 	};
 
+	const mockAdminAjaxCatchAll = async ( page: Page ) => {
+		await page.route( '/wp-admin/admin-ajax.php', async ( route ) => {
+			await route.fulfill( {
+				status: 200,
+				contentType: 'application/json',
+				json: { success: true, data: { responses: {} } },
+			} );
+		} );
+	};
+
+	const mockTemplatesApiCatchAll = async ( page: Page ) => {
+		await page.route( ( url ) => {
+			return url.pathname.includes( '/wp-json/elementor/v1/template-library/templates' ) &&
+				'cloud' !== url.searchParams.get( 'source' );
+		}, async ( route ) => {
+			await route.fulfill( {
+				status: 200,
+				contentType: 'application/json',
+				json: { templates: [], config: {} },
+			} );
+		} );
+	};
+
 	const setupCloudTemplatesTab = async ( page: Page, testInfo: TestInfo, apiRequests: ApiRequests ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
+		await mockAdminAjaxCatchAll( page );
+		await mockTemplatesApiCatchAll( page );
 		await mockCloudTemplatesRoute( page );
 		await mockTemplatesQuotaRoute( page );
 
@@ -340,6 +365,16 @@ test.describe( 'Cloud Templates', () => {
 
 		await mockRenameTemplateRoute( page, id, renameMockResponse );
 
+		await mockCloudTemplatesRoute( page, {
+			templates: {
+				templates: cloudTemplatesMock.templates.templates.map( ( t ) =>
+					t.template_id === id ? { ...t, title: newTitle } : t,
+				),
+				total: 4,
+			},
+			config: cloudTemplatesMock.config,
+		} );
+
 		const pageTemplateRow = templateItems.filter( { hasText: title } ).first();
 		const moreToggleButton = pageTemplateRow.locator( '.elementor-template-library-template-more-toggle' );
 		await moreToggleButton.click();
@@ -383,6 +418,14 @@ test.describe( 'Cloud Templates', () => {
 		};
 
 		await mockDeleteTemplateRoute( page, id, deleteMockResponse );
+
+		await mockCloudTemplatesRoute( page, {
+			templates: {
+				templates: cloudTemplatesMock.templates.templates.filter( ( t ) => t.template_id !== id ),
+				total: 3,
+			},
+			config: cloudTemplatesMock.config,
+		} );
 
 		const pageTemplateRow = templateItems.filter( { hasText: title } ).first();
 		const moreToggleButton = pageTemplateRow.locator( '.elementor-template-library-template-more-toggle' );
@@ -478,6 +521,8 @@ test.describe( 'Cloud Templates', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
+		await mockAdminAjaxCatchAll( page );
+		await mockTemplatesApiCatchAll( page );
 		await mockTemplatesQuotaRoute( page );
 		await mockConnect( page );
 
