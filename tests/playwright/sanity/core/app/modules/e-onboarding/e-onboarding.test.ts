@@ -274,22 +274,23 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 		const { progressRequests } = await mockOnboardingApi( page );
 		await navigateToSiteFeaturesStep( page );
 
-		let redirectedUrl = '';
-		await page.route( '**/edit.php**', async ( route ) => {
-			redirectedUrl = route.request().url();
-			await route.fulfill( { status: 200, contentType: 'text/html', body: '<html></html>' } );
-		} );
-
-		await doAndWaitForProgress( page, () =>
-			page.getByRole( 'button', { name: 'Skip' } ).click(),
+		await page.route( '**/edit.php**', ( route ) =>
+			route.fulfill( { status: 200, contentType: 'text/html', body: '<html></html>' } ),
 		);
+
+		const [ navigationRequest ] = await Promise.all( [
+			page.waitForRequest( ( req ) => req.url().includes( 'edit.php' ) ),
+			doAndWaitForProgress( page, () =>
+				page.getByRole( 'button', { name: 'Skip' } ).click(),
+			),
+		] );
 
 		expect( progressRequests.at( -1 ) ).toMatchObject( {
 			skip_step: true,
 			complete: true,
 		} );
 
-		expect( redirectedUrl ).toContain( 'action=elementor_new_post' );
+		expect( navigationRequest.url() ).toContain( 'action=elementor_new_post' );
 	} );
 
 	test( 'Back from theme_selection shows experience_level Continue enabled', async ( { page } ) => {
