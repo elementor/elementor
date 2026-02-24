@@ -34,7 +34,7 @@ class Global_Typography_Extension {
 			'heading_v4_typography_classes',
 			[
 				'type' => Controls_Manager::HEADING,
-				'label' => esc_html__( 'Version 4 Classes', 'elementor' ),
+				'label' => esc_html__( 'Atomic Classes', 'elementor' ),
 				'separator' => 'before',
 			]
 		);
