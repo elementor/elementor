@@ -8,6 +8,7 @@ export { useElementEditorSettings } from './hooks/use-element-editor-settings';
 export { useElementSetting, useElementSettings } from './hooks/use-element-setting';
 export { useParentElement } from './hooks/use-parent-element';
 export { useSelectedElement } from './hooks/use-selected-element';
+export { useSelectedElementSetting, useSelectedElementSettings } from './hooks/use-selected-element-setting';
 
 // utils
 export { createElement, type CreateElementParams } from './sync/create-element';

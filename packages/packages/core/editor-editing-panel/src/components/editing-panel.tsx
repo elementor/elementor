@@ -4,8 +4,9 @@ import {
 	ControlReplacementsProvider,
 	getControlReplacements,
 } from '@elementor/editor-controls';
-import { useSelectedElement } from '@elementor/editor-elements';
+import { useSelectedElementSettings } from '@elementor/editor-elements';
 import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
+import { type AnyTransformable } from '@elementor/editor-props';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { AtomIcon } from '@elementor/icons';
 import { createLocation } from '@elementor/locations';
@@ -24,7 +25,7 @@ export const { Slot: PanelHeaderTopSlot, inject: injectIntoPanelHeaderTop } = cr
 const { useMenuItems } = controlActionsMenu;
 
 export const EditingPanel = () => {
-	const { element, elementType } = useSelectedElement();
+	const { element, elementType, settings } = useSelectedElementSettings< AnyTransformable >();
 	const controlReplacements = getControlReplacements();
 	const menuItems = useMenuItems().default;
 
@@ -59,7 +60,7 @@ export const EditingPanel = () => {
 				<ThemeProvider>
 					<ControlActionsProvider items={ menuItems }>
 						<ControlReplacementsProvider replacements={ controlReplacements }>
-							<ElementProvider element={ element } elementType={ elementType }>
+							<ElementProvider element={ element } elementType={ elementType } settings={ settings }>
 								<Panel>
 									<PanelHeaderTopSlot />
 									{ panelContent }

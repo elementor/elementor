@@ -1,8 +1,8 @@
-import { getElementStyles, useElementSetting } from '@elementor/editor-elements';
+import { getElementStyles } from '@elementor/editor-elements';
 import { type ClassesPropValue, type PropKey } from '@elementor/editor-props';
 import { type StyleDefinitionID } from '@elementor/editor-styles';
 
-import { useElement } from '../contexts/element-context';
+import { useElement, usePanelElementSetting } from '../contexts/element-context';
 import { useStateByElement } from './use-state-by-element';
 
 export function useActiveStyleDefId( classProp: PropKey ) {
@@ -27,9 +27,7 @@ function useFirstAppliedClass( appliedClassesIds: string[] ) {
 }
 
 function useAppliedClassesIds( classProp: PropKey ) {
-	const { element } = useElement();
-
-	return useElementSetting< ClassesPropValue >( element.id, classProp );
+	return usePanelElementSetting< ClassesPropValue >( classProp );
 }
 
 function useActiveAndAppliedClassId( id: StyleDefinitionID | null, appliedClassesIds: string[] ) {

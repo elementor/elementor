@@ -2,13 +2,7 @@ import * as React from 'react';
 import { useMemo } from 'react';
 import { PropKeyProvider, PropProvider, type SetValueMeta } from '@elementor/editor-controls';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
-import {
-	type ElementID,
-	getElementLabel,
-	getElementSettings,
-	updateElementSettings,
-	useElementSettings,
-} from '@elementor/editor-elements';
+import { type ElementID, getElementLabel, getElementSettings, updateElementSettings } from '@elementor/editor-elements';
 import {
 	type CreateOptions,
 	isDependency,
@@ -16,7 +10,6 @@ import {
 	type PropKey,
 	type Props,
 	type PropType,
-	type PropValue,
 } from '@elementor/editor-props';
 import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
@@ -37,9 +30,8 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 	const {
 		element: { id: elementId },
 		elementType: { propsSchema, dependenciesPerTargetMapping = {} },
+		settings: elementSettingValues,
 	} = useElement();
-
-	const elementSettingValues = useElementSettings< PropValue >( elementId, Object.keys( propsSchema ) ) as Values;
 
 	const value = { [ bind ]: elementSettingValues?.[ bind ] ?? null };
 

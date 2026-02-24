@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { ControlAdornmentsProvider } from '@elementor/editor-controls';
 import { getFieldIndicators, useElement } from '@elementor/editor-editing-panel';
-import { useElementSetting, useSelectedElement } from '@elementor/editor-elements';
 import { PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { EllipsisWithTooltip } from '@elementor/editor-ui';
 import { ComponentsIcon, PencilIcon } from '@elementor/icons';
@@ -10,10 +9,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useComponentsPermissions } from '../../hooks/use-components-permissions';
 import { useSanitizeOverridableProps } from '../../hooks/use-sanitize-overridable-props';
-import {
-	componentInstancePropTypeUtil,
-	type ComponentInstancePropValue,
-} from '../../prop-types/component-instance-prop-type';
+import { componentInstancePropTypeUtil } from '../../prop-types/component-instance-prop-type';
 import { ComponentInstanceProvider } from '../../provider/component-instance-context';
 import { useComponent } from '../../store/store';
 import { type OverridablePropsGroup } from '../../types';
@@ -24,7 +20,7 @@ import { OverridePropsGroup } from './override-props-group';
 export function InstanceEditingPanel() {
 	const { canEdit } = useComponentsPermissions();
 
-	const settings = useComponentInstanceSettings();
+	const { element, settings } = useComponentInstanceSettings();
 
 	const componentId = settings?.component_id?.value;
 
@@ -32,11 +28,11 @@ export function InstanceEditingPanel() {
 
 	const component = useComponent( componentId ?? null );
 
-	const componentInstanceId = useSelectedElement()?.element?.id;
+	const componentInstanceId = element?.id;
 
 	const overridableProps = useSanitizeOverridableProps( componentId ?? null, componentInstanceId );
 
-	if ( ! componentId || ! overridableProps || ! component ) {
+	if ( ! componentId || ! overridableProps || ! component || ! element ) {
 		return null;
 	}
 
@@ -95,9 +91,14 @@ export function InstanceEditingPanel() {
 }
 
 function useComponentInstanceSettings() {
-	const { element } = useElement();
+	const { element, elementType, settings } = useElement();
+	const extractedSettings = componentInstancePropTypeUtil.extract( settings.component_instance );
 
-	const settings = useElementSetting< ComponentInstancePropValue >( element.id, 'component_instance' );
-
-	return componentInstancePropTypeUtil.extract( settings );
+	return {
+		settings: extractedSettings,
+		element: {
+			id: element?.id,
+			elementType,
+		},
+	};
 }
