@@ -9,7 +9,7 @@ import {
 	navigateToSiteFeaturesStep,
 } from './e-onboarding-utils';
 
-test.describe.skip( 'E-Onboarding @e-onboarding', () => {
+test.describe( 'E-Onboarding @e-onboarding', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
