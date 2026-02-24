@@ -48,6 +48,9 @@ interface OnboardingConfig {
 		dashboard: string;
 		editor: string;
 		connect: string;
+		comparePlans?: string;
+		exploreFeatures?: string;
+		createNewPage?: string;
 	};
 }
 
@@ -95,6 +98,9 @@ const defaultConfig: OnboardingConfig = {
 		dashboard: 'https://test.local/wp-admin/',
 		editor: 'https://test.local/editor',
 		connect: 'https://test.local/connect',
+		comparePlans: 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash',
+		exploreFeatures: 'https://elementor.com/features/?utm_source=onboarding&utm_medium=wp-dash',
+		createNewPage: 'https://test.local/wp-admin/edit.php?action=elementor_new_post&post_type=page',
 	},
 };
 
@@ -269,13 +275,23 @@ describe( 'App', () => {
 			render( <App /> );
 
 			// Assert
-			expect( screen.getByText( 'Finish' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Skip' ) ).not.toBeInTheDocument();
+			expect( screen.getByText( 'Continue with Free' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Skip' ) ).toBeInTheDocument();
 		} );
 
-		it( 'should call onComplete when finishing last step', async () => {
+		it( 'should redirect to createNewPage URL with complete:true when finishing last step', async () => {
 			// Arrange
-			const onComplete = jest.fn();
+			let capturedHref = '';
+			Object.defineProperty( window, 'location', {
+				writable: true,
+				value: {
+					...window.location,
+					set href( url: string ) {
+						capturedHref = url;
+					},
+				},
+			} );
+
 			window.elementorAppConfig = createMockConfig( {
 				isConnected: true,
 				choices: { site_features: [ 'contact_form' ] },
@@ -286,18 +302,23 @@ describe( 'App', () => {
 				},
 			} );
 
-			render( <App onComplete={ onComplete } /> );
+			render( <App /> );
 
 			// Act
-			fireEvent.click( screen.getByText( 'Finish' ) );
+			fireEvent.click( screen.getByText( 'Continue with Free' ) );
 
 			// Assert
 			await waitFor( () => {
-				expect( mockFetch ).toHaveBeenCalled();
+				expect( mockFetch ).toHaveBeenCalledWith(
+					expect.stringContaining( 'user-progress' ),
+					expect.objectContaining( {
+						body: expect.stringContaining( '"complete":true' ),
+					} )
+				);
 			} );
 
 			await waitFor( () => {
-				expect( onComplete ).toHaveBeenCalled();
+				expect( capturedHref ).toContain( 'elementor_new_post' );
 			} );
 		} );
 	} );

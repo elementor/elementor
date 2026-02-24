@@ -97,10 +97,7 @@ class Module extends BaseModule {
 			'version' => self::VERSION,
 			'restUrl' => rest_url( 'elementor/v1/e-onboarding/' ),
 			'nonce' => wp_create_nonce( 'wp_rest' ),
-			'progress' => array_merge( $progress->to_array(), [
-				'current_step_id' => $progress->get_current_step_id() ?? $steps[0]['id'] ?? 'building_for',
-				'current_step_index' => $progress->get_current_step_index() ?? 0,
-			] ),
+			'progress' => $this->validate_progress_for_steps( $progress, $steps ),
 			'choices' => $choices->to_array(),
 			'hadUnexpectedExit' => $progress->had_unexpected_exit(),
 			'isConnected' => $is_connected,
@@ -112,8 +109,30 @@ class Module extends BaseModule {
 				'dashboard' => admin_url(),
 				'editor' => admin_url( 'edit.php?post_type=elementor_library' ),
 				'connect' => $this->get_connect_url(),
+				'comparePlans' => 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash',
+				'exploreFeatures' => 'https://elementor.com/features/?utm_source=onboarding&utm_medium=wp-dash',
+				'createNewPage' => Plugin::$instance->documents->get_create_new_post_url(),
 			],
 		] );
+	}
+
+	private function validate_progress_for_steps( User_Progress $progress, array $steps ): array {
+		$progress_data = $progress->to_array();
+		$step_count = count( $steps );
+		$current_step_index = $progress->get_current_step_index() ?? 0;
+		$current_step_id = $progress->get_current_step_id() ?? $steps[0]['id'] ?? 'building_for';
+
+		$is_invalid_step_index = $current_step_index < 0 || $current_step_index >= $step_count;
+
+		if ( $is_invalid_step_index ) {
+			$current_step_id = $steps[0]['id'];
+			$current_step_index = 0;
+		}
+
+		$progress_data['current_step_id'] = $current_step_id;
+		$progress_data['current_step_index'] = $current_step_index;
+
+		return $progress_data;
 	}
 
 	private function is_user_connected(): bool {
@@ -250,13 +269,20 @@ class Module extends BaseModule {
 				'label' => __( 'Start with a theme that fits your needs', 'elementor' ),
 				'type' => 'single',
 			],
-			[
+		];
+
+		if ( ! $this->is_elementor_pro_active() ) {
+			$steps[] = [
 				'id' => 'site_features',
 				'label' => __( 'What do you want to include in your site?', 'elementor' ),
 				'type' => 'multiple',
-			],
-		];
+			];
+		}
 
 		return apply_filters( 'elementor/e-onboarding/steps', $steps );
+	}
+
+	private function is_elementor_pro_active(): bool {
+		return (bool) apply_filters( 'elementor/e-onboarding/is_elementor_pro_active', Utils::has_pro() );
 	}
 }
