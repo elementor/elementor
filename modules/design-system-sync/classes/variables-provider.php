@@ -51,7 +51,6 @@ class Variables_Provider {
 
 			$color_variables[ $id ] = $variable;
 		}
-
 		return $color_variables;
 	}
 
