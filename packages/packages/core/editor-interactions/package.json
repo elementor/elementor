@@ -41,11 +41,13 @@
   "dependencies": {
     "@elementor/editor-controls": "4.0.0",
     "@elementor/editor-elements": "4.0.0",
+    "@elementor/editor-mcp": "4.0.0",
     "@elementor/editor-props": "^4.0.0",
     "@elementor/editor-responsive": "4.0.0-524",
     "@elementor/editor-ui": "4.0.0",
     "@elementor/editor-v1-adapters": "4.0.0",
     "@elementor/icons": "^1.68.0",
+    "@elementor/schema": "4.0.0",
     "@elementor/session": "4.0.0",
     "@elementor/ui": "1.36.17",
     "@elementor/utils": "4.0.0",

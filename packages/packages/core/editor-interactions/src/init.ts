@@ -7,6 +7,7 @@ import { Trigger } from './components/controls/trigger';
 import { initCleanInteractionIdsOnDuplicate } from './hooks/on-duplicate';
 import { registerInteractionsControl } from './interactions-controls-registry';
 import { interactionsRepository } from './interactions-repository';
+import { initMcpIntegration } from './mcp';
 import { documentElementsInteractionsProvider } from './providers/document-elements-interactions-provider';
 
 export function init() {
@@ -50,6 +51,7 @@ export function init() {
 			component: Effect,
 			options: [ 'fade', 'slide', 'scale' ],
 		} );
+		initMcpIntegration();
 	} catch ( error ) {
 		throw error;
 	}
