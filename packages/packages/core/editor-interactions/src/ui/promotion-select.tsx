@@ -2,6 +2,7 @@ import * as React from 'react';
 import { type MouseEvent, useRef } from 'react';
 import { MenuListItem } from '@elementor/editor-ui';
 import { MenuSubheader, Select, type SelectChangeEvent } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 import { InteractionsPromotionChip, type InteractionsPromotionChipRef } from './interactions-promotion-chip';
 
@@ -10,7 +11,7 @@ type PromotionSelectProps = {
 	onChange?: ( value: string ) => void;
 	baseOptions: Record< string, string >;
 	disabledOptions: Record< string, string >;
-	promotionLabel: string;
+	promotionLabel?: string;
 	promotionContent: string;
 	upgradeUrl: string;
 };
@@ -56,7 +57,7 @@ export function PromotionSelect( {
 					promotionRef.current?.toggle();
 				} }
 			>
-				{ promotionLabel }
+				{ promotionLabel ?? __( 'PRO features', 'elementor' ) }
 				<InteractionsPromotionChip
 					content={ promotionContent }
 					upgradeUrl={ upgradeUrl }
