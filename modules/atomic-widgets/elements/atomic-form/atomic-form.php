@@ -18,7 +18,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Email_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_V2_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
@@ -220,8 +219,8 @@ class Atomic_Form extends Atomic_Element_Base {
 	private function build_label( string $text, string $input_id ): array {
 		return Widget_Builder::make( 'e-form-label' )
 			->settings( [
-				'text' => Html_V2_Prop_Type::generate( [
-					'content'  => $text,
+				'text' => Html_V3_Prop_Type::generate( [
+					'content'  => String_Prop_Type::generate( $text ),
 					'children' => [],
 				] ),
 				'input-id' => String_Prop_Type::generate( $input_id ),
