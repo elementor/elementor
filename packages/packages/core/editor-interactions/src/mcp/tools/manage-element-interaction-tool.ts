@@ -1,15 +1,15 @@
-import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { updateElementInteractions } from '@elementor/editor-elements';
+import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { z } from '@elementor/schema';
 
 import { DEFAULT_VALUES } from '../../components/interaction-details';
-import { type ElementInteractions } from '../../types';
 import { interactionsRepository } from '../../interactions-repository';
+import { type ElementInteractions } from '../../types';
 import {
 	createInteractionItem,
 	extractExcludedBreakpoints,
-	extractString,
 	extractSize,
+	extractString,
 } from '../../utils/prop-value-utils';
 import { generateTempInteractionId } from '../../utils/temp-id-utils';
 import { MAX_INTERACTIONS_PER_ELEMENT } from '../constants';
@@ -45,38 +45,16 @@ Use excludedBreakpoints to disable the animation on specific responsive breakpoi
 				.string()
 				.optional()
 				.describe( 'Interaction ID — required for update and delete. Obtain from a prior "get" call.' ),
-			trigger: z
-				.enum( [ 'load', 'scrollIn' ] )
-				.optional()
-				.describe( 'Event that triggers the animation' ),
-			effect: z
-				.enum( [ 'fade', 'slide', 'scale' ] )
-				.optional()
-				.describe( 'Animation effect type' ),
-			effectType: z
-				.enum( [ 'in', 'out' ] )
-				.optional()
-				.describe( 'Whether the animation plays in or out' ),
+			trigger: z.enum( [ 'load', 'scrollIn' ] ).optional().describe( 'Event that triggers the animation' ),
+			effect: z.enum( [ 'fade', 'slide', 'scale' ] ).optional().describe( 'Animation effect type' ),
+			effectType: z.enum( [ 'in', 'out' ] ).optional().describe( 'Whether the animation plays in or out' ),
 			direction: z
 				.enum( [ 'top', 'bottom', 'left', 'right', '' ] )
 				.optional()
 				.describe( 'Direction for slide effect. Use empty string for fade/scale.' ),
-			duration: z
-				.number()
-				.min( 0 )
-				.max( 10000 )
-				.optional()
-				.describe( 'Animation duration in milliseconds' ),
-			delay: z
-				.number()
-				.min( 0 )
-				.max( 10000 )
-				.optional()
-				.describe( 'Animation delay in milliseconds' ),
-			easing: z
-				.string()
-				.optional()
-				.describe( 'Easing function. See interactions schema for options.' ),
+			duration: z.number().min( 0 ).max( 10000 ).optional().describe( 'Animation duration in milliseconds' ),
+			delay: z.number().min( 0 ).max( 10000 ).optional().describe( 'Animation delay in milliseconds' ),
+			easing: z.string().optional().describe( 'Easing function. See interactions schema for options.' ),
 			excludedBreakpoints: z
 				.array( z.string() )
 				.optional()
@@ -171,7 +149,9 @@ Use excludedBreakpoints to disable the animation on specific responsive breakpoi
 					);
 
 					if ( itemIndex === -1 ) {
-						throw new Error( `Interaction with ID "${ interactionId }" not found on element "${ elementId }".` );
+						throw new Error(
+							`Interaction with ID "${ interactionId }" not found on element "${ elementId }".`
+						);
 					}
 
 					const existingItem = updatedItems[ itemIndex ];
@@ -187,11 +167,13 @@ Use excludedBreakpoints to disable the animation on specific responsive breakpoi
 						effect: effect ?? extractString( existingAnimation.effect ),
 						type: effectType ?? extractString( existingAnimation.type ),
 						direction: direction !== undefined ? direction : extractString( existingAnimation.direction ),
-						duration: duration !== undefined ? duration : ( extractSize( existingTiming.duration ) as number ),
+						duration:
+							duration !== undefined ? duration : ( extractSize( existingTiming.duration ) as number ),
 						delay: delay !== undefined ? delay : ( extractSize( existingTiming.delay ) as number ),
 						replay: existingConfig.replay?.value ?? DEFAULT_VALUES.replay,
 						easing: easing ?? extractString( existingConfig.easing ),
-						excludedBreakpoints: excludedBreakpoints !== undefined ? excludedBreakpoints : existingExcludedBreakpoints,
+						excludedBreakpoints:
+							excludedBreakpoints !== undefined ? excludedBreakpoints : existingExcludedBreakpoints,
 					} );
 
 					updatedItems = [
@@ -213,7 +195,9 @@ Use excludedBreakpoints to disable the animation on specific responsive breakpoi
 					);
 
 					if ( updatedItems.length === beforeCount ) {
-						throw new Error( `Interaction with ID "${ interactionId }" not found on element "${ elementId }".` );
+						throw new Error(
+							`Interaction with ID "${ interactionId }" not found on element "${ elementId }".`
+						);
 					}
 					break;
 				}
@@ -233,7 +217,9 @@ Use excludedBreakpoints to disable the animation on specific responsive breakpoi
 				updateElementInteractions( { elementId, interactions: updatedInteractions } );
 			} catch ( error ) {
 				throw new Error(
-					`Failed to update interactions for element "${ elementId }": ${ error instanceof Error ? error.message : 'Unknown error' }`
+					`Failed to update interactions for element "${ elementId }": ${
+						error instanceof Error ? error.message : 'Unknown error'
+					}`
 				);
 			}
 

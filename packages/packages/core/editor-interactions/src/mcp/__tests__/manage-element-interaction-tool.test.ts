@@ -3,6 +3,7 @@ import { updateElementInteractions } from '@elementor/editor-elements';
 import { interactionsRepository } from '../../interactions-repository';
 import { createInteractionItem } from '../../utils/prop-value-utils';
 import { initManageElementInteractionTool } from '../tools/manage-element-interaction-tool';
+import { MAX_INTERACTIONS_PER_ELEMENT } from '../constants';
 
 jest.mock( '../../interactions-repository', () => ( {
 	interactionsRepository: {
@@ -17,7 +18,6 @@ jest.mock( '@elementor/editor-elements', () => ( {
 const mockAll = interactionsRepository.all as jest.Mock;
 const mockUpdateElementInteractions = updateElementInteractions as jest.Mock;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function createRegistryAndGetHandler(): ( args: Record< string, unknown > ) => unknown {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let capturedHandler: ( ( args: any ) => unknown ) | null = null;
@@ -226,8 +226,8 @@ describe( 'manage-element-interaction tool', () => {
 			expect( result.interactionCount ).toBe( 2 );
 		} );
 
-		it( 'throws when element already has 5 interactions', () => {
-			const items = Array.from( { length: 5 }, ( _, i ) =>
+		it( `throws when element already has ${MAX_INTERACTIONS_PER_ELEMENT} interactions`, () => {
+			const items = Array.from( { length: MAX_INTERACTIONS_PER_ELEMENT }, ( _, i ) =>
 				createInteractionItem( {
 					interactionId: `id-${ i }`,
 					trigger: 'load',
@@ -245,8 +245,14 @@ describe( 'manage-element-interaction tool', () => {
 			const callHandler = createRegistryAndGetHandler();
 
 			expect( () =>
-				callHandler( { elementId: 'el-full', action: 'add', trigger: 'load', effect: 'fade', effectType: 'in' } )
-			).toThrow( /max/i );
+				callHandler( {
+					elementId: 'el-full',
+					action: 'add',
+					trigger: 'load',
+					effect: 'fade',
+					effectType: 'in',
+				} )
+			).toThrow( new RegExp(`${MAX_INTERACTIONS_PER_ELEMENT}`, 'i') );
 		} );
 	} );
 
@@ -366,9 +372,9 @@ describe( 'manage-element-interaction tool', () => {
 			mockAll.mockReturnValue( [] );
 			const callHandler = createRegistryAndGetHandler();
 
-			expect( () =>
-				callHandler( { elementId: 'el-abc', action: 'update', trigger: 'load' } )
-			).toThrow( /interactionId is required/ );
+			expect( () => callHandler( { elementId: 'el-abc', action: 'update', trigger: 'load' } ) ).toThrow(
+				/interactionId is required/
+			);
 		} );
 
 		it( 'throws when interaction ID is not found', () => {
@@ -434,9 +440,9 @@ describe( 'manage-element-interaction tool', () => {
 			mockAll.mockReturnValue( [] );
 			const callHandler = createRegistryAndGetHandler();
 
-			expect( () =>
-				callHandler( { elementId: 'el-abc', action: 'delete' } )
-			).toThrow( /interactionId is required/ );
+			expect( () => callHandler( { elementId: 'el-abc', action: 'delete' } ) ).toThrow(
+				/interactionId is required/
+			);
 		} );
 
 		it( 'throws when interaction ID is not found', () => {
@@ -454,9 +460,9 @@ describe( 'manage-element-interaction tool', () => {
 			mockAll.mockReturnValue( [ makeElementData( 'el-abc', [ item ] ) ] );
 			const callHandler = createRegistryAndGetHandler();
 
-			expect( () =>
-				callHandler( { elementId: 'el-abc', action: 'delete', interactionId: 'ghost-id' } )
-			).toThrow( /not found/ );
+			expect( () => callHandler( { elementId: 'el-abc', action: 'delete', interactionId: 'ghost-id' } ) ).toThrow(
+				/not found/
+			);
 		} );
 	} );
 
@@ -478,9 +484,7 @@ describe( 'manage-element-interaction tool', () => {
 			mockAll.mockReturnValue( [ makeElementData( 'el-clear', items ) ] );
 
 			const callHandler = createRegistryAndGetHandler();
-			const result = JSON.parse(
-				callHandler( { elementId: 'el-clear', action: 'clear' } ) as string
-			);
+			const result = JSON.parse( callHandler( { elementId: 'el-clear', action: 'clear' } ) as string );
 
 			expect( result.success ).toBe( true );
 			expect( result.interactionCount ).toBe( 0 );
@@ -491,9 +495,7 @@ describe( 'manage-element-interaction tool', () => {
 			mockAll.mockReturnValue( [] );
 
 			const callHandler = createRegistryAndGetHandler();
-			const result = JSON.parse(
-				callHandler( { elementId: 'el-empty', action: 'clear' } ) as string
-			);
+			const result = JSON.parse( callHandler( { elementId: 'el-empty', action: 'clear' } ) as string );
 
 			expect( result.success ).toBe( true );
 			expect( result.interactionCount ).toBe( 0 );
@@ -510,7 +512,13 @@ describe( 'manage-element-interaction tool', () => {
 			const callHandler = createRegistryAndGetHandler();
 
 			expect( () =>
-				callHandler( { elementId: 'el-missing', action: 'add', trigger: 'load', effect: 'fade', effectType: 'in' } )
+				callHandler( {
+					elementId: 'el-missing',
+					action: 'add',
+					trigger: 'load',
+					effect: 'fade',
+					effectType: 'in',
+				} )
 			).toThrow( /Failed to update interactions for element "el-missing"/ );
 		} );
 
@@ -523,7 +531,13 @@ describe( 'manage-element-interaction tool', () => {
 			const callHandler = createRegistryAndGetHandler();
 
 			expect( () =>
-				callHandler( { elementId: 'el-missing', action: 'add', trigger: 'load', effect: 'fade', effectType: 'in' } )
+				callHandler( {
+					elementId: 'el-missing',
+					action: 'add',
+					trigger: 'load',
+					effect: 'fade',
+					effectType: 'in',
+				} )
 			).toThrow( /Element not found/ );
 		} );
 	} );

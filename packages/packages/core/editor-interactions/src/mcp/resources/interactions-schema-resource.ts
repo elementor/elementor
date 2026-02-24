@@ -1,7 +1,7 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
 import { EASING_OPTIONS } from '../../components/controls/easing';
-import { TRIGGER_OPTIONS, BASE_TRIGGERS } from '../../components/controls/trigger';
+import { BASE_TRIGGERS, TRIGGER_OPTIONS } from '../../components/controls/trigger';
 import { MAX_INTERACTIONS_PER_ELEMENT } from '../constants';
 
 export const INTERACTIONS_SCHEMA_URI = 'elementor://interactions/schema';
@@ -46,7 +46,8 @@ export const initInteractionsSchemaResource = ( reg: MCPRegistryEntry ) => {
 		'interactions-schema',
 		INTERACTIONS_SCHEMA_URI,
 		{
-			description: 'Schema describing all available options for element interactions (triggers, effects, easings, timing, breakpoints, etc.).',
+			description:
+				'Schema describing all available options for element interactions (triggers, effects, easings, timing, breakpoints, etc.).',
 		},
 		async () => {
 			return {
