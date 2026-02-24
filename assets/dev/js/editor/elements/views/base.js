@@ -970,19 +970,6 @@ BaseElementView = BaseContainer.extend( {
 
 		this.runReadyTrigger();
 
-		if ( this.toggleEditTools ) {
-			const editButton = this.ui.editButton;
-
-			// Since this.ui.tools does not exist while testing.
-			if ( this.ui.tools ) {
-				this.ui.tools.hoverIntent( function() {
-					editButton.addClass( 'elementor-active' );
-				}, function() {
-					editButton.removeClass( 'elementor-active' );
-				}, { timeout: 500 } );
-			}
-		}
-
 		// Defer to wait for all of the children to render.
 		setTimeout( () => {
 			this.initDraggable();
