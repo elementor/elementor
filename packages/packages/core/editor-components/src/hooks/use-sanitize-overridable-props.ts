@@ -5,6 +5,8 @@ import { filterValidOverridableProps } from '../utils/filter-valid-overridable-p
 export function useSanitizeOverridableProps(
 	componentId: ComponentId | null,
 	instanceElementId?: string
+	// instanceElementId is used to find the component inner elements,
+	// and should be passed when editing component instance (not in component edit mode)
 ): OverridableProps | undefined {
 	const overridableProps = useOverridableProps( componentId );
 	const isSanitized = useIsSanitizedComponent( componentId, 'overridableProps' );
