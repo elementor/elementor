@@ -6,6 +6,9 @@ import {
 	mockOnboardingApi,
 	doAndWaitForProgress,
 	navigateAndPassLogin,
+	navigateToSiteFeaturesStep,
+	setOnboardingCompletedViaCli,
+	resetOnboardingProgressViaCli,
 } from './e-onboarding-utils';
 
 test.describe( 'E-Onboarding @e-onboarding', () => {
@@ -206,25 +209,35 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 			await expect( page.getByTestId( 'feature-card-core_placeholder' ) ).toBeVisible();
 
 			const continueWithFreeBtn = page.getByRole( 'button', { name: 'Continue with Free' } );
-			await expect( continueWithFreeBtn ).toBeDisabled();
+			await expect( continueWithFreeBtn ).not.toBeDisabled();
 
 			await expect( page.getByRole( 'button', { name: 'Skip' } ) ).toBeVisible();
 			await expect( page.getByRole( 'button', { name: 'Back' } ) ).toBeVisible();
 
 			await page.getByTestId( 'feature-card-theme_builder' ).click();
-			await expect( continueWithFreeBtn ).not.toBeDisabled();
 			await expect(
 				page.getByText( /Based on the features you chose, we recommend the/ ),
 			).toContainText( 'Pro' );
+
+			// Intercept the createNewPage navigation so the test environment doesn't
+			// actually create a post.
+			let redirectedUrl = '';
+			await page.route( '**/edit.php**', async ( route ) => {
+				redirectedUrl = route.request().url();
+				await route.fulfill( { status: 200, contentType: 'text/html', body: '<html></html>' } );
+			} );
 
 			await doAndWaitForProgress( page, () => continueWithFreeBtn.click() );
 
 			expect( choicesRequests[ 4 ] ).toMatchObject( { site_features: [ 'theme_builder' ] } );
 			expect( progressRequests[ 4 ] ).toMatchObject( {
 				complete_step: 'site_features',
+				complete: true,
 				step_index: 4,
 				total_steps: 5,
 			} );
+
+			expect( redirectedUrl ).toContain( 'action=elementor_new_post' );
 		} );
 	} );
 
@@ -264,6 +277,30 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 		await expect( page.getByRole( 'button', { name: 'Continue' } ) ).not.toBeDisabled();
 	} );
 
+	test( 'Skip on site_features shows completion screen and redirects to new page', async ( { page } ) => {
+		const { progressRequests } = await mockOnboardingApi( page );
+		await navigateToSiteFeaturesStep( page );
+
+		let redirectedUrl = '';
+		await page.route( '**/edit.php**', async ( route ) => {
+			redirectedUrl = route.request().url();
+			await route.fulfill( { status: 200, contentType: 'text/html', body: '<html></html>' } );
+		} );
+
+		await doAndWaitForProgress( page, () =>
+			page.getByRole( 'button', { name: 'Skip' } ).click(),
+		);
+
+		expect( progressRequests.at( -1 ) ).toMatchObject( {
+			skip_step: true,
+			complete: true,
+			step_index: 4,
+			total_steps: 5,
+		} );
+
+		expect( redirectedUrl ).toContain( 'action=elementor_new_post' );
+	} );
+
 	test( 'Back from theme_selection shows experience_level Continue enabled', async ( { page } ) => {
 		await mockOnboardingApi( page );
 		await navigateAndPassLogin( page );
@@ -293,5 +330,67 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 		).toHaveAttribute( 'aria-pressed', 'true' );
 
 		await expect( page.getByRole( 'button', { name: 'Continue' } ) ).not.toBeDisabled();
+	} );
+
+	test.describe( 'Onboarding starter lifecycle', () => {
+		test.beforeEach( async () => {
+			await setOnboardingCompletedViaCli();
+		} );
+
+		test.afterEach( async () => {
+			await resetOnboardingProgressViaCli();
+		} );
+
+		test( 'Starter shows after completion, disappears on widget add, and does not reappear after publish and reload', async ( { page, apiRequests }, testInfo ) => {
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+			const editor = await wpAdmin.openNewPage();
+			const previewFrame = editor.getPreviewFrame();
+
+			await test.step( 'Starter is visible on a fresh Elementor page', async () => {
+				const starterActive = await page.evaluate( () => {
+					return !! ( window as unknown as { elementor?: { config?: { starter?: unknown } } } ).elementor?.config?.starter;
+				} );
+				expect( starterActive ).toBe( true );
+
+				await expect( previewFrame.locator( '.elementor-start-building' ) ).toBeVisible();
+			} );
+
+			await test.step( 'Adding a widget to the canvas dismisses the starter', async () => {
+				const starterDismissedRequest = page.waitForRequest(
+					( req ) =>
+						req.url().includes( 'e-onboarding/user-progress' ) &&
+						'POST' === req.method(),
+				);
+
+				await editor.addWidget( { widgetType: 'text' } );
+
+				const req = await starterDismissedRequest;
+				const body = req.postDataJSON() as Record< string, unknown >;
+				expect( body ).toMatchObject( { starter_dismissed: true } );
+
+				await expect( previewFrame.locator( '.elementor-start-building' ) ).not.toBeVisible();
+
+				const starterActive = await page.evaluate( () => {
+					return !! ( window as unknown as { elementor?: { config?: { starter?: unknown } } } ).elementor?.config?.starter;
+				} );
+				expect( starterActive ).toBe( false );
+			} );
+
+			await test.step( 'Publish the page', async () => {
+				await editor.publishPage();
+			} );
+
+			await test.step( 'Starter does not show after page reload', async () => {
+				await page.reload();
+				await page.waitForLoadState( 'load' );
+
+				const starterActiveAfterReload = await page.evaluate( () => {
+					return !! ( window as unknown as { elementor?: { config?: { starter?: unknown } } } ).elementor?.config?.starter;
+				} );
+				expect( starterActiveAfterReload ).toBe( false );
+
+				await expect( previewFrame.locator( '.elementor-start-building' ) ).not.toBeVisible();
+			} );
+		} );
 	} );
 } );
