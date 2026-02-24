@@ -355,14 +355,8 @@ test.describe( 'Cloud Templates', () => {
 
 		await renameInput.fill( newTitle );
 
-		const renameResponsePromise = page.waitForResponse( ( response ) => {
-			return response.url().includes( '/wp-admin/admin-ajax.php' );
-		} );
-
 		const renameButton = page.locator( '.dialog-button.dialog-ok.dialog-confirm-ok', { hasText: 'Rename' } );
 		await renameButton.click();
-
-		await renameResponsePromise;
 
 		await expect( page.locator( `text=${ newTitle }` ).first() ).toBeVisible();
 	} );
@@ -402,14 +396,8 @@ test.describe( 'Cloud Templates', () => {
 		const confirmDialog = page.locator( '.dialog-message.dialog-confirm-message' );
 		await expect( confirmDialog ).toContainText( `This will permanently remove "${ title }".` );
 
-		const deleteResponsePromise = page.waitForResponse( ( response ) => {
-			return response.url().includes( '/wp-admin/admin-ajax.php' );
-		} );
-
 		const confirmDeleteButton = page.locator( '.dialog-confirm-ok', { hasText: 'Delete' } );
 		await confirmDeleteButton.click();
-
-		await deleteResponsePromise;
 
 		await expect( templateItems.filter( { hasText: title } ) ).toHaveCount( 0 );
 		await expect( templateItems ).toHaveCount( 3 );
@@ -442,13 +430,6 @@ test.describe( 'Cloud Templates', () => {
 		const folderInput = page.getByRole( 'textbox', { name: 'Folder name' } );
 		await folderInput.fill( folderTitle );
 
-		const createResponsePromise = page.waitForResponse( ( response ) => {
-			return response.url().includes( '/wp-admin/admin-ajax.php' );
-		} );
-
-		const createButton = page.locator( '.dialog-confirm-ok', { hasText: 'Create' } );
-		await createButton.click();
-
 		const updatedTemplatesMock = {
 			templates: {
 				templates: [
@@ -475,14 +456,15 @@ test.describe( 'Cloud Templates', () => {
 			config: cloudTemplatesMock.config,
 		};
 
+		await mockCloudTemplatesRoute( page, updatedTemplatesMock );
+
 		const templatesRefreshPromise = page.waitForResponse( ( response ) => {
 			return response.url().includes( '/wp-json/elementor/v1/template-library/templates' ) &&
 				response.url().includes( 'source=cloud' );
 		} );
 
-		await createResponsePromise;
-
-		await mockCloudTemplatesRoute( page, updatedTemplatesMock );
+		const createButton = page.locator( '.dialog-confirm-ok', { hasText: 'Create' } );
+		await createButton.click();
 
 		await templatesRefreshPromise;
 
@@ -552,15 +534,6 @@ test.describe( 'Cloud Templates', () => {
 		const cloudTemplatesCheckbox = page.locator( '.source-selections-input.cloud input[type="checkbox"]' );
 		await cloudTemplatesCheckbox.check();
 
-		const saveResponsePromise = page.waitForResponse( ( response ) => {
-			return response.url().includes( '/wp-admin/admin-ajax.php' );
-		} );
-
-		const saveButton = page.locator( '#elementor-template-library-save-template-submit' );
-		await saveButton.click();
-
-		await saveResponsePromise;
-
 		const updatedTemplatesMock = {
 			templates: {
 				templates: [
@@ -585,13 +558,21 @@ test.describe( 'Cloud Templates', () => {
 			config: cloudTemplatesMock.config,
 		};
 
+		await mockCloudTemplatesRoute( page, updatedTemplatesMock );
+
 		const templatesRefreshPromise = page.waitForResponse( ( response ) => {
 			return response.url().includes( '/wp-json/elementor/v1/template-library/templates' ) &&
 				response.url().includes( 'source=cloud' );
 		} );
 
-		await mockCloudTemplatesRoute( page, updatedTemplatesMock );
+		const saveResponsePromise = page.waitForResponse( ( response ) => {
+			return response.url().includes( '/wp-admin/admin-ajax.php' );
+		} );
 
+		const saveButton = page.locator( '#elementor-template-library-save-template-submit' );
+		await saveButton.click();
+
+		await saveResponsePromise;
 		await templatesRefreshPromise;
 
 		await page.waitForSelector( '.elementor-template-library-template-cloud' );
