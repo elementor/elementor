@@ -5,7 +5,6 @@ import { type FieldProps } from '../../types';
 import { PromotionSelect } from '../../ui/promotion-select';
 import { DEFAULT_VALUES } from '../interaction-details';
 
-
 export const EFFECT_OPTIONS = {
 	fade: __( 'Fade', 'elementor' ),
 	slide: __( 'Slide', 'elementor' ),
@@ -31,8 +30,11 @@ export function Effect( { value, onChange }: FieldProps ) {
 			baseOptions={ baseOptions }
 			disabledOptions={ disabledOptions }
 			promotionLabel={ __( 'PRO effects', 'elementor' ) }
-			promotionContent={ __( 'Upgrade to further customize your animation with opacity, scale, move, rotate and more.', 'elementor' ) }
+			promotionContent={ __(
+				'Upgrade to further customize your animation with opacity, scale, move, rotate and more.',
+				'elementor'
+			) }
 			upgradeUrl="https://go.elementor.com/go-pro-interactions-custom-effect-modal/"
-			/>
+		/>
 	);
 }
