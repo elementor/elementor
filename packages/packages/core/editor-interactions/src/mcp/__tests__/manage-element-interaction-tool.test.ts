@@ -2,8 +2,8 @@ import { updateElementInteractions } from '@elementor/editor-elements';
 
 import { interactionsRepository } from '../../interactions-repository';
 import { createInteractionItem } from '../../utils/prop-value-utils';
-import { initManageElementInteractionTool } from '../tools/manage-element-interaction-tool';
 import { MAX_INTERACTIONS_PER_ELEMENT } from '../constants';
+import { initManageElementInteractionTool } from '../tools/manage-element-interaction-tool';
 
 jest.mock( '../../interactions-repository', () => ( {
 	interactionsRepository: {
@@ -226,7 +226,7 @@ describe( 'manage-element-interaction tool', () => {
 			expect( result.interactionCount ).toBe( 2 );
 		} );
 
-		it( `throws when element already has ${MAX_INTERACTIONS_PER_ELEMENT} interactions`, () => {
+		it( `throws when element already has ${ MAX_INTERACTIONS_PER_ELEMENT } interactions`, () => {
 			const items = Array.from( { length: MAX_INTERACTIONS_PER_ELEMENT }, ( _, i ) =>
 				createInteractionItem( {
 					interactionId: `id-${ i }`,
@@ -252,7 +252,7 @@ describe( 'manage-element-interaction tool', () => {
 					effect: 'fade',
 					effectType: 'in',
 				} )
-			).toThrow( new RegExp(`${MAX_INTERACTIONS_PER_ELEMENT}`, 'i') );
+			).toThrow( new RegExp( `${ MAX_INTERACTIONS_PER_ELEMENT }`, 'i' ) );
 		} );
 	} );
 
