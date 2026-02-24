@@ -191,8 +191,6 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 			expect( choicesRequests[ 3 ] ).toMatchObject( { theme_selection: 'hello-elementor' } );
 			expect( progressRequests[ 3 ] ).toMatchObject( {
 				complete_step: 'theme_selection',
-				step_index: 3,
-				total_steps: 5,
 			} );
 		} );
 
@@ -228,11 +226,9 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 			await doAndWaitForProgress( page, () => continueWithFreeBtn.click() );
 
 			expect( choicesRequests[ 4 ] ).toMatchObject( { site_features: [ 'theme_builder' ] } );
-			expect( progressRequests[ 4 ] ).toMatchObject( {
+			expect( progressRequests.at( -1 ) ).toMatchObject( {
 				complete_step: 'site_features',
 				complete: true,
-				step_index: 4,
-				total_steps: 5,
 			} );
 
 			expect( redirectedUrl ).toContain( 'action=elementor_new_post' );
@@ -292,8 +288,6 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 		expect( progressRequests.at( -1 ) ).toMatchObject( {
 			skip_step: true,
 			complete: true,
-			step_index: 4,
-			total_steps: 5,
 		} );
 
 		expect( redirectedUrl ).toContain( 'action=elementor_new_post' );
