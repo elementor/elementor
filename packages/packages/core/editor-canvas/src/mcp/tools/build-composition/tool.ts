@@ -32,7 +32,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 			hints: [ { name: 'claude-sonnet-4-5' } ],
 		},
 		handler: async ( params ) => {
-			const { xmlStructure, elementConfig, stylesConfig } = params;
+			const { xmlStructure, elementConfig, stylesConfig, customCSS } = params;
 			let generatedXML: string = '';
 			const errors: Error[] = [];
 			const rootContainers: V1Element[] = [];
@@ -44,6 +44,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				} );
 				compositionBuilder.setElementConfig( elementConfig );
 				compositionBuilder.setStylesConfig( stylesConfig );
+				compositionBuilder.setCustomCSS( customCSS );
 
 				const {
 					configErrors,

@@ -110,6 +110,7 @@ Use existing global classes, or create if none matches the requirements
 - **xmlStructure**: Valid XML with configuration-id attributes
 - **elementConfig**: Record of configuration-id → widget PropValues
 - **stylesConfig**: Record of configuration-id → style PropValues (layout only)
+- **customCSS**: Record of configuration-id → custom CSS - do not use selectors, only the css rules, separated by semicolons
   ` );
 
 	buildCompositionsToolPrompt.example( `
@@ -123,6 +124,9 @@ A Heading and a button inside a flexbox
         "value": "section"
       },
   },
+	customCSS: {
+		"flex1": "background-color: #f5f5f5; padding: 2rem;"
+	},
   stylesConfig: {
     "heading1": {
       "font-size": {

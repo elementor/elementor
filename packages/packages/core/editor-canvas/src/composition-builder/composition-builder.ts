@@ -26,11 +26,13 @@ type CtorOptions = {
 	api?: Partial< API >;
 	elementConfig?: AnyConfig;
 	stylesConfig?: AnyConfig;
+	customCSS?: Record< string, string >;
 };
 
 export class CompositionBuilder {
 	private elementConfig: Record< string, Record< string, AnyValue > > = {};
 	private elementStylesConfig: Record< string, Record< string, AnyValue > > = {};
+	private elementCusomCSS: Record< string, string > = {};
 	private rootContainers: V1Element[] = [];
 	private containerElements: string[] = [];
 	private api: API = {
@@ -56,11 +58,12 @@ export class CompositionBuilder {
 	}
 
 	constructor( opts: CtorOptions ) {
-		const { api = {}, elementConfig = {}, stylesConfig = {}, xml } = opts;
+		const { api = {}, elementConfig = {}, stylesConfig = {}, customCSS = {}, xml } = opts;
 		this.xml = xml;
 		Object.assign( this.api, api );
 		this.setElementConfig( elementConfig );
 		this.setStylesConfig( stylesConfig );
+		this.setCustomCSS( customCSS );
 	}
 
 	setElementConfig( config: Record< string, Record< string, AnyValue > > ) {
@@ -69,6 +72,10 @@ export class CompositionBuilder {
 
 	setStylesConfig( config: Record< string, Record< string, AnyValue > > ) {
 		this.elementStylesConfig = config;
+	}
+
+	setCustomCSS( config: Record< string, string > ) {
+		this.elementCusomCSS = config;
 	}
 
 	getXML() {
@@ -171,6 +178,15 @@ export class CompositionBuilder {
 					errors.push( String( error ) );
 				}
 			}
+		}
+		for ( const [ customCSSId, customCSS ] of Object.entries( this.elementCusomCSS ) ) {
+			const { element, node } = this.matchNodeByConfigId( customCSSId );
+			this.api.doUpdateElementProperty( {
+				elementId: element.id,
+				propertyName: '_styles',
+				propertyValue: { custom_css: customCSS },
+				elementType: node.tagName,
+			} );
 		}
 		return {
 			errors,
