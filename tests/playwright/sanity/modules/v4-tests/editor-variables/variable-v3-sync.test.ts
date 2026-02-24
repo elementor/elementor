@@ -15,7 +15,8 @@ const initTemplate = async ( page: Page, testInfo: TestInfo, apiRequests: ApiReq
 	return { wpAdminPage, editorPage };
 };
 
-test.describe( 'V4-V3 Color Variable Sync @v4-tests', () => {
+// TODO: https://elementor.atlassian.net/browse/ED-23110 - To restore this
+test.describe.skip( 'V4-V3 Color Variable Sync @v4-tests', () => {
 	let wpAdminPage: WpAdminPage;
 	let editor: EditorPage;
 	let context: BrowserContext;
@@ -43,8 +44,7 @@ test.describe( 'V4-V3 Color Variable Sync @v4-tests', () => {
 		await context.close();
 	} );
 
-	// TODO: https://elementor.atlassian.net/browse/ED-23110 - To restore this test
-	test.skip( 'Synced V4 color variable appears in Site Settings > Global Colors', async () => {
+	test( 'Synced V4 color variable appears in Site Settings > Global Colors', async () => {
 		await test.step( 'Create a V4 color variable in the Variables Manager', async () => {
 			const variableRow = await variablesManagerPage.createVariableFromManager( {
 				name: syncedColorName,
@@ -72,8 +72,7 @@ test.describe( 'V4-V3 Color Variable Sync @v4-tests', () => {
 		} );
 	} );
 
-	// TODO: https://elementor.atlassian.net/browse/ED-23110 - To restore this test
-	test.skip( 'Synced V4 color variable appears in V3 widget color picker and renders correctly on frontend', async () => {
+	test( 'Synced V4 color variable appears in V3 widget color picker and renders correctly on frontend', async () => {
 		await test.step( 'Create a V4 color variable in the Variables Manager', async () => {
 			const variableRow = await variablesManagerPage.createVariableFromManager( {
 				name: syncedColorName,

@@ -39,8 +39,7 @@ test.describe( 'Variable Manager @v4-tests', () => {
 		} );
 	} );
 
-	// TODO: https://elementor.atlassian.net/browse/ED-23110 - To restore this test
-	test.skip( 'Font Variable exists after creating in panel', async ( ) => {
+	test( 'Font Variable exists after creating in panel', async ( ) => {
 		const addedFontVariable = { name: 'test-font-variable', value: 'Arial', type: 'font' as const };
 		const variableRow = await variablesManagerPage.createVariableFromManager( addedFontVariable );
 		await expect( variableRow ).toBeVisible();
