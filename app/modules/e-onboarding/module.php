@@ -112,6 +112,7 @@ class Module extends BaseModule {
 				'connect' => $this->get_connect_url(),
 				'comparePlans' => 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash',
 				'exploreFeatures' => 'https://elementor.com/features/?utm_source=onboarding&utm_medium=wp-dash',
+				'createNewPage' => Plugin::$instance->documents->get_create_new_post_url(),
 			],
 		] );
 	}

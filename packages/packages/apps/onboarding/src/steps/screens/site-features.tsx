@@ -130,6 +130,7 @@ export function SiteFeatures() {
 			spacing={ 4 }
 			width="100%"
 			marginBottom={ 10 }
+			data-testid="site-features-step"
 			sx={ ( theme: Theme ) => ( {
 				[ theme.breakpoints.down( 'sm' ) ]: {
 					marginBottom: theme.spacing( 10 ),

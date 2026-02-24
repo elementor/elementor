@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -18,6 +18,7 @@ import { ThemeSelection } from '../steps/screens/theme-selection';
 import { getStepVisualConfig } from '../steps/step-visuals';
 import { StepId } from '../types';
 import { BaseLayout } from './ui/base-layout';
+import { CompletionScreen } from './ui/completion-screen';
 import { Footer } from './ui/footer';
 import { FooterActions } from './ui/footer-actions';
 import { SplitLayout } from './ui/split-layout';
@@ -29,11 +30,10 @@ const isChoiceEmpty = ( choice: unknown ): boolean => {
 };
 
 interface AppContentProps {
-	onComplete?: () => void;
 	onClose?: () => void;
 }
 
-export function AppContent( { onComplete, onClose }: AppContentProps ) {
+export function AppContent( { onClose }: AppContentProps ) {
 	const {
 		stepId,
 		stepIndex,
@@ -49,6 +49,8 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 		urls,
 		actions,
 	} = useOnboarding();
+
+	const [ isCompleting, setIsCompleting ] = useState( false );
 
 	const updateProgress = useUpdateProgress();
 	const updateChoices = useUpdateChoices();
@@ -101,7 +103,29 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 		}
 	}, [ actions, isFirst ] );
 
+	const redirectToNewPage = useCallback( () => {
+		const redirectUrl = urls.createNewPage || urls.editor || urls.dashboard;
+		window.location.href = redirectUrl;
+	}, [ urls ] );
+
 	const handleSkip = useCallback( () => {
+		if ( isLast ) {
+			setIsCompleting( true );
+			updateProgress.mutate(
+				{
+					skip_step: true,
+					complete: true,
+					step_index: stepIndex,
+					total_steps: totalSteps,
+				},
+				{
+					onSuccess: redirectToNewPage,
+					onError: redirectToNewPage,
+				}
+			);
+			return;
+		}
+
 		updateProgress.mutate(
 			{
 				skip_step: true,
@@ -117,7 +141,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 				},
 			}
 		);
-	}, [ actions, stepIndex, totalSteps, updateProgress ] );
+	}, [ actions, isLast, stepIndex, totalSteps, updateProgress, redirectToNewPage ] );
 
 	const handleContinue = useCallback(
 		( directChoice?: Record< string, unknown > ) => {
@@ -131,6 +155,23 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 				}
 			}
 
+			if ( isLast ) {
+				setIsCompleting( true );
+				updateProgress.mutate(
+					{
+						complete_step: stepId,
+						complete: true,
+						step_index: stepIndex,
+						total_steps: totalSteps,
+					},
+					{
+						onSuccess: redirectToNewPage,
+						onError: redirectToNewPage,
+					}
+				);
+				return;
+			}
+
 			updateProgress.mutate(
 				{
 					complete_step: stepId,
@@ -140,12 +181,7 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 				{
 					onSuccess: () => {
 						actions.completeStep( stepId );
-
-						if ( ! isLast ) {
-							actions.nextStep();
-						} else {
-							onComplete?.();
-						}
+						actions.nextStep();
 					},
 					onError: () => {
 						actions.setError( __( 'Failed to complete step.', 'elementor' ) );
@@ -153,14 +189,14 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 				}
 			);
 		},
-		[ stepId, stepIndex, totalSteps, choices, actions, isLast, onComplete, updateProgress, updateChoices ]
+		[ stepId, stepIndex, totalSteps, choices, actions, isLast, updateProgress, updateChoices, redirectToNewPage ]
 	);
 
 	const rightPanelConfig = useMemo( () => getStepVisualConfig( stepId ), [ stepId ] );
 	const isPending = updateProgress.isPending || isLoading;
 
 	const choiceForStep = choices[ stepId as keyof typeof choices ];
-	const continueDisabled = isChoiceEmpty( choiceForStep );
+	const continueDisabled = ! isLast && isChoiceEmpty( choiceForStep );
 
 	const getContinueLabel = () => {
 		if ( stepId === StepId.THEME_SELECTION && ! completedSteps.includes( StepId.THEME_SELECTION ) ) {
@@ -194,6 +230,10 @@ export function AppContent( { onComplete, onClose }: AppContentProps ) {
 				return <Box sx={ { flex: 1, width: '100%' } } />;
 		}
 	};
+
+	if ( isCompleting ) {
+		return <CompletionScreen />;
+	}
 
 	if ( ! hasPassedLogin ) {
 		return (
