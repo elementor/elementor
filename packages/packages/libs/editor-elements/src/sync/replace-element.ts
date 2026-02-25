@@ -2,7 +2,7 @@ import { ElementIndexNotFoundError, ElementNotFoundError, ElementParentNotFoundE
 import { createElement } from './create-element';
 import { deleteElement } from './delete-element';
 import { getContainer } from './get-container';
-import { type V1Element, type V1ElementData, type V1ElementModelProps } from './types';
+import { type V1Element, type V1ElementModelProps } from './types';
 
 type ElementLocation = {
 	container: V1Element;
@@ -10,16 +10,16 @@ type ElementLocation = {
 };
 
 type ReplaceElementArgs = {
-	currentElement: V1ElementData;
+	currentElementId: string;
 	newElement: Omit< V1ElementModelProps, 'id' >;
 	withHistory?: boolean;
 };
 
-export const replaceElement = async ( { currentElement, newElement, withHistory = true }: ReplaceElementArgs ) => {
-	const currentElementContainer = getContainer( currentElement.id );
+export const replaceElement = async ( { currentElementId, newElement, withHistory = true }: ReplaceElementArgs ) => {
+	const currentElementContainer = getContainer( currentElementId );
 
 	if ( ! currentElementContainer ) {
-		throw new ElementNotFoundError( { context: { elementId: currentElement.id } } );
+		throw new ElementNotFoundError( { context: { elementId: currentElementId } } );
 	}
 
 	const { container, index } = getNewElementContainer( currentElementContainer, newElement );

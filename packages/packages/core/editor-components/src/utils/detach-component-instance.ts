@@ -1,4 +1,4 @@
-import { createElement, createElements, deleteElement, getContainer } from '@elementor/editor-elements';
+import { createElement, createElements, deleteElement, getContainer, replaceElement } from '@elementor/editor-elements';
 import { __ } from '@wordpress/i18n';
 
 import { componentInstanceOverridesPropTypeUtil } from '../prop-types/component-instance-overrides-prop-type';
@@ -26,46 +26,17 @@ export async function detachComponentInstance( {
 		throw new Error( `Component with ID "${ componentId }" not found.` );
 	}
 
-	const { parent } = instanceContainer;
-
-	if ( ! parent ) {
-		throw new Error( `Instance parent container not found.` );
-	}
-
-	const elementIndex = instanceContainer.view?._index ?? 0;
-
 	const componentElements = componentData.elements ?? [];
 	const overrides = extractInstanceOverrides( instanceContainer );
 
 	const elementsWithOverrides = applyOverridesToElements( componentElements, overrides );
 
-	const containerElement = createElement( {
-		container: parent,
-		model: {
-			elType: 'e-flexbox' as const,
-			settings: {},
-		},
-		options: {
-			at: elementIndex,
-			useHistory: false,
-		},
-	} );
+	const 
 
-	if ( elementsWithOverrides.length > 0 ) {
-		createElements( {
-			elements: elementsWithOverrides.map( ( element ) => ( {
-				container: containerElement,
-				model: element,
-			} ) ),
-			title: __( 'Instance Detached', 'elementor' ),
-		} );
-	}
-
-	await deleteElement( {
-		container: instanceContainer,
-		options: {
-			useHistory: false,
-		},
+	replaceElement( {
+		currentElementId: instanceId,
+		newElement: elementsWithOverrides[ 0 ],
+		withHistory: false,
 	} );
 
 	trackComponentEvent( {
