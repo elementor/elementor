@@ -139,17 +139,8 @@ export default class EditorPage extends BasePage {
 			} );
 		}, templateData );
 
-		await this.page.waitForFunction( () => {
-			try {
-				type ElWindow = Window & { elementor?: { documents?: { getCurrent(): { editor: { isChanged: boolean } } } } };
-				return true === ( window as ElWindow ).elementor?.documents?.getCurrent()?.editor?.isChanged;
-			} catch {
-				return false;
-			}
-		}, { timeout: timeouts.heavyAction, polling: 250 } );
-
-		const frame = await this.waitForPreviewFrame();
-		await frame
+		await this.page
+			.frameLocator( '#elementor-preview-iframe' )
 			.locator( '.elementor-element' )
 			.first()
 			.waitFor( { timeout: timeouts.heavyAction } );
