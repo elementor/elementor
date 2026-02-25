@@ -34,6 +34,11 @@ async function goBackToEditor( page: Page, editor: EditorPage ): Promise<void> {
 	await page.waitForTimeout( timeouts.navigation );
 }
 
+async function viewPublishedPage( page: Page, editor: EditorPage ): Promise<void> {
+	await editor.viewPage();
+	await page.waitForTimeout( timeouts.navigation );
+}
+
 async function assertDivBlockColor( divBlock: Locator, expectedColor: string ): Promise<void> {
 	await expect( divBlock ).toBeVisible();
 	await expect( divBlock ).toHaveCSS( 'background-color', expectedColor );
@@ -60,6 +65,14 @@ test.describe( 'Global Classes - Order @v4-tests', () => {
 		const { request } = page.context();
 		editor = await wpAdmin.openNewPage();
 		await deleteAllGlobalClasses( apiRequests, request );
+	} );
+
+	test.afterAll( async ( { apiRequests } ) => {
+		const { request } = page.context();
+		await deleteAllGlobalClasses( apiRequests, request );
+
+		await wpAdmin.resetExperiments();
+		await page.close();
 	} );
 
 	test( 'Global class order determines CSS specificity on canvas and frontend', async () => {
@@ -99,7 +112,8 @@ test.describe( 'Global Classes - Order @v4-tests', () => {
 
 		await test.step( 'Publish and view frontend: Verify all classes present and green wins', async () => {
 			await editor.publishPage();
-			await editor.viewPage();
+			await viewPublishedPage( page, editor );
+
 			frontendDivBlock = getFrontendDivBlock( page, divBlockId );
 			await assertDivBlockColor( frontendDivBlock, GREEN );
 			await assertDivBlockHasClasses( frontendDivBlock, ALL_CLASSES );
@@ -123,7 +137,8 @@ test.describe( 'Global Classes - Order @v4-tests', () => {
 		} );
 
 		await test.step( 'View frontend: Verify red wins after first reorder (global class order auto-saved)', async () => {
-			await editor.viewPage();
+			await viewPublishedPage( page, editor );
+
 			frontendDivBlock = getFrontendDivBlock( page, divBlockId );
 			await assertDivBlockColor( frontendDivBlock, RED );
 			await assertDivBlockHasClasses( frontendDivBlock, ALL_CLASSES );
@@ -147,10 +162,11 @@ test.describe( 'Global Classes - Order @v4-tests', () => {
 		} );
 
 		await test.step( 'View frontend: Verify blue wins after second reorder', async () => {
-			await editor.viewPage();
+			await viewPublishedPage( page, editor );
+
 			frontendDivBlock = getFrontendDivBlock( page, divBlockId );
 			await assertDivBlockColor( frontendDivBlock, BLUE );
-			await assertDivBlockHasClasses( frontendDivBlock, ALL_CLASSES );
+			await assertDivBlockHasClasses( frontendDivBlock, ALL_CLASSES.reverse() );
 		} );
 
 		await test.step( 'Go back to editor and verify canvas still shows blue', async () => {
