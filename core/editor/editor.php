@@ -117,6 +117,12 @@ class Editor {
 		// Send MIME Type header like WP admin-header.
 		@header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );
 
+		// WP 7.0+ sets cross-origin isolation headers on admin pages (COOP + COEP).
+		// The Elementor preview iframe does not send these headers, so the browser
+		// blocks contentWindow access with a SecurityError. Reset them to defaults.
+		@header( 'Cross-Origin-Opener-Policy: unsafe-none' );
+		@header( 'Cross-Origin-Embedder-Policy: unsafe-none' );
+
 		add_filter( 'show_admin_bar', '__return_false' );
 
 		// Remove all WordPress actions
