@@ -3,7 +3,7 @@ import { type NotificationData, notify } from '@elementor/editor-notifications';
 import { __dispatch as dispatch } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
-import { slice } from '../store';
+import { slice } from '../../../store/store';
 
 const successNotification = ( componentId: number, componentName: string ): NotificationData => ( {
 	type: 'success',
