@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { canSendEvents } from '@elementor/events';
 import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -17,7 +18,7 @@ import { SiteFeatures } from '../steps/screens/site-features';
 import { ThemeSelection } from '../steps/screens/theme-selection';
 import { getStepVisualConfig } from '../steps/step-visuals';
 import { StepId } from '../types';
-import onboardingEventManager from '../utils/onboarding-events';
+import type { OnboardingEventManager } from '../utils/onboarding-events';
 import { BaseLayout } from './ui/base-layout';
 import { CompletionScreen } from './ui/completion-screen';
 import { Footer } from './ui/footer';
@@ -53,9 +54,26 @@ export function AppContent( { onClose }: AppContentProps ) {
 	} = useOnboarding();
 
 	const [ isCompleting, setIsCompleting ] = useState( false );
+	const eventManagerRef = useRef< OnboardingEventManager | null >( null );
 
 	const updateProgress = useUpdateProgress();
 	const updateChoices = useUpdateChoices();
+
+	const trackEvent = useCallback( ( eventKey: string ) => {
+		if ( ! canSendEvents() ) {
+			return;
+		}
+
+		if ( eventManagerRef.current ) {
+			eventManagerRef.current.send( eventKey );
+			return;
+		}
+
+		import( '../utils/onboarding-events' ).then( ( { default: onboardingEventManager } ) => {
+			eventManagerRef.current = onboardingEventManager;
+			onboardingEventManager.send( eventKey );
+		} );
+	}, [] );
 
 	useEffect( () => {
 		if ( hadUnexpectedExit ) {
@@ -65,9 +83,9 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 	useEffect( () => {
 		if ( isConnected ) {
-			onboardingEventManager.trackOnboardingStarted();
+			trackEvent( 'ONBOARDING_STARTED' );
 		}
-	}, [ isConnected ] );
+	}, [ isConnected, trackEvent ] );
 
 	const checkProInstallScreen = useCheckProInstallScreen();
 
@@ -75,7 +93,8 @@ export function AppContent( { onClose }: AppContentProps ) {
 		const result = await checkProInstallScreen();
 		actions.setShouldShowProInstallScreen( result.shouldShowProInstallScreen );
 		actions.setConnected( true );
-	}, [ actions, checkProInstallScreen ] );
+		trackEvent( 'OB_CONNECTED' );
+	}, [ actions, checkProInstallScreen, trackEvent ] );
 
 	const handleConnect = useElementorConnect( {
 		connectUrl: urls.connect,

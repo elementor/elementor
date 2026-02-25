@@ -5,11 +5,15 @@ export const BASE_PAYLOAD = {
 
 type EventPayload = {
 	interaction_type?: string;
+	interaction_result?: string;
+	interaction_description?: string;
 	target_type?: string;
 	target_name?: string;
-	interaction_result?: string;
+	target_value?: string;
 	target_location?: string;
-	interaction_description?: string;
+	location_l1?: string;
+	location_l2?: string;
+	location_l3?: string;
 };
 
 type EventConfig = {
@@ -32,6 +36,19 @@ const onboardingEventsConfig: OnboardingEventsConfig = {
 			target_location: 'onboarding',
 			interaction_description:
 				'first step of the onboarding funnel after login. our first possible reference point for ob.',
+		},
+	},
+	OB_CONNECTED: {
+		eventName: 'ob_connected',
+		once: true,
+		payload: {
+			interaction_type: 'connect',
+			target_type: 'button',
+			target_name: 'connect',
+			interaction_result: 'user_connected',
+			target_location: 'onboarding',
+			location_l1: 'connect_flow',
+			interaction_description: 'user connect process loaded from onboarding',
 		},
 	},
 };

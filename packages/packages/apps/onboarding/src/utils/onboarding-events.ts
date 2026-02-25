@@ -8,6 +8,7 @@ class OnboardingEventManager {
 
 	send( eventKey: string, payloadOverrides: Record< string, unknown > = {} ): boolean {
 		const config = this.EVENT_CONFIGS[ eventKey ];
+
 		if ( ! config ) {
 			return false;
 		}
@@ -27,14 +28,6 @@ class OnboardingEventManager {
 		}
 
 		return result;
-	}
-
-	trackOnboardingStarted() {
-		return this.send( 'ONBOARDING_STARTED' );
-	}
-
-	onConnected() {
-		this.trackOnboardingStarted();
 	}
 }
 
