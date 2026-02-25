@@ -6,6 +6,7 @@ import {
 	completeOnboarding,
 	completeStep,
 	dismissProInstallScreen,
+	markProInstalled,
 	goToStep,
 	goToStepIndex,
 	nextStep,
@@ -18,12 +19,14 @@ import {
 	selectError,
 	selectHadUnexpectedExit,
 	selectHasPassedLogin,
+	selectHasProInstallScreenDismissed,
 	selectIsConnected,
 	selectIsFirstStep,
 	selectIsGuest,
 	selectIsLastStep,
 	selectIsLoading,
 	selectShouldShowProInstall,
+	selectIsProInstalled,
 	selectSteps,
 	selectTotalSteps,
 	selectUrls,
@@ -59,6 +62,8 @@ export function useOnboarding() {
 	const isGuest = __useSelector( selectIsGuest );
 	const hasPassedLogin = __useSelector( selectHasPassedLogin );
 	const shouldShowProInstall = __useSelector( selectShouldShowProInstall );
+	const hasProInstallScreenDismissed = __useSelector( selectHasProInstallScreenDismissed );
+	const isProInstalled = __useSelector( selectIsProInstalled );
 	const userName = __useSelector( selectUserName );
 	const urls = __useSelector( selectUrls );
 
@@ -82,6 +87,7 @@ export function useOnboarding() {
 			setGuest: ( guest: boolean ) => dispatch( setGuest( guest ) ),
 			setShouldShowProInstallScreen: ( value: boolean ) => dispatch( setShouldShowProInstallScreen( value ) ),
 			dismissProInstallScreen: () => dispatch( dismissProInstallScreen() ),
+			markProInstalled: () => dispatch( markProInstalled() ),
 		} ),
 		[ dispatch ]
 	);
@@ -103,6 +109,8 @@ export function useOnboarding() {
 		isGuest,
 		hasPassedLogin,
 		shouldShowProInstall,
+		hasProInstallScreenDismissed,
+		isProInstalled,
 		userName,
 		urls,
 		actions,

@@ -51,7 +51,7 @@ interface OnboardingConfig {
 		comparePlans?: string;
 		exploreFeatures?: string;
 		createNewPage?: string;
-		upgradeUrl?: string;
+		upgradeUrl?: string | null;
 	};
 }
 
@@ -462,6 +462,70 @@ describe( 'App', () => {
 				'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar',
 				'_blank'
 			);
+		} );
+
+		it( 'should hide the Upgrade button when upgradeUrl is not provided (Pro already active)', () => {
+			// Arrange
+			window.elementorAppConfig = createMockConfig( {
+				isConnected: true,
+				urls: {
+					dashboard: 'https://test.local/wp-admin/',
+					editor: 'https://test.local/editor',
+					connect: 'https://test.local/connect',
+					upgradeUrl: null,
+				},
+			} );
+
+			// Act
+			render( <App /> );
+
+			// Assert
+			expect( screen.queryByText( 'Upgrade' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should keep the Upgrade button visible after dismissing the Pro install screen', async () => {
+			// Arrange
+			window.elementorAppConfig = createMockConfig( {
+				isConnected: true,
+				shouldShowProInstallScreen: true,
+			} );
+
+			render( <App /> );
+			expect( screen.getByTestId( 'pro-install-screen' ) ).toBeInTheDocument();
+
+			// Act
+			fireEvent.click( screen.getByText( "I'll do it later" ) );
+
+			// Assert - dismissed means Pro not yet installed; Upgrade button stays visible
+			await waitFor( () => {
+				expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
+			} );
+			expect( screen.getByText( 'Upgrade' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should hide the Upgrade button after Pro is installed', async () => {
+			// Arrange
+			mockFetch.mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( { data: { success: true, message: 'installed' } } ),
+			} );
+
+			window.elementorAppConfig = createMockConfig( {
+				isConnected: true,
+				shouldShowProInstallScreen: true,
+			} );
+
+			render( <App /> );
+			expect( screen.getByTestId( 'pro-install-screen' ) ).toBeInTheDocument();
+
+			// Act
+			fireEvent.click( screen.getByText( 'Install Pro on this site' ) );
+
+			// Assert
+			await waitFor( () => {
+				expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
+			} );
+			expect( screen.queryByText( 'Upgrade' ) ).not.toBeInTheDocument();
 		} );
 	} );
 

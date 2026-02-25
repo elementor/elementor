@@ -77,6 +77,7 @@ function getEmptyState(): OnboardingState {
 		urls: { dashboard: '', editor: '', connect: '', comparePlans: '', exploreFeatures: '' },
 		shouldShowProInstallScreen: false,
 		hasProInstallScreenDismissed: false,
+		isProInstalled: false,
 	};
 }
 
@@ -117,6 +118,7 @@ function buildStateFromConfig(
 		urls: config.urls ?? { dashboard: '', editor: '', connect: '', comparePlans: '', exploreFeatures: '' },
 		shouldShowProInstallScreen: config.shouldShowProInstallScreen ?? false,
 		hasProInstallScreenDismissed: false,
+		isProInstalled: false,
 	};
 }
 
@@ -231,6 +233,11 @@ export const slice = __createSlice( {
 		dismissProInstallScreen: ( state ) => {
 			state.hasProInstallScreenDismissed = true;
 		},
+
+		markProInstalled: ( state ) => {
+			state.isProInstalled = true;
+			state.hasProInstallScreenDismissed = true;
+		},
 	},
 } );
 
@@ -253,6 +260,7 @@ export const {
 	setGuest,
 	setShouldShowProInstallScreen,
 	dismissProInstallScreen,
+	markProInstalled,
 } = slice.actions;
 
 export function registerOnboardingSlice() {

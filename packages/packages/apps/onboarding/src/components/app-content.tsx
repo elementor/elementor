@@ -44,6 +44,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 		isLoading,
 		hasPassedLogin,
 		shouldShowProInstall,
+		isProInstalled,
 		choices,
 		completedSteps,
 		urls,
@@ -269,6 +270,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 			topBar={
 				<TopBar>
 					<TopBarContent
+						showUpgrade={ !! urls.upgradeUrl && ! isProInstalled }
 						showClose={ false }
 						onClose={ handleClose }
 						onUpgrade={ () => window.open( urls.upgradeUrl, '_blank' ) }

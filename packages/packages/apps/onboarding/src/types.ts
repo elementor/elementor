@@ -74,7 +74,7 @@ export interface OnboardingConfig {
 		comparePlans?: string;
 		exploreFeatures?: string;
 		createNewPage?: string;
-		upgradeUrl?: string;
+		upgradeUrl?: string | null;
 	};
 }
 
@@ -96,6 +96,7 @@ export interface OnboardingState {
 	userName: string;
 	shouldShowProInstallScreen: boolean;
 	hasProInstallScreenDismissed: boolean;
+	isProInstalled: boolean;
 	urls: {
 		dashboard: string;
 		editor: string;
@@ -103,6 +104,6 @@ export interface OnboardingState {
 		comparePlans?: string;
 		exploreFeatures?: string;
 		createNewPage?: string;
-		upgradeUrl?: string;
+		upgradeUrl?: string | null;
 	};
 }

@@ -19,6 +19,7 @@ export {
 	setGuest,
 	setShouldShowProInstallScreen,
 	dismissProInstallScreen,
+	markProInstalled,
 } from './slice';
 
 export {
@@ -43,4 +44,5 @@ export {
 	selectHasPassedLogin,
 	selectHasProInstallScreenDismissed,
 	selectShouldShowProInstall,
+	selectIsProInstalled,
 } from './selectors';
