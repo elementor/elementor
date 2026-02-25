@@ -1,0 +1,33 @@
+{
+    "$$type": "overrides",
+    "value": [
+        {
+            "$$type": "override",
+            "value": {
+                "override_key": "prop-uuid-1",
+                "override_value": {
+                    "$$type": "string",
+                    "value": "First override text"
+                },
+                "schema_source": {
+                    "type": "component",
+                    "id": 123
+                }
+            }
+        },
+        {
+            "$$type": "override",
+            "value": {
+                "override_key": "prop-uuid-3",
+                "override_value": {
+                    "$$type": "string",
+                    "value": "Third override text"
+                },
+                "schema_source": {
+                    "type": "component",
+                    "id": 123
+                }
+            }
+        }
+    ]
+}

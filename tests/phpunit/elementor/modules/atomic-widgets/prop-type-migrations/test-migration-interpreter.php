@@ -866,4 +866,52 @@ class Test_Migration_Interpreter extends Elementor_Test_Base {
 		// Act
 		Migration_Interpreter::run( $migration, $data );
 	}
+
+
+	public function test_associative_to_indexed_array_converts_associative_array_to_indexed(){
+		// Arrange
+		$data = [
+			'$$type' => 'overrides',
+			'value' => [
+				'1' => [ '$$type' => 'override', 'value' => [ 'key' => 'first' ] ],
+				'3' => [ '$$type' => 'override', 'value' => [ 'key' => 'second' ] ],
+			],
+		];
+		$migration = [
+			'up' => [
+				[ 'op' => [ 'fn' => 'associative_to_indexed_array', 'path' => 'value' ] ],
+			],
+		];
+
+		// Act
+		$result = Migration_Interpreter::run($migration, $data);
+
+		// Assert
+		$expected_json = '{"$$type":"overrides","value":[{"$$type":"override","value":{"key":"first"}},{"$$type":"override","value":{"key":"second"}}]}';
+		$this->assertEquals($expected_json, json_encode($result));
+	}
+
+	public function test_associative_to_indexed_array_preserves_already_indexed_array()
+	{
+		// Arrange
+		$data = [
+			'$$type' => 'overrides',
+			'value' => [
+				[ '$$type' => 'override', 'value' => [ 'key' => 'first' ] ],
+				[ '$$type' => 'override', 'value' => [ 'key' => 'second' ] ],
+			],
+		];
+		$migration = [
+			'up' => [
+				[ 'op' => [ 'fn' => 'associative_to_indexed_array', 'path' => 'value' ] ],
+			],
+		];
+
+		// Act
+		$result = Migration_Interpreter::run($migration, $data);
+
+		// Assert
+		$expected_json = '{"$$type":"overrides","value":[{"$$type":"override","value":{"key":"first"}},{"$$type":"override","value":{"key":"second"}}]}';
+		$this->assertEquals($expected_json, json_encode($result));
+	}
 }

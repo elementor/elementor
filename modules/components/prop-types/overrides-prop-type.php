@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Overrides_Prop_Type extends Array_Prop_Type {
 	public static function get_key(): string {
-		return 'overrides';
+		return 'overrides-v2';
 	}
 
 	protected function define_item_type(): Prop_Type {

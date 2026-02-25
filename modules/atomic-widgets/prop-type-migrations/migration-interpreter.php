@@ -88,6 +88,10 @@ class Migration_Interpreter {
 			case 'move':
 				self::execute_move( $op, $data );
 				break;
+
+			case 'associative_to_indexed_array':
+				self::execute_associative_to_indexed_array( $path, $data );
+				break;
 		}
 	}
 
@@ -136,6 +140,22 @@ class Migration_Interpreter {
 		if ( $clean ) {
 			self::execute_delete( $data, $src, true );
 		}
+	}
+
+	private static function execute_associative_to_indexed_array( string $path, array &$data ): void {
+		$value = Path_Resolver::get( $path, $data );
+
+		if ( null === $value || ! is_array( $value ) ) {
+			return;
+		}
+
+		if ( empty( $value ) ) {
+			return;
+		}
+
+		$indexed = array_values( $value );
+
+		self::set_at_path( $data, $path, $indexed );
 	}
 
 	private static function check_condition( array $condition, array $wildcard_values, array $data ): bool {

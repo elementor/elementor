@@ -190,6 +190,52 @@ Move nested object structure
 { "op": { "fn": "move", "src": "value.settings", "dest": "value.config.settings" } }
 ```
 
+### Associative to Indexed Array
+
+`associative_to_indexed_array` converts an associative array to an indexed array by reordering keys to sequential numeric indices (0, 1, 2, ...). This is useful for fixing corrupted array structures where keys are non-sequential.
+
+Params: None
+
+#### Usage
+
+Fix corrupted array with non-sequential keys
+
+```json
+{ "op": { "fn": "associative_to_indexed_array", "path": "value" } }
+```
+
+Fix nested array
+
+```json
+{ "op": { "fn": "associative_to_indexed_array", "path": "settings.items.value" } }
+```
+
+**Before**:
+
+```json
+{
+  "$$type": "overrides",
+  "value": {
+    "1": { "$$type": "override", "value": "first" },
+    "3": { "$$type": "override", "value": "second" }
+  }
+}
+```
+
+**After**:
+
+```json
+{
+  "$$type": "overrides",
+  "value": [
+    { "$$type": "override", "value": "first" },
+    { "$$type": "override", "value": "second" }
+  ]
+}
+```
+
+**Note**: This operation only affects arrays with non-sequential keys. Already indexed arrays remain unchanged.
+
 ## Examples
 
 ### Widget Key Migration: Rename Settings Key

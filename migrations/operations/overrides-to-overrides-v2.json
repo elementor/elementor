@@ -1,0 +1,26 @@
+{
+  "up": [
+    {
+      "op": {
+        "fn": "associative_to_indexed_array",
+        "path": "value"
+      }
+    },
+    {
+      "op": {
+        "fn": "set",
+        "path": "$$type",
+        "value": "overrides-v2"
+      }
+    }
+  ],
+  "down": [
+    {
+      "op": {
+        "fn": "set",
+        "path": "$$type",
+        "value": "overrides"
+      }
+    }
+  ]
+}
