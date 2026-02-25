@@ -7,7 +7,7 @@ export { useElementChildren, type ElementChildren, type ElementModel } from './h
 export { useElementEditorSettings } from './hooks/use-element-editor-settings';
 export { useParentElement } from './hooks/use-parent-element';
 export { useSelectedElement } from './hooks/use-selected-element';
-export { useSelectedElementSetting, useSelectedElementSettings } from './hooks/use-selected-element-setting';
+export { useSelectedElementSettings } from './hooks/use-selected-element-setting';
 
 // utils
 export { createElement, type CreateElementParams } from './sync/create-element';
