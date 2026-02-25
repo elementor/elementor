@@ -15,7 +15,7 @@ import {
 type PromotionPopoverCardProps = {
 	title: string;
 	content: string;
-	ctaUrl: string;
+	ctaUrl?: string;
 	ctaText?: string;
 	onClose: ( e: MouseEvent ) => void;
 };
