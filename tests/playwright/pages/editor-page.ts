@@ -126,10 +126,10 @@ export default class EditorPage extends BasePage {
 
 		templateData = this.fixAtomicWidgetSettings( templateData );
 
-		await this.page.evaluate( ( data ) => {
+		await this.page.evaluate( async ( data ) => {
 			const model = new Backbone.Model( { title: 'test' } );
 
-			window.$e.run( 'document/elements/import', {
+			await window.$e.run( 'document/elements/import', {
 				data,
 				model,
 				options: {
