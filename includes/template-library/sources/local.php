@@ -1081,9 +1081,9 @@ class Source_Local extends Source_Base {
 
 	public function redirect_categories_page_to_saved_templates_page() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$taxonomy = $_GET['taxonomy'] ?? '';
+		$taxonomy = sanitize_key( wp_unslash( $_GET['taxonomy'] ?? '' ) );
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$post_type = $_GET['post_type'] ?? '';
+		$post_type = sanitize_key( wp_unslash( $_GET['post_type'] ?? '' ) );
 		$is_categories_page = 'edit-tags.php' === $GLOBALS['pagenow']
 			&& self::TAXONOMY_CATEGORY_SLUG === $taxonomy
 			&& self::CPT === $post_type;
