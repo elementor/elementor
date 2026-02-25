@@ -65,6 +65,9 @@ declare global {
 				urls?: {
 					assets?: string;
 				};
+				editor_events?: {
+					can_send_events?: boolean;
+				};
 			};
 		};
 		elementor?: {

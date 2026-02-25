@@ -17,6 +17,7 @@ import { SiteFeatures } from '../steps/screens/site-features';
 import { ThemeSelection } from '../steps/screens/theme-selection';
 import { getStepVisualConfig } from '../steps/step-visuals';
 import { StepId } from '../types';
+import onboardingEventManager from '../utils/onboarding-events';
 import { BaseLayout } from './ui/base-layout';
 import { CompletionScreen } from './ui/completion-screen';
 import { Footer } from './ui/footer';
@@ -60,6 +61,12 @@ export function AppContent( { onClose }: AppContentProps ) {
 			actions.clearUnexpectedExit();
 		}
 	}, [ hadUnexpectedExit, actions ] );
+
+	useEffect( () => {
+		if ( hasPassedLogin ) {
+			onboardingEventManager.trackOnboardingStarted();
+		}
+	}, [ hasPassedLogin ] );
 
 	const checkProInstallScreen = useCheckProInstallScreen();
 

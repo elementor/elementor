@@ -37,6 +37,7 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
+    "@elementor/events": "4.0.0",
     "@elementor/icons": "1.68.0",
     "@elementor/query": "4.0.0",
     "@elementor/store": "4.0.0",

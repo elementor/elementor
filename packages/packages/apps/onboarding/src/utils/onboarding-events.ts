@@ -1,0 +1,43 @@
+import { canSendEvents, safeDispatch } from '@elementor/events';
+import onboardingEventsConfig from './onboarding-events-config';
+
+class OnboardingEventManager {
+	sentEvents = new Set< string >();
+	EVENT_CONFIGS = onboardingEventsConfig;
+
+	send( eventKey: string, payloadOverrides: Record< string, unknown > = {} ): boolean {
+		const config = this.EVENT_CONFIGS[ eventKey ];
+		if ( ! config ) {
+			return false;
+		}
+
+		if ( config.once && this.sentEvents.has( eventKey ) ) {
+			return false;
+		}
+
+		if ( ! canSendEvents() ) {
+			return false;
+		}
+
+		const result = safeDispatch( config.eventName, { ...config.payload, ...payloadOverrides } );
+
+		if ( result !== false && config.once ) {
+			this.sentEvents.add( eventKey );
+		}
+
+		return result;
+	}
+
+	trackOnboardingStarted() {
+		return this.send( 'ONBOARDING_STARTED' );
+	}
+
+	onConnected() {
+		this.trackOnboardingStarted();
+	}
+}
+
+const onboardingEventManager = new OnboardingEventManager();
+
+export { OnboardingEventManager };
+export default onboardingEventManager;
