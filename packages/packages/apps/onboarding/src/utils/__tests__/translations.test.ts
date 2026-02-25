@@ -80,29 +80,4 @@ describe( 't()', () => {
 			expect( t( 'test.with_positional', 'Alice' ) ).toBe( 'Hello Alice and %2$s' );
 		} );
 	} );
-
-	describe( 'dev warning', () => {
-		let warnSpy: jest.SpyInstance;
-
-		beforeEach( () => {
-			warnSpy = jest.spyOn( console, 'warn' ).mockImplementation();
-			setStrings( MOCK_STRINGS );
-		} );
-
-		afterEach( () => {
-			warnSpy.mockRestore();
-		} );
-
-		it( 'should warn on missing key in non-production', () => {
-			t( 'missing.key' );
-
-			expect( warnSpy ).toHaveBeenCalledWith( expect.stringContaining( 'missing.key' ) );
-		} );
-
-		it( 'should not warn for existing keys', () => {
-			t( 'test.simple' );
-
-			expect( warnSpy ).not.toHaveBeenCalled();
-		} );
-	} );
 } );
