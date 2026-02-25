@@ -16,9 +16,9 @@ class Global_Classes {
 	private function __construct( array $data = [], array $order = [] ) {
 		$this->items = Collection::make( $data );
 		$this->order = Collection::make( $order );
-		$this->ordered_items = $this->items->map( function( $item ) {
-			return $item;
-		});
+		$this->ordered_items = $this->order
+			->map( fn( $id ) => $data[ $id ] ?? null )
+			->filter( fn( $item ) => null !== $item );
 	}
 
 	public function get_items() {

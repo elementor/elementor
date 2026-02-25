@@ -1,5 +1,5 @@
 import { type Dispatch, type SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
-import { type BreakpointId, getBreakpoints } from '@elementor/editor-responsive';
+import { type BreakpointId, useBreakpoints } from '@elementor/editor-responsive';
 import { isClassState, type StyleDefinition, type StyleDefinitionClassState } from '@elementor/editor-styles';
 import { type StylesProvider, stylesRepository } from '@elementor/editor-styles-repository';
 import { registerDataHook } from '@elementor/editor-v1-adapters';
@@ -30,6 +30,7 @@ type ProviderAndStyleItemsMap = Record< string, ProviderAndStyleItems >;
 export function useStyleItems() {
 	const resolve = useStylePropResolver();
 	const renderStyles = useStyleRenderer( resolve );
+	const breakpoints = useBreakpoints();
 
 	const [ styleItems, setStyleItems ] = useState< ProviderAndStyleItemsMap >( {} );
 	const styleItemsCacheRef = useRef< Map< string, StyleItemsCache > >( new Map() );
@@ -74,17 +75,14 @@ export function useStyleItems() {
 		} );
 	} );
 
-	const breakpointsOrder = getBreakpoints().map( ( breakpoint ) => breakpoint.id );
-
 	return useMemo(
 		() =>
 			Object.values( styleItems )
 				.sort( sortByProviderPriority )
 				.flatMap( ( { items } ) => items )
 				.sort( sortByStateType )
-				.sort( sortByBreakpoint( breakpointsOrder ) ),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[ styleItems, breakpointsOrder.join( '-' ) ]
+				.sort( sortByBreakpoint( breakpoints.map( ( breakpoint ) => breakpoint.id ) ) ),
+		[ styleItems, breakpoints ]
 	);
 }
 
@@ -151,9 +149,14 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, cach
 	async function updateItems( current: StylesCollection, previous: StylesCollection, signal: AbortSignal ) {
 		const changedIds = getChangedStyleIds( current, previous );
 
+		cache.orderedIds = provider.actions
+			.all()
+			.map( ( style ) => style.id )
+			.reverse();
+
 		if ( changedIds.length > 0 ) {
 			const changedStyles = changedIds
-				.map( ( id ) => current[ id ] )
+				.map( ( id ) => provider.actions.get( id ) )
 				.filter( ( style ): style is StyleDefinition => !! style )
 				.map( ( style ) => ( {
 					...style,
@@ -185,6 +188,7 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, cach
 
 		return renderStyles( { styles: breakToBreakpoints( styles ), signal } ).then( ( rendered ) => {
 			rebuildCache( cache, allStyles, rendered );
+
 			return rendered;
 		} );
 	}
@@ -233,16 +237,10 @@ function getChangedStyleIds( current: StylesCollection, previous: StylesCollecti
 }
 
 function getOrderedItems( cache: StyleItemsCache ): StyleItem[] {
-	const result: StyleItem[] = [];
-
-	for ( const id of cache.orderedIds ) {
-		const items = cache.itemsById.get( id );
-		if ( items ) {
-			result.push( ...items );
-		}
-	}
-
-	return result;
+	return cache.orderedIds
+		.map( ( id ) => cache.itemsById.get( id ) )
+		.filter( ( items ): items is StyleItem[] => items !== undefined )
+		.flat();
 }
 
 function updateCacheItems( cache: StyleItemsCache, rendered: StyleItem[] ): void {
@@ -262,7 +260,7 @@ function updateCacheItems( cache: StyleItemsCache, rendered: StyleItem[] ): void
 }
 
 function rebuildCache( cache: StyleItemsCache, allStyles: StyleDefinition[], rendered: StyleItem[] ): void {
-	cache.orderedIds = allStyles.map( ( style ) => style.id );
+	cache.orderedIds = allStyles.map( ( style ) => style.id ).reverse();
 	cache.itemsById.clear();
 
 	for ( const item of rendered ) {
