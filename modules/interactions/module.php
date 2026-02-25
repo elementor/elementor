@@ -4,6 +4,7 @@ namespace Elementor\Modules\Interactions;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\Interactions\Props\Interaction_Item_Prop_Type;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -98,7 +99,16 @@ class Module extends BaseModule {
 			'constants' => $this->get_presets()->defaults(),
 			'animationOptions' => $this->get_presets()->list(),
 			'breakpoints' => $this->get_active_breakpoints(),
+			'itemSchema' => $this->get_item_schema(),
 		];
+	}
+
+	private function get_item_schema() {
+		$item_prop = Interaction_Item_Prop_Type::make();
+		if ( ! Utils::has_pro() ) {
+			$item_prop->set_shape( $item_prop->get_filtered_shape_for_pro() );
+		}
+		return $item_prop;
 	}
 
 	private function get_active_breakpoints() {
