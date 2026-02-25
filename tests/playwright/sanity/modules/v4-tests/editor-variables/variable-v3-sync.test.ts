@@ -15,7 +15,8 @@ const initTemplate = async ( page: Page, testInfo: TestInfo, apiRequests: ApiReq
 	return { wpAdminPage, editorPage };
 };
 
-test.describe( 'V4-V3 Color Variable Sync @v4-tests', () => {
+// TODO: https://elementor.atlassian.net/browse/ED-23110 - To restore this
+test.describe.skip( 'V4-V3 Color Variable Sync @v4-tests', () => {
 	let wpAdminPage: WpAdminPage;
 	let editor: EditorPage;
 	let context: BrowserContext;

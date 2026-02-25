@@ -2,8 +2,8 @@ import { getV1DocumentsManager, setDocumentModifiedStatus } from '@elementor/edi
 import { getAllDescendants, type V1Element } from '@elementor/editor-elements';
 import { __dispatch as dispatch } from '@elementor/store';
 
-import { COMPONENT_WIDGET_TYPE } from '../../create-component-type';
-import { slice } from '../store';
+import { COMPONENT_WIDGET_TYPE } from '../../../create-component-type';
+import { slice } from '../../../store/store';
 
 const TITLE_EXTERNAL_CHANGE_COMMAND = 'title_external_change';
 
