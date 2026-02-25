@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 
 import { InteractionItemContextProvider } from '../contexts/interactions-item-context';
 import type { ElementInteractions, InteractionItemPropValue, InteractionItemValue } from '../types';
-import { isProInteraction } from '../utils/is-pro-interaction';
+import { isSupportedInteraction } from '../utils/is-supported-interaction';
 import { buildDisplayLabel, createDefaultInteractionItem, extractString } from '../utils/prop-value-utils';
 import { InteractionsListItem } from './interactions-list-item';
 import { ProInteractionDisabledContent } from './pro-interaction-disabled-content';
@@ -117,7 +117,7 @@ export function InteractionsList( props: InteractionListProps ) {
 				addButtonInfotipContent={ infotipContent }
 				itemSettings={ {
 					initialValues: createDefaultInteractionItem(),
-					isOpenDisabled: ( value: InteractionItemPropValue ) => isProInteraction( value ),
+					isOpenDisabled: ( value: InteractionItemPropValue ) => ! isSupportedInteraction( value ),
 					onDisabledItemClick: ( value, anchorEl ) => {
 						setPromoPopover( { open: true, anchorEl } );
 					},
@@ -125,13 +125,21 @@ export function InteractionsList( props: InteractionListProps ) {
 					Icon: () => null,
 					Content: InteractionsListItem,
 					actions: ( value: InteractionItemPropValue ) => {
+						const notSupported = ! isSupportedInteraction( value );
+
+						const playHandler = notSupported
+							? undefined
+							: () => {
+									onPlayInteraction( extractString( value.value.interaction_id ) );
+							  };
+
 						return (
 							<Tooltip key="preview" placement="top" title={ __( 'Preview', 'elementor' ) }>
 								<IconButton
 									aria-label={ __( 'Play interaction', 'elementor' ) }
 									size="tiny"
-									onClick={ () => onPlayInteraction( extractString( value.value.interaction_id ) ) }
-									disabled={ isProInteraction( value ) }
+									onClick={ playHandler }
+									disabled={ notSupported }
 								>
 									<PlayerPlayIcon fontSize="tiny" />
 								</IconButton>

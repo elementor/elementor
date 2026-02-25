@@ -1,6 +1,6 @@
 import { getInteractionsControlOptions } from '../interactions-controls-registry';
 import type { InteractionItemPropValue } from '../types';
-import { isProInteraction } from '../utils/is-pro-interaction';
+import { isSupportedInteraction } from '../utils/is-supported-interaction';
 import { createInteractionItemValue } from './utils';
 
 jest.mock( '../interactions-controls-registry', () => ( {
@@ -14,12 +14,12 @@ const wrapAsItem = ( value: ReturnType< typeof createInteractionItemValue > ): I
 	value,
 } );
 
-describe( 'isProInteraction', () => {
+describe( 'isSupportedInteraction', () => {
 	afterEach( () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'should return false when trigger and easing are both in registered options', () => {
+	it( 'should allow interaction when trigger and easing are both in registered options', () => {
 		mockedGetOptions.mockImplementation( ( type ) => {
 			if ( type === 'trigger' ) {
 				return [ 'load', 'scrollIn', 'scrollOut' ];
@@ -32,26 +32,23 @@ describe( 'isProInteraction', () => {
 
 		const item = wrapAsItem( createInteractionItemValue( { trigger: 'load', easing: 'easeIn' } ) );
 
-		expect( isProInteraction( item ) ).toBe( false );
+		expect( isSupportedInteraction( item ) ).toBe( true );
 	} );
 
-	it( 'should return true when trigger is NOT in registered options (pro trigger)', () => {
+	it( 'should not allow interaction when trigger is NOT in registered options (pro trigger)', () => {
 		mockedGetOptions.mockImplementation( ( type ) => {
 			if ( type === 'trigger' ) {
 				return [ 'load', 'scrollIn' ];
-			}
-			if ( type === 'easing' ) {
-				return [ 'easeIn', 'easeOut' ];
 			}
 			return [];
 		} );
 
 		const item = wrapAsItem( createInteractionItemValue( { trigger: 'hover' } ) );
 
-		expect( isProInteraction( item ) ).toBe( true );
+		expect( isSupportedInteraction( item ) ).toBe( false );
 	} );
 
-	it( 'should return true when easing is NOT in registered options (pro easing)', () => {
+	it( 'should not allow interaction when easing is NOT in registered options (pro easing)', () => {
 		mockedGetOptions.mockImplementation( ( type ) => {
 			if ( type === 'trigger' ) {
 				return [ 'load', 'scrollIn' ];
@@ -64,10 +61,10 @@ describe( 'isProInteraction', () => {
 
 		const item = wrapAsItem( createInteractionItemValue( { trigger: 'load', easing: 'proCustomEasing' } ) );
 
-		expect( isProInteraction( item ) ).toBe( true );
+		expect( isSupportedInteraction( item ) ).toBe( false );
 	} );
 
-	it( 'should return true when both trigger and easing are pro', () => {
+	it( 'should not allow interaction when both trigger and easing are pro', () => {
 		mockedGetOptions.mockImplementation( ( type ) => {
 			if ( type === 'trigger' ) {
 				return [ 'load' ];
@@ -80,7 +77,7 @@ describe( 'isProInteraction', () => {
 
 		const item = wrapAsItem( createInteractionItemValue( { trigger: 'click', easing: 'proCustomEasing' } ) );
 
-		expect( isProInteraction( item ) ).toBe( true );
+		expect( isSupportedInteraction( item ) ).toBe( false );
 	} );
 
 	it( 'should skip checks when control options are empty (no filtering)', () => {
@@ -88,7 +85,7 @@ describe( 'isProInteraction', () => {
 
 		const item = wrapAsItem( createInteractionItemValue( { trigger: 'anyTrigger', easing: 'anyEasing' } ) );
 
-		expect( isProInteraction( item ) ).toBe( false );
+		expect( isSupportedInteraction( item ) ).toBe( true );
 	} );
 
 	it( 'should skip trigger check when trigger options are empty but flag pro easing', () => {
@@ -104,7 +101,7 @@ describe( 'isProInteraction', () => {
 
 		const item = wrapAsItem( createInteractionItemValue( { trigger: 'anyTrigger', easing: 'proEasing' } ) );
 
-		expect( isProInteraction( item ) ).toBe( true );
+		expect( isSupportedInteraction( item ) ).toBe( false );
 	} );
 
 	it( 'should skip easing check when easing options are empty but flag pro trigger', () => {
@@ -120,7 +117,7 @@ describe( 'isProInteraction', () => {
 
 		const item = wrapAsItem( createInteractionItemValue( { trigger: 'hover', easing: 'anyEasing' } ) );
 
-		expect( isProInteraction( item ) ).toBe( true );
+		expect( isSupportedInteraction( item ) ).toBe( false );
 	} );
 
 	it( 'should flag as pro only when a concrete trigger value is outside the registered set', () => {
@@ -135,10 +132,10 @@ describe( 'isProInteraction', () => {
 		} );
 
 		const freeItem = wrapAsItem( createInteractionItemValue( { trigger: 'scrollIn', easing: 'easeOut' } ) );
-		expect( isProInteraction( freeItem ) ).toBe( false );
+		expect( isSupportedInteraction( freeItem ) ).toBe( true );
 
 		const proItem = wrapAsItem( createInteractionItemValue( { trigger: 'click', easing: 'easeOut' } ) );
-		expect( isProInteraction( proItem ) ).toBe( true );
+		expect( isSupportedInteraction( proItem ) ).toBe( false );
 	} );
 
 	it( 'should not flag as pro when easing is empty (missing config)', () => {
@@ -154,7 +151,7 @@ describe( 'isProInteraction', () => {
 
 		const item = wrapAsItem( createInteractionItemValue( { trigger: 'load', easing: '' } ) );
 
-		expect( isProInteraction( item ) ).toBe( false );
+		expect( isSupportedInteraction( item ) ).toBe( true );
 	} );
 
 	it( 'should flag as pro only when a concrete easing value is outside the registered set', () => {
@@ -169,9 +166,9 @@ describe( 'isProInteraction', () => {
 		} );
 
 		const freeItem = wrapAsItem( createInteractionItemValue( { trigger: 'load', easing: 'easeIn' } ) );
-		expect( isProInteraction( freeItem ) ).toBe( false );
+		expect( isSupportedInteraction( freeItem ) ).toBe( true );
 
 		const proItem = wrapAsItem( createInteractionItemValue( { trigger: 'load', easing: 'cubicBezier' } ) );
-		expect( isProInteraction( proItem ) ).toBe( true );
+		expect( isSupportedInteraction( proItem ) ).toBe( false );
 	} );
 } );

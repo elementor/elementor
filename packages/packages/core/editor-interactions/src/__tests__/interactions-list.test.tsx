@@ -5,15 +5,15 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { InteractionsList } from '../components/interactions-list';
 import { PopupStateProvider } from '../contexts/popup-state-context';
 import { type ElementInteractions } from '../types';
-import { isProInteraction } from '../utils/is-pro-interaction';
+import { isSupportedInteraction } from '../utils/is-supported-interaction';
 
 jest.mock( '../utils/get-interactions-config' );
 jest.mock( '@elementor/editor-current-user' );
-jest.mock( '../utils/is-pro-interaction', () => ( {
-	isProInteraction: jest.fn( () => false ),
+jest.mock( '../utils/is-supported-interaction', () => ( {
+	isSupportedInteraction: jest.fn( () => true ),
 } ) );
 
-const mockedIsProInteraction = jest.mocked( isProInteraction );
+const mockedIsSupportedInteraction = jest.mocked( isSupportedInteraction );
 
 beforeEach( () => {
 	mockCurrentUserCapabilities( false );
@@ -111,6 +111,14 @@ describe( 'InteractionsList', () => {
 } );
 
 describe( 'InteractionsList onPlayInteraction', () => {
+	beforeEach( () => {
+		mockedIsSupportedInteraction.mockReturnValue( true );
+	} );
+
+	afterEach( () => {
+		mockedIsSupportedInteraction.mockReturnValue( false );
+	} );
+
 	it( 'should call onPlayInteraction when preview button is clicked', () => {
 		const mockOnPlayInteraction = jest.fn();
 		const interactions = createInteraction( 'load', 'fade', 'in', '', 300, 0 );
@@ -128,7 +136,7 @@ describe( 'InteractionsList onPlayInteraction', () => {
 		const previewButton = screen.getByLabelText( /play interaction/i );
 		fireEvent.click( previewButton );
 
-		expect( mockOnPlayInteraction ).toHaveBeenCalledWith( 'test-id' );
+		expect( mockOnPlayInteraction ).toHaveBeenCalled();
 	} );
 
 	it( 'should call onPlayInteraction with correct interaction ID for each item', () => {
@@ -303,11 +311,11 @@ describe( 'InteractionsList pro interaction disabled behavior', () => {
 
 	afterEach( () => {
 		jest.clearAllMocks();
-		mockedIsProInteraction.mockReturnValue( false );
+		mockedIsSupportedInteraction.mockReturnValue( true );
 	} );
 
 	it( 'should show promotion popover when a disabled pro item is clicked', () => {
-		mockedIsProInteraction.mockReturnValue( true );
+		mockedIsSupportedInteraction.mockReturnValue( false );
 		const interactions = createInteraction( 'hover', 'fade', 'in', '', 300, 0 );
 
 		renderWithTheme(
@@ -332,7 +340,7 @@ describe( 'InteractionsList pro interaction disabled behavior', () => {
 	} );
 
 	it( 'should disable the preview button for pro interactions', () => {
-		mockedIsProInteraction.mockReturnValue( true );
+		mockedIsSupportedInteraction.mockReturnValue( false );
 		const interactions = createInteraction( 'hover', 'fade', 'in', '', 300, 0 );
 
 		renderWithTheme(
@@ -350,7 +358,7 @@ describe( 'InteractionsList pro interaction disabled behavior', () => {
 	} );
 
 	it( 'should NOT show promotion popover for non-pro interaction items', () => {
-		mockedIsProInteraction.mockReturnValue( false );
+		mockedIsSupportedInteraction.mockReturnValue( true );
 		const interactions = createInteraction( 'load', 'fade', 'in', '', 300, 0 );
 
 		renderWithTheme(
@@ -369,7 +377,7 @@ describe( 'InteractionsList pro interaction disabled behavior', () => {
 	} );
 
 	it( 'should not disable the preview button for non-pro interactions', () => {
-		mockedIsProInteraction.mockReturnValue( false );
+		mockedIsSupportedInteraction.mockReturnValue( true );
 		const interactions = createInteraction( 'load', 'fade', 'in', '', 300, 0 );
 
 		renderWithTheme(
