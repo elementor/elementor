@@ -1,6 +1,6 @@
 import { __getState as getState } from '@elementor/store';
 
-import { selectComponents } from '../store/store';
+import { selectComponents } from '../../store/store';
 import { createSubmitComponentSchema } from './component-form-schema';
 
 type ValidationResult = { isValid: true; errorMessage: null } | { isValid: false; errorMessage: string };
