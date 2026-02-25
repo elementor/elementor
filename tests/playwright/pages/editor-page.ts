@@ -126,10 +126,10 @@ export default class EditorPage extends BasePage {
 
 		templateData = this.fixAtomicWidgetSettings( templateData );
 
-		await this.page.evaluate( async ( data ) => {
+		await this.page.evaluate( ( data ) => {
 			const model = new Backbone.Model( { title: 'test' } );
 
-			await window.$e.run( 'document/elements/import', {
+			window.$e.run( 'document/elements/import', {
 				data,
 				model,
 				options: {
@@ -138,6 +138,15 @@ export default class EditorPage extends BasePage {
 				},
 			} );
 		}, templateData );
+
+		await this.page.waitForFunction( () => {
+			try {
+				type ElWindow = Window & { elementor?: { documents?: { getCurrent(): { editor: { isChanged: boolean } } } } };
+				return true === ( window as ElWindow ).elementor?.documents?.getCurrent()?.editor?.isChanged;
+			} catch {
+				return false;
+			}
+		}, { timeout: timeouts.heavyAction, polling: 250 } );
 
 		const frame = await this.waitForPreviewFrame();
 		await frame
