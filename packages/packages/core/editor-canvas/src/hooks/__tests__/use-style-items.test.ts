@@ -231,4 +231,106 @@ describe( 'useStyleItems', () => {
 			{ id: 'style1', breakpoint: 'mobile' },
 		] );
 	} );
+
+	it( 'should use cached items when no changes detected', async () => {
+		// Arrange.
+		const renderStylesMock = jest.fn().mockImplementation( ( { styles } ) =>
+			Promise.resolve(
+				styles.map( ( style: StyleDefinition ) => ( {
+					id: style.id,
+					breakpoint: style?.variants[ 0 ]?.meta.breakpoint || 'desktop',
+				} ) )
+			)
+		);
+
+		jest.mocked( useStyleRenderer ).mockReturnValue( renderStylesMock );
+
+		const mockProvider = createMockStylesProvider( { key: 'provider1', priority: 1 }, [
+			createMockStyleDefinition( { id: 'style1' } ),
+			createMockStyleDefinition( { id: 'style2' } ),
+		] );
+
+		jest.mocked( stylesRepository ).getProviders.mockReturnValue( [ mockProvider ] );
+
+		// Act - initial render.
+		const { result } = renderHook( () => useStyleItems() );
+
+		await act( async () => {
+			mockProvider.actions.updateProps?.( {
+				id: 'style1',
+				meta: { breakpoint: null, state: null },
+				props: { a: 1 },
+			} );
+		} );
+
+		// Assert.
+		expect( renderStylesMock ).toHaveBeenCalledTimes( 1 );
+		expect( result.current ).toHaveLength( 2 );
+
+		// Act - trigger update with same props (updateProps mutates in place, same reference).
+		renderStylesMock.mockClear();
+
+		await act( async () => {
+			mockProvider.actions.updateProps?.( {
+				id: 'style1',
+				meta: { breakpoint: null, state: null },
+				props: { a: 1 },
+			} );
+		} );
+
+		// Assert - renderStyles should not be called when no changes detected.
+		expect( renderStylesMock ).not.toHaveBeenCalled();
+		expect( result.current ).toHaveLength( 2 );
+	} );
+
+	it( 'should only re-render changed styles on differential update', async () => {
+		// Arrange.
+		const renderStylesMock = jest.fn().mockImplementation( ( { styles } ) =>
+			Promise.resolve(
+				styles.map( ( style: StyleDefinition ) => ( {
+					id: style.id,
+					breakpoint: style?.variants[ 0 ]?.meta.breakpoint || 'desktop',
+				} ) )
+			)
+		);
+
+		jest.mocked( useStyleRenderer ).mockReturnValue( renderStylesMock );
+
+		const mockProvider = createMockStylesProvider( { key: 'provider1', priority: 1 }, [
+			createMockStyleDefinition( { id: 'style1' } ),
+			createMockStyleDefinition( { id: 'style2' } ),
+			createMockStyleDefinition( { id: 'style3' } ),
+		] );
+
+		jest.mocked( stylesRepository ).getProviders.mockReturnValue( [ mockProvider ] );
+
+		// Act - initial render.
+		const { result } = renderHook( () => useStyleItems() );
+
+		await act( async () => {
+			mockProvider.actions.updateProps?.( {
+				id: 'style1',
+				meta: { breakpoint: null, state: null },
+				props: { a: 1 },
+			} );
+		} );
+
+		// Assert - initial render includes all styles.
+		expect( renderStylesMock ).toHaveBeenCalledTimes( 1 );
+		expect( renderStylesMock.mock.calls[ 0 ][ 0 ].styles ).toHaveLength( 3 );
+		expect( result.current ).toHaveLength( 3 );
+
+		// Act - update style2 using update action (creates new object reference).
+		renderStylesMock.mockClear();
+
+		await act( async () => {
+			mockProvider.actions.update?.( { id: 'style2', label: 'Updated Style 2' } );
+		} );
+
+		// Assert - only the changed style should be rendered.
+		expect( renderStylesMock ).toHaveBeenCalledTimes( 1 );
+		expect( renderStylesMock.mock.calls[ 0 ][ 0 ].styles ).toHaveLength( 1 );
+		expect( renderStylesMock.mock.calls[ 0 ][ 0 ].styles[ 0 ].id ).toBe( 'style2' );
+		expect( result.current ).toHaveLength( 3 );
+	} );
 } );
