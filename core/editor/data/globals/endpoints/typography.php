@@ -52,13 +52,13 @@ class Typography extends Base {
 				'id' => $id,
 			];
 
-		unset( $item['_id'], $item['title'] );
+			unset( $item['_id'], $item['title'] );
 
-		$result[ $id ]['value'] = $item;
+			$result[ $id ]['value'] = $item;
+		}
+
+		return apply_filters( 'elementor/globals/typography/items', $result );
 	}
-
-	return apply_filters( 'elementor/globals/typography/items', $result );
-}
 
 	protected function convert_db_format( $item ) {
 		$db_format = [
