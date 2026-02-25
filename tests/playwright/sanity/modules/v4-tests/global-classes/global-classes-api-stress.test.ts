@@ -9,7 +9,7 @@ import { deleteAllGlobalClasses, createGlobalClasses, getGlobalClasses } from '.
 /**
  * This is an initial set of stress tests, currently meant to be executed manually+locally (against a valid .env file)
  *
- * This test adds 100 global styles to a widget via the API
+ * This test adds 100 global styles via the API
  */
 
 const CLASS_COUNT = 100;
