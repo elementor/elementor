@@ -104,9 +104,6 @@ jobs:
                 TYPE="Internal:"
               fi
 
-              # Remove the type from PR_TITLE for the description part
-              DESCRIPTION=$(echo "$PR_TITLE" | sed 's/^[A-Za-z]*: *//')
-
               # Push the conflict branch
               if git push --force-with-lease origin "$BRANCH:$CONFLICT_BRANCH"; then
                 # Create draft PR with conflict information
@@ -120,7 +117,7 @@ jobs:
                   gh pr create \
                     --base "$TARGET" \
                     --head "$CONFLICT_BRANCH" \
-                    --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET} with conflicts ${DESCRIPTION}" \
+                    --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET} with conflicts" \
                     --body "⚠️ **Manual Resolution Required**
 
                   This cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch has conflicts that need manual resolution.
@@ -164,9 +161,6 @@ jobs:
               TYPE="Internal:"
             fi
 
-                        # Remove the type from PR_TITLE for the description part
-            DESCRIPTION=$(echo "$PR_TITLE" | sed 's/^[A-Za-z]*: *//')
-
             # Create PR via gh CLI (token already in env: GH_TOKEN)
             # Check if PR already exists
             if gh pr list --head "$BRANCH" --base "$TARGET" --state open | grep -q .; then
@@ -181,7 +175,7 @@ jobs:
               PR_URL=$(gh pr create \
                 --base "$TARGET" \
                 --head "$BRANCH" \
-                --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET} ${DESCRIPTION}" \
+                --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET}" \
                 --body "Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch.
 
                 **Source:** ${{ github.event.pull_request.head.repo.full_name }}
