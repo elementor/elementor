@@ -74,6 +74,7 @@ export interface OnboardingConfig {
 		comparePlans?: string;
 		exploreFeatures?: string;
 		createNewPage?: string;
+		upgradeUrl?: string;
 	};
 }
 
@@ -102,5 +103,6 @@ export interface OnboardingState {
 		comparePlans?: string;
 		exploreFeatures?: string;
 		createNewPage?: string;
+		upgradeUrl?: string;
 	};
 }

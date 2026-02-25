@@ -51,6 +51,7 @@ interface OnboardingConfig {
 		comparePlans?: string;
 		exploreFeatures?: string;
 		createNewPage?: string;
+		upgradeUrl?: string;
 	};
 }
 
@@ -101,6 +102,8 @@ const defaultConfig: OnboardingConfig = {
 		comparePlans: 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash',
 		exploreFeatures: 'https://elementor.com/features/?utm_source=onboarding&utm_medium=wp-dash',
 		createNewPage: 'https://test.local/wp-admin/edit.php?action=elementor_new_post&post_type=page',
+		upgradeUrl:
+			'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar',
 	},
 };
 
@@ -438,6 +441,27 @@ describe( 'App', () => {
 				expect( screen.queryByTestId( 'pro-install-screen' ) ).not.toBeInTheDocument();
 			} );
 			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'Upgrade button', () => {
+		it( 'should open the upgrade URL in a new tab when clicking Upgrade', () => {
+			// Arrange
+			const mockOpen = jest.fn();
+			window.open = mockOpen;
+
+			window.elementorAppConfig = createMockConfig( { isConnected: true } );
+
+			render( <App /> );
+
+			// Act
+			fireEvent.click( screen.getByText( 'Upgrade' ) );
+
+			// Assert
+			expect( mockOpen ).toHaveBeenCalledWith(
+				'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar',
+				'_blank'
+			);
 		} );
 	} );
 
