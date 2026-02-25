@@ -13,10 +13,10 @@ import { selectComponentByUid } from '../../../store/store';
 import { type ComponentFormValues, type PublishedComponent } from '../../../types';
 import { switchToComponent } from '../../../utils/switch-to-component';
 import { trackComponentEvent } from '../../../utils/tracking';
-import { findNonAtomicElementsInElement } from '../../prevent-non-atomic-nesting';
 import { createUnpublishedComponent } from '../../store/actions/create-unpublished-component';
+import { findNonAtomicElementsInElement } from '../../sync/prevent-non-atomic-nesting';
+import { createBaseComponentSchema, createSubmitComponentSchema } from '../../utils/component-form-schema';
 import { useForm } from './hooks/use-form';
-import { createBaseComponentSchema, createSubmitComponentSchema } from './utils/component-form-schema';
 import {
 	type ComponentEventData,
 	type ContextMenuEventOptions,
