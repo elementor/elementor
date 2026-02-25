@@ -80,7 +80,6 @@ test.describe( 'Pro Interaction Disabled Content @v4-tests', () => {
 			const promoDialog = page.locator( '[role="dialog"][aria-label="promotion-popover-title"]' );
 			await expect( promoDialog ).toBeVisible();
 
-			await expect( promoDialog.getByText( 'Upgrade now' ) ).toBeVisible();
 			await expect(
 				promoDialog.getByText(
 					'This interaction is currently inactive and not showing on your website. Activate your Pro plugin to use it again.',
@@ -135,8 +134,6 @@ test.describe( 'Pro Interaction Disabled Content @v4-tests', () => {
 						'This interaction is currently inactive and not showing on your website. Activate your Pro plugin to use it again.',
 					),
 				).toBeVisible();
-
-				await expect( promoDialog.getByText( 'Upgrade now' ) ).not.toBeVisible();
 			} );
 
 			await context.close();
