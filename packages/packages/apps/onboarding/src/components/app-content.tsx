@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { canSendEvents } from '@elementor/events';
 import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -17,6 +18,7 @@ import { SiteFeatures } from '../steps/screens/site-features';
 import { ThemeSelection } from '../steps/screens/theme-selection';
 import { getStepVisualConfig } from '../steps/step-visuals';
 import { StepId } from '../types';
+import type { OnboardingEventManager } from '../utils/onboarding-events';
 import { BaseLayout } from './ui/base-layout';
 import { CompletionScreen } from './ui/completion-screen';
 import { Footer } from './ui/footer';
@@ -42,6 +44,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 		totalSteps,
 		hadUnexpectedExit,
 		isLoading,
+		isConnected,
 		hasPassedLogin,
 		shouldShowProInstall,
 		choices,
@@ -51,9 +54,26 @@ export function AppContent( { onClose }: AppContentProps ) {
 	} = useOnboarding();
 
 	const [ isCompleting, setIsCompleting ] = useState( false );
+	const eventManagerRef = useRef< OnboardingEventManager | null >( null );
 
 	const updateProgress = useUpdateProgress();
 	const updateChoices = useUpdateChoices();
+
+	const maybeTrackEvent = useCallback( ( eventKey: string, payloadOverrides: Record< string, unknown > = {} ) => {
+		if ( ! canSendEvents() ) {
+			return;
+		}
+
+		if ( eventManagerRef.current ) {
+			eventManagerRef.current.send( eventKey, payloadOverrides );
+			return;
+		}
+
+		import( '../utils/onboarding-events' ).then( ( { default: onboardingEventManager } ) => {
+			eventManagerRef.current = onboardingEventManager;
+			onboardingEventManager.send( eventKey, payloadOverrides );
+		} );
+	}, [] );
 
 	useEffect( () => {
 		if ( hadUnexpectedExit ) {
@@ -61,13 +81,26 @@ export function AppContent( { onClose }: AppContentProps ) {
 		}
 	}, [ hadUnexpectedExit, actions ] );
 
+	useEffect( () => {
+		if ( isConnected ) {
+			maybeTrackEvent( 'ONBOARDING_STARTED' );
+		}
+	}, [ isConnected, maybeTrackEvent ] );
+
+	useEffect( () => {
+		if ( ! shouldShowProInstall ) {
+			maybeTrackEvent( 'OB_STEP_VIEWED', { target_value: stepId, location_l1: stepId } );
+		}
+	}, [ stepId, shouldShowProInstall, maybeTrackEvent ] );
+
 	const checkProInstallScreen = useCheckProInstallScreen();
 
 	const handleConnectSuccess = useCallback( async () => {
 		const result = await checkProInstallScreen();
 		actions.setShouldShowProInstallScreen( result.shouldShowProInstallScreen );
 		actions.setConnected( true );
-	}, [ actions, checkProInstallScreen ] );
+		maybeTrackEvent( 'OB_CONNECTED' );
+	}, [ actions, checkProInstallScreen, maybeTrackEvent ] );
 
 	const handleConnect = useElementorConnect( {
 		connectUrl: urls.connect,
