@@ -1,5 +1,10 @@
+import { DEFAULT_STRINGS } from './default-strings';
+
 function getStrings(): Record< string, string > {
-	return window.elementorAppConfig?.[ 'e-onboarding' ]?.strings ?? {};
+	return {
+		...DEFAULT_STRINGS,
+		...window.elementorAppConfig?.[ 'e-onboarding' ]?.strings,
+	};
 }
 
 export function t( key: string, ...args: string[] ): string {
