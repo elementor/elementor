@@ -57,8 +57,8 @@ export function ProPlanNotice( { planName }: LicenseNoticeProps ) {
 						fontSize: theme.spacing( 1.625 ),
 					} ) }
 				>
-					{ t( 'steps.site_features.plan_recommendation_prefix' ) }{ ' ' }
-					<strong>{ planName }</strong> { t( 'steps.site_features.plan_recommendation_suffix' ) }
+					{ t( 'steps.site_features.plan_recommendation_prefix' ) } <strong>{ planName }</strong>{ ' ' }
+					{ t( 'steps.site_features.plan_recommendation_suffix' ) }
 				</Typography>
 			</Stack>
 			<Button

@@ -40,15 +40,10 @@ export function ProInstall() {
 			</Typography>
 
 			<Typography variant="body2" align="center" color="text.secondary">
-				{ isInstalling
-					? t( 'pro_install.installing' )
-					: t( 'pro_install.subtitle' ) }
+				{ isInstalling ? t( 'pro_install.installing' ) : t( 'pro_install.subtitle' ) }
 			</Typography>
 
-			<ProLogo
-				src={ getOnboardingAssetUrl( 'install-pro-logo.png' ) }
-				alt={ t( 'pro_install.logo_alt' ) }
-			/>
+			<ProLogo src={ getOnboardingAssetUrl( 'install-pro-logo.png' ) } alt={ t( 'pro_install.logo_alt' ) } />
 
 			{ error && (
 				<Typography variant="body2" align="center" color="error">

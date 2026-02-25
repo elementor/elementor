@@ -10,7 +10,6 @@ import {
 } from '@elementor/icons';
 
 import { t } from '../../utils/translations';
-
 import OrganizationIcon from './organization-icon';
 
 export interface SiteAboutOption {
