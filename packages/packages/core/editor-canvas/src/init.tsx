@@ -1,5 +1,4 @@
 import { injectIntoLogic, injectIntoTop } from '@elementor/editor';
-import { init as initInteractionsRepository } from '@elementor/editor-interactions';
 import { getMCPByDomain } from '@elementor/editor-mcp';
 
 import { ClassesRename } from './components/classes-rename';
@@ -31,8 +30,6 @@ export function init() {
 	initLegacyViews();
 
 	initSettingsTransformers();
-
-	initInteractionsRepository();
 
 	injectIntoTop( {
 		id: 'elements-overlays',
