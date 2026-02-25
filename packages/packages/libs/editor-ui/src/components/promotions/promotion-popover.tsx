@@ -83,7 +83,7 @@ function PopoverAlert( { title, content, ctaUrl, ctaText, onClose }: PromotionPo
 				role="dialog"
 				aria-label="promotion-popover-title"
 				action={
-					ctaText ? (
+					( ctaText && ctaUrl ) ? (
 						<AlertAction
 							variant="contained"
 							color="promotion"
