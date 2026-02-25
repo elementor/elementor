@@ -28,7 +28,7 @@ jest.mock( '../use-style-renderer', () => ( {
 } ) );
 
 jest.mock( '@elementor/editor-responsive', () => ( {
-	getBreakpoints: jest.fn().mockReturnValue( [
+	useBreakpoints: jest.fn().mockReturnValue( [
 		{ id: 'desktop', label: 'Desktop' },
 		{ id: 'tablet', label: 'Tablet' },
 		{ id: 'mobile', label: 'Mobile' },
