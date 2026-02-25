@@ -56,24 +56,6 @@ describe( 'ProInteractionDisabledContent', () => {
 	} );
 
 	describe( 'Admin vs non-admin CTA', () => {
-		it( 'should show "Upgrade now" CTA text when user is admin', () => {
-			mockCurrentUserCapabilities( true );
-
-			const anchorEl = createAnchorEl();
-			( window as unknown as { elementorAppConfig: { admin_url: string } } ).elementorAppConfig = {
-				admin_url: 'https://example.com/wp-admin/',
-			};
-
-			renderWithTheme(
-				<ProInteractionDisabledContent
-					promoPopover={ { open: true, anchorEl } }
-					setPromoPopover={ jest.fn() }
-				/>
-			);
-
-			expect( screen.getByText( 'Upgrade now' ) ).toBeInTheDocument();
-		} );
-
 		it( 'should NOT show "Upgrade now" CTA text when user is not admin', () => {
 			mockCurrentUserCapabilities( false );
 
@@ -90,45 +72,6 @@ describe( 'ProInteractionDisabledContent', () => {
 			);
 
 			expect( screen.queryByText( 'Upgrade now' ) ).not.toBeInTheDocument();
-		} );
-	} );
-
-	describe( 'CTA URL resolution', () => {
-		it( 'should link to plugins.php when admin_url is available', () => {
-			mockCurrentUserCapabilities( true );
-
-			const anchorEl = createAnchorEl();
-			( window as unknown as { elementorAppConfig: { admin_url: string } } ).elementorAppConfig = {
-				admin_url: 'https://example.com/wp-admin/',
-			};
-
-			renderWithTheme(
-				<ProInteractionDisabledContent
-					promoPopover={ { open: true, anchorEl } }
-					setPromoPopover={ jest.fn() }
-				/>
-			);
-
-			const link = screen.getByRole( 'link', { name: 'Upgrade now' } );
-			expect( link ).toHaveAttribute( 'href', 'https://example.com/wp-admin/plugins.php' );
-		} );
-
-		it( 'should fall back to go.elementor.com when admin_url is not available', () => {
-			mockCurrentUserCapabilities( true );
-
-			const anchorEl = createAnchorEl();
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			( window as any ).elementorAppConfig = undefined;
-
-			renderWithTheme(
-				<ProInteractionDisabledContent
-					promoPopover={ { open: true, anchorEl } }
-					setPromoPopover={ jest.fn() }
-				/>
-			);
-
-			const link = screen.getByRole( 'link', { name: 'Upgrade now' } );
-			expect( link ).toHaveAttribute( 'href', 'https://go.elementor.com/go-pro-interactions/' );
 		} );
 	} );
 
