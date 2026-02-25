@@ -47,6 +47,9 @@ export type LegacyWindow = Window & {
 				},
 			];
 		$previewWrapper: JQueryElement;
+		helpers: {
+			hasPro: () => boolean;
+		};
 	};
 };
 
@@ -216,7 +219,16 @@ type ToJSON< T > = {
 
 type ContextMenuGroup = {
 	name: string;
-	actions: unknown[];
+	actions: ContextMenuAction[];
+};
+
+export type ContextMenuAction = {
+	name: string;
+	icon: string;
+	title: string | ( () => string );
+	shortcut?: string;
+	isEnabled: () => boolean;
+	callback: ( _: unknown, eventData: unknown ) => void;
 };
 
 export type ReplacementSettings = {
