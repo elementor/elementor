@@ -2,13 +2,10 @@ name: Jest
 
 on:
   pull_request:
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '.github/config.json'
-      - 'bin/**'
-      - '.gitignore'
-      - 'docs/**'
+    paths:
+      - '**/*.+(js|ts|jsx|tsx)'
+      - 'package*.json'
+      - '.github/workflows/jest.yml'
   merge_group:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
