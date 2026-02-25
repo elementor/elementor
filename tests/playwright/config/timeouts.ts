@@ -6,5 +6,6 @@ export const timeouts = {
 	expect: 5_000,
 	action: 5_000,
 	longAction: 10_000,
+	heavyAction: 30_000,
 	navigation: 10_000,
 };

@@ -126,10 +126,10 @@ export default class EditorPage extends BasePage {
 
 		templateData = this.fixAtomicWidgetSettings( templateData );
 
-		await this.page.evaluate( async ( data ) => {
+		await this.page.evaluate( ( data ) => {
 			const model = new Backbone.Model( { title: 'test' } );
 
-			await window.$e.run( 'document/elements/import', {
+			window.$e.run( 'document/elements/import', {
 				data,
 				model,
 				options: {
@@ -139,10 +139,11 @@ export default class EditorPage extends BasePage {
 			} );
 		}, templateData );
 
-		await this.getPreviewFrame()
+		const frame = await this.waitForPreviewFrame();
+		await frame
 			.locator( '.elementor-element' )
 			.first()
-			.waitFor( { timeout: timeouts.longAction } );
+			.waitFor( { timeout: timeouts.heavyAction } );
 	}
 
 	/**
