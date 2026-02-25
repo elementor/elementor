@@ -44,7 +44,7 @@ interface OnboardingConfig {
 	isConnected: boolean;
 	shouldShowProInstallScreen?: boolean;
 	userName?: string;
-	strings?: Record< string, string >;
+	translations?: Record< string, string >;
 	urls: {
 		dashboard: string;
 		editor: string;
@@ -72,7 +72,7 @@ const defaultConfig: OnboardingConfig = {
 	restUrl: 'https://test.local/wp-json/elementor/v1/e-onboarding/',
 	nonce: 'test-nonce',
 	steps: DEFAULT_STEPS,
-	strings: DEFAULT_STRINGS,
+	translations: DEFAULT_STRINGS,
 	progress: {
 		current_step_id: 'building_for',
 		current_step_index: 0,

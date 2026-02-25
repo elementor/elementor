@@ -119,7 +119,7 @@ class Module extends BaseModule {
 			'userName' => $this->get_user_display_name(),
 			'steps' => $steps,
 			'uiTheme' => $this->get_ui_theme_preference(),
-			'strings' => $this->get_translated_strings(),
+			'translations' => $this->get_translated_strings(),
 			'shouldShowProInstallScreen' => $is_connected ? $this->should_show_pro_install_screen() : false,
 			'urls' => [
 				'dashboard' => admin_url(),
@@ -269,7 +269,7 @@ class Module extends BaseModule {
 		$api = new EditorAssetsAPI( [
 			EditorAssetsAPI::ASSETS_DATA_URL => self::ASSETS_BASE_URL . $locale . '.json',
 			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_onboarding_strings_' . $locale,
-			EditorAssetsAPI::ASSETS_DATA_KEY => 'strings',
+			EditorAssetsAPI::ASSETS_DATA_KEY => 'translations',
 		] );
 
 		return $api->get_assets_data();

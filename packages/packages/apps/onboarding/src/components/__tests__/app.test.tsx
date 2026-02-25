@@ -44,7 +44,7 @@ interface OnboardingConfig {
 	choices: Record< string, unknown >;
 	hadUnexpectedExit: boolean;
 	isConnected: boolean;
-	strings?: Record< string, string >;
+	translations?: Record< string, string >;
 	shouldShowProInstallScreen?: boolean;
 	urls: {
 		dashboard: string;
@@ -87,7 +87,7 @@ const defaultConfig: OnboardingConfig = {
 			type: 'multiple',
 		},
 	],
-	strings: DEFAULT_STRINGS,
+	translations: DEFAULT_STRINGS,
 	progress: {
 		current_step_id: 'building_for',
 		current_step_index: 0,
