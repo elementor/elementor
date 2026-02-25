@@ -44,10 +44,14 @@ interface OnboardingConfig {
 	hadUnexpectedExit: boolean;
 	isConnected: boolean;
 	strings?: Record< string, string >;
+	shouldShowProInstallScreen?: boolean;
 	urls: {
 		dashboard: string;
 		editor: string;
 		connect: string;
+		comparePlans?: string;
+		exploreFeatures?: string;
+		createNewPage?: string;
 	};
 }
 
@@ -87,10 +91,16 @@ const defaultConfig: OnboardingConfig = {
 		'common.skip': 'Skip',
 		'common.back': 'Back',
 		'common.finish': 'Finish',
+		'common.loading': 'Loading\u2026',
 		'common.upgrade': 'Upgrade',
-		'common.or': 'OR',
+		'common.close_onboarding': 'Close onboarding',
+		'common.installed': 'Installed',
+		'common.recommended': 'Recommended',
+		'error.failed_mark_exit': 'Failed to mark user exit.',
+		'error.failed_complete_step': 'Failed to complete step.',
 		'login.title': "Let's get to work.",
 		'login.sign_in': 'Sign in to Elementor',
+		'login.or': 'OR',
 		'login.continue_another_way': 'Continue another way',
 		'login.continue_as_guest': 'Continue as a guest',
 		'steps.building_for.title': 'Who are you building for?',
@@ -100,10 +110,61 @@ const defaultConfig: OnboardingConfig = {
 		'steps.building_for.option_business': 'My business or workplace',
 		'steps.building_for.option_client': 'A client',
 		'steps.building_for.option_exploring': 'Just exploring',
-		'steps.site_features.title': 'What do you want to include in your site?',
-		'error.failed_mark_exit': 'Failed to mark user exit.',
-		'error.failed_complete_step': 'Failed to complete step.',
+		'steps.site_about.title': 'What is your site about?',
+		'steps.site_about.subtitle': 'Choose anything that applies.',
+		'steps.site_about.option_small_med_business': 'Small-Med Business',
+		'steps.site_about.option_online_store': 'Online store',
+		'steps.site_about.option_company_site': 'Company site',
+		'steps.site_about.option_blog': 'Blog',
+		'steps.site_about.option_landing_page': 'Landing page',
+		'steps.site_about.option_booking': 'Booking',
+		'steps.site_about.option_organization': 'Organization',
+		'steps.site_about.option_other': 'Other',
+		'steps.site_about.greeting_myself': "Got it! We'll keep things simple.",
+		'steps.site_about.greeting_business': "Great! Let's set up your business site.",
+		'steps.site_about.greeting_client': "Nice! Let's create something for your client.",
+		'steps.site_about.greeting_fallback': "Let's get started!",
+		'steps.experience_level.title': 'How much experience do you have with Elementor?',
+		'steps.experience_level.subtitle': 'This helps us adjust the editor to your workflow.',
+		'steps.experience_level.option_beginner': "I'm just getting started",
+		'steps.experience_level.option_intermediate': 'I have some experience',
+		'steps.experience_level.option_advanced': "I'm very comfortable with Elementor",
+		'steps.theme_selection.title': 'Start with a theme that fits your needs',
+		'steps.theme_selection.subtitle': 'Hello themes are built to work seamlessly with Elementor.',
+		'steps.theme_selection.aria_label': 'Theme selection',
+		'steps.theme_selection.theme_hello_label': 'Hello',
+		'steps.theme_selection.theme_hello_description': 'A flexible canvas theme you can shape from the ground up',
+		'steps.theme_selection.theme_hello_biz_label': 'Hello Biz',
+		'steps.theme_selection.theme_hello_biz_description': 'A ready-to-start theme with smart layouts and widgets',
+		'steps.theme_selection.greeting_beginner': "Glad you're here!",
+		'steps.theme_selection.greeting_default': "Great. Let's take it to the next step",
 		'steps.theme_selection.continue_with_theme': 'Continue with this theme',
+		'steps.site_features.title': 'What do you want to include in your site?',
+		'steps.site_features.subtitle': "We'll use this to tailor suggestions for you.",
+		'steps.site_features.continue_with_free': 'Continue with Free',
+		'steps.site_features.option_classes_variables': 'Classes & variables',
+		'steps.site_features.option_core_placeholder': 'Core placeholder',
+		'steps.site_features.option_theme_builder': 'Theme builder',
+		'steps.site_features.option_lead_collection': 'Lead Collection',
+		'steps.site_features.option_custom_code': 'Custom Code',
+		'steps.site_features.option_email_deliverability': 'Email deliverability',
+		'steps.site_features.option_ai_generator': 'AI generator',
+		'steps.site_features.option_image_optimization': 'Image optimization',
+		'steps.site_features.option_accessibility_tools': 'Accessibility tools',
+		'steps.site_features.explore_more': 'Explore more',
+		'steps.site_features.included': 'Included',
+		'steps.site_features.plan_recommendation_prefix': 'Based on the features you chose, we recommend the',
+		'steps.site_features.plan_recommendation_suffix': 'plan',
+		'steps.site_features.compare_plans': 'Compare plans',
+		'pro_install.title': 'You already have a Pro subscription',
+		'pro_install.subtitle': 'Would you like to install it on this site now?',
+		'pro_install.installing': 'Installing Elementor Pro\u2026',
+		'pro_install.installing_short': 'Installing\u2026',
+		'pro_install.install_button': 'Install Pro on this site',
+		'pro_install.logo_alt': 'Elementor + Elementor Pro',
+		'pro_install.do_it_later': "I'll do it later",
+		'completion.title': 'Getting things ready',
+		'completion.subtitle': 'Tailoring the editor to your goals and workflow\u2026',
 	},
 	progress: {
 		current_step_id: 'building_for',
@@ -113,10 +174,14 @@ const defaultConfig: OnboardingConfig = {
 	choices: {},
 	hadUnexpectedExit: false,
 	isConnected: false,
+	shouldShowProInstallScreen: false,
 	urls: {
 		dashboard: 'https://test.local/wp-admin/',
 		editor: 'https://test.local/editor',
 		connect: 'https://test.local/connect',
+		comparePlans: 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash',
+		exploreFeatures: 'https://elementor.com/features/?utm_source=onboarding&utm_medium=wp-dash',
+		createNewPage: 'https://test.local/wp-admin/edit.php?action=elementor_new_post&post_type=page',
 	},
 };
 
@@ -291,13 +356,23 @@ describe( 'App', () => {
 			render( <App /> );
 
 			// Assert
-			expect( screen.getByText( 'Finish' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Skip' ) ).not.toBeInTheDocument();
+			expect( screen.getByText( 'Continue with Free' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Skip' ) ).toBeInTheDocument();
 		} );
 
-		it( 'should call onComplete when finishing last step', async () => {
+		it( 'should redirect to createNewPage URL with complete:true when finishing last step', async () => {
 			// Arrange
-			const onComplete = jest.fn();
+			let capturedHref = '';
+			Object.defineProperty( window, 'location', {
+				writable: true,
+				value: {
+					...window.location,
+					set href( url: string ) {
+						capturedHref = url;
+					},
+				},
+			} );
+
 			window.elementorAppConfig = createMockConfig( {
 				isConnected: true,
 				choices: { site_features: [ 'contact_form' ] },
@@ -308,19 +383,142 @@ describe( 'App', () => {
 				},
 			} );
 
-			render( <App onComplete={ onComplete } /> );
+			render( <App /> );
 
 			// Act
-			fireEvent.click( screen.getByText( 'Finish' ) );
+			fireEvent.click( screen.getByText( 'Continue with Free' ) );
 
 			// Assert
 			await waitFor( () => {
-				expect( mockFetch ).toHaveBeenCalled();
+				expect( mockFetch ).toHaveBeenCalledWith(
+					expect.stringContaining( 'user-progress' ),
+					expect.objectContaining( {
+						body: expect.stringContaining( '"complete":true' ),
+					} )
+				);
 			} );
 
 			await waitFor( () => {
-				expect( onComplete ).toHaveBeenCalled();
+				expect( capturedHref ).toContain( 'elementor_new_post' );
 			} );
+		} );
+	} );
+
+	describe( 'Pro install flow', () => {
+		it( 'should show Pro install screen when connected and eligible', () => {
+			// Arrange
+			window.elementorAppConfig = createMockConfig( {
+				isConnected: true,
+				shouldShowProInstallScreen: true,
+			} );
+
+			// Act
+			render( <App /> );
+
+			// Assert
+			expect( screen.getByTestId( 'pro-install-screen' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'You already have a Pro subscription' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Install Pro on this site' ) ).toBeInTheDocument();
+			expect( screen.getByText( "I'll do it later" ) ).toBeInTheDocument();
+		} );
+
+		it( 'should skip Pro install screen when not eligible', () => {
+			// Arrange
+			window.elementorAppConfig = createMockConfig( {
+				isConnected: true,
+				shouldShowProInstallScreen: false,
+			} );
+
+			// Act
+			render( <App /> );
+
+			// Assert
+			expect( screen.queryByTestId( 'pro-install-screen' ) ).not.toBeInTheDocument();
+			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should not show Pro install screen for guest users', () => {
+			// Arrange
+			window.elementorAppConfig = createMockConfig( {
+				isConnected: false,
+				shouldShowProInstallScreen: true,
+			} );
+
+			render( <App /> );
+
+			// Act - continue as guest
+			fireEvent.click( screen.getByText( 'Continue as a guest' ) );
+
+			// Assert - should go to steps, not pro install (guests are not connected)
+			expect( screen.queryByTestId( 'pro-install-screen' ) ).not.toBeInTheDocument();
+			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should dismiss Pro install screen when clicking "I\'ll do it later"', async () => {
+			// Arrange
+			window.elementorAppConfig = createMockConfig( {
+				isConnected: true,
+				shouldShowProInstallScreen: true,
+			} );
+
+			render( <App /> );
+			expect( screen.getByTestId( 'pro-install-screen' ) ).toBeInTheDocument();
+
+			// Act
+			fireEvent.click( screen.getByText( "I'll do it later" ) );
+
+			// Assert - should navigate to onboarding steps
+			await waitFor( () => {
+				expect( screen.queryByTestId( 'pro-install-screen' ) ).not.toBeInTheDocument();
+			} );
+			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should call install-pro endpoint when clicking install button', async () => {
+			// Arrange
+			window.elementorAppConfig = createMockConfig( {
+				isConnected: true,
+				shouldShowProInstallScreen: true,
+			} );
+
+			render( <App /> );
+
+			// Act
+			fireEvent.click( screen.getByText( 'Install Pro on this site' ) );
+
+			// Assert
+			await waitFor( () => {
+				expect( mockFetch ).toHaveBeenCalledWith(
+					expect.stringContaining( 'install-pro' ),
+					expect.objectContaining( {
+						method: 'POST',
+					} )
+				);
+			} );
+		} );
+
+		it( 'should dismiss Pro install screen after successful installation', async () => {
+			// Arrange
+			mockFetch.mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( { data: { success: true, message: 'installed' } } ),
+			} );
+
+			window.elementorAppConfig = createMockConfig( {
+				isConnected: true,
+				shouldShowProInstallScreen: true,
+			} );
+
+			render( <App /> );
+
+			// Act
+			fireEvent.click( screen.getByText( 'Install Pro on this site' ) );
+
+			// Assert - should transition to onboarding steps
+			await waitFor( () => {
+				expect( screen.queryByTestId( 'pro-install-screen' ) ).not.toBeInTheDocument();
+			} );
+			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
 		} );
 	} );
 

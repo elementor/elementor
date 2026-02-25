@@ -34,6 +34,7 @@ export interface StepVisualConfig {
 	imageLayout: ImageLayout;
 	background: string;
 	assets: RightPanelAsset[];
+	contentMaxWidth?: number;
 }
 
 export interface OnboardingProgress {
@@ -65,10 +66,14 @@ export interface OnboardingConfig {
 	hadUnexpectedExit: boolean;
 	steps: Step[];
 	isConnected: boolean;
+	shouldShowProInstallScreen: boolean;
 	urls: {
 		dashboard: string;
 		editor: string;
 		connect: string;
+		comparePlans?: string;
+		exploreFeatures?: string;
+		createNewPage?: string;
 	};
 }
 
@@ -88,9 +93,14 @@ export interface OnboardingState {
 	isConnected: boolean;
 	isGuest: boolean;
 	userName: string;
+	shouldShowProInstallScreen: boolean;
+	hasProInstallScreenDismissed: boolean;
 	urls: {
 		dashboard: string;
 		editor: string;
 		connect: string;
+		comparePlans?: string;
+		exploreFeatures?: string;
+		createNewPage?: string;
 	};
 }

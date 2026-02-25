@@ -11,6 +11,7 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -105,27 +106,49 @@ class Module extends BaseModule {
 		// clear the theme selection so the user can re-select.
 		$this->maybe_invalidate_theme_selection( $progress, $choices );
 
-		Plugin::instance()->app->set_settings( 'e-onboarding', [
+		$is_connected = $this->is_user_connected();
+
+		Plugin::$instance->app->set_settings( 'e-onboarding', [
 			'version' => self::VERSION,
 			'restUrl' => rest_url( 'elementor/v1/e-onboarding/' ),
 			'nonce' => wp_create_nonce( 'wp_rest' ),
-			'progress' => array_merge( $progress->to_array(), [
-				'current_step_id' => $progress->get_current_step_id() ?? $steps[0]['id'] ?? 'building_for',
-				'current_step_index' => $progress->get_current_step_index() ?? 0,
-			] ),
+			'progress' => $this->validate_progress_for_steps( $progress, $steps ),
 			'choices' => $choices->to_array(),
 			'hadUnexpectedExit' => $progress->had_unexpected_exit(),
-			'isConnected' => $this->is_user_connected(),
+			'isConnected' => $is_connected,
 			'userName' => $this->get_user_display_name(),
 			'steps' => $steps,
 			'uiTheme' => $this->get_ui_theme_preference(),
 			'strings' => $this->get_translated_strings(),
+			'shouldShowProInstallScreen' => $is_connected ? $this->should_show_pro_install_screen() : false,
 			'urls' => [
 				'dashboard' => admin_url(),
 				'editor' => admin_url( 'edit.php?post_type=elementor_library' ),
 				'connect' => $this->get_connect_url(),
+				'comparePlans' => 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash',
+				'exploreFeatures' => 'https://elementor.com/features/?utm_source=onboarding&utm_medium=wp-dash',
+				'createNewPage' => Plugin::$instance->documents->get_create_new_post_url(),
 			],
 		] );
+	}
+
+	private function validate_progress_for_steps( User_Progress $progress, array $steps ): array {
+		$progress_data = $progress->to_array();
+		$step_count = count( $steps );
+		$current_step_index = $progress->get_current_step_index() ?? 0;
+		$current_step_id = $progress->get_current_step_id() ?? $steps[0]['id'] ?? 'building_for';
+
+		$is_invalid_step_index = $current_step_index < 0 || $current_step_index >= $step_count;
+
+		if ( $is_invalid_step_index ) {
+			$current_step_id = $steps[0]['id'];
+			$current_step_index = 0;
+		}
+
+		$progress_data['current_step_id'] = $current_step_id;
+		$progress_data['current_step_index'] = $current_step_index;
+
+		return $progress_data;
 	}
 
 	private function is_user_connected(): bool {
@@ -152,6 +175,28 @@ class Module extends BaseModule {
 		}
 
 		return $connect->get_app( 'library' );
+	}
+
+	public static function should_show_pro_install_screen(): bool {
+		if ( Utils::has_pro() || Utils::is_pro_installed_and_not_active() ) {
+			return false;
+		}
+
+		$connect = Plugin::$instance->common->get_component( 'connect' );
+
+		if ( ! $connect ) {
+			return false;
+		}
+
+		$pro_install_app = $connect->get_app( 'pro-install' );
+
+		if ( ! $pro_install_app || ! $pro_install_app->is_connected() ) {
+			return false;
+		}
+
+		$download_link = $pro_install_app->get_download_link();
+
+		return ! empty( $download_link );
 	}
 
 	private function get_ui_theme_preference(): string {
@@ -262,13 +307,20 @@ class Module extends BaseModule {
 				'label' => __( 'Start with a theme that fits your needs', 'elementor' ),
 				'type' => 'single',
 			],
-			[
+		];
+
+		if ( ! $this->is_elementor_pro_active() ) {
+			$steps[] = [
 				'id' => 'site_features',
 				'label' => __( 'What do you want to include in your site?', 'elementor' ),
 				'type' => 'multiple',
-			],
-		];
+			];
+		}
 
 		return apply_filters( 'elementor/e-onboarding/steps', $steps );
+	}
+
+	private function is_elementor_pro_active(): bool {
+		return (bool) apply_filters( 'elementor/e-onboarding/is_elementor_pro_active', Utils::has_pro() );
 	}
 }

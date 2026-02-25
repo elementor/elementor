@@ -4,13 +4,14 @@ import {
 	CalendarIcon,
 	CartIcon,
 	DomainIcon,
-	GridDotsIcon,
 	LandingPageTemplateIcon,
 	PostTypeIcon,
 	SearchIcon,
 } from '@elementor/icons';
 
 import { t } from '../../utils/translations';
+
+import OrganizationIcon from './organization-icon';
 
 export interface SiteAboutOption {
 	value: string;
@@ -19,13 +20,13 @@ export interface SiteAboutOption {
 }
 
 export const SITE_ABOUT_OPTIONS: SiteAboutOption[] = [
-	{ value: 'small_business', labelKey: 'steps.site_about.option_small_business', icon: BriefcaseIcon },
+	{ value: 'small_business', labelKey: 'steps.site_about.option_small_med_business', icon: BriefcaseIcon },
 	{ value: 'online_store', labelKey: 'steps.site_about.option_online_store', icon: CartIcon },
 	{ value: 'company_site', labelKey: 'steps.site_about.option_company_site', icon: DomainIcon },
 	{ value: 'blog', labelKey: 'steps.site_about.option_blog', icon: PostTypeIcon },
 	{ value: 'landing_page', labelKey: 'steps.site_about.option_landing_page', icon: LandingPageTemplateIcon },
 	{ value: 'booking', labelKey: 'steps.site_about.option_booking', icon: CalendarIcon },
-	{ value: 'portfolio', labelKey: 'steps.site_about.option_portfolio', icon: GridDotsIcon },
+	{ value: 'organization', labelKey: 'steps.site_about.option_organization', icon: OrganizationIcon },
 	{ value: 'other', labelKey: 'steps.site_about.option_other', icon: SearchIcon },
 ];
 

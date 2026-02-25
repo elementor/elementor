@@ -7,6 +7,9 @@ export function t( key: string, ...args: string[] ): string {
 	let template = strings[ key ];
 
 	if ( ! template ) {
+		if ( process.env.NODE_ENV !== 'production' ) {
+			console.warn( `[onboarding] Missing translation for key: "${ key }"` );
+		}
 		return key;
 	}
 

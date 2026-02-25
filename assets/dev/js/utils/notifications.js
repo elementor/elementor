@@ -55,8 +55,15 @@ module.exports = elementorModules.Module.extend( {
 				},
 			},
 			button: {
-				tag: 'div',
+				tag: 'button',
 			},
+		} );
+
+		// Add role="status" and aria-live for screen reader announcement
+		toast.getElements( 'widget' ).attr( {
+			role: 'status',
+			'aria-live': 'polite',
+			'aria-atomic': 'true',
 		} );
 
 		this.getToast = function() {
@@ -70,6 +77,9 @@ module.exports = elementorModules.Module.extend( {
 		toast.setMessage( options.message );
 
 		toast.getElements( 'buttonsWrapper' ).empty();
+
+		toast.focusedButton = null;
+		toast.buttons = [];
 
 		const isPositionValid = this.isPositionValid( options?.position );
 

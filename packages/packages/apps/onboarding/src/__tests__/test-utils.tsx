@@ -41,12 +41,15 @@ interface OnboardingConfig {
 	choices: Record< string, unknown >;
 	hadUnexpectedExit: boolean;
 	isConnected: boolean;
+	shouldShowProInstallScreen?: boolean;
 	userName?: string;
 	strings?: Record< string, string >;
 	urls: {
 		dashboard: string;
 		editor: string;
 		connect: string;
+		comparePlans?: string;
+		exploreFeatures?: string;
 	};
 }
 
@@ -66,13 +69,13 @@ const DEFAULT_STRINGS: Record< string, string > = {
 	'common.loading': 'Loading\u2026',
 	'common.upgrade': 'Upgrade',
 	'common.close_onboarding': 'Close onboarding',
-	'common.or': 'OR',
 	'common.installed': 'Installed',
 	'common.recommended': 'Recommended',
 	'error.failed_mark_exit': 'Failed to mark user exit.',
 	'error.failed_complete_step': 'Failed to complete step.',
 	'login.title': "Let's get to work.",
 	'login.sign_in': 'Sign in to Elementor',
+	'login.or': 'OR',
 	'login.continue_another_way': 'Continue another way',
 	'login.continue_as_guest': 'Continue as a guest',
 	'steps.building_for.title': 'Who are you building for?',
@@ -84,13 +87,13 @@ const DEFAULT_STRINGS: Record< string, string > = {
 	'steps.building_for.option_exploring': 'Just exploring',
 	'steps.site_about.title': 'What is your site about?',
 	'steps.site_about.subtitle': 'Choose anything that applies.',
-	'steps.site_about.option_small_business': 'Small business',
+	'steps.site_about.option_small_med_business': 'Small-Med Business',
 	'steps.site_about.option_online_store': 'Online store',
 	'steps.site_about.option_company_site': 'Company site',
 	'steps.site_about.option_blog': 'Blog',
 	'steps.site_about.option_landing_page': 'Landing page',
 	'steps.site_about.option_booking': 'Booking',
-	'steps.site_about.option_portfolio': 'Portfolio',
+	'steps.site_about.option_organization': 'Organization',
 	'steps.site_about.option_other': 'Other',
 	'steps.site_about.greeting_myself': "Got it! We'll keep things simple.",
 	'steps.site_about.greeting_business': "Great! Let's set up your business site.",
@@ -112,7 +115,37 @@ const DEFAULT_STRINGS: Record< string, string > = {
 	'steps.theme_selection.greeting_default': "Great. Let's take it to the next step",
 	'steps.theme_selection.continue_with_theme': 'Continue with this theme',
 	'steps.site_features.title': 'What do you want to include in your site?',
+	'steps.site_features.subtitle': "We'll use this to tailor suggestions for you.",
+	'steps.site_features.continue_with_free': 'Continue with Free',
+	'steps.site_features.option_classes_variables': 'Classes & variables',
+	'steps.site_features.option_core_placeholder': 'Core placeholder',
+	'steps.site_features.option_theme_builder': 'Theme builder',
+	'steps.site_features.option_lead_collection': 'Lead Collection',
+	'steps.site_features.option_custom_code': 'Custom Code',
+	'steps.site_features.option_email_deliverability': 'Email deliverability',
+	'steps.site_features.option_ai_generator': 'AI generator',
+	'steps.site_features.option_image_optimization': 'Image optimization',
+	'steps.site_features.option_accessibility_tools': 'Accessibility tools',
+	'steps.site_features.explore_more': 'Explore more',
+	'steps.site_features.included': 'Included',
+	'steps.site_features.plan_recommendation_prefix': 'Based on the features you chose, we recommend the',
+	'steps.site_features.plan_recommendation_suffix': 'plan',
+	'steps.site_features.compare_plans': 'Compare plans',
+	'pro_install.title': 'You already have a Pro subscription',
+	'pro_install.subtitle': 'Would you like to install it on this site now?',
+	'pro_install.installing': 'Installing Elementor Pro\u2026',
+	'pro_install.installing_short': 'Installing\u2026',
+	'pro_install.install_button': 'Install Pro on this site',
+	'pro_install.logo_alt': 'Elementor + Elementor Pro',
+	'pro_install.do_it_later': "I'll do it later",
+	'completion.title': 'Getting things ready',
+	'completion.subtitle': 'Tailoring the editor to your goals and workflow\u2026',
 };
+
+export const DEFAULT_TEST_URLS = {
+	exploreFeatures: 'https://elementor.com/features/?utm_source=onboarding&utm_medium=wp-dash',
+	comparePlans: 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash',
+} as const;
 
 const defaultConfig: OnboardingConfig = {
 	version: '1.0.0',
@@ -128,10 +161,12 @@ const defaultConfig: OnboardingConfig = {
 	choices: {},
 	hadUnexpectedExit: false,
 	isConnected: true,
+	shouldShowProInstallScreen: false,
 	urls: {
 		dashboard: 'https://test.local/wp-admin/',
 		editor: 'https://test.local/editor',
 		connect: 'https://test.local/connect',
+		...DEFAULT_TEST_URLS,
 	},
 };
 
