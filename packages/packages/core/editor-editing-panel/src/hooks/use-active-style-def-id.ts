@@ -11,7 +11,7 @@ export function useActiveStyleDefId( classProp: PropKey ) {
 		null
 	);
 
-	const appliedClassesIds = useAppliedClassesIds( classProp )?.value || [];
+	const appliedClassesIds = usePanelElementSetting< ClassesPropValue >( classProp )?.value || [];
 
 	const fallback = useFirstAppliedClass( appliedClassesIds );
 
@@ -24,10 +24,6 @@ function useFirstAppliedClass( appliedClassesIds: string[] ) {
 	const stylesDefs = getElementStyles( element.id ) ?? {};
 
 	return Object.values( stylesDefs ).find( ( styleDef ) => appliedClassesIds.includes( styleDef.id ) );
-}
-
-function useAppliedClassesIds( classProp: PropKey ) {
-	return usePanelElementSetting< ClassesPropValue >( classProp );
 }
 
 function useActiveAndAppliedClassId( id: StyleDefinitionID | null, appliedClassesIds: string[] ) {

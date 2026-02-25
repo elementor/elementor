@@ -6,7 +6,6 @@ import {
 } from '@elementor/editor-controls';
 import { useSelectedElementSettings } from '@elementor/editor-elements';
 import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
-import { type AnyTransformable } from '@elementor/editor-props';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { AtomIcon } from '@elementor/icons';
 import { createLocation } from '@elementor/locations';
@@ -25,7 +24,7 @@ export const { Slot: PanelHeaderTopSlot, inject: injectIntoPanelHeaderTop } = cr
 const { useMenuItems } = controlActionsMenu;
 
 export const EditingPanel = () => {
-	const { element, elementType, settings } = useSelectedElementSettings< AnyTransformable >();
+	const { element, elementType, settings } = useSelectedElementSettings();
 	const controlReplacements = getControlReplacements();
 	const menuItems = useMenuItems().default;
 

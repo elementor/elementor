@@ -1,3 +1,4 @@
+import { type AnyTransformable } from '@elementor/editor-props';
 import { __privateUseListenTo as useListenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
 
 import { getElementSettings } from '../sync/get-element-setting';
@@ -19,7 +20,7 @@ type UseSelectedElementSettingsResult< TValue > =
 // Use the selected element and it's settings,
 // and subscribe to changes on both the selected element and its settings.
 // This ensures the element and its settings are synced.
-export function useSelectedElementSettings< TValue >(): UseSelectedElementSettingsResult< TValue > {
+export function useSelectedElementSettings< TValue = AnyTransformable >(): UseSelectedElementSettingsResult< TValue > {
 	return useListenTo(
 		[
 			commandEndEvent( 'document/elements/select' ),
