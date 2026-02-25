@@ -9,11 +9,13 @@
   "packageManager": "npm@10.0.0",
   "scripts": {
     "build": "turbo build",
+    "build:ci": "turbo build --concurrency 1",
     "build:tools": "turbo build --filter=\"./packages/tools/*\"",
     "dev": "concurrently -n turbo,tsc -c red,blue 'turbo dev --parallel' 'tsc -w --preserveWatchOutput'",
     "test": "jest --config='./jest.config.js'",
     "test:coverage": "npm run test -- --coverage",
     "lint": "concurrently -n eslint,tsc -c magenta,blue \"eslint . --report-unused-disable-directives-severity error\" \"tsc\"",
+    "lint:fix": "eslint . --fix --report-unused-disable-directives-severity error",
     "check-unused": "knip",
     "spell-check": "cspell . --quiet",
     "format": "eslint . --fix",
@@ -25,6 +27,7 @@
     "release": "npm run build && node scripts/version-manager/index.js publish"
   },
   "workspaces": [
+    "packages/apps/*",
     "packages/core/*",
     "packages/libs/*",
     "packages/tools/*"
@@ -43,7 +46,7 @@
     "@typescript-eslint/eslint-plugin": "^8.6.0",
     "@typescript-eslint/parser": "^8.6.0",
     "@wordpress/eslint-plugin": "^21.1.0",
-    "@wordpress/jest-console": "^8.35.0",
+    "baseline-browser-mapping": "^2.9.17",
     "concurrently": "^9.1.0",
     "cspell": "^8.17.1",
     "eslint": "^8.57.1",

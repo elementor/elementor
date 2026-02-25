@@ -35,8 +35,9 @@ describe( 'SvgMediaControl', () => {
 			isPending: false,
 		} as never );
 		jest.mocked( useCurrentUserCapabilities ).mockReturnValue( {
-			canUser: jest.fn().mockReturnValue( true ),
+			canUser: jest.fn(),
 			capabilities: [],
+			isAdmin: true,
 		} );
 	} );
 
@@ -210,8 +211,9 @@ describe( 'SvgMediaControl', () => {
 		jest.mocked( useUnfilteredFilesUpload ).mockReturnValue( { data: false } as UseQueryResult< boolean, Error > );
 		const props = { setValue: jest.fn(), value: {}, bind: 'svg', propType };
 		jest.mocked( useCurrentUserCapabilities ).mockReturnValue( {
-			canUser: jest.fn().mockReturnValue( false ),
+			canUser: jest.fn(),
 			capabilities: [],
+			isAdmin: false,
 		} );
 
 		// Act

@@ -1,33 +1,33 @@
 import { getElementChildren } from './get-element-children';
 import { getRandomStyleId } from './get-random-style-id';
 
-/**
- * @typedef {import('assets/dev/js/editor/container/container')} Container
- */
+export function regenerateLocalStyleIds( container ) {
+	const allElements = getElementChildren( container.model );
+
+	const styledElements = allElements.filter( ( model ) => {
+		return Object.keys( model.get( 'styles' ) ?? {} ).length > 0;
+	} );
+
+	updateElementsStyleIdsInsideOut( styledElements );
+}
 
 function isClassesProp( prop ) {
 	return prop.$$type && 'classes' === prop.$$type && Array.isArray( prop.value ) && prop.value.length > 0;
 }
 
-/**
- * Update the style id of the container.
- *
- * @param {Container} container
- */
-function updateStyleId( container ) {
-	const originalStyles = container.model.get( 'styles' );
-	const settings = container.settings?.toJSON() ?? {};
+function calculateNewStylesAndSettings( element, model, settings ) {
+	const originalStyles = model.get( 'styles' );
+	const settingsJson = settings?.toJSON() ?? {};
 
-	const classesProps = Object.entries( settings ).filter(
+	const classesProps = Object.entries( settingsJson ).filter(
 		( [ , propValue ] ) => ( isClassesProp( propValue ) ),
 	);
 
 	const newStyles = {};
-
-	const changedIds = {}; // Conversion map - {[originalId: string]: newId: string}
+	const changedIds = {};
 
 	Object.entries( originalStyles ).forEach( ( [ originalStyleId, style ] ) => {
-		const newStyleId = getRandomStyleId( container, newStyles );
+		const newStyleId = getRandomStyleId( element, newStyles );
 		newStyles[ newStyleId ] = structuredClone( { ...style, id: newStyleId } );
 		changedIds[ originalStyleId ] = newStyleId;
 	} );
@@ -39,29 +39,40 @@ function updateStyleId( container ) {
 		} ];
 	}, {} );
 
-	// Update classes array
-	$e.internal( 'document/elements/set-settings', {
-		container,
-		settings: Object.fromEntries( newClassesProps ),
-	} );
+	return {
+		newStyles,
+		newSettings: Object.fromEntries( newClassesProps ),
+	};
+}
 
-	// Update local styles
-	container.model.set( 'styles', newStyles );
+function updateStyleIdForContainer( container ) {
+	const { model, settings } = container;
+	const { newStyles, newSettings } = calculateNewStylesAndSettings( container, model, settings );
+
+	$e.internal( 'document/elements/set-settings', { container, settings: newSettings } );
+	model.set( 'styles', newStyles );
+}
+
+function updateStyleIdForModel( model ) {
+	const settings = model.get( 'settings' );
+	const { newStyles, newSettings } = calculateNewStylesAndSettings( model, model, settings );
+
+	settings.set( newSettings );
+	model.set( 'styles', newStyles );
+}
+
+function updateStyleId( model ) {
+	const container = window.elementor.getContainer( model.get( 'id' ) );
+
+	// If view exists, update the styles via the container
+	if ( container ) {
+		updateStyleIdForContainer( container );
+		return;
+	}
+
+	updateStyleIdForModel( model );
 }
 
 function updateElementsStyleIdsInsideOut( styledElements ) {
 	styledElements?.reverse().forEach( updateStyleId );
-}
-
-/**
- * Get a container - iterate over its children, find all styled atomic widgets and update their style ids
- *
- * @param {Container} container
- */
-export function regenerateLocalStyleIds( container ) {
-	const allElements = getElementChildren( container );
-
-	const styledElements = allElements.filter( ( element ) => Object.keys( element.model.get( 'styles' ) ?? {} ).length > 0 );
-
-	updateElementsStyleIdsInsideOut( styledElements );
 }

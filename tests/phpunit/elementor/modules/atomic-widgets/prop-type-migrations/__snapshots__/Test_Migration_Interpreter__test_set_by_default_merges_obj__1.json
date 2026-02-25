@@ -1,0 +1,12 @@
+{
+    "settings": {
+        "link": {
+            "value": {
+                "url": "test.com",
+                "extra": "data",
+                "tag": "a",
+                "new": "field"
+            }
+        }
+    }
+}

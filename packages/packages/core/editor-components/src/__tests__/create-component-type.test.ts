@@ -5,19 +5,34 @@ import type {
 	ElementModel,
 	LegacyWindow,
 } from '@elementor/editor-canvas';
-import { jest } from '@jest/globals';
 
-import { type ContextMenuAction, createComponentType, TYPE } from '../create-component-type';
+import { COMPONENT_WIDGET_TYPE, type ContextMenuAction, createComponentType } from '../create-component-type';
 import type { ExtendedWindow } from '../types';
 
 const MOCK_COMPONENT_ID = 123;
+
+const createMockRenderer = () =>
+	( {
+		register: jest.fn(),
+		render: jest.fn( () => Promise.resolve( '<div>Component</div>' ) ),
+	} ) as CreateTemplatedElementTypeOptions[ 'renderer' ];
+
+const createMockElementConfig = () => ( {
+	twig_templates: {},
+	twig_main_template: 'main',
+	atomic_props_schema: {},
+	base_styles_dictionary: {},
+} );
+
+type ComponentViewInstance = {
+	editComponent: jest.Mock;
+	handleDblClick: ( e: MouseEvent ) => void;
+};
 
 describe( 'createComponentType', () => {
 	let mockElementorWindow: LegacyWindow[ 'elementor' ];
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-
 		const mockBaseView = class {
 			getContextMenuGroups() {
 				return [
@@ -105,6 +120,10 @@ describe( 'createComponentType', () => {
 					},
 				},
 			},
+			storage: {
+				get: jest.fn(),
+				set: jest.fn(),
+			},
 		};
 	} );
 
@@ -113,19 +132,17 @@ describe( 'createComponentType', () => {
 	} );
 
 	const createMockViewInstance = ( isAdministrator: boolean ) => {
-		( window as unknown as LegacyWindow & ExtendedWindow ).elementor = {
+		( window as unknown as LegacyWindow ).elementor = {
 			...mockElementorWindow,
 			config: {
 				user: {
 					is_administrator: isAdministrator,
 				},
 			},
-		} as LegacyWindow[ 'elementor' ] & {
-			config?: { user?: { is_administrator?: boolean } };
 		};
 
 		const ComponentType = createComponentType( {
-			type: TYPE,
+			type: COMPONENT_WIDGET_TYPE,
 			renderer: {
 				register: jest.fn(),
 				render: jest.fn( () => Promise.resolve( '<div>Component</div>' ) ),
@@ -243,12 +260,10 @@ describe( 'createComponentType', () => {
 					is_administrator: true,
 				},
 			},
-		} as LegacyWindow[ 'elementor' ] & {
-			config?: { user?: { is_administrator?: boolean } };
 		};
 
 		const ComponentType = createComponentType( {
-			type: TYPE,
+			type: COMPONENT_WIDGET_TYPE,
 			renderer: {
 				register: jest.fn(),
 				render: jest.fn( () => Promise.resolve( '<div>Component</div>' ) ),
@@ -310,5 +325,55 @@ describe( 'createComponentType', () => {
 
 		expect( actions ).toHaveLength( 1 );
 		expect( actions.some( ( action ) => action.name === 'edit component' ) ).toBe( false );
+	} );
+
+	it( 'should return the same view class for multiple type instances', () => {
+		// Arrange
+		const ComponentType = createComponentType( {
+			type: COMPONENT_WIDGET_TYPE,
+			renderer: createMockRenderer(),
+			element: createMockElementConfig(),
+		} );
+
+		// Act
+		const typeInstance1 = new ComponentType();
+		const typeInstance2 = new ComponentType();
+		const viewClass1 = typeInstance1.getView();
+		const viewClass2 = typeInstance2.getView();
+
+		// Assert
+		expect( viewClass1 ).toBe( viewClass2 );
+	} );
+
+	it( 'should call editComponent when user is administrator', () => {
+		// Arrange
+		const viewInstance = createMockViewInstance( true ) as unknown as ComponentViewInstance;
+		const mockEvent = { stopPropagation: jest.fn() } as unknown as MouseEvent;
+		viewInstance.editComponent = jest.fn();
+
+		// Act
+		viewInstance.handleDblClick( mockEvent );
+
+		// Assert
+		expect( mockEvent.stopPropagation ).toHaveBeenCalled();
+		expect( viewInstance.editComponent ).toHaveBeenCalledWith( {
+			trigger: 'doubleClick',
+			location: 'canvas',
+			secondaryLocation: 'canvasElement',
+		} );
+	} );
+
+	it( 'should not call editComponent when user is not administrator', () => {
+		// Arrange
+		const viewInstance = createMockViewInstance( false ) as unknown as ComponentViewInstance;
+		const mockEvent = { stopPropagation: jest.fn() } as unknown as MouseEvent;
+		viewInstance.editComponent = jest.fn();
+
+		// Act
+		viewInstance.handleDblClick( mockEvent );
+
+		// Assert
+		expect( mockEvent.stopPropagation ).toHaveBeenCalled();
+		expect( viewInstance.editComponent ).not.toHaveBeenCalled();
 	} );
 } );

@@ -1,10 +1,12 @@
-import { type z, type z3 } from '@elementor/schema';
+import { z, type z3 } from '@elementor/schema';
 import { type AngieMcpSdk } from '@elementor-external/angie-sdk';
 import { McpServer, type ToolCallback } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { type RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import { type ServerNotification, type ServerRequest } from '@modelcontextprotocol/sdk/types.js';
 
+import { ANGIE_MODEL_PREFERENCES, type AngieModelPreferences } from './angie-annotations';
 import { mockMcpRegistry } from './test-utils/mock-mcp-registry';
+import { getSDK } from './utils/get-sdk';
 
 type ZodRawShape = z3.ZodRawShape;
 
@@ -67,8 +69,20 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 		);
 	}
 	const mcpServer = mcpRegistry[ namespace ];
-	const { addTool } = createToolRegistrator( mcpServer );
+	const { addTool } = createToolRegistry( mcpServer );
 	return {
+		waitForReady: () => getSDK().waitForReady(),
+		// @ts-expect-error: TS is unable to infer the type here
+		resource: async ( ...args: Parameters< McpServer[ 'resource' ] > ) => {
+			await getSDK().waitForReady();
+			return mcpServer.resource( ...args );
+		},
+		sendResourceUpdated: ( ...args: Parameters< McpServer[ 'server' ][ 'sendResourceUpdated' ] > ) => {
+			return new Promise( async () => {
+				await getSDK().waitForReady();
+				mcpServer.server.sendResourceUpdated( ...args );
+			} );
+		},
 		mcpServer,
 		addTool,
 		setMCPDescription: ( description: string ) => {
@@ -97,7 +111,10 @@ export interface MCPRegistryEntry {
 	) => void;
 	setMCPDescription: ( description: string ) => void;
 	getActiveChatInfo: () => { sessionId: string; expiresAt: number };
+	sendResourceUpdated: McpServer[ 'server' ][ 'sendResourceUpdated' ];
+	resource: McpServer[ 'resource' ];
 	mcpServer: McpServer;
+	waitForReady: () => Promise< void >;
 }
 
 type ResourceList = {
@@ -113,6 +130,10 @@ type ToolRegistrationOptions<
 	name: string;
 	description: string;
 	schema?: InputArgs;
+	/**
+	 * Auto added fields:
+	 * @param errors z.string().optional().describe('Error message if the tool failed')
+	 */
 	outputSchema?: OutputSchema;
 	handler: InputArgs extends z.ZodRawShape
 		? (
@@ -123,23 +144,33 @@ type ToolRegistrationOptions<
 				args: unknown,
 				extra: RequestHandlerExtra< ServerRequest, ServerNotification >
 		  ) => ExpectedOutput | Promise< ExpectedOutput >;
-	isDestrcutive?: boolean;
+	isDestructive?: boolean;
 	requiredResources?: ResourceList;
+	modelPreferences?: AngieModelPreferences;
 };
 
-function createToolRegistrator( server: McpServer ) {
+function createToolRegistry( server: McpServer ) {
 	function addTool<
 		T extends undefined | z.ZodRawShape = undefined,
 		O extends undefined | z.ZodRawShape = undefined,
 	>( opts: ToolRegistrationOptions< T, O > ) {
 		const outputSchema = opts.outputSchema as ZodRawShape | undefined;
+		if ( outputSchema ) {
+			Object.assign(
+				outputSchema,
+				outputSchema.errors ?? {
+					errors: z.string().optional().describe( 'Error message if the tool failed' ),
+				}
+			);
+		}
 		// @ts-ignore: TS is unable to infer the type here
 		const inputSchema: ZodRawShape = opts.schema ? opts.schema : {};
 		const toolCallback: ToolCallback< ZodRawShape > = async function ( args, extra ) {
 			try {
 				const invocationResult = await opts.handler( opts.schema ? args : {}, extra );
 				return {
-					structuredContent: typeof invocationResult === 'string' ? undefined : invocationResult,
+					// TODO: Uncomment this when the outputSchema is stable
+					// structuredContent: typeof invocationResult === 'string' ? undefined : invocationResult,
 					content: [
 						{
 							type: 'text',
@@ -153,6 +184,9 @@ function createToolRegistrator( server: McpServer ) {
 			} catch ( error ) {
 				return {
 					isError: true,
+					structuredContent: {
+						errors: ( error as Error ).message || 'Unknown error',
+					},
 					content: [
 						{
 							type: 'text',
@@ -163,19 +197,23 @@ function createToolRegistrator( server: McpServer ) {
 			}
 		};
 		const annotations: Record< string, unknown > = {
-			destructiveHint: opts.isDestrcutive,
-			readOnlyHint: opts.isDestrcutive ? false : undefined,
+			destructiveHint: opts.isDestructive,
+			readOnlyHint: opts.isDestructive ? false : undefined,
 			title: opts.name,
 		};
 		if ( opts.requiredResources ) {
 			annotations[ 'angie/requiredResources' ] = opts.requiredResources;
+		}
+		if ( opts.modelPreferences ) {
+			annotations[ ANGIE_MODEL_PREFERENCES ] = opts.modelPreferences;
 		}
 		server.registerTool(
 			opts.name,
 			{
 				description: opts.description,
 				inputSchema,
-				outputSchema,
+				// TODO: Uncomment this when the outputSchema is stable
+				// outputSchema,
 				title: opts.name,
 				annotations,
 			},

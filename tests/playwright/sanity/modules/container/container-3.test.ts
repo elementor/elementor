@@ -228,6 +228,34 @@ test.describe( 'Container tests #3 @container', () => {
 		await expect.soft( editor.getPreviewFrame().locator( containerSelector ) ).toHaveCSS( '--e-con-transform-rotateZ', '2deg' );
 		await expect.soft( editor.getPreviewFrame().locator( containerSelector ) ).toHaveCSS( '--e-con-transform-scale', '2' );
 	} );
+
+	test( 'Edit handles should be inside when overflow is hidden', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		await editor.closeNavigatorIfOpen();
+		await editor.setPageTemplate( 'canvas' );
+
+		// Act.
+		await editor.addElement( { elType: 'container' }, 'document' ); // Add container to push second one down and avoid inside handles due to scroll snap.
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		await editor.openPanelTab( 'layout' );
+		await editor.openSection( 'section_layout_additional_options' );
+		await editor.setSelectControlValue( 'overflow', 'hidden' );
+
+		const containerSelector = '.elementor-edit-mode .elementor-element-' + containerId;
+		const container = editor.getPreviewFrame().locator( containerSelector );
+		const handles = container.locator( '> .elementor-element-overlay > .elementor-editor-element-settings' );
+
+		await editor.getPreviewFrame().hover( containerSelector );
+
+		// Assert.
+		await expect.soft( container ).toHaveClass( /e-handles-inside/ );
+		await expect.soft( handles ).toBeVisible();
+
+		await editor.setPageTemplate( 'default' );
+	} );
 } );
 
 async function addContainerAndHover( editor: EditorPage ) {

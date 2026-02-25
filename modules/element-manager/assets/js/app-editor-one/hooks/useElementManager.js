@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import {
 	getAdminAppData,
 	getUsageWidgets,
@@ -7,6 +7,7 @@ import {
 } from '../../api';
 
 export const useElementManager = () => {
+	const isInitialMount = useRef( true );
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ widgets, setWidgets ] = useState( [] );
 	const [ promotionWidgets, setPromotionWidgets ] = useState( [] );
@@ -106,6 +107,7 @@ export const useElementManager = () => {
 
 			setPlugins( pluginsData );
 			setIsLoading( false );
+			setChangeProgress( ( prev ) => ( { ...prev, isUnsavedChanges: false } ) );
 		};
 
 		loadData();
@@ -115,6 +117,12 @@ export const useElementManager = () => {
 		if ( isLoading ) {
 			return;
 		}
+
+		if ( isInitialMount.current ) {
+			isInitialMount.current = false;
+			return;
+		}
+
 		setChangeProgress( ( prev ) => ( { ...prev, isUnsavedChanges: true } ) );
 	}, [ widgetsDisabled, widgetsRoleRestrictions, isLoading ] );
 

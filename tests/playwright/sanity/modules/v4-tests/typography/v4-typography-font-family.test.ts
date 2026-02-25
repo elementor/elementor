@@ -18,9 +18,8 @@ test.describe( 'V4 Typography Font Family Tests @v4-tests', () => {
 	let driver: EditorDriver;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		driver = await DriverFactory.createEditorDriver( browser, testInfo, apiRequests, {
-			experiments: [ 'e_atomic_elements' ],
-		} );
+		driver = await DriverFactory.createEditorDriver( browser, testInfo, apiRequests );
+		await driver.wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
 	} );
 
 	test.afterAll( async () => {

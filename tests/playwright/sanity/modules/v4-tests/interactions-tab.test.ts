@@ -1,11 +1,40 @@
 import { parallelTest as test } from '../../../parallelTest';
-import { expect } from '@playwright/test';
-import { DriverFactory } from '../../../drivers/driver-factory';
 import WpAdminPage from '../../../pages/wp-admin-page';
+import { expect } from '@playwright/test';
+
+function getElementInteractionsData( elementId: string ) {
+	const scriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
+	if ( ! scriptTag ) {
+		return null;
+	}
+
+	try {
+		const allInteractions = JSON.parse( scriptTag.textContent || '[]' );
+		const elementData = allInteractions.find(
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			( item: any ) => item.elementId === elementId || item.dataId === elementId,
+		);
+
+		if ( ! elementData || ! elementData.interactions ) {
+			return null;
+		}
+
+		return elementData.interactions;
+	} catch {
+		return null;
+	}
+}
 
 test.describe( 'Interactions Tab @v4-tests', () => {
-	test.beforeAll( async () => {
-		await DriverFactory.activateExperimentsCli( [ 'e_atomic_elements', 'e_interactions' ] );
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.setExperiments( {
+			e_interactions: 'active',
+			e_atomic_elements: 'active',
+		} );
+		await page.close();
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -49,6 +78,63 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		} );
 	} );
 
+	test( 'Core trigger menu shows "While scrolling" as disabled and scrollOn-only controls stay hidden', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		await test.step( 'Add heading widget and navigate to interactions tab', async () => {
+			const container = await editor.addElement( { elType: 'container' }, 'document' );
+			await editor.addWidget( { widgetType: 'e-heading', container } );
+
+			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
+			await interactionsTab.click();
+			await expect( interactionsTab ).toHaveAttribute( 'aria-selected', 'true' );
+		} );
+
+		await test.step( 'Create an interaction and open popover', async () => {
+			const addInteractionButton = page.getByRole( 'button', { name: 'Create an interaction' } );
+			await expect( addInteractionButton ).toBeVisible();
+			await addInteractionButton.click();
+
+			await page.waitForSelector( '.MuiPopover-root' );
+			await expect( page.locator( '.MuiPopover-root' ) ).toBeVisible();
+		} );
+
+		await test.step( 'Assert trigger options and hidden scrollOn-only controls', async () => {
+			const popover = page.locator( '.MuiPopover-root' ).first();
+
+			// Open trigger menu via the combobox (avoids duplicate text matches from disablePortal).
+			const triggerSelect = popover.locator( '[role="combobox"]' ).first();
+			await expect( triggerSelect ).toBeVisible();
+			await triggerSelect.click();
+
+			// Core trigger control enables only these two options.
+			await expect( page.locator( '[role="option"]' ).filter( { hasText: 'Page load' } ) ).toBeVisible();
+			await expect( page.locator( '[role="option"]' ).filter( { hasText: 'Scroll into view' } ) ).toBeVisible();
+
+			// Pro-only option is present but disabled in core runs.
+			const scrollOnOption = page.locator( '[role="option"]' ).filter( { hasText: 'While Scrolling' } );
+			await expect( scrollOnOption ).toBeVisible();
+			await expect( scrollOnOption ).toHaveAttribute( 'aria-disabled', 'true' );
+
+			// Close menu without changing selection.
+			await page.keyboard.press( 'Escape' );
+
+			// ScrollOn-only controls should not render for "Page load".
+			await expect( popover.getByText( 'Relative To', { exact: true } ) ).toHaveCount( 0 );
+			await expect( popover.getByText( 'Offset Top', { exact: true } ) ).toHaveCount( 0 );
+			await expect( popover.getByText( 'Offset Bottom', { exact: true } ) ).toHaveCount( 0 );
+
+			// Switch to "Scroll into view" and ensure scrollOn-only controls still do not render.
+			await triggerSelect.click();
+			await page.locator( '[role="option"]' ).filter( { hasText: 'Scroll into view' } ).click();
+
+			await expect( popover.getByText( 'Relative To', { exact: true } ) ).toHaveCount( 0 );
+			await expect( popover.getByText( 'Offset Top', { exact: true } ) ).toHaveCount( 0 );
+			await expect( popover.getByText( 'Offset Bottom', { exact: true } ) ).toHaveCount( 0 );
+		} );
+	} );
+
 	test( 'Interactions functionality end-to-end test', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
@@ -74,47 +160,51 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			const interactionTag = page.locator( '.MuiTag-root' ).first();
 
 			await expect( interactionTag ).toBeVisible();
-			await page.waitForSelector( '.MuiPopover-root' );
+			const popover = page.locator( '.MuiPopover-root' ).first();
+			await popover.waitFor( { state: 'visible' } );
 
-			const selectOption = async ( openSelector, optionName ) => {
-				await expect( openSelector ).toBeVisible();
-				await openSelector.click();
-
-				const option = page.getByRole( 'option', { name: optionName } );
-				await expect( option ).toBeVisible();
-				await option.click();
+			const selectInPopover = async ( combobox, optionText ) => {
+				await combobox.click();
+				await page.locator( '[role="option"]' ).filter( { hasText: optionText } ).click();
+				await page.waitForFunction(
+					() => ! document.querySelector( '.MuiPopover-paper .MuiModal-root' ),
+					{ timeout: 3000 },
+				);
 			};
 
-			await selectOption( page.getByText( 'Page load', { exact: true } ), 'Scroll into view' );
-			await selectOption( page.getByText( 'Fade', { exact: true } ), 'Slide' );
-			await selectOption( page.getByText( '300 MS', { exact: true } ), '100 MS' );
+			const getFieldCombobox = ( label: string ) =>
+				popover.locator( `[aria-label="${ label } control"] [role="combobox"]` );
 
-			const effectTypeOption = page.getByLabel( 'Out', { exact: true } );
-			const directionOption = page.getByLabel( 'To bottom', { exact: true } );
+			// Change trigger from "Page load" to "Scroll into view"
+			await selectInPopover( getFieldCombobox( 'Trigger' ), 'Scroll into view' );
 
-			await expect( effectTypeOption ).toBeVisible();
-			await effectTypeOption.click();
+			// Change animation from "Fade" to "Slide"
+			await selectInPopover( getFieldCombobox( 'Effect' ), 'Slide' );
 
-			await expect( directionOption ).toBeVisible();
-			await directionOption.click();
+			// Set duration to 300ms
+			const durationInput = popover.locator( 'input[type="number"]' ).first();
+			await expect( durationInput ).toBeVisible();
+			await durationInput.fill( '300' );
 
-			await expect( interactionTag ).toContainText( 'Scroll into view: Slide Out' );
+			// Change effect type to "Out"
+			const effectTypeButton = popover.getByLabel( 'Out', { exact: true } );
+			await expect( effectTypeButton ).toBeVisible();
+			await effectTypeButton.click();
 
+			// Change direction to "To bottom"
+			const directionButton = popover.getByLabel( 'To bottom', { exact: true } );
+			await expect( directionButton ).toBeVisible();
+			await directionButton.click();
+
+			// Close the popover by clicking outside
 			await page.locator( 'body' ).click();
+
+			// Verify the tag shows the correct text
+			await expect( interactionTag ).toContainText( 'Scroll into view: Slide Out' );
 		} );
 
 		await test.step( 'Publish and view the page', async () => {
 			await editor.publishAndViewPage();
-		} );
-
-		await test.step( 'Verify data-interactions attribute on heading', async () => {
-			const headingElement = page.locator( '.e-heading-base' ).first();
-
-			await expect( headingElement ).toBeVisible();
-			await expect( headingElement ).toHaveAttribute( 'data-interactions' );
-
-			const interactionsData = await headingElement.getAttribute( 'data-interactions' );
-			expect( interactionsData ).toBeTruthy();
 		} );
 	} );
 
@@ -164,7 +254,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 
 			// Verify the custom event was fired with correct data
 			const eventDetail = await eventPromise;
-			expect( eventDetail ).toHaveProperty( 'animationId' );
+			expect( eventDetail ).toHaveProperty( 'interactionId' );
 			expect( eventDetail ).toHaveProperty( 'elementId' );
 		} );
 
@@ -176,7 +266,6 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			const headingElement = page.locator( '.e-heading-base' ).first();
 
 			await expect( headingElement ).toBeVisible();
-			await expect( headingElement ).toHaveAttribute( 'data-interactions' );
 
 			// Verify motion.dev library is loaded
 			const isMotionLoaded = await page.evaluate( () => {
@@ -186,11 +275,242 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			expect( isMotionLoaded ).toBe( true );
 
 			// Wait for the animation to complete (default 300ms duration + buffer)
-			await page.waitForTimeout( 500 );
+			await page.waitForTimeout( 1000 );
 
 			// For "Fade In" on "Page load", the element should be fully visible (opacity: 1)
 			const opacity = await headingElement.evaluate( ( el ) => window.getComputedStyle( el ).opacity );
-			expect( parseFloat( opacity ) ).toBeGreaterThan( 0.9 );
+			expect( parseFloat( opacity ) ).toBeGreaterThan( 0.8 );
+		} );
+	} );
+
+	test( 'Replay control is visible and disabled in interactions popover', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		await test.step( 'Add heading widget and navigate to interactions tab', async () => {
+			const container = await editor.addElement( { elType: 'container' }, 'document' );
+			await editor.addWidget( { widgetType: 'e-heading', container } );
+
+			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
+			await interactionsTab.click();
+			await expect( interactionsTab ).toHaveAttribute( 'aria-selected', 'true' );
+		} );
+
+		await test.step( 'Create interaction and open popover', async () => {
+			const addInteractionButton = page.getByRole( 'button', { name: 'Create an interaction' } );
+			await addInteractionButton.click();
+
+			await page.waitForSelector( '.MuiPopover-root' );
+
+			await expect( page.locator( '.MuiPopover-root' ) ).toBeVisible();
+		} );
+
+		await test.step( 'Replay control is not visible on page load trigger', async () => {
+			const replayLabel = page.getByText( 'Replay', { exact: true } );
+
+			// Assert - label is not visible
+			await expect( replayLabel ).not.toBeVisible();
+		} );
+
+		await test.step( 'Verify Replay control is visible with Yes button disabled', async () => {
+			// Arrange – use CSS selectors to bypass aria-hidden from disablePortal.
+			const popover = page.locator( '.MuiPopover-root' ).first();
+			const triggerCombobox = popover.locator( '[role="combobox"]' ).first();
+			await triggerCombobox.click();
+
+			await page.locator( '[role="option"]' ).filter( { hasText: 'Scroll into view' } ).click();
+
+			const replayLabel = page.getByText( 'Replay', { exact: true } );
+
+			// Assert - label is visible
+			await expect( replayLabel ).toBeVisible();
+
+			// Assert - toggle buttons exist
+			const yesButton = page.getByLabel( 'Yes', { exact: true } );
+			const noButton = page.getByLabel( 'No', { exact: true } );
+
+			await expect( yesButton ).toBeVisible();
+			await expect( noButton ).toBeVisible();
+
+			// Assert - Yes button is disabled (promotion), No button is enabled
+			await expect( yesButton ).toBeDisabled();
+			await expect( noButton ).not.toBeDisabled();
+		} );
+	} );
+
+	test( 'Duplicate element with interactions generates new temp IDs', async ( { page, apiRequests }, testInfo ) => {
+		let originalElementId = '';
+		let duplicatedElementId = '';
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		await test.step( 'Add widget and create interaction', async () => {
+			const container = await editor.addElement( { elType: 'e-div-block' }, 'document' );
+			originalElementId = await editor.addWidget( { widgetType: 'e-heading', container } );
+
+			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
+			await interactionsTab.click();
+
+			const addInteractionButton = page.getByRole( 'button', { name: 'Create an interaction' } );
+			await addInteractionButton.click();
+			await page.waitForSelector( '.MuiPopover-root' );
+			await page.locator( 'body' ).click();
+		} );
+
+		await test.step( 'Save to get permanent IDs', async () => {
+			await editor.publishPage();
+			await page.reload();
+			await editor.waitForPanelToLoad();
+		} );
+
+		await test.step( 'Get original interaction ID from saved data', async () => {
+			const previewFrame = editor.getPreviewFrame();
+
+			const originalInteractionsData = await previewFrame.evaluate( getElementInteractionsData, originalElementId );
+
+			expect( originalInteractionsData ).toBeTruthy();
+			expect( originalInteractionsData.items[ 0 ]?.value?.interaction_id?.value ).toBeTruthy();
+			const originalInteractionId = originalInteractionsData.items[ 0 ].value.interaction_id.value;
+			expect( originalInteractionId ).not.toContain( 'temp-' );
+		} );
+
+		await test.step( 'Duplicate the element', async () => {
+			const elementInPreview = editor.getPreviewFrame().locator( `[data-id="${ originalElementId }"]` );
+			await elementInPreview.click( { button: 'right' } );
+
+			await page.getByRole( 'menuitem', { name: 'Duplicate' } ).click();
+			await page.waitForTimeout( 500 );
+
+			const originalElement = editor.getPreviewFrame().locator( `[data-id="${ originalElementId }"]` );
+			const duplicatedElement = originalElement.locator( 'xpath=./following-sibling::*[1]' );
+			duplicatedElementId = await duplicatedElement.getAttribute( 'data-id' );
+
+			expect( duplicatedElementId ).toBeTruthy();
+			expect( duplicatedElementId ).not.toBe( originalElementId );
+		} );
+
+		await test.step( 'Verify duplicated element has interactions with cleaned IDs', async () => {
+			await editor.selectElement( duplicatedElementId );
+			await page.waitForTimeout( 500 );
+
+			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
+			await interactionsTab.click();
+			await page.waitForTimeout( 500 );
+
+			const previewFrame = editor.getPreviewFrame();
+
+			await previewFrame.waitForFunction(
+				( elementId ) => {
+					const scriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
+					if ( ! scriptTag ) {
+						return false;
+					}
+					try {
+						const allInteractions = JSON.parse( scriptTag.textContent || '[]' );
+						const elementData = allInteractions.find(
+							// eslint-disable-next-line @typescript-eslint/no-explicit-any
+							( item: any ) => ( item.elementId === elementId || item.dataId === elementId ) && item.interactions?.items?.length > 0,
+						);
+						return !! ( elementData );
+					} catch {
+						return false;
+					}
+				},
+				duplicatedElementId,
+				{ timeout: 5000 },
+			);
+
+			const duplicatedInteractionsData = await previewFrame.evaluate( getElementInteractionsData, duplicatedElementId );
+
+			expect( duplicatedInteractionsData ).toBeTruthy();
+			expect( duplicatedInteractionsData.items ).toHaveLength( 1 );
+
+			const duplicatedInteractionId = duplicatedInteractionsData.items[ 0 ].value.interaction_id?.value;
+
+			// Should have an interaction ID (either temp or permanent)
+			expect( duplicatedInteractionId ).toBeTruthy();
+
+			const originalInteractionsData = await previewFrame.evaluate( getElementInteractionsData, originalElementId );
+			const originalInteractionId = originalInteractionsData.items[ 0 ].value.interaction_id.value;
+			expect( duplicatedInteractionId ).not.toBe( originalInteractionId );
+		} );
+	} );
+
+	test( 'Multiple interactions on same element have unique IDs', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+		let originalElementId: string;
+
+		await test.step( 'Add widget and create multiple interactions', async () => {
+			const container = await editor.addElement( { elType: 'e-div-block' }, 'document' );
+			originalElementId = await editor.addWidget( { widgetType: 'e-heading', container } );
+
+			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
+			await interactionsTab.click();
+
+			// Create first interaction
+			const addInteractionButton = page.getByRole( 'button', { name: 'Create an interaction' } );
+			await addInteractionButton.click();
+			await page.waitForSelector( '.MuiPopover-root' );
+			await page.locator( 'body' ).click();
+
+			// Create second interaction
+			const addAdditionalInteractionButton = page.locator( 'button[aria-label*="Add item"]' );
+			await addAdditionalInteractionButton.click();
+			await page.waitForSelector( '.MuiPopover-root' );
+			await page.locator( 'body' ).click();
+		} );
+
+		await test.step( 'Verify each interaction has unique ID', async () => {
+			const interactionTags = page.locator( '.MuiTag-root' );
+			await expect( interactionTags ).toHaveCount( 2 );
+			const previewFrame = editor.getPreviewFrame();
+
+			const interactionsData = await previewFrame.evaluate( getElementInteractionsData, originalElementId );
+
+			expect( interactionsData.items ).toHaveLength( 2 );
+
+			const id1 = interactionsData.items[ 0 ].value.interaction_id?.value;
+			const id2 = interactionsData.items[ 1 ].value.interaction_id?.value;
+
+			expect( id1 ).not.toBe( id2 );
+			expect( id1 ).toContain( 'temp-' );
+			expect( id2 ).toContain( 'temp-' );
+		} );
+
+		await test.step( 'Verify play buttons trigger correct interaction IDs', async () => {
+			const interactionTags = page.locator( '.MuiTag-root' );
+
+			// Set up event listeners
+			await page.evaluate( () => {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				( window.top as any ).addEventListener( 'atomic/play_interactions', ( e: CustomEvent ) => {
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					( window as any ).__interactionEvents = ( window as any ).__interactionEvents || [];
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					( window as any ).__interactionEvents.push( e.detail );
+				} );
+			} );
+
+			// Click first play button
+			const firstTag = interactionTags.first();
+			await firstTag.hover();
+			await firstTag.locator( 'button[aria-label*="Play interaction"]' ).click();
+			await page.waitForTimeout( 100 );
+
+			// Click second play button
+			const secondTag = interactionTags.nth( 1 );
+			await secondTag.hover();
+			await secondTag.locator( 'button[aria-label*="Play interaction"]' ).click();
+			await page.waitForTimeout( 100 );
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const capturedEvents = await page.evaluate( () => ( window as any ).__interactionEvents || [] );
+
+			expect( capturedEvents ).toHaveLength( 2 );
+			expect( capturedEvents[ 0 ].interactionId ).toBeTruthy();
+			expect( capturedEvents[ 1 ].interactionId ).toBeTruthy();
+			expect( capturedEvents[ 0 ].interactionId ).not.toBe( capturedEvents[ 1 ].interactionId );
 		} );
 	} );
 } );

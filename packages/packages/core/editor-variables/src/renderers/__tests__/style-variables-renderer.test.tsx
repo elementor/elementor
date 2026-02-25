@@ -11,6 +11,7 @@ const unsubscribeMock = jest.fn();
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	__privateUseListenTo: jest.fn(),
 	commandEndEvent: jest.fn(),
+	getCanvasIframeDocument: jest.fn(),
 } ) );
 
 jest.mock( '@elementor/ui', () => ( {
@@ -21,10 +22,6 @@ jest.mock( '../../style-variables-repository', () => ( {
 	styleVariablesRepository: {
 		subscribe: jest.fn( () => unsubscribeMock ),
 	},
-} ) );
-
-jest.mock( '../../sync/get-canvas-iframe-document', () => ( {
-	getCanvasIframeDocument: jest.fn(),
 } ) );
 
 describe( '<StyleVariablesRenderer />', () => {

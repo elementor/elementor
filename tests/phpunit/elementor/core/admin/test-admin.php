@@ -6,6 +6,7 @@ use Elementor\Core\Experiments\Wrap_Core_Dependency;
 use Elementor\Plugin;
 use Elementor\Core\Admin\Admin;
 use Elementor\Core\Base\Document;
+use Elementor\Core\DocumentTypes\Page;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,6 +33,12 @@ class Test_Admin extends Elementor_Test_Base {
 		parent::tearDown();
 
 		$pagenow = $this->pagenow;
+
+		unset( $_GET['action'] );
+		unset( $_GET['active-tab'] );
+		unset( $_GET['active_tab'] );
+		unset( $_GET['_wpnonce'] );
+		unset( $_REQUEST['_wpnonce'] );
 	}
 
 	public function test_save_post() {
@@ -203,5 +210,222 @@ class Test_Admin extends Elementor_Test_Base {
 
 		// Cleanup.
 		Plugin::$instance->experiments = $original_experiments;
+	}
+
+	public function test_get_site_settings_url_config__returns_valid_url_without_existing_page() {
+		// Arrange
+		$this->act_as_admin();
+		
+		$existing_pages = get_pages( [
+			'meta_key' => Document::BUILT_WITH_ELEMENTOR_META_KEY,
+			'number' => -1,
+		] );
+		
+		foreach ( $existing_pages as $page ) {
+			wp_delete_post( $page->ID, true );
+		}
+
+		// Act
+		$config = Page::get_site_settings_url_config();
+
+		// Assert
+		$this->assertIsArray( $config );
+		$this->assertArrayHasKey( 'url', $config );
+		$this->assertArrayHasKey( 'new_page', $config );
+		$this->assertArrayHasKey( 'type', $config );
+		$this->assertNotEmpty( $config['url'] );
+		$this->assertTrue( $config['new_page'] );
+		$this->assertStringContainsString( 'edit.php', $config['url'] );
+		$this->assertStringContainsString( 'action=elementor_new_post', $config['url'] );
+		$this->assertEquals( 'site_settings', $config['type'] );
+	}
+
+	public function test_get_site_settings_url_config__returns_valid_url_with_existing_page() {
+		// Arrange
+		$this->act_as_admin();
+		
+		$document = $this->factory()->documents->create_and_get( [
+			'post_type' => 'page',
+			'post_status' => 'publish',
+		] );
+
+		// Act
+		$config = Page::get_site_settings_url_config();
+
+		// Assert
+		$this->assertIsArray( $config );
+		$this->assertArrayHasKey( 'url', $config );
+		$this->assertArrayHasKey( 'new_page', $config );
+		$this->assertArrayHasKey( 'type', $config );
+		$this->assertNotEmpty( $config['url'] );
+		$this->assertFalse( $config['new_page'] );
+		$this->assertStringContainsString( 'post.php', $config['url'] );
+		$this->assertStringContainsString( 'action=elementor', $config['url'] );
+		$this->assertStringContainsString( 'post=' . $document->get_main_id(), $config['url'] );
+		$this->assertEquals( 'site_settings', $config['type'] );
+	}
+
+	public function test_get_site_settings_url_config__with_active_tab() {
+		// Arrange
+		$this->act_as_admin();
+		$active_tab = 'settings-site-identity';
+
+		// Act
+		$config = Page::get_site_settings_url_config( $active_tab );
+
+		// Assert
+		$this->assertIsArray( $config );
+		$this->assertNotEmpty( $config['url'] );
+		$this->assertStringContainsString( 'active-tab=' . $active_tab, $config['url'] );
+	}
+
+	public function test_get_site_settings_url_config__with_all_tabs() {
+		// Arrange
+		$this->act_as_admin();
+		$tabs = [
+			'global-colors',
+			'global-typography',
+			'theme-style-typography',
+			'theme-style-buttons',
+			'theme-style-images',
+			'theme-style-form-fields',
+			'settings-site-identity',
+			'settings-background',
+			'settings-layout',
+			'settings-lightbox',
+			'settings-page-transitions',
+			'settings-custom-css',
+		];
+
+		// Act & Assert
+		foreach ( $tabs as $tab ) {
+			$config = Page::get_site_settings_url_config( $tab );
+			$this->assertIsArray( $config );
+			$this->assertNotEmpty( $config['url'] );
+			$this->assertStringContainsString( 'active-tab=' . $tab, $config['url'], "Failed for tab: {$tab}" );
+		}
+	}
+
+	public function test_admin_action_site_settings_redirect__requires_nonce() {
+		// Arrange
+		$this->act_as_admin();
+		$admin = new Admin();
+		$_GET['action'] = 'elementor_site_settings_redirect';
+		unset( $_GET['_wpnonce'] );
+		unset( $_REQUEST['_wpnonce'] );
+
+		// Act & Assert
+		$this->expectException( \WPDieException::class );
+		$admin->admin_action_site_settings_redirect();
+	}
+
+	public function test_admin_action_site_settings_redirect__requires_capability() {
+		// Arrange
+		$this->act_as_subscriber();
+		$admin = new Admin();
+		$_GET['action'] = 'elementor_site_settings_redirect';
+		$_GET['_wpnonce'] = wp_create_nonce( 'elementor_action_site_settings_redirect' );
+		$_REQUEST['_wpnonce'] = $_GET['_wpnonce'];
+
+		// Act & Assert
+		$this->expectException( \WPDieException::class );
+		$admin->admin_action_site_settings_redirect();
+	}
+
+	public function test_admin_action_edit_website_redirect__requires_nonce() {
+		// Arrange
+		$this->act_as_admin();
+		$admin = new Admin();
+		$_GET['action'] = 'elementor_edit_website_redirect';
+		unset( $_GET['_wpnonce'] );
+		unset( $_REQUEST['_wpnonce'] );
+
+		// Act & Assert
+		$this->expectException( \WPDieException::class );
+		$admin->admin_action_edit_website_redirect();
+	}
+
+	public function test_admin_action_edit_website_redirect__requires_capability() {
+		// Arrange
+		$this->act_as_subscriber();
+		$admin = new Admin();
+		$_GET['action'] = 'elementor_edit_website_redirect';
+		$_GET['_wpnonce'] = wp_create_nonce( 'elementor_action_edit_website' );
+		$_REQUEST['_wpnonce'] = $_GET['_wpnonce'];
+
+		// Act & Assert
+		$this->expectException( \WPDieException::class );
+		$admin->admin_action_edit_website_redirect();
+	}
+
+	public function test_admin_action_edit_website_redirect__redirects_to_create_new_page_when_no_homepage() {
+		// Arrange
+		$this->act_as_admin();
+		update_option( 'show_on_front', 'posts' );
+		$admin = new Admin();
+		$_GET['action'] = 'elementor_edit_website_redirect';
+		$_GET['_wpnonce'] = wp_create_nonce( 'elementor_action_edit_website' );
+		$_REQUEST['_wpnonce'] = $_GET['_wpnonce'];
+
+		add_filter( 'wp_redirect', function( $location ) {
+			throw new \Exception( $location );
+		} );
+
+		// Act & Assert
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'edit.php?post_type=page' );
+		$this->expectExceptionMessage( 'action=elementor_new_post' );
+		$admin->admin_action_edit_website_redirect();
+	}
+
+	public function test_admin_action_edit_website_redirect__redirects_to_create_new_page_when_homepage_not_built_with_elementor() {
+		// Arrange
+		$this->act_as_admin();
+		update_option( 'show_on_front', 'page' );
+		$homepage = $this->factory()->post->create_and_get( [
+			'post_type' => 'page',
+			'post_status' => 'publish',
+		] );
+		update_option( 'page_on_front', $homepage->ID );
+		$admin = new Admin();
+		$_GET['action'] = 'elementor_edit_website_redirect';
+		$_GET['_wpnonce'] = wp_create_nonce( 'elementor_action_edit_website' );
+		$_REQUEST['_wpnonce'] = $_GET['_wpnonce'];
+
+		add_filter( 'wp_redirect', function( $location ) {
+			throw new \Exception( $location );
+		} );
+
+		// Act & Assert
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'edit.php?post_type=page' );
+		$this->expectExceptionMessage( 'action=elementor_new_post' );
+		$admin->admin_action_edit_website_redirect();
+	}
+
+	public function test_admin_action_edit_website_redirect__redirects_to_homepage_edit_url_when_built_with_elementor() {
+		// Arrange
+		$this->act_as_admin();
+		update_option( 'show_on_front', 'page' );
+		$document = $this->factory()->documents->create_and_get( [
+			'post_type' => 'page',
+			'post_status' => 'publish',
+		] );
+		update_option( 'page_on_front', $document->get_main_id() );
+		$admin = new Admin();
+		$_GET['action'] = 'elementor_edit_website_redirect';
+		$_GET['_wpnonce'] = wp_create_nonce( 'elementor_action_edit_website' );
+		$_REQUEST['_wpnonce'] = $_GET['_wpnonce'];
+
+		add_filter( 'wp_redirect', function( $location ) {
+			throw new \Exception( $location );
+		} );
+
+		// Act & Assert
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'post.php' );
+		$this->expectExceptionMessage( 'post=' . $document->get_main_id() );
+		$this->expectExceptionMessage( 'action=elementor' );
+		$admin->admin_action_edit_website_redirect();
 	}
 }

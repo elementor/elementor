@@ -17,9 +17,10 @@ type Config = {
 	id: string;
 	label: string;
 	component: ComponentType;
+	position?: number;
 };
 
-export function injectTab( { id, label, component }: Config ) {
+export function injectTab( { id, label, component, position }: Config ) {
 	registerTab( { id, label, component } );
 
 	listenTo( v1ReadyEvent(), () => {
@@ -44,6 +45,7 @@ export function injectTab( { id, label, component }: Config ) {
 			label,
 			route,
 			isActive: 'route' in e && e.route === route,
+			position,
 		} );
 	} );
 }

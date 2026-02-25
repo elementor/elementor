@@ -46,6 +46,7 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 		value = '',
 		startAdornment,
 		disablePortal = true,
+		inputProps,
 		...restProps
 	} = props;
 
@@ -100,7 +101,7 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 					placeholder={ placeholder }
 					hasSelectedValue={ isValueFromOptions }
 					startAdornment={ startAdornment }
-					extraInputProps={ restProps.inputProps }
+					extraInputProps={ inputProps }
 				/>
 			) }
 		/>
@@ -141,11 +142,7 @@ const TextInput = ( {
 			} }
 			InputProps={ {
 				...params.InputProps,
-				startAdornment: startAdornment ? (
-					<InputAdornment position="start">{ startAdornment }</InputAdornment>
-				) : (
-					params.InputProps.startAdornment
-				),
+				startAdornment: startAdornment || params.InputProps.startAdornment,
 				endAdornment: <ClearButton params={ params } allowClear={ allowClear } handleChange={ handleChange } />,
 			} }
 		/>

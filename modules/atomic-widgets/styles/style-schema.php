@@ -45,6 +45,7 @@ class Style_Schema {
 			self::get_effects_props(),
 			self::get_layout_props(),
 			self::get_alignment_props(),
+			self::get_special_props(),
 		);
 	}
 
@@ -229,6 +230,21 @@ class Style_Schema {
 			'outline-width' => Size_Prop_Type::make()
 				->units( Size_Constants::border() )
 				->description( 'The width of the outline in Size PropType format' ),
+			'outline-color' => Color_Prop_Type::make()->description( 'The color of the outline, specified as a hex code, rgb(a), hsl(a), or a standard css color name.' ),
+			'outline-style' => String_Prop_Type::make()->enum( [
+				'none',
+				'hidden',
+				'dotted',
+				'dashed',
+				'solid',
+				'double',
+				'groove',
+				'ridge',
+				'inset',
+				'outset',
+			] )->description( 'The outline style in CSS values' ),
+			'outline-offset' => Size_Prop_Type::make()->units( Size_Constants::border() )->description( 'The offset of the outline, specified as a length in Size PropType format' ),
+
 		];
 	}
 
@@ -326,6 +342,18 @@ class Style_Schema {
 				'stretch',
 			] )
 			->description( 'Defines how the browser distributes space between and around content items along the main-axis of a flex container. CSS values: center, start, end, flex-start, flex-end, left, right, normal, space-between, space-around, space-evenly, stretch' ),
+			'justify-items' => String_Prop_Type::make()->enum( [
+				'normal',
+				'stretch',
+				'center',
+				'start',
+				'end',
+				'flex-start',
+				'flex-end',
+				'left',
+				'right',
+				'anchor-center',
+			] )->description( 'Defines how the browser distributes space between and around content items along the inline axis of a grid container. CSS values: center, start, end, flex-start, flex-end, left, right' ),
 			'align-content' => String_Prop_Type::make()->enum( [
 				'center',
 				'start',
@@ -364,6 +392,14 @@ class Style_Schema {
 				'stretch',
 			] )->description( 'Allows the default alignment (or the one specified by align-items) to be overridden for individual flex items. CSS values: auto, normal, center, start, end, self-start, self-end, flex-start, flex-end, anchor-center, baseline, first baseline, last baseline, stretch' ),
 			'order' => Number_Prop_Type::make()->description( 'Specifies the order of the flex items. Items with lower order values are displayed first.' ),
+		];
+	}
+
+	private static function get_special_props() {
+		return [
+			'content' => String_Prop_Type::make()->description( 'The string content for pseudo-element content property' ),
+			'appearance' => String_Prop_Type::make()->enum( [ 'none', 'auto' ] )->description( 'The appearance of the element. CSS values: none, auto' ),
+			'clip-path' => String_Prop_Type::make()->description( 'The clip-path CSS property defines a shape to be used as clipping region.' ),
 		];
 	}
 }

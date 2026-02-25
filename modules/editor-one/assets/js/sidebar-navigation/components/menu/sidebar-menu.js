@@ -1,8 +1,10 @@
 import { useMemo } from '@wordpress/element';
+import { Divider } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import MenuActiveStateResolver from '../../classes/menu-active-state-resolver';
 import SidebarMenuItem from './sidebar-menu-item';
-import { MenuList } from './styled-components';
+import { MenuList } from '../shared';
+import { Fragment } from 'react';
 
 const SidebarMenu = ( { menuItems, level4Groups, activeMenuSlug, activeChildSlug } ) => {
 	const activeStateResolver = useMemo(
@@ -27,13 +29,16 @@ const SidebarMenu = ( { menuItems, level4Groups, activeMenuSlug, activeChildSlug
 	return (
 		<MenuList>
 			{ menuItems.map( ( item ) => (
-				<SidebarMenuItem
-					key={ item.slug }
-					item={ item }
-					isActive={ activeStateResolver.isMenuActive( item ) }
-					children={ getChildren( item ) }
-					activeChildSlug={ activeChildSlug }
-				/>
+				<Fragment key={ item.slug }>
+					{ item.has_divider_before && <Divider sx={ { my: 1 } } /> }
+					<SidebarMenuItem
+						item={ item }
+						isActive={ activeStateResolver.isMenuActive( item ) }
+						activeChildSlug={ activeChildSlug }
+					>
+						{ getChildren( item ) }
+					</SidebarMenuItem>
+				</Fragment>
 			) ) }
 		</MenuList>
 	);
@@ -47,4 +52,3 @@ SidebarMenu.propTypes = {
 };
 
 export default SidebarMenu;
-

@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Variables\Classes;
 
+use Elementor\Modules\Variables\Storage\Exceptions\Type_Mismatch;
 use WP_Error;
 use Exception;
 use WP_REST_Server;
@@ -106,6 +107,12 @@ class Rest_Api {
 					'type' => 'integer',
 					'validate_callback' => [ $this, 'is_valid_order' ],
 				],
+				'type' => [
+					'required' => false,
+					'type' => 'string',
+					'validate_callback' => [ $this, 'is_valid_variable_type' ],
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
+				],
 			],
 		] );
 
@@ -146,6 +153,12 @@ class Rest_Api {
 					'validate_callback' => [ $this, 'is_valid_variable_value' ],
 					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
 				],
+				'type' => [
+					'required' => false,
+					'type' => 'string',
+					'validate_callback' => [ $this, 'is_valid_variable_type' ],
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
+				],
 			],
 		] );
 
@@ -169,6 +182,7 @@ class Rest_Api {
 	}
 
 	public function trim_and_sanitize_text_field( $value ) {
+
 		return trim( sanitize_text_field( $value ) );
 	}
 
@@ -296,11 +310,16 @@ class Rest_Api {
 		$label = $request->get_param( 'label' );
 		$value = $request->get_param( 'value' );
 		$order = $request->get_param( 'order' );
+		$type = $request->get_param( 'type' );
 
 		$update_data = [
 			'label' => $label,
 			'value' => $value,
 		];
+
+		if ( $type ) {
+			$update_data['type'] = $type;
+		}
 
 		if ( null !== $order ) {
 			$update_data['order'] = $order;
@@ -360,6 +379,12 @@ class Rest_Api {
 
 		if ( $value ) {
 			$overrides['value'] = $value;
+		}
+
+		$type = $request->get_param( 'type' );
+
+		if ( $type ) {
+			$overrides['type'] = $type;
 		}
 
 		$result = $this->service->restore( $id, $overrides );
@@ -422,6 +447,14 @@ class Rest_Api {
 			);
 		}
 
+		if ( $e instanceof Type_Mismatch ) {
+			return $this->prepare_error_response(
+				self::HTTP_BAD_REQUEST,
+				'type_mismatch',
+				$e->getMessage()
+			);
+		}
+
 		return $this->prepare_error_response(
 			self::HTTP_SERVER_ERROR,
 			'unexpected_server_error',
@@ -450,7 +483,6 @@ class Rest_Api {
 		return true;
 	}
 
-
 	public function is_valid_operations_array( $operations ) {
 		if ( ! is_array( $operations ) || empty( $operations ) ) {
 			return new WP_Error(
@@ -461,12 +493,13 @@ class Rest_Api {
 
 		foreach ( $operations as $index => $operation ) {
 			if ( ! is_array( $operation ) || ! isset( $operation['type'] ) ) {
+				$sanitized_index = absint( $index );
 				return new WP_Error(
 					'invalid_operation_structure',
 					sprintf(
 						/* translators: %d: operation index */
 						__( 'Invalid operation structure at index %d', 'elementor' ),
-						$index
+						$sanitized_index
 					)
 				);
 			}
@@ -474,12 +507,13 @@ class Rest_Api {
 			$allowed_types = [ 'create', 'update', 'delete', 'restore', 'reorder' ];
 
 			if ( ! in_array( $operation['type'], $allowed_types, true ) ) {
+				$sanitized_index = absint( $index );
 				return new WP_Error(
 					'invalid_operation_type',
 					sprintf(
 						/* translators: %d: operation index */
 						__( 'Invalid operation type at index %d', 'elementor' ),
-						$index
+						$sanitized_index
 					)
 				);
 			}

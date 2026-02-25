@@ -12,10 +12,13 @@ const learnMoreButton = {
 
 const INFOTIP_CONTENT = {
 	descendant: __(
-		'To add a link to this element, first remove the link from the elements inside of it.',
+		'To add a link or action to this element, first remove the link or action from the elements inside of it.',
 		'elementor'
 	),
-	ancestor: __( 'To add a link to this element, first remove the link from its parent container.', 'elementor' ),
+	ancestor: __(
+		'To add a link or action to this container, first remove the link or action from its parent container.',
+		'elementor'
+	),
 };
 
 type RestrictedLinkInfotipProps = PropsWithChildren< {

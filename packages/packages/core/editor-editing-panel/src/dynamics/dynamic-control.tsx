@@ -5,7 +5,8 @@ import { type PropKey } from '@elementor/editor-props';
 import { createTopLevelObjectType } from '../controls-registry/create-top-level-object-type';
 import { DynamicConditionalControl } from './components/dynamic-conditional-control';
 import { useDynamicTag } from './hooks/use-dynamic-tag';
-import { dynamicPropTypeUtil, type DynamicPropValue } from './utils';
+import { type DynamicPropValue } from './types';
+import { dynamicPropTypeUtil } from './utils';
 
 type DynamicControlProps = React.PropsWithChildren< {
 	bind: PropKey;

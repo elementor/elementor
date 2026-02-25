@@ -26,10 +26,13 @@ class Global_Classes_Cleanup {
 
 	private function on_classes_update( $new_value, $prev_value ) {
 		$deleted_classes_ids = $this->get_deleted_classes_ids( $new_value, $prev_value );
+		$additional_post_types = apply_filters( 'elementor/global_classes/additional_post_types', [] );
 
 		if ( ! empty( $deleted_classes_ids ) ) {
 			Plugin::$instance->db->iterate_elementor_documents(
-				fn( $document, $elements_data ) => $this->unapply_deleted_classes( $document, $elements_data, $deleted_classes_ids )
+				fn( $document, $elements_data ) => $this->unapply_deleted_classes( $document, $elements_data, $deleted_classes_ids ),
+				100,
+				$additional_post_types
 			);
 		}
 	}

@@ -24,6 +24,29 @@ class PromotionData {
 		];
 	}
 
+	public function get_v4_promotions_data( $force_request = false ): array {
+		$assets_data = $this->editor_assets_api->get_assets_data( $force_request );
+
+		if ( empty( $assets_data ) ) {
+			return [];
+		}
+
+		$promotions = [];
+
+		foreach ( $assets_data as $item ) {
+			foreach ( $item as $key => $promotion ) {
+				$promotions[ $key ] = [
+					'title' => esc_html( $promotion['title'] ?? '' ),
+					'content' => esc_html( $promotion['content'] ?? '' ),
+					'ctaUrl' => esc_url( $promotion['ctaUrl'] ?? '' ),
+					'image' => esc_url( $promotion['image'] ?? '' ),
+				];
+			}
+		}
+
+		return $promotions;
+	}
+
 	private function transform_assets_data( $force_request = false ) {
 		$assets_data = $this->editor_assets_api->get_assets_data( $force_request );
 		$transformed_data = [];

@@ -6,6 +6,30 @@ on:
       - main
     paths:
       - 'packages/**'
+  workflow_call:
+    inputs:
+      tag:
+        type: string
+        required: false
+        default: ''
+        description: 'Tag to use. Empty/"manual" = manual tag, "latest" = no tag suffix (latest), other = use as version tag suffix'
+      version:
+        type: string
+        required: false
+        default: ''
+        description: 'Base version to use. If not provided, reads from package.json'
+    secrets:
+      NPMJS_CLOUD_DEVOPS_TOKEN:
+        required: true
+      MAINTAIN_TOKEN:
+        required: true
+  workflow_dispatch:
+    inputs:
+      tag:
+        type: string
+        required: false
+        default: ''
+        description: 'Tag to use. Empty/"manual" = manual tag, "latest" = no tag suffix (latest), other = use as version tag suffix'
 
 jobs:
   publish-packages:
@@ -29,38 +53,110 @@ jobs:
         run: |
           npm ci
 
-      - name: Get Current Version
-        id: get-version
-        working-directory: packages
+      - name: Validate Inputs
         run: |
-          CURRENT_VERSION=$(node scripts/version-manager/index.js get-version "@elementor/editor")
-          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
-          echo "Current version: $CURRENT_VERSION"
+          # Validate version format if provided (semver)
+          if [ -n "${{ inputs.version }}" ]; then
+            if ! [[ "${{ inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "Error: version must be in semver format (e.g., 1.2.3)"
+              exit 1
+            fi
+          fi
 
-      - name: Set Version with Build Tag
-        id: build-tag
+          # Validate tag doesn't contain special characters
+          if [ -n "${{ inputs.tag }}" ]; then
+            if [[ "${{ inputs.tag }}" =~ [^a-zA-Z0-9._-] ]]; then
+              echo "Error: tag contains invalid characters"
+              exit 1
+            fi
+          fi
+
+      - name: Determine Tag Strategy
+        id: tag-strategy
+        run: |
+          # Determine effective tag based on trigger and inputs
+          if [ "${{ github.event_name }}" == "push" ]; then
+            # Existing behavior: use build number as version suffix
+            TAG_SUFFIX="${{ github.run_number }}"
+            NPM_DIST_TAG="build"
+          elif [ -z "${{ inputs.tag }}" ] || [ "${{ inputs.tag }}" == "manual" ]; then
+            # Manual tag
+            TAG_SUFFIX="manual"
+            NPM_DIST_TAG="manual"
+          elif [ "${{ inputs.tag }}" == "latest" ]; then
+            # Latest - no version suffix
+            TAG_SUFFIX=""
+            NPM_DIST_TAG="latest"
+          else
+            # Custom tag
+            TAG_SUFFIX="${{ inputs.tag }}"
+            NPM_DIST_TAG="${{ inputs.tag }}"
+          fi
+
+          echo "TAG_SUFFIX=$TAG_SUFFIX" >> $GITHUB_OUTPUT
+          echo "NPM_DIST_TAG=$NPM_DIST_TAG" >> $GITHUB_OUTPUT
+          echo "Using tag suffix: $TAG_SUFFIX"
+          echo "Using npm dist-tag: $NPM_DIST_TAG"
+
+      - name: Get/Set Version
+        id: version
         working-directory: packages
         run: |
-          VERSION_WITH_TAG="${{ steps.get-version.outputs.current_version }}-${{ github.run_number }}"
-          echo "Setting version to: $VERSION_WITH_TAG"
-          node scripts/version-manager/index.js set "${{ steps.get-version.outputs.current_version }}" --tag "${{ github.run_number }}"
-          echo "VERSION_WITH_TAG=$VERSION_WITH_TAG" >> $GITHUB_OUTPUT
+          # Get base version - use input if provided, otherwise read from package.json
+          if [ -n "${{ inputs.version }}" ]; then
+            BASE_VERSION="${{ inputs.version }}"
+            echo "Using provided version: $BASE_VERSION"
+          else
+            BASE_VERSION=$(node scripts/version-manager/index.js get-version "@elementor/editor")
+            echo "Current version from package.json: $BASE_VERSION"
+          fi
+
+          echo "BASE_VERSION=$BASE_VERSION" >> $GITHUB_OUTPUT
+
+          # Only set version if there's a tag suffix
+          if [ -n "${{ steps.tag-strategy.outputs.TAG_SUFFIX }}" ]; then
+            FULL_VERSION="${BASE_VERSION}-${{ steps.tag-strategy.outputs.TAG_SUFFIX }}"
+            echo "Setting version to: $FULL_VERSION"
+            node scripts/version-manager/index.js set "$BASE_VERSION" --tag "${{ steps.tag-strategy.outputs.TAG_SUFFIX }}"
+          else
+            # No tag suffix - versions already defined in package.json or set version without tag
+            FULL_VERSION="$BASE_VERSION"
+            echo "Using version: $FULL_VERSION"
+            # If version was provided as input, we need to set it
+            if [ -n "${{ inputs.version }}" ]; then
+              node scripts/version-manager/index.js set "$BASE_VERSION"
+            fi
+          fi
+
+          echo "FULL_VERSION=$FULL_VERSION" >> $GITHUB_OUTPUT
+          echo "VERSION_WITH_TAG=$FULL_VERSION" >> $GITHUB_OUTPUT
 
       - name: Build Packages
         working-directory: packages
-        run: npm run build
+        run: npm run build:ci
 
       - name: Publish Packages
         working-directory: packages
         run: |
-          # Publish with the build number tag
-          node scripts/version-manager/index.js publish --tag build --yes
+          # Publish with the determined npm dist-tag
+          node scripts/version-manager/index.js publish --tag "${{ steps.tag-strategy.outputs.NPM_DIST_TAG }}" --yes
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
 
       - name: Create Git Tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
         run: |
           git config --global user.email "github-actions@github.com"
           git config --global user.name "GitHub Actions"
-          git tag -a "v${{ steps.build-tag.outputs.VERSION_WITH_TAG }}" -m "Release ${{ steps.build-tag.outputs.VERSION_WITH_TAG }}"
-          git push origin "v${{ steps.build-tag.outputs.VERSION_WITH_TAG }}"
+          git remote set-url origin https://x-access-token:${{ secrets.MAINTAIN_TOKEN }}@github.com/${{ github.repository }}.git
+
+          TAG_NAME="v${{ steps.version.outputs.FULL_VERSION }}"
+
+          # Check if tag exists
+          if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
+            echo "Tag $TAG_NAME already exists, skipping creation"
+          else
+            git tag -a "$TAG_NAME" -m "Release ${{ steps.version.outputs.FULL_VERSION }}"
+            git push origin "$TAG_NAME" || echo "Warning: Failed to push tag"
+          fi

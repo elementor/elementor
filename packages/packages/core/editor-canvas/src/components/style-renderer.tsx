@@ -1,10 +1,13 @@
 import * as React from 'react';
-import { __privateUseListenTo as useListenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
+import {
+	__privateUseListenTo as useListenTo,
+	commandEndEvent,
+	getCanvasIframeDocument,
+} from '@elementor/editor-v1-adapters';
 import { Portal } from '@elementor/ui';
 
 import { useDocumentsCssLinks } from '../hooks/use-documents-css-links';
 import { useStyleItems } from '../hooks/use-style-items';
-import { getCanvasIframeDocument } from '../sync/get-canvas-iframe-document';
 
 export function StyleRenderer() {
 	const container = usePortalContainer();

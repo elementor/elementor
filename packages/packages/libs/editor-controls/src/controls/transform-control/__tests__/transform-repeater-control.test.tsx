@@ -11,6 +11,33 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { TransformRepeaterControl } from '../transform-repeater-control';
 
+jest.mock( '@elementor/editor-elements', () => ( {
+	...jest.requireActual( '@elementor/editor-elements' ),
+	useSelectedElement: jest.fn( () => ( {
+		element: { id: 'test-element-id', type: 'e-flexbox' },
+		elementType: { key: 'e-flexbox' },
+	} ) ),
+	getContainer: jest.fn( () => ( {
+		id: 'test-element-id',
+		model: {
+			get: jest.fn( ( key: string ) => {
+				if ( key === 'widgetType' ) {
+					return 'e-flexbox';
+				}
+				if ( key === 'elType' ) {
+					return 'e-flexbox';
+				}
+				return null;
+			} ),
+		},
+	} ) ),
+	getWidgetsCache: jest.fn( () => ( {
+		'e-flexbox': {
+			meta: { is_container: true },
+		},
+	} ) ),
+} ) );
+
 type DimensionPropValue< T extends string[] > = {
 	[ K in T[ number ] ]?: {
 		$$type: 'size';

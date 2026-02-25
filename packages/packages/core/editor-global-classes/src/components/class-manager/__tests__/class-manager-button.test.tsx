@@ -1,13 +1,11 @@
 import * as React from 'react';
-import { renderWithQuery } from 'test-utils';
+import { createMockTrackingModule, mockTracking, renderWithQuery } from 'test-utils';
 import {
 	__useActiveDocument as useActiveDocument,
 	__useActiveDocumentActions as useActiveDocumentActions,
 } from '@elementor/editor-documents';
 import { useUserStylesCapability } from '@elementor/editor-styles-repository';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
-
-import { mockTrackingModule } from '../../../__tests__/mocks';
 
 jest.mock( '@elementor/editor-documents' );
 jest.mock( '@elementor/editor-styles-repository', () => ( {
@@ -21,7 +19,7 @@ jest.mock( '../class-manager-panel', () => ( {
 	usePanelActions: jest.fn( () => ( { open: jest.fn() } ) ),
 } ) );
 
-jest.mock( '../../../utils/tracking', () => mockTrackingModule );
+jest.mock( '../../../utils/tracking', () => createMockTrackingModule( 'trackGlobalClasses' ) );
 
 import { ClassManagerButton } from '../class-manager-button';
 import { usePanelActions } from '../class-manager-panel';
@@ -50,6 +48,10 @@ describe( 'ClassManagerButton', () => {
 
 		// Assert.
 		expect( openPanel ).toHaveBeenCalled();
+		expect( mockTracking ).toHaveBeenCalledWith( {
+			event: 'classManagerOpened',
+			source: 'style-panel',
+		} );
 	} );
 
 	it( 'should open the dialog if the document is dirty, and allow to cancel the action', () => {
@@ -82,6 +84,7 @@ describe( 'ClassManagerButton', () => {
 		expect( screen.queryByText( unsavedChangesMessage ) ).not.toBeInTheDocument();
 		expect( save ).not.toHaveBeenCalled();
 		expect( openPanel ).not.toHaveBeenCalled();
+		expect( mockTracking ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should open the dialog if the document is dirty, and allow to save and continue', async () => {
@@ -117,6 +120,10 @@ describe( 'ClassManagerButton', () => {
 
 		expect( save ).toHaveBeenCalled();
 		expect( openPanel ).toHaveBeenCalled();
+		expect( mockTracking ).toHaveBeenCalledWith( {
+			event: 'classManagerOpened',
+			source: 'style-panel',
+		} );
 	} );
 
 	it( 'should not render the button if the user does not have permission to update classes', () => {

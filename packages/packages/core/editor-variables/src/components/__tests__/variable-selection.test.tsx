@@ -16,11 +16,17 @@ jest.mock( '../../variables-registry/variable-type-registry' );
 jest.mock( '../../utils/tracking' );
 jest.mock( '../../hooks/use-permissions' );
 jest.mock( '@elementor/editor-controls', () => ( {
+	...jest.requireActual( '@elementor/editor-controls' ),
 	useBoundProp: jest.fn(),
 } ) );
+jest.mock( '../ui/no-search-results', () => ( {
+	NoSearchResults: () => <span>No results found</span>,
+} ) );
+
 jest.mock( '@elementor/editor-ui', () => ( {
 	...jest.requireActual( '@elementor/editor-ui' ),
 	PopoverMenuList: jest.fn(),
+	PopoverBody: ( { children }: PropsWithChildren ) => children,
 } ) );
 
 jest.mocked( PopoverMenuList ).mockImplementation(
@@ -42,13 +48,6 @@ jest.mocked( PopoverMenuList ).mockImplementation(
 		);
 	}
 );
-
-jest.mock( '../ui/no-search-results', () => ( {
-	NoSearchResults: () => <span>No results found</span>,
-} ) );
-jest.mock( '@elementor/editor-editing-panel', () => ( {
-	PopoverBody: ( { children }: PropsWithChildren ) => children,
-} ) );
 
 const TestWrapper = ( { children, propTypeKey = 'color' }: { children: React.ReactNode; propTypeKey?: string } ) => {
 	return <VariableTypeProvider propTypeKey={ propTypeKey }>{ children }</VariableTypeProvider>;

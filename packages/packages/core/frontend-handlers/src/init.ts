@@ -1,30 +1,24 @@
-import { elementSelectorHandlers } from './handlers-registry';
-import { onElementDestroy, onElementRender, onElementSelectorRender } from './lifecycle-events';
+import { onElementDestroy, onElementRender } from './lifecycle-events';
 
 export function init() {
 	window.addEventListener( 'elementor/element/render', ( _event ) => {
 		const event = _event as CustomEvent< { id: string; type: string; element: Element } >;
 		const { id, type, element } = event.detail;
 
-		// Ensure the "destroy" event was not triggered before the render event.
-		onElementDestroy( { elementType: type, elementId: id } );
-
 		onElementRender( { element, elementType: type, elementId: id } );
 	} );
 
 	window.addEventListener( 'elementor/element/destroy', ( _event ) => {
-		const event = _event as CustomEvent< { id: string; type: string } >;
-		const { id, type } = event.detail;
+		const event = _event as CustomEvent< { id: string; type: string; element: Element } >;
+		const { id, type, element } = event.detail;
 
-		onElementDestroy( { elementType: type, elementId: id } );
+		onElementDestroy( { elementType: type, elementId: id, element } );
 	} );
 
+	// 'elementor/element/render' doesn't fire on the frontend
 	document.addEventListener( 'DOMContentLoaded', () => {
-		const controller = new AbortController();
-
 		document.querySelectorAll( '[data-e-type]' ).forEach( ( element ) => {
 			const el = element as HTMLElement;
-
 			const { eType, id } = el.dataset;
 
 			if ( ! eType || ! id ) {
@@ -40,19 +34,6 @@ export function init() {
 					},
 				} )
 			);
-		} );
-
-		Array.from( elementSelectorHandlers.keys() ).forEach( ( selector ) => {
-			Array.from( document.querySelectorAll( selector ) ).forEach( ( element ) => {
-				const el = element as HTMLElement;
-				const elementId = el?.closest( '[data-id]' )?.getAttribute( 'data-id' ) ?? '';
-
-				onElementSelectorRender( {
-					element,
-					controller,
-					elementId,
-				} );
-			} );
 		} );
 	} );
 }

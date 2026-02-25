@@ -6,6 +6,7 @@ import { useVariableType } from '../context/variable-type-context';
 import { service } from '../service';
 import { type NormalizedVariable, type Variable } from '../types';
 import { filterBySearch } from '../utils/filter-by-search';
+import { toNormalizedVariable, variablesToList } from '../utils/variables-to-list';
 import { getVariableType, getVariableTypes } from '../variables-registry/variable-type-registry';
 
 export const getVariables = ( includeDeleted = true ) => {
@@ -16,6 +17,10 @@ export const getVariables = ( includeDeleted = true ) => {
 	}
 
 	return Object.fromEntries( Object.entries( variables ).filter( ( [ , variable ] ) => ! variable.deleted ) );
+};
+
+export const hasVariable = ( key: string ) => {
+	return getVariables()[ key ] !== undefined;
 };
 
 export const useVariable = ( key: string ) => {
@@ -75,18 +80,13 @@ const getMatchingTypes = ( propKey: string ): string[] => {
 	return matchingTypes;
 };
 
-const normalizeVariables = ( propKey: string ) => {
+const normalizeVariables = ( propKey: string ): NormalizedVariable[] => {
 	const variables = getVariables( false );
 	const matchingTypes = getMatchingTypes( propKey );
 
-	return Object.entries( variables )
-		.filter( ( [ , variable ] ) => matchingTypes.includes( variable.type ) )
-		.map( ( [ key, { label, value, order } ] ) => ( {
-			key,
-			label,
-			value,
-			order,
-		} ) );
+	return variablesToList( variables )
+		.filter( ( variable ) => matchingTypes.includes( variable.type ) )
+		.map( toNormalizedVariable );
 };
 
 const extractId = ( { id }: { id: string } ): string => id;
@@ -97,15 +97,20 @@ export const createVariable = ( newVariable: Variable ): Promise< string > => {
 
 export const updateVariable = (
 	updateId: string,
-	{ value, label }: { value: string; label: string }
+	{ value, label, type }: { value: string; label: string; type?: string }
 ): Promise< string > => {
-	return service.update( updateId, { value, label } ).then( extractId );
+	return service.update( updateId, { value, label, type } ).then( extractId );
 };
 
 export const deleteVariable = ( deleteId: string ): Promise< string > => {
 	return service.delete( deleteId ).then( extractId );
 };
 
-export const restoreVariable = ( restoreId: string, label?: string, value?: string ): Promise< string > => {
-	return service.restore( restoreId, label, value ).then( extractId );
+export const restoreVariable = (
+	restoreId: string,
+	label?: string,
+	value?: string,
+	type?: string
+): Promise< string > => {
+	return service.restore( restoreId, label, value, type ).then( extractId );
 };

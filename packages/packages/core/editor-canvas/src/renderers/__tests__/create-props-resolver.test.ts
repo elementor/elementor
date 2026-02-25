@@ -290,4 +290,153 @@ describe( 'createPropsResolver', () => {
 		expect( onResolve ).toHaveBeenNthCalledWith( 1, { key: 'int', value: 2 } );
 		expect( onResolve ).toHaveBeenNthCalledWith( 2, { key: 'int2', value: 4 } );
 	} );
+
+	it( 'should pass renderContext to transformers', async () => {
+		// Arrange.
+		const CONTEXT_KEY = 'test-key';
+		const CONTEXT_VALUE = 'from-context';
+
+		const transformers = createTransformersRegistry().register(
+			'context-aware',
+			createTransformer< { key: string } >( ( value, options ) => {
+				return options.renderContext?.[ value.key ] ?? 'fallback';
+			} )
+		);
+
+		const resolve = createPropsResolver( {
+			transformers,
+			schema: {
+				text: createMockPropType( { kind: 'plain', key: 'context-aware' } ),
+			},
+		} );
+
+		// Act.
+		const result = await resolve( {
+			props: {
+				text: { $$type: 'context-aware', value: { key: CONTEXT_KEY } },
+			},
+			renderContext: { [ CONTEXT_KEY ]: CONTEXT_VALUE },
+		} );
+
+		// Assert.
+		expect( result ).toEqual( { text: CONTEXT_VALUE } );
+	} );
+
+	it( 'should use fallback when renderContext is not provided', async () => {
+		// Arrange.
+		const transformers = createTransformersRegistry().register(
+			'context-aware',
+			createTransformer< { key: string } >( ( value, options ) => {
+				return options.renderContext?.[ value.key ] ?? 'fallback';
+			} )
+		);
+
+		const resolve = createPropsResolver( {
+			transformers,
+			schema: {
+				text: createMockPropType( { kind: 'plain', key: 'context-aware' } ),
+			},
+		} );
+
+		// Act.
+		const result = await resolve( {
+			props: {
+				text: { $$type: 'context-aware', value: { key: 'any-key' } },
+			},
+		} );
+
+		// Assert.
+		expect( result ).toEqual( { text: 'fallback' } );
+	} );
+
+	it( 'should propagate renderContext through nested object props', async () => {
+		// Arrange.
+		const CONTEXT_KEY = 'nested-key';
+		const CONTEXT_VALUE = 'nested-context';
+
+		const transformers = createTransformersRegistry()
+			.register(
+				'object',
+				createTransformer< unknown >( ( value ) => value )
+			)
+			.register(
+				'context-aware',
+				createTransformer< { key: string } >( ( value, options ) => {
+					return options.renderContext?.[ value.key ] ?? 'fallback';
+				} )
+			);
+
+		const nestedSchema = {
+			inner: createMockPropType( { kind: 'plain', key: 'context-aware' } ),
+		};
+
+		const resolve = createPropsResolver( {
+			transformers,
+			schema: {
+				outer: createMockPropType( { kind: 'object', key: 'object', shape: nestedSchema } ),
+			},
+		} );
+
+		// Act.
+		const result = await resolve( {
+			props: {
+				outer: {
+					$$type: 'object',
+					value: {
+						inner: { $$type: 'context-aware', value: { key: CONTEXT_KEY } },
+					},
+				},
+			},
+			renderContext: { [ CONTEXT_KEY ]: CONTEXT_VALUE },
+		} );
+
+		// Assert.
+		expect( result ).toEqual( { outer: { inner: CONTEXT_VALUE } } );
+	} );
+
+	it( 'should propagate renderContext through array props', async () => {
+		// Arrange.
+		const CONTEXT_KEY = 'array-key';
+		const CONTEXT_VALUE = 'array-context';
+
+		const transformers = createTransformersRegistry()
+			.register(
+				'array',
+				createTransformer< unknown >( ( value ) => value )
+			)
+			.register(
+				'context-aware',
+				createTransformer< { key: string } >( ( value, options ) => {
+					return options.renderContext?.[ value.key ] ?? 'fallback';
+				} )
+			);
+
+		const resolve = createPropsResolver( {
+			transformers,
+			schema: {
+				items: createMockPropType( {
+					kind: 'array',
+					key: 'array',
+					item_prop_type: createMockPropType( { kind: 'plain', key: 'context-aware' } ),
+				} ),
+			},
+		} );
+
+		// Act.
+		const result = await resolve( {
+			props: {
+				items: {
+					$$type: 'array',
+					value: [
+						{ $$type: 'context-aware', value: { key: CONTEXT_KEY } },
+						{ $$type: 'context-aware', value: { key: CONTEXT_KEY } },
+					],
+				},
+			},
+			renderContext: { [ CONTEXT_KEY ]: CONTEXT_VALUE },
+		} );
+
+		// Assert.
+		expect( result ).toEqual( { items: [ CONTEXT_VALUE, CONTEXT_VALUE ] } );
+	} );
 } );

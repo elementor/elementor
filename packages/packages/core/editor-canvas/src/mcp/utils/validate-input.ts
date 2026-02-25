@@ -2,6 +2,8 @@ import { getWidgetsCache } from '@elementor/editor-elements';
 import { type PropsSchema, type PropValue, Schema } from '@elementor/editor-props';
 import { getStylesSchema } from '@elementor/editor-styles';
 
+import { STYLE_SCHEMA_URI } from '../resources/widgets-schema-resource';
+
 let _widgetsSchema: Record< string, PropsSchema > | null = null;
 
 type ValidationResult = {
@@ -48,9 +50,14 @@ export const validateInput = {
 			} else if ( ! Schema.isPropKeyConfigurable( propName ) ) {
 				errors.push( `Property "${ propName }" is not configurable.` );
 			} else {
-				const { valid, errorMessages } = Schema.validatePropValue( propSchema, propValue as PropValue );
+				const { valid } = Schema.validatePropValue( propSchema, propValue as PropValue );
 				if ( ! valid ) {
-					errors.push( `Invalid property "${ propName }": ${ errorMessages }` );
+					errors.push(
+						`Invalid property "${ propName }". Validate input with resource [${ STYLE_SCHEMA_URI.replace(
+							'{category}',
+							propName
+						) }]`
+					);
 				}
 			}
 		} );
@@ -66,7 +73,7 @@ export const validateInput = {
 	validateStyles( values: Record< string, unknown > ): ValidationResult {
 		const styleSchema = getStylesSchema();
 		const customCssValue = values.custom_css;
-		const result = this.validateProps( styleSchema, values, [ 'custom_css' ] );
+		const result = this.validateProps( styleSchema, values, [ 'custom_css', '$intention' ] );
 		const appendInvalidCustomCssErr = () => {
 			result.valid = false;
 			result.errors = result.errors || [];

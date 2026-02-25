@@ -1,9 +1,15 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
+import { getContainer, getElementSetting } from '@elementor/editor-elements';
 import { fireEvent, screen } from '@testing-library/react';
 import { type Editor } from '@tiptap/react';
 
 import { InlineEditorToolbar } from '../inline-editor-toolbar';
+
+jest.mock( '@elementor/editor-elements', () => ( {
+	getContainer: jest.fn(),
+	getElementSetting: jest.fn(),
+} ) );
 
 type MockEditorOptions = {
 	activeFormats?: string[];
@@ -38,6 +44,11 @@ const createMockEditor = ( options: MockEditorOptions = {} ): Editor => {
 };
 
 describe( 'InlineEditorToolbar', () => {
+	beforeEach( () => {
+		jest.mocked( getContainer ).mockReturnValue( null );
+		jest.mocked( getElementSetting ).mockReturnValue( null );
+	} );
+
 	it( 'should render all toolbar buttons', () => {
 		// Arrange.
 		const mockEditor = createMockEditor();
@@ -187,6 +198,45 @@ describe( 'InlineEditorToolbar', () => {
 
 			// Assert.
 			expect( newTabButton ).toHaveAttribute( 'aria-pressed', 'true' );
+		} );
+	} );
+
+	describe( 'Link button visibility based on LinkControl', () => {
+		const ELEMENT_ID = 'test-element-123';
+
+		beforeEach( () => {
+			jest.clearAllMocks();
+		} );
+
+		it( 'should hide link button when element has LinkControl link', () => {
+			// Arrange
+			const mockEditor = createMockEditor();
+
+			jest.mocked( getElementSetting ).mockReturnValue( {
+				$$type: 'link',
+				value: {
+					destination: 'https://example.com',
+				},
+			} );
+
+			// Act
+			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } elementId={ ELEMENT_ID } /> );
+
+			// Assert
+			expect( screen.queryByLabelText( 'Link' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should show link button when element has no LinkControl link', () => {
+			// Arrange
+			const mockEditor = createMockEditor();
+
+			jest.mocked( getElementSetting ).mockReturnValue( null );
+
+			// Act
+			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } elementId={ ELEMENT_ID } /> );
+
+			// Assert
+			expect( screen.getByLabelText( 'Link' ) ).toBeInTheDocument();
 		} );
 	} );
 } );

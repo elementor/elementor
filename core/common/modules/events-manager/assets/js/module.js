@@ -4,33 +4,37 @@ import { TIERS } from 'elementor-utils/tiers';
 
 export default class extends elementorModules.Module {
 	trackingEnabled = false;
-	#sessionRecordingInProgress = false;
 
 	onInit() {
 		this.config = eventsConfig;
 
+		if ( ! this.canSendEvents() ) {
+			return;
+		}
+
+		this.initializeMixpanel( () => this.enableTracking() );
+	}
+
+	initializeMixpanel( onLoaded ) {
 		mixpanel.init(
 			elementorCommon.config.editor_events?.token,
 			{
 				persistence: 'localStorage',
 				autocapture: false,
-				record_sessions_percent: 0,
-				record_idle_timeout_ms: 60000,
-				record_max_ms: 300000,
-				record_mask_text_selector: '',
 				flags: true,
 				api_hosts: {
 					flags: 'https://api-eu.mixpanel.com',
 				},
+				loaded: onLoaded,
 			},
 		);
-
-		if ( elementorCommon.config.editor_events?.can_send_events ) {
-			this.enableTracking();
-		}
 	}
 
 	enableTracking() {
+		if ( ! this.isMixpanelReady() ) {
+			return;
+		}
+
 		const userId = elementorCommon.config.library_connect?.user_id;
 
 		if ( userId ) {
@@ -51,7 +55,7 @@ export default class extends elementorModules.Module {
 	}
 
 	dispatchEvent( name, data, options = {} ) {
-		if ( ! elementorCommon.config.editor_events?.can_send_events ) {
+		if ( ! this.canSendEvents() ) {
 			return;
 		}
 
@@ -75,40 +79,6 @@ export default class extends elementorModules.Module {
 		mixpanel.track( name, eventData, options );
 	}
 
-	startSessionRecording() {
-		if ( ! elementorCommon.config.editor_events?.can_send_events || this.isSessionRecordingInProgress() ) {
-			return;
-		}
-
-		if ( ! this.trackingEnabled ) {
-			this.enableTracking();
-		}
-
-		mixpanel.start_session_recording();
-		this.setSessionRecordingInProgress( true );
-	}
-
-	stopSessionRecording() {
-		if ( ! elementorCommon.config.editor_events?.can_send_events || ! this.isSessionRecordingInProgress() ) {
-			return;
-		}
-
-		mixpanel.stop_session_recording();
-		this.setSessionRecordingInProgress( false );
-	}
-
-	setSessionRecordingInProgress( value ) {
-		if ( 'boolean' !== typeof value ) {
-			return;
-		}
-
-		this.#sessionRecordingInProgress = value;
-	}
-
-	isSessionRecordingInProgress() {
-		return this.#sessionRecordingInProgress;
-	}
-
 	async featureFlagIsActive( flagName ) {
 		if ( 'function' !== typeof mixpanel?.flags?.is_enabled ) {
 			return false;
@@ -120,6 +90,10 @@ export default class extends elementorModules.Module {
 
 	async getExperimentVariant( experimentName, defaultValue = 'control' ) {
 		try {
+			if ( ! this.canSendEvents() ) {
+				return defaultValue;
+			}
+
 			const isAbTestingEnabled = elementorCommon.config.editor_events?.flags_enabled ?? false;
 
 			if ( ! isAbTestingEnabled ) {
@@ -131,7 +105,7 @@ export default class extends elementorModules.Module {
 			}
 
 			if ( ! this.trackingEnabled ) {
-				return defaultValue;
+				this.enableTracking();
 			}
 
 			if ( ! mixpanel.flags ) {
@@ -160,5 +134,22 @@ export default class extends elementorModules.Module {
 		}
 
 		mixpanel.track( '$experiment_started', { 'Experiment name': experimentName, 'Variant name': experimentVariant } );
+	}
+
+	isMixpanelReady() {
+		if ( 'undefined' === typeof mixpanel || ! mixpanel ) {
+			return false;
+		}
+
+		try {
+			const distinctId = mixpanel.get_distinct_id();
+			return distinctId !== undefined && distinctId !== null;
+		} catch ( error ) {
+			return false;
+		}
+	}
+
+	canSendEvents() {
+		return !! elementorCommon?.config?.editor_events?.can_send_events;
 	}
 }

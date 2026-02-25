@@ -4,16 +4,19 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 
 use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Base\Atomic_Control_Base;
-use Elementor\Modules\AtomicWidgets\Controls\Base\Element_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Utils;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -80,14 +83,16 @@ trait Has_Atomic_Base {
 		}
 	}
 
-	private function parse_atomic_styles( array $styles ): array {
+	private function parse_atomic_styles( array $data ): array {
+		$styles = $data['styles'] ?? [];
 		$style_parser = Style_Parser::make( Style_Schema::get() );
 
 		foreach ( $styles as $style_id => $style ) {
 			$result = $style_parser->parse( $style );
 
 			if ( ! $result->is_valid() ) {
-				throw new \Exception( esc_html( "Styles validation failed for style `$style_id`. " . $result->errors()->to_string() ) );
+				$widget_id = $data['id'] ?? 'unknown';
+				throw new \Exception( esc_html( "Styles validation failed for style `$style_id`. Widget ID: `$widget_id`. " . $result->errors()->to_string() ) );
 			}
 
 			$styles[ $style_id ] = $result->unwrap();
@@ -127,65 +132,6 @@ trait Has_Atomic_Base {
 		}
 
 		return [];
-	}
-
-	private function convert_prop_type_interactions_to_legacy( $interactions ) {
-		$legacy_items = [];
-
-		foreach ( $interactions['items'] as $item ) {
-			if ( isset( $item['$$type'] ) && 'interaction-item' === $item['$$type'] ) {
-				$legacy_item = $this->extract_legacy_interaction_from_prop_type( $item );
-				if ( $legacy_item ) {
-					$legacy_items[] = $legacy_item;
-				}
-			} else {
-				$legacy_items[] = $item;
-			}
-		}
-
-		return [
-			'version' => $interactions['version'] ?? 1,
-			'items' => $legacy_items,
-		];
-	}
-
-	private function extract_legacy_interaction_from_prop_type( $item ) {
-		if ( ! isset( $item['value'] ) || ! is_array( $item['value'] ) ) {
-			return null;
-		}
-
-		$item_value = $item['value'];
-
-		$interaction_id = $this->extract_prop_value( $item_value, 'interaction_id' );
-		$trigger = $this->extract_prop_value( $item_value, 'trigger' );
-		$animation = $this->extract_prop_value( $item_value, 'animation' );
-
-		if ( ! is_array( $animation ) ) {
-			return null;
-		}
-
-		$effect = $this->extract_prop_value( $animation, 'effect' );
-		$type = $this->extract_prop_value( $animation, 'type' );
-		$direction = $this->extract_prop_value( $animation, 'direction' );
-		$timing_config = $this->extract_prop_value( $animation, 'timing_config' );
-
-		$duration = 300;
-		$delay = 0;
-
-		if ( is_array( $timing_config ) ) {
-			$duration = $this->extract_prop_value( $timing_config, 'duration', 300 );
-			$delay = $this->extract_prop_value( $timing_config, 'delay', 0 );
-		}
-
-		$animation_id = implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay ] );
-
-		return [
-			'interaction_id' => $interaction_id,
-			'animation' => [
-				'animation_id' => $animation_id,
-				'animation_type' => 'full-preset',
-			],
-		];
 	}
 
 	private function extract_prop_value( $data, $key, $default = '' ) {
@@ -237,7 +183,7 @@ trait Has_Atomic_Base {
 
 		$data['version'] = $this->version;
 		$data['settings'] = $this->parse_atomic_settings( $data['settings'] );
-		$data['styles'] = $this->parse_atomic_styles( $data['styles'] );
+		$data['styles'] = $this->parse_atomic_styles( $data );
 		$data['editor_settings'] = $this->parse_editor_settings( $data['editor_settings'] );
 
 		if ( isset( $data['interactions'] ) && ! empty( $data['interactions'] ) ) {
@@ -254,25 +200,7 @@ trait Has_Atomic_Base {
 		if ( empty( $decoded['items'] ) ) {
 			return [];
 		}
-
-		$transformed_items = [];
-
-		foreach ( $decoded['items'] as $item ) {
-			if ( isset( $item['$$type'] ) && 'interaction-item' === $item['$$type'] ) {
-				$transformed_items[] = $item;
-				continue;
-			}
-
-			$transformed_item = $this->convert_legacy_to_prop_type( $item );
-			if ( $transformed_item ) {
-				$transformed_items[] = $transformed_item;
-			}
-		}
-
-		return [
-			'version' => 1,
-			'items' => $transformed_items,
-		];
+		return $decoded;
 	}
 
 	private function decode_interactions_data( $interactions ) {
@@ -293,61 +221,10 @@ trait Has_Atomic_Base {
 		];
 	}
 
-	private function convert_legacy_to_prop_type( $item ) {
-		if ( ! isset( $item['animation']['animation_id'] ) || ! isset( $item['interaction_id'] ) ) {
-			return null;
-		}
-
-		$animation_id = $item['animation']['animation_id'];
-		$parsed = $this->parse_animation_id_string( $animation_id );
-
-		if ( ! $parsed ) {
-			return null;
-		}
-
-		return $this->create_prop_value( 'interaction-item', [
-			'interaction_id' => $this->create_prop_value( 'string', $item['interaction_id'] ),
-			'trigger' => $this->create_prop_value( 'string', $parsed['trigger'] ),
-			'animation' => $this->create_prop_value( 'animation-preset-props', [
-				'effect' => $this->create_prop_value( 'string', $parsed['effect'] ),
-				'type' => $this->create_prop_value( 'string', $parsed['type'] ),
-				'direction' => $this->create_prop_value( 'string', $parsed['direction'] ),
-				'timing_config' => $this->create_prop_value( 'timing-config', [
-					'duration' => $this->create_prop_value( 'number', (int) $parsed['duration'] ),
-					'delay' => $this->create_prop_value( 'number', (int) $parsed['delay'] ),
-				] ),
-			] ),
-		] );
-	}
-
-	private function parse_animation_id_string( $animation_id ) {
-		$pattern = '/^([^-]+)-([^-]+)-([^-]+)-([^-]*)-(\d+)-(\d+)$/';
-
-		if ( preg_match( $pattern, $animation_id, $matches ) ) {
-			return [
-				'trigger' => $matches[1],
-				'effect' => $matches[2],
-				'type' => $matches[3],
-				'direction' => $matches[4],
-				'duration' => (int) $matches[5],
-				'delay' => (int) $matches[6],
-			];
-		}
-
-		return null;
-	}
-
-	private function create_prop_value( $type, $value ) {
-		return [
-			'$$type' => $type,
-			'value' => $value,
-		];
-	}
-
 	final public function get_raw_data( $with_html_content = false ) {
 		$raw_data = parent::get_raw_data( $with_html_content );
 
-		$raw_data['styles'] = $this->styles;
+		$raw_data['styles'] = Atomic_Widget_Styles::get_license_based_filtered_styles( $this->styles ?? [] );
 		$raw_data['interactions'] = $this->interactions ?? [];
 		$raw_data['editor_settings'] = $this->editor_settings;
 
@@ -364,8 +241,27 @@ trait Has_Atomic_Base {
 	public function get_atomic_settings(): array {
 		$schema = static::get_props_schema();
 		$props = $this->get_settings();
+		$initial_attributes = $this->get_initial_attributes();
+
+		$props['attributes'] = Attributes_Prop_Type::generate( array_merge(
+			$initial_attributes['value'] ?? [],
+			$props['attributes']['value'] ?? []
+		) );
 
 		return Render_Props_Resolver::for_settings()->resolve( $schema, $props );
+	}
+
+	protected function get_initial_attributes() {
+		return Attributes_Prop_Type::generate( [
+			Key_Value_Prop_Type::generate( [
+				'key' => String_Prop_Type::generate( 'data-e-type' ),
+				'value' => $this->get_type(),
+			] ),
+			Key_Value_Prop_Type::generate( [
+				'key' => String_Prop_Type::generate( 'data-id' ),
+				'value' => $this->get_id(),
+			] ),
+		] );
 	}
 
 	public function get_atomic_setting( string $key ) {
@@ -406,85 +302,74 @@ trait Has_Atomic_Base {
 		);
 	}
 
-	public function get_interactions_ids() {
-		$animation_ids = [];
-
-		$list_of_interactions = ( is_array( $this->interactions ) && isset( $this->interactions['items'] ) )
-			? $this->interactions['items']
-			: [];
-
-		foreach ( $list_of_interactions as $interaction ) {
-			if ( isset( $interaction['$$type'] ) && 'interaction-item' === $interaction['$$type'] ) {
-				$animation_id = $this->extract_animation_id_from_prop_type( $interaction );
-				if ( $animation_id ) {
-					$animation_ids[] = $animation_id;
-				}
-			} elseif ( isset( $interaction['animation']['animation_id'] ) ) {
-				$animation_ids[] = $interaction['animation']['animation_id'];
-			}
+	protected function set_render_context( array $context_pairs ): void {
+		foreach ( $context_pairs as $context_pair ) {
+			$context_key = $context_pair['context_key'] ?? static::class;
+			$context = $context_pair['context'];
+			Render_Context::push( $context_key, $context );
 		}
-
-		return $animation_ids;
 	}
 
-	private function extract_animation_id_from_prop_type( $item ) {
-		if ( ! isset( $item['value'] ) || ! is_array( $item['value'] ) ) {
-			return null;
+	protected function clear_render_context( array $context_pairs ): void {
+		foreach ( $context_pairs as $context_pair ) {
+			$context_key = $context_pair['context_key'] ?? static::class;
+			Render_Context::pop( $context_key );
 		}
-
-		$item_value = $item['value'];
-
-		$trigger = $this->extract_prop_value( $item_value, 'trigger' );
-		$animation = $this->extract_prop_value( $item_value, 'animation' );
-
-		if ( ! is_array( $animation ) ) {
-			return null;
-		}
-
-		$effect = $this->extract_prop_value( $animation, 'effect' );
-		$type = $this->extract_prop_value( $animation, 'type' );
-		$direction = $this->extract_prop_value( $animation, 'direction' );
-		$timing_config = $this->extract_prop_value( $animation, 'timing_config' );
-
-		$duration = 300;
-		$delay = 0;
-
-		if ( is_array( $timing_config ) ) {
-			$duration = $this->extract_prop_value( $timing_config, 'duration', 300 );
-			$delay = $this->extract_prop_value( $timing_config, 'delay', 0 );
-		}
-
-		return implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay ] );
 	}
 
 	public function print_content() {
 		$defined_context = $this->define_render_context();
 
-		$context_key = $defined_context['context_key'] ?? static::class;
-		$element_context = $defined_context['context'] ?? [];
-
-		$has_context = ! empty( $element_context );
-
-		if ( ! $has_context ) {
+		if ( empty( $defined_context ) ) {
 			return parent::print_content();
 		}
 
-		Render_Context::push( $context_key, $element_context );
+		$this->set_render_context( $defined_context );
 
 		parent::print_content();
 
-		Render_Context::pop( $context_key );
+		$this->clear_render_context( $defined_context );
 	}
 
 	/**
 	 * Define the context for element's Render_Context.
 	 *
-	 * @return array{context_key: ?string, context: array}
+	 * @return array Array of context pairs. Each pair is an associative array with:
+	 *               - 'context_key' (optional): The context key. Defaults to static::class if not provided.
+	 *               - 'context' (required): The context value (can be any type).
+	 *
+	 * @example
+	 * [
+	 *     [
+	 *         'context_key' => 'custom-key',
+	 *         'context' => ['some' => 'data'],
+	 *     ],
+	 *     [
+	 *         'context' => ['instance_id' => $this->get_id()],
+	 *     ],
+	 * ]
 	 */
 	protected function define_render_context(): array {
-		return [
-			'context_key' => null,
-			'context' => [],
+		return [];
+	}
+
+	protected function get_link_attributes( $link_settings, $add_key_to_result = false ) {
+		$tag = $link_settings['tag'] ?? Link_Prop_Type::DEFAULT_TAG;
+		$href = $link_settings['href'];
+		$target = $link_settings['target'] ?? '_self';
+
+		$is_button = 'button' === $tag;
+		$href_attribute_key = $is_button ? 'data-action-link' : 'href';
+
+		$result = [
+			$href_attribute_key => $href,
+			'target' => $target,
 		];
+
+		if ( $add_key_to_result ) {
+			$result['key'] = $href_attribute_key;
+		}
+
+		return $result;
 	}
 }

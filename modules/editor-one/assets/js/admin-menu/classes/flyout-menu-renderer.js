@@ -10,7 +10,7 @@ export class FlyoutMenuRenderer {
 			return false;
 		}
 
-		const editorLi = this.findEditorMenuItem();
+		const editorLi = this.findEditorInMenu( `#toplevel_page_elementor-home` );
 
 		if ( ! editorLi ) {
 			return false;
@@ -22,6 +22,13 @@ export class FlyoutMenuRenderer {
 		editorFlyoutUl.className = 'elementor-submenu-flyout elementor-level-3';
 
 		editorFlyout.items.forEach( ( item ) => {
+			if ( item.has_divider_before ) {
+				const dividerLi = document.createElement( 'li' );
+				dividerLi.className = 'elementor-flyout-divider';
+				dividerLi.setAttribute( 'role', 'separator' );
+				editorFlyoutUl.appendChild( dividerLi );
+			}
+
 			const li = document.createElement( 'li' );
 			li.setAttribute( 'data-group-id', item.group_id || '' );
 
@@ -39,18 +46,8 @@ export class FlyoutMenuRenderer {
 		return true;
 	}
 
-	findEditorMenuItem() {
-		let elementorMenu = document.querySelector( '#adminmenu a[href="admin.php?page=elementor"]' );
-
-		if ( ! elementorMenu ) {
-			elementorMenu = document.querySelector( '#adminmenu .toplevel_page_elementor' );
-		}
-
-		if ( ! elementorMenu ) {
-			return null;
-		}
-
-		const menuItem = elementorMenu.closest( 'li.menu-top' );
+	findEditorInMenu( menuSelector ) {
+		const menuItem = document.querySelector( menuSelector );
 
 		if ( ! menuItem ) {
 			return null;
@@ -62,7 +59,7 @@ export class FlyoutMenuRenderer {
 			return null;
 		}
 
-		const editorItem = submenu.querySelector( 'a[href*="elementor-editor"]' );
+		const editorItem = submenu.querySelector( 'a[href$="page=elementor"]' );
 
 		if ( ! editorItem ) {
 			return null;
@@ -71,4 +68,3 @@ export class FlyoutMenuRenderer {
 		return editorItem.closest( 'li' );
 	}
 }
-

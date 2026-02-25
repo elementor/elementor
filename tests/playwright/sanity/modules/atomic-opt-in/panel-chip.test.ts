@@ -25,7 +25,7 @@ test.describe( 'V4 modal promotion test @promotions', () => {
 
 		const modalContainer = page.locator( EditorSelectors.panels.popoverCard );
 		await expect.soft( modalContainer ).toBeVisible();
-		await expect( modalContainer.getByText( 'Elementor V4' ) ).toBeVisible();
+		await expect( modalContainer.getByText( 'Atomic Elements' ).first() ).toBeVisible();
 		await modalContainer.getByRole( 'button', { name: 'close' } ).click();
 		await expect.soft( modalContainer ).toBeHidden();
 	} );

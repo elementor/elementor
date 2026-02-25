@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useRef, useState } from 'react';
+import { type KeyboardEvent, useRef, useState } from 'react';
 import { WarningInfotip } from '@elementor/editor-ui';
 import { TextField, type TextFieldProps } from '@elementor/ui';
 
@@ -34,6 +34,7 @@ export type LabelFieldProps = {
 	selectOnShow?: boolean;
 	showWarningInfotip?: boolean;
 	variables?: TVariablesList;
+	onKeyDown?: ( event: KeyboardEvent< HTMLInputElement > ) => void;
 };
 
 export const LabelField = ( {
@@ -47,6 +48,7 @@ export const LabelField = ( {
 	selectOnShow = false,
 	showWarningInfotip = false,
 	variables,
+	onKeyDown,
 }: LabelFieldProps ) => {
 	const [ label, setLabel ] = useState( value );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
@@ -84,6 +86,7 @@ export const LabelField = ( {
 				maxLength: VARIABLE_LABEL_MAX_LENGTH,
 				...( selectOnShow && { onFocus: ( e: React.FocusEvent< HTMLInputElement > ) => e.target.select() } ),
 				'aria-label': 'Name',
+				onKeyDown,
 			} }
 			// eslint-disable-next-line jsx-a11y/no-autofocus
 			autoFocus={ focusOnShow }

@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { keyValuePropTypeUtil, type KeyValuePropValue, type StringPropValue } from '@elementor/editor-props';
+import { PromotionAlert, PromotionChip } from '@elementor/editor-ui';
 import { ChevronDownIcon, VariationsIcon } from '@elementor/icons';
 import { bindPopover, bindTrigger, Box, Popover, UnstableTag, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -46,12 +47,16 @@ const includeCurrentValueInOptions = ( value: KeyValuePropValue[ 'value' ], disa
 	} );
 };
 
+const PRO_UPGRADE_URL = 'https://go.elementor.com/go-pro-transitions-modal/';
+
 export const TransitionSelector = ( {
 	recentlyUsedList = [],
 	disabledItems = [],
+	showPromotion = false,
 }: {
 	recentlyUsedList: string[];
 	disabledItems?: string[];
+	showPromotion?: boolean;
 } ) => {
 	const { value, setValue } = useBoundProp( keyValuePropTypeUtil );
 	const {
@@ -59,6 +64,14 @@ export const TransitionSelector = ( {
 	} = value;
 	const defaultRef = useRef< HTMLDivElement >( null );
 	const popoverState = usePopupState( { variant: 'popover' } );
+
+	const disabledCategories = useMemo( () => {
+		return new Set(
+			transitionProperties
+				.filter( ( cat ) => cat.properties.some( ( prop ) => prop.isDisabled ) )
+				.map( ( cat ) => cat.label )
+		);
+	}, [] );
 
 	const getItemList = () => {
 		const recentItems = recentlyUsedList
@@ -136,6 +149,30 @@ export const TransitionSelector = ( {
 					title={ __( 'Transition Property', 'elementor' ) }
 					icon={ VariationsIcon as React.ElementType< { fontSize: string } > }
 					disabledItems={ includeCurrentValueInOptions( value, disabledItems ) }
+					categoryItemContentTemplate={ ( item ) => (
+						<Box
+							sx={ {
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'space-between',
+								width: '100%',
+							} }
+						>
+							<span>{ item.value }</span>
+							{ showPromotion && disabledCategories.has( item.value ) && <PromotionChip /> }
+						</Box>
+					) }
+					footer={
+						showPromotion ? (
+							<PromotionAlert
+								message={ __(
+									'Upgrade to customize transition properties and control effects.',
+									'elementor'
+								) }
+								upgradeUrl={ PRO_UPGRADE_URL }
+							/>
+						) : null
+					}
 				/>
 			</Popover>
 		</Box>

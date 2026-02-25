@@ -32,19 +32,29 @@ export function ElementsOverlays() {
 		return null;
 	}
 
-	return elements.map( ( [ id, element ] ) => {
+	return elements.map( ( { id, domElement, isGlobal } ) => {
 		const isSelected = selected.element?.id === id;
 
 		return overlayRegistry.map(
 			( { shouldRender, component: Overlay }, index ) =>
-				shouldRender( { id, element, isSelected } ) && (
-					<Overlay key={ `${ id }-${ index }` } id={ id } element={ element } isSelected={ isSelected } />
+				shouldRender( { id, element: domElement, isSelected } ) && (
+					<Overlay
+						key={ `${ id }-${ index }` }
+						id={ id }
+						element={ domElement }
+						isSelected={ isSelected }
+						isGlobal={ isGlobal }
+					/>
 				)
 		);
 	} );
 }
 
-type IdElementTuple = [ string, HTMLElement ];
+type ElementData = {
+	id: string;
+	domElement: HTMLElement;
+	isGlobal: boolean;
+};
 
 function useElementsDom() {
 	return useListenTo(
@@ -52,8 +62,12 @@ function useElementsDom() {
 		() => {
 			return getElements()
 				.filter( ( el ) => ELEMENTS_DATA_ATTR in ( el.view?.el?.dataset ?? {} ) )
-				.map( ( element ) => [ element.id, element.view?.getDomElement?.()?.get?.( 0 ) ] )
-				.filter( ( item ): item is IdElementTuple => !! item[ 1 ] );
+				.map( ( element ) => ( {
+					id: element.id,
+					domElement: element.view?.getDomElement?.()?.get?.( 0 ),
+					isGlobal: element.model.get( 'isGlobal' ) ?? false,
+				} ) )
+				.filter( ( item ): item is ElementData => !! item.domElement );
 		}
 	);
 }

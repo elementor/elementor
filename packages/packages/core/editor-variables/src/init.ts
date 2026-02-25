@@ -1,8 +1,10 @@
-import { injectIntoTop } from '@elementor/editor';
-import { controlActionsMenu, registerControlReplacement } from '@elementor/editor-editing-panel';
+import { injectIntoLogic, injectIntoTop } from '@elementor/editor';
+import { registerControlReplacement } from '@elementor/editor-controls';
 import { __registerPanel as registerPanel } from '@elementor/editor-panels';
 import { isTransformable, type PropValue } from '@elementor/editor-props';
+import { controlActionsMenu } from '@elementor/menus';
 
+import { OpenPanelFromUrl } from './components/open-panel-from-url';
 import { panel } from './components/variables-manager/variables-manager-panel';
 import { VariableControl } from './controls/variable-control';
 import { usePropVariableAction } from './hooks/use-prop-variable-action';
@@ -36,6 +38,7 @@ export function init() {
 
 	registerPopoverAction( {
 		id: 'variables',
+		priority: 40,
 		useProps: usePropVariableAction,
 	} );
 
@@ -46,6 +49,11 @@ export function init() {
 	injectIntoTop( {
 		id: 'canvas-style-variables-render',
 		component: StyleVariablesRenderer,
+	} );
+
+	injectIntoLogic( {
+		id: 'variables-open-panel-from-url',
+		component: OpenPanelFromUrl,
 	} );
 
 	registerPanel( panel );

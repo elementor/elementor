@@ -40,6 +40,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$settings = $widget->get_atomic_settings();
 		array_pop( $settings ); // remove common settings
 
+		$settings = $this->filter_out_extra_fields( $settings );
+
 		// Assert.
 		$this->assertSame( $args['result'], $settings );
 
@@ -358,7 +360,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget = $this->make_mock_widget( [ 'props_schema' => $schema ] );
 
 		$test_schema = $widget::get_props_schema();
-		unset( $test_schema['_cssid'] );
+		$test_schema = $this->filter_out_extra_fields( $test_schema );
 		// Act & Assert.
 		$this->assertSame( $schema, $test_schema );
 	}
@@ -656,7 +658,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`. meta.state: missing_or_invalid_value' );
+		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`. Widget ID: `1`. meta.state: missing_or_invalid_value' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -691,7 +693,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`. meta.breakpoint: missing_or_invalid_value' );
+		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`. Widget ID: `1`. meta.breakpoint: missing_or_invalid_value' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -728,7 +730,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `1234`. id: missing_or_invalid, label: missing_or_invalid' );
+		$this->expectExceptionMessage( 'Styles validation failed for style `1234`. Widget ID: `1`. id: missing_or_invalid, label: missing_or_invalid' );
 
 		// Act.
 		$data = $widget->get_data_for_save();
@@ -769,7 +771,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`. type: missing_or_invalid' );
+		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`. Widget ID: `1`. type: missing_or_invalid' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -806,7 +808,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`. label: missing_or_invalid' );
+		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`. Widget ID: `1`. label: missing_or_invalid' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -849,7 +851,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`. variants[1].padding: invalid_value' );
+		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`. Widget ID: `1`. variants[1].padding: invalid_value' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -908,5 +910,19 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				return static::$options['props_schema'] ?? [];
 			}
 		};
+	}
+
+	/**
+	 * Remove extra fields that may be added by other modules
+	 *
+	 * @param array $data
+	 * @return array
+	 */
+	private function filter_out_extra_fields( array $data ): array {
+		unset( $data['_cssid'] );
+		unset( $data['display-conditions'] );
+		unset( $data['attributes'] );
+
+		return $data;
 	}
 }

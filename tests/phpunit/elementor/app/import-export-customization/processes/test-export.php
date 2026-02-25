@@ -135,6 +135,10 @@ class Test_Export extends Elementor_Test_Base {
 			'customCode' => true,
 			'customIcons' => true,
 			'customFonts' => true,
+			'classes' => true,
+			'variables' => true,
+			'classesCount' => 0,
+			'variablesCount' => 0,
 		];
 
 		$this->assertEquals( $expected_manifest_site_settings, $result['manifest']['site-settings'] );

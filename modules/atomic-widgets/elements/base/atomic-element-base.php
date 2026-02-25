@@ -6,8 +6,7 @@ use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
-use Elementor\Modules\AtomicWidgets\Elements\Base\Render_Context;
-use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Meta;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -17,11 +16,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Atomic_Element_Base extends Element_Base {
 	use Has_Atomic_Base;
+	use Has_Meta;
 
 	protected $version = '0.0';
 	protected $styles = [];
 	protected $interactions = [];
 	protected $editor_settings = [];
+
+	public static $widget_description = null;
 
 
 	public function __construct( $data = [], $args = null ) {
@@ -32,6 +34,9 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$this->interactions = $this->parse_atomic_interactions( $data['interactions'] ?? [] );
 		$this->editor_settings = $data['editor_settings'] ?? [];
 		$this->add_script_depends( Frontend_Assets_Loader::ATOMIC_WIDGETS_HANDLER );
+		if ( static::$widget_description ) {
+			$this->description( static::$widget_description );
+		}
 	}
 
 	private function parse_atomic_interactions( $interactions ) {
@@ -50,31 +55,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 			return [];
 		}
 
-		if ( isset( $interactions['items'] ) && is_array( $interactions['items'] ) ) {
-			return $this->convert_prop_type_interactions_to_legacy_for_runtime( $interactions );
-		}
-
 		return $interactions;
-	}
-
-	private function convert_prop_type_interactions_to_legacy_for_runtime( $interactions ) {
-		$legacy_items = [];
-
-		foreach ( $interactions['items'] as $item ) {
-			if ( isset( $item['$$type'] ) && 'interaction-item' === $item['$$type'] ) {
-				$legacy_item = $this->extract_legacy_interaction_from_prop_type( $item );
-				if ( $legacy_item ) {
-					$legacy_items[] = $legacy_item;
-				}
-			} else {
-				$legacy_items[] = $item;
-			}
-		}
-
-		return [
-			'version' => $interactions['version'] ?? 1,
-			'items' => $legacy_items,
-		];
 	}
 
 	abstract protected function define_atomic_controls(): array;
@@ -83,22 +64,28 @@ abstract class Atomic_Element_Base extends Element_Base {
 		return [];
 	}
 
+	protected function define_atomic_pseudo_states(): array {
+		return [];
+	}
+
 	public function get_global_scripts() {
 		return [];
 	}
 
-	final public function get_initial_config() {
+	protected function get_initial_config() {
 		$config = parent::get_initial_config();
 		$props_schema = static::get_props_schema();
 
+		$config['atomic'] = true;
 		$config['atomic_controls'] = $this->get_atomic_controls();
 		$config['atomic_props_schema'] = $props_schema;
 		$config['atomic_style_states'] = $this->define_atomic_style_states();
+		$config['atomic_pseudo_states'] = $this->define_atomic_pseudo_states();
 		$config['dependencies_per_target_mapping'] = Dependency_Manager::get_source_to_dependents( $props_schema );
 		$config['base_styles'] = $this->get_base_styles();
 		$config['version'] = $this->version;
 		$config['show_in_panel'] = $this->should_show_in_panel();
-		$config['categories'] = [ 'v4-elements' ];
+		$config['categories'] = $this->define_panel_categories();
 		$config['hide_on_search'] = false;
 		$config['controls'] = [];
 		$config['keywords'] = $this->get_keywords();
@@ -106,12 +93,18 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['initial_attributes'] = $this->define_initial_attributes();
 		$config['include_in_widgets_config'] = true;
 		$config['default_html_tag'] = $this->define_default_html_tag();
+		$config['meta'] = $this->get_meta();
+		$config['allowed_child_types'] = $this->define_allowed_child_types();
 
 		return $config;
 	}
 
 	protected function should_show_in_panel() {
 		return true;
+	}
+
+	protected function define_panel_categories(): array {
+		return [ 'v4-elements' ];
 	}
 
 	protected function define_default_children() {
@@ -126,15 +119,14 @@ abstract class Atomic_Element_Base extends Element_Base {
 		return [];
 	}
 
+	protected function define_allowed_child_types() {
+		return [];
+	}
+
 	protected function add_render_attributes() {
 		parent::add_render_attributes();
 
-		$interaction_ids = $this->get_interactions_ids();
-
-		if ( ! empty( $interaction_ids ) ) {
-			$this->add_render_attribute( '_wrapper', 'data-interaction-id', $this->get_id() );
-			$this->add_render_attribute( '_wrapper', 'data-interactions', json_encode( $interaction_ids ) );
-		}
+		$this->add_render_attribute( '_wrapper', 'data-interaction-id', $this->get_id() );
 	}
 
 	/**
@@ -247,19 +239,5 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 	public static function generate() {
 		return Element_Builder::make( static::get_type() );
-	}
-
-	protected function get_link_attributes( $link_settings ) {
-		$tag = $link_settings['tag'] ?? Link_Prop_Type::DEFAULT_TAG;
-		$href = $link_settings['href'];
-		$target = $link_settings['target'] ?? '_self';
-
-		$is_button = 'button' === $tag;
-		$href_attribute_key = $is_button ? 'data-action-link' : 'href';
-
-		return [
-			$href_attribute_key => $href,
-			'target' => $target,
-		];
 	}
 }

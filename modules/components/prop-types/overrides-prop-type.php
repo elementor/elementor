@@ -23,6 +23,15 @@ class Overrides_Prop_Type extends Array_Prop_Type {
 	public function sanitize_value( $value ): array {
 		$sanitized = parent::sanitize_value( $value );
 
-		return array_filter( $sanitized, fn( $item ) => null !== $item['value'] );
+		// array_values is used to format filtered overrides to indexed array
+		return array_values( array_filter( $sanitized, function( $item ) {
+			switch ( $item['$$type'] ) {
+				case 'override':
+					return null !== $item['value'];
+				case 'overridable':
+					$override = $item['value']['origin_value'];
+					return null !== $override['value'];
+			}
+		} ) );
 	}
 }

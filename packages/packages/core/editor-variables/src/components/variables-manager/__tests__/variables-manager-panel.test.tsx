@@ -50,11 +50,31 @@ jest.mock( '@elementor/editor-ui', () => {
 	};
 } );
 
+jest.mock( '@elementor/editor-current-user', () => ( {
+	useSuppressedMessage: jest.fn().mockReturnValue( [ false, jest.fn() ] ),
+} ) );
+
+jest.mock( '../hooks/use-auto-edit', () => ( {
+	useAutoEdit: jest.fn().mockReturnValue( {
+		autoEditVariableId: null,
+		startAutoEdit: jest.fn(),
+		handleAutoEditComplete: jest.fn(),
+	} ),
+} ) );
+
+jest.mock( '../hooks/use-error-navigation', () => ( {
+	useErrorNavigation: jest.fn().mockReturnValue( {
+		createNavigationCallback: jest.fn(),
+		resetNavigation: jest.fn(),
+	} ),
+} ) );
+
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	changeEditMode: jest.fn(),
 	commandEndEvent: jest.fn(),
 	windowEvent: jest.fn(),
 	getCurrentEditMode: jest.fn().mockReturnValue( 'edit' ),
+	isExperimentActive: jest.fn().mockReturnValue( false ),
 } ) );
 
 jest.mock( '@elementor/ui', () => {
@@ -94,10 +114,12 @@ jest.mock( '../hooks/use-variables-manager-state', () => ( {
 
 jest.mock( '../variables-manager-table', () => {
 	const VariablesManagerTable = ( props: {
-		menuActions: unknown[];
+		menuActions: ( variableId: string ) => unknown[];
 		variables: Record< string, unknown >;
 		onChange: ( variables: Record< string, unknown > ) => void;
 	} ) => {
+		const menuActionsArray = props.menuActions( 'var-1' );
+
 		return (
 			<button
 				type="button"
@@ -114,7 +136,7 @@ jest.mock( '../variables-manager-table', () => {
 				} }
 				data-props={ JSON.stringify( {
 					...props,
-					menuActions: props.menuActions?.map( ( action ) => {
+					menuActions: menuActionsArray.map( ( action ) => {
 						const typedAction = action as { name: string; icon: unknown; color: string; onClick: unknown };
 						return {
 							...typedAction,
@@ -141,12 +163,18 @@ describe( 'VariablesManagerPanel', () => {
 		isDirty: false,
 		hasValidationErrors: false,
 		searchValue: '',
+		isSaveDisabled: false,
+		isSaving: false,
 		handleOnChange: jest.fn(),
 		createVariable: jest.fn(),
 		handleDeleteVariable: jest.fn(),
+		handleStartSync: jest.fn(),
+		handleStopSync: jest.fn(),
 		handleSave: jest.fn(),
 		handleSearch: mockHandleSearch,
 		setHasValidationErrors: jest.fn(),
+		setIsSaving: jest.fn(),
+		setIsSaveDisabled: jest.fn(),
 	};
 
 	beforeEach( () => {

@@ -107,7 +107,7 @@ export const PromotionWidgetsTable = ( { widgets, promotionData } ) => {
 										checked={ false }
 										disabled={ true }
 										size="small"
-										className={ `e-id-elementor-element-manager-toggle-${ widget.name }` }
+										data-id={ `e-id-elementor-element-manager-toggle-${ widget.name }` }
 									/>
 								</TableCell>
 								<TableCell></TableCell>

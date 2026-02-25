@@ -1,4 +1,30 @@
-import { type ElementInteractions } from '@elementor/editor-elements';
+import { type RefObject } from 'react';
+import { type Unit } from '@elementor/editor-controls';
+import type {
+	AnimationPresetPropValue,
+	BooleanPropValue,
+	ConfigPropValue,
+	ElementInteractions,
+	ExcludedBreakpointsPropValue,
+	InteractionBreakpointsPropValue,
+	InteractionItemPropValue,
+	NumberPropValue,
+	StringPropValue,
+	TimingConfigPropValue,
+} from '@elementor/editor-elements';
+
+export type {
+	BooleanPropValue,
+	ConfigPropValue,
+	StringPropValue,
+	NumberPropValue,
+	TimingConfigPropValue,
+	AnimationPresetPropValue,
+	InteractionItemPropValue,
+	ElementInteractions,
+	ExcludedBreakpointsPropValue,
+	InteractionBreakpointsPropValue,
+};
 
 export type AnimationOption = {
 	value: string;
@@ -18,29 +44,36 @@ export type InteractionsConfig = {
 	animationOptions: AnimationOption[];
 };
 
-export type FieldProps = {
-	value: string;
-	onChange: ( value: string ) => void;
+export type FieldProps< T = string > = {
+	value: T;
+	onChange: ( value: T ) => void;
 	label?: string;
+	disabled?: boolean;
+	anchorRef?: RefObject< HTMLElement | null >;
 };
 
-export type DirectionFieldProps = FieldProps & {
+export type ReplayFieldProps = FieldProps< boolean >;
+export type DirectionFieldProps = FieldProps< string > & {
 	interactionType: string;
 };
 
-export type InteractionItem = {
+export type ElementInteractionData = {
 	elementId: string;
 	dataId: string; // The data-id attribute for DOM selection
 	interactions: ElementInteractions;
 };
 
-export type InteractionsCollection = InteractionItem[];
+export type InteractionsCollection = ElementInteractionData[];
 
 export type InteractionsProvider = {
 	getKey: () => string;
 	priority: number;
 	subscribe: ( callback: () => void ) => () => void;
 	actions: {
-		all: () => InteractionItem[];
+		all: () => ElementInteractionData[];
 	};
 };
+
+export type InteractionItemValue = InteractionItemPropValue[ 'value' ];
+
+export type SizeStringValue = `${ number }${ Unit }` | number;

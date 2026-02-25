@@ -1,25 +1,37 @@
 import * as React from 'react';
-import { createMockDocument, createMockStyleDefinition, dispatchDependencyCommand, renderWithStore } from 'test-utils';
-import { getCurrentDocument, getV1DocumentsManager } from '@elementor/editor-documents';
+import {
+	createMockDocument,
+	createMockStyleDefinition,
+	createMockTrackingModule,
+	dispatchDependencyCommand,
+	mockTracking,
+	renderWithStore,
+} from 'test-utils';
+import { getCurrentDocument } from '@elementor/editor-documents';
 import { __privateRunCommand } from '@elementor/editor-v1-adapters';
 import { QueryClient, QueryClientProvider } from '@elementor/query';
 import { __createStore, __dispatch, __registerSlice, type SliceState, type Store } from '@elementor/store';
 import { ThemeProvider } from '@elementor/ui';
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 
-import { mockTrackingModule } from '../../../__tests__/mocks';
 import { apiClient } from '../../../api';
 import { slice } from '../../../store';
 import { ClassManagerPanel, usePanelActions } from '../class-manager-panel';
 
 jest.mock( '@elementor/editor-documents' );
 jest.mock( '../class-manager-introduction' );
+jest.mock( '../start-sync-to-v3-modal' );
 
 jest.mock( '../../../api' );
+
+jest.mock( '@elementor/editor-current-user', () => ( {
+	useSuppressedMessage: jest.fn().mockReturnValue( [ false, jest.fn() ] ),
+} ) );
 
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	...jest.requireActual( '@elementor/editor-v1-adapters' ),
 	__privateRunCommand: jest.fn(),
+	changeEditMode: jest.fn(),
 } ) );
 
 jest.mock( '@elementor/editor-panels', () => ( {
@@ -29,7 +41,12 @@ jest.mock( '@elementor/editor-panels', () => ( {
 	} ),
 } ) );
 
-jest.mock( '../../../utils/tracking', () => mockTrackingModule );
+jest.mock( '../panel-interactions', () => ( {
+	blockPanelInteractions: jest.fn(),
+	unblockPanelInteractions: jest.fn(),
+} ) );
+
+jest.mock( '../../../utils/tracking', () => createMockTrackingModule( 'trackGlobalClasses' ) );
 
 describe( 'ClassManagerPanel', () => {
 	let store: Store< SliceState< typeof slice > >;
@@ -302,12 +319,7 @@ describe( 'ClassManagerPanel', () => {
 		expect( window.onbeforeunload ).toBeNull();
 	} );
 
-	it( 'should reload the current document after deleting classes and saving the change.', async () => {
-		// Arrange.
-
-		const invalidateCache = jest.fn();
-		jest.mocked( getV1DocumentsManager ).mockReturnValue( { invalidateCache } as never );
-
+	it( 'should save deleted classes successfully', async () => {
 		// Act.
 		renderWithStore(
 			<ThemeProvider>
@@ -344,15 +356,15 @@ describe( 'ClassManagerPanel', () => {
 		// Act.
 		fireEvent.click( screen.getByRole( 'button', { name: 'Save changes' } ) );
 
-		// Assert.
+		// Assert - Verify that publish was called with deleted class
 		await waitFor( () => {
-			expect( invalidateCache ).toHaveBeenCalled();
-		} );
-
-		expect( __privateRunCommand ).toHaveBeenCalledWith( 'editor/documents/switch', {
-			id: 1,
-			shouldScroll: false,
-			shouldNavigateToDefaultRoute: false,
+			expect( apiClient.publish ).toHaveBeenCalledWith( {
+				items: {
+					'class-1': createMockStyleDefinition( { id: 'class-1', label: 'Class 1' } ),
+				},
+				order: [ 'class-1' ],
+				changes: { added: [], deleted: [ 'class-2' ], modified: [] },
+			} );
 		} );
 	} );
 
@@ -431,5 +443,25 @@ describe( 'ClassManagerPanel', () => {
 		fireEvent.click( discardButton );
 		expect( slice.actions.resetToInitialState ).toHaveBeenCalledWith( { context: 'frontend' } );
 		expect( store.getState().globalClasses.data.order ).toEqual( [ 'class-2', 'class-1' ] );
+	} );
+
+	it( 'should track classManagerSearched event when search field is focused', () => {
+		// Act
+		renderWithStore(
+			<QueryClientProvider client={ queryClient }>
+				<ClassManagerPanel />
+			</QueryClientProvider>,
+			store
+		);
+
+		const input = screen.getByRole( 'textbox' );
+
+		// Act
+		fireEvent.focus( input );
+
+		// Assert
+		expect( mockTracking ).toHaveBeenCalledWith( {
+			event: 'classManagerSearched',
+		} );
 	} );
 } );

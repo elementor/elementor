@@ -11,6 +11,7 @@ export default function IndexHeader( props ) {
 	const [ isInfoModalOpen, setIsInfoModalOpen ] = useState( false );
 	const importRef = useRef();
 	const shouldShowImportButton = elementorAppConfig.user.is_administrator || ( elementorAppConfig.user.restrictions?.includes( 'json-upload' ) ?? false );
+	const { refetch, isFetching } = props;
 	const buttons = useMemo( () => [
 		{
 			id: 'info',
@@ -25,9 +26,9 @@ export default function IndexHeader( props ) {
 			id: 'refetch',
 			text: __( 'Refetch', 'elementor' ),
 			hideText: true,
-			icon: `eicon-sync ${ props.isFetching ? 'eicon-animation-spin' : '' }`,
+			icon: `eicon-sync ${ isFetching ? 'eicon-animation-spin' : '' }`,
 			onClick: () => {
-				props.refetch();
+				refetch();
 			},
 		},
 		shouldShowImportButton && {
@@ -37,10 +38,11 @@ export default function IndexHeader( props ) {
 			icon: 'eicon-upload-circle-o',
 			elRef: importRef,
 			onClick: () => {
-				navigate( '/import?referrer=kit-library' );
+				const importUrl = '/import-customization';
+				navigate( importUrl );
 			},
 		},
-	], [ props.isFetching, props.refetch, shouldShowImportButton, navigate ] );
+	], [ isFetching, refetch, shouldShowImportButton, navigate ] );
 
 	return (
 		<>

@@ -12,11 +12,11 @@ import {
 import { __ } from '@wordpress/i18n';
 
 const popoverData = {
-	image: 'https://assets.elementor.com/v4-promotion/v1/images/v4_chip.png',
-	image_alt: __( 'Elementor V4', 'elementor' ),
-	title: __( 'Elementor V4', 'elementor' ),
+	image: 'https://assets.elementor.com/v4-promotion/v1/images/v4_chip_new.png',
+	image_alt: __( 'Atomic Elements', 'elementor' ),
+	title: __( 'Atomic Elements', 'elementor' ),
 	description: [
-		__( 'You’ve got powerful new tools with Editor V4. But, keep in mind that this is an early release, so don’t use it on live sites yet.', 'elementor' ),
+		__( 'The new generation of high-performance, flexible building blocks designed for precise styling and a unified experience.', 'elementor' ),
 	],
 	upgrade_text: __( 'Learn more', 'elementor' ),
 	upgrade_url: 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/',

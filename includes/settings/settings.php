@@ -1,14 +1,9 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Files\Fonts\Google_Font;
-use Elementor\Includes\Settings\AdminMenuItems\Admin_Menu_Item;
-use Elementor\Includes\Settings\AdminMenuItems\Get_Help_Menu_Item;
-use Elementor\Includes\Settings\AdminMenuItems\Getting_Started_Menu_Item;
 use Elementor\Modules\Promotions\Module as Promotions_Module;
 use Elementor\TemplateLibrary\Source_Local;
-use Elementor\Modules\Home\Module as Home_Module;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Includes\Settings\AdminMenuItems\Editor_One_Home_Menu;
 use Elementor\Includes\Settings\AdminMenuItems\Editor_One_Settings_Menu;
@@ -48,11 +43,6 @@ class Settings extends Settings_Page {
 	const TAB_GENERAL = 'general';
 
 	/**
-	 * Settings page style tab slug.
-	 */
-	const TAB_STYLE = 'style';
-
-	/**
 	 * Settings page integrations tab slug.
 	 */
 	const TAB_INTEGRATIONS = 'integrations';
@@ -69,7 +59,7 @@ class Settings extends Settings_Page {
 
 	const ADMIN_MENU_PRIORITY = 10;
 
-	public Home_Module $home_module;
+	const MENU_CAPABILITY_EDIT_POSTS = 'edit_posts';
 
 	/**
 	 * Register admin menu.
@@ -82,92 +72,23 @@ class Settings extends Settings_Page {
 	 * @access public
 	 */
 	public function register_admin_menu() {
-		global $menu;
-
-		$menu[] = [ '', 'read', 'separator-elementor', '', 'wp-menu-separator elementor' ]; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( self::MENU_CAPABILITY_EDIT_POSTS ) ) {
 			return;
 		}
 
 		add_menu_page(
 			esc_html__( 'Elementor', 'elementor' ),
 			esc_html__( 'Elementor', 'elementor' ),
-			'manage_options',
+			self::MENU_CAPABILITY_EDIT_POSTS,
 			self::PAGE_ID,
-			[
-				$this,
-				$this->home_module->is_experiment_active() ? 'display_home_screen' : 'display_settings_page',
-			],
+			[ $this, 'display_home_screen' ],
 			'',
 			'58.5'
 		);
-
-		if ( $this->home_module->is_experiment_active() ) {
-			add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-				if ( ! $this->is_editor_one_active() ) {
-					$admin_menu->register( 'elementor-settings', new Admin_Menu_Item( $this ) );
-				}
-			}, 0 );
-		}
 	}
 
 	public function display_home_screen() {
 		echo '<div id="e-home-screen"></div>';
-	}
-
-	/**
-	 * Reorder the Elementor menu items in admin.
-	 * Based on WC.
-	 *
-	 * @since 2.4.0
-	 *
-	 * @param array $menu_order Menu order.
-	 * @return array
-	 */
-	public function menu_order( $menu_order ) {
-		// Initialize our custom order array.
-		$elementor_menu_order = [];
-
-		// Get the index of our custom separator.
-		$elementor_separator = array_search( 'separator-elementor', $menu_order, true );
-
-		// Get index of library menu.
-		$elementor_library = array_search( Source_Local::ADMIN_MENU_SLUG, $menu_order, true );
-
-		// Loop through menu order and do some rearranging.
-		foreach ( $menu_order as $index => $item ) {
-			if ( 'elementor' === $item ) {
-				$elementor_menu_order[] = 'separator-elementor';
-				$elementor_menu_order[] = $item;
-				$elementor_menu_order[] = Source_Local::ADMIN_MENU_SLUG;
-
-				unset( $menu_order[ $elementor_separator ] );
-				unset( $menu_order[ $elementor_library ] );
-			} elseif ( ! in_array( $item, [ 'separator-elementor' ], true ) ) {
-				$elementor_menu_order[] = $item;
-			}
-		}
-
-		// Return order.
-		return $elementor_menu_order;
-	}
-
-	/**
-	 * Register Elementor knowledge base sub-menu.
-	 *
-	 * Add new Elementor knowledge base sub-menu under the main Elementor menu.
-	 *
-	 * Fired by `admin_menu` action.
-	 *
-	 * @since 2.0.3
-	 * @access private
-	 */
-	private function register_knowledge_base_menu( Admin_Menu_Manager $admin_menu ) {
-		if ( ! Plugin::instance()->modules_manager->get_modules( 'editor-one' ) ) {
-			$admin_menu->register( 'elementor-getting-started', new Getting_Started_Menu_Item() );
-			$admin_menu->register( 'go_knowledge_base_site', new Get_Help_Menu_Item() );
-		}
 	}
 
 	private function register_editor_one_settings_menu( Menu_Data_Provider $menu_data_provider ) {
@@ -176,31 +97,6 @@ class Settings extends Settings_Page {
 
 	private function register_editor_one_home_menu( Menu_Data_Provider $menu_data_provider ) {
 		$menu_data_provider->register_menu( new Editor_One_Home_Menu() );
-	}
-
-	private function is_editor_one_active(): bool {
-		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
-	}
-
-	/**
-	 * Go Elementor Pro.
-	 *
-	 * Redirect the Elementor Pro page the clicking the Elementor Pro menu link.
-	 *
-	 * Fired by `admin_init` action.
-	 *
-	 * @since 2.0.3
-	 * @access public
-	 */
-	public function handle_external_redirects() {
-		if ( empty( $_GET['page'] ) ) {
-			return;
-		}
-
-		if ( 'go_knowledge_base_site' === $_GET['page'] ) {
-			wp_redirect( Get_Help_Menu_Item::URL );
-			die;
-		}
 	}
 
 	/**
@@ -214,27 +110,7 @@ class Settings extends Settings_Page {
 	 * @access public
 	 */
 	public function on_admin_init() {
-		$this->handle_external_redirects();
-
 		$this->maybe_remove_all_admin_notices();
-	}
-
-	/**
-	 * Change "Settings" menu name.
-	 *
-	 * Update the name of the Settings admin menu from "Elementor" to "Settings".
-	 *
-	 * Fired by `admin_menu` action.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	public function admin_menu_change_name() {
-		$menu_name = $this->home_module->is_experiment_active()
-			? esc_html__( 'Home', 'elementor' )
-			: esc_html__( 'Settings', 'elementor' );
-
-		Utils::change_submenu_first_item_label( 'elementor', $menu_name );
 	}
 
 	/**
@@ -525,7 +401,6 @@ class Settings extends Settings_Page {
 	 */
 	private function maybe_remove_all_admin_notices() {
 		$elementor_pages = [
-			'elementor-getting-started',
 			'elementor-system-info',
 			'e-form-submissions',
 			'elementor_custom_fonts',
@@ -567,28 +442,15 @@ class Settings extends Settings_Page {
 	public function __construct() {
 		parent::__construct();
 
-		$this->home_module = new Home_Module();
-
 		add_action( 'admin_init', [ $this, 'on_admin_init' ] );
 		add_filter( 'elementor/generator_tag/settings', [ $this, 'add_generator_tag_settings' ] );
 
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
 
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
-			if ( $this->home_module->is_experiment_active() ) {
-				$this->register_editor_one_settings_menu( $menu_data_provider );
-				$this->register_editor_one_home_menu( $menu_data_provider );
-			}
+			$this->register_editor_one_settings_menu( $menu_data_provider );
+			$this->register_editor_one_home_menu( $menu_data_provider );
 		} );
-
-		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
-			$this->register_knowledge_base_menu( $admin_menu );
-		}, Promotions_Module::ADMIN_MENU_PRIORITY - 1 );
-
-		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
-
-		add_filter( 'custom_menu_order', '__return_true' );
-		add_filter( 'menu_order', [ $this, 'menu_order' ] );
 
 		$clear_cache_callback = [ Plugin::$instance->files_manager, 'clear_cache' ];
 

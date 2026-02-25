@@ -1,0 +1,20 @@
+{
+    "settings": {
+        "link": {
+            "$$type": "link",
+            "value": {
+                "tag": "a"
+            }
+        },
+        "button": {
+            "$$type": "link",
+            "value": {
+                "tag": "a"
+            }
+        },
+        "text": {
+            "$$type": "string",
+            "value": "text"
+        }
+    }
+}

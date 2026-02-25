@@ -48,6 +48,15 @@
 			margin-block-start: 5px;
 		}
 
+		&.e-editor-one {
+			border: 1px solid rgba(0, 0, 0, 0.12);
+			border-radius: 8px;
+
+			&:not(:first-child) {
+				margin-block-start: 20px;
+			}
+		}
+
 		p {
 			font-size: 16px;
 			margin: 20px 0 25px;
@@ -118,10 +127,9 @@
 
 		img {
 			width: 330px;
-			height: 315px;
-			padding: 0.625rem;
-			object-fit: cover;
-			object-position: top;
+			height: auto;
+			max-width: 100%;
+			aspect-ratio: 330 / 315;
 		}
 	}
 

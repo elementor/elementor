@@ -1,9 +1,29 @@
 import { elementSelectorHandlers, elementTypeHandlers } from './handlers-registry';
 
-const unmountElementTypeCallbacks: Map< string, Map< string, () => void > > = new Map();
-const unmountElementSelectorCallbacks: Map< string, Map< string, () => void > > = new Map();
+type UnmountEntry = {
+	controller: AbortController;
+	manualUnmount: ( () => void )[];
+};
+
+const unmountCallbacks = new WeakMap< Element, UnmountEntry >();
 
 const ELEMENT_RENDERED_EVENT_NAME = 'elementor/element/rendered';
+const ELEMENT_DESTROYED_EVENT_NAME = 'elementor/element/destroyed';
+
+type LifecycleEventParams = {
+	element: Element;
+	elementType: string;
+	elementId: string;
+};
+
+const dispatchDestroyedEvent = ( params: LifecycleEventParams ) => {
+	params.element.dispatchEvent(
+		new CustomEvent( ELEMENT_DESTROYED_EVENT_NAME, {
+			bubbles: true,
+			detail: params,
+		} )
+	);
+};
 
 export const onElementRender = ( {
 	element,
@@ -14,10 +34,14 @@ export const onElementRender = ( {
 	elementType: string;
 	elementId: string;
 } ) => {
+	cleanupOnUnmount( element );
+
 	const controller = new AbortController();
 	const manualUnmount: ( () => void )[] = [];
 
 	const dispatchRenderedEvent = () => {
+		onElementSelectorRender( { element, controller } );
+
 		element.dispatchEvent(
 			new CustomEvent( ELEMENT_RENDERED_EVENT_NAME, {
 				bubbles: true,
@@ -30,7 +54,7 @@ export const onElementRender = ( {
 		);
 	};
 
-	// When the rendered event is dispatched, the element is not yet connected to the DOM (marrionet view case)
+	// When the rendered event is dispatched, the element is not yet connected to the DOM (marionette view case)
 	if ( ! element.isConnected ) {
 		requestAnimationFrame( () => {
 			dispatchRenderedEvent();
@@ -43,24 +67,25 @@ export const onElementRender = ( {
 		return;
 	}
 
+	setUnmountEntry( { element, controller, manualUnmount } );
+
 	Array.from( elementTypeHandlers.get( elementType )?.values() ?? [] ).forEach( ( handler ) => {
 		const settings = element.getAttribute( 'data-e-settings' );
 
 		const listenToChildren = ( elementTypes: string[] ) => ( {
 			render: ( callback: () => void ) => {
-				element.addEventListener(
-					ELEMENT_RENDERED_EVENT_NAME,
-					( event ) => {
-						const { elementType: childType } = ( event as CustomEvent ).detail;
+				const listener = ( event: Event ) => {
+					const { elementType: childType } = ( event as CustomEvent ).detail;
 
-						if ( ! elementTypes.includes( childType ) ) {
-							return;
-						}
+					if ( ! elementTypes.includes( childType ) ) {
+						return;
+					}
 
-						callback();
-					},
-					{ signal: controller.signal }
-				);
+					callback();
+				};
+
+				element.addEventListener( ELEMENT_RENDERED_EVENT_NAME, listener, { signal: controller.signal } );
+				element.addEventListener( ELEMENT_DESTROYED_EVENT_NAME, listener, { signal: controller.signal } );
 			},
 		} );
 
@@ -75,33 +100,24 @@ export const onElementRender = ( {
 			manualUnmount.push( unmount );
 		}
 	} );
-
-	if ( ! unmountElementTypeCallbacks.has( elementType ) ) {
-		unmountElementTypeCallbacks.set( elementType, new Map() );
-	}
-
-	unmountElementTypeCallbacks.get( elementType )?.set( elementId, () => {
-		controller.abort();
-
-		manualUnmount.forEach( ( callback ) => callback() );
-	} );
 };
 
 export const onElementSelectorRender = ( {
 	element,
-	elementId,
 	controller,
 }: {
 	element: Element;
-	elementId: string;
 	controller: AbortController;
 } ) => {
+	let requiresCleanup = false;
+	const manualUnmount: ( () => void )[] = [];
+
 	Array.from( elementSelectorHandlers.entries() ?? [] ).forEach( ( [ selector, handlers ] ) => {
 		if ( ! element.matches( selector ) ) {
 			return;
 		}
 
-		const manualUnmount: ( () => void )[] = [];
+		requiresCleanup = true;
 
 		Array.from( handlers.values() ?? [] ).forEach( ( handler ) => {
 			const settings = element.getAttribute( 'data-e-settings' );
@@ -116,31 +132,55 @@ export const onElementSelectorRender = ( {
 				manualUnmount.push( unmount );
 			}
 		} );
-
-		if ( ! unmountElementSelectorCallbacks.has( elementId ) ) {
-			unmountElementTypeCallbacks.set( elementId, new Map() );
-		}
-
-		unmountElementSelectorCallbacks.get( elementId )?.set( selector, () => {
-			controller.abort();
-
-			manualUnmount.forEach( ( callback ) => callback() );
-		} );
 	} );
+
+	if ( requiresCleanup ) {
+		setUnmountEntry( { element, controller, manualUnmount } );
+	}
 };
 
-export const onElementDestroy = ( { elementType, elementId }: { elementType: string; elementId: string } ) => {
-	const unmount = unmountElementTypeCallbacks.get( elementType )?.get( elementId );
-
-	if ( ! unmount ) {
+export const onElementDestroy = ( {
+	elementType,
+	elementId,
+	element,
+}: {
+	elementType: string;
+	elementId: string;
+	element?: Element;
+} ) => {
+	if ( ! element ) {
 		return;
 	}
 
-	unmount();
+	cleanupOnUnmount( element );
 
-	unmountElementTypeCallbacks.get( elementType )?.delete( elementId );
+	dispatchDestroyedEvent( { element, elementType, elementId } );
+};
 
-	if ( unmountElementTypeCallbacks.get( elementType )?.size === 0 ) {
-		unmountElementTypeCallbacks.delete( elementType );
+const setUnmountEntry = ( {
+	element,
+	controller,
+	manualUnmount,
+}: {
+	element: Element;
+	controller: AbortController;
+	manualUnmount: ( () => void )[];
+} ) => {
+	const existingEntry = unmountCallbacks.get( element );
+
+	if ( existingEntry ) {
+		existingEntry.manualUnmount.push( ...manualUnmount );
+	} else {
+		unmountCallbacks.set( element, { controller, manualUnmount } );
+	}
+};
+
+const cleanupOnUnmount = ( element: Element ) => {
+	const entry = unmountCallbacks.get( element );
+
+	if ( entry ) {
+		entry.controller.abort();
+		entry.manualUnmount.forEach( ( callback ) => callback() );
+		unmountCallbacks.delete( element );
 	}
 };

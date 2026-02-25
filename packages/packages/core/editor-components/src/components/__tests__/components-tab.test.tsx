@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { renderWithStore, renderWithTheme } from 'test-utils';
-import { setDocumentModifiedStatus } from '@elementor/editor-documents';
+import { mockCurrentUserCapabilities, renderWithStore, renderWithTheme } from 'test-utils';
 import {
 	__createStore,
 	__dispatch as dispatch,
@@ -8,38 +7,44 @@ import {
 	type SliceState,
 	type Store,
 } from '@elementor/store';
-import { act, fireEvent, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, screen } from '@testing-library/react';
 
 import { slice } from '../../store/store';
 import { loadComponents } from '../../store/thunks';
 import { ComponentSearch } from '../components-tab/component-search';
+import { Components } from '../components-tab/components';
 import { ComponentItem } from '../components-tab/components-item';
 import { ComponentsList } from '../components-tab/components-list';
 import { SearchProvider } from '../components-tab/search-provider';
 
+type ExtendedWindow = Window & {
+	elementor?: {
+		helpers?: {
+			hasPro?: () => boolean;
+		};
+	};
+	elementorPro?: {
+		config?: {
+			isActive?: boolean;
+		};
+	};
+};
+
 jest.mock( '@elementor/editor-documents', () => ( {
+	getV1DocumentsManager: jest.fn(),
 	setDocumentModifiedStatus: jest.fn(),
 } ) );
 
-jest.mock( '@elementor/editor-canvas', () => ( {
-	startDragElementFromPanel: jest.fn(),
-	endDragElementFromPanel: jest.fn(),
-} ) );
-
-jest.mock( '@elementor/editor-elements', () => ( {
-	dropElement: jest.fn(),
-} ) );
-
-jest.mock( '../../utils/get-container-for-new-element', () => ( {
-	getContainerForNewElement: jest.fn( () => ( {
-		container: { id: 'test-container' },
-		options: { useHistory: false, scrollIntoView: true },
+jest.mock( '@elementor/editor-mcp', () => ( {
+	getAngieSdk: jest.fn().mockImplementation( () => ( {
+		isAngieReady: jest.fn( () => false ),
+		triggerAngie: jest.fn(),
 	} ) ),
 } ) );
 
-jest.mock( '../create-component-form/utils/replace-element-with-component', () => ( {
-	createComponentModel: jest.fn( ( { id, name } ) => ( { id, name, elType: 'component' } ) ),
-} ) );
+jest.mock( '@elementor/editor-current-user' );
+
+mockCurrentUserCapabilities( true );
 
 const mockComponents = [
 	{ id: 1, name: 'Button Component', uid: 'f73880da-522c-442e-815a-b2c9849b7415' },
@@ -48,16 +53,19 @@ const mockComponents = [
 	{ id: 4, name: 'Test Component 1', uid: 'f73880da-522c-442e-815a-b2c9849b7418' },
 	{ id: 5, name: 'Test Component 2', uid: 'f73880da-522c-442e-815a-b2c9849b7419' },
 	{ id: 6, name: 'Valid Component', uid: 'f73880da-522c-442e-815a-b2c9849b7420' },
+	{ id: 7, name: 'ExistingComponent', uid: 'f73880da-522c-442e-815a-b2c9849b7421' },
 ];
 
 describe( 'ComponentsTab', () => {
 	let store: Store< SliceState< typeof slice > >;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
 		jest.useFakeTimers();
 		registerSlice( slice );
 		store = __createStore();
+		act( () => {
+			dispatch( slice.actions.load( mockComponents ) );
+		} );
 	} );
 
 	afterEach( () => {
@@ -102,15 +110,12 @@ describe( 'ComponentsTab', () => {
 			);
 
 			// Assert
-			expect( screen.getByText( 'Text that explains that there are no Components yet.' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'No components yet' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Learn more about components' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Create your first one:' ) ).toBeInTheDocument();
 		} );
 
 		it( 'should render components list when components exist', () => {
-			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( mockComponents ) );
-			} );
-
 			// Act
 			renderWithStore(
 				<SearchProvider localStorageKey="test-search">
@@ -124,22 +129,19 @@ describe( 'ComponentsTab', () => {
 			expect( screen.getByText( 'Text Component' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Test Component 1' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Test Component 2' ) ).toBeInTheDocument();
-			expect(
-				screen.queryByText( 'Text that explains that there are no Components yet.' )
-			).not.toBeInTheDocument();
+			expect( screen.queryByText( 'No components yet' ) ).not.toBeInTheDocument();
 		} );
 
-		it( 'should render component item with draggable attributes and actions', () => {
-			// Arrange
-			const buttonComponent = mockComponents[ 0 ];
-
+		it( 'should render component items as disabled without actions', () => {
 			// Act
-			renderWithStore( <ComponentItem component={ buttonComponent } />, store );
+			renderWithStore( <ComponentItem component={ mockComponents[ 0 ] } />, store );
 
 			// Assert
 			const componentItem = screen.getByRole( 'button', { name: /Button Component/ } );
 			expect( componentItem ).toBeInTheDocument();
-			expect( componentItem ).toHaveAttribute( 'draggable', 'true' );
+			expect( componentItem ).toHaveAttribute( 'aria-disabled', 'true' );
+			expect( componentItem ).not.toHaveAttribute( 'draggable', 'true' );
+			expect( screen.queryByLabelText( 'More actions' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'should render search input with correct attributes and placeholder', () => {
@@ -156,11 +158,6 @@ describe( 'ComponentsTab', () => {
 		} );
 
 		it( 'should handle search functionality and show filtered results', () => {
-			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( mockComponents ) );
-			} );
-
 			// Act
 			renderWithStore(
 				<SearchProvider localStorageKey="test-search">
@@ -190,11 +187,6 @@ describe( 'ComponentsTab', () => {
 		} );
 
 		it( 'should show empty search result when no matches found', () => {
-			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( mockComponents ) );
-			} );
-
 			// Act
 			renderWithStore(
 				<SearchProvider localStorageKey="test-search">
@@ -217,11 +209,10 @@ describe( 'ComponentsTab', () => {
 			expect( screen.getByText( 'Try something else.' ) ).toBeInTheDocument();
 		} );
 
-		it( 'should remove component from list when archived', async () => {
+		it( 'should render empty state when no components exist and user is not admin', () => {
 			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( mockComponents ) );
-			} );
+			dispatch( slice.actions.load( [] ) );
+			mockCurrentUserCapabilities( false );
 
 			// Act
 			renderWithStore(
@@ -232,24 +223,66 @@ describe( 'ComponentsTab', () => {
 			);
 
 			// Assert
-			expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Text Component' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'No components yet' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Learn more about components' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Create your first one:' ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: /Create component with AI/i } ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'ComponentsProNotification', () => {
+		const extendedWindow = window as unknown as ExtendedWindow;
+		let originalElementor: ExtendedWindow[ 'elementor' ];
+		let originalElementorPro: ExtendedWindow[ 'elementorPro' ];
+
+		beforeEach( () => {
+			originalElementor = extendedWindow.elementor;
+			originalElementorPro = extendedWindow.elementorPro;
+		} );
+
+		afterEach( () => {
+			extendedWindow.elementor = originalElementor;
+			extendedWindow.elementorPro = originalElementorPro;
+		} );
+
+		it( 'should render notification for Core users without Pro when components exist', () => {
+			// Arrange
+			extendedWindow.elementor = {
+				helpers: {
+					hasPro: () => false,
+				},
+			};
+			extendedWindow.elementorPro = undefined;
 
 			// Act
-			const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
-			const buttonComponentMoreActions = moreActionsButtons[ 0 ];
-			fireEvent.click( buttonComponentMoreActions );
-
-			const archiveButton = await screen.findByText( 'Archive' );
-			fireEvent.click( archiveButton );
+			renderWithStore( <Components />, store );
 
 			// Assert
-			await waitFor( () => {
-				expect( screen.queryByText( 'Button Component' ) ).not.toBeInTheDocument();
+			expect( screen.getByText( /Try Components for free:/i ) ).toBeInTheDocument();
+			expect(
+				screen.getByText(
+					/Soon Components will be part of the Pro subscription, but what you create now will remain on your site\./i
+				)
+			).toBeInTheDocument();
+		} );
+
+		it( 'should not render notification when no components exist', () => {
+			// Arrange
+			extendedWindow.elementor = {
+				helpers: {
+					hasPro: () => false,
+				},
+			};
+			extendedWindow.elementorPro = undefined;
+			act( () => {
+				dispatch( slice.actions.load( [] ) );
 			} );
-			expect( screen.getByText( 'Text Component' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Image Component' ) ).toBeInTheDocument();
-			expect( jest.mocked( setDocumentModifiedStatus ) ).toHaveBeenCalledWith( true );
+
+			// Act
+			renderWithStore( <Components />, store );
+
+			// Assert
+			expect( screen.queryByText( /Try Components for free:/i ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );

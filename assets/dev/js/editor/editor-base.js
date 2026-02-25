@@ -411,7 +411,7 @@ export default class EditorBase extends Marionette.Application {
 	 * @return {Container} container
 	 */
 	getPreviewContainer() {
-		return this.getPreviewView().getContainer();
+		return this.getPreviewView()?.getContainer();
 	}
 
 	getContainer( id ) {
@@ -420,6 +420,23 @@ export default class EditorBase extends Marionette.Application {
 		}
 
 		return $e.components.get( 'document' ).utils.findContainerById( id );
+	}
+
+	getContainerByKeyValue( args ) {
+		const { key, value, parent = this.getPreviewView() } = args;
+
+		if ( this.getPreviewContainer().model.get( key ) === value ) {
+			return this.getPreviewContainer();
+		}
+
+		const view = $e.components.get( 'document' ).utils.findViewRecursive(
+			parent.children,
+			key,
+			value,
+			false,
+		);
+
+		return view?.[ 0 ]?.getContainer() ?? null;
 	}
 
 	initComponents() {

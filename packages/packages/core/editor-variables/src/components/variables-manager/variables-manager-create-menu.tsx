@@ -1,14 +1,25 @@
 import * as React from 'react';
-import { createElement, useRef } from 'react';
+import { createElement, useMemo, useRef } from 'react';
 import { PlusIcon } from '@elementor/icons';
 import { bindMenu, bindTrigger, IconButton, Menu, MenuItem, type PopupState, Typography } from '@elementor/ui';
+import { capitalize } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
+import { useQuotaPermissions } from '../../hooks/use-quota-permissions';
 import { type TVariablesList } from '../../storage';
 import { trackVariablesManagerEvent } from '../../utils/tracking';
 import { getVariableTypes } from '../../variables-registry/variable-type-registry';
+import { VariablePromotionChip, type VariablePromotionChipRef } from '../ui/variable-promotion-chip';
 
 export const SIZE = 'tiny';
+
+type MenuOptionConfig = {
+	key: string;
+	propTypeKey: string;
+	variableType: string;
+	defaultValue: string;
+	icon: React.ElementType;
+};
 
 type VariableManagerCreateMenuProps = {
 	variables: TVariablesList;
@@ -17,39 +28,30 @@ type VariableManagerCreateMenuProps = {
 	menuState: PopupState;
 };
 
-export const VariableManagerCreateMenu = ( {
-	variables,
-	onCreate,
-	disabled,
-	menuState,
-}: VariableManagerCreateMenuProps ) => {
+export const VariableManagerCreateMenu = ( { variables, onCreate, menuState }: VariableManagerCreateMenuProps ) => {
 	const buttonRef = useRef< HTMLButtonElement >( null );
 
 	const variableTypes = getVariableTypes();
 
-	const menuOptions = Object.entries( variableTypes )
-		.filter( ( [ , variable ] ) => !! variable.defaultValue )
-		.map( ( [ key, variable ] ) => {
-			const displayName = variable.variableType.charAt( 0 ).toUpperCase() + variable.variableType.slice( 1 );
-
-			return {
-				key,
-				name: displayName,
-				icon: variable.icon,
-				onClick: () => {
-					const defaultName = getDefaultName( variables, key, variable.variableType );
-					onCreate( key, defaultName, variable.defaultValue || '' );
-					trackVariablesManagerEvent( { action: 'add', varType: variable.variableType } );
-				},
-			};
-		} );
+	const menuOptionConfigs = useMemo(
+		() =>
+			Object.entries( variableTypes )
+				.filter( ( [ , variable ] ) => !! variable.defaultValue )
+				.map( ( [ key, variable ] ) => ( {
+					key,
+					propTypeKey: variable.propTypeUtil.key,
+					variableType: variable.variableType,
+					defaultValue: variable.defaultValue || '',
+					icon: variable.icon,
+				} ) ),
+		[ variableTypes ]
+	);
 
 	return (
 		<>
 			<IconButton
 				{ ...bindTrigger( menuState ) }
 				ref={ buttonRef }
-				disabled={ disabled }
 				size={ SIZE }
 				aria-label={ __( 'Add variable', 'elementor' ) }
 			>
@@ -76,28 +78,64 @@ export const VariableManagerCreateMenu = ( {
 				} }
 				data-testid="variable-manager-create-menu"
 			>
-				{ menuOptions.map( ( option ) => (
-					<MenuItem
-						key={ option.key }
-						onClick={ () => {
-							option.onClick?.();
-							menuState.close();
-						} }
-						sx={ {
-							gap: 1.5,
-						} }
-					>
-						{ createElement( option.icon, {
-							fontSize: SIZE,
-							color: 'action',
-						} ) }
-						<Typography variant="caption" color="text.primary">
-							{ option.name }
-						</Typography>
-					</MenuItem>
+				{ menuOptionConfigs.map( ( config ) => (
+					<MenuOption
+						key={ config.key }
+						config={ config }
+						variables={ variables }
+						onCreate={ onCreate }
+						onClose={ menuState.close }
+					/>
 				) ) }
 			</Menu>
 		</>
+	);
+};
+
+const MenuOption = ( {
+	config,
+	variables,
+	onCreate,
+	onClose,
+}: {
+	config: MenuOptionConfig;
+	variables: TVariablesList;
+	onCreate: VariableManagerCreateMenuProps[ 'onCreate' ];
+	onClose: () => void;
+} ) => {
+	const promotionRef = useRef< VariablePromotionChipRef >( null );
+	const userQuotaPermissions = useQuotaPermissions( config.propTypeKey );
+
+	const displayName = capitalize( config.variableType );
+	const isDisabled = ! userQuotaPermissions.canAdd();
+
+	const handleClick = () => {
+		if ( isDisabled ) {
+			promotionRef.current?.toggle();
+			return;
+		}
+
+		const defaultName = getDefaultName( variables, config.key, config.variableType );
+
+		onCreate( config.key, defaultName, config.defaultValue );
+		trackVariablesManagerEvent( { action: 'add', varType: config.variableType } );
+		onClose();
+	};
+
+	return (
+		<MenuItem onClick={ handleClick } sx={ { gap: 1.5, cursor: 'pointer' } }>
+			{ createElement( config.icon, { fontSize: SIZE, color: isDisabled ? 'disabled' : 'action' } ) }
+			<Typography variant="caption" color={ isDisabled ? 'text.disabled' : 'text.primary' }>
+				{ displayName }
+			</Typography>
+			{ isDisabled && (
+				<VariablePromotionChip
+					variableType={ config.variableType }
+					upgradeUrl={ `https://go.elementor.com/go-pro-manager-${ config.variableType }-variable/` }
+					ref={ promotionRef }
+				/>
+			) }
+		</MenuItem>
 	);
 };
 

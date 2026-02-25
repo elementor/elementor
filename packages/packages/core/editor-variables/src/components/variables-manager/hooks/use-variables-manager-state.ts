@@ -5,6 +5,8 @@ import { getVariables } from '../../../hooks/use-prop-variables';
 import { service } from '../../../service';
 import { type TVariablesList } from '../../../storage';
 import { filterBySearch } from '../../../utils/filter-by-search';
+import { applySelectionFilters, variablesToList } from '../../../utils/variables-to-list';
+import { getVariableTypes } from '../../../variables-registry/variable-type-registry';
 
 export const useVariablesManagerState = () => {
 	const [ variables, setVariables ] = useState( () => getVariables( false ) );
@@ -43,6 +45,22 @@ export const useVariablesManagerState = () => {
 		setIsDirty( true );
 	}, [] );
 
+	const handleStartSync = useCallback( ( itemId: string ) => {
+		setVariables( ( prev ) => ( {
+			...prev,
+			[ itemId ]: { ...prev[ itemId ], sync_to_v3: true },
+		} ) );
+		setIsDirty( true );
+	}, [] );
+
+	const handleStopSync = useCallback( ( itemId: string ) => {
+		setVariables( ( prev ) => ( {
+			...prev,
+			[ itemId ]: { ...prev[ itemId ], sync_to_v3: false },
+		} ) );
+		setIsDirty( true );
+	}, [] );
+
 	const handleSearch = ( searchTerm: string ) => {
 		setSearchValue( searchTerm );
 	};
@@ -50,7 +68,7 @@ export const useVariablesManagerState = () => {
 	const handleSave = useCallback( async (): Promise< { success: boolean } > => {
 		const originalVariables = getVariables( false );
 		setIsSaving( true );
-		const result = await service.batchSave( originalVariables, variables );
+		const result = await service.batchSave( originalVariables, variables, deletedVariables );
 
 		if ( result.success ) {
 			await service.load();
@@ -62,14 +80,15 @@ export const useVariablesManagerState = () => {
 		}
 
 		return { success: result.success };
-	}, [ variables ] );
+	}, [ variables, deletedVariables ] );
 
-	const filteredVariables = () => {
-		const list = Object.entries( variables ).map( ( [ id, value ] ) => ( { ...value, id } ) );
-		const filtered = filterBySearch( list, searchValue );
+	const filteredVariables = useCallback( () => {
+		const list = variablesToList( variables ).filter( ( v ) => ! v.deleted );
+		const typeFiltered = applySelectionFilters( list, getVariableTypes() );
+		const searchFiltered = filterBySearch( typeFiltered, searchValue );
 
-		return Object.fromEntries( filtered.map( ( { id, ...rest } ) => [ id, rest ] ) );
-	};
+		return Object.fromEntries( searchFiltered.map( ( { key, ...rest } ) => [ key, rest ] ) );
+	}, [ variables, searchValue ] );
 
 	return {
 		variables: filteredVariables(),
@@ -79,6 +98,8 @@ export const useVariablesManagerState = () => {
 		handleOnChange,
 		createVariable,
 		handleDeleteVariable,
+		handleStartSync,
+		handleStopSync,
 		handleSave,
 		isSaving,
 		handleSearch,

@@ -1,4 +1,5 @@
-import { $eType, ElementorType } from '../types/types';
+import { $eType, ElementorType, WindowType } from '../types/types';
+import EditorPage from '../pages/editor-page';
 
 /**
  * Add element to the page using model and parent container.
@@ -41,7 +42,7 @@ export const addElement = ( props: { model: unknown, container: null | string, i
 		},
 	);
 
-	if ( 'object' === typeof element && 'id' in element && 'string' === typeof element.id ) {
+	if ( element !== null && 'object' === typeof element && 'id' in element && 'string' === typeof element.id ) {
 		return element.id;
 	}
 	return undefined;
@@ -55,5 +56,33 @@ export const addElement = ( props: { model: unknown, container: null | string, i
  * @return {string} css selector
  */
 export const getElementSelector = ( id: string ) => {
-	return `[data-id = "${ id }"]`;
+	return `[data-id="${ id }"]`;
+};
+
+/**
+ * Capture the ID of the next element created via document/elements/create command.
+ *
+ * @param {EditorPage}       editor     - Editor page instance.
+ * @param {string|undefined} widgetType - Optional widget type to filter (e.g., 'e-component').
+ *
+ * @return {Promise<string>} The ID of the created element
+ */
+export const captureNextElementCreation = async ( editor: EditorPage, widgetType?: string ): Promise<string> => {
+	return editor.page.evaluate( ( widgetTypeFilter?: string ) => {
+		return new Promise< string >( ( resolve ) => {
+			const extendedWindow = window as unknown as WindowType;
+
+			const callback = ( component: unknown, command: string, args: unknown, result: { model?: { get?: ( key: string ) => string }, id: string } ) => {
+				if ( 'document/elements/create' === command ) {
+					const createdWidgetType = result?.model?.get?.( 'widgetType' );
+
+					if ( ! widgetTypeFilter || createdWidgetType === widgetTypeFilter ) {
+						extendedWindow.$e.commands.off( 'run:after', callback );
+						resolve( result.id );
+					}
+				}
+			};
+			extendedWindow.$e.commands.on( 'run:after', callback );
+		} );
+	}, widgetType );
 };

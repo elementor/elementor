@@ -14,8 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Size_Style_Schema {
 	private $blacklist = [
-		'border-width',
-		'border-radius',
 		'box-shadow',
 		'filter',
 		'backdrop-filter',

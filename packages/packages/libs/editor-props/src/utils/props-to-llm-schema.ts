@@ -219,3 +219,31 @@ export function isPropKeyConfigurable( propKey: string ): boolean {
 export function configurableKeys( schema: PropsSchema ): string[] {
 	return Object.keys( schema ).filter( isPropKeyConfigurable );
 }
+
+export function enrichWithIntention(
+	jsonSchema: JsonSchema7,
+	text: string = 'Describe the desired outcome'
+): JsonSchema7 {
+	const result = structuredClone( jsonSchema );
+	if ( ! result.properties ) {
+		return jsonSchema;
+	}
+	result.properties.$intention = {
+		type: 'string',
+		description: text,
+	};
+	result.required = [ ...( result.required || [] ), '$intention' ];
+	return result;
+}
+
+export function removeIntention( jsonSchema: JsonSchema7 ): JsonSchema7 {
+	const result = structuredClone( jsonSchema );
+	if ( ! result.properties ) {
+		return jsonSchema;
+	}
+	delete result.properties.$intention;
+	if ( result.required ) {
+		result.required = result.required.filter( ( req ) => req !== '$intention' );
+	}
+	return result;
+}

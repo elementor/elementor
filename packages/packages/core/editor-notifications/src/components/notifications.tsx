@@ -9,6 +9,9 @@ import { notifyAction } from '../slice';
 import { getEditingPanelWidth } from '../sync/get-editing-panel-width';
 import { type NotificationData, type Notifications } from '../types';
 
+// 8 seconds
+const AUTO_HIDE_DURATION = 8000;
+
 const DefaultCustomSnackbar = forwardRef( ( props: SnackbarProps, ref ) => {
 	const filteredProps = getFilteredSnackbarProps( props );
 	const panelWidth = getEditingPanelWidth();
@@ -43,7 +46,7 @@ const Wrapper = () => {
 	return (
 		<SnackbarProvider
 			maxSnack={ 3 }
-			autoHideDuration={ 8000 }
+			autoHideDuration={ AUTO_HIDE_DURATION }
 			anchorOrigin={ { horizontal: 'center', vertical: 'bottom' } }
 			Components={ muiToEuiMapper }
 		>

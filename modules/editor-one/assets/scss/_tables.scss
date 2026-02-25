@@ -52,12 +52,19 @@
 
 	td > label,
 	td > .elementor-field-row {
-		display: flex;
-		align-items: flex-start;
-		gap: 4px;
+		display: block;
+		position: relative;
+		padding-inline-start: 24px;
 		font-size: 13px;
 		color: var(--e-one-palette-text-primary);
-		line-height: 1.4;
+		line-height: 1.5;
+
+		input[type="checkbox"] {
+			position: absolute;
+			inset-inline-start: 0;
+			inset-block-start: 2px;
+			margin: 0;
+		}
 	}
 
 	.description {
@@ -149,7 +156,6 @@
 		td {
 			color: var(--e-one-palette-text-primary);
 			font-size: 13px;
-			font-weight: 400;
 			padding: 10px;
 
 			&:last-child {
@@ -295,3 +301,30 @@
 	}
 }
 
+@media screen and (min-width: 783px) {
+	body.post-type-elementor_library {
+		.wp-list-table {
+			thead th {
+				&#title,
+				&.column-title {
+					width: 20%;
+				}
+			}
+
+			tbody td {
+				&#title,
+				&.column-title {
+					width: 20%;
+				}
+			}
+		}
+	}
+}
+
+.wp-list-table:not(.e-form-submissions-list-table) {
+	tbody {
+		td {
+			font-weight: 400;
+		}
+	}
+}

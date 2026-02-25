@@ -22,12 +22,22 @@ class Module extends BaseModule {
 
 	private $preset_animations;
 
+	private $frontend_handler;
+
 	private function get_presets() {
 		if ( ! $this->preset_animations ) {
 			$this->preset_animations = new Presets();
 		}
 
 		return $this->preset_animations;
+	}
+
+	private function get_frontend_handler() {
+		if ( ! $this->frontend_handler ) {
+			$this->frontend_handler = new Interactions_Frontend_Handler();
+		}
+
+		return $this->frontend_handler;
 	}
 
 	public static function get_experimental_data() {
@@ -59,12 +69,18 @@ class Module extends BaseModule {
 		add_action( 'elementor/preview/enqueue_scripts', fn () => $this->enqueue_preview_scripts() );
 		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
 
+		// Collect interactions from documents before they render (header, footer, post content)
+		add_filter( 'elementor/frontend/builder_content_data', [ $this->get_frontend_handler(), 'collect_document_interactions' ], 10, 2 );
+
+		// Output centralized interaction data in footer
+		add_action( 'wp_footer', [ $this->get_frontend_handler(), 'print_interactions_data' ], 1 );
+
 		add_filter( 'elementor/document/save/data',
 			/**
 			 * @throws \Exception
 			 */
 			function( $data, $document ) {
-				$validation = new Validation( $this->get_presets() );
+				$validation = new Validation();
 				$document_after_sanitization = $validation->sanitize( $data );
 				$validation->validate();
 
@@ -77,11 +93,25 @@ class Module extends BaseModule {
 		}, 11, 2 );
 	}
 
-	private function get_config() {
+	public function get_config() {
 		return [
 			'constants' => $this->get_presets()->defaults(),
 			'animationOptions' => $this->get_presets()->list(),
+			'breakpoints' => $this->get_active_breakpoints(),
 		];
+	}
+
+	private function get_active_breakpoints() {
+		$breakpoints_config = Plugin::$instance->breakpoints->get_breakpoints_config();
+		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
+
+		$breakpoints = [];
+
+		foreach ( array_keys( $active_breakpoints ) as $breakpoint_label ) {
+			$breakpoints[ $breakpoint_label ] = $breakpoints_config[ $breakpoint_label ];
+		}
+
+		return $breakpoints;
 	}
 
 	private function register_frontend_scripts() {

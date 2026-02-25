@@ -8,8 +8,9 @@ const BUTTON_CLASSES = {
 	disabled: /e-onboarding__button--disabled/,
 };
 
-// Unskip: ED-18816 - Refactor onboarding test
-test.describe.skip( 'On boarding @onBoarding', async () => {
+const POPUP_NAVIGATION_TIMEOUT = 3000;
+
+test.describe( 'On boarding @onBoarding', async () => {
 	let originalActiveTheme: string;
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
@@ -41,32 +42,33 @@ test.describe.skip( 'On boarding @onBoarding', async () => {
 		await expect( goProPopover ).toBeVisible();
 	} );
 
-	/**
-	 * Test the first onboarding page - Test that the Action button at the bottom shows the correct "Create my account"
-	 * text, And that clicking on it opens the popup to create an account in my.elementor.com
-	 */
 	test( 'Onboarding Create Account Popup Open', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
 
 		const ctaButton = await page.waitForSelector( 'a.e-onboarding__button-action' );
 
-		expect( await ctaButton.innerText() ).toBe( 'Create my account' );
+		expect( await ctaButton.innerText() ).toBe( 'Start setup' );
 
-		const [ popup ] = await Promise.all( [
-			page.waitForEvent( 'popup' ),
-			page.click( 'a.e-onboarding__button-action' ),
-		] );
+		const popupPromise = page.waitForEvent( 'popup', { timeout: POPUP_NAVIGATION_TIMEOUT } ).catch( () => null );
+		const navigationPromise = page.waitForURL( /my\.elementor\.com/, { timeout: POPUP_NAVIGATION_TIMEOUT } ).then( () => true ).catch( () => false );
 
-		await popup.waitForLoadState( 'domcontentloaded' );
+		await page.click( 'a.e-onboarding__button-action' );
 
-		expect( popup.url() ).toContain( 'my.elementor.com/signup' );
+		const [ popup, navigated ] = await Promise.all( [ popupPromise, navigationPromise ] );
+		if ( popup ) {
+			await popup.waitForLoadState( 'domcontentloaded' );
+			expect( popup.url() ).toContain( 'elementor-connect' );
+			await popup.close();
+		}
 
-		const signupForm = popup.locator( '[data-test="signup-form"]' );
+		// Some browsers may not support popups.
+		if ( navigated && ! popup ) {
+			expect( page.url() ).toContain( 'my.elementor.com/signup' );
+		}
 
-		// Check that the popup opens the Elementor Connect screen.
-		await expect( signupForm ).toBeVisible();
-
-		await popup.close();
+		if ( ! navigated && ! popup ) {
+			throw new Error( 'Neither popup nor navigation occurred after clicking the button' );
+		}
 	} );
 
 	/**
@@ -80,7 +82,7 @@ test.describe.skip( 'On boarding @onBoarding', async () => {
 
 		await skipButton.click();
 
-		await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Every site starts with a theme.' );
+		await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( /^(Start with Hello Biz|Every site starts with a theme.|Choose the right theme for your website)$/ );
 	} );
 
 	/**
@@ -149,7 +151,7 @@ test.describe.skip( 'On boarding @onBoarding', async () => {
 
 		await nextButton.click();
 
-		const kitLibraryTitle = page.locator( 'text=Kit Library' );
+		const kitLibraryTitle = page.getByText( 'Website Templates' ).first();
 
 		await expect( kitLibraryTitle ).toBeVisible();
 	} );
@@ -165,6 +167,7 @@ test.describe( 'Onboarding @onBoarding', async () => {
 			upgradeNowBtn = page.locator( EditorSelectors.onboarding.upgradeButton ),
 			tierLocator = page.locator( '.e-onboarding__choose-features-section__message strong' ),
 			tiers = {
+				one: 'One',
 				advanced: 'Advanced',
 				essential: 'Essential',
 			};
@@ -187,12 +190,12 @@ test.describe( 'Onboarding @onBoarding', async () => {
 		} );
 
 		await test.step( 'Check that tier changes to Advanced when checking an Advanced item', async () => {
-			await page.locator( '#advanced-1' ).check();
+			await page.locator( '#advanced-4' ).check();
 			await expect( tierLocator ).toHaveText( tiers.advanced );
 		} );
 
 		await test.step( 'Check that tier changes to Essential when unchecking all Advanced items but an Essential Item Is checked.', async () => {
-			await page.locator( '#advanced-1' ).uncheck();
+			await page.locator( '#advanced-4' ).uncheck();
 			await expect( tierLocator ).toHaveText( tiers.essential );
 		} );
 
@@ -202,8 +205,14 @@ test.describe( 'Onboarding @onBoarding', async () => {
 		} );
 
 		await test.step( 'Check that tier changes to Advanced when checking only and Advanced item', async () => {
-			await page.locator( '#advanced-1' ).check();
+			await page.locator( '#advanced-4' ).check();
 			await expect( tierLocator ).toHaveText( tiers.advanced );
+		} );
+
+		await test.step( 'Check that tier changes to ONE when checking a ONE item', async () => {
+			await page.locator( '#advanced-4' ).uncheck();
+			await page.locator( '#one-1' ).check();
+			await expect( tierLocator ).toHaveText( tiers.one );
 		} );
 	} );
 

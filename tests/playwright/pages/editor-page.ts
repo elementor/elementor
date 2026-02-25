@@ -11,6 +11,7 @@ import TopBarSelectors, { TopBarSelector } from '../selectors/top-bar-selectors'
 import Breakpoints from '../assets/breakpoints';
 import { timeouts } from '../config/timeouts';
 import v4Panel from './atomic-elements-panel/v4-elements-panel';
+import { INLINE_EDITING_SELECTORS } from '../sanity/modules/v4-tests/inline-text-editing/selectors/selectors';
 
 let $e: $eType;
 let elementor: ElementorType;
@@ -832,25 +833,11 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Close any visible MUI dialog that might be blocking interactions.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async closeMuiDialogIfVisible(): Promise<void> {
-		const dialogCloseButton = this.page.locator( '.MuiDialog-container button[aria-label="close"]' );
-		if ( await dialogCloseButton.isVisible( { timeout: 500 } ).catch( () => false ) ) {
-			await dialogCloseButton.click();
-			await this.page.locator( '.MuiDialog-root' ).waitFor( { state: 'hidden', timeout: 2000 } ).catch( () => {} );
-		}
-	}
-
-	/**
 	 * Open the elements/widgets panel.
 	 *
 	 * @return {Promise<void>}
 	 */
 	async openElementsPanel(): Promise<void> {
-		await this.closeMuiDialogIfVisible();
 		await this.clickTopBarItem( TopBarSelectors.elementsPanel );
 		await this.page.locator( EditorSelectors.panels.elements.wrapper ).waitFor();
 	}
@@ -1383,5 +1370,61 @@ export default class EditorPage extends BasePage {
 		const elementWidthInPxUnit = await element.boundingBox().then( ( box ) => box?.width ?? 0 );
 		const vwAndPxValuesAreEqual = Math.abs( vwConvertedToPxUnit - elementWidthInPxUnit ) <= 1;
 		expect( vwAndPxValuesAreEqual ).toBeTruthy();
+	}
+
+	async triggerEditingElement( elementId: string, waitFor: boolean = true ): Promise<Locator> {
+		const element = this.previewFrame.locator( `.elementor-element-${ elementId }` );
+
+		await this.page.keyboard.press( 'Escape' );
+		await this.page.waitForTimeout( timeouts.veryShort );
+		await element.waitFor();
+		await element[ INLINE_EDITING_SELECTORS.triggerEvent ]();
+
+		const inlineEditor = this.previewFrame.locator( `.elementor-element-${ elementId } ${ INLINE_EDITING_SELECTORS.canvas.inlineEditor }` );
+
+		if ( waitFor ) {
+			await inlineEditor.waitFor( { timeout: timeouts.action } );
+		}
+
+		return inlineEditor;
+	}
+
+	async selectInlineEditedText( elementId: string, substringOrSelectAll: string | true ): Promise<void> {
+		const inlineEditor = await this.triggerEditingElement( elementId );
+
+		if ( true === substringOrSelectAll ) {
+			return await this.page.keyboard.press( 'ControlOrMeta+A' );
+		}
+
+		if ( 'string' !== typeof substringOrSelectAll ) {
+			return;
+		}
+
+		const substring = substringOrSelectAll;
+		const entireText = await inlineEditor.textContent();
+
+		if ( ! entireText?.includes( substring ) ) {
+			return;
+		}
+
+		const startIndex = entireText.indexOf( substring );
+
+		for ( let i = 0; i < startIndex; i++ ) {
+			await this.page.keyboard.press( 'ArrowRight', { delay: timeouts.veryShort } );
+		}
+
+		for ( let i = 0; i < substring.length; i++ ) {
+			await this.page.keyboard.press( 'Shift+ArrowRight', { delay: timeouts.veryShort } );
+		}
+	}
+
+	async toggleInlineEditingAttribute( attribute: string ): Promise<void> {
+		if ( ! Object.values( INLINE_EDITING_SELECTORS.attributes ).includes( attribute ) ) {
+			return;
+		}
+
+		const button = this.page.locator( `[role="presentation"] button[value="${ attribute }"]` );
+
+		await button.click();
 	}
 }

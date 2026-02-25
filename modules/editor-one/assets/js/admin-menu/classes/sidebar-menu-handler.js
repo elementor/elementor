@@ -1,21 +1,21 @@
 export class SidebarMenuHandler {
 	constructor() {
-		this.elementorMenu = document.querySelector( '#toplevel_page_elementor' );
+		this.elementorHomeMenu = this.findElementorHomeMenu();
+
+		if ( this.elementorHomeMenu ) {
+			this.deactivateOtherMenus();
+			this.activateElementorMenu();
+			this.highlightSubmenu();
+		}
 	}
 
-	handle() {
-		if ( ! this.elementorMenu ) {
-			return;
-		}
-
-		this.deactivateOtherMenus();
-		this.activateElementorMenu();
-		this.highlightSubmenu();
+	findElementorHomeMenu() {
+		return document.querySelector( '#toplevel_page_elementor-home' );
 	}
 
 	deactivateOtherMenus() {
 		document.querySelectorAll( '#adminmenu li.wp-has-current-submenu' ).forEach( ( item ) => {
-			if ( item !== this.elementorMenu ) {
+			if ( item !== this.elementorHomeMenu ) {
 				item.classList.remove( 'wp-has-current-submenu', 'wp-menu-open', 'selected' );
 				item.classList.add( 'wp-not-current-submenu' );
 
@@ -28,10 +28,10 @@ export class SidebarMenuHandler {
 	}
 
 	activateElementorMenu() {
-		this.elementorMenu.classList.remove( 'wp-not-current-submenu' );
-		this.elementorMenu.classList.add( 'wp-has-current-submenu', 'wp-menu-open', 'selected' );
+		this.elementorHomeMenu.classList.remove( 'wp-not-current-submenu' );
+		this.elementorHomeMenu.classList.add( 'wp-has-current-submenu', 'wp-menu-open', 'selected' );
 
-		const elementorLink = this.elementorMenu.querySelector( ':scope > a.menu-top' );
+		const elementorLink = this.elementorHomeMenu.querySelector( ':scope > a.menu-top' );
 		if ( elementorLink ) {
 			elementorLink.classList.add( 'wp-has-current-submenu', 'wp-menu-open' );
 		}
@@ -42,17 +42,17 @@ export class SidebarMenuHandler {
 		const searchParams = currentUrl.searchParams;
 		const page = searchParams.get( 'page' );
 
-		let targetSlug = 'elementor-editor';
+		let targetSlug = 'elementor';
 
-		if ( 'elementor' === page ) {
-			targetSlug = 'elementor-editor';
+		if ( 'elementor' === page || 'elementor-home' === page ) {
+			targetSlug = 'elementor';
 		} else if ( 'e-form-submissions' === page ) {
 			targetSlug = 'e-form-submissions';
 		} else if ( 'elementor-theme-builder' === page ) {
 			targetSlug = 'elementor-theme-builder';
 		}
 
-		const submenuItems = this.elementorMenu.querySelectorAll( '.wp-submenu li' );
+		const submenuItems = this.elementorHomeMenu.querySelectorAll( '.wp-submenu li' );
 
 		submenuItems.forEach( ( item ) => {
 			const link = item.querySelector( 'a' );

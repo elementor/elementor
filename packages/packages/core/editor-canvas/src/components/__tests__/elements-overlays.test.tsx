@@ -8,7 +8,6 @@ import {
 } from '@elementor/editor-v1-adapters';
 import { screen, waitFor } from '@testing-library/react';
 
-import { hasInlineEditableProperty } from '../../utils/inline-editing-utils';
 import { ElementsOverlays } from '../elements-overlays';
 import { CANVAS_WRAPPER_ID } from '../outline-overlay';
 
@@ -19,7 +18,6 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	__privateUseIsRouteActive: jest.fn(),
 	isExperimentActive: jest.fn(),
 } ) );
-jest.mock( '../../utils/inline-editing-utils' );
 
 describe( '<ElementsOverlays />', () => {
 	beforeEach( () => {
@@ -30,7 +28,6 @@ describe( '<ElementsOverlays />', () => {
 
 		jest.mocked( useEditMode ).mockReturnValue( 'edit' );
 		jest.mocked( useIsRouteActive ).mockReturnValue( false );
-		jest.mocked( hasInlineEditableProperty ).mockReturnValue( false );
 		jest.mocked( isExperimentActive ).mockReturnValue( true );
 
 		jest.mocked( getElements ).mockReturnValue( [

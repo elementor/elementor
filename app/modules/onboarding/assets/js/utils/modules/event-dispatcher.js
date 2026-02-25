@@ -24,7 +24,6 @@ export const ONBOARDING_EVENTS_MAP = {
 	CREATE_ACCOUNT_STATUS: 'core_onboarding_create_account_status',
 	STEP1_CLICKED_CONNECT: 'core_onboarding_s1_clicked_connect',
 	AB_101_START_AS_FREE_USER: 'ab_101_start_as_free_user',
-	SESSION_REPLAY_START: 'onboarding_session_replay_start',
 };
 
 export const ONBOARDING_STEP_NAMES = {
@@ -44,6 +43,25 @@ export function canSendEvents() {
 export function isEventsManagerAvailable() {
 	return elementorCommon?.eventsManager &&
 		'function' === typeof elementorCommon.eventsManager.dispatchEvent;
+}
+
+export function initializeAndEnableTracking() {
+	if ( ! isEventsManagerAvailable() ) {
+		return;
+	}
+
+	if ( elementorCommon.eventsManager.trackingEnabled ) {
+		return;
+	}
+
+	if ( elementorCommon.eventsManager.isMixpanelReady() ) {
+		elementorCommon.eventsManager.enableTracking();
+		return;
+	}
+
+	elementorCommon.eventsManager.initializeMixpanel(
+		() => elementorCommon.eventsManager.enableTracking(),
+	);
 }
 
 export function dispatch( eventName, payload = {} ) {
@@ -173,6 +191,7 @@ export function addTimeSpentToPayload( payload, totalTimeSpent, stepTimeSpent = 
 const EventDispatcher = {
 	canSendEvents,
 	isEventsManagerAvailable,
+	initializeAndEnableTracking,
 	dispatch,
 	dispatchIfAllowed,
 	createEventPayload,

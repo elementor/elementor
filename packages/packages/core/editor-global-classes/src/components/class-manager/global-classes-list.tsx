@@ -19,9 +19,11 @@ import { SortableItem, SortableProvider } from './sortable';
 
 type GlobalClassesListProps = {
 	disabled?: boolean;
+	onStopSyncRequest?: ( id: string ) => void;
+	onStartSyncRequest?: ( id: string ) => void;
 };
 
-export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
+export const GlobalClassesList = ( { disabled, onStopSyncRequest, onStartSyncRequest }: GlobalClassesListProps ) => {
 	const {
 		search: { debouncedValue: searchValue },
 	} = useSearchAndFilters();
@@ -73,28 +75,28 @@ export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
 					onChange={ reorderClasses }
 					disableDragOverlay={ ! allowSorting }
 				>
-					{ filteredCssClasses?.map( ( { id, label } ) => (
-						<SortableItem key={ id } id={ id }>
+					{ filteredCssClasses?.map( ( cssClass ) => (
+						<SortableItem key={ cssClass.id } id={ cssClass.id }>
 							{ ( { isDragged, isDragPlaceholder, triggerProps, triggerStyle } ) => {
 								if ( isDragged && ! draggedItemId ) {
-									setDraggedItemId( id );
+									setDraggedItemId( cssClass.id );
 								}
 								return (
 									<ClassItem
-										id={ id }
-										label={ label }
+										id={ cssClass.id }
+										label={ cssClass.label }
 										renameClass={ ( newLabel: string ) => {
 											trackGlobalClasses( {
 												event: 'classRenamed',
-												classId: id,
-												oldValue: label,
+												classId: cssClass.id,
+												oldValue: cssClass.label,
 												newValue: newLabel,
 												source: 'class-manager',
 											} );
 											dispatch(
 												slice.actions.update( {
 													style: {
-														id,
+														id: cssClass.id,
 														label: newLabel,
 													},
 												} )
@@ -107,6 +109,23 @@ export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
 											style: triggerStyle,
 										} }
 										showSortIndicator={ allowSorting }
+										syncToV3={ cssClass.sync_to_v3 }
+										onToggleSync={ ( id, newValue ) => {
+											if ( ! newValue && onStopSyncRequest ) {
+												onStopSyncRequest( id );
+											} else if ( newValue && onStartSyncRequest ) {
+												onStartSyncRequest( id );
+											} else {
+												dispatch(
+													slice.actions.update( {
+														style: {
+															id,
+															sync_to_v3: newValue,
+														},
+													} )
+												);
+											}
+										} }
 									/>
 								);
 							} }

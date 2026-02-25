@@ -1,0 +1,30 @@
+{
+  "widgetKeys": {},
+  "propTypes": {
+    "a-to-b": {
+      "fromType": "type_a",
+      "toType": "type_b",
+      "path": "a-to-b.json"
+    },
+    "b-to-d": {
+      "fromType": "type_b",
+      "toType": "type_d",
+      "path": "b-to-d.json"
+    },
+    "a-to-c": {
+      "fromType": "type_a",
+      "toType": "type_c",
+      "path": "a-to-c.json"
+    },
+    "c-to-e": {
+      "fromType": "type_c",
+      "toType": "type_e",
+      "path": "c-to-e.json"
+    },
+    "e-to-d": {
+      "fromType": "type_e",
+      "toType": "type_d",
+      "path": "e-to-d.json"
+    }
+  }
+}

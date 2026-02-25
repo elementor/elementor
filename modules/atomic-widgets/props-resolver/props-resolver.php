@@ -5,7 +5,6 @@ namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type_Migrator;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Exception;
 
@@ -47,8 +46,6 @@ abstract class Props_Resolver {
 	}
 
 	protected function transform( $value, $key, Prop_Type $prop_type ) {
-		$value = Prop_Type_Migrator::migrate( $value, $prop_type );
-
 		if ( $prop_type instanceof Union_Prop_Type ) {
 			$prop_type = $prop_type->get_prop_type( $value['$$type'] );
 

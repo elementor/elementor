@@ -14,9 +14,11 @@ const SIZE = 'tiny';
 export const TransformSettingsControl = ( {
 	popupState,
 	anchorRef,
+	showChildrenPerspective,
 }: {
 	popupState: PopupState;
 	anchorRef: React.RefObject< HTMLDivElement | null >;
+	showChildrenPerspective: boolean;
 } ) => {
 	const popupProps = bindPopover( {
 		...popupState,
@@ -47,10 +49,14 @@ export const TransformSettingsControl = ( {
 				<PropKeyProvider bind={ 'transform-origin' }>
 					<TransformOriginControl />
 				</PropKeyProvider>
-				<Box sx={ { my: 0.5 } }>
-					<Divider />
-				</Box>
-				<ChildrenPerspectiveControl />
+				{ showChildrenPerspective && (
+					<>
+						<Box sx={ { my: 0.5 } }>
+							<Divider />
+						</Box>
+						<ChildrenPerspectiveControl />
+					</>
+				) }
 			</PopoverContent>
 		</Popover>
 	);

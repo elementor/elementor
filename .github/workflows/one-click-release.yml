@@ -31,6 +31,9 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-22.04
+    outputs:
+      PACKAGE_VERSION: ${{ steps.output-data.outputs.PACKAGE_VERSION }}
+      PACKAGE_TAG: ${{ steps.output-data.outputs.PACKAGE_TAG }}
     steps:
       - name: Check if Custom Core was executed
         if: github.event.inputs.custom_core_executed == 'false'
@@ -112,6 +115,7 @@ jobs:
         with:
           VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
       - name: Create GitHub release
+        if: github.event.inputs.dry_run == 'false'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.PACKAGE_VERSION }}
@@ -119,8 +123,6 @@ jobs:
           files: |
             elementor-*.zip
             ${{ env.CHANGELOG_FILE }}
-          prerelease: ${{ github.event.inputs.dry_run }}
-          draft: ${{ github.event.inputs.dry_run }}
           body_path: ${{ env.CHANGELOG_FILE }}
       - name: Validate Build Files
         if: github.repository_owner == 'elementor'
@@ -192,25 +194,30 @@ jobs:
                       ]
                     }
 
-      - name: Publish packages (and tag version)
-        id: release-packages
-        working-directory: packages
+      - name: Determine Package Tag
+        id: package-tag
         run: |
           if [ "${{ env.CHANNEL }}" == "ga" ]; then
-            node scripts/version-manager/index.js set "${{ env.PACKAGE_VERSION }}"
+            echo "tag=latest" >> $GITHUB_OUTPUT
           else
-            if [ ${{ github.event.inputs.dry_run }} == 'false' ]; then
-              LATEST_BETA_NUM=$(git tag -l "v${{ env.PACKAGE_VERSION }}-*" | sed 's/.*-//' | sort -nr | head -n1 || echo "0")
-              NEXT_BETA_NUM=$((LATEST_BETA_NUM + 1))
-              node scripts/version-manager/index.js set "${{ env.PACKAGE_VERSION }}" --tag "${NEXT_BETA_NUM}"
-              git config --global user.email "github-actions@github.com"
-              git config --global user.name "GitHub Actions"
-              git tag -a "v${{ env.PACKAGE_VERSION }}-${NEXT_BETA_NUM}" -m "Release ${{ env.PACKAGE_VERSION }}-${NEXT_BETA_NUM}"
-              git push origin "v${{ env.PACKAGE_VERSION }}-${NEXT_BETA_NUM}"
-            fi
+            LATEST_BETA_NUM=$(git tag -l "v${{ env.PACKAGE_VERSION }}-*" | sed 's/.*-//' | sort -nr | head -n1 || echo "0")
+            NEXT_BETA_NUM=$((LATEST_BETA_NUM + 1))
+            echo "tag=${NEXT_BETA_NUM}" >> $GITHUB_OUTPUT
           fi
-          npm run release ${{ github.event.inputs.dry_run && '-- --dry-run' || '' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
-          DRY_RUN: ${{ github.event.inputs.dry_run }}
+
+      - name: Output Package Data for Next Job
+        id: output-data
+        run: |
+          echo "PACKAGE_VERSION=${{ env.PACKAGE_VERSION }}" >> $GITHUB_OUTPUT
+          echo "PACKAGE_TAG=${{ steps.package-tag.outputs.tag }}" >> $GITHUB_OUTPUT
+
+  publish-packages:
+    needs: release
+    if: github.event.inputs.dry_run == 'false'
+    uses: ./.github/workflows/publish-packages.yml
+    with:
+      version: ${{ needs.release.outputs.PACKAGE_VERSION }}
+      tag: ${{ needs.release.outputs.PACKAGE_TAG }}
+    secrets:
+      NPMJS_CLOUD_DEVOPS_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
+      MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}

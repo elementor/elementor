@@ -27,6 +27,7 @@ export default defineConfig( {
 	reporter: process.env.CI ? [
 		[ 'github' ],
 		[ 'list' ],
+		[ 'allure-playwright', { suiteTitle: false } ],
 	]
 		: 'list',
 	use: {

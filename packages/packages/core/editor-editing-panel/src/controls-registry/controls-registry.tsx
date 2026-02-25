@@ -1,6 +1,8 @@
 import {
+	ChipsControl,
 	type ControlComponent,
 	DateTimeControl,
+	EmailFormActionControl,
 	HtmlTagControl,
 	ImageControl,
 	InlineEditingControl,
@@ -22,7 +24,8 @@ import { type ControlLayout } from '@elementor/editor-elements';
 import {
 	booleanPropTypeUtil,
 	DateTimePropTypeUtil,
-	htmlPropTypeUtil,
+	emailPropTypeUtil,
+	htmlV3PropTypeUtil,
 	imagePropTypeUtil,
 	imageSrcPropTypeUtil,
 	keyValuePropTypeUtil,
@@ -31,6 +34,7 @@ import {
 	type PropTypeUtil,
 	queryPropTypeUtil,
 	sizePropTypeUtil,
+	stringArrayPropTypeUtil,
 	stringPropTypeUtil,
 } from '@elementor/editor-props';
 
@@ -43,12 +47,13 @@ export type ControlRegistry = Record<
 >;
 
 const controlTypes = {
-	image: { component: ImageControl, layout: 'full', propTypeUtil: imagePropTypeUtil },
+	image: { component: ImageControl, layout: 'custom', propTypeUtil: imagePropTypeUtil },
 	'svg-media': { component: SvgMediaControl, layout: 'full', propTypeUtil: imageSrcPropTypeUtil },
 	text: { component: TextControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	textarea: { component: TextAreaControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	size: { component: SizeControl, layout: 'two-columns', propTypeUtil: sizePropTypeUtil },
 	select: { component: SelectControlWrapper, layout: 'two-columns', propTypeUtil: stringPropTypeUtil },
+	chips: { component: ChipsControl, layout: 'full', propTypeUtil: stringArrayPropTypeUtil },
 	link: { component: LinkControl, layout: 'custom', propTypeUtil: linkPropTypeUtil },
 	query: { component: QueryControl, layout: 'full', propTypeUtil: queryPropTypeUtil },
 	url: { component: UrlControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
@@ -59,7 +64,8 @@ const controlTypes = {
 	'html-tag': { component: HtmlTagControl, layout: 'two-columns', propTypeUtil: stringPropTypeUtil },
 	toggle: { component: ToggleControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	'date-time': { component: DateTimeControl, layout: 'full', propTypeUtil: DateTimePropTypeUtil },
-	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: htmlPropTypeUtil },
+	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: htmlV3PropTypeUtil },
+	email: { component: EmailFormActionControl, layout: 'custom', propTypeUtil: emailPropTypeUtil },
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;

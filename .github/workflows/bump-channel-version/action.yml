@@ -10,7 +10,7 @@ inputs:
     description: 'The current package version, e.g. "3.11.7".'
   POSTFIX:
     required: false
-    description: 'The postfix that will be added to the package version -rc / -test / empty.'
+    description: 'The postfix that will be added to the package version -rc / empty.'
   OVERRIDE_PACKAGE_VERSION:
     required: false
     default: false

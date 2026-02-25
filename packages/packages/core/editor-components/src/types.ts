@@ -1,4 +1,5 @@
-import { type V1ElementData } from '@elementor/editor-elements';
+import { type RenderContext } from '@elementor/editor-canvas';
+import { type V1Element, type V1ElementData } from '@elementor/editor-elements';
 import { type PropValue, type TransformablePropValue } from '@elementor/editor-props';
 import type { StyleDefinition } from '@elementor/editor-styles';
 
@@ -14,11 +15,20 @@ export type Component = PublishedComponent | UnpublishedComponent;
 
 export type PublishedComponent = BaseComponent & {
 	id: number;
+	isArchived?: boolean;
+};
+
+export type OriginalElementData = {
+	model: V1ElementData;
+	parentId: string;
+	index: number;
 };
 
 export type UnpublishedComponent = BaseComponent & {
 	elements: V1ElementData[];
 };
+
+export type OriginPropFields = Pick< OverridableProp, 'propKey' | 'widgetType' | 'elType' | 'elementId' >;
 
 export type OverridableProp = {
 	overrideKey: string;
@@ -29,6 +39,7 @@ export type OverridableProp = {
 	widgetType: string;
 	originValue: PropValue;
 	groupId: string;
+	originPropFields?: OriginPropFields;
 };
 
 export type OverridablePropsGroup = {
@@ -54,6 +65,11 @@ type BaseComponent = {
 export type DocumentStatus = 'publish' | 'draft';
 export type DocumentSaveStatus = DocumentStatus | 'autosave';
 
+export type ElementorStorage = {
+	get: < T = unknown >( key: string ) => T | null;
+	set: < T >( key: string, data: T ) => void;
+};
+
 export type ExtendedWindow = Window & {
 	elementorCommon: Record< string, unknown > & {
 		eventsManager: {
@@ -63,32 +79,27 @@ export type ExtendedWindow = Window & {
 				triggers: Record< string, string >;
 			};
 		};
+		storage: ElementorStorage;
 	};
-};
-
-export type ComponentInstancePropValue< TComponentId extends number | string = number | string > =
-	TransformablePropValue<
-		'component-instance',
-		{
-			component_id: TransformablePropValue< 'number', TComponentId >;
-			overrides?: TransformablePropValue< 'overrides', ComponentOverrides >;
-		}
-	>;
-
-type ComponentOverrides = TransformablePropValue< 'overrides', ComponentOverride[] >;
-
-type ComponentOverride = TransformablePropValue< 'override', ComponentOverridePropValue >;
-
-type ComponentOverridePropValue = {
-	override_key: string;
-	override_value: TransformablePropValue< string >;
-	schema_source: {
-		type: string;
-		id: number;
+	elementor?: {
+		getContainerByKeyValue?: ( args: {
+			key: string;
+			value: string;
+			parent?: V1Element[ 'view' ];
+		} ) => V1Element | null;
 	};
 };
 
 export type ComponentOverridable = {
 	override_key: string;
 	origin_value: TransformablePropValue< string >;
+};
+
+export type ComponentRenderContext = RenderContext< {
+	overrides?: Record< string, unknown >;
+} >;
+
+export type UpdatedComponentName = {
+	componentId: number;
+	title: string;
 };

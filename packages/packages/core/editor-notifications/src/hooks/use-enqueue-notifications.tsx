@@ -31,7 +31,6 @@ export const useEnqueueNotification = ( notifications: Notifications ) => {
 			);
 
 			enqueueSnackbar( notification.message, {
-				persist: true,
 				variant: notification.type as VariantType,
 				key: notification.id,
 				onClose: () => dispatch( clearAction( { id: notification.id } ) ),

@@ -29,28 +29,21 @@ class Overridable_Prop_Type extends Plain_Prop_Type {
 			return false;
 		}
 
-		$required_fields = [
-			'override_key' => 'is_string',
-			'origin_value' => 'is_array',
-		];
+		if ( ! array_key_exists( 'override_key', $value ) || ! is_string( $value['override_key'] ) ) {
+			return false;
+		}
 
-		$is_valid_structure = true;
-		foreach ( $required_fields as $field => $validator ) {
-			if ( ! array_key_exists( $field, $value ) || ! call_user_func( $validator, $value[ $field ] ) ) {
-				$is_valid_structure = false;
-				break;
-			}
+		if ( ! array_key_exists( 'origin_value', $value ) ) {
+			return false;
 		}
 
 		$origin_prop_type = $this->get_origin_prop_type();
 
-		if ( ! $is_valid_structure || ! $origin_prop_type ) {
+		if ( ! $origin_prop_type ) {
 			return false;
 		}
 
-		['origin_value' => $origin_value] = $value;
-
-		return $origin_prop_type->validate( $origin_value );
+		return $origin_prop_type->validate( $value['origin_value'] );
 	}
 
 	protected function sanitize_value( $value ): ?array {
@@ -63,7 +56,7 @@ class Overridable_Prop_Type extends Plain_Prop_Type {
 		}
 
 		$sanitized_override_key = sanitize_key( $override_key );
-		$sanitized_origin_value = $origin_prop_type->sanitize( $origin_value );
+		$sanitized_origin_value = is_null( $origin_value ) ? null : $origin_prop_type->sanitize( $origin_value );
 
 		return [
 			'override_key' => $sanitized_override_key,

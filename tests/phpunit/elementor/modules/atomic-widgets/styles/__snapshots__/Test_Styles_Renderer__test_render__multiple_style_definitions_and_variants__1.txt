@@ -1,1 +1,1 @@
-.test-style-1{color:red;}.test-style-1:hover{color:purple;}.test-style-2{color:blue;}.test-style-2:hover{color:green;}
+.test-style-1{color:red;}.test-style-1:hover,.test-style-1:focus-visible{color:purple;}.test-style-2{color:blue;}.test-style-2:hover,.test-style-2:focus-visible{color:green;}

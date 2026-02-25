@@ -147,7 +147,10 @@ export const slice = createSlice( {
 			customCss = customCss?.raw ? customCss : null;
 
 			if ( variant ) {
-				variant.props = mergeProps( variant.props, payload.props );
+				// mergeProps fails with Proxy objects from store, manually re-create clones
+				const variantProps = JSON.parse( JSON.stringify( variant.props ) ) as Props;
+				const payloadProps = JSON.parse( JSON.stringify( payload.props ) ) as Props;
+				variant.props = mergeProps( variantProps, payloadProps );
 				variant.custom_css = customCss;
 
 				style.variants = getNonEmptyVariants( style );

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { type RefObject, useEffect, useRef } from 'react';
 import { ExternalLinkIcon } from '@elementor/icons';
-import { bindPopover, Popover, type PopupState, Stack, TextField, ToggleButton } from '@elementor/ui';
+import { bindPopover, Popover, type PopupState, Stack, TextField, ToggleButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 type Props = {
@@ -56,17 +56,22 @@ export const UrlPopover = ( {
 					inputProps={ { ref: inputRef } }
 					color="secondary"
 					InputProps={ { sx: { borderRadius: '8px' } } }
+					onKeyUp={ ( event: React.KeyboardEvent< HTMLInputElement > ) =>
+						event.key === 'Enter' && handleClose()
+					}
 				/>
-				<ToggleButton
-					size="tiny"
-					value="newTab"
-					selected={ openInNewTab }
-					onClick={ onToggleNewTab }
-					aria-label={ __( 'Open in a new tab', 'elementor' ) }
-					sx={ { borderRadius: '8px' } }
-				>
-					<ExternalLinkIcon fontSize="tiny" />
-				</ToggleButton>
+				<Tooltip title={ __( 'Open in a new tab', 'elementor' ) }>
+					<ToggleButton
+						size="tiny"
+						value="newTab"
+						selected={ openInNewTab }
+						onClick={ onToggleNewTab }
+						aria-label={ __( 'Open in a new tab', 'elementor' ) }
+						sx={ { borderRadius: '8px' } }
+					>
+						<ExternalLinkIcon fontSize="tiny" />
+					</ToggleButton>
+				</Tooltip>
 			</Stack>
 		</Popover>
 	);

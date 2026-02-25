@@ -15,7 +15,7 @@ export default function ImportKit() {
 	const { data, dispatch } = useImportContext();
 	const navigate = useNavigate();
 
-	const { id, referrer, file_url: fileUrl, action_type: actionType, nonce, return_to: returnToParam } = useQueryParams().getAll();
+	const { id, referrer, file_url: fileUrl, action_type: actionType, nonce, return_to: returnToParam, no_automatic_redirect: noAutomaticRedirectParam } = useQueryParams().getAll();
 
 	const { uploading, error, uploadKit } = useUploadKit();
 	const { attemptRedirect } = useReturnToRedirect( data.returnTo );
@@ -95,9 +95,12 @@ export default function ImportKit() {
 			if ( returnToParam ) {
 				dispatch( { type: 'SET_RETURN_TO', payload: returnToParam } );
 			}
+			if ( 'true' === noAutomaticRedirectParam ) {
+				dispatch( { type: 'SET_NO_AUTOMATIC_REDIRECT', payload: true } );
+			}
 			dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.UPLOADING } );
 		}
-	}, [ id, referrer, fileUrl, actionType, nonce, returnToParam, dispatch ] );
+	}, [ id, referrer, fileUrl, actionType, nonce, returnToParam, noAutomaticRedirectParam, dispatch ] );
 
 	useEffect( () => {
 		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitImportUploadBox );

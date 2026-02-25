@@ -264,10 +264,11 @@ function useCreateAction() {
 		if ( hasReachedLimit( provider ) ) {
 			return {
 				isValid: false,
+				/* translators: %s is the maximum number of classes */
 				errorMessage: __(
-					'You’ve reached the limit of 50 classes. Please remove an existing one to create a new class.',
+					'You’ve reached the limit of %s classes. Please remove an existing one to create a new class.',
 					'elementor'
-				),
+				).replace( '%s', provider.limit.toString() ),
 			};
 		}
 		return validateStyleLabel( newClassLabel, event );

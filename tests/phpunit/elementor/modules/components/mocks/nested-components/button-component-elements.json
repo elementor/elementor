@@ -1,43 +1,49 @@
 [
-    {
-        "id": "11bb4c3",
-        "elType": "e-flexbox",
-        "settings": {},
-        "isInner": false,
-        "elements": [
-            {
-                "id": "07ac447",
-                "elType": "widget",
-                "widgetType": "e-button",
-                "elements": [],
-                "settings": {
-                    "text": {
-                        "$$type": "overridable",
-                        "value": {
-                            "override_key": "0",
-                            "origin_value": {
-                                "$$type": "string",
-                                "value": "Click here"
-                            }
-                        }
-                    },
-                    "link": {
-                        "$$type": "overridable",
-                        "value": {
-                            "override_key": "1",
-                            "origin_value": {
-                                "$$type": "link",
-                                "value": {
-                                    "destination": {
-                                        "$$type": "url",
-                                        "value": "https://test-link.com"
-                                    }
-                                }
-                            }
-                        }
-                    }
+  {
+    "id": "11bb4c3",
+    "elType": "e-flexbox",
+    "settings": {},
+    "isInner": false,
+    "elements": [
+      {
+        "id": "07ac447",
+        "elType": "widget",
+        "widgetType": "e-button",
+        "elements": [],
+        "settings": {
+          "text": {
+            "$$type": "overridable",
+            "value": {
+              "override_key": "prop-0",
+              "origin_value": {
+                "$$type": "html-v3",
+                "value": {
+                  "content": {
+                    "$$type": "string",
+                    "value": "Click here"
+                  },
+                  "children": []
                 }
+              }
             }
-        ]
-    }
+          },
+          "link": {
+            "$$type": "overridable",
+            "value": {
+              "override_key": "prop-1",
+              "origin_value": {
+                "$$type": "link",
+                "value": {
+                  "destination": {
+                    "$$type": "url",
+                    "value": "https://test-link.com"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
 ]
