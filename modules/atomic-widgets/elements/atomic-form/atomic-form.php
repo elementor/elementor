@@ -5,9 +5,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Chips_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Email_Form_Action_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Toggle_Control;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Success_Message\Form_Success_Message;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Error_Message\Form_Error_Message;
@@ -19,12 +17,14 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Email_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
-
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -151,13 +151,23 @@ class Atomic_Form extends Atomic_Element_Base {
 	}
 
 	protected function define_base_styles(): array {
-		$display = String_Prop_Type::generate( 'block' );
-
 		return [
 			static::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
-						->add_prop( 'display', $display )
+						->set_breakpoint( Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP )
+						->add_prop( 'display', String_Prop_Type::generate( 'flex' ) )
+						->add_prop( 'flex', String_Prop_Type::generate( '1' ) )
+						->add_prop( 'flex-direction', String_Prop_Type::generate( 'row' ) )
+						->add_prop( 'flex-wrap', String_Prop_Type::generate( 'wrap' ) )
+						->add_prop( 'gap', Size_Prop_Type::generate( [
+							'size' => 10,
+							'unit' => 'px',
+						] ) )
+						->add_prop( 'padding', Size_Prop_Type::generate( [
+							'size' => 20,
+							'unit' => 'px',
+						] ) )
 				),
 		];
 	}
@@ -172,19 +182,23 @@ class Atomic_Form extends Atomic_Element_Base {
 
 	protected function define_default_children() {
 		return [
-			Widget_Builder::make( 'e-form-input' )
-				->build(),
-			Widget_Builder::make( Atomic_Button::get_element_type() )
+			$this->build_label( __( 'First name', 'elementor' ), 'first-name' ),
+			$this->build_input( __( 'First name', 'elementor' ), 'text' ),
+
+			$this->build_label( __( 'Last name', 'elementor' ), 'last-name' ),
+			$this->build_input( __( 'Last name', 'elementor' ), 'text' ),
+
+			$this->build_label( __( 'Email', 'elementor' ), 'email' ),
+			$this->build_input( __( 'your@mail.com', 'elementor' ), 'email' ),
+
+			$this->build_label( __( 'Message', 'elementor' ), 'message' ),
+			$this->build_input( __( 'Your message', 'elementor' ), 'textarea' ),
+
+			Widget_Builder::make( 'e-form-submit-button' )
 				->settings( [
 					'text' => Html_V3_Prop_Type::generate( [
 						'content'  => String_Prop_Type::generate( __( 'Submit', 'elementor' ) ),
 						'children' => [],
-					] ),
-					'attributes' => Attributes_Prop_Type::generate( [
-						Key_Value_Prop_Type::generate( [
-							'key' => String_Prop_Type::generate( 'type' ),
-							'value' => String_Prop_Type::generate( 'submit' ),
-						] ),
 					] ),
 				] )
 				->is_locked( true )
@@ -200,6 +214,35 @@ class Atomic_Form extends Atomic_Element_Base {
 				__( 'Error message', 'elementor' )
 			),
 		];
+	}
+	private function build_label( string $text, string $input_id ): array {
+		return Widget_Builder::make( 'e-form-label' )
+			->settings( [
+				'text' => Html_V3_Prop_Type::generate( [
+					'content'  => String_Prop_Type::generate( $text ),
+					'children' => [],
+				] ),
+				'input-id' => String_Prop_Type::generate( $input_id ),
+			] )
+			->build();
+	}
+
+	private function build_input( string $placeholder, string $type = 'text' ): array {
+		if ( 'textarea' === $type ) {
+			return Widget_Builder::make( 'e-form-textarea' )
+				->settings( [
+					'placeholder' => String_Prop_Type::generate( $placeholder ),
+					'rows' => Number_Prop_Type::generate( 4 ),
+				] )
+				->build();
+		}
+
+		return Widget_Builder::make( 'e-form-input' )
+			->settings( [
+				'placeholder' => String_Prop_Type::generate( $placeholder ),
+				'type' => String_Prop_Type::generate( $type ),
+			] )
+			->build();
 	}
 
 	private function build_status_message( string $message, string $state, string $title ): array {
