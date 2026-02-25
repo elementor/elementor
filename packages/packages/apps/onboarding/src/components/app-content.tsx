@@ -59,19 +59,19 @@ export function AppContent( { onClose }: AppContentProps ) {
 	const updateProgress = useUpdateProgress();
 	const updateChoices = useUpdateChoices();
 
-	const trackEvent = useCallback( ( eventKey: string ) => {
+	const maybeTrackEvent = useCallback( ( eventKey: string, payloadOverrides: Record< string, unknown > = {} ) => {
 		if ( ! canSendEvents() ) {
 			return;
 		}
 
 		if ( eventManagerRef.current ) {
-			eventManagerRef.current.send( eventKey );
+			eventManagerRef.current.send( eventKey, payloadOverrides );
 			return;
 		}
 
 		import( '../utils/onboarding-events' ).then( ( { default: onboardingEventManager } ) => {
 			eventManagerRef.current = onboardingEventManager;
-			onboardingEventManager.send( eventKey );
+			onboardingEventManager.send( eventKey, payloadOverrides );
 		} );
 	}, [] );
 
@@ -83,9 +83,15 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 	useEffect( () => {
 		if ( isConnected ) {
-			trackEvent( 'ONBOARDING_STARTED' );
+			maybeTrackEvent( 'ONBOARDING_STARTED' );
 		}
-	}, [ isConnected, trackEvent ] );
+	}, [ isConnected, maybeTrackEvent ] );
+
+	useEffect( () => {
+		if ( ! shouldShowProInstall ) {
+			maybeTrackEvent( 'OB_STEP_VIEWED', { target_value: stepId, location_l1: stepId } );
+		}
+	}, [ stepId, shouldShowProInstall, maybeTrackEvent ] );
 
 	const checkProInstallScreen = useCheckProInstallScreen();
 
@@ -93,8 +99,8 @@ export function AppContent( { onClose }: AppContentProps ) {
 		const result = await checkProInstallScreen();
 		actions.setShouldShowProInstallScreen( result.shouldShowProInstallScreen );
 		actions.setConnected( true );
-		trackEvent( 'OB_CONNECTED' );
-	}, [ actions, checkProInstallScreen, trackEvent ] );
+		maybeTrackEvent( 'OB_CONNECTED' );
+	}, [ actions, checkProInstallScreen, maybeTrackEvent ] );
 
 	const handleConnect = useElementorConnect( {
 		connectUrl: urls.connect,

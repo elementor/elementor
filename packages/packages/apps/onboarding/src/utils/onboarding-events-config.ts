@@ -51,6 +51,18 @@ const onboardingEventsConfig: OnboardingEventsConfig = {
 			interaction_description: 'user connect process loaded from onboarding',
 		},
 	},
+	OB_STEP_VIEWED: {
+		eventName: 'ob_step_viewed',
+		once: false,
+		payload: {
+			interaction_type: 'step_load',
+			target_type: 'loaded',
+			target_name: 'step_load',
+			interaction_result: 'step_load',
+			target_location: 'onboarding',
+			interaction_description: 'onboarding step loaded',
+		},
+	},
 };
 
 export default onboardingEventsConfig;
