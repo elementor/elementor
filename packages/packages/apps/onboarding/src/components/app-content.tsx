@@ -273,7 +273,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 						showUpgrade={ !! urls.upgradeUrl && ! isProInstalled }
 						showClose={ false }
 						onClose={ handleClose }
-						onUpgrade={ () => window.open( urls.upgradeUrl, '_blank' ) }
+						onUpgrade={ () => !! urls.upgradeUrl && window.open( urls.upgradeUrl, '_blank' ) }
 					/>
 				</TopBar>
 			}
