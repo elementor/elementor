@@ -9,6 +9,7 @@ on:
       - 'bin/**'
       - '.gitignore'
       - 'docs/**'
+      - '.vscode/**'
   merge_group:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
