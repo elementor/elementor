@@ -20,7 +20,7 @@ export type InteractionsControlType =
 type InteractionsControlPropsMap = {
 	trigger: FieldProps;
 	effect: FieldProps;
-	customEffects?: FieldProps< PropValue >;
+	customEffects: FieldProps< PropValue >;
 	effectType: FieldProps;
 	direction: DirectionFieldProps;
 	duration: FieldProps;

@@ -54,18 +54,26 @@ const SplitLayoutRoot = styled( Box, {
 	};
 } );
 
-const LeftPanel = styled( Box )( ( { theme } ) => ( {
+interface LeftPanelProps {
+	contentMaxWidth: number;
+}
+
+const LeftPanel = styled( Box, {
+	shouldForwardProp: ( prop ) => 'contentMaxWidth' !== prop,
+} )< LeftPanelProps >( ( { theme, contentMaxWidth } ) => ( {
 	display: 'flex',
 	flexDirection: 'column',
 	alignItems: 'center',
 	gap: LEFT_PANEL_GAP,
 	padding: `${ LEFT_PANEL_PADDING_TOP }px ${ LEFT_PANEL_PADDING_X }px`,
 	'& > *': {
-		maxWidth: LEFT_PANEL_CONTENT_WIDTH,
 		width: '100%',
 	},
+	'& > *:last-of-type': {
+		maxWidth: contentMaxWidth,
+	},
 	[ theme.breakpoints.down( 'sm' ) ]: {
-		padding: `${ LEFT_PANEL_PADDING_TOP }px ${ theme.spacing( 2 ) }`,
+		padding: 0,
 		gap: LEFT_PANEL_GAP / 2,
 		'& > *': {
 			maxWidth: 'none',
@@ -86,11 +94,16 @@ interface SplitLayoutProps {
 
 export function SplitLayout( { left, rightConfig, progress }: SplitLayoutProps ) {
 	const ratio = LAYOUT_RATIOS[ rightConfig.imageLayout ] ?? LAYOUT_RATIOS.wide;
+	const contentMaxWidth = rightConfig.contentMaxWidth ?? LEFT_PANEL_CONTENT_WIDTH;
 
 	return (
 		<SplitLayoutRoot leftRatio={ ratio.left } rightRatio={ ratio.right }>
-			<LeftPanel>
-				{ progress && <ProgressBar currentStep={ progress.currentStep } totalSteps={ progress.totalSteps } /> }
+			<LeftPanel contentMaxWidth={ contentMaxWidth }>
+				{ progress && (
+					<Box sx={ { maxWidth: LEFT_PANEL_CONTENT_WIDTH, width: '100%' } }>
+						<ProgressBar currentStep={ progress.currentStep } totalSteps={ progress.totalSteps } />
+					</Box>
+				) }
 				{ left }
 			</LeftPanel>
 			<RightPanel config={ rightConfig } />
