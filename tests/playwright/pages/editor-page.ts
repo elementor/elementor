@@ -139,33 +139,10 @@ export default class EditorPage extends BasePage {
 			} );
 		}, templateData );
 
-		// Wait for document state to be properly set after template import
-		await this.page.waitForFunction( () => {
-			interface ElementorWindow extends Window {
-				elementor?: {
-					documents?: {
-						getCurrent(): {
-							editor: { isChanged: boolean };
-						};
-					};
-					config?: {
-						user?: {
-							capabilities?: string[];
-						};
-					};
-				};
-			}
-			try {
-				const elementorInstance = ( window as ElementorWindow ).elementor;
-				const currentDoc = elementorInstance?.documents?.getCurrent();
-				return true === currentDoc?.editor?.isChanged;
-			} catch ( error ) {
-				return false;
-			}
-		}, {
-			polling: 100,
-			timeout: timeouts.longAction,
-		} );
+		await this.getPreviewFrame()
+			.locator( '.elementor-element' )
+			.first()
+			.waitFor( { timeout: timeouts.longAction } );
 	}
 
 	/**
