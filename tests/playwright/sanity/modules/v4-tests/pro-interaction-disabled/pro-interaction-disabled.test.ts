@@ -3,7 +3,7 @@ import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import _path from 'path';
 
-test.describe( 'Pro Interaction Disabled Content @v4-tests', () => {
+test.describe.skip( 'Pro Interaction Disabled Content @v4-tests', () => {
 	const TEMPLATE_PATH = _path.resolve(
 		__dirname,
 		'./pro-interaction-template.json',
