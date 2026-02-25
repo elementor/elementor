@@ -140,7 +140,7 @@ const renderDisplayField = ( element = mockElement(), elementType = createMockEl
 						setMetaState={ jest.fn() }
 						setId={ jest.fn() }
 					>
-						<ElementProvider element={ element } elementType={ elementType }>
+					<ElementProvider element={ element } elementType={ elementType } settings={ {} }>
 							<StyleInheritanceProvider>
 								<DisplayField />
 							</StyleInheritanceProvider>

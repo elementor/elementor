@@ -13,7 +13,6 @@ import {
 	getElementLabel,
 	getElementType,
 	getWidgetsCache,
-	useElementSetting,
 	useSelectedElement,
 } from '@elementor/editor-elements';
 import {
@@ -291,7 +290,6 @@ describe( '<InstanceEditingPanel />', () => {
 		registerSlice( slice );
 		store = __createStore();
 
-		jest.mocked( useElementSetting ).mockReturnValue( {} );
 		jest.mocked( useSelectedElement ).mockReturnValue( {
 			element: { id: MOCK_INSTANCE_ID, type: 'component-instance' },
 			elementType: MOCK_ELEMENT_TYPE,
@@ -578,7 +576,7 @@ function setupComponent( {
 function renderEditInstancePanel( store: Store< SliceState< typeof slice > > ) {
 	return renderWithStore(
 		<ControlActionsProvider items={ [] }>
-			<ElementProvider element={ MOCK_ELEMENT } elementType={ MOCK_ELEMENT_TYPE }>
+			<ElementProvider element={ MOCK_ELEMENT } elementType={ MOCK_ELEMENT_TYPE } settings={ {} }>
 				<InstanceEditingPanel />
 			</ElementProvider>
 		</ControlActionsProvider>,

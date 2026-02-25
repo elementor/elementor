@@ -12,7 +12,6 @@ import {
 	getElementLabel,
 	getElementSetting,
 	updateElementSettings,
-	useElementSetting,
 } from '@elementor/editor-elements';
 import { type StyleDefinitionState } from '@elementor/editor-styles';
 import {
@@ -27,7 +26,7 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { __ } from '@wordpress/i18n';
 
 import { ClassesPropProvider } from '../../../contexts/classes-prop-context';
-import { ElementProvider } from '../../../contexts/element-context';
+import { ElementProvider, usePanelElementSetting } from '../../../contexts/element-context';
 import { StyleProvider } from '../../../contexts/style-context';
 import { CssClassSelector } from '../css-class-selector';
 
@@ -45,6 +44,10 @@ jest.mock( '@elementor/editor-styles-repository', () => {
 jest.mock( '@elementor/editor-elements' );
 jest.mock( '@elementor/editor-documents', () => ( {
 	setDocumentModifiedStatus: jest.fn(),
+} ) );
+jest.mock( '../../../contexts/element-context', () => ( {
+	...jest.requireActual( '../../../contexts/element-context' ),
+	usePanelElementSetting: jest.fn(),
 } ) );
 
 jest.mock( '../use-can-convert-local-class-to-global', () => ( {
@@ -161,10 +164,6 @@ describe( '<CssClassSelector />', () => {
 
 		jest.mocked( useGetStylesRepositoryCreateAction ).mockReturnValue( [ provider1, jest.fn() ] );
 
-		jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
-	} );
-
-	afterEach( () => {
 		historyMock.afterEach();
 	} );
 
@@ -211,7 +210,7 @@ describe( '<CssClassSelector />', () => {
 
 	it( 'should list all available classes with filtering, excluding the applied and non editable ones', () => {
 		// Arrange.
-		jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local' ] } );
+		jest.mocked( usePanelElementSetting ).mockReturnValue( { value: [ 'local' ] } );
 
 		const nonEditableProvider = createMockStylesProvider(
 			{
@@ -251,7 +250,7 @@ describe( '<CssClassSelector />', () => {
 		const setActive = jest.fn();
 
 		const appliedClasses = [ 'local', 'provider-1-b' ];
-		jest.mocked( useElementSetting ).mockReturnValue( { value: appliedClasses } );
+		jest.mocked( usePanelElementSetting ).mockReturnValue( { value: appliedClasses } );
 		jest.mocked( getElementSetting ).mockReturnValue( { value: appliedClasses } );
 
 		renderComponent( { setActive, active: 'provider-1-b' } );
@@ -281,7 +280,7 @@ describe( '<CssClassSelector />', () => {
 		] );
 
 		const appliedClasses: string[] = [];
-		jest.mocked( useElementSetting ).mockReturnValue( { value: appliedClasses } );
+		jest.mocked( usePanelElementSetting ).mockReturnValue( { value: appliedClasses } );
 		jest.mocked( getElementSetting ).mockReturnValue( { value: appliedClasses } );
 
 		renderComponent( { active: null } );
@@ -304,7 +303,7 @@ describe( '<CssClassSelector />', () => {
 		// Arrange.
 		const appliedClasses = [ 'local', 'provider-1-b', 'provider-1-a' ];
 
-		jest.mocked( useElementSetting ).mockReturnValue( { value: appliedClasses } );
+		jest.mocked( usePanelElementSetting ).mockReturnValue( { value: appliedClasses } );
 		jest.mocked( getElementSetting ).mockReturnValue( { value: appliedClasses } );
 		jest.mocked( stylesRepository.getProviderByKey ).mockImplementation( ( key ) => {
 			if ( key === 'provider-1' ) {
@@ -339,7 +338,7 @@ describe( '<CssClassSelector />', () => {
 
 	it( 'should disallow deleting the elements provider classes', () => {
 		// Arrange.
-		jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local' ] } );
+		jest.mocked( usePanelElementSetting ).mockReturnValue( { value: [ 'local' ] } );
 
 		const setActive = jest.fn();
 
@@ -362,7 +361,7 @@ describe( '<CssClassSelector />', () => {
 			] ),
 		] );
 
-		jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'provider-1-a' ] } );
+		jest.mocked( usePanelElementSetting ).mockReturnValue( { value: [ 'provider-1-a' ] } );
 
 		// Act.
 		renderComponent( { active: null } );
@@ -459,7 +458,7 @@ describe( '<CssClassSelector />', () => {
 		// Arrange.
 		const appliedIds = [ 'local', 'provider-1-b' ];
 
-		jest.mocked( useElementSetting ).mockReturnValue( { value: appliedIds } );
+		jest.mocked( usePanelElementSetting ).mockReturnValue( { value: appliedIds } );
 		jest.mocked( getElementSetting ).mockReturnValue( { value: appliedIds } );
 
 		const setActive = jest.fn();
@@ -547,7 +546,7 @@ describe( '<CssClassSelector />', () => {
 
 	it( 'should not display any Pseudo classes if none is active', () => {
 		// Arrange.
-		jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b' ] } );
+		jest.mocked( usePanelElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b' ] } );
 
 		const setActive = jest.fn();
 		const setActiveMetaState = jest.fn();
@@ -575,7 +574,7 @@ describe( '<CssClassSelector />', () => {
 
 	it( 'should display the active Pseudo classes in the active style chip', () => {
 		// Arrange.
-		jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b' ] } );
+		jest.mocked( usePanelElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b' ] } );
 
 		const setActive = jest.fn();
 
@@ -602,7 +601,7 @@ describe( '<CssClassSelector />', () => {
 
 	it( 'should show the Pseudo classes in the CSS menu and set the clicked selector as the active one', () => {
 		// Arrange.
-		jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
+		jest.mocked( usePanelElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
 
 		const setActive = jest.fn();
 		const setActiveMetaState = jest.fn();
@@ -636,7 +635,7 @@ describe( '<CssClassSelector />', () => {
 
 	it( 'should activate the right style definition if a Pseudo classes item of an inactive style css-class-menu is clicked', () => {
 		// Arrange.
-		jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
+		jest.mocked( usePanelElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
 		jest.mocked( stylesRepository.getProviderByKey ).mockImplementation( ( key ) => {
 			if ( key === 'provider-1' ) {
 				return provider1;
@@ -786,7 +785,7 @@ describe( '<CssClassSelector />', () => {
 
 	it( 'should show a style indicator for styled states within the states sub menu', () => {
 		// Arrange.
-		jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local' ] } );
+		jest.mocked( usePanelElementSetting ).mockReturnValue( { value: [ 'local' ] } );
 
 		const setActive = jest.fn();
 		const setActiveMetaState = jest.fn();
@@ -836,7 +835,7 @@ describe( '<CssClassSelector />', () => {
 
 		// Act.
 		renderWithTheme(
-			<ElementProvider element={ { id: 'mock-element', type: 'mock-element-type' } } elementType={ elementType }>
+			<ElementProvider element={ { id: 'mock-element', type: 'mock-element-type' } } elementType={ elementType } settings={ {} }>
 				<ClassesPropProvider prop="my-classes">
 					<StyleProvider
 						id={ 'local' }
@@ -1377,13 +1376,15 @@ type Options = {
 	setActive?: () => void;
 	state?: StyleDefinitionState;
 	setActiveMetaState?: () => void;
+	classes?: string[];
 };
 
-function renderComponent( { setActive = () => {}, active, state = null, setActiveMetaState = () => {} }: Options ) {
+function renderComponent( { setActive = () => {}, active, state = null, setActiveMetaState = () => {}, classes = [ 'local', 'provider-1-b', 'provider-1-a' ] }: Options ) {
 	return renderWithTheme(
 		<ElementProvider
 			element={ { id: 'mock-element', type: 'mock-element-type' } }
 			elementType={ createMockElementType( { key: 'mock-element-type' } ) }
+			settings={ { 'my-classes': { value: classes } } }
 		>
 			<ClassesPropProvider prop="my-classes">
 				<StyleProvider
