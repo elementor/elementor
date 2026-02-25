@@ -1,7 +1,21 @@
+export const BASE_PAYLOAD = {
+	app_type: 'editor',
+	window_name: 'core_onboarding',
+};
+
+type EventPayload = {
+	interaction_type?: string;
+	target_type?: string;
+	target_name?: string;
+	interaction_result?: string;
+	target_location?: string;
+	interaction_description?: string;
+};
+
 type EventConfig = {
 	eventName: string;
 	once: boolean;
-	payload: Record< string, string >;
+	payload: EventPayload;
 };
 
 type OnboardingEventsConfig = Record< string, EventConfig >;
@@ -11,8 +25,6 @@ const onboardingEventsConfig: OnboardingEventsConfig = {
 		eventName: 'ob_onboarding_started',
 		once: true,
 		payload: {
-			app_type: 'editor',
-			window_name: 'core_onboarding',
 			interaction_type: 'load',
 			target_type: 'loaded',
 			target_name: 'onboarding_first_load',

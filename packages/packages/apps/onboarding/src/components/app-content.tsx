@@ -43,6 +43,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 		totalSteps,
 		hadUnexpectedExit,
 		isLoading,
+		isConnected,
 		hasPassedLogin,
 		shouldShowProInstall,
 		choices,
@@ -63,10 +64,10 @@ export function AppContent( { onClose }: AppContentProps ) {
 	}, [ hadUnexpectedExit, actions ] );
 
 	useEffect( () => {
-		if ( hasPassedLogin ) {
+		if ( isConnected ) {
 			onboardingEventManager.trackOnboardingStarted();
 		}
-	}, [ hasPassedLogin ] );
+	}, [ isConnected ] );
 
 	const checkProInstallScreen = useCheckProInstallScreen();
 

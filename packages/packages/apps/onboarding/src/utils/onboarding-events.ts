@@ -1,5 +1,6 @@
 import { canSendEvents, safeDispatch } from '@elementor/events';
-import onboardingEventsConfig from './onboarding-events-config';
+
+import onboardingEventsConfig, { BASE_PAYLOAD } from './onboarding-events-config';
 
 class OnboardingEventManager {
 	sentEvents = new Set< string >();
@@ -19,7 +20,7 @@ class OnboardingEventManager {
 			return false;
 		}
 
-		const result = safeDispatch( config.eventName, { ...config.payload, ...payloadOverrides } );
+		const result = safeDispatch( config.eventName, { ...BASE_PAYLOAD, ...config.payload, ...payloadOverrides } );
 
 		if ( result !== false && config.once ) {
 			this.sentEvents.add( eventKey );
