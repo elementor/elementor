@@ -29,6 +29,8 @@ type PromotionPopoverProps = React.PropsWithChildren<
 	}
 >;
 
+const MAX_WIDTH = 296;
+
 export const PromotionPopover = ( {
 	children,
 	open,
@@ -67,6 +69,8 @@ export const PromotionPopover = ( {
 };
 
 function PopoverAlert( { title, content, ctaUrl, ctaText, onClose }: PromotionPopoverCardProps ) {
+	const showCta = ctaText && ctaUrl;
+
 	return (
 		<ClickAwayListener
 			disableReactTree={ true }
@@ -83,7 +87,7 @@ function PopoverAlert( { title, content, ctaUrl, ctaText, onClose }: PromotionPo
 				role="dialog"
 				aria-label="promotion-popover-title"
 				action={
-					( ctaText && ctaUrl ) ? (
+					showCta && (
 						<AlertAction
 							variant="contained"
 							color="promotion"
@@ -93,9 +97,9 @@ function PopoverAlert( { title, content, ctaUrl, ctaText, onClose }: PromotionPo
 						>
 							{ ctaText }
 						</AlertAction>
-					) : null
+					)
 				}
-				sx={ { maxWidth: 296 } }
+				sx={ { maxWidth: MAX_WIDTH } }
 			>
 				<Box sx={ { gap: 0.5, display: 'flex', flexDirection: 'column' } }>
 					<AlertTitle>{ title }</AlertTitle>
