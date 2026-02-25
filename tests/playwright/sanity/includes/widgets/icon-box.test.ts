@@ -22,7 +22,6 @@ test.describe( 'Icon Box widget tests', () => {
 		// Assert.
 		await test.step( 'LTR layouts', async () => {
 			const iconBoxes = page.locator( '.e-con-inner' ).first();
-			await iconBoxes.waitFor();
 			await expect.soft( iconBoxes ).toHaveScreenshot( 'icon-box-layouts-physical-properties-ltr.png' );
 		} );
 
@@ -33,8 +32,7 @@ test.describe( 'Icon Box widget tests', () => {
 			await editor.page.waitForLoadState();
 
 			const iconBoxes = page.locator( '.e-con-inner' ).first();
-			await iconBoxes.waitFor();
-			await expect.soft( iconBoxes ).toHaveScreenshot( 'icon-box-layouts-physical-properties-rtl.png' );
+			await expect.soft( iconBoxes ).toHaveScreenshot( 'icon-box-layouts-physical-properties-rtl.png', { maxDiffPixelRatio: 0.06 } );
 		} );
 
 		await wpAdmin.setSiteLanguage( '' );

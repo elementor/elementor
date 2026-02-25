@@ -88,6 +88,8 @@ export default class Content {
 	async selectImageSize( args: { widget: string, select: string, imageSize: string } ): Promise<void> {
 		await this.editor.waitForPreviewFrame();
 		const frame: Frame = this.editor.getPreviewFrame();
+
+		await frame.locator( args.widget ).waitFor( { state: 'visible' } );
 		await frame.locator( args.widget ).click();
 		await this.editor.setSelectControlValue( args.select, args.imageSize );
 		await frame.locator( EditorSelectors.pageTitle ).click();
@@ -106,9 +108,12 @@ export default class Content {
 	async verifyImageSrc( args: { selector: string, imageTitle: string, isPublished: boolean } ): Promise<void> {
 		const image = args.isPublished
 			? this.page.locator( args.selector )
-			: await this.editor.getPreviewFrame().waitForSelector( args.selector );
+			: this.editor.getPreviewFrame().locator( args.selector );
+
+		await image.waitFor( { state: 'visible' } );
+
 		const src = await image.getAttribute( 'src' );
-		expect( src.includes( args.imageTitle ) ).toEqual( true );
+		expect( src ).toContain( args.imageTitle );
 	}
 
 	/**

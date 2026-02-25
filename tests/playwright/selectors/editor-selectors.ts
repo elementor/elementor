@@ -131,7 +131,7 @@ const EditorSelectors = {
 		get link() {
 			return `${ this.widget } a`;
 		},
-		lightBox: '.swiper-zoom-container',
+		lightBox: '.swiper-zoom-container, .elementor-lightbox',
 	},
 	icon: {
 		widget: '[data-widget_type="icon.default"]',

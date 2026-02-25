@@ -41,6 +41,7 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 						select: data[ i ].select,
 						imageSize: imageSize[ id ],
 					} );
+
 				await contentTab.verifyImageSrc(
 					{
 						selector: data[ i ].image,
@@ -53,8 +54,10 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 						className: `size-${ imageSize[ id ] }`,
 						isPublished: false,
 					} );
+
 				await editor.publishAndViewPage();
 				await editor.waitForPanelToLoad();
+
 				await contentTab.verifyImageSrc(
 					{
 						selector: data[ i ].image,
@@ -81,7 +84,12 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 
 			await wpAdmin.openNewPage();
 			await editor.addWidget( { widgetType: data[ i ].widgetTitle } );
+
+			await editor.waitForPanelToLoad();
+			await editor.getPreviewFrame().locator( data[ i ].widget ).waitFor( { state: 'visible' } );
+
 			await editor.setMediaControlImageValue( 'image', `${ imageTitle }.png` );
+
 			await editor.waitForPanelToLoad();
 			await contentTab.setCustomImageSize(
 				{
@@ -89,8 +97,13 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 					select: data[ i ].select,
 					imageTitle, width: '300', height: '300',
 				} );
+
 			await editor.verifyImageSize( { selector: data[ i ].image, width: 300, height: 300, isPublished: false } );
 			await editor.publishAndViewPage();
+
+			await page.waitForLoadState( 'domcontentloaded' );
+			await page.locator( data[ i ].image ).waitFor( { state: 'visible' } );
+
 			await editor.verifyImageSize( { selector: data[ i ].image, width: 300, height: 300, isPublished: true } );
 		} );
 	}
@@ -103,12 +116,21 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 		await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
 		const widgetId = await editor.addWidget( { widgetType: 'image' } );
+
+		await editor.waitForPanelToLoad();
+		await editor.getPreviewFrame().locator( EditorSelectors.image.widget ).waitFor( { state: 'visible' } );
+
 		await editor.setMediaControlImageValue( 'image', `${ image }.png` );
+
 		await editor.setSelectControlValue( 'caption_source', 'attachment' );
 		await editor.setSelectControlValue( 'link_to', 'file' );
 		await editor.setSelectControlValue( 'open_lightbox', 'yes' );
-		expect( await editor.getPreviewFrame().locator( EditorSelectors.image.link ).
-			getAttribute( 'data-elementor-open-lightbox' ) ).toEqual( 'yes' );
+
+		await editor.getPreviewFrame().locator( EditorSelectors.image.link ).waitFor( { state: 'visible' } );
+
+		await expect( editor.getPreviewFrame().locator( EditorSelectors.image.link ) )
+			.toHaveAttribute( 'data-elementor-open-lightbox', 'yes' );
+
 		await editor.getPreviewFrame().locator( EditorSelectors.image.image ).click( );
 		await expect( editor.getPreviewFrame().locator( EditorSelectors.image.lightBox ) ).toBeVisible();
 
@@ -118,13 +140,20 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 		await expect( description ).toHaveCSS( 'text-align', 'center' );
 
 		const imageSrc = await editor.getPreviewFrame().locator( EditorSelectors.image.image ).getAttribute( 'src' );
+
+		await editor.getPreviewFrame().locator( '.elementor-lightbox' ).first().press( 'Escape' );
+		await expect( editor.getPreviewFrame().locator( '.elementor-lightbox' ).first() ).not.toBeVisible();
 		await editor.removeElement( widgetId );
 		await editor.addWidget( { widgetType: 'heading' } );
 		await editor.setTextControlValue( 'link', imageSrc );
 
 		await editor.publishAndViewPage();
+		await page.waitForLoadState( 'domcontentloaded' );
+		await page.locator( EditorSelectors.widget ).locator( 'a' ).waitFor( { state: 'visible' } );
 
 		await page.locator( EditorSelectors.widget ).locator( 'a' ).click( );
+
+		await page.locator( EditorSelectors.dialog.lightBox ).waitFor( { state: 'visible', timeout: 5000 } );
 
 		const maskPageTitle = page.locator( EditorSelectors.pageHeader );
 		await expect( page.locator( EditorSelectors.dialog.lightBox ) ).toHaveScreenshot( 'frontend-image-lightbox.png', { mask: [ maskPageTitle ] } );

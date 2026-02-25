@@ -1,4 +1,5 @@
 import { expect } from '@playwright/test';
+import { timeouts } from '../../../config/timeouts';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { wpCli } from '../../../assets/wp-cli';
@@ -47,15 +48,34 @@ test.describe( 'Document tests', async () => {
 		} );
 } );
 
+async function dismissModalIfPresent( wpAdmin: WpAdminPage ) {
+	const modalOverlay = wpAdmin.page.locator( '.components-modal__screen-overlay' );
+	try {
+		await modalOverlay.waitFor( { state: 'visible', timeout: timeouts.action } );
+		await wpAdmin.page.keyboard.press( 'Escape' );
+		await modalOverlay.waitFor( { state: 'hidden' } );
+	} catch {
+	}
+}
+
 async function addElement( wpAdmin: WpAdminPage, elementType: string ) {
-	const frame = wpAdmin.page.frame( { name: 'editor-canvas' } );
-	if ( ! await wpAdmin.page.frameLocator( 'iframe[name="editor-canvas"]' ).locator( 'p[role="document"]' ).isVisible() ) {
-		await frame.locator( '.block-editor-inserter__toggle' ).click();
-	} else {
-		await wpAdmin.page.frameLocator( 'iframe[name="editor-canvas"]' ).locator( 'p[role="document"]' ).click();
-		await wpAdmin.page.click( '.block-editor-inserter__toggle' );
+	const inserterToggle = wpAdmin.page.getByRole( 'button', { name: 'Block Inserter', exact: true } );
+	await inserterToggle.waitFor( { timeout: timeouts.longAction } );
+
+	await dismissModalIfPresent( wpAdmin );
+
+	if ( 'true' !== await inserterToggle.getAttribute( 'aria-pressed' ) ) {
+		await inserterToggle.click();
 	}
 
-	await wpAdmin.page.click( `[class*="editor-block-list-item-${ elementType }"]` );
-	await frame.click( '.editor-styles-wrapper' );
+	const blockItemSelector = [
+		`[class*="editor-block-list-item-core-${ elementType }"]`,
+		`[class*="editor-block-list-item-${ elementType }"]`,
+	].join( ', ' );
+
+	await wpAdmin.page.locator( blockItemSelector ).first().click();
+
+	if ( 'true' === await inserterToggle.getAttribute( 'aria-pressed' ) ) {
+		await inserterToggle.click();
+	}
 }

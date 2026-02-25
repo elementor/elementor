@@ -1,6 +1,8 @@
 import EditorPage from '../playwright/pages/editor-page';
 import EditorSelectors from '../playwright/selectors/editor-selectors';
+import { timeouts } from '../playwright/config/timeouts';
 import { expect, type Frame, type Page, type TestInfo } from '@playwright/test';
+
 type ScreenShot = {
 	device: string,
 	isPublished: boolean,
@@ -23,7 +25,12 @@ export default class ElementRegressionHelper {
 	private async waitForPublishedContentReady(): Promise<void> {
 		await this.page.waitForLoadState( 'load' );
 		const container = this.page.locator( EditorSelectors.container ).first();
-		await container.waitFor( { state: 'visible' } );
+		await container.waitFor( { state: 'visible', timeout: timeouts.longAction } );
+	}
+
+	private async waitForEditorContentReady(): Promise<void> {
+		const frame = this.editor.getPreviewFrame();
+		await frame.locator( EditorSelectors.container ).first().waitFor( { state: 'visible', timeout: timeouts.longAction } );
 	}
 
 	async doScreenshot( widgetType: string, isPublished: boolean ) {
@@ -49,6 +56,7 @@ export default class ElementRegressionHelper {
 				const iframe = document.getElementById( 'elementor-preview-iframe' );
 				iframe.style.height = '3000px';
 			} );
+			await this.waitForEditorContentReady();
 		}
 		await expect.soft( locator )
 			.toHaveScreenshot( `${ widgetType }_${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
@@ -111,6 +119,7 @@ export default class ElementRegressionHelper {
 				wrapper.style.overflow = 'visible';
 				wrapper.style.maxHeight = 'none';
 			} );
+			await this.waitForEditorContentReady();
 			await expect.soft( page.locator( EditorSelectors.container + ' >> nth=0' ) )
 				.toHaveScreenshot( `${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
 		}
