@@ -4,7 +4,7 @@ import {
 	__registerSlice as registerSlice,
 } from '@elementor/store';
 
-import { slice } from '../../store/store';
+import { slice } from '../../../store/store';
 import { validateComponentName } from '../component-name-validation';
 
 describe( 'validateComponentName', () => {
