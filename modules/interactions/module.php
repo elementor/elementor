@@ -4,7 +4,6 @@ namespace Elementor\Modules\Interactions;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
-use Elementor\Modules\Interactions\Props\Interaction_Item_Prop_Type;
 use Elementor\Plugin;
 use Elementor\Utils;
 
