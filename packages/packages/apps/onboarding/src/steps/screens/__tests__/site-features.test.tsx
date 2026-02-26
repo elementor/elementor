@@ -2,6 +2,7 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 
 import { DEFAULT_TEST_URLS, mockFetch, renderApp, setupOnboardingTests } from '../../../__tests__/test-utils';
+import { t } from '../../../utils/translations';
 import { FEATURE_OPTIONS } from '../site-features';
 
 const SITE_FEATURES_PROGRESS = {
@@ -58,7 +59,7 @@ describe( 'SiteFeatures', () => {
 			} );
 
 			FEATURE_OPTIONS.forEach( ( option ) => {
-				expect( screen.getByText( option.label ) ).toBeInTheDocument();
+				expect( screen.getByText( t( option.labelKey ) ) ).toBeInTheDocument();
 			} );
 			expect( screen.getByText( EXPLORE_MORE_LABEL ) ).toBeInTheDocument();
 		} );
@@ -86,7 +87,7 @@ describe( 'SiteFeatures', () => {
 
 			const proOptions = FEATURE_OPTIONS.filter( ( option ) => option.licenseType === 'pro' );
 			proOptions.forEach( ( option ) => {
-				const button = screen.getByRole( 'button', { name: option.label } );
+				const button = screen.getByRole( 'button', { name: t( option.labelKey ) } );
 				expect( button ).toHaveAttribute( 'aria-pressed', 'false' );
 			} );
 		} );
@@ -100,7 +101,7 @@ describe( 'SiteFeatures', () => {
 			} );
 
 			const firstProOption = getFirstProOption();
-			fireEvent.click( screen.getByRole( 'button', { name: firstProOption.label } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: t( firstProOption.labelKey ) } ) );
 			await waitFor( () => {
 				expect( screen.getByRole( 'button', { name: FINISH_BUTTON_LABEL } ) ).toBeEnabled();
 			} );
@@ -187,10 +188,10 @@ describe( 'SiteFeatures', () => {
 				if ( ! option ) {
 					throw new Error( 'Expected option for selected id' );
 				}
-				const button = screen.getByRole( 'button', { name: option.label } );
+				const button = screen.getByRole( 'button', { name: t( option.labelKey ) } );
 				expect( button ).toHaveAttribute( 'aria-pressed', 'true' );
 			} );
-			const unselectedButton = screen.getByRole( 'button', { name: unselectedOption.label } );
+			const unselectedButton = screen.getByRole( 'button', { name: t( unselectedOption.labelKey ) } );
 			expect( unselectedButton ).toHaveAttribute( 'aria-pressed', 'false' );
 		} );
 	} );

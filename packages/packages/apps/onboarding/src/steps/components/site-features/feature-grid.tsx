@@ -1,19 +1,22 @@
 import * as React from 'react';
 import { ArrowRightIcon, CheckIcon, CrownFilledIcon } from '@elementor/icons';
 import { Box, Chip, styled, Typography } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
 
 import { SelectionBadge } from '../../../components/ui/selection-badge';
+import { t } from '../../../utils/translations';
 
 export interface FeatureOption {
 	id: string;
-	label: string;
+	labelKey: string;
 	Icon: React.ElementType;
 	licenseType: 'core' | 'pro' | 'one' | 'other';
 }
 
-interface ExploreMoreOption extends FeatureOption {
+interface ExploreMoreOption {
 	id: 'explore_more';
+	labelKey: string;
+	Icon: React.ElementType;
+	licenseType: 'other';
 	isExploreMore: true;
 }
 
@@ -32,7 +35,7 @@ interface FeatureGridProps {
 
 const EXPLORE_MORE_OPTION: ExploreMoreOption = {
 	id: 'explore_more',
-	label: __( 'Explore more', 'elementor' ),
+	labelKey: 'steps.site_features.explore_more',
 	Icon: ArrowRightIcon,
 	licenseType: 'other',
 	isExploreMore: true,
@@ -102,7 +105,7 @@ function ExploreMoreCard( { onClick, onKeyDown }: ExploreMoreCardProps ) {
 				<EXPLORE_MORE_OPTION.Icon fontSize="small" />
 			</Box>
 			<Typography variant="body2" color="text.secondary" textAlign="center">
-				{ EXPLORE_MORE_OPTION.label }
+				{ t( EXPLORE_MORE_OPTION.labelKey ) }
 			</Typography>
 		</FeatureCard>
 	);
@@ -154,7 +157,7 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick, onExplor
 						onKeyDown={ handleKeyDownEvent }
 						aria-pressed={ isCore ? undefined : isSelected }
 					>
-						{ isCore && <IncludedInCoreChip label={ __( 'Included', 'elementor' ) } size="small" /> }
+						{ isCore && <IncludedInCoreChip label={ t( 'steps.site_features.included' ) } size="small" /> }
 						{ isSelected && (
 							<SelectionBadge
 								icon={ BadgeIcon }
@@ -165,7 +168,7 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick, onExplor
 							<Icon fontSize="medium" />
 						</Box>
 						<Typography variant="body2" color="text.secondary" textAlign="center">
-							{ option.label }
+							{ t( option.labelKey ) }
 						</Typography>
 					</FeatureCard>
 				);
