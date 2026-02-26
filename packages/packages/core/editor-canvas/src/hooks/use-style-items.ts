@@ -176,10 +176,7 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, cach
 	async function createItems( signal: AbortSignal ) {
 		const allStyles = provider.actions.all();
 
-		const styles = allStyles.map( ( __, index, items ) => {
-			const lastPosition = items.length - 1;
-			const style = items[ lastPosition - index ];
-
+		const styles = allStyles.reverse().map( ( style ) => {
 			return {
 				...style,
 				cssName: provider.actions.resolveCssName( style.id ),
