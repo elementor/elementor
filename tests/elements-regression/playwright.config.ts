@@ -3,7 +3,7 @@ import { defineConfig } from '@playwright/test';
 import { config as _config } from 'dotenv';
 
 process.env.DEV_SERVER = 'http://localhost:8888';
-process.env.TEST_SERVER = 'http://localhost:8888'; // Test server is the same as dev server in elements-regression
+process.env.TEST_SERVER = 'http://localhost:8889';
 process.env.DEBUG_PORT = 1 === Number( process.env.TEST_PARALLEL_INDEX ) ? '9223' : '9222';
 
 _config( {
@@ -21,8 +21,8 @@ export default defineConfig( {
 		toHaveScreenshot: { maxDiffPixelRatio: 0.03 },
 	},
 	forbidOnly: !! process.env.CI,
-	retries: process.env.CI ? 5 : 0,
-	workers: process.env.CI ? 3 : 1,
+	retries: process.env.CI ? 2 : 0,
+	workers: process.env.CI ? 2 : 1,
 	fullyParallel: true,
 	reporter: process.env.CI ? [
 		[ 'github' ],
