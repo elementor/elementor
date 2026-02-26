@@ -323,6 +323,7 @@ class Module extends BaseModule {
 	}
 
 	private function is_elementor_pro_installed(): bool {
-		return  Utils::has_pro() || Utils::is_pro_installed_and_not_active();
+		$is_pro_installed = Utils::has_pro() || Utils::is_pro_installed_and_not_active();
+		return (bool) apply_filters( 'elementor/e-onboarding/is_elementor_pro_active', $is_pro_installed );
 	}
 }
