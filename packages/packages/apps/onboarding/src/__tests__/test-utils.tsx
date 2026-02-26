@@ -4,6 +4,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
 
 import { App } from '../components/app';
+import { DEFAULT_STRINGS } from '../utils/default-strings';
 
 jest.mock( '@elementor/query', () => {
 	const actual = jest.requireActual( '@elementor/query' );
@@ -43,6 +44,7 @@ interface OnboardingConfig {
 	isConnected: boolean;
 	shouldShowProInstallScreen?: boolean;
 	userName?: string;
+	translations?: Record< string, string >;
 	urls: {
 		dashboard: string;
 		editor: string;
@@ -70,6 +72,7 @@ const defaultConfig: OnboardingConfig = {
 	restUrl: 'https://test.local/wp-json/elementor/v1/e-onboarding/',
 	nonce: 'test-nonce',
 	steps: DEFAULT_STEPS,
+	translations: DEFAULT_STRINGS,
 	progress: {
 		current_step_id: 'building_for',
 		current_step_index: 0,
