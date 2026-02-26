@@ -68,6 +68,7 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 						isPublished: true,
 					} );
 				await wpAdmin.editWithElementor();
+				await page.waitForLoadState( 'load' );
 			}
 		} );
 	}
