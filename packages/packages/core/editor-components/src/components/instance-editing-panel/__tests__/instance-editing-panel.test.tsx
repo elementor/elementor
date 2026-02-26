@@ -8,13 +8,7 @@ import {
 } from 'test-utils';
 import { ControlActionsProvider, TextControl } from '@elementor/editor-controls';
 import { controlsRegistry, ElementProvider } from '@elementor/editor-editing-panel';
-import {
-	getContainer,
-	getElementLabel,
-	getElementType,
-	getWidgetsCache,
-	useSelectedElement,
-} from '@elementor/editor-elements';
+import { getContainer, getElementLabel, getElementType, getWidgetsCache } from '@elementor/editor-elements';
 import {
 	__createStore,
 	__dispatch as dispatch,
@@ -52,7 +46,6 @@ const MOCK_ELEMENT_ID = 'element-123';
 const MOCK_COMPONENT_ID = 456;
 const MOCK_INNER_COMPONENT_ID = 789;
 const MOCK_COMPONENT_NAME = 'Test Component';
-const MOCK_INSTANCE_ID = 'instance-789';
 const MOCK_PROP_TYPE = createMockPropType( { kind: 'plain', key: 'string' } );
 const MOCK_ELEMENT_LABEL = 'Heading Block';
 const MOCK_CONTROL_TYPE = 'test-override-text';
@@ -287,10 +280,6 @@ describe( '<InstanceEditingPanel />', () => {
 		registerSlice( slice );
 		store = __createStore();
 
-		jest.mocked( useSelectedElement ).mockReturnValue( {
-			element: { id: MOCK_INSTANCE_ID, type: 'component-instance' },
-			elementType: MOCK_ELEMENT_TYPE,
-		} );
 		jest.mocked( componentInstancePropTypeUtil.extract ).mockReturnValue( {
 			component_id: { $$type: 'number', value: MOCK_COMPONENT_ID },
 			overrides: { $$type: 'overrides', value: [] },

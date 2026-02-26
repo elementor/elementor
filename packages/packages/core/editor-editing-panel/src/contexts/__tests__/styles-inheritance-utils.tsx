@@ -32,7 +32,12 @@ export const initStyleInheritanceMocks = ( id: string ) => {
 	} );
 };
 
-export const getInheritanceChainForPath = ( element: Element, elementType: ElementType, path: string[], settings = {} ) =>
+export const getInheritanceChainForPath = (
+	element: Element,
+	elementType: ElementType,
+	path: string[],
+	settings = {}
+) =>
 	renderHook( () => useStylesInheritanceChain( path ), {
 		wrapper: ( { children } ) => (
 			<ElementProvider element={ element } elementType={ elementType } settings={ settings }>

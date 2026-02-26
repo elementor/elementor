@@ -1,16 +1,17 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 import {
 	BoxShadowRepeaterControl,
 	FilterRepeaterControl,
 	TransformRepeaterControl,
 	TransitionRepeaterControl,
-	useElementCanHaveChildren,
 } from '@elementor/editor-controls';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../../../contexts/element-context';
 import { useStyle } from '../../../contexts/style-context';
 import { StylesField } from '../../../controls-registry/styles-field';
+import { canElementHaveChildren } from '../../../utils/can-element-have-children';
 import { getRecentlyUsedList } from '../../../utils/get-recently-used-styles';
 import { PanelDivider } from '../../panel-divider';
 import { SectionContent } from '../../section-content';
@@ -27,7 +28,7 @@ export const EffectsSection = () => {
 	const { element } = useElement();
 	const { meta } = useStyle();
 
-	const canElementHaveChildren = useElementCanHaveChildren( element?.id ?? '' );
+	const canHaveChildren = useMemo( () => canElementHaveChildren( element?.id ?? '' ), [ element?.id ] );
 
 	return (
 		<SectionContent gap={ 1 }>
@@ -40,7 +41,7 @@ export const EffectsSection = () => {
 			</StylesField>
 			<PanelDivider />
 			<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
-				<TransformRepeaterControl showChildrenPerspective={ canElementHaveChildren } />
+				<TransformRepeaterControl showChildrenPerspective={ canHaveChildren } />
 			</StylesField>
 			<PanelDivider />
 			<StylesField bind="transition" propDisplayName={ TRANSITIONS_LABEL }>

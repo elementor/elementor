@@ -8,17 +8,13 @@ import {
 	renderWithTheme,
 } from 'test-utils';
 import { useBoundProp } from '@elementor/editor-controls';
+import { getElementLabel, getElementSettings, updateElementSettings } from '@elementor/editor-elements';
 import {
-	getElementLabel,
-	getElementSettings,
-	updateElementSettings,
-} from '@elementor/editor-elements';
-import {
+	type AnyTransformable,
 	type Dependency,
 	type PropsSchema,
 	type PropType,
 	type PropValue,
-	type AnyTransformable,
 	stringPropTypeUtil,
 } from '@elementor/editor-props';
 import { fireEvent, screen } from '@testing-library/react';
@@ -321,7 +317,11 @@ describe( '<SettingsField />', () => {
 			jest.mocked( getElementSettings ).mockReturnValue( { [ bind ]: initialValue } );
 
 			renderWithTheme(
-				<ElementProvider element={ element } elementType={ elementType } settings={ { [ bind ]: initialValue } }>
+				<ElementProvider
+					element={ element }
+					elementType={ elementType }
+					settings={ { [ bind ]: initialValue } }
+				>
 					<SettingsField bind={ bind } propDisplayName={ __( 'Text', 'elementor' ) }>
 						<MockControl />
 					</SettingsField>
@@ -1285,7 +1285,11 @@ function setup( {
 	};
 
 	return renderControl(
-		<ElementProvider element={ element } elementType={ elementType } settings={ values as Record< string, AnyTransformable | null > }>
+		<ElementProvider
+			element={ element }
+			elementType={ elementType }
+			settings={ values as Record< string, AnyTransformable | null > }
+		>
 			<SettingsField bind={ bind } propDisplayName={ __( 'Text', 'elementor' ) }>
 				<MockControl />
 			</SettingsField>

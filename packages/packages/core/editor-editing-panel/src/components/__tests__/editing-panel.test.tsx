@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { createMockElementType, renderWithTheme } from 'test-utils';
-import { type Element, type ElementType, useSelectedElement, useSelectedElementSettings } from '@elementor/editor-elements';
+import { type Element, type ElementType, useSelectedElementSettings } from '@elementor/editor-elements';
 import { screen } from '@testing-library/react';
 
 import { EditingPanel } from '../editing-panel';
 
 jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
-	useSelectedElement: jest.fn(),
 	useSelectedElementSettings: jest.fn(),
 } ) );
 
@@ -40,9 +39,10 @@ describe( '<EditingPanel />', () => {
 		},
 	] )( 'should not render panel when $title', ( { element, elementType } ) => {
 		// Arrange.
-		jest.mocked( useSelectedElement ).mockReturnValue( {
+		jest.mocked( useSelectedElementSettings ).mockReturnValue( {
 			element: element as Element,
 			elementType: elementType as ElementType,
+			settings: {},
 		} );
 
 		// Act.
