@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Box, Stack, styled, Typography } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
+
+import { t } from '../../utils/translations';
 
 const PROGRESS_BAR_WIDTH = 192;
 
@@ -32,9 +33,6 @@ const ProgressFill = styled( Box )( ( { theme } ) => ( {
 	'@keyframes e-onboarding-fake-progress': FAKE_PROGRESS_KEYFRAMES,
 } ) );
 
-const LOADING_TITLE = __( 'Getting things ready', 'elementor' );
-const LOADING_SUBTITLE = __( 'Tailoring the editor to your goals and workflow\u2026', 'elementor' );
-
 export function CompletionScreen() {
 	return (
 		<Box
@@ -54,10 +52,10 @@ export function CompletionScreen() {
 
 				<Stack spacing={ 1 } textAlign="center">
 					<Typography variant="h5" fontWeight={ 500 } color="text.primary">
-						{ LOADING_TITLE }
+						{ t( 'completion.title' ) }
 					</Typography>
 					<Typography variant="body1" color="text.secondary">
-						{ LOADING_SUBTITLE }
+						{ t( 'completion.subtitle' ) }
 					</Typography>
 				</Stack>
 			</Stack>
