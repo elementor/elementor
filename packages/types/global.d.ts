@@ -29,6 +29,7 @@ interface EOnboardingConfig {
 	shouldShowProInstallScreen?: boolean;
 	userName?: string;
 	uiTheme?: 'auto' | 'dark' | 'light';
+	translations?: Record< string, string >;
 	steps: Array<{
 		id: string;
 		label: string;
