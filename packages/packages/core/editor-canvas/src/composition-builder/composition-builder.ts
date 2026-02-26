@@ -151,9 +151,9 @@ export class CompositionBuilder {
 	applyStyles() {
 		const errors: string[] = [];
 		const invalidStyles: Record< string, string[] > = {};
-		const validStylesPropValues: Record< string, AnyValue > = {};
 		for ( const [ styleId, styleConfig ] of Object.entries( this.elementStylesConfig ) ) {
 			const { element, node } = this.matchNodeByConfigId( styleId );
+			const validStylesPropValues: Record< string, AnyValue > = {};
 			for ( const [ styleName, stylePropValue ] of Object.entries( styleConfig ) ) {
 				const { valid, errors: validationErrors } = validateInput.validateStyles( {
 					[ styleName ]: stylePropValue,
@@ -167,16 +167,19 @@ export class CompositionBuilder {
 				} else {
 					validStylesPropValues[ styleName ] = stylePropValue;
 				}
-				try {
-					this.api.doUpdateElementProperty( {
-						elementId: element.id,
-						propertyName: '_styles',
-						propertyValue: validStylesPropValues,
-						elementType: node.tagName,
-					} );
-				} catch ( error ) {
-					errors.push( String( error ) );
-				}
+			}
+			if ( Object.keys( validStylesPropValues ).length === 0 ) {
+				continue;
+			}
+			try {
+				this.api.doUpdateElementProperty( {
+					elementId: element.id,
+					propertyName: '_styles',
+					propertyValue: validStylesPropValues,
+					elementType: node.tagName,
+				} );
+			} catch ( error ) {
+				errors.push( String( error ) );
 			}
 		}
 		for ( const [ customCSSId, customCSS ] of Object.entries( this.elementCusomCSS ) ) {
