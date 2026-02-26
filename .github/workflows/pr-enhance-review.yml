@@ -3,6 +3,14 @@ name: Enhanced PR Review
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.github/config.json'
+      - 'bin/**'
+      - '.gitignore'
+      - 'docs/**'
+      - '.vscode/**'
 
 jobs:
   check-label:
