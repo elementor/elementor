@@ -227,7 +227,7 @@ function createComponentView(
 						name: 'edit component',
 						icon: 'eicon-edit',
 						title: () => __( 'Edit Component', 'elementor' ),
-						...( ! hasPro && { shortcut: proBadge } ),
+						...( ! hasPro && { shortcut: proBadge, hasShortcutAction: true } ),
 						isEnabled: () => hasPro,
 						callback: ( _: unknown, eventData: ContextMenuEventData ) => this.editComponent( eventData ),
 					},

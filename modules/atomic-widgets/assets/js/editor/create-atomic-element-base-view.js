@@ -428,6 +428,7 @@ export default function createAtomicElementBaseView( type ) {
 					name: 'save-component',
 					title: __( 'Create component', 'elementor' ),
 					shortcut: badge,
+					hasShortcutAction: ! isActive,
 					callback: this.saveAsComponent.bind( this ),
 					isEnabled: () => isActive && ! this.getContainer().isLocked(),
 				} );
