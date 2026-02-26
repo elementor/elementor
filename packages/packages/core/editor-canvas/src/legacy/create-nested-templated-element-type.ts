@@ -186,6 +186,7 @@ export function createNestedTemplatedElementView( {
 						base_styles: baseStylesDictionary,
 						editor_attributes: buildEditorAttributes( model ),
 						editor_classes: buildEditorClasses( model ),
+						children_html: '<!-- elementor-children-placeholder -->',
 					};
 
 					return renderer.render( templateKey, context );
@@ -226,7 +227,8 @@ export function createNestedTemplatedElementView( {
 		_attachTwigContent( html: string ) {
 			const $newContent = legacyWindow.jQuery( html );
 			const oldEl = this.$el.get( 0 );
-			const newEl = $newContent.get( 0 );
+			const allNodes = Array.from( $newContent as unknown as ArrayLike< Node > );
+			const newEl = allNodes.find( ( el ) => el.nodeType === Node.ELEMENT_NODE ) as HTMLElement | undefined;
 
 			if ( ! oldEl || ! newEl ) {
 				return;

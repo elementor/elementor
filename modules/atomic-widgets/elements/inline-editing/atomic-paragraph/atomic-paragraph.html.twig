@@ -10,9 +10,8 @@
 				{{ linkAttr }}="{{ settings.link.href | raw }}"
 				target="{{ settings.link.target }}"
 				class="{{ base_styles['link-base'] }}"
-			><!-- elementor-children-placeholder --></{{ settings.link.tag | e('html_tag') }}>
+			></{{ settings.link.tag | e('html_tag') }}>
 		{% else %}
-			<!-- elementor-children-placeholder -->
 		{% endif %}
 	</{{ settings.tag | e('html_tag') }}>
 {% endif %}
