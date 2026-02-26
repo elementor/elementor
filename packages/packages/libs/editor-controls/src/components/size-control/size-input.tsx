@@ -7,8 +7,6 @@ import ControlActions from '../../control-actions/control-actions';
 import { type ExtendedOption, isUnitExtendedOption, type Unit } from '../../utils/size-control';
 import { SelectionEndAdornment, TextFieldInnerSelection } from '../size-control/text-field-inner-selection';
 
-const RESTRICTED_KEYBOARD_SHORTCUT_UNITS = [ 'auto' ];
-
 type SizeInputProps = {
 	unit: Unit | ExtendedOption;
 	size: number | string;
@@ -45,11 +43,22 @@ export const SizeInput = ( {
 	ariaLabel,
 }: SizeInputProps ) => {
 	const unitInputBufferRef = useRef( '' );
+
 	const inputType = isUnitExtendedOption( unit ) ? 'text' : 'number';
 	const inputValue = ! isUnitExtendedOption( unit ) && Number.isNaN( size ) ? '' : size ?? '';
 
-	const handleKeyUp = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
-		const { key } = event;
+	const handleKeyDown = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
+		const { key, altKey, ctrlKey, metaKey } = event;
+
+		if ( altKey || ctrlKey || metaKey ) {
+			return;
+		}
+
+		if ( isUnitExtendedOption( unit ) && ! isNaN( Number( key ) ) ) {
+			const defaultUnit = units?.[0];
+			defaultUnit && handleUnitChange( units?.[0] );
+			return;
+		}
 
 		if ( ! /^[a-zA-Z%]$/.test( key ) ) {
 			return;
@@ -62,13 +71,18 @@ export const SizeInput = ( {
 		unitInputBufferRef.current = updatedBuffer;
 
 		const matchedUnit =
-			units.find( ( u ) => ! RESTRICTED_KEYBOARD_SHORTCUT_UNITS.includes( u ) && u.includes( updatedBuffer ) ) ||
-			units.find( ( u ) => ! RESTRICTED_KEYBOARD_SHORTCUT_UNITS.includes( u ) && u.startsWith( newChar ) ) ||
-			units.find( ( u ) => ! RESTRICTED_KEYBOARD_SHORTCUT_UNITS.includes( u ) && u.includes( newChar ) );
+			units.find( ( u ) => u.startsWith( updatedBuffer ) ) ||
+			units.find( ( u ) => u.startsWith( newChar ) ) ||
+			units.find( ( u ) => u.includes( newChar ) );
 
 		if ( matchedUnit ) {
 			handleUnitChange( matchedUnit );
 		}
+	};
+
+	const handleBlur = ( event: React.FocusEvent< HTMLInputElement > ) => {
+		onBlur?.( event );
+		unitInputBufferRef.current = '';
 	};
 
 	const popupAttributes = {
@@ -118,8 +132,8 @@ export const SizeInput = ( {
 					type={ inputType }
 					value={ inputValue }
 					onChange={ handleSizeChange }
-					onKeyUp={ handleKeyUp }
-					onBlur={ onBlur }
+					onKeyDown={ handleKeyDown }
+					onBlur={ handleBlur }
 					InputProps={ InputProps }
 					inputProps={ { min, step: 'any', 'aria-label': ariaLabel } }
 					isPopoverOpen={ popupState.isOpen }
