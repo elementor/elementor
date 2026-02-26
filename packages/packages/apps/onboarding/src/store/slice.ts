@@ -243,6 +243,7 @@ export const slice = __createSlice( {
 		markProInstalled: ( state ) => {
 			state.isProInstalled = true;
 			state.hasProInstallScreenDismissed = true;
+			state.steps = state.steps.filter( ( step ) => step.id !== StepId.SITE_FEATURES );
 		},
 	},
 } );

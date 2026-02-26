@@ -270,7 +270,6 @@ export function AppContent( { onClose }: AppContentProps ) {
 			topBar={
 				<TopBar>
 					<TopBarContent
-						showUpgrade={ ! isProInstalled }
 						showClose={ false }
 						onClose={ handleClose }
 						onUpgrade={ () => window.open( urls.upgradeUrl, '_blank' ) }
