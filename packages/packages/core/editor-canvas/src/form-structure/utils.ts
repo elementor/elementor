@@ -6,6 +6,12 @@ export type CreateArgs = {
 		elType?: string;
 		widgetType?: string;
 	};
+	options?: {
+		wrapperForModel?: {
+			elType?: string;
+			widgetType?: string;
+		};
+	};
 };
 
 export type MoveArgs = {
@@ -42,6 +48,10 @@ export const FORM_FIELD_ELEMENT_TYPES = new Set( [
 
 export function getArgsElementType( args: CreateArgs ): string | undefined {
 	return args.model?.widgetType || args.model?.elType;
+}
+
+export function getElementTypeFromModel( { elType, widgetType }: { elType?: string, widgetType?: string } ): string | undefined {
+	return widgetType || elType;
 }
 
 export function getElementType( element?: V1Element ): string | undefined {

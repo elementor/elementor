@@ -6,6 +6,7 @@ import {
 	type CreateArgs,
 	FORM_FIELD_ELEMENT_TYPES,
 	getArgsElementType,
+	getElementTypeFromModel,
 	hasClipboardElementTypes,
 	hasElementTypes,
 	isWithinForm,
@@ -37,14 +38,35 @@ export function initFormAncestorEnforcement() {
 	} );
 }
 
-function blockFormFieldCreate( args: CreateArgs ): boolean {
+function isContainerForFormField( args: CreateArgs ): boolean {
+	const wrapperForModel = args?.options?.wrapperForModel;
+
+	if ( wrapperForModel ) {
+		const elementType = getElementTypeFromModel( wrapperForModel );
+
+		if ( ! elementType || ( elementType && FORM_FIELD_ELEMENT_TYPES.has( elementType ) ) ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+function blockFormFieldCreate( args: CreateArgs ): boolean {	
+
+	if ( isContainerForFormField( args ) ) {
+		handleBlockedFormField();
+
+		return true;
+	}
+
 	const elementType = getArgsElementType( args );
 
 	if ( ! elementType || ! FORM_FIELD_ELEMENT_TYPES.has( elementType ) ) {
 		return false;
 	}
 
-	if ( ! isWithinForm( args.container ) ) {
+	if ( ! isWithinForm( args.container )  || isContainerForFormField( args ) ) {
 		handleBlockedFormField();
 
 		return true;

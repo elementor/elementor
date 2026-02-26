@@ -160,7 +160,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 	getWrappingContainer( container, model, settings ) {
 		const isAtomic = elementor.helpers.isAtomicWidget( model );
-		const options = { at: settings.at, scrollIntoView: settings.scrollIntoView, useHistory: settings?.useHistory ?? true };
+		const options = { at: settings.at, scrollIntoView: settings.scrollIntoView, useHistory: settings?.useHistory ?? true, wrapperForModel: model };
 
 		if ( isAtomic ) {
 			return ContainerHelper.createContainerFromModel(
