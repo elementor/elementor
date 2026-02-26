@@ -9,6 +9,7 @@ use Elementor\App\Modules\E_Onboarding\Storage\Onboarding_Progress_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -20,6 +21,20 @@ class Module extends BaseModule {
 
 	const VERSION = '1.0.0';
 	const EXPERIMENT_NAME = 'e_onboarding';
+	const ASSETS_BASE_URL = 'https://assets.elementor.com/onboarding/v1/strings/';
+
+	const SUPPORTED_LOCALES = [
+		'de_DE',
+		'es_ES',
+		'fr_FR',
+		'he_IL',
+		'id_ID',
+		'it_IT',
+		'nl_NL',
+		'pl_PL',
+		'pt_BR',
+		'tr_TR',
+	];
 
 	private Onboarding_Progress_Manager $progress_manager;
 
@@ -39,13 +54,13 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
-		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
+		if ( ! Plugin::instance()->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			return;
 		}
 
 		$this->progress_manager = Onboarding_Progress_Manager::instance();
 
-		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
+		Plugin::instance()->data_manager_v2->register_controller( new Controller() );
 
 		add_action( 'elementor/init', [ $this, 'on_elementor_init' ], 12 );
 
@@ -57,7 +72,7 @@ class Module extends BaseModule {
 	}
 
 	public function on_elementor_init(): void {
-		if ( ! Plugin::$instance->app->is_current() ) {
+		if ( ! Plugin::instance()->app->is_current() ) {
 			return;
 		}
 
@@ -79,7 +94,7 @@ class Module extends BaseModule {
 	}
 
 	private function set_onboarding_settings(): void {
-		if ( ! Plugin::$instance->common ) {
+		if ( ! Plugin::instance()->common ) {
 			return;
 		}
 
@@ -97,23 +112,43 @@ class Module extends BaseModule {
 			'version' => self::VERSION,
 			'restUrl' => rest_url( 'elementor/v1/e-onboarding/' ),
 			'nonce' => wp_create_nonce( 'wp_rest' ),
-			'progress' => array_merge( $progress->to_array(), [
-				'current_step_id' => $progress->get_current_step_id() ?? $steps[0]['id'] ?? 'building_for',
-				'current_step_index' => $progress->get_current_step_index() ?? 0,
-			] ),
+			'progress' => $this->validate_progress_for_steps( $progress, $steps ),
 			'choices' => $choices->to_array(),
 			'hadUnexpectedExit' => $progress->had_unexpected_exit(),
 			'isConnected' => $is_connected,
 			'userName' => $this->get_user_display_name(),
 			'steps' => $steps,
 			'uiTheme' => $this->get_ui_theme_preference(),
+			'translations' => $this->get_translated_strings(),
 			'shouldShowProInstallScreen' => $is_connected ? $this->should_show_pro_install_screen() : false,
 			'urls' => [
 				'dashboard' => admin_url(),
 				'editor' => admin_url( 'edit.php?post_type=elementor_library' ),
 				'connect' => $this->get_connect_url(),
+				'comparePlans' => 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash',
+				'exploreFeatures' => 'https://elementor.com/features/?utm_source=onboarding&utm_medium=wp-dash',
+				'createNewPage' => Plugin::$instance->documents->get_create_new_post_url(),
 			],
 		] );
+	}
+
+	private function validate_progress_for_steps( User_Progress $progress, array $steps ): array {
+		$progress_data = $progress->to_array();
+		$step_count = count( $steps );
+		$current_step_index = $progress->get_current_step_index() ?? 0;
+		$current_step_id = $progress->get_current_step_id() ?? $steps[0]['id'] ?? 'building_for';
+
+		$is_invalid_step_index = $current_step_index < 0 || $current_step_index >= $step_count;
+
+		if ( $is_invalid_step_index ) {
+			$current_step_id = $steps[0]['id'];
+			$current_step_index = 0;
+		}
+
+		$progress_data['current_step_id'] = $current_step_id;
+		$progress_data['current_step_index'] = $current_step_index;
+
+		return $progress_data;
 	}
 
 	private function is_user_connected(): bool {
@@ -133,7 +168,7 @@ class Module extends BaseModule {
 	}
 
 	private function get_library_app() {
-		$connect = Plugin::$instance->common->get_component( 'connect' );
+		$connect = Plugin::instance()->common->get_component( 'connect' );
 
 		if ( ! $connect ) {
 			return null;
@@ -228,6 +263,28 @@ class Module extends BaseModule {
 		} ) );
 	}
 
+	private function get_translated_strings(): array {
+		$locale = $this->get_onboarding_locale();
+
+		$api = new EditorAssetsAPI( [
+			EditorAssetsAPI::ASSETS_DATA_URL => self::ASSETS_BASE_URL . $locale . '.json',
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_onboarding_strings_' . $locale,
+			EditorAssetsAPI::ASSETS_DATA_KEY => 'translations',
+		] );
+
+		return $api->get_assets_data();
+	}
+
+	private function get_onboarding_locale(): string {
+		$user_locale = get_user_locale();
+
+		if ( in_array( $user_locale, self::SUPPORTED_LOCALES, true ) ) {
+			return $user_locale;
+		}
+
+		return 'en';
+	}
+
 	private function get_steps_config(): array {
 		$steps = [
 			[
@@ -250,13 +307,20 @@ class Module extends BaseModule {
 				'label' => __( 'Start with a theme that fits your needs', 'elementor' ),
 				'type' => 'single',
 			],
-			[
+		];
+
+		if ( ! $this->is_elementor_pro_active() ) {
+			$steps[] = [
 				'id' => 'site_features',
 				'label' => __( 'What do you want to include in your site?', 'elementor' ),
 				'type' => 'multiple',
-			],
-		];
+			];
+		}
 
 		return apply_filters( 'elementor/e-onboarding/steps', $steps );
+	}
+
+	private function is_elementor_pro_active(): bool {
+		return (bool) apply_filters( 'elementor/e-onboarding/is_elementor_pro_active', Utils::has_pro() );
 	}
 }

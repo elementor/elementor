@@ -29,6 +29,7 @@ interface EOnboardingConfig {
 	shouldShowProInstallScreen?: boolean;
 	userName?: string;
 	uiTheme?: 'auto' | 'dark' | 'light';
+	translations?: Record< string, string >;
 	steps: Array<{
 		id: string;
 		label: string;
@@ -38,6 +39,8 @@ interface EOnboardingConfig {
 		dashboard: string;
 		editor: string;
 		connect: string;
+		comparePlans?: string;
+		exploreFeatures?: string;
 	};
 }
 
@@ -96,6 +99,7 @@ declare global {
 			getContainer?: ( id: string ) => V1Element;
 			helpers?: {
 				enqueueFont?: EnqueueFont;
+				hasPro?: () => boolean;
 			};
 		};
 		elementorFrontend?: {
@@ -106,6 +110,7 @@ declare global {
 		elementorPro?: {
 			config?: {
 				version?: string;
+				isActive?: boolean;
 			};
 		};
 		elementorAppConfig?: {
