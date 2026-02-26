@@ -26,11 +26,6 @@ export type {
 	InteractionBreakpointsPropValue,
 };
 
-export type AnimationOption = {
-	value: string;
-	label: string;
-};
-
 export type InteractionConstants = {
 	defaultDuration: number;
 	defaultDelay: number;
@@ -41,7 +36,6 @@ export type InteractionConstants = {
 
 export type InteractionsConfig = {
 	constants: InteractionConstants;
-	animationOptions: AnimationOption[];
 };
 
 export type FieldProps< T = string > = {
