@@ -99,6 +99,7 @@ declare global {
 			getContainer?: ( id: string ) => V1Element;
 			helpers?: {
 				enqueueFont?: EnqueueFont;
+				hasPro?: () => boolean;
 			};
 		};
 		elementorFrontend?: {
@@ -109,6 +110,7 @@ declare global {
 		elementorPro?: {
 			config?: {
 				version?: string;
+				isActive?: boolean;
 			};
 		};
 		elementorAppConfig?: {
