@@ -13,7 +13,6 @@ const SITE_FEATURES_PROGRESS = {
 const STEP_TITLE = 'What do you want to include in your site?';
 const STEP_SUBTITLE = "We'll use this to tailor suggestions for you.";
 const BUILT_IN_LABEL = 'Included';
-const EXPLORE_MORE_LABEL = 'Explore more';
 const FINISH_BUTTON_LABEL = 'Continue with Free';
 const USER_CHOICES_ENDPOINT = 'user-choices';
 const PRO_PLAN_NOTICE_TEXT = 'Some features you selected are available in Pro plan.';
@@ -138,19 +137,6 @@ describe( 'SiteFeatures', () => {
 	} );
 
 	describe( 'External links', () => {
-		it( '"Explore more" opens features URL in new tab', () => {
-			const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
-			renderApp( {
-				isConnected: true,
-				progress: SITE_FEATURES_PROGRESS,
-			} );
-
-			fireEvent.click( screen.getByRole( 'button', { name: EXPLORE_MORE_LABEL } ) );
-
-			expect( openSpy ).toHaveBeenCalledWith( DEFAULT_TEST_URLS.exploreFeatures, TARGET_BLANK );
-			openSpy.mockRestore();
-		} );
-
 		it( '"Compare plans" opens pricing URL in new tab', () => {
 			const firstProOption = getFirstProOption();
 			const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );

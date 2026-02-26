@@ -50,7 +50,6 @@ interface OnboardingConfig {
 		editor: string;
 		connect: string;
 		comparePlans?: string;
-		exploreFeatures?: string;
 		upgradeUrl: string;
 	};
 }
@@ -64,7 +63,6 @@ const DEFAULT_STEPS = [
 ];
 
 export const DEFAULT_TEST_URLS = {
-	exploreFeatures: 'https://elementor.com/features/?utm_source=onboarding&utm_medium=wp-dash',
 	comparePlans: 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash',
 	upgradeUrl:
 		'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar&utm_term=2.0.0',

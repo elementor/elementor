@@ -74,7 +74,7 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 	},
 	{
 		id: 'woocommerce_builder',
-		labelKey: 'WooCommerce',
+		labelKey: 'steps.site_features.woocommerce',
 		Icon: WoocommerceIcon,
 		licenseType: 'pro',
 	},
@@ -87,8 +87,7 @@ const CORE_FEATURE_IDS = new Set(
 const FEATURE_OPTION_IDS = new Set( FEATURE_OPTIONS.map( ( featureOption ) => featureOption.id ) );
 
 export function SiteFeatures() {
-	const { choices, actions, urls } = useOnboarding();
-	const exploreFeaturesUrl = urls.exploreFeatures;
+	const { choices, actions } = useOnboarding();
 
 	const storedPaidFeatures = useMemo(
 		() => ( ( choices.site_features as string[] ) || [] ).filter( ( id ) => FEATURE_OPTION_IDS.has( id ) ),
@@ -125,10 +124,6 @@ export function SiteFeatures() {
 		return hasOneFeature ? 'One' : 'Pro';
 	}, [ storedPaidFeatures ] );
 
-	const handleExploreMoreClick = useCallback( () => {
-		window.open( exploreFeaturesUrl, '_blank' );
-	}, [ exploreFeaturesUrl ] );
-
 	return (
 		<Stack
 			spacing={ 4 }
@@ -154,7 +149,6 @@ export function SiteFeatures() {
 				options={ FEATURE_OPTIONS }
 				selectedValues={ selectedValues }
 				onFeatureClick={ handleFeatureClick }
-				onExploreMoreClick={ handleExploreMoreClick }
 			/>
 
 			{ storedPaidFeatures.length > 0 && <ProPlanNotice planName={ planName } /> }
