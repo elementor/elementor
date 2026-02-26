@@ -17,8 +17,9 @@ export const initMcpInteractions = () => {
 		- delete: Remove a specific interaction by its interactionId.
 		- clear: Remove all interactions from the element.
 		
-		For add/update, provide: trigger, effect, effectType, direction (empty string for non-slide effects), duration, delay, easing.
+		For add/update, provide: trigger, effect, effectType, direction (required for slide effect), duration, delay, easing.
 		Use excludedBreakpoints to disable the animation on specific responsive breakpoints (e.g. ["mobile", "tablet"]).
+		Example Get Request:
 		{
 			"elementId": "123",
 			"action": "get",
@@ -27,6 +28,42 @@ export const initMcpInteractions = () => {
 				"trigger": "click",
 				"effect": "fade",
 			}
+		}
+		Example Add Request:
+		{
+			"elementId": "123",
+			"action": "add",
+			"animationData": {
+				"effectType": "in",
+				"direction": "top",
+				"trigger": "click",
+				"effect": "fade",
+				"duration": 1000,
+				"delay": 0,
+				"easing": "easeIn",
+				"excludedBreakpoints": ["mobile", "tablet"],
+			}
+		}
+		Example Update Request:
+		{
+			"elementId": "123",
+			"action": "update",
+			"interactionId": "123",
+			"animationData": {
+				"trigger": "click",
+				"effect": "fade",
+			}
+		}
+		Example Delete Request:
+		{
+			"elementId": "123",
+			"action": "delete",
+			"interactionId": "123",
+		}
+		Example Clear Request:
+		{
+			"elementId": "123",
+			"action": "clear",
 		}
 		`,
 	} );

@@ -52,7 +52,7 @@ export const initManageElementInteractionTool = ( reg: MCPRegistryEntry ) => {
 			elementId: string;
 			action: 'get' | 'add' | 'update' | 'delete' | 'clear';
 			interactionId?: string;
-			[ key: string ]: any;
+			[ key: string ]: unknown;
 		} ) => {
 			const { elementId, action, interactionId, ...animationData } = input;
 
