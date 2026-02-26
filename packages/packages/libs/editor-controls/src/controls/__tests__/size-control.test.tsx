@@ -527,8 +527,8 @@ describe( 'SizeControl', () => {
 		it.each( [
 			{ input: '%', expected: '%', description: 'exact match' },
 			{ input: 'r', expected: 'rem', description: 'prefix match' },
-			{ input: 'e', expected: 'rem', description: 'prefix match' },
-			{ input: 'x', expected: 'px', description: 'substring match' },
+			{ input: 'e', expected: 'em', description: 'prefix match' },
+			{ input: 'p', expected: 'px', description: 'prefix match' },
 			{ input: 'k', description: 'no match - should not change unit' },
 		] )( 'should handle unit selection by keyboard - $description', ( { input, expected } ) => {
 			// Arrange.
@@ -541,7 +541,7 @@ describe( 'SizeControl', () => {
 			const sizeInput = screen.getByRole( 'spinbutton' );
 
 			// Act.
-			fireEvent.keyUp( sizeInput, { key: input } );
+			fireEvent.keyDown( sizeInput, { key: input } );
 
 			// Assert.
 			if ( expected ) {
@@ -561,15 +561,15 @@ describe( 'SizeControl', () => {
 
 			const sizeInput = screen.getByRole( 'spinbutton' );
 
-			fireEvent.keyUp( sizeInput, { key: 'r' } );
-			fireEvent.keyUp( sizeInput, { key: 'e' } );
-			fireEvent.keyUp( sizeInput, { key: 'm' } );
+			fireEvent.keyDown( sizeInput, { key: 'r' } );
+			fireEvent.keyDown( sizeInput, { key: 'e' } );
+			fireEvent.keyDown( sizeInput, { key: 'm' } );
 
 			// Assert.
 			expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 10, unit: 'rem' } } );
 		} );
 
-		it( 'should not match auto unit via keyboard shortcut', () => {
+		it( 'should match auto unit via keyboard shortcut', () => {
 			// Arrange.
 			const setValue = jest.fn();
 			const props = { setValue, value: mockSizeProp( { size: 10, unit: 'px' } ), bind: 'select', propType };
@@ -588,13 +588,13 @@ describe( 'SizeControl', () => {
 
 			setValue.mockClear();
 
-			fireEvent.keyUp( sizeInput, { key: 'a' } );
-			fireEvent.keyUp( sizeInput, { key: 'u' } );
-			fireEvent.keyUp( sizeInput, { key: 't' } );
-			fireEvent.keyUp( sizeInput, { key: 'o' } );
+			fireEvent.keyDown( sizeInput, { key: 'a' } );
+			fireEvent.keyDown( sizeInput, { key: 'u' } );
+			fireEvent.keyDown( sizeInput, { key: 't' } );
+			fireEvent.keyDown( sizeInput, { key: 'o' } );
 
 			// Assert.
-			expect( setValue ).not.toHaveBeenCalledWith( { $$type: 'size', value: { size: '', unit: 'auto' } } );
+			expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: '', unit: 'auto' } } );
 		} );
 
 		it( 'should handle buffer overflow in unit selection (max 3 chars) - custom', () => {
@@ -614,10 +614,10 @@ describe( 'SizeControl', () => {
 
 			const sizeInput = screen.getByRole( 'spinbutton' );
 
-			fireEvent.keyUp( sizeInput, { key: 'c' } );
-			fireEvent.keyUp( sizeInput, { key: 'u' } );
-			fireEvent.keyUp( sizeInput, { key: 's' } );
-			fireEvent.keyUp( sizeInput, { key: 't' } );
+			fireEvent.keyDown( sizeInput, { key: 'c' } );
+			fireEvent.keyDown( sizeInput, { key: 'u' } );
+			fireEvent.keyDown( sizeInput, { key: 's' } );
+			fireEvent.keyDown( sizeInput, { key: 't' } );
 
 			// Assert.
 			expect( setValue ).toHaveBeenLastCalledWith( {
@@ -628,6 +628,7 @@ describe( 'SizeControl', () => {
 				},
 			} );
 		} );
+
 		it( 'should handle default unit when defaultUnit is provided', () => {
 			// Arrange.
 			const setValue = jest.fn();
@@ -657,16 +658,16 @@ describe( 'SizeControl', () => {
 
 			const sizeInput = screen.getByRole( 'spinbutton' );
 
-			fireEvent.keyUp( sizeInput, { key: 'd' } );
+			fireEvent.keyDown( sizeInput, { key: 'd' } );
 			expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 45, unit: 'deg' } } );
 
-			fireEvent.keyUp( sizeInput, { key: 'r' } );
+			fireEvent.keyDown( sizeInput, { key: 'r' } );
 			expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 45, unit: 'rad' } } );
 
-			fireEvent.keyUp( sizeInput, { key: 'g' } );
+			fireEvent.keyDown( sizeInput, { key: 'g' } );
 			expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 45, unit: 'grad' } } );
 
-			fireEvent.keyUp( sizeInput, { key: 't' } );
+			fireEvent.keyDown( sizeInput, { key: 't' } );
 			expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 45, unit: 'turn' } } );
 		} );
 	} );

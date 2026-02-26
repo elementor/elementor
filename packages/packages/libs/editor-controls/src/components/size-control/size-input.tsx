@@ -107,8 +107,7 @@ export const SizeInput = ( {
 
 		const matchedUnit =
 			units.find( ( u ) => u.startsWith( updatedBuffer ) ) ||
-			units.find( ( u ) => u.startsWith( newChar ) ) ||
-			units.find( ( u ) => u.includes( newChar ) );
+			units.find( ( u ) => u.startsWith( newChar ) );
 
 		if ( matchedUnit ) {
 			handleUnitChange( matchedUnit );
