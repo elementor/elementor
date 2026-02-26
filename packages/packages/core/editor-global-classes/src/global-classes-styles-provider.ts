@@ -100,14 +100,14 @@ export const globalClassesStylesProvider = createStylesProvider( {
 } );
 
 const subscribeWithStates = (
-	cb: ( previous: Record< string, StyleDefinition >, current: Record< string, StyleDefinition > ) => void
+	cb: ( current: Record< string, StyleDefinition >, previous: Record< string, StyleDefinition > ) => void
 ) => {
 	let previousState = selectData( getState() );
 
 	return subscribeWithSelector(
 		( state: StateWithGlobalClasses ) => state.globalClasses,
 		( currentState ) => {
-			cb( previousState.items, currentState.data.items );
+			cb( currentState.data.items, previousState.items );
 			previousState = currentState.data;
 		}
 	);
