@@ -46,7 +46,7 @@ interface OnboardingConfig {
 	isConnected: boolean;
 	translations?: Record< string, string >;
 	shouldShowProInstallScreen?: boolean;
-	hasProInstalledBeforeOnboarding?: boolean;
+	hasProInstalledBeforeOnboarding: boolean;
 	urls: {
 		dashboard: string;
 		editor: string;
@@ -99,6 +99,7 @@ const defaultConfig: OnboardingConfig = {
 	hadUnexpectedExit: false,
 	isConnected: false,
 	shouldShowProInstallScreen: false,
+	hasProInstalledBeforeOnboarding: false,
 	urls: {
 		dashboard: 'https://test.local/wp-admin/',
 		editor: 'https://test.local/editor',
