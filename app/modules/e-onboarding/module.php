@@ -112,7 +112,7 @@ class Module extends BaseModule {
 				'comparePlans' => 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash',
 				'exploreFeatures' => 'https://elementor.com/features/?utm_source=onboarding&utm_medium=wp-dash',
 				'createNewPage' => Plugin::$instance->documents->get_create_new_post_url(),
-				'upgradeUrl' => $this->is_elementor_pro_active() ? null : 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar',
+				'upgradeUrl' => $this->is_elementor_pro_active() ? null : 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar&utm_term=2.0.0',
 			],
 		] );
 	}
