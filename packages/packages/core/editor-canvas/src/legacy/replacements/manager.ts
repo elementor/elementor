@@ -1,3 +1,7 @@
+import {
+	type CreateNestedTemplatedElementTypeOptions,
+	createNestedTemplatedElementView,
+} from '../create-nested-templated-element-type';
 import type { CreateTemplatedElementTypeOptions } from '../create-templated-element-type';
 import { createTemplatedElementView } from '../create-templated-element-type';
 import type { ElementType, ElementView, LegacyWindow, ReplacementSettings } from '../types';
@@ -126,6 +130,147 @@ export const createTemplatedElementTypeWithReplacements = ( {
 
 		getView() {
 			return view;
+		}
+	};
+};
+
+type NestedViewInstance = ElementView & {
+	emptyView: null;
+	_replacement: ReplacementBaseInterface | null;
+	_replacementConfig: ReplacementSettings | null;
+	_initReplacementConfig: () => void;
+	_getOrCreateReplacement: () => ReplacementBaseInterface | null;
+	_triggerAltMethod: ( methodKey: keyof ReplacementBaseInterface, ...args: unknown[] ) => void;
+};
+
+type ExtendableView = {
+	extend: ( props: object & ThisType< NestedViewInstance > ) => typeof ElementView;
+	prototype: Record< string, ( ...args: unknown[] ) => unknown >;
+};
+
+export const createNestedViewWithReplacements = ( {
+	type,
+	renderer,
+	element,
+	modelExtensions,
+}: CreateNestedTemplatedElementTypeOptions ): typeof ElementView => {
+	const options = { type, renderer, element, modelExtensions };
+	const NestedView = createNestedTemplatedElementView( options ) as unknown as ExtendableView;
+
+	return NestedView.extend( {
+		emptyView: null,
+
+		_replacement: null as ReplacementBaseInterface | null,
+		_replacementConfig: null as ReplacementSettings | null,
+
+		_initReplacementConfig() {
+			if ( this._replacementConfig ) {
+				return;
+			}
+
+			const settings = this.model.get( 'settings' );
+
+			this._replacementConfig = {
+				getSetting: ( key: string ) => settings.get( key as never ),
+				setSetting: ( key: string, value: unknown ) => settings.set( key as never, value as never ),
+				element: this.el,
+				type: this.model?.get( 'widgetType' ) ?? this.model?.get( 'elType' ) ?? null,
+				id: this.model?.get( 'id' ) ?? null,
+				refreshView: () => {
+					this.invalidateRenderCache?.();
+					this.render();
+				},
+			};
+		},
+
+		_getOrCreateReplacement(): ReplacementBaseInterface | null {
+			this._initReplacementConfig();
+
+			const elementType = this._replacementConfig?.type;
+
+			if ( elementType && ! this._replacement ) {
+				const ReplacementClass = getReplacement( elementType );
+
+				if ( ReplacementClass ) {
+					this._replacement = new ReplacementClass( this._replacementConfig as ReplacementSettings );
+				}
+			}
+
+			return this._replacement;
+		},
+
+		_triggerAltMethod( methodKey: keyof ReplacementBaseInterface, ...args: unknown[] ) {
+			const baseMethod = NestedView.prototype[ methodKey ]?.bind( this );
+			const replacement = this._getOrCreateReplacement();
+			const shouldReplace = replacement?.shouldRenderReplacement();
+			const altMethod = shouldReplace && replacement?.[ methodKey ]?.bind( replacement );
+
+			if ( ! altMethod || ! shouldReplace ) {
+				return baseMethod?.( ...args );
+			}
+
+			const renderTiming = replacement?.originalMethodsToTrigger()[ methodKey as TriggerMethod ] ?? 'never';
+
+			if ( renderTiming === 'before' ) {
+				baseMethod?.( ...args );
+			}
+
+			altMethod();
+
+			if ( renderTiming === 'after' ) {
+				baseMethod?.( ...args );
+			}
+		},
+
+		render() {
+			this._triggerAltMethod( 'render' );
+		},
+
+		renderOnChange( ...args: unknown[] ) {
+			this._triggerAltMethod( 'renderOnChange', ...args );
+		},
+
+		onDestroy() {
+			this._triggerAltMethod( 'onDestroy' );
+		},
+
+		_afterRender() {
+			this._triggerAltMethod( '_afterRender' );
+		},
+
+		_beforeRender() {
+			this._triggerAltMethod( '_beforeRender' );
+		},
+	} );
+};
+
+export const createNestedTemplatedElementTypeWithReplacements = ( {
+	type,
+	renderer,
+	element,
+	modelExtensions,
+}: CreateNestedTemplatedElementTypeOptions ): typeof ElementType => {
+	const legacyWindow = window as unknown as LegacyWindow;
+
+	const view = createNestedViewWithReplacements( { type, renderer, element, modelExtensions } );
+
+	return class extends legacyWindow.elementor.modules.elements.types.Base {
+		getType() {
+			return type;
+		}
+
+		getView() {
+			return view;
+		}
+
+		getModel() {
+			const BaseModel = legacyWindow.elementor.modules.elements.models.AtomicElementBase;
+
+			if ( modelExtensions && Object.keys( modelExtensions ).length > 0 ) {
+				return BaseModel.extend( modelExtensions ) as typeof BaseModel;
+			}
+
+			return BaseModel;
 		}
 	};
 };

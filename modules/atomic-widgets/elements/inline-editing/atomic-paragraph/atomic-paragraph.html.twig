@@ -1,29 +1,18 @@
-{% set paragraph_content = settings.paragraph.content is defined ? settings.paragraph.content : settings.paragraph %}
-{% set render_children = children_html is defined and children_html is not empty %}
+{% set paragraph_content = settings.inline_html.content is defined ? settings.inline_html.content : settings.inline_html %}
 {% set tags_list = allowed_tags is defined ? allowed_tags : '<b><strong><sup><sub><s><em><u><ul><ol><li><blockquote><a><del><span><br>' %}
 
 {% if paragraph_content is not empty %}
 	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
-		<{{ settings.tag | e('html_tag') }} class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}" data-interaction-id="{{ id }}" {{ id_attribute }} {{ settings.attributes | raw }}>
-			{% if settings.link.href %}
-				<{{ settings.link.tag | e('html_tag') }}
-					{% set linkAttr = settings.link.tag == 'a' ? 'href' : 'data-action-link' %}
-					{{ linkAttr }}="{{ settings.link.href | raw }}"
-					target="{{ settings.link.target }}"
-					class="{{ base_styles['link-base'] }}"
-				>
-					{% if render_children %}
-						{{ children_html | raw }}
-					{% else %}
-						{{ paragraph_content | striptags(tags_list) | raw }}
-					{% endif %}
-				</{{ settings.link.tag | e('html_tag') }}>
-			{% else %}
-					{% if render_children %}
-						{{ children_html | raw }}
-					{% else %}
-						{{ paragraph_content | striptags(tags_list) | raw }}
-					{% endif %}
-			{% endif %}
-		</{{ settings.tag | e('html_tag') }}>
+	<{{ settings.tag | e('html_tag') }} class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}" data-interaction-id="{{ id }}" {{ id_attribute }} {{ settings.attributes | raw }}>
+		{% if settings.link.href %}
+			<{{ settings.link.tag | e('html_tag') }}
+				{% set linkAttr = settings.link.tag == 'a' ? 'href' : 'data-action-link' %}
+				{{ linkAttr }}="{{ settings.link.href | raw }}"
+				target="{{ settings.link.target }}"
+				class="{{ base_styles['link-base'] }}"
+			><!-- elementor-children-placeholder --></{{ settings.link.tag | e('html_tag') }}>
+		{% else %}
+			<!-- elementor-children-placeholder -->
+		{% endif %}
+	</{{ settings.tag | e('html_tag') }}>
 {% endif %}

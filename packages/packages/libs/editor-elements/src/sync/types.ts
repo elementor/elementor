@@ -160,6 +160,7 @@ export type V1ElementConfig< T = object > = {
 	base_styles_dictionary?: Record< string, string >;
 	atomic_style_states?: ClassState[];
 	show_in_panel?: boolean;
+	is_inline_editing?: boolean;
 	meta?: { [ key: string ]: string | number | boolean | null | NonNullable< V1ElementConfig[ 'meta' ] > };
 } & T;
 

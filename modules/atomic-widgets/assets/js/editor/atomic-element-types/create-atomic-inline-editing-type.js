@@ -1,8 +1,8 @@
-const createAtomicParagraphType = () => {
+const createAtomicInlineEditingType = () => {
 	const AtomicElementBaseView = elementor.modules.elements.views.createAtomicElementBase( 'e-paragraph' );
 	const BaseElementView = elementor.modules.elements.views.BaseElement;
 
-	class AtomicParagraphView extends AtomicElementBaseView {
+	class AtomicInlineEditingView extends AtomicElementBaseView {
 		get emptyView() {
 			return null;
 		}
@@ -58,7 +58,13 @@ const createAtomicParagraphType = () => {
 		}
 	}
 
-	return new elementor.modules.elements.types.AtomicElementBase( 'e-paragraph', AtomicParagraphView );
+	return Object.entries( elementor.config.elements ).reduce( ( carry, [ key, element ] ) => {
+		if ( element.is_inline_editing ) {
+			carry.push( new elementor.modules.elements.types.AtomicElementBase( key, AtomicInlineEditingView ) );
+		}
+
+		return carry;
+	}, [] );
 };
 
-export default createAtomicParagraphType;
+export default createAtomicInlineEditingType;

@@ -6,10 +6,9 @@ use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
-use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Span_Children_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Inline_Children_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -24,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Paragraph extends Atomic_Element_Base {
-	use Has_Span_Children_Template;
+	use Has_Inline_Children_Template;
 
 	const LINK_BASE_STYLE_KEY = 'link-base';
 
@@ -40,10 +39,6 @@ class Atomic_Paragraph extends Atomic_Element_Base {
 
 	protected function define_default_html_tag() {
 		return 'p';
-	}
-
-	protected function define_allowed_child_types() {
-		return [ 'e-html-span-child' ];
 	}
 
 	public function get_title() {
@@ -63,7 +58,7 @@ class Atomic_Paragraph extends Atomic_Element_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
-			'paragraph' => self::get_html_prop_type()
+			self::get_inline_editing_prop_key() => self::get_html_prop_type()
 				->default( [
 					'content'  => String_Prop_Type::generate( __( 'Type your paragraph here', 'elementor' ) ),
 					'children' => [],
@@ -85,7 +80,7 @@ class Atomic_Paragraph extends Atomic_Element_Base {
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
 				->set_items( [
-					Inline_Editing_Control::bind_to( 'paragraph' )
+					Inline_Editing_Control::bind_to( self::get_inline_editing_prop_key() )
 						->set_placeholder( __( 'Type your paragraph here', 'elementor' ) )
 						->set_label( __( 'Paragraph', 'elementor' ) ),
 				] ),

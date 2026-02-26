@@ -11,7 +11,7 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 	}
 
 	initialize( attributes, options ) {
-		const elementType = this.get( 'elType' );
+		const elementType = this.get( 'widgetType' ) || this.get( 'elType' );
 		this.config = elementor.config.elements[ elementType ];
 
 		const isNewElementCreate = 0 === this.get( 'elements' ).length &&

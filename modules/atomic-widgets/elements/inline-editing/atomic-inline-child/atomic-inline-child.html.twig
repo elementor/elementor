@@ -1,10 +1,11 @@
-{% set text_content = settings.text.text is defined ? settings.text.text : settings.text %}
+{% set text_content = settings.inline_html.text is defined ? settings.inline_html.text : settings.inline_html %}
 {% if text_content is not empty %}
 	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
-	<span
+	{% set tag = settings.tag is defined ? settings.tag : 'span' %}
+	<{{ tag | e('html_tag') }}
 		data-interaction-id="{{ id }}"
 		class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}"
 		{{ id_attribute }}
 		{{ settings.attributes | raw }}
-	>{{ text_content | raw }}</span>
+	>{{ text_content | raw }}</{{ tag | e('html_tag') }}>
 {% endif %}

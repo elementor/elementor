@@ -7,7 +7,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Span_Children_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html\Html_V3_Prop_Type;
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Heading extends Atomic_Widget_Base {
-	use Has_Span_Children_Template;
+	use Has_Template;
 
 	const LINK_BASE_STYLE_KEY = 'link-base';
 
@@ -55,7 +55,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->default( 'h2' )
 				->description( 'The HTML tag for the heading element. Could be h1, h2, up to h6' ),
 
-			'title' => self::get_html_prop_type()
+			'title' => Html_V3_Prop_Type::make()
 				->default( [
 					'content'  => String_Prop_Type::generate( __( 'This is a title', 'elementor' ) ),
 					'children' => [],

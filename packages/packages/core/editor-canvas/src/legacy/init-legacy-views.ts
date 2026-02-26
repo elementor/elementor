@@ -5,12 +5,14 @@ import { createDomRenderer, type DomRenderer } from '../renderers/create-dom-ren
 import { createElementType } from './create-element-type';
 import {
 	canBeNestedTemplated,
-	createNestedTemplatedElementType,
 	type ModelExtensions,
 	type NestedTemplatedElementConfig,
 } from './create-nested-templated-element-type';
 import { canBeTemplated, type CreateTemplatedElementTypeOptions } from './create-templated-element-type';
-import { createTemplatedElementTypeWithReplacements } from './replacements/manager';
+import {
+	createNestedTemplatedElementTypeWithReplacements,
+	createTemplatedElementTypeWithReplacements,
+} from './replacements/manager';
 import type { ElementType, LegacyWindow } from './types';
 
 type ElementLegacyType = {
@@ -37,8 +39,12 @@ export function initLegacyViews() {
 		const legacyWindow = window as unknown as LegacyWindow;
 		const renderer = createDomRenderer();
 
+		type ExtendedElementConfig = V1ElementConfig & { is_inline_editing?: boolean };
+
 		Object.entries( widgetsCache ).forEach( ( [ type, element ] ) => {
-			if ( ! element.atomic ) {
+			const extendedElement = element as ExtendedElementConfig;
+
+			if ( ! extendedElement.atomic && ! extendedElement.is_inline_editing ) {
 				return;
 			}
 
@@ -93,7 +99,7 @@ function tryRegisterElement(
 }
 
 function createNestedTemplatedType( type: string, renderer: DomRenderer, element: NestedTemplatedElementConfig ) {
-	return createNestedTemplatedElementType( {
+	return createNestedTemplatedElementTypeWithReplacements( {
 		type,
 		renderer,
 		element,

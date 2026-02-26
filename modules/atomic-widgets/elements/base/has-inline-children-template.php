@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 
+use Elementor\Modules\AtomicWidgets\Elements\InlineEditing\AtomicInlineChild\Atomic_Inline_Child;
 use Elementor\Modules\AtomicWidgets\Elements\TemplateRenderer\Template_Renderer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html\Children\Child_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html\Html_V3_Prop_Type;
@@ -14,14 +15,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * @mixin Has_Atomic_Base
  */
-trait Has_Span_Children_Template {
-	use Has_Template;
+trait Has_Inline_Children_Template {
+	use Has_Element_Template {
+		get_initial_config as get_element_template_initial_config;
+	}
+
+	protected static function get_inline_editing_prop_key() {
+		return 'inline_html';
+	}
 
 	public function get_initial_config() {
-		$config = parent::get_initial_config();
-
-		$config['twig_main_template'] = $this->get_main_template();
-		$config['twig_templates'] = $this->get_templates_contents();
+		$config = $this->get_element_template_initial_config();
+		// $config['is_inline_editing'] = true;
 
 		return $config;
 	}
@@ -32,6 +37,24 @@ trait Has_Span_Children_Template {
 
 	protected static function get_child_content_prop_type(): Child_Prop_Type {
 		return Child_Prop_Type::make();
+	}
+
+	protected function define_allowed_child_types() {
+		return [ Atomic_Inline_Child::get_type() ];
+	}
+
+	public function print_content() {
+		$defined_context = $this->define_render_context();
+
+		if ( empty( $defined_context ) ) {
+			return $this->render();
+		}
+
+		$this->set_render_context( $defined_context );
+
+		$this->render();
+
+		$this->clear_render_context( $defined_context );
 	}
 
 	protected function render() {
@@ -101,6 +124,10 @@ trait Has_Span_Children_Template {
 		}
 
 		return null;
+	}
+
+	protected function define_default_children() {
+		return [];
 	}
 
 	abstract protected function get_templates(): array;

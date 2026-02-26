@@ -104,7 +104,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content\Atom
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Success_Message\Form_Success_Message;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Error_Message\Form_Error_Message;
-use Elementor\Modules\AtomicWidgets\Elements\InlineEditing\AtomicSpanChild\Atomic_Span_Child;
+use Elementor\Modules\AtomicWidgets\Elements\InlineEditing\AtomicInlineChild\Atomic_Inline_Child;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
@@ -266,7 +266,7 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Div_Block() );
 		$elements_manager->register_element_type( new Flexbox() );
 		
-		$elements_manager->register_element_type( new Atomic_Span_Child() );
+		$elements_manager->register_element_type( new Atomic_Inline_Child() );
 		$elements_manager->register_element_type( new Atomic_Paragraph() );
 		
 		$elements_manager->register_element_type( new Atomic_Tabs() );

@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\AtomicWidgets\Elements\InlineEditing\AtomicSpanChild;
+namespace Elementor\Modules\AtomicWidgets\Elements\InlineEditing\AtomicInlineChild;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Html_Tag_Control;
@@ -7,10 +7,9 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Inline_Editing_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Span_Children_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Inline_Children_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
@@ -19,19 +18,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Atomic_Span_Child extends Atomic_Element_Base {
-	use Has_Span_Children_Template;
+class Atomic_Inline_Child extends Atomic_Element_Base {
+	use Has_Inline_Children_Template;
 
 	public static function get_type() {
-		return 'e-html-span-child';
+		return 'e-html-inline-child';
 	}
 
 	public static function get_element_type(): string {
-		return 'e-html-span-child';
+		return 'e-html-inline-child';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Span', 'elementor' );
+		return esc_html__( 'Inline Child', 'elementor' );
 	}
 
 	public function get_icon() {
@@ -40,6 +39,10 @@ class Atomic_Span_Child extends Atomic_Element_Base {
 
 	public function should_show_in_panel() {
 		return false;
+	}
+
+	protected function define_default_html_tag() {
+		return 'span';
 	}
 
 	protected static function define_props_schema(): array {
@@ -91,7 +94,7 @@ class Atomic_Span_Child extends Atomic_Element_Base {
 
 	protected function get_templates(): array {
 		return [
-			'elementor/elements/atomic-span-child' => __DIR__ . '/atomic-span-child.html.twig',
+			'elementor/elements/atomic-inline-child' => __DIR__ . '/atomic-inline-child.html.twig',
 		];
 	}
 }
