@@ -24,8 +24,4 @@ class Interaction_Item_Prop_Type extends Object_Prop_Type {
 			'breakpoints' => Interaction_Breakpoints_Prop_Type::make()->description( 'The breakpoints to use for the animation' ),
 		];
 	}
-
-	public function get_filtered_shape_for_pro(): array {
-		return Prop_Shape_Filter_For_Pro::filter_shape( $this->get_shape() );
-	}
 }

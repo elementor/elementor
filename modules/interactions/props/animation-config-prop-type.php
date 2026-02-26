@@ -26,8 +26,4 @@ class Animation_Config_Prop_Type extends Object_Prop_Type {
 			'offsetBottom' => Number_Prop_Type::make()->meta( 'pro', true )->description( 'The offset bottom to use for the animation' ),
 		];
 	}
-
-	public function get_filtered_shape_for_pro(): array {
-		return Prop_Shape_Filter_For_Pro::filter_shape( $this->get_shape() );
-	}
 }
