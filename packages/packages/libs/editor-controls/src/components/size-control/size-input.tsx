@@ -7,7 +7,7 @@ import ControlActions from '../../control-actions/control-actions';
 import { type ExtendedOption, isUnitExtendedOption, type Unit } from '../../utils/size-control';
 import { SelectionEndAdornment, TextFieldInnerSelection } from '../size-control/text-field-inner-selection';
 
-function useTypingBuffer( { timeout = 800 } : { timeout: number } ) {
+function useTypingBuffer( timeout: number = 800 ) {
 	const inputBufferRef = useRef( '' );
 	const timeoutRef = useRef< number | null >( null );
 
