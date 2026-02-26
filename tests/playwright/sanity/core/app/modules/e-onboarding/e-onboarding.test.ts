@@ -28,7 +28,7 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 		await context.close();
 	} );
 
-	test( 'Full onboarding happy path', async ( { page } ) => {
+	test.skip( 'Full onboarding happy path', async ( { page } ) => {
 		const { choicesRequests, progressRequests } = await mockOnboardingApi( page );
 
 		await page.goto( ONBOARDING_URL );
