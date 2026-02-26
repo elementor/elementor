@@ -25,15 +25,15 @@ class Presets {
 	const BASE_EASING = [ 'easeIn' ];
 	const ADDITIONAL_EASING = [ 'easeOut', 'easeInOut', 'backIn', 'backInOut', 'backOut', 'linear' ];
 
-	public static function EASING() {
+	public static function easing_options() {
 		return array_merge( self::BASE_EASING, self::ADDITIONAL_EASING );
 	}
 
-	public static function EFFECTS() {
+	public static function effects_options() {
 		return array_merge( self::BASE_EFFECTS, self::ADDITIONAL_EFFECTS );
 	}
 
-	public static function TRIGGERS() {
+	public static function triggers_options() {
 		return array_merge( self::BASE_TRIGGERS, self::ADDITIONAL_TRIGGERS );
 	}
 
@@ -75,8 +75,8 @@ class Presets {
 	private function generate_animation_options() {
 		$options = [];
 
-		foreach ( self::TRIGGERS() as $trigger ) {
-			foreach ( self::EFFECTS() as $effect ) {
+		foreach ( self::triggers_options() as $trigger ) {
+			foreach ( self::effects_options() as $effect ) {
 				foreach ( self::TYPES as $type ) {
 					foreach ( self::DIRECTIONS as $direction ) {
 						$value = "{$trigger}-{$effect}-{$type}-{$direction}";

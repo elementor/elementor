@@ -21,7 +21,7 @@ class Animation_Config_Prop_Type extends Object_Prop_Type {
 	protected function define_shape(): array {
 		return [
 			'replay' => Boolean_Prop_Type::make()->meta( 'pro', true )->description( 'Whether to replay the animation' ),
-			'easing' => String_Prop_Type::make()->meta( 'enum', Presets::EASING() )->default( Presets::DEFAULT_EASING )->meta( 'pro', Presets::ADDITIONAL_EASING )->description( 'The easing function to use for the animation' ),
+			'easing' => String_Prop_Type::make()->meta( 'enum', Presets::easing_options() )->default( Presets::DEFAULT_EASING )->meta( 'pro', Presets::ADDITIONAL_EASING )->description( 'The easing function to use for the animation' ),
 			'offsetTop' => Number_Prop_Type::make()->meta( 'pro', true )->description( 'The offset top to use for the animation' ),
 			'offsetBottom' => Number_Prop_Type::make()->meta( 'pro', true )->description( 'The offset bottom to use for the animation' ),
 		];
