@@ -90,7 +90,9 @@ export const SizeInput = ( {
 
 		if ( isUnitExtendedOption( unit ) && ! isNaN( Number( key ) ) ) {
 			const defaultUnit = units?.[0];
-			defaultUnit && handleUnitChange( units?.[0] );
+			if ( defaultUnit ) {
+				handleUnitChange( defaultUnit );
+			}
 			return;
 		}
 
