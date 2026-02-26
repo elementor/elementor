@@ -459,13 +459,13 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		saveAsComponent( openContextMenuEvent, options ) {
-			// Calculate the absolute position where the context menu was opened.
 			const isProActive = window.elementorV2?.editorComponents?.isProActive?.() ?? true;
 
 			if ( ! isProActive ) {
 				return;
 			}
 
+			// Calculate the absolute position where the context menu was opened.
 			const openMenuOriginalEvent = openContextMenuEvent.originalEvent;
 			const iframeRect = elementor.$preview[ 0 ].getBoundingClientRect();
 			const anchorPosition = {
