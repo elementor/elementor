@@ -158,5 +158,3 @@ If user specifies:
 - "Minimal/simple" → reduce ornamentation but maintain quality principles
 `;
 
-export const BEST_PRACTICES_URI = 'elementor://styles/best-practices';
-
