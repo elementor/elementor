@@ -67,6 +67,8 @@ export const initMcpInteractions = () => {
 		}
 		`,
 	} );
-	initInteractionsSchemaResource( reg );
-	reg.waitForReady().then( () => initManageElementInteractionTool( reg ) );
+	reg.waitForReady().then( () => {
+		initInteractionsSchemaResource( reg );
+		initManageElementInteractionTool( reg );
+	} );
 };

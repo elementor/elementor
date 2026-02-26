@@ -1,12 +1,13 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
+import { isProUser } from '@elementor/utils';
 
-import { getInteractionsConfig } from '../../utils/get-interactions-config';
+import { baseSchema, proSchema } from '../tools/schema';
 
 export const INTERACTIONS_SCHEMA_URI = 'elementor://interactions/schema';
 
 export const initInteractionsSchemaResource = ( reg: MCPRegistryEntry ) => {
 	const { resource } = reg;
-	const { itemSchema } = getInteractionsConfig() ?? {};
+	const schema = isProUser() ? { ...baseSchema, ...proSchema } : baseSchema;
 
 	resource(
 		'interactions-schema',
@@ -20,7 +21,7 @@ export const initInteractionsSchemaResource = ( reg: MCPRegistryEntry ) => {
 					{
 						uri: INTERACTIONS_SCHEMA_URI,
 						mimeType: 'application/json',
-						text: JSON.stringify( itemSchema ),
+						text: JSON.stringify( schema ),
 					},
 				],
 			};

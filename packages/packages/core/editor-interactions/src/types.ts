@@ -42,7 +42,6 @@ export type InteractionConstants = {
 export type InteractionsConfig = {
 	constants: InteractionConstants;
 	animationOptions: AnimationOption[];
-	itemSchema?: InteractionItemPropValue;
 };
 
 export type FieldProps< T = string > = {
