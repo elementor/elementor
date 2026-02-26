@@ -1,0 +1,16 @@
+{
+	"[php]": {
+		"editor.defaultFormatter": "junstyle.php-cs-fixer",
+		"editor.formatOnSave": false,
+		"editor.formatOnPaste": false,
+		"editor.formatOnType": false
+	},
+	"php-cs-fixer.executablePath": "~/.cursor/extensions/junstyle.php-cs-fixer-0.3.21/php-cs-fixer.phar",
+	"php-cs-fixer.config": "./php-cs-fixer.php",
+	"php-cs-fixer.allowRisky": true,
+	"php-cs-fixer.onsave": false,
+	"php-cs-fixer.autoFixByBracket": true,
+	"php-cs-fixer.autoFixBySemicolon": false,
+	"php-cs-fixer.formatHtml": true,
+	"php-cs-fixer.documentFormattingProvider": true
+}
