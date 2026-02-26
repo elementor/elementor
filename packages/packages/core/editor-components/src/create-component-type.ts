@@ -255,7 +255,9 @@ function createComponentView(
 		}
 
 		editComponent( { trigger, location, secondaryLocation }: ContextMenuEventData ) {
-			if ( this.isComponentCurrentlyEdited() ) {
+			const hasPro = hasProInstalled();
+
+			if ( ! hasPro || this.isComponentCurrentlyEdited() ) {
 				return;
 			}
 
