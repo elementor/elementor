@@ -1,26 +1,11 @@
-type ExtendedWindow = Window & {
-	elementor?: {
-		helpers?: {
-			hasPro?: () => boolean;
-		};
-	};
-	elementorPro?: {
-		config?: {
-			isActive?: boolean;
-		};
-	};
-};
+export function hasProInstalled(): boolean {
+	return window.elementor?.helpers?.hasPro?.() ?? false;
+}
 
-export function isProUser(): boolean {
-	const extendedWindow = window as unknown as ExtendedWindow;
-
-	const hasPro = extendedWindow.elementor?.helpers?.hasPro?.() ?? false;
-
-	if ( ! hasPro ) {
+export function isProActive(): boolean {
+	if ( ! hasProInstalled() ) {
 		return false;
 	}
 
-	const isProActive = extendedWindow.elementorPro?.config?.isActive ?? false;
-
-	return isProActive;
+	return window.elementorPro?.config?.isActive ?? false;
 }
