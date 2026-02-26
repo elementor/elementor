@@ -329,7 +329,8 @@ class Module extends BaseModule {
 
 	private function is_elementor_theme_active(): bool {
 		$active_theme = get_stylesheet();
+		$is_active = in_array( $active_theme, Onboarding_Progress_Manager::ALLOWED_THEMES, true );
 
-		return in_array( $active_theme, Onboarding_Progress_Manager::ALLOWED_THEMES, true );
+		return (bool) apply_filters( 'elementor/e-onboarding/is_elementor_theme_active', $is_active );
 	}
 }
