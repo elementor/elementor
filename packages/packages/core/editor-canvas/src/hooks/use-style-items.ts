@@ -22,7 +22,7 @@ type ProviderAndStyleItems = { provider: StylesProvider; items: StyleItem[] };
 
 type ProviderAndSubscriber = {
 	provider: StylesProvider;
-	subscriber: ( current?: StylesCollection, previous?: StylesCollection ) => Promise< void >;
+	subscriber: ( previous?: StylesCollection, current?: StylesCollection ) => Promise< void >;
 };
 
 type ProviderAndStyleItemsMap = Record< string, ProviderAndStyleItems >;
@@ -125,14 +125,14 @@ type CreateProviderSubscriberArgs = {
 };
 
 function createProviderSubscriber( { provider, renderStyles, setStyleItems, cache }: CreateProviderSubscriberArgs ) {
-	return abortPreviousRuns( ( abortController, current?: StylesCollection, previous?: StylesCollection ) =>
+	return abortPreviousRuns( ( abortController, previous?: StylesCollection, current?: StylesCollection ) =>
 		signalizedProcess( abortController.signal )
 			.then( ( _, signal ) => {
 				const hasDiffInfo = current !== undefined && previous !== undefined;
 				const hasCache = cache.orderedIds.length > 0;
 
 				if ( hasDiffInfo && hasCache ) {
-					return updateItems( current, previous, signal );
+					return updateItems( previous, current, signal );
 				}
 
 				return createItems( signal );
@@ -146,8 +146,8 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, cach
 			.execute()
 	);
 
-	async function updateItems( current: StylesCollection, previous: StylesCollection, signal: AbortSignal ) {
-		const changedIds = getChangedStyleIds( current, previous );
+	async function updateItems( previous: StylesCollection, current: StylesCollection, signal: AbortSignal ) {
+		const changedIds = getChangedStyleIds( previous, current );
 
 		cache.orderedIds = provider.actions
 			.all()
@@ -221,7 +221,7 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, cach
 	}
 }
 
-function getChangedStyleIds( current: StylesCollection, previous: StylesCollection ): string[] {
+function getChangedStyleIds( previous: StylesCollection, current: StylesCollection ): string[] {
 	const changedIds: string[] = [];
 
 	for ( const id of Object.keys( current ) ) {

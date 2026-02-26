@@ -4,7 +4,7 @@ export type CreateStylesProviderOptions = {
 	key: string | ( () => string );
 	priority?: number;
 	limit?: number;
-	subscribe?: ( callback: ( current?: StylesCollection, previous?: StylesCollection ) => void ) => () => void;
+	subscribe?: ( callback: ( previous?: StylesCollection, current?: StylesCollection ) => void ) => () => void;
 	labels?: {
 		singular: string;
 		plural: string;

@@ -10,7 +10,7 @@ type CreateMockProviderArgs = Omit< Partial< CreateStylesProviderOptions >, 'sub
 	actions?: Partial< CreateStylesProviderOptions[ 'actions' ] >;
 };
 
-type Subscriber = ( current?: StylesCollection, previous?: StylesCollection ) => void;
+type Subscriber = ( previous?: StylesCollection, current?: StylesCollection ) => void;
 
 export function createMockStylesProvider(
 	{ key = 'test-provider', priority = 0, labels, limit, actions }: CreateMockProviderArgs,
@@ -36,7 +36,7 @@ export function createMockStylesProvider(
 		const currentState = toCollection();
 
 		for ( const subscriber of subscribers ) {
-			subscriber( currentState, previousState );
+			subscriber( previousState, currentState );
 		}
 
 		previousState = currentState;
