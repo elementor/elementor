@@ -34,11 +34,6 @@ async function goBackToEditor( page: Page, editor: EditorPage ): Promise<void> {
 	await page.waitForTimeout( timeouts.navigation );
 }
 
-async function viewPublishedPage( page: Page, editor: EditorPage ): Promise<void> {
-	await editor.viewPage();
-	await page.waitForTimeout( timeouts.navigation );
-}
-
 async function assertDivBlockColor( divBlock: Locator, expectedColor: string ): Promise<void> {
 	await expect( divBlock ).toBeVisible();
 	await expect( divBlock ).toHaveCSS( 'background-color', expectedColor );
@@ -105,14 +100,14 @@ test.describe( 'Global Classes - Order @v4-tests', () => {
 
 		await test.step( 'Create green-bg class and verify canvas shows green (last class wins)', async () => {
 			await createClassWithBackgroundColor( page, editor, 'green-bg', '#00FF00' );
-			await page.waitForTimeout( timeouts.action );
 			canvasDivBlock = getCanvasDivBlock( editor, divBlockId );
 			await assertDivBlockColor( canvasDivBlock, GREEN );
 		} );
 
 		await test.step( 'Publish and view frontend: Verify all classes present and green wins', async () => {
 			await editor.publishPage();
-			await viewPublishedPage( page, editor );
+			await page.waitForTimeout( timeouts.action );
+			await editor.viewPage();
 
 			frontendDivBlock = getFrontendDivBlock( page, divBlockId );
 			await assertDivBlockColor( frontendDivBlock, GREEN );
@@ -137,7 +132,7 @@ test.describe( 'Global Classes - Order @v4-tests', () => {
 		} );
 
 		await test.step( 'View frontend: Verify red wins after first reorder (global class order auto-saved)', async () => {
-			await viewPublishedPage( page, editor );
+			await editor.viewPage();
 
 			frontendDivBlock = getFrontendDivBlock( page, divBlockId );
 			await assertDivBlockColor( frontendDivBlock, RED );
@@ -162,7 +157,7 @@ test.describe( 'Global Classes - Order @v4-tests', () => {
 		} );
 
 		await test.step( 'View frontend: Verify blue wins after second reorder', async () => {
-			await viewPublishedPage( page, editor );
+			await editor.viewPage();
 
 			frontendDivBlock = getFrontendDivBlock( page, divBlockId );
 			await assertDivBlockColor( frontendDivBlock, BLUE );

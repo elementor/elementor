@@ -35,7 +35,11 @@ export async function deleteAllGlobalClasses( apiRequests: ApiRequests, request:
 			return { success: true, deleted: 0 };
 		}
 
-		createGlobalClasses( apiRequests, request, {}, [] );
+		await apiRequests.customPut( request, 'index.php?rest_route=/elementor/v1/global-classes', {
+			items: {},
+			order: [],
+			changes: { added: [], deleted: order, modified: [] },
+		} );
 
 		return { success: true, deleted: order.length };
 	} catch ( error ) {
@@ -48,16 +52,16 @@ export async function createGlobalClasses(
 	request: APIRequestContext,
 	items: Record<string, GlobalClassItem>,
 	order: string[],
-): Promise<{ ok: boolean; error?: string }> {
+): Promise<{ success: boolean; error?: string }> {
 	try {
 		await apiRequests.customPut( request, 'index.php?rest_route=/elementor/v1/global-classes', {
 			items,
 			order,
 			changes: { added: order, deleted: [], modified: [] },
 		} );
-		return { ok: true };
+		return { success: true };
 	} catch ( error ) {
-		return { ok: false, error: String( error ) };
+		return { success: false, error: String( error ) };
 	}
 }
 

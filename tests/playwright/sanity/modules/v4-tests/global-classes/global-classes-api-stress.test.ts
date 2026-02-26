@@ -154,13 +154,13 @@ test.describe.skip( 'Global Classes API Stress Test @stress', () => {
 		const apiResponse = await createGlobalClasses( apiRequests, request, items, order );
 		const apiTime = Date.now() - startApi;
 
-		logProgress( `API response: ok=${ apiResponse.ok }, time=${ apiTime }ms` );
+		logProgress( `API response: ok=${ apiResponse.success }, time=${ apiTime }ms` );
 
-		if ( ! apiResponse.ok ) {
+		if ( ! apiResponse.success ) {
 			logProgress( `API error: ${ apiResponse.error }` );
 		}
 
-		expect( apiResponse.ok ).toBe( true );
+		expect( apiResponse.success ).toBe( true );
 
 		logProgress( 'Verifying classes were created...' );
 		const { order: existingIds } = await getGlobalClasses( apiRequests, request );
