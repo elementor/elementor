@@ -83,6 +83,7 @@ export declare class ElementView {
 		length: number;
 		findByIndex: ( index: number ) => ElementView;
 		each: ( callback: ( view: ElementView ) => void ) => void;
+		map: < T >( callback: ( view: ElementView ) => T ) => T[];
 	};
 
 	constructor( ...args: unknown[] );
