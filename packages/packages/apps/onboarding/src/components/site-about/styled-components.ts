@@ -9,6 +9,7 @@ export const OptionCardRoot = styled( ButtonBase )( ( { theme } ) => ( {
 	gap: theme.spacing( 3 ),
 	minWidth: 0,
 	height: theme.spacing( 16 ),
+	padding: theme.spacing( 2 ),
 	borderRadius: 8,
 	border: `1px solid ${ theme.palette.divider }`,
 	cursor: 'pointer',

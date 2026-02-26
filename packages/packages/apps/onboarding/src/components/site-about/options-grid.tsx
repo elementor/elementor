@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { t } from '../../utils/translations';
 import { SITE_ABOUT_OPTIONS } from './constants';
 import { OptionCard } from './option-card';
 import { CardGrid } from './styled-components';
@@ -15,7 +16,7 @@ export function OptionsGrid( { selectedValues, onToggle }: OptionsGridProps ) {
 			{ SITE_ABOUT_OPTIONS.map( ( option ) => (
 				<OptionCard
 					key={ option.value }
-					label={ option.label }
+					label={ t( option.labelKey ) }
 					icon={ option.icon }
 					selected={ selectedValues.includes( option.value ) }
 					onClick={ () => onToggle( option.value ) }
