@@ -4,6 +4,7 @@ import { __deleteStore } from '@elementor/store';
 import { QueryClient } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
+import { DEFAULT_STRINGS } from '../../utils/default-strings';
 import { App } from '../app';
 
 jest.mock( '@elementor/query', () => {
@@ -43,6 +44,7 @@ interface OnboardingConfig {
 	choices: Record< string, unknown >;
 	hadUnexpectedExit: boolean;
 	isConnected: boolean;
+	translations?: Record< string, string >;
 	shouldShowProInstallScreen?: boolean;
 	urls: {
 		dashboard: string;
@@ -86,6 +88,7 @@ const defaultConfig: OnboardingConfig = {
 			type: 'multiple',
 		},
 	],
+	translations: DEFAULT_STRINGS,
 	progress: {
 		current_step_id: 'building_for',
 		current_step_index: 0,

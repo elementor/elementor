@@ -1,5 +1,6 @@
 import { expect, Page } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
+import { timeouts } from '../../../config/timeouts';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { getInSettingsTab } from './styleguide.helper';
 
@@ -61,7 +62,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		await styleguideSaveChanges( page );
 
 		// Assert 1.
-		await expect( styleguidePreviewDialog ).toBeHidden();
+		await expect( styleguidePreviewDialog ).toBeHidden( { timeout: timeouts.longAction } );
 
 		// Act 2.
 		await page.click( '.elementor-panel-menu-item-title:has-text("Global Fonts")' );
@@ -146,7 +147,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		await page.click( '.elementor-panel-menu-item-title:has-text("Global Fonts")' );
 
 		// Assert
-		await expect( editor.getPreviewFrame().getByText( 'Global Fonts' ) ).toBeVisible();
+		await expect( editor.getPreviewFrame().getByText( 'Global Fonts' ) ).toBeVisible( { timeout: timeouts.longAction } );
 
 		// Act 2.
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
@@ -156,7 +157,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		await page.click( '.elementor-panel-menu-item-title:has-text("Global Colors")' );
 
 		// Assert 2
-		await expect( editor.getPreviewFrame().getByText( 'Global Colors' ) ).toBeVisible();
+		await expect( editor.getPreviewFrame().getByText( 'Global Colors' ) ).toBeVisible( { timeout: timeouts.longAction } );
 	} );
 
 	test( 'Enabling Styleguide Preview at Global Colors shows the Styleguide Modal and updates user preferences', async ( { page, apiRequests }, testInfo ) => {

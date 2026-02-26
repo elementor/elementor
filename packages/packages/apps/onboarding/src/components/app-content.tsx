@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Box } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
 
 import { useCheckProInstallScreen } from '../hooks/use-check-pro-install-screen';
 import { useElementorConnect } from '../hooks/use-elementor-connect';
@@ -17,6 +16,7 @@ import { SiteFeatures } from '../steps/screens/site-features';
 import { ThemeSelection } from '../steps/screens/theme-selection';
 import { getStepVisualConfig } from '../steps/step-visuals';
 import { StepId } from '../types';
+import { t } from '../utils/translations';
 import { BaseLayout } from './ui/base-layout';
 import { CompletionScreen } from './ui/completion-screen';
 import { Footer } from './ui/footer';
@@ -90,7 +90,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 					onClose?.();
 				},
 				onError: () => {
-					actions.setError( __( 'Failed to mark user exit.', 'elementor' ) );
+					actions.setError( t( 'error.failed_mark_exit' ) );
 				},
 			}
 		);
@@ -185,7 +185,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 						actions.nextStep();
 					},
 					onError: () => {
-						actions.setError( __( 'Failed to complete step.', 'elementor' ) );
+						actions.setError( t( 'error.failed_complete_step' ) );
 					},
 				}
 			);
@@ -201,18 +201,18 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 	const getContinueLabel = () => {
 		if ( stepId === StepId.THEME_SELECTION && ! completedSteps.includes( StepId.THEME_SELECTION ) ) {
-			return __( 'Continue with this theme', 'elementor' );
+			return t( 'steps.theme_selection.continue_with_theme' );
 		}
 
 		if ( stepId === StepId.SITE_FEATURES && ! completedSteps.includes( StepId.SITE_FEATURES ) ) {
-			return __( 'Continue with Free', 'elementor' );
+			return t( 'steps.site_features.continue_with_free' );
 		}
 
 		if ( isLast ) {
-			return __( 'Finish', 'elementor' );
+			return t( 'common.finish' );
 		}
 
-		return __( 'Continue', 'elementor' );
+		return t( 'common.continue' );
 	};
 
 	const renderStepContent = () => {
