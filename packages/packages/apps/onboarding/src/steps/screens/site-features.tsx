@@ -74,7 +74,7 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 	},
 	{
 		id: 'woocommerce_builder',
-		labelKey: 'steps.site_features.option_woocommerce_builder',
+		labelKey: 'Woocommerce',
 		Icon: WoocommerceIcon,
 		licenseType: 'pro',
 	},
