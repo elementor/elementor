@@ -1809,13 +1809,11 @@ class Source_Local extends Source_Base {
 	 */
 	private function add_actions() {
 		if ( is_admin() ) {
-<<<<<<< HEAD
 			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 				$this->register_admin_menu( $admin_menu );
 			}, static::ADMIN_MENU_PRIORITY );
-=======
+
 			add_action( 'admin_init', [ $this, 'redirect_categories_page_to_saved_templates_page' ] );
->>>>>>> d5d290b35d (Internal: Redirect categories page to saved templates page [ED-22981] (#34890))
 
 			add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 				$this->register_editor_one_menu( $menu_data_provider );
