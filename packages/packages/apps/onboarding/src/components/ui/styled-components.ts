@@ -1,7 +1,11 @@
-import { Box, styled } from '@elementor/ui';
+import { Box, styled, Typography } from '@elementor/ui';
 
-// One-off brand color from design (Figma onboarding 2026).
 const GREETING_BANNER_BG_COLOR = '#fae4fa';
+
+export const StepTitle = styled( Typography )( {
+	fontWeight: 500,
+	fontFamily: 'Poppins',
+} );
 
 export const GreetingBannerRoot = styled( Box )( ( { theme } ) => ( {
 	display: 'inline-flex',
