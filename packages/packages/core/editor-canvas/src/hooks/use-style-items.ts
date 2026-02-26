@@ -249,12 +249,12 @@ function updateCacheItems( cache: StyleItemsCache, rendered: StyleItem[] ): void
 		if ( existing ) {
 			const idx = existing.findIndex( ( e ) => e.breakpoint === item.breakpoint && e.state === item.state );
 			if ( idx >= 0 ) {
-				cache.itemsById.set( item.id, [
-					...existing.map( ( existingItem, i ) => ( i === idx ? item : existingItem ) ),
-				] );
+				existing[ idx ] = item;
 			} else {
-				cache.itemsById.set( item.id, [ ...existing, item ] );
+				existing.push( item );
 			}
+		} else {
+			cache.itemsById.set( item.id, [ item ] );
 		}
 	}
 }

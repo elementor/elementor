@@ -35,11 +35,7 @@ export async function deleteAllGlobalClasses( apiRequests: ApiRequests, request:
 			return { success: true, deleted: 0 };
 		}
 
-		await apiRequests.customPut( request, 'index.php?rest_route=/elementor/v1/global-classes', {
-			items: {},
-			order: [],
-			changes: { added: [], deleted: order, modified: [] },
-		} );
+		createGlobalClasses( apiRequests, request, {}, [] );
 
 		return { success: true, deleted: order.length };
 	} catch ( error ) {
