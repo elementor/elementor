@@ -1,16 +1,15 @@
 import { getAllDescendants, type V1Element } from '@elementor/editor-elements';
 
+type Model = {
+	elType?: string;
+	widgetType?: string;
+};
+
 export type CreateArgs = {
 	container?: V1Element;
-	model?: {
-		elType?: string;
-		widgetType?: string;
-	};
+	model?: Model;
 	options?: {
-		wrapperForModel?: {
-			elType?: string;
-			widgetType?: string;
-		};
+		wrapperForModel?: Model;
 	};
 };
 
@@ -50,7 +49,7 @@ export function getArgsElementType( args: CreateArgs ): string | undefined {
 	return args.model?.widgetType || args.model?.elType;
 }
 
-export function getElementTypeFromModel( { elType, widgetType }: { elType?: string, widgetType?: string } ): string | undefined {
+export function getElementTypeFromModel( { elType, widgetType }: Model ): string | undefined {
 	return widgetType || elType;
 }
 

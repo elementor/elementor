@@ -52,8 +52,7 @@ function isContainerForFormField( args: CreateArgs ): boolean {
 	return false;
 }
 
-function blockFormFieldCreate( args: CreateArgs ): boolean {	
-
+function blockFormFieldCreate( args: CreateArgs ): boolean {
 	if ( isContainerForFormField( args ) ) {
 		handleBlockedFormField();
 
@@ -66,7 +65,7 @@ function blockFormFieldCreate( args: CreateArgs ): boolean {
 		return false;
 	}
 
-	if ( ! isWithinForm( args.container )  || isContainerForFormField( args ) ) {
+	if ( ! isWithinForm( args.container ) || isContainerForFormField( args ) ) {
 		handleBlockedFormField();
 
 		return true;
