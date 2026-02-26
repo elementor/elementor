@@ -5,7 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Prop_Types_Schema_Extender;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;

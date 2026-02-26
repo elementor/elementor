@@ -1,40 +1,53 @@
 <?php
-namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading;
 
+namespace Elementor\Modules\AtomicWidgets\Elements\InlineEditing\Atomic_Paragraph;
+
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Inline_Editing_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
-use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
-use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Span_Children_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Inline_Editing_Control;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
+	exit;
 }
 
-class Atomic_Heading extends Atomic_Widget_Base {
-	use Has_Template;
+class Atomic_Paragraph extends Atomic_Element_Base {
+	use Has_Span_Children_Template;
 
 	const LINK_BASE_STYLE_KEY = 'link-base';
 
-	public static $widget_description = 'Display a heading with customizable tag, styles, and link options.';
+	public static $widget_description = 'Display a paragraph with customizable tag, styles, and link options.';
+
+	public static function get_type() {
+		return 'e-paragraph';
+	}
 
 	public static function get_element_type(): string {
-		return 'e-heading';
+		return 'e-paragraph';
+	}
+
+	protected function define_default_html_tag() {
+		return 'p';
+	}
+
+	protected function define_allowed_child_types() {
+		return [ 'e-html-span-child' ];
 	}
 
 	public function get_title() {
-		return esc_html__( 'Heading', 'elementor' );
+		return esc_html__( 'Paragraph', 'elementor' );
 	}
 
 	public function get_keywords() {
@@ -42,7 +55,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-e-heading';
+		return 'eicon-paragraph';
 	}
 
 	protected static function define_props_schema(): array {
@@ -50,17 +63,16 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
-			'tag' => String_Prop_Type::make()
-				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] )
-				->default( 'h2' )
-				->description( 'The HTML tag for the heading element. Could be h1, h2, up to h6' ),
-
-			'title' => Html_V3_Prop_Type::make()
+			'paragraph' => self::get_html_prop_type()
 				->default( [
-					'content'  => String_Prop_Type::generate( __( 'This is a title', 'elementor' ) ),
+					'content'  => String_Prop_Type::generate( __( 'Type your paragraph here', 'elementor' ) ),
 					'children' => [],
 				] )
-				->description( 'The text content of the heading.' ),
+				->description( 'The text content of the paragraph.' ),
+
+			'tag' => String_Prop_Type::make()
+				->enum( [ 'p', 'span' ] )
+				->default( 'p' ),
 
 			'link' => Link_Prop_Type::make(),
 
@@ -69,16 +81,14 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	protected function define_atomic_controls(): array {
-		$content_section = Section::make()
-			->set_label( __( 'Content', 'elementor' ) )
-			->set_items( [
-				Inline_Editing_Control::bind_to( 'title' )
-					->set_placeholder( __( 'Type your title here', 'elementor' ) )
-					->set_label( __( 'Title', 'elementor' ) ),
-			] );
-
 		return [
-			$content_section,
+			Section::make()
+				->set_label( __( 'Content', 'elementor' ) )
+				->set_items( [
+					Inline_Editing_Control::bind_to( 'paragraph' )
+						->set_placeholder( __( 'Type your paragraph here', 'elementor' ) )
+						->set_label( __( 'Paragraph', 'elementor' ) ),
+				] ),
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
@@ -91,28 +101,12 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			Select_Control::bind_to( 'tag' )
 				->set_options([
 					[
-						'value' => 'h1',
-						'label' => 'H1',
+						'value' => 'p',
+						'label' => 'p',
 					],
 					[
-						'value' => 'h2',
-						'label' => 'H2',
-					],
-					[
-						'value' => 'h3',
-						'label' => 'H3',
-					],
-					[
-						'value' => 'h4',
-						'label' => 'H4',
-					],
-					[
-						'value' => 'h5',
-						'label' => 'H5',
-					],
-					[
-						'value' => 'h6',
-						'label' => 'H6',
+						'value' => 'span',
+						'label' => 'span',
 					],
 				])
 				->set_label( __( 'Tag', 'elementor' ) ),
@@ -123,8 +117,8 @@ class Atomic_Heading extends Atomic_Widget_Base {
 					'topDivider' => true,
 				] ),
 			Text_Control::bind_to( '_cssid' )
-			->set_label( __( 'ID', 'elementor' ) )
-			->set_meta( $this->get_css_id_control_meta() ),
+				->set_label( __( 'ID', 'elementor' ) )
+				->set_meta( $this->get_css_id_control_meta() ),
 		];
 	}
 
@@ -151,7 +145,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 	protected function get_templates(): array {
 		return [
-			'elementor/elements/atomic-heading' => __DIR__ . '/atomic-heading.html.twig',
+			'elementor/elements/atomic-paragraph' => __DIR__ . '/atomic-paragraph.html.twig',
 		];
 	}
 }

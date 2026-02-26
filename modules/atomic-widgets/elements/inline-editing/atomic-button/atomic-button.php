@@ -1,17 +1,17 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Button;
+namespace Elementor\Modules\AtomicWidgets\Elements\InlineEditing\Atomic_Button;
 
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Inline_Editing_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
-use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Span_Children_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Button extends Atomic_Widget_Base {
-	use Has_Template;
+	use Has_Span_Children_Template;
 
 	public static function get_element_type(): string {
 		return 'e-button';
@@ -49,7 +49,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
-			'text' => Html_V3_Prop_Type::make()
+			'text' => self::get_html_prop_type()
 				->default( [
 					'content'  => String_Prop_Type::generate( __( 'Click here', 'elementor' ) ),
 					'children' => [],

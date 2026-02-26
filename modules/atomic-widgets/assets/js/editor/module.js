@@ -6,6 +6,8 @@ import createAtomicFormType from './atomic-element-types/atomic-form/create-atom
 import createFormMessageType from './atomic-element-types/atomic-form/create-form-message-type';
 import createDivBlockType from './atomic-element-types/create-div-block-type';
 import createFlexboxType from './atomic-element-types/create-flexbox-type';
+import createAtomicParagraphType from './atomic-element-types/create-atomic-paragraph-type';
+import createAtomicSpanChildType from './atomic-element-types/create-atomic-span-child-type';
 
 class Module extends elementorModules.editor.utils.Module {
 	onInit() {
@@ -24,6 +26,8 @@ class Module extends elementorModules.editor.utils.Module {
 	registerAtomicElements() {
 		elementor.elementsManager.registerElementType( createDivBlockType() );
 		elementor.elementsManager.registerElementType( createFlexboxType() );
+		elementor.elementsManager.registerElementType( createAtomicParagraphType() );
+		elementor.elementsManager.registerElementType( createAtomicSpanChildType() );
 		elementor.elementsManager.registerElementType( createAtomicFormType() );
 		elementor.elementsManager.registerElementType( createFormMessageType( 'e-form-success-message' ) );
 		elementor.elementsManager.registerElementType( createFormMessageType( 'e-form-error-message' ) );

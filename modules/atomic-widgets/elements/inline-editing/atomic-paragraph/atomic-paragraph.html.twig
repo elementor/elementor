@@ -1,4 +1,8 @@
-{% if settings.paragraph is not empty %}
+{% set paragraph_content = settings.paragraph.content is defined ? settings.paragraph.content : settings.paragraph %}
+{% set render_children = children_html is defined and children_html is not empty %}
+{% set tags_list = allowed_tags is defined ? allowed_tags : '<b><strong><sup><sub><s><em><u><ul><ol><li><blockquote><a><del><span><br>' %}
+
+{% if paragraph_content is not empty %}
 	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
 		<{{ settings.tag | e('html_tag') }} class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}" data-interaction-id="{{ id }}" {{ id_attribute }} {{ settings.attributes | raw }}>
 			{% if settings.link.href %}
@@ -8,10 +12,18 @@
 					target="{{ settings.link.target }}"
 					class="{{ base_styles['link-base'] }}"
 				>
-						{{ settings.paragraph | striptags(allowed_tags) | raw }}
+					{% if render_children %}
+						{{ children_html | raw }}
+					{% else %}
+						{{ paragraph_content | striptags(tags_list) | raw }}
+					{% endif %}
 				</{{ settings.link.tag | e('html_tag') }}>
 			{% else %}
-					{{ settings.paragraph | striptags('<b><strong><sup><sub><s><em><u><ul><ol><li><blockquote><a><del><span><br>') | raw }}
+					{% if render_children %}
+						{{ children_html | raw }}
+					{% else %}
+						{{ paragraph_content | striptags(tags_list) | raw }}
+					{% endif %}
 			{% endif %}
 		</{{ settings.tag | e('html_tag') }}>
 {% endif %}

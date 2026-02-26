@@ -9,10 +9,10 @@ use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Youtube\Atomic_Youtube;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
+use Elementor\Modules\AtomicWidgets\Elements\InlineEditing\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
+use Elementor\Modules\AtomicWidgets\Elements\InlineEditing\Atomic_Paragraph\Atomic_Paragraph;
+use Elementor\Modules\AtomicWidgets\Elements\InlineEditing\Atomic_Button\Atomic_Button;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Divider\Atomic_Divider;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs\Atomic_Tabs;
@@ -72,8 +72,8 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Date_Time_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Backdrop_Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Gradient_Color_Stop_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_V2_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html\Html_V2_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Layout_Direction_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Flex_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
@@ -104,6 +104,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content\Atom
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Success_Message\Form_Success_Message;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Error_Message\Form_Error_Message;
+use Elementor\Modules\AtomicWidgets\Elements\InlineEditing\AtomicSpanChild\Atomic_Span_Child;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
@@ -255,17 +256,19 @@ class Module extends BaseModule {
 	private function register_widgets( Widgets_Manager $widgets_manager ) {
 		$widgets_manager->register( new Atomic_Heading() );
 		$widgets_manager->register( new Atomic_Image() );
-		$widgets_manager->register( new Atomic_Paragraph() );
 		$widgets_manager->register( new Atomic_Svg() );
 		$widgets_manager->register( new Atomic_Button() );
 		$widgets_manager->register( new Atomic_Youtube() );
 		$widgets_manager->register( new Atomic_Divider() );
 	}
-
+	
 	private function register_elements( Elements_Manager $elements_manager ) {
 		$elements_manager->register_element_type( new Div_Block() );
 		$elements_manager->register_element_type( new Flexbox() );
-
+		
+		$elements_manager->register_element_type( new Atomic_Span_Child() );
+		$elements_manager->register_element_type( new Atomic_Paragraph() );
+		
 		$elements_manager->register_element_type( new Atomic_Tabs() );
 		$elements_manager->register_element_type( new Atomic_Tabs_Menu() );
 		$elements_manager->register_element_type( new Atomic_Tab() );

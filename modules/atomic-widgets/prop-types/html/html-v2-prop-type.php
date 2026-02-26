@@ -1,9 +1,9 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropTypes;
+namespace Elementor\Modules\AtomicWidgets\PropTypes\Html;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html\Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
