@@ -9,3 +9,4 @@ export { useSearchState, type UseSearchStateResult } from './use-search-state';
 export { generateUniqueId } from './generate-unique-id';
 export { capitalize } from './string-helpers';
 export { compareVersions, isVersionLessThan, isVersionGreaterOrEqual } from './version';
+export { createTranslate } from './translations';
