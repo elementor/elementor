@@ -52,14 +52,13 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 					rootContainers: generatedRootContainers,
 				} = compositionBuilder.build( documentContainer );
 
+				rootContainers.push( ...generatedRootContainers );
 				generatedXML = new XMLSerializer().serializeToString( compositionBuilder.getXML() );
 
 				if ( configErrors.length ) {
 					errors.push( ...configErrors.map( ( e ) => new Error( e ) ) );
 					throw new Error( 'Configuration errors occurred during composition building.' );
 				}
-
-				rootContainers.push( ...generatedRootContainers );
 
 				Object.entries( invalidStyles ).forEach( ( [ elementId, rawCssRules ] ) => {
 					const customCss = {
