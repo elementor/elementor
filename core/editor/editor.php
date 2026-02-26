@@ -539,26 +539,25 @@ class Editor {
 		add_filter( 'wp_link_query_args', [ $this, 'filter_wp_link_query_args' ] );
 		add_filter( 'wp_link_query', [ $this, 'filter_wp_link_query' ] );
 
-		add_action( 'admin_init', [ $this, 'maybe_remove_cross_origin_isolation' ] );
+		add_filter( 'replace_editor', [ $this, 'filter_replace_editor' ], 10, 2 );
 	}
 
 	/**
-	 * Removes WordPress 7.0+ cross-origin isolation hooks when the Elementor editor is active.
+	 * Signals to WordPress that Elementor is replacing the block editor on its own editor page,
+	 * so that block-editor-specific behaviour (e.g. WP 7.0 COOP/COEP isolation headers) is not
+	 * applied when the Elementor editor is active.
 	 *
-	 * WordPress 7.0 adds COOP + COEP headers on block-editor admin pages via
-	 * wp_set_up_cross_origin_isolation(). These headers cause a SecurityError when
-	 * Elementor's JS tries to access the preview iframe's contentWindow. Removing
-	 * the hook before load-post.php fires prevents those headers from being set on
-	 * the Elementor editor page without touching is_block_editor or any other
-	 * WP_Screen state, which avoids side-effects on the Gutenberg conversion flow.
+	 * @param bool     $replace Whether the editor is being replaced.
+	 * @param \WP_Post $post    The post being edited.
+	 *
+	 * @return bool
 	 */
-	public function maybe_remove_cross_origin_isolation() {
-		if ( ! isset( $_REQUEST['action'] ) || 'elementor' !== $_REQUEST['action'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			return;
+	public function filter_replace_editor( $replace, $post ) {
+		if ( isset( $_REQUEST['action'] ) && 'elementor' === $_REQUEST['action'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return true;
 		}
 
-		remove_action( 'load-post.php', 'wp_set_up_cross_origin_isolation' );
-		remove_action( 'load-post-new.php', 'wp_set_up_cross_origin_isolation' );
+		return $replace;
 	}
 
 	/**
