@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useMemo } from 'react';
 import {
 	BoxShadowRepeaterControl,
 	FilterRepeaterControl,
@@ -28,7 +27,7 @@ export const EffectsSection = () => {
 	const { element } = useElement();
 	const { meta } = useStyle();
 
-	const canHaveChildren = useMemo( () => canElementHaveChildren( element?.id ?? '' ), [ element?.id ] );
+	const canHaveChildren = canElementHaveChildren( element?.id ?? '' );
 
 	return (
 		<SectionContent gap={ 1 }>
