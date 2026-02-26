@@ -1156,6 +1156,21 @@ class Source_Local extends Source_Base {
 		}
 	}
 
+	public function redirect_categories_page_to_saved_templates_page() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$taxonomy = sanitize_key( wp_unslash( $_GET['taxonomy'] ?? '' ) );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$post_type = sanitize_key( wp_unslash( $_GET['post_type'] ?? '' ) );
+		$is_categories_page = 'edit-tags.php' === $GLOBALS['pagenow']
+			&& self::TAXONOMY_CATEGORY_SLUG === $taxonomy
+			&& self::CPT === $post_type;
+
+		if ( $is_categories_page ) {
+			wp_safe_redirect( admin_url( 'edit.php?post_type=' . self::CPT . '&tabs_group=library' ) );
+			die;
+		}
+	}
+
 	/**
 	 * Is template library supports export.
 	 *
@@ -1797,6 +1812,8 @@ class Source_Local extends Source_Base {
 			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 				$this->register_admin_menu( $admin_menu );
 			}, static::ADMIN_MENU_PRIORITY );
+
+			add_action( 'admin_init', [ $this, 'redirect_categories_page_to_saved_templates_page' ] );
 
 			add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 				$this->register_editor_one_menu( $menu_data_provider );
