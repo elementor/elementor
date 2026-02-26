@@ -88,19 +88,19 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 			await expect( page.getByRole( 'heading', { name: 'What is your site about?' } ) ).toBeVisible();
 			await expect( page.getByText( 'Choose anything that applies.' ) ).toBeVisible();
 
-			await expect( page.getByRole( 'button', { name: 'Small business' } ) ).toBeVisible();
+			await expect( page.getByRole( 'button', { name: 'Small-Med Business' } ) ).toBeVisible();
 			await expect( page.getByRole( 'button', { name: 'Online store' } ) ).toBeVisible();
 			await expect( page.getByRole( 'button', { name: 'Company site' } ) ).toBeVisible();
 			await expect( page.getByRole( 'button', { name: 'Blog' } ) ).toBeVisible();
 			await expect( page.getByRole( 'button', { name: 'Landing page' } ) ).toBeVisible();
 			await expect( page.getByRole( 'button', { name: 'Booking' } ) ).toBeVisible();
-			await expect( page.getByRole( 'button', { name: 'Portfolio' } ) ).toBeVisible();
+			await expect( page.getByRole( 'button', { name: 'Organization' } ) ).toBeVisible();
 			await expect( page.getByRole( 'button', { name: 'Other' } ) ).toBeVisible();
 
 			const continueBtn = page.getByRole( 'button', { name: 'Continue' } );
 			await expect( continueBtn ).toBeDisabled();
 
-			const smallBusiness = page.getByRole( 'button', { name: 'Small business' } );
+			const smallBusiness = page.getByRole( 'button', { name: 'Small-Med Business' } );
 			await smallBusiness.click();
 			await expect( smallBusiness ).toHaveAttribute( 'aria-pressed', 'true' );
 
@@ -243,7 +243,7 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 		);
 		await expect( page.getByTestId( 'site-about-step' ) ).toBeVisible();
 
-		await page.getByRole( 'button', { name: 'Small business' } ).click();
+		await page.getByRole( 'button', { name: 'Small-Med Business' } ).click();
 		await page.getByRole( 'button', { name: 'Online store' } ).click();
 		await expect( page.getByRole( 'button', { name: 'Continue' } ) ).not.toBeDisabled();
 
@@ -261,7 +261,7 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 		await expect( page.getByTestId( 'site-about-step' ) ).toBeVisible();
 
 		await expect(
-			page.getByRole( 'button', { name: 'Small business' } ),
+			page.getByRole( 'button', { name: 'Small-Med Business' } ),
 		).toHaveAttribute( 'aria-pressed', 'true' );
 		await expect(
 			page.getByRole( 'button', { name: 'Online store' } ),
@@ -302,7 +302,7 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 		);
 		await expect( page.getByTestId( 'site-about-step' ) ).toBeVisible();
 
-		await page.getByRole( 'button', { name: 'Small business' } ).click();
+		await page.getByRole( 'button', { name: 'Small-Med Business' } ).click();
 		const siteAboutContinue = page.getByRole( 'button', { name: 'Continue' } );
 		await doAndWaitForProgress( page, () => siteAboutContinue.click() );
 		await expect( page.getByTestId( 'experience-level-step' ) ).toBeVisible();
