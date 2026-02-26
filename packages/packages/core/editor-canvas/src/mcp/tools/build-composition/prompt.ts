@@ -25,6 +25,8 @@ export const generatePrompt = () => {
 - NO LINKS in configuration
 - Retry on errors up to 10x
 
+Note about configuration ids: These names are visible to the end-user, make sure they make sense, related and relevant.
+
 # DESIGN PHILOSOPHY: CONTEXT-DRIVEN CREATIVITY
 
 **Use the user's context aggressively.** Business type, brand personality, target audience, and purpose should drive every design decision. A law firm needs gravitas; a children's app needs playfulness. Don't default to generic.
@@ -105,15 +107,15 @@ BAD: \`<e-flexbox style="height:100vh"><e-div-block style="height:100vh">overflo
 	buildCompositionsToolPrompt.example( `
 Section with heading + button (NO explicit heights - content sizes naturally):
 {
-  xmlStructure: "<e-flexbox configuration-id="section1"><e-heading configuration-id="heading1"></e-heading><e-button configuration-id="cta1"></e-button></e-flexbox>",
+  xmlStructure: "<e-flexbox configuration-id="Main Section"><e-heading configuration-id="Section Title"></e-heading><e-button configuration-id="Call to Action"></e-button></e-flexbox>",
   elementConfig: {
     "section1": { "tag": { "$$type": "string", "value": "section" } }
   },
   customCSS: {
-    "section1": "padding: 6rem 4rem; background: linear-gradient(135deg, #faf8f5 0%, #f0ebe4 100%);"
+    "Section Title": "padding: 6rem 4rem; background: linear-gradient(135deg, #faf8f5 0%, #f0ebe4 100%);"
   },
   stylesConfig: {
-    "heading1": {
+    "Section Title": {
       "font-size": { "$$type": "size", "value": { "size": { "$$type": "number", "value": 3.5 }, "unit": { "$$type": "string", "value": "rem" } } },
       "color": { "$$type": "color", "value": { "$$type": "string", "value": "#2d2a26" } }
     }

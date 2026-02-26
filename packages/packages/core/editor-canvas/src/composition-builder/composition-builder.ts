@@ -99,6 +99,9 @@ export class CompositionBuilder {
 					model: {
 						elType: elementTag,
 						id: generateElementId(),
+						editor_settings: {
+							title: node.getAttribute( 'configuration-id' ) ?? undefined,
+						},
 					},
 					options: { useHistory: false },
 			  } )
@@ -108,6 +111,9 @@ export class CompositionBuilder {
 						elType: 'widget',
 						widgetType: elementTag,
 						id: generateElementId(),
+						editor_settings: {
+							title: node.getAttribute( 'configuration-id' ) ?? undefined,
+						},
 					},
 					options: { useHistory: false },
 			  } );
