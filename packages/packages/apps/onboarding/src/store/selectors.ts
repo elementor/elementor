@@ -34,8 +34,6 @@ const selectShouldShowProInstallScreen = ( state: State ) => state.onboarding.sh
 
 export const selectHasProInstallScreenDismissed = ( state: State ) => state.onboarding.hasProInstallScreenDismissed;
 
-export const selectIsProInstalled = ( state: State ) => state.onboarding.isProInstalled;
-
 export const selectCurrentStep = __createSelector(
 	[ selectSteps, selectCurrentStepIndex ],
 	( steps, index ) => steps[ index ] ?? null

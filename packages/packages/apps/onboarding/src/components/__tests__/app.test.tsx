@@ -46,7 +46,6 @@ interface OnboardingConfig {
 	isConnected: boolean;
 	translations?: Record< string, string >;
 	shouldShowProInstallScreen?: boolean;
-	hasProInstalledBeforeOnboarding: boolean;
 	urls: {
 		dashboard: string;
 		editor: string;
@@ -98,7 +97,6 @@ const defaultConfig: OnboardingConfig = {
 	hadUnexpectedExit: false,
 	isConnected: false,
 	shouldShowProInstallScreen: false,
-	hasProInstalledBeforeOnboarding: false,
 	urls: {
 		dashboard: 'https://test.local/wp-admin/',
 		editor: 'https://test.local/editor',
@@ -465,65 +463,6 @@ describe( 'App', () => {
 				'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar&utm_term=2.0.0',
 				'_blank'
 			);
-		} );
-
-		it( 'should hide the Upgrade button when Pro plugin is already active before onboarding', () => {
-			// Arrange
-			window.elementorAppConfig = createMockConfig( {
-				isConnected: true,
-				hasProInstalledBeforeOnboarding: true,
-			} );
-
-			// Act
-			render( <App /> );
-
-			// Assert
-			expect( screen.queryByText( 'Upgrade' ) ).not.toBeInTheDocument();
-		} );
-
-		it( 'should keep the Upgrade button visible after dismissing the Pro install screen', async () => {
-			// Arrange
-			window.elementorAppConfig = createMockConfig( {
-				isConnected: true,
-				shouldShowProInstallScreen: true,
-			} );
-
-			render( <App /> );
-			expect( screen.getByTestId( 'pro-install-screen' ) ).toBeInTheDocument();
-
-			// Act
-			fireEvent.click( screen.getByText( "I'll do it later" ) );
-
-			// Assert
-			await waitFor( () => {
-				expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
-			} );
-			expect( screen.getByText( 'Upgrade' ) ).toBeInTheDocument();
-		} );
-
-		it( 'should hide the Upgrade button after Pro is installed', async () => {
-			// Arrange
-			mockFetch.mockResolvedValue( {
-				ok: true,
-				json: () => Promise.resolve( { data: { success: true, message: 'installed' } } ),
-			} );
-
-			window.elementorAppConfig = createMockConfig( {
-				isConnected: true,
-				shouldShowProInstallScreen: true,
-			} );
-
-			render( <App /> );
-			expect( screen.getByTestId( 'pro-install-screen' ) ).toBeInTheDocument();
-
-			// Act
-			fireEvent.click( screen.getByText( 'Install Pro on this site' ) );
-
-			// Assert
-			await waitFor( () => {
-				expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
-			} );
-			expect( screen.queryByText( 'Upgrade' ) ).not.toBeInTheDocument();
 		} );
 	} );
 

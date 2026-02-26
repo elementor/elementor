@@ -120,7 +120,6 @@ class Module extends BaseModule {
 			'steps' => $steps,
 			'uiTheme' => $this->get_ui_theme_preference(),
 			'translations' => $this->get_translated_strings(),
-			'hasProInstalledBeforeOnboarding' => $this->is_elementor_pro_installed(),
 			'shouldShowProInstallScreen' => $is_connected ? $this->should_show_pro_install_screen() : false,
 			'urls' => [
 				'dashboard' => admin_url(),

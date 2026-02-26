@@ -27,7 +27,6 @@ interface EOnboardingConfig {
 	hadUnexpectedExit: boolean;
 	isConnected: boolean;
 	shouldShowProInstallScreen?: boolean;
-	hasProInstalledBeforeOnboarding?: boolean;
 	userName?: string;
 	uiTheme?: 'auto' | 'dark' | 'light';
 	translations?: Record< string, string >;

@@ -44,7 +44,6 @@ export function AppContent( { onClose }: AppContentProps ) {
 		isLoading,
 		hasPassedLogin,
 		shouldShowProInstall,
-		isProInstalled,
 		choices,
 		completedSteps,
 		urls,

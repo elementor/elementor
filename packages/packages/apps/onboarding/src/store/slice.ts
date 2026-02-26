@@ -77,7 +77,6 @@ function getEmptyState(): OnboardingState {
 		urls: { dashboard: '', editor: '', connect: '', comparePlans: '', upgradeUrl: '' },
 		shouldShowProInstallScreen: false,
 		hasProInstallScreenDismissed: false,
-		isProInstalled: false,
 	};
 }
 
@@ -124,7 +123,6 @@ function buildStateFromConfig(
 		},
 		shouldShowProInstallScreen: config.shouldShowProInstallScreen ?? false,
 		hasProInstallScreenDismissed: false,
-		isProInstalled: config.hasProInstalledBeforeOnboarding ?? false,
 	};
 }
 
@@ -241,7 +239,6 @@ export const slice = __createSlice( {
 		},
 
 		markProInstalled: ( state ) => {
-			state.isProInstalled = true;
 			state.hasProInstallScreenDismissed = true;
 			state.steps = state.steps.filter( ( step ) => step.id !== StepId.SITE_FEATURES );
 		},

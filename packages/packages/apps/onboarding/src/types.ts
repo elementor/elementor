@@ -67,7 +67,6 @@ export interface OnboardingConfig {
 	steps: Step[];
 	isConnected: boolean;
 	shouldShowProInstallScreen: boolean;
-	hasProInstalledBeforeOnboarding: boolean;
 	urls: {
 		dashboard: string;
 		editor: string;
@@ -96,7 +95,6 @@ export interface OnboardingState {
 	userName: string;
 	shouldShowProInstallScreen: boolean;
 	hasProInstallScreenDismissed: boolean;
-	isProInstalled: boolean;
 	urls: {
 		dashboard: string;
 		editor: string;
