@@ -99,3 +99,4 @@ class Presets {
 
 		return esc_html( $label );
 	}
+}
