@@ -118,7 +118,7 @@ function buildStateFromConfig(
 		urls: config.urls ?? { dashboard: '', editor: '', connect: '', comparePlans: '', exploreFeatures: '' },
 		shouldShowProInstallScreen: config.shouldShowProInstallScreen ?? false,
 		hasProInstallScreenDismissed: false,
-		isProInstalled: false,
+		isProInstalled: config.hasProInstalledBeforeOnboarding ?? false,
 	};
 }
 

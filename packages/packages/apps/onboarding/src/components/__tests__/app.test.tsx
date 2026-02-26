@@ -46,6 +46,7 @@ interface OnboardingConfig {
 	isConnected: boolean;
 	translations?: Record< string, string >;
 	shouldShowProInstallScreen?: boolean;
+	hasProInstalledBeforeOnboarding?: boolean;
 	urls: {
 		dashboard: string;
 		editor: string;
@@ -53,7 +54,7 @@ interface OnboardingConfig {
 		comparePlans?: string;
 		exploreFeatures?: string;
 		createNewPage?: string;
-		upgradeUrl?: string | null;
+		upgradeUrl: string;
 	};
 }
 
@@ -467,16 +468,11 @@ describe( 'App', () => {
 			);
 		} );
 
-		it( 'should hide the Upgrade button when upgradeUrl is not provided (Pro already active)', () => {
+		it( 'should hide the Upgrade button when Pro plugin is already active before onboarding', () => {
 			// Arrange
 			window.elementorAppConfig = createMockConfig( {
 				isConnected: true,
-				urls: {
-					dashboard: 'https://test.local/wp-admin/',
-					editor: 'https://test.local/editor',
-					connect: 'https://test.local/connect',
-					upgradeUrl: null,
-				},
+				hasProInstalledBeforeOnboarding: true,
 			} );
 
 			// Act
@@ -499,7 +495,7 @@ describe( 'App', () => {
 			// Act
 			fireEvent.click( screen.getByText( "I'll do it later" ) );
 
-			// Assert - dismissed means Pro not yet installed; Upgrade button stays visible
+			// Assert
 			await waitFor( () => {
 				expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
 			} );
