@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ArrowRightIcon, CheckIcon, CrownFilledIcon } from '@elementor/icons';
+import { CheckIcon, CrownFilledIcon } from '@elementor/icons';
 import { Box, Chip, styled, Typography } from '@elementor/ui';
 
 import { SelectionBadge } from '../../../components/ui/selection-badge';
