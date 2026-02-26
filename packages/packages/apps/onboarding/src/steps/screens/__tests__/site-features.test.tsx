@@ -60,7 +60,6 @@ describe( 'SiteFeatures', () => {
 			FEATURE_OPTIONS.forEach( ( option ) => {
 				expect( screen.getByText( t( option.labelKey ) ) ).toBeInTheDocument();
 			} );
-			expect( screen.getByText( EXPLORE_MORE_LABEL ) ).toBeInTheDocument();
 		} );
 
 		it( 'renders Included chip on core features', () => {

@@ -44,5 +44,4 @@ export {
 	selectHasPassedLogin,
 	selectHasProInstallScreenDismissed,
 	selectShouldShowProInstall,
-	selectIsProInstalled,
 } from './selectors';
