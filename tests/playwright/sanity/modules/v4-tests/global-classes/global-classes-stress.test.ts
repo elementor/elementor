@@ -1,4 +1,4 @@
-import { expect, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
 import Breakpoints from '../../../../assets/breakpoints';
 import type EditorPage from '../../../../pages/editor-page';
@@ -9,9 +9,11 @@ import { deleteAllGlobalClasses } from './utils';
 import { timeouts } from '../../../../config/timeouts';
 
 /**
- * This is an initial set of stress tests, currently meant to be executed manually+locally (against a valid .env file)
+ * This is an initial set of stress tests
  *
  * This test adds 10 global styles to a widget via the UI
+ * it intentionally doesn't assert anything yet, since it should be executed only as part of some stress tests suite
+ * as it is a bit of a time-consuming test, aimed only to see the UI doesn't get unresponsive at edge-case scenarios
  */
 
 const CLASS_COUNT = 10;
@@ -179,9 +181,5 @@ test.describe.skip( 'Global Classes Memory Stress Test @stress', () => {
 
 		const globalClassesStylesheets = stylesheets.filter( ( href ) => href.includes( 'global-classes' ) );
 		logProgress( `Found ${ globalClassesStylesheets.length } global classes stylesheets` );
-
-		logProgress( 'Stress test completed successfully!' );
-
-		expect( true ).toBe( true );
 	} );
 } );

@@ -75,31 +75,30 @@ export function useStyleItems() {
 		} );
 	} );
 
+	const breakpointSorter = useMemo(
+		() => createBreakpointSorter( breakpoints.map( ( breakpoint ) => breakpoint.id ) ),
+		[ breakpoints ]
+	);
+
 	return useMemo(
 		() =>
 			Object.values( styleItems )
-				.sort( sortByProviderPriority )
+				.sort( prioritySorter )
 				.flatMap( ( { items } ) => items )
-				.sort( sortByStateType )
-				.sort( sortByBreakpoint( breakpoints.map( ( breakpoint ) => breakpoint.id ) ) ),
-		[ styleItems, breakpoints ]
+				.sort( stateSorter )
+				.sort( breakpointSorter ),
+		[ styleItems, breakpointSorter ]
 	);
 }
 
-function sortByProviderPriority(
+function prioritySorter(
 	{ provider: providerA }: ProviderAndStyleItems,
 	{ provider: providerB }: ProviderAndStyleItems
 ) {
 	return providerA.priority - providerB.priority;
 }
 
-function sortByBreakpoint( breakpointsOrder: BreakpointId[] ) {
-	return ( { breakpoint: breakpointA }: StyleItem, { breakpoint: breakpointB }: StyleItem ) =>
-		breakpointsOrder.indexOf( breakpointA as BreakpointId ) -
-		breakpointsOrder.indexOf( breakpointB as BreakpointId );
-}
-
-function sortByStateType( { state: stateA }: StyleItem, { state: stateB }: StyleItem ) {
+function stateSorter( { state: stateA }: StyleItem, { state: stateB }: StyleItem ) {
 	if (
 		isClassState( stateA as StyleDefinitionClassState ) &&
 		! isClassState( stateB as StyleDefinitionClassState )
@@ -115,6 +114,12 @@ function sortByStateType( { state: stateA }: StyleItem, { state: stateB }: Style
 	}
 
 	return 0;
+}
+
+function createBreakpointSorter( breakpointsOrder: BreakpointId[] ) {
+	return ( { breakpoint: breakpointA }: StyleItem, { breakpoint: breakpointB }: StyleItem ) =>
+		breakpointsOrder.indexOf( breakpointA as BreakpointId ) -
+		breakpointsOrder.indexOf( breakpointB as BreakpointId );
 }
 
 type CreateProviderSubscriberArgs = {
@@ -240,8 +245,8 @@ function getOrderedItems( cache: StyleItemsCache ): StyleItem[] {
 		.flat();
 }
 
-function updateCacheItems( cache: StyleItemsCache, rendered: StyleItem[] ): void {
-	for ( const item of rendered ) {
+function updateCacheItems( cache: StyleItemsCache, changedItems: StyleItem[] ): void {
+	for ( const item of changedItems ) {
 		const existing = cache.itemsById.get( item.id );
 		if ( existing ) {
 			const idx = existing.findIndex( ( e ) => e.breakpoint === item.breakpoint && e.state === item.state );
@@ -256,11 +261,11 @@ function updateCacheItems( cache: StyleItemsCache, rendered: StyleItem[] ): void
 	}
 }
 
-function rebuildCache( cache: StyleItemsCache, allStyles: StyleDefinition[], rendered: StyleItem[] ): void {
+function rebuildCache( cache: StyleItemsCache, allStyles: StyleDefinition[], items: StyleItem[] ): void {
 	cache.orderedIds = allStyles.map( ( style ) => style.id ).reverse();
 	cache.itemsById.clear();
 
-	for ( const item of rendered ) {
+	for ( const item of items ) {
 		const existing = cache.itemsById.get( item.id ) || [];
 		existing.push( item );
 		cache.itemsById.set( item.id, existing );
