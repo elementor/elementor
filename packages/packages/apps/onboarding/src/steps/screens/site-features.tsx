@@ -12,6 +12,7 @@ import {
 import { Stack, type Theme, Typography } from '@elementor/ui';
 
 import { CorePlaceholderIcon } from '../../components/ui/core-placeholder-icon';
+import { WoocommerceIcon } from '../../components/ui/woocommerce-icon';
 import { useOnboarding } from '../../hooks/use-onboarding';
 import { t } from '../../utils/translations';
 import { FeatureGrid, type FeatureOption, ProPlanNotice } from '../components/site-features';
@@ -70,6 +71,12 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 		labelKey: 'steps.site_features.option_accessibility_tools',
 		Icon: ElementorAccessibilityIcon,
 		licenseType: 'one',
+	},
+	{
+		id: 'woocommerce_builder',
+		labelKey: 'steps.site_features.option_woocommerce_builder',
+		Icon: WoocommerceIcon,
+		licenseType: 'pro',
 	},
 ];
 

@@ -173,7 +173,6 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick, onExplor
 					</FeatureCard>
 				);
 			} ) }
-			<ExploreMoreCard onClick={ onExploreMoreClick } onKeyDown={ handleKeyDown } />
 		</Box>
 	);
 }
