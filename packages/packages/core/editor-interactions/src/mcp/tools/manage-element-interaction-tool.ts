@@ -1,7 +1,7 @@
 import { updateElementInteractions } from '@elementor/editor-elements';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { z } from '@elementor/schema';
-import { isProUser } from '@elementor/utils';
+import { isProActive } from '@elementor/utils';
 
 import { interactionsRepository } from '../../interactions-repository';
 import { type ElementInteractions } from '../../types';
@@ -18,7 +18,7 @@ const EMPTY_INTERACTIONS: ElementInteractions = {
 
 export const initManageElementInteractionTool = ( reg: MCPRegistryEntry ) => {
 	const { addTool } = reg;
-	const extendedSchema = isProUser() ? { ...baseSchema, ...proSchema } : baseSchema;
+	const extendedSchema = isProActive() ? { ...baseSchema, ...proSchema } : baseSchema;
 	const schema = {
 		elementId: z.string().describe( 'The ID of the element to read or modify interactions on' ),
 		action: z

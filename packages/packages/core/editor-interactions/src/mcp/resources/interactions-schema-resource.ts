@@ -1,5 +1,5 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
-import { isProUser } from '@elementor/utils';
+import { isProActive } from '@elementor/utils';
 
 import { baseSchema, proSchema } from '../tools/schema';
 
@@ -7,7 +7,7 @@ export const INTERACTIONS_SCHEMA_URI = 'elementor://interactions/schema';
 
 export const initInteractionsSchemaResource = ( reg: MCPRegistryEntry ) => {
 	const { resource } = reg;
-	const schema = isProUser() ? { ...baseSchema, ...proSchema } : baseSchema;
+	const schema = isProActive() ? { ...baseSchema, ...proSchema } : baseSchema;
 
 	resource(
 		'interactions-schema',
