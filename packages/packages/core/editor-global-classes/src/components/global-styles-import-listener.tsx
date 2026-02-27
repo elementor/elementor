@@ -8,7 +8,24 @@ export function GlobalStylesImportListener() {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		const handleGlobalStylesImported = () => {
+		const handleGlobalStylesImported = ( event: CustomEvent ) => {
+			const importedClasses = event.detail?.global_classes;
+
+			if ( importedClasses?.items && importedClasses?.order ) {
+				dispatch(
+					slice.actions.load( {
+						preview: {
+							items: importedClasses.items,
+							order: importedClasses.order,
+						},
+						frontend: {
+							items: importedClasses.items,
+							order: importedClasses.order,
+						},
+					} )
+				);
+			}
+
 			Promise.all( [ apiClient.all( 'preview' ), apiClient.all( 'frontend' ) ] ).then(
 				( [ previewRes, frontendRes ] ) => {
 					const { data: previewData } = previewRes;
@@ -30,10 +47,10 @@ export function GlobalStylesImportListener() {
 			);
 		};
 
-		window.addEventListener( 'elementor/global-styles/imported', handleGlobalStylesImported );
+		window.addEventListener( 'elementor/global-styles/imported', handleGlobalStylesImported as EventListener );
 
 		return () => {
-			window.removeEventListener( 'elementor/global-styles/imported', handleGlobalStylesImported );
+			window.removeEventListener( 'elementor/global-styles/imported', handleGlobalStylesImported as EventListener );
 		};
 	}, [ dispatch ] );
 

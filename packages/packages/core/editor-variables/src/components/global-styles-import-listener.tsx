@@ -1,13 +1,22 @@
 import { useEffect } from 'react';
 
 import { service } from '../service';
+import { styleVariablesRepository } from '../style-variables-repository';
 
 export function GlobalStylesImportListener() {
 	useEffect( () => {
 		const handleGlobalStylesImported = ( event: CustomEvent ) => {
-			if ( event.detail?.global_variables ) {
-				service.load();
+			const importedVars = event.detail?.global_variables;
+
+			if ( ! importedVars ) {
+				return;
 			}
+
+			if ( importedVars.data && typeof importedVars.data === 'object' ) {
+				styleVariablesRepository.update( importedVars.data );
+			}
+
+			service.load();
 		};
 
 		window.addEventListener( 'elementor/global-styles/imported', handleGlobalStylesImported as EventListener );
