@@ -100,6 +100,25 @@ class Template_Library_Global_Classes_Snapshot_Builder extends Template_Library_
 		return [ 'id' ];
 	}
 
+	protected function normalize_for_comparison( array $item ): array {
+		$id = $item['id'] ?? '';
+
+		if ( '' === $id ) {
+			return $item;
+		}
+
+		$parsed = self::parse_snapshot_or_null( [
+			'items' => [ $id => $item ],
+			'order' => [ $id ],
+		] );
+
+		if ( null !== $parsed && isset( $parsed['items'][ $id ] ) ) {
+			return $parsed['items'][ $id ];
+		}
+
+		return $item;
+	}
+
 	protected function get_item_prefix(): string {
 		return 'g-';
 	}

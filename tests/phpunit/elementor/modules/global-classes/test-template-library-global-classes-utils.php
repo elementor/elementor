@@ -248,7 +248,7 @@ class Test_Template_Library_Global_Classes_Utils extends Elementor_Test_Base {
 				'g-2' => [
 					'id' => 'g-2',
 					'type' => 'class',
-					'label' => 'Brand New',
+					'label' => 'Fresh',
 					'variants' => [],
 				],
 			],

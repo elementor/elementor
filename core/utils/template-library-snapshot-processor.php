@@ -21,6 +21,10 @@ abstract class Template_Library_Snapshot_Processor {
 		return [];
 	}
 
+	protected function normalize_for_comparison( array $item ): array {
+		return $item;
+	}
+
 	protected function get_empty_result(): array {
 		return [
 			'id_map' => [],
@@ -67,7 +71,7 @@ abstract class Template_Library_Snapshot_Processor {
 
 			if ( null !== $matching_id && isset( $updated_items[ $matching_id ] ) ) {
 				$is_same = Template_Library_Import_Export_Utils::items_equal_ignoring_keys(
-					$updated_items[ $matching_id ],
+					$this->normalize_for_comparison( $updated_items[ $matching_id ] ),
 					$incoming_item,
 					$ignore_keys
 				);
