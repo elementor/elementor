@@ -18,7 +18,7 @@ const LAYOUT_RATIOS: Record< ImageLayout, { left: number; right: number } > = {
 
 const LAYOUT_GAP = 4;
 const LAYOUT_PADDING = 4;
-const LAYOUT_TRANSITION_MS = 300;
+export const LAYOUT_TRANSITION_MS = 300;
 const LEFT_PANEL_CONTENT_WIDTH = 386;
 const LEFT_PANEL_PADDING_X = 80;
 const LEFT_PANEL_PADDING_TOP = 40;

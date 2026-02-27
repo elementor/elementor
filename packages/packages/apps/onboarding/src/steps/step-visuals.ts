@@ -37,8 +37,9 @@ const stepVisuals: Record< StepIdType, StepVisualConfig > = {
 	},
 	[ StepId.SITE_ABOUT ]: {
 		imageLayout: 'narrow',
-		background: buildBackground( 'step-2.png' ),
+		background: buildBackground( 'step-1.png' ),
 		assets: [],
+		lottieAnimation: getOnboardingAssetUrl( 'site-about.lottie' ),
 	},
 	[ StepId.EXPERIENCE_LEVEL ]: {
 		imageLayout: 'wide',
