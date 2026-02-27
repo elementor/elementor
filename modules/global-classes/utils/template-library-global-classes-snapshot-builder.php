@@ -96,6 +96,10 @@ class Template_Library_Global_Classes_Snapshot_Builder extends Template_Library_
 		return self::make()->create_all_as_new( $snapshot );
 	}
 
+	protected function get_comparison_ignore_keys(): array {
+		return [ 'id' ];
+	}
+
 	protected function get_item_prefix(): string {
 		return 'g-';
 	}

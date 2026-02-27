@@ -135,6 +135,75 @@ class Test_Template_Library_Variables_Utils extends Elementor_Test_Base {
 		$this->assertStringStartsWith( Template_Library_Import_Export_Utils::LABEL_PREFIX, $current['data'][ $new_id ]['label'] );
 	}
 
+	public function test_merge_snapshot_matches_by_name_and_maps_id_when_content_equal() {
+		$this->act_as_admin();
+
+		$this->seed_variables( [
+			'e-gv-existing' => [
+				'type' => Color_Variable_Prop_Type::get_key(),
+				'label' => 'Brand',
+				'value' => '#ff0000',
+				'order' => 1,
+			],
+		] );
+
+		$incoming = [
+			'data' => [
+				'e-gv-remote' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Brand',
+					'value' => '#ff0000',
+					'order' => 1,
+				],
+			],
+		];
+
+		$result = Template_Library_Variables_Snapshot_Builder::merge_snapshot_and_get_id_map( $incoming );
+
+		$this->assertArrayHasKey( 'e-gv-remote', $result['id_map'] );
+		$this->assertSame( 'e-gv-existing', $result['id_map']['e-gv-remote'] );
+
+		$current = $this->repository()->load()->serialize();
+		$active_count = 0;
+		foreach ( $current['data'] as $item ) {
+			if ( empty( $item['deleted'] ) ) {
+				++$active_count;
+			}
+		}
+		$this->assertSame( 1, $active_count );
+	}
+
+	public function test_merge_snapshot_creates_new_when_no_name_match() {
+		$this->act_as_admin();
+
+		$this->seed_variables( [
+			'e-gv-1' => [
+				'type' => Color_Variable_Prop_Type::get_key(),
+				'label' => 'Existing',
+				'value' => '#000000',
+				'order' => 1,
+			],
+		] );
+
+		$incoming = [
+			'data' => [
+				'e-gv-2' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'BrandNew',
+					'value' => '#ffffff',
+					'order' => 1,
+				],
+			],
+		];
+
+		$result = Template_Library_Variables_Snapshot_Builder::merge_snapshot_and_get_id_map( $incoming );
+
+		$this->assertEmpty( $result['id_map'] );
+
+		$current = $this->repository()->load()->serialize();
+		$this->assertArrayHasKey( 'e-gv-2', $current['data'] );
+	}
+
 	public function test_rewrite_elements_variable_ids_updates_nested_values() {
 		$elements = [
 			[

@@ -157,6 +157,26 @@ class Test_Import_Modes_Transformation extends Elementor_Test_Base {
 		$this->assertMatchesJsonSnapshot( $normalized_content );
 	}
 
+	public function test_match_site_mode_with_cross_site_name_match_remaps_id(): void {
+		$data = $this->load_fixture();
+
+		$snapshot_class = $data['global_classes']['items']['g-f83024e'];
+		$existing_class = $snapshot_class;
+		$existing_class['id'] = 'g-siteown';
+
+		Global_Classes_Repository::make()->put( [
+			'g-siteown' => $existing_class,
+		], [ 'g-siteown' ] );
+
+		$result = $this->process_import( $data, 'match_site' );
+
+		$this->assertArrayHasKey( 'content', $result );
+
+		$summary = $this->extract_transformation_summary( $result, $data );
+		$this->assertContains( 'g-siteown', $summary['global_classes_in_content'], 'Name match should remap to existing class ID' );
+		$this->assertNotContains( 'g-f83024e', $summary['global_classes_in_content'], 'Original remote ID should be remapped' );
+	}
+
 	public function test_match_site_mode_with_empty_site_creates_new_classes(): void {
 		$data = $this->load_fixture();
 

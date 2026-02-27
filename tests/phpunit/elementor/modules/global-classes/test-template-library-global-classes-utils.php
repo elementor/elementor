@@ -135,6 +135,135 @@ class Test_Template_Library_Global_Classes_Utils extends Elementor_Test_Base {
 		$this->assertStringStartsWith( Template_Library_Import_Export_Utils::LABEL_PREFIX, $current['items'][ $new_id ]['label'] );
 	}
 
+	public function test_merge_snapshot_matches_by_name_and_maps_id_when_content_equal() {
+		$this->act_as_admin();
+
+		$variants = [
+			[
+				'meta' => [
+					'breakpoint' => 'desktop',
+					'state' => null,
+				],
+				'props' => [
+					'display' => [
+						'$$type' => 'string',
+						'value' => 'block',
+					],
+				],
+			],
+		];
+
+		$this->seed_global_classes( [
+			'g-existing' => [
+				'id' => 'g-existing',
+				'type' => 'class',
+				'label' => 'Hero',
+				'variants' => $variants,
+			],
+		], [ 'g-existing' ] );
+
+		$incoming = [
+			'items' => [
+				'g-remote' => [
+					'id' => 'g-remote',
+					'type' => 'class',
+					'label' => 'Hero',
+					'variants' => $variants,
+				],
+			],
+			'order' => [ 'g-remote' ],
+		];
+
+		$result = Template_Library_Global_Classes_Snapshot_Builder::merge_snapshot_and_get_id_map( $incoming );
+
+		$this->assertArrayHasKey( 'g-remote', $result['id_map'] );
+		$this->assertSame( 'g-existing', $result['id_map']['g-remote'] );
+
+		$current = Global_Classes_Repository::make()->all()->get();
+		$this->assertCount( 1, $current['items'] );
+		$this->assertArrayHasKey( 'g-existing', $current['items'] );
+	}
+
+	public function test_merge_snapshot_skips_mapping_when_same_id_and_name_and_content() {
+		$this->act_as_admin();
+
+		$variants = [
+			[
+				'meta' => [
+					'breakpoint' => 'desktop',
+					'state' => null,
+				],
+				'props' => [
+					'display' => [
+						'$$type' => 'string',
+						'value' => 'block',
+					],
+				],
+			],
+		];
+
+		$this->seed_global_classes( [
+			'g-1' => [
+				'id' => 'g-1',
+				'type' => 'class',
+				'label' => 'Hero',
+				'variants' => $variants,
+			],
+		], [ 'g-1' ] );
+
+		$incoming = [
+			'items' => [
+				'g-1' => [
+					'id' => 'g-1',
+					'type' => 'class',
+					'label' => 'Hero',
+					'variants' => $variants,
+				],
+			],
+			'order' => [ 'g-1' ],
+		];
+
+		$result = Template_Library_Global_Classes_Snapshot_Builder::merge_snapshot_and_get_id_map( $incoming );
+
+		$this->assertEmpty( $result['id_map'] );
+
+		$current = Global_Classes_Repository::make()->all()->get();
+		$this->assertCount( 1, $current['items'] );
+	}
+
+	public function test_merge_snapshot_creates_new_when_no_name_match() {
+		$this->act_as_admin();
+
+		$this->seed_global_classes( [
+			'g-1' => [
+				'id' => 'g-1',
+				'type' => 'class',
+				'label' => 'Existing',
+				'variants' => [],
+			],
+		], [ 'g-1' ] );
+
+		$incoming = [
+			'items' => [
+				'g-2' => [
+					'id' => 'g-2',
+					'type' => 'class',
+					'label' => 'Brand New',
+					'variants' => [],
+				],
+			],
+			'order' => [ 'g-2' ],
+		];
+
+		$result = Template_Library_Global_Classes_Snapshot_Builder::merge_snapshot_and_get_id_map( $incoming );
+
+		$this->assertEmpty( $result['id_map'] );
+
+		$current = Global_Classes_Repository::make()->all()->get();
+		$this->assertCount( 2, $current['items'] );
+		$this->assertArrayHasKey( 'g-2', $current['items'] );
+	}
+
 	public function test_rewrite_elements_classes_ids_updates_values() {
 		$elements = [
 			[

@@ -18,7 +18,35 @@ class Template_Library_Import_Export_Utils {
 		$a = self::recursive_ksort( $a );
 		$b = self::recursive_ksort( $b );
 
-		return wp_json_encode( $a ) === wp_json_encode( $b );
+		$encoded_a = wp_json_encode( $a );
+		$encoded_b = wp_json_encode( $b );
+
+		if ( false === $encoded_a || false === $encoded_b ) {
+			return false;
+		}
+
+		return $encoded_a === $encoded_b;
+	}
+
+	public static function items_equal_ignoring_keys( array $a, array $b, array $ignore_keys = [] ): bool {
+		foreach ( $ignore_keys as $key ) {
+			unset( $a[ $key ], $b[ $key ] );
+		}
+
+		return self::items_equal( $a, $b );
+	}
+
+	public static function build_label_to_id_index( array $items, string $label_key = 'label' ): array {
+		$index = [];
+
+		foreach ( $items as $id => $item ) {
+			$label = $item[ $label_key ] ?? null;
+			if ( is_string( $label ) && '' !== $label && ! isset( $index[ $label ] ) ) {
+				$index[ $label ] = $id;
+			}
+		}
+
+		return $index;
 	}
 
 	public static function recursive_ksort( $value ) {
