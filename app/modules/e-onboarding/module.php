@@ -302,12 +302,15 @@ class Module extends BaseModule {
 				'label' => __( 'How much experience do you have with Elementor?', 'elementor' ),
 				'type' => 'single',
 			],
-			[
+		];
+
+		if ( ! $this->is_elementor_theme_active() ) {
+			$steps[] = [
 				'id' => 'theme_selection',
 				'label' => __( 'Start with a theme that fits your needs', 'elementor' ),
 				'type' => 'single',
-			],
-		];
+			];
+		}
 
 		if ( ! $this->is_elementor_pro_installed() ) {
 			$steps[] = [
@@ -323,5 +326,12 @@ class Module extends BaseModule {
 	private function is_elementor_pro_installed(): bool {
 		$is_pro_installed = Utils::has_pro() || Utils::is_pro_installed_and_not_active();
 		return (bool) apply_filters( 'elementor/e-onboarding/is_elementor_pro_installed', $is_pro_installed );
+	}
+
+	private function is_elementor_theme_active(): bool {
+		$active_theme = get_stylesheet();
+		$is_active = in_array( $active_theme, Onboarding_Progress_Manager::ALLOWED_THEMES, true );
+
+		return (bool) apply_filters( 'elementor/e-onboarding/is_elementor_theme_active', $is_active );
 	}
 }
