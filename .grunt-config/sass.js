@@ -94,6 +94,13 @@ const sass = {
 			},
 			{
 				expand: true,
+				cwd: 'modules/a11y-announcements/assets/scss',
+				src: 'editor.scss',
+				dest: 'assets/css/modules/a11y-announcements',
+				ext: '.css',
+			},
+			{
+				expand: true,
 				cwd: 'modules/editor-one/assets/scss',
 				src: '*.scss',
 				dest: 'assets/css/modules/editor-one',
