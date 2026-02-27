@@ -525,11 +525,11 @@ describe( 'SizeControl', () => {
 
 	describe( 'Keyboard Unit Selection', () => {
 		it.each( [
-			{ input: '%', expected: '%', description: 'exact match' },
-			{ input: 'r', expected: 'rem', description: 'prefix match' },
-			{ input: 'e', expected: 'em', description: 'prefix match' },
-			{ input: 'p', expected: 'px', description: 'prefix match' },
-			{ input: 'k', description: 'no match - should not change unit' },
+			{ input: [ '%' ], expected: '%', description: 'exact match' },
+			{ input: [ 'r', 'e' ], expected: 'rem', description: 'prefix match' },
+			{ input: [ 'e' ], expected: 'em', description: 'prefix match' },
+			{ input: [ 'p' ], expected: 'px', description: 'prefix match' },
+			{ input: [ 'k' ], description: 'no match - should not change unit' },
 		] )( 'should handle unit selection by keyboard - $description', ( { input, expected } ) => {
 			// Arrange.
 			const setValue = jest.fn();
@@ -541,7 +541,9 @@ describe( 'SizeControl', () => {
 			const sizeInput = screen.getByRole( 'spinbutton' );
 
 			// Act.
-			fireEvent.keyDown( sizeInput, { key: input } );
+			input.forEach( ( key ) => {
+				fireEvent.keyDown( sizeInput, { key } );
+			} );
 
 			// Assert.
 			if ( expected ) {
@@ -648,7 +650,7 @@ describe( 'SizeControl', () => {
 	} );
 
 	describe( 'Angle Units Support', () => {
-		it( 'should handle angle unit keyboard shortcuts', () => {
+		it( 'should handle angle unit keyboard shortcuts "deg"', () => {
 			// Arrange.
 			const setValue = jest.fn();
 			const props = { setValue, value: mockSizeProp( { size: 45, unit: 'deg' } ), bind: 'select', propType };
@@ -659,15 +661,56 @@ describe( 'SizeControl', () => {
 			const sizeInput = screen.getByRole( 'spinbutton' );
 
 			fireEvent.keyDown( sizeInput, { key: 'd' } );
+			fireEvent.keyDown( sizeInput, { key: 'e' } );
+
 			expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 45, unit: 'deg' } } );
+		} );
+
+		it( 'should handle angle unit keyboard shortcuts "rad"', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const props = { setValue, value: mockSizeProp( { size: 45, unit: 'rad' } ), bind: 'select', propType };
+
+			// Act.
+			renderControl( <SizeControl variant="angle" units={ mockAngleUnits() } disableCustom />, props );
+
+			const sizeInput = screen.getByRole( 'spinbutton' );
 
 			fireEvent.keyDown( sizeInput, { key: 'r' } );
+			fireEvent.keyDown( sizeInput, { key: 'a' } );
+
 			expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 45, unit: 'rad' } } );
+		} );
+
+		it( 'should handle angle unit keyboard shortcuts "grad"', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const props = { setValue, value: mockSizeProp( { size: 45, unit: 'grad' } ), bind: 'select', propType };
+
+			// Act.
+			renderControl( <SizeControl variant="angle" units={ mockAngleUnits() } disableCustom />, props );
+
+			const sizeInput = screen.getByRole( 'spinbutton' );
 
 			fireEvent.keyDown( sizeInput, { key: 'g' } );
+			fireEvent.keyDown( sizeInput, { key: 'r' } );
+
 			expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 45, unit: 'grad' } } );
+		} );
+
+		it( 'should handle angle unit keyboard shortcuts "turn"', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const props = { setValue, value: mockSizeProp( { size: 45, unit: 'turn' } ), bind: 'select', propType };
+
+			// Act.
+			renderControl( <SizeControl variant="angle" units={ mockAngleUnits() } disableCustom />, props );
+
+			const sizeInput = screen.getByRole( 'spinbutton' );
 
 			fireEvent.keyDown( sizeInput, { key: 't' } );
+			fireEvent.keyDown( sizeInput, { key: 'u' } );
+
 			expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 45, unit: 'turn' } } );
 		} );
 	} );
