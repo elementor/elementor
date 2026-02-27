@@ -268,7 +268,11 @@ export function AppContent( { onClose }: AppContentProps ) {
 			testId="onboarding-steps"
 			topBar={
 				<TopBar>
-					<TopBarContent showClose={ false } onClose={ handleClose } />
+					<TopBarContent
+						showClose={ false }
+						onClose={ handleClose }
+						onUpgrade={ () => window.open( urls.upgradeUrl, '_blank' ) }
+					/>
 				</TopBar>
 			}
 			footer={

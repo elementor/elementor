@@ -23,7 +23,7 @@ class Test_Module extends Test_Base {
 	}
 
 	public function test_steps_exclude_site_features_when_pro_active() {
-		add_filter( 'elementor/e-onboarding/is_elementor_pro_active', '__return_true' );
+		add_filter( 'elementor/e-onboarding/is_elementor_pro_installed', '__return_true' );
 		try {
 			$_GET['page'] = 'elementor-app';
 			do_action( 'elementor/init' );
@@ -35,7 +35,7 @@ class Test_Module extends Test_Base {
 			$step_ids = array_column( $settings['steps'], 'id' );
 			$this->assertNotContains( 'site_features', $step_ids );
 		} finally {
-			remove_filter( 'elementor/e-onboarding/is_elementor_pro_active', '__return_true' );
+			remove_filter( 'elementor/e-onboarding/is_elementor_pro_installed', '__return_true' );
 		}
 	}
 

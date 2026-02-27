@@ -12,6 +12,7 @@ import {
 import { Stack, type Theme, Typography } from '@elementor/ui';
 
 import { CorePlaceholderIcon } from '../../components/ui/core-placeholder-icon';
+import { WoocommerceIcon } from '../../components/ui/woocommerce-icon';
 import { useOnboarding } from '../../hooks/use-onboarding';
 import { t } from '../../utils/translations';
 import { FeatureGrid, type FeatureOption, ProPlanNotice } from '../components/site-features';
@@ -71,6 +72,12 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 		Icon: ElementorAccessibilityIcon,
 		licenseType: 'one',
 	},
+	{
+		id: 'woocommerce_builder',
+		labelKey: 'steps.site_features.woocommerce',
+		Icon: WoocommerceIcon,
+		licenseType: 'pro',
+	},
 ];
 
 const CORE_FEATURE_IDS = new Set(
@@ -80,8 +87,7 @@ const CORE_FEATURE_IDS = new Set(
 const FEATURE_OPTION_IDS = new Set( FEATURE_OPTIONS.map( ( featureOption ) => featureOption.id ) );
 
 export function SiteFeatures() {
-	const { choices, actions, urls } = useOnboarding();
-	const exploreFeaturesUrl = urls.exploreFeatures;
+	const { choices, actions } = useOnboarding();
 
 	const storedPaidFeatures = useMemo(
 		() => ( ( choices.site_features as string[] ) || [] ).filter( ( id ) => FEATURE_OPTION_IDS.has( id ) ),
@@ -118,10 +124,6 @@ export function SiteFeatures() {
 		return hasOneFeature ? 'One' : 'Pro';
 	}, [ storedPaidFeatures ] );
 
-	const handleExploreMoreClick = useCallback( () => {
-		window.open( exploreFeaturesUrl, '_blank' );
-	}, [ exploreFeaturesUrl ] );
-
 	return (
 		<Stack
 			spacing={ 4 }
@@ -147,7 +149,6 @@ export function SiteFeatures() {
 				options={ FEATURE_OPTIONS }
 				selectedValues={ selectedValues }
 				onFeatureClick={ handleFeatureClick }
-				onExploreMoreClick={ handleExploreMoreClick }
 			/>
 
 			{ storedPaidFeatures.length > 0 && <ProPlanNotice planName={ planName } /> }
