@@ -842,7 +842,7 @@ class Controls_Manager {
 		if ( $control_type_instance instanceof Base_Data_Control ) {
 			$control_default_value = $control_type_instance->get_default_value();
 
-			if ( is_array( $control_default_value ) ) {
+			if ( is_array( $control_default_value ) && is_array( $control_data['default'] ) {
 				$control_data['default'] = isset( $control_data['default'] ) ? array_merge( $control_default_value, $control_data['default'] ) : $control_default_value;
 			} else {
 				$control_data['default'] = isset( $control_data['default'] ) ? $control_data['default'] : $control_default_value;
