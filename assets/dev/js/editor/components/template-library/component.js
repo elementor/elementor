@@ -286,11 +286,21 @@ export default class Component extends ComponentModalBase {
 					}
 				}
 
+				const importOptions = jQuery.extend( {}, this.manager.modalConfig.importOptions );
+
+				importOptions.withPageSettings = withPageSettings;
+
+				if ( null === withPageSettings && model.get( 'hasPageSettings' ) ) {
+					const insertTemplateHandler = this.getImportSettingsDialog();
+					insertTemplateHandler.showImportDialogWithData( model, processedData, importOptions, callback );
+					return;
+				}
+
 				this.manager.layout.hideModal();
 
 				this.showFlatteningWarningIfNeeded( processedData );
 
-				callback( processedData, { model, withPageSettings } );
+				callback( processedData, { model, importOptions } );
 			},
 			error: ( data ) => {
 				this.manager.showErrorDialog( data );

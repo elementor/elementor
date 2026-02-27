@@ -84,6 +84,10 @@ class Template_Library_Global_Classes_Element_Transformer {
 
 			if ( ! self::should_flatten_class_id( $class_id, $items, $ids_to_flatten ) ) {
 				if ( self::is_global_class_id( $class_id ) ) {
+					if ( null !== $ids_to_flatten && isset( $items[ $class_id ] ) ) {
+						$updated_values[] = $class_id;
+					}
+
 					continue;
 				}
 				$updated_values[] = $class_id;

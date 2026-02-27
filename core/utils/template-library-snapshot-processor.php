@@ -61,11 +61,6 @@ abstract class Template_Library_Snapshot_Processor {
 				continue;
 			}
 
-			if ( $this->count_current_items( $updated_items ) >= $this->get_max_items() ) {
-				$ids_to_flatten[] = $incoming_id;
-				continue;
-			}
-
 			$incoming_label = $incoming_item['label'] ?? null;
 			$matching_id = is_string( $incoming_label ) ? ( $label_to_id[ $incoming_label ] ?? null ) : null;
 
@@ -82,7 +77,14 @@ abstract class Template_Library_Snapshot_Processor {
 					}
 					continue;
 				}
+			}
 
+			if ( $this->count_current_items( $updated_items ) >= $this->get_max_items() ) {
+				$ids_to_flatten[] = $incoming_id;
+				continue;
+			}
+
+			if ( null !== $matching_id && isset( $updated_items[ $matching_id ] ) ) {
 				$target_id = Template_Library_Import_Export_Utils::generate_unique_id(
 					array_keys( $updated_items ),
 					$this->get_item_prefix()
