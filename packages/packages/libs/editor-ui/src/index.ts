@@ -10,6 +10,7 @@ export { WarningInfotip } from './components/warning-infotip';
 export { GlobalDialog, openDialog, closeDialog } from './components/global-dialog';
 export { SearchField } from './components/search-field';
 export { Form } from './components/form';
+export { UpgradeButton } from './components/upgrade-button';
 
 export * from './components/popover';
 export * from './components/save-changes-dialog';

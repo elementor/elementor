@@ -67,6 +67,7 @@ const mockVariableType = {
 	variableType: 'Color',
 	propTypeUtil: { key: 'color' },
 	selectionFilter: null,
+	isUpgradeRequired: false,
 };
 
 const mockBoundProp = {
