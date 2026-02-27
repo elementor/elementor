@@ -5,6 +5,7 @@ namespace Elementor\Modules\Variables\Utils;
 use Elementor\Core\Utils\Template_Library_Element_Iterator;
 use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
 use Elementor\Core\Utils\Template_Library_Snapshot_Processor;
+use Elementor\Modules\Variables\Storage\Constants;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Plugin;
@@ -69,7 +70,7 @@ class Template_Library_Variables_Snapshot_Builder extends Template_Library_Snaps
 
 		return self::build_snapshot_from_data(
 			$filtered_data,
-			$all_data['version'] ?? Variables_Collection::FORMAT_VERSION_V1
+			$all_data['version'] ?? Constants::FORMAT_VERSION_V1
 		);
 	}
 
@@ -110,7 +111,7 @@ class Template_Library_Variables_Snapshot_Builder extends Template_Library_Snaps
 	}
 
 	protected function get_max_items(): int {
-		return Variables_Collection::TOTAL_VARIABLES_COUNT;
+		return Constants::TOTAL_VARIABLES_COUNT;
 	}
 
 	protected function can_access_repository(): bool {
@@ -128,7 +129,7 @@ class Template_Library_Variables_Snapshot_Builder extends Template_Library_Snaps
 				'items' => [],
 				'order' => [],
 				'watermark' => 0,
-				'version' => Variables_Collection::FORMAT_VERSION_V1,
+				'version' => Constants::FORMAT_VERSION_V1,
 			];
 		}
 
@@ -139,7 +140,7 @@ class Template_Library_Variables_Snapshot_Builder extends Template_Library_Snaps
 			'items' => $serialized['data'] ?? [],
 			'order' => [],
 			'watermark' => $serialized['watermark'] ?? 0,
-			'version' => $serialized['version'] ?? Variables_Collection::FORMAT_VERSION_V1,
+			'version' => $serialized['version'] ?? Constants::FORMAT_VERSION_V1,
 		];
 	}
 
@@ -169,7 +170,7 @@ class Template_Library_Variables_Snapshot_Builder extends Template_Library_Snaps
 		$updated_collection = Variables_Collection::hydrate( [
 			'data' => $items,
 			'watermark' => $metadata['watermark'] ?? 0,
-			'version' => $metadata['version'] ?? Variables_Collection::FORMAT_VERSION_V1,
+			'version' => $metadata['version'] ?? Constants::FORMAT_VERSION_V1,
 		] );
 
 		$this->repository->save( $updated_collection );

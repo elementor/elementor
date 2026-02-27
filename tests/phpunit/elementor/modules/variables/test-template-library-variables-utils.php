@@ -6,6 +6,7 @@ use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
+use Elementor\Modules\Variables\Storage\Constants;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Modules\Variables\Utils\Template_Library_Variables_Element_Transformer;
@@ -28,7 +29,7 @@ class Test_Template_Library_Variables_Utils extends Elementor_Test_Base {
 		$collection = Variables_Collection::hydrate( [
 			'data' => $data,
 			'watermark' => 0,
-			'version' => Variables_Collection::FORMAT_VERSION_V1,
+			'version' => Constants::FORMAT_VERSION_V1,
 		] );
 
 		$this->repository()->save( $collection );
@@ -97,7 +98,7 @@ class Test_Template_Library_Variables_Utils extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'data', $snapshot );
 		$this->assertArrayHasKey( 'e-gv-2', $snapshot['data'] );
 		$this->assertArrayNotHasKey( 'e-gv-1', $snapshot['data'] );
-		$this->assertSame( Variables_Collection::FORMAT_VERSION_V1, $snapshot['version'] );
+		$this->assertSame( Constants::FORMAT_VERSION_V1, $snapshot['version'] );
 	}
 
 	public function test_merge_snapshot_and_get_id_map_remaps_conflict_and_updates_labels() {
