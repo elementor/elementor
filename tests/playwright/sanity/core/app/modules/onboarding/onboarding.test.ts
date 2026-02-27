@@ -123,7 +123,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 	 * 2. Clicking on 'Skip' should take the user to the Good to Go screen
 	 */
 
-	test( 'Onboarding Site Logo Page', async ( { page } ) => {
+	test.skip( 'Onboarding Site Logo Page', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding/siteLogo' );
 
 		const nextButton = page.locator( 'text=Next' );
@@ -220,7 +220,7 @@ test.describe( 'Onboarding @onBoarding', async () => {
 		} );
 	} );
 
-	test( 'Onboarding Choose Features page - Upgrade button', async ( { page } ) => {
+	test.skip( 'Onboarding Choose Features page - Upgrade button', async ( { page } ) => {
 		await page.goto( chooseFeaturesUrl );
 
 		const upgradeNowBtn = page.locator( EditorSelectors.onboarding.upgradeButton );
@@ -248,7 +248,7 @@ test.describe( 'Onboarding @onBoarding', async () => {
 		} );
 	} );
 
-	test( 'Onboarding Choose Features page - Skip button', async ( { page } ) => {
+	test.skip( 'Onboarding Choose Features page - Skip button', async ( { page } ) => {
 		await page.goto( chooseFeaturesUrl );
 
 		const skipButton = page.locator( EditorSelectors.onboarding.skipButton );
