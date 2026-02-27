@@ -20,8 +20,7 @@ export default function AddSectionArea( props ) {
 		};
 	}, [] );
 
-	const handleAddContainerClick = ( event ) => {
-		event.stopPropagation();
+	const handleAddContainerClick = () => {
 		props.setIsRenderPresets( true );
 	};
 
