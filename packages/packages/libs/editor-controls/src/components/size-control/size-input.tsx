@@ -89,7 +89,7 @@ export const SizeInput = ( {
 		}
 
 		if ( isUnitExtendedOption( unit ) && ! isNaN( Number( key ) ) ) {
-			const defaultUnit = units?.[0];
+			const defaultUnit = units?.[ 0 ];
 			if ( defaultUnit ) {
 				handleUnitChange( defaultUnit );
 			}
@@ -106,8 +106,7 @@ export const SizeInput = ( {
 		const updatedBuffer = appendKey( newChar );
 
 		const matchedUnit =
-			units.find( ( u ) => u.startsWith( updatedBuffer ) ) ||
-			units.find( ( u ) => u.startsWith( newChar ) );
+			units.find( ( u ) => u.startsWith( updatedBuffer ) ) || units.find( ( u ) => u.startsWith( newChar ) );
 
 		if ( matchedUnit ) {
 			handleUnitChange( matchedUnit );
