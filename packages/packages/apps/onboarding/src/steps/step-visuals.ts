@@ -62,3 +62,8 @@ const stepVisuals: Record< StepIdType, StepVisualConfig > = {
 export const getLoginVisualConfig = (): StepVisualConfig => LOGIN_CONFIG;
 
 export const getStepVisualConfig = ( stepId: StepIdType ): StepVisualConfig => stepVisuals[ stepId ] ?? DEFAULT_CONFIG;
+
+export const getLottieAnimationUrls = (): string[] =>
+	Object.values( stepVisuals ).flatMap( ( config ) =>
+		config.lottieAnimation ? [ config.lottieAnimation ] : []
+	);

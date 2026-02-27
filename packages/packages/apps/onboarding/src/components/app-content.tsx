@@ -4,6 +4,7 @@ import { Box } from '@elementor/ui';
 
 import { useCheckProInstallScreen } from '../hooks/use-check-pro-install-screen';
 import { useElementorConnect } from '../hooks/use-elementor-connect';
+import { useLottiePreload } from '../hooks/use-lottie-preload';
 import { useOnboarding } from '../hooks/use-onboarding';
 import { useUpdateChoices } from '../hooks/use-update-choices';
 import { useUpdateProgress } from '../hooks/use-update-progress';
@@ -51,6 +52,8 @@ export function AppContent( { onClose }: AppContentProps ) {
 	} = useOnboarding();
 
 	const [ isCompleting, setIsCompleting ] = useState( false );
+
+	useLottiePreload();
 
 	const updateProgress = useUpdateProgress();
 	const updateChoices = useUpdateChoices();
