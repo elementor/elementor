@@ -1,45 +1,11 @@
 import * as React from 'react';
-import { useEffect, useRef } from 'react';
 import { MathFunctionIcon } from '@elementor/icons';
 import { Box, InputAdornment, type PopupState } from '@elementor/ui';
 
 import ControlActions from '../../control-actions/control-actions';
+import { useTypingBuffer } from '../../hooks/use-typing-buffer';
 import { type ExtendedOption, isUnitExtendedOption, type Unit } from '../../utils/size-control';
 import { SelectionEndAdornment, TextFieldInnerSelection } from '../size-control/text-field-inner-selection';
-
-function useTypingBuffer( timeout: number = 800 ) {
-	const inputBufferRef = useRef( '' );
-	const timeoutRef = useRef< number | null >( null );
-
-	const appendKey = ( key: string ) => {
-		inputBufferRef.current = ( inputBufferRef.current + key ).slice( -3 );
-
-		if ( timeoutRef.current ) {
-			window.clearTimeout( timeoutRef.current );
-		}
-
-		timeoutRef.current = window.setTimeout( () => {
-			inputBufferRef.current = '';
-		}, timeout );
-
-		return inputBufferRef.current;
-	};
-
-	useEffect( () => {
-		return () => {
-			inputBufferRef.current = '';
-			if ( timeoutRef.current ) {
-				window.clearTimeout( timeoutRef.current );
-				timeoutRef.current = null;
-			}
-		};
-	}, [] );
-
-	return {
-		buffer: inputBufferRef.current,
-		appendKey,
-	};
-}
 
 type SizeInputProps = {
 	unit: Unit | ExtendedOption;
@@ -76,7 +42,7 @@ export const SizeInput = ( {
 	id,
 	ariaLabel,
 }: SizeInputProps ) => {
-	const { appendKey } = useTypingBuffer();
+	const { appendKey, startsWith } = useTypingBuffer();
 
 	const inputType = isUnitExtendedOption( unit ) ? 'text' : 'number';
 	const inputValue = ! isUnitExtendedOption( unit ) && Number.isNaN( size ) ? '' : size ?? '';
@@ -105,8 +71,7 @@ export const SizeInput = ( {
 		const newChar = key.toLowerCase();
 		const updatedBuffer = appendKey( newChar );
 
-		const matchedUnit =
-			units.find( ( u ) => u.startsWith( updatedBuffer ) ) || units.find( ( u ) => u.startsWith( newChar ) );
+		const matchedUnit = units.find( ( u ) => startsWith( u, updatedBuffer ) );
 
 		if ( matchedUnit ) {
 			handleUnitChange( matchedUnit );
