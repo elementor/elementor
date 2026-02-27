@@ -443,6 +443,47 @@ describe( 'App', () => {
 			} );
 			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
 		} );
+
+		it( 'should remove site_features step after successful Pro installation', async () => {
+			// Arrange - user is on theme_selection (step 4 of 5), Pro install screen is pending
+			mockFetch.mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( { data: { success: true, message: 'installed' } } ),
+			} );
+
+			window.elementorAppConfig = createMockConfig( {
+				isConnected: true,
+				shouldShowProInstallScreen: true,
+				progress: {
+					current_step_id: 'theme_selection',
+					current_step_index: 3,
+					completed_steps: [ 'building_for', 'site_about', 'experience_level' ],
+				},
+			} );
+
+			render( <App /> );
+			expect( screen.getByTestId( 'pro-install-screen' ) ).toBeInTheDocument();
+
+			// Act - install Pro
+			fireEvent.click( screen.getByText( 'Install Pro on this site' ) );
+
+			// Assert - pro screen dismissed, onboarding steps shown
+			await waitFor( () => {
+				expect( screen.queryByTestId( 'pro-install-screen' ) ).not.toBeInTheDocument();
+			} );
+
+			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
+			fireEvent.click( screen.getByText( 'Skip' ) );
+
+			await waitFor( () => {
+				expect( mockFetch ).toHaveBeenCalledWith(
+					expect.stringContaining( 'user-progress' ),
+					expect.objectContaining( {
+						body: expect.stringContaining( '"complete":true' ),
+					} )
+				);
+			} );
+		} );
 	} );
 
 	describe( 'Upgrade button', () => {
