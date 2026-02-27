@@ -27,7 +27,7 @@ export function useTypingBuffer( options: UseTypingBufferOptions = {} ) {
 
 	const startsWith = ( haystack: string, needle: string ) => {
 		// At least 2 characters in needle for longer haystack.
-		if ( 2 < haystack.length && 2 > needle.length ) {
+		if ( 3 < haystack.length && 2 > needle.length ) {
 			return false;
 		}
 		return haystack.startsWith( needle );

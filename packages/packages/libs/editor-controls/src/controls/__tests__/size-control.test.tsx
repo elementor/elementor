@@ -11,7 +11,7 @@ import { SizeControl } from '../size-control';
 
 const mockSizeProp = ( value?: SizePropValue[ 'value' ] ) => ( {
 	$$type: 'size',
-	value: { unit: '', size: 0, ...value },
+	value: { unit: '', size: null, ...value },
 } );
 
 const mockLengthUnits = (): LengthUnit[] => [ 'px', 'rem', '%', 'em' ];
@@ -526,7 +526,7 @@ describe( 'SizeControl', () => {
 	describe( 'Keyboard Unit Selection', () => {
 		it.each( [
 			{ input: [ '%' ], expected: '%', description: 'exact match' },
-			{ input: [ 'r', 'e' ], expected: 'rem', description: 'prefix match' },
+			{ input: [ 'r' ], expected: 'rem', description: 'prefix match' },
 			{ input: [ 'e' ], expected: 'em', description: 'prefix match' },
 			{ input: [ 'p' ], expected: 'px', description: 'prefix match' },
 			{ input: [ 'k' ], description: 'no match - should not change unit' },
@@ -647,6 +647,21 @@ describe( 'SizeControl', () => {
 			// Assert
 			expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 20, unit: 'rem' } } );
 		} );
+
+		it( 'should ignore key-combinations (such as ctrl, alt/opt, meta/cmd)', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const props = { setValue, value: mockSizeProp( { size: 10, unit: 'px' } ), bind: 'select', propType };
+
+			// Act.
+			renderControl( <SizeControl units={ mockLengthUnits() } disableCustom />, props );
+
+			const sizeInput = screen.getByRole( 'spinbutton' );
+
+			fireEvent.keyDown( sizeInput, { key: 'a', ctrlKey: true } );
+
+			expect( setValue ).not.toHaveBeenCalled();
+		} );
 	} );
 
 	describe( 'Angle Units Support', () => {
@@ -661,7 +676,6 @@ describe( 'SizeControl', () => {
 			const sizeInput = screen.getByRole( 'spinbutton' );
 
 			fireEvent.keyDown( sizeInput, { key: 'd' } );
-			fireEvent.keyDown( sizeInput, { key: 'e' } );
 
 			expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 45, unit: 'deg' } } );
 		} );
@@ -677,7 +691,6 @@ describe( 'SizeControl', () => {
 			const sizeInput = screen.getByRole( 'spinbutton' );
 
 			fireEvent.keyDown( sizeInput, { key: 'r' } );
-			fireEvent.keyDown( sizeInput, { key: 'a' } );
 
 			expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 45, unit: 'rad' } } );
 		} );
