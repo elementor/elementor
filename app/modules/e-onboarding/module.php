@@ -126,8 +126,8 @@ class Module extends BaseModule {
 				'editor' => admin_url( 'edit.php?post_type=elementor_library' ),
 				'connect' => $this->get_connect_url(),
 				'comparePlans' => 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash',
-				'exploreFeatures' => 'https://elementor.com/features/?utm_source=onboarding&utm_medium=wp-dash',
 				'createNewPage' => Plugin::$instance->documents->get_create_new_post_url(),
+				'upgradeUrl' => 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar&utm_term=2.0.0',
 			],
 		] );
 	}
@@ -178,7 +178,7 @@ class Module extends BaseModule {
 	}
 
 	public static function should_show_pro_install_screen(): bool {
-		if ( Utils::has_pro() || Utils::is_pro_installed_and_not_active() ) {
+		if ( self::is_elementor_pro_installed() ) {
 			return false;
 		}
 
@@ -312,7 +312,7 @@ class Module extends BaseModule {
 			];
 		}
 
-		if ( ! $this->is_elementor_pro_active() ) {
+		if ( ! self::is_elementor_pro_installed() ) {
 			$steps[] = [
 				'id' => 'site_features',
 				'label' => __( 'What do you want to include in your site?', 'elementor' ),
@@ -323,8 +323,9 @@ class Module extends BaseModule {
 		return apply_filters( 'elementor/e-onboarding/steps', $steps );
 	}
 
-	private function is_elementor_pro_active(): bool {
-		return (bool) apply_filters( 'elementor/e-onboarding/is_elementor_pro_active', Utils::has_pro() );
+	private static function is_elementor_pro_installed(): bool {
+		$is_pro_installed = Utils::has_pro() || Utils::is_pro_installed_and_not_active();
+		return (bool) apply_filters( 'elementor/e-onboarding/is_elementor_pro_installed', $is_pro_installed );
 	}
 
 	private function is_elementor_theme_active(): bool {
