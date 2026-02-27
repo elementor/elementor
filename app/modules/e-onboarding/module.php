@@ -177,8 +177,8 @@ class Module extends BaseModule {
 		return $connect->get_app( 'library' );
 	}
 
-	public function should_show_pro_install_screen(): bool {
-		if ( $this->is_elementor_pro_installed() ) {
+	public static function should_show_pro_install_screen(): bool {
+		if ( self::is_elementor_pro_installed() ) {
 			return false;
 		}
 
@@ -309,7 +309,7 @@ class Module extends BaseModule {
 			],
 		];
 
-		if ( ! $this->is_elementor_pro_installed() ) {
+		if ( ! self::is_elementor_pro_installed() ) {
 			$steps[] = [
 				'id' => 'site_features',
 				'label' => __( 'What do you want to include in your site?', 'elementor' ),
@@ -320,7 +320,7 @@ class Module extends BaseModule {
 		return apply_filters( 'elementor/e-onboarding/steps', $steps );
 	}
 
-	private function is_elementor_pro_installed(): bool {
+	private static function is_elementor_pro_installed(): bool {
 		$is_pro_installed = Utils::has_pro() || Utils::is_pro_installed_and_not_active();
 		return (bool) apply_filters( 'elementor/e-onboarding/is_elementor_pro_installed', $is_pro_installed );
 	}
