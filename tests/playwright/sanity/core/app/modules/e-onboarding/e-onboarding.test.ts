@@ -10,11 +10,15 @@ import {
 } from './e-onboarding-utils';
 
 test.describe( 'E-Onboarding @e-onboarding', () => {
+	let originalActiveTheme: string;
+
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( { e_onboarding: 'active' } );
+		originalActiveTheme = await wpAdmin.getActiveTheme();
+		await wpAdmin.activateTheme( 'twentytwentyfive' );
 		await page.close();
 		await context.close();
 	} );
@@ -23,6 +27,7 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.activateTheme( originalActiveTheme );
 		await wpAdmin.resetExperiments();
 		await page.close();
 		await context.close();
@@ -322,5 +327,31 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 		).toHaveAttribute( 'aria-pressed', 'true' );
 
 		await expect( page.getByRole( 'button', { name: 'Continue' } ) ).not.toBeDisabled();
+	} );
+
+	test( 'theme_selection step is skipped when Elementor theme is already active', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.activateTheme( originalActiveTheme );
+
+		await mockOnboardingApi( page );
+		await navigateAndPassLogin( page );
+
+		await doAndWaitForProgress( page, () =>
+			page.getByRole( 'button', { name: 'Just exploring' } ).click(),
+		);
+		await expect( page.getByTestId( 'site-about-step' ) ).toBeVisible();
+
+		await page.getByRole( 'button', { name: 'Small-Med Business' } ).click();
+		await doAndWaitForProgress( page, () =>
+			page.getByRole( 'button', { name: 'Continue' } ).click(),
+		);
+		await expect( page.getByTestId( 'experience-level-step' ) ).toBeVisible();
+
+		await doAndWaitForProgress( page, () =>
+			page.getByRole( 'button', { name: 'I have some experience' } ).click(),
+		);
+
+		await expect( page.getByTestId( 'site-features-step' ) ).toBeVisible();
+		await expect( page.getByTestId( 'theme-selection-step' ) ).not.toBeVisible();
 	} );
 } );
