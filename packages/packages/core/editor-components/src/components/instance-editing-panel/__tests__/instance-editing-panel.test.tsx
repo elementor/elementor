@@ -1,11 +1,16 @@
 import * as React from 'react';
-import { createMockContainer, createMockPropType, mockCurrentUserCapabilities, renderWithStore } from 'test-utils';
+import {
+	createMockContainer,
+	createMockElement,
+	createMockPropType,
+	mockCurrentUserCapabilities,
+	renderWithStore,
+} from 'test-utils';
 import { ControlActionsProvider, TextControl } from '@elementor/editor-controls';
 import { controlsRegistry, ElementProvider } from '@elementor/editor-editing-panel';
 import {
 	getContainer,
 	getElementLabel,
-	getElementSetting,
 	getElementType,
 	getWidgetsCache,
 	useElementSetting,
@@ -18,18 +23,16 @@ import {
 	type SliceState,
 	type Store,
 } from '@elementor/store';
-import { fireEvent, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 
 import { componentInstancePropTypeUtil } from '../../../prop-types/component-instance-prop-type';
 import { slice } from '../../../store/store';
-import { switchToComponent } from '../../../utils/switch-to-component';
+import { getContainerByOriginId } from '../../../utils/get-container-by-origin-id';
 import { InstanceEditingPanel } from '../instance-editing-panel';
 
 jest.mock( '@elementor/editor-elements' );
 
 jest.mock( '@elementor/session' );
-
-jest.mock( '../../../utils/switch-to-component' );
 
 jest.mock( '../../../prop-types/component-instance-prop-type', () => ( {
 	componentInstancePropTypeUtil: {
@@ -39,6 +42,10 @@ jest.mock( '../../../prop-types/component-instance-prop-type', () => ( {
 } ) );
 
 jest.mock( '@elementor/editor-current-user' );
+
+jest.mock( '../../../utils/get-container-by-origin-id', () => ( {
+	getContainerByOriginId: jest.fn(),
+} ) );
 
 mockCurrentUserCapabilities( true );
 
@@ -296,6 +303,7 @@ describe( '<InstanceEditingPanel />', () => {
 		);
 		jest.mocked( getElementType ).mockImplementation( createMockElementType );
 		jest.mocked( getContainer ).mockReturnValue( createMockContainer( MOCK_ELEMENT_ID, [] ) );
+		jest.mocked( getContainerByOriginId ).mockImplementation( ( originId ) => createMockContainer( originId, [] ) );
 	} );
 
 	it( 'should render the component name in the header', () => {
@@ -334,43 +342,16 @@ describe( '<InstanceEditingPanel />', () => {
 		expect( screen.getByText( 'Link' ) ).toBeInTheDocument();
 	} );
 
-	it( 'should call switchToComponent when edit button is clicked', () => {
+	it( 'should show edit button as disabled in core panel', () => {
 		// Arrange.
-		setupComponent();
-		renderEditInstancePanel( store );
-
-		// Act.
-		const editButtonLabel = `Edit ${ MOCK_COMPONENT_NAME }`;
-		const editButton = screen.getByLabelText( editButtonLabel );
-		fireEvent.click( editButton );
-
-		// Assert.
-		expect( switchToComponent ).toHaveBeenCalledTimes( 1 );
-		expect( switchToComponent ).toHaveBeenCalledWith( MOCK_COMPONENT_ID, MOCK_INSTANCE_ID );
-	} );
-
-	it( 'should show edit button when user is admin', () => {
-		// Arrange.
-		mockCurrentUserCapabilities( true );
 		setupComponent();
 
 		// Act.
 		renderEditInstancePanel( store );
 
 		// Assert.
-		expect( screen.getByLabelText( `Edit ${ MOCK_COMPONENT_NAME }` ) ).toBeInTheDocument();
-	} );
-
-	it( 'should not show edit button when user is not admin', () => {
-		// Arrange.
-		mockCurrentUserCapabilities( false );
-		setupComponent();
-
-		// Act.
-		renderEditInstancePanel( store );
-
-		// Assert.
-		expect( screen.queryByLabelText( `Edit ${ MOCK_COMPONENT_NAME }` ) ).not.toBeInTheDocument();
+		const editButton = screen.getByLabelText( `Edit ${ MOCK_COMPONENT_NAME }` );
+		expect( editButton ).toBeDisabled();
 	} );
 
 	it( 'should not render when componentId is missing', () => {
@@ -388,7 +369,7 @@ describe( '<InstanceEditingPanel />', () => {
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
-	it( 'should not render any sections when no overridable props', () => {
+	it( 'should show empty state without edit button when no overridable props', () => {
 		// Arrange.
 		setupComponent( { isWithOverridableProps: false } );
 
@@ -397,6 +378,8 @@ describe( '<InstanceEditingPanel />', () => {
 
 		// Assert.
 		expect( screen.getByText( MOCK_COMPONENT_NAME ) ).toBeInTheDocument();
+		expect( screen.getByText( 'No properties yet' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Edit component' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Content' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Settings' ) ).not.toBeInTheDocument();
 	} );
@@ -531,14 +514,19 @@ function setupComponent( {
 			},
 		};
 
-		jest.mocked( getElementSetting ).mockImplementation( ( elementId, settingKey ) => {
-			if ( elementId === 'nested-instance-1' && settingKey === 'component_instance' ) {
-				return {
-					$$type: 'component-instance',
-					value: nestedComponentInstanceValue,
-				};
+		jest.mocked( getContainerByOriginId ).mockImplementation( ( originId ) => {
+			if ( originId === 'nested-instance-1' ) {
+				return createMockElement( {
+					model: { id: 'nested-instance-1', widgetType: 'e-component' },
+					settings: {
+						component_instance: {
+							$$type: 'component-instance',
+							value: nestedComponentInstanceValue,
+						},
+					},
+				} );
 			}
-			return undefined;
+			return createMockContainer( originId, [] );
 		} );
 
 		jest.mocked( componentInstancePropTypeUtil.extract ).mockImplementation( ( value: unknown ) => {

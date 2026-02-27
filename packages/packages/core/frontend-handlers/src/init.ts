@@ -5,9 +5,6 @@ export function init() {
 		const event = _event as CustomEvent< { id: string; type: string; element: Element } >;
 		const { id, type, element } = event.detail;
 
-		// Ensure the "destroy" event was not triggered before the render event.
-		onElementDestroy( { elementType: type, elementId: id } );
-
 		onElementRender( { element, elementType: type, elementId: id } );
 	} );
 
@@ -28,15 +25,7 @@ export function init() {
 				return;
 			}
 
-			window.dispatchEvent(
-				new CustomEvent( 'elementor/element/render', {
-					detail: {
-						id,
-						type: eType,
-						element,
-					},
-				} )
-			);
+			onElementRender( { element: el, elementType: eType, elementId: id } );
 		} );
 	} );
 }

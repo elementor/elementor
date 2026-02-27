@@ -5,6 +5,8 @@ import { showGlobalStylesDialog } from './global-styles-dialog';
 var TemplateLibraryImportView;
 
 TemplateLibraryImportView = Marionette.ItemView.extend( {
+	tagName: 'main',
+
 	template: '#tmpl-elementor-template-library-import',
 
 	id: 'elementor-template-library-import',

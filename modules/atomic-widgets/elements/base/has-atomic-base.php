@@ -14,9 +14,9 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-use Elementor\Modules\Interactions\Adapter as Interactions_Adapter;
 use Elementor\Utils;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -224,7 +224,7 @@ trait Has_Atomic_Base {
 	final public function get_raw_data( $with_html_content = false ) {
 		$raw_data = parent::get_raw_data( $with_html_content );
 
-		$raw_data['styles'] = $this->styles;
+		$raw_data['styles'] = Atomic_Widget_Styles::get_license_based_filtered_styles( $this->styles ?? [] );
 		$raw_data['interactions'] = $this->interactions ?? [];
 		$raw_data['editor_settings'] = $this->editor_settings;
 
@@ -302,137 +302,55 @@ trait Has_Atomic_Base {
 		);
 	}
 
-	public function get_interactions_ids() {
-		$animation_ids = [];
-
-		$list_of_interactions = $this->extract_interactions_items( $this->interactions );
-
-		foreach ( $list_of_interactions as $interaction ) {
-			if ( isset( $interaction['$$type'] ) && 'interaction-item' === $interaction['$$type'] ) {
-				$animation_id = $this->extract_animation_id_from_prop_type( $interaction );
-				if ( $animation_id ) {
-					$animation_ids[] = $animation_id;
-				}
-			} elseif ( isset( $interaction['animation']['animation_id'] ) ) {
-				$animation_ids[] = $interaction['animation']['animation_id'];
-			}
+	protected function set_render_context( array $context_pairs ): void {
+		foreach ( $context_pairs as $context_pair ) {
+			$context_key = $context_pair['context_key'] ?? static::class;
+			$context = $context_pair['context'];
+			Render_Context::push( $context_key, $context );
 		}
-
-		return $animation_ids;
 	}
 
-	/**
-	 * Extract items array from interactions data.
-	 * Handles both v1 format (items is array) and v2 format (items is wrapped with $$type).
-	 */
-	private function extract_interactions_items( $interactions ) {
-		if ( ! is_array( $interactions ) || ! isset( $interactions['items'] ) ) {
-			return [];
+	protected function clear_render_context( array $context_pairs ): void {
+		foreach ( $context_pairs as $context_pair ) {
+			$context_key = $context_pair['context_key'] ?? static::class;
+			Render_Context::pop( $context_key );
 		}
-
-		$items = $interactions['items'];
-
-		// Handle v2 wrapped format: {$$type: 'interactions-array', value: [...]}
-		if ( isset( $items['$$type'] ) && Interactions_Adapter::ITEMS_TYPE === $items['$$type'] ) {
-			return isset( $items['value'] ) && is_array( $items['value'] ) ? $items['value'] : [];
-		}
-
-		// v1 format: items is direct array
-		return is_array( $items ) ? $items : [];
-	}
-
-	private function extract_animation_id_from_prop_type( $item ) {
-		if ( ! isset( $item['value'] ) || ! is_array( $item['value'] ) ) {
-			return null;
-		}
-
-		$item_value = $item['value'];
-
-		$trigger = $this->extract_prop_value( $item_value, 'trigger' );
-		$animation = $this->extract_prop_value( $item_value, 'animation' );
-
-		if ( ! is_array( $animation ) ) {
-			return null;
-		}
-
-		$effect = $this->extract_prop_value( $animation, 'effect' );
-		$type = $this->extract_prop_value( $animation, 'type' );
-		$direction = $this->extract_prop_value( $animation, 'direction' );
-		$timing_config = $this->extract_prop_value( $animation, 'timing_config' );
-		$config = $this->extract_prop_value( $animation, 'config' );
-
-		$duration = 600;
-		$delay = 0;
-		$replay = 0;
-		$easing = 'easeIn';
-		$relative_to = 'viewport';
-		$offset_top = 15;
-		$offset_bottom = 85;
-
-		if ( is_array( $timing_config ) ) {
-			$duration = Interactions_Adapter::extract_time_value( $timing_config['duration'] ?? null, 600 );
-			$delay = Interactions_Adapter::extract_time_value( $timing_config['delay'] ?? null, 0 );
-		}
-
-		if ( is_array( $config ) ) {
-			$relative_to = $this->extract_prop_value( $config, 'relativeTo', 'viewport' );
-			$offset_top = Interactions_Adapter::extract_numeric_value( $config['offsetTop'] ?? null, 15 );
-			$offset_bottom = Interactions_Adapter::extract_numeric_value( $config['offsetBottom'] ?? null, 85 );
-
-			$replay = $this->extract_prop_value( $config, 'replay', 0 );
-			if ( empty( $replay ) && 0 !== $replay && '0' !== $replay ) {
-				$replay = 0;
-			}
-
-			$easing = $this->extract_prop_value( $config, 'easing', 'easeIn' );
-		} else {
-			$replay = 0;
-		}
-
-		return implode( '-', [
-			$trigger,
-			$effect,
-			$type,
-			$direction,
-			$duration,
-			$delay,
-			$replay,
-			$easing,
-			$relative_to,
-			$offset_top,
-			$offset_bottom,
-		] );
 	}
 
 	public function print_content() {
 		$defined_context = $this->define_render_context();
 
-		$context_key = $defined_context['context_key'] ?? static::class;
-		$element_context = $defined_context['context'] ?? [];
-
-		$has_context = ! empty( $element_context );
-
-		if ( ! $has_context ) {
+		if ( empty( $defined_context ) ) {
 			return parent::print_content();
 		}
 
-		Render_Context::push( $context_key, $element_context );
+		$this->set_render_context( $defined_context );
 
 		parent::print_content();
 
-		Render_Context::pop( $context_key );
+		$this->clear_render_context( $defined_context );
 	}
 
 	/**
 	 * Define the context for element's Render_Context.
 	 *
-	 * @return array{context_key: ?string, context: array}
+	 * @return array Array of context pairs. Each pair is an associative array with:
+	 *               - 'context_key' (optional): The context key. Defaults to static::class if not provided.
+	 *               - 'context' (required): The context value (can be any type).
+	 *
+	 * @example
+	 * [
+	 *     [
+	 *         'context_key' => 'custom-key',
+	 *         'context' => ['some' => 'data'],
+	 *     ],
+	 *     [
+	 *         'context' => ['instance_id' => $this->get_id()],
+	 *     ],
+	 * ]
 	 */
 	protected function define_render_context(): array {
-		return [
-			'context_key' => null,
-			'context' => [],
-		];
+		return [];
 	}
 
 	protected function get_link_attributes( $link_settings, $add_key_to_result = false ) {

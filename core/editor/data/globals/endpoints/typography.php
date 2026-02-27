@@ -57,16 +57,22 @@ class Typography extends Base {
 			$result[ $id ]['value'] = $item;
 		}
 
-		return $result;
+		return apply_filters( 'elementor/globals/typography/items', $result );
 	}
 
 	protected function convert_db_format( $item ) {
 		$db_format = [
 			'_id' => $item['id'],
-			'title' => $item['title'] ?? '',
+			'title' => sanitize_text_field( $item['title'] ?? '' ),
 		];
 
-		$db_format = array_merge( $item['value'], $db_format );
+		$value = $item['value'];
+
+		unset( $value['_id'], $value['title'] );
+
+		foreach ( $value as $key => $dirty_value ) {
+			$db_format[ $key ] = is_string( $dirty_value ) ? sanitize_text_field( $dirty_value ) : $dirty_value ?? '';
+		}
 
 		return $db_format;
 	}

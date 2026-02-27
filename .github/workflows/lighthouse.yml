@@ -2,6 +2,14 @@ name: Lighthouse
 
 on:
   pull_request:
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.github/config.json'
+      - 'bin/**'
+      - '.gitignore'
+      - 'docs/**'
+      - '.vscode/**'
   push:
     branches:
       - 'main'
@@ -29,6 +37,9 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
+      
+      - name: Remove package.json
+        run: rm -f package*.json
 
       - name: Install Node.js 20.x
         uses: actions/setup-node@v4

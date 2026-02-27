@@ -5,6 +5,7 @@ namespace Elementor\Core\Common\Modules\EventsManager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Utils;
 use Elementor\Plugin;
 use Elementor\Tracker;
@@ -29,13 +30,13 @@ class Module extends BaseModule {
 			! Tracker::has_terms_changed( '2025-07-07' ) &&
 			Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 
-		$session_replays = [];
 		$is_flags_enabled = false;
 
 		if ( $can_send_events ) {
 			$mixpanel_config = self::get_remote_mixpanel_config();
-			$session_replays = $mixpanel_config[0]['sessionReplays'] ?? [];
-			$is_flags_enabled = $mixpanel_config[0]['flags'] ?? false;
+			$is_flags_enabled = EditorAssetsAPI::has_valid_nested_array( $mixpanel_config, [ 0 ] )
+				? (bool) ( $mixpanel_config[0]['flags'] ?? false )
+				: false;
 		}
 
 		$settings = [
@@ -49,7 +50,6 @@ class Module extends BaseModule {
 			'subscription_id' => self::get_subscription_id(),
 			'subscription' => self::get_subscription(),
 			'token' => ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN,
-			'session_replays' => $session_replays,
 			'flags_enabled' => $is_flags_enabled,
 		];
 
@@ -91,18 +91,12 @@ class Module extends BaseModule {
 	}
 
 	private static function get_remote_mixpanel_config() {
-		$data = wp_remote_get( static::REMOTE_MIXPANEL_CONFIG_URL );
+		$editor_assets_api = new EditorAssetsAPI( [
+			EditorAssetsAPI::ASSETS_DATA_URL => static::REMOTE_MIXPANEL_CONFIG_URL,
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_mixpanel_config',
+			EditorAssetsAPI::ASSETS_DATA_KEY => 'mixpanel',
+		] );
 
-		if ( is_wp_error( $data ) ) {
-			return [];
-		}
-
-		$data = json_decode( wp_remote_retrieve_body( $data ), true );
-
-		if ( empty( $data['mixpanel'] ) || ! is_array( $data['mixpanel'] ) ) {
-			return [];
-		}
-
-		return $data['mixpanel'];
+		return $editor_assets_api->get_assets_data();
 	}
 }

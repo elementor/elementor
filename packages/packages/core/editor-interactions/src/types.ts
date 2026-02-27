@@ -1,3 +1,4 @@
+import { type RefObject } from 'react';
 import { type Unit } from '@elementor/editor-controls';
 import type {
 	AnimationPresetPropValue,
@@ -43,18 +44,16 @@ export type InteractionsConfig = {
 	animationOptions: AnimationOption[];
 };
 
-export type FieldProps = {
-	value: string;
-	onChange: ( value: string ) => void;
+export type FieldProps< T = string > = {
+	value: T;
+	onChange: ( value: T ) => void;
 	label?: string;
+	disabled?: boolean;
+	anchorRef?: RefObject< HTMLElement | null >;
 };
 
-export type ReplayFieldProps = {
-	value: boolean;
-	onChange: ( value: boolean ) => void;
-	disabled?: boolean;
-};
-export type DirectionFieldProps = FieldProps & {
+export type ReplayFieldProps = FieldProps< boolean >;
+export type DirectionFieldProps = FieldProps< string > & {
 	interactionType: string;
 };
 
@@ -77,6 +76,4 @@ export type InteractionsProvider = {
 
 export type InteractionItemValue = InteractionItemPropValue[ 'value' ];
 
-export type TimeUnit = Extract< Unit, 'ms' | 's' >;
-
-export type TimeValue = `${ number }${ TimeUnit }` | number;
+export type SizeStringValue = `${ number }${ Unit }` | number;

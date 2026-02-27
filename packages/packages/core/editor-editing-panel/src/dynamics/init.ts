@@ -42,6 +42,7 @@ export const init = () => {
 
 	registerPopoverAction( {
 		id: 'dynamic-tags',
+		priority: 20,
 		useProps: usePropDynamicAction,
 	} );
 

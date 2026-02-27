@@ -39,6 +39,7 @@ export function init() {
 
 	registerPopoverAction( {
 		id: 'variables',
+		priority: 40,
 		useProps: usePropVariableAction,
 	} );
 

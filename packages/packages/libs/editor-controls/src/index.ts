@@ -8,6 +8,7 @@ export { BoxShadowRepeaterControl } from './controls/box-shadow-repeater-control
 export { FilterRepeaterControl } from './controls/filter-control/filter-repeater-control';
 export { SelectControl } from './controls/select-control';
 export { SelectControlWrapper } from './controls/select-control-wrapper';
+export { ChipsControl } from './controls/chips-control';
 export { ColorControl } from './controls/color-control';
 export { ToggleControl } from './controls/toggle-control';
 export { NumberControl } from './controls/number-control';
@@ -22,6 +23,7 @@ export { QueryControl } from './controls/query-control';
 export { GapControl } from './controls/gap-control';
 export { AspectRatioControl } from './controls/aspect-ratio-control';
 export { SvgMediaControl } from './controls/svg-media-control';
+export { VideoMediaControl } from './controls/video-media-control';
 export { BackgroundControl } from './controls/background-control/background-control';
 export { SwitchControl } from './controls/switch-control';
 export { RepeatableControl } from './controls/repeatable-control';
@@ -35,6 +37,7 @@ export { enqueueFont } from './controls/font-family-control/enqueue-font';
 export { transitionProperties, transitionsItemsList } from './controls/transition-control/data';
 export { DateTimeControl } from './controls/date-time-control';
 export { InlineEditingControl } from './controls/inline-editing-control';
+export { EmailFormActionControl } from './controls/email-form-action-control';
 
 // components
 export { ControlFormLabel } from './components/control-form-label';
@@ -54,6 +57,7 @@ export { PopoverGridContainer } from './components/popover-grid-container';
 export { InlineEditor } from './components/inline-editor';
 export { InlineEditorToolbar } from './components/inline-editor-toolbar';
 export { UnstableSizeField } from './components/size/unstable-size-field';
+export { NumberInput } from './components/number-input';
 
 // types
 export type { ControlComponent } from './create-control';
