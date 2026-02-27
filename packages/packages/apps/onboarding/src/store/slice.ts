@@ -1,26 +1,26 @@
 import { __createSlice, __registerSlice, type PayloadAction } from '@elementor/store';
-import { __ } from '@wordpress/i18n';
 
 import type { OnboardingChoices, OnboardingState, Step, StepIdType, StepType } from '../types';
 import { StepId } from '../types';
+import { t } from '../utils/translations';
 
 function getDefaultSteps(): Step[] {
 	return [
-		{ id: StepId.BUILDING_FOR, label: __( 'Who are you building for?', 'elementor' ), type: 'single' },
-		{ id: StepId.SITE_ABOUT, label: __( 'What is your site about?', 'elementor' ), type: 'multiple' },
+		{ id: StepId.BUILDING_FOR, label: t( 'steps.building_for.title' ), type: 'single' },
+		{ id: StepId.SITE_ABOUT, label: t( 'steps.site_about.title' ), type: 'multiple' },
 		{
 			id: StepId.EXPERIENCE_LEVEL,
-			label: __( 'How much experience do you have with Elementor?', 'elementor' ),
+			label: t( 'steps.experience_level.title' ),
 			type: 'single',
 		},
 		{
 			id: StepId.THEME_SELECTION,
-			label: __( 'Start with a theme that fits your needs', 'elementor' ),
+			label: t( 'steps.theme_selection.title' ),
 			type: 'single',
 		},
 		{
 			id: StepId.SITE_FEATURES,
-			label: __( 'What do you want to include in your site?', 'elementor' ),
+			label: t( 'steps.site_features.title' ),
 			type: 'multiple',
 		},
 	];
@@ -74,9 +74,9 @@ function getEmptyState(): OnboardingState {
 		isConnected: false,
 		isGuest: false,
 		userName: '',
+		urls: { dashboard: '', editor: '', connect: '', comparePlans: '', exploreFeatures: '' },
 		shouldShowProInstallScreen: false,
 		hasProInstallScreenDismissed: false,
-		urls: { dashboard: '', editor: '', connect: '' },
 	};
 }
 
@@ -90,8 +90,13 @@ function buildStateFromConfig(
 	const steps = parseStepsFromConfig( config.steps );
 	const firstStepId = steps[ 0 ]?.id ?? StepId.BUILDING_FOR;
 	const progress = config.progress ?? {};
-	const currentStepIndex = progress.current_step_index ?? 0;
-	const currentStepId = steps[ currentStepIndex ]?.id ?? ( progress.current_step_id as StepIdType ) ?? firstStepId;
+	let currentStepIndex = progress.current_step_index ?? 0;
+
+	if ( currentStepIndex < 0 || currentStepIndex >= steps.length ) {
+		currentStepIndex = 0;
+	}
+
+	const currentStepId = steps[ currentStepIndex ]?.id ?? firstStepId;
 
 	return {
 		steps,
@@ -109,9 +114,9 @@ function buildStateFromConfig(
 		isConnected: config.isConnected ?? false,
 		isGuest: false,
 		userName: config.userName ?? '',
+		urls: config.urls ?? { dashboard: '', editor: '', connect: '', comparePlans: '', exploreFeatures: '' },
 		shouldShowProInstallScreen: config.shouldShowProInstallScreen ?? false,
 		hasProInstallScreenDismissed: false,
-		urls: config.urls ?? { dashboard: '', editor: '', connect: '' },
 	};
 }
 

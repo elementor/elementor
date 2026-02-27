@@ -1,5 +1,7 @@
 'use strict';
 
+import { getActiveBreakpoint } from './interactions-breakpoints.js';
+
 export const config = window.ElementorInteractionsConfig?.constants || {
 	defaultDuration: 600,
 	defaultDelay: 0,
@@ -7,6 +9,11 @@ export const config = window.ElementorInteractionsConfig?.constants || {
 	scaleStart: 0,
 	defaultEasing: 'easeIn',
 };
+
+export function skipInteraction( interaction ) {
+	const breakpoint = getActiveBreakpoint();
+	return interaction?.breakpoints?.excluded?.includes( breakpoint );
+}
 
 export function getKeyframes( effect, type, direction ) {
 	const isIn = 'in' === type;
@@ -103,11 +110,13 @@ export function parseInteractionsData( data ) {
 	return data;
 }
 
-function unwrapInteractionValue( interaction ) {
+function unwrapInteractionValue( propValue, fallback = null ) {
 	// Supports Elementor's typed wrapper shape: { $$type: '...', value: ... }.
-	return ( interaction && 'object' === typeof interaction && '$$type' in interaction )
-		? interaction.value
-		: interaction;
+	if ( propValue && 'object' === typeof propValue && '$$type' in propValue ) {
+		return propValue.value;
+	}
+
+	return propValue ?? fallback;
 }
 
 function timingValueToMs( timingValue, fallbackMs ) {
@@ -157,6 +166,22 @@ export function findElementByDataId( dataId ) {
 	return document.querySelector( `[data-interaction-id="${ dataId }"]` );
 }
 
+function unwrapInteractionBreakpoints( propValue ) {
+	const breakpointsConfig = unwrapInteractionValue( propValue, {} );
+
+	const excluded = unwrapInteractionValue( breakpointsConfig?.excluded, [] );
+
+	if ( 1 > excluded.length ) {
+		return {};
+	}
+
+	const breakpoints = {
+		excluded: excluded.map( ( breakpoint ) => unwrapInteractionValue( breakpoint, '' ) ),
+	};
+
+	return breakpoints;
+}
+
 export function extractAnimationConfig( interaction ) {
 	if ( 'string' === typeof interaction ) {
 		return parseAnimationName( interaction );
@@ -180,6 +205,8 @@ export function extractAnimationConfig( interaction ) {
 		return null;
 	}
 
+	const breakpoints = unwrapInteractionBreakpoints( payload.breakpoints );
+
 	const effect = unwrapInteractionValue( animation.effect ) || animation.effect || 'fade';
 	const type = unwrapInteractionValue( animation.type ) || animation.type || 'in';
 	const direction = unwrapInteractionValue( animation.direction ) || animation.direction || '';
@@ -192,6 +219,7 @@ export function extractAnimationConfig( interaction ) {
 
 	return {
 		trigger,
+		breakpoints,
 		effect,
 		type,
 		direction,

@@ -103,19 +103,19 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		await test.step( 'Assert trigger options and hidden scrollOn-only controls', async () => {
 			const popover = page.locator( '.MuiPopover-root' ).first();
 
-			// Open trigger menu (default is "Page load").
-			const triggerSelect = popover.getByText( 'Page load', { exact: true } );
+			// Open trigger menu via the combobox (avoids duplicate text matches from disablePortal).
+			const triggerSelect = popover.locator( '[role="combobox"]' ).first();
 			await expect( triggerSelect ).toBeVisible();
 			await triggerSelect.click();
 
 			// Core trigger control enables only these two options.
-			await expect( page.getByRole( 'option', { name: 'Page load' } ) ).toBeVisible();
-			await expect( page.getByRole( 'option', { name: 'Scroll into view' } ) ).toBeVisible();
+			await expect( page.locator( '[role="option"]' ).filter( { hasText: 'Page load' } ) ).toBeVisible();
+			await expect( page.locator( '[role="option"]' ).filter( { hasText: 'Scroll into view' } ) ).toBeVisible();
 
 			// Pro-only option is present but disabled in core runs.
-			const scrollOnOption = page.getByRole( 'option', { name: 'While scrolling' } );
+			const scrollOnOption = page.locator( '[role="option"]' ).filter( { hasText: 'While Scrolling' } );
 			await expect( scrollOnOption ).toBeVisible();
-			await expect( scrollOnOption ).toBeDisabled();
+			await expect( scrollOnOption ).toHaveAttribute( 'aria-disabled', 'true' );
 
 			// Close menu without changing selection.
 			await page.keyboard.press( 'Escape' );
@@ -127,7 +127,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 
 			// Switch to "Scroll into view" and ensure scrollOn-only controls still do not render.
 			await triggerSelect.click();
-			await page.getByRole( 'option', { name: 'Scroll into view' } ).click();
+			await page.locator( '[role="option"]' ).filter( { hasText: 'Scroll into view' } ).click();
 
 			await expect( popover.getByText( 'Relative To', { exact: true } ) ).toHaveCount( 0 );
 			await expect( popover.getByText( 'Offset Top', { exact: true } ) ).toHaveCount( 0 );
@@ -160,25 +160,26 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			const interactionTag = page.locator( '.MuiTag-root' ).first();
 
 			await expect( interactionTag ).toBeVisible();
-			const popover = page.locator( '.MuiPopover-root' );
+			const popover = page.locator( '.MuiPopover-root' ).first();
 			await popover.waitFor( { state: 'visible' } );
 
-			// Helper function to select from a dropdown
-			const selectOption = async ( currentText, optionName ) => {
-				const button = popover.getByText( currentText, { exact: true } );
-				await expect( button ).toBeVisible();
-				await button.click();
-
-				const option = page.getByRole( 'option', { name: optionName } );
-				await expect( option ).toBeVisible();
-				await option.click();
+			const selectInPopover = async ( combobox, optionText ) => {
+				await combobox.click();
+				await page.locator( '[role="option"]' ).filter( { hasText: optionText } ).click();
+				await page.waitForFunction(
+					() => ! document.querySelector( '.MuiPopover-paper .MuiModal-root' ),
+					{ timeout: 3000 },
+				);
 			};
 
+			const getFieldCombobox = ( label: string ) =>
+				popover.locator( `[aria-label="${ label } control"] [role="combobox"]` );
+
 			// Change trigger from "Page load" to "Scroll into view"
-			await selectOption( 'Page load', 'Scroll into view' );
+			await selectInPopover( getFieldCombobox( 'Trigger' ), 'Scroll into view' );
 
 			// Change animation from "Fade" to "Slide"
-			await selectOption( 'Fade', 'Slide' );
+			await selectInPopover( getFieldCombobox( 'Effect' ), 'Slide' );
 
 			// Set duration to 300ms
 			const durationInput = popover.locator( 'input[type="number"]' ).first();
@@ -312,15 +313,12 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		} );
 
 		await test.step( 'Verify Replay control is visible with Yes button disabled', async () => {
-			// Arrange
-			const selectOption = async ( openSelector, optionName ) => {
-				await openSelector.click();
+			// Arrange – use CSS selectors to bypass aria-hidden from disablePortal.
+			const popover = page.locator( '.MuiPopover-root' ).first();
+			const triggerCombobox = popover.locator( '[role="combobox"]' ).first();
+			await triggerCombobox.click();
 
-				const option = page.getByRole( 'option', { name: optionName } );
-				await option.click();
-			};
-
-			await selectOption( page.getByText( 'Page load', { exact: true } ), 'Scroll into view' );
+			await page.locator( '[role="option"]' ).filter( { hasText: 'Scroll into view' } ).click();
 
 			const replayLabel = page.getByText( 'Replay', { exact: true } );
 

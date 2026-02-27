@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Box, ListItemButton, Skeleton, Stack } from '@elementor/ui';
-const ROWS_COUNT = 6;
 
-const rows = Array.from( { length: ROWS_COUNT }, ( _, index ) => index );
+const ROWS = Array.from( { length: 6 }, ( _, index ) => index );
 
 export const LoadingComponents = () => {
 	return (
@@ -26,7 +25,7 @@ export const LoadingComponents = () => {
 				},
 			} }
 		>
-			{ rows.map( ( row ) => (
+			{ ROWS.map( ( row ) => (
 				<ListItemButton
 					key={ row }
 					sx={ { border: 'solid 1px', borderColor: 'divider', py: 0.5, px: 1 } }
