@@ -50,4 +50,38 @@ class Test_Module extends Test_Base {
 		$step_ids = array_column( $settings['steps'], 'id' );
 		$this->assertContains( 'site_features', $step_ids );
 	}
+
+	public function test_steps_exclude_theme_selection_when_elementor_theme_active() {
+		add_filter( 'elementor/e-onboarding/is_elementor_theme_active', '__return_true' );
+		try {
+			$_GET['page'] = 'elementor-app';
+			do_action( 'elementor/init' );
+
+			$settings = Plugin::$instance->app->get_settings( 'e-onboarding' );
+			$this->assertIsArray( $settings );
+			$this->assertArrayHasKey( 'steps', $settings );
+
+			$step_ids = array_column( $settings['steps'], 'id' );
+			$this->assertNotContains( 'theme_selection', $step_ids );
+		} finally {
+			remove_filter( 'elementor/e-onboarding/is_elementor_theme_active', '__return_true' );
+		}
+	}
+
+	public function test_steps_include_theme_selection_when_elementor_theme_not_active() {
+		add_filter( 'elementor/e-onboarding/is_elementor_theme_active', '__return_false' );
+		try {
+			$_GET['page'] = 'elementor-app';
+			do_action( 'elementor/init' );
+
+			$settings = Plugin::$instance->app->get_settings( 'e-onboarding' );
+			$this->assertIsArray( $settings );
+			$this->assertArrayHasKey( 'steps', $settings );
+
+			$step_ids = array_column( $settings['steps'], 'id' );
+			$this->assertContains( 'theme_selection', $step_ids );
+		} finally {
+			remove_filter( 'elementor/e-onboarding/is_elementor_theme_active', '__return_false' );
+		}
+	}
 }
