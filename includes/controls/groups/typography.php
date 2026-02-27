@@ -194,6 +194,33 @@ class Group_Control_Typography extends Group_Control_Base {
 			],
 		];
 
+		$fields['text_decoration_style'] = [
+			'label' => esc_html_x( 'Decoration Style', 'Typography Control', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'default' => 'solid',
+			'options' => [
+				'solid' => esc_html_x( 'Solid', 'Typography Control', 'elementor' ),
+				'double' => esc_html_x( 'Double', 'Typography Control', 'elementor' ),
+				'dotted' => esc_html_x( 'Dotted', 'Typography Control', 'elementor' ),
+				'dashed' => esc_html_x( 'Dashed', 'Typography Control', 'elementor' ),
+				'wavy' => esc_html_x( 'Wavy', 'Typography Control', 'elementor' ),
+			],
+			'condition' => [
+				'text_decoration!' => [ 'none', '' ],
+			],
+			'selector_value' => 'text-decoration-style: {{VALUE}};',
+		];
+
+		$fields['text_decoration_color'] = [
+			'label' => esc_html_x( 'Decoration Color', 'Typography Control', 'elementor' ),
+			'type' => Controls_Manager::COLOR,
+			'default' => '',
+			'condition' => [
+				'text_decoration!' => [ 'none', '' ],
+			],
+			'selector_value' => 'text-decoration-color: {{VALUE}};',
+		];
+
 		$fields['line_height'] = [
 			'label' => esc_html__( 'Line Height', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
