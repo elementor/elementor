@@ -40,7 +40,7 @@ interface EOnboardingConfig {
 		editor: string;
 		connect: string;
 		comparePlans?: string;
-		exploreFeatures?: string;
+		upgradeUrl: string;
 	};
 }
 
