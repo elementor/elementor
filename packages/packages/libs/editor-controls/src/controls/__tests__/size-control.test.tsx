@@ -381,7 +381,13 @@ describe( 'SizeControl', () => {
 		fireEvent.keyPress( customInput, { key: 'Enter' } );
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 'updated:my-custom-size', unit: 'custom' } } );
+		expect( setValue ).toHaveBeenCalledWith( {
+			$$type: 'size',
+			value: {
+				size: 'updated:my-custom-size',
+				unit: 'custom',
+			},
+		} );
 	} );
 
 	it( "should make sure custom unit is always last in unit's list", async () => {
