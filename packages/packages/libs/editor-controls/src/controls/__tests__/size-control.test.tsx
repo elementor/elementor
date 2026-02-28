@@ -343,6 +343,47 @@ describe( 'SizeControl', () => {
 		expect( selectButton ).toContainHTML( customOptionElement );
 	} );
 
+	it( 'should close the popover and update the size when the enter key is pressed', () => {
+		// Arrange.
+		const setValue = jest.fn();
+
+		const requiredPropType = createMockPropType( {
+			key: 'size',
+			kind: 'plain',
+			settings: {
+				required: true,
+			},
+		} );
+
+		const props = {
+			setValue,
+			value: mockSizeProp( { size: 'my-custom-size', unit: 'custom' } ),
+			bind: 'select',
+			propType: requiredPropType,
+		};
+
+		const anchorEl = {
+			current: document.body,
+		} as unknown as RefObject< HTMLDivElement | null >;
+
+		// Act.
+		renderControl(
+			<SizeControl units={ mockLengthUnits() } extendedOptions={ [ 'auto' ] } anchorRef={ anchorEl } />,
+			props
+		);
+
+		const selectButton = screen.getByRole( 'button' );
+		expect( selectButton ).toContainHTML( customOptionElement );
+
+		const customInput = screen.getByDisplayValue( 'my-custom-size' );
+
+		fireEvent.input( customInput, { target: { value: 'updated:my-custom-size' } } );
+		fireEvent.keyPress( customInput, { key: 'Enter' } );
+
+		// Assert.
+		expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 'updated:my-custom-size', unit: 'custom' } } );
+	} );
+
 	it( "should make sure custom unit is always last in unit's list", async () => {
 		// Arrange.
 		const setValue = jest.fn();
