@@ -67,7 +67,14 @@ export type { ControlActionsItems } from './control-actions/control-actions-cont
 export type { AdornmentComponent } from './control-adornments/control-adornments-context';
 export type { PropProviderProps } from './bound-prop-context';
 export type { SetValue, SetValueMeta } from './bound-prop-context/prop-context';
-export type { ExtendedOption, Unit, LengthUnit, AngleUnit, TimeUnit } from './utils/size-control';
+export {
+	isUnitExtendedOption,
+	type ExtendedOption,
+	type Unit,
+	type LengthUnit,
+	type AngleUnit,
+	type TimeUnit,
+} from './utils/size-control';
 export type { ToggleControlProps } from './controls/toggle-control';
 export type { FontCategory } from './controls/font-family-control/font-family-control';
 export type { InlineEditorToolbarProps } from './components/inline-editor-toolbar';
