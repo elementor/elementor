@@ -37,10 +37,6 @@ class Presets {
 		return array_merge( self::BASE_TRIGGERS, self::ADDITIONAL_TRIGGERS );
 	}
 
-	public function list() {
-		return $this->generate_animation_options();
-	}
-
 	public function defaults() {
 		return [
 			'defaultDuration' => self::DEFAULT_DURATION,
@@ -49,52 +45,5 @@ class Presets {
 			'scaleStart' => self::DEFAULT_SCALE_START,
 			'defaultEasing' => self::DEFAULT_EASING,
 		];
-	}
-
-	private function get_label( $key, $value ) {
-		$special_labels = [
-			'trigger' => [
-				'load' => __( 'On page load', 'elementor' ),
-				'scrollIn' => __( 'Scroll into view', 'elementor' ),
-				'scrollOut' => __( 'Scroll out of view', 'elementor' ),
-				'scrollOn' => __( 'While scrolling', 'elementor' ),
-				'hover' => __( 'Hover', 'elementor' ),
-				'click' => __( 'Click', 'elementor' ),
-			],
-		];
-
-		if ( isset( $special_labels[ $key ][ $value ] ) ) {
-			return $special_labels[ $key ][ $value ];
-		}
-
-		$label = ucwords( str_replace( '-', ' ', $value ) );
-
-		return esc_html( $label );
-	}
-
-	private function generate_animation_options() {
-		$options = [];
-
-		foreach ( self::triggers_options() as $trigger ) {
-			foreach ( self::effects_options() as $effect ) {
-				foreach ( self::TYPES as $type ) {
-					foreach ( self::DIRECTIONS as $direction ) {
-						$value = "{$trigger}-{$effect}-{$type}-{$direction}";
-						$label = sprintf(
-							'%s: %s %s',
-							$this->get_label( 'trigger', $trigger ),
-							$this->get_label( 'effect', $effect ),
-							$this->get_label( 'type', $type ),
-						);
-						$options[] = [
-							'value' => $value,
-							'label' => $label,
-						];
-					}
-				}
-			}
-		}
-
-		return $options;
 	}
 }
