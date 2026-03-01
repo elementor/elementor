@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { __ } from '@wordpress/i18n';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { Box, Button, Chip, CloseButton, Typography } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 const PROMO_IMAGE = 'https://assets.elementor.com/v4-promotion/v1/images/v4_chip_new.png';
 
@@ -64,7 +64,10 @@ export function AtomicElementsPromo() {
 
 				<Box sx={ { pl: 2.5, pr: 4, pt: 2 } }>
 					<Typography variant="caption" color="text.tertiary">
-						{ __( 'The new generation of high-performance, flexible building blocks designed for precise styling and a unified experience.', 'elementor' ) }
+						{ __(
+							'The new generation of high-performance, flexible building blocks designed for precise styling and a unified experience.',
+							'elementor'
+						) }
 					</Typography>
 				</Box>
 

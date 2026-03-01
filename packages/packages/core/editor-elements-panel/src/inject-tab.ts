@@ -11,7 +11,6 @@ import { registerTab } from './tabs';
 import { createLegacyView } from './utils/create-legacy-view';
 import { createTabNavItem } from './utils/create-tab-nav-item';
 import { getLegacyElementsPanelComponent } from './utils/get-legacy-elements-panel-component';
-import { getWindow } from './utils/get-window';
 
 type Config = {
 	id: string;

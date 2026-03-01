@@ -12,13 +12,16 @@ export function init( Component: React.ComponentType ) {
 	} );
 
 	listenTo( v1ReadyEvent(), () => {
-		window.elementor?.hooks?.addFilter( 'panel/elements/regionViews', ( regionViews, { notice }: Record<string, unknown> ) => {
-			regionViews.notice = {
-				region: notice,
-				view: createNoticeView(),
-			};
+		window.elementor?.hooks?.addFilter(
+			'panel/elements/regionViews',
+			( regionViews, { notice }: Record< string, unknown > ) => {
+				regionViews.notice = {
+					region: notice,
+					view: createNoticeView(),
+				};
 
-			return regionViews;
-		} );
+				return regionViews;
+			}
+		);
 	} );
 }
