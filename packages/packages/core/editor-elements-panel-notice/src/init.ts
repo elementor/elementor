@@ -36,22 +36,19 @@ export function init() {
 		// eslint-disable-next-line no-console
 		console.log( '[notice] v1ReadyEvent fired — registering panel/elements/regionViews filter' );
 
-		window.elementor.hooks.addFilter(
-			'panel/elements/regionViews',
-			( regionViews, { notice } ) => {
-				// eslint-disable-next-line no-console
-				console.log( '[notice] panel/elements/regionViews filter called', { notice, regionViews } );
+		window.elementor.hooks.addFilter( 'panel/elements/regionViews', ( regionViews, { notice } ) => {
+			// eslint-disable-next-line no-console
+			console.log( '[notice] panel/elements/regionViews filter called', { notice, regionViews } );
 
-				regionViews.notice = {
-					region: notice,
-					view: createNoticeView(),
-				};
+			regionViews.notice = {
+				region: notice,
+				view: createNoticeView(),
+			};
 
-				// eslint-disable-next-line no-console
-				console.log( '[notice] regionViews.notice set', regionViews.notice );
+			// eslint-disable-next-line no-console
+			console.log( '[notice] regionViews.notice set', regionViews.notice );
 
-				return regionViews;
-			}
-		);
+			return regionViews;
+		} );
 	} );
 }
