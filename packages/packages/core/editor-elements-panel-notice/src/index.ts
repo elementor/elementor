@@ -1,1 +1,1 @@
-export { init } from './init';
+export { register } from './init';

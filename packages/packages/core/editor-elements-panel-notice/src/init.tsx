@@ -5,7 +5,7 @@ import { __privateListenTo as listenTo, v1ReadyEvent } from '@elementor/editor-v
 import { NoticePortal } from './components/notice-portal';
 import { createNoticeView } from './utils/create-notice-view';
 
-export function init( Component: React.ComponentType ) {
+export function register( Component: React.ComponentType ) {
 	injectIntoTop( {
 		id: 'editor-elements-panel-notice',
 		component: () => <NoticePortal component={ Component } />,
