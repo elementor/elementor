@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 
 import { componentInstanceOverridesPropTypeUtil } from '../prop-types/component-instance-overrides-prop-type';
 import { type ComponentInstanceProp, componentInstancePropTypeUtil } from '../prop-types/component-instance-prop-type';
-import { applyOverridesToElements } from './apply-overrides-to-elements';
+import { applyOverridesToOverridables } from './apply-overrides-to-elements';
 import { getComponentDocumentData } from './component-document-data';
 import { trackComponentEvent } from './tracking';
 
@@ -26,10 +26,10 @@ export async function detachComponentInstance( {
 		throw new Error( `Component with ID "${ componentId }" not found.` );
 	}
 
-	const componentElements = componentData.elements ?? [];
+	const componentElements = structuredClone(componentData.elements ?? []);
 	const overrides = extractInstanceOverrides( instanceContainer );
 
-	const elementsWithOverrides = applyOverridesToElements( componentElements, overrides );
+	const elementsWithOverrides = applyOverridesToOverridables( componentElements, overrides );
 
 	const 
 
