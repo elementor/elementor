@@ -45,7 +45,7 @@ async function assertDivBlockHasClasses( divBlock: Locator, classNames: string[]
 	}
 }
 
-test.describe.skip( 'Global Classes - Order @v4-tests', () => {
+test.describe( 'Global Classes - Order @v4-tests', () => {
 	let wpAdmin: WpAdminPage;
 	let editor: EditorPage;
 	let page: Page;
@@ -70,7 +70,7 @@ test.describe.skip( 'Global Classes - Order @v4-tests', () => {
 		await page.close();
 	} );
 
-	test( 'Global class order determines CSS specificity on canvas and frontend', async () => {
+	test.skip( 'Global class order determines CSS specificity on canvas and frontend', async () => {
 		let divBlockId: string;
 		let canvasDivBlock: Locator;
 		let frontendDivBlock: Locator;
