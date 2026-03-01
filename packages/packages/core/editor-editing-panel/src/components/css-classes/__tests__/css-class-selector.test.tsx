@@ -8,12 +8,7 @@ import {
 	mockHistoryManager,
 	renderWithTheme,
 } from 'test-utils';
-import {
-	getElementLabel,
-	getElementSetting,
-	updateElementSettings,
-	useElementSetting,
-} from '@elementor/editor-elements';
+import { getElementLabel, getElementSetting, updateElementSettings } from '@elementor/editor-elements';
 import { type StyleDefinitionState } from '@elementor/editor-styles';
 import {
 	ELEMENTS_STYLES_PROVIDER_KEY_PREFIX,
@@ -160,8 +155,6 @@ describe( '<CssClassSelector />', () => {
 		jest.mocked( useProviders ).mockReturnValue( [ localProvider, provider1, provider2 ] );
 
 		jest.mocked( useGetStylesRepositoryCreateAction ).mockReturnValue( [ provider1, jest.fn() ] );
-
-		jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
 	} );
 
 	afterEach( () => {
@@ -177,9 +170,6 @@ describe( '<CssClassSelector />', () => {
 
 		// Assert - Does not show placeholder text if there are applied classes.
 		expect( screen.queryByPlaceholderText( 'Type class name' ) ).not.toBeInTheDocument();
-
-		// Assert - Check if useElementSetting called with the correct arguments.
-		expect( useElementSetting ).toHaveBeenCalledWith( 'mock-element', 'my-classes' );
 
 		// Assert - Check if applied class exist in the document.
 		expect( applied ).toHaveLength( 3 );
@@ -211,8 +201,6 @@ describe( '<CssClassSelector />', () => {
 
 	it( 'should list all available classes with filtering, excluding the applied and non editable ones', () => {
 		// Arrange.
-		jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local' ] } );
-
 		const nonEditableProvider = createMockStylesProvider(
 			{
 				key: 'provider-3',
@@ -226,7 +214,7 @@ describe( '<CssClassSelector />', () => {
 
 		jest.mocked( useProviders ).mockReturnValue( [ localProvider, provider1, provider2, nonEditableProvider ] );
 
-		renderComponent( { active: 'provider-1-b' } );
+		renderComponent( { active: 'provider-1-b', appliedClasses: [ 'local' ] } );
 
 		// Act.
 		const input = screen.getByRole( 'combobox', { hidden: true } );
@@ -251,10 +239,9 @@ describe( '<CssClassSelector />', () => {
 		const setActive = jest.fn();
 
 		const appliedClasses = [ 'local', 'provider-1-b' ];
-		jest.mocked( useElementSetting ).mockReturnValue( { value: appliedClasses } );
 		jest.mocked( getElementSetting ).mockReturnValue( { value: appliedClasses } );
 
-		renderComponent( { setActive, active: 'provider-1-b' } );
+		renderComponent( { setActive, active: 'provider-1-b', appliedClasses } );
 
 		// Act.
 		fireEvent.change( screen.getByRole( 'combobox', { hidden: true } ), { target: { value: 'P' } } );
@@ -281,10 +268,9 @@ describe( '<CssClassSelector />', () => {
 		] );
 
 		const appliedClasses: string[] = [];
-		jest.mocked( useElementSetting ).mockReturnValue( { value: appliedClasses } );
 		jest.mocked( getElementSetting ).mockReturnValue( { value: appliedClasses } );
 
-		renderComponent( { active: null } );
+		renderComponent( { active: null, appliedClasses } );
 
 		// Act.
 		fireEvent.change( screen.getByRole( 'combobox', { hidden: true } ), { target: { value: 'P' } } );
@@ -304,7 +290,6 @@ describe( '<CssClassSelector />', () => {
 		// Arrange.
 		const appliedClasses = [ 'local', 'provider-1-b', 'provider-1-a' ];
 
-		jest.mocked( useElementSetting ).mockReturnValue( { value: appliedClasses } );
 		jest.mocked( getElementSetting ).mockReturnValue( { value: appliedClasses } );
 		jest.mocked( stylesRepository.getProviderByKey ).mockImplementation( ( key ) => {
 			if ( key === 'provider-1' ) {
@@ -315,7 +300,7 @@ describe( '<CssClassSelector />', () => {
 
 		const setActive = jest.fn();
 
-		renderComponent( { active: 'provider-1-b', setActive } );
+		renderComponent( { active: 'provider-1-b', setActive, appliedClasses } );
 
 		// Act.
 		fireEvent.keyDown( screen.getByRole( 'combobox', { hidden: true } ), { key: 'Backspace', keyCode: 8 } );
@@ -339,11 +324,10 @@ describe( '<CssClassSelector />', () => {
 
 	it( 'should disallow deleting the elements provider classes', () => {
 		// Arrange.
-		jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local' ] } );
 
 		const setActive = jest.fn();
 
-		renderComponent( { active: 'local', setActive } );
+		renderComponent( { active: 'local', setActive, appliedClasses: [ 'local' ] } );
 
 		// Act.
 		fireEvent.keyDown( screen.getByRole( 'combobox', { hidden: true } ), { key: 'Backspace', keyCode: 8 } );
@@ -362,10 +346,8 @@ describe( '<CssClassSelector />', () => {
 			] ),
 		] );
 
-		jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'provider-1-a' ] } );
-
 		// Act.
-		renderComponent( { active: null } );
+		renderComponent( { active: null, appliedClasses: [ 'provider-1-a' ] } );
 
 		// Assert.
 		expect( screen.getByRole( 'button', { name: 'local', pressed: true } ) ).toBeInTheDocument();
@@ -422,7 +404,6 @@ describe( '<CssClassSelector />', () => {
 		// Arrange.
 		const appliedIds = [ 'local', 'provider-1-b' ];
 
-		jest.mocked( useElementSetting ).mockReturnValue( { value: appliedIds } );
 		jest.mocked( getElementSetting ).mockReturnValue( { value: appliedIds } );
 
 		const setActive = jest.fn();
@@ -433,7 +414,7 @@ describe( '<CssClassSelector />', () => {
 			createClass,
 		] );
 
-		renderComponent( { active: 'provider-1-b', setActive } );
+		renderComponent( { active: 'provider-1-b', setActive, appliedClasses: appliedIds } );
 
 		// Act.
 		fireEvent.change( screen.getByRole( 'combobox', { hidden: true } ), { target: { value: 'class-name' } } );
@@ -459,7 +440,6 @@ describe( '<CssClassSelector />', () => {
 		// Arrange.
 		const appliedIds = [ 'local', 'provider-1-b' ];
 
-		jest.mocked( useElementSetting ).mockReturnValue( { value: appliedIds } );
 		jest.mocked( getElementSetting ).mockReturnValue( { value: appliedIds } );
 
 		const setActive = jest.fn();
@@ -470,7 +450,7 @@ describe( '<CssClassSelector />', () => {
 			createClass,
 		] );
 
-		renderComponent( { active: 'provider-1-b', setActive } );
+		renderComponent( { active: 'provider-1-b', setActive, appliedClasses: appliedIds } );
 
 		// Act.
 		const input = screen.getByRole( 'combobox', { hidden: true } );
@@ -547,13 +527,16 @@ describe( '<CssClassSelector />', () => {
 
 	it( 'should not display any Pseudo classes if none is active', () => {
 		// Arrange.
-		jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b' ] } );
-
 		const setActive = jest.fn();
 		const setActiveMetaState = jest.fn();
 
 		// Act.
-		renderComponent( { active: 'local', setActive, setActiveMetaState } );
+		renderComponent( {
+			active: 'local',
+			setActive,
+			setActiveMetaState,
+			appliedClasses: [ 'local', 'provider-1-b' ],
+		} );
 
 		const chipGroups = screen.getAllByRole( 'group' );
 
@@ -575,12 +558,11 @@ describe( '<CssClassSelector />', () => {
 
 	it( 'should display the active Pseudo classes in the active style chip', () => {
 		// Arrange.
-		jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b' ] } );
 
 		const setActive = jest.fn();
 
 		// Act.
-		renderComponent( { active: 'local', setActive, state: 'hover' } );
+		renderComponent( { active: 'local', setActive, state: 'hover', appliedClasses: [ 'local', 'provider-1-b' ] } );
 
 		const chipGroups = screen.getAllByRole( 'group' );
 
@@ -602,13 +584,17 @@ describe( '<CssClassSelector />', () => {
 
 	it( 'should show the Pseudo classes in the CSS menu and set the clicked selector as the active one', () => {
 		// Arrange.
-		jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
 
 		const setActive = jest.fn();
 		const setActiveMetaState = jest.fn();
 
 		// Act.
-		renderComponent( { active: 'local', setActive, setActiveMetaState } );
+		renderComponent( {
+			active: 'local',
+			setActive,
+			setActiveMetaState,
+			appliedClasses: [ 'local', 'provider-1-b', 'provider-1-a' ],
+		} );
 
 		const chipGroups = screen.getAllByRole( 'group' );
 
@@ -636,7 +622,6 @@ describe( '<CssClassSelector />', () => {
 
 	it( 'should activate the right style definition if a Pseudo classes item of an inactive style css-class-menu is clicked', () => {
 		// Arrange.
-		jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
 		jest.mocked( stylesRepository.getProviderByKey ).mockImplementation( ( key ) => {
 			if ( key === 'provider-1' ) {
 				return provider1;
@@ -648,7 +633,13 @@ describe( '<CssClassSelector />', () => {
 		const setActiveMetaState = jest.fn();
 
 		// Act.
-		renderComponent( { active: 'local', setActive, setActiveMetaState, state: 'hover' } );
+		renderComponent( {
+			active: 'local',
+			setActive,
+			setActiveMetaState,
+			state: 'hover',
+			appliedClasses: [ 'local', 'provider-1-b', 'provider-1-a' ],
+		} );
 
 		const chipGroups = screen.getAllByRole( 'group' );
 
@@ -786,13 +777,11 @@ describe( '<CssClassSelector />', () => {
 
 	it( 'should show a style indicator for styled states within the states sub menu', () => {
 		// Arrange.
-		jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local' ] } );
-
 		const setActive = jest.fn();
 		const setActiveMetaState = jest.fn();
 
 		// Act.
-		renderComponent( { active: 'local', setActive, setActiveMetaState } );
+		renderComponent( { active: 'local', setActive, setActiveMetaState, appliedClasses: [ 'local' ] } );
 
 		const chipGroups = screen.getAllByRole( 'group' );
 
@@ -823,8 +812,6 @@ describe( '<CssClassSelector />', () => {
 
 	it( 'should show element custom states and set the clicked one active', () => {
 		// Arrange.
-		jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b' ] } );
-
 		const setActive = jest.fn();
 		const setActiveMetaState = jest.fn();
 
@@ -836,7 +823,11 @@ describe( '<CssClassSelector />', () => {
 
 		// Act.
 		renderWithTheme(
-			<ElementProvider element={ { id: 'mock-element', type: 'mock-element-type' } } elementType={ elementType }>
+			<ElementProvider
+				element={ { id: 'mock-element', type: 'mock-element-type' } }
+				elementType={ elementType }
+				settings={ { 'my-classes': { $$type: 'classes', value: [ 'local', 'provider-1-b' ] } } }
+			>
 				<ClassesPropProvider prop="my-classes">
 					<StyleProvider
 						id={ 'local' }
@@ -868,9 +859,7 @@ describe( '<CssClassSelector />', () => {
 	describe( 'Global class menu section', () => {
 		it( 'should not show global class menu items for a local class', () => {
 			// Arrange.
-			jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
-
-			renderComponent( { active: 'provider-1-b' } );
+			renderComponent( { active: 'provider-1-b', appliedClasses: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
 
 			jest.mocked( stylesRepository.getProviderByKey ).mockReturnValue( localProvider );
 
@@ -892,10 +881,9 @@ describe( '<CssClassSelector />', () => {
 			// Arrange.
 			const appliedClasses = [ 'local', 'provider-1-b', 'provider-1-a' ];
 
-			jest.mocked( useElementSetting ).mockReturnValue( { value: appliedClasses } );
 			jest.mocked( getElementSetting ).mockReturnValue( { value: appliedClasses } );
 
-			renderComponent( { active: 'provider-1-b' } );
+			renderComponent( { active: 'provider-1-b', appliedClasses } );
 			jest.mocked( stylesRepository.getProviderByKey ).mockReturnValue( provider1 );
 
 			// Act.
@@ -932,12 +920,10 @@ describe( '<CssClassSelector />', () => {
 
 		it( 'should rename a class when the "Rename" button is clicked', async () => {
 			// Arrange.
-			jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
-
 			const mockProvider = createMockStylesProvider( { key: 'provider-1-b' } );
 			jest.mocked( stylesRepository.getProviderByKey ).mockReturnValue( mockProvider );
 
-			renderComponent( { active: 'provider-1-b' } );
+			renderComponent( { active: 'provider-1-b', appliedClasses: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
 
 			// Act.
 			const classToRename = screen.getByRole( 'group', { name: __( 'Edit Provider-1-a', 'elementor' ) } );
@@ -972,7 +958,6 @@ describe( '<CssClassSelector />', () => {
 
 		it( 'should disable the"Rename" button if user does not have the update capability', () => {
 			// Arrange.
-			jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
 			jest.mocked( useUserStylesCapability ).mockReturnValue( {
 				userCan: () => ( {
 					update: false,
@@ -985,7 +970,7 @@ describe( '<CssClassSelector />', () => {
 			jest.mocked( stylesRepository.getProviderByKey ).mockReturnValue( mockProvider );
 
 			// Act.
-			renderComponent( { active: 'provider-1-b' } );
+			renderComponent( { active: 'provider-1-b', appliedClasses: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
 
 			const classToRename = screen.getByRole( 'group', { name: __( 'Edit Provider-1-a', 'elementor' ) } );
 			const classToRenameMenuTrigger = within( classToRename ).getByLabelText(
@@ -1002,7 +987,6 @@ describe( '<CssClassSelector />', () => {
 
 		it( 'should not allow inline rename if user does not have the update capability', () => {
 			// Arrange.
-			jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
 			jest.mocked( useUserStylesCapability ).mockReturnValue( {
 				userCan: () => ( {
 					update: false,
@@ -1017,7 +1001,7 @@ describe( '<CssClassSelector />', () => {
 			jest.mocked( stylesRepository.getProviderByKey ).mockReturnValue( mockProvider );
 
 			// Act.
-			renderComponent( { active: 'provider-1-b' } );
+			renderComponent( { active: 'provider-1-b', appliedClasses: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
 
 			const activeEditableField = within( screen.getByRole( 'group', { name: 'Edit Provider-1-b' } ) ).getByRole(
 				'button',
@@ -1033,7 +1017,6 @@ describe( '<CssClassSelector />', () => {
 
 		it( 'should disable the state item if the user does not have the updateProps capability', () => {
 			// Arrange.
-			jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
 			jest.mocked( useUserStylesCapability ).mockReturnValue( {
 				userCan: () => ( {
 					update: true,
@@ -1047,7 +1030,7 @@ describe( '<CssClassSelector />', () => {
 			jest.mocked( stylesRepository.getProviderByKey ).mockReturnValue( mockProvider );
 
 			// Act.
-			renderComponent( { active: 'provider-1-b' } );
+			renderComponent( { active: 'provider-1-b', appliedClasses: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
 
 			const classToRename = screen.getByRole( 'group', { name: __( 'Edit Provider-1-a', 'elementor' ) } );
 			const classToRenameMenuTrigger = within( classToRename ).getByLabelText(
@@ -1066,7 +1049,6 @@ describe( '<CssClassSelector />', () => {
 
 		it( 'should show info tip if the user does not have the updateProps capability for the active class', () => {
 			// Arrange.
-			jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
 			jest.mocked( useUserStylesCapability ).mockReturnValue( {
 				userCan: () => ( {
 					update: true,
@@ -1080,7 +1062,7 @@ describe( '<CssClassSelector />', () => {
 			jest.mocked( stylesRepository.getProviderByKey ).mockReturnValue( mockProvider );
 
 			// Act.
-			renderComponent( { active: 'provider-1-b' } );
+			renderComponent( { active: 'provider-1-b', appliedClasses: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
 
 			// Assert.
 			expect(
@@ -1090,7 +1072,6 @@ describe( '<CssClassSelector />', () => {
 
 		it( 'should not show info tip if the user has the updateProps capability for the active class', () => {
 			// Arrange.
-			jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
 			jest.mocked( useUserStylesCapability ).mockReturnValue( {
 				userCan: () => ( {
 					update: true,
@@ -1103,7 +1084,7 @@ describe( '<CssClassSelector />', () => {
 			jest.mocked( stylesRepository.getProviderByKey ).mockReturnValue( mockProvider );
 
 			// Act.
-			renderComponent( { active: 'provider-1-b' } );
+			renderComponent( { active: 'provider-1-b', appliedClasses: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
 
 			// Assert.
 			expect(
@@ -1113,7 +1094,6 @@ describe( '<CssClassSelector />', () => {
 
 		it( 'should not disable normal state item if the user does not have the updateProps capability', () => {
 			// Arrange.
-			jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
 			jest.mocked( useUserStylesCapability ).mockReturnValue( {
 				userCan: () => ( {
 					update: true,
@@ -1127,7 +1107,7 @@ describe( '<CssClassSelector />', () => {
 			jest.mocked( stylesRepository.getProviderByKey ).mockReturnValue( mockProvider );
 
 			// Act.
-			renderComponent( { active: 'provider-1-b' } );
+			renderComponent( { active: 'provider-1-b', appliedClasses: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
 
 			const classToRename = screen.getByRole( 'group', { name: __( 'Edit Provider-1-a', 'elementor' ) } );
 			const classToRenameMenuTrigger = within( classToRename ).getByLabelText(
@@ -1146,11 +1126,10 @@ describe( '<CssClassSelector />', () => {
 
 		it( 'should not show the "Remove" button for a local class', () => {
 			// Arrange.
-			jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
 			jest.mocked( stylesRepository.getProviderByKey ).mockReturnValue( localProvider );
 
 			// Act.
-			renderComponent( { active: 'local' } );
+			renderComponent( { active: 'local', appliedClasses: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
 
 			const localClass = screen.getByRole( 'group', { name: __( 'Edit Local', 'elementor' ) } );
 			const classToRemoveMenuTrigger = within( localClass ).getByLabelText( 'Open CSS Class Menu' );
@@ -1166,9 +1145,7 @@ describe( '<CssClassSelector />', () => {
 
 		it( 'should show placeholder text when there are no applied classes', () => {
 			// Arrange.
-			jest.mocked( useElementSetting ).mockReturnValue( { value: [] } );
-
-			renderComponent( { active: null } );
+			renderComponent( { active: null, appliedClasses: [] } );
 
 			// Assert.
 			expect( screen.getByPlaceholderText( 'Type class name' ) ).toBeInTheDocument();
@@ -1176,17 +1153,20 @@ describe( '<CssClassSelector />', () => {
 	} );
 
 	describe( 'Class history', () => {
+		let appliedClasses: string[];
+
 		beforeEach( () => {
+			appliedClasses = [];
+
 			jest.mocked( getElementLabel ).mockImplementation( ( id ) => {
 				return id === 'mock-element' ? 'Mock Element' : '';
 			} );
 		} );
 
 		const setupElementSettings = ( _appliedClasses: string[] ) => {
-			let appliedClasses = _appliedClasses;
+			appliedClasses = _appliedClasses;
 
 			jest.mocked( getElementSetting ).mockImplementation( () => ( { value: appliedClasses } ) );
-			jest.mocked( useElementSetting ).mockImplementation( () => ( { value: appliedClasses } ) );
 
 			jest.mocked( updateElementSettings ).mockImplementation( ( { props } ) => {
 				appliedClasses = ( props?.[ 'my-classes' ] as { value: string[] } )?.value;
@@ -1207,7 +1187,7 @@ describe( '<CssClassSelector />', () => {
 
 			const setActive = jest.fn();
 
-			renderComponent( { active: 'provider-1-b', setActive } );
+			renderComponent( { active: 'provider-1-b', setActive, appliedClasses } );
 
 			// Act - Apply class.
 			const input = screen.getByRole( 'combobox', { hidden: true } );
@@ -1261,7 +1241,7 @@ describe( '<CssClassSelector />', () => {
 
 			const setActive = jest.fn();
 
-			renderComponent( { active: 'provider-1-b', setActive } );
+			renderComponent( { active: 'provider-1-b', setActive, appliedClasses } );
 			// Act - Remove class.
 			fireEvent.keyDown( screen.getByRole( 'combobox', { hidden: true } ), { key: 'Backspace', keyCode: 8 } );
 
@@ -1322,7 +1302,7 @@ describe( '<CssClassSelector />', () => {
 			jest.mocked( useGetStylesRepositoryCreateAction ).mockReturnValue( [ mockProvider, createClass ] );
 			jest.mocked( useProviders ).mockReturnValue( [ localProvider, mockProvider ] );
 
-			renderComponent( { active: 'local', setActive } );
+			renderComponent( { active: 'local', setActive, appliedClasses } );
 
 			// Act - Create new class.
 			const input = screen.getByRole( 'combobox', { hidden: true } );
@@ -1377,13 +1357,21 @@ type Options = {
 	setActive?: () => void;
 	state?: StyleDefinitionState;
 	setActiveMetaState?: () => void;
+	appliedClasses?: string[];
 };
 
-function renderComponent( { setActive = () => {}, active, state = null, setActiveMetaState = () => {} }: Options ) {
+function renderComponent( {
+	setActive = () => {},
+	active,
+	state = null,
+	setActiveMetaState = () => {},
+	appliedClasses = [ 'local', 'provider-1-b', 'provider-1-a' ],
+}: Options ) {
 	return renderWithTheme(
 		<ElementProvider
 			element={ { id: 'mock-element', type: 'mock-element-type' } }
 			elementType={ createMockElementType( { key: 'mock-element-type' } ) }
+			settings={ { 'my-classes': { $$type: 'classes', value: appliedClasses } } }
 		>
 			<ClassesPropProvider prop="my-classes">
 				<StyleProvider

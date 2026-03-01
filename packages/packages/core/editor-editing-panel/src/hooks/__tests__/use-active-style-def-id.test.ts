@@ -1,8 +1,8 @@
 import { act } from 'react';
-import { getElementStyles, useElementSetting } from '@elementor/editor-elements';
+import { getElementStyles } from '@elementor/editor-elements';
 import { renderHook } from '@testing-library/react';
 
-import { useElement } from '../../contexts/element-context';
+import { useElement, usePanelElementSetting } from '../../contexts/element-context';
 import { useActiveStyleDefId } from '../use-active-style-def-id';
 
 jest.mock( '@elementor/editor-elements' );
@@ -19,7 +19,7 @@ describe( 'useActiveStyleDefId', () => {
 
 	it( 'should return null when no classes are applied', () => {
 		// Arrange
-		jest.mocked( useElementSetting ).mockReturnValue( {
+		jest.mocked( usePanelElementSetting ).mockReturnValue( {
 			value: [],
 		} );
 
@@ -36,7 +36,7 @@ describe( 'useActiveStyleDefId', () => {
 		// Arrange
 		const activeStyleId = 'style-1';
 
-		jest.mocked( useElementSetting ).mockReturnValue( {
+		jest.mocked( usePanelElementSetting ).mockReturnValue( {
 			value: [ activeStyleId, 'style-2' ],
 		} );
 
@@ -65,7 +65,7 @@ describe( 'useActiveStyleDefId', () => {
 		const nonAppliedStyleId = 'non-applied-style';
 		const fallbackStyleId = 'fallback-style-id';
 
-		jest.mocked( useElementSetting ).mockReturnValue( {
+		jest.mocked( usePanelElementSetting ).mockReturnValue( {
 			value: [ fallbackStyleId ],
 		} );
 
@@ -94,7 +94,7 @@ describe( 'useActiveStyleDefId', () => {
 		const firstStyleId = 'first-style-id';
 		const secondStyleId = 'second-style-id';
 
-		jest.mocked( useElementSetting ).mockReturnValue( {
+		jest.mocked( usePanelElementSetting ).mockReturnValue( {
 			value: [ secondStyleId, firstStyleId ],
 		} );
 
@@ -120,9 +120,9 @@ describe( 'useActiveStyleDefId', () => {
 		expect( result.current[ 0 ] ).toBe( firstStyleId );
 	} );
 
-	it( 'should handle case when useElementSetting returns null', () => {
+	it( 'should handle case when usePanelElementSetting returns null', () => {
 		// Arrange
-		jest.mocked( useElementSetting ).mockReturnValue( null );
+		jest.mocked( usePanelElementSetting ).mockReturnValue( null );
 
 		jest.mocked( getElementStyles ).mockReturnValue( {
 			'test-style-id': {

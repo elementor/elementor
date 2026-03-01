@@ -6,7 +6,6 @@ import {
 	mockStylesSchema,
 	renderWithTheme,
 } from 'test-utils';
-import { useElementSetting } from '@elementor/editor-elements';
 import { getBreakpointsTree } from '@elementor/editor-responsive';
 import { getStylesSchema, type StyleDefinitionVariant } from '@elementor/editor-styles';
 import {
@@ -16,6 +15,7 @@ import {
 import { screen } from '@testing-library/react';
 
 import { ControlLabel } from '../../components/control-label';
+import { usePanelElementSetting } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
 import { useStylesInheritanceChain } from '../../contexts/styles-inheritance-context';
 import { registerFieldIndicator } from '../../field-indicators-registry';
@@ -23,7 +23,6 @@ import { useStylesFields } from '../../hooks/use-styles-fields';
 import { StylesInheritanceIndicator } from '../../styles-inheritance/components/styles-inheritance-indicator';
 import { StylesField } from '../styles-field';
 
-jest.mock( '@elementor/editor-elements' );
 jest.mock( '@elementor/editor-responsive' );
 jest.mock( '@elementor/editor-styles' );
 jest.mock( '@elementor/editor-styles-repository', () => ( {
@@ -36,6 +35,7 @@ jest.mock( '@elementor/editor-styles-repository', () => ( {
 
 jest.mock( '../../hooks/use-styles-fields' );
 jest.mock( '../../contexts/classes-prop-context' );
+jest.mock( '../../contexts/element-context' );
 jest.mock( '../../contexts/style-context' );
 jest.mock( '../../contexts/styles-inheritance-context' );
 
@@ -52,7 +52,7 @@ const mobileNormalMeta = {
 describe( 'StylesField with inheritance', () => {
 	beforeEach( () => {
 		jest.mocked( getStylesSchema ).mockReturnValue( mockStylesSchema );
-		jest.mocked( useElementSetting ).mockReturnValue( {} );
+		jest.mocked( usePanelElementSetting ).mockReturnValue( {} );
 		jest.mocked( getBreakpointsTree ).mockImplementation( createMockBreakpointsTree );
 
 		registerFieldIndicator( {
