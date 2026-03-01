@@ -44,7 +44,6 @@ class Presets {
 		if ( isset( $special_labels[ $key ][ $value ] ) ) {
 			return $special_labels[ $key ][ $value ];
 		}
-
 		$label = ucwords( str_replace( '-', ' ', $value ) );
 
 		return esc_html( $label );
