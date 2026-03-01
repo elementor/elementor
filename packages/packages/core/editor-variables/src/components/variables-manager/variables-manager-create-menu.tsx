@@ -142,17 +142,13 @@ const MenuOption = ( {
 export const getDefaultName = ( variables: TVariablesList, baseName: string ) => {
 	const pattern = new RegExp( `^${ baseName }-(\\d+)$`, 'i' );
 
-	const usedNumbers = new Set(
-		Object.values( variables )
-			.map( ( variable ) => variable.label )
-			.filter( ( label ) => pattern.test( label ) )
-			.map( ( label ) => parseInt( label.match( pattern )?.[ 1 ] ?? '0', 10 ) )
-	);
-
 	let counter = 1;
-	while ( usedNumbers.has( counter ) ) {
-		counter++;
-	}
+
+	Object.values( variables ).forEach( ( variable ) => {
+		if ( pattern.test( variable.label ) ) {
+			counter = Math.max( counter, parseInt( variable.label.match( pattern )?.[ 1 ] ?? '0', 10 ) + 1 );
+		}
+	} );
 
 	return `${ baseName }-${ counter }`;
 };
