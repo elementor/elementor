@@ -26,14 +26,6 @@ export function useTypingBuffer( options: UseTypingBufferOptions = {} ) {
 		return inputBufferRef.current;
 	};
 
-	const reset = () => {
-		inputBufferRef.current = '';
-		if ( timeoutRef.current ) {
-			window.clearTimeout( timeoutRef.current );
-			timeoutRef.current = null;
-		}
-	};
-
 	const startsWith = ( haystack: string, needle: string ) => {
 		// At least 2 characters in needle for longer haystack.
 		if ( 3 < haystack.length && 2 > needle.length ) {
@@ -44,13 +36,16 @@ export function useTypingBuffer( options: UseTypingBufferOptions = {} ) {
 
 	useEffect( () => {
 		return () => {
-			reset();
+			inputBufferRef.current = '';
+			if ( timeoutRef.current ) {
+				window.clearTimeout( timeoutRef.current );
+				timeoutRef.current = null;
+			}
 		};
 	}, [] );
 
 	return {
 		buffer: inputBufferRef.current,
-		reset,
 		appendKey,
 		startsWith,
 	};
