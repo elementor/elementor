@@ -42,7 +42,7 @@ export const SizeInput = ( {
 	id,
 	ariaLabel,
 }: SizeInputProps ) => {
-	const { appendKey, startsWith } = useTypingBuffer();
+	const { appendKey, reset: resetBuffer, startsWith } = useTypingBuffer();
 
 	const inputType = isUnitExtendedOption( unit ) ? 'text' : 'number';
 	const inputValue = ! isUnitExtendedOption( unit ) && Number.isNaN( size ) ? '' : size ?? '';
@@ -57,6 +57,7 @@ export const SizeInput = ( {
 		if ( isUnitExtendedOption( unit ) && ! isNaN( Number( key ) ) ) {
 			const defaultUnit = units?.[ 0 ];
 			if ( defaultUnit ) {
+				resetBuffer();
 				handleUnitChange( defaultUnit );
 			}
 			return;
@@ -74,6 +75,7 @@ export const SizeInput = ( {
 		const matchedUnit = units.find( ( u ) => startsWith( u, updatedBuffer ) );
 
 		if ( matchedUnit ) {
+			resetBuffer();
 			handleUnitChange( matchedUnit );
 		}
 	};

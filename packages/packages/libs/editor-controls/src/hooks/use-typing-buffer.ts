@@ -20,9 +20,18 @@ export function useTypingBuffer( options: UseTypingBufferOptions = {} ) {
 
 		timeoutRef.current = window.setTimeout( () => {
 			inputBufferRef.current = '';
+			timeoutRef.current = null;
 		}, timeout );
 
 		return inputBufferRef.current;
+	};
+
+	const reset = () => {
+		inputBufferRef.current = '';
+		if ( timeoutRef.current ) {
+			window.clearTimeout( timeoutRef.current );
+			timeoutRef.current = null;
+		}
 	};
 
 	const startsWith = ( haystack: string, needle: string ) => {
@@ -35,16 +44,13 @@ export function useTypingBuffer( options: UseTypingBufferOptions = {} ) {
 
 	useEffect( () => {
 		return () => {
-			inputBufferRef.current = '';
-			if ( timeoutRef.current ) {
-				window.clearTimeout( timeoutRef.current );
-				timeoutRef.current = null;
-			}
+			reset();
 		};
 	}, [] );
 
 	return {
 		buffer: inputBufferRef.current,
+		reset,
 		appendKey,
 		startsWith,
 	};
