@@ -97,5 +97,4 @@ export {
 
 // hooks
 export { useSyncExternalState } from './hooks/use-sync-external-state';
-export { useElementCanHaveChildren } from './hooks/use-element-can-have-children';
 export { useFontFamilies } from './hooks/use-font-families';
