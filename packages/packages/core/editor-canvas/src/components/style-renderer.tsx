@@ -36,10 +36,14 @@ function usePortalContainer() {
 	return useListenTo( commandEndEvent( 'editor/documents/attach-preview' ), () => getCanvasIframeDocument()?.head );
 }
 
+// we load local styles also from components, which are handled differently
+// to avoid having "Encountered two children with the same key" - adding this filtering to avoid rendering the same style twice
 function filterUniqueStyleDefinitions( styleItems: StyleItem[] ) {
 	const seen = new Map< string, StyleItem[] >();
+
 	return styleItems.filter( ( style ) => {
 		const existingStyle = seen.get( style.id );
+
 		if ( existingStyle ) {
 			const existingStyleVariant = existingStyle.find(
 				( s ) => s.breakpoint === style.breakpoint && s.state === style.state
