@@ -418,7 +418,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "${{ github.event_name == 'schedule' && 'Scheduled run failed' || (steps.map_user.outputs.slack_user && format('{0} please check the run', steps.map_user.outputs.slack_user) || format('{0} please check the run', github.actor)) }}"
+                    "text": "${{ github.event_name == 'schedule' && 'Scheduled run failed' || (steps.map_user.outputs.slack_user && format('<@{0}> please check the run', steps.map_user.outputs.slack_user) || format('{0} please check the run', github.actor)) }}"
                   }
                 }
               ]
