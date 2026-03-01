@@ -146,7 +146,7 @@ export const getDefaultName = ( variables: TVariablesList, baseName: string ) =>
 		Object.values( variables )
 			.map( ( variable ) => variable.label )
 			.filter( ( label ) => pattern.test( label ) )
-			.map( ( label ) => parseInt( label.match( pattern )![ 1 ], 10 ) )
+			.map( ( label ) => parseInt( label.match( pattern )?.[ 1 ] ?? '0', 10 ) )
 	);
 
 	let counter = 1;

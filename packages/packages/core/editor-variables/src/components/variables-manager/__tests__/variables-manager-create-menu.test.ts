@@ -1,13 +1,9 @@
-import { getDefaultName } from '../variables-manager-create-menu';
-
 import type { TVariablesList } from '../../../storage';
+import { getDefaultName } from '../variables-manager-create-menu';
 
 const makeVars = ( entries: Array< { label: string; type: string } > ): TVariablesList =>
 	Object.fromEntries(
-		entries.map( ( entry, i ) => [
-			`var-${ i }`,
-			{ label: entry.label, type: entry.type, value: '' },
-		] )
+		entries.map( ( entry, i ) => [ `var-${ i }`, { label: entry.label, type: entry.type, value: '' } ] )
 	);
 
 describe( 'getDefaultName', () => {
