@@ -106,7 +106,7 @@ declare global {
 					filterName: string,
 					callback: (
 						regionViews: Record< string, unknown >,
-						options: { notice: unknown }
+						options: { notice: unknown, elements: unknown }
 					) => Record< string, unknown >
 				) => void;
 			};

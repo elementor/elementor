@@ -24,7 +24,7 @@ export function injectTab( { id, label, component, position }: Config ) {
 	registerTab( { id, label, component } );
 
 	listenTo( v1ReadyEvent(), () => {
-		getWindow().elementor.hooks.addFilter( 'panel/elements/regionViews', ( regions, { elements } ) => {
+		window.elementor?.hooks?.addFilter( 'panel/elements/regionViews', ( regions, { elements } ) => {
 			// Creating a empty legacy view that will be replaced by react component.
 			regions[ id ] = { region: elements, view: createLegacyView() };
 

@@ -29,8 +29,10 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
+    "@elementor/editor-elements-panel-notice": "4.0.0",
     "@elementor/editor-ui": "4.0.0",
-    "@elementor/ui": "1.36.17"
+    "@elementor/ui": "1.36.17",
+    "@wordpress/i18n": "^5.13.0"
   },
   "peerDependencies": {
     "react": "^18.3.1",

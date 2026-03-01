@@ -41,8 +41,7 @@
   "dependencies": {
     "@elementor/ui": "1.36.17",
     "@elementor/editor": "4.0.0",
-    "@elementor/editor-v1-adapters": "4.0.0",
-    "@elementor/unlock-v4-promo": "4.0.0"
+    "@elementor/editor-v1-adapters": "4.0.0"
   },
   "peerDependencies": {
     "react": "^18.3.1",

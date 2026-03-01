@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
+import { __ } from '@wordpress/i18n';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { Box, Button, Chip, CloseButton, Typography } from '@elementor/ui';
 
@@ -33,9 +34,9 @@ export function AtomicElementsPromo() {
 					} }
 				>
 					<Typography variant="subtitle2" sx={ { flexGrow: 1 } }>
-						Atomic Elements
+						{ __( 'Atomic Elements', 'elementor' ) }
 					</Typography>
-					<Chip label="New" size="small" color="primary" />
+					<Chip label={ __( 'New', 'elementor' ) } size="small" color="primary" />
 					<CloseButton onClick={ () => setDismissed( true ) } />
 				</Box>
 
@@ -63,8 +64,7 @@ export function AtomicElementsPromo() {
 
 				<Box sx={ { pl: 2.5, pr: 4, pt: 2 } }>
 					<Typography variant="caption" color="text.tertiary">
-						The new generation of high-performance, flexible building blocks designed for precise styling
-						and a unified experience.
+						{ __( 'The new generation of high-performance, flexible building blocks designed for precise styling and a unified experience.', 'elementor' ) }
 					</Typography>
 				</Box>
 
@@ -80,10 +80,10 @@ export function AtomicElementsPromo() {
 					} }
 				>
 					<Button variant="text" size="small" color="secondary">
-						Learn more
+						{ __( 'Learn more', 'elementor' ) }
 					</Button>
 					<Button variant="contained" size="small" color="primary">
-						Unlock for free
+						{ __( 'Unlock for free', 'elementor' ) }
 					</Button>
 				</Box>
 			</Box>

@@ -11,16 +11,6 @@ type EditorElementsPanelExtendsWindow = Window & {
 	};
 
 	elementor: {
-		hooks: {
-			addFilter: (
-				filterName: string,
-				callback: (
-					regions: Record< string, unknown >,
-					options: { elements: unknown }
-				) => Record< string, unknown >
-			) => void;
-		};
-
 		getPanelView: () => {
 			getCurrentPageView: () => {
 				search: {

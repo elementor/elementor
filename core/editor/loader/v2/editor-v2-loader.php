@@ -37,7 +37,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		'utils',
 		'wp-media',
 		'editor-current-user',
-		'unlock-v4-promo',
+		'editor-elements-panel-notice',
 	];
 
 	const EXTENSIONS = [
@@ -46,7 +46,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		'editor-notifications',
 		'editor-panels',
 		'editor-elements-panel',
-		'editor-elements-panel-notice',
+		'unlock-v4-promo',
 		'editor-mcp',
 	];
 
