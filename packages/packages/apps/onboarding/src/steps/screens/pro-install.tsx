@@ -21,7 +21,7 @@ export function ProInstall() {
 	const handleInstall = useCallback( () => {
 		installPro.mutate( undefined, {
 			onSuccess: () => {
-				actions.dismissProInstallScreen();
+				actions.markProInstalled();
 			},
 		} );
 	}, [ installPro, actions ] );

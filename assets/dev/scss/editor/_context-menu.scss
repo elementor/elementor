@@ -34,6 +34,14 @@
 				cursor: default;
 				opacity: .5;
 				color: var(--e-a-color-disabled);
+
+				&.elementor-context-menu-list__item--has-shortcut-action {
+					opacity: 1;
+
+					> :not(.elementor-context-menu-list__item__shortcut) {
+						opacity: .5;
+					}
+				}
 			}
 
 			&:not(.elementor-context-menu-list__item--disabled) {

@@ -117,6 +117,7 @@ describe( '<OverridablePropControl />', () => {
 		jest.mocked( useElement ).mockReturnValue( {
 			element: { id: 'test-widget-id', type: ELEMENT_TYPE },
 			elementType: mockElementType,
+			settings: {},
 		} );
 	} );
 
@@ -321,7 +322,11 @@ function renderOverridableControl(
 
 	return renderControl(
 		<StoreProvider store={ storeInstance }>
-			<ElementProvider element={ { id: 'test-widget-id', type: ELEMENT_TYPE } } elementType={ mockElementType }>
+			<ElementProvider
+				element={ { id: 'test-widget-id', type: ELEMENT_TYPE } }
+				elementType={ mockElementType }
+				settings={ {} }
+			>
 				<ErrorBoundary fallback={ null }>
 					<OverridablePropControl OriginalControl={ AlternativeComponent ?? OriginalControl } />
 				</ErrorBoundary>
@@ -367,6 +372,7 @@ describe( 'OverridablePropControl with control replacements', () => {
 		jest.mocked( useElement ).mockReturnValue( {
 			element: { id: 'test-widget-id', type: ELEMENT_TYPE },
 			elementType: mockElementType,
+			settings: {},
 		} );
 
 		mockGetControlReplacements.mockReturnValue( [] );
@@ -476,7 +482,11 @@ function renderOverridableControlWithReplacements(
 
 	return renderControl(
 		<StoreProvider store={ storeInstance }>
-			<ElementProvider element={ { id: 'test-widget-id', type: ELEMENT_TYPE } } elementType={ mockElementType }>
+			<ElementProvider
+				element={ { id: 'test-widget-id', type: ELEMENT_TYPE } }
+				elementType={ mockElementType }
+				settings={ {} }
+			>
 				<ErrorBoundary fallback={ null }>
 					<OverridablePropControl OriginalControl={ OriginalControl } />
 				</ErrorBoundary>
