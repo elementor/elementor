@@ -115,7 +115,7 @@ const MenuOption = ( {
 			return;
 		}
 
-		const defaultName = getDefaultName( variables, config.key, config.variableType );
+		const defaultName = getDefaultName( variables, config.variableType );
 
 		onCreate( config.key, defaultName, config.defaultValue );
 		trackVariablesManagerEvent( { action: 'add', varType: config.variableType } );
@@ -139,18 +139,20 @@ const MenuOption = ( {
 	);
 };
 
-const getDefaultName = ( variables: TVariablesList, type: string, baseName: string ) => {
-	const existingNames = Object.values( variables )
-		.filter( ( variable ) => variable.type === type )
-		.map( ( variable ) => variable.label );
+export const getDefaultName = ( variables: TVariablesList, baseName: string ) => {
+	const pattern = new RegExp( `^${ baseName }-(\\d+)$`, 'i' );
+
+	const usedNumbers = new Set(
+		Object.values( variables )
+			.map( ( variable ) => variable.label )
+			.filter( ( label ) => pattern.test( label ) )
+			.map( ( label ) => parseInt( label.match( pattern )![ 1 ], 10 ) )
+	);
 
 	let counter = 1;
-	let name = `${ baseName }-${ counter }`;
-
-	while ( existingNames.includes( name ) ) {
+	while ( usedNumbers.has( counter ) ) {
 		counter++;
-		name = `${ baseName }-${ counter }`;
 	}
 
-	return name;
+	return `${ baseName }-${ counter }`;
 };
