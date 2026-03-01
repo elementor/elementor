@@ -3,8 +3,7 @@ import { useState } from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { Box, Button, Chip, CloseButton, Typography } from '@elementor/ui';
 
-// TODO: Replace with a bundled local asset.
-const PROMO_IMAGE = 'https://www.figma.com/api/mcp/asset/3ac51fca-0575-4a48-aa20-08c4a4db21ca';
+const PROMO_IMAGE = 'https://assets.elementor.com/v4-promotion/v1/images/v4_chip_new.png';
 
 export function AtomicElementsPromo() {
 	const [ dismissed, setDismissed ] = useState( false );
@@ -23,7 +22,6 @@ export function AtomicElementsPromo() {
 					width: 300,
 				} }
 			>
-				{ /* Header */ }
 				<Box
 					sx={ {
 						display: 'flex',
@@ -41,7 +39,6 @@ export function AtomicElementsPromo() {
 					<CloseButton onClick={ () => setDismissed( true ) } />
 				</Box>
 
-				{ /* Image */ }
 				<Box
 					sx={ {
 						height: 160,
@@ -64,7 +61,6 @@ export function AtomicElementsPromo() {
 					/>
 				</Box>
 
-				{ /* Description */ }
 				<Box sx={ { pl: 2.5, pr: 4, pt: 2 } }>
 					<Typography variant="caption" color="text.tertiary">
 						The new generation of high-performance, flexible building blocks designed for precise styling
@@ -72,7 +68,6 @@ export function AtomicElementsPromo() {
 					</Typography>
 				</Box>
 
-				{ /* Footer */ }
 				<Box
 					sx={ {
 						display: 'flex',

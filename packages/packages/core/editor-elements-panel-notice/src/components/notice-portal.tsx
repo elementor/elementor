@@ -12,9 +12,6 @@ export function NoticePortal() {
 		document.getElementById( NOTICE_AREA_ID )
 	);
 
-	// eslint-disable-next-line no-console
-	console.log( '[notice] NoticePortal render — container:', container );
-
 	return container ? (
 		<Portal container={ container }>
 			<NoticeBanner />

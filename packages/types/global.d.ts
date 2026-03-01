@@ -101,6 +101,20 @@ declare global {
 				enqueueFont?: EnqueueFont;
 				hasPro?: () => boolean;
 			};
+			hooks?: {
+				addFilter: (
+					filterName: string,
+					callback: (
+						regionViews: Record< string, unknown >,
+						options: { notice: unknown }
+					) => Record< string, unknown >
+				) => void;
+			};
+		};
+		Marionette?: {
+			CompositeView: {
+				extend: ( options: Record< string, unknown > ) => unknown;
+			};
 		};
 		elementorFrontend?: {
 			config?: {
