@@ -18,17 +18,24 @@ class Global_Classes_Repository {
 
 	private string $context = self::CONTEXT_FRONTEND;
 
+	private ?Global_Classes $cache = null;
+
 	public static function make(): Global_Classes_Repository {
 		return new self();
 	}
 
 	public function context( string $context ): self {
 		$this->context = $context;
+		$this->cache = null;
 
 		return $this;
 	}
 
-	public function all() {
+	public function all( bool $force = false ): Global_Classes {
+		if ( ! $force && null !== $this->cache ) {
+			return $this->cache;
+		}
+
 		$meta_key = $this->get_meta_key();
 		$kit = $this->get_kit();
 		$all = $kit->get_json_meta( $meta_key );
@@ -49,7 +56,9 @@ class Global_Classes_Repository {
 			}
 		);
 
-		return Global_Classes::make( $all['items'] ?? [], $all['order'] ?? [] );
+		$this->cache = Global_Classes::make( $all['items'] ?? [], $all['order'] ?? [] );
+
+		return $this->cache;
 	}
 
 	public function put( array $items, array $order ) {
@@ -77,6 +86,8 @@ class Global_Classes_Repository {
 		if ( ! $value ) {
 			throw new \Exception( 'Failed to update global classes' );
 		}
+
+		$this->cache = null;
 
 		do_action( 'elementor/global_classes/update', $this->context, $updated_value, $current_value );
 	}

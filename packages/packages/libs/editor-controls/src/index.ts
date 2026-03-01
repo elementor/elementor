@@ -23,6 +23,7 @@ export { QueryControl } from './controls/query-control';
 export { GapControl } from './controls/gap-control';
 export { AspectRatioControl } from './controls/aspect-ratio-control';
 export { SvgMediaControl } from './controls/svg-media-control';
+export { VideoMediaControl } from './controls/video-media-control';
 export { BackgroundControl } from './controls/background-control/background-control';
 export { SwitchControl } from './controls/switch-control';
 export { RepeatableControl } from './controls/repeatable-control';
@@ -96,5 +97,4 @@ export {
 
 // hooks
 export { useSyncExternalState } from './hooks/use-sync-external-state';
-export { useElementCanHaveChildren } from './hooks/use-element-can-have-children';
 export { useFontFamilies } from './hooks/use-font-families';
