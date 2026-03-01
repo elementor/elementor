@@ -23,17 +23,17 @@ class WelcomeScreen {
 	}
 
 	public function maybe_enqueue_welcome_popover(): void {
-		// if ( $this->is_first_or_second_editor_visit() ) {
-		// 	return;
-		// }
+		if ( $this->is_first_or_second_editor_visit() ) {
+			return;
+		}
 
-		// if ( $this->has_welcome_popover_been_displayed() ) {
-		// 	return;
-		// }
+		if ( $this->has_welcome_popover_been_displayed() ) {
+			return;
+		}
 
-		// if ( Upgrade_Manager::is_new_installation() ) {
-		// 	return;
-		// }
+		if ( Upgrade_Manager::is_new_installation() ) {
+			return;
+		}
 
 		$this->register_package();
 		wp_enqueue_script( 'elementor-v2-' . self::PACKAGE_NAME );
