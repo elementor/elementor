@@ -9,16 +9,16 @@ export function useTypingBuffer( options: UseTypingBufferOptions = {} ) {
 	const { limit = 3, timeout = 600 } = options;
 
 	const inputBufferRef = useRef( '' );
-	const timeoutRef = useRef< number | null >( null );
+	const timeoutRef = useRef< ReturnType< typeof setTimeout > | null >( null );
 
 	const appendKey = ( key: string ) => {
 		inputBufferRef.current = ( inputBufferRef.current + key ).slice( -limit );
 
 		if ( timeoutRef.current ) {
-			window.clearTimeout( timeoutRef.current );
+			clearTimeout( timeoutRef.current );
 		}
 
-		timeoutRef.current = window.setTimeout( () => {
+		timeoutRef.current = setTimeout( () => {
 			inputBufferRef.current = '';
 			timeoutRef.current = null;
 		}, timeout );
@@ -38,7 +38,7 @@ export function useTypingBuffer( options: UseTypingBufferOptions = {} ) {
 		return () => {
 			inputBufferRef.current = '';
 			if ( timeoutRef.current ) {
-				window.clearTimeout( timeoutRef.current );
+				clearTimeout( timeoutRef.current );
 				timeoutRef.current = null;
 			}
 		};
