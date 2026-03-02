@@ -239,7 +239,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 		return <CompletionScreen />;
 	}
 
-	if ( hasPassedLogin ) {
+	if ( ! hasPassedLogin ) {
 		return (
 			<BaseLayout
 				topBar={
