@@ -1,8 +1,7 @@
 import { type PropValue } from '@elementor/editor-props';
-import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 import { generateUniqueId } from '@elementor/utils';
 
-import { selectCurrentComponent, selectOverridableProps, slice } from '../../../store/store';
+import { componentsStore } from '../../../store/dispatchers';
 import { type OriginPropFields, type OverridableProp } from '../../../types';
 import { type Source, trackComponentEvent } from '../../../utils/tracking';
 import {
@@ -40,7 +39,7 @@ export function setOverridableProp( {
 	originPropFields,
 	source,
 }: Props ): OverridableProp | undefined {
-	const overridableProps = selectOverridableProps( getState(), componentId );
+	const overridableProps = componentsStore.getOverridableProps( componentId );
 
 	if ( ! overridableProps ) {
 		return;
@@ -87,20 +86,12 @@ export function setOverridableProp( {
 		groups = removePropFromGroup( groups, existingOverridableProp.groupId, overridableProp.overrideKey );
 	}
 
-	dispatch(
-		slice.actions.setOverridableProps( {
-			componentId,
-			overridableProps: {
-				props,
-				groups,
-			},
-		} )
-	);
+	componentsStore.setOverridableProps( componentId, { props, groups } );
 
 	const isNewProperty = ! existingOverridableProp;
 
 	if ( isNewProperty ) {
-		const currentComponent = selectCurrentComponent( getState() );
+		const currentComponent = componentsStore.getCurrentComponent();
 
 		trackComponentEvent( {
 			action: 'propertyExposed',

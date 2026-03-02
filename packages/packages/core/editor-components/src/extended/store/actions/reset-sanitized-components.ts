@@ -1,7 +1,5 @@
-import { __dispatch as dispatch } from '@elementor/store';
-
-import { slice } from '../../../store/store';
+import { componentsStore } from '../../../store/dispatchers';
 
 export function resetSanitizedComponents() {
-	dispatch( slice.actions.resetSanitizedComponents() );
+	componentsStore.resetSanitizedComponents();
 }

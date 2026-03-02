@@ -32,9 +32,12 @@ import { initNonAtomicNestingPrevention } from './sync/prevent-non-atomic-nestin
 import { initRevertOverridablesOnCopyOrDuplicate } from './sync/revert-overridables-on-copy-or-duplicate';
 import { SanitizeOverridableProps } from './sync/sanitize-overridable-props';
 
+const PRIORITY = 10;
+
 export function initExtended() {
 	registerEditingPanelReplacement( {
-		id: 'component-instance-edit-panel',
+		id: 'extended-component-instance-edit-panel',
+		priority: PRIORITY,
 		condition: ( _, elementType ) => elementType.key === 'e-component',
 		component: ExtendedInstanceEditingPanel,
 	} );
@@ -43,6 +46,7 @@ export function initExtended() {
 		id: 'components',
 		label: __( 'Components', 'elementor' ),
 		component: ExtendedComponents,
+		priority: PRIORITY,
 	} );
 
 	registerPanel( componentPropertiesPanel );

@@ -1,9 +1,8 @@
 import { updateElementSettings, type V1ElementData } from '@elementor/editor-elements';
-import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { apiClient } from '../../api';
 import { type ComponentInstanceProp } from '../../prop-types/component-instance-prop-type';
-import { selectUnpublishedComponents, slice } from '../../store/store';
+import { componentsStore } from '../../store/dispatchers';
 import { type DocumentSaveStatus, type UnpublishedComponent } from '../../types';
 
 export async function createComponentsBeforeSave( {
@@ -13,7 +12,7 @@ export async function createComponentsBeforeSave( {
 	elements: V1ElementData[];
 	status: DocumentSaveStatus;
 } ) {
-	const unpublishedComponents = selectUnpublishedComponents( getState() );
+	const unpublishedComponents = componentsStore.getUnpublishedComponents();
 
 	if ( ! unpublishedComponents.length ) {
 		return;
@@ -24,20 +23,18 @@ export async function createComponentsBeforeSave( {
 
 		updateComponentInstances( elements, uidToComponentId );
 
-		dispatch(
-			slice.actions.add(
-				unpublishedComponents.map( ( component ) => ( {
-					id: uidToComponentId.get( component.uid ) as number,
-					name: component.name,
-					uid: component.uid,
-					overridableProps: component.overridableProps ? component.overridableProps : undefined,
-				} ) )
-			)
+		componentsStore.add(
+			unpublishedComponents.map( ( component ) => ( {
+				id: uidToComponentId.get( component.uid ) as number,
+				name: component.name,
+				uid: component.uid,
+				overridableProps: component.overridableProps ? component.overridableProps : undefined,
+			} ) )
 		);
-		dispatch( slice.actions.resetUnpublished() );
+		componentsStore.resetUnpublished();
 	} catch ( error ) {
 		const failedUids = unpublishedComponents.map( ( component ) => component.uid );
-		dispatch( slice.actions.removeUnpublished( failedUids ) );
+		componentsStore.removeUnpublished( failedUids );
 
 		throw new Error( `Failed to publish components: ${ error }` );
 	}

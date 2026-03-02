@@ -1,6 +1,4 @@
-import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
-
-import { selectOverridableProps, slice } from '../../../store/store';
+import { componentsStore } from '../../../store/dispatchers';
 import { type ComponentId, type OverridableProp } from '../../../types';
 import { movePropBetweenGroups } from '../utils/groups-transformers';
 
@@ -17,7 +15,7 @@ export function updateOverridablePropParams( {
 	label,
 	groupId,
 }: UpdatePropParams ): OverridableProp | undefined {
-	const overridableProps = selectOverridableProps( getState(), componentId );
+	const overridableProps = componentsStore.getOverridableProps( componentId );
 
 	if ( ! overridableProps ) {
 		return;
@@ -40,19 +38,14 @@ export function updateOverridablePropParams( {
 
 	const updatedGroups = movePropBetweenGroups( overridableProps.groups, overrideKey, oldGroupId, newGroupId );
 
-	dispatch(
-		slice.actions.setOverridableProps( {
-			componentId,
-			overridableProps: {
-				...overridableProps,
-				props: {
-					...overridableProps.props,
-					[ overrideKey ]: updatedProp,
-				},
-				groups: updatedGroups,
-			},
-		} )
-	);
+	componentsStore.setOverridableProps( componentId, {
+		...overridableProps,
+		props: {
+			...overridableProps.props,
+			[ overrideKey ]: updatedProp,
+		},
+		groups: updatedGroups,
+	} );
 
 	return updatedProp;
 }

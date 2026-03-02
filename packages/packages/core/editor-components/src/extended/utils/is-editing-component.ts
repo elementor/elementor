@@ -1,13 +1,5 @@
-import { __getStore as getStore } from '@elementor/store';
-
-import { type ComponentsSlice, selectCurrentComponentId } from '../../store/store';
+import { componentsStore } from '../../store/dispatchers';
 
 export function isEditingComponent(): boolean {
-	const state = getStore()?.getState() as ComponentsSlice | undefined;
-
-	if ( ! state ) {
-		return false;
-	}
-
-	return selectCurrentComponentId( state ) !== null;
+	return componentsStore.getCurrentComponentId() !== null;
 }

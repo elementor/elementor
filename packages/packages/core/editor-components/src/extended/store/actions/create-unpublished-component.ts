@@ -1,10 +1,9 @@
 import { createElements, deleteElement, getContainer, type V1ElementData } from '@elementor/editor-elements';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
-import { __dispatch as dispatch } from '@elementor/store';
 import { generateUniqueId } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
-import { slice } from '../../../store/store';
+import { componentsStore } from '../../../store/dispatchers';
 import { type OriginalElementData, type OverridableProps } from '../../../types';
 import { type Source, trackComponentEvent } from '../../../utils/tracking';
 import { type ComponentEventData } from '../../components/create-component-form/utils/get-component-event-data';
@@ -40,15 +39,13 @@ export async function createUnpublishedComponent( {
 		index: container?.view?._index ?? 0,
 	};
 
-	dispatch(
-		slice.actions.addUnpublished( {
-			...componentBase,
-			elements: [ elementDataWithOverridablesReverted ],
-			overridableProps,
-		} )
-	);
+	componentsStore.addUnpublished( {
+		...componentBase,
+		elements: [ elementDataWithOverridablesReverted ],
+		overridableProps,
+	} );
 
-	dispatch( slice.actions.addCreatedThisSession( generatedUid ) );
+	componentsStore.addCreatedThisSession( generatedUid );
 
 	const componentInstance = await replaceElementWithComponent( element, componentBase );
 
@@ -65,8 +62,8 @@ export async function createUnpublishedComponent( {
 	} catch ( error ) {
 		restoreOriginalElement( originalElement, componentInstance.id );
 
-		dispatch( slice.actions.removeUnpublished( generatedUid ) );
-		dispatch( slice.actions.removeCreatedThisSession( generatedUid ) );
+		componentsStore.removeUnpublished( generatedUid );
+		componentsStore.removeCreatedThisSession( generatedUid );
 
 		throw error;
 	}

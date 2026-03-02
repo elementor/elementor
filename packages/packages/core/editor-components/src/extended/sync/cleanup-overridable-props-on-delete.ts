@@ -1,8 +1,7 @@
 import { getAllDescendants, type V1Element } from '@elementor/editor-elements';
 import { type HookOptions, registerDataHook } from '@elementor/editor-v1-adapters';
-import { __getState as getState } from '@elementor/store';
 
-import { type ComponentsSlice, selectCurrentComponentId, selectOverridableProps } from '../../store/store';
+import { componentsStore } from '../../store/dispatchers';
 import { deleteOverridableProp } from '../store/actions/delete-overridable-prop';
 
 type DeleteCommandArgs = {
@@ -19,19 +18,13 @@ export function initCleanupOverridablePropsOnDelete() {
 			return true;
 		}
 
-		const state = getState() as ComponentsSlice | undefined;
-
-		if ( ! state ) {
-			return true;
-		}
-
-		const currentComponentId = selectCurrentComponentId( state );
+		const currentComponentId = componentsStore.getCurrentComponentId();
 
 		if ( ! currentComponentId ) {
 			return true;
 		}
 
-		const overridableProps = selectOverridableProps( state, currentComponentId );
+		const overridableProps = componentsStore.getOverridableProps( currentComponentId );
 
 		if ( ! overridableProps || Object.keys( overridableProps.props ).length === 0 ) {
 			return true;

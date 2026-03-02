@@ -1,6 +1,6 @@
 import { createHooksRegistry, createMockElement, setupHooksRegistry, type WindowWithHooks } from 'test-utils';
 import { getAllDescendants, type V1Element } from '@elementor/editor-elements';
-import { __getState as getState } from '@elementor/store';
+import { __getState as getState, __getStore as getStore } from '@elementor/store';
 
 import { SLICE_NAME } from '../../../store/store';
 import type { OverridableProps, PublishedComponent } from '../../../types';
@@ -10,6 +10,7 @@ import { initCleanupOverridablePropsOnDelete } from '../cleanup-overridable-prop
 jest.mock( '@elementor/store', () => ( {
 	...jest.requireActual( '@elementor/store' ),
 	__getState: jest.fn(),
+	__getStore: jest.fn(),
 	__dispatch: jest.fn(),
 } ) );
 
@@ -151,9 +152,10 @@ describe( 'initCleanupOverridablePropsOnDelete', () => {
 			currentComponentId: MOCK_COMPONENT_ID,
 		};
 
-		jest.mocked( getState ).mockImplementation( () => ( {
-			[ SLICE_NAME ]: mockState,
-		} ) );
+		const stateGetter = () => ( { [ SLICE_NAME ]: mockState } );
+
+		jest.mocked( getState ).mockImplementation( stateGetter );
+		jest.mocked( getStore ).mockImplementation( () => ( { getState: stateGetter, dispatch: jest.fn() } ) as never );
 
 		jest.mocked( getAllDescendants ).mockReturnValue( [] );
 		jest.mocked( deleteOverridableProp ).mockReturnValue( undefined );

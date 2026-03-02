@@ -1,6 +1,4 @@
-import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
-
-import { selectCurrentComponent, selectOverridableProps, slice } from '../../../store/store';
+import { componentsStore } from '../../../store/dispatchers';
 import { type ComponentId, type OverridablePropsGroup } from '../../../types';
 import { type Source, trackComponentEvent } from '../../../utils/tracking';
 
@@ -17,9 +15,9 @@ export function addOverridableGroup( {
 	label,
 	source,
 }: AddGroupParams ): OverridablePropsGroup | undefined {
-	const currentComponent = selectCurrentComponent( getState() );
+	const currentComponent = componentsStore.getCurrentComponent();
 
-	const overridableProps = selectOverridableProps( getState(), componentId );
+	const overridableProps = componentsStore.getOverridableProps( componentId );
 
 	if ( ! overridableProps ) {
 		return;
@@ -31,22 +29,17 @@ export function addOverridableGroup( {
 		props: [],
 	};
 
-	dispatch(
-		slice.actions.setOverridableProps( {
-			componentId,
-			overridableProps: {
-				...overridableProps,
-				groups: {
-					...overridableProps.groups,
-					items: {
-						...overridableProps.groups.items,
-						[ groupId ]: newGroup,
-					},
-					order: [ groupId, ...overridableProps.groups.order ],
-				},
+	componentsStore.setOverridableProps( componentId, {
+		...overridableProps,
+		groups: {
+			...overridableProps.groups,
+			items: {
+				...overridableProps.groups.items,
+				[ groupId ]: newGroup,
 			},
-		} )
-	);
+			order: [ groupId, ...overridableProps.groups.order ],
+		},
+	} );
 
 	trackComponentEvent( {
 		action: 'propertiesGroupCreated',
