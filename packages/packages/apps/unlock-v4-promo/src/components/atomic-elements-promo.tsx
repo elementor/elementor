@@ -20,7 +20,6 @@ export function AtomicElementsPromo() {
 					bgcolor: 'background.default',
 					display: 'flex',
 					flexDirection: 'column',
-					width: 300,
 				} }
 			>
 				<Box
@@ -33,18 +32,17 @@ export function AtomicElementsPromo() {
 						py: 1,
 					} }
 				>
-					<Typography variant="subtitle2" sx={ { flexGrow: 1 } }>
+					<Typography variant="subtitle2" sx={ { flexGrow: 1, gap: 1, display: 'flex', alignItems: 'center' } }>
 						{ __( 'Atomic Elements', 'elementor' ) }
+						<Chip label={ __( 'New', 'elementor' ) } size="small" color="primary" />
 					</Typography>
-					<Chip label={ __( 'New', 'elementor' ) } size="small" color="primary" />
-					<CloseButton onClick={ () => setDismissed( true ) } />
+					<CloseButton slotProps={{ icon: { fontSize: "small" } }} onClick={ () => setDismissed( true ) } />
 				</Box>
 
 				<Box
 					sx={ {
-						height: 160,
-						width: 260,
-						mx: 'auto',
+						maxHeight: 205,
+						mx: 2,
 						overflow: 'hidden',
 					} }
 				>
@@ -54,7 +52,6 @@ export function AtomicElementsPromo() {
 						alt=""
 						sx={ {
 							width: '100%',
-							height: '100%',
 							objectFit: 'cover',
 							objectPosition: 'center',
 							display: 'block',
