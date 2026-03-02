@@ -119,12 +119,12 @@ export const EmptyState = () => {
 						<Link
 							component="button"
 							variant="caption"
-							color="primary.main"
 							onClick={ handleGenerateClick }
 							sx={ {
 								display: 'flex',
 								alignItems: 'center',
 								gap: 0.5,
+								color: 'primary.main',
 								textDecoration: 'none',
 								'&:hover': { textDecoration: 'underline' },
 							} }
