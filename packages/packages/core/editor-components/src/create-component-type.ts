@@ -14,6 +14,7 @@ import {
 import { getCurrentDocument } from '@elementor/editor-documents';
 import { type V1ElementData } from '@elementor/editor-elements';
 import { __getState as getState } from '@elementor/store';
+import { hasProInstalled } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
@@ -21,7 +22,6 @@ import { type ComponentInstanceProp } from './prop-types/component-instance-prop
 import { type ComponentsSlice, selectComponentByUid } from './store/store';
 import { type ComponentRenderContext, type ExtendedWindow } from './types';
 import { formatComponentElementsId } from './utils/format-component-elements-id';
-import { hasProInstalled } from './utils/is-pro-user';
 import { switchToComponent } from './utils/switch-to-component';
 import { trackComponentEvent } from './utils/tracking';
 
