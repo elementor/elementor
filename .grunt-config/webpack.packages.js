@@ -13,8 +13,8 @@ const REGEXES = {
 	elementorPathImports: /^@elementor\/(ui|icons)\/(.+)$/,
 
 	// @elementor/editor
-	// We want to bundle `@elementor/design-tokens` inside the UI package since it's an internal thing.
-	elementorPackages: /^@elementor\/(?!design-tokens)(.+)$/,
+	// We want to bundle `@elementor/design-tokens` and `@elementor/angie-sdk` since they're not registered as WordPress scripts.
+	elementorPackages: /^@elementor\/(?!design-tokens|angie-sdk)(.+)$/,
 
 	// @wordpress/components
 	wordpressPackages: /^@wordpress\/(.+)$/,

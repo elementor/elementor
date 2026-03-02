@@ -16,6 +16,10 @@ class Module extends BaseModule {
 	const PLUGIN_SLUG = 'angie';
 	const ANGIE_PLUGIN_PATH = 'angie/angie.php';
 
+	const PACKAGES = [
+		'editor-angie-entrypoints',
+	];
+
 	public function get_name() {
 		return self::MODULE_NAME;
 	}
@@ -34,7 +38,13 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
+
 		( new Rest_Api() )->register_hooks();
+	}
+
+	private function add_packages( array $packages ): array {
+		return array_merge( $packages, self::PACKAGES );
 	}
 
 	public static function is_angie_installed(): bool {
