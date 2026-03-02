@@ -2,8 +2,7 @@ import * as React from 'react';
 import { useCallback } from 'react';
 import { notify } from '@elementor/editor-notifications';
 import { ThemeProvider } from '@elementor/editor-ui';
-import { httpService } from '@elementor/http-client';
-import { Box, Button, Chip, CloseButton, Typography } from '@elementor/ui';
+import { Box, Button, Chip, CloseButton, Divider, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { usePromoSuppressedMessage } from '../hooks/use-promo-suppressed-message';
@@ -34,6 +33,7 @@ export function AtomicElementsPromo() {
 
 	return (
 		<ThemeProvider>
+			<Divider/>
 			<Box
 				sx={ {
 					bgcolor: 'background.default',
@@ -56,7 +56,7 @@ export function AtomicElementsPromo() {
 						sx={ { flexGrow: 1, gap: 1, display: 'flex', alignItems: 'center' } }
 					>
 						{ __( 'Atomic Elements', 'elementor' ) }
-						<Chip label={ __( 'New', 'elementor' ) } size="small" color="primary" />
+						<Chip label={ __( 'New', 'elementor' ) } size="tiny" variant="standard" color="secondary" />
 					</Typography>
 					<CloseButton slotProps={ { icon: { fontSize: 'small' } } } onClick={ toggleSuppressMessage } />
 				</Box>
@@ -115,6 +115,7 @@ export function AtomicElementsPromo() {
 					</Button>
 				</Box>
 			</Box>
+			<Divider/>
 		</ThemeProvider>
 	);
 }
