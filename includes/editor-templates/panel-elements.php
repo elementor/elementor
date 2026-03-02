@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div id="elementor-panel-elements-search-area"></div>
 	<div id="elementor-panel-elements-notice-area"></div>
 	<div id="elementor-panel-elements-wrapper"></div>
-	<div id="elementor-panel-elements-angie-promotion-area"></div>
+	<div id="elementor-panel-elements-promotion-area"></div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-categories">
@@ -103,26 +103,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <?php if ( Plugin::$instance->experiments->is_feature_active( Modules\AngieEntrypoints\Module::EXPERIMENT_NAME ) ) : ?>
-<script type="text/template" id="tmpl-elementor-panel-elements-angie-empty-state">
-	<div class="elementor-panel-angie-promotion elementor-panel-angie-promotion--empty-state">
-		<div class="elementor-panel-angie-promotion__title"><?php echo esc_html__( 'No widget found for', 'elementor' ); ?> "<span class="elementor-panel-angie-promotion__search-term"></span>"</div>
-		<div class="elementor-panel-angie-promotion__message"><?php echo esc_html__( 'Build a custom widget with Angie by describing what you need.', 'elementor' ); ?></div>
-		<button type="button" class="elementor-panel-angie-promotion__cta">
-			<i class="eicon-ai" aria-hidden="true"></i>
-			<?php echo esc_html__( 'Create custom widget', 'elementor' ); ?>
-		</button>
-	</div>
+<script type="text/template" id="tmpl-elementor-panel-elements-promotion-empty-state">
+	<div class="elementor-panel-elements-promotion__title"><?php echo esc_html__( 'No widget found for', 'elementor' ); ?> "{{{ searchTerm }}}"</div>
+	<div class="elementor-panel-elements-promotion__message"><?php echo esc_html__( 'Build a custom widget with Angie by describing what you need.', 'elementor' ); ?></div>
+	<button type="button" class="elementor-panel-elements-promotion__cta">
+		<i class="eicon-ai" aria-hidden="true"></i>
+		<?php echo esc_html__( 'Create custom widget', 'elementor' ); ?>
+	</button>
 </script>
 
-<script type="text/template" id="tmpl-elementor-panel-elements-angie-search-footer">
-	<div class="elementor-panel-angie-promotion elementor-panel-angie-promotion--search-footer">
-		<div class="elementor-panel-angie-promotion__title"><?php echo esc_html__( "Couldn't find what you're looking for?", 'elementor' ); ?></div>
-		<div class="elementor-panel-angie-promotion__message"><?php echo esc_html__( 'Build a custom widget with Angie by describing what you need.', 'elementor' ); ?></div>
-		<button type="button" class="elementor-panel-angie-promotion__cta">
-			<i class="eicon-ai" aria-hidden="true"></i>
-			<?php echo esc_html__( 'Create custom widget', 'elementor' ); ?>
-		</button>
-	</div>
+<script type="text/template" id="tmpl-elementor-panel-elements-promotion-search-footer">
+	<div class="elementor-panel-elements-promotion__title"><?php echo esc_html__( "Couldn't find what you're looking for?", 'elementor' ); ?></div>
+	<div class="elementor-panel-elements-promotion__message"><?php echo esc_html__( 'Build a custom widget with Angie by describing what you need.', 'elementor' ); ?></div>
+	<button type="button" class="elementor-panel-elements-promotion__cta">
+		<i class="eicon-ai" aria-hidden="true"></i>
+		<?php echo esc_html__( 'Create custom widget', 'elementor' ); ?>
+	</button>
 </script>
 <?php endif; ?>
 
