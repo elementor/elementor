@@ -254,7 +254,7 @@ test.describe( 'Onboarding @onBoarding', async () => {
 	test( 'Onboarding Choose Features page - Skip button', async ( { page } ) => {
 		await page.goto( chooseFeaturesUrl );
 
-		const skipButton = page.locator( EditorSelectors.onboardingButton );
+		const skipButton = page.locator( EditorSelectors.onboarding.skipButton );
 
 		await skipButton.waitFor();
 
