@@ -109,7 +109,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		await expect( nextButton ).toHaveClass( BUTTON_CLASSES.active );
 
-		await page.locator( EditorSelectors.onboardingButton ).click();
+		await page.locator( EditorSelectors.onboarding.skipButton ).click();
 
 		const pageTitle = page.locator( EditorSelectors.onboarding.screenTitle );
 		await expect( pageTitle ).toHaveText( 'Have a logo? Add it here.' );
@@ -128,7 +128,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		const nextButton = page.locator( 'text=Next' );
 		const removeButton = page.locator( EditorSelectors.onboarding.removeLogoButton );
-		const skipButton = page.locator( EditorSelectors.onboardingButton );
+		const skipButton = page.locator( EditorSelectors.onboarding.skipButton );
 
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-expect-error
