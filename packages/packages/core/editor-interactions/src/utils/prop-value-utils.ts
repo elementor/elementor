@@ -46,22 +46,22 @@ export const createConfig = ( {
 	replay,
 	easing = 'easeIn',
 	relativeTo = '',
-	offsetTop = 0,
-	offsetBottom = 85,
+	start = 85,
+	end = 15,
 }: {
 	replay: boolean;
 	easing?: string;
 	relativeTo?: string;
-	offsetTop?: SizeStringValue;
-	offsetBottom?: SizeStringValue;
+	start?: SizeStringValue;
+	end?: SizeStringValue;
 } ): ConfigPropValue => ( {
 	$$type: 'config',
 	value: {
 		replay: createBoolean( replay ),
 		easing: createString( easing ),
 		relativeTo: createString( relativeTo ),
-		offsetTop: createSize( offsetTop, '%' ),
-		offsetBottom: createSize( offsetBottom, '%' ),
+		start: createSize( start, '%' ),
+		end: createSize( end, '%' ),
 	},
 } );
 
@@ -102,8 +102,8 @@ export const createAnimationPreset = ( {
 	replay = false,
 	easing = 'easeIn',
 	relativeTo,
-	offsetTop,
-	offsetBottom,
+	start,
+	end,
 	customEffects,
 }: {
 	effect: string;
@@ -114,8 +114,8 @@ export const createAnimationPreset = ( {
 	replay: boolean;
 	easing?: string;
 	relativeTo?: string;
-	offsetTop?: SizeStringValue;
-	offsetBottom?: SizeStringValue;
+	start?: SizeStringValue;
+	end?: SizeStringValue;
 	customEffects?: PropValue;
 } ): AnimationPresetPropValue => ( {
 	$$type: 'animation-preset-props',
@@ -129,8 +129,8 @@ export const createAnimationPreset = ( {
 			replay,
 			easing,
 			relativeTo,
-			offsetTop,
-			offsetBottom,
+			start,
+			end,
 		} ),
 	},
 } );
@@ -146,8 +146,8 @@ export const createInteractionItem = ( {
 	replay = false,
 	easing = 'easeIn',
 	relativeTo,
-	offsetTop,
-	offsetBottom,
+	start,
+	end,
 	excludedBreakpoints,
 	customEffects,
 }: {
@@ -161,8 +161,8 @@ export const createInteractionItem = ( {
 	replay?: boolean;
 	easing?: string;
 	relativeTo?: string;
-	offsetTop?: number;
-	offsetBottom?: number;
+	start?: number;
+	end?: number;
 	excludedBreakpoints?: string[];
 	customEffects?: PropValue;
 } ): InteractionItemPropValue => ( {
@@ -179,8 +179,8 @@ export const createInteractionItem = ( {
 			replay,
 			easing,
 			relativeTo,
-			offsetTop,
-			offsetBottom,
+			start,
+			end,
 			customEffects,
 		} ),
 		...( excludedBreakpoints &&

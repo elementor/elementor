@@ -12,8 +12,8 @@ type Props = {
 	replay?: boolean;
 	easing?: string;
 	relativeTo?: string;
-	offsetTop?: number;
-	offsetBottom?: number;
+	start?: number;
+	end?: number;
 	excludedBreakpoints?: string[];
 };
 

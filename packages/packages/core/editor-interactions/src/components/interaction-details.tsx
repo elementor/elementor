@@ -35,8 +35,8 @@ export const DEFAULT_VALUES = {
 	replay: false,
 	easing: 'easeIn',
 	relativeTo: 'viewport',
-	offsetTop: 15,
-	offsetBottom: 85,
+	start: 85,
+	end: 15,
 };
 
 const TRIGGERS_WITHOUT_REPLAY = [ 'load', 'scrollOn', 'hover', 'click' ];
@@ -51,8 +51,8 @@ type InteractionsControlType =
 	| 'replay'
 	| 'easing'
 	| 'relativeTo'
-	| 'offsetTop'
-	| 'offsetBottom'
+	| 'start'
+	| 'end'
 	| 'customEffects';
 
 type InteractionValues = {
@@ -65,8 +65,8 @@ type InteractionValues = {
 	replay: boolean;
 	easing: string;
 	relativeTo: string;
-	offsetTop: SizeStringValue;
-	offsetBottom: SizeStringValue;
+	start: SizeStringValue;
+	end: SizeStringValue;
 	customEffects?: PropValue;
 };
 
@@ -80,8 +80,8 @@ const controlVisibilityConfig: ControlVisibilityConfig = {
 	effectType: ( values ) => values.effect !== 'custom',
 	direction: ( values ) => values.effect !== 'custom',
 	relativeTo: ( values ) => values.trigger === 'scrollOn',
-	offsetTop: ( values ) => values.trigger === 'scrollOn',
-	offsetBottom: ( values ) => values.trigger === 'scrollOn',
+	start: ( values ) => values.trigger === 'scrollOn',
+	end: ( values ) => values.trigger === 'scrollOn',
 
 	duration: ( values ) => {
 		const isRelativeToVisible = values.trigger === 'scrollOn';
@@ -114,10 +114,13 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const easing = extractString( interaction.animation.value.config?.value.easing, DEFAULT_VALUES.easing );
 	const relativeTo = extractString( interaction.animation.value.config?.value.relativeTo, DEFAULT_VALUES.relativeTo );
 
-	const offsetTop = extractSize( interaction.animation.value.config?.value.offsetTop, DEFAULT_VALUES.offsetTop );
-	const offsetBottom = extractSize(
-		interaction.animation.value.config?.value.offsetBottom,
-		DEFAULT_VALUES.offsetBottom
+	const start = extractSize(
+		interaction.animation.value.config?.value.start,
+		DEFAULT_VALUES.start
+	);
+	const end = extractSize(
+		interaction.animation.value.config?.value.end,
+		DEFAULT_VALUES.end
 	);
 
 	const interactionValues = {
@@ -130,8 +133,8 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		easing,
 		replay,
 		relativeTo,
-		offsetTop,
-		offsetBottom,
+		start,
+		end,
 		customEffects,
 	};
 
@@ -142,10 +145,13 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		'relativeTo',
 		controlVisibilityConfig.relativeTo( interactionValues )
 	);
-	const OffsetTopControl = useControlComponent( 'offsetTop', controlVisibilityConfig.offsetTop( interactionValues ) );
-	const OffsetBottomControl = useControlComponent(
-		'offsetBottom',
-		controlVisibilityConfig.offsetBottom( interactionValues )
+	const StartControl = useControlComponent(
+		'start',
+		controlVisibilityConfig.start( interactionValues )
+	);
+	const EndControl = useControlComponent(
+		'end',
+		controlVisibilityConfig.end( interactionValues )
 	);
 	const CustomEffectControl = useControlComponent(
 		'customEffects',
@@ -172,8 +178,8 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			replay: boolean;
 			easing?: string;
 			relativeTo: string;
-			offsetTop: SizeStringValue;
-			offsetBottom: SizeStringValue;
+			start: SizeStringValue;
+			end: SizeStringValue;
 			customEffects?: PropValue;
 		} >
 	): void => {
@@ -198,8 +204,8 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 				replay: updates.replay ?? replay,
 				easing: updates.easing ?? easing,
 				relativeTo: updates.relativeTo ?? relativeTo,
-				offsetTop: updates.offsetTop ?? offsetTop,
-				offsetBottom: updates.offsetBottom ?? offsetBottom,
+				start: updates.start ?? start,
+				end: updates.end ?? end,
 				customEffects: updates.customEffects ?? customEffects,
 			} ),
 		};
@@ -297,32 +303,32 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 					<>
 						<Divider />
 						<Grid container spacing={ 1.5 }>
+							{ StartControl && (
+								<Field label={ __( 'Start', 'elementor' ) }>
+									<StartControl
+										value={ parseSizeValue( start, [ '%' ] ).size?.toString() ?? '' }
+										onChange={ ( v: string ) =>
+											updateInteraction( { start: v as SizeStringValue } )
+										}
+									/>
+								</Field>
+							) }
+							{ EndControl && (
+								<Field label={ __( 'End', 'elementor' ) }>
+									<EndControl
+										value={ parseSizeValue( end, [ '%' ] ).size?.toString() ?? '' }
+										onChange={ ( v: string ) =>
+											updateInteraction( { end: v as SizeStringValue } )
+										}
+									/>
+								</Field>
+							) }
 							<Field label={ __( 'Relative To', 'elementor' ) }>
 								<RelativeToControl
 									value={ relativeTo }
 									onChange={ ( v ) => updateInteraction( { relativeTo: v } ) }
 								/>
 							</Field>
-							{ OffsetTopControl && (
-								<Field label={ __( 'Offset Top', 'elementor' ) }>
-									<OffsetTopControl
-										value={ String( parseSizeValue( offsetTop, [ '%' ] ).size ) }
-										onChange={ ( v: string ) =>
-											updateInteraction( { offsetTop: v as SizeStringValue } )
-										}
-									/>
-								</Field>
-							) }
-							{ OffsetBottomControl && (
-								<Field label={ __( 'Offset Bottom', 'elementor' ) }>
-									<OffsetBottomControl
-										value={ String( parseSizeValue( offsetBottom, [ '%' ] ).size ) }
-										onChange={ ( v: string ) =>
-											updateInteraction( { offsetBottom: v as SizeStringValue } )
-										}
-									/>
-								</Field>
-							) }
 						</Grid>
 						<Divider />
 					</>

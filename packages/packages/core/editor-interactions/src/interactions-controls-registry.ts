@@ -13,8 +13,8 @@ type InteractionsControlType =
 	| 'replay'
 	| 'easing'
 	| 'relativeTo'
-	| 'offsetTop'
-	| 'offsetBottom'
+	| 'start'
+	| 'end'
 	| 'customEffects';
 
 type InteractionsControlPropsMap = {
@@ -28,8 +28,8 @@ type InteractionsControlPropsMap = {
 	replay: ReplayFieldProps;
 	easing: FieldProps;
 	relativeTo: FieldProps;
-	offsetTop: FieldProps;
-	offsetBottom: FieldProps;
+	start: FieldProps;
+	end: FieldProps;
 };
 
 type ControlOptions< T extends InteractionsControlType > = {
