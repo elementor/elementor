@@ -32,11 +32,14 @@ export function AtomicElementsPromo() {
 						py: 1,
 					} }
 				>
-					<Typography variant="subtitle2" sx={ { flexGrow: 1, gap: 1, display: 'flex', alignItems: 'center' } }>
+					<Typography
+						variant="subtitle2"
+						sx={ { flexGrow: 1, gap: 1, display: 'flex', alignItems: 'center' } }
+					>
 						{ __( 'Atomic Elements', 'elementor' ) }
 						<Chip label={ __( 'New', 'elementor' ) } size="small" color="primary" />
 					</Typography>
-					<CloseButton slotProps={{ icon: { fontSize: "small" } }} onClick={ () => setDismissed( true ) } />
+					<CloseButton slotProps={ { icon: { fontSize: 'small' } } } onClick={ () => setDismissed( true ) } />
 				</Box>
 
 				<Box
