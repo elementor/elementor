@@ -46,7 +46,7 @@ describe( '<DynamicSelectionControl />', () => {
 
 		const element = mockElement();
 		const elementType = createMockElementType();
-		jest.mocked( useElement ).mockReturnValue( { element, elementType } );
+		jest.mocked( useElement ).mockReturnValue( { element, elementType, settings: {} } );
 
 		jest.mocked( isDynamicTagSupported ).mockReturnValue( true );
 
