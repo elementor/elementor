@@ -8,6 +8,8 @@ const BUTTON_CLASSES = {
 	disabled: /e-onboarding__button--disabled/,
 };
 
+const GOOD_TO_GO_SCREEN_TITLE = /Welcome aboard! What's next\?|How would you like to create your website?|All set! Choose how to start/;
+
 // Unskip: ED-18816 - Refactor onboarding test
 test.describe.skip( 'On boarding @onBoarding', async () => {
 	let originalActiveTheme: string;
@@ -132,7 +134,7 @@ test.describe.skip( 'On boarding @onBoarding', async () => {
 		await expect( nextButton ).toHaveClass( BUTTON_CLASSES.disabled );
 		await skipButton.click();
 
-		await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Welcome aboard! What\'s next?' );
+		await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( GOOD_TO_GO_SCREEN_TITLE );
 	} );
 
 	/**
@@ -237,7 +239,7 @@ test.describe( 'Onboarding @onBoarding', async () => {
 
 			await expect(
 				page.locator( EditorSelectors.onboarding.screenTitle ),
-			).toHaveText( /Welcome aboard! What's next\?|How would you like to create your website?|All set! Choose how to start/ );
+			).toHaveText( GOOD_TO_GO_SCREEN_TITLE );
 		} );
 	} );
 
@@ -252,7 +254,7 @@ test.describe( 'Onboarding @onBoarding', async () => {
 			await skipButton.click();
 			expect( page.url() ).toContain( 'onboarding/goodToGo' );
 			await expect( page.locator( EditorSelectors.onboarding.progressBar.skippedItem ) ).toContainText( 'Choose Features' );
-			await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Welcome aboard! What\'s next?' );
+			await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( GOOD_TO_GO_SCREEN_TITLE );
 		} );
 	} );
 } );
