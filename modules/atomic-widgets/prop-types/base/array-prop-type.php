@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-abstract class Array_Prop_Type implements Transformable_Prop_Type {
+abstract class Array_Prop_Type extends Transformable_Prop_Type {
 	// Backward compatibility, do not change to "const". Keep name in uppercase.
 	// phpcs:ignore
 	static $KIND = 'array';
@@ -99,7 +99,7 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 	}
 
 	public function jsonSerialize(): array {
-		return [
+		return array_merge( parent::jsonSerialize(), [
 			// phpcs:ignore
 			'kind' => static::$KIND,
 			'key' => static::get_key(),
@@ -109,7 +109,7 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 			'item_prop_type' => $this->get_item_type(),
 			'dependencies' => $this->get_dependencies(),
 			'initial_value' => $this->get_initial_value(),
-		];
+		] );
 	}
 
 	abstract protected function define_item_type(): Prop_Type;
