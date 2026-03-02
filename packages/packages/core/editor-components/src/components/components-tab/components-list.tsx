@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { ComponentsIcon, ElementorAIIcon } from '@elementor/icons';
-import { Box, Link, List, Stack, Typography } from '@elementor/ui';
+import { Box, Divider, Link, List, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useAngieIntegration } from '../../hooks/use-angie-integration';
@@ -105,51 +105,52 @@ export const EmptyState = () => {
 					</Typography>
 				</Stack>
 
-				{ canCreate && (
-					<>
-						<Typography variant="caption" color="text.tertiary" sx={ { py: 0.5 } }>
-							{ __( 'Or', 'elementor' ) }
+			{ canCreate && (
+				<>
+					<Typography variant="subtitle2" color="text.primary" sx={ { py: 0.5, fontWeight: 500 } }>
+						{ __( 'Or', 'elementor' ) }
+					</Typography>
+
+					<Stack alignItems="center" gap={ 0.5 }>
+						<Typography align="center" variant="caption" color="text.tertiary">
+							{ __( 'Generate a custom component using Angie', 'elementor' ) }
 						</Typography>
 
-						<Stack alignItems="center" gap={ 0.5 }>
-							<Typography align="center" variant="caption" color="text.tertiary">
-								{ __( 'Generate a custom component using Angie', 'elementor' ) }
-							</Typography>
+						<Link
+							component="button"
+							variant="caption"
+							color="primary.main"
+							onClick={ handleGenerateClick }
+							sx={ {
+								display: 'flex',
+								alignItems: 'center',
+								gap: 0.5,
+								textDecoration: 'none',
+								'&:hover': { textDecoration: 'underline' },
+							} }
+						>
+							<ElementorAIIcon sx={ { fontSize: 16 } } />
+							{ __( 'Generate Component', 'elementor' ) }
+						</Link>
+					</Stack>
+				</>
+			) }
 
-							<Link
-								component="button"
-								variant="caption"
-								color="primary.main"
-								onClick={ handleGenerateClick }
-								sx={ {
-									display: 'flex',
-									alignItems: 'center',
-									gap: 0.5,
-									textDecoration: 'none',
-									'&:hover': { textDecoration: 'underline' },
-								} }
-							>
-								<ElementorAIIcon sx={ { fontSize: 16 } } />
-								{ __( 'Generate Component', 'elementor' ) }
-							</Link>
-						</Stack>
-					</>
-				) }
-
-				<Stack alignItems="center" gap={ 0.5 } sx={ { mt: 'auto', pt: 2 } }>
-					<Typography align="center" variant="caption" color="text.tertiary">
-						{ __( 'Components are reusable blocks that sync across your site.', 'elementor' ) }
-					</Typography>
-					<Link
-						href={ LEARN_MORE_URL }
-						target="_blank"
-						rel="noopener noreferrer"
-						variant="caption"
-						color="info.main"
-					>
-						{ __( 'Learn more', 'elementor' ) }
-					</Link>
-				</Stack>
+			<Stack alignItems="center" gap={ 0.5 } sx={ { mt: 'auto', width: '100%' } }>
+				<Divider sx={ { width: '100%', mb: 2 } } />
+				<Typography align="center" variant="caption" color="text.tertiary">
+					{ __( 'Components are reusable blocks that sync across your site.', 'elementor' ) }
+				</Typography>
+				<Link
+					href={ LEARN_MORE_URL }
+					target="_blank"
+					rel="noopener noreferrer"
+					variant="caption"
+					color="info.main"
+				>
+					{ __( 'Learn more', 'elementor' ) }
+				</Link>
+			</Stack>
 			</Stack>
 
 			{ isIntroModalOpen && (
