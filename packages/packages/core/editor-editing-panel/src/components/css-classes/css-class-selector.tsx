@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { type ReactElement, useRef, useState } from 'react';
-import { useElementSetting } from '@elementor/editor-elements';
 import { type ClassesPropValue } from '@elementor/editor-props';
 import {
 	isElementsStylesProvider,
@@ -27,7 +26,7 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { useClassesProp } from '../../contexts/classes-prop-context';
-import { useElement } from '../../contexts/element-context';
+import { useElement, usePanelElementSetting } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
 import { getStylesProviderColorName } from '../../utils/get-styles-provider-color';
 import { trackStyles } from '../../utils/tracking/subscribe';
@@ -287,10 +286,9 @@ function hasReachedLimit( provider: StylesProvider ) {
 }
 
 function useAppliedOptions( options: StyleDefOption[] ) {
-	const { element } = useElement();
 	const currentClassesProp = useClassesProp();
 
-	const appliedIds = useElementSetting< ClassesPropValue >( element.id, currentClassesProp )?.value || [];
+	const appliedIds = usePanelElementSetting< ClassesPropValue >( currentClassesProp )?.value ?? [];
 	const appliedOptions = options.filter( ( option ) => option.value && appliedIds.includes( option.value ) );
 
 	const hasElementsProviderStyleApplied = appliedOptions.some(

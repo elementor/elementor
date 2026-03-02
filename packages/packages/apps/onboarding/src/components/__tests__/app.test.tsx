@@ -4,6 +4,7 @@ import { __deleteStore } from '@elementor/store';
 import { QueryClient } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
+import { DEFAULT_STRINGS } from '../../utils/default-strings';
 import { App } from '../app';
 
 jest.mock( '@elementor/query', () => {
@@ -43,14 +44,15 @@ interface OnboardingConfig {
 	choices: Record< string, unknown >;
 	hadUnexpectedExit: boolean;
 	isConnected: boolean;
+	translations?: Record< string, string >;
 	shouldShowProInstallScreen?: boolean;
 	urls: {
 		dashboard: string;
 		editor: string;
 		connect: string;
 		comparePlans?: string;
-		exploreFeatures?: string;
 		createNewPage?: string;
+		upgradeUrl: string;
 	};
 }
 
@@ -85,6 +87,7 @@ const defaultConfig: OnboardingConfig = {
 			type: 'multiple',
 		},
 	],
+	translations: DEFAULT_STRINGS,
 	progress: {
 		current_step_id: 'building_for',
 		current_step_index: 0,
@@ -99,8 +102,9 @@ const defaultConfig: OnboardingConfig = {
 		editor: 'https://test.local/editor',
 		connect: 'https://test.local/connect',
 		comparePlans: 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash',
-		exploreFeatures: 'https://elementor.com/features/?utm_source=onboarding&utm_medium=wp-dash',
 		createNewPage: 'https://test.local/wp-admin/edit.php?action=elementor_new_post&post_type=page',
+		upgradeUrl:
+			'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar&utm_term=2.0.0',
 	},
 };
 
@@ -438,6 +442,68 @@ describe( 'App', () => {
 				expect( screen.queryByTestId( 'pro-install-screen' ) ).not.toBeInTheDocument();
 			} );
 			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should remove site_features step after successful Pro installation', async () => {
+			// Arrange - user is on theme_selection (step 4 of 5), Pro install screen is pending
+			mockFetch.mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( { data: { success: true, message: 'installed' } } ),
+			} );
+
+			window.elementorAppConfig = createMockConfig( {
+				isConnected: true,
+				shouldShowProInstallScreen: true,
+				progress: {
+					current_step_id: 'theme_selection',
+					current_step_index: 3,
+					completed_steps: [ 'building_for', 'site_about', 'experience_level' ],
+				},
+			} );
+
+			render( <App /> );
+			expect( screen.getByTestId( 'pro-install-screen' ) ).toBeInTheDocument();
+
+			// Act - install Pro
+			fireEvent.click( screen.getByText( 'Install Pro on this site' ) );
+
+			// Assert - pro screen dismissed, onboarding steps shown
+			await waitFor( () => {
+				expect( screen.queryByTestId( 'pro-install-screen' ) ).not.toBeInTheDocument();
+			} );
+
+			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
+			fireEvent.click( screen.getByText( 'Skip' ) );
+
+			await waitFor( () => {
+				expect( mockFetch ).toHaveBeenCalledWith(
+					expect.stringContaining( 'user-progress' ),
+					expect.objectContaining( {
+						body: expect.stringContaining( '"complete":true' ),
+					} )
+				);
+			} );
+		} );
+	} );
+
+	describe( 'Upgrade button', () => {
+		it( 'should open the upgrade URL in a new tab when clicking Upgrade', () => {
+			// Arrange
+			const mockOpen = jest.fn();
+			window.open = mockOpen;
+
+			window.elementorAppConfig = createMockConfig( { isConnected: true } );
+
+			render( <App /> );
+
+			// Act
+			fireEvent.click( screen.getByText( 'Upgrade' ) );
+
+			// Assert
+			expect( mockOpen ).toHaveBeenCalledWith(
+				'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar&utm_term=2.0.0',
+				'_blank'
+			);
 		} );
 	} );
 

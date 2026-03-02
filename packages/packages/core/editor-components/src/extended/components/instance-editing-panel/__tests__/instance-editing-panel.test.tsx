@@ -2,14 +2,7 @@ import * as React from 'react';
 import { createMockContainer, createMockPropType, mockCurrentUserCapabilities, renderWithStore } from 'test-utils';
 import { ControlActionsProvider, TextControl } from '@elementor/editor-controls';
 import { controlsRegistry, ElementProvider } from '@elementor/editor-editing-panel';
-import {
-	getContainer,
-	getElementLabel,
-	getElementType,
-	getWidgetsCache,
-	useElementSetting,
-	useSelectedElement,
-} from '@elementor/editor-elements';
+import { getContainer, getElementLabel, getElementType, getWidgetsCache } from '@elementor/editor-elements';
 import {
 	__createStore,
 	__dispatch as dispatch,
@@ -46,7 +39,6 @@ jest.mock( '../../../../utils/get-container-by-origin-id', () => ( {
 
 mockCurrentUserCapabilities( true );
 
-const MOCK_ELEMENT_ID = 'element-123';
 const MOCK_COMPONENT_ID = 456;
 const MOCK_COMPONENT_NAME = 'Test Component';
 const MOCK_INSTANCE_ID = 'instance-789';
@@ -64,7 +56,7 @@ const MOCK_COMPONENT_INSTANCE_PROP_TYPE = createMockPropType( {
 } );
 
 const MOCK_ELEMENT = {
-	id: MOCK_ELEMENT_ID,
+	id: MOCK_INSTANCE_ID,
 	type: 'component-instance',
 };
 
@@ -170,11 +162,6 @@ describe( '<ExtendedInstanceEditingPanel />', () => {
 		registerSlice( slice );
 		store = __createStore();
 
-		jest.mocked( useElementSetting ).mockReturnValue( {} );
-		jest.mocked( useSelectedElement ).mockReturnValue( {
-			element: { id: MOCK_INSTANCE_ID, type: 'component-instance' },
-			elementType: MOCK_ELEMENT_TYPE,
-		} );
 		jest.mocked( componentInstancePropTypeUtil.extract ).mockReturnValue( {
 			component_id: { $$type: 'number', value: MOCK_COMPONENT_ID },
 			overrides: { $$type: 'overrides', value: [] },
@@ -184,7 +171,7 @@ describe( '<ExtendedInstanceEditingPanel />', () => {
 			createMockWidgetsCache() as unknown as ReturnType< typeof getWidgetsCache >
 		);
 		jest.mocked( getElementType ).mockImplementation( createMockElementType );
-		jest.mocked( getContainer ).mockReturnValue( createMockContainer( MOCK_ELEMENT_ID, [] ) );
+		jest.mocked( getContainer ).mockReturnValue( createMockContainer( MOCK_INSTANCE_ID, [] ) );
 		jest.mocked( getContainerByOriginId ).mockImplementation( ( originId ) => createMockContainer( originId, [] ) );
 	} );
 
@@ -298,7 +285,7 @@ function setupComponent( { isWithOverridableProps = true }: SetupComponentOption
 function renderPanel( store: Store< SliceState< typeof slice > > ) {
 	return renderWithStore(
 		<ControlActionsProvider items={ [] }>
-			<ElementProvider element={ MOCK_ELEMENT } elementType={ MOCK_ELEMENT_TYPE }>
+			<ElementProvider element={ MOCK_ELEMENT } elementType={ MOCK_ELEMENT_TYPE } settings={ {} }>
 				<ExtendedInstanceEditingPanel />
 			</ElementProvider>
 		</ControlActionsProvider>,

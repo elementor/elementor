@@ -81,11 +81,14 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 		);
 
 		// Assert.
-		$expected = Collection::make( $this->mock_global_classes['items'] )
+		$expected = Collection::make( $this->mock_global_classes['order'] )
+			->map( fn( $id ) => $this->mock_global_classes['items'][ $id ] ?? null )
+			->filter( fn( $item ) => null !== $item )
 			->map( function ( $item ) {
 				$item['id'] = $item['label'];
 				return $item;
 			} )
+			->reverse()
 			->all();
 
 		$this->mock_atomic_styles_manager

@@ -23,6 +23,7 @@ export { QueryControl } from './controls/query-control';
 export { GapControl } from './controls/gap-control';
 export { AspectRatioControl } from './controls/aspect-ratio-control';
 export { SvgMediaControl } from './controls/svg-media-control';
+export { VideoMediaControl } from './controls/video-media-control';
 export { BackgroundControl } from './controls/background-control/background-control';
 export { SwitchControl } from './controls/switch-control';
 export { RepeatableControl } from './controls/repeatable-control';
@@ -66,7 +67,14 @@ export type { ControlActionsItems } from './control-actions/control-actions-cont
 export type { AdornmentComponent } from './control-adornments/control-adornments-context';
 export type { PropProviderProps } from './bound-prop-context';
 export type { SetValue, SetValueMeta } from './bound-prop-context/prop-context';
-export type { ExtendedOption, Unit, LengthUnit, AngleUnit, TimeUnit } from './utils/size-control';
+export {
+	isUnitExtendedOption,
+	type ExtendedOption,
+	type Unit,
+	type LengthUnit,
+	type AngleUnit,
+	type TimeUnit,
+} from './utils/size-control';
 export type { ToggleControlProps } from './controls/toggle-control';
 export type { FontCategory } from './controls/font-family-control/font-family-control';
 export type { InlineEditorToolbarProps } from './components/inline-editor-toolbar';
@@ -96,5 +104,5 @@ export {
 
 // hooks
 export { useSyncExternalState } from './hooks/use-sync-external-state';
-export { useElementCanHaveChildren } from './hooks/use-element-can-have-children';
 export { useFontFamilies } from './hooks/use-font-families';
+export { useTypingBuffer, type UseTypingBufferOptions } from './hooks/use-typing-buffer';

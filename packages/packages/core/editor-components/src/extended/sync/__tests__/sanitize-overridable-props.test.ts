@@ -68,10 +68,6 @@ function createMockComponent( id: number, overridableProps?: OverridableProps ):
 	};
 }
 
-function useSanitizeOverridablePropsEffect() {
-	return SanitizeOverridableProps();
-}
-
 describe( 'SanitizeOverridableProps', () => {
 	let store: Store< SliceState< typeof slice > >;
 
@@ -83,7 +79,7 @@ describe( 'SanitizeOverridableProps', () => {
 
 	it( 'should not run cleanup when no current component', () => {
 		// Act
-		renderHookWithStore( useSanitizeOverridablePropsEffect, store );
+		renderHookWithStore( SanitizeOverridableProps, store );
 
 		// Assert
 		expect( mockFilterValidOverridableProps ).not.toHaveBeenCalled();
@@ -105,7 +101,7 @@ describe( 'SanitizeOverridableProps', () => {
 		);
 
 		// Act
-		renderHookWithStore( useSanitizeOverridablePropsEffect, store );
+		renderHookWithStore( SanitizeOverridableProps, store );
 
 		// Assert
 		expect( mockFilterValidOverridableProps ).not.toHaveBeenCalled();
@@ -121,7 +117,7 @@ describe( 'SanitizeOverridableProps', () => {
 		mockFilterValidOverridableProps.mockReturnValue( mockOverridableProps );
 
 		// Act
-		renderHookWithStore( useSanitizeOverridablePropsEffect, store );
+		renderHookWithStore( SanitizeOverridableProps, store );
 
 		// Assert
 		expect( mockFilterValidOverridableProps ).toHaveBeenCalledWith( mockOverridableProps );
@@ -139,7 +135,7 @@ describe( 'SanitizeOverridableProps', () => {
 		mockFilterValidOverridableProps.mockReturnValue( filteredProps );
 
 		// Act
-		renderHookWithStore( useSanitizeOverridablePropsEffect, store );
+		renderHookWithStore( SanitizeOverridableProps, store );
 
 		// Assert
 		expect( mockDeleteOverridableProp ).toHaveBeenCalledWith( {
@@ -171,7 +167,7 @@ describe( 'SanitizeOverridableProps', () => {
 		mockFilterValidOverridableProps.mockReturnValue( mockOverridableProps );
 
 		// Act
-		const { rerender } = renderHookWithStore( useSanitizeOverridablePropsEffect, store );
+		const { rerender } = renderHookWithStore( SanitizeOverridableProps, store );
 		expect( mockFilterValidOverridableProps ).not.toHaveBeenCalled();
 
 		// Act
