@@ -1,20 +1,55 @@
 import * as React from 'react';
-import { ChevronRightIcon } from '@elementor/icons';
-import { Box, Divider, Image, Stack, styled, Typography } from '@elementor/ui';
-import type { Theme } from '@elementor/ui';
+import { Box, Button, Divider, Paper, Stack, styled, Typography } from '@elementor/ui';
 
-import { FullscreenCard, PrimaryButton, SecondaryButton, TextButton } from '../../components/fullscreen-card';
+import { FullscreenCard, PrimaryButton, TextButton } from '../../components/fullscreen-card';
 import { t } from '../../utils/translations';
 import { AppleIcon, FacebookIcon, GoogleIcon } from '../components/login/social-icons';
 
-const SocialIcon = styled( Box )( ( { theme } ) => ( {
-	borderRadius: 100,
-	border: `1px solid ${ theme.palette.divider }`,
-	padding: theme.spacing( 1 ),
-	backgroundColor: theme.palette.secondary.contrastText,
-	display: 'inline-flex',
+const StyledButton = styled( Button )( ( { theme } ) => ( {
+	width: '100%',
+	display: 'flex',
 	alignItems: 'center',
 	justifyContent: 'center',
+	flexWrap: 'wrap',
+	padding: theme.spacing( 1.5, 3 ),
+	gap: theme.spacing( 1 ),
+	border: `1px solid ${ theme.palette.divider }`,
+	borderRadius: theme.shape.borderRadius,
+	color: theme.palette.text.primary,
+	textTransform: 'none',
+	backgroundColor: 'transparent',
+	minHeight: 48,
+	'&:hover': {
+		backgroundColor: theme.palette.action.hover,
+		borderColor: theme.palette.text.primary,
+	},
+} ) );
+
+const SocialIconWrapper = styled( Paper )( ( { theme } ) => ( {
+	width: 28,
+	height: 28,
+	borderRadius: '50%',
+	border: `1px solid ${ theme.palette.divider }`,
+	boxShadow: 'none',
+	display: 'flex',
+	alignItems: 'center',
+	justifyContent: 'center',
+	flexWrap: 'wrap',
+	marginLeft: -8,
+	'&:first-of-type': {
+		marginLeft: 0,
+		zIndex: 1,
+	},
+	'&:nth-of-type(2)': {
+		zIndex: 2,
+	},
+	'&:nth-of-type(3)': {
+		zIndex: 3,
+	},
+	'& svg': {
+		width: 16,
+		height: 16,
+	},
 } ) );
 
 interface LoginProps {
@@ -43,33 +78,22 @@ export function Login( { onConnect, onContinueAsGuest }: LoginProps ) {
 
 				<Stack spacing={ 6 }>
 					<Stack spacing={ 2 } alignItems="center">
-						<SecondaryButton
-							variant="text"
-							color="secondary"
-							fullWidth
-							size="large"
-							endIcon={ <ChevronRightIcon fontSize="tiny" /> }
-							onClick={ onConnect }
-						>
-							{ t( 'login.continue_another_way' ) }
-						</SecondaryButton>
-
-						<Stack direction="row">
-							<SocialIcon>
-								<GoogleIcon />
-							</SocialIcon>
-							<SocialIcon sx={ { marginInlineStart: '-10px' } }>
-								<FacebookIcon />
-							</SocialIcon>
-							<SocialIcon
-								sx={ ( theme: Theme ) => ( {
-									marginInlineStart: '-10px',
-									color: theme.palette.text.primary,
-								} ) }
-							>
-								<AppleIcon />
-							</SocialIcon>
-						</Stack>
+						<StyledButton onClick={ onConnect } variant="outlined" color="secondary">
+							<Box display="flex" alignItems="center">
+								<SocialIconWrapper elevation={ 24 }>
+									<GoogleIcon />
+								</SocialIconWrapper>
+								<SocialIconWrapper elevation={ 24 }>
+									<FacebookIcon />
+								</SocialIconWrapper>
+								<SocialIconWrapper elevation={ 24 }>
+									<AppleIcon />
+								</SocialIconWrapper>
+							</Box>
+							<Typography variant="button" fontWeight="500">
+								{ t( 'login.continue_another_way' ) }
+							</Typography>
+						</StyledButton>
 					</Stack>
 
 					<TextButton variant="text" color="info" onClick={ onContinueAsGuest }>
