@@ -15,29 +15,33 @@ function echo_select_your_structure_title() {
 	</div>
 </script>
 
+<?php if ( apply_filters( 'elementor/editor/show_starter', false ) ) : ?>
+<div class="elementor-start-building" id="elementor-start-building">
+	<button type="button" class="elementor-start-building__close" aria-label="<?php echo esc_attr__( 'Close', 'elementor' ); ?>">
+		<i class="eicon-close" aria-hidden="true"></i>
+	</button>
+	<div class="elementor-start-building__title"><?php echo esc_html__( 'Start building.', 'elementor' ); ?></div>
+	<div class="elementor-start-building__cards">
+		<button type="button" class="elementor-start-building__card elementor-start-building__card--ai">
+			<div class="elementor-start-building__card-illustration elementor-start-building__card-illustration--ai">
+				<img src="<?php echo esc_url( ELEMENTOR_ASSETS_URL . 'images/app/e-onboarding/ai-site-planner.png' ); ?>" alt="<?php echo esc_attr__( 'AI Site Planner', 'elementor' ); ?>" />
+			</div>
+			<span class="elementor-start-building__card-label"><?php echo esc_html__( 'AI Site Planner', 'elementor' ); ?></span>
+			<span class="elementor-start-building__card-subtitle"><?php echo esc_html__( 'Generate your wireframe with AI', 'elementor' ); ?></span>
+		</button>
+		<button type="button" class="elementor-start-building__card elementor-start-building__card--templates">
+			<div class="elementor-start-building__card-illustration elementor-start-building__card-illustration--templates">
+				<img src="<?php echo esc_url( ELEMENTOR_ASSETS_URL . 'images/app/e-onboarding/website-templates.png' ); ?>" alt="<?php echo esc_attr__( 'Website templates', 'elementor' ); ?>" />
+			</div>
+			<span class="elementor-start-building__card-label"><?php echo esc_html__( 'Website templates', 'elementor' ); ?></span>
+			<span class="elementor-start-building__card-subtitle"><?php echo esc_html__( 'Start with a ready-made design', 'elementor' ); ?></span>
+		</button>
+	</div>
+</div>
+<?php endif; ?>
+
 <script type="text/template" id="tmpl-elementor-add-section">
 	<# if ( $e.components.get( 'document/elements' ).utils.allowAddingWidgets() ) { #>
-	<?php if ( apply_filters( 'elementor/editor/show_starter', false ) ) : ?>
-	<div class="elementor-start-building">
-		<div class="elementor-start-building__title"><?php echo esc_html__( 'Start building.', 'elementor' ); ?></div>
-		<div class="elementor-start-building__cards">
-			<button type="button" class="elementor-start-building__card elementor-start-building__card--ai">
-				<div class="elementor-start-building__card-illustration elementor-start-building__card-illustration--ai">
-					<img src="<?php echo esc_url( ELEMENTOR_ASSETS_URL . 'images/app/e-onboarding/ai-site-planner.png' ); ?>" alt="<?php echo esc_attr__( 'AI Site Planner', 'elementor' ); ?>" />
-				</div>
-				<span class="elementor-start-building__card-label"><?php echo esc_html__( 'AI Site Planner', 'elementor' ); ?></span>
-				<span class="elementor-start-building__card-subtitle"><?php echo esc_html__( 'Generate your wireframe with AI', 'elementor' ); ?></span>
-			</button>
-			<button type="button" class="elementor-start-building__card elementor-start-building__card--templates">
-				<div class="elementor-start-building__card-illustration elementor-start-building__card-illustration--templates">
-					<img src="<?php echo esc_url( ELEMENTOR_ASSETS_URL . 'images/app/e-onboarding/website-templates.png' ); ?>" alt="<?php echo esc_attr__( 'Website templates', 'elementor' ); ?>" />
-				</div>
-				<span class="elementor-start-building__card-label"><?php echo esc_html__( 'Website templates', 'elementor' ); ?></span>
-				<span class="elementor-start-building__card-subtitle"><?php echo esc_html__( 'Start with a ready-made design', 'elementor' ); ?></span>
-			</button>
-		</div>
-	</div>
-	<?php endif; ?>
 	<div class="elementor-add-section-inner">
 		<button type="button" class="elementor-add-section-close" data-tooltip="<?php echo esc_attr__( 'Close', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Close', 'elementor' ); ?>">
 			<i class="eicon-close" aria-hidden="true"></i>

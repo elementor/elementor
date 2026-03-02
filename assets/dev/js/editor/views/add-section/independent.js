@@ -6,23 +6,6 @@ export default class AddSectionView extends BaseAddSectionView {
 		return 'elementor-add-new-section';
 	}
 
-	ui() {
-		return {
-			...BaseAddSectionView.prototype.ui.call( this ),
-			startBuilding: '.elementor-start-building',
-			aiPlannerCard: '.elementor-start-building__card--ai',
-			templatesCard: '.elementor-start-building__card--templates',
-		};
-	}
-
-	events() {
-		return {
-			...BaseAddSectionView.prototype.events.call( this ),
-			'click @ui.aiPlannerCard': 'onAiPlannerClick',
-			'click @ui.templatesCard': 'onTemplatesClick',
-		};
-	}
-
 	isStarterActive() {
 		return !! elementor.config.starter;
 	}
@@ -31,8 +14,41 @@ export default class AddSectionView extends BaseAddSectionView {
 		super.onRender();
 
 		if ( this.isStarterActive() ) {
-			this.listenToOnce( elementor.elements, 'add', this.dismissStarter );
+			this.initStarter();
 		}
+	}
+
+	initStarter() {
+		const starterEl = document.getElementById( 'elementor-start-building' );
+
+		if ( ! starterEl ) {
+			return;
+		}
+
+		const previewEl = document.getElementById( 'elementor-preview' );
+
+		if ( previewEl ) {
+			previewEl.appendChild( starterEl );
+		}
+
+		starterEl.style.display = 'flex';
+
+		this.starterEl = starterEl;
+
+		starterEl.querySelector( '.elementor-start-building__close' )
+			?.addEventListener( 'click', () => this.dismissStarter() );
+
+		starterEl.querySelector( '.elementor-start-building__card--ai' )
+			?.addEventListener( 'click', () => this.onAiPlannerClick() );
+
+		starterEl.querySelector( '.elementor-start-building__card--templates' )
+			?.addEventListener( 'click', () => this.onTemplatesClick() );
+
+		elementor.channels.panelElements.on( 'element:drag:start', this.onPanelDragStart, this );
+	}
+
+	onPanelDragStart() {
+		this.dismissStarter();
 	}
 
 	onCloseButtonClick() {
@@ -46,24 +62,24 @@ export default class AddSectionView extends BaseAddSectionView {
 	onAiPlannerClick() {
 		const url = elementor.config.starter?.aiPlannerUrl;
 
-		this.dismissStarter();
-
 		if ( url ) {
 			window.open( url, '_blank', 'noopener,noreferrer' );
 		}
 	}
 
 	onTemplatesClick() {
-		this.dismissStarter();
 		$e.run( 'library/open', this.getTemplatesModalOptions() );
 	}
 
 	dismissStarter() {
-		if ( ! this.ui.startBuilding?.length ) {
+		if ( ! this.starterEl ) {
 			return;
 		}
 
-		this.ui.startBuilding.hide();
+		this.starterEl.style.display = 'none';
+		this.starterEl = null;
+
+		elementor.channels.panelElements.off( 'element:drag:start', this.onPanelDragStart, this );
 
 		const config = elementor.config.starter;
 
@@ -78,5 +94,9 @@ export default class AddSectionView extends BaseAddSectionView {
 			method: 'POST',
 			data: { starter_dismissed: true },
 		} );
+	}
+
+	onDestroy() {
+		elementor.channels.panelElements.off( 'element:drag:start', this.onPanelDragStart, this );
 	}
 }
