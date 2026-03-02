@@ -47,9 +47,10 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'New Onboarding', 'elementor' ),
 			'description' => esc_html__( 'New onboarding experience for 2026 with improved user journey and progress tracking.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
+			'hidden' => false,
+			'default' => Experiments_Manager::STATE_ACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+			'mutable' => false,
 		];
 	}
 
