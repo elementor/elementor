@@ -6,10 +6,6 @@ import { App } from './app';
 const ROOT_ELEMENT_ID = 'e-v4-opt-in-welcome';
 
 export function init() {
-	if ( ! document.body.classList.contains( 'elementor-editor-active' ) ) {
-		return;
-	}
-
 	const rootElement = getOrCreateRootElement();
 
 	createRoot( rootElement ).render( <App /> );
