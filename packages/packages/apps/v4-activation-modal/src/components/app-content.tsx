@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -52,9 +51,9 @@ export function AppContent( { onClose }: { onClose: () => void } ) {
 			onClose={ onClose }
 			rightPanelBackgroundColor={ BACKGROUND_COLOR }
 			rightPanel={
-				<ModalImage 
-					id={ selectedItem } 
-					images={ FEATURE_ITEMS.map( ( { id, image } ) => ( { id, src: image } ) ) } 
+				<ModalImage
+					id={ selectedItem }
+					images={ FEATURE_ITEMS.map( ( { id, image } ) => ( { id, src: image } ) ) }
 				/>
 			}
 			header={
