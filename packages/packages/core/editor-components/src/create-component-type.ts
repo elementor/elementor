@@ -1,6 +1,7 @@
 import {
 	type BackboneModel,
 	type BackboneModelConstructor,
+	type ContextMenuAction,
 	type CreateTemplatedElementTypeOptions,
 	createTemplatedElementView,
 	type ElementModel,
@@ -13,6 +14,7 @@ import {
 import { getCurrentDocument } from '@elementor/editor-documents';
 import { type V1ElementData } from '@elementor/editor-elements';
 import { __getState as getState } from '@elementor/store';
+import { hasProInstalled } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
@@ -24,14 +26,6 @@ import { switchToComponent } from './utils/switch-to-component';
 import { trackComponentEvent } from './utils/tracking';
 
 type ContextMenuEventData = { location: string; secondaryLocation: string; trigger: string };
-
-export type ContextMenuAction = {
-	name: string;
-	icon: string;
-	title: string | ( () => string );
-	isEnabled: () => boolean;
-	callback: ( _: unknown, eventData: ContextMenuEventData ) => void;
-};
 
 type ContextMenuGroupConfig = {
 	disable: Record< string, string[] >;
@@ -57,6 +51,8 @@ type ComponentModelInstance = BackboneModel< ComponentModel > & {
 };
 
 export const COMPONENT_WIDGET_TYPE = 'e-component';
+
+const EDIT_COMPONENT_UPGRADE_URL = 'https://go.elementor.com/go-pro-components-edit/';
 
 const updateGroups = ( groups: ContextMenuGroup[], config: ContextMenuGroupConfig ): ContextMenuGroup[] => {
 	const disableMap = new Map( Object.entries( config.disable ?? {} ) );
@@ -218,6 +214,11 @@ function createComponentView(
 
 		_getContextMenuConfig() {
 			const isAdministrator = isUserAdministrator();
+			const hasPro = hasProInstalled();
+
+			const proLabel = __( 'PRO', 'elementor' );
+			const badgeClass = 'elementor-context-menu-list__item__shortcut__new-badge';
+			const proBadge = `<a href="${ EDIT_COMPONENT_UPGRADE_URL }" target="_blank" onclick="event.stopPropagation()" class="${ badgeClass }">${ proLabel }</a>`;
 
 			const addedGroup = {
 				general: {
@@ -226,7 +227,8 @@ function createComponentView(
 						name: 'edit component',
 						icon: 'eicon-edit',
 						title: () => __( 'Edit Component', 'elementor' ),
-						isEnabled: () => true,
+						...( ! hasPro && { shortcut: proBadge, hasShortcutAction: true } ),
+						isEnabled: () => hasPro,
 						callback: ( _: unknown, eventData: ContextMenuEventData ) => this.editComponent( eventData ),
 					},
 				},
@@ -253,7 +255,9 @@ function createComponentView(
 		}
 
 		editComponent( { trigger, location, secondaryLocation }: ContextMenuEventData ) {
-			if ( this.isComponentCurrentlyEdited() ) {
+			const hasPro = hasProInstalled();
+
+			if ( ! hasPro || this.isComponentCurrentlyEdited() ) {
 				return;
 			}
 
@@ -275,9 +279,7 @@ function createComponentView(
 		handleDblClick( e: MouseEvent ) {
 			e.stopPropagation();
 
-			const isAdministrator = isUserAdministrator();
-
-			if ( ! isAdministrator ) {
+			if ( ! isUserAdministrator() || ! hasProInstalled() ) {
 				return;
 			}
 
