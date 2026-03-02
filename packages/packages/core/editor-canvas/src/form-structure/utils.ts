@@ -8,9 +8,6 @@ type Model = {
 export type CreateArgs = {
 	container?: V1Element;
 	model?: Model;
-	options?: {
-		wrapperForModel?: Model;
-	};
 };
 
 export type MoveArgs = {
@@ -47,10 +44,6 @@ export const FORM_FIELD_ELEMENT_TYPES = new Set( [
 
 export function getArgsElementType( args: CreateArgs ): string | undefined {
 	return args.model?.widgetType || args.model?.elType;
-}
-
-export function getElementTypeFromModel( { elType, widgetType }: Model ): string | undefined {
-	return widgetType || elType;
 }
 
 export function getElementType( element?: V1Element ): string | undefined {
