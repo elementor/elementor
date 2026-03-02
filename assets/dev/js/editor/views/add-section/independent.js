@@ -19,10 +19,22 @@ export default class AddSectionView extends BaseAddSectionView {
 	}
 
 	initStarter() {
+		this.starterEl = this.findAndMountStarterElement();
+
+		if ( ! this.starterEl ) {
+			return;
+		}
+
+		this.starterEl.style.display = 'flex';
+		this.attachStarterEventListeners();
+		elementor.channels.panelElements.on( 'element:drag:start', this.onPanelDragStart, this );
+	}
+
+	findAndMountStarterElement() {
 		const starterEl = document.getElementById( 'elementor-start-building' );
 
 		if ( ! starterEl ) {
-			return;
+			return null;
 		}
 
 		const previewEl = document.getElementById( 'elementor-preview' );
@@ -31,20 +43,39 @@ export default class AddSectionView extends BaseAddSectionView {
 			previewEl.appendChild( starterEl );
 		}
 
-		starterEl.style.display = 'flex';
+		return starterEl;
+	}
 
-		this.starterEl = starterEl;
+	attachStarterEventListeners() {
+		this.boundDismissStarter = () => this.dismissStarter();
+		this.boundOnAiPlannerClick = () => this.onAiPlannerClick();
+		this.boundOnTemplatesClick = () => this.onTemplatesClick();
 
-		starterEl.querySelector( '.elementor-start-building__close' )
-			?.addEventListener( 'click', () => this.dismissStarter() );
+		this.starterEl.querySelector( '.elementor-start-building__close' )
+			?.addEventListener( 'click', this.boundDismissStarter );
 
-		starterEl.querySelector( '.elementor-start-building__card--ai' )
-			?.addEventListener( 'click', () => this.onAiPlannerClick() );
+		this.starterEl.querySelector( '.elementor-start-building__card--ai' )
+			?.addEventListener( 'click', this.boundOnAiPlannerClick );
 
-		starterEl.querySelector( '.elementor-start-building__card--templates' )
-			?.addEventListener( 'click', () => this.onTemplatesClick() );
+		this.starterEl.querySelector( '.elementor-start-building__card--templates' )
+			?.addEventListener( 'click', this.boundOnTemplatesClick );
+	}
 
-		elementor.channels.panelElements.on( 'element:drag:start', this.onPanelDragStart, this );
+	removeStarterEventListeners() {
+		if ( ! this.starterEl ) {
+			return;
+		}
+
+		this.starterEl.querySelector( '.elementor-start-building__close' )
+			?.removeEventListener( 'click', this.boundDismissStarter );
+
+		this.starterEl.querySelector( '.elementor-start-building__card--ai' )
+			?.removeEventListener( 'click', this.boundOnAiPlannerClick );
+
+		this.starterEl.querySelector( '.elementor-start-building__card--templates' )
+			?.removeEventListener( 'click', this.boundOnTemplatesClick );
+
+		elementor.channels.panelElements.off( 'element:drag:start', this.onPanelDragStart, this );
 	}
 
 	onPanelDragStart() {
@@ -76,10 +107,10 @@ export default class AddSectionView extends BaseAddSectionView {
 			return;
 		}
 
+		this.removeStarterEventListeners();
+
 		this.starterEl.style.display = 'none';
 		this.starterEl = null;
-
-		elementor.channels.panelElements.off( 'element:drag:start', this.onPanelDragStart, this );
 
 		const config = elementor.config.starter;
 
@@ -97,6 +128,6 @@ export default class AddSectionView extends BaseAddSectionView {
 	}
 
 	onDestroy() {
-		elementor.channels.panelElements.off( 'element:drag:start', this.onPanelDragStart, this );
+		this.removeStarterEventListeners();
 	}
 }

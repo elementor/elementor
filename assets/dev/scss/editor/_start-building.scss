@@ -1,0 +1,115 @@
+.elementor-start-building {
+	all: initial;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 10000;
+	display: none;
+	flex-direction: column;
+	align-items: center;
+	gap: 24px;
+	padding: 24px 20px 32px;
+	background-color: #f9f9fb;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+
+	&__close {
+		position: absolute;
+		top: 16px;
+		inset-inline-end: 16px;
+		padding: 4px;
+		margin: 0;
+		border: none;
+		border-radius: 50%;
+		background-color: transparent;
+		cursor: pointer;
+		font-size: 18px;
+		line-height: 1;
+		color: #0c0d0e;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		&:hover,
+		&:focus {
+			background-color: rgba(0, 0, 0, 0.05);
+			color: #0c0d0e;
+			border: none;
+			box-shadow: none;
+		}
+	}
+
+	&__title {
+		font-family: Poppins, sans-serif;
+		font-size: 24px;
+		font-weight: 500;
+		line-height: 32px;
+		color: #0c0d0e;
+	}
+
+	&__cards {
+		display: flex;
+		gap: 24px;
+		justify-content: center;
+	}
+
+	&__card {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		width: 280px;
+		border-radius: 12px;
+		background-color: #fff;
+		overflow: hidden;
+		cursor: pointer;
+		padding: 0;
+		margin: 0;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+		transition: box-shadow 0.2s ease;
+		border: none;
+
+		&:hover,
+		&:focus {
+			box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+		}
+	}
+
+	&__card-illustration {
+		width: 100%;
+		height: 138px;
+		overflow: hidden;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 12px;
+		box-sizing: border-box;
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			border-radius: 8px;
+		}
+	}
+
+	&__card-label {
+		font-family: var(--e-a-font-family);
+		font-size: 16px;
+		font-weight: 500;
+		line-height: 18px;
+		letter-spacing: 0.15px;
+		color: #0c0d0e;
+		margin-top: 4px;
+	}
+
+	&__card-subtitle {
+		font-family: var(--e-a-font-family);
+		font-size: 14px;
+		font-weight: 400;
+		line-height: 20px;
+		letter-spacing: 0.15px;
+		color: #3f444b;
+		margin-top: 8px;
+		margin-bottom: 24px;
+	}
+}
