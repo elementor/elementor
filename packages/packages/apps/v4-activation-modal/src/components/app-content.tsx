@@ -1,12 +1,14 @@
 import * as React from 'react';
+
 import { Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { V4ActivationModal } from './v4-activation-modal';
 import { FeatureItem } from './feature-item';
+import { ModalFooter } from './modal-footer';
 import { ModalHeader } from './modal-header';
 import { ModalImage } from './modal-image';
-import { ModalFooter } from './modal-footer';
+import { V4ActivationModal } from './v4-activation-modal';
+
 import { useAutoplayCarousel } from '../hooks/use-autoplay-carousel';
 
 const BACKGROUND_COLOR = '#FFDFF9';
@@ -50,7 +52,10 @@ export function AppContent( { onClose }: { onClose: () => void } ) {
 			onClose={ onClose }
 			rightPanelBackgroundColor={ BACKGROUND_COLOR }
 			rightPanel={
-				<ModalImage id={ selectedItem } images={ FEATURE_ITEMS.map( ( { id, image } ) => ( { id, src: image } ) ) } />
+				<ModalImage 
+					id={ selectedItem } 
+					images={ FEATURE_ITEMS.map( ( { id, image } ) => ( { id, src: image } ) ) } 
+				/>
 			}
 			header={
 				<ModalHeader

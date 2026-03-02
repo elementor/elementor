@@ -13,20 +13,15 @@ type ModalImageProps = {
 };
 
 export const ModalImage: React.FC< ModalImageProps > = ( { id, images } ) => {
-	const [ loadedIds, setLoadedIds ] = useState< Record < string, boolean > > ( {} );
+	const [ loadedIds, setLoadedIds ] = useState< Record< string, boolean > >( {} );
 
-	const showSkeleton = useMemo(
-		() => images.some( (img) => ! loadedIds[ img.id ] ),
-		[ images, loadedIds ],
-	);
+    const showSkeleton = useMemo( () => images.some( ( img ) => ! loadedIds[ img.id ] ), [ images, loadedIds ] );
 
 	const markLoaded = ( key: string ) => setLoadedIds( ( prev ) => ( { ...prev, [ key ]: true } ) );
 
 	return (
 		<>
-			{ showSkeleton && (
-				<Skeleton variant="rectangular" width="80%" height="60%" />
-			) }
+			{ showSkeleton && <Skeleton variant="rectangular" width="80%" height="60%" /> }
 			{ images.map( ( { id: key, src } )  => (
 				<Box
 					key={ key }
