@@ -82,8 +82,7 @@ export const SocialIconWrapper = styled( Paper )( ( { theme } ) => ( {
 	display: 'flex',
 	alignItems: 'center',
 	justifyContent: 'center',
-	flexWrap: 'wrap',
-	marginLeft: -8,
+	marginLeft: theme.spacing( -1 ),
 	'&:first-of-type': {
 		marginLeft: 0,
 		zIndex: 1,
