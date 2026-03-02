@@ -20,8 +20,8 @@ class Animation_Config_Prop_Type extends Object_Prop_Type {
 		return [
 			'replay' => Boolean_Prop_Type::make()->description( 'Whether to replay the animation' ),
 			'easing' => String_Prop_Type::make()->description( 'The easing function to use for the animation' ),
-			'offsetTop' => Number_Prop_Type::make()->description( 'The offset top to use for the animation' ),
-			'offsetBottom' => Number_Prop_Type::make()->description( 'The offset bottom to use for the animation' ),
+			'start' => Number_Prop_Type::make()->description( 'The start to use for the animation' ),
+			'end' => Number_Prop_Type::make()->description( 'The end to use for the animation' ),
 		];
 	}
 }

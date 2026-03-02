@@ -550,8 +550,8 @@ class Test_Interactions_Collector extends TestCase {
 								'config' => [
 									'$$type' => 'config',
 									'value' => [
-										'offsetTop' => [ '$$type' => 'number', 'value' => 10 ],
-										'offsetBottom' => [ '$$type' => 'number', 'value' => 90 ],
+										'start' => [ '$$type' => 'number', 'value' => 90 ],
+										'end' => [ '$$type' => 'number', 'value' => 10 ],
 									],
 								],
 							],

@@ -22,15 +22,15 @@ export function mockTiming( { duration, delay } ) {
 	};
 }
 
-export function mockConfig( { replay, easing, relativeTo, offsetTop, offsetBottom } ) {
+export function mockConfig( { replay, easing, relativeTo, start, end } ) {
 	return {
 		$$type: 'config',
 		value: {
 			replay: { $$type: 'boolean', value: replay },
 			easing: { $$type: 'string', value: easing },
 			relativeTo: { $$type: 'string', value: relativeTo },
-			offsetTop: { $$type: 'size', value: { size: offsetTop, unit: '%' } },
-			offsetBottom: { $$type: 'size', value: { size: offsetBottom, unit: '%' } },
+			start: { $$type: 'size', value: { size: start, unit: '%' } },
+			end: { $$type: 'size', value: { size: end, unit: '%' } },
 		},
 	};
 }
