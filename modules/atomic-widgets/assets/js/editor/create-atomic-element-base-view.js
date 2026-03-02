@@ -1,3 +1,4 @@
+import environment from 'elementor-common/utils/environment';
 import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 import AtomicElementEmptyView from './container/atomic-element-empty-view';
 
@@ -420,14 +421,14 @@ export default function createAtomicElementBaseView( type ) {
 			if ( isExperimentalFeaturesEnabled && isAdministrator ) {
 				const isProActive = window.elementorV2?.editorComponents?.isProActive?.() ?? true;
 
-				const badge = isProActive
-					? `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`
-					: `<a href="https://go.elementor.com/go-pro-components-create/" target="_blank" onclick="event.stopPropagation()" class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'PRO', 'elementor' ) }</a>`;
+				const controlSign = environment.mac ? '&#8984;' : '^';
+				const shortcutLabel = controlSign + '+⇧+K';
+				const proBadge = `<a href="https://go.elementor.com/go-pro-components-create/" target="_blank" onclick="event.stopPropagation()" class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'PRO', 'elementor' ) }</a>`;
 
 				saveActions.unshift( {
 					name: 'save-component',
 					title: __( 'Create component', 'elementor' ),
-					shortcut: badge,
+					shortcut: isProActive ? shortcutLabel : proBadge,
 					hasShortcutAction: ! isProActive,
 					callback: this.saveAsComponent.bind( this ),
 					isEnabled: () => isProActive && ! this.getContainer().isLocked(),
