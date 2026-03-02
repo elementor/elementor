@@ -21,30 +21,30 @@ describe( 'AngieIntroModal', () => {
 		expect( screen.getByText( 'New' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'You can now generate custom components using Angie' ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: "Let's Try" } ) ).toBeInTheDocument();
-		expect( screen.getByText( "Don't show this again" ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Close' } ) ).toBeInTheDocument();
 	} );
 
-	it( 'should call onConfirm with false when clicking confirm without checking the checkbox', () => {
+	it( 'should call onConfirm when clicking confirm button', () => {
 		// Act
 		renderWithTheme( <AngieIntroModal onClose={ onClose } onConfirm={ onConfirm } /> );
 		fireEvent.click( screen.getByRole( 'button', { name: "Let's Try" } ) );
 
 		// Assert
-		expect( onConfirm ).toHaveBeenCalledWith( false );
+		expect( onConfirm ).toHaveBeenCalled();
 		expect( onClose ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should call onConfirm with true when clicking confirm after checking the checkbox', () => {
+	it( 'should call onClose when clicking the close button', () => {
 		// Act
 		renderWithTheme( <AngieIntroModal onClose={ onClose } onConfirm={ onConfirm } /> );
-		fireEvent.click( screen.getByRole( 'checkbox' ) );
-		fireEvent.click( screen.getByRole( 'button', { name: "Let's Try" } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Close' } ) );
 
 		// Assert
-		expect( onConfirm ).toHaveBeenCalledWith( true );
+		expect( onClose ).toHaveBeenCalled();
+		expect( onConfirm ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should call onClose when closing the modal', () => {
+	it( 'should call onClose when pressing Escape', () => {
 		// Act
 		renderWithTheme( <AngieIntroModal onClose={ onClose } onConfirm={ onConfirm } /> );
 		fireEvent.keyDown( screen.getByRole( 'dialog' ), { key: 'Escape' } );

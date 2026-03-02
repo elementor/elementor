@@ -42,7 +42,10 @@ jest.mock( '@elementor/editor-mcp', () => ( {
 	} ) ),
 } ) );
 
-jest.mock( '@elementor/editor-current-user' );
+jest.mock( '@elementor/editor-current-user', () => ( {
+	useSuppressedMessage: jest.fn().mockReturnValue( [ false, jest.fn() ] ),
+	useCurrentUserCapabilities: jest.fn(),
+} ) );
 
 mockCurrentUserCapabilities( true );
 

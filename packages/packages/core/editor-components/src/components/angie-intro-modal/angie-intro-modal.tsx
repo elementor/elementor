@@ -1,19 +1,16 @@
 import * as React from 'react';
-import { useState } from 'react';
 import { useSuppressedMessage } from '@elementor/editor-current-user';
+import { XIcon } from '@elementor/icons';
 import {
 	Box,
 	Button,
-	Checkbox,
 	Chip,
 	Dialog,
 	DialogActions,
 	DialogContent,
-	DialogHeader,
-	DialogTitle,
 	Fade,
 	type FadeProps,
-	FormControlLabel,
+	IconButton,
 	Stack,
 	Typography,
 } from '@elementor/ui';
@@ -24,22 +21,29 @@ const INTRO_IMAGE_URL = 'https://assets.elementor.com/packages/v1/images/angie-c
 
 type AngieIntroModalProps = {
 	onClose: () => void;
-	onConfirm: ( suppressFuture: boolean ) => void;
+	onConfirm: () => void;
 };
 
 export const AngieIntroModal = ( { onClose, onConfirm }: AngieIntroModalProps ) => {
-	const [ dontShowAgain, setDontShowAgain ] = useState( false );
-
 	return (
-		<Dialog open onClose={ onClose } maxWidth="xs" TransitionComponent={ Transition }>
-			<DialogHeader sx={ { pb: 0 } }>
+		<Dialog
+			open
+			onClose={ onClose }
+			maxWidth="xs"
+			TransitionComponent={ Transition }
+			PaperProps={ { sx: { width: 296, maxWidth: 296 } } }
+		>
+			<Box sx={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1 } }>
 				<Stack direction="row" alignItems="center" gap={ 1 }>
-					<DialogTitle>{ __( 'Meet Angie', 'elementor' ) }</DialogTitle>
+					<Typography variant="subtitle2">{ __( 'Meet Angie', 'elementor' ) }</Typography>
 					<Chip label={ __( 'New', 'elementor' ) } color="info" size="small" />
 				</Stack>
-			</DialogHeader>
+				<IconButton size="small" onClick={ onClose } aria-label={ __( 'Close', 'elementor' ) }>
+					<XIcon fontSize="small" />
+				</IconButton>
+			</Box>
 
-			<DialogContent sx={ { px: 0, pt: 2 } }>
+			<DialogContent sx={ { p: 0 } }>
 				<Box
 					component="img"
 					src={ INTRO_IMAGE_URL }
@@ -51,26 +55,15 @@ export const AngieIntroModal = ( { onClose, onConfirm }: AngieIntroModalProps ) 
 						backgroundColor: 'action.hover',
 					} }
 				/>
-				<Box sx={ { px: 3, pt: 2 } }>
+				<Box sx={ { px: 2, py: 1 } }>
 					<Typography variant="body2" color="text.secondary">
 						{ __( 'You can now generate custom components using Angie', 'elementor' ) }
 					</Typography>
 				</Box>
 			</DialogContent>
 
-			<DialogActions sx={ { justifyContent: 'space-between' } }>
-				<FormControlLabel
-					control={
-						<Checkbox
-							checked={ dontShowAgain }
-							onChange={ () => setDontShowAgain( ! dontShowAgain ) }
-						/>
-					}
-					label={
-						<Typography variant="body2">{ __( "Don't show this again", 'elementor' ) }</Typography>
-					}
-				/>
-				<Button variant="contained" color="primary" onClick={ () => onConfirm( dontShowAgain ) }>
+			<DialogActions sx={ { justifyContent: 'flex-end', px: 2, pb: 1.5, pt: 1 } }>
+				<Button variant="contained" color="primary" size="small" onClick={ onConfirm }>
 					{ __( "Let's Try", 'elementor' ) }
 				</Button>
 			</DialogActions>
