@@ -68,10 +68,8 @@ export const EmptyState = () => {
 		triggerAngiePrompt();
 	};
 
-	const handleIntroConfirm = ( suppressFuture: boolean ) => {
-		if ( suppressFuture ) {
-			suppressIntro();
-		}
+	const handleIntroConfirm = () => {
+		suppressIntro();
 		setIsIntroModalOpen( false );
 		triggerAngiePrompt();
 	};
@@ -121,7 +119,7 @@ export const EmptyState = () => {
 							<Link
 								component="button"
 								variant="caption"
-								color="info.main"
+								color="primary.main"
 								onClick={ handleGenerateClick }
 								sx={ {
 									display: 'flex',
