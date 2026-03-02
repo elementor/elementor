@@ -262,11 +262,66 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onChildviewChildrenRender() {
+		this.updateAngiePromotion();
 		elementor.getPanelView().updateScrollbar();
 	},
 
 	onChildviewSearchChangeInput( child ) {
 		this.changeFilter( child.ui.input.val(), 'search' );
+	},
+
+	updateAngiePromotion() {
+		const $area = this.$( '#elementor-panel-elements-angie-promotion-area' );
+
+		if ( ! $area.length ) {
+			return;
+		}
+
+		$area.empty();
+
+		const filterValue = elementor.channels.panelElements.request( 'filter:value' );
+
+		if ( ! filterValue ) {
+			return;
+		}
+
+		const elementsView = this.elements.currentView;
+
+		if ( ! elementsView || ! ( elementsView instanceof PanelElementsElementsView ) ) {
+			return;
+		}
+
+		const visibleChildrenCount = elementsView.children.length;
+
+		if ( 0 === visibleChildrenCount ) {
+			this.showAngieEmptyState( $area, filterValue );
+		} else {
+			this.showAngieSearchFooter( $area );
+		}
+	},
+
+	showAngieEmptyState( $area, searchTerm ) {
+		const $template = jQuery( '#tmpl-elementor-panel-elements-angie-empty-state' );
+
+		if ( ! $template.length ) {
+			return;
+		}
+
+		const $content = jQuery( $template.html() );
+
+		$content.find( '.elementor-panel-angie-promotion__search-term' ).text( searchTerm );
+
+		$area.append( $content );
+	},
+
+	showAngieSearchFooter( $area ) {
+		const $template = jQuery( '#tmpl-elementor-panel-elements-angie-search-footer' );
+
+		if ( ! $template.length ) {
+			return;
+		}
+
+		$area.append( jQuery( $template.html() ) );
 	},
 
 	onDestroy() {
