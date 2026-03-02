@@ -13,7 +13,6 @@ import { EditItemPopover } from '../../components/control-repeater/items/edit-it
 import { RepeaterHeader } from '../../components/repeater/repeater-header';
 import { ControlAdornments } from '../../control-adornments/control-adornments';
 import { createControl } from '../../create-control';
-import { useElementCanHaveChildren } from '../../hooks/use-element-can-have-children';
 import { initialRotateValue, initialScaleValue, initialSkewValue, initialTransformValue } from './initial-values';
 import { TransformContent } from './transform-content';
 import { TransformIcon } from './transform-icon';
@@ -22,25 +21,26 @@ import { TransformSettingsControl } from './transform-settings-control';
 
 const SIZE = 'tiny';
 
-export const TransformRepeaterControl = createControl( () => {
-	const context = useBoundProp( transformPropTypeUtil );
-	const headerRef = useRef< HTMLDivElement >( null );
-	const popupState = usePopupState( { variant: 'popover' } );
-	const showChildrenPerspective = useElementCanHaveChildren();
+export const TransformRepeaterControl = createControl(
+	( { showChildrenPerspective }: { showChildrenPerspective: boolean } ) => {
+		const context = useBoundProp( transformPropTypeUtil );
+		const headerRef = useRef< HTMLDivElement >( null );
+		const popupState = usePopupState( { variant: 'popover' } );
 
-	return (
-		<PropProvider { ...context }>
-			<TransformSettingsControl
-				popupState={ popupState }
-				anchorRef={ headerRef }
-				showChildrenPerspective={ showChildrenPerspective }
-			/>
-			<PropKeyProvider bind={ 'transform-functions' }>
-				<Repeater headerRef={ headerRef } propType={ context.propType } popupState={ popupState } />
-			</PropKeyProvider>
-		</PropProvider>
-	);
-} );
+		return (
+			<PropProvider { ...context }>
+				<TransformSettingsControl
+					popupState={ popupState }
+					anchorRef={ headerRef }
+					showChildrenPerspective={ showChildrenPerspective }
+				/>
+				<PropKeyProvider bind={ 'transform-functions' }>
+					<Repeater headerRef={ headerRef } propType={ context.propType } popupState={ popupState } />
+				</PropKeyProvider>
+			</PropProvider>
+		);
+	}
+);
 
 const ToolTip = (
 	<Box

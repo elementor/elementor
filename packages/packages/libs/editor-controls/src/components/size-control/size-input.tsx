@@ -1,13 +1,11 @@
 import * as React from 'react';
-import { useRef } from 'react';
 import { MathFunctionIcon } from '@elementor/icons';
 import { Box, InputAdornment, type PopupState } from '@elementor/ui';
 
 import ControlActions from '../../control-actions/control-actions';
+import { useTypingBuffer } from '../../hooks/use-typing-buffer';
 import { type ExtendedOption, isUnitExtendedOption, type Unit } from '../../utils/size-control';
 import { SelectionEndAdornment, TextFieldInnerSelection } from '../size-control/text-field-inner-selection';
-
-const RESTRICTED_KEYBOARD_SHORTCUT_UNITS = [ 'auto' ];
 
 type SizeInputProps = {
 	unit: Unit | ExtendedOption;
@@ -44,12 +42,25 @@ export const SizeInput = ( {
 	id,
 	ariaLabel,
 }: SizeInputProps ) => {
-	const unitInputBufferRef = useRef( '' );
+	const { appendKey, startsWith } = useTypingBuffer();
+
 	const inputType = isUnitExtendedOption( unit ) ? 'text' : 'number';
 	const inputValue = ! isUnitExtendedOption( unit ) && Number.isNaN( size ) ? '' : size ?? '';
 
-	const handleKeyUp = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
-		const { key } = event;
+	const handleKeyDown = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
+		const { key, altKey, ctrlKey, metaKey } = event;
+
+		if ( altKey || ctrlKey || metaKey ) {
+			return;
+		}
+
+		if ( isUnitExtendedOption( unit ) && ! isNaN( Number( key ) ) ) {
+			const defaultUnit = units?.[ 0 ];
+			if ( defaultUnit ) {
+				handleUnitChange( defaultUnit );
+			}
+			return;
+		}
 
 		if ( ! /^[a-zA-Z%]$/.test( key ) ) {
 			return;
@@ -58,13 +69,9 @@ export const SizeInput = ( {
 		event.preventDefault();
 
 		const newChar = key.toLowerCase();
-		const updatedBuffer = ( unitInputBufferRef.current + newChar ).slice( -3 );
-		unitInputBufferRef.current = updatedBuffer;
+		const updatedBuffer = appendKey( newChar );
 
-		const matchedUnit =
-			units.find( ( u ) => ! RESTRICTED_KEYBOARD_SHORTCUT_UNITS.includes( u ) && u.includes( updatedBuffer ) ) ||
-			units.find( ( u ) => ! RESTRICTED_KEYBOARD_SHORTCUT_UNITS.includes( u ) && u.startsWith( newChar ) ) ||
-			units.find( ( u ) => ! RESTRICTED_KEYBOARD_SHORTCUT_UNITS.includes( u ) && u.includes( newChar ) );
+		const matchedUnit = units.find( ( u ) => startsWith( u, updatedBuffer ) );
 
 		if ( matchedUnit ) {
 			handleUnitChange( matchedUnit );
@@ -118,7 +125,7 @@ export const SizeInput = ( {
 					type={ inputType }
 					value={ inputValue }
 					onChange={ handleSizeChange }
-					onKeyUp={ handleKeyUp }
+					onKeyDown={ handleKeyDown }
 					onBlur={ onBlur }
 					InputProps={ InputProps }
 					inputProps={ { min, step: 'any', 'aria-label': ariaLabel } }

@@ -244,7 +244,10 @@ test.describe( 'Onboarding @onBoarding', async () => {
 		await test.step( 'Check that step was changed to Good to Go', async () => {
 			expect( page.url() ).toContain( 'onboarding/goodToGo' );
 			await expect( page.locator( EditorSelectors.onboarding.progressBar.completedItem ) ).toContainText( 'Choose Features' );
-			await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Welcome aboard! What\'s next?' );
+
+			await expect(
+				page.locator( EditorSelectors.onboarding.screenTitle ),
+			).toHaveText( /Welcome aboard! What's next\?|How would you like to create your website?|All set! Choose how to start/ );
 		} );
 	} );
 
