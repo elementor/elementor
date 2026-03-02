@@ -44,7 +44,7 @@ function isContainerForFormField( args: CreateArgs ): boolean {
 	if ( wrapperForModel ) {
 		const elementType = getElementTypeFromModel( wrapperForModel );
 
-		if ( ! elementType || ( elementType && FORM_FIELD_ELEMENT_TYPES.has( elementType ) ) ) {
+		if ( ! elementType || FORM_FIELD_ELEMENT_TYPES.has( elementType ) ) {
 			return true;
 		}
 	}
@@ -65,7 +65,7 @@ function blockFormFieldCreate( args: CreateArgs ): boolean {
 		return false;
 	}
 
-	if ( ! isWithinForm( args.container ) || isContainerForFormField( args ) ) {
+	if ( ! isWithinForm( args.container ) ) {
 		handleBlockedFormField();
 
 		return true;
