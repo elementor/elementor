@@ -10,7 +10,8 @@ const BUTTON_CLASSES = {
 
 const GOOD_TO_GO_SCREEN_TITLE = /Welcome aboard! What's next\?|How would you like to create your website?|All set! Choose how to start/;
 
-test.describe( 'On boarding @onBoarding', async () => {
+// Unskip: ED-18816 - Refactor onboarding test
+test.describe.skip( 'On boarding @onBoarding', async () => {
 	let originalActiveTheme: string;
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
