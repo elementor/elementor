@@ -114,7 +114,8 @@ describe( 'ComponentsTab', () => {
 			expect( screen.getByText( 'Learn more' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Or' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Generate a custom component using Angie' ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'button', { name: /Generate Component/i } ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Generate Component' ) ).toBeInTheDocument();
+			expect( screen.getByText( /Shift \+ K/ ) ).toBeInTheDocument();
 		} );
 
 		it( 'should render components list when components exist', () => {
@@ -226,9 +227,9 @@ describe( 'ComponentsTab', () => {
 
 			// Assert
 			expect( screen.getByText( 'Create your first component' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Learn more about components' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Learn more' ) ).toBeInTheDocument();
 			expect( screen.queryByText( 'Or' ) ).not.toBeInTheDocument();
-			expect( screen.queryByRole( 'button', { name: /Generate Component/i } ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Generate Component' ) ).not.toBeInTheDocument();
 		} );
 
 		describe( 'Angie Integration', () => {
@@ -259,7 +260,7 @@ describe( 'ComponentsTab', () => {
 					store
 				);
 
-				fireEvent.click( screen.getByRole( 'button', { name: /Generate Component/i } ) );
+				fireEvent.click( screen.getByText( 'Generate Component' ) );
 
 				// Assert
 				expect( screen.getByText( 'Meet Angie' ) ).toBeInTheDocument();
@@ -290,7 +291,7 @@ describe( 'ComponentsTab', () => {
 					store
 				);
 
-				fireEvent.click( screen.getByRole( 'button', { name: /Generate Component/i } ) );
+				fireEvent.click( screen.getByText( 'Generate Component' ) );
 
 				// Assert
 				expect( window.location.href ).toBe( '/wp-admin/plugin-install.php?s=angie' );

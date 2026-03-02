@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { ComponentsIcon, ElementorAIIcon } from '@elementor/icons';
-import { Box, Button, Divider, Link, List, Stack, Typography } from '@elementor/ui';
+import { Box, Link, List, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useAngieIntegration } from '../../hooks/use-angie-integration';
@@ -80,6 +80,9 @@ export const EmptyState = () => {
 		setIsIntroModalOpen( false );
 	};
 
+	const isMac = navigator.platform.toUpperCase().indexOf( 'MAC' ) >= 0;
+	const shortcutKey = isMac ? 'Cmd' : 'Ctrl';
+
 	return (
 		<>
 			<Stack
@@ -87,66 +90,58 @@ export const EmptyState = () => {
 				justifyContent="start"
 				height="100%"
 				sx={ { px: 2, py: 4 } }
-				gap={ 2 }
+				gap={ 1 }
 				overflow="hidden"
 			>
-				<Stack alignItems="center" gap={ 1 }>
+				<Stack alignItems="center" gap={ 0.5 }>
 					<ComponentsIcon fontSize="large" sx={ { color: 'text.secondary' } } />
 
 					<Typography align="center" variant="subtitle2" color="text.secondary" sx={ SUBTITLE_OVERRIDE_SX }>
 						{ __( 'Create your first component', 'elementor' ) }
 					</Typography>
 
-					<Typography align="center" variant="caption" color="secondary" sx={ { maxWidth: 228 } }>
+					<Typography align="center" variant="caption" color="text.tertiary">
 						{ canCreate
-							? __( 'Right-click any div-block or flexbox on your canvas and select "Create component"', 'elementor' )
+							? `${ __( 'Press', 'elementor' ) } ${ shortcutKey }+ Shift + K ${ __( 'on div-block or flexbox', 'elementor' ) }`
 							: __( 'With your current role, you cannot create components. Contact an administrator to create one.', 'elementor' ) }
 					</Typography>
 				</Stack>
 
 				{ canCreate && (
 					<>
-						<Divider sx={ { width: '100%' } }>
-							<Typography variant="caption" color="text.tertiary">
-								{ __( 'Or', 'elementor' ) }
-							</Typography>
-						</Divider>
+						<Typography variant="caption" color="text.tertiary" sx={ { py: 0.5 } }>
+							{ __( 'Or', 'elementor' ) }
+						</Typography>
 
-						<Stack alignItems="center" gap={ 1.5 } width="100%">
-							<Typography align="center" variant="caption" color="secondary">
+						<Stack alignItems="center" gap={ 0.5 }>
+							<Typography align="center" variant="caption" color="text.tertiary">
 								{ __( 'Generate a custom component using Angie', 'elementor' ) }
 							</Typography>
 
-							<Button
-								variant="contained"
-								color="primary"
-								startIcon={ <ElementorAIIcon /> }
-								onClick={ handleGenerateClick }
-								fullWidth
-								sx={ { maxWidth: 200 } }
-							>
-								{ __( 'Generate Component', 'elementor' ) }
-							</Button>
-						</Stack>
-
-						<Stack alignItems="center" gap={ 0.5 } sx={ { mt: 'auto', pt: 2 } }>
-							<Typography align="center" variant="caption" color="text.tertiary">
-								{ __( 'Components are reusable blocks that sync across your site.', 'elementor' ) }
-							</Typography>
 							<Link
-								href={ LEARN_MORE_URL }
-								target="_blank"
-								rel="noopener noreferrer"
+								component="button"
 								variant="caption"
 								color="info.main"
+								onClick={ handleGenerateClick }
+								sx={ {
+									display: 'flex',
+									alignItems: 'center',
+									gap: 0.5,
+									textDecoration: 'none',
+									'&:hover': { textDecoration: 'underline' },
+								} }
 							>
-								{ __( 'Learn more', 'elementor' ) }
+								<ElementorAIIcon sx={ { fontSize: 16 } } />
+								{ __( 'Generate Component', 'elementor' ) }
 							</Link>
 						</Stack>
 					</>
 				) }
 
-				{ ! canCreate && (
+				<Stack alignItems="center" gap={ 0.5 } sx={ { mt: 'auto', pt: 2 } }>
+					<Typography align="center" variant="caption" color="text.tertiary">
+						{ __( 'Components are reusable blocks that sync across your site.', 'elementor' ) }
+					</Typography>
 					<Link
 						href={ LEARN_MORE_URL }
 						target="_blank"
@@ -154,9 +149,9 @@ export const EmptyState = () => {
 						variant="caption"
 						color="info.main"
 					>
-						{ __( 'Learn more about components', 'elementor' ) }
+						{ __( 'Learn more', 'elementor' ) }
 					</Link>
-				) }
+				</Stack>
 			</Stack>
 
 			{ isIntroModalOpen && (
