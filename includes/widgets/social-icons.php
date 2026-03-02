@@ -713,4 +713,47 @@ class Widget_Social_Icons extends Widget_Base {
 		</div>
 		<?php
 	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_settings_for_display();
+		if ( empty( $settings['social_icon_list'] ) ) {
+			return '';
+		}
+
+		$migration_allowed = Icons_Manager::is_migration_allowed();
+		$links = [];
+
+		foreach ( $settings['social_icon_list'] as $item ) {
+			$url = $item['link']['url'] ?? '';
+			if ( empty( $url ) ) {
+				continue;
+			}
+
+			$migrated = isset( $item['__fa4_migrated']['social_icon'] );
+			$is_new = empty( $item['social'] ) && $migration_allowed;
+			$social = '';
+
+			if ( ! empty( $item['social'] ) ) {
+				$social = str_replace( 'fa fa-', '', $item['social'] );
+			}
+
+			if ( ( $is_new || $migrated ) && 'svg' !== ( $item['social_icon']['library'] ?? '' ) ) {
+				$parts = explode( ' ', $item['social_icon']['value'] ?? '', 2 );
+				$social = ! empty( $parts[1] ) ? str_replace( 'fa-', '', $parts[1] ) : '';
+			}
+
+			if ( 'svg' === ( $item['social_icon']['library'] ?? '' ) ) {
+				$social = get_post_meta( $item['social_icon']['value']['id'] ?? 0, '_wp_attachment_image_alt', true );
+			}
+
+			$label = ucwords( str_replace( '-', ' ', $social ) );
+			if ( empty( $label ) ) {
+				$label = 'Link';
+			}
+
+			$links[] = '- [' . $label . '](' . esc_url( $url ) . ')';
+		}
+
+		return implode( "\n", $links );
+	}
 }

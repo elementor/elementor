@@ -500,4 +500,20 @@ class Widget_Image_Gallery extends Widget_Base {
 		</div>
 		<?php
 	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_settings_for_display();
+		if ( empty( $settings['wp_gallery'] ) ) { return ''; }
+		$images = [];
+		foreach ( $settings['wp_gallery'] as $image ) {
+			$url = $image['url'] ?? '';
+			if ( empty( $url ) ) { continue; }
+			$alt = '';
+			if ( ! empty( $image['id'] ) ) {
+				$alt = get_post_meta( $image['id'], '_wp_attachment_image_alt', true );
+			}
+			$images[] = '![' . $alt . '](' . esc_url( $url ) . ')';
+		}
+		return implode( "\n\n", $images );
+	}
 }

@@ -1138,4 +1138,14 @@ class Widget_Divider extends Widget_Base {
 		</div>
 		<?php
 	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_settings_for_display();
+
+		if ( 'line_text' === ( $settings['look'] ?? '' ) && ! empty( $settings['text'] ) ) {
+			return '--- ' . Utils::html_to_plain_text( $settings['text'] ) . ' ---';
+		}
+
+		return '---';
+	}
 }

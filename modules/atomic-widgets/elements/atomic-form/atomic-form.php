@@ -310,4 +310,8 @@ class Atomic_Form extends Atomic_Element_Base {
 
 		$this->add_render_attribute( '_wrapper', $attributes );
 	}
+
+	public function render_markdown(): string {
+		return '';
+	}
 }
