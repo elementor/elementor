@@ -292,7 +292,7 @@ export default class extends BaseRegion {
 		if ( document.config.panel.has_elements ) {
 			this.initLayout();
 
-			if ( false !== this.storage.visible ) {
+			if ( false !== this.storage.visible && ! elementor.config.starter ) {
 				$e.route( 'navigator' );
 			}
 		}

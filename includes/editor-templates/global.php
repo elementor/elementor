@@ -19,6 +19,9 @@ function echo_select_your_structure_title() {
 	<# if ( $e.components.get( 'document/elements' ).utils.allowAddingWidgets() ) { #>
 	<?php if ( apply_filters( 'elementor/editor/show_starter', false ) ) : ?>
 	<div class="elementor-start-building">
+		<button type="button" class="elementor-start-building__close" aria-label="<?php echo esc_attr__( 'Close', 'elementor' ); ?>">
+			<i class="eicon-close" aria-hidden="true"></i>
+		</button>
 		<div class="elementor-start-building__title"><?php echo esc_html__( 'Start building.', 'elementor' ); ?></div>
 		<div class="elementor-start-building__cards">
 			<button type="button" class="elementor-start-building__card elementor-start-building__card--ai">

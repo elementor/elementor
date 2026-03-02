@@ -10,6 +10,7 @@ export default class AddSectionView extends BaseAddSectionView {
 		return {
 			...BaseAddSectionView.prototype.ui.call( this ),
 			startBuilding: '.elementor-start-building',
+			starterClose: '.elementor-start-building__close',
 			aiPlannerCard: '.elementor-start-building__card--ai',
 			templatesCard: '.elementor-start-building__card--templates',
 		};
@@ -18,6 +19,7 @@ export default class AddSectionView extends BaseAddSectionView {
 	events() {
 		return {
 			...BaseAddSectionView.prototype.events.call( this ),
+			'click @ui.starterClose': 'onStarterCloseClick',
 			'click @ui.aiPlannerCard': 'onAiPlannerClick',
 			'click @ui.templatesCard': 'onTemplatesClick',
 		};
@@ -31,8 +33,12 @@ export default class AddSectionView extends BaseAddSectionView {
 		super.onRender();
 
 		if ( this.isStarterActive() ) {
-			this.listenToOnce( elementor.elements, 'add', this.dismissStarter );
+			elementor.channels.panelElements.on( 'element:drag:start', this.onPanelDragStart, this );
 		}
+	}
+
+	onPanelDragStart() {
+		this.dismissStarter();
 	}
 
 	onCloseButtonClick() {
@@ -43,10 +49,12 @@ export default class AddSectionView extends BaseAddSectionView {
 		this.closeSelectPresets();
 	}
 
+	onStarterCloseClick() {
+		this.dismissStarter();
+	}
+
 	onAiPlannerClick() {
 		const url = elementor.config.starter?.aiPlannerUrl;
-
-		this.dismissStarter();
 
 		if ( url ) {
 			window.open( url, '_blank', 'noopener,noreferrer' );
@@ -54,7 +62,6 @@ export default class AddSectionView extends BaseAddSectionView {
 	}
 
 	onTemplatesClick() {
-		this.dismissStarter();
 		$e.run( 'library/open', this.getTemplatesModalOptions() );
 	}
 
@@ -63,7 +70,15 @@ export default class AddSectionView extends BaseAddSectionView {
 			return;
 		}
 
-		this.ui.startBuilding.hide();
+		const starterEl = this.ui.startBuilding[ 0 ];
+
+		starterEl.addEventListener( 'transitionend', () => {
+			this.ui.startBuilding.hide();
+		}, { once: true } );
+
+		starterEl.classList.add( 'elementor-start-building--dismissed' );
+
+		elementor.channels.panelElements.off( 'element:drag:start', this.onPanelDragStart, this );
 
 		const config = elementor.config.starter;
 
@@ -78,5 +93,9 @@ export default class AddSectionView extends BaseAddSectionView {
 			method: 'POST',
 			data: { starter_dismissed: true },
 		} );
+	}
+
+	onDestroy() {
+		elementor.channels.panelElements.off( 'element:drag:start', this.onPanelDragStart, this );
 	}
 }
