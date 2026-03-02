@@ -1,6 +1,5 @@
 import { getElementType, getSelectedElements, getWidgetsCache } from '@elementor/editor-elements';
-
-import { isProActive } from '../../utils/is-pro-user';
+import { isProActive } from '@elementor/utils';
 
 type LegacyWindow = {
 	$e: {

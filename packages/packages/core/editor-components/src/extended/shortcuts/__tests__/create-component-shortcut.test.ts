@@ -1,7 +1,7 @@
 import type { Element } from '@elementor/editor-elements';
 import { getElementType, getSelectedElements, getWidgetsCache } from '@elementor/editor-elements';
+import { isProActive } from '@elementor/utils';
 
-import { isProActive } from '../../../utils/is-pro-user';
 import {
 	CREATE_COMPONENT_SHORTCUT_KEYS,
 	initCreateComponentShortcut,
@@ -15,7 +15,7 @@ jest.mock( '@elementor/editor-elements', () => ( {
 	getWidgetsCache: jest.fn(),
 } ) );
 
-jest.mock( '../../../utils/is-pro-user', () => ( {
+jest.mock( '@elementor/utils', () => ( {
 	isProActive: jest.fn(),
 } ) );
 
@@ -77,7 +77,7 @@ describe( 'create-component-shortcut', () => {
 	} );
 
 	describe( 'CREATE_COMPONENT_SHORTCUT_KEYS', () => {
-		it( 'should be ctrl+shift+p', () => {
+		it( 'should be ctrl+shift+k', () => {
 			// Assert
 			expect( CREATE_COMPONENT_SHORTCUT_KEYS ).toBe( 'ctrl+shift+k' );
 		} );
