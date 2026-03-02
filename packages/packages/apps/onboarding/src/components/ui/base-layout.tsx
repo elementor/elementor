@@ -42,7 +42,7 @@ export function BaseLayout( { children, topBar, footer, testId }: BaseLayoutProp
 	const footerHeight = footer ? FOOTER_HEIGHT : 0;
 
 	return (
-		<LayoutRoot data-testid={ testId }>
+		<LayoutRoot data-module="e-onboarding" data-testid={ testId }>
 			{ topBar }
 			<ContentArea topBarHeight={ topBarHeight } footerHeight={ footerHeight }>
 				{ children }
