@@ -1,4 +1,4 @@
-import { getSelectedElement, getWidgetsCache } from '@elementor/editor-elements';
+import { getElementType, getSelectedElements, getWidgetsCache } from '@elementor/editor-elements';
 
 import { isProActive } from '../../utils/is-pro-user';
 
@@ -34,14 +34,19 @@ type ShortcutConfig = {
 export const CREATE_COMPONENT_SHORTCUT_KEYS = 'ctrl+shift+k';
 const OPEN_SAVE_AS_COMPONENT_FORM_EVENT = 'elementor/editor/open-save-as-component-form';
 
-type CreateComponentAllowedResult =
-	| { allowed: true; container: Container }
-	| { allowed: false; container?: undefined };
+type CreateComponentAllowedResult = { allowed: true; container: Container } | { allowed: false; container?: undefined };
 
 export function isCreateComponentAllowed(): CreateComponentAllowedResult {
-	const { element } = getSelectedElement();
+	const selectedElements = getSelectedElements();
 
-	if ( ! element ) {
+	if ( selectedElements.length !== 1 ) {
+		return { allowed: false };
+	}
+
+	const element = selectedElements[ 0 ];
+	const elementType = getElementType( element.type );
+
+	if ( ! elementType ) {
 		return { allowed: false };
 	}
 
@@ -72,8 +77,8 @@ export function triggerCreateComponentForm( container: Container ): void {
 	const iframeRect = legacyWindow.elementor.$preview[ 0 ].getBoundingClientRect();
 
 	const anchorPosition = {
-		left: elementRect.left + iframeRect.left,
-		top: elementRect.top + iframeRect.top,
+		left: iframeRect.left + elementRect.left + elementRect.width / 2,
+		top: iframeRect.top + elementRect.top,
 	};
 
 	window.dispatchEvent(

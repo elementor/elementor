@@ -1,5 +1,5 @@
 import type { Element } from '@elementor/editor-elements';
-import { getSelectedElement, getWidgetsCache } from '@elementor/editor-elements';
+import { getElementType, getSelectedElements, getWidgetsCache } from '@elementor/editor-elements';
 
 import { isProActive } from '../../../utils/is-pro-user';
 import {
@@ -10,7 +10,8 @@ import {
 } from '../create-component-shortcut';
 
 jest.mock( '@elementor/editor-elements', () => ( {
-	getSelectedElement: jest.fn(),
+	getElementType: jest.fn(),
+	getSelectedElements: jest.fn(),
 	getWidgetsCache: jest.fn(),
 } ) );
 
@@ -51,8 +52,11 @@ describe( 'create-component-shortcut', () => {
 
 		mockShortcutsRegister = jest.fn();
 		mockGetContainer = jest.fn();
-		mockGetBoundingClientRect = jest.fn().mockReturnValue( { left: 100, top: 200 } );
+		mockGetBoundingClientRect = jest.fn().mockReturnValue( { left: 100, top: 200, width: 200 } );
 		mockPreviewGetBoundingClientRect = jest.fn().mockReturnValue( { left: 50, top: 50 } );
+
+		Object.defineProperty( window, 'innerWidth', { value: 1024, writable: true } );
+		Object.defineProperty( window, 'innerHeight', { value: 768, writable: true } );
 
 		( window as unknown as { $e: unknown } ).$e = {
 			shortcuts: {
@@ -73,7 +77,7 @@ describe( 'create-component-shortcut', () => {
 	} );
 
 	describe( 'CREATE_COMPONENT_SHORTCUT_KEYS', () => {
-		it( 'should be ctrl+shift+k', () => {
+		it( 'should be ctrl+shift+p', () => {
 			// Assert
 			expect( CREATE_COMPONENT_SHORTCUT_KEYS ).toBe( 'ctrl+shift+k' );
 		} );
@@ -82,10 +86,35 @@ describe( 'create-component-shortcut', () => {
 	describe( 'isCreateComponentAllowed', () => {
 		it( 'should return false when no element is selected', () => {
 			// Arrange
-			jest.mocked( getSelectedElement ).mockReturnValue( {
-				element: null,
-				elementType: null,
-			} );
+			jest.mocked( getSelectedElements ).mockReturnValue( [] );
+
+			// Act
+			const result = isCreateComponentAllowed();
+
+			// Assert
+			expect( result.allowed ).toBe( false );
+		} );
+
+		it( 'should return false when multiple elements are selected', () => {
+			// Arrange
+			jest.mocked( getSelectedElements ).mockReturnValue( [
+				{ id: MOCK_ELEMENT_ID, type: ATOMIC_ELEMENT_TYPE } as Element,
+				{ id: 'another-id', type: ATOMIC_ELEMENT_TYPE } as Element,
+			] );
+
+			// Act
+			const result = isCreateComponentAllowed();
+
+			// Assert
+			expect( result.allowed ).toBe( false );
+		} );
+
+		it( 'should return false when element type is not found', () => {
+			// Arrange
+			jest.mocked( getSelectedElements ).mockReturnValue( [
+				{ id: MOCK_ELEMENT_ID, type: ATOMIC_ELEMENT_TYPE } as Element,
+			] );
+			jest.mocked( getElementType ).mockReturnValue( undefined );
 
 			// Act
 			const result = isCreateComponentAllowed();
@@ -96,10 +125,14 @@ describe( 'create-component-shortcut', () => {
 
 		it( 'should return false when Pro is not active', () => {
 			// Arrange
-			jest.mocked( getSelectedElement ).mockReturnValue( {
-				element: { id: MOCK_ELEMENT_ID, type: ATOMIC_ELEMENT_TYPE } as Element,
-				elementType: { key: ATOMIC_ELEMENT_TYPE, controls: {}, propsSchema: {} } as never,
-			} );
+			jest.mocked( getSelectedElements ).mockReturnValue( [
+				{ id: MOCK_ELEMENT_ID, type: ATOMIC_ELEMENT_TYPE } as Element,
+			] );
+			jest.mocked( getElementType ).mockReturnValue( {
+				key: ATOMIC_ELEMENT_TYPE,
+				controls: {},
+				propsSchema: {},
+			} as never );
 			jest.mocked( isProActive ).mockReturnValue( false );
 
 			// Act
@@ -111,10 +144,14 @@ describe( 'create-component-shortcut', () => {
 
 		it( 'should return false for widget element type (non-atomic)', () => {
 			// Arrange
-			jest.mocked( getSelectedElement ).mockReturnValue( {
-				element: { id: MOCK_ELEMENT_ID, type: WIDGET_ELEMENT_TYPE } as Element,
-				elementType: { key: WIDGET_ELEMENT_TYPE, controls: {}, propsSchema: {} } as never,
-			} );
+			jest.mocked( getSelectedElements ).mockReturnValue( [
+				{ id: MOCK_ELEMENT_ID, type: WIDGET_ELEMENT_TYPE } as Element,
+			] );
+			jest.mocked( getElementType ).mockReturnValue( {
+				key: WIDGET_ELEMENT_TYPE,
+				controls: {},
+				propsSchema: {},
+			} as never );
 			jest.mocked( isProActive ).mockReturnValue( true );
 			jest.mocked( getWidgetsCache ).mockReturnValue( {
 				[ WIDGET_ELEMENT_TYPE ]: { elType: 'widget' },
@@ -129,10 +166,14 @@ describe( 'create-component-shortcut', () => {
 
 		it( 'should return false when element is locked', () => {
 			// Arrange
-			jest.mocked( getSelectedElement ).mockReturnValue( {
-				element: { id: MOCK_ELEMENT_ID, type: ATOMIC_ELEMENT_TYPE } as Element,
-				elementType: { key: ATOMIC_ELEMENT_TYPE, controls: {}, propsSchema: {} } as never,
-			} );
+			jest.mocked( getSelectedElements ).mockReturnValue( [
+				{ id: MOCK_ELEMENT_ID, type: ATOMIC_ELEMENT_TYPE } as Element,
+			] );
+			jest.mocked( getElementType ).mockReturnValue( {
+				key: ATOMIC_ELEMENT_TYPE,
+				controls: {},
+				propsSchema: {},
+			} as never );
 			jest.mocked( isProActive ).mockReturnValue( true );
 			jest.mocked( getWidgetsCache ).mockReturnValue( {
 				[ ATOMIC_ELEMENT_TYPE ]: { atomic_props_schema: {} },
@@ -148,10 +189,14 @@ describe( 'create-component-shortcut', () => {
 
 		it( 'should return true for valid atomic element', () => {
 			// Arrange
-			jest.mocked( getSelectedElement ).mockReturnValue( {
-				element: { id: MOCK_ELEMENT_ID, type: ATOMIC_ELEMENT_TYPE } as Element,
-				elementType: { key: ATOMIC_ELEMENT_TYPE, controls: {}, propsSchema: {} } as never,
-			} );
+			jest.mocked( getSelectedElements ).mockReturnValue( [
+				{ id: MOCK_ELEMENT_ID, type: ATOMIC_ELEMENT_TYPE } as Element,
+			] );
+			jest.mocked( getElementType ).mockReturnValue( {
+				key: ATOMIC_ELEMENT_TYPE,
+				controls: {},
+				propsSchema: {},
+			} as never );
 			jest.mocked( isProActive ).mockReturnValue( true );
 			jest.mocked( getWidgetsCache ).mockReturnValue( {
 				[ ATOMIC_ELEMENT_TYPE ]: { atomic_props_schema: {} },
@@ -185,7 +230,7 @@ describe( 'create-component-shortcut', () => {
 			const dispatchedEvent = mockDispatchEvent.mock.calls[ 0 ][ 0 ] as CustomEvent;
 			expect( dispatchedEvent.detail ).toEqual( {
 				element: expect.objectContaining( { id: MOCK_ELEMENT_ID } ),
-				anchorPosition: { left: 150, top: 250 },
+				anchorPosition: { left: 250, top: 250 },
 				options: {
 					trigger: 'keyboard',
 					location: 'canvas',
@@ -229,10 +274,14 @@ describe( 'create-component-shortcut', () => {
 
 		it( 'should trigger form when callback is invoked with valid element', () => {
 			// Arrange
-			jest.mocked( getSelectedElement ).mockReturnValue( {
-				element: { id: MOCK_ELEMENT_ID, type: ATOMIC_ELEMENT_TYPE } as Element,
-				elementType: { key: ATOMIC_ELEMENT_TYPE, controls: {}, propsSchema: {} } as never,
-			} );
+			jest.mocked( getSelectedElements ).mockReturnValue( [
+				{ id: MOCK_ELEMENT_ID, type: ATOMIC_ELEMENT_TYPE } as Element,
+			] );
+			jest.mocked( getElementType ).mockReturnValue( {
+				key: ATOMIC_ELEMENT_TYPE,
+				controls: {},
+				propsSchema: {},
+			} as never );
 			jest.mocked( isProActive ).mockReturnValue( true );
 			jest.mocked( getWidgetsCache ).mockReturnValue( {
 				[ ATOMIC_ELEMENT_TYPE ]: { atomic_props_schema: {} },
@@ -255,10 +304,7 @@ describe( 'create-component-shortcut', () => {
 
 		it( 'should not trigger form when callback is invoked with invalid element', () => {
 			// Arrange
-			jest.mocked( getSelectedElement ).mockReturnValue( {
-				element: null,
-				elementType: null,
-			} );
+			jest.mocked( getSelectedElements ).mockReturnValue( [] );
 
 			initCreateComponentShortcut();
 			const registeredConfig = mockShortcutsRegister.mock.calls[ 0 ][ 1 ];
