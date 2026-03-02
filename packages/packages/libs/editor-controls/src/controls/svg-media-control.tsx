@@ -17,7 +17,7 @@ import { useUnfilteredFilesUpload } from '../hooks/use-unfiltered-files-upload';
 const TILE_SIZE = 8;
 const TILE_WHITE = 'transparent';
 const TILE_BLACK = '#c1c1c1';
-const TILES_GRADIENT_FORMULA = `linear-gradient(45deg, ${ TILE_BLACK } 25%, ${ TILE_WHITE } 0, ${ TILE_WHITE } 75%, ${ TILE_BLACK } 0, ${ TILE_BLACK })`;
+export const TILES_GRADIENT_FORMULA = `linear-gradient(45deg, ${ TILE_BLACK } 25%, ${ TILE_WHITE } 0, ${ TILE_WHITE } 75%, ${ TILE_BLACK } 0, ${ TILE_BLACK })`;
 
 const StyledCard = styled( Card )`
 	background-color: white;
