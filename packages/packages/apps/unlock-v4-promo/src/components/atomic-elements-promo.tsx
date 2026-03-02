@@ -6,6 +6,7 @@ import { Box, Button, Chip, CloseButton, Divider, Typography } from '@elementor/
 import { __ } from '@wordpress/i18n';
 
 import { usePromoSuppressedMessage } from '../hooks/use-promo-suppressed-message';
+import { httpService } from '@elementor/http-client';
 
 const PROMO_IMAGE = 'https://assets.elementor.com/v4-promotion/v1/images/v4_chip_new.png';
 
