@@ -2,13 +2,13 @@ import * as React from 'react';
 import { Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { useAutoplayCarousel } from '../hooks/use-autoplay-carousel';
 import { FeatureItem } from './feature-item';
 import { ModalFooter } from './modal-footer';
 import { ModalHeader } from './modal-header';
 import { ModalImage } from './modal-image';
 import { V4ActivationModal } from './v4-activation-modal';
 
-import { useAutoplayCarousel } from '../hooks/use-autoplay-carousel';
 
 const BACKGROUND_COLOR = '#FFDFF9';
 
