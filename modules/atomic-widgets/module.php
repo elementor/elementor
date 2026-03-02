@@ -279,7 +279,7 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Atomic_Tabs_Content_Area() );
 		$elements_manager->register_element_type( new Atomic_Tab_Content() );
 
-		if ( \Elementor\Utils::has_pro() && Plugin::$instance->experiments->is_feature_active( 'e_pro_atomic_form' ) ) {
+		if ( \Elementor\Utils::has_pro() ) {
 			$elements_manager->register_element_type( new Atomic_Form() );
 			$elements_manager->register_element_type( new Form_Success_Message() );
 			$elements_manager->register_element_type( new Form_Error_Message() );
