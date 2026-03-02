@@ -1,10 +1,13 @@
 import * as React from 'react';
-import { ComponentsIcon } from '@elementor/icons';
-import { Box, Divider, Link, List, Stack, Typography } from '@elementor/ui';
+import { useState } from 'react';
+import { ComponentsIcon, ElementorAIIcon } from '@elementor/icons';
+import { Box, Button, Divider, Link, List, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { useAngieIntegration } from '../../hooks/use-angie-integration';
 import { useComponents } from '../../hooks/use-components';
 import { useComponentsPermissions } from '../../hooks/use-components-permissions';
+import { AngieIntroModal, useAngieIntroModal } from '../angie-intro-modal';
 import { ComponentItem } from './components-item';
 import { LoadingComponents } from './loading-components';
 import { useSearch } from './search-provider';
@@ -42,67 +45,127 @@ export function ComponentsList() {
 
 export const EmptyState = () => {
 	const { canCreate } = useComponentsPermissions();
+	const { isAngieAvailable, isAngieInstalled, triggerAngiePrompt, redirectToInstall } = useAngieIntegration();
+	const { shouldShowIntro, suppressIntro } = useAngieIntroModal();
+	const [ isIntroModalOpen, setIsIntroModalOpen ] = useState( false );
+
+	const handleGenerateClick = () => {
+		if ( ! isAngieInstalled ) {
+			redirectToInstall();
+			return;
+		}
+
+		if ( isAngieAvailable ) {
+			triggerAngiePrompt();
+			return;
+		}
+
+		if ( shouldShowIntro ) {
+			setIsIntroModalOpen( true );
+			return;
+		}
+
+		triggerAngiePrompt();
+	};
+
+	const handleIntroConfirm = ( suppressFuture: boolean ) => {
+		if ( suppressFuture ) {
+			suppressIntro();
+		}
+		setIsIntroModalOpen( false );
+		triggerAngiePrompt();
+	};
+
+	const handleIntroClose = () => {
+		setIsIntroModalOpen( false );
+	};
 
 	return (
-		<Stack
-			alignItems="center"
-			justifyContent="start"
-			height="100%"
-			sx={ { px: 2, py: 4 } }
-			gap={ 2 }
-			overflow="hidden"
-		>
-			<Stack alignItems="center" gap={ 1 }>
-				<ComponentsIcon fontSize="large" sx={ { color: 'text.secondary' } } />
+		<>
+			<Stack
+				alignItems="center"
+				justifyContent="start"
+				height="100%"
+				sx={ { px: 2, py: 4 } }
+				gap={ 2 }
+				overflow="hidden"
+			>
+				<Stack alignItems="center" gap={ 1 }>
+					<ComponentsIcon fontSize="large" sx={ { color: 'text.secondary' } } />
 
-				<Typography align="center" variant="subtitle2" color="text.secondary" sx={ SUBTITLE_OVERRIDE_SX }>
-					{ __( 'No components yet', 'elementor' ) }
-				</Typography>
+					<Typography align="center" variant="subtitle2" color="text.secondary" sx={ SUBTITLE_OVERRIDE_SX }>
+						{ __( 'Create your first component', 'elementor' ) }
+					</Typography>
 
-				<Typography align="center" variant="caption" color="secondary" sx={ { maxWidth: 200 } }>
-					{ __( 'Components are reusable blocks that sync across your site.', 'elementor' ) }
-					<br />
-					{ canCreate
-						? __( 'Create once, use everywhere.', 'elementor' )
-						: __(
-								'With your current role, you cannot create components. Contact an administrator to create one.',
-								'elementor'
-						  ) }
-				</Typography>
-				<Link
-					href={ LEARN_MORE_URL }
-					target="_blank"
-					rel="noopener noreferrer"
-					variant="caption"
-					color="info.main"
-				>
-					{ __( 'Learn more about components', 'elementor' ) }
-				</Link>
+					<Typography align="center" variant="caption" color="secondary" sx={ { maxWidth: 228 } }>
+						{ canCreate
+							? __( 'Right-click any div-block or flexbox on your canvas and select "Create component"', 'elementor' )
+							: __( 'With your current role, you cannot create components. Contact an administrator to create one.', 'elementor' ) }
+					</Typography>
+				</Stack>
+
+				{ canCreate && (
+					<>
+						<Divider sx={ { width: '100%' } }>
+							<Typography variant="caption" color="text.tertiary">
+								{ __( 'Or', 'elementor' ) }
+							</Typography>
+						</Divider>
+
+						<Stack alignItems="center" gap={ 1.5 } width="100%">
+							<Typography align="center" variant="caption" color="secondary">
+								{ __( 'Generate a custom component using Angie', 'elementor' ) }
+							</Typography>
+
+							<Button
+								variant="contained"
+								color="primary"
+								startIcon={ <ElementorAIIcon /> }
+								onClick={ handleGenerateClick }
+								fullWidth
+								sx={ { maxWidth: 200 } }
+							>
+								{ __( 'Generate Component', 'elementor' ) }
+							</Button>
+						</Stack>
+
+						<Stack alignItems="center" gap={ 0.5 } sx={ { mt: 'auto', pt: 2 } }>
+							<Typography align="center" variant="caption" color="text.tertiary">
+								{ __( 'Components are reusable blocks that sync across your site.', 'elementor' ) }
+							</Typography>
+							<Link
+								href={ LEARN_MORE_URL }
+								target="_blank"
+								rel="noopener noreferrer"
+								variant="caption"
+								color="info.main"
+							>
+								{ __( 'Learn more', 'elementor' ) }
+							</Link>
+						</Stack>
+					</>
+				) }
+
+				{ ! canCreate && (
+					<Link
+						href={ LEARN_MORE_URL }
+						target="_blank"
+						rel="noopener noreferrer"
+						variant="caption"
+						color="info.main"
+					>
+						{ __( 'Learn more about components', 'elementor' ) }
+					</Link>
+				) }
 			</Stack>
 
-			{ canCreate && (
-				<>
-					<Divider sx={ { width: '100%' } } />
-					<Stack alignItems="center" gap={ 1 } width="100%">
-						<Typography
-							align="center"
-							variant="subtitle2"
-							color="text.secondary"
-							sx={ SUBTITLE_OVERRIDE_SX }
-						>
-							{ __( 'Create your first one:', 'elementor' ) }
-						</Typography>
-
-						<Typography align="center" variant="caption" color="secondary" sx={ { maxWidth: 228 } }>
-							{ __(
-								'Right-click any div-block or flexbox on your canvas or structure and select "Create component"',
-								'elementor'
-							) }
-						</Typography>
-					</Stack>
-				</>
+			{ isIntroModalOpen && (
+				<AngieIntroModal
+					onClose={ handleIntroClose }
+					onConfirm={ handleIntroConfirm }
+				/>
 			) }
-		</Stack>
+		</>
 	);
 };
 

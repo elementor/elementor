@@ -110,9 +110,11 @@ describe( 'ComponentsTab', () => {
 			);
 
 			// Assert
-			expect( screen.getByText( 'No components yet' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Learn more about components' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Create your first one:' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Create your first component' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Learn more' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Or' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Generate a custom component using Angie' ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: /Generate Component/i } ) ).toBeInTheDocument();
 		} );
 
 		it( 'should render components list when components exist', () => {
@@ -223,10 +225,79 @@ describe( 'ComponentsTab', () => {
 			);
 
 			// Assert
-			expect( screen.getByText( 'No components yet' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Create your first component' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Learn more about components' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Create your first one:' ) ).not.toBeInTheDocument();
-			expect( screen.queryByRole( 'button', { name: /Create component with AI/i } ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Or' ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: /Generate Component/i } ) ).not.toBeInTheDocument();
+		} );
+
+		describe( 'Angie Integration', () => {
+			beforeEach( () => {
+				act( () => {
+					dispatch( slice.actions.load( [] ) );
+				} );
+				mockCurrentUserCapabilities( true );
+			} );
+
+			it( 'should show intro modal when Generate Component is clicked and Angie is installed but not available', () => {
+				// Arrange
+				( window as Window & { elementorEditorV2Env?: object } ).elementorEditorV2Env = {
+					'@elementor/editor-components': {
+						angie: {
+							isInstalled: true,
+							isActive: true,
+							installUrl: '/wp-admin/plugin-install.php',
+						},
+					},
+				};
+
+				// Act
+				renderWithStore(
+					<SearchProvider localStorageKey="test-search">
+						<ComponentsList />
+					</SearchProvider>,
+					store
+				);
+
+				fireEvent.click( screen.getByRole( 'button', { name: /Generate Component/i } ) );
+
+				// Assert
+				expect( screen.getByText( 'Meet Angie' ) ).toBeInTheDocument();
+				expect( screen.getByText( 'You can now generate custom components using Angie' ) ).toBeInTheDocument();
+			} );
+
+			it( 'should redirect to install URL when Generate Component is clicked and Angie is not installed', () => {
+				// Arrange
+				const originalLocation = window.location;
+				delete ( window as Partial< Window > ).location;
+				window.location = { ...originalLocation, href: '' } as Location;
+
+				( window as Window & { elementorEditorV2Env?: object } ).elementorEditorV2Env = {
+					'@elementor/editor-components': {
+						angie: {
+							isInstalled: false,
+							isActive: false,
+							installUrl: '/wp-admin/plugin-install.php?s=angie',
+						},
+					},
+				};
+
+				// Act
+				renderWithStore(
+					<SearchProvider localStorageKey="test-search">
+						<ComponentsList />
+					</SearchProvider>,
+					store
+				);
+
+				fireEvent.click( screen.getByRole( 'button', { name: /Generate Component/i } ) );
+
+				// Assert
+				expect( window.location.href ).toBe( '/wp-admin/plugin-install.php?s=angie' );
+
+				// Cleanup
+				window.location = originalLocation;
+			} );
 		} );
 	} );
 
