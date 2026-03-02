@@ -16,9 +16,6 @@ const UpgradeButton = styled( Button )( ( { theme } ) => ( {
 	fontWeight: 500,
 	lineHeight: theme.typography.pxToRem( 22 ),
 	letterSpacing: '0.46px',
-	'&:hover': {
-		backgroundColor: theme.palette.promotion.main,
-	},
 } ) );
 
 const Divider = styled( 'div' )( ( { theme } ) => ( {
@@ -43,7 +40,7 @@ export function TopBarContent( { showUpgrade = true, showClose = true, onUpgrade
 
 			<Stack direction="row" alignItems="center" spacing={ 2 }>
 				{ showUpgrade && (
-					<UpgradeButton variant="contained" onClick={ onUpgrade }>
+					<UpgradeButton color="promotion" variant="contained" onClick={ onUpgrade }>
 						{ t( 'common.upgrade' ) }
 					</UpgradeButton>
 				) }
