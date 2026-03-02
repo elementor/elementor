@@ -79,6 +79,8 @@ type BaseItemSettings< T > = {
 	Icon: React.ComponentType< { value: T } >;
 	Content: RepeaterItemContent< T >;
 	actions?: ( value: T ) => React.ReactNode;
+	isOpenDisabled?: ( value: T ) => boolean;
+	onDisabledItemClick?: ( value: T, anchorEl: HTMLElement | null ) => void;
 };
 
 type SortableItemSettings< T > = BaseItemSettings< T > & {
@@ -258,6 +260,12 @@ export const Repeater = < T, >( {
 								<RepeaterItem
 									disabled={ disabled }
 									propDisabled={ value?.disabled }
+									disableOpen={ itemSettings.isOpenDisabled?.( value ) ?? false }
+									onDisabledItemClick={
+										itemSettings.isOpenDisabled?.( value )
+											? ( anchorEl ) => itemSettings.onDisabledItemClick?.( value, anchorEl )
+											: undefined
+									}
 									label={
 										<RepeaterItemLabelSlot value={ value }>
 											<itemSettings.Label value={ value } index={ index } />
@@ -300,6 +308,8 @@ export const Repeater = < T, >( {
 type RepeaterItemProps< T > = {
 	label: React.ReactNode;
 	propDisabled?: boolean;
+	disableOpen?: boolean;
+	onDisabledItemClick?: ( anchorEl: HTMLElement | null ) => void;
 	startIcon: UnstableTagProps[ 'startIcon' ];
 	removeItem: () => void;
 	duplicateItem: () => void;
@@ -318,6 +328,8 @@ type RepeaterItemProps< T > = {
 const RepeaterItem = < T, >( {
 	label,
 	propDisabled,
+	disableOpen,
+	onDisabledItemClick,
 	startIcon,
 	children,
 	removeItem,
@@ -345,8 +357,9 @@ const RepeaterItem = < T, >( {
 				label={ label }
 				ref={ setRef }
 				aria-label={ __( 'Open item', 'elementor' ) }
-				{ ...bindTrigger( popoverState ) }
+				{ ...( disableOpen ? { onClick: () => onDisabledItemClick?.( ref ) } : bindTrigger( popoverState ) ) }
 				startIcon={ startIcon }
+				sx={ disableOpen ? { opacity: 0.5, pointerEvents: 'auto' } : undefined }
 				actions={
 					<>
 						{ showDuplicate && (
@@ -374,9 +387,11 @@ const RepeaterItem = < T, >( {
 					</>
 				}
 			/>
-			<RepeaterPopover width={ ref?.getBoundingClientRect().width } { ...popoverProps } anchorEl={ ref }>
-				<Box>{ children( { anchorEl: ref } ) }</Box>
-			</RepeaterPopover>
+			{ ! disableOpen && (
+				<RepeaterPopover width={ ref?.getBoundingClientRect().width } { ...popoverProps } anchorEl={ ref }>
+					<Box>{ children( { anchorEl: ref } ) }</Box>
+				</RepeaterPopover>
+			) }
 		</>
 	);
 };

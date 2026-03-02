@@ -3,7 +3,7 @@ import { type PropValue } from '@elementor/editor-props';
 
 import { type DirectionFieldProps, type FieldProps, type ReplayFieldProps } from './types';
 
-type InteractionsControlType =
+export type InteractionsControlType =
 	| 'trigger'
 	| 'effect'
 	| 'effectType'

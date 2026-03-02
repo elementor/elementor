@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Repeater } from '@elementor/editor-controls';
 import { InfoCircleFilledIcon, PlayerPlayIcon } from '@elementor/icons';
 import { Alert, AlertTitle, Box, IconButton, Tooltip } from '@elementor/ui';
@@ -7,8 +7,11 @@ import { __ } from '@wordpress/i18n';
 
 import { InteractionItemContextProvider } from '../contexts/interactions-item-context';
 import type { ElementInteractions, InteractionItemPropValue, InteractionItemValue } from '../types';
+import { isSupportedInteraction } from '../utils/is-supported-interaction';
 import { buildDisplayLabel, createDefaultInteractionItem, extractString } from '../utils/prop-value-utils';
 import { InteractionsListItem } from './interactions-list-item';
+import { ProInteractionDisabledContent } from './pro-interaction-disabled-content';
+
 export const MAX_NUMBER_OF_INTERACTIONS = 5;
 
 export type InteractionListProps = {
@@ -94,6 +97,11 @@ export function InteractionsList( props: InteractionListProps ) {
 		[ handleInteractionChange, onPlayInteraction ]
 	);
 
+	const [ promoPopover, setPromoPopover ] = useState< {
+		open: boolean;
+		anchorEl: HTMLElement | null;
+	} >( { open: false, anchorEl: null } );
+
 	return (
 		<InteractionItemContextProvider value={ contextValue }>
 			<Repeater
@@ -109,22 +117,38 @@ export function InteractionsList( props: InteractionListProps ) {
 				addButtonInfotipContent={ infotipContent }
 				itemSettings={ {
 					initialValues: createDefaultInteractionItem(),
-					Label: ( { value }: { value: InteractionItemPropValue } ) => buildDisplayLabel( value.value ),
+					isOpenDisabled: ( value: InteractionItemPropValue ) => ! isSupportedInteraction( value ),
+					onDisabledItemClick: ( value, anchorEl ) => {
+						setPromoPopover( { open: true, anchorEl } );
+					},
+					Label: ( { value } ) => buildDisplayLabel( value.value ),
 					Icon: () => null,
 					Content: InteractionsListItem,
-					actions: ( value: InteractionItemPropValue ) => (
-						<Tooltip key="preview" placement="top" title={ __( 'Preview', 'elementor' ) }>
-							<IconButton
-								aria-label={ __( 'Play interaction', 'elementor' ) }
-								size="tiny"
-								onClick={ () => onPlayInteraction( extractString( value.value.interaction_id ) ) }
-							>
-								<PlayerPlayIcon fontSize="tiny" />
-							</IconButton>
-						</Tooltip>
-					),
+					actions: ( value: InteractionItemPropValue ) => {
+						const notSupported = ! isSupportedInteraction( value );
+
+						const playHandler = notSupported
+							? undefined
+							: () => {
+									onPlayInteraction( extractString( value.value.interaction_id ) );
+							  };
+
+						return (
+							<Tooltip key="preview" placement="top" title={ __( 'Preview', 'elementor' ) }>
+								<IconButton
+									aria-label={ __( 'Play interaction', 'elementor' ) }
+									size="tiny"
+									onClick={ playHandler }
+									disabled={ notSupported }
+								>
+									<PlayerPlayIcon fontSize="tiny" />
+								</IconButton>
+							</Tooltip>
+						);
+					},
 				} }
 			/>
+			<ProInteractionDisabledContent promoPopover={ promoPopover } setPromoPopover={ setPromoPopover } />
 		</InteractionItemContextProvider>
 	);
 }

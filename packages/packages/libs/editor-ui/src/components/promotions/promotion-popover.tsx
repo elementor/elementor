@@ -15,7 +15,7 @@ import {
 type PromotionPopoverCardProps = {
 	title: string;
 	content: string;
-	ctaUrl: string;
+	ctaUrl?: string;
 	ctaText?: string;
 	onClose: ( e: MouseEvent ) => void;
 };
@@ -28,6 +28,8 @@ type PromotionPopoverProps = React.PropsWithChildren<
 		anchorRef?: RefObject< HTMLElement | null >;
 	}
 >;
+
+const MAX_WIDTH = 296;
 
 export const PromotionPopover = ( {
 	children,
@@ -67,6 +69,8 @@ export const PromotionPopover = ( {
 };
 
 function PopoverAlert( { title, content, ctaUrl, ctaText, onClose }: PromotionPopoverCardProps ) {
+	const showCta = ctaText && ctaUrl;
+
 	return (
 		<ClickAwayListener
 			disableReactTree={ true }
@@ -83,17 +87,19 @@ function PopoverAlert( { title, content, ctaUrl, ctaText, onClose }: PromotionPo
 				role="dialog"
 				aria-label="promotion-popover-title"
 				action={
-					<AlertAction
-						variant="contained"
-						color="promotion"
-						href={ ctaUrl }
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						{ ctaText }
-					</AlertAction>
+					showCta && (
+						<AlertAction
+							variant="contained"
+							color="promotion"
+							href={ ctaUrl }
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							{ ctaText }
+						</AlertAction>
+					)
 				}
-				sx={ { maxWidth: 296 } }
+				sx={ { maxWidth: MAX_WIDTH } }
 			>
 				<Box sx={ { gap: 0.5, display: 'flex', flexDirection: 'column' } }>
 					<AlertTitle>{ title }</AlertTitle>
