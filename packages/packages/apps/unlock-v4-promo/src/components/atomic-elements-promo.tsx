@@ -15,7 +15,7 @@ export function AtomicElementsPromo() {
 
 	return (
 		<ThemeProvider>
-			<Divider/>
+			<Divider />
 			<Box
 				sx={ {
 					bgcolor: 'background.default',
@@ -91,7 +91,7 @@ export function AtomicElementsPromo() {
 					</Button>
 				</Box>
 			</Box>
-			<Divider/>
+			<Divider />
 		</ThemeProvider>
 	);
 }
