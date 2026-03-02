@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type Theme, Box, Typography } from '@elementor/ui';
+import { Box, type Theme, Typography } from '@elementor/ui';
 
 type FeatureItemProps = {
 	title: string;

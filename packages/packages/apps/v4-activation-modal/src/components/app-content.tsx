@@ -9,7 +9,6 @@ import { ModalHeader } from './modal-header';
 import { ModalImage } from './modal-image';
 import { V4ActivationModal } from './v4-activation-modal';
 
-
 const BACKGROUND_COLOR = '#FFDFF9';
 
 const LEARN_MORE_URL = 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/';
