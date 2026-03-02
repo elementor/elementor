@@ -10,7 +10,7 @@ export const usePromoSuppressedMessage = () => {
 
 	const toggleSuppressMessage = useCallback( () => {
 		if ( ! suppressed ) {
-			// setSuppressMessage();
+			setSuppressMessage();
 			notify( {
 				type: 'default',
 				message: __( 'You can re-activate Atomic elements via Editor Settings > Atomic Editor', 'elementor' ),

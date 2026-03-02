@@ -19,14 +19,14 @@ export function AtomicElementsPromo() {
 			if ( response.data.success ) {
 				window.location.reload();
 			}
-		} catch ( error ) {
+		} catch {
 			notify( {
 				type: 'error',
 				message: __( 'Failed to activate Atomic elements', 'elementor' ),
 				id: 'atomic-elements-promo-error',
 			} );
 		}
-	}, [ toggleSuppressMessage ] );
+	}, [] );
 
 	if ( suppressed ) {
 		return null;
