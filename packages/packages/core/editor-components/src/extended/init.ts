@@ -25,6 +25,7 @@ import { OverridablePropControl } from './components/overridable-props/overridab
 import { OverridablePropIndicator } from './components/overridable-props/overridable-prop-indicator';
 import { COMPONENT_DOCUMENT_TYPE, OVERRIDABLE_PROP_REPLACEMENT_ID } from './consts';
 import { initMcp } from './mcp';
+import { initCreateComponentShortcut } from './shortcuts/create-component-shortcut';
 import { beforeSave } from './sync/before-save';
 import { initCleanupOverridablePropsOnDelete } from './sync/cleanup-overridable-props-on-delete';
 import { initHandleComponentEditModeContainer } from './sync/handle-component-edit-mode-container';
@@ -101,4 +102,6 @@ export function initExtended() {
 		id: 'sanitize-overridable-props',
 		component: SanitizeOverridableProps,
 	} );
+
+	initCreateComponentShortcut();
 }
