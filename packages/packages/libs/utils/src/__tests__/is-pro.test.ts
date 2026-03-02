@@ -1,4 +1,4 @@
-import { hasProInstalled, isProActive } from '../is-pro-user';
+import { hasProInstalled, isProActive } from '../is-pro';
 
 describe( 'is-pro-user utilities', () => {
 	let originalElementor: Window[ 'elementor' ];
