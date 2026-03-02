@@ -237,14 +237,6 @@ function setFormState( element, state ) {
 	}
 
 	element.setAttribute( 'data-form-state', state );
-
-	const id = extractId( element );
-	const container = id ? window.elementor?.getContainer?.( id ) : null;
-	container?.view?._updateStatusVisibility?.();
-}
-
-function extractId( element ) {
-	return element?.dataset?.id || null;
 }
 
 function getPostId() {

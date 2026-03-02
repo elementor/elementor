@@ -57,7 +57,26 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		className() {
-			return `${ BaseElementView.prototype.className.apply( this ) } e-con e-atomic-element ${ this.getClassString() }`;
+			const generatedClasses = this.getGeneratedClasses();
+			return `${ BaseElementView.prototype.className.apply( this ) } e-con e-atomic-element ${ this.getClassString() } ${ generatedClasses }`;
+		},
+
+		getGeneratedClasses() {
+			const propsSchema = this.model.config.atomic_props_schema || {};
+			const generatedClasses = [];
+
+			Object.keys( propsSchema ).forEach( ( key ) => {
+				const propMeta = propsSchema[ key ]?.meta;
+				if ( propMeta?.generates_class ) {
+					const classPattern = propMeta.generates_class;
+					const settingValue = this.model.getSetting( key );
+					const value = settingValue?.value ?? settingValue;
+					const className = classPattern.replace( '{value}', value );
+					generatedClasses.push( className );
+				}
+			} );
+
+			return generatedClasses.join( ' ' );
 		},
 
 		// TODO: Copied from `views/column.js`.
@@ -158,9 +177,13 @@ export default function createAtomicElementBaseView( type ) {
 				return;
 			}
 
-			if ( changed.classes ) {
-				// Preserve runtime state classes (e.g., e--selected) that are managed by Alpine
-				// and would be lost when replacing the class attribute.
+			// Check if classes changed OR if any setting with generates_class metadata changed
+			const propsSchema = this.model.config.atomic_props_schema || {};
+			const hasGeneratesClassChange = Object.keys( changed ).some( ( key ) => propsSchema[ key ]?.meta?.generates_class );
+
+			if ( changed.classes || hasGeneratesClassChange ) {
+			// Preserve runtime state classes (e.g., e--selected) that are managed by Alpine
+			// and would be lost when replacing the class attribute.
 				const preservedClasses = Array.from( this.$el[ 0 ].classList ).filter( ( cls ) => cls.startsWith( 'e--' ) );
 				this.$el.attr( 'class', this.className() );
 				preservedClasses.forEach( ( cls ) => this.$el[ 0 ].classList.add( cls ) );

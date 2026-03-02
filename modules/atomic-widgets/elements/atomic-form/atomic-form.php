@@ -11,6 +11,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Success_Message\Fo
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Error_Message\Form_Error_Message;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Widget_Builder;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
@@ -32,6 +33,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Form extends Atomic_Element_Base {
+	use Has_Element_Template;
+
 	const BASE_STYLE_KEY = 'base';
 
 	public function __construct( $data = [], $args = null ) {
@@ -76,7 +79,8 @@ class Atomic_Form extends Atomic_Element_Base {
 				->default( __( 'Form', 'elementor' ) ),
 			'form-state' => String_Prop_Type::make()
 				->enum( [ 'default', 'success', 'error' ] )
-				->default( 'default' ),
+				->default( 'default' )
+				->meta( 'generates_class', 'form-state-{value}' ),
 			'actions-after-submit' => String_Array_Prop_Type::make()
 				->default( [] ),
 			'email' => Email_Prop_Type::make()
@@ -274,36 +278,20 @@ class Atomic_Form extends Atomic_Element_Base {
 			->build();
 	}
 
-	protected function add_render_attributes() {
-		parent::add_render_attributes();
-		$settings = $this->get_atomic_settings();
-		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
-
-		$attributes = [
-			'class' => [
-				'e-con',
-				'e-atomic-element',
-				$base_style_class,
-				...( $settings['classes'] ?? [] ),
-			],
-			'x-data' => 'eForm' . $this->get_id(),
-			'x-on:submit' => 'submit',
+	protected function get_templates(): array {
+		return [
+			'elementor/elements/atomic-form' => __DIR__ . '/atomic-form.html.twig',
 		];
+	}
 
-		if ( ! empty( $settings['_cssid'] ) ) {
-			$attributes['id'] = esc_attr( $settings['_cssid'] );
-		}
+	protected function build_template_context(): array {
+		$context = $this->build_base_template_context();
+		$settings = $this->get_atomic_settings();
 
-		if ( ! empty( $settings['form-name'] ) ) {
-			$attributes['aria-label'] = esc_attr( $settings['form-name'] );
-			$attributes['data-form-name'] = esc_attr( $settings['form-name'] );
-		}
-
-		$form_state = Plugin::$instance->editor->is_edit_mode()
+		$context['form_state'] = Plugin::$instance->editor->is_edit_mode()
 			? ( $settings['form-state'] ?? 'default' )
 			: 'default';
-		$attributes['data-form-state'] = esc_attr( $form_state );
 
-		$this->add_render_attribute( '_wrapper', $attributes );
+		return $context;
 	}
 }

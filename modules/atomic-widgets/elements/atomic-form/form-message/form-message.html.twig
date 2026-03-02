@@ -1,0 +1,10 @@
+{% set classes = ['e-con', 'e-atomic-element', base_styles.base] | merge(settings.classes | default([])) | join(' ') %}
+{% set message_type = type == 'e-form-success-message' ? 'message-success' : 'message-error' %}
+<div class="{{ classes }} {{ message_type }} {{ editor_classes | default('') }}"
+     data-id="{{ id }}"
+     data-element_type="{{ type }}"
+     data-e-type="{{ type }}"
+     data-interaction-id="{{ id }}"
+     {{ editor_attributes | default('') | raw }}>
+    <!-- elementor-children-placeholder -->
+</div>

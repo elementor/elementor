@@ -434,10 +434,10 @@ class Module extends BaseModule {
 	private function add_inline_styles() {
 		$inline_css = implode( '', [
 			'.e-heading-base a, .e-paragraph-base a { all: unset; cursor: pointer; }',
-			'.elementor-element[data-element_type="e-form"][data-form-state="default"] [data-e-state="success"],',
-			'.elementor-element[data-element_type="e-form"][data-form-state="default"] [data-e-state="error"],',
-			'.elementor-element[data-element_type="e-form"][data-form-state="success"] [data-e-state="error"],',
-			'.elementor-element[data-element_type="e-form"][data-form-state="error"] [data-e-state="success"]',
+			'.elementor-element[data-element_type="e-form"].form-state-default .message-success,',
+			'.elementor-element[data-element_type="e-form"].form-state-default .message-error,',
+			'.elementor-element[data-element_type="e-form"].form-state-success .message-error,',
+			'.elementor-element[data-element_type="e-form"].form-state-error .message-success',
 			'{ display: none; }',
 		] );
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
