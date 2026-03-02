@@ -79,7 +79,8 @@ class Atomic_Form extends Atomic_Element_Base {
 				->default( __( 'Form', 'elementor' ) ),
 			'form-state' => String_Prop_Type::make()
 				->enum( [ 'default', 'success', 'error' ] )
-				->default( 'default' ),
+				->default( 'default' )
+				->meta( 'generates_class', 'form-state-{value}' ),
 			'actions-after-submit' => String_Array_Prop_Type::make()
 				->default( [] ),
 			'email' => Email_Prop_Type::make()
