@@ -36,6 +36,7 @@ class Opt_In {
 		$this->register_feature();
 
 		add_action( 'elementor/ajax/register_actions', fn( Ajax $ajax ) => $this->add_ajax_actions( $ajax ) );
+		add_action( 'rest_api_init', fn() => $this->register_routes() );
 	}
 
 	private function register_feature() {
@@ -82,5 +83,20 @@ class Opt_In {
 	private function add_ajax_actions( Ajax $ajax ) {
 		$ajax->register_ajax_action( 'editor_v4_opt_in', fn() => $this->ajax_opt_in_v4() );
 		$ajax->register_ajax_action( 'editor_v4_opt_out', fn() => $this->ajax_opt_out_v4() );
+	}
+
+	private function handle_rest_opt_in_v4() {
+		$this->ajax_opt_in_v4();
+		return new \WP_REST_Response( [
+			'success' => true,
+		], 200 );
+	}
+
+	private function register_routes() {
+		register_rest_route( 'elementor/v1', '/operations/opt-in-v4', [
+			'methods' => 'POST',
+			'callback' => fn() => $this->handle_rest_opt_in_v4(),
+			'permission_callback' => fn() => current_user_can( 'manage_options' ),
+		] );
 	}
 }
