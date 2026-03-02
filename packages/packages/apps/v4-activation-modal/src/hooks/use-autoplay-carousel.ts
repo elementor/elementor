@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-const DEFAULT_INTERVAL_MS = 5000;
+const DEFAULT_INTERVAL_MS = 3000;
 
 export function useAutoplayCarousel< T >( items: T[], intervalMs = DEFAULT_INTERVAL_MS ) {
 	const [ selectedItem, setSelectedItem ] = useState< T >( items[ 0 ] );

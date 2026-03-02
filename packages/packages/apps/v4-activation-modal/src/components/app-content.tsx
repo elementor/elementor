@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { __ } from '@wordpress/i18n';
-import { Stack } from '@elementor/ui';
+import { Box, Stack } from '@elementor/ui';
 
 import { V4ActivationModal } from './v4-activation-modal';
 import { ModalHeader } from './modal-header';
+import { ModalImage } from './modal-image';
 import { ModalFooter } from './modal-footer';
 import { FeatureItem } from './feature-item';
 import { useAutoplayCarousel } from '../hooks/use-autoplay-carousel';
@@ -17,21 +18,25 @@ const FEATURE_ITEMS = [
 		id: 'combineWidgets',
 		title: __( 'Combine legacy Widgets & new Elements', 'elementor' ),
 		subtitle: __( 'Current and new workflows work together on the same page.', 'elementor' ),
+		image: '',
 	},
 	{
 		id: 'designSystems',
 		title: __( 'Build reusable design systems', 'elementor' ),
 		subtitle: __( 'Classes, Variables & Components give a clear path for scale.', 'elementor' ),
+		image: '',
 	},
 	{
 		id: 'consistentStyling',
 		title: __( 'Consistent styling experience', 'elementor' ),
 		subtitle: __( 'A unified Style tab with full control over responsive design.', 'elementor' ),
+		image: '',
 	},
 	{
 		id: 'performance',
 		title: __( 'Unparalleled performance', 'elementor' ),
 		subtitle: __( 'Clean code and a light CSS footprint with single-div wrappers.', 'elementor' ),
+		image: '',
 	},
 ] as const;
 
@@ -44,6 +49,12 @@ export function AppContent( { onClose }: { onClose: () => void } ) {
 		<V4ActivationModal
 			onClose={ onClose }
 			rightPanelBackgroundColor={ BACKGROUND_COLOR }
+			rightPanel={
+				<ModalImage 
+					id={ selectedItem } 
+					images={ FEATURE_ITEMS.map( ( { id, image } ) => ( { id, src: image } ) ) }
+				/>
+			}
 			header={
 				<ModalHeader
 					title={ __( 'Welcome to the future of Elementor!', 'elementor' ) }
