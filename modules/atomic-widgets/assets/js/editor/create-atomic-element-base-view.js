@@ -419,7 +419,7 @@ export default function createAtomicElementBaseView( type ) {
 			const isExperimentalFeaturesEnabled = elementorCommon.config.experimentalFeatures?.e_components;
 
 			if ( isExperimentalFeaturesEnabled && isAdministrator ) {
-				const isProActive = window.elementorV2?.editorComponents?.isProActive?.() ?? true;
+				const isProActive = window.elementorV2?.utils?.isProActive?.() ?? true;
 
 				const controlSign = environment.mac ? '&#8984;' : '^';
 				const shortcutLabel = controlSign + '+⇧+K';
@@ -460,7 +460,7 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		saveAsComponent( openContextMenuEvent, options ) {
-			const isProActive = window.elementorV2?.editorComponents?.isProActive?.() ?? true;
+			const isProActive = window.elementorV2?.utils?.isProActive?.() ?? true;
 
 			if ( ! isProActive ) {
 				return;
