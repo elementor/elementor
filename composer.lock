@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "13b99171e74feadb72c79ef073fb43ee",
+    "content-hash": "53017212cf884e4c8ec7f90756eae70b",
     "packages": [
         {
             "name": "elementor/wp-notifications-package",
@@ -39,17 +39,10 @@
         },
         {
             "name": "elementor/wp-one-package",
-            "version": "1.0.52",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:elementor/wp-one-package.git",
-                "reference": "423ab9ed01d342a11d304eb7d4276c5623a8263d"
-            },
+            "version": "1.0.55",
             "dist": {
                 "type": "zip",
-                "url": "https://composer.elementor.com/download/elementor/wp-one-package/1.0.52",
-                "reference": "423ab9ed01d342a11d304eb7d4276c5623a8263d",
-                "shasum": ""
+                "url": "https://composer.elementor.com/download/elementor/wp-one-package/1.0.55"
             },
             "require": {
                 "elementor/wp-notifications-package": "^1.2"
@@ -76,10 +69,7 @@
                     "vendor/bin/phpcbf ."
                 ]
             },
-            "support": {
-                "source": "https://github.com/elementor/wp-one-package/tree/1.0.52"
-            },
-            "time": "2026-02-15T11:05:07+00:00"
+            "time": "2026-03-02T13:09:20+00:00"
         }
     ],
     "packages-dev": [
@@ -578,16 +568,16 @@
         },
         {
             "name": "justinrainbow/json-schema",
-            "version": "5.3.1",
+            "version": "5.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jsonrainbow/json-schema.git",
-                "reference": "b5a44b6391a3bbb75c9f2b73e1ef03d6045e1e20"
+                "reference": "2f7abf648939847a789c55c206d4cb9dd0d53e2c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jsonrainbow/json-schema/zipball/b5a44b6391a3bbb75c9f2b73e1ef03d6045e1e20",
-                "reference": "b5a44b6391a3bbb75c9f2b73e1ef03d6045e1e20",
+                "url": "https://api.github.com/repos/jsonrainbow/json-schema/zipball/2f7abf648939847a789c55c206d4cb9dd0d53e2c",
+                "reference": "2f7abf648939847a789c55c206d4cb9dd0d53e2c",
                 "shasum": ""
             },
             "require": {
@@ -637,9 +627,9 @@
             ],
             "support": {
                 "issues": "https://github.com/jsonrainbow/json-schema/issues",
-                "source": "https://github.com/jsonrainbow/json-schema/tree/5.3.1"
+                "source": "https://github.com/jsonrainbow/json-schema/tree/5.3.2"
             },
-            "time": "2025-12-12T08:56:22+00:00"
+            "time": "2026-02-27T12:33:19+00:00"
         },
         {
             "name": "myclabs/deep-copy",
