@@ -2,8 +2,8 @@ import * as React from 'react';
 import type { ReactNode } from 'react';
 import { Box, styled } from '@elementor/ui';
 
-const TOPBAR_HEIGHT = 40;
-const FOOTER_HEIGHT = 72;
+const TOPBAR_HEIGHT = 48;
+const FOOTER_HEIGHT = 68;
 
 const LayoutRoot = styled( Box )( ( { theme } ) => ( {
 	position: 'fixed',
@@ -42,7 +42,7 @@ export function BaseLayout( { children, topBar, footer, testId }: BaseLayoutProp
 	const footerHeight = footer ? FOOTER_HEIGHT : 0;
 
 	return (
-		<LayoutRoot data-testid={ testId }>
+		<LayoutRoot data-module="e-onboarding" data-testid={ testId }>
 			{ topBar }
 			<ContentArea topBarHeight={ topBarHeight } footerHeight={ footerHeight }>
 				{ children }

@@ -74,9 +74,13 @@ export function AppContent( { onClose }: AppContentProps ) {
 		onSuccess: handleConnectSuccess,
 	} );
 
-	const handleContinueAsGuest = useCallback( () => {
-		actions.setGuest( true );
-	}, [ actions ] );
+	const handleContinueAsGuest = useCallback(
+		( event: React.SyntheticEvent ) => {
+			event.preventDefault();
+			actions.setGuest( true );
+		},
+		[ actions ]
+	);
 
 	const handleClose = useCallback( () => {
 		window.dispatchEvent( new CustomEvent( 'e-onboarding-user-exit' ) );
