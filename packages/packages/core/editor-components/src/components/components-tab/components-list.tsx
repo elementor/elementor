@@ -91,9 +91,10 @@ export const EmptyState = () => {
 				gap={ 1 }
 				overflow="hidden"
 			>
-				<Stack alignItems="center" gap={ 0.5 }>
-					<ComponentsIcon fontSize="large" sx={ { color: 'text.secondary' } } />
+			<Stack alignItems="center" gap={ 1 }>
+				<ComponentsIcon fontSize="large" sx={ { color: 'text.secondary' } } />
 
+				<Stack alignItems="center" gap={ 0.5 }>
 					<Typography align="center" variant="subtitle2" color="text.secondary" sx={ SUBTITLE_OVERRIDE_SX }>
 						{ __( 'Create your first component', 'elementor' ) }
 					</Typography>
@@ -104,6 +105,7 @@ export const EmptyState = () => {
 							: __( 'With your current role, you cannot create components. Contact an administrator to create one.', 'elementor' ) }
 					</Typography>
 				</Stack>
+			</Stack>
 
 			{ canCreate && (
 				<>
@@ -120,14 +122,14 @@ export const EmptyState = () => {
 							component="button"
 							variant="caption"
 							onClick={ handleGenerateClick }
-							sx={ {
+							sx={ ( theme ) => ( {
 								display: 'flex',
 								alignItems: 'center',
 								gap: 0.5,
-								color: 'primary.main',
+								color: theme.palette.primary.main,
 								textDecoration: 'none',
 								'&:hover': { textDecoration: 'underline' },
-							} }
+							} ) }
 						>
 							<ElementorAIIcon sx={ { fontSize: 16 } } />
 							{ __( 'Generate Component', 'elementor' ) }
