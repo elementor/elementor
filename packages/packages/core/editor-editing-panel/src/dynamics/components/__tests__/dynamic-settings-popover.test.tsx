@@ -128,7 +128,7 @@ describe( '<DynamicSettingsPopover />', () => {
 
 		// Act.
 		renderWithTheme(
-			<ElementProvider { ...elementProviderProps }>
+			<ElementProvider { ...elementProviderProps } settings={ {} }>
 				<DynamicSettingsPopover dynamicTag={ dynamicTag } />
 			</ElementProvider>
 		);
@@ -180,7 +180,7 @@ describe( '<DynamicSettingsPopover />', () => {
 
 		// Act.
 		renderWithTheme(
-			<ElementProvider { ...elementProviderProps }>
+			<ElementProvider { ...elementProviderProps } settings={ {} }>
 				<DynamicSettingsPopover dynamicTag={ dynamicTag } />
 			</ElementProvider>
 		);

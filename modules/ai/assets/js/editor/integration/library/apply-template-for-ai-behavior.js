@@ -2,6 +2,8 @@ const { renderLayoutApp, importToEditor } = require( '../../utils/editor-integra
 const { MODE_VARIATION } = require( '../../pages/form-layout/context/config' );
 const { __ } = require( '@wordpress/i18n' );
 const { ATTACHMENT_TYPE_JSON, ELEMENTOR_LIBRARY_SOURCE } = require( '../../pages/form-layout/components/attachments' );
+const { EditorOneEventManager } = require( 'elementor-editor-utils/editor-one-events' );
+
 var ApplyTemplateForAiBehavior;
 
 ApplyTemplateForAiBehavior = Marionette.Behavior.extend( {
@@ -15,10 +17,20 @@ ApplyTemplateForAiBehavior = Marionette.Behavior.extend( {
 		'click @ui.generateVariation': 'onGenerateVariationClick',
 	},
 
+	trackAiGenerate( model ) {
+		EditorOneEventManager.sendELibraryGenerateAi( {
+			assetId: model.get( 'template_id' ),
+			assetName: model.get( 'title' ),
+			libraryType: model.get( 'type' ) || model.get( 'source' ),
+		} );
+	},
+
 	onGenerateVariationClick() {
 		const args = {
 			model: this.view.model,
 		};
+
+		this.trackAiGenerate( this.view.model );
 
 		const libraryComponent = $e.components.get( 'library' );
 		const at = libraryComponent.manager.modalConfig?.importOptions?.at;
@@ -57,6 +69,8 @@ ApplyTemplateForAiBehavior = Marionette.Behavior.extend( {
 		const args = {
 			model: this.view.model,
 		};
+
+		this.trackAiGenerate( this.view.model );
 
 		this.ui.applyButton.addClass( 'elementor-disabled' );
 

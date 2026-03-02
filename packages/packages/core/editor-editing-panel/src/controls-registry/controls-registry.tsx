@@ -19,13 +19,14 @@ import {
 	TextControl,
 	ToggleControl,
 	UrlControl,
+	VideoMediaControl,
 } from '@elementor/editor-controls';
 import { type ControlLayout } from '@elementor/editor-elements';
 import {
 	booleanPropTypeUtil,
 	DateTimePropTypeUtil,
 	emailPropTypeUtil,
-	htmlV2PropTypeUtil,
+	htmlV3PropTypeUtil,
 	imagePropTypeUtil,
 	imageSrcPropTypeUtil,
 	keyValuePropTypeUtil,
@@ -36,6 +37,7 @@ import {
 	sizePropTypeUtil,
 	stringArrayPropTypeUtil,
 	stringPropTypeUtil,
+	videoSrcPropTypeUtil,
 } from '@elementor/editor-props';
 
 import { ControlTypeAlreadyRegisteredError, ControlTypeNotRegisteredError } from '../errors';
@@ -64,7 +66,8 @@ const controlTypes = {
 	'html-tag': { component: HtmlTagControl, layout: 'two-columns', propTypeUtil: stringPropTypeUtil },
 	toggle: { component: ToggleControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	'date-time': { component: DateTimeControl, layout: 'full', propTypeUtil: DateTimePropTypeUtil },
-	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: htmlV2PropTypeUtil },
+	video: { component: VideoMediaControl, layout: 'full', propTypeUtil: videoSrcPropTypeUtil },
+	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: htmlV3PropTypeUtil },
 	email: { component: EmailFormActionControl, layout: 'custom', propTypeUtil: emailPropTypeUtil },
 } as const satisfies ControlRegistry;
 

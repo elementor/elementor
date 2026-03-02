@@ -29,6 +29,7 @@ interface EOnboardingConfig {
 	shouldShowProInstallScreen?: boolean;
 	userName?: string;
 	uiTheme?: 'auto' | 'dark' | 'light';
+	translations?: Record< string, string >;
 	steps: Array<{
 		id: string;
 		label: string;
@@ -38,22 +39,28 @@ interface EOnboardingConfig {
 		dashboard: string;
 		editor: string;
 		connect: string;
+		comparePlans?: string;
+		upgradeUrl: string;
 	};
 }
 
 declare global {
 	interface Window {
 		elementorCommon?: {
-			eventsManager?: {
-				dispatchEvent?: (name: string, data: unknown) => void;
-				config?: {
-					locations?: Record<string, string>;
-					secondaryLocations?: Record<string, string>;
-					names?: Record<string, Record<string, string>>;
-					triggers?: Record<string, string>;
-					elements?: Record<string, string>;
-				};
+		eventsManager?: {
+			dispatchEvent?: (name: string, data: unknown) => void;
+			config?: {
+				locations?: Record<string, string>;
+				secondaryLocations?: Record<string, string>;
+				names?: Record<string, Record<string, string>>;
+				triggers?: Record<string, string>;
+				elements?: Record<string, string>;
+				appTypes?: Record<string, string>;
+				targetTypes?: Record<string, string>;
+				interactionResults?: Record<string, string>;
+				targetNames?: Record<string, Record<string, string>>;
 			};
+		};
 			config?: {
 				experimentalFeatures?: Record< string, boolean >;
 				urls?: {
@@ -92,6 +99,7 @@ declare global {
 			getContainer?: ( id: string ) => V1Element;
 			helpers?: {
 				enqueueFont?: EnqueueFont;
+				hasPro?: () => boolean;
 			};
 		};
 		elementorFrontend?: {
@@ -102,6 +110,7 @@ declare global {
 		elementorPro?: {
 			config?: {
 				version?: string;
+				isActive?: boolean;
 			};
 		};
 		elementorAppConfig?: {

@@ -51,11 +51,14 @@ class Variables_Provider {
 
 			$color_variables[ $id ] = $variable;
 		}
-
 		return $color_variables;
 	}
 
 	public static function clear_cache() {
 		self::$cached_variables = null;
+	}
+
+	public static function get_v4_variable_id( string $label ): string {
+		return 'v4-' . strtolower( $label );
 	}
 }

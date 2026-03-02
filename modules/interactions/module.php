@@ -34,7 +34,7 @@ class Module extends BaseModule {
 
 	private function get_frontend_handler() {
 		if ( ! $this->frontend_handler ) {
-			$this->frontend_handler = new Interactions_Frontend_Handler();
+			$this->frontend_handler = new Interactions_Frontend_Handler( fn () => $this->get_config() );
 		}
 
 		return $this->frontend_handler;
@@ -65,7 +65,6 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/frontend/after_register_scripts', fn () => $this->register_frontend_scripts() );
 		add_action( 'elementor/editor/before_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
-		add_action( 'elementor/frontend/before_enqueue_scripts', fn () => $this->enqueue_interactions() );
 		add_action( 'elementor/preview/enqueue_scripts', fn () => $this->enqueue_preview_scripts() );
 		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
 
@@ -96,7 +95,6 @@ class Module extends BaseModule {
 	public function get_config() {
 		return [
 			'constants' => $this->get_presets()->defaults(),
-			'animationOptions' => $this->get_presets()->list(),
 			'breakpoints' => $this->get_active_breakpoints(),
 		];
 	}
@@ -139,17 +137,6 @@ class Module extends BaseModule {
 			[ 'motion-js' ],
 			'1.0.0',
 			true
-		);
-	}
-
-	public function enqueue_interactions(): void {
-		wp_enqueue_script( 'motion-js' );
-		wp_enqueue_script( 'elementor-interactions' );
-
-		wp_localize_script(
-			'elementor-interactions',
-			'ElementorInteractionsConfig',
-			$this->get_config()
 		);
 	}
 

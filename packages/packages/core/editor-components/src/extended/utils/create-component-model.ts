@@ -1,0 +1,28 @@
+import { type V1ElementModelProps } from '@elementor/editor-elements';
+
+export type ComponentInstanceParams = {
+	id?: number;
+	name: string;
+	uid: string;
+};
+
+export const createComponentModel = ( component: ComponentInstanceParams ): Omit< V1ElementModelProps, 'id' > => {
+	return {
+		elType: 'widget',
+		widgetType: 'e-component',
+		settings: {
+			component_instance: {
+				$$type: 'component-instance',
+				value: {
+					component_id: {
+						$$type: 'number',
+						value: component.id ?? component.uid,
+					},
+				},
+			},
+		},
+		editor_settings: {
+			component_uid: component.uid,
+		},
+	};
+};

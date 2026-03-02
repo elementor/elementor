@@ -4,7 +4,8 @@ import { timeouts } from '../../../../../config/timeouts';
 import EditorPage from '../../../../../pages/editor-page';
 
 export const selectComponentInstance = async ( editor: EditorPage, elementId: string ): Promise< void > => {
-	const componentInstance = editor.getPreviewFrame().locator( `[data-widget_type="e-component.default"][data-id="${ elementId }"]` );
+	const frame = await editor.waitForPreviewFrame();
+	const componentInstance = frame.locator( `[data-widget_type="e-component.default"][data-id="${ elementId }"]` );
 
 	await componentInstance.click();
 };

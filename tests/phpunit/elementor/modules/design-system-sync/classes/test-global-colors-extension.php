@@ -177,4 +177,60 @@ class Test_Global_Colors_Extension extends Elementor_Test_Base {
 		$this->assertEquals( 'Second', $result[1]['label'] );
 		$this->assertEquals( 'Third', $result[2]['label'] );
 	}
+
+	public function test_add_v4_variables_section_to_color_selector__returns_items_unchanged_when_no_variables() {
+		// Arrange
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$kit->update_json_meta( '_elementor_global_variables', [
+			'data' => [],
+			'watermark' => 0,
+		] );
+
+		$items = [
+			'existing-1' => [
+				'id' => 'existing-1',
+				'title' => 'Existing',
+				'value' => '#000000',
+				'group' => 'default',
+			],
+		];
+
+		// Act
+		$result = $this->extension->add_v4_variables_section_to_color_selector( $items );
+
+		// Assert
+		$this->assertSame( $items, $result );
+	}
+
+	public function test_add_v4_variables_section_to_color_selector__injects_v4_colors_with_correct_format() {
+		// Arrange
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$kit->update_json_meta( '_elementor_global_variables', [
+			'data' => [
+				'var-1' => [
+					'type' => 'global-color-variable',
+					'label' => 'Primary',
+					'value' => [
+						'$$type' => 'color',
+						'value' => '#ff0000',
+					],
+					'sync_to_v3' => true,
+					'order' => 0,
+				],
+			],
+			'watermark' => 1,
+		] );
+
+		$items = [];
+
+		// Act
+		$result = $this->extension->add_v4_variables_section_to_color_selector( $items );
+
+		// Assert
+		$this->assertArrayHasKey( 'v4-primary', $result );
+		$this->assertEquals( 'v4-primary', $result['v4-primary']['id'] );
+		$this->assertEquals( 'Primary', $result['v4-primary']['title'] );
+		$this->assertEquals( '#FF0000', $result['v4-primary']['value'] );
+		$this->assertEquals( 'v4', $result['v4-primary']['group'] );
+	}
 }
