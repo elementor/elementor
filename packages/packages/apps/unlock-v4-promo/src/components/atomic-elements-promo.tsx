@@ -1,15 +1,34 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useCallback } from 'react';
+import { notify } from '@elementor/editor-notifications';
 import { ThemeProvider } from '@elementor/editor-ui';
+import { httpService } from '@elementor/http-client';
 import { Box, Button, Chip, CloseButton, Divider, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
+
+import { usePromoSuppressedMessage } from '../hooks/use-promo-suppressed-message';
 
 const PROMO_IMAGE = 'https://assets.elementor.com/v4-promotion/v1/images/v4_chip_new.png';
 
 export function AtomicElementsPromo() {
-	const [ dismissed, setDismissed ] = useState( false );
+	const [ suppressed, toggleSuppressMessage ] = usePromoSuppressedMessage();
 
-	if ( dismissed ) {
+	const activateAtomicElements = useCallback( async () => {
+		try {
+			const response = await httpService().post( 'elementor/v1/operations/opt-in-v4' );
+			if ( response.data.success ) {
+				window.location.reload();
+			}
+		} catch {
+			notify( {
+				type: 'error',
+				message: __( 'Failed to activate Atomic elements', 'elementor' ),
+				id: 'atomic-elements-promo-error',
+			} );
+		}
+	}, [] );
+
+	if ( suppressed ) {
 		return null;
 	}
 
@@ -40,7 +59,7 @@ export function AtomicElementsPromo() {
 						{ __( 'Atomic Elements', 'elementor' ) }
 						<Chip label={ __( 'New', 'elementor' ) } size="tiny" variant="standard" color="secondary" />
 					</Typography>
-					<CloseButton slotProps={ { icon: { fontSize: 'small' } } } onClick={ () => setDismissed( true ) } />
+					<CloseButton slotProps={ { icon: { fontSize: 'small' } } } onClick={ toggleSuppressMessage } />
 				</Box>
 
 				<Box
@@ -83,10 +102,16 @@ export function AtomicElementsPromo() {
 						pt: 1,
 					} }
 				>
-					<Button variant="text" size="small" color="secondary">
+					<Button
+						variant="text"
+						size="small"
+						color="secondary"
+						href="https://go.elementor.com/wp-dash-opt-in-v4-help-center/"
+						target="_blank"
+					>
 						{ __( 'Learn more', 'elementor' ) }
 					</Button>
-					<Button variant="contained" size="small" color="primary">
+					<Button variant="contained" size="small" color="primary" onClick={ activateAtomicElements }>
 						{ __( 'Unlock for free', 'elementor' ) }
 					</Button>
 				</Box>
