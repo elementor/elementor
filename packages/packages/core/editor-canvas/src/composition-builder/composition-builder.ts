@@ -26,11 +26,13 @@ type CtorOptions = {
 	api?: Partial< API >;
 	elementConfig?: AnyConfig;
 	stylesConfig?: AnyConfig;
+	customCSS?: Record< string, string >;
 };
 
 export class CompositionBuilder {
 	private elementConfig: Record< string, Record< string, AnyValue > > = {};
 	private elementStylesConfig: Record< string, Record< string, AnyValue > > = {};
+	private elementCusomCSS: Record< string, string > = {};
 	private rootContainers: V1Element[] = [];
 	private containerElements: string[] = [];
 	private api: API = {
@@ -56,11 +58,12 @@ export class CompositionBuilder {
 	}
 
 	constructor( opts: CtorOptions ) {
-		const { api = {}, elementConfig = {}, stylesConfig = {}, xml } = opts;
+		const { api = {}, elementConfig = {}, stylesConfig = {}, customCSS = {}, xml } = opts;
 		this.xml = xml;
 		Object.assign( this.api, api );
 		this.setElementConfig( elementConfig );
 		this.setStylesConfig( stylesConfig );
+		this.setCustomCSS( customCSS );
 	}
 
 	setElementConfig( config: Record< string, Record< string, AnyValue > > ) {
@@ -69,6 +72,10 @@ export class CompositionBuilder {
 
 	setStylesConfig( config: Record< string, Record< string, AnyValue > > ) {
 		this.elementStylesConfig = config;
+	}
+
+	setCustomCSS( config: Record< string, string > ) {
+		this.elementCusomCSS = config;
 	}
 
 	getXML() {
@@ -92,6 +99,9 @@ export class CompositionBuilder {
 					model: {
 						elType: elementTag,
 						id: generateElementId(),
+						editor_settings: {
+							title: node.getAttribute( 'configuration-id' ) ?? undefined,
+						},
 					},
 					options: { useHistory: false },
 			  } )
@@ -101,6 +111,9 @@ export class CompositionBuilder {
 						elType: 'widget',
 						widgetType: elementTag,
 						id: generateElementId(),
+						editor_settings: {
+							title: node.getAttribute( 'configuration-id' ) ?? undefined,
+						},
 					},
 					options: { useHistory: false },
 			  } );
@@ -144,9 +157,9 @@ export class CompositionBuilder {
 	applyStyles() {
 		const errors: string[] = [];
 		const invalidStyles: Record< string, string[] > = {};
-		const validStylesPropValues: Record< string, AnyValue > = {};
 		for ( const [ styleId, styleConfig ] of Object.entries( this.elementStylesConfig ) ) {
 			const { element, node } = this.matchNodeByConfigId( styleId );
+			const validStylesPropValues: Record< string, AnyValue > = {};
 			for ( const [ styleName, stylePropValue ] of Object.entries( styleConfig ) ) {
 				const { valid, errors: validationErrors } = validateInput.validateStyles( {
 					[ styleName ]: stylePropValue,
@@ -160,13 +173,29 @@ export class CompositionBuilder {
 				} else {
 					validStylesPropValues[ styleName ] = stylePropValue;
 				}
+			}
+			if ( Object.keys( validStylesPropValues ).length === 0 ) {
+				continue;
+			}
+			try {
 				this.api.doUpdateElementProperty( {
 					elementId: element.id,
 					propertyName: '_styles',
 					propertyValue: validStylesPropValues,
 					elementType: node.tagName,
 				} );
+			} catch ( error ) {
+				errors.push( String( error ) );
 			}
+		}
+		for ( const [ customCSSId, customCSS ] of Object.entries( this.elementCusomCSS ) ) {
+			const { element, node } = this.matchNodeByConfigId( customCSSId );
+			this.api.doUpdateElementProperty( {
+				elementId: element.id,
+				propertyName: '_styles',
+				propertyValue: { custom_css: customCSS },
+				elementType: node.tagName,
+			} );
 		}
 		return {
 			errors,

@@ -32,7 +32,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 			hints: [ { name: 'claude-sonnet-4-5' } ],
 		},
 		handler: async ( params ) => {
-			const { xmlStructure, elementConfig, stylesConfig } = params;
+			const { xmlStructure, elementConfig, stylesConfig, customCSS } = params;
 			let generatedXML: string = '';
 			const errors: Error[] = [];
 			const rootContainers: V1Element[] = [];
@@ -44,6 +44,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				} );
 				compositionBuilder.setElementConfig( elementConfig );
 				compositionBuilder.setStylesConfig( stylesConfig );
+				compositionBuilder.setCustomCSS( customCSS );
 
 				const {
 					configErrors,
@@ -51,14 +52,13 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 					rootContainers: generatedRootContainers,
 				} = compositionBuilder.build( documentContainer );
 
+				rootContainers.push( ...generatedRootContainers );
 				generatedXML = new XMLSerializer().serializeToString( compositionBuilder.getXML() );
 
 				if ( configErrors.length ) {
 					errors.push( ...configErrors.map( ( e ) => new Error( e ) ) );
 					throw new Error( 'Configuration errors occurred during composition building.' );
 				}
-
-				rootContainers.push( ...generatedRootContainers );
 
 				Object.entries( invalidStyles ).forEach( ( [ elementId, rawCssRules ] ) => {
 					const customCss = {
@@ -113,7 +113,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 
 				const errorText = `Failed to build composition with the following errors:\n\n${ errorMessages.join(
 					'\n\n'
-				) }\n\n"Missing $$type" errors indicate that the configuration objects are invalid. Try again and apply **ALL** object entries with correct $$type.\nNow that you have these errors, fix them and try again. Errors regarding configuration objects, please check against the PropType schemas`;
+				) }`;
 				throw new Error( errorText );
 			}
 			return {

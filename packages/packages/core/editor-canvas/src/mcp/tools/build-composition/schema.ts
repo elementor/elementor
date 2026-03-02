@@ -1,4 +1,4 @@
-import { z } from '@elementor/schema';
+import { zod as z } from '@elementor/editor-mcp';
 
 import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 
@@ -24,6 +24,13 @@ export const inputSchema = {
 		.describe(
 			`A record mapping element IDs to their styles configuration objects. Use the actual styles schema from [${ STYLE_SCHEMA_URI }].`
 		)
+		.default( {} ),
+	customCSS: z
+		.record(
+			z.string().describe( 'The configuration id' ),
+			z.string().describe( 'The custom CSS for the element. MANDATORY' )
+		)
+		.describe( 'A record mapping element IDs to their custom CSS.' )
 		.default( {} ),
 };
 
