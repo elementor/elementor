@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Button, Paper, styled } from '@elementor/ui';
+import { Box, Button, Link, Paper, styled } from '@elementor/ui';
 
 import { getOnboardingAssetUrl } from '../steps/step-visuals';
 
@@ -100,7 +100,7 @@ export const SocialIconWrapper = styled( Paper )( ( { theme } ) => ( {
 	},
 } ) );
 
-export const TextButton = styled( Button )( ( { theme } ) => ( {
+export const TextButton = styled( Link )( ( { theme } ) => ( {
 	textTransform: 'none',
 	fontSize: theme.typography.pxToRem( 13 ),
 	fontWeight: 500,

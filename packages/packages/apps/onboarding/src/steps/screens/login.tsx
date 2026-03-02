@@ -8,18 +8,22 @@ import {
 	SocialIconWrapper,
 	TextButton,
 } from '../../components/fullscreen-card';
+import { ElementorIcon } from '../../components/ui/elementor-icon';
 import { t } from '../../utils/translations';
 import { AppleIcon, FacebookIcon, GoogleIcon } from '../components/login/social-icons';
 
 interface LoginProps {
 	onConnect?: () => void;
-	onContinueAsGuest?: () => void;
+	onContinueAsGuest?: ( event: React.SyntheticEvent ) => void;
 }
 
 export function Login( { onConnect, onContinueAsGuest }: LoginProps ) {
 	return (
 		<FullscreenCard data-testid="login-screen">
-			<Typography variant="h5" align="center" fontWeight={ 500 } fontFamily="Poppins">
+			<Stack display="flex" alignItems="center" marginBottom={ -1 }>
+				<ElementorIcon sx={ { width: 32, height: 32 } } />
+			</Stack>
+			<Typography variant="h5" color="text.primary" align="center" fontWeight={ 500 } fontFamily="Poppins">
 				{ t( 'login.title' ) }
 			</Typography>
 			<Stack spacing={ 3 } width="100%">
@@ -55,7 +59,12 @@ export function Login( { onConnect, onContinueAsGuest }: LoginProps ) {
 						</SecondaryButton>
 					</Stack>
 
-					<TextButton variant="text" color="info" onClick={ onContinueAsGuest }>
+					<TextButton
+						href={ '#' }
+						color="info.main"
+						align="center"
+						onClick={ ( event: React.SyntheticEvent ) => onContinueAsGuest?.( event ) }
+					>
 						{ t( 'login.continue_as_guest' ) }
 					</TextButton>
 				</Stack>
