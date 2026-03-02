@@ -8,14 +8,9 @@ const BUTTON_CLASSES = {
 	disabled: /e-onboarding__button--disabled/,
 };
 
-<<<<<<< HEAD
-// Unskip: ED-18816 - Refactor onboarding test
-test.describe.skip( 'On boarding @onBoarding', async () => {
-=======
 const GOOD_TO_GO_SCREEN_TITLE = /Welcome aboard! What's next\?|How would you like to create your website?|All set! Choose how to start/;
 
 test.describe( 'On boarding @onBoarding', async () => {
->>>>>>> 6f91b78d53 (Internal: Update onboarding test assertions [ED-23159] (#34943))
 	let originalActiveTheme: string;
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
