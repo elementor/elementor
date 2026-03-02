@@ -72,8 +72,8 @@ export interface OnboardingConfig {
 		editor: string;
 		connect: string;
 		comparePlans?: string;
-		exploreFeatures?: string;
 		createNewPage?: string;
+		upgradeUrl: string;
 	};
 }
 
@@ -100,7 +100,7 @@ export interface OnboardingState {
 		editor: string;
 		connect: string;
 		comparePlans?: string;
-		exploreFeatures?: string;
 		createNewPage?: string;
+		upgradeUrl: string;
 	};
 }

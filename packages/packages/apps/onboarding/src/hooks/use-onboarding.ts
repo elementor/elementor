@@ -8,6 +8,7 @@ import {
 	dismissProInstallScreen,
 	goToStep,
 	goToStepIndex,
+	markProInstalled,
 	nextStep,
 	prevStep,
 	selectChoices,
@@ -82,6 +83,7 @@ export function useOnboarding() {
 			setGuest: ( guest: boolean ) => dispatch( setGuest( guest ) ),
 			setShouldShowProInstallScreen: ( value: boolean ) => dispatch( setShouldShowProInstallScreen( value ) ),
 			dismissProInstallScreen: () => dispatch( dismissProInstallScreen() ),
+			markProInstalled: () => dispatch( markProInstalled() ),
 		} ),
 		[ dispatch ]
 	);

@@ -66,7 +66,7 @@ export async function navigateToSiteFeaturesStep( page: Page ) {
 		page.getByRole( 'button', { name: 'Just exploring' } ).click(),
 	);
 
-	await page.getByRole( 'button', { name: 'Small business' } ).click();
+	await page.getByRole( 'button', { name: 'Small-Med Business' } ).click();
 	await doAndWaitForProgress( page, () =>
 		page.getByRole( 'button', { name: 'Continue' } ).click(),
 	);

@@ -29,6 +29,12 @@ export const TextFieldPopover = ( props: Props ) => {
 		}
 	}, [ popupState.isOpen ] );
 
+	const handleKeyPress = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
+		if ( event.key.toLowerCase() === 'enter' ) {
+			handleClose();
+		}
+	};
+
 	const handleClose = () => {
 		restoreValue();
 		popupState.close();
@@ -58,6 +64,7 @@ export const TextFieldPopover = ( props: Props ) => {
 			<TextField
 				value={ value }
 				onChange={ onChange }
+				onKeyPress={ handleKeyPress }
 				size="tiny"
 				type="text"
 				fullWidth

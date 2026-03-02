@@ -1,0 +1,44 @@
+{% set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') %}
+{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
+{% set video_classes = base_styles.base %}
+{% set video_start_time = settings.start_time %}
+{% set video_end_time = settings.end_time %}
+{% if video_start_time is not empty %}
+	{% set video_timings = '#t=' ~ video_start_time %}
+{% else %}
+	{% set video_timings = '#t=0' %}
+{% endif %}
+{% if video_end_time is not empty and video_end_time > video_start_time %}
+	{% set video_timings = video_timings ~ ',' ~ video_end_time %}
+{% endif %}
+{% if settings.source.url is not empty %}
+  {% set video_url = settings.source.url | e('full_url') %}
+	<video
+    data-id="{{ id }}" data-interaction-id="{{ id }}"
+    data-e-type="{{ type }}" data-interactions="{{ interactions | json_encode | e('html_attr') }}"
+    {{ id_attribute }}
+    class="{{ classes }}"
+    {{ settings.attributes | raw }}
+		class="{{ video_classes }}"
+		{% if settings.poster_enabled %}poster="{{ settings.poster.src | e('full_url') }}"{% endif %}
+		{% if settings.autoplay %}autoplay{% endif %}
+		{% if settings.mute %}muted{% endif %}
+		{% if settings.loop %}loop{% endif %}
+		{% if settings.controls %}controls{% endif %}
+		{% if settings.playsinline %}playsinline{% endif %}
+		{% if not settings.download %}controlslist="nodownload"{% endif %}
+		preload="{{ settings.preload }}"
+	>
+		<source src="{{ video_url ~ video_timings }}">
+	</video>
+{% else %}
+	{% if settings.poster_enabled %}
+  <div style="width:100%; aspect-ratio: 16/9; background-image: url({{ settings.poster.src | e('full_url') }}); background-size: contain; background-position: center center; background-repeat: no-repeat; min-height: 100px;"></div>
+	{% else %}
+	<div style="width:100%; background-color: rgb(245, 245, 245); aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center;">
+	<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<path d="M17.6902 8.92189C18.3227 8.56844 19.0991 8.58381 19.7162 8.96355L54.3829 30.2969C54.9738 30.661 55.3334 31.3059 55.3334 32C55.3334 32.6941 54.9738 33.339 54.3829 33.7031L19.7162 55.0365C19.0991 55.4162 18.3227 55.4316 17.6902 55.0781C17.0584 54.7245 16.6667 54.0574 16.6667 53.3333V10.6667L16.685 10.3984C16.7685 9.7807 17.1373 9.23132 17.6902 8.92189ZM20.6667 49.7526L49.5157 32L20.6667 14.2448V49.7526Z" fill="black" fill-opacity="0.54"/>
+	</svg>
+	</div>
+	{% endif %}
+{% endif %}

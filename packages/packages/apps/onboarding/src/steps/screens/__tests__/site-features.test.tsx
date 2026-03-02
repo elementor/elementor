@@ -2,6 +2,7 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 
 import { DEFAULT_TEST_URLS, mockFetch, renderApp, setupOnboardingTests } from '../../../__tests__/test-utils';
+import { t } from '../../../utils/translations';
 import { FEATURE_OPTIONS } from '../site-features';
 
 const SITE_FEATURES_PROGRESS = {
@@ -12,7 +13,6 @@ const SITE_FEATURES_PROGRESS = {
 const STEP_TITLE = 'What do you want to include in your site?';
 const STEP_SUBTITLE = "We'll use this to tailor suggestions for you.";
 const BUILT_IN_LABEL = 'Included';
-const EXPLORE_MORE_LABEL = 'Explore more';
 const FINISH_BUTTON_LABEL = 'Continue with Free';
 const USER_CHOICES_ENDPOINT = 'user-choices';
 const PRO_PLAN_NOTICE_TEXT = 'Some features you selected are available in Pro plan.';
@@ -58,9 +58,8 @@ describe( 'SiteFeatures', () => {
 			} );
 
 			FEATURE_OPTIONS.forEach( ( option ) => {
-				expect( screen.getByText( option.label ) ).toBeInTheDocument();
+				expect( screen.getByText( t( option.labelKey ) ) ).toBeInTheDocument();
 			} );
-			expect( screen.getByText( EXPLORE_MORE_LABEL ) ).toBeInTheDocument();
 		} );
 
 		it( 'renders Included chip on core features', () => {
@@ -86,7 +85,7 @@ describe( 'SiteFeatures', () => {
 
 			const proOptions = FEATURE_OPTIONS.filter( ( option ) => option.licenseType === 'pro' );
 			proOptions.forEach( ( option ) => {
-				const button = screen.getByRole( 'button', { name: option.label } );
+				const button = screen.getByRole( 'button', { name: t( option.labelKey ) } );
 				expect( button ).toHaveAttribute( 'aria-pressed', 'false' );
 			} );
 		} );
@@ -100,7 +99,7 @@ describe( 'SiteFeatures', () => {
 			} );
 
 			const firstProOption = getFirstProOption();
-			fireEvent.click( screen.getByRole( 'button', { name: firstProOption.label } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: t( firstProOption.labelKey ) } ) );
 			await waitFor( () => {
 				expect( screen.getByRole( 'button', { name: FINISH_BUTTON_LABEL } ) ).toBeEnabled();
 			} );
@@ -137,19 +136,6 @@ describe( 'SiteFeatures', () => {
 	} );
 
 	describe( 'External links', () => {
-		it( '"Explore more" opens features URL in new tab', () => {
-			const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
-			renderApp( {
-				isConnected: true,
-				progress: SITE_FEATURES_PROGRESS,
-			} );
-
-			fireEvent.click( screen.getByRole( 'button', { name: EXPLORE_MORE_LABEL } ) );
-
-			expect( openSpy ).toHaveBeenCalledWith( DEFAULT_TEST_URLS.exploreFeatures, TARGET_BLANK );
-			openSpy.mockRestore();
-		} );
-
 		it( '"Compare plans" opens pricing URL in new tab', () => {
 			const firstProOption = getFirstProOption();
 			const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
@@ -187,10 +173,10 @@ describe( 'SiteFeatures', () => {
 				if ( ! option ) {
 					throw new Error( 'Expected option for selected id' );
 				}
-				const button = screen.getByRole( 'button', { name: option.label } );
+				const button = screen.getByRole( 'button', { name: t( option.labelKey ) } );
 				expect( button ).toHaveAttribute( 'aria-pressed', 'true' );
 			} );
-			const unselectedButton = screen.getByRole( 'button', { name: unselectedOption.label } );
+			const unselectedButton = screen.getByRole( 'button', { name: t( unselectedOption.labelKey ) } );
 			expect( unselectedButton ).toHaveAttribute( 'aria-pressed', 'false' );
 		} );
 	} );

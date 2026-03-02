@@ -75,13 +75,13 @@ describe( 'SiteAbout', () => {
 			renderApp( SITE_ABOUT_STEP );
 
 			// Assert
-			expect( screen.getByText( 'Small business' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Small-Med Business' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Online store' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Company site' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Blog' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Landing page' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Booking' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Portfolio' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Organization' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Other' ) ).toBeInTheDocument();
 		} );
 
@@ -113,15 +113,15 @@ describe( 'SiteAbout', () => {
 			// Arrange
 			renderApp( SITE_ABOUT_STEP );
 			const blogButton = screen.getByRole( 'button', { name: 'Blog' } );
-			const portfolioButton = screen.getByRole( 'button', { name: 'Portfolio' } );
+			const organizationButton = screen.getByRole( 'button', { name: 'Organization' } );
 
 			// Act
 			fireEvent.click( blogButton );
-			fireEvent.click( portfolioButton );
+			fireEvent.click( organizationButton );
 
 			// Assert
 			expect( blogButton ).toHaveAttribute( 'aria-pressed', 'true' );
-			expect( portfolioButton ).toHaveAttribute( 'aria-pressed', 'true' );
+			expect( organizationButton ).toHaveAttribute( 'aria-pressed', 'true' );
 		} );
 
 		it( 'should deselect on second click', () => {
@@ -159,17 +159,17 @@ describe( 'SiteAbout', () => {
 				...SITE_ABOUT_STEP,
 				choices: {
 					building_for: 'myself',
-					site_about: [ 'blog', 'portfolio' ],
+					site_about: [ 'blog', 'organization' ],
 				},
 			} );
 
 			// Assert
 			const blogButton = screen.getByRole( 'button', { name: 'Blog' } );
-			const portfolioButton = screen.getByRole( 'button', { name: 'Portfolio' } );
+			const organizationButton = screen.getByRole( 'button', { name: 'Organization' } );
 			const otherButton = screen.getByRole( 'button', { name: 'Other' } );
 
 			expect( blogButton ).toHaveAttribute( 'aria-pressed', 'true' );
-			expect( portfolioButton ).toHaveAttribute( 'aria-pressed', 'true' );
+			expect( organizationButton ).toHaveAttribute( 'aria-pressed', 'true' );
 			expect( otherButton ).toHaveAttribute( 'aria-pressed', 'false' );
 		} );
 	} );

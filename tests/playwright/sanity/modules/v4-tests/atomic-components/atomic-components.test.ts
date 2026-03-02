@@ -36,8 +36,17 @@ test.describe( 'Atomic Components @v4-tests', () => {
 		await context?.close();
 	} );
 
+	type ProWindow = Window & { elementorPro?: { config: { isActive: boolean } } };
+
+	const mockProAsActive = async () => {
+		await page.evaluate( () => {
+			( window as unknown as ProWindow ).elementorPro = { config: { isActive: true } };
+		} );
+	};
+
 	test.beforeEach( async () => {
 		editor = await wpAdminPage.openNewPage();
+		await mockProAsActive();
 	} );
 
 	test( 'should allow converting an atomic container into a component', async () => {
@@ -164,7 +173,7 @@ test.describe( 'Atomic Components @v4-tests', () => {
 		} );
 	} );
 
-	test( 'should allow exposing props and overriding at instance and nested component level', async ( {}, testInfo ) => {
+	test( 'should allow exposing props and overriding at instance and nested component level', async ( {} ) => {
 		const componentName = uniqueName( 'Props Component' );
 		const outerComponentName = uniqueName( 'Outer Component' );
 
@@ -224,7 +233,10 @@ test.describe( 'Atomic Components @v4-tests', () => {
 			const headingText = page.locator( 'h2' ).first();
 			await expect( headingText ).toContainText( nestedDefaultValue );
 
-			await wpAdminPage.editExistingPostWithElementor( pageId, { page, testInfo } );
+			await page.goto( `/wp-admin/post.php?post=${ pageId }&action=elementor` );
+			await page.waitForLoadState( 'load', { timeout: 20000 } );
+			await wpAdminPage.waitForPanel();
+			await mockProAsActive();
 		} );
 
 		await test.step( 'Verify exposed prop appears in instance panel and override it', async () => {
@@ -287,6 +299,124 @@ test.describe( 'Atomic Components @v4-tests', () => {
 
 			const lastHeading = page.locator( 'h2' ).nth( 1 );
 			await expect( lastHeading ).toContainText( nestedOverrideValue, { timeout: timeouts.longAction } );
+		} );
+	} );
+
+	test.describe( 'Pro gating on canvas actions', () => {
+		const mockProState = async ( targetPage: Page, state: { installed: boolean; active: boolean } ) => {
+			await targetPage.evaluate( ( { installed, active } ) => {
+				const w = window as unknown as ProWindow;
+
+				if ( installed ) {
+					w.elementorPro = { config: { isActive: active } };
+				} else {
+					delete w.elementorPro;
+				}
+			}, state );
+		};
+
+		test( 'should show PRO badge and disable "Create component" when Pro is not active', async () => {
+			let flexbox: Locator;
+
+			await test.step( 'Mock no-pro state and add a flexbox', async () => {
+				await mockProState( page, { installed: false, active: false } );
+				const { locator } = await createContentForComponent( editor );
+				flexbox = locator;
+			} );
+
+			await test.step( 'Right-click and verify create-component is disabled with PRO badge', async () => {
+				await flexbox.click( { button: 'right' } );
+				await page.waitForSelector( EditorSelectors.contextMenu.menu );
+
+				const createItem = page.getByRole( 'menuitem', { name: 'Create component' } );
+				await expect( createItem ).toBeVisible();
+
+				const proBadge = createItem.locator( 'a[href*="go-pro-components-create"]' );
+				await expect( proBadge ).toBeVisible();
+				await expect( proBadge ).toHaveText( 'PRO' );
+			} );
+		} );
+
+		test( 'should disable "Edit Component" and block dblclick when Pro is not installed', async () => {
+			const componentName = uniqueName( 'No Pro Edit' );
+
+			await test.step( 'Create a component with Pro enabled', async () => {
+				const { locator: flexbox } = await createContentForComponent( editor );
+				await openCreateComponentFromContextMenu( flexbox, page );
+				await createComponent( page, editor, componentName );
+				await exitComponentEditMode( editor );
+			} );
+
+			await test.step( 'Reload page to reset Pro state (test env has no Pro installed)', async () => {
+				await page.reload( { waitUntil: 'load' } );
+				await wpAdminPage.waitForPanel();
+			} );
+
+			await test.step( 'Verify context menu shows PRO badge on Edit Component', async () => {
+				const componentInstance = editor.getPreviewFrame().locator( EditorSelectors.components.instanceWidget ).first();
+				await componentInstance.click( { button: 'right', force: true } );
+				await page.waitForSelector( EditorSelectors.contextMenu.menu );
+
+				const editMenuItem = page.getByRole( 'menuitem', { name: 'Edit Component' } );
+				await expect( editMenuItem ).toBeVisible();
+
+				const proBadge = editMenuItem.locator( 'a[href*="go-pro-components-edit"]' );
+				await expect( proBadge ).toBeVisible();
+				await expect( proBadge ).toHaveText( 'PRO' );
+
+				await page.keyboard.press( 'Escape' );
+			} );
+
+			await test.step( 'Verify double-click does not enter edit mode', async () => {
+				const componentInstance = editor.getPreviewFrame().locator( EditorSelectors.components.instanceWidget ).first();
+				await componentInstance.dblclick();
+
+				const panelHeader = page.locator( EditorSelectors.components.editModeHeader );
+				await expect( panelHeader ).not.toBeVisible( { timeout: timeouts.action } );
+			} );
+		} );
+
+		test( 'should allow "Edit Component" when Pro is installed but license expired', async () => {
+			const componentName = uniqueName( 'Expired Edit' );
+
+			await test.step( 'Create a component with Pro enabled', async () => {
+				const { locator: flexbox } = await createContentForComponent( editor );
+				await openCreateComponentFromContextMenu( flexbox, page );
+				await createComponent( page, editor, componentName );
+				await exitComponentEditMode( editor );
+			} );
+
+			await test.step( 'Mock expired license and verify edit via context menu works', async () => {
+				await mockProState( page, { installed: true, active: false } );
+
+				const componentInstance = editor.getPreviewFrame().locator( EditorSelectors.components.instanceWidget ).first();
+				await componentInstance.click( { button: 'right', force: true } );
+				await page.waitForSelector( EditorSelectors.contextMenu.menu );
+
+				const editMenuItem = page.getByRole( 'menuitem', { name: 'Edit Component' } );
+				await expect( editMenuItem ).toBeVisible();
+
+				const proBadge = editMenuItem.locator( 'a[href*="go-pro"]' );
+				await expect( proBadge ).not.toBeVisible();
+
+				await editMenuItem.click();
+
+				const panelHeader = page.locator( EditorSelectors.components.editModeHeader );
+				await expect( panelHeader ).toBeVisible( { timeout: timeouts.longAction } );
+				await expect( panelHeader ).toContainText( componentName );
+
+				await exitComponentEditMode( editor );
+			} );
+
+			await test.step( 'Verify double-click edit also works with expired license', async () => {
+				const componentInstance = editor.getPreviewFrame().locator( EditorSelectors.components.instanceWidget ).first();
+				await componentInstance.dblclick();
+
+				const panelHeader = page.locator( EditorSelectors.components.editModeHeader );
+				await expect( panelHeader ).toBeVisible( { timeout: timeouts.longAction } );
+
+				await exitComponentEditMode( editor );
+			} );
 		} );
 	} );
 

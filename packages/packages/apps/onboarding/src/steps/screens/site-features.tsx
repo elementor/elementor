@@ -10,66 +10,73 @@ import {
 	ThemeBuilderIcon,
 } from '@elementor/icons';
 import { Stack, type Theme, Typography } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
 
 import { CorePlaceholderIcon } from '../../components/ui/core-placeholder-icon';
+import { WoocommerceIcon } from '../../components/ui/woocommerce-icon';
 import { useOnboarding } from '../../hooks/use-onboarding';
+import { t } from '../../utils/translations';
 import { FeatureGrid, type FeatureOption, ProPlanNotice } from '../components/site-features';
 
 export const FEATURE_OPTIONS: FeatureOption[] = [
 	{
 		id: 'classes_variables',
-		label: __( 'Classes & variables', 'elementor' ),
+		labelKey: 'steps.site_features.option_classes_variables',
 		Icon: ( props ) => <ColorSwatchIcon { ...props } sx={ { transform: 'rotate(90deg)' } } />,
 		licenseType: 'core',
 	},
 	{
 		id: 'core_placeholder',
-		label: __( 'Core placeholder', 'elementor' ),
+		labelKey: 'steps.site_features.option_core_placeholder',
 		Icon: CorePlaceholderIcon,
 		licenseType: 'core',
 	},
 	{
 		id: 'theme_builder',
-		label: __( 'Theme builder', 'elementor' ),
+		labelKey: 'steps.site_features.option_theme_builder',
 		Icon: ThemeBuilderIcon,
 		licenseType: 'pro',
 	},
 	{
 		id: 'lead_collection',
-		label: __( 'Lead Collection', 'elementor' ),
+		labelKey: 'steps.site_features.option_lead_collection',
 		Icon: CorePlaceholderIcon,
 		licenseType: 'pro',
 	},
 	{
 		id: 'custom_code_css',
-		label: __( 'Custom Code', 'elementor' ),
+		labelKey: 'steps.site_features.option_custom_code',
 		Icon: CodeIcon,
 		licenseType: 'pro',
 	},
 	{
 		id: 'email_deliverability',
-		label: __( 'Email deliverability', 'elementor' ),
+		labelKey: 'steps.site_features.option_email_deliverability',
 		Icon: ElementorEmailDeliverabilityIcon,
 		licenseType: 'one',
 	},
 	{
 		id: 'ai_features',
-		label: __( 'AI generator', 'elementor' ),
+		labelKey: 'steps.site_features.option_ai_generator',
 		Icon: ElementorAIIcon,
 		licenseType: 'one',
 	},
 	{
 		id: 'image_optimization',
-		label: __( 'Image optimization', 'elementor' ),
+		labelKey: 'steps.site_features.option_image_optimization',
 		Icon: ElementorImageOptimizerIcon,
 		licenseType: 'one',
 	},
 	{
 		id: 'accessibility',
-		label: __( 'Accessibility tools', 'elementor' ),
+		labelKey: 'steps.site_features.option_accessibility_tools',
 		Icon: ElementorAccessibilityIcon,
 		licenseType: 'one',
+	},
+	{
+		id: 'woocommerce_builder',
+		labelKey: 'steps.site_features.woocommerce',
+		Icon: WoocommerceIcon,
+		licenseType: 'pro',
 	},
 ];
 
@@ -79,12 +86,8 @@ const CORE_FEATURE_IDS = new Set(
 
 const FEATURE_OPTION_IDS = new Set( FEATURE_OPTIONS.map( ( featureOption ) => featureOption.id ) );
 
-const STEP_TITLE = __( 'What do you want to include in your site?', 'elementor' );
-const STEP_SUBTITLE = __( "We'll use this to tailor suggestions for you.", 'elementor' );
-
 export function SiteFeatures() {
-	const { choices, actions, urls } = useOnboarding();
-	const exploreFeaturesUrl = urls.exploreFeatures;
+	const { choices, actions } = useOnboarding();
 
 	const storedPaidFeatures = useMemo(
 		() => ( ( choices.site_features as string[] ) || [] ).filter( ( id ) => FEATURE_OPTION_IDS.has( id ) ),
@@ -121,10 +124,6 @@ export function SiteFeatures() {
 		return hasOneFeature ? 'One' : 'Pro';
 	}, [ storedPaidFeatures ] );
 
-	const handleExploreMoreClick = useCallback( () => {
-		window.open( exploreFeaturesUrl, '_blank' );
-	}, [ exploreFeaturesUrl ] );
-
 	return (
 		<Stack
 			spacing={ 4 }
@@ -139,10 +138,10 @@ export function SiteFeatures() {
 		>
 			<Stack spacing={ 1 } textAlign="center" alignItems="center">
 				<Typography variant="h5" align="center" fontWeight={ 500 }>
-					{ STEP_TITLE }
+					{ t( 'steps.site_features.title' ) }
 				</Typography>
 				<Typography variant="body1" color="text.secondary">
-					{ STEP_SUBTITLE }
+					{ t( 'steps.site_features.subtitle' ) }
 				</Typography>
 			</Stack>
 
@@ -150,7 +149,6 @@ export function SiteFeatures() {
 				options={ FEATURE_OPTIONS }
 				selectedValues={ selectedValues }
 				onFeatureClick={ handleFeatureClick }
-				onExploreMoreClick={ handleExploreMoreClick }
 			/>
 
 			{ storedPaidFeatures.length > 0 && <ProPlanNotice planName={ planName } /> }

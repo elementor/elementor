@@ -1,28 +1,27 @@
-import { __ } from '@wordpress/i18n';
-
 import { getOnboardingAssetUrl } from '../../steps/step-visuals';
 import type { ThemeSlug } from '../../types';
+import { t } from '../../utils/translations';
 
 export interface ThemeDefinition {
 	slug: ThemeSlug;
-	label: string;
-	description: string;
+	labelKey: string;
+	descriptionKey: string;
 	previewBgColor: string;
 	previewImage: string;
 }
 
 export const HELLO_THEME: ThemeDefinition = {
 	slug: 'hello-elementor',
-	label: __( 'Hello', 'elementor' ),
-	description: __( 'A flexible canvas theme you can shape from the ground up', 'elementor' ),
+	labelKey: 'steps.theme_selection.theme_hello_label',
+	descriptionKey: 'steps.theme_selection.theme_hello_description',
 	previewBgColor: '#f6f6f6',
 	previewImage: getOnboardingAssetUrl( 'theme-hello.png' ),
 };
 
 export const HELLO_BIZ_THEME: ThemeDefinition = {
 	slug: 'hello-biz',
-	label: __( 'Hello Biz', 'elementor' ),
-	description: __( 'A ready-to-start theme with smart layouts and widgets', 'elementor' ),
+	labelKey: 'steps.theme_selection.theme_hello_biz_label',
+	descriptionKey: 'steps.theme_selection.theme_hello_biz_description',
 	previewBgColor: '#ffb8e5',
 	previewImage: getOnboardingAssetUrl( 'theme-hello-biz.png' ),
 };
@@ -64,8 +63,8 @@ export function getRecommendedTheme( choices: {
  */
 export function getGreetingText( experienceLevel: string | null ): string {
 	if ( experienceLevel === 'beginner' ) {
-		return __( "Glad you're here!", 'elementor' );
+		return t( 'steps.theme_selection.greeting_beginner' );
 	}
 
-	return __( "Great. Let's take it to the next step", 'elementor' );
+	return t( 'steps.theme_selection.greeting_default' );
 }

@@ -1,25 +1,19 @@
 import * as React from 'react';
-import { ArrowRightIcon, CheckIcon, CrownFilledIcon } from '@elementor/icons';
+import { CheckIcon, CrownFilledIcon } from '@elementor/icons';
 import { Box, Chip, styled, Typography } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
 
 import { SelectionBadge } from '../../../components/ui/selection-badge';
+import { t } from '../../../utils/translations';
 
 export interface FeatureOption {
 	id: string;
-	label: string;
+	labelKey: string;
 	Icon: React.ElementType;
 	licenseType: 'core' | 'pro' | 'one' | 'other';
 }
 
-interface ExploreMoreOption extends FeatureOption {
-	id: 'explore_more';
-	isExploreMore: true;
-}
-
 interface FeatureCardProps {
 	isSelected: boolean;
-	isExploreMore?: boolean;
 	isCore?: boolean;
 }
 
@@ -27,16 +21,7 @@ interface FeatureGridProps {
 	options: FeatureOption[];
 	selectedValues: string[];
 	onFeatureClick: ( id: string ) => void;
-	onExploreMoreClick: () => void;
 }
-
-const EXPLORE_MORE_OPTION: ExploreMoreOption = {
-	id: 'explore_more',
-	label: __( 'Explore more', 'elementor' ),
-	Icon: ArrowRightIcon,
-	licenseType: 'other',
-	isExploreMore: true,
-};
 
 const IncludedInCoreChip = styled( Chip )( ( { theme } ) => ( {
 	position: 'absolute',
@@ -50,8 +35,8 @@ const IncludedInCoreChip = styled( Chip )( ( { theme } ) => ( {
 } ) );
 
 const FeatureCard = styled( Box, {
-	shouldForwardProp: ( prop ) => ! [ 'isSelected', 'isExploreMore', 'isCore' ].includes( prop as string ),
-} )< FeatureCardProps >( ( { theme, isSelected, isExploreMore, isCore } ) => ( {
+	shouldForwardProp: ( prop ) => ! [ 'isSelected', 'isCore' ].includes( prop as string ),
+} )< FeatureCardProps >( ( { theme, isSelected, isCore } ) => ( {
 	position: 'relative',
 	display: 'flex',
 	flexDirection: 'column',
@@ -69,46 +54,9 @@ const FeatureCard = styled( Box, {
 			backgroundColor: theme.palette.action.hover,
 		},
 	} ),
-	...( isExploreMore && {
-		'& .feature-icon': {
-			display: 'flex',
-			alignItems: 'center',
-			justifyContent: 'center',
-			width: theme.spacing( 3.75 ),
-			borderRadius: '50%',
-			backgroundColor: theme.palette.text.primary,
-			color: theme.palette.background.paper,
-			aspectRatio: 1,
-		},
-	} ),
 } ) );
 
-interface ExploreMoreCardProps {
-	onClick: () => void;
-	onKeyDown: ( event: React.KeyboardEvent, handler: () => void ) => void;
-}
-
-function ExploreMoreCard( { onClick, onKeyDown }: ExploreMoreCardProps ) {
-	return (
-		<FeatureCard
-			isSelected={ false }
-			isExploreMore
-			onClick={ onClick }
-			role="button"
-			tabIndex={ 0 }
-			onKeyDown={ ( event: React.KeyboardEvent ) => onKeyDown( event, onClick ) }
-		>
-			<Box className="feature-icon" sx={ { mb: 1 } }>
-				<EXPLORE_MORE_OPTION.Icon fontSize="small" />
-			</Box>
-			<Typography variant="body2" color="text.secondary" textAlign="center">
-				{ EXPLORE_MORE_OPTION.label }
-			</Typography>
-		</FeatureCard>
-	);
-}
-
-export function FeatureGrid( { options, selectedValues, onFeatureClick, onExploreMoreClick }: FeatureGridProps ) {
+export function FeatureGrid( { options, selectedValues, onFeatureClick }: FeatureGridProps ) {
 	const handleKeyDown = ( event: React.KeyboardEvent, handler: () => void ) => {
 		if ( [ 'Enter', ' ' ].includes( event.key ) ) {
 			event.preventDefault();
@@ -154,7 +102,7 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick, onExplor
 						onKeyDown={ handleKeyDownEvent }
 						aria-pressed={ isCore ? undefined : isSelected }
 					>
-						{ isCore && <IncludedInCoreChip label={ __( 'Included', 'elementor' ) } size="small" /> }
+						{ isCore && <IncludedInCoreChip label={ t( 'steps.site_features.included' ) } size="small" /> }
 						{ isSelected && (
 							<SelectionBadge
 								icon={ BadgeIcon }
@@ -165,12 +113,11 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick, onExplor
 							<Icon fontSize="medium" />
 						</Box>
 						<Typography variant="body2" color="text.secondary" textAlign="center">
-							{ option.label }
+							{ t( option.labelKey ) }
 						</Typography>
 					</FeatureCard>
 				);
 			} ) }
-			<ExploreMoreCard onClick={ onExploreMoreClick } onKeyDown={ handleKeyDown } />
 		</Box>
 	);
 }

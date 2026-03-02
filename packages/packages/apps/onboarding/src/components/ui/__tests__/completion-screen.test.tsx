@@ -1,9 +1,18 @@
 import * as React from 'react';
 import { render, screen } from '@testing-library/react';
 
+import { createMockConfig } from '../../../__tests__/test-utils';
 import { CompletionScreen } from '../completion-screen';
 
 describe( 'CompletionScreen', () => {
+	beforeEach( () => {
+		window.elementorAppConfig = createMockConfig();
+	} );
+
+	afterEach( () => {
+		window.elementorAppConfig = undefined;
+	} );
+
 	it( 'should render loading title', () => {
 		render( <CompletionScreen /> );
 

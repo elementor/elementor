@@ -56,6 +56,7 @@ describe( 'OverridablePropIndicator', () => {
 		jest.mocked( useElement ).mockReturnValue( {
 			element: { id: MOCK_ELEMENT_ID, type: MOCK_WIDGET_TYPE },
 			elementType: { key: MOCK_WIDGET_TYPE, propsSchema: {}, controls: [], title: 'Test Element' },
+			settings: {},
 		} );
 	} );
 
@@ -268,6 +269,7 @@ describe( 'OverridablePropIndicator with componentInstanceElement context', () =
 			controls: [],
 			title: 'Component Instance',
 		},
+		settings: {},
 	};
 
 	let store: Store< ComponentsSlice >;
@@ -279,6 +281,7 @@ describe( 'OverridablePropIndicator with componentInstanceElement context', () =
 		jest.mocked( useElement ).mockReturnValue( {
 			element: { id: ORIGINAL_ELEMENT_ID, type: ORIGINAL_WIDGET_TYPE },
 			elementType: { key: ORIGINAL_WIDGET_TYPE, propsSchema: {}, controls: [], title: 'Heading' },
+			settings: {},
 		} );
 
 		jest.mocked( getWidgetsCache ).mockReturnValue( {
@@ -515,6 +518,7 @@ describe( 'OverridablePropForm duplicate validation', () => {
 		jest.mocked( useElement ).mockReturnValue( {
 			element: { id: MOCK_ELEMENT_ID, type: MOCK_WIDGET_TYPE },
 			elementType: { key: MOCK_WIDGET_TYPE, propsSchema: {}, controls: [], title: 'Test Element' },
+			settings: {},
 		} );
 	} );
 
