@@ -1,6 +1,4 @@
-import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
-
-import { selectOverridableProps, slice } from '../../../store/store';
+import { componentsStore } from '../../../store/dispatchers';
 import { type ComponentId } from '../../../types';
 
 type ReorderGroupsParams = {
@@ -9,22 +7,17 @@ type ReorderGroupsParams = {
 };
 
 export function reorderOverridableGroups( { componentId, newOrder }: ReorderGroupsParams ): void {
-	const overridableProps = selectOverridableProps( getState(), componentId );
+	const overridableProps = componentsStore.getOverridableProps( componentId );
 
 	if ( ! overridableProps ) {
 		return;
 	}
 
-	dispatch(
-		slice.actions.setOverridableProps( {
-			componentId,
-			overridableProps: {
-				...overridableProps,
-				groups: {
-					...overridableProps.groups,
-					order: newOrder,
-				},
-			},
-		} )
-	);
+	componentsStore.setOverridableProps( componentId, {
+		...overridableProps,
+		groups: {
+			...overridableProps.groups,
+			order: newOrder,
+		},
+	} );
 }

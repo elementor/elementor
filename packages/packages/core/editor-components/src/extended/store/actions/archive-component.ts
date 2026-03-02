@@ -1,9 +1,8 @@
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import { type NotificationData, notify } from '@elementor/editor-notifications';
-import { __dispatch as dispatch } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
-import { slice } from '../../../store/store';
+import { componentsStore } from '../../../store/dispatchers';
 
 const successNotification = ( componentId: number, componentName: string ): NotificationData => ( {
 	type: 'success',
@@ -13,7 +12,7 @@ const successNotification = ( componentId: number, componentName: string ): Noti
 } );
 
 export const archiveComponent = ( componentId: number, componentName: string ) => {
-	dispatch( slice.actions.archive( componentId ) );
+	componentsStore.archive( componentId );
 	setDocumentModifiedStatus( true );
 	notify( successNotification( componentId, componentName ) );
 };

@@ -1,6 +1,4 @@
-import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
-
-import { selectCurrentComponent, selectOverridableProps, slice } from '../../../store/store';
+import { componentsStore } from '../../../store/dispatchers';
 import { type ComponentId, type OverridableProp } from '../../../types';
 import { type Source, trackComponentEvent } from '../../../utils/tracking';
 import { revertElementOverridableSetting } from '../../utils/revert-overridable-settings';
@@ -13,7 +11,7 @@ type DeletePropParams = {
 };
 
 export function deleteOverridableProp( { componentId, propKey, source }: DeletePropParams ): void {
-	const overridableProps = selectOverridableProps( getState(), componentId );
+	const overridableProps = componentsStore.getOverridableProps( componentId );
 
 	if ( ! overridableProps || Object.keys( overridableProps.props ).length === 0 ) {
 		return;
@@ -43,18 +41,13 @@ export function deleteOverridableProp( { componentId, propKey, source }: DeleteP
 
 	const updatedGroups = removePropFromAllGroups( overridableProps.groups, propKey );
 
-	dispatch(
-		slice.actions.setOverridableProps( {
-			componentId,
-			overridableProps: {
-				...overridableProps,
-				props: remainingProps,
-				groups: updatedGroups,
-			},
-		} )
-	);
+	componentsStore.setOverridableProps( componentId, {
+		...overridableProps,
+		props: remainingProps,
+		groups: updatedGroups,
+	} );
 
-	const currentComponent = selectCurrentComponent( getState() );
+	const currentComponent = componentsStore.getCurrentComponent();
 
 	for ( const prop of deletedProps ) {
 		trackComponentEvent( {

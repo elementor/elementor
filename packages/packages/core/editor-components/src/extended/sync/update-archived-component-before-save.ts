@@ -1,8 +1,7 @@
 import { type NotificationData, notify } from '@elementor/editor-notifications';
-import { __getState as getState } from '@elementor/store';
 
 import { apiClient } from '../../api';
-import { selectArchivedThisSession } from '../../store/store';
+import { componentsStore } from '../../store/dispatchers';
 import { type DocumentSaveStatus } from '../../types';
 
 const failedNotification = ( message: string ): NotificationData => ( {
@@ -13,7 +12,7 @@ const failedNotification = ( message: string ): NotificationData => ( {
 
 export const updateArchivedComponentBeforeSave = async ( status: DocumentSaveStatus ) => {
 	try {
-		const archivedComponents = selectArchivedThisSession( getState() );
+		const archivedComponents = componentsStore.getArchivedThisSession();
 
 		if ( ! archivedComponents.length ) {
 			return;

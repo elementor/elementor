@@ -1,14 +1,13 @@
 import { getV1DocumentsManager, setDocumentModifiedStatus } from '@elementor/editor-documents';
 import { getAllDescendants, type V1Element } from '@elementor/editor-elements';
-import { __dispatch as dispatch } from '@elementor/store';
 
 import { COMPONENT_WIDGET_TYPE } from '../../../create-component-type';
-import { slice } from '../../../store/store';
+import { componentsStore } from '../../../store/dispatchers';
 
 const TITLE_EXTERNAL_CHANGE_COMMAND = 'title_external_change';
 
 export const renameComponent = ( componentUid: string, newName: string ) => {
-	dispatch( slice.actions.rename( { componentUid, name: newName } ) );
+	componentsStore.rename( componentUid, newName );
 
 	setDocumentModifiedStatus( true );
 

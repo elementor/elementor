@@ -1,6 +1,4 @@
-import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
-
-import { selectOverridableProps, slice } from '../../../store/store';
+import { componentsStore } from '../../../store/dispatchers';
 import { type ComponentId } from '../../../types';
 import { renameGroup } from '../utils/groups-transformers';
 
@@ -11,7 +9,7 @@ type RenameGroupParams = {
 };
 
 export function renameOverridableGroup( { componentId, groupId, label }: RenameGroupParams ): boolean {
-	const overridableProps = selectOverridableProps( getState(), componentId );
+	const overridableProps = componentsStore.getOverridableProps( componentId );
 
 	if ( ! overridableProps ) {
 		return false;
@@ -25,15 +23,10 @@ export function renameOverridableGroup( { componentId, groupId, label }: RenameG
 
 	const updatedGroups = renameGroup( overridableProps.groups, groupId, label );
 
-	dispatch(
-		slice.actions.setOverridableProps( {
-			componentId,
-			overridableProps: {
-				...overridableProps,
-				groups: updatedGroups,
-			},
-		} )
-	);
+	componentsStore.setOverridableProps( componentId, {
+		...overridableProps,
+		groups: updatedGroups,
+	} );
 
 	return true;
 }
