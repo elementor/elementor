@@ -151,14 +151,14 @@ export const createInteractionItem = ( {
 	excludedBreakpoints,
 	customEffects,
 }: {
-	trigger: string;
-	effect: string;
-	type: string;
+	trigger?: string;
+	effect?: string;
+	type?: string;
 	direction?: string;
-	duration: SizeStringValue;
-	delay: SizeStringValue;
+	duration?: SizeStringValue;
+	delay?: SizeStringValue;
 	interactionId?: string;
-	replay: boolean;
+	replay?: boolean;
 	easing?: string;
 	relativeTo?: string;
 	offsetTop?: number;
@@ -169,13 +169,13 @@ export const createInteractionItem = ( {
 	$$type: 'interaction-item',
 	value: {
 		...( interactionId && { interaction_id: createString( interactionId ) } ),
-		trigger: createString( trigger ),
+		trigger: createString( trigger ?? '' ),
 		animation: createAnimationPreset( {
-			effect,
-			type,
+			effect: effect ?? '',
+			type: type ?? '',
 			direction,
-			duration,
-			delay,
+			duration: duration ?? 0,
+			delay: delay ?? 0,
 			replay,
 			easing,
 			relativeTo,
