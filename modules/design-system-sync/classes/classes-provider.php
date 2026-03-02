@@ -87,6 +87,35 @@ class Classes_Provider {
 		return [];
 	}
 
+	public static function get_all_normal_state_variant_props( array $variants ): array {
+		$result = [];
+
+		foreach ( $variants as $variant ) {
+			if ( ! isset( $variant['meta'] ) ) {
+				continue;
+			}
+
+			$meta = $variant['meta'];
+
+			if ( ! array_key_exists( 'breakpoint', $meta ) || ! array_key_exists( 'state', $meta ) ) {
+				continue;
+			}
+
+			$state = $meta['state'];
+
+			if ( ! in_array( $state, [ null, 'normal' ], true ) ) {
+				continue;
+			}
+
+			$breakpoint = $meta['breakpoint'];
+			$breakpoint_key = ( null === $breakpoint ) ? 'desktop' : $breakpoint;
+
+			$result[ $breakpoint_key ] = $variant['props'] ?? [];
+		}
+
+		return $result;
+	}
+
 	public static function has_typography_props( array $props ): bool {
 		foreach ( self::TYPOGRAPHY_PROPS as $key ) {
 			if ( isset( $props[ $key ] ) ) {
@@ -118,10 +147,13 @@ class Classes_Provider {
 				continue;
 			}
 
+			$all_variant_props = self::get_all_normal_state_variant_props( $variants );
+
 			$typography_classes[] = [
 				'id' => $id,
 				'label' => $class['label'] ?? '',
 				'props' => $default_props,
+				'variants_props' => $all_variant_props,
 			];
 		}
 

@@ -98,6 +98,27 @@ class Global_Typography_Extension {
 			$resolved_props = $props_resolver->resolve( $schema, $props );
 			$value = $this->convert_v4_props_to_v3_format( $resolved_props );
 
+			$variants_props = $class['variants_props'] ?? [];
+
+			foreach ( $variants_props as $breakpoint => $bp_props ) {
+				if ( 'desktop' === $breakpoint ) {
+					continue;
+				}
+
+				if ( empty( $bp_props ) ) {
+					continue;
+				}
+
+				$resolved_bp_props = $props_resolver->resolve( $schema, $bp_props );
+				$bp_values = $this->convert_v4_props_to_v3_format( $resolved_bp_props );
+
+				foreach ( $bp_values as $key => $val ) {
+					if ( $this->is_responsive_prop( $key ) ) {
+						$value[ $key . '_' . $breakpoint ] = $val;
+					}
+				}
+			}
+
 			$v4_items[ $id ] = [
 				'id' => $id,
 				'title' => $label,
@@ -107,6 +128,15 @@ class Global_Typography_Extension {
 		}
 
 		return array_merge( $v4_items, $items );
+	}
+
+	private function is_responsive_prop( string $v3_key ): bool {
+		return in_array( $v3_key, [
+			'typography_font_size',
+			'typography_line_height',
+			'typography_letter_spacing',
+			'typography_word_spacing',
+		], true );
 	}
 
 	private function convert_v4_props_to_v3_format( array $v4_props ): array {

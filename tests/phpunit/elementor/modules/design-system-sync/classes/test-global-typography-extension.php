@@ -314,6 +314,107 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 		$this->assertEmpty( $result );
 	}
 
+	public function test_add_v4_classes_to_typography_selector__includes_responsive_breakpoint_values() {
+		// Arrange
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$kit->update_json_meta( '_elementor_global_classes', [
+			'items' => [
+				'class-1' => [
+					'label' => 'Heading',
+					'type' => 'class',
+					'variants' => [
+						[
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => 'normal',
+							],
+							'props' => [
+								'font-family' => 'Roboto',
+								'font-size' => '24px',
+							],
+						],
+						[
+							'meta' => [
+								'breakpoint' => 'tablet',
+								'state' => null,
+							],
+							'props' => [
+								'font-size' => '20px',
+							],
+						],
+						[
+							'meta' => [
+								'breakpoint' => 'mobile',
+								'state' => null,
+							],
+							'props' => [
+								'font-size' => '16px',
+							],
+						],
+					],
+					'sync_to_v3' => true,
+				],
+			],
+		] );
+
+		$items = [];
+
+		// Act
+		$result = $this->extension->add_v4_classes_to_typography_selector( $items );
+
+		// Assert
+		$value = $result['v4-Heading']['value'];
+		$this->assertEquals( '24px', $value['typography_font_size'] );
+		$this->assertEquals( '20px', $value['typography_font_size_tablet'] );
+		$this->assertEquals( '16px', $value['typography_font_size_mobile'] );
+	}
+
+	public function test_add_v4_classes_to_typography_selector__only_adds_responsive_suffix_to_responsive_props() {
+		// Arrange
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$kit->update_json_meta( '_elementor_global_classes', [
+			'items' => [
+				'class-1' => [
+					'label' => 'Heading',
+					'type' => 'class',
+					'variants' => [
+						[
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => 'normal',
+							],
+							'props' => [
+								'font-family' => 'Roboto',
+								'font-size' => '24px',
+							],
+						],
+						[
+							'meta' => [
+								'breakpoint' => 'tablet',
+								'state' => null,
+							],
+							'props' => [
+								'font-family' => 'Arial',
+								'font-size' => '20px',
+							],
+						],
+					],
+					'sync_to_v3' => true,
+				],
+			],
+		] );
+
+		$items = [];
+
+		// Act
+		$result = $this->extension->add_v4_classes_to_typography_selector( $items );
+
+		// Assert
+		$value = $result['v4-Heading']['value'];
+		$this->assertEquals( '20px', $value['typography_font_size_tablet'] );
+		$this->assertArrayNotHasKey( 'typography_font_family_tablet', $value );
+	}
+
 	public function test_add_v4_classes_to_typography_selector__handles_multiple_classes() {
 		// Arrange
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
