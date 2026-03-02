@@ -1191,14 +1191,10 @@ class Admin extends App {
 			return;
 		}
 
-		if ( empty( $request['source'] ) ) {
-			return;
-		}
-
 		$campaign_data = [
+			'campaign' => sanitize_key( $request['campaign'] ),
 			'source' => sanitize_key( $request['source'] ),
-			'campaign' => 'ally-plg',
-			'medium' => 'wp-dash',
+			'medium' => sanitize_key( $request['medium'] ),
 		];
 
 		set_transient( 'elementor_ea11y_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
@@ -1209,24 +1205,10 @@ class Admin extends App {
 			return;
 		}
 
-		if ( empty( $request['source'] ) ) {
-			return;
-		}
-
-		$one_subscription = Hints::is_plugin_connected_to_one_subscription();
-
-		if ( $one_subscription && strpos( $request['source'], 'editor' ) !== false ) {
-			$medium = 'editor-one';
-		} elseif ( $one_subscription ) {
-			$medium = 'wp-dash-one';
-		} else {
-			$medium = 'wp-dash';
-		}
-
 		$campaign_data = [
+			'campaign' => sanitize_key( $request['campaign'] ),
 			'source' => sanitize_key( $request['source'] ),
-			'campaign' => $one_subscription ? 'io-plg-one' : 'io-plg',
-			'medium' => $medium,
+			'medium' => sanitize_key( $request['medium'] ),
 		];
 
 		set_transient( 'elementor_image_optimization_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
@@ -1237,14 +1219,10 @@ class Admin extends App {
 			return;
 		}
 
-		if ( empty( $request['source'] ) ) {
-			return;
-		}
-
 		$campaign_data = [
+			'campaign' => sanitize_key( $request['campaign'] ),
 			'source' => sanitize_key( $request['source'] ),
-			'campaign' => 'sm-plg',
-			'medium' => 'wp-dash',
+			'medium' => sanitize_key( $request['medium'] ),
 		];
 
 		set_transient( 'elementor_site_mailer_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
