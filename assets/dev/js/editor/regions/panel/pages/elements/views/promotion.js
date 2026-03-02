@@ -25,6 +25,18 @@ PanelElementsPromotionView = Marionette.ItemView.extend( {
 	hasTemplate() {
 		return !! jQuery( this.getTemplate() ).length;
 	},
+
+	events: {
+		'click .elementor-panel-elements-promotion__cta': 'onCtaClick',
+	},
+
+	onCtaClick() {
+		window.dispatchEvent(
+			new CustomEvent( 'elementor/editor/show-angie-promotion-modal', {
+				detail: { prompt: `Generate a new widget - ${ this.options.searchTerm || '' }` },
+			} ),
+		);
+	},
 } );
 
 module.exports = PanelElementsPromotionView;
