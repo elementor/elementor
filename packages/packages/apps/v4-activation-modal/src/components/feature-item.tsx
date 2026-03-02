@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Typography } from '@elementor/ui';
+import { Box, Typography , type Theme } from '@elementor/ui';
 
 type FeatureItemProps = {
 	title: string;
@@ -16,8 +16,13 @@ export const FeatureItem = ( { title, subtitle, selected, onClick }: FeatureItem
 				pl: 2,
 				pr: 1,
 				cursor: 'pointer',
-				borderLeft: selected ? '3px solid' : '3px solid transparent',
+				borderLeft: '3px solid',
 				borderColor: selected ? 'common.black' : 'transparent',
+				transition: ( theme: Theme ) =>
+					theme.transitions.create( [ 'border-color' ], {
+						easing: theme.transitions.easing.sharp,
+						duration: theme.transitions.duration.enteringScreen,
+					} ),
 			} }
 		>
 			<Typography variant="subtitle2" color="text.primary">

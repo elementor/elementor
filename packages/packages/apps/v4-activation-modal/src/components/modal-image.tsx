@@ -56,5 +56,3 @@ export const ModalImage: React.FC< ModalImageProps > = ( { id, images } ) => {
 		</>
 	);
 };
-
-export default ModalImage;
