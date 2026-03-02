@@ -7,7 +7,9 @@ import { Box, Button, Stack, styled, Typography } from '@elementor/ui';
 import { useOnboarding } from '../../../hooks/use-onboarding';
 import { t } from '../../../utils/translations';
 
-const PRO_PLAN_NOTICE_BG = 'rgba(250, 228, 250, 0.6)';
+const PRO_PLAN_NOTICE_BG_LIGHT = 'rgba(250, 228, 250, 0.6)';
+const PRO_PLAN_NOTICE_BG_DARK = '#fae4fa';
+const PRO_PLAN_NOTICE_TEXT_COLOR = '#3f444b';
 
 const ProPlanNoticeRoot = styled( Box )( ( { theme } ) => ( {
 	display: 'flex',
@@ -15,7 +17,7 @@ const ProPlanNoticeRoot = styled( Box )( ( { theme } ) => ( {
 	gap: theme.spacing( 1 ),
 	padding: theme.spacing( 1, 2 ),
 	borderRadius: theme.spacing( 1 ),
-	backgroundColor: PRO_PLAN_NOTICE_BG,
+	backgroundColor: theme.palette.mode === 'dark' ? PRO_PLAN_NOTICE_BG_DARK : PRO_PLAN_NOTICE_BG_LIGHT,
 	[ theme.breakpoints.down( 'sm' ) ]: {
 		flexDirection: 'column',
 		justifyContent: 'center',
@@ -47,14 +49,14 @@ export function ProPlanNotice( { planName }: LicenseNoticeProps ) {
 				<InfoCircleIcon
 					sx={ ( theme: Theme ) => ( {
 						fontSize: theme.spacing( 2.5 ),
-						color: 'text.secondary',
+						color: PRO_PLAN_NOTICE_TEXT_COLOR,
 					} ) }
 				/>
 				<Typography
 					variant="body2"
-					color="text.secondary"
 					sx={ ( theme: Theme ) => ( {
 						fontSize: theme.spacing( 1.625 ),
+						color: PRO_PLAN_NOTICE_TEXT_COLOR,
 					} ) }
 				>
 					{ t( 'steps.site_features.plan_recommendation_prefix' ) } <strong>{ planName }</strong>{ ' ' }
