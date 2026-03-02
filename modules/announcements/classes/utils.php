@@ -2,9 +2,9 @@
 
 namespace Elementor\Modules\Announcements\Classes;
 
-use Elementor\Modules\Announcements\Triggers\{
-	IsFlexContainerInactive, AiStarted
-};
+use Elementor\Modules\Announcements\Triggers\AiStarted;
+use Elementor\Modules\Announcements\Triggers\AllyStarted;
+use Elementor\Modules\Announcements\Triggers\IsFlexContainerInactive;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -16,7 +16,7 @@ class Utils {
 	 *
 	 * @param $trigger
 	 *
-	 * @return IsFlexContainerInactive|false
+	 * @return IsFlexContainerInactive|AiStarted|AllyStarted|false
 	 */
 	public static function get_trigger_object( $trigger ) {
 		$object_trigger = apply_filters( 'elementor/announcements/trigger_object', false, $trigger );
@@ -31,6 +31,8 @@ class Utils {
 				return new IsFlexContainerInactive();
 			case 'aiStarted':
 				return new AiStarted();
+			case 'allyStarted':
+				return new AllyStarted();
 			default:
 				return false;
 		}

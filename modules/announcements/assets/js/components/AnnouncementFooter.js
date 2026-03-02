@@ -1,7 +1,9 @@
 import PropTypes from 'prop-types';
 
-export default function AnnouncementFooter( props ) {
-	const { buttons, onClose } = props;
+export default function AnnouncementFooter( { buttons, onClose } ) {
+	if ( ! buttons ) {
+		return null;
+	}
 
 	return (
 		<div className="announcement-footer-container">
@@ -9,11 +11,11 @@ export default function AnnouncementFooter( props ) {
 				return (
 					<a
 						key={ `button${ index }` }
-						className={ `button-item ${ button.variant }` }
-						href={ button.url }
-						target={ button.target }
+						className={ `button-item ${ button?.variant }` }
+						href={ button?.url?.replaceAll( '&amp;', '&' ) }
+						target={ button?.target }
 						onClick={ () => onClose( 'cta' ) } >
-						{ button.label }
+						{ button?.label }
 					</a>
 				);
 			} ) }

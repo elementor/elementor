@@ -305,7 +305,7 @@ class User {
 	public static function set_introduction_viewed( array $data ) {
 		$user_introduction_meta = self::get_introduction_meta();
 
-		$user_introduction_meta[ $data['introductionKey'] ] = true;
+		$user_introduction_meta[ $data['introductionKey'] ] = time();
 
 		update_user_meta( get_current_user_id(), self::INTRODUCTION_KEY, $user_introduction_meta );
 	}
