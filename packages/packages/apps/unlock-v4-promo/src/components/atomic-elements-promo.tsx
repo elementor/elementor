@@ -15,6 +15,7 @@ export function AtomicElementsPromo() {
 
 	return (
 		<ThemeProvider>
+			<Divider/>
 			<Box
 				sx={ {
 					bgcolor: 'background.default',
@@ -37,7 +38,7 @@ export function AtomicElementsPromo() {
 						sx={ { flexGrow: 1, gap: 1, display: 'flex', alignItems: 'center' } }
 					>
 						{ __( 'Atomic Elements', 'elementor' ) }
-						<Chip label={ __( 'New', 'elementor' ) } size="small" color="secondary" />
+						<Chip label={ __( 'New', 'elementor' ) } size="tiny" variant="standard" color="secondary" />
 					</Typography>
 					<CloseButton slotProps={ { icon: { fontSize: 'small' } } } onClick={ () => setDismissed( true ) } />
 				</Box>
