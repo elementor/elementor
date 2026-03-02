@@ -12,6 +12,7 @@ import {
 import { Stack, type Theme, Typography } from '@elementor/ui';
 
 import { CorePlaceholderIcon } from '../../components/ui/core-placeholder-icon';
+import { StepTitle } from '../../components/ui/styled-components';
 import { WoocommerceIcon } from '../../components/ui/woocommerce-icon';
 import { useOnboarding } from '../../hooks/use-onboarding';
 import { t } from '../../utils/translations';
@@ -137,9 +138,9 @@ export function SiteFeatures() {
 			} ) }
 		>
 			<Stack spacing={ 1 } textAlign="center" alignItems="center">
-				<Typography variant="h5" align="center" fontWeight={ 500 }>
+				<StepTitle color="text.primary" variant="h5" align="center">
 					{ t( 'steps.site_features.title' ) }
-				</Typography>
+				</StepTitle>
 				<Typography variant="body1" color="text.secondary">
 					{ t( 'steps.site_features.subtitle' ) }
 				</Typography>

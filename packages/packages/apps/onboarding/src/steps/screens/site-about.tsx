@@ -38,7 +38,7 @@ export function SiteAbout() {
 
 			<Stack spacing={ 4 } alignItems="center">
 				<Stack spacing={ 1 } alignItems="center">
-					<StepTitle variant="h5" align="center">
+					<StepTitle color="text.primary" variant="h5" align="center">
 						{ t( 'steps.site_about.title' ) }
 					</StepTitle>
 					<Typography variant="body1" color="text.secondary" align="center">
