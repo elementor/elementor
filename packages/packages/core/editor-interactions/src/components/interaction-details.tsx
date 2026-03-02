@@ -114,14 +114,8 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const easing = extractString( interaction.animation.value.config?.value.easing, DEFAULT_VALUES.easing );
 	const relativeTo = extractString( interaction.animation.value.config?.value.relativeTo, DEFAULT_VALUES.relativeTo );
 
-	const start = extractSize(
-		interaction.animation.value.config?.value.start,
-		DEFAULT_VALUES.start
-	);
-	const end = extractSize(
-		interaction.animation.value.config?.value.end,
-		DEFAULT_VALUES.end
-	);
+	const start = extractSize( interaction.animation.value.config?.value.start, DEFAULT_VALUES.start );
+	const end = extractSize( interaction.animation.value.config?.value.end, DEFAULT_VALUES.end );
 
 	const interactionValues = {
 		trigger,
@@ -145,14 +139,8 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		'relativeTo',
 		controlVisibilityConfig.relativeTo( interactionValues )
 	);
-	const StartControl = useControlComponent(
-		'start',
-		controlVisibilityConfig.start( interactionValues )
-	);
-	const EndControl = useControlComponent(
-		'end',
-		controlVisibilityConfig.end( interactionValues )
-	);
+	const StartControl = useControlComponent( 'start', controlVisibilityConfig.start( interactionValues ) );
+	const EndControl = useControlComponent( 'end', controlVisibilityConfig.end( interactionValues ) );
 	const CustomEffectControl = useControlComponent(
 		'customEffects',
 		controlVisibilityConfig.custom( interactionValues )
@@ -317,9 +305,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 								<Field label={ __( 'End', 'elementor' ) }>
 									<EndControl
 										value={ parseSizeValue( end, [ '%' ] ).size?.toString() ?? '' }
-										onChange={ ( v: string ) =>
-											updateInteraction( { end: v as SizeStringValue } )
-										}
+										onChange={ ( v: string ) => updateInteraction( { end: v as SizeStringValue } ) }
 									/>
 								</Field>
 							) }
