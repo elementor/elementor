@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMemo, useState } from 'react';
-import { Box, Skeleton } from '@elementor/ui';
+import { Box, Skeleton, type Theme } from '@elementor/ui';
 
 type ImageEntry = {
 	id: string;
@@ -8,19 +8,19 @@ type ImageEntry = {
 };
 
 type ModalImageProps = {
-    id: string;
-    images: ImageEntry[];
+	id: string;
+	images: ImageEntry[];
 };
 
 export const ModalImage: React.FC< ModalImageProps > = ( { id, images } ) => {
-    const [ loadedIds, setLoadedIds ] = useState< Record < string, boolean > > ( {} );
+	const [ loadedIds, setLoadedIds ] = useState< Record < string, boolean > > ( {} );
 
 	const showSkeleton = useMemo(
 		() => images.some( (img) => ! loadedIds[ img.id ] ),
 		[ images, loadedIds ],
 	);
 
-    const markLoaded = ( key: string ) => setLoadedIds( ( prev ) => ( { ...prev, [ key ]: true } ) );
+	const markLoaded = ( key: string ) => setLoadedIds( ( prev ) => ( { ...prev, [ key ]: true } ) );
 
 	return (
 		<>
@@ -31,11 +31,9 @@ export const ModalImage: React.FC< ModalImageProps > = ( { id, images } ) => {
 				<Box
 					key={ key }
 					component="img"
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-ignore
 					src={ src }
-					alt={ `Modal image ${key}` }
-					onLoad={ () => markLoaded( key) }
+					alt={ `Modal image ${ key }` }
+					onLoad={ () => markLoaded( key ) }
 					onError={ () => markLoaded( key ) }
 					sx={ {
 						display: showSkeleton ? 'none' : 'block',
@@ -44,7 +42,7 @@ export const ModalImage: React.FC< ModalImageProps > = ( { id, images } ) => {
 						opacity: key === id ? 1 : 0,
 						objectFit: 'cover',
 						objectPosition: 'left top',
-						transition: ( theme ) =>
+						transition: ( theme: Theme ) =>
 							theme.transitions.create( [ 'opacity' ], {
 								easing: theme.transitions.easing.sharp,
 								duration: theme.transitions.duration.enteringScreen,
@@ -52,7 +50,7 @@ export const ModalImage: React.FC< ModalImageProps > = ( { id, images } ) => {
 					} }
 				/>
 			) ) 
-            }
+			}
 		</>
 	);
 };

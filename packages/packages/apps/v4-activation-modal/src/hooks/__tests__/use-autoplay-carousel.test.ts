@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 
 import { useAutoplayCarousel } from '../use-autoplay-carousel';
 
-const ITEMS = [ 'a', 'b', 'c' ] as const;
+const ITEMS = [ 'a', 'b', 'c' ];
 
 beforeEach( () => {
 	jest.useFakeTimers();

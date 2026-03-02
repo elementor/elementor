@@ -1,12 +1,12 @@
 import * as React from 'react';
+import { Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
-import { Box, Stack } from '@elementor/ui';
 
 import { V4ActivationModal } from './v4-activation-modal';
+import { FeatureItem } from './feature-item';
 import { ModalHeader } from './modal-header';
 import { ModalImage } from './modal-image';
 import { ModalFooter } from './modal-footer';
-import { FeatureItem } from './feature-item';
 import { useAutoplayCarousel } from '../hooks/use-autoplay-carousel';
 
 const BACKGROUND_COLOR = '#FFDFF9';
@@ -38,7 +38,7 @@ const FEATURE_ITEMS = [
 		subtitle: __( 'Clean code and a light CSS footprint with single-div wrappers.', 'elementor' ),
 		image: '',
 	},
-] as const;
+];
 
 const FEATURE_IDS = FEATURE_ITEMS.map( ( item ) => item.id );
 
@@ -50,10 +50,7 @@ export function AppContent( { onClose }: { onClose: () => void } ) {
 			onClose={ onClose }
 			rightPanelBackgroundColor={ BACKGROUND_COLOR }
 			rightPanel={
-				<ModalImage 
-					id={ selectedItem } 
-					images={ FEATURE_ITEMS.map( ( { id, image } ) => ( { id, src: image } ) ) }
-				/>
+				<ModalImage id={ selectedItem } images={ FEATURE_ITEMS.map( ( { id, image } ) => ( { id, src: image } ) ) } />
 			}
 			header={
 				<ModalHeader

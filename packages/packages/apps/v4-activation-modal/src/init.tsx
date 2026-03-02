@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { createRoot } from 'react-dom/client';
 import { App } from './app';
+import { createRoot } from 'react-dom/client';
 
 const ROOT_ELEMENT_ID = 'e-v4-opt-in-welcome';
 

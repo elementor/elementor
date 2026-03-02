@@ -1,10 +1,6 @@
 import * as React from 'react';
 import { useCallback, useState } from 'react';
-import {
-	DirectionProvider,
-	LocalizationProvider,
-	ThemeProvider,
-} from '@elementor/ui';
+import { DirectionProvider, LocalizationProvider, ThemeProvider } from '@elementor/ui';
 
 import { AppContent } from './components';
 
