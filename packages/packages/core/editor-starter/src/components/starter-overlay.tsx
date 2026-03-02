@@ -1,112 +1,20 @@
 import * as React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Box, IconButton, Typography, styled } from '@elementor/ui';
+import {
+	Card,
+	CardActionArea,
+	CardContent,
+	CardMedia,
+	CloseButton,
+	Paper,
+	Slide,
+	Stack,
+	type Theme,
+	Typography,
+} from '@elementor/ui';
 
-import { getStarterConfig, deleteStarterConfig, getAssetUrl, getEditingPanelWidth, getTopBarHeight } from '../utils';
 import type { StarterConfig } from '../types';
-
-const TRANSITION_DURATION = 350;
-
-const Overlay = styled( Box )( {
-	position: 'fixed',
-	right: 0,
-	zIndex: 10000,
-	display: 'flex',
-	flexDirection: 'column',
-	alignItems: 'center',
-	gap: '24px',
-	padding: '24px 20px 32px',
-	backgroundColor: '#f9f9fb',
-	boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)',
-	transform: 'translateY(0)',
-	opacity: 1,
-	transition: `transform ${ TRANSITION_DURATION }ms ease-in-out, opacity ${ TRANSITION_DURATION }ms ease-in-out`,
-} );
-
-const CloseButton = styled( IconButton )( {
-	position: 'absolute',
-	top: '16px',
-	right: '16px',
-	padding: '4px',
-	borderRadius: '50%',
-	backgroundColor: 'transparent',
-	fontSize: '18px',
-	lineHeight: 1,
-	color: '#0c0d0e',
-	'&:hover, &:focus': {
-		backgroundColor: 'rgba(0, 0, 0, 0.05)',
-		color: '#0c0d0e',
-	},
-} );
-
-const Title = styled( Typography )( {
-	fontFamily: 'Poppins, sans-serif',
-	fontSize: '24px',
-	fontWeight: 500,
-	lineHeight: '32px',
-	color: '#0c0d0e',
-} );
-
-const CardsContainer = styled( Box )( {
-	display: 'flex',
-	gap: '24px',
-	justifyContent: 'center',
-} );
-
-const Card = styled( 'button' )( {
-	display: 'flex',
-	flexDirection: 'column',
-	alignItems: 'center',
-	width: '280px',
-	borderRadius: '12px',
-	backgroundColor: '#fff',
-	overflow: 'hidden',
-	cursor: 'pointer',
-	padding: 0,
-	margin: 0,
-	boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-	transition: 'box-shadow 0.2s ease',
-	border: 'none',
-	'&:hover, &:focus': {
-		boxShadow: '0 4px 16px rgba(0, 0, 0, 0.12)',
-	},
-} );
-
-const CardIllustration = styled( Box )( {
-	width: '100%',
-	height: '138px',
-	overflow: 'hidden',
-	display: 'flex',
-	alignItems: 'center',
-	justifyContent: 'center',
-	padding: '12px',
-	boxSizing: 'border-box',
-	'& img': {
-		width: '100%',
-		height: '100%',
-		objectFit: 'cover',
-		borderRadius: '8px',
-	},
-} );
-
-const CardLabel = styled( Typography )( {
-	fontSize: '16px',
-	fontWeight: 500,
-	lineHeight: '18px',
-	letterSpacing: '0.15px',
-	color: '#0c0d0e',
-	marginTop: '4px',
-} );
-
-const CardSubtitle = styled( Typography )( {
-	fontSize: '14px',
-	fontWeight: 400,
-	lineHeight: '20px',
-	letterSpacing: '0.15px',
-	color: '#3f444b',
-	marginTop: '8px',
-	marginBottom: '24px',
-} );
+import { deleteStarterConfig, getAssetUrl, getEditingPanelWidth, getStarterConfig, getTopBarHeight } from '../utils';
 
 interface ElementorChannels {
 	panelElements?: {
@@ -120,7 +28,8 @@ function getElementorChannels(): ElementorChannels | undefined {
 }
 
 function dismissStarterApi( config: StarterConfig ) {
-	const apiFetch = ( window as unknown as { wp?: { apiFetch?: ( args: object ) => Promise< unknown > } } ).wp?.apiFetch;
+	const apiFetch = ( window as unknown as { wp?: { apiFetch?: ( args: object ) => Promise< unknown > } } ).wp
+		?.apiFetch;
 
 	apiFetch?.( {
 		path: config.restPath,
@@ -170,10 +79,6 @@ export default function StarterOverlay() {
 
 		dismissStarterApi( config );
 		deleteStarterConfig();
-
-		setTimeout( () => {
-			setConfig( null );
-		}, TRANSITION_DURATION );
 	}, [ config ] );
 
 	useEffect( () => {
@@ -238,45 +143,98 @@ export default function StarterOverlay() {
 	};
 
 	return (
-		<Overlay
-			sx={ {
-				top: topOffset + 'px',
-				left: panelWidth + 'px',
-				...( isDismissing && {
-					transform: 'translateY(-100%)',
-					opacity: 0,
-				} ),
-			} }
-		>
-			<CloseButton onClick={ dismiss } aria-label="Close">
-				<i className="eicon-close" aria-hidden="true" />
-			</CloseButton>
+		<Slide direction="down" in={ ! isDismissing } mountOnEnter unmountOnExit onExited={ () => setConfig( null ) }>
+			<Paper
+				elevation={ 4 }
+				sx={ {
+					position: 'fixed',
+					insetBlockStart: topOffset + 'px',
+					insetInlineStart: panelWidth + 'px',
+					insetInlineEnd: 0,
+					zIndex: 10000,
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'center',
+					gap: 3,
+					py: 3,
+					pb: 4,
+					px: 2.5,
+					backgroundColor: '#f9f9fb',
+				} }
+			>
+				<CloseButton
+					onClick={ dismiss }
+					aria-label="Close"
+					sx={ ( theme: Theme ) => ( {
+						position: 'absolute',
+						insetBlockStart: theme.spacing( 2 ),
+						insetInlineEnd: theme.spacing( 2 ),
+					} ) }
+				/>
 
-			<Title>Start building.</Title>
+				<Typography
+					variant="h5"
+					sx={ {
+						fontFamily: 'Poppins, sans-serif',
+						fontWeight: 500,
+						color: 'text.primary',
+					} }
+				>
+					Start building.
+				</Typography>
 
-			<CardsContainer>
-				<Card type="button" onClick={ onAiPlannerClick }>
-					<CardIllustration>
-						<img
-							src={ getAssetUrl( 'ai-site-planner.png' ) }
-							alt="AI Site Planner"
-						/>
-					</CardIllustration>
-					<CardLabel>AI Site Planner</CardLabel>
-					<CardSubtitle>Generate your wireframe with AI</CardSubtitle>
-				</Card>
+				<Stack direction="row" spacing={ 3 } justifyContent="center">
+					<Card sx={ { width: 280 } }>
+						<CardActionArea onClick={ onAiPlannerClick }>
+							<CardMedia
+								component="img"
+								image={ getAssetUrl( 'ai-site-planner.png' ) }
+								alt="AI Site Planner"
+								sx={ {
+									height: 138,
+									p: 1.5,
+									boxSizing: 'border-box',
+									objectFit: 'cover',
+									borderRadius: 1,
+								} }
+							/>
+							<CardContent sx={ { textAlign: 'center' } }>
+								<Typography variant="subtitle1" color="text.primary">
+									AI Site Planner
+								</Typography>
+								<Typography variant="body2" color="text.secondary" sx={ { mt: 1 } }>
+									Generate your wireframe with AI
+								</Typography>
+							</CardContent>
+						</CardActionArea>
+					</Card>
 
-				<Card type="button" onClick={ onTemplatesClick }>
-					<CardIllustration>
-						<img
-							src={ getAssetUrl( 'website-templates.png' ) }
-							alt="Website templates"
-						/>
-					</CardIllustration>
-					<CardLabel>Website templates</CardLabel>
-					<CardSubtitle>Start with a ready-made design</CardSubtitle>
-				</Card>
-			</CardsContainer>
-		</Overlay>
+					<Card sx={ { width: 280 } }>
+						<CardActionArea onClick={ onTemplatesClick }>
+							<CardMedia
+								component="img"
+								image={ getAssetUrl( 'website-templates.png' ) }
+								alt="Website templates"
+								sx={ {
+									height: 138,
+									p: 1.5,
+									boxSizing: 'border-box',
+									objectFit: 'cover',
+									borderRadius: 1,
+								} }
+							/>
+							<CardContent sx={ { textAlign: 'center' } }>
+								<Typography variant="subtitle1" color="text.primary">
+									Website templates
+								</Typography>
+								<Typography variant="body2" color="text.secondary" sx={ { mt: 1 } }>
+									Start with a ready-made design
+								</Typography>
+							</CardContent>
+						</CardActionArea>
+					</Card>
+				</Stack>
+			</Paper>
+		</Slide>
 	);
 }
