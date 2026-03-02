@@ -6,6 +6,25 @@ export default class AddSectionView extends BaseAddSectionView {
 		return 'elementor-add-new-section';
 	}
 
+	ui() {
+		return {
+			...BaseAddSectionView.prototype.ui.call( this ),
+			startBuilding: '.elementor-start-building',
+			starterClose: '.elementor-start-building__close',
+			aiPlannerCard: '.elementor-start-building__card--ai',
+			templatesCard: '.elementor-start-building__card--templates',
+		};
+	}
+
+	events() {
+		return {
+			...BaseAddSectionView.prototype.events.call( this ),
+			'click @ui.starterClose': 'onStarterCloseClick',
+			'click @ui.aiPlannerCard': 'onAiPlannerClick',
+			'click @ui.templatesCard': 'onTemplatesClick',
+		};
+	}
+
 	isStarterActive() {
 		return !! elementor.config.starter;
 	}
@@ -14,68 +33,8 @@ export default class AddSectionView extends BaseAddSectionView {
 		super.onRender();
 
 		if ( this.isStarterActive() ) {
-			this.initStarter();
+			elementor.channels.panelElements.on( 'element:drag:start', this.onPanelDragStart, this );
 		}
-	}
-
-	initStarter() {
-		this.starterEl = this.findAndMountStarterElement();
-
-		if ( ! this.starterEl ) {
-			return;
-		}
-
-		this.starterEl.style.display = 'flex';
-		this.attachStarterEventListeners();
-		elementor.channels.panelElements.on( 'element:drag:start', this.onPanelDragStart, this );
-	}
-
-	findAndMountStarterElement() {
-		const starterEl = document.getElementById( 'elementor-start-building' );
-
-		if ( ! starterEl ) {
-			return null;
-		}
-
-		const previewEl = document.getElementById( 'elementor-preview' );
-
-		if ( previewEl ) {
-			previewEl.appendChild( starterEl );
-		}
-
-		return starterEl;
-	}
-
-	attachStarterEventListeners() {
-		this.boundDismissStarter = () => this.dismissStarter();
-		this.boundOnAiPlannerClick = () => this.onAiPlannerClick();
-		this.boundOnTemplatesClick = () => this.onTemplatesClick();
-
-		this.starterEl.querySelector( '.elementor-start-building__close' )
-			?.addEventListener( 'click', this.boundDismissStarter );
-
-		this.starterEl.querySelector( '.elementor-start-building__card--ai' )
-			?.addEventListener( 'click', this.boundOnAiPlannerClick );
-
-		this.starterEl.querySelector( '.elementor-start-building__card--templates' )
-			?.addEventListener( 'click', this.boundOnTemplatesClick );
-	}
-
-	removeStarterEventListeners() {
-		if ( ! this.starterEl ) {
-			return;
-		}
-
-		this.starterEl.querySelector( '.elementor-start-building__close' )
-			?.removeEventListener( 'click', this.boundDismissStarter );
-
-		this.starterEl.querySelector( '.elementor-start-building__card--ai' )
-			?.removeEventListener( 'click', this.boundOnAiPlannerClick );
-
-		this.starterEl.querySelector( '.elementor-start-building__card--templates' )
-			?.removeEventListener( 'click', this.boundOnTemplatesClick );
-
-		elementor.channels.panelElements.off( 'element:drag:start', this.onPanelDragStart, this );
 	}
 
 	onPanelDragStart() {
@@ -88,6 +47,10 @@ export default class AddSectionView extends BaseAddSectionView {
 			containerCreated: false,
 		} );
 		this.closeSelectPresets();
+	}
+
+	onStarterCloseClick() {
+		this.dismissStarter();
 	}
 
 	onAiPlannerClick() {
@@ -103,14 +66,19 @@ export default class AddSectionView extends BaseAddSectionView {
 	}
 
 	dismissStarter() {
-		if ( ! this.starterEl ) {
+		if ( ! this.ui.startBuilding?.length ) {
 			return;
 		}
 
-		this.removeStarterEventListeners();
+		const starterEl = this.ui.startBuilding[ 0 ];
 
-		this.starterEl.style.display = 'none';
-		this.starterEl = null;
+		starterEl.addEventListener( 'transitionend', () => {
+			this.ui.startBuilding.hide();
+		}, { once: true } );
+
+		starterEl.classList.add( 'elementor-start-building--dismissed' );
+
+		elementor.channels.panelElements.off( 'element:drag:start', this.onPanelDragStart, this );
 
 		const config = elementor.config.starter;
 
@@ -128,6 +96,6 @@ export default class AddSectionView extends BaseAddSectionView {
 	}
 
 	onDestroy() {
-		this.removeStarterEventListeners();
+		elementor.channels.panelElements.off( 'element:drag:start', this.onPanelDragStart, this );
 	}
 }
