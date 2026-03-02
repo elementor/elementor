@@ -1,15 +1,34 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useCallback } from 'react';
+import { notify } from '@elementor/editor-notifications';
 import { ThemeProvider } from '@elementor/editor-ui';
+import { httpService } from '@elementor/http-client';
 import { Box, Button, Chip, CloseButton, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
+
+import { usePromoSuppressedMessage } from '../hooks/use-promo-suppressed-message';
 
 const PROMO_IMAGE = 'https://assets.elementor.com/v4-promotion/v1/images/v4_chip_new.png';
 
 export function AtomicElementsPromo() {
-	const [ dismissed, setDismissed ] = useState( false );
+	const [ suppressed, toggleSuppressMessage ] = usePromoSuppressedMessage();
 
-	if ( dismissed ) {
+	const activateAtomicElements = useCallback( async () => {
+		try {
+			const response = await httpService().post( 'elementor/v1/operations/opt-in-v4' );
+			if ( response.data.success ) {
+				window.location.reload();
+			}
+		} catch ( error ) {
+			notify( {
+				type: 'error',
+				message: __( 'Failed to activate Atomic elements', 'elementor' ),
+				id: 'atomic-elements-promo-error',
+			} );
+		}
+	}, [ toggleSuppressMessage ] );
+
+	if ( suppressed ) {
 		return null;
 	}
 
@@ -32,11 +51,14 @@ export function AtomicElementsPromo() {
 						py: 1,
 					} }
 				>
-					<Typography variant="subtitle2" sx={ { flexGrow: 1, gap: 1, display: 'flex', alignItems: 'center' } }>
+					<Typography
+						variant="subtitle2"
+						sx={ { flexGrow: 1, gap: 1, display: 'flex', alignItems: 'center' } }
+					>
 						{ __( 'Atomic Elements', 'elementor' ) }
 						<Chip label={ __( 'New', 'elementor' ) } size="small" color="primary" />
 					</Typography>
-					<CloseButton slotProps={{ icon: { fontSize: "small" } }} onClick={ () => setDismissed( true ) } />
+					<CloseButton slotProps={ { icon: { fontSize: 'small' } } } onClick={ toggleSuppressMessage } />
 				</Box>
 
 				<Box
@@ -79,10 +101,16 @@ export function AtomicElementsPromo() {
 						pt: 1,
 					} }
 				>
-					<Button variant="text" size="small" color="secondary">
+					<Button
+						variant="text"
+						size="small"
+						color="secondary"
+						href="https://go.elementor.com/wp-dash-opt-in-v4-help-center/"
+						target="_blank"
+					>
 						{ __( 'Learn more', 'elementor' ) }
 					</Button>
-					<Button variant="contained" size="small" color="primary">
+					<Button variant="contained" size="small" color="primary" onClick={ activateAtomicElements }>
 						{ __( 'Unlock for free', 'elementor' ) }
 					</Button>
 				</Box>

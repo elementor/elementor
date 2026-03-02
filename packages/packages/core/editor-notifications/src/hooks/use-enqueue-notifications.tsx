@@ -7,6 +7,8 @@ import { Button, CloseButton } from '@elementor/ui';
 import { clearAction } from '../slice';
 import type { Notifications } from '../types';
 
+const AUTO_HIDE_DURATION = 8000;
+
 export const useEnqueueNotification = ( notifications: Notifications ) => {
 	const { enqueueSnackbar } = useSnackbar();
 	const dispatch = useDispatch();
@@ -36,6 +38,7 @@ export const useEnqueueNotification = ( notifications: Notifications ) => {
 				onClose: () => dispatch( clearAction( { id: notification.id } ) ),
 				preventDuplicate: true,
 				action: <Action />,
+				autoHideDuration: notification.autoHideDuration ?? AUTO_HIDE_DURATION,
 			} );
 		} );
 	}, [ notifications, enqueueSnackbar, dispatch ] );
