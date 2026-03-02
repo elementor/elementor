@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
-import { Box, Button, Chip, CloseButton, Typography } from '@elementor/ui';
+import { Box, Button, Chip, CloseButton, Divider, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 const PROMO_IMAGE = 'https://assets.elementor.com/v4-promotion/v1/images/v4_chip_new.png';
@@ -37,7 +37,7 @@ export function AtomicElementsPromo() {
 						sx={ { flexGrow: 1, gap: 1, display: 'flex', alignItems: 'center' } }
 					>
 						{ __( 'Atomic Elements', 'elementor' ) }
-						<Chip label={ __( 'New', 'elementor' ) } size="small" color="primary" />
+						<Chip label={ __( 'New', 'elementor' ) } size="small" color="secondary" />
 					</Typography>
 					<CloseButton slotProps={ { icon: { fontSize: 'small' } } } onClick={ () => setDismissed( true ) } />
 				</Box>
@@ -90,6 +90,7 @@ export function AtomicElementsPromo() {
 					</Button>
 				</Box>
 			</Box>
+			<Divider/>
 		</ThemeProvider>
 	);
 }
