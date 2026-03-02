@@ -132,10 +132,6 @@ class Atomic_Form extends Atomic_Element_Base {
 								'label' => __( 'Email', 'elementor' ),
 								'value' => 'email',
 							],
-							[
-								'label' => __( 'Webhook', 'elementor' ),
-								'value' => 'webhook',
-							],
 						] ),
 					Email_Form_Action_Control::bind_to( 'email' )
 						->set_meta( [
