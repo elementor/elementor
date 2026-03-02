@@ -20,8 +20,8 @@ class Atomic_Elements_Utils {
 	}
 
 	public static function get_element_instance( $element_type ) {
-		$widget = Plugin::$instance->widgets_manager->get_widget_types( $element_type );
-		$element = Plugin::$instance->elements_manager->get_element_types( $element_type );
+		$widget = Plugin::instance()->widgets_manager->get_widget_types( $element_type );
+		$element = Plugin::instance()->elements_manager->get_element_types( $element_type );
 
 		return $widget ?? $element;
 	}

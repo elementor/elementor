@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\GlobalClasses\Database\Global_Classes_Database_Updater;
 use Elementor\Modules\GlobalClasses\ImportExport\Import_Export;
 use Elementor\Modules\GlobalClasses\ImportExportCustomization\Import_Export_Customization;
+use Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes;
 use Elementor\Modules\GlobalClasses\Usage\Global_Classes_Usage;
 use Elementor\Plugin;
 
@@ -47,6 +48,27 @@ class Module extends BaseModule {
 			( new Import_Export() )->register_hooks();
 			( new Import_Export_Customization() )->register_hooks();
 			( new Global_Classes_Database_Updater() )->register();
+
+			add_filter(
+				'elementor/template_library/export/build_snapshots',
+				[ Template_Library_Global_Classes::class, 'add_global_classes_snapshot' ],
+				10,
+				4
+			);
+
+			add_filter(
+				'elementor/template_library/get_data/extract_snapshots',
+				[ Template_Library_Global_Classes::class, 'extract_global_classes_from_data' ],
+				10,
+				3
+			);
+
+			add_filter(
+				'elementor/template_library/import/process_content',
+				[ Template_Library_Global_Classes::class, 'process_global_classes_import' ],
+				20,
+				3
+			);
 		}
 	}
 
