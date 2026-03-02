@@ -6,7 +6,7 @@
     "node": ">=20.19.0",
     "npm": ">=10.0.0"
   },
-  "packageManager": "npm@10.0.0",
+  "packageManager": "npm@10.0.0+sha512.d793bf5481baff3b99f2e8b66311e17097289a84ca36a0bc6c2ea12a599acc9a280db7560a80b9899b0da7d266f31ab055a6fad218809210f202a87c5bccaafe",
   "scripts": {
     "build": "turbo build",
     "build:ci": "turbo build --concurrency 1",

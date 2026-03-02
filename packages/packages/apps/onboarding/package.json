@@ -33,15 +33,16 @@
     "!**/__tests__"
   ],
   "scripts": {
-    "build": "tsup --config=../../tsup.build.ts",
-    "dev": "tsup --config=../../tsup.dev.ts"
+    "build": "tsup",
+    "dev": "tsup --watch"
   },
   "dependencies": {
     "@elementor/icons": "1.68.0",
     "@elementor/query": "4.0.0",
     "@elementor/store": "4.0.0",
     "@elementor/ui": "1.36.17",
-    "@elementor/utils": "4.0.0"
+    "@elementor/utils": "4.0.0",
+    "@lottiefiles/dotlottie-react": "^0.18.3"
   },
   "peerDependencies": {
     "react": "^18.3.1",
