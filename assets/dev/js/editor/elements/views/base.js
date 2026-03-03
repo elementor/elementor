@@ -188,6 +188,15 @@ BaseElementView = BaseContainer.extend( {
 						isEnabled: () => !! elementorCommon.storage.get( 'clipboard' ),
 						callback: () => $e.run( 'document/elements/paste-style', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					}, {
+						name: 'pasteInteractions',
+						title: __( 'Paste interactions', 'elementor' ),
+						isEnabled: () => !! elementorCommon.storage.get( 'clipboard' ),
+						callback: () => {
+							$e.run( 'document/elements/paste-interactions', {
+								containers: elementor.selection.getElements( this.getContainer() ),
+							} );
+						},
+					}, {
 						name: 'pasteArea',
 						icon: 'eicon-import-export',
 						title: __( 'Paste from other site', 'elementor' ),
