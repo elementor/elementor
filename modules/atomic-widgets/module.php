@@ -128,6 +128,7 @@ class Module extends BaseModule {
 		'editor-styles', // TODO: Need to be registered and not enqueued.
 		'editor-styles-repository',
 		'editor-interactions',
+		'editor-templates',
 	];
 
 	public function get_name() {

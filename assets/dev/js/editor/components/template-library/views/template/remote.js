@@ -1,3 +1,5 @@
+import { EditorOneEventManager } from 'elementor-editor-utils/editor-one-events';
+
 var TemplateLibraryTemplateView = require( 'elementor-templates/views/template/base' ),
 	TemplateLibraryTemplateRemoteView;
 
@@ -28,6 +30,17 @@ TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend( {
 		this.model.set( 'favorite', isFavorite );
 
 		elementor.templates.markAsFavorite( this.model, isFavorite );
+
+		const baseTier = elementor.config.library_connect?.base_access_tier;
+		const templateTier = this.model.get( 'accessTier' );
+
+		EditorOneEventManager.sendELibraryFavorite( {
+			assetId: this.model.get( 'template_id' ),
+			assetName: this.model.get( 'title' ),
+			libraryType: this.model.get( 'type' ) || this.model.get( 'source' ),
+			isFavorite,
+			proRequired: baseTier !== templateTier,
+		} );
 
 		if ( ! isFavorite && elementor.templates.getFilter( 'favorite' ) ) {
 			elementor.channels.templates.trigger( 'filter:change' );

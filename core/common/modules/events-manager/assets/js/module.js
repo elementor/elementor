@@ -13,11 +13,10 @@ export default class extends elementorModules.Module {
 			return;
 		}
 
-		this.initializeMixpanel();
-		this.enableTracking();
+		this.initializeMixpanel( () => this.enableTracking() );
 	}
 
-	initializeMixpanel() {
+	initializeMixpanel( onLoaded ) {
 		mixpanel.init(
 			elementorCommon.config.editor_events?.token,
 			{
@@ -31,11 +30,16 @@ export default class extends elementorModules.Module {
 				api_hosts: {
 					flags: 'https://api-eu.mixpanel.com',
 				},
+				loaded: onLoaded,
 			},
 		);
 	}
 
 	enableTracking() {
+		if ( ! this.isMixpanelReady() ) {
+			return;
+		}
+
 		const userId = elementorCommon.config.library_connect?.user_id;
 
 		if ( userId ) {
@@ -169,6 +173,19 @@ export default class extends elementorModules.Module {
 		}
 
 		mixpanel.track( '$experiment_started', { 'Experiment name': experimentName, 'Variant name': experimentVariant } );
+	}
+
+	isMixpanelReady() {
+		if ( 'undefined' === typeof mixpanel || ! mixpanel ) {
+			return false;
+		}
+
+		try {
+			const distinctId = mixpanel.get_distinct_id();
+			return distinctId !== undefined && distinctId !== null;
+		} catch ( error ) {
+			return false;
+		}
 	}
 
 	canSendEvents() {

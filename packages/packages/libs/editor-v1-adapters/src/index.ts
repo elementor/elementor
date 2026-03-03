@@ -37,7 +37,7 @@ export type { HistoryItem, WindowWithHistoryManager } from './undoable/get-histo
 
 export { useEditMode, changeEditMode, type EditMode, getCurrentEditMode } from './edit-mode';
 
-export { registerDataHook } from './data-hooks/register-data-hook';
+export { registerDataHook, type HookOptions } from './data-hooks/register-data-hook';
 export { blockCommand } from './data-hooks/block-command';
 
 export { getCanvasIframeDocument } from './canvas';

@@ -40,9 +40,9 @@ describe( 'Data Hooks', () => {
 			hook3.apply( { id: 3 } );
 
 			expect( mockFn ).toHaveBeenCalledTimes( 3 );
-			expect( mockFn ).toHaveBeenNthCalledWith( 1, { id: 1 } );
-			expect( mockFn ).toHaveBeenNthCalledWith( 2, { id: 2 } );
-			expect( mockFn ).toHaveBeenNthCalledWith( 3, { id: 3 } );
+			expect( mockFn ).toHaveBeenNthCalledWith( 1, { id: 1 }, undefined, {} );
+			expect( mockFn ).toHaveBeenNthCalledWith( 2, { id: 2 }, undefined, {} );
+			expect( mockFn ).toHaveBeenNthCalledWith( 3, { id: 3 }, undefined, {} );
 
 			expect( hook1.getId?.() ).not.toEqual( hook2.getId?.() );
 		} );
