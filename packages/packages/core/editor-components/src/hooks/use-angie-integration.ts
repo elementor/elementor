@@ -49,14 +49,19 @@ export const useAngieIntegration = () => {
 		window.location.hash = `angie-prompt=${ encodeURIComponent( prompt ) }`;
 	}, [] );
 
-	const redirectToInstall = useCallback( ( returnPrompt: string = GENERATE_COMPONENT_PROMPT ) => {
-		const angieSdk = ( window as Window & { angieSdk?: { setReferrerRedirect?: ( url: string, prompt: string ) => void } } ).angieSdk;
-		if ( angieSdk?.setReferrerRedirect ) {
-			angieSdk.setReferrerRedirect( window.location.href, returnPrompt );
-		}
+	const redirectToInstall = useCallback(
+		( returnPrompt: string = GENERATE_COMPONENT_PROMPT ) => {
+			const angieSdk = (
+				window as Window & { angieSdk?: { setReferrerRedirect?: ( url: string, prompt: string ) => void } }
+			 ).angieSdk;
+			if ( angieSdk?.setReferrerRedirect ) {
+				angieSdk.setReferrerRedirect( window.location.href, returnPrompt );
+			}
 
-		window.location.href = config.installUrl;
-	}, [ config.installUrl ] );
+			window.location.href = config.installUrl;
+		},
+		[ config.installUrl ]
+	);
 
 	const isAngieAvailable = checkAngieAvailable();
 

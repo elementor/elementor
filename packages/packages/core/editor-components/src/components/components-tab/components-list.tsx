@@ -1,18 +1,60 @@
 import * as React from 'react';
-import { useState } from 'react';
-import { ComponentsIcon, ElementorAIIcon } from '@elementor/icons';
+import { useLayoutEffect, useRef, useState } from 'react';
+import { AIIcon, ComponentsIcon } from '@elementor/icons';
 import { Box, Divider, Link, List, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useAngieIntegration } from '../../hooks/use-angie-integration';
 import { useComponents } from '../../hooks/use-components';
 import { useComponentsPermissions } from '../../hooks/use-components-permissions';
-import { AngieIntroModal, useAngieIntroModal } from '../angie-intro-modal';
+import { AngieIntroPopover, useAngieIntro } from '../angie-intro';
 import { ComponentItem } from './components-item';
 import { LoadingComponents } from './loading-components';
 import { useSearch } from './search-provider';
 
 const LEARN_MORE_URL = 'http://go.elementor.com/components-guide-article';
+
+// Injected dynamically because global CSS would break the Widgets tab (shared panel elements).
+const EMPTY_STATE_STYLE_ID = 'components-empty-state-full-height';
+
+const FULL_HEIGHT_CSS = `
+#elementor-panel-page-elements {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+#elementor-panel-elements {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
+}
+
+#elementor-panel-elements-wrapper {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
+}
+`;
+
+const useFullHeightPanel = () => {
+	useLayoutEffect( () => {
+		let style = document.getElementById( EMPTY_STATE_STYLE_ID );
+
+		if ( ! style ) {
+			style = document.createElement( 'style' );
+			style.id = EMPTY_STATE_STYLE_ID;
+			style.textContent = FULL_HEIGHT_CSS;
+			document.head.appendChild( style );
+		}
+
+		return () => {
+			document.getElementById( EMPTY_STATE_STYLE_ID )?.remove();
+		};
+	}, [] );
+};
 
 // Override legacy panel CSS reset that sets h1-h6 to font-size:100% and font-weight:normal.
 // See: assets/dev/scss/editor/panel/_reset.scss (applied via :where() selector in panel.scss).
@@ -46,8 +88,11 @@ export function ComponentsList() {
 export const EmptyState = () => {
 	const { canCreate } = useComponentsPermissions();
 	const { isAngieAvailable, isAngieInstalled, triggerAngiePrompt, redirectToInstall } = useAngieIntegration();
-	const { shouldShowIntro, suppressIntro } = useAngieIntroModal();
-	const [ isIntroModalOpen, setIsIntroModalOpen ] = useState( false );
+	const { shouldShowIntro, suppressIntro } = useAngieIntro();
+	const [ isIntroOpen, setIsIntroOpen ] = useState( false );
+	const generateLinkRef = useRef< HTMLButtonElement | null >( null );
+
+	useFullHeightPanel();
 
 	const handleGenerateClick = () => {
 		if ( ! isAngieInstalled ) {
@@ -61,7 +106,7 @@ export const EmptyState = () => {
 		}
 
 		if ( shouldShowIntro ) {
-			setIsIntroModalOpen( true );
+			setIsIntroOpen( true );
 			return;
 		}
 
@@ -70,39 +115,44 @@ export const EmptyState = () => {
 
 	const handleIntroConfirm = () => {
 		suppressIntro();
-		setIsIntroModalOpen( false );
+		setIsIntroOpen( false );
 		triggerAngiePrompt();
 	};
 
 	const handleIntroClose = () => {
-		setIsIntroModalOpen( false );
+		setIsIntroOpen( false );
 	};
 
 	const isMac = navigator.platform.toUpperCase().indexOf( 'MAC' ) >= 0;
 	const shortcutKey = isMac ? 'Cmd' : 'Ctrl';
 
 	return (
-		<>
-			<Stack
-				alignItems="center"
-				justifyContent="start"
-				height="100%"
-				sx={ { px: 2, py: 4 } }
-				gap={ 1 }
-				overflow="hidden"
-			>
-			<Stack alignItems="center" gap={ 1 }>
+		<Stack
+			alignItems="center"
+			justifyContent="start"
+			height="100%"
+			sx={ { px: 2, py: 4 } }
+			gap={ 1 }
+			overflow="hidden"
+		>
+			<Stack alignItems="center" gap={ 1.75 }>
 				<ComponentsIcon fontSize="large" sx={ { color: 'text.secondary' } } />
 
-				<Stack alignItems="center" gap={ 0.5 }>
+				<Stack alignItems="center" gap={ 1.75 }>
 					<Typography align="center" variant="subtitle2" color="text.secondary" sx={ SUBTITLE_OVERRIDE_SX }>
 						{ __( 'Create your first component', 'elementor' ) }
 					</Typography>
 
 					<Typography align="center" variant="caption" color="text.tertiary">
 						{ canCreate
-							? `${ __( 'Press', 'elementor' ) } ${ shortcutKey }+ Shift + K ${ __( 'on div-block or flexbox', 'elementor' ) }`
-							: __( 'With your current role, you cannot create components. Contact an administrator to create one.', 'elementor' ) }
+							? `${ __( 'Press', 'elementor' ) } ${ shortcutKey }+ Shift + K ${ __(
+									'on div-block or flexbox',
+									'elementor'
+							  ) }`
+							: __(
+									'With your current role, you cannot create components. Contact an administrator to create one.',
+									'elementor'
+							  ) }
 					</Typography>
 				</Stack>
 			</Stack>
@@ -113,27 +163,36 @@ export const EmptyState = () => {
 						{ __( 'Or', 'elementor' ) }
 					</Typography>
 
-					<Stack alignItems="center" gap={ 0.5 }>
+					<Stack alignItems="center" gap={ 1 }>
 						<Typography align="center" variant="caption" color="text.tertiary">
 							{ __( 'Generate a custom component using Angie', 'elementor' ) }
 						</Typography>
 
 						<Link
+							ref={ generateLinkRef }
 							component="button"
 							variant="caption"
 							onClick={ handleGenerateClick }
-							sx={ ( theme ) => ( {
+							sx={ {
 								display: 'flex',
 								alignItems: 'center',
+								padding: 0.5,
 								gap: 0.5,
-								color: theme.palette.primary.main,
+								color: '#c00bb9',
 								textDecoration: 'none',
 								'&:hover': { textDecoration: 'underline' },
-							} ) }
+							} }
 						>
-							<ElementorAIIcon sx={ { fontSize: 16 } } />
+							<AIIcon sx={ { fontSize: 16 } } />
 							{ __( 'Generate Component', 'elementor' ) }
 						</Link>
+
+						<AngieIntroPopover
+							open={ isIntroOpen }
+							onClose={ handleIntroClose }
+							onConfirm={ handleIntroConfirm }
+							anchorRef={ generateLinkRef }
+						/>
 					</Stack>
 				</>
 			) }
@@ -153,15 +212,7 @@ export const EmptyState = () => {
 					{ __( 'Learn more', 'elementor' ) }
 				</Link>
 			</Stack>
-			</Stack>
-
-			{ isIntroModalOpen && (
-				<AngieIntroModal
-					onClose={ handleIntroClose }
-					onConfirm={ handleIntroConfirm }
-				/>
-			) }
-		</>
+		</Stack>
 	);
 };
 
