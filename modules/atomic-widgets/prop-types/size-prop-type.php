@@ -13,14 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Size_Prop_Type extends Object_Prop_Type {
-
-	public static function get_supported_units(): array {
-		return apply_filters( 'elementor/atomic-widgets/size/units', Size_Constants::all_supported_units() );
-	}
-
-	public function units( $units = 'all' ) {
+	public function units( $units = 'all' ): self {
 		if ( 'all' === $units ) {
-			$units = Size_Constants::all();
+			$units = Size_Constants::standard_units();
 		}
 
 		if ( is_array( $units ) ) {
@@ -99,7 +94,8 @@ class Size_Prop_Type extends Object_Prop_Type {
 
 	protected function define_shape(): array {
 		return [
-			'unit' => String_Prop_Type::make()->enum( static::get_supported_units() )
+			// TODO do we send all units for every size
+			'unit' => String_Prop_Type::make()->enum( Size_Constants::all_units() )
 				->required(),
 			'size' => Union_Prop_Type::make()
 				->add_prop_type( String_Prop_Type::make() )
