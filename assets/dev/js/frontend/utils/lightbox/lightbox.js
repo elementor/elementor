@@ -669,7 +669,6 @@ module.exports = elementorModules.ViewModule.extend( {
 		let $prevButton, $nextButton;
 
 		options.slides.forEach( ( slide ) => {
-
 			let slideClass = slideshowClasses.slide + ' ' + classes.item;
 
 			if ( slide.video ) {
