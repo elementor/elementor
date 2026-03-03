@@ -69,6 +69,15 @@ class Atomic_Form extends Atomic_Element_Base {
 			] )
 			->get();
 
+		$submissions_metadata_dependencies = Dependency_Manager::make()
+			->where( [
+				'operator' => 'contains',
+				'path' => [ 'actions-after-submit' ],
+				'value' => 'collect-submissions',
+				'effect' => 'hide',
+			] )
+			->get();
+
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
@@ -79,6 +88,9 @@ class Atomic_Form extends Atomic_Element_Base {
 				->default( 'default' ),
 			'actions-after-submit' => String_Array_Prop_Type::make()
 				->default( [] ),
+			'submissions_metadata' => String_Array_Prop_Type::make()
+				->set_dependencies( $submissions_metadata_dependencies )
+				->default( [ 'remote_ip', 'user_agent' ] ),
 			'email' => Email_Prop_Type::make()
 				->set_dependencies( $email_dependencies )
 				->default( [] ),
@@ -128,6 +140,19 @@ class Atomic_Form extends Atomic_Element_Base {
 							[
 								'label' => __( 'Email', 'elementor' ),
 								'value' => 'email',
+							],
+						] ),
+					Chips_Control::bind_to( 'submissions_metadata' )
+						->set_label( __( 'Include metadata', 'elementor' ) )
+						->set_meta( [ 'topDivider' => true ] )
+						->set_options( [
+							[
+								'label' => __( 'User IP', 'elementor' ),
+								'value' => 'remote_ip',
+							],
+							[
+								'label' => __( 'User Agent', 'elementor' ),
+								'value' => 'user_agent',
 							],
 						] ),
 					Email_Form_Action_Control::bind_to( 'email' )
