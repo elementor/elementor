@@ -4,8 +4,6 @@ namespace Elementor\Modules\AngieEntrypoints;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as ExperimentsManager;
-use Elementor\Core\Utils\Hints;
-use Elementor\Elements_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -30,19 +28,5 @@ class Module extends BaseModule {
 			'default' => ExperimentsManager::STATE_INACTIVE,
 			'release_status' => ExperimentsManager::RELEASE_STATUS_ALPHA,
 		];
-	}
-
-	public function __construct() {
-		parent::__construct();
-
-		( new Rest_Api() )->register_hooks();
-	}
-
-	public static function is_angie_installed(): bool {
-		return Hints::is_plugin_installed( self::PLUGIN_SLUG );
-	}
-
-	public static function is_angie_active(): bool {
-		return Hints::is_plugin_active( self::PLUGIN_SLUG );
 	}
 }
