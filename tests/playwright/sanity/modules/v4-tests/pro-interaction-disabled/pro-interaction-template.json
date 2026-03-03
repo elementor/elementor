@@ -1,0 +1,115 @@
+{
+    "content": [
+      {
+        "id": "abc12345",
+        "settings": [],
+        "elements": [
+          {
+            "id": "def67890",
+            "settings": [],
+            "elements": [],
+            "isInner": false,
+            "widgetType": "e-heading",
+            "elType": "widget",
+            "styles": [],
+            "editor_settings": [],
+            "interactions": {
+              "version": 1,
+              "items": [
+                {
+                  "$$type": "interaction-item",
+                  "value": {
+                    "interaction_id": {
+                      "$$type": "string",
+                      "value": "test-pro-interaction-1"
+                    },
+                    "trigger": {
+                      "$$type": "string",
+                      "value": "hover"
+                    },
+                    "animation": {
+                      "$$type": "animation-preset-props",
+                      "value": {
+                        "effect": {
+                          "$$type": "string",
+                          "value": "fade"
+                        },
+                        "type": {
+                          "$$type": "string",
+                          "value": "in"
+                        },
+                        "direction": {
+                          "$$type": "string",
+                          "value": ""
+                        },
+                        "timing_config": {
+                          "$$type": "timing-config",
+                          "value": {
+                            "duration": {
+                              "$$type": "size",
+                              "value": {
+                                "size": 600,
+                                "unit": "ms"
+                              }
+                            },
+                            "delay": {
+                              "$$type": "size",
+                              "value": {
+                                "size": 0,
+                                "unit": "ms"
+                              }
+                            }
+                          }
+                        },
+                        "config": {
+                          "$$type": "animation-config",
+                          "value": {
+                            "replay": {
+                              "$$type": "boolean",
+                              "value": false
+                            },
+                            "easing": {
+                              "$$type": "string",
+                              "value": "easeIn"
+                            },
+                            "relativeTo": {
+                              "$$type": "string",
+                              "value": ""
+                            },
+                            "offsetTop": {
+                              "$$type": "size",
+                              "value": {
+                                "size": 15,
+                                "unit": "%"
+                              }
+                            },
+                            "offsetBottom": {
+                              "$$type": "size",
+                              "value": {
+                                "size": 85,
+                                "unit": "%"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "version": "0.0"
+          }
+        ],
+        "isInner": false,
+        "elType": "e-div-block",
+        "styles": [],
+        "editor_settings": [],
+        "version": "0.0"
+      }
+    ],
+    "page_settings": [],
+    "version": "0.4",
+    "title": "Pro-interaction-disabled-test",
+    "type": "page"
+  }

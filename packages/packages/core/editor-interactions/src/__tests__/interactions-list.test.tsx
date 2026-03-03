@@ -1,11 +1,23 @@
 import * as React from 'react';
+import { mockCurrentUserCapabilities, renderWithTheme } from 'test-utils';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { InteractionsList } from '../components/interactions-list';
 import { PopupStateProvider } from '../contexts/popup-state-context';
 import { type ElementInteractions } from '../types';
+import { isSupportedInteraction } from '../utils/is-supported-interaction';
 
 jest.mock( '../utils/get-interactions-config' );
+jest.mock( '@elementor/editor-current-user' );
+jest.mock( '../utils/is-supported-interaction', () => ( {
+	isSupportedInteraction: jest.fn( () => true ),
+} ) );
+
+const mockedIsSupportedInteraction = jest.mocked( isSupportedInteraction );
+
+beforeEach( () => {
+	mockCurrentUserCapabilities( false );
+} );
 
 const createInteraction = (
 	trigger: string,
@@ -99,6 +111,14 @@ describe( 'InteractionsList', () => {
 } );
 
 describe( 'InteractionsList onPlayInteraction', () => {
+	beforeEach( () => {
+		mockedIsSupportedInteraction.mockReturnValue( true );
+	} );
+
+	afterEach( () => {
+		mockedIsSupportedInteraction.mockReturnValue( false );
+	} );
+
 	it( 'should call onPlayInteraction when preview button is clicked', () => {
 		const mockOnPlayInteraction = jest.fn();
 		const interactions = createInteraction( 'load', 'fade', 'in', '', 300, 0 );
@@ -116,7 +136,7 @@ describe( 'InteractionsList onPlayInteraction', () => {
 		const previewButton = screen.getByLabelText( /play interaction/i );
 		fireEvent.click( previewButton );
 
-		expect( mockOnPlayInteraction ).toHaveBeenCalledWith( 'test-id' );
+		expect( mockOnPlayInteraction ).toHaveBeenCalled();
 	} );
 
 	it( 'should call onPlayInteraction with correct interaction ID for each item', () => {
@@ -278,5 +298,99 @@ describe( 'InteractionsList onPlayInteraction', () => {
 		);
 
 		expect( screen.getByText( 'On page load: Fade In' ) ).toBeInTheDocument();
+	} );
+} );
+
+describe( 'InteractionsList pro interaction disabled behavior', () => {
+	beforeEach( () => {
+		mockCurrentUserCapabilities( true );
+		( window as unknown as { elementorAppConfig: { admin_url: string } } ).elementorAppConfig = {
+			admin_url: 'https://example.com/wp-admin/',
+		};
+	} );
+
+	afterEach( () => {
+		jest.clearAllMocks();
+		mockedIsSupportedInteraction.mockReturnValue( true );
+	} );
+
+	it( 'should show promotion popover when a disabled pro item is clicked', () => {
+		mockedIsSupportedInteraction.mockReturnValue( false );
+		const interactions = createInteraction( 'hover', 'fade', 'in', '', 300, 0 );
+
+		renderWithTheme(
+			<PopupStateProvider>
+				<InteractionsList
+					interactions={ interactions }
+					onSelectInteractions={ jest.fn() }
+					onPlayInteraction={ jest.fn() }
+				/>
+			</PopupStateProvider>
+		);
+
+		const openItemButton = screen.getByLabelText( /open item/i );
+		fireEvent.click( openItemButton );
+
+		expect( screen.getByRole( 'dialog', { name: /promotion-popover-title/i } ) ).toBeInTheDocument();
+		expect(
+			screen.getByText(
+				'This interaction is currently inactive and not showing on your website. Activate your Pro plugin to use it again.'
+			)
+		).toBeInTheDocument();
+	} );
+
+	it( 'should disable the preview button for pro interactions', () => {
+		mockedIsSupportedInteraction.mockReturnValue( false );
+		const interactions = createInteraction( 'hover', 'fade', 'in', '', 300, 0 );
+
+		renderWithTheme(
+			<PopupStateProvider>
+				<InteractionsList
+					interactions={ interactions }
+					onSelectInteractions={ jest.fn() }
+					onPlayInteraction={ jest.fn() }
+				/>
+			</PopupStateProvider>
+		);
+
+		const previewButton = screen.getByLabelText( /play interaction/i );
+		expect( previewButton ).toBeDisabled();
+	} );
+
+	it( 'should NOT show promotion popover for non-pro interaction items', () => {
+		mockedIsSupportedInteraction.mockReturnValue( true );
+		const interactions = createInteraction( 'load', 'fade', 'in', '', 300, 0 );
+
+		renderWithTheme(
+			<PopupStateProvider>
+				<InteractionsList
+					interactions={ interactions }
+					onSelectInteractions={ jest.fn() }
+					onPlayInteraction={ jest.fn() }
+				/>
+			</PopupStateProvider>
+		);
+
+		const openItemButton = screen.getByLabelText( /open item/i );
+		fireEvent.click( openItemButton );
+		expect( screen.queryByRole( 'dialog', { name: /promotion-popover-title/i } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should not disable the preview button for non-pro interactions', () => {
+		mockedIsSupportedInteraction.mockReturnValue( true );
+		const interactions = createInteraction( 'load', 'fade', 'in', '', 300, 0 );
+
+		renderWithTheme(
+			<PopupStateProvider>
+				<InteractionsList
+					interactions={ interactions }
+					onSelectInteractions={ jest.fn() }
+					onPlayInteraction={ jest.fn() }
+				/>
+			</PopupStateProvider>
+		);
+
+		const previewButton = screen.getByLabelText( /play interaction/i );
+		expect( previewButton ).toBeEnabled();
 	} );
 } );
