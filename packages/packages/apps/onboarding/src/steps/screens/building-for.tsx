@@ -54,7 +54,7 @@ export function BuildingFor( { onComplete }: BuildingForProps ) {
 			<GreetingBanner>{ greetingText }</GreetingBanner>
 
 			<Stack spacing={ 4 } alignItems="center">
-				<StepTitle variant="h5" align="center">
+				<StepTitle color="text.primary" variant="h5" align="center">
 					{ t( 'steps.building_for.title' ) }
 				</StepTitle>
 

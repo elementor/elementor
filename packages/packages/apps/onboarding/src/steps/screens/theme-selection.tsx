@@ -70,7 +70,7 @@ export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
 
 			<Stack spacing={ 4 }>
 				<Stack spacing={ 1 }>
-					<StepTitle variant="h5" align="center">
+					<StepTitle color="text.primary" variant="h5" align="center">
 						{ t( 'steps.theme_selection.title' ) }
 					</StepTitle>
 					<Typography variant="body1" color="text.secondary">

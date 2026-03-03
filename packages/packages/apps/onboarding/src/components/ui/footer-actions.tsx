@@ -26,9 +26,6 @@ const BackButton = styled( Button )( ( { theme } ) => ( {
 	fontWeight: 500,
 	lineHeight: theme.typography.pxToRem( 24 ),
 	letterSpacing: '0.4px',
-	'&:hover': {
-		backgroundColor: 'transparent',
-	},
 } ) );
 
 const SkipButton = styled( Button )( ( { theme } ) => {
@@ -45,16 +42,10 @@ const SkipButton = styled( Button )( ( { theme } ) => {
 		fontWeight: 500,
 		lineHeight: theme.typography.pxToRem( 24 ),
 		letterSpacing: '0.4px',
-		'&:hover': {
-			backgroundColor: 'transparent',
-			borderColor: outlinedBorderColor,
-		},
 	};
 } );
 
 const ContinueButton = styled( Button )( ( { theme } ) => ( {
-	backgroundColor: theme.palette.primary.main,
-	color: theme.palette.primary.contrastText,
 	padding: theme.spacing( 0.75, 2 ),
 	minHeight: 0,
 	borderRadius: theme.shape.borderRadius,
@@ -63,9 +54,6 @@ const ContinueButton = styled( Button )( ( { theme } ) => ( {
 	fontWeight: 500,
 	lineHeight: theme.typography.pxToRem( 24 ),
 	letterSpacing: '0.4px',
-	'&:hover': {
-		backgroundColor: theme.palette.primary.main,
-	},
 } ) );
 
 interface FooterActionsProps {
@@ -114,6 +102,7 @@ export function FooterActions( {
 
 				{ showContinue && (
 					<ContinueButton
+						color="primary"
 						variant="contained"
 						onClick={ onContinue }
 						disabled={ continueDisabled || continueLoading }
