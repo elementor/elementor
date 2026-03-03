@@ -25,6 +25,7 @@ const RightPanelRoot = styled( Box, {
 	borderRadius: theme.shape.borderRadius * PANEL_RADIUS_MULTIPLIER,
 	overflow: 'hidden',
 	background,
+	backgroundPosition: 'left center',
 } ) );
 
 const AssetImage = styled( 'img' )( {

@@ -35,15 +35,17 @@ const stepVisuals: Record< StepIdType, StepVisualConfig > = {
 	[ StepId.SITE_ABOUT ]: {
 		background: buildBackground( 'step-2.png' ),
 		assets: [],
-		lottieAnimation: getOnboardingAssetUrl( 'site-about.lottie' ),
+		lottieAnimation: getOnboardingAssetUrl( 'step-2.lottie' ),
 	},
 	[ StepId.EXPERIENCE_LEVEL ]: {
 		background: buildBackground( 'step-3.png' ),
 		assets: [],
+		lottieAnimation: getOnboardingAssetUrl( 'step-3.lottie' ),
 	},
 	[ StepId.THEME_SELECTION ]: {
 		background: buildBackground( 'step-4.png' ),
 		assets: [],
+		lottieAnimation: getOnboardingAssetUrl( 'step-4.lottie' ),
 	},
 	[ StepId.SITE_FEATURES ]: {
 		background: buildBackground( 'step-5.png' ),
@@ -57,6 +59,4 @@ export const getLoginVisualConfig = (): StepVisualConfig => LOGIN_CONFIG;
 export const getStepVisualConfig = ( stepId: StepIdType ): StepVisualConfig => stepVisuals[ stepId ] ?? DEFAULT_CONFIG;
 
 export const getLottieAnimationUrls = (): string[] =>
-	Object.values( stepVisuals ).flatMap( ( config ) =>
-		config.lottieAnimation ? [ config.lottieAnimation ] : []
-	);
+	Object.values( stepVisuals ).flatMap( ( config ) => ( config.lottieAnimation ? [ config.lottieAnimation ] : [] ) );
