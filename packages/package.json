@@ -30,7 +30,7 @@
     "packages/tools/*",
     "packages/libs/*",
     "packages/core/*",
-    "packages/apps/*"
+    "apps/*"
   ],
   "devDependencies": {
     "@jest/globals": "~29.7.0",
