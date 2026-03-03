@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { setReferrerRedirect } from '@elementor/angie-sdk';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { XIcon } from '@elementor/icons';
-import { Box, Button, Dialog, DialogContent, IconButton, Image, Stack, Typography } from '@elementor/ui';
+import { Button, Dialog, DialogContent, IconButton, Image, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 const SHOW_ANGIE_PROMOTION_MODAL_EVENT = 'elementor/editor/show-angie-promotion-modal';
@@ -49,7 +49,7 @@ export function AngiePromotionModal() {
 
 	return (
 		<ThemeProvider>
-			<Dialog minWidth="md" open={ open } onClose={ handleClose }>
+			<Dialog fullWidth maxWidth="md" open={ open } onClose={ handleClose }>
 				<IconButton
 					aria-label={ __( 'Close', 'elementor' ) }
 					onClick={ handleClose }
@@ -63,33 +63,18 @@ export function AngiePromotionModal() {
 					<XIcon />
 				</IconButton>
 				<DialogContent sx={ { p: 0, overflow: 'hidden' } }>
-					<Stack direction="row" alignItems="stretch">
-						<Box
+					<Stack direction="row" sx={ { height: 400 } }>
+						<Image
 							sx={ {
-								flex: 1,
-								minWidth: 0,
-								overflow: 'hidden',
+								height: '100%',
+								aspectRatio: '1 / 1',
+								objectFit: 'cover',
+								objectPosition: 'right center',
 							} }
-						>
-							<Image
-								sx={ {
-									width: '100%',
-									height: '100%',
-									objectFit: 'cover',
-									objectPosition: 'right center',
-								} }
-								src={ 'https://assets.elementor.com/packages/v1/images/class-manager-intro.svg' }
-								alt={ '' }
-							/>
-						</Box>
-						<Box
-							sx={ {
-								flexShrink: 0,
-								width: 340,
-								p: 4,
-							} }
-						>
-							<Typography variant="h6" fontWeight={ 600 } mb={ 2 }>
+							src={ ANGIE_PROMOTION_IMAGE_URL }
+						/>
+						<Stack gap={ 2 } justifyContent="center" p={ 4 }>
+							<Typography variant="h6" fontWeight={ 600 } whiteSpace="nowrap">
 								{ __( 'Install Angie to build custom widgets', 'elementor' ) }
 							</Typography>
 							<Typography variant="body2" color="text.secondary">
@@ -101,12 +86,12 @@ export function AngiePromotionModal() {
 							<Typography variant="body2" color="text.secondary">
 								{ __( 'Install once to start building directly inside the editor.', 'elementor' ) }
 							</Typography>
-							<Stack direction="row" justifyContent="flex-end" mt={ 2 }>
+							<Stack direction="row" justifyContent="flex-end" sx={ { mt: 1 } }>
 								<Button variant="contained" color="accent" onClick={ handleInstall }>
 									{ __( 'Install Angie', 'elementor' ) }
 								</Button>
 							</Stack>
-						</Box>
+						</Stack>
 					</Stack>
 				</DialogContent>
 			</Dialog>
