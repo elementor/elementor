@@ -6,9 +6,7 @@ module.exports = {
 		'^.+\\.(t|j)sx?$': '@swc/jest',
 	},
 	moduleNameMapper: {
-		'^@elementor/(?!ui|icons|design-tokens)(.*)$': [
-			'<rootDir>/libs/$1/src',
-		],
+		'^@elementor/(?!ui|icons|design-tokens)(.*)$': [ '<rootDir>/libs/$1/src' ],
 	},
 	testMatch: [ '<rootDir>/libs/**/__tests__/**/*.test.[jt]s?(x)' ],
 	// Setup files to run for all the tests.
