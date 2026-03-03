@@ -157,4 +157,3 @@ If user specifies:
 - Specific spacing → use it
 - "Minimal/simple" → reduce ornamentation but maintain quality principles
 `;
-
