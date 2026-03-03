@@ -26,7 +26,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -286,11 +285,8 @@ class Atomic_Form extends Atomic_Element_Base {
 
 	protected function build_template_context(): array {
 		$context = $this->build_base_template_context();
-		$settings = $this->get_atomic_settings();
 
-		$context['form_state'] = Plugin::$instance->editor->is_edit_mode()
-			? ( $settings['form-state'] ?? 'default' )
-			: 'default';
+		$context['form_state'] = 'default';
 
 		return $context;
 	}

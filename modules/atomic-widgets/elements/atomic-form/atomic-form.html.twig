@@ -1,3 +1,4 @@
+{%- set form_state = form_state | default(settings['form-state']) | default('default') -%}
 {%- set classes = ['e-con', 'e-atomic-element', base_styles.base, 'form-state-' ~ form_state] | merge(settings.classes | default([])) | join(' ') -%}
 <form class="{{ classes }} {{ editor_classes | default('') }}"
       data-id="{{ id }}"
