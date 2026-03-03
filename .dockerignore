@@ -1,5 +1,7 @@
 node_modules
 packages/node_modules
+packages/.turbo
+.turbo
 build
 tmp
 .git
@@ -12,4 +14,7 @@ local-site
 vendor
 *.log
 *.map
+coverage-report
+test-results
+playwright-report
 docker-output/

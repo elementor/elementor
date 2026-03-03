@@ -16,6 +16,13 @@ tmp/
 build/
 dist/
 
+# CI and test outputs
+.turbo/
+coverage-report/
+test-results/
+playwright-report/
+docker-output/
+
 # Logs and temporary files
 *.log
 *.cache
