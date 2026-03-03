@@ -418,7 +418,7 @@ export default function createAtomicElementBaseView( type ) {
 			const isExperimentalFeaturesEnabled = elementorCommon.config.experimentalFeatures?.e_components;
 
 			if ( isExperimentalFeaturesEnabled && isAdministrator ) {
-				const isProActive = window.elementorV2?.editorComponents?.isProActive?.() ?? true;
+				const isProActive = window.elementorV2?.utils?.isProActive?.() ?? true;
 
 				const badge = isProActive
 					? `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`
@@ -459,7 +459,7 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		saveAsComponent( openContextMenuEvent, options ) {
-			const isProActive = window.elementorV2?.editorComponents?.isProActive?.() ?? true;
+			const isProActive = window.elementorV2?.utils?.isProActive?.() ?? true;
 
 			if ( ! isProActive ) {
 				return;
