@@ -63,6 +63,7 @@ interface FooterActionsProps {
 	backLabel?: string;
 	skipLabel?: string;
 	continueLabel?: string;
+	isBackDisabled?: boolean;
 	continueDisabled?: boolean;
 	continueLoading?: boolean;
 	onBack?: () => void;
@@ -77,6 +78,7 @@ export function FooterActions( {
 	backLabel = t( 'common.back' ),
 	skipLabel = t( 'common.skip' ),
 	continueLabel = t( 'common.continue' ),
+	isBackDisabled = false,
 	continueDisabled = false,
 	continueLoading = false,
 	onBack,
@@ -87,7 +89,12 @@ export function FooterActions( {
 		<>
 			<LeftActions>
 				{ showBack && (
-					<BackButton variant="text" onClick={ onBack } startIcon={ <ArrowLeftIcon fontSize="tiny" /> }>
+					<BackButton
+						variant="text"
+						onClick={ onBack }
+						disabled={ isBackDisabled }
+						startIcon={ <ArrowLeftIcon fontSize="tiny" /> }
+					>
 						{ backLabel }
 					</BackButton>
 				) }

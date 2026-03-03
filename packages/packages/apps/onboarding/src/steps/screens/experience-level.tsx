@@ -40,9 +40,9 @@ export function ExperienceLevel( { onComplete }: ExperienceLevelProps ) {
 
 	return (
 		<Stack spacing={ 4 } width="100%" data-testid="experience-level-step">
-			<Stack spacing={ 1 } textAlign="center" alignItems="center">
+			<Stack spacing={ 1 } textAlign="center" alignItems="center" sx={ { pt: 2.5 } }>
 				<StepTitle color="text.primary" variant="h5" align="center" maxWidth={ 325 }>
-					{ t( 'steps.experience_level.title' ) }
+					testje { t( 'steps.experience_level.title' ) }
 				</StepTitle>
 				<Typography variant="body1" color="text.secondary">
 					{ t( 'steps.experience_level.subtitle' ) }

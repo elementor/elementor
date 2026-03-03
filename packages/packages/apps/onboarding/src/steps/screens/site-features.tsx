@@ -1,28 +1,26 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
-import {
-	CodeIcon,
-	ColorSwatchIcon,
-	ElementorAccessibilityIcon,
-	ElementorAIIcon,
-	ElementorEmailDeliverabilityIcon,
-	ElementorImageOptimizerIcon,
-	ThemeBuilderIcon,
-} from '@elementor/icons';
 import { Stack, type Theme, Typography } from '@elementor/ui';
 
-import { CorePlaceholderIcon } from '../../components/ui/core-placeholder-icon';
 import { StepTitle } from '../../components/ui/styled-components';
 import { WoocommerceIcon } from '../../components/ui/woocommerce-icon';
 import { useOnboarding } from '../../hooks/use-onboarding';
 import { t } from '../../utils/translations';
 import { FeatureGrid, type FeatureOption, ProPlanNotice } from '../components/site-features';
+import AccessibilityToolsIcon from '../../icons/site-features/accessibility-tools-icon';
+import AIGeneratorIcon from '../../icons/site-features/ai-generator-icon';
+import ClassesVariablesIcon from '../../icons/site-features/classes-variables-icon';
+import CorePlaceholderIcon from '../../icons/site-features/core-placeholder-icon';
+import CustomCodeIcon from '../../icons/site-features/custom-code-icon';
+import EmailDeliverabilityIcon from '../../icons/site-features/email-deliverability-icon';
+import ImageOptimizationIcon from '../../icons/site-features/image-optimization-icon';
+import ThemeBuilderIcon from '../../icons/site-features/theme-builder-icon';
 
 export const FEATURE_OPTIONS: FeatureOption[] = [
 	{
 		id: 'classes_variables',
 		labelKey: 'steps.site_features.option_classes_variables',
-		Icon: ( props ) => <ColorSwatchIcon { ...props } sx={ { transform: 'rotate(90deg)' } } />,
+		Icon: ClassesVariablesIcon,
 		licenseType: 'core',
 	},
 	{
@@ -46,31 +44,31 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 	{
 		id: 'custom_code_css',
 		labelKey: 'steps.site_features.option_custom_code',
-		Icon: CodeIcon,
+		Icon: CustomCodeIcon,
 		licenseType: 'pro',
 	},
 	{
 		id: 'email_deliverability',
 		labelKey: 'steps.site_features.option_email_deliverability',
-		Icon: ElementorEmailDeliverabilityIcon,
+		Icon: EmailDeliverabilityIcon,
 		licenseType: 'one',
 	},
 	{
 		id: 'ai_features',
 		labelKey: 'steps.site_features.option_ai_generator',
-		Icon: ElementorAIIcon,
+		Icon: AIGeneratorIcon,
 		licenseType: 'one',
 	},
 	{
 		id: 'image_optimization',
 		labelKey: 'steps.site_features.option_image_optimization',
-		Icon: ElementorImageOptimizerIcon,
+		Icon: ImageOptimizationIcon,
 		licenseType: 'one',
 	},
 	{
 		id: 'accessibility',
 		labelKey: 'steps.site_features.option_accessibility_tools',
-		Icon: ElementorAccessibilityIcon,
+		Icon: AccessibilityToolsIcon,
 		licenseType: 'one',
 	},
 	{
