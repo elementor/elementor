@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
+import {
+	__privateListenTo as listenTo,
+	__privateRunCommand as runCommand,
+	getCurrentEditMode,
+	windowEvent,
+} from '@elementor/editor-v1-adapters';
 
 import type { StarterConfig } from '../types';
 import { deleteStarterConfig, getEditingPanelWidth, getStarterConfig, getTopBarHeight } from '../utils';
@@ -94,22 +99,12 @@ export function useStarter() {
 			return;
 		}
 
-		const updateWidth = () => setPanelWidth( getEditingPanelWidth() );
-		const observer = new MutationObserver( updateWidth );
-		const panel = document.querySelector( '.elementor-panel' );
-
-		if ( panel ) {
-			observer.observe( panel, { attributes: true, attributeFilter: [ 'style', 'class' ] } );
-		}
-
-		window.addEventListener( 'resize', updateWidth );
-		updateWidth();
-
-		return () => {
-			observer.disconnect();
-			window.removeEventListener( 'resize', updateWidth );
-		};
-	}, [ config ] );
+		return listenTo( windowEvent( 'elementor/edit-mode/change' ), () => {
+			if ( getCurrentEditMode() !== 'edit' ) {
+				dismiss();
+			}
+		} );
+	}, [ config, dismiss ] );
 
 	const openTemplatesLibrary = useCallback( () => {
 		dismiss();
