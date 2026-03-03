@@ -257,10 +257,7 @@ class Atomic_Form extends Atomic_Element_Base {
 		return Element_Builder::make( $element_type )
 			->settings( [
 				'attributes' => Attributes_Prop_Type::generate( [
-					Key_Value_Prop_Type::generate( [
-						'key' => String_Prop_Type::generate( 'data-e-state' ),
-						'value' => String_Prop_Type::generate( $state ),
-					] ),
+					Key_Value_Prop_Type::generate( [] ),
 				] ),
 			] )
 			->editor_settings( [
