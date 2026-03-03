@@ -28,8 +28,8 @@
   },
   "workspaces": [
     "packages/tools/*",
-    "packages/core/*",
     "packages/libs/*",
+    "packages/core/*",
     "packages/apps/*"
   ],
   "devDependencies": {
