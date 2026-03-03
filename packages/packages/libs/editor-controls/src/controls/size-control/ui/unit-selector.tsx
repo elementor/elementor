@@ -48,7 +48,7 @@ export const UnitSelector = < T extends string >( {
 			<Menu MenuListProps={ { dense: true } } { ...bindMenu( popupState ) }>
 				{ options.map( ( option ) => (
 					<MenuListItem
-						key={ String( option ) }
+						key={ option }
 						onClick={ () => handleMenuItemClick( option ) }
 						{ ...menuItemsAttributes?.[ option ] }
 						primaryTypographyProps={ {
@@ -62,7 +62,7 @@ export const UnitSelector = < T extends string >( {
 							sx: menuItemContentStyles,
 						} }
 					>
-						{ optionLabelOverrides[ option ] ?? String( option ).toUpperCase() }
+						{ optionLabelOverrides[ option ] ?? option.toUpperCase() }
 					</MenuListItem>
 				) ) }
 			</Menu>
