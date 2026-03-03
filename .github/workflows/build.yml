@@ -9,8 +9,10 @@ on:
       - '**.md'
       - '**.txt'
       - '.github/config.json'
+      - 'bin/**'
       - '.gitignore'
       - 'docs/**'
+      - '.vscode/**'
   workflow_dispatch:
   workflow_call:
     outputs:

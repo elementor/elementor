@@ -1,10 +1,10 @@
-import { getOverridableProp } from '../components/overridable-props/utils/get-overridable-prop';
 import { type ComponentInstanceOverride } from '../prop-types/component-instance-overrides-prop-type';
 import { componentInstanceOverridesPropTypeUtil } from '../prop-types/component-instance-overrides-prop-type';
 import { componentInstancePropTypeUtil } from '../prop-types/component-instance-prop-type';
 import { componentOverridablePropTypeUtil } from '../prop-types/component-overridable-prop-type';
 import { type OverridableProp, type OverridableProps } from '../types';
 import { getContainerByOriginId } from './get-container-by-origin-id';
+import { getOverridableProp } from './get-overridable-prop';
 import { extractInnerOverrideInfo } from './overridable-props-utils';
 
 export function filterValidOverridableProps(

@@ -35,11 +35,11 @@ register( {
 				'@keydown.arrow-left.prevent'( event ) {
 					this.navigateTabs( event );
 				},
-			':class'() {
-				const id = this.$el.id;
+				':class'() {
+					const id = this.$el.id;
 
-				return { [ SELECTED_CLASS ]: this.activeTab === id };
-			},
+					return { [ SELECTED_CLASS ]: this.activeTab === id };
+				},
 				':aria-selected'() {
 					const id = this.$el.id;
 

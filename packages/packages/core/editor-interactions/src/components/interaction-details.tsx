@@ -25,7 +25,7 @@ type InteractionDetailsProps = {
 	onPlayInteraction: ( interactionId: string ) => void;
 };
 
-const DEFAULT_VALUES = {
+export const DEFAULT_VALUES = {
 	trigger: 'load',
 	effect: 'fade',
 	type: 'in',

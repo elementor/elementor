@@ -74,7 +74,7 @@ export const TextButton = styled( Button )( ( { theme } ) => ( {
 	lineHeight: theme.typography.pxToRem( 22 ),
 } ) );
 
-const backgroundUrl = getOnboardingAssetUrl( 'login.webp' );
+const backgroundUrl = getOnboardingAssetUrl( 'login.png' );
 
 interface FullscreenCardProps {
 	children: React.ReactNode;

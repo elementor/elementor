@@ -4,6 +4,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
 
 import { App } from '../components/app';
+import { DEFAULT_STRINGS } from '../utils/default-strings';
 
 jest.mock( '@elementor/query', () => {
 	const actual = jest.requireActual( '@elementor/query' );
@@ -43,10 +44,13 @@ interface OnboardingConfig {
 	isConnected: boolean;
 	shouldShowProInstallScreen?: boolean;
 	userName?: string;
+	translations?: Record< string, string >;
 	urls: {
 		dashboard: string;
 		editor: string;
 		connect: string;
+		comparePlans?: string;
+		upgradeUrl: string;
 	};
 }
 
@@ -58,11 +62,18 @@ const DEFAULT_STEPS = [
 	{ id: 'site_features', label: 'Site features', type: 'multiple' as const },
 ];
 
+export const DEFAULT_TEST_URLS = {
+	comparePlans: 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash',
+	upgradeUrl:
+		'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar&utm_term=2.0.0',
+} as const;
+
 const defaultConfig: OnboardingConfig = {
 	version: '1.0.0',
 	restUrl: 'https://test.local/wp-json/elementor/v1/e-onboarding/',
 	nonce: 'test-nonce',
 	steps: DEFAULT_STEPS,
+	translations: DEFAULT_STRINGS,
 	progress: {
 		current_step_id: 'building_for',
 		current_step_index: 0,
@@ -76,6 +87,7 @@ const defaultConfig: OnboardingConfig = {
 		dashboard: 'https://test.local/wp-admin/',
 		editor: 'https://test.local/editor',
 		connect: 'https://test.local/connect',
+		...DEFAULT_TEST_URLS,
 	},
 };
 

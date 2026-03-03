@@ -1,54 +1,25 @@
 import * as React from 'react';
-import { ControlAdornmentsProvider } from '@elementor/editor-controls';
-import { getFieldIndicators } from '@elementor/editor-editing-panel';
-import { useSelectedElement } from '@elementor/editor-elements';
-import { PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
-import { EllipsisWithTooltip } from '@elementor/editor-ui';
-import { ComponentsIcon, PencilIcon } from '@elementor/icons';
-import { Box, Divider, IconButton, Stack, Tooltip } from '@elementor/ui';
+import { PencilIcon } from '@elementor/icons';
+import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useComponentInstanceSettings } from '../../hooks/use-component-instance-settings';
-import { useComponentsPermissions } from '../../hooks/use-components-permissions';
-import { useSanitizeOverridableProps } from '../../hooks/use-sanitize-overridable-props';
 import { ComponentInstanceProvider } from '../../provider/component-instance-context';
-import { useComponent } from '../../store/store';
-import { type OverridablePropsGroup } from '../../types';
-import { switchToComponent } from '../../utils/switch-to-component';
 import { EmptyState } from './empty-state';
-import { OverridePropsGroup } from './override-props-group';
+import { InstancePanelBody } from './instance-panel-body';
+import { EditComponentAction, InstancePanelHeader } from './instance-panel-header';
+import { useInstancePanelData } from './use-instance-panel-data';
 
 export function InstanceEditingPanel() {
-	const { canEdit } = useComponentsPermissions();
+	const data = useInstancePanelData();
 
-	const settings = useComponentInstanceSettings();
-
-	const componentId = settings?.component_id?.value;
-
-	const overrides = settings?.overrides?.value;
-
-	const component = useComponent( componentId ?? null );
-
-	const componentInstanceId = useSelectedElement()?.element?.id;
-
-	const overridableProps = useSanitizeOverridableProps( componentId ?? null, componentInstanceId );
-
-	if ( ! componentId || ! overridableProps || ! component ) {
+	if ( ! data ) {
 		return null;
 	}
 
+	const { componentId, component, overrides, overridableProps, groups, isEmpty, componentInstanceId } = data;
+
 	/* translators: %s: component name. */
 	const panelTitle = __( 'Edit %s', 'elementor' ).replace( '%s', component.name );
-
-	const handleEditComponent = () => switchToComponent( componentId, componentInstanceId );
-
-	const isNonEmptyGroup = ( group: OverridablePropsGroup | null ) => group !== null && group.props.length > 0;
-
-	const groups = overridableProps.groups.order
-		.map( ( groupId ) => overridableProps.groups.items[ groupId ] ?? null )
-		.filter( isNonEmptyGroup );
-
-	const isEmpty = groups.length === 0 || Object.keys( overridableProps.props ).length === 0;
 
 	return (
 		<Box data-testid="instance-editing-panel">
@@ -57,35 +28,16 @@ export function InstanceEditingPanel() {
 				overrides={ overrides }
 				overridableProps={ overridableProps }
 			>
-				<PanelHeader sx={ { justifyContent: 'start', px: 2 } }>
-					<Stack direction="row" alignItems="center" flexGrow={ 1 } gap={ 1 } maxWidth="100%">
-						<ComponentsIcon fontSize="small" sx={ { color: 'text.tertiary' } } />
-						<EllipsisWithTooltip title={ component.name } as={ PanelHeaderTitle } sx={ { flexGrow: 1 } } />
-						{ canEdit && (
-							<Tooltip title={ panelTitle }>
-								<IconButton size="tiny" onClick={ handleEditComponent } aria-label={ panelTitle }>
-									<PencilIcon fontSize="tiny" />
-								</IconButton>
-							</Tooltip>
-						) }
-					</Stack>
-				</PanelHeader>
-				<PanelBody>
-					<ControlAdornmentsProvider items={ getFieldIndicators( 'settings' ) }>
-						{ isEmpty ? (
-							<EmptyState onEditComponent={ handleEditComponent } />
-						) : (
-							<Stack direction="column" alignItems="stretch">
-								{ groups.map( ( group ) => (
-									<React.Fragment key={ group.id + componentInstanceId }>
-										<OverridePropsGroup group={ group } />
-										<Divider />
-									</React.Fragment>
-								) ) }
-							</Stack>
-						) }
-					</ControlAdornmentsProvider>
-				</PanelBody>
+				<InstancePanelHeader
+					componentName={ component.name }
+					actions={ <EditComponentAction disabled label={ panelTitle } icon={ PencilIcon } /> }
+				/>
+				<InstancePanelBody
+					groups={ groups }
+					isEmpty={ isEmpty }
+					emptyState={ <EmptyState /> }
+					componentInstanceId={ componentInstanceId }
+				/>
 			</ComponentInstanceProvider>
 		</Box>
 	);

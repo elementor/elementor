@@ -36,13 +36,20 @@ const sass = {
 				dest: 'assets/css/modules/container-converter',
 				ext: '.css',
 			},
-			{
-				expand: true,
-				cwd: 'modules/notes/assets/scss',
-				src: 'editor.scss',
-				dest: 'assets/css/modules/notes',
-				ext: '.css',
-			},
+		{
+			expand: true,
+			cwd: 'modules/design-system-sync/assets/scss',
+			src: 'design-system-sync.scss',
+			dest: 'assets/css/modules/design-system-sync',
+			ext: '.css',
+		},
+		{
+			expand: true,
+			cwd: 'modules/notes/assets/scss',
+			src: 'editor.scss',
+			dest: 'assets/css/modules/notes',
+			ext: '.css',
+		},
 			{
 				expand: true,
 				cwd: 'assets/dev/scss/frontend',

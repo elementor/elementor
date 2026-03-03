@@ -1,0 +1,46 @@
+/* Shared row and title styles for V4 list controls */
+.e-v4-color-variable-list__row,
+.e-v4-typography-list__row {
+	display: flex;
+	align-items: center;
+	min-height: 40px;
+}
+
+.e-v4-color-variable-list__title,
+.e-v4-typography-list__title {
+	flex: 1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* V4 Color Variable List */
+.e-v4-color-variable-list__color-value {
+	font-size: 10px;
+	padding: 0 5px;
+	margin-inline-end: 5px;
+}
+
+.e-v4-color-variable-list__color-swatch {
+	display: inline-block;
+	width: 27px;
+	height: 27px;
+	flex-shrink: 0;
+	margin-inline-end: 5px;
+}
+
+/* V4 Typography List */
+.e-v4-typography-list__edit-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	background: var(--e-a-bg-active);
+	border: none;
+	border-radius: var(--e-a-border-radius);
+	opacity: 0.5;
+	cursor: default;
+	flex-shrink: 0;
+	margin-inline-end: 2px;
+}

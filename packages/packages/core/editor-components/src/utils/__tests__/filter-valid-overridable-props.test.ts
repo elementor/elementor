@@ -1,7 +1,6 @@
 import { createMockElement } from 'test-utils';
 import { type PropValue } from '@elementor/editor-props';
 
-import { getOverridableProp } from '../../components/overridable-props/utils/get-overridable-prop';
 import { componentInstanceOverridePropTypeUtil } from '../../prop-types/component-instance-override-prop-type';
 import { componentInstanceOverridesPropTypeUtil } from '../../prop-types/component-instance-overrides-prop-type';
 import { componentInstancePropTypeUtil } from '../../prop-types/component-instance-prop-type';
@@ -9,11 +8,13 @@ import { componentOverridablePropTypeUtil } from '../../prop-types/component-ove
 import { type OverridableProp, type OverridableProps } from '../../types';
 import { filterValidOverridableProps, isExposedPropValid } from '../filter-valid-overridable-props';
 import { getContainerByOriginId } from '../get-container-by-origin-id';
+import { getOverridableProp } from '../get-overridable-prop';
 
 jest.mock( '../get-container-by-origin-id', () => ( {
 	getContainerByOriginId: jest.fn(),
 } ) );
-jest.mock( '../../components/overridable-props/utils/get-overridable-prop', () => ( {
+
+jest.mock( '../get-overridable-prop', () => ( {
 	getOverridableProp: jest.fn(),
 } ) );
 

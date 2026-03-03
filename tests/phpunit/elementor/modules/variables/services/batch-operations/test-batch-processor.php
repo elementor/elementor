@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Variables\Services\Batch_Operations;
 
+use Elementor\Modules\Variables\Storage\Constants;
 use Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed;
 use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
@@ -196,7 +197,7 @@ class Test_Batch_Processor extends TestCase {
 	public function test_apply_operation__create_throws_variables_limit_reached() {
 		// Arrange
 		$variables = [];
-		for ( $i = 0; $i < 100; $i++ ) {
+		for ( $i = 0; $i < Constants::TOTAL_VARIABLES_COUNT; $i++ ) {
 			$variables[ "id-{$i}" ] = [
 				'type' => 'color',
 				'label' => "Label {$i}",

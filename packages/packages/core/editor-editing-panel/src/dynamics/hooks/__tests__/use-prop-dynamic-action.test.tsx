@@ -125,7 +125,7 @@ const mockElementPropSchema = ( bind: string, propSchema: PropType ) => {
 		},
 	};
 
-	jest.mocked( useElement ).mockReturnValue( { elementType: mockElementType, element: {} as never } );
+	jest.mocked( useElement ).mockReturnValue( { elementType: mockElementType, element: {} as never, settings: {} } );
 	jest.mocked( useBoundProp ).mockReturnValue( {
 		value: '',
 		setValue: jest.fn(),

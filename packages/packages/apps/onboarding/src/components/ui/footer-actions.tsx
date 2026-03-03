@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { ArrowLeftIcon } from '@elementor/icons';
 import { Box, Button, styled } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
+
+import { t } from '../../utils/translations';
 
 const LeftActions = styled( Box )( {
 	display: 'flex',
@@ -85,9 +86,9 @@ export function FooterActions( {
 	showBack = true,
 	showSkip = true,
 	showContinue = true,
-	backLabel = __( 'Back', 'elementor' ),
-	skipLabel = __( 'Skip', 'elementor' ),
-	continueLabel = __( 'Continue', 'elementor' ),
+	backLabel = t( 'common.back' ),
+	skipLabel = t( 'common.skip' ),
+	continueLabel = t( 'common.continue' ),
 	continueDisabled = false,
 	continueLoading = false,
 	onBack,
@@ -117,7 +118,7 @@ export function FooterActions( {
 						onClick={ onContinue }
 						disabled={ continueDisabled || continueLoading }
 					>
-						{ continueLoading ? __( 'Loading…', 'elementor' ) : continueLabel }
+						{ continueLoading ? t( 'common.loading' ) : continueLabel }
 					</ContinueButton>
 				) }
 			</RightActions>
