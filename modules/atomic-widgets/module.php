@@ -253,7 +253,7 @@ class Module extends BaseModule {
 	}
 
 	private function add_supported_units( $settings ) {
-		$settings['supported_size_units'] = Size_Constants::all_units();
+		$settings['supported_size_units'] = Size_Constants::all_supported_units();
 
 		$settings['size_units'] = Size_Constants::grouped_units();
 

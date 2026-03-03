@@ -138,7 +138,7 @@ class Size_Constants {
 		];
 	}
 
-	public static function all_units(): array {
+	public static function all_supported_units(): array {
 		return [
 			...self::LENGTH_UNITS,
 			...self::TIME_UNITS,
@@ -160,7 +160,7 @@ class Size_Constants {
 	private static function by_group( string $group ): array {
 		$groups = self::grouped_units();
 
-		return $groups[$group] ?? [];
+		return $groups[ $group ] ?? [];
 	}
 
 	public static function get_preset( string $name ): array {
@@ -171,6 +171,10 @@ class Size_Constants {
 
 	public static function length(): array {
 		return self::by_group( 'length' );
+	}
+
+	public static function time(): array {
+		return self::by_group( 'time' );
 	}
 
 	public static function layout(): array {
@@ -210,7 +214,7 @@ class Size_Constants {
 	}
 
 	public static function opacity(): array {
-		return self::get_preset('opacity');
+		return self::get_preset( 'opacity' );
 	}
 
 	public static function box_shadow(): array {
