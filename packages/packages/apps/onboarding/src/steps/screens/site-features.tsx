@@ -124,17 +124,7 @@ export function SiteFeatures() {
 	}, [ storedPaidFeatures ] );
 
 	return (
-		<Stack
-			spacing={ 4 }
-			width="100%"
-			marginBottom={ 10 }
-			data-testid="site-features-step"
-			sx={ ( theme: Theme ) => ( {
-				[ theme.breakpoints.down( 'sm' ) ]: {
-					marginBottom: theme.spacing( 10 ),
-				},
-			} ) }
-		>
+		<Stack spacing={ 4 } width="100%" data-testid="site-features-step">
 			<Stack spacing={ 1 } textAlign="center" alignItems="center">
 				<StepTitle color="text.primary" variant="h5" align="center">
 					{ t( 'steps.site_features.title' ) }

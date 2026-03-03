@@ -2,6 +2,8 @@ import { StepId, type StepIdType, type StepVisualConfig } from '../types';
 
 const ONBOARDING_ASSETS_PATH = 'images/app/e-onboarding/';
 
+const CONTENT_MAX_WIDTH_WIDE_ELEMENT = 724;
+
 const getAssetsBaseUrl = () => window.elementorCommon?.config?.urls?.assets ?? '';
 
 export const getOnboardingAssetUrl = ( fileName: string ) => {
@@ -43,11 +45,12 @@ const stepVisuals: Record< StepIdType, StepVisualConfig > = {
 	[ StepId.THEME_SELECTION ]: {
 		background: buildBackground( 'step-4.png' ),
 		assets: [],
+		contentMaxWidth: CONTENT_MAX_WIDTH_WIDE_ELEMENT,
 	},
 	[ StepId.SITE_FEATURES ]: {
 		background: buildBackground( 'step-5.png' ),
 		assets: [],
-		contentMaxWidth: 724,
+		contentMaxWidth: CONTENT_MAX_WIDTH_WIDE_ELEMENT,
 	},
 };
 
