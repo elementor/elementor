@@ -60,6 +60,7 @@ class Size_Constants {
 
 	private const NUMERIC_UNITS = [
 		...self::LENGTH_UNITS,
+		self::UNIT_PERCENT,
 		self::UNIT_CUSTOM,
 	];
 
@@ -145,6 +146,7 @@ class Size_Constants {
 			...self::ANGLE_UNITS,
 			...self::EXTENDED_UNITS,
 			...self::VIEWPORT_MIN_MAX_UNITS,
+			self::UNIT_PERCENT,
 		];
 	}
 
