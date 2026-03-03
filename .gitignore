@@ -4,6 +4,9 @@ node_modules/
 .sass-cache/
 log/
 vendor/
+!tests/qunit/vendor/
+!tests/qunit/vendor/wp-includes/
+!tests/qunit/vendor/wp-includes/*.js
 local-site/
 tmp/
 8888/
