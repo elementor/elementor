@@ -5,6 +5,7 @@ namespace Elementor\Modules\AngieEntrypoints;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as ExperimentsManager;
 use Elementor\Core\Utils\Hints;
+use Elementor\Elements_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

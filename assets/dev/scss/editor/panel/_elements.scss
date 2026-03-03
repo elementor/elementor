@@ -288,3 +288,53 @@
 		}
 	}
 }
+
+#elementor-panel-elements-promotion-area:empty {
+	display: none;
+}
+
+.elementor-panel-elements-promotion {
+	text-align: center;
+	padding: 30px 20px;
+
+	&__title {
+		font-size: 14px;
+		font-weight: bold;
+		line-height: 1.4;
+		color: var(--e-a-color-txt);
+	}
+
+	&__message {
+		margin-block-start: 8px;
+		font-size: 13px;
+		line-height: 1.6;
+		color: var(--e-a-color-txt-muted);
+	}
+
+	&__cta {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		margin-block-start: 16px;
+		padding: 0;
+		border: none;
+		background: none;
+		color: var(--e-a-color-accent-promotion, #{$e-accent-promotion});
+		font-size: 14px;
+		font-weight: 500;
+		cursor: pointer;
+		font-family: var(--e-a-font-family);
+
+		i {
+			font-size: 16px;
+		}
+
+		&:hover {
+			opacity: 0.8;
+		}
+	}
+
+	&--search-footer {
+		border-block-start: var(--e-a-border);
+	}
+}

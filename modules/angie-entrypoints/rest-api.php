@@ -4,6 +4,7 @@ namespace Elementor\Modules\AngieEntrypoints;
 
 use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
+use Elementor\Core\Utils\Hints;
 use Elementor\Core\Utils\Plugins_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,6 +20,14 @@ class Rest_Api {
 	}
 
 	private function register_routes() {
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/config', [
+			[
+				'methods' => 'GET',
+				'callback' => fn() => $this->route_wrapper( fn() => $this->get_config() ),
+				'permission_callback' => '__return_true',
+			],
+		] );
+
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/install', [
 			[
 				'methods' => 'POST',
@@ -34,6 +43,14 @@ class Rest_Api {
 				'permission_callback' => fn() => current_user_can( 'activate_plugins' ),
 			],
 		] );
+	}
+
+	private function get_config() {
+		return Response_Builder::make( [
+			'isInstalled' => Module::is_angie_installed(),
+			'isActive' => Module::is_angie_active(),
+			'installUrl' => Hints::get_plugin_install_url( Module::PLUGIN_SLUG ),
+		] )->build();
 	}
 
 	private function install() {
