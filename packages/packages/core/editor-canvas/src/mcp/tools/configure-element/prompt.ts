@@ -1,4 +1,7 @@
-import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
+import {
+	STYLE_SCHEMA_URI,
+	WIDGET_SCHEMA_URI,
+} from '../../resources/widgets-schema-resource';
 
 export const configureElementToolPrompt = `Configure an existing element on the page.
 
@@ -26,10 +29,40 @@ When a user requires to change anything in an element, such as updating text, co
 This tool handles elements of type "widget".
 This tool handles styling elements, using the "stylePropertiesToChange" parameter.
 
+# CRITICAL: Color Property Handling - MANDATORY WORKFLOW (ENFORCED - CANNOT BYPASS)
+**ABSOLUTE REQUIREMENT**: For the "color" style property, you MUST ALWAYS call the "convert-css-to-atomic" tool FIRST before calling this tool. This is ENFORCED by validation - the tool will REJECT any color property that was not created by "convert-css-to-atomic".
+
+**FORBIDDEN ACTIONS (WILL CAUSE ERRORS):**
+- Using the style schema directly for color properties
+- Passing raw CSS color strings (e.g., "red", "#ff0000") directly to this tool
+- Manually constructing PropValue objects for color properties (even if format is correct)
+- Extracting color PropValues from style schema resources
+- Copying PropValue structure from examples or documentation
+
+**MANDATORY WORKFLOW FOR COLOR PROPERTIES (NO EXCEPTIONS - FOLLOW EXACTLY):**
+1. **STEP 1 (REQUIRED)**: Call "convert-css-to-atomic" tool with: { "cssString": "color: YOUR_COLOR;" }
+   Example: { "cssString": "color: red;" } or { "cssString": "color: #ff0000;" }
+2. **STEP 2**: Extract the PropValue from the response: result.props.color
+   This object will have: { "$$type": "color", "value": "#ff0000", "_convertedBy": "convert-css-to-atomic" }
+3. **STEP 3**: Use that EXACT object (do not modify it) in "stylePropertiesToChange.color"
+   Example: stylePropertiesToChange: { color: result.props.color }
+4. **STEP 4**: For all other style properties (not color), use the style schema as normal
+
+**ENFORCEMENT MECHANISM**: 
+This tool validates that color PropValues contain a special "_convertedBy" marker that is ONLY added by "convert-css-to-atomic". If this marker is missing, the tool will REJECT the request with a detailed error message showing exactly what to do, even if the PropValue format is otherwise correct. This ensures you cannot bypass the converter tool.
+
+**WHY THIS IS REQUIRED**:
+- Ensures consistent color conversion across all CSS formats
+- Validates color values properly
+- Maintains compatibility with future color format changes
+- Provides proper error handling for invalid colors
+
+**IF YOU GET AN ERROR**: The error message will include a step-by-step example. Follow it exactly. Do not try to work around it.
+
 To CLEAR a property (i.e., set it to default or none), provide null as a value.
 
 The element's schema must be known before using this tool.
-The style schema must be known before using this tool.
+The style schema must be known before using this tool (except for color, which uses the CSS converter).
 
 Attached resource link describing how PropType schema should be parsed as PropValue for this tool.
 
