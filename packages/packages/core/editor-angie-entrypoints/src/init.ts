@@ -1,10 +1,10 @@
 import { injectIntoTop } from '@elementor/editor';
 
-import { AngieModal } from './components/angie-modal';
+import { GenerateWidget } from './components/generate-widget';
 
 export function init() {
 	injectIntoTop( {
-		id: 'angie-promotion-modal',
-		component: AngieModal,
+		id: 'angie-generate-widget',
+		component: GenerateWidget,
 	} );
 }

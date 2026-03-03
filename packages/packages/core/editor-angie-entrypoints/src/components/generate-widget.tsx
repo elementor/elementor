@@ -1,34 +1,28 @@
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
-import { getAngieIframe, setReferrerRedirect, toggleAngieSidebar } from '@elementor/angie-sdk';
+import { setReferrerRedirect } from '@elementor/angie-sdk';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { XIcon } from '@elementor/icons';
 import { Button, Dialog, DialogContent, IconButton, Image, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { ANGIE_INSTALL_URL, ANGIE_PROMOTION_IMAGE_URL, SHOW_ANGIE_MODAL_EVENT } from '../consts';
-import { isAngieActive } from '../utils/is-angie-active';
+import { ANGIE_INSTALL_URL, ANGIE_PROMOTION_IMAGE_URL, GENERATE_WIDGET_EVENT } from '../consts';
+import { useAngieSidebarPrompt } from '../hooks/use-angie-sidebar';
 
 type ShowModalEventDetail = {
 	prompt?: string;
 };
 
-export function AngieModal() {
+export function GenerateWidget() {
 	const [ open, setOpen ] = useState( false );
 	const [ prompt, setPrompt ] = useState< string | undefined >();
+	const angieSidebarPrompt = useAngieSidebarPrompt();
 
 	useEffect( () => {
 		const handleShow = async ( event: CustomEvent< ShowModalEventDetail > ) => {
-			const isActive = await isAngieActive();
+			if ( angieSidebarPrompt ) {
+				angieSidebarPrompt( event.detail?.prompt );
 
-			if ( isActive ) {
-				const iframe = getAngieIframe();
-				if ( iframe ) {
-					toggleAngieSidebar( iframe, true );
-					if ( event.detail?.prompt ) {
-						window.location.hash = 'angie-prompt=' + encodeURIComponent( event.detail.prompt );
-					}
-				}
 				return;
 			}
 
@@ -36,12 +30,12 @@ export function AngieModal() {
 			setOpen( true );
 		};
 
-		window.addEventListener( SHOW_ANGIE_MODAL_EVENT, handleShow as unknown as EventListener );
+		window.addEventListener( GENERATE_WIDGET_EVENT, handleShow as unknown as EventListener );
 
 		return () => {
-			window.removeEventListener( SHOW_ANGIE_MODAL_EVENT, handleShow as unknown as EventListener );
+			window.removeEventListener( GENERATE_WIDGET_EVENT, handleShow as unknown as EventListener );
 		};
-	}, [] );
+	}, [ angieSidebarPrompt ] );
 
 	const handleClose = useCallback( () => {
 		setOpen( false );
@@ -107,13 +101,5 @@ export function AngieModal() {
 				</DialogContent>
 			</Dialog>
 		</ThemeProvider>
-	);
-}
-
-export async function showAngiePromotionModal( prompt?: string ) {
-	window.dispatchEvent(
-		new CustomEvent< ShowModalEventDetail >( SHOW_ANGIE_MODAL_EVENT, {
-			detail: { prompt },
-		} )
 	);
 }
