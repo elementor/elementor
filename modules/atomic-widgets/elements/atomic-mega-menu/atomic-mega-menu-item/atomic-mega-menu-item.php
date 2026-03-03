@@ -2,6 +2,7 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Mega_Menu\Atomic_Mega_Menu_Item;
 
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Render_Context;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Mega_Menu\Atomic_Mega_Menu\Atomic_Mega_Menu;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
@@ -23,6 +24,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Mega_Menu_Item extends Atomic_Element_Base {
+	use Has_Element_Template;
+
 	const BASE_STYLE_KEY = 'base';
 
 	public function __construct( $data = [], $args = null ) {
@@ -93,25 +96,32 @@ class Atomic_Mega_Menu_Item extends Atomic_Element_Base {
 			'display' => String_Prop_Type::generate( 'flex' ),
 			'align-items' => String_Prop_Type::generate( 'center' ),
 			'cursor' => String_Prop_Type::generate( 'pointer' ),
-			'color' => Color_Prop_Type::generate( '#0C0D0E' ),
+			'color' => Color_Prop_Type::generate( '#3B3B3B' ),
+			'font-size' => Size_Prop_Type::generate( [
+				'size' => 15,
+				'unit' => 'px',
+			] ),
+			'font-weight' => String_Prop_Type::generate( '500' ),
 			'padding' => Size_Prop_Type::generate( [
-				'size' => 12,
+				'size' => 14,
 				'unit' => 'px',
 			] ),
 			'background' => Background_Prop_Type::generate( [
-				'color' => Color_Prop_Type::generate( '#FFFFFF' ),
+				'color' => Color_Prop_Type::generate( 'transparent' ),
 			] ),
 		];
 
 		$selected_styles = [
+			'color' => Color_Prop_Type::generate( '#0C0D0E' ),
 			'background' => Background_Prop_Type::generate( [
 				'color' => Color_Prop_Type::generate( '#F0F0F0' ),
 			] ),
 		];
 
 		$hover_styles = [
+			'color' => Color_Prop_Type::generate( '#0C0D0E' ),
 			'background' => Background_Prop_Type::generate( [
-				'color' => Color_Prop_Type::generate( '#E0E0E0' ),
+				'color' => Color_Prop_Type::generate( '#F5F5F5' ),
 			] ),
 		];
 
@@ -148,32 +158,22 @@ class Atomic_Mega_Menu_Item extends Atomic_Element_Base {
 		];
 	}
 
-	protected function add_render_attributes() {
-		parent::add_render_attributes();
-		$settings = $this->get_atomic_settings();
-		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
-		$initial_attributes = $this->define_initial_attributes();
+	protected function get_templates(): array {
+		return [
+			'elementor/elements/atomic-mega-menu-item' => __DIR__ . '/atomic-mega-menu-item.html.twig',
+		];
+	}
 
+	protected function build_template_context(): array {
 		$menu_context = Render_Context::get( Atomic_Mega_Menu::class );
 		$get_item_index = $menu_context['get-item-index'];
 		$mega_menu_id = $menu_context['mega-menu-id'];
 
 		$index = $get_item_index( $this->get_id() );
 
-		$attributes = [
-			'class' => [
-				'e-con',
-				'e-atomic-element',
-				$base_style_class,
-				...( $settings['classes'] ?? [] ),
-			],
-			'x-bind' => 'menuItem',
-			'x-ref' => $this->get_id(),
-			'id' => Atomic_Mega_Menu::get_item_id( $mega_menu_id, $index ),
-			'aria-expanded' => 'false',
-			'aria-controls' => Atomic_Mega_Menu::get_panel_id( $mega_menu_id, $index ),
-		];
-
-		$this->add_render_attribute( '_wrapper', array_merge( $initial_attributes, $attributes ) );
+		return array_merge( $this->build_base_template_context(), [
+			'item_id' => Atomic_Mega_Menu::get_item_id( $mega_menu_id, $index ),
+			'panel_id' => Atomic_Mega_Menu::get_panel_id( $mega_menu_id, $index ),
+		] );
 	}
 }

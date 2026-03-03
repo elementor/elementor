@@ -2,15 +2,21 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Mega_Menu\Atomic_Mega_Menu;
 
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Mega_Menu\Atomic_Mega_Menu_Nav\Atomic_Mega_Menu_Nav;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Mega_Menu\Atomic_Mega_Menu_Item\Atomic_Mega_Menu_Item;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Mega_Menu\Atomic_Mega_Menu_Content_Area\Atomic_Mega_Menu_Content_Area;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Mega_Menu\Atomic_Mega_Menu_Panel\Atomic_Mega_Menu_Panel;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Mega_Menu\Atomic_Mega_Menu_Toggle\Atomic_Mega_Menu_Toggle;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Elements\Mega_Menu_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
@@ -24,7 +30,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Mega_Menu extends Atomic_Element_Base {
+	use Has_Element_Template;
+
 	const BASE_STYLE_KEY = 'base';
+	const ELEMENT_TYPE_TOGGLE = 'e-mega-menu-toggle';
 	const ELEMENT_TYPE_NAV = 'e-mega-menu-nav';
 	const ELEMENT_TYPE_CONTENT_AREA = 'e-mega-menu-content-area';
 	const ELEMENT_TYPE_ITEM = 'e-mega-menu-item';
@@ -63,7 +72,12 @@ class Atomic_Mega_Menu extends Atomic_Element_Base {
 				->default( [] ),
 			'attributes' => Attributes_Prop_Type::make()
 				->meta( Overridable_Prop_Type::ignore() ),
-		];
+			'trigger-mode' => String_Prop_Type::make()
+			->default( 'hover' )
+			->enum( [ 'hover', 'click' ] ),
+		'default-active-item' => Number_Prop_Type::make()
+			->default( null ),
+	];
 	}
 
 	protected function define_atomic_controls(): array {
@@ -71,11 +85,23 @@ class Atomic_Mega_Menu extends Atomic_Element_Base {
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
 				->set_id( 'content' )
-				->set_items( [] ),
+				->set_items( [
+					Mega_Menu_Control::make()
+						->set_label( __( 'Menu Items', 'elementor' ) )
+						->set_meta( [
+							'layout' => 'custom',
+						] ),
+				] ),
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
 				->set_items( [
+					Select_Control::bind_to( 'trigger-mode' )
+						->set_label( __( 'Open On', 'elementor' ) )
+						->set_options( [
+							[ 'value' => 'hover', 'label' => __( 'Hover', 'elementor' ) ],
+							[ 'value' => 'click', 'label' => __( 'Click', 'elementor' ) ],
+						] ),
 					Text_Control::bind_to( '_cssid' )
 						->set_label( __( 'ID', 'elementor' ) )
 						->set_meta( [
@@ -127,6 +153,13 @@ class Atomic_Mega_Menu extends Atomic_Element_Base {
 				->build();
 		}
 
+		$toggle = Atomic_Mega_Menu_Toggle::generate()
+			->is_locked( true )
+			->editor_settings( [
+				'title' => 'Menu Toggle',
+			] )
+			->build();
+
 		$nav = Atomic_Mega_Menu_Nav::generate()
 			->children( $item_elements )
 			->is_locked( true )
@@ -138,6 +171,7 @@ class Atomic_Mega_Menu extends Atomic_Element_Base {
 			->build();
 
 		return [
+			$toggle,
 			$nav,
 			$content_area,
 		];
@@ -206,37 +240,20 @@ class Atomic_Mega_Menu extends Atomic_Element_Base {
 
 	protected function define_render_context(): array {
 		return [
-			'context' => [
-				'get-item-index' => fn( $item_id ) => $this->get_item_index( $item_id ),
-				'get-panel-index' => fn( $panel_id ) => $this->get_panel_index( $panel_id ),
-				'mega-menu-id' => $this->get_id(),
+			[
+				'context' => [
+					'get-item-index' => fn( $item_id ) => $this->get_item_index( $item_id ),
+					'get-panel-index' => fn( $panel_id ) => $this->get_panel_index( $panel_id ),
+					'mega-menu-id' => $this->get_id(),
+				],
 			],
 		];
 	}
 
-	protected function add_render_attributes() {
-		parent::add_render_attributes();
-		$settings = $this->get_atomic_settings();
-		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
-		$initial_attributes = $this->define_initial_attributes();
-
-		$attributes = [
-			'class' => [
-				'e-con',
-				'e-atomic-element',
-				$base_style_class,
-				...( $settings['classes'] ?? [] ),
-			],
-			'role' => 'navigation',
-			'x-data' => 'eMegaMenu' . $this->get_id(),
-			'data-e-settings' => wp_json_encode( [] ),
+	protected function get_templates(): array {
+		return [
+			'elementor/elements/atomic-mega-menu' => __DIR__ . '/atomic-mega-menu.html.twig',
 		];
-
-		if ( ! empty( $settings['_cssid'] ) ) {
-			$attributes['id'] = esc_attr( $settings['_cssid'] );
-		}
-
-		$this->add_render_attribute( '_wrapper', array_merge( $initial_attributes, $attributes ) );
 	}
 
 	public static function get_item_id( $mega_menu_id, $index ) {

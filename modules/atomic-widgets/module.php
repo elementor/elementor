@@ -105,6 +105,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Mega_Menu\Atomic_Mega_Menu_N
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Mega_Menu\Atomic_Mega_Menu_Item\Atomic_Mega_Menu_Item;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Mega_Menu\Atomic_Mega_Menu_Content_Area\Atomic_Mega_Menu_Content_Area;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Mega_Menu\Atomic_Mega_Menu_Panel\Atomic_Mega_Menu_Panel;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Mega_Menu\Atomic_Mega_Menu_Toggle\Atomic_Mega_Menu_Toggle;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Success_Message\Form_Success_Message;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Error_Message\Form_Error_Message;
@@ -289,6 +290,7 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Atomic_Mega_Menu_Item() );
 		$elements_manager->register_element_type( new Atomic_Mega_Menu_Content_Area() );
 		$elements_manager->register_element_type( new Atomic_Mega_Menu_Panel() );
+		$elements_manager->register_element_type( new Atomic_Mega_Menu_Toggle() );
 
 		if ( \Elementor\Utils::has_pro() && Plugin::$instance->experiments->is_feature_active( 'e_pro_atomic_form' ) ) {
 			$elements_manager->register_element_type( new Atomic_Form() );

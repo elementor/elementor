@@ -1,6 +1,12 @@
 import { register } from '@elementor/frontend-handlers';
 import { Alpine, refreshTree } from '@elementor/alpinejs';
-import { ITEM_ELEMENT_TYPE, PANEL_ELEMENT_TYPE, getItemId, getIndex } from './utils';
+import {
+	ITEM_ELEMENT_TYPE,
+	PANEL_ELEMENT_TYPE,
+	TOGGLE_ELEMENT_TYPE,
+	getItemId,
+	getIndex,
+} from './utils';
 
 register( {
 	elementType: 'e-mega-menu',
@@ -23,7 +29,7 @@ register( {
 			Alpine.$data( element ).activeItem = getItemId( element.dataset.id, targetIndex );
 		}, { signal } );
 
-		listenToChildren( [ ITEM_ELEMENT_TYPE, PANEL_ELEMENT_TYPE ] )
+		listenToChildren( [ ITEM_ELEMENT_TYPE, PANEL_ELEMENT_TYPE, TOGGLE_ELEMENT_TYPE ] )
 			.render( () => refreshTree( element ) );
 	},
 } );

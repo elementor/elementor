@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Mega_Menu\Atomic_Mega_Menu_Nav;
+namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Mega_Menu\Atomic_Mega_Menu_Toggle;
 
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
@@ -8,9 +8,9 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
+use Elementor\Modules\AtomicWidgets\Styles\Style_States;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Atomic_Mega_Menu_Nav extends Atomic_Element_Base {
+class Atomic_Mega_Menu_Toggle extends Atomic_Element_Base {
 	use Has_Element_Template;
 
 	const BASE_STYLE_KEY = 'base';
@@ -30,33 +30,31 @@ class Atomic_Mega_Menu_Nav extends Atomic_Element_Base {
 	}
 
 	public static function get_type() {
-		return 'e-mega-menu-nav';
+		return 'e-mega-menu-toggle';
 	}
 
 	public static function get_element_type(): string {
-		return 'e-mega-menu-nav';
+		return 'e-mega-menu-toggle';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Mega Menu Nav', 'elementor' );
+		return esc_html__( 'Menu Toggle', 'elementor' );
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'menu', 'toggle', 'hamburger' ];
 	}
 
 	public function get_icon() {
-		return 'eicon-nav-menu';
+		return 'eicon-menu-bar';
 	}
 
 	public function should_show_in_panel() {
 		return false;
 	}
 
-	public function define_initial_attributes(): array {
-		return [
-			'role' => 'menubar',
-		];
+	protected function define_default_html_tag() {
+		return 'button';
 	}
 
 	protected static function define_props_schema(): array {
@@ -73,32 +71,37 @@ class Atomic_Mega_Menu_Nav extends Atomic_Element_Base {
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
-				->set_items( [
-					Text_Control::bind_to( '_cssid' )
-						->set_label( __( 'ID', 'elementor' ) )
-						->set_meta( [
-							'layout' => 'two-columns',
-						] ),
-				] ),
+				->set_items( [] ),
 		];
 	}
 
 	protected function define_base_styles(): array {
 		$styles = [
 			'display' => String_Prop_Type::generate( 'flex' ),
-			'flex-wrap' => String_Prop_Type::generate( 'wrap' ),
-			'align-items' => String_Prop_Type::generate( 'stretch' ),
-			'gap' => Size_Prop_Type::generate( [
-				'size' => 0,
-				'unit' => 'px',
+			'align-items' => String_Prop_Type::generate( 'center' ),
+			'justify-content' => String_Prop_Type::generate( 'center' ),
+			'cursor' => String_Prop_Type::generate( 'pointer' ),
+			'background' => Background_Prop_Type::generate( [
+				'color' => Color_Prop_Type::generate( '#FFFFFF' ),
 			] ),
-			'margin' => Size_Prop_Type::generate( [
-				'size' => 0,
-				'unit' => 'px',
-			] ),
+			'color' => Color_Prop_Type::generate( '#0C0D0E' ),
 			'padding' => Size_Prop_Type::generate( [
-				'size' => 0,
+				'size' => 12,
 				'unit' => 'px',
+			] ),
+			'font-size' => Size_Prop_Type::generate( [
+				'size' => 24,
+				'unit' => 'px',
+			] ),
+			'border-radius' => Size_Prop_Type::generate( [
+				'size' => 4,
+				'unit' => 'px',
+			] ),
+		];
+
+		$hover_styles = [
+			'background' => Background_Prop_Type::generate( [
+				'color' => Color_Prop_Type::generate( '#F5F5F5' ),
 			] ),
 		];
 
@@ -107,17 +110,18 @@ class Atomic_Mega_Menu_Nav extends Atomic_Element_Base {
 				->add_variant(
 					Style_Variant::make()
 						->add_props( $styles )
+				)
+				->add_variant(
+					Style_Variant::make()
+						->set_state( Style_States::HOVER )
+						->add_props( $hover_styles )
 				),
 		];
 	}
 
 	protected function get_templates(): array {
 		return [
-			'elementor/elements/atomic-mega-menu-nav' => __DIR__ . '/atomic-mega-menu-nav.html.twig',
+			'elementor/elements/atomic-mega-menu-toggle' => __DIR__ . '/atomic-mega-menu-toggle.html.twig',
 		];
-	}
-
-	protected function define_allowed_child_types() {
-		return [ 'e-mega-menu-item', 'container' ];
 	}
 }

@@ -2,6 +2,9 @@ export const ITEM_ELEMENT_TYPE = 'e-mega-menu-item';
 export const PANEL_ELEMENT_TYPE = 'e-mega-menu-panel';
 export const NAV_ELEMENT_TYPE = 'e-mega-menu-nav';
 export const CONTENT_AREA_ELEMENT_TYPE = 'e-mega-menu-content-area';
+export const TOGGLE_ELEMENT_TYPE = 'e-mega-menu-toggle';
+
+export const SELECTED_CLASS = 'e--selected';
 
 export const getItemId = ( megaMenuId, index ) => {
 	return `${ megaMenuId }-item-${ index }`;
@@ -23,4 +26,20 @@ export const getIndex = ( el, elementType ) => {
 	const children = getChildren( el, elementType );
 
 	return children.indexOf( el );
+};
+
+export const getItems = ( menuElement ) => {
+	return Array.from(
+		menuElement.querySelectorAll( `[data-element_type="${ ITEM_ELEMENT_TYPE }"]` ),
+	);
+};
+
+export const getPanels = ( menuElement ) => {
+	return Array.from(
+		menuElement.querySelectorAll( `[data-element_type="${ PANEL_ELEMENT_TYPE }"]` ),
+	);
+};
+
+export const isRtl = () => {
+	return 'rtl' === document.documentElement.dir;
 };

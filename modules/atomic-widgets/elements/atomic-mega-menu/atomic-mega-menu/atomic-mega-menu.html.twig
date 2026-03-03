@@ -1,0 +1,10 @@
+{% set e_settings = {
+    'trigger-mode': settings['trigger-mode'] | default('hover'),
+    'content-width': settings['content-width'] | default('full-width'),
+    'content-position': settings['content-position'] | default('center'),
+    'dropdown-breakpoint': settings['dropdown-breakpoint'] | default('tablet'),
+} %}
+{% set classes = ['e-con', 'e-atomic-element', base_styles.base] | merge(settings.classes | default([])) | join(' ') %}
+<nav class="{{ classes }} {{ editor_classes | default('') }}" data-id="{{ id }}" data-element_type="{{ type }}" data-e-type="{{ type }}" data-interaction-id="{{ id }}" data-interactions="{{ interactions | json_encode | e('html_attr') }}" role="navigation" x-data="eMegaMenu{{ id }}" data-e-settings="{{ e_settings | json_encode | e('html_attr') }}" {{ editor_attributes | default('') | raw }}>
+    <!-- elementor-children-placeholder -->
+</nav>
