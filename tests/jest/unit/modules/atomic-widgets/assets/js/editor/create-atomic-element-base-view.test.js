@@ -114,6 +114,10 @@ describe( 'createAtomicElementBaseView - renderOnChange', () => {
 		BaseElementView.prototype.renderOnChange = jest.fn();
 		BaseElementView.prototype.behaviors = jest.fn( () => ( {} ) );
 		BaseElementView.prototype.ui = jest.fn( () => ( {} ) );
+		BaseElementView.prototype.getContextMenuGroups = jest.fn( () => [
+			{ name: 'general', actions: [] },
+			{ name: 'clipboard', actions: [] },
+		] );
 
 		global.elementor = {
 			modules: {
@@ -1198,7 +1202,7 @@ describe( 'createAtomicElementBaseView - components Pro gating', () => {
 		global.window = global.window || {};
 		global.window.elementorV2 = {
 			...( global.window.elementorV2 || {} ),
-			editorComponents: { isProActive: jest.fn( () => isActive ) },
+			utils: { isProActive: jest.fn( () => isActive ) },
 		};
 	};
 
@@ -1266,7 +1270,7 @@ describe( 'createAtomicElementBaseView - components Pro gating', () => {
 	it( 'should block saveAsComponent when Pro is not active', () => {
 		// Arrange
 		global.window.elementorV2 = {
-			editorComponents: { isProActive: () => false },
+			utils: { isProActive: () => false },
 		};
 
 		// Act
@@ -1279,7 +1283,7 @@ describe( 'createAtomicElementBaseView - components Pro gating', () => {
 	it( 'should allow saveAsComponent when Pro is active', () => {
 		// Arrange
 		global.window.elementorV2 = {
-			editorComponents: { isProActive: () => true },
+			utils: { isProActive: () => true },
 		};
 
 		// Act
