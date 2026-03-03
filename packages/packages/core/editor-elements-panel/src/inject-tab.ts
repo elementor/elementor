@@ -11,7 +11,6 @@ import { registerTab } from './tabs';
 import { createLegacyView } from './utils/create-legacy-view';
 import { createTabNavItem } from './utils/create-tab-nav-item';
 import { getLegacyElementsPanelComponent } from './utils/get-legacy-elements-panel-component';
-import { getWindow } from './utils/get-window';
 
 type Config = {
 	id: string;
@@ -24,7 +23,7 @@ export function injectTab( { id, label, component, position }: Config ) {
 	registerTab( { id, label, component } );
 
 	listenTo( v1ReadyEvent(), () => {
-		getWindow().elementor.hooks.addFilter( 'panel/elements/regionViews', ( regions, { elements } ) => {
+		window.elementor?.hooks?.addFilter( 'panel/elements/regionViews', ( regions, { elements } ) => {
 			// Creating a empty legacy view that will be replaced by react component.
 			regions[ id ] = { region: elements, view: createLegacyView() };
 

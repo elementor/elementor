@@ -122,16 +122,16 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 
 			// ScrollOn-only controls should not render for "Page load".
 			await expect( popover.getByText( 'Relative To', { exact: true } ) ).toHaveCount( 0 );
-			await expect( popover.getByText( 'Offset Top', { exact: true } ) ).toHaveCount( 0 );
-			await expect( popover.getByText( 'Offset Bottom', { exact: true } ) ).toHaveCount( 0 );
+			await expect( popover.getByText( 'Start', { exact: true } ) ).toHaveCount( 0 );
+			await expect( popover.getByText( 'End', { exact: true } ) ).toHaveCount( 0 );
 
 			// Switch to "Scroll into view" and ensure scrollOn-only controls still do not render.
 			await triggerSelect.click();
 			await page.locator( '[role="option"]' ).filter( { hasText: 'Scroll into view' } ).click();
 
 			await expect( popover.getByText( 'Relative To', { exact: true } ) ).toHaveCount( 0 );
-			await expect( popover.getByText( 'Offset Top', { exact: true } ) ).toHaveCount( 0 );
-			await expect( popover.getByText( 'Offset Bottom', { exact: true } ) ).toHaveCount( 0 );
+			await expect( popover.getByText( 'Start', { exact: true } ) ).toHaveCount( 0 );
+			await expect( popover.getByText( 'End', { exact: true } ) ).toHaveCount( 0 );
 		} );
 	} );
 
