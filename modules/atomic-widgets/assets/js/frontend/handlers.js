@@ -236,7 +236,8 @@ function setFormState( element, state ) {
 		return;
 	}
 
-	element.setAttribute( 'data-form-state', state );
+	element.classList.remove( 'form-state-default', 'form-state-success', 'form-state-error' );
+	element.classList.add( `form-state-${ state }` );
 }
 
 function getPostId() {
