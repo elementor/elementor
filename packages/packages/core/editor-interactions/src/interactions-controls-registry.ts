@@ -1,4 +1,5 @@
 import { type ComponentType } from 'react';
+import { type PropValue } from '@elementor/editor-props';
 
 import { type DirectionFieldProps, type FieldProps, type ReplayFieldProps } from './types';
 
@@ -13,11 +14,13 @@ type InteractionsControlType =
 	| 'easing'
 	| 'relativeTo'
 	| 'offsetTop'
-	| 'offsetBottom';
+	| 'offsetBottom'
+	| 'customEffects';
 
 type InteractionsControlPropsMap = {
 	trigger: FieldProps;
 	effect: FieldProps;
+	customEffects: FieldProps< PropValue >;
 	effectType: FieldProps;
 	direction: DirectionFieldProps;
 	duration: FieldProps;

@@ -1,8 +1,11 @@
 import * as React from 'react';
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { renderWithTheme } from 'test-utils';
+import { fireEvent, screen, within } from '@testing-library/react';
 
+import { Direction } from '../components/controls/direction';
 import { Easing } from '../components/controls/easing';
 import { Effect } from '../components/controls/effect';
+import { EffectType } from '../components/controls/effect-type';
 import { Trigger } from '../components/controls/trigger';
 import { InteractionDetails } from '../components/interaction-details';
 import type { InteractionItemValue } from '../types';
@@ -50,7 +53,7 @@ describe( 'InteractionDetails', () => {
 	const mockOnPlayInteraction = jest.fn();
 
 	const renderInteractionDetails = ( interaction: InteractionItemValue ) => {
-		return render(
+		return renderWithTheme(
 			<InteractionDetails
 				interaction={ interaction }
 				onChange={ mockOnChange }
@@ -88,6 +91,18 @@ describe( 'InteractionDetails', () => {
 				};
 			}
 
+			if ( type === 'direction' ) {
+				return {
+					component: Direction,
+				};
+			}
+
+			if ( type === 'effectType' ) {
+				return {
+					component: EffectType,
+				};
+			}
+
 			return null;
 		} );
 	} );
@@ -105,6 +120,20 @@ describe( 'InteractionDetails', () => {
 			expect( screen.getByText( 'Duration' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Delay' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Easing' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should not render scrollOn-only controls for load or scrollIn triggers', () => {
+			// Arrange + Assert (load)
+			renderInteractionDetails( createInteractionItemValue( { trigger: 'load' } ) );
+			expect( screen.queryByText( 'Relative To' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Offset Top' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Offset Bottom' ) ).not.toBeInTheDocument();
+
+			// Arrange + Assert (scrollIn)
+			renderInteractionDetails( createInteractionItemValue( { trigger: 'scrollIn' } ) );
+			expect( screen.queryByText( 'Relative To' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Offset Top' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Offset Bottom' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'should render with custom values', () => {
@@ -180,6 +209,28 @@ describe( 'InteractionDetails', () => {
 		} );
 	} );
 
+	describe( 'Trigger menu options', () => {
+		it( 'should show "While scrolling" option as disabled in the trigger menu', () => {
+			const interaction = createInteractionItemValue( { trigger: 'load' } );
+
+			renderInteractionDetails( interaction );
+
+			const comboboxes = screen.getAllByRole( 'combobox' );
+			const triggerSelect = comboboxes[ 0 ];
+
+			fireEvent.mouseDown( triggerSelect );
+
+			// Sanity: core UI enables only these trigger options.
+			expect( screen.getByRole( 'option', { name: /page load/i, hidden: true } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'option', { name: /scroll into view/i, hidden: true } ) ).toBeInTheDocument();
+
+			// Guard: Pro-only trigger should be present but disabled in the core trigger control.
+			const scrollOnOption = screen.getByRole( 'option', { name: /while scrolling/i, hidden: true } );
+			expect( scrollOnOption ).toBeInTheDocument();
+			expect( scrollOnOption ).toHaveAttribute( 'aria-disabled', 'true' );
+		} );
+	} );
+
 	describe( 'onChange callback', () => {
 		it( 'should call onChange when trigger changes', () => {
 			const interaction = createInteractionItemValue( {
@@ -195,7 +246,7 @@ describe( 'InteractionDetails', () => {
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const triggerSelect = comboboxes[ 0 ];
 			fireEvent.mouseDown( triggerSelect );
-			const scrollInOption = screen.getByRole( 'option', { name: /scroll into view/i } );
+			const scrollInOption = screen.getByRole( 'option', { name: /scroll into view/i, hidden: true } );
 			fireEvent.click( scrollInOption );
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
@@ -218,7 +269,7 @@ describe( 'InteractionDetails', () => {
 
 			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
-			const slideOption = screen.getByRole( 'option', { name: /slide/i } );
+			const slideOption = screen.getByRole( 'option', { name: /slide/i, hidden: true } );
 			fireEvent.click( slideOption );
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
@@ -376,7 +427,7 @@ describe( 'InteractionDetails', () => {
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const triggerSelect = comboboxes[ 0 ];
 			fireEvent.mouseDown( triggerSelect );
-			const scrollInOption = screen.getByRole( 'option', { name: /scroll into view/i } );
+			const scrollInOption = screen.getByRole( 'option', { name: /scroll into view/i, hidden: true } );
 			fireEvent.click( scrollInOption );
 
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
@@ -407,7 +458,7 @@ describe( 'InteractionDetails', () => {
 
 			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
-			const slideOption = screen.getByRole( 'option', { name: /slide/i } );
+			const slideOption = screen.getByRole( 'option', { name: /slide/i, hidden: true } );
 			fireEvent.click( slideOption );
 
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
@@ -431,7 +482,7 @@ describe( 'InteractionDetails', () => {
 
 			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
-			const scaleOption = screen.getByRole( 'option', { name: /scale/i } );
+			const scaleOption = screen.getByRole( 'option', { name: /scale/i, hidden: true } );
 			fireEvent.click( scaleOption );
 
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
@@ -462,7 +513,7 @@ describe( 'InteractionDetails', () => {
 
 			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
-			const slideOption = screen.getByRole( 'option', { name: /slide/i } );
+			const slideOption = screen.getByRole( 'option', { name: /slide/i, hidden: true } );
 			fireEvent.click( slideOption );
 
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];

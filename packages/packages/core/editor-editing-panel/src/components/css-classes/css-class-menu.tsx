@@ -25,12 +25,25 @@ type State = {
 	label: string;
 };
 
-const STATES: State[] = [
+const DEFAULT_PSEUDO_STATES: State[] = [
 	{ key: 'normal', value: null, label: __( 'normal', 'elementor' ) },
 	{ key: 'hover', value: 'hover', label: __( 'hover', 'elementor' ) },
 	{ key: 'focus', value: 'focus', label: __( 'focus', 'elementor' ) },
 	{ key: 'active', value: 'active', label: __( 'active', 'elementor' ) },
 ];
+
+function usePseudoStates(): State[] {
+	const { elementType } = useElement();
+	const { pseudoStates = [] } = elementType;
+
+	const additionalStates: State[] = pseudoStates.map( ( { name, value } ) => ( {
+		key: value as StyleDefinitionStateWithNormal,
+		value: value as StyleDefinitionState,
+		label: name,
+	} ) );
+
+	return [ ...DEFAULT_PSEUDO_STATES, ...additionalStates ];
+}
 
 type CssClassMenuProps = {
 	popupState: PopupState;
@@ -41,6 +54,7 @@ type CssClassMenuProps = {
 export function CssClassMenu( { popupState, anchorEl, fixed }: CssClassMenuProps ) {
 	const { provider } = useCssClass();
 	const isLocalStyle = provider ? isElementsStylesProvider( provider ) : true;
+	const pseudoStates = usePseudoStates();
 
 	const handleKeyDown = ( e: React.KeyboardEvent< HTMLElement > ) => {
 		e.stopPropagation();
@@ -69,7 +83,7 @@ export function CssClassMenu( { popupState, anchorEl, fixed }: CssClassMenuProps
 			<MenuSubheader sx={ { typography: 'caption', color: 'text.secondary', pb: 0.5, pt: 1 } }>
 				{ __( 'States', 'elementor' ) }
 			</MenuSubheader>
-			{ STATES.map( ( state ) => {
+			{ pseudoStates.map( ( state ) => {
 				return (
 					<StateMenuItem
 						key={ state.key }

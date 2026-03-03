@@ -20,9 +20,10 @@ import { SortableItem, SortableProvider } from './sortable';
 type GlobalClassesListProps = {
 	disabled?: boolean;
 	onStopSyncRequest?: ( id: string ) => void;
+	onStartSyncRequest?: ( id: string ) => void;
 };
 
-export const GlobalClassesList = ( { disabled, onStopSyncRequest }: GlobalClassesListProps ) => {
+export const GlobalClassesList = ( { disabled, onStopSyncRequest, onStartSyncRequest }: GlobalClassesListProps ) => {
 	const {
 		search: { debouncedValue: searchValue },
 	} = useSearchAndFilters();
@@ -112,6 +113,8 @@ export const GlobalClassesList = ( { disabled, onStopSyncRequest }: GlobalClasse
 										onToggleSync={ ( id, newValue ) => {
 											if ( ! newValue && onStopSyncRequest ) {
 												onStopSyncRequest( id );
+											} else if ( newValue && onStartSyncRequest ) {
+												onStartSyncRequest( id );
 											} else {
 												dispatch(
 													slice.actions.update( {

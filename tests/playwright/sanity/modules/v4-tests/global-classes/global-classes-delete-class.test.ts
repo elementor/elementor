@@ -27,15 +27,15 @@ test.describe( 'Global Classes - Delete Class @v4-tests', () => {
 		const divBlock = editor.getPreviewFrame().locator( `[data-id="${ divBlockId }"]` );
 		await expect( divBlock ).toHaveClass( new RegExp( `\\b${ className }\\b` ) );
 
-	await page.getByRole( 'button', { name: 'Class Manager' } ).click();
-	await page.getByRole( 'button', { name: 'Save & Continue' } ).click();
-	await page.locator( '[aria-label="Got it introduction"]' ).click();
-	await page.locator( '[aria-label="More actions"]' ).first().click();
-	await page.getByRole( 'menuitem', { name: 'Delete' } ).click();
-	await page.getByRole( 'button', { name: 'Delete' } ).click();
-	await page.getByRole( 'button', { name: 'Save changes' } ).click();
+		await page.getByRole( 'button', { name: 'Class Manager' } ).click();
+		await page.getByRole( 'button', { name: 'Save & Continue' } ).click();
+		await page.locator( '[aria-label="Got it introduction"]' ).click();
+		await page.locator( '[aria-label="More actions"]' ).first().click();
+		await page.getByRole( 'menuitem', { name: 'Delete' } ).click();
+		await page.getByRole( 'button', { name: 'Delete' } ).click();
+		await page.getByRole( 'button', { name: 'Save changes' } ).click();
 
-	const overlay = divBlock.locator( '.elementor-element-overlay' );
+		const overlay = divBlock.locator( '.elementor-element-overlay' );
 		await expect( overlay ).toHaveCount( 1 );
 	} );
 } );

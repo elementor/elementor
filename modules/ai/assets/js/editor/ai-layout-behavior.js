@@ -4,6 +4,7 @@ import {
 	renderLayoutApp,
 } from './utils/editor-integration';
 import { MODE_LAYOUT } from './pages/form-layout/context/config';
+import { EditorOneEventManager } from 'elementor-editor-utils/editor-one-events';
 
 export default class AiLayoutBehavior extends Marionette.Behavior {
 	previewContainer = null;
@@ -23,6 +24,10 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 
 	onAiButtonClick( e ) {
 		e.stopPropagation();
+
+		EditorOneEventManager.sendCanvasEmptyBoxAction( {
+			targetName: 'generate_with_ai',
+		} );
 
 		window.elementorAiCurrentContext = this.getOption( 'context' );
 

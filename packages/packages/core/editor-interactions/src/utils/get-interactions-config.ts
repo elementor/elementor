@@ -8,7 +8,6 @@ const DEFAULT_CONFIG: InteractionsConfig = {
 		scaleStart: 0.5,
 		easing: 'linear',
 	},
-	animationOptions: [],
 };
 
 export function getInteractionsConfig(): InteractionsConfig {

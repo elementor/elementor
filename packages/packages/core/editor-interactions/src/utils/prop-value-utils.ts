@@ -1,5 +1,5 @@
 import { type Unit } from '@elementor/editor-controls';
-import { sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
+import { type PropValue, sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 
 import { DEFAULT_TIME_UNIT, TIME_UNITS } from '../configs/time-constants';
 import {
@@ -104,6 +104,7 @@ export const createAnimationPreset = ( {
 	relativeTo,
 	offsetTop,
 	offsetBottom,
+	customEffects,
 }: {
 	effect: string;
 	type: string;
@@ -115,10 +116,12 @@ export const createAnimationPreset = ( {
 	relativeTo?: string;
 	offsetTop?: SizeStringValue;
 	offsetBottom?: SizeStringValue;
+	customEffects?: PropValue;
 } ): AnimationPresetPropValue => ( {
 	$$type: 'animation-preset-props',
 	value: {
 		effect: createString( effect ),
+		custom_effect: customEffects,
 		type: createString( type ),
 		direction: createString( direction ?? '' ),
 		timing_config: createTimingConfig( duration, delay ),
@@ -146,36 +149,39 @@ export const createInteractionItem = ( {
 	offsetTop,
 	offsetBottom,
 	excludedBreakpoints,
+	customEffects,
 }: {
-	trigger: string;
-	effect: string;
-	type: string;
+	trigger?: string;
+	effect?: string;
+	type?: string;
 	direction?: string;
-	duration: SizeStringValue;
-	delay: SizeStringValue;
+	duration?: SizeStringValue;
+	delay?: SizeStringValue;
 	interactionId?: string;
-	replay: boolean;
+	replay?: boolean;
 	easing?: string;
 	relativeTo?: string;
 	offsetTop?: number;
 	offsetBottom?: number;
 	excludedBreakpoints?: string[];
+	customEffects?: PropValue;
 } ): InteractionItemPropValue => ( {
 	$$type: 'interaction-item',
 	value: {
 		...( interactionId && { interaction_id: createString( interactionId ) } ),
-		trigger: createString( trigger ),
+		trigger: createString( trigger ?? '' ),
 		animation: createAnimationPreset( {
-			effect,
-			type,
+			effect: effect ?? '',
+			type: type ?? '',
 			direction,
-			duration,
-			delay,
+			duration: duration ?? 0,
+			delay: delay ?? 0,
 			replay,
 			easing,
 			relativeTo,
 			offsetTop,
 			offsetBottom,
+			customEffects,
 		} ),
 		...( excludedBreakpoints &&
 			excludedBreakpoints.length > 0 && {

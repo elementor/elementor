@@ -9,6 +9,8 @@ import {
 	parseInteractionsData,
 } from 'elementor/modules/interactions/assets/js/interactions-utils';
 
+import { mockInteraction, mockBreakpoints, mockAnimation, mockTiming, mockConfig } from './utils';
+
 describe( 'interactions-utils', () => {
 	describe( 'getKeyframes', () => {
 		it( 'should generate fade in keyframes without direction', () => {
@@ -160,8 +162,10 @@ describe( 'interactions-utils', () => {
 			};
 
 			const result = extractAnimationConfig( interaction );
+
 			expect( result ).toEqual( {
 				trigger: 'load',
+				breakpoints: {},
 				effect: 'fade',
 				type: 'in',
 				direction: 'right',
@@ -169,6 +173,35 @@ describe( 'interactions-utils', () => {
 				delay: 0,
 				easing: 'easeIn',
 				replay: false,
+			} );
+		} );
+
+		it( 'should normalize breakpoints into anim config', () => {
+			const interaction = mockInteraction( {
+				animation: mockAnimation( {
+					effect: 'fade',
+					type: 'in',
+					direction: '',
+
+					timingConfig: mockTiming( {
+						duration: 600,
+						delay: 100,
+					} ),
+
+					config: mockConfig( {
+						replay: false,
+						easing: 'easeIn',
+					} ),
+				} ),
+				breakpoints: mockBreakpoints( {
+					excluded: [ 'widescreen', 'desktop', 'laptop' ],
+				} ),
+			} );
+
+			const parsed = extractAnimationConfig( interaction );
+
+			expect( parsed.breakpoints ).toEqual( {
+				excluded: [ 'widescreen', 'desktop', 'laptop' ],
 			} );
 		} );
 

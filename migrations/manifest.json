@@ -15,6 +15,11 @@
       "fromType": "html",
       "toType": "html-v2",
       "path": "operations/html-to-html-v2.json"
+    },
+    "html-v2-to-html-v3": {
+      "fromType": "html-v2",
+      "toType": "html-v3",
+      "path": "operations/html-v2-to-html-v3.json"
     }
   }
 }

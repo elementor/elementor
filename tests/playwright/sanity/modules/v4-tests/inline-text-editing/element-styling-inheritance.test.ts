@@ -5,6 +5,7 @@ import EditorPage from '../../../../pages/editor-page';
 import { INLINE_EDITING_SELECTORS } from './selectors/selectors';
 import { UNITS } from '../typography/typography-constants';
 import EditorSelectors from '../../../../selectors/editor-selectors';
+import { timeouts } from '../../../../config/timeouts';
 
 const TESTED_CONTENT = 'Very long Text With no Space To fiiiiiiiiiiiiiit';
 const CONTENT_WORDS = TESTED_CONTENT.split( ' ' );
@@ -85,7 +86,7 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 
 		await test.step( 'Style widget - position', async () => {
 			await editor.v4Panel.style.openSection( 'Position' );
-			await editor.v4Panel.style.setPositionSectionValue( 'absolute', { Top: { size: 40, unit: UNITS.px } } );
+			await editor.v4Panel.style.setPositionSectionValue( 'absolute', { Top: { size: 40, unit: UNITS.px } }, { zIndex: 1000 } );
 			await editor.v4Panel.style.closeSection( 'Position' );
 		} );
 
@@ -179,7 +180,8 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 			await expect.soft( flexboxElement ).toHaveScreenshot( getScreenshotName( EDITOR_STATIC_SCREENSHOT_HOVER ) );
 
 			// Act.
-			await editor.triggerEditingElement( headingId );
+			await editor.triggerEditingElement( headingId, false );
+			await page.waitForTimeout( timeouts.action );
 
 			// Assert.
 			// Already hovered at this stage

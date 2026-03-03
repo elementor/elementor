@@ -638,7 +638,11 @@ function renderOverridePropControl(
 			overridableProps={ overridableProps }
 		>
 			<ControlActionsProvider items={ [] }>
-				<ElementProvider element={ MOCK_INSTANCE_ELEMENT } elementType={ MOCK_INSTANCE_ELEMENT_TYPE }>
+				<ElementProvider
+					element={ MOCK_INSTANCE_ELEMENT }
+					elementType={ MOCK_INSTANCE_ELEMENT_TYPE }
+					settings={ {} }
+				>
 					<OverridePropControl overrideKey={ overrideKey } />
 				</ElementProvider>
 			</ControlActionsProvider>

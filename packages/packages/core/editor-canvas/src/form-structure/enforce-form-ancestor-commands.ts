@@ -16,7 +16,7 @@ import {
 
 const FORM_FIELDS_OUTSIDE_ALERT: NotificationData = {
 	type: 'default',
-	message: __( 'Form fields must be placed inside a form.', 'elementor' ),
+	message: __( 'Form elements must be placed inside a form.', 'elementor' ),
 	id: 'form-fields-outside-form-blocked',
 };
 

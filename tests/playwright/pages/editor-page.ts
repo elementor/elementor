@@ -139,33 +139,11 @@ export default class EditorPage extends BasePage {
 			} );
 		}, templateData );
 
-		// Wait for document state to be properly set after template import
-		await this.page.waitForFunction( () => {
-			interface ElementorWindow extends Window {
-				elementor?: {
-					documents?: {
-						getCurrent(): {
-							editor: { isChanged: boolean };
-						};
-					};
-					config?: {
-						user?: {
-							capabilities?: string[];
-						};
-					};
-				};
-			}
-			try {
-				const elementorInstance = ( window as ElementorWindow ).elementor;
-				const currentDoc = elementorInstance?.documents?.getCurrent();
-				return true === currentDoc?.editor?.isChanged;
-			} catch ( error ) {
-				return false;
-			}
-		}, {
-			timeout: 5000,
-			polling: 100,
-		} );
+		await this.page
+			.frameLocator( '#elementor-preview-iframe' )
+			.locator( '.elementor-element' )
+			.first()
+			.waitFor( { timeout: timeouts.heavyAction } );
 	}
 
 	/**
@@ -558,7 +536,9 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setSelectControlValue( controlId: string, value: string ): Promise<void> {
-		await this.page.selectOption( `.elementor-control-${ controlId } select`, value );
+		const selectLocator = this.page.locator( `.elementor-control-${ controlId } select` );
+		await selectLocator.waitFor( { state: 'visible', timeout: timeouts.longAction } );
+		await selectLocator.selectOption( value, { timeout: timeouts.longAction } );
 	}
 
 	/**
@@ -1372,14 +1352,19 @@ export default class EditorPage extends BasePage {
 		expect( vwAndPxValuesAreEqual ).toBeTruthy();
 	}
 
-	async triggerEditingElement( elementId: string ): Promise<Locator> {
-		const inlineEditor = this.previewFrame.locator( `.elementor-element-${ elementId } ${ INLINE_EDITING_SELECTORS.canvas.inlineEditor }` );
+	async triggerEditingElement( elementId: string, waitFor: boolean = true ): Promise<Locator> {
 		const element = this.previewFrame.locator( `.elementor-element-${ elementId }` );
 
 		await this.page.keyboard.press( 'Escape' );
 		await this.page.waitForTimeout( timeouts.veryShort );
 		await element.waitFor();
 		await element[ INLINE_EDITING_SELECTORS.triggerEvent ]();
+
+		const inlineEditor = this.previewFrame.locator( `.elementor-element-${ elementId } ${ INLINE_EDITING_SELECTORS.canvas.inlineEditor }` );
+
+		if ( waitFor ) {
+			await inlineEditor.waitFor( { timeout: timeouts.action } );
+		}
 
 		return inlineEditor;
 	}

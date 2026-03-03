@@ -15,6 +15,7 @@ on:
       - 'docs/**'
       - '.vscode/**'
       - '**/package.json'
+      - 'tests/phpunit/**'
   schedule:
     - cron: '30 08 * * 0,1,2,3,4,5'
   workflow_dispatch:

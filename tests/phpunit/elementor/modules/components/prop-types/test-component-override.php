@@ -23,9 +23,9 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 			'value' => [
 				'override_key' => 'prop-uuid-1',
 				'override_value' => [
-					'$$type' => 'html-v2',
+					'$$type' => 'html-v3',
 					'value' => [
-						'content' => 'New Title',
+						'content' => ['$$type' => 'string', 'value' => 'New Title'],
 						'children' => [],
 					],
 				],
@@ -47,9 +47,9 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 			'value' => [
 				'override_key' => 'prop-uuid-5',
 				'override_value' => [
-					'$$type' => 'html-v2',
+					'$$type' => 'html-v3',
 					'value' => [
-						'content' => 'New button text',
+						'content' => ['$$type' => 'string', 'value' => 'New button text'],
 						'children' => [],
 					],
 				],
@@ -102,9 +102,9 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 			'non-array value' => [ 'not-an-array' ],
 		'missing override_key' => [ [
 			'override_value' => [
-				'$$type' => 'html-v2',
+				'$$type' => 'html-v3',
 				'value' => [
-					'content' => 'New Title',
+					'content' => ['$$type' => 'string', 'value' => 'New Title'],
 					'children' => [],
 				],
 			],
@@ -117,9 +117,9 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 		'missing schema_source' => [ [ 
 			'override_key' => 'prop-uuid-1',
 			'override_value' => [
-				'$$type' => 'html-v2',
+				'$$type' => 'html-v3',
 				'value' => [
-					'content' => 'New Title',
+					'content' => ['$$type' => 'string', 'value' => 'New Title'],
 					'children' => [],
 				],
 			],
@@ -128,9 +128,9 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 			'value' => [ 
 				'override_key' => 123, 
 				'value' => [
-					'$$type' => 'html-v2',
+					'$$type' => 'html-v3',
 					'value' => [
-						'content' => 'New Title',
+						'content' => ['$$type' => 'string', 'value' => 'New Title'],
 						'children' => [],
 					],
 				],
@@ -143,9 +143,9 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 		'non-array schema_source' => [ [ 
 			'override_key' => 'prop-uuid-1',
 			'override_value' => [
-				'$$type' => 'html-v2',
+				'$$type' => 'html-v3',
 				'value' => [
-					'content' => 'New Title',
+					'content' => ['$$type' => 'string', 'value' => 'New Title'],
 					'children' => [],
 				],
 			],
@@ -181,7 +181,7 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 			'value' => [
 				'override_key' => 'prop-uuid-1',
 				// number is not a valid html value
-				'override_value' => [ '$$type' => 'html-v2', 'value' => 123 ],
+				'override_value' => [ '$$type' => 'html-v3', 'value' => 123 ],
 				'schema_source' => ['type' => 'component', 'id' => $this::VALID_COMPONENT_ID ],
 			]
 		] );
@@ -199,7 +199,7 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 			'$$type' => 'override',
 			'value' => [
 				'override_key' => 'prop-uuid-1',
-				// prop-uuid-1 should be an html-v2
+				// prop-uuid-1 should be an html-v3
 				'override_value' => [ '$$type' => 'number', 'value' => 123 ],
 				'schema_source' => ['type' => 'component', 'id' => $this::VALID_COMPONENT_ID ],
 			]
@@ -242,9 +242,9 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 			'value' => [
 				'override_key' => 'prop-uuid-5',
 				'override_value' => [
-					'$$type' => 'html-v2',
+					'$$type' => 'html-v3',
 					'value' => [
-						'content' => 'New button text <script>alert(1)</script>',
+						'content' => ['$$type' => 'string', 'value' => 'New button text <script>alert(1)</script>'],
 						'children' => [],
 					],
 				],
@@ -258,9 +258,9 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 			'value' => [
 				'override_key' => 'prop-uuid-5',
 				'override_value' => [
-					'$$type' => 'html-v2',
+					'$$type' => 'html-v3',
 					'value' => [
-						'content' => 'New button text alert(1)',
+						'content' => ['$$type' => 'string', 'value' => 'New button text alert(1)'],
 						'children' => [],
 					],
 				],
@@ -298,9 +298,9 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 			'value' => [
 				'override_key' => 'prop-uuid-autosave-only',
 				'override_value' => [
-					'$$type' => 'html-v2',
+					'$$type' => 'html-v3',
 					'value' => [
-						'content' => 'Override Value',
+						'content' => ['$$type' => 'string', 'value' => 'Override Value'],
 						'children' => [],
 					],
 				],
@@ -323,9 +323,9 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 			'value' => [
 				'override_key' => 'prop-uuid-autosave-only',
 				'override_value' => [
-					'$$type' => 'html-v2',
+					'$$type' => 'html-v3',
 					'value' => [
-						'content' => 'Override Value',
+						'content' => ['$$type' => 'string', 'value' => 'Override Value'],
 						'children' => [],
 					],
 				],
@@ -339,9 +339,9 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 			'value' => [
 				'override_key' => 'prop-uuid-autosave-only',
 				'override_value' => [
-					'$$type' => 'html-v2',
+					'$$type' => 'html-v3',
 					'value' => [
-						'content' => 'Override Value',
+						'content' => ['$$type' => 'string', 'value' => 'Override Value'],
 						'children' => [],
 					],
 				],

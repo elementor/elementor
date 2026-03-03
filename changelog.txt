@@ -1,5 +1,10 @@
 == Changelog ==
 
+= 3.35.5 - 2026-02-17 =
+
+* Security Fix: Improved code security enforcement in global style settings
+* Fix: General UI issues in Editor screens in WordPress Admin
+
 = 3.35.4 - 2026-02-11 =
 
 * Fix: License activation issues in various scenarios

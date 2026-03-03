@@ -2,7 +2,6 @@ import { __ } from '@wordpress/i18n';
 import {
 	Button,
 	Checkbox,
-	Chip,
 	Dialog,
 	DialogActions,
 	DialogContent,
@@ -16,32 +15,25 @@ import DialogHeaderGroup from '@elementor/ui/DialogHeaderGroup';
 import DialogHeader from '@elementor/ui/DialogHeader';
 
 const i18n = {
-	header: __( 'Version 4', 'elementor' ),
-	chip: __( 'Beta', 'elementor' ),
+	header: __( 'Atomic Editor', 'elementor' ),
 	checkboxText: __( 'I’ve read and understood.', 'elementor' ),
 
 	optIn: {
-		titleText: __( 'You are about to enable version 4 features!', 'elementor' ),
-		introText: __( 'By activating, you’ll get early access to the next generation of Elementor’s Editor. This is your chance to explore new capabilities and help shape the future of Elementor! ', 'elementor' ),
-		notesHeader: __( ' Important notes:', 'elementor' ),
-		notes: {
-			details: [
-				__( 'Features are still in development, but the beta is safe to use in production.', 'elementor' ),
-				__( 'When you activate, you’ll also be activating Containers and Nested Elements. You can turn them back off by going to: WP Admin > Elementor > Settings > Features.', 'elementor' ),
-			],
-		},
+		titleText: __( 'You are about to enable Atomic Editor features!', 'elementor' ),
+		introText: __( 'By activating, you’ll get access to the next generation of Elementor’s Editor. This is your chance to explore new capabilities and help shape the future of Elementor! ', 'elementor' ),
+		details: [
+			__( 'When you activate, you’ll also be activating Containers and Nested Elements. You can turn them back off by going to: WP Admin > Elementor > Settings > Features.', 'elementor' ),
+		],
 		activateButton: __( 'Activate', 'elementor' ),
 		cancelButton: __( 'Cancel', 'elementor' ),
 	},
 
 	optOut: {
-		titleText: __( 'You\'re about to lose all content created with version 4', 'elementor' ),
-		notes: {
-			details: [
-				__( 'By deactivating, you’ll lose all Atomic Elements, Classes and Variables. Any content you created with these features will no longer be available or appear on your site.', 'elementor' ),
-				__( 'Containers and Nested Elements will stay in their current status.', 'elementor' ),
-			],
-		},
+		titleText: __( 'You\'re about to lose all content created with Atomic features', 'elementor' ),
+		details: [
+			__( 'By deactivating, you’ll lose all Atomic Elements, Classes and Variables. Any content you created with these features will no longer be available or appear on your site.', 'elementor' ),
+			__( 'Containers and Nested Elements will stay in their current status.', 'elementor' ),
+		],
 		activateButton: __( 'Deactivate', 'elementor' ),
 		cancelButton: __( 'Cancel', 'elementor' ),
 	},
@@ -67,29 +59,24 @@ export const Terms = ( { onClose, onSubmit, isEnrolled, ...props } ) => {
 			{ ...props }
 			open
 			onClose={ onClose }
+			maxWidth="md"
 		>
 			<DialogHeader>
 				<DialogHeaderGroup>
 					<DialogTitle>{ i18n.header }</DialogTitle>
-					<Chip label={ i18n.chip } color="secondary" variant="filled" size="small" />
 				</DialogHeaderGroup>
 			</DialogHeader>
 
 			<DialogContent dividers>
 				<Stack gap={ 2.5 }>
-					<Stack gap={ 1 }>
+					<Stack gap={ 1.5 } sx={ { mx: 2, maxWidth: '550px' } }>
 						<TextNode align="center" variant="h6">{ i18n[ currentState ].titleText }</TextNode>
-						<TextNode align="center" variant="body2">{ i18n[ currentState ].introText }</TextNode>
+						{ i18n[ currentState ].introText && <TextNode align="center" variant="body3">{ i18n[ currentState ].introText }</TextNode> }
 					</Stack>
-					<Stack gap={ 1 }>
-						<TextNode variant="body2">{ i18n[ currentState ].notesHeader }</TextNode>
-						<ContentList>
-							<ContentListItem variant="body2">
-								{ i18n[ currentState ].notes.details[ 0 ] }
-							</ContentListItem>
-
-							{ i18n[ currentState ].notes.details.slice( 1 ).map( ( entry, index ) => (
-								<ContentListItem key={ index } variant="body2">
+					<Stack>
+						<ContentList sx={ { mx: 3, maxWidth: '550px' } }>
+							{ i18n[ currentState ].details.map( ( entry, index ) => (
+								<ContentListItem key={ index } variant="body3">
 									{ entry }
 								</ContentListItem>
 							) ) }
