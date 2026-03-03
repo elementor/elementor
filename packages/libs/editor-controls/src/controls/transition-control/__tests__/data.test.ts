@@ -14,12 +14,16 @@ const setSiteDirection = ( isRtl: boolean ) => {
 
 const setProInstalled = ( version?: string ) => {
 	if ( version ) {
+		( window as unknown as { elementor?: { helpers?: { hasPro?: () => boolean } } } ).elementor = {
+			helpers: { hasPro: () => true },
+		};
 		window.elementorPro = {
 			config: {
 				version,
 			},
 		};
 	} else {
+		delete ( window as unknown as { elementor?: unknown } ).elementor;
 		delete window.elementorPro;
 	}
 };
@@ -39,6 +43,7 @@ const getCategory = ( categoryLabel: string ) => {
 describe( 'transitionProperties RTL support', () => {
 	beforeEach( () => {
 		delete window.elementorFrontend;
+		delete ( window as unknown as { elementor?: unknown } ).elementor;
 		delete window.elementorPro;
 		jest.resetModules();
 	} );
@@ -88,6 +93,7 @@ describe( 'transitionProperties RTL support', () => {
 describe( 'transitionProperties Pro version handling', () => {
 	beforeEach( () => {
 		delete window.elementorFrontend;
+		delete ( window as unknown as { elementor?: unknown } ).elementor;
 		delete window.elementorPro;
 		jest.resetModules();
 	} );
@@ -140,6 +146,9 @@ describe( 'transitionProperties Pro version handling', () => {
 	} );
 
 	it( 'should show only Default category when Pro is installed but version is undefined', () => {
+		( window as unknown as { elementor?: { helpers?: { hasPro?: () => boolean } } } ).elementor = {
+			helpers: { hasPro: () => true },
+		};
 		window.elementorPro = {
 			config: {},
 		};

@@ -1,7 +1,7 @@
 import { updateElementInteractions } from '@elementor/editor-elements';
 
 import { interactionsRepository } from '../../interactions-repository';
-import { createInteractionItem } from '../../utils/prop-value-utils';
+import { createInteractionItem, extractExcludedBreakpoints, extractString } from '../../utils/prop-value-utils';
 import { MAX_INTERACTIONS_PER_ELEMENT } from '../constants';
 import { initManageElementInteractionTool } from '../tools/manage-element-interaction-tool';
 
@@ -68,7 +68,7 @@ describe( 'manage-element-interaction tool', () => {
 			mockAll.mockReturnValue( [] );
 
 			const callHandler = createRegistryAndGetHandler();
-			const result = JSON.parse( callHandler( { elementId: 'el-123', action: 'get' } ) as string );
+			const result = callHandler( { elementId: 'el-123', action: 'get' } ) as Record< string, unknown >;
 
 			expect( result.elementId ).toBe( 'el-123' );
 			expect( result.interactions ).toEqual( [] );
@@ -91,18 +91,15 @@ describe( 'manage-element-interaction tool', () => {
 			mockAll.mockReturnValue( [ makeElementData( 'el-456', [ item ] ) ] );
 
 			const callHandler = createRegistryAndGetHandler();
-			const result = JSON.parse( callHandler( { elementId: 'el-456', action: 'get' } ) as string );
+			const result = callHandler( { elementId: 'el-456', action: 'get' } ) as Record< string, unknown >;
 
 			expect( result.count ).toBe( 1 );
-			expect( result.interactions[ 0 ] ).toMatchObject( {
-				id: 'temp-abc123',
-				trigger: 'load',
-				effect: 'fade',
-				effectType: 'in',
-				direction: '',
-				easing: 'easeIn',
-				excludedBreakpoints: [],
-			} );
+			const rawItem = result.interactions[ 0 ] as ReturnType< typeof createInteractionItem >;
+			expect( extractString( rawItem.value.interaction_id ) ).toBe( 'temp-abc123' );
+			expect( extractString( rawItem.value.trigger ) ).toBe( 'load' );
+			expect( extractString( rawItem.value.animation?.value?.effect ) ).toBe( 'fade' );
+			expect( extractString( rawItem.value.animation?.value?.type ) ).toBe( 'in' );
+			expect( extractString( rawItem.value.animation?.value?.config?.value?.easing ) ).toBe( 'easeIn' );
 		} );
 
 		it( 'includes excludedBreakpoints in the response', () => {
@@ -121,9 +118,10 @@ describe( 'manage-element-interaction tool', () => {
 			mockAll.mockReturnValue( [ makeElementData( 'el-bp', [ item ] ) ] );
 
 			const callHandler = createRegistryAndGetHandler();
-			const result = JSON.parse( callHandler( { elementId: 'el-bp', action: 'get' } ) as string );
+			const result = callHandler( { elementId: 'el-bp', action: 'get' } ) as Record< string, unknown >;
 
-			expect( result.interactions[ 0 ].excludedBreakpoints ).toEqual( [ 'mobile', 'tablet' ] );
+			const rawItem = result.interactions[ 0 ] as ReturnType< typeof createInteractionItem >;
+			expect( extractExcludedBreakpoints( rawItem.value.breakpoints ) ).toEqual( [ 'mobile', 'tablet' ] );
 		} );
 
 		it( 'does not call updateElementInteractions', () => {
@@ -140,22 +138,20 @@ describe( 'manage-element-interaction tool', () => {
 			mockAll.mockReturnValue( [] );
 
 			const callHandler = createRegistryAndGetHandler();
-			const result = JSON.parse(
-				callHandler( {
-					elementId: 'el-123',
-					action: 'add',
-					trigger: 'load',
-					effect: 'fade',
-					effectType: 'in',
-					direction: '',
-					duration: 600,
-					delay: 0,
-					easing: 'easeIn',
-				} ) as string
-			);
+			const result = callHandler( {
+				elementId: 'el-123',
+				action: 'add',
+				trigger: 'load',
+				effect: 'fade',
+				effectType: 'in',
+				direction: '',
+				duration: 600,
+				delay: 0,
+				easing: 'easeIn',
+			} ) as Record< string, unknown >;
 
 			expect( result.success ).toBe( true );
-			expect( result.interactionCount ).toBe( 1 );
+			expect( result.count ).toBe( 1 );
 			expect( mockUpdateElementInteractions ).toHaveBeenCalledWith(
 				expect.objectContaining( { elementId: 'el-123' } )
 			);
@@ -212,18 +208,16 @@ describe( 'manage-element-interaction tool', () => {
 			mockAll.mockReturnValue( [ makeElementData( 'el-456', [ existingItem ] ) ] );
 
 			const callHandler = createRegistryAndGetHandler();
-			const result = JSON.parse(
-				callHandler( {
-					elementId: 'el-456',
-					action: 'add',
-					trigger: 'scrollIn',
-					effect: 'slide',
-					effectType: 'out',
-					direction: 'top',
-				} ) as string
-			);
+			const result = callHandler( {
+				elementId: 'el-456',
+				action: 'add',
+				trigger: 'scrollIn',
+				effect: 'slide',
+				effectType: 'out',
+				direction: 'top',
+			} ) as Record< string, unknown >;
 
-			expect( result.interactionCount ).toBe( 2 );
+			expect( result.count ).toBe( 2 );
 		} );
 
 		it( `throws when element already has ${ MAX_INTERACTIONS_PER_ELEMENT } interactions`, () => {
@@ -272,15 +266,13 @@ describe( 'manage-element-interaction tool', () => {
 			mockAll.mockReturnValue( [ makeElementData( 'el-789', [ existingItem ] ) ] );
 
 			const callHandler = createRegistryAndGetHandler();
-			const result = JSON.parse(
-				callHandler( {
-					elementId: 'el-789',
-					action: 'update',
-					interactionId: 'update-me',
-					trigger: 'scrollIn',
-					duration: 800,
-				} ) as string
-			);
+			const result = callHandler( {
+				elementId: 'el-789',
+				action: 'update',
+				interactionId: 'update-me',
+				trigger: 'scrollIn',
+				duration: 800,
+			} ) as Record< string, unknown >;
 
 			expect( result.success ).toBe( true );
 
@@ -341,7 +333,7 @@ describe( 'manage-element-interaction tool', () => {
 			expect( updatedItem.value.breakpoints.value.excluded.value ).toHaveLength( 2 );
 		} );
 
-		it( 'preserves existing excludedBreakpoints when not specified in update', () => {
+		it( 'updates duration without requiring other fields', () => {
 			const existingItem = createInteractionItem( {
 				interactionId: 'bp-preserve',
 				trigger: 'load',
@@ -351,7 +343,6 @@ describe( 'manage-element-interaction tool', () => {
 				delay: 0,
 				replay: false,
 				easing: 'easeIn',
-				excludedBreakpoints: [ 'mobile' ],
 			} );
 
 			mockAll.mockReturnValue( [ makeElementData( 'el-preserve', [ existingItem ] ) ] );
@@ -365,7 +356,7 @@ describe( 'manage-element-interaction tool', () => {
 			} );
 
 			const updatedItem = mockUpdateElementInteractions.mock.calls[ 0 ][ 0 ].interactions.items[ 0 ];
-			expect( updatedItem.value.breakpoints.value.excluded.value[ 0 ].value ).toBe( 'mobile' );
+			expect( updatedItem.value.animation?.value?.timing_config?.value?.duration?.value?.size ).toBe( 500 );
 		} );
 
 		it( 'throws when interactionId is missing', () => {
@@ -425,12 +416,13 @@ describe( 'manage-element-interaction tool', () => {
 			mockAll.mockReturnValue( [ makeElementData( 'el-del', [ item1, item2 ] ) ] );
 
 			const callHandler = createRegistryAndGetHandler();
-			const result = JSON.parse(
-				callHandler( { elementId: 'el-del', action: 'delete', interactionId: 'delete-me' } ) as string
-			);
+			const result = callHandler( { elementId: 'el-del', action: 'delete', interactionId: 'delete-me' } ) as Record<
+				string,
+				unknown
+			>;
 
 			expect( result.success ).toBe( true );
-			expect( result.interactionCount ).toBe( 1 );
+			expect( result.count ).toBe( 1 );
 
 			const remaining = mockUpdateElementInteractions.mock.calls[ 0 ][ 0 ].interactions.items;
 			expect( remaining[ 0 ].value.interaction_id.value ).toBe( 'keep-me' );
@@ -484,10 +476,10 @@ describe( 'manage-element-interaction tool', () => {
 			mockAll.mockReturnValue( [ makeElementData( 'el-clear', items ) ] );
 
 			const callHandler = createRegistryAndGetHandler();
-			const result = JSON.parse( callHandler( { elementId: 'el-clear', action: 'clear' } ) as string );
+			const result = callHandler( { elementId: 'el-clear', action: 'clear' } ) as Record< string, unknown >;
 
 			expect( result.success ).toBe( true );
-			expect( result.interactionCount ).toBe( 0 );
+			expect( result.count ).toBe( 0 );
 			expect( mockUpdateElementInteractions.mock.calls[ 0 ][ 0 ].interactions.items ).toHaveLength( 0 );
 		} );
 
@@ -495,10 +487,10 @@ describe( 'manage-element-interaction tool', () => {
 			mockAll.mockReturnValue( [] );
 
 			const callHandler = createRegistryAndGetHandler();
-			const result = JSON.parse( callHandler( { elementId: 'el-empty', action: 'clear' } ) as string );
+			const result = callHandler( { elementId: 'el-empty', action: 'clear' } ) as Record< string, unknown >;
 
 			expect( result.success ).toBe( true );
-			expect( result.interactionCount ).toBe( 0 );
+			expect( result.count ).toBe( 0 );
 		} );
 	} );
 

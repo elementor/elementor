@@ -9,8 +9,13 @@ beforeEach( () => {
 } );
 
 afterEach( () => {
-	jest.runOnlyPendingTimers();
-	jest.clearAllTimers();
+	try {
+		jest.runOnlyPendingTimers();
+		jest.clearAllTimers();
+	} catch {
+		// Fake timers not active (e.g. when running with other test files)
+	}
+	jest.useRealTimers();
 } );
 
 describe( 'useAutoplayCarousel', () => {
@@ -31,10 +36,11 @@ describe( 'useAutoplayCarousel', () => {
 	} );
 
 	it( 'should cycle back to the first item after reaching the last', () => {
-		const { result } = renderHook( () => useAutoplayCarousel( ITEMS ) );
+		const INTERVAL_MS = 5000;
+		const { result } = renderHook( () => useAutoplayCarousel( ITEMS, INTERVAL_MS ) );
 
 		act( () => {
-			jest.advanceTimersByTime( 5000 * ITEMS.length );
+			jest.advanceTimersByTime( INTERVAL_MS * ITEMS.length );
 		} );
 
 		expect( result.current.selectedItem ).toBe( 'a' );

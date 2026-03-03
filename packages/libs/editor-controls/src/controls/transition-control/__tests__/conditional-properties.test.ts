@@ -2,9 +2,11 @@ type TransitionCategory = { label: string };
 
 describe( 'transition properties conditional loading', () => {
 	const originalElementorPro = window.elementorPro;
+	const originalElementor = ( window as unknown as { elementor?: unknown } ).elementor;
 
 	afterEach( () => {
 		window.elementorPro = originalElementorPro;
+		( window as unknown as { elementor?: unknown } ).elementor = originalElementor;
 		jest.resetModules();
 	} );
 
@@ -28,6 +30,11 @@ describe( 'transition properties conditional loading', () => {
 			expectedHasMargin: false,
 		},
 	] )( 'should load correct properties when $scenario', ( { proConfig, expectedLength, expectedHasMargin } ) => {
+		if ( expectedHasMargin ) {
+			( window as unknown as { elementor?: { helpers?: { hasPro?: () => boolean } } } ).elementor = {
+				helpers: { hasPro: () => true },
+			};
+		}
 		window.elementorPro = proConfig;
 
 		const { transitionProperties: props } = require( '../data' );
