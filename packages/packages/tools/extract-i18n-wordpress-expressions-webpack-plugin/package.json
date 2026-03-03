@@ -45,6 +45,7 @@
     "glob": "^11.0.0"
   },
   "devDependencies": {
+    "@types/node": "*",
     "memfs": "^4.17.0",
     "tsup": "^8.3.5"
   }
