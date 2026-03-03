@@ -71,8 +71,8 @@ export default function createAtomicElementBaseView( type ) {
 					const classPattern = propMeta.generates_class;
 					const settingValue = this.model.getSetting( key );
 					const value = settingValue?.value ?? settingValue;
-					
-					if ( value && typeof value === 'string' ) {
+
+					if ( value && 'string' === typeof value ) {
 						const className = classPattern.replace( '{value}', value );
 						generatedClasses.push( className );
 					}
