@@ -1,2 +1,2 @@
 export { init } from './init';
-export { showAngiePromotionModal } from './components/angie-promotion-modal';
+export { showAngiePromotionModal } from './components/angie-modal';

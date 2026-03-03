@@ -1,34 +1,45 @@
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
-import { setReferrerRedirect } from '@elementor/angie-sdk';
+import { getAngieIframe, setReferrerRedirect, toggleAngieSidebar } from '@elementor/angie-sdk';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { XIcon } from '@elementor/icons';
 import { Button, Dialog, DialogContent, IconButton, Image, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-const SHOW_ANGIE_PROMOTION_MODAL_EVENT = 'elementor/editor/show-angie-promotion-modal';
-
-const ANGIE_INSTALL_URL = '/wp-admin/plugin-install.php?s=angie&tab=search&type=term';
-const ANGIE_PROMOTION_IMAGE_URL = 'https://assets.elementor.com/packages/v1/images/angie-promotion.svg';
+import { ANGIE_INSTALL_URL, ANGIE_PROMOTION_IMAGE_URL, SHOW_ANGIE_MODAL_EVENT } from '../consts';
+import { isAngieActive } from '../utils/is-angie-active';
 
 type ShowModalEventDetail = {
 	prompt?: string;
 };
 
-export function AngiePromotionModal() {
+export function AngieModal() {
 	const [ open, setOpen ] = useState( false );
 	const [ prompt, setPrompt ] = useState< string | undefined >();
 
 	useEffect( () => {
-		const handleShow = ( event: CustomEvent< ShowModalEventDetail > ) => {
+		const handleShow = async ( event: CustomEvent< ShowModalEventDetail > ) => {
+			const isActive = await isAngieActive();
+
+			if ( isActive ) {
+				const iframe = getAngieIframe();
+				if ( iframe ) {
+					toggleAngieSidebar( iframe, true );
+					if ( event.detail?.prompt ) {
+						window.location.hash = 'angie-prompt=' + encodeURIComponent( event.detail.prompt );
+					}
+				}
+				return;
+			}
+
 			setPrompt( event.detail?.prompt );
 			setOpen( true );
 		};
 
-		window.addEventListener( SHOW_ANGIE_PROMOTION_MODAL_EVENT, handleShow as EventListener );
+		window.addEventListener( SHOW_ANGIE_MODAL_EVENT, handleShow as unknown as EventListener );
 
 		return () => {
-			window.removeEventListener( SHOW_ANGIE_PROMOTION_MODAL_EVENT, handleShow as EventListener );
+			window.removeEventListener( SHOW_ANGIE_MODAL_EVENT, handleShow as unknown as EventListener );
 		};
 	}, [] );
 
@@ -99,9 +110,9 @@ export function AngiePromotionModal() {
 	);
 }
 
-export function showAngiePromotionModal( prompt?: string ) {
+export async function showAngiePromotionModal( prompt?: string ) {
 	window.dispatchEvent(
-		new CustomEvent< ShowModalEventDetail >( SHOW_ANGIE_PROMOTION_MODAL_EVENT, {
+		new CustomEvent< ShowModalEventDetail >( SHOW_ANGIE_MODAL_EVENT, {
 			detail: { prompt },
 		} )
 	);

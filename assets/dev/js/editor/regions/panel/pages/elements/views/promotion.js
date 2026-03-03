@@ -32,7 +32,7 @@ PanelElementsPromotionView = Marionette.ItemView.extend( {
 
 	onCtaClick() {
 		window.dispatchEvent(
-			new CustomEvent( 'elementor/editor/show-angie-promotion-modal', {
+			new CustomEvent( 'elementor/editor/show-angie-modal', {
 				detail: { prompt: `Generate a new widget - ${ this.options.searchTerm || '' }` },
 			} ),
 		);
