@@ -5,8 +5,6 @@ import { Stack, type Theme, Typography } from '@elementor/ui';
 import { StepTitle } from '../../components/ui/styled-components';
 import { WoocommerceIcon } from '../../components/ui/woocommerce-icon';
 import { useOnboarding } from '../../hooks/use-onboarding';
-import { t } from '../../utils/translations';
-import { FeatureGrid, type FeatureOption, ProPlanNotice } from '../components/site-features';
 import AccessibilityToolsIcon from '../../icons/site-features/accessibility-tools-icon';
 import AIGeneratorIcon from '../../icons/site-features/ai-generator-icon';
 import ClassesVariablesIcon from '../../icons/site-features/classes-variables-icon';
@@ -15,6 +13,8 @@ import CustomCodeIcon from '../../icons/site-features/custom-code-icon';
 import EmailDeliverabilityIcon from '../../icons/site-features/email-deliverability-icon';
 import ImageOptimizationIcon from '../../icons/site-features/image-optimization-icon';
 import ThemeBuilderIcon from '../../icons/site-features/theme-builder-icon';
+import { t } from '../../utils/translations';
+import { FeatureGrid, type FeatureOption, ProPlanNotice } from '../components/site-features';
 
 export const FEATURE_OPTIONS: FeatureOption[] = [
 	{
