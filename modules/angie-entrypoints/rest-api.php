@@ -4,7 +4,6 @@ namespace Elementor\Modules\AngieEntrypoints;
 
 use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
-use Elementor\Core\Utils\Hints;
 use Elementor\Core\Utils\Plugins_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,22 +19,6 @@ class Rest_Api {
 	}
 
 	private function register_routes() {
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/config', [
-			[
-				'methods' => 'GET',
-				'callback' => fn() => $this->route_wrapper( fn() => $this->get_config() ),
-				'permission_callback' => '__return_true',
-			],
-		] );
-
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/install', [
-			[
-				'methods' => 'POST',
-				'callback' => fn() => $this->route_wrapper( fn() => $this->install() ),
-				'permission_callback' => fn() => current_user_can( 'install_plugins' ),
-			],
-		] );
-
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/activate', [
 			[
 				'methods' => 'POST',
@@ -43,34 +26,6 @@ class Rest_Api {
 				'permission_callback' => fn() => current_user_can( 'activate_plugins' ),
 			],
 		] );
-	}
-
-	private function get_config() {
-		return Response_Builder::make( [
-			'isInstalled' => Module::is_angie_installed(),
-			'isActive' => Module::is_angie_active(),
-			'installUrl' => Hints::get_plugin_install_url( Module::PLUGIN_SLUG ),
-		] )->build();
-	}
-
-	private function install() {
-		if ( Module::is_angie_installed() ) {
-			return Response_Builder::make( [ 'status' => 'already_installed' ] )->build();
-		}
-
-		$plugins_manager = new Plugins_Manager();
-		$result = $plugins_manager->install( Module::ANGIE_PLUGIN_PATH );
-
-		if ( ! empty( $result['failed'] ) ) {
-			return Error_Builder::make( 'install_failed' )
-				->set_status( 500 )
-				->set_message( __( 'Failed to install Angie plugin', 'elementor' ) )
-				->build();
-		}
-
-		return Response_Builder::make( [ 'status' => 'installed' ] )
-			->set_status( 201 )
-			->build();
 	}
 
 	private function activate() {
