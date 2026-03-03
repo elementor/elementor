@@ -25,30 +25,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  file-diff:
-    runs-on: ubuntu-latest
-    name: File Diff
-    if: startsWith( github.repository, 'elementor/' )
-    outputs:
-      php_diff: ${{ steps.php_diff_files.outputs.diff }}
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
-      - name: Check PHP files diff
-        id: php_diff_files
-        uses: technote-space/get-diff-action@v6
-        with:
-          PATTERNS: |
-            **/*.php
-            **/*.twig
-            composer.+(json|lock)
-            .github/**/*.yml
-            install-wp-tests.sh
-
   test_pr_group:
     uses: ./.github/workflows/phpunit-runner.yml
-    needs: ['file-diff']
-    if: ${{ (github.event_name == 'pull_request' || github.event_name == 'merge_group') && (github.event.pull_request.title == null || needs.file-diff.outputs.php_diff) }}
+    if: ${{ startsWith(github.repository, 'elementor/') && (github.event_name == 'pull_request' || github.event_name == 'merge_group') }}
     with:
       job_name: PHPUnit (PR/Merge)
       wordpress_versions: '["latest", "6.8", "6.7"]'

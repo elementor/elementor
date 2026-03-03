@@ -18,8 +18,6 @@ on:
     outputs:
       artifact_name:
         value: ${{ jobs.build-plugin.outputs.artifact_name }}
-      changelog_diff:
-        value: ${{ jobs.build-plugin.outputs.changelog_diff }}
   push:
     branches:
       - 'main'
@@ -42,7 +40,6 @@ jobs:
     if: startsWith( github.repository, 'elementor/' )
     outputs:
       artifact_name: ${{ env.PLUGIN_FOLDER_FILENAME}}
-      changelog_diff: ${{ steps.changelog_diff_files.outputs.diff }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -54,16 +51,6 @@ jobs:
           key: ${{ runner.os }}-turbo-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-turbo-
-
-      - name: Check if this is only a changelog PR
-        id: changelog_diff_files
-        uses: technote-space/get-diff-action@v6
-        with:
-          PATTERNS: |
-            **/*
-            .*/**/*
-            !readme.txt
-            !changelog.txt
 
       - name: Install Node.js 20.x
         uses: actions/setup-node@v4
