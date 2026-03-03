@@ -2,7 +2,7 @@
   "name": "@elementor/editor-starter",
   "description": "Start building overlay for the Elementor editor",
   "version": "4.0.0",
-  "private": false,
+  "private": true,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
   "license": "GPL-3.0-or-later",
@@ -25,9 +25,6 @@
   "bugs": {
     "url": "https://github.com/elementor/elementor/issues"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "files": [
     "README.md",
     "/dist",
@@ -42,7 +39,8 @@
     "@elementor/editor": "4.0.0",
     "@elementor/editor-v1-adapters": "4.0.0",
     "@elementor/ui": "1.36.17",
-    "@wordpress/api-fetch": "^7.12.0"
+    "@wordpress/api-fetch": "^7.12.0",
+    "@wordpress/i18n": "^5.13.0"
   },
   "peerDependencies": {
     "react": "^18.3.1",
