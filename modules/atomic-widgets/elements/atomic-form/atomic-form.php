@@ -34,6 +34,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Atomic_Form extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
+	public const ACTION_COLLECT_SUBMISSIONS = 'collect-submissions';
+	public const METADATA_REMOTE_IP = 'remote_ip';
+	public const METADATA_USER_AGENT = 'user_agent';
+
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 		$this->meta( 'is_container', true );
@@ -73,7 +77,7 @@ class Atomic_Form extends Atomic_Element_Base {
 			->where( [
 				'operator' => 'contains',
 				'path' => [ 'actions-after-submit' ],
-				'value' => 'collect-submissions',
+				'value' => self::ACTION_COLLECT_SUBMISSIONS,
 				'effect' => 'hide',
 			] )
 			->get();
@@ -90,7 +94,7 @@ class Atomic_Form extends Atomic_Element_Base {
 				->default( [] ),
 			'submissions_metadata' => String_Array_Prop_Type::make()
 				->set_dependencies( $submissions_metadata_dependencies )
-				->default( [ 'remote_ip', 'user_agent' ] ),
+				->default( [ self::METADATA_REMOTE_IP, self::METADATA_USER_AGENT ] ),
 			'email' => Email_Prop_Type::make()
 				->set_dependencies( $email_dependencies )
 				->default( [] ),
@@ -135,7 +139,7 @@ class Atomic_Form extends Atomic_Element_Base {
 						->set_options( [
 							[
 								'label' => __( 'Collect submissions', 'elementor' ),
-								'value' => 'collect-submissions',
+								'value' => self::ACTION_COLLECT_SUBMISSIONS,
 							],
 							[
 								'label' => __( 'Email', 'elementor' ),
@@ -148,11 +152,11 @@ class Atomic_Form extends Atomic_Element_Base {
 						->set_options( [
 							[
 								'label' => __( 'User IP', 'elementor' ),
-								'value' => 'remote_ip',
+								'value' => self::METADATA_REMOTE_IP,
 							],
 							[
 								'label' => __( 'User Agent', 'elementor' ),
-								'value' => 'user_agent',
+								'value' => self::METADATA_USER_AGENT,
 							],
 						] ),
 					Email_Form_Action_Control::bind_to( 'email' )
