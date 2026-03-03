@@ -8,6 +8,7 @@ interface UpdateProgressParams {
 	step_index?: number;
 	total_steps?: number;
 	user_exit?: boolean;
+	complete?: boolean;
 }
 
 async function updateProgress( params: UpdateProgressParams ): Promise< void > {

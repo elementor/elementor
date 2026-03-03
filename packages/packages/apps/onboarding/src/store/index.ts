@@ -19,6 +19,7 @@ export {
 	setGuest,
 	setShouldShowProInstallScreen,
 	dismissProInstallScreen,
+	markProInstalled,
 } from './slice';
 
 export {

@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Variables\Storage;
 
+use Elementor\Modules\Variables\Storage\Constants;
 use Elementor\Modules\Variables\Storage\Entities\Variable;
 use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
@@ -24,7 +25,7 @@ class Test_Variables_Collection extends TestCase {
 		// Assert
 		$this->assertEmpty( $collection->all() );
 		$this->assertEquals( 0, $collection->watermark() );
-		$this->assertEquals( Variables_Collection::FORMAT_VERSION_V1, $collection->serialize()['version'] );
+		$this->assertEquals( Constants::FORMAT_VERSION_V1, $collection->serialize()['version'] );
 	}
 
 	public function test_hydrate__creates_collection_from_array() {
@@ -331,7 +332,7 @@ class Test_Variables_Collection extends TestCase {
 	public function test_assert_limit_not_reached__throws_when_at_limit() {
 		// Arrange
 		$variables = [];
-		for ( $i = 0; $i < Variables_Collection::TOTAL_VARIABLES_COUNT; $i++ ) {
+		for ( $i = 0; $i < Constants::TOTAL_VARIABLES_COUNT; $i++ ) {
 			$variables[ "id-{$i}" ] = [
 				'type' => 'color',
 				'label' => "Label {$i}",
@@ -358,7 +359,7 @@ class Test_Variables_Collection extends TestCase {
 		// Arrange
 		$variables = [];
 
-		for ( $i = 0; $i < Variables_Collection::TOTAL_VARIABLES_COUNT + 1; $i++ ) {
+		for ( $i = 0; $i < Constants::TOTAL_VARIABLES_COUNT + 1; $i++ ) {
 			$variables[ "id-{$i}" ] = [
 				'type' => 'color',
 				'label' => "Label {$i}",
@@ -386,7 +387,7 @@ class Test_Variables_Collection extends TestCase {
 		$variables = [];
 		$variables = [];
 
-		for ( $i = 0; $i < Variables_Collection::TOTAL_VARIABLES_COUNT - 5; $i++ ) {
+		for ( $i = 0; $i < Constants::TOTAL_VARIABLES_COUNT - 5; $i++ ) {
 			$variables[ "id-{$i}" ] = [
 				'type' => 'color',
 				'label' => "Label {$i}",

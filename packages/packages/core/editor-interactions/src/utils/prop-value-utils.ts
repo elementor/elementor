@@ -1,5 +1,5 @@
 import { type Unit } from '@elementor/editor-controls';
-import { sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
+import { type PropValue, sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 
 import { DEFAULT_TIME_UNIT, TIME_UNITS } from '../configs/time-constants';
 import {
@@ -46,22 +46,22 @@ export const createConfig = ( {
 	replay,
 	easing = 'easeIn',
 	relativeTo = '',
-	offsetTop = 0,
-	offsetBottom = 85,
+	start = 85,
+	end = 15,
 }: {
 	replay: boolean;
 	easing?: string;
 	relativeTo?: string;
-	offsetTop?: SizeStringValue;
-	offsetBottom?: SizeStringValue;
+	start?: SizeStringValue;
+	end?: SizeStringValue;
 } ): ConfigPropValue => ( {
 	$$type: 'config',
 	value: {
 		replay: createBoolean( replay ),
 		easing: createString( easing ),
 		relativeTo: createString( relativeTo ),
-		offsetTop: createSize( offsetTop, '%' ),
-		offsetBottom: createSize( offsetBottom, '%' ),
+		start: createSize( start, '%' ),
+		end: createSize( end, '%' ),
 	},
 } );
 
@@ -102,8 +102,9 @@ export const createAnimationPreset = ( {
 	replay = false,
 	easing = 'easeIn',
 	relativeTo,
-	offsetTop,
-	offsetBottom,
+	start,
+	end,
+	customEffects,
 }: {
 	effect: string;
 	type: string;
@@ -113,12 +114,14 @@ export const createAnimationPreset = ( {
 	replay: boolean;
 	easing?: string;
 	relativeTo?: string;
-	offsetTop?: SizeStringValue;
-	offsetBottom?: SizeStringValue;
+	start?: SizeStringValue;
+	end?: SizeStringValue;
+	customEffects?: PropValue;
 } ): AnimationPresetPropValue => ( {
 	$$type: 'animation-preset-props',
 	value: {
 		effect: createString( effect ),
+		custom_effect: customEffects,
 		type: createString( type ),
 		direction: createString( direction ?? '' ),
 		timing_config: createTimingConfig( duration, delay ),
@@ -126,8 +129,8 @@ export const createAnimationPreset = ( {
 			replay,
 			easing,
 			relativeTo,
-			offsetTop,
-			offsetBottom,
+			start,
+			end,
 		} ),
 	},
 } );
@@ -143,39 +146,42 @@ export const createInteractionItem = ( {
 	replay = false,
 	easing = 'easeIn',
 	relativeTo,
-	offsetTop,
-	offsetBottom,
+	start,
+	end,
 	excludedBreakpoints,
+	customEffects,
 }: {
-	trigger: string;
-	effect: string;
-	type: string;
+	trigger?: string;
+	effect?: string;
+	type?: string;
 	direction?: string;
-	duration: SizeStringValue;
-	delay: SizeStringValue;
+	duration?: SizeStringValue;
+	delay?: SizeStringValue;
 	interactionId?: string;
-	replay: boolean;
+	replay?: boolean;
 	easing?: string;
 	relativeTo?: string;
-	offsetTop?: number;
-	offsetBottom?: number;
+	start?: number;
+	end?: number;
 	excludedBreakpoints?: string[];
+	customEffects?: PropValue;
 } ): InteractionItemPropValue => ( {
 	$$type: 'interaction-item',
 	value: {
 		...( interactionId && { interaction_id: createString( interactionId ) } ),
-		trigger: createString( trigger ),
+		trigger: createString( trigger ?? '' ),
 		animation: createAnimationPreset( {
-			effect,
-			type,
+			effect: effect ?? '',
+			type: type ?? '',
 			direction,
-			duration,
-			delay,
+			duration: duration ?? 0,
+			delay: delay ?? 0,
 			replay,
 			easing,
 			relativeTo,
-			offsetTop,
-			offsetBottom,
+			start,
+			end,
+			customEffects,
 		} ),
 		...( excludedBreakpoints &&
 			excludedBreakpoints.length > 0 && {

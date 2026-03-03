@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { CheckedCircleIcon } from '@elementor/icons';
 import { Stack, Typography } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
 
 import type { ThemeSlug } from '../../types';
+import { t } from '../../utils/translations';
 import { InstalledChip, RecommendedChip, ThemeCardRoot, ThemePreview } from './styled-components';
 
 export interface ThemeCardProps {
@@ -50,14 +50,14 @@ export function ThemeCard( {
 			<ThemePreview bgColor={ previewBgColor } previewImage={ previewImage }>
 				{ installed && (
 					<InstalledChip
-						label={ __( 'Installed', 'elementor' ) }
+						label={ t( 'common.installed' ) }
 						size="small"
 						color="success"
 						icon={ <CheckedCircleIcon /> }
 					/>
 				) }
 				{ recommended && ! installed && (
-					<RecommendedChip label={ __( 'Recommended', 'elementor' ) } size="small" color="secondary" />
+					<RecommendedChip label={ t( 'common.recommended' ) } size="small" color="secondary" />
 				) }
 			</ThemePreview>
 

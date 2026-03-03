@@ -1,4 +1,4 @@
-import { htmlV2PropTypeUtil, type PropType, stringPropTypeUtil } from '@elementor/editor-props';
+import { htmlV3PropTypeUtil, type PropType, stringPropTypeUtil } from '@elementor/editor-props';
 
 type InlineEditingEligibilityArgs = {
 	rawValue: unknown;
@@ -9,7 +9,7 @@ const hasKey = ( propType: PropType ): propType is PropType & { key: unknown } =
 	return 'key' in propType;
 };
 
-const TEXT_PROP_TYPE_KEYS = new Set( [ htmlV2PropTypeUtil.key, stringPropTypeUtil.key ] );
+const TEXT_PROP_TYPE_KEYS = new Set( [ htmlV3PropTypeUtil.key, stringPropTypeUtil.key ] );
 
 const isCoreTextPropTypeKey = ( key: unknown ): boolean => {
 	return ( TEXT_PROP_TYPE_KEYS as Set< unknown > ).has( key );
@@ -36,5 +36,5 @@ export const isInlineEditingAllowed = ( { rawValue, propTypeFromSchema }: Inline
 		return isAllowedBySchema( propTypeFromSchema );
 	}
 
-	return htmlV2PropTypeUtil.isValid( rawValue ) || stringPropTypeUtil.isValid( rawValue );
+	return htmlV3PropTypeUtil.isValid( rawValue ) || stringPropTypeUtil.isValid( rawValue );
 };

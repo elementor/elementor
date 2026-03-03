@@ -25,7 +25,14 @@ const RATIO_OPTIONS = [
 const CUSTOM_RATIO = 'custom';
 
 export const AspectRatioControl = createControl( ( { label }: { label: string } ) => {
-	const { value: aspectRatioValue, setValue: setAspectRatioValue, disabled } = useBoundProp( stringPropTypeUtil );
+	const {
+		value: currentPropValue,
+		setValue: setAspectRatioValue,
+		disabled,
+		placeholder: externalPlaceholder,
+	} = useBoundProp( stringPropTypeUtil );
+
+	const aspectRatioValue = currentPropValue ?? externalPlaceholder;
 
 	const isCustomSelected =
 		aspectRatioValue && ! RATIO_OPTIONS.some( ( option ) => option.value === aspectRatioValue );
@@ -87,6 +94,9 @@ export const AspectRatioControl = createControl( ( { label }: { label: string } 
 		}
 	};
 
+	const lookup = currentPropValue ?? externalPlaceholder;
+	const selectedOption = RATIO_OPTIONS.find( ( option ) => option.value === lookup );
+
 	return (
 		<ControlActions>
 			<Stack direction="column" gap={ 2 }>
@@ -102,6 +112,7 @@ export const AspectRatioControl = createControl( ( { label }: { label: string } 
 							disabled={ disabled }
 							value={ selectedValue }
 							onChange={ handleSelectChange }
+							renderValue={ isCustomSelected ? undefined : () => selectedOption?.label }
 							fullWidth
 						>
 							{ [ ...RATIO_OPTIONS, { label: __( 'Custom', 'elementor' ), value: CUSTOM_RATIO } ].map(

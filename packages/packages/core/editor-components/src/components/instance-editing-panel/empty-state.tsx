@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useComponentsPermissions } from '../../hooks/use-components-permissions';
 
-export const EmptyState = ( { onEditComponent }: { onEditComponent: () => void } ) => {
+export const EmptyState = ( { onEditComponent }: { onEditComponent?: () => void } ) => {
 	const { canEdit } = useComponentsPermissions();
 
 	const message = canEdit
@@ -34,7 +34,7 @@ export const EmptyState = ( { onEditComponent }: { onEditComponent: () => void }
 			<Typography align="center" variant="caption" maxWidth="170px">
 				{ message }
 			</Typography>
-			{ canEdit && (
+			{ canEdit && !! onEditComponent && (
 				<Button variant="outlined" color="secondary" size="small" sx={ { mt: 1 } } onClick={ onEditComponent }>
 					<PencilIcon fontSize="small" />
 					{ __( 'Edit component', 'elementor' ) }

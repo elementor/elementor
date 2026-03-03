@@ -126,7 +126,7 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 		$stylesheet = $this->createMock( \Elementor\Stylesheet::class );
 		$stylesheet->expects( $this->once() )
 			->method( 'add_raw_css' )
-			->with( ':root { --e-global-color-v4-Primary:var(--Primary); }' );
+			->with( ':root { --e-global-color-v4-primary:var(--Primary); }' );
 
 		$post_css = $this->createMock( \Elementor\Core\Files\CSS\Post::class );
 		$post_css->method( 'get_post_id' )->willReturn( $kit_id );
@@ -171,7 +171,7 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 		$stylesheet = $this->createMock( \Elementor\Stylesheet::class );
 		$stylesheet->expects( $this->once() )
 			->method( 'add_raw_css' )
-			->with( ':root { --e-global-color-v4-Primary:var(--Primary); --e-global-color-v4-Secondary:var(--Secondary); }' );
+			->with( ':root { --e-global-color-v4-primary:var(--Primary); --e-global-color-v4-secondary:var(--Secondary); }' );
 
 		$post_css = $this->createMock( \Elementor\Core\Files\CSS\Post::class );
 		$post_css->method( 'get_post_id' )->willReturn( $kit_id );
@@ -216,7 +216,7 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 		$stylesheet = $this->createMock( \Elementor\Stylesheet::class );
 		$stylesheet->expects( $this->once() )
 			->method( 'add_raw_css' )
-			->with( ':root { --e-global-color-v4-Valid:var(--Valid); }' );
+			->with( ':root { --e-global-color-v4-valid:var(--Valid); }' );
 
 		$post_css = $this->createMock( \Elementor\Core\Files\CSS\Post::class );
 		$post_css->method( 'get_post_id' )->willReturn( $kit_id );
@@ -666,7 +666,7 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 		$stylesheet->expects( $this->once() )
 			->method( 'add_raw_css' )
 			->with( $this->logicalAnd(
-				$this->stringContains( '--e-global-color-v4-Primary:var(--Primary);' ),
+				$this->stringContains( '--e-global-color-v4-primary:var(--Primary);' ),
 				$this->stringContains( '--e-global-typography-v4-Heading-font-size:' )
 			) );
 

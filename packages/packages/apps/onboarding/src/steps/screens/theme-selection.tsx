@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { Stack, Typography } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
 
 import {
 	getGreetingText,
@@ -11,9 +10,11 @@ import {
 	ThemeCard,
 } from '../../components/theme-selection';
 import { GreetingBanner } from '../../components/ui/greeting-banner';
+import { StepTitle } from '../../components/ui/styled-components';
 import { useOnboarding } from '../../hooks/use-onboarding';
 import type { ThemeSlug } from '../../types';
 import { StepId } from '../../types';
+import { t } from '../../utils/translations';
 
 interface ThemeSelectionProps {
 	onComplete: ( choice: Record< string, unknown > ) => void;
@@ -69,11 +70,11 @@ export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
 
 			<Stack spacing={ 4 }>
 				<Stack spacing={ 1 }>
-					<Typography variant="h5" align="center" fontWeight={ 500 } fontFamily="Poppins">
-						{ __( 'Start with a theme that fits your needs', 'elementor' ) }
-					</Typography>
+					<StepTitle variant="h5" align="center">
+						{ t( 'steps.theme_selection.title' ) }
+					</StepTitle>
 					<Typography variant="body1" color="text.secondary">
-						{ __( 'Hello themes are built to work seamlessly with Elementor.', 'elementor' ) }
+						{ t( 'steps.theme_selection.subtitle' ) }
 					</Typography>
 				</Stack>
 
@@ -81,7 +82,7 @@ export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
 					direction="row"
 					spacing={ 4 }
 					role="radiogroup"
-					aria-label={ __( 'Theme selection', 'elementor' ) }
+					aria-label={ t( 'steps.theme_selection.aria_label' ) }
 				>
 					{ themes.map( ( theme ) => {
 						const isSelected = effectiveSelection === theme.slug;
@@ -92,8 +93,8 @@ export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
 							<ThemeCard
 								key={ theme.slug }
 								slug={ theme.slug }
-								label={ theme.label }
-								description={ theme.description }
+								label={ t( theme.labelKey ) }
+								description={ t( theme.descriptionKey ) }
 								previewBgColor={ theme.previewBgColor }
 								previewImage={ theme.previewImage }
 								selected={ isSelected }

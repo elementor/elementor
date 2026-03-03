@@ -26,11 +26,6 @@ export type {
 	InteractionBreakpointsPropValue,
 };
 
-export type AnimationOption = {
-	value: string;
-	label: string;
-};
-
 export type InteractionConstants = {
 	defaultDuration: number;
 	defaultDelay: number;
@@ -41,22 +36,18 @@ export type InteractionConstants = {
 
 export type InteractionsConfig = {
 	constants: InteractionConstants;
-	animationOptions: AnimationOption[];
 };
 
-export type FieldProps = {
-	value: string;
-	onChange: ( value: string ) => void;
+export type FieldProps< T = string > = {
+	value: T;
+	onChange: ( value: T ) => void;
 	label?: string;
-};
-
-export type ReplayFieldProps = {
-	value: boolean;
-	onChange: ( value: boolean ) => void;
 	disabled?: boolean;
 	anchorRef?: RefObject< HTMLElement | null >;
 };
-export type DirectionFieldProps = FieldProps & {
+
+export type ReplayFieldProps = FieldProps< boolean >;
+export type DirectionFieldProps = FieldProps< string > & {
 	interactionType: string;
 };
 

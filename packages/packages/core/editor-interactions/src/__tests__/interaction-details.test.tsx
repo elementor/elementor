@@ -1,8 +1,11 @@
 import * as React from 'react';
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { renderWithTheme } from 'test-utils';
+import { fireEvent, screen, within } from '@testing-library/react';
 
+import { Direction } from '../components/controls/direction';
 import { Easing } from '../components/controls/easing';
 import { Effect } from '../components/controls/effect';
+import { EffectType } from '../components/controls/effect-type';
 import { Trigger } from '../components/controls/trigger';
 import { InteractionDetails } from '../components/interaction-details';
 import type { InteractionItemValue } from '../types';
@@ -50,7 +53,7 @@ describe( 'InteractionDetails', () => {
 	const mockOnPlayInteraction = jest.fn();
 
 	const renderInteractionDetails = ( interaction: InteractionItemValue ) => {
-		return render(
+		return renderWithTheme(
 			<InteractionDetails
 				interaction={ interaction }
 				onChange={ mockOnChange }
@@ -88,6 +91,18 @@ describe( 'InteractionDetails', () => {
 				};
 			}
 
+			if ( type === 'direction' ) {
+				return {
+					component: Direction,
+				};
+			}
+
+			if ( type === 'effectType' ) {
+				return {
+					component: EffectType,
+				};
+			}
+
 			return null;
 		} );
 	} );
@@ -111,14 +126,14 @@ describe( 'InteractionDetails', () => {
 			// Arrange + Assert (load)
 			renderInteractionDetails( createInteractionItemValue( { trigger: 'load' } ) );
 			expect( screen.queryByText( 'Relative To' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Offset Top' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Offset Bottom' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'End' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Start' ) ).not.toBeInTheDocument();
 
 			// Arrange + Assert (scrollIn)
 			renderInteractionDetails( createInteractionItemValue( { trigger: 'scrollIn' } ) );
 			expect( screen.queryByText( 'Relative To' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Offset Top' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Offset Bottom' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'End' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Start' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'should render with custom values', () => {
@@ -206,11 +221,11 @@ describe( 'InteractionDetails', () => {
 			fireEvent.mouseDown( triggerSelect );
 
 			// Sanity: core UI enables only these trigger options.
-			expect( screen.getByRole( 'option', { name: /page load/i } ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'option', { name: /scroll into view/i } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'option', { name: /page load/i, hidden: true } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'option', { name: /scroll into view/i, hidden: true } ) ).toBeInTheDocument();
 
 			// Guard: Pro-only trigger should be present but disabled in the core trigger control.
-			const scrollOnOption = screen.getByRole( 'option', { name: /while scrolling/i } );
+			const scrollOnOption = screen.getByRole( 'option', { name: /while scrolling/i, hidden: true } );
 			expect( scrollOnOption ).toBeInTheDocument();
 			expect( scrollOnOption ).toHaveAttribute( 'aria-disabled', 'true' );
 		} );
@@ -231,7 +246,7 @@ describe( 'InteractionDetails', () => {
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const triggerSelect = comboboxes[ 0 ];
 			fireEvent.mouseDown( triggerSelect );
-			const scrollInOption = screen.getByRole( 'option', { name: /scroll into view/i } );
+			const scrollInOption = screen.getByRole( 'option', { name: /scroll into view/i, hidden: true } );
 			fireEvent.click( scrollInOption );
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
@@ -254,7 +269,7 @@ describe( 'InteractionDetails', () => {
 
 			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
-			const slideOption = screen.getByRole( 'option', { name: /slide/i } );
+			const slideOption = screen.getByRole( 'option', { name: /slide/i, hidden: true } );
 			fireEvent.click( slideOption );
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
@@ -412,7 +427,7 @@ describe( 'InteractionDetails', () => {
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const triggerSelect = comboboxes[ 0 ];
 			fireEvent.mouseDown( triggerSelect );
-			const scrollInOption = screen.getByRole( 'option', { name: /scroll into view/i } );
+			const scrollInOption = screen.getByRole( 'option', { name: /scroll into view/i, hidden: true } );
 			fireEvent.click( scrollInOption );
 
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
@@ -443,7 +458,7 @@ describe( 'InteractionDetails', () => {
 
 			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
-			const slideOption = screen.getByRole( 'option', { name: /slide/i } );
+			const slideOption = screen.getByRole( 'option', { name: /slide/i, hidden: true } );
 			fireEvent.click( slideOption );
 
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
@@ -467,7 +482,7 @@ describe( 'InteractionDetails', () => {
 
 			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
-			const scaleOption = screen.getByRole( 'option', { name: /scale/i } );
+			const scaleOption = screen.getByRole( 'option', { name: /scale/i, hidden: true } );
 			fireEvent.click( scaleOption );
 
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
@@ -498,7 +513,7 @@ describe( 'InteractionDetails', () => {
 
 			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
-			const slideOption = screen.getByRole( 'option', { name: /slide/i } );
+			const slideOption = screen.getByRole( 'option', { name: /slide/i, hidden: true } );
 			fireEvent.click( slideOption );
 
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
@@ -549,29 +564,29 @@ describe( 'InteractionDetails', () => {
 		} );
 	} );
 
-	describe( 'Offset Top / Offset Bottom (size)', () => {
-		let offsetTopControlProps: { value: unknown; onChange: ( v: unknown ) => void };
-		let offsetBottomControlProps: { value: unknown; onChange: ( v: unknown ) => void };
+	describe( 'Start / End (size)', () => {
+		let startControlProps: { value: unknown; onChange: ( v: unknown ) => void };
+		let endControlProps: { value: unknown; onChange: ( v: unknown ) => void };
 
-		const MockOffsetTopControl = ( props: { value: unknown; onChange: ( v: unknown ) => void } ) => {
-			offsetTopControlProps = props;
+		const MockStartControl = ( props: { value: unknown; onChange: ( v: unknown ) => void } ) => {
+			startControlProps = props;
 			return (
-				<div data-testid="offset-top-control">
+				<div data-testid="start-control">
 					<span data-value={ JSON.stringify( props.value ) } />
 					<button type="button" onClick={ () => props.onChange( '25' ) }>
-						Set offset top 25%
+						Set start 25%
 					</button>
 				</div>
 			);
 		};
 
-		const MockOffsetBottomControl = ( props: { value: unknown; onChange: ( v: unknown ) => void } ) => {
-			offsetBottomControlProps = props;
+		const MockEndControl = ( props: { value: unknown; onChange: ( v: unknown ) => void } ) => {
+			endControlProps = props;
 			return (
-				<div data-testid="offset-bottom-control">
+				<div data-testid="end-control">
 					<span data-value={ JSON.stringify( props.value ) } />
 					<button type="button" onClick={ () => props.onChange( '75' ) }>
-						Set offset bottom 75%
+						Set end 75%
 					</button>
 				</div>
 			);
@@ -592,11 +607,11 @@ describe( 'InteractionDetails', () => {
 				if ( type === 'easing' ) {
 					return { component: Easing };
 				}
-				if ( type === 'offsetTop' ) {
-					return { component: MockOffsetTopControl };
+				if ( type === 'start' ) {
+					return { component: MockStartControl };
 				}
-				if ( type === 'offsetBottom' ) {
-					return { component: MockOffsetBottomControl };
+				if ( type === 'end' ) {
+					return { component: MockEndControl };
 				}
 				if ( type === 'relativeTo' ) {
 					return { component: () => <div data-testid="relative-to" /> };
@@ -605,66 +620,66 @@ describe( 'InteractionDetails', () => {
 			} );
 		} );
 
-		it( 'should render Offset Top and Offset Bottom when trigger is scrollOn', () => {
+		it( 'should render Start and End when trigger is scrollOn', () => {
 			const interaction = createInteractionItemValue( {
 				trigger: 'scrollOn',
-				offsetTop: 15,
-				offsetBottom: 85,
+				start: 85,
+				end: 15,
 			} );
 
 			renderInteractionDetails( interaction );
 
-			expect( screen.getByText( 'Offset Top' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Offset Bottom' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Start' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'End' ) ).toBeInTheDocument();
 
 			// eslint-disable-next-line testing-library/no-test-id-queries
-			expect( screen.getByTestId( 'offset-top-control' ) ).toBeInTheDocument();
+			expect( screen.getByTestId( 'start-control' ) ).toBeInTheDocument();
 
 			// eslint-disable-next-line testing-library/no-test-id-queries
-			expect( screen.getByTestId( 'offset-bottom-control' ) ).toBeInTheDocument();
+			expect( screen.getByTestId( 'end-control' ) ).toBeInTheDocument();
 		} );
 
-		it( 'should not render Offset Top or Offset Bottom when trigger is load', () => {
+		it( 'should not render Start or End when trigger is load', () => {
 			const interaction = createInteractionItemValue( { trigger: 'load' } );
 
 			renderInteractionDetails( interaction );
 
-			expect( screen.queryByText( 'Offset Top' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Offset Bottom' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Start' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'End' ) ).not.toBeInTheDocument();
 		} );
 
-		it( 'should pass value to OffsetTopControl as size string value', () => {
+		it( 'should pass value to StartControl as size string value', () => {
 			const interaction = createInteractionItemValue( {
 				trigger: 'scrollOn',
-				offsetTop: 15,
-				offsetBottom: 85,
+				start: 85,
+				end: 15,
 			} );
 
 			renderInteractionDetails( interaction );
 
-			expect( offsetTopControlProps ).toBeDefined();
-			const value = offsetTopControlProps.value;
+			expect( startControlProps ).toBeDefined();
+			const value = startControlProps.value;
 
-			expect( value ).toEqual( '15' );
+			expect( value ).toEqual( '85' );
 		} );
 
-		it( 'should call onChange with size string value when OffsetTopControl onChange is called', () => {
+		it( 'should call onChange with size string value when StartControl onChange is called', () => {
 			const interaction = createInteractionItemValue( {
 				trigger: 'scrollOn',
-				offsetTop: 15,
-				offsetBottom: 85,
+				start: 85,
+				end: 15,
 			} );
 
 			renderInteractionDetails( interaction );
 
-			fireEvent.click( screen.getByRole( 'button', { name: /set offset top 25%/i } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: /set start 25%/i } ) );
 
 			expect( mockOnChange ).toHaveBeenCalled();
 
 			const updated = mockOnChange.mock.calls[ 0 ][ 0 ];
-			const offsetTop = updated.animation.value.config?.value?.offsetTop;
+			const start = updated.animation.value.config?.value?.start;
 
-			expect( offsetTop ).toEqual( {
+			expect( start ).toEqual( {
 				$$type: 'size',
 				value: {
 					size: 25,
@@ -673,23 +688,23 @@ describe( 'InteractionDetails', () => {
 			} );
 		} );
 
-		it( 'should call onChange with size string when OffsetBottomControl onChange is called', () => {
+		it( 'should call onChange with size string when EndControl onChange is called', () => {
 			const interaction = createInteractionItemValue( {
 				trigger: 'scrollOn',
-				offsetTop: 15,
-				offsetBottom: 85,
+				start: 85,
+				end: 15,
 			} );
 
 			renderInteractionDetails( interaction );
 
-			fireEvent.click( screen.getByRole( 'button', { name: /set offset bottom 75%/i } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: /set end 75%/i } ) );
 
 			expect( mockOnChange ).toHaveBeenCalled();
 
 			const updated = mockOnChange.mock.calls[ 0 ][ 0 ];
-			const offsetBottom = updated.animation.value.config?.value?.offsetBottom;
+			const end = updated.animation.value.config?.value?.end;
 
-			expect( offsetBottom ).toEqual( {
+			expect( end ).toEqual( {
 				$$type: 'size',
 				value: {
 					size: 75,
@@ -698,30 +713,30 @@ describe( 'InteractionDetails', () => {
 			} );
 		} );
 
-		it( 'should use default size for offsetTop when config has no offsetTop', () => {
+		it( 'should use default size for start when config has no start', () => {
 			const interaction = createInteractionItemValue( {
 				trigger: 'scrollOn',
-				offsetBottom: 85,
+				end: 15,
 			} );
 
 			renderInteractionDetails( interaction );
 
-			const offsetTopValue = offsetTopControlProps.value;
+			const startValue = startControlProps.value;
 
-			expect( offsetTopValue ).toEqual( '15' );
+			expect( startValue ).toEqual( '85' );
 		} );
 
-		it( 'should use default size for offsetBottom when config has no offsetBottom', () => {
+		it( 'should use default size for end when config has no end', () => {
 			const interaction = createInteractionItemValue( {
 				trigger: 'scrollOn',
-				offsetTop: 15,
+				start: 85,
 			} );
 
 			renderInteractionDetails( interaction );
 
-			const offsetBottomValue = offsetBottomControlProps.value;
+			const endValue = endControlProps.value;
 
-			expect( offsetBottomValue ).toEqual( '85' );
+			expect( endValue ).toEqual( '15' );
 		} );
 	} );
 } );

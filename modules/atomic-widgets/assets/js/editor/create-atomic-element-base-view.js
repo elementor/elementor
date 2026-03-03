@@ -418,12 +418,19 @@ export default function createAtomicElementBaseView( type ) {
 			const isExperimentalFeaturesEnabled = elementorCommon.config.experimentalFeatures?.e_components;
 
 			if ( isExperimentalFeaturesEnabled && isAdministrator ) {
+				const isProActive = window.elementorV2?.utils?.isProActive?.() ?? true;
+
+				const badge = isProActive
+					? `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`
+					: `<a href="https://go.elementor.com/go-pro-components-create/" target="_blank" onclick="event.stopPropagation()" class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'PRO', 'elementor' ) }</a>`;
+
 				saveActions.unshift( {
 					name: 'save-component',
 					title: __( 'Create component', 'elementor' ),
-					shortcut: `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`,
+					shortcut: badge,
+					hasShortcutAction: ! isProActive,
 					callback: this.saveAsComponent.bind( this ),
-					isEnabled: () => ! this.getContainer().isLocked(),
+					isEnabled: () => isProActive && ! this.getContainer().isLocked(),
 				} );
 			}
 
@@ -452,6 +459,12 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		saveAsComponent( openContextMenuEvent, options ) {
+			const isProActive = window.elementorV2?.utils?.isProActive?.() ?? true;
+
+			if ( ! isProActive ) {
+				return;
+			}
+
 			// Calculate the absolute position where the context menu was opened.
 			const openMenuOriginalEvent = openContextMenuEvent.originalEvent;
 			const iframeRect = elementor.$preview[ 0 ].getBoundingClientRect();

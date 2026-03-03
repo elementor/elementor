@@ -47,6 +47,9 @@ export type LegacyWindow = Window & {
 				},
 			];
 		$previewWrapper: JQueryElement;
+		helpers: {
+			hasPro: () => boolean;
+		};
 	};
 };
 
@@ -80,6 +83,7 @@ export declare class ElementView {
 		length: number;
 		findByIndex: ( index: number ) => ElementView;
 		each: ( callback: ( view: ElementView ) => void ) => void;
+		map: < T >( callback: ( view: ElementView ) => T ) => T[];
 	};
 
 	constructor( ...args: unknown[] );
@@ -216,7 +220,16 @@ type ToJSON< T > = {
 
 type ContextMenuGroup = {
 	name: string;
-	actions: unknown[];
+	actions: ContextMenuAction[];
+};
+
+export type ContextMenuAction = {
+	name: string;
+	icon: string;
+	title: string | ( () => string );
+	shortcut?: string;
+	isEnabled: () => boolean;
+	callback: ( _: unknown, eventData: unknown ) => void;
 };
 
 export type ReplacementSettings = {

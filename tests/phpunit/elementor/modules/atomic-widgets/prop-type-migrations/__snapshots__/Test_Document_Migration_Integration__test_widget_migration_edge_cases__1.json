@@ -3,7 +3,7 @@
         "id": "no-migration-needed",
         "settings": {
             "title": {
-                "$$type": "html-v2",
+                "$$type": "html-v3",
                 "value": {
                     "content": "Already correct type",
                     "children": []
@@ -36,7 +36,7 @@
         "id": "chained-migration-upgrade",
         "settings": {
             "title": {
-                "$$type": "html-v2",
+                "$$type": "html-v3",
                 "value": "Should chain: a-string -> string -> html -> html-v2"
             },
             "tag": {
@@ -51,7 +51,7 @@
         "id": "chained-migration-downgrade",
         "settings": {
             "title": {
-                "$$type": "html-v2",
+                "$$type": "html-v3",
                 "value": {
                     "content": "Should chain: html-v3 -> html-v2",
                     "children": []
@@ -112,7 +112,7 @@
                 "value": "h2"
             },
             "title": {
-                "$$type": "html-v2",
+                "$$type": "html-v3",
                 "value": {
                     "content": "Key should migrate: old-title -> title",
                     "children": []
@@ -130,7 +130,7 @@
                 "value": "h3"
             },
             "title": {
-                "$$type": "html-v2",
+                "$$type": "html-v3",
                 "value": "Both key (old-title->title) AND type (html->html-v2) migration"
             }
         },
@@ -141,7 +141,7 @@
         "id": "multiple-key-migrations",
         "settings": {
             "title": {
-                "$$type": "html-v2",
+                "$$type": "html-v3",
                 "value": {
                     "content": "Migrate old-title -> title",
                     "children": []
@@ -159,7 +159,7 @@
         "id": "interactions-with-nested-migration",
         "settings": {
             "title": {
-                "$$type": "html-v2",
+                "$$type": "html-v3",
                 "value": {
                     "content": "Element with interactions",
                     "children": []

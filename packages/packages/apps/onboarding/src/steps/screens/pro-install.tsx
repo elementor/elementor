@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useCallback } from 'react';
 import { CircularProgress, Stack, styled, Typography } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
 
 import { FullscreenCard, PrimaryButton, TextButton } from '../../components/fullscreen-card';
 import { useInstallPro } from '../../hooks/use-install-pro';
 import { useOnboarding } from '../../hooks/use-onboarding';
+import { t } from '../../utils/translations';
 import { getOnboardingAssetUrl } from '../step-visuals';
 
 const ProLogo = styled( 'img' )( ( { theme } ) => ( {
@@ -21,7 +21,7 @@ export function ProInstall() {
 	const handleInstall = useCallback( () => {
 		installPro.mutate( undefined, {
 			onSuccess: () => {
-				actions.dismissProInstallScreen();
+				actions.markProInstalled();
 			},
 		} );
 	}, [ installPro, actions ] );
@@ -36,19 +36,14 @@ export function ProInstall() {
 	return (
 		<FullscreenCard data-testid="pro-install-screen">
 			<Typography variant="h5" align="center" fontWeight={ 500 } fontFamily="Poppins">
-				{ __( 'You already have a Pro subscription', 'elementor' ) }
+				{ t( 'pro_install.title' ) }
 			</Typography>
 
 			<Typography variant="body2" align="center" color="text.secondary">
-				{ isInstalling
-					? __( 'Installing Elementor Pro…', 'elementor' )
-					: __( 'Would you like to install it on this site now?', 'elementor' ) }
+				{ isInstalling ? t( 'pro_install.installing' ) : t( 'pro_install.subtitle' ) }
 			</Typography>
 
-			<ProLogo
-				src={ getOnboardingAssetUrl( 'install-pro-logo.png' ) }
-				alt={ __( 'Elementor + Elementor Pro', 'elementor' ) }
-			/>
+			<ProLogo src={ getOnboardingAssetUrl( 'install-pro-logo.png' ) } alt={ t( 'pro_install.logo_alt' ) } />
 
 			{ error && (
 				<Typography variant="body2" align="center" color="error">
@@ -66,11 +61,11 @@ export function ProInstall() {
 					disabled={ isInstalling }
 					startIcon={ isInstalling ? <CircularProgress size={ 18 } color="inherit" /> : undefined }
 				>
-					{ isInstalling ? __( 'Installing…', 'elementor' ) : __( 'Install Pro on this site', 'elementor' ) }
+					{ isInstalling ? t( 'pro_install.installing_short' ) : t( 'pro_install.install_button' ) }
 				</PrimaryButton>
 
 				<TextButton variant="text" color="info" onClick={ handleDismiss } disabled={ isInstalling }>
-					{ __( "I'll do it later", 'elementor' ) }
+					{ t( 'pro_install.do_it_later' ) }
 				</TextButton>
 			</Stack>
 		</FullscreenCard>

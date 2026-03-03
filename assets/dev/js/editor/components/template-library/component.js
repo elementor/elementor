@@ -2,6 +2,7 @@ import ComponentModalBase from 'elementor-api/modules/component-modal-base';
 import * as commands from './commands/';
 import * as commandsData from './commands-data/';
 import { SAVE_CONTEXTS } from './constants';
+import { EditorOneEventManager } from 'elementor-editor-utils/editor-one-events';
 
 const TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layout' );
 
@@ -110,15 +111,45 @@ export default class Component extends ComponentModalBase {
 		const currentTab = this.tabs[ tab ];
 		const filter = currentTab.getFilter ? currentTab.getFilter() : currentTab.filter;
 
+		this.trackLibraryNavigation( tab, currentTab.title );
+
 		this.currentTab = tab;
 
 		this.manager.setScreen( filter );
+	}
+
+	trackLibraryNavigation( tab, tabTitle ) {
+		EditorOneEventManager.sendELibraryNav( tabTitle || tab );
 	}
 
 	activateTab( tab ) {
 		$e.routes.saveState( 'library' );
 
 		super.activateTab( tab );
+
+		// Update ARIA attributes for accessibility
+		const $tabsWrapper = jQuery( this.getTabsWrapperSelector() );
+		const $tabs = $tabsWrapper.find( '[role="tab"]' );
+		const $activeTab = $tabs.filter( `[data-tab="${ tab }"]` );
+
+		const $templatesContainer = this.manager?.layout?.modalContent?.currentView?.$childViewContainer;
+
+		$tabs.attr( {
+			'aria-selected': 'false',
+			tabindex: '-1',
+		} );
+
+		$activeTab.attr( {
+			'aria-selected': 'true',
+			tabindex: '0',
+		} );
+
+		if ( $templatesContainer?.length ) {
+			$templatesContainer.attr( {
+				role: 'tabpanel',
+				'aria-labelledby': `tab-${ tab }`,
+			} );
+		}
 	}
 
 	open() {
@@ -154,13 +185,28 @@ export default class Component extends ComponentModalBase {
 	// TODO: Move function to 'insert-template' command.
 	insertTemplate( args ) {
 		this.downloadTemplate( args, ( data, callbackParams ) => {
+			const model = callbackParams.model;
+			const source = model.get( 'source' ) ?? 'local';
+			const templateType = model.get( 'type' );
+			const templateTitle = model.get( 'title' );
+			const templateId = model.get( 'template_id' );
+			const baseTier = elementor.config.library_connect?.base_access_tier;
+			const templateTier = model.get( 'accessTier' );
+
 			$e.run( 'document/elements/import', {
-				model: callbackParams.model,
+				model,
 				data,
 				options: callbackParams.importOptions,
 				onAfter: () => {
 					this.manager.eventManager.sendTemplateInsertedEvent( {
-						library_type: callbackParams.model.get( 'source' ) ?? 'local',
+						library_type: source,
+					} );
+
+					EditorOneEventManager.sendELibraryInsert( {
+						assetId: templateId,
+						assetName: templateTitle,
+						libraryType: templateType || source,
+						proRequired: baseTier !== templateTier,
 					} );
 				},
 			} );

@@ -19,6 +19,7 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
       USING_PAT: ${{ secrets.GH_PAT != '' }}
+      JIRA_TICKET_PATTERN: '[A-Z]{2,10}-[0-9]+'
 
     steps:
       - name: Checkout repository
@@ -104,8 +105,13 @@ jobs:
                 TYPE="Internal:"
               fi
 
-              # Remove the type from PR_TITLE for the description part
-              DESCRIPTION=$(echo "$PR_TITLE" | sed 's/^[A-Za-z]*: *//')
+              # Extract ticket from original PR title (e.g. [ED-22962], [PROJ-123])
+              TICKET=$(echo "$PR_TITLE" | grep -oE "$JIRA_TICKET_PATTERN" | head -1)
+              if [ -n "$TICKET" ]; then
+                TICKET_SUFFIX=" [${TICKET}]"
+              else
+                TICKET_SUFFIX=" [NO-TICKET]"
+              fi
 
               # Push the conflict branch
               if git push --force-with-lease origin "$BRANCH:$CONFLICT_BRANCH"; then
@@ -120,7 +126,7 @@ jobs:
                   gh pr create \
                     --base "$TARGET" \
                     --head "$CONFLICT_BRANCH" \
-                    --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET} with conflicts ${DESCRIPTION}" \
+                    --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET} with conflicts${TICKET_SUFFIX}" \
                     --body "⚠️ **Manual Resolution Required**
 
                   This cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch has conflicts that need manual resolution.
@@ -164,8 +170,13 @@ jobs:
               TYPE="Internal:"
             fi
 
-                        # Remove the type from PR_TITLE for the description part
-            DESCRIPTION=$(echo "$PR_TITLE" | sed 's/^[A-Za-z]*: *//')
+            # Extract ticket from original PR title (e.g. [ED-22962], [PROJ-123])
+            TICKET=$(echo "$PR_TITLE" | grep -oE "$JIRA_TICKET_PATTERN" | head -1)
+            if [ -n "$TICKET" ]; then
+              TICKET_SUFFIX=" [${TICKET}]"
+            else
+              TICKET_SUFFIX=" [NO-TICKET]"
+            fi
 
             # Create PR via gh CLI (token already in env: GH_TOKEN)
             # Check if PR already exists
@@ -181,7 +192,7 @@ jobs:
               PR_URL=$(gh pr create \
                 --base "$TARGET" \
                 --head "$BRANCH" \
-                --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET} ${DESCRIPTION}" \
+                --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET}${TICKET_SUFFIX}" \
                 --body "Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch.
 
                 **Source:** ${{ github.event.pull_request.head.repo.full_name }}

@@ -5,8 +5,11 @@ const FolderCollectionView = require( './folders/folders-list' );
 const LOAD_MORE_ID = 0;
 
 import { SAVE_CONTEXTS } from './../../constants';
+import { rovingTabindex, suppressEscapeKeyUp } from 'elementor-editor-utils/keyboard-nav';
 
 const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
+	tagName: 'main',
+
 	id: 'elementor-template-library-save-template',
 
 	template: '#tmpl-elementor-template-library-save-template',
@@ -39,7 +42,9 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		return {
 			'submit @ui.form': 'onFormSubmit',
 			'click @ui.ellipsisIcon': 'onEllipsisIconClick',
+			'keydown @ui.ellipsisIcon': 'onEllipsisIconKeyDown',
 			'click @ui.foldersList': 'onFoldersListClick',
+			'keydown @ui.foldersListContainer': 'onFoldersListKeyDown',
 			'click @ui.removeFolderSelection': 'onRemoveFolderSelectionClick',
 			'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
 			'click @ui.upgradeBadge': 'onUpgradeBadgeClicked',
@@ -201,6 +206,87 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			saveContext = this.getOption( 'context' );
 
 		return templateType[ `${ saveContext }Dialog` ];
+	},
+
+	onEllipsisIconKeyDown( event ) {
+		if ( 'Escape' === event.key ) {
+			event.preventDefault();
+			if ( this.ui.foldersDropdown.is( ':visible' ) ) {
+				this.hideFoldersDropdown();
+				suppressEscapeKeyUp( event );
+			}
+			return;
+		}
+
+		if ( ( 'Tab' === event.key && ! event.shiftKey ) || 'ArrowDown' === event.key ) {
+			if ( this.ui.foldersDropdown.is( ':visible' ) ) {
+				event.preventDefault();
+				event.stopPropagation();
+				this.focusFirstFolderItem();
+			}
+		}
+	},
+
+	onFoldersListKeyDown( event ) {
+		if ( 'Escape' === event.key ) {
+			event.preventDefault();
+			this.hideFoldersDropdown();
+			this.ui.ellipsisIcon.trigger( 'focus' );
+			suppressEscapeKeyUp( event );
+			return;
+		}
+
+		if ( 'Tab' === event.key ) {
+			this.handleFolderTab( event );
+			return;
+		}
+
+		const $items = this.getFolderItems();
+
+		rovingTabindex( {
+			event,
+			$items,
+			orientation: 'vertical',
+			homeEnd: false,
+			onActivate: ( e, $item ) => {
+				e.stopPropagation();
+				$item.trigger( 'click' );
+			},
+		} );
+
+		event.stopPropagation();
+	},
+
+	handleFolderTab( event ) {
+		const $items = this.getFolderItems();
+		const currentIndex = $items.index( event.target );
+
+		if ( event.shiftKey ) {
+			if ( currentIndex <= 0 ) {
+				// Close dropdown and let the browser naturally move focus backwards.
+				this.hideFoldersDropdown();
+				this.ui.ellipsisIcon.trigger( 'focus' );
+			} else {
+				event.preventDefault();
+				event.stopPropagation();
+				$items.eq( currentIndex - 1 ).trigger( 'focus' );
+			}
+			return;
+		}
+
+		if ( currentIndex < $items.length - 1 ) {
+			event.preventDefault();
+			event.stopPropagation();
+			$items.eq( currentIndex + 1 ).trigger( 'focus' );
+		} else {
+			// Close dropdown and let the browser naturally advance focus forward.
+			this.hideFoldersDropdown();
+			this.ui.ellipsisIcon.trigger( 'focus' );
+		}
+	},
+
+	updateEllipsisAriaExpanded( expanded ) {
+		this.ui.ellipsisIcon.attr( 'aria-expanded', expanded ? 'true' : 'false' );
 	},
 
 	onFormSubmit( event ) {
@@ -389,11 +475,13 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	async onEllipsisIconClick() {
 		if ( this.ui.foldersDropdown.is( ':visible' ) ) {
 			this.hideFoldersDropdown();
+			this.updateEllipsisAriaExpanded( false );
 
 			return;
 		}
 
 		this.ui.foldersDropdown.show();
+		this.updateEllipsisAriaExpanded( true );
 
 		if ( ! this.folderCollectionView ) {
 			this.folderCollectionView = new FolderCollectionView( {
@@ -408,12 +496,28 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			} finally {
 				this.removeSpinner();
 				this.disableSelectedFolder();
+				this.focusFirstFolderItem();
 			}
+		} else {
+			this.focusFirstFolderItem();
 		}
 
 		elementor.templates.eventManager.sendPageViewEvent( {
 			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.saveModalSelectFolder,
 		} );
+	},
+
+	getFolderItems() {
+		// Must query the DOM fresh because the folder list is rendered dynamically
+		// after the view's initial render, so this.ui.foldersList may be stale.
+		return this.$( '.cloud-folder-selection-dropdown ul li:visible' );
+	},
+
+	focusFirstFolderItem() {
+		const $firstItem = this.getFolderItems().first();
+		if ( $firstItem.length ) {
+			$firstItem.trigger( 'focus' );
+		}
 	},
 
 	renderFolderDropdown() {
@@ -723,6 +827,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	hideFoldersDropdown() {
 		this.ui.foldersDropdown.hide();
+		this.updateEllipsisAriaExpanded( false );
 	},
 
 	bindDocumentClickHandler() {
