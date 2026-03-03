@@ -29,7 +29,6 @@ class Size_Constants {
 
 	private const LENGTH_UNITS = [
 		self::UNIT_PX,
-		self::UNIT_PERCENT,
 		self::UNIT_EM,
 		self::UNIT_REM,
 		self::UNIT_VW,
@@ -133,6 +132,7 @@ class Size_Constants {
 	public static function standard_units(): array {
 		return [
 			...self::LENGTH_UNITS,
+			self::UNIT_PERCENT,
 			self::UNIT_AUTO,
 			self::UNIT_CUSTOM,
 		];
