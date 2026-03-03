@@ -133,7 +133,7 @@ jobs:
 
       - name: Build Packages
         working-directory: packages
-        run: npm run build:ci
+        run: npm run build
 
       - name: Publish Packages
         working-directory: packages

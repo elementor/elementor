@@ -9,7 +9,7 @@ const colors = {
   reset: '\x1b[0m'
 };
 
-const WORKSPACE_PATTERNS = ['core/*', 'libs/*', 'tools/*'];
+const WORKSPACE_PATTERNS = ['libs/*'];
 
 const BUMP_TYPES = ['patch', 'minor', 'major'];
 

@@ -33,6 +33,7 @@ const checkTextDomain = {
 				'!.github/**',
 				'!.run/**',
 				'!vendor/**',
+				'!docker-output/**',
 				'!*~'
 			],
 			expand: true

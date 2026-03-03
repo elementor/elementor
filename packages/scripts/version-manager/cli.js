@@ -135,7 +135,7 @@ Examples:
   $ version-manager set 3.31.0
   $ version-manager set 3.31.0 --tag beta.1
   $ version-manager set 3.31.0 --dry-run
-  $ version-manager set 3.31.0 --packages "packages/core/*"
+  $ version-manager set 3.31.0 --packages "libs/*"
   $ version-manager bump patch
   $ version-manager bump minor --tag rc.1
   $ version-manager list
@@ -143,7 +143,7 @@ Examples:
   $ version-manager validate
   $ version-manager publish --yes
   $ version-manager publish --dry-run
-  $ version-manager publish --packages "packages/libs/*"
+  $ version-manager publish --packages "libs/*"
   $ version-manager get-version "@elementor/editor-controls"
   $ version-manager get-version "editor-.*"
   $ version-manager get-version "@elementor/.*"

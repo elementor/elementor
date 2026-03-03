@@ -1,10 +1,19 @@
 const path = require( 'path' );
 const fs = require( 'fs' );
-const { GenerateWordPressAssetFileWebpackPlugin } = require( path.resolve( __dirname, '../packages/packages/tools/generate-wordpress-asset-file-webpack-plugin' ) );
-const { ExtractI18nWordpressExpressionsWebpackPlugin } = require( path.resolve( __dirname, '../packages/packages/tools/extract-i18n-wordpress-expressions-webpack-plugin' ) );
-const { ExternalizeWordPressAssetsWebpackPlugin } = require( path.resolve( __dirname, '../packages/packages/tools/externalize-wordpress-assets-webpack-plugin' ) );
-const { EntryInitializationWebpackPlugin } = require( path.resolve( __dirname, '../packages/packages/tools/entry-initialization-webpack-plugin' ) );
+const { GenerateWordPressAssetFileWebpackPlugin } = require( path.resolve( __dirname, '../packages/libs/generate-wordpress-asset-file-webpack-plugin' ) );
+const { ExtractI18nWordpressExpressionsWebpackPlugin } = require( path.resolve( __dirname, '../packages/libs/extract-i18n-wordpress-expressions-webpack-plugin' ) );
+const { ExternalizeWordPressAssetsWebpackPlugin } = require( path.resolve( __dirname, '../packages/libs/externalize-wordpress-assets-webpack-plugin' ) );
+const { EntryInitializationWebpackPlugin } = require( path.resolve( __dirname, '../packages/libs/entry-initialization-webpack-plugin' ) );
 const TerserPlugin = require('terser-webpack-plugin');
+
+const BUILD_TOOL_PACKAGES = new Set( [
+	'commitlint-plugin-editor',
+	'entry-initialization-webpack-plugin',
+	'eslint-plugin-editor',
+	'externalize-wordpress-assets-webpack-plugin',
+	'extract-i18n-wordpress-expressions-webpack-plugin',
+	'generate-wordpress-asset-file-webpack-plugin',
+] );
 
 const packages = getLocalRepoPackagesEntries();
 
@@ -128,7 +137,7 @@ module.exports = {
 
 function getLocalRepoPackagesEntries() {
 	const repoPath = path.resolve( __dirname, '../packages' );
-	const relevantDirs = [ 'packages/apps', 'packages/core', 'packages/libs' ]
+	const relevantDirs = [ 'libs' ];
 
 	const packages = relevantDirs.flatMap( ( dir ) =>
 		fs.readdirSync( path.resolve( repoPath, dir ) )
@@ -136,7 +145,7 @@ function getLocalRepoPackagesEntries() {
 				name,
 				path: path.resolve( repoPath, dir, `${name}/src/index.ts` ),
 			} ) )
-			.filter( ( { path } ) => fs.existsSync( path ) )
+			.filter( ( { name, path } ) => !BUILD_TOOL_PACKAGES.has( name ) && fs.existsSync( path ) )
 	);
 
 	packages.push( {

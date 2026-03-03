@@ -6,7 +6,7 @@ const { logWarning } = require('./logger');
 
 async function getPackages(pattern) {
   const isInPackagesDir = process.cwd().endsWith('packages');
-  const basePattern = isInPackagesDir ? 'packages/{core,libs,tools}/*/package.json' : `packages/packages/{${WORKSPACE_PATTERNS.join(',')}}/package.json`;
+  const basePattern = isInPackagesDir ? 'libs/*/package.json' : `packages/libs/*/package.json`;
   const searchPattern = pattern || basePattern;
   
   const finalPattern = searchPattern.endsWith('/package.json') ? searchPattern : `${searchPattern}/package.json`;

@@ -51,7 +51,7 @@ node scripts/version-manager/index.js set 3.31.0 --tag beta.1
 node scripts/version-manager/index.js set 3.31.0 --dry-run
 
 # Set only specific packages
-node scripts/version-manager/index.js set 3.31.0 --packages "packages/core/*"
+node scripts/version-manager/index.js set 3.31.0 --packages "libs/*"
 ```
 
 #### Bump Version
@@ -91,7 +91,7 @@ node scripts/version-manager/index.js list
 node scripts/version-manager/index.js list --publishable
 
 # List specific packages
-node scripts/version-manager/index.js list --packages "packages/libs/*"
+node scripts/version-manager/index.js list --packages "libs/*"
 ```
 
 #### Get Package Version
@@ -158,7 +158,7 @@ node scripts/version-manager/index.js publish --yes
 node scripts/version-manager/index.js publish --dry-run
 
 # Publish specific packages
-node scripts/version-manager/index.js publish --packages "packages/libs/*"
+node scripts/version-manager/index.js publish --packages "libs/*"
 
 # Publish with specific access level
 node scripts/version-manager/index.js publish --access public
