@@ -155,7 +155,13 @@ class Global_Typography_Extension {
 		];
 
 		foreach ( $prop_map as $v4_prop => $v3_prop ) {
-			if ( isset( $v4_props[ $v4_prop ] ) && ! empty( $v4_props[ $v4_prop ] ) ) {
+			if ( ! isset( $v4_props[ $v4_prop ] ) || empty( $v4_props[ $v4_prop ] ) ) {
+				continue;
+			}
+
+			if ( $this->is_responsive_prop( $v3_prop ) ) {
+				$v3_format[ $v3_prop ] = $this->parse_css_size_value( $v4_props[ $v4_prop ] );
+			} else {
 				$v3_format[ $v3_prop ] = $v4_props[ $v4_prop ];
 			}
 		}
@@ -165,5 +171,19 @@ class Global_Typography_Extension {
 		}
 
 		return $v3_format;
+	}
+
+	private function parse_css_size_value( string $css_value ): array {
+		if ( preg_match( '/^(-?[\d.]+)\s*([a-z%]+)$/i', $css_value, $matches ) ) {
+			return [
+				'size' => (float) $matches[1],
+				'unit' => $matches[2],
+			];
+		}
+
+		return [
+			'size' => (float) $css_value,
+			'unit' => 'px',
+		];
 	}
 }

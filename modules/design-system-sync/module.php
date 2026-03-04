@@ -72,5 +72,11 @@ class Module extends BaseModule {
 
 	public function clear_classes_cache() {
 		Classes\Classes_Provider::clear_cache();
+
+		$kit = \Elementor\Plugin::$instance->kits_manager->get_active_kit();
+		if ( $kit ) {
+			$kit_id = $kit->get_main_id();
+			delete_post_meta( $kit_id, '_elementor_css' );
+		}
 	}
 }

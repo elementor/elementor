@@ -203,7 +203,7 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 		// Assert
 		$value = $result['v4-Body']['value'];
 		$this->assertEquals( 'Arial', $value['typography_font_family'] );
-		$this->assertEquals( '16px', $value['typography_font_size'] );
+		$this->assertEquals( [ 'size' => 16.0, 'unit' => 'px' ], $value['typography_font_size'] );
 		$this->assertEquals( '400', $value['typography_font_weight'] );
 		$this->assertEquals( 'italic', $value['typography_font_style'] );
 		$this->assertEquals( 'custom', $value['typography_typography'] );
@@ -364,9 +364,9 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 
 		// Assert
 		$value = $result['v4-Heading']['value'];
-		$this->assertEquals( '24px', $value['typography_font_size'] );
-		$this->assertEquals( '20px', $value['typography_font_size_tablet'] );
-		$this->assertEquals( '16px', $value['typography_font_size_mobile'] );
+		$this->assertEquals( [ 'size' => 24.0, 'unit' => 'px' ], $value['typography_font_size'] );
+		$this->assertEquals( [ 'size' => 20.0, 'unit' => 'px' ], $value['typography_font_size_tablet'] );
+		$this->assertEquals( [ 'size' => 16.0, 'unit' => 'px' ], $value['typography_font_size_mobile'] );
 	}
 
 	public function test_add_v4_classes_to_typography_selector__only_adds_responsive_suffix_to_responsive_props() {
@@ -411,7 +411,7 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 
 		// Assert
 		$value = $result['v4-Heading']['value'];
-		$this->assertEquals( '20px', $value['typography_font_size_tablet'] );
+		$this->assertEquals( [ 'size' => 20.0, 'unit' => 'px' ], $value['typography_font_size_tablet'] );
 		$this->assertArrayNotHasKey( 'typography_font_family_tablet', $value );
 	}
 
