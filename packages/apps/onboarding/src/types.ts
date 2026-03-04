@@ -32,7 +32,7 @@ export interface StepVisualConfig {
 	background: string;
 	assets: RightPanelAsset[];
 	contentMaxWidth?: number;
-	lottieAnimation?: string;
+	video?: string;
 }
 
 export interface OnboardingProgress {

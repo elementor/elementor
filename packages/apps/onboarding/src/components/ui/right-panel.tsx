@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Box, styled } from '@elementor/ui';
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 import type { AssetAnimation, RightPanelAsset, StepVisualConfig } from '../../types';
 import { LAYOUT_TRANSITION_MS } from './split-layout';
@@ -71,26 +70,32 @@ const RightPanelAssetItem = React.memo( function RightPanelAssetItem( { asset }:
 	);
 } );
 
-const LottiePanel = React.memo( function LottiePanel( { src }: { src: string } ) {
+const VideoPanel = React.memo( function VideoPanel( { src }: { src: string } ) {
 	const [ isReady, setIsReady ] = useState( false );
-	const [ hasError, setHasError ] = useState( false );
 
 	useEffect( () => {
 		const timer = setTimeout( () => setIsReady( true ), LAYOUT_TRANSITION_MS );
 		return () => clearTimeout( timer );
 	}, [] );
 
-	if ( ! isReady || hasError ) {
+	if ( ! isReady ) {
 		return null;
 	}
 
 	return (
-		<DotLottieReact
+		<Box
+			component="video"
 			src={ src }
-			autoplay
-			layout={ { fit: 'cover' } }
-			onLoadError={ () => setHasError( true ) }
-			style={ { position: 'absolute', inset: 0 } }
+			autoPlay
+			muted
+			playsInline
+			sx={ {
+				position: 'absolute',
+				inset: 0,
+				width: '100%',
+				height: '100%',
+				objectFit: 'cover',
+			} }
 		/>
 	);
 } );
@@ -102,7 +107,7 @@ interface RightPanelProps {
 export const RightPanel = React.memo( function RightPanel( { config }: RightPanelProps ) {
 	return (
 		<RightPanelRoot background={ config.background }>
-			{ config.lottieAnimation && <LottiePanel src={ config.lottieAnimation } /> }
+			{ config.video && <VideoPanel src={ config.video } /> }
 			{ config.assets.map( ( asset ) => (
 				<RightPanelAssetItem key={ asset.id } asset={ asset } />
 			) ) }
