@@ -1,8 +1,26 @@
 import { useCallback } from 'react';
 import { canSendEvents, getMixpanel } from '@elementor/events';
 
-import type { OnboardingEventPayload } from '../analytics';
-import { clearEventQueue, enqueueEvent, getEventQueue, OnboardingEventName, STEP_NUMBERS } from '../analytics';
+import type {
+	ObSummaryMetadataItem,
+	ObSummarySnapshot,
+	OnboardingEventPayload,
+	SiteStarterInteractionResult,
+	SiteStarterTargetName,
+} from '../analytics';
+import {
+	clearEventQueue,
+	enqueueEvent,
+	EXPERIENCE_VALUE_MAP,
+	getEventQueue,
+	OnboardingEventName,
+	PERSONA_VALUE_MAP,
+	PRO_FEATURES_CORE_IDS,
+	STEP_NUMBERS,
+	STEP_SPEC_NAMES,
+	TARGET_NAME_PERSONA,
+	THEME_VALUE_MAP,
+} from '../analytics';
 
 function dispatchDirectly( eventName: string, payload: Record< string, unknown > ): void {
 	const { dispatchEvent } = getMixpanel();
@@ -115,7 +133,7 @@ export function useOnboardingEvent() {
 			trackEvent( OnboardingEventName.STEP_VIEWED, {
 				interaction_type: 'step_load',
 				target_type: 'loaded',
-				target_name: viewedStepId,
+				target_name: STEP_SPEC_NAMES[ viewedStepId ] ?? viewedStepId,
 				interaction_result: 'step_load',
 				target_value: STEP_NUMBERS[ viewedStepId ],
 				target_location: 'onboarding',
@@ -131,9 +149,9 @@ export function useOnboardingEvent() {
 			trackEvent( OnboardingEventName.PERSONA_SELECTED, {
 				interaction_type: 'click',
 				target_type: 'button',
-				target_name: 'who_are_you_building for',
+				target_name: TARGET_NAME_PERSONA,
 				interaction_result: 'selected_and_next',
-				target_value: value,
+				target_value: PERSONA_VALUE_MAP[ value ] ?? value,
 				target_location: 'onboarding',
 				location_l1: 'select_persona',
 				location_l2: STEP_NUMBERS.building_for,
@@ -167,7 +185,7 @@ export function useOnboardingEvent() {
 				target_type: 'button',
 				target_name: 'how_experienced_are_you?',
 				interaction_result: 'selected_and_next',
-				target_value: level,
+				target_value: EXPERIENCE_VALUE_MAP[ level ] ?? level,
 				target_location: 'onboarding',
 				location_l1: 'select_experience',
 				location_l2: STEP_NUMBERS.experience_level,
@@ -185,7 +203,7 @@ export function useOnboardingEvent() {
 				target_type: 'chip',
 				target_name: 'recommended',
 				interaction_result: 'theme_recommended',
-				target_value: theme,
+				target_value: THEME_VALUE_MAP[ theme ] ?? theme,
 				target_location: 'onboarding',
 				location_l1: 'select_theme',
 				location_l2: STEP_NUMBERS.theme_selection,
@@ -202,7 +220,7 @@ export function useOnboardingEvent() {
 				target_type: 'button',
 				target_name: 'continue_with_this_theme',
 				interaction_result: 'theme_installed',
-				target_value: theme,
+				target_value: THEME_VALUE_MAP[ theme ] ?? theme,
 				target_location: 'onboarding',
 				location_l1: 'select_theme',
 				location_l2: STEP_NUMBERS.theme_selection,
@@ -214,12 +232,13 @@ export function useOnboardingEvent() {
 
 	const trackProFeaturesSelected = useCallback(
 		( params: { targetName: 'continue_with_free' | 'compare plans'; features: string[] } ) => {
+			const featuresWithoutCore = params.features.filter( ( id ) => ! PRO_FEATURES_CORE_IDS.has( id ) );
 			trackEvent( OnboardingEventName.PRO_FEATURES_SELECTED, {
 				interaction_type: 'click',
 				target_type: 'cards',
 				target_name: params.targetName,
 				interaction_result: params.targetName === 'continue_with_free' ? 'finish_onboarding' : 'pricing_page',
-				target_value: params.features,
+				target_value: featuresWithoutCore,
 				target_location: 'onboarding',
 				location_l1: 'pro_features',
 				location_l2: STEP_NUMBERS.site_features,
@@ -293,6 +312,107 @@ export function useOnboardingEvent() {
 		[ trackEvent ]
 	);
 
+	const trackSiteStarterSelected = useCallback(
+		( params: { targetName: SiteStarterTargetName; interactionResult: SiteStarterInteractionResult } ) => {
+			trackEvent( OnboardingEventName.SITE_STARTER_SELECTED, {
+				window_name: 'editor',
+				interaction_type: 'click',
+				target_type: 'card',
+				target_name: params.targetName,
+				interaction_result: params.interactionResult,
+				target_location: 'start_building',
+				location_l1: '',
+				interaction_description: 'user selected or ignored site starters on first load of canvas',
+			} );
+		},
+		[ trackEvent ]
+	);
+
+	const toSummaryValue = ( v: unknown ): unknown => {
+		if ( v === null || v === undefined || v === '' ) {
+			return 'skip';
+		}
+		if ( Array.isArray( v ) && v.length === 0 ) {
+			return 'skip';
+		}
+		return v;
+	};
+
+	const trackSummary = useCallback(
+		( snapshot: ObSummarySnapshot ) => {
+			const proFeaturesOnly = ( snapshot.choices.site_features ?? [] ).filter(
+				( id ) => ! PRO_FEATURES_CORE_IDS.has( id )
+			);
+
+			const metadata: ObSummaryMetadataItem[] = [
+				{
+					key: 'login_type',
+					value: toSummaryValue( snapshot.isGuest ? 'guest' : 'elementor_login' ),
+				},
+				{ key: 'connect', value: snapshot.isConnected },
+				{
+					key: 'pro_install',
+					value: toSummaryValue( snapshot.proInstall ?? false ),
+				},
+				{
+					key: 'persona',
+					value: toSummaryValue(
+						snapshot.choices.building_for !== null && snapshot.choices.building_for !== undefined
+							? PERSONA_VALUE_MAP[ snapshot.choices.building_for ] ?? snapshot.choices.building_for
+							: null
+					),
+				},
+				{
+					key: 'site_topic',
+					value: toSummaryValue( snapshot.choices.site_about ?? [] ),
+				},
+				{
+					key: 'experience_level',
+					value: toSummaryValue(
+						snapshot.choices.experience_level !== null && snapshot.choices.experience_level !== undefined
+							? EXPERIENCE_VALUE_MAP[ snapshot.choices.experience_level ] ??
+									snapshot.choices.experience_level
+							: null
+					),
+				},
+				{
+					key: 'theme_recommended',
+					value: ( (): string => {
+						const raw = snapshot.themeRecommended ?? snapshot.choices.theme_selection ?? 'none';
+						return raw === 'none' || ! raw ? 'none' : THEME_VALUE_MAP[ raw ] ?? raw;
+					} )(),
+				},
+				{
+					key: 'theme_installed',
+					value:
+						snapshot.choices.theme_selection !== null && snapshot.choices.theme_selection !== undefined
+							? THEME_VALUE_MAP[ snapshot.choices.theme_selection ] ?? snapshot.choices.theme_selection
+							: 'none',
+				},
+				{
+					key: 'pro_features',
+					value: toSummaryValue( proFeaturesOnly.length ? proFeaturesOnly : 'skip' ),
+				},
+				{
+					key: 'steps_completed',
+					value: snapshot.completedSteps.length,
+				},
+			];
+
+			trackEvent( OnboardingEventName.SUMMARY, {
+				interaction_type: 'onboarding_complete',
+				target_type: 'summary',
+				target_name: 'ob_summary',
+				interaction_result: 'onboarding_final_choices',
+				target_location: 'onboarding',
+				location_l1: 'summary',
+				interaction_description: 'trigger event upon onboarding completion or when flow is closed abruptly',
+				metadata: { summary: metadata },
+			} );
+		},
+		[ trackEvent ]
+	);
+
 	return {
 		trackOnboardingInitialized,
 		trackLoginType,
@@ -309,6 +429,8 @@ export function useOnboardingEvent() {
 		trackSkipClicked,
 		trackUpgradeClicked,
 		trackResumeOnboarding,
+		trackSiteStarterSelected,
+		trackSummary,
 		activateTracking,
 		flushQueue,
 	};

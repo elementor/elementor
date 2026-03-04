@@ -1,5 +1,21 @@
-export { OnboardingEventName, STEP_NUMBERS } from './events';
-export type { OnboardingEventPayload, ConnectSuccessData } from './events';
+export {
+	OnboardingEventName,
+	STEP_NUMBERS,
+	PRO_FEATURES_CORE_IDS,
+	TARGET_NAME_PERSONA,
+	PERSONA_VALUE_MAP,
+	EXPERIENCE_VALUE_MAP,
+	THEME_VALUE_MAP,
+	STEP_SPEC_NAMES,
+} from './events';
+export type {
+	ConnectSuccessData,
+	ObSummaryMetadataItem,
+	ObSummarySnapshot,
+	OnboardingEventPayload,
+	SiteStarterInteractionResult,
+	SiteStarterTargetName,
+} from './events';
 export { enqueueEvent, getEventQueue, clearEventQueue } from './event-queue';
 export {
 	initializeAndEnableTracking,

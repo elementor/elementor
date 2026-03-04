@@ -69,6 +69,7 @@ class Module extends BaseModule {
 			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_starter_settings' ] );
 			add_filter( 'elementor/editor/v2/packages', [ $this, 'add_starter_packages' ] );
 			add_action( 'elementor/editor/v2/styles/enqueue', [ $this, 'enqueue_fonts' ] );
+			add_action( 'elementor/editor/v2/styles/enqueue', [ $this, 'enqueue_starter_layout_css' ] );
 		}
 	}
 
@@ -88,6 +89,24 @@ class Module extends BaseModule {
 			[],
 			ELEMENTOR_VERSION
 		);
+	}
+
+	public function enqueue_starter_layout_css(): void {
+		$css = '
+			#elementor-starter-container {
+				position: absolute;
+				inset-block-start: 0;
+				inset-inline-start: 0;
+				inset-inline-end: 0;
+			}
+			#elementor-preview-responsive-wrapper:has(#elementor-starter-container) #elementor-preview-iframe {
+				margin-block-start: 150px;
+			}
+		';
+
+		wp_register_style( 'elementor-starter-layout', false );
+		wp_enqueue_style( 'elementor-starter-layout' );
+		wp_add_inline_style( 'elementor-starter-layout', $css );
 	}
 
 	public function progress_manager(): Onboarding_Progress_Manager {

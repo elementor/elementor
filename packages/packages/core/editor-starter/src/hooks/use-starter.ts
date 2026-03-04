@@ -1,13 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-	__privateListenTo as listenTo,
-	__privateRunCommand as runCommand,
-	getCurrentEditMode,
-	windowEvent,
-} from '@elementor/editor-v1-adapters';
+import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 
 import type { StarterConfig } from '../types';
-import { deleteStarterConfig, getEditingPanelWidth, getStarterConfig, getTopBarHeight } from '../utils';
+import { deleteStarterConfig, getStarterConfig } from '../utils';
+
+const PREVIEW_WRAPPER_SELECTOR = '#elementor-preview-responsive-wrapper';
 
 interface ElementorChannels {
 	panelElements?: {
@@ -34,19 +31,30 @@ function dismissStarterApi( config: StarterConfig ) {
 export function useStarter() {
 	const [ config, setConfig ] = useState< StarterConfig | null >( null );
 	const [ isDismissing, setIsDismissing ] = useState( false );
-	const [ panelWidth, setPanelWidth ] = useState( 0 );
-	const [ topOffset, setTopOffset ] = useState( 0 );
+	const [ portalContainer, setPortalContainer ] = useState< Element | null >( null );
 	const dismissedRef = useRef( false );
 
 	useEffect( () => {
 		const activate = () => {
 			const cfg = getStarterConfig();
 
-			if ( cfg ) {
-				setConfig( cfg );
-				setPanelWidth( getEditingPanelWidth() );
-				setTopOffset( getTopBarHeight() );
+			if ( ! cfg ) {
+				return;
 			}
+
+			const wrapper = document.querySelector( PREVIEW_WRAPPER_SELECTOR );
+
+			if ( ! wrapper ) {
+				return;
+			}
+
+			const container = document.createElement( 'div' );
+			container.id = 'elementor-starter-container';
+
+			wrapper.prepend( container );
+
+			setConfig( cfg );
+			setPortalContainer( container );
 		};
 
 		const onCommandAfter = ( e: Event ) => {
@@ -94,18 +102,6 @@ export function useStarter() {
 		};
 	}, [ config, dismiss ] );
 
-	useEffect( () => {
-		if ( ! config ) {
-			return;
-		}
-
-		return listenTo( windowEvent( 'elementor/edit-mode/change' ), () => {
-			if ( getCurrentEditMode() !== 'edit' ) {
-				dismiss();
-			}
-		} );
-	}, [ config, dismiss ] );
-
 	const openTemplatesLibrary = useCallback( () => {
 		dismiss();
 		runCommand( 'library/open' );
@@ -119,14 +115,19 @@ export function useStarter() {
 		}
 	}, [ config, dismiss ] );
 
+	const onExited = useCallback( () => {
+		portalContainer?.remove();
+		setPortalContainer( null );
+		setConfig( null );
+	}, [ portalContainer ] );
+
 	return {
 		config,
 		isDismissing,
-		panelWidth,
-		topOffset,
+		portalContainer,
 		dismiss,
 		openAiPlanner,
 		openTemplatesLibrary,
-		onExited: () => setConfig( null ),
+		onExited,
 	};
 }

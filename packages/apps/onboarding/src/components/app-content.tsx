@@ -54,6 +54,8 @@ export function AppContent( { onClose }: AppContentProps ) {
 		completedSteps,
 		urls,
 		actions,
+		isConnected,
+		isGuest,
 	} = useOnboarding();
 
 	const [ isCompleting, setIsCompleting ] = useState( false );
@@ -73,6 +75,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 		trackSkipClicked,
 		trackUpgradeClicked,
 		trackResumeOnboarding,
+		trackSummary,
 		activateTracking,
 		flushQueue,
 	} = useOnboardingEvent();
@@ -144,6 +147,12 @@ export function AppContent( { onClose }: AppContentProps ) {
 	);
 
 	const handleClose = useCallback( () => {
+		trackSummary( {
+			choices,
+			completedSteps: [ ...completedSteps ],
+			isConnected,
+			isGuest,
+		} );
 		window.dispatchEvent( new CustomEvent( 'e-onboarding-user-exit' ) );
 
 		updateProgress.mutate(
@@ -159,7 +168,16 @@ export function AppContent( { onClose }: AppContentProps ) {
 				},
 			}
 		);
-	}, [ actions, onClose, updateProgress ] );
+	}, [
+		actions,
+		choices,
+		completedSteps,
+		isConnected,
+		isGuest,
+		onClose,
+		trackSummary,
+		updateProgress,
+	] );
 
 	const handleBack = useCallback( () => {
 		trackBackClicked( stepId );
@@ -180,6 +198,12 @@ export function AppContent( { onClose }: AppContentProps ) {
 		trackSkipClicked( stepId );
 
 		if ( isLast ) {
+			trackSummary( {
+				choices,
+				completedSteps: [ ...completedSteps, stepId ],
+				isConnected,
+				isGuest,
+			} );
 			setIsCompleting( true );
 			updateProgress.mutate(
 				{
@@ -211,7 +235,21 @@ export function AppContent( { onClose }: AppContentProps ) {
 				},
 			}
 		);
-	}, [ actions, isLast, stepIndex, totalSteps, updateProgress, redirectToNewPage, trackSkipClicked, stepId ] );
+	}, [
+		actions,
+		choices,
+		completedSteps,
+		isConnected,
+		isGuest,
+		isLast,
+		stepId,
+		stepIndex,
+		totalSteps,
+		trackSkipClicked,
+		trackSummary,
+		updateProgress,
+		redirectToNewPage,
+	] );
 
 	const saveChoicesFireAndForget = useCallback(
 		( choiceData: Record< string, unknown > ) => {
@@ -285,6 +323,12 @@ export function AppContent( { onClose }: AppContentProps ) {
 			}
 
 			if ( isLast ) {
+				trackSummary( {
+					choices,
+					completedSteps: [ ...completedSteps, stepId ],
+					isConnected,
+					isGuest,
+				} );
 				setIsCompleting( true );
 				updateProgress.mutate(
 					{
@@ -320,6 +364,12 @@ export function AppContent( { onClose }: AppContentProps ) {
 			);
 		},
 		[
+			actions,
+			choices,
+			completedSteps,
+			isConnected,
+			isGuest,
+			isLast,
 			stepId,
 			stepIndex,
 			totalSteps,
@@ -332,6 +382,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 			showToast,
 			redirectToNewPage,
 			trackProFeaturesSelected,
+			trackSummary,
 		]
 	);
 

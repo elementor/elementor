@@ -4,7 +4,8 @@ export const getMixpanel = () => {
 		dispatchEvent: eventsManager.dispatchEvent?.bind( eventsManager ),
 		config: eventsManager.config,
 		canSendEvents: eventsManager.canSendEvents?.bind( eventsManager ),
-		initializeMixpanel: eventsManager.initializeMixpanel?.bind( eventsManager ),
+		initializeMixpanel:
+			eventsManager.initializeMixpanel?.bind( eventsManager ),
 		enableTracking: eventsManager.enableTracking?.bind( eventsManager ),
 		isMixpanelReady: eventsManager.isMixpanelReady?.bind( eventsManager ),
 		trackingEnabled: eventsManager.trackingEnabled ?? false,
@@ -20,12 +21,17 @@ export const useMixpanel = () => {
 	};
 };
 
-export const trackEvent = < T extends { eventName: string } & Record< string, unknown > >( event: T ) => {
+export const trackEvent = <
+	T extends { eventName: string } & Record< string, unknown >,
+>(
+	event: T
+) => {
 	const { dispatchEvent } = getMixpanel();
 	dispatchEvent?.( event.eventName, event );
 };
 
-export const canSendEvents = (): boolean => getMixpanel().canSendEvents?.() ?? false;
+export const canSendEvents = (): boolean =>
+	getMixpanel().canSendEvents?.() ?? false;
 
 export const setCanSendEvents = ( value: boolean ): void => {
 	const editorEvents = window.elementorCommon?.config?.editor_events;
@@ -34,7 +40,8 @@ export const setCanSendEvents = ( value: boolean ): void => {
 	}
 };
 
-export const isMixpanelReady = (): boolean => getMixpanel().isMixpanelReady?.() ?? false;
+export const isMixpanelReady = (): boolean =>
+	getMixpanel().isMixpanelReady?.() ?? false;
 
 export const isTrackingEnabled = (): boolean => getMixpanel().trackingEnabled;
 
