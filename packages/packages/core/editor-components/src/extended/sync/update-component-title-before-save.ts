@@ -1,11 +1,10 @@
-import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
-
 import { apiClient } from '../../api';
-import { selectUpdatedComponentNames, slice } from '../../store/store';
+import { componentsActions } from '../../store/dispatchers';
+import { componentsSelectors } from '../../store/selectors';
 import { type DocumentSaveStatus } from '../../types';
 
 export const updateComponentTitleBeforeSave = async ( status: DocumentSaveStatus ) => {
-	const updatedComponentNames = selectUpdatedComponentNames( getState() );
+	const updatedComponentNames = componentsSelectors.getUpdatedComponentNames();
 
 	if ( ! updatedComponentNames.length ) {
 		return;
@@ -14,6 +13,6 @@ export const updateComponentTitleBeforeSave = async ( status: DocumentSaveStatus
 	const result = await apiClient.updateComponentTitle( updatedComponentNames, status );
 
 	if ( result.failedIds.length === 0 ) {
-		dispatch( slice.actions.cleanUpdatedComponentNames() );
+		componentsActions.cleanUpdatedComponentNames();
 	}
 };
