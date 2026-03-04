@@ -114,7 +114,6 @@ export { getContainerByOriginId } from './utils/get-container-by-origin-id';
 export { getOverridableProp } from './utils/get-overridable-prop';
 export { getPropTypeForComponentOverride } from './utils/get-prop-type-for-component-override';
 export { isComponentInstance } from './utils/is-component-instance';
-export { hasProInstalled, isProActive } from './utils/is-pro-user';
 export { resolveOverridePropValue } from './utils/resolve-override-prop-value';
 export { switchToComponent } from './utils/switch-to-component';
 export { onElementDrop, trackComponentEvent } from './utils/tracking';
