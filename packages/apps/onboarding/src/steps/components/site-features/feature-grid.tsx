@@ -113,11 +113,15 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick }: Featur
 						) }
 						<Box
 							className="feature-icon"
+							display="flex"
+							alignItems="center"
+							justifyContent="center"
 							color="primary.dark"
+							fontSize={ theme.spacing( 4 ) }
 							height={ theme.spacing( 4 ) }
 							sx={ { mt: 2, mb: 1 } }
 						>
-							<Icon fontSize="medium" />
+							<Icon fontSize="inherit" />
 						</Box>
 						<Typography
 							variant="body2"
