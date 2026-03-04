@@ -167,6 +167,42 @@ export function AppContent( { onClose }: AppContentProps ) {
 			if ( stepId === StepId.THEME_SELECTION ) {
 				const themeSlug = ( choiceData?.theme_selection ?? choices.theme_selection ) as string;
 
+				if ( themeSlug && isLast ) {
+					setIsCompleting( true );
+					installTheme.mutate( themeSlug, {
+						onSuccess: () => {
+							updateProgress.mutate(
+								{
+									complete_step: stepId,
+									complete: true,
+									step_index: stepIndex,
+									total_steps: totalSteps,
+								},
+								{
+									onSuccess: redirectToNewPage,
+									onError: redirectToNewPage,
+								}
+							);
+						},
+						onError: () => {
+							showToast( t( 'error.theme_install_failed' ) );
+							updateProgress.mutate(
+								{
+									complete_step: stepId,
+									complete: true,
+									step_index: stepIndex,
+									total_steps: totalSteps,
+								},
+								{
+									onSuccess: redirectToNewPage,
+									onError: redirectToNewPage,
+								}
+							);
+						},
+					} );
+					return;
+				}
+
 				if ( themeSlug ) {
 					installTheme.mutate( themeSlug, {
 						onError: () => {
