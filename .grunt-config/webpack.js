@@ -123,6 +123,7 @@ const entry = {
 	'import-export-admin': path.resolve( __dirname, '../app/modules/import-export/assets/js/admin.js' ),
 	'import-export-customization-admin': path.resolve( __dirname, '../app/modules/import-export-customization/assets/js/admin.js' ),
 	'editor-one-admin': path.resolve( __dirname, '../modules/editor-one/assets/js/admin.js' ),
+	'interactions-shared-utils': path.resolve( __dirname, '../modules/interactions/assets/js/interactions-shared-utils.js' ),
 	'interactions': path.resolve( __dirname, '../modules/interactions/assets/js/interactions.js' ),
 	'editor-interactions': path.resolve( __dirname, '../modules/interactions/assets/js/editor-interactions.js' ),
 	'kit-elements-defaults-editor': path.resolve( __dirname, '../modules/kit-elements-defaults/assets/js/editor/index.js' ),
