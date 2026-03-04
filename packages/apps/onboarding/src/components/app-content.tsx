@@ -4,8 +4,8 @@ import { Box } from '@elementor/ui';
 
 import { useCheckProInstallScreen } from '../hooks/use-check-pro-install-screen';
 import { useElementorConnect } from '../hooks/use-elementor-connect';
-import { useOnboarding } from '../hooks/use-onboarding';
 import { useInstallTheme } from '../hooks/use-install-theme';
+import { useOnboarding } from '../hooks/use-onboarding';
 import { useUpdateChoices } from '../hooks/use-update-choices';
 import { useUpdateProgress } from '../hooks/use-update-progress';
 import { BuildingFor } from '../steps/screens/building-for';
@@ -17,7 +17,7 @@ import { SiteFeatures } from '../steps/screens/site-features';
 import { ThemeSelection } from '../steps/screens/theme-selection';
 import { getStepVisualConfig } from '../steps/step-visuals';
 import { StepId } from '../types';
-import { trackOnboardingError } from '../utils/error-tracking';
+import { ONBOARDING_ERRORS, trackOnboardingError } from '../utils/error-tracking';
 import { t } from '../utils/translations';
 import { useToast } from './toast/toast-context';
 import { BaseLayout } from './ui/base-layout';
@@ -153,7 +153,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 		( choiceData: Record< string, unknown > ) => {
 			updateChoices.mutate( choiceData, {
 				onError: () => {
-					trackOnboardingError( 'choices_persist_failed', { step: stepId } );
+					trackOnboardingError( ONBOARDING_ERRORS.CHOICES_PERSIST_FAILED, { step: stepId } );
 				},
 			} );
 		},
@@ -162,10 +162,12 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 	const handleContinue = useCallback(
 		( directChoice?: Record< string, unknown > ) => {
-			const choiceData = directChoice ?? ( () => {
-				const storedChoice = choices[ stepId as keyof typeof choices ];
-				return isChoiceEmpty( storedChoice ) ? null : { [ stepId ]: storedChoice };
-			} )();
+		const choiceData =
+				directChoice ??
+				( () => {
+					const storedChoice = choices[ stepId as keyof typeof choices ];
+					return isChoiceEmpty( storedChoice ) ? null : { [ stepId ]: storedChoice };
+				} )();
 
 			if ( choiceData ) {
 				saveChoicesFireAndForget( choiceData );
@@ -177,7 +179,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 				if ( themeSlug ) {
 					installTheme.mutate( themeSlug, {
 						onError: ( error ) => {
-							trackOnboardingError( 'theme_install_failed', { message: error.message } );
+							trackOnboardingError( ONBOARDING_ERRORS.THEME_INSTALL_FAILED, { message: error.message } );
 							showToast( t( 'error.theme_install_failed' ) );
 						},
 					} );
@@ -219,7 +221,19 @@ export function AppContent( { onClose }: AppContentProps ) {
 				}
 			);
 		},
-		[ stepId, stepIndex, totalSteps, choices, actions, isLast, updateProgress, saveChoicesFireAndForget, installTheme, showToast, redirectToNewPage ]
+		[
+			stepId,
+			stepIndex,
+			totalSteps,
+			choices,
+			actions,
+			isLast,
+			updateProgress,
+			saveChoicesFireAndForget,
+			installTheme,
+			showToast,
+			redirectToNewPage,
+		]
 	);
 
 	const rightPanelConfig = useMemo( () => getStepVisualConfig( stepId ), [ stepId ] );

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
+import { XIcon } from '@elementor/icons';
 import { IconButton, Snackbar } from '@elementor/ui';
-import XIcon from '@elementor/icons/XIcon';
 
 interface Toast {
 	id: string;
@@ -66,12 +66,7 @@ export function ToastProvider( { children }: { children: React.ReactNode } ) {
 				} }
 				message={ currentToast?.message }
 				action={
-					<IconButton
-						size="small"
-						aria-label="close"
-						color="inherit"
-						onClick={ handleClose }
-					>
+					<IconButton size="small" aria-label="close" color="inherit" onClick={ handleClose }>
 						<XIcon fontSize="small" />
 					</IconButton>
 				}

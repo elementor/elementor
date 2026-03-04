@@ -1,9 +1,5 @@
-export async function withRetry< T >(
-	fn: () => Promise< T >,
-	maxRetries = 1,
-	delayMs = 1000,
-): Promise< T > {
-	let lastError: Error;
+export async function withRetry< T >( fn: () => Promise< T >, maxRetries = 1, delayMs = 1000 ): Promise< T > {
+	let lastError: Error = new Error( 'withRetry: all attempts failed' );
 
 	for ( let attempt = 0; attempt <= maxRetries; attempt++ ) {
 		try {
@@ -17,5 +13,5 @@ export async function withRetry< T >(
 		}
 	}
 
-	throw lastError!;
+	throw lastError;
 }
