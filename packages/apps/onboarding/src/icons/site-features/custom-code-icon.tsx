@@ -3,9 +3,9 @@ import { SvgIcon } from '@elementor/ui';
 
 const CustomCodeIcon = React.forwardRef< SVGSVGElement, React.ComponentProps< typeof SvgIcon > >( ( props, ref ) => {
 	return (
-		<SvgIcon viewBox="0 0 26 23" { ...props } ref={ ref } width="26" height="23">
+		<SvgIcon viewBox="0 0 32 32" { ...props } ref={ ref } width="32" height="32">
 			<path
-				d="M6.08333 6.08351L0.75 11.4168L6.08333 16.7502"
+				d="M9.33333 10.666L4 15.9993L9.33333 21.3327"
 				fill="none"
 				stroke="currentColor"
 				strokeWidth="1.5"
@@ -13,7 +13,7 @@ const CustomCodeIcon = React.forwardRef< SVGSVGElement, React.ComponentProps< ty
 				strokeLinejoin="round"
 			/>
 			<path
-				d="M19.4167 6.08351L24.75 11.4168L19.4167 16.7502"
+				d="M22.667 10.666L28.0003 15.9993L22.667 21.3327"
 				fill="none"
 				stroke="currentColor"
 				strokeWidth="1.5"
@@ -21,7 +21,7 @@ const CustomCodeIcon = React.forwardRef< SVGSVGElement, React.ComponentProps< ty
 				strokeLinejoin="round"
 			/>
 			<path
-				d="M15.4167 0.750177L10.0833 22.0835"
+				d="M18.6663 5.33301L13.333 26.6663"
 				fill="none"
 				stroke="currentColor"
 				strokeWidth="1.5"
