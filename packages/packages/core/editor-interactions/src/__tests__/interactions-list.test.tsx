@@ -5,7 +5,17 @@ import { InteractionsList } from '../components/interactions-list';
 import { PopupStateProvider } from '../contexts/popup-state-context';
 import { type ElementInteractions } from '../types';
 
-jest.mock( '../utils/get-interactions-config' );
+jest.mock( '../utils/get-interactions-config', () => ( {
+	getInteractionsConfig: jest.fn( () => ( {
+		constants: {
+			defaultDuration: 600,
+			defaultDelay: 0,
+			slideDistance: 100,
+			scaleStart: 0,
+			defaultEasing: 'easeIn',
+		},
+	} ) ),
+} ) );
 
 const createInteraction = (
 	trigger: string,
