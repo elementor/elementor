@@ -69,7 +69,7 @@ describe( 'manage-element-interaction tool', () => {
 
 			const callHandler = createRegistryAndGetHandler();
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const result = callHandler( { elementId: 'el-123', action: 'get' } ) as any;
+			const result = callHandler( { elementId: 'el-123', action: 'get' } ) as any;
 
 			expect( result.elementId ).toBe( 'el-123' );
 			expect( result.interactions ).toEqual( [] );
@@ -93,7 +93,7 @@ describe( 'manage-element-interaction tool', () => {
 
 			const callHandler = createRegistryAndGetHandler();
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const result = callHandler( { elementId: 'el-456', action: 'get' } ) as any;
+			const result = callHandler( { elementId: 'el-456', action: 'get' } ) as any;
 
 			expect( result.count ).toBe( 1 );
 			const returned = result.interactions[ 0 ];
@@ -123,7 +123,7 @@ describe( 'manage-element-interaction tool', () => {
 
 			const callHandler = createRegistryAndGetHandler();
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const result = callHandler( { elementId: 'el-bp', action: 'get' } ) as any;
+			const result = callHandler( { elementId: 'el-bp', action: 'get' } ) as any;
 
 			const bpValues = result.interactions[ 0 ].value.breakpoints.value.excluded.value.map(
 				( bp: { value: string } ) => bp.value
@@ -145,7 +145,7 @@ describe( 'manage-element-interaction tool', () => {
 			mockAll.mockReturnValue( [] );
 
 			const callHandler = createRegistryAndGetHandler();
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 			const result = callHandler( {
 				elementId: 'el-123',
 				action: 'add',
@@ -216,7 +216,7 @@ describe( 'manage-element-interaction tool', () => {
 			mockAll.mockReturnValue( [ makeElementData( 'el-456', [ existingItem ] ) ] );
 
 			const callHandler = createRegistryAndGetHandler();
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 			const result = callHandler( {
 				elementId: 'el-456',
 				action: 'add',
@@ -275,7 +275,7 @@ describe( 'manage-element-interaction tool', () => {
 			mockAll.mockReturnValue( [ makeElementData( 'el-789', [ existingItem ] ) ] );
 
 			const callHandler = createRegistryAndGetHandler();
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 			const result = callHandler( {
 				elementId: 'el-789',
 				action: 'update',
