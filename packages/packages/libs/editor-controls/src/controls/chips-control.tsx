@@ -31,7 +31,7 @@ export const ChipsControl = createControl( ( { options }: ChipsControlProps ) =>
 
 	const handleChange = ( _: SyntheticEvent, newValue: ChipsOption[] ) => {
 		const values = newValue.map( ( option ) => stringPropTypeUtil.create( option.value ) );
-		setValue( values.length > 0 ? values : null );
+		setValue( values );
 	};
 
 	return (
