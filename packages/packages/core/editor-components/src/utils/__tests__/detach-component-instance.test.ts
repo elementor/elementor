@@ -9,7 +9,13 @@ import { resolveDetachedInstance } from '../resolve-detached-instance';
 jest.mock( '@elementor/editor-elements' );
 jest.mock( '@elementor/store', () => ( {
 	...jest.requireActual( '@elementor/store' ),
-	__getState: jest.fn( () => null ),
+	__getState: jest.fn( () => ( {
+		components: {
+			currentComponentId: null,
+			overridableProps: {},
+			data: [ { id: 456, uid: 'test-component-uid' } ],
+		},
+	} ) ),
 	__dispatch: jest.fn(),
 } ) );
 jest.mock( '../component-document-data' );
@@ -24,8 +30,15 @@ const mockGetComponentDocumentData = getComponentDocumentData as jest.MockedFunc
 describe( 'detachComponentInstance', () => {
 	const historyMock = mockHistoryManager();
 
+	const mockTrackingInfo = {
+		location: 'test-location',
+		secondaryLocation: 'test-secondary-location',
+		trigger: 'test-trigger',
+	};
+
 	beforeEach( () => {
 		historyMock.beforeEach();
+		jest.clearAllMocks();
 
 		mockGetComponentDocumentData.mockResolvedValue( {
 			elements: [
@@ -50,14 +63,17 @@ describe( 'detachComponentInstance', () => {
 			elType: 'e-flexbox',
 			settings: {},
 		} );
+		const mockDetachedElement = createMockContainer( 'detached-element-id' );
 
 		mockGetContainer.mockReturnValue( mockContainer as V1Element );
 		mockResolveDetachedInstance.mockReturnValue( mockResolvedInstance );
+		mockReplaceElement.mockReturnValue( mockDetachedElement as V1Element );
 
 		// Act.
 		await detachComponentInstance( {
 			instanceId: 'instance-123',
 			componentId: 456,
+			trackingInfo: mockTrackingInfo,
 		} );
 
 		// Assert.
@@ -108,6 +124,7 @@ describe( 'detachComponentInstance', () => {
 		await detachComponentInstance( {
 			instanceId: 'instance-123',
 			componentId: 456,
+			trackingInfo: mockTrackingInfo,
 		} );
 
 		// Assert - initial detach.
@@ -159,6 +176,7 @@ describe( 'detachComponentInstance', () => {
 		await detachComponentInstance( {
 			instanceId: 'instance-123',
 			componentId: 456,
+			trackingInfo: mockTrackingInfo,
 		} );
 
 		// Assert.

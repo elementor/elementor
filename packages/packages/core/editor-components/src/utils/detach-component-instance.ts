@@ -5,7 +5,13 @@ import { __ } from '@wordpress/i18n';
 
 import { componentInstanceOverridesPropTypeUtil } from '../prop-types/component-instance-overrides-prop-type';
 import { type ComponentInstanceProp, componentInstancePropTypeUtil } from '../prop-types/component-instance-prop-type';
-import { type ComponentsSlice, selectCurrentComponentId, selectOverridableProps, slice } from '../store/store';
+import {
+	type ComponentsSlice,
+	selectComponent,
+	selectCurrentComponentId,
+	selectOverridableProps,
+	slice,
+} from '../store/store';
 import { getComponentDocumentData } from './component-document-data';
 import { resolveDetachedInstance } from './resolve-detached-instance';
 import { trackComponentEvent } from './tracking';
@@ -13,9 +19,14 @@ import { trackComponentEvent } from './tracking';
 type DetachParams = {
 	instanceId: string;
 	componentId: number;
+	trackingInfo: PerformDetachParams[ 'trackingInfo' ];
 };
 
-export async function detachComponentInstance( { instanceId, componentId }: DetachParams ): Promise< V1Element > {
+export async function detachComponentInstance( {
+	instanceId,
+	componentId,
+	trackingInfo,
+}: DetachParams ): Promise< V1Element > {
 	const instanceContainer = getContainer( instanceId );
 
 	if ( ! instanceContainer ) {
@@ -50,7 +61,7 @@ export async function detachComponentInstance( { instanceId, componentId }: Deta
 	const undoableDetach = undoable(
 		{
 			do: (): V1Element => {
-				return performDetach( { instanceId, detachedInstanceElementData, componentId } );
+				return performDetach( { instanceId, detachedInstanceElementData, componentId, trackingInfo } );
 			},
 			undo: ( _: undefined, detachedElement: V1Element ): V1Element => {
 				const restoredInstance = replaceElement( {
@@ -80,6 +91,7 @@ export async function detachComponentInstance( { instanceId, componentId }: Deta
 					instanceId: restoredInstance.id,
 					detachedInstanceElementData,
 					componentId,
+					trackingInfo,
 				} );
 			},
 		},
@@ -96,19 +108,27 @@ type PerformDetachParams = {
 	instanceId: string;
 	detachedInstanceElementData: V1ElementModelProps;
 	componentId: number;
+	trackingInfo: {
+		location: string;
+		secondaryLocation?: string;
+		trigger: string;
+	};
 };
 
-function performDetach( { instanceId, detachedInstanceElementData, componentId }: PerformDetachParams ) {
+function performDetach( { instanceId, detachedInstanceElementData, componentId, trackingInfo }: PerformDetachParams ) {
 	const detachedElement = replaceElement( {
 		currentElementId: instanceId,
 		newElement: detachedInstanceElementData,
 		withHistory: false,
 	} );
 
+	const componentUid = selectComponent( getState(), componentId )?.uid;
+
 	trackComponentEvent( {
+		...trackingInfo,
 		action: 'detached',
 		source: 'user',
-		component_id: componentId,
+		component_uid: componentUid,
 		instance_id: instanceId,
 	} );
 

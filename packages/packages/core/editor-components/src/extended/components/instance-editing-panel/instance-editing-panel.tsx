@@ -13,9 +13,10 @@ import {
 import { useInstancePanelData } from '../../../components/instance-editing-panel/use-instance-panel-data';
 import { useComponentsPermissions } from '../../../hooks/use-components-permissions';
 import { ComponentInstanceProvider } from '../../../provider/component-instance-context';
+import { type ExtendedWindow } from '../../../types';
 import { detachComponentInstance } from '../../../utils/detach-component-instance';
 import { switchToComponent } from '../../../utils/switch-to-component';
-import { DetachInstanceConfirmationDialog } from './detach-instance-confirmation-dialog';
+import { DetachInstanceConfirmationDialog } from '../detach-instance-confirmation-dialog';
 
 export function ExtendedInstanceEditingPanel() {
 	const { canEdit } = useComponentsPermissions();
@@ -49,6 +50,7 @@ export function ExtendedInstanceEditingPanel() {
 		detachComponentInstance( {
 			instanceId: componentInstanceId,
 			componentId,
+			trackingInfo: getDetachTrackingInfo(),
 		} );
 	};
 
@@ -98,4 +100,21 @@ export function ExtendedInstanceEditingPanel() {
 			/>
 		</Box>
 	);
+}
+
+function getDetachTrackingInfo() {
+	const extendedWindow = window as unknown as ExtendedWindow;
+	const config = extendedWindow?.elementorCommon?.eventsManager?.config;
+
+	if ( ! config ) {
+		return {
+			location: '',
+			trigger: '',
+		};
+	}
+
+	return {
+		location: ( config.locations.components as Record< string, string > ).instanceEditingPanel,
+		trigger: config.triggers.click,
+	};
 }

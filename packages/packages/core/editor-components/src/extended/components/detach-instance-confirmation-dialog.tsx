@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ConfirmationDialog } from '@elementor/editor-ui';
+import { closeDialog, ConfirmationDialog, openDialog } from '@elementor/editor-ui';
 import { __ } from '@wordpress/i18n';
 
 type DetachInstanceConfirmationDialogProps = {
@@ -32,4 +32,15 @@ export function DetachInstanceConfirmationDialog( {
 			/>
 		</ConfirmationDialog>
 	);
+}
+
+export function openDetachConfirmDialog( onConfirm: () => void ) {
+	const handleConfirm = () => {
+		closeDialog();
+		onConfirm();
+	};
+
+	openDialog( {
+		component: <DetachInstanceConfirmationDialog open onClose={ closeDialog } onConfirm={ handleConfirm } />,
+	} );
 }

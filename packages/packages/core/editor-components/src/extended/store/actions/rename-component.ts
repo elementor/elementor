@@ -1,7 +1,7 @@
 import { getV1DocumentsManager, setDocumentModifiedStatus } from '@elementor/editor-documents';
 import { getAllDescendants, type V1Element } from '@elementor/editor-elements';
 
-import { COMPONENT_WIDGET_TYPE } from '../../../create-component-type';
+import { COMPONENT_WIDGET_TYPE } from '../../../consts';
 import { componentsActions } from '../../../store/dispatchers';
 
 const TITLE_EXTERNAL_CHANGE_COMMAND = 'title_external_change';

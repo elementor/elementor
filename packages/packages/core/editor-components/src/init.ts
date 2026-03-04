@@ -21,6 +21,7 @@ import { openEditModeDialog } from './components/in-edit-mode';
 import { InstanceEditingPanel } from './components/instance-editing-panel/instance-editing-panel';
 import { LoadTemplateComponents } from './components/load-template-components';
 import { COMPONENT_WIDGET_TYPE, createComponentType } from './create-component-type';
+import { openDetachConfirmDialog } from './extended/components/detach-instance-confirmation-dialog';
 import { initExtended } from './extended/init';
 import { PopulateStore } from './populate-store';
 import { initCircularNestingPrevention } from './prevent-circular-nesting';
@@ -38,7 +39,11 @@ export function init() {
 	registerSlice( slice );
 
 	registerElementType( COMPONENT_WIDGET_TYPE, ( options: CreateTemplatedElementTypeOptions ) =>
-		createComponentType( { ...options, showLockedByModal: openEditModeDialog } )
+		createComponentType( {
+			...options,
+			showLockedByModal: openEditModeDialog,
+			showDetachConfirmDialog: openDetachConfirmDialog,
+		} )
 	);
 
 	( window as unknown as ExtendedWindow ).elementorCommon.__beforeSave = beforeSave;

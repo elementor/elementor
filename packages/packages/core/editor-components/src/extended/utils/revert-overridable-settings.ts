@@ -8,7 +8,7 @@ import {
 	type V1ElementSettingsProps,
 } from '@elementor/editor-elements';
 
-import { COMPONENT_WIDGET_TYPE } from '../../create-component-type';
+import { COMPONENT_WIDGET_TYPE } from '../../consts';
 import {
 	type ComponentInstanceOverrideProp,
 	componentInstanceOverridePropTypeUtil,
