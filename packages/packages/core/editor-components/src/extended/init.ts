@@ -32,7 +32,7 @@ import { initNonAtomicNestingPrevention } from './sync/prevent-non-atomic-nestin
 import { initRevertOverridablesOnCopyOrDuplicate } from './sync/revert-overridables-on-copy-or-duplicate';
 import { SanitizeOverridableProps } from './sync/sanitize-overridable-props';
 
-const PRIORITY = 10;
+const PRIORITY = 1;
 
 export function initExtended() {
 	registerEditingPanelReplacement( {
