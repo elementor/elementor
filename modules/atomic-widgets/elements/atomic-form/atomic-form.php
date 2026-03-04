@@ -97,7 +97,10 @@ class Atomic_Form extends Atomic_Element_Base {
 				->default( [] ),
 			'submissions_metadata' => String_Array_Prop_Type::make()
 				->set_dependencies( $submissions_metadata_dependencies )
-				->default( [ self::METADATA_REMOTE_IP, self::METADATA_USER_AGENT ] ),
+				->default( [
+					String_Prop_Type::generate( self::METADATA_REMOTE_IP ),
+					String_Prop_Type::generate( self::METADATA_USER_AGENT ),
+				] ),
 			'email' => Email_Prop_Type::make()
 				->set_dependencies( $email_dependencies )
 				->default( [] ),

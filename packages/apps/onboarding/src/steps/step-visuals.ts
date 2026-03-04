@@ -2,6 +2,8 @@ import { StepId, type StepIdType, type StepVisualConfig } from '../types';
 
 const ONBOARDING_ASSETS_PATH = 'images/app/e-onboarding/';
 
+const CONTENT_MAX_WIDTH_WIDE_ELEMENT = 724;
+
 const getAssetsBaseUrl = () => window.elementorCommon?.config?.urls?.assets ?? '';
 
 export const getOnboardingAssetUrl = ( fileName: string ) => {
@@ -18,43 +20,37 @@ const buildBackground = ( fileName: string ) => {
 };
 
 const DEFAULT_CONFIG: StepVisualConfig = {
-	imageLayout: 'wide',
 	background: buildBackground( 'step-1.png' ),
 	assets: [],
 };
 
 export const LOGIN_CONFIG: StepVisualConfig = {
-	imageLayout: 'wide',
 	background: buildBackground( 'login.png' ),
 	assets: [],
 };
 
 const stepVisuals: Record< StepIdType, StepVisualConfig > = {
 	[ StepId.BUILDING_FOR ]: {
-		imageLayout: 'wide',
 		background: buildBackground( 'step-1.png' ),
 		assets: [],
 	},
 	[ StepId.SITE_ABOUT ]: {
-		imageLayout: 'narrow',
 		background: buildBackground( 'step-2.png' ),
 		assets: [],
 	},
 	[ StepId.EXPERIENCE_LEVEL ]: {
-		imageLayout: 'wide',
 		background: buildBackground( 'step-3.png' ),
 		assets: [],
 	},
 	[ StepId.THEME_SELECTION ]: {
-		imageLayout: 'narrow',
 		background: buildBackground( 'step-4.png' ),
 		assets: [],
+		contentMaxWidth: CONTENT_MAX_WIDTH_WIDE_ELEMENT,
 	},
 	[ StepId.SITE_FEATURES ]: {
-		imageLayout: 'narrow',
 		background: buildBackground( 'step-5.png' ),
 		assets: [],
-		contentMaxWidth: 724,
+		contentMaxWidth: CONTENT_MAX_WIDTH_WIDE_ELEMENT,
 	},
 };
 

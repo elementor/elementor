@@ -57,7 +57,7 @@ export function ThemeCard( {
 					/>
 				) }
 				{ recommended && ! installed && (
-					<RecommendedChip label={ t( 'common.recommended' ) } size="small" color="secondary" />
+					<RecommendedChip label={ t( 'common.recommended' ) } size="small" color="default" />
 				) }
 			</ThemePreview>
 
