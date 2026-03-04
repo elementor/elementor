@@ -147,7 +147,7 @@
                         "styles": {
                             "e-ELEMID00-LOCAL00": {
                                 "id": "e-ELEMID00-LOCAL00",
-                                "label": "heading",
+                                "label": "local",
                                 "type": "class",
                                 "variants": [
                                     {
@@ -206,7 +206,7 @@
                         "styles": {
                             "e-ELEMID00-LOCAL00": {
                                 "id": "e-ELEMID00-LOCAL00",
-                                "label": "heading",
+                                "label": "local",
                                 "type": "class",
                                 "variants": [
                                     {

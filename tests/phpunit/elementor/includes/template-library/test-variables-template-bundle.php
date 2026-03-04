@@ -139,16 +139,14 @@ class Test_Variables_Template_Bundle extends Elementor_Test_Base {
 		$this->assertIsArray( $prepared );
 		$this->assertIsArray( $prepared['content'] );
 
-		$new_id = $prepared['content'][0]['settings']['text_color']['value'];
-		$this->assertNotSame( 'e-gv-123', $new_id );
-		$this->assertStringStartsWith( 'e-gv-', $new_id );
+		$resolved_id = $prepared['content'][0]['settings']['text_color']['value'];
+		$this->assertSame( 'e-gv-123', $resolved_id );
 
 		$current = $this->get_repository()->load()->serialize();
 		$current_ids = array_keys( $current['data'] ?? [] );
 
 		$this->assertContains( 'e-gv-123', $current_ids );
-		$this->assertContains( $new_id, $current_ids );
-		$this->assertStringStartsWith( 'DUP_', $current['data'][ $new_id ]['label'] );
+		$this->assertCount( 1, $current_ids );
 	}
 
 	public function test_import_keep_flatten_resolves_variable_refs() {

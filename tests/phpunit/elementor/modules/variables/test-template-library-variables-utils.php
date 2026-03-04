@@ -101,7 +101,7 @@ class Test_Template_Library_Variables_Utils extends Elementor_Test_Base {
 		$this->assertSame( Constants::FORMAT_VERSION_V1, $snapshot['version'] );
 	}
 
-	public function test_merge_snapshot_and_get_id_map_remaps_conflict_and_updates_labels() {
+	public function test_merge_snapshot_and_get_id_map_matches_by_type_and_label_ignoring_value() {
 		$this->act_as_admin();
 
 		$this->seed_variables( [
@@ -126,14 +126,11 @@ class Test_Template_Library_Variables_Utils extends Elementor_Test_Base {
 
 		$result = Template_Library_Variables_Snapshot_Builder::merge_snapshot_and_get_id_map( $incoming );
 
-		$this->assertArrayHasKey( 'e-gv-1', $result['id_map'] );
-		$new_id = $result['id_map']['e-gv-1'];
-		$this->assertStringStartsWith( 'e-gv-', $new_id );
-		$this->assertNotSame( 'e-gv-1', $new_id );
+		$this->assertEmpty( $result['id_map'] );
 
 		$current = $this->repository()->load()->serialize();
-		$this->assertArrayHasKey( $new_id, $current['data'] );
-		$this->assertStringStartsWith( Template_Library_Import_Export_Utils::LABEL_PREFIX, $current['data'][ $new_id ]['label'] );
+		$this->assertArrayHasKey( 'e-gv-1', $current['data'] );
+		$this->assertCount( 1, $current['data'] );
 	}
 
 	public function test_merge_snapshot_matches_by_name_and_maps_id_when_content_equal() {
