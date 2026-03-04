@@ -54,6 +54,9 @@ const ContinueButton = styled( Button )( ( { theme } ) => ( {
 	fontWeight: 500,
 	lineHeight: theme.typography.pxToRem( 24 ),
 	letterSpacing: '0.4px',
+	'&:focus-visible': {
+		backgroundColor: theme.palette.promotion.main,
+	},
 } ) );
 
 interface FooterActionsProps {

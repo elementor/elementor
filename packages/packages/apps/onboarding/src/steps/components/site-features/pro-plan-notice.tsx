@@ -1,21 +1,23 @@
 import * as React from 'react';
 import { useCallback } from 'react';
-import { InfoCircleIcon } from '@elementor/icons';
+import { ArrowUpRightIcon, InfoCircleIcon } from '@elementor/icons';
 import type { Theme } from '@elementor/ui';
-import { Box, Button, Stack, styled, Typography } from '@elementor/ui';
+import { Box, Link, Stack, styled, Typography } from '@elementor/ui';
 
 import { useOnboarding } from '../../../hooks/use-onboarding';
 import { t } from '../../../utils/translations';
 
-const PRO_PLAN_NOTICE_BG = 'rgba(250, 228, 250, 0.6)';
+const PRO_PLAN_NOTICE_BG = '#FAE4FA';
 
 const ProPlanNoticeRoot = styled( Box )( ( { theme } ) => ( {
 	display: 'flex',
 	alignItems: 'center',
 	gap: theme.spacing( 1 ),
-	padding: theme.spacing( 1, 2 ),
+	padding: theme.spacing( 1.5, 3 ),
 	borderRadius: theme.spacing( 1 ),
 	backgroundColor: PRO_PLAN_NOTICE_BG,
+	width: 'max-content',
+	maxWidth: '100%',
 	[ theme.breakpoints.down( 'sm' ) ]: {
 		flexDirection: 'column',
 		justifyContent: 'center',
@@ -30,10 +32,6 @@ export function ProPlanNotice( { planName }: LicenseNoticeProps ) {
 	const { urls } = useOnboarding();
 	const comparePlansUrl = urls.comparePlans;
 
-	const handleComparePlansClick = useCallback( () => {
-		window.open( comparePlansUrl, '_blank' );
-	}, [ comparePlansUrl ] );
-
 	return (
 		<ProPlanNoticeRoot>
 			<Stack
@@ -44,37 +42,31 @@ export function ProPlanNotice( { planName }: LicenseNoticeProps ) {
 					alignItems: 'center',
 				} ) }
 			>
-				<InfoCircleIcon
-					sx={ ( theme: Theme ) => ( {
-						fontSize: theme.spacing( 2.5 ),
-						color: 'text.secondary',
-					} ) }
-				/>
 				<Typography
 					variant="body2"
-					color="text.secondary"
+					color="text.primary"
 					sx={ ( theme: Theme ) => ( {
-						fontSize: theme.spacing( 1.625 ),
+						fontSize: theme.spacing( 2 ),
 					} ) }
 				>
-					{ t( 'steps.site_features.plan_recommendation_prefix' ) } <strong>{ planName }</strong>{ ' ' }
+					{ t( 'steps.site_features.plan_recommendation_prefix' ) } { planName }{ ' ' }
 					{ t( 'steps.site_features.plan_recommendation_suffix' ) }
 				</Typography>
 			</Stack>
-			<Button
-				variant="text"
-				size="small"
-				color="promotion"
-				onClick={ handleComparePlansClick }
+			<Link
+				href={ comparePlansUrl }
+				target="_blank"
+				color="promotion.main"
+				fontSize={ 16 }
 				sx={ ( theme: Theme ) => ( {
-					fontSize: theme.spacing( 1.625 ),
-					textTransform: 'none',
-					padding: theme.spacing( 0.5, 0.625 ),
-					minWidth: 'auto',
+					display: 'flex',
+					alignItems: 'center',
+					gap: theme.spacing( 0.5 ),
 				} ) }
 			>
 				{ t( 'steps.site_features.compare_plans' ) }
-			</Button>
+				<ArrowUpRightIcon sx={ { fontSize: 'inherit' } } />
+			</Link>
 		</ProPlanNoticeRoot>
 	);
 }
