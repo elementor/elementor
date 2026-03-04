@@ -27,10 +27,10 @@
     "release": "npm run build && node scripts/version-manager/index.js publish"
   },
   "workspaces": [
-    "packages/apps/*",
-    "packages/core/*",
+    "packages/tools/*",
     "packages/libs/*",
-    "packages/tools/*"
+    "packages/core/*",
+    "apps/*"
   ],
   "devDependencies": {
     "@jest/globals": "~29.7.0",

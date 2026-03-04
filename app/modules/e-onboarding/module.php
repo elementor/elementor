@@ -65,9 +65,9 @@ class Module extends BaseModule {
 		add_action( 'elementor/init', [ $this, 'on_elementor_init' ], 12 );
 
 		if ( $this->should_show_starter() ) {
-			add_filter( 'elementor/editor/show_starter', '__return_true' );
 			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_starter_settings' ] );
-			add_action( 'elementor/preview/enqueue_styles', [ $this, 'enqueue_fonts' ] );
+			add_filter( 'elementor/editor/v2/packages', [ $this, 'add_starter_packages' ] );
+			add_action( 'elementor/editor/v2/styles/enqueue', [ $this, 'enqueue_fonts' ] );
 		}
 	}
 
@@ -227,6 +227,12 @@ class Module extends BaseModule {
 		$progress = $this->progress_manager->get_progress();
 
 		return null !== $progress->get_completed_at() && ! $progress->is_starter_dismissed();
+	}
+
+	public function add_starter_packages( array $packages ): array {
+		$packages[] = 'editor-starter';
+
+		return $packages;
 	}
 
 	public function add_starter_settings( array $settings ): array {
