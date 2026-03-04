@@ -343,7 +343,7 @@ class Test_Template_Library_Global_Classes_Utils extends Elementor_Test_Base {
 		$this->assertStringStartsWith( 'e-abc12345-', $local_id );
 		$this->assertArrayHasKey( $local_id, $result[0]['styles'] );
 		$this->assertSame( 'class', $result[0]['styles'][ $local_id ]['type'] );
-		$this->assertSame( 'Main', $result[0]['styles'][ $local_id ]['label'] );
+		$this->assertSame( 'local', $result[0]['styles'][ $local_id ]['label'] );
 		$this->assertNotEmpty( $result[0]['styles'][ $local_id ]['variants'] );
 	}
 }
