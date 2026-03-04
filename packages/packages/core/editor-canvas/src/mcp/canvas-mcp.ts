@@ -10,7 +10,14 @@ import { initGetElementConfigTool } from './tools/get-element-config/tool';
 export const initCanvasMcp = ( reg: MCPRegistryEntry ) => {
 	const { setMCPDescription } = reg;
 	setMCPDescription(
-		'Everything related to creative design, layout, styling and building the pages, specifically element of type "widget"'
+		`Everything related to creative design, layout, styling and building the pages, specifically element of type "widget".
+# Canvas workflow for new compositions
+- Check existing global variables
+- Check existing global classes
+- Create missing global variables
+- Create reusable global classes
+- Build valid XML with minimal inline styles (layout/positioning only)
+- Apply global classes to elements`
 	);
 	initWidgetsSchemaResource( reg );
 	initDocumentStructureResource( reg );
