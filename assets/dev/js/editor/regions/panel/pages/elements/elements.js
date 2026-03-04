@@ -3,8 +3,8 @@ var PanelElementsCategoriesCollection = require( './collections/categories' ),
 	PanelElementsCategoriesView = require( './views/categories' ),
 	PanelElementsElementsView = elementor.modules.layouts.panel.pages.elements.views.Elements,
 	PanelElementsGlobalView = require( './views/global' ),
-	PanelElementsPromotionView = require( './views/promotion' ),
 	PanelElementsSearchView = require( './views/search' ),
+	PanelElementsWidgetCreationView = require( './views/widget-creation' ),
 	PanelElementsLayoutView;
 
 PanelElementsLayoutView = Marionette.LayoutView.extend( {
@@ -18,7 +18,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 	regions: {
 		elements: '#elementor-panel-elements-wrapper',
-		promotion: '#elementor-panel-elements-promotion-area',
+		widgetCreation: '#elementor-panel-elements-widget-creation-area',
 		search: '#elementor-panel-elements-search-area',
 		notice: '#elementor-panel-elements-notice-area',
 	},
@@ -264,7 +264,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onChildviewChildrenRender() {
-		this.updatePromotion();
+		this.updateWidgetCreation();
 		elementor.getPanelView().updateScrollbar();
 	},
 
@@ -272,33 +272,33 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		this.changeFilter( child.ui.input.val(), 'search' );
 	},
 
-	updatePromotion() {
+	updateWidgetCreation() {
 		const filterValue = elementor.channels.panelElements.request( 'filter:value' );
 
 		if ( ! filterValue ) {
-			this.promotion.empty();
+			this.widgetCreation.empty();
 			return;
 		}
 
 		const elementsView = this.elements.currentView;
 
 		if ( ! elementsView || ! ( elementsView instanceof PanelElementsElementsView ) ) {
-			this.promotion.empty();
+			this.widgetCreation.empty();
 			return;
 		}
 
 		const emptyResults = 0 === elementsView.children.length;
-		const promotionView = new PanelElementsPromotionView( {
+		const widgetCreationView = new PanelElementsWidgetCreationView( {
 			emptyResults,
 			searchTerm: filterValue,
 		} );
 
-		if ( ! promotionView.hasTemplate() ) {
-			this.promotion.empty();
+		if ( ! widgetCreationView.hasTemplate() ) {
+			this.widgetCreation.empty();
 			return;
 		}
 
-		this.promotion.show( promotionView );
+		this.widgetCreation.show( widgetCreationView );
 	},
 
 	onDestroy() {

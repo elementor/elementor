@@ -1,14 +1,14 @@
-var PanelElementsPromotionView;
+var PanelElementsWidgetCreationView;
 
-PanelElementsPromotionView = Marionette.ItemView.extend( {
+PanelElementsWidgetCreationView = Marionette.ItemView.extend( {
 	getTemplate() {
 		return this.options.emptyResults
-			? '#tmpl-elementor-panel-elements-promotion-empty-state'
-			: '#tmpl-elementor-panel-elements-promotion-search-footer';
+			? '#tmpl-elementor-panel-elements-widget-creation-empty-state'
+			: '#tmpl-elementor-panel-elements-widget-creation-search-footer';
 	},
 
 	className() {
-		const baseClass = 'elementor-panel-elements-promotion';
+		const baseClass = 'elementor-panel-elements-widget-creation';
 		const modifierClass = this.options.emptyResults
 			? `${ baseClass }--empty-state`
 			: `${ baseClass }--search-footer`;
@@ -27,16 +27,16 @@ PanelElementsPromotionView = Marionette.ItemView.extend( {
 	},
 
 	events: {
-		'click .elementor-panel-elements-promotion__cta': 'onCtaClick',
+		'click .elementor-panel-elements-widget-creation__cta': 'onCtaClick',
 	},
 
 	onCtaClick() {
 		window.dispatchEvent(
-			new CustomEvent( 'elementor/editor/angie/generate-widget', {
+			new CustomEvent( 'elementor/editor/create-widget', {
 				detail: { prompt: `Generate a new widget - ${ this.options.searchTerm || '' }` },
 			} ),
 		);
 	},
 } );
 
-module.exports = PanelElementsPromotionView;
+module.exports = PanelElementsWidgetCreationView;

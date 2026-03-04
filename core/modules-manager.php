@@ -136,7 +136,7 @@ class Modules_Manager {
 			'components',
 			'interactions',
 			'feedback',
-			'angie-entrypoints',
+			'widget-creation',
 			'editor-one',
 		];
 	}
