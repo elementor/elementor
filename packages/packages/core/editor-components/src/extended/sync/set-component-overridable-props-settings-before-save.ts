@@ -1,8 +1,7 @@
 import { type V1Document } from '@elementor/editor-documents';
 import { type V1Element } from '@elementor/editor-elements';
-import { __getState as getState } from '@elementor/store';
 
-import { selectOverridableProps } from '../../store/store';
+import { componentsSelectors } from '../../store/selectors';
 import { COMPONENT_DOCUMENT_TYPE } from '../consts';
 
 export const setComponentOverridablePropsSettingsBeforeSave = ( {
@@ -16,7 +15,7 @@ export const setComponentOverridablePropsSettingsBeforeSave = ( {
 		return;
 	}
 
-	const overridableProps = selectOverridableProps( getState(), currentDocument.id );
+	const overridableProps = componentsSelectors.getOverridableProps( currentDocument.id );
 	if ( overridableProps ) {
 		container.settings.set( 'overridable_props', overridableProps );
 	}
