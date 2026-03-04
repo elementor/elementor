@@ -10,6 +10,7 @@ import {
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
 import { ConfirmationDialog, SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
+import { reloadKitCss } from '@elementor/editor-canvas';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { AlertTriangleFilledIcon, ColorFilterIcon, TrashIcon } from '@elementor/icons';
 import {
@@ -55,6 +56,7 @@ export const { panel, usePanelActions } = createPanel( {
 	},
 	onClose: async () => {
 		changeEditMode( 'edit' );
+		reloadKitCss();
 	},
 	isOpenPreviousElement: true,
 } );

@@ -13,6 +13,7 @@ use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
+use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed;
 
@@ -276,6 +277,9 @@ class Rest_Api {
 
 	protected function clear_cache() {
 		Plugin::$instance->files_manager->clear_cache();
+
+		$kit_id = Plugin::$instance->kits_manager->get_active_id();
+		Post_CSS::create( $kit_id )->update();
 	}
 
 	private function create_new_variable( WP_REST_Request $request ) {
