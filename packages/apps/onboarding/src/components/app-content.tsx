@@ -157,12 +157,8 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 	const handleContinue = useCallback(
 		( directChoice?: Record< string, unknown > ) => {
-			const choiceData =
-				directChoice ??
-				( () => {
-					const storedChoice = choices[ stepId as keyof typeof choices ];
-					return isChoiceEmpty( storedChoice ) ? null : { [ stepId ]: storedChoice };
-				} )();
+			const storedChoice = choices[ stepId as keyof typeof choices ];
+			const choiceData = directChoice ?? ( isChoiceEmpty( storedChoice ) ? null : { [ stepId ]: storedChoice } );
 
 			if ( choiceData ) {
 				saveChoicesFireAndForget( choiceData );
