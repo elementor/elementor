@@ -6,14 +6,16 @@ import { XIcon } from '@elementor/icons';
 import { Button, Dialog, DialogContent, IconButton, Image, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { ANGIE_INSTALL_URL, ANGIE_PROMOTION_IMAGE_URL, GENERATE_WIDGET_EVENT } from '../consts';
+import { ANGIE_INSTALL_URL, CREATE_WIDGET_EVENT } from '../consts';
 import { useAngieSidebarPrompt } from '../hooks/use-angie-sidebar';
 
 type ShowModalEventDetail = {
 	prompt?: string;
 };
 
-export function GenerateWidget() {
+const PROMOTION_IMAGE_URL = 'https://assets.elementor.com/packages/v1/images/angie-promotion.svg';
+
+export function CreateWidget() {
 	const [ open, setOpen ] = useState( false );
 	const [ prompt, setPrompt ] = useState< string | undefined >();
 	const angieSidebarPrompt = useAngieSidebarPrompt();
@@ -30,10 +32,10 @@ export function GenerateWidget() {
 			setOpen( true );
 		};
 
-		window.addEventListener( GENERATE_WIDGET_EVENT, handleShow as unknown as EventListener );
+		window.addEventListener( CREATE_WIDGET_EVENT, handleShow as unknown as EventListener );
 
 		return () => {
-			window.removeEventListener( GENERATE_WIDGET_EVENT, handleShow as unknown as EventListener );
+			window.removeEventListener( CREATE_WIDGET_EVENT, handleShow as unknown as EventListener );
 		};
 	}, [ angieSidebarPrompt ] );
 
@@ -76,7 +78,7 @@ export function GenerateWidget() {
 								objectFit: 'cover',
 								objectPosition: 'right center',
 							} }
-							src={ ANGIE_PROMOTION_IMAGE_URL }
+							src={ PROMOTION_IMAGE_URL }
 						/>
 						<Stack gap={ 2 } justifyContent="center" p={ 4 }>
 							<Typography variant="h6" fontWeight={ 600 } whiteSpace="nowrap">

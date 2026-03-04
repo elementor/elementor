@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AngieEntrypoints;
+namespace Elementor\Modules\WidgetCreation;
 
 use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
@@ -19,7 +19,7 @@ class Rest_Api {
 	}
 
 	private function register_routes() {
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/activate', [
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/activate-angie', [
 			[
 				'methods' => 'POST',
 				'callback' => fn() => $this->route_wrapper( fn() => $this->activate() ),
