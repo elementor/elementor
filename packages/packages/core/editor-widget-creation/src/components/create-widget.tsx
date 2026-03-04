@@ -21,21 +21,23 @@ export function CreateWidget() {
 	const angieSidebarPrompt = useAngieSidebarPrompt();
 
 	useEffect( () => {
-		const handleShow = async ( event: CustomEvent< ShowModalEventDetail > ) => {
+		const handleShow = async ( event: Event ) => {
+			const customEvent = event as CustomEvent< ShowModalEventDetail >;
+
 			if ( angieSidebarPrompt ) {
-				angieSidebarPrompt( event.detail?.prompt );
+				angieSidebarPrompt( customEvent.detail?.prompt );
 
 				return;
 			}
 
-			setPrompt( event.detail?.prompt );
+			setPrompt( customEvent.detail?.prompt );
 			setOpen( true );
 		};
 
-		window.addEventListener( CREATE_WIDGET_EVENT, handleShow as unknown as EventListener );
+		window.addEventListener( CREATE_WIDGET_EVENT, handleShow );
 
 		return () => {
-			window.removeEventListener( CREATE_WIDGET_EVENT, handleShow as unknown as EventListener );
+			window.removeEventListener( CREATE_WIDGET_EVENT, handleShow );
 		};
 	}, [ angieSidebarPrompt ] );
 
@@ -93,7 +95,7 @@ export function CreateWidget() {
 							<Typography variant="body2" color="text.secondary">
 								{ __( 'Install once to start building directly inside the editor.', 'elementor' ) }
 							</Typography>
-							<Stack direction="row" justifyContent="flex-end" sx={ { mt: 1 } }>
+							<Stack direction="row" justifyContent="flex-end" sx={ { mt: 2 } }>
 								<Button variant="contained" color="accent" onClick={ handleInstall }>
 									{ __( 'Install Angie', 'elementor' ) }
 								</Button>

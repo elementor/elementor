@@ -4,8 +4,6 @@ namespace Elementor\Modules\WidgetCreation;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as ExperimentsManager;
-use Elementor\Core\Utils\Hints;
-use Elementor\Modules\WidgetCreation\Rest_Api;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -14,9 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const MODULE_NAME = 'widget-creation';
 	const EXPERIMENT_NAME = 'e_widget_creation';
-
-	const ANGIE_PLUGIN_SLUG = 'angie';
-	const ANGIE_PLUGIN_PATH = 'angie/angie.php';
 
 	const PACKAGES = [
 		'editor-widget-creation',
@@ -41,19 +36,9 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
-
-		( new Rest_Api() )->register_hooks();
 	}
 
 	private function add_packages( array $packages ): array {
 		return array_merge( $packages, self::PACKAGES );
-	}
-
-	public static function is_angie_installed(): bool {
-		return Hints::is_plugin_installed( self::ANGIE_PLUGIN_SLUG );
-	}
-
-	public static function is_angie_active(): bool {
-		return Hints::is_plugin_active( self::ANGIE_PLUGIN_SLUG );
 	}
 }
