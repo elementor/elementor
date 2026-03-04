@@ -286,6 +286,10 @@ export default class Component extends ComponentModalBase {
 					}
 				}
 
+				if ( ! this.manager.hasGlobalStyles( data ) && null === withPageSettings ) {
+					withPageSettings = false;
+				}
+
 				const importOptions = jQuery.extend( {}, this.manager.modalConfig.importOptions );
 
 				importOptions.withPageSettings = withPageSettings;

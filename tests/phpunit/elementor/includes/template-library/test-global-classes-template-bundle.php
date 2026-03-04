@@ -357,7 +357,7 @@ class Test_Global_Classes_Template_Bundle extends Elementor_Test_Base {
 		$this->assertArrayHasKey( $flattened_id, $second['styles'], 'Flattened class should be in styles' );
 
 		$flattened_style = $second['styles'][ $flattened_id ];
-		$this->assertSame( 'heading', $flattened_style['label'], 'Label should be preserved from global class' );
+		$this->assertSame( 'local', $flattened_style['label'], 'Label should always be local for flattened class' );
 		$this->assertNotEmpty( $flattened_style['variants'], 'Variants should be preserved' );
 
 		$props = $flattened_style['variants'][0]['props'];
@@ -502,7 +502,7 @@ class Test_Global_Classes_Template_Bundle extends Elementor_Test_Base {
 
 		$flattened_first = $first['styles'][ $new_first_id ];
 		$this->assertSame( 'class', $flattened_first['type'] );
-		$this->assertSame( 'heading', $flattened_first['label'] );
+		$this->assertSame( 'local', $flattened_first['label'] );
 		$this->assertNotEmpty( $flattened_first['variants'] );
 
 		$props = $flattened_first['variants'][0]['props'];

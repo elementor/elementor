@@ -262,7 +262,7 @@ class Test_Import_Modes_Transformation extends Elementor_Test_Base {
 
 		$flattened_styles = array_filter(
 			$all_styles,
-			fn( $style ) => str_contains( $style['label'] ?? '', 'heading' ) || $style['label'] === 'flattened'
+			fn( $style ) => ( $style['label'] ?? '' ) === 'local'
 		);
 
 		$this->assertNotEmpty( $flattened_styles, 'Should have created local styles from g-f83024e (heading class)' );

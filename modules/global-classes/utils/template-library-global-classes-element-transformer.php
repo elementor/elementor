@@ -126,7 +126,7 @@ class Template_Library_Global_Classes_Element_Transformer {
 	private static function build_local_class_style( string $local_id, array $global_class ): array {
 		return [
 			'id' => $local_id,
-			'label' => $global_class['label'] ?? 'flattened',
+			'label' => 'local',
 			'type' => 'class',
 			'variants' => $global_class['variants'] ?? [],
 		];
