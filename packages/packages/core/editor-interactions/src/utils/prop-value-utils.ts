@@ -17,6 +17,7 @@ import {
 	type TimingConfigPropValue,
 } from '../types';
 import { formatSizeValue, parseSizeValue } from '../utils/size-transform-utils';
+import { getInteractionsConfig } from './get-interactions-config';
 import { generateTempInteractionId } from './temp-id-utils';
 
 export const createString = ( value: string ): StringPropValue => ( {
@@ -191,14 +192,15 @@ export const createInteractionItem = ( {
 } );
 
 export const createDefaultInteractionItem = (): InteractionItemPropValue => {
+	const { constants } = getInteractionsConfig();
 	return createInteractionItem( {
 		trigger: 'load',
 		effect: 'fade',
 		type: 'in',
-		duration: 600,
-		delay: 0,
+		duration: constants.defaultDuration,
+		delay: constants.defaultDelay,
 		replay: false,
-		easing: 'easeIn',
+		easing: constants.defaultEasing,
 		interactionId: generateTempInteractionId(),
 	} );
 };
