@@ -17,7 +17,6 @@ import { SiteFeatures } from '../steps/screens/site-features';
 import { ThemeSelection } from '../steps/screens/theme-selection';
 import { getStepVisualConfig } from '../steps/step-visuals';
 import { StepId } from '../types';
-import { ONBOARDING_ERRORS, trackOnboardingError } from '../utils/error-tracking';
 import { t } from '../utils/translations';
 import { useToast } from './toast/toast-context';
 import { BaseLayout } from './ui/base-layout';
@@ -151,13 +150,9 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 	const saveChoicesFireAndForget = useCallback(
 		( choiceData: Record< string, unknown > ) => {
-			updateChoices.mutate( choiceData, {
-				onError: () => {
-					trackOnboardingError( ONBOARDING_ERRORS.CHOICES_PERSIST_FAILED, { step: stepId } );
-				},
-			} );
+			updateChoices.mutate( choiceData );
 		},
-		[ updateChoices, stepId ]
+		[ updateChoices ]
 	);
 
 	const handleContinue = useCallback(
@@ -178,8 +173,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 				if ( themeSlug ) {
 					installTheme.mutate( themeSlug, {
-						onError: ( error ) => {
-							trackOnboardingError( ONBOARDING_ERRORS.THEME_INSTALL_FAILED, { message: error.message } );
+						onError: () => {
 							showToast( t( 'error.theme_install_failed' ) );
 						},
 					} );
