@@ -15,7 +15,11 @@ export function registerTab( {
 	priority = DEFAULT_PRIORITY,
 	...props
 }: Omit< Tab, 'priority' > & { id: string; priority?: number } ) {
-	registry.set( id, { ...props, priority } );
+	const existing = registry.get( id );
+
+	if ( ! existing || priority <= existing.priority ) {
+		registry.set( id, { ...props, priority } );
+	}
 }
 
 export function getTab( id: string ): Tab | null {
