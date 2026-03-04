@@ -49,12 +49,12 @@ test.describe( 'E-Onboarding @e-onboarding', () => {
 			await expect( page.getByAltText( 'Facebook' ) ).toBeVisible();
 			await expect( page.getByAltText( 'Apple' ) ).toBeVisible();
 
-			await expect( page.getByRole( 'button', { name: 'Continue as a guest' } ) ).toBeVisible();
+			await expect( page.getByRole( 'link', { name: 'Continue as a guest' } ) ).toBeVisible();
 
 			await expect( page.getByRole( 'button', { name: 'Back' } ) ).not.toBeVisible();
 			await expect( page.getByRole( 'button', { name: 'Continue', exact: true } ) ).not.toBeVisible();
 
-			await page.getByRole( 'button', { name: 'Continue as a guest' } ).click();
+			await page.getByRole( 'link', { name: 'Continue as a guest' } ).click();
 		} );
 
 		await test.step( 'Building for step', async () => {
