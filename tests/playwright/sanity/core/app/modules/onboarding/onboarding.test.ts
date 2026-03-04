@@ -153,6 +153,14 @@ test.describe( 'On boarding @onBoarding', async () => {
 	test( 'Onboarding Good to Go Page - Open Kit Library', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding/goodToGo' );
 
+		const isExperiment402B = await page.evaluate( () => {
+			return 'B' === localStorage.getItem( 'elementor_onboarding_experiment402_variant' );
+		} );
+
+		if ( isExperiment402B ) {
+			test.skip( true, 'Skipping Kit Library navigation test in Experiment 402 Variant B' );
+		}
+
 		const nextButton = page.locator( '.e-onboarding__cards-grid > a:nth-child(2)' );
 
 		await nextButton.click();
