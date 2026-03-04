@@ -2,7 +2,6 @@
 
 namespace Elementor\App\Modules\E_Onboarding\Data\Endpoints;
 
-use Elementor\App\Modules\E_Onboarding\Storage\Onboarding_Progress_Manager;
 use Elementor\Data\V2\Base\Endpoint as Endpoint_Base;
 use WP_REST_Server;
 
@@ -11,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Install_Theme extends Endpoint_Base {
+
+	const ALLOWED_THEMES = [ 'hello-elementor', 'hello-biz' ];
 
 	public function get_name(): string {
 		return 'install-theme';
@@ -35,24 +36,51 @@ class Install_Theme extends Endpoint_Base {
 		$params = $request->get_json_params();
 		$theme_slug = $params['theme_slug'] ?? '';
 
-		if ( empty( $theme_slug ) ) {
+		if ( empty( $theme_slug ) || ! in_array( $theme_slug, self::ALLOWED_THEMES, true ) ) {
 			return new \WP_Error(
-				'missing_theme_slug',
-				__( 'Theme slug is required.', 'elementor' ),
+				'invalid_theme',
+				__( 'Invalid or unsupported theme.', 'elementor' ),
 				[ 'status' => 400 ]
 			);
 		}
 
-		$manager = Onboarding_Progress_Manager::instance();
-		$success = $manager->install_and_activate_theme( $theme_slug );
-
-		if ( ! $success ) {
+		if ( ! current_user_can( 'install_themes' ) || ! current_user_can( 'switch_themes' ) ) {
 			return new \WP_Error(
-				'theme_install_failed',
-				__( 'Failed to install or activate the theme.', 'elementor' ),
-				[ 'status' => 500 ]
+				'insufficient_permissions',
+				__( 'You do not have permission to install themes.', 'elementor' ),
+				[ 'status' => 403 ]
 			);
 		}
+
+		$theme = wp_get_theme( $theme_slug );
+
+		if ( ! $theme->exists() ) {
+			if ( ! function_exists( 'request_filesystem_credentials' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/file.php';
+			}
+
+			if ( ! class_exists( '\Theme_Upgrader' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+			}
+
+			if ( ! class_exists( '\WP_Ajax_Upgrader_Skin' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/class-wp-ajax-upgrader-skin.php';
+			}
+
+			$skin = new \WP_Ajax_Upgrader_Skin();
+			$upgrader = new \Theme_Upgrader( $skin );
+			$result = $upgrader->install( "https://downloads.wordpress.org/theme/{$theme_slug}.latest-stable.zip" );
+
+			if ( is_wp_error( $result ) || ! $result ) {
+				return new \WP_Error(
+					'theme_install_failed',
+					__( 'Failed to install the theme.', 'elementor' ),
+					[ 'status' => 500 ]
+				);
+			}
+		}
+
+		switch_theme( $theme_slug );
 
 		return [
 			'data' => [
