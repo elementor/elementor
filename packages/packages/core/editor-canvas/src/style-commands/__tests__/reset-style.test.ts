@@ -8,12 +8,12 @@ import { createElementStyle, deleteElementStyle, getElementStyles } from '@eleme
 import { ELEMENTS_STYLES_RESERVED_LABEL } from '@elementor/editor-styles-repository';
 
 import { initResetStyleCommand } from '../reset-style';
-import { getClassesProp, hasAtomicWidgets, isAtomicWidget } from '../utils';
+import { getClassesProp, hasAtomicWidgets, isAtomicWidget } from '../../utils/command-utils';
 
 jest.mock( '@elementor/editor-elements' );
 
-jest.mock( '../utils', () => ( {
-	...jest.requireActual( '../utils' ),
+jest.mock( '../../utils/command-utils', () => ( {
+	...jest.requireActual( '../../utils/command-utils' ),
 	getClassesProp: jest.fn(),
 	hasAtomicWidgets: jest.fn(),
 	isAtomicWidget: jest.fn(),

@@ -20,13 +20,15 @@ import { type StyleDefinition } from '@elementor/editor-styles';
 import { ELEMENTS_STYLES_RESERVED_LABEL } from '@elementor/editor-styles-repository';
 
 import { initPasteStyleCommand } from '../paste-style';
-import { getClipboardElements } from '../utils';
+import { getClipboardElements } from '../../utils/command-utils';
 
 jest.mock( '@elementor/editor-elements' );
-jest.mock( '../utils', () => ( {
-	...jest.requireActual( '../utils' ),
+
+jest.mock( '../../utils/command-utils', () => ( {
+	...jest.requireActual( '../../utils/command-utils' ),
 	getClipboardElements: jest.fn(),
 } ) );
+
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	...jest.requireActual( '@elementor/editor-v1-adapters' ),
 	blockCommand: jest.fn(),
