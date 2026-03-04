@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { useCallback } from 'react';
-import { ArrowUpRightIcon, InfoCircleIcon } from '@elementor/icons';
-import type { Theme } from '@elementor/ui';
-import { Box, Link, Stack, styled, Typography } from '@elementor/ui';
+import { ArrowUpRightIcon } from '@elementor/icons';
+import { Box, Link, Stack, styled, Typography, useTheme } from '@elementor/ui';
 
 import { useOnboarding } from '../../../hooks/use-onboarding';
 import { t } from '../../../utils/translations';
@@ -31,24 +29,12 @@ interface LicenseNoticeProps {
 export function ProPlanNotice( { planName }: LicenseNoticeProps ) {
 	const { urls } = useOnboarding();
 	const comparePlansUrl = urls.comparePlans;
+	const theme = useTheme();
 
 	return (
 		<ProPlanNoticeRoot>
-			<Stack
-				sx={ ( theme: Theme ) => ( {
-					display: 'flex',
-					flexDirection: 'row',
-					gap: theme.spacing( 1.5 ),
-					alignItems: 'center',
-				} ) }
-			>
-				<Typography
-					variant="body2"
-					color="text.primary"
-					sx={ ( theme: Theme ) => ( {
-						fontSize: theme.spacing( 2 ),
-					} ) }
-				>
+			<Stack direction="row" spacing={ 1.5 } alignItems="center">
+				<Typography variant="body2" color="text.primary" fontSize={ theme.spacing( 2 ) }>
 					{ t( 'steps.site_features.plan_recommendation_prefix' ) } { planName }{ ' ' }
 					{ t( 'steps.site_features.plan_recommendation_suffix' ) }
 				</Typography>
@@ -57,15 +43,18 @@ export function ProPlanNotice( { planName }: LicenseNoticeProps ) {
 				href={ comparePlansUrl }
 				target="_blank"
 				color="promotion.main"
-				fontSize={ 16 }
-				sx={ ( theme: Theme ) => ( {
+				sx={ {
 					display: 'flex',
 					alignItems: 'center',
-					gap: theme.spacing( 0.5 ),
-				} ) }
+					gap: theme.spacing( 0.25 ),
+					fontSize: theme.spacing( 2 ),
+					'& > svg': {
+						fontSize: 'inherit',
+					},
+				} }
 			>
 				{ t( 'steps.site_features.compare_plans' ) }
-				<ArrowUpRightIcon sx={ { fontSize: 'inherit' } } />
+				<ArrowUpRightIcon />
 			</Link>
 		</ProPlanNoticeRoot>
 	);
