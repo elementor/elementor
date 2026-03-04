@@ -80,6 +80,7 @@ export function ProInstall() {
 					align="center"
 					onClick={ ( event: React.SyntheticEvent ) => handleDismiss?.( event ) }
 					disabled={ isInstalling }
+					sx={ { textDecoration: 'none' } }
 				>
 					{ t( 'pro_install.do_it_later' ) }
 				</TextButton>

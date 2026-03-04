@@ -42,6 +42,9 @@ const SkipButton = styled( Button )( ( { theme } ) => {
 		fontWeight: 500,
 		lineHeight: theme.typography.pxToRem( 24 ),
 		letterSpacing: '0.4px',
+		'&:hover': {
+			borderColor: outlinedBorderColor,
+		},
 	};
 } );
 

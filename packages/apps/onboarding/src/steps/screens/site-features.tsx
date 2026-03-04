@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
-import { Stack, Typography } from '@elementor/ui';
+import { Stack, Typography, useTheme } from '@elementor/ui';
 
 import { StepTitle } from '../../components/ui/styled-components';
 import { useOnboarding } from '../../hooks/use-onboarding';
@@ -90,6 +90,8 @@ const FEATURE_OPTION_IDS = new Set( FEATURE_OPTIONS.map( ( featureOption ) => fe
 export function SiteFeatures() {
 	const { choices, actions } = useOnboarding();
 
+	const theme = useTheme();
+
 	const storedPaidFeatures = useMemo(
 		() => ( ( choices.site_features as string[] ) || [] ).filter( ( id ) => FEATURE_OPTION_IDS.has( id ) ),
 		[ choices.site_features ]
@@ -128,7 +130,7 @@ export function SiteFeatures() {
 	return (
 		<Stack spacing={ 4 } width="100%" data-testid="site-features-step">
 			<Stack spacing={ 1 } textAlign="center" alignItems="center">
-				<StepTitle color="text.primary" variant="h5" align="center">
+				<StepTitle color="text.primary" variant="h5" align="center" paddingBlockStart={ theme.spacing( 2.5 ) }>
 					{ t( 'steps.site_features.title' ) }
 				</StepTitle>
 				<Typography variant="body1" color="text.secondary">

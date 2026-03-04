@@ -23,7 +23,7 @@ export function OptionCard( { label, icon: Icon, selected, onClick }: OptionCard
 			aria-pressed={ selected }
 		>
 			{ selected && <SelectionBadge icon={ CheckIcon } /> }
-			<Icon sx={ { fontSize: theme.spacing( 4 ), color: 'text.secondary' } } />
+			<Icon sx={ { fontSize: theme.spacing( 4 ), color: 'text.primary' } } />
 			<Typography
 				variant="body2"
 				color="text.secondary"

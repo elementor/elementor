@@ -111,7 +111,12 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick }: Featur
 								variant={ option.licenseType !== 'core' ? 'paid' : 'free' }
 							/>
 						) }
-						<Box className="feature-icon" height={ theme.spacing( 4 ) } sx={ { mt: 2, mb: 1 } }>
+						<Box
+							className="feature-icon"
+							color="primary.dark"
+							height={ theme.spacing( 4 ) }
+							sx={ { mt: 2, mb: 1 } }
+						>
 							<Icon fontSize="medium" />
 						</Box>
 						<Typography

@@ -31,12 +31,15 @@ export function ProPlanNotice( { planName }: LicenseNoticeProps ) {
 	const comparePlansUrl = urls.comparePlans;
 	const theme = useTheme();
 
+	const isOne = 'One' === planName;
+
 	return (
 		<ProPlanNoticeRoot>
 			<Stack direction="row" spacing={ 1.5 } alignItems="center">
 				<Typography variant="body2" color="text.primary" fontSize={ theme.spacing( 2 ) }>
-					{ t( 'steps.site_features.plan_recommendation_prefix' ) } { planName }{ ' ' }
-					{ t( 'steps.site_features.plan_recommendation_suffix' ) }
+					{ isOne
+						? t( 'steps.site_features.plan_recommendation_one' )
+						: t( 'steps.site_features.plan_recommendation_pro' ) }
 				</Typography>
 			</Stack>
 			<Link
@@ -48,6 +51,10 @@ export function ProPlanNotice( { planName }: LicenseNoticeProps ) {
 					alignItems: 'center',
 					gap: theme.spacing( 0.25 ),
 					fontSize: theme.spacing( 2 ),
+					'&:hover': {
+						textDecoration: 'underline',
+						textDecorationColor: 'rgba(147, 0, 63, 0.4)',
+					},
 					'& > svg': {
 						fontSize: 'inherit',
 					},

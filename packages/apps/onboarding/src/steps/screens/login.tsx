@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Divider, Stack, Typography } from '@elementor/ui';
+import { Box, Stack, Typography } from '@elementor/ui';
 
 import {
 	FullscreenCard,
@@ -31,14 +31,6 @@ export function Login( { onConnect, onContinueAsGuest }: LoginProps ) {
 					{ t( 'login.sign_in' ) }
 				</PrimaryButton>
 
-				<Stack direction="row" alignItems="center" justifyContent="center" spacing={ 2 }>
-					<Divider sx={ { width: 80 } } />
-					<Typography variant="body2" color="text.tertiary">
-						{ t( 'login.or' ) }
-					</Typography>
-					<Divider sx={ { width: 80 } } />
-				</Stack>
-
 				<Stack spacing={ 6 }>
 					<Stack spacing={ 2 } alignItems="center">
 						<SecondaryButton onClick={ onConnect } variant="outlined" color="primary" fullWidth>
@@ -63,7 +55,9 @@ export function Login( { onConnect, onContinueAsGuest }: LoginProps ) {
 						href={ '#' }
 						color="info.main"
 						align="center"
+						variant="body2"
 						onClick={ ( event: React.SyntheticEvent ) => onContinueAsGuest?.( event ) }
+						sx={ { textDecoration: 'none' } }
 					>
 						{ t( 'login.continue_as_guest' ) }
 					</TextButton>
