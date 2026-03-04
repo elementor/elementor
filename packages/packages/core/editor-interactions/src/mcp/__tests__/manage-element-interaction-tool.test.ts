@@ -156,6 +156,7 @@ describe( 'manage-element-interaction tool', () => {
 				duration: 600,
 				delay: 0,
 				easing: 'easeIn',
+				/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 			} ) as any;
 
 			expect( result.success ).toBe( true );
@@ -224,6 +225,7 @@ describe( 'manage-element-interaction tool', () => {
 				effect: 'slide',
 				effectType: 'out',
 				direction: 'top',
+			/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 			} ) as any;
 
 			expect( result.count ).toBe( 2 );
@@ -282,6 +284,7 @@ describe( 'manage-element-interaction tool', () => {
 				interactionId: 'update-me',
 				trigger: 'scrollIn',
 				duration: 800,
+			/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 			} ) as any;
 
 			expect( result.success ).toBe( true );
