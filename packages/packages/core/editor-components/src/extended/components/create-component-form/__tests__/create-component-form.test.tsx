@@ -302,7 +302,7 @@ describe( 'CreateComponentForm', () => {
 			// Assert.
 			await waitFor( () => {
 				expect( mockReplaceElement ).toHaveBeenCalledWith( {
-					currentElement: mockElement,
+					currentElementId: mockElement.id,
 					newElement: expect.objectContaining( {
 						elType: 'widget',
 						widgetType: 'e-component',

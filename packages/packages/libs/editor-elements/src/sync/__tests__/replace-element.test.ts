@@ -34,7 +34,7 @@ const newElement: Omit< V1ElementModelProps, 'id' > = {
 describe( 'replaceElement', () => {
 	const extendedWindow = window as unknown as ExtendedWindow;
 
-	it( 'should replace element', () => {
+	it( 'should replace element', async () => {
 		// Arrange.
 		extendedWindow.elementor = {
 			getContainer: ( id ) => {
@@ -48,7 +48,7 @@ describe( 'replaceElement', () => {
 		};
 
 		// Act.
-		replaceElement( { currentElement: currentElementData, newElement } );
+		await replaceElement( { currentElementId: currentElement.id, newElement } );
 
 		// Assert.
 		expect( mockRunCommandSync ).toHaveBeenCalledWith( 'document/elements/create', {
@@ -63,7 +63,7 @@ describe( 'replaceElement', () => {
 		} );
 	} );
 
-	it( 'should wrap widget in container when replacing element at document top level', () => {
+	it( 'should wrap widget in container when replacing element at document top level', async () => {
 		// Arrange.
 		const documentElement = createMockElement( {
 			model: { id: 'document' },
@@ -87,7 +87,7 @@ describe( 'replaceElement', () => {
 		mockRunCommandSync.mockReturnValueOnce( createdContainerElement );
 
 		// Act.
-		replaceElement( { currentElement: currentElementData, newElement } );
+		await replaceElement( { currentElementId: currentElement.id, newElement } );
 
 		// Assert.
 		expect( mockRunCommandSync ).toHaveBeenNthCalledWith( 1, 'document/elements/create', {

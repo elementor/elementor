@@ -24,7 +24,12 @@ export function DetachInstanceConfirmationDialog( {
 					) }
 				</ConfirmationDialog.ContentText>
 			</ConfirmationDialog.Content>
-			<ConfirmationDialog.Actions onClose={ onClose } onConfirm={ onConfirm } />
+			<ConfirmationDialog.Actions
+				onClose={ onClose }
+				onConfirm={ onConfirm }
+				confirmLabel={ __( 'Detach', 'elementor' ) }
+				color="primary"
+			/>
 		</ConfirmationDialog>
 	);
 }

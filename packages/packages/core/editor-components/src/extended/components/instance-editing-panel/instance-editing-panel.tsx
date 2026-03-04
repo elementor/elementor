@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { PencilIcon } from '@elementor/icons';
-import { Box } from '@elementor/ui';
+import { useState } from 'react';
+import { DetachIcon, PencilIcon } from '@elementor/icons';
+import { Box, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { EmptyState } from '../../../components/instance-editing-panel/empty-state';
@@ -12,11 +13,14 @@ import {
 import { useInstancePanelData } from '../../../components/instance-editing-panel/use-instance-panel-data';
 import { useComponentsPermissions } from '../../../hooks/use-components-permissions';
 import { ComponentInstanceProvider } from '../../../provider/component-instance-context';
+import { detachComponentInstance } from '../../../utils/detach-component-instance';
 import { switchToComponent } from '../../../utils/switch-to-component';
+import { DetachInstanceConfirmationDialog } from './detach-instance-confirmation-dialog';
 
 export function ExtendedInstanceEditingPanel() {
 	const { canEdit } = useComponentsPermissions();
 	const data = useInstancePanelData();
+	const [ isDetachDialogOpen, setIsDetachDialogOpen ] = useState( false );
 
 	if ( ! data ) {
 		return null;
@@ -24,10 +28,33 @@ export function ExtendedInstanceEditingPanel() {
 
 	const { componentId, component, overrides, overridableProps, groups, isEmpty, componentInstanceId } = data;
 
+	const canDetach = canEdit && !! componentInstanceId;
+
 	/* translators: %s: component name. */
 	const panelTitle = __( 'Edit %s', 'elementor' ).replace( '%s', component.name );
+	const detachLabel = __( 'Detach from Component', 'elementor' );
 
 	const handleEditComponent = () => switchToComponent( componentId, componentInstanceId );
+
+	const handleDetachClick = () => {
+		setIsDetachDialogOpen( true );
+	};
+
+	const handleDetachConfirm = async () => {
+		if ( ! componentInstanceId ) {
+			return;
+		}
+
+		setIsDetachDialogOpen( false );
+		detachComponentInstance( {
+			instanceId: componentInstanceId,
+			componentId,
+		} );
+	};
+
+	const handleDetachCancel = () => {
+		setIsDetachDialogOpen( false );
+	};
 
 	return (
 		<Box data-testid="instance-editing-panel">
@@ -40,11 +67,20 @@ export function ExtendedInstanceEditingPanel() {
 					componentName={ component.name }
 					actions={
 						canEdit ? (
-							<EditComponentAction
-								label={ panelTitle }
-								onClick={ handleEditComponent }
-								icon={ PencilIcon }
-							/>
+							<Stack direction="row" gap={ 0.5 }>
+								{ canDetach && (
+									<EditComponentAction
+										label={ detachLabel }
+										icon={ DetachIcon }
+										onClick={ handleDetachClick }
+									/>
+								) }
+								<EditComponentAction
+									label={ panelTitle }
+									onClick={ handleEditComponent }
+									icon={ PencilIcon }
+								/>
+							</Stack>
 						) : undefined
 					}
 				/>
@@ -55,6 +91,11 @@ export function ExtendedInstanceEditingPanel() {
 					componentInstanceId={ componentInstanceId }
 				/>
 			</ComponentInstanceProvider>
+			<DetachInstanceConfirmationDialog
+				open={ isDetachDialogOpen }
+				onClose={ handleDetachCancel }
+				onConfirm={ handleDetachConfirm }
+			/>
 		</Box>
 	);
 }

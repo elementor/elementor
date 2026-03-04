@@ -10,10 +10,11 @@ import {
 	type SliceState,
 	type Store,
 } from '@elementor/store';
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { componentInstancePropTypeUtil } from '../../../../prop-types/component-instance-prop-type';
 import { slice } from '../../../../store/store';
+import { detachComponentInstance } from '../../../../utils/detach-component-instance';
 import { getContainerByOriginId } from '../../../../utils/get-container-by-origin-id';
 import { switchToComponent } from '../../../../utils/switch-to-component';
 import { ExtendedInstanceEditingPanel } from '../instance-editing-panel';
@@ -23,6 +24,8 @@ jest.mock( '@elementor/editor-elements' );
 jest.mock( '@elementor/session' );
 
 jest.mock( '../../../../utils/switch-to-component' );
+
+jest.mock( '../../../../utils/detach-component-instance' );
 
 jest.mock( '../../../../prop-types/component-instance-prop-type', () => ( {
 	componentInstancePropTypeUtil: {
@@ -259,6 +262,93 @@ describe( '<ExtendedInstanceEditingPanel />', () => {
 		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Title' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Subtitle' ) ).toBeInTheDocument();
+	} );
+
+	describe( 'Detach functionality', () => {
+		it( 'should show detach button when user is admin', () => {
+			// Arrange.
+			setupComponent();
+
+			// Act.
+			renderPanel( store );
+
+			// Assert.
+			expect( screen.getByLabelText( 'Detach from Component' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should not show detach button when user is not admin', () => {
+			// Arrange.
+			mockCurrentUserCapabilities( false );
+			setupComponent();
+
+			// Act.
+			renderPanel( store );
+
+			// Assert.
+			expect( screen.queryByLabelText( 'Detach from Component' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should show confirmation dialog when detach button is clicked', async () => {
+			// Arrange.
+			setupComponent();
+			renderPanel( store );
+
+			// Act.
+			const detachButton = screen.getByLabelText( 'Detach from Component' );
+			fireEvent.click( detachButton );
+
+			// Assert.
+			await waitFor( () => {
+				expect( screen.getByText( 'Detach from Component?' ) ).toBeInTheDocument();
+			} );
+		} );
+
+		it( 'should close dialog when cancel is clicked', async () => {
+			// Arrange.
+			setupComponent();
+			renderPanel( store );
+
+			// Act.
+			const detachButton = screen.getByLabelText( 'Detach from Component' );
+			fireEvent.click( detachButton );
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Detach from Component?' ) ).toBeInTheDocument();
+			} );
+
+			const cancelButton = screen.getByRole( 'button', { name: /not now/i } );
+			fireEvent.click( cancelButton );
+
+			// Assert.
+			await waitFor( () => {
+				expect( screen.queryByText( 'Detach from Component?' ) ).not.toBeInTheDocument();
+			} );
+		} );
+
+		it( 'should call detachComponentInstance when confirm is clicked', async () => {
+			// Arrange.
+			setupComponent();
+			renderPanel( store );
+
+			// Act.
+			const detachButton = screen.getByLabelText( 'Detach from Component' );
+			fireEvent.click( detachButton );
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Detach from Component?' ) ).toBeInTheDocument();
+			} );
+
+			const confirmButton = screen.getByRole( 'button', { name: /detach/i } );
+			fireEvent.click( confirmButton );
+
+			// Assert.
+			await waitFor( () => {
+				expect( detachComponentInstance ).toHaveBeenCalledWith( {
+					instanceId: MOCK_INSTANCE_ID,
+					componentId: MOCK_COMPONENT_ID,
+				} );
+			} );
+		} );
 	} );
 } );
 

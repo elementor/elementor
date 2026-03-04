@@ -4,7 +4,7 @@ import { type ComponentInstanceParams, createComponentModel } from './create-com
 
 export const replaceElementWithComponent = async ( element: V1ElementData, component: ComponentInstanceParams ) => {
 	return await replaceElement( {
-		currentElement: element,
+		currentElementId: element.id,
 		newElement: createComponentModel( component ),
 		withHistory: false,
 	} );

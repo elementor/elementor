@@ -1,11 +1,14 @@
-import { createElement, createElements, deleteElement, getContainer, replaceElement } from '@elementor/editor-elements';
-import { __ } from '@wordpress/i18n';
+import { getContainer, replaceElement } from '@elementor/editor-elements';
 
 import { componentInstanceOverridesPropTypeUtil } from '../prop-types/component-instance-overrides-prop-type';
 import { type ComponentInstanceProp, componentInstancePropTypeUtil } from '../prop-types/component-instance-prop-type';
-import { applyOverridesToOverridables } from './apply-overrides-to-elements';
 import { getComponentDocumentData } from './component-document-data';
+import { resolveDetachedInstance } from './resolve-detached-instance';
 import { trackComponentEvent } from './tracking';
+
+export type DetachComponentInstanceResult = {
+	idMapping: Map< string, string >;
+};
 
 export async function detachComponentInstance( {
 	instanceId,
@@ -26,17 +29,19 @@ export async function detachComponentInstance( {
 		throw new Error( `Component with ID "${ componentId }" not found.` );
 	}
 
-	const componentElements = structuredClone(componentData.elements ?? []);
+	const rootElement = componentData.elements?.[ 0 ];
+
+	if ( ! rootElement ) {
+		throw new Error( `Component with ID "${ componentId }" has no root element.` );
+	}
+
 	const overrides = extractInstanceOverrides( instanceContainer );
+	const elementWithAppliedOverrides = resolveDetachedInstance( structuredClone( rootElement ), overrides );
 
-	const elementsWithOverrides = applyOverridesToOverridables( componentElements, overrides );
-
-	const 
-
-	replaceElement( {
+	await replaceElement( {
 		currentElementId: instanceId,
-		newElement: elementsWithOverrides[ 0 ],
-		withHistory: false,
+		newElement: elementWithAppliedOverrides as Parameters< typeof replaceElement >[ 0 ][ 'newElement' ],
+		withHistory: true,
 	} );
 
 	trackComponentEvent( {
@@ -47,8 +52,8 @@ export async function detachComponentInstance( {
 	} );
 }
 
-function extractInstanceOverrides( instanceContainer: ReturnType< typeof getContainer > ) {
-	const settings = instanceContainer?.model.toJSON().settings;
+function extractInstanceOverrides( instanceContainer: NonNullable< ReturnType< typeof getContainer > > ) {
+	const settings = instanceContainer.model.toJSON().settings;
 	const componentInstance = componentInstancePropTypeUtil.extract(
 		settings?.component_instance as ComponentInstanceProp
 	);
