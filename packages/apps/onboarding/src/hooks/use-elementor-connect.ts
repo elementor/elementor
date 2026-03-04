@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useRef } from 'react';
 
+import type { ConnectSuccessData } from '../analytics';
+
 interface ConnectOptions {
 	connectUrl: string;
-	onSuccess?: () => void;
+	onSuccess?: ( data: ConnectSuccessData ) => void;
 }
 
 const POPUP_WIDTH = 600;
@@ -10,19 +12,42 @@ const POPUP_HEIGHT = 700;
 const POPUP_TOP = 200;
 const POPUP_LEFT = 0;
 
-export function useElementorConnect( { connectUrl, onSuccess }: ConnectOptions ) {
+let callbackCounter = 0;
+
+export function useElementorConnect( {
+	connectUrl,
+	onSuccess,
+}: ConnectOptions ) {
 	const onSuccessRef = useRef( onSuccess );
 	onSuccessRef.current = onSuccess;
 
+	const callbackIdRef = useRef( `ob${ ++callbackCounter }` );
+
 	useEffect( () => {
-		const handleSuccess = () => {
-			onSuccessRef.current?.();
+		const cbId = callbackIdRef.current;
+		const jqEventName = `elementor/connect/success/${ cbId }`;
+
+		const handleSuccess = ( _event: unknown, data: ConnectSuccessData ) => {
+			onSuccessRef.current?.( data ?? {} );
 		};
 
-		window.addEventListener( 'elementor/connect/success', handleSuccess );
+		const jq = (
+			window as unknown as {
+				jQuery?: ( sel: string ) => {
+					on: ( evt: string, cb: unknown ) => void;
+					off: ( evt: string, cb: unknown ) => void;
+				};
+			}
+		 ).jQuery;
+
+		if ( jq ) {
+			jq( 'body' ).on( jqEventName, handleSuccess );
+		}
 
 		return () => {
-			window.removeEventListener( 'elementor/connect/success', handleSuccess );
+			if ( jq ) {
+				jq( 'body' ).off( jqEventName, handleSuccess );
+			}
 		};
 	}, [] );
 
@@ -31,8 +56,9 @@ export function useElementorConnect( { connectUrl, onSuccess }: ConnectOptions )
 			return;
 		}
 
+		const cbId = callbackIdRef.current;
 		const separator = connectUrl.includes( '?' ) ? '&' : '?';
-		const popupUrl = `${ connectUrl }${ separator }mode=popup`;
+		const popupUrl = `${ connectUrl }${ separator }mode=popup&callback_id=${ cbId }`;
 
 		const features = `toolbar=no,menubar=no,width=${ POPUP_WIDTH },height=${ POPUP_HEIGHT },top=${ POPUP_TOP },left=${ POPUP_LEFT }`;
 

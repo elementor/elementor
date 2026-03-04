@@ -1,11 +1,19 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box } from '@elementor/ui';
 
+import type { ConnectSuccessData } from '../analytics';
+import {
+	canSendEvents,
+	initializeAndEnableTracking,
+	setCanSendEvents,
+	updateLibraryConnectConfig,
+} from '../analytics';
 import { useCheckProInstallScreen } from '../hooks/use-check-pro-install-screen';
 import { useElementorConnect } from '../hooks/use-elementor-connect';
 import { useInstallTheme } from '../hooks/use-install-theme';
 import { useOnboarding } from '../hooks/use-onboarding';
+import { useOnboardingEvent } from '../hooks/use-onboarding-event';
 import { useUpdateChoices } from '../hooks/use-update-choices';
 import { useUpdateProgress } from '../hooks/use-update-progress';
 import { BuildingFor } from '../steps/screens/building-for';
@@ -60,19 +68,71 @@ export function AppContent( { onClose }: AppContentProps ) {
 	const updateChoices = useUpdateChoices();
 	const installTheme = useInstallTheme();
 
+	const {
+		trackOnboardingInitialized,
+		trackLoginType,
+		trackConnect,
+		trackStepViewed,
+		trackProFeaturesSelected,
+		trackBackClicked,
+		trackSkipClicked,
+		trackUpgradeClicked,
+		trackResumeOnboarding,
+		activateTracking,
+		flushQueue,
+	} = useOnboardingEvent();
+
+	const hasTrackedInit = useRef( false );
+
+	useEffect( () => {
+		if ( ! hasTrackedInit.current ) {
+			hasTrackedInit.current = true;
+			trackOnboardingInitialized();
+			trackStepViewed( 'login' );
+		}
+	}, [ trackOnboardingInitialized, trackStepViewed ] );
+
 	useEffect( () => {
 		if ( hadUnexpectedExit ) {
+			trackResumeOnboarding( stepId );
 			actions.clearUnexpectedExit();
 		}
-	}, [ hadUnexpectedExit, actions ] );
+	}, [ hadUnexpectedExit, actions, trackResumeOnboarding, stepId ] );
+
+	useEffect( () => {
+		if ( hasPassedLogin && stepId ) {
+			trackStepViewed( stepId );
+		}
+	}, [ hasPassedLogin, stepId, trackStepViewed ] );
 
 	const checkProInstallScreen = useCheckProInstallScreen();
 
-	const handleConnectSuccess = useCallback( async () => {
-		const result = await checkProInstallScreen();
-		actions.setShouldShowProInstallScreen( result.shouldShowProInstallScreen );
-		actions.setConnected( true );
-	}, [ actions, checkProInstallScreen ] );
+	const handleConnectSuccess = useCallback(
+		async ( data: ConnectSuccessData ) => {
+			trackConnect( true );
+			trackLoginType( 'elementor_login' );
+
+			const shouldEnableTracking = data.tracking_opted_in || canSendEvents();
+
+			if ( data.tracking_opted_in ) {
+				setCanSendEvents( true );
+			}
+
+			if ( shouldEnableTracking ) {
+				initializeAndEnableTracking();
+				activateTracking();
+
+				setTimeout( () => flushQueue(), 500 );
+			}
+
+			updateLibraryConnectConfig( data );
+
+			const result = await checkProInstallScreen();
+			actions.setShouldShowProInstallScreen( result.shouldShowProInstallScreen );
+			actions.setConnected( true );
+		},
+		[ actions, checkProInstallScreen, trackConnect, trackLoginType, activateTracking, flushQueue ]
+	);
 
 	const handleConnect = useElementorConnect( {
 		connectUrl: urls.connect,
@@ -82,9 +142,10 @@ export function AppContent( { onClose }: AppContentProps ) {
 	const handleContinueAsGuest = useCallback(
 		( event: React.SyntheticEvent ) => {
 			event.preventDefault();
+			trackLoginType( 'guest' );
 			actions.setGuest( true );
 		},
-		[ actions ]
+		[ actions, trackLoginType ]
 	);
 
 	const handleClose = useCallback( () => {
@@ -106,12 +167,14 @@ export function AppContent( { onClose }: AppContentProps ) {
 	}, [ actions, onClose, updateProgress ] );
 
 	const handleBack = useCallback( () => {
+		trackBackClicked( stepId );
+
 		if ( isFirst ) {
 			actions.setGuest( false );
 		} else {
 			actions.prevStep();
 		}
-	}, [ actions, isFirst ] );
+	}, [ actions, isFirst, trackBackClicked, stepId ] );
 
 	const redirectToNewPage = useCallback( () => {
 		const redirectUrl = urls.createNewPage || urls.editor || urls.dashboard;
@@ -119,6 +182,8 @@ export function AppContent( { onClose }: AppContentProps ) {
 	}, [ urls ] );
 
 	const handleSkip = useCallback( () => {
+		trackSkipClicked( stepId );
+
 		if ( isLast ) {
 			setIsCompleting( true );
 			updateProgress.mutate(
@@ -151,7 +216,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 				},
 			}
 		);
-	}, [ actions, isLast, stepIndex, totalSteps, updateProgress, redirectToNewPage ] );
+	}, [ actions, isLast, stepIndex, totalSteps, updateProgress, redirectToNewPage, trackSkipClicked, stepId ] );
 
 	const saveChoicesFireAndForget = useCallback(
 		( choiceData: Record< string, unknown > ) => {
@@ -162,6 +227,13 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 	const handleContinue = useCallback(
 		( directChoice?: Record< string, unknown > ) => {
+			if ( stepId === StepId.SITE_FEATURES ) {
+				trackProFeaturesSelected( {
+					targetName: 'continue_with_free',
+					features: ( choices.site_features as string[] ) || [],
+				} );
+			}
+
 			const storedChoice = choices[ stepId as keyof typeof choices ];
 			const choiceData = directChoice ?? ( isChoiceEmpty( storedChoice ) ? null : { [ stepId ]: storedChoice } );
 
@@ -264,6 +336,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 			installTheme,
 			showToast,
 			redirectToNewPage,
+			trackProFeaturesSelected,
 		]
 	);
 
@@ -347,7 +420,10 @@ export function AppContent( { onClose }: AppContentProps ) {
 					<TopBarContent
 						showClose={ false }
 						onClose={ handleClose }
-						onUpgrade={ () => window.open( urls.upgradeUrl, '_blank' ) }
+						onUpgrade={ () => {
+							trackUpgradeClicked( stepId );
+							window.open( urls.upgradeUrl, '_blank' );
+						} }
 					/>
 				</TopBar>
 			}

@@ -7,10 +7,12 @@ import { getGreeting } from '../../components/site-about/constants';
 import { GreetingBanner } from '../../components/ui/greeting-banner';
 import { StepTitle } from '../../components/ui/styled-components';
 import { useOnboarding } from '../../hooks/use-onboarding';
+import { useOnboardingEvent } from '../../hooks/use-onboarding-event';
 import { t } from '../../utils/translations';
 
 export function SiteAbout() {
 	const { choices, actions } = useOnboarding();
+	const { trackSiteTopicSelected } = useOnboardingEvent();
 
 	const selectedValues: string[] = useMemo(
 		() => ( Array.isArray( choices.site_about ) ? choices.site_about : [] ),
@@ -27,9 +29,10 @@ export function SiteAbout() {
 				? selectedValues.filter( ( v ) => v !== value )
 				: [ ...selectedValues, value ];
 
+			trackSiteTopicSelected( next );
 			actions.setUserChoice( 'site_about', next );
 		},
-		[ selectedValues, actions ]
+		[ selectedValues, actions, trackSiteTopicSelected ]
 	);
 
 	return (

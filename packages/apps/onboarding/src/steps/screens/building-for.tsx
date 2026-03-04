@@ -7,6 +7,7 @@ import { GreetingBanner } from '../../components/ui/greeting-banner';
 import { OptionButton } from '../../components/ui/option-button';
 import { StepTitle } from '../../components/ui/styled-components';
 import { useOnboarding } from '../../hooks/use-onboarding';
+import { useOnboardingEvent } from '../../hooks/use-onboarding-event';
 import { t } from '../../utils/translations';
 
 const GREETING_WAVE = '\uD83D\uDC4B';
@@ -28,6 +29,7 @@ interface BuildingForProps {
 
 export function BuildingFor( { onComplete }: BuildingForProps ) {
 	const { userName, isConnected, isGuest, choices, actions } = useOnboarding();
+	const { trackPersonaSelected } = useOnboardingEvent();
 
 	const selectedValue = choices.building_for;
 
@@ -43,10 +45,11 @@ export function BuildingFor( { onComplete }: BuildingForProps ) {
 
 	const handleSelect = useCallback(
 		( value: BuildingForValue ) => {
+			trackPersonaSelected( value );
 			actions.setUserChoice( 'building_for', value );
 			onComplete( { building_for: value } );
 		},
-		[ actions, onComplete ]
+		[ actions, onComplete, trackPersonaSelected ]
 	);
 
 	return (

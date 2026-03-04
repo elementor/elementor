@@ -6,6 +6,7 @@ import { FullscreenCard, PrimaryButton, TextButton } from '../../components/full
 import { useToast } from '../../components/toast/toast-context';
 import { useInstallPro } from '../../hooks/use-install-pro';
 import { useOnboarding } from '../../hooks/use-onboarding';
+import { useOnboardingEvent } from '../../hooks/use-onboarding-event';
 import { t } from '../../utils/translations';
 import { getOnboardingAssetUrl } from '../step-visuals';
 
@@ -19,8 +20,19 @@ export function ProInstall() {
 	const { actions } = useOnboarding();
 	const installPro = useInstallPro();
 	const { showToast } = useToast();
+	const { trackProInstall, trackStepViewed } = useOnboardingEvent();
+
+	const hasTrackedView = React.useRef( false );
+
+	React.useEffect( () => {
+		if ( ! hasTrackedView.current ) {
+			hasTrackedView.current = true;
+			trackStepViewed( 'pro_install' );
+		}
+	}, [ trackStepViewed ] );
 
 	const handleInstall = useCallback( () => {
+		trackProInstall( 'install' );
 		installPro.mutate( undefined, {
 			onSuccess: () => {
 				actions.markProInstalled();
@@ -30,14 +42,15 @@ export function ProInstall() {
 				actions.dismissProInstallScreen();
 			},
 		} );
-	}, [ installPro, actions, showToast ] );
+	}, [ installPro, actions, showToast, trackProInstall ] );
 
 	const handleDismiss = useCallback(
 		( event: React.SyntheticEvent ) => {
 			event.preventDefault();
+			trackProInstall( 'later' );
 			actions.dismissProInstallScreen();
 		},
-		[ actions ]
+		[ actions, trackProInstall ]
 	);
 
 	const isInstalling = installPro.isPending;
