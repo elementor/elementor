@@ -124,9 +124,17 @@ class Module extends BaseModule {
 		);
 
 		wp_register_script(
+			'elementor-interactions-shared-utils',
+			$this->get_js_assets_url( 'interactions-shared-utils' ),
+			[ 'motion-js' ],
+			'1.0.0',
+			true
+		);
+
+		wp_register_script(
 			'elementor-interactions',
 			$this->get_js_assets_url( 'interactions' ),
-			[ 'motion-js' ],
+			[ 'motion-js', 'elementor-interactions-shared-utils' ],
 			'1.0.0',
 			true
 		);
@@ -134,7 +142,7 @@ class Module extends BaseModule {
 		wp_register_script(
 			'elementor-editor-interactions',
 			$this->get_js_assets_url( 'editor-interactions' ),
-			[ 'motion-js' ],
+			[ 'motion-js', 'elementor-interactions-shared-utils' ],
 			'1.0.0',
 			true
 		);
@@ -149,6 +157,7 @@ class Module extends BaseModule {
 	}
 
 	public function enqueue_preview_scripts() {
+		wp_enqueue_script( 'elementor-interactions-shared-utils' );
 		// Ensure motion-js and editor-interactions handler are available in preview iframe
 		wp_enqueue_script( 'motion-js' );
 		wp_enqueue_script( 'elementor-editor-interactions' );

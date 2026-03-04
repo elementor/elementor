@@ -16,3 +16,27 @@ export { TRIGGER_OPTIONS, BASE_TRIGGERS } from './components/controls/trigger';
 export { EASING_OPTIONS, BASE_EASINGS } from './components/controls/easing';
 export { REPLAY_OPTIONS, BASE_REPLAY } from './components/controls/replay';
 export { EFFECT_OPTIONS, BASE_EFFECTS } from './components/controls/effect';
+
+export {
+	createString,
+	createNumber,
+	createBoolean,
+	createTimingConfig,
+	createConfig,
+	createExcludedBreakpoints,
+	createInteractionBreakpoints,
+	createAnimationPreset,
+	createInteractionItem,
+	createDefaultInteractionItem,
+	createDefaultInteractions,
+	extractString,
+	extractBoolean,
+	extractSize,
+	extractExcludedBreakpoints,
+	buildDisplayLabel,
+} from './utils/prop-value-utils';
+
+export { generateTempInteractionId, isTempId } from './utils/temp-id-utils';
+export { resolveDirection } from './utils/resolve-direction';
+export { convertTimeUnit } from './utils/time-conversion';
+export { parseSizeValue, formatSizeValue } from './utils/size-transform-utils';
