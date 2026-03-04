@@ -15,11 +15,15 @@ export const OptionButton = styled( Button )( ( { theme } ) => ( {
 	paddingInlineEnd: 12,
 	'& .MuiButton-endIcon': {
 		opacity: 0,
+		'& > *:nth-of-type(1)': {
+			fontSize: theme.spacing( 3 ),
+		},
 	},
 	'&:hover': {
 		borderColor: theme.palette.divider,
 		'& .MuiButton-endIcon': {
 			opacity: 1,
+			color: theme.palette.action.active,
 		},
 	},
 	'&:focus, &:active, &.Mui-focusVisible': {
