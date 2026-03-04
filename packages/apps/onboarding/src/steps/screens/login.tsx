@@ -10,9 +10,7 @@ import {
 } from '../../components/fullscreen-card';
 import { ElementorIcon } from '../../components/ui/elementor-icon';
 import { t } from '../../utils/translations';
-import { AppleIcon } from '../../icons/login/apple-icon';
-import { FacebookIcon } from '../../icons/login/facebook-icon';
-import { GoogleIcon } from '../../icons/login/google-icon';
+import { AppleIcon, FacebookIcon, GoogleIcon } from '../../icons';
 
 interface LoginProps {
 	onConnect?: () => void;

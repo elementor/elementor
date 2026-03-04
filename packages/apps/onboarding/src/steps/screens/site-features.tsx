@@ -4,15 +4,17 @@ import { Stack, Typography } from '@elementor/ui';
 
 import { StepTitle } from '../../components/ui/styled-components';
 import { useOnboarding } from '../../hooks/use-onboarding';
-import AccessibilityToolsIcon from '../../icons/site-features/accessibility-tools-icon';
-import AIGeneratorIcon from '../../icons/site-features/ai-generator-icon';
-import ClassesVariablesIcon from '../../icons/site-features/classes-variables-icon';
-import CorePlaceholderIcon from '../../icons/site-features/core-placeholder-icon';
-import CustomCodeIcon from '../../icons/site-features/custom-code-icon';
-import EmailDeliverabilityIcon from '../../icons/site-features/email-deliverability-icon';
-import ImageOptimizationIcon from '../../icons/site-features/image-optimization-icon';
-import ThemeBuilderIcon from '../../icons/site-features/theme-builder-icon';
-import { WoocommerceIcon } from '../../icons/site-features/woocommerce-icon';
+import {
+	AccessibilityToolsIcon,
+	AIGeneratorIcon,
+	ClassesVariablesIcon,
+	CorePlaceholderIcon,
+	CustomCodeIcon,
+	EmailDeliverabilityIcon,
+	ImageOptimizationIcon,
+	ThemeBuilderIcon,
+	WoocommerceIcon,
+} from '../../icons';
 import { t } from '../../utils/translations';
 import { FeatureGrid, type FeatureOption, ProPlanNotice } from '../components/site-features';
 

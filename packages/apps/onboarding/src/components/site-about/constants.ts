@@ -1,14 +1,16 @@
 import type { ElementType } from 'react';
 
 import { t } from '../../utils/translations';
-import BlogIcon from '../../icons/site-about/blog-icon';
-import BookingIcon from '../../icons/site-about/booking-icon';
-import CompanySiteIcon from '../../icons/site-about/company-site-icon';
-import LandingPageIcon from '../../icons/site-about/landing-page-icon';
-import OnlineStoreIcon from '../../icons/site-about/online-store-icon';
-import OrganizationIcon from '../../icons/site-about/organization-icon';
-import OtherIcon from '../../icons/site-about/other-icon';
-import SmallMedBusinessIcon from '../../icons/site-about/small-med-business-icon';
+import {
+	BlogIcon,
+	BookingIcon,
+	CompanySiteIcon,
+	LandingPageIcon,
+	OnlineStoreIcon,
+	OrganizationIcon,
+	OtherIcon,
+	SmallMedBusinessIcon,
+} from '../../icons';
 
 export interface SiteAboutOption {
 	value: string;

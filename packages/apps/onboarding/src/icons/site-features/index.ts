@@ -1,0 +1,10 @@
+export { default as AccessibilityToolsIcon } from './accessibility-tools-icon';
+export { default as AIGeneratorIcon } from './ai-generator-icon';
+export { default as ClassesVariablesIcon } from './classes-variables-icon';
+export { default as CorePlaceholderIcon } from './core-placeholder-icon';
+export { default as CustomCodeIcon } from './custom-code-icon';
+export { default as EmailDeliverabilityIcon } from './email-deliverability-icon';
+export { default as ExploreMoreIcon } from './explore-more-icon';
+export { default as ImageOptimizationIcon } from './image-optimization-icon';
+export { default as ThemeBuilderIcon } from './theme-builder-icon';
+export { default as WoocommerceIcon } from './woocommerce-icon';
