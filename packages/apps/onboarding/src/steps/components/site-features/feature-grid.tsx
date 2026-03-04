@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { CheckIcon, CrownFilledIcon } from '@elementor/icons';
-import { Box, Chip, styled, Typography } from '@elementor/ui';
+import { Box, Chip, styled, Typography, useTheme } from '@elementor/ui';
 
 import { SelectionBadge } from '../../../components/ui/selection-badge';
 import { t } from '../../../utils/translations';
@@ -9,7 +9,7 @@ export interface FeatureOption {
 	id: string;
 	labelKey: string;
 	Icon: React.ElementType;
-	licenseType: 'core' | 'pro' | 'one' | 'other';
+	licenseType: 'core' | 'pro' | 'one';
 }
 
 interface FeatureCardProps {
@@ -57,6 +57,8 @@ const FeatureCard = styled( Box, {
 } ) );
 
 export function FeatureGrid( { options, selectedValues, onFeatureClick }: FeatureGridProps ) {
+	const theme = useTheme();
+
 	const handleKeyDown = ( event: React.KeyboardEvent, handler: () => void ) => {
 		if ( [ 'Enter', ' ' ].includes( event.key ) ) {
 			event.preventDefault();
@@ -109,10 +111,26 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick }: Featur
 								variant={ option.licenseType !== 'core' ? 'paid' : 'free' }
 							/>
 						) }
-						<Box className="feature-icon" sx={ { mb: 1 } }>
-							<Icon fontSize="medium" />
+						<Box
+							className="feature-icon"
+							display="flex"
+							alignItems="center"
+							justifyContent="center"
+							color="primary.dark"
+							fontSize={ theme.spacing( 4 ) }
+							height={ theme.spacing( 4 ) }
+							sx={ { mt: 2, mb: 1 } }
+						>
+							<Icon fontSize="inherit" />
 						</Box>
-						<Typography variant="body2" color="text.secondary" textAlign="center">
+						<Typography
+							variant="body2"
+							color="text.secondary"
+							display="flex"
+							alignItems="center"
+							align="center"
+							sx={ { minHeight: theme.spacing( 5 ) } }
+						>
 							{ t( option.labelKey ) }
 						</Typography>
 					</FeatureCard>
