@@ -1,8 +1,9 @@
 import { useMutation } from '@elementor/query';
 
 import { getConfig } from '../utils/get-config';
+import { withRetry } from '../utils/retry';
 
-async function installPro(): Promise< { success: boolean; message: string } > {
+async function installProRequest(): Promise< { success: boolean; message: string } > {
 	const config = getConfig();
 
 	if ( ! config ) {
@@ -29,6 +30,6 @@ async function installPro(): Promise< { success: boolean; message: string } > {
 
 export function useInstallPro() {
 	return useMutation( {
-		mutationFn: installPro,
+		mutationFn: () => withRetry( installProRequest ),
 	} );
 }

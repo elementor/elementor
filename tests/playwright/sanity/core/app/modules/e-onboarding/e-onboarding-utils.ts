@@ -55,7 +55,7 @@ export async function doAndWaitForProgress( page: Page, action: () => Promise< v
 export async function navigateAndPassLogin( page: Page ) {
 	await page.goto( ONBOARDING_URL );
 	await expect( page.getByTestId( 'login-screen' ) ).toBeVisible();
-	await page.getByRole( 'button', { name: 'Continue as a guest' } ).click();
+	await page.getByRole( 'link', { name: 'Continue as a guest' } ).click();
 	await expect( page.getByTestId( 'building-for-step' ) ).toBeVisible();
 }
 

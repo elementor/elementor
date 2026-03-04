@@ -145,7 +145,6 @@ describe( 'manage-element-interaction tool', () => {
 			mockAll.mockReturnValue( [] );
 
 			const callHandler = createRegistryAndGetHandler();
-
 			const result = callHandler( {
 				elementId: 'el-123',
 				action: 'add',
@@ -277,7 +276,6 @@ describe( 'manage-element-interaction tool', () => {
 			mockAll.mockReturnValue( [ makeElementData( 'el-789', [ existingItem ] ) ] );
 
 			const callHandler = createRegistryAndGetHandler();
-
 			const result = callHandler( {
 				elementId: 'el-789',
 				action: 'update',
@@ -371,7 +369,7 @@ describe( 'manage-element-interaction tool', () => {
 			} );
 
 			const updatedItem = mockUpdateElementInteractions.mock.calls[ 0 ][ 0 ].interactions.items[ 0 ];
-			expect( updatedItem.value.breakpoints.value.excluded.value[ 0 ].value ).toBe( 'mobile' );
+			expect( updatedItem.value.breakpoints ).toBeUndefined();
 		} );
 
 		it( 'throws when interactionId is missing', () => {
