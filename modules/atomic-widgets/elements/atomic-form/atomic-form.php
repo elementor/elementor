@@ -11,6 +11,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Success_Message\Fo
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Error_Message\Form_Error_Message;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Widget_Builder;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
@@ -25,14 +26,19 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Atomic_Form extends Atomic_Element_Base {
+	use Has_Element_Template;
+
 	const BASE_STYLE_KEY = 'base';
+
+	public const ACTION_COLLECT_SUBMISSIONS = 'collect-submissions';
+	public const METADATA_REMOTE_IP = 'remote_ip';
+	public const METADATA_USER_AGENT = 'user_agent';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -69,6 +75,15 @@ class Atomic_Form extends Atomic_Element_Base {
 			] )
 			->get();
 
+		$submissions_metadata_dependencies = Dependency_Manager::make()
+			->where( [
+				'operator' => 'contains',
+				'path' => [ 'actions-after-submit' ],
+				'value' => self::ACTION_COLLECT_SUBMISSIONS,
+				'effect' => 'hide',
+			] )
+			->get();
+
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
@@ -76,9 +91,13 @@ class Atomic_Form extends Atomic_Element_Base {
 				->default( __( 'Form', 'elementor' ) ),
 			'form-state' => String_Prop_Type::make()
 				->enum( [ 'default', 'success', 'error' ] )
-				->default( 'default' ),
+				->default( 'default' )
+				->meta( 'generates_class', 'form-state-{value}' ),
 			'actions-after-submit' => String_Array_Prop_Type::make()
 				->default( [] ),
+			'submissions_metadata' => String_Array_Prop_Type::make()
+				->set_dependencies( $submissions_metadata_dependencies )
+				->default( [ self::METADATA_REMOTE_IP, self::METADATA_USER_AGENT ] ),
 			'email' => Email_Prop_Type::make()
 				->set_dependencies( $email_dependencies )
 				->default( [] ),
@@ -123,11 +142,24 @@ class Atomic_Form extends Atomic_Element_Base {
 						->set_options( [
 							[
 								'label' => __( 'Collect submissions', 'elementor' ),
-								'value' => 'collect-submissions',
+								'value' => self::ACTION_COLLECT_SUBMISSIONS,
 							],
 							[
 								'label' => __( 'Email', 'elementor' ),
 								'value' => 'email',
+							],
+						] ),
+					Chips_Control::bind_to( 'submissions_metadata' )
+						->set_label( __( 'Include metadata', 'elementor' ) )
+						->set_meta( [ 'topDivider' => true ] )
+						->set_options( [
+							[
+								'label' => __( 'User IP', 'elementor' ),
+								'value' => self::METADATA_REMOTE_IP,
+							],
+							[
+								'label' => __( 'User Agent', 'elementor' ),
+								'value' => self::METADATA_USER_AGENT,
 							],
 						] ),
 					Email_Form_Action_Control::bind_to( 'email' )
@@ -254,10 +286,7 @@ class Atomic_Form extends Atomic_Element_Base {
 		return Element_Builder::make( $element_type )
 			->settings( [
 				'attributes' => Attributes_Prop_Type::generate( [
-					Key_Value_Prop_Type::generate( [
-						'key' => String_Prop_Type::generate( 'data-e-state' ),
-						'value' => String_Prop_Type::generate( $state ),
-					] ),
+					Key_Value_Prop_Type::generate( [] ),
 				] ),
 			] )
 			->editor_settings( [
@@ -274,36 +303,17 @@ class Atomic_Form extends Atomic_Element_Base {
 			->build();
 	}
 
-	protected function add_render_attributes() {
-		parent::add_render_attributes();
-		$settings = $this->get_atomic_settings();
-		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
-
-		$attributes = [
-			'class' => [
-				'e-con',
-				'e-atomic-element',
-				$base_style_class,
-				...( $settings['classes'] ?? [] ),
-			],
-			'x-data' => 'eForm' . $this->get_id(),
-			'x-on:submit' => 'submit',
+	protected function get_templates(): array {
+		return [
+			'elementor/elements/atomic-form' => __DIR__ . '/atomic-form.html.twig',
 		];
+	}
 
-		if ( ! empty( $settings['_cssid'] ) ) {
-			$attributes['id'] = esc_attr( $settings['_cssid'] );
-		}
+	protected function build_template_context(): array {
+		$context = $this->build_base_template_context();
 
-		if ( ! empty( $settings['form-name'] ) ) {
-			$attributes['aria-label'] = esc_attr( $settings['form-name'] );
-			$attributes['data-form-name'] = esc_attr( $settings['form-name'] );
-		}
+		$context['form_state'] = 'default';
 
-		$form_state = Plugin::$instance->editor->is_edit_mode()
-			? ( $settings['form-state'] ?? 'default' )
-			: 'default';
-		$attributes['data-form-state'] = esc_attr( $form_state );
-
-		$this->add_render_attribute( '_wrapper', $attributes );
+		return $context;
 	}
 }
