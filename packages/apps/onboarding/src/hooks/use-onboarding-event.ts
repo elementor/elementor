@@ -1,15 +1,8 @@
 import { useCallback } from 'react';
-import { getMixpanel } from '@elementor/events';
+import { canSendEvents, getMixpanel } from '@elementor/events';
 
-import {
-	OnboardingEventName,
-	STEP_NUMBERS,
-	enqueueEvent,
-	getEventQueue,
-	clearEventQueue,
-	canSendEvents,
-} from '../analytics';
 import type { OnboardingEventPayload } from '../analytics';
+import { clearEventQueue, enqueueEvent, getEventQueue, OnboardingEventName, STEP_NUMBERS } from '../analytics';
 
 function dispatchDirectly( eventName: string, payload: Record< string, unknown > ): void {
 	const { dispatchEvent } = getMixpanel();
@@ -19,22 +12,19 @@ function dispatchDirectly( eventName: string, payload: Record< string, unknown >
 let globalTrackingActive = false;
 
 export function useOnboardingEvent() {
-	const trackEvent = useCallback(
-		( eventName: string, payload: Partial< OnboardingEventPayload > ) => {
-			const fullPayload: Record< string, unknown > = {
-				app_type: 'editor',
-				window_name: 'core_onboarding',
-				...payload,
-			};
+	const trackEvent = useCallback( ( eventName: string, payload: Partial< OnboardingEventPayload > ) => {
+		const fullPayload: Record< string, unknown > = {
+			app_type: 'editor',
+			window_name: 'core_onboarding',
+			...payload,
+		};
 
-			if ( globalTrackingActive && canSendEvents() ) {
-				dispatchDirectly( eventName, fullPayload );
-			} else {
-				enqueueEvent( eventName, fullPayload );
-			}
-		},
-		[],
-	);
+		if ( globalTrackingActive && canSendEvents() ) {
+			dispatchDirectly( eventName, fullPayload );
+		} else {
+			enqueueEvent( eventName, fullPayload );
+		}
+	}, [] );
 
 	const activateTracking = useCallback( () => {
 		globalTrackingActive = true;
@@ -75,16 +65,14 @@ export function useOnboardingEvent() {
 				target_type: 'button',
 				target_name: 'login',
 				interaction_result:
-					loginType === 'guest'
-						? 'skip_and_onboarding_initialization'
-						: 'login_option selected',
+					loginType === 'guest' ? 'skip_and_onboarding_initialization' : 'login_option selected',
 				target_value: loginType,
 				target_location: 'onboarding',
 				location_l1: 'login_step',
 				interaction_description: 'user connect process loaded from onboarding',
 			} );
 		},
-		[ trackEvent ],
+		[ trackEvent ]
 	);
 
 	const trackConnect = useCallback(
@@ -101,7 +89,7 @@ export function useOnboardingEvent() {
 				metadata: ! success && error ? { error } : undefined,
 			} );
 		},
-		[ trackEvent ],
+		[ trackEvent ]
 	);
 
 	const trackProInstall = useCallback(
@@ -119,7 +107,7 @@ export function useOnboardingEvent() {
 				state: action === 'install',
 			} );
 		},
-		[ trackEvent ],
+		[ trackEvent ]
 	);
 
 	const trackStepViewed = useCallback(
@@ -135,7 +123,7 @@ export function useOnboardingEvent() {
 				interaction_description: 'onboarding step loaded',
 			} );
 		},
-		[ trackEvent ],
+		[ trackEvent ]
 	);
 
 	const trackPersonaSelected = useCallback(
@@ -152,7 +140,7 @@ export function useOnboardingEvent() {
 				interaction_description: 'user chooses persona type and automatically being redirected to next step',
 			} );
 		},
-		[ trackEvent ],
+		[ trackEvent ]
 	);
 
 	const trackSiteTopicSelected = useCallback(
@@ -169,7 +157,7 @@ export function useOnboardingEvent() {
 				interaction_description: 'user multiselects site topics',
 			} );
 		},
-		[ trackEvent ],
+		[ trackEvent ]
 	);
 
 	const trackExperienceSelected = useCallback(
@@ -183,10 +171,11 @@ export function useOnboardingEvent() {
 				target_location: 'onboarding',
 				location_l1: 'select_experience',
 				location_l2: STEP_NUMBERS.experience_level,
-				interaction_description: 'user chooses experience_level and automatically being redirected to next step',
+				interaction_description:
+					'user chooses experience_level and automatically being redirected to next step',
 			} );
 		},
-		[ trackEvent ],
+		[ trackEvent ]
 	);
 
 	const trackThemeSuggested = useCallback(
@@ -203,7 +192,7 @@ export function useOnboardingEvent() {
 				interaction_description: 'user got a recommendation for a certain theme',
 			} );
 		},
-		[ trackEvent ],
+		[ trackEvent ]
 	);
 
 	const trackThemeSelected = useCallback(
@@ -220,7 +209,7 @@ export function useOnboardingEvent() {
 				interaction_description: 'user installed a certain theme',
 			} );
 		},
-		[ trackEvent ],
+		[ trackEvent ]
 	);
 
 	const trackProFeaturesSelected = useCallback(
@@ -237,7 +226,7 @@ export function useOnboardingEvent() {
 				interaction_description: 'user selected pro features and continued',
 			} );
 		},
-		[ trackEvent ],
+		[ trackEvent ]
 	);
 
 	const trackBackClicked = useCallback(
@@ -253,7 +242,7 @@ export function useOnboardingEvent() {
 				location_l2: STEP_NUMBERS[ currentStepId ],
 			} );
 		},
-		[ trackEvent ],
+		[ trackEvent ]
 	);
 
 	const trackSkipClicked = useCallback(
@@ -269,7 +258,7 @@ export function useOnboardingEvent() {
 				location_l2: STEP_NUMBERS[ currentStepId ],
 			} );
 		},
-		[ trackEvent ],
+		[ trackEvent ]
 	);
 
 	const trackUpgradeClicked = useCallback(
@@ -285,7 +274,7 @@ export function useOnboardingEvent() {
 				location_l2: STEP_NUMBERS[ currentStepId ],
 			} );
 		},
-		[ trackEvent ],
+		[ trackEvent ]
 	);
 
 	const trackResumeOnboarding = useCallback(
@@ -301,7 +290,7 @@ export function useOnboardingEvent() {
 				interaction_description: 'onboarding step loaded',
 			} );
 		},
-		[ trackEvent ],
+		[ trackEvent ]
 	);
 
 	return {
