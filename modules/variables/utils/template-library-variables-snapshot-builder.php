@@ -106,6 +106,10 @@ class Template_Library_Variables_Snapshot_Builder extends Template_Library_Snaps
 		return self::make()->create_all_as_new( $snapshot );
 	}
 
+	protected function get_comparison_ignore_keys(): array {
+		return [ 'value', 'created_at', 'updated_at', 'order', 'deleted_at', 'deleted', 'sync_to_v3' ];
+	}
+
 	protected function get_item_prefix(): string {
 		return 'e-gv-';
 	}

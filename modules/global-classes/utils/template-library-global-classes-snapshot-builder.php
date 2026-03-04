@@ -132,7 +132,7 @@ class Template_Library_Global_Classes_Snapshot_Builder extends Template_Library_
 	}
 
 	protected function load_current_data(): array {
-		$current = Global_Classes_Repository::make()->all()->get();
+		$current = Global_Classes_Repository::make()->context( Global_Classes_Repository::CONTEXT_PREVIEW )->all()->get();
 
 		return [
 			'items' => $current['items'] ?? [],

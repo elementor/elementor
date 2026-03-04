@@ -289,7 +289,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		this.ui.ellipsisIcon.attr( 'aria-expanded', expanded ? 'true' : 'false' );
 	},
 
-	onFormSubmit( event ) {
+	async onFormSubmit( event ) {
 		event.preventDefault();
 
 		var formData = this.ui.form.elementorSerializeObject(),
@@ -314,6 +314,12 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		this.updateToastConfig( formData );
 
 		this.updateSourceState( formData );
+
+		try {
+			await $e.run( 'document/save/auto', { force: true } );
+		} catch ( e ) {
+			// Proceed even if auto-save fails or is rejected.
+		}
 
 		elementor.templates.saveTemplate( this.getSaveType(), formData );
 	},
