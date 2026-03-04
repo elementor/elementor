@@ -1,16 +1,16 @@
 var PanelElementsWidgetCreationView;
 
-PanelElementsWidgetCreationView = Marionette.ItemView.extend( {
 const TEMPLATES = {
 	EMPTY_STATE: '#tmpl-elementor-panel-elements-widget-creation-empty-state',
 	SEARCH_FOOTER: '#tmpl-elementor-panel-elements-widget-creation-search-footer',
 };
 
-getTemplate() {
-	return this.options.emptyResults
-		? TEMPLATES.EMPTY_STATE
-		: TEMPLATES.SEARCH_FOOTER;
-},
+PanelElementsWidgetCreationView = Marionette.ItemView.extend( {
+	getTemplate() {
+		return this.options.emptyResults
+			? TEMPLATES.EMPTY_STATE
+			: TEMPLATES.SEARCH_FOOTER;
+	},
 
 	className() {
 		const baseClass = 'elementor-panel-elements-widget-creation';
