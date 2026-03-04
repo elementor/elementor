@@ -12,7 +12,7 @@ const ProPlanNoticeRoot = styled( Box )( ( { theme } ) => ( {
 	alignItems: 'center',
 	gap: theme.spacing( 1 ),
 	padding: theme.spacing( 1.5, 3 ),
-	borderRadius: theme.spacing( 1 ),
+	borderRadius: theme.spacing( 2 ),
 	backgroundColor: PRO_PLAN_NOTICE_BG,
 	width: 'max-content',
 	maxWidth: '100%',

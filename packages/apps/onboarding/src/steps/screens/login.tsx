@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Stack, Typography } from '@elementor/ui';
+import { Box, Stack, Typography, useTheme } from '@elementor/ui';
 
 import {
 	FullscreenCard,
@@ -18,6 +18,8 @@ interface LoginProps {
 }
 
 export function Login( { onConnect, onContinueAsGuest }: LoginProps ) {
+	const theme = useTheme();
+
 	return (
 		<FullscreenCard data-testid="login-screen">
 			<Stack display="flex" alignItems="center" marginBottom={ -1 }>
@@ -26,7 +28,7 @@ export function Login( { onConnect, onContinueAsGuest }: LoginProps ) {
 			<Typography variant="h5" color="text.primary" align="center" fontWeight={ 500 } fontFamily="Poppins">
 				{ t( 'login.title' ) }
 			</Typography>
-			<Stack spacing={ 3 } width="100%">
+			<Stack width="100%" gap={ theme.spacing( 2 ) }>
 				<PrimaryButton variant="contained" color="primary" fullWidth size="large" onClick={ onConnect }>
 					{ t( 'login.sign_in' ) }
 				</PrimaryButton>

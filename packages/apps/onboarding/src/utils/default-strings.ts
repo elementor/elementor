@@ -64,7 +64,7 @@ export const DEFAULT_STRINGS: Record< string, string > = {
 	'steps.site_features.option_accessibility_tools': 'Accessibility',
 	'steps.site_features.woocommerce': 'WooCommerce',
 	'steps.site_features.included': 'Included',
-	'steps.site_features.plan_recommendation_one': 'NIce picks 🙂 Elementor One has you covered.',
+	'steps.site_features.plan_recommendation_one': 'Nice picks 🙂 Elementor One has you covered.',
 	'steps.site_features.plan_recommendation_pro': 'Advanced tools? Elementor Pro includes them.',
 	'steps.site_features.compare_plans': 'View plans',
 	'pro_install.title': 'You already have a Pro subscription',
