@@ -6,6 +6,7 @@ import { DirectionProvider, ThemeProvider } from '@elementor/ui';
 
 import { initFromConfig, registerOnboardingSlice } from '../store';
 import { AppContent } from './app-content';
+import { ToastProvider } from './toast/toast-context';
 
 type ColorSchemePreference = 'auto' | 'dark' | 'light';
 type ResolvedColorScheme = 'dark' | 'light';
@@ -55,7 +56,9 @@ export function App( props: AppProps ) {
 			<QueryClientProvider client={ queryClient }>
 				<DirectionProvider rtl={ window.document.dir === 'rtl' }>
 					<ThemeProvider colorScheme={ colorScheme } palette="argon-beta">
-						<AppContent { ...props } />
+						<ToastProvider>
+							<AppContent { ...props } />
+						</ToastProvider>
 					</ThemeProvider>
 				</DirectionProvider>
 			</QueryClientProvider>
