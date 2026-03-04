@@ -1,7 +1,8 @@
 {
-  "name": "@elementor/editor-mcp",
+  "name": "@elementor/editor-starter",
+  "description": "Start building overlay for the Elementor editor",
   "version": "4.0.0",
-  "private": false,
+  "private": true,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
   "license": "GPL-3.0-or-later",
@@ -10,7 +11,7 @@
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.mts",
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
     },
@@ -18,18 +19,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/elementor/elementor.git",
-    "directory": "packages/core/editor-mcp"
+    "url": "git+https://github.com/elementor/elementor.git",
+    "directory": "packages/core/editor-starter"
   },
   "bugs": {
     "url": "https://github.com/elementor/elementor/issues"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "files": [
     "README.md",
-    "CHANGELOG.md",
     "/dist",
     "/src",
     "!**/__tests__"
@@ -38,15 +35,18 @@
     "build": "tsup --config=../../tsup.build.ts",
     "dev": "tsup --config=../../tsup.dev.ts"
   },
+  "dependencies": {
+    "@elementor/editor": "4.0.0",
+    "@elementor/editor-v1-adapters": "4.0.0",
+    "@elementor/ui": "1.36.17",
+    "@wordpress/api-fetch": "^7.12.0",
+    "@wordpress/i18n": "^5.13.0"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
   "devDependencies": {
     "tsup": "^8.3.5"
-  },
-  "dependencies": {
-    "@elementor-external/angie-sdk": "npm:@elementor/angie-sdk@^1.0.4",
-    "@elementor/editor-v1-adapters": "4.0.0",
-    "@elementor/schema": "4.0.0",
-    "@elementor/store": "4.0.0",
-    "@modelcontextprotocol/sdk": "1.27.1",
-    "zod-to-json-schema": "3.24.6"
   }
 }

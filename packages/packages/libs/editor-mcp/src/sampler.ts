@@ -59,11 +59,7 @@ export const createSampler = ( server: Server, opts: Opts = DEFAULT_OPTS ) => {
 			},
 			SamplingMessageSchema
 		);
-		try {
-			return JSON.parse( result.content.text as string );
-		} catch {
-			return result.content;
-		}
+		return result.content;
 	};
 	return exec;
 };
