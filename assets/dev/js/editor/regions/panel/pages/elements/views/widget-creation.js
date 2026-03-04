@@ -5,6 +5,11 @@ const TEMPLATES = {
 	SEARCH_FOOTER: '#tmpl-elementor-panel-elements-widget-creation-search-footer',
 };
 
+const prompt = `Create a widget for me.
+Goal: [What should this widget help me accomplish?]
+Placement: [Where will I see it in the editor/UI?]
+How it should work: `;
+
 PanelElementsWidgetCreationView = Marionette.ItemView.extend( {
 	getTemplate() {
 		return this.options.emptyResults
@@ -38,10 +43,7 @@ PanelElementsWidgetCreationView = Marionette.ItemView.extend( {
 	onCtaClick() {
 		window.dispatchEvent(
 			new CustomEvent( 'elementor/editor/create-widget', {
-				detail: { prompt: `Create a widget for me.
-Goal: [What should this widget help me accomplish?]
-Placement: [Where will I see it in the editor/UI?]
-How it should work: ` },
+				detail: { prompt },
 			} ),
 		);
 	},
