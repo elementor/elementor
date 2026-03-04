@@ -12,8 +12,8 @@ class Presets {
 	const DEFAULT_SLIDE_DISTANCE = 100;
 	const DEFAULT_SCALE_START = 0;
 	const DEFAULT_RELATIVE_TO = 'viewport';
-	const DEFAULT_OFFSET_TOP = 15;
-	const DEFAULT_OFFSET_BOTTOM = 85;
+	const DEFAULT_END = 15;
+	const DEFAULT_START = 85;
 
 	const BASE_TRIGGERS = [ 'load', 'scrollIn' ];
 	const ADDITIONAL_TRIGGERS = [ 'scrollOut', 'scrollOn', 'hover', 'click' ];
@@ -48,8 +48,8 @@ class Presets {
 			'scaleStart' => self::DEFAULT_SCALE_START,
 			'defaultEasing' => self::DEFAULT_EASING,
 			'relativeTo' => self::DEFAULT_RELATIVE_TO,
-			'offsetTop' => self::DEFAULT_OFFSET_TOP,
-			'offsetBottom' => self::DEFAULT_OFFSET_BOTTOM,
+			'start' => self::DEFAULT_START,
+			'end' => self::DEFAULT_END,
 		];
 	}
 }

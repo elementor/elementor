@@ -8,8 +8,8 @@ const DEFAULT_CONFIG: InteractionsConfig = {
 		scaleStart: 0,
 		defaultEasing: 'easeIn',
 		relativeTo: 'viewport',
-		offsetTop: 15,
-		offsetBottom: 85,
+		end: 15,
+		start: 85,
 	},
 };
 

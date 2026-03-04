@@ -9,8 +9,8 @@ export const config = window.ElementorInteractionsConfig?.constants || {
 	scaleStart: 0,
 	defaultEasing: 'easeIn',
 	relativeTo: 'viewport',
-	offsetTop: 15,
-	offsetBottom: 85,
+	start: 85,
+	end: 15,
 };
 
 export function skipInteraction( interaction ) {

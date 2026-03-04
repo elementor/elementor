@@ -33,8 +33,8 @@ export type InteractionConstants = {
 	scaleStart: number;
 	defaultEasing: string;
 	relativeTo: string;
-	offsetTop: number;
-	offsetBottom: number;
+	start: number;
+	end: number;
 };
 
 export type InteractionsConfig = {
