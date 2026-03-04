@@ -1,17 +1,17 @@
 import { getAngieIframe, toggleAngieSidebar } from '@elementor-external/angie-sdk';
 
 export const sendPromptToAngie = ( prompt?: string ) => {
-  const angieSidebar = getAngieIframe();
+	const angieSidebar = getAngieIframe();
 
-  if ( ! angieSidebar ) {
-    return;
-  }
+	if ( ! angieSidebar ) {
+		return;
+	}
 
-  toggleAngieSidebar( angieSidebar, true );
+	toggleAngieSidebar( angieSidebar, true );
 
-  if ( ! prompt ) {
-    return;
-  }
+	if ( ! prompt ) {
+		return;
+	}
 
-  window.location.hash = `angie-prompt=${ encodeURIComponent( prompt ) }`;
+	window.location.hash = `angie-prompt=${ encodeURIComponent( prompt ) }`;
 };
