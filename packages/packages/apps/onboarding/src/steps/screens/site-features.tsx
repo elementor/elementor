@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
-import { Stack, type Theme, Typography } from '@elementor/ui';
+import { Stack, Typography } from '@elementor/ui';
 
-import { WoocommerceIcon } from '../../components/icons/site-features/woocommerce-icon';
 import { StepTitle } from '../../components/ui/styled-components';
 import { useOnboarding } from '../../hooks/use-onboarding';
 import AccessibilityToolsIcon from '../../icons/site-features/accessibility-tools-icon';
@@ -13,6 +12,7 @@ import CustomCodeIcon from '../../icons/site-features/custom-code-icon';
 import EmailDeliverabilityIcon from '../../icons/site-features/email-deliverability-icon';
 import ImageOptimizationIcon from '../../icons/site-features/image-optimization-icon';
 import ThemeBuilderIcon from '../../icons/site-features/theme-builder-icon';
+import { WoocommerceIcon } from '../../icons/site-features/woocommerce-icon';
 import { t } from '../../utils/translations';
 import { FeatureGrid, type FeatureOption, ProPlanNotice } from '../components/site-features';
 
