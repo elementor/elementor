@@ -153,10 +153,6 @@ export default class Manager extends elementorModules.editor.utils.Module {
 
 			if ( data.typography ) {
 				Object.values( data.typography ).forEach( ( item ) => {
-					if ( 'v4' === item.group ) {
-						return;
-					}
-
 					const controls = elementor.config.kit_config.design_system_controls.typography,
 						values = {
 							_id: item.id,
