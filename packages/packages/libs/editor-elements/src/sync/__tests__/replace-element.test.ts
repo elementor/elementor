@@ -1,15 +1,11 @@
 import { createMockElement } from 'test-utils';
-import {
-	__privateRunCommand as runCommand,
-	__privateRunCommandSync as runCommandSync,
-} from '@elementor/editor-v1-adapters';
+import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
 
 import { replaceElement } from '../replace-element';
 import { type ExtendedWindow, type V1ElementModelProps } from '../types';
 
 jest.mock( '@elementor/editor-v1-adapters' );
 
-const mockRunCommand = jest.mocked( runCommand );
 const mockRunCommandSync = jest.mocked( runCommandSync );
 
 const currentElementData = {
@@ -34,7 +30,7 @@ const newElement: Omit< V1ElementModelProps, 'id' > = {
 describe( 'replaceElement', () => {
 	const extendedWindow = window as unknown as ExtendedWindow;
 
-	it( 'should replace element', async () => {
+	it( 'should replace element', () => {
 		// Arrange.
 		extendedWindow.elementor = {
 			getContainer: ( id ) => {
@@ -48,7 +44,7 @@ describe( 'replaceElement', () => {
 		};
 
 		// Act.
-		await replaceElement( { currentElementId: currentElement.id, newElement } );
+		replaceElement( { currentElementId: currentElement.id, newElement } );
 
 		// Assert.
 		expect( mockRunCommandSync ).toHaveBeenCalledWith( 'document/elements/create', {
@@ -57,13 +53,13 @@ describe( 'replaceElement', () => {
 			options: { at: 1, useHistory: true, edit: false },
 		} );
 
-		expect( mockRunCommand ).toHaveBeenCalledWith( 'document/elements/delete', {
+		expect( mockRunCommandSync ).toHaveBeenCalledWith( 'document/elements/delete', {
 			container: { ...currentElement, parent: parentElement },
 			options: { useHistory: true },
 		} );
 	} );
 
-	it( 'should wrap widget in container when replacing element at document top level', async () => {
+	it( 'should wrap widget in container when replacing element at document top level', () => {
 		// Arrange.
 		const documentElement = createMockElement( {
 			model: { id: 'document' },
@@ -87,7 +83,7 @@ describe( 'replaceElement', () => {
 		mockRunCommandSync.mockReturnValueOnce( createdContainerElement );
 
 		// Act.
-		await replaceElement( { currentElementId: currentElement.id, newElement } );
+		replaceElement( { currentElementId: currentElement.id, newElement } );
 
 		// Assert.
 		expect( mockRunCommandSync ).toHaveBeenNthCalledWith( 1, 'document/elements/create', {
@@ -102,7 +98,7 @@ describe( 'replaceElement', () => {
 			options: { at: 0, useHistory: true, edit: false },
 		} );
 
-		expect( mockRunCommand ).toHaveBeenCalledWith( 'document/elements/delete', {
+		expect( mockRunCommandSync ).toHaveBeenCalledWith( 'document/elements/delete', {
 			container: { ...currentElement, parent: documentElement },
 			options: { useHistory: true },
 		} );

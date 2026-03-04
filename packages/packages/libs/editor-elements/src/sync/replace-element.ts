@@ -15,7 +15,7 @@ type ReplaceElementArgs = {
 	withHistory?: boolean;
 };
 
-export const replaceElement = async ( { currentElementId, newElement, withHistory = true }: ReplaceElementArgs ) => {
+export const replaceElement = ( { currentElementId, newElement, withHistory = true }: ReplaceElementArgs ) => {
 	const currentElementContainer = getContainer( currentElementId );
 
 	if ( ! currentElementContainer ) {
@@ -30,7 +30,7 @@ export const replaceElement = async ( { currentElementId, newElement, withHistor
 		options: { at: index, useHistory: withHistory },
 	} );
 
-	await deleteElement( { container: currentElementContainer, options: { useHistory: withHistory } } );
+	deleteElement( { container: currentElementContainer, options: { useHistory: withHistory } } );
 
 	return newElementInstance;
 };

@@ -16,6 +16,10 @@ import { componentInstancePropTypeUtil } from '../../../../prop-types/component-
 import { slice } from '../../../../store/store';
 import { detachComponentInstance } from '../../../../utils/detach-component-instance';
 import { getContainerByOriginId } from '../../../../utils/get-container-by-origin-id';
+
+jest.mock( '../../../../utils/detach-component-instance', () => ( {
+	detachComponentInstance: jest.fn(),
+} ) );
 import { switchToComponent } from '../../../../utils/switch-to-component';
 import { ExtendedInstanceEditingPanel } from '../instance-editing-panel';
 
@@ -24,8 +28,6 @@ jest.mock( '@elementor/editor-elements' );
 jest.mock( '@elementor/session' );
 
 jest.mock( '../../../../utils/switch-to-component' );
-
-jest.mock( '../../../../utils/detach-component-instance' );
 
 jest.mock( '../../../../prop-types/component-instance-prop-type', () => ( {
 	componentInstancePropTypeUtil: {

@@ -40,7 +40,7 @@ export function ExtendedInstanceEditingPanel() {
 		setIsDetachDialogOpen( true );
 	};
 
-	const handleDetachConfirm = async () => {
+	const handleDetachConfirm = () => {
 		if ( ! componentInstanceId ) {
 			return;
 		}
