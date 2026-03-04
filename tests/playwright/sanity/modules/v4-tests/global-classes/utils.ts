@@ -13,6 +13,7 @@ type GlobalClassItem = {
 	type: 'class';
 	label: string;
 	variants: GlobalClassVariant[];
+	sync_to_v3?: boolean;
 };
 
 export async function getGlobalClasses( apiRequests: ApiRequests, request: APIRequestContext ): Promise<{ items: Record<string, GlobalClassItem>; order: string[] }> {
