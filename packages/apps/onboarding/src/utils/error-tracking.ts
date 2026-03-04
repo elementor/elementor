@@ -6,7 +6,7 @@ export const ONBOARDING_ERRORS = {
 	PRO_INSTALL_FAILED: 'pro_install_failed',
 } as const;
 
-type OnboardingErrorType = typeof ONBOARDING_ERRORS[ keyof typeof ONBOARDING_ERRORS ];
+type OnboardingErrorType = ( typeof ONBOARDING_ERRORS )[ keyof typeof ONBOARDING_ERRORS ];
 
 export function trackOnboardingError( errorType: OnboardingErrorType, details?: Record< string, unknown > ) {
 	trackEvent( {

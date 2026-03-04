@@ -162,7 +162,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 	const handleContinue = useCallback(
 		( directChoice?: Record< string, unknown > ) => {
-		const choiceData =
+			const choiceData =
 				directChoice ??
 				( () => {
 					const storedChoice = choices[ stepId as keyof typeof choices ];
