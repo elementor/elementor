@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { getAngieIframe, toggleAngieSidebar } from '@elementor/angie-sdk';
+import { getAngieIframe, toggleAngieSidebar } from '@elementor-external/angie-sdk';
 
 import { isAngieActive } from '../utils/is-angie-active';
 

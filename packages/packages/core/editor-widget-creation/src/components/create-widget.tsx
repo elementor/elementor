@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
-import { setReferrerRedirect } from '@elementor/angie-sdk';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { XIcon } from '@elementor/icons';
 import { Button, Dialog, DialogContent, IconButton, Image, Stack, Typography } from '@elementor/ui';
+import { setReferrerRedirect } from '@elementor-external/angie-sdk';
 import { __ } from '@wordpress/i18n';
 
 import { ANGIE_INSTALL_URL, CREATE_WIDGET_EVENT } from '../consts';

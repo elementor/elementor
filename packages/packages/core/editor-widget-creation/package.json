@@ -39,7 +39,7 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/angie-sdk": "^1.3.1",
+    "@elementor-external/angie-sdk": "npm:@elementor/angie-sdk@^1.3.1",
     "@elementor/editor": "4.0.0",
     "@elementor/editor-ui": "4.0.0",
     "@elementor/icons": "^1.63.0",
