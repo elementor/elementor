@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const MODULE_NAME = 'angie-entrypoints';
-	const EXPERIMENT_NAME = 'e_angie_entrypoints';
+	const EXPERIMENT_NAME = 'e_widget_creation';
 	const PLUGIN_SLUG = 'angie';
 	const ANGIE_PLUGIN_PATH = 'angie/angie.php';
 
