@@ -9,8 +9,8 @@ import {
 	TextButton,
 } from '../../components/fullscreen-card';
 import { ElementorIcon } from '../../components/ui/elementor-icon';
-import { t } from '../../utils/translations';
 import { AppleIcon, FacebookIcon, GoogleIcon } from '../../icons';
+import { t } from '../../utils/translations';
 
 interface LoginProps {
 	onConnect?: () => void;

@@ -1,6 +1,5 @@
 import type { ElementType } from 'react';
 
-import { t } from '../../utils/translations';
 import {
 	BlogIcon,
 	BookingIcon,
@@ -11,6 +10,7 @@ import {
 	OtherIcon,
 	SmallMedBusinessIcon,
 } from '../../icons';
+import { t } from '../../utils/translations';
 
 export interface SiteAboutOption {
 	value: string;
