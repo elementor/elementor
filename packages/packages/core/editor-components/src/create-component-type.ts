@@ -296,16 +296,20 @@ function createComponentView( options: ComponentTypeOptions ): typeof ElementVie
 				return;
 			}
 
-			const handleConfirm = () => {
-				detachComponentInstance( {
-					instanceId,
-					componentId,
-					trackingInfo: {
-						location,
-						secondaryLocation,
-						trigger,
-					},
-				} );
+			const handleConfirm = async () => {
+				try {
+					await detachComponentInstance( {
+						instanceId,
+						componentId,
+						trackingInfo: {
+							location,
+							secondaryLocation,
+							trigger,
+						},
+					} );
+				} catch ( error ) {
+					console.error( 'Failed to detach component instance:', error );
+				}
 			};
 
 			options.showDetachConfirmDialog?.( handleConfirm );

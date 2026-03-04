@@ -46,10 +46,7 @@ export async function detachComponentInstance( {
 	}
 
 	const overrides = extractInstanceOverrides( instanceContainer );
-	const detachedInstanceElementData = resolveDetachedInstance(
-		structuredClone( rootElement ),
-		overrides
-	) as V1ElementModelProps;
+	const detachedInstanceElementData = resolveDetachedInstance( rootElement, overrides ) as V1ElementModelProps;
 
 	const state = getState() as ComponentsSlice | undefined;
 	const currentComponentId = state ? selectCurrentComponentId( state ) : null;
@@ -125,11 +122,13 @@ function performDetach( { instanceId, detachedInstanceElementData, componentId, 
 	const componentUid = selectComponent( getState(), componentId )?.uid;
 
 	trackComponentEvent( {
-		...trackingInfo,
 		action: 'detached',
 		source: 'user',
 		component_uid: componentUid,
 		instance_id: instanceId,
+		location: trackingInfo.location,
+		secondary_location: trackingInfo.secondaryLocation,
+		trigger: trackingInfo.trigger,
 	} );
 
 	return detachedElement;

@@ -16,12 +16,12 @@ import { componentInstancePropTypeUtil } from '../../../../prop-types/component-
 import { slice } from '../../../../store/store';
 import { detachComponentInstance } from '../../../../utils/detach-component-instance';
 import { getContainerByOriginId } from '../../../../utils/get-container-by-origin-id';
+import { switchToComponent } from '../../../../utils/switch-to-component';
+import { ExtendedInstanceEditingPanel } from '../instance-editing-panel';
 
 jest.mock( '../../../../utils/detach-component-instance', () => ( {
 	detachComponentInstance: jest.fn(),
 } ) );
-import { switchToComponent } from '../../../../utils/switch-to-component';
-import { ExtendedInstanceEditingPanel } from '../instance-editing-panel';
 
 jest.mock( '@elementor/editor-elements' );
 
@@ -50,6 +50,9 @@ const MOCK_INSTANCE_ID = 'instance-789';
 const MOCK_PROP_TYPE = createMockPropType( { kind: 'plain', key: 'string' } );
 const MOCK_ELEMENT_LABEL = 'Heading Block';
 const MOCK_CONTROL_TYPE = 'test-override-text';
+
+const MOCK_TRACKING_LOCATION = 'Instance Editing Panel';
+const MOCK_TRACKING_TRIGGER = 'click';
 
 const MOCK_COMPONENT_INSTANCE_PROP_TYPE = createMockPropType( {
 	kind: 'object',
@@ -154,6 +157,27 @@ function createMockElementType( widgetType: string ) {
 	};
 }
 
+function setupEventsManagerConfig() {
+	( window as unknown as Record< string, unknown > ).elementorCommon = {
+		eventsManager: {
+			config: {
+				locations: {
+					components: {
+						instanceEditingPanel: MOCK_TRACKING_LOCATION,
+					},
+				},
+				triggers: {
+					click: MOCK_TRACKING_TRIGGER,
+				},
+			},
+		},
+	};
+}
+
+function cleanupEventsManagerConfig() {
+	delete ( window as unknown as Record< string, unknown > ).elementorCommon;
+}
+
 describe( '<ExtendedInstanceEditingPanel />', () => {
 	let store: Store< SliceState< typeof slice > >;
 
@@ -166,6 +190,7 @@ describe( '<ExtendedInstanceEditingPanel />', () => {
 		mockCurrentUserCapabilities( true );
 		registerSlice( slice );
 		store = __createStore();
+		setupEventsManagerConfig();
 
 		jest.mocked( componentInstancePropTypeUtil.extract ).mockReturnValue( {
 			component_id: { $$type: 'number', value: MOCK_COMPONENT_ID },
@@ -178,6 +203,10 @@ describe( '<ExtendedInstanceEditingPanel />', () => {
 		jest.mocked( getElementType ).mockImplementation( createMockElementType );
 		jest.mocked( getContainer ).mockReturnValue( createMockContainer( MOCK_INSTANCE_ID, [] ) );
 		jest.mocked( getContainerByOriginId ).mockImplementation( ( originId ) => createMockContainer( originId, [] ) );
+	} );
+
+	afterEach( () => {
+		cleanupEventsManagerConfig();
 	} );
 
 	it( 'should render the component name in the header', () => {
@@ -278,7 +307,7 @@ describe( '<ExtendedInstanceEditingPanel />', () => {
 			expect( screen.getByLabelText( 'Detach from Component' ) ).toBeInTheDocument();
 		} );
 
-		it( 'should not show detach button when user is not admin', () => {
+		it( 'should show detach button when user is not admin', () => {
 			// Arrange.
 			mockCurrentUserCapabilities( false );
 			setupComponent();
@@ -287,7 +316,7 @@ describe( '<ExtendedInstanceEditingPanel />', () => {
 			renderPanel( store );
 
 			// Assert.
-			expect( screen.queryByLabelText( 'Detach from Component' ) ).not.toBeInTheDocument();
+			expect( screen.getByLabelText( 'Detach from Component' ) ).toBeInTheDocument();
 		} );
 
 		it( 'should show confirmation dialog when detach button is clicked', async () => {
@@ -327,7 +356,7 @@ describe( '<ExtendedInstanceEditingPanel />', () => {
 			} );
 		} );
 
-		it( 'should call detachComponentInstance when confirm is clicked', async () => {
+		it( 'should call detachComponentInstance with trackingInfo when confirm is clicked', async () => {
 			// Arrange.
 			setupComponent();
 			renderPanel( store );
@@ -348,6 +377,10 @@ describe( '<ExtendedInstanceEditingPanel />', () => {
 				expect( detachComponentInstance ).toHaveBeenCalledWith( {
 					instanceId: MOCK_INSTANCE_ID,
 					componentId: MOCK_COMPONENT_ID,
+					trackingInfo: {
+						location: MOCK_TRACKING_LOCATION,
+						trigger: MOCK_TRACKING_TRIGGER,
+					},
 				} );
 			} );
 		} );

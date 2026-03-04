@@ -29,7 +29,7 @@ export function ExtendedInstanceEditingPanel() {
 
 	const { componentId, component, overrides, overridableProps, groups, isEmpty, componentInstanceId } = data;
 
-	const canDetach = canEdit && !! componentInstanceId;
+	const canDetach = !! componentInstanceId;
 
 	/* translators: %s: component name. */
 	const panelTitle = __( 'Edit %s', 'elementor' ).replace( '%s', component.name );
@@ -41,22 +41,46 @@ export function ExtendedInstanceEditingPanel() {
 		setIsDetachDialogOpen( true );
 	};
 
-	const handleDetachConfirm = () => {
+	const handleDetachConfirm = async () => {
 		if ( ! componentInstanceId ) {
 			return;
 		}
 
 		setIsDetachDialogOpen( false );
-		detachComponentInstance( {
-			instanceId: componentInstanceId,
-			componentId,
-			trackingInfo: getDetachTrackingInfo(),
-		} );
+
+		try {
+			await detachComponentInstance( {
+				instanceId: componentInstanceId,
+				componentId,
+				trackingInfo: getDetachTrackingInfo(),
+			} );
+		} catch ( error ) {
+			console.error( 'Failed to detach component instance:', error );
+		}
 	};
 
 	const handleDetachCancel = () => {
 		setIsDetachDialogOpen( false );
 	};
+
+	const actions = (
+		<Stack direction="row" gap={ 0.5 }>
+			{ canDetach && (
+				<EditComponentAction
+					label={ detachLabel }
+					icon={ DetachIcon }
+					onClick={ handleDetachClick }
+				/>
+			) }
+			{ canEdit && (
+				<EditComponentAction
+					label={ panelTitle }
+					onClick={ handleEditComponent }
+					icon={ PencilIcon }
+				/>
+			) }
+		</Stack>
+	);
 
 	return (
 		<Box data-testid="instance-editing-panel">
@@ -67,24 +91,7 @@ export function ExtendedInstanceEditingPanel() {
 			>
 				<InstancePanelHeader
 					componentName={ component.name }
-					actions={
-						canEdit ? (
-							<Stack direction="row" gap={ 0.5 }>
-								{ canDetach && (
-									<EditComponentAction
-										label={ detachLabel }
-										icon={ DetachIcon }
-										onClick={ handleDetachClick }
-									/>
-								) }
-								<EditComponentAction
-									label={ panelTitle }
-									onClick={ handleEditComponent }
-									icon={ PencilIcon }
-								/>
-							</Stack>
-						) : undefined
-					}
+					actions={ actions }
 				/>
 				<InstancePanelBody
 					groups={ groups }

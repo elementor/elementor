@@ -6,19 +6,6 @@ export function regenerateLocalStyleIds( element: V1ElementData ): {
 	styles: Record< StyleDefinitionID, StyleDefinition > | undefined;
 	settings: V1ElementSettingsProps | undefined;
 } {
-	const { styles, settings } = regenerateStyleIds( element );
-
-	if ( ! settings ) {
-		return { styles, settings: undefined };
-	}
-
-	return { styles, settings };
-}
-
-function regenerateStyleIds( element: V1ElementData ): {
-	styles: Record< StyleDefinitionID, StyleDefinition > | undefined;
-	settings: V1ElementSettingsProps | undefined;
-} {
 	const originalStyles = element.styles;
 
 	if ( ! originalStyles || Object.keys( originalStyles ).length === 0 ) {
@@ -40,17 +27,19 @@ function regenerateStyleIds( element: V1ElementData ): {
 		return { styles: newStyles, settings: undefined };
 	}
 
-	for ( const [ propKey, propValue ] of Object.entries( settings ) ) {
+	const updatedSettings = { ...settings };
+
+	for ( const [ propKey, propValue ] of Object.entries( updatedSettings ) ) {
 		if ( isClassesProp( propValue ) && propValue.value.length > 0 ) {
 			const updatedClasses = propValue.value.map( ( classId ) => styleIdMapping[ classId ] ?? classId );
 
-			settings[ propKey ] = classesPropTypeUtil.create( updatedClasses );
+			updatedSettings[ propKey ] = classesPropTypeUtil.create( updatedClasses );
 		}
 	}
 
 	return {
 		styles: newStyles,
-		settings,
+		settings: updatedSettings,
 	};
 }
 
