@@ -54,7 +54,6 @@ export function AppContent( { onClose }: AppContentProps ) {
 		completedSteps,
 		urls,
 		actions,
-		isConnected,
 		isGuest,
 	} = useOnboarding();
 
@@ -168,16 +167,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 				},
 			}
 		);
-	}, [
-		actions,
-		choices,
-		completedSteps,
-		isConnected,
-		isGuest,
-		onClose,
-		trackSummary,
-		updateProgress,
-	] );
+	}, [ actions, choices, completedSteps, isConnected, isGuest, onClose, trackSummary, updateProgress ] );
 
 	const handleBack = useCallback( () => {
 		trackBackClicked( stepId );
@@ -373,9 +363,6 @@ export function AppContent( { onClose }: AppContentProps ) {
 			stepId,
 			stepIndex,
 			totalSteps,
-			choices,
-			actions,
-			isLast,
 			updateProgress,
 			saveChoicesFireAndForget,
 			installTheme,
