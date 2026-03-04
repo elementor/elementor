@@ -44,6 +44,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 		totalSteps,
 		hadUnexpectedExit,
 		isLoading,
+		isConnected,
 		hasPassedLogin,
 		shouldShowProInstall,
 		choices,
@@ -78,9 +79,13 @@ export function AppContent( { onClose }: AppContentProps ) {
 		onSuccess: handleConnectSuccess,
 	} );
 
-	const handleContinueAsGuest = useCallback( () => {
-		actions.setGuest( true );
-	}, [ actions ] );
+	const handleContinueAsGuest = useCallback(
+		( event: React.SyntheticEvent ) => {
+			event.preventDefault();
+			actions.setGuest( true );
+		},
+		[ actions ]
+	);
 
 	const handleClose = useCallback( () => {
 		window.dispatchEvent( new CustomEvent( 'e-onboarding-user-exit' ) );
@@ -267,6 +272,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 	const choiceForStep = choices[ stepId as keyof typeof choices ];
 	const continueDisabled = ! isLast && isChoiceEmpty( choiceForStep );
+	const isBackDisabled = isFirst && isConnected;
 
 	const getContinueLabel = () => {
 		if ( stepId === StepId.THEME_SELECTION && ! completedSteps.includes( StepId.THEME_SELECTION ) ) {
@@ -351,6 +357,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 						showBack
 						showSkip
 						showContinue
+						isBackDisabled={ isBackDisabled }
 						continueLabel={ getContinueLabel() }
 						continueDisabled={ continueDisabled }
 						continueLoading={ isPending }

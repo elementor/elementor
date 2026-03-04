@@ -6,7 +6,7 @@ export const OptionCardRoot = styled( ButtonBase )( ( { theme } ) => ( {
 	flexDirection: 'column',
 	alignItems: 'center',
 	justifyContent: 'center',
-	gap: theme.spacing( 3 ),
+	gap: theme.spacing( 2 ),
 	minWidth: 0,
 	height: theme.spacing( 16 ),
 	padding: theme.spacing( 2 ),
@@ -14,6 +14,12 @@ export const OptionCardRoot = styled( ButtonBase )( ( { theme } ) => ( {
 	border: `1px solid ${ theme.palette.divider }`,
 	cursor: 'pointer',
 	transition: 'border-color 150ms ease, background-color 150ms ease',
+	'&:hover': {
+		backgroundColor: theme.palette.action.hover,
+	},
+	'&.Mui-selected': {
+		border: `2px solid ${ theme.palette.text.primary }`,
+	},
 } ) );
 
 export const CardGrid = styled( Box )( ( { theme } ) => ( {

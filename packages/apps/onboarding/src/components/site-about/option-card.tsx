@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type { ElementType } from 'react';
 import { CheckIcon } from '@elementor/icons';
-import { Typography } from '@elementor/ui';
+import { Typography, useTheme } from '@elementor/ui';
 
 import { SelectionBadge } from '../ui/selection-badge';
 import { OptionCardRoot } from './styled-components';
@@ -14,6 +14,8 @@ interface OptionCardProps {
 }
 
 export function OptionCard( { label, icon: Icon, selected, onClick }: OptionCardProps ) {
+	const theme = useTheme();
+
 	return (
 		<OptionCardRoot
 			className={ selected ? 'Mui-selected' : undefined }
@@ -21,8 +23,15 @@ export function OptionCard( { label, icon: Icon, selected, onClick }: OptionCard
 			aria-pressed={ selected }
 		>
 			{ selected && <SelectionBadge icon={ CheckIcon } /> }
-			<Icon sx={ { fontSize: 32, color: 'text.secondary' } } />
-			<Typography variant="body2" color="text.secondary" align="center">
+			<Icon sx={ { fontSize: theme.spacing( 4 ), color: 'text.primary' } } />
+			<Typography
+				variant="body2"
+				color="text.secondary"
+				display="flex"
+				alignItems="center"
+				align="center"
+				sx={ { minHeight: theme.spacing( 5 ) } }
+			>
 				{ label }
 			</Typography>
 		</OptionCardRoot>

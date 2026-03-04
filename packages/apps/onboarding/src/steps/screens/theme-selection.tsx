@@ -66,11 +66,13 @@ export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
 
 	return (
 		<Stack spacing={ 7.5 } data-testid="theme-selection-step">
-			<GreetingBanner>{ greetingText }</GreetingBanner>
+			<Stack width="100%" maxWidth={ 386 } alignSelf="center">
+				<GreetingBanner>{ greetingText }</GreetingBanner>
+			</Stack>
 
 			<Stack spacing={ 4 }>
-				<Stack spacing={ 1 }>
-					<StepTitle variant="h5" align="center">
+				<Stack spacing={ 1 } textAlign="center">
+					<StepTitle color="text.primary" variant="h5" align="center">
 						{ t( 'steps.theme_selection.title' ) }
 					</StepTitle>
 					<Typography variant="body1" color="text.secondary">
@@ -80,7 +82,9 @@ export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
 
 				<Stack
 					direction="row"
-					spacing={ 4 }
+					justifyContent="center"
+					flexWrap="wrap"
+					gap={ 4 }
 					role="radiogroup"
 					aria-label={ t( 'steps.theme_selection.aria_label' ) }
 				>

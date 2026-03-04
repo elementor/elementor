@@ -32,15 +32,26 @@ export function ProInstall() {
 		} );
 	}, [ installPro, actions, showToast ] );
 
-	const handleDismiss = useCallback( () => {
-		actions.dismissProInstallScreen();
-	}, [ actions ] );
+	const handleDismiss = useCallback(
+		( event: React.SyntheticEvent ) => {
+			event.preventDefault();
+			actions.dismissProInstallScreen();
+		},
+		[ actions ]
+	);
 
 	const isInstalling = installPro.isPending;
 
 	return (
 		<FullscreenCard data-testid="pro-install-screen">
-			<Typography variant="h5" align="center" fontWeight={ 500 } fontFamily="Poppins">
+			<Typography
+				variant="h5"
+				color="text.primary"
+				align="center"
+				fontWeight={ 500 }
+				fontFamily="Poppins"
+				marginBottom={ -2 }
+			>
 				{ t( 'pro_install.title' ) }
 			</Typography>
 
@@ -63,7 +74,13 @@ export function ProInstall() {
 					{ isInstalling ? t( 'pro_install.installing_short' ) : t( 'pro_install.install_button' ) }
 				</PrimaryButton>
 
-				<TextButton variant="text" color="info" onClick={ handleDismiss } disabled={ isInstalling }>
+				<TextButton
+					href={ '#' }
+					align="center"
+					onClick={ ( event: React.SyntheticEvent ) => handleDismiss?.( event ) }
+					disabled={ isInstalling }
+					sx={ { textDecoration: 'none' } }
+				>
 					{ t( 'pro_install.do_it_later' ) }
 				</TextButton>
 			</Stack>

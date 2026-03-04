@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Button, Paper, styled } from '@elementor/ui';
+import { Box, Button, Link, Paper, styled } from '@elementor/ui';
 
 import { getOnboardingAssetUrl } from '../steps/step-visuals';
 
@@ -54,19 +54,52 @@ export const PrimaryButton = styled( Button )( ( { theme } ) => ( {
 	letterSpacing: '0.46px',
 	lineHeight: theme.typography.pxToRem( 26 ),
 	padding: theme.spacing( 1, 2.75 ),
+	minHeight: theme.spacing( 6 ),
 } ) );
 
 export const SecondaryButton = styled( Button )( ( { theme } ) => ( {
+	display: 'flex',
+	alignItems: 'center',
+	justifyContent: 'center',
+	flexWrap: 'wrap',
+	gap: theme.spacing( 1 ),
+	border: `1px solid ${ theme.palette.divider }`,
 	borderRadius: theme.shape.borderRadius,
 	textTransform: 'none',
 	fontSize: theme.typography.pxToRem( 15 ),
 	fontWeight: 500,
 	letterSpacing: '0.46px',
 	lineHeight: theme.typography.pxToRem( 26 ),
-	padding: theme.spacing( 1, 1.5 ),
+	padding: theme.spacing( 1, 3 ),
 } ) );
 
-export const TextButton = styled( Button )( ( { theme } ) => ( {
+export const SocialIconWrapper = styled( Paper )( ( { theme } ) => ( {
+	width: theme.spacing( 3.5 ),
+	height: theme.spacing( 3.5 ),
+	borderRadius: '50%',
+	border: `1px solid ${ theme.palette.divider }`,
+	boxShadow: 'none',
+	display: 'flex',
+	alignItems: 'center',
+	justifyContent: 'center',
+	marginLeft: theme.spacing( -1 ),
+	'&:first-of-type': {
+		marginLeft: 0,
+		zIndex: 1,
+	},
+	'&:nth-of-type(2)': {
+		zIndex: 2,
+	},
+	'&:nth-of-type(3)': {
+		zIndex: 3,
+	},
+	'& svg': {
+		width: theme.spacing( 2.5 ),
+		height: theme.spacing( 2.5 ),
+	},
+} ) );
+
+export const TextButton = styled( Link )( ( { theme } ) => ( {
 	textTransform: 'none',
 	fontSize: theme.typography.pxToRem( 13 ),
 	fontWeight: 500,
