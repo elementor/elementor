@@ -301,6 +301,7 @@ class Test_Manager extends Data_Test_Base {
 			'e-onboarding/user-choices' => 'e-onboarding',
 			'e-onboarding/pro-install-screen' => 'e-onboarding',
 			'e-onboarding/install-pro' => 'e-onboarding',
+			'e-onboarding/install-theme' => 'e-onboarding',
 		], $this->manager->command_formats );
 	}
 }
