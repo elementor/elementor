@@ -97,6 +97,10 @@ jobs:
           echo "NPM_DIST_TAG=$NPM_DIST_TAG" >> $GITHUB_OUTPUT
           echo "Using tag suffix: $TAG_SUFFIX"
           echo "Using npm dist-tag: $NPM_DIST_TAG"
+      
+      - name: Build Packages
+        working-directory: packages
+        run: npm run build
 
       - name: Get/Set Version
         id: version
@@ -130,10 +134,6 @@ jobs:
 
           echo "FULL_VERSION=$FULL_VERSION" >> $GITHUB_OUTPUT
           echo "VERSION_WITH_TAG=$FULL_VERSION" >> $GITHUB_OUTPUT
-
-      - name: Build Packages
-        working-directory: packages
-        run: npm run build:ci
 
       - name: Publish Packages
         working-directory: packages
