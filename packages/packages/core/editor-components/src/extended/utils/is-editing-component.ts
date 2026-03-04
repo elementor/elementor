@@ -1,5 +1,5 @@
-import { componentsStore } from '../../store/dispatchers';
+import { componentsSelectors } from '../../store/selectors';
 
 export function isEditingComponent(): boolean {
-	return componentsStore.getCurrentComponentId() !== null;
+	return componentsSelectors.getCurrentComponentId() !== null;
 }

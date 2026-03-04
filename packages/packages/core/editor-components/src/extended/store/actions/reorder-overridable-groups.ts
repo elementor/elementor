@@ -1,4 +1,5 @@
-import { componentsStore } from '../../../store/dispatchers';
+import { componentsActions } from '../../../store/dispatchers';
+import { componentsSelectors } from '../../../store/selectors';
 import { type ComponentId } from '../../../types';
 
 type ReorderGroupsParams = {
@@ -7,13 +8,13 @@ type ReorderGroupsParams = {
 };
 
 export function reorderOverridableGroups( { componentId, newOrder }: ReorderGroupsParams ): void {
-	const overridableProps = componentsStore.getOverridableProps( componentId );
+	const overridableProps = componentsSelectors.getOverridableProps( componentId );
 
 	if ( ! overridableProps ) {
 		return;
 	}
 
-	componentsStore.setOverridableProps( componentId, {
+	componentsActions.setOverridableProps( componentId, {
 		...overridableProps,
 		groups: {
 			...overridableProps.groups,

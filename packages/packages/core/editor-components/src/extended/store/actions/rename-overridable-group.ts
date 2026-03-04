@@ -1,4 +1,5 @@
-import { componentsStore } from '../../../store/dispatchers';
+import { componentsActions } from '../../../store/dispatchers';
+import { componentsSelectors } from '../../../store/selectors';
 import { type ComponentId } from '../../../types';
 import { renameGroup } from '../utils/groups-transformers';
 
@@ -9,7 +10,7 @@ type RenameGroupParams = {
 };
 
 export function renameOverridableGroup( { componentId, groupId, label }: RenameGroupParams ): boolean {
-	const overridableProps = componentsStore.getOverridableProps( componentId );
+	const overridableProps = componentsSelectors.getOverridableProps( componentId );
 
 	if ( ! overridableProps ) {
 		return false;
@@ -23,7 +24,7 @@ export function renameOverridableGroup( { componentId, groupId, label }: RenameG
 
 	const updatedGroups = renameGroup( overridableProps.groups, groupId, label );
 
-	componentsStore.setOverridableProps( componentId, {
+	componentsActions.setOverridableProps( componentId, {
 		...overridableProps,
 		groups: updatedGroups,
 	} );

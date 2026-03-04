@@ -2,12 +2,12 @@ import { getV1DocumentsManager, setDocumentModifiedStatus } from '@elementor/edi
 import { getAllDescendants, type V1Element } from '@elementor/editor-elements';
 
 import { COMPONENT_WIDGET_TYPE } from '../../../create-component-type';
-import { componentsStore } from '../../../store/dispatchers';
+import { componentsActions } from '../../../store/dispatchers';
 
 const TITLE_EXTERNAL_CHANGE_COMMAND = 'title_external_change';
 
 export const renameComponent = ( componentUid: string, newName: string ) => {
-	componentsStore.rename( componentUid, newName );
+	componentsActions.rename( componentUid, newName );
 
 	setDocumentModifiedStatus( true );
 

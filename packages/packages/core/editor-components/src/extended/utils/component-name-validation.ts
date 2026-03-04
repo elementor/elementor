@@ -1,10 +1,10 @@
-import { componentsStore } from '../../store/dispatchers';
+import { componentsSelectors } from '../../store/selectors';
 import { createSubmitComponentSchema } from './component-form-schema';
 
 type ValidationResult = { isValid: true; errorMessage: null } | { isValid: false; errorMessage: string };
 
 export function validateComponentName( label: string ): ValidationResult {
-	const existingComponentTitles = componentsStore.getComponents()?.map( ( { name } ) => name ) ?? [];
+	const existingComponentTitles = componentsSelectors.getComponents()?.map( ( { name } ) => name ) ?? [];
 	const schema = createSubmitComponentSchema( existingComponentTitles );
 	const result = schema.safeParse( { componentName: label.toLowerCase() } );
 

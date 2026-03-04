@@ -1,4 +1,5 @@
-import { componentsStore } from '../../../store/dispatchers';
+import { componentsActions } from '../../../store/dispatchers';
+import { componentsSelectors } from '../../../store/selectors';
 import { type ComponentId, type OverridableProp } from '../../../types';
 import { movePropBetweenGroups } from '../utils/groups-transformers';
 
@@ -15,7 +16,7 @@ export function updateOverridablePropParams( {
 	label,
 	groupId,
 }: UpdatePropParams ): OverridableProp | undefined {
-	const overridableProps = componentsStore.getOverridableProps( componentId );
+	const overridableProps = componentsSelectors.getOverridableProps( componentId );
 
 	if ( ! overridableProps ) {
 		return;
@@ -38,7 +39,7 @@ export function updateOverridablePropParams( {
 
 	const updatedGroups = movePropBetweenGroups( overridableProps.groups, overrideKey, oldGroupId, newGroupId );
 
-	componentsStore.setOverridableProps( componentId, {
+	componentsActions.setOverridableProps( componentId, {
 		...overridableProps,
 		props: {
 			...overridableProps.props,

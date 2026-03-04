@@ -1,7 +1,7 @@
 import { getAllDescendants, type V1Element } from '@elementor/editor-elements';
 import { type HookOptions, registerDataHook } from '@elementor/editor-v1-adapters';
 
-import { componentsStore } from '../../store/dispatchers';
+import { componentsSelectors } from '../../store/selectors';
 import { deleteOverridableProp } from '../store/actions/delete-overridable-prop';
 
 type DeleteCommandArgs = {
@@ -18,13 +18,13 @@ export function initCleanupOverridablePropsOnDelete() {
 			return true;
 		}
 
-		const currentComponentId = componentsStore.getCurrentComponentId();
+		const currentComponentId = componentsSelectors.getCurrentComponentId();
 
 		if ( ! currentComponentId ) {
 			return true;
 		}
 
-		const overridableProps = componentsStore.getOverridableProps( currentComponentId );
+		const overridableProps = componentsSelectors.getOverridableProps( currentComponentId );
 
 		if ( ! overridableProps || Object.keys( overridableProps.props ).length === 0 ) {
 			return true;

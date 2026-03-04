@@ -1,14 +1,15 @@
 import { type ComponentOverridablePropValue } from '../../prop-types/component-overridable-prop-type';
 import { type OriginPropFields, type OverridableProps } from '../../types';
 import { resolveOverridePropValue } from '../../utils/resolve-override-prop-value';
-import { componentsStore } from '../dispatchers';
+import { componentsActions } from '../dispatchers';
+import { componentsSelectors } from '../selectors';
 
 export function updateOverridableProp(
 	componentId: number,
 	propValue: ComponentOverridablePropValue,
 	originPropFields?: OriginPropFields
 ) {
-	const overridableProps = componentsStore.getOverridableProps( componentId );
+	const overridableProps = componentsSelectors.getOverridableProps( componentId );
 
 	if ( ! overridableProps ) {
 		return;
@@ -42,5 +43,5 @@ export function updateOverridableProp(
 		},
 	} satisfies OverridableProps;
 
-	componentsStore.setOverridableProps( componentId, newOverridableProps );
+	componentsActions.setOverridableProps( componentId, newOverridableProps );
 }

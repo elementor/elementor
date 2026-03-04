@@ -3,7 +3,7 @@ import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters
 import { generateUniqueId } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
-import { componentsStore } from '../../../store/dispatchers';
+import { componentsActions } from '../../../store/dispatchers';
 import { type OriginalElementData, type OverridableProps } from '../../../types';
 import { type Source, trackComponentEvent } from '../../../utils/tracking';
 import { type ComponentEventData } from '../../components/create-component-form/utils/get-component-event-data';
@@ -39,13 +39,13 @@ export async function createUnpublishedComponent( {
 		index: container?.view?._index ?? 0,
 	};
 
-	componentsStore.addUnpublished( {
+	componentsActions.addUnpublished( {
 		...componentBase,
 		elements: [ elementDataWithOverridablesReverted ],
 		overridableProps,
 	} );
 
-	componentsStore.addCreatedThisSession( generatedUid );
+	componentsActions.addCreatedThisSession( generatedUid );
 
 	const componentInstance = await replaceElementWithComponent( element, componentBase );
 
@@ -62,8 +62,8 @@ export async function createUnpublishedComponent( {
 	} catch ( error ) {
 		restoreOriginalElement( originalElement, componentInstance.id );
 
-		componentsStore.removeUnpublished( generatedUid );
-		componentsStore.removeCreatedThisSession( generatedUid );
+		componentsActions.removeUnpublished( generatedUid );
+		componentsActions.removeCreatedThisSession( generatedUid );
 
 		throw error;
 	}

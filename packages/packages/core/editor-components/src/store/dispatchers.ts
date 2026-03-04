@@ -1,30 +1,14 @@
 import { type V1Document } from '@elementor/editor-documents';
-import { __dispatch as dispatch, __getState as getState, __getStore as getStore } from '@elementor/store';
+import { __dispatch as dispatch, __getStore as getStore } from '@elementor/store';
 
 import { type ComponentId, type OverridableProps, type PublishedComponent, type UnpublishedComponent } from '../types';
-import {
-	type ComponentsPathItem,
-	type ComponentsSlice,
-	type SanitizeAttributes,
-	selectArchivedThisSession,
-	selectComponents,
-	selectCurrentComponent,
-	selectCurrentComponentId,
-	selectOverridableProps,
-	selectUnpublishedComponents,
-	selectUpdatedComponentNames,
-	slice,
-} from './store';
+import { type ComponentsPathItem, type SanitizeAttributes, slice } from './store';
 
 function safeDispatch() {
 	return getStore()?.dispatch;
 }
 
-function safeGetState(): ComponentsSlice | undefined {
-	return getStore()?.getState() as ComponentsSlice | undefined;
-}
-
-export const componentsStore = {
+export const componentsActions = {
 	add( components: PublishedComponent | PublishedComponent[] ) {
 		dispatch( slice.actions.add( components ) );
 	},
@@ -75,31 +59,5 @@ export const componentsStore = {
 	},
 	resetSanitizedComponents() {
 		dispatch( slice.actions.resetSanitizedComponents() );
-	},
-
-	getOverridableProps( componentId: ComponentId ) {
-		return selectOverridableProps( getState(), componentId );
-	},
-	getCurrentComponent() {
-		return selectCurrentComponent( getState() );
-	},
-	getCurrentComponentId() {
-		const state = safeGetState();
-		if ( ! state ) {
-			return null;
-		}
-		return selectCurrentComponentId( state );
-	},
-	getUnpublishedComponents() {
-		return selectUnpublishedComponents( getState() );
-	},
-	getUpdatedComponentNames() {
-		return selectUpdatedComponentNames( getState() );
-	},
-	getArchivedThisSession() {
-		return selectArchivedThisSession( getState() );
-	},
-	getComponents() {
-		return selectComponents( getState() );
 	},
 };

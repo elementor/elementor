@@ -1,4 +1,5 @@
-import { componentsStore } from '../../../store/dispatchers';
+import { componentsActions } from '../../../store/dispatchers';
+import { componentsSelectors } from '../../../store/selectors';
 import { type ComponentId, type OverridablePropsGroup } from '../../../types';
 import { type Source, trackComponentEvent } from '../../../utils/tracking';
 
@@ -15,9 +16,9 @@ export function addOverridableGroup( {
 	label,
 	source,
 }: AddGroupParams ): OverridablePropsGroup | undefined {
-	const currentComponent = componentsStore.getCurrentComponent();
+	const currentComponent = componentsSelectors.getCurrentComponent();
 
-	const overridableProps = componentsStore.getOverridableProps( componentId );
+	const overridableProps = componentsSelectors.getOverridableProps( componentId );
 
 	if ( ! overridableProps ) {
 		return;
@@ -29,7 +30,7 @@ export function addOverridableGroup( {
 		props: [],
 	};
 
-	componentsStore.setOverridableProps( componentId, {
+	componentsActions.setOverridableProps( componentId, {
 		...overridableProps,
 		groups: {
 			...overridableProps.groups,

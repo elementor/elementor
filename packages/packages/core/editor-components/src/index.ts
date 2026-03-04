@@ -57,7 +57,8 @@ export {
 
 export { loadComponentsAssets } from './store/actions/load-components-assets';
 export { updateOverridableProp } from './store/actions/update-overridable-prop';
-export { componentsStore } from './store/dispatchers';
+export { componentsActions } from './store/dispatchers';
+export { componentsSelectors } from './store/selectors';
 export {
 	SLICE_NAME,
 	selectArchivedThisSession,

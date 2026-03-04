@@ -1,4 +1,5 @@
-import { componentsStore } from '../../../store/dispatchers';
+import { componentsActions } from '../../../store/dispatchers';
+import { componentsSelectors } from '../../../store/selectors';
 import { type ComponentId } from '../../../types';
 import { deleteGroup } from '../utils/groups-transformers';
 
@@ -8,7 +9,7 @@ type DeleteGroupParams = {
 };
 
 export function deleteOverridableGroup( { componentId, groupId }: DeleteGroupParams ): boolean {
-	const overridableProps = componentsStore.getOverridableProps( componentId );
+	const overridableProps = componentsSelectors.getOverridableProps( componentId );
 
 	if ( ! overridableProps ) {
 		return false;
@@ -22,7 +23,7 @@ export function deleteOverridableGroup( { componentId, groupId }: DeleteGroupPar
 
 	const updatedGroups = deleteGroup( overridableProps.groups, groupId );
 
-	componentsStore.setOverridableProps( componentId, {
+	componentsActions.setOverridableProps( componentId, {
 		...overridableProps,
 		groups: updatedGroups,
 	} );

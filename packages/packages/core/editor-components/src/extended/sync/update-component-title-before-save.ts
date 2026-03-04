@@ -1,9 +1,10 @@
 import { apiClient } from '../../api';
-import { componentsStore } from '../../store/dispatchers';
+import { componentsActions } from '../../store/dispatchers';
+import { componentsSelectors } from '../../store/selectors';
 import { type DocumentSaveStatus } from '../../types';
 
 export const updateComponentTitleBeforeSave = async ( status: DocumentSaveStatus ) => {
-	const updatedComponentNames = componentsStore.getUpdatedComponentNames();
+	const updatedComponentNames = componentsSelectors.getUpdatedComponentNames();
 
 	if ( ! updatedComponentNames.length ) {
 		return;
@@ -12,6 +13,6 @@ export const updateComponentTitleBeforeSave = async ( status: DocumentSaveStatus
 	const result = await apiClient.updateComponentTitle( updatedComponentNames, status );
 
 	if ( result.failedIds.length === 0 ) {
-		componentsStore.cleanUpdatedComponentNames();
+		componentsActions.cleanUpdatedComponentNames();
 	}
 };

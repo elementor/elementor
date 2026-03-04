@@ -2,7 +2,8 @@ import { updateElementSettings, type V1ElementData } from '@elementor/editor-ele
 
 import { apiClient } from '../../api';
 import { type ComponentInstanceProp } from '../../prop-types/component-instance-prop-type';
-import { componentsStore } from '../../store/dispatchers';
+import { componentsActions } from '../../store/dispatchers';
+import { componentsSelectors } from '../../store/selectors';
 import { type DocumentSaveStatus, type UnpublishedComponent } from '../../types';
 
 export async function createComponentsBeforeSave( {
@@ -12,7 +13,7 @@ export async function createComponentsBeforeSave( {
 	elements: V1ElementData[];
 	status: DocumentSaveStatus;
 } ) {
-	const unpublishedComponents = componentsStore.getUnpublishedComponents();
+	const unpublishedComponents = componentsSelectors.getUnpublishedComponents();
 
 	if ( ! unpublishedComponents.length ) {
 		return;
@@ -23,7 +24,7 @@ export async function createComponentsBeforeSave( {
 
 		updateComponentInstances( elements, uidToComponentId );
 
-		componentsStore.add(
+		componentsActions.add(
 			unpublishedComponents.map( ( component ) => ( {
 				id: uidToComponentId.get( component.uid ) as number,
 				name: component.name,
@@ -31,10 +32,10 @@ export async function createComponentsBeforeSave( {
 				overridableProps: component.overridableProps ? component.overridableProps : undefined,
 			} ) )
 		);
-		componentsStore.resetUnpublished();
+		componentsActions.resetUnpublished();
 	} catch ( error ) {
 		const failedUids = unpublishedComponents.map( ( component ) => component.uid );
-		componentsStore.removeUnpublished( failedUids );
+		componentsActions.removeUnpublished( failedUids );
 
 		throw new Error( `Failed to publish components: ${ error }` );
 	}
