@@ -129,10 +129,7 @@ class Onboarding_Progress_Manager {
 		}
 
 		if ( isset( $params['theme_selection'] ) ) {
-			$theme_slug = $params['theme_selection'];
-			$choices->set_theme_selection( $theme_slug );
-
-			$this->install_and_activate_theme( $theme_slug );
+			$choices->set_theme_selection( $params['theme_selection'] );
 		}
 
 		if ( isset( $params['site_features'] ) ) {
@@ -142,13 +139,13 @@ class Onboarding_Progress_Manager {
 		return $this->save_choices( $choices );
 	}
 
-	private function install_and_activate_theme( string $theme_slug ): void {
+	public function install_and_activate_theme( string $theme_slug ): bool {
 		if ( ! in_array( $theme_slug, self::ALLOWED_THEMES, true ) ) {
-			return;
+			return false;
 		}
 
 		if ( ! current_user_can( 'install_themes' ) || ! current_user_can( 'switch_themes' ) ) {
-			return;
+			return false;
 		}
 
 		$theme = wp_get_theme( $theme_slug );
@@ -171,11 +168,13 @@ class Onboarding_Progress_Manager {
 			$result = $upgrader->install( "https://downloads.wordpress.org/theme/{$theme_slug}.latest-stable.zip" );
 
 			if ( is_wp_error( $result ) || ! $result ) {
-				return;
+				return false;
 			}
 		}
 
 		switch_theme( $theme_slug );
+
+		return true;
 	}
 
 	public function reset(): void {

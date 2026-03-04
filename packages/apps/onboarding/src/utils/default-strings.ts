@@ -10,6 +10,8 @@ export const DEFAULT_STRINGS: Record< string, string > = {
 	'common.recommended': 'Recommended',
 	'error.failed_mark_exit': 'Failed to mark user exit.',
 	'error.failed_complete_step': 'Failed to complete step.',
+	'error.pro_install_failed': 'Couldn\'t install Elementor Pro. Please try again later',
+	'error.theme_install_failed': 'Theme installation didn\'t complete. Please try again later',
 	'login.title': "Let's get to work.",
 	'login.sign_in': 'Sign in to Elementor',
 	'login.or': 'OR',

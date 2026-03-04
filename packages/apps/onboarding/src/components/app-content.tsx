@@ -5,6 +5,7 @@ import { Box } from '@elementor/ui';
 import { useCheckProInstallScreen } from '../hooks/use-check-pro-install-screen';
 import { useElementorConnect } from '../hooks/use-elementor-connect';
 import { useOnboarding } from '../hooks/use-onboarding';
+import { useInstallTheme } from '../hooks/use-install-theme';
 import { useUpdateChoices } from '../hooks/use-update-choices';
 import { useUpdateProgress } from '../hooks/use-update-progress';
 import { BuildingFor } from '../steps/screens/building-for';
@@ -16,7 +17,9 @@ import { SiteFeatures } from '../steps/screens/site-features';
 import { ThemeSelection } from '../steps/screens/theme-selection';
 import { getStepVisualConfig } from '../steps/step-visuals';
 import { StepId } from '../types';
+import { trackOnboardingError } from '../utils/error-tracking';
 import { t } from '../utils/translations';
+import { useToast } from './toast/toast-context';
 import { BaseLayout } from './ui/base-layout';
 import { CompletionScreen } from './ui/completion-screen';
 import { Footer } from './ui/footer';
@@ -51,9 +54,11 @@ export function AppContent( { onClose }: AppContentProps ) {
 	} = useOnboarding();
 
 	const [ isCompleting, setIsCompleting ] = useState( false );
+	const { showToast } = useToast();
 
 	const updateProgress = useUpdateProgress();
 	const updateChoices = useUpdateChoices();
+	const installTheme = useInstallTheme();
 
 	useEffect( () => {
 		if ( hadUnexpectedExit ) {
@@ -89,7 +94,8 @@ export function AppContent( { onClose }: AppContentProps ) {
 					onClose?.();
 				},
 				onError: () => {
-					actions.setError( t( 'error.failed_mark_exit' ) );
+					actions.setExitType( 'user_exit' );
+					onClose?.();
 				},
 			}
 		);
@@ -143,15 +149,38 @@ export function AppContent( { onClose }: AppContentProps ) {
 		);
 	}, [ actions, isLast, stepIndex, totalSteps, updateProgress, redirectToNewPage ] );
 
+	const saveChoicesFireAndForget = useCallback(
+		( choiceData: Record< string, unknown > ) => {
+			updateChoices.mutate( choiceData, {
+				onError: () => {
+					trackOnboardingError( 'choices_persist_failed', { step: stepId } );
+				},
+			} );
+		},
+		[ updateChoices, stepId ]
+	);
+
 	const handleContinue = useCallback(
 		( directChoice?: Record< string, unknown > ) => {
-			if ( directChoice ) {
-				updateChoices.mutate( directChoice );
-			} else {
+			const choiceData = directChoice ?? ( () => {
 				const storedChoice = choices[ stepId as keyof typeof choices ];
+				return isChoiceEmpty( storedChoice ) ? null : { [ stepId ]: storedChoice };
+			} )();
 
-				if ( ! isChoiceEmpty( storedChoice ) ) {
-					updateChoices.mutate( { [ stepId ]: storedChoice } );
+			if ( choiceData ) {
+				saveChoicesFireAndForget( choiceData );
+			}
+
+			if ( stepId === StepId.THEME_SELECTION ) {
+				const themeSlug = ( choiceData?.theme_selection ?? choices.theme_selection ) as string;
+
+				if ( themeSlug ) {
+					installTheme.mutate( themeSlug, {
+						onError: ( error ) => {
+							trackOnboardingError( 'theme_install_failed', { message: error.message } );
+							showToast( t( 'error.theme_install_failed' ) );
+						},
+					} );
 				}
 			}
 
@@ -184,12 +213,13 @@ export function AppContent( { onClose }: AppContentProps ) {
 						actions.nextStep();
 					},
 					onError: () => {
-						actions.setError( t( 'error.failed_complete_step' ) );
+						actions.completeStep( stepId );
+						actions.nextStep();
 					},
 				}
 			);
 		},
-		[ stepId, stepIndex, totalSteps, choices, actions, isLast, updateProgress, updateChoices, redirectToNewPage ]
+		[ stepId, stepIndex, totalSteps, choices, actions, isLast, updateProgress, saveChoicesFireAndForget, installTheme, showToast, redirectToNewPage ]
 	);
 
 	const rightPanelConfig = useMemo( () => getStepVisualConfig( stepId ), [ stepId ] );
