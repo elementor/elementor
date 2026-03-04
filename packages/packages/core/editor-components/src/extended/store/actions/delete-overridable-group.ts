@@ -1,6 +1,5 @@
-import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
-
-import { selectOverridableProps, slice } from '../../../store/store';
+import { componentsActions } from '../../../store/dispatchers';
+import { componentsSelectors } from '../../../store/selectors';
 import { type ComponentId } from '../../../types';
 import { deleteGroup } from '../utils/groups-transformers';
 
@@ -10,7 +9,7 @@ type DeleteGroupParams = {
 };
 
 export function deleteOverridableGroup( { componentId, groupId }: DeleteGroupParams ): boolean {
-	const overridableProps = selectOverridableProps( getState(), componentId );
+	const overridableProps = componentsSelectors.getOverridableProps( componentId );
 
 	if ( ! overridableProps ) {
 		return false;
@@ -24,15 +23,10 @@ export function deleteOverridableGroup( { componentId, groupId }: DeleteGroupPar
 
 	const updatedGroups = deleteGroup( overridableProps.groups, groupId );
 
-	dispatch(
-		slice.actions.setOverridableProps( {
-			componentId,
-			overridableProps: {
-				...overridableProps,
-				groups: updatedGroups,
-			},
-		} )
-	);
+	componentsActions.setOverridableProps( componentId, {
+		...overridableProps,
+		groups: updatedGroups,
+	} );
 
 	return true;
 }
