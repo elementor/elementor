@@ -2,8 +2,8 @@ import * as React from 'react';
 import { useCallback, useMemo } from 'react';
 import { Stack, type Theme, Typography } from '@elementor/ui';
 
-import { StepTitle } from '../../components/ui/styled-components';
 import { WoocommerceIcon } from '../../components/icons/site-features/woocommerce-icon';
+import { StepTitle } from '../../components/ui/styled-components';
 import { useOnboarding } from '../../hooks/use-onboarding';
 import AccessibilityToolsIcon from '../../icons/site-features/accessibility-tools-icon';
 import AIGeneratorIcon from '../../icons/site-features/ai-generator-icon';
