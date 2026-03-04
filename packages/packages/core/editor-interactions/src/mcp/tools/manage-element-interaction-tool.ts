@@ -5,7 +5,12 @@ import { isProActive } from '@elementor/utils';
 
 import { interactionsRepository } from '../../interactions-repository';
 import { type ElementInteractions } from '../../types';
-import { createInteractionItem, extractExcludedBreakpoints, extractSize, extractString } from '../../utils/prop-value-utils';
+import {
+	createInteractionItem,
+	extractExcludedBreakpoints,
+	extractSize,
+	extractString,
+} from '../../utils/prop-value-utils';
 import { generateTempInteractionId } from '../../utils/temp-id-utils';
 import { MAX_INTERACTIONS_PER_ELEMENT } from '../constants';
 import { INTERACTIONS_SCHEMA_URI } from '../resources/interactions-schema-resource';

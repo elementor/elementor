@@ -123,7 +123,9 @@ describe( 'manage-element-interaction tool', () => {
 			const callHandler = createRegistryAndGetHandler();
 			const result = callHandler( { elementId: 'el-bp', action: 'get' } ) as Record< string, unknown >;
 
-			expect( ( ( result.interactions as unknown[] )[ 0 ] as Record< string, unknown > ).excludedBreakpoints ).toEqual( [ 'mobile', 'tablet' ] );
+			expect(
+				( ( result.interactions as unknown[] )[ 0 ] as Record< string, unknown > ).excludedBreakpoints
+			).toEqual( [ 'mobile', 'tablet' ] );
 		} );
 
 		it( 'does not call updateElementInteractions', () => {
@@ -419,7 +421,11 @@ describe( 'manage-element-interaction tool', () => {
 			mockAll.mockReturnValue( [ makeElementData( 'el-del', [ item1, item2 ] ) ] );
 
 			const callHandler = createRegistryAndGetHandler();
-			const result = callHandler( { elementId: 'el-del', action: 'delete', interactionId: 'delete-me' } ) as Record< string, unknown >;
+			const result = callHandler( {
+				elementId: 'el-del',
+				action: 'delete',
+				interactionId: 'delete-me',
+			} ) as Record< string, unknown >;
 
 			expect( result.success ).toBe( true );
 			expect( result.count ).toBe( 1 );

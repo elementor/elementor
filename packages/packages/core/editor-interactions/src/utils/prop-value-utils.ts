@@ -2,7 +2,6 @@ import { type Unit } from '@elementor/editor-controls';
 import { type PropValue, sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 
 import { DEFAULT_TIME_UNIT, TIME_UNITS } from '../configs/time-constants';
-import { getInteractionsConfig } from './get-interactions-config';
 import {
 	type AnimationPresetPropValue,
 	type BooleanPropValue,
@@ -18,6 +17,7 @@ import {
 	type TimingConfigPropValue,
 } from '../types';
 import { formatSizeValue, parseSizeValue } from '../utils/size-transform-utils';
+import { getInteractionsConfig } from './get-interactions-config';
 import { generateTempInteractionId } from './temp-id-utils';
 
 export const createString = ( value: string ): StringPropValue => ( {
