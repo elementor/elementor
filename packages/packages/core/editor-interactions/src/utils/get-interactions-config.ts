@@ -2,11 +2,14 @@ import { type InteractionsConfig } from '../types';
 
 const DEFAULT_CONFIG: InteractionsConfig = {
 	constants: {
-		defaultDuration: 300,
+		defaultDuration: 600,
 		defaultDelay: 0,
 		slideDistance: 100,
-		scaleStart: 0.5,
-		easing: 'linear',
+		scaleStart: 0,
+		defaultEasing: 'easeIn',
+		relativeTo: 'viewport',
+		offsetTop: 15,
+		offsetBottom: 85,
 	},
 };
 

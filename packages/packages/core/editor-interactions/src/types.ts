@@ -31,7 +31,10 @@ export type InteractionConstants = {
 	defaultDelay: number;
 	slideDistance: number;
 	scaleStart: number;
-	easing: string;
+	defaultEasing: string;
+	relativeTo: string;
+	offsetTop: number;
+	offsetBottom: number;
 };
 
 export type InteractionsConfig = {

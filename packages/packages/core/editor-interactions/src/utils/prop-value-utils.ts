@@ -2,6 +2,7 @@ import { type Unit } from '@elementor/editor-controls';
 import { type PropValue, sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 
 import { DEFAULT_TIME_UNIT, TIME_UNITS } from '../configs/time-constants';
+import { getInteractionsConfig } from './get-interactions-config';
 import {
 	type AnimationPresetPropValue,
 	type BooleanPropValue,
@@ -191,14 +192,15 @@ export const createInteractionItem = ( {
 } );
 
 export const createDefaultInteractionItem = (): InteractionItemPropValue => {
+	const { constants } = getInteractionsConfig();
 	return createInteractionItem( {
 		trigger: 'load',
 		effect: 'fade',
 		type: 'in',
-		duration: 600,
-		delay: 0,
+		duration: constants.defaultDuration,
+		delay: constants.defaultDelay,
 		replay: false,
-		easing: 'easeIn',
+		easing: constants.defaultEasing,
 		interactionId: generateTempInteractionId(),
 	} );
 };
