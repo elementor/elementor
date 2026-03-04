@@ -28,10 +28,7 @@ export interface RightPanelAsset {
 	animation?: AssetAnimation;
 }
 
-export type ImageLayout = 'wide' | 'narrow';
-
 export interface StepVisualConfig {
-	imageLayout: ImageLayout;
 	background: string;
 	assets: RightPanelAsset[];
 	contentMaxWidth?: number;
