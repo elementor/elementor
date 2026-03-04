@@ -6,6 +6,7 @@ import { FullscreenCard, PrimaryButton, TextButton } from '../../components/full
 import { useToast } from '../../components/toast/toast-context';
 import { useInstallPro } from '../../hooks/use-install-pro';
 import { useOnboarding } from '../../hooks/use-onboarding';
+import { ONBOARDING_ERRORS, trackOnboardingError } from '../../utils/error-tracking';
 import { t } from '../../utils/translations';
 import { getOnboardingAssetUrl } from '../step-visuals';
 
@@ -25,7 +26,8 @@ export function ProInstall() {
 			onSuccess: () => {
 				actions.markProInstalled();
 			},
-			onError: () => {
+			onError: ( error ) => {
+				trackOnboardingError( ONBOARDING_ERRORS.PRO_INSTALL_FAILED, { message: error.message } );
 				showToast( t( 'error.pro_install_failed' ) );
 				actions.dismissProInstallScreen();
 			},
