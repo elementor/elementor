@@ -6,8 +6,10 @@ import type {
 	LegacyWindow,
 } from '@elementor/editor-canvas';
 
-import { COMPONENT_WIDGET_TYPE, type ContextMenuAction, createComponentType } from '../create-component-type';
+import { COMPONENT_WIDGET_TYPE, createComponentType } from '../create-component-type';
 import type { ExtendedWindow } from '../types';
+
+type TestWindow = LegacyWindow & ExtendedWindow;
 
 const MOCK_COMPONENT_ID = 123;
 
@@ -104,9 +106,11 @@ describe( 'createComponentType', () => {
 			createBackboneElementsCollection: jest.fn(),
 		} as unknown as LegacyWindow[ 'elementor' ];
 
-		( window as unknown as LegacyWindow & ExtendedWindow ).elementor = mockElementorWindow;
+		const testWindow = window as unknown as TestWindow;
 
-		( window as unknown as LegacyWindow & ExtendedWindow ).elementorCommon = {
+		testWindow.elementor = mockElementorWindow;
+
+		testWindow.elementorCommon = {
 			eventsManager: {
 				config: {
 					triggers: {
@@ -129,10 +133,16 @@ describe( 'createComponentType', () => {
 
 	afterEach( () => {
 		jest.clearAllMocks();
+		delete window.elementorPro;
 	} );
 
+	const setProState = ( { installed, active }: { installed: boolean; active: boolean } ) => {
+		( window as unknown as TestWindow ).elementor.helpers = { hasPro: () => installed };
+		window.elementorPro = { config: { isActive: active } };
+	};
+
 	const createMockViewInstance = ( isAdministrator: boolean ) => {
-		( window as unknown as LegacyWindow ).elementor = {
+		( window as unknown as TestWindow ).elementor = {
 			...mockElementorWindow,
 			config: {
 				user: {
@@ -199,6 +209,8 @@ describe( 'createComponentType', () => {
 			} as BackboneModel< ElementModel >,
 		};
 
+		( viewInstance as unknown as ComponentViewInstance ).editComponent = jest.fn();
+
 		return viewInstance;
 	};
 
@@ -207,7 +219,7 @@ describe( 'createComponentType', () => {
 		const groups = viewInstance.getContextMenuGroups();
 
 		const generalGroup = groups.find( ( group ) => group.name === 'general' );
-		const actions = ( generalGroup?.actions ?? [] ) as ContextMenuAction[];
+		const actions = generalGroup?.actions ?? [];
 		expect( generalGroup ).toBeDefined();
 		expect( actions ).toHaveLength( 2 );
 		expect( actions.some( ( action ) => action.name === 'edit component' ) ).toBe( true );
@@ -219,7 +231,7 @@ describe( 'createComponentType', () => {
 		const groups = viewInstance.getContextMenuGroups();
 
 		const generalGroup = groups.find( ( group ) => group.name === 'general' );
-		const actions = ( generalGroup?.actions ?? [] ) as ContextMenuAction[];
+		const actions = generalGroup?.actions ?? [];
 		expect( generalGroup ).toBeDefined();
 		expect( actions ).toHaveLength( 1 );
 		expect( actions.some( ( action ) => action.name === 'edit component' ) ).toBe( false );
@@ -239,8 +251,8 @@ describe( 'createComponentType', () => {
 		expect( adminClipboardGroup ).toBeDefined();
 		expect( editorClipboardGroup ).toBeDefined();
 
-		const adminActions = ( adminClipboardGroup?.actions ?? [] ) as ContextMenuAction[];
-		const editorActions = ( editorClipboardGroup?.actions ?? [] ) as ContextMenuAction[];
+		const adminActions = adminClipboardGroup?.actions ?? [];
+		const editorActions = editorClipboardGroup?.actions ?? [];
 		const adminPasteStyleAction = adminActions.find( ( action ) => action.name === 'pasteStyle' );
 		const adminResetStyleAction = adminActions.find( ( action ) => action.name === 'resetStyle' );
 		const editorPasteStyleAction = editorActions.find( ( action ) => action.name === 'pasteStyle' );
@@ -253,7 +265,7 @@ describe( 'createComponentType', () => {
 	} );
 
 	it( 'should return groups without modifications when componentId is not available', () => {
-		( window as unknown as LegacyWindow & ExtendedWindow ).elementor = {
+		( window as unknown as TestWindow ).elementor = {
 			...mockElementorWindow,
 			config: {
 				user: {
@@ -321,7 +333,7 @@ describe( 'createComponentType', () => {
 
 		const groups = viewInstance.getContextMenuGroups();
 		const generalGroup = groups.find( ( group ) => group.name === 'general' );
-		const actions = ( generalGroup?.actions ?? [] ) as ContextMenuAction[];
+		const actions = generalGroup?.actions ?? [];
 
 		expect( actions ).toHaveLength( 1 );
 		expect( actions.some( ( action ) => action.name === 'edit component' ) ).toBe( false );
@@ -349,7 +361,8 @@ describe( 'createComponentType', () => {
 		// Arrange
 		const viewInstance = createMockViewInstance( true ) as unknown as ComponentViewInstance;
 		const mockEvent = { stopPropagation: jest.fn() } as unknown as MouseEvent;
-		viewInstance.editComponent = jest.fn();
+
+		setProState( { installed: true, active: true } );
 
 		// Act
 		viewInstance.handleDblClick( mockEvent );
@@ -367,7 +380,6 @@ describe( 'createComponentType', () => {
 		// Arrange
 		const viewInstance = createMockViewInstance( false ) as unknown as ComponentViewInstance;
 		const mockEvent = { stopPropagation: jest.fn() } as unknown as MouseEvent;
-		viewInstance.editComponent = jest.fn();
 
 		// Act
 		viewInstance.handleDblClick( mockEvent );
@@ -375,5 +387,68 @@ describe( 'createComponentType', () => {
 		// Assert
 		expect( mockEvent.stopPropagation ).toHaveBeenCalled();
 		expect( viewInstance.editComponent ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should silently block dblclick when Pro is not installed', () => {
+		// Arrange
+		const viewInstance = createMockViewInstance( true ) as unknown as ComponentViewInstance;
+		const mockEvent = { stopPropagation: jest.fn() } as unknown as MouseEvent;
+
+		setProState( { installed: false, active: false } );
+
+		// Act
+		viewInstance.handleDblClick( mockEvent );
+
+		// Assert
+		expect( mockEvent.stopPropagation ).toHaveBeenCalled();
+		expect( viewInstance.editComponent ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should allow dblclick edit when Pro is installed but expired', () => {
+		// Arrange
+		const viewInstance = createMockViewInstance( true ) as unknown as ComponentViewInstance;
+		const mockEvent = { stopPropagation: jest.fn() } as unknown as MouseEvent;
+
+		setProState( { installed: true, active: false } );
+
+		// Act
+		viewInstance.handleDblClick( mockEvent );
+
+		// Assert
+		expect( mockEvent.stopPropagation ).toHaveBeenCalled();
+		expect( viewInstance.editComponent ).toHaveBeenCalled();
+	} );
+
+	it( 'should disable edit action and show PRO badge when Pro is not installed', () => {
+		// Arrange
+		const viewInstance = createMockViewInstance( true );
+		setProState( { installed: false, active: false } );
+
+		// Act
+		const groups = viewInstance.getContextMenuGroups();
+		const generalGroup = groups.find( ( group ) => group.name === 'general' );
+		const editAction = ( generalGroup?.actions ?? [] ).find( ( action ) => action.name === 'edit component' );
+
+		// Assert
+		expect( editAction ).toBeDefined();
+		expect( editAction?.isEnabled() ).toBe( false );
+		expect( editAction?.shortcut ).toContain( 'PRO' );
+		expect( editAction?.shortcut ).toContain( 'go-pro-components-edit' );
+	} );
+
+	it( 'should enable edit action without badge when Pro is installed but expired', () => {
+		// Arrange
+		const viewInstance = createMockViewInstance( true );
+		setProState( { installed: true, active: false } );
+
+		// Act
+		const groups = viewInstance.getContextMenuGroups();
+		const generalGroup = groups.find( ( group ) => group.name === 'general' );
+		const editAction = ( generalGroup?.actions ?? [] ).find( ( action ) => action.name === 'edit component' );
+
+		// Assert
+		expect( editAction ).toBeDefined();
+		expect( editAction?.isEnabled() ).toBe( true );
+		expect( editAction?.shortcut ).toBeUndefined();
 	} );
 } );

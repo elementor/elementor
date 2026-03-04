@@ -37,10 +37,10 @@ class Atomic_Global_Styles {
 		$context = is_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
 
 		$get_styles = function () use ( $context ) {
-			return Global_Classes_Repository::make()->context( $context )->all()->get_items()->map( function( $item ) {
+			return Global_Classes_Repository::make()->context( $context )->all()->get_ordered_items()->map( function( $item ) {
 				$item['id'] = $item['label'];
 				return $item;
-			})->all();
+			})->reverse()->all(); // we should reverse the order of the items so that the last in the original array should be rendered first (to be overridden by the previous ones)
 		};
 
 		$styles_manager->register(

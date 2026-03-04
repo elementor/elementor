@@ -1,8 +1,8 @@
 import ElementEmpty from './element-empty';
+import InlineChildren from './inline-children';
 import RootEmpty from './root-empty';
 
 const NEW_NESTABLE_CLASS = 'elementor-navigator__element-new-nestable';
-const INLINE_CHILD_INDENT_INCREMENT = 10;
 
 export default class extends Marionette.CompositeView {
 	getTemplate() {
@@ -47,7 +47,7 @@ export default class extends Marionette.CompositeView {
 			return RootEmpty;
 		}
 
-		if ( this.getInlineChildren() ) {
+		if ( this.inlineChildren.get() ) {
 			return null;
 		}
 
@@ -117,7 +117,7 @@ export default class extends Marionette.CompositeView {
 
 		this.childViewContainer = '.elementor-navigator__elements';
 
-		this._cachedInlineChildren = undefined;
+		this.inlineChildren = new InlineChildren( this );
 
 		this.listenTo( this.model, 'change', this.onModelChange )
 			.listenTo( this.model.get( 'settings' ), 'change', this.onModelSettingsChange );
@@ -155,43 +155,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	hasChildren() {
-		return this.model.get( 'elements' )?.length || 'widget' !== this.model.get( 'elType' ) || !! this.getInlineChildren();
-	}
-
-	getInlineChildren() {
-		if ( undefined !== this._cachedInlineChildren ) {
-			return this._cachedInlineChildren;
-		}
-
-		this._cachedInlineChildren = this._computeInlineChildren();
-
-		return this._cachedInlineChildren;
-	}
-
-	_computeInlineChildren() {
-		if ( 'widget' !== this.model.get( 'elType' ) ) {
-			return null;
-		}
-
-		const settings = this.model.get( 'settings' );
-
-		if ( ! settings ) {
-			return null;
-		}
-
-		const allChildren = [];
-
-		Object.values( settings.attributes ).forEach( ( setting ) => {
-			if ( 'html-v3' === setting?.$$type && Array.isArray( setting?.value?.children ) ) {
-				allChildren.push( ...setting.value.children );
-			}
-		} );
-
-		return allChildren.length > 0 ? allChildren : null;
-	}
-
-	invalidateInlineChildrenCache() {
-		this._cachedInlineChildren = undefined;
+		return this.model.get( 'elements' )?.length || 'widget' !== this.model.get( 'elType' ) || !! this.inlineChildren?.get();
 	}
 
 	toggleList( state, callback ) {
@@ -399,6 +363,8 @@ export default class extends Marionette.CompositeView {
 	 */
 	deselect() {
 		this.removeEditingClass();
+
+		this.inlineChildren.clearHighlights();
 	}
 
 	onRender() {
@@ -412,56 +378,7 @@ export default class extends Marionette.CompositeView {
 
 		this.toggleHiddenClass();
 		this.renderIndicators();
-		this.renderInlineChildren();
-	}
-
-	renderInlineChildren() {
-		this.ui.elements.find( '.elementor-navigator__inline-child' ).remove();
-
-		const inlineChildren = this.getInlineChildren();
-
-		if ( ! inlineChildren ) {
-			return;
-		}
-
-		this.appendInlineChildItems( inlineChildren, this.getIndent() );
-	}
-
-	appendInlineChildItems( children, indent ) {
-		indent += INLINE_CHILD_INDENT_INCREMENT;
-		const $container = this.ui.elements;
-
-		children.forEach( ( child ) => {
-			const title = child.content || child.type;
-
-			const $item = jQuery( '<div>', {
-				class: 'elementor-navigator__element elementor-navigator__inline-child',
-				'data-inline-id': child.id,
-			} );
-
-			const $inner = jQuery( '<div>', {
-				class: 'elementor-navigator__item',
-			} ).css( 'padding-inline-start', indent + 'px' );
-
-			$inner.append(
-				jQuery( '<div>', { class: 'elementor-navigator__element__element-type' } )
-					.html( '<i class="eicon-code-bold" aria-hidden="true"></i>' ),
-				jQuery( '<div>', { class: 'elementor-navigator__element__title' } )
-					.append(
-						jQuery( '<span>', {
-							class: 'elementor-navigator__element__title__text',
-							text: '<' + child.type + '> ' + title,
-						} ),
-					),
-			);
-
-			$item.append( $inner );
-			$container.append( $item );
-
-			if ( Array.isArray( child.children ) && child.children.length > 0 ) {
-				this.appendInlineChildItems( child.children, indent );
-			}
-		} );
+		this.inlineChildren.render();
 	}
 
 	onModelChange() {
@@ -499,8 +416,8 @@ export default class extends Marionette.CompositeView {
 		);
 
 		if ( hasHtmlV3Change ) {
-			this.invalidateInlineChildrenCache();
-			this.renderInlineChildren();
+			this.inlineChildren.invalidateCache();
+			this.inlineChildren.render();
 		}
 	}
 

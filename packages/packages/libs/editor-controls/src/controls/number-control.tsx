@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { numberPropTypeUtil } from '@elementor/editor-props';
+import { numberPropTypeUtil, type PropType } from '@elementor/editor-props';
 import { InputAdornment } from '@elementor/ui';
 
 import { useBoundProp } from '../bound-prop-context';
@@ -9,6 +9,13 @@ import { createControl } from '../create-control';
 
 const isEmptyOrNaN = ( value?: string | number | null ) =>
 	value === null || value === undefined || value === '' || Number.isNaN( Number( value ) );
+
+const renderSuffix = ( propType: PropType ) => {
+	if ( propType.meta?.suffix ) {
+		return <InputAdornment position="end">{ propType.meta.suffix }</InputAdornment>;
+	}
+	return <></>;
+};
 
 export const NumberControl = createControl(
 	( {
@@ -26,7 +33,7 @@ export const NumberControl = createControl(
 		shouldForceInt?: boolean;
 		startIcon?: React.ReactNode;
 	} ) => {
-		const { value, setValue, placeholder, disabled, restoreValue } = useBoundProp( numberPropTypeUtil );
+		const { value, setValue, placeholder, disabled, restoreValue, propType } = useBoundProp( numberPropTypeUtil );
 
 		const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 			const {
@@ -68,6 +75,7 @@ export const NumberControl = createControl(
 								{ startIcon }
 							</InputAdornment>
 						) : undefined,
+						endAdornment: renderSuffix( propType ),
 					} }
 				/>
 			</ControlActions>

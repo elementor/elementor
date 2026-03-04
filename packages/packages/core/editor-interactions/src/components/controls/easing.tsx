@@ -31,7 +31,6 @@ export function Easing( {}: FieldProps ) {
 			value={ DEFAULT_VALUES.easing }
 			baseOptions={ baseOptions }
 			disabledOptions={ disabledOptions }
-			promotionLabel={ __( 'PRO features', 'elementor' ) }
 			promotionContent={ __( 'Upgrade to control the smoothness of the interaction.', 'elementor' ) }
 			upgradeUrl="https://go.elementor.com/go-pro-interactions-easing-modal/"
 		/>

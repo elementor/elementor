@@ -27,6 +27,7 @@ describe( 'useCustomCss', () => {
 		jest.mocked( useElement ).mockReturnValue( {
 			element: { id: 'test-element-id', type: 'test' },
 			elementType: { key: 'test', controls: [], title: 'Test', propsSchema: {} },
+			settings: {},
 		} );
 	} );
 

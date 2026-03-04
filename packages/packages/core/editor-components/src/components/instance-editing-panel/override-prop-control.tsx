@@ -19,8 +19,8 @@ import {
 	useElement,
 	type Values,
 } from '@elementor/editor-editing-panel';
-import { type Control, getElementType } from '@elementor/editor-elements';
-import { propDependenciesMet, type PropType, type PropValue } from '@elementor/editor-props';
+import { type Control, getElementSettings, getElementType } from '@elementor/editor-elements';
+import { type AnyTransformable, propDependenciesMet, type PropType, type PropValue } from '@elementor/editor-props';
 import { Stack } from '@elementor/ui';
 
 import { useControlsByWidgetType } from '../../hooks/use-controls-by-widget-type';
@@ -224,6 +224,8 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 		return null;
 	}
 
+	const settings = getElementSettings< AnyTransformable >( elementId, Object.keys( elementType.propsSchema ) );
+
 	const propTypeSchema = createTopLevelObjectType( {
 		schema: {
 			[ overridableProp.overrideKey ]: propType,
@@ -235,7 +237,7 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 			value={ componentOverridablePropTypeUtil.extract( matchingOverride ) ?? undefined }
 			componentInstanceElement={ componentInstanceElement }
 		>
-			<ElementProvider element={ { id: elementId, type } } elementType={ elementType }>
+			<ElementProvider element={ { id: elementId, type } } elementType={ elementType } settings={ settings }>
 				<SettingsField bind={ propKey } propDisplayName={ overridableProp.label }>
 					<PropProvider
 						propType={ propTypeSchema }

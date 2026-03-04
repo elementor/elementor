@@ -40,7 +40,7 @@ export function ComponentsList() {
 	);
 }
 
-const EmptyState = () => {
+export const EmptyState = () => {
 	const { canCreate } = useComponentsPermissions();
 
 	return (
@@ -106,7 +106,7 @@ const EmptyState = () => {
 	);
 };
 
-const EmptySearchResult = () => {
+export const EmptySearchResult = () => {
 	const { searchValue, clearSearch } = useSearch();
 	return (
 		<Stack
@@ -163,7 +163,7 @@ const EmptySearchResult = () => {
 	);
 };
 
-const useFilteredComponents = () => {
+export const useFilteredComponents = () => {
 	const { components, isLoading } = useComponents();
 	const { searchValue } = useSearch();
 

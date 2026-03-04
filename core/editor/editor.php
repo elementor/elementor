@@ -538,6 +538,26 @@ class Editor {
 		// Handle autocomplete feature for URL control.
 		add_filter( 'wp_link_query_args', [ $this, 'filter_wp_link_query_args' ] );
 		add_filter( 'wp_link_query', [ $this, 'filter_wp_link_query' ] );
+
+		add_filter( 'replace_editor', [ $this, 'filter_replace_editor' ], 10, 2 );
+	}
+
+	/**
+	 * Signals to WordPress that Elementor is replacing the block editor on its own editor page,
+	 * so that block-editor-specific behaviour (e.g. WP 7.0 COOP/COEP isolation headers) is not
+	 * applied when the Elementor editor is active.
+	 *
+	 * @param bool     $replace Whether the editor is being replaced.
+	 * @param \WP_Post $post    The post being edited.
+	 *
+	 * @return bool
+	 */
+	public function filter_replace_editor( $replace, $post ) {
+		if ( isset( $_REQUEST['action'] ) && 'elementor' === $_REQUEST['action'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return true;
+		}
+
+		return $replace;
 	}
 
 	/**
