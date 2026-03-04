@@ -9,7 +9,7 @@ export interface FeatureOption {
 	id: string;
 	labelKey: string;
 	Icon: React.ElementType;
-	licenseType: 'core' | 'pro' | 'one' | 'other';
+	licenseType: 'core' | 'pro' | 'one';
 }
 
 interface FeatureCardProps {
