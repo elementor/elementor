@@ -87,7 +87,7 @@ export function init() {
 
 	initLoadComponentDataAfterInstanceAdded();
 
-	if ( isProAtLeast( PRO_EXTENDED_MIGRATION_VERSION ) ) {
+	if ( !! window.elementorPro && ! isProAtLeast( PRO_EXTENDED_MIGRATION_VERSION ) ) {
 		initExtended();
 	}
 }

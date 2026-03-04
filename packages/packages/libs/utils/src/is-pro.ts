@@ -16,6 +16,11 @@ function getProVersion(): string {
 
 export function isProAtLeast( targetVersion: string ): boolean {
 	const version = getProVersion();
+
+	if ( ! version ) {
+		return false;
+	}
+
 	const [ major, minor ] = version.split( '.' ).map( Number );
 	const [ targetMajor, targetMinor ] = targetVersion.split( '.' ).map( Number );
 
