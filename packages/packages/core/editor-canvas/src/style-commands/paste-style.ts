@@ -9,7 +9,13 @@ import {
 } from '@elementor/editor-v1-adapters';
 
 import { undoablePasteElementStyle } from './undoable-actions/paste-element-style';
-import { type ContainerArgs, getClassesProp, getClipboardElements, hasAtomicWidgets, isAtomicWidget } from './utils';
+import {
+	type ContainerArgs,
+	getClassesProp,
+	getClipboardElements,
+	hasAtomicWidgets,
+	isAtomicWidget,
+} from '../utils/command-utils';
 
 type PasteStylesCommandArgs = ContainerArgs & {
 	storageKey?: string;
