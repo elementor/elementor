@@ -28,7 +28,13 @@ Prefer using "em" and "rem" values for text-related sizes, padding and spacing. 
 This flexboxes are by default "flex" with "stretch" alignment. To ensure proper layout, define the "justify-content" and "align-items" as in the schema.
 
 When applicable for styles, apply style PropValues using the ${ STYLE_SCHEMA_URI }.
-The css string must follow standard CSS syntax, with properties and values separated by semicolons, no selectors, or nesting rules allowed.`,
+The css string must follow standard CSS syntax, with properties and values separated by semicolons, no selectors, or nesting rules allowed.
+
+** CRITICAL - VARIABLES **
+When using global variables, ensure that the variables are defined in the ${ 'elementor://global-variables' } resource.
+Variables from the user context ARE NOT SUPPORTED AND WILL RESOLVE IN ERROR.
+
+`,
 				},
 			],
 		};
