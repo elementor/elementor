@@ -1,12 +1,8 @@
 import { useElement } from '@elementor/editor-editing-panel';
-import { useElementSetting, useSelectedElement } from '@elementor/editor-elements';
 
 import { useSanitizeOverridableProps } from '../../hooks/use-sanitize-overridable-props';
 import { type ComponentInstanceOverridesPropValue } from '../../prop-types/component-instance-overrides-prop-type';
-import {
-	componentInstancePropTypeUtil,
-	type ComponentInstancePropValue,
-} from '../../prop-types/component-instance-prop-type';
+import { componentInstancePropTypeUtil } from '../../prop-types/component-instance-prop-type';
 import { useComponent } from '../../store/store';
 import { type Component, type OverridablePropsGroup } from '../../types';
 
@@ -21,7 +17,7 @@ type InstancePanelData = {
 };
 
 export function useInstancePanelData(): InstancePanelData | null {
-	const settings = useComponentInstanceSettings();
+	const { element, settings } = useComponentInstanceSettings();
 
 	const componentId = settings?.component_id?.value;
 
@@ -29,7 +25,7 @@ export function useInstancePanelData(): InstancePanelData | null {
 
 	const component = useComponent( componentId ?? null );
 
-	const componentInstanceId = useSelectedElement()?.element?.id;
+	const componentInstanceId = element?.id;
 
 	const overridableProps = useSanitizeOverridableProps( componentId ?? null, componentInstanceId );
 
@@ -49,9 +45,7 @@ export function useInstancePanelData(): InstancePanelData | null {
 }
 
 function useComponentInstanceSettings() {
-	const { element } = useElement();
+	const { element, settings } = useElement();
 
-	const settings = useElementSetting< ComponentInstancePropValue >( element.id, 'component_instance' );
-
-	return componentInstancePropTypeUtil.extract( settings );
+	return { element, settings: componentInstancePropTypeUtil.extract( settings.component_instance ) };
 }
