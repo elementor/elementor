@@ -19,7 +19,7 @@ test.describe( 'Atomic Components @v4-tests', () => {
 
 	const headingControlLabel = 'Title';
 
-	const proMockScript = `<script>window.elementorPro = { config: { isActive: true, version: '4.0.0' } };</script>`;
+	const proMockScript = `<script>window.elementorPro = { config: { isActive: true, version: '3.35.0' } };</script>`;
 
 	const proMockRouteHandler = async ( route: import( '@playwright/test' ).Route ) => {
 		const response = await route.fetch();
@@ -37,12 +37,15 @@ test.describe( 'Atomic Components @v4-tests', () => {
 		} );
 	};
 
+	// Temporary fix for Pro mock route pattern, will be moved to pro
+	const proMockRoutePattern = ( url: URL ) => 'elementor' === url.searchParams.get( 'action' );
+
 	const enableProMock = async () => {
-		await page.route( '**/*action=elementor*', proMockRouteHandler );
+		await page.route( proMockRoutePattern, proMockRouteHandler );
 	};
 
 	const disableProMock = async () => {
-		await page.unroute( '**/*action=elementor*', proMockRouteHandler );
+		await page.unroute( proMockRoutePattern, proMockRouteHandler );
 	};
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
