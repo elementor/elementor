@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useCallback } from 'react';
 import { ChevronRightSmallIcon } from '@elementor/icons';
 import { Stack, Typography, withDirection } from '@elementor/ui';
 
@@ -32,14 +31,11 @@ export function ExperienceLevel( { onComplete }: ExperienceLevelProps ) {
 
 	const selectedValue = choices.experience_level;
 
-	const handleSelect = useCallback(
-		( value: string ) => {
-			trackExperienceSelected( value );
-			actions.setUserChoice( 'experience_level', value );
-			onComplete( { experience_level: value } );
-		},
-		[ actions, onComplete, trackExperienceSelected ]
-	);
+	function handleSelect( value: string ) {
+		trackExperienceSelected( value );
+		actions.setUserChoice( 'experience_level', value );
+		onComplete( { experience_level: value } );
+	}
 
 	return (
 		<Stack spacing={ 4 } width="100%" data-testid="experience-level-step">

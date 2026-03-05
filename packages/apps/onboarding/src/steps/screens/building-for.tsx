@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { ChevronRightSmallIcon } from '@elementor/icons';
 import { Stack, withDirection } from '@elementor/ui';
 
@@ -43,14 +43,11 @@ export function BuildingFor( { onComplete }: BuildingForProps ) {
 		return t( 'steps.building_for.greeting_without_name', GREETING_WAVE );
 	}, [ userName, isConnected, isGuest ] );
 
-	const handleSelect = useCallback(
-		( value: BuildingForValue ) => {
-			trackPersonaSelected( value );
-			actions.setUserChoice( 'building_for', value );
-			onComplete( { building_for: value } );
-		},
-		[ actions, onComplete, trackPersonaSelected ]
-	);
+	function handleSelect( value: BuildingForValue ) {
+		trackPersonaSelected( value );
+		actions.setUserChoice( 'building_for', value );
+		onComplete( { building_for: value } );
+	}
 
 	return (
 		<Stack spacing={ 7.5 } data-testid="building-for-step">

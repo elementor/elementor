@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Stack, Typography } from '@elementor/ui';
 
 import { OptionsGrid } from '../../components/site-about';
@@ -23,17 +23,14 @@ export function SiteAbout() {
 		return getGreeting( choices.building_for ?? '' );
 	}, [ choices.building_for ] );
 
-	const handleToggle = useCallback(
-		( value: string ) => {
-			const next = selectedValues.includes( value )
-				? selectedValues.filter( ( v ) => v !== value )
-				: [ ...selectedValues, value ];
+	function handleToggle( value: string ) {
+		const next = selectedValues.includes( value )
+			? selectedValues.filter( ( v ) => v !== value )
+			: [ ...selectedValues, value ];
 
-			trackSiteTopicSelected( next );
-			actions.setUserChoice( 'site_about', next );
-		},
-		[ selectedValues, actions, trackSiteTopicSelected ]
-	);
+		trackSiteTopicSelected( next );
+		actions.setUserChoice( 'site_about', next );
+	}
 
 	return (
 		<Stack spacing={ 7.5 } data-testid="site-about-step">

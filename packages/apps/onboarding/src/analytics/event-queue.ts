@@ -11,19 +11,14 @@ export function enqueueEvent( name: string, payload: Record< string, unknown > )
 		const queue = getEventQueue();
 		queue.push( { name, payload, timestamp: Date.now() } );
 		sessionStorage.setItem( STORAGE_KEY, JSON.stringify( queue ) );
-	} catch ( error ) {
-		// eslint-disable-next-line no-console -- intentional: surface storage failures for debugging
-		console.warn( 'Failed to enqueue event:', error );
-	}
+	} catch {}
 }
 
 export function getEventQueue(): QueuedEvent[] {
 	try {
 		const raw = sessionStorage.getItem( STORAGE_KEY );
 		return raw ? JSON.parse( raw ) : [];
-	} catch ( error ) {
-		// eslint-disable-next-line no-console -- intentional: surface storage failures for debugging
-		console.warn( 'Failed to get event queue:', error );
+	} catch {
 		return [];
 	}
 }
@@ -31,8 +26,5 @@ export function getEventQueue(): QueuedEvent[] {
 export function clearEventQueue(): void {
 	try {
 		sessionStorage.removeItem( STORAGE_KEY );
-	} catch ( error ) {
-		// eslint-disable-next-line no-console -- intentional: surface storage failures for debugging
-		console.warn( 'Failed to clear event queue:', error );
-	}
+	} catch {}
 }

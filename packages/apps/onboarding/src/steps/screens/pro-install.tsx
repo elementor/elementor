@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useCallback } from 'react';
 import { CircularProgress, Stack, styled, Typography } from '@elementor/ui';
 
 import { FullscreenCard, PrimaryButton, TextButton } from '../../components/fullscreen-card';
@@ -31,7 +30,7 @@ export function ProInstall() {
 		}
 	}, [ trackStepViewed ] );
 
-	const handleInstall = useCallback( () => {
+	function handleInstall() {
 		trackProInstall( 'install' );
 		installPro.mutate( undefined, {
 			onSuccess: () => {
@@ -48,16 +47,13 @@ export function ProInstall() {
 				actions.dismissProInstallScreen();
 			},
 		} );
-	}, [ installPro, actions, showToast, trackProInstall, trackErrorReported ] );
+	}
 
-	const handleDismiss = useCallback(
-		( event: React.SyntheticEvent ) => {
-			event.preventDefault();
-			trackProInstall( 'later' );
-			actions.dismissProInstallScreen();
-		},
-		[ actions, trackProInstall ]
-	);
+	function handleDismiss( event: React.SyntheticEvent ) {
+		event.preventDefault();
+		trackProInstall( 'later' );
+		actions.dismissProInstallScreen();
+	}
 
 	const isInstalling = installPro.isPending;
 
@@ -96,7 +92,7 @@ export function ProInstall() {
 				<TextButton
 					href={ '#' }
 					align="center"
-					onClick={ ( event: React.SyntheticEvent ) => handleDismiss?.( event ) }
+					onClick={ ( event: React.SyntheticEvent ) => handleDismiss( event ) }
 					disabled={ isInstalling }
 					sx={ { textDecoration: 'none' } }
 				>

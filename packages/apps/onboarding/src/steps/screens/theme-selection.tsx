@@ -37,15 +37,6 @@ export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
 	// For now, always show both themes so the UI can be tested.
 	const showBothThemes = true;
 
-	// Pre-select the recommended theme if no explicit selection was made yet.
-	// `actions` is omitted from deps because it is a stable memoized object (useMemo + dispatch).
-	useEffect( () => {
-		if ( ! selectedValue ) {
-			actions.setUserChoice( 'theme_selection', recommendedTheme );
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ selectedValue, recommendedTheme ] );
-
 	const hasTrackedSuggestion = React.useRef( false );
 
 	useEffect( () => {

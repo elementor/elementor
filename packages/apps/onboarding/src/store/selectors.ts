@@ -22,6 +22,8 @@ export const selectError = ( state: State ) => state.onboarding.error;
 
 export const selectHadUnexpectedExit = ( state: State ) => state.onboarding.hadUnexpectedExit;
 
+export const selectResumeStepIdForTracking = ( state: State ) => state.onboarding.resumeStepIdForTracking;
+
 export const selectIsConnected = ( state: State ) => state.onboarding.isConnected;
 
 export const selectIsGuest = ( state: State ) => state.onboarding.isGuest;

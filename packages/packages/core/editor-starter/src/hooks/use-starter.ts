@@ -1,8 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-	__privateRunCommand as runCommand,
-	getCanvasIframeDocument,
-} from '@elementor/editor-v1-adapters';
+import { __privateRunCommand as runCommand, getCanvasIframeDocument } from '@elementor/editor-v1-adapters';
 
 import type { StarterConfig } from '../types';
 import { deleteStarterConfig, getStarterConfig } from '../utils';
@@ -17,9 +14,7 @@ interface ElementorChannels {
 }
 
 function getElementorChannels(): ElementorChannels | undefined {
-	return (
-		window as unknown as { elementor?: { channels?: ElementorChannels } }
-	 ).elementor?.channels;
+	return ( window as unknown as { elementor?: { channels?: ElementorChannels } } ).elementor?.channels;
 }
 
 function dismissStarterApi( config: StarterConfig ) {
@@ -38,19 +33,33 @@ function dismissStarterApi( config: StarterConfig ) {
 
 function showIframeHeader() {
 	const iframeDoc = getCanvasIframeDocument();
-	iframeDoc?.documentElement?.style.setProperty(
-		'--e-starter-header-display',
-		'block'
-	);
+	iframeDoc?.documentElement?.style.setProperty( '--e-starter-header-display', 'block' );
 }
 
 export function useStarter() {
 	const [ config, setConfig ] = useState< StarterConfig | null >( null );
 	const [ isDismissing, setIsDismissing ] = useState( false );
-	const [ portalContainer, setPortalContainer ] = useState< Element | null >(
-		null
-	);
+	const [ portalContainer, setPortalContainer ] = useState< Element | null >( null );
 	const dismissedRef = useRef( false );
+	const dismissRef = useRef< () => void >( () => {} );
+
+	const runDismiss = useCallback( () => {
+		if ( ! config || dismissedRef.current ) {
+			return;
+		}
+
+		dismissedRef.current = true;
+		setIsDismissing( true );
+
+		dismissStarterApi( config );
+		deleteStarterConfig();
+	}, [ config ] );
+
+	dismissRef.current = runDismiss;
+
+	const dismiss = useCallback( () => {
+		dismissRef.current();
+	}, [] );
 
 	useEffect( () => {
 		const activate = () => {
@@ -83,29 +92,10 @@ export function useStarter() {
 			}
 		};
 
-		window.addEventListener(
-			'elementor/commands/run/after',
-			onCommandAfter
-		);
+		window.addEventListener( 'elementor/commands/run/after', onCommandAfter );
 
-		return () =>
-			window.removeEventListener(
-				'elementor/commands/run/after',
-				onCommandAfter
-			);
+		return () => window.removeEventListener( 'elementor/commands/run/after', onCommandAfter );
 	}, [] );
-
-	const dismiss = useCallback( () => {
-		if ( ! config || dismissedRef.current ) {
-			return;
-		}
-
-		dismissedRef.current = true;
-		setIsDismissing( true );
-
-		dismissStarterApi( config );
-		deleteStarterConfig();
-	}, [ config ] );
 
 	useEffect( () => {
 		if ( ! config ) {
@@ -123,36 +113,27 @@ export function useStarter() {
 		const channels = getElementorChannels();
 		const handleDragStart = () => dismiss();
 
-		window.addEventListener(
-			'elementor/commands/run/after',
-			onElementAdded
-		);
+		window.addEventListener( 'elementor/commands/run/after', onElementAdded );
 		channels?.panelElements?.on( 'element:drag:start', handleDragStart );
 
 		return () => {
-			window.removeEventListener(
-				'elementor/commands/run/after',
-				onElementAdded
-			);
-			channels?.panelElements?.off(
-				'element:drag:start',
-				handleDragStart
-			);
+			window.removeEventListener( 'elementor/commands/run/after', onElementAdded );
+			channels?.panelElements?.off( 'element:drag:start', handleDragStart );
 		};
 	}, [ config, dismiss ] );
 
-	const openTemplatesLibrary = useCallback( () => {
+	function openTemplatesLibrary() {
 		dismiss();
 		runCommand( 'library/open' );
-	}, [ dismiss ] );
+	}
 
-	const openAiPlanner = useCallback( () => {
+	function openAiPlanner() {
 		dismiss();
 
 		if ( config?.aiPlannerUrl ) {
 			window.open( config.aiPlannerUrl, '_blank', 'noopener,noreferrer' );
 		}
-	}, [ config, dismiss ] );
+	}
 
 	const onExited = useCallback( () => {
 		showIframeHeader();

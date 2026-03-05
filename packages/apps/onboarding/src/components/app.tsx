@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { createQueryClient, QueryClientProvider } from '@elementor/query';
 import { __createStore, __getStore, __StoreProvider as StoreProvider } from '@elementor/store';
 import { DirectionProvider, ThemeProvider } from '@elementor/ui';
@@ -40,12 +40,10 @@ export function App( props: AppProps ) {
 			existingStore = __createStore();
 		}
 
+		existingStore.dispatch( initFromConfig() );
+
 		return existingStore;
 	}, [] );
-
-	useEffect( () => {
-		store.dispatch( initFromConfig() );
-	}, [ store ] );
 
 	const queryClient = useMemo( () => createQueryClient(), [] );
 

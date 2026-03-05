@@ -1,460 +1,63 @@
-import { useCallback } from 'react';
-import { canSendEvents, getMixpanel } from '@elementor/events';
-
 import type {
 	ErrorReportedTarget,
-	ObSummaryMetadataItem,
 	ObSummarySnapshot,
-	OnboardingEventPayload,
 	SiteStarterInteractionResult,
 	SiteStarterTargetName,
-} from '../analytics';
+} from '../analytics/events';
 import {
-	clearEventQueue,
-	enqueueEvent,
-	EXPERIENCE_VALUE_MAP,
-	getEventQueue,
-	OnboardingEventName,
-	PERSONA_VALUE_MAP,
-	PRO_FEATURES_CORE_IDS,
-	STEP_NUMBERS,
-	STEP_SPEC_NAMES,
-	TARGET_NAME_PERSONA,
-	THEME_VALUE_MAP,
-} from '../analytics';
+	flushQueue,
+	trackBackClicked,
+	trackConnect,
+	trackErrorReported,
+	trackExperienceSelected,
+	trackLoginType,
+	trackOnboardingInitialized,
+	trackPersonaSelected,
+	trackProFeaturesSelected,
+	trackProInstall,
+	trackResumeOnboarding,
+	trackSiteStarterSelected,
+	trackSiteTopicSelected,
+	trackSkipClicked,
+	trackStepViewed,
+	trackSummary,
+	trackThemeSelected,
+	trackThemeSuggested,
+	trackUpgradeClicked,
+} from '../analytics/onboarding-tracking';
 import { useTrackingState } from '../analytics/tracking-context';
-
-function dispatchDirectly( eventName: string, payload: Record< string, unknown > ): void {
-	const { dispatchEvent } = getMixpanel();
-	dispatchEvent?.( eventName, payload );
-}
 
 export function useOnboardingEvent() {
 	const { isActive, activate } = useTrackingState();
 
-	const trackEvent = useCallback(
-		( eventName: string, payload: Partial< OnboardingEventPayload > ) => {
-			const fullPayload: Record< string, unknown > = {
-				app_type: 'editor',
-				window_name: 'core_onboarding',
-				...payload,
-			};
-
-			if ( isActive && canSendEvents() ) {
-				dispatchDirectly( eventName, fullPayload );
-			} else {
-				enqueueEvent( eventName, fullPayload );
-			}
-		},
-		[ isActive ]
-	);
-
-	const activateTracking = useCallback( () => {
-		activate();
-	}, [ activate ] );
-
-	const flushQueue = useCallback( () => {
-		const queued = getEventQueue();
-
-		queued
-			.sort( ( a, b ) => a.timestamp - b.timestamp )
-			.forEach( ( event ) => {
-				if ( event.name && event.payload ) {
-					dispatchDirectly( event.name, event.payload );
-				}
-			} );
-
-		clearEventQueue();
-	}, [] );
-
-	// --- Named event functions ---
-
-	const trackOnboardingInitialized = useCallback( () => {
-		clearEventQueue();
-		trackEvent( OnboardingEventName.INITIALIZED, {
-			interaction_type: 'load',
-			target_type: 'loaded',
-			target_name: 'onboarding_first_load',
-			interaction_result: 'onboarding_loaded',
-			target_location: 'onboarding',
-			interaction_description: 'first step of the onboarding funnel',
-		} );
-	}, [ trackEvent ] );
-
-	const trackLoginType = useCallback(
-		( loginType: 'social_login' | 'elementor_login' | 'guest' ) => {
-			trackEvent( OnboardingEventName.LOGIN_TYPE, {
-				interaction_type: 'click',
-				target_type: 'button',
-				target_name: 'login',
-				interaction_result:
-					loginType === 'guest' ? 'skip_and_onboarding_initialization' : 'login_option selected',
-				target_value: loginType,
-				target_location: 'onboarding',
-				location_l1: 'login_step',
-				interaction_description: 'user connect process loaded from onboarding',
-			} );
-		},
-		[ trackEvent ]
-	);
-
-	const trackConnect = useCallback(
-		( success: boolean, error?: string ) => {
-			trackEvent( OnboardingEventName.CONNECT, {
-				interaction_type: 'click',
-				target_type: 'button',
-				target_name: 'connect',
-				interaction_result: 'user_connect',
-				target_value: success,
-				target_location: 'onboarding',
-				location_l1: 'connect_flow',
-				interaction_description: 'user connect process loaded from onboarding',
-				metadata: ! success && error ? { error } : undefined,
-			} );
-		},
-		[ trackEvent ]
-	);
-
-	const trackProInstall = useCallback(
-		( action: 'install' | 'later' ) => {
-			trackEvent( OnboardingEventName.PRO_INSTALL, {
-				interaction_type: 'click',
-				target_type: 'button',
-				target_name: action === 'install' ? 'install_pro_on_this_site' : "i'll_do_it_later",
-				interaction_result:
-					action === 'install'
-						? 'pro_installed_onboarding_initialization'
-						: 'skip_and_onboarding_initialization',
-				target_location: 'onboarding',
-				location_l1: 'install_pro_step',
-				state: action === 'install',
-			} );
-		},
-		[ trackEvent ]
-	);
-
-	const trackStepViewed = useCallback(
-		( viewedStepId: string ) => {
-			trackEvent( OnboardingEventName.STEP_VIEWED, {
-				interaction_type: 'step_load',
-				target_type: 'loaded',
-				target_name: STEP_SPEC_NAMES[ viewedStepId ] ?? viewedStepId,
-				interaction_result: 'step_load',
-				target_value: STEP_NUMBERS[ viewedStepId ],
-				target_location: 'onboarding',
-				location_l1: STEP_NUMBERS[ viewedStepId ],
-				interaction_description: 'onboarding step loaded',
-			} );
-		},
-		[ trackEvent ]
-	);
-
-	const trackPersonaSelected = useCallback(
-		( value: string ) => {
-			trackEvent( OnboardingEventName.PERSONA_SELECTED, {
-				interaction_type: 'click',
-				target_type: 'button',
-				target_name: TARGET_NAME_PERSONA,
-				interaction_result: 'selected_and_next',
-				target_value: PERSONA_VALUE_MAP[ value ] ?? value,
-				target_location: 'onboarding',
-				location_l1: 'select_persona',
-				location_l2: STEP_NUMBERS.building_for,
-				interaction_description: 'user chooses persona type and automatically being redirected to next step',
-			} );
-		},
-		[ trackEvent ]
-	);
-
-	const trackSiteTopicSelected = useCallback(
-		( topics: string[] ) => {
-			trackEvent( OnboardingEventName.SITE_TOPIC_SELECTED, {
-				interaction_type: 'click',
-				target_type: 'cards',
-				target_name: 'what_is_your_site_about',
-				interaction_result: 'selected',
-				target_value: topics,
-				target_location: 'onboarding',
-				location_l1: 'site_topic',
-				location_l2: STEP_NUMBERS.site_about,
-				interaction_description: 'user multiselects site topics',
-			} );
-		},
-		[ trackEvent ]
-	);
-
-	const trackExperienceSelected = useCallback(
-		( level: string ) => {
-			trackEvent( OnboardingEventName.EXPERIENCE_SELECTED, {
-				interaction_type: 'click',
-				target_type: 'button',
-				target_name: 'how_experienced_are_you?',
-				interaction_result: 'selected_and_next',
-				target_value: EXPERIENCE_VALUE_MAP[ level ] ?? level,
-				target_location: 'onboarding',
-				location_l1: 'select_experience',
-				location_l2: STEP_NUMBERS.experience_level,
-				interaction_description:
-					'user chooses experience_level and automatically being redirected to next step',
-			} );
-		},
-		[ trackEvent ]
-	);
-
-	const trackThemeSuggested = useCallback(
-		( theme: string ) => {
-			trackEvent( OnboardingEventName.THEME_SUGGESTED, {
-				interaction_type: 'exposure',
-				target_type: 'chip',
-				target_name: 'recommended',
-				interaction_result: 'theme_recommended',
-				target_value: THEME_VALUE_MAP[ theme ] ?? theme,
-				target_location: 'onboarding',
-				location_l1: 'select_theme',
-				location_l2: STEP_NUMBERS.theme_selection,
-				interaction_description: 'user got a recommendation for a certain theme',
-			} );
-		},
-		[ trackEvent ]
-	);
-
-	const trackThemeSelected = useCallback(
-		( theme: string ) => {
-			trackEvent( OnboardingEventName.THEME_SELECTED, {
-				interaction_type: 'click',
-				target_type: 'button',
-				target_name: 'continue_with_this_theme',
-				interaction_result: 'theme_installed',
-				target_value: THEME_VALUE_MAP[ theme ] ?? theme,
-				target_location: 'onboarding',
-				location_l1: 'select_theme',
-				location_l2: STEP_NUMBERS.theme_selection,
-				interaction_description: 'user installed a certain theme',
-			} );
-		},
-		[ trackEvent ]
-	);
-
-	const trackProFeaturesSelected = useCallback(
-		( params: { targetName: 'continue_with_free' | 'compare plans'; features: string[] } ) => {
-			const featuresWithoutCore = params.features.filter( ( id ) => ! PRO_FEATURES_CORE_IDS.has( id ) );
-			trackEvent( OnboardingEventName.PRO_FEATURES_SELECTED, {
-				interaction_type: 'click',
-				target_type: 'cards',
-				target_name: params.targetName,
-				interaction_result: params.targetName === 'continue_with_free' ? 'finish_onboarding' : 'pricing_page',
-				target_value: featuresWithoutCore,
-				target_location: 'onboarding',
-				location_l1: 'pro_features',
-				location_l2: STEP_NUMBERS.site_features,
-				interaction_description: 'user selected pro features and continued',
-			} );
-		},
-		[ trackEvent ]
-	);
-
-	const trackBackClicked = useCallback(
-		( currentStepId: string ) => {
-			trackEvent( OnboardingEventName.BACK_CLICKED, {
-				interaction_type: 'click',
-				target_type: 'button',
-				target_name: 'back',
-				interaction_result: 'redirect_back',
-				target_value: STEP_NUMBERS[ currentStepId ],
-				target_location: 'onboarding_navigation',
-				location_l1: 'footer',
-				location_l2: STEP_NUMBERS[ currentStepId ],
-			} );
-		},
-		[ trackEvent ]
-	);
-
-	const trackSkipClicked = useCallback(
-		( currentStepId: string ) => {
-			trackEvent( OnboardingEventName.SKIP_CLICKED, {
-				interaction_type: 'click',
-				target_type: 'button',
-				target_name: 'skip',
-				interaction_result: 'skip_step',
-				target_value: STEP_NUMBERS[ currentStepId ],
-				target_location: 'onboarding_navigation',
-				location_l1: 'footer',
-				location_l2: STEP_NUMBERS[ currentStepId ],
-			} );
-		},
-		[ trackEvent ]
-	);
-
-	const trackUpgradeClicked = useCallback(
-		( currentStepId: string ) => {
-			trackEvent( OnboardingEventName.UPGRADE_CLICKED, {
-				interaction_type: 'click',
-				target_type: 'button',
-				target_name: 'upgrade',
-				interaction_result: 'pricing_page_opened',
-				target_value: STEP_NUMBERS[ currentStepId ],
-				target_location: 'onboarding_navigation',
-				location_l1: 'header',
-				location_l2: STEP_NUMBERS[ currentStepId ],
-			} );
-		},
-		[ trackEvent ]
-	);
-
-	const trackResumeOnboarding = useCallback(
-		( resumeStepId: string ) => {
-			trackEvent( OnboardingEventName.RESUME_ONBOARDING, {
-				interaction_type: 'onboarding_load',
-				target_type: 'reloaded',
-				target_name: 'reloaded',
-				interaction_result: 'onboarding_load',
-				target_value: STEP_NUMBERS[ resumeStepId ],
-				target_location: 'onboarding',
-				location_l1: STEP_NUMBERS[ resumeStepId ],
-				interaction_description: 'onboarding step loaded',
-			} );
-		},
-		[ trackEvent ]
-	);
-
-	const trackSiteStarterSelected = useCallback(
-		( params: { targetName: SiteStarterTargetName; interactionResult: SiteStarterInteractionResult } ) => {
-			trackEvent( OnboardingEventName.SITE_STARTER_SELECTED, {
-				window_name: 'editor',
-				interaction_type: 'click',
-				target_type: 'card',
-				target_name: params.targetName,
-				interaction_result: params.interactionResult,
-				target_location: 'start_building',
-				location_l1: '',
-				interaction_description: 'user selected or ignored site starters on first load of canvas',
-			} );
-		},
-		[ trackEvent ]
-	);
-
-	const toSummaryValue = ( v: unknown ): unknown => {
-		if ( v === null || v === undefined || v === '' ) {
-			return 'skip';
-		}
-		if ( Array.isArray( v ) && v.length === 0 ) {
-			return 'skip';
-		}
-		return v;
-	};
-
-	const trackSummary = useCallback(
-		( snapshot: ObSummarySnapshot ) => {
-			const proFeaturesOnly = ( snapshot.choices.site_features ?? [] ).filter(
-				( id ) => ! PRO_FEATURES_CORE_IDS.has( id )
-			);
-
-			const metadata: ObSummaryMetadataItem[] = [
-				{
-					key: 'login_type',
-					value: toSummaryValue( snapshot.isGuest ? 'guest' : 'elementor_login' ),
-				},
-				{ key: 'connect', value: snapshot.isConnected },
-				{
-					key: 'pro_install',
-					value: toSummaryValue( snapshot.proInstall ?? false ),
-				},
-				{
-					key: 'persona',
-					value: toSummaryValue(
-						snapshot.choices.building_for !== null && snapshot.choices.building_for !== undefined
-							? PERSONA_VALUE_MAP[ snapshot.choices.building_for ] ?? snapshot.choices.building_for
-							: null
-					),
-				},
-				{
-					key: 'site_topic',
-					value: toSummaryValue( snapshot.choices.site_about ?? [] ),
-				},
-				{
-					key: 'experience_level',
-					value: toSummaryValue(
-						snapshot.choices.experience_level !== null && snapshot.choices.experience_level !== undefined
-							? EXPERIENCE_VALUE_MAP[ snapshot.choices.experience_level ] ??
-									snapshot.choices.experience_level
-							: null
-					),
-				},
-				{
-					key: 'theme_recommended',
-					value: ( (): string => {
-						const raw = snapshot.themeRecommended ?? snapshot.choices.theme_selection ?? 'none';
-						return raw === 'none' || ! raw ? 'none' : THEME_VALUE_MAP[ raw ] ?? raw;
-					} )(),
-				},
-				{
-					key: 'theme_installed',
-					value:
-						snapshot.choices.theme_selection !== null && snapshot.choices.theme_selection !== undefined
-							? THEME_VALUE_MAP[ snapshot.choices.theme_selection ] ?? snapshot.choices.theme_selection
-							: 'none',
-				},
-				{
-					key: 'pro_features',
-					value: toSummaryValue( proFeaturesOnly.length ? proFeaturesOnly : 'skip' ),
-				},
-				{
-					key: 'steps_completed',
-					value: snapshot.completedSteps.length,
-				},
-			];
-
-			trackEvent( OnboardingEventName.SUMMARY, {
-				interaction_type: 'onboarding_complete',
-				target_type: 'summary',
-				target_name: 'ob_summary',
-				interaction_result: 'onboarding_final_choices',
-				target_location: 'onboarding',
-				location_l1: 'summary',
-				interaction_description: 'trigger event upon onboarding completion or when flow is closed abruptly',
-				metadata: { summary: metadata },
-			} );
-		},
-		[ trackEvent ]
-	);
-
-	const trackErrorReported = useCallback(
-		( params: ErrorReportedTarget & { stepId: string; errorBody: string } ) => {
-			trackEvent( OnboardingEventName.ERROR_REPORTED, {
-				interaction_type: 'action_failed',
-				target_type: params.targetType,
-				target_name: params.targetName,
-				interaction_result: 'error_reported',
-				target_value: STEP_NUMBERS[ params.stepId ] ?? params.stepId,
-				target_location: 'onboarding',
-				location_l1: STEP_NUMBERS[ params.stepId ] ?? params.stepId,
-				interaction_description: 'onboarding step loaded',
-				metadata: { error_title: params.errorBody },
-			} );
-		},
-		[ trackEvent ]
-	);
-
 	return {
-		trackOnboardingInitialized,
-		trackLoginType,
-		trackConnect,
-		trackProInstall,
-		trackStepViewed,
-		trackPersonaSelected,
-		trackSiteTopicSelected,
-		trackExperienceSelected,
-		trackThemeSuggested,
-		trackThemeSelected,
-		trackProFeaturesSelected,
-		trackBackClicked,
-		trackSkipClicked,
-		trackUpgradeClicked,
-		trackResumeOnboarding,
-		trackSiteStarterSelected,
-		trackSummary,
-		trackErrorReported,
-		activateTracking,
+		trackOnboardingInitialized: () => trackOnboardingInitialized( isActive ),
+		trackLoginType: ( loginType: 'social_login' | 'elementor_login' | 'guest' ) =>
+			trackLoginType( isActive, loginType ),
+		trackConnect: ( success: boolean, error?: string ) => trackConnect( isActive, success, error ),
+		trackProInstall: ( action: 'install' | 'later' ) => trackProInstall( isActive, action ),
+		trackStepViewed: ( viewedStepId: string ) => trackStepViewed( isActive, viewedStepId ),
+		trackPersonaSelected: ( value: string ) => trackPersonaSelected( isActive, value ),
+		trackSiteTopicSelected: ( topics: string[] ) => trackSiteTopicSelected( isActive, topics ),
+		trackExperienceSelected: ( level: string ) => trackExperienceSelected( isActive, level ),
+		trackThemeSuggested: ( theme: string ) => trackThemeSuggested( isActive, theme ),
+		trackThemeSelected: ( theme: string ) => trackThemeSelected( isActive, theme ),
+		trackProFeaturesSelected: ( params: {
+			targetName: 'continue_with_free' | 'compare plans';
+			features: string[];
+		} ) => trackProFeaturesSelected( isActive, params ),
+		trackBackClicked: ( currentStepId: string ) => trackBackClicked( isActive, currentStepId ),
+		trackSkipClicked: ( currentStepId: string ) => trackSkipClicked( isActive, currentStepId ),
+		trackUpgradeClicked: ( currentStepId: string ) => trackUpgradeClicked( isActive, currentStepId ),
+		trackResumeOnboarding: ( resumeStepId: string ) => trackResumeOnboarding( isActive, resumeStepId ),
+		trackSiteStarterSelected: ( params: {
+			targetName: SiteStarterTargetName;
+			interactionResult: SiteStarterInteractionResult;
+		} ) => trackSiteStarterSelected( isActive, params ),
+		trackSummary: ( snapshot: ObSummarySnapshot ) => trackSummary( isActive, snapshot ),
+		trackErrorReported: ( params: ErrorReportedTarget & { stepId: string; errorBody: string } ) =>
+			trackErrorReported( isActive, params ),
+		activateTracking: activate,
 		flushQueue,
 	};
 }

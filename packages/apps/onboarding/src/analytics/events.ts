@@ -29,13 +29,8 @@ export const STEP_NUMBERS: Record< string, string > = {
 	site_features: '5',
 };
 
-/** REFINED: do not send pre-selected core features in pro_features. Must match site-features.tsx core options. */
-export const PRO_FEATURES_CORE_IDS = new Set( [ 'classes_variables', 'core_placeholder' ] );
-
-/** REFINED: target_name for ob_persona_selected. */
 export const TARGET_NAME_PERSONA = 'who_are_you_building_for';
 
-/** REFINED: map UI persona values to analytics target_value. */
 export const PERSONA_VALUE_MAP: Record< string, string > = {
 	myself: 'myself_or_someone_i_know',
 	business: 'my_business_or_workplace',
@@ -43,26 +38,23 @@ export const PERSONA_VALUE_MAP: Record< string, string > = {
 	exploring: 'just_exploring',
 };
 
-/** REFINED: map UI experience values to analytics target_value (advanced -> expert). */
 export const EXPERIENCE_VALUE_MAP: Record< string, string > = {
 	beginner: 'beginner',
 	intermediate: 'intermediate',
 	advanced: 'expert',
 };
 
-/** REFINED: map theme slugs to analytics target_value (hello | hellobiz). */
 export const THEME_VALUE_MAP: Record< string, string > = {
 	'hello-elementor': 'hello',
 	'hello-biz': 'hellobiz',
 };
 
-/** REFINED: step target_name for ob_step_viewed (stepId -> spec name). */
 export const STEP_SPEC_NAMES: Record< string, string > = {
 	login: 'login',
 	pro_install: 'pro_install',
-	building_for: 'who_are_you_building for',
-	site_about: 'What_is_your_site_about',
-	experience_level: 'how_experienced_are_you?',
+	building_for: 'who_are_you_building_for',
+	site_about: 'what_is_your_site_about',
+	experience_level: 'how_experienced_are_you',
 	theme_selection: 'theme_install',
 	site_features: 'pro_features',
 };
@@ -84,12 +76,10 @@ export interface OnboardingEventPayload {
 	state?: unknown;
 }
 
-/** REFINED: user interacts with AI/website templates/close/widget on first canvas (editor). */
 export type SiteStarterTargetName = 'AI_site_planner' | 'Website templates' | 'clicked_x' | 'widget_dragged';
 
 export type SiteStarterInteractionResult = 'site_planner_opened' | 'kit_library_opened' | 'closed' | 'widget_dragged';
 
-/** REFINED: metadata item for ob_summary (key-value). */
 export interface ObSummaryMetadataItem {
 	key: string;
 	value: unknown;

@@ -45,7 +45,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 		isFirst,
 		isLast,
 		totalSteps,
-		hadUnexpectedExit,
+		resumeStepIdForTracking,
 		isLoading,
 		isConnected,
 		hasPassedLogin,
@@ -87,9 +87,9 @@ export function AppContent( { onClose }: AppContentProps ) {
 			hasTrackedInit.current = true;
 			trackOnboardingInitialized();
 
-			if ( hadUnexpectedExit ) {
-				trackResumeOnboarding( stepId );
-				actions.clearUnexpectedExit();
+			if ( resumeStepIdForTracking ) {
+				trackResumeOnboarding( resumeStepIdForTracking );
+				actions.clearResumeStepIdForTracking();
 			} else {
 				trackStepViewed( 'login' );
 			}
@@ -101,7 +101,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 		}
 	}, [
 		stepId,
-		hadUnexpectedExit,
+		resumeStepIdForTracking,
 		hasPassedLogin,
 		actions,
 		trackOnboardingInitialized,
@@ -143,14 +143,11 @@ export function AppContent( { onClose }: AppContentProps ) {
 		onSuccess: handleConnectSuccess,
 	} );
 
-	const handleContinueAsGuest = useCallback(
-		( event: React.SyntheticEvent ) => {
-			event.preventDefault();
-			trackLoginType( 'guest' );
-			actions.setGuest( true );
-		},
-		[ actions, trackLoginType ]
-	);
+	function handleContinueAsGuest( event: React.SyntheticEvent ) {
+		event.preventDefault();
+		trackLoginType( 'guest' );
+		actions.setGuest( true );
+	}
 
 	const handleClose = useCallback( () => {
 		trackSummary( {
@@ -193,7 +190,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 		updateProgress,
 	] );
 
-	const handleBack = useCallback( () => {
+	function handleBack() {
 		trackBackClicked( stepId );
 
 		if ( isFirst ) {
@@ -201,7 +198,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 		} else {
 			actions.prevStep();
 		}
-	}, [ actions, isFirst, trackBackClicked, stepId ] );
+	}
 
 	const redirectToNewPage = useCallback( () => {
 		const redirectUrl = urls.createNewPage || urls.editor || urls.dashboard;

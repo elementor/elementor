@@ -14,10 +14,7 @@ const POPUP_LEFT = 0;
 
 const CONNECT_SUCCESS_EVENT = 'elementor/connect/success';
 
-export function useElementorConnect( {
-	connectUrl,
-	onSuccess,
-}: ConnectOptions ) {
+export function useElementorConnect( { connectUrl, onSuccess }: ConnectOptions ) {
 	const onSuccessRef = useRef( onSuccess );
 	onSuccessRef.current = onSuccess;
 
@@ -28,16 +25,10 @@ export function useElementorConnect( {
 			onSuccessRef.current?.( data );
 		};
 
-		window.addEventListener(
-			CONNECT_SUCCESS_EVENT,
-			handleNativeSuccess
-		);
+		window.addEventListener( CONNECT_SUCCESS_EVENT, handleNativeSuccess );
 
 		return () => {
-			window.removeEventListener(
-				CONNECT_SUCCESS_EVENT,
-				handleNativeSuccess
-			);
+			window.removeEventListener( CONNECT_SUCCESS_EVENT, handleNativeSuccess );
 		};
 	}, [] );
 

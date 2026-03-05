@@ -95,6 +95,7 @@ export interface OnboardingState {
 	isLoading: boolean;
 	error: string | null;
 	hadUnexpectedExit: boolean;
+	resumeStepIdForTracking: StepIdType | null;
 	isConnected: boolean;
 	isGuest: boolean;
 	userName: string;
