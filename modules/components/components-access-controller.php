@@ -18,7 +18,19 @@ class Components_Access_Controller {
 			return self::TIER_CORE;
 		}
 
-		return apply_filters( 'elementor/components/access_tier', self::TIER_CORE );
+		if ( ! class_exists( '\ElementorPro\License\API' ) ) {
+			return self::TIER_CORE;
+		}
+
+		if ( \ElementorPro\License\API::is_license_active() ) {
+			return self::TIER_PRO;
+		}
+
+		if ( \ElementorPro\License\API::is_license_expired() ) {
+			return self::TIER_EXPIRED;
+		}
+
+		return self::TIER_CORE;
 	}
 
 	public static function is_pro_tier(): bool {
