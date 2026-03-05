@@ -1,6 +1,5 @@
-import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
-
-import { selectOverridableProps, slice } from '../../../store/store';
+import { componentsActions } from '../../../store/dispatchers';
+import { componentsSelectors } from '../../../store/selectors';
 import { type ComponentId } from '../../../types';
 
 type ReorderGroupPropsParams = {
@@ -10,7 +9,7 @@ type ReorderGroupPropsParams = {
 };
 
 export function reorderGroupProps( { componentId, groupId, newPropsOrder }: ReorderGroupPropsParams ): void {
-	const overridableProps = selectOverridableProps( getState(), componentId );
+	const overridableProps = componentsSelectors.getOverridableProps( componentId );
 
 	if ( ! overridableProps ) {
 		return;
@@ -22,22 +21,17 @@ export function reorderGroupProps( { componentId, groupId, newPropsOrder }: Reor
 		return;
 	}
 
-	dispatch(
-		slice.actions.setOverridableProps( {
-			componentId,
-			overridableProps: {
-				...overridableProps,
-				groups: {
-					...overridableProps.groups,
-					items: {
-						...overridableProps.groups.items,
-						[ groupId ]: {
-							...group,
-							props: newPropsOrder,
-						},
-					},
+	componentsActions.setOverridableProps( componentId, {
+		...overridableProps,
+		groups: {
+			...overridableProps.groups,
+			items: {
+				...overridableProps.groups.items,
+				[ groupId ]: {
+					...group,
+					props: newPropsOrder,
 				},
 			},
-		} )
-	);
+		},
+	} );
 }
