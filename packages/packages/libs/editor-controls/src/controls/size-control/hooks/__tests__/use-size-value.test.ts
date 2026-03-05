@@ -2,6 +2,11 @@ import { type SizePropValue } from '@elementor/editor-props';
 import { act, renderHook } from '@testing-library/react';
 
 import { useSizeValue } from '../use-size-value';
+import { isExtendedUnit } from '../../utils/is-extended-unit';
+
+jest.mock( '../../utils/is-extended-unit' );
+
+const mockIsExtendedUnit = jest.mocked( isExtendedUnit );
 
 const renderSizeValueHook = ( props = {} ) => {
 	const onChange = jest.fn();
@@ -22,7 +27,7 @@ describe( 'useSizeValue', () => {
 	} );
 
 	describe( 'Initial state', () => {
-		it( 'should return unit and size from external value', () => {
+		it( 'should return unit, size, setSize and setUnit from the hook', () => {
 			// Act.
 			const { result } = renderSizeValueHook( {
 				value: {
@@ -33,8 +38,12 @@ describe( 'useSizeValue', () => {
 			} );
 
 			// Assert.
-			expect( result.current.size ).toBe( 10 );
-			expect( result.current.unit ).toBe( 'rem' );
+			expect( result.current ).toEqual( {
+				size: 10,
+				unit: 'rem',
+				setSize: expect.any( Function ),
+				setUnit: expect.any( Function ),
+			} );
 		} );
 
 		it( 'should return empty size and unit auto when unit is auto (extended)', () => {
@@ -52,7 +61,7 @@ describe( 'useSizeValue', () => {
 			expect( result.current.unit ).toBe( 'auto' );
 		} );
 
-		it( 'should return empty size and unit auto when external unit is auto and size is null', () => {
+		it( 'should return empty size and unit auto when unit is auto and size is null', () => {
 			// Act.
 			const { result } = renderSizeValueHook( {
 				value: {
@@ -67,7 +76,7 @@ describe( 'useSizeValue', () => {
 			expect( result.current.unit ).toBe( 'auto' );
 		} );
 
-		it( 'should return string size and unit custom when external unit is custom', () => {
+		it( 'should return string size and unit custom when unit is custom', () => {
 			// Act.
 			const { result } = renderSizeValueHook( {
 				value: {
@@ -82,7 +91,7 @@ describe( 'useSizeValue', () => {
 			expect( result.current.unit ).toBe( 'custom' );
 		} );
 
-		it( 'should return empty size for custom unit when external size is null', () => {
+		it( 'should return empty size for custom unit when size is null', () => {
 			// Act.
 			const { result } = renderSizeValueHook( {
 				value: {
@@ -97,7 +106,7 @@ describe( 'useSizeValue', () => {
 			expect( result.current.unit ).toBe( 'custom' );
 		} );
 
-		it( 'should return empty size when external size is null and unit is standard', () => {
+		it( 'should return empty size when size is null and unit is standard', () => {
 			// Act.
 			const { result } = renderSizeValueHook( {
 				value: {
@@ -112,7 +121,7 @@ describe( 'useSizeValue', () => {
 			expect( result.current.unit ).toBe( 'px' );
 		} );
 
-		it( 'should return empty size when external size is undefined and unit is standard', () => {
+		it( 'should return empty size when size is undefined and unit is standard', () => {
 			// Act.
 			const { result } = renderSizeValueHook( {
 				value: {
@@ -127,7 +136,7 @@ describe( 'useSizeValue', () => {
 			expect( result.current.unit ).toBe( 'px' );
 		} );
 
-		it( 'should use defaultUnit when externalValue is null', () => {
+		it( 'should use defaultUnit when value is null', () => {
 			// Act.
 			const { result } = renderSizeValueHook( {
 				units: [ 'px', 'em' ],
@@ -139,7 +148,7 @@ describe( 'useSizeValue', () => {
 			expect( result.current.size ).toBe( '' );
 		} );
 
-		it( 'should use px when externalValue is null and defaultUnit is not provided', () => {
+		it( 'should use system default unit when value is null and defaultUnit is not provided', () => {
 			// Act.
 			const { result } = renderSizeValueHook( {
 				units: [ 'px' ],
@@ -152,7 +161,7 @@ describe( 'useSizeValue', () => {
 	} );
 
 	describe( 'resolveSizeValue', () => {
-		it( 'should resolve unit to defaultUnit when external unit is not in units list', () => {
+		it( 'should resolve unit to defaultUnit when value unit is not in units list', () => {
 			// Act.
 			const { result } = renderSizeValueHook( {
 				value: {
@@ -167,7 +176,7 @@ describe( 'useSizeValue', () => {
 			expect( result.current.size ).toBe( 1 );
 		} );
 
-		it( 'should fallback to px default if provided default unit doesnt conform to units list', () => {
+		it( 'should fallback to system default unit if provided default unit and value unit doesnt conform to units list', () => {
 			// Act.
 			const { result } = renderSizeValueHook( {
 				value: {
@@ -182,7 +191,7 @@ describe( 'useSizeValue', () => {
 			expect( result.current.size ).toBe( 2 );
 		} );
 
-		it( 'should fallback to first unit in list if provided default unit and px default doesnt conform to units list', () => {
+		it( 'should fallback to first unit in unit list if provided default unit, value unit and system default doesnt conform to units list', () => {
 			// Act.
 			const { result } = renderSizeValueHook( {
 				value: {
@@ -197,7 +206,7 @@ describe( 'useSizeValue', () => {
 			expect( result.current.size ).toBe( 3 );
 		} );
 
-		it( 'should fallback to empty unit if provided units list is empty', () => {
+		it( 'should fallback to empty unit value if provided units list is empty', () => {
 			// Act.
 			const { result } = renderSizeValueHook( {
 				value: {
@@ -212,14 +221,14 @@ describe( 'useSizeValue', () => {
 			expect( result.current.size ).toBe( 3 );
 		} );
 
-		it( 'should resolve unit to px when external unit is not in units list and defaultUnit is not provided', () => {
+		it( 'should resolve unit system default when value unit is not in units list and defaultUnit is not provided', () => {
 			// Act.
 			const { result } = renderSizeValueHook( {
 				value: {
 					size: 90,
 					unit: 'ch',
 				},
-				units: [ 'px', 'vh' ],
+				units: [ 'rem', 'px', 'vh' ],
 			} );
 
 			expect( result.current.unit ).toBe( 'px' );
@@ -248,10 +257,9 @@ describe( 'useSizeValue', () => {
 
 			// Assert.
 			expect( onChange ).toHaveBeenCalledWith( { size: 42, unit: 'px' } );
-			expect( result.current.unit ).toBe( 'px' );
 		} );
 
-		it( 'should set size to null when value is empty string and call onChange', () => {
+		it( 'should set size to empty string when value is empty string and call onChange', () => {
 			// Arrange.
 			const onChange = jest.fn();
 
@@ -270,8 +278,8 @@ describe( 'useSizeValue', () => {
 			} );
 
 			// Assert.
-			expect( onChange ).toHaveBeenCalledWith( { size: null, unit: 'px' } );
-			expect( result.current.size ).toBe( null );
+			expect( onChange ).toHaveBeenCalledWith( { size: '', unit: 'px' } );
+			expect( result.current.size ).toBe( '' );
 		} );
 
 		it( 'should trim whitespace and convert to number', () => {
@@ -297,7 +305,7 @@ describe( 'useSizeValue', () => {
 			expect( result.current.unit ).toBe( 'px' );
 		} );
 
-		it( 'should call onChange with NaN when setSize with non-numeric string', () => {
+		it( 'should call onChange with size empty string when setSize with non-numeric string', () => {
 			// Arrange.
 			const onChange = jest.fn();
 
@@ -316,7 +324,7 @@ describe( 'useSizeValue', () => {
 			} );
 
 			// Assert.
-			expect( onChange ).toHaveBeenCalledWith( { size: null, unit: 'px' } );
+			expect( onChange ).toHaveBeenCalledWith( { size: '', unit: 'px' } );
 		} );
 
 		it( 'should accept zero as valid size', () => {
@@ -341,7 +349,7 @@ describe( 'useSizeValue', () => {
 			expect( onChange ).toHaveBeenCalledWith( { size: 0, unit: 'px' } );
 		} );
 
-		it( 'should set size to null when value is only whitespace', () => {
+		it( 'should set size to empty string when value is only whitespace', () => {
 			// Arrange.
 			const onChange = jest.fn();
 
@@ -360,7 +368,7 @@ describe( 'useSizeValue', () => {
 			} );
 
 			// Assert.
-			expect( onChange ).toHaveBeenCalledWith( { size: null, unit: 'px' } );
+			expect( onChange ).toHaveBeenCalledWith( { size: '', unit: 'px' } );
 		} );
 
 		it( 'should accept decimal size', () => {
@@ -407,8 +415,9 @@ describe( 'useSizeValue', () => {
 			expect( onChange ).toHaveBeenCalledWith( { size: -10, unit: 'px' } );
 		} );
 
-		it( 'should call onChange with size and unit auto when setSize is called while unit is auto', () => {
+		it( 'should not call onChange with size when unit is auto', () => {
 			// Arrange.
+			mockIsExtendedUnit.mockReturnValue( true );
 			const onChange = jest.fn();
 
 			// Act.
@@ -424,12 +433,14 @@ describe( 'useSizeValue', () => {
 			act( () => result.current.setSize( '50' ) );
 
 			// Assert.
-			expect( onChange ).toHaveBeenCalledWith( { size: 50, unit: 'auto' } );
+			expect( onChange ).not.toHaveBeenCalled();
 			expect( result.current.unit ).toBe( 'auto' );
+			expect( result.current.size ).toBe( '' );
 		} );
 
-		it( 'should call onChange with NaN size and unit custom when setSize is called with non-numeric string while unit is custom', () => {
+		it( 'should not call onChange with string size while unit is custom', () => {
 			// Arrange.
+			mockIsExtendedUnit.mockReturnValue( true );
 			const onChange = jest.fn();
 
 			// Act.
@@ -445,8 +456,9 @@ describe( 'useSizeValue', () => {
 			act( () => result.current.setSize( 'calc(50% + 5px)' ) );
 
 			// Assert.
-			expect( onChange ).toHaveBeenCalledWith( { size: null, unit: 'custom' } );
+			expect( onChange ).not.toHaveBeenCalledWith( { size: '', unit: 'custom' } );
 			expect( result.current.unit ).toBe( 'custom' );
+			expect( result.current.size ).toBe( 'calc(100% - 10px)' );
 		} );
 
 		it( 'should call onChange with null when setSize sets same value as external (differsFromExternal false)', () => {

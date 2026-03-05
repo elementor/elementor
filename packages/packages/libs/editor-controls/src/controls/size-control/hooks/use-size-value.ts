@@ -4,6 +4,7 @@ import { type SizePropValue } from '@elementor/editor-props';
 import { useSyncExternalState } from '../../../hooks/use-sync-external-state';
 import { type SizeUnit } from '../types';
 import { DEFAULT_SIZE, DEFAULT_SIZE_UNIT, resolveSizeValue } from '../utils/resolve-size-value';
+import { isExtendedUnit } from '../utils/is-extended-unit';
 
 type SizeValue = SizePropValue[ 'value' ];
 
@@ -34,12 +35,16 @@ export const useSizeValue = < T extends SizeValue, U extends SizeUnit >( {
 	} );
 
 	const setSize = ( newSize: string ) => {
+		if ( isExtendedUnit( sizeValue.unit ) ) {
+			return;
+		}
+
 		const trimmed = newSize.trim();
 		const parsed = Number( trimmed );
 
 		const newState = {
 			...sizeValue,
-			size: trimmed && ! isNaN( parsed ) ? parsed : null,
+			size: trimmed && ! isNaN( parsed ) ? parsed : '',
 		};
 
 		setSizeValue( newState );
