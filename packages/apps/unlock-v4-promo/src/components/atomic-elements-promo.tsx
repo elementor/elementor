@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { usePromoSuppressedMessage } from '../hooks/use-promo-suppressed-message';
 
 const PROMO_IMAGE = 'https://assets.elementor.com/v4-promotion/v1/images/v4_chip_new.png';
+const LEARN_MORE_URL = 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/';
 
 export function AtomicElementsPromo() {
 	const [ suppressed, toggleSuppressMessage ] = usePromoSuppressedMessage();
@@ -102,16 +103,20 @@ export function AtomicElementsPromo() {
 						pt: 1,
 					} }
 				>
-					<Button
-						variant="text"
-						size="small"
-						color="secondary"
-						href="https://go.elementor.com/wp-dash-opt-in-v4-help-center/"
-						target="_blank"
-					>
+					<Button variant="text" size="small" color="secondary" href={ LEARN_MORE_URL } target="_blank">
 						{ __( 'Learn more', 'elementor' ) }
 					</Button>
-					<Button variant="contained" size="small" color="primary" onClick={ activateAtomicElements }>
+					<Button
+						variant="contained"
+						size="small"
+						color="inherit"
+						sx={ {
+							bgcolor: 'text.primary',
+							color: 'background.paper',
+							'&:hover': { bgcolor: 'text.secondary', color: 'background.paper' },
+						} }
+						onClick={ activateAtomicElements }
+					>
 						{ __( 'Unlock for free', 'elementor' ) }
 					</Button>
 				</Box>
