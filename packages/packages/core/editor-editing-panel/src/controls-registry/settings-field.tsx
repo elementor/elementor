@@ -30,7 +30,7 @@ const HISTORY_DEBOUNCE_WAIT = 800;
 const getElementSettigsWithDefaults = ( propsSchema: PropsSchema, elementSettings?: Props ) => {
 	const elementSettingsWithDefaults = { ...elementSettings };
 	Object.keys( propsSchema ).forEach( ( key ) => {
-		if ( ! ( key in elementSettingsWithDefaults ) ) {
+		if ( ! ( key in elementSettingsWithDefaults ) || elementSettingsWithDefaults[ key ] === null ) {
 			if ( propsSchema[ key ].default !== null ) {
 				elementSettingsWithDefaults[ key ] = propsSchema[ key ].default as Values[ keyof Values ];
 			}
