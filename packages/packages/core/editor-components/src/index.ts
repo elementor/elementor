@@ -1,11 +1,10 @@
 export { init } from './init';
 
 export { apiClient } from './api';
-export type { ComponentItems, CreateComponentPayload, CreateComponentResponse } from './api';
 
 export { ComponentSearch } from './components/components-tab/component-search';
 export { ComponentItem, ComponentName } from './components/components-tab/components-item';
-export type { ComponentItemProps, ComponentNameProps } from './components/components-tab/components-item';
+export type { ComponentItemProps } from './components/components-tab/components-item';
 export {
 	ComponentsList,
 	EmptySearchResult,
@@ -13,7 +12,7 @@ export {
 	useFilteredComponents,
 } from './components/components-tab/components-list';
 export { LoadingComponents } from './components/components-tab/loading-components';
-export { SearchProvider, useSearch } from './components/components-tab/search-provider';
+export { SearchProvider } from './components/components-tab/search-provider';
 export { EmptyState as InstanceEmptyState } from './components/instance-editing-panel/empty-state';
 export { InstancePanelBody } from './components/instance-editing-panel/instance-panel-body';
 export { EditComponentAction, InstancePanelHeader } from './components/instance-editing-panel/instance-panel-header';
@@ -43,12 +42,7 @@ export type {
 	ComponentOverridablePropValue,
 } from './prop-types/component-overridable-prop-type';
 
-export {
-	ComponentInstanceProvider,
-	useComponentId,
-	useComponentInstanceOverrides,
-	useComponentOverridableProps,
-} from './provider/component-instance-context';
+export { ComponentInstanceProvider } from './provider/component-instance-context';
 export {
 	OverridablePropProvider,
 	useComponentInstanceElement,
@@ -61,25 +55,9 @@ export { componentsActions } from './store/dispatchers';
 export { componentsSelectors } from './store/selectors';
 export {
 	SLICE_NAME,
-	selectArchivedThisSession,
-	selectComponent,
-	selectComponentByUid,
-	selectComponents,
-	selectCreatedThisSession,
-	selectCurrentComponent,
-	selectCurrentComponentId,
-	selectData,
-	selectFlatStyles,
-	selectIsOverridablePropsLoaded,
-	selectLoadIsError,
-	selectLoadIsPending,
 	selectOverridableProps,
 	selectPath,
-	selectStyles,
-	selectUnpublishedComponents,
-	selectUpdatedComponentNames,
 	slice,
-	useComponent,
 	useCurrentComponent,
 	useCurrentComponentId,
 	useIsSanitizedComponent,
@@ -93,11 +71,7 @@ export type {
 	Component,
 	ComponentFormValues,
 	ComponentId,
-	ComponentOverridable,
-	ComponentRenderContext,
 	DocumentSaveStatus,
-	DocumentStatus,
-	ElementorStorage,
 	ExtendedWindow,
 	OriginalElementData,
 	OriginPropFields,
@@ -110,7 +84,7 @@ export type {
 	UpdatedComponentName,
 } from './types';
 
-export { filterValidOverridableProps, isExposedPropValid } from './utils/filter-valid-overridable-props';
+export { filterValidOverridableProps } from './utils/filter-valid-overridable-props';
 export { getContainerByOriginId } from './utils/get-container-by-origin-id';
 export { getOverridableProp } from './utils/get-overridable-prop';
 export { getPropTypeForComponentOverride } from './utils/get-prop-type-for-component-override';
