@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Stack, Typography } from '@elementor/ui';
+import { ReactNode } from 'react';
 
 type ModalHeaderProps = {
 	title: string;
-	subtitle: string;
+	subtitle: ReactNode;
 };
 
 export const ModalHeader = ( { title, subtitle }: ModalHeaderProps ) => {

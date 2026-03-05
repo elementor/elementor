@@ -16,8 +16,8 @@ const LEARN_MORE_URL = 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/'
 const FEATURE_ITEMS = [
 	{
 		id: 'combineWidgets',
-		title: __( 'Combine legacy Widgets & new Elements', 'elementor' ),
-		subtitle: __( 'Current and new workflows work together on the same page.', 'elementor' ),
+		title: __( 'Use Atomic Elements alongside your existing widgets', 'elementor' ),
+		subtitle: __( 'No need to rebuild pages. Combine legacy & new workflows.', 'elementor' ),
 		image: '',
 	},
 	{
@@ -28,13 +28,13 @@ const FEATURE_ITEMS = [
 	},
 	{
 		id: 'consistentStyling',
-		title: __( 'Consistent styling experience', 'elementor' ),
+		title: __( 'Keep styles consistent across your site', 'elementor' ),
 		subtitle: __( 'A unified Style tab with full control over responsive design.', 'elementor' ),
 		image: '',
 	},
 	{
 		id: 'performance',
-		title: __( 'Unparalleled performance', 'elementor' ),
+		title: __( 'Get unparalleled performance', 'elementor' ),
 		subtitle: __( 'Clean code and a light CSS footprint with single-div wrappers.', 'elementor' ),
 		image: '',
 	},
@@ -57,11 +57,14 @@ export function AppContent( { onClose }: { onClose: () => void } ) {
 			}
 			header={
 				<ModalHeader
-					title={ __( 'Welcome to the future of Elementor!', 'elementor' ) }
-					subtitle={ __(
-						"You're now using The Atomic Editor, a new architectural foundation that will continue to evolve with more features and capabilities.",
-						'elementor'
-					) }
+					title={ __( 'You’re now using the Atomic Editor', 'elementor' ) }
+					subtitle= {
+					<>
+						{ __( 'Elementor’s new editing experience is now active.', 'elementor' ) }
+						<br />
+						{ __( 'Your existing pages stay exactly the same - you can keep working as usual while exploring new Atomic Elements.', 'elementor' ) }
+					</>
+					}
 				/>
 			}
 			footer={
