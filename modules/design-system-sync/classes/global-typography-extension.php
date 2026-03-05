@@ -3,6 +3,7 @@
 namespace Elementor\Modules\DesignSystemSync\Classes;
 
 use Elementor\Controls_Manager;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
@@ -101,7 +102,7 @@ class Global_Typography_Extension {
 			$variants_props = $class['variants_props'] ?? [];
 
 			foreach ( $variants_props as $breakpoint => $bp_props ) {
-				if ( 'desktop' === $breakpoint ) {
+				if ( Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP === $breakpoint ) {
 					continue;
 				}
 

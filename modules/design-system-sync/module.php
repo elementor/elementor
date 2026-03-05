@@ -50,7 +50,10 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/controls/register', [ $this, 'register_controls' ] );
 		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_editor_styles' ] );
-		add_action( 'elementor/global_classes/update', [ $this, 'clear_classes_cache' ] );
+		add_action( 'elementor/global_classes/update', function () {
+			$this->clear_classes_cache();
+			$this->clear_css_cache();
+		} );
 	}
 
 	public function register_controls( $controls_manager ) {
@@ -72,7 +75,9 @@ class Module extends BaseModule {
 
 	public function clear_classes_cache() {
 		Classes\Classes_Provider::clear_cache();
+	}
 
+	public function clear_css_cache() {
 		$kit = \Elementor\Plugin::$instance->kits_manager->get_active_kit();
 		if ( $kit ) {
 			$kit_id = $kit->get_main_id();

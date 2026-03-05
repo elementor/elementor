@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\DesignSystemSync\Classes;
 
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
 
@@ -73,7 +74,7 @@ class Classes_Provider {
 			$breakpoint = $meta['breakpoint'];
 			$state = $meta['state'];
 
-			if ( ! in_array( $breakpoint, [ null, 'desktop' ], true ) ) {
+			if ( ! in_array( $breakpoint, [ null, Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP ], true ) ) {
 				continue;
 			}
 
@@ -108,7 +109,7 @@ class Classes_Provider {
 			}
 
 			$breakpoint = $meta['breakpoint'];
-			$breakpoint_key = ( null === $breakpoint ) ? 'desktop' : $breakpoint;
+			$breakpoint_key = ( null === $breakpoint ) ? Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP : $breakpoint;
 
 			$result[ $breakpoint_key ] = $variant['props'] ?? [];
 		}

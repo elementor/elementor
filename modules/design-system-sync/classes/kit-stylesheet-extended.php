@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\DesignSystemSync\Classes;
 
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Plugin;
@@ -29,14 +30,10 @@ class Kit_Stylesheet_Extended {
 		}
 
 		$synced_classes = Classes_Provider::get_synced_classes();
-		$grouped_class_entries = [];
+		$grouped_class_entries = ! empty( $synced_classes ) ? $this->get_classes_css_entries( $synced_classes ) : [];
 
-		if ( ! empty( $synced_classes ) ) {
-			$grouped_class_entries = $this->get_classes_css_entries( $synced_classes );
-
-			if ( ! empty( $grouped_class_entries['desktop'] ) ) {
-				$css_entries = array_merge( $css_entries, $grouped_class_entries['desktop'] );
-			}
+		if ( ! empty( $grouped_class_entries[ Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP ] ) ) {
+			$css_entries = array_merge( $css_entries, $grouped_class_entries[ Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP ] );
 		}
 
 		if ( ! empty( $css_entries ) ) {
@@ -46,7 +43,7 @@ class Kit_Stylesheet_Extended {
 		}
 
 		foreach ( $grouped_class_entries as $device => $entries ) {
-			if ( 'desktop' === $device || empty( $entries ) ) {
+			if ( Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP === $device || empty( $entries ) ) {
 				continue;
 			}
 
@@ -106,7 +103,7 @@ class Kit_Stylesheet_Extended {
 				continue;
 			}
 
-			$desktop_props = $all_variant_props['desktop'] ?? [];
+			$desktop_props = $all_variant_props[ Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP ] ?? [];
 
 			if ( ! Classes_Provider::has_typography_props( $desktop_props ) ) {
 				continue;
