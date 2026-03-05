@@ -1,9 +1,9 @@
 const path = require( 'path' );
 const fs = require( 'fs' );
-const { GenerateWordPressAssetFileWebpackPlugin } = require( path.resolve( __dirname, '../packages/packages/tools/generate-wordpress-asset-file-webpack-plugin' ) );
-const { ExtractI18nWordpressExpressionsWebpackPlugin } = require( path.resolve( __dirname, '../packages/packages/tools/extract-i18n-wordpress-expressions-webpack-plugin' ) );
-const { ExternalizeWordPressAssetsWebpackPlugin } = require( path.resolve( __dirname, '../packages/packages/tools/externalize-wordpress-assets-webpack-plugin' ) );
-const { EntryInitializationWebpackPlugin } = require( path.resolve( __dirname, '../packages/packages/tools/entry-initialization-webpack-plugin' ) );
+const { GenerateWordPressAssetFileWebpackPlugin } = require( path.resolve( __dirname, '../packages/tools/generate-wordpress-asset-file-webpack-plugin' ) );
+const { ExtractI18nWordpressExpressionsWebpackPlugin } = require( path.resolve( __dirname, '../packages/tools/extract-i18n-wordpress-expressions-webpack-plugin' ) );
+const { ExternalizeWordPressAssetsWebpackPlugin } = require( path.resolve( __dirname, '../packages/tools/externalize-wordpress-assets-webpack-plugin' ) );
+const { EntryInitializationWebpackPlugin } = require( path.resolve( __dirname, '../packages/tools/entry-initialization-webpack-plugin' ) );
 const TerserPlugin = require('terser-webpack-plugin');
 
 const packages = getLocalRepoPackagesEntries();
@@ -128,7 +128,7 @@ module.exports = {
 
 function getLocalRepoPackagesEntries() {
 	const repoPath = path.resolve( __dirname, '../packages' );
-	const relevantDirs = [ 'packages/core', 'packages/libs', 'apps' ]
+	const relevantDirs = [ 'core', 'libs', 'apps' ]
 
 	const packages = relevantDirs.flatMap( ( dir ) =>
 		fs.readdirSync( path.resolve( repoPath, dir ) )

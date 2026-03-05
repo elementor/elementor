@@ -92,19 +92,19 @@ module.exports = {
 			{
 				zones: [
 					{
-						target: './packages/core',
-						from: [ './packages/tools' ],
+						target: './core',
+						from: [ './tools' ],
 						message: 'Core cannot import from Tools.',
 					},
 
 					{
-						target: './packages/libs',
-						from: [ './packages/core', './packages/tools' ],
+						target: './libs',
+						from: [ './core', './tools' ],
 						message: 'Libraries can only import other libraries.',
 					},
 					{
-						target: './packages/tools',
-						from: [ './packages/*' ],
+						target: './tools',
+						from: [ './*' ],
 						message: 'Tools cannot import from Core, Libs or Tools.',
 					},
 				],
@@ -114,7 +114,7 @@ module.exports = {
 	overrides: [
 		{
 			// Core Packages.
-			files: [ '**/packages/@(core|libs)/**/*.[tj]s?(x)' ],
+			files: [ '**/@(core|libs)/**/*.[tj]s?(x)' ],
 			rules: {
 				'@wordpress/i18n-text-domain': [ 'error', { allowedTextDomain: 'elementor' } ],
 			},

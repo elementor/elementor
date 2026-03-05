@@ -18,7 +18,7 @@ const RemoveChunksPlugin = require('./remove-chunks');
 
 const WatchTimePlugin = require('./plugins/watch-time/index');
 
-const { ExtractI18nWordpressExpressionsWebpackPlugin } = require( path.resolve( __dirname, '../packages/packages/tools/extract-i18n-wordpress-expressions-webpack-plugin' ) );
+const { ExtractI18nWordpressExpressionsWebpackPlugin } = require( path.resolve( __dirname, '../packages/tools/extract-i18n-wordpress-expressions-webpack-plugin' ) );
 
 // Preventing auto-generated long names of shared sub chunks (optimization.splitChunks.minChunks) by using only the hash.
 const getChunkName = ( chunkData, environment ) => {
