@@ -7,6 +7,7 @@ import {
 	getContainer,
 	getElementLabel,
 	replaceElement,
+	type V1Element,
 	type V1ElementModelProps,
 } from '@elementor/editor-elements';
 import { notify } from '@elementor/editor-notifications';
@@ -83,7 +84,9 @@ describe( 'CreateComponentForm', () => {
 			}
 			return Promise.resolve();
 		} );
-		mockReplaceElement.mockResolvedValue( createMockElement( { model: { id: CREATED_COMPONENT_INSTANCE_ID } } ) );
+		mockReplaceElement.mockReturnValue(
+			createMockElement( { model: { id: CREATED_COMPONENT_INSTANCE_ID } } ) as V1Element
+		);
 
 		act( () => {
 			__dispatch(

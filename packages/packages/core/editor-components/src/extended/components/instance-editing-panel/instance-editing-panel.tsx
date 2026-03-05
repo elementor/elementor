@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
+import { notify } from '@elementor/editor-notifications';
 import { DetachIcon, PencilIcon } from '@elementor/icons';
 import { Box, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -54,8 +55,12 @@ export function ExtendedInstanceEditingPanel() {
 				componentId,
 				trackingInfo: getDetachTrackingInfo(),
 			} );
-		} catch ( error ) {
-			console.error( 'Failed to detach component instance:', error );
+		} catch {
+			notify( {
+				type: 'error',
+				message: __( 'Failed to detach component instance.', 'elementor' ),
+				id: 'detach-component-instance-failed',
+			} );
 		}
 	};
 
@@ -66,18 +71,10 @@ export function ExtendedInstanceEditingPanel() {
 	const actions = (
 		<Stack direction="row" gap={ 0.5 }>
 			{ canDetach && (
-				<EditComponentAction
-					label={ detachLabel }
-					icon={ DetachIcon }
-					onClick={ handleDetachClick }
-				/>
+				<EditComponentAction label={ detachLabel } icon={ DetachIcon } onClick={ handleDetachClick } />
 			) }
 			{ canEdit && (
-				<EditComponentAction
-					label={ panelTitle }
-					onClick={ handleEditComponent }
-					icon={ PencilIcon }
-				/>
+				<EditComponentAction label={ panelTitle } onClick={ handleEditComponent } icon={ PencilIcon } />
 			) }
 		</Stack>
 	);
@@ -89,10 +86,7 @@ export function ExtendedInstanceEditingPanel() {
 				overrides={ overrides }
 				overridableProps={ overridableProps }
 			>
-				<InstancePanelHeader
-					componentName={ component.name }
-					actions={ actions }
-				/>
+				<InstancePanelHeader componentName={ component.name } actions={ actions } />
 				<InstancePanelBody
 					groups={ groups }
 					isEmpty={ isEmpty }

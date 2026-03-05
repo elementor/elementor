@@ -14,6 +14,7 @@ import {
 } from '@elementor/editor-canvas';
 import { getCurrentDocument } from '@elementor/editor-documents';
 import { type V1ElementData } from '@elementor/editor-elements';
+import { notify } from '@elementor/editor-notifications';
 import { __getState as getState } from '@elementor/store';
 import { hasProInstalled } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
@@ -301,14 +302,14 @@ function createComponentView( options: ComponentTypeOptions ): typeof ElementVie
 					await detachComponentInstance( {
 						instanceId,
 						componentId,
-						trackingInfo: {
-							location,
-							secondaryLocation,
-							trigger,
-						},
+						trackingInfo: { location, secondaryLocation, trigger },
 					} );
-				} catch ( error ) {
-					console.error( 'Failed to detach component instance:', error );
+				} catch {
+					notify( {
+						type: 'error',
+						message: __( 'Failed to detach component instance.', 'elementor' ),
+						id: 'detach-component-instance-failed',
+					} );
 				}
 			};
 
