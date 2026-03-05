@@ -40,9 +40,15 @@ jest.mock( '@elementor/editor-mcp', () => ( {
 		isAngieReady: jest.fn( () => false ),
 		triggerAngie: jest.fn(),
 	} ) ),
+	isAngieAvailable: jest.fn( () => false ),
+	isAngieSidebarOpen: jest.fn( () => false ),
+	sendPromptToAngie: jest.fn(),
 } ) );
 
-jest.mock( '@elementor/editor-current-user' );
+jest.mock( '@elementor/editor-current-user', () => ( {
+	useSuppressedMessage: jest.fn().mockReturnValue( [ false, jest.fn() ] ),
+	useCurrentUserCapabilities: jest.fn(),
+} ) );
 
 mockCurrentUserCapabilities( true );
 
@@ -110,9 +116,12 @@ describe( 'ComponentsTab', () => {
 			);
 
 			// Assert
-			expect( screen.getByText( 'No components yet' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Learn more about components' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Create your first one:' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Create your first component' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Learn more' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Or' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Generate a custom component using Angie' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Generate Component' ) ).toBeInTheDocument();
+			expect( screen.getByText( /Shift \+ K/ ) ).toBeInTheDocument();
 		} );
 
 		it( 'should render components list when components exist', () => {
@@ -223,10 +232,91 @@ describe( 'ComponentsTab', () => {
 			);
 
 			// Assert
-			expect( screen.getByText( 'No components yet' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Learn more about components' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Create your first one:' ) ).not.toBeInTheDocument();
-			expect( screen.queryByRole( 'button', { name: /Create component with AI/i } ) ).not.toBeInTheDocument();
+			expect( screen.getByText( 'Create your first component' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Learn more' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Or' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Generate Component' ) ).not.toBeInTheDocument();
+		} );
+
+		describe( 'Angie Integration', () => {
+			const mcpMock = () => jest.requireMock( '@elementor/editor-mcp' );
+			let dispatchEventSpy: jest.SpyInstance;
+
+			beforeEach( () => {
+				act( () => {
+					dispatch( slice.actions.load( [] ) );
+				} );
+				mockCurrentUserCapabilities( true );
+				mcpMock().isAngieAvailable.mockReturnValue( false );
+				mcpMock().isAngieSidebarOpen.mockReturnValue( false );
+				mcpMock().sendPromptToAngie.mockClear();
+				dispatchEventSpy = jest.spyOn( window, 'dispatchEvent' );
+			} );
+
+			afterEach( () => {
+				dispatchEventSpy.mockRestore();
+			} );
+
+			it( 'should send prompt when Angie is available and sidebar is open', () => {
+				// Arrange
+				mcpMock().isAngieAvailable.mockReturnValue( true );
+				mcpMock().isAngieSidebarOpen.mockReturnValue( true );
+
+				// Act
+				renderWithStore(
+					<SearchProvider localStorageKey="test-search">
+						<ComponentsList />
+					</SearchProvider>,
+					store
+				);
+
+				fireEvent.click( screen.getByText( 'Generate Component' ) );
+
+				// Assert
+				expect( mcpMock().sendPromptToAngie ).toHaveBeenCalled();
+			} );
+
+			it( 'should show intro popover when Angie is available but sidebar is closed', () => {
+				// Arrange
+				mcpMock().isAngieAvailable.mockReturnValue( true );
+				mcpMock().isAngieSidebarOpen.mockReturnValue( false );
+
+				// Act
+				renderWithStore(
+					<SearchProvider localStorageKey="test-search">
+						<ComponentsList />
+					</SearchProvider>,
+					store
+				);
+
+				fireEvent.click( screen.getByText( 'Generate Component' ) );
+
+				// Assert
+				expect( screen.getByText( 'Meet Angie' ) ).toBeInTheDocument();
+				expect( screen.getByText( 'You can now generate custom components using Angie' ) ).toBeInTheDocument();
+			} );
+
+			it( 'should dispatch installation modal event when Angie is not available', () => {
+				// Arrange
+				mcpMock().isAngieAvailable.mockReturnValue( false );
+
+				// Act
+				renderWithStore(
+					<SearchProvider localStorageKey="test-search">
+						<ComponentsList />
+					</SearchProvider>,
+					store
+				);
+
+				fireEvent.click( screen.getByText( 'Generate Component' ) );
+
+				// Assert
+				const installEvent = dispatchEventSpy.mock.calls.find(
+					( [ event ] ) => event instanceof CustomEvent && event.type === 'elementor/editor/create-widget'
+				);
+				expect( installEvent ).toBeDefined();
+				expect( mcpMock().sendPromptToAngie ).not.toHaveBeenCalled();
+			} );
 		} );
 	} );
 

@@ -1,15 +1,60 @@
 import * as React from 'react';
-import { ComponentsIcon } from '@elementor/icons';
+import { useLayoutEffect, useRef, useState } from 'react';
+import { isAngieAvailable, isAngieSidebarOpen, sendPromptToAngie } from '@elementor/editor-mcp';
+import { AIIcon, ComponentsIcon } from '@elementor/icons';
 import { Box, Divider, Link, List, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../hooks/use-components';
 import { useComponentsPermissions } from '../../hooks/use-components-permissions';
+import { AngieIntroPopover, useAngieIntro } from '../angie-intro';
 import { ComponentItem } from './components-item';
 import { LoadingComponents } from './loading-components';
 import { useSearch } from './search-provider';
 
 const LEARN_MORE_URL = 'http://go.elementor.com/components-guide-article';
+
+// Injected dynamically because global CSS would break the Widgets tab (shared panel elements).
+const EMPTY_STATE_STYLE_ID = 'components-empty-state-full-height';
+
+const FULL_HEIGHT_CSS = `
+#elementor-panel-page-elements {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+#elementor-panel-elements {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
+}
+
+#elementor-panel-elements-wrapper {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
+}
+`;
+
+const useFullHeightPanel = () => {
+	useLayoutEffect( () => {
+		let style = document.getElementById( EMPTY_STATE_STYLE_ID );
+
+		if ( ! style ) {
+			style = document.createElement( 'style' );
+			style.id = EMPTY_STATE_STYLE_ID;
+			style.textContent = FULL_HEIGHT_CSS;
+			document.head.appendChild( style );
+		}
+
+		return () => {
+			document.getElementById( EMPTY_STATE_STYLE_ID )?.remove();
+		};
+	}, [] );
+};
 
 // Override legacy panel CSS reset that sets h1-h6 to font-size:100% and font-weight:normal.
 // See: assets/dev/scss/editor/panel/_reset.scss (applied via :where() selector in panel.scss).
@@ -40,8 +85,54 @@ export function ComponentsList() {
 	);
 }
 
+const GENERATE_COMPONENT_PROMPT =
+	'Create a reusable component for me. Goal: [What should this component help me accomplish?]';
+
+const SHOW_INSTALLATION_MODAL_EVENT = 'elementor/editor/create-widget';
+
 export const EmptyState = () => {
 	const { canCreate } = useComponentsPermissions();
+	const { shouldShowIntro, suppressIntro } = useAngieIntro();
+	const [ isIntroOpen, setIsIntroOpen ] = useState( false );
+	const generateLinkRef = useRef< HTMLButtonElement | null >( null );
+
+	useFullHeightPanel();
+
+	const handleGenerateClick = () => {
+		if ( ! isAngieAvailable() ) {
+			window.dispatchEvent(
+				new CustomEvent( SHOW_INSTALLATION_MODAL_EVENT, {
+					detail: { prompt: GENERATE_COMPONENT_PROMPT },
+				} )
+			);
+			return;
+		}
+
+		if ( isAngieSidebarOpen() ) {
+			sendPromptToAngie( GENERATE_COMPONENT_PROMPT );
+			return;
+		}
+
+		if ( shouldShowIntro ) {
+			setIsIntroOpen( true );
+			return;
+		}
+
+		sendPromptToAngie( GENERATE_COMPONENT_PROMPT );
+	};
+
+	const handleIntroConfirm = () => {
+		suppressIntro();
+		setIsIntroOpen( false );
+		sendPromptToAngie( GENERATE_COMPONENT_PROMPT );
+	};
+
+	const handleIntroClose = () => {
+		setIsIntroOpen( false );
+	};
+
+	const isMac = navigator.platform.toUpperCase().indexOf( 'MAC' ) >= 0;
+	const shortcutKey = isMac ? 'Cmd' : 'Ctrl';
 
 	return (
 		<Stack
@@ -49,25 +140,75 @@ export const EmptyState = () => {
 			justifyContent="start"
 			height="100%"
 			sx={ { px: 2, py: 4 } }
-			gap={ 2 }
+			gap={ 1 }
 			overflow="hidden"
 		>
-			<Stack alignItems="center" gap={ 1 }>
+			<Stack alignItems="center" gap={ 1.75 }>
 				<ComponentsIcon fontSize="large" sx={ { color: 'text.secondary' } } />
 
-				<Typography align="center" variant="subtitle2" color="text.secondary" sx={ SUBTITLE_OVERRIDE_SX }>
-					{ __( 'No components yet', 'elementor' ) }
-				</Typography>
+				<Stack alignItems="center" gap={ 1.75 }>
+					<Typography align="center" variant="subtitle2" color="text.secondary" sx={ SUBTITLE_OVERRIDE_SX }>
+						{ __( 'Create your first component', 'elementor' ) }
+					</Typography>
 
-				<Typography align="center" variant="caption" color="secondary" sx={ { maxWidth: 200 } }>
+					<Typography align="center" variant="caption" color="text.tertiary">
+						{ canCreate
+							? `${ __( 'Press', 'elementor' ) } ${ shortcutKey }+ Shift + K ${ __(
+									'on div-block or flexbox',
+									'elementor'
+							  ) }`
+							: __(
+									'With your current role, you cannot create components. Contact an administrator to create one.',
+									'elementor'
+							  ) }
+					</Typography>
+				</Stack>
+			</Stack>
+
+			{ canCreate && (
+				<>
+					<Typography variant="subtitle2" color="text.primary" sx={ { py: 0.5, fontWeight: 500 } }>
+						{ __( 'Or', 'elementor' ) }
+					</Typography>
+
+					<Stack alignItems="center" gap={ 1 }>
+						<Typography align="center" variant="caption" color="text.tertiary">
+							{ __( 'Generate a custom component using Angie', 'elementor' ) }
+						</Typography>
+
+						<Link
+							ref={ generateLinkRef }
+							component="button"
+							variant="caption"
+							onClick={ handleGenerateClick }
+							sx={ {
+								display: 'flex',
+								alignItems: 'center',
+								padding: 0.5,
+								gap: 0.5,
+								color: '#c00bb9',
+								textDecoration: 'none',
+								'&:hover': { textDecoration: 'underline' },
+							} }
+						>
+							<AIIcon sx={ { fontSize: 16 } } />
+							{ __( 'Generate Component', 'elementor' ) }
+						</Link>
+
+						<AngieIntroPopover
+							open={ isIntroOpen }
+							onClose={ handleIntroClose }
+							onConfirm={ handleIntroConfirm }
+							anchorRef={ generateLinkRef }
+						/>
+					</Stack>
+				</>
+			) }
+
+			<Stack alignItems="center" gap={ 0.5 } sx={ { mt: 'auto', width: '100%' } }>
+				<Divider sx={ { width: '100%', mb: 2 } } />
+				<Typography align="center" variant="caption" color="text.tertiary">
 					{ __( 'Components are reusable blocks that sync across your site.', 'elementor' ) }
-					<br />
-					{ canCreate
-						? __( 'Create once, use everywhere.', 'elementor' )
-						: __(
-								'With your current role, you cannot create components. Contact an administrator to create one.',
-								'elementor'
-						  ) }
 				</Typography>
 				<Link
 					href={ LEARN_MORE_URL }
@@ -76,32 +217,9 @@ export const EmptyState = () => {
 					variant="caption"
 					color="info.main"
 				>
-					{ __( 'Learn more about components', 'elementor' ) }
+					{ __( 'Learn more', 'elementor' ) }
 				</Link>
 			</Stack>
-
-			{ canCreate && (
-				<>
-					<Divider sx={ { width: '100%' } } />
-					<Stack alignItems="center" gap={ 1 } width="100%">
-						<Typography
-							align="center"
-							variant="subtitle2"
-							color="text.secondary"
-							sx={ SUBTITLE_OVERRIDE_SX }
-						>
-							{ __( 'Create your first one:', 'elementor' ) }
-						</Typography>
-
-						<Typography align="center" variant="caption" color="secondary" sx={ { maxWidth: 228 } }>
-							{ __(
-								'Right-click any div-block or flexbox on your canvas or structure and select "Create component"',
-								'elementor'
-							) }
-						</Typography>
-					</Stack>
-				</>
-			) }
 		</Stack>
 	);
 };
