@@ -2,16 +2,7 @@
 
 import { getActiveBreakpoint } from './interactions-breakpoints.js';
 
-export const config = window.ElementorInteractionsConfig?.constants || {
-	defaultDuration: 600,
-	defaultDelay: 0,
-	slideDistance: 100,
-	scaleStart: 0,
-	defaultEasing: 'easeIn',
-	relativeTo: 'viewport',
-	start: 85,
-	end: 15,
-};
+export const config = window.ElementorInteractionsConfig?.constants ?? {};
 
 export function skipInteraction( interaction ) {
 	const breakpoint = getActiveBreakpoint();
