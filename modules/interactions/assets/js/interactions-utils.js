@@ -1,7 +1,7 @@
 'use strict';
 
 import {
-	config,
+	config as getConfig,
 	skipInteraction,
 	extractInteractionId,
 	getAnimateFunction,
@@ -13,13 +13,15 @@ import {
 } from './interactions-shared-utils.js';
 
 export {
-	config,
+	getConfig as config,
 	skipInteraction,
 	extractInteractionId,
 	getAnimateFunction,
 	getInViewFunction,
 	waitForAnimateFunction,
 	parseInteractionsData,
+	unwrapInteractionValue,
+	timingValueToMs,
 };
 
 export function getKeyframes( effect, type, direction ) {
@@ -29,6 +31,8 @@ export function getKeyframes( effect, type, direction ) {
 	if ( 'fade' === effect ) {
 		keyframes.opacity = isIn ? [ 0, 1 ] : [ 1, 0 ];
 	}
+
+	const config = getConfig();
 
 	if ( 'scale' === effect ) {
 		keyframes.scale = isIn ? [ config.scaleStart, 1 ] : [ 1, config.scaleStart ];
@@ -60,6 +64,8 @@ export function parseAnimationName( name ) {
 		,
 		,
 	] = name.split( '-' );
+
+	const config = getConfig();
 
 	return {
 		trigger,
@@ -134,6 +140,8 @@ export function extractAnimationConfig( interaction ) {
 	}
 
 	const breakpoints = unwrapInteractionBreakpoints( payload.breakpoints );
+
+	const config = getConfig();
 
 	const effect = unwrapInteractionValue( animation.effect ) || animation.effect || 'fade';
 	const type = unwrapInteractionValue( animation.type ) || animation.type || 'in';
