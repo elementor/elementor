@@ -13,6 +13,10 @@ class Module extends BaseModule {
 	const MODULE_NAME = 'widget-creation';
 	const EXPERIMENT_NAME = 'e_widget_creation';
 
+	const PACKAGES = [
+		'editor-widget-creation',
+	];
+
 	public function get_name() {
 		return self::MODULE_NAME;
 	}
@@ -26,5 +30,15 @@ class Module extends BaseModule {
 			'default' => ExperimentsManager::STATE_INACTIVE,
 			'release_status' => ExperimentsManager::RELEASE_STATUS_ALPHA,
 		];
+	}
+
+	public function __construct() {
+		parent::__construct();
+
+		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
+	}
+
+	private function add_packages( array $packages ): array {
+		return array_merge( $packages, self::PACKAGES );
 	}
 }
