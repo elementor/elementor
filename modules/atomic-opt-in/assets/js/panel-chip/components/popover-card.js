@@ -62,9 +62,9 @@ const PopoverCard = ( { doClose } ) => {
 					<Button
 						variant="contained"
 						size="small"
-						color="accent"
+						color="inherit"
 						onClick={ redirectHandler }
-						sx={ { ml: 'auto' } }
+						sx={ { ml: 'auto', bgcolor: 'text.primary', color: 'background.paper', '&:hover': { bgcolor: 'text.secondary', color: 'background.paper' } } }
 					>{ ctaText }</Button>
 				</Stack>
 			</Box>
