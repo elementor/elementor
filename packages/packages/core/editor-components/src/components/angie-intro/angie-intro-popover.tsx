@@ -19,8 +19,7 @@ import {
 import { __ } from '@wordpress/i18n';
 
 export const ANGIE_INTRO_MESSAGE_KEY = 'angie-components-intro';
-
-const INTRO_IMAGE_URL = 'https://assets.elementor.com/packages/v1/images/angie-components-intro.png';
+const INTRO_IMAGE_URL = 'https://assets.elementor.com/packages/v1/images/angie-promotion.svg';
 const IMAGE_OVERLAY_COLOR = 'rgba(255, 0, 191, 0.6)';
 const BUTTON_COLOR = '#f0abfc';
 const BUTTON_HOVER_COLOR = '#e879f9';

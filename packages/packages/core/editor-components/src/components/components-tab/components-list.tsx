@@ -1,8 +1,20 @@
 import * as React from 'react';
 import { useLayoutEffect, useRef, useState } from 'react';
-import { isAngieAvailable, isAngieSidebarOpen, sendPromptToAngie } from '@elementor/editor-mcp';
-import { AIIcon, ComponentsIcon } from '@elementor/icons';
-import { Box, Divider, Link, List, Stack, Typography } from '@elementor/ui';
+import { isAngieAvailable, isAngieSidebarOpen, redirectToInstallation, sendPromptToAngie } from '@elementor/editor-mcp';
+import { AIIcon, ComponentsIcon, XIcon } from '@elementor/icons';
+import {
+	Box,
+	Button,
+	Dialog,
+	DialogContent,
+	Divider,
+	IconButton,
+	Image,
+	Link,
+	List,
+	Stack,
+	Typography,
+} from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../hooks/use-components';
@@ -88,23 +100,20 @@ export function ComponentsList() {
 const GENERATE_COMPONENT_PROMPT =
 	'Create a reusable component for me. Goal: [What should this component help me accomplish?]';
 
-const SHOW_INSTALLATION_MODAL_EVENT = 'elementor/editor/create-widget';
+const PROMOTION_IMAGE_URL = 'https://assets.elementor.com/packages/v1/images/angie-promotion.svg';
 
 export const EmptyState = () => {
 	const { canCreate } = useComponentsPermissions();
 	const { shouldShowIntro, suppressIntro } = useAngieIntro();
 	const [ isIntroOpen, setIsIntroOpen ] = useState( false );
+	const [ isInstallDialogOpen, setIsInstallDialogOpen ] = useState( false );
 	const generateLinkRef = useRef< HTMLButtonElement | null >( null );
 
 	useFullHeightPanel();
 
 	const handleGenerateClick = () => {
 		if ( ! isAngieAvailable() ) {
-			window.dispatchEvent(
-				new CustomEvent( SHOW_INSTALLATION_MODAL_EVENT, {
-					detail: { prompt: GENERATE_COMPONENT_PROMPT },
-				} )
-			);
+			setIsInstallDialogOpen( true );
 			return;
 		}
 
@@ -129,6 +138,14 @@ export const EmptyState = () => {
 
 	const handleIntroClose = () => {
 		setIsIntroOpen( false );
+	};
+
+	const handleInstallDialogClose = () => {
+		setIsInstallDialogOpen( false );
+	};
+
+	const handleInstall = () => {
+		redirectToInstallation( GENERATE_COMPONENT_PROMPT );
 	};
 
 	const isMac = navigator.platform.toUpperCase().indexOf( 'MAC' ) >= 0;
@@ -220,6 +237,48 @@ export const EmptyState = () => {
 					{ __( 'Learn more', 'elementor' ) }
 				</Link>
 			</Stack>
+
+			<Dialog fullWidth maxWidth="md" open={ isInstallDialogOpen } onClose={ handleInstallDialogClose }>
+				<IconButton
+					aria-label={ __( 'Close', 'elementor' ) }
+					onClick={ handleInstallDialogClose }
+					sx={ { position: 'absolute', right: 8, top: 8, zIndex: 1 } }
+				>
+					<XIcon />
+				</IconButton>
+				<DialogContent sx={ { p: 0, overflow: 'hidden' } }>
+					<Stack direction="row" sx={ { height: 400 } }>
+						<Image
+							sx={ {
+								height: '100%',
+								aspectRatio: '1 / 1',
+								objectFit: 'cover',
+								objectPosition: 'right center',
+							} }
+							src={ PROMOTION_IMAGE_URL }
+						/>
+						<Stack gap={ 2 } justifyContent="center" p={ 4 }>
+							<Typography variant="h6" fontWeight={ 600 } whiteSpace="nowrap">
+								{ __( 'Install Angie to build custom components', 'elementor' ) }
+							</Typography>
+							<Typography variant="body2" color="text.secondary">
+								{ __(
+									'Angie lets you generate custom components using simple instructions.',
+									'elementor'
+								) }
+							</Typography>
+							<Typography variant="body2" color="text.secondary">
+								{ __( 'Install once to start building directly inside the editor.', 'elementor' ) }
+							</Typography>
+							<Stack direction="row" justifyContent="flex-end" sx={ { mt: 2 } }>
+								<Button variant="contained" color="accent" onClick={ handleInstall }>
+									{ __( 'Install Angie', 'elementor' ) }
+								</Button>
+							</Stack>
+						</Stack>
+					</Stack>
+				</DialogContent>
+			</Dialog>
 		</Stack>
 	);
 };

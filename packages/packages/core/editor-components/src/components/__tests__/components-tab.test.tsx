@@ -43,6 +43,7 @@ jest.mock( '@elementor/editor-mcp', () => ( {
 	isAngieAvailable: jest.fn( () => false ),
 	isAngieSidebarOpen: jest.fn( () => false ),
 	sendPromptToAngie: jest.fn(),
+	redirectToInstallation: jest.fn(),
 } ) );
 
 jest.mock( '@elementor/editor-current-user', () => ( {
@@ -240,7 +241,6 @@ describe( 'ComponentsTab', () => {
 
 		describe( 'Angie Integration', () => {
 			const mcpMock = () => jest.requireMock( '@elementor/editor-mcp' );
-			let dispatchEventSpy: jest.SpyInstance;
 
 			beforeEach( () => {
 				act( () => {
@@ -250,11 +250,6 @@ describe( 'ComponentsTab', () => {
 				mcpMock().isAngieAvailable.mockReturnValue( false );
 				mcpMock().isAngieSidebarOpen.mockReturnValue( false );
 				mcpMock().sendPromptToAngie.mockClear();
-				dispatchEventSpy = jest.spyOn( window, 'dispatchEvent' );
-			} );
-
-			afterEach( () => {
-				dispatchEventSpy.mockRestore();
 			} );
 
 			it( 'should send prompt when Angie is available and sidebar is open', () => {
@@ -296,7 +291,7 @@ describe( 'ComponentsTab', () => {
 				expect( screen.getByText( 'You can now generate custom components using Angie' ) ).toBeInTheDocument();
 			} );
 
-			it( 'should dispatch installation modal event when Angie is not available', () => {
+			it( 'should show installation dialog when Angie is not available', () => {
 				// Arrange
 				mcpMock().isAngieAvailable.mockReturnValue( false );
 
@@ -311,10 +306,8 @@ describe( 'ComponentsTab', () => {
 				fireEvent.click( screen.getByText( 'Generate Component' ) );
 
 				// Assert
-				const installEvent = dispatchEventSpy.mock.calls.find(
-					( [ event ] ) => event instanceof CustomEvent && event.type === 'elementor/editor/create-widget'
-				);
-				expect( installEvent ).toBeDefined();
+				expect( screen.getByText( 'Install Angie to build custom components' ) ).toBeInTheDocument();
+				expect( screen.getByText( 'Install Angie' ) ).toBeInTheDocument();
 				expect( mcpMock().sendPromptToAngie ).not.toHaveBeenCalled();
 			} );
 		} );
