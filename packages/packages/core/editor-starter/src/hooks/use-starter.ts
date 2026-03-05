@@ -87,18 +87,23 @@ export function useStarter() {
 			return;
 		}
 
+		const onElementAdded = ( e: Event ) => {
+			const detail = ( e as CustomEvent )?.detail;
+
+			if ( detail?.command === 'preview/drop' ) {
+				dismiss();
+			}
+		};
+
 		const channels = getElementorChannels();
-
-		if ( ! channels?.panelElements ) {
-			return;
-		}
-
 		const handleDragStart = () => dismiss();
 
-		channels.panelElements.on( 'element:drag:start', handleDragStart );
+		window.addEventListener( 'elementor/commands/run/after', onElementAdded );
+		channels?.panelElements?.on( 'element:drag:start', handleDragStart );
 
 		return () => {
-			channels.panelElements?.off( 'element:drag:start', handleDragStart );
+			window.removeEventListener( 'elementor/commands/run/after', onElementAdded );
+			channels?.panelElements?.off( 'element:drag:start', handleDragStart );
 		};
 	}, [ config, dismiss ] );
 
