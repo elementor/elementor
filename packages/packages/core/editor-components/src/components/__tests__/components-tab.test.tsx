@@ -40,6 +40,9 @@ jest.mock( '@elementor/editor-mcp', () => ( {
 		isAngieReady: jest.fn( () => false ),
 		triggerAngie: jest.fn(),
 	} ) ),
+	isAngieAvailable: jest.fn( () => false ),
+	sendPromptToAngie: jest.fn(),
+	redirectToInstallation: jest.fn(),
 } ) );
 
 jest.mock( '@elementor/editor-current-user', () => ( {
@@ -250,7 +253,6 @@ describe( 'ComponentsTab', () => {
 						angie: {
 							isInstalled: true,
 							isActive: true,
-							installUrl: '/wp-admin/plugin-install.php',
 						},
 					},
 				};
@@ -270,18 +272,16 @@ describe( 'ComponentsTab', () => {
 				expect( screen.getByText( 'You can now generate custom components using Angie' ) ).toBeInTheDocument();
 			} );
 
-			it( 'should redirect to install URL when Generate Component is clicked and Angie is not installed', () => {
+			it( 'should call redirectToInstallation when Generate Component is clicked and Angie is not installed', () => {
 				// Arrange
-				const originalLocation = window.location;
-				delete ( window as Partial< Window > ).location;
-				window.location = { ...originalLocation, href: '' } as Location;
+				const { redirectToInstallation } = jest.requireMock( '@elementor/editor-mcp' );
+				redirectToInstallation.mockClear();
 
 				( window as Window & { elementorEditorV2Env?: object } ).elementorEditorV2Env = {
 					'@elementor/editor-components': {
 						angie: {
 							isInstalled: false,
 							isActive: false,
-							installUrl: '/wp-admin/plugin-install.php?s=angie',
 						},
 					},
 				};
@@ -297,10 +297,7 @@ describe( 'ComponentsTab', () => {
 				fireEvent.click( screen.getByText( 'Generate Component' ) );
 
 				// Assert
-				expect( window.location.href ).toBe( '/wp-admin/plugin-install.php?s=angie' );
-
-				// Cleanup
-				window.location = originalLocation;
+				expect( redirectToInstallation ).toHaveBeenCalledWith( 'Help me create a custom component' );
 			} );
 		} );
 	} );
