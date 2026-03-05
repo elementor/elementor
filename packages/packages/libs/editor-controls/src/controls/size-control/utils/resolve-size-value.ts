@@ -70,33 +70,3 @@ const sanitizeSize = ( size: SizeValue[ 'size' ] ): SizeValue[ 'size' ] => {
 	}
 	return size;
 };
-
-// let unit = value.unit;
-// let size = value.size;
-
-// // Rule 1: unit not in allowed list — fall back to default
-// const isValidUnit = units.includes( unit as TUnit );
-//
-// if ( ! isValidUnit ) {
-// 	unit = defaultUnit ?? DEFAULT_SIZE_UNIT;
-// }
-
-// Rule 2: extended units auto
-// if ( unit === AUTO_EXTENDED_UNIT ) {
-// 	return { size: '', unit };
-// }
-//
-// // Rule 3: extended units custom
-// if ( unit === CUSTOM_EXTENDED_UNIT ) {
-// 	return { size: String( value.size ?? '' ), unit };
-// }
-
-// Rule 4: bad size — convert to empty string
-// if ( value.size === null || value.size === undefined ) {
-// 	size = '';
-// }
-//
-// return {
-// 	unit,
-// 	size,
-// };
