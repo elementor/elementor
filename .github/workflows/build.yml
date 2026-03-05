@@ -57,13 +57,7 @@ jobs:
 
       - name: Check if this is only a changelog PR
         id: changelog_diff_files
-        uses: technote-space/get-diff-action@v6
-        with:
-          PATTERNS: |
-            **/*
-            .*/**/*
-            !readme.txt
-            !changelog.txt
+        run: echo "diff=true" >> $GITHUB_OUTPUT
 
       - name: Install Node.js 20.x
         uses: actions/setup-node@v4
