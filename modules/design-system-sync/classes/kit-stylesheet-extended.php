@@ -21,6 +21,8 @@ class Kit_Stylesheet_Extended {
 			return;
 		}
 
+		$kit_selector = '.elementor-kit-' . $post_css->get_post_id();
+
 		$css_entries = [];
 
 		$synced_variables = Variables_Provider::get_synced_color_variables();
@@ -38,7 +40,7 @@ class Kit_Stylesheet_Extended {
 
 		if ( ! empty( $css_entries ) ) {
 			$post_css->get_stylesheet()->add_raw_css(
-				':root { ' . implode( ' ', $css_entries ) . ' }'
+				$kit_selector . ' { ' . implode( ' ', $css_entries ) . ' }'
 			);
 		}
 
@@ -48,7 +50,7 @@ class Kit_Stylesheet_Extended {
 			}
 
 			$post_css->get_stylesheet()->add_raw_css(
-				':root { ' . implode( ' ', $entries ) . ' }',
+				$kit_selector . ' { ' . implode( ' ', $entries ) . ' }',
 				$device
 			);
 		}
