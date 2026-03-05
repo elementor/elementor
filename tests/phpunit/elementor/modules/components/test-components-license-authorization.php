@@ -63,7 +63,7 @@ class Test_Components_License_Authorization extends Elementor_Test_Base {
 
 	private function create_test_component( string $title, array $elements, string $status = 'publish' ): int {
 		$this->act_as_admin();
-		\Mock_Pro_License_API::set_license_state( active: true );
+		\Mock_Pro_License_API::set_license_state( true );
 
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
 		$request->set_body_params( [
@@ -86,7 +86,7 @@ class Test_Components_License_Authorization extends Elementor_Test_Base {
 	public function test_create_component__blocked_for_core_tier() {
 		// Arrange
 		$this->act_as_admin();
-		\Mock_Pro_License_API::set_license_state( active: false );
+		\Mock_Pro_License_API::set_license_state( false );
 
 		// Act
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
@@ -113,7 +113,7 @@ class Test_Components_License_Authorization extends Elementor_Test_Base {
 	public function test_create_validate__blocked_for_core_tier() {
 		// Arrange
 		$this->act_as_admin();
-		\Mock_Pro_License_API::set_license_state( active: false );
+		\Mock_Pro_License_API::set_license_state( false );
 
 		// Act
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/create-validate' );
@@ -138,7 +138,7 @@ class Test_Components_License_Authorization extends Elementor_Test_Base {
 	public function test_update_statuses__blocked_for_core_tier() {
 		// Arrange
 		$component_id = $this->create_test_component( 'Draft Component', $this->mock_component_1_content, 'draft' );
-		\Mock_Pro_License_API::set_license_state( active: false );
+		\Mock_Pro_License_API::set_license_state( false );
 
 		// Act
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components/status' );
@@ -156,7 +156,7 @@ class Test_Components_License_Authorization extends Elementor_Test_Base {
 	public function test_archive__blocked_for_core_tier() {
 		// Arrange
 		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
-		\Mock_Pro_License_API::set_license_state( active: false );
+		\Mock_Pro_License_API::set_license_state( false );
 
 		// Act
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/archive' );
@@ -173,7 +173,7 @@ class Test_Components_License_Authorization extends Elementor_Test_Base {
 	public function test_update_titles__blocked_for_core_tier() {
 		// Arrange
 		$component_id = $this->create_test_component( 'Original Title', $this->mock_component_1_content );
-		\Mock_Pro_License_API::set_license_state( active: false );
+		\Mock_Pro_License_API::set_license_state( false );
 
 		// Act
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/update-titles' );
@@ -192,7 +192,7 @@ class Test_Components_License_Authorization extends Elementor_Test_Base {
 	public function test_lock__blocked_for_core_tier() {
 		// Arrange
 		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
-		\Mock_Pro_License_API::set_license_state( active: false );
+		\Mock_Pro_License_API::set_license_state( false );
 
 		// Act
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/lock' );
@@ -208,7 +208,7 @@ class Test_Components_License_Authorization extends Elementor_Test_Base {
 	public function test_unlock__blocked_for_core_tier() {
 		// Arrange
 		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
-		\Mock_Pro_License_API::set_license_state( active: false );
+		\Mock_Pro_License_API::set_license_state( false );
 
 		// Act
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/unlock' );
@@ -224,7 +224,7 @@ class Test_Components_License_Authorization extends Elementor_Test_Base {
 	public function test_lock_status__blocked_for_core_tier() {
 		// Arrange
 		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
-		\Mock_Pro_License_API::set_license_state( active: false );
+		\Mock_Pro_License_API::set_license_state( false );
 
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/lock-status' );
@@ -240,7 +240,7 @@ class Test_Components_License_Authorization extends Elementor_Test_Base {
 	public function test_get_components__allowed_for_core_tier() {
 		// Arrange
 		$this->create_test_component( 'Test Component', $this->mock_component_1_content );
-		\Mock_Pro_License_API::set_license_state( active: false );
+		\Mock_Pro_License_API::set_license_state( false );
 
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components' );
@@ -253,7 +253,7 @@ class Test_Components_License_Authorization extends Elementor_Test_Base {
 	public function test_get_styles__allowed_for_core_tier() {
 		// Arrange
 		$this->create_test_component( 'Test Component', $this->mock_component_1_content );
-		\Mock_Pro_License_API::set_license_state( active: false );
+		\Mock_Pro_License_API::set_license_state( false );
 
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/styles' );
@@ -266,7 +266,7 @@ class Test_Components_License_Authorization extends Elementor_Test_Base {
 	public function test_get_overridable_props__allowed_for_core_tier() {
 		// Arrange
 		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
-		\Mock_Pro_License_API::set_license_state( active: false );
+		\Mock_Pro_License_API::set_license_state( false );
 
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/overridable-props' );
