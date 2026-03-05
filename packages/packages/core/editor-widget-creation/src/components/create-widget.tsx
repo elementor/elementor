@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { isAngieAvailable, redirectToInstallation, sendPromptToAngie } from '@elementor/editor-mcp';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { XIcon } from '@elementor/icons';
@@ -17,39 +17,39 @@ export function CreateWidget() {
 	const [ open, setOpen ] = useState( false );
 	const [ prompt, setPrompt ] = useState< string | undefined >();
 
+	const handleShow = async ( event: Event ) => {
+		const customEvent = event as CustomEvent< ShowModalEventDetail >;
+
+		if ( isAngieAvailable() ) {
+			sendPromptToAngie( customEvent.detail?.prompt );
+
+			return;
+		}
+
+		setPrompt( customEvent.detail?.prompt );
+		setOpen( true );
+	};
+
+	const handleClose = () => {
+		setOpen( false );
+		setPrompt( undefined );
+	};
+
+	const handleInstall = () => {
+		if ( ! prompt ) {
+			return;
+		}
+
+		redirectToInstallation( prompt );
+	};
+
 	useEffect( () => {
-		const handleShow = async ( event: Event ) => {
-			const customEvent = event as CustomEvent< ShowModalEventDetail >;
-
-			if ( isAngieAvailable() ) {
-				sendPromptToAngie( customEvent.detail?.prompt );
-
-				return;
-			}
-
-			setPrompt( customEvent.detail?.prompt );
-			setOpen( true );
-		};
-
 		window.addEventListener( CREATE_WIDGET_EVENT, handleShow );
 
 		return () => {
 			window.removeEventListener( CREATE_WIDGET_EVENT, handleShow );
 		};
 	}, [] );
-
-	const handleClose = useCallback( () => {
-		setOpen( false );
-		setPrompt( undefined );
-	}, [] );
-
-	const handleInstall = useCallback( () => {
-		if ( ! prompt ) {
-			return;
-		}
-
-		redirectToInstallation( prompt );
-	}, [ prompt ] );
 
 	return (
 		<ThemeProvider>
