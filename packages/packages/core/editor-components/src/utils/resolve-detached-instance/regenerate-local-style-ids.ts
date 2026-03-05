@@ -2,6 +2,7 @@ import { generateElementId, type V1ElementData, type V1ElementSettingsProps } fr
 import { classesPropTypeUtil, type ClassesPropValue, type PropValue } from '@elementor/editor-props';
 import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 
+// Ts version for atomic-widgets/assets/js/editor/utils/regenerate-local-style-ids.js
 export function regenerateLocalStyleIds( element: V1ElementData ): {
 	styles: Record< StyleDefinitionID, StyleDefinition > | undefined;
 	settings: V1ElementSettingsProps | undefined;
