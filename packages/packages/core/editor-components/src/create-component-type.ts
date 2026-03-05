@@ -20,7 +20,6 @@ import { hasProInstalled } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
-import { COMPONENT_WIDGET_TYPE } from './consts';
 import { type ComponentInstanceProp } from './prop-types/component-instance-prop-type';
 import { type ComponentsSlice, selectComponentByUid } from './store/store';
 import { type ComponentRenderContext, type ExtendedWindow } from './types';
@@ -28,8 +27,6 @@ import { detachComponentInstance } from './utils/detach-component-instance';
 import { formatComponentElementsId } from './utils/format-component-elements-id';
 import { switchToComponent } from './utils/switch-to-component';
 import { trackComponentEvent } from './utils/tracking';
-
-export { COMPONENT_WIDGET_TYPE };
 
 type ContextMenuGroupConfig = {
 	disable: Record< string, string[] >;

@@ -34,6 +34,7 @@ export function DetachInstanceConfirmationDialog( {
 	);
 }
 
+// Used imperatively from the context menu (Marionette view).
 export function openDetachConfirmDialog( onConfirm: () => void ) {
 	const handleConfirm = () => {
 		closeDialog();

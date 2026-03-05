@@ -3,6 +3,7 @@ import { createMockContainer, createMockPropType, mockCurrentUserCapabilities, r
 import { ControlActionsProvider, TextControl } from '@elementor/editor-controls';
 import { controlsRegistry, ElementProvider } from '@elementor/editor-editing-panel';
 import { getContainer, getElementLabel, getElementType, getWidgetsCache } from '@elementor/editor-elements';
+import { notify } from '@elementor/editor-notifications';
 import {
 	__createStore,
 	__dispatch as dispatch,
@@ -22,6 +23,8 @@ import { ExtendedInstanceEditingPanel } from '../instance-editing-panel';
 jest.mock( '../../../../utils/detach-component-instance', () => ( {
 	detachComponentInstance: jest.fn(),
 } ) );
+
+jest.mock( '@elementor/editor-notifications' );
 
 jest.mock( '@elementor/editor-elements' );
 
@@ -344,7 +347,7 @@ describe( '<ExtendedInstanceEditingPanel />', () => {
 			} );
 		} );
 
-		it( 'should call detachComponentInstance with trackingInfo when confirm is clicked', async () => {
+		it( 'should call detachComponentInstance and close dialog when confirm is clicked', async () => {
 			// Arrange.
 			setupComponent();
 			renderPanel( store );
@@ -369,6 +372,37 @@ describe( '<ExtendedInstanceEditingPanel />', () => {
 						location: MOCK_TRACKING_LOCATION,
 						trigger: MOCK_TRACKING_TRIGGER,
 					},
+				} );
+			} );
+
+			await waitFor( () => {
+				expect( screen.queryByText( 'Detach from Component?' ) ).not.toBeInTheDocument();
+			} );
+		} );
+
+		it( 'should show error notification when detach fails', async () => {
+			// Arrange.
+			jest.mocked( detachComponentInstance ).mockRejectedValue( new Error( 'detach failed' ) );
+			setupComponent();
+			renderPanel( store );
+
+			// Act.
+			const detachButton = screen.getByLabelText( 'Detach from Component' );
+			fireEvent.click( detachButton );
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Detach from Component?' ) ).toBeInTheDocument();
+			} );
+
+			const confirmButton = screen.getByRole( 'button', { name: /detach/i } );
+			fireEvent.click( confirmButton );
+
+			// Assert.
+			await waitFor( () => {
+				expect( notify ).toHaveBeenCalledWith( {
+					type: 'error',
+					message: 'Failed to detach component instance.',
+					id: 'detach-component-instance-failed',
 				} );
 			} );
 		} );

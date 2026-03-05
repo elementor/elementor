@@ -14,7 +14,11 @@ import { trackComponentEvent } from './tracking';
 type DetachParams = {
 	instanceId: string;
 	componentId: number;
-	trackingInfo: PerformDetachParams[ 'trackingInfo' ];
+	trackingInfo: {
+		location: string;
+		secondaryLocation?: string;
+		trigger: string;
+	};
 };
 
 type DoReturn = {
@@ -65,11 +69,21 @@ export async function detachComponentInstance( {
 
 				const originalInstanceModel = instanceContainer.model.toJSON();
 
-				const detachedElement = performDetach( {
-					instanceId,
-					detachedInstanceElementData,
-					componentId,
-					trackingInfo,
+				const detachedElement = replaceElement( {
+					currentElementId: instanceId,
+					newElement: detachedInstanceElementData,
+					withHistory: false,
+				} );
+
+				const componentUid = selectComponent( getState(), componentId )?.uid;
+				trackComponentEvent( {
+					action: 'detached',
+					source: 'user',
+					component_uid: componentUid,
+					instance_id: instanceId,
+					location: trackingInfo.location,
+					secondary_location: trackingInfo.secondaryLocation,
+					trigger: trackingInfo.trigger,
 				} );
 
 				return {
@@ -120,11 +134,10 @@ export async function detachComponentInstance( {
 					? selectOverridableProps( getState(), editedComponentOnDetach ) ?? null
 					: null;
 
-				const detachedElement = performDetach( {
-					instanceId: restoredInstance.id,
-					detachedInstanceElementData,
-					componentId,
-					trackingInfo,
+				const detachedElement = replaceElement( {
+					currentElementId: restoredInstance.id,
+					newElement: detachedInstanceElementData,
+					withHistory: false,
 				} );
 
 				return {
@@ -142,39 +155,6 @@ export async function detachComponentInstance( {
 	);
 
 	return undoableDetach();
-}
-
-type PerformDetachParams = {
-	instanceId: string;
-	detachedInstanceElementData: V1ElementModelProps;
-	componentId: number;
-	trackingInfo: {
-		location: string;
-		secondaryLocation?: string;
-		trigger: string;
-	};
-};
-
-function performDetach( { instanceId, detachedInstanceElementData, componentId, trackingInfo }: PerformDetachParams ) {
-	const detachedElement = replaceElement( {
-		currentElementId: instanceId,
-		newElement: detachedInstanceElementData,
-		withHistory: false,
-	} );
-
-	const componentUid = selectComponent( getState(), componentId )?.uid;
-
-	trackComponentEvent( {
-		action: 'detached',
-		source: 'user',
-		component_uid: componentUid,
-		instance_id: instanceId,
-		location: trackingInfo.location,
-		secondary_location: trackingInfo.secondaryLocation,
-		trigger: trackingInfo.trigger,
-	} );
-
-	return detachedElement;
 }
 
 function extractInstanceOverrides( instanceContainer: NonNullable< ReturnType< typeof getContainer > > ) {

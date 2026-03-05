@@ -6,7 +6,8 @@ import type {
 	LegacyWindow,
 } from '@elementor/editor-canvas';
 
-import { COMPONENT_WIDGET_TYPE, createComponentType } from '../create-component-type';
+import { COMPONENT_WIDGET_TYPE } from '../consts';
+import { createComponentType } from '../create-component-type';
 import type { ExtendedWindow } from '../types';
 
 type TestWindow = LegacyWindow & ExtendedWindow;
