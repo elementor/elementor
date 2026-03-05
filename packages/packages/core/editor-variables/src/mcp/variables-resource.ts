@@ -35,7 +35,6 @@ export const initVariablesResource = () => {
 		window.addEventListener( 'variables:updated', () => {
 			mcpServer.server.sendResourceUpdated( {
 				uri: GLOBAL_VARIABLES_URI,
-				contents: [ { uri: GLOBAL_VARIABLES_URI, text: localStorage[ 'elementor-global-variables' ] } ],
 			} );
 		} );
 	} );
