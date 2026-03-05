@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Stack, Typography } from '@elementor/ui';
 import { ReactNode } from 'react';
+import { Stack, Typography } from '@elementor/ui';
 
 type ModalHeaderProps = {
 	title: string;

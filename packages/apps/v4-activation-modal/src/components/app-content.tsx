@@ -58,12 +58,15 @@ export function AppContent( { onClose }: { onClose: () => void } ) {
 			header={
 				<ModalHeader
 					title={ __( 'You’re now using the Atomic Editor', 'elementor' ) }
-					subtitle= {
-					<>
-						{ __( 'Elementor’s new editing experience is now active.', 'elementor' ) }
-						<br />
-						{ __( 'Your existing pages stay exactly the same - you can keep working as usual while exploring new Atomic Elements.', 'elementor' ) }
-					</>
+					subtitle={
+						<>
+							{ __( 'Elementor’s new editing experience is now active.', 'elementor' ) }
+							<br />
+							{ __(
+									'Your existing pages stay exactly the same - you can keep working as usual while exploring new Atomic Elements.',
+								'elementor'
+							) }
+						</>
 					}
 				/>
 			}
