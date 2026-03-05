@@ -14,10 +14,7 @@ const POPUP_LEFT = 0;
 
 let callbackCounter = 0;
 
-export function useElementorConnect( {
-	connectUrl,
-	onSuccess,
-}: ConnectOptions ) {
+export function useElementorConnect( { connectUrl, onSuccess }: ConnectOptions ) {
 	const onSuccessRef = useRef( onSuccess );
 	onSuccessRef.current = onSuccess;
 

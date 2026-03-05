@@ -4,6 +4,7 @@ import { createQueryClient, QueryClientProvider } from '@elementor/query';
 import { __createStore, __getStore, __StoreProvider as StoreProvider } from '@elementor/store';
 import { DirectionProvider, ThemeProvider } from '@elementor/ui';
 
+import { TrackingProvider } from '../analytics/tracking-context';
 import { initFromConfig, registerOnboardingSlice } from '../store';
 import { AppContent } from './app-content';
 import { ToastProvider } from './toast/toast-context';
@@ -57,7 +58,9 @@ export function App( props: AppProps ) {
 				<DirectionProvider rtl={ window.document.dir === 'rtl' }>
 					<ThemeProvider colorScheme={ colorScheme } palette="argon-beta">
 						<ToastProvider>
-							<AppContent { ...props } />
+							<TrackingProvider>
+								<AppContent { ...props } />
+							</TrackingProvider>
 						</ToastProvider>
 					</ThemeProvider>
 				</DirectionProvider>

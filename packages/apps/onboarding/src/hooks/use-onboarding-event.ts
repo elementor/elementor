@@ -22,32 +22,36 @@ import {
 	TARGET_NAME_PERSONA,
 	THEME_VALUE_MAP,
 } from '../analytics';
+import { useTrackingState } from '../analytics/tracking-context';
 
 function dispatchDirectly( eventName: string, payload: Record< string, unknown > ): void {
 	const { dispatchEvent } = getMixpanel();
 	dispatchEvent?.( eventName, payload );
 }
 
-let globalTrackingActive = false;
-
 export function useOnboardingEvent() {
-	const trackEvent = useCallback( ( eventName: string, payload: Partial< OnboardingEventPayload > ) => {
-		const fullPayload: Record< string, unknown > = {
-			app_type: 'editor',
-			window_name: 'core_onboarding',
-			...payload,
-		};
+	const { isActive, activate } = useTrackingState();
 
-		if ( globalTrackingActive && canSendEvents() ) {
-			dispatchDirectly( eventName, fullPayload );
-		} else {
-			enqueueEvent( eventName, fullPayload );
-		}
-	}, [] );
+	const trackEvent = useCallback(
+		( eventName: string, payload: Partial< OnboardingEventPayload > ) => {
+			const fullPayload: Record< string, unknown > = {
+				app_type: 'editor',
+				window_name: 'core_onboarding',
+				...payload,
+			};
+
+			if ( isActive && canSendEvents() ) {
+				dispatchDirectly( eventName, fullPayload );
+			} else {
+				enqueueEvent( eventName, fullPayload );
+			}
+		},
+		[ isActive ]
+	);
 
 	const activateTracking = useCallback( () => {
-		globalTrackingActive = true;
-	}, [] );
+		activate();
+	}, [ activate ] );
 
 	const flushQueue = useCallback( () => {
 		const queued = getEventQueue();

@@ -4,8 +4,7 @@ export const getMixpanel = () => {
 		dispatchEvent: eventsManager.dispatchEvent?.bind( eventsManager ),
 		config: eventsManager.config,
 		canSendEvents: eventsManager.canSendEvents?.bind( eventsManager ),
-		initializeMixpanel:
-			eventsManager.initializeMixpanel?.bind( eventsManager ),
+		initializeMixpanel: eventsManager.initializeMixpanel?.bind( eventsManager ),
 		enableTracking: eventsManager.enableTracking?.bind( eventsManager ),
 		isMixpanelReady: eventsManager.isMixpanelReady?.bind( eventsManager ),
 		trackingEnabled: eventsManager.trackingEnabled ?? false,
@@ -21,17 +20,12 @@ export const useMixpanel = () => {
 	};
 };
 
-export const trackEvent = <
-	T extends { eventName: string } & Record< string, unknown >,
->(
-	event: T
-) => {
+export const trackEvent = < T extends { eventName: string } & Record< string, unknown > >( event: T ) => {
 	const { dispatchEvent } = getMixpanel();
 	dispatchEvent?.( event.eventName, event );
 };
 
-export const canSendEvents = (): boolean =>
-	getMixpanel().canSendEvents?.() ?? false;
+export const canSendEvents = (): boolean => getMixpanel().canSendEvents?.() ?? false;
 
 export const setCanSendEvents = ( value: boolean ): void => {
 	const editorEvents = window.elementorCommon?.config?.editor_events;
@@ -40,8 +34,7 @@ export const setCanSendEvents = ( value: boolean ): void => {
 	}
 };
 
-export const isMixpanelReady = (): boolean =>
-	getMixpanel().isMixpanelReady?.() ?? false;
+export const isMixpanelReady = (): boolean => getMixpanel().isMixpanelReady?.() ?? false;
 
 export const isTrackingEnabled = (): boolean => getMixpanel().trackingEnabled;
 
@@ -50,7 +43,7 @@ export const enableTracking = (): void => getMixpanel().enableTracking?.();
 export const initializeMixpanel = ( onLoaded?: () => void ): void =>
 	getMixpanel().initializeMixpanel?.( onLoaded ?? ( () => {} ) );
 
-export function initializeAndEnableTracking(): void {
+export function initializeAndEnableTracking( onReady?: () => void ): void {
 	const mixpanel = getMixpanel();
 
 	if ( ! mixpanel.dispatchEvent ) {
@@ -58,13 +51,18 @@ export function initializeAndEnableTracking(): void {
 	}
 
 	if ( mixpanel.trackingEnabled ) {
+		onReady?.();
 		return;
 	}
 
 	if ( mixpanel.isMixpanelReady?.() ) {
 		mixpanel.enableTracking?.();
+		onReady?.();
 		return;
 	}
 
-	mixpanel.initializeMixpanel?.( () => mixpanel.enableTracking?.() );
+	mixpanel.initializeMixpanel?.( () => {
+		mixpanel.enableTracking?.();
+		onReady?.();
+	} );
 }

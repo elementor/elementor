@@ -85,17 +85,9 @@ export interface OnboardingEventPayload {
 }
 
 /** REFINED: user interacts with AI/website templates/close/widget on first canvas (editor). */
-export type SiteStarterTargetName =
-	| 'AI_site_planner'
-	| 'Website templates'
-	| 'clicked_x'
-	| 'widget_dragged';
+export type SiteStarterTargetName = 'AI_site_planner' | 'Website templates' | 'clicked_x' | 'widget_dragged';
 
-export type SiteStarterInteractionResult =
-	| 'site_planner_opened'
-	| 'kit_library_opened'
-	| 'closed'
-	| 'widget_dragged';
+export type SiteStarterInteractionResult = 'site_planner_opened' | 'kit_library_opened' | 'closed' | 'widget_dragged';
 
 /** REFINED: metadata item for ob_summary (key-value). */
 export interface ObSummaryMetadataItem {

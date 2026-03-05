@@ -86,22 +86,28 @@ export function AppContent( { onClose }: AppContentProps ) {
 		if ( ! hasTrackedInit.current ) {
 			hasTrackedInit.current = true;
 			trackOnboardingInitialized();
-			trackStepViewed( 'login' );
-		}
-	}, [ trackOnboardingInitialized, trackStepViewed ] );
 
-	useEffect( () => {
-		if ( hadUnexpectedExit ) {
-			trackResumeOnboarding( stepId );
-			actions.clearUnexpectedExit();
+			if ( hadUnexpectedExit ) {
+				trackResumeOnboarding( stepId );
+				actions.clearUnexpectedExit();
+			} else {
+				trackStepViewed( 'login' );
+			}
+			return;
 		}
-	}, [ hadUnexpectedExit, actions, trackResumeOnboarding, stepId ] );
 
-	useEffect( () => {
 		if ( hasPassedLogin && stepId ) {
 			trackStepViewed( stepId );
 		}
-	}, [ hasPassedLogin, stepId, trackStepViewed ] );
+	}, [
+		stepId,
+		hadUnexpectedExit,
+		hasPassedLogin,
+		actions,
+		trackOnboardingInitialized,
+		trackResumeOnboarding,
+		trackStepViewed,
+	] );
 
 	const checkProInstallScreen = useCheckProInstallScreen();
 
@@ -117,10 +123,10 @@ export function AppContent( { onClose }: AppContentProps ) {
 			}
 
 			if ( shouldEnableTracking ) {
-				initializeAndEnableTracking();
-				activateTracking();
-
-				setTimeout( () => flushQueue(), 500 );
+				initializeAndEnableTracking( () => {
+					activateTracking();
+					flushQueue();
+				} );
 			}
 
 			updateLibraryConnectConfig( data );
@@ -174,7 +180,18 @@ export function AppContent( { onClose }: AppContentProps ) {
 				},
 			}
 		);
-	}, [ actions, choices, completedSteps, isConnected, isGuest, onClose, stepId, trackErrorReported, trackSummary, updateProgress ] );
+	}, [
+		actions,
+		choices,
+		completedSteps,
+		isConnected,
+		isGuest,
+		onClose,
+		stepId,
+		trackErrorReported,
+		trackSummary,
+		updateProgress,
+	] );
 
 	const handleBack = useCallback( () => {
 		trackBackClicked( stepId );
@@ -316,7 +333,8 @@ export function AppContent( { onClose }: AppContentProps ) {
 											targetType: 'request',
 											targetName: 'complete_step',
 											stepId,
-											errorBody: error instanceof Error ? error.message : 'Failed to update progress',
+											errorBody:
+												error instanceof Error ? error.message : 'Failed to update progress',
 										} );
 										redirectToNewPage();
 									},
@@ -345,7 +363,10 @@ export function AppContent( { onClose }: AppContentProps ) {
 											targetType: 'request',
 											targetName: 'complete_step',
 											stepId,
-											errorBody: progressError instanceof Error ? progressError.message : 'Failed to update progress',
+											errorBody:
+												progressError instanceof Error
+													? progressError.message
+													: 'Failed to update progress',
 										} );
 										redirectToNewPage();
 									},
