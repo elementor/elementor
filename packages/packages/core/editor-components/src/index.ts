@@ -18,7 +18,7 @@ export { InstancePanelBody } from './components/instance-editing-panel/instance-
 export { EditComponentAction, InstancePanelHeader } from './components/instance-editing-panel/instance-panel-header';
 export { useInstancePanelData } from './components/instance-editing-panel/use-instance-panel-data';
 
-export { COMPONENT_WIDGET_TYPE } from './create-component-type';
+export { COMPONENT_WIDGET_TYPE } from './consts';
 
 export { useComponents } from './hooks/use-components';
 export { useComponentsPermissions } from './hooks/use-components-permissions';
