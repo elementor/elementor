@@ -25,6 +25,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -83,6 +84,9 @@ class Atomic_Form extends Atomic_Element_Base {
 				->set_dependencies( $email_dependencies )
 				->default( [] ),
 			'attributes' => Attributes_Prop_Type::make(),
+			'disable-default-children' => Boolean_Prop_Type::make()
+				->default( false )
+				->description( "when used by tool must be set to true" ),
 		];
 	}
 
@@ -177,7 +181,8 @@ class Atomic_Form extends Atomic_Element_Base {
 	}
 
 	protected function define_default_children() {
-		return [
+		
+		return  [
 			$this->build_label( __( 'First name', 'elementor' ), 'first-name' ),
 			$this->build_input( __( 'First name', 'elementor' ), 'text' ),
 
@@ -190,15 +195,15 @@ class Atomic_Form extends Atomic_Element_Base {
 			$this->build_label( __( 'Message', 'elementor' ), 'message' ),
 			$this->build_input( __( 'Your message', 'elementor' ), 'textarea' ),
 
-			Widget_Builder::make( 'e-form-submit-button' )
-				->settings( [
-					'text' => Html_V3_Prop_Type::generate( [
-						'content'  => String_Prop_Type::generate( __( 'Submit', 'elementor' ) ),
-						'children' => [],
-					] ),
-				] )
-				->is_locked( true )
-				->build(),
+		Widget_Builder::make( 'e-form-submit-button' )
+			->settings( [
+				'text' => Html_V3_Prop_Type::generate( [
+					'content'  => String_Prop_Type::generate( __( 'Submit', 'elementor' ) ),
+					'children' => [],
+				] ),
+			] )
+			->is_locked( true )
+			->build(),
 			$this->build_status_message(
 				__( 'Great! We’ve received your information.', 'elementor' ),
 				'success',

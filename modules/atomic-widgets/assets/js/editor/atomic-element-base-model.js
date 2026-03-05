@@ -31,6 +31,11 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 	}
 
 	onElementCreate() {
+		const disableDefaultChildren = this.get( 'editor_settings' )?.[ 'disable-default-children' ] ?? false;
+		if ( disableDefaultChildren ) {
+			return;
+		}
+
 		this.set( 'elements', this.getDefaultChildren().map( ( element ) => this.buildElement( element ) ) );
 	}
 

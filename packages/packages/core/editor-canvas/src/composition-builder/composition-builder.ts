@@ -92,6 +92,9 @@ export class CompositionBuilder {
 					model: {
 						elType: elementTag,
 						id: generateElementId(),
+						editor_settings: {
+							'disable-default-children': true,
+						}
 					},
 					options: { useHistory: false },
 			  } )
