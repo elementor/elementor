@@ -61,14 +61,14 @@ describe( 'useFontFamilies', () => {
 		} );
 	} );
 
-	it( 'should filter out unsupported font categories', () => {
+	it( 'should group unknown font categories under Custom Fonts', () => {
 		// Arrange.
 		const mockFontFamilies: Record< string, SupportedFonts > = {
 			Arial: 'system',
 			'Custom Font': 'custom',
 			Roboto: 'googlefonts',
-			'Unsupported Font': 'not-supported', // This will be filtered out by the component's logic
-		} as unknown as Record< string, SupportedFonts >;
+			'Unknown Font': 'some-future-type',
+		};
 
 		jest.mocked( getElementorConfig ).mockReturnValue( {
 			controls: {
@@ -89,7 +89,7 @@ describe( 'useFontFamilies', () => {
 		} );
 		expect( result.current[ 1 ] ).toEqual( {
 			label: 'Custom Fonts',
-			fonts: [ 'Custom Font' ],
+			fonts: [ 'Custom Font', 'Unknown Font' ],
 		} );
 		expect( result.current[ 2 ] ).toEqual( {
 			label: 'Google Fonts',
@@ -190,6 +190,34 @@ describe( 'useFontFamilies', () => {
 		expect( result.current[ 2 ] ).toEqual( {
 			label: 'Google Fonts',
 			fonts: [ 'Roboto', 'Alef Hebrew' ],
+		} );
+	} );
+
+	it( 'should group variable and typekit fonts under Custom Fonts', () => {
+		// Arrange.
+		const mockFontFamilies: Record< string, SupportedFonts > = {
+			Arial: 'system',
+			'My Variable Font': 'variable',
+			'My Typekit Font': 'typekit',
+			Roboto: 'googlefonts',
+		};
+
+		jest.mocked( getElementorConfig ).mockReturnValue( {
+			controls: {
+				font: {
+					options: mockFontFamilies,
+				},
+			},
+		} );
+
+		// Act.
+		const { result } = renderHook( () => useFontFamilies() );
+
+		// Assert.
+		expect( result.current ).toHaveLength( 3 );
+		expect( result.current[ 1 ] ).toEqual( {
+			label: 'Custom Fonts',
+			fonts: [ 'My Variable Font', 'My Typekit Font' ],
 		} );
 	} );
 

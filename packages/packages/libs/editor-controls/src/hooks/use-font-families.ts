@@ -8,10 +8,8 @@ const SYSTEM_GROUP = 0;
 const CUSTOM_GROUP = 1;
 const GOOGLE_GROUP = 2;
 
-const categoryGroupIndex: Record< SupportedFonts, number > = {
+const knownCategoryGroup: Partial< Record< SupportedFonts, number > > = {
 	system: SYSTEM_GROUP,
-	custom: CUSTOM_GROUP,
-	local: CUSTOM_GROUP,
 	googlefonts: GOOGLE_GROUP,
 	earlyaccess: GOOGLE_GROUP,
 };
@@ -20,6 +18,10 @@ const groupLabels: Record< number, string > = {
 	[ SYSTEM_GROUP ]: __( 'System', 'elementor' ),
 	[ CUSTOM_GROUP ]: __( 'Custom Fonts', 'elementor' ),
 	[ GOOGLE_GROUP ]: __( 'Google Fonts', 'elementor' ),
+};
+
+const resolveGroupIndex = ( category: string ): number => {
+	return knownCategoryGroup[ category as SupportedFonts ] ?? CUSTOM_GROUP;
 };
 
 const getFontFamilies = () => {
@@ -40,11 +42,7 @@ export const useFontFamilies = () => {
 	return useMemo( () => {
 		return Object.entries( fontFamilies || {} )
 			.reduce< FontCategory[] >( ( acc, [ font, category ] ) => {
-				const groupIndex = categoryGroupIndex[ category as SupportedFonts ];
-
-				if ( groupIndex === undefined ) {
-					return acc;
-				}
+				const groupIndex = resolveGroupIndex( category as string );
 
 				if ( ! acc[ groupIndex ] ) {
 					acc[ groupIndex ] = {
