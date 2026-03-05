@@ -242,7 +242,13 @@ describe( 'manage-element-interaction tool', () => {
 		it( 'uses provided effectType when given', () => {
 			mockAll.mockReturnValue( [] );
 			const callHandler = createRegistryAndGetHandler();
-			callHandler( { elementId: 'el-explicit-type', action: 'add', trigger: 'load', effect: 'fade', effectType: 'out' } );
+			callHandler( {
+				elementId: 'el-explicit-type',
+				action: 'add',
+				trigger: 'load',
+				effect: 'fade',
+				effectType: 'out',
+			} );
 
 			const createdItem = mockUpdateElementInteractions.mock.calls[ 0 ][ 0 ].interactions.items[ 0 ];
 			expect( createdItem.value.animation.value.type.value ).toBe( 'out' );

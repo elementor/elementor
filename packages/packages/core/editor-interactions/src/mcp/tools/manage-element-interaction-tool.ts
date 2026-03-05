@@ -62,9 +62,13 @@ export const initManageElementInteractionTool = ( reg: MCPRegistryEntry ) => {
 			[ key: string ]: unknown;
 		} ) => {
 			const { elementId, action, interactionId, ...animationData } = input;
-			const { effectType, ...restAnimationData } = animationData as { effectType?: string; [ key: string ]: unknown };
+			const { effectType, ...restAnimationData } = animationData as {
+				effectType?: string;
+				[ key: string ]: unknown;
+			};
 			const effect = restAnimationData.effect as string | undefined;
-			const resolvedType = effectType ?? ( effect && ! EFFECTS_WITHOUT_TYPE.includes( effect ) ? 'in' : undefined );
+			const resolvedType =
+				effectType ?? ( effect && ! EFFECTS_WITHOUT_TYPE.includes( effect ) ? 'in' : undefined );
 
 			const allInteractions = interactionsRepository.all();
 			const elementData = allInteractions.find( ( data ) => data.elementId === elementId );
