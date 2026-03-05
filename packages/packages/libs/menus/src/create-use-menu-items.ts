@@ -1,4 +1,4 @@
-import { type ComponentType, useMemo } from 'react';
+import { type ComponentType, useSyncExternalStore } from 'react';
 
 import { type LocationsMap, type MenuGroups } from './types';
 
@@ -13,22 +13,41 @@ type GroupedMenuItems< TGroups extends string > = Record<
 >;
 
 export function createUseMenuItems< TGroups extends string >(
-	locations: LocationsMap< MenuGroups< TGroups > >
+	locations: LocationsMap< MenuGroups< TGroups > >,
+	subscribe: ( listener: () => void ) => () => void
 ): UseMenuItems< TGroups > {
-	return () => {
-		// Normalize the injections groups to an object with the groups as keys.
-		return useMemo( () => {
-			return Object.entries( locations ).reduce( ( carry, [ groupName, location ] ) => {
-				const items = location.getInjections().map( ( injection ) => ( {
-					id: injection.id,
-					MenuItem: injection.component,
-				} ) );
+	let cachedMenuItems: GroupedMenuItems< TGroups > | null = null;
+	let cachedInjectionIds: string | null = null;
 
-				return {
-					...carry,
-					[ groupName ]: items,
-				};
-			}, {} as GroupedMenuItems< TGroups > );
-		}, [] );
+	const getMenuItems = () => {
+		const currentInjectionIds = Object.entries( locations )
+			.map( ( [ , location ] ) =>
+				location
+					.getInjections()
+					.map( ( i ) => i.id )
+					.join( ',' )
+			)
+			.join( '|' );
+
+		if ( currentInjectionIds === cachedInjectionIds && cachedMenuItems ) {
+			return cachedMenuItems;
+		}
+
+		cachedInjectionIds = currentInjectionIds;
+		cachedMenuItems = Object.entries( locations ).reduce( ( carry, [ groupName, location ] ) => {
+			const items = location.getInjections().map( ( injection ) => ( {
+				id: injection.id,
+				MenuItem: injection.component,
+			} ) );
+
+			return {
+				...carry,
+				[ groupName ]: items,
+			};
+		}, {} as GroupedMenuItems< TGroups > );
+
+		return cachedMenuItems;
 	};
+
+	return () => useSyncExternalStore( subscribe, getMenuItems );
 }
