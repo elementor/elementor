@@ -3,6 +3,7 @@
 namespace Elementor\App\Modules\E_Onboarding;
 
 use Elementor\App\Modules\E_Onboarding\Data\Controller;
+use Elementor\App\Modules\E_Onboarding\Data\Endpoints\Install_Theme;
 use Elementor\App\Modules\E_Onboarding\Storage\Entities\User_Choices;
 use Elementor\App\Modules\E_Onboarding\Storage\Entities\User_Progress;
 use Elementor\App\Modules\E_Onboarding\Storage\Onboarding_Progress_Manager;
@@ -336,7 +337,7 @@ class Module extends BaseModule {
 
 	private function is_elementor_theme_active(): bool {
 		$active_theme = get_stylesheet();
-		$is_active = in_array( $active_theme, Onboarding_Progress_Manager::ALLOWED_THEMES, true );
+		$is_active = in_array( $active_theme, Install_Theme::ALLOWED_THEMES, true );
 
 		return (bool) apply_filters( 'elementor/e-onboarding/is_elementor_theme_active', $is_active );
 	}

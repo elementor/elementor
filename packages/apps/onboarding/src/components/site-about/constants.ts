@@ -1,16 +1,16 @@
 import type { ElementType } from 'react';
-import {
-	BriefcaseIcon,
-	CalendarIcon,
-	CartIcon,
-	DomainIcon,
-	LandingPageTemplateIcon,
-	PostTypeIcon,
-	SearchIcon,
-} from '@elementor/icons';
 
+import {
+	BlogIcon,
+	BookingIcon,
+	CompanySiteIcon,
+	LandingPageIcon,
+	OnlineStoreIcon,
+	OrganizationIcon,
+	OtherIcon,
+	SmallMedBusinessIcon,
+} from '../../icons';
 import { t } from '../../utils/translations';
-import OrganizationIcon from './organization-icon';
 
 export interface SiteAboutOption {
 	value: string;
@@ -19,14 +19,14 @@ export interface SiteAboutOption {
 }
 
 export const SITE_ABOUT_OPTIONS: SiteAboutOption[] = [
-	{ value: 'small_business', labelKey: 'steps.site_about.option_small_med_business', icon: BriefcaseIcon },
-	{ value: 'online_store', labelKey: 'steps.site_about.option_online_store', icon: CartIcon },
-	{ value: 'company_site', labelKey: 'steps.site_about.option_company_site', icon: DomainIcon },
-	{ value: 'blog', labelKey: 'steps.site_about.option_blog', icon: PostTypeIcon },
-	{ value: 'landing_page', labelKey: 'steps.site_about.option_landing_page', icon: LandingPageTemplateIcon },
-	{ value: 'booking', labelKey: 'steps.site_about.option_booking', icon: CalendarIcon },
+	{ value: 'small_business', labelKey: 'steps.site_about.option_small_med_business', icon: SmallMedBusinessIcon },
+	{ value: 'online_store', labelKey: 'steps.site_about.option_online_store', icon: OnlineStoreIcon },
+	{ value: 'company_site', labelKey: 'steps.site_about.option_company_site', icon: CompanySiteIcon },
+	{ value: 'blog', labelKey: 'steps.site_about.option_blog', icon: BlogIcon },
+	{ value: 'landing_page', labelKey: 'steps.site_about.option_landing_page', icon: LandingPageIcon },
+	{ value: 'booking', labelKey: 'steps.site_about.option_booking', icon: BookingIcon },
 	{ value: 'organization', labelKey: 'steps.site_about.option_organization', icon: OrganizationIcon },
-	{ value: 'other', labelKey: 'steps.site_about.option_other', icon: SearchIcon },
+	{ value: 'other', labelKey: 'steps.site_about.option_other', icon: OtherIcon },
 ];
 
 export const GREETING_KEY_MAP: Record< string, string > = {
