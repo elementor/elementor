@@ -1,5 +1,13 @@
 import type { CSSProperties } from 'react';
 
+export type ExtendedWindow = Window & {
+	elementorCommon?: {
+		config?: {
+			library_connect?: Record< string, unknown >;
+		};
+	};
+};
+
 export const StepId = {
 	BUILDING_FOR: 'building_for',
 	SITE_ABOUT: 'site_about',
