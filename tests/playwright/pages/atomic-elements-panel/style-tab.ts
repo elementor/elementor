@@ -14,41 +14,6 @@ export const STYLE_SECTIONS = {
 	EFFECTS: 'Effects',
 } as const;
 
-const SIZE_SECTION_LABELS = {
-	WIDTH: 'Width',
-	HEIGHT: 'Height',
-	MIN_WIDTH: 'Min width',
-	MIN_HEIGHT: 'Min height',
-	MAX_WIDTH: 'Max width',
-	MAX_HEIGHT: 'Max height',
-};
-
-const OFFSET_LABELS = {
-	TOP: 'Top',
-	RIGHT: 'Right',
-	BOTTOM: 'Bottom',
-	LEFT: 'Left',
-};
-
-const FONT_SIZE_LABELS = {
-	LINE_HEIGHT: 'Line height',
-	LETTER_SPACING: 'Letter spacing',
-	WORD_SPACING: 'Word spacing',
-	FONT_SIZE: 'Font size',
-};
-
-const BORDER_TYPE_LABELS = {
-	NONE: 'None',
-	SOLID: 'Solid',
-	DASHED: 'Dashed',
-	DOTTED: 'Dotted',
-	DOUBLE: 'Double',
-	GROOVE: 'Groove',
-	RIDGE: 'Ridge',
-	INSET: 'Inset',
-	OUTSET: 'Outset',
-};
-
 const DISPLAY_VALUES = {
 	BLOCK: 'block',
 	FLEX: 'flex',
@@ -58,12 +23,12 @@ const DISPLAY_VALUES = {
 };
 
 export type StyleSection = typeof STYLE_SECTIONS[keyof typeof STYLE_SECTIONS];
-type SizeLabel = typeof SIZE_SECTION_LABELS[keyof typeof SIZE_SECTION_LABELS];
-type OffSetLabel = typeof OFFSET_LABELS[keyof typeof OFFSET_LABELS];
+type SizeLabel = 'Width' | 'Height' | 'Min width' | 'Min height' | 'Max width' | 'Max height';
+type OffSetLabel = 'Top' | 'Right' | 'Bottom' | 'Left';
 type Position= 'static' | 'relative' | 'absolute' | 'fixed' | 'sticky';
 type SizeValue = { size: number, unit?: Unit ; };
-type FontProperty = typeof FONT_SIZE_LABELS[keyof typeof FONT_SIZE_LABELS];
-type BorderTypeLabel = typeof BORDER_TYPE_LABELS[keyof typeof BORDER_TYPE_LABELS];
+type FontProperty = 'Line height' | 'Letter spacing' | 'Word spacing' | 'Font size';
+type BorderTypeLabel = 'None' | 'Solid' | 'Dashed' | 'Dotted' | 'Double' | 'Groove' | 'Ridge' | 'Inset' | 'Outset';
 type DisplayValue = typeof DISPLAY_VALUES[keyof typeof DISPLAY_VALUES];
 type DisplayOptions = {
 	[DISPLAY_VALUES.FLEX]?: {

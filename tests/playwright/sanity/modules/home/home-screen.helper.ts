@@ -138,7 +138,7 @@ export const saveHomepageSettings = async ( apiRequests: ApiRequests, requestCon
 			homepageId: homepageResponse?.value || null,
 			showOnFront: showOnFrontResponse?.value || null,
 		};
-	} catch ( error ) {
+	} catch {
 		return {
 			homepageId: null,
 			showOnFront: null,
@@ -158,7 +158,7 @@ export const restoreHomepageSettings = async ( apiRequests: ApiRequests, request
 		if ( settings.showOnFront !== null ) {
 			await apiRequests.customPut( requestContext, 'index.php?rest_route=/wp/v2/options/show_on_front', { value: settings.showOnFront } );
 		}
-	} catch ( error ) {
+	} catch {
 	}
 };
 

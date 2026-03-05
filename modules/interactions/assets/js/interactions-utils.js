@@ -31,11 +31,11 @@ export function getKeyframes( effect, type, direction ) {
 	}
 
 	if ( 'scale' === effect ) {
-		keyframes.scale = isIn ? [ config.scaleStart, 1 ] : [ 1, config.scaleStart ];
+		keyframes.scale = isIn ? [ config.scaleStart ?? 0, 1 ] : [ 1, config.scaleStart ?? 0 ];
 	}
 
 	if ( direction ) {
-		const distance = config.slideDistance;
+		const distance = config.slideDistance ?? 100;
 		const movement = {
 			left: { x: isIn ? [ -distance, 0 ] : [ 0, -distance ] },
 			right: { x: isIn ? [ distance, 0 ] : [ 0, distance ] },
@@ -58,7 +58,7 @@ export function parseAnimationName( name ) {
 		duration,
 		delay,
 		,
-		,
+		easing,
 	] = name.split( '-' );
 
 	return {
@@ -66,10 +66,10 @@ export function parseAnimationName( name ) {
 		effect,
 		type,
 		direction: direction || null,
-		duration: duration ? parseInt( duration, 10 ) : config.defaultDuration,
-		delay: delay ? parseInt( delay, 10 ) : config.defaultDelay,
+		duration: duration ? parseInt( duration, 10 ) : ( config.defaultDuration ?? 600 ),
+		delay: delay ? parseInt( delay, 10 ) : ( config.defaultDelay ?? 0 ),
 		replay: false,
-		easing: config.defaultEasing,
+		easing: easing || ( config.defaultEasing ?? 'easeIn' ),
 	};
 }
 
@@ -138,12 +138,12 @@ export function extractAnimationConfig( interaction ) {
 	const effect = unwrapInteractionValue( animation.effect ) || animation.effect || 'fade';
 	const type = unwrapInteractionValue( animation.type ) || animation.type || 'in';
 	const direction = unwrapInteractionValue( animation.direction ) || animation.direction || '';
-	const easing = config.defaultEasing;
+	const easing = config.defaultEasing ?? 'easeIn';
 	const replay = false;
 
 	const timingConfig = unwrapInteractionValue( animation.timing_config ) || animation.timing_config || {};
-	const duration = timingValueToMs( timingConfig?.duration, config.defaultDuration );
-	const delay = timingValueToMs( timingConfig?.delay, config.defaultDelay );
+	const duration = timingValueToMs( timingConfig?.duration, config.defaultDuration ?? 600 );
+	const delay = timingValueToMs( timingConfig?.delay, config.defaultDelay ?? 0 );
 
 	return {
 		trigger,
