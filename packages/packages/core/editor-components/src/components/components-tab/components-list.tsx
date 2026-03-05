@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useLayoutEffect, useRef, useState } from 'react';
+import { isAngieAvailable, redirectToInstallation, sendPromptToAngie } from '@elementor/editor-mcp';
 import { AIIcon, ComponentsIcon } from '@elementor/icons';
 import { Box, Divider, Link, List, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useAngieIntegration } from '../../hooks/use-angie-integration';
 import { useComponents } from '../../hooks/use-components';
 import { useComponentsPermissions } from '../../hooks/use-components-permissions';
 import { AngieIntroPopover, useAngieIntro } from '../angie-intro';
@@ -85,9 +85,30 @@ export function ComponentsList() {
 	);
 }
 
+const GENERATE_COMPONENT_PROMPT = 'Help me create a custom component';
+
+type AngieEnvConfig = {
+	isInstalled: boolean;
+};
+
+const getAngieEnvConfig = (): AngieEnvConfig => {
+	const env = window.elementorEditorV2Env;
+
+	return env?.[ '@elementor/editor-components' ]?.angie ?? { isInstalled: false };
+};
+
+declare global {
+	interface Window {
+		elementorEditorV2Env?: {
+			'@elementor/editor-components'?: {
+				angie?: AngieEnvConfig;
+			};
+		};
+	}
+}
+
 export const EmptyState = () => {
 	const { canCreate } = useComponentsPermissions();
-	const { isAngieAvailable, isAngieInstalled, triggerAngiePrompt, redirectToInstall } = useAngieIntegration();
 	const { shouldShowIntro, suppressIntro } = useAngieIntro();
 	const [ isIntroOpen, setIsIntroOpen ] = useState( false );
 	const generateLinkRef = useRef< HTMLButtonElement | null >( null );
@@ -95,13 +116,15 @@ export const EmptyState = () => {
 	useFullHeightPanel();
 
 	const handleGenerateClick = () => {
-		if ( ! isAngieInstalled ) {
-			redirectToInstall();
+		if ( isAngieAvailable() ) {
+			sendPromptToAngie( GENERATE_COMPONENT_PROMPT );
 			return;
 		}
 
-		if ( isAngieAvailable ) {
-			triggerAngiePrompt();
+		const { isInstalled } = getAngieEnvConfig();
+
+		if ( ! isInstalled ) {
+			redirectToInstallation( GENERATE_COMPONENT_PROMPT );
 			return;
 		}
 
@@ -110,13 +133,13 @@ export const EmptyState = () => {
 			return;
 		}
 
-		triggerAngiePrompt();
+		sendPromptToAngie( GENERATE_COMPONENT_PROMPT );
 	};
 
 	const handleIntroConfirm = () => {
 		suppressIntro();
 		setIsIntroOpen( false );
-		triggerAngiePrompt();
+		sendPromptToAngie( GENERATE_COMPONENT_PROMPT );
 	};
 
 	const handleIntroClose = () => {

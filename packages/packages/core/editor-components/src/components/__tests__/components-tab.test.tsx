@@ -239,21 +239,46 @@ describe( 'ComponentsTab', () => {
 		} );
 
 		describe( 'Angie Integration', () => {
+			const mcpMock = () => jest.requireMock( '@elementor/editor-mcp' );
+
 			beforeEach( () => {
 				act( () => {
 					dispatch( slice.actions.load( [] ) );
 				} );
 				mockCurrentUserCapabilities( true );
+				mcpMock().isAngieAvailable.mockReturnValue( false );
+				mcpMock().sendPromptToAngie.mockClear();
+				mcpMock().redirectToInstallation.mockClear();
 			} );
 
-			it( 'should show intro modal when Generate Component is clicked and Angie is installed but not available', () => {
+			afterEach( () => {
+				delete ( window as Window & { elementorEditorV2Env?: object } ).elementorEditorV2Env;
+			} );
+
+			it( 'should send prompt when Angie is available', () => {
+				// Arrange
+				mcpMock().isAngieAvailable.mockReturnValue( true );
+
+				// Act
+				renderWithStore(
+					<SearchProvider localStorageKey="test-search">
+						<ComponentsList />
+					</SearchProvider>,
+					store
+				);
+
+				fireEvent.click( screen.getByText( 'Generate Component' ) );
+
+				// Assert
+				expect( mcpMock().sendPromptToAngie ).toHaveBeenCalledWith( 'Help me create a custom component' );
+				expect( mcpMock().redirectToInstallation ).not.toHaveBeenCalled();
+			} );
+
+			it( 'should show intro popover when Angie is installed but not available', () => {
 				// Arrange
 				( window as Window & { elementorEditorV2Env?: object } ).elementorEditorV2Env = {
 					'@elementor/editor-components': {
-						angie: {
-							isInstalled: true,
-							isActive: true,
-						},
+						angie: { isInstalled: true },
 					},
 				};
 
@@ -270,19 +295,14 @@ describe( 'ComponentsTab', () => {
 				// Assert
 				expect( screen.getByText( 'Meet Angie' ) ).toBeInTheDocument();
 				expect( screen.getByText( 'You can now generate custom components using Angie' ) ).toBeInTheDocument();
+				expect( mcpMock().redirectToInstallation ).not.toHaveBeenCalled();
 			} );
 
-			it( 'should call redirectToInstallation when Generate Component is clicked and Angie is not installed', () => {
+			it( 'should redirect to installation when Angie is not installed', () => {
 				// Arrange
-				const { redirectToInstallation } = jest.requireMock( '@elementor/editor-mcp' );
-				redirectToInstallation.mockClear();
-
 				( window as Window & { elementorEditorV2Env?: object } ).elementorEditorV2Env = {
 					'@elementor/editor-components': {
-						angie: {
-							isInstalled: false,
-							isActive: false,
-						},
+						angie: { isInstalled: false },
 					},
 				};
 
@@ -297,7 +317,8 @@ describe( 'ComponentsTab', () => {
 				fireEvent.click( screen.getByText( 'Generate Component' ) );
 
 				// Assert
-				expect( redirectToInstallation ).toHaveBeenCalledWith( 'Help me create a custom component' );
+				expect( mcpMock().redirectToInstallation ).toHaveBeenCalledWith( 'Help me create a custom component' );
+				expect( mcpMock().sendPromptToAngie ).not.toHaveBeenCalled();
 			} );
 		} );
 	} );
