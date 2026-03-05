@@ -688,7 +688,10 @@ class Components_REST_API {
 		return Error_Builder::make( 'insufficient_permissions' )
 			->set_status( 403 )
 			->set_message( __( 'You do not have permission to perform this action.', 'elementor' ) )
-			->set_meta( [ 'action' => $action, 'tier' => Components_Access_Controller::get_access_tier() ] )
+			->set_meta( [
+				'action' => $action,
+				'tier' => Components_Access_Controller::get_access_tier(),
+			] )
 			->build();
 	}
 }
