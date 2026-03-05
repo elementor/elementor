@@ -12,6 +12,22 @@ import {
 import { mockInteraction, mockBreakpoints, mockAnimation, mockTiming, mockConfig } from './utils';
 
 describe( 'interactions-utils', () => {
+	beforeAll( () => {
+		window.ElementorInteractionsConfig = {
+			constants: {
+				defaultReplay: false,
+				defaultRelativeTo: 'viewport',
+				defaultStart: 0,
+				defaultEnd: 100,
+				slideDistance: 100,
+				scaleStart: 0,
+				defaultEasing: 'easeIn',
+				defaultDuration: 600,
+				defaultDelay: 0,
+			},
+		};
+	} );
+
 	describe( 'getKeyframes', () => {
 		it( 'should generate fade in keyframes without direction', () => {
 			const result = getKeyframes( 'fade', 'in', '' );
