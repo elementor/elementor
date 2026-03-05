@@ -161,7 +161,7 @@ class Interactions_Frontend_Handler {
 		$json_data = wp_json_encode( $elements_with_interactions, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON data is already encoded
-		echo '<script type="application/json" id="elementor-interactions-data">' . $json_data . '</script>';
+		echo '<script type="application/json" id="' . Module::SCRIPT_ID_INTERACTIONS_DATA . '">' . $json_data . '</script>';
 	}
 
 	/**
@@ -202,14 +202,14 @@ class Interactions_Frontend_Handler {
 	}
 
 	private function enqueue_interactions_assets() {
-		wp_enqueue_script( 'motion-js' );
-		wp_enqueue_script( 'elementor-interactions' );
+		wp_enqueue_script( Module::HANDLE_MOTION_JS );
+		wp_enqueue_script( Module::HANDLE_FRONTEND );
 
 		$config = $this->config_provider ? call_user_func( $this->config_provider ) : [];
 
 		wp_localize_script(
-			'elementor-interactions',
-			'ElementorInteractionsConfig',
+			Module::HANDLE_FRONTEND,
+			Module::JS_CONFIG_OBJECT,
 			$config
 		);
 	}
