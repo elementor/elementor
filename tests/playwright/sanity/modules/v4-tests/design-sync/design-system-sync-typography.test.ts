@@ -10,7 +10,7 @@ const BREAKPOINT_FONT_SIZES: Record<string, number> = {
 	tablet: 48,
 };
 
-test.describe( 'Design System Sync - Typography V4→V3 @v4-tests', () => {
+test.describe( 'Design System Sync - Typography V4 - V3 @v4-tests', () => {
 	let wpAdmin: WpAdminPage;
 	let editor: EditorPage;
 	let page: Page;
