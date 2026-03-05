@@ -6,6 +6,12 @@
     "node": ">=20.19.0",
     "npm": ">=10.0.0"
   },
+  "workspaces": [
+    "packages/tools/*",
+    "packages/libs/*",
+    "packages/core/*",
+    "apps/*"
+  ],
   "scripts": {
     "build": "turbo build",
     "build:ci": "turbo build --concurrency 1",

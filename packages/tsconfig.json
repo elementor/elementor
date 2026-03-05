@@ -24,9 +24,9 @@
     "noEmit": true,
     "paths": {
       "@elementor/*": [
-        "./core/*/src",
-        "./libs/*/src",
-        "./tools/*/src",
+        "./packages/core/*/src",
+        "./packages/libs/*/src",
+        "./packages/tools/*/src",
         "./apps/*/src"
       ],
       "test-utils": [

@@ -16,7 +16,7 @@
     "build": "npm run build:packages && grunt build",
     "build:docker": "rm -rf docker-output && docker build --target output --output type=local,dest=./docker-output . && cd docker-output/elementor && zip -r elementor.zip . && echo 'Build output available in ./docker-output/elementor/elementor.zip'",
     "build:packages": "turbo build",
-    "build:tools": "turbo build --filter='./packages/tools/*'",
+    "build:tools": "turbo build --filter='./packages/packages/tools/*'",
     "build:ci": "turbo build --concurrency 1 && npx grunt webpack:production",
     "prepare-environment": "npm ci && composer install",
     "prepare-environment:ci": "npm ci",
@@ -60,9 +60,9 @@
   "packageManager": "npm@10.0.0",
   "workspaces": [
     "packages",
-    "packages/tools/*",
-    "packages/libs/*",
-    "packages/core/*",
+    "packages/packages/tools/*",
+    "packages/packages/libs/*",
+    "packages/packages/core/*",
     "packages/apps/*"
   ],
   "engines": {
