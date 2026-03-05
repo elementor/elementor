@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once __DIR__ . '/mocks/component-mocks.php';
 require_once __DIR__ . '/mocks/component-overrides-mocks.php';
+require_once __DIR__ . '/mocks/mock-pro-license-api.php';
 
 class Test_Components_Rest_Api extends Elementor_Test_Base {
 
@@ -21,6 +22,8 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 
 	public function setUp(): void {
 		parent::setUp();
+
+		\Mock_Pro_License_API::set_license_state( active: true );
 
 		// Load mock component data
 		$this->mock_component_1_content = Component_Mocks::get_component_1_data();
@@ -47,6 +50,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 	}
 
 	public function tearDown(): void {
+		\Mock_Pro_License_API::set_license_state( active: true );
 		parent::tearDown();
 		$this->clean_up_components();
 	}
@@ -2251,5 +2255,212 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$past_time = gmdate( 'Y-m-d H:i:s', strtotime( '-1 day' ) );
 		$wpdb->update( $wpdb->posts, [ 'post_modified_gmt' => $past_time ], [ 'ID' => $main_doc_id ] );
 		clean_post_cache( $main_doc_id );
+	}
+
+	// =====================================================
+	// License-based authorization tests (Core tier = no Pro)
+	// =====================================================
+
+	public function test_post_create_component__fails_without_pro_license() {
+		// Arrange
+		$this->act_as_admin();
+		\Mock_Pro_License_API::set_license_state( active: false );
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'publish',
+			'items' => [
+				[
+					'uid' => '100',
+					'title' => 'Test Component',
+					'elements' => $this->mock_component_1_content,
+				]
+			],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 403, $response->get_status() );
+		$this->assertEquals( 'insufficient_permissions', $response->get_data()['code'] );
+		$this->assertEquals( 'create', $response->get_data()['data']['meta']['action'] );
+		$this->assertEquals( 'core', $response->get_data()['data']['meta']['tier'] );
+	}
+
+	public function test_post_validate_components__fails_without_pro_license() {
+		// Arrange
+		$this->act_as_admin();
+		\Mock_Pro_License_API::set_license_state( active: false );
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/create-validate' );
+		$request->set_body_params( [
+			'items' => [
+				[
+					'uid' => 'test-uid',
+					'title' => 'Test Component',
+					'elements' => $this->mock_component_1_content,
+				],
+			],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 403, $response->get_status() );
+		$this->assertEquals( 'insufficient_permissions', $response->get_data()['code'] );
+		$this->assertEquals( 'create', $response->get_data()['data']['meta']['action'] );
+	}
+
+	public function test_update_statuses__fails_without_pro_license() {
+		// Arrange
+		$this->act_as_admin();
+		$draft_id = $this->create_test_component( 'Draft Component', [], 'draft' );
+		\Mock_Pro_License_API::set_license_state( active: false );
+
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components/status' );
+		$request->set_param( 'ids', [ $draft_id ] );
+		$request->set_param( 'status', 'publish' );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 403, $response->get_status() );
+		$this->assertEquals( 'insufficient_permissions', $response->get_data()['code'] );
+		$this->assertEquals( 'publish', $response->get_data()['data']['meta']['action'] );
+	}
+
+	public function test_archive_components__fails_without_pro_license() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
+		\Mock_Pro_License_API::set_license_state( active: false );
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/archive' );
+		$request->set_param( 'componentIds', [ $component_id ] );
+		$request->set_param( 'status', 'publish' );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 403, $response->get_status() );
+		$this->assertEquals( 'insufficient_permissions', $response->get_data()['code'] );
+		$this->assertEquals( 'delete', $response->get_data()['data']['meta']['action'] );
+	}
+
+	public function test_update_titles__fails_without_pro_license() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Original Title', $this->mock_component_1_content );
+		\Mock_Pro_License_API::set_license_state( active: false );
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/update-titles' );
+		$request->set_param( 'components', [
+			[ 'componentId' => $component_id, 'title' => 'New Title' ],
+		] );
+		$request->set_param( 'status', 'publish' );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 403, $response->get_status() );
+		$this->assertEquals( 'insufficient_permissions', $response->get_data()['code'] );
+		$this->assertEquals( 'rename', $response->get_data()['data']['meta']['action'] );
+	}
+
+	public function test_lock_component__fails_without_pro_license() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
+		\Mock_Pro_License_API::set_license_state( active: false );
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/lock' );
+		$request->set_param( 'componentId', $component_id );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 403, $response->get_status() );
+		$this->assertEquals( 'insufficient_permissions', $response->get_data()['code'] );
+		$this->assertEquals( 'lock', $response->get_data()['data']['meta']['action'] );
+	}
+
+	public function test_unlock_component__fails_without_pro_license() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
+		\Mock_Pro_License_API::set_license_state( active: false );
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/unlock' );
+		$request->set_param( 'componentId', $component_id );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 403, $response->get_status() );
+		$this->assertEquals( 'insufficient_permissions', $response->get_data()['code'] );
+		$this->assertEquals( 'unlock', $response->get_data()['data']['meta']['action'] );
+	}
+
+	public function test_get_lock_status__fails_without_pro_license() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
+		\Mock_Pro_License_API::set_license_state( active: false );
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/lock-status' );
+		$request->set_param( 'componentId', (string) $component_id );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 403, $response->get_status() );
+		$this->assertEquals( 'insufficient_permissions', $response->get_data()['code'] );
+		$this->assertEquals( 'lock_status', $response->get_data()['data']['meta']['action'] );
+	}
+
+	public function test_get_components__succeeds_without_pro_license() {
+		// Arrange
+		$this->act_as_admin();
+		$this->create_test_component( 'Test Component', $this->mock_component_1_content );
+		\Mock_Pro_License_API::set_license_state( active: false );
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components' );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+	}
+
+	public function test_get_styles__succeeds_without_pro_license() {
+		// Arrange
+		$this->act_as_admin();
+		$this->create_test_component( 'Test Component', $this->mock_component_1_content );
+		\Mock_Pro_License_API::set_license_state( active: false );
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/styles' );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+	}
+
+	public function test_get_overridable_props__succeeds_without_pro_license() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
+		\Mock_Pro_License_API::set_license_state( active: false );
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/overridable-props' );
+		$request->set_param( 'componentId', $component_id );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
 	}
 }
