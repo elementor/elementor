@@ -1,3 +1,5 @@
+'use strict';
+
 import {
 	config,
 	getKeyframes,
@@ -53,7 +55,7 @@ function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	const options = {
 		duration: animConfig.duration / 1000,
 		delay: animConfig.delay / 1000,
-		ease: config.defaultEasing,
+		ease: config().defaultEasing,
 	};
 
 	// WHY - Transition can be set on elements but once it sets it destroys all animations, so we basically put it aside.
