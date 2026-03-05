@@ -19,6 +19,7 @@ test.describe( 'Atomic Components @v4-tests', () => {
 
 	const headingControlLabel = 'Title';
 
+	// Temporary mock for Pro, will be moved to pro
 	const proMockScript = `<script>window.elementorPro = { config: { isActive: true, version: '3.35.0' } };</script>`;
 
 	const proMockRouteHandler = async ( route: import( '@playwright/test' ).Route ) => {
@@ -37,7 +38,6 @@ test.describe( 'Atomic Components @v4-tests', () => {
 		} );
 	};
 
-	// Temporary fix for Pro mock route pattern, will be moved to pro
 	const proMockRoutePattern = ( url: URL ) => 'elementor' === url.searchParams.get( 'action' );
 
 	const enableProMock = async () => {
