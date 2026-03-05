@@ -26,7 +26,7 @@ function applyAnimation( element, animConfig, animateFunc ) {
 	const options = {
 		duration: animConfig.duration / 1000,
 		delay: animConfig.delay / 1000,
-		ease: config.defaultEasing,
+		ease: config().defaultEasing,
 	};
 
 	const initialKeyframes = {};
@@ -114,6 +114,7 @@ function handleInteractionsUpdate() {
 			.filter( Boolean )
 			.sort()
 			.join( ',' );
+
 		const prevIds = ( previousItem.interactions?.items || [] )
 			.map( extractInteractionId )
 			.filter( Boolean )
