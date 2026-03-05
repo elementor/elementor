@@ -5,13 +5,8 @@ import { __ } from '@wordpress/i18n';
 
 import { componentInstanceOverridesPropTypeUtil } from '../prop-types/component-instance-overrides-prop-type';
 import { type ComponentInstanceProp, componentInstancePropTypeUtil } from '../prop-types/component-instance-prop-type';
-import {
-	type ComponentsSlice,
-	selectComponent,
-	selectCurrentComponentId,
-	selectOverridableProps,
-	slice,
-} from '../store/store';
+import { selectComponent, selectCurrentComponentId, selectOverridableProps, slice } from '../store/store';
+import { type OverridableProps } from '../types';
 import { getComponentDocumentData } from './component-document-data';
 import { resolveDetachedInstance } from './resolve-detached-instance';
 import { trackComponentEvent } from './tracking';
@@ -22,11 +17,19 @@ type DetachParams = {
 	trackingInfo: PerformDetachParams[ 'trackingInfo' ];
 };
 
+type DoReturn = {
+	detachedElement: V1Element;
+	detachedInstanceElementData: V1ElementModelProps;
+	editedComponentOnDetach: number | null;
+	overridablePropsBeforeDetach: OverridableProps | null;
+	originalInstanceModel: V1ElementModelProps;
+};
+
 export async function detachComponentInstance( {
 	instanceId,
 	componentId,
 	trackingInfo,
-}: DetachParams ): Promise< V1Element > {
+}: DetachParams ): Promise< DoReturn > {
 	const instanceContainer = getContainer( instanceId );
 
 	if ( ! instanceContainer ) {
@@ -45,51 +48,91 @@ export async function detachComponentInstance( {
 		throw new Error( `Component with ID "${ componentId }" has no root element.` );
 	}
 
-	const overrides = extractInstanceOverrides( instanceContainer );
-	const detachedInstanceElementData = resolveDetachedInstance( rootElement, overrides ) as V1ElementModelProps;
-
-	const state = getState() as ComponentsSlice | undefined;
-	const currentComponentId = state ? selectCurrentComponentId( state ) : null;
-	const originalOverridableProps =
-		currentComponentId && state ? selectOverridableProps( state, currentComponentId ) : null;
-
-	const originalInstanceModel = instanceContainer.model.toJSON();
-
 	const undoableDetach = undoable(
 		{
-			do: (): V1Element => {
-				return performDetach( { instanceId, detachedInstanceElementData, componentId, trackingInfo } );
+			do: (): DoReturn => {
+				const overrides = extractInstanceOverrides( instanceContainer );
+				const detachedInstanceElementData = resolveDetachedInstance(
+					rootElement,
+					overrides
+				) as V1ElementModelProps;
+
+				const editedComponentOnDetach = selectCurrentComponentId( getState() );
+				// We need to store the overridable props of the current component before detach to restore them on undo.
+				const overridablePropsBeforeDetach = editedComponentOnDetach
+					? selectOverridableProps( getState(), editedComponentOnDetach ) ?? null
+					: null;
+
+				const originalInstanceModel = instanceContainer.model.toJSON();
+
+				const detachedElement = performDetach( {
+					instanceId,
+					detachedInstanceElementData,
+					componentId,
+					trackingInfo,
+				} );
+
+				return {
+					detachedElement,
+					detachedInstanceElementData,
+					editedComponentOnDetach,
+					overridablePropsBeforeDetach,
+					originalInstanceModel,
+				};
 			},
-			undo: ( _: undefined, detachedElement: V1Element ): V1Element => {
+			undo: (
+				_: undefined,
+				{
+					detachedElement,
+					originalInstanceModel,
+					overridablePropsBeforeDetach,
+					editedComponentOnDetach,
+				}: DoReturn
+			): V1Element => {
 				const restoredInstance = replaceElement( {
 					currentElementId: detachedElement.id,
 					newElement: originalInstanceModel,
 					withHistory: false,
 				} );
 
-				if ( originalOverridableProps ) {
-					const undoState = getState() as ComponentsSlice | undefined;
-					const undoCurrentComponentId = undoState ? selectCurrentComponentId( undoState ) : null;
-
-					if ( undoCurrentComponentId ) {
-						dispatch(
-							slice.actions.setOverridableProps( {
-								componentId: undoCurrentComponentId,
-								overridableProps: originalOverridableProps,
-							} )
-						);
-					}
+				const currentComponentId = selectCurrentComponentId( getState() );
+				if (
+					currentComponentId &&
+					currentComponentId === editedComponentOnDetach &&
+					overridablePropsBeforeDetach
+				) {
+					dispatch(
+						slice.actions.setOverridableProps( {
+							componentId: currentComponentId,
+							overridableProps: overridablePropsBeforeDetach,
+						} )
+					);
 				}
 
 				return restoredInstance;
 			},
-			redo: ( _: undefined, _doReturn: V1Element, restoredInstance: V1Element ) => {
-				return performDetach( {
+			redo: ( _: undefined, doReturn: DoReturn, restoredInstance: V1Element ) => {
+				const { detachedInstanceElementData } = doReturn;
+
+				const editedComponentOnDetach = selectCurrentComponentId( getState() );
+				// We need to store the overridable props of the current component before detach to restore them on undo.
+				const overridablePropsBeforeDetach = editedComponentOnDetach
+					? selectOverridableProps( getState(), editedComponentOnDetach ) ?? null
+					: null;
+
+				const detachedElement = performDetach( {
 					instanceId: restoredInstance.id,
 					detachedInstanceElementData,
 					componentId,
 					trackingInfo,
 				} );
+
+				return {
+					...doReturn,
+					detachedElement,
+					editedComponentOnDetach,
+					overridablePropsBeforeDetach,
+				};
 			},
 		},
 		{

@@ -1,4 +1,5 @@
 import { type V1ElementData } from '@elementor/editor-elements';
+import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 
 import { type ComponentInstanceOverride } from '../../../prop-types/component-instance-overrides-prop-type';
 import { resolveDetachedInstance } from '../resolve-detached-instance';
@@ -27,30 +28,28 @@ describe( 'resolveDetachedInstance', () => {
 			expect( typeof result.id ).toBe( 'string' );
 		} );
 
-		it( 'should update classes props with new style IDs', () => {
+		it( 'should regenerate style IDs and update these IDs in classes prop', () => {
 			// Arrange
+			const localStyleId = 'local-123';
+
+			const localStyleValue: StyleDefinition = {
+				id: localStyleId,
+				label: 'local',
+				type: 'class',
+				variants: [],
+			};
+
 			const element: V1ElementData = {
 				id: 'container1',
 				elType: 'container',
 				settings: {
 					classes: {
 						$$type: 'classes',
-						value: [ 'style-123', 'style-456' ],
+						value: [ 'g-123', 'g-456', localStyleId, 'g-789' ],
 					},
 				},
 				styles: {
-					'style-123': {
-						id: 'style-123',
-						label: 'Primary',
-						type: 'class',
-						variants: [],
-					},
-					'style-456': {
-						id: 'style-456',
-						label: 'Secondary',
-						type: 'class',
-						variants: [],
-					},
+					[ localStyleId ]: localStyleValue,
 				},
 			};
 			const overrides: ComponentInstanceOverride[] = [];
@@ -59,12 +58,15 @@ describe( 'resolveDetachedInstance', () => {
 			const result = resolveDetachedInstance( element, overrides );
 
 			// Assert
+			const stylesEntries = Object.entries( result.styles as Record< StyleDefinitionID, StyleDefinition > );
+			expect( stylesEntries ).toHaveLength( 1 );
+			const [ newStyleId, newStyleValue ] = stylesEntries[ 0 ];
+			expect( newStyleId ).not.toBe( localStyleId );
+			expect( newStyleValue ).toEqual( { ...localStyleValue, id: newStyleId } );
+
 			const classes = result.settings?.classes as { $$type: string; value: string[] };
-			expect( classes.value ).toHaveLength( 2 );
-			expect( classes.value[ 0 ] ).not.toBe( 'style-123' );
-			expect( classes.value[ 1 ] ).not.toBe( 'style-456' );
-			expect( classes.value[ 0 ] ).toMatch( /^e-/ );
-			expect( classes.value[ 1 ] ).toMatch( /^e-/ );
+			expect( classes.value ).toHaveLength( 4 );
+			expect( classes.value ).toEqual( [ 'g-123', 'g-456', newStyleId, 'g-789' ] );
 		} );
 	} );
 

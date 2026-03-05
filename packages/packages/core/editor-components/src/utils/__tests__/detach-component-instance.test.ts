@@ -38,7 +38,6 @@ describe( 'detachComponentInstance', () => {
 
 	beforeEach( () => {
 		historyMock.beforeEach();
-		jest.clearAllMocks();
 
 		mockGetComponentDocumentData.mockResolvedValue( {
 			elements: [

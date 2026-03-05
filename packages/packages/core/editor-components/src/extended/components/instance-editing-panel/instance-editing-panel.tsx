@@ -30,8 +30,6 @@ export function ExtendedInstanceEditingPanel() {
 
 	const { componentId, component, overrides, overridableProps, groups, isEmpty, componentInstanceId } = data;
 
-	const canDetach = !! componentInstanceId;
-
 	/* translators: %s: component name. */
 	const panelTitle = __( 'Edit %s', 'elementor' ).replace( '%s', component.name );
 	const detachLabel = __( 'Detach from Component', 'elementor' );
@@ -43,10 +41,6 @@ export function ExtendedInstanceEditingPanel() {
 	};
 
 	const handleDetachConfirm = async () => {
-		if ( ! componentInstanceId ) {
-			return;
-		}
-
 		setIsDetachDialogOpen( false );
 
 		try {
@@ -70,9 +64,7 @@ export function ExtendedInstanceEditingPanel() {
 
 	const actions = (
 		<Stack direction="row" gap={ 0.5 }>
-			{ canDetach && (
-				<EditComponentAction label={ detachLabel } icon={ DetachIcon } onClick={ handleDetachClick } />
-			) }
+			<EditComponentAction label={ detachLabel } icon={ DetachIcon } onClick={ handleDetachClick } />
 			{ canEdit && (
 				<EditComponentAction label={ panelTitle } onClick={ handleEditComponent } icon={ PencilIcon } />
 			) }

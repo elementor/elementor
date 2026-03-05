@@ -65,8 +65,10 @@ function createOverrideMap( overrides: ComponentInstanceOverride[] ): Map< strin
 		if ( componentInstanceOverridePropTypeUtil.isValid( item ) ) {
 			map.set( item.value.override_key, item );
 		} else if ( componentOverridablePropTypeUtil.isValid( item ) ) {
-			const override = item.value.origin_value as ComponentInstanceOverrideProp;
-			map.set( override.value.override_key, override );
+			const override = item.value.origin_value;
+			if ( override && componentInstanceOverridePropTypeUtil.isValid( override ) ) {
+				map.set( override.value.override_key, override );
+			}
 		}
 	} );
 

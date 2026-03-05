@@ -296,20 +296,8 @@ describe( '<ExtendedInstanceEditingPanel />', () => {
 	} );
 
 	describe( 'Detach functionality', () => {
-		it( 'should show detach button when user is admin', () => {
+		it( 'should show detach button', () => {
 			// Arrange.
-			setupComponent();
-
-			// Act.
-			renderPanel( store );
-
-			// Assert.
-			expect( screen.getByLabelText( 'Detach from Component' ) ).toBeInTheDocument();
-		} );
-
-		it( 'should show detach button when user is not admin', () => {
-			// Arrange.
-			mockCurrentUserCapabilities( false );
 			setupComponent();
 
 			// Act.
