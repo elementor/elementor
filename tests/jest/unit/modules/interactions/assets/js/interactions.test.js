@@ -13,6 +13,15 @@ function setReadyStateComplete() {
 
 function initBreakpoints() {
 	window.ElementorInteractionsConfig = {
+		constants: {
+			defaultEasing: 'easeIn',
+			defaultDuration: 600,
+			defaultDelay: 0,
+			defaultReplay: false,
+			defaultRelativeTo: 'viewport',
+			defaultStart: 0,
+			defaultEnd: 100,
+		},
 		breakpoints: {
 			mobile: { value: 768, direction: 'max' },
 			mobile_extra: { value: 880, direction: 'max' },
