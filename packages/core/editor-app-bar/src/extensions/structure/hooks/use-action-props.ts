@@ -8,25 +8,25 @@ import { type ExtendedWindow, type ToggleActionProps } from '../../../types';
 import { StructureIconWithPopup } from './structure-icon-with-popup';
 
 export default function useActionProps(): ToggleActionProps {
-	const { isActive, isBlocked } = useRouteStatus( 'navigator' );
+	const { isActive, isBlocked } = useRouteStatus('navigator');
 
 	return {
-		title: __( 'Structure', 'elementor' ),
+		title: __('Structure', 'elementor'),
 		icon: StructureIconWithPopup,
 		onClick: () => {
 			const extendedWindow = window as unknown as ExtendedWindow;
 			const config = extendedWindow?.elementorCommon?.eventsManager?.config;
 
-			if ( config ) {
-				extendedWindow.elementorCommon.eventsManager.dispatchEvent( config.names.topBar.structure, {
+			if (config) {
+				extendedWindow.elementorCommon.eventsManager.dispatchEvent(config.names.topBar.structure, {
 					location: config.locations.topBar,
 					secondaryLocation: config.secondaryLocations.structure,
 					trigger: config.triggers.toggleClick,
 					element: config.elements.buttonIcon,
-				} );
+				});
 			}
 
-			runCommand( 'navigator/toggle' );
+			runCommand('navigator/toggle');
 		},
 		selected: isActive,
 		disabled: isBlocked,

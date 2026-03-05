@@ -6,80 +6,80 @@ import { render, renderHook } from '@testing-library/react';
 
 import { useDocumentsCssLinks } from '../use-documents-css-links';
 
-jest.mock( '@elementor/editor-v1-adapters', () => ( {
-	...jest.requireActual( '@elementor/editor-v1-adapters' ),
+jest.mock('@elementor/editor-v1-adapters', () => ({
+	...jest.requireActual('@elementor/editor-v1-adapters'),
 	getCanvasIframeDocument: jest.fn(),
-} ) );
+}));
 
-describe( 'useDocumentsCssLinks', () => {
-	const head = createDOMElement( {
+describe('useDocumentsCssLinks', () => {
+	const head = createDOMElement({
 		tag: 'head',
 		children: [
-			createDOMElement( {
+			createDOMElement({
 				tag: 'link',
 				attrs: { href: '2.css', rel: 'stylesheet', id: 'elementor-post-2-css' },
-			} ),
-			createDOMElement( {
+			}),
+			createDOMElement({
 				tag: 'link',
 				attrs: { href: '10.css', rel: 'stylesheet', id: 'elementor-post-10-css' },
-			} ),
-			createDOMElement( {
+			}),
+			createDOMElement({
 				tag: 'link',
 				attrs: { href: '5.css', rel: 'stylesheet', id: 'elementor-post-5-css' },
-			} ),
-			createDOMElement( {
+			}),
+			createDOMElement({
 				tag: 'link',
 				attrs: { href: 'not-elementor.css', rel: 'stylesheet', id: 'not-elementor-css' },
-			} ),
+			}),
 		],
-	} );
+	});
 
-	const body = createDOMElement( {
+	const body = createDOMElement({
 		tag: 'body',
 		children: [
-			createDOMElement( { tag: 'div', attrs: { 'data-elementor-id': '2' } } ),
-			createDOMElement( { tag: 'div', attrs: { 'data-elementor-id': '4' } } ),
-			createDOMElement( {
+			createDOMElement({ tag: 'div', attrs: { 'data-elementor-id': '2' } }),
+			createDOMElement({ tag: 'div', attrs: { 'data-elementor-id': '4' } }),
+			createDOMElement({
 				tag: 'div',
-				children: [ createDOMElement( { tag: 'div', attrs: { 'data-elementor-id': '5' } } ) ],
-			} ),
+				children: [createDOMElement({ tag: 'div', attrs: { 'data-elementor-id': '5' } })],
+			}),
 		],
-	} );
+	});
 
 	const Component = () => {
 		const links = useDocumentsCssLinks();
 
 		return createPortal(
 			<>
-				{ links.map( ( link ) => (
-					<link key={ link.id } { ...link } data-from-hook />
-				) ) }
+				{links.map((link) => (
+					<link key={link.id} {...link} data-from-hook />
+				))}
 			</>,
 			head
 		);
 	};
 
-	it( 'should return an array of links attrs and remove them from the dom', () => {
+	it('should return an array of links attrs and remove them from the dom', () => {
 		// Arrange.
 		const document = { body, head };
 
-		jest.mocked( getCanvasIframeDocument ).mockReturnValue( document as never );
+		jest.mocked(getCanvasIframeDocument).mockReturnValue(document as never);
 
 		// Act.
-		render( <Component /> );
+		render(<Component />);
 
 		// Assert.
-		expect( head ).toMatchSnapshot();
-	} );
+		expect(head).toMatchSnapshot();
+	});
 
-	it( 'should return empty array when iframe document is not available', () => {
+	it('should return empty array when iframe document is not available', () => {
 		// Arrange.
-		jest.mocked( getCanvasIframeDocument ).mockReturnValue( null );
+		jest.mocked(getCanvasIframeDocument).mockReturnValue(null);
 
 		// Act.
-		const { result } = renderHook( () => useDocumentsCssLinks(), { initialProps: {} } );
+		const { result } = renderHook(() => useDocumentsCssLinks(), { initialProps: {} });
 
 		// Assert.
-		expect( result.current ).toEqual( [] );
-	} );
-} );
+		expect(result.current).toEqual([]);
+	});
+});

@@ -15,105 +15,103 @@ import { fireEvent, screen } from '@testing-library/react';
 import { BackgroundOverlayRepeaterControl } from '../background-control/background-overlay/background-overlay-repeater-control';
 import { gradientPropType } from './background-gradient-color-control.test';
 
-jest.mock( '../image-media-control' );
-jest.mock( '@elementor/wp-media' );
+jest.mock('../image-media-control');
+jest.mock('@elementor/wp-media');
 
-const stubBackgroundColorOverlay = ( color: string ): BackgroundOverlayItemPropValue => {
-	return backgroundColorOverlayPropTypeUtil.create( {
-		color: colorPropTypeUtil.create( color ),
-	} );
+const stubBackgroundColorOverlay = (color: string): BackgroundOverlayItemPropValue => {
+	return backgroundColorOverlayPropTypeUtil.create({
+		color: colorPropTypeUtil.create(color),
+	});
 };
 
-const propType = createMockPropType( {
+const propType = createMockPropType({
 	kind: 'array',
-	item_prop_type: createMockPropType( {
+	item_prop_type: createMockPropType({
 		kind: 'union',
 		prop_types: {
-			'background-color-overlay': createMockPropType( {
+			'background-color-overlay': createMockPropType({
 				kind: 'object',
 				shape: {
-					color: createMockPropType( { kind: 'plain' } ),
+					color: createMockPropType({ kind: 'plain' }),
 				},
-			} ),
-			'background-image-overlay': createMockPropType( {
+			}),
+			'background-image-overlay': createMockPropType({
 				kind: 'object',
 				shape: {
-					image: createMockPropType( {
+					image: createMockPropType({
 						kind: 'object',
 						shape: {
-							src: createMockPropType( {
+							src: createMockPropType({
 								kind: 'object',
 								shape: {
-									id: createMockPropType( { kind: 'plain' } ),
-									url: createMockPropType( { kind: 'plain' } ),
+									id: createMockPropType({ kind: 'plain' }),
+									url: createMockPropType({ kind: 'plain' }),
 								},
-							} ),
-							size: createMockPropType( { kind: 'plain' } ),
+							}),
+							size: createMockPropType({ kind: 'plain' }),
 						},
-					} ),
-					size: createMockPropType( {
+					}),
+					size: createMockPropType({
 						kind: 'union',
 						prop_types: {
-							'background-image-size-scale': createMockPropType( {
+							'background-image-size-scale': createMockPropType({
 								kind: 'object',
 								shape: {
-									width: createMockPropType( {
+									width: createMockPropType({
 										kind: 'object',
 										shape: {
-											unit: createMockPropType( { kind: 'plain' } ),
-											size: createMockPropType( { kind: 'plain' } ),
+											unit: createMockPropType({ kind: 'plain' }),
+											size: createMockPropType({ kind: 'plain' }),
 										},
-									} ),
-									height: createMockPropType( {
+									}),
+									height: createMockPropType({
 										kind: 'object',
 										shape: {
-											unit: createMockPropType( { kind: 'plain' } ),
-											size: createMockPropType( { kind: 'plain' } ),
+											unit: createMockPropType({ kind: 'plain' }),
+											size: createMockPropType({ kind: 'plain' }),
 										},
-									} ),
+									}),
 								},
-							} ),
-							string: createMockPropType( { kind: 'plain' } ),
+							}),
+							string: createMockPropType({ kind: 'plain' }),
 						},
-					} ),
-					position: createMockPropType( {
+					}),
+					position: createMockPropType({
 						kind: 'union',
 						prop_types: {
-							'background-image-position-offset': createMockPropType( {
+							'background-image-position-offset': createMockPropType({
 								kind: 'object',
 								shape: {
-									x: createMockPropType( {
+									x: createMockPropType({
 										kind: 'object',
 										shape: {
-											unit: createMockPropType( { kind: 'plain' } ),
-											size: createMockPropType( { kind: 'plain' } ),
+											unit: createMockPropType({ kind: 'plain' }),
+											size: createMockPropType({ kind: 'plain' }),
 										},
-									} ),
-									y: createMockPropType( {
+									}),
+									y: createMockPropType({
 										kind: 'object',
 										shape: {
-											unit: createMockPropType( { kind: 'plain' } ),
-											size: createMockPropType( { kind: 'plain' } ),
+											unit: createMockPropType({ kind: 'plain' }),
+											size: createMockPropType({ kind: 'plain' }),
 										},
-									} ),
+									}),
 								},
-							} ),
-							string: createMockPropType( { kind: 'plain' } ),
+							}),
+							string: createMockPropType({ kind: 'plain' }),
 						},
-					} ),
-					resolution: createMockPropType( { kind: 'plain' } ),
-					repeat: createMockPropType( { kind: 'plain' } ),
-					attachment: createMockPropType( { kind: 'plain' } ),
+					}),
+					resolution: createMockPropType({ kind: 'plain' }),
+					repeat: createMockPropType({ kind: 'plain' }),
+					attachment: createMockPropType({ kind: 'plain' }),
 				},
-			} ),
+			}),
 			'background-gradient-overlay': gradientPropType,
 		},
-	} ),
-} ) as ArrayPropType;
+	}),
+}) as ArrayPropType;
 
-const createMockImageOverlay = (
-	value?: BackgroundImageOverlayPropValue[ 'value' ]
-): BackgroundImageOverlayPropValue => ( {
+const createMockImageOverlay = (value?: BackgroundImageOverlayPropValue['value']): BackgroundImageOverlayPropValue => ({
 	$$type: 'background-image-overlay',
 	value: {
 		image: {
@@ -161,190 +159,190 @@ const createMockImageOverlay = (
 			$$type: 'string',
 			value: 'fixed',
 		},
-		...( value ?? {} ),
+		...(value ?? {}),
 	},
-} );
+});
 
 const createMockData = (
-	value: BackgroundOverlayPropValue[ 'value' ] = [
-		stubBackgroundColorOverlay( 'rgba(255, 0, 0, 0.2)' ),
-		stubBackgroundColorOverlay( '#F54359' ),
+	value: BackgroundOverlayPropValue['value'] = [
+		stubBackgroundColorOverlay('rgba(255, 0, 0, 0.2)'),
+		stubBackgroundColorOverlay('#F54359'),
 	]
-): BackgroundOverlayPropValue => ( {
+): BackgroundOverlayPropValue => ({
 	$$type: 'background-overlay',
 	value,
-} );
+});
 
-describe( 'BackgroundControl', () => {
-	beforeEach( () => {
-		initEnv( {
+describe('BackgroundControl', () => {
+	beforeEach(() => {
+		initEnv({
 			'@elementor/editor-controls': {
 				background_placeholder_image: 'https://test-site/wp-content/uploads/bg-test.jpg',
 			},
-		} );
+		});
 
-		jest.mocked( useWpMediaAttachment ).mockReturnValue( {
+		jest.mocked(useWpMediaAttachment).mockReturnValue({
 			data: {
 				url: 'https://test-site/wp-content/uploads/bg-test.jpg',
 				id: 807,
 				title: 'bg-test',
 			} as Attachment,
-		} as never );
-	} );
+		} as never);
+	});
 
-	it( 'should render Background overlay repeater', () => {
+	it('should render Background overlay repeater', () => {
 		// Arrange.
 		const props = { value: createMockData(), setValue: jest.fn(), bind: 'background-overlay', propType };
 
 		// Act.
-		renderControl( <BackgroundOverlayRepeaterControl />, props );
+		renderControl(<BackgroundOverlayRepeaterControl />, props);
 
 		// Assert.
-		expect( screen.getByText( 'Overlay' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'rgba(255, 0, 0, 0.2)' ) ).toBeInTheDocument();
-		expect( screen.getByText( '#F54359' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Overlay')).toBeInTheDocument();
+		expect(screen.getByText('rgba(255, 0, 0, 0.2)')).toBeInTheDocument();
+		expect(screen.getByText('#F54359')).toBeInTheDocument();
+	});
 
-	it( 'should display popup content with nested values', async () => {
+	it('should display popup content with nested values', async () => {
 		// Arrange.
 		const props = { value: createMockData(), setValue: jest.fn(), bind: 'background-overlay', propType };
 
 		// Act.
-		renderControl( <BackgroundOverlayRepeaterControl />, props );
+		renderControl(<BackgroundOverlayRepeaterControl />, props);
 
-		const [ colorRepeaterItem ] = screen.getAllByRole( 'button', { name: 'Open item' } );
-		fireEvent.click( colorRepeaterItem );
+		const [colorRepeaterItem] = screen.getAllByRole('button', { name: 'Open item' });
+		fireEvent.click(colorRepeaterItem);
 
 		// Assert.
-		expect( screen.getByText( 'Color' ) ).toHaveAttribute( 'aria-selected', 'true' );
-		expect( screen.getByText( 'rgba(255, 0, 0, 0.2)' ) ).toBeVisible();
-	} );
+		expect(screen.getByText('Color')).toHaveAttribute('aria-selected', 'true');
+		expect(screen.getByText('rgba(255, 0, 0, 0.2)')).toBeVisible();
+	});
 
-	it( 'should display popup content with image tab', async () => {
+	it('should display popup content with image tab', async () => {
 		// Arrange.
 		const backgroundImageMockValue = createMockImageOverlay();
 		const props = {
-			value: createMockData( [ backgroundImageMockValue ] ),
+			value: createMockData([backgroundImageMockValue]),
 			setValue: jest.fn(),
 			bind: 'background-overlay',
 			propType,
 		};
 
 		// Act.
-		renderControl( <BackgroundOverlayRepeaterControl />, props );
+		renderControl(<BackgroundOverlayRepeaterControl />, props);
 
-		const [ imageRepeaterItem ] = screen.getAllByRole( 'button', { name: 'Open item' } );
-		fireEvent.click( imageRepeaterItem );
+		const [imageRepeaterItem] = screen.getAllByRole('button', { name: 'Open item' });
+		fireEvent.click(imageRepeaterItem);
 
 		// Assert.
-		expect( screen.queryAllByText( 'Image' ).at( 0 ) ).toHaveAttribute( 'aria-selected', 'true' );
-		expect( screen.getByLabelText( 'Repeat-x' ) ).toHaveAttribute( 'aria-pressed', 'true' );
-		expect( screen.getByLabelText( 'Fixed' ) ).toHaveAttribute( 'aria-pressed', 'true' );
-		expect( screen.getByDisplayValue( 'full' ) ).toBeInTheDocument();
-	} );
+		expect(screen.queryAllByText('Image').at(0)).toHaveAttribute('aria-selected', 'true');
+		expect(screen.getByLabelText('Repeat-x')).toHaveAttribute('aria-pressed', 'true');
+		expect(screen.getByLabelText('Fixed')).toHaveAttribute('aria-pressed', 'true');
+		expect(screen.getByDisplayValue('full')).toBeInTheDocument();
+	});
 
-	it( 'should display attachment title on item label image component (excluding attachment subtype)', async () => {
+	it('should display attachment title on item label image component (excluding attachment subtype)', async () => {
 		// Arrange.
 		const backgroundImageMockValue = createMockImageOverlay();
 
 		const props = {
-			value: createMockData( [ backgroundImageMockValue ] ),
+			value: createMockData([backgroundImageMockValue]),
 			setValue: jest.fn(),
 			bind: 'background-overlay',
 			propType,
 		};
 		const imageTitle = 'Elementor Logo';
 
-		jest.mocked( useWpMediaAttachment ).mockReturnValue( {
+		jest.mocked(useWpMediaAttachment).mockReturnValue({
 			data: {
 				title: imageTitle,
 				url: 'https://test-site/wp-content/uploads/bg-test.jpg',
 			},
-		} as never );
+		} as never);
 
 		// Act.
-		renderControl( <BackgroundOverlayRepeaterControl />, props );
+		renderControl(<BackgroundOverlayRepeaterControl />, props);
 
 		// Assert.
-		expect( screen.getByText( imageTitle ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText(imageTitle)).toBeInTheDocument();
+	});
 
-	it( 'should display attachment title and file type on item label image component (label + subtype)', async () => {
+	it('should display attachment title and file type on item label image component (label + subtype)', async () => {
 		// Arrange.
 		const backgroundImageMockValue = createMockImageOverlay();
 
 		const props = {
-			value: createMockData( [ backgroundImageMockValue ] ),
+			value: createMockData([backgroundImageMockValue]),
 			setValue: jest.fn(),
 			bind: 'background-overlay',
 			propType,
 		};
 
-		jest.mocked( useWpMediaAttachment ).mockReturnValue( {
+		jest.mocked(useWpMediaAttachment).mockReturnValue({
 			data: {
 				title: 'dummy_image',
 				subtype: 'jpg',
 				filename: 'dummy_image.jpg',
 				url: 'https://test-site/wp-content/uploads/bg-test.jpg',
 			},
-		} as never );
+		} as never);
 
 		// Act.
-		renderControl( <BackgroundOverlayRepeaterControl />, props );
+		renderControl(<BackgroundOverlayRepeaterControl />, props);
 
 		// Assert.
-		expect( screen.getByText( 'dummy_image.jpg' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('dummy_image.jpg')).toBeInTheDocument();
+	});
 
-	it( 'should not display image label (excluding attachment title)', async () => {
+	it('should not display image label (excluding attachment title)', async () => {
 		// Arrange.
 		const backgroundImageMockValue = createMockImageOverlay();
 
 		const props = {
-			value: createMockData( [ backgroundImageMockValue ] ),
+			value: createMockData([backgroundImageMockValue]),
 			setValue: jest.fn(),
 			bind: 'background-overlay',
 			propType,
 		};
 
-		jest.mocked( useWpMediaAttachment ).mockReturnValue( {
+		jest.mocked(useWpMediaAttachment).mockReturnValue({
 			data: {
 				subtype: 'jpg',
 				url: 'https://test-site/wp-content/uploads/bg-test.jpg',
 			},
-		} as never );
+		} as never);
 
 		// Act.
-		renderControl( <BackgroundOverlayRepeaterControl />, props );
+		renderControl(<BackgroundOverlayRepeaterControl />, props);
 
 		// Assert.
-		expect( screen.queryByText( 'jpg' ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.queryByText('jpg')).not.toBeInTheDocument();
+	});
 
-	it( 'should display SVG correct title and file type on item label component (label + subtype)', async () => {
+	it('should display SVG correct title and file type on item label component (label + subtype)', async () => {
 		// Arrange.
 		const backgroundImageMockValue = createMockImageOverlay();
 
 		const props = {
-			value: createMockData( [ backgroundImageMockValue ] ),
+			value: createMockData([backgroundImageMockValue]),
 			setValue: jest.fn(),
 			bind: 'background-overlay',
 			propType,
 		};
 
-		jest.mocked( useWpMediaAttachment ).mockReturnValue( {
+		jest.mocked(useWpMediaAttachment).mockReturnValue({
 			data: {
 				title: 'svg_image',
 				subtype: 'svg+xml',
 				filename: 'svg_image.svg',
 				url: 'https://test-site/wp-content/uploads/test.svg',
 			},
-		} as never );
+		} as never);
 
 		// Act.
-		renderControl( <BackgroundOverlayRepeaterControl />, props );
+		renderControl(<BackgroundOverlayRepeaterControl />, props);
 
 		// Assert.
-		expect( screen.getByText( 'svg_image.svg' ) ).toBeInTheDocument();
-	} );
-} );
+		expect(screen.getByText('svg_image.svg')).toBeInTheDocument();
+	});
+});

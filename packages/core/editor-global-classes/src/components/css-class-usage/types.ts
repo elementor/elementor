@@ -12,8 +12,8 @@ export type CssClassUsageContent = {
 	type: ContentType;
 };
 
-export type CssClassUsage = Record< CssClassID, Array< CssClassUsageContent > >;
+export type CssClassUsage = Record<CssClassID, Array<CssClassUsageContent>>;
 
-export type EnhancedCssClassUsageContent = { content: Array< CssClassUsageContent >; total: number };
+export type EnhancedCssClassUsageContent = { content: Array<CssClassUsageContent>; total: number };
 
-export type EnhancedCssClassUsage = Record< CssClassID, EnhancedCssClassUsageContent >;
+export type EnhancedCssClassUsage = Record<CssClassID, EnhancedCssClassUsageContent>;

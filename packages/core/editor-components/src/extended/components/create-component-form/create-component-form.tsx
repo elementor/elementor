@@ -31,115 +31,115 @@ type SaveAsComponentEventData = {
 const MAX_COMPONENTS = 100;
 
 export function CreateComponentForm() {
-	const [ element, setElement ] = useState< {
+	const [element, setElement] = useState<{
 		element: V1ElementData;
 		elementLabel: string;
-	} | null >( null );
+	} | null>(null);
 
-	const [ anchorPosition, setAnchorPosition ] = useState< { top: number; left: number } >();
+	const [anchorPosition, setAnchorPosition] = useState<{ top: number; left: number }>();
 	const { components } = useComponents();
 
-	const eventData = useRef< ComponentEventData | null >( null );
+	const eventData = useRef<ComponentEventData | null>(null);
 
-	useEffect( () => {
+	useEffect(() => {
 		const OPEN_SAVE_AS_COMPONENT_FORM_EVENT = 'elementor/editor/open-save-as-component-form';
 
-		const openPopup = ( event: CustomEvent< SaveAsComponentEventData > ) => {
-			const { shouldOpen, notification } = shouldOpenForm( event.detail.element, components?.length ?? 0 );
+		const openPopup = (event: CustomEvent<SaveAsComponentEventData>) => {
+			const { shouldOpen, notification } = shouldOpenForm(event.detail.element, components?.length ?? 0);
 
-			if ( ! shouldOpen ) {
-				notify( notification );
+			if (!shouldOpen) {
+				notify(notification);
 				return;
 			}
 
-			setElement( { element: event.detail.element, elementLabel: getElementLabel( event.detail.element.id ) } );
-			setAnchorPosition( event.detail.anchorPosition );
+			setElement({ element: event.detail.element, elementLabel: getElementLabel(event.detail.element.id) });
+			setAnchorPosition(event.detail.anchorPosition);
 
-			eventData.current = getComponentEventData( event.detail.element, event.detail.options );
-			trackComponentEvent( {
+			eventData.current = getComponentEventData(event.detail.element, event.detail.options);
+			trackComponentEvent({
 				action: 'createClicked',
 				source: 'user',
 				...eventData.current,
-			} );
+			});
 		};
 
-		window.addEventListener( OPEN_SAVE_AS_COMPONENT_FORM_EVENT, openPopup as EventListener );
+		window.addEventListener(OPEN_SAVE_AS_COMPONENT_FORM_EVENT, openPopup as EventListener);
 
 		return () => {
-			window.removeEventListener( OPEN_SAVE_AS_COMPONENT_FORM_EVENT, openPopup as EventListener );
+			window.removeEventListener(OPEN_SAVE_AS_COMPONENT_FORM_EVENT, openPopup as EventListener);
 		};
-	}, [ components?.length ] );
+	}, [components?.length]);
 
-	const handleSave = async ( values: ComponentFormValues ) => {
+	const handleSave = async (values: ComponentFormValues) => {
 		try {
-			if ( ! element ) {
-				throw new Error( `Can't save element as component: element not found` );
+			if (!element) {
+				throw new Error(`Can't save element as component: element not found`);
 			}
 
-			const { uid, instanceId } = await createUnpublishedComponent( {
+			const { uid, instanceId } = await createUnpublishedComponent({
 				name: values.componentName,
 				element: element.element,
 				eventData: eventData.current,
 				source: 'user',
-			} );
+			});
 
-			const publishedComponentId = ( componentsSelectors.getComponentByUid( uid ) as PublishedComponent )?.id;
+			const publishedComponentId = (componentsSelectors.getComponentByUid(uid) as PublishedComponent)?.id;
 
-			if ( publishedComponentId ) {
-				switchToComponent( publishedComponentId, instanceId );
+			if (publishedComponentId) {
+				switchToComponent(publishedComponentId, instanceId);
 			} else {
-				throw new Error( 'Failed to find published component' );
+				throw new Error('Failed to find published component');
 			}
 
-			notify( {
+			notify({
 				type: 'success',
-				message: __( 'Component created successfully.', 'elementor' ),
-				id: `component-saved-successfully-${ uid }`,
-			} );
+				message: __('Component created successfully.', 'elementor'),
+				id: `component-saved-successfully-${uid}`,
+			});
 
 			resetAndClosePopup();
 		} catch {
-			const errorMessage = __( 'Failed to create component. Please try again.', 'elementor' );
-			notify( {
+			const errorMessage = __('Failed to create component. Please try again.', 'elementor');
+			notify({
 				type: 'error',
 				message: errorMessage,
 				id: 'component-save-failed',
-			} );
+			});
 			resetAndClosePopup();
 		}
 	};
 
 	const resetAndClosePopup = () => {
-		setElement( null );
-		setAnchorPosition( undefined );
+		setElement(null);
+		setAnchorPosition(undefined);
 	};
 
 	const cancelSave = () => {
 		resetAndClosePopup();
 
-		trackComponentEvent( {
+		trackComponentEvent({
 			action: 'createCancelled',
 			source: 'user',
 			...eventData.current,
-		} );
+		});
 	};
 
 	return (
 		<ThemeProvider>
 			<Popover
-				open={ element !== null }
-				onClose={ cancelSave }
+				open={element !== null}
+				onClose={cancelSave}
 				anchorReference="anchorPosition"
-				anchorPosition={ anchorPosition }
+				anchorPosition={anchorPosition}
 				data-testid="create-component-form"
 			>
-				{ element !== null && (
+				{element !== null && (
 					<Form
-						initialValues={ { componentName: element.elementLabel } }
-						handleSave={ handleSave }
-						closePopup={ cancelSave }
+						initialValues={{ componentName: element.elementLabel }}
+						handleSave={handleSave}
+						closePopup={cancelSave}
 					/>
-				) }
+				)}
 			</Popover>
 		</ThemeProvider>
 	);
@@ -149,10 +149,10 @@ type ShouldOpenFormResult =
 	| { shouldOpen: true; notification: null }
 	| { shouldOpen: false; notification: NotificationData };
 
-function shouldOpenForm( element: V1ElementData, componentsCount: number ): ShouldOpenFormResult {
-	const nonAtomicElements = findNonAtomicElementsInElement( element );
+function shouldOpenForm(element: V1ElementData, componentsCount: number): ShouldOpenFormResult {
+	const nonAtomicElements = findNonAtomicElementsInElement(element);
 
-	if ( nonAtomicElements.length > 0 ) {
+	if (nonAtomicElements.length > 0) {
 		return {
 			shouldOpen: false,
 			notification: {
@@ -166,7 +166,7 @@ function shouldOpenForm( element: V1ElementData, componentsCount: number ): Shou
 		};
 	}
 
-	if ( componentsCount >= MAX_COMPONENTS ) {
+	if (componentsCount >= MAX_COMPONENTS) {
 		return {
 			shouldOpen: false,
 			notification: {
@@ -175,7 +175,7 @@ function shouldOpenForm( element: V1ElementData, componentsCount: number ): Shou
 				message: __(
 					`You've reached the limit of %s components. Please remove an existing one to create a new component.`,
 					'elementor'
-				).replace( '%s', MAX_COMPONENTS.toString() ),
+				).replace('%s', MAX_COMPONENTS.toString()),
 				id: 'maximum-number-of-components-exceeded',
 			},
 		};
@@ -186,93 +186,93 @@ function shouldOpenForm( element: V1ElementData, componentsCount: number ): Shou
 
 const FONT_SIZE = 'tiny';
 
-const Form = ( {
+const Form = ({
 	initialValues,
 	handleSave,
 	closePopup,
 }: {
 	initialValues: ComponentFormValues;
-	handleSave: ( values: ComponentFormValues ) => void;
+	handleSave: (values: ComponentFormValues) => void;
 	closePopup: () => void;
-} ) => {
-	const { values, errors, isValid, handleChange, validateForm } = useForm< ComponentFormValues >( initialValues );
+}) => {
+	const { values, errors, isValid, handleChange, validateForm } = useForm<ComponentFormValues>(initialValues);
 	const nameInputRef = useTextFieldAutoSelect();
 
 	const { components } = useComponents();
 
-	const existingComponentNames = useMemo( () => {
-		return components?.map( ( component ) => component.name ) ?? [];
-	}, [ components ] );
+	const existingComponentNames = useMemo(() => {
+		return components?.map((component) => component.name) ?? [];
+	}, [components]);
 
 	const changeValidationSchema = useMemo(
-		() => createBaseComponentSchema( existingComponentNames ),
-		[ existingComponentNames ]
+		() => createBaseComponentSchema(existingComponentNames),
+		[existingComponentNames]
 	);
 	const submitValidationSchema = useMemo(
-		() => createSubmitComponentSchema( existingComponentNames ),
-		[ existingComponentNames ]
+		() => createSubmitComponentSchema(existingComponentNames),
+		[existingComponentNames]
 	);
 
 	const handleSubmit = () => {
-		const { success, parsedValues } = validateForm( submitValidationSchema );
+		const { success, parsedValues } = validateForm(submitValidationSchema);
 
-		if ( success ) {
-			handleSave( parsedValues );
+		if (success) {
+			handleSave(parsedValues);
 		}
 	};
 
 	const texts = {
-		heading: __( 'Create component', 'elementor' ),
-		name: __( 'Name', 'elementor' ),
-		cancel: __( 'Cancel', 'elementor' ),
-		create: __( 'Create', 'elementor' ),
+		heading: __('Create component', 'elementor'),
+		name: __('Name', 'elementor'),
+		cancel: __('Cancel', 'elementor'),
+		create: __('Create', 'elementor'),
 	};
 
 	const nameInputId = 'component-name';
 
 	return (
-		<FormElement onSubmit={ handleSubmit }>
+		<FormElement onSubmit={handleSubmit}>
 			<Stack alignItems="start" width="268px">
 				<Stack
 					direction="row"
 					alignItems="center"
-					py={ 1 }
-					px={ 1.5 }
-					sx={ { columnGap: 0.5, borderBottom: '1px solid', borderColor: 'divider', width: '100%' } }
+					py={1}
+					px={1.5}
+					sx={{ columnGap: 0.5, borderBottom: '1px solid', borderColor: 'divider', width: '100%' }}
 				>
-					<ComponentsIcon fontSize={ FONT_SIZE } />
-					<Typography variant="caption" sx={ { color: 'text.primary', fontWeight: '500', lineHeight: 1 } }>
-						{ texts.heading }
+					<ComponentsIcon fontSize={FONT_SIZE} />
+					<Typography variant="caption" sx={{ color: 'text.primary', fontWeight: '500', lineHeight: 1 }}>
+						{texts.heading}
 					</Typography>
 				</Stack>
-				<Grid container gap={ 0.75 } alignItems="start" p={ 1.5 }>
-					<Grid item xs={ 12 }>
-						<FormLabel htmlFor={ nameInputId } size="tiny">
-							{ texts.name }
+				<Grid container gap={0.75} alignItems="start" p={1.5}>
+					<Grid item xs={12}>
+						<FormLabel htmlFor={nameInputId} size="tiny">
+							{texts.name}
 						</FormLabel>
 					</Grid>
-					<Grid item xs={ 12 }>
+					<Grid item xs={12}>
 						<TextField
-							id={ nameInputId }
-							size={ FONT_SIZE }
+							id={nameInputId}
+							size={FONT_SIZE}
 							fullWidth
-							value={ values.componentName }
-							onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) =>
-								handleChange( e, 'componentName', changeValidationSchema )
+							value={values.componentName}
+							onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+								handleChange(e, 'componentName', changeValidationSchema)
 							}
-							inputProps={ { style: { color: 'text.primary', fontWeight: '600' } } }
-							error={ Boolean( errors.componentName ) }
-							helperText={ errors.componentName }
-							inputRef={ nameInputRef }
+							inputProps={{ style: { color: 'text.primary', fontWeight: '600' } }}
+							error={Boolean(errors.componentName)}
+							helperText={errors.componentName}
+							inputRef={nameInputRef}
 						/>
 					</Grid>
 				</Grid>
-				<Stack direction="row" justifyContent="flex-end" alignSelf="end" py={ 1 } px={ 1.5 }>
-					<Button onClick={ closePopup } color="secondary" variant="text" size="small">
-						{ texts.cancel }
+				<Stack direction="row" justifyContent="flex-end" alignSelf="end" py={1} px={1.5}>
+					<Button onClick={closePopup} color="secondary" variant="text" size="small">
+						{texts.cancel}
 					</Button>
-					<Button type="submit" disabled={ ! isValid } variant="contained" color="primary" size="small">
-						{ texts.create }
+					<Button type="submit" disabled={!isValid} variant="contained" color="primary" size="small">
+						{texts.create}
 					</Button>
 				</Stack>
 			</Stack>

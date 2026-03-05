@@ -12,79 +12,79 @@ import { createControl } from '../create-control';
 
 export type SelectOption = {
 	label: string;
-	value: StringPropValue[ 'value' ];
+	value: StringPropValue['value'];
 	disabled?: boolean;
 };
 
 type Props = {
 	options: SelectOption[];
-	onChange?: ( newValue: string | null, previousValue: string | null | undefined ) => void;
-	fallbackLabels?: Record< string, string >;
+	onChange?: (newValue: string | null, previousValue: string | null | undefined) => void;
+	fallbackLabels?: Record<string, string>;
 };
 
-const StyledSelect = styled( Select )( () => ( { '.MuiSelect-select.Mui-disabled': { cursor: 'not-allowed' } } ) );
+const StyledSelect = styled(Select)(() => ({ '.MuiSelect-select.Mui-disabled': { cursor: 'not-allowed' } }));
 
-export const HtmlTagControl = createControl( ( { options, onChange, fallbackLabels = {} }: Props ) => {
-	const { value, setValue, disabled, placeholder } = useBoundProp( stringPropTypeUtil );
-	const handleChange = ( event: SelectChangeEvent< StringPropValue[ 'value' ] > ) => {
+export const HtmlTagControl = createControl(({ options, onChange, fallbackLabels = {} }: Props) => {
+	const { value, setValue, disabled, placeholder } = useBoundProp(stringPropTypeUtil);
+	const handleChange = (event: SelectChangeEvent<StringPropValue['value']>) => {
 		const newValue = event.target.value || null;
 
-		onChange?.( newValue, value );
-		setValue( newValue );
+		onChange?.(newValue, value);
+		setValue(newValue);
 	};
 
 	const elementLabel = getElementLabel() ?? 'element';
 	const infoTipProps = {
-		title: __( 'HTML Tag', 'elementor' ),
+		title: __('HTML Tag', 'elementor'),
 		/* translators: %s is the element name. */
 		description: __(
 			`The tag is locked to 'a' tag because this %s has a link. To pick a different tag, remove the link first.`,
 			'elementor'
-		).replace( '%s', elementLabel ),
-		isEnabled: !! disabled,
+		).replace('%s', elementLabel),
+		isEnabled: !!disabled,
 	};
 
-	const renderValue = ( selectedValue: string | null ) => {
-		if ( selectedValue ) {
-			return findOptionByValue( selectedValue )?.label || fallbackLabels[ selectedValue ] || selectedValue;
+	const renderValue = (selectedValue: string | null) => {
+		if (selectedValue) {
+			return findOptionByValue(selectedValue)?.label || fallbackLabels[selectedValue] || selectedValue;
 		}
 
-		if ( ! placeholder ) {
+		if (!placeholder) {
 			return '';
 		}
 
-		const placeholderOption = findOptionByValue( placeholder );
+		const placeholderOption = findOptionByValue(placeholder);
 		const displayText = placeholderOption?.label || placeholder;
 
 		return (
 			<Typography component="span" variant="caption" color="text.tertiary">
-				{ displayText }
+				{displayText}
 			</Typography>
 		);
 	};
 
-	const findOptionByValue = ( searchValue: string | null ) => options.find( ( opt ) => opt.value === searchValue );
+	const findOptionByValue = (searchValue: string | null) => options.find((opt) => opt.value === searchValue);
 
 	return (
 		<ControlActions>
-			<ConditionalControlInfotip { ...infoTipProps }>
+			<ConditionalControlInfotip {...infoTipProps}>
 				<StyledSelect
-					sx={ { overflow: 'hidden', cursor: disabled ? 'not-allowed' : undefined } }
+					sx={{ overflow: 'hidden', cursor: disabled ? 'not-allowed' : undefined }}
 					displayEmpty
 					size="tiny"
-					renderValue={ renderValue }
-					value={ value ?? '' }
-					onChange={ handleChange }
-					disabled={ disabled }
+					renderValue={renderValue}
+					value={value ?? ''}
+					onChange={handleChange}
+					disabled={disabled}
 					fullWidth
 				>
-					{ options.map( ( { label, ...props } ) => (
-						<MenuListItem key={ props.value } { ...props } value={ props.value ?? '' }>
-							{ label }
+					{options.map(({ label, ...props }) => (
+						<MenuListItem key={props.value} {...props} value={props.value ?? ''}>
+							{label}
 						</MenuListItem>
-					) ) }
+					))}
 				</StyledSelect>
 			</ConditionalControlInfotip>
 		</ControlActions>
 	);
-} );
+});

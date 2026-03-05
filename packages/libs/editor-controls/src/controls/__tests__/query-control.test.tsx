@@ -5,15 +5,15 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { QueryControl } from '../query-control';
 
-const queryPropType = createMockPropType( {
+const queryPropType = createMockPropType({
 	kind: 'object',
 	shape: {
-		id: createMockPropType( { kind: 'plain' } ),
-		label: createMockPropType( { kind: 'object' } ),
+		id: createMockPropType({ kind: 'plain' }),
+		label: createMockPropType({ kind: 'object' }),
 	},
-} );
+});
 
-jest.mock( '@elementor/http-client' );
+jest.mock('@elementor/http-client');
 
 const baseProps = {
 	bind: 'query',
@@ -59,44 +59,44 @@ const categorizedAjaxResponse = {
 	],
 };
 
-describe( '<QueryControl />', () => {
-	beforeEach( () => {
+describe('<QueryControl />', () => {
+	beforeEach(() => {
 		jest.resetAllMocks();
-		jest.mocked( httpService ).mockReturnValue( {
+		jest.mocked(httpService).mockReturnValue({
 			// @ts-expect-error - We don't need all types for this test
 			get: getMockImplementation,
-		} );
-	} );
+		});
+	});
 
-	afterEach( () => {
+	afterEach(() => {
 		jest.resetAllMocks();
-	} );
+	});
 
-	it( 'should render control with placeholder', () => {
+	it('should render control with placeholder', () => {
 		// Act.
 		renderControl(
-			<QueryControl queryOptions={ queryOptions } placeholder="Search posts..." allowCustomValues={ false } />,
+			<QueryControl queryOptions={queryOptions} placeholder="Search posts..." allowCustomValues={false} />,
 			baseProps
 		);
 
 		// Assert.
-		expect( screen.getByPlaceholderText( 'Search posts...' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByPlaceholderText('Search posts...')).toBeInTheDocument();
+	});
 
-	it( 'should handle null value', () => {
+	it('should handle null value', () => {
 		// Act.
 		renderControl(
-			<QueryControl queryOptions={ queryOptions } placeholder="Search posts..." allowCustomValues={ false } />,
+			<QueryControl queryOptions={queryOptions} placeholder="Search posts..." allowCustomValues={false} />,
 			baseProps
 		);
 
-		const input = screen.getByPlaceholderText( 'Search posts...' );
+		const input = screen.getByPlaceholderText('Search posts...');
 
 		// Assert.
-		expect( input ).toHaveValue( '' );
-	} );
+		expect(input).toHaveValue('');
+	});
 
-	it( 'should display existing value', () => {
+	it('should display existing value', () => {
 		// Arrange.
 		const props = {
 			...baseProps,
@@ -117,104 +117,104 @@ describe( '<QueryControl />', () => {
 
 		// Act.
 		renderControl(
-			<QueryControl queryOptions={ queryOptions } placeholder="Search posts..." allowCustomValues={ false } />,
+			<QueryControl queryOptions={queryOptions} placeholder="Search posts..." allowCustomValues={false} />,
 			props
 		);
 
-		const input = screen.getByDisplayValue( 'Existing Post' );
+		const input = screen.getByDisplayValue('Existing Post');
 
 		// Assert.
-		expect( input ).toBeInTheDocument();
-	} );
+		expect(input).toBeInTheDocument();
+	});
 
-	it.skip( 'should fetch and display options when typing', async () => {
+	it.skip('should fetch and display options when typing', async () => {
 		// Act.
 		renderControl(
 			<QueryControl
-				queryOptions={ queryOptions }
+				queryOptions={queryOptions}
 				placeholder="Search posts..."
-				allowCustomValues={ false }
-				minInputLength={ 2 }
+				allowCustomValues={false}
+				minInputLength={2}
 			/>,
 			baseProps
 		);
 
-		const input = screen.getByPlaceholderText( 'Search posts...' );
+		const input = screen.getByPlaceholderText('Search posts...');
 
 		// Act.
-		fireEvent.input( input, { target: { value: 'Va' } } );
+		fireEvent.input(input, { target: { value: 'Va' } });
 
 		// Assert.
 		await waitFor(
 			() => {
-				expect( screen.getByText( 'Val 1' ) ).toBeVisible();
+				expect(screen.getByText('Val 1')).toBeVisible();
 			},
 			{ timeout: 600 }
 		);
 
 		await waitFor(
 			() => {
-				expect( screen.getByText( 'Val 2' ) ).toBeVisible();
+				expect(screen.getByText('Val 2')).toBeVisible();
 			},
 			{ timeout: 600 }
 		);
-	} );
+	});
 
-	it( 'should not fetch options when input length is below minimum', async () => {
+	it('should not fetch options when input length is below minimum', async () => {
 		// Act.
 		renderControl(
 			<QueryControl
-				queryOptions={ queryOptions }
+				queryOptions={queryOptions}
 				placeholder="Search posts..."
-				allowCustomValues={ false }
-				minInputLength={ 3 }
+				allowCustomValues={false}
+				minInputLength={3}
 			/>,
 			baseProps
 		);
 
-		const input = screen.getByPlaceholderText( 'Search posts...' );
+		const input = screen.getByPlaceholderText('Search posts...');
 
 		// Act.
-		fireEvent.input( input, { target: { value: 'Va' } } );
+		fireEvent.input(input, { target: { value: 'Va' } });
 
 		// Wait for potential debounce
-		await new Promise( ( resolve ) => setTimeout( resolve, 500 ) );
+		await new Promise((resolve) => setTimeout(resolve, 500));
 
 		// Assert.
-		expect( httpService ).not.toHaveBeenCalled();
+		expect(httpService).not.toHaveBeenCalled();
 
 		// Act.
-		fireEvent.input( input, { target: { value: 'Val' } } );
+		fireEvent.input(input, { target: { value: 'Val' } });
 
 		// Wait for potential debounce
-		await new Promise( ( resolve ) => setTimeout( resolve, 500 ) );
+		await new Promise((resolve) => setTimeout(resolve, 500));
 
 		// Assert.
-		expect( httpService ).toHaveBeenCalled();
-	} );
+		expect(httpService).toHaveBeenCalled();
+	});
 
-	it.skip( 'should handle option selection', async () => {
+	it.skip('should handle option selection', async () => {
 		// Act.
 		renderControl(
-			<QueryControl queryOptions={ queryOptions } placeholder="Search posts..." allowCustomValues={ false } />,
+			<QueryControl queryOptions={queryOptions} placeholder="Search posts..." allowCustomValues={false} />,
 			baseProps
 		);
 
-		const input = screen.getByPlaceholderText( 'Search posts...' );
+		const input = screen.getByPlaceholderText('Search posts...');
 
 		// Act.
-		fireEvent.input( input, { target: { value: 'Va' } } );
+		fireEvent.input(input, { target: { value: 'Va' } });
 
 		// Wait for options to load
-		await waitFor( () => {
-			expect( screen.getByText( 'Val 1' ) ).toBeVisible();
-		} );
+		await waitFor(() => {
+			expect(screen.getByText('Val 1')).toBeVisible();
+		});
 
 		// Select option
-		fireEvent.click( screen.getByText( 'Val 1' ) );
+		fireEvent.click(screen.getByText('Val 1'));
 
 		// Assert.
-		expect( baseProps.setValue ).toHaveBeenCalledWith( {
+		expect(baseProps.setValue).toHaveBeenCalledWith({
 			$$type: 'query',
 			value: {
 				id: {
@@ -226,44 +226,44 @@ describe( '<QueryControl />', () => {
 					value: 'Val 1',
 				},
 			},
-		} );
-	} );
+		});
+	});
 
-	it.skip( 'should handle categorized options', async () => {
+	it.skip('should handle categorized options', async () => {
 		// Arrange.
-		jest.mocked( httpService ).mockReturnValue( {
+		jest.mocked(httpService).mockReturnValue({
 			// @ts-expect-error - We don't need all types for this test
 			get: getCategorizedMockImplementation,
-		} );
+		});
 
 		// Act.
 		renderControl(
-			<QueryControl queryOptions={ queryOptions } placeholder="Search posts..." allowCustomValues={ false } />,
+			<QueryControl queryOptions={queryOptions} placeholder="Search posts..." allowCustomValues={false} />,
 			baseProps
 		);
 
-		const input = screen.getByPlaceholderText( 'Search posts...' );
+		const input = screen.getByPlaceholderText('Search posts...');
 
 		// Act.
-		fireEvent.input( input, { target: { value: 'Post' } } );
+		fireEvent.input(input, { target: { value: 'Post' } });
 
 		// Assert.
 		await waitFor(
 			() => {
-				expect( screen.getByText( 'Post 1' ) ).toBeVisible();
+				expect(screen.getByText('Post 1')).toBeVisible();
 			},
 			{ timeout: 600 }
 		);
 
 		await waitFor(
 			() => {
-				expect( screen.getByText( 'Page 1' ) ).toBeVisible();
+				expect(screen.getByText('Page 1')).toBeVisible();
 			},
 			{ timeout: 600 }
 		);
-	} );
+	});
 
-	it( 'should handle custom values when allowCustomValues is true', () => {
+	it('should handle custom values when allowCustomValues is true', () => {
 		// Arrange.
 		const props = {
 			...baseProps,
@@ -274,41 +274,41 @@ describe( '<QueryControl />', () => {
 		};
 		// Act.
 		renderControl(
-			<QueryControl queryOptions={ queryOptions } placeholder="Search posts..." allowCustomValues={ true } />,
+			<QueryControl queryOptions={queryOptions} placeholder="Search posts..." allowCustomValues={true} />,
 			props
 		);
 
-		const input = screen.getByDisplayValue( 'Custom URL' );
+		const input = screen.getByDisplayValue('Custom URL');
 
 		// Assert.
-		expect( input ).toBeInTheDocument();
-	} );
+		expect(input).toBeInTheDocument();
+	});
 
-	it( 'should debounce API calls', async () => {
+	it('should debounce API calls', async () => {
 		// Act.
 		renderControl(
-			<QueryControl queryOptions={ queryOptions } placeholder="Search posts..." allowCustomValues={ false } />,
+			<QueryControl queryOptions={queryOptions} placeholder="Search posts..." allowCustomValues={false} />,
 			baseProps
 		);
 
-		const input = screen.getByPlaceholderText( 'Search posts...' );
+		const input = screen.getByPlaceholderText('Search posts...');
 
 		// Act - type multiple characters quickly
-		fireEvent.input( input, { target: { value: 'T' } } );
-		fireEvent.input( input, { target: { value: 'Te' } } );
-		fireEvent.input( input, { target: { value: 'Tes' } } );
-		fireEvent.input( input, { target: { value: 'Test' } } );
+		fireEvent.input(input, { target: { value: 'T' } });
+		fireEvent.input(input, { target: { value: 'Te' } });
+		fireEvent.input(input, { target: { value: 'Tes' } });
+		fireEvent.input(input, { target: { value: 'Test' } });
 
 		// Wait for debounce to complete
 		await waitFor(
 			() => {
-				expect( httpService ).toHaveBeenCalledTimes( 1 );
+				expect(httpService).toHaveBeenCalledTimes(1);
 			},
 			{ timeout: 600 }
 		);
-	} );
+	});
 
-	it( 'should generate first loaded option from existing value', () => {
+	it('should generate first loaded option from existing value', () => {
 		// Arrange.
 		const props = {
 			...baseProps,
@@ -329,14 +329,14 @@ describe( '<QueryControl />', () => {
 
 		// Act.
 		renderControl(
-			<QueryControl queryOptions={ queryOptions } placeholder="Search posts..." allowCustomValues={ false } />,
+			<QueryControl queryOptions={queryOptions} placeholder="Search posts..." allowCustomValues={false} />,
 			props
 		);
 
 		// Assert.
-		expect( screen.getByDisplayValue( 'Test Post' ) ).toBeInTheDocument();
-	} );
-} );
+		expect(screen.getByDisplayValue('Test Post')).toBeInTheDocument();
+	});
+});
 
 async function getMockImplementation() {
 	return {

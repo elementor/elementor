@@ -4,91 +4,91 @@ import { act, renderHook } from '@testing-library/react';
 import useIsRouteActive from '../use-is-route-active';
 import { mockIsRouteActive } from './test-utils';
 
-describe( '@elementor/editor-v1-adapters - useIsRouteActive', () => {
-	it( 'should return false when a route is inactive by default', () => {
+describe('@elementor/editor-v1-adapters - useIsRouteActive', () => {
+	it('should return false when a route is inactive by default', () => {
 		// Arrange.
 		const route = 'panel/menu';
 
-		mockIsRouteActive( () => false );
+		mockIsRouteActive(() => false);
 
 		// Act.
-		const { result } = renderHook( () => useIsRouteActive( route ) );
+		const { result } = renderHook(() => useIsRouteActive(route));
 
 		// Assert.
-		expect( result.current ).toBe( false );
-	} );
+		expect(result.current).toBe(false);
+	});
 
-	it( 'should return true when a route is active by default', () => {
+	it('should return true when a route is active by default', () => {
 		// Arrange.
 		const route = 'panel/menu';
 
-		mockIsRouteActive( () => true );
+		mockIsRouteActive(() => true);
 
 		// Act.
-		const { result } = renderHook( () => useIsRouteActive( route ) );
+		const { result } = renderHook(() => useIsRouteActive(route));
 
 		// Assert.
-		expect( result.current ).toBe( true );
-	} );
+		expect(result.current).toBe(true);
+	});
 
-	it( 'should return true when a route gets activated', () => {
+	it('should return true when a route gets activated', () => {
 		// Arrange.
 		const route = 'panel/menu';
 
-		mockIsRouteActive( () => false );
+		mockIsRouteActive(() => false);
 
 		// Act.
-		const { result } = renderHook( () => useIsRouteActive( route ) );
+		const { result } = renderHook(() => useIsRouteActive(route));
 
-		act( () => {
-			mockIsRouteActive( () => true );
-			dispatchRouteOpen( route );
-		} );
+		act(() => {
+			mockIsRouteActive(() => true);
+			dispatchRouteOpen(route);
+		});
 
 		// Assert.
-		expect( result.current ).toBe( true );
-	} );
+		expect(result.current).toBe(true);
+	});
 
-	it( 'should return false when a route gets deactivated', () => {
+	it('should return false when a route gets deactivated', () => {
 		// Arrange.
 		const route = 'panel/menu';
 
-		mockIsRouteActive( () => true );
+		mockIsRouteActive(() => true);
 
 		// Act.
-		const { result } = renderHook( () => useIsRouteActive( route ) );
+		const { result } = renderHook(() => useIsRouteActive(route));
 
-		act( () => {
-			mockIsRouteActive( () => false );
-			dispatchRouteClose( route );
-		} );
+		act(() => {
+			mockIsRouteActive(() => false);
+			dispatchRouteClose(route);
+		});
 
 		// Assert.
-		expect( result.current ).toBe( false );
-	} );
+		expect(result.current).toBe(false);
+	});
 
-	it( 'should re-check whether the route is active when changing it', () => {
+	it('should re-check whether the route is active when changing it', () => {
 		// Arrange.
-		mockIsRouteActive( ( r ) => {
+		mockIsRouteActive((r) => {
 			return 'active/route' === r;
-		} );
+		});
 
 		// Act.
-		const { result, rerender } = renderHook( ( { route } ) => useIsRouteActive( route ), {
+		const { result, rerender } = renderHook(({ route }) => useIsRouteActive(route), {
 			initialProps: {
 				route: 'active/route',
 			},
-		} );
+		});
 
 		// Assert.
-		expect( result.current ).toBe( true );
+		expect(result.current).toBe(true);
 
 		// Act.
-		rerender( {
+		rerender({
 			route: 'inactive/route',
-		} );
+		});
 
 		// Assert.
-		expect( result.current ).toBe( false );
-	} );
-} );
+		expect(result.current).toBe(false);
+	});
+});

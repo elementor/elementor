@@ -16,23 +16,23 @@ export default function UtilitiesMenuLocation() {
 	// Otherwise, display all items inline.
 	const shouldUsePopover = menuItems.default.length > MAX_TOOLBAR_ACTIONS + 1;
 
-	const toolbarMenuItems = shouldUsePopover ? menuItems.default.slice( 0, MAX_TOOLBAR_ACTIONS ) : menuItems.default;
-	const popoverMenuItems = shouldUsePopover ? menuItems.default.slice( MAX_TOOLBAR_ACTIONS ) : [];
+	const toolbarMenuItems = shouldUsePopover ? menuItems.default.slice(0, MAX_TOOLBAR_ACTIONS) : menuItems.default;
+	const popoverMenuItems = shouldUsePopover ? menuItems.default.slice(MAX_TOOLBAR_ACTIONS) : [];
 
 	return (
 		<ToolbarMenu>
-			{ toolbarMenuItems.map( ( { MenuItem, id } ) => (
-				<Fragment key={ id }>
+			{toolbarMenuItems.map(({ MenuItem, id }) => (
+				<Fragment key={id}>
 					<MenuItem />
 				</Fragment>
-			) ) }
-			{ popoverMenuItems.length > 0 && (
+			))}
+			{popoverMenuItems.length > 0 && (
 				<ToolbarMenuMore id="elementor-editor-app-bar-utilities-more">
-					{ popoverMenuItems.map( ( { MenuItem, id } ) => (
-						<MenuItem key={ id } />
-					) ) }
+					{popoverMenuItems.map(({ MenuItem, id }) => (
+						<MenuItem key={id} />
+					))}
 				</ToolbarMenuMore>
-			) }
+			)}
 		</ToolbarMenu>
 	);
 }

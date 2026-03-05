@@ -9,32 +9,32 @@ const DEFAULT_PANEL_ROUTE = 'panel/elements';
 
 export function OpenPanelFromUrl() {
 	const { open } = usePanelActions();
-	const hasOpened = useRef( false );
+	const hasOpened = useRef(false);
 
-	useEffect( () => {
-		const urlParams = new URLSearchParams( window.location.search );
-		const activePanel = urlParams.get( ACTIVE_PANEL_PARAM );
+	useEffect(() => {
+		const urlParams = new URLSearchParams(window.location.search);
+		const activePanel = urlParams.get(ACTIVE_PANEL_PARAM);
 
-		if ( activePanel !== PANEL_ID ) {
+		if (activePanel !== PANEL_ID) {
 			return;
 		}
 
 		// Listen for the default panel route to open - this signals Elementor initialization is complete
-		const cleanup = listenTo( routeOpenEvent( DEFAULT_PANEL_ROUTE ), () => {
-			if ( hasOpened.current ) {
+		const cleanup = listenTo(routeOpenEvent(DEFAULT_PANEL_ROUTE), () => {
+			if (hasOpened.current) {
 				return;
 			}
 
 			hasOpened.current = true;
 
 			// Open panel after default route is established
-			requestAnimationFrame( () => {
+			requestAnimationFrame(() => {
 				open();
-			} );
-		} );
+			});
+		});
 
 		return cleanup;
-	}, [ open ] );
+	}, [open]);
 
 	return null;
 }

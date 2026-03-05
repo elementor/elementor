@@ -16,7 +16,7 @@ import { CanvasInlineEditor } from './canvas-inline-editor';
 import { isInlineEditingAllowed } from './inline-editing-eligibility';
 import { INLINE_EDITING_PROPERTY_PER_TYPE } from './inline-editing-utils';
 
-type TagPropType = PropType< 'tag' > & {
+type TagPropType = PropType<'tag'> & {
 	settings?: {
 		enum?: string[];
 	};
@@ -33,11 +33,11 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	}
 
 	static getTypes() {
-		return Object.keys( INLINE_EDITING_PROPERTY_PER_TYPE );
+		return Object.keys(INLINE_EDITING_PROPERTY_PER_TYPE);
 	}
 
 	isEditingModeActive() {
-		return !! this.inlineEditorRoot;
+		return !!this.inlineEditorRoot;
 	}
 
 	shouldRenderReplacement() {
@@ -45,7 +45,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	}
 
 	handleRenderInlineEditor = () => {
-		if ( this.isEditingModeActive() || ! this.isInlineEditingEligible() ) {
+		if (this.isEditingModeActive() || !this.isInlineEditingEligible()) {
 			return;
 		}
 
@@ -53,7 +53,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	};
 
 	renderOnChange() {
-		if ( this.isEditingModeActive() ) {
+		if (this.isEditingModeActive()) {
 			return;
 		}
 
@@ -69,8 +69,8 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	}
 
 	_afterRender() {
-		if ( this.isInlineEditingEligible() && ! this.handlerAttached ) {
-			this.element.addEventListener( 'click', this.handleRenderInlineEditor );
+		if (this.isInlineEditingEligible() && !this.handlerAttached) {
+			this.element.addEventListener('click', this.handleRenderInlineEditor);
 			this.handlerAttached = true;
 		}
 	}
@@ -89,7 +89,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	}
 
 	resetInlineEditorRoot() {
-		this.element.removeEventListener( 'click', this.handleRenderInlineEditor );
+		this.element.removeEventListener('click', this.handleRenderInlineEditor);
 		this.handlerAttached = false;
 		this.inlineEditorRoot?.unmount?.();
 		this.inlineEditorRoot = null;
@@ -102,63 +102,63 @@ export default class InlineEditingReplacement extends ReplacementBase {
 
 	isInlineEditingEligible() {
 		const settingKey = this.getInlineEditablePropertyName();
-		const rawValue = this.getSetting( settingKey );
+		const rawValue = this.getSetting(settingKey);
 
-		return isInlineEditingAllowed( { rawValue, propTypeFromSchema: this.getInlineEditablePropType() } );
+		return isInlineEditingAllowed({ rawValue, propTypeFromSchema: this.getInlineEditablePropType() });
 	}
 
 	getInlineEditablePropertyName(): string {
-		return INLINE_EDITING_PROPERTY_PER_TYPE[ this.type ] ?? '';
+		return INLINE_EDITING_PROPERTY_PER_TYPE[this.type] ?? '';
 	}
 
 	getInlineEditablePropType() {
-		const propSchema = getElementType( this.type )?.propsSchema;
+		const propSchema = getElementType(this.type)?.propsSchema;
 		const propertyName = this.getInlineEditablePropertyName();
 
-		return propSchema?.[ propertyName ] ?? null;
+		return propSchema?.[propertyName] ?? null;
 	}
 
 	getInlineEditablePropValue() {
 		const prop = this.getInlineEditablePropType();
 		const settingKey = this.getInlineEditablePropertyName();
 
-		return this.getSetting( settingKey ) ?? prop?.default ?? null;
+		return this.getSetting(settingKey) ?? prop?.default ?? null;
 	}
 
 	getExtractedContentValue() {
 		const propValue = this.getInlineEditablePropValue();
-		const extracted = htmlV3PropTypeUtil.extract( propValue );
+		const extracted = htmlV3PropTypeUtil.extract(propValue);
 
-		return stringPropTypeUtil.extract( extracted?.content ?? null ) ?? '';
+		return stringPropTypeUtil.extract(extracted?.content ?? null) ?? '';
 	}
 
-	setContentValue( value: string | null ) {
+	setContentValue(value: string | null) {
 		const settingKey = this.getInlineEditablePropertyName();
 		const html = value || '';
-		const parsed = parseHtmlChildren( html );
+		const parsed = parseHtmlChildren(html);
 
-		const valueToSave = htmlV3PropTypeUtil.create( {
-			content: parsed.content ? stringPropTypeUtil.create( parsed.content ) : null,
+		const valueToSave = htmlV3PropTypeUtil.create({
+			content: parsed.content ? stringPropTypeUtil.create(parsed.content) : null,
 			children: parsed.children,
-		} );
+		});
 
 		undoable(
 			{
 				do: () => {
 					const prevValue = this.getInlineEditablePropValue();
 
-					this.runCommand( settingKey, valueToSave );
+					this.runCommand(settingKey, valueToSave);
 
 					return prevValue;
 				},
-				undo: ( _, prevValue ) => {
-					this.runCommand( settingKey, prevValue ?? null );
+				undo: (_, prevValue) => {
+					this.runCommand(settingKey, prevValue ?? null);
 				},
 			},
 			{
-				title: getElementLabel( this.id ),
+				title: getElementLabel(this.id),
 				// translators: %s is the name of the property that was edited.
-				subtitle: __( '%s edited', 'elementor' ).replace(
+				subtitle: __('%s edited', 'elementor').replace(
 					'%s',
 					this.getInlineEditablePropTypeKey() ?? 'Inline editing'
 				),
@@ -170,15 +170,15 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	getInlineEditablePropTypeKey() {
 		const propType = this.getInlineEditablePropType();
 
-		if ( ! propType ) {
+		if (!propType) {
 			return null;
 		}
 
-		if ( propType.kind === 'union' ) {
-			const textKeys = [ htmlV3PropTypeUtil.key, stringPropTypeUtil.key ];
+		if (propType.kind === 'union') {
+			const textKeys = [htmlV3PropTypeUtil.key, stringPropTypeUtil.key];
 
-			for ( const key of textKeys ) {
-				if ( propType.prop_types[ key ] ) {
+			for (const key of textKeys) {
+				if (propType.prop_types[key]) {
 					return key;
 				}
 			}
@@ -186,25 +186,25 @@ export default class InlineEditingReplacement extends ReplacementBase {
 			return null;
 		}
 
-		if ( 'key' in propType && typeof propType.key === 'string' ) {
+		if ('key' in propType && typeof propType.key === 'string') {
 			return propType.key;
 		}
 
 		return null;
 	}
 
-	runCommand( key: string, value: PropValue | null ) {
+	runCommand(key: string, value: PropValue | null) {
 		runCommandSync(
 			'document/elements/set-settings',
 			{
-				container: getContainer( this.id ),
+				container: getContainer(this.id),
 				settings: {
-					[ key ]: value,
+					[key]: value,
 				},
 			},
 			{ internal: true }
 		);
-		runCommandSync( 'document/save/set-is-modified', { status: true }, { internal: true } );
+		runCommandSync('document/save/set-is-modified', { status: true }, { internal: true });
 	}
 
 	getExpectedTag() {
@@ -212,49 +212,49 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		const tagSettingKey = 'tag';
 
 		return (
-			stringPropTypeUtil.extract( this.getSetting( tagSettingKey ) ?? null ) ??
-			stringPropTypeUtil.extract( tagPropType?.default ?? null ) ??
+			stringPropTypeUtil.extract(this.getSetting(tagSettingKey) ?? null) ??
+			stringPropTypeUtil.extract(tagPropType?.default ?? null) ??
 			null
 		);
 	}
 
 	getTagPropType() {
-		const propsSchema = getElementType( this.type )?.propsSchema;
+		const propsSchema = getElementType(this.type)?.propsSchema;
 
-		if ( ! propsSchema?.tag ) {
+		if (!propsSchema?.tag) {
 			return null;
 		}
 
-		const tagPropType = ( propsSchema.tag as TagPropType ) ?? null;
+		const tagPropType = (propsSchema.tag as TagPropType) ?? null;
 
-		if ( tagPropType.kind === 'union' ) {
-			return ( tagPropType.prop_types.string as TagPropType ) ?? null;
+		if (tagPropType.kind === 'union') {
+			return (tagPropType.prop_types.string as TagPropType) ?? null;
 		}
 
 		return tagPropType;
 	}
 
 	renderInlineEditor() {
-		if ( this.isEditingModeActive() ) {
+		if (this.isEditingModeActive()) {
 			this.resetInlineEditorRoot();
 		}
 
-		const elementClasses = this.element.children?.[ 0 ]?.classList.toString() ?? '';
+		const elementClasses = this.element.children?.[0]?.classList.toString() ?? '';
 		const propValue = this.getExtractedContentValue();
 		const expectedTag = this.getExpectedTag();
 
 		this.element.innerHTML = '';
 
-		this.inlineEditorRoot = createRoot( this.element );
+		this.inlineEditorRoot = createRoot(this.element);
 		this.inlineEditorRoot.render(
 			<CanvasInlineEditor
-				elementClasses={ elementClasses }
-				initialValue={ propValue }
-				expectedTag={ expectedTag }
-				rootElement={ this.element }
-				id={ this.id }
-				setValue={ this.setContentValue.bind( this ) }
-				onBlur={ this.unmountInlineEditor.bind( this ) }
+				elementClasses={elementClasses}
+				initialValue={propValue}
+				expectedTag={expectedTag}
+				rootElement={this.element}
+				id={this.id}
+				setValue={this.setContentValue.bind(this)}
+				onBlur={this.unmountInlineEditor.bind(this)}
 			/>
 		);
 	}

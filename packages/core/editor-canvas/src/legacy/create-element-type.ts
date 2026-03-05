@@ -4,7 +4,7 @@ import { type ElementType, type ElementView, type LegacyWindow } from './types';
 // reason TypeScript can't infer the types properly when emitting DTS.
 //
 // See: https://github.com/microsoft/TypeScript/issues/9944#issuecomment-244448079
-export function createElementType( type: string ): typeof ElementType {
+export function createElementType(type: string): typeof ElementType {
 	const legacyWindow = window as unknown as LegacyWindow;
 
 	return class extends legacyWindow.elementor.modules.elements.types.Widget {
@@ -23,19 +23,19 @@ export function createElementViewClassDeclaration(): typeof ElementView {
 
 	return class extends legacyWindow.elementor.modules.elements.views.Widget {
 		// Dispatch `render` event so the overlay layer will be updated
-		onRender( ...args: unknown[] ) {
-			super.onRender( ...args );
+		onRender(...args: unknown[]) {
+			super.onRender(...args);
 
-			this.#dispatchEvent( 'elementor/preview/atomic-widget/render' );
-			this.#dispatchPreviewEvent( 'elementor/element/render' );
+			this.#dispatchEvent('elementor/preview/atomic-widget/render');
+			this.#dispatchPreviewEvent('elementor/element/render');
 		}
 
 		// Dispatch `destroy` event so the overlay layer will be updated
-		onDestroy( ...args: unknown[] ) {
-			super.onDestroy( ...args );
+		onDestroy(...args: unknown[]) {
+			super.onDestroy(...args);
 
-			this.#dispatchEvent( 'elementor/preview/atomic-widget/destroy' );
-			this.#dispatchPreviewEvent( 'elementor/element/destroy' );
+			this.#dispatchEvent('elementor/preview/atomic-widget/destroy');
+			this.#dispatchPreviewEvent('elementor/element/destroy');
 		}
 
 		attributes() {
@@ -52,18 +52,18 @@ export function createElementViewClassDeclaration(): typeof ElementView {
 
 		// Removes behaviors that are not needed for atomic widgets (that are implemented in the overlay layer).
 		behaviors() {
-			const disabledBehaviors = [ 'InlineEditing', 'Draggable', 'Resizable' ];
+			const disabledBehaviors = ['InlineEditing', 'Draggable', 'Resizable'];
 
-			const behaviorsAsEntries = Object.entries( super.behaviors() ).filter(
-				( [ key ] ) => ! disabledBehaviors.includes( key )
+			const behaviorsAsEntries = Object.entries(super.behaviors()).filter(
+				([key]) => !disabledBehaviors.includes(key)
 			);
 
-			return Object.fromEntries( behaviorsAsEntries );
+			return Object.fromEntries(behaviorsAsEntries);
 		}
 
 		// Change the drag handle because the $el is not the draggable element (`display: contents`).
 		getDomElement() {
-			return this.$el.find( ':first-child' );
+			return this.$el.find(':first-child');
 		}
 
 		// Remove the overlay, so we can use the new overlay layer.
@@ -71,34 +71,34 @@ export function createElementViewClassDeclaration(): typeof ElementView {
 			return null;
 		}
 
-		#dispatchEvent( eventType: string ) {
+		#dispatchEvent(eventType: string) {
 			window.top?.dispatchEvent(
-				new CustomEvent( eventType, {
-					detail: { id: this.model.get( 'id' ) },
-				} )
+				new CustomEvent(eventType, {
+					detail: { id: this.model.get('id') },
+				})
 			);
 		}
 
-		#dispatchPreviewEvent( eventType: string ) {
-			const element = this.getDomElement().get( 0 );
+		#dispatchPreviewEvent(eventType: string) {
+			const element = this.getDomElement().get(0);
 
-			if ( ! element ) {
+			if (!element) {
 				return;
 			}
 
-			legacyWindow.elementor?.$preview?.[ 0 ]?.contentWindow.dispatchEvent(
-				new CustomEvent( eventType, {
+			legacyWindow.elementor?.$preview?.[0]?.contentWindow.dispatchEvent(
+				new CustomEvent(eventType, {
 					detail: {
-						id: this.model.get( 'id' ),
-						type: this.model.get( 'widgetType' ),
+						id: this.model.get('id'),
+						type: this.model.get('widgetType'),
 						element,
 					},
-				} )
+				})
 			);
 		}
 
 		getContextMenuGroups() {
-			return super.getContextMenuGroups().filter( ( group ) => group.name !== 'save' );
+			return super.getContextMenuGroups().filter((group) => group.name !== 'save');
 		}
 	};
 }

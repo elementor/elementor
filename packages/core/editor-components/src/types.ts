@@ -9,7 +9,7 @@ export type ComponentFormValues = {
 
 export type ComponentId = number;
 
-export type StylesDefinition = Record< ComponentId, StyleDefinition[] >;
+export type StylesDefinition = Record<ComponentId, StyleDefinition[]>;
 
 export type Component = PublishedComponent | UnpublishedComponent;
 
@@ -28,7 +28,7 @@ export type UnpublishedComponent = BaseComponent & {
 	elements: V1ElementData[];
 };
 
-export type OriginPropFields = Pick< OverridableProp, 'propKey' | 'widgetType' | 'elType' | 'elementId' >;
+export type OriginPropFields = Pick<OverridableProp, 'propKey' | 'widgetType' | 'elType' | 'elementId'>;
 
 export type OverridableProp = {
 	overrideKey: string;
@@ -49,9 +49,9 @@ export type OverridablePropsGroup = {
 };
 
 export type OverridableProps = {
-	props: Record< string, OverridableProp >;
+	props: Record<string, OverridableProp>;
 	groups: {
-		items: Record< string, OverridablePropsGroup >;
+		items: Record<string, OverridablePropsGroup>;
 		order: string[];
 	};
 };
@@ -66,38 +66,34 @@ export type DocumentStatus = 'publish' | 'draft';
 export type DocumentSaveStatus = DocumentStatus | 'autosave';
 
 export type ElementorStorage = {
-	get: < T = unknown >( key: string ) => T | null;
-	set: < T >( key: string, data: T ) => void;
+	get: <T = unknown>(key: string) => T | null;
+	set: <T>(key: string, data: T) => void;
 };
 
 export type ExtendedWindow = Window & {
-	elementorCommon: Record< string, unknown > & {
+	elementorCommon: Record<string, unknown> & {
 		eventsManager: {
 			config: {
-				locations: Record< string, string >;
-				secondaryLocations: Record< string, string >;
-				triggers: Record< string, string >;
+				locations: Record<string, string>;
+				secondaryLocations: Record<string, string>;
+				triggers: Record<string, string>;
 			};
 		};
 		storage: ElementorStorage;
 	};
 	elementor?: {
-		getContainerByKeyValue?: ( args: {
-			key: string;
-			value: string;
-			parent?: V1Element[ 'view' ];
-		} ) => V1Element | null;
+		getContainerByKeyValue?: (args: { key: string; value: string; parent?: V1Element['view'] }) => V1Element | null;
 	};
 };
 
 export type ComponentOverridable = {
 	override_key: string;
-	origin_value: TransformablePropValue< string >;
+	origin_value: TransformablePropValue<string>;
 };
 
-export type ComponentRenderContext = RenderContext< {
-	overrides?: Record< string, unknown >;
-} >;
+export type ComponentRenderContext = RenderContext<{
+	overrides?: Record<string, unknown>;
+}>;
 
 export type UpdatedComponentName = {
 	componentId: number;

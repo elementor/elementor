@@ -6,14 +6,14 @@ import { createStylesRenderer } from '../renderers/create-styles-renderer';
 
 const SELECTOR_PREFIX = '.elementor';
 
-export function useStyleRenderer( resolve: PropsResolver ) {
+export function useStyleRenderer(resolve: PropsResolver) {
 	const breakpoints = useBreakpointsMap();
 
-	return useMemo( () => {
-		return createStylesRenderer( {
+	return useMemo(() => {
+		return createStylesRenderer({
 			selectorPrefix: SELECTOR_PREFIX,
 			breakpoints,
 			resolve,
-		} );
-	}, [ resolve, breakpoints ] );
+		});
+	}, [resolve, breakpoints]);
 }

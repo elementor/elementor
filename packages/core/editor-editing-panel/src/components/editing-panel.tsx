@@ -28,20 +28,20 @@ export const EditingPanel = () => {
 	const controlReplacements = getControlReplacements();
 	const menuItems = useMenuItems().default;
 
-	if ( ! element || ! elementType ) {
+	if (!element || !elementType) {
 		return null;
 	}
 
 	/* translators: %s: Element type title. */
-	const panelTitle = __( 'Edit %s', 'elementor' ).replace( '%s', elementType.title );
+	const panelTitle = __('Edit %s', 'elementor').replace('%s', elementType.title);
 
-	const { component: ReplacementComponent } = getEditingPanelReplacement( element, elementType ) ?? {};
+	const { component: ReplacementComponent } = getEditingPanelReplacement(element, elementType) ?? {};
 
 	let panelContent = (
 		<>
 			<PanelHeader>
-				<PanelHeaderTitle>{ panelTitle }</PanelHeaderTitle>
-				<AtomIcon fontSize="small" sx={ { color: 'text.tertiary' } } />
+				<PanelHeaderTitle>{panelTitle}</PanelHeaderTitle>
+				<AtomIcon fontSize="small" sx={{ color: 'text.tertiary' }} />
 			</PanelHeader>
 			<PanelBody>
 				<EditingPanelTabs />
@@ -49,20 +49,20 @@ export const EditingPanel = () => {
 		</>
 	);
 
-	if ( ReplacementComponent ) {
+	if (ReplacementComponent) {
 		panelContent = <ReplacementComponent />;
 	}
 
 	return (
-		<ErrorBoundary fallback={ <EditorPanelErrorFallback /> }>
-			<SessionStorageProvider prefix={ 'elementor' }>
+		<ErrorBoundary fallback={<EditorPanelErrorFallback />}>
+			<SessionStorageProvider prefix={'elementor'}>
 				<ThemeProvider>
-					<ControlActionsProvider items={ menuItems }>
-						<ControlReplacementsProvider replacements={ controlReplacements }>
-							<ElementProvider element={ element } elementType={ elementType } settings={ settings }>
+					<ControlActionsProvider items={menuItems}>
+						<ControlReplacementsProvider replacements={controlReplacements}>
+							<ElementProvider element={element} elementType={elementType} settings={settings}>
 								<Panel>
 									<PanelHeaderTopSlot />
-									{ panelContent }
+									{panelContent}
 								</Panel>
 							</ElementProvider>
 						</ControlReplacementsProvider>

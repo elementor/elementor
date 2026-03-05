@@ -36,172 +36,172 @@ export function revertElementOverridableSetting(
 	originValue: unknown,
 	overrideKey: string
 ): void {
-	const container = getContainer( elementId );
+	const container = getContainer(elementId);
 
-	if ( ! container ) {
+	if (!container) {
 		return;
 	}
 
-	if ( isComponentInstance( container.model.toJSON() ) ) {
-		revertComponentInstanceOverridableSetting( elementId, overrideKey );
+	if (isComponentInstance(container.model.toJSON())) {
+		revertComponentInstanceOverridableSetting(elementId, overrideKey);
 
 		return;
 	}
 
-	updateElementSettings( {
+	updateElementSettings({
 		id: elementId,
-		props: { [ settingKey ]: originValue ?? null },
+		props: { [settingKey]: originValue ?? null },
 		withHistory: false,
-	} );
+	});
 }
 
-function revertComponentInstanceOverridableSetting( elementId: string, overrideKey: string ): void {
-	const setting = getElementSetting< ComponentInstanceProp >( elementId, 'component_instance' );
+function revertComponentInstanceOverridableSetting(elementId: string, overrideKey: string): void {
+	const setting = getElementSetting<ComponentInstanceProp>(elementId, 'component_instance');
 
-	const componentInstance = componentInstancePropTypeUtil.extract( setting );
-	const overrides = componentInstanceOverridesPropTypeUtil.extract( componentInstance?.overrides );
+	const componentInstance = componentInstancePropTypeUtil.extract(setting);
+	const overrides = componentInstanceOverridesPropTypeUtil.extract(componentInstance?.overrides);
 
-	if ( ! overrides?.length ) {
+	if (!overrides?.length) {
 		return;
 	}
 
-	const revertedOverrides = revertComponentInstanceOverrides( overrides, overrideKey );
+	const revertedOverrides = revertComponentInstanceOverrides(overrides, overrideKey);
 
-	const updatedSetting = componentInstancePropTypeUtil.create( {
+	const updatedSetting = componentInstancePropTypeUtil.create({
 		...componentInstance,
-		overrides: componentInstanceOverridesPropTypeUtil.create( revertedOverrides ),
-	} as ComponentInstancePropValue );
+		overrides: componentInstanceOverridesPropTypeUtil.create(revertedOverrides),
+	} as ComponentInstancePropValue);
 
-	updateElementSettings( {
+	updateElementSettings({
 		id: elementId,
 		props: { component_instance: updatedSetting },
 		withHistory: false,
-	} );
+	});
 }
 
 function revertComponentInstanceOverrides(
-	overrides: NonNullable< ComponentInstanceOverridesPropValue >,
+	overrides: NonNullable<ComponentInstanceOverridesPropValue>,
 	filterByKey?: string
 ): ComponentInstanceOverridesPropValue {
 	return overrides
-		.map( ( item ) => {
-			if ( ! componentOverridablePropTypeUtil.isValid( item ) ) {
+		.map((item) => {
+			if (!componentOverridablePropTypeUtil.isValid(item)) {
 				return item;
 			}
 
-			if ( ! componentInstanceOverridePropTypeUtil.isValid( item.value.origin_value ) ) {
+			if (!componentInstanceOverridePropTypeUtil.isValid(item.value.origin_value)) {
 				return null;
 			}
 
-			if ( filterByKey && item.value.override_key !== filterByKey ) {
+			if (filterByKey && item.value.override_key !== filterByKey) {
 				return item;
 			}
 
 			return item.value.origin_value as ComponentInstanceOverrideProp;
-		} )
-		.filter( ( item ): item is NonNullable< typeof item > => item !== null );
+		})
+		.filter((item): item is NonNullable<typeof item> => item !== null);
 }
 
-function revertOverridablePropsFromSettings( settings: V1ElementSettingsProps ): RevertSettingsResult {
+function revertOverridablePropsFromSettings(settings: V1ElementSettingsProps): RevertSettingsResult {
 	let hasChanges = false;
 	const revertedSettings: V1ElementSettingsProps = {};
 
-	for ( const [ key, value ] of Object.entries( settings ) ) {
-		if ( componentOverridablePropTypeUtil.isValid( value ) ) {
-			revertedSettings[ key ] = value.value.origin_value;
+	for (const [key, value] of Object.entries(settings)) {
+		if (componentOverridablePropTypeUtil.isValid(value)) {
+			revertedSettings[key] = value.value.origin_value;
 			hasChanges = true;
 		} else {
-			revertedSettings[ key ] = value;
+			revertedSettings[key] = value;
 		}
 	}
 
 	return { hasChanges, settings: revertedSettings };
 }
 
-export function revertAllOverridablesInElementData( elementData: V1ElementData ): V1ElementData {
+export function revertAllOverridablesInElementData(elementData: V1ElementData): V1ElementData {
 	const revertedElement = { ...elementData };
 
-	if ( isComponentInstance( { widgetType: elementData.widgetType, elType: elementData.elType } ) ) {
-		revertedElement.settings = revertComponentInstanceSettings( elementData.settings );
-	} else if ( revertedElement.settings ) {
-		const { settings } = revertOverridablePropsFromSettings( revertedElement.settings );
+	if (isComponentInstance({ widgetType: elementData.widgetType, elType: elementData.elType })) {
+		revertedElement.settings = revertComponentInstanceSettings(elementData.settings);
+	} else if (revertedElement.settings) {
+		const { settings } = revertOverridablePropsFromSettings(revertedElement.settings);
 		revertedElement.settings = settings;
 	}
 
-	if ( revertedElement.elements ) {
-		revertedElement.elements = revertedElement.elements.map( revertAllOverridablesInElementData );
+	if (revertedElement.elements) {
+		revertedElement.elements = revertedElement.elements.map(revertAllOverridablesInElementData);
 	}
 
 	return revertedElement;
 }
 
-function revertComponentInstanceSettings( settings: V1ElementData[ 'settings' ] ): V1ElementData[ 'settings' ] {
-	if ( ! settings?.component_instance ) {
+function revertComponentInstanceSettings(settings: V1ElementData['settings']): V1ElementData['settings'] {
+	if (!settings?.component_instance) {
 		return settings;
 	}
 
-	const componentInstance = componentInstancePropTypeUtil.extract( settings.component_instance );
-	const overrides = componentInstanceOverridesPropTypeUtil.extract( componentInstance?.overrides );
+	const componentInstance = componentInstancePropTypeUtil.extract(settings.component_instance);
+	const overrides = componentInstanceOverridesPropTypeUtil.extract(componentInstance?.overrides);
 
-	if ( ! overrides?.length ) {
+	if (!overrides?.length) {
 		return settings;
 	}
 
-	const revertedOverrides = revertComponentInstanceOverrides( overrides );
+	const revertedOverrides = revertComponentInstanceOverrides(overrides);
 
 	return {
 		...settings,
-		component_instance: componentInstancePropTypeUtil.create( {
+		component_instance: componentInstancePropTypeUtil.create({
 			...componentInstance,
-			overrides: componentInstanceOverridesPropTypeUtil.create( revertedOverrides ),
-		} as ComponentInstancePropValue ),
+			overrides: componentInstanceOverridesPropTypeUtil.create(revertedOverrides),
+		} as ComponentInstancePropValue),
 	};
 }
 
-export function revertAllOverridablesInContainer( container: V1Element ): void {
-	getAllDescendants( container ).forEach( ( element ) => {
-		if ( element.model.get( 'widgetType' ) === COMPONENT_WIDGET_TYPE ) {
-			revertComponentInstanceOverridesInElement( element );
+export function revertAllOverridablesInContainer(container: V1Element): void {
+	getAllDescendants(container).forEach((element) => {
+		if (element.model.get('widgetType') === COMPONENT_WIDGET_TYPE) {
+			revertComponentInstanceOverridesInElement(element);
 		} else {
-			revertElementSettings( element );
+			revertElementSettings(element);
 		}
-	} );
+	});
 }
 
-function revertComponentInstanceOverridesInElement( element: V1Element ): void {
+function revertComponentInstanceOverridesInElement(element: V1Element): void {
 	const settings = element.settings?.toJSON() ?? {};
-	const componentInstance = componentInstancePropTypeUtil.extract( settings.component_instance );
-	const overrides = componentInstanceOverridesPropTypeUtil.extract( componentInstance?.overrides );
+	const componentInstance = componentInstancePropTypeUtil.extract(settings.component_instance);
+	const overrides = componentInstanceOverridesPropTypeUtil.extract(componentInstance?.overrides);
 
-	if ( ! overrides?.length ) {
+	if (!overrides?.length) {
 		return;
 	}
 
-	const revertedOverrides = revertComponentInstanceOverrides( overrides );
+	const revertedOverrides = revertComponentInstanceOverrides(overrides);
 
-	const updatedSetting = componentInstancePropTypeUtil.create( {
+	const updatedSetting = componentInstancePropTypeUtil.create({
 		...componentInstance,
-		overrides: componentInstanceOverridesPropTypeUtil.create( revertedOverrides ),
-	} as ComponentInstancePropValue );
+		overrides: componentInstanceOverridesPropTypeUtil.create(revertedOverrides),
+	} as ComponentInstancePropValue);
 
-	updateElementSettings( {
+	updateElementSettings({
 		id: element.id,
 		props: { component_instance: updatedSetting },
 		withHistory: false,
-	} );
+	});
 }
 
-function revertElementSettings( element: V1Element ): void {
+function revertElementSettings(element: V1Element): void {
 	const settings = element.settings?.toJSON() ?? {};
-	const { hasChanges, settings: revertedSettings } = revertOverridablePropsFromSettings( settings );
+	const { hasChanges, settings: revertedSettings } = revertOverridablePropsFromSettings(settings);
 
-	if ( ! hasChanges ) {
+	if (!hasChanges) {
 		return;
 	}
 
-	updateElementSettings( {
+	updateElementSettings({
 		id: element.id,
 		props: revertedSettings,
 		withHistory: false,
-	} );
+	});
 }

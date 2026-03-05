@@ -4,12 +4,12 @@ type BackgroundColorOverlay = {
 	color?: string;
 };
 
-export const backgroundColorOverlayTransformer = createTransformer( ( value: BackgroundColorOverlay ) => {
+export const backgroundColorOverlayTransformer = createTransformer((value: BackgroundColorOverlay) => {
 	const { color = null } = value;
 
-	if ( ! color ) {
+	if (!color) {
 		return null;
 	}
 
-	return `linear-gradient(${ color }, ${ color })`;
-} );
+	return `linear-gradient(${color}, ${color})`;
+});

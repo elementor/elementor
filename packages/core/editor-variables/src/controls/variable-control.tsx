@@ -12,25 +12,25 @@ import { getVariableType } from '../variables-registry/variable-type-registry';
 export const VariableControl = () => {
 	const boundProp = useBoundProp();
 
-	const boundPropValue = ( boundProp.value ?? boundProp.placeholder ) as TransformablePropValue< string, string >;
+	const boundPropValue = (boundProp.value ?? boundProp.placeholder) as TransformablePropValue<string, string>;
 
-	const assignedVariable = useVariable( boundPropValue?.value );
+	const assignedVariable = useVariable(boundPropValue?.value);
 
-	if ( ! assignedVariable ) {
+	if (!assignedVariable) {
 		return <MissingVariable />;
 	}
 
 	const { $$type: propTypeKey } = boundPropValue;
 
-	if ( assignedVariable?.deleted ) {
-		return <DeletedVariable variable={ assignedVariable } propTypeKey={ propTypeKey } />;
+	if (assignedVariable?.deleted) {
+		return <DeletedVariable variable={assignedVariable} propTypeKey={propTypeKey} />;
 	}
 
-	const { isCompatible } = getVariableType( assignedVariable.type );
+	const { isCompatible } = getVariableType(assignedVariable.type);
 
-	if ( isCompatible && ! isCompatible( boundProp?.propType, assignedVariable ) ) {
-		return <MismatchVariable variable={ assignedVariable } />;
+	if (isCompatible && !isCompatible(boundProp?.propType, assignedVariable)) {
+		return <MismatchVariable variable={assignedVariable} />;
 	}
 
-	return <AssignedVariable variable={ assignedVariable } propTypeKey={ propTypeKey } />;
+	return <AssignedVariable variable={assignedVariable} propTypeKey={propTypeKey} />;
 };

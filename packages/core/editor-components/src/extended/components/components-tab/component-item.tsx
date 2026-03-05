@@ -21,9 +21,9 @@ import { createComponentModel } from '../../utils/create-component-model';
 import { getContainerForNewElement } from '../../utils/get-container-for-new-element';
 import { DeleteConfirmationDialog } from './delete-confirmation-dialog';
 
-export function ComponentItem( { component }: ComponentItemProps ) {
-	const itemRef = useRef< HTMLElement >( null );
-	const [ isDeleteDialogOpen, setIsDeleteDialogOpen ] = useState( false );
+export function ComponentItem({ component }: ComponentItemProps) {
+	const itemRef = useRef<HTMLElement>(null);
+	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 	const { canRename, canDelete } = useComponentsPermissions();
 
 	const shouldShowActions = canRename || canDelete;
@@ -34,145 +34,145 @@ export function ComponentItem( { component }: ComponentItemProps ) {
 		openEditMode,
 		error,
 		getProps: getEditableProps,
-	} = useEditable( {
+	} = useEditable({
 		value: component.name,
-		onSubmit: ( newName: string ) => renameComponent( component.uid, newName ),
+		onSubmit: (newName: string) => renameComponent(component.uid, newName),
 		validation: validateComponentTitle,
-	} );
+	});
 
-	const componentModel = createComponentModel( component );
+	const componentModel = createComponentModel(component);
 
-	const popupState = usePopupState( {
+	const popupState = usePopupState({
 		variant: 'popover',
 		disableAutoFocus: true,
-	} );
+	});
 
 	const handleClick = () => {
-		addComponentToPage( componentModel );
+		addComponentToPage(componentModel);
 	};
 
 	const handleDragEnd = () => {
-		loadComponentsAssets( [ componentModel as V1ElementData ] );
+		loadComponentsAssets([componentModel as V1ElementData]);
 
 		endDragElementFromPanel();
 	};
 
 	const handleDeleteClick = () => {
-		setIsDeleteDialogOpen( true );
+		setIsDeleteDialogOpen(true);
 		popupState.close();
 	};
 
 	const handleDeleteConfirm = () => {
-		if ( ! component.id ) {
-			throw new Error( 'Component ID is required' );
+		if (!component.id) {
+			throw new Error('Component ID is required');
 		}
 
-		setIsDeleteDialogOpen( false );
-		archiveComponent( component.id, component.name );
+		setIsDeleteDialogOpen(false);
+		archiveComponent(component.id, component.name);
 	};
 
 	const handleDeleteDialogClose = () => {
-		setIsDeleteDialogOpen( false );
+		setIsDeleteDialogOpen(false);
 	};
 
 	return (
 		<Stack>
 			<WarningInfotip
-				open={ Boolean( error ) }
-				text={ error ?? '' }
+				open={Boolean(error)}
+				text={error ?? ''}
 				placement="bottom"
-				width={ itemRef.current?.getBoundingClientRect().width }
-				offset={ [ 0, -15 ] }
+				width={itemRef.current?.getBoundingClientRect().width}
+				offset={[0, -15]}
 			>
 				<CoreComponentItem
-					ref={ itemRef }
-					component={ component }
-					disabled={ false }
+					ref={itemRef}
+					component={component}
+					disabled={false}
 					draggable
-					onDragStart={ ( event: React.DragEvent ) => startDragElementFromPanel( componentModel, event ) }
-					onDragEnd={ handleDragEnd }
-					onClick={ handleClick }
-					isEditing={ isEditing }
-					error={ error }
+					onDragStart={(event: React.DragEvent) => startDragElementFromPanel(componentModel, event)}
+					onDragEnd={handleDragEnd}
+					onClick={handleClick}
+					isEditing={isEditing}
+					error={error}
 					nameSlot={
 						<ComponentName
-							name={ component.name }
-							editable={ { ref: editableRef, isEditing, getProps: getEditableProps } }
+							name={component.name}
+							editable={{ ref: editableRef, isEditing, getProps: getEditableProps }}
 						/>
 					}
 					endSlot={
 						shouldShowActions ? (
-							<IconButton size="tiny" { ...bindTrigger( popupState ) } aria-label="More actions">
+							<IconButton size="tiny" {...bindTrigger(popupState)} aria-label="More actions">
 								<DotsVerticalIcon fontSize="tiny" />
 							</IconButton>
 						) : undefined
 					}
 				/>
 			</WarningInfotip>
-			{ shouldShowActions && (
+			{shouldShowActions && (
 				<Menu
-					{ ...bindMenu( popupState ) }
-					anchorOrigin={ {
+					{...bindMenu(popupState)}
+					anchorOrigin={{
 						vertical: 'bottom',
 						horizontal: 'right',
-					} }
-					transformOrigin={ {
+					}}
+					transformOrigin={{
 						vertical: 'top',
 						horizontal: 'right',
-					} }
+					}}
 				>
-					{ canRename && (
+					{canRename && (
 						<MenuListItem
-							sx={ { minWidth: '160px' } }
-							primaryTypographyProps={ { variant: 'caption', color: 'text.primary' } }
-							onClick={ () => {
+							sx={{ minWidth: '160px' }}
+							primaryTypographyProps={{ variant: 'caption', color: 'text.primary' }}
+							onClick={() => {
 								popupState.close();
 								openEditMode();
-							} }
+							}}
 						>
-							{ __( 'Rename', 'elementor' ) }
+							{__('Rename', 'elementor')}
 						</MenuListItem>
-					) }
-					{ canDelete && (
+					)}
+					{canDelete && (
 						<MenuListItem
-							sx={ { minWidth: '160px' } }
-							primaryTypographyProps={ { variant: 'caption', color: 'error.light' } }
-							onClick={ handleDeleteClick }
+							sx={{ minWidth: '160px' }}
+							primaryTypographyProps={{ variant: 'caption', color: 'error.light' }}
+							onClick={handleDeleteClick}
 						>
-							{ __( 'Delete', 'elementor' ) }
+							{__('Delete', 'elementor')}
 						</MenuListItem>
-					) }
+					)}
 				</Menu>
-			) }
+			)}
 			<DeleteConfirmationDialog
-				open={ isDeleteDialogOpen }
-				onClose={ handleDeleteDialogClose }
-				onConfirm={ handleDeleteConfirm }
+				open={isDeleteDialogOpen}
+				onClose={handleDeleteDialogClose}
+				onConfirm={handleDeleteConfirm}
 			/>
 		</Stack>
 	);
 }
 
-const addComponentToPage = ( model: DropElementParams[ 'model' ] ) => {
+const addComponentToPage = (model: DropElementParams['model']) => {
 	const { container, options } = getContainerForNewElement();
 
-	if ( ! container ) {
-		throw new Error( `Can't find container to drop new component instance at` );
+	if (!container) {
+		throw new Error(`Can't find container to drop new component instance at`);
 	}
 
-	loadComponentsAssets( [ model as V1ElementData ] );
+	loadComponentsAssets([model as V1ElementData]);
 
-	dropElement( {
+	dropElement({
 		containerId: container.id,
 		model,
 		options: { ...options, useHistory: false, scrollIntoView: true },
-	} );
+	});
 };
 
-const validateComponentTitle = ( newTitle: string ) => {
-	const result = validateComponentName( newTitle );
+const validateComponentTitle = (newTitle: string) => {
+	const result = validateComponentName(newTitle);
 
-	if ( ! result.errorMessage ) {
+	if (!result.errorMessage) {
 		return null;
 	}
 

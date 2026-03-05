@@ -30,21 +30,21 @@ type ExtendedWindow = Window & {
 	};
 };
 
-jest.mock( '@elementor/editor-documents', () => ( {
+jest.mock('@elementor/editor-documents', () => ({
 	getV1DocumentsManager: jest.fn(),
 	setDocumentModifiedStatus: jest.fn(),
-} ) );
+}));
 
-jest.mock( '@elementor/editor-mcp', () => ( {
-	getAngieSdk: jest.fn().mockImplementation( () => ( {
-		isAngieReady: jest.fn( () => false ),
+jest.mock('@elementor/editor-mcp', () => ({
+	getAngieSdk: jest.fn().mockImplementation(() => ({
+		isAngieReady: jest.fn(() => false),
 		triggerAngie: jest.fn(),
-	} ) ),
-} ) );
+	})),
+}));
 
-jest.mock( '@elementor/editor-current-user' );
+jest.mock('@elementor/editor-current-user');
 
-mockCurrentUserCapabilities( true );
+mockCurrentUserCapabilities(true);
 
 const mockComponents = [
 	{ id: 1, name: 'Button Component', uid: 'f73880da-522c-442e-815a-b2c9849b7415' },
@@ -56,32 +56,32 @@ const mockComponents = [
 	{ id: 7, name: 'ExistingComponent', uid: 'f73880da-522c-442e-815a-b2c9849b7421' },
 ];
 
-describe( 'ComponentsTab', () => {
-	let store: Store< SliceState< typeof slice > >;
+describe('ComponentsTab', () => {
+	let store: Store<SliceState<typeof slice>>;
 
-	beforeEach( () => {
+	beforeEach(() => {
 		jest.useFakeTimers();
-		registerSlice( slice );
+		registerSlice(slice);
 		store = __createStore();
-		act( () => {
-			dispatch( slice.actions.load( mockComponents ) );
-		} );
-	} );
+		act(() => {
+			dispatch(slice.actions.load(mockComponents));
+		});
+	});
 
-	afterEach( () => {
-		if ( jest.isMockFunction( setTimeout ) ) {
+	afterEach(() => {
+		if (jest.isMockFunction(setTimeout)) {
 			jest.runOnlyPendingTimers();
 			jest.clearAllTimers();
 			jest.useRealTimers();
 		}
-	} );
+	});
 
-	describe( 'ComponentsList', () => {
-		it( 'should render loading state when components are loading', () => {
+	describe('ComponentsList', () => {
+		it('should render loading state when components are loading', () => {
 			// Arrange
-			act( () => {
-				dispatch( loadComponents.pending( '', undefined ) );
-			} );
+			act(() => {
+				dispatch(loadComponents.pending('', undefined));
+			});
 
 			// Act
 			renderWithStore(
@@ -92,14 +92,14 @@ describe( 'ComponentsTab', () => {
 			);
 
 			// Assert
-			expect( screen.getByLabelText( 'Loading components' ) ).toBeInTheDocument();
-		} );
+			expect(screen.getByLabelText('Loading components')).toBeInTheDocument();
+		});
 
-		it( 'should render empty state when no components exist', () => {
+		it('should render empty state when no components exist', () => {
 			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( [] ) );
-			} );
+			act(() => {
+				dispatch(slice.actions.load([]));
+			});
 
 			// Act
 			renderWithStore(
@@ -110,12 +110,12 @@ describe( 'ComponentsTab', () => {
 			);
 
 			// Assert
-			expect( screen.getByText( 'No components yet' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Learn more about components' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Create your first one:' ) ).toBeInTheDocument();
-		} );
+			expect(screen.getByText('No components yet')).toBeInTheDocument();
+			expect(screen.getByText('Learn more about components')).toBeInTheDocument();
+			expect(screen.getByText('Create your first one:')).toBeInTheDocument();
+		});
 
-		it( 'should render components list when components exist', () => {
+		it('should render components list when components exist', () => {
 			// Act
 			renderWithStore(
 				<SearchProvider localStorageKey="test-search">
@@ -125,26 +125,26 @@ describe( 'ComponentsTab', () => {
 			);
 
 			// Assert
-			expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Text Component' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Test Component 1' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Test Component 2' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'No components yet' ) ).not.toBeInTheDocument();
-		} );
+			expect(screen.getByText('Button Component')).toBeInTheDocument();
+			expect(screen.getByText('Text Component')).toBeInTheDocument();
+			expect(screen.getByText('Test Component 1')).toBeInTheDocument();
+			expect(screen.getByText('Test Component 2')).toBeInTheDocument();
+			expect(screen.queryByText('No components yet')).not.toBeInTheDocument();
+		});
 
-		it( 'should render component items as disabled without actions', () => {
+		it('should render component items as disabled without actions', () => {
 			// Act
-			renderWithStore( <ComponentItem component={ mockComponents[ 0 ] } />, store );
+			renderWithStore(<ComponentItem component={mockComponents[0]} />, store);
 
 			// Assert
-			const componentItem = screen.getByRole( 'button', { name: /Button Component/ } );
-			expect( componentItem ).toBeInTheDocument();
-			expect( componentItem ).toHaveAttribute( 'aria-disabled', 'true' );
-			expect( componentItem ).not.toHaveAttribute( 'draggable', 'true' );
-			expect( screen.queryByLabelText( 'More actions' ) ).not.toBeInTheDocument();
-		} );
+			const componentItem = screen.getByRole('button', { name: /Button Component/ });
+			expect(componentItem).toBeInTheDocument();
+			expect(componentItem).toHaveAttribute('aria-disabled', 'true');
+			expect(componentItem).not.toHaveAttribute('draggable', 'true');
+			expect(screen.queryByLabelText('More actions')).not.toBeInTheDocument();
+		});
 
-		it( 'should render search input with correct attributes and placeholder', () => {
+		it('should render search input with correct attributes and placeholder', () => {
 			// Act
 			renderWithTheme(
 				<SearchProvider localStorageKey="test-search">
@@ -153,11 +153,11 @@ describe( 'ComponentsTab', () => {
 			);
 
 			// Assert
-			expect( screen.getByRole( 'search' ) ).toBeInTheDocument();
-			expect( screen.getByPlaceholderText( 'Search' ) ).toBeInTheDocument();
-		} );
+			expect(screen.getByRole('search')).toBeInTheDocument();
+			expect(screen.getByPlaceholderText('Search')).toBeInTheDocument();
+		});
 
-		it( 'should handle search functionality and show filtered results', () => {
+		it('should handle search functionality and show filtered results', () => {
 			// Act
 			renderWithStore(
 				<SearchProvider localStorageKey="test-search">
@@ -168,25 +168,25 @@ describe( 'ComponentsTab', () => {
 			);
 
 			// Assert
-			expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Text Component' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Image Component' ) ).toBeInTheDocument();
+			expect(screen.getByText('Button Component')).toBeInTheDocument();
+			expect(screen.getByText('Text Component')).toBeInTheDocument();
+			expect(screen.getByText('Image Component')).toBeInTheDocument();
 
 			// Act
-			const searchInput = screen.getByPlaceholderText( 'Search' );
-			fireEvent.change( searchInput, { target: { value: 'Button' } } );
+			const searchInput = screen.getByPlaceholderText('Search');
+			fireEvent.change(searchInput, { target: { value: 'Button' } });
 
-			act( () => {
-				jest.advanceTimersByTime( 300 );
-			} );
+			act(() => {
+				jest.advanceTimersByTime(300);
+			});
 
 			// Assert
-			expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Text Component' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Image Component' ) ).not.toBeInTheDocument();
-		} );
+			expect(screen.getByText('Button Component')).toBeInTheDocument();
+			expect(screen.queryByText('Text Component')).not.toBeInTheDocument();
+			expect(screen.queryByText('Image Component')).not.toBeInTheDocument();
+		});
 
-		it( 'should show empty search result when no matches found', () => {
+		it('should show empty search result when no matches found', () => {
 			// Act
 			renderWithStore(
 				<SearchProvider localStorageKey="test-search">
@@ -197,22 +197,22 @@ describe( 'ComponentsTab', () => {
 			);
 
 			// Act
-			const searchInput = screen.getByPlaceholderText( 'Search' );
-			fireEvent.change( searchInput, { target: { value: 'NonExistent' } } );
+			const searchInput = screen.getByPlaceholderText('Search');
+			fireEvent.change(searchInput, { target: { value: 'NonExistent' } });
 
-			act( () => {
-				jest.advanceTimersByTime( 300 );
-			} );
+			act(() => {
+				jest.advanceTimersByTime(300);
+			});
 
 			// Assert
-			expect( screen.getByText( 'Sorry, nothing matched' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Try something else.' ) ).toBeInTheDocument();
-		} );
+			expect(screen.getByText('Sorry, nothing matched')).toBeInTheDocument();
+			expect(screen.getByText('Try something else.')).toBeInTheDocument();
+		});
 
-		it( 'should render empty state when no components exist and user is not admin', () => {
+		it('should render empty state when no components exist and user is not admin', () => {
 			// Arrange
-			dispatch( slice.actions.load( [] ) );
-			mockCurrentUserCapabilities( false );
+			dispatch(slice.actions.load([]));
+			mockCurrentUserCapabilities(false);
 
 			// Act
 			renderWithStore(
@@ -223,29 +223,29 @@ describe( 'ComponentsTab', () => {
 			);
 
 			// Assert
-			expect( screen.getByText( 'No components yet' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Learn more about components' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Create your first one:' ) ).not.toBeInTheDocument();
-			expect( screen.queryByRole( 'button', { name: /Create component with AI/i } ) ).not.toBeInTheDocument();
-		} );
-	} );
+			expect(screen.getByText('No components yet')).toBeInTheDocument();
+			expect(screen.getByText('Learn more about components')).toBeInTheDocument();
+			expect(screen.queryByText('Create your first one:')).not.toBeInTheDocument();
+			expect(screen.queryByRole('button', { name: /Create component with AI/i })).not.toBeInTheDocument();
+		});
+	});
 
-	describe( 'ComponentsProNotification', () => {
+	describe('ComponentsProNotification', () => {
 		const extendedWindow = window as unknown as ExtendedWindow;
-		let originalElementor: ExtendedWindow[ 'elementor' ];
-		let originalElementorPro: ExtendedWindow[ 'elementorPro' ];
+		let originalElementor: ExtendedWindow['elementor'];
+		let originalElementorPro: ExtendedWindow['elementorPro'];
 
-		beforeEach( () => {
+		beforeEach(() => {
 			originalElementor = extendedWindow.elementor;
 			originalElementorPro = extendedWindow.elementorPro;
-		} );
+		});
 
-		afterEach( () => {
+		afterEach(() => {
 			extendedWindow.elementor = originalElementor;
 			extendedWindow.elementorPro = originalElementorPro;
-		} );
+		});
 
-		it( 'should render notification for Core users without Pro when components exist', () => {
+		it('should render notification for Core users without Pro when components exist', () => {
 			// Arrange
 			extendedWindow.elementor = {
 				helpers: {
@@ -255,18 +255,18 @@ describe( 'ComponentsTab', () => {
 			extendedWindow.elementorPro = undefined;
 
 			// Act
-			renderWithStore( <Components />, store );
+			renderWithStore(<Components />, store);
 
 			// Assert
-			expect( screen.getByText( /Try Components for free:/i ) ).toBeInTheDocument();
+			expect(screen.getByText(/Try Components for free:/i)).toBeInTheDocument();
 			expect(
 				screen.getByText(
 					/Soon Components will be part of the Pro subscription, but what you create now will remain on your site\./i
 				)
 			).toBeInTheDocument();
-		} );
+		});
 
-		it( 'should not render notification when no components exist', () => {
+		it('should not render notification when no components exist', () => {
 			// Arrange
 			extendedWindow.elementor = {
 				helpers: {
@@ -274,15 +274,15 @@ describe( 'ComponentsTab', () => {
 				},
 			};
 			extendedWindow.elementorPro = undefined;
-			act( () => {
-				dispatch( slice.actions.load( [] ) );
-			} );
+			act(() => {
+				dispatch(slice.actions.load([]));
+			});
 
 			// Act
-			renderWithStore( <Components />, store );
+			renderWithStore(<Components />, store);
 
 			// Assert
-			expect( screen.queryByText( /Try Components for free:/i ) ).not.toBeInTheDocument();
-		} );
-	} );
-} );
+			expect(screen.queryByText(/Try Components for free:/i)).not.toBeInTheDocument();
+		});
+	});
+});

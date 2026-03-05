@@ -7,14 +7,14 @@ type PackageJSON = {
 	version: string;
 };
 
-const packageJson: PackageJSON = JSON.parse( fs.readFileSync( './package.json', 'utf8' ) );
+const packageJson: PackageJSON = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
 
-export default defineConfig( {
-	entry: [ 'src/index.ts' ],
+export default defineConfig({
+	entry: ['src/index.ts'],
 	clean: true,
-	format: [ 'cjs' ],
+	format: ['cjs'],
 	env: {
 		PACKAGE_NAME: packageJson.name,
 		PACKAGE_VERSION: packageJson.version,
 	},
-} );
+});

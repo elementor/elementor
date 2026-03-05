@@ -33,39 +33,39 @@ export default function RecentlyEdited() {
 	const { data } = useRecentPosts();
 
 	const getRecentPosts = () => {
-		if ( ! data ) {
+		if (!data) {
 			return [];
 		}
 
-		return data.filter( ( post ) => post.id !== document?.id ).splice( 0, NUMBER_OF_RECENT_POSTS - 1 );
+		return data.filter((post) => post.id !== document?.id).splice(0, NUMBER_OF_RECENT_POSTS - 1);
 	};
 	const recentPosts = getRecentPosts();
 
-	const popupState = usePopupState( {
+	const popupState = usePopupState({
 		variant: 'popover',
 		popupId: 'elementor-v2-top-bar-recently-edited',
-	} );
+	});
 
-	const documentTitle = useReverseHtmlEntities( document?.title );
+	const documentTitle = useReverseHtmlEntities(document?.title);
 
-	if ( ! document ) {
+	if (!document) {
 		return null;
 	}
 
-	const buttonProps = bindTrigger( popupState );
+	const buttonProps = bindTrigger(popupState);
 
 	return (
 		<>
 			<Button
 				color="inherit"
 				size="small"
-				endIcon={ <ChevronDownIcon fontSize="small" /> }
-				{ ...buttonProps }
-				onClick={ ( e: React.MouseEvent ) => {
+				endIcon={<ChevronDownIcon fontSize="small" />}
+				{...buttonProps}
+				onClick={(e: React.MouseEvent) => {
 					const extendedWindow = window as unknown as ExtendedWindow;
 					const config = extendedWindow?.elementorCommon?.eventsManager?.config;
 
-					if ( config ) {
+					if (config) {
 						extendedWindow.elementorCommon.eventsManager.dispatchEvent(
 							config.names.topBar.documentNameDropdown,
 							{
@@ -77,42 +77,42 @@ export default function RecentlyEdited() {
 						);
 					}
 
-					buttonProps.onClick( e );
-				} }
+					buttonProps.onClick(e);
+				}}
 			>
-				<Indicator title={ documentTitle } status={ document.status } />
+				<Indicator title={documentTitle} status={document.status} />
 			</Button>
 			<Menu
-				MenuListProps={ {
+				MenuListProps={{
 					subheader: (
-						<ListSubheader color="primary" sx={ { fontStyle: 'italic', fontWeight: '300' } }>
-							{ __( 'Recent', 'elementor' ) }
+						<ListSubheader color="primary" sx={{ fontStyle: 'italic', fontWeight: '300' }}>
+							{__('Recent', 'elementor')}
 						</ListSubheader>
 					),
-				} }
-				PaperProps={ { sx: { mt: 2.5, width: 320 } } }
-				{ ...bindMenu( popupState ) }
+				}}
+				PaperProps={{ sx: { mt: 2.5, width: 320 } }}
+				{...bindMenu(popupState)}
 			>
-				{ recentPosts.map( ( post ) => (
-					<PostListItem key={ post.id } post={ post } closePopup={ popupState.close } />
-				) ) }
+				{recentPosts.map((post) => (
+					<PostListItem key={post.id} post={post} closePopup={popupState.close} />
+				))}
 
-				{ recentPosts.length === 0 && (
+				{recentPosts.length === 0 && (
 					<MenuItem disabled>
 						<ListItemText
-							primaryTypographyProps={ {
+							primaryTypographyProps={{
 								variant: 'caption',
 								fontStyle: 'italic',
-							} }
-							primary={ __( 'There are no other pages or templates on this site yet.', 'elementor' ) }
+							}}
+							primary={__('There are no other pages or templates on this site yet.', 'elementor')}
 						/>
 					</MenuItem>
-				) }
+				)}
 
-				{ /* It appears that there might be a bug in Material UI. When the divider is the first active element, it attempts to receive focus instead of the item below it. */ }
-				<Divider disabled={ recentPosts.length === 0 } />
+				{/* It appears that there might be a bug in Material UI. When the divider is the first active element, it attempts to receive focus instead of the item below it. */}
+				<Divider disabled={recentPosts.length === 0} />
 
-				<CreatePostListItem closePopup={ popupState.close } />
+				<CreatePostListItem closePopup={popupState.close} />
 			</Menu>
 		</>
 	);

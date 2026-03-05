@@ -1,11 +1,11 @@
 import { getContainer } from '@elementor/editor-elements';
 
-export const canElementHaveChildren = ( elementId: string ): boolean => {
-	const container = getContainer( elementId );
+export const canElementHaveChildren = (elementId: string): boolean => {
+	const container = getContainer(elementId);
 
-	if ( ! container ) {
+	if (!container) {
 		return false;
 	}
 
-	return container.model.get( 'elType' ) !== 'widget';
+	return container.model.get('elType') !== 'widget';
 };

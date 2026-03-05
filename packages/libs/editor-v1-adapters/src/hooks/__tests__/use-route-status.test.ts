@@ -4,8 +4,8 @@ import { type EditMode, type ExtendedWindow } from '../../edit-mode';
 import useRouteStatus from '../use-route-status';
 import { mockIsRouteActive } from './test-utils';
 
-describe( 'useRouteStatus', () => {
-	it.each( [
+describe('useRouteStatus', () => {
+	it.each([
 		{
 			input: {
 				isRouteActive: true,
@@ -21,7 +21,7 @@ describe( 'useRouteStatus', () => {
 				isKitRouteActive: false,
 				isPreviewMode: true,
 				options: {
-					allowedEditModes: [ 'edit', 'preview' ],
+					allowedEditModes: ['edit', 'preview'],
 				},
 			},
 			expected: true,
@@ -44,22 +44,22 @@ describe( 'useRouteStatus', () => {
 			},
 			expected: false,
 		},
-	] )(
+	])(
 		'should check if the route is active: isRouteActive = $input.isRouteActive, isPreviewMode = $input.isPreviewMode, options: $input.options',
-		( { input: { isRouteActive, isKitRouteActive, isPreviewMode, options }, expected } ) => {
+		({ input: { isRouteActive, isKitRouteActive, isPreviewMode, options }, expected }) => {
 			// Arrange
-			mockIsRouteActive( ( route ) => ( route === 'panel/global' ? isKitRouteActive : isRouteActive ) );
-			mockEditMode( isPreviewMode ? 'preview' : 'edit' );
+			mockIsRouteActive((route) => (route === 'panel/global' ? isKitRouteActive : isRouteActive));
+			mockEditMode(isPreviewMode ? 'preview' : 'edit');
 
 			// Act.
-			const { result } = renderHook( () => useRouteStatus( 'panel/page-settings', options ) );
+			const { result } = renderHook(() => useRouteStatus('panel/page-settings', options));
 
 			// Assert.
-			expect( result.current.isActive ).toBe( expected );
+			expect(result.current.isActive).toBe(expected);
 		}
 	);
 
-	it.each( [
+	it.each([
 		{
 			input: {
 				isRouteActive: false,
@@ -75,7 +75,7 @@ describe( 'useRouteStatus', () => {
 				isKitRouteActive: false,
 				isPreviewMode: true,
 				options: {
-					allowedEditModes: [ 'edit', 'preview' ],
+					allowedEditModes: ['edit', 'preview'],
 				},
 			},
 			expected: false,
@@ -109,24 +109,24 @@ describe( 'useRouteStatus', () => {
 			},
 			expected: true,
 		},
-	] )(
+	])(
 		'should check if the route is blocked: isKitRouteActive = $input.isKitRouteActive, isPreviewMode = $input.isPreviewMode, options: $input.options',
-		( { input: { isRouteActive, isKitRouteActive, isPreviewMode, options }, expected } ) => {
+		({ input: { isRouteActive, isKitRouteActive, isPreviewMode, options }, expected }) => {
 			// Arrange
-			mockIsRouteActive( ( route ) => ( route === 'panel/global' ? isKitRouteActive : isRouteActive ) );
-			mockEditMode( isPreviewMode ? 'preview' : 'edit' );
+			mockIsRouteActive((route) => (route === 'panel/global' ? isKitRouteActive : isRouteActive));
+			mockEditMode(isPreviewMode ? 'preview' : 'edit');
 
 			// Act.
-			const { result } = renderHook( () => useRouteStatus( 'panel/page-settings', options ) );
+			const { result } = renderHook(() => useRouteStatus('panel/page-settings', options));
 
 			// Assert.
-			expect( result.current.isBlocked ).toBe( expected );
+			expect(result.current.isBlocked).toBe(expected);
 		}
 	);
-} );
+});
 
-function mockEditMode( editMode: EditMode ) {
-	( window as unknown as ExtendedWindow ).elementor = {
+function mockEditMode(editMode: EditMode) {
+	(window as unknown as ExtendedWindow).elementor = {
 		changeEditMode: () => {},
 		channels: {
 			dataEditMode: {

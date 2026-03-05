@@ -20,45 +20,45 @@ import { slice } from './store';
 import { SyncWithDocumentSave } from './sync-with-document';
 
 export function init() {
-	registerSlice( slice );
-	registerPanel( panel );
+	registerSlice(slice);
+	registerPanel(panel);
 
-	stylesRepository.register( globalClassesStylesProvider );
+	stylesRepository.register(globalClassesStylesProvider);
 
-	injectIntoLogic( {
+	injectIntoLogic({
 		id: 'global-classes-populate-store',
 		component: PopulateStore,
-	} );
+	});
 
-	injectIntoLogic( {
+	injectIntoLogic({
 		id: 'global-classes-sync-with-document',
 		component: SyncWithDocumentSave,
-	} );
+	});
 
-	injectIntoLogic( {
+	injectIntoLogic({
 		id: 'global-classes-prefetch-css-class-usage',
 		component: PrefetchCssClassUsage,
-	} );
+	});
 
-	injectIntoLogic( {
+	injectIntoLogic({
 		id: 'global-classes-open-panel-from-url',
 		component: OpenPanelFromUrl,
-	} );
+	});
 
-	injectIntoCssClassConvert( {
+	injectIntoCssClassConvert({
 		id: 'global-classes-convert-from-local-class',
 		component: ConvertLocalClassToGlobalClass,
-	} );
+	});
 
-	injectIntoClassSelectorActions( {
+	injectIntoClassSelectorActions({
 		id: 'global-classes-manager-button',
 		component: ClassManagerButton,
-	} );
+	});
 
-	registerStyleProviderToColors( GLOBAL_CLASSES_PROVIDER_KEY, {
+	registerStyleProviderToColors(GLOBAL_CLASSES_PROVIDER_KEY, {
 		name: 'global',
-		getThemeColor: ( theme ) => theme.palette.global.dark,
-	} );
+		getThemeColor: (theme) => theme.palette.global.dark,
+	});
 
 	initMcpIntegration();
 }

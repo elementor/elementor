@@ -5,14 +5,14 @@ import { unknownChildrenSchema } from './utils';
 
 export const shadowPropTypeUtil = createPropUtils(
 	'shadow',
-	z.strictObject( {
+	z.strictObject({
 		position: unknownChildrenSchema,
 		hOffset: unknownChildrenSchema,
 		vOffset: unknownChildrenSchema,
 		blur: unknownChildrenSchema,
 		spread: unknownChildrenSchema,
 		color: unknownChildrenSchema,
-	} )
+	})
 );
 
-export type ShadowPropValue = z.infer< typeof shadowPropTypeUtil.schema >;
+export type ShadowPropValue = z.infer<typeof shadowPropTypeUtil.schema>;

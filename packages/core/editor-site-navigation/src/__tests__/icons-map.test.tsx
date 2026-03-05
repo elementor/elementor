@@ -2,12 +2,12 @@ import * as React from 'react';
 
 import { extendIconsMap, getIconsMap, resetIconsMap } from '../icons-map';
 
-describe( '@elementor/site-navigation - iconsMap', () => {
-	afterEach( () => {
+describe('@elementor/site-navigation - iconsMap', () => {
+	afterEach(() => {
 		resetIconsMap();
-	} );
+	});
 
-	it( 'should override existing icons', async () => {
+	it('should override existing icons', async () => {
 		// Arrange.
 		const initialIcons = getIconsMap();
 		const addedIcons = {
@@ -15,10 +15,10 @@ describe( '@elementor/site-navigation - iconsMap', () => {
 		};
 
 		// Act - add icons.
-		extendIconsMap( addedIcons );
+		extendIconsMap(addedIcons);
 
 		// Assert - should be initial and added.
-		expect( getIconsMap() ).toEqual( { ...initialIcons, ...addedIcons } );
+		expect(getIconsMap()).toEqual({ ...initialIcons, ...addedIcons });
 
 		// Arrange.
 		const overrideIcons = {
@@ -26,9 +26,9 @@ describe( '@elementor/site-navigation - iconsMap', () => {
 		};
 
 		// Act - override exits icons.
-		extendIconsMap( overrideIcons );
+		extendIconsMap(overrideIcons);
 
 		// Assert - should override exits icons.
-		expect( getIconsMap() ).toEqual( { ...initialIcons, ...overrideIcons } );
-	} );
-} );
+		expect(getIconsMap()).toEqual({ ...initialIcons, ...overrideIcons });
+	});
+});

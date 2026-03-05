@@ -13,14 +13,14 @@ import { SelectControl } from './select-control';
 import { TextAreaControl } from './text-area-control';
 import { TextControl } from './text-control';
 
-const EmailField = ( { bind, label, placeholder }: { bind: string; label: string; placeholder?: string } ) => (
-	<PropKeyProvider bind={ bind }>
-		<Grid container direction="column" gap={ 0.5 }>
+const EmailField = ({ bind, label, placeholder }: { bind: string; label: string; placeholder?: string }) => (
+	<PropKeyProvider bind={bind}>
+		<Grid container direction="column" gap={0.5}>
 			<Grid item>
-				<ControlFormLabel>{ label }</ControlFormLabel>
+				<ControlFormLabel>{label}</ControlFormLabel>
 			</Grid>
 			<Grid item>
-				<TextControl placeholder={ placeholder } />
+				<TextControl placeholder={placeholder} />
 			</Grid>
 		</Grid>
 	</PropKeyProvider>
@@ -29,31 +29,28 @@ const EmailField = ( { bind, label, placeholder }: { bind: string; label: string
 const SendToField = () => (
 	<EmailField
 		bind="to"
-		label={ __( 'Send To', 'elementor' ) }
-		placeholder={ __( 'Where should we send new submissions?', 'elementor' ) }
+		label={__('Send To', 'elementor')}
+		placeholder={__('Where should we send new submissions?', 'elementor')}
 	/>
 );
 
 const SubjectField = () => (
 	<EmailField
 		bind="subject"
-		label={ __( 'Email Subject', 'elementor' ) }
-		placeholder={ __( 'New form submission', 'elementor' ) }
+		label={__('Email Subject', 'elementor')}
+		placeholder={__('New form submission', 'elementor')}
 	/>
 );
 
 const MessageField = () => (
 	<PropKeyProvider bind="message">
-		<Grid container direction="column" gap={ 0.5 }>
+		<Grid container direction="column" gap={0.5}>
 			<Grid item>
-				<ControlFormLabel>{ __( 'Message', 'elementor' ) }</ControlFormLabel>
+				<ControlFormLabel>{__('Message', 'elementor')}</ControlFormLabel>
 			</Grid>
 			<Grid item>
 				<TextAreaControl
-					placeholder={ __(
-						'By default, all form fields are sent via [all-fields] shortcode.',
-						'elementor'
-					) }
+					placeholder={__('By default, all form fields are sent via [all-fields] shortcode.', 'elementor')}
 				/>
 			</Grid>
 		</Grid>
@@ -63,37 +60,37 @@ const MessageField = () => (
 const FromEmailField = () => (
 	<EmailField
 		bind="from"
-		label={ __( 'From email', 'elementor' ) }
-		placeholder={ __( 'What email address should appear as the sender?', 'elementor' ) }
+		label={__('From email', 'elementor')}
+		placeholder={__('What email address should appear as the sender?', 'elementor')}
 	/>
 );
 
 const FromNameField = () => (
 	<EmailField
 		bind="from-name"
-		label={ __( 'From name', 'elementor' ) }
-		placeholder={ __( 'What name should appear as the sender?', 'elementor' ) }
+		label={__('From name', 'elementor')}
+		placeholder={__('What name should appear as the sender?', 'elementor')}
 	/>
 );
 
-const ReplyToField = () => <EmailField bind="reply-to" label={ __( 'Reply-to', 'elementor' ) } />;
+const ReplyToField = () => <EmailField bind="reply-to" label={__('Reply-to', 'elementor')} />;
 
-const CcField = () => <EmailField bind="cc" label={ __( 'Cc', 'elementor' ) } />;
+const CcField = () => <EmailField bind="cc" label={__('Cc', 'elementor')} />;
 
-const BccField = () => <EmailField bind="bcc" label={ __( 'Bcc', 'elementor' ) } />;
+const BccField = () => <EmailField bind="bcc" label={__('Bcc', 'elementor')} />;
 
 const MetaDataField = () => (
 	<PropKeyProvider bind="meta-data">
-		<Stack gap={ 0.5 }>
-			<ControlLabel>{ __( 'Meta data', 'elementor' ) }</ControlLabel>
+		<Stack gap={0.5}>
+			<ControlLabel>{__('Meta data', 'elementor')}</ControlLabel>
 			<ChipsControl
-				options={ [
-					{ label: __( 'Date', 'elementor' ), value: 'date' },
-					{ label: __( 'Time', 'elementor' ), value: 'time' },
-					{ label: __( 'Page URL', 'elementor' ), value: 'page-url' },
-					{ label: __( 'User agent', 'elementor' ), value: 'user-agent' },
-					{ label: __( 'Credit', 'elementor' ), value: 'credit' },
-				] }
+				options={[
+					{ label: __('Date', 'elementor'), value: 'date' },
+					{ label: __('Time', 'elementor'), value: 'time' },
+					{ label: __('Page URL', 'elementor'), value: 'page-url' },
+					{ label: __('User agent', 'elementor'), value: 'user-agent' },
+					{ label: __('Credit', 'elementor'), value: 'credit' },
+				]}
 			/>
 		</Stack>
 	</PropKeyProvider>
@@ -101,16 +98,16 @@ const MetaDataField = () => (
 
 const SendAsField = () => (
 	<PropKeyProvider bind="send-as">
-		<Grid container direction="column" gap={ 0.5 }>
+		<Grid container direction="column" gap={0.5}>
 			<Grid item>
-				<ControlFormLabel>{ __( 'Send as', 'elementor' ) }</ControlFormLabel>
+				<ControlFormLabel>{__('Send as', 'elementor')}</ControlFormLabel>
 			</Grid>
 			<Grid item>
 				<SelectControl
-					options={ [
-						{ label: __( 'HTML', 'elementor' ), value: 'html' },
-						{ label: __( 'Plain Text', 'elementor' ), value: 'plain' },
-					] }
+					options={[
+						{ label: __('HTML', 'elementor'), value: 'html' },
+						{ label: __('Plain Text', 'elementor'), value: 'plain' },
+					]}
 				/>
 			</Grid>
 		</Grid>
@@ -118,9 +115,9 @@ const SendAsField = () => (
 );
 
 const AdvancedSettings = () => (
-	<CollapsibleContent defaultOpen={ false }>
-		<Box sx={ { pt: 2 } }>
-			<Stack gap={ 2 }>
+	<CollapsibleContent defaultOpen={false}>
+		<Box sx={{ pt: 2 }}>
+			<Stack gap={2}>
 				<FromNameField />
 				<ReplyToField />
 				<CcField />
@@ -133,13 +130,13 @@ const AdvancedSettings = () => (
 	</CollapsibleContent>
 );
 
-export const EmailFormActionControl = createControl( () => {
-	const { value, setValue, ...propContext } = useBoundProp( emailPropTypeUtil );
+export const EmailFormActionControl = createControl(() => {
+	const { value, setValue, ...propContext } = useBoundProp(emailPropTypeUtil);
 
 	return (
-		<PropProvider { ...propContext } value={ value } setValue={ setValue }>
-			<Stack gap={ 2 }>
-				<ControlFormLabel>{ __( 'Email settings', 'elementor' ) }</ControlFormLabel>
+		<PropProvider {...propContext} value={value} setValue={setValue}>
+			<Stack gap={2}>
+				<ControlFormLabel>{__('Email settings', 'elementor')}</ControlFormLabel>
 				<SendToField />
 				<SubjectField />
 				<MessageField />
@@ -148,4 +145,4 @@ export const EmailFormActionControl = createControl( () => {
 			</Stack>
 		</PropProvider>
 	);
-} );
+});

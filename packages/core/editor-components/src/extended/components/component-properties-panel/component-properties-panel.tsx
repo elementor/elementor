@@ -9,10 +9,10 @@ import { ComponentPropertiesPanelContent } from './component-properties-panel-co
 
 const id = 'component-properties-panel';
 
-export const { panel, usePanelActions } = createPanel( {
+export const { panel, usePanelActions } = createPanel({
 	id,
 	component: ComponentPropertiesPanel,
-} );
+});
 
 function ComponentPropertiesPanel() {
 	const { close: closePanel } = usePanelActions();
@@ -20,13 +20,13 @@ function ComponentPropertiesPanel() {
 
 	return (
 		<ThemeProvider>
-			<ErrorBoundary fallback={ <ErrorBoundaryFallback /> }>
+			<ErrorBoundary fallback={<ErrorBoundaryFallback />}>
 				<Panel>
 					<ComponentPropertiesPanelContent
-						onClose={ () => {
+						onClose={() => {
 							closePanel();
 							openEditingPanel();
-						} }
+						}}
 					/>
 				</Panel>
 			</ErrorBoundary>
@@ -35,9 +35,9 @@ function ComponentPropertiesPanel() {
 }
 
 const ErrorBoundaryFallback = () => (
-	<Box role="alert" sx={ { minHeight: '100%', p: 2 } }>
-		<Alert severity="error" sx={ { mb: 2, maxWidth: 400, textAlign: 'center' } }>
-			<strong>{ __( 'Something went wrong', 'elementor' ) }</strong>
+	<Box role="alert" sx={{ minHeight: '100%', p: 2 }}>
+		<Alert severity="error" sx={{ mb: 2, maxWidth: 400, textAlign: 'center' }}>
+			<strong>{__('Something went wrong', 'elementor')}</strong>
 		</Alert>
 	</Box>
 );

@@ -8,18 +8,18 @@ import EditModeTemplate from './edit-mode-template';
 
 export default function ListItemCreate() {
 	const { type, resetEditMode } = usePostListContext();
-	const { createPost } = usePostActions( type );
+	const { createPost } = usePostActions(type);
 	const navigateToDocument = useNavigateToDocument();
 	const { setError } = usePostListContext();
 
-	const createPostCallback = async ( inputValue: string ) => {
+	const createPostCallback = async (inputValue: string) => {
 		try {
-			const { id } = await createPost.mutateAsync( {
+			const { id } = await createPost.mutateAsync({
 				title: inputValue,
 				status: 'draft',
-			} );
+			});
 
-			navigateToDocument( id );
+			navigateToDocument(id);
 		} catch {
 			setError();
 		} finally {
@@ -29,9 +29,9 @@ export default function ListItemCreate() {
 
 	return (
 		<EditModeTemplate
-			postTitle={ __( 'New Page', 'elementor' ) }
-			isLoading={ createPost.isPending }
-			callback={ createPostCallback }
+			postTitle={__('New Page', 'elementor')}
+			isLoading={createPost.isPending}
+			callback={createPostCallback}
 		/>
 	);
 }

@@ -18,32 +18,32 @@ function safeGetState(): ComponentsSlice | undefined {
 }
 
 export const componentsSelectors = {
-	getOverridableProps( componentId: ComponentId ) {
-		return selectOverridableProps( getState(), componentId );
+	getOverridableProps(componentId: ComponentId) {
+		return selectOverridableProps(getState(), componentId);
 	},
 	getCurrentComponent() {
-		return selectCurrentComponent( getState() );
+		return selectCurrentComponent(getState());
 	},
 	getCurrentComponentId() {
 		const state = safeGetState();
-		if ( ! state ) {
+		if (!state) {
 			return null;
 		}
-		return selectCurrentComponentId( state );
+		return selectCurrentComponentId(state);
 	},
 	getUnpublishedComponents() {
-		return selectUnpublishedComponents( getState() );
+		return selectUnpublishedComponents(getState());
 	},
 	getUpdatedComponentNames() {
-		return selectUpdatedComponentNames( getState() );
+		return selectUpdatedComponentNames(getState());
 	},
 	getArchivedThisSession() {
-		return selectArchivedThisSession( getState() );
+		return selectArchivedThisSession(getState());
 	},
 	getComponents() {
-		return selectComponents( getState() );
+		return selectComponents(getState());
 	},
-	getComponentByUid( componentUid: string ) {
-		return selectComponentByUid( getState(), componentUid );
+	getComponentByUid(componentUid: string) {
+		return selectComponentByUid(getState(), componentUid);
 	},
 };

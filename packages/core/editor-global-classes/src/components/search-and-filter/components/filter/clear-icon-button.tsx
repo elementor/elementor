@@ -5,36 +5,36 @@ import { Box, IconButton, styled, type SxProps, type Theme, Tooltip } from '@ele
 import { trackGlobalClasses } from '../../../../utils/tracking';
 import { useSearchAndFilters } from '../../context';
 
-type ClearIconButtonProps = { tooltipText: React.ReactNode; sx?: SxProps< Theme >; trigger: 'menu' | 'header' };
+type ClearIconButtonProps = { tooltipText: React.ReactNode; sx?: SxProps<Theme>; trigger: 'menu' | 'header' };
 
-export const ClearIconButton = ( { tooltipText, sx, trigger }: ClearIconButtonProps ) => {
+export const ClearIconButton = ({ tooltipText, sx, trigger }: ClearIconButtonProps) => {
 	const {
 		filters: { onClearFilter },
 	} = useSearchAndFilters();
 
 	const handleClearFilters = () => {
-		onClearFilter( trigger );
-		trackGlobalClasses( {
+		onClearFilter(trigger);
+		trackGlobalClasses({
 			event: 'classManagerFilterCleared',
 			trigger,
-		} );
+		});
 	};
 
 	return (
-		<Tooltip title={ tooltipText } placement="top" disableInteractive>
+		<Tooltip title={tooltipText} placement="top" disableInteractive>
 			<Box>
-				<CustomIconButton aria-label={ tooltipText } size="tiny" onClick={ handleClearFilters } sx={ sx }>
+				<CustomIconButton aria-label={tooltipText} size="tiny" onClick={handleClearFilters} sx={sx}>
 					<BrushBigIcon fontSize="tiny" />
 				</CustomIconButton>
 			</Box>
 		</Tooltip>
 	);
 };
-const CustomIconButton = styled( IconButton )( ( { theme } ) => ( {
+const CustomIconButton = styled(IconButton)(({ theme }) => ({
 	'&.Mui-disabled': {
 		pointerEvents: 'auto',
 		'&:hover': {
 			color: theme.palette.action.disabled,
 		},
 	},
-} ) );
+}));

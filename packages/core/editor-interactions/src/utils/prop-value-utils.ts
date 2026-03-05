@@ -20,30 +20,30 @@ import { formatSizeValue, parseSizeValue } from '../utils/size-transform-utils';
 import { getInteractionsConfig } from './get-interactions-config';
 import { generateTempInteractionId } from './temp-id-utils';
 
-export const createString = ( value: string ): StringPropValue => ( {
+export const createString = (value: string): StringPropValue => ({
 	$$type: 'string',
 	value,
-} );
+});
 
-export const createNumber = ( value: number ): NumberPropValue => ( {
+export const createNumber = (value: number): NumberPropValue => ({
 	$$type: 'number',
 	value,
-} );
+});
 
-export const createTimingConfig = ( duration: SizeStringValue, delay: SizeStringValue ): TimingConfigPropValue => ( {
+export const createTimingConfig = (duration: SizeStringValue, delay: SizeStringValue): TimingConfigPropValue => ({
 	$$type: 'timing-config',
 	value: {
-		duration: sizePropTypeUtil.create( parseSizeValue( duration, TIME_UNITS, undefined, DEFAULT_TIME_UNIT ) ),
-		delay: sizePropTypeUtil.create( parseSizeValue( delay, TIME_UNITS, undefined, DEFAULT_TIME_UNIT ) ),
+		duration: sizePropTypeUtil.create(parseSizeValue(duration, TIME_UNITS, undefined, DEFAULT_TIME_UNIT)),
+		delay: sizePropTypeUtil.create(parseSizeValue(delay, TIME_UNITS, undefined, DEFAULT_TIME_UNIT)),
 	},
-} );
+});
 
-export const createBoolean = ( value: boolean ): BooleanPropValue => ( {
+export const createBoolean = (value: boolean): BooleanPropValue => ({
 	$$type: 'boolean',
 	value,
-} );
+});
 
-export const createConfig = ( {
+export const createConfig = ({
 	replay,
 	easing = 'easeIn',
 	relativeTo = '',
@@ -55,46 +55,46 @@ export const createConfig = ( {
 	relativeTo?: string;
 	start?: SizeStringValue;
 	end?: SizeStringValue;
-} ): ConfigPropValue => ( {
+}): ConfigPropValue => ({
 	$$type: 'config',
 	value: {
-		replay: createBoolean( replay ),
-		easing: createString( easing ),
-		relativeTo: createString( relativeTo ),
-		start: createSize( start, '%' ),
-		end: createSize( end, '%' ),
+		replay: createBoolean(replay),
+		easing: createString(easing),
+		relativeTo: createString(relativeTo),
+		start: createSize(start, '%'),
+		end: createSize(end, '%'),
 	},
-} );
+});
 
-const createSize = ( value?: SizeStringValue, defaultUnit?: Unit, defaultValue?: SizeStringValue ) => {
-	if ( ! value ) {
+const createSize = (value?: SizeStringValue, defaultUnit?: Unit, defaultValue?: SizeStringValue) => {
+	if (!value) {
 		return;
 	}
 
-	return sizePropTypeUtil.create( parseSizeValue( value, [ '%' ], defaultValue, defaultUnit ) );
+	return sizePropTypeUtil.create(parseSizeValue(value, ['%'], defaultValue, defaultUnit));
 };
 
-export const extractBoolean = ( prop: BooleanPropValue | undefined, fallback = false ): boolean => {
+export const extractBoolean = (prop: BooleanPropValue | undefined, fallback = false): boolean => {
 	return prop?.value ?? fallback;
 };
 
-export const createExcludedBreakpoints = ( breakpoints: string[] ): ExcludedBreakpointsPropValue => ( {
+export const createExcludedBreakpoints = (breakpoints: string[]): ExcludedBreakpointsPropValue => ({
 	$$type: 'excluded-breakpoints',
-	value: breakpoints.map( createString ),
-} );
+	value: breakpoints.map(createString),
+});
 
-export const createInteractionBreakpoints = ( excluded: string[] ): InteractionBreakpointsPropValue => ( {
+export const createInteractionBreakpoints = (excluded: string[]): InteractionBreakpointsPropValue => ({
 	$$type: 'interaction-breakpoints',
 	value: {
-		excluded: createExcludedBreakpoints( excluded ),
+		excluded: createExcludedBreakpoints(excluded),
 	},
-} );
+});
 
-export const extractExcludedBreakpoints = ( breakpoints: InteractionBreakpointsPropValue | undefined ): string[] => {
-	return breakpoints?.value.excluded.value.map( ( bp: StringPropValue ) => bp.value ) ?? [];
+export const extractExcludedBreakpoints = (breakpoints: InteractionBreakpointsPropValue | undefined): string[] => {
+	return breakpoints?.value.excluded.value.map((bp: StringPropValue) => bp.value) ?? [];
 };
 
-export const createAnimationPreset = ( {
+export const createAnimationPreset = ({
 	effect,
 	type,
 	direction,
@@ -118,25 +118,25 @@ export const createAnimationPreset = ( {
 	start?: SizeStringValue;
 	end?: SizeStringValue;
 	customEffects?: PropValue;
-} ): AnimationPresetPropValue => ( {
+}): AnimationPresetPropValue => ({
 	$$type: 'animation-preset-props',
 	value: {
-		effect: createString( effect ),
+		effect: createString(effect),
 		custom_effect: customEffects,
-		type: createString( type ),
-		direction: createString( direction ?? '' ),
-		timing_config: createTimingConfig( duration, delay ),
-		config: createConfig( {
+		type: createString(type),
+		direction: createString(direction ?? ''),
+		timing_config: createTimingConfig(duration, delay),
+		config: createConfig({
 			replay,
 			easing,
 			relativeTo,
 			start,
 			end,
-		} ),
+		}),
 	},
-} );
+});
 
-export const createInteractionItem = ( {
+export const createInteractionItem = ({
 	trigger,
 	effect,
 	type,
@@ -166,12 +166,12 @@ export const createInteractionItem = ( {
 	end?: number;
 	excludedBreakpoints?: string[];
 	customEffects?: PropValue;
-} ): InteractionItemPropValue => ( {
+}): InteractionItemPropValue => ({
 	$$type: 'interaction-item',
 	value: {
-		...( interactionId && { interaction_id: createString( interactionId ) } ),
-		trigger: createString( trigger ?? '' ),
-		animation: createAnimationPreset( {
+		...(interactionId && { interaction_id: createString(interactionId) }),
+		trigger: createString(trigger ?? ''),
+		animation: createAnimationPreset({
 			effect: effect ?? '',
 			type: type ?? '',
 			direction,
@@ -183,17 +183,17 @@ export const createInteractionItem = ( {
 			start,
 			end,
 			customEffects,
-		} ),
-		...( excludedBreakpoints &&
+		}),
+		...(excludedBreakpoints &&
 			excludedBreakpoints.length > 0 && {
-				breakpoints: createInteractionBreakpoints( excludedBreakpoints ),
-			} ),
+				breakpoints: createInteractionBreakpoints(excludedBreakpoints),
+			}),
 	},
-} );
+});
 
 export const createDefaultInteractionItem = (): InteractionItemPropValue => {
 	const { constants } = getInteractionsConfig();
-	return createInteractionItem( {
+	return createInteractionItem({
 		trigger: 'load',
 		effect: 'fade',
 		type: 'in',
@@ -202,45 +202,45 @@ export const createDefaultInteractionItem = (): InteractionItemPropValue => {
 		replay: false,
 		easing: constants.defaultEasing,
 		interactionId: generateTempInteractionId(),
-	} );
+	});
 };
 
-export const createDefaultInteractions = (): ElementInteractions => ( {
+export const createDefaultInteractions = (): ElementInteractions => ({
 	version: 1,
-	items: [ createDefaultInteractionItem() ],
-} );
+	items: [createDefaultInteractionItem()],
+});
 
-export const extractString = ( prop: StringPropValue | undefined, fallback = '' ): string => {
+export const extractString = (prop: StringPropValue | undefined, fallback = ''): string => {
 	return prop?.value ?? fallback;
 };
 
-export const extractSize = ( prop?: SizePropValue, defaultValue?: SizeStringValue ): SizeStringValue => {
-	if ( ! prop?.value ) {
+export const extractSize = (prop?: SizePropValue, defaultValue?: SizeStringValue): SizeStringValue => {
+	if (!prop?.value) {
 		return defaultValue as SizeStringValue;
 	}
 
-	return formatSizeValue( prop.value );
+	return formatSizeValue(prop.value);
 };
 
-const TRIGGER_LABELS: Record< string, string > = {
+const TRIGGER_LABELS: Record<string, string> = {
 	load: 'On page load',
 	scrollIn: 'Scroll into view',
 	scrollOut: 'Scroll out of view',
 	scrollOn: 'While scrolling',
 };
 
-const capitalize = ( str: string ): string => {
-	return str.charAt( 0 ).toUpperCase() + str.slice( 1 );
+const capitalize = (str: string): string => {
+	return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
-export const buildDisplayLabel = ( item: InteractionItemValue ): string => {
-	const trigger = extractString( item.trigger );
-	const effect = extractString( item.animation.value.effect );
-	const type = extractString( item.animation.value.type );
+export const buildDisplayLabel = (item: InteractionItemValue): string => {
+	const trigger = extractString(item.trigger);
+	const effect = extractString(item.animation.value.effect);
+	const type = extractString(item.animation.value.type);
 
-	const triggerLabel = TRIGGER_LABELS[ trigger ] || capitalize( trigger );
-	const effectLabel = capitalize( effect );
-	const typeLabel = capitalize( type );
+	const triggerLabel = TRIGGER_LABELS[trigger] || capitalize(trigger);
+	const effectLabel = capitalize(effect);
+	const typeLabel = capitalize(type);
 
-	return `${ triggerLabel }: ${ effectLabel } ${ typeLabel }`;
+	return `${triggerLabel}: ${effectLabel} ${typeLabel}`;
 };

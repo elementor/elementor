@@ -9,35 +9,35 @@ import { useOnboarding } from '../../hooks/use-onboarding';
 import { t } from '../../utils/translations';
 import { getOnboardingAssetUrl } from '../step-visuals';
 
-const ProLogo = styled( 'img' )( ( { theme } ) => ( {
+const ProLogo = styled('img')(({ theme }) => ({
 	maxWidth: 200,
 	height: 'auto',
-	margin: theme.spacing( 1, 0 ),
-} ) );
+	margin: theme.spacing(1, 0),
+}));
 
 export function ProInstall() {
 	const { actions } = useOnboarding();
 	const installPro = useInstallPro();
 	const { showToast } = useToast();
 
-	const handleInstall = useCallback( () => {
-		installPro.mutate( undefined, {
+	const handleInstall = useCallback(() => {
+		installPro.mutate(undefined, {
 			onSuccess: () => {
 				actions.markProInstalled();
 			},
 			onError: () => {
-				showToast( t( 'error.pro_install_failed' ) );
+				showToast(t('error.pro_install_failed'));
 				actions.dismissProInstallScreen();
 			},
-		} );
-	}, [ installPro, actions, showToast ] );
+		});
+	}, [installPro, actions, showToast]);
 
 	const handleDismiss = useCallback(
-		( event: React.SyntheticEvent ) => {
+		(event: React.SyntheticEvent) => {
 			event.preventDefault();
 			actions.dismissProInstallScreen();
 		},
-		[ actions ]
+		[actions]
 	);
 
 	const isInstalling = installPro.isPending;
@@ -48,40 +48,40 @@ export function ProInstall() {
 				variant="h5"
 				color="text.primary"
 				align="center"
-				fontWeight={ 500 }
+				fontWeight={500}
 				fontFamily="Poppins"
-				marginBottom={ -2 }
+				marginBottom={-2}
 			>
-				{ t( 'pro_install.title' ) }
+				{t('pro_install.title')}
 			</Typography>
 
 			<Typography variant="body2" align="center" color="text.secondary">
-				{ isInstalling ? t( 'pro_install.installing' ) : t( 'pro_install.subtitle' ) }
+				{isInstalling ? t('pro_install.installing') : t('pro_install.subtitle')}
 			</Typography>
 
-			<ProLogo src={ getOnboardingAssetUrl( 'install-pro-logo.png' ) } alt={ t( 'pro_install.logo_alt' ) } />
+			<ProLogo src={getOnboardingAssetUrl('install-pro-logo.png')} alt={t('pro_install.logo_alt')} />
 
-			<Stack spacing={ 2 } width="100%" alignItems="center">
+			<Stack spacing={2} width="100%" alignItems="center">
 				<PrimaryButton
 					variant="contained"
 					color="primary"
 					fullWidth
 					size="large"
-					onClick={ handleInstall }
-					disabled={ isInstalling }
-					startIcon={ isInstalling ? <CircularProgress size={ 18 } color="inherit" /> : undefined }
+					onClick={handleInstall}
+					disabled={isInstalling}
+					startIcon={isInstalling ? <CircularProgress size={18} color="inherit" /> : undefined}
 				>
-					{ isInstalling ? t( 'pro_install.installing_short' ) : t( 'pro_install.install_button' ) }
+					{isInstalling ? t('pro_install.installing_short') : t('pro_install.install_button')}
 				</PrimaryButton>
 
 				<TextButton
-					href={ '#' }
+					href={'#'}
 					align="center"
-					onClick={ ( event: React.SyntheticEvent ) => handleDismiss?.( event ) }
-					disabled={ isInstalling }
-					sx={ { textDecoration: 'none' } }
+					onClick={(event: React.SyntheticEvent) => handleDismiss?.(event)}
+					disabled={isInstalling}
+					sx={{ textDecoration: 'none' }}
 				>
-					{ t( 'pro_install.do_it_later' ) }
+					{t('pro_install.do_it_later')}
 				</TextButton>
 			</Stack>
 		</FullscreenCard>

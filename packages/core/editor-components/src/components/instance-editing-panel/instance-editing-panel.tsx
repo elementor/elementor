@@ -12,31 +12,31 @@ import { useInstancePanelData } from './use-instance-panel-data';
 export function InstanceEditingPanel() {
 	const data = useInstancePanelData();
 
-	if ( ! data ) {
+	if (!data) {
 		return null;
 	}
 
 	const { componentId, component, overrides, overridableProps, groups, isEmpty, componentInstanceId } = data;
 
 	/* translators: %s: component name. */
-	const panelTitle = __( 'Edit %s', 'elementor' ).replace( '%s', component.name );
+	const panelTitle = __('Edit %s', 'elementor').replace('%s', component.name);
 
 	return (
 		<Box data-testid="instance-editing-panel">
 			<ComponentInstanceProvider
-				componentId={ componentId }
-				overrides={ overrides }
-				overridableProps={ overridableProps }
+				componentId={componentId}
+				overrides={overrides}
+				overridableProps={overridableProps}
 			>
 				<InstancePanelHeader
-					componentName={ component.name }
-					actions={ <EditComponentAction disabled label={ panelTitle } icon={ PencilIcon } /> }
+					componentName={component.name}
+					actions={<EditComponentAction disabled label={panelTitle} icon={PencilIcon} />}
 				/>
 				<InstancePanelBody
-					groups={ groups }
-					isEmpty={ isEmpty }
-					emptyState={ <EmptyState /> }
-					componentInstanceId={ componentInstanceId }
+					groups={groups}
+					isEmpty={isEmpty}
+					emptyState={<EmptyState />}
+					componentInstanceId={componentInstanceId}
 				/>
 			</ComponentInstanceProvider>
 		</Box>

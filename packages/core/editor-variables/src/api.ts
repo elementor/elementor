@@ -33,49 +33,49 @@ export type BatchPayload = {
 
 export const apiClient = {
 	list: () => {
-		return httpService().get( BASE_PATH + '/list' );
+		return httpService().get(BASE_PATH + '/list');
 	},
 
-	create: ( type: string, label: string, value: string ) => {
-		return httpService().post( BASE_PATH + '/create', {
+	create: (type: string, label: string, value: string) => {
+		return httpService().post(BASE_PATH + '/create', {
 			type,
 			label,
 			value,
-		} );
+		});
 	},
 
-	update: ( id: string, label: string, value: string, type?: string ) => {
-		return httpService().put( BASE_PATH + '/update', {
+	update: (id: string, label: string, value: string, type?: string) => {
+		return httpService().put(BASE_PATH + '/update', {
 			id,
 			label,
 			value,
 			type,
-		} );
+		});
 	},
 
-	delete: ( id: string ) => {
-		return httpService().post( BASE_PATH + '/delete', { id } );
+	delete: (id: string) => {
+		return httpService().post(BASE_PATH + '/delete', { id });
 	},
 
-	restore: ( id: string, label?: string, value?: string, type?: string ) => {
+	restore: (id: string, label?: string, value?: string, type?: string) => {
 		const payload: RestoreVariablePayload = { id };
 
-		if ( label ) {
+		if (label) {
 			payload.label = label;
 		}
 
-		if ( value ) {
+		if (value) {
 			payload.value = value;
 		}
 
-		if ( type ) {
+		if (type) {
 			payload.type = type;
 		}
 
-		return httpService().post( BASE_PATH + '/restore', payload );
+		return httpService().post(BASE_PATH + '/restore', payload);
 	},
 
-	batch: ( payload: BatchPayload ) => {
-		return httpService().post( BASE_PATH + '/batch', payload );
+	batch: (payload: BatchPayload) => {
+		return httpService().post(BASE_PATH + '/batch', payload);
 	},
 };

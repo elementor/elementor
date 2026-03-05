@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { SvgIcon } from '@elementor/ui';
 
-const AIGeneratorIcon = React.forwardRef< SVGSVGElement, React.ComponentProps< typeof SvgIcon > >( ( props, ref ) => {
+const AIGeneratorIcon = React.forwardRef<SVGSVGElement, React.ComponentProps<typeof SvgIcon>>((props, ref) => {
 	return (
-		<SvgIcon viewBox="0 0 32 32" { ...props } ref={ ref } width="32" height="32">
+		<SvgIcon viewBox="0 0 32 32" {...props} ref={ref} width="32" height="32">
 			<path
 				d="M23.2273 4.83321C23.4152 4.47883 23.9229 4.47883 24.1108 4.83321L24.4249 5.42564C24.8747 6.27415 25.5688 6.9682 26.4173 7.41807L27.0097 7.73216C27.3641 7.92005 27.3641 8.42778 27.0097 8.61567L26.4173 8.92976C25.5688 9.37962 24.8747 10.0737 24.4249 10.9222L24.1108 11.5146C23.9229 11.869 23.4152 11.869 23.2273 11.5146L22.9132 10.9222C22.4633 10.0737 21.7693 9.37962 20.9208 8.92976L20.3283 8.61567C19.9739 8.42778 19.9739 7.92005 20.3283 7.73216L20.9208 7.41807C21.7693 6.9682 22.4633 6.27415 22.9132 5.42564L23.2273 4.83321Z"
 				fill="none"
@@ -18,6 +18,6 @@ const AIGeneratorIcon = React.forwardRef< SVGSVGElement, React.ComponentProps< t
 			/>
 		</SvgIcon>
 	);
-} );
+});
 
 export default AIGeneratorIcon;

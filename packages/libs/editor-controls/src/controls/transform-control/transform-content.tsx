@@ -17,44 +17,44 @@ import {
 import { useTransformTabsHistory } from './use-transform-tabs-history';
 
 export const TransformContent = () => {
-	const { getTabsProps, getTabProps, getTabPanelProps } = useTransformTabsHistory( {
+	const { getTabsProps, getTabProps, getTabPanelProps } = useTransformTabsHistory({
 		move: initialTransformValue.value,
 		scale: initialScaleValue.value,
 		rotate: initialRotateValue.value,
 		skew: initialSkewValue.value,
-	} );
+	});
 
 	return (
 		<PopoverContent>
-			<Box sx={ { width: '100%' } }>
-				<Box sx={ { borderBottom: 1, borderColor: 'divider' } }>
+			<Box sx={{ width: '100%' }}>
+				<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
 					<Tabs
 						size="small"
 						variant="fullWidth"
-						sx={ {
+						sx={{
 							'& .MuiTab-root': {
 								minWidth: '62px',
 							},
-						} }
-						{ ...getTabsProps() }
-						aria-label={ __( 'Transform', 'elementor' ) }
+						}}
+						{...getTabsProps()}
+						aria-label={__('Transform', 'elementor')}
 					>
-						<Tab label={ __( 'Move', 'elementor' ) } { ...getTabProps( TransformFunctionKeys.move ) } />
-						<Tab label={ __( 'Scale', 'elementor' ) } { ...getTabProps( TransformFunctionKeys.scale ) } />
-						<Tab label={ __( 'Rotate', 'elementor' ) } { ...getTabProps( TransformFunctionKeys.rotate ) } />
-						<Tab label={ __( 'Skew', 'elementor' ) } { ...getTabProps( TransformFunctionKeys.skew ) } />
+						<Tab label={__('Move', 'elementor')} {...getTabProps(TransformFunctionKeys.move)} />
+						<Tab label={__('Scale', 'elementor')} {...getTabProps(TransformFunctionKeys.scale)} />
+						<Tab label={__('Rotate', 'elementor')} {...getTabProps(TransformFunctionKeys.rotate)} />
+						<Tab label={__('Skew', 'elementor')} {...getTabProps(TransformFunctionKeys.skew)} />
 					</Tabs>
 				</Box>
-				<TabPanel sx={ { p: 1.5 } } { ...getTabPanelProps( TransformFunctionKeys.move ) }>
+				<TabPanel sx={{ p: 1.5 }} {...getTabPanelProps(TransformFunctionKeys.move)}>
 					<Move />
 				</TabPanel>
-				<TabPanel sx={ { p: 1.5 } } { ...getTabPanelProps( TransformFunctionKeys.scale ) }>
+				<TabPanel sx={{ p: 1.5 }} {...getTabPanelProps(TransformFunctionKeys.scale)}>
 					<Scale />
 				</TabPanel>
-				<TabPanel sx={ { p: 1.5 } } { ...getTabPanelProps( TransformFunctionKeys.rotate ) }>
+				<TabPanel sx={{ p: 1.5 }} {...getTabPanelProps(TransformFunctionKeys.rotate)}>
 					<Rotate />
 				</TabPanel>
-				<TabPanel sx={ { p: 1.5 } } { ...getTabPanelProps( TransformFunctionKeys.skew ) }>
+				<TabPanel sx={{ p: 1.5 }} {...getTabPanelProps(TransformFunctionKeys.skew)}>
 					<Skew />
 				</TabPanel>
 			</Box>

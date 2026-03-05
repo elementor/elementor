@@ -4,89 +4,89 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { useFloatingActionsBar } from '../../floating-bar';
 import { PopoverAction } from '../popover-action';
 
-jest.mock( '../../floating-bar' );
+jest.mock('../../floating-bar');
 
-describe( 'PopoverAction', () => {
-	beforeEach( () => {
-		jest.mocked( useFloatingActionsBar ).mockReturnValue( {
+describe('PopoverAction', () => {
+	beforeEach(() => {
+		jest.mocked(useFloatingActionsBar).mockReturnValue({
 			setOpen: jest.fn(),
 			open: false,
-		} );
-	} );
+		});
+	});
 
-	it( 'renders the icon button with the correct title', () => {
+	it('renders the icon button with the correct title', () => {
 		// Arrange.
 		const title = 'Test Action';
 		const Icon = () => <span>Icon</span>;
 		const content = () => <div>Content</div>;
 
 		// Act.
-		render( <PopoverAction title={ title } icon={ Icon } content={ content } /> );
+		render(<PopoverAction title={title} icon={Icon} content={content} />);
 
 		// Assert.
-		const button = screen.getByRole( 'button', { name: title } );
-		expect( button ).toBeInTheDocument();
-		expect( screen.getByText( 'Icon' ) ).toBeInTheDocument();
-	} );
+		const button = screen.getByRole('button', { name: title });
+		expect(button).toBeInTheDocument();
+		expect(screen.getByText('Icon')).toBeInTheDocument();
+	});
 
-	it( 'does not render when visible is false', () => {
+	it('does not render when visible is false', () => {
 		// Arrange & Act.
 		const { container } = render(
 			<PopoverAction
 				title="Hidden Action"
-				icon={ () => <span>Icon</span> }
-				content={ () => <div>Content</div> }
-				visible={ false }
+				icon={() => <span>Icon</span>}
+				content={() => <div>Content</div>}
+				visible={false}
 			/>
 		);
 
 		// Assert.
-		expect( container ).toBeEmptyDOMElement();
-	} );
+		expect(container).toBeEmptyDOMElement();
+	});
 
-	it( 'renders the popover with the content', () => {
+	it('renders the popover with the content', () => {
 		// Arrange.
 		const title = 'Test Action';
 		const Icon = () => <span>Icon</span>;
 		const content = () => <div> Content </div>;
 
 		// Act.
-		render( <PopoverAction title={ title } icon={ Icon } content={ content } /> );
+		render(<PopoverAction title={title} icon={Icon} content={content} />);
 
-		fireEvent.click( screen.getByRole( 'button', { name: title } ) );
+		fireEvent.click(screen.getByRole('button', { name: title }));
 
 		// Assert.
-		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Content')).toBeInTheDocument();
+	});
 
-	it( 'calls setOpen when the button is clicked', () => {
+	it('calls setOpen when the button is clicked', () => {
 		// Arrange.
 		const setOpenMock = jest.fn();
-		jest.mocked( useFloatingActionsBar ).mockReturnValue( {
+		jest.mocked(useFloatingActionsBar).mockReturnValue({
 			setOpen: setOpenMock,
 			open: false,
-		} );
+		});
 
 		const title = 'Test Action';
 		const Icon = () => <span>Icon</span>;
 		const content = () => <div>Content</div>;
 
 		// Act.
-		render( <PopoverAction title={ title } icon={ Icon } content={ content } /> );
+		render(<PopoverAction title={title} icon={Icon} content={content} />);
 
-		fireEvent.click( screen.getByRole( 'button', { name: title } ) );
+		fireEvent.click(screen.getByRole('button', { name: title }));
 
 		// Assert.
-		expect( setOpenMock ).toHaveBeenCalledWith( true );
-	} );
+		expect(setOpenMock).toHaveBeenCalledWith(true);
+	});
 
-	it( 'closes the popover when the close function is called', () => {
+	it('closes the popover when the close function is called', () => {
 		// Arrange.
 		const setOpenMock = jest.fn();
-		jest.mocked( useFloatingActionsBar ).mockReturnValue( {
+		jest.mocked(useFloatingActionsBar).mockReturnValue({
 			setOpen: setOpenMock,
 			open: true,
-		} );
+		});
 
 		const title = 'Test Action';
 		const Icon = () => <span>Icon</span>;
@@ -94,27 +94,27 @@ describe( 'PopoverAction', () => {
 		// Act.
 		render(
 			<PopoverAction
-				title={ title }
-				icon={ Icon }
-				content={ ( { close } ) => (
+				title={title}
+				icon={Icon}
+				content={({ close }) => (
 					<div>
 						Content
-						<button onClick={ close }>Close</button>
+						<button onClick={close}>Close</button>
 					</div>
-				) }
+				)}
 			/>
 		);
 
-		fireEvent.click( screen.getByRole( 'button', { name: title } ) );
+		fireEvent.click(screen.getByRole('button', { name: title }));
 
 		// Assert.
-		expect( setOpenMock ).toHaveBeenCalledWith( true );
+		expect(setOpenMock).toHaveBeenCalledWith(true);
 
 		setOpenMock.mockClear();
 
 		// Act.
-		fireEvent.click( screen.getByText( 'Close' ) );
+		fireEvent.click(screen.getByText('Close'));
 
-		expect( setOpenMock ).toHaveBeenCalledWith( false );
-	} );
-} );
+		expect(setOpenMock).toHaveBeenCalledWith(false);
+	});
+});

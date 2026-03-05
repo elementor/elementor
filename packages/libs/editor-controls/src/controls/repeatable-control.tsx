@@ -39,7 +39,7 @@ type RepeatableControlProps = {
 const PLACEHOLDER_REGEX = /\$\{([^}]+)\}/g;
 
 export const RepeatableControl = createControl(
-	( {
+	({
 		repeaterLabel,
 		childControlConfig,
 		showDuplicate,
@@ -49,52 +49,48 @@ export const RepeatableControl = createControl(
 		placeholder,
 		propKey,
 		addItemTooltipProps,
-	}: RepeatableControlProps ) => {
+	}: RepeatableControlProps) => {
 		const { propTypeUtil: childPropTypeUtil, isItemDisabled } = childControlConfig;
 
-		if ( ! childPropTypeUtil ) {
+		if (!childPropTypeUtil) {
 			return null;
 		}
 
 		const childArrayPropTypeUtil = useMemo(
-			() => createArrayPropUtils( childPropTypeUtil.key, childPropTypeUtil.schema, propKey ),
-			[ childPropTypeUtil.key, childPropTypeUtil.schema, propKey ]
+			() => createArrayPropUtils(childPropTypeUtil.key, childPropTypeUtil.schema, propKey),
+			[childPropTypeUtil.key, childPropTypeUtil.schema, propKey]
 		);
 
 		const contextValue = useMemo(
-			() => ( {
+			() => ({
 				...childControlConfig,
 				placeholder: placeholder || '',
 				patternLabel: patternLabel || '',
-			} ),
-			[ childControlConfig, placeholder, patternLabel ]
+			}),
+			[childControlConfig, placeholder, patternLabel]
 		);
 
-		const { propType, value, setValue } = useBoundProp( childArrayPropTypeUtil );
+		const { propType, value, setValue } = useBoundProp(childArrayPropTypeUtil);
 
 		return (
-			<PropProvider propType={ propType } value={ value } setValue={ setValue }>
-				<RepeatableControlContext.Provider value={ contextValue }>
+			<PropProvider propType={propType} value={value} setValue={setValue}>
+				<RepeatableControlContext.Provider value={contextValue}>
 					<ControlRepeater
-						initial={ childPropTypeUtil.create( initialValues || null ) }
-						propTypeUtil={ childArrayPropTypeUtil as CollectionPropUtil< RepeatablePropValue > }
-						isItemDisabled={ isItemDisabled }
+						initial={childPropTypeUtil.create(initialValues || null)}
+						propTypeUtil={childArrayPropTypeUtil as CollectionPropUtil<RepeatablePropValue>}
+						isItemDisabled={isItemDisabled}
 					>
-						<RepeaterHeader label={ repeaterLabel }>
-							<TooltipAddItemAction
-								{ ...addItemTooltipProps }
-								newItemIndex={ 0 }
-								ariaLabel={ repeaterLabel }
-							/>
+						<RepeaterHeader label={repeaterLabel}>
+							<TooltipAddItemAction {...addItemTooltipProps} newItemIndex={0} ariaLabel={repeaterLabel} />
 						</RepeaterHeader>
-						<ItemsContainer isSortable={ false }>
+						<ItemsContainer isSortable={false}>
 							<Item
-								Icon={ ItemIcon }
-								Label={ ItemLabel }
+								Icon={ItemIcon}
+								Label={ItemLabel}
 								actions={
 									<>
-										{ showDuplicate && <DuplicateItemAction /> }
-										{ showToggle && <DisableItemAction /> }
+										{showDuplicate && <DuplicateItemAction />}
+										{showToggle && <DisableItemAction />}
 										<RemoveItemAction />
 									</>
 								}
@@ -116,130 +112,130 @@ const ItemIcon = () => <></>;
 const Content = () => {
 	const { component: ChildControl, props = {} } = useRepeatableControlContext();
 	return (
-		<PopoverContent p={ 1.5 }>
+		<PopoverContent p={1.5}>
 			<PopoverGridContainer>
-				<ChildControl { ...props } />
+				<ChildControl {...props} />
 			</PopoverGridContainer>
 		</PopoverContent>
 	);
 };
 
-const interpolate = ( template: string, data: Record< string, unknown > ) => {
-	if ( ! data ) {
+const interpolate = (template: string, data: Record<string, unknown>) => {
+	if (!data) {
 		return template;
 	}
 
-	return template.replace( PLACEHOLDER_REGEX, ( _, path ): string => {
-		const value = getNestedValue( data, path );
+	return template.replace(PLACEHOLDER_REGEX, (_, path): string => {
+		const value = getNestedValue(data, path);
 
-		if ( typeof value === 'object' && value !== null && ! Array.isArray( value ) ) {
-			if ( 'name' in value && value.name ) {
+		if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+			if ('name' in value && value.name) {
 				return value.name as string;
 			}
 
-			return JSON.stringify( value );
+			return JSON.stringify(value);
 		}
 
-		if ( Array.isArray( value ) ) {
-			return value.join( ', ' );
+		if (Array.isArray(value)) {
+			return value.join(', ');
 		}
 
-		return String( value ?? '' );
-	} );
+		return String(value ?? '');
+	});
 };
 
-const getNestedValue = ( obj: Record< string, unknown >, path: string ) => {
-	let parentObj: Record< string, unknown > = {};
-	const pathKeys = path.split( '.' );
-	const key = pathKeys.slice( -1 )[ 0 ];
+const getNestedValue = (obj: Record<string, unknown>, path: string) => {
+	let parentObj: Record<string, unknown> = {};
+	const pathKeys = path.split('.');
+	const key = pathKeys.slice(-1)[0];
 
-	let value: unknown = pathKeys.reduce( ( current: Record< string, unknown >, currentKey, currentIndex ) => {
-		if ( currentIndex === pathKeys.length - 2 ) {
+	let value: unknown = pathKeys.reduce((current: Record<string, unknown>, currentKey, currentIndex) => {
+		if (currentIndex === pathKeys.length - 2) {
 			parentObj = current;
 		}
 
-		if ( current && typeof current === 'object' ) {
-			return current[ currentKey ] as Record< string, unknown >;
+		if (current && typeof current === 'object') {
+			return current[currentKey] as Record<string, unknown>;
 		}
 
 		return {};
-	}, obj );
+	}, obj);
 
-	value = !! value ? value : '';
+	value = !!value ? value : '';
 	const propType = parentObj?.$$type;
-	const propValue = parentObj?.value as SizePropValue[ 'value' ];
+	const propValue = parentObj?.value as SizePropValue['value'];
 	const doesValueRepresentCustomSize = key === 'unit' && propType === 'size' && propValue?.unit === 'custom';
 
-	if ( ! doesValueRepresentCustomSize ) {
+	if (!doesValueRepresentCustomSize) {
 		return value;
 	}
 
 	return propValue?.size ? '' : CUSTOM_SIZE_LABEL;
 };
 
-const isEmptyValue = ( val: unknown ) => {
-	if ( typeof val === 'string' ) {
+const isEmptyValue = (val: unknown) => {
+	if (typeof val === 'string') {
 		return val.trim() === '';
 	}
 
-	if ( Number.isNaN( val ) ) {
+	if (Number.isNaN(val)) {
 		return true;
 	}
 
-	if ( Array.isArray( val ) ) {
+	if (Array.isArray(val)) {
 		return val.length === 0;
 	}
 
-	if ( typeof val === 'object' && val !== null ) {
-		return Object.keys( val ).length === 0;
+	if (typeof val === 'object' && val !== null) {
+		return Object.keys(val).length === 0;
 	}
 
 	return false;
 };
 
-const shouldShowPlaceholder = ( pattern: string, data: Record< string, unknown > ): boolean => {
-	const propertyPaths = getAllProperties( pattern );
+const shouldShowPlaceholder = (pattern: string, data: Record<string, unknown>): boolean => {
+	const propertyPaths = getAllProperties(pattern);
 
-	const values = propertyPaths.map( ( path ) => getNestedValue( data, path ) );
+	const values = propertyPaths.map((path) => getNestedValue(data, path));
 
-	if ( values.length === 0 ) {
+	if (values.length === 0) {
 		return false;
 	}
 
-	if ( values.some( ( value ) => value === null || value === undefined ) ) {
+	if (values.some((value) => value === null || value === undefined)) {
 		return true;
 	}
 
-	if ( values.every( isEmptyValue ) ) {
+	if (values.every(isEmptyValue)) {
 		return true;
 	}
 
 	return false;
 };
 
-const getTextColor = ( isReadOnly: boolean, showPlaceholder: boolean ): string => {
-	if ( isReadOnly ) {
+const getTextColor = (isReadOnly: boolean, showPlaceholder: boolean): string => {
+	if (isReadOnly) {
 		return 'text.disabled';
 	}
 	return showPlaceholder ? 'text.tertiary' : 'text.primary';
 };
 
-const ItemLabel = ( { value }: { value: Record< string, unknown > } ) => {
+const ItemLabel = ({ value }: { value: Record<string, unknown> }) => {
 	const { placeholder, patternLabel, props: childProps } = useRepeatableControlContext();
-	const showPlaceholder = shouldShowPlaceholder( patternLabel, value );
-	const label = showPlaceholder ? placeholder : interpolate( patternLabel, value );
-	const isReadOnly = !! childProps?.readOnly;
-	const color = getTextColor( isReadOnly, showPlaceholder );
+	const showPlaceholder = shouldShowPlaceholder(patternLabel, value);
+	const label = showPlaceholder ? placeholder : interpolate(patternLabel, value);
+	const isReadOnly = !!childProps?.readOnly;
+	const color = getTextColor(isReadOnly, showPlaceholder);
 
 	return (
-		<Box component="span" color={ color }>
-			{ label }
+		<Box component="span" color={color}>
+			{label}
 		</Box>
 	);
 };
 
-const getAllProperties = ( pattern: string ) => {
-	const properties = pattern.match( PLACEHOLDER_REGEX )?.map( ( match ) => match.slice( 2, -1 ) ) || [];
+const getAllProperties = (pattern: string) => {
+	const properties = pattern.match(PLACEHOLDER_REGEX)?.map((match) => match.slice(2, -1)) || [];
 
 	return properties;
 };

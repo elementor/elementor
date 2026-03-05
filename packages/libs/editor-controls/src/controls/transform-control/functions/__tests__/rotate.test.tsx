@@ -4,26 +4,26 @@ import { screen } from '@testing-library/react';
 
 import { Rotate } from '../rotate';
 
-describe( 'Rotate Transform', () => {
+describe('Rotate Transform', () => {
 	const createAxisProp = () =>
-		createMockPropType( {
+		createMockPropType({
 			kind: 'object',
 			shape: {
-				unit: createMockPropType( { kind: 'plain' } ),
-				size: createMockPropType( { kind: 'plain' } ),
+				unit: createMockPropType({ kind: 'plain' }),
+				size: createMockPropType({ kind: 'plain' }),
 			},
-		} );
+		});
 
-	const propType = createMockPropType( {
+	const propType = createMockPropType({
 		kind: 'object',
 		shape: {
 			x: createAxisProp(),
 			y: createAxisProp(),
 			z: createAxisProp(),
 		},
-	} );
+	});
 
-	it.each( [
+	it.each([
 		[
 			'full value',
 			{
@@ -48,11 +48,11 @@ describe( 'Rotate Transform', () => {
 				z: { $$type: 'size', value: { size: 0, unit: 'deg' } },
 			},
 		],
-	] )( 'should render labels with mock case: %s', ( _label, mockValue ) => {
-		renderControl( <Rotate />, { value: mockValue, propType } );
+	])('should render labels with mock case: %s', (_label, mockValue) => {
+		renderControl(<Rotate />, { value: mockValue, propType });
 
-		expect( screen.getByText( 'Rotate X' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Rotate Y' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Rotate Z' ) ).toBeInTheDocument();
-	} );
-} );
+		expect(screen.getByText('Rotate X')).toBeInTheDocument();
+		expect(screen.getByText('Rotate Y')).toBeInTheDocument();
+		expect(screen.getByText('Rotate Z')).toBeInTheDocument();
+	});
+});

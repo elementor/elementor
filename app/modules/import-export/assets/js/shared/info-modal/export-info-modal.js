@@ -10,7 +10,7 @@ export default function ExportInfoModal( props ) {
 					<>
 						{ __( 'A Website Kit is a .zip file that contains all the parts of a complete site. It’s an easy way to get a site up and running quickly.', 'elementor' ) }
 						<br /><br />
-						<InlineLink url="https://go.elementor.com/app-what-are-kits">{ __( ' Learn more about Website Kits', 'elementor' ) }</InlineLink>
+						<InlineLink url="https://go.elementor.com/app-what-are-kits">{ __( 'Learn more about Website Kits', 'elementor' ) }</InlineLink>
 					</>
 				</InfoModal.Text>
 			</InfoModal.Section>

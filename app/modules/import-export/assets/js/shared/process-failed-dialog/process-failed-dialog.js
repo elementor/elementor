@@ -14,7 +14,7 @@ const messagesContent = {
 	general: {
 		title: __( 'Unable to download the Website Template', 'elementor' ),
 		text: <>
-			{ __( 'We couldn’t download the Website Template due to technical difficulties on our part. Try again and if the problem persists contact ', 'elementor' ) }
+			{ __( 'We couldn’t download the Website Template due to technical difficulties on our part. Try again and if the problem persists contact', 'elementor' ) }
 			<InlineLink url="https://my.elementor.com/support-center/">
 				{ __( 'Support', 'elementor' ) }
 			</InlineLink>
@@ -27,7 +27,7 @@ const messagesContent = {
 	'invalid-zip-file': {
 		title: __( 'Couldn’t use the .zip file', 'elementor' ),
 		text: <>
-			{ __( 'Seems like there is a problem with the zip’s files. Try installing again and if the problem persists contact ', 'elementor' ) }
+			{ __( 'Seems like there is a problem with the zip’s files. Try installing again and if the problem persists contact', 'elementor' ) }
 			<InlineLink url="https://my.elementor.com/support-center/">
 				{ __( 'Support', 'elementor' ) }
 			</InlineLink>
@@ -36,11 +36,11 @@ const messagesContent = {
 	timeout: {
 		title: __( 'Unable to download the Website Template', 'elementor' ),
 		text: <>
-			{ __( 'It took too much time to download your Website Template and we were unable to complete the process. If all the Website Template’s parts don’t appear in ', 'elementor' ) }
+			{ __( 'It took too much time to download your Website Template and we were unable to complete the process. If all the Website Template’s parts don’t appear in', 'elementor' ) }
 			<InlineLink url={ elementorAppConfig.pages_url } >
 				{ __( 'Pages', 'elementor' ) }
 			</InlineLink>
-			{ __( ', try again and if the problem persists contact ', 'elementor' ) }
+			{ __( ', try again and if the problem persists contact', 'elementor' ) }
 			<InlineLink url="https://my.elementor.com/support-center/">
 				{ __( 'Support', 'elementor' ) }
 			</InlineLink>
@@ -49,7 +49,7 @@ const messagesContent = {
 	'invalid-kit-library-zip-error': {
 		title: __( 'Unable to download the Website Template', 'elementor' ),
 		text: <>
-			{ __( 'We couldn’t download the Website Template due to technical difficulty on our part. Try again in a few minutes and if the problem persists contact ', 'elementor' ) }
+			{ __( 'We couldn’t download the Website Template due to technical difficulty on our part. Try again in a few minutes and if the problem persists contact', 'elementor' ) }
 			<InlineLink url="https://my.elementor.com/support-center/">
 				{ __( 'Support', 'elementor' ) }
 			</InlineLink>

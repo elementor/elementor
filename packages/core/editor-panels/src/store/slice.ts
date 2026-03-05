@@ -6,17 +6,17 @@ const initialState: {
 	openId: null,
 };
 
-export default __createSlice( {
+export default __createSlice({
 	name: 'panels',
 	initialState,
 	reducers: {
-		open( state, action: PayloadAction< string > ) {
+		open(state, action: PayloadAction<string>) {
 			state.openId = action.payload;
 		},
-		close( state, action: PayloadAction< string | undefined > ) {
-			if ( ! action.payload || state.openId === action.payload ) {
+		close(state, action: PayloadAction<string | undefined>) {
+			if (!action.payload || state.openId === action.payload) {
 				state.openId = null;
 			}
 		},
 	},
-} );
+});

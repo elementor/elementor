@@ -7,7 +7,7 @@ import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
 
 export const TextControl = createControl(
-	( {
+	({
 		placeholder,
 		error,
 		inputValue,
@@ -23,25 +23,25 @@ export const TextControl = createControl(
 		helperText?: string;
 		sx?: SxProps;
 		ariaLabel?: string;
-	} ) => {
-		const { value, setValue, disabled } = useBoundProp( stringPropTypeUtil );
-		const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => setValue( event.target.value );
+	}) => {
+		const { value, setValue, disabled } = useBoundProp(stringPropTypeUtil);
+		const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => setValue(event.target.value);
 
 		return (
 			<ControlActions>
 				<TextField
 					size="tiny"
 					fullWidth
-					disabled={ inputDisabled ?? disabled }
-					value={ inputValue ?? value ?? '' }
-					onChange={ handleChange }
-					placeholder={ placeholder }
-					error={ error }
-					helperText={ helperText }
-					sx={ sx }
-					inputProps={ {
-						...( ariaLabel ? { 'aria-label': ariaLabel } : {} ),
-					} }
+					disabled={inputDisabled ?? disabled}
+					value={inputValue ?? value ?? ''}
+					onChange={handleChange}
+					placeholder={placeholder}
+					error={error}
+					helperText={helperText}
+					sx={sx}
+					inputProps={{
+						...(ariaLabel ? { 'aria-label': ariaLabel } : {}),
+					}}
 				/>
 			</ControlActions>
 		);

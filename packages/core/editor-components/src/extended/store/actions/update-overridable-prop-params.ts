@@ -10,21 +10,21 @@ type UpdatePropParams = {
 	groupId: string | null;
 };
 
-export function updateOverridablePropParams( {
+export function updateOverridablePropParams({
 	componentId,
 	overrideKey,
 	label,
 	groupId,
-}: UpdatePropParams ): OverridableProp | undefined {
-	const overridableProps = componentsSelectors.getOverridableProps( componentId );
+}: UpdatePropParams): OverridableProp | undefined {
+	const overridableProps = componentsSelectors.getOverridableProps(componentId);
 
-	if ( ! overridableProps ) {
+	if (!overridableProps) {
 		return;
 	}
 
-	const prop = overridableProps.props[ overrideKey ];
+	const prop = overridableProps.props[overrideKey];
 
-	if ( ! prop ) {
+	if (!prop) {
 		return;
 	}
 
@@ -37,16 +37,16 @@ export function updateOverridablePropParams( {
 		groupId: newGroupId,
 	};
 
-	const updatedGroups = movePropBetweenGroups( overridableProps.groups, overrideKey, oldGroupId, newGroupId );
+	const updatedGroups = movePropBetweenGroups(overridableProps.groups, overrideKey, oldGroupId, newGroupId);
 
-	componentsActions.setOverridableProps( componentId, {
+	componentsActions.setOverridableProps(componentId, {
 		...overridableProps,
 		props: {
 			...overridableProps.props,
-			[ overrideKey ]: updatedProp,
+			[overrideKey]: updatedProp,
 		},
 		groups: updatedGroups,
-	} );
+	});
 
 	return updatedProp;
 }

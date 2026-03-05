@@ -12,20 +12,20 @@ type Props = {
 	label: string;
 };
 
-export default function DocTypeChip( { postType, docType, label }: Props ) {
+export default function DocTypeChip({ postType, docType, label }: Props) {
 	const color = 'elementor_library' === postType ? 'global' : 'primary';
-	const Icon = iconsMap[ docType ] || PostTypeIcon;
+	const Icon = iconsMap[docType] || PostTypeIcon;
 
 	return (
 		<Chip
 			component="span"
 			size="small"
 			variant="outlined"
-			label={ label }
-			data-value={ docType }
-			color={ color }
-			icon={ <Icon /> }
-			sx={ { ml: 1, cursor: 'inherit' } }
+			label={label}
+			data-value={docType}
+			color={color}
+			icon={<Icon />}
+			sx={{ ml: 1, cursor: 'inherit' }}
 		/>
 	);
 }

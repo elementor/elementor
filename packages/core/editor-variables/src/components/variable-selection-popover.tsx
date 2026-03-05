@@ -25,20 +25,20 @@ type Props = {
 	propTypeKey: PropTypeKey;
 };
 
-export const VariableSelectionPopover = ( { closePopover, propTypeKey, selectedVariable }: Props ) => {
-	const [ currentView, setCurrentView ] = useState< View >( VIEW_LIST );
-	const [ editId, setEditId ] = useState< string >( '' );
+export const VariableSelectionPopover = ({ closePopover, propTypeKey, selectedVariable }: Props) => {
+	const [currentView, setCurrentView] = useState<View>(VIEW_LIST);
+	const [editId, setEditId] = useState<string>('');
 	const { open } = usePanelActions();
-	const onSettingsAvailable = isExperimentActive( 'e_variables_manager' )
+	const onSettingsAvailable = isExperimentActive('e_variables_manager')
 		? () => {
 				open();
-		  }
+			}
 		: undefined;
 
 	return (
-		<VariableTypeProvider propTypeKey={ propTypeKey }>
+		<VariableTypeProvider propTypeKey={propTypeKey}>
 			<PopoverContentRefContextProvider>
-				{ RenderView( {
+				{RenderView({
 					propTypeKey,
 					currentView,
 					selectedVariable,
@@ -47,7 +47,7 @@ export const VariableSelectionPopover = ( { closePopover, propTypeKey, selectedV
 					setCurrentView,
 					closePopover,
 					onSettings: onSettingsAvailable,
-				} ) }
+				})}
 			</PopoverContentRefContextProvider>
 		</VariableTypeProvider>
 	);
@@ -59,8 +59,8 @@ type ViewProps = {
 	selectedVariable?: Variable;
 	disabled?: boolean;
 	editId: string;
-	setEditId: ( id: string ) => void;
-	setCurrentView: ( stage: View ) => void;
+	setEditId: (id: string) => void;
+	setCurrentView: (stage: View) => void;
 	closePopover: () => void;
 	onSettings?: () => void;
 };
@@ -69,37 +69,37 @@ type Handlers = {
 	onClose: () => void;
 	onGoBack?: () => void;
 	onAdd?: () => void;
-	onEdit?: ( key: string ) => void;
+	onEdit?: (key: string) => void;
 	onSettings?: () => void;
 };
 
-function RenderView( props: ViewProps ): React.ReactNode {
+function RenderView(props: ViewProps): React.ReactNode {
 	const userPermissions = usePermissions();
-	const userQuotaPremissions = useQuotaPermissions( props.propTypeKey );
+	const userQuotaPremissions = useQuotaPermissions(props.propTypeKey);
 
 	const handlers: Handlers = {
 		onClose: () => {
 			props.closePopover();
 		},
 		onGoBack: () => {
-			props.setCurrentView( VIEW_LIST );
+			props.setCurrentView(VIEW_LIST);
 		},
 	};
 
-	if ( userPermissions.canAdd() ) {
+	if (userPermissions.canAdd()) {
 		handlers.onAdd = () => {
-			props.setCurrentView( VIEW_ADD );
+			props.setCurrentView(VIEW_ADD);
 		};
 	}
 
-	if ( userPermissions.canEdit() ) {
-		handlers.onEdit = ( key: string ) => {
-			props.setEditId( key );
-			props.setCurrentView( VIEW_EDIT );
+	if (userPermissions.canEdit()) {
+		handlers.onEdit = (key: string) => {
+			props.setEditId(key);
+			props.setCurrentView(VIEW_EDIT);
 		};
 	}
 
-	if ( userPermissions.canManageSettings() && props.onSettings ) {
+	if (userPermissions.canManageSettings() && props.onSettings) {
 		handlers.onSettings = () => {
 			props.closePopover();
 			props.onSettings?.();
@@ -107,36 +107,36 @@ function RenderView( props: ViewProps ): React.ReactNode {
 	}
 
 	const handleSubmitOnEdit = () => {
-		if ( props?.selectedVariable?.key === props.editId ) {
+		if (props?.selectedVariable?.key === props.editId) {
 			handlers.onClose();
 		} else {
 			handlers.onGoBack?.();
 		}
 	};
 
-	if ( VIEW_LIST === props.currentView ) {
+	if (VIEW_LIST === props.currentView) {
 		return (
 			<VariablesSelection
-				closePopover={ handlers.onClose }
-				onAdd={ handlers.onAdd }
-				onEdit={ handlers.onEdit }
-				onSettings={ handlers.onSettings }
-				disabled={ ! userQuotaPremissions.canAdd() }
+				closePopover={handlers.onClose}
+				onAdd={handlers.onAdd}
+				onEdit={handlers.onEdit}
+				onSettings={handlers.onSettings}
+				disabled={!userQuotaPremissions.canAdd()}
 			/>
 		);
 	}
 
-	if ( VIEW_ADD === props.currentView ) {
-		return <VariableCreation onGoBack={ handlers.onGoBack } onClose={ handlers.onClose } />;
+	if (VIEW_ADD === props.currentView) {
+		return <VariableCreation onGoBack={handlers.onGoBack} onClose={handlers.onClose} />;
 	}
 
-	if ( VIEW_EDIT === props.currentView ) {
+	if (VIEW_EDIT === props.currentView) {
 		return (
 			<VariableEdit
-				editId={ props.editId }
-				onGoBack={ handlers.onGoBack }
-				onClose={ handlers.onClose }
-				onSubmit={ handleSubmitOnEdit }
+				editId={props.editId}
+				onGoBack={handlers.onGoBack}
+				onClose={handlers.onClose}
+				onSubmit={handleSubmitOnEdit}
 			/>
 		);
 	}

@@ -35,61 +35,61 @@ import { SanitizeOverridableProps } from './sync/sanitize-overridable-props';
 const PRIORITY = 1;
 
 export function initExtended() {
-	registerEditingPanelReplacement( {
+	registerEditingPanelReplacement({
 		id: 'extended-component-instance-edit-panel',
 		priority: PRIORITY,
-		condition: ( _, elementType ) => elementType.key === 'e-component',
+		condition: (_, elementType) => elementType.key === 'e-component',
 		component: ExtendedInstanceEditingPanel,
-	} );
+	});
 
-	registerTab( {
+	registerTab({
 		id: 'components',
-		label: __( 'Components', 'elementor' ),
+		label: __('Components', 'elementor'),
 		component: ExtendedComponents,
 		priority: PRIORITY,
-	} );
+	});
 
-	registerPanel( componentPropertiesPanel );
+	registerPanel(componentPropertiesPanel);
 
-	registerDataHook( 'dependency', 'editor/documents/close', ( args ) => {
+	registerDataHook('dependency', 'editor/documents/close', (args) => {
 		const document = getV1CurrentDocument();
-		if ( document.config.type === COMPONENT_DOCUMENT_TYPE ) {
+		if (document.config.type === COMPONENT_DOCUMENT_TYPE) {
 			args.mode = 'autosave';
 		}
 		return true;
-	} );
+	});
 
-	registerDataHook( 'after', 'preview/drop', onElementDrop );
+	registerDataHook('after', 'preview/drop', onElementDrop);
 
-	( window as unknown as ExtendedWindow ).elementorCommon.__beforeSave = beforeSave;
+	(window as unknown as ExtendedWindow).elementorCommon.__beforeSave = beforeSave;
 
-	injectIntoTop( {
+	injectIntoTop({
 		id: 'create-component-popup',
 		component: CreateComponentForm,
-	} );
+	});
 
-	injectIntoTop( {
+	injectIntoTop({
 		id: 'edit-component',
 		component: EditComponent,
-	} );
+	});
 
-	injectIntoPanelHeaderTop( {
+	injectIntoPanelHeaderTop({
 		id: 'component-panel-header',
 		component: ComponentPanelHeader,
-	} );
+	});
 
-	registerFieldIndicator( {
+	registerFieldIndicator({
 		fieldType: FIELD_TYPE.SETTINGS,
 		id: 'component-overridable-prop',
 		priority: 1,
 		indicator: OverridablePropIndicator,
-	} );
+	});
 
-	registerControlReplacement( {
+	registerControlReplacement({
 		id: OVERRIDABLE_PROP_REPLACEMENT_ID,
 		component: OverridablePropControl,
-		condition: ( { value } ) => componentOverridablePropTypeUtil.isValid( value ),
-	} );
+		condition: ({ value }) => componentOverridablePropTypeUtil.isValid(value),
+	});
 
 	initCleanupOverridablePropsOnDelete();
 
@@ -101,8 +101,8 @@ export function initExtended() {
 
 	initRevertOverridablesOnCopyOrDuplicate();
 
-	injectIntoLogic( {
+	injectIntoLogic({
 		id: 'sanitize-overridable-props',
 		component: SanitizeOverridableProps,
-	} );
+	});
 }

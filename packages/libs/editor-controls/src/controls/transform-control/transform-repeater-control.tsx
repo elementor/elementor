@@ -22,20 +22,20 @@ import { TransformSettingsControl } from './transform-settings-control';
 const SIZE = 'tiny';
 
 export const TransformRepeaterControl = createControl(
-	( { showChildrenPerspective }: { showChildrenPerspective: boolean } ) => {
-		const context = useBoundProp( transformPropTypeUtil );
-		const headerRef = useRef< HTMLDivElement >( null );
-		const popupState = usePopupState( { variant: 'popover' } );
+	({ showChildrenPerspective }: { showChildrenPerspective: boolean }) => {
+		const context = useBoundProp(transformPropTypeUtil);
+		const headerRef = useRef<HTMLDivElement>(null);
+		const popupState = usePopupState({ variant: 'popover' });
 
 		return (
-			<PropProvider { ...context }>
+			<PropProvider {...context}>
 				<TransformSettingsControl
-					popupState={ popupState }
-					anchorRef={ headerRef }
-					showChildrenPerspective={ showChildrenPerspective }
+					popupState={popupState}
+					anchorRef={headerRef}
+					showChildrenPerspective={showChildrenPerspective}
 				/>
-				<PropKeyProvider bind={ 'transform-functions' }>
-					<Repeater headerRef={ headerRef } propType={ context.propType } popupState={ popupState } />
+				<PropKeyProvider bind={'transform-functions'}>
+					<Repeater headerRef={headerRef} propType={context.propType} popupState={popupState} />
 				</PropKeyProvider>
 			</PropProvider>
 		);
@@ -43,60 +43,56 @@ export const TransformRepeaterControl = createControl(
 );
 
 const ToolTip = (
-	<Box
-		component="span"
-		aria-label={ undefined }
-		sx={ { display: 'flex', gap: 0.5, p: 2, width: 320, borderRadius: 1 } }
-	>
-		<InfoCircleFilledIcon sx={ { color: 'secondary.main' } } />
+	<Box component="span" aria-label={undefined} sx={{ display: 'flex', gap: 0.5, p: 2, width: 320, borderRadius: 1 }}>
+		<InfoCircleFilledIcon sx={{ color: 'secondary.main' }} />
 		<Typography variant="body2" color="text.secondary" fontSize="14px">
-			{ __( 'You can use each kind of transform only once per element.', 'elementor' ) }
+			{__('You can use each kind of transform only once per element.', 'elementor')}
 		</Typography>
 	</Box>
 );
 
-const Repeater = ( {
+const Repeater = ({
 	headerRef,
 	propType,
 	popupState,
 }: {
-	headerRef: React.RefObject< HTMLDivElement >;
+	headerRef: React.RefObject<HTMLDivElement>;
 	propType: PropType;
 	popupState: PopupState;
-} ) => {
-	const transformFunctionsContext = useBoundProp( transformFunctionsPropTypeUtil );
-	const availableValues = [ initialTransformValue, initialScaleValue, initialRotateValue, initialSkewValue ];
+}) => {
+	const transformFunctionsContext = useBoundProp(transformFunctionsPropTypeUtil);
+	const availableValues = [initialTransformValue, initialScaleValue, initialRotateValue, initialSkewValue];
 	const { value: transformValues, bind } = transformFunctionsContext;
 
 	const getInitialValue = () => {
-		return availableValues.find( ( value ) => ! transformValues?.some( ( item ) => item.$$type === value.$$type ) );
+		return availableValues.find((value) => !transformValues?.some((item) => item.$$type === value.$$type));
 	};
 
-	const shouldDisableAddItem = ! getInitialValue();
+	const shouldDisableAddItem = !getInitialValue();
 
 	return (
-		<PropProvider { ...transformFunctionsContext }>
+		<PropProvider {...transformFunctionsContext}>
 			<ControlRepeater
-				initial={ getInitialValue() ?? initialTransformValue }
-				propTypeUtil={ transformFunctionsPropTypeUtil }
+				initial={getInitialValue() ?? initialTransformValue}
+				propTypeUtil={transformFunctionsPropTypeUtil}
 			>
 				<RepeaterHeader
-					label={ __( 'Transform', 'elementor' ) }
-					adornment={ () => <ControlAdornments customContext={ { path: [ 'transform' ], propType } } /> }
-					ref={ headerRef }
+					label={__('Transform', 'elementor')}
+					adornment={() => <ControlAdornments customContext={{ path: ['transform'], propType }} />}
+					ref={headerRef}
 				>
-					<TransformBasePopoverTrigger popupState={ popupState } repeaterBindKey={ bind } />
+					<TransformBasePopoverTrigger popupState={popupState} repeaterBindKey={bind} />
 					<TooltipAddItemAction
-						disabled={ shouldDisableAddItem }
-						tooltipContent={ ToolTip }
-						enableTooltip={ shouldDisableAddItem }
-						ariaLabel={ 'transform' }
+						disabled={shouldDisableAddItem}
+						tooltipContent={ToolTip}
+						enableTooltip={shouldDisableAddItem}
+						ariaLabel={'transform'}
 					/>
 				</RepeaterHeader>
 				<ItemsContainer>
 					<Item
-						Icon={ TransformIcon }
-						Label={ TransformLabel }
+						Icon={TransformIcon}
+						Label={TransformLabel}
 						actions={
 							<>
 								<DisableItemAction />
@@ -113,20 +109,20 @@ const Repeater = ( {
 	);
 };
 
-const TransformBasePopoverTrigger = ( {
+const TransformBasePopoverTrigger = ({
 	popupState,
 	repeaterBindKey,
 }: {
 	popupState: PopupState;
 	repeaterBindKey: string;
-} ) => {
+}) => {
 	const { bind } = useBoundProp();
-	const titleLabel = __( 'Transform settings', 'elementor' );
+	const titleLabel = __('Transform settings', 'elementor');
 
 	return bind !== repeaterBindKey ? null : (
-		<Tooltip title={ titleLabel } placement="top">
-			<IconButton size={ SIZE } aria-label={ titleLabel } { ...bindTrigger( popupState ) }>
-				<AdjustmentsIcon fontSize={ SIZE } />
+		<Tooltip title={titleLabel} placement="top">
+			<IconButton size={SIZE} aria-label={titleLabel} {...bindTrigger(popupState)}>
+				<AdjustmentsIcon fontSize={SIZE} />
 			</IconButton>
 		</Tooltip>
 	);

@@ -5,36 +5,36 @@ import { screen } from '@testing-library/react';
 
 import { RepeatableControl } from '../repeatable-control';
 
-jest.mock( '../../bound-prop-context', () => ( {
-	...jest.requireActual( '../../bound-prop-context' ),
+jest.mock('../../bound-prop-context', () => ({
+	...jest.requireActual('../../bound-prop-context'),
 	useBoundProp: jest.fn(),
-} ) );
+}));
 
-jest.mock( '../../components/control-repeater/context/repeater-context', () => ( {
-	...jest.requireActual( '../../components/control-repeater/context/repeater-context' ),
+jest.mock('../../components/control-repeater/context/repeater-context', () => ({
+	...jest.requireActual('../../components/control-repeater/context/repeater-context'),
 	useRepeaterContext: jest.fn(),
-} ) );
+}));
 
 import { useBoundProp } from '../../bound-prop-context';
 import { useRepeaterContext } from '../../components/control-repeater/context/repeater-context';
 import { type RepeatablePropValue } from '../../components/control-repeater/types';
-const mockUseRepeaterContext = useRepeaterContext as jest.MockedFunction< typeof useRepeaterContext >;
-const mockUseBoundProp = useBoundProp as jest.MockedFunction< typeof useBoundProp >;
+const mockUseRepeaterContext = useRepeaterContext as jest.MockedFunction<typeof useRepeaterContext>;
+const mockUseBoundProp = useBoundProp as jest.MockedFunction<typeof useBoundProp>;
 const TEXT_PRIMARY_COLOR = 'rgb(12, 13, 14)';
 const TEXT_TERTIARY_COLOR = 'rgb(105, 114, 125)';
 const TEXT_DISABLED_COLOR = 'rgb(157, 165, 174)';
 
-const stringPropType = createMockPropType( { kind: 'object' } );
+const stringPropType = createMockPropType({ kind: 'object' });
 
-const getMockRepeaterContext = ( value: RepeatablePropValue, setValue?: ReturnType< typeof jest.fn > ) => ( {
+const getMockRepeaterContext = (value: RepeatablePropValue, setValue?: ReturnType<typeof jest.fn>) => ({
 	index: 0,
 	value,
 	setItems: setValue ?? jest.fn(),
-	items: [ { key: 0, item: value } ],
+	items: [{ key: 0, item: value }],
 	isOpen: false,
 	openItemIndex: 0,
 	setOpenItemIndex: jest.fn(),
-	initial: { $$type: 'string-array', value: [ { $$type: 'string', value: null } ] },
+	initial: { $$type: 'string-array', value: [{ $$type: 'string', value: null }] },
 	addItem: jest.fn(),
 	updateItem: jest.fn(),
 	removeItem: jest.fn(),
@@ -60,7 +60,7 @@ const getMockRepeaterContext = ( value: RepeatablePropValue, setValue?: ReturnTy
 		_childPopupState: undefined,
 		_setChildPopupState: jest.fn(),
 	},
-} );
+});
 
 const baseProps = {
 	bind: 'items',
@@ -69,16 +69,16 @@ const baseProps = {
 	value: [],
 };
 
-const mockTextControl = jest.fn( ( { placeholder } ) => (
-	<input title="text-control" defaultValue={ placeholder } data-testid="text-control" />
-) );
+const mockTextControl = jest.fn(({ placeholder }) => (
+	<input title="text-control" defaultValue={placeholder} data-testid="text-control" />
+));
 
-describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', () => {
-	beforeEach( () => {
+describe('<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', () => {
+	beforeEach(() => {
 		jest.clearAllMocks();
-	} );
+	});
 
-	it( 'should show placeholder when pattern has placeholders but data is null', () => {
+	it('should show placeholder when pattern has placeholders but data is null', () => {
 		// Arrange.
 		const childControlConfig = {
 			component: mockTextControl,
@@ -88,24 +88,24 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 
 		const value = { $$type: 'string', value: null };
 
-		mockUseBoundProp.mockReturnValue( {
-			propType: createMockPropType( { kind: 'array' } ),
-			value: [ value ],
+		mockUseBoundProp.mockReturnValue({
+			propType: createMockPropType({ kind: 'array' }),
+			value: [value],
 			setValue: jest.fn(),
 			bind: 'items',
 			path: [],
 			restoreValue: jest.fn(),
 			resetValue: jest.fn(),
-		} );
+		});
 
-		mockUseRepeaterContext.mockReturnValue( getMockRepeaterContext( value ) );
+		mockUseRepeaterContext.mockReturnValue(getMockRepeaterContext(value));
 
 		// Act.
 		renderControl(
 			<RepeatableControl
 				label="Text Items"
 				repeaterLabel="Text Items"
-				childControlConfig={ childControlConfig }
+				childControlConfig={childControlConfig}
 				patternLabel="Item: ${value}"
 				placeholder="Empty item"
 			/>,
@@ -113,12 +113,12 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 		);
 
 		// Assert.
-		const placeholderElement = screen.getByText( 'Empty item' );
-		expect( placeholderElement ).toBeInTheDocument();
-		expect( placeholderElement ).toHaveStyle( { color: TEXT_TERTIARY_COLOR } );
-	} );
+		const placeholderElement = screen.getByText('Empty item');
+		expect(placeholderElement).toBeInTheDocument();
+		expect(placeholderElement).toHaveStyle({ color: TEXT_TERTIARY_COLOR });
+	});
 
-	it( 'should show placeholder when pattern has placeholders but data has empty string', () => {
+	it('should show placeholder when pattern has placeholders but data has empty string', () => {
 		// Arrange.
 		const childControlConfig = {
 			component: mockTextControl,
@@ -128,24 +128,24 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 
 		const value = { $$type: 'string', value: '' };
 
-		mockUseBoundProp.mockReturnValue( {
-			propType: createMockPropType( { kind: 'array' } ),
-			value: [ value ],
+		mockUseBoundProp.mockReturnValue({
+			propType: createMockPropType({ kind: 'array' }),
+			value: [value],
 			setValue: jest.fn(),
 			bind: 'items',
 			path: [],
 			restoreValue: jest.fn(),
 			resetValue: jest.fn(),
-		} );
+		});
 
-		mockUseRepeaterContext.mockReturnValue( getMockRepeaterContext( value ) );
+		mockUseRepeaterContext.mockReturnValue(getMockRepeaterContext(value));
 
 		// Act.
 		renderControl(
 			<RepeatableControl
 				label="Text Items"
 				repeaterLabel="Text Items"
-				childControlConfig={ childControlConfig }
+				childControlConfig={childControlConfig}
 				patternLabel="Item: ${value}"
 				placeholder="Empty item"
 			/>,
@@ -153,12 +153,12 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 		);
 
 		// Assert.
-		const placeholderElement = screen.getByText( 'Empty item' );
-		expect( placeholderElement ).toBeInTheDocument();
-		expect( placeholderElement ).toHaveStyle( { color: TEXT_TERTIARY_COLOR } );
-	} );
+		const placeholderElement = screen.getByText('Empty item');
+		expect(placeholderElement).toBeInTheDocument();
+		expect(placeholderElement).toHaveStyle({ color: TEXT_TERTIARY_COLOR });
+	});
 
-	it( 'should show placeholder when pattern has placeholders but data has whitespace-only string', () => {
+	it('should show placeholder when pattern has placeholders but data has whitespace-only string', () => {
 		// Arrange.
 		const childControlConfig = {
 			component: mockTextControl,
@@ -168,24 +168,24 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 
 		const value = { $$type: 'string', value: '   ' };
 
-		mockUseBoundProp.mockReturnValue( {
-			propType: createMockPropType( { kind: 'array' } ),
-			value: [ value ],
+		mockUseBoundProp.mockReturnValue({
+			propType: createMockPropType({ kind: 'array' }),
+			value: [value],
 			setValue: jest.fn(),
 			bind: 'items',
 			path: [],
 			restoreValue: jest.fn(),
 			resetValue: jest.fn(),
-		} );
+		});
 
-		mockUseRepeaterContext.mockReturnValue( getMockRepeaterContext( value ) );
+		mockUseRepeaterContext.mockReturnValue(getMockRepeaterContext(value));
 
 		// Act.
 		renderControl(
 			<RepeatableControl
 				label="Text Items"
 				repeaterLabel="Text Items"
-				childControlConfig={ childControlConfig }
+				childControlConfig={childControlConfig}
 				patternLabel="Item: ${value}"
 				placeholder="Empty item"
 			/>,
@@ -193,12 +193,12 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 		);
 
 		// Assert.
-		const placeholderElement = screen.getByText( 'Empty item' );
-		expect( placeholderElement ).toBeInTheDocument();
-		expect( placeholderElement ).toHaveStyle( { color: TEXT_TERTIARY_COLOR } );
-	} );
+		const placeholderElement = screen.getByText('Empty item');
+		expect(placeholderElement).toBeInTheDocument();
+		expect(placeholderElement).toHaveStyle({ color: TEXT_TERTIARY_COLOR });
+	});
 
-	it( 'should show interpolated pattern when data has valid values', () => {
+	it('should show interpolated pattern when data has valid values', () => {
 		// Arrange.
 		const childControlConfig = {
 			component: mockTextControl,
@@ -208,24 +208,24 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 
 		const value = { $$type: 'string', value: 'Hello World' };
 
-		mockUseBoundProp.mockReturnValue( {
-			propType: createMockPropType( { kind: 'array' } ),
-			value: [ value ],
+		mockUseBoundProp.mockReturnValue({
+			propType: createMockPropType({ kind: 'array' }),
+			value: [value],
 			setValue: jest.fn(),
 			bind: 'items',
 			path: [],
 			restoreValue: jest.fn(),
 			resetValue: jest.fn(),
-		} );
+		});
 
-		mockUseRepeaterContext.mockReturnValue( getMockRepeaterContext( value ) );
+		mockUseRepeaterContext.mockReturnValue(getMockRepeaterContext(value));
 
 		// Act.
 		renderControl(
 			<RepeatableControl
 				label="Text Items"
 				repeaterLabel="Text Items"
-				childControlConfig={ childControlConfig }
+				childControlConfig={childControlConfig}
 				patternLabel="Item: ${value}"
 				placeholder="Empty item"
 			/>,
@@ -233,12 +233,12 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 		);
 
 		// Assert.
-		const labelElement = screen.getByText( 'Item: Hello World' );
-		expect( labelElement ).toBeInTheDocument();
-		expect( labelElement ).toHaveStyle( { color: TEXT_PRIMARY_COLOR } );
-	} );
+		const labelElement = screen.getByText('Item: Hello World');
+		expect(labelElement).toBeInTheDocument();
+		expect(labelElement).toHaveStyle({ color: TEXT_PRIMARY_COLOR });
+	});
 
-	it( 'should show interpolated pattern when no placeholders are present', () => {
+	it('should show interpolated pattern when no placeholders are present', () => {
 		// Arrange.
 		const childControlConfig = {
 			component: mockTextControl,
@@ -248,24 +248,24 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 
 		const value = { $$type: 'string', value: null };
 
-		mockUseBoundProp.mockReturnValue( {
-			propType: createMockPropType( { kind: 'array' } ),
-			value: [ value ],
+		mockUseBoundProp.mockReturnValue({
+			propType: createMockPropType({ kind: 'array' }),
+			value: [value],
 			setValue: jest.fn(),
 			bind: 'items',
 			path: [],
 			restoreValue: jest.fn(),
 			resetValue: jest.fn(),
-		} );
+		});
 
-		mockUseRepeaterContext.mockReturnValue( getMockRepeaterContext( value ) );
+		mockUseRepeaterContext.mockReturnValue(getMockRepeaterContext(value));
 
 		// Act.
 		renderControl(
 			<RepeatableControl
 				label="Text Items"
 				repeaterLabel="Text Items"
-				childControlConfig={ childControlConfig }
+				childControlConfig={childControlConfig}
 				patternLabel="Static Label"
 				placeholder="Empty item"
 			/>,
@@ -273,14 +273,14 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 		);
 
 		// Assert.
-		const labelElement = screen.getByText( 'Static Label' );
-		expect( labelElement ).toBeInTheDocument();
-		expect( labelElement ).toHaveStyle( { color: TEXT_PRIMARY_COLOR } );
-	} );
+		const labelElement = screen.getByText('Static Label');
+		expect(labelElement).toBeInTheDocument();
+		expect(labelElement).toHaveStyle({ color: TEXT_PRIMARY_COLOR });
+	});
 
-	it( 'should show interpolated pattern when nested object properties exist', () => {
+	it('should show interpolated pattern when nested object properties exist', () => {
 		// Arrange.
-		const objectPropTypeUtil = createMockPropUtil( 'object', createMockSchema( 'object' ) );
+		const objectPropTypeUtil = createMockPropUtil('object', createMockSchema('object'));
 		const childControlConfig = {
 			component: mockTextControl,
 			props: { placeholder: 'Enter text' },
@@ -289,24 +289,24 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 
 		const value = { $$type: 'object', value: { user: { name: 'John Doe', email: 'john@example.com' } } };
 
-		mockUseBoundProp.mockReturnValue( {
-			propType: createMockPropType( { kind: 'array' } ),
-			value: [ value ],
+		mockUseBoundProp.mockReturnValue({
+			propType: createMockPropType({ kind: 'array' }),
+			value: [value],
 			setValue: jest.fn(),
 			bind: 'items',
 			path: [],
 			restoreValue: jest.fn(),
 			resetValue: jest.fn(),
-		} );
+		});
 
-		mockUseRepeaterContext.mockReturnValue( getMockRepeaterContext( value ) );
+		mockUseRepeaterContext.mockReturnValue(getMockRepeaterContext(value));
 
 		// Act.
 		renderControl(
 			<RepeatableControl
 				label="Text Items"
 				repeaterLabel="Text Items"
-				childControlConfig={ childControlConfig }
+				childControlConfig={childControlConfig}
 				patternLabel="User: ${value.user.name} - ${value.user.email}"
 				placeholder="No user data"
 			/>,
@@ -314,14 +314,14 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 		);
 
 		// Assert.
-		const labelElement = screen.getByText( 'User: John Doe - john@example.com' );
-		expect( labelElement ).toBeInTheDocument();
-		expect( labelElement ).toHaveStyle( { color: TEXT_PRIMARY_COLOR } );
-	} );
+		const labelElement = screen.getByText('User: John Doe - john@example.com');
+		expect(labelElement).toBeInTheDocument();
+		expect(labelElement).toHaveStyle({ color: TEXT_PRIMARY_COLOR });
+	});
 
-	it( 'should show placeholder when nested object properties are missing', () => {
+	it('should show placeholder when nested object properties are missing', () => {
 		// Arrange.
-		const objectPropTypeUtil = createMockPropUtil( 'object', createMockSchema( 'object' ) );
+		const objectPropTypeUtil = createMockPropUtil('object', createMockSchema('object'));
 		const childControlConfig = {
 			component: mockTextControl,
 			props: { placeholder: 'Enter text' },
@@ -330,24 +330,24 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 
 		const value = { $$type: 'object', value: { user: { name: 'John Doe' } } };
 
-		mockUseBoundProp.mockReturnValue( {
-			propType: createMockPropType( { kind: 'array' } ),
-			value: [ value ],
+		mockUseBoundProp.mockReturnValue({
+			propType: createMockPropType({ kind: 'array' }),
+			value: [value],
 			setValue: jest.fn(),
 			bind: 'items',
 			path: [],
 			restoreValue: jest.fn(),
 			resetValue: jest.fn(),
-		} );
+		});
 
-		mockUseRepeaterContext.mockReturnValue( getMockRepeaterContext( value ) );
+		mockUseRepeaterContext.mockReturnValue(getMockRepeaterContext(value));
 
 		// Act.
 		renderControl(
 			<RepeatableControl
 				label="Text Items"
 				repeaterLabel="Text Items"
-				childControlConfig={ childControlConfig }
+				childControlConfig={childControlConfig}
 				patternLabel="User: ${user.name} - ${user.email}"
 				placeholder="No user data"
 			/>,
@@ -355,14 +355,14 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 		);
 
 		// Assert.
-		const placeholderElement = screen.getByText( 'No user data' );
-		expect( placeholderElement ).toBeInTheDocument();
-		expect( placeholderElement ).toHaveStyle( { color: TEXT_TERTIARY_COLOR } );
-	} );
+		const placeholderElement = screen.getByText('No user data');
+		expect(placeholderElement).toBeInTheDocument();
+		expect(placeholderElement).toHaveStyle({ color: TEXT_TERTIARY_COLOR });
+	});
 
-	it( 'should show interpolated pattern when some values are considered empty but others are not', () => {
+	it('should show interpolated pattern when some values are considered empty but others are not', () => {
 		// Arrange.
-		const objectPropTypeUtil = createMockPropUtil( 'object', createMockSchema( 'object' ) );
+		const objectPropTypeUtil = createMockPropUtil('object', createMockSchema('object'));
 		const childControlConfig = {
 			component: mockTextControl,
 			props: { placeholder: 'Enter text' },
@@ -371,24 +371,24 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 
 		const value = { $$type: 'object', value: { title: 'My Title', description: '' } };
 
-		mockUseBoundProp.mockReturnValue( {
-			propType: createMockPropType( { kind: 'array' } ),
-			value: [ value ],
+		mockUseBoundProp.mockReturnValue({
+			propType: createMockPropType({ kind: 'array' }),
+			value: [value],
 			setValue: jest.fn(),
 			bind: 'items',
 			path: [],
 			restoreValue: jest.fn(),
 			resetValue: jest.fn(),
-		} );
+		});
 
-		mockUseRepeaterContext.mockReturnValue( getMockRepeaterContext( value ) );
+		mockUseRepeaterContext.mockReturnValue(getMockRepeaterContext(value));
 
 		// Act.
 		renderControl(
 			<RepeatableControl
 				label="Text Items"
 				repeaterLabel="Text Items"
-				childControlConfig={ childControlConfig }
+				childControlConfig={childControlConfig}
 				patternLabel="Title: ${value.title} - Description: ${value.description}"
 				placeholder="Incomplete data"
 			/>,
@@ -396,14 +396,14 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 		);
 
 		// Assert.
-		const labelElement = screen.getByText( 'Title: My Title - Description:' );
-		expect( labelElement ).toBeInTheDocument();
-		expect( labelElement ).toHaveStyle( { color: TEXT_PRIMARY_COLOR } );
-	} );
+		const labelElement = screen.getByText('Title: My Title - Description:');
+		expect(labelElement).toBeInTheDocument();
+		expect(labelElement).toHaveStyle({ color: TEXT_PRIMARY_COLOR });
+	});
 
-	it( 'should show placeholder when all pattern values are empty', () => {
+	it('should show placeholder when all pattern values are empty', () => {
 		// Arrange.
-		const objectPropTypeUtil = createMockPropUtil( 'object', createMockSchema( 'object' ) );
+		const objectPropTypeUtil = createMockPropUtil('object', createMockSchema('object'));
 		const childControlConfig = {
 			component: mockTextControl,
 			props: { placeholder: 'Enter text' },
@@ -412,24 +412,24 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 
 		const value = { $$type: 'object', value: { title: '', description: '   ' } };
 
-		mockUseBoundProp.mockReturnValue( {
-			propType: createMockPropType( { kind: 'array' } ),
-			value: [ value ],
+		mockUseBoundProp.mockReturnValue({
+			propType: createMockPropType({ kind: 'array' }),
+			value: [value],
 			setValue: jest.fn(),
 			bind: 'items',
 			path: [],
 			restoreValue: jest.fn(),
 			resetValue: jest.fn(),
-		} );
+		});
 
-		mockUseRepeaterContext.mockReturnValue( getMockRepeaterContext( value ) );
+		mockUseRepeaterContext.mockReturnValue(getMockRepeaterContext(value));
 
 		// Act.
 		renderControl(
 			<RepeatableControl
 				label="Text Items"
 				repeaterLabel="Text Items"
-				childControlConfig={ childControlConfig }
+				childControlConfig={childControlConfig}
 				patternLabel="Title: ${value.title} - Description: ${value.description}"
 				placeholder="All empty"
 			/>,
@@ -437,12 +437,12 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 		);
 
 		// Assert.
-		const placeholderElement = screen.getByText( 'All empty' );
-		expect( placeholderElement ).toBeInTheDocument();
-		expect( placeholderElement ).toHaveStyle( { color: TEXT_TERTIARY_COLOR } );
-	} );
+		const placeholderElement = screen.getByText('All empty');
+		expect(placeholderElement).toBeInTheDocument();
+		expect(placeholderElement).toHaveStyle({ color: TEXT_TERTIARY_COLOR });
+	});
 
-	it( 'should use disabled color when readOnly is true', () => {
+	it('should use disabled color when readOnly is true', () => {
 		// Arrange.
 		const childControlConfig = {
 			component: mockTextControl,
@@ -452,24 +452,24 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 
 		const value = { $$type: 'string', value: 'Hello' };
 
-		mockUseBoundProp.mockReturnValue( {
-			propType: createMockPropType( { kind: 'array' } ),
-			value: [ value ],
+		mockUseBoundProp.mockReturnValue({
+			propType: createMockPropType({ kind: 'array' }),
+			value: [value],
 			setValue: jest.fn(),
 			bind: 'items',
 			path: [],
 			restoreValue: jest.fn(),
 			resetValue: jest.fn(),
-		} );
+		});
 
-		mockUseRepeaterContext.mockReturnValue( getMockRepeaterContext( value ) );
+		mockUseRepeaterContext.mockReturnValue(getMockRepeaterContext(value));
 
 		// Act.
 		renderControl(
 			<RepeatableControl
 				label="Text Items"
 				repeaterLabel="Text Items"
-				childControlConfig={ childControlConfig }
+				childControlConfig={childControlConfig}
 				patternLabel="Item: ${value}"
 				placeholder="Empty item"
 			/>,
@@ -477,8 +477,8 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 		);
 
 		// Assert
-		const labelElement = screen.getByText( 'Item: Hello' );
-		expect( labelElement ).toBeInTheDocument();
-		expect( labelElement ).toHaveStyle( { color: TEXT_DISABLED_COLOR } );
-	} );
-} );
+		const labelElement = screen.getByText('Item: Hello');
+		expect(labelElement).toBeInTheDocument();
+		expect(labelElement).toHaveStyle({ color: TEXT_DISABLED_COLOR });
+	});
+});

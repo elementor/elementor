@@ -7,10 +7,10 @@ type TransformChildren = {
 
 const FALLBACK = '0px';
 
-function getVal( val: string ) {
-	return `${ val ?? FALLBACK }`;
+function getVal(val: string) {
+	return `${val ?? FALLBACK}`;
 }
 
 export const perspectiveOriginTransformer = createTransformer(
-	( value: TransformChildren ) => `${ getVal( value?.x ) } ${ getVal( value?.y ) }`
+	(value: TransformChildren) => `${getVal(value?.x)} ${getVal(value?.y)}`
 );

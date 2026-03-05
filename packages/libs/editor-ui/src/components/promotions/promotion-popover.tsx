@@ -17,36 +17,36 @@ type PromotionPopoverCardProps = {
 	content: string;
 	ctaUrl: string;
 	ctaText?: string;
-	onClose: ( e: MouseEvent ) => void;
+	onClose: (e: MouseEvent) => void;
 };
 
 type PromotionPopoverProps = React.PropsWithChildren<
 	PromotionPopoverCardProps & {
 		open: boolean;
-		placement?: InfotipProps[ 'placement' ];
-		slotProps?: InfotipProps[ 'slotProps' ];
-		anchorRef?: RefObject< HTMLElement | null >;
+		placement?: InfotipProps['placement'];
+		slotProps?: InfotipProps['slotProps'];
+		anchorRef?: RefObject<HTMLElement | null>;
 	}
 >;
 
-export const PromotionPopover = ( {
+export const PromotionPopover = ({
 	children,
 	open,
 	placement = 'right',
 	slotProps,
 	anchorRef,
 	...cardProps
-}: PromotionPopoverProps ) => {
+}: PromotionPopoverProps) => {
 	const anchorEl = anchorRef?.current;
 
-	const defaultSlotProps: InfotipProps[ 'slotProps' ] = {
+	const defaultSlotProps: InfotipProps['slotProps'] = {
 		popper: {
-			...( anchorEl && { anchorEl } ),
+			...(anchorEl && { anchorEl }),
 			modifiers: [
 				{
 					name: 'offset',
 					options: {
-						offset: anchorRef ? [ 0, 4 ] : [ 0, 10 ],
+						offset: anchorRef ? [0, 4] : [0, 10],
 					},
 				},
 			],
@@ -55,49 +55,49 @@ export const PromotionPopover = ( {
 
 	return (
 		<Infotip
-			placement={ placement }
-			arrow={ false }
-			content={ <PopoverAlert { ...cardProps } /> }
-			open={ open }
-			slotProps={ slotProps || defaultSlotProps }
+			placement={placement}
+			arrow={false}
+			content={<PopoverAlert {...cardProps} />}
+			open={open}
+			slotProps={slotProps || defaultSlotProps}
 		>
-			{ children }
+			{children}
 		</Infotip>
 	);
 };
 
-function PopoverAlert( { title, content, ctaUrl, ctaText, onClose }: PromotionPopoverCardProps ) {
+function PopoverAlert({ title, content, ctaUrl, ctaText, onClose }: PromotionPopoverCardProps) {
 	return (
 		<ClickAwayListener
-			disableReactTree={ true }
+			disableReactTree={true}
 			mouseEvent="onMouseDown"
 			touchEvent="onTouchStart"
-			onClickAway={ onClose }
+			onClickAway={onClose}
 		>
 			<Alert
 				variant="standard"
 				color="promotion"
-				icon={ <CrownFilledIcon fontSize="tiny" /> }
-				onClose={ onClose }
-				onMouseDown={ ( e: MouseEvent ) => e.stopPropagation() }
+				icon={<CrownFilledIcon fontSize="tiny" />}
+				onClose={onClose}
+				onMouseDown={(e: MouseEvent) => e.stopPropagation()}
 				role="dialog"
 				aria-label="promotion-popover-title"
 				action={
 					<AlertAction
 						variant="contained"
 						color="promotion"
-						href={ ctaUrl }
+						href={ctaUrl}
 						target="_blank"
 						rel="noopener noreferrer"
 					>
-						{ ctaText }
+						{ctaText}
 					</AlertAction>
 				}
-				sx={ { maxWidth: 296 } }
+				sx={{ maxWidth: 296 }}
 			>
-				<Box sx={ { gap: 0.5, display: 'flex', flexDirection: 'column' } }>
-					<AlertTitle>{ title }</AlertTitle>
-					<Typography variant="body2">{ content }</Typography>
+				<Box sx={{ gap: 0.5, display: 'flex', flexDirection: 'column' }}>
+					<AlertTitle>{title}</AlertTitle>
+					<Typography variant="body2">{content}</Typography>
 				</Box>
 			</Alert>
 		</ClickAwayListener>

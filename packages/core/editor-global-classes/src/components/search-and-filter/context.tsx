@@ -11,13 +11,13 @@ export type CheckedFilters = {
 type SearchContextType = {
 	debouncedValue: string;
 	inputValue: string;
-	handleChange: ( value: string ) => void;
+	handleChange: (value: string) => void;
 	onClearSearch: () => void;
 };
 type FilterAndSortContextType = {
 	filters: CheckedFilters;
-	setFilters: React.Dispatch< React.SetStateAction< CheckedFilters > >;
-	onClearFilter: ( type?: 'menu' | 'header' ) => void;
+	setFilters: React.Dispatch<React.SetStateAction<CheckedFilters>>;
+	onClearFilter: (type?: 'menu' | 'header') => void;
 };
 
 export type SearchAndFilterContextType = {
@@ -25,7 +25,7 @@ export type SearchAndFilterContextType = {
 	filters: FilterAndSortContextType;
 };
 
-const SearchAndFilterContext = createContext< SearchAndFilterContextType | undefined >( undefined );
+const SearchAndFilterContext = createContext<SearchAndFilterContextType | undefined>(undefined);
 
 const INIT_CHECKED_FILTERS: CheckedFilters = {
 	empty: false,
@@ -33,34 +33,34 @@ const INIT_CHECKED_FILTERS: CheckedFilters = {
 	unused: false,
 };
 
-export const SearchAndFilterProvider = ( { children }: React.PropsWithChildren ) => {
-	const [ filters, setFilters ] = React.useState< CheckedFilters >( INIT_CHECKED_FILTERS );
+export const SearchAndFilterProvider = ({ children }: React.PropsWithChildren) => {
+	const [filters, setFilters] = React.useState<CheckedFilters>(INIT_CHECKED_FILTERS);
 
 	const getInitialSearchValue = () => {
-		const storedValue = localStorage.getItem( 'elementor-global-classes-search' );
-		if ( storedValue ) {
-			localStorage.removeItem( 'elementor-global-classes-search' );
+		const storedValue = localStorage.getItem('elementor-global-classes-search');
+		if (storedValue) {
+			localStorage.removeItem('elementor-global-classes-search');
 			return storedValue;
 		}
 		return '';
 	};
 
-	const { debouncedValue, inputValue, handleChange } = useDebounceState( {
+	const { debouncedValue, inputValue, handleChange } = useDebounceState({
 		delay: 300,
 		initialValue: getInitialSearchValue(),
-	} );
+	});
 
 	const onClearSearch = () => {
-		handleChange( '' );
+		handleChange('');
 	};
 
 	const onClearFilter = () => {
-		setFilters( INIT_CHECKED_FILTERS );
+		setFilters(INIT_CHECKED_FILTERS);
 	};
 
 	return (
 		<SearchAndFilterContext.Provider
-			value={ {
+			value={{
 				search: {
 					debouncedValue,
 					inputValue,
@@ -72,17 +72,17 @@ export const SearchAndFilterProvider = ( { children }: React.PropsWithChildren )
 					setFilters,
 					onClearFilter,
 				},
-			} }
+			}}
 		>
-			{ children }
+			{children}
 		</SearchAndFilterContext.Provider>
 	);
 };
 
 export const useSearchAndFilters = () => {
-	const context = useContext( SearchAndFilterContext );
-	if ( ! context ) {
-		throw new Error( 'useSearchContext must be used within a SearchContextProvider' );
+	const context = useContext(SearchAndFilterContext);
+	if (!context) {
+		throw new Error('useSearchContext must be used within a SearchContextProvider');
 	}
 	return context;
 };

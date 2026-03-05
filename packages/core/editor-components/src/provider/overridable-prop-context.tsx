@@ -6,15 +6,15 @@ import { type ComponentOverridablePropValue } from '../prop-types/component-over
 
 type OverridablePropData = {
 	value?: ComponentOverridablePropValue;
-	componentInstanceElement?: ReturnType< typeof useElement >;
+	componentInstanceElement?: ReturnType<typeof useElement>;
 };
 
-const OverridablePropContext = createContext< OverridablePropData | null >( null );
+const OverridablePropContext = createContext<OverridablePropData | null>(null);
 
-export function OverridablePropProvider( { children, ...props }: PropsWithChildren< OverridablePropData > ) {
-	return <OverridablePropContext.Provider value={ props }>{ children }</OverridablePropContext.Provider>;
+export function OverridablePropProvider({ children, ...props }: PropsWithChildren<OverridablePropData>) {
+	return <OverridablePropContext.Provider value={props}>{children}</OverridablePropContext.Provider>;
 }
 
-export const useOverridablePropValue = () => useContext( OverridablePropContext )?.value;
+export const useOverridablePropValue = () => useContext(OverridablePropContext)?.value;
 
-export const useComponentInstanceElement = () => useContext( OverridablePropContext )?.componentInstanceElement;
+export const useComponentInstanceElement = () => useContext(OverridablePropContext)?.componentInstanceElement;

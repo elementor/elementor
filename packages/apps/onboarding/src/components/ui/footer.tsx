@@ -4,7 +4,7 @@ import { Box, styled } from '@elementor/ui';
 
 import { FOOTER_HEIGHT } from './base-layout';
 
-const FooterRoot = styled( Box )( ( { theme } ) => ( {
+const FooterRoot = styled(Box)(({ theme }) => ({
 	position: 'fixed',
 	bottom: 0,
 	left: 0,
@@ -13,16 +13,16 @@ const FooterRoot = styled( Box )( ( { theme } ) => ( {
 	display: 'flex',
 	alignItems: 'center',
 	justifyContent: 'space-between',
-	padding: theme.spacing( 2, 3 ),
+	padding: theme.spacing(2, 3),
 	background: theme.palette.background.paper,
-	boxShadow: theme.shadows[ 4 ],
+	boxShadow: theme.shadows[4],
 	zIndex: theme.zIndex?.appBar || 1100,
-} ) );
+}));
 
 interface FooterProps {
 	children?: ReactNode;
 }
 
-export function Footer( { children }: FooterProps ) {
-	return <FooterRoot component="footer">{ children }</FooterRoot>;
+export function Footer({ children }: FooterProps) {
+	return <FooterRoot component="footer">{children}</FooterRoot>;
 }

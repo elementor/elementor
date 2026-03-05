@@ -12,40 +12,35 @@ import { AxisRow } from './axis-row';
 
 const rotateAxisControls: { label: string; bind: 'x' | 'y' | 'z'; startIcon: React.ReactNode }[] = [
 	{
-		label: __( 'Rotate X', 'elementor' ),
+		label: __('Rotate X', 'elementor'),
 		bind: 'x',
-		startIcon: <Arrow360Icon fontSize={ 'tiny' } />,
+		startIcon: <Arrow360Icon fontSize={'tiny'} />,
 	},
 	{
-		label: __( 'Rotate Y', 'elementor' ),
+		label: __('Rotate Y', 'elementor'),
 		bind: 'y',
-		startIcon: <Arrow360Icon fontSize="tiny" style={ { transform: 'scaleX(-1) rotate(-90deg)' } } />,
+		startIcon: <Arrow360Icon fontSize="tiny" style={{ transform: 'scaleX(-1) rotate(-90deg)' }} />,
 	},
 	{
-		label: __( 'Rotate Z', 'elementor' ),
+		label: __('Rotate Z', 'elementor'),
 		bind: 'z',
-		startIcon: <RotateClockwiseIcon fontSize={ 'tiny' } />,
+		startIcon: <RotateClockwiseIcon fontSize={'tiny'} />,
 	},
 ];
 
-const rotateUnits: AngleUnit[] = [ 'deg', 'rad', 'grad', 'turn' ];
+const rotateUnits: AngleUnit[] = ['deg', 'rad', 'grad', 'turn'];
 
 export const Rotate = () => {
-	const context = useBoundProp( rotateTransformPropTypeUtil );
-	const rowRefs: RefObject< HTMLDivElement >[] = [ useRef( null ), useRef( null ), useRef( null ) ];
+	const context = useBoundProp(rotateTransformPropTypeUtil);
+	const rowRefs: RefObject<HTMLDivElement>[] = [useRef(null), useRef(null), useRef(null)];
 
 	return (
-		<Grid container spacing={ 1.5 }>
-			<PropProvider { ...context }>
-				<PropKeyProvider bind={ TransformFunctionKeys.rotate }>
-					{ rotateAxisControls.map( ( control, index ) => (
-						<AxisRow
-							key={ control.bind }
-							{ ...control }
-							anchorRef={ rowRefs[ index ] }
-							units={ rotateUnits }
-						/>
-					) ) }
+		<Grid container spacing={1.5}>
+			<PropProvider {...context}>
+				<PropKeyProvider bind={TransformFunctionKeys.rotate}>
+					{rotateAxisControls.map((control, index) => (
+						<AxisRow key={control.bind} {...control} anchorRef={rowRefs[index]} units={rotateUnits} />
+					))}
 				</PropKeyProvider>
 			</PropProvider>
 		</Grid>

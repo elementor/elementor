@@ -5,10 +5,10 @@ import { componentOverridableTransformer } from '../../component-overridable-tra
 import { componentOverrideTransformer } from '../../component-override-transformer';
 import { type ComponentOverridable } from '../../types';
 
-describe( 'componentOverridableTransformer', () => {
+describe('componentOverridableTransformer', () => {
 	const TEST_OPTIONS: TransformerOptions = { key: 'test-key' };
 	const TEST_OVERRIDE_KEY = 'test-override-key';
-	const TEST_ORIGIN_VALUE: TransformablePropValue< string > = {
+	const TEST_ORIGIN_VALUE: TransformablePropValue<string> = {
 		$$type: 'string',
 		value: 'origin-value',
 	};
@@ -17,13 +17,13 @@ describe( 'componentOverridableTransformer', () => {
 		value: 'Override String',
 	};
 
-	settingsTransformersRegistry.register( 'override', componentOverrideTransformer );
+	settingsTransformersRegistry.register('override', componentOverrideTransformer);
 
-	beforeEach( () => {
+	beforeEach(() => {
 		jest.clearAllMocks();
-	} );
+	});
 
-	it( 'should return origin value when no overrides exist in context', () => {
+	it('should return origin value when no overrides exist in context', () => {
 		// Arrange
 		const value: ComponentOverridable = {
 			override_key: TEST_OVERRIDE_KEY,
@@ -32,13 +32,13 @@ describe( 'componentOverridableTransformer', () => {
 		const options: TransformerOptions = { ...TEST_OPTIONS, renderContext: { overrides: {} } };
 
 		// Act
-		const result = componentOverridableTransformer( value, options );
+		const result = componentOverridableTransformer(value, options);
 
 		// Assert
-		expect( result ).toBe( TEST_ORIGIN_VALUE );
-	} );
+		expect(result).toBe(TEST_ORIGIN_VALUE);
+	});
 
-	it( 'should return origin value when override key does not match', () => {
+	it('should return origin value when override key does not match', () => {
 		// Arrange
 		const value: ComponentOverridable = {
 			override_key: TEST_OVERRIDE_KEY,
@@ -50,13 +50,13 @@ describe( 'componentOverridableTransformer', () => {
 		};
 
 		// Act
-		const result = componentOverridableTransformer( value, options );
+		const result = componentOverridableTransformer(value, options);
 
 		// Assert
-		expect( result ).toBe( TEST_ORIGIN_VALUE );
-	} );
+		expect(result).toBe(TEST_ORIGIN_VALUE);
+	});
 
-	it( 'should return override value when override exists and origin is not an override type', () => {
+	it('should return override value when override exists and origin is not an override type', () => {
 		// Arrange
 		const value: ComponentOverridable = {
 			override_key: TEST_OVERRIDE_KEY,
@@ -64,17 +64,17 @@ describe( 'componentOverridableTransformer', () => {
 		};
 		const options: TransformerOptions = {
 			...TEST_OPTIONS,
-			renderContext: { overrides: { [ TEST_OVERRIDE_KEY ]: TEST_OVERRIDE_VALUE } },
+			renderContext: { overrides: { [TEST_OVERRIDE_KEY]: TEST_OVERRIDE_VALUE } },
 		};
 
 		// Act
-		const result = componentOverridableTransformer( value, options );
+		const result = componentOverridableTransformer(value, options);
 
 		// Assert
-		expect( result ).toEqual( TEST_OVERRIDE_VALUE );
-	} );
+		expect(result).toEqual(TEST_OVERRIDE_VALUE);
+	});
 
-	it( 'should transform override when origin value is an override type', () => {
+	it('should transform override when origin value is an override type', () => {
 		// Arrange
 		const TRANSFORMED_KEY = 'transformed-key';
 
@@ -94,26 +94,26 @@ describe( 'componentOverridableTransformer', () => {
 
 		const options: TransformerOptions = {
 			...TEST_OPTIONS,
-			renderContext: { overrides: { [ TEST_OVERRIDE_KEY ]: TEST_OVERRIDE_VALUE } },
+			renderContext: { overrides: { [TEST_OVERRIDE_KEY]: TEST_OVERRIDE_VALUE } },
 		};
 
 		// Act
-		const result = componentOverridableTransformer( value, options );
+		const result = componentOverridableTransformer(value, options);
 
 		// Assert
-		expect( result ).toEqual( {
-			[ TRANSFORMED_KEY ]: TEST_OVERRIDE_VALUE,
-		} );
-	} );
+		expect(result).toEqual({
+			[TRANSFORMED_KEY]: TEST_OVERRIDE_VALUE,
+		});
+	});
 
-	it( 'should handle multiple overrides in context and select correct one', () => {
+	it('should handle multiple overrides in context and select correct one', () => {
 		// Arrange
 		const FIRST_OVERRIDE_KEY = 'first-key';
 		const SECOND_OVERRIDE_KEY = 'second-key';
 		const FIRST_VALUE = 'first-override-value';
 		const SECOND_VALUE = 'second-override-value';
 
-		const originValue: TransformablePropValue< string > = {
+		const originValue: TransformablePropValue<string> = {
 			$$type: 'string',
 			value: 'origin',
 		};
@@ -127,16 +127,16 @@ describe( 'componentOverridableTransformer', () => {
 			...TEST_OPTIONS,
 			renderContext: {
 				overrides: {
-					[ FIRST_OVERRIDE_KEY ]: FIRST_VALUE,
-					[ SECOND_OVERRIDE_KEY ]: SECOND_VALUE,
+					[FIRST_OVERRIDE_KEY]: FIRST_VALUE,
+					[SECOND_OVERRIDE_KEY]: SECOND_VALUE,
 				},
 			},
 		};
 
 		// Act
-		const result = componentOverridableTransformer( value, options );
+		const result = componentOverridableTransformer(value, options);
 
 		// Assert
-		expect( result ).toEqual( SECOND_VALUE );
-	} );
-} );
+		expect(result).toEqual(SECOND_VALUE);
+	});
+});

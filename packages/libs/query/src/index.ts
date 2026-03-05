@@ -13,26 +13,26 @@ export {
 let queryClient: QueryClient | undefined;
 
 export function getQueryClient(): QueryClient {
-	if ( ! queryClient ) {
-		throw new Error( 'Query client is not created yet.' );
+	if (!queryClient) {
+		throw new Error('Query client is not created yet.');
 	}
 
 	return queryClient;
 }
 
 export function createQueryClient() {
-	if ( queryClient ) {
-		throw new Error( 'Query client is already created.' );
+	if (queryClient) {
+		throw new Error('Query client is already created.');
 	}
 
-	queryClient = new QueryClient( {
+	queryClient = new QueryClient({
 		defaultOptions: {
 			queries: {
 				refetchOnWindowFocus: false,
 				refetchOnReconnect: false,
 			},
 		},
-	} );
+	});
 
 	return queryClient;
 }

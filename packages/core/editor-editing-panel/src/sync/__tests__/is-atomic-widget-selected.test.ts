@@ -2,10 +2,10 @@ import { createMockElement } from 'test-utils';
 
 import { isAtomicWidgetSelected } from '../is-atomic-widget-selected';
 
-describe( 'isAtomicWidgetSelected', () => {
+describe('isAtomicWidgetSelected', () => {
 	const getElements = jest.fn();
 
-	beforeEach( () => {
+	beforeEach(() => {
 		window.elementor = {
 			selection: {
 				getElements,
@@ -27,67 +27,67 @@ describe( 'isAtomicWidgetSelected', () => {
 				},
 			},
 		};
-	} );
+	});
 
-	it( 'should return false if there are no selectedElements', () => {
+	it('should return false if there are no selectedElements', () => {
 		// Arrange.
-		getElements.mockReturnValue( [] );
+		getElements.mockReturnValue([]);
 
 		// Assert.
-		expect( isAtomicWidgetSelected() ).toBe( false );
-	} );
+		expect(isAtomicWidgetSelected()).toBe(false);
+	});
 
-	it( 'should return true for v2 element', () => {
+	it('should return true for v2 element', () => {
 		// Arrange.
-		getElements.mockReturnValue( [ createMockElement( { model: { widgetType: 'v2-heading' } } ) ] );
+		getElements.mockReturnValue([createMockElement({ model: { widgetType: 'v2-heading' } })]);
 
 		// Assert.
-		expect( isAtomicWidgetSelected() ).toBe( true );
-	} );
+		expect(isAtomicWidgetSelected()).toBe(true);
+	});
 
-	it( 'should return true for v2 element', () => {
+	it('should return true for v2 element', () => {
 		// Arrange.
-		getElements.mockReturnValue( [ createMockElement( { model: { elType: 'v2-container' } } ) ] );
+		getElements.mockReturnValue([createMockElement({ model: { elType: 'v2-container' } })]);
 
 		// Assert.
-		expect( isAtomicWidgetSelected() ).toBe( true );
-	} );
+		expect(isAtomicWidgetSelected()).toBe(true);
+	});
 
-	it( 'should return false for v1 element', () => {
+	it('should return false for v1 element', () => {
 		// Arrange.
-		getElements.mockReturnValue( [ createMockElement( { model: { widgetType: 'v1-heading' } } ) ] );
+		getElements.mockReturnValue([createMockElement({ model: { widgetType: 'v1-heading' } })]);
 
 		// Assert.
-		expect( isAtomicWidgetSelected() ).toBe( false );
-	} );
+		expect(isAtomicWidgetSelected()).toBe(false);
+	});
 
-	it( 'should return false for non-existing element', () => {
+	it('should return false for non-existing element', () => {
 		// Arrange.
-		getElements.mockReturnValue( [ createMockElement( { model: { widgetType: 'non-existing' } } ) ] );
+		getElements.mockReturnValue([createMockElement({ model: { widgetType: 'non-existing' } })]);
 
 		// Assert.
-		expect( isAtomicWidgetSelected() ).toBe( false );
-	} );
+		expect(isAtomicWidgetSelected()).toBe(false);
+	});
 
-	it( 'should return false if there is more than 1 selected element with mixed versions', () => {
+	it('should return false if there is more than 1 selected element with mixed versions', () => {
 		// Arrange.
-		getElements.mockReturnValue( [
-			createMockElement( { model: { widgetType: 'v2-heading' } } ),
-			createMockElement( { model: { widgetType: 'v1-heading' } } ),
-		] );
+		getElements.mockReturnValue([
+			createMockElement({ model: { widgetType: 'v2-heading' } }),
+			createMockElement({ model: { widgetType: 'v1-heading' } }),
+		]);
 
 		// Assert.
-		expect( isAtomicWidgetSelected() ).toBe( false );
-	} );
+		expect(isAtomicWidgetSelected()).toBe(false);
+	});
 
-	it( 'should return false if there is more than 1 selected element with same version', () => {
+	it('should return false if there is more than 1 selected element with same version', () => {
 		// Arrange.
-		getElements.mockReturnValue( [
-			createMockElement( { model: { widgetType: 'v2-heading' } } ),
-			createMockElement( { model: { widgetType: 'v2-container' } } ),
-		] );
+		getElements.mockReturnValue([
+			createMockElement({ model: { widgetType: 'v2-heading' } }),
+			createMockElement({ model: { widgetType: 'v2-container' } }),
+		]);
 
 		// Assert.
-		expect( isAtomicWidgetSelected() ).toBe( false );
-	} );
-} );
+		expect(isAtomicWidgetSelected()).toBe(false);
+	});
+});

@@ -13,16 +13,16 @@ export const service = {
 		return storage.load();
 	},
 
-	findIdByLabel( needle: string ): string {
-		const variableId = Object.entries( this.variables() ).find( ( [ , variable ] ) => variable.label === needle );
-		if ( ! variableId ) {
-			throw new Error( `Variable with label ${ needle } not found` );
+	findIdByLabel(needle: string): string {
+		const variableId = Object.entries(this.variables()).find(([, variable]) => variable.label === needle);
+		if (!variableId) {
+			throw new Error(`Variable with label ${needle} not found`);
 		}
-		return variableId[ 0 ];
+		return variableId[0];
 	},
 
-	findVariableByLabel( needle: string ): TVariable | null {
-		return Object.values( this.variables() ).find( ( variable ) => variable.label === needle ) || null;
+	findVariableByLabel(needle: string): TVariable | null {
+		return Object.values(this.variables()).find((variable) => variable.label === needle) || null;
 	},
 
 	getWatermark: (): number => {
@@ -36,200 +36,200 @@ export const service = {
 	load: () => {
 		return apiClient
 			.list()
-			.then( ( response ) => {
+			.then((response) => {
 				const { success, data: payload } = response.data;
 
-				if ( ! success ) {
-					throw new Error( 'Unexpected response from server' );
+				if (!success) {
+					throw new Error('Unexpected response from server');
 				}
 
 				return payload;
-			} )
-			.then( ( data ) => {
+			})
+			.then((data) => {
 				const { variables, watermark } = data;
 
-				storage.fill( variables, watermark );
+				storage.fill(variables, watermark);
 
-				styleVariablesRepository.update( variables );
+				styleVariablesRepository.update(variables);
 
 				return variables;
-			} );
+			});
 	},
 
-	create: ( { type, label, value }: Variable ) => {
+	create: ({ type, label, value }: Variable) => {
 		return apiClient
-			.create( type, label, value )
-			.then( ( response ) => {
+			.create(type, label, value)
+			.then((response) => {
 				const { success, data: payload } = response.data;
 
-				if ( ! success ) {
-					const errorMessage = payload?.message || __( 'Unexpected response from server', 'elementor' );
-					throw new Error( errorMessage );
+				if (!success) {
+					const errorMessage = payload?.message || __('Unexpected response from server', 'elementor');
+					throw new Error(errorMessage);
 				}
 
 				return payload;
-			} )
-			.then( ( data ) => {
+			})
+			.then((data) => {
 				const { variable, watermark } = data;
 
-				handleWatermark( OP_RW, watermark );
+				handleWatermark(OP_RW, watermark);
 
 				const { id: variableId, ...createdVariable } = variable;
 
-				storage.add( variableId, createdVariable );
+				storage.add(variableId, createdVariable);
 
-				styleVariablesRepository.update( {
-					[ variableId ]: createdVariable,
-				} );
+				styleVariablesRepository.update({
+					[variableId]: createdVariable,
+				});
 
 				return {
 					id: variableId,
 					variable: createdVariable,
 				};
-			} );
+			});
 	},
 
-	update: ( id: string, { label, value, type }: Omit< Variable, 'type' > & { type?: Variable[ 'type' ] } ) => {
+	update: (id: string, { label, value, type }: Omit<Variable, 'type'> & { type?: Variable['type'] }) => {
 		return apiClient
-			.update( id, label, value, type )
-			.then( ( response ) => {
+			.update(id, label, value, type)
+			.then((response) => {
 				const { success, data: payload } = response.data;
 
-				if ( ! success ) {
-					const errorMessage = payload?.message || __( 'Unexpected response from server', 'elementor' );
-					throw new Error( errorMessage );
+				if (!success) {
+					const errorMessage = payload?.message || __('Unexpected response from server', 'elementor');
+					throw new Error(errorMessage);
 				}
 
 				return payload;
-			} )
-			.then( ( data ) => {
+			})
+			.then((data) => {
 				const { variable, watermark } = data;
 
-				handleWatermark( OP_RW, watermark );
+				handleWatermark(OP_RW, watermark);
 
 				const { id: variableId, ...updatedVariable } = variable;
 
-				storage.update( variableId, updatedVariable );
+				storage.update(variableId, updatedVariable);
 
-				styleVariablesRepository.update( {
-					[ variableId ]: updatedVariable,
-				} );
+				styleVariablesRepository.update({
+					[variableId]: updatedVariable,
+				});
 
 				return {
 					id: variableId,
 					variable: updatedVariable,
 				};
-			} );
+			});
 	},
 
-	delete: ( id: string ) => {
+	delete: (id: string) => {
 		return apiClient
-			.delete( id )
-			.then( ( response ) => {
+			.delete(id)
+			.then((response) => {
 				const { success, data: payload } = response.data;
 
-				if ( ! success ) {
-					throw new Error( 'Unexpected response from server' );
+				if (!success) {
+					throw new Error('Unexpected response from server');
 				}
 
 				return payload;
-			} )
-			.then( ( data ) => {
+			})
+			.then((data) => {
 				const { variable, watermark } = data;
 
-				handleWatermark( OP_RW, watermark );
+				handleWatermark(OP_RW, watermark);
 
 				const { id: variableId, ...deletedVariable } = variable;
 
-				storage.update( variableId, deletedVariable );
+				storage.update(variableId, deletedVariable);
 
-				styleVariablesRepository.update( {
-					[ variableId ]: deletedVariable,
-				} );
+				styleVariablesRepository.update({
+					[variableId]: deletedVariable,
+				});
 
 				return {
 					id: variableId,
 					variable: deletedVariable,
 				};
-			} );
+			});
 	},
 
-	restore: ( id: string, label?: string, value?: string, type?: string ) => {
+	restore: (id: string, label?: string, value?: string, type?: string) => {
 		return apiClient
-			.restore( id, label, value, type )
-			.then( ( response ) => {
+			.restore(id, label, value, type)
+			.then((response) => {
 				const { success, data: payload } = response.data;
 
-				if ( ! success ) {
-					throw new Error( 'Unexpected response from server' );
+				if (!success) {
+					throw new Error('Unexpected response from server');
 				}
 
 				return payload;
-			} )
-			.then( ( data ) => {
+			})
+			.then((data) => {
 				const { variable, watermark } = data;
 
-				handleWatermark( OP_RW, watermark );
+				handleWatermark(OP_RW, watermark);
 
 				const { id: variableId, ...restoredVariable } = variable;
 
-				storage.update( variableId, restoredVariable );
+				storage.update(variableId, restoredVariable);
 
-				styleVariablesRepository.update( {
-					[ variableId ]: restoredVariable,
-				} );
+				styleVariablesRepository.update({
+					[variableId]: restoredVariable,
+				});
 
 				return {
 					id: variableId,
 					variable: restoredVariable,
 				};
-			} );
+			});
 	},
 
-	batchSave: ( originalVariables: TVariablesList, currentVariables: TVariablesList, deletedVariables: string[] ) => {
-		const operations = buildOperationsArray( originalVariables, currentVariables, deletedVariables );
+	batchSave: (originalVariables: TVariablesList, currentVariables: TVariablesList, deletedVariables: string[]) => {
+		const operations = buildOperationsArray(originalVariables, currentVariables, deletedVariables);
 		const batchPayload = { operations, watermark: storage.state.watermark };
 
-		if ( operations.length === 0 ) {
-			return Promise.resolve( {
+		if (operations.length === 0) {
+			return Promise.resolve({
 				success: true,
 				watermark: storage.state.watermark,
 				operations: 0,
-			} );
+			});
 		}
 
 		return apiClient
-			.batch( batchPayload )
-			.then( ( response ) => {
+			.batch(batchPayload)
+			.then((response) => {
 				const { success, data: payload } = response.data;
 
-				if ( ! success ) {
-					throw new Error( 'Unexpected response from server' );
+				if (!success) {
+					throw new Error('Unexpected response from server');
 				}
 
 				return payload;
-			} )
-			.then( ( data ) => {
+			})
+			.then((data) => {
 				const { results, watermark } = data;
 
-				handleWatermark( OP_RW, watermark );
+				handleWatermark(OP_RW, watermark);
 
-				if ( results ) {
-					results.forEach( ( result: OperationResult ) => {
-						if ( result.variable ) {
+				if (results) {
+					results.forEach((result: OperationResult) => {
+						if (result.variable) {
 							const { id: variableId, ...variableData } = result.variable;
 
-							if ( result.type === 'create' ) {
-								storage.add( variableId, variableData );
+							if (result.type === 'create') {
+								storage.add(variableId, variableData);
 							} else {
-								storage.update( variableId, variableData );
+								storage.update(variableId, variableData);
 							}
 
-							styleVariablesRepository.update( {
-								[ variableId ]: variableData,
-							} );
+							styleVariablesRepository.update({
+								[variableId]: variableData,
+							});
 						}
-					} );
+					});
 				}
 
 				return {
@@ -237,13 +237,13 @@ export const service = {
 					watermark,
 					operations: operations.length,
 				};
-			} );
+			});
 	},
 };
 
-const handleWatermark = ( operation: string, newWatermark: number ) => {
-	if ( storage.watermarkDiff( operation, newWatermark ) ) {
-		setTimeout( () => service.load(), 500 );
+const handleWatermark = (operation: string, newWatermark: number) => {
+	if (storage.watermarkDiff(operation, newWatermark)) {
+		setTimeout(() => service.load(), 500);
 	}
-	storage.watermark( newWatermark );
+	storage.watermark(newWatermark);
 };

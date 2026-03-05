@@ -16,35 +16,35 @@ import {
 
 const FORM_NESTING_ALERT: NotificationData = {
 	type: 'default',
-	message: __( "Forms can't be nested. Create separate forms instead.", 'elementor' ),
+	message: __("Forms can't be nested. Create separate forms instead.", 'elementor'),
 	id: 'form-nesting-blocked',
 };
 
 export function initFormNestingPrevention() {
-	blockCommand( {
+	blockCommand({
 		command: 'document/elements/create',
 		condition: blockFormCreate,
-	} );
+	});
 
-	blockCommand( {
+	blockCommand({
 		command: 'document/elements/move',
 		condition: blockFormMove,
-	} );
+	});
 
-	blockCommand( {
+	blockCommand({
 		command: 'document/elements/paste',
 		condition: blockFormPaste,
-	} );
+	});
 }
 
-function blockFormCreate( args: CreateArgs ): boolean {
-	const elementType = getArgsElementType( args );
+function blockFormCreate(args: CreateArgs): boolean {
+	const elementType = getArgsElementType(args);
 
-	if ( ! elementType ) {
+	if (!elementType) {
 		return false;
 	}
 
-	if ( elementType === FORM_ELEMENT_TYPE && isWithinForm( args.container ) ) {
+	if (elementType === FORM_ELEMENT_TYPE && isWithinForm(args.container)) {
 		handleBlockedFormField();
 		return true;
 	}
@@ -52,14 +52,14 @@ function blockFormCreate( args: CreateArgs ): boolean {
 	return false;
 }
 
-function blockFormMove( args: MoveArgs ): boolean {
-	const { containers = [ args.container ], target } = args;
+function blockFormMove(args: MoveArgs): boolean {
+	const { containers = [args.container], target } = args;
 
-	const hasFormElement = containers.some( ( container ) =>
-		container ? hasElementType( container, FORM_ELEMENT_TYPE ) : false
+	const hasFormElement = containers.some((container) =>
+		container ? hasElementType(container, FORM_ELEMENT_TYPE) : false
 	);
 
-	if ( hasFormElement && isWithinForm( target ) ) {
+	if (hasFormElement && isWithinForm(target)) {
 		handleBlockedFormField();
 		return true;
 	}
@@ -67,24 +67,24 @@ function blockFormMove( args: MoveArgs ): boolean {
 	return false;
 }
 
-function blockFormPaste( args: PasteArgs ): boolean {
+function blockFormPaste(args: PasteArgs): boolean {
 	const { storageType } = args;
 
-	if ( storageType !== 'localstorage' ) {
+	if (storageType !== 'localstorage') {
 		return false;
 	}
 
 	const data = (
 		window as { elementorCommon?: { storage?: { get: () => StorageContent } } }
-	 )?.elementorCommon?.storage?.get();
+	)?.elementorCommon?.storage?.get();
 
-	if ( ! data?.clipboard?.elements ) {
+	if (!data?.clipboard?.elements) {
 		return false;
 	}
 
-	const hasFormElement = hasClipboardElementType( data.clipboard.elements, FORM_ELEMENT_TYPE );
+	const hasFormElement = hasClipboardElementType(data.clipboard.elements, FORM_ELEMENT_TYPE);
 
-	if ( hasFormElement && isWithinForm( args.container ) ) {
+	if (hasFormElement && isWithinForm(args.container)) {
 		handleBlockedFormField();
 		return true;
 	}
@@ -93,5 +93,5 @@ function blockFormPaste( args: PasteArgs ): boolean {
 }
 
 function handleBlockedFormField(): void {
-	notify( FORM_NESTING_ALERT );
+	notify(FORM_NESTING_ALERT);
 }

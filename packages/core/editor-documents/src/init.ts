@@ -8,14 +8,14 @@ import { syncStore } from './sync';
 export function init() {
 	initStore();
 
-	injectIntoLogic( {
+	injectIntoLogic({
 		id: 'documents-hooks',
 		component: LogicHooks,
-	} );
+	});
 }
 
 function initStore() {
-	__registerSlice( slice );
+	__registerSlice(slice);
 
 	syncStore();
 }

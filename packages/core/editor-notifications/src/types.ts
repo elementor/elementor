@@ -5,10 +5,10 @@ export type NotificationData = {
 	type: VariantType;
 	message: string | React.ReactNode;
 	id: string;
-	additionalActionProps?: Partial< ButtonProps >[];
+	additionalActionProps?: Partial<ButtonProps>[];
 	autoHideDuration?: number;
 };
 
 type NotificationId = string;
 
-export type Notifications = Record< NotificationId, NotificationData >;
+export type Notifications = Record<NotificationId, NotificationData>;

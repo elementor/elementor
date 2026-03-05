@@ -4,18 +4,18 @@ import { getLicenseConfig } from '../../../hooks/use-license-config';
 import { type DynamicTags } from '../../types';
 import { getAtomicDynamicTags } from '../get-atomic-dynamic-tags';
 
-jest.mock( '@elementor/editor-v1-adapters', () => ( {
+jest.mock('@elementor/editor-v1-adapters', () => ({
 	getElementorConfig: jest.fn(),
-} ) );
-jest.mock( '../../../hooks/use-license-config' );
+}));
+jest.mock('../../../hooks/use-license-config');
 
-describe( 'getAtomicDynamicTags', () => {
+describe('getAtomicDynamicTags', () => {
 	const mockTags: DynamicTags = {
 		'core-tag': {
 			name: 'core-tag',
 			label: 'Core Tag',
 			group: 'core',
-			categories: [ 'text' ],
+			categories: ['text'],
 			atomic_controls: [],
 			props_schema: {},
 		},
@@ -23,7 +23,7 @@ describe( 'getAtomicDynamicTags', () => {
 			name: 'pro-free-tag',
 			label: 'Pro Free Tag',
 			group: 'pro',
-			categories: [ 'text' ],
+			categories: ['text'],
 			atomic_controls: [],
 			props_schema: {},
 		},
@@ -32,7 +32,7 @@ describe( 'getAtomicDynamicTags', () => {
 			name: 'pro-paid-tag',
 			label: 'Pro Paid Tag',
 			group: 'pro',
-			categories: [ 'text' ],
+			categories: ['text'],
 			atomic_controls: [],
 			props_schema: {},
 		},
@@ -43,86 +43,86 @@ describe( 'getAtomicDynamicTags', () => {
 		pro: { title: 'Pro', color: '#f00' },
 	};
 
-	beforeEach( () => {
-		jest.mocked( getElementorConfig ).mockReturnValue( {
+	beforeEach(() => {
+		jest.mocked(getElementorConfig).mockReturnValue({
 			atomicDynamicTags: {
 				tags: mockTags,
 				groups: mockGroups,
 			},
-		} as never );
-	} );
+		} as never);
+	});
 
-	afterEach( () => {
+	afterEach(() => {
 		jest.clearAllMocks();
-	} );
+	});
 
-	it( 'should return null if atomicDynamicTags is not available', () => {
+	it('should return null if atomicDynamicTags is not available', () => {
 		// Arrange.
-		jest.mocked( getElementorConfig ).mockReturnValue( {} as never );
+		jest.mocked(getElementorConfig).mockReturnValue({} as never);
 
 		// Act.
 		const result = getAtomicDynamicTags();
 
 		// Assert.
-		expect( result ).toBeNull();
-	} );
+		expect(result).toBeNull();
+	});
 
-	it( 'should return all tags when license is not expired', () => {
+	it('should return all tags when license is not expired', () => {
 		// Arrange.
-		jest.mocked( getLicenseConfig ).mockReturnValue( { expired: false } );
+		jest.mocked(getLicenseConfig).mockReturnValue({ expired: false });
 
 		// Act.
 		const result = getAtomicDynamicTags();
 
 		// Assert.
-		expect( result ).toEqual( {
+		expect(result).toEqual({
 			tags: mockTags,
 			groups: mockGroups,
-		} );
-	} );
+		});
+	});
 
-	it( 'should filter out pro tags requiring license when expired', () => {
+	it('should filter out pro tags requiring license when expired', () => {
 		// Arrange.
-		jest.mocked( getLicenseConfig ).mockReturnValue( { expired: true } );
+		jest.mocked(getLicenseConfig).mockReturnValue({ expired: true });
 
 		// Act.
 		const result = getAtomicDynamicTags();
 
 		// Assert.
-		expect( result ).toEqual( {
+		expect(result).toEqual({
 			tags: {
-				'core-tag': mockTags[ 'core-tag' ],
-				'pro-free-tag': mockTags[ 'pro-free-tag' ],
+				'core-tag': mockTags['core-tag'],
+				'pro-free-tag': mockTags['pro-free-tag'],
 				// 'pro-paid-tag' should be filtered out
 			},
 			groups: mockGroups,
-		} );
-		expect( result?.tags[ 'pro-paid-tag' ] ).toBeUndefined();
-	} );
+		});
+		expect(result?.tags['pro-paid-tag']).toBeUndefined();
+	});
 
-	it( 'should keep tags with origin !== elementor when expired', () => {
+	it('should keep tags with origin !== elementor when expired', () => {
 		// Arrange.
-		jest.mocked( getLicenseConfig ).mockReturnValue( { expired: true } );
+		jest.mocked(getLicenseConfig).mockReturnValue({ expired: true });
 
 		// Act.
 		const result = getAtomicDynamicTags();
 
 		// Assert.
-		expect( result?.tags[ 'core-tag' ] ).toBeDefined();
-	} );
+		expect(result?.tags['core-tag']).toBeDefined();
+	});
 
-	it( 'should keep pro tags not requiring license when expired', () => {
+	it('should keep pro tags not requiring license when expired', () => {
 		// Arrange.
-		jest.mocked( getLicenseConfig ).mockReturnValue( { expired: true } );
+		jest.mocked(getLicenseConfig).mockReturnValue({ expired: true });
 
 		// Act.
 		const result = getAtomicDynamicTags();
 
 		// Assert.
-		expect( result?.tags[ 'pro-free-tag' ] ).toBeDefined();
-	} );
+		expect(result?.tags['pro-free-tag']).toBeDefined();
+	});
 
-	it( 'should handle tags with missing meta gracefully', () => {
+	it('should handle tags with missing meta gracefully', () => {
 		// Arrange.
 		const tagsWithMissingMeta: DynamicTags = {
 			'tag-no-meta': {
@@ -135,18 +135,18 @@ describe( 'getAtomicDynamicTags', () => {
 			},
 		};
 
-		jest.mocked( getElementorConfig ).mockReturnValue( {
+		jest.mocked(getElementorConfig).mockReturnValue({
 			atomicDynamicTags: {
 				tags: tagsWithMissingMeta,
 				groups: mockGroups,
 			},
-		} as never );
-		jest.mocked( getLicenseConfig ).mockReturnValue( { expired: true } );
+		} as never);
+		jest.mocked(getLicenseConfig).mockReturnValue({ expired: true });
 
 		// Act.
 		const result = getAtomicDynamicTags();
 
 		// Assert.
-		expect( result?.tags[ 'tag-no-meta' ] ).toBeDefined();
-	} );
-} );
+		expect(result?.tags['tag-no-meta']).toBeDefined();
+	});
+});

@@ -10,52 +10,52 @@ export type ElementModel = {
 	editorSettings: V1ElementEditorSettingsProps;
 };
 
-export type ElementChildren = Record< string, ElementModel[] >;
+export type ElementChildren = Record<string, ElementModel[]>;
 
-function toElementModel( { model }: ModelResult ): ElementModel {
+function toElementModel({ model }: ModelResult): ElementModel {
 	return {
-		id: model.get( 'id' ) as string,
-		editorSettings: model.get( 'editor_settings' ) ?? {},
+		id: model.get('id') as string,
+		editorSettings: model.get('editor_settings') ?? {},
 	};
 }
 
-export function useElementChildren< T extends ElementChildren >(
+export function useElementChildren<T extends ElementChildren>(
 	elementId: ElementID,
-	childrenTypes: Record< string, string >
+	childrenTypes: Record<string, string>
 ): T {
 	return useListenTo(
 		[
 			v1ReadyEvent(),
-			commandEndEvent( 'document/elements/create' ),
-			commandEndEvent( 'document/elements/delete' ),
-			commandEndEvent( 'document/elements/update' ),
-			commandEndEvent( 'document/elements/set-settings' ),
+			commandEndEvent('document/elements/create'),
+			commandEndEvent('document/elements/delete'),
+			commandEndEvent('document/elements/update'),
+			commandEndEvent('document/elements/set-settings'),
 		],
 		() => {
-			const container = getContainer( elementId );
+			const container = getContainer(elementId);
 			const model = container?.model;
 
-			if ( ! model ) {
+			if (!model) {
 				return {} as ElementChildren;
 			}
 
-			const elementChildren = Object.entries( childrenTypes ).reduce( ( acc, [ parentType, childType ] ) => {
-				const parent = findChildRecursive( model, ( m ) => m.get( 'elType' ) === parentType );
+			const elementChildren = Object.entries(childrenTypes).reduce((acc, [parentType, childType]) => {
+				const parent = findChildRecursive(model, (m) => m.get('elType') === parentType);
 
-				if ( ! parent ) {
-					acc[ childType ] = [];
+				if (!parent) {
+					acc[childType] = [];
 					return acc;
 				}
 
-				const children = getElementChildren( parent.model, ( m ) => m.get( 'elType' ) === childType );
+				const children = getElementChildren(parent.model, (m) => m.get('elType') === childType);
 
-				acc[ childType ] = children.map( toElementModel );
+				acc[childType] = children.map(toElementModel);
 
 				return acc;
-			}, {} as ElementChildren );
+			}, {} as ElementChildren);
 
 			return elementChildren;
 		},
-		[ elementId ]
+		[elementId]
 	) as T;
 }

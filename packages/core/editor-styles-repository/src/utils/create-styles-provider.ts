@@ -1,24 +1,24 @@
 import { type StylesCollection, type StylesProvider, type UserCapabilities } from '../types';
 
 export type CreateStylesProviderOptions = {
-	key: string | ( () => string );
+	key: string | (() => string);
 	priority?: number;
 	limit?: number;
-	subscribe?: ( callback: ( previous?: StylesCollection, current?: StylesCollection ) => void ) => () => void;
+	subscribe?: (callback: (previous?: StylesCollection, current?: StylesCollection) => void) => () => void;
 	labels?: {
 		singular: string;
 		plural: string;
 	};
 	actions: {
-		all: StylesProvider[ 'actions' ][ 'all' ];
-		get: StylesProvider[ 'actions' ][ 'get' ];
-		resolveCssName?: StylesProvider[ 'actions' ][ 'resolveCssName' ];
-		create?: StylesProvider[ 'actions' ][ 'create' ];
-		delete?: StylesProvider[ 'actions' ][ 'delete' ];
-		update?: StylesProvider[ 'actions' ][ 'update' ];
-		updateProps?: StylesProvider[ 'actions' ][ 'updateProps' ];
-		updateCustomCss?: StylesProvider[ 'actions' ][ 'updateCustomCss' ];
-		tracking?: StylesProvider[ 'actions' ][ 'tracking' ];
+		all: StylesProvider['actions']['all'];
+		get: StylesProvider['actions']['get'];
+		resolveCssName?: StylesProvider['actions']['resolveCssName'];
+		create?: StylesProvider['actions']['create'];
+		delete?: StylesProvider['actions']['delete'];
+		update?: StylesProvider['actions']['update'];
+		updateProps?: StylesProvider['actions']['updateProps'];
+		updateCustomCss?: StylesProvider['actions']['updateCustomCss'];
+		tracking?: StylesProvider['actions']['tracking'];
 	};
 	capabilities?: UserCapabilities;
 };
@@ -26,7 +26,7 @@ export type CreateStylesProviderOptions = {
 const DEFAULT_LIMIT = 10000;
 const DEFAULT_PRIORITY = 10;
 
-export function createStylesProvider( {
+export function createStylesProvider({
 	key,
 	priority = DEFAULT_PRIORITY,
 	limit = DEFAULT_LIMIT,
@@ -34,7 +34,7 @@ export function createStylesProvider( {
 	labels,
 	actions,
 	capabilities,
-}: CreateStylesProviderOptions ): StylesProvider {
+}: CreateStylesProviderOptions): StylesProvider {
 	return {
 		getKey: typeof key === 'string' ? () => key : key,
 		priority,
@@ -48,7 +48,7 @@ export function createStylesProvider( {
 		actions: {
 			all: actions.all,
 			get: actions.get,
-			resolveCssName: actions.resolveCssName ?? ( ( id ) => id ),
+			resolveCssName: actions.resolveCssName ?? ((id) => id),
 			create: actions.create,
 			delete: actions.delete,
 			update: actions.update,

@@ -3,7 +3,7 @@ export function hasProInstalled(): boolean {
 }
 
 export function isProActive(): boolean {
-	if ( ! hasProInstalled() ) {
+	if (!hasProInstalled()) {
 		return false;
 	}
 

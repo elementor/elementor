@@ -1,5 +1,5 @@
-export type EnqueueFont = ( fontFamily: string, context?: 'preview' | 'editor' ) => void;
+export type EnqueueFont = (fontFamily: string, context?: 'preview' | 'editor') => void;
 
-export const enqueueFont: EnqueueFont = ( fontFamily, context = 'preview' ) => {
-	return window.elementor?.helpers?.enqueueFont?.( fontFamily, context ) ?? null;
+export const enqueueFont: EnqueueFont = (fontFamily, context = 'preview') => {
+	return window.elementor?.helpers?.enqueueFont?.(fontFamily, context) ?? null;
 };

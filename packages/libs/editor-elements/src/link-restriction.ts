@@ -5,7 +5,7 @@ import { getElementSetting } from './sync/get-element-setting';
 
 const ANCHOR_SELECTOR = 'a, [data-action-link]';
 
-type LinkValue = LinkPropValue[ 'value' ];
+type LinkValue = LinkPropValue['value'];
 
 export type LinkInLinkRestriction =
 	| {
@@ -19,10 +19,10 @@ export type LinkInLinkRestriction =
 			elementId?: never;
 	  };
 
-export function getLinkInLinkRestriction( elementId: string, resolvedValue?: LinkValue ): LinkInLinkRestriction {
-	const anchoredDescendantId = getAnchoredDescendantId( elementId );
+export function getLinkInLinkRestriction(elementId: string, resolvedValue?: LinkValue): LinkInLinkRestriction {
+	const anchoredDescendantId = getAnchoredDescendantId(elementId);
 
-	if ( anchoredDescendantId ) {
+	if (anchoredDescendantId) {
 		return {
 			shouldRestrict: true,
 			reason: 'descendant',
@@ -30,9 +30,9 @@ export function getLinkInLinkRestriction( elementId: string, resolvedValue?: Lin
 		};
 	}
 
-	const hasInlineLink = checkForInlineLink( elementId, resolvedValue );
+	const hasInlineLink = checkForInlineLink(elementId, resolvedValue);
 
-	if ( hasInlineLink ) {
+	if (hasInlineLink) {
 		return {
 			shouldRestrict: true,
 			reason: 'descendant',
@@ -40,9 +40,9 @@ export function getLinkInLinkRestriction( elementId: string, resolvedValue?: Lin
 		};
 	}
 
-	const ancestor = getAnchoredAncestorId( elementId );
+	const ancestor = getAnchoredAncestorId(elementId);
 
-	if ( ancestor ) {
+	if (ancestor) {
 		return {
 			shouldRestrict: true,
 			reason: 'ancestor',
@@ -55,18 +55,18 @@ export function getLinkInLinkRestriction( elementId: string, resolvedValue?: Lin
 	};
 }
 
-export function getAnchoredDescendantId( elementId: string ): string | null {
-	const element = getElementDOM( elementId );
+export function getAnchoredDescendantId(elementId: string): string | null {
+	const element = getElementDOM(elementId);
 
-	if ( ! element ) {
+	if (!element) {
 		return null;
 	}
 
-	for ( const childAnchorElement of Array.from( element.querySelectorAll( ANCHOR_SELECTOR ) ) ) {
+	for (const childAnchorElement of Array.from(element.querySelectorAll(ANCHOR_SELECTOR))) {
 		// Ensure the child is not in the current element's scope
-		const childElementId = findElementIdOf( childAnchorElement );
+		const childElementId = findElementIdOf(childAnchorElement);
 
-		if ( childElementId !== elementId ) {
+		if (childElementId !== elementId) {
 			return childElementId;
 		}
 	}
@@ -74,43 +74,43 @@ export function getAnchoredDescendantId( elementId: string ): string | null {
 	return null;
 }
 
-export function getAnchoredAncestorId( elementId: string ): string | null {
-	const element = getElementDOM( elementId );
+export function getAnchoredAncestorId(elementId: string): string | null {
+	const element = getElementDOM(elementId);
 
-	if ( ! element || element.parentElement === null ) {
+	if (!element || element.parentElement === null) {
 		return null;
 	}
 
-	const parentAnchor = element.parentElement.closest( ANCHOR_SELECTOR );
+	const parentAnchor = element.parentElement.closest(ANCHOR_SELECTOR);
 
-	return parentAnchor ? findElementIdOf( parentAnchor ) : null;
+	return parentAnchor ? findElementIdOf(parentAnchor) : null;
 }
 
-export function isElementAnchored( elementId: string ): boolean {
-	const element = getElementDOM( elementId ) as HTMLElement;
+export function isElementAnchored(elementId: string): boolean {
+	const element = getElementDOM(elementId) as HTMLElement;
 
-	if ( ! element ) {
+	if (!element) {
 		return false;
 	}
 
-	if ( element.matches( ANCHOR_SELECTOR ) ) {
+	if (element.matches(ANCHOR_SELECTOR)) {
 		return true;
 	}
 
-	return doesElementContainAnchor( element );
+	return doesElementContainAnchor(element);
 }
 
-function doesElementContainAnchor( element: Element ): boolean {
-	for ( const child of Array.from( element.children ) as HTMLElement[] ) {
-		if ( isElementorElement( child ) ) {
+function doesElementContainAnchor(element: Element): boolean {
+	for (const child of Array.from(element.children) as HTMLElement[]) {
+		if (isElementorElement(child)) {
 			continue;
 		}
 
-		if ( child.matches( ANCHOR_SELECTOR ) ) {
+		if (child.matches(ANCHOR_SELECTOR)) {
 			return true;
 		}
 
-		if ( doesElementContainAnchor( child ) ) {
+		if (doesElementContainAnchor(child)) {
 			return true;
 		}
 	}
@@ -118,38 +118,38 @@ function doesElementContainAnchor( element: Element ): boolean {
 	return false;
 }
 
-function findElementIdOf( element: Element ): string | null {
-	return element.closest< HTMLElement >( '[data-id]' )?.dataset.id || null;
+function findElementIdOf(element: Element): string | null {
+	return element.closest<HTMLElement>('[data-id]')?.dataset.id || null;
 }
 
-function checkForInlineLink( elementId: string, resolvedValue?: LinkValue ): boolean {
-	const element = getElementDOM( elementId );
+function checkForInlineLink(elementId: string, resolvedValue?: LinkValue): boolean {
+	const element = getElementDOM(elementId);
 
-	if ( ! element ) {
+	if (!element) {
 		return false;
 	}
 
-	if ( element.matches( ANCHOR_SELECTOR ) ) {
+	if (element.matches(ANCHOR_SELECTOR)) {
 		return false;
 	}
 
-	const linkSetting = resolvedValue ?? getElementSetting< LinkPropValue >( elementId, 'link' )?.value;
+	const linkSetting = resolvedValue ?? getElementSetting<LinkPropValue>(elementId, 'link')?.value;
 
-	if ( linkSetting?.destination ) {
+	if (linkSetting?.destination) {
 		return false;
 	}
 
-	return element.querySelector( ANCHOR_SELECTOR ) !== null;
+	return element.querySelector(ANCHOR_SELECTOR) !== null;
 }
 
-function getElementDOM( id: string ) {
+function getElementDOM(id: string) {
 	try {
-		return getContainer( id )?.view?.el || null;
+		return getContainer(id)?.view?.el || null;
 	} catch {
 		return null;
 	}
 }
 
-function isElementorElement( element: Element ): boolean {
-	return element.hasAttribute( 'data-id' );
+function isElementorElement(element: Element): boolean {
+	return element.hasAttribute('data-id');
 }

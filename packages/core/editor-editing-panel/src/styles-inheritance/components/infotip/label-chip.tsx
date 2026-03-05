@@ -13,35 +13,35 @@ type Props = {
 
 const SIZE = 'tiny';
 
-export const LabelChip = ( { displayLabel, provider }: Props ) => {
+export const LabelChip = ({ displayLabel, provider }: Props) => {
 	const isBaseStyle = provider === ELEMENTS_BASE_STYLES_PROVIDER_KEY;
 
 	const chipIcon = isBaseStyle ? (
-		<Tooltip title={ __( 'Inherited from base styles', 'elementor' ) } placement="top">
-			<InfoCircleIcon fontSize={ SIZE } />
+		<Tooltip title={__('Inherited from base styles', 'elementor')} placement="top">
+			<InfoCircleIcon fontSize={SIZE} />
 		</Tooltip>
 	) : undefined;
 
 	return (
 		<Chip
-			label={ displayLabel }
-			size={ SIZE }
-			color={ getStylesProviderColorName( provider ) }
+			label={displayLabel}
+			size={SIZE}
+			color={getStylesProviderColorName(provider)}
 			variant="standard"
 			state="enabled"
-			icon={ chipIcon }
-			sx={ ( theme: Theme ) => ( {
+			icon={chipIcon}
+			sx={(theme: Theme) => ({
 				lineHeight: 1,
 				flexWrap: 'nowrap',
 				alignItems: 'center',
-				borderRadius: `${ theme.shape.borderRadius * 0.75 }px`,
+				borderRadius: `${theme.shape.borderRadius * 0.75}px`,
 				flexDirection: 'row-reverse',
 				'.MuiChip-label': {
 					overflow: 'hidden',
 					textOverflow: 'ellipsis',
 					whiteSpace: 'nowrap',
 				},
-			} ) }
+			})}
 		/>
 	);
 };

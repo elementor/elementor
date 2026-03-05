@@ -23,91 +23,91 @@ const MAX_CLASSES = 100;
 
 export const GLOBAL_CLASSES_PROVIDER_KEY = 'global-classes';
 
-export const globalClassesStylesProvider = createStylesProvider( {
+export const globalClassesStylesProvider = createStylesProvider({
 	key: GLOBAL_CLASSES_PROVIDER_KEY,
 	priority: 30,
 	limit: MAX_CLASSES,
 	labels: {
-		singular: __( 'class', 'elementor' ),
-		plural: __( 'classes', 'elementor' ),
+		singular: __('class', 'elementor'),
+		plural: __('classes', 'elementor'),
 	},
-	subscribe: ( cb ) => subscribeWithStates( cb ),
+	subscribe: (cb) => subscribeWithStates(cb),
 	capabilities: getCapabilities(),
 	actions: {
-		all: () => selectOrderedClasses( getState() ),
-		get: ( id ) => selectClass( getState(), id ),
-		resolveCssName: ( id: string ) => {
-			return selectClass( getState(), id )?.label ?? id;
+		all: () => selectOrderedClasses(getState()),
+		get: (id) => selectClass(getState(), id),
+		resolveCssName: (id: string) => {
+			return selectClass(getState(), id)?.label ?? id;
 		},
-		create: ( label, variants: StyleDefinitionVariant[] = [] ) => {
-			const classes = selectGlobalClasses( getState() );
+		create: (label, variants: StyleDefinitionVariant[] = []) => {
+			const classes = selectGlobalClasses(getState());
 
-			const existingLabels = Object.values( classes ).map( ( style ) => style.label );
+			const existingLabels = Object.values(classes).map((style) => style.label);
 
-			if ( existingLabels.includes( label ) ) {
-				throw new GlobalClassLabelAlreadyExistsError( { context: { label } } );
+			if (existingLabels.includes(label)) {
+				throw new GlobalClassLabelAlreadyExistsError({ context: { label } });
 			}
 
-			const existingIds = Object.keys( classes );
-			const id = generateId( 'g-', existingIds );
+			const existingIds = Object.keys(classes);
+			const id = generateId('g-', existingIds);
 
 			dispatch(
-				slice.actions.add( {
+				slice.actions.add({
 					id,
 					type: 'class',
 					label,
 					variants,
-				} )
+				})
 			);
 
 			return id;
 		},
-		update: ( payload ) => {
+		update: (payload) => {
 			dispatch(
-				slice.actions.update( {
+				slice.actions.update({
 					style: payload,
-				} )
+				})
 			);
 		},
-		delete: ( id ) => {
-			dispatch( slice.actions.delete( id ) );
+		delete: (id) => {
+			dispatch(slice.actions.delete(id));
 		},
-		updateProps: ( args ) => {
+		updateProps: (args) => {
 			dispatch(
-				slice.actions.updateProps( {
+				slice.actions.updateProps({
 					id: args.id,
 					meta: args.meta,
 					props: args.props,
-				} )
+				})
 			);
 		},
-		updateCustomCss: ( args ) => {
+		updateCustomCss: (args) => {
 			dispatch(
-				slice.actions.updateProps( {
+				slice.actions.updateProps({
 					id: args.id,
 					meta: args.meta,
 					custom_css: args.custom_css,
 					props: {},
-				} )
+				})
 			);
 		},
-		tracking: ( data: { event: string; [ key: string ]: unknown } ) => {
-			trackGlobalClasses( data as TrackingEvent ).catch( ( error ) => {
-				throw new GlobalClassTrackingError( { cause: error } );
-			} );
+		tracking: (data: { event: string; [key: string]: unknown }) => {
+			trackGlobalClasses(data as TrackingEvent).catch((error) => {
+				throw new GlobalClassTrackingError({ cause: error });
+			});
 		},
 	},
-} );
+});
 
 const subscribeWithStates = (
-	cb: ( previous: Record< string, StyleDefinition >, current: Record< string, StyleDefinition > ) => void
+	cb: (previous: Record<string, StyleDefinition>, current: Record<string, StyleDefinition>) => void
 ) => {
-	let previousState = selectData( getState() );
+	let previousState = selectData(getState());
 
 	return subscribeWithSelector(
-		( state: StateWithGlobalClasses ) => state.globalClasses,
-		( currentState ) => {
-			cb( previousState.items, currentState.data.items );
+		(state: StateWithGlobalClasses) => state.globalClasses,
+		(currentState) => {
+			cb(previousState.items, currentState.data.items);
 			previousState = currentState.data;
 		}
 	);

@@ -6,31 +6,31 @@ import { selectUnpublishedComponents } from './store/store';
 import { getComponentDocumentData } from './utils/component-document-data';
 
 export const componentInstanceTransformer = createTransformer(
-	async ( {
+	async ({
 		component_id: id,
 		overrides: overridesValue,
 	}: {
 		component_id: number | string;
 		overrides?: ComponentInstanceOverrideProp[];
-	} ) => {
-		const unpublishedComponents = selectUnpublishedComponents( getState() );
+	}) => {
+		const unpublishedComponents = selectUnpublishedComponents(getState());
 
-		const unpublishedComponent = unpublishedComponents.find( ( { uid } ) => uid === id );
+		const unpublishedComponent = unpublishedComponents.find(({ uid }) => uid === id);
 
-		const overrides = overridesValue?.reduce( ( acc, override ) => ( { ...acc, ...override } ), {} );
+		const overrides = overridesValue?.reduce((acc, override) => ({ ...acc, ...override }), {});
 
-		if ( unpublishedComponent ) {
+		if (unpublishedComponent) {
 			return {
-				elements: structuredClone( unpublishedComponent.elements ),
+				elements: structuredClone(unpublishedComponent.elements),
 				overrides,
 			};
 		}
 
-		if ( typeof id !== 'number' ) {
-			throw new Error( `Component ID "${ id }" not valid.` );
+		if (typeof id !== 'number') {
+			throw new Error(`Component ID "${id}" not valid.`);
 		}
 
-		const data = await getComponentDocumentData( id );
+		const data = await getComponentDocumentData(id);
 
 		return {
 			elements: data?.elements ?? [],

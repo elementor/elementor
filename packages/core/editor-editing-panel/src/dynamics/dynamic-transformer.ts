@@ -9,52 +9,52 @@ type Dynamic = {
 	settings?: Props;
 };
 
-export const dynamicTransformer = createTransformer< Dynamic >( ( value, { propType } ) => {
-	if ( ! value?.name || ! isDynamicTagSupported( value.name ) ) {
+export const dynamicTransformer = createTransformer<Dynamic>((value, { propType }) => {
+	if (!value?.name || !isDynamicTagSupported(value.name)) {
 		return propType?.default ?? null;
 	}
 
-	return getDynamicValue( value.name, simpleTransform( value?.settings ?? {} ) );
-} );
+	return getDynamicValue(value.name, simpleTransform(value?.settings ?? {}));
+});
 
 // Temporary naive transformation until we'll have a `backendTransformer` that
 // will replace the `dynamicTransformer` client implementation.
-function simpleTransform( props: Props ) {
-	const transformed = Object.entries( props ).map( ( [ settingKey, settingValue ] ) => {
-		const value = isTransformable( settingValue ) ? settingValue.value : settingValue;
+function simpleTransform(props: Props) {
+	const transformed = Object.entries(props).map(([settingKey, settingValue]) => {
+		const value = isTransformable(settingValue) ? settingValue.value : settingValue;
 
-		return [ settingKey, value ] as const;
-	} );
+		return [settingKey, value] as const;
+	});
 
-	return Object.fromEntries( transformed );
+	return Object.fromEntries(transformed);
 }
 
-function getDynamicValue( name: string, settings: Record< string, unknown > ) {
+function getDynamicValue(name: string, settings: Record<string, unknown>) {
 	const { dynamicTags } = window.elementor ?? {};
 
-	if ( ! dynamicTags ) {
+	if (!dynamicTags) {
 		throw new DynamicTagsManagerNotFoundError();
 	}
 
 	const getTagValue = () => {
-		const tag = dynamicTags.createTag( 'v4-dynamic-tag', name, settings );
+		const tag = dynamicTags.createTag('v4-dynamic-tag', name, settings);
 
-		if ( ! tag ) {
+		if (!tag) {
 			return null;
 		}
 
-		return dynamicTags.loadTagDataFromCache( tag ) ?? null;
+		return dynamicTags.loadTagDataFromCache(tag) ?? null;
 	};
 
 	const tagValue = getTagValue();
 
-	if ( tagValue !== null ) {
+	if (tagValue !== null) {
 		return tagValue;
 	}
 
-	return new Promise( ( resolve ) => {
-		dynamicTags.refreshCacheFromServer( () => {
-			resolve( getTagValue() );
-		} );
-	} );
+	return new Promise((resolve) => {
+		dynamicTags.refreshCacheFromServer(() => {
+			resolve(getTagValue());
+		});
+	});
 }

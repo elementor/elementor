@@ -1,13 +1,13 @@
 import { numberPropTypeUtil, type NumberPropValue, stringPropTypeUtil, type StringPropValue } from '../prop-types';
 import { type ObjectPropValue, type PropValue, type TransformablePropValue } from '../types';
 
-const ensureNotNull = ( v: unknown, fallback: unknown ) => ( v === null ? fallback : v );
+const ensureNotNull = (v: unknown, fallback: unknown) => (v === null ? fallback : v);
 
-type PropConverter = ( value: unknown ) => PropValue;
+type PropConverter = (value: unknown) => PropValue;
 
 type Options = {
 	forceKey?: string;
-	transformers?: Record< string, PropConverter >;
+	transformers?: Record<string, PropConverter>;
 };
 
 const defaultOptions: Options = {
@@ -15,27 +15,27 @@ const defaultOptions: Options = {
 };
 
 export const adjustLlmPropValueSchema = (
-	value: Readonly< PropValue >,
+	value: Readonly<PropValue>,
 	{ transformers = {}, forceKey = undefined }: Options = defaultOptions
 ): PropValue => {
-	const clone = structuredClone( value );
-	if ( typeof clone !== 'object' || clone === null ) {
+	const clone = structuredClone(value);
+	if (typeof clone !== 'object' || clone === null) {
 		return null;
 	}
 	// Check for transformable types
-	if ( Array.isArray( clone ) ) {
-		return clone.map( ( item ) => adjustLlmPropValueSchema( item, { forceKey, transformers } ) ) as PropValue;
+	if (Array.isArray(clone)) {
+		return clone.map((item) => adjustLlmPropValueSchema(item, { forceKey, transformers })) as PropValue;
 	}
-	const transformablePropValue = clone as TransformablePropValue< string >;
-	if ( '$intention' in transformablePropValue ) {
-		delete ( transformablePropValue as Record< string, unknown > ).$intention;
+	const transformablePropValue = clone as TransformablePropValue<string>;
+	if ('$intention' in transformablePropValue) {
+		delete (transformablePropValue as Record<string, unknown>).$intention;
 	}
-	if ( forceKey ) {
+	if (forceKey) {
 		transformablePropValue.$$type = forceKey;
 	}
 
 	// fix by type - Size is the only case where we have a non-valid structure
-	switch ( transformablePropValue.$$type ) {
+	switch (transformablePropValue.$$type) {
 		case 'size': {
 			const { value: rawSizePropValue } = transformablePropValue as TransformablePropValue<
 				string,
@@ -44,14 +44,14 @@ export const adjustLlmPropValueSchema = (
 			const unit =
 				typeof rawSizePropValue.unit === 'string'
 					? rawSizePropValue.unit
-					: ensureNotNull( stringPropTypeUtil.extract( rawSizePropValue.unit ), 'px' );
+					: ensureNotNull(stringPropTypeUtil.extract(rawSizePropValue.unit), 'px');
 			const size =
 				typeof rawSizePropValue.size === 'string' || typeof rawSizePropValue.size === 'number'
 					? rawSizePropValue.size
 					: ensureNotNull(
-							stringPropTypeUtil.extract( rawSizePropValue.size ),
-							numberPropTypeUtil.extract( rawSizePropValue.size )
-					  );
+							stringPropTypeUtil.extract(rawSizePropValue.size),
+							numberPropTypeUtil.extract(rawSizePropValue.size)
+						);
 			return {
 				$$type: 'size',
 				value: {
@@ -74,24 +74,24 @@ export const adjustLlmPropValueSchema = (
 			};
 		}
 		default:
-			const transformer = transformers?.[ transformablePropValue.$$type ];
-			if ( transformer ) {
-				return transformer( transformablePropValue.value );
+			const transformer = transformers?.[transformablePropValue.$$type];
+			if (transformer) {
+				return transformer(transformablePropValue.value);
 			}
 	}
 
-	if ( typeof transformablePropValue.value === 'object' ) {
-		if ( Array.isArray( transformablePropValue.value ) ) {
-			transformablePropValue.value = adjustLlmPropValueSchema( transformablePropValue.value, {
+	if (typeof transformablePropValue.value === 'object') {
+		if (Array.isArray(transformablePropValue.value)) {
+			transformablePropValue.value = adjustLlmPropValueSchema(transformablePropValue.value, {
 				transformers,
-			} ) as PropValue[];
+			}) as PropValue[];
 		} else {
 			const { value: objectValue } = transformablePropValue as ObjectPropValue;
 			const clonedObject = clone as ObjectPropValue;
-			clonedObject.value = {} as ( typeof clonedObject )[ 'value' ]; // Record< string, PropValue >;
-			Object.entries( objectValue ).forEach( ( [ key, childProp ] ) => {
-				clonedObject.value[ key ] = adjustLlmPropValueSchema( childProp as PropValue, { transformers } );
-			} );
+			clonedObject.value = {} as (typeof clonedObject)['value']; // Record< string, PropValue >;
+			Object.entries(objectValue).forEach(([key, childProp]) => {
+				clonedObject.value[key] = adjustLlmPropValueSchema(childProp as PropValue, { transformers });
+			});
 		}
 	}
 	return clone;

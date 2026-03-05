@@ -5,56 +5,56 @@ import { mockElement } from '../../__tests__/utils';
 import { createMockSnapshotField } from '../../styles-inheritance/__tests__/mock-utils';
 import { getInheritanceChainForPath, initStyleInheritanceMocks, mockElementStyles } from './styles-inheritance-utils';
 
-jest.mock( '@elementor/editor-styles-repository' );
-jest.mock( '../classes-prop-context' );
-jest.mock( '@elementor/editor-responsive' );
-jest.mock( '@elementor/editor-elements' );
-jest.mock( '../style-context' );
+jest.mock('@elementor/editor-styles-repository');
+jest.mock('../classes-prop-context');
+jest.mock('@elementor/editor-responsive');
+jest.mock('@elementor/editor-elements');
+jest.mock('../style-context');
 
-describe( 'useStylesInheritanceChain', () => {
-	beforeAll( () => {
-		initStyleInheritanceMocks( 'style-id-1' );
-	} );
+describe('useStylesInheritanceChain', () => {
+	beforeAll(() => {
+		initStyleInheritanceMocks('style-id-1');
+	});
 
 	const element = mockElement();
 	const elementType = createMockElementType();
 
-	it( 'should provide a single styles inheritance field', () => {
+	it('should provide a single styles inheritance field', () => {
 		// Arrange.
-		const mockStyleBasic1 = createMockStyleDefinition( {
+		const mockStyleBasic1 = createMockStyleDefinition({
 			id: 'style-basic-1',
 			props: {
 				prop1: 1,
 			},
-		} );
-		const mockStyleBasic2 = createMockStyleDefinition( {
+		});
+		const mockStyleBasic2 = createMockStyleDefinition({
 			id: 'style-basic-2',
 			props: {
 				prop1: 2,
 				prop2: 2,
 			},
-		} );
+		});
 
-		const settings = mockElementStyles( [ mockStyleBasic1, mockStyleBasic2 ] );
+		const settings = mockElementStyles([mockStyleBasic1, mockStyleBasic2]);
 
 		// Act.
-		const { result: prop1Result } = getInheritanceChainForPath( element, elementType, [ 'prop1' ], settings );
-		const { result: prop2Result } = getInheritanceChainForPath( element, elementType, [ 'prop2' ], settings );
+		const { result: prop1Result } = getInheritanceChainForPath(element, elementType, ['prop1'], settings);
+		const { result: prop2Result } = getInheritanceChainForPath(element, elementType, ['prop2'], settings);
 
 		// Assert.
-		expect( prop1Result.current ).toEqual( [
-			createMockSnapshotField( mockStyleBasic1, { breakpoint: null, state: null }, [ 'prop1' ], null ),
-			createMockSnapshotField( mockStyleBasic2, { breakpoint: null, state: null }, [ 'prop1' ], null ),
-		] );
+		expect(prop1Result.current).toEqual([
+			createMockSnapshotField(mockStyleBasic1, { breakpoint: null, state: null }, ['prop1'], null),
+			createMockSnapshotField(mockStyleBasic2, { breakpoint: null, state: null }, ['prop1'], null),
+		]);
 
-		expect( prop2Result.current ).toEqual( [
-			createMockSnapshotField( mockStyleBasic2, { breakpoint: null, state: null }, [ 'prop2' ], null ),
-		] );
-	} );
+		expect(prop2Result.current).toEqual([
+			createMockSnapshotField(mockStyleBasic2, { breakpoint: null, state: null }, ['prop2'], null),
+		]);
+	});
 
-	it( 'should retrieve the correct value from a nested object and filter out missing values', () => {
+	it('should retrieve the correct value from a nested object and filter out missing values', () => {
 		// Arrange.
-		const mockStyleObject1 = createMockStyleDefinition( {
+		const mockStyleObject1 = createMockStyleDefinition({
 			id: 'style-object-1',
 			props: {
 				myObject: {
@@ -65,8 +65,8 @@ describe( 'useStylesInheritanceChain', () => {
 					},
 				},
 			},
-		} );
-		const mockStyleObject2 = createMockStyleDefinition( {
+		});
+		const mockStyleObject2 = createMockStyleDefinition({
 			id: 'style-object-2',
 			props: {
 				myObject: {
@@ -76,79 +76,64 @@ describe( 'useStylesInheritanceChain', () => {
 					},
 				},
 			},
-		} );
+		});
 
-		const settings = mockElementStyles( [ mockStyleObject1, mockStyleObject2 ] );
+		const settings = mockElementStyles([mockStyleObject1, mockStyleObject2]);
 
 		// Act.
 		const { result: prop1Result } = getInheritanceChainForPath(
 			element,
 			elementType,
-			[ 'myObject', 'prop1' ],
+			['myObject', 'prop1'],
 			settings
 		);
 		const { result: prop2Result } = getInheritanceChainForPath(
 			element,
 			elementType,
-			[ 'myObject', 'prop2' ],
+			['myObject', 'prop2'],
 			settings
 		);
 
 		// Assert.
-		expect( prop1Result.current ).toEqual( [
-			createMockSnapshotField(
-				mockStyleObject1,
-				{ breakpoint: null, state: null },
-				[ 'myObject', 'prop1' ],
-				null
-			),
-			createMockSnapshotField(
-				mockStyleObject2,
-				{ breakpoint: null, state: null },
-				[ 'myObject', 'prop1' ],
-				null
-			),
-		] );
+		expect(prop1Result.current).toEqual([
+			createMockSnapshotField(mockStyleObject1, { breakpoint: null, state: null }, ['myObject', 'prop1'], null),
+			createMockSnapshotField(mockStyleObject2, { breakpoint: null, state: null }, ['myObject', 'prop1'], null),
+		]);
 
-		expect( prop2Result.current ).toEqual( [
-			createMockSnapshotField(
-				mockStyleObject1,
-				{ breakpoint: null, state: null },
-				[ 'myObject', 'prop2' ],
-				null
-			),
-		] );
-	} );
+		expect(prop2Result.current).toEqual([
+			createMockSnapshotField(mockStyleObject1, { breakpoint: null, state: null }, ['myObject', 'prop2'], null),
+		]);
+	});
 
-	it( 'should filter out missing values from nested unless the origin prop type is a union and the prop value is of another type', () => {
+	it('should filter out missing values from nested unless the origin prop type is a union and the prop value is of another type', () => {
 		// Arrange.
-		const stringPropType = createMockPropType( {
+		const stringPropType = createMockPropType({
 			kind: 'plain',
 			key: 'test-string',
-		} );
+		});
 
-		const objectPropType = createMockPropType( {
+		const objectPropType = createMockPropType({
 			kind: 'object',
 			key: 'test-object',
 			shape: {
 				prop1: stringPropType,
 				prop2: stringPropType,
 			},
-		} );
+		});
 
-		const unionPropType = createMockPropType( {
+		const unionPropType = createMockPropType({
 			kind: 'union',
 			prop_types: {
 				object: objectPropType,
 				string: stringPropType,
 			},
-		} );
+		});
 
-		jest.mocked( getStylesSchema ).mockReturnValue( {
+		jest.mocked(getStylesSchema).mockReturnValue({
 			unionProp: unionPropType,
-		} );
+		});
 
-		const styleWithAllNestedProps = createMockStyleDefinition( {
+		const styleWithAllNestedProps = createMockStyleDefinition({
 			id: 'style-with-all-nested-props',
 			props: {
 				unionProp: {
@@ -159,9 +144,9 @@ describe( 'useStylesInheritanceChain', () => {
 					},
 				},
 			},
-		} );
+		});
 
-		const styleWithoutMatchingType = createMockStyleDefinition( {
+		const styleWithoutMatchingType = createMockStyleDefinition({
 			id: 'style-without-matching-prop-type',
 			props: {
 				unionProp: {
@@ -169,9 +154,9 @@ describe( 'useStylesInheritanceChain', () => {
 					value: 'value3',
 				},
 			},
-		} );
+		});
 
-		const styleWithSomeNestedProps = createMockStyleDefinition( {
+		const styleWithSomeNestedProps = createMockStyleDefinition({
 			id: 'style-with-some-nested-props',
 			props: {
 				unionProp: {
@@ -181,63 +166,53 @@ describe( 'useStylesInheritanceChain', () => {
 					},
 				},
 			},
-		} );
+		});
 
-		const settings = mockElementStyles( [
+		const settings = mockElementStyles([
 			styleWithAllNestedProps,
 			styleWithoutMatchingType,
 			styleWithSomeNestedProps,
-		] );
+		]);
 
 		// Act.
 		const { result: resultForProp1 } = getInheritanceChainForPath(
 			element,
 			elementType,
-			[ 'unionProp', 'prop1' ],
+			['unionProp', 'prop1'],
 			settings
 		);
 		const { result: resultForProp2 } = getInheritanceChainForPath(
 			element,
 			elementType,
-			[ 'unionProp', 'prop2' ],
+			['unionProp', 'prop2'],
 			settings
 		);
 
 		// Assert.
-		expect( resultForProp1.current ).toEqual( [
+		expect(resultForProp1.current).toEqual([
 			createMockSnapshotField(
 				styleWithAllNestedProps,
 				{ breakpoint: null, state: null },
-				[ 'unionProp', 'prop1' ],
+				['unionProp', 'prop1'],
 				null
 			),
-			createMockSnapshotField(
-				styleWithoutMatchingType,
-				{ breakpoint: null, state: null },
-				[ 'unionProp' ],
-				null
-			),
+			createMockSnapshotField(styleWithoutMatchingType, { breakpoint: null, state: null }, ['unionProp'], null),
 			createMockSnapshotField(
 				styleWithSomeNestedProps,
 				{ breakpoint: null, state: null },
-				[ 'unionProp', 'prop1' ],
+				['unionProp', 'prop1'],
 				null
 			),
-		] );
+		]);
 
-		expect( resultForProp2.current ).toEqual( [
+		expect(resultForProp2.current).toEqual([
 			createMockSnapshotField(
 				styleWithAllNestedProps,
 				{ breakpoint: null, state: null },
-				[ 'unionProp', 'prop2' ],
+				['unionProp', 'prop2'],
 				null
 			),
-			createMockSnapshotField(
-				styleWithoutMatchingType,
-				{ breakpoint: null, state: null },
-				[ 'unionProp' ],
-				null
-			),
-		] );
-	} );
-} );
+			createMockSnapshotField(styleWithoutMatchingType, { breakpoint: null, state: null }, ['unionProp'], null),
+		]);
+	});
+});

@@ -3,18 +3,18 @@ import { __getState as getState } from '@elementor/store';
 import { selectOverridableProps } from '../store/store';
 import { type OverridableProp } from '../types';
 
-export function getOverridableProp( {
+export function getOverridableProp({
 	componentId,
 	overrideKey,
 }: {
 	componentId: number;
 	overrideKey: string;
-} ): OverridableProp | undefined {
-	const overridableProps = selectOverridableProps( getState(), componentId );
+}): OverridableProp | undefined {
+	const overridableProps = selectOverridableProps(getState(), componentId);
 
-	if ( ! overridableProps ) {
+	if (!overridableProps) {
 		return undefined;
 	}
 
-	return overridableProps.props[ overrideKey ];
+	return overridableProps.props[overrideKey];
 }

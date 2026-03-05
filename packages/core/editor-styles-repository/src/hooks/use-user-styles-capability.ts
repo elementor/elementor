@@ -4,7 +4,7 @@ import { stylesRepository } from '../styles-repository';
 import { type UserCapabilities } from '../types';
 
 type UserCan = {
-	[ key in keyof UserCapabilities ]: boolean;
+	[key in keyof UserCapabilities]: boolean;
 };
 
 const DEFAULT_CAPABILITIES: UserCan = {
@@ -17,18 +17,18 @@ const DEFAULT_CAPABILITIES: UserCan = {
 export const useUserStylesCapability = () => {
 	const { capabilities } = useCurrentUserCapabilities();
 
-	const userCan = ( providerKey: string ): UserCan => {
-		const provider = stylesRepository.getProviderByKey( providerKey );
+	const userCan = (providerKey: string): UserCan => {
+		const provider = stylesRepository.getProviderByKey(providerKey);
 
-		if ( ! provider?.capabilities ) {
+		if (!provider?.capabilities) {
 			return DEFAULT_CAPABILITIES;
 		}
 
-		return Object.entries( provider.capabilities ).reduce(
-			( acc, [ key, capability ] ) => ( {
+		return Object.entries(provider.capabilities).reduce(
+			(acc, [key, capability]) => ({
 				...acc,
-				[ key ]: capabilities?.includes( capability ) ?? true,
-			} ),
+				[key]: capabilities?.includes(capability) ?? true,
+			}),
 			DEFAULT_CAPABILITIES
 		);
 	};

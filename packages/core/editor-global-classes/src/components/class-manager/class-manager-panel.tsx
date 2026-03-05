@@ -61,124 +61,124 @@ const reloadDocument = () => {
 
 	documentsManager.invalidateCache();
 
-	return runCommand( 'editor/documents/switch', {
+	return runCommand('editor/documents/switch', {
 		id: currentDocument?.id,
 		shouldScroll: false,
 		shouldNavigateToDefaultRoute: false,
-	} );
+	});
 };
 
 // We need to disable the app-bar buttons, and the elements overlays when opening the classes manager panel.
 // The buttons and overlays are enabled only in edit mode, so we're creating a custom new edit mode that
 // will force them to be disabled. We can't use the `preview` edit mode in this case since it'll force
 // the panel to be closed.
-export const { panel, usePanelActions } = createPanel( {
+export const { panel, usePanelActions } = createPanel({
 	id,
 	component: ClassManagerPanel,
-	allowedEditModes: [ 'edit', id ],
+	allowedEditModes: ['edit', id],
 	onOpen: () => {
-		changeEditMode( id );
+		changeEditMode(id);
 
 		blockPanelInteractions();
 	},
 	onClose: async () => {
-		changeEditMode( 'edit' );
+		changeEditMode('edit');
 		await reloadDocument();
 		unblockPanelInteractions();
 	},
 	isOpenPreviousElement: true,
-} );
+});
 
 export function ClassManagerPanel() {
 	const isDirty = useDirtyState();
 	const { close: closePanel } = usePanelActions();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
-	const [ stopSyncConfirmation, setStopSyncConfirmation ] = useState< string | null >( null );
-	const [ startSyncConfirmation, setStartSyncConfirmation ] = useState< string | null >( null );
-	const [ isStopSyncSuppressed ] = useSuppressedMessage( STOP_SYNC_MESSAGE_KEY );
+	const [stopSyncConfirmation, setStopSyncConfirmation] = useState<string | null>(null);
+	const [startSyncConfirmation, setStartSyncConfirmation] = useState<string | null>(null);
+	const [isStopSyncSuppressed] = useSuppressedMessage(STOP_SYNC_MESSAGE_KEY);
 
 	const { mutateAsync: publish, isPending: isPublishing } = usePublish();
 
 	const resetAndClosePanel = () => {
-		dispatch( slice.actions.resetToInitialState( { context: 'frontend' } ) );
+		dispatch(slice.actions.resetToInitialState({ context: 'frontend' }));
 		closeSaveChangesDialog();
 	};
 
-	const handleStopSync = useCallback( ( classId: string ) => {
+	const handleStopSync = useCallback((classId: string) => {
 		dispatch(
-			slice.actions.update( {
+			slice.actions.update({
 				style: {
 					id: classId,
 					sync_to_v3: false,
 				},
-			} )
+			})
 		);
-		setStopSyncConfirmation( null );
-	}, [] );
+		setStopSyncConfirmation(null);
+	}, []);
 
-	const handleStartSync = useCallback( ( classId: string ) => {
+	const handleStartSync = useCallback((classId: string) => {
 		dispatch(
-			slice.actions.update( {
+			slice.actions.update({
 				style: {
 					id: classId,
 					sync_to_v3: true,
 				},
-			} )
+			})
 		);
-		setStartSyncConfirmation( null );
-	}, [] );
+		setStartSyncConfirmation(null);
+	}, []);
 
 	const handleStopSyncRequest = useCallback(
-		( classId: string ) => {
-			if ( ! isStopSyncSuppressed ) {
-				setStopSyncConfirmation( classId );
+		(classId: string) => {
+			if (!isStopSyncSuppressed) {
+				setStopSyncConfirmation(classId);
 			} else {
-				handleStopSync( classId );
+				handleStopSync(classId);
 			}
 		},
-		[ isStopSyncSuppressed, handleStopSync ]
+		[isStopSyncSuppressed, handleStopSync]
 	);
 
 	usePreventUnload();
 
 	return (
 		<ThemeProvider>
-			<ErrorBoundary fallback={ <ErrorBoundaryFallback /> }>
+			<ErrorBoundary fallback={<ErrorBoundaryFallback />}>
 				<Panel>
 					<SearchAndFilterProvider>
 						<PanelHeader>
-							<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
-								<Stack width="100%" direction="row" gap={ 1 }>
-									<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
+							<Stack p={1} pl={2} width="100%" direction="row" alignItems="center">
+								<Stack width="100%" direction="row" gap={1}>
+									<PanelHeaderTitle sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
 										<FlippedColorSwatchIcon fontSize="inherit" />
-										{ __( 'Class Manager', 'elementor' ) }
+										{__('Class Manager', 'elementor')}
 									</PanelHeaderTitle>
 									<TotalCssClassCounter />
 								</Stack>
 								<CloseButton
-									sx={ { marginLeft: 'auto' } }
-									disabled={ isPublishing }
-									onClose={ () => {
-										if ( isDirty ) {
+									sx={{ marginLeft: 'auto' }}
+									disabled={isPublishing}
+									onClose={() => {
+										if (isDirty) {
 											openSaveChangesDialog();
 											return;
 										}
 
 										closePanel();
-									} }
+									}}
 								/>
 							</Stack>
 						</PanelHeader>
 						<PanelBody
-							sx={ {
+							sx={{
 								display: 'flex',
 								flexDirection: 'column',
 								height: '100%',
-							} }
+							}}
 						>
-							<Box px={ 2 } pb={ 1 }>
-								<Stack direction="row" justifyContent="spaceBetween" gap={ 0.5 } sx={ { pb: 0.5 } }>
-									<Box sx={ { flexGrow: 1 } }>
+							<Box px={2} pb={1}>
+								<Stack direction="row" justifyContent="spaceBetween" gap={0.5} sx={{ pb: 0.5 }}>
+									<Box sx={{ flexGrow: 1 }}>
 										<ClassManagerSearch />
 									</Box>
 									<CssClassFilter />
@@ -187,16 +187,16 @@ export function ClassManagerPanel() {
 							</Box>
 							<Divider />
 							<Box
-								px={ 2 }
-								sx={ {
+								px={2}
+								sx={{
 									flexGrow: 1,
 									overflowY: 'auto',
-								} }
+								}}
 							>
 								<GlobalClassesList
-									disabled={ isPublishing }
-									onStopSyncRequest={ handleStopSyncRequest }
-									onStartSyncRequest={ ( classId ) => setStartSyncConfirmation( classId ) }
+									disabled={isPublishing}
+									onStopSyncRequest={handleStopSyncRequest}
+									onStartSyncRequest={(classId) => setStartSyncConfirmation(classId)}
 								/>
 							</Box>
 						</PanelBody>
@@ -207,80 +207,78 @@ export function ClassManagerPanel() {
 								size="small"
 								color="global"
 								variant="contained"
-								onClick={ publish }
-								disabled={ ! isDirty }
-								loading={ isPublishing }
+								onClick={publish}
+								disabled={!isDirty}
+								loading={isPublishing}
 							>
-								{ __( 'Save changes', 'elementor' ) }
+								{__('Save changes', 'elementor')}
 							</Button>
 						</PanelFooter>
 					</SearchAndFilterProvider>
 				</Panel>
 			</ErrorBoundary>
 			<ClassManagerIntroduction />
-			{ startSyncConfirmation && (
+			{startSyncConfirmation && (
 				<StartSyncToV3Modal
 					externalOpen
-					onExternalClose={ () => setStartSyncConfirmation( null ) }
-					onConfirm={ () => handleStartSync( startSyncConfirmation ) }
+					onExternalClose={() => setStartSyncConfirmation(null)}
+					onConfirm={() => handleStartSync(startSyncConfirmation)}
 				/>
-			) }
-			{ stopSyncConfirmation && (
+			)}
+			{stopSyncConfirmation && (
 				<StopSyncConfirmationDialog
 					open
-					onClose={ () => setStopSyncConfirmation( null ) }
-					onConfirm={ () => handleStopSync( stopSyncConfirmation ) }
+					onClose={() => setStopSyncConfirmation(null)}
+					onConfirm={() => handleStopSync(stopSyncConfirmation)}
 				/>
-			) }
-			{ isSaveChangesDialogOpen && (
+			)}
+			{isSaveChangesDialogOpen && (
 				<SaveChangesDialog>
-					<DialogHeader onClose={ closeSaveChangesDialog } logo={ false }>
-						<SaveChangesDialog.Title>
-							{ __( 'You have unsaved changes', 'elementor' ) }
-						</SaveChangesDialog.Title>
+					<DialogHeader onClose={closeSaveChangesDialog} logo={false}>
+						<SaveChangesDialog.Title>{__('You have unsaved changes', 'elementor')}</SaveChangesDialog.Title>
 					</DialogHeader>
 					<SaveChangesDialog.Content>
 						<SaveChangesDialog.ContentText>
-							{ __( 'You have unsaved changes in the Class Manager.', 'elementor' ) }
+							{__('You have unsaved changes in the Class Manager.', 'elementor')}
 						</SaveChangesDialog.ContentText>
 						<SaveChangesDialog.ContentText>
-							{ __( 'To avoid losing your updates, save your changes before leaving.', 'elementor' ) }
+							{__('To avoid losing your updates, save your changes before leaving.', 'elementor')}
 						</SaveChangesDialog.ContentText>
 					</SaveChangesDialog.Content>
 					<SaveChangesDialog.Actions
-						actions={ {
+						actions={{
 							discard: {
-								label: __( 'Discard', 'elementor' ),
+								label: __('Discard', 'elementor'),
 								action: () => {
 									resetAndClosePanel();
 								},
 							},
 							confirm: {
-								label: __( 'Save & Continue', 'elementor' ),
+								label: __('Save & Continue', 'elementor'),
 								action: async () => {
 									await publish();
 									closeSaveChangesDialog();
 									closePanel();
 								},
 							},
-						} }
+						}}
 					/>
 				</SaveChangesDialog>
-			) }
+			)}
 		</ThemeProvider>
 	);
 }
 
-const CloseButton = ( { onClose, ...props }: IconButtonProps & { onClose: () => void } ) => (
-	<IconButton size="small" color="secondary" onClick={ onClose } aria-label="Close" { ...props }>
+const CloseButton = ({ onClose, ...props }: IconButtonProps & { onClose: () => void }) => (
+	<IconButton size="small" color="secondary" onClick={onClose} aria-label="Close" {...props}>
 		<XIcon fontSize="small" />
 	</IconButton>
 );
 
 const ErrorBoundaryFallback = () => (
-	<Box role="alert" sx={ { minHeight: '100%', p: 2 } }>
-		<Alert severity="error" sx={ { mb: 2, maxWidth: 400, textAlign: 'center' } }>
-			<strong>{ __( 'Something went wrong', 'elementor' ) }</strong>
+	<Box role="alert" sx={{ minHeight: '100%', p: 2 }}>
+		<Alert severity="error" sx={{ mb: 2, maxWidth: 400, textAlign: 'center' }}>
+			<strong>{__('Something went wrong', 'elementor')}</strong>
 		</Alert>
 	</Box>
 );
@@ -288,73 +286,68 @@ const ErrorBoundaryFallback = () => (
 const usePreventUnload = () => {
 	const isDirty = useDirtyState();
 
-	useEffect( () => {
-		const handleBeforeUnload = ( event: BeforeUnloadEvent ) => {
-			if ( isDirty ) {
+	useEffect(() => {
+		const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+			if (isDirty) {
 				event.preventDefault();
 			}
 		};
 
-		window.addEventListener( 'beforeunload', handleBeforeUnload );
+		window.addEventListener('beforeunload', handleBeforeUnload);
 
 		return () => {
-			window.removeEventListener( 'beforeunload', handleBeforeUnload );
+			window.removeEventListener('beforeunload', handleBeforeUnload);
 		};
-	}, [ isDirty ] );
+	}, [isDirty]);
 };
 
 const usePublish = () => {
-	return useMutation( {
-		mutationFn: () => saveGlobalClasses( { context: 'frontend' } ),
+	return useMutation({
+		mutationFn: () => saveGlobalClasses({ context: 'frontend' }),
 		onSuccess: async () => {
-			setDocumentModifiedStatus( false );
+			setDocumentModifiedStatus(false);
 
-			if ( hasDeletedItems() ) {
+			if (hasDeletedItems()) {
 				await onDelete();
 			}
 		},
-	} );
+	});
 };
 
 const TotalCssClassCounter = () => {
 	const filters = useFilters();
 	const cssClasses = useClassesOrder();
 
-	return (
-		<Chip
-			size={ 'small' }
-			label={ filters ? `${ filters.length } / ${ cssClasses?.length }` : cssClasses?.length }
-		/>
-	);
+	return <Chip size={'small'} label={filters ? `${filters.length} / ${cssClasses?.length}` : cssClasses?.length} />;
 };
 
-const StopSyncConfirmationDialog = ( { open, onClose, onConfirm }: StopSyncConfirmationDialogProps ) => {
-	const [ , suppressStopSyncMessage ] = useSuppressedMessage( STOP_SYNC_MESSAGE_KEY );
+const StopSyncConfirmationDialog = ({ open, onClose, onConfirm }: StopSyncConfirmationDialogProps) => {
+	const [, suppressStopSyncMessage] = useSuppressedMessage(STOP_SYNC_MESSAGE_KEY);
 
 	return (
-		<ConfirmationDialog open={ open } onClose={ onClose }>
-			<ConfirmationDialog.Title icon={ FlippedColorSwatchIcon } iconColor="primary">
-				{ __( 'Un-sync typography class', 'elementor' ) }
+		<ConfirmationDialog open={open} onClose={onClose}>
+			<ConfirmationDialog.Title icon={FlippedColorSwatchIcon} iconColor="primary">
+				{__('Un-sync typography class', 'elementor')}
 			</ConfirmationDialog.Title>
 			<ConfirmationDialog.Content>
 				<ConfirmationDialog.ContentText>
-					{ __( "You're about to stop syncing a typography class to version 3.", 'elementor' ) }
+					{__("You're about to stop syncing a typography class to version 3.", 'elementor')}
 				</ConfirmationDialog.ContentText>
-				<ConfirmationDialog.ContentText sx={ { mt: 1 } }>
-					{ __(
+				<ConfirmationDialog.ContentText sx={{ mt: 1 }}>
+					{__(
 						"Note that if it's being used anywhere, the affected elements will inherit the default typography.",
 						'elementor'
-					) }
+					)}
 				</ConfirmationDialog.ContentText>
 			</ConfirmationDialog.Content>
 			<ConfirmationDialog.Actions
-				onClose={ onClose }
-				onConfirm={ onConfirm }
-				cancelLabel={ __( 'Cancel', 'elementor' ) }
-				confirmLabel={ __( 'Got it', 'elementor' ) }
+				onClose={onClose}
+				onConfirm={onConfirm}
+				cancelLabel={__('Cancel', 'elementor')}
+				confirmLabel={__('Got it', 'elementor')}
 				color="primary"
-				onSuppressMessage={ suppressStopSyncMessage }
-				suppressLabel={ __( "Don't show again", 'elementor' ) }
+				onSuppressMessage={suppressStopSyncMessage}
+				suppressLabel={__("Don't show again", 'elementor')}
 			/>
 		</ConfirmationDialog>
 	);

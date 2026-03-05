@@ -5,64 +5,64 @@ import { fireEvent, screen } from '@testing-library/react';
 import { ComponentModal } from '../component-modal';
 import { useCanvasDocument } from '../use-canvas-document';
 
-jest.mock( '@elementor/editor-canvas' );
-jest.mock( '@elementor/editor-v1-adapters' );
-jest.mock( '../use-canvas-document' );
+jest.mock('@elementor/editor-canvas');
+jest.mock('@elementor/editor-v1-adapters');
+jest.mock('../use-canvas-document');
 
-describe( '<ComponentModal />', () => {
+describe('<ComponentModal />', () => {
 	let mockOnClose: jest.Mock;
 
-	beforeEach( () => {
-		jest.mocked( useCanvasDocument ).mockReturnValue( document );
+	beforeEach(() => {
+		jest.mocked(useCanvasDocument).mockReturnValue(document);
 
 		mockOnClose = jest.fn();
-	} );
+	});
 
-	afterEach( () => {
+	afterEach(() => {
 		jest.clearAllMocks();
-	} );
+	});
 
-	describe( 'ComponentModal', () => {
-		it( 'should not render when portal is not available', () => {
+	describe('ComponentModal', () => {
+		it('should not render when portal is not available', () => {
 			// Arrange.
-			jest.mocked( useCanvasDocument ).mockReturnValue( null );
-			renderWithTheme( <div aria-label="mock-widget"></div> );
+			jest.mocked(useCanvasDocument).mockReturnValue(null);
+			renderWithTheme(<div aria-label="mock-widget"></div>);
 
 			// Act.
-			const mockElement = screen.getByLabelText( 'mock-widget' );
-			renderWithTheme( <ComponentModal topLevelElementDom={ mockElement } onClose={ mockOnClose } /> );
+			const mockElement = screen.getByLabelText('mock-widget');
+			renderWithTheme(<ComponentModal topLevelElementDom={mockElement} onClose={mockOnClose} />);
 
 			// Assert.
-			expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
-		} );
+			expect(screen.queryByRole('button')).not.toBeInTheDocument();
+		});
 
-		it( 'should trigger the onClose when clicking on the backdrop', () => {
+		it('should trigger the onClose when clicking on the backdrop', () => {
 			// Arrange.
-			renderWithTheme( <div aria-label="mock-widget"></div> );
-			const mockElement = screen.getByLabelText( 'mock-widget' );
+			renderWithTheme(<div aria-label="mock-widget"></div>);
+			const mockElement = screen.getByLabelText('mock-widget');
 
 			// Act.
-			renderWithTheme( <ComponentModal topLevelElementDom={ mockElement } onClose={ mockOnClose } /> );
+			renderWithTheme(<ComponentModal topLevelElementDom={mockElement} onClose={mockOnClose} />);
 
-			const backdrop = screen.getByRole( 'button' );
-			fireEvent.click( backdrop );
+			const backdrop = screen.getByRole('button');
+			fireEvent.click(backdrop);
 
 			// Assert.
-			expect( mockOnClose ).toHaveBeenCalledTimes( 1 );
-		} );
+			expect(mockOnClose).toHaveBeenCalledTimes(1);
+		});
 
-		it( 'should trigger the onClose when pressing the Esc key', () => {
+		it('should trigger the onClose when pressing the Esc key', () => {
 			// Arrange.
-			renderWithTheme( <div aria-label="mock-widget"></div> );
-			const mockElement = screen.getByLabelText( 'mock-widget' );
+			renderWithTheme(<div aria-label="mock-widget"></div>);
+			const mockElement = screen.getByLabelText('mock-widget');
 
 			// Act.
-			renderWithTheme( <ComponentModal topLevelElementDom={ mockElement } onClose={ mockOnClose } /> );
+			renderWithTheme(<ComponentModal topLevelElementDom={mockElement} onClose={mockOnClose} />);
 
-			fireEvent.keyDown( mockElement.ownerDocument.body, { key: 'Escape' } );
+			fireEvent.keyDown(mockElement.ownerDocument.body, { key: 'Escape' });
 
 			// Assert.
-			expect( mockOnClose ).toHaveBeenCalledTimes( 1 );
-		} );
-	} );
-} );
+			expect(mockOnClose).toHaveBeenCalledTimes(1);
+		});
+	});
+});

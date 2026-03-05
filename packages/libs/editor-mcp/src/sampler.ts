@@ -2,7 +2,7 @@ import { type z } from '@elementor/schema';
 import { type RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import { SamplingMessageSchema, type ServerNotification, type ServerRequest } from '@modelcontextprotocol/sdk/types.js';
 
-type Server = RequestHandlerExtra< ServerRequest, ServerNotification >;
+type Server = RequestHandlerExtra<ServerRequest, ServerNotification>;
 type Opts = {
 	maxTokens?: number;
 	modelPreferences?: string;
@@ -19,7 +19,7 @@ type SamplingOpts = {
 	systemPrompt?: string;
 	structuredOutput?: z.ZodTypeAny;
 	messages: { role: 'user' | 'assistant'; content: { type: 'text'; text: string } }[];
-	requestParams?: { [ key: string ]: string };
+	requestParams?: { [key: string]: string };
 };
 
 const DEFAULT_STRUCTURED_OUTPUT = {
@@ -30,14 +30,14 @@ const DEFAULT_STRUCTURED_OUTPUT = {
 			description: 'Result',
 		},
 	},
-	required: [ 'content' ],
+	required: ['content'],
 	additionalProperties: false,
 };
 
-export const createSampler = ( server: Server, opts: Opts = DEFAULT_OPTS ) => {
+export const createSampler = (server: Server, opts: Opts = DEFAULT_OPTS) => {
 	const { maxTokens = 1000, modelPreferences = 'openai', model = 'gpt-4o' } = opts;
-	const exec = async ( payload: SamplingOpts ) => {
-		const systemPromptObject = { ...( payload.systemPrompt ? { systemPrompt: payload.systemPrompt } : {} ) };
+	const exec = async (payload: SamplingOpts) => {
+		const systemPromptObject = { ...(payload.systemPrompt ? { systemPrompt: payload.systemPrompt } : {}) };
 		const requestParams = payload.requestParams || {};
 		const result = await server.sendRequest(
 			{
@@ -46,7 +46,7 @@ export const createSampler = ( server: Server, opts: Opts = DEFAULT_OPTS ) => {
 					...requestParams,
 					maxTokens,
 					modelPreferences: {
-						hints: [ { name: modelPreferences } ],
+						hints: [{ name: modelPreferences }],
 					},
 					metadata: {
 						model,

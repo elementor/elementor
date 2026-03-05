@@ -1,64 +1,64 @@
-type Settings = Record< string, unknown >;
+type Settings = Record<string, unknown>;
 
 type ChildRenderCallback = () => void;
 
 interface ListenToChildrenAPI {
-	render: ( callback: ChildRenderCallback ) => void;
+	render: (callback: ChildRenderCallback) => void;
 }
 
-type ListenToChildrenFunction = ( elementTypes: string[] ) => ListenToChildrenAPI;
+type ListenToChildrenFunction = (elementTypes: string[]) => ListenToChildrenAPI;
 
-type SharedHandlerParams< TSettings extends Settings = Settings > = {
+type SharedHandlerParams<TSettings extends Settings = Settings> = {
 	element: Element;
 	signal: AbortSignal;
 	settings: TSettings;
 };
 
-export type Handler = < TSettings extends Settings = Settings >(
-	params: SharedHandlerParams< TSettings > & {
+export type Handler = <TSettings extends Settings = Settings>(
+	params: SharedHandlerParams<TSettings> & {
 		listenToChildren: ListenToChildrenFunction;
 	}
-) => ( () => void ) | undefined;
+) => (() => void) | undefined;
 
-export type SelectorHandler = < TSettings extends Settings = Settings >(
-	params: SharedHandlerParams< TSettings >
-) => ( () => void ) | undefined;
+export type SelectorHandler = <TSettings extends Settings = Settings>(
+	params: SharedHandlerParams<TSettings>
+) => (() => void) | undefined;
 
-export const elementTypeHandlers: Map< string, Map< string, Handler > > = new Map();
-export const elementSelectorHandlers: Map< string, Map< string, SelectorHandler > > = new Map();
+export const elementTypeHandlers: Map<string, Map<string, Handler>> = new Map();
+export const elementSelectorHandlers: Map<string, Map<string, SelectorHandler>> = new Map();
 
-export const register = ( { elementType, id, callback }: { elementType: string; id: string; callback: Handler } ) => {
-	if ( ! elementTypeHandlers.has( elementType ) ) {
-		elementTypeHandlers.set( elementType, new Map() );
+export const register = ({ elementType, id, callback }: { elementType: string; id: string; callback: Handler }) => {
+	if (!elementTypeHandlers.has(elementType)) {
+		elementTypeHandlers.set(elementType, new Map());
 	}
 
-	if ( ! elementTypeHandlers.get( elementType )?.has( id ) ) {
-		elementTypeHandlers.get( elementType )?.set( id, callback );
+	if (!elementTypeHandlers.get(elementType)?.has(id)) {
+		elementTypeHandlers.get(elementType)?.set(id, callback);
 	}
 };
 
-Object.defineProperty( window, 'registerElementorElement', {
+Object.defineProperty(window, 'registerElementorElement', {
 	value: register,
 	enumerable: true,
-} );
+});
 
-export const unregister = ( { elementType, id }: { elementType: string; id?: string } ) => {
-	if ( ! elementTypeHandlers.has( elementType ) ) {
+export const unregister = ({ elementType, id }: { elementType: string; id?: string }) => {
+	if (!elementTypeHandlers.has(elementType)) {
 		return;
 	}
 
-	if ( id ) {
-		elementTypeHandlers.get( elementType )?.delete( id );
+	if (id) {
+		elementTypeHandlers.get(elementType)?.delete(id);
 
-		if ( elementTypeHandlers.get( elementType )?.size === 0 ) {
-			elementTypeHandlers.delete( elementType );
+		if (elementTypeHandlers.get(elementType)?.size === 0) {
+			elementTypeHandlers.delete(elementType);
 		}
 	} else {
-		elementTypeHandlers.delete( elementType );
+		elementTypeHandlers.delete(elementType);
 	}
 };
 
-export const registerBySelector = ( {
+export const registerBySelector = ({
 	id,
 	selector,
 	callback,
@@ -66,28 +66,28 @@ export const registerBySelector = ( {
 	selector: string;
 	id: string;
 	callback: SelectorHandler;
-} ) => {
-	if ( ! elementSelectorHandlers.has( selector ) ) {
-		elementSelectorHandlers.set( selector, new Map() );
+}) => {
+	if (!elementSelectorHandlers.has(selector)) {
+		elementSelectorHandlers.set(selector, new Map());
 	}
 
-	if ( ! elementSelectorHandlers.get( selector )?.has( id ) ) {
-		elementSelectorHandlers.get( selector )?.set( id, callback );
+	if (!elementSelectorHandlers.get(selector)?.has(id)) {
+		elementSelectorHandlers.get(selector)?.set(id, callback);
 	}
 };
 
-export const unregisterBySelector = ( { selector, id }: { selector: string; id?: string } ) => {
-	if ( ! elementSelectorHandlers.has( selector ) ) {
+export const unregisterBySelector = ({ selector, id }: { selector: string; id?: string }) => {
+	if (!elementSelectorHandlers.has(selector)) {
 		return;
 	}
 
-	if ( id ) {
-		elementSelectorHandlers.get( selector )?.delete( id );
+	if (id) {
+		elementSelectorHandlers.get(selector)?.delete(id);
 
-		if ( elementSelectorHandlers.get( selector )?.size === 0 ) {
-			elementSelectorHandlers.delete( selector );
+		if (elementSelectorHandlers.get(selector)?.size === 0) {
+			elementSelectorHandlers.delete(selector);
 		}
 	} else {
-		elementSelectorHandlers.delete( selector );
+		elementSelectorHandlers.delete(selector);
 	}
 };

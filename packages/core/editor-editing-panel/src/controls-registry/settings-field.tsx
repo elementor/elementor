@@ -27,29 +27,29 @@ type SettingsFieldProps = {
 
 const HISTORY_DEBOUNCE_WAIT = 800;
 
-const getElementSettigsWithDefaults = ( propsSchema: PropsSchema, elementSettings?: Props ) => {
+const getElementSettigsWithDefaults = (propsSchema: PropsSchema, elementSettings?: Props) => {
 	const elementSettingsWithDefaults = { ...elementSettings };
-	Object.keys( propsSchema ).forEach( ( key ) => {
-		if ( ! ( key in elementSettingsWithDefaults ) ) {
-			if ( propsSchema[ key ].default !== null ) {
-				elementSettingsWithDefaults[ key ] = propsSchema[ key ].default as Values[ keyof Values ];
+	Object.keys(propsSchema).forEach((key) => {
+		if (!(key in elementSettingsWithDefaults)) {
+			if (propsSchema[key].default !== null) {
+				elementSettingsWithDefaults[key] = propsSchema[key].default as Values[keyof Values];
 			}
 		}
-	} );
+	});
 	return elementSettingsWithDefaults;
 };
 
-const extractDependencyEffect = ( bind: string, propsSchema: PropsSchema, currentElementSettings: Props ) => {
-	const elementSettingsForDepCheck = getElementSettigsWithDefaults( propsSchema, currentElementSettings );
-	const propType = propsSchema[ bind ];
-	const depCheck = isDependencyMet( propType?.dependencies, elementSettingsForDepCheck );
+const extractDependencyEffect = (bind: string, propsSchema: PropsSchema, currentElementSettings: Props) => {
+	const elementSettingsForDepCheck = getElementSettigsWithDefaults(propsSchema, currentElementSettings);
+	const propType = propsSchema[bind];
+	const depCheck = isDependencyMet(propType?.dependencies, elementSettingsForDepCheck);
 	const isHidden =
-		! depCheck.isMet &&
-		! isDependency( depCheck.failingDependencies[ 0 ] ) &&
-		depCheck.failingDependencies[ 0 ]?.effect === 'hide';
+		!depCheck.isMet &&
+		!isDependency(depCheck.failingDependencies[0]) &&
+		depCheck.failingDependencies[0]?.effect === 'hide';
 	return {
-		isDisabled: ( prop: PropType ) => {
-			const result = ! isDependencyMet( prop?.dependencies, elementSettingsForDepCheck ).isMet;
+		isDisabled: (prop: PropType) => {
+			const result = !isDependencyMet(prop?.dependencies, elementSettingsForDepCheck).isMet;
 			return result;
 		},
 		isHidden,
@@ -57,79 +57,79 @@ const extractDependencyEffect = ( bind: string, propsSchema: PropsSchema, curren
 	};
 };
 
-export const SettingsField = ( { bind, children, propDisplayName }: SettingsFieldProps ) => {
+export const SettingsField = ({ bind, children, propDisplayName }: SettingsFieldProps) => {
 	const {
 		element: { id: elementId },
 		elementType: { propsSchema, dependenciesPerTargetMapping = {} },
 		settings: currentElementSettings,
 	} = useElement();
 
-	const value = { [ bind ]: currentElementSettings?.[ bind ] ?? null };
+	const value = { [bind]: currentElementSettings?.[bind] ?? null };
 
-	const propType = createTopLevelObjectType( { schema: propsSchema } );
+	const propType = createTopLevelObjectType({ schema: propsSchema });
 
-	const undoableUpdateElementProp = useUndoableUpdateElementProp( {
+	const undoableUpdateElementProp = useUndoableUpdateElementProp({
 		elementId,
 		propDisplayName,
-	} );
+	});
 	const { isDisabled, isHidden, settingsWithDefaults } = extractDependencyEffect(
 		bind,
 		propsSchema,
 		currentElementSettings
 	);
-	if ( isHidden ) {
+	if (isHidden) {
 		return null;
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const setValue = ( newValue: Values, _: CreateOptions = {}, meta?: SetValueMeta ) => {
+	const setValue = (newValue: Values, _: CreateOptions = {}, meta?: SetValueMeta) => {
 		const { withHistory = true } = meta ?? {};
-		const dependents = extractOrderedDependencies( dependenciesPerTargetMapping );
+		const dependents = extractOrderedDependencies(dependenciesPerTargetMapping);
 
-		const settings = getUpdatedValues( newValue, dependents, propsSchema, settingsWithDefaults, elementId );
-		if ( withHistory ) {
-			undoableUpdateElementProp( settings );
+		const settings = getUpdatedValues(newValue, dependents, propsSchema, settingsWithDefaults, elementId);
+		if (withHistory) {
+			undoableUpdateElementProp(settings);
 		} else {
-			updateElementSettings( { id: elementId, props: settings, withHistory: false } );
+			updateElementSettings({ id: elementId, props: settings, withHistory: false });
 		}
 	};
 
 	return (
-		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>
-			<PropKeyProvider bind={ bind }>{ children }</PropKeyProvider>
+		<PropProvider propType={propType} value={value} setValue={setValue} isDisabled={isDisabled}>
+			<PropKeyProvider bind={bind}>{children}</PropKeyProvider>
 		</PropProvider>
 	);
 };
 
-function useUndoableUpdateElementProp( {
+function useUndoableUpdateElementProp({
 	elementId,
 	propDisplayName,
 }: {
 	elementId: ElementID;
 	propDisplayName: string;
-} ) {
-	return useMemo( () => {
+}) {
+	return useMemo(() => {
 		return undoable(
 			{
-				do: ( newSettings: Props ) => {
-					const prevPropValue = getElementSettings( elementId, Object.keys( newSettings ) ) as Props;
+				do: (newSettings: Props) => {
+					const prevPropValue = getElementSettings(elementId, Object.keys(newSettings)) as Props;
 
-					updateElementSettings( { id: elementId, props: newSettings as Props, withHistory: false } );
-					setDocumentModifiedStatus( true );
+					updateElementSettings({ id: elementId, props: newSettings as Props, withHistory: false });
+					setDocumentModifiedStatus(true);
 
 					return prevPropValue;
 				},
 
-				undo: ( {}, prevProps ) => {
-					updateElementSettings( { id: elementId, props: prevProps, withHistory: false } );
+				undo: ({}, prevProps) => {
+					updateElementSettings({ id: elementId, props: prevProps, withHistory: false });
 				},
 			},
 			{
-				title: getElementLabel( elementId ),
+				title: getElementLabel(elementId),
 				// translators: %s is the name of the property that was edited.
-				subtitle: __( '%s edited', 'elementor' ).replace( '%s', propDisplayName ),
+				subtitle: __('%s edited', 'elementor').replace('%s', propDisplayName),
 				debounce: { wait: HISTORY_DEBOUNCE_WAIT },
 			}
 		);
-	}, [ elementId, propDisplayName ] );
+	}, [elementId, propDisplayName]);
 }

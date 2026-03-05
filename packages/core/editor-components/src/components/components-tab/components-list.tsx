@@ -21,21 +21,21 @@ const SUBTITLE_OVERRIDE_SX = {
 export function ComponentsList() {
 	const { components, isLoading, searchValue } = useFilteredComponents();
 
-	if ( isLoading ) {
+	if (isLoading) {
 		return <LoadingComponents />;
 	}
 
-	const isEmpty = ! components?.length;
+	const isEmpty = !components?.length;
 
-	if ( isEmpty ) {
+	if (isEmpty) {
 		return searchValue.length ? <EmptySearchResult /> : <EmptyState />;
 	}
 
 	return (
-		<List sx={ { display: 'flex', flexDirection: 'column', gap: 1, px: 2 } }>
-			{ components.map( ( component ) => (
-				<ComponentItem key={ component.uid } component={ component } />
-			) ) }
+		<List sx={{ display: 'flex', flexDirection: 'column', gap: 1, px: 2 }}>
+			{components.map((component) => (
+				<ComponentItem key={component.uid} component={component} />
+			))}
 		</List>
 	);
 }
@@ -44,64 +44,52 @@ export const EmptyState = () => {
 	const { canCreate } = useComponentsPermissions();
 
 	return (
-		<Stack
-			alignItems="center"
-			justifyContent="start"
-			height="100%"
-			sx={ { px: 2, py: 4 } }
-			gap={ 2 }
-			overflow="hidden"
-		>
-			<Stack alignItems="center" gap={ 1 }>
-				<ComponentsIcon fontSize="large" sx={ { color: 'text.secondary' } } />
+		<Stack alignItems="center" justifyContent="start" height="100%" sx={{ px: 2, py: 4 }} gap={2} overflow="hidden">
+			<Stack alignItems="center" gap={1}>
+				<ComponentsIcon fontSize="large" sx={{ color: 'text.secondary' }} />
 
-				<Typography align="center" variant="subtitle2" color="text.secondary" sx={ SUBTITLE_OVERRIDE_SX }>
-					{ __( 'No components yet', 'elementor' ) }
+				<Typography align="center" variant="subtitle2" color="text.secondary" sx={SUBTITLE_OVERRIDE_SX}>
+					{__('No components yet', 'elementor')}
 				</Typography>
 
-				<Typography align="center" variant="caption" color="secondary" sx={ { maxWidth: 200 } }>
-					{ __( 'Components are reusable blocks that sync across your site.', 'elementor' ) }
+				<Typography align="center" variant="caption" color="secondary" sx={{ maxWidth: 200 }}>
+					{__('Components are reusable blocks that sync across your site.', 'elementor')}
 					<br />
-					{ canCreate
-						? __( 'Create once, use everywhere.', 'elementor' )
+					{canCreate
+						? __('Create once, use everywhere.', 'elementor')
 						: __(
 								'With your current role, you cannot create components. Contact an administrator to create one.',
 								'elementor'
-						  ) }
+							)}
 				</Typography>
 				<Link
-					href={ LEARN_MORE_URL }
+					href={LEARN_MORE_URL}
 					target="_blank"
 					rel="noopener noreferrer"
 					variant="caption"
 					color="info.main"
 				>
-					{ __( 'Learn more about components', 'elementor' ) }
+					{__('Learn more about components', 'elementor')}
 				</Link>
 			</Stack>
 
-			{ canCreate && (
+			{canCreate && (
 				<>
-					<Divider sx={ { width: '100%' } } />
-					<Stack alignItems="center" gap={ 1 } width="100%">
-						<Typography
-							align="center"
-							variant="subtitle2"
-							color="text.secondary"
-							sx={ SUBTITLE_OVERRIDE_SX }
-						>
-							{ __( 'Create your first one:', 'elementor' ) }
+					<Divider sx={{ width: '100%' }} />
+					<Stack alignItems="center" gap={1} width="100%">
+						<Typography align="center" variant="subtitle2" color="text.secondary" sx={SUBTITLE_OVERRIDE_SX}>
+							{__('Create your first one:', 'elementor')}
 						</Typography>
 
-						<Typography align="center" variant="caption" color="secondary" sx={ { maxWidth: 228 } }>
-							{ __(
+						<Typography align="center" variant="caption" color="secondary" sx={{ maxWidth: 228 }}>
+							{__(
 								'Right-click any div-block or flexbox on your canvas or structure and select "Create component"',
 								'elementor'
-							) }
+							)}
 						</Typography>
 					</Stack>
 				</>
-			) }
+			)}
 		</Stack>
 	);
 };
@@ -109,54 +97,47 @@ export const EmptyState = () => {
 export const EmptySearchResult = () => {
 	const { searchValue, clearSearch } = useSearch();
 	return (
-		<Stack
-			color={ 'text.secondary' }
-			pt={ 5 }
-			alignItems="center"
-			gap={ 1 }
-			overflow={ 'hidden' }
-			justifySelf={ 'center' }
-		>
+		<Stack color={'text.secondary'} pt={5} alignItems="center" gap={1} overflow={'hidden'} justifySelf={'center'}>
 			<ComponentsIcon />
 			<Box
-				sx={ {
+				sx={{
 					width: '100%',
-				} }
+				}}
 			>
-				<Typography align="center" variant="subtitle2" color="inherit" sx={ SUBTITLE_OVERRIDE_SX }>
-					{ __( 'Sorry, nothing matched', 'elementor' ) }
+				<Typography align="center" variant="subtitle2" color="inherit" sx={SUBTITLE_OVERRIDE_SX}>
+					{__('Sorry, nothing matched', 'elementor')}
 				</Typography>
-				{ searchValue && (
+				{searchValue && (
 					<Typography
 						variant="subtitle2"
 						color="inherit"
-						sx={ {
+						sx={{
 							...SUBTITLE_OVERRIDE_SX,
 							display: 'flex',
 							width: '100%',
 							justifyContent: 'center',
-						} }
+						}}
 					>
 						<span>&ldquo;</span>
 						<span
-							style={ {
+							style={{
 								maxWidth: '80%',
 								overflow: 'hidden',
 								textOverflow: 'ellipsis',
-							} }
+							}}
 						>
-							{ searchValue }
+							{searchValue}
 						</span>
 						<span>&rdquo;.</span>
 					</Typography>
-				) }
+				)}
 			</Box>
 			<Typography align="center" variant="caption" color="inherit">
-				{ __( 'Try something else.', 'elementor' ) }
+				{__('Try something else.', 'elementor')}
 			</Typography>
 			<Typography align="center" variant="caption" color="inherit">
-				<Link color="secondary" variant="caption" component="button" onClick={ clearSearch }>
-					{ __( 'Clear & try again', 'elementor' ) }
+				<Link color="secondary" variant="caption" component="button" onClick={clearSearch}>
+					{__('Clear & try again', 'elementor')}
 				</Link>
 			</Typography>
 		</Stack>
@@ -168,9 +149,7 @@ export const useFilteredComponents = () => {
 	const { searchValue } = useSearch();
 
 	return {
-		components: components.filter( ( component ) =>
-			component.name.toLowerCase().includes( searchValue.toLowerCase() )
-		),
+		components: components.filter((component) => component.name.toLowerCase().includes(searchValue.toLowerCase())),
 		isLoading,
 		searchValue,
 	};

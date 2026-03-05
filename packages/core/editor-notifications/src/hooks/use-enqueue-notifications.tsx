@@ -9,37 +9,37 @@ import type { Notifications } from '../types';
 
 const AUTO_HIDE_DURATION = 8000;
 
-export const useEnqueueNotification = ( notifications: Notifications ) => {
+export const useEnqueueNotification = (notifications: Notifications) => {
 	const { enqueueSnackbar } = useSnackbar();
 	const dispatch = useDispatch();
 
-	useEffect( () => {
-		Object.values( notifications ).forEach( ( notification ) => {
+	useEffect(() => {
+		Object.values(notifications).forEach((notification) => {
 			const Action = () => (
-				<Fragment key={ notification.id }>
-					{ notification.additionalActionProps?.map( ( additionalAction, index ) => (
-						<Button key={ `${ index }` } { ...additionalAction } />
-					) ) }
+				<Fragment key={notification.id}>
+					{notification.additionalActionProps?.map((additionalAction, index) => (
+						<Button key={`${index}`} {...additionalAction} />
+					))}
 
 					<CloseButton
 						aria-label="close"
 						color="inherit"
-						onClick={ () => {
-							closeSnackbar( notification.id );
-							dispatch( clearAction( { id: notification.id } ) );
-						} }
+						onClick={() => {
+							closeSnackbar(notification.id);
+							dispatch(clearAction({ id: notification.id }));
+						}}
 					></CloseButton>
 				</Fragment>
 			);
 
-			enqueueSnackbar( notification.message, {
+			enqueueSnackbar(notification.message, {
 				variant: notification.type as VariantType,
 				key: notification.id,
-				onClose: () => dispatch( clearAction( { id: notification.id } ) ),
+				onClose: () => dispatch(clearAction({ id: notification.id })),
 				preventDuplicate: true,
 				action: <Action />,
 				autoHideDuration: notification.autoHideDuration ?? AUTO_HIDE_DURATION,
-			} );
-		} );
-	}, [ notifications, enqueueSnackbar, dispatch ] );
+			});
+		});
+	}, [notifications, enqueueSnackbar, dispatch]);
 };

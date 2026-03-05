@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { SvgIcon } from '@elementor/ui';
 
-const ExploreMoreIcon = React.forwardRef< SVGSVGElement, React.ComponentProps< typeof SvgIcon > >( ( props, ref ) => {
+const ExploreMoreIcon = React.forwardRef<SVGSVGElement, React.ComponentProps<typeof SvgIcon>>((props, ref) => {
 	return (
-		<SvgIcon viewBox="0 0 24 24" { ...props } ref={ ref } width="24" height="24">
+		<SvgIcon viewBox="0 0 24 24" {...props} ref={ref} width="24" height="24">
 			<path
 				d="M6.74805 3.75L12.748 9.75L6.74805 15.75"
 				fill="none"
@@ -14,6 +14,6 @@ const ExploreMoreIcon = React.forwardRef< SVGSVGElement, React.ComponentProps< t
 			/>
 		</SvgIcon>
 	);
-} );
+});
 
 export default ExploreMoreIcon;

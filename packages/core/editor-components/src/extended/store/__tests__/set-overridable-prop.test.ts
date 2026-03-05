@@ -5,18 +5,18 @@ import { SLICE_NAME } from '../../../store/store';
 import type { PublishedComponent } from '../../../types';
 import { setOverridableProp } from '../actions/set-overridable-prop';
 
-jest.mock( '@elementor/store', () => ( {
-	...jest.requireActual( '@elementor/store' ),
+jest.mock('@elementor/store', () => ({
+	...jest.requireActual('@elementor/store'),
 	__getState: jest.fn(),
 	__dispatch: jest.fn(),
-} ) );
+}));
 
-jest.mock( '@elementor/utils', () => ( {
-	...jest.requireActual( '@elementor/utils' ),
+jest.mock('@elementor/utils', () => ({
+	...jest.requireActual('@elementor/utils'),
 	generateUniqueId: jest.fn(),
-} ) );
+}));
 
-describe( 'setOverridableProp', () => {
+describe('setOverridableProp', () => {
 	const MOCK_COMPONENT_ID = 1;
 	const MOCK_WIDGET_ID = 'widget-1';
 	const MOCK_PROP_KEY = 'text';
@@ -38,7 +38,7 @@ describe( 'setOverridableProp', () => {
 	let mockState: { data: PublishedComponent[] };
 	let idCounter: number;
 
-	beforeEach( () => {
+	beforeEach(() => {
 		jest.clearAllMocks();
 		idCounter = 0;
 
@@ -52,17 +52,17 @@ describe( 'setOverridableProp', () => {
 			],
 		};
 
-		jest.mocked( getState ).mockImplementation( () => ( {
-			[ SLICE_NAME ]: mockState,
-		} ) );
+		jest.mocked(getState).mockImplementation(() => ({
+			[SLICE_NAME]: mockState,
+		}));
 
-		jest.mocked( generateUniqueId ).mockImplementation( () => {
+		jest.mocked(generateUniqueId).mockImplementation(() => {
 			idCounter++;
-			return `generated-${ idCounter }`;
-		} );
-	} );
+			return `generated-${idCounter}`;
+		});
+	});
 
-	it.each( [
+	it.each([
 		{
 			should: 'add a new prop to an empty overridable props map with default group',
 			initialOverrides: undefined,
@@ -72,7 +72,7 @@ describe( 'setOverridableProp', () => {
 			},
 			expectedDispatch: {
 				props: {
-					[ GENERATED_ID_2 ]: {
+					[GENERATED_ID_2]: {
 						overrideKey: GENERATED_ID_2,
 						label: LABEL,
 						propKey: MOCK_PROP_KEY,
@@ -83,13 +83,13 @@ describe( 'setOverridableProp', () => {
 				},
 				groups: {
 					items: {
-						[ GENERATED_ID_1 ]: {
+						[GENERATED_ID_1]: {
 							id: GENERATED_ID_1,
 							label: 'Default',
-							props: [ GENERATED_ID_2 ],
+							props: [GENERATED_ID_2],
 						},
 					},
-					order: [ GENERATED_ID_1 ],
+					order: [GENERATED_ID_1],
 				},
 			},
 		},
@@ -97,7 +97,7 @@ describe( 'setOverridableProp', () => {
 			should: 'maintain the same override-key when adding a prop that already exists',
 			initialOverrides: {
 				props: {
-					[ MOCK_OVERRIDE_KEY ]: {
+					[MOCK_OVERRIDE_KEY]: {
 						overrideKey: MOCK_OVERRIDE_KEY,
 						label: 'Old Label',
 						propKey: MOCK_PROP_KEY,
@@ -108,13 +108,13 @@ describe( 'setOverridableProp', () => {
 				},
 				groups: {
 					items: {
-						[ GROUP_ID_1 ]: {
+						[GROUP_ID_1]: {
 							id: GROUP_ID_1,
 							label: 'Group 1',
-							props: [ MOCK_OVERRIDE_KEY ],
+							props: [MOCK_OVERRIDE_KEY],
 						},
 					},
-					order: [ GROUP_ID_1 ],
+					order: [GROUP_ID_1],
 				},
 			},
 			callParams: {
@@ -124,7 +124,7 @@ describe( 'setOverridableProp', () => {
 			},
 			expectedDispatch: {
 				props: {
-					[ MOCK_OVERRIDE_KEY ]: {
+					[MOCK_OVERRIDE_KEY]: {
 						overrideKey: MOCK_OVERRIDE_KEY,
 						label: 'Updated Label',
 						propKey: MOCK_PROP_KEY,
@@ -135,13 +135,13 @@ describe( 'setOverridableProp', () => {
 				},
 				groups: {
 					items: {
-						[ GROUP_ID_1 ]: {
+						[GROUP_ID_1]: {
 							id: GROUP_ID_1,
 							label: 'Group 1',
-							props: [ MOCK_OVERRIDE_KEY ],
+							props: [MOCK_OVERRIDE_KEY],
 						},
 					},
-					order: [ GROUP_ID_1 ],
+					order: [GROUP_ID_1],
 				},
 			},
 			expectNoIdGeneration: true,
@@ -150,7 +150,7 @@ describe( 'setOverridableProp', () => {
 			should: 'move prop to new group when groupId changes',
 			initialOverrides: {
 				props: {
-					[ MOCK_OVERRIDE_KEY ]: {
+					[MOCK_OVERRIDE_KEY]: {
 						overrideKey: MOCK_OVERRIDE_KEY,
 						label: LABEL,
 						propKey: MOCK_PROP_KEY,
@@ -161,13 +161,13 @@ describe( 'setOverridableProp', () => {
 				},
 				groups: {
 					items: {
-						[ GROUP_ID_1 ]: {
+						[GROUP_ID_1]: {
 							id: GROUP_ID_1,
 							label: 'Group 1',
-							props: [ MOCK_OVERRIDE_KEY ],
+							props: [MOCK_OVERRIDE_KEY],
 						},
 					},
-					order: [ GROUP_ID_1 ],
+					order: [GROUP_ID_1],
 				},
 			},
 			callParams: {
@@ -176,7 +176,7 @@ describe( 'setOverridableProp', () => {
 			},
 			expectedDispatch: {
 				props: {
-					[ MOCK_OVERRIDE_KEY ]: {
+					[MOCK_OVERRIDE_KEY]: {
 						overrideKey: MOCK_OVERRIDE_KEY,
 						label: LABEL,
 						propKey: MOCK_PROP_KEY,
@@ -187,18 +187,18 @@ describe( 'setOverridableProp', () => {
 				},
 				groups: {
 					items: {
-						[ GROUP_ID_1 ]: {
+						[GROUP_ID_1]: {
 							id: GROUP_ID_1,
 							label: 'Group 1',
 							props: [],
 						},
-						[ GROUP_ID_2 ]: {
+						[GROUP_ID_2]: {
 							id: GROUP_ID_2,
 							label: 'Default',
-							props: [ MOCK_OVERRIDE_KEY ],
+							props: [MOCK_OVERRIDE_KEY],
 						},
 					},
-					order: [ GROUP_ID_1, GROUP_ID_2 ],
+					order: [GROUP_ID_1, GROUP_ID_2],
 				},
 			},
 		},
@@ -206,7 +206,7 @@ describe( 'setOverridableProp', () => {
 			should: 'add a prop to a new group',
 			initialOverrides: {
 				props: {
-					[ MOCK_OVERRIDE_KEY ]: {
+					[MOCK_OVERRIDE_KEY]: {
 						overrideKey: MOCK_OVERRIDE_KEY,
 						label: 'Existing Label',
 						elementId: 'element-0',
@@ -219,13 +219,13 @@ describe( 'setOverridableProp', () => {
 				},
 				groups: {
 					items: {
-						[ GROUP_ID_1 ]: {
+						[GROUP_ID_1]: {
 							id: GROUP_ID_1,
 							label: 'Group 1',
-							props: [ MOCK_OVERRIDE_KEY ],
+							props: [MOCK_OVERRIDE_KEY],
 						},
 					},
-					order: [ GROUP_ID_1 ],
+					order: [GROUP_ID_1],
 				},
 			},
 			callParams: {
@@ -234,7 +234,7 @@ describe( 'setOverridableProp', () => {
 			},
 			expectedDispatch: {
 				props: {
-					[ MOCK_OVERRIDE_KEY ]: {
+					[MOCK_OVERRIDE_KEY]: {
 						overrideKey: MOCK_OVERRIDE_KEY,
 						label: LABEL,
 						elementId: MOCK_WIDGET_ID,
@@ -247,18 +247,18 @@ describe( 'setOverridableProp', () => {
 				},
 				groups: {
 					items: {
-						[ GROUP_ID_1 ]: {
+						[GROUP_ID_1]: {
 							id: GROUP_ID_1,
 							label: 'Group 1',
 							props: [],
 						},
-						[ GROUP_ID_2 ]: {
+						[GROUP_ID_2]: {
 							id: GROUP_ID_2,
 							label: 'Default',
-							props: [ MOCK_OVERRIDE_KEY ],
+							props: [MOCK_OVERRIDE_KEY],
 						},
 					},
-					order: [ GROUP_ID_1, GROUP_ID_2 ],
+					order: [GROUP_ID_1, GROUP_ID_2],
 				},
 			},
 		},
@@ -266,7 +266,7 @@ describe( 'setOverridableProp', () => {
 			should: 'use existing group when prop exists and groupId is null',
 			initialOverrides: {
 				props: {
-					[ MOCK_OVERRIDE_KEY ]: {
+					[MOCK_OVERRIDE_KEY]: {
 						overrideKey: MOCK_OVERRIDE_KEY,
 						label: 'Existing Label',
 						propKey: MOCK_PROP_KEY,
@@ -277,13 +277,13 @@ describe( 'setOverridableProp', () => {
 				},
 				groups: {
 					items: {
-						[ GROUP_ID_1 ]: {
+						[GROUP_ID_1]: {
 							id: GROUP_ID_1,
 							label: 'Existing Group',
-							props: [ MOCK_OVERRIDE_KEY ],
+							props: [MOCK_OVERRIDE_KEY],
 						},
 					},
-					order: [ GROUP_ID_1 ],
+					order: [GROUP_ID_1],
 				},
 			},
 			callParams: {
@@ -293,7 +293,7 @@ describe( 'setOverridableProp', () => {
 			},
 			expectedDispatch: {
 				props: {
-					[ MOCK_OVERRIDE_KEY ]: {
+					[MOCK_OVERRIDE_KEY]: {
 						overrideKey: MOCK_OVERRIDE_KEY,
 						label: 'Updated Label',
 						propKey: MOCK_PROP_KEY,
@@ -304,24 +304,24 @@ describe( 'setOverridableProp', () => {
 				},
 				groups: {
 					items: {
-						[ GROUP_ID_1 ]: {
+						[GROUP_ID_1]: {
 							id: GROUP_ID_1,
 							label: 'Existing Group',
-							props: [ MOCK_OVERRIDE_KEY ],
+							props: [MOCK_OVERRIDE_KEY],
 						},
 					},
-					order: [ GROUP_ID_1 ],
+					order: [GROUP_ID_1],
 				},
 			},
 		},
-	] )( 'should $should', ( { initialOverrides, callParams, expectedDispatch, expectNoIdGeneration } ) => {
+	])('should $should', ({ initialOverrides, callParams, expectedDispatch, expectNoIdGeneration }) => {
 		// Arrange
-		if ( initialOverrides ) {
-			mockState.data[ 0 ].overridableProps = initialOverrides;
+		if (initialOverrides) {
+			mockState.data[0].overridableProps = initialOverrides;
 		}
 
 		// Act
-		setOverridableProp( {
+		setOverridableProp({
 			componentId: MOCK_COMPONENT_ID,
 			overrideKey: MOCK_OVERRIDE_KEY,
 			label: callParams.label,
@@ -330,28 +330,28 @@ describe( 'setOverridableProp', () => {
 			...MOCK_WIDGET,
 			originValue: callParams.originValue ?? ORIGIN_VALUE,
 			source: 'user',
-		} );
+		});
 
 		// Assert
-		expect( dispatch ).toHaveBeenCalledWith( {
-			type: `${ SLICE_NAME }/setOverridableProps`,
+		expect(dispatch).toHaveBeenCalledWith({
+			type: `${SLICE_NAME}/setOverridableProps`,
 			payload: {
 				componentId: MOCK_COMPONENT_ID,
 				overridableProps: expectedDispatch,
 			},
-		} );
+		});
 
-		if ( expectNoIdGeneration ) {
-			expect( generateUniqueId ).not.toHaveBeenCalled();
+		if (expectNoIdGeneration) {
+			expect(generateUniqueId).not.toHaveBeenCalled();
 		}
-	} );
+	});
 
-	it( 'should not dispatch when component does not exist', () => {
+	it('should not dispatch when component does not exist', () => {
 		// Arrange
 		mockState.data = [];
 
 		// Act
-		setOverridableProp( {
+		setOverridableProp({
 			componentId: MOCK_COMPONENT_ID,
 			overrideKey: null,
 			label: LABEL,
@@ -360,9 +360,9 @@ describe( 'setOverridableProp', () => {
 			...MOCK_WIDGET,
 			originValue: ORIGIN_VALUE,
 			source: 'user',
-		} );
+		});
 
 		// Assert
-		expect( dispatch ).not.toHaveBeenCalled();
-	} );
-} );
+		expect(dispatch).not.toHaveBeenCalled();
+	});
+});

@@ -6,11 +6,11 @@ import initMcpApplyGetGlobalClassUsages from './mcp-get-global-class-usages';
 import { initManageGlobalClasses } from './mcp-manage-global-classes';
 
 export const initMcpIntegration = () => {
-	const reg = getMCPByDomain( 'classes', {
+	const reg = getMCPByDomain('classes', {
 		instructions: 'MCP server for management of Elementor global classes',
-	} );
-	initMcpApplyUnapplyGlobalClasses( reg );
-	initMcpApplyGetGlobalClassUsages( reg );
-	initManageGlobalClasses( reg );
+	});
+	initMcpApplyUnapplyGlobalClasses(reg);
+	initMcpApplyGetGlobalClassUsages(reg);
+	initManageGlobalClasses(reg);
 	initClassesResource();
 };

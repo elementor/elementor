@@ -4,35 +4,35 @@ import { screen } from '@testing-library/react';
 
 import { Scale } from '../scale';
 
-describe( 'Scale Transform', () => {
-	const propType = createMockPropType( {
+describe('Scale Transform', () => {
+	const propType = createMockPropType({
 		kind: 'object',
 		shape: {
-			x: createMockPropType( {
+			x: createMockPropType({
 				kind: 'object',
 				shape: {
-					unit: createMockPropType( { kind: 'plain' } ),
-					size: createMockPropType( { kind: 'plain' } ),
+					unit: createMockPropType({ kind: 'plain' }),
+					size: createMockPropType({ kind: 'plain' }),
 				},
-			} ),
-			y: createMockPropType( {
+			}),
+			y: createMockPropType({
 				kind: 'object',
 				shape: {
-					unit: createMockPropType( { kind: 'plain' } ),
-					size: createMockPropType( { kind: 'plain' } ),
+					unit: createMockPropType({ kind: 'plain' }),
+					size: createMockPropType({ kind: 'plain' }),
 				},
-			} ),
-			z: createMockPropType( {
+			}),
+			z: createMockPropType({
 				kind: 'object',
 				shape: {
-					unit: createMockPropType( { kind: 'plain' } ),
-					size: createMockPropType( { kind: 'plain' } ),
+					unit: createMockPropType({ kind: 'plain' }),
+					size: createMockPropType({ kind: 'plain' }),
 				},
-			} ),
+			}),
 		},
-	} );
+	});
 
-	it( 'should render scale controls with proper labels', () => {
+	it('should render scale controls with proper labels', () => {
 		// Arrange.
 		const mockValue = {
 			x: { $$type: 'number', value: 1 },
@@ -41,11 +41,11 @@ describe( 'Scale Transform', () => {
 		};
 
 		// Act.
-		renderControl( <Scale />, { value: mockValue, propType } );
+		renderControl(<Scale />, { value: mockValue, propType });
 
 		// Assert.
-		expect( screen.getByText( 'Scale X' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Scale Y' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Scale Z' ) ).toBeInTheDocument();
-	} );
-} );
+		expect(screen.getByText('Scale X')).toBeInTheDocument();
+		expect(screen.getByText('Scale Y')).toBeInTheDocument();
+		expect(screen.getByText('Scale Z')).toBeInTheDocument();
+	});
+});

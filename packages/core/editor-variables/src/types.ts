@@ -11,9 +11,9 @@ export type Variable = {
 	sync_to_v3?: boolean;
 };
 
-export type StyleVariables = Record< string, Variable >;
+export type StyleVariables = Record<string, Variable>;
 
-export type ExtendedVirtualizedItem = VirtualizedItem< 'item', string > & {
+export type ExtendedVirtualizedItem = VirtualizedItem<'item', string> & {
 	icon: React.ReactNode;
 	secondaryText: string;
 	onEdit?: () => void;

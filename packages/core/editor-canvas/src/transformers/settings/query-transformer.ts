@@ -5,6 +5,6 @@ type Query = {
 	label: string;
 };
 
-export const queryTransformer = createTransformer( ( { id }: Query ) => {
+export const queryTransformer = createTransformer(({ id }: Query) => {
 	return id ?? null;
-} );
+});

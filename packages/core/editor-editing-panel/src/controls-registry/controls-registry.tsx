@@ -45,7 +45,7 @@ import { ControlTypeAlreadyRegisteredError, ControlTypeNotRegisteredError } from
 export type ControlRegistry = Record<
 	string,
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	{ component: ControlComponent; layout: ControlLayout; propTypeUtil?: PropTypeUtil< string, any > }
+	{ component: ControlComponent; layout: ControlLayout; propTypeUtil?: PropTypeUtil<string, any> }
 >;
 
 const controlTypes = {
@@ -74,24 +74,24 @@ const controlTypes = {
 export type ControlType = keyof typeof controlTypes;
 
 export type ControlTypes = {
-	[ key in ControlType ]: ( typeof controlTypes )[ key ][ 'component' ];
+	[key in ControlType]: (typeof controlTypes)[key]['component'];
 };
 
 class ControlsRegistry {
-	constructor( private readonly controlsRegistry: ControlRegistry ) {
+	constructor(private readonly controlsRegistry: ControlRegistry) {
 		this.controlsRegistry = controlsRegistry;
 	}
 
-	get( type: ControlType ): ControlComponent {
-		return this.controlsRegistry[ type ]?.component;
+	get(type: ControlType): ControlComponent {
+		return this.controlsRegistry[type]?.component;
 	}
 
-	getLayout( type: ControlType ) {
-		return this.controlsRegistry[ type ]?.layout;
+	getLayout(type: ControlType) {
+		return this.controlsRegistry[type]?.layout;
 	}
 
-	getPropTypeUtil( type: ControlType ) {
-		return this.controlsRegistry[ type ]?.propTypeUtil;
+	getPropTypeUtil(type: ControlType) {
+		return this.controlsRegistry[type]?.propTypeUtil;
 	}
 
 	registry(): ControlRegistry {
@@ -103,21 +103,21 @@ class ControlsRegistry {
 		component: ControlComponent,
 		layout: ControlLayout,
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		propTypeUtil?: PropTypeUtil< string, any >
+		propTypeUtil?: PropTypeUtil<string, any>
 	) {
-		if ( this.controlsRegistry[ type ] ) {
-			throw new ControlTypeAlreadyRegisteredError( { context: { controlType: type } } );
+		if (this.controlsRegistry[type]) {
+			throw new ControlTypeAlreadyRegisteredError({ context: { controlType: type } });
 		}
-		this.controlsRegistry[ type ] = { component, layout, propTypeUtil };
+		this.controlsRegistry[type] = { component, layout, propTypeUtil };
 	}
 
-	unregister( type: string ) {
-		if ( ! this.controlsRegistry[ type ] ) {
-			throw new ControlTypeNotRegisteredError( { context: { controlType: type } } );
+	unregister(type: string) {
+		if (!this.controlsRegistry[type]) {
+			throw new ControlTypeNotRegisteredError({ context: { controlType: type } });
 		}
 		// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-		delete this.controlsRegistry[ type ];
+		delete this.controlsRegistry[type];
 	}
 }
 
-export const controlsRegistry = new ControlsRegistry( controlTypes );
+export const controlsRegistry = new ControlsRegistry(controlTypes);

@@ -3,31 +3,31 @@ import { useMutation } from '@elementor/query';
 import type { OnboardingChoices } from '../types';
 import { getConfig } from '../utils/get-config';
 
-type UpdateChoicesParams = Partial< OnboardingChoices >;
+type UpdateChoicesParams = Partial<OnboardingChoices>;
 
-async function updateChoices( params: UpdateChoicesParams ): Promise< void > {
+async function updateChoices(params: UpdateChoicesParams): Promise<void> {
 	const config = getConfig();
 
-	if ( ! config ) {
-		throw new Error( 'Onboarding config not found' );
+	if (!config) {
+		throw new Error('Onboarding config not found');
 	}
 
-	const response = await fetch( `${ config.restUrl }user-choices`, {
+	const response = await fetch(`${config.restUrl}user-choices`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
 			'X-WP-Nonce': config.nonce,
 		},
-		body: JSON.stringify( params ),
-	} );
+		body: JSON.stringify(params),
+	});
 
-	if ( ! response.ok ) {
-		throw new Error( 'Failed to update choices' );
+	if (!response.ok) {
+		throw new Error('Failed to update choices');
 	}
 }
 
 export function useUpdateChoices() {
-	return useMutation( {
+	return useMutation({
 		mutationFn: updateChoices,
-	} );
+	});
 }

@@ -17,9 +17,9 @@ import { type ControlProps } from '../utils/types';
 import { QueryControl } from './query-control';
 import { SwitchControl } from './switch-control';
 
-type Props = ControlProps< {
+type Props = ControlProps<{
 	queryOptions: {
-		params: Record< string, unknown >;
+		params: Record<string, unknown>;
 		url: string;
 	};
 	allowCustomValues?: boolean;
@@ -27,23 +27,23 @@ type Props = ControlProps< {
 	placeholder?: string;
 	label?: string;
 	ariaLabel?: string;
-} >;
+}>;
 
 type LinkSessionValue = {
-	value?: LinkPropValue[ 'value' ] | null;
+	value?: LinkPropValue['value'] | null;
 	meta?: {
 		isEnabled?: boolean;
 	};
 };
 
-export type DestinationProp = LinkPropValue[ 'value' ][ 'destination' ];
+export type DestinationProp = LinkPropValue['value']['destination'];
 
 const SIZE = 'tiny';
 
-export const LinkControl = createControl( ( props: Props ) => {
-	const { value, path, setValue, ...propContext } = useBoundProp( linkPropTypeUtil );
-	const [ linkSessionValue, setLinkSessionValue ] = useSessionStorage< LinkSessionValue >( path.join( '/' ) );
-	const [ isActive, setIsActive ] = useState( !! value );
+export const LinkControl = createControl((props: Props) => {
+	const { value, path, setValue, ...propContext } = useBoundProp(linkPropTypeUtil);
+	const [linkSessionValue, setLinkSessionValue] = useSessionStorage<LinkSessionValue>(path.join('/'));
+	const [isActive, setIsActive] = useState(!!value);
 
 	const {
 		allowCustomValues = true,
@@ -51,122 +51,120 @@ export const LinkControl = createControl( ( props: Props ) => {
 		placeholder,
 		minInputLength = 2,
 		context: { elementId },
-		label = __( 'Link', 'elementor' ),
+		label = __('Link', 'elementor'),
 		ariaLabel,
 	} = props || {};
 
-	const [ linkInLinkRestriction, setLinkInLinkRestriction ] = useState(
-		getLinkInLinkRestriction( elementId, value )
-	);
-	const shouldDisableAddingLink = ! isActive && linkInLinkRestriction.shouldRestrict;
+	const [linkInLinkRestriction, setLinkInLinkRestriction] = useState(getLinkInLinkRestriction(elementId, value));
+	const shouldDisableAddingLink = !isActive && linkInLinkRestriction.shouldRestrict;
 
 	const debouncedCheckRestriction = useMemo(
 		() =>
-			debounce( () => {
-				const newRestriction = getLinkInLinkRestriction( elementId, value );
+			debounce(() => {
+				const newRestriction = getLinkInLinkRestriction(elementId, value);
 
-				if ( newRestriction.shouldRestrict && isActive ) {
-					setIsActive( false );
+				if (newRestriction.shouldRestrict && isActive) {
+					setIsActive(false);
 				}
 
-				setLinkInLinkRestriction( newRestriction );
-			}, 300 ),
-		[ elementId, isActive, value ]
+				setLinkInLinkRestriction(newRestriction);
+			}, 300),
+		[elementId, isActive, value]
 	);
 
-	useEffect( () => {
+	useEffect(() => {
 		debouncedCheckRestriction();
 
-		const handleInlineLinkChanged = ( event: Event ) => {
-			const customEvent = event as CustomEvent< { elementId: string } >;
+		const handleInlineLinkChanged = (event: Event) => {
+			const customEvent = event as CustomEvent<{ elementId: string }>;
 
-			if ( customEvent.detail.elementId === elementId ) {
+			if (customEvent.detail.elementId === elementId) {
 				debouncedCheckRestriction();
 			}
 		};
 
-		window.addEventListener( 'elementor:inline-link-changed', handleInlineLinkChanged );
+		window.addEventListener('elementor:inline-link-changed', handleInlineLinkChanged);
 
 		return () => {
-			window.removeEventListener( 'elementor:inline-link-changed', handleInlineLinkChanged );
+			window.removeEventListener('elementor:inline-link-changed', handleInlineLinkChanged);
 			debouncedCheckRestriction.cancel();
 		};
-	}, [ elementId, debouncedCheckRestriction ] );
+	}, [elementId, debouncedCheckRestriction]);
 
 	const onEnabledChange = () => {
-		setLinkInLinkRestriction( getLinkInLinkRestriction( elementId, value ) );
+		setLinkInLinkRestriction(getLinkInLinkRestriction(elementId, value));
 
-		if ( linkInLinkRestriction.shouldRestrict && ! isActive ) {
+		if (linkInLinkRestriction.shouldRestrict && !isActive) {
 			return;
 		}
 
-		const newState = ! isActive;
-		setIsActive( newState );
+		const newState = !isActive;
+		setIsActive(newState);
 
-		if ( ! newState && value !== null ) {
-			setValue( null );
+		if (!newState && value !== null) {
+			setValue(null);
 		}
 
-		if ( newState && linkSessionValue?.value ) {
-			setValue( linkSessionValue.value );
+		if (newState && linkSessionValue?.value) {
+			setValue(linkSessionValue.value);
 		}
 
-		setLinkSessionValue( {
+		setLinkSessionValue({
 			value: linkSessionValue?.value,
 			meta: { isEnabled: newState },
-		} );
+		});
 	};
 
-	const onSaveValueToSession = ( newValue: DestinationProp[ 'value' ] | null ) => {
-		const valueToSave: LinkPropValue[ 'value' ] | null = newValue
+	const onSaveValueToSession = (newValue: DestinationProp['value'] | null) => {
+		const valueToSave: LinkPropValue['value'] | null = newValue
 			? {
 					...value,
 					destination: newValue,
-			  }
+				}
 			: null;
 
-		setLinkSessionValue( { ...linkSessionValue, value: valueToSave } );
+		setLinkSessionValue({ ...linkSessionValue, value: valueToSave });
 	};
 
 	return (
-		<PropProvider { ...propContext } value={ value } setValue={ setValue }>
-			<Stack gap={ 1.5 }>
+		<PropProvider {...propContext} value={value} setValue={setValue}>
+			<Stack gap={1.5}>
 				<Stack
 					direction="row"
-					sx={ {
+					sx={{
 						justifyContent: 'space-between',
 						alignItems: 'center',
 						marginInlineEnd: -0.75,
-					} }
+					}}
 				>
-					<ControlLabel>{ label }</ControlLabel>
-					<RestrictedLinkInfotip isVisible={ ! isActive } linkInLinkRestriction={ linkInLinkRestriction }>
+					<ControlLabel>{label}</ControlLabel>
+					<RestrictedLinkInfotip isVisible={!isActive} linkInLinkRestriction={linkInLinkRestriction}>
 						<ToggleIconControl
-							disabled={ shouldDisableAddingLink }
-							active={ isActive }
-							onIconClick={ onEnabledChange }
-							label={ __( 'Toggle link', 'elementor' ) }
+							disabled={shouldDisableAddingLink}
+							active={isActive}
+							onIconClick={onEnabledChange}
+							label={__('Toggle link', 'elementor')}
 						/>
 					</RestrictedLinkInfotip>
 				</Stack>
-				<Collapse in={ isActive } timeout="auto" unmountOnExit>
-					<Stack gap={ 1.5 }>
-						<PropKeyProvider bind={ 'destination' }>
+				<Collapse in={isActive} timeout="auto" unmountOnExit>
+					<Stack gap={1.5}>
+						<PropKeyProvider bind={'destination'}>
 							<QueryControl
-								queryOptions={ queryOptions }
-								allowCustomValues={ allowCustomValues }
-								minInputLength={ minInputLength }
-								placeholder={ placeholder }
-								onSetValue={ onSaveValueToSession }
-								ariaLabel={ ariaLabel || label }
+								queryOptions={queryOptions}
+								allowCustomValues={allowCustomValues}
+								minInputLength={minInputLength}
+								placeholder={placeholder}
+								onSetValue={onSaveValueToSession}
+								ariaLabel={ariaLabel || label}
 							/>
 						</PropKeyProvider>
-						<PropKeyProvider bind={ 'isTargetBlank' }>
+						<PropKeyProvider bind={'isTargetBlank'}>
 							<Grid container alignItems="center" flexWrap="nowrap" justifyContent="space-between">
 								<Grid item>
-									<ControlFormLabel>{ __( 'Open in a new tab', 'elementor' ) }</ControlFormLabel>
+									<ControlFormLabel>{__('Open in a new tab', 'elementor')}</ControlFormLabel>
 								</Grid>
-								<Grid item sx={ { marginInlineEnd: -1 } }>
+								<Grid item sx={{ marginInlineEnd: -1 }}>
 									<SwitchControl />
 								</Grid>
 							</Grid>
@@ -176,7 +174,7 @@ export const LinkControl = createControl( ( props: Props ) => {
 			</Stack>
 		</PropProvider>
 	);
-} );
+});
 
 type ToggleIconControlProps = {
 	disabled: boolean;
@@ -185,10 +183,10 @@ type ToggleIconControlProps = {
 	label?: string;
 };
 
-const ToggleIconControl = ( { disabled, active, onIconClick, label }: ToggleIconControlProps ) => {
+const ToggleIconControl = ({ disabled, active, onIconClick, label }: ToggleIconControlProps) => {
 	return (
-		<IconButton size={ SIZE } onClick={ onIconClick } aria-label={ label } disabled={ disabled }>
-			{ active ? <MinusIcon fontSize={ SIZE } /> : <PlusIcon fontSize={ SIZE } /> }
+		<IconButton size={SIZE} onClick={onIconClick} aria-label={label} disabled={disabled}>
+			{active ? <MinusIcon fontSize={SIZE} /> : <PlusIcon fontSize={SIZE} />}
 		</IconButton>
 	);
 };

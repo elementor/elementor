@@ -33,52 +33,52 @@ import { initLoadComponentDataAfterInstanceAdded } from './sync/load-component-d
 import { type ExtendedWindow } from './types';
 
 export function init() {
-	stylesRepository.register( componentsStylesProvider );
+	stylesRepository.register(componentsStylesProvider);
 
-	registerSlice( slice );
+	registerSlice(slice);
 
-	registerElementType( COMPONENT_WIDGET_TYPE, ( options: CreateTemplatedElementTypeOptions ) =>
-		createComponentType( { ...options, showLockedByModal: openEditModeDialog } )
+	registerElementType(COMPONENT_WIDGET_TYPE, (options: CreateTemplatedElementTypeOptions) =>
+		createComponentType({ ...options, showLockedByModal: openEditModeDialog })
 	);
 
-	( window as unknown as ExtendedWindow ).elementorCommon.__beforeSave = beforeSave;
+	(window as unknown as ExtendedWindow).elementorCommon.__beforeSave = beforeSave;
 
-	injectTab( {
+	injectTab({
 		id: 'components',
-		label: __( 'Components', 'elementor' ),
+		label: __('Components', 'elementor'),
 		component: Components,
 		position: 1,
-	} );
+	});
 
-	injectIntoLogic( {
+	injectIntoLogic({
 		id: 'components-populate-store',
 		component: PopulateStore,
-	} );
+	});
 
-	registerDataHook( 'after', 'editor/documents/attach-preview', async () => {
+	registerDataHook('after', 'editor/documents/attach-preview', async () => {
 		const { id, config } = getV1CurrentDocument();
 
-		if ( id ) {
-			removeComponentStyles( id );
+		if (id) {
+			removeComponentStyles(id);
 		}
 
-		await loadComponentsAssets( ( config?.elements as V1ElementData[] ) ?? [] );
-	} );
+		await loadComponentsAssets((config?.elements as V1ElementData[]) ?? []);
+	});
 
-	injectIntoLogic( {
+	injectIntoLogic({
 		id: 'templates',
 		component: LoadTemplateComponents,
-	} );
+	});
 
-	registerEditingPanelReplacement( {
+	registerEditingPanelReplacement({
 		id: 'component-instance-edit-panel',
-		condition: ( _, elementType ) => elementType.key === 'e-component',
+		condition: (_, elementType) => elementType.key === 'e-component',
 		component: InstanceEditingPanel,
-	} );
+	});
 
-	settingsTransformersRegistry.register( 'component-instance', componentInstanceTransformer );
-	settingsTransformersRegistry.register( 'overridable', componentOverridableTransformer );
-	settingsTransformersRegistry.register( 'override', componentOverrideTransformer );
+	settingsTransformersRegistry.register('component-instance', componentInstanceTransformer);
+	settingsTransformersRegistry.register('overridable', componentOverridableTransformer);
+	settingsTransformersRegistry.register('override', componentOverrideTransformer);
 
 	initCircularNestingPrevention();
 

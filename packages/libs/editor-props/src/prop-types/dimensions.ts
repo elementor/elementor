@@ -5,12 +5,12 @@ import { unknownChildrenSchema } from './utils';
 
 export const dimensionsPropTypeUtil = createPropUtils(
 	'dimensions',
-	z.strictObject( {
+	z.strictObject({
 		'block-start': unknownChildrenSchema,
 		'block-end': unknownChildrenSchema,
 		'inline-start': unknownChildrenSchema,
 		'inline-end': unknownChildrenSchema,
-	} )
+	})
 );
 
-export type DimensionsPropValue = z.infer< typeof dimensionsPropTypeUtil.schema >;
+export type DimensionsPropValue = z.infer<typeof dimensionsPropTypeUtil.schema>;

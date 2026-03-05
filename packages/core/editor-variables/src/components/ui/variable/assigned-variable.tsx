@@ -16,48 +16,48 @@ type Props = {
 	variable: Variable;
 };
 
-export const AssignedVariable = ( { variable, propTypeKey }: Props ) => {
-	const { startIcon, propTypeUtil } = getVariableType( propTypeKey );
+export const AssignedVariable = ({ variable, propTypeKey }: Props) => {
+	const { startIcon, propTypeUtil } = getVariableType(propTypeKey);
 	const { setValue } = useBoundProp();
-	const anchorRef = useRef< HTMLDivElement >( null );
+	const anchorRef = useRef<HTMLDivElement>(null);
 
 	const popupId = useId();
-	const popupState = usePopupState( {
+	const popupState = usePopupState({
 		variant: 'popover',
-		popupId: `elementor-variables-list-${ popupId }`,
-	} );
+		popupId: `elementor-variables-list-${popupId}`,
+	});
 
-	const unlinkVariable = createUnlinkHandler( variable, propTypeKey, setValue );
+	const unlinkVariable = createUnlinkHandler(variable, propTypeKey, setValue);
 
-	const StartIcon = startIcon || ( () => null );
+	const StartIcon = startIcon || (() => null);
 
 	return (
-		<Box ref={ anchorRef }>
+		<Box ref={anchorRef}>
 			<AssignedTag
-				label={ variable.label }
+				label={variable.label}
 				startIcon={
 					<>
-						<ColorFilterIcon fontSize={ SIZE } />
-						<StartIcon value={ variable.value } />
+						<ColorFilterIcon fontSize={SIZE} />
+						<StartIcon value={variable.value} />
 					</>
 				}
-				onUnlink={ unlinkVariable }
-				{ ...bindTrigger( popupState ) }
+				onUnlink={unlinkVariable}
+				{...bindTrigger(popupState)}
 			/>
 			<Popover
 				disableScrollLock
-				anchorEl={ anchorRef.current }
-				anchorOrigin={ { vertical: 'bottom', horizontal: 'right' } }
-				transformOrigin={ { vertical: 'top', horizontal: 'right' } }
-				PaperProps={ {
+				anchorEl={anchorRef.current}
+				anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+				transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+				PaperProps={{
 					sx: { my: 1 },
-				} }
-				{ ...bindPopover( popupState ) }
+				}}
+				{...bindPopover(popupState)}
 			>
 				<VariableSelectionPopover
-					selectedVariable={ variable }
-					closePopover={ popupState.close }
-					propTypeKey={ propTypeUtil.key }
+					selectedVariable={variable}
+					closePopover={popupState.close}
+					propTypeKey={propTypeUtil.key}
 				/>
 			</Popover>
 		</Box>

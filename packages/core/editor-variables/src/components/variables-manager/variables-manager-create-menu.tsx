@@ -23,76 +23,76 @@ type MenuOptionConfig = {
 
 type VariableManagerCreateMenuProps = {
 	variables: TVariablesList;
-	onCreate: ( type: string, defaultName: string, defaultValue: string ) => void;
+	onCreate: (type: string, defaultName: string, defaultValue: string) => void;
 	disabled?: boolean;
 	menuState: PopupState;
 };
 
-export const VariableManagerCreateMenu = ( { variables, onCreate, menuState }: VariableManagerCreateMenuProps ) => {
-	const buttonRef = useRef< HTMLButtonElement >( null );
+export const VariableManagerCreateMenu = ({ variables, onCreate, menuState }: VariableManagerCreateMenuProps) => {
+	const buttonRef = useRef<HTMLButtonElement>(null);
 
 	const variableTypes = getVariableTypes();
 
 	const menuOptionConfigs = useMemo(
 		() =>
-			Object.entries( variableTypes )
-				.filter( ( [ , variable ] ) => !! variable.defaultValue )
-				.map( ( [ key, variable ] ) => ( {
+			Object.entries(variableTypes)
+				.filter(([, variable]) => !!variable.defaultValue)
+				.map(([key, variable]) => ({
 					key,
 					propTypeKey: variable.propTypeUtil.key,
 					variableType: variable.variableType,
 					defaultValue: variable.defaultValue || '',
 					icon: variable.icon,
-				} ) ),
-		[ variableTypes ]
+				})),
+		[variableTypes]
 	);
 
 	return (
 		<>
 			<IconButton
-				{ ...bindTrigger( menuState ) }
-				ref={ buttonRef }
-				size={ SIZE }
-				aria-label={ __( 'Add variable', 'elementor' ) }
+				{...bindTrigger(menuState)}
+				ref={buttonRef}
+				size={SIZE}
+				aria-label={__('Add variable', 'elementor')}
 			>
-				<PlusIcon fontSize={ SIZE } />
+				<PlusIcon fontSize={SIZE} />
 			</IconButton>
 
 			<Menu
 				disablePortal
-				MenuListProps={ {
+				MenuListProps={{
 					dense: true,
-				} }
-				PaperProps={ {
+				}}
+				PaperProps={{
 					elevation: 6,
-				} }
-				{ ...bindMenu( menuState ) }
-				anchorEl={ buttonRef.current }
-				anchorOrigin={ {
+				}}
+				{...bindMenu(menuState)}
+				anchorEl={buttonRef.current}
+				anchorOrigin={{
 					vertical: 'bottom',
 					horizontal: 'right',
-				} }
-				transformOrigin={ {
+				}}
+				transformOrigin={{
 					vertical: 'top',
 					horizontal: 'right',
-				} }
+				}}
 				data-testid="variable-manager-create-menu"
 			>
-				{ menuOptionConfigs.map( ( config ) => (
+				{menuOptionConfigs.map((config) => (
 					<MenuOption
-						key={ config.key }
-						config={ config }
-						variables={ variables }
-						onCreate={ onCreate }
-						onClose={ menuState.close }
+						key={config.key}
+						config={config}
+						variables={variables}
+						onCreate={onCreate}
+						onClose={menuState.close}
 					/>
-				) ) }
+				))}
 			</Menu>
 		</>
 	);
 };
 
-const MenuOption = ( {
+const MenuOption = ({
 	config,
 	variables,
 	onCreate,
@@ -100,55 +100,55 @@ const MenuOption = ( {
 }: {
 	config: MenuOptionConfig;
 	variables: TVariablesList;
-	onCreate: VariableManagerCreateMenuProps[ 'onCreate' ];
+	onCreate: VariableManagerCreateMenuProps['onCreate'];
 	onClose: () => void;
-} ) => {
-	const promotionRef = useRef< VariablePromotionChipRef >( null );
-	const userQuotaPermissions = useQuotaPermissions( config.propTypeKey );
+}) => {
+	const promotionRef = useRef<VariablePromotionChipRef>(null);
+	const userQuotaPermissions = useQuotaPermissions(config.propTypeKey);
 
-	const displayName = capitalize( config.variableType );
-	const isDisabled = ! userQuotaPermissions.canAdd();
+	const displayName = capitalize(config.variableType);
+	const isDisabled = !userQuotaPermissions.canAdd();
 
 	const handleClick = () => {
-		if ( isDisabled ) {
+		if (isDisabled) {
 			promotionRef.current?.toggle();
 			return;
 		}
 
-		const defaultName = getDefaultName( variables, config.variableType );
+		const defaultName = getDefaultName(variables, config.variableType);
 
-		onCreate( config.key, defaultName, config.defaultValue );
-		trackVariablesManagerEvent( { action: 'add', varType: config.variableType } );
+		onCreate(config.key, defaultName, config.defaultValue);
+		trackVariablesManagerEvent({ action: 'add', varType: config.variableType });
 		onClose();
 	};
 
 	return (
-		<MenuItem onClick={ handleClick } sx={ { gap: 1.5, cursor: 'pointer' } }>
-			{ createElement( config.icon, { fontSize: SIZE, color: isDisabled ? 'disabled' : 'action' } ) }
-			<Typography variant="caption" color={ isDisabled ? 'text.disabled' : 'text.primary' }>
-				{ displayName }
+		<MenuItem onClick={handleClick} sx={{ gap: 1.5, cursor: 'pointer' }}>
+			{createElement(config.icon, { fontSize: SIZE, color: isDisabled ? 'disabled' : 'action' })}
+			<Typography variant="caption" color={isDisabled ? 'text.disabled' : 'text.primary'}>
+				{displayName}
 			</Typography>
-			{ isDisabled && (
+			{isDisabled && (
 				<VariablePromotionChip
-					variableType={ config.variableType }
-					upgradeUrl={ `https://go.elementor.com/go-pro-manager-${ config.variableType }-variable/` }
-					ref={ promotionRef }
+					variableType={config.variableType}
+					upgradeUrl={`https://go.elementor.com/go-pro-manager-${config.variableType}-variable/`}
+					ref={promotionRef}
 				/>
-			) }
+			)}
 		</MenuItem>
 	);
 };
 
-export const getDefaultName = ( variables: TVariablesList, baseName: string ) => {
-	const pattern = new RegExp( `^${ baseName }-(\\d+)$`, 'i' );
+export const getDefaultName = (variables: TVariablesList, baseName: string) => {
+	const pattern = new RegExp(`^${baseName}-(\\d+)$`, 'i');
 
 	let counter = 1;
 
-	Object.values( variables ).forEach( ( variable ) => {
-		if ( pattern.test( variable.label ) ) {
-			counter = Math.max( counter, parseInt( variable.label.match( pattern )?.[ 1 ] ?? '0', 10 ) + 1 );
+	Object.values(variables).forEach((variable) => {
+		if (pattern.test(variable.label)) {
+			counter = Math.max(counter, parseInt(variable.label.match(pattern)?.[1] ?? '0', 10) + 1);
 		}
-	} );
+	});
 
-	return `${ baseName }-${ counter }`;
+	return `${baseName}-${counter}`;
 };

@@ -9,7 +9,7 @@ export type ComponentEventData = {
 	trigger?: string;
 };
 
-export type ContextMenuEventOptions = Record< string, unknown > & {
+export type ContextMenuEventOptions = Record<string, unknown> & {
 	location: string;
 	secondaryLocation: string;
 	trigger: string;
@@ -19,7 +19,7 @@ export const getComponentEventData = (
 	containerElement: V1ElementData,
 	options?: ContextMenuEventOptions
 ): ComponentEventData => {
-	const { elementsCount, componentsCount } = countNestedElements( containerElement );
+	const { elementsCount, componentsCount } = countNestedElements(containerElement);
 
 	return {
 		nested_elements_count: elementsCount,
@@ -31,21 +31,21 @@ export const getComponentEventData = (
 	};
 };
 
-function countNestedElements( container: V1ElementData ): { elementsCount: number; componentsCount: number } {
-	if ( ! container.elements || container.elements.length === 0 ) {
+function countNestedElements(container: V1ElementData): { elementsCount: number; componentsCount: number } {
+	if (!container.elements || container.elements.length === 0) {
 		return { elementsCount: 0, componentsCount: 0 };
 	}
 
 	let elementsCount = container.elements.length;
 	let componentsCount = 0;
 
-	for ( const element of container.elements ) {
-		if ( element.widgetType === 'e-component' ) {
+	for (const element of container.elements) {
+		if (element.widgetType === 'e-component') {
 			componentsCount++;
 		}
 
 		const { elementsCount: nestedElementsCount, componentsCount: nestedComponentsCount } =
-			countNestedElements( element );
+			countNestedElements(element);
 		elementsCount += nestedElementsCount;
 		componentsCount += nestedComponentsCount;
 	}

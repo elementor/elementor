@@ -9,14 +9,14 @@ const STORAGE_KEY = 'elementor-global-classes';
 const updateLocalStorageCache = () => {
 	const classes = globalClassesStylesProvider.actions.all();
 
-	localStorage.setItem( STORAGE_KEY, JSON.stringify( classes ) );
+	localStorage.setItem(STORAGE_KEY, JSON.stringify(classes));
 };
 
 export const initClassesResource = () => {
-	const canvasMcpEntry = getMCPByDomain( 'canvas' );
-	const classesMcpEntry = getMCPByDomain( 'classes' );
+	const canvasMcpEntry = getMCPByDomain('canvas');
+	const classesMcpEntry = getMCPByDomain('classes');
 
-	[ canvasMcpEntry, classesMcpEntry ].forEach( ( entry ) => {
+	[canvasMcpEntry, classesMcpEntry].forEach((entry) => {
 		const { mcpServer, resource, waitForReady } = entry;
 		resource(
 			'global-classes',
@@ -26,17 +26,17 @@ export const initClassesResource = () => {
 			},
 			async () => {
 				return {
-					contents: [ { uri: GLOBAL_CLASSES_URI, text: localStorage[ STORAGE_KEY ] ?? '[]' } ],
+					contents: [{ uri: GLOBAL_CLASSES_URI, text: localStorage[STORAGE_KEY] ?? '[]' }],
 				};
 			}
 		);
-		waitForReady().then( () => {
+		waitForReady().then(() => {
 			updateLocalStorageCache();
 
-			globalClassesStylesProvider.subscribe( () => {
+			globalClassesStylesProvider.subscribe(() => {
 				updateLocalStorageCache();
 				mcpServer.sendResourceListChanged();
-			} );
-		} );
-	} );
+			});
+		});
+	});
 };

@@ -5,11 +5,11 @@ import { unknownChildrenSchema } from './utils';
 
 export const linkPropTypeUtil = createPropUtils(
 	'link',
-	z.strictObject( {
+	z.strictObject({
 		destination: unknownChildrenSchema,
 		isTargetBlank: unknownChildrenSchema,
 		tag: unknownChildrenSchema,
-	} )
+	})
 );
 
-export type LinkPropValue = z.infer< typeof linkPropTypeUtil.schema >;
+export type LinkPropValue = z.infer<typeof linkPropTypeUtil.schema>;

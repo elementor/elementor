@@ -8,4 +8,4 @@ export const backgroundGradientOverlayPropTypeUtil = createPropUtils(
 	unknownChildrenSchema
 );
 
-export type BackgroundGradientOverlayPropValue = z.infer< typeof backgroundGradientOverlayPropTypeUtil.schema >;
+export type BackgroundGradientOverlayPropValue = z.infer<typeof backgroundGradientOverlayPropTypeUtil.schema>;

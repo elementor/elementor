@@ -40,8 +40,8 @@ export { useSelector as __useSelector, useDispatch as __useDispatch, Provider as
  *
  * const value = useSelector( ( state: MySliceState ) => state.mySlice.value );
  */
-export type SliceState< S extends Slice > = {
-	[ key in S[ 'name' ] ]: ReturnType< S[ 'getInitialState' ] >;
+export type SliceState<S extends Slice> = {
+	[key in S['name']]: ReturnType<S['getInitialState']>;
 };
 
 // The `configureStore` function from Redux Toolkit infers its actions from the `reducers`
@@ -51,102 +51,97 @@ export type SliceState< S extends Slice > = {
 // generic store type.
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyStore< State = any > = EnhancedStore<
-	State,
-	AnyAction,
-	[ ThunkMiddleware< State, AnyAction > ],
-	[ StoreEnhancer ]
->;
+type AnyStore<State = any> = EnhancedStore<State, AnyAction, [ThunkMiddleware<State, AnyAction>], [StoreEnhancer]>;
 
 interface SlicesMap {
-	[ key: Slice[ 'name' ] ]: Slice;
+	[key: Slice['name']]: Slice;
 }
 
 let instance: AnyStore | null = null;
 let slices: SlicesMap = {};
 const pendingActions: AnyAction[] = [];
-const middlewares = new Set< Middleware >();
+const middlewares = new Set<Middleware>();
 
 const getReducers = () => {
-	const reducers = Object.entries( slices ).reduce( ( reducersData: ReducersMapObject, [ name, slice ] ) => {
-		reducersData[ name ] = slice.reducer;
+	const reducers = Object.entries(slices).reduce((reducersData: ReducersMapObject, [name, slice]) => {
+		reducersData[name] = slice.reducer;
 
 		return reducersData;
-	}, {} );
+	}, {});
 
-	return combineReducers( reducers );
+	return combineReducers(reducers);
 };
 
-function registerSlice( slice: Slice ) {
-	if ( slices[ slice.name ] ) {
-		throw new Error( `Slice with name "${ slice.name }" already exists.` );
+function registerSlice(slice: Slice) {
+	if (slices[slice.name]) {
+		throw new Error(`Slice with name "${slice.name}" already exists.`);
 	}
 
-	slices[ slice.name ] = slice;
+	slices[slice.name] = slice;
 }
 
-const addMiddleware = ( middleware: Middleware ) => {
-	middlewares.add( middleware );
+const addMiddleware = (middleware: Middleware) => {
+	middlewares.add(middleware);
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- See the comment above about `AnyStore`
-const dispatch = ( action: any ) => {
-	if ( ! instance ) {
-		pendingActions.push( action );
+const dispatch = (action: any) => {
+	if (!instance) {
+		pendingActions.push(action);
 
 		return;
 	}
 
-	return instance.dispatch( action );
+	return instance.dispatch(action);
 };
 
 const getState = () => {
-	if ( ! instance ) {
-		throw new Error( 'The store instance does not exist.' );
+	if (!instance) {
+		throw new Error('The store instance does not exist.');
 	}
 
 	return instance.getState();
 };
 
-const subscribe = ( listener: () => void ) => {
-	if ( ! instance ) {
-		throw new Error( 'The store instance does not exist.' );
+const subscribe = (listener: () => void) => {
+	if (!instance) {
+		throw new Error('The store instance does not exist.');
 	}
 
-	return instance.subscribe( listener );
+	return instance.subscribe(listener);
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const subscribeWithSelector = < T >( selector: ( state: any ) => T, listener: ( selectedState: T ) => void ) => {
-	let prevState = selector( getState() );
+const subscribeWithSelector = <T>(selector: (state: any) => T, listener: (selectedState: T) => void) => {
+	let prevState = selector(getState());
 
-	return subscribe( () => {
-		const nextState = selector( getState() );
+	return subscribe(() => {
+		const nextState = selector(getState());
 
-		if ( prevState === nextState ) {
+		if (prevState === nextState) {
 			return;
 		}
 
 		prevState = nextState;
 
-		listener( nextState );
-	} );
+		listener(nextState);
+	});
 };
 
 const createStore = () => {
-	if ( instance ) {
-		throw new Error( 'The store instance already exists.' );
+	if (instance) {
+		throw new Error('The store instance already exists.');
 	}
 
-	instance = configureStore( {
+	instance = configureStore({
 		reducer: getReducers(),
-		middleware: ( getDefaultMiddleware ) => {
-			return [ ...getDefaultMiddleware(), ...Array.from( middlewares ) ];
+		middleware: (getDefaultMiddleware) => {
+			return [...getDefaultMiddleware(), ...Array.from(middlewares)];
 		},
-	} );
+	});
 
-	if ( pendingActions.length ) {
-		pendingActions.forEach( ( action ) => dispatch( action ) );
+	if (pendingActions.length) {
+		pendingActions.forEach((action) => dispatch(action));
 		pendingActions.length = 0;
 	}
 

@@ -10,15 +10,15 @@ export default function useSyncDocumentTitle() {
 
 	const document = activeDocument && activeDocument.type.value !== 'kit' ? activeDocument : hostDocument;
 
-	useEffect( () => {
+	useEffect(() => {
 		// Allow empty string as title.
-		if ( document?.title === undefined ) {
+		if (document?.title === undefined) {
 			return;
 		}
 
 		// translators: %s: Document title.
-		const title = __( 'Edit "%s" with Elementor', 'elementor' ).replace( '%s', document.title );
+		const title = __('Edit "%s" with Elementor', 'elementor').replace('%s', document.title);
 
 		window.document.title = title;
-	}, [ document?.title ] );
+	}, [document?.title]);
 }

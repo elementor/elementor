@@ -5,7 +5,7 @@ import { unknownChildrenSchema } from '../../utils';
 
 export const hueRotateFilterPropTypeUtil = createPropUtils(
 	'hue-rotate',
-	z.strictObject( {
+	z.strictObject({
 		size: unknownChildrenSchema,
-	} )
+	})
 );

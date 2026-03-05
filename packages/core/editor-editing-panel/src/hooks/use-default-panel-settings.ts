@@ -3,19 +3,19 @@ import { createContext, useContext } from 'react';
 import { useElement } from '../contexts/element-context';
 
 type Defaults = {
-	defaultSectionsExpanded: Record< string, string[] >;
+	defaultSectionsExpanded: Record<string, string[]>;
 	defaultTab: string;
 };
 
 const fallbackEditorSettings: Defaults = {
 	defaultSectionsExpanded: {
-		settings: [ 'Content', 'Settings' ],
+		settings: ['Content', 'Settings'],
 		style: [],
 	},
 	defaultTab: 'settings',
 };
 
-const defaultPanelSettingsContext = createContext< Record< string, Defaults | undefined > >( {
+const defaultPanelSettingsContext = createContext<Record<string, Defaults | undefined>>({
 	'e-div-block': {
 		defaultSectionsExpanded: fallbackEditorSettings.defaultSectionsExpanded,
 		defaultTab: 'style',
@@ -28,10 +28,10 @@ const defaultPanelSettingsContext = createContext< Record< string, Defaults | un
 		defaultSectionsExpanded: fallbackEditorSettings.defaultSectionsExpanded,
 		defaultTab: 'style',
 	},
-} );
+});
 
 export const useDefaultPanelSettings = () => {
 	const { element } = useElement();
-	const defaults = useContext( defaultPanelSettingsContext )[ element.type ];
+	const defaults = useContext(defaultPanelSettingsContext)[element.type];
 	return defaults || fallbackEditorSettings;
 };

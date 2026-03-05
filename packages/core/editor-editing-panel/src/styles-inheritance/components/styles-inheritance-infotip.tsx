@@ -34,12 +34,12 @@ export const calculatePopoverOffset = (
 	cardWidth: number,
 	isSiteRtl: boolean
 ): number => {
-	if ( ! triggerRect ) {
+	if (!triggerRect) {
 		return 0;
 	}
 
 	const triggerWidth = triggerRect.width;
-	return isSiteRtl ? triggerWidth - cardWidth : -( cardWidth / 2 ) + triggerWidth / 2;
+	return isSiteRtl ? triggerWidth - cardWidth : -(cardWidth / 2) + triggerWidth / 2;
 };
 
 type Props = {
@@ -51,70 +51,63 @@ type Props = {
 	isDisabled?: boolean;
 };
 
-export const StylesInheritanceInfotip = ( {
-	inheritanceChain,
-	propType,
-	path,
-	label,
-	children,
-	isDisabled,
-}: Props ) => {
-	const [ showInfotip, setShowInfotip ] = useState< boolean >( false );
-	const triggerRef = useRef< HTMLDivElement >( null );
+export const StylesInheritanceInfotip = ({ inheritanceChain, propType, path, label, children, isDisabled }: Props) => {
+	const [showInfotip, setShowInfotip] = useState<boolean>(false);
+	const triggerRef = useRef<HTMLDivElement>(null);
 
 	const toggleInfotip = () => {
-		if ( isDisabled ) {
+		if (isDisabled) {
 			return;
 		}
-		setShowInfotip( ( prev ) => ! prev );
+		setShowInfotip((prev) => !prev);
 	};
 
 	const closeInfotip = () => {
-		if ( isDisabled ) {
+		if (isDisabled) {
 			return;
 		}
-		setShowInfotip( false );
+		setShowInfotip(false);
 	};
 
-	const key = path.join( '.' );
+	const key = path.join('.');
 
 	const sectionWidth = useSectionWidth();
 
-	const resolve = useMemo< PropsResolver >( () => {
-		return createPropsResolver( {
+	const resolve = useMemo<PropsResolver>(() => {
+		return createPropsResolver({
 			transformers: stylesInheritanceTransformersRegistry,
-			schema: { [ key ]: propType },
-		} );
-	}, [ key, propType ] );
+			schema: { [key]: propType },
+		});
+	}, [key, propType]);
 
-	const items = useNormalizedInheritanceChainItems( inheritanceChain, key, resolve );
+	const items = useNormalizedInheritanceChainItems(inheritanceChain, key, resolve);
 
 	const infotipContent = (
-		<ClickAwayListener onClickAway={ closeInfotip }>
+		<ClickAwayListener onClickAway={closeInfotip}>
 			<Card
-				elevation={ 0 }
-				sx={ {
-					width: `${ sectionWidth - SECTION_PADDING_INLINE }px`,
+				elevation={0}
+				sx={{
+					width: `${sectionWidth - SECTION_PADDING_INLINE}px`,
 					maxWidth: INFOTIP_MAX_WIDTH,
 					maxHeight: 268,
 					overflowX: 'hidden',
 					display: 'flex',
 					flexDirection: 'column',
-				} }
+				}}
 			>
 				<Box
-					sx={ {
+					sx={{
 						position: 'sticky',
 						top: 0,
 						zIndex: 1,
 						backgroundColor: 'background.paper',
-					} }
+					}}
 				>
-					<PopoverHeader title={ __( 'Style origin', 'elementor' ) } onClose={ closeInfotip } />
+					<PopoverHeader title={__('Style origin', 'elementor')} onClose={closeInfotip} />
 				</Box>
 
 				<CardContent
-					sx={ {
+					sx={{
 						display: 'flex',
 						flexDirection: 'column',
 						p: 0,
@@ -123,69 +116,64 @@ export const StylesInheritanceInfotip = ( {
 						'&:last-child': {
 							pb: 0,
 						},
-					} }
+					}}
 				>
-					<Stack gap={ 1.5 } sx={ { pl: 3, pr: 1, pb: 2 } } role="list">
-						{ items.map( ( item, index ) => {
+					<Stack gap={1.5} sx={{ pl: 3, pr: 1, pb: 2 }} role="list">
+						{items.map((item, index) => {
 							return (
 								<Box
-									key={ item.id }
+									key={item.id}
 									display="flex"
-									gap={ 0.5 }
+									gap={0.5}
 									role="listitem"
 									// translators: %s is the display label of the inheritance item
-									aria-label={ __( 'Inheritance item: %s', 'elementor' ).replace(
+									aria-label={__('Inheritance item: %s', 'elementor').replace(
 										'%s',
 										item.displayLabel
-									) }
+									)}
 								>
 									<Box
 										display="flex"
-										gap={ 0.5 }
-										sx={ { flexWrap: 'wrap', width: '100%', alignItems: 'flex-start' } }
+										gap={0.5}
+										sx={{ flexWrap: 'wrap', width: '100%', alignItems: 'flex-start' }}
 									>
-										<BreakpointIcon breakpoint={ item.breakpoint } />
-										<LabelChip displayLabel={ item.displayLabel } provider={ item.provider } />
-										<ValueComponent index={ index } value={ item.value } />
+										<BreakpointIcon breakpoint={item.breakpoint} />
+										<LabelChip displayLabel={item.displayLabel} provider={item.provider} />
+										<ValueComponent index={index} value={item.value} />
 									</Box>
 									<ActionIcons />
 								</Box>
 							);
-						} ) }
+						})}
 					</Stack>
 				</CardContent>
 			</Card>
 		</ClickAwayListener>
 	);
 
-	if ( isDisabled ) {
-		return <Box sx={ { display: 'inline-flex' } }>{ children }</Box>;
+	if (isDisabled) {
+		return <Box sx={{ display: 'inline-flex' }}>{children}</Box>;
 	}
 
 	return (
-		<Box ref={ triggerRef } sx={ { display: 'inline-flex' } }>
+		<Box ref={triggerRef} sx={{ display: 'inline-flex' }}>
 			<TooltipOrInfotip
-				showInfotip={ showInfotip }
-				onClose={ closeInfotip }
-				infotipContent={ infotipContent }
-				isDisabled={ isDisabled }
-				triggerRef={ triggerRef }
-				sectionWidth={ sectionWidth }
+				showInfotip={showInfotip}
+				onClose={closeInfotip}
+				infotipContent={infotipContent}
+				isDisabled={isDisabled}
+				triggerRef={triggerRef}
+				sectionWidth={sectionWidth}
 			>
-				<IconButton
-					onClick={ toggleInfotip }
-					aria-label={ label }
-					sx={ { my: '-1px' } }
-					disabled={ isDisabled }
-				>
-					{ children }
+				<IconButton onClick={toggleInfotip} aria-label={label} sx={{ my: '-1px' }} disabled={isDisabled}>
+					{children}
 				</IconButton>
 			</TooltipOrInfotip>
 		</Box>
 	);
 };
 
-function TooltipOrInfotip( {
+function TooltipOrInfotip({
 	children,
 	showInfotip,
 	onClose,
@@ -199,62 +187,62 @@ function TooltipOrInfotip( {
 	onClose: () => void;
 	infotipContent: React.ReactNode;
 	isDisabled?: boolean;
-	triggerRef: React.RefObject< HTMLDivElement >;
+	triggerRef: React.RefObject<HTMLDivElement>;
 	sectionWidth: number;
-} ) {
+}) {
 	const direction = useDirection();
 	const isSiteRtl = direction.isSiteRtl;
 
-	if ( isDisabled ) {
-		return <Box sx={ { display: 'inline-flex' } }>{ children }</Box>;
+	if (isDisabled) {
+		return <Box sx={{ display: 'inline-flex' }}>{children}</Box>;
 	}
 
-	if ( showInfotip ) {
+	if (showInfotip) {
 		const triggerRect = triggerRef.current?.getBoundingClientRect();
-		const cardWidth = Math.min( sectionWidth - SECTION_PADDING_INLINE, INFOTIP_MAX_WIDTH );
-		const offsetX = calculatePopoverOffset( triggerRect, cardWidth, isSiteRtl );
+		const cardWidth = Math.min(sectionWidth - SECTION_PADDING_INLINE, INFOTIP_MAX_WIDTH);
+		const offsetX = calculatePopoverOffset(triggerRect, cardWidth, isSiteRtl);
 
 		return (
 			<>
 				<Backdrop
-					open={ showInfotip }
-					onClick={ onClose }
-					sx={ {
+					open={showInfotip}
+					onClick={onClose}
+					sx={{
 						backgroundColor: 'transparent',
-						zIndex: ( theme: Theme ) => theme.zIndex.modal - 1,
-					} }
+						zIndex: (theme: Theme) => theme.zIndex.modal - 1,
+					}}
 				/>
 				<Infotip
 					placement="top"
-					content={ infotipContent }
-					open={ showInfotip }
-					onClose={ onClose }
+					content={infotipContent}
+					open={showInfotip}
+					onClose={onClose}
 					disableHoverListener
-					componentsProps={ {
+					componentsProps={{
 						tooltip: {
 							sx: { mx: 2 },
 						},
-					} }
-					slotProps={ {
+					}}
+					slotProps={{
 						popper: {
 							modifiers: [
 								{
 									name: 'offset',
-									options: { offset: [ offsetX, 0 ] },
+									options: { offset: [offsetX, 0] },
 								},
 							],
 						},
-					} }
+					}}
 				>
-					{ children }
+					{children}
 				</Infotip>
 			</>
 		);
 	}
 
 	return (
-		<Tooltip title={ __( 'Style origin', 'elementor' ) } placement="top">
-			{ children }
+		<Tooltip title={__('Style origin', 'elementor')} placement="top">
+			{children}
 		</Tooltip>
 	);
 }

@@ -7,24 +7,24 @@ import ListItemDuplicate from './list-items/list-item-duplicate';
 import ListItemRename from './list-items/list-item-rename';
 import ListItemView from './list-items/list-item-view';
 
-export default function PostListItem( { post }: { post?: Post } ) {
+export default function PostListItem({ post }: { post?: Post }) {
 	const { editMode } = usePostListContext();
 
-	if ( 'rename' === editMode.mode && post?.id && post?.id === editMode.details.postId ) {
-		return <ListItemRename post={ post } />;
+	if ('rename' === editMode.mode && post?.id && post?.id === editMode.details.postId) {
+		return <ListItemRename post={post} />;
 	}
 
-	if ( 'create' === editMode.mode && ! post ) {
+	if ('create' === editMode.mode && !post) {
 		return <ListItemCreate />;
 	}
 
-	if ( 'duplicate' === editMode.mode && ! post ) {
+	if ('duplicate' === editMode.mode && !post) {
 		return <ListItemDuplicate />;
 	}
 
-	if ( ! post ) {
+	if (!post) {
 		return null;
 	}
 
-	return <ListItemView post={ post } />;
+	return <ListItemView post={post} />;
 }

@@ -13,39 +13,37 @@ type Props = ElementOverlayProps & {
 	isSmallerOffset?: boolean;
 };
 
-const OverlayBox = styled( Box, {
-	shouldForwardProp: ( prop ) => prop !== 'isSelected' && prop !== 'isSmallerOffset' && prop !== 'isGlobal',
-} )< Pick< Props, 'isSelected' | 'isSmallerOffset' | 'isGlobal' > >(
-	( { theme, isSelected, isSmallerOffset, isGlobal } ) => ( {
-		outline: `${ isSelected ? '2px' : '1px' } solid ${
-			isGlobal ? theme.palette.global.main : theme.palette.primary.light
-		}`,
-		outlineOffset: isSelected && ! isSmallerOffset ? '-2px' : '-1px',
-		pointerEvents: 'none',
-	} )
-);
+const OverlayBox = styled(Box, {
+	shouldForwardProp: (prop) => prop !== 'isSelected' && prop !== 'isSmallerOffset' && prop !== 'isGlobal',
+})<Pick<Props, 'isSelected' | 'isSmallerOffset' | 'isGlobal'>>(({ theme, isSelected, isSmallerOffset, isGlobal }) => ({
+	outline: `${isSelected ? '2px' : '1px'} solid ${
+		isGlobal ? theme.palette.global.main : theme.palette.primary.light
+	}`,
+	outlineOffset: isSelected && !isSmallerOffset ? '-2px' : '-1px',
+	pointerEvents: 'none',
+}));
 
-export const OutlineOverlay = ( { element, isSelected, id, isGlobal = false }: Props ): React.ReactElement | false => {
-	const { context, floating, isVisible } = useFloatingOnElement( { element, isSelected } );
-	const { getFloatingProps, getReferenceProps } = useInteractions( [ useHover( context ) ] );
+export const OutlineOverlay = ({ element, isSelected, id, isGlobal = false }: Props): React.ReactElement | false => {
+	const { context, floating, isVisible } = useFloatingOnElement({ element, isSelected });
+	const { getFloatingProps, getReferenceProps } = useInteractions([useHover(context)]);
 	const hasOverlapping = useHasOverlapping();
 
-	useBindReactPropsToElement( element, getReferenceProps );
+	useBindReactPropsToElement(element, getReferenceProps);
 	const isSmallerOffset = element.offsetHeight <= 1;
 
 	return (
 		isVisible &&
-		! hasOverlapping && (
-			<FloatingPortal id={ CANVAS_WRAPPER_ID }>
+		!hasOverlapping && (
+			<FloatingPortal id={CANVAS_WRAPPER_ID}>
 				<OverlayBox
-					ref={ floating.setRef }
-					isSelected={ isSelected }
-					isGlobal={ isGlobal }
-					style={ floating.styles }
-					data-element-overlay={ id }
+					ref={floating.setRef}
+					isSelected={isSelected}
+					isGlobal={isGlobal}
+					style={floating.styles}
+					data-element-overlay={id}
 					role="presentation"
-					isSmallerOffset={ isSmallerOffset }
-					{ ...getFloatingProps() }
+					isSmallerOffset={isSmallerOffset}
+					{...getFloatingProps()}
 				/>
 			</FloatingPortal>
 		)

@@ -6,34 +6,34 @@ import { useBoundProp } from '../bound-prop-context';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
 
-type Props = Partial< Omit< UnstableColorFieldProps, 'value' | 'onChange' > > & {
-	propTypeUtil?: PropTypeUtil< string, string >;
+type Props = Partial<Omit<UnstableColorFieldProps, 'value' | 'onChange'>> & {
+	propTypeUtil?: PropTypeUtil<string, string>;
 	anchorEl?: HTMLElement | null;
 	id?: string;
 };
 
 export const ColorControl = createControl(
-	( { propTypeUtil = colorPropTypeUtil, anchorEl, slotProps = {}, id, ...props }: Props ) => {
-		const { value, setValue, placeholder: boundPropPlaceholder, disabled } = useBoundProp( propTypeUtil );
+	({ propTypeUtil = colorPropTypeUtil, anchorEl, slotProps = {}, id, ...props }: Props) => {
+		const { value, setValue, placeholder: boundPropPlaceholder, disabled } = useBoundProp(propTypeUtil);
 
 		const placeholder = props.placeholder ?? boundPropPlaceholder;
 
-		const handleChange = ( selectedColor: string ) => {
-			setValue( selectedColor || null );
+		const handleChange = (selectedColor: string) => {
+			setValue(selectedColor || null);
 		};
 
 		return (
 			<ControlActions>
 				<UnstableColorField
-					id={ id }
+					id={id}
 					size="tiny"
 					fullWidth
-					value={ value ?? '' }
-					placeholder={ placeholder ?? '' }
-					onChange={ handleChange }
-					{ ...props }
-					disabled={ disabled }
-					slotProps={ {
+					value={value ?? ''}
+					placeholder={placeholder ?? ''}
+					onChange={handleChange}
+					{...props}
+					disabled={disabled}
+					slotProps={{
 						...slotProps,
 						colorPicker: {
 							anchorEl,
@@ -54,7 +54,7 @@ export const ColorControl = createControl(
 								},
 							},
 						},
-					} }
+					}}
 				/>
 			</ControlActions>
 		);

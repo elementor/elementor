@@ -17,13 +17,13 @@ const components = {
 	Link,
 };
 
-export const mainMenu = createMenu( {
-	groups: [ 'help', 'exits' ],
+export const mainMenu = createMenu({
+	groups: ['help', 'exits'],
 	components,
-} );
+});
 
-export const toolsMenu = createMenu( { components } );
+export const toolsMenu = createMenu({ components });
 
-export const utilitiesMenu = createMenu( { components } );
+export const utilitiesMenu = createMenu({ components });
 
-export const integrationsMenu = createMenu( { components } );
+export const integrationsMenu = createMenu({ components });

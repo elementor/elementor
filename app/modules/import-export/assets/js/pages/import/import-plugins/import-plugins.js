@@ -97,7 +97,7 @@ export default function ImportPlugins() {
 
 				{
 					! ! minVersionMissing?.length &&
-					<Notice label={ __( ' Recommended:', 'elementor' ) } className="e-app-import-plugins__versions-notice" color="warning">
+					<Notice label={ __( 'Recommended:', 'elementor' ) } className="e-app-import-plugins__versions-notice" color="warning">
 						{ __( 'Head over to Updates and make sure that your plugins are updated to the latest version.', 'elementor' ) } <InlineLink url={ elementorAppConfig.admin_url + 'update-core.php' }>{ __( 'Take me there', 'elementor' ) }</InlineLink>
 					</Notice>
 				}

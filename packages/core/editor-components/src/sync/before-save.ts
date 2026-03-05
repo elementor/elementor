@@ -8,7 +8,7 @@ type Options = {
 	container: V1Element & {
 		document: V1Document;
 		model: {
-			get: ( key: 'elements' ) => {
+			get: (key: 'elements') => {
 				toJSON: () => V1ElementData[];
 			};
 		};
@@ -16,8 +16,8 @@ type Options = {
 	status: DocumentSaveStatus;
 };
 
-export const beforeSave = ( { container, status }: Options ) => {
-	const elements = container?.model.get( 'elements' ).toJSON?.() ?? [];
+export const beforeSave = ({ container, status }: Options) => {
+	const elements = container?.model.get('elements').toJSON?.() ?? [];
 
-	return publishDraftComponentsInPageBeforeSave( { elements, status } );
+	return publishDraftComponentsInPageBeforeSave({ elements, status });
 };

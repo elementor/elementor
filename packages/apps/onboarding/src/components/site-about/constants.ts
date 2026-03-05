@@ -29,7 +29,7 @@ export const SITE_ABOUT_OPTIONS: SiteAboutOption[] = [
 	{ value: 'other', labelKey: 'steps.site_about.option_other', icon: OtherIcon },
 ];
 
-export const GREETING_KEY_MAP: Record< string, string > = {
+export const GREETING_KEY_MAP: Record<string, string> = {
 	myself: 'steps.site_about.greeting_myself',
 	business: 'steps.site_about.greeting_business',
 	client: 'steps.site_about.greeting_client',
@@ -38,8 +38,8 @@ export const GREETING_KEY_MAP: Record< string, string > = {
 
 export const GREETING_FALLBACK_KEY = 'steps.site_about.greeting_fallback';
 
-export function getGreeting( buildingFor: string ): string {
-	const key = GREETING_KEY_MAP[ buildingFor ] ?? GREETING_FALLBACK_KEY;
+export function getGreeting(buildingFor: string): string {
+	const key = GREETING_KEY_MAP[buildingFor] ?? GREETING_FALLBACK_KEY;
 
-	return t( key );
+	return t(key);
 }

@@ -41,16 +41,16 @@ export type InteractionsConfig = {
 	constants: InteractionConstants;
 };
 
-export type FieldProps< T = string > = {
+export type FieldProps<T = string> = {
 	value: T;
-	onChange: ( value: T ) => void;
+	onChange: (value: T) => void;
 	label?: string;
 	disabled?: boolean;
-	anchorRef?: RefObject< HTMLElement | null >;
+	anchorRef?: RefObject<HTMLElement | null>;
 };
 
-export type ReplayFieldProps = FieldProps< boolean >;
-export type DirectionFieldProps = FieldProps< string > & {
+export type ReplayFieldProps = FieldProps<boolean>;
+export type DirectionFieldProps = FieldProps<string> & {
 	interactionType: string;
 };
 
@@ -65,12 +65,12 @@ export type InteractionsCollection = ElementInteractionData[];
 export type InteractionsProvider = {
 	getKey: () => string;
 	priority: number;
-	subscribe: ( callback: () => void ) => () => void;
+	subscribe: (callback: () => void) => () => void;
 	actions: {
 		all: () => ElementInteractionData[];
 	};
 };
 
-export type InteractionItemValue = InteractionItemPropValue[ 'value' ];
+export type InteractionItemValue = InteractionItemPropValue['value'];
 
-export type SizeStringValue = `${ number }${ Unit }` | number;
+export type SizeStringValue = `${number}${Unit}` | number;

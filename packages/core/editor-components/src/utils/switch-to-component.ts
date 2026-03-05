@@ -7,64 +7,64 @@ export async function switchToComponent(
 	componentInstanceId?: string | null,
 	element?: HTMLElement | null
 ) {
-	const selector = getSelector( element, componentInstanceId );
+	const selector = getSelector(element, componentInstanceId);
 
-	invalidateDocumentData( componentId );
+	invalidateDocumentData(componentId);
 
-	await switchToDocument( componentId, {
+	await switchToDocument(componentId, {
 		selector,
 		mode: 'autosave',
 		setAsInitial: false,
 		shouldScroll: false,
-	} );
+	});
 
 	const currentDocumentContainer = getCurrentDocumentContainer();
-	const topLevelElement = currentDocumentContainer?.children?.[ 0 ];
+	const topLevelElement = currentDocumentContainer?.children?.[0];
 
-	if ( topLevelElement ) {
-		selectElement( topLevelElement.id );
+	if (topLevelElement) {
+		selectElement(topLevelElement.id);
 		expandNavigator();
 	}
 }
 
 export async function expandNavigator() {
-	await runCommand( 'navigator/expand-all' );
+	await runCommand('navigator/expand-all');
 }
 
-function getSelector( element?: HTMLElement | null, componentInstanceId?: string | null ): string | undefined {
-	if ( element ) {
-		return buildUniqueSelector( element );
+function getSelector(element?: HTMLElement | null, componentInstanceId?: string | null): string | undefined {
+	if (element) {
+		return buildUniqueSelector(element);
 	}
 
-	if ( componentInstanceId ) {
-		return `[data-id="${ componentInstanceId }"]`;
+	if (componentInstanceId) {
+		return `[data-id="${componentInstanceId}"]`;
 	}
 
 	return undefined;
 }
 
-export function buildUniqueSelector( element: HTMLElement ): string {
+export function buildUniqueSelector(element: HTMLElement): string {
 	const selectors: string[] = [];
-	let current = element.closest< HTMLElement >( '[data-id]' );
+	let current = element.closest<HTMLElement>('[data-id]');
 
-	while ( current ) {
+	while (current) {
 		const dataId = current.dataset.id;
-		const isComponentInstance = current.hasAttribute( 'data-elementor-id' );
+		const isComponentInstance = current.hasAttribute('data-elementor-id');
 
-		if ( isComponentInstance ) {
-			selectors.unshift( `[data-id="${ dataId }"]` );
+		if (isComponentInstance) {
+			selectors.unshift(`[data-id="${dataId}"]`);
 		}
 
-		current = current.parentElement?.closest( '[data-id]' ) ?? null;
+		current = current.parentElement?.closest('[data-id]') ?? null;
 	}
 
-	if ( selectors.length === 0 ) {
-		const closestElement = element.closest< HTMLElement >( '[data-id]' );
+	if (selectors.length === 0) {
+		const closestElement = element.closest<HTMLElement>('[data-id]');
 
-		if ( closestElement?.dataset?.id ) {
-			return `[data-id="${ closestElement.dataset.id }"]`;
+		if (closestElement?.dataset?.id) {
+			return `[data-id="${closestElement.dataset.id}"]`;
 		}
 	}
 
-	return selectors.join( ' ' );
+	return selectors.join(' ');
 }

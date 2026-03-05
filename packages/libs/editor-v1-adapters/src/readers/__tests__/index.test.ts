@@ -8,10 +8,10 @@ type ExtendedWindow = Window & {
 	};
 };
 
-describe( '@elementor/editor-v1-adapters - Readers', () => {
+describe('@elementor/editor-v1-adapters - Readers', () => {
 	let eIsPartOf: jest.Mock;
 
-	beforeEach( () => {
+	beforeEach(() => {
 		const extendedWindow = window as unknown as ExtendedWindow;
 
 		extendedWindow.$e = {
@@ -21,20 +21,20 @@ describe( '@elementor/editor-v1-adapters - Readers', () => {
 		};
 
 		eIsPartOf = extendedWindow.$e.routes.isPartOf;
-	} );
+	});
 
-	it( 'should determine if a route is active', () => {
+	it('should determine if a route is active', () => {
 		// Arrange.
 		const route = 'test/route';
 
-		eIsPartOf.mockReturnValue( true );
+		eIsPartOf.mockReturnValue(true);
 
 		// Act.
-		const result = isRouteActive( route );
+		const result = isRouteActive(route);
 
 		// Assert.
-		expect( result ).toEqual( true );
-		expect( eIsPartOf ).toHaveBeenCalledTimes( 1 );
-		expect( eIsPartOf ).toHaveBeenCalledWith( route );
-	} );
-} );
+		expect(result).toEqual(true);
+		expect(eIsPartOf).toHaveBeenCalledTimes(1);
+		expect(eIsPartOf).toHaveBeenCalledWith(route);
+	});
+});

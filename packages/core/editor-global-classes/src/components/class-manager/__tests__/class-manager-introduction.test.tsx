@@ -6,77 +6,77 @@ import { __ } from '@wordpress/i18n';
 
 import { ClassManagerIntroduction } from '../class-manager-introduction';
 
-jest.mock( '@elementor/editor-current-user' );
-jest.mock( '@wordpress/i18n' );
+jest.mock('@elementor/editor-current-user');
+jest.mock('@wordpress/i18n');
 
-describe( 'ClassManagerIntroduction', () => {
-	beforeEach( () => {
-		jest.mocked( useSuppressedMessage ).mockReturnValue( [ false, jest.fn() ] );
-		( __ as jest.Mock ).mockImplementation( ( str ) => str );
-	} );
+describe('ClassManagerIntroduction', () => {
+	beforeEach(() => {
+		jest.mocked(useSuppressedMessage).mockReturnValue([false, jest.fn()]);
+		(__ as jest.Mock).mockImplementation((str) => str);
+	});
 
-	it( 'should render the introduction modal when message is not suppressed', () => {
+	it('should render the introduction modal when message is not suppressed', () => {
 		// Act.
-		renderWithTheme( <ClassManagerIntroduction /> );
+		renderWithTheme(<ClassManagerIntroduction />);
 
 		// Assert.
-		expect( screen.getByText( 'Class Manager' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Class Manager')).toBeInTheDocument();
+	});
 
-	it( 'should not render the introduction modal when message is suppressed', () => {
+	it('should not render the introduction modal when message is suppressed', () => {
 		// Arrange.
-		jest.mocked( useSuppressedMessage ).mockReturnValue( [ true, jest.fn() ] );
+		jest.mocked(useSuppressedMessage).mockReturnValue([true, jest.fn()]);
 
 		// Act.
-		renderWithTheme( <ClassManagerIntroduction /> );
+		renderWithTheme(<ClassManagerIntroduction />);
 
 		// Assert.
-		expect( screen.queryByText( 'Class Manager' ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.queryByText('Class Manager')).not.toBeInTheDocument();
+	});
 
-	it( 'should suppress the message and close the modal when handleClose is called with false', async () => {
+	it('should suppress the message and close the modal when handleClose is called with false', async () => {
 		// Arrange.
 		const suppressMessage = jest.fn();
 
-		jest.mocked( useSuppressedMessage ).mockReturnValue( [ false, suppressMessage ] );
+		jest.mocked(useSuppressedMessage).mockReturnValue([false, suppressMessage]);
 
 		// Act.
-		renderWithTheme( <ClassManagerIntroduction /> );
+		renderWithTheme(<ClassManagerIntroduction />);
 
-		const checkbox = screen.getByRole( 'checkbox' );
+		const checkbox = screen.getByRole('checkbox');
 
-		fireEvent.click( checkbox );
+		fireEvent.click(checkbox);
 
-		const closeButton = screen.getByRole( 'button' );
+		const closeButton = screen.getByRole('button');
 
-		fireEvent.click( closeButton );
+		fireEvent.click(closeButton);
 
 		// Assert
-		expect( suppressMessage ).toHaveBeenCalled();
+		expect(suppressMessage).toHaveBeenCalled();
 
-		await waitFor( () => {
-			expect( screen.queryByText( 'Class Manager' ) ).not.toBeInTheDocument();
-		} );
-	} );
+		await waitFor(() => {
+			expect(screen.queryByText('Class Manager')).not.toBeInTheDocument();
+		});
+	});
 
-	it( 'should close the modal without suppressing the message when handleClose is called with true', async () => {
+	it('should close the modal without suppressing the message when handleClose is called with true', async () => {
 		// Arrange.
 		const suppressMessage = jest.fn();
 
-		jest.mocked( useSuppressedMessage ).mockReturnValue( [ false, suppressMessage ] );
+		jest.mocked(useSuppressedMessage).mockReturnValue([false, suppressMessage]);
 
 		// Act.
-		renderWithTheme( <ClassManagerIntroduction /> );
+		renderWithTheme(<ClassManagerIntroduction />);
 
-		const closeButton = screen.getByRole( 'button' );
+		const closeButton = screen.getByRole('button');
 
-		fireEvent.click( closeButton );
+		fireEvent.click(closeButton);
 
 		// Assert
-		expect( suppressMessage ).not.toHaveBeenCalled();
+		expect(suppressMessage).not.toHaveBeenCalled();
 
-		await waitFor( () => {
-			expect( screen.queryByText( 'Class Manager' ) ).not.toBeInTheDocument();
-		} );
-	} );
-} );
+		await waitFor(() => {
+			expect(screen.queryByText('Class Manager')).not.toBeInTheDocument();
+		});
+	});
+});

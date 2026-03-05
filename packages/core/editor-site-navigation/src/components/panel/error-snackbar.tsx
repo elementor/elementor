@@ -6,25 +6,25 @@ type Props = {
 	onClose: () => void;
 };
 
-const ErrorSnackbar = ( { open, onClose }: Props ) => {
+const ErrorSnackbar = ({ open, onClose }: Props) => {
 	return (
 		<Snackbar
-			open={ open }
-			onClose={ onClose }
-			anchorOrigin={ {
+			open={open}
+			onClose={onClose}
+			anchorOrigin={{
 				vertical: 'bottom',
 				horizontal: 'left',
-			} }
+			}}
 		>
-			<Alert onClose={ onClose } severity="error" sx={ { width: '100%' } }>
+			<Alert onClose={onClose} severity="error" sx={{ width: '100%' }}>
 				<Typography
 					component="span"
-					sx={ {
+					sx={{
 						fontWeight: 'bold',
-					} }
+					}}
 				>
 					We couldn’t complete the action.
-				</Typography>{ ' ' }
+				</Typography>{' '}
 				Please try again
 			</Alert>
 		</Snackbar>

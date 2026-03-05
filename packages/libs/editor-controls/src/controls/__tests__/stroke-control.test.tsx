@@ -4,17 +4,17 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { StrokeControl } from '../stroke-control';
 
-const propType = createMockPropType( {
+const propType = createMockPropType({
 	kind: 'object',
 	key: 'image',
 	shape: {
-		color: createMockPropType( { kind: 'object' } ),
-		width: createMockPropType( { kind: 'object' } ),
+		color: createMockPropType({ kind: 'object' }),
+		width: createMockPropType({ kind: 'object' }),
 	},
-} );
+});
 
-describe( 'StrokeControl', () => {
-	it( 'should apply text-stroke when width is updated', () => {
+describe('StrokeControl', () => {
+	it('should apply text-stroke when width is updated', () => {
 		// Arrange.
 		const setValue = jest.fn();
 		const bind = '-webkit-text-stroke';
@@ -40,16 +40,16 @@ describe( 'StrokeControl', () => {
 		const props = { value: defaultValue, setValue, bind, propType };
 
 		// Act.
-		renderControl( <StrokeControl />, props );
+		renderControl(<StrokeControl />, props);
 
 		// Assert.
-		const widthInput = screen.getByRole( 'spinbutton' );
+		const widthInput = screen.getByRole('spinbutton');
 
-		fireEvent.click( widthInput );
+		fireEvent.click(widthInput);
 
-		fireEvent.input( widthInput, { target: { value: '10' } } );
+		fireEvent.input(widthInput, { target: { value: '10' } });
 
-		expect( setValue ).toHaveBeenCalledWith( {
+		expect(setValue).toHaveBeenCalledWith({
 			$$type: 'stroke',
 			value: {
 				color: {
@@ -64,10 +64,10 @@ describe( 'StrokeControl', () => {
 					},
 				},
 			},
-		} );
-	} );
+		});
+	});
 
-	it( 'should not allow incorrect stroke width input value', () => {
+	it('should not allow incorrect stroke width input value', () => {
 		// Arrange.
 		const setValue = jest.fn();
 		const bind = '-webkit-text-stroke';
@@ -93,16 +93,16 @@ describe( 'StrokeControl', () => {
 		const props = { value: defaultValue, setValue, bind, propType };
 
 		// Act.
-		renderControl( <StrokeControl />, props );
+		renderControl(<StrokeControl />, props);
 
 		// Assert.
-		const widthInput = screen.getByRole( 'spinbutton' );
+		const widthInput = screen.getByRole('spinbutton');
 
-		fireEvent.click( widthInput );
+		fireEvent.click(widthInput);
 
-		fireEvent.input( widthInput, { target: { value: 'hot' } } );
+		fireEvent.input(widthInput, { target: { value: 'hot' } });
 
-		expect( setValue ).toHaveBeenCalledWith( {
+		expect(setValue).toHaveBeenCalledWith({
 			$$type: 'stroke',
 			value: {
 				color: {
@@ -111,6 +111,6 @@ describe( 'StrokeControl', () => {
 				},
 				width: null,
 			},
-		} );
-	} );
-} );
+		});
+	});
+});

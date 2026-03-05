@@ -25,14 +25,14 @@ const mockMenuProps = {
 	onClose: jest.fn(),
 };
 
-jest.mock( '@elementor/ui', () => ( {
-	...jest.requireActual( '@elementor/ui' ),
-	IconButton: ( props: IconButtonProps ) => (
-		<button { ...props } aria-label="Menu trigger">
-			{ props.children }
+jest.mock('@elementor/ui', () => ({
+	...jest.requireActual('@elementor/ui'),
+	IconButton: (props: IconButtonProps) => (
+		<button {...props} aria-label="Menu trigger">
+			{props.children}
 		</button>
 	),
-	Menu: ( {
+	Menu: ({
 		children,
 		open,
 		MenuListProps,
@@ -42,34 +42,34 @@ jest.mock( '@elementor/ui', () => ( {
 		anchorOrigin,
 		transformOrigin,
 		...props
-	}: MenuProps ) =>
+	}: MenuProps) =>
 		open && (
 			<div
 				role="menu"
-				data-menu-props={ JSON.stringify( {
+				data-menu-props={JSON.stringify({
 					MenuListProps,
 					PaperProps,
 					disablePortal,
 					anchorEl,
 					anchorOrigin,
 					transformOrigin,
-				} ) }
-				{ ...props }
+				})}
+				{...props}
 			>
-				{ children }
+				{children}
 			</div>
 		),
-	MenuItem: ( { children, sx, ...props }: MenuItemProps ) => (
-		<li role="menuitem" data-sx={ JSON.stringify( sx ) } { ...props }>
-			{ children }
+	MenuItem: ({ children, sx, ...props }: MenuItemProps) => (
+		<li role="menuitem" data-sx={JSON.stringify(sx)} {...props}>
+			{children}
 		</li>
 	),
 	usePopupState: () => mockPopupState,
 	bindTrigger: () => mockTriggerProps,
 	bindMenu: () => mockMenuProps,
-} ) );
+}));
 
-describe( 'VariableEditMenu', () => {
+describe('VariableEditMenu', () => {
 	const mockMenuActions = [
 		{
 			name: 'Delete',
@@ -79,101 +79,101 @@ describe( 'VariableEditMenu', () => {
 		},
 	];
 
-	const renderComponent = ( props = {} ) => {
+	const renderComponent = (props = {}) => {
 		const defaultProps = {
 			menuActions: mockMenuActions,
 			itemId: '123',
 		};
 
-		return render( <VariableEditMenu { ...defaultProps } { ...props } /> );
+		return render(<VariableEditMenu {...defaultProps} {...props} />);
 	};
 
-	beforeEach( () => {
+	beforeEach(() => {
 		jest.clearAllMocks();
-		Object.assign( mockPopupState, {
+		Object.assign(mockPopupState, {
 			isOpen: false,
 			anchorEl: null,
 			close: jest.fn(),
 			open: jest.fn(),
 			setAnchorEl: jest.fn(),
 			toggle: jest.fn(),
-		} );
-	} );
+		});
+	});
 
-	it( 'should render menu trigger button', () => {
+	it('should render menu trigger button', () => {
 		// Arrange & Act
 		renderComponent();
 
 		// Assert
-		expect( screen.getByRole( 'button', { name: 'Menu trigger' } ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByRole('button', { name: 'Menu trigger' })).toBeInTheDocument();
+	});
 
-	it( 'should render menu items when menu is open', () => {
+	it('should render menu items when menu is open', () => {
 		// Arrange
-		Object.assign( mockPopupState, {
+		Object.assign(mockPopupState, {
 			isOpen: true,
-			anchorEl: document.createElement( 'div' ),
-		} );
+			anchorEl: document.createElement('div'),
+		});
 
 		// Act
 		renderComponent();
 
 		// Assert
-		expect( screen.getByRole( 'menu' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Delete' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByRole('menu')).toBeInTheDocument();
+		expect(screen.getByText('Delete')).toBeInTheDocument();
+	});
 
-	it( 'should handle disabled state', () => {
+	it('should handle disabled state', () => {
 		// Arrange & Act
-		renderComponent( { disabled: true } );
+		renderComponent({ disabled: true });
 
 		// Assert
-		expect( screen.getByRole( 'button', { name: 'Menu trigger' } ) ).toBeDisabled();
-	} );
+		expect(screen.getByRole('button', { name: 'Menu trigger' })).toBeDisabled();
+	});
 
-	it( 'should call action onClick when menu item is clicked', () => {
+	it('should call action onClick when menu item is clicked', () => {
 		// Arrange
 		const mockClose = jest.fn();
-		Object.assign( mockPopupState, {
+		Object.assign(mockPopupState, {
 			isOpen: true,
-			anchorEl: document.createElement( 'div' ),
+			anchorEl: document.createElement('div'),
 			close: mockClose,
-		} );
+		});
 		renderComponent();
 
 		// Act
-		fireEvent.click( screen.getByRole( 'menuitem' ) );
+		fireEvent.click(screen.getByRole('menuitem'));
 
 		// Assert
-		expect( mockMenuActions[ 0 ].onClick ).toHaveBeenCalled();
-		expect( mockClose ).toHaveBeenCalled();
-	} );
+		expect(mockMenuActions[0].onClick).toHaveBeenCalled();
+		expect(mockClose).toHaveBeenCalled();
+	});
 
-	it( 'should apply correct styles to menu items', () => {
+	it('should apply correct styles to menu items', () => {
 		// Arrange
-		Object.assign( mockPopupState, {
+		Object.assign(mockPopupState, {
 			isOpen: true,
-			anchorEl: document.createElement( 'div' ),
-		} );
+			anchorEl: document.createElement('div'),
+		});
 
 		// Act
 		renderComponent();
-		const menuItem = screen.getByRole( 'menuitem' );
-		const sx = JSON.parse( menuItem.getAttribute( 'data-sx' ) || '{}' );
+		const menuItem = screen.getByRole('menuitem');
+		const sx = JSON.parse(menuItem.getAttribute('data-sx') || '{}');
 
 		// Assert
-		expect( sx ).toEqual( {
+		expect(sx).toEqual({
 			color: 'error.main',
 			gap: 1,
-		} );
-	} );
+		});
+	});
 
-	it( 'should render multiple menu items', () => {
+	it('should render multiple menu items', () => {
 		// Arrange
-		Object.assign( mockPopupState, {
+		Object.assign(mockPopupState, {
 			isOpen: true,
-			anchorEl: document.createElement( 'div' ),
-		} );
+			anchorEl: document.createElement('div'),
+		});
 
 		const multipleActions = [
 			...mockMenuActions,
@@ -186,19 +186,19 @@ describe( 'VariableEditMenu', () => {
 		];
 
 		// Act
-		renderComponent( { menuActions: multipleActions } );
+		renderComponent({ menuActions: multipleActions });
 
 		// Assert
-		expect( screen.getByText( 'Delete' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Edit' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Delete')).toBeInTheDocument();
+		expect(screen.getByText('Edit')).toBeInTheDocument();
+	});
 
-	it( 'should apply custom colors to menu items', () => {
+	it('should apply custom colors to menu items', () => {
 		// Arrange
-		Object.assign( mockPopupState, {
+		Object.assign(mockPopupState, {
 			isOpen: true,
-			anchorEl: document.createElement( 'div' ),
-		} );
+			anchorEl: document.createElement('div'),
+		});
 
 		const customColorActions = [
 			{
@@ -210,15 +210,15 @@ describe( 'VariableEditMenu', () => {
 		];
 
 		// Act
-		renderComponent( { menuActions: customColorActions } );
-		const menuItem = screen.getByRole( 'menuitem' );
-		const sx = JSON.parse( menuItem.getAttribute( 'data-sx' ) || '{}' );
+		renderComponent({ menuActions: customColorActions });
+		const menuItem = screen.getByRole('menuitem');
+		const sx = JSON.parse(menuItem.getAttribute('data-sx') || '{}');
 
 		// Assert
-		expect( sx ).toEqual( {
+		expect(sx).toEqual({
 			color: 'success.main',
 			gap: 1,
-		} );
-		expect( screen.getByText( 'Custom Action' ) ).toBeInTheDocument();
-	} );
-} );
+		});
+		expect(screen.getByText('Custom Action')).toBeInTheDocument();
+	});
+});

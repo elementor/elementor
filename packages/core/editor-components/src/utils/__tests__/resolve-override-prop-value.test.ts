@@ -2,12 +2,12 @@ import { componentInstanceOverridePropTypeUtil } from '../../prop-types/componen
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
 import { resolveOverridePropValue } from '../resolve-override-prop-value';
 
-describe( 'resolveOverridePropValue', () => {
+describe('resolveOverridePropValue', () => {
 	const PLAIN_STRING_VALUE = { $$type: 'string', value: 'Plain Text' };
 	const OVERRIDE_STRING_VALUE = { $$type: 'string', value: 'Override Text' };
 	const NESTED_STRING_VALUE = { $$type: 'string', value: 'Nested Override Text' };
 
-	it.each( [
+	it.each([
 		{
 			should: 'return plain prop value as-is',
 			input: PLAIN_STRING_VALUE,
@@ -15,38 +15,38 @@ describe( 'resolveOverridePropValue', () => {
 		},
 		{
 			should: 'extract origin_value from overridable prop',
-			input: componentOverridablePropTypeUtil.create( {
+			input: componentOverridablePropTypeUtil.create({
 				override_key: 'prop-1',
 				origin_value: OVERRIDE_STRING_VALUE,
-			} ),
+			}),
 			expected: OVERRIDE_STRING_VALUE,
 		},
 		{
 			should: 'extract override_value from override prop',
-			input: componentInstanceOverridePropTypeUtil.create( {
+			input: componentInstanceOverridePropTypeUtil.create({
 				override_key: 'prop-1',
 				override_value: OVERRIDE_STRING_VALUE,
 				schema_source: { type: 'component', id: 123 },
-			} ),
+			}),
 			expected: OVERRIDE_STRING_VALUE,
 		},
 		{
 			should: 'extract innermost override_value from overridable containing override',
-			input: componentOverridablePropTypeUtil.create( {
+			input: componentOverridablePropTypeUtil.create({
 				override_key: 'outer-key',
-				origin_value: componentInstanceOverridePropTypeUtil.create( {
+				origin_value: componentInstanceOverridePropTypeUtil.create({
 					override_key: 'inner-key',
 					override_value: NESTED_STRING_VALUE,
 					schema_source: { type: 'component', id: 456 },
-				} ),
-			} ),
+				}),
+			}),
 			expected: NESTED_STRING_VALUE,
 		},
-	] )( 'should $should', ( { input, expected } ) => {
+	])('should $should', ({ input, expected }) => {
 		// Act
-		const result = resolveOverridePropValue( input );
+		const result = resolveOverridePropValue(input);
 
 		// Assert
-		expect( result ).toEqual( expected );
-	} );
-} );
+		expect(result).toEqual(expected);
+	});
+});

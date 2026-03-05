@@ -8,27 +8,27 @@ type PromotionAlertProps = {
 	upgradeUrl: string;
 };
 
-export const PromotionAlert = ( { message, upgradeUrl }: PromotionAlertProps ) => (
+export const PromotionAlert = ({ message, upgradeUrl }: PromotionAlertProps) => (
 	<Alert
 		variant="standard"
 		color="promotion"
-		icon={ false }
+		icon={false}
 		role="dialog"
 		aria-label="promotion-alert"
 		size="small"
-		sx={ { m: 2, mt: 1, pt: 0.5, pb: 0.5 } }
+		sx={{ m: 2, mt: 1, pt: 0.5, pb: 0.5 }}
 	>
-		{ message }
+		{message}
 		<Button
-			size={ 'tiny' }
-			variant={ 'text' }
-			color={ 'promotion' }
+			size={'tiny'}
+			variant={'text'}
+			color={'promotion'}
 			target="_blank"
-			href={ upgradeUrl }
+			href={upgradeUrl}
 			rel="noopener noreferrer"
-			startIcon={ <CrownFilledIcon fontSize="tiny" /> }
+			startIcon={<CrownFilledIcon fontSize="tiny" />}
 		>
-			{ __( 'Upgrade now', 'elementor' ) }
+			{__('Upgrade now', 'elementor')}
 		</Button>
 	</Alert>
 );

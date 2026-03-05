@@ -10,17 +10,17 @@ import { ToggleControl } from '../../../toggle-control';
 
 type Attachment = 'fixed' | 'scroll';
 
-const attachmentControlOptions: ToggleButtonGroupItem< Attachment >[] = [
+const attachmentControlOptions: ToggleButtonGroupItem<Attachment>[] = [
 	{
 		value: 'fixed',
-		label: __( 'Fixed', 'elementor' ),
-		renderContent: ( { size } ) => <PinIcon fontSize={ size } />,
+		label: __('Fixed', 'elementor'),
+		renderContent: ({ size }) => <PinIcon fontSize={size} />,
 		showTooltip: true,
 	},
 	{
 		value: 'scroll',
-		label: __( 'Scroll', 'elementor' ),
-		renderContent: ( { size } ) => <PinnedOffIcon fontSize={ size } />,
+		label: __('Scroll', 'elementor'),
+		renderContent: ({ size }) => <PinnedOffIcon fontSize={size} />,
 		showTooltip: true,
 	},
 ];
@@ -28,11 +28,11 @@ const attachmentControlOptions: ToggleButtonGroupItem< Attachment >[] = [
 export const BackgroundImageOverlayAttachment = () => {
 	return (
 		<PopoverGridContainer>
-			<Grid item xs={ 6 }>
-				<ControlFormLabel>{ __( 'Attachment', 'elementor' ) }</ControlFormLabel>
+			<Grid item xs={6}>
+				<ControlFormLabel>{__('Attachment', 'elementor')}</ControlFormLabel>
 			</Grid>
-			<Grid item xs={ 6 } sx={ { display: 'flex', justifyContent: 'flex-end', overflow: 'hidden' } }>
-				<ToggleControl options={ attachmentControlOptions } />
+			<Grid item xs={6} sx={{ display: 'flex', justifyContent: 'flex-end', overflow: 'hidden' }}>
+				<ToggleControl options={attachmentControlOptions} />
 			</Grid>
 		</PopoverGridContainer>
 	);

@@ -5,28 +5,28 @@ import { validatePropValue } from '../../validate-prop-value';
 
 type PlainPropType = Types.PropType & { key: string };
 
-const createMeta = ( description: string ) => ( {
+const createMeta = (description: string) => ({
 	description,
-} );
+});
 
-describe( 'PropType to LLM JSON Schema conversion', () => {
-	describe( 'Primitive prop types', () => {
-		const stubPropTypes: ( PlainPropType & { key: string } )[] = [
-			{ kind: 'string', key: 'string', meta: createMeta( 'string-prop' ), settings: {} },
-			{ kind: 'number', key: 'number', meta: createMeta( 'number-prop' ), settings: {} },
-			{ kind: 'boolean', key: 'boolean', meta: createMeta( 'boolean-prop' ), settings: {} },
+describe('PropType to LLM JSON Schema conversion', () => {
+	describe('Primitive prop types', () => {
+		const stubPropTypes: (PlainPropType & { key: string })[] = [
+			{ kind: 'string', key: 'string', meta: createMeta('string-prop'), settings: {} },
+			{ kind: 'number', key: 'number', meta: createMeta('number-prop'), settings: {} },
+			{ kind: 'boolean', key: 'boolean', meta: createMeta('boolean-prop'), settings: {} },
 		];
 
-		stubPropTypes.forEach( ( propType ) => {
-			it( 'should convert ' + propType.kind + ' prop type correctly', () => {
-				const jsonSchema = propTypeToJsonSchema( propType );
-				expect( jsonSchema.description ).toBe( propType.meta?.description );
-				expect( jsonSchema.properties ).toHaveProperty( 'value' );
-				expect( jsonSchema.properties ).toHaveProperty( '$$type', { type: 'string', const: propType.kind } );
-			} );
-		} );
-		describe( 'Invalid string nesting', () => {
-			it( 'Should REJECT double-nested string PropValue', () => {
+		stubPropTypes.forEach((propType) => {
+			it('should convert ' + propType.kind + ' prop type correctly', () => {
+				const jsonSchema = propTypeToJsonSchema(propType);
+				expect(jsonSchema.description).toBe(propType.meta?.description);
+				expect(jsonSchema.properties).toHaveProperty('value');
+				expect(jsonSchema.properties).toHaveProperty('$$type', { type: 'string', const: propType.kind });
+			});
+		});
+		describe('Invalid string nesting', () => {
+			it('Should REJECT double-nested string PropValue', () => {
 				const stubPropValue = {
 					$$type: 'string',
 					value: {
@@ -35,41 +35,41 @@ describe( 'PropType to LLM JSON Schema conversion', () => {
 					},
 				};
 				const stringPropType = STUBS.tag;
-				const { errors, valid } = validatePropValue( stringPropType, stubPropValue );
-				expect( valid ).toBe( false );
-				expect( errors?.length ).toBeGreaterThan( 0 );
-			} );
-		} );
-		describe( 'String prop type with enum', () => {
+				const { errors, valid } = validatePropValue(stringPropType, stubPropValue);
+				expect(valid).toBe(false);
+				expect(errors?.length).toBeGreaterThan(0);
+			});
+		});
+		describe('String prop type with enum', () => {
 			const enumPropType = STUBS.alignContent;
-			const validEnumValues = < string[] >( enumPropType.settings.enum || [] );
-			const invalidEnumValues = [ 'invalid-enum-value', '', '123', null, undefined ];
-			validEnumValues.forEach( ( enumValue ) => {
-				it( `Should accept valid ${ enumPropType.key } enum value ${ enumValue }`, () => {
+			const validEnumValues = <string[]>(enumPropType.settings.enum || []);
+			const invalidEnumValues = ['invalid-enum-value', '', '123', null, undefined];
+			validEnumValues.forEach((enumValue) => {
+				it(`Should accept valid ${enumPropType.key} enum value ${enumValue}`, () => {
 					const propValue = {
 						$$type: 'string',
 						value: enumValue,
 					};
-					expect( validatePropValue( enumPropType, propValue ).valid ).toBe( true );
-				} );
-			} );
-			invalidEnumValues.forEach( ( enumValue ) => {
-				it( `Should reject invalid ${ enumPropType.key } enum value ${ enumValue }`, () => {
+					expect(validatePropValue(enumPropType, propValue).valid).toBe(true);
+				});
+			});
+			invalidEnumValues.forEach((enumValue) => {
+				it(`Should reject invalid ${enumPropType.key} enum value ${enumValue}`, () => {
 					const propValue = {
 						$$type: 'string',
 						value: enumValue,
 					};
-					const { errors, valid } = validatePropValue( enumPropType, propValue );
-					expect( valid ).toBe( false );
-					expect( errors?.length ).toBeGreaterThan( 0 );
-				} );
-			} );
-		} );
+					const { errors, valid } = validatePropValue(enumPropType, propValue);
+					expect(valid).toBe(false);
+					expect(errors?.length).toBeGreaterThan(0);
+				});
+			});
+		});
 
-		describe( 'Union prop types', () => {
+		describe('Union prop types', () => {
 			const colorPropType = STUBS.color;
-			describe( 'should convert union prop type correctly', () => {
-				const options: Types.TransformablePropValue< string >[] = [
+			describe('should convert union prop type correctly', () => {
+				const options: Types.TransformablePropValue<string>[] = [
 					{
 						$$type: 'color',
 						value: '#ffffff',
@@ -79,21 +79,21 @@ describe( 'PropType to LLM JSON Schema conversion', () => {
 						value: 'some-global-variable',
 					},
 				];
-				options.forEach( ( option ) => {
-					it( 'Should accept PropValue of kind ' + option.$$type, () => {
-						const { errors, valid, errorMessages } = validatePropValue( colorPropType, option );
-						expect( errorMessages ).toBe( '' );
-						expect( valid ).toBe( true );
-						expect( errors ).toHaveLength( 0 );
-					} );
-				} );
-			} );
-		} );
-	} );
+				options.forEach((option) => {
+					it('Should accept PropValue of kind ' + option.$$type, () => {
+						const { errors, valid, errorMessages } = validatePropValue(colorPropType, option);
+						expect(errorMessages).toBe('');
+						expect(valid).toBe(true);
+						expect(errors).toHaveLength(0);
+					});
+				});
+			});
+		});
+	});
 
-	describe( 'Complex object prop type', () => {
+	describe('Complex object prop type', () => {
 		const backgroundPropType = STUBS.background as Types.ObjectPropType;
-		describe( 'background prop type', () => {
+		describe('background prop type', () => {
 			const backgroundOverlays = [
 				// background-color-overlay
 				{
@@ -222,21 +222,21 @@ describe( 'PropType to LLM JSON Schema conversion', () => {
 					},
 				},
 			];
-			backgroundOverlays.forEach( ( bgOverlayPropValue ) => {
-				it( `Should accept ${ bgOverlayPropValue.$$type } as background-overlay`, () => {
+			backgroundOverlays.forEach((bgOverlayPropValue) => {
+				it(`Should accept ${bgOverlayPropValue.$$type} as background-overlay`, () => {
 					const propValue = {
 						$$type: 'background',
 						value: {
-							'background-overlay': { $$type: 'background-overlay', value: [ bgOverlayPropValue ] },
+							'background-overlay': { $$type: 'background-overlay', value: [bgOverlayPropValue] },
 						},
 					} as const;
-					const { errors, valid, errorMessages } = validatePropValue( backgroundPropType, propValue );
-					expect( errorMessages ).toBe( '' );
-					expect( errors ).toHaveLength( 0 );
-					expect( valid ).toBe( true );
-				} );
-			} );
-			it( 'Should accept clipped background prop value', () => {
+					const { errors, valid, errorMessages } = validatePropValue(backgroundPropType, propValue);
+					expect(errorMessages).toBe('');
+					expect(errors).toHaveLength(0);
+					expect(valid).toBe(true);
+				});
+			});
+			it('Should accept clipped background prop value', () => {
 				const propValue = {
 					$$type: 'background',
 					value: {
@@ -246,11 +246,11 @@ describe( 'PropType to LLM JSON Schema conversion', () => {
 						},
 					},
 				};
-				const { errors, valid, errorMessages } = validatePropValue( backgroundPropType, propValue );
-				expect( errorMessages ).toBe( '' );
-				expect( valid ).toBe( true );
-				expect( errors ).toHaveLength( 0 );
-			} );
-		} );
-	} );
-} );
+				const { errors, valid, errorMessages } = validatePropValue(backgroundPropType, propValue);
+				expect(errorMessages).toBe('');
+				expect(valid).toBe(true);
+				expect(errors).toHaveLength(0);
+			});
+		});
+	});
+});

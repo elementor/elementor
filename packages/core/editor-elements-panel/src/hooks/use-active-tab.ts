@@ -13,19 +13,19 @@ export function useActiveTab() {
 	return useListenTo(
 		[
 			v1ReadyEvent(),
-			routeOpenEvent( LEGACY_ELEMENTS_PANEL_ROUTE_PREFIX ),
-			routeCloseEvent( LEGACY_ELEMENTS_PANEL_ROUTE_PREFIX ),
+			routeOpenEvent(LEGACY_ELEMENTS_PANEL_ROUTE_PREFIX),
+			routeCloseEvent(LEGACY_ELEMENTS_PANEL_ROUTE_PREFIX),
 		],
 		() => {
 			const panelRoute = getWindow().$e.routes.getCurrent()?.panel;
 
-			if ( ! panelRoute || ! panelRoute.startsWith( LEGACY_ELEMENTS_PANEL_ROUTE_PREFIX ) ) {
+			if (!panelRoute || !panelRoute.startsWith(LEGACY_ELEMENTS_PANEL_ROUTE_PREFIX)) {
 				return null;
 			}
 
-			const tab = panelRoute.replace( LEGACY_ELEMENTS_PANEL_ROUTE_PREFIX, '' );
+			const tab = panelRoute.replace(LEGACY_ELEMENTS_PANEL_ROUTE_PREFIX, '');
 
-			return getTab( tab ) ?? null;
+			return getTab(tab) ?? null;
 		}
 	);
 }

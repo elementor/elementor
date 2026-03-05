@@ -12,12 +12,12 @@ type SizeInputProps = {
 	size: number | string;
 	placeholder?: string;
 	startIcon?: React.ReactNode;
-	units: ( Unit | ExtendedOption )[];
-	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
-	onFocus?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
-	onClick?: ( event: React.MouseEvent< HTMLInputElement > ) => void;
-	handleUnitChange: ( unit: Unit | ExtendedOption ) => void;
-	handleSizeChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
+	units: (Unit | ExtendedOption)[];
+	onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
+	onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void;
+	onClick?: (event: React.MouseEvent<HTMLInputElement>) => void;
+	handleUnitChange: (unit: Unit | ExtendedOption) => void;
+	handleSizeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 	popupState: PopupState;
 	disabled?: boolean;
 	min?: number;
@@ -25,7 +25,7 @@ type SizeInputProps = {
 	ariaLabel?: string;
 };
 
-export const SizeInput = ( {
+export const SizeInput = ({
 	units,
 	handleUnitChange,
 	handleSizeChange,
@@ -41,40 +41,40 @@ export const SizeInput = ( {
 	min,
 	id,
 	ariaLabel,
-}: SizeInputProps ) => {
+}: SizeInputProps) => {
 	const { appendKey, startsWith } = useTypingBuffer();
 
-	const inputType = isUnitExtendedOption( unit ) ? 'text' : 'number';
-	const inputValue = ! isUnitExtendedOption( unit ) && Number.isNaN( size ) ? '' : size ?? '';
+	const inputType = isUnitExtendedOption(unit) ? 'text' : 'number';
+	const inputValue = !isUnitExtendedOption(unit) && Number.isNaN(size) ? '' : (size ?? '');
 
-	const handleKeyDown = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
+	const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
 		const { key, altKey, ctrlKey, metaKey } = event;
 
-		if ( altKey || ctrlKey || metaKey ) {
+		if (altKey || ctrlKey || metaKey) {
 			return;
 		}
 
-		if ( isUnitExtendedOption( unit ) && ! isNaN( Number( key ) ) ) {
-			const defaultUnit = units?.[ 0 ];
-			if ( defaultUnit ) {
-				handleUnitChange( defaultUnit );
+		if (isUnitExtendedOption(unit) && !isNaN(Number(key))) {
+			const defaultUnit = units?.[0];
+			if (defaultUnit) {
+				handleUnitChange(defaultUnit);
 			}
 			return;
 		}
 
-		if ( ! /^[a-zA-Z%]$/.test( key ) ) {
+		if (!/^[a-zA-Z%]$/.test(key)) {
 			return;
 		}
 
 		event.preventDefault();
 
 		const newChar = key.toLowerCase();
-		const updatedBuffer = appendKey( newChar );
+		const updatedBuffer = appendKey(newChar);
 
-		const matchedUnit = units.find( ( u ) => startsWith( u, updatedBuffer ) );
+		const matchedUnit = units.find((u) => startsWith(u, updatedBuffer));
 
-		if ( matchedUnit ) {
-			handleUnitChange( matchedUnit );
+		if (matchedUnit) {
+			handleUnitChange(matchedUnit);
 		}
 	};
 
@@ -83,10 +83,10 @@ export const SizeInput = ( {
 		'aria-haspopup': true,
 	};
 
-	const menuItemsAttributes = units.includes( 'custom' )
+	const menuItemsAttributes = units.includes('custom')
 		? {
 				custom: popupAttributes,
-		  }
+			}
 		: undefined;
 
 	const alternativeOptionLabels = {
@@ -95,23 +95,23 @@ export const SizeInput = ( {
 
 	const InputProps = {
 		...popupAttributes,
-		readOnly: isUnitExtendedOption( unit ),
+		readOnly: isUnitExtendedOption(unit),
 		autoComplete: 'off',
 		onClick,
 		onFocus,
 		startAdornment: startIcon ? (
-			<InputAdornment position="start" disabled={ disabled }>
-				{ startIcon }
+			<InputAdornment position="start" disabled={disabled}>
+				{startIcon}
 			</InputAdornment>
 		) : undefined,
 		endAdornment: (
 			<SelectionEndAdornment
-				disabled={ disabled }
-				options={ units }
-				onClick={ handleUnitChange }
-				value={ unit }
-				alternativeOptionLabels={ alternativeOptionLabels }
-				menuItemsAttributes={ menuItemsAttributes }
+				disabled={disabled}
+				options={units}
+				onClick={handleUnitChange}
+				value={unit}
+				alternativeOptionLabels={alternativeOptionLabels}
+				menuItemsAttributes={menuItemsAttributes}
 			/>
 		),
 	};
@@ -120,17 +120,17 @@ export const SizeInput = ( {
 		<ControlActions>
 			<Box>
 				<TextFieldInnerSelection
-					disabled={ disabled }
-					placeholder={ placeholder }
-					type={ inputType }
-					value={ inputValue }
-					onChange={ handleSizeChange }
-					onKeyDown={ handleKeyDown }
-					onBlur={ onBlur }
-					InputProps={ InputProps }
-					inputProps={ { min, step: 'any', 'aria-label': ariaLabel } }
-					isPopoverOpen={ popupState.isOpen }
-					id={ id }
+					disabled={disabled}
+					placeholder={placeholder}
+					type={inputType}
+					value={inputValue}
+					onChange={handleSizeChange}
+					onKeyDown={handleKeyDown}
+					onBlur={onBlur}
+					InputProps={InputProps}
+					inputProps={{ min, step: 'any', 'aria-label': ariaLabel }}
+					isPopoverOpen={popupState.isOpen}
+					id={id}
 				/>
 			</Box>
 		</ControlActions>

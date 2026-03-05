@@ -59,7 +59,7 @@ export const STUBS = {
 				"Aligns a flex container's lines within when there is extra space in the cross-axis. CSS values: center, start, end, space-between, space-around, space-evenly",
 		},
 		settings: {
-			enum: [ 'center', 'start', 'end', 'space-between', 'space-around', 'space-evenly' ],
+			enum: ['center', 'start', 'end', 'space-between', 'space-around', 'space-evenly'],
 		},
 		dependencies: undefined,
 		initial_value: null,
@@ -178,7 +178,7 @@ export const STUBS = {
 																	default: null,
 																	meta: {},
 																	settings: {
-																		categories: [ 'number' ],
+																		categories: ['number'],
 																	},
 																	dependencies: null,
 																	initial_value: null,
@@ -208,7 +208,7 @@ export const STUBS = {
 																	default: null,
 																	meta: {},
 																	settings: {
-																		categories: [ 'url' ],
+																		categories: ['url'],
 																	},
 																	dependencies: null,
 																	initial_value: null,
@@ -227,7 +227,7 @@ export const STUBS = {
 													default: null,
 													meta: {},
 													settings: {
-														categories: [ 'image' ],
+														categories: ['image'],
 													},
 													dependencies: null,
 													initial_value: null,
@@ -272,7 +272,7 @@ export const STUBS = {
 									default: null,
 									meta: {},
 									settings: {
-										enum: [ 'repeat', 'repeat-x', 'repeat-y', 'no-repeat' ],
+										enum: ['repeat', 'repeat-x', 'repeat-y', 'no-repeat'],
 									},
 									dependencies: null,
 									initial_value: null,
@@ -289,7 +289,7 @@ export const STUBS = {
 											default: null,
 											meta: {},
 											settings: {
-												enum: [ 'auto', 'cover', 'contain' ],
+												enum: ['auto', 'cover', 'contain'],
 											},
 											dependencies: null,
 											initial_value: null,
@@ -386,7 +386,7 @@ export const STUBS = {
 																			default: null,
 																			meta: {},
 																			settings: {
-																				categories: [ 'text', 'number' ],
+																				categories: ['text', 'number'],
 																			},
 																			dependencies: null,
 																			initial_value: null,
@@ -497,7 +497,7 @@ export const STUBS = {
 																			default: null,
 																			meta: {},
 																			settings: {
-																				categories: [ 'text', 'number' ],
+																				categories: ['text', 'number'],
 																			},
 																			dependencies: null,
 																			initial_value: null,
@@ -649,7 +649,7 @@ export const STUBS = {
 																			default: null,
 																			meta: {},
 																			settings: {
-																				categories: [ 'text', 'number' ],
+																				categories: ['text', 'number'],
 																			},
 																			dependencies: null,
 																			initial_value: null,
@@ -759,7 +759,7 @@ export const STUBS = {
 																			default: null,
 																			meta: {},
 																			settings: {
-																				categories: [ 'text', 'number' ],
+																				categories: ['text', 'number'],
 																			},
 																			dependencies: null,
 																			initial_value: null,
@@ -799,7 +799,7 @@ export const STUBS = {
 									default: null,
 									meta: {},
 									settings: {
-										enum: [ 'fixed', 'scroll' ],
+										enum: ['fixed', 'scroll'],
 									},
 									dependencies: null,
 									initial_value: null,
@@ -821,7 +821,7 @@ export const STUBS = {
 									default: null,
 									meta: {},
 									settings: {
-										enum: [ 'linear', 'radial' ],
+										enum: ['linear', 'radial'],
 									},
 									dependencies: null,
 									initial_value: null,
@@ -958,7 +958,7 @@ export const STUBS = {
 				default: null,
 				meta: {},
 				settings: {
-					enum: [ 'border-box', 'padding-box', 'content-box', 'text' ],
+					enum: ['border-box', 'padding-box', 'content-box', 'text'],
 				},
 				dependencies: null,
 				initial_value: null,

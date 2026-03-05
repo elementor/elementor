@@ -6,97 +6,97 @@ import { componentsActions } from '../../store/dispatchers';
 import { componentsSelectors } from '../../store/selectors';
 import { type DocumentSaveStatus, type UnpublishedComponent } from '../../types';
 
-export async function createComponentsBeforeSave( {
+export async function createComponentsBeforeSave({
 	elements,
 	status,
 }: {
 	elements: V1ElementData[];
 	status: DocumentSaveStatus;
-} ) {
+}) {
 	const unpublishedComponents = componentsSelectors.getUnpublishedComponents();
 
-	if ( ! unpublishedComponents.length ) {
+	if (!unpublishedComponents.length) {
 		return;
 	}
 
 	try {
-		const uidToComponentId = await createComponents( unpublishedComponents, status );
+		const uidToComponentId = await createComponents(unpublishedComponents, status);
 
-		updateComponentInstances( elements, uidToComponentId );
+		updateComponentInstances(elements, uidToComponentId);
 
 		componentsActions.add(
-			unpublishedComponents.map( ( component ) => ( {
-				id: uidToComponentId.get( component.uid ) as number,
+			unpublishedComponents.map((component) => ({
+				id: uidToComponentId.get(component.uid) as number,
 				name: component.name,
 				uid: component.uid,
 				overridableProps: component.overridableProps ? component.overridableProps : undefined,
-			} ) )
+			}))
 		);
 		componentsActions.resetUnpublished();
-	} catch ( error ) {
-		const failedUids = unpublishedComponents.map( ( component ) => component.uid );
-		componentsActions.removeUnpublished( failedUids );
+	} catch (error) {
+		const failedUids = unpublishedComponents.map((component) => component.uid);
+		componentsActions.removeUnpublished(failedUids);
 
-		throw new Error( `Failed to publish components: ${ error }` );
+		throw new Error(`Failed to publish components: ${error}`);
 	}
 }
 
 async function createComponents(
 	components: UnpublishedComponent[],
 	status: DocumentSaveStatus
-): Promise< Map< string, number > > {
-	const response = await apiClient.create( {
+): Promise<Map<string, number>> {
+	const response = await apiClient.create({
 		status,
-		items: components.map( ( component ) => ( {
+		items: components.map((component) => ({
 			uid: component.uid,
 			title: component.name,
 			elements: component.elements,
 			settings: component.overridableProps ? { overridable_props: component.overridableProps } : undefined,
-		} ) ),
-	} );
+		})),
+	});
 
-	const map = new Map< string, number >();
+	const map = new Map<string, number>();
 
-	Object.entries( response ).forEach( ( [ key, value ] ) => {
-		map.set( key, value );
-	} );
+	Object.entries(response).forEach(([key, value]) => {
+		map.set(key, value);
+	});
 
 	return map;
 }
 
-function updateComponentInstances( elements: V1ElementData[], uidToComponentId: Map< string, number > ): void {
-	elements.forEach( ( element ) => {
-		const { shouldUpdate, newComponentId } = shouldUpdateElement( element, uidToComponentId );
-		if ( shouldUpdate ) {
-			updateElementComponentId( element.id, newComponentId );
+function updateComponentInstances(elements: V1ElementData[], uidToComponentId: Map<string, number>): void {
+	elements.forEach((element) => {
+		const { shouldUpdate, newComponentId } = shouldUpdateElement(element, uidToComponentId);
+		if (shouldUpdate) {
+			updateElementComponentId(element.id, newComponentId);
 		}
 
-		if ( element.elements ) {
-			updateComponentInstances( element.elements, uidToComponentId );
+		if (element.elements) {
+			updateComponentInstances(element.elements, uidToComponentId);
 		}
-	} );
+	});
 }
 
 function shouldUpdateElement(
 	element: V1ElementData,
-	uidToComponentId: Map< string, number >
+	uidToComponentId: Map<string, number>
 ): { shouldUpdate: true; newComponentId: number } | { shouldUpdate: false; newComponentId: null } {
-	if ( element.widgetType === 'e-component' ) {
-		const currentComponentId = ( element.settings?.component_instance as ComponentInstanceProp )?.value
-			?.component_id.value;
+	if (element.widgetType === 'e-component') {
+		const currentComponentId = (element.settings?.component_instance as ComponentInstanceProp)?.value?.component_id
+			.value;
 
-		if ( currentComponentId && uidToComponentId.has( currentComponentId.toString() ) ) {
+		if (currentComponentId && uidToComponentId.has(currentComponentId.toString())) {
 			return {
 				shouldUpdate: true,
-				newComponentId: uidToComponentId.get( currentComponentId.toString() ) as number,
+				newComponentId: uidToComponentId.get(currentComponentId.toString()) as number,
 			};
 		}
 	}
 	return { shouldUpdate: false, newComponentId: null };
 }
 
-function updateElementComponentId( elementId: string, componentId: number ): void {
-	updateElementSettings( {
+function updateElementComponentId(elementId: string, componentId: number): void {
+	updateElementSettings({
 		id: elementId,
 		props: {
 			component_instance: {
@@ -107,5 +107,5 @@ function updateElementComponentId( elementId: string, componentId: number ): voi
 			},
 		},
 		withHistory: false,
-	} );
+	});
 }

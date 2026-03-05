@@ -3,43 +3,43 @@ import { useContext, useEffect, useState } from 'react';
 import { getSessionStorageItem, removeSessionStorageItem, setSessionStorageItem } from './session-storage';
 import { Context } from './session-storage-context';
 
-export const useSessionStorage = < T >( key: string, customPrefix?: string ) => {
-	const contextPrefix = useContext( Context )?.prefix ?? '';
+export const useSessionStorage = <T>(key: string, customPrefix?: string) => {
+	const contextPrefix = useContext(Context)?.prefix ?? '';
 	const prefix = customPrefix ? customPrefix : contextPrefix;
-	const prefixedKey = `${ prefix }/${ key }`;
+	const prefixedKey = `${prefix}/${key}`;
 
-	const [ value, setValue ] = useState< T | null >();
+	const [value, setValue] = useState<T | null>();
 
-	useEffect( () => {
-		return subscribeToSessionStorage< T | null >( prefixedKey, ( newValue ) => {
-			setValue( newValue ?? null );
-		} );
-	}, [ prefixedKey ] );
+	useEffect(() => {
+		return subscribeToSessionStorage<T | null>(prefixedKey, (newValue) => {
+			setValue(newValue ?? null);
+		});
+	}, [prefixedKey]);
 
-	const saveValue = ( newValue: T ) => {
-		setSessionStorageItem( prefixedKey, newValue );
+	const saveValue = (newValue: T) => {
+		setSessionStorageItem(prefixedKey, newValue);
 	};
 
 	const removeValue = () => {
-		removeSessionStorageItem( prefixedKey );
+		removeSessionStorageItem(prefixedKey);
 	};
 
-	return [ value, saveValue, removeValue ] as const;
+	return [value, saveValue, removeValue] as const;
 };
 
-const subscribeToSessionStorage = < T >( key: string, subscriber: ( value: T ) => void ) => {
-	subscriber( getSessionStorageItem( key ) as T );
+const subscribeToSessionStorage = <T>(key: string, subscriber: (value: T) => void) => {
+	subscriber(getSessionStorageItem(key) as T);
 
 	const abortController = new AbortController();
 
 	window.addEventListener(
 		'storage',
-		( e ) => {
-			if ( e.key !== key || e.storageArea !== sessionStorage ) {
+		(e) => {
+			if (e.key !== key || e.storageArea !== sessionStorage) {
 				return;
 			}
 
-			subscriber( getSessionStorageItem( key ) as T );
+			subscriber(getSessionStorageItem(key) as T);
 		},
 		{ signal: abortController.signal }
 	);

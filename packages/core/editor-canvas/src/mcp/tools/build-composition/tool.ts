@@ -13,10 +13,10 @@ import { doUpdateElementProperty } from '../../utils/do-update-element-property'
 import { generatePrompt } from './prompt';
 import { inputSchema as schema, outputSchema } from './schema';
 
-export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
+export const initBuildCompositionsTool = (reg: MCPRegistryEntry) => {
 	const { addTool } = reg;
 
-	addTool( {
+	addTool({
 		name: 'build-compositions',
 		description: generatePrompt(),
 		schema,
@@ -29,42 +29,42 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 		],
 		outputSchema,
 		modelPreferences: {
-			hints: [ { name: 'claude-sonnet-4-5' } ],
+			hints: [{ name: 'claude-sonnet-4-5' }],
 		},
-		handler: async ( params ) => {
+		handler: async (params) => {
 			const { xmlStructure, elementConfig, stylesConfig, customCSS } = params;
 			let generatedXML: string = '';
 			const errors: Error[] = [];
 			const rootContainers: V1Element[] = [];
-			const documentContainer = getContainer( 'document' ) as unknown as V1Element;
+			const documentContainer = getContainer('document') as unknown as V1Element;
 			try {
-				const compositionBuilder = CompositionBuilder.fromXMLString( xmlStructure, {
+				const compositionBuilder = CompositionBuilder.fromXMLString(xmlStructure, {
 					createElement,
 					getWidgetsCache,
-				} );
-				compositionBuilder.setElementConfig( elementConfig );
-				compositionBuilder.setStylesConfig( stylesConfig );
-				compositionBuilder.setCustomCSS( customCSS );
+				});
+				compositionBuilder.setElementConfig(elementConfig);
+				compositionBuilder.setStylesConfig(stylesConfig);
+				compositionBuilder.setCustomCSS(customCSS);
 
 				const {
 					configErrors,
 					invalidStyles,
 					rootContainers: generatedRootContainers,
-				} = compositionBuilder.build( documentContainer );
+				} = compositionBuilder.build(documentContainer);
 
-				rootContainers.push( ...generatedRootContainers );
-				generatedXML = new XMLSerializer().serializeToString( compositionBuilder.getXML() );
+				rootContainers.push(...generatedRootContainers);
+				generatedXML = new XMLSerializer().serializeToString(compositionBuilder.getXML());
 
-				if ( configErrors.length ) {
-					errors.push( ...configErrors.map( ( e ) => new Error( e ) ) );
-					throw new Error( 'Configuration errors occurred during composition building.' );
+				if (configErrors.length) {
+					errors.push(...configErrors.map((e) => new Error(e)));
+					throw new Error('Configuration errors occurred during composition building.');
 				}
 
-				Object.entries( invalidStyles ).forEach( ( [ elementId, rawCssRules ] ) => {
+				Object.entries(invalidStyles).forEach(([elementId, rawCssRules]) => {
 					const customCss = {
-						value: rawCssRules.join( ';\n' ),
+						value: rawCssRules.join(';\n'),
 					};
-					doUpdateElementProperty( {
+					doUpdateElementProperty({
 						elementId,
 						propertyName: '_styles',
 						propertyValue: {
@@ -73,53 +73,49 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 							},
 						},
 						elementType: 'widget',
-					} );
-				} );
-			} catch ( error ) {
-				errors.push( error as Error );
+					});
+				});
+			} catch (error) {
+				errors.push(error as Error);
 			}
 
-			if ( errors.length ) {
-				rootContainers.forEach( ( rootContainer ) => {
-					deleteElement( {
+			if (errors.length) {
+				rootContainers.forEach((rootContainer) => {
+					deleteElement({
 						container: rootContainer,
 						options: { useHistory: false },
-					} );
-				} );
+					});
+				});
 
 				const errorMessages = errors
-					.map( ( e ) => {
-						if ( typeof e === 'string' ) {
+					.map((e) => {
+						if (typeof e === 'string') {
 							return e;
 						}
-						if ( e instanceof Error ) {
-							return e.message || String( e );
+						if (e instanceof Error) {
+							return e.message || String(e);
 						}
 
-						if ( typeof e === 'object' && e !== null ) {
-							return JSON.stringify( e );
+						if (typeof e === 'object' && e !== null) {
+							return JSON.stringify(e);
 						}
-						return String( e );
-					} )
-					.filter(
-						( msg ) => msg && msg.trim() !== '' && msg !== '{}' && msg !== 'null' && msg !== 'undefined'
-					);
+						return String(e);
+					})
+					.filter((msg) => msg && msg.trim() !== '' && msg !== '{}' && msg !== 'null' && msg !== 'undefined');
 
-				if ( errorMessages.length === 0 ) {
-					throw new Error(
-						'Failed to build composition: Unknown error occurred. No error details available.'
-					);
+				if (errorMessages.length === 0) {
+					throw new Error('Failed to build composition: Unknown error occurred. No error details available.');
 				}
 
-				const errorText = `Failed to build composition with the following errors:\n\n${ errorMessages.join(
+				const errorText = `Failed to build composition with the following errors:\n\n${errorMessages.join(
 					'\n\n'
-				) }`;
-				throw new Error( errorText );
+				)}`;
+				throw new Error(errorText);
 			}
 			return {
 				xmlStructure: generatedXML,
 				errors: errors?.length
-					? errors.map( ( e ) => ( typeof e === 'string' ? e : e.message ) ).join( '\n\n' )
+					? errors.map((e) => (typeof e === 'string' ? e : e.message)).join('\n\n')
 					: undefined,
 				llm_instructions: `The composition was built successfully with element IDs embedded in the XML.
 
@@ -134,5 +130,5 @@ Remember: Global classes ensure design consistency and reusability. Don't skip a
 `,
 			};
 		},
-	} );
+	});
 };

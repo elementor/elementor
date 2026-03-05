@@ -6,100 +6,100 @@ import { renderHook } from '@testing-library/react';
 import { StylesProviderNotFoundError } from '../../errors';
 import { StyleProvider, useStyle } from '../style-context';
 
-jest.mock( '@elementor/editor-styles-repository', () => ( {
-	...jest.requireActual( '@elementor/editor-styles-repository' ),
-	useUserStylesCapability: jest.fn().mockReturnValue( { userCan: () => ( { updateProps: true } ) } ),
+jest.mock('@elementor/editor-styles-repository', () => ({
+	...jest.requireActual('@elementor/editor-styles-repository'),
+	useUserStylesCapability: jest.fn().mockReturnValue({ userCan: () => ({ updateProps: true }) }),
 	stylesRepository: {
 		getProviders: jest.fn(),
 	},
-} ) );
+}));
 
-describe( 'StyleContext', () => {
-	it( 'should return the correct style id and its provider', () => {
+describe('StyleContext', () => {
+	it('should return the correct style id and its provider', () => {
 		// Arrange.
-		const mockProvider1 = createMockStylesProvider( { key: 'style-provider' }, [
-			createMockStyleDefinition( { id: 'style-id-1' } ),
-		] );
+		const mockProvider1 = createMockStylesProvider({ key: 'style-provider' }, [
+			createMockStyleDefinition({ id: 'style-id-1' }),
+		]);
 
-		const mockProvider2 = createMockStylesProvider( { key: 'style-provider-2' }, [
-			createMockStyleDefinition( { id: 'style-id-2' } ),
-		] );
+		const mockProvider2 = createMockStylesProvider({ key: 'style-provider-2' }, [
+			createMockStyleDefinition({ id: 'style-id-2' }),
+		]);
 
-		jest.mocked( stylesRepository.getProviders ).mockReturnValue( [ mockProvider1, mockProvider2 ] );
+		jest.mocked(stylesRepository.getProviders).mockReturnValue([mockProvider1, mockProvider2]);
 
 		// Act.
-		const { result } = renderHook( useStyle, {
-			wrapper: ( { children } ) => (
+		const { result } = renderHook(useStyle, {
+			wrapper: ({ children }) => (
 				<StyleProvider
-					id={ 'style-id-2' }
-					meta={ { breakpoint: null, state: null } }
-					setMetaState={ jest.fn() }
-					setId={ jest.fn() }
+					id={'style-id-2'}
+					meta={{ breakpoint: null, state: null }}
+					setMetaState={jest.fn()}
+					setId={jest.fn()}
 				>
-					{ children }
+					{children}
 				</StyleProvider>
 			),
-		} );
+		});
 
 		// Assert.
-		expect( result.current.id ).toBe( 'style-id-2' );
-		expect( result.current.provider ).toBe( mockProvider2 );
-	} );
+		expect(result.current.id).toBe('style-id-2');
+		expect(result.current.provider).toBe(mockProvider2);
+	});
 
-	it( 'should throw when style provider does not exist', () => {
+	it('should throw when style provider does not exist', () => {
 		// Arrange.
 		const mockConsoleError = jest.fn();
 		window.console.error = mockConsoleError;
-		const mockProvider = createMockStylesProvider( { key: 'style-provider' }, [
-			createMockStyleDefinition( { id: 'style-id-1' } ),
-		] );
+		const mockProvider = createMockStylesProvider({ key: 'style-provider' }, [
+			createMockStyleDefinition({ id: 'style-id-1' }),
+		]);
 
-		jest.mocked( stylesRepository.getProviders ).mockReturnValue( [ mockProvider ] );
+		jest.mocked(stylesRepository.getProviders).mockReturnValue([mockProvider]);
 
 		// Act/Assert.
-		expect( () => {
+		expect(() => {
 			renderWithTheme(
 				<StyleProvider
-					id={ 'style-id' }
-					meta={ { breakpoint: null, state: null } }
-					setMetaState={ jest.fn() }
-					setId={ jest.fn() }
+					id={'style-id'}
+					meta={{ breakpoint: null, state: null }}
+					setMetaState={jest.fn()}
+					setId={jest.fn()}
 				>
-					{ 'children' }
+					{'children'}
 				</StyleProvider>
 			);
-		} ).toThrow( StylesProviderNotFoundError );
+		}).toThrow(StylesProviderNotFoundError);
 
-		expect( mockConsoleError ).toHaveBeenCalled();
-	} );
+		expect(mockConsoleError).toHaveBeenCalled();
+	});
 
-	it( 'should disable editing when user does not have updateProps capability', () => {
+	it('should disable editing when user does not have updateProps capability', () => {
 		// Arrange.
-		const mockProvider = createMockStylesProvider( { key: 'style-provider' }, [
-			createMockStyleDefinition( { id: 'style-id-1' } ),
-		] );
+		const mockProvider = createMockStylesProvider({ key: 'style-provider' }, [
+			createMockStyleDefinition({ id: 'style-id-1' }),
+		]);
 
-		jest.mocked( stylesRepository.getProviders ).mockReturnValue( [ mockProvider ] );
+		jest.mocked(stylesRepository.getProviders).mockReturnValue([mockProvider]);
 
-		jest.mocked( useUserStylesCapability ).mockReturnValue( {
-			userCan: () => ( { updateProps: false, update: true, delete: true, create: true } ),
-		} );
+		jest.mocked(useUserStylesCapability).mockReturnValue({
+			userCan: () => ({ updateProps: false, update: true, delete: true, create: true }),
+		});
 
 		// Act.
-		const { result } = renderHook( useStyle, {
-			wrapper: ( { children } ) => (
+		const { result } = renderHook(useStyle, {
+			wrapper: ({ children }) => (
 				<StyleProvider
-					id={ 'style-id-1' }
-					meta={ { breakpoint: null, state: null } }
-					setMetaState={ jest.fn() }
-					setId={ jest.fn() }
+					id={'style-id-1'}
+					meta={{ breakpoint: null, state: null }}
+					setMetaState={jest.fn()}
+					setId={jest.fn()}
 				>
-					{ children }
+					{children}
 				</StyleProvider>
 			),
-		} );
+		});
 
 		// Assert.
-		expect( result.current.canEdit ).toBe( false );
-	} );
-} );
+		expect(result.current.canEdit).toBe(false);
+	});
+});

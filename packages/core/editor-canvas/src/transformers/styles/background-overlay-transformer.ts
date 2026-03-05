@@ -1,7 +1,7 @@
 import { createTransformer } from '../create-transformer';
 import { type BackgroundImageTransformed } from './background-image-overlay-transformer';
 
-type BackgroundOverlay = ( BackgroundImageTransformed | string )[];
+type BackgroundOverlay = (BackgroundImageTransformed | string)[];
 
 export type BackgroundOverlayTransformed = {
 	'background-image'?: string | null;
@@ -12,22 +12,22 @@ export type BackgroundOverlayTransformed = {
 };
 
 export const backgroundOverlayTransformer = createTransformer(
-	( value: BackgroundOverlay ): BackgroundOverlayTransformed | null => {
-		if ( ! value || value.length === 0 ) {
+	(value: BackgroundOverlay): BackgroundOverlayTransformed | null => {
+		if (!value || value.length === 0) {
 			return null;
 		}
 
-		const normalizedValues = normalizeOverlayValues( value );
+		const normalizedValues = normalizeOverlayValues(value);
 
-		if ( normalizedValues.length === 0 ) {
+		if (normalizedValues.length === 0) {
 			return null;
 		}
 
-		const images = getValuesString( normalizedValues, 'src', 'none', true );
-		const repeats = getValuesString( normalizedValues, 'repeat', 'repeat' );
-		const attachments = getValuesString( normalizedValues, 'attachment', 'scroll' );
-		const sizes = getValuesString( normalizedValues, 'size', 'auto auto' );
-		const positions = getValuesString( normalizedValues, 'position', '0% 0%' );
+		const images = getValuesString(normalizedValues, 'src', 'none', true);
+		const repeats = getValuesString(normalizedValues, 'repeat', 'repeat');
+		const attachments = getValuesString(normalizedValues, 'attachment', 'scroll');
+		const sizes = getValuesString(normalizedValues, 'size', 'auto auto');
+		const positions = getValuesString(normalizedValues, 'position', '0% 0%');
 
 		return {
 			'background-image': images,
@@ -39,9 +39,9 @@ export const backgroundOverlayTransformer = createTransformer(
 	}
 );
 
-function normalizeOverlayValues( overlays: BackgroundOverlay ): BackgroundImageTransformed[] {
-	const mappedValues = overlays.map( ( item ) => {
-		if ( typeof item === 'string' ) {
+function normalizeOverlayValues(overlays: BackgroundOverlay): BackgroundImageTransformed[] {
+	const mappedValues = overlays.map((item) => {
+		if (typeof item === 'string') {
 			return {
 				src: item,
 				repeat: null,
@@ -52,32 +52,32 @@ function normalizeOverlayValues( overlays: BackgroundOverlay ): BackgroundImageT
 		}
 
 		return item;
-	} );
+	});
 
-	return mappedValues.filter( ( item ) => item && !! item.src );
+	return mappedValues.filter((item) => item && !!item.src);
 }
 
 function getValuesString(
-	items: Partial< BackgroundImageTransformed >[],
+	items: Partial<BackgroundImageTransformed>[],
 	prop: keyof BackgroundImageTransformed,
 	defaultValue: string,
 	preventUnification: boolean = false
 ) {
-	const isEmpty = items.filter( ( item ) => item?.[ prop ] ).length === 0;
+	const isEmpty = items.filter((item) => item?.[prop]).length === 0;
 
-	if ( isEmpty ) {
+	if (isEmpty) {
 		return defaultValue;
 	}
 
-	const formattedValues = items.map( ( item ) => item[ prop ] ?? defaultValue );
+	const formattedValues = items.map((item) => item[prop] ?? defaultValue);
 
-	if ( ! preventUnification ) {
-		const allSame = formattedValues.every( ( value ) => value === formattedValues[ 0 ] );
+	if (!preventUnification) {
+		const allSame = formattedValues.every((value) => value === formattedValues[0]);
 
-		if ( allSame ) {
-			return formattedValues[ 0 ];
+		if (allSame) {
+			return formattedValues[0];
 		}
 	}
 
-	return formattedValues.join( ',' );
+	return formattedValues.join(',');
 }

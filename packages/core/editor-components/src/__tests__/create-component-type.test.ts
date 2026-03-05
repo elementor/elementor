@@ -14,27 +14,27 @@ type TestWindow = LegacyWindow & ExtendedWindow;
 const MOCK_COMPONENT_ID = 123;
 
 const createMockRenderer = () =>
-	( {
+	({
 		register: jest.fn(),
-		render: jest.fn( () => Promise.resolve( '<div>Component</div>' ) ),
-	} ) as CreateTemplatedElementTypeOptions[ 'renderer' ];
+		render: jest.fn(() => Promise.resolve('<div>Component</div>')),
+	}) as CreateTemplatedElementTypeOptions['renderer'];
 
-const createMockElementConfig = () => ( {
+const createMockElementConfig = () => ({
 	twig_templates: {},
 	twig_main_template: 'main',
 	atomic_props_schema: {},
 	base_styles_dictionary: {},
-} );
+});
 
 type ComponentViewInstance = {
 	editComponent: jest.Mock;
-	handleDblClick: ( e: MouseEvent ) => void;
+	handleDblClick: (e: MouseEvent) => void;
 };
 
-describe( 'createComponentType', () => {
-	let mockElementorWindow: LegacyWindow[ 'elementor' ];
+describe('createComponentType', () => {
+	let mockElementorWindow: LegacyWindow['elementor'];
 
-	beforeEach( () => {
+	beforeEach(() => {
 		const mockBaseView = class {
 			getContextMenuGroups() {
 				return [
@@ -104,7 +104,7 @@ describe( 'createComponentType', () => {
 				},
 			},
 			createBackboneElementsCollection: jest.fn(),
-		} as unknown as LegacyWindow[ 'elementor' ];
+		} as unknown as LegacyWindow['elementor'];
 
 		const testWindow = window as unknown as TestWindow;
 
@@ -129,20 +129,20 @@ describe( 'createComponentType', () => {
 				set: jest.fn(),
 			},
 		};
-	} );
+	});
 
-	afterEach( () => {
+	afterEach(() => {
 		jest.clearAllMocks();
 		delete window.elementorPro;
-	} );
+	});
 
-	const setProState = ( { installed, active }: { installed: boolean; active: boolean } ) => {
-		( window as unknown as TestWindow ).elementor.helpers = { hasPro: () => installed };
+	const setProState = ({ installed, active }: { installed: boolean; active: boolean }) => {
+		(window as unknown as TestWindow).elementor.helpers = { hasPro: () => installed };
 		window.elementorPro = { config: { isActive: active } };
 	};
 
-	const createMockViewInstance = ( isAdministrator: boolean ) => {
-		( window as unknown as TestWindow ).elementor = {
+	const createMockViewInstance = (isAdministrator: boolean) => {
+		(window as unknown as TestWindow).elementor = {
 			...mockElementorWindow,
 			config: {
 				user: {
@@ -151,24 +151,24 @@ describe( 'createComponentType', () => {
 			},
 		};
 
-		const ComponentType = createComponentType( {
+		const ComponentType = createComponentType({
 			type: COMPONENT_WIDGET_TYPE,
 			renderer: {
 				register: jest.fn(),
-				render: jest.fn( () => Promise.resolve( '<div>Component</div>' ) ),
-			} as CreateTemplatedElementTypeOptions[ 'renderer' ],
+				render: jest.fn(() => Promise.resolve('<div>Component</div>')),
+			} as CreateTemplatedElementTypeOptions['renderer'],
 			element: {
 				twig_templates: {},
 				twig_main_template: 'main',
 				atomic_props_schema: {},
 				base_styles_dictionary: {},
 			},
-		} );
+		});
 
 		const ViewClass = ComponentType.prototype.getView();
 		const mockSettings = {
-			get: jest.fn( ( key: string ) => {
-				if ( key === 'component_instance' ) {
+			get: jest.fn((key: string) => {
+				if (key === 'component_instance') {
 					return {
 						$$type: 'component-instance',
 						value: {
@@ -180,9 +180,9 @@ describe( 'createComponentType', () => {
 					};
 				}
 				return null;
-			} ),
+			}),
 		};
-		const mockModel = createMockElement( {
+		const mockModel = createMockElement({
 			model: {
 				id: 'test-element',
 				settings: mockSettings,
@@ -191,81 +191,81 @@ describe( 'createComponentType', () => {
 					title: 'Test Component',
 				},
 			},
-		} );
+		});
 
-		const viewInstance = new ViewClass( {
+		const viewInstance = new ViewClass({
 			model: mockModel.model,
-		} as { model: BackboneModel< ElementModel > } );
+		} as { model: BackboneModel<ElementModel> });
 
 		viewInstance.options = {
 			model: {
 				...mockModel.model,
-				get: jest.fn( ( key: string ) => {
-					if ( key === 'settings' ) {
+				get: jest.fn((key: string) => {
+					if (key === 'settings') {
 						return mockSettings;
 					}
-					return ( mockModel.model.get as jest.Mock )( key );
-				} ) as BackboneModel< ElementModel >[ 'get' ],
-			} as BackboneModel< ElementModel >,
+					return (mockModel.model.get as jest.Mock)(key);
+				}) as BackboneModel<ElementModel>['get'],
+			} as BackboneModel<ElementModel>,
 		};
 
-		( viewInstance as unknown as ComponentViewInstance ).editComponent = jest.fn();
+		(viewInstance as unknown as ComponentViewInstance).editComponent = jest.fn();
 
 		return viewInstance;
 	};
 
-	it( 'should add edit component action to context menu when user is administrator', () => {
-		const viewInstance = createMockViewInstance( true );
+	it('should add edit component action to context menu when user is administrator', () => {
+		const viewInstance = createMockViewInstance(true);
 		const groups = viewInstance.getContextMenuGroups();
 
-		const generalGroup = groups.find( ( group ) => group.name === 'general' );
+		const generalGroup = groups.find((group) => group.name === 'general');
 		const actions = generalGroup?.actions ?? [];
-		expect( generalGroup ).toBeDefined();
-		expect( actions ).toHaveLength( 2 );
-		expect( actions.some( ( action ) => action.name === 'edit component' ) ).toBe( true );
-		expect( actions.some( ( action ) => action.name === 'copy' ) ).toBe( true );
-	} );
+		expect(generalGroup).toBeDefined();
+		expect(actions).toHaveLength(2);
+		expect(actions.some((action) => action.name === 'edit component')).toBe(true);
+		expect(actions.some((action) => action.name === 'copy')).toBe(true);
+	});
 
-	it( 'should not add edit component action to context menu when user is editor', () => {
-		const viewInstance = createMockViewInstance( false );
+	it('should not add edit component action to context menu when user is editor', () => {
+		const viewInstance = createMockViewInstance(false);
 		const groups = viewInstance.getContextMenuGroups();
 
-		const generalGroup = groups.find( ( group ) => group.name === 'general' );
+		const generalGroup = groups.find((group) => group.name === 'general');
 		const actions = generalGroup?.actions ?? [];
-		expect( generalGroup ).toBeDefined();
-		expect( actions ).toHaveLength( 1 );
-		expect( actions.some( ( action ) => action.name === 'edit component' ) ).toBe( false );
-		expect( actions.some( ( action ) => action.name === 'copy' ) ).toBe( true );
-	} );
+		expect(generalGroup).toBeDefined();
+		expect(actions).toHaveLength(1);
+		expect(actions.some((action) => action.name === 'edit component')).toBe(false);
+		expect(actions.some((action) => action.name === 'copy')).toBe(true);
+	});
 
-	it( 'should disable clipboard actions for both admin and editor users', () => {
-		const adminViewInstance = createMockViewInstance( true );
-		const editorViewInstance = createMockViewInstance( false );
+	it('should disable clipboard actions for both admin and editor users', () => {
+		const adminViewInstance = createMockViewInstance(true);
+		const editorViewInstance = createMockViewInstance(false);
 
 		const adminGroups = adminViewInstance.getContextMenuGroups();
 		const editorGroups = editorViewInstance.getContextMenuGroups();
 
-		const adminClipboardGroup = adminGroups.find( ( group ) => group.name === 'clipboard' );
-		const editorClipboardGroup = editorGroups.find( ( group ) => group.name === 'clipboard' );
+		const adminClipboardGroup = adminGroups.find((group) => group.name === 'clipboard');
+		const editorClipboardGroup = editorGroups.find((group) => group.name === 'clipboard');
 
-		expect( adminClipboardGroup ).toBeDefined();
-		expect( editorClipboardGroup ).toBeDefined();
+		expect(adminClipboardGroup).toBeDefined();
+		expect(editorClipboardGroup).toBeDefined();
 
 		const adminActions = adminClipboardGroup?.actions ?? [];
 		const editorActions = editorClipboardGroup?.actions ?? [];
-		const adminPasteStyleAction = adminActions.find( ( action ) => action.name === 'pasteStyle' );
-		const adminResetStyleAction = adminActions.find( ( action ) => action.name === 'resetStyle' );
-		const editorPasteStyleAction = editorActions.find( ( action ) => action.name === 'pasteStyle' );
-		const editorResetStyleAction = editorActions.find( ( action ) => action.name === 'resetStyle' );
+		const adminPasteStyleAction = adminActions.find((action) => action.name === 'pasteStyle');
+		const adminResetStyleAction = adminActions.find((action) => action.name === 'resetStyle');
+		const editorPasteStyleAction = editorActions.find((action) => action.name === 'pasteStyle');
+		const editorResetStyleAction = editorActions.find((action) => action.name === 'resetStyle');
 
-		expect( adminPasteStyleAction?.isEnabled() ).toBe( false );
-		expect( adminResetStyleAction?.isEnabled() ).toBe( false );
-		expect( editorPasteStyleAction?.isEnabled() ).toBe( false );
-		expect( editorResetStyleAction?.isEnabled() ).toBe( false );
-	} );
+		expect(adminPasteStyleAction?.isEnabled()).toBe(false);
+		expect(adminResetStyleAction?.isEnabled()).toBe(false);
+		expect(editorPasteStyleAction?.isEnabled()).toBe(false);
+		expect(editorResetStyleAction?.isEnabled()).toBe(false);
+	});
 
-	it( 'should return groups without modifications when componentId is not available', () => {
-		( window as unknown as TestWindow ).elementor = {
+	it('should return groups without modifications when componentId is not available', () => {
+		(window as unknown as TestWindow).elementor = {
 			...mockElementorWindow,
 			config: {
 				user: {
@@ -274,78 +274,78 @@ describe( 'createComponentType', () => {
 			},
 		};
 
-		const ComponentType = createComponentType( {
+		const ComponentType = createComponentType({
 			type: COMPONENT_WIDGET_TYPE,
 			renderer: {
 				register: jest.fn(),
-				render: jest.fn( () => Promise.resolve( '<div>Component</div>' ) ),
-			} as CreateTemplatedElementTypeOptions[ 'renderer' ],
+				render: jest.fn(() => Promise.resolve('<div>Component</div>')),
+			} as CreateTemplatedElementTypeOptions['renderer'],
 			element: {
 				twig_templates: {},
 				twig_main_template: 'main',
 				atomic_props_schema: {},
 				base_styles_dictionary: {},
 			},
-		} );
+		});
 
 		const ViewClass = ComponentType.prototype.getView();
 		const mockSettings = {
-			get: jest.fn( ( key: string ) => {
-				if ( key === 'component_instance' ) {
+			get: jest.fn((key: string) => {
+				if (key === 'component_instance') {
 					return undefined;
 				}
 				return null;
-			} ),
+			}),
 		};
-		const mockModel = createMockElement( {
+		const mockModel = createMockElement({
 			model: {
 				id: 'test-element',
 				settings: mockSettings,
 			},
-		} );
+		});
 
-		const viewInstance = new ViewClass( {
+		const viewInstance = new ViewClass({
 			model: mockModel.model,
-		} as { model: BackboneModel< ElementModel > } );
+		} as { model: BackboneModel<ElementModel> });
 
 		viewInstance.options = {
 			model: {
 				...mockModel.model,
-				get: jest.fn( ( key: string ) => {
-					if ( key === 'settings' ) {
+				get: jest.fn((key: string) => {
+					if (key === 'settings') {
 						return mockSettings;
 					}
-					return ( mockModel.model.get as jest.Mock )( key );
-				} ) as BackboneModel< ElementModel >[ 'get' ],
-			} as BackboneModel< ElementModel >,
+					return (mockModel.model.get as jest.Mock)(key);
+				}) as BackboneModel<ElementModel>['get'],
+			} as BackboneModel<ElementModel>,
 		};
 
 		const originalGetComponentId = (
 			viewInstance as unknown as { getComponentId: () => number | undefined }
-		 ).getComponentId.bind( viewInstance );
-		( viewInstance as unknown as { getComponentId: () => number | undefined } ).getComponentId = jest.fn( () => {
+		).getComponentId.bind(viewInstance);
+		(viewInstance as unknown as { getComponentId: () => number | undefined }).getComponentId = jest.fn(() => {
 			try {
 				return originalGetComponentId();
 			} catch {
 				return undefined;
 			}
-		} );
+		});
 
 		const groups = viewInstance.getContextMenuGroups();
-		const generalGroup = groups.find( ( group ) => group.name === 'general' );
+		const generalGroup = groups.find((group) => group.name === 'general');
 		const actions = generalGroup?.actions ?? [];
 
-		expect( actions ).toHaveLength( 1 );
-		expect( actions.some( ( action ) => action.name === 'edit component' ) ).toBe( false );
-	} );
+		expect(actions).toHaveLength(1);
+		expect(actions.some((action) => action.name === 'edit component')).toBe(false);
+	});
 
-	it( 'should return the same view class for multiple type instances', () => {
+	it('should return the same view class for multiple type instances', () => {
 		// Arrange
-		const ComponentType = createComponentType( {
+		const ComponentType = createComponentType({
 			type: COMPONENT_WIDGET_TYPE,
 			renderer: createMockRenderer(),
 			element: createMockElementConfig(),
-		} );
+		});
 
 		// Act
 		const typeInstance1 = new ComponentType();
@@ -354,101 +354,101 @@ describe( 'createComponentType', () => {
 		const viewClass2 = typeInstance2.getView();
 
 		// Assert
-		expect( viewClass1 ).toBe( viewClass2 );
-	} );
+		expect(viewClass1).toBe(viewClass2);
+	});
 
-	it( 'should call editComponent when user is administrator', () => {
+	it('should call editComponent when user is administrator', () => {
 		// Arrange
-		const viewInstance = createMockViewInstance( true ) as unknown as ComponentViewInstance;
+		const viewInstance = createMockViewInstance(true) as unknown as ComponentViewInstance;
 		const mockEvent = { stopPropagation: jest.fn() } as unknown as MouseEvent;
 
-		setProState( { installed: true, active: true } );
+		setProState({ installed: true, active: true });
 
 		// Act
-		viewInstance.handleDblClick( mockEvent );
+		viewInstance.handleDblClick(mockEvent);
 
 		// Assert
-		expect( mockEvent.stopPropagation ).toHaveBeenCalled();
-		expect( viewInstance.editComponent ).toHaveBeenCalledWith( {
+		expect(mockEvent.stopPropagation).toHaveBeenCalled();
+		expect(viewInstance.editComponent).toHaveBeenCalledWith({
 			trigger: 'doubleClick',
 			location: 'canvas',
 			secondaryLocation: 'canvasElement',
-		} );
-	} );
+		});
+	});
 
-	it( 'should not call editComponent when user is not administrator', () => {
+	it('should not call editComponent when user is not administrator', () => {
 		// Arrange
-		const viewInstance = createMockViewInstance( false ) as unknown as ComponentViewInstance;
+		const viewInstance = createMockViewInstance(false) as unknown as ComponentViewInstance;
 		const mockEvent = { stopPropagation: jest.fn() } as unknown as MouseEvent;
 
 		// Act
-		viewInstance.handleDblClick( mockEvent );
+		viewInstance.handleDblClick(mockEvent);
 
 		// Assert
-		expect( mockEvent.stopPropagation ).toHaveBeenCalled();
-		expect( viewInstance.editComponent ).not.toHaveBeenCalled();
-	} );
+		expect(mockEvent.stopPropagation).toHaveBeenCalled();
+		expect(viewInstance.editComponent).not.toHaveBeenCalled();
+	});
 
-	it( 'should silently block dblclick when Pro is not installed', () => {
+	it('should silently block dblclick when Pro is not installed', () => {
 		// Arrange
-		const viewInstance = createMockViewInstance( true ) as unknown as ComponentViewInstance;
+		const viewInstance = createMockViewInstance(true) as unknown as ComponentViewInstance;
 		const mockEvent = { stopPropagation: jest.fn() } as unknown as MouseEvent;
 
-		setProState( { installed: false, active: false } );
+		setProState({ installed: false, active: false });
 
 		// Act
-		viewInstance.handleDblClick( mockEvent );
+		viewInstance.handleDblClick(mockEvent);
 
 		// Assert
-		expect( mockEvent.stopPropagation ).toHaveBeenCalled();
-		expect( viewInstance.editComponent ).not.toHaveBeenCalled();
-	} );
+		expect(mockEvent.stopPropagation).toHaveBeenCalled();
+		expect(viewInstance.editComponent).not.toHaveBeenCalled();
+	});
 
-	it( 'should allow dblclick edit when Pro is installed but expired', () => {
+	it('should allow dblclick edit when Pro is installed but expired', () => {
 		// Arrange
-		const viewInstance = createMockViewInstance( true ) as unknown as ComponentViewInstance;
+		const viewInstance = createMockViewInstance(true) as unknown as ComponentViewInstance;
 		const mockEvent = { stopPropagation: jest.fn() } as unknown as MouseEvent;
 
-		setProState( { installed: true, active: false } );
+		setProState({ installed: true, active: false });
 
 		// Act
-		viewInstance.handleDblClick( mockEvent );
+		viewInstance.handleDblClick(mockEvent);
 
 		// Assert
-		expect( mockEvent.stopPropagation ).toHaveBeenCalled();
-		expect( viewInstance.editComponent ).toHaveBeenCalled();
-	} );
+		expect(mockEvent.stopPropagation).toHaveBeenCalled();
+		expect(viewInstance.editComponent).toHaveBeenCalled();
+	});
 
-	it( 'should disable edit action and show PRO badge when Pro is not installed', () => {
+	it('should disable edit action and show PRO badge when Pro is not installed', () => {
 		// Arrange
-		const viewInstance = createMockViewInstance( true );
-		setProState( { installed: false, active: false } );
+		const viewInstance = createMockViewInstance(true);
+		setProState({ installed: false, active: false });
 
 		// Act
 		const groups = viewInstance.getContextMenuGroups();
-		const generalGroup = groups.find( ( group ) => group.name === 'general' );
-		const editAction = ( generalGroup?.actions ?? [] ).find( ( action ) => action.name === 'edit component' );
+		const generalGroup = groups.find((group) => group.name === 'general');
+		const editAction = (generalGroup?.actions ?? []).find((action) => action.name === 'edit component');
 
 		// Assert
-		expect( editAction ).toBeDefined();
-		expect( editAction?.isEnabled() ).toBe( false );
-		expect( editAction?.shortcut ).toContain( 'PRO' );
-		expect( editAction?.shortcut ).toContain( 'go-pro-components-edit' );
-	} );
+		expect(editAction).toBeDefined();
+		expect(editAction?.isEnabled()).toBe(false);
+		expect(editAction?.shortcut).toContain('PRO');
+		expect(editAction?.shortcut).toContain('go-pro-components-edit');
+	});
 
-	it( 'should enable edit action without badge when Pro is installed but expired', () => {
+	it('should enable edit action without badge when Pro is installed but expired', () => {
 		// Arrange
-		const viewInstance = createMockViewInstance( true );
-		setProState( { installed: true, active: false } );
+		const viewInstance = createMockViewInstance(true);
+		setProState({ installed: true, active: false });
 
 		// Act
 		const groups = viewInstance.getContextMenuGroups();
-		const generalGroup = groups.find( ( group ) => group.name === 'general' );
-		const editAction = ( generalGroup?.actions ?? [] ).find( ( action ) => action.name === 'edit component' );
+		const generalGroup = groups.find((group) => group.name === 'general');
+		const editAction = (generalGroup?.actions ?? []).find((action) => action.name === 'edit component');
 
 		// Assert
-		expect( editAction ).toBeDefined();
-		expect( editAction?.isEnabled() ).toBe( true );
-		expect( editAction?.shortcut ).toBeUndefined();
-	} );
-} );
+		expect(editAction).toBeDefined();
+		expect(editAction?.isEnabled()).toBe(true);
+		expect(editAction?.shortcut).toBeUndefined();
+	});
+});

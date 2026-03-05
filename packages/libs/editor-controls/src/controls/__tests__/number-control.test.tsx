@@ -4,77 +4,77 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { NumberControl } from '../number-control';
 
-const propType = createMockPropType( { kind: 'plain' } );
+const propType = createMockPropType({ kind: 'plain' });
 
-describe( 'NumberControl', () => {
-	it( 'should pass the updated payload when input value changes', () => {
+describe('NumberControl', () => {
+	it('should pass the updated payload when input value changes', () => {
 		// Arrange.
 		const setValue = jest.fn();
 
 		const props = { setValue, value: { $$type: 'number', value: 7 }, bind: 'number', propType };
 
 		// Act.
-		renderControl( <NumberControl placeholder={ 'Add number' } />, props );
+		renderControl(<NumberControl placeholder={'Add number'} />, props);
 
-		const input = screen.getByRole( 'spinbutton' );
+		const input = screen.getByRole('spinbutton');
 
 		// Assert.
-		expect( input ).toHaveValue( 7 );
+		expect(input).toHaveValue(7);
 		// Make sure props are passed correctly.
-		expect( input ).toHaveAttribute( 'placeholder', 'Add number' );
+		expect(input).toHaveAttribute('placeholder', 'Add number');
 
 		// Act.
-		fireEvent.input( input, { target: { value: 8 } } );
+		fireEvent.input(input, { target: { value: 8 } });
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( {
+		expect(setValue).toHaveBeenCalledWith({
 			$$type: 'number',
 			value: 8,
-		} );
-	} );
+		});
+	});
 
-	it( 'should convert string to number when input value changes', () => {
+	it('should convert string to number when input value changes', () => {
 		// Arrange.
 		const setValue = jest.fn();
 
 		const props = { setValue, value: { $$type: 'number', value: 7 }, bind: 'number', propType };
 		// Act.
-		renderControl( <NumberControl />, props );
+		renderControl(<NumberControl />, props);
 
-		const input = screen.getByRole( 'spinbutton' );
+		const input = screen.getByRole('spinbutton');
 
 		// Assert.
-		expect( input ).toHaveValue( 7 );
+		expect(input).toHaveValue(7);
 
 		// Act.
-		fireEvent.input( input, { target: { value: '8' } } );
+		fireEvent.input(input, { target: { value: '8' } });
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( {
+		expect(setValue).toHaveBeenCalledWith({
 			$$type: 'number',
 			value: 8,
-		} );
-	} );
+		});
+	});
 
-	it( 'should convert empty string to null when input value changes', () => {
+	it('should convert empty string to null when input value changes', () => {
 		// Arrange.
 		const setValue = jest.fn();
 
 		const props = { setValue, value: { $$type: 'number', value: 7 }, bind: 'number', propType };
 
 		// Act.
-		renderControl( <NumberControl />, props );
+		renderControl(<NumberControl />, props);
 
-		const input = screen.getByRole( 'spinbutton' );
+		const input = screen.getByRole('spinbutton');
 
 		// Act.
-		fireEvent.input( input, { target: { value: '' } } );
+		fireEvent.input(input, { target: { value: '' } });
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( null );
-	} );
+		expect(setValue).toHaveBeenCalledWith(null);
+	});
 
-	it( 'should use placeholder from NumberControl when both renderControl props and NumberControl have placeholder', () => {
+	it('should use placeholder from NumberControl when both renderControl props and NumberControl have placeholder', () => {
 		// Arrange.
 		const setValue = jest.fn();
 		const props = {
@@ -86,14 +86,14 @@ describe( 'NumberControl', () => {
 		};
 
 		// Act.
-		renderControl( <NumberControl placeholder="Component placeholder" />, props );
+		renderControl(<NumberControl placeholder="Component placeholder" />, props);
 
-		const input = screen.getByRole( 'spinbutton' );
+		const input = screen.getByRole('spinbutton');
 
-		expect( input ).toHaveAttribute( 'placeholder', 'Component placeholder' );
-	} );
+		expect(input).toHaveAttribute('placeholder', 'Component placeholder');
+	});
 
-	it( 'should use placeholder from renderControl props when NumberControl has no placeholder', () => {
+	it('should use placeholder from renderControl props when NumberControl has no placeholder', () => {
 		// Arrange.
 		const setValue = jest.fn();
 		const props = {
@@ -105,11 +105,11 @@ describe( 'NumberControl', () => {
 		};
 
 		// Act.
-		renderControl( <NumberControl />, props );
+		renderControl(<NumberControl />, props);
 
-		const input = screen.getByRole( 'spinbutton' );
+		const input = screen.getByRole('spinbutton');
 
 		// Assert.
-		expect( input ).toHaveAttribute( 'placeholder', '123' );
-	} );
-} );
+		expect(input).toHaveAttribute('placeholder', '123');
+	});
+});

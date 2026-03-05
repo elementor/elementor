@@ -12,21 +12,21 @@ export default function PrimaryAction() {
 
 	return (
 		<Paper
-			sx={ {
+			sx={{
 				px: 5,
 				py: 4,
 				borderTop: 1,
 				borderColor: 'divider',
-			} }
+			}}
 		>
 			<Button
 				variant="contained"
-				disabled={ ! document || ! document.isDirty }
+				disabled={!document || !document.isDirty}
 				size="medium"
-				sx={ { width: '100%' } }
-				onClick={ () => ( document && ! document.isSaving ? save() : null ) }
+				sx={{ width: '100%' }}
+				onClick={() => (document && !document.isSaving ? save() : null)}
 			>
-				{ document?.isSaving ? <CircularProgress /> : __( 'Save Changes', 'elementor' ) }
+				{document?.isSaving ? <CircularProgress /> : __('Save Changes', 'elementor')}
 			</Button>
 		</Paper>
 	);

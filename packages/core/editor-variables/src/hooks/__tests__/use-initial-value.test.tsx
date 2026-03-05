@@ -7,208 +7,208 @@ import { fontVariablePropTypeUtil } from '../../prop-types/font-variable-prop-ty
 import { useInitialValue } from '../use-initial-value';
 import { useVariable } from '../use-prop-variables';
 
-type PropTypeUtil = ReturnType< typeof createPropUtils >;
+type PropTypeUtil = ReturnType<typeof createPropUtils>;
 
-jest.mock( '@elementor/editor-controls', () => ( {
+jest.mock('@elementor/editor-controls', () => ({
 	useBoundProp: jest.fn(),
-} ) );
+}));
 
-jest.mock( '../../variables-registry/variable-type-registry', () => ( {
-	hasVariableType: jest.fn().mockImplementation( ( type: string ) => {
-		const variableTypes = [ colorVariablePropTypeUtil, fontVariablePropTypeUtil ];
-		return variableTypes.some( ( variableType ) => variableType.key === type );
-	} ),
-} ) );
+jest.mock('../../variables-registry/variable-type-registry', () => ({
+	hasVariableType: jest.fn().mockImplementation((type: string) => {
+		const variableTypes = [colorVariablePropTypeUtil, fontVariablePropTypeUtil];
+		return variableTypes.some((variableType) => variableType.key === type);
+	}),
+}));
 
-jest.mock( '../use-prop-variables', () => ( {
+jest.mock('../use-prop-variables', () => ({
 	useVariable: jest.fn(),
-} ) );
+}));
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function stubBoundPropValue( props: any ) {
+function stubBoundPropValue(props: any) {
 	return {
 		bind: 'sample-bind',
 		setValue: jest.fn(),
 		propType: props.propType as unknown as PropTypeUtil,
-		path: [ 'sample-path' ],
+		path: ['sample-path'],
 		restoreValue: jest.fn(),
 		resetValue: jest.fn(),
 		value: props.value,
 	};
 }
 
-describe( 'useInitialValue for assigned variables', () => {
-	it( 'should return value of assigned color variable', () => {
+describe('useInitialValue for assigned variables', () => {
+	it('should return value of assigned color variable', () => {
 		// Arrange.
-		jest.mocked( useBoundProp ).mockReturnValue(
-			stubBoundPropValue( {
+		jest.mocked(useBoundProp).mockReturnValue(
+			stubBoundPropValue({
 				propType: colorVariablePropTypeUtil,
-				value: colorVariablePropTypeUtil.create( 'e-gv-a01' ),
-			} )
+				value: colorVariablePropTypeUtil.create('e-gv-a01'),
+			})
 		);
 
-		jest.mocked( useVariable ).mockReturnValue( {
+		jest.mocked(useVariable).mockReturnValue({
 			key: 'e-gv-a01',
 			type: colorVariablePropTypeUtil.key,
 			label: 'primary-text-color',
 			value: 'rgba(0, 0, 0, 0.9)',
-		} );
+		});
 
 		// Act.
-		const { result } = renderHook( () => {
+		const { result } = renderHook(() => {
 			return useInitialValue();
-		} );
+		});
 
 		// Assert.
-		expect( result.current ).toBe( 'rgba(0, 0, 0, 0.9)' );
-	} );
+		expect(result.current).toBe('rgba(0, 0, 0, 0.9)');
+	});
 
-	it( 'should return value of assigned font variable', () => {
+	it('should return value of assigned font variable', () => {
 		// Arrange.
-		jest.mocked( useBoundProp ).mockReturnValue(
-			stubBoundPropValue( {
+		jest.mocked(useBoundProp).mockReturnValue(
+			stubBoundPropValue({
 				propType: fontVariablePropTypeUtil,
-				value: fontVariablePropTypeUtil.create( 'e-gv-a02' ),
-			} )
+				value: fontVariablePropTypeUtil.create('e-gv-a02'),
+			})
 		);
 
-		jest.mocked( useVariable ).mockReturnValue( {
+		jest.mocked(useVariable).mockReturnValue({
 			key: 'e-gv-a02',
 			type: fontVariablePropTypeUtil.key,
 			label: 'primary-font',
 			value: 'Arial',
-		} );
+		});
 
 		// Act.
-		const { result } = renderHook( () => {
+		const { result } = renderHook(() => {
 			return useInitialValue();
-		} );
+		});
 
 		// Assert.
-		expect( result.current ).toBe( 'Arial' );
-	} );
+		expect(result.current).toBe('Arial');
+	});
 
-	it( 'should return empty for missing (non-existing) variable', () => {
+	it('should return empty for missing (non-existing) variable', () => {
 		// Arrange.
-		jest.mocked( useBoundProp ).mockReturnValue(
-			stubBoundPropValue( {
+		jest.mocked(useBoundProp).mockReturnValue(
+			stubBoundPropValue({
 				propType: colorVariablePropTypeUtil,
-				value: colorVariablePropTypeUtil.create( 'e-gv-a01' ),
-			} )
+				value: colorVariablePropTypeUtil.create('e-gv-a01'),
+			})
 		);
 
-		jest.mocked( useVariable ).mockReturnValue( null );
+		jest.mocked(useVariable).mockReturnValue(null);
 
 		// Act.
-		const { result } = renderHook( () => {
+		const { result } = renderHook(() => {
 			return useInitialValue();
-		} );
+		});
 
 		// Assert.
-		expect( result.current ).toBe( '' );
-	} );
-} );
+		expect(result.current).toBe('');
+	});
+});
 
-describe( 'useInitialValue for non-empty values', () => {
-	it( 'should return value of assigned color', () => {
+describe('useInitialValue for non-empty values', () => {
+	it('should return value of assigned color', () => {
 		// Arrange.
-		jest.mocked( useBoundProp ).mockReturnValue(
-			stubBoundPropValue( {
+		jest.mocked(useBoundProp).mockReturnValue(
+			stubBoundPropValue({
 				propType: colorPropTypeUtil,
-				value: colorPropTypeUtil.create( '#000000' ),
-			} )
+				value: colorPropTypeUtil.create('#000000'),
+			})
 		);
 
-		jest.mocked( useVariable ).mockReturnValue( null );
+		jest.mocked(useVariable).mockReturnValue(null);
 
 		// Act.
-		const { result } = renderHook( () => {
+		const { result } = renderHook(() => {
 			return useInitialValue();
-		} );
+		});
 
 		// Assert.
-		expect( result.current ).toBe( '#000000' );
-	} );
+		expect(result.current).toBe('#000000');
+	});
 
-	it( 'should return value of assigned font', () => {
+	it('should return value of assigned font', () => {
 		// Arrange.
-		jest.mocked( useBoundProp ).mockReturnValue(
-			stubBoundPropValue( {
+		jest.mocked(useBoundProp).mockReturnValue(
+			stubBoundPropValue({
 				propType: stringPropTypeUtil,
-				value: stringPropTypeUtil.create( 'Arial' ),
-			} )
+				value: stringPropTypeUtil.create('Arial'),
+			})
 		);
 
-		jest.mocked( useVariable ).mockReturnValue( null );
+		jest.mocked(useVariable).mockReturnValue(null);
 
 		// Act.
-		const { result } = renderHook( () => {
+		const { result } = renderHook(() => {
 			return useInitialValue();
-		} );
+		});
 
 		// Assert.
-		expect( result.current ).toBe( 'Arial' );
-	} );
-} );
+		expect(result.current).toBe('Arial');
+	});
+});
 
-describe( 'useInitialValue for empty values', () => {
-	it( 'should return empty value for empty color value', () => {
+describe('useInitialValue for empty values', () => {
+	it('should return empty value for empty color value', () => {
 		// Arrange.
-		jest.mocked( useBoundProp ).mockReturnValue(
-			stubBoundPropValue( {
+		jest.mocked(useBoundProp).mockReturnValue(
+			stubBoundPropValue({
 				propType: colorPropTypeUtil,
-				value: colorPropTypeUtil.create( '' ),
-			} )
+				value: colorPropTypeUtil.create(''),
+			})
 		);
 
-		jest.mocked( useVariable ).mockReturnValue( null );
+		jest.mocked(useVariable).mockReturnValue(null);
 
 		// Act.
-		const { result } = renderHook( () => {
+		const { result } = renderHook(() => {
 			return useInitialValue();
-		} );
+		});
 
 		// Assert.
-		expect( result.current ).toBe( '' );
-	} );
+		expect(result.current).toBe('');
+	});
 
-	it( 'should return empty value for empty font value', () => {
+	it('should return empty value for empty font value', () => {
 		// Arrange.
-		jest.mocked( useBoundProp ).mockReturnValue(
-			stubBoundPropValue( {
+		jest.mocked(useBoundProp).mockReturnValue(
+			stubBoundPropValue({
 				propType: stringPropTypeUtil,
-				value: stringPropTypeUtil.create( '' ),
-			} )
+				value: stringPropTypeUtil.create(''),
+			})
 		);
 
-		jest.mocked( useVariable ).mockReturnValue( null );
+		jest.mocked(useVariable).mockReturnValue(null);
 
 		// Act.
-		const { result } = renderHook( () => {
+		const { result } = renderHook(() => {
 			return useInitialValue();
-		} );
+		});
 
 		// Assert.
-		expect( result.current ).toBe( '' );
-	} );
+		expect(result.current).toBe('');
+	});
 
-	it( 'should return empty for unset (null) value', () => {
+	it('should return empty for unset (null) value', () => {
 		// Arrange.
-		jest.mocked( useBoundProp ).mockReturnValue(
-			stubBoundPropValue( {
+		jest.mocked(useBoundProp).mockReturnValue(
+			stubBoundPropValue({
 				propType: colorPropTypeUtil,
 				value: null,
-			} )
+			})
 		);
 
-		jest.mocked( useVariable ).mockReturnValue( null );
+		jest.mocked(useVariable).mockReturnValue(null);
 
 		// Act.
-		const { result } = renderHook( () => {
+		const { result } = renderHook(() => {
 			return useInitialValue();
-		} );
+		});
 
 		// Assert.
-		expect( result.current ).toBe( '' );
-	} );
-} );
+		expect(result.current).toBe('');
+	});
+});

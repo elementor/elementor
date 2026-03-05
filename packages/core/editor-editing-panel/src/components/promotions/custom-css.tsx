@@ -6,18 +6,18 @@ import { __ } from '@wordpress/i18n';
 import { StyleTabSection } from '../style-tab-section';
 
 export const CustomCssSection = () => {
-	const triggerRef = useRef< PromotionTriggerRef >( null );
+	const triggerRef = useRef<PromotionTriggerRef>(null);
 
 	return (
 		<StyleTabSection
-			section={ {
+			section={{
 				name: 'Custom CSS',
-				title: __( 'Custom CSS', 'elementor' ),
+				title: __('Custom CSS', 'elementor'),
 				action: {
-					component: <PromotionTrigger ref={ triggerRef } promotionKey="customCss" />,
+					component: <PromotionTrigger ref={triggerRef} promotionKey="customCss" />,
 					onClick: () => triggerRef.current?.toggle(),
 				},
-			} }
+			}}
 		/>
 	);
 };

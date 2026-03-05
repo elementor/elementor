@@ -9,21 +9,21 @@ import EditModeTemplate from './edit-mode-template';
 export default function ListItemDuplicate() {
 	const { type, editMode, resetEditMode } = usePostListContext();
 	const navigateToDocument = useNavigateToDocument();
-	const { duplicatePost } = usePostActions( type );
+	const { duplicatePost } = usePostActions(type);
 	const { setError } = usePostListContext();
 
-	if ( 'duplicate' !== editMode.mode ) {
+	if ('duplicate' !== editMode.mode) {
 		return null;
 	}
 
-	const duplicatePostCallback = async ( inputValue: string ) => {
+	const duplicatePostCallback = async (inputValue: string) => {
 		try {
-			const { post_id: postId } = await duplicatePost.mutateAsync( {
+			const { post_id: postId } = await duplicatePost.mutateAsync({
 				id: editMode.details.postId,
 				title: inputValue,
-			} );
+			});
 
-			navigateToDocument( postId );
+			navigateToDocument(postId);
 		} catch {
 			setError();
 		} finally {
@@ -33,9 +33,9 @@ export default function ListItemDuplicate() {
 
 	return (
 		<EditModeTemplate
-			postTitle={ `${ editMode.details.title } ${ __( 'copy', 'elementor' ) }` }
-			isLoading={ duplicatePost.isPending }
-			callback={ duplicatePostCallback }
+			postTitle={`${editMode.details.title} ${__('copy', 'elementor')}`}
+			isLoading={duplicatePost.isPending}
+			callback={duplicatePostCallback}
 		/>
 	);
 }

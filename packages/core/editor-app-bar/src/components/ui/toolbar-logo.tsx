@@ -7,11 +7,11 @@ interface StyledElementorLogoProps extends SvgIconProps {
 	showMenuIcon?: boolean;
 }
 
-type ToolbarLogoProps = Omit< ToggleButtonProps, 'value' >;
+type ToolbarLogoProps = Omit<ToggleButtonProps, 'value'>;
 
-const ElementorLogo = ( props: SvgIconProps ) => {
+const ElementorLogo = (props: SvgIconProps) => {
 	return (
-		<SvgIcon viewBox="0 0 32 32" { ...props }>
+		<SvgIcon viewBox="0 0 32 32" {...props}>
 			<g>
 				<circle cx="16" cy="16" r="16" />
 				<path d="M11.7 9H9V22.3H11.7V9Z" />
@@ -23,7 +23,7 @@ const ElementorLogo = ( props: SvgIconProps ) => {
 	);
 };
 
-const StyledToggleButton = styled( ToggleButton )( ( { theme } ) => ( {
+const StyledToggleButton = styled(ToggleButton)(({ theme }) => ({
 	padding: 0,
 	border: 0,
 	color: theme.palette.text.primary,
@@ -33,22 +33,22 @@ const StyledToggleButton = styled( ToggleButton )( ( { theme } ) => ( {
 	'&.MuiToggleButton-root.Mui-selected': {
 		backgroundColor: 'initial',
 	},
-} ) );
+}));
 
-const StyledElementorLogo = styled( ElementorLogo, {
-	shouldForwardProp: ( prop ) => prop !== 'showMenuIcon',
-} )< StyledElementorLogoProps >( ( { theme, showMenuIcon } ) => ( {
+const StyledElementorLogo = styled(ElementorLogo, {
+	shouldForwardProp: (prop) => prop !== 'showMenuIcon',
+})<StyledElementorLogoProps>(({ theme, showMenuIcon }) => ({
 	'& path': {
 		fill: theme.palette.background.default,
 		transition: 'all 0.2s linear',
 		transformOrigin: 'bottom left',
 		'&:first-of-type': {
-			transitionDelay: ! showMenuIcon && '0.2s',
+			transitionDelay: !showMenuIcon && '0.2s',
 			transform: showMenuIcon && 'translateY(-9px) scaleY(0)',
 		},
 		'&:not(:first-of-type)': {
 			// Emotion automatically change 4 to -4 in RTL mode.
-			transform: ! showMenuIcon && `translateX(${ theme.direction === 'rtl' ? '4' : '9' }px) scaleX(0.6)`,
+			transform: !showMenuIcon && `translateX(${theme.direction === 'rtl' ? '4' : '9'}px) scaleX(0.6)`,
 		},
 		'&:nth-of-type(2)': {
 			transitionDelay: showMenuIcon ? '0' : '0.2s',
@@ -60,24 +60,24 @@ const StyledElementorLogo = styled( ElementorLogo, {
 			transitionDelay: showMenuIcon ? '0.2s' : '0',
 		},
 	},
-} ) );
+}));
 
-export default function ToolbarLogo( props: ToolbarLogoProps ) {
-	const [ isHoverState, setIsHoverState ] = useState( false );
+export default function ToolbarLogo(props: ToolbarLogoProps) {
+	const [isHoverState, setIsHoverState] = useState(false);
 	const showMenuIcon = props.selected || isHoverState;
 
 	return (
 		<StyledToggleButton
-			{ ...props }
+			{...props}
 			value="selected"
 			size="large"
-			onMouseEnter={ () => setIsHoverState( true ) }
-			onMouseLeave={ () => setIsHoverState( false ) }
+			onMouseEnter={() => setIsHoverState(true)}
+			onMouseLeave={() => setIsHoverState(false)}
 		>
 			<StyledElementorLogo
 				fontSize="large"
-				showMenuIcon={ showMenuIcon }
-				titleAccess={ __( 'Elementor Logo', 'elementor' ) }
+				showMenuIcon={showMenuIcon}
+				titleAccess={__('Elementor Logo', 'elementor')}
 			/>
 		</StyledToggleButton>
 	);

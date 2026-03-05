@@ -4,25 +4,25 @@ import apiFetch from '@wordpress/api-fetch';
 import useCreatePage, { endpointPath } from '../use-create-page';
 
 // Mock apiFetch to return a promise that resolves to an empty array.
-jest.mock( '@wordpress/api-fetch' );
+jest.mock('@wordpress/api-fetch');
 
-describe( '@elementor/recently-edited/use-page', () => {
-	beforeEach( () => {
-		jest.mocked( apiFetch ).mockImplementation( () => Promise.resolve( [] ) );
-	} );
+describe('@elementor/recently-edited/use-page', () => {
+	beforeEach(() => {
+		jest.mocked(apiFetch).mockImplementation(() => Promise.resolve([]));
+	});
 
-	afterEach( () => {
+	afterEach(() => {
 		jest.clearAllMocks();
-	} );
+	});
 
-	it( 'should run useCreatePage hook', async () => {
+	it('should run useCreatePage hook', async () => {
 		// Arrange.
-		const { result } = renderHook( useCreatePage );
+		const { result } = renderHook(useCreatePage);
 		const newPost = {
 			id: 1,
 			edit_url: 'edit-url.com',
 		};
-		jest.mocked( apiFetch ).mockImplementation( () => Promise.resolve( newPost ) );
+		jest.mocked(apiFetch).mockImplementation(() => Promise.resolve(newPost));
 
 		const { create } = result.current;
 
@@ -30,11 +30,11 @@ describe( '@elementor/recently-edited/use-page', () => {
 		create();
 
 		// Assert.
-		expect( apiFetch ).toHaveBeenCalledTimes( 1 );
-		expect( apiFetch ).toHaveBeenCalledWith( {
+		expect(apiFetch).toHaveBeenCalledTimes(1);
+		expect(apiFetch).toHaveBeenCalledWith({
 			data: { post_type: 'page' },
 			method: 'POST',
 			path: endpointPath,
-		} );
-	} );
-} );
+		});
+	});
+});

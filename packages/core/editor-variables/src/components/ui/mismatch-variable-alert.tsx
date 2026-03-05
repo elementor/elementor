@@ -9,43 +9,43 @@ type AlertProps = {
 };
 
 const i18n = {
-	title: __( 'Variable has changed', 'elementor' ),
+	title: __('Variable has changed', 'elementor'),
 	message: __(
 		`This variable is no longer compatible with this property. You can clear it or select a different one.`,
 		'elementor'
 	),
 	buttons: {
-		clear: __( 'Clear', 'elementor' ),
-		select: __( 'Select variable', 'elementor' ),
+		clear: __('Clear', 'elementor'),
+		select: __('Select variable', 'elementor'),
 	},
 };
 
-export const MismatchVariableAlert = ( { onClose, onClear, triggerSelect }: AlertProps ) => {
+export const MismatchVariableAlert = ({ onClose, onClear, triggerSelect }: AlertProps) => {
 	return (
-		<ClickAwayListener onClickAway={ onClose }>
+		<ClickAwayListener onClickAway={onClose}>
 			<Alert
 				variant="standard"
 				severity="warning"
-				onClose={ onClose }
+				onClose={onClose}
 				action={
 					<>
-						{ onClear && (
-							<AlertAction variant="contained" onClick={ onClear }>
-								{ i18n.buttons.clear }
+						{onClear && (
+							<AlertAction variant="contained" onClick={onClear}>
+								{i18n.buttons.clear}
 							</AlertAction>
-						) }
-						{ triggerSelect && (
-							<AlertAction variant="outlined" onClick={ triggerSelect }>
-								{ i18n.buttons.select }
+						)}
+						{triggerSelect && (
+							<AlertAction variant="outlined" onClick={triggerSelect}>
+								{i18n.buttons.select}
 							</AlertAction>
-						) }
+						)}
 					</>
 				}
-				sx={ { maxWidth: 300 } }
+				sx={{ maxWidth: 300 }}
 			>
-				<AlertTitle>{ i18n.title }</AlertTitle>
+				<AlertTitle>{i18n.title}</AlertTitle>
 				<Typography variant="body2" color="textPrimary">
-					{ i18n.message }
+					{i18n.message}
 				</Typography>
 			</Alert>
 		</ClickAwayListener>

@@ -6,22 +6,22 @@ import { mainMenu } from '../../locations';
 import { EXPERIMENT_NAME, FEEDBACK_TOGGLE_EVENT } from './feedback-consts';
 
 export function init() {
-	const isActive = isExperimentActive( EXPERIMENT_NAME );
-	if ( ! isActive ) {
+	const isActive = isExperimentActive(EXPERIMENT_NAME);
+	if (!isActive) {
 		return;
 	}
-	mainMenu.registerAction( {
+	mainMenu.registerAction({
 		id: 'open-send-feedback',
 		group: 'help',
 		priority: 20,
 		useProps: () => {
 			return {
 				icon: MessageLinesIcon,
-				title: __( 'Send Feedback', 'elementor' ),
+				title: __('Send Feedback', 'elementor'),
 				onClick: () => {
-					dispatchEvent( new CustomEvent( FEEDBACK_TOGGLE_EVENT ) );
+					dispatchEvent(new CustomEvent(FEEDBACK_TOGGLE_EVENT));
 				},
 			};
 		},
-	} );
+	});
 }

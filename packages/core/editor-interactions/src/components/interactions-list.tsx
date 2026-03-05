@@ -12,118 +12,118 @@ import { InteractionsListItem } from './interactions-list-item';
 export const MAX_NUMBER_OF_INTERACTIONS = 5;
 
 export type InteractionListProps = {
-	onSelectInteractions: ( interactions: ElementInteractions ) => void;
+	onSelectInteractions: (interactions: ElementInteractions) => void;
 	interactions: ElementInteractions;
-	onPlayInteraction: ( interactionId: string ) => void;
+	onPlayInteraction: (interactionId: string) => void;
 	triggerCreateOnShowEmpty?: boolean;
 };
 
-export function InteractionsList( props: InteractionListProps ) {
+export function InteractionsList(props: InteractionListProps) {
 	const { interactions, onSelectInteractions, onPlayInteraction, triggerCreateOnShowEmpty } = props;
 
-	const hasInitializedRef = useRef( false );
+	const hasInitializedRef = useRef(false);
 
 	const handleUpdateInteractions = useCallback(
-		( newInteractions: ElementInteractions ) => {
-			onSelectInteractions( newInteractions );
+		(newInteractions: ElementInteractions) => {
+			onSelectInteractions(newInteractions);
 		},
-		[ onSelectInteractions ]
+		[onSelectInteractions]
 	);
 
-	useEffect( () => {
+	useEffect(() => {
 		if (
 			triggerCreateOnShowEmpty &&
-			! hasInitializedRef.current &&
-			( ! interactions.items || interactions.items?.length === 0 )
+			!hasInitializedRef.current &&
+			(!interactions.items || interactions.items?.length === 0)
 		) {
 			hasInitializedRef.current = true;
 			const newState: ElementInteractions = {
 				version: 1,
-				items: [ createDefaultInteractionItem() ],
+				items: [createDefaultInteractionItem()],
 			};
-			handleUpdateInteractions( newState );
+			handleUpdateInteractions(newState);
 		}
-	}, [ triggerCreateOnShowEmpty, interactions.items, handleUpdateInteractions ] );
+	}, [triggerCreateOnShowEmpty, interactions.items, handleUpdateInteractions]);
 
-	const isMaxNumberOfInteractionsReached = useMemo( () => {
+	const isMaxNumberOfInteractionsReached = useMemo(() => {
 		return interactions.items?.length >= MAX_NUMBER_OF_INTERACTIONS;
-	}, [ interactions.items?.length ] );
+	}, [interactions.items?.length]);
 
 	const infotipContent = isMaxNumberOfInteractionsReached ? (
-		<Alert color="secondary" icon={ <InfoCircleFilledIcon /> } size="small">
-			<AlertTitle>{ __( 'Interactions', 'elementor' ) }</AlertTitle>
+		<Alert color="secondary" icon={<InfoCircleFilledIcon />} size="small">
+			<AlertTitle>{__('Interactions', 'elementor')}</AlertTitle>
 			<Box component="span">
-				{ __(
+				{__(
 					"You've reached the limit of 5 interactions for this element. Please remove an interaction before creating a new one.",
 					'elementor'
-				) }
+				)}
 			</Box>
 		</Alert>
 	) : undefined;
 
 	const handleRepeaterChange = useCallback(
-		( newItems: ElementInteractions[ 'items' ] ) => {
-			handleUpdateInteractions( {
+		(newItems: ElementInteractions['items']) => {
+			handleUpdateInteractions({
 				...interactions,
 				items: newItems,
-			} );
+			});
 		},
-		[ interactions, handleUpdateInteractions ]
+		[interactions, handleUpdateInteractions]
 	);
 
 	const handleInteractionChange = useCallback(
-		( index: number, newInteractionValue: InteractionItemValue ) => {
-			const newItems = structuredClone( interactions.items );
-			newItems[ index ] = {
+		(index: number, newInteractionValue: InteractionItemValue) => {
+			const newItems = structuredClone(interactions.items);
+			newItems[index] = {
 				$$type: 'interaction-item',
 				value: newInteractionValue,
 			};
-			handleUpdateInteractions( {
+			handleUpdateInteractions({
 				...interactions,
 				items: newItems,
-			} );
+			});
 		},
-		[ interactions, handleUpdateInteractions ]
+		[interactions, handleUpdateInteractions]
 	);
 
 	const contextValue = useMemo(
-		() => ( {
+		() => ({
 			onInteractionChange: handleInteractionChange,
 			onPlayInteraction,
-		} ),
-		[ handleInteractionChange, onPlayInteraction ]
+		}),
+		[handleInteractionChange, onPlayInteraction]
 	);
 
 	return (
-		<InteractionItemContextProvider value={ contextValue }>
+		<InteractionItemContextProvider value={contextValue}>
 			<Repeater
 				openOnAdd
-				openItem={ triggerCreateOnShowEmpty ? 0 : undefined }
-				label={ __( 'Interactions', 'elementor' ) }
-				values={ interactions.items }
-				setValues={ handleRepeaterChange }
-				showDuplicate={ false }
-				showToggle={ false }
-				isSortable={ false }
-				disableAddItemButton={ isMaxNumberOfInteractionsReached }
-				addButtonInfotipContent={ infotipContent }
-				itemSettings={ {
+				openItem={triggerCreateOnShowEmpty ? 0 : undefined}
+				label={__('Interactions', 'elementor')}
+				values={interactions.items}
+				setValues={handleRepeaterChange}
+				showDuplicate={false}
+				showToggle={false}
+				isSortable={false}
+				disableAddItemButton={isMaxNumberOfInteractionsReached}
+				addButtonInfotipContent={infotipContent}
+				itemSettings={{
 					initialValues: createDefaultInteractionItem(),
-					Label: ( { value }: { value: InteractionItemPropValue } ) => buildDisplayLabel( value.value ),
+					Label: ({ value }: { value: InteractionItemPropValue }) => buildDisplayLabel(value.value),
 					Icon: () => null,
 					Content: InteractionsListItem,
-					actions: ( value: InteractionItemPropValue ) => (
-						<Tooltip key="preview" placement="top" title={ __( 'Preview', 'elementor' ) }>
+					actions: (value: InteractionItemPropValue) => (
+						<Tooltip key="preview" placement="top" title={__('Preview', 'elementor')}>
 							<IconButton
-								aria-label={ __( 'Play interaction', 'elementor' ) }
+								aria-label={__('Play interaction', 'elementor')}
 								size="tiny"
-								onClick={ () => onPlayInteraction( extractString( value.value.interaction_id ) ) }
+								onClick={() => onPlayInteraction(extractString(value.value.interaction_id))}
 							>
 								<PlayerPlayIcon fontSize="tiny" />
 							</IconButton>
 						</Tooltip>
 					),
-				} }
+				}}
 			/>
 		</InteractionItemContextProvider>
 	);

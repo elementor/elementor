@@ -16,32 +16,32 @@ import { ComponentItem } from './component-item';
 const ExtendedComponentsList = () => {
 	const { components, isLoading, searchValue } = useFilteredComponents();
 
-	if ( isLoading ) {
+	if (isLoading) {
 		return <LoadingComponents />;
 	}
 
-	const isEmpty = ! components?.length;
+	const isEmpty = !components?.length;
 
-	if ( isEmpty ) {
+	if (isEmpty) {
 		return searchValue.length ? <EmptySearchResult /> : <EmptyState />;
 	}
 
 	return (
-		<List sx={ { display: 'flex', flexDirection: 'column', gap: 1, px: 2 } }>
-			{ components.map( ( component ) => (
-				<ComponentItem key={ component.uid } component={ component } />
-			) ) }
+		<List sx={{ display: 'flex', flexDirection: 'column', gap: 1, px: 2 }}>
+			{components.map((component) => (
+				<ComponentItem key={component.uid} component={component} />
+			))}
 		</List>
 	);
 };
 
 const ExtendedComponentsContent = () => {
 	const { components, isLoading } = useComponents();
-	const hasComponents = ! isLoading && components.length > 0;
+	const hasComponents = !isLoading && components.length > 0;
 
 	return (
 		<>
-			{ hasComponents && <ComponentSearch /> }
+			{hasComponents && <ComponentSearch />}
 			<ExtendedComponentsList />
 		</>
 	);

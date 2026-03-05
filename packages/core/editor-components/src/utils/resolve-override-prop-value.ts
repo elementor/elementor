@@ -10,40 +10,40 @@ import {
 	componentOverridablePropTypeUtil,
 } from '../prop-types/component-overridable-prop-type';
 
-export const resolveOverridePropValue = ( originalPropValue: ComponentInstanceOverride | PropValue ): PropValue => {
-	const isOverridable = componentOverridablePropTypeUtil.isValid( originalPropValue );
-	if ( isOverridable ) {
-		return getOverridableValue( originalPropValue as ComponentOverridableProp );
+export const resolveOverridePropValue = (originalPropValue: ComponentInstanceOverride | PropValue): PropValue => {
+	const isOverridable = componentOverridablePropTypeUtil.isValid(originalPropValue);
+	if (isOverridable) {
+		return getOverridableValue(originalPropValue as ComponentOverridableProp);
 	}
 
-	const isOverride = componentInstanceOverridePropTypeUtil.isValid( originalPropValue );
-	if ( isOverride ) {
-		return getOverrideValue( originalPropValue );
+	const isOverride = componentInstanceOverridePropTypeUtil.isValid(originalPropValue);
+	if (isOverride) {
+		return getOverrideValue(originalPropValue);
 	}
 
 	return originalPropValue;
 };
 
-function getOverridableValue( overridableProp: ComponentOverridableProp | null ): PropValue {
-	const overridableValue = componentOverridablePropTypeUtil.extract( overridableProp );
+function getOverridableValue(overridableProp: ComponentOverridableProp | null): PropValue {
+	const overridableValue = componentOverridablePropTypeUtil.extract(overridableProp);
 
-	if ( ! overridableValue ) {
+	if (!overridableValue) {
 		return null;
 	}
 
-	const isOverride = componentInstanceOverridePropTypeUtil.isValid( overridableValue.origin_value );
+	const isOverride = componentInstanceOverridePropTypeUtil.isValid(overridableValue.origin_value);
 
-	if ( isOverride ) {
-		return getOverrideValue( overridableValue.origin_value as ComponentInstanceOverrideProp );
+	if (isOverride) {
+		return getOverrideValue(overridableValue.origin_value as ComponentInstanceOverrideProp);
 	}
 
 	return overridableValue.origin_value;
 }
 
-function getOverrideValue( overrideProp: ComponentInstanceOverrideProp | null ): PropValue {
-	const overrideValue = componentInstanceOverridePropTypeUtil.extract( overrideProp );
+function getOverrideValue(overrideProp: ComponentInstanceOverrideProp | null): PropValue {
+	const overrideValue = componentInstanceOverridePropTypeUtil.extract(overrideProp);
 
-	if ( ! overrideValue ) {
+	if (!overrideValue) {
 		return null;
 	}
 

@@ -11,29 +11,29 @@ interface UpdateProgressParams {
 	complete?: boolean;
 }
 
-async function updateProgress( params: UpdateProgressParams ): Promise< void > {
+async function updateProgress(params: UpdateProgressParams): Promise<void> {
 	const config = getConfig();
 
-	if ( ! config ) {
-		throw new Error( 'Onboarding config not found' );
+	if (!config) {
+		throw new Error('Onboarding config not found');
 	}
 
-	const response = await fetch( `${ config.restUrl }user-progress`, {
+	const response = await fetch(`${config.restUrl}user-progress`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
 			'X-WP-Nonce': config.nonce,
 		},
-		body: JSON.stringify( params ),
-	} );
+		body: JSON.stringify(params),
+	});
 
-	if ( ! response.ok ) {
-		throw new Error( 'Failed to update progress' );
+	if (!response.ok) {
+		throw new Error('Failed to update progress');
 	}
 }
 
 export function useUpdateProgress() {
-	return useMutation( {
+	return useMutation({
 		mutationFn: updateProgress,
-	} );
+	});
 }

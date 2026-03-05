@@ -8,25 +8,25 @@ type DeleteGroupParams = {
 	groupId: string;
 };
 
-export function deleteOverridableGroup( { componentId, groupId }: DeleteGroupParams ): boolean {
-	const overridableProps = componentsSelectors.getOverridableProps( componentId );
+export function deleteOverridableGroup({ componentId, groupId }: DeleteGroupParams): boolean {
+	const overridableProps = componentsSelectors.getOverridableProps(componentId);
 
-	if ( ! overridableProps ) {
+	if (!overridableProps) {
 		return false;
 	}
 
-	const group = overridableProps.groups.items[ groupId ];
+	const group = overridableProps.groups.items[groupId];
 
-	if ( ! group || group.props.length > 0 ) {
+	if (!group || group.props.length > 0) {
 		return false;
 	}
 
-	const updatedGroups = deleteGroup( overridableProps.groups, groupId );
+	const updatedGroups = deleteGroup(overridableProps.groups, groupId);
 
-	componentsActions.setOverridableProps( componentId, {
+	componentsActions.setOverridableProps(componentId, {
 		...overridableProps,
 		groups: updatedGroups,
-	} );
+	});
 
 	return true;
 }

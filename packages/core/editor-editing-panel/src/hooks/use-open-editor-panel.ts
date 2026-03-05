@@ -7,11 +7,11 @@ import { isAtomicWidgetSelected } from '../sync/is-atomic-widget-selected';
 export const useOpenEditorPanel = () => {
 	const { open } = usePanelActions();
 
-	useEffect( () => {
-		return listenTo( commandStartEvent( 'panel/editor/open' ), () => {
-			if ( isAtomicWidgetSelected() ) {
+	useEffect(() => {
+		return listenTo(commandStartEvent('panel/editor/open'), () => {
+			if (isAtomicWidgetSelected()) {
 				open();
 			}
-		} );
-	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
+		});
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 };

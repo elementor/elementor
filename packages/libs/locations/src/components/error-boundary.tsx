@@ -9,7 +9,7 @@ interface State {
 	hasError: boolean;
 }
 
-export default class ErrorBoundary extends Component< Props, State > {
+export default class ErrorBoundary extends Component<Props, State> {
 	public state: State = {
 		hasError: false,
 	};
@@ -20,7 +20,7 @@ export default class ErrorBoundary extends Component< Props, State > {
 	}
 
 	public render() {
-		if ( this.state.hasError ) {
+		if (this.state.hasError) {
 			return this.props.fallback;
 		}
 

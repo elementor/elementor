@@ -2,45 +2,45 @@ import { act, renderHook } from '@testing-library/react';
 
 import { type ColorScheme, type ExtendedWindow, useColorScheme } from '../use-color-scheme';
 
-describe( '@elementor/editor - useColorScheme', () => {
-	it( 'should use the "auto" color scheme by default', () => {
+describe('@elementor/editor - useColorScheme', () => {
+	it('should use the "auto" color scheme by default', () => {
 		// Act.
-		const { result } = renderHook( () => useColorScheme() );
+		const { result } = renderHook(() => useColorScheme());
 
 		// Assert.
-		expect( result.current ).toBe( 'auto' );
-	} );
+		expect(result.current).toBe('auto');
+	});
 
-	it( 'should sync color scheme on V1 ready', () => {
+	it('should sync color scheme on V1 ready', () => {
 		// Arrange.
-		mockV1ColorScheme( 'dark' );
+		mockV1ColorScheme('dark');
 
 		// Act.
-		const { result } = renderHook( () => useColorScheme() );
+		const { result } = renderHook(() => useColorScheme());
 
-		act( () => {
-			dispatchEvent( new CustomEvent( 'elementor/initialized' ) );
-		} );
+		act(() => {
+			dispatchEvent(new CustomEvent('elementor/initialized'));
+		});
 
 		// Assert.
-		expect( result.current ).toBe( 'dark' );
-	} );
+		expect(result.current).toBe('dark');
+	});
 
-	it( 'should sync color scheme on V1 change', () => {
+	it('should sync color scheme on V1 change', () => {
 		// Arrange.
-		mockV1ColorScheme( 'auto' );
+		mockV1ColorScheme('auto');
 
-		const { result } = renderHook( () => useColorScheme() );
+		const { result } = renderHook(() => useColorScheme());
 
 		// Assert - Before change.
-		expect( result.current ).toBe( 'auto' );
+		expect(result.current).toBe('auto');
 
 		// Act - Change.
-		act( () => {
-			mockV1ColorScheme( 'dark' );
+		act(() => {
+			mockV1ColorScheme('dark');
 
 			dispatchEvent(
-				new CustomEvent( 'elementor/commands/run/after', {
+				new CustomEvent('elementor/commands/run/after', {
 					detail: {
 						command: 'document/elements/settings',
 						args: {
@@ -52,21 +52,21 @@ describe( '@elementor/editor - useColorScheme', () => {
 							},
 						},
 					},
-				} )
+				})
 			);
-		} );
+		});
 
 		// Assert.
-		expect( result.current ).toBe( 'dark' );
-	} );
+		expect(result.current).toBe('dark');
+	});
 
-	it( 'should not sync color scheme on unrelated commands', () => {
+	it('should not sync color scheme on unrelated commands', () => {
 		// Act.
-		const { result } = renderHook( () => useColorScheme() );
+		const { result } = renderHook(() => useColorScheme());
 
-		act( () => {
+		act(() => {
 			dispatchEvent(
-				new CustomEvent( 'elementor/commands/run/after', {
+				new CustomEvent('elementor/commands/run/after', {
 					detail: {
 						command: 'document/elements/settings',
 						args: {
@@ -75,17 +75,17 @@ describe( '@elementor/editor - useColorScheme', () => {
 							},
 						},
 					},
-				} )
+				})
 			);
-		} );
+		});
 
 		// Assert.
-		expect( result.current ).toBe( 'auto' );
-	} );
-} );
+		expect(result.current).toBe('auto');
+	});
+});
 
-function mockV1ColorScheme( colorScheme: ColorScheme ) {
-	( window as unknown as ExtendedWindow ).elementor = {
+function mockV1ColorScheme(colorScheme: ColorScheme) {
+	(window as unknown as ExtendedWindow).elementor = {
 		getPreferences: () => colorScheme,
 	};
 }

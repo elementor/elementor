@@ -4,40 +4,40 @@ import apiFetch from '@wordpress/api-fetch';
 
 import { useHomepage } from '../use-homepage';
 
-jest.mock( '@wordpress/api-fetch' );
+jest.mock('@wordpress/api-fetch');
 
-describe( '@elementor/site-settings/use-homepage', () => {
-	beforeEach( () => {
-		jest.mocked( apiFetch ).mockImplementation( () => Promise.resolve( [] ) );
-	} );
+describe('@elementor/site-settings/use-homepage', () => {
+	beforeEach(() => {
+		jest.mocked(apiFetch).mockImplementation(() => Promise.resolve([]));
+	});
 
-	afterEach( () => {
+	afterEach(() => {
 		jest.clearAllMocks();
-	} );
+	});
 
-	xit( 'useHomepage hook should return homepage settings', async () => {
+	xit('useHomepage hook should return homepage settings', async () => {
 		// Arrange.
 		const settings = {
 			show_on_front: 'page',
 			page_on_front: 1,
 		};
-		jest.mocked( apiFetch ).mockImplementation( () => Promise.resolve( settings ) );
+		jest.mocked(apiFetch).mockImplementation(() => Promise.resolve(settings));
 
 		// Act.
-		const { component } = renderHookWithQuery( () => useHomepage() );
+		const { component } = renderHookWithQuery(() => useHomepage());
 
 		// Assert.
 		const expectedPath = '/elementor/v1/site-navigation/homepage';
 
-		expect( apiFetch ).toHaveBeenCalledWith( {
+		expect(apiFetch).toHaveBeenCalledWith({
 			path: expectedPath,
-		} );
-		expect( apiFetch ).toHaveBeenCalledTimes( 1 );
+		});
+		expect(apiFetch).toHaveBeenCalledTimes(1);
 
-		await waitFor( () => {
+		await waitFor(() => {
 			return component.result.current.isSuccess;
-		} );
+		});
 
-		expect( component.result.current.data ).toBe( settings );
-	} );
-} );
+		expect(component.result.current.data).toBe(settings);
+	});
+});

@@ -6,12 +6,12 @@ import { settingsQueryKey } from './use-homepage';
 export function useHomepageActions() {
 	const invalidateSettings = useInvalidateSettings();
 
-	const onSuccess = async () => invalidateSettings( { exact: true } );
+	const onSuccess = async () => invalidateSettings({ exact: true });
 
-	const updateSettingsMutation = useMutation( {
-		mutationFn: ( settings: Settings ) => updateSettings( settings ),
+	const updateSettingsMutation = useMutation({
+		mutationFn: (settings: Settings) => updateSettings(settings),
 		onSuccess,
-	} );
+	});
 
 	return { updateSettingsMutation };
 }
@@ -19,9 +19,9 @@ export function useHomepageActions() {
 function useInvalidateSettings() {
 	const queryClient = useQueryClient();
 
-	return ( options = {} ) => {
+	return (options = {}) => {
 		const queryKey = settingsQueryKey();
 
-		return queryClient.invalidateQueries( { queryKey }, options );
+		return queryClient.invalidateQueries({ queryKey }, options);
 	};
 }

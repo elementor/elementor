@@ -1,4 +1,4 @@
-export type RequestToHandleMap = Array< {
+export type RequestToHandleMap = Array<{
 	request: string | RegExp;
 	handle: string;
-} >;
+}>;

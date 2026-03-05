@@ -5,67 +5,64 @@ import type { StyleDefinition } from '@elementor/editor-styles';
 import { InvalidElementsStyleProviderMetaError } from '../errors';
 import { documentElementsStylesProvider } from '../providers/document-elements-styles-provider';
 
-jest.mock( '@elementor/editor-elements' );
+jest.mock('@elementor/editor-elements');
 
-describe( 'documentElementsStylesProvider', () => {
-	beforeEach( () => {
-		jest.mocked( getElements ).mockReturnValue( [
-			createMockElement( {
+describe('documentElementsStylesProvider', () => {
+	beforeEach(() => {
+		jest.mocked(getElements).mockReturnValue([
+			createMockElement({
 				model: {
 					id: '1',
 					styles: {
-						's-1': createMockStyleDefinition( { id: 's-1' } ),
-						's-2': createMockStyleDefinition( { id: 's-2' } ),
+						's-1': createMockStyleDefinition({ id: 's-1' }),
+						's-2': createMockStyleDefinition({ id: 's-2' }),
 					},
 				},
-			} ),
-			createMockElement( {
+			}),
+			createMockElement({
 				model: {
 					id: '2',
 					styles: {
-						's-3': createMockStyleDefinition( { id: 's-3' } ),
+						's-3': createMockStyleDefinition({ id: 's-3' }),
 					},
 				},
-			} ),
-		] );
-	} );
+			}),
+		]);
+	});
 
-	it( 'should generate the key based on current document', () => {
+	it('should generate the key based on current document', () => {
 		// Arrange.
-		jest.mocked( getCurrentDocumentId ).mockReturnValue( 42 );
+		jest.mocked(getCurrentDocumentId).mockReturnValue(42);
 
 		// Act.
 		const key = documentElementsStylesProvider.getKey();
 
 		// Assert.
-		expect( key ).toBe( 'document-elements-42' );
-	} );
+		expect(key).toBe('document-elements-42');
+	});
 
-	it( 'should return all the styles attached to all the document elements', () => {
+	it('should return all the styles attached to all the document elements', () => {
 		// Act.
 		const styles = documentElementsStylesProvider.actions.all();
 
 		// Assert.
-		expect( styles ).toEqual( [
-			expect.objectContaining( { id: 's-1' } ),
-			expect.objectContaining( { id: 's-2' } ),
-			expect.objectContaining( { id: 's-3' } ),
-		] );
-	} );
+		expect(styles).toEqual([
+			expect.objectContaining({ id: 's-1' }),
+			expect.objectContaining({ id: 's-2' }),
+			expect.objectContaining({ id: 's-3' }),
+		]);
+	});
 
-	it( 'should return all styles filtered by element', () => {
+	it('should return all styles filtered by element', () => {
 		// Act.
-		const styles = documentElementsStylesProvider.actions.all( { elementId: '1' } );
+		const styles = documentElementsStylesProvider.actions.all({ elementId: '1' });
 
 		// Assert.
-		expect( styles ).toEqual( [
-			expect.objectContaining( { id: 's-1' } ),
-			expect.objectContaining( { id: 's-2' } ),
-		] );
-	} );
+		expect(styles).toEqual([expect.objectContaining({ id: 's-1' }), expect.objectContaining({ id: 's-2' })]);
+	});
 
-	it( 'should retrieve an element style by id', () => {
-		const styles: Record< string, StyleDefinition > = {
+	it('should retrieve an element style by id', () => {
+		const styles: Record<string, StyleDefinition> = {
 			'style-1': {
 				id: 'style-1',
 				label: 'Style 1',
@@ -80,25 +77,25 @@ describe( 'documentElementsStylesProvider', () => {
 			},
 		};
 
-		jest.mocked( getElementStyles ).mockImplementation( ( elementId ) => {
+		jest.mocked(getElementStyles).mockImplementation((elementId) => {
 			return elementId === 'test-element-id' ? styles : null;
-		} );
+		});
 
 		// Act.
-		const elementStyle = documentElementsStylesProvider.actions.get( 'style-2', { elementId: 'test-element-id' } );
+		const elementStyle = documentElementsStylesProvider.actions.get('style-2', { elementId: 'test-element-id' });
 
 		// Assert.
-		expect( elementStyle ).toStrictEqual( styles[ 'style-2' ] );
-	} );
+		expect(elementStyle).toStrictEqual(styles['style-2']);
+	});
 
-	it( 'should throw when trying to get a style by id without passing an element id', () => {
+	it('should throw when trying to get a style by id without passing an element id', () => {
 		// Act & Assert.
-		expect( () => documentElementsStylesProvider.actions.get( 'style', { notElementId: 'test-value' } ) ).toThrow(
+		expect(() => documentElementsStylesProvider.actions.get('style', { notElementId: 'test-value' })).toThrow(
 			new InvalidElementsStyleProviderMetaError()
 		);
-	} );
+	});
 
-	it( 'should update style props', () => {
+	it('should update style props', () => {
 		// Act.
 		documentElementsStylesProvider.actions?.updateProps?.(
 			{
@@ -115,9 +112,9 @@ describe( 'documentElementsStylesProvider', () => {
 		);
 
 		// Assert.
-		expect( updateElementStyle ).toHaveBeenCalledTimes( 1 );
+		expect(updateElementStyle).toHaveBeenCalledTimes(1);
 
-		expect( updateElementStyle ).toHaveBeenCalledWith( {
+		expect(updateElementStyle).toHaveBeenCalledWith({
 			elementId: 'test-element',
 			styleId: 'test-style',
 			meta: {
@@ -127,32 +124,31 @@ describe( 'documentElementsStylesProvider', () => {
 			props: {
 				prop: 'value',
 			},
-		} );
-	} );
+		});
+	});
 
-	it.each( [
+	it.each([
 		{ elementsMeta: { notElementId: 'test-value' } },
 		{ elementsMeta: { elementId: 123 } },
 		{ elementsMeta: { elementId: null } },
 		{ elementsMeta: { elementId: '' } },
 		{ elementsMeta: { elementId: {} } },
-	] )( 'should throw when updating props with invalid elements meta', ( { elementsMeta } ) => {
+	])('should throw when updating props with invalid elements meta', ({ elementsMeta }) => {
 		// Act & Assert.
-		expect(
-			() =>
-				documentElementsStylesProvider.actions?.updateProps?.(
-					{
-						id: 'test-id',
-						meta: {
-							breakpoint: null,
-							state: null,
-						},
-						props: {
-							prop: 'value',
-						},
+		expect(() =>
+			documentElementsStylesProvider.actions?.updateProps?.(
+				{
+					id: 'test-id',
+					meta: {
+						breakpoint: null,
+						state: null,
 					},
-					elementsMeta
-				)
-		).toThrow( new InvalidElementsStyleProviderMetaError() );
-	} );
-} );
+					props: {
+						prop: 'value',
+					},
+				},
+				elementsMeta
+			)
+		).toThrow(new InvalidElementsStyleProviderMetaError());
+	});
+});

@@ -23,54 +23,54 @@ type KeyValueControlProps = {
 	regexValue?: string;
 	validationErrorMessage?: string;
 	escapeHtml?: boolean;
-	getHelperText?: ( key: string, value: string ) => { keyHelper?: string; valueHelper?: string };
+	getHelperText?: (key: string, value: string) => { keyHelper?: string; valueHelper?: string };
 };
 
-const getInitialFieldValue = ( fieldValue: unknown ): string => {
+const getInitialFieldValue = (fieldValue: unknown): string => {
 	const transformableValue = fieldValue as { $$type?: string; value?: string };
 
-	if ( ! fieldValue || typeof fieldValue !== 'object' || transformableValue.$$type === 'dynamic' ) {
+	if (!fieldValue || typeof fieldValue !== 'object' || transformableValue.$$type === 'dynamic') {
 		return '';
 	}
 
 	return transformableValue.value || '';
 };
 
-export const KeyValueControl = createControl( ( props: KeyValueControlProps = {} ) => {
-	const { value, setValue, ...propContext } = useBoundProp( keyValuePropTypeUtil );
-	const [ keyError, setKeyError ] = useState< string >( '' );
-	const [ valueError, setValueError ] = useState< string >( '' );
+export const KeyValueControl = createControl((props: KeyValueControlProps = {}) => {
+	const { value, setValue, ...propContext } = useBoundProp(keyValuePropTypeUtil);
+	const [keyError, setKeyError] = useState<string>('');
+	const [valueError, setValueError] = useState<string>('');
 
-	const [ sessionState, setSessionState ] = useState( {
-		key: getInitialFieldValue( value?.key ),
-		value: getInitialFieldValue( value?.value ),
-	} );
+	const [sessionState, setSessionState] = useState({
+		key: getInitialFieldValue(value?.key),
+		value: getInitialFieldValue(value?.value),
+	});
 
-	const keyLabel = props.keyName || __( 'Key', 'elementor' );
-	const valueLabel = props.valueName || __( 'Value', 'elementor' );
-	const { keyHelper, valueHelper } = props.getHelperText?.( sessionState.key, sessionState.value ) || {
+	const keyLabel = props.keyName || __('Key', 'elementor');
+	const valueLabel = props.valueName || __('Value', 'elementor');
+	const { keyHelper, valueHelper } = props.getHelperText?.(sessionState.key, sessionState.value) || {
 		keyHelper: undefined,
 		valueHelper: undefined,
 	};
 
-	const [ keyRegex, valueRegex, errMsg ] = useMemo< [ RegExp | undefined, RegExp | undefined, string ] >(
+	const [keyRegex, valueRegex, errMsg] = useMemo<[RegExp | undefined, RegExp | undefined, string]>(
 		() => [
-			props.regexKey ? new RegExp( props.regexKey ) : undefined,
-			props.regexValue ? new RegExp( props.regexValue ) : undefined,
-			props.validationErrorMessage || __( 'Invalid Format', 'elementor' ),
+			props.regexKey ? new RegExp(props.regexKey) : undefined,
+			props.regexValue ? new RegExp(props.regexValue) : undefined,
+			props.validationErrorMessage || __('Invalid Format', 'elementor'),
 		],
-		[ props.regexKey, props.regexValue, props.validationErrorMessage ]
+		[props.regexKey, props.regexValue, props.validationErrorMessage]
 	);
 
-	const validate = ( newValue: string, fieldType: string ): boolean => {
-		if ( fieldType === 'key' && keyRegex ) {
-			const isValid = keyRegex.test( newValue );
-			setKeyError( isValid ? '' : errMsg );
+	const validate = (newValue: string, fieldType: string): boolean => {
+		if (fieldType === 'key' && keyRegex) {
+			const isValid = keyRegex.test(newValue);
+			setKeyError(isValid ? '' : errMsg);
 
 			return isValid;
-		} else if ( fieldType === 'value' && valueRegex ) {
-			const isValid = valueRegex.test( newValue );
-			setValueError( isValid ? '' : errMsg );
+		} else if (fieldType === 'value' && valueRegex) {
+			const isValid = valueRegex.test(newValue);
+			setValueError(isValid ? '' : errMsg);
 
 			return isValid;
 		}
@@ -78,78 +78,78 @@ export const KeyValueControl = createControl( ( props: KeyValueControlProps = {}
 		return true;
 	};
 
-	const handleChange = ( newValue: Props, options?: CreateOptions, meta?: { bind?: PropKey } ) => {
+	const handleChange = (newValue: Props, options?: CreateOptions, meta?: { bind?: PropKey }) => {
 		const fieldType = meta?.bind;
 
-		if ( ! fieldType ) {
+		if (!fieldType) {
 			return;
 		}
 
-		const newChangedValue = newValue[ fieldType ];
+		const newChangedValue = newValue[fieldType];
 
-		if ( isTransformable( newChangedValue ) && newChangedValue.$$type === 'dynamic' ) {
-			setValue( {
+		if (isTransformable(newChangedValue) && newChangedValue.$$type === 'dynamic') {
+			setValue({
 				...value,
-				[ fieldType ]: newChangedValue,
-			} );
+				[fieldType]: newChangedValue,
+			});
 
 			return;
 		}
 
-		const extractedValue = stringPropTypeUtil.extract( newChangedValue );
+		const extractedValue = stringPropTypeUtil.extract(newChangedValue);
 
-		setSessionState( ( prev ) => ( {
+		setSessionState((prev) => ({
 			...prev,
-			[ fieldType ]: extractedValue,
-		} ) );
+			[fieldType]: extractedValue,
+		}));
 
-		if ( extractedValue && validate( extractedValue, fieldType ) ) {
-			setValue( {
+		if (extractedValue && validate(extractedValue, fieldType)) {
+			setValue({
 				...value,
-				[ fieldType ]: newChangedValue,
-			} );
+				[fieldType]: newChangedValue,
+			});
 		} else {
-			setValue( {
+			setValue({
 				...value,
-				[ fieldType ]: {
+				[fieldType]: {
 					value: '',
 					$$type: 'string',
 				},
-			} );
+			});
 		}
 	};
 
 	return (
-		<PropProvider { ...propContext } value={ value } setValue={ handleChange }>
-			<Grid container gap={ 1.5 }>
-				<Grid item xs={ 12 } display="flex" flexDirection="column">
-					<FormLabel size="tiny" sx={ { pb: 1 } }>
-						{ keyLabel }
+		<PropProvider {...propContext} value={value} setValue={handleChange}>
+			<Grid container gap={1.5}>
+				<Grid item xs={12} display="flex" flexDirection="column">
+					<FormLabel size="tiny" sx={{ pb: 1 }}>
+						{keyLabel}
 					</FormLabel>
-					<PropKeyProvider bind={ 'key' }>
+					<PropKeyProvider bind={'key'}>
 						<TextControl
-							inputValue={ props.escapeHtml ? escapeHtmlAttr( sessionState.key ) : sessionState.key }
-							error={ !! keyError }
-							helperText={ keyHelper }
+							inputValue={props.escapeHtml ? escapeHtmlAttr(sessionState.key) : sessionState.key}
+							error={!!keyError}
+							helperText={keyHelper}
 						/>
 					</PropKeyProvider>
-					{ !! keyError && <FormHelperText error>{ keyError }</FormHelperText> }
+					{!!keyError && <FormHelperText error>{keyError}</FormHelperText>}
 				</Grid>
-				<Grid item xs={ 12 } display="flex" flexDirection="column">
-					<FormLabel size="tiny" sx={ { pb: 1 } }>
-						{ valueLabel }
+				<Grid item xs={12} display="flex" flexDirection="column">
+					<FormLabel size="tiny" sx={{ pb: 1 }}>
+						{valueLabel}
 					</FormLabel>
-					<PropKeyProvider bind={ 'value' }>
+					<PropKeyProvider bind={'value'}>
 						<TextControl
-							inputValue={ props.escapeHtml ? escapeHtmlAttr( sessionState.value ) : sessionState.value }
-							error={ !! valueError }
-							inputDisabled={ !! keyError }
-							helperText={ valueHelper }
+							inputValue={props.escapeHtml ? escapeHtmlAttr(sessionState.value) : sessionState.value}
+							error={!!valueError}
+							inputDisabled={!!keyError}
+							helperText={valueHelper}
 						/>
 					</PropKeyProvider>
-					{ !! valueError && <FormHelperText error>{ valueError }</FormHelperText> }
+					{!!valueError && <FormHelperText error>{valueError}</FormHelperText>}
 				</Grid>
 			</Grid>
 		</PropProvider>
 	);
-} );
+});

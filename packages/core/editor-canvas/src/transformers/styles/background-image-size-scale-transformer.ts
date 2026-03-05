@@ -6,5 +6,5 @@ type BackgroundImageSizeScale = {
 };
 
 export const backgroundImageSizeScaleTransformer = createTransformer(
-	( { width, height }: BackgroundImageSizeScale ) => `${ width ?? 'auto' } ${ height ?? 'auto' }`
+	({ width, height }: BackgroundImageSizeScale) => `${width ?? 'auto'} ${height ?? 'auto'}`
 );

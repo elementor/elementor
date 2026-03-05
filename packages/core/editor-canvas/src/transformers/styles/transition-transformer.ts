@@ -10,46 +10,46 @@ export type TransitionValue = {
 	size: string;
 };
 
-const getAllowedProperties = (): Set< string > => {
-	const allowedProperties = new Set< string >();
+const getAllowedProperties = (): Set<string> => {
+	const allowedProperties = new Set<string>();
 
-	transitionProperties.forEach( ( category ) => {
-		category.properties.forEach( ( property ) => {
-			allowedProperties.add( property.value );
-		} );
-	} );
+	transitionProperties.forEach((category) => {
+		category.properties.forEach((property) => {
+			allowedProperties.add(property.value);
+		});
+	});
 
 	return allowedProperties;
 };
 
-export const transitionTransformer = createTransformer( ( transitionValues: TransitionValue[] ) => {
-	if ( transitionValues?.length < 1 ) {
+export const transitionTransformer = createTransformer((transitionValues: TransitionValue[]) => {
+	if (transitionValues?.length < 1) {
 		return null;
 	}
 
 	const allowedProperties = getAllowedProperties();
 
 	const validTransitions = transitionValues
-		.map( ( value ) => mapToTransitionString( value, allowedProperties ) )
-		.filter( Boolean );
+		.map((value) => mapToTransitionString(value, allowedProperties))
+		.filter(Boolean);
 
-	if ( validTransitions.length === 0 ) {
+	if (validTransitions.length === 0) {
 		return null;
 	}
 
-	return validTransitions.join( ', ' );
-} );
+	return validTransitions.join(', ');
+});
 
-const mapToTransitionString = ( value: TransitionValue, allowedProperties: Set< string > ): string => {
-	if ( ! value.selection || ! value.size ) {
+const mapToTransitionString = (value: TransitionValue, allowedProperties: Set<string>): string => {
+	if (!value.selection || !value.size) {
 		return '';
 	}
 
 	const property = value.selection.value;
 
-	if ( ! allowedProperties.has( property ) ) {
+	if (!allowedProperties.has(property)) {
 		return '';
 	}
 
-	return `${ property } ${ value.size }`;
+	return `${property} ${value.size}`;
 };

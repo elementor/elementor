@@ -5,4 +5,4 @@ type Position = {
 	y?: string;
 };
 
-export const positionTransformer = createTransformer( ( { x, y }: Position ) => `${ x ?? '0px' } ${ y ?? '0px' }` );
+export const positionTransformer = createTransformer(({ x, y }: Position) => `${x ?? '0px'} ${y ?? '0px'}`);

@@ -8,28 +8,28 @@ import { StylesFieldLayout } from '../../styles-field-layout';
 
 type FontStyle = 'normal' | 'italic';
 
-const FONT_STYLE_LABEL = __( 'Font style', 'elementor' );
+const FONT_STYLE_LABEL = __('Font style', 'elementor');
 
-const options: ToggleButtonGroupItem< FontStyle >[] = [
+const options: ToggleButtonGroupItem<FontStyle>[] = [
 	{
 		value: 'normal',
-		label: __( 'Normal', 'elementor' ),
-		renderContent: ( { size } ) => <MinusIcon fontSize={ size } />,
+		label: __('Normal', 'elementor'),
+		renderContent: ({ size }) => <MinusIcon fontSize={size} />,
 		showTooltip: true,
 	},
 	{
 		value: 'italic',
-		label: __( 'Italic', 'elementor' ),
-		renderContent: ( { size } ) => <ItalicIcon fontSize={ size } />,
+		label: __('Italic', 'elementor'),
+		renderContent: ({ size }) => <ItalicIcon fontSize={size} />,
 		showTooltip: true,
 	},
 ];
 
 export const FontStyleField = () => {
 	return (
-		<StylesField bind="font-style" propDisplayName={ FONT_STYLE_LABEL }>
-			<StylesFieldLayout label={ FONT_STYLE_LABEL }>
-				<ToggleControl options={ options } />
+		<StylesField bind="font-style" propDisplayName={FONT_STYLE_LABEL}>
+			<StylesFieldLayout label={FONT_STYLE_LABEL}>
+				<ToggleControl options={options} />
 			</StylesFieldLayout>
 		</StylesField>
 	);

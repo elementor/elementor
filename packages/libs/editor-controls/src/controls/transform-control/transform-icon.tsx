@@ -4,8 +4,8 @@ import { ArrowAutofitHeightIcon, ArrowsMaximizeIcon, RotateClockwise2Icon, SkewX
 
 import { TransformFunctionKeys } from './initial-values';
 
-export const TransformIcon = ( { value }: { value: TransformFunctionsItemPropValue } ) => {
-	switch ( value.$$type ) {
+export const TransformIcon = ({ value }: { value: TransformFunctionsItemPropValue }) => {
+	switch (value.$$type) {
 		case TransformFunctionKeys.move:
 			return <ArrowsMaximizeIcon fontSize="tiny" />;
 		case TransformFunctionKeys.scale:

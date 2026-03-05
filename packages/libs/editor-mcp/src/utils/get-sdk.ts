@@ -4,11 +4,11 @@ let sdk: AngieMcpSdk;
 
 export const getSDK = () => {
 	// @ts-ignore - QUnit fails this
-	const isMCPDisabled = !! ( globalThis as Record< string, unknown > ).__ELEMENTOR_MCP_DISABLED__;
-	if ( isMCPDisabled ) {
+	const isMCPDisabled = !!(globalThis as Record<string, unknown>).__ELEMENTOR_MCP_DISABLED__;
+	if (isMCPDisabled) {
 		return {} as unknown as AngieMcpSdk;
 	}
-	if ( ! sdk ) {
+	if (!sdk) {
 		sdk = new AngieMcpSdk();
 	}
 	return sdk;

@@ -8,26 +8,26 @@ import { type Post } from '../../../../types';
 import PostListItem from '../post-list-item';
 
 const mockMutateAsync = jest.fn();
-jest.mock( '../../../../hooks/use-posts-actions', () => ( {
-	usePostActions: () => ( {
+jest.mock('../../../../hooks/use-posts-actions', () => ({
+	usePostActions: () => ({
 		updatePost: {
 			mutateAsync: mockMutateAsync,
 			isPending: false,
 		},
-	} ),
-} ) );
+	}),
+}));
 
-jest.mock( '@elementor/editor-documents', () => ( {
+jest.mock('@elementor/editor-documents', () => ({
 	__useActiveDocument: jest.fn(),
 	__useNavigateToDocument: jest.fn(),
-} ) );
+}));
 
-describe( '@elementor/editor-site-navigation - PostListItem', () => {
-	afterAll( () => {
+describe('@elementor/editor-site-navigation - PostListItem', () => {
+	afterAll(() => {
 		jest.clearAllMocks();
-	} );
+	});
 
-	it( 'should render a published page', () => {
+	it('should render a published page', () => {
 		// Arrange.
 		const post: Post = {
 			id: 1,
@@ -44,17 +44,17 @@ describe( '@elementor/editor-site-navigation - PostListItem', () => {
 		};
 
 		// Act.
-		renderWithQuery( <PostListItem post={ post } /> );
+		renderWithQuery(<PostListItem post={post} />);
 
 		// Assert.
-		const label = screen.getByText( 'Test Page' );
-		const publishedLabel = screen.queryByText( 'publish', { exact: false } );
+		const label = screen.getByText('Test Page');
+		const publishedLabel = screen.queryByText('publish', { exact: false });
 
-		expect( label ).toBeInTheDocument();
-		expect( publishedLabel ).not.toBeInTheDocument();
-	} );
+		expect(label).toBeInTheDocument();
+		expect(publishedLabel).not.toBeInTheDocument();
+	});
 
-	it( 'should show the page status for non-published pages', () => {
+	it('should show the page status for non-published pages', () => {
 		// Arrange.
 		const post: Post = {
 			id: 1,
@@ -71,14 +71,14 @@ describe( '@elementor/editor-site-navigation - PostListItem', () => {
 		};
 
 		// Act.
-		renderWithQuery( <PostListItem post={ post } /> );
+		renderWithQuery(<PostListItem post={post} />);
 
 		// Assert.
-		const label = screen.getByText( 'draft', { exact: false } );
-		expect( label ).toBeInTheDocument();
-	} );
+		const label = screen.getByText('draft', { exact: false });
+		expect(label).toBeInTheDocument();
+	});
 
-	it( 'should render actions menu', () => {
+	it('should render actions menu', () => {
 		// Arrange.
 		const post: Post = {
 			id: 1,
@@ -94,29 +94,29 @@ describe( '@elementor/editor-site-navigation - PostListItem', () => {
 			},
 		};
 
-		const actions = [ 'View Page', 'Rename', 'Duplicate', 'Delete', 'Set as homepage' ];
+		const actions = ['View Page', 'Rename', 'Duplicate', 'Delete', 'Set as homepage'];
 
 		// Act.
-		renderWithQuery( <PostListItem post={ post } /> );
+		renderWithQuery(<PostListItem post={post} />);
 
-		const buttons = screen.getAllByRole( 'button' );
+		const buttons = screen.getAllByRole('button');
 		// Button to open menu
-		const button = buttons[ 1 ];
+		const button = buttons[1];
 
 		// Open menu
-		fireEvent.click( button );
+		fireEvent.click(button);
 
 		// Assert.
-		actions.forEach( ( action ) => {
-			const label = screen.getByText( action );
-			expect( label ).toBeInTheDocument();
-		} );
-	} );
+		actions.forEach((action) => {
+			const label = screen.getByText(action);
+			expect(label).toBeInTheDocument();
+		});
+	});
 
-	it( 'should navigate to document on click', () => {
+	it('should navigate to document on click', () => {
 		// Arrange.
 		const navigateToDocument = jest.fn();
-		jest.mocked( useNavigateToDocument ).mockReturnValue( navigateToDocument );
+		jest.mocked(useNavigateToDocument).mockReturnValue(navigateToDocument);
 
 		const id = 10;
 
@@ -135,19 +135,19 @@ describe( '@elementor/editor-site-navigation - PostListItem', () => {
 		};
 
 		// Act.
-		renderWithQuery( <PostListItem post={ post } /> );
+		renderWithQuery(<PostListItem post={post} />);
 
-		const buttons = screen.getAllByRole( 'button' );
-		const button = buttons[ 0 ];
+		const buttons = screen.getAllByRole('button');
+		const button = buttons[0];
 
-		fireEvent.click( button );
+		fireEvent.click(button);
 
 		// Assert.
-		expect( navigateToDocument ).toHaveBeenCalledTimes( 1 );
-		expect( navigateToDocument ).toHaveBeenCalledWith( id );
-	} );
+		expect(navigateToDocument).toHaveBeenCalledTimes(1);
+		expect(navigateToDocument).toHaveBeenCalledWith(id);
+	});
 
-	it( 'should put the list item in edit mode, when "Rename" action is clicked', () => {
+	it('should put the list item in edit mode, when "Rename" action is clicked', () => {
 		// Arrange.
 		const post: Post = {
 			id: 10,
@@ -164,45 +164,45 @@ describe( '@elementor/editor-site-navigation - PostListItem', () => {
 		};
 
 		renderWithQuery(
-			<PostListContextProvider type={ 'page' } setError={ () => {} }>
-				<PostListItem post={ post } />
+			<PostListContextProvider type={'page'} setError={() => {}}>
+				<PostListItem post={post} />
 			</PostListContextProvider>
 		);
 
 		// Act #1 - enter edit mode.
-		const buttons = screen.getAllByRole( 'button' );
-		fireEvent.click( buttons[ 1 ] ); // Button to open the actions' menu of the post.
+		const buttons = screen.getAllByRole('button');
+		fireEvent.click(buttons[1]); // Button to open the actions' menu of the post.
 
-		const renameButton = screen.getByRole( 'menuitem', { name: 'Rename' } );
-		fireEvent.click( renameButton );
+		const renameButton = screen.getByRole('menuitem', { name: 'Rename' });
+		fireEvent.click(renameButton);
 
 		// Assert.
-		waitFor( () => {
-			expect( renameButton ).not.toBeInTheDocument();
-		} ).then();
+		waitFor(() => {
+			expect(renameButton).not.toBeInTheDocument();
+		}).then();
 
-		const input = screen.getByRole( 'textbox' );
+		const input = screen.getByRole('textbox');
 
-		expect( input ).toBeInTheDocument();
-		expect( input ).toHaveValue( 'Test Page' );
+		expect(input).toBeInTheDocument();
+		expect(input).toHaveValue('Test Page');
 
 		// Act #2 - rename and reset edit mode.
-		fireEvent.change( input, { target: { value: 'Renamed Title' } } );
-		fireEvent.blur( input );
+		fireEvent.change(input, { target: { value: 'Renamed Title' } });
+		fireEvent.blur(input);
 
 		// Assert.
-		waitFor( () => {
-			expect( input ).toHaveAttribute( 'aria-disabled', 'true' );
-		} ).then();
+		waitFor(() => {
+			expect(input).toHaveAttribute('aria-disabled', 'true');
+		}).then();
 
-		expect( mockMutateAsync ).toHaveBeenCalledTimes( 1 );
+		expect(mockMutateAsync).toHaveBeenCalledTimes(1);
 
-		waitFor( () => {
-			expect( input ).not.toBeInTheDocument();
-		} ).then();
+		waitFor(() => {
+			expect(input).not.toBeInTheDocument();
+		}).then();
 
-		waitFor( () => {
-			expect( screen.getByText( 'Renamed Title' ) ).toBeInTheDocument();
-		} ).then();
-	} );
-} );
+		waitFor(() => {
+			expect(screen.getByText('Renamed Title')).toBeInTheDocument();
+		}).then();
+	});
+});

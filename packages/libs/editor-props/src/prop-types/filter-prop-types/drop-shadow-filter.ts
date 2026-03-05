@@ -5,12 +5,12 @@ import { unknownChildrenSchema } from '../utils';
 
 export const dropShadowFilterPropTypeUtil = createPropUtils(
 	'drop-shadow',
-	z.object( {
+	z.object({
 		xAxis: unknownChildrenSchema,
 		yAxis: unknownChildrenSchema,
 		blur: unknownChildrenSchema,
 		color: unknownChildrenSchema,
-	} )
+	})
 );
 
-export type DropShadowFilterPropValue = z.infer< typeof dropShadowFilterPropTypeUtil.schema >;
+export type DropShadowFilterPropValue = z.infer<typeof dropShadowFilterPropTypeUtil.schema>;

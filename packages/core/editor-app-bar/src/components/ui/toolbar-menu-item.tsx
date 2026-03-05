@@ -6,16 +6,16 @@ type ToolbarMenuItemProps = IconButtonProps & {
 	selected?: boolean;
 };
 
-export default function ToolbarMenuItem( { title, ...props }: ToolbarMenuItemProps ) {
+export default function ToolbarMenuItem({ title, ...props }: ToolbarMenuItemProps) {
 	return (
-		<Tooltip title={ title }>
-			{ /* @see https://mui.com/material-ui/react-tooltip/#disabled-elements */ }
-			<Box component="span" aria-label={ undefined }>
+		<Tooltip title={title}>
+			{/* @see https://mui.com/material-ui/react-tooltip/#disabled-elements */}
+			<Box component="span" aria-label={undefined}>
 				<IconButton
-					{ ...props }
-					aria-label={ title }
+					{...props}
+					aria-label={title}
 					size="medium"
-					sx={ {
+					sx={{
 						'& svg': {
 							fontSize: '1.25rem',
 							height: '1em',
@@ -24,24 +24,24 @@ export default function ToolbarMenuItem( { title, ...props }: ToolbarMenuItemPro
 						'&:hover': {
 							color: 'text.primary',
 						},
-					} }
+					}}
 				/>
 			</Box>
 		</Tooltip>
 	);
 }
 
-function Tooltip( props: TooltipProps ) {
+function Tooltip(props: TooltipProps) {
 	return (
 		<BaseTooltip
-			PopperProps={ {
+			PopperProps={{
 				sx: {
 					'&.MuiTooltip-popper .MuiTooltip-tooltip.MuiTooltip-tooltipPlacementBottom': {
 						mt: 2,
 					},
 				},
-			} }
-			{ ...props }
+			}}
+			{...props}
 		/>
 	);
 }

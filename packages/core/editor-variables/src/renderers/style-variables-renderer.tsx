@@ -16,50 +16,50 @@ export function StyleVariablesRenderer() {
 	const container = usePortalContainer();
 	const styleVariables = useStyleVariables();
 
-	const hasVariables = Object.keys( styleVariables ).length > 0;
+	const hasVariables = Object.keys(styleVariables).length > 0;
 
-	if ( ! container || ! hasVariables ) {
+	if (!container || !hasVariables) {
 		return null;
 	}
 
-	const cssVariables = convertToCssVariables( styleVariables );
-	const wrappedCss = `${ VARIABLES_WRAPPER }{${ cssVariables }}`;
+	const cssVariables = convertToCssVariables(styleVariables);
+	const wrappedCss = `${VARIABLES_WRAPPER}{${cssVariables}}`;
 
 	return (
-		<Portal container={ container }>
-			<style data-e-style-id="e-variables" key={ wrappedCss }>
-				{ wrappedCss }
+		<Portal container={container}>
+			<style data-e-style-id="e-variables" key={wrappedCss}>
+				{wrappedCss}
 			</style>
 		</Portal>
 	);
 }
 
 function usePortalContainer() {
-	return useListenTo( commandEndEvent( 'editor/documents/attach-preview' ), () => getCanvasIframeDocument()?.head );
+	return useListenTo(commandEndEvent('editor/documents/attach-preview'), () => getCanvasIframeDocument()?.head);
 }
 
 function useStyleVariables() {
-	const [ variables, setVariables ] = useState< StyleVariables >( {} );
+	const [variables, setVariables] = useState<StyleVariables>({});
 
-	useEffect( () => {
-		const unsubscribe = styleVariablesRepository.subscribe( setVariables );
+	useEffect(() => {
+		const unsubscribe = styleVariablesRepository.subscribe(setVariables);
 
 		return () => {
 			unsubscribe();
 		};
-	}, [] );
+	}, []);
 
 	return variables;
 }
 
-function cssVariableDeclaration( key: string, variable: Variable ) {
+function cssVariableDeclaration(key: string, variable: Variable) {
 	const variableName = variable?.deleted ? key : variable.label;
 	const value = variable.value;
 
-	return `--${ variableName }:${ value };`;
+	return `--${variableName}:${value};`;
 }
 
-function convertToCssVariables( variables: StyleVariables ): string {
-	const listOfVariables = Object.entries( variables );
-	return listOfVariables.map( ( [ key, variable ] ) => cssVariableDeclaration( key, variable ) ).join( '' );
+function convertToCssVariables(variables: StyleVariables): string {
+	const listOfVariables = Object.entries(variables);
+	return listOfVariables.map(([key, variable]) => cssVariableDeclaration(key, variable)).join('');
 }

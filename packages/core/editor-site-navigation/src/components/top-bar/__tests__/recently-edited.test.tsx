@@ -11,168 +11,168 @@ import useRecentPosts from '../../../hooks/use-recent-posts';
 import { type RecentPost } from '../../../types';
 import RecentlyEdited from '../recently-edited';
 
-jest.mock( '@elementor/editor-documents', () => ( {
+jest.mock('@elementor/editor-documents', () => ({
 	__useActiveDocument: jest.fn(),
 	__useHostDocument: jest.fn(),
 	__useNavigateToDocument: jest.fn(),
-} ) );
+}));
 
-jest.mock( '../../../hooks/use-recent-posts', () => ( {
-	default: jest.fn( () => ( { isLoading: false, data: [] } ) ),
+jest.mock('../../../hooks/use-recent-posts', () => ({
+	default: jest.fn(() => ({ isLoading: false, data: [] })),
 	__esModule: true,
-} ) );
+}));
 
-jest.mock( '../../../hooks/use-user', () => ( {
-	default: jest.fn( () => ( {
+jest.mock('../../../hooks/use-user', () => ({
+	default: jest.fn(() => ({
 		isLoading: false,
 		data: {
 			capabilities: {
 				edit_posts: true,
 			},
 		},
-	} ) ),
+	})),
 	__esModule: true,
-} ) );
+}));
 
-describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
-	it( 'should show the title of the active document without its status when the document is published', async () => {
+describe('@elementor/recently-edited - Top bar Recently Edited', () => {
+	it('should show the title of the active document without its status when the document is published', async () => {
 		// Arrange.
-		jest.mocked( useActiveDocument ).mockReturnValue(
-			createMockDocument( {
+		jest.mocked(useActiveDocument).mockReturnValue(
+			createMockDocument({
 				id: 1,
 				title: 'Active Document',
-			} )
+			})
 		);
 
 		// Act.
-		renderWithTheme( <RecentlyEdited /> );
+		renderWithTheme(<RecentlyEdited />);
 
 		// Assert.
-		expect( screen.getByText( 'Active Document' ) ).toBeInTheDocument();
-		expect( screen.queryByText( '(publish)' ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.getByText('Active Document')).toBeInTheDocument();
+		expect(screen.queryByText('(publish)')).not.toBeInTheDocument();
+	});
 
-	it( 'should show the title of the active document with its status when the document is not published', async () => {
+	it('should show the title of the active document with its status when the document is not published', async () => {
 		// Arrange.
-		jest.mocked( useActiveDocument ).mockReturnValue(
-			createMockDocument( {
+		jest.mocked(useActiveDocument).mockReturnValue(
+			createMockDocument({
 				id: 1,
 				title: 'Active Document',
 				status: {
 					value: 'draft',
 					label: 'Draft',
 				},
-			} )
+			})
 		);
 
 		// Act.
-		renderWithTheme( <RecentlyEdited /> );
+		renderWithTheme(<RecentlyEdited />);
 
 		// Assert.
-		expect( screen.getByText( 'Active Document' ) ).toBeInTheDocument();
-		expect( screen.getByText( '(Draft)' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Active Document')).toBeInTheDocument();
+		expect(screen.getByText('(Draft)')).toBeInTheDocument();
+	});
 
-	it( 'should show the title of the host document when there is no active document', () => {
+	it('should show the title of the host document when there is no active document', () => {
 		// Arrange.
-		jest.mocked( useActiveDocument ).mockReturnValue( null );
+		jest.mocked(useActiveDocument).mockReturnValue(null);
 
-		jest.mocked( useHostDocument ).mockReturnValue(
-			createMockDocument( {
+		jest.mocked(useHostDocument).mockReturnValue(
+			createMockDocument({
 				id: 1,
 				title: 'Host Document',
-			} )
+			})
 		);
 
 		// Act.
-		renderWithTheme( <RecentlyEdited /> );
+		renderWithTheme(<RecentlyEdited />);
 
 		// Assert.
-		expect( screen.getByText( 'Host Document' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Host Document')).toBeInTheDocument();
+	});
 
-	it( 'should show the title of the host document when the active document is kit', () => {
+	it('should show the title of the host document when the active document is kit', () => {
 		// Arrange.
-		jest.mocked( useActiveDocument ).mockReturnValue(
-			createMockDocument( {
+		jest.mocked(useActiveDocument).mockReturnValue(
+			createMockDocument({
 				id: 1,
 				title: 'Active Document',
 				type: {
 					value: 'kit',
 					label: 'Kit',
 				},
-			} )
+			})
 		);
 
-		jest.mocked( useHostDocument ).mockReturnValue(
-			createMockDocument( {
+		jest.mocked(useHostDocument).mockReturnValue(
+			createMockDocument({
 				id: 2,
 				title: 'Host Document',
-			} )
+			})
 		);
 
 		// Act.
-		renderWithTheme( <RecentlyEdited /> );
+		renderWithTheme(<RecentlyEdited />);
 
 		// Assert.
-		expect( screen.getByText( 'Host Document' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Host Document')).toBeInTheDocument();
+	});
 
-	it( 'should show nothing if there are no documents', () => {
+	it('should show nothing if there are no documents', () => {
 		// Arrange.
-		jest.mocked( useActiveDocument ).mockReturnValue( null );
-		jest.mocked( useHostDocument ).mockReturnValue( null );
+		jest.mocked(useActiveDocument).mockReturnValue(null);
+		jest.mocked(useHostDocument).mockReturnValue(null);
 
 		// Act.
-		renderWithTheme( <RecentlyEdited /> );
+		renderWithTheme(<RecentlyEdited />);
 
 		// Assert.
-		expect( screen.queryByText( 'Host Document' ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'Active Document' ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.queryByText('Host Document')).not.toBeInTheDocument();
+		expect(screen.queryByText('Active Document')).not.toBeInTheDocument();
+	});
 
-	it( 'should show empty state', () => {
+	it('should show empty state', () => {
 		// Arrange.
-		jest.mocked( useActiveDocument ).mockReturnValue(
-			createMockDocument( {
+		jest.mocked(useActiveDocument).mockReturnValue(
+			createMockDocument({
 				id: 1,
 				title: 'Header',
 				type: {
 					value: 'header',
 					label: 'Header',
 				},
-			} )
+			})
 		);
 
 		const isLoading = false;
 		const recentPosts: RecentPost[] = [];
 
-		jest.mocked( useRecentPosts ).mockReturnValue( { isLoading, data: recentPosts } as ReturnType<
+		jest.mocked(useRecentPosts).mockReturnValue({ isLoading, data: recentPosts } as ReturnType<
 			typeof useRecentPosts
-		> );
+		>);
 
-		renderWithTheme( <RecentlyEdited /> );
+		renderWithTheme(<RecentlyEdited />);
 
 		// Act.
-		const buttons = screen.getAllByRole( 'button' );
-		fireEvent.click( buttons[ 0 ] ); // Opens the recently edited menu
+		const buttons = screen.getAllByRole('button');
+		fireEvent.click(buttons[0]); // Opens the recently edited menu
 
 		// Assert.
-		const label = screen.getByText( 'There are no other pages or templates on this site yet', { exact: false } );
-		expect( label ).toBeInTheDocument();
-	} );
+		const label = screen.getByText('There are no other pages or templates on this site yet', { exact: false });
+		expect(label).toBeInTheDocument();
+	});
 
-	it( 'should open the recently edited menu on click', () => {
+	it('should open the recently edited menu on click', () => {
 		// Arrange.
-		jest.mocked( useActiveDocument ).mockReturnValue(
-			createMockDocument( {
+		jest.mocked(useActiveDocument).mockReturnValue(
+			createMockDocument({
 				id: 1,
 				title: 'Header',
 				type: {
 					value: 'header',
 					label: 'Header',
 				},
-			} )
+			})
 		);
 
 		const isLoading = false;
@@ -193,37 +193,37 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 			},
 		];
 
-		jest.mocked( useRecentPosts ).mockReturnValue( { isLoading, data: recentPosts } as ReturnType<
+		jest.mocked(useRecentPosts).mockReturnValue({ isLoading, data: recentPosts } as ReturnType<
 			typeof useRecentPosts
-		> );
+		>);
 
-		renderWithTheme( <RecentlyEdited /> );
+		renderWithTheme(<RecentlyEdited />);
 
 		// Act.
-		const buttons = screen.getAllByRole( 'button' );
-		fireEvent.click( buttons[ 0 ] ); // Opens the recently edited menu
+		const buttons = screen.getAllByRole('button');
+		fireEvent.click(buttons[0]); // Opens the recently edited menu
 
 		// Assert.
-		const menu = screen.getByRole( 'menu' );
-		expect( menu ).toBeInTheDocument();
+		const menu = screen.getByRole('menu');
+		expect(menu).toBeInTheDocument();
 
-		const label = screen.getByText( 'Recent' );
-		expect( label ).toBeInTheDocument();
+		const label = screen.getByText('Recent');
+		expect(label).toBeInTheDocument();
 
-		expect( screen.getByText( 'Test post' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Test post')).toBeInTheDocument();
+	});
 
-	it( 'should render titles with HTML entities', () => {
+	it('should render titles with HTML entities', () => {
 		// Arrange.
-		jest.mocked( useActiveDocument ).mockReturnValue(
-			createMockDocument( {
+		jest.mocked(useActiveDocument).mockReturnValue(
+			createMockDocument({
 				id: 1,
 				title: 'Header title with special char &#165;',
 				type: {
 					value: 'header',
 					label: 'Header',
 				},
-			} )
+			})
 		);
 
 		const isLoading = false;
@@ -272,38 +272,38 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 			},
 		];
 
-		jest.mocked( useRecentPosts ).mockReturnValue( { isLoading, data: recentPosts } as ReturnType<
+		jest.mocked(useRecentPosts).mockReturnValue({ isLoading, data: recentPosts } as ReturnType<
 			typeof useRecentPosts
-		> );
+		>);
 
 		// Act.
-		renderWithTheme( <RecentlyEdited /> );
+		renderWithTheme(<RecentlyEdited />);
 
 		// Assert - the document title should be rendered with the HTML entity.
-		expect( screen.getByText( 'Header title with special char ¥' ) ).toBeInTheDocument();
+		expect(screen.getByText('Header title with special char ¥')).toBeInTheDocument();
 
 		// Open the posts list.
-		fireEvent.click( screen.getByRole( 'button' ) );
+		fireEvent.click(screen.getByRole('button'));
 
 		// Assert - the post title should be rendered with the HTML entity.
-		expect( screen.getByText( 'Post title with <h1>HTML</h1>' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Post title with <HTML entities>' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Post title with <h1>HTML</h1>')).toBeInTheDocument();
+		expect(screen.getByText('Post title with <HTML entities>')).toBeInTheDocument();
+	});
 
-	it( 'should navigate to document on click', () => {
+	it('should navigate to document on click', () => {
 		// Arrange.
-		jest.mocked( useActiveDocument ).mockReturnValue(
-			createMockDocument( {
+		jest.mocked(useActiveDocument).mockReturnValue(
+			createMockDocument({
 				id: 1,
 				title: 'Test',
-			} )
+			})
 		);
 
 		const navigateToDocument = jest.fn();
 
-		jest.mocked( useNavigateToDocument ).mockReturnValue( navigateToDocument );
+		jest.mocked(useNavigateToDocument).mockReturnValue(navigateToDocument);
 
-		jest.mocked( useRecentPosts ).mockReturnValue( {
+		jest.mocked(useRecentPosts).mockReturnValue({
 			isLoading: false,
 			data: [
 				{
@@ -321,35 +321,35 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 					},
 				},
 			],
-		} as ReturnType< typeof useRecentPosts > );
+		} as ReturnType<typeof useRecentPosts>);
 
-		renderWithTheme( <RecentlyEdited /> );
+		renderWithTheme(<RecentlyEdited />);
 
 		// Open the posts list.
-		fireEvent.click( screen.getByRole( 'button' ) );
+		fireEvent.click(screen.getByRole('button'));
 
 		// Act.
-		fireEvent.click( screen.getByText( 'Test post' ) );
+		fireEvent.click(screen.getByText('Test post'));
 
 		// Assert.
-		expect( navigateToDocument ).toHaveBeenCalledTimes( 1 );
-		expect( navigateToDocument ).toHaveBeenCalledWith( 123 );
-	} );
+		expect(navigateToDocument).toHaveBeenCalledTimes(1);
+		expect(navigateToDocument).toHaveBeenCalledWith(123);
+	});
 
-	it( 'should be disabled when user cant edit post', () => {
+	it('should be disabled when user cant edit post', () => {
 		// Arrange.
-		jest.mocked( useActiveDocument ).mockReturnValue(
-			createMockDocument( {
+		jest.mocked(useActiveDocument).mockReturnValue(
+			createMockDocument({
 				id: 1,
 				title: 'Test',
-			} )
+			})
 		);
 
 		const navigateToDocument = jest.fn();
 
-		jest.mocked( useNavigateToDocument ).mockReturnValue( navigateToDocument );
+		jest.mocked(useNavigateToDocument).mockReturnValue(navigateToDocument);
 
-		jest.mocked( useRecentPosts ).mockReturnValue( {
+		jest.mocked(useRecentPosts).mockReturnValue({
 			isLoading: false,
 			data: [
 				{
@@ -367,15 +367,15 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 					},
 				},
 			],
-		} as ReturnType< typeof useRecentPosts > );
+		} as ReturnType<typeof useRecentPosts>);
 
-		renderWithTheme( <RecentlyEdited /> );
+		renderWithTheme(<RecentlyEdited />);
 
 		// Open the posts list.
-		fireEvent.click( screen.getByRole( 'button' ) );
+		fireEvent.click(screen.getByRole('button'));
 
 		// Assert.
-		const listItem = screen.getAllByRole( 'menuitem' )[ 0 ];
-		expect( listItem ).toHaveAttribute( 'aria-disabled', 'true' );
-	} );
-} );
+		const listItem = screen.getAllByRole('menuitem')[0];
+		expect(listItem).toHaveAttribute('aria-disabled', 'true');
+	});
+});

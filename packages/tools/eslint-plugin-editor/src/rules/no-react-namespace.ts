@@ -10,7 +10,7 @@ type ReactHookNode = TSESTree.CallExpression & {
 	};
 };
 
-export const noReactNamespace = ESLintUtils.RuleCreator.withoutDocs< Options, MessageIds >( {
+export const noReactNamespace = ESLintUtils.RuleCreator.withoutDocs<Options, MessageIds>({
 	meta: {
 		type: 'layout',
 		docs: {
@@ -24,17 +24,17 @@ export const noReactNamespace = ESLintUtils.RuleCreator.withoutDocs< Options, Me
 
 	defaultOptions: [],
 
-	create( context ) {
+	create(context) {
 		return {
-			'CallExpression[callee.object.name="React"][callee.property.name=/use[A-Z]/]'( node: ReactHookNode ) {
-				context.report( {
+			'CallExpression[callee.object.name="React"][callee.property.name=/use[A-Z]/]'(node: ReactHookNode) {
+				context.report({
 					node,
 					messageId: 'noReactNamespace',
 					data: {
 						hookName: node.callee.property.name,
 					},
-				} );
+				});
 			},
 		};
 	},
-} );
+});

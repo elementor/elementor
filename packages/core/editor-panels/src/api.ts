@@ -10,14 +10,14 @@ import { injectIntoPanels } from './location';
 import { selectOpenId, slice } from './store';
 import { V2_PANEL } from './sync';
 
-export type PanelDeclaration< TOnOpenReturn = unknown > = {
+export type PanelDeclaration<TOnOpenReturn = unknown> = {
 	id: string;
 	component: ComponentType;
 	isOpenPreviousElement?: boolean;
-} & UseActionsOptions< TOnOpenReturn > &
+} & UseActionsOptions<TOnOpenReturn> &
 	UseRouteStatusOptions;
 
-export function createPanel< TOnOpenReturn >( {
+export function createPanel<TOnOpenReturn>({
 	id,
 	component,
 	onOpen,
@@ -25,11 +25,11 @@ export function createPanel< TOnOpenReturn >( {
 	allowedEditModes,
 	blockOnKitRoutes,
 	isOpenPreviousElement = false,
-}: PanelDeclaration< TOnOpenReturn > ) {
-	const usePanelStatus = createUseStatus( id, {
+}: PanelDeclaration<TOnOpenReturn>) {
+	const usePanelStatus = createUseStatus(id, {
 		allowedEditModes,
 		blockOnKitRoutes,
-	} );
+	});
 
 	const usePanelActions = createUseActions(
 		id,
@@ -51,11 +51,11 @@ export function createPanel< TOnOpenReturn >( {
 	};
 }
 
-export function registerPanel( { id, component }: Pick< PanelDeclaration, 'id' | 'component' > ) {
-	injectIntoPanels( {
+export function registerPanel({ id, component }: Pick<PanelDeclaration, 'id' | 'component'>) {
+	injectIntoPanels({
 		id,
 		component,
-	} );
+	});
 }
 
 type UseStatus = () => {
@@ -63,10 +63,10 @@ type UseStatus = () => {
 	isBlocked: boolean;
 };
 
-function createUseStatus( id: PanelDeclaration[ 'id' ], options: UseRouteStatusOptions = {} ): UseStatus {
+function createUseStatus(id: PanelDeclaration['id'], options: UseRouteStatusOptions = {}): UseStatus {
 	return () => {
-		const openPanelId = useSelector( selectOpenId );
-		const v1PanelStatus = useRouteStatus( V2_PANEL, options );
+		const openPanelId = useSelector(selectOpenId);
+		const v1PanelStatus = useRouteStatus(V2_PANEL, options);
 
 		return {
 			isOpen: openPanelId === id && v1PanelStatus.isActive,
@@ -75,15 +75,15 @@ function createUseStatus( id: PanelDeclaration[ 'id' ], options: UseRouteStatusO
 	};
 }
 
-type UseActionsOptions< TOnOpenReturn > = {
+type UseActionsOptions<TOnOpenReturn> = {
 	onOpen?: () => TOnOpenReturn;
-	onClose?: ( state: TOnOpenReturn ) => Promise< void >;
+	onClose?: (state: TOnOpenReturn) => Promise<void>;
 };
 
-function createUseActions< TOnOpenReturn >(
-	id: PanelDeclaration[ 'id' ],
+function createUseActions<TOnOpenReturn>(
+	id: PanelDeclaration['id'],
 	useStatus: UseStatus,
-	options: UseActionsOptions< TOnOpenReturn > = {},
+	options: UseActionsOptions<TOnOpenReturn> = {},
 	isOpenPreviousElement?: boolean
 ) {
 	let stateSnapshot: TOnOpenReturn | null = null;
@@ -95,31 +95,30 @@ function createUseActions< TOnOpenReturn >(
 
 		return {
 			open: async () => {
-				if ( isBlocked ) {
+				if (isBlocked) {
 					return;
 				}
-				if ( isOpenPreviousElement ) {
-					previousSelectedElement =
-						window.elementor?.selection?.getElements?.()[ 0 ]?.model.get( 'id' ) ?? null;
+				if (isOpenPreviousElement) {
+					previousSelectedElement = window.elementor?.selection?.getElements?.()[0]?.model.get('id') ?? null;
 				}
 
-				dispatch( slice.actions.open( id ) );
+				dispatch(slice.actions.open(id));
 
 				stateSnapshot = options.onOpen?.() ?? null;
 			},
 			close: async () => {
-				if ( isBlocked ) {
+				if (isBlocked) {
 					return;
 				}
 
-				dispatch( slice.actions.close( id ) );
+				dispatch(slice.actions.close(id));
 
-				await options.onClose?.( stateSnapshot as TOnOpenReturn );
+				await options.onClose?.(stateSnapshot as TOnOpenReturn);
 
-				if ( previousSelectedElement ) {
+				if (previousSelectedElement) {
 					try {
-						const container = window.elementor?.getContainer?.( previousSelectedElement );
-						runCommand( 'document/elements/select', { container } );
+						const container = window.elementor?.getContainer?.(previousSelectedElement);
+						runCommand('document/elements/select', { container });
 					} catch {}
 					previousSelectedElement = null;
 				}

@@ -14,30 +14,29 @@ const DYNAMIC_PROP_TYPE_KEY = 'dynamic';
 
 export const dynamicPropTypeUtil = createPropUtils(
 	DYNAMIC_PROP_TYPE_KEY,
-	z.strictObject( {
+	z.strictObject({
 		name: z.string(),
 		group: z.string(),
 		settings: z.any().optional(),
-	} )
+	})
 );
 
-export const isDynamicTagSupported = ( tagName: string ) => {
-	return !! getElementorConfig()?.atomicDynamicTags?.tags?.[ tagName ];
+export const isDynamicTagSupported = (tagName: string) => {
+	return !!getElementorConfig()?.atomicDynamicTags?.tags?.[tagName];
 };
 
-const isDynamicPropType = ( prop: TransformablePropType ): prop is DynamicPropType =>
-	prop.key === DYNAMIC_PROP_TYPE_KEY;
+const isDynamicPropType = (prop: TransformablePropType): prop is DynamicPropType => prop.key === DYNAMIC_PROP_TYPE_KEY;
 
-export const getDynamicPropType = ( propType: PropType ): DynamicPropType | null => {
-	const dynamicPropType = propType.kind === 'union' && propType.prop_types[ DYNAMIC_PROP_TYPE_KEY ];
+export const getDynamicPropType = (propType: PropType): DynamicPropType | null => {
+	const dynamicPropType = propType.kind === 'union' && propType.prop_types[DYNAMIC_PROP_TYPE_KEY];
 
-	return dynamicPropType && isDynamicPropType( dynamicPropType ) ? dynamicPropType : null;
+	return dynamicPropType && isDynamicPropType(dynamicPropType) ? dynamicPropType : null;
 };
 
-export const isDynamicPropValue = ( prop: PropValue ): prop is DynamicPropValue => {
-	return isTransformable( prop ) && prop.$$type === DYNAMIC_PROP_TYPE_KEY;
+export const isDynamicPropValue = (prop: PropValue): prop is DynamicPropValue => {
+	return isTransformable(prop) && prop.$$type === DYNAMIC_PROP_TYPE_KEY;
 };
 
-export const supportsDynamic = ( propType: PropType ): boolean => {
-	return !! getDynamicPropType( propType );
+export const supportsDynamic = (propType: PropType): boolean => {
+	return !!getDynamicPropType(propType);
 };

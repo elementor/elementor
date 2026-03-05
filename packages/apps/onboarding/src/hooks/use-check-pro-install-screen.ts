@@ -9,30 +9,30 @@ interface ProInstallScreenResponse {
 }
 
 export function useCheckProInstallScreen() {
-	const checkProInstallScreen = useCallback( async (): Promise< { shouldShowProInstallScreen: boolean } > => {
+	const checkProInstallScreen = useCallback(async (): Promise<{ shouldShowProInstallScreen: boolean }> => {
 		const config = getConfig();
 
-		if ( ! config ) {
+		if (!config) {
 			return { shouldShowProInstallScreen: false };
 		}
 
-		const response = await fetch( `${ config.restUrl }pro-install-screen`, {
+		const response = await fetch(`${config.restUrl}pro-install-screen`, {
 			method: 'GET',
 			headers: {
 				'X-WP-Nonce': config.nonce,
 			},
-		} );
+		});
 
-		if ( ! response.ok ) {
+		if (!response.ok) {
 			return { shouldShowProInstallScreen: false };
 		}
 
-		const json = ( await response.json() ) as ProInstallScreenResponse;
+		const json = (await response.json()) as ProInstallScreenResponse;
 
 		return {
 			shouldShowProInstallScreen: json.data?.shouldShowProInstallScreen ?? false,
 		};
-	}, [] );
+	}, []);
 
 	return checkProInstallScreen;
 }

@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 
 const SIZE = 'tiny';
 
-const IconContainer = styled( Box )`
+const IconContainer = styled(Box)`
 	pointer-events: none;
 	opacity: 0;
 	transition: opacity 0.2s ease-in-out;
@@ -15,16 +15,16 @@ const IconContainer = styled( Box )`
 		position: absolute;
 		top: 50%;
 		left: 50%;
-		transform: translate( -50%, -50% );
+		transform: translate(-50%, -50%);
 		width: 10px;
 		height: 10px;
-		fill: ${ ( { theme } ) => theme.palette.primary.contrastText };
-		stroke: ${ ( { theme } ) => theme.palette.primary.contrastText };
+		fill: ${({ theme }) => theme.palette.primary.contrastText};
+		stroke: ${({ theme }) => theme.palette.primary.contrastText};
 		stroke-width: 2px;
 	}
 `;
 
-const Content = styled( Box )`
+const Content = styled(Box)`
 	position: relative;
 	display: flex;
 	align-items: center;
@@ -32,7 +32,7 @@ const Content = styled( Box )`
 	cursor: pointer;
 	width: 16px;
 	height: 16px;
-	margin-inline: ${ ( { theme } ) => theme.spacing( 0.5 ) };
+	margin-inline: ${({ theme }) => theme.spacing(0.5)};
 
 	&:before {
 		content: '';
@@ -40,11 +40,11 @@ const Content = styled( Box )`
 		position: absolute;
 		top: 50%;
 		left: 50%;
-		transform: translate( -50%, -50% ) rotate( 45deg );
+		transform: translate(-50%, -50%) rotate(45deg);
 		width: 5px;
 		height: 5px;
 		border-radius: 1px;
-		background-color: ${ ( { theme } ) => theme.palette.primary.main };
+		background-color: ${({ theme }) => theme.palette.primary.main};
 		transition: all 0.1s ease-in-out;
 	}
 
@@ -66,18 +66,16 @@ type Props = {
 	isOverridable: boolean;
 	isOpen: boolean;
 };
-export const Indicator = forwardRef< HTMLDivElement, Props >( ( { isOpen, isOverridable, ...props }, ref ) => (
+export const Indicator = forwardRef<HTMLDivElement, Props>(({ isOpen, isOverridable, ...props }, ref) => (
 	<Content
 		role="button"
-		ref={ ref }
-		{ ...props }
-		className={ isOpen || isOverridable ? 'enlarged' : '' }
-		aria-label={
-			isOverridable ? __( 'Overridable property', 'elementor' ) : __( 'Make prop overridable', 'elementor' )
-		}
+		ref={ref}
+		{...props}
+		className={isOpen || isOverridable ? 'enlarged' : ''}
+		aria-label={isOverridable ? __('Overridable property', 'elementor') : __('Make prop overridable', 'elementor')}
 	>
 		<IconContainer className="icon">
-			{ isOverridable ? <CheckIcon fontSize={ SIZE } /> : <PlusIcon fontSize={ SIZE } /> }
+			{isOverridable ? <CheckIcon fontSize={SIZE} /> : <PlusIcon fontSize={SIZE} />}
 		</IconContainer>
 	</Content>
-) );
+));

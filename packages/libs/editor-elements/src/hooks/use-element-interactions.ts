@@ -5,20 +5,20 @@ import { getElementInteractions } from '../sync/get-element-interactions';
 import { type ElementInteractions } from '../sync/types';
 import { type ElementID } from '../types';
 
-export const useElementInteractions = ( elementId: ElementID ) => {
-	const [ interactions, setInteractions ] = useState< ElementInteractions >( () => {
-		const initial = getElementInteractions( elementId );
+export const useElementInteractions = (elementId: ElementID) => {
+	const [interactions, setInteractions] = useState<ElementInteractions>(() => {
+		const initial = getElementInteractions(elementId);
 
 		return initial ?? { version: 1, items: [] };
-	} );
+	});
 
 	useListenTo(
-		windowEvent( 'elementor/element/update_interactions' ),
+		windowEvent('elementor/element/update_interactions'),
 		() => {
-			const newInteractions = getElementInteractions( elementId );
-			setInteractions( newInteractions ?? { version: 1, items: [] } );
+			const newInteractions = getElementInteractions(elementId);
+			setInteractions(newInteractions ?? { version: 1, items: [] });
 		},
-		[ elementId ]
+		[elementId]
 	);
 
 	return interactions;

@@ -3,11 +3,11 @@ import { type ComponentType, type PropsWithChildren } from 'react';
 // Allow passing the `key` prop even when there are no props for the component
 export type AnyProps = object;
 
-export type InjectedComponent< TProps extends object = AnyProps > = ComponentType< TProps >;
+export type InjectedComponent<TProps extends object = AnyProps> = ComponentType<TProps>;
 export type Id = string;
 export type Priority = number;
 
-export type Injection< TProps extends object = AnyProps > = {
+export type Injection<TProps extends object = AnyProps> = {
 	/**
 	 * A unique id (per location) of the injected component.
 	 */
@@ -15,21 +15,21 @@ export type Injection< TProps extends object = AnyProps > = {
 	/**
 	 * The injected component.
 	 */
-	component: InjectedComponent< TProps >;
+	component: InjectedComponent<TProps>;
 	/**
 	 * Priority of the injected component inside the location. Lower value means higher priority.
 	 */
 	priority: Priority;
 };
 
-export type ReplaceableInjection< TProps extends object = AnyProps > = Injection< TProps > & {
+export type ReplaceableInjection<TProps extends object = AnyProps> = Injection<TProps> & {
 	/**
 	 * A function that returns a boolean indicating whether the injection should be applied or not.
 	 */
-	condition?: ( props: TProps ) => boolean;
+	condition?: (props: TProps) => boolean;
 };
 
-export type InjectArgs< TProps extends object = AnyProps > = {
+export type InjectArgs<TProps extends object = AnyProps> = {
 	/**
 	 * A unique id (per location) of the component to be injected.
 	 */
@@ -37,7 +37,7 @@ export type InjectArgs< TProps extends object = AnyProps > = {
 	/**
 	 * The component to be injected.
 	 */
-	component: InjectedComponent< TProps >;
+	component: InjectedComponent<TProps>;
 
 	options?: {
 		/**
@@ -51,14 +51,11 @@ export type InjectArgs< TProps extends object = AnyProps > = {
 	};
 };
 
-export type ReplaceableInjectArgs< TProps extends object = AnyProps > = Pick<
-	InjectArgs< TProps >,
-	'id' | 'component'
-> & {
+export type ReplaceableInjectArgs<TProps extends object = AnyProps> = Pick<InjectArgs<TProps>, 'id' | 'component'> & {
 	/**
 	 * A function that returns a boolean indicating whether the injection should be applied or not.
 	 */
-	condition?: ( props: TProps ) => boolean;
+	condition?: (props: TProps) => boolean;
 
 	options?: {
 		/**
@@ -68,30 +65,30 @@ export type ReplaceableInjectArgs< TProps extends object = AnyProps > = Pick<
 	};
 };
 
-export type Location< TProps extends object = AnyProps > = {
+export type Location<TProps extends object = AnyProps> = {
 	/**
 	 * Inject a component into the location.
 	 */
-	inject: ( args: InjectArgs< TProps > ) => void;
+	inject: (args: InjectArgs<TProps>) => void;
 	/**
 	 *
 	 * @return All the injections in the location.
 	 */
-	getInjections: () => Injection< TProps >[];
-	useInjections: () => Injection< TProps >[];
-	Slot: ComponentType< TProps >;
+	getInjections: () => Injection<TProps>[];
+	useInjections: () => Injection<TProps>[];
+	Slot: ComponentType<TProps>;
 };
 
-export type ReplaceableLocation< TProps extends object = AnyProps > = {
+export type ReplaceableLocation<TProps extends object = AnyProps> = {
 	/**
 	 * Register a component into the location.
 	 */
-	inject: ( args: ReplaceableInjectArgs< TProps > ) => void;
+	inject: (args: ReplaceableInjectArgs<TProps>) => void;
 	/**
 	 *
 	 * @return All the injections in the location.
 	 */
-	getInjections: () => ReplaceableInjection< TProps >[];
-	useInjections: () => ReplaceableInjection< TProps >[];
-	Slot: ComponentType< PropsWithChildren< TProps > >;
+	getInjections: () => ReplaceableInjection<TProps>[];
+	useInjections: () => ReplaceableInjection<TProps>[];
+	Slot: ComponentType<PropsWithChildren<TProps>>;
 };

@@ -7,18 +7,18 @@ import { type Unit } from '../../utils/size-control';
 import { UnitSelect } from './unit-select';
 import { UnstableSizeInput } from './unstable-size-input';
 
-type Props< TValue > = {
+type Props<TValue> = {
 	value: TValue;
 	units: Unit[];
 	defaultUnit?: Unit;
-	onChange: ( value: TValue ) => void;
-	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
+	onChange: (value: TValue) => void;
+	onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
 	disabled?: boolean;
-	InputProps?: TextFieldProps[ 'InputProps' ];
+	InputProps?: TextFieldProps['InputProps'];
 	startIcon?: React.ReactNode;
 };
 
-export const UnstableSizeField = < T extends SizePropValue[ 'value' ] >( {
+export const UnstableSizeField = <T extends SizePropValue['value']>({
 	value,
 	InputProps,
 	onChange,
@@ -26,37 +26,37 @@ export const UnstableSizeField = < T extends SizePropValue[ 'value' ] >( {
 	units,
 	defaultUnit,
 	startIcon,
-}: Props< T > ) => {
-	const { size, unit, setSize, setUnit } = useSizeValue< T >( value, onChange, defaultUnit );
+}: Props<T>) => {
+	const { size, unit, setSize, setUnit } = useSizeValue<T>(value, onChange, defaultUnit);
 
 	const shouldHighlightUnit = () => {
-		return hasValue( size );
+		return hasValue(size);
 	};
 
 	return (
 		<UnstableSizeInput
 			type="number"
-			value={ size ?? '' }
-			onBlur={ onBlur }
-			onChange={ ( event ) => setSize( event.target.value ) }
-			InputProps={ {
+			value={size ?? ''}
+			onBlur={onBlur}
+			onChange={(event) => setSize(event.target.value)}
+			InputProps={{
 				...InputProps,
-				startAdornment: startIcon && <InputAdornment position="start">{ startIcon }</InputAdornment>,
+				startAdornment: startIcon && <InputAdornment position="start">{startIcon}</InputAdornment>,
 				endAdornment: (
 					<InputAdornment position="end">
 						<UnitSelect
-							options={ units }
-							value={ unit }
-							onClick={ setUnit }
-							showPrimaryColor={ shouldHighlightUnit() }
+							options={units}
+							value={unit}
+							onClick={setUnit}
+							showPrimaryColor={shouldHighlightUnit()}
 						/>
 					</InputAdornment>
 				),
-			} }
+			}}
 		/>
 	);
 };
 
-const hasValue = ( value: PropValue ): boolean => {
+const hasValue = (value: PropValue): boolean => {
 	return value !== null && value !== '';
 };

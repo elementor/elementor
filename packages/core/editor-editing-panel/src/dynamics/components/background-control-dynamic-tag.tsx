@@ -16,33 +16,33 @@ import { useDynamicTag } from '../hooks/use-dynamic-tag';
 
 export const BackgroundControlDynamicTagIcon = () => <DatabaseIcon fontSize="tiny" />;
 
-export const BackgroundControlDynamicTagLabel = ( { value }: { value: BackgroundOverlayPropType } ) => {
-	const context = useBoundProp( backgroundImageOverlayPropTypeUtil );
+export const BackgroundControlDynamicTagLabel = ({ value }: { value: BackgroundOverlayPropType }) => {
+	const context = useBoundProp(backgroundImageOverlayPropTypeUtil);
 
 	return (
-		<PropProvider { ...context } value={ value.value }>
+		<PropProvider {...context} value={value.value}>
 			<PropKeyProvider bind="image">
-				<Wrapper rawValue={ value.value } />
+				<Wrapper rawValue={value.value} />
 			</PropKeyProvider>
 		</PropProvider>
 	);
 };
 
-const Wrapper = ( { rawValue }: { rawValue: BackgroundOverlayPropType[ 'value' ] } ) => {
-	const { propType } = useBoundProp< BackgroundOverlayPropType, UnionPropType >();
+const Wrapper = ({ rawValue }: { rawValue: BackgroundOverlayPropType['value'] }) => {
+	const { propType } = useBoundProp<BackgroundOverlayPropType, UnionPropType>();
 
-	const imageOverlayPropType = propType.prop_types[ 'background-image-overlay' ] as ObjectPropType;
+	const imageOverlayPropType = propType.prop_types['background-image-overlay'] as ObjectPropType;
 	return (
-		<PropProvider propType={ imageOverlayPropType.shape.image } value={ rawValue } setValue={ () => void 0 }>
+		<PropProvider propType={imageOverlayPropType.shape.image} value={rawValue} setValue={() => void 0}>
 			<PropKeyProvider bind="src">
-				<Content rawValue={ rawValue.image } />
+				<Content rawValue={rawValue.image} />
 			</PropKeyProvider>
 		</PropProvider>
 	);
 };
 
-const Content = ( { rawValue }: { rawValue: BackgroundOverlayImagePropType } ) => {
+const Content = ({ rawValue }: { rawValue: BackgroundOverlayImagePropType }) => {
 	const src = rawValue.value.src;
-	const dynamicTag = useDynamicTag( src.value.name || '' );
-	return <React.Fragment>{ dynamicTag?.label }</React.Fragment>;
+	const dynamicTag = useDynamicTag(src.value.name || '');
+	return <React.Fragment>{dynamicTag?.label}</React.Fragment>;
 };

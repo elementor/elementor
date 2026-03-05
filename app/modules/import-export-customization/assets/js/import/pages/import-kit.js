@@ -141,7 +141,7 @@ export default function ImportKit() {
 						color="text.secondary"
 						data-testid="import-description"
 					>
-						{ __( 'Upload a file with templates, site settings, content, etc., and apply them to your site ', 'elementor' ) }
+						{ __( 'Upload a file with templates, site settings, content, etc., and apply them to your site', 'elementor' ) }
 						<Link
 							href="#"
 							color="info.light"

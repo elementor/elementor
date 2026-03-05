@@ -12,13 +12,13 @@ import { init as initStylesInheritance } from './styles-inheritance/init';
 import { isAtomicWidgetSelected } from './sync/is-atomic-widget-selected';
 
 export function init() {
-	registerPanel( panel );
+	registerPanel(panel);
 	blockV1Panel();
 
-	injectIntoLogic( {
+	injectIntoLogic({
 		id: 'editing-panel-hooks',
 		component: EditingPanelHooks,
-	} );
+	});
 
 	// TODO: Move it from here once we have dynamic package.
 	initDynamics();
@@ -35,8 +35,8 @@ export function init() {
 }
 
 const blockV1Panel = () => {
-	blockCommand( {
+	blockCommand({
 		command: 'panel/editor/open',
 		condition: isAtomicWidgetSelected,
-	} );
+	});
 };

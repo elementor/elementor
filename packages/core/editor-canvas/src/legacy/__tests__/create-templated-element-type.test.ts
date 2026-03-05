@@ -9,45 +9,45 @@ import {
 const MOCK_ELEMENT_TYPE = 'test-element';
 const MOCK_HTML = '<div>Element</div>';
 
-const createMockRenderer = () => ( {
+const createMockRenderer = () => ({
 	register: jest.fn(),
-	render: jest.fn( () => Promise.resolve( MOCK_HTML ) ),
-} );
+	render: jest.fn(() => Promise.resolve(MOCK_HTML)),
+});
 
-const createMockElementConfig = () => ( {
+const createMockElementConfig = () => ({
 	twig_templates: {},
 	twig_main_template: 'main',
 	atomic_props_schema: {},
 	base_styles_dictionary: {},
-} );
+});
 
-describe( 'createTemplatedElementType', () => {
-	beforeEach( () => {
+describe('createTemplatedElementType', () => {
+	beforeEach(() => {
 		mockLegacyElementor();
-	} );
+	});
 
-	it( 'should return the correct element type', () => {
+	it('should return the correct element type', () => {
 		// Arrange
-		const ElementType = createTemplatedElementType( {
+		const ElementType = createTemplatedElementType({
 			type: MOCK_ELEMENT_TYPE,
 			renderer: createMockRenderer(),
 			element: createMockElementConfig(),
-		} );
+		});
 
 		// Act
 		const typeInstance = new ElementType();
 
 		// Assert
-		expect( typeInstance.getType() ).toBe( MOCK_ELEMENT_TYPE );
-	} );
+		expect(typeInstance.getType()).toBe(MOCK_ELEMENT_TYPE);
+	});
 
-	it( 'should return the same view class for multiple type instances', () => {
+	it('should return the same view class for multiple type instances', () => {
 		// Arrange
-		const ElementType = createTemplatedElementType( {
+		const ElementType = createTemplatedElementType({
 			type: MOCK_ELEMENT_TYPE,
 			renderer: createMockRenderer(),
 			element: createMockElementConfig(),
-		} );
+		});
 
 		// Act
 		const typeInstance1 = new ElementType();
@@ -56,43 +56,43 @@ describe( 'createTemplatedElementType', () => {
 		const viewClass2 = typeInstance2.getView();
 
 		// Assert
-		expect( viewClass1 ).toBe( viewClass2 );
-	} );
-} );
+		expect(viewClass1).toBe(viewClass2);
+	});
+});
 
-describe( 'createTemplatedElementView', () => {
-	beforeEach( () => {
+describe('createTemplatedElementView', () => {
+	beforeEach(() => {
 		mockLegacyElementor();
-	} );
+	});
 
-	describe( 'class structure', () => {
-		it( 'should return twig as template type', () => {
+	describe('class structure', () => {
+		it('should return twig as template type', () => {
 			// Arrange
-			const ViewClass = createTemplatedElementView( {
+			const ViewClass = createTemplatedElementView({
 				type: MOCK_ELEMENT_TYPE,
 				renderer: createMockRenderer(),
 				element: createMockElementConfig(),
-			} );
+			});
 
 			// Assert
-			expect( ViewClass.prototype.getTemplateType() ).toBe( 'twig' );
-		} );
+			expect(ViewClass.prototype.getTemplateType()).toBe('twig');
+		});
 
-		it( 'should return element type as namespace key', () => {
+		it('should return element type as namespace key', () => {
 			// Arrange
-			const ViewClass = createTemplatedElementView( {
+			const ViewClass = createTemplatedElementView({
 				type: MOCK_ELEMENT_TYPE,
 				renderer: createMockRenderer(),
 				element: createMockElementConfig(),
-			} );
+			});
 
 			// Assert
-			expect( ViewClass.prototype.getNamespaceKey() ).toBe( MOCK_ELEMENT_TYPE );
-		} );
-	} );
+			expect(ViewClass.prototype.getNamespaceKey()).toBe(MOCK_ELEMENT_TYPE);
+		});
+	});
 
-	describe( 'template registration', () => {
-		it( 'should register templates with the renderer', () => {
+	describe('template registration', () => {
+		it('should register templates with the renderer', () => {
 			// Arrange
 			const utils = createMockRenderer();
 			const elementConfig = {
@@ -104,33 +104,33 @@ describe( 'createTemplatedElementView', () => {
 			};
 
 			// Act
-			createTemplatedElementView( {
+			createTemplatedElementView({
 				type: MOCK_ELEMENT_TYPE,
 				renderer: utils,
 				element: elementConfig,
-			} );
+			});
 
 			// Assert
-			expect( utils.register ).toHaveBeenCalledTimes( 2 );
-			expect( utils.register ).toHaveBeenCalledWith( 'template1', '<div>Template 1</div>' );
-			expect( utils.register ).toHaveBeenCalledWith( 'template2', '<div>Template 2</div>' );
-		} );
-	} );
-} );
+			expect(utils.register).toHaveBeenCalledTimes(2);
+			expect(utils.register).toHaveBeenCalledWith('template1', '<div>Template 1</div>');
+			expect(utils.register).toHaveBeenCalledWith('template2', '<div>Template 2</div>');
+		});
+	});
+});
 
-describe( 'canBeTemplated', () => {
-	it( 'should return true when all required properties are present', () => {
+describe('canBeTemplated', () => {
+	it('should return true when all required properties are present', () => {
 		// Arrange
 		const element = createMockElementConfig();
 
 		// Act
-		const result = canBeTemplated( element );
+		const result = canBeTemplated(element);
 
 		// Assert
-		expect( result ).toBe( true );
-	} );
+		expect(result).toBe(true);
+	});
 
-	it( 'should return false when atomic_props_schema is missing', () => {
+	it('should return false when atomic_props_schema is missing', () => {
 		// Arrange
 		const element = {
 			twig_templates: {},
@@ -139,13 +139,13 @@ describe( 'canBeTemplated', () => {
 		};
 
 		// Act
-		const result = canBeTemplated( element );
+		const result = canBeTemplated(element);
 
 		// Assert
-		expect( result ).toBe( false );
-	} );
+		expect(result).toBe(false);
+	});
 
-	it( 'should return false when twig_templates is missing', () => {
+	it('should return false when twig_templates is missing', () => {
 		// Arrange
 		const element = {
 			twig_main_template: 'main',
@@ -154,13 +154,13 @@ describe( 'canBeTemplated', () => {
 		};
 
 		// Act
-		const result = canBeTemplated( element );
+		const result = canBeTemplated(element);
 
 		// Assert
-		expect( result ).toBe( false );
-	} );
+		expect(result).toBe(false);
+	});
 
-	it( 'should return false when twig_main_template is missing', () => {
+	it('should return false when twig_main_template is missing', () => {
 		// Arrange
 		const element = {
 			twig_templates: {},
@@ -169,13 +169,13 @@ describe( 'canBeTemplated', () => {
 		};
 
 		// Act
-		const result = canBeTemplated( element );
+		const result = canBeTemplated(element);
 
 		// Assert
-		expect( result ).toBe( false );
-	} );
+		expect(result).toBe(false);
+	});
 
-	it( 'should return false when base_styles_dictionary is missing', () => {
+	it('should return false when base_styles_dictionary is missing', () => {
 		// Arrange
 		const element = {
 			twig_templates: {},
@@ -184,9 +184,9 @@ describe( 'canBeTemplated', () => {
 		};
 
 		// Act
-		const result = canBeTemplated( element );
+		const result = canBeTemplated(element);
 
 		// Assert
-		expect( result ).toBe( false );
-	} );
-} );
+		expect(result).toBe(false);
+	});
+});

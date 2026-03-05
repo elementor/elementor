@@ -10,12 +10,12 @@ type ComponentInstanceData = {
 	overridableProps: OverridableProps;
 };
 
-const ComponentInstanceContext = createContext< ComponentInstanceData | null >( null );
+const ComponentInstanceContext = createContext<ComponentInstanceData | null>(null);
 
-export function ComponentInstanceProvider( { children, ...props }: PropsWithChildren< ComponentInstanceData > ) {
-	return <ComponentInstanceContext.Provider value={ props }>{ children }</ComponentInstanceContext.Provider>;
+export function ComponentInstanceProvider({ children, ...props }: PropsWithChildren<ComponentInstanceData>) {
+	return <ComponentInstanceContext.Provider value={props}>{children}</ComponentInstanceContext.Provider>;
 }
 
-export const useComponentId = () => useContext( ComponentInstanceContext )?.componentId;
-export const useComponentInstanceOverrides = () => useContext( ComponentInstanceContext )?.overrides;
-export const useComponentOverridableProps = () => useContext( ComponentInstanceContext )?.overridableProps;
+export const useComponentId = () => useContext(ComponentInstanceContext)?.componentId;
+export const useComponentInstanceOverrides = () => useContext(ComponentInstanceContext)?.overrides;
+export const useComponentOverridableProps = () => useContext(ComponentInstanceContext)?.overridableProps;

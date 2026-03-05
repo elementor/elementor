@@ -20,47 +20,47 @@ interface FeatureCardProps {
 interface FeatureGridProps {
 	options: FeatureOption[];
 	selectedValues: string[];
-	onFeatureClick: ( id: string ) => void;
+	onFeatureClick: (id: string) => void;
 }
 
-const IncludedInCoreChip = styled( Chip )( ( { theme } ) => ( {
+const IncludedInCoreChip = styled(Chip)(({ theme }) => ({
 	position: 'absolute',
-	insetBlockStart: theme.spacing( 0.75 ),
-	insetInlineStart: theme.spacing( 0.75 ),
-	height: theme.spacing( 2.25 ),
+	insetBlockStart: theme.spacing(0.75),
+	insetInlineStart: theme.spacing(0.75),
+	height: theme.spacing(2.25),
 	'& .MuiChip-label': {
-		fontSize: theme.spacing( 1.5 ),
-		padding: `${ theme.spacing( 0.375 ) } ${ theme.spacing( 1 ) }`,
+		fontSize: theme.spacing(1.5),
+		padding: `${theme.spacing(0.375)} ${theme.spacing(1)}`,
 	},
-} ) );
+}));
 
-const FeatureCard = styled( Box, {
-	shouldForwardProp: ( prop ) => ! [ 'isSelected', 'isCore' ].includes( prop as string ),
-} )< FeatureCardProps >( ( { theme, isSelected, isCore } ) => ( {
+const FeatureCard = styled(Box, {
+	shouldForwardProp: (prop) => !['isSelected', 'isCore'].includes(prop as string),
+})<FeatureCardProps>(({ theme, isSelected, isCore }) => ({
 	position: 'relative',
 	display: 'flex',
 	flexDirection: 'column',
 	alignItems: 'center',
 	justifyContent: 'center',
 	aspectRatio: '1',
-	minHeight: theme.spacing( 12 ),
-	padding: theme.spacing( 2 ),
-	borderRadius: theme.spacing( 1 ),
-	border: isSelected ? `2px solid ${ theme.palette.text.primary }` : `1px solid ${ theme.palette.divider }`,
+	minHeight: theme.spacing(12),
+	padding: theme.spacing(2),
+	borderRadius: theme.spacing(1),
+	border: isSelected ? `2px solid ${theme.palette.text.primary}` : `1px solid ${theme.palette.divider}`,
 	cursor: isCore ? 'default' : 'pointer',
 	transition: 'border-color 0.2s ease, background-color 0.2s ease',
-	...( ! isCore && {
+	...(!isCore && {
 		'&:hover': {
 			backgroundColor: theme.palette.action.hover,
 		},
-	} ),
-} ) );
+	}),
+}));
 
-export function FeatureGrid( { options, selectedValues, onFeatureClick }: FeatureGridProps ) {
+export function FeatureGrid({ options, selectedValues, onFeatureClick }: FeatureGridProps) {
 	const theme = useTheme();
 
-	const handleKeyDown = ( event: React.KeyboardEvent, handler: () => void ) => {
-		if ( [ 'Enter', ' ' ].includes( event.key ) ) {
+	const handleKeyDown = (event: React.KeyboardEvent, handler: () => void) => {
+		if (['Enter', ' '].includes(event.key)) {
 			event.preventDefault();
 			handler();
 		}
@@ -69,7 +69,7 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick }: Featur
 	return (
 		<Box
 			justifyContent="center"
-			sx={ {
+			sx={{
 				display: 'grid',
 				gridTemplateColumns: {
 					xs: 'repeat(auto-fit, minmax(100px, 135px))',
@@ -78,48 +78,48 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick }: Featur
 				},
 				gap: 2,
 				width: '100%',
-			} }
+			}}
 		>
-			{ options.map( ( option ) => {
-				const isSelected = selectedValues.includes( option.id );
+			{options.map((option) => {
+				const isSelected = selectedValues.includes(option.id);
 				const Icon = option.Icon;
 				const BadgeIcon = option.licenseType !== 'core' ? CrownFilledIcon : CheckIcon;
 				const isCore = option.licenseType === 'core';
 
-				const handleClick = () => onFeatureClick( option.id );
+				const handleClick = () => onFeatureClick(option.id);
 
 				const handleKeyDownEvent = isCore
 					? undefined
-					: ( event: React.KeyboardEvent ) => handleKeyDown( event, handleClick );
+					: (event: React.KeyboardEvent) => handleKeyDown(event, handleClick);
 
 				return (
 					<FeatureCard
-						key={ option.id }
-						data-testid={ `feature-card-${ option.id }` }
-						isSelected={ isSelected }
-						isCore={ isCore }
-						onClick={ isCore ? undefined : handleClick }
-						role={ isCore ? undefined : 'button' }
-						tabIndex={ isCore ? undefined : 0 }
-						onKeyDown={ handleKeyDownEvent }
-						aria-pressed={ isCore ? undefined : isSelected }
+						key={option.id}
+						data-testid={`feature-card-${option.id}`}
+						isSelected={isSelected}
+						isCore={isCore}
+						onClick={isCore ? undefined : handleClick}
+						role={isCore ? undefined : 'button'}
+						tabIndex={isCore ? undefined : 0}
+						onKeyDown={handleKeyDownEvent}
+						aria-pressed={isCore ? undefined : isSelected}
 					>
-						{ isCore && <IncludedInCoreChip label={ t( 'steps.site_features.included' ) } size="small" /> }
-						{ isSelected && (
+						{isCore && <IncludedInCoreChip label={t('steps.site_features.included')} size="small" />}
+						{isSelected && (
 							<SelectionBadge
-								icon={ BadgeIcon }
-								variant={ option.licenseType !== 'core' ? 'paid' : 'free' }
+								icon={BadgeIcon}
+								variant={option.licenseType !== 'core' ? 'paid' : 'free'}
 							/>
-						) }
+						)}
 						<Box
 							className="feature-icon"
 							display="flex"
 							alignItems="center"
 							justifyContent="center"
 							color="primary.dark"
-							fontSize={ theme.spacing( 4 ) }
-							height={ theme.spacing( 4 ) }
-							sx={ { mt: 2, mb: 1 } }
+							fontSize={theme.spacing(4)}
+							height={theme.spacing(4)}
+							sx={{ mt: 2, mb: 1 }}
 						>
 							<Icon fontSize="inherit" />
 						</Box>
@@ -129,13 +129,13 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick }: Featur
 							display="flex"
 							alignItems="center"
 							align="center"
-							sx={ { minHeight: theme.spacing( 5 ) } }
+							sx={{ minHeight: theme.spacing(5) }}
 						>
-							{ t( option.labelKey ) }
+							{t(option.labelKey)}
 						</Typography>
 					</FeatureCard>
 				);
-			} ) }
+			})}
 		</Box>
 	);
 }

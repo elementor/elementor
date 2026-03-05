@@ -7,20 +7,14 @@ type ModalFooterProps = {
 	learnMoreUrl: string;
 };
 
-export const ModalFooter = ( { helpText, learnMoreText, learnMoreUrl }: ModalFooterProps ) => {
+export const ModalFooter = ({ helpText, learnMoreText, learnMoreUrl }: ModalFooterProps) => {
 	return (
-		<Stack direction="row" alignItems="center" gap={ 1.5 }>
+		<Stack direction="row" alignItems="center" gap={1.5}>
 			<Typography variant="body2" color="text.secondary">
-				{ helpText }
+				{helpText}
 			</Typography>
-			<Link
-				href={ learnMoreUrl }
-				target="_blank"
-				variant="body2"
-				color="info.main"
-				sx={ { textDecoration: 'none' } }
-			>
-				{ learnMoreText }
+			<Link href={learnMoreUrl} target="_blank" variant="body2" color="info.main" sx={{ textDecoration: 'none' }}>
+				{learnMoreText}
 			</Link>
 		</Stack>
 	);

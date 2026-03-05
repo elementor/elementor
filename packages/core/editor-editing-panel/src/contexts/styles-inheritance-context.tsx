@@ -17,51 +17,51 @@ import { useClassesProp } from './classes-prop-context';
 import { useElement, usePanelElementSetting } from './element-context';
 import { useStyle } from './style-context';
 
-const Context = createContext< StylesInheritanceAPI | null >( null );
+const Context = createContext<StylesInheritanceAPI | null>(null);
 
-export function StyleInheritanceProvider( { children }: PropsWithChildren ) {
+export function StyleInheritanceProvider({ children }: PropsWithChildren) {
 	const styleDefs = useAppliedStyles();
 
 	const breakpointsTree = getBreakpointsTree();
 
-	const { getSnapshot, getInheritanceChain } = createStylesInheritance( styleDefs, breakpointsTree );
+	const { getSnapshot, getInheritanceChain } = createStylesInheritance(styleDefs, breakpointsTree);
 
-	return <Context.Provider value={ { getSnapshot, getInheritanceChain } }>{ children }</Context.Provider>;
+	return <Context.Provider value={{ getSnapshot, getInheritanceChain }}>{children}</Context.Provider>;
 }
 
 export function useStylesInheritanceSnapshot(): StylesInheritanceSnapshot | null {
-	const context = useContext( Context );
+	const context = useContext(Context);
 	const { meta } = useStyle();
 
-	if ( ! context ) {
-		throw new Error( 'useStylesInheritanceSnapshot must be used within a StyleInheritanceProvider' );
+	if (!context) {
+		throw new Error('useStylesInheritanceSnapshot must be used within a StyleInheritanceProvider');
 	}
 
-	if ( ! meta ) {
+	if (!meta) {
 		return null;
 	}
 
-	return context.getSnapshot( meta ) ?? null;
+	return context.getSnapshot(meta) ?? null;
 }
 
-export function useStylesInheritanceChain( path: string[] ): SnapshotPropValue[] {
-	const context = useContext( Context );
+export function useStylesInheritanceChain(path: string[]): SnapshotPropValue[] {
+	const context = useContext(Context);
 
-	if ( ! context ) {
-		throw new Error( 'useStylesInheritanceChain must be used within a StyleInheritanceProvider' );
+	if (!context) {
+		throw new Error('useStylesInheritanceChain must be used within a StyleInheritanceProvider');
 	}
 
 	const schema = getStylesSchema();
 
-	const topLevelPropType = schema?.[ path[ 0 ] ];
+	const topLevelPropType = schema?.[path[0]];
 
 	const snapshot = useStylesInheritanceSnapshot();
 
-	if ( ! snapshot ) {
+	if (!snapshot) {
 		return [];
 	}
 
-	return context.getInheritanceChain( snapshot, path, topLevelPropType );
+	return context.getInheritanceChain(snapshot, path, topLevelPropType);
 }
 
 const useAppliedStyles = () => {
@@ -70,17 +70,17 @@ const useAppliedStyles = () => {
 
 	useStylesRerender();
 
-	const classesProp = usePanelElementSetting< ClassesPropValue >( currentClassesProp );
+	const classesProp = usePanelElementSetting<ClassesPropValue>(currentClassesProp);
 
-	const appliedStyles = classesPropTypeUtil.extract( classesProp ) ?? [];
+	const appliedStyles = classesPropTypeUtil.extract(classesProp) ?? [];
 
-	return stylesRepository.all().filter( ( style ) => [ ...baseStyles, ...appliedStyles ].includes( style.id ) );
+	return stylesRepository.all().filter((style) => [...baseStyles, ...appliedStyles].includes(style.id));
 };
 
 const useBaseStyles = () => {
 	const { elementType } = useElement();
 	const widgetsCache = getWidgetsCache();
-	const widgetCache = widgetsCache?.[ elementType.key ];
+	const widgetCache = widgetsCache?.[elementType.key];
 
-	return Object.keys( widgetCache?.base_styles ?? {} );
+	return Object.keys(widgetCache?.base_styles ?? {});
 };

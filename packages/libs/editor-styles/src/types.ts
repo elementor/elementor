@@ -15,11 +15,11 @@ export type StyleDefinitionPseudoState =
 	| 'checked'
 	| StyleDefinitionAdditionalPseudoState;
 
-export type StyleDefinitionClassState = ClassState[ 'value' ];
+export type StyleDefinitionClassState = ClassState['value'];
 
 export type StyleDefinitionStateType = StyleDefinitionPseudoState | StyleDefinitionClassState;
 
-export type StyleDefinitionState = null | Exclude< StyleDefinitionStateType, StyleDefinitionAdditionalPseudoState >;
+export type StyleDefinitionState = null | Exclude<StyleDefinitionStateType, StyleDefinitionAdditionalPseudoState>;
 
 export type CustomCss = {
 	raw: string;
@@ -46,4 +46,4 @@ export type StyleDefinition = {
 	sync_to_v3?: boolean;
 };
 
-export type StyleDefinitionsMap = Record< StyleDefinition[ 'id' ], StyleDefinition >;
+export type StyleDefinitionsMap = Record<StyleDefinition['id'], StyleDefinition>;

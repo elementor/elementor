@@ -10,7 +10,7 @@ type PopoverHeaderProps = {
 	actions?: React.ReactNode[];
 };
 
-export const PopoverHeader = ( { title, onClose, icon, actions }: PopoverHeaderProps ) => {
+export const PopoverHeader = ({ title, onClose, icon, actions }: PopoverHeaderProps) => {
 	const paddingAndSizing = {
 		pl: 2,
 		pr: 1,
@@ -19,14 +19,14 @@ export const PopoverHeader = ( { title, onClose, icon, actions }: PopoverHeaderP
 	};
 
 	return (
-		<Stack direction="row" alignItems="center" { ...paddingAndSizing } sx={ { columnGap: 0.5 } }>
-			{ icon }
-			<Typography variant="subtitle2" sx={ { fontSize: '12px', mt: 0.25 } }>
-				{ title }
+		<Stack direction="row" alignItems="center" {...paddingAndSizing} sx={{ columnGap: 0.5 }}>
+			{icon}
+			<Typography variant="subtitle2" sx={{ fontSize: '12px', mt: 0.25 }}>
+				{title}
 			</Typography>
-			<Stack direction="row" sx={ { ml: 'auto' } }>
-				{ actions }
-				<CloseButton slotProps={ { icon: { fontSize: SIZE } } } sx={ { ml: 'auto' } } onClick={ onClose } />
+			<Stack direction="row" sx={{ ml: 'auto' }}>
+				{actions}
+				<CloseButton slotProps={{ icon: { fontSize: SIZE } }} sx={{ ml: 'auto' }} onClick={onClose} />
 			</Stack>
 		</Stack>
 	);

@@ -1,30 +1,30 @@
 import { type PropsSchema, type PropType } from '../types';
 import { type JsonSchema7 } from './prop-json-schema';
 
-export function propTypeToJsonSchema( propType: PropType ): JsonSchema7 {
+export function propTypeToJsonSchema(propType: PropType): JsonSchema7 {
 	const description = propType.meta?.description;
 
 	const schema: JsonSchema7 = {};
 
-	if ( description ) {
+	if (description) {
 		schema.description = description;
 	}
 
 	// Add example from initial_value if it exists
-	if ( propType.initial_value !== null && propType.initial_value !== undefined ) {
-		schema.examples = [ propType.initial_value ];
+	if (propType.initial_value !== null && propType.initial_value !== undefined) {
+		schema.examples = [propType.initial_value];
 	}
 
 	// Handle different kinds of prop types
-	switch ( propType.kind ) {
+	switch (propType.kind) {
 		case 'union':
-			return convertUnionPropType( propType, schema );
+			return convertUnionPropType(propType, schema);
 		case 'object':
-			return convertObjectPropType( propType, schema );
+			return convertObjectPropType(propType, schema);
 		case 'array':
-			return convertArrayPropType( propType, schema );
+			return convertArrayPropType(propType, schema);
 		default:
-			return convertPlainPropType( propType, schema );
+			return convertPlainPropType(propType, schema);
 	}
 }
 
@@ -35,13 +35,13 @@ function convertPlainPropType(
 	const schema = { ...baseSchema };
 
 	// This could happen when data is malformed due to a bug, added this as a safeguard.
-	if ( ! Object.hasOwn( propType, 'kind' ) ) {
-		throw new Error( `PropType kind is undefined for propType with key: ${ propType.key ?? '[unknown key]' }` );
+	if (!Object.hasOwn(propType, 'kind')) {
+		throw new Error(`PropType kind is undefined for propType with key: ${propType.key ?? '[unknown key]'}`);
 	}
 
-	const enumValues = ( propType.settings?.enum || [] ) as string[] | number[];
+	const enumValues = (propType.settings?.enum || []) as string[] | number[];
 
-	switch ( propType.kind ) {
+	switch (propType.kind) {
 		case 'string':
 		case 'number':
 		case 'boolean':
@@ -55,10 +55,10 @@ function convertPlainPropType(
 					},
 					value: {
 						type: propType.kind,
-						...( enumValues.length > 0 ? { enum: enumValues } : {} ),
+						...(enumValues.length > 0 ? { enum: enumValues } : {}),
 					},
 				},
-				required: [ '$$type', 'value' ],
+				required: ['$$type', 'value'],
 			};
 		default:
 			return {
@@ -78,34 +78,34 @@ function convertPlainPropType(
  * @param propType   The union prop type to convert
  * @param baseSchema Base schema to extend
  */
-function convertUnionPropType( propType: PropType & { kind: 'union' }, baseSchema: JsonSchema7 ): JsonSchema7 {
-	const schema = structuredClone( baseSchema );
+function convertUnionPropType(propType: PropType & { kind: 'union' }, baseSchema: JsonSchema7): JsonSchema7 {
+	const schema = structuredClone(baseSchema);
 
 	const propTypes = propType.prop_types || {};
 	const schemas: JsonSchema7[] = [];
 
 	// Convert each prop type in the union
-	for ( const [ typeKey, subPropType ] of Object.entries( propTypes ) ) {
-		if ( typeKey === 'dynamic' || typeKey === 'overridable' ) {
+	for (const [typeKey, subPropType] of Object.entries(propTypes)) {
+		if (typeKey === 'dynamic' || typeKey === 'overridable') {
 			continue;
 		}
-		const subSchema = convertPropTypeToJsonSchema( subPropType );
-		schemas.push( subSchema );
+		const subSchema = convertPropTypeToJsonSchema(subPropType);
+		schemas.push(subSchema);
 	}
 
-	if ( schemas.length > 0 ) {
+	if (schemas.length > 0) {
 		schema.anyOf = schemas;
 	}
 
 	const propTypeDescription = propType.meta?.description;
-	if ( propTypeDescription ) {
+	if (propTypeDescription) {
 		schema.description = propTypeDescription;
 	}
 	return schema;
 }
 
-function convertObjectPropType( propType: PropType & { kind: 'object' }, baseSchema: JsonSchema7 ): JsonSchema7 {
-	const schema = structuredClone( baseSchema );
+function convertObjectPropType(propType: PropType & { kind: 'object' }, baseSchema: JsonSchema7): JsonSchema7 {
+	const schema = structuredClone(baseSchema);
 
 	schema.type = 'object';
 	const internalStructure: {
@@ -121,33 +121,33 @@ function convertObjectPropType( propType: PropType & { kind: 'object' }, baseSch
 			},
 			value: {
 				type: 'object',
-				properties: {} as Record< string, JsonSchema7 >,
+				properties: {} as Record<string, JsonSchema7>,
 				additionalProperties: false,
 			},
 		},
 	};
 
-	const required: string[] = [ '$$type', 'value' ];
+	const required: string[] = ['$$type', 'value'];
 	const valueRequired: string[] = [];
 
 	const shape = propType.shape || {};
 
 	// Convert each property in the object shape
-	for ( const [ key, subPropType ] of Object.entries( shape ) ) {
-		const propSchema = propTypeToJsonSchema( subPropType );
+	for (const [key, subPropType] of Object.entries(shape)) {
+		const propSchema = propTypeToJsonSchema(subPropType);
 
 		// Check if this property is required
-		if ( subPropType.settings?.required === true ) {
-			valueRequired.push( key );
+		if (subPropType.settings?.required === true) {
+			valueRequired.push(key);
 		}
 
-		if ( internalStructure.properties.value.properties ) {
-			internalStructure.properties.value.properties[ key ] = propSchema;
+		if (internalStructure.properties.value.properties) {
+			internalStructure.properties.value.properties[key] = propSchema;
 		}
 	}
 
 	schema.required = required;
-	if ( valueRequired.length > 0 ) {
+	if (valueRequired.length > 0) {
 		internalStructure.properties.value.required = valueRequired;
 	}
 
@@ -157,16 +157,16 @@ function convertObjectPropType( propType: PropType & { kind: 'object' }, baseSch
 	};
 }
 
-function convertArrayPropType( propType: PropType & { kind: 'array' }, baseSchema: JsonSchema7 ): JsonSchema7 {
-	const schema = structuredClone( baseSchema );
+function convertArrayPropType(propType: PropType & { kind: 'array' }, baseSchema: JsonSchema7): JsonSchema7 {
+	const schema = structuredClone(baseSchema);
 
 	schema.type = 'object';
 	let items: unknown;
 
 	const itemPropType = propType.item_prop_type;
 
-	if ( itemPropType ) {
-		items = convertPropTypeToJsonSchema( itemPropType );
+	if (itemPropType) {
+		items = convertPropTypeToJsonSchema(itemPropType);
 	}
 
 	schema.properties = {
@@ -176,31 +176,31 @@ function convertArrayPropType( propType: PropType & { kind: 'array' }, baseSchem
 		},
 		value: {
 			type: 'array',
-			...( items ? { items } : {} ),
+			...(items ? { items } : {}),
 		} as JsonSchema7,
 	};
 	return schema;
 }
 
-function convertPropTypeToJsonSchema( propType: PropType ): JsonSchema7 {
-	return propTypeToJsonSchema( propType );
+function convertPropTypeToJsonSchema(propType: PropType): JsonSchema7 {
+	return propTypeToJsonSchema(propType);
 }
 
-export function propsSchemaToJsonSchema( schema: PropsSchema ): JsonSchema7 {
+export function propsSchemaToJsonSchema(schema: PropsSchema): JsonSchema7 {
 	const jsonSchema: JsonSchema7 = {
 		type: 'object',
 		properties: {},
 	};
 
-	for ( const [ key, propType ] of Object.entries( schema ) ) {
+	for (const [key, propType] of Object.entries(schema)) {
 		// Skip internal properties
-		if ( ! isPropKeyConfigurable( key ) ) {
+		if (!isPropKeyConfigurable(key)) {
 			continue;
 		}
 
-		const propSchema = convertPropTypeToJsonSchema( propType );
-		if ( jsonSchema.properties ) {
-			jsonSchema.properties[ key ] = propSchema;
+		const propSchema = convertPropTypeToJsonSchema(propType);
+		if (jsonSchema.properties) {
+			jsonSchema.properties[key] = propSchema;
 		}
 
 		// Handle required fields at root level if needed
@@ -210,40 +210,40 @@ export function propsSchemaToJsonSchema( schema: PropsSchema ): JsonSchema7 {
 	return jsonSchema;
 }
 
-export const nonConfigurablePropKeys = [ '_cssid', 'classes', 'attributes' ] as readonly string[];
+export const nonConfigurablePropKeys = ['_cssid', 'classes', 'attributes'] as readonly string[];
 
-export function isPropKeyConfigurable( propKey: string ): boolean {
-	return ! nonConfigurablePropKeys.includes( propKey );
+export function isPropKeyConfigurable(propKey: string): boolean {
+	return !nonConfigurablePropKeys.includes(propKey);
 }
 
-export function configurableKeys( schema: PropsSchema ): string[] {
-	return Object.keys( schema ).filter( isPropKeyConfigurable );
+export function configurableKeys(schema: PropsSchema): string[] {
+	return Object.keys(schema).filter(isPropKeyConfigurable);
 }
 
 export function enrichWithIntention(
 	jsonSchema: JsonSchema7,
 	text: string = 'Describe the desired outcome'
 ): JsonSchema7 {
-	const result = structuredClone( jsonSchema );
-	if ( ! result.properties ) {
+	const result = structuredClone(jsonSchema);
+	if (!result.properties) {
 		return jsonSchema;
 	}
 	result.properties.$intention = {
 		type: 'string',
 		description: text,
 	};
-	result.required = [ ...( result.required || [] ), '$intention' ];
+	result.required = [...(result.required || []), '$intention'];
 	return result;
 }
 
-export function removeIntention( jsonSchema: JsonSchema7 ): JsonSchema7 {
-	const result = structuredClone( jsonSchema );
-	if ( ! result.properties ) {
+export function removeIntention(jsonSchema: JsonSchema7): JsonSchema7 {
+	const result = structuredClone(jsonSchema);
+	if (!result.properties) {
 		return jsonSchema;
 	}
 	delete result.properties.$intention;
-	if ( result.required ) {
-		result.required = result.required.filter( ( req ) => req !== '$intention' );
+	if (result.required) {
+		result.required = result.required.filter((req) => req !== '$intention');
 	}
 	return result;
 }

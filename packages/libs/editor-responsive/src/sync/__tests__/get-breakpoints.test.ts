@@ -73,8 +73,8 @@ const mockBreakpoints = {
 
 const mockEmptyBreakpoints = {} as V1Breakpoints;
 
-describe( 'getBreakpoints', () => {
-	describe.each( [
+describe('getBreakpoints', () => {
+	describe.each([
 		{
 			type: 'array',
 			getter: getBreakpoints,
@@ -83,7 +83,7 @@ describe( 'getBreakpoints', () => {
 			type: 'tree',
 			getter: getBreakpointsTree,
 		},
-	] as const )( 'Get breakpoints as $type', ( { getter, type } ) => {
+	] as const)('Get breakpoints as $type', ({ getter, type }) => {
 		const items = [
 			{
 				type: 'filled',
@@ -133,7 +133,7 @@ describe( 'getBreakpoints', () => {
 			},
 		] as const;
 
-		it.each( items )( 'should handle with $type breakpoints config', ( { breakpoints, expected } ) => {
+		it.each(items)('should handle with $type breakpoints config', ({ breakpoints, expected }) => {
 			// Arrange.
 			const extendedWindow = window as unknown as ExtendedWindow;
 
@@ -148,7 +148,7 @@ describe( 'getBreakpoints', () => {
 			const breakpointsData = getter();
 
 			// Assert.
-			expect( breakpointsData ).toEqual( expected[ type ] );
-		} );
-	} );
-} );
+			expect(breakpointsData).toEqual(expected[type]);
+		});
+	});
+});

@@ -1,6 +1,6 @@
 import { MenuList, styled } from '@elementor/ui';
 
-export const VariablesStyledMenuList = styled( MenuList )< { disabled?: boolean } >( ( { theme, disabled } ) => ( {
+export const VariablesStyledMenuList = styled(MenuList)<{ disabled?: boolean }>(({ theme, disabled }) => ({
 	'& > li': {
 		height: 32,
 		width: '100%',
@@ -10,13 +10,13 @@ export const VariablesStyledMenuList = styled( MenuList )< { disabled?: boolean 
 	'& > [role="option"]': {
 		...theme.typography.caption,
 		lineHeight: 'inherit',
-		padding: theme.spacing( 0.5, 1, 0.5, 2 ),
-		...( ! disabled && {
+		padding: theme.spacing(0.5, 1, 0.5, 2),
+		...(!disabled && {
 			'&:hover, &:focus': {
 				backgroundColor: theme.palette.action.hover,
 			},
 			cursor: 'pointer',
-		} ),
+		}),
 		'&[aria-selected="true"]': {
 			backgroundColor: theme.palette.action.selected,
 		},
@@ -30,4 +30,4 @@ export const VariablesStyledMenuList = styled( MenuList )< { disabled?: boolean 
 	},
 	width: '100%',
 	position: 'relative',
-} ) );
+}));

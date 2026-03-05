@@ -1,31 +1,31 @@
 import { createError } from '@elementor/utils';
 
-export const ElementNotFoundError = createError< { elementId: string } >( {
+export const ElementNotFoundError = createError<{ elementId: string }>({
 	code: 'element_not_found',
 	message: 'Element not found.',
-} );
+});
 
-export const StyleNotFoundError = createError< { styleId: string } >( {
+export const StyleNotFoundError = createError<{ styleId: string }>({
 	code: 'style_not_found',
 	message: 'Style not found.',
-} );
+});
 
-export const ElementTypeNotExistsError = createError< { elementId: string } >( {
+export const ElementTypeNotExistsError = createError<{ elementId: string }>({
 	code: 'element_type_not_exists',
 	message: 'Element type does not exist.',
-} );
+});
 
-export const ElementLabelNotExistsError = createError< { elementType: string } >( {
+export const ElementLabelNotExistsError = createError<{ elementType: string }>({
 	code: 'element_label_not_exists',
 	message: 'Element label does not exist.',
-} );
+});
 
-export const ElementParentNotFoundError = createError< { elementId: string } >( {
+export const ElementParentNotFoundError = createError<{ elementId: string }>({
 	code: 'element_parent_not_found',
 	message: 'Element parent not found.',
-} );
+});
 
-export const ElementIndexNotFoundError = createError< { elementId: string } >( {
+export const ElementIndexNotFoundError = createError<{ elementId: string }>({
 	code: 'element_index_not_found',
 	message: 'Element index not found.',
-} );
+});

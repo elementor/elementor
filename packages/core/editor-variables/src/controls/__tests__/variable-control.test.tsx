@@ -10,28 +10,28 @@ import { fontVariablePropTypeUtil } from '../../prop-types/font-variable-prop-ty
 import { getVariableType } from '../../variables-registry/variable-type-registry';
 import { VariableControl } from '../variable-control';
 
-jest.mock( '../../hooks/use-prop-variables', () => ( {
+jest.mock('../../hooks/use-prop-variables', () => ({
 	useVariable: jest.fn(),
 	useFilteredVariables: jest.fn(),
-} ) );
+}));
 
-jest.mock( '../../variables-registry/variable-type-registry', () => ( {
+jest.mock('../../variables-registry/variable-type-registry', () => ({
 	getVariableType: jest.fn(),
-} ) );
+}));
 
-const propType = createMockPropType( { kind: 'object' } );
-const mockGetVariableType = jest.mocked( getVariableType );
+const propType = createMockPropType({ kind: 'object' });
+const mockGetVariableType = jest.mocked(getVariableType);
 
-const createMockPropTypeUtil = ( key: string ): PropTypeUtil< string, string > =>
-	( {
+const createMockPropTypeUtil = (key: string): PropTypeUtil<string, string> =>
+	({
 		key,
-		create: jest.fn( ( value: string ) => ( {
+		create: jest.fn((value: string) => ({
 			$$type: key,
 			value,
-		} ) ),
-	} ) as unknown as PropTypeUtil< string, string >;
+		})),
+	}) as unknown as PropTypeUtil<string, string>;
 
-describe( 'VariableControl', () => {
+describe('VariableControl', () => {
 	const originalGetBoundingClientRect = globalThis.Element.prototype.getBoundingClientRect;
 
 	const mockVariable = {
@@ -53,29 +53,29 @@ describe( 'VariableControl', () => {
 		isSourceNotEmpty: true,
 	};
 
-	beforeEach( () => {
-		globalThis.Element.prototype.getBoundingClientRect = jest.fn().mockReturnValue( { height: 1000, width: 1000 } );
+	beforeEach(() => {
+		globalThis.Element.prototype.getBoundingClientRect = jest.fn().mockReturnValue({ height: 1000, width: 1000 });
 
 		jest.clearAllMocks();
 
 		// Setup default mock implementations
-		( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( mockVariable );
-		( usePropVariablesModule.useFilteredVariables as jest.Mock ).mockReturnValue( mockVariables );
+		(usePropVariablesModule.useVariable as jest.Mock).mockReturnValue(mockVariable);
+		(usePropVariablesModule.useFilteredVariables as jest.Mock).mockReturnValue(mockVariables);
 
-		mockGetVariableType.mockReturnValue( {
+		mockGetVariableType.mockReturnValue({
 			icon: TextIcon,
 			valueField: jest.fn(),
 			variableType: 'type-1',
-			propTypeUtil: createMockPropTypeUtil( 'color-variable' ),
-			fallbackPropTypeUtil: createMockPropTypeUtil( 'fallback-prop-type' ),
-		} );
-	} );
+			propTypeUtil: createMockPropTypeUtil('color-variable'),
+			fallbackPropTypeUtil: createMockPropTypeUtil('fallback-prop-type'),
+		});
+	});
 
-	afterEach( () => {
+	afterEach(() => {
 		globalThis.Element.prototype.getBoundingClientRect = originalGetBoundingClientRect;
-	} );
+	});
 
-	it( 'should render with the assigned variable', () => {
+	it('should render with the assigned variable', () => {
 		// Arrange
 		const setValue = jest.fn();
 
@@ -90,14 +90,14 @@ describe( 'VariableControl', () => {
 		};
 
 		// Act
-		renderControl( <VariableControl />, props );
+		renderControl(<VariableControl />, props);
 
 		// Assert
-		expect( usePropVariablesModule.useVariable ).toHaveBeenCalledWith( 'e-gv-123' );
-		expect( screen.getByText( 'primary-background-color' ) ).toBeInTheDocument();
-	} );
+		expect(usePropVariablesModule.useVariable).toHaveBeenCalledWith('e-gv-123');
+		expect(screen.getByText('primary-background-color')).toBeInTheDocument();
+	});
 
-	it( 'should unlink the variable and make style to remain', () => {
+	it('should unlink the variable and make style to remain', () => {
 		// Arrange
 		const setValue = jest.fn();
 		const props = {
@@ -111,19 +111,19 @@ describe( 'VariableControl', () => {
 		};
 
 		// Act
-		renderControl( <VariableControl />, props );
+		renderControl(<VariableControl />, props);
 
-		const unlinkButton = screen.getByLabelText( 'Unlink variable' );
-		fireEvent.click( unlinkButton );
+		const unlinkButton = screen.getByLabelText('Unlink variable');
+		fireEvent.click(unlinkButton);
 
 		// Assert
-		expect( setValue ).toHaveBeenCalledWith( {
+		expect(setValue).toHaveBeenCalledWith({
 			$$type: 'fallback-prop-type',
 			value: '#911f1f',
-		} );
-	} );
+		});
+	});
 
-	it( 'should handle undefined value gracefully', () => {
+	it('should handle undefined value gracefully', () => {
 		// Arrange
 		const setValue = jest.fn();
 		const props = {
@@ -133,16 +133,16 @@ describe( 'VariableControl', () => {
 			propType,
 		};
 
-		( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( undefined );
+		(usePropVariablesModule.useVariable as jest.Mock).mockReturnValue(undefined);
 
 		// Act
-		renderControl( <VariableControl />, props );
+		renderControl(<VariableControl />, props);
 
 		// Assert - Should show missing variable UI when value is undefined
-		expect( screen.getByText( 'Missing variable' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Missing variable')).toBeInTheDocument();
+	});
 
-	it( 'should render with a deleted variable', () => {
+	it('should render with a deleted variable', () => {
 		// Arrange
 		const setValue = jest.fn();
 		const deletedVariable = {
@@ -150,7 +150,7 @@ describe( 'VariableControl', () => {
 			deleted: true,
 		};
 
-		( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( deletedVariable );
+		(usePropVariablesModule.useVariable as jest.Mock).mockReturnValue(deletedVariable);
 
 		const props = {
 			setValue,
@@ -163,13 +163,13 @@ describe( 'VariableControl', () => {
 		};
 
 		// Act
-		renderControl( <VariableControl />, props );
+		renderControl(<VariableControl />, props);
 
 		// Assert
-		expect( screen.getByText( 'primary-background-color (deleted)' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('primary-background-color (deleted)')).toBeInTheDocument();
+	});
 
-	it( 'should render with a missing variable', () => {
+	it('should render with a missing variable', () => {
 		// Arrange
 		const props = {
 			setValue: jest.fn(),
@@ -181,16 +181,16 @@ describe( 'VariableControl', () => {
 			propType,
 		};
 
-		( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( null );
+		(usePropVariablesModule.useVariable as jest.Mock).mockReturnValue(null);
 
 		// Act
-		renderControl( <VariableControl />, props );
+		renderControl(<VariableControl />, props);
 
 		// Assert
-		expect( screen.getByText( 'Missing variable' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Missing variable')).toBeInTheDocument();
+	});
 
-	it( 'should render a variable mismatch, when detected', () => {
+	it('should render a variable mismatch, when detected', () => {
 		// Arrange
 		const props = {
 			setValue: jest.fn(),
@@ -199,39 +199,39 @@ describe( 'VariableControl', () => {
 				value: 'e-gv-font-variable',
 			},
 			bind: 'color',
-			propType: createMockPropType( {
+			propType: createMockPropType({
 				kind: 'union',
 				prop_types: {
-					[ colorPropTypeUtil.key ]: createMockPropType( {
+					[colorPropTypeUtil.key]: createMockPropType({
 						kind: 'plain',
 						key: 'color',
-					} ),
-					[ colorVariablePropTypeUtil.key ]: createMockPropType( {
+					}),
+					[colorVariablePropTypeUtil.key]: createMockPropType({
 						kind: 'plain',
 						key: 'global-color-variable',
-					} ),
+					}),
 				},
-			} ),
+			}),
 		};
 
-		mockGetVariableType.mockReturnValue( {
+		mockGetVariableType.mockReturnValue({
 			icon: TextIcon,
 			valueField: jest.fn(),
 			variableType: 'type-1',
-			propTypeUtil: createMockPropTypeUtil( 'global-color-variable' ),
-			fallbackPropTypeUtil: createMockPropTypeUtil( 'color' ),
+			propTypeUtil: createMockPropTypeUtil('global-color-variable'),
+			fallbackPropTypeUtil: createMockPropTypeUtil('color'),
 			isCompatible: () => false,
-		} );
+		});
 
 		// Act
-		renderControl( <VariableControl />, props );
+		renderControl(<VariableControl />, props);
 
 		// Assert
-		expect( screen.getByText( 'primary-background-color (changed)' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('primary-background-color (changed)')).toBeInTheDocument();
+	});
 
-	describe( 'Variable inheritance', () => {
-		it( 'should inherit placeholder from tablet value when switching to mobile', () => {
+	describe('Variable inheritance', () => {
+		it('should inherit placeholder from tablet value when switching to mobile', () => {
 			// Arrange.
 			const setValue = jest.fn();
 
@@ -242,7 +242,7 @@ describe( 'VariableControl', () => {
 			};
 
 			jest.clearAllMocks();
-			( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( tabletVariable );
+			(usePropVariablesModule.useVariable as jest.Mock).mockReturnValue(tabletVariable);
 
 			const tabletProps = {
 				setValue,
@@ -268,22 +268,22 @@ describe( 'VariableControl', () => {
 			};
 
 			// Act.
-			const { rerender } = renderControl( <VariableControl />, tabletProps );
+			const { rerender } = renderControl(<VariableControl />, tabletProps);
 
-			expect( usePropVariablesModule.useVariable ).toHaveBeenCalledWith( 'e-gv-456' );
-			expect( screen.getByText( 'secondary-color' ) ).toBeInTheDocument();
+			expect(usePropVariablesModule.useVariable).toHaveBeenCalledWith('e-gv-456');
+			expect(screen.getByText('secondary-color')).toBeInTheDocument();
 
-			( usePropVariablesModule.useVariable as jest.Mock ).mockClear();
+			(usePropVariablesModule.useVariable as jest.Mock).mockClear();
 
 			// Act.
-			rerender( <VariableControl />, mobileProps );
+			rerender(<VariableControl />, mobileProps);
 
 			// Assert.
-			expect( usePropVariablesModule.useVariable ).toHaveBeenCalledWith( 'e-gv-456-placeholder' );
-			expect( screen.getByText( 'secondary-color' ) ).toBeInTheDocument();
-		} );
+			expect(usePropVariablesModule.useVariable).toHaveBeenCalledWith('e-gv-456-placeholder');
+			expect(screen.getByText('secondary-color')).toBeInTheDocument();
+		});
 
-		it( 'should prioritize value over placeholder when both are provided', () => {
+		it('should prioritize value over placeholder when both are provided', () => {
 			// Arrange.
 			const setValue = jest.fn();
 
@@ -294,7 +294,7 @@ describe( 'VariableControl', () => {
 			};
 
 			jest.clearAllMocks();
-			( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( mobileVariable );
+			(usePropVariablesModule.useVariable as jest.Mock).mockReturnValue(mobileVariable);
 
 			const props = {
 				setValue,
@@ -313,12 +313,12 @@ describe( 'VariableControl', () => {
 			};
 
 			// Act.
-			renderControl( <VariableControl />, props );
+			renderControl(<VariableControl />, props);
 
 			// Assert.
-			expect( usePropVariablesModule.useVariable ).toHaveBeenCalledWith( 'e-gv-789' );
-			expect( usePropVariablesModule.useVariable ).not.toHaveBeenCalledWith( 'e-gv-123' );
-			expect( screen.getByText( 'mobile-specific-color' ) ).toBeInTheDocument();
-		} );
-	} );
-} );
+			expect(usePropVariablesModule.useVariable).toHaveBeenCalledWith('e-gv-789');
+			expect(usePropVariablesModule.useVariable).not.toHaveBeenCalledWith('e-gv-123');
+			expect(screen.getByText('mobile-specific-color')).toBeInTheDocument();
+		});
+	});
+});

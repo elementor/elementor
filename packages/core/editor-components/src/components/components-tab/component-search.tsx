@@ -9,22 +9,22 @@ export const ComponentSearch = () => {
 	const { inputValue, handleChange } = useSearch();
 
 	return (
-		<Stack direction="row" gap={ 0.5 } sx={ { width: '100%', px: 2, py: 1.5 } }>
-			<Box sx={ { flexGrow: 1 } }>
+		<Stack direction="row" gap={0.5} sx={{ width: '100%', px: 2, py: 1.5 }}>
+			<Box sx={{ flexGrow: 1 }}>
 				<TextField
-					role={ 'search' }
+					role={'search'}
 					fullWidth
-					size={ 'tiny' }
-					value={ inputValue }
-					placeholder={ __( 'Search', 'elementor' ) }
-					onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) => handleChange( e.target.value ) }
-					InputProps={ {
+					size={'tiny'}
+					value={inputValue}
+					placeholder={__('Search', 'elementor')}
+					onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(e.target.value)}
+					InputProps={{
 						startAdornment: (
 							<InputAdornment position="start">
-								<SearchIcon fontSize={ 'tiny' } />
+								<SearchIcon fontSize={'tiny'} />
 							</InputAdornment>
 						),
-					} }
+					}}
 				/>
 			</Box>
 		</Stack>

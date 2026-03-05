@@ -2,21 +2,21 @@ import { useDebounceState, type UseDebounceStateResult } from './use-debounce-st
 
 export type UseSearchStateResult = UseDebounceStateResult;
 
-export function useSearchState( { localStorageKey }: { localStorageKey?: string } ) {
+export function useSearchState({ localStorageKey }: { localStorageKey?: string }) {
 	const getInitialSearchValue = () => {
-		if ( localStorageKey ) {
-			const storedValue = localStorage.getItem( localStorageKey );
-			if ( storedValue ) {
-				localStorage.removeItem( localStorageKey );
+		if (localStorageKey) {
+			const storedValue = localStorage.getItem(localStorageKey);
+			if (storedValue) {
+				localStorage.removeItem(localStorageKey);
 				return storedValue;
 			}
 		}
 		return '';
 	};
-	const { debouncedValue, inputValue, handleChange } = useDebounceState( {
+	const { debouncedValue, inputValue, handleChange } = useDebounceState({
 		delay: 300,
 		initialValue: getInitialSearchValue(),
-	} );
+	});
 	return {
 		debouncedValue,
 		inputValue,

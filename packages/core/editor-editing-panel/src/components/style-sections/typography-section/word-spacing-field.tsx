@@ -6,15 +6,15 @@ import { __ } from '@wordpress/i18n';
 import { StylesField } from '../../../controls-registry/styles-field';
 import { StylesFieldLayout } from '../../styles-field-layout';
 
-const WORD_SPACING_LABEL = __( 'Word spacing', 'elementor' );
+const WORD_SPACING_LABEL = __('Word spacing', 'elementor');
 
 export const WordSpacingField = () => {
-	const rowRef = useRef< HTMLDivElement >( null );
+	const rowRef = useRef<HTMLDivElement>(null);
 
 	return (
-		<StylesField bind="word-spacing" propDisplayName={ WORD_SPACING_LABEL }>
-			<StylesFieldLayout label={ WORD_SPACING_LABEL } ref={ rowRef }>
-				<SizeControl anchorRef={ rowRef } min={ -Number.MAX_SAFE_INTEGER } />
+		<StylesField bind="word-spacing" propDisplayName={WORD_SPACING_LABEL}>
+			<StylesFieldLayout label={WORD_SPACING_LABEL} ref={rowRef}>
+				<SizeControl anchorRef={rowRef} min={-Number.MAX_SAFE_INTEGER} />
 			</StylesFieldLayout>
 		</StylesField>
 	);

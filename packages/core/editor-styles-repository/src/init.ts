@@ -3,6 +3,6 @@ import { elementBaseStylesProvider } from './providers/element-base-styles-provi
 import { stylesRepository } from './styles-repository';
 
 export function init() {
-	stylesRepository.register( documentElementsStylesProvider );
-	stylesRepository.register( elementBaseStylesProvider );
+	stylesRepository.register(documentElementsStylesProvider);
+	stylesRepository.register(elementBaseStylesProvider);
 }

@@ -11,70 +11,68 @@ import { MissingPropTypeError } from './errors';
 import { type SetValue, type SetValueMeta } from './prop-context';
 import { type PropKeyContextValue, usePropKeyContext } from './prop-key-context';
 
-type UseBoundProp< TValue extends PropValue > = {
+type UseBoundProp<TValue extends PropValue> = {
 	bind: PropKey;
-	setValue: SetValue< TValue | null >;
+	setValue: SetValue<TValue | null>;
 	value: TValue;
 	propType: PropType;
 	placeholder?: TValue;
 	path: PropKey[];
 	restoreValue: () => void;
 	resetValue: () => void;
-	isDisabled?: ( propType: PropType ) => boolean | undefined;
+	isDisabled?: (propType: PropType) => boolean | undefined;
 	disabled?: boolean;
 };
 
-type EnhancedPropKeyContextValue< T, P > = PropKeyContextValue< T, P > & {
+type EnhancedPropKeyContextValue<T, P> = PropKeyContextValue<T, P> & {
 	resetValue: () => void;
 };
 
 export function useBoundProp<
 	T extends PropValue = PropValue,
 	P extends PropType = PropType,
->(): EnhancedPropKeyContextValue< T, P >;
+>(): EnhancedPropKeyContextValue<T, P>;
 
-export function useBoundProp< TKey extends string, TValue extends PropValue >(
-	propTypeUtil: PropTypeUtil< TKey, TValue >
-): UseBoundProp< TValue >;
+export function useBoundProp<TKey extends string, TValue extends PropValue>(
+	propTypeUtil: PropTypeUtil<TKey, TValue>
+): UseBoundProp<TValue>;
 
-export function useBoundProp< TKey extends string, TValue extends PropValue >(
-	propTypeUtil?: PropTypeUtil< TKey, TValue >
-) {
+export function useBoundProp<TKey extends string, TValue extends PropValue>(propTypeUtil?: PropTypeUtil<TKey, TValue>) {
 	const propKeyContext = usePropKeyContext();
 
-	const { isValid, validate, restoreValue } = useValidation( propKeyContext.propType );
+	const { isValid, validate, restoreValue } = useValidation(propKeyContext.propType);
 
-	const disabled = propKeyContext.isDisabled?.( propKeyContext.propType );
+	const disabled = propKeyContext.isDisabled?.(propKeyContext.propType);
 
 	const resetValue = () => {
-		propKeyContext.setValue( propKeyContext.propType.initial_value ?? null );
+		propKeyContext.setValue(propKeyContext.propType.initial_value ?? null);
 	};
 
 	// allow using the hook without a propTypeUtil, with no modifications or validations.
-	if ( ! propTypeUtil ) {
+	if (!propTypeUtil) {
 		return {
 			...propKeyContext,
 			disabled,
 			resetValue,
-		} as EnhancedPropKeyContextValue< PropValue, PropType >;
+		} as EnhancedPropKeyContextValue<PropValue, PropType>;
 	}
 
-	function setValue( value: TValue | null, options: CreateOptions, meta?: SetValueMeta ) {
-		if ( ! validate( value, meta?.validation ) ) {
+	function setValue(value: TValue | null, options: CreateOptions, meta?: SetValueMeta) {
+		if (!validate(value, meta?.validation)) {
 			return;
 		}
 
-		if ( value === null ) {
-			return propKeyContext?.setValue( null, options, meta );
+		if (value === null) {
+			return propKeyContext?.setValue(null, options, meta);
 		}
 
-		return propKeyContext?.setValue( propTypeUtil?.create( value, options ), {}, meta );
+		return propKeyContext?.setValue(propTypeUtil?.create(value, options), {}, meta);
 	}
 
-	const propType = resolveUnionPropType( propKeyContext.propType, propTypeUtil.key );
+	const propType = resolveUnionPropType(propKeyContext.propType, propTypeUtil.key);
 
-	const value = propTypeUtil.extract( propKeyContext.value ?? propType.default ?? null );
-	const placeholder = propTypeUtil.extract( propKeyContext.placeholder ?? null );
+	const value = propTypeUtil.extract(propKeyContext.value ?? propType.default ?? null);
+	const placeholder = propTypeUtil.extract(propKeyContext.placeholder ?? null);
 
 	return {
 		...propKeyContext,
@@ -88,28 +86,28 @@ export function useBoundProp< TKey extends string, TValue extends PropValue >(
 	};
 }
 
-const useValidation = ( propType: PropType ) => {
-	const [ isValid, setIsValid ] = useState( true );
+const useValidation = (propType: PropType) => {
+	const [isValid, setIsValid] = useState(true);
 
 	// If the value does not pass the prop type validation, set the isValid state to false.
 	// This will prevent the value from being set in the model, and its fallback will be used instead.
-	const validate = ( value: PropValue | null, validation?: ( value: PropValue ) => boolean ) => {
+	const validate = (value: PropValue | null, validation?: (value: PropValue) => boolean) => {
 		let valid = true;
 
-		if ( propType.settings.required && value === null ) {
+		if (propType.settings.required && value === null) {
 			valid = false;
 		}
 
-		if ( validation && ! validation( value ) ) {
+		if (validation && !validation(value)) {
 			valid = false;
 		}
 
-		setIsValid( valid );
+		setIsValid(valid);
 
 		return valid;
 	};
 
-	const restoreValue = () => setIsValid( true );
+	const restoreValue = () => setIsValid(true);
 
 	return {
 		isValid,
@@ -120,15 +118,15 @@ const useValidation = ( propType: PropType ) => {
 };
 
 // utils
-const resolveUnionPropType = ( propType: PropType, key: string ): PropType => {
+const resolveUnionPropType = (propType: PropType, key: string): PropType => {
 	let resolvedPropType = propType;
 
-	if ( propType.kind === 'union' ) {
-		resolvedPropType = propType.prop_types[ key ];
+	if (propType.kind === 'union') {
+		resolvedPropType = propType.prop_types[key];
 	}
 
-	if ( ! resolvedPropType ) {
-		throw new MissingPropTypeError( { context: { key } } );
+	if (!resolvedPropType) {
+		throw new MissingPropTypeError({ context: { key } });
 	}
 
 	return resolvedPropType;

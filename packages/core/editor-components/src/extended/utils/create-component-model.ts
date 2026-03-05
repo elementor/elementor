@@ -6,7 +6,7 @@ export type ComponentInstanceParams = {
 	uid: string;
 };
 
-export const createComponentModel = ( component: ComponentInstanceParams ): Omit< V1ElementModelProps, 'id' > => {
+export const createComponentModel = (component: ComponentInstanceParams): Omit<V1ElementModelProps, 'id'> => {
 	return {
 		elType: 'widget',
 		widgetType: 'e-component',

@@ -2,17 +2,17 @@ import { z, type ZodType } from '@elementor/schema';
 
 import { type PropValue, type TransformablePropValue } from '../types';
 
-type Updater< T > = ( prev?: T ) => T;
+type Updater<T> = (prev?: T) => T;
 
 export type CreateOptions = {
 	base?: unknown;
 	disabled?: boolean;
 };
 
-const SCHEMA_CACHE = new Map< string, unknown >();
+const SCHEMA_CACHE = new Map<string, unknown>();
 
-export type PropTypeUtil< TKey extends string, TValue extends PropValue > = ReturnType<
-	typeof createPropUtils< TKey, TValue >
+export type PropTypeUtil<TKey extends string, TValue extends PropValue> = ReturnType<
+	typeof createPropUtils<TKey, TValue>
 >;
 
 /**
@@ -30,55 +30,55 @@ export type PropTypeUtil< TKey extends string, TValue extends PropValue > = Retu
  * ```
  */
 
-export function getPropSchemaFromCache( key: string ) {
-	return SCHEMA_CACHE.get( key ) as PropTypeUtil< string, PropValue > | undefined;
+export function getPropSchemaFromCache(key: string) {
+	return SCHEMA_CACHE.get(key) as PropTypeUtil<string, PropValue> | undefined;
 }
 
-export function createPropUtils< TKey extends string, TValue extends PropValue >(
+export function createPropUtils<TKey extends string, TValue extends PropValue>(
 	key: TKey,
-	valueSchema: ZodType< TValue >
+	valueSchema: ZodType<TValue>
 ) {
-	const schema = z.strictObject( {
-		$$type: z.literal( key ),
+	const schema = z.strictObject({
+		$$type: z.literal(key),
 		value: valueSchema,
 		disabled: z.boolean().optional(),
-	} );
+	});
 
-	type Prop = TransformablePropValue< TKey, TValue >;
+	type Prop = TransformablePropValue<TKey, TValue>;
 
-	function isValid( prop: unknown ): prop is Prop {
-		return schema.safeParse( prop ).success;
+	function isValid(prop: unknown): prop is Prop {
+		return schema.safeParse(prop).success;
 	}
 
-	function create( value: TValue ): Prop;
-	function create( value: TValue, createOptions?: CreateOptions ): Prop;
-	function create( value: Updater< TValue >, createOptions: CreateOptions ): Prop;
-	function create( value: TValue | Updater< TValue >, createOptions?: CreateOptions ): Prop {
-		const fn = ( typeof value === 'function' ? value : () => value ) as Updater< TValue >;
+	function create(value: TValue): Prop;
+	function create(value: TValue, createOptions?: CreateOptions): Prop;
+	function create(value: Updater<TValue>, createOptions: CreateOptions): Prop;
+	function create(value: TValue | Updater<TValue>, createOptions?: CreateOptions): Prop {
+		const fn = (typeof value === 'function' ? value : () => value) as Updater<TValue>;
 
 		const { base, disabled } = createOptions || {};
 
-		if ( ! base ) {
+		if (!base) {
 			return {
 				$$type: key,
 				value: fn(),
-				...( disabled && { disabled } ),
+				...(disabled && { disabled }),
 			};
 		}
 
-		if ( ! isValid( base ) ) {
-			throw new Error( `Cannot create prop based on invalid value: ${ JSON.stringify( base ) }` );
+		if (!isValid(base)) {
+			throw new Error(`Cannot create prop based on invalid value: ${JSON.stringify(base)}`);
 		}
 
 		return {
 			$$type: key,
-			value: fn( base.value ),
-			...( disabled && { disabled } ),
+			value: fn(base.value),
+			...(disabled && { disabled }),
 		};
 	}
 
-	function extract( prop: unknown ): TValue | null {
-		if ( ! isValid( prop ) ) {
+	function extract(prop: unknown): TValue | null {
+		if (!isValid(prop)) {
 			return null;
 		}
 
@@ -93,14 +93,14 @@ export function createPropUtils< TKey extends string, TValue extends PropValue >
 		key: key as TKey,
 	};
 
-	SCHEMA_CACHE.set( key, propUtil );
+	SCHEMA_CACHE.set(key, propUtil);
 	return propUtil;
 }
 
-export function createArrayPropUtils< TKey extends string, TValue extends PropValue >(
+export function createArrayPropUtils<TKey extends string, TValue extends PropValue>(
 	key: TKey,
-	valueSchema: ZodType< TValue >,
+	valueSchema: ZodType<TValue>,
 	overrideKey?: string
 ) {
-	return createPropUtils( overrideKey || `${ key }-array`, z.array( valueSchema ) );
+	return createPropUtils(overrideKey || `${key}-array`, z.array(valueSchema));
 }

@@ -10,7 +10,7 @@ type FieldIndicator = {
 	priority: number;
 };
 
-const indicatorsRegistry: Record< FieldType, Map< string, FieldIndicator > > = {
+const indicatorsRegistry: Record<FieldType, Map<string, FieldIndicator>> = {
 	settings: new Map(),
 	styles: new Map(),
 };
@@ -20,18 +20,18 @@ const DEFAULT_PRIORITY = 10;
 export const FIELD_TYPE = {
 	SETTINGS: 'settings',
 	STYLES: 'styles',
-} satisfies Record< string, FieldType >;
+} satisfies Record<string, FieldType>;
 
-export const registerFieldIndicator = ( {
+export const registerFieldIndicator = ({
 	fieldType,
 	id,
 	indicator,
 	priority = DEFAULT_PRIORITY,
-}: FieldIndicator & { fieldType: FieldType } ) => {
-	indicatorsRegistry[ fieldType ].set( id, { id, indicator, priority } );
+}: FieldIndicator & { fieldType: FieldType }) => {
+	indicatorsRegistry[fieldType].set(id, { id, indicator, priority });
 };
 
-export const getFieldIndicators = ( fieldType: FieldType ): { id: string; Adornment: AdornmentComponent }[] =>
-	Array.from( indicatorsRegistry[ fieldType ].values() )
-		.sort( ( a, b ) => a.priority - b.priority )
-		.map( ( { id, indicator: Adornment } ) => ( { id, Adornment } ) );
+export const getFieldIndicators = (fieldType: FieldType): { id: string; Adornment: AdornmentComponent }[] =>
+	Array.from(indicatorsRegistry[fieldType].values())
+		.sort((a, b) => a.priority - b.priority)
+		.map(({ id, indicator: Adornment }) => ({ id, Adornment }));

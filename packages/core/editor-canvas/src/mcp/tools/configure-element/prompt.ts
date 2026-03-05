@@ -3,10 +3,10 @@ import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-sch
 export const configureElementToolPrompt = `Configure an existing element on the page.
 
 # **CRITICAL - REQUIRED INFORMATION (Must read before using this tool)**
-1. [${ WIDGET_SCHEMA_URI }]
+1. [${WIDGET_SCHEMA_URI}]
    Required to understand which widgets are available, and what are their configuration schemas.
    Every widgetType (i.e. e-heading, e-button) that is supported has it's own property schema, that you must follow in order to apply parameter values correctly.
-2. [${ STYLE_SCHEMA_URI }]
+2. [${STYLE_SCHEMA_URI}]
    Required to understand the styles schema for the widgets. All widgets share the same styles schema, grouped by categories.
    Use this resource to understand which style properties are available for each element, and how to structure the "stylePropertiesToChange" parameter.
 3. If not sure about the PropValues schema, you can use the "get-element-configuration-values" tool to retreive the current PropValues configuration of the element.
@@ -62,7 +62,7 @@ Use the EXACT "PROP-TYPE" Schema given, and ALWAYS include the "key" property fr
 \`\`\`json
 {
   propertiesToChange: {
-    // List of properties TO CHANGE, following the PropType schema for the element as defined in the resource [${ WIDGET_SCHEMA_URI }]
+    // List of properties TO CHANGE, following the PropType schema for the element as defined in the resource [${WIDGET_SCHEMA_URI}]
     title: {
       $$type: 'string',
       value: 'New Title Text'

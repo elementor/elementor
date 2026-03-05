@@ -1,5 +1,5 @@
-export const ensureError = ( error: unknown ) => {
-	if ( error instanceof Error ) {
+export const ensureError = (error: unknown) => {
+	if (error instanceof Error) {
 		return error;
 	}
 
@@ -7,10 +7,10 @@ export const ensureError = ( error: unknown ) => {
 	let cause: unknown = null;
 
 	try {
-		message = JSON.stringify( error );
-	} catch ( e ) {
+		message = JSON.stringify(error);
+	} catch (e) {
 		cause = e;
 		message = 'Unable to stringify the thrown value';
 	}
-	return new Error( `Unexpected non-error thrown: ${ message }`, { cause } );
+	return new Error(`Unexpected non-error thrown: ${message}`, { cause });
 };

@@ -5,20 +5,20 @@ import { __ } from '@wordpress/i18n';
 
 import { CollapseIcon } from './collapse-icon';
 
-type StaticItem< T = unknown > = T extends ( ...args: unknown[] ) => unknown ? never : T;
+type StaticItem<T = unknown> = T extends (...args: unknown[]) => unknown ? never : T;
 
-type CallbackItem< T > = ( isOpen: boolean ) => T;
-export type CollapsibleValue< T > = CallbackItem< T > | StaticItem< T >;
+type CallbackItem<T> = (isOpen: boolean) => T;
+export type CollapsibleValue<T> = CallbackItem<T> | StaticItem<T>;
 
-type CollapsibleContentProps = React.PropsWithChildren< {
+type CollapsibleContentProps = React.PropsWithChildren<{
 	defaultOpen?: boolean;
-	titleEnd?: CollapsibleValue< ReactNode | string > | null;
-} >;
+	titleEnd?: CollapsibleValue<ReactNode | string> | null;
+}>;
 
-const IndicatorsWrapper = styled( 'div' )`
+const IndicatorsWrapper = styled('div')`
 	position: absolute;
 	top: 0;
-	right: ${ ( { theme } ) => theme.spacing( 3 ) };
+	right: ${({ theme }) => theme.spacing(3)};
 	height: 100%;
 	display: flex;
 	flex-direction: column;
@@ -26,40 +26,40 @@ const IndicatorsWrapper = styled( 'div' )`
 	justify-content: center;
 `;
 
-export const CollapsibleContent = ( { children, defaultOpen = false, titleEnd = null }: CollapsibleContentProps ) => {
-	const [ open, setOpen ] = useState( defaultOpen );
+export const CollapsibleContent = ({ children, defaultOpen = false, titleEnd = null }: CollapsibleContentProps) => {
+	const [open, setOpen] = useState(defaultOpen);
 
 	const handleToggle = () => {
-		setOpen( ( prevOpen ) => ! prevOpen );
+		setOpen((prevOpen) => !prevOpen);
 	};
 
 	return (
 		<Stack>
-			<Stack sx={ { position: 'relative' } }>
+			<Stack sx={{ position: 'relative' }}>
 				<Button
 					fullWidth
 					size="small"
 					color="secondary"
 					variant="outlined"
-					onClick={ handleToggle }
-					endIcon={ <CollapseIcon open={ open } /> }
-					sx={ { my: 0.5 } }
-					aria-label={ open ? 'Show less' : 'Show more' }
+					onClick={handleToggle}
+					endIcon={<CollapseIcon open={open} />}
+					sx={{ my: 0.5 }}
+					aria-label={open ? 'Show less' : 'Show more'}
 				>
-					{ open ? __( 'Show less', 'elementor' ) : __( 'Show more', 'elementor' ) }
+					{open ? __('Show less', 'elementor') : __('Show more', 'elementor')}
 				</Button>
-				{ titleEnd && <IndicatorsWrapper>{ getCollapsibleValue( titleEnd, open ) }</IndicatorsWrapper> }
+				{titleEnd && <IndicatorsWrapper>{getCollapsibleValue(titleEnd, open)}</IndicatorsWrapper>}
 			</Stack>
-			<Collapse in={ open } timeout="auto" unmountOnExit>
-				{ children }
+			<Collapse in={open} timeout="auto" unmountOnExit>
+				{children}
 			</Collapse>
 		</Stack>
 	);
 };
 
-export function getCollapsibleValue< T >( value: CollapsibleValue< T >, isOpen: boolean ): T {
-	if ( typeof value === 'function' ) {
-		return ( value as CallbackItem< T > )( isOpen );
+export function getCollapsibleValue<T>(value: CollapsibleValue<T>, isOpen: boolean): T {
+	if (typeof value === 'function') {
+		return (value as CallbackItem<T>)(isOpen);
 	}
 
 	return value;

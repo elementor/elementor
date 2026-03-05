@@ -11,7 +11,7 @@ import { DirectionProvider, ThemeProvider } from '@elementor/ui';
 import Shell from './components/shell';
 import { ensureCurrentUser } from './ensure-current-user';
 
-export function start( domElement: Element ): void {
+export function start(domElement: Element): void {
 	const store = __createStore();
 	const queryClient = createQueryClient();
 
@@ -20,9 +20,9 @@ export function start( domElement: Element ): void {
 	dispatchReadyEvent();
 
 	render(
-		<StoreProvider store={ store }>
-			<QueryClientProvider client={ queryClient }>
-				<DirectionProvider rtl={ window.document.dir === 'rtl' }>
+		<StoreProvider store={store}>
+			<QueryClientProvider client={queryClient}>
+				<DirectionProvider rtl={window.document.dir === 'rtl'}>
 					<ThemeProvider>
 						<GlobalDialog />
 						<Shell />
@@ -36,19 +36,19 @@ export function start( domElement: Element ): void {
 
 // Support conditional rendering based on the React version.
 // We use `createRoot` when available, but fallback to `ReactDOM.render` for older versions.
-function render( app: JSX.Element, domElement: Element ) {
+function render(app: JSX.Element, domElement: Element) {
 	let renderFn: () => void;
 
 	try {
-		const root = createRoot( domElement );
+		const root = createRoot(domElement);
 
 		renderFn = () => {
-			root.render( app );
+			root.render(app);
 		};
 	} catch {
 		renderFn = () => {
 			// eslint-disable-next-line react/no-deprecated
-			ReactDOM.render( app, domElement );
+			ReactDOM.render(app, domElement);
 		};
 	}
 

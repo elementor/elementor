@@ -10,23 +10,23 @@ import { filterValidOverridableProps, isExposedPropValid } from '../filter-valid
 import { getContainerByOriginId } from '../get-container-by-origin-id';
 import { getOverridableProp } from '../get-overridable-prop';
 
-jest.mock( '../get-container-by-origin-id', () => ( {
+jest.mock('../get-container-by-origin-id', () => ({
 	getContainerByOriginId: jest.fn(),
-} ) );
+}));
 
-jest.mock( '../get-overridable-prop', () => ( {
+jest.mock('../get-overridable-prop', () => ({
 	getOverridableProp: jest.fn(),
-} ) );
+}));
 
-const mockGetContainerByOriginId = jest.mocked( getContainerByOriginId );
+const mockGetContainerByOriginId = jest.mocked(getContainerByOriginId);
 
 const INNER_COMPONENT_ID = 1111;
 const COMPONENT_INSTANCE_ELEMENT_ID = '61b83e7';
 
-function createDirectProp( overrideKey: string ): OverridableProp {
+function createDirectProp(overrideKey: string): OverridableProp {
 	return {
 		overrideKey,
-		label: `Direct Prop ${ overrideKey }`,
+		label: `Direct Prop ${overrideKey}`,
 		elementId: 'direct-element-id',
 		propKey: 'text',
 		elType: 'widget',
@@ -36,10 +36,10 @@ function createDirectProp( overrideKey: string ): OverridableProp {
 	};
 }
 
-function createExposedProp( overrideKey: string, innerOverrideKey: string ): OverridableProp {
+function createExposedProp(overrideKey: string, innerOverrideKey: string): OverridableProp {
 	return {
 		overrideKey,
-		label: `Exposed Prop ${ overrideKey }`,
+		label: `Exposed Prop ${overrideKey}`,
 		elementId: COMPONENT_INSTANCE_ELEMENT_ID,
 		propKey: 'text',
 		elType: 'widget',
@@ -62,29 +62,29 @@ function createExposedProp( overrideKey: string, innerOverrideKey: string ): Ove
 	};
 }
 
-function createComponentInstanceSetting( overrides: Array< { outerKey: string; innerKey: string } > ) {
-	const overridesValue = overrides.map( ( { outerKey, innerKey } ) =>
-		componentOverridablePropTypeUtil.create( {
+function createComponentInstanceSetting(overrides: Array<{ outerKey: string; innerKey: string }>) {
+	const overridesValue = overrides.map(({ outerKey, innerKey }) =>
+		componentOverridablePropTypeUtil.create({
 			override_key: outerKey,
-			origin_value: componentInstanceOverridePropTypeUtil.create( {
+			origin_value: componentInstanceOverridePropTypeUtil.create({
 				override_key: innerKey,
 				override_value: null,
 				schema_source: { type: 'component', id: INNER_COMPONENT_ID },
-			} ),
-		} )
+			}),
+		})
 	);
 
-	return componentInstancePropTypeUtil.create( {
+	return componentInstancePropTypeUtil.create({
 		component_id: { $$type: 'number', value: INNER_COMPONENT_ID },
-		overrides: componentInstanceOverridesPropTypeUtil.create( overridesValue ),
-	} );
+		overrides: componentInstanceOverridesPropTypeUtil.create(overridesValue),
+	});
 }
 
-function createInnerOverridableProps( propKeys: string[] ): OverridableProps {
-	const props: Record< string, OverridableProp > = {};
+function createInnerOverridableProps(propKeys: string[]): OverridableProps {
+	const props: Record<string, OverridableProp> = {};
 
-	for ( const key of propKeys ) {
-		props[ key ] = createDirectProp( key );
+	for (const key of propKeys) {
+		props[key] = createDirectProp(key);
 	}
 
 	return {
@@ -93,183 +93,183 @@ function createInnerOverridableProps( propKeys: string[] ): OverridableProps {
 			items: {
 				'group-1': { id: 'group-1', label: 'Group 1', props: propKeys },
 			},
-			order: [ 'group-1' ],
+			order: ['group-1'],
 		},
 	};
 }
 
-function mockContainerWithComponentInstance( componentInstanceSetting: PropValue ) {
+function mockContainerWithComponentInstance(componentInstanceSetting: PropValue) {
 	mockGetContainerByOriginId.mockReturnValue(
-		createMockElement( {
+		createMockElement({
 			model: { id: COMPONENT_INSTANCE_ELEMENT_ID, widgetType: 'e-component' },
 			settings: { component_instance: componentInstanceSetting },
-		} )
+		})
 	);
 }
 
-describe( 'filter-valid-overridable-props', () => {
-	beforeEach( () => {
+describe('filter-valid-overridable-props', () => {
+	beforeEach(() => {
 		jest.clearAllMocks();
-	} );
+	});
 
-	describe( 'isExposedPropValid', () => {
-		it( 'should return true for direct props (no originPropFields)', () => {
+	describe('isExposedPropValid', () => {
+		it('should return true for direct props (no originPropFields)', () => {
 			// Arrange
-			const prop = createDirectProp( 'prop-1' );
-			jest.mocked( getOverridableProp ).mockReturnValue( undefined );
+			const prop = createDirectProp('prop-1');
+			jest.mocked(getOverridableProp).mockReturnValue(undefined);
 
 			// Act
-			const result = isExposedPropValid( prop );
+			const result = isExposedPropValid(prop);
 
 			// Assert
-			expect( result ).toBe( true );
-			expect( getOverridableProp ).not.toHaveBeenCalled();
-		} );
+			expect(result).toBe(true);
+			expect(getOverridableProp).not.toHaveBeenCalled();
+		});
 
-		it( 'should return true when inner prop exists', () => {
+		it('should return true when inner prop exists', () => {
 			// Arrange
-			const prop = createExposedProp( 'prop-4', 'prop-0' );
-			const innerOverridableProps = createInnerOverridableProps( [ 'prop-0', 'prop-1' ] );
+			const prop = createExposedProp('prop-4', 'prop-0');
+			const innerOverridableProps = createInnerOverridableProps(['prop-0', 'prop-1']);
 
 			mockContainerWithComponentInstance(
-				createComponentInstanceSetting( [ { outerKey: 'prop-4', innerKey: 'prop-0' } ] )
+				createComponentInstanceSetting([{ outerKey: 'prop-4', innerKey: 'prop-0' }])
 			);
 
-			jest.mocked( getOverridableProp ).mockImplementation( ( { overrideKey } ) => {
-				return innerOverridableProps.props[ overrideKey ];
-			} );
+			jest.mocked(getOverridableProp).mockImplementation(({ overrideKey }) => {
+				return innerOverridableProps.props[overrideKey];
+			});
 
 			// Act
-			const result = isExposedPropValid( prop );
+			const result = isExposedPropValid(prop);
 
 			// Assert
-			expect( result ).toBe( true );
-			expect( getOverridableProp ).toHaveBeenCalledWith( {
+			expect(result).toBe(true);
+			expect(getOverridableProp).toHaveBeenCalledWith({
 				componentId: INNER_COMPONENT_ID,
 				overrideKey: 'prop-0',
-			} );
-		} );
+			});
+		});
 
-		it( 'should return false when inner prop was deleted', () => {
+		it('should return false when inner prop was deleted', () => {
 			// Arrange
-			const prop = createExposedProp( 'prop-4', 'prop-0' );
-			const innerOverridableProps = createInnerOverridableProps( [ 'prop-1' ] );
+			const prop = createExposedProp('prop-4', 'prop-0');
+			const innerOverridableProps = createInnerOverridableProps(['prop-1']);
 
 			mockContainerWithComponentInstance(
-				createComponentInstanceSetting( [ { outerKey: 'prop-4', innerKey: 'prop-0' } ] )
+				createComponentInstanceSetting([{ outerKey: 'prop-4', innerKey: 'prop-0' }])
 			);
 
-			jest.mocked( getOverridableProp ).mockImplementation(
-				( { overrideKey } ) => innerOverridableProps.props[ overrideKey ]
+			jest.mocked(getOverridableProp).mockImplementation(
+				({ overrideKey }) => innerOverridableProps.props[overrideKey]
 			);
 
 			// Act
-			const result = isExposedPropValid( prop );
+			const result = isExposedPropValid(prop);
 
 			// Assert
-			expect( result ).toBe( false );
-		} );
+			expect(result).toBe(false);
+		});
 
-		it( 'should return false when component instance element not found', () => {
+		it('should return false when component instance element not found', () => {
 			// Arrange
-			const prop = createExposedProp( 'prop-4', 'prop-0' );
+			const prop = createExposedProp('prop-4', 'prop-0');
 
-			mockContainerWithComponentInstance( null );
+			mockContainerWithComponentInstance(null);
 
-			jest.mocked( getOverridableProp ).mockReturnValue( undefined );
+			jest.mocked(getOverridableProp).mockReturnValue(undefined);
 
 			// Act
-			const result = isExposedPropValid( prop );
+			const result = isExposedPropValid(prop);
 
 			// Assert
-			expect( result ).toBe( false );
-			expect( getOverridableProp ).not.toHaveBeenCalled();
-		} );
+			expect(result).toBe(false);
+			expect(getOverridableProp).not.toHaveBeenCalled();
+		});
 
-		it( 'should return false when inner component not found in store', () => {
+		it('should return false when inner component not found in store', () => {
 			// Arrange
-			const prop = createExposedProp( 'prop-4', 'prop-0' );
+			const prop = createExposedProp('prop-4', 'prop-0');
 
 			mockContainerWithComponentInstance(
-				createComponentInstanceSetting( [ { outerKey: 'prop-4', innerKey: 'prop-0' } ] )
+				createComponentInstanceSetting([{ outerKey: 'prop-4', innerKey: 'prop-0' }])
 			);
 
-			jest.mocked( getOverridableProp ).mockReturnValue( undefined );
+			jest.mocked(getOverridableProp).mockReturnValue(undefined);
 
 			// Act
-			const result = isExposedPropValid( prop );
+			const result = isExposedPropValid(prop);
 
 			// Assert
-			expect( result ).toBe( false );
-		} );
-	} );
+			expect(result).toBe(false);
+		});
+	});
 
-	describe( 'filterValidOverridableProps', () => {
-		it( 'should keep direct props unchanged', () => {
+	describe('filterValidOverridableProps', () => {
+		it('should keep direct props unchanged', () => {
 			// Arrange
 			const overridableProps: OverridableProps = {
 				props: {
-					'prop-1': createDirectProp( 'prop-1' ),
-					'prop-2': createDirectProp( 'prop-2' ),
+					'prop-1': createDirectProp('prop-1'),
+					'prop-2': createDirectProp('prop-2'),
 				},
 				groups: {
 					items: {
-						'group-1': { id: 'group-1', label: 'Group 1', props: [ 'prop-1', 'prop-2' ] },
+						'group-1': { id: 'group-1', label: 'Group 1', props: ['prop-1', 'prop-2'] },
 					},
-					order: [ 'group-1' ],
+					order: ['group-1'],
 				},
 			};
 
-			jest.mocked( getOverridableProp ).mockImplementation( ( { overrideKey } ) => {
-				return overridableProps.props[ overrideKey ];
-			} );
+			jest.mocked(getOverridableProp).mockImplementation(({ overrideKey }) => {
+				return overridableProps.props[overrideKey];
+			});
 
 			// Act
-			const result = filterValidOverridableProps( overridableProps );
+			const result = filterValidOverridableProps(overridableProps);
 
 			// Assert
-			expect( Object.keys( result.props ) ).toEqual( [ 'prop-1', 'prop-2' ] );
-			expect( result.groups.items[ 'group-1' ].props ).toEqual( [ 'prop-1', 'prop-2' ] );
-		} );
+			expect(Object.keys(result.props)).toEqual(['prop-1', 'prop-2']);
+			expect(result.groups.items['group-1'].props).toEqual(['prop-1', 'prop-2']);
+		});
 
-		it( 'should filter out exposed props with deleted inner props', () => {
+		it('should filter out exposed props with deleted inner props', () => {
 			// Arrange
 			const overridableProps: OverridableProps = {
 				props: {
-					'prop-2': createDirectProp( 'prop-2' ),
-					'prop-4': createExposedProp( 'prop-4', 'prop-0' ),
-					'prop-5': createExposedProp( 'prop-5', 'prop-1' ),
+					'prop-2': createDirectProp('prop-2'),
+					'prop-4': createExposedProp('prop-4', 'prop-0'),
+					'prop-5': createExposedProp('prop-5', 'prop-1'),
 				},
 				groups: {
 					items: {
-						'group-1': { id: 'group-1', label: 'Group 1', props: [ 'prop-2', 'prop-4', 'prop-5' ] },
+						'group-1': { id: 'group-1', label: 'Group 1', props: ['prop-2', 'prop-4', 'prop-5'] },
 					},
-					order: [ 'group-1' ],
+					order: ['group-1'],
 				},
 			};
 
-			const innerOverridableProps = createInnerOverridableProps( [ 'prop-1' ] );
+			const innerOverridableProps = createInnerOverridableProps(['prop-1']);
 
 			mockContainerWithComponentInstance(
-				createComponentInstanceSetting( [
+				createComponentInstanceSetting([
 					{ outerKey: 'prop-4', innerKey: 'prop-0' },
 					{ outerKey: 'prop-5', innerKey: 'prop-1' },
-				] )
+				])
 			);
 
-			jest.mocked( getOverridableProp ).mockImplementation( ( { overrideKey } ) => {
-				return innerOverridableProps.props[ overrideKey ];
-			} );
+			jest.mocked(getOverridableProp).mockImplementation(({ overrideKey }) => {
+				return innerOverridableProps.props[overrideKey];
+			});
 
 			// Act
-			const result = filterValidOverridableProps( overridableProps );
+			const result = filterValidOverridableProps(overridableProps);
 
 			// Assert
-			expect( Object.keys( result.props ) ).toEqual( [ 'prop-2', 'prop-5' ] );
-			expect( result.groups.items[ 'group-1' ].props ).toEqual( [ 'prop-2', 'prop-5' ] );
-		} );
+			expect(Object.keys(result.props)).toEqual(['prop-2', 'prop-5']);
+			expect(result.groups.items['group-1'].props).toEqual(['prop-2', 'prop-5']);
+		});
 
-		it( 'should handle multi-level nesting validation', () => {
+		it('should handle multi-level nesting validation', () => {
 			// Arrange
 			const middleComponentId = 2222;
 			const innerComponentId = 1111;
@@ -308,70 +308,70 @@ describe( 'filter-valid-overridable-props', () => {
 				},
 			};
 
-			const innerProp = createDirectProp( 'prop-0' );
+			const innerProp = createDirectProp('prop-0');
 
 			const overridableProps: OverridableProps = {
 				props: { 'prop-10': outerProp },
 				groups: {
-					items: { 'group-1': { id: 'group-1', label: 'Group 1', props: [ 'prop-10' ] } },
-					order: [ 'group-1' ],
+					items: { 'group-1': { id: 'group-1', label: 'Group 1', props: ['prop-10'] } },
+					order: ['group-1'],
 				},
 			};
 
-			mockGetContainerByOriginId.mockImplementation( ( elementId ) => {
+			mockGetContainerByOriginId.mockImplementation((elementId) => {
 				let settings;
-				if ( elementId === 'outer-component-instance' ) {
-					settings = componentInstancePropTypeUtil.create( {
+				if (elementId === 'outer-component-instance') {
+					settings = componentInstancePropTypeUtil.create({
 						component_id: { $$type: 'number', value: middleComponentId },
-						overrides: componentInstanceOverridesPropTypeUtil.create( [
-							componentOverridablePropTypeUtil.create( {
+						overrides: componentInstanceOverridesPropTypeUtil.create([
+							componentOverridablePropTypeUtil.create({
 								override_key: 'prop-10',
-								origin_value: componentInstanceOverridePropTypeUtil.create( {
+								origin_value: componentInstanceOverridePropTypeUtil.create({
 									override_key: 'prop-4',
 									override_value: null,
 									schema_source: { type: 'component', id: middleComponentId },
-								} ),
-							} ),
-						] ),
-					} );
+								}),
+							}),
+						]),
+					});
 				}
-				if ( elementId === 'middle-component-instance' ) {
-					settings = componentInstancePropTypeUtil.create( {
+				if (elementId === 'middle-component-instance') {
+					settings = componentInstancePropTypeUtil.create({
 						component_id: { $$type: 'number', value: innerComponentId },
-						overrides: componentInstanceOverridesPropTypeUtil.create( [
-							componentOverridablePropTypeUtil.create( {
+						overrides: componentInstanceOverridesPropTypeUtil.create([
+							componentOverridablePropTypeUtil.create({
 								override_key: 'prop-4',
-								origin_value: componentInstanceOverridePropTypeUtil.create( {
+								origin_value: componentInstanceOverridePropTypeUtil.create({
 									override_key: 'prop-0',
 									override_value: null,
 									schema_source: { type: 'component', id: innerComponentId },
-								} ),
-							} ),
-						] ),
-					} );
+								}),
+							}),
+						]),
+					});
 				}
-				return createMockElement( {
+				return createMockElement({
 					model: { id: elementId, widgetType: 'e-component' },
 					settings: { component_instance: settings },
-				} );
-			} );
+				});
+			});
 
-			jest.mocked( getOverridableProp ).mockImplementation( ( { componentId, overrideKey } ) => {
-				if ( componentId === middleComponentId && overrideKey === 'prop-4' ) {
+			jest.mocked(getOverridableProp).mockImplementation(({ componentId, overrideKey }) => {
+				if (componentId === middleComponentId && overrideKey === 'prop-4') {
 					return middleProp;
 				}
-				if ( componentId === innerComponentId && overrideKey === 'prop-0' ) {
+				if (componentId === innerComponentId && overrideKey === 'prop-0') {
 					return innerProp;
 				}
 
 				return undefined;
-			} );
+			});
 
 			// Act
-			const result = filterValidOverridableProps( overridableProps );
+			const result = filterValidOverridableProps(overridableProps);
 
 			// Assert
-			expect( Object.keys( result.props ) ).toEqual( [ 'prop-10' ] );
-		} );
-	} );
-} );
+			expect(Object.keys(result.props)).toEqual(['prop-10']);
+		});
+	});
+});

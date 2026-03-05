@@ -6,11 +6,11 @@ import { TransformFunctionKeys } from '../types';
 
 export const rotateTransformPropTypeUtil = createPropUtils(
 	TransformFunctionKeys.rotate,
-	z.strictObject( {
+	z.strictObject({
 		x: unknownChildrenSchema,
 		y: unknownChildrenSchema,
 		z: unknownChildrenSchema,
-	} )
+	})
 );
 
-export type RotateTransformPropValue = z.infer< typeof rotateTransformPropTypeUtil.schema >;
+export type RotateTransformPropValue = z.infer<typeof rotateTransformPropTypeUtil.schema>;

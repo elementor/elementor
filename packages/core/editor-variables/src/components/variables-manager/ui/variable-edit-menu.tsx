@@ -5,9 +5,9 @@ import { bindMenu, bindTrigger, IconButton, Menu, MenuItem, type SvgIconProps, u
 
 export type VariableManagerMenuAction = {
 	name: string;
-	icon: React.ForwardRefExoticComponent< Omit< SvgIconProps, 'ref' > & React.RefAttributes< SVGSVGElement > >;
+	icon: React.ForwardRefExoticComponent<Omit<SvgIconProps, 'ref'> & React.RefAttributes<SVGSVGElement>>;
 	color: string;
-	onClick: ( id: string ) => void;
+	onClick: (id: string) => void;
 };
 
 type VariableEditMenuProps = {
@@ -16,68 +16,68 @@ type VariableEditMenuProps = {
 	itemId: string;
 };
 
-export const VariableEditMenu = ( { menuActions, disabled, itemId }: VariableEditMenuProps ) => {
-	const menuState = usePopupState( {
+export const VariableEditMenu = ({ menuActions, disabled, itemId }: VariableEditMenuProps) => {
+	const menuState = usePopupState({
 		variant: 'popover',
-	} );
+	});
 
-	const triggerProps = bindTrigger( menuState );
+	const triggerProps = bindTrigger(menuState);
 
 	return (
 		<>
 			<IconButton
-				{ ...triggerProps }
-				disabled={ disabled }
+				{...triggerProps}
+				disabled={disabled}
 				size="tiny"
-				onClick={ ( e: MouseEvent ) => {
+				onClick={(e: MouseEvent) => {
 					e.stopPropagation();
-					triggerProps.onClick?.( e );
-				} }
+					triggerProps.onClick?.(e);
+				}}
 			>
 				<DotsVerticalIcon fontSize="tiny" />
 			</IconButton>
 
 			<Menu
 				disablePortal
-				MenuListProps={ {
+				MenuListProps={{
 					dense: true,
-				} }
-				PaperProps={ {
+				}}
+				PaperProps={{
 					elevation: 6,
-				} }
-				{ ...bindMenu( menuState ) }
-				anchorEl={ menuState.anchorEl }
-				anchorOrigin={ {
+				}}
+				{...bindMenu(menuState)}
+				anchorEl={menuState.anchorEl}
+				anchorOrigin={{
 					vertical: 'bottom',
 					horizontal: 'right',
-				} }
-				transformOrigin={ {
+				}}
+				transformOrigin={{
 					vertical: 'top',
 					horizontal: 'right',
-				} }
-				open={ menuState.isOpen }
-				onClose={ menuState.close }
+				}}
+				open={menuState.isOpen}
+				onClose={menuState.close}
 			>
-				{ menuActions.map( ( action ) => (
+				{menuActions.map((action) => (
 					<MenuItem
-						key={ action.name }
-						onClick={ ( e: MouseEvent ) => {
+						key={action.name}
+						onClick={(e: MouseEvent) => {
 							e.stopPropagation();
-							action.onClick?.( itemId );
+							action.onClick?.(itemId);
 							menuState.close();
-						} }
-						sx={ {
+						}}
+						sx={{
 							color: action.color,
 							gap: 1,
-						} }
+						}}
 					>
-						{ action.icon &&
-							createElement( action.icon, {
+						{action.icon &&
+							createElement(action.icon, {
 								fontSize: 'inherit',
-							} ) }{ ' ' }
-						{ action.name }
+							})}{' '}
+						{action.name}
 					</MenuItem>
-				) ) }
+				))}
 			</Menu>
 		</>
 	);

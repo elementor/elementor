@@ -9,12 +9,12 @@ import { SearchProvider } from './search-provider';
 
 const ComponentsContent = () => {
 	const { components, isLoading } = useComponents();
-	const hasComponents = ! isLoading && components.length > 0;
+	const hasComponents = !isLoading && components.length > 0;
 
 	return (
 		<>
-			{ hasComponents && <ComponentSearch /> }
-			{ hasComponents && <ComponentsProNotification /> }
+			{hasComponents && <ComponentSearch />}
+			{hasComponents && <ComponentsProNotification />}
 			<ComponentsList />
 		</>
 	);

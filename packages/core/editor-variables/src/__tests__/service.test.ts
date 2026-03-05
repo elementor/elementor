@@ -5,7 +5,7 @@ import { service } from '../service';
 import { type TVariable } from '../storage';
 
 // Mock the API client
-jest.mock( '../api' );
+jest.mock('../api');
 
 // Mock sessionStorage
 const mockLocalStorage = {
@@ -15,21 +15,21 @@ const mockLocalStorage = {
 	clear: jest.fn(),
 };
 
-Object.defineProperty( window, 'localStorage', {
+Object.defineProperty(window, 'localStorage', {
 	value: mockLocalStorage,
-} );
+});
 
-describe( 'service', () => {
-	beforeEach( () => {
+describe('service', () => {
+	beforeEach(() => {
 		jest.clearAllMocks();
-		mockLocalStorage.getItem.mockReturnValue( null );
-	} );
+		mockLocalStorage.getItem.mockReturnValue(null);
+	});
 
-	describe( 'load', () => {
-		it( 'should result in filled list of variables', async () => {
+	describe('load', () => {
+		it('should result in filled list of variables', async () => {
 			// Arrange.
-			jest.mocked( apiClient.list ).mockResolvedValue(
-				createMockHttpResponse( {
+			jest.mocked(apiClient.list).mockResolvedValue(
+				createMockHttpResponse({
 					success: true,
 					data: {
 						variables: {
@@ -47,7 +47,7 @@ describe( 'service', () => {
 						total: 2,
 						watermark: 10,
 					},
-				} )
+				})
 			);
 
 			// Act.
@@ -67,24 +67,24 @@ describe( 'service', () => {
 				},
 			};
 
-			expect( variables ).toEqual( expectedVariables );
+			expect(variables).toEqual(expectedVariables);
 
-			expect( apiClient.list ).toHaveBeenCalled();
+			expect(apiClient.list).toHaveBeenCalled();
 
-			expect( mockLocalStorage.setItem ).toHaveBeenCalledWith( 'elementor-global-variables-watermark', '10' );
+			expect(mockLocalStorage.setItem).toHaveBeenCalledWith('elementor-global-variables-watermark', '10');
 
-			expect( mockLocalStorage.setItem ).toHaveBeenCalledWith(
+			expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
 				'elementor-global-variables',
-				JSON.stringify( expectedVariables )
+				JSON.stringify(expectedVariables)
 			);
-		} );
-	} );
+		});
+	});
 
-	describe( 'create', () => {
-		it( 'should add new variable to the list', async () => {
+	describe('create', () => {
+		it('should add new variable to the list', async () => {
 			// Arrange.
-			jest.mocked( apiClient.create ).mockResolvedValue(
-				createMockHttpResponse( {
+			jest.mocked(apiClient.create).mockResolvedValue(
+				createMockHttpResponse({
 					success: true,
 					data: {
 						variable: {
@@ -95,60 +95,60 @@ describe( 'service', () => {
 						},
 						watermark: 11,
 					},
-				} )
+				})
 			);
 
-			mockLocalStorage.getItem.mockImplementation( ( key ) => {
-				if ( key === 'elementor-global-variables-watermark' ) {
+			mockLocalStorage.getItem.mockImplementation((key) => {
+				if (key === 'elementor-global-variables-watermark') {
 					return '10';
 				}
 
-				if ( key === 'elementor-global-variables' ) {
+				if (key === 'elementor-global-variables') {
 					return null;
 				}
 
 				return null;
-			} );
+			});
 
 			// Act.
-			const result = await service.create( {
+			const result = await service.create({
 				type: 'global-font-variable',
 				label: 'primary-font',
 				value: 'Arial',
-			} );
+			});
 
 			// Assert.
-			expect( result ).toEqual( {
+			expect(result).toEqual({
 				id: 'variable-3',
 				variable: {
 					label: 'primary-font',
 					value: 'Arial',
 					type: 'global-font-variable',
 				},
-			} );
+			});
 
-			expect( apiClient.create ).toHaveBeenCalledWith( 'global-font-variable', 'primary-font', 'Arial' );
+			expect(apiClient.create).toHaveBeenCalledWith('global-font-variable', 'primary-font', 'Arial');
 
-			expect( mockLocalStorage.setItem ).toHaveBeenCalledWith(
+			expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
 				'elementor-global-variables',
-				JSON.stringify( {
+				JSON.stringify({
 					'variable-3': {
 						label: 'primary-font',
 						value: 'Arial',
 						type: 'global-font-variable',
 					},
-				} )
+				})
 			);
 
-			expect( mockLocalStorage.setItem ).toHaveBeenCalledWith( 'elementor-global-variables-watermark', '11' );
-		} );
-	} );
+			expect(mockLocalStorage.setItem).toHaveBeenCalledWith('elementor-global-variables-watermark', '11');
+		});
+	});
 
-	describe( 'update', () => {
-		it( 'should update existing variable in the list', async () => {
+	describe('update', () => {
+		it('should update existing variable in the list', async () => {
 			// Arrange.
-			jest.mocked( apiClient.update ).mockResolvedValue(
-				createMockHttpResponse( {
+			jest.mocked(apiClient.update).mockResolvedValue(
+				createMockHttpResponse({
 					success: true,
 					data: {
 						variable: {
@@ -159,26 +159,26 @@ describe( 'service', () => {
 						},
 						watermark: 11,
 					},
-				} )
+				})
 			);
 
-			mockLocalStorage.getItem.mockImplementation( ( key ) => {
-				if ( key === 'elementor-global-variables-watermark' ) {
+			mockLocalStorage.getItem.mockImplementation((key) => {
+				if (key === 'elementor-global-variables-watermark') {
 					return '10';
 				}
 
-				if ( key === 'elementor-global-variables' ) {
-					return JSON.stringify( {
+				if (key === 'elementor-global-variables') {
+					return JSON.stringify({
 						'variable-3': {
 							type: 'global-font-variable',
 							label: 'primary-font',
 							value: 'Arial',
 						},
-					} );
+					});
 				}
 
 				return null;
-			} );
+			});
 
 			// Act.
 			const changedVariable = {
@@ -187,70 +187,70 @@ describe( 'service', () => {
 				value: 'Arial',
 			} as TVariable;
 
-			const result = await service.update( 'variable-3', changedVariable );
+			const result = await service.update('variable-3', changedVariable);
 
 			// Assert.
-			expect( result ).toEqual( {
+			expect(result).toEqual({
 				id: 'variable-3',
 				variable: {
 					label: 'updated-primary-font',
 					value: 'Arial',
 					type: 'global-font-variable',
 				},
-			} );
+			});
 
-			expect( apiClient.update ).toHaveBeenCalledWith(
+			expect(apiClient.update).toHaveBeenCalledWith(
 				'variable-3',
 				'updated-primary-font',
 				'Arial',
 				'global-font-variable'
 			);
 
-			expect( mockLocalStorage.setItem ).toHaveBeenCalledWith(
+			expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
 				'elementor-global-variables',
-				JSON.stringify( {
+				JSON.stringify({
 					'variable-3': {
 						label: 'updated-primary-font',
 						value: 'Arial',
 						type: 'global-font-variable',
 					},
-				} )
+				})
 			);
 
-			expect( mockLocalStorage.setItem ).toHaveBeenCalledWith( 'elementor-global-variables-watermark', '11' );
-		} );
+			expect(mockLocalStorage.setItem).toHaveBeenCalledWith('elementor-global-variables-watermark', '11');
+		});
 
-		it( 'should pass type in payload when type is changed', async () => {
+		it('should pass type in payload when type is changed', async () => {
 			// Arrange.
-			jest.mocked( apiClient.update ).mockResolvedValue(
-				createMockHttpResponse( {
+			jest.mocked(apiClient.update).mockResolvedValue(
+				createMockHttpResponse({
 					success: true,
 					data: { watermark: 11, variable: {} },
-				} )
+				})
 			);
 
 			// Act.
-			await service.update( 'size-variable', {
+			await service.update('size-variable', {
 				type: 'global-custom-size-variable',
 				label: 'updated-custom-size',
 				value: 'clamp(9rem, 4rem, 5px)',
-			} );
+			});
 
 			// Assert.
-			expect( apiClient.update ).toHaveBeenCalledWith(
+			expect(apiClient.update).toHaveBeenCalledWith(
 				'size-variable',
 				'updated-custom-size',
 				'clamp(9rem, 4rem, 5px)',
 				'global-custom-size-variable'
 			);
-		} );
-	} );
+		});
+	});
 
-	describe( 'delete', () => {
-		it( 'should update the variable in the list based on server response', async () => {
+	describe('delete', () => {
+		it('should update the variable in the list based on server response', async () => {
 			// Arrange.
-			jest.mocked( apiClient.delete ).mockResolvedValue(
-				createMockHttpResponse( {
+			jest.mocked(apiClient.delete).mockResolvedValue(
+				createMockHttpResponse({
 					success: true,
 					data: {
 						variable: {
@@ -263,36 +263,36 @@ describe( 'service', () => {
 						},
 						watermark: 20,
 					},
-				} )
+				})
 			);
 
-			mockLocalStorage.getItem.mockImplementation( ( key ) => {
-				if ( key === 'elementor-global-variables-watermark' ) {
+			mockLocalStorage.getItem.mockImplementation((key) => {
+				if (key === 'elementor-global-variables-watermark') {
 					return '19';
 				}
 
-				if ( key === 'elementor-global-variables' ) {
-					return JSON.stringify( {
+				if (key === 'elementor-global-variables') {
+					return JSON.stringify({
 						'variable-3': {
 							type: 'global-font-variable',
 							label: 'primary-font',
 							value: 'Arial',
 						},
-					} );
+					});
 				}
 
 				return null;
-			} );
+			});
 
 			// Act.
-			const result = await service.delete( 'variable-3' );
+			const result = await service.delete('variable-3');
 
 			// Assert.
-			expect( apiClient.delete ).toHaveBeenCalledWith( 'variable-3' );
+			expect(apiClient.delete).toHaveBeenCalledWith('variable-3');
 
-			expect( mockLocalStorage.setItem ).toHaveBeenCalledWith(
+			expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
 				'elementor-global-variables',
-				JSON.stringify( {
+				JSON.stringify({
 					'variable-3': {
 						label: 'primary-font',
 						value: 'Arial',
@@ -300,12 +300,12 @@ describe( 'service', () => {
 						deleted: true,
 						deleted_at: '2021-01-01 00:00:00',
 					},
-				} )
+				})
 			);
 
-			expect( mockLocalStorage.setItem ).toHaveBeenCalledWith( 'elementor-global-variables-watermark', '20' );
+			expect(mockLocalStorage.setItem).toHaveBeenCalledWith('elementor-global-variables-watermark', '20');
 
-			expect( result ).toEqual( {
+			expect(result).toEqual({
 				id: 'variable-3',
 				variable: {
 					label: 'primary-font',
@@ -314,15 +314,15 @@ describe( 'service', () => {
 					deleted: true,
 					deleted_at: '2021-01-01 00:00:00',
 				},
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( 'restore', () => {
-		it( 'should restore the variable in the list based on server response', async () => {
+	describe('restore', () => {
+		it('should restore the variable in the list based on server response', async () => {
 			// Arrange.
-			jest.mocked( apiClient.restore ).mockResolvedValue(
-				createMockHttpResponse( {
+			jest.mocked(apiClient.restore).mockResolvedValue(
+				createMockHttpResponse({
 					success: true,
 					data: {
 						variable: {
@@ -333,16 +333,16 @@ describe( 'service', () => {
 						},
 						watermark: 30,
 					},
-				} )
+				})
 			);
 
-			mockLocalStorage.getItem.mockImplementation( ( key ) => {
-				if ( key === 'elementor-global-variables-watermark' ) {
+			mockLocalStorage.getItem.mockImplementation((key) => {
+				if (key === 'elementor-global-variables-watermark') {
 					return '29';
 				}
 
-				if ( key === 'elementor-global-variables' ) {
-					return JSON.stringify( {
+				if (key === 'elementor-global-variables') {
+					return JSON.stringify({
 						'variable-3': {
 							type: 'global-font-variable',
 							label: 'primary-font',
@@ -350,55 +350,55 @@ describe( 'service', () => {
 							deleted: true,
 							deleted_at: '2021-01-01 00:00:00',
 						},
-					} );
+					});
 				}
 
 				return null;
-			} );
+			});
 
 			// Act.
-			const result = await service.restore( 'variable-3' );
+			const result = await service.restore('variable-3');
 
 			// Assert.
-			expect( apiClient.restore ).toHaveBeenCalledWith( 'variable-3', undefined, undefined, undefined );
+			expect(apiClient.restore).toHaveBeenCalledWith('variable-3', undefined, undefined, undefined);
 
-			expect( mockLocalStorage.setItem ).toHaveBeenCalledWith(
+			expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
 				'elementor-global-variables',
-				JSON.stringify( {
+				JSON.stringify({
 					'variable-3': {
 						label: 'primary-font',
 						value: 'Arial',
 						type: 'global-font-variable',
 					},
-				} )
+				})
 			);
 
-			expect( mockLocalStorage.setItem ).toHaveBeenCalledWith( 'elementor-global-variables-watermark', '30' );
+			expect(mockLocalStorage.setItem).toHaveBeenCalledWith('elementor-global-variables-watermark', '30');
 
-			expect( result ).toEqual( {
+			expect(result).toEqual({
 				id: 'variable-3',
 				variable: {
 					label: 'primary-font',
 					value: 'Arial',
 					type: 'global-font-variable',
 				},
-			} );
-		} );
+			});
+		});
 
-		it( 'should pass type in payload when restoring with a changed type', async () => {
+		it('should pass type in payload when restoring with a changed type', async () => {
 			// Arrange.
-			jest.mocked( apiClient.restore ).mockResolvedValue(
-				createMockHttpResponse( {
+			jest.mocked(apiClient.restore).mockResolvedValue(
+				createMockHttpResponse({
 					success: true,
 					data: { watermark: 31, variable: {} },
-				} )
+				})
 			);
 
 			// Act.
-			await service.restore( 'variable-3', 'size', '12px', 'global-size-variable' );
+			await service.restore('variable-3', 'size', '12px', 'global-size-variable');
 
 			// Assert.
-			expect( apiClient.restore ).toHaveBeenCalledWith( 'variable-3', 'size', '12px', 'global-size-variable' );
-		} );
-	} );
-} );
+			expect(apiClient.restore).toHaveBeenCalledWith('variable-3', 'size', '12px', 'global-size-variable');
+		});
+	});
+});

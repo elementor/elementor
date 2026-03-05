@@ -11,39 +11,39 @@ import { validateValue } from '../../utils/validations';
 
 type FontFieldProps = {
 	value: string;
-	onChange: ( value: string ) => void;
-	onValidationChange?: ( errorMessage: string ) => void;
+	onChange: (value: string) => void;
+	onValidationChange?: (errorMessage: string) => void;
 };
 
-export const FontField = ( { value, onChange, onValidationChange }: FontFieldProps ) => {
-	const [ fontFamily, setFontFamily ] = useState( value );
+export const FontField = ({ value, onChange, onValidationChange }: FontFieldProps) => {
+	const [fontFamily, setFontFamily] = useState(value);
 
-	const defaultRef = useRef< HTMLDivElement >( null );
+	const defaultRef = useRef<HTMLDivElement>(null);
 	const anchorRef = usePopoverContentRef() ?? defaultRef.current;
 
-	const fontPopoverState = usePopupState( { variant: 'popover' } );
+	const fontPopoverState = usePopupState({ variant: 'popover' });
 
 	const fontFamilies = useFontFamilies();
 	const sectionWidth = useSectionWidth();
 
-	const mapFontSubs = React.useMemo( () => {
-		return fontFamilies.map( ( { label, fonts } ) => ( {
+	const mapFontSubs = React.useMemo(() => {
+		return fontFamilies.map(({ label, fonts }) => ({
 			label,
 			items: fonts,
-		} ) );
-	}, [ fontFamilies ] );
+		}));
+	}, [fontFamilies]);
 
-	const handleChange = ( newValue: string ) => {
-		setFontFamily( newValue );
+	const handleChange = (newValue: string) => {
+		setFontFamily(newValue);
 
-		const errorMsg = validateValue( newValue );
-		onValidationChange?.( errorMsg );
+		const errorMsg = validateValue(newValue);
+		onValidationChange?.(errorMsg);
 
-		onChange( errorMsg ? '' : newValue );
+		onChange(errorMsg ? '' : newValue);
 	};
 
-	const handleFontFamilyChange = ( newFontFamily: string ) => {
-		handleChange( newFontFamily );
+	const handleFontFamilyChange = (newFontFamily: string) => {
+		handleChange(newFontFamily);
 		fontPopoverState.close();
 	};
 
@@ -52,32 +52,32 @@ export const FontField = ( { value, onChange, onValidationChange }: FontFieldPro
 	return (
 		<>
 			<UnstableTag
-				id={ id }
+				id={id}
 				variant="outlined"
-				label={ fontFamily }
-				endIcon={ <ChevronDownIcon fontSize="tiny" /> }
-				{ ...bindTrigger( fontPopoverState ) }
+				label={fontFamily}
+				endIcon={<ChevronDownIcon fontSize="tiny" />}
+				{...bindTrigger(fontPopoverState)}
 				fullWidth
 			/>
 			<Popover
 				disablePortal
 				disableScrollLock
-				anchorEl={ anchorRef }
-				anchorOrigin={ { vertical: 'top', horizontal: 'right' } }
-				transformOrigin={ { vertical: 'top', horizontal: -28 } }
-				{ ...bindPopover( fontPopoverState ) }
+				anchorEl={anchorRef}
+				anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+				transformOrigin={{ vertical: 'top', horizontal: -28 }}
+				{...bindPopover(fontPopoverState)}
 			>
 				<ItemSelector
 					id="font-family-variables-selector"
-					itemsList={ mapFontSubs }
-					selectedItem={ fontFamily }
-					onItemChange={ handleFontFamilyChange }
-					onClose={ fontPopoverState.close }
-					sectionWidth={ sectionWidth }
-					title={ __( 'Font family', 'elementor' ) }
-					itemStyle={ ( item ) => ( { fontFamily: item.value } ) }
-					onDebounce={ enqueueFont }
-					icon={ TextIcon as React.ElementType< { fontSize: string } > }
+					itemsList={mapFontSubs}
+					selectedItem={fontFamily}
+					onItemChange={handleFontFamilyChange}
+					onClose={fontPopoverState.close}
+					sectionWidth={sectionWidth}
+					title={__('Font family', 'elementor')}
+					itemStyle={(item) => ({ fontFamily: item.value })}
+					onDebounce={enqueueFont}
+					icon={TextIcon as React.ElementType<{ fontSize: string }>}
 				/>
 			</Popover>
 		</>

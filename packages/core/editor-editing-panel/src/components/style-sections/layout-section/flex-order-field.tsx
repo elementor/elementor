@@ -20,7 +20,7 @@ import { StylesFieldLayout } from '../../styles-field-layout';
 
 type GroupControlItemOption = 'first' | 'last' | 'custom';
 
-const ORDER_LABEL = __( 'Order', 'elementor' );
+const ORDER_LABEL = __('Order', 'elementor');
 
 export const FIRST_DEFAULT_VALUE = -99999;
 export const LAST_DEFAULT_VALUE = 99999;
@@ -30,34 +30,34 @@ const LAST = 'last';
 const CUSTOM = 'custom';
 
 const orderValueMap = {
-	[ FIRST ]: FIRST_DEFAULT_VALUE,
-	[ LAST ]: LAST_DEFAULT_VALUE,
+	[FIRST]: FIRST_DEFAULT_VALUE,
+	[LAST]: LAST_DEFAULT_VALUE,
 };
 
-const items: ToggleButtonGroupItem< GroupControlItemOption >[] = [
+const items: ToggleButtonGroupItem<GroupControlItemOption>[] = [
 	{
 		value: FIRST,
-		label: __( 'First', 'elementor' ),
-		renderContent: ( { size } ) => <ArrowUpSmallIcon fontSize={ size } />,
+		label: __('First', 'elementor'),
+		renderContent: ({ size }) => <ArrowUpSmallIcon fontSize={size} />,
 		showTooltip: true,
 	},
 	{
 		value: LAST,
-		label: __( 'Last', 'elementor' ),
-		renderContent: ( { size } ) => <ArrowDownSmallIcon fontSize={ size } />,
+		label: __('Last', 'elementor'),
+		renderContent: ({ size }) => <ArrowDownSmallIcon fontSize={size} />,
 		showTooltip: true,
 	},
 	{
 		value: CUSTOM,
-		label: __( 'Custom', 'elementor' ),
-		renderContent: ( { size } ) => <PencilIcon fontSize={ size } />,
+		label: __('Custom', 'elementor'),
+		renderContent: ({ size }) => <PencilIcon fontSize={size} />,
 		showTooltip: true,
 	},
 ];
 
 export const FlexOrderField = () => {
 	return (
-		<StylesField bind="order" propDisplayName={ ORDER_LABEL }>
+		<StylesField bind="order" propDisplayName={ORDER_LABEL}>
 			<UiProviders>
 				<SectionContent>
 					<FlexOrderFieldContent />
@@ -72,98 +72,98 @@ function FlexOrderFieldContent() {
 		value: order,
 		setValue: setOrder,
 		canEdit,
-	} = useStylesField< NumberPropValue | null >( 'order', {
+	} = useStylesField<NumberPropValue | null>('order', {
 		history: { propDisplayName: ORDER_LABEL },
-	} );
+	});
 
 	const { placeholder } = useBoundProp();
 	const placeholderValue = placeholder as NumberPropValue;
 
-	const currentGroup = useMemo( () => getGroupControlValue( order?.value ?? null ), [ order ] );
+	const currentGroup = useMemo(() => getGroupControlValue(order?.value ?? null), [order]);
 
-	const [ activeGroup, setActiveGroup ] = useState( currentGroup );
-	const [ customLocked, setCustomLocked ] = useState( false );
+	const [activeGroup, setActiveGroup] = useState(currentGroup);
+	const [customLocked, setCustomLocked] = useState(false);
 
-	useEffect( () => {
-		if ( ! customLocked ) {
-			setActiveGroup( currentGroup );
+	useEffect(() => {
+		if (!customLocked) {
+			setActiveGroup(currentGroup);
 		}
-	}, [ currentGroup, customLocked ] );
+	}, [currentGroup, customLocked]);
 
-	useEffect( () => {
-		if ( order === null ) {
-			setCustomLocked( false );
+	useEffect(() => {
+		if (order === null) {
+			setCustomLocked(false);
 		}
-	}, [ order ] );
+	}, [order]);
 
-	const groupPlaceholder = getGroupControlValue( placeholderValue?.value ?? null );
+	const groupPlaceholder = getGroupControlValue(placeholderValue?.value ?? null);
 
-	const handleToggleButtonChange = ( group: GroupControlItemOption | null ) => {
-		setActiveGroup( group );
-		setCustomLocked( group === CUSTOM );
+	const handleToggleButtonChange = (group: GroupControlItemOption | null) => {
+		setActiveGroup(group);
+		setCustomLocked(group === CUSTOM);
 
-		if ( CUSTOM === group ) {
-			setOrder( { $$type: 'number', value: null } );
+		if (CUSTOM === group) {
+			setOrder({ $$type: 'number', value: null });
 			return;
 		}
 
-		if ( FIRST === group ) {
-			setOrder( { $$type: 'number', value: orderValueMap[ group ] } );
+		if (FIRST === group) {
+			setOrder({ $$type: 'number', value: orderValueMap[group] });
 			return;
 		}
 
-		if ( LAST === group ) {
-			setOrder( { $$type: 'number', value: orderValueMap[ group ] } );
+		if (LAST === group) {
+			setOrder({ $$type: 'number', value: orderValueMap[group] });
 			return;
 		}
 
-		setOrder( null );
+		setOrder(null);
 	};
 
 	const isCustomVisible = CUSTOM === activeGroup || CUSTOM === groupPlaceholder;
-	const orderPlaceholder = CUSTOM === groupPlaceholder ? String( placeholderValue?.value ?? null ) : '';
+	const orderPlaceholder = CUSTOM === groupPlaceholder ? String(placeholderValue?.value ?? null) : '';
 
 	return (
 		<>
-			<StylesFieldLayout label={ ORDER_LABEL }>
+			<StylesFieldLayout label={ORDER_LABEL}>
 				<ControlToggleButtonGroup
-					items={ items }
-					value={ activeGroup }
-					onChange={ handleToggleButtonChange }
-					exclusive={ true }
-					placeholder={ groupPlaceholder }
-					disabled={ ! canEdit }
+					items={items}
+					value={activeGroup}
+					onChange={handleToggleButtonChange}
+					exclusive={true}
+					placeholder={groupPlaceholder}
+					disabled={!canEdit}
 				/>
 			</StylesFieldLayout>
-			{ isCustomVisible && (
-				<Grid container gap={ 2 } alignItems="center" flexWrap="nowrap">
-					<Grid item xs={ 6 }>
-						<ControlLabel>{ __( 'Custom order', 'elementor' ) }</ControlLabel>
+			{isCustomVisible && (
+				<Grid container gap={2} alignItems="center" flexWrap="nowrap">
+					<Grid item xs={6}>
+						<ControlLabel>{__('Custom order', 'elementor')}</ControlLabel>
 					</Grid>
-					<Grid item xs={ 6 } sx={ { display: 'flex', justifyContent: 'end' } }>
+					<Grid item xs={6} sx={{ display: 'flex', justifyContent: 'end' }}>
 						<NumberControl
-							min={ FIRST_DEFAULT_VALUE + 1 }
-							max={ LAST_DEFAULT_VALUE - 1 }
-							shouldForceInt={ true }
-							placeholder={ orderPlaceholder }
+							min={FIRST_DEFAULT_VALUE + 1}
+							max={LAST_DEFAULT_VALUE - 1}
+							shouldForceInt={true}
+							placeholder={orderPlaceholder}
 						/>
 					</Grid>
 				</Grid>
-			) }
+			)}
 		</>
 	);
 }
 
-const getGroupControlValue = ( order: number | null ): GroupControlItemOption | null => {
-	if ( LAST_DEFAULT_VALUE === order ) {
+const getGroupControlValue = (order: number | null): GroupControlItemOption | null => {
+	if (LAST_DEFAULT_VALUE === order) {
 		return LAST;
 	}
 
-	if ( FIRST_DEFAULT_VALUE === order ) {
+	if (FIRST_DEFAULT_VALUE === order) {
 		return FIRST;
 	}
 
-	if ( null !== order ) {
+	if (null !== order) {
 		return CUSTOM;
 	}
 

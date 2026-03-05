@@ -1,18 +1,18 @@
 import { debounce } from '../debounce';
 
-describe( 'debounce', () => {
-	beforeEach( () => {
+describe('debounce', () => {
+	beforeEach(() => {
 		jest.useFakeTimers();
-	} );
+	});
 
-	it( 'should debounce a function', () => {
+	it('should debounce a function', () => {
 		// Arrange.
 		let value = 0;
 
 		const fn = () => value++;
 
 		// Act.
-		const debouncedFn = debounce( fn, 100 );
+		const debouncedFn = debounce(fn, 100);
 
 		debouncedFn();
 		debouncedFn();
@@ -21,17 +21,17 @@ describe( 'debounce', () => {
 		jest.runAllTimers();
 
 		// Assert.
-		expect( value ).toBe( 1 );
-	} );
+		expect(value).toBe(1);
+	});
 
-	it( 'should cancel a debounced function', () => {
+	it('should cancel a debounced function', () => {
 		// Arrange.
 		let value = 0;
 
 		const fn = () => value++;
 
 		// Act.
-		const debouncedFn = debounce( fn, 100 );
+		const debouncedFn = debounce(fn, 100);
 
 		debouncedFn();
 
@@ -40,50 +40,50 @@ describe( 'debounce', () => {
 		jest.runAllTimers();
 
 		// Assert.
-		expect( value ).toBe( 0 );
-		expect( debouncedFn.pending() ).toBe( false );
-	} );
+		expect(value).toBe(0);
+		expect(debouncedFn.pending()).toBe(false);
+	});
 
-	it( 'should flush a debounced function', () => {
+	it('should flush a debounced function', () => {
 		// Arrange.
 		let value = 0;
 
 		const fn = () => value++;
 
 		// Act.
-		const debouncedFn = debounce( fn, 100 );
+		const debouncedFn = debounce(fn, 100);
 
 		debouncedFn();
 
 		debouncedFn.flush();
 
 		// Assert.
-		expect( value ).toBe( 1 );
+		expect(value).toBe(1);
 
 		// Act.
 		jest.runAllTimers();
 
 		// Assert - Ensure the timer was cancelled.
-		expect( value ).toBe( 1 );
-	} );
+		expect(value).toBe(1);
+	});
 
-	it( 'should determine if the function is pending', () => {
+	it('should determine if the function is pending', () => {
 		// Arrange.
-		const debouncedFn = debounce( () => null, 100 );
+		const debouncedFn = debounce(() => null, 100);
 
 		// Assert.
-		expect( debouncedFn.pending() ).toBe( false );
+		expect(debouncedFn.pending()).toBe(false);
 
 		// Act.
 		debouncedFn();
 
 		// Assert.
-		expect( debouncedFn.pending() ).toBe( true );
+		expect(debouncedFn.pending()).toBe(true);
 
 		// Act.
 		jest.runAllTimers();
 
 		// Assert.
-		expect( debouncedFn.pending() ).toBe( false );
-	} );
-} );
+		expect(debouncedFn.pending()).toBe(false);
+	});
+});

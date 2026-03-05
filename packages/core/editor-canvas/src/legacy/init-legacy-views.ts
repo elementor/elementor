@@ -14,55 +14,52 @@ import { createTemplatedElementTypeWithReplacements } from './replacements/manag
 import type { ElementType, LegacyWindow } from './types';
 
 type ElementLegacyType = {
-	[ key: string ]: ( options: CreateTemplatedElementTypeOptions ) => typeof ElementType;
+	[key: string]: (options: CreateTemplatedElementTypeOptions) => typeof ElementType;
 };
 export const elementsLegacyTypes: ElementLegacyType = {};
 
-const modelExtensionsRegistry: Record< string, ModelExtensions > = {};
+const modelExtensionsRegistry: Record<string, ModelExtensions> = {};
 
-export function registerModelExtensions( type: string, extensions: ModelExtensions ) {
-	modelExtensionsRegistry[ type ] = extensions;
+export function registerModelExtensions(type: string, extensions: ModelExtensions) {
+	modelExtensionsRegistry[type] = extensions;
 }
 
-export function registerElementType(
-	type: string,
-	elementTypeGenerator: ElementLegacyType[ keyof ElementLegacyType ]
-) {
-	elementsLegacyTypes[ type ] = elementTypeGenerator;
+export function registerElementType(type: string, elementTypeGenerator: ElementLegacyType[keyof ElementLegacyType]) {
+	elementsLegacyTypes[type] = elementTypeGenerator;
 }
 
 export function initLegacyViews() {
-	__privateListenTo( v1ReadyEvent(), () => {
+	__privateListenTo(v1ReadyEvent(), () => {
 		const widgetsCache = getWidgetsCache() ?? {};
 		const legacyWindow = window as unknown as LegacyWindow;
 		const renderer = createDomRenderer();
 
-		Object.entries( widgetsCache ).forEach( ( [ type, element ] ) => {
-			if ( ! element.atomic ) {
+		Object.entries(widgetsCache).forEach(([type, element]) => {
+			if (!element.atomic) {
 				return;
 			}
 
-			const ResolvedElementType = resolveElementType( type, renderer, element );
+			const ResolvedElementType = resolveElementType(type, renderer, element);
 
-			tryRegisterElement( legacyWindow, type, element, ResolvedElementType );
-		} );
-	} );
+			tryRegisterElement(legacyWindow, type, element, ResolvedElementType);
+		});
+	});
 }
 
-function resolveElementType( type: string, renderer: DomRenderer, element: V1ElementConfig ) {
-	if ( canBeNestedTemplated( element ) ) {
-		return createNestedTemplatedType( type, renderer, element );
+function resolveElementType(type: string, renderer: DomRenderer, element: V1ElementConfig) {
+	if (canBeNestedTemplated(element)) {
+		return createNestedTemplatedType(type, renderer, element);
 	}
 
-	if ( ! canBeTemplated( element ) ) {
-		return createElementType( type );
+	if (!canBeTemplated(element)) {
+		return createElementType(type);
 	}
 
-	const customGenerator = elementsLegacyTypes[ type ];
+	const customGenerator = elementsLegacyTypes[type];
 
 	return (
-		customGenerator?.( { type, renderer, element } ) ??
-		createTemplatedElementTypeWithReplacements( { type, renderer, element } )
+		customGenerator?.({ type, renderer, element }) ??
+		createTemplatedElementTypeWithReplacements({ type, renderer, element })
 	);
 }
 
@@ -72,31 +69,31 @@ function tryRegisterElement(
 	element: V1ElementConfig,
 	ResolvedElementType: typeof ElementType
 ) {
-	const shouldBeRegistered = canBeTemplated( element ) || canBeNestedTemplated( element );
+	const shouldBeRegistered = canBeTemplated(element) || canBeNestedTemplated(element);
 
-	if ( ! shouldBeRegistered ) {
+	if (!shouldBeRegistered) {
 		return;
 	}
 
 	const elementsManager = legacyWindow.elementor.elementsManager;
-	const isAlreadyRegistered = Boolean( elementsManager.getElementTypeClass( type ) );
+	const isAlreadyRegistered = Boolean(elementsManager.getElementTypeClass(type));
 
 	try {
-		elementsManager.registerElementType( new ResolvedElementType() );
+		elementsManager.registerElementType(new ResolvedElementType());
 	} catch {
-		const canOverrideExisting = canBeNestedTemplated( element ) && isAlreadyRegistered;
+		const canOverrideExisting = canBeNestedTemplated(element) && isAlreadyRegistered;
 
-		if ( canOverrideExisting ) {
-			elementsManager._elementTypes[ type ] = new ResolvedElementType();
+		if (canOverrideExisting) {
+			elementsManager._elementTypes[type] = new ResolvedElementType();
 		}
 	}
 }
 
-function createNestedTemplatedType( type: string, renderer: DomRenderer, element: NestedTemplatedElementConfig ) {
-	return createNestedTemplatedElementType( {
+function createNestedTemplatedType(type: string, renderer: DomRenderer, element: NestedTemplatedElementConfig) {
+	return createNestedTemplatedElementType({
 		type,
 		renderer,
 		element,
-		modelExtensions: modelExtensionsRegistry[ type ],
-	} );
+		modelExtensions: modelExtensionsRegistry[type],
+	});
 }

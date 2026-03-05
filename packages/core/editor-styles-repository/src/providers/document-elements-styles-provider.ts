@@ -17,68 +17,68 @@ type ElementsMeta = {
 	elementId: string;
 };
 
-export const documentElementsStylesProvider = createStylesProvider( {
+export const documentElementsStylesProvider = createStylesProvider({
 	key: () => {
 		const documentId = getCurrentDocumentId();
 
-		if ( ! documentId ) {
+		if (!documentId) {
 			throw new ActiveDocumentMustExistError();
 		}
 
-		return `${ ELEMENTS_STYLES_PROVIDER_KEY_PREFIX }${ documentId }`;
+		return `${ELEMENTS_STYLES_PROVIDER_KEY_PREFIX}${documentId}`;
 	},
 	priority: 50,
-	subscribe: ( cb ) => listenTo( styleRerenderEvents, () => cb() ),
+	subscribe: (cb) => listenTo(styleRerenderEvents, () => cb()),
 	actions: {
-		all: ( meta = {} ) => {
+		all: (meta = {}) => {
 			let elements = getElements();
 
-			if ( isValidElementsMeta( meta ) ) {
-				elements = elements.filter( ( element ) => element.id === meta.elementId );
+			if (isValidElementsMeta(meta)) {
+				elements = elements.filter((element) => element.id === meta.elementId);
 			}
 
-			return elements.flatMap( ( element ) => Object.values( element.model.get( 'styles' ) ?? {} ) );
+			return elements.flatMap((element) => Object.values(element.model.get('styles') ?? {}));
 		},
 
-		get: ( id, meta = {} ) => {
-			if ( ! isValidElementsMeta( meta ) ) {
-				throw new InvalidElementsStyleProviderMetaError( { context: { meta } } );
+		get: (id, meta = {}) => {
+			if (!isValidElementsMeta(meta)) {
+				throw new InvalidElementsStyleProviderMetaError({ context: { meta } });
 			}
 
-			const styles = getElementStyles( meta.elementId ) ?? {};
+			const styles = getElementStyles(meta.elementId) ?? {};
 
-			return styles[ id ] ?? null;
+			return styles[id] ?? null;
 		},
 
-		updateProps: ( args, meta = {} ) => {
-			if ( ! isValidElementsMeta( meta ) ) {
-				throw new InvalidElementsStyleProviderMetaError( { context: { meta } } );
+		updateProps: (args, meta = {}) => {
+			if (!isValidElementsMeta(meta)) {
+				throw new InvalidElementsStyleProviderMetaError({ context: { meta } });
 			}
 
-			updateElementStyle( {
+			updateElementStyle({
 				elementId: meta.elementId,
 				styleId: args.id,
 				meta: args.meta,
 				props: args.props,
-			} );
+			});
 		},
 
-		updateCustomCss: ( args, meta = {} ) => {
-			if ( ! isValidElementsMeta( meta ) ) {
-				throw new InvalidElementsStyleProviderMetaError( { context: { meta } } );
+		updateCustomCss: (args, meta = {}) => {
+			if (!isValidElementsMeta(meta)) {
+				throw new InvalidElementsStyleProviderMetaError({ context: { meta } });
 			}
 
-			updateElementStyle( {
+			updateElementStyle({
 				elementId: meta.elementId,
 				styleId: args.id,
 				meta: args.meta,
 				custom_css: args.custom_css.raw ? args.custom_css : null,
 				props: {},
-			} );
+			});
 		},
 	},
-} );
+});
 
-function isValidElementsMeta( meta: Record< string, unknown > ): meta is ElementsMeta {
-	return 'elementId' in meta && typeof meta.elementId === 'string' && !! meta.elementId;
+function isValidElementsMeta(meta: Record<string, unknown>): meta is ElementsMeta {
+	return 'elementId' in meta && typeof meta.elementId === 'string' && !!meta.elementId;
 }

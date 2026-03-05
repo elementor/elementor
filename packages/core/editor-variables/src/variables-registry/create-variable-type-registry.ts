@@ -22,50 +22,50 @@ export type MenuActionContext = {
 	variable: Variable;
 	variableId: string;
 	handlers: {
-		onStartSync: ( id: string ) => void;
-		onStopSync: ( id: string ) => void;
+		onStartSync: (id: string) => void;
+		onStopSync: (id: string) => void;
 	};
 };
 
-export type MenuActionsFactory = ( context: MenuActionContext ) => VariableManagerMenuAction[];
+export type MenuActionsFactory = (context: MenuActionContext) => VariableManagerMenuAction[];
 
 export type ValueFieldProps = {
 	value: string;
-	onChange: ( value: string ) => void;
-	onPropTypeKeyChange?: ( key: string ) => void;
+	onChange: (value: string) => void;
+	onPropTypeKeyChange?: (key: string) => void;
 	propTypeKey?: string;
-	onValidationChange?: ( value: string ) => void;
+	onValidationChange?: (value: string) => void;
 	propType?: PropType;
 	error?: { value: string; message: string };
-	onKeyDown?: ( event: KeyboardEvent< HTMLElement > ) => void;
+	onKeyDown?: (event: KeyboardEvent<HTMLElement>) => void;
 };
 
-type FallbackPropTypeUtil = ReturnType< typeof createPropUtils >;
+type FallbackPropTypeUtil = ReturnType<typeof createPropUtils>;
 
 type VariableTypeOptions = {
-	icon: ForwardRefExoticComponent< Omit< SvgIconProps, 'ref' > & RefAttributes< SVGSVGElement > >;
-	startIcon?: ( { value }: { value: string } ) => JSX.Element;
-	valueField?: ( props: ValueFieldProps ) => JSX.Element;
+	icon: ForwardRefExoticComponent<Omit<SvgIconProps, 'ref'> & RefAttributes<SVGSVGElement>>;
+	startIcon?: ({ value }: { value: string }) => JSX.Element;
+	valueField?: (props: ValueFieldProps) => JSX.Element;
 	variableType: string;
 	key?: string;
 	defaultValue?: string;
 	styleTransformer?: AnyTransformer;
 	fallbackPropTypeUtil: FallbackPropTypeUtil;
-	propTypeUtil: PropTypeUtil< string, string >;
-	selectionFilter?: ( variables: NormalizedVariable[], propType?: PropType ) => NormalizedVariable[];
-	valueTransformer?: ( value: string, type?: string ) => PropValue;
-	isCompatible?: ( propType: PropType, variable: Variable ) => boolean;
+	propTypeUtil: PropTypeUtil<string, string>;
+	selectionFilter?: (variables: NormalizedVariable[], propType?: PropType) => NormalizedVariable[];
+	valueTransformer?: (value: string, type?: string) => PropValue;
+	isCompatible?: (propType: PropType, variable: Variable) => boolean;
 	emptyState?: JSX.Element;
 	isActive?: boolean;
 	menuActionsFactory?: MenuActionsFactory;
 };
 
-export type VariableTypesMap = Record< string, Omit< VariableTypeOptions, 'key' > >;
+export type VariableTypesMap = Record<string, Omit<VariableTypeOptions, 'key'>>;
 
 export function createVariableTypeRegistry() {
 	const variableTypes: VariableTypesMap = {};
 
-	const registerVariableType = ( {
+	const registerVariableType = ({
 		key,
 		icon,
 		startIcon,
@@ -81,13 +81,13 @@ export function createVariableTypeRegistry() {
 		emptyState,
 		isActive = true,
 		menuActionsFactory,
-	}: VariableTypeOptions ) => {
+	}: VariableTypeOptions) => {
 		const variableTypeKey = key ?? propTypeUtil.key;
 
-		if ( ! isCompatible ) {
-			isCompatible = ( propType, variable: Variable ) => {
-				if ( 'union' === propType.kind ) {
-					if ( variable.type in propType.prop_types ) {
+		if (!isCompatible) {
+			isCompatible = (propType, variable: Variable) => {
+				if ('union' === propType.kind) {
+					if (variable.type in propType.prop_types) {
 						return true;
 					}
 				}
@@ -95,7 +95,7 @@ export function createVariableTypeRegistry() {
 			};
 		}
 
-		variableTypes[ variableTypeKey ] = {
+		variableTypes[variableTypeKey] = {
 			icon,
 			startIcon,
 			valueField,
@@ -111,28 +111,28 @@ export function createVariableTypeRegistry() {
 			menuActionsFactory,
 		};
 
-		registerTransformer( propTypeUtil.key, styleTransformer );
-		registerInheritanceTransformer( propTypeUtil.key );
+		registerTransformer(propTypeUtil.key, styleTransformer);
+		registerInheritanceTransformer(propTypeUtil.key);
 	};
 
-	const registerTransformer = ( key: PropTypeKey, transformer?: AnyTransformer ) => {
-		styleTransformersRegistry.register( key, transformer ?? variableTransformer );
+	const registerTransformer = (key: PropTypeKey, transformer?: AnyTransformer) => {
+		styleTransformersRegistry.register(key, transformer ?? variableTransformer);
 	};
 
-	const registerInheritanceTransformer = ( key: PropTypeKey ) => {
-		stylesInheritanceTransformersRegistry.register( key, inheritanceTransformer );
+	const registerInheritanceTransformer = (key: PropTypeKey) => {
+		stylesInheritanceTransformersRegistry.register(key, inheritanceTransformer);
 	};
 
-	const getVariableType = ( key: string ) => {
-		return variableTypes[ key ];
+	const getVariableType = (key: string) => {
+		return variableTypes[key];
 	};
 
 	const getVariableTypes = () => {
 		return variableTypes;
 	};
 
-	const hasVariableType = ( key: string ) => {
-		return key in variableTypes && !! variableTypes[ key ].isActive;
+	const hasVariableType = (key: string) => {
+		return key in variableTypes && !!variableTypes[key].isActive;
 	};
 
 	return {

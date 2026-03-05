@@ -14,46 +14,46 @@ export type VariablePromotionChipRef = {
 	toggle: () => void;
 };
 
-export const VariablePromotionChip = forwardRef< VariablePromotionChipRef, VariablePromotionChipProps >(
-	( { variableType, upgradeUrl }, ref ) => {
-		const [ isOpen, setIsOpen ] = useState( false );
+export const VariablePromotionChip = forwardRef<VariablePromotionChipRef, VariablePromotionChipProps>(
+	({ variableType, upgradeUrl }, ref) => {
+		const [isOpen, setIsOpen] = useState(false);
 
-		useCanvasClickHandler( isOpen, () => setIsOpen( false ) );
+		useCanvasClickHandler(isOpen, () => setIsOpen(false));
 
-		const toggle = () => setIsOpen( ( prev ) => ! prev );
+		const toggle = () => setIsOpen((prev) => !prev);
 
-		useImperativeHandle( ref, () => ( { toggle } ), [] );
+		useImperativeHandle(ref, () => ({ toggle }), []);
 
 		const title = sprintf(
 			/* translators: %s: Variable Type. */
-			__( '%s variables', 'elementor' ),
-			capitalize( variableType )
+			__('%s variables', 'elementor'),
+			capitalize(variableType)
 		);
 
 		const content = sprintf(
 			/* translators: %s: Variable Type. */
-			__( 'Upgrade to continue creating and editing %s variables.', 'elementor' ),
+			__('Upgrade to continue creating and editing %s variables.', 'elementor'),
 			variableType
 		);
 
 		return (
 			<PromotionPopover
-				open={ isOpen }
-				title={ title }
-				content={ content }
-				ctaText={ __( 'Upgrade now', 'elementor' ) }
-				ctaUrl={ upgradeUrl }
-				onClose={ ( e: MouseEvent ) => {
+				open={isOpen}
+				title={title}
+				content={content}
+				ctaText={__('Upgrade now', 'elementor')}
+				ctaUrl={upgradeUrl}
+				onClose={(e: MouseEvent) => {
 					e.stopPropagation();
-					setIsOpen( false );
-				} }
+					setIsOpen(false);
+				}}
 			>
 				<Box
-					onClick={ ( e: MouseEvent ) => {
+					onClick={(e: MouseEvent) => {
 						e.stopPropagation();
 						toggle();
-					} }
-					sx={ { cursor: 'pointer', display: 'inline-flex' } }
+					}}
+					sx={{ cursor: 'pointer', display: 'inline-flex' }}
 				>
 					<PromotionChip />
 				</Box>

@@ -9,7 +9,7 @@ export const InteractionsTab = () => {
 
 	return (
 		<SectionsList>
-			<InteractionsTabContent elementId={ element.id } />
+			<InteractionsTabContent elementId={element.id} />
 		</SectionsList>
 	);
 };

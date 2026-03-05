@@ -5,6 +5,4 @@ type ColorStop = {
 	offset?: number;
 };
 
-export const colorStopTransformer = createTransformer(
-	( value: ColorStop ) => `${ value?.color } ${ value?.offset ?? 0 }%`
-);
+export const colorStopTransformer = createTransformer((value: ColorStop) => `${value?.color} ${value?.offset ?? 0}%`);

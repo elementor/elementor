@@ -6,25 +6,25 @@ import { type Post } from '../../../../../types';
 import Delete from '../delete';
 
 const mockMutateAsync = jest.fn();
-jest.mock( '../../../../../hooks/use-posts-actions', () => ( {
-	usePostActions: () => ( {
+jest.mock('../../../../../hooks/use-posts-actions', () => ({
+	usePostActions: () => ({
 		deletePost: {
 			mutateAsync: mockMutateAsync,
 			isPending: false,
 		},
-	} ),
-} ) );
+	}),
+}));
 
-jest.mock( '@elementor/editor-documents', () => ( {
+jest.mock('@elementor/editor-documents', () => ({
 	__useActiveDocument: jest.fn(),
-} ) );
+}));
 
-describe( '@elementor/editor-site-navigation/pages-panel-actions - Delete', () => {
-	afterAll( () => {
+describe('@elementor/editor-site-navigation/pages-panel-actions - Delete', () => {
+	afterAll(() => {
 		jest.clearAllMocks();
-	} );
+	});
 
-	it( 'should render Delete, display the modal and run the delete action', () => {
+	it('should render Delete, display the modal and run the delete action', () => {
 		// Arrange.
 		const post: Post = {
 			id: 1,
@@ -42,30 +42,30 @@ describe( '@elementor/editor-site-navigation/pages-panel-actions - Delete', () =
 		};
 
 		// Act.
-		renderWithTheme( <Delete post={ post } /> );
+		renderWithTheme(<Delete post={post} />);
 
 		// Assert.
-		const button = screen.getByRole( 'menuitem' );
-		expect( button ).not.toHaveAttribute( 'aria-disabled' );
+		const button = screen.getByRole('menuitem');
+		expect(button).not.toHaveAttribute('aria-disabled');
 
 		// Open the modal.
-		fireEvent.click( button );
+		fireEvent.click(button);
 
-		const modal = screen.getByText( 'Delete "Test Page"?' );
-		expect( modal ).toBeInTheDocument();
+		const modal = screen.getByText('Delete "Test Page"?');
+		expect(modal).toBeInTheDocument();
 
-		const modalButtons = screen.getAllByRole( 'button' );
-		expect( modalButtons[ 0 ] ).toHaveTextContent( 'Cancel' );
-		expect( modalButtons[ 1 ] ).toHaveTextContent( 'Delete' );
+		const modalButtons = screen.getAllByRole('button');
+		expect(modalButtons[0]).toHaveTextContent('Cancel');
+		expect(modalButtons[1]).toHaveTextContent('Delete');
 
 		// Click the delete button.
-		fireEvent.click( modalButtons[ 1 ] );
+		fireEvent.click(modalButtons[1]);
 
-		expect( mockMutateAsync ).toHaveBeenCalledTimes( 1 );
-		expect( mockMutateAsync ).toHaveBeenCalledWith( post.id );
-	} );
+		expect(mockMutateAsync).toHaveBeenCalledTimes(1);
+		expect(mockMutateAsync).toHaveBeenCalledWith(post.id);
+	});
 
-	it( 'should render Delete disabled when post is homepage', () => {
+	it('should render Delete disabled when post is homepage', () => {
 		// Arrange.
 		const post: Post = {
 			id: 1,
@@ -83,10 +83,10 @@ describe( '@elementor/editor-site-navigation/pages-panel-actions - Delete', () =
 		};
 
 		// Act.
-		renderWithTheme( <Delete post={ post } /> );
+		renderWithTheme(<Delete post={post} />);
 
 		// Assert.
-		const button = screen.getByRole( 'menuitem' );
-		expect( button ).toHaveAttribute( 'aria-disabled', 'true' );
-	} );
-} );
+		const button = screen.getByRole('menuitem');
+		expect(button).toHaveAttribute('aria-disabled', 'true');
+	});
+});

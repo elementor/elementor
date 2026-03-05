@@ -12,9 +12,9 @@ type DeleteElementParams = {
 	options?: Options;
 };
 
-export function deleteElement( { container, options = {} }: DeleteElementParams ): Promise< void > {
-	return runCommand( 'document/elements/delete', {
+export function deleteElement({ container, options = {} }: DeleteElementParams): Promise<void> {
+	return runCommand('document/elements/delete', {
 		container,
 		options,
-	} );
+	});
 }

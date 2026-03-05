@@ -4,7 +4,7 @@ import { Box, Divider, styled } from '@elementor/ui';
 
 import { TOPBAR_HEIGHT } from './base-layout';
 
-const TopBarRoot = styled( Box )( ( { theme } ) => ( {
+const TopBarRoot = styled(Box)(({ theme }) => ({
 	position: 'fixed',
 	top: 0,
 	left: 0,
@@ -17,16 +17,16 @@ const TopBarRoot = styled( Box )( ( { theme } ) => ( {
 	paddingInlineEnd: 16,
 	background: theme.palette.background.paper,
 	zIndex: theme.zIndex?.appBar || 1100,
-} ) );
+}));
 
 interface TopBarProps {
 	children?: ReactNode;
 }
 
-export function TopBar( { children }: TopBarProps ) {
+export function TopBar({ children }: TopBarProps) {
 	return (
 		<TopBarRoot component="header">
-			{ children }
+			{children}
 			<Divider absolute />
 		</TopBarRoot>
 	);

@@ -8,4 +8,4 @@ export const backgroundImageSizeScalePropTypeUtil = createPropUtils(
 	unknownChildrenSchema
 );
 
-export type BackgroundImageSizeScalePropValue = z.infer< typeof backgroundImageSizeScalePropTypeUtil.schema >;
+export type BackgroundImageSizeScalePropValue = z.infer<typeof backgroundImageSizeScalePropTypeUtil.schema>;

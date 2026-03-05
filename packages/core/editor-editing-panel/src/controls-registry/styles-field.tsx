@@ -16,36 +16,36 @@ export type StylesFieldProps = {
 	propDisplayName: string;
 };
 
-export const StylesField = ( { bind, propDisplayName, children }: StylesFieldProps ) => {
+export const StylesField = ({ bind, propDisplayName, children }: StylesFieldProps) => {
 	const stylesSchema = getStylesSchema();
 
-	const stylesInheritanceChain = useStylesInheritanceChain( [ bind ] );
+	const stylesInheritanceChain = useStylesInheritanceChain([bind]);
 
-	const { value, canEdit, ...fields } = useStylesField( bind, { history: { propDisplayName } } );
+	const { value, canEdit, ...fields } = useStylesField(bind, { history: { propDisplayName } });
 
-	const propType = createTopLevelObjectType( { schema: stylesSchema } );
+	const propType = createTopLevelObjectType({ schema: stylesSchema });
 
-	const [ actualValue ] = stylesInheritanceChain;
+	const [actualValue] = stylesInheritanceChain;
 
 	const placeholderValues = {
-		[ bind ]: actualValue?.value,
+		[bind]: actualValue?.value,
 	};
 
-	const setValue = ( newValue: Record< string, PropValue > ) => {
-		fields.setValue( newValue[ bind ] );
+	const setValue = (newValue: Record<string, PropValue>) => {
+		fields.setValue(newValue[bind]);
 	};
 
 	return (
-		<ControlAdornmentsProvider items={ getFieldIndicators( 'styles' ) }>
+		<ControlAdornmentsProvider items={getFieldIndicators('styles')}>
 			<PropProvider
-				propType={ propType }
-				value={ { [ bind ]: value } }
-				setValue={ setValue }
-				placeholder={ placeholderValues }
-				isDisabled={ () => ! canEdit }
+				propType={propType}
+				value={{ [bind]: value }}
+				setValue={setValue}
+				placeholder={placeholderValues}
+				isDisabled={() => !canEdit}
 			>
-				<PropKeyProvider bind={ bind }>
-					<ConditionalField>{ children }</ConditionalField>
+				<PropKeyProvider bind={bind}>
+					<ConditionalField>{children}</ConditionalField>
 				</PropKeyProvider>
 			</PropProvider>
 		</ControlAdornmentsProvider>

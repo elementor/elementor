@@ -1,6 +1,6 @@
 import { Button, styled } from '@elementor/ui';
 
-export const OptionButton = styled( Button )( ( { theme } ) => ( {
+export const OptionButton = styled(Button)(({ theme }) => ({
 	justifyContent: 'space-between',
 	height: 56,
 	borderRadius: 8,
@@ -16,7 +16,7 @@ export const OptionButton = styled( Button )( ( { theme } ) => ( {
 	'& .MuiButton-endIcon': {
 		opacity: 0,
 		'& > *:nth-of-type(1)': {
-			fontSize: theme.spacing( 3 ),
+			fontSize: theme.spacing(3),
 		},
 	},
 	'&:hover': {
@@ -41,4 +41,4 @@ export const OptionButton = styled( Button )( ( { theme } ) => ( {
 			borderColor: theme.palette.text.primary,
 		},
 	},
-} ) );
+}));

@@ -11,10 +11,10 @@ type PropValue = {
 export const useInitialValue = () => {
 	const { value: initial }: { value: PropValue } = useBoundProp();
 
-	const hasAssignedVariable = hasVariableType( initial?.$$type ) && Boolean( initial?.value );
-	const variable = useVariable( hasAssignedVariable ? initial.value : '' );
+	const hasAssignedVariable = hasVariableType(initial?.$$type) && Boolean(initial?.value);
+	const variable = useVariable(hasAssignedVariable ? initial.value : '');
 
-	if ( hasAssignedVariable ) {
+	if (hasAssignedVariable) {
 		return variable ? variable.value : '';
 	}
 

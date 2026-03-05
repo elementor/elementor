@@ -16,13 +16,13 @@ export type CreateElementStyleArgs = {
 	elementId: ElementID;
 	classesProp: string;
 	label: string;
-	meta: StyleDefinitionVariant[ 'meta' ];
-	props: StyleDefinitionVariant[ 'props' ];
-	custom_css?: StyleDefinitionVariant[ 'custom_css' ];
+	meta: StyleDefinitionVariant['meta'];
+	props: StyleDefinitionVariant['props'];
+	custom_css?: StyleDefinitionVariant['custom_css'];
 	additionalVariants?: StyleDefinitionVariant[];
 };
 
-export function createElementStyle( {
+export function createElementStyle({
 	styleId,
 	elementId,
 	classesProp,
@@ -31,50 +31,50 @@ export function createElementStyle( {
 	props,
 	custom_css: customCss = null,
 	additionalVariants = [],
-}: CreateElementStyleArgs ): string {
+}: CreateElementStyleArgs): string {
 	let id = styleId;
 
-	mutateElementStyles( elementId, ( styles ) => {
-		id ??= generateId( `e-${ elementId }-`, Object.keys( styles ) );
+	mutateElementStyles(elementId, (styles) => {
+		id ??= generateId(`e-${elementId}-`, Object.keys(styles));
 
-		const variants = [ { meta, props, custom_css: customCss }, ...additionalVariants ];
+		const variants = [{ meta, props, custom_css: customCss }, ...additionalVariants];
 
-		styles[ id ] = {
+		styles[id] = {
 			id,
 			label,
 			type: 'class',
 			variants,
 		} satisfies StyleDefinition;
 
-		addStyleToClassesProp( elementId, classesProp, id );
+		addStyleToClassesProp(elementId, classesProp, id);
 
 		return styles;
-	} );
+	});
 
 	return id as string;
 }
 
-function addStyleToClassesProp( elementId: ElementID, classesProp: string, styleId: string ) {
-	const base = getElementSetting( elementId, classesProp );
+function addStyleToClassesProp(elementId: ElementID, classesProp: string, styleId: string) {
+	const base = getElementSetting(elementId, classesProp);
 
 	const classesPropValue = classesPropTypeUtil.create(
-		( prev ) => {
-			return [ ...( prev ?? [] ), styleId ];
+		(prev) => {
+			return [...(prev ?? []), styleId];
 		},
 		{ base }
 	);
 
-	updateElementSettings( {
+	updateElementSettings({
 		id: elementId,
 		props: {
-			[ classesProp ]: classesPropValue,
+			[classesProp]: classesPropValue,
 		},
 		withHistory: false,
-	} );
+	});
 }
 
-export function shouldCreateNewLocalStyle< T >(
-	payload: { styleId: StyleDefinition[ 'id' ] | null; provider: T | null } | null
+export function shouldCreateNewLocalStyle<T>(
+	payload: { styleId: StyleDefinition['id'] | null; provider: T | null } | null
 ) {
-	return ! payload?.styleId && ! payload?.provider;
+	return !payload?.styleId && !payload?.provider;
 }

@@ -6,11 +6,11 @@ import { TransformFunctionKeys } from '../types';
 
 export const moveTransformPropTypeUtil = createPropUtils(
 	TransformFunctionKeys.move,
-	z.strictObject( {
+	z.strictObject({
 		x: unknownChildrenSchema,
 		y: unknownChildrenSchema,
 		z: unknownChildrenSchema,
-	} )
+	})
 );
 
-export type MoveTransformPropValue = z.infer< typeof moveTransformPropTypeUtil.schema >;
+export type MoveTransformPropValue = z.infer<typeof moveTransformPropTypeUtil.schema>;

@@ -8,19 +8,19 @@ type DeleteConfirmationDialogProps = {
 	onConfirm: () => void;
 };
 
-export function DeleteConfirmationDialog( { open, onClose, onConfirm }: DeleteConfirmationDialogProps ) {
+export function DeleteConfirmationDialog({ open, onClose, onConfirm }: DeleteConfirmationDialogProps) {
 	return (
-		<ConfirmationDialog open={ open } onClose={ onClose }>
-			<ConfirmationDialog.Title>{ __( 'Delete this component?', 'elementor' ) }</ConfirmationDialog.Title>
+		<ConfirmationDialog open={open} onClose={onClose}>
+			<ConfirmationDialog.Title>{__('Delete this component?', 'elementor')}</ConfirmationDialog.Title>
 			<ConfirmationDialog.Content>
 				<ConfirmationDialog.ContentText>
-					{ __(
+					{__(
 						'Existing instances on your pages will remain functional. You will no longer find this component in your list.',
 						'elementor'
-					) }
+					)}
 				</ConfirmationDialog.ContentText>
 			</ConfirmationDialog.Content>
-			<ConfirmationDialog.Actions onClose={ onClose } onConfirm={ onConfirm } />
+			<ConfirmationDialog.Actions onClose={onClose} onConfirm={onConfirm} />
 		</ConfirmationDialog>
 	);
 }

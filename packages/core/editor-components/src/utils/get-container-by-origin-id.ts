@@ -23,24 +23,24 @@ import { type ExtendedWindow } from '../types';
  * getContainerByOriginId('element-1', 'instance-abc')
  * // returns container with id='{hash}_element-1' and originId='element-1'
  */
-export function getContainerByOriginId( originElementId: string, instanceElementId?: string ): V1Element | null {
-	if ( ! instanceElementId ) {
-		return getContainer( originElementId );
+export function getContainerByOriginId(originElementId: string, instanceElementId?: string): V1Element | null {
+	if (!instanceElementId) {
+		return getContainer(originElementId);
 	}
 
-	const instanceContainer = getContainer( instanceElementId );
+	const instanceContainer = getContainer(instanceElementId);
 
-	if ( ! instanceContainer ) {
+	if (!instanceContainer) {
 		return null;
 	}
 
 	const legacyWindow = window as unknown as ExtendedWindow;
 
 	return (
-		legacyWindow.elementor?.getContainerByKeyValue?.( {
+		legacyWindow.elementor?.getContainerByKeyValue?.({
 			key: 'originId',
 			value: originElementId,
 			parent: instanceContainer.view,
-		} ) ?? null
+		}) ?? null
 	);
 }

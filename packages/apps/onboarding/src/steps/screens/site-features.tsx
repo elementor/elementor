@@ -82,10 +82,10 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 ];
 
 const CORE_FEATURE_IDS = new Set(
-	FEATURE_OPTIONS.flatMap( ( option ) => ( option.licenseType === 'core' ? [ option.id ] : [] ) )
+	FEATURE_OPTIONS.flatMap((option) => (option.licenseType === 'core' ? [option.id] : []))
 );
 
-const FEATURE_OPTION_IDS = new Set( FEATURE_OPTIONS.map( ( featureOption ) => featureOption.id ) );
+const FEATURE_OPTION_IDS = new Set(FEATURE_OPTIONS.map((featureOption) => featureOption.id));
 
 export function SiteFeatures() {
 	const { choices, actions } = useOnboarding();
@@ -93,58 +93,58 @@ export function SiteFeatures() {
 	const theme = useTheme();
 
 	const storedPaidFeatures = useMemo(
-		() => ( ( choices.site_features as string[] ) || [] ).filter( ( id ) => FEATURE_OPTION_IDS.has( id ) ),
-		[ choices.site_features ]
+		() => ((choices.site_features as string[]) || []).filter((id) => FEATURE_OPTION_IDS.has(id)),
+		[choices.site_features]
 	);
 
-	const selectedValues = useMemo( () => {
-		const combined = [ ...CORE_FEATURE_IDS, ...storedPaidFeatures ];
-		return combined.filter( ( id, index ) => combined.indexOf( id ) === index );
-	}, [ storedPaidFeatures ] );
+	const selectedValues = useMemo(() => {
+		const combined = [...CORE_FEATURE_IDS, ...storedPaidFeatures];
+		return combined.filter((id, index) => combined.indexOf(id) === index);
+	}, [storedPaidFeatures]);
 
 	const handleFeatureClick = useCallback(
-		( id: string ) => {
-			if ( CORE_FEATURE_IDS.has( id ) && selectedValues.includes( id ) ) {
+		(id: string) => {
+			if (CORE_FEATURE_IDS.has(id) && selectedValues.includes(id)) {
 				return;
 			}
 
-			const hasPaidFeaturesSelected = storedPaidFeatures.includes( id );
+			const hasPaidFeaturesSelected = storedPaidFeatures.includes(id);
 			const updatedPaidFeatureSelection = hasPaidFeaturesSelected
-				? storedPaidFeatures.filter( ( featureId ) => featureId !== id )
-				: [ ...storedPaidFeatures, id ];
+				? storedPaidFeatures.filter((featureId) => featureId !== id)
+				: [...storedPaidFeatures, id];
 
-			actions.setUserChoice( 'site_features', updatedPaidFeatureSelection );
+			actions.setUserChoice('site_features', updatedPaidFeatureSelection);
 		},
-		[ storedPaidFeatures, selectedValues, actions ]
+		[storedPaidFeatures, selectedValues, actions]
 	);
 
-	const planName = useMemo( () => {
-		const hasOneFeature = storedPaidFeatures.some( ( optionId ) => {
-			const option = FEATURE_OPTIONS.find( ( featureOption ) => featureOption.id === optionId );
+	const planName = useMemo(() => {
+		const hasOneFeature = storedPaidFeatures.some((optionId) => {
+			const option = FEATURE_OPTIONS.find((featureOption) => featureOption.id === optionId);
 			return option?.licenseType === 'one';
-		} );
+		});
 
 		return hasOneFeature ? 'One' : 'Pro';
-	}, [ storedPaidFeatures ] );
+	}, [storedPaidFeatures]);
 
 	return (
-		<Stack spacing={ 4 } width="100%" data-testid="site-features-step">
-			<Stack spacing={ 1 } textAlign="center" alignItems="center">
-				<StepTitle color="text.primary" variant="h5" align="center" paddingBlockStart={ theme.spacing( 2.5 ) }>
-					{ t( 'steps.site_features.title' ) }
+		<Stack spacing={4} width="100%" data-testid="site-features-step">
+			<Stack spacing={1} textAlign="center" alignItems="center">
+				<StepTitle color="text.primary" variant="h5" align="center" paddingBlockStart={theme.spacing(2.5)}>
+					{t('steps.site_features.title')}
 				</StepTitle>
 				<Typography variant="body1" color="text.secondary">
-					{ t( 'steps.site_features.subtitle' ) }
+					{t('steps.site_features.subtitle')}
 				</Typography>
 			</Stack>
 
 			<FeatureGrid
-				options={ FEATURE_OPTIONS }
-				selectedValues={ selectedValues }
-				onFeatureClick={ handleFeatureClick }
+				options={FEATURE_OPTIONS}
+				selectedValues={selectedValues}
+				onFeatureClick={handleFeatureClick}
 			/>
 
-			{ storedPaidFeatures.length > 0 && <ProPlanNotice planName={ planName } /> }
+			{storedPaidFeatures.length > 0 && <ProPlanNotice planName={planName} />}
 		</Stack>
 	);
 }

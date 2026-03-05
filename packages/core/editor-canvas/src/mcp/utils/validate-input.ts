@@ -4,7 +4,7 @@ import { getStylesSchema } from '@elementor/editor-styles';
 
 import { STYLE_SCHEMA_URI } from '../resources/widgets-schema-resource';
 
-let _widgetsSchema: Record< string, PropsSchema > | null = null;
+let _widgetsSchema: Record<string, PropsSchema> | null = null;
 
 type ValidationResult = {
 	valid: boolean;
@@ -12,18 +12,18 @@ type ValidationResult = {
 };
 
 export const validateInput = {
-	get widgetsSchema(): Record< string, PropsSchema > {
-		if ( ! _widgetsSchema ) {
-			const schema: Record< string, PropsSchema > = {};
+	get widgetsSchema(): Record<string, PropsSchema> {
+		if (!_widgetsSchema) {
+			const schema: Record<string, PropsSchema> = {};
 			const cache = getWidgetsCache();
-			if ( ! cache ) {
+			if (!cache) {
 				return {};
 			}
-			Object.entries( cache ).forEach( ( [ widgetType, widgetData ] ) => {
-				if ( widgetData.atomic_props_schema ) {
-					schema[ widgetType ] = structuredClone( widgetData.atomic_props_schema );
+			Object.entries(cache).forEach(([widgetType, widgetData]) => {
+				if (widgetData.atomic_props_schema) {
+					schema[widgetType] = structuredClone(widgetData.atomic_props_schema);
 				}
-			} );
+			});
 			_widgetsSchema = schema;
 		}
 		return _widgetsSchema;
@@ -31,38 +31,38 @@ export const validateInput = {
 
 	validateProps(
 		schema: PropsSchema | undefined | null,
-		values: Record< string, unknown >,
+		values: Record<string, unknown>,
 		ignore: string[] = []
 	): ValidationResult {
-		if ( ! schema ) {
-			throw new Error( 'No schema provided for validation.' );
+		if (!schema) {
+			throw new Error('No schema provided for validation.');
 		}
 		const errors: string[] = [];
 		let hasInvalidKey = false;
-		Object.entries( values ).forEach( ( [ propName, propValue ] ) => {
-			if ( ignore.includes( propName ) ) {
+		Object.entries(values).forEach(([propName, propValue]) => {
+			if (ignore.includes(propName)) {
 				return;
 			}
-			const propSchema = schema[ propName ];
-			if ( ! propSchema ) {
-				errors.push( `Property "${ propName }" is not defined in the schema.` );
+			const propSchema = schema[propName];
+			if (!propSchema) {
+				errors.push(`Property "${propName}" is not defined in the schema.`);
 				hasInvalidKey = true;
-			} else if ( ! Schema.isPropKeyConfigurable( propName ) ) {
-				errors.push( `Property "${ propName }" is not configurable.` );
+			} else if (!Schema.isPropKeyConfigurable(propName)) {
+				errors.push(`Property "${propName}" is not configurable.`);
 			} else {
-				const { valid } = Schema.validatePropValue( propSchema, propValue as PropValue );
-				if ( ! valid ) {
+				const { valid } = Schema.validatePropValue(propSchema, propValue as PropValue);
+				if (!valid) {
 					errors.push(
-						`Invalid property "${ propName }". Validate input with resource [${ STYLE_SCHEMA_URI.replace(
+						`Invalid property "${propName}". Validate input with resource [${STYLE_SCHEMA_URI.replace(
 							'{category}',
 							propName
-						) }]`
+						)}]`
 					);
 				}
 			}
-		} );
-		if ( hasInvalidKey ) {
-			errors.push( 'Available properties: ' + Object.keys( schema ).join( ', ' ) );
+		});
+		if (hasInvalidKey) {
+			errors.push('Available properties: ' + Object.keys(schema).join(', '));
 		}
 		return {
 			errors,
@@ -70,17 +70,17 @@ export const validateInput = {
 		};
 	},
 
-	validateStyles( values: Record< string, unknown > ): ValidationResult {
+	validateStyles(values: Record<string, unknown>): ValidationResult {
 		const styleSchema = getStylesSchema();
 		const customCssValue = values.custom_css;
-		const result = this.validateProps( styleSchema, values, [ 'custom_css', '$intention' ] );
+		const result = this.validateProps(styleSchema, values, ['custom_css', '$intention']);
 		const appendInvalidCustomCssErr = () => {
 			result.valid = false;
 			result.errors = result.errors || [];
-			result.errors.push( 'Invalid property "custom_css". Expected a string value.' );
+			result.errors.push('Invalid property "custom_css". Expected a string value.');
 		};
-		if ( customCssValue && typeof customCssValue === 'object' ) {
-			if ( typeof ( customCssValue as Record< string, unknown > ).value !== 'string' ) {
+		if (customCssValue && typeof customCssValue === 'object') {
+			if (typeof (customCssValue as Record<string, unknown>).value !== 'string') {
 				appendInvalidCustomCssErr();
 			}
 		} else if (
@@ -93,15 +93,11 @@ export const validateInput = {
 		return result;
 	},
 
-	validatePropSchema(
-		widgetType: string,
-		values: Record< string, unknown >,
-		ignore: string[] = []
-	): ValidationResult {
-		const schema = this.widgetsSchema[ widgetType ];
-		if ( ! schema ) {
-			return { valid: false, errors: [ `No schema found for widget type "${ widgetType }".` ] };
+	validatePropSchema(widgetType: string, values: Record<string, unknown>, ignore: string[] = []): ValidationResult {
+		const schema = this.widgetsSchema[widgetType];
+		if (!schema) {
+			return { valid: false, errors: [`No schema found for widget type "${widgetType}".`] };
 		}
-		return this.validateProps( schema, values, ignore );
+		return this.validateProps(schema, values, ignore);
 	},
 };

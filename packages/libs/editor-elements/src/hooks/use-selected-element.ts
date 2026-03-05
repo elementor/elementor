@@ -5,10 +5,10 @@ import { getSelectedElement } from '../sync/get-selected-elements';
 export function useSelectedElement() {
 	return useListenTo(
 		[
-			commandEndEvent( 'document/elements/select' ),
-			commandEndEvent( 'document/elements/deselect' ),
-			commandEndEvent( 'document/elements/select-all' ),
-			commandEndEvent( 'document/elements/deselect-all' ),
+			commandEndEvent('document/elements/select'),
+			commandEndEvent('document/elements/deselect'),
+			commandEndEvent('document/elements/select-all'),
+			commandEndEvent('document/elements/deselect-all'),
 		],
 		getSelectedElement
 	);

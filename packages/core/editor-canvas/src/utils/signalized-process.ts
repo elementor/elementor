@@ -1,34 +1,32 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyFn = ( ...args: any[] ) => any;
+type AnyFn = (...args: any[]) => any;
 
-type SignalizedProcess< TNextArg = never > = {
-	then: < TReturn >(
-		cb: ( arg: TNextArg, signal: AbortSignal ) => TReturn
-	) => SignalizedProcess< Awaited< TReturn > >;
+type SignalizedProcess<TNextArg = never> = {
+	then: <TReturn>(cb: (arg: TNextArg, signal: AbortSignal) => TReturn) => SignalizedProcess<Awaited<TReturn>>;
 
-	execute: () => Promise< void >;
+	execute: () => Promise<void>;
 };
 
-export function signalizedProcess< TNextArg = never >(
+export function signalizedProcess<TNextArg = never>(
 	signal: AbortSignal,
 	steps: AnyFn[] = []
-): SignalizedProcess< TNextArg > {
+): SignalizedProcess<TNextArg> {
 	return {
-		then: ( cb ) => {
-			steps.push( cb );
+		then: (cb) => {
+			steps.push(cb);
 
-			return signalizedProcess( signal, steps );
+			return signalizedProcess(signal, steps);
 		},
 
 		execute: async () => {
 			let lastResult: TNextArg | undefined;
 
-			for ( const step of steps ) {
-				if ( signal.aborted ) {
+			for (const step of steps) {
+				if (signal.aborted) {
 					break;
 				}
 
-				lastResult = await step( lastResult, signal );
+				lastResult = await step(lastResult, signal);
 			}
 		},
 	};

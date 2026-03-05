@@ -8,18 +8,18 @@ import ErrorSnackbar from './error-snackbar';
 import PostsCollapsibleList from './posts-list/posts-collapsible-list';
 
 const Shell = () => {
-	const [ isErrorSnackbarOpen, setIsErrorSnackbarOpen ] = useState( false );
+	const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] = useState(false);
 
 	return (
 		<Panel>
 			<PanelHeader>
-				<PanelHeaderTitle>{ __( 'Pages', 'elementor' ) }</PanelHeaderTitle>
+				<PanelHeaderTitle>{__('Pages', 'elementor')}</PanelHeaderTitle>
 			</PanelHeader>
 			<PanelBody>
-				<PostListContextProvider type={ 'page' } setError={ () => setIsErrorSnackbarOpen( true ) }>
-					<PostsCollapsibleList isOpenByDefault={ true } />
+				<PostListContextProvider type={'page'} setError={() => setIsErrorSnackbarOpen(true)}>
+					<PostsCollapsibleList isOpenByDefault={true} />
 				</PostListContextProvider>
-				<ErrorSnackbar open={ isErrorSnackbarOpen } onClose={ () => setIsErrorSnackbarOpen( false ) } />
+				<ErrorSnackbar open={isErrorSnackbarOpen} onClose={() => setIsErrorSnackbarOpen(false)} />
 			</PanelBody>
 		</Panel>
 	);

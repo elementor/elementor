@@ -5,10 +5,10 @@ import { unknownChildrenSchema } from '../utils';
 
 export const perspectiveOriginPropTypeUtil = createPropUtils(
 	'perspective-origin',
-	z.strictObject( {
+	z.strictObject({
 		x: unknownChildrenSchema,
 		y: unknownChildrenSchema,
-	} )
+	})
 );
 
-export type PerspectiveOriginPropValue = z.infer< typeof perspectiveOriginPropTypeUtil.schema >;
+export type PerspectiveOriginPropValue = z.infer<typeof perspectiveOriginPropTypeUtil.schema>;

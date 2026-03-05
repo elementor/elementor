@@ -34,19 +34,19 @@ export type Document = {
 };
 
 export type V1DocumentsManager = {
-	documents: Record< string, V1Document >;
+	documents: Record<string, V1Document>;
 	getCurrentId: () => number;
 	getInitialId: () => number;
 	getCurrent: () => V1Document;
-	invalidateCache: ( id?: number | string ) => void;
-	request: < TData >( id: number | string ) => Promise< TData >;
-	get: ( id: number | string ) => V1Document;
+	invalidateCache: (id?: number | string) => void;
+	request: <TData>(id: number | string) => Promise<TData>;
+	get: (id: number | string) => V1Document;
 };
 
 export type ExtendedWindow = Window & {
 	elementor: {
 		documents: V1DocumentsManager;
-		getPreferences: ( key: 'exit_to' ) => ExitTo;
+		getPreferences: (key: 'exit_to') => ExitTo;
 	};
 };
 
@@ -82,16 +82,16 @@ export type V1Document = {
 		isSaving: boolean;
 	};
 	container: {
-		settings: V1Model< {
+		settings: V1Model<{
 			post_title: string;
 			exit_to: ExitTo;
-		} >;
+		}>;
 		view: {
 			el: HTMLElement;
 		};
 	};
 };
 
-type V1Model< T > = {
-	get: < K extends keyof T = keyof T >( key: K ) => T[ K ];
+type V1Model<T> = {
+	get: <K extends keyof T = keyof T>(key: K) => T[K];
 };

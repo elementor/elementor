@@ -15,10 +15,10 @@ import { usePanelActions } from './class-manager-panel';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 
 const trackGlobalClassesButton = () => {
-	trackGlobalClasses( {
+	trackGlobalClasses({
 		event: 'classManagerOpened',
 		source: 'style-panel',
-	} );
+	});
 };
 
 export const ClassManagerButton = () => {
@@ -30,53 +30,53 @@ export const ClassManagerButton = () => {
 
 	const { userCan } = useUserStylesCapability();
 
-	const isUserAllowedToUpdateClass = userCan( globalClassesStylesProvider.getKey() ).update;
+	const isUserAllowedToUpdateClass = userCan(globalClassesStylesProvider.getKey()).update;
 
-	if ( ! isUserAllowedToUpdateClass ) {
+	if (!isUserAllowedToUpdateClass) {
 		return null;
 	}
 
 	const handleOpenPanel = () => {
-		if ( document?.isDirty ) {
+		if (document?.isDirty) {
 			openSaveChangesDialog();
 			return;
 		}
 
 		openPanel();
 		trackGlobalClassesButton();
-		trackGlobalClasses( {
+		trackGlobalClasses({
 			event: 'classManagerOpened',
 			source: 'style-panel',
-		} );
+		});
 		prefetchClassesUsage();
 	};
 
 	return (
 		<>
-			<Tooltip title={ __( 'Class Manager', 'elementor' ) } placement="top">
-				<IconButton size="tiny" onClick={ handleOpenPanel } sx={ { marginInlineEnd: -0.75 } }>
+			<Tooltip title={__('Class Manager', 'elementor')} placement="top">
+				<IconButton size="tiny" onClick={handleOpenPanel} sx={{ marginInlineEnd: -0.75 }}>
 					<FlippedColorSwatchIcon fontSize="tiny" />
 				</IconButton>
 			</Tooltip>
-			{ isSaveChangesDialogOpen && (
+			{isSaveChangesDialogOpen && (
 				<SaveChangesDialog>
-					<SaveChangesDialog.Title>{ __( 'You have unsaved changes', 'elementor' ) }</SaveChangesDialog.Title>
+					<SaveChangesDialog.Title>{__('You have unsaved changes', 'elementor')}</SaveChangesDialog.Title>
 					<SaveChangesDialog.Content>
-						<SaveChangesDialog.ContentText sx={ { mb: 2 } }>
-							{ __(
+						<SaveChangesDialog.ContentText sx={{ mb: 2 }}>
+							{__(
 								"To open the Class Manager, save your page first. You can't continue without saving.",
 								'elementor'
-							) }
+							)}
 						</SaveChangesDialog.ContentText>
 					</SaveChangesDialog.Content>
 					<SaveChangesDialog.Actions
-						actions={ {
+						actions={{
 							cancel: {
-								label: __( 'Stay here', 'elementor' ),
+								label: __('Stay here', 'elementor'),
 								action: closeSaveChangesDialog,
 							},
 							confirm: {
-								label: __( 'Save & Continue', 'elementor' ),
+								label: __('Save & Continue', 'elementor'),
 								action: async () => {
 									await saveDocument();
 									closeSaveChangesDialog();
@@ -85,10 +85,10 @@ export const ClassManagerButton = () => {
 									prefetchClassesUsage();
 								},
 							},
-						} }
+						}}
 					/>
 				</SaveChangesDialog>
-			) }
+			)}
 		</>
 	);
 };

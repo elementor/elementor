@@ -13,28 +13,28 @@ import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import { slice } from '../../../../store/store';
 import { ComponentItem } from '../component-item';
 import { ExtendedComponents } from '../components';
-jest.mock( '@elementor/editor-documents' );
+jest.mock('@elementor/editor-documents');
 
-jest.mock( '@elementor/editor-current-user' );
+jest.mock('@elementor/editor-current-user');
 
-mockCurrentUserCapabilities( true );
+mockCurrentUserCapabilities(true);
 
 const mockStartDragElementFromPanel = jest.fn();
 
-jest.mock( '@elementor/editor-canvas', () => ( {
-	startDragElementFromPanel: ( ...args: unknown[] ) => mockStartDragElementFromPanel( ...args ),
-} ) );
+jest.mock('@elementor/editor-canvas', () => ({
+	startDragElementFromPanel: (...args: unknown[]) => mockStartDragElementFromPanel(...args),
+}));
 
-jest.mock( '@elementor/editor-elements', () => ( {
+jest.mock('@elementor/editor-elements', () => ({
 	dropElement: jest.fn(),
-} ) );
+}));
 
-jest.mock( '../../../utils/create-component-model', () => ( {
-	createComponentModel: jest.fn( ( { id, name } ) => ( { id, name, elType: 'component' } ) ),
-} ) );
+jest.mock('../../../utils/create-component-model', () => ({
+	createComponentModel: jest.fn(({ id, name }) => ({ id, name, elType: 'component' })),
+}));
 
 const getEditableRenameField = () =>
-	screen.getAllByRole( 'textbox' ).find( ( el ) => el.getAttribute( 'contenteditable' ) === 'true' ) as HTMLElement;
+	screen.getAllByRole('textbox').find((el) => el.getAttribute('contenteditable') === 'true') as HTMLElement;
 
 const mockComponents = [
 	{ id: 1, name: 'Button Component', uid: 'f73880da-522c-442e-815a-b2c9849b7415' },
@@ -46,423 +46,423 @@ const mockComponents = [
 	{ id: 7, name: 'ExistingComponent', uid: 'f73880da-522c-442e-815a-b2c9849b7421' },
 ];
 
-describe( 'ExtendedComponents tab', () => {
-	let store: Store< SliceState< typeof slice > >;
+describe('ExtendedComponents tab', () => {
+	let store: Store<SliceState<typeof slice>>;
 
-	beforeEach( () => {
-		registerSlice( slice );
+	beforeEach(() => {
+		registerSlice(slice);
 		store = __createStore();
 
-		act( () => {
-			dispatch( slice.actions.load( mockComponents ) );
-		} );
-	} );
+		act(() => {
+			dispatch(slice.actions.load(mockComponents));
+		});
+	});
 
-	it( 'should render component item with draggable attributes and actions', () => {
+	it('should render component item with draggable attributes and actions', () => {
 		// Arrange
-		const buttonComponent = mockComponents[ 0 ];
+		const buttonComponent = mockComponents[0];
 
 		// Act
-		renderWithStore( <ComponentItem component={ buttonComponent } />, store );
+		renderWithStore(<ComponentItem component={buttonComponent} />, store);
 
 		// Assert
-		const componentItem = screen.getByRole( 'button', { name: /Button Component/ } );
-		expect( componentItem ).toBeInTheDocument();
-		expect( componentItem ).toHaveAttribute( 'draggable', 'true' );
-	} );
+		const componentItem = screen.getByRole('button', { name: /Button Component/ });
+		expect(componentItem).toBeInTheDocument();
+		expect(componentItem).toHaveAttribute('draggable', 'true');
+	});
 
-	it( 'should call startDragElementFromPanel with component model and event on drag start', () => {
+	it('should call startDragElementFromPanel with component model and event on drag start', () => {
 		// Arrange
-		const [ buttonComponent ] = mockComponents;
+		const [buttonComponent] = mockComponents;
 
 		// Act
-		renderWithStore( <ComponentItem component={ buttonComponent } />, store );
+		renderWithStore(<ComponentItem component={buttonComponent} />, store);
 
-		const componentItem = screen.getByRole( 'button', { name: /Button Component/ } );
-		fireEvent.dragStart( componentItem );
+		const componentItem = screen.getByRole('button', { name: /Button Component/ });
+		fireEvent.dragStart(componentItem);
 
 		// Assert
-		expect( mockStartDragElementFromPanel ).toHaveBeenCalledTimes( 1 );
-		expect( mockStartDragElementFromPanel ).toHaveBeenCalledWith(
-			expect.objectContaining( { id: buttonComponent.id, name: buttonComponent.name } ),
-			expect.any( Object )
+		expect(mockStartDragElementFromPanel).toHaveBeenCalledTimes(1);
+		expect(mockStartDragElementFromPanel).toHaveBeenCalledWith(
+			expect.objectContaining({ id: buttonComponent.id, name: buttonComponent.name }),
+			expect.any(Object)
 		);
-	} );
+	});
 
-	it( 'should show delete confirmation dialog when Delete is clicked', async () => {
+	it('should show delete confirmation dialog when Delete is clicked', async () => {
 		// Act
-		renderWithStore( <ExtendedComponents />, store );
+		renderWithStore(<ExtendedComponents />, store);
 
-		const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
-		const buttonComponentMoreActions = moreActionsButtons[ 0 ];
-		fireEvent.click( buttonComponentMoreActions );
+		const moreActionsButtons = screen.getAllByLabelText('More actions');
+		const buttonComponentMoreActions = moreActionsButtons[0];
+		fireEvent.click(buttonComponentMoreActions);
 
-		const deleteButton = await screen.findByText( 'Delete' );
-		fireEvent.click( deleteButton );
+		const deleteButton = await screen.findByText('Delete');
+		fireEvent.click(deleteButton);
 
 		// Assert
-		await waitFor( () => {
-			expect( screen.getByRole( 'dialog', { name: 'Delete this component?' } ) ).toBeInTheDocument();
-		} );
+		await waitFor(() => {
+			expect(screen.getByRole('dialog', { name: 'Delete this component?' })).toBeInTheDocument();
+		});
 		expect(
 			screen.getByText(
 				'Existing instances on your pages will remain functional. You will no longer find this component in your list.'
 			)
 		).toBeInTheDocument();
-	} );
+	});
 
-	it( 'should delete component when Delete button in dialog is clicked', async () => {
+	it('should delete component when Delete button in dialog is clicked', async () => {
 		// Act
-		renderWithStore( <ExtendedComponents />, store );
+		renderWithStore(<ExtendedComponents />, store);
 
 		// Assert
-		expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Text Component' ) ).toBeInTheDocument();
+		expect(screen.getByText('Button Component')).toBeInTheDocument();
+		expect(screen.getByText('Text Component')).toBeInTheDocument();
 
 		// Act
-		const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
-		const buttonComponentMoreActions = moreActionsButtons[ 0 ];
-		fireEvent.click( buttonComponentMoreActions );
+		const moreActionsButtons = screen.getAllByLabelText('More actions');
+		const buttonComponentMoreActions = moreActionsButtons[0];
+		fireEvent.click(buttonComponentMoreActions);
 
-		const deleteMenuItem = await screen.findByText( 'Delete' );
-		fireEvent.click( deleteMenuItem );
+		const deleteMenuItem = await screen.findByText('Delete');
+		fireEvent.click(deleteMenuItem);
 
-		await waitFor( () => {
-			expect( screen.getByRole( 'dialog', { name: 'Delete this component?' } ) ).toBeInTheDocument();
-		} );
+		await waitFor(() => {
+			expect(screen.getByRole('dialog', { name: 'Delete this component?' })).toBeInTheDocument();
+		});
 
-		const confirmDeleteButton = screen.getByRole( 'button', { name: 'Delete' } );
-		fireEvent.click( confirmDeleteButton );
+		const confirmDeleteButton = screen.getByRole('button', { name: 'Delete' });
+		fireEvent.click(confirmDeleteButton);
 
 		// Assert
-		await waitFor( () => {
-			expect( screen.queryByText( 'Button Component' ) ).not.toBeInTheDocument();
-		} );
-		expect( screen.getByText( 'Text Component' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Image Component' ) ).toBeInTheDocument();
-		expect( jest.mocked( setDocumentModifiedStatus ) ).toHaveBeenCalledWith( true );
-	} );
+		await waitFor(() => {
+			expect(screen.queryByText('Button Component')).not.toBeInTheDocument();
+		});
+		expect(screen.getByText('Text Component')).toBeInTheDocument();
+		expect(screen.getByText('Image Component')).toBeInTheDocument();
+		expect(jest.mocked(setDocumentModifiedStatus)).toHaveBeenCalledWith(true);
+	});
 
-	it( 'should close delete dialog without deleting when Not now is clicked', async () => {
+	it('should close delete dialog without deleting when Not now is clicked', async () => {
 		// Act
-		renderWithStore( <ExtendedComponents />, store );
+		renderWithStore(<ExtendedComponents />, store);
 
-		const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
-		fireEvent.click( moreActionsButtons[ 0 ] );
+		const moreActionsButtons = screen.getAllByLabelText('More actions');
+		fireEvent.click(moreActionsButtons[0]);
 
-		const deleteMenuItem = await screen.findByText( 'Delete' );
-		fireEvent.click( deleteMenuItem );
+		const deleteMenuItem = await screen.findByText('Delete');
+		fireEvent.click(deleteMenuItem);
 
-		await waitFor( () => {
-			expect( screen.getByRole( 'dialog', { name: 'Delete this component?' } ) ).toBeInTheDocument();
-		} );
+		await waitFor(() => {
+			expect(screen.getByRole('dialog', { name: 'Delete this component?' })).toBeInTheDocument();
+		});
 
 		// Act
-		const notNowButton = screen.getByRole( 'button', { name: 'Not now' } );
-		fireEvent.click( notNowButton );
+		const notNowButton = screen.getByRole('button', { name: 'Not now' });
+		fireEvent.click(notNowButton);
 
 		// Assert
-		await waitFor( () => {
-			expect( screen.queryByRole( 'dialog', { name: 'Delete this component?' } ) ).not.toBeInTheDocument();
-		} );
-		expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
-	} );
+		await waitFor(() => {
+			expect(screen.queryByRole('dialog', { name: 'Delete this component?' })).not.toBeInTheDocument();
+		});
+		expect(screen.getByText('Button Component')).toBeInTheDocument();
+	});
 
-	it( 'should close delete dialog when Escape key is pressed', async () => {
+	it('should close delete dialog when Escape key is pressed', async () => {
 		// Act
-		renderWithStore( <ExtendedComponents />, store );
+		renderWithStore(<ExtendedComponents />, store);
 
-		const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
-		fireEvent.click( moreActionsButtons[ 0 ] );
+		const moreActionsButtons = screen.getAllByLabelText('More actions');
+		fireEvent.click(moreActionsButtons[0]);
 
-		const deleteMenuItem = await screen.findByText( 'Delete' );
-		fireEvent.click( deleteMenuItem );
+		const deleteMenuItem = await screen.findByText('Delete');
+		fireEvent.click(deleteMenuItem);
 
-		await waitFor( () => {
-			expect( screen.getByRole( 'dialog', { name: 'Delete this component?' } ) ).toBeInTheDocument();
-		} );
+		await waitFor(() => {
+			expect(screen.getByRole('dialog', { name: 'Delete this component?' })).toBeInTheDocument();
+		});
 
 		// Act
-		fireEvent.keyDown( screen.getByRole( 'dialog' ), { key: 'Escape' } );
+		fireEvent.keyDown(screen.getByRole('dialog'), { key: 'Escape' });
 
 		// Assert
-		await waitFor( () => {
-			expect( screen.queryByRole( 'dialog', { name: 'Delete this component?' } ) ).not.toBeInTheDocument();
-		} );
-		expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
-	} );
+		await waitFor(() => {
+			expect(screen.queryByRole('dialog', { name: 'Delete this component?' })).not.toBeInTheDocument();
+		});
+		expect(screen.getByText('Button Component')).toBeInTheDocument();
+	});
 
-	it( 'should open rename mode when Rename menu item is clicked', async () => {
+	it('should open rename mode when Rename menu item is clicked', async () => {
 		// Act
-		renderWithStore( <ExtendedComponents />, store );
+		renderWithStore(<ExtendedComponents />, store);
 
-		const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
-		const buttonComponentMoreActions = moreActionsButtons[ 0 ];
-		fireEvent.click( buttonComponentMoreActions );
+		const moreActionsButtons = screen.getAllByLabelText('More actions');
+		const buttonComponentMoreActions = moreActionsButtons[0];
+		fireEvent.click(buttonComponentMoreActions);
 
-		const renameButton = await screen.findByText( 'Rename' );
-		fireEvent.click( renameButton );
+		const renameButton = await screen.findByText('Rename');
+		fireEvent.click(renameButton);
 
 		// Assert
 		const editableField = getEditableRenameField();
-		expect( editableField ).toHaveAttribute( 'contentEditable', 'true' );
-		expect( editableField ).toHaveTextContent( 'Button Component' );
-	} );
+		expect(editableField).toHaveAttribute('contentEditable', 'true');
+		expect(editableField).toHaveTextContent('Button Component');
+	});
 
-	it( 'should rename component successfully when valid name is submitted', async () => {
+	it('should rename component successfully when valid name is submitted', async () => {
 		// Act
-		renderWithStore( <ExtendedComponents />, store );
+		renderWithStore(<ExtendedComponents />, store);
 
-		const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
-		const buttonComponentMoreActions = moreActionsButtons[ 0 ];
-		fireEvent.click( buttonComponentMoreActions );
+		const moreActionsButtons = screen.getAllByLabelText('More actions');
+		const buttonComponentMoreActions = moreActionsButtons[0];
+		fireEvent.click(buttonComponentMoreActions);
 
-		const renameButton = await screen.findByText( 'Rename' );
-		fireEvent.click( renameButton );
+		const renameButton = await screen.findByText('Rename');
+		fireEvent.click(renameButton);
 
 		const editableField = getEditableRenameField();
 		editableField.textContent = 'NewButtonName';
-		fireEvent.input( editableField, { target: { innerText: 'NewButtonName' } } );
-		await waitFor( () => {
-			expect( editableField ).toHaveTextContent( 'NewButtonName' );
-		} );
-		fireEvent.keyDown( editableField, { key: 'Enter' } );
+		fireEvent.input(editableField, { target: { innerText: 'NewButtonName' } });
+		await waitFor(() => {
+			expect(editableField).toHaveTextContent('NewButtonName');
+		});
+		fireEvent.keyDown(editableField, { key: 'Enter' });
 
 		// Assert
 		await waitFor(
 			() => {
-				expect( screen.getByText( 'NewButtonName' ) ).toBeInTheDocument();
+				expect(screen.getByText('NewButtonName')).toBeInTheDocument();
 			},
 			{ timeout: 3000 }
 		);
-		expect( screen.queryByText( 'Button Component' ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.queryByText('Button Component')).not.toBeInTheDocument();
+	});
 
-	it( 'should rename component successfully when valid name is submitted via blur', async () => {
+	it('should rename component successfully when valid name is submitted via blur', async () => {
 		// Act
-		renderWithStore( <ExtendedComponents />, store );
+		renderWithStore(<ExtendedComponents />, store);
 
-		const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
-		const buttonComponentMoreActions = moreActionsButtons[ 0 ];
-		fireEvent.click( buttonComponentMoreActions );
+		const moreActionsButtons = screen.getAllByLabelText('More actions');
+		const buttonComponentMoreActions = moreActionsButtons[0];
+		fireEvent.click(buttonComponentMoreActions);
 
-		const renameButton = await screen.findByText( 'Rename' );
-		fireEvent.click( renameButton );
+		const renameButton = await screen.findByText('Rename');
+		fireEvent.click(renameButton);
 
 		const editableField = getEditableRenameField();
-		fireEvent.input( editableField, { target: { innerText: 'RenamedComponent' } } );
-		fireEvent.blur( editableField );
+		fireEvent.input(editableField, { target: { innerText: 'RenamedComponent' } });
+		fireEvent.blur(editableField);
 
 		// Assert
-		await waitFor( () => {
-			expect( screen.getByText( 'RenamedComponent' ) ).toBeInTheDocument();
-		} );
-		expect( screen.queryByText( 'Button Component' ) ).not.toBeInTheDocument();
-	} );
+		await waitFor(() => {
+			expect(screen.getByText('RenamedComponent')).toBeInTheDocument();
+		});
+		expect(screen.queryByText('Button Component')).not.toBeInTheDocument();
+	});
 
-	it( 'should cancel rename when Escape key is pressed', async () => {
+	it('should cancel rename when Escape key is pressed', async () => {
 		// Act
-		renderWithStore( <ExtendedComponents />, store );
+		renderWithStore(<ExtendedComponents />, store);
 
-		const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
-		const buttonComponentMoreActions = moreActionsButtons[ 0 ];
-		fireEvent.click( buttonComponentMoreActions );
+		const moreActionsButtons = screen.getAllByLabelText('More actions');
+		const buttonComponentMoreActions = moreActionsButtons[0];
+		fireEvent.click(buttonComponentMoreActions);
 
-		const renameButton = await screen.findByText( 'Rename' );
-		fireEvent.click( renameButton );
+		const renameButton = await screen.findByText('Rename');
+		fireEvent.click(renameButton);
 
 		const editableField = getEditableRenameField();
 		editableField.textContent = 'NewName';
-		fireEvent.input( editableField, { target: { innerText: 'NewName' } } );
-		fireEvent.keyDown( editableField, { key: 'Escape' } );
+		fireEvent.input(editableField, { target: { innerText: 'NewName' } });
+		fireEvent.keyDown(editableField, { key: 'Escape' });
 
 		// Assert
-		await waitFor( () => {
-			expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
-		} );
-		expect( screen.queryByText( 'NewName' ) ).not.toBeInTheDocument();
-	} );
+		await waitFor(() => {
+			expect(screen.getByText('Button Component')).toBeInTheDocument();
+		});
+		expect(screen.queryByText('NewName')).not.toBeInTheDocument();
+	});
 
-	it( 'should show validation error for component name that is too short', async () => {
+	it('should show validation error for component name that is too short', async () => {
 		// Act
-		renderWithStore( <ExtendedComponents />, store );
+		renderWithStore(<ExtendedComponents />, store);
 
-		const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
-		const buttonComponentMoreActions = moreActionsButtons[ 0 ];
-		fireEvent.click( buttonComponentMoreActions );
+		const moreActionsButtons = screen.getAllByLabelText('More actions');
+		const buttonComponentMoreActions = moreActionsButtons[0];
+		fireEvent.click(buttonComponentMoreActions);
 
-		const renameButton = await screen.findByText( 'Rename' );
-		fireEvent.click( renameButton );
+		const renameButton = await screen.findByText('Rename');
+		fireEvent.click(renameButton);
 
 		const editableField = getEditableRenameField();
-		fireEvent.input( editableField, { target: { innerText: 'A' } } );
+		fireEvent.input(editableField, { target: { innerText: 'A' } });
 
 		// Assert
-		await waitFor( () => {
+		await waitFor(() => {
 			expect(
-				screen.getByText( 'Component name is too short. Please enter at least 2 characters.' )
+				screen.getByText('Component name is too short. Please enter at least 2 characters.')
 			).toBeInTheDocument();
-		} );
-		expect( editableField ).toHaveAttribute( 'contentEditable', 'true' );
-	} );
+		});
+		expect(editableField).toHaveAttribute('contentEditable', 'true');
+	});
 
-	it( 'should show validation error for component name that is too long', async () => {
+	it('should show validation error for component name that is too long', async () => {
 		// Act
-		renderWithStore( <ExtendedComponents />, store );
+		renderWithStore(<ExtendedComponents />, store);
 
-		const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
-		const buttonComponentMoreActions = moreActionsButtons[ 0 ];
-		fireEvent.click( buttonComponentMoreActions );
+		const moreActionsButtons = screen.getAllByLabelText('More actions');
+		const buttonComponentMoreActions = moreActionsButtons[0];
+		fireEvent.click(buttonComponentMoreActions);
 
-		const renameButton = await screen.findByText( 'Rename' );
-		fireEvent.click( renameButton );
+		const renameButton = await screen.findByText('Rename');
+		fireEvent.click(renameButton);
 
 		const editableField = getEditableRenameField();
-		const longName = 'A'.repeat( 51 );
-		fireEvent.input( editableField, { target: { innerText: longName } } );
+		const longName = 'A'.repeat(51);
+		fireEvent.input(editableField, { target: { innerText: longName } });
 
 		// Assert
-		await waitFor( () => {
+		await waitFor(() => {
 			expect(
-				screen.getByText( 'Component name is too long. Please keep it under 50 characters.' )
+				screen.getByText('Component name is too long. Please keep it under 50 characters.')
 			).toBeInTheDocument();
-		} );
-		expect( editableField ).toHaveAttribute( 'contentEditable', 'true' );
-	} );
+		});
+		expect(editableField).toHaveAttribute('contentEditable', 'true');
+	});
 
-	it( 'should show validation error for duplicate component name', async () => {
+	it('should show validation error for duplicate component name', async () => {
 		// Act
-		renderWithStore( <ExtendedComponents />, store );
+		renderWithStore(<ExtendedComponents />, store);
 
-		const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
-		const buttonComponentMoreActions = moreActionsButtons[ 0 ];
-		fireEvent.click( buttonComponentMoreActions );
+		const moreActionsButtons = screen.getAllByLabelText('More actions');
+		const buttonComponentMoreActions = moreActionsButtons[0];
+		fireEvent.click(buttonComponentMoreActions);
 
-		const renameButton = await screen.findByText( 'Rename' );
-		fireEvent.click( renameButton );
+		const renameButton = await screen.findByText('Rename');
+		fireEvent.click(renameButton);
 
 		const editableField = getEditableRenameField();
 		editableField.textContent = 'ExistingComponent';
-		fireEvent.input( editableField, { target: { innerText: 'ExistingComponent' } } );
+		fireEvent.input(editableField, { target: { innerText: 'ExistingComponent' } });
 
-		await waitFor( () => {
-			expect( editableField ).toHaveTextContent( 'ExistingComponent' );
-		} );
+		await waitFor(() => {
+			expect(editableField).toHaveTextContent('ExistingComponent');
+		});
 
-		fireEvent.keyDown( editableField, { key: 'Enter' } );
+		fireEvent.keyDown(editableField, { key: 'Enter' });
 
 		// Assert
-		await waitFor( () => {
-			const allComponents = screen.getAllByRole( 'button' );
-			const buttonComponent = allComponents.find( ( btn ) => btn.textContent?.includes( 'Button Component' ) );
-			if ( ! buttonComponent ) {
-				const textboxes = screen.queryAllByRole( 'textbox' );
-				expect( textboxes.length ).toBeGreaterThan( 0 );
+		await waitFor(() => {
+			const allComponents = screen.getAllByRole('button');
+			const buttonComponent = allComponents.find((btn) => btn.textContent?.includes('Button Component'));
+			if (!buttonComponent) {
+				const textboxes = screen.queryAllByRole('textbox');
+				expect(textboxes.length).toBeGreaterThan(0);
 			} else {
-				expect( buttonComponent ).toBeInTheDocument();
+				expect(buttonComponent).toBeInTheDocument();
 			}
-		} );
-	} );
+		});
+	});
 
-	it( 'should not submit rename when validation error exists', async () => {
+	it('should not submit rename when validation error exists', async () => {
 		// Act
-		renderWithStore( <ExtendedComponents />, store );
+		renderWithStore(<ExtendedComponents />, store);
 
-		const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
-		const buttonComponentMoreActions = moreActionsButtons[ 0 ];
-		fireEvent.click( buttonComponentMoreActions );
+		const moreActionsButtons = screen.getAllByLabelText('More actions');
+		const buttonComponentMoreActions = moreActionsButtons[0];
+		fireEvent.click(buttonComponentMoreActions);
 
-		const renameButton = await screen.findByText( 'Rename' );
-		fireEvent.click( renameButton );
+		const renameButton = await screen.findByText('Rename');
+		fireEvent.click(renameButton);
 
 		const editableField = getEditableRenameField();
-		fireEvent.input( editableField, { target: { innerText: 'A' } } );
+		fireEvent.input(editableField, { target: { innerText: 'A' } });
 
-		await waitFor( () => {
+		await waitFor(() => {
 			expect(
-				screen.getByText( 'Component name is too short. Please enter at least 2 characters.' )
+				screen.getByText('Component name is too short. Please enter at least 2 characters.')
 			).toBeInTheDocument();
-		} );
+		});
 
-		fireEvent.keyDown( editableField, { key: 'Enter' } );
+		fireEvent.keyDown(editableField, { key: 'Enter' });
 
 		// Assert
-		expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
-		expect( screen.queryByText( 'A' ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.getByText('Button Component')).toBeInTheDocument();
+		expect(screen.queryByText('A')).not.toBeInTheDocument();
+	});
 
-	it( 'should close edit mode on blur when validation error exists', async () => {
+	it('should close edit mode on blur when validation error exists', async () => {
 		// Act
-		renderWithStore( <ExtendedComponents />, store );
+		renderWithStore(<ExtendedComponents />, store);
 
-		const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
-		const buttonComponentMoreActions = moreActionsButtons[ 0 ];
-		fireEvent.click( buttonComponentMoreActions );
+		const moreActionsButtons = screen.getAllByLabelText('More actions');
+		const buttonComponentMoreActions = moreActionsButtons[0];
+		fireEvent.click(buttonComponentMoreActions);
 
-		const renameButton = await screen.findByText( 'Rename' );
-		fireEvent.click( renameButton );
+		const renameButton = await screen.findByText('Rename');
+		fireEvent.click(renameButton);
 
 		const editableField = getEditableRenameField();
-		fireEvent.input( editableField, { target: { innerText: 'A' } } );
+		fireEvent.input(editableField, { target: { innerText: 'A' } });
 
-		await waitFor( () => {
+		await waitFor(() => {
 			expect(
-				screen.getByText( 'Component name is too short. Please enter at least 2 characters.' )
+				screen.getByText('Component name is too short. Please enter at least 2 characters.')
 			).toBeInTheDocument();
-		} );
+		});
 
-		fireEvent.blur( editableField );
+		fireEvent.blur(editableField);
 
 		// Assert
-		await waitFor( () => {
-			expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
-		} );
-	} );
+		await waitFor(() => {
+			expect(screen.getByText('Button Component')).toBeInTheDocument();
+		});
+	});
 
-	it( 'should not submit rename when name has not changed', async () => {
+	it('should not submit rename when name has not changed', async () => {
 		// Act
-		renderWithStore( <ExtendedComponents />, store );
+		renderWithStore(<ExtendedComponents />, store);
 
-		const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
-		const buttonComponentMoreActions = moreActionsButtons[ 0 ];
-		fireEvent.click( buttonComponentMoreActions );
+		const moreActionsButtons = screen.getAllByLabelText('More actions');
+		const buttonComponentMoreActions = moreActionsButtons[0];
+		fireEvent.click(buttonComponentMoreActions);
 
-		const renameButton = await screen.findByText( 'Rename' );
-		fireEvent.click( renameButton );
+		const renameButton = await screen.findByText('Rename');
+		fireEvent.click(renameButton);
 
 		const editableField = getEditableRenameField();
 		editableField.textContent = 'NewName';
-		fireEvent.input( editableField, { target: { innerText: 'NewName' } } );
+		fireEvent.input(editableField, { target: { innerText: 'NewName' } });
 		editableField.textContent = 'Button Component';
-		fireEvent.input( editableField, { target: { innerText: 'Button Component' } } );
-		fireEvent.keyDown( editableField, { key: 'Enter' } );
+		fireEvent.input(editableField, { target: { innerText: 'Button Component' } });
+		fireEvent.keyDown(editableField, { key: 'Enter' });
 
 		// Assert
-		await waitFor( () => {
-			expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
-		} );
-	} );
+		await waitFor(() => {
+			expect(screen.getByText('Button Component')).toBeInTheDocument();
+		});
+	});
 
-	it( 'should show more actions button when user is admin', () => {
+	it('should show more actions button when user is admin', () => {
 		// Arrange
-		mockCurrentUserCapabilities( true );
+		mockCurrentUserCapabilities(true);
 
 		// Act
-		renderWithStore( <ExtendedComponents />, store );
+		renderWithStore(<ExtendedComponents />, store);
 
 		// Assert
-		const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
-		expect( moreActionsButtons.length ).toBeGreaterThan( 0 );
-	} );
+		const moreActionsButtons = screen.getAllByLabelText('More actions');
+		expect(moreActionsButtons.length).toBeGreaterThan(0);
+	});
 
-	it( 'should not show more actions button when user is not admin', () => {
+	it('should not show more actions button when user is not admin', () => {
 		// Arrange
-		mockCurrentUserCapabilities( false );
+		mockCurrentUserCapabilities(false);
 
 		// Act
-		renderWithStore( <ExtendedComponents />, store );
+		renderWithStore(<ExtendedComponents />, store);
 
 		// Assert
-		expect( screen.queryByLabelText( 'More actions' ) ).not.toBeInTheDocument();
-	} );
-} );
+		expect(screen.queryByLabelText('More actions')).not.toBeInTheDocument();
+	});
+});

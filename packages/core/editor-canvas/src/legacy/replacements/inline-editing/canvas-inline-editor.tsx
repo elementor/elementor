@@ -16,7 +16,7 @@ import {
 
 const EDITOR_WRAPPER_SELECTOR = 'inline-editor-wrapper';
 
-export const CanvasInlineEditor = ( {
+export const CanvasInlineEditor = ({
 	elementClasses,
 	initialValue,
 	expectedTag,
@@ -30,55 +30,55 @@ export const CanvasInlineEditor = ( {
 	expectedTag: string | null;
 	rootElement: HTMLElement;
 	id: string;
-	setValue: ( value: string | null ) => void;
+	setValue: (value: string | null) => void;
 	onBlur: () => void;
-} ) => {
-	const [ editor, setEditor ] = useState< Editor | null >( null );
-	const { onSelectionEnd, anchor: toolbarAnchor } = useRenderToolbar( rootElement.ownerDocument, id );
+}) => {
+	const [editor, setEditor] = useState<Editor | null>(null);
+	const { onSelectionEnd, anchor: toolbarAnchor } = useRenderToolbar(rootElement.ownerDocument, id);
 
 	const onBlur = () => {
-		removeToolbarAnchor( rootElement.ownerDocument, id );
+		removeToolbarAnchor(rootElement.ownerDocument, id);
 
 		props.onBlur();
 	};
 
-	useOnClickOutsideIframe( onBlur );
+	useOnClickOutsideIframe(onBlur);
 
 	return (
 		<ThemeProvider>
-			<InlineEditingOverlay expectedTag={ expectedTag } rootElement={ rootElement } id={ id } />
+			<InlineEditingOverlay expectedTag={expectedTag} rootElement={rootElement} id={id} />
 			<style>
-				{ `
+				{`
 			.ProseMirror > * {
 				height: 100%;
 			}
-			.${ EDITOR_WRAPPER_SELECTOR } .ProseMirror > button[contenteditable="true"] {
+			.${EDITOR_WRAPPER_SELECTOR} .ProseMirror > button[contenteditable="true"] {
 				height: auto;
 				cursor: text;
 			}
-			` }
+			`}
 			</style>
 			<InlineEditor
-				onEditorCreate={ setEditor }
-				editorProps={ {
+				onEditorCreate={setEditor}
+				editorProps={{
 					attributes: {
 						style: 'outline: none;overflow-wrap: normal;height:100%',
 					},
-				} }
-				elementClasses={ elementClasses }
-				value={ initialValue }
-				setValue={ setValue }
-				onBlur={ onBlur }
+				}}
+				elementClasses={elementClasses}
+				value={initialValue}
+				setValue={setValue}
+				onBlur={onBlur}
 				autofocus
-				expectedTag={ expectedTag }
-				onSelectionEnd={ onSelectionEnd }
+				expectedTag={expectedTag}
+				onSelectionEnd={onSelectionEnd}
 			/>
-			{ toolbarAnchor && editor && <InlineEditingToolbar anchor={ toolbarAnchor } editor={ editor } id={ id } /> }
+			{toolbarAnchor && editor && <InlineEditingToolbar anchor={toolbarAnchor} editor={editor} id={id} />}
 		</ThemeProvider>
 	);
 };
 
-const InlineEditingOverlay = ( {
+const InlineEditingOverlay = ({
 	expectedTag,
 	rootElement,
 	id,
@@ -86,36 +86,36 @@ const InlineEditingOverlay = ( {
 	expectedTag: string | null;
 	rootElement: HTMLElement;
 	id: string;
-} ) => {
-	const inlineEditedElement = getInlineEditorElement( rootElement, expectedTag );
-	const [ overlayRefElement, setOverlayElement ] = useState< HTMLDivElement | null >( inlineEditedElement );
+}) => {
+	const inlineEditedElement = getInlineEditorElement(rootElement, expectedTag);
+	const [overlayRefElement, setOverlayElement] = useState<HTMLDivElement | null>(inlineEditedElement);
 
-	useEffect( () => {
-		setOverlayElement( getInlineEditorElement( rootElement, expectedTag ) );
-	}, [ expectedTag, rootElement ] );
+	useEffect(() => {
+		setOverlayElement(getInlineEditorElement(rootElement, expectedTag));
+	}, [expectedTag, rootElement]);
 
-	return overlayRefElement ? <OutlineOverlay element={ overlayRefElement } id={ id } isSelected /> : null;
+	return overlayRefElement ? <OutlineOverlay element={overlayRefElement} id={id} isSelected /> : null;
 };
 
-const InlineEditingToolbar = ( { anchor, editor, id }: { anchor: HTMLElement; editor: Editor; id: string } ) => {
-	const { refs, floatingStyles } = useFloating( {
+const InlineEditingToolbar = ({ anchor, editor, id }: { anchor: HTMLElement; editor: Editor; id: string }) => {
+	const { refs, floatingStyles } = useFloating({
 		placement: 'top',
 		strategy: 'fixed',
 		transform: false,
 		whileElementsMounted: autoUpdate,
-		middleware: [ horizontalShifter, flip() ],
-	} );
+		middleware: [horizontalShifter, flip()],
+	});
 
-	useLayoutEffect( () => {
-		refs.setReference( anchor );
+	useLayoutEffect(() => {
+		refs.setReference(anchor);
 
-		return () => refs.setReference( null );
-	}, [ anchor, refs ] );
+		return () => refs.setReference(null);
+	}, [anchor, refs]);
 
 	return (
-		<FloatingPortal id={ CANVAS_WRAPPER_ID }>
-			<Box ref={ refs.setFloating } role="presentation" style={ { ...floatingStyles, pointerEvents: 'none' } }>
-				<InlineEditorToolbar editor={ editor } elementId={ id } />
+		<FloatingPortal id={CANVAS_WRAPPER_ID}>
+			<Box ref={refs.setFloating} role="presentation" style={{ ...floatingStyles, pointerEvents: 'none' }}>
+				<InlineEditorToolbar editor={editor} elementId={id} />
 			</Box>
 		</FloatingPortal>
 	);

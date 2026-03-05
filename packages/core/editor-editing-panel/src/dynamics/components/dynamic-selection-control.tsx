@@ -40,40 +40,40 @@ import { DynamicSelection } from './dynamic-selection';
 
 const SIZE = 'tiny';
 
-const tagsWithoutTabs = [ 'popup' ];
+const tagsWithoutTabs = ['popup'];
 
-export const DynamicSelectionControl = ( { OriginalControl, ...props }: { OriginalControl?: ControlComponent } ) => {
+export const DynamicSelectionControl = ({ OriginalControl, ...props }: { OriginalControl?: ControlComponent }) => {
 	const { setValue: setAnyValue, propType } = useBoundProp();
-	const { bind, value } = useBoundProp( dynamicPropTypeUtil );
+	const { bind, value } = useBoundProp(dynamicPropTypeUtil);
 	const { expired: readonly } = useLicenseConfig();
-	const originalPropType = createTopLevelObjectType( {
+	const originalPropType = createTopLevelObjectType({
 		schema: {
-			[ bind ]: propType,
+			[bind]: propType,
 		},
-	} );
+	});
 
-	const [ propValueFromHistory ] = usePersistDynamicValue( bind );
-	const selectionPopoverState = usePopupState( { variant: 'popover' } );
+	const [propValueFromHistory] = usePersistDynamicValue(bind);
+	const selectionPopoverState = usePopupState({ variant: 'popover' });
 
 	const { name: tagName = '' } = value;
-	const dynamicTag = useDynamicTag( tagName );
+	const dynamicTag = useDynamicTag(tagName);
 
-	if ( ! isDynamicTagSupported( tagName ) && OriginalControl ) {
+	if (!isDynamicTagSupported(tagName) && OriginalControl) {
 		return (
-			<PropProvider propType={ originalPropType } value={ { [ bind ]: null } } setValue={ setAnyValue }>
-				<PropKeyProvider bind={ bind }>
-					<OriginalControl { ...props } />
+			<PropProvider propType={originalPropType} value={{ [bind]: null }} setValue={setAnyValue}>
+				<PropKeyProvider bind={bind}>
+					<OriginalControl {...props} />
 				</PropKeyProvider>
 			</PropProvider>
 		);
 	}
 
 	const removeDynamicTag = () => {
-		setAnyValue( propValueFromHistory ?? null );
+		setAnyValue(propValueFromHistory ?? null);
 	};
 
-	if ( ! dynamicTag ) {
-		throw new Error( `Dynamic tag ${ tagName } not found` );
+	if (!dynamicTag) {
+		throw new Error(`Dynamic tag ${tagName} not found`);
 	}
 
 	return (
@@ -81,18 +81,18 @@ export const DynamicSelectionControl = ( { OriginalControl, ...props }: { Origin
 			<Tag
 				fullWidth
 				showActionsOnHover
-				label={ dynamicTag.label }
-				startIcon={ <DatabaseIcon fontSize={ SIZE } /> }
-				{ ...bindTrigger( selectionPopoverState ) }
+				label={dynamicTag.label}
+				startIcon={<DatabaseIcon fontSize={SIZE} />}
+				{...bindTrigger(selectionPopoverState)}
 				actions={
 					<>
-						<DynamicSettingsPopover dynamicTag={ dynamicTag } disabled={ readonly } />
+						<DynamicSettingsPopover dynamicTag={dynamicTag} disabled={readonly} />
 						<IconButton
-							size={ SIZE }
-							onClick={ removeDynamicTag }
-							aria-label={ __( 'Remove dynamic value', 'elementor' ) }
+							size={SIZE}
+							onClick={removeDynamicTag}
+							aria-label={__('Remove dynamic value', 'elementor')}
 						>
-							<XIcon fontSize={ SIZE } />
+							<XIcon fontSize={SIZE} />
 						</IconButton>
 					</>
 				}
@@ -100,114 +100,105 @@ export const DynamicSelectionControl = ( { OriginalControl, ...props }: { Origin
 			<Popover
 				disablePortal
 				disableScrollLock
-				anchorOrigin={ { vertical: 'bottom', horizontal: 'right' } }
-				transformOrigin={ { vertical: 'top', horizontal: 'right' } }
-				PaperProps={ {
+				anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+				transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+				PaperProps={{
 					sx: { my: 1 },
-				} }
-				{ ...bindPopover( selectionPopoverState ) }
+				}}
+				{...bindPopover(selectionPopoverState)}
 			>
-				<SectionPopoverBody aria-label={ __( 'Dynamic tags', 'elementor' ) }>
-					<DynamicSelection close={ selectionPopoverState.close } expired={ readonly } />
+				<SectionPopoverBody aria-label={__('Dynamic tags', 'elementor')}>
+					<DynamicSelection close={selectionPopoverState.close} expired={readonly} />
 				</SectionPopoverBody>
 			</Popover>
 		</Box>
 	);
 };
 
-export const DynamicSettingsPopover = ( {
+export const DynamicSettingsPopover = ({
 	dynamicTag,
 	disabled = false,
 }: {
 	dynamicTag: DynamicTag;
 	disabled?: boolean;
-} ) => {
-	const popupState = usePopupState( { variant: 'popover' } );
+}) => {
+	const popupState = usePopupState({ variant: 'popover' });
 
-	const hasDynamicSettings = !! dynamicTag.atomic_controls.length;
+	const hasDynamicSettings = !!dynamicTag.atomic_controls.length;
 
-	if ( ! hasDynamicSettings ) {
+	if (!hasDynamicSettings) {
 		return null;
 	}
 
 	return (
 		<>
 			<IconButton
-				size={ SIZE }
-				disabled={ disabled }
-				{ ...( ! disabled && bindTrigger( popupState ) ) }
-				aria-label={ __( 'Dynamic settings', 'elementor' ) }
+				size={SIZE}
+				disabled={disabled}
+				{...(!disabled && bindTrigger(popupState))}
+				aria-label={__('Dynamic settings', 'elementor')}
 			>
-				<SettingsIcon fontSize={ SIZE } />
+				<SettingsIcon fontSize={SIZE} />
 			</IconButton>
 			<Popover
 				disablePortal
 				disableScrollLock
-				anchorOrigin={ { vertical: 'bottom', horizontal: 'right' } }
-				transformOrigin={ { vertical: 'top', horizontal: 'right' } }
-				PaperProps={ {
+				anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+				transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+				PaperProps={{
 					sx: { my: 1 },
-				} }
-				{ ...bindPopover( popupState ) }
+				}}
+				{...bindPopover(popupState)}
 			>
-				<SectionPopoverBody aria-label={ __( 'Dynamic settings', 'elementor' ) }>
+				<SectionPopoverBody aria-label={__('Dynamic settings', 'elementor')}>
 					<PopoverHeader
-						title={ dynamicTag.label }
-						onClose={ popupState.close }
-						icon={ <DatabaseIcon fontSize={ SIZE } /> }
+						title={dynamicTag.label}
+						onClose={popupState.close}
+						icon={<DatabaseIcon fontSize={SIZE} />}
 					/>
-					<DynamicSettings controls={ dynamicTag.atomic_controls } tagName={ dynamicTag.name } />
+					<DynamicSettings controls={dynamicTag.atomic_controls} tagName={dynamicTag.name} />
 				</SectionPopoverBody>
 			</Popover>
 		</>
 	);
 };
 
-const DynamicSettings = ( { controls, tagName }: { controls: DynamicTag[ 'atomic_controls' ]; tagName: string } ) => {
-	const tabs = controls.filter( ( { type } ) => type === 'section' ) as ControlsSection[];
-	const { getTabsProps, getTabProps, getTabPanelProps } = useTabs< number >( 0 );
+const DynamicSettings = ({ controls, tagName }: { controls: DynamicTag['atomic_controls']; tagName: string }) => {
+	const tabs = controls.filter(({ type }) => type === 'section') as ControlsSection[];
+	const { getTabsProps, getTabProps, getTabPanelProps } = useTabs<number>(0);
 
-	if ( ! tabs.length ) {
+	if (!tabs.length) {
 		// Dynamic must have hierarchical controls.
 		return null;
 	}
 
-	if ( tagsWithoutTabs.includes( tagName ) ) {
-		const singleTab = tabs[ 0 ];
+	if (tagsWithoutTabs.includes(tagName)) {
+		const singleTab = tabs[0];
 		return (
 			<>
 				<Divider />
-				<ControlsItemsStack items={ singleTab.value.items } />
+				<ControlsItemsStack items={singleTab.value.items} />
 			</>
 		);
 	}
 
 	return (
 		<>
-			{ tabs.length > 1 && (
-				<Tabs size="small" variant="fullWidth" { ...getTabsProps() }>
-					{ tabs.map( ( { value }, index ) => (
-						<Tab
-							key={ index }
-							label={ value.label }
-							sx={ { px: 1, py: 0.5 } }
-							{ ...getTabProps( index ) }
-						/>
-					) ) }
+			{tabs.length > 1 && (
+				<Tabs size="small" variant="fullWidth" {...getTabsProps()}>
+					{tabs.map(({ value }, index) => (
+						<Tab key={index} label={value.label} sx={{ px: 1, py: 0.5 }} {...getTabProps(index)} />
+					))}
 				</Tabs>
-			) }
+			)}
 			<Divider />
-			{ tabs.map( ( { value }, index ) => {
+			{tabs.map(({ value }, index) => {
 				return (
-					<TabPanel
-						key={ index }
-						sx={ { flexGrow: 1, py: 0, overflowY: 'auto' } }
-						{ ...getTabPanelProps( index ) }
-					>
-						<ControlsItemsStack items={ value.items } />
+					<TabPanel key={index} sx={{ flexGrow: 1, py: 0, overflowY: 'auto' }} {...getTabPanelProps(index)}>
+						<ControlsItemsStack items={value.items} />
 					</TabPanel>
 				);
-			} ) }
+			})}
 		</>
 	);
 };
@@ -223,34 +214,34 @@ const DYNAMIC_TAG_LAYOUT_OVERRIDES = {
 	select: 'full',
 } as const;
 
-const getLayout = ( control: Control[ 'value' ] ): ControlLayout => {
-	const dynamicOverride = DYNAMIC_TAG_LAYOUT_OVERRIDES[ control.type as keyof typeof DYNAMIC_TAG_LAYOUT_OVERRIDES ];
-	if ( dynamicOverride ) {
+const getLayout = (control: Control['value']): ControlLayout => {
+	const dynamicOverride = DYNAMIC_TAG_LAYOUT_OVERRIDES[control.type as keyof typeof DYNAMIC_TAG_LAYOUT_OVERRIDES];
+	if (dynamicOverride) {
 		return dynamicOverride;
 	}
 
 	return (
-		LAYOUT_OVERRIDE_FIELDS[ control.bind as keyof typeof LAYOUT_OVERRIDE_FIELDS ] ??
-		controlsRegistry.getLayout( control.type as ControlType )
+		LAYOUT_OVERRIDE_FIELDS[control.bind as keyof typeof LAYOUT_OVERRIDE_FIELDS] ??
+		controlsRegistry.getLayout(control.type as ControlType)
 	);
 };
 
-const Control = ( { control }: { control: Control[ 'value' ] } ) => {
-	if ( ! controlsRegistry.get( control.type as ControlType ) ) {
+const Control = ({ control }: { control: Control['value'] }) => {
+	if (!controlsRegistry.get(control.type as ControlType)) {
 		return null;
 	}
 
-	const layout = getLayout( control );
+	const layout = getLayout(control);
 
 	const shouldDisablePortal = control.type === 'select';
 	const baseControlProps = shouldDisablePortal
 		? {
 				...control.props,
 				MenuProps: {
-					...( control.props?.MenuProps ?? {} ),
+					...(control.props?.MenuProps ?? {}),
 					disablePortal: true,
 				},
-		  }
+			}
 		: { ...control.props };
 	const controlProps = {
 		...baseControlProps,
@@ -262,31 +253,31 @@ const Control = ( { control }: { control: Control[ 'value' ] } ) => {
 			? {
 					display: 'grid',
 					gridTemplateColumns: isSwitchControl ? 'minmax(0, 1fr) max-content' : '1fr 1fr',
-			  }
+				}
 			: {};
 
 	return (
-		<DynamicControl bind={ control.bind }>
-			<Grid container gap={ 0.75 } sx={ layoutStyleProps }>
-				{ control.label ? (
-					<Grid item xs={ 12 }>
-						<ControlFormLabel>{ control.label }</ControlFormLabel>
+		<DynamicControl bind={control.bind}>
+			<Grid container gap={0.75} sx={layoutStyleProps}>
+				{control.label ? (
+					<Grid item xs={12}>
+						<ControlFormLabel>{control.label}</ControlFormLabel>
 					</Grid>
-				) : null }
-				<Grid item xs={ 12 }>
-					<BaseControl type={ control.type as ControlType } props={ controlProps } />
+				) : null}
+				<Grid item xs={12}>
+					<BaseControl type={control.type as ControlType} props={controlProps} />
 				</Grid>
 			</Grid>
 		</DynamicControl>
 	);
 };
 
-function ControlsItemsStack( { items }: { items: ControlsSection[ 'value' ][ 'items' ] } ) {
+function ControlsItemsStack({ items }: { items: ControlsSection['value']['items'] }) {
 	return (
-		<Stack p={ 2 } gap={ 2 } sx={ { overflowY: 'auto' } }>
-			{ items.map( ( item ) =>
-				item.type === 'control' ? <Control key={ item.value.bind } control={ item.value } /> : null
-			) }
+		<Stack p={2} gap={2} sx={{ overflowY: 'auto' }}>
+			{items.map((item) =>
+				item.type === 'control' ? <Control key={item.value.bind} control={item.value} /> : null
+			)}
 		</Stack>
 	);
 }

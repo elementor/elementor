@@ -7,22 +7,19 @@ import { createStylesInheritance } from '../create-styles-inheritance';
 import { type StyleDefinitionStateWithNormal, type StylesInheritanceSnapshot } from '../types';
 import { createMockSnapshotField } from './mock-utils';
 
-jest.mock( '@elementor/editor-responsive' );
-jest.mock( '../../contexts/style-context' );
+jest.mock('@elementor/editor-responsive');
+jest.mock('../../contexts/style-context');
 
 type ExpectedSnapshots = Partial<
-	Record<
-		NonNullable< BreakpointId >,
-		Partial< Record< StyleDefinitionStateWithNormal, StylesInheritanceSnapshot > >
-	>
+	Record<NonNullable<BreakpointId>, Partial<Record<StyleDefinitionStateWithNormal, StylesInheritanceSnapshot>>>
 >;
 
-const desktopNormal = { breakpoint: 'desktop', state: null } as StyleDefinitionVariant[ 'meta' ];
-const desktopHover = { breakpoint: 'desktop', state: 'hover' } as StyleDefinitionVariant[ 'meta' ];
-const tabletNormal = { breakpoint: 'tablet', state: null } as StyleDefinitionVariant[ 'meta' ];
-const mobileNormal = { breakpoint: 'mobile', state: null } as StyleDefinitionVariant[ 'meta' ];
+const desktopNormal = { breakpoint: 'desktop', state: null } as StyleDefinitionVariant['meta'];
+const desktopHover = { breakpoint: 'desktop', state: 'hover' } as StyleDefinitionVariant['meta'];
+const tabletNormal = { breakpoint: 'tablet', state: null } as StyleDefinitionVariant['meta'];
+const mobileNormal = { breakpoint: 'mobile', state: null } as StyleDefinitionVariant['meta'];
 
-const desktopNormalProp1 = createMockStyleDefinitionWithVariants( {
+const desktopNormalProp1 = createMockStyleDefinitionWithVariants({
 	variants: [
 		{
 			meta: desktopNormal,
@@ -30,9 +27,9 @@ const desktopNormalProp1 = createMockStyleDefinitionWithVariants( {
 			custom_css: null,
 		},
 	],
-} );
+});
 
-const tabletNormalProp2 = createMockStyleDefinitionWithVariants( {
+const tabletNormalProp2 = createMockStyleDefinitionWithVariants({
 	variants: [
 		{
 			meta: tabletNormal,
@@ -40,9 +37,9 @@ const tabletNormalProp2 = createMockStyleDefinitionWithVariants( {
 			custom_css: null,
 		},
 	],
-} );
+});
 
-const mobileNormalProp3 = createMockStyleDefinitionWithVariants( {
+const mobileNormalProp3 = createMockStyleDefinitionWithVariants({
 	variants: [
 		{
 			meta: mobileNormal,
@@ -50,47 +47,35 @@ const mobileNormalProp3 = createMockStyleDefinitionWithVariants( {
 			custom_css: null,
 		},
 	],
-} );
+});
 
 const test1 = {
 	explanation:
 		'set props in snapshots based on the relevant style variants or inherited props from prior breakpoints',
-	styles: [ desktopNormalProp1, tabletNormalProp2, mobileNormalProp3 ],
+	styles: [desktopNormalProp1, tabletNormalProp2, mobileNormalProp3],
 	expectedSnapshots: {
 		desktop: {
 			normal: {
-				prop1: [
-					createMockSnapshotField( desktopNormalProp1, { breakpoint: 'desktop', state: null }, [ 'prop1' ] ),
-				],
+				prop1: [createMockSnapshotField(desktopNormalProp1, { breakpoint: 'desktop', state: null }, ['prop1'])],
 			},
 		},
 		tablet: {
 			normal: {
-				prop1: [
-					createMockSnapshotField( desktopNormalProp1, { breakpoint: 'desktop', state: null }, [ 'prop1' ] ),
-				],
-				prop2: [
-					createMockSnapshotField( tabletNormalProp2, { breakpoint: 'tablet', state: null }, [ 'prop2' ] ),
-				],
+				prop1: [createMockSnapshotField(desktopNormalProp1, { breakpoint: 'desktop', state: null }, ['prop1'])],
+				prop2: [createMockSnapshotField(tabletNormalProp2, { breakpoint: 'tablet', state: null }, ['prop2'])],
 			},
 		},
 		mobile: {
 			normal: {
-				prop1: [
-					createMockSnapshotField( desktopNormalProp1, { breakpoint: 'desktop', state: null }, [ 'prop1' ] ),
-				],
-				prop2: [
-					createMockSnapshotField( tabletNormalProp2, { breakpoint: 'tablet', state: null }, [ 'prop2' ] ),
-				],
-				prop3: [
-					createMockSnapshotField( mobileNormalProp3, { breakpoint: 'mobile', state: null }, [ 'prop3' ] ),
-				],
+				prop1: [createMockSnapshotField(desktopNormalProp1, { breakpoint: 'desktop', state: null }, ['prop1'])],
+				prop2: [createMockSnapshotField(tabletNormalProp2, { breakpoint: 'tablet', state: null }, ['prop2'])],
+				prop3: [createMockSnapshotField(mobileNormalProp3, { breakpoint: 'mobile', state: null }, ['prop3'])],
 			},
 		},
 	},
 };
 
-const desktopNormalProp1Override = createMockStyleDefinitionWithVariants( {
+const desktopNormalProp1Override = createMockStyleDefinitionWithVariants({
 	variants: [
 		{
 			meta: desktopNormal,
@@ -98,26 +83,26 @@ const desktopNormalProp1Override = createMockStyleDefinitionWithVariants( {
 			custom_css: null,
 		},
 	],
-} );
+});
 
 const test2 = {
 	explanation: 'sort the snapshot prop values based on the order of the style definitions',
-	styles: [ desktopNormalProp1Override, desktopNormalProp1 ],
+	styles: [desktopNormalProp1Override, desktopNormalProp1],
 	expectedSnapshots: {
 		desktop: {
 			normal: {
 				prop1: [
-					createMockSnapshotField( desktopNormalProp1Override, { breakpoint: 'desktop', state: null }, [
+					createMockSnapshotField(desktopNormalProp1Override, { breakpoint: 'desktop', state: null }, [
 						'prop1',
-					] ),
-					createMockSnapshotField( desktopNormalProp1, { breakpoint: 'desktop', state: null }, [ 'prop1' ] ),
+					]),
+					createMockSnapshotField(desktopNormalProp1, { breakpoint: 'desktop', state: null }, ['prop1']),
 				],
 			},
 		},
 	},
 };
 
-const desktopNormalHoverProp1 = createMockStyleDefinitionWithVariants( {
+const desktopNormalHoverProp1 = createMockStyleDefinitionWithVariants({
 	variants: [
 		{
 			meta: desktopNormal,
@@ -130,9 +115,9 @@ const desktopNormalHoverProp1 = createMockStyleDefinitionWithVariants( {
 			custom_css: null,
 		},
 	],
-} );
+});
 
-const mobileNormalProp1 = createMockStyleDefinitionWithVariants( {
+const mobileNormalProp1 = createMockStyleDefinitionWithVariants({
 	variants: [
 		{
 			meta: mobileNormal,
@@ -140,9 +125,9 @@ const mobileNormalProp1 = createMockStyleDefinitionWithVariants( {
 			custom_css: null,
 		},
 	],
-} );
+});
 
-const desktopHoverProp1 = createMockStyleDefinitionWithVariants( {
+const desktopHoverProp1 = createMockStyleDefinitionWithVariants({
 	variants: [
 		{
 			meta: desktopHover,
@@ -150,84 +135,72 @@ const desktopHoverProp1 = createMockStyleDefinitionWithVariants( {
 			custom_css: null,
 		},
 	],
-} );
+});
 
 const test3 = {
 	explanation: 'give priority to matching state prop values in state-specific snapshots',
-	styles: [ desktopNormalHoverProp1, mobileNormalProp1, desktopHoverProp1 ],
+	styles: [desktopNormalHoverProp1, mobileNormalProp1, desktopHoverProp1],
 	expectedSnapshots: {
 		desktop: {
 			normal: {
 				prop1: [
-					createMockSnapshotField( desktopNormalHoverProp1, { breakpoint: 'desktop', state: null }, [
-						'prop1',
-					] ),
+					createMockSnapshotField(desktopNormalHoverProp1, { breakpoint: 'desktop', state: null }, ['prop1']),
 				],
 			},
 			hover: {
 				prop1: [
-					createMockSnapshotField( desktopNormalHoverProp1, { breakpoint: 'desktop', state: 'hover' }, [
+					createMockSnapshotField(desktopNormalHoverProp1, { breakpoint: 'desktop', state: 'hover' }, [
 						'prop1',
-					] ),
-					createMockSnapshotField( desktopHoverProp1, { breakpoint: 'desktop', state: 'hover' }, [
-						'prop1',
-					] ),
-					createMockSnapshotField( desktopNormalHoverProp1, { breakpoint: 'desktop', state: null }, [
-						'prop1',
-					] ),
+					]),
+					createMockSnapshotField(desktopHoverProp1, { breakpoint: 'desktop', state: 'hover' }, ['prop1']),
+					createMockSnapshotField(desktopNormalHoverProp1, { breakpoint: 'desktop', state: null }, ['prop1']),
 				],
 			},
 		},
 		mobile: {
 			normal: {
 				prop1: [
-					createMockSnapshotField( mobileNormalProp1, { breakpoint: 'mobile', state: null }, [ 'prop1' ] ),
-					createMockSnapshotField( desktopNormalHoverProp1, { breakpoint: 'desktop', state: null }, [
-						'prop1',
-					] ),
+					createMockSnapshotField(mobileNormalProp1, { breakpoint: 'mobile', state: null }, ['prop1']),
+					createMockSnapshotField(desktopNormalHoverProp1, { breakpoint: 'desktop', state: null }, ['prop1']),
 				],
 			},
 			hover: {
 				prop1: [
-					createMockSnapshotField( desktopNormalHoverProp1, { breakpoint: 'desktop', state: 'hover' }, [
+					createMockSnapshotField(desktopNormalHoverProp1, { breakpoint: 'desktop', state: 'hover' }, [
 						'prop1',
-					] ),
-					createMockSnapshotField( desktopHoverProp1, { breakpoint: 'desktop', state: 'hover' }, [
-						'prop1',
-					] ),
-					createMockSnapshotField( mobileNormalProp1, { breakpoint: 'mobile', state: null }, [ 'prop1' ] ),
-					createMockSnapshotField( desktopNormalHoverProp1, { breakpoint: 'desktop', state: null }, [
-						'prop1',
-					] ),
+					]),
+					createMockSnapshotField(desktopHoverProp1, { breakpoint: 'desktop', state: 'hover' }, ['prop1']),
+					createMockSnapshotField(mobileNormalProp1, { breakpoint: 'mobile', state: null }, ['prop1']),
+					createMockSnapshotField(desktopNormalHoverProp1, { breakpoint: 'desktop', state: null }, ['prop1']),
 				],
 			},
 		},
 	},
 };
 
-const desktopNormalEmpty = createMockStyleDefinitionWithVariants( {
+const desktopNormalEmpty = createMockStyleDefinitionWithVariants({
 	variants: [
 		{
 			meta: desktopNormal,
-			props: { prop1: null, prop2: [ undefined, null, '', { a: null, b: undefined } ] },
+			props: { prop1: null, prop2: [undefined, null, '', { a: null, b: undefined }] },
 			custom_css: null,
 		},
 	],
-} );
+});
 
-const mobileNormalEmpty = createMockStyleDefinitionWithVariants( {
+const mobileNormalEmpty = createMockStyleDefinitionWithVariants({
 	variants: [
 		{
 			meta: mobileNormal,
-			props: { prop1: { a: null, b: undefined, c: '', d: [ { e: null } ] } },
+			props: { prop1: { a: null, b: undefined, c: '', d: [{ e: null }] } },
 			custom_css: null,
 		},
 	],
-} );
+});
 
 const test4 = {
 	explanation: 'clear empty values from snapshot prop arrays',
-	styles: [ desktopNormalEmpty, mobileNormalEmpty, desktopHoverProp1 ],
+	styles: [desktopNormalEmpty, mobileNormalEmpty, desktopHoverProp1],
 	expectedSnapshots: {
 		desktop: {
 			normal: {},
@@ -238,30 +211,30 @@ const test4 = {
 	},
 };
 
-describe( 'Styles Inheritance', () => {
-	beforeEach( () => {
-		jest.mocked( getProviderByStyleId ).mockReturnValue( createMockStylesProvider( { key: 'test' } ) );
-	} );
+describe('Styles Inheritance', () => {
+	beforeEach(() => {
+		jest.mocked(getProviderByStyleId).mockReturnValue(createMockStylesProvider({ key: 'test' }));
+	});
 
-	it.each( [ test1, test2, test3, test4 ] )(
+	it.each([test1, test2, test3, test4])(
 		'should $explanation',
-		( { styles, expectedSnapshots }: { styles: StyleDefinition[]; expectedSnapshots: ExpectedSnapshots } ) => {
+		({ styles, expectedSnapshots }: { styles: StyleDefinition[]; expectedSnapshots: ExpectedSnapshots }) => {
 			// Arrange.
-			const { getSnapshot } = createStylesInheritance( styles, createMockBreakpointsTree() );
+			const { getSnapshot } = createStylesInheritance(styles, createMockBreakpointsTree());
 
-			Object.entries( expectedSnapshots ).forEach( ( [ breakpointId, states ] ) => {
-				Object.entries( states ).forEach( ( [ state, expectedSnapshot ] ) => {
+			Object.entries(expectedSnapshots).forEach(([breakpointId, states]) => {
+				Object.entries(states).forEach(([state, expectedSnapshot]) => {
 					// Act.
 					const snapshot =
-						getSnapshot( {
+						getSnapshot({
 							breakpoint: breakpointId as BreakpointId,
 							state: state as StyleDefinitionState,
-						} ) ?? {};
+						}) ?? {};
 
 					// Assert.
-					expect( snapshot ).toEqual( expectedSnapshot );
-				} );
-			} );
+					expect(snapshot).toEqual(expectedSnapshot);
+				});
+			});
 		}
 	);
-} );
+});

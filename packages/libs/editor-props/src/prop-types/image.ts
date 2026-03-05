@@ -5,10 +5,10 @@ import { unknownChildrenSchema } from './utils';
 
 export const imagePropTypeUtil = createPropUtils(
 	'image',
-	z.strictObject( {
+	z.strictObject({
 		src: unknownChildrenSchema,
 		size: unknownChildrenSchema,
-	} )
+	})
 );
 
-export type ImagePropValue = z.infer< typeof imagePropTypeUtil.schema >;
+export type ImagePropValue = z.infer<typeof imagePropTypeUtil.schema>;

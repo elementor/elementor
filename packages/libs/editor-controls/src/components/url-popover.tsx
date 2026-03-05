@@ -6,15 +6,15 @@ import { __ } from '@wordpress/i18n';
 
 type Props = {
 	popupState: PopupState;
-	anchorRef: RefObject< HTMLDivElement | null >;
+	anchorRef: RefObject<HTMLDivElement | null>;
 	restoreValue: () => void;
 	value: string;
-	onChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
+	onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 	openInNewTab: boolean;
 	onToggleNewTab: () => void;
 };
 
-export const UrlPopover = ( {
+export const UrlPopover = ({
 	popupState,
 	restoreValue,
 	anchorRef,
@@ -22,14 +22,14 @@ export const UrlPopover = ( {
 	onChange,
 	openInNewTab,
 	onToggleNewTab,
-}: Props ) => {
-	const inputRef = useRef< HTMLInputElement >( null );
+}: Props) => {
+	const inputRef = useRef<HTMLInputElement>(null);
 
-	useEffect( () => {
-		if ( popupState.isOpen ) {
-			requestAnimationFrame( () => inputRef.current?.focus() );
+	useEffect(() => {
+		if (popupState.isOpen) {
+			requestAnimationFrame(() => inputRef.current?.focus());
 		}
-	}, [ popupState.isOpen ] );
+	}, [popupState.isOpen]);
 
 	const handleClose = () => {
 		restoreValue();
@@ -38,36 +38,34 @@ export const UrlPopover = ( {
 
 	return (
 		<Popover
-			slotProps={ {
+			slotProps={{
 				paper: { sx: { borderRadius: '16px', width: anchorRef.current?.offsetWidth + 'px', marginTop: -1 } },
-			} }
-			{ ...bindPopover( popupState ) }
-			anchorOrigin={ { vertical: 'top', horizontal: 'left' } }
-			transformOrigin={ { vertical: 'top', horizontal: 'left' } }
-			onClose={ handleClose }
+			}}
+			{...bindPopover(popupState)}
+			anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+			transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+			onClose={handleClose}
 		>
-			<Stack direction="row" alignItems="center" gap={ 1 } sx={ { p: 1.5 } }>
+			<Stack direction="row" alignItems="center" gap={1} sx={{ p: 1.5 }}>
 				<TextField
-					value={ value }
-					onChange={ onChange }
+					value={value}
+					onChange={onChange}
 					size="tiny"
 					fullWidth
-					placeholder={ __( 'Type a URL', 'elementor' ) }
-					inputProps={ { ref: inputRef } }
+					placeholder={__('Type a URL', 'elementor')}
+					inputProps={{ ref: inputRef }}
 					color="secondary"
-					InputProps={ { sx: { borderRadius: '8px' } } }
-					onKeyUp={ ( event: React.KeyboardEvent< HTMLInputElement > ) =>
-						event.key === 'Enter' && handleClose()
-					}
+					InputProps={{ sx: { borderRadius: '8px' } }}
+					onKeyUp={(event: React.KeyboardEvent<HTMLInputElement>) => event.key === 'Enter' && handleClose()}
 				/>
-				<Tooltip title={ __( 'Open in a new tab', 'elementor' ) }>
+				<Tooltip title={__('Open in a new tab', 'elementor')}>
 					<ToggleButton
 						size="tiny"
 						value="newTab"
-						selected={ openInNewTab }
-						onClick={ onToggleNewTab }
-						aria-label={ __( 'Open in a new tab', 'elementor' ) }
-						sx={ { borderRadius: '8px' } }
+						selected={openInNewTab}
+						onClick={onToggleNewTab}
+						aria-label={__('Open in a new tab', 'elementor')}
+						sx={{ borderRadius: '8px' }}
 					>
 						<ExternalLinkIcon fontSize="tiny" />
 					</ToggleButton>

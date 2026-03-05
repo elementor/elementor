@@ -20,72 +20,72 @@ import { trackGlobalClasses } from '../../../utils/tracking';
 import { type CssClassID } from '../types';
 import { CssClassUsagePopover } from './css-class-usage-popover';
 
-export const CssClassUsageTrigger = ( { id, onClick }: { id: CssClassID; onClick: ( id: CssClassID ) => void } ) => {
+export const CssClassUsageTrigger = ({ id, onClick }: { id: CssClassID; onClick: (id: CssClassID) => void }) => {
 	const {
 		data: { total },
 		isLoading,
-	} = useCssClassUsageByID( id );
-	const cssClassUsagePopover = usePopupState( { variant: 'popover', popupId: 'css-class-usage-popover' } );
+	} = useCssClassUsageByID(id);
+	const cssClassUsagePopover = usePopupState({ variant: 'popover', popupId: 'css-class-usage-popover' });
 
-	if ( isLoading ) {
+	if (isLoading) {
 		return null;
 	}
 
 	const WrapperComponent = total !== 0 ? TooltipWrapper : InfoAlertMessage;
 
 	const handleMouseEnter = () => {
-		trackGlobalClasses( {
+		trackGlobalClasses({
 			event: 'classUsageHovered',
 			classId: id,
 			usage: total,
-		} );
+		});
 	};
 
-	const handleClick = ( e: MouseEvent ) => {
-		if ( total !== 0 ) {
-			bindTrigger( cssClassUsagePopover ).onClick( e );
-			onClick( id );
-			trackGlobalClasses( {
+	const handleClick = (e: MouseEvent) => {
+		if (total !== 0) {
+			bindTrigger(cssClassUsagePopover).onClick(e);
+			onClick(id);
+			trackGlobalClasses({
 				event: 'classUsageClicked',
 				classId: id,
-			} );
+			});
 		}
 	};
 
 	return (
 		<>
-			<Box position={ 'relative' } onMouseEnter={ handleMouseEnter }>
-				<WrapperComponent total={ total }>
+			<Box position={'relative'} onMouseEnter={handleMouseEnter}>
+				<WrapperComponent total={total}>
 					<CustomIconButton
-						disabled={ total === 0 }
-						size={ 'tiny' }
-						{ ...bindTrigger( cssClassUsagePopover ) }
-						onClick={ handleClick }
+						disabled={total === 0}
+						size={'tiny'}
+						{...bindTrigger(cssClassUsagePopover)}
+						onClick={handleClick}
 					>
-						<CurrentLocationIcon fontSize={ 'tiny' } />
+						<CurrentLocationIcon fontSize={'tiny'} />
 					</CustomIconButton>
 				</WrapperComponent>
 			</Box>
 			<Box>
 				<Popover
-					anchorOrigin={ {
+					anchorOrigin={{
 						vertical: 'center',
 						horizontal: 'right',
-					} }
-					transformOrigin={ {
+					}}
+					transformOrigin={{
 						vertical: 15,
 						horizontal: -50,
-					} }
-					{ ...bindPopover( cssClassUsagePopover ) }
-					onClose={ () => {
-						bindPopover( cssClassUsagePopover ).onClose();
-						onClick( '' );
-					} }
+					}}
+					{...bindPopover(cssClassUsagePopover)}
+					onClose={() => {
+						bindPopover(cssClassUsagePopover).onClose();
+						onClick('');
+					}}
 				>
 					<CssClassUsagePopover
-						onClose={ cssClassUsagePopover.close }
+						onClose={cssClassUsagePopover.close}
 						aria-label="css-class-usage-popover"
-						cssClassID={ id }
+						cssClassID={id}
 					/>
 				</Popover>
 			</Box>
@@ -93,7 +93,7 @@ export const CssClassUsageTrigger = ( { id, onClick }: { id: CssClassID; onClick
 	);
 };
 
-const CustomIconButton = styled( IconButton )( ( { theme } ) => ( {
+const CustomIconButton = styled(IconButton)(({ theme }) => ({
 	'&.Mui-disabled': {
 		pointerEvents: 'auto', // Enable hover
 		'&:hover': {
@@ -102,30 +102,27 @@ const CustomIconButton = styled( IconButton )( ( { theme } ) => ( {
 	},
 	height: '22px',
 	width: '22px',
-} ) );
+}));
 
-const TooltipWrapper = ( { children, total }: PropsWithChildren< { total: number } > ) => (
+const TooltipWrapper = ({ children, total }: PropsWithChildren<{ total: number }>) => (
 	<Tooltip
 		disableInteractive
-		placement={ 'top' }
-		title={ `${ __( 'Show {{number}} {{locations}}', 'elementor' )
-			.replace( '{{number}}', total.toString() )
-			.replace(
-				'{{locations}}',
-				total === 1 ? __( 'location', 'elementor' ) : __( 'locations', 'elementor' )
-			) }` }
+		placement={'top'}
+		title={`${__('Show {{number}} {{locations}}', 'elementor')
+			.replace('{{number}}', total.toString())
+			.replace('{{locations}}', total === 1 ? __('location', 'elementor') : __('locations', 'elementor'))}`}
 	>
-		<span>{ children }</span>
+		<span>{children}</span>
 	</Tooltip>
 );
 
-const InfoAlertMessage = ( { children }: PropsWithChildren ) => (
+const InfoAlertMessage = ({ children }: PropsWithChildren) => (
 	<Infotip
 		disableInteractive
-		placement={ 'top' }
-		color={ 'secondary' }
-		content={ <InfoAlert sx={ { mt: 1 } }>{ __( 'This class isn’t being used yet.', 'elementor' ) }</InfoAlert> }
+		placement={'top'}
+		color={'secondary'}
+		content={<InfoAlert sx={{ mt: 1 }}>{__('This class isn’t being used yet.', 'elementor')}</InfoAlert>}
 	>
-		<span>{ children }</span>
+		<span>{children}</span>
 	</Infotip>
 );

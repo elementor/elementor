@@ -8,12 +8,12 @@ type TransformRotate = {
 
 const defaultRotate = '0deg';
 
-export const transformRotateTransformer = createTransformer( ( value: TransformRotate ) => {
+export const transformRotateTransformer = createTransformer((value: TransformRotate) => {
 	const transforms = [
-		`rotateX(${ value?.x ?? defaultRotate })`,
-		`rotateY(${ value?.y ?? defaultRotate })`,
-		`rotateZ(${ value?.z ?? defaultRotate })`,
+		`rotateX(${value?.x ?? defaultRotate})`,
+		`rotateY(${value?.y ?? defaultRotate})`,
+		`rotateZ(${value?.z ?? defaultRotate})`,
 	];
 
-	return transforms.join( ' ' );
-} );
+	return transforms.join(' ');
+});

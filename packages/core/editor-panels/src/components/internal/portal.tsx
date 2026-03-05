@@ -4,14 +4,14 @@ import { Portal as BasePortal, type PortalProps } from '@elementor/ui';
 
 import { getPortalContainer } from '../../sync';
 
-type Props = Omit< PortalProps, 'container' >;
+type Props = Omit<PortalProps, 'container'>;
 
-export default function Portal( props: Props ) {
-	const containerRef = useRef( getPortalContainer );
+export default function Portal(props: Props) {
+	const containerRef = useRef(getPortalContainer);
 
-	if ( ! containerRef.current ) {
+	if (!containerRef.current) {
 		return null;
 	}
 
-	return <BasePortal container={ containerRef.current } { ...props } />;
+	return <BasePortal container={containerRef.current} {...props} />;
 }

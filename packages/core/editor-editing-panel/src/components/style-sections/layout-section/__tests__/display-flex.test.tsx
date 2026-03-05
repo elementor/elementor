@@ -23,57 +23,57 @@ import { StyleInheritanceProvider, useStylesInheritanceChain } from '../../../..
 import { useStylesFields } from '../../../../hooks/use-styles-fields';
 import { DisplayField } from '../display-field';
 
-jest.mock( '@elementor/editor-v1-adapters' );
-jest.mock( '../../../../hooks/use-styles-fields' );
+jest.mock('@elementor/editor-v1-adapters');
+jest.mock('../../../../hooks/use-styles-fields');
 
-jest.mock( '@elementor/editor-styles-repository', () => ( {
-	...jest.requireActual( '@elementor/editor-styles-repository' ),
-	useUserStylesCapability: jest.fn().mockReturnValue( { userCan: () => ( { updateProps: true } ) } ),
+jest.mock('@elementor/editor-styles-repository', () => ({
+	...jest.requireActual('@elementor/editor-styles-repository'),
+	useUserStylesCapability: jest.fn().mockReturnValue({ userCan: () => ({ updateProps: true }) }),
 	stylesRepository: {
 		getProviders: jest.fn(),
 		all: jest.fn(),
 	},
-} ) );
-jest.mock( '@elementor/editor-responsive' );
-jest.mock( '../../../../styles-inheritance/components/styles-inheritance-indicator' );
-jest.mock( '../../../../contexts/styles-inheritance-context', () => ( {
-	...jest.requireActual( '../../../../contexts/styles-inheritance-context' ),
+}));
+jest.mock('@elementor/editor-responsive');
+jest.mock('../../../../styles-inheritance/components/styles-inheritance-indicator');
+jest.mock('../../../../contexts/styles-inheritance-context', () => ({
+	...jest.requireActual('../../../../contexts/styles-inheritance-context'),
 	useStylesInheritanceChain: jest.fn(),
-} ) );
+}));
 
-jest.mock( '@elementor/ui', () => {
-	const actual = jest.requireActual( '@elementor/ui' );
+jest.mock('@elementor/ui', () => {
+	const actual = jest.requireActual('@elementor/ui');
 	return {
 		...actual,
-		Infotip: ( { children }: { children: ReactNode } ) => <>{ children }</>,
+		Infotip: ({ children }: { children: ReactNode }) => <>{children}</>,
 	};
-} );
+});
 
-describe( '<DisplayField />', () => {
-	beforeEach( () => {
-		jest.mocked( getStylesSchema ).mockReturnValue( {
-			display: createMockPropType( { kind: 'object', key: 'string' } ),
-		} );
-		const mockProvider = createMockStylesProvider( { key: 'style-provider' }, [
-			createMockStyleDefinition( { id: 'style-id' } ),
-		] );
-		jest.mocked( stylesRepository.getProviders ).mockReturnValue( [ mockProvider ] );
+describe('<DisplayField />', () => {
+	beforeEach(() => {
+		jest.mocked(getStylesSchema).mockReturnValue({
+			display: createMockPropType({ kind: 'object', key: 'string' }),
+		});
+		const mockProvider = createMockStylesProvider({ key: 'style-provider' }, [
+			createMockStyleDefinition({ id: 'style-id' }),
+		]);
+		jest.mocked(stylesRepository.getProviders).mockReturnValue([mockProvider]);
 
-		const mockStyle = createMockStyleDefinition( {} );
-		jest.mocked( stylesRepository.all ).mockReturnValue( [ mockStyle ] );
+		const mockStyle = createMockStyleDefinition({});
+		jest.mocked(stylesRepository.all).mockReturnValue([mockStyle]);
 
-		jest.mocked( isExperimentActive ).mockReturnValue( false );
-		jest.mocked( getBreakpointsTree ).mockImplementation( createMockBreakpointsTree );
-	} );
+		jest.mocked(isExperimentActive).mockReturnValue(false);
+		jest.mocked(getBreakpointsTree).mockImplementation(createMockBreakpointsTree);
+	});
 
-	it( 'should select flex when useStylesFields value is flex', () => {
+	it('should select flex when useStylesFields value is flex', () => {
 		// Arrange.
 		const setValues = jest.fn();
-		jest.mocked( useStylesFields ).mockReturnValue( {
+		jest.mocked(useStylesFields).mockReturnValue({
 			values: { display: { $$type: 'string', value: 'flex' } },
 			setValues,
 			canEdit: true,
-		} );
+		});
 
 		mockStylesInheritanceDisplayField();
 
@@ -81,41 +81,41 @@ describe( '<DisplayField />', () => {
 		renderDisplayField();
 
 		// Assert.
-		const flexButton = screen.getByRole( 'button', { name: 'Flex' } );
-		expect( flexButton ).toHaveAttribute( 'aria-pressed', 'true' );
-	} );
+		const flexButton = screen.getByRole('button', { name: 'Flex' });
+		expect(flexButton).toHaveAttribute('aria-pressed', 'true');
+	});
 
-	it( 'should select flex when useStylesFields value is flex even if useActualStylesFieldValue is different', () => {
+	it('should select flex when useStylesFields value is flex even if useActualStylesFieldValue is different', () => {
 		// Arrange.
 		const setValues = jest.fn();
-		jest.mocked( useStylesFields ).mockReturnValue( {
+		jest.mocked(useStylesFields).mockReturnValue({
 			values: { display: { $$type: 'string', value: 'flex' } },
 			setValues,
 			canEdit: true,
-		} );
+		});
 
 		mockStylesInheritanceDisplayField(
-			createMockStyleDefinition( {
+			createMockStyleDefinition({
 				props: {
 					display: {
 						$$type: 'string',
 						value: 'block',
 					},
 				},
-			} )
+			})
 		);
 		// Act.
 		renderDisplayField();
 
 		// Assert.
-		const flexButton = screen.getByRole( 'button', { name: 'Flex' } );
-		expect( flexButton ).toHaveAttribute( 'aria-pressed', 'true' );
-	} );
+		const flexButton = screen.getByRole('button', { name: 'Flex' });
+		expect(flexButton).toHaveAttribute('aria-pressed', 'true');
+	});
 
-	it( 'should not select any value', () => {
+	it('should not select any value', () => {
 		// Arrange.
 		const setValues = jest.fn();
-		jest.mocked( useStylesFields ).mockReturnValue( { values: { display: null }, setValues, canEdit: true } );
+		jest.mocked(useStylesFields).mockReturnValue({ values: { display: null }, setValues, canEdit: true });
 
 		mockStylesInheritanceDisplayField();
 
@@ -123,24 +123,24 @@ describe( '<DisplayField />', () => {
 		renderDisplayField();
 
 		// Assert.
-		[ 'Block', 'Flex', 'Inline-block', 'None' ].forEach( ( label ) => {
-			expect( screen.getByRole( 'button', { name: label } ) ).toHaveAttribute( 'aria-pressed', 'false' );
-		} );
-	} );
-} );
+		['Block', 'Flex', 'Inline-block', 'None'].forEach((label) => {
+			expect(screen.getByRole('button', { name: label })).toHaveAttribute('aria-pressed', 'false');
+		});
+	});
+});
 
-const renderDisplayField = ( element = mockElement(), elementType = createMockElementType() ) => {
+const renderDisplayField = (element = mockElement(), elementType = createMockElementType()) => {
 	return render(
-		<ControlActionsProvider items={ [] }>
+		<ControlActionsProvider items={[]}>
 			<ThemeProvider>
 				<ClassesPropProvider prop="my-classes">
 					<StyleProvider
 						id="style-id"
-						meta={ { breakpoint: null, state: null } }
-						setMetaState={ jest.fn() }
-						setId={ jest.fn() }
+						meta={{ breakpoint: null, state: null }}
+						setMetaState={jest.fn()}
+						setId={jest.fn()}
 					>
-						<ElementProvider element={ element } elementType={ elementType } settings={ {} }>
+						<ElementProvider element={element} elementType={elementType} settings={{}}>
 							<StyleInheritanceProvider>
 								<DisplayField />
 							</StyleInheritanceProvider>
@@ -152,19 +152,19 @@ const renderDisplayField = ( element = mockElement(), elementType = createMockEl
 	);
 };
 
-const mockStylesInheritanceDisplayField = ( style?: StyleDefinition ) => {
-	if ( style ) {
-		jest.mocked( useStylesInheritanceChain ).mockReturnValue( [
+const mockStylesInheritanceDisplayField = (style?: StyleDefinition) => {
+	if (style) {
+		jest.mocked(useStylesInheritanceChain).mockReturnValue([
 			{
 				style,
 				provider: null,
-				variant: style.variants[ 0 ],
-				value: style.variants[ 0 ].props.display,
+				variant: style.variants[0],
+				value: style.variants[0].props.display,
 			},
-		] );
+		]);
 
 		return;
 	}
 
-	jest.mocked( useStylesInheritanceChain ).mockReturnValue( [] );
+	jest.mocked(useStylesInheritanceChain).mockReturnValue([]);
 };

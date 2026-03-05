@@ -14,30 +14,30 @@ export type MoveElementParams = {
 	options?: Options;
 };
 
-export function moveElement( { element, targetContainer, options = {} }: MoveElementParams ): V1Element {
+export function moveElement({ element, targetContainer, options = {} }: MoveElementParams): V1Element {
 	const resolvedElement = element.lookup?.();
 	const resolvedTarget = targetContainer.lookup?.();
 
-	if ( ! resolvedElement ) {
-		throw new Error( `Element not found: ${ element.id }` );
+	if (!resolvedElement) {
+		throw new Error(`Element not found: ${element.id}`);
 	}
 
-	if ( ! resolvedTarget ) {
-		throw new Error( `Target container not found: ${ targetContainer.id }` );
+	if (!resolvedTarget) {
+		throw new Error(`Target container not found: ${targetContainer.id}`);
 	}
 
 	const modelToRecreate = resolvedElement.model.toJSON();
 
-	deleteElement( {
+	deleteElement({
 		container: resolvedElement,
 		options: { ...options, useHistory: false },
-	} );
+	});
 
-	const newContainer = createElement( {
+	const newContainer = createElement({
 		container: resolvedTarget,
 		model: modelToRecreate,
 		options: { edit: false, ...options, useHistory: false },
-	} );
+	});
 
 	return newContainer;
 }

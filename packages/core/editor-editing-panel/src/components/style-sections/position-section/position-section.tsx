@@ -28,28 +28,28 @@ type DimensionsValues = {
 	'inset-inline-end': DimensionValue;
 };
 
-const POSITION_LABEL = __( 'Position', 'elementor' );
-const DIMENSIONS_LABEL = __( 'Dimensions', 'elementor' );
+const POSITION_LABEL = __('Position', 'elementor');
+const DIMENSIONS_LABEL = __('Dimensions', 'elementor');
 
 export const PositionSection = () => {
-	const { value: positionValue } = useStylesField< StringPropValue >( 'position', {
+	const { value: positionValue } = useStylesField<StringPropValue>('position', {
 		history: { propDisplayName: POSITION_LABEL },
-	} );
-	const { values: dimensions, setValues: setDimensions } = useStylesFields< DimensionsValues >( [
+	});
+	const { values: dimensions, setValues: setDimensions } = useStylesFields<DimensionsValues>([
 		'inset-block-start',
 		'inset-block-end',
 		'inset-inline-start',
 		'inset-inline-end',
-	] );
+	]);
 
-	const [ dimensionsValuesFromHistory, updateDimensionsHistory, clearDimensionsHistory ] = usePersistDimensions();
+	const [dimensionsValuesFromHistory, updateDimensionsHistory, clearDimensionsHistory] = usePersistDimensions();
 
-	const onPositionChange = ( newPosition: string | null, previousPosition: string | null | undefined ) => {
+	const onPositionChange = (newPosition: string | null, previousPosition: string | null | undefined) => {
 		const meta = { history: { propDisplayName: DIMENSIONS_LABEL } };
 
-		if ( newPosition === 'static' ) {
-			if ( dimensions ) {
-				updateDimensionsHistory( dimensions );
+		if (newPosition === 'static') {
+			if (dimensions) {
+				updateDimensionsHistory(dimensions);
 				setDimensions(
 					{
 						'inset-block-start': undefined,
@@ -60,9 +60,9 @@ export const PositionSection = () => {
 					meta
 				);
 			}
-		} else if ( previousPosition === 'static' ) {
-			if ( dimensionsValuesFromHistory ) {
-				setDimensions( dimensionsValuesFromHistory, meta );
+		} else if (previousPosition === 'static') {
+			if (dimensionsValuesFromHistory) {
+				setDimensions(dimensionsValuesFromHistory, meta);
 				clearDimensionsHistory();
 			}
 		}
@@ -72,13 +72,13 @@ export const PositionSection = () => {
 
 	return (
 		<SectionContent>
-			<PositionField onChange={ onPositionChange } />
-			{ isNotStatic ? (
+			<PositionField onChange={onPositionChange} />
+			{isNotStatic ? (
 				<>
 					<DimensionsField />
 					<ZIndexField />
 				</>
-			) : null }
+			) : null}
 
 			<PanelDivider />
 			<OffsetField />
@@ -88,8 +88,8 @@ export const PositionSection = () => {
 
 const usePersistDimensions = () => {
 	const { id: styleDefID, meta } = useStyle();
-	const styleVariantPath = `styles/${ styleDefID }/${ meta.breakpoint || 'desktop' }/${ meta.state || 'null' }`;
-	const dimensionsPath = `${ styleVariantPath }/dimensions`;
+	const styleVariantPath = `styles/${styleDefID}/${meta.breakpoint || 'desktop'}/${meta.state || 'null'}`;
+	const dimensionsPath = `${styleVariantPath}/dimensions`;
 
-	return useSessionStorage< DimensionsValues >( dimensionsPath );
+	return useSessionStorage<DimensionsValues>(dimensionsPath);
 };

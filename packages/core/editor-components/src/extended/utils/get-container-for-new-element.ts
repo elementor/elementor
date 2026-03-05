@@ -11,21 +11,21 @@ export const getContainerForNewElement = (): { container: V1Element | null; opti
 
 	let container, options;
 
-	if ( selectedElement ) {
-		switch ( selectedElement.model.get( 'elType' ) ) {
+	if (selectedElement) {
+		switch (selectedElement.model.get('elType')) {
 			case 'widget': {
 				container = selectedElement?.parent;
 
 				const selectedElIndex = selectedElement.view?._index ?? -1;
 
-				if ( selectedElIndex > -1 ) {
+				if (selectedElIndex > -1) {
 					options = { at: selectedElIndex + 1 };
 				}
 
 				break;
 			}
 			case 'section': {
-				container = selectedElement?.children?.[ 0 ];
+				container = selectedElement?.children?.[0];
 				break;
 			}
 			default: {
@@ -41,9 +41,9 @@ export const getContainerForNewElement = (): { container: V1Element | null; opti
 function getSelectedElementContainer() {
 	const selectedElements = getSelectedElements();
 
-	if ( selectedElements.length !== 1 ) {
+	if (selectedElements.length !== 1) {
 		return undefined;
 	}
 
-	return getContainer( selectedElements[ 0 ].id );
+	return getContainer(selectedElements[0].id);
 }

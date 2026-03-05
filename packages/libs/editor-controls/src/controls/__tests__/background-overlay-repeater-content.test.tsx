@@ -18,105 +18,103 @@ import {
 } from '../background-control/background-overlay/background-overlay-repeater-control';
 import { createMockGradientOverlay, gradientPropType } from './background-gradient-color-control.test';
 
-jest.mock( '../../components/control-repeater/context/repeater-context' );
-jest.mocked( useRepeaterContext ).mockReturnValue( { rowRef: document.body } as never );
+jest.mock('../../components/control-repeater/context/repeater-context');
+jest.mocked(useRepeaterContext).mockReturnValue({ rowRef: document.body } as never);
 
-const stubBackgroundColorOverlay = ( color: string ): BackgroundOverlayItemPropValue => {
-	return backgroundColorOverlayPropTypeUtil.create( {
-		color: colorPropTypeUtil.create( color ),
-	} );
+const stubBackgroundColorOverlay = (color: string): BackgroundOverlayItemPropValue => {
+	return backgroundColorOverlayPropTypeUtil.create({
+		color: colorPropTypeUtil.create(color),
+	});
 };
 
-const propType = createMockPropType( {
+const propType = createMockPropType({
 	kind: 'array',
-	item_prop_type: createMockPropType( {
+	item_prop_type: createMockPropType({
 		kind: 'union',
 		prop_types: {
-			'background-color-overlay': createMockPropType( {
+			'background-color-overlay': createMockPropType({
 				kind: 'object',
 				shape: {
-					color: createMockPropType( { kind: 'plain' } ),
+					color: createMockPropType({ kind: 'plain' }),
 				},
-			} ),
-			'background-image-overlay': createMockPropType( {
+			}),
+			'background-image-overlay': createMockPropType({
 				kind: 'object',
 				shape: {
-					image: createMockPropType( {
+					image: createMockPropType({
 						kind: 'object',
 						shape: {
-							src: createMockPropType( {
+							src: createMockPropType({
 								kind: 'object',
 								shape: {
-									id: createMockPropType( { kind: 'plain' } ),
-									url: createMockPropType( { kind: 'plain' } ),
+									id: createMockPropType({ kind: 'plain' }),
+									url: createMockPropType({ kind: 'plain' }),
 								},
-							} ),
-							size: createMockPropType( { kind: 'plain' } ),
+							}),
+							size: createMockPropType({ kind: 'plain' }),
 						},
-					} ),
-					size: createMockPropType( {
+					}),
+					size: createMockPropType({
 						kind: 'union',
 						prop_types: {
-							'background-image-size-scale': createMockPropType( {
+							'background-image-size-scale': createMockPropType({
 								kind: 'object',
 								shape: {
-									width: createMockPropType( {
+									width: createMockPropType({
 										kind: 'object',
 										shape: {
-											unit: createMockPropType( { kind: 'plain' } ),
-											size: createMockPropType( { kind: 'plain' } ),
+											unit: createMockPropType({ kind: 'plain' }),
+											size: createMockPropType({ kind: 'plain' }),
 										},
-									} ),
-									height: createMockPropType( {
+									}),
+									height: createMockPropType({
 										kind: 'object',
 										shape: {
-											unit: createMockPropType( { kind: 'plain' } ),
-											size: createMockPropType( { kind: 'plain' } ),
+											unit: createMockPropType({ kind: 'plain' }),
+											size: createMockPropType({ kind: 'plain' }),
 										},
-									} ),
+									}),
 								},
-							} ),
-							string: createMockPropType( { kind: 'plain' } ),
+							}),
+							string: createMockPropType({ kind: 'plain' }),
 						},
-					} ),
-					position: createMockPropType( {
+					}),
+					position: createMockPropType({
 						kind: 'union',
 						prop_types: {
-							'background-image-position-offset': createMockPropType( {
+							'background-image-position-offset': createMockPropType({
 								kind: 'object',
 								shape: {
-									x: createMockPropType( {
+									x: createMockPropType({
 										kind: 'object',
 										shape: {
-											unit: createMockPropType( { kind: 'plain' } ),
-											size: createMockPropType( { kind: 'plain' } ),
+											unit: createMockPropType({ kind: 'plain' }),
+											size: createMockPropType({ kind: 'plain' }),
 										},
-									} ),
-									y: createMockPropType( {
+									}),
+									y: createMockPropType({
 										kind: 'object',
 										shape: {
-											unit: createMockPropType( { kind: 'plain' } ),
-											size: createMockPropType( { kind: 'plain' } ),
+											unit: createMockPropType({ kind: 'plain' }),
+											size: createMockPropType({ kind: 'plain' }),
 										},
-									} ),
+									}),
 								},
-							} ),
-							string: createMockPropType( { kind: 'plain' } ),
+							}),
+							string: createMockPropType({ kind: 'plain' }),
 						},
-					} ),
-					resolution: createMockPropType( { kind: 'plain' } ),
-					repeat: createMockPropType( { kind: 'plain' } ),
-					attachment: createMockPropType( { kind: 'plain' } ),
+					}),
+					resolution: createMockPropType({ kind: 'plain' }),
+					repeat: createMockPropType({ kind: 'plain' }),
+					attachment: createMockPropType({ kind: 'plain' }),
 				},
-			} ),
+			}),
 			'background-gradient-overlay': gradientPropType,
 		},
-	} ),
-} ) as ArrayPropType;
+	}),
+}) as ArrayPropType;
 
-const createMockImageOverlay = (
-	value?: BackgroundImageOverlayPropValue[ 'value' ]
-): BackgroundImageOverlayPropValue => ( {
+const createMockImageOverlay = (value?: BackgroundImageOverlayPropValue['value']): BackgroundImageOverlayPropValue => ({
 	$$type: 'background-image-overlay',
 	value: {
 		image: {
@@ -164,20 +162,20 @@ const createMockImageOverlay = (
 			$$type: 'string',
 			value: 'fixed',
 		},
-		...( value ?? {} ),
+		...(value ?? {}),
 	},
-} );
+});
 
-describe( 'ItemContent', () => {
-	beforeEach( () => {
-		initEnv( {
+describe('ItemContent', () => {
+	beforeEach(() => {
+		initEnv({
 			'@elementor/editor-controls': {
 				background_placeholder_image: 'https://test-site/wp-content/uploads/bg-test.jpg',
 			},
-		} );
-	} );
+		});
+	});
 
-	it( 'should set the default color when switching from image to color tab', async () => {
+	it('should set the default color when switching from image to color tab', async () => {
 		// Arrange.
 		const setValue = jest.fn();
 		const backgroundImageMockValue = createMockImageOverlay();
@@ -190,53 +188,53 @@ describe( 'ItemContent', () => {
 		};
 
 		// Act.
-		renderControl( <ItemContent />, props );
+		renderControl(<ItemContent />, props);
 
-		const colorTab = screen.getByText( 'Color' );
-		fireEvent.click( colorTab );
+		const colorTab = screen.getByText('Color');
+		fireEvent.click(colorTab);
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( initialBackgroundColorOverlay );
-	} );
+		expect(setValue).toHaveBeenCalledWith(initialBackgroundColorOverlay);
+	});
 
-	it( 'should set default image when switching from color to image tab', async () => {
+	it('should set default image when switching from color to image tab', async () => {
 		// Arrange.
 		const setValue = jest.fn();
 		const props = {
 			setValue,
 			propType: propType.item_prop_type,
 			bind: 'background-overlay',
-			value: stubBackgroundColorOverlay( 'rgba(255, 0, 0, 0.2)' ),
+			value: stubBackgroundColorOverlay('rgba(255, 0, 0, 0.2)'),
 		};
 
 		// Act.
-		renderControl( <ItemContent />, props );
+		renderControl(<ItemContent />, props);
 
-		const imageTab = screen.getByText( 'Image' );
-		fireEvent.click( imageTab );
+		const imageTab = screen.getByText('Image');
+		fireEvent.click(imageTab);
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( getInitialBackgroundOverlay() );
-	} );
+		expect(setValue).toHaveBeenCalledWith(getInitialBackgroundOverlay());
+	});
 
-	it( 'should set default gradient when switching from color to gradient tab', async () => {
+	it('should set default gradient when switching from color to gradient tab', async () => {
 		// Arrange.
 		const setValue = jest.fn();
 		const props = {
 			setValue,
 			propType: propType.item_prop_type,
 			bind: 'background-overlay',
-			value: stubBackgroundColorOverlay( 'rgba(0, 0, 0)' ),
+			value: stubBackgroundColorOverlay('rgba(0, 0, 0)'),
 		};
 
 		// Act.
-		renderControl( <ItemContent />, props );
+		renderControl(<ItemContent />, props);
 
-		const gradientTab = screen.getByText( 'Gradient' );
-		fireEvent.click( gradientTab );
+		const gradientTab = screen.getByText('Gradient');
+		fireEvent.click(gradientTab);
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( {
+		expect(setValue).toHaveBeenCalledWith({
 			$$type: 'background-gradient-overlay',
 			value: {
 				type: { $$type: 'string', value: 'linear' },
@@ -261,14 +259,14 @@ describe( 'ItemContent', () => {
 					],
 				},
 			},
-		} );
+		});
 
-		expect( screen.queryAllByText( 'Gradient' ).at( 0 ) ).toHaveAttribute( 'aria-selected', 'true' );
-		expect( screen.getByText( 'Angle' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Stop' ) ).toBeInTheDocument();
-	} );
+		expect(screen.queryAllByText('Gradient').at(0)).toHaveAttribute('aria-selected', 'true');
+		expect(screen.getByText('Angle')).toBeInTheDocument();
+		expect(screen.getByText('Stop')).toBeInTheDocument();
+	});
 
-	it( 'should save the color and image value history when switching between tabs', () => {
+	it('should save the color and image value history when switching between tabs', () => {
 		// Arrange.
 		const setValue = jest.fn();
 		const imageValue = createMockImageOverlay();
@@ -281,31 +279,31 @@ describe( 'ItemContent', () => {
 		};
 
 		// Act.
-		const { rerender } = renderControl( <ItemContent />, props );
+		const { rerender } = renderControl(<ItemContent />, props);
 
 		// Arrange.
-		const colorTab = screen.getByText( 'Color' );
-		fireEvent.click( colorTab );
+		const colorTab = screen.getByText('Color');
+		fireEvent.click(colorTab);
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( initialBackgroundColorOverlay );
+		expect(setValue).toHaveBeenCalledWith(initialBackgroundColorOverlay);
 
 		// Arrange.
 		setValue.mockClear();
 
 		// Act.
-		rerender( <ItemContent />, {
-			value: stubBackgroundColorOverlay( '#F54359' ),
-		} );
+		rerender(<ItemContent />, {
+			value: stubBackgroundColorOverlay('#F54359'),
+		});
 
-		const imageTab = screen.getByText( 'Image' );
-		fireEvent.click( imageTab );
+		const imageTab = screen.getByText('Image');
+		fireEvent.click(imageTab);
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( imageValue );
-	} );
+		expect(setValue).toHaveBeenCalledWith(imageValue);
+	});
 
-	it( 'should save the gradient value history when switching between tabs', () => {
+	it('should save the gradient value history when switching between tabs', () => {
 		// Arrange.
 		const setValue = jest.fn();
 		const gradientValue = createMockGradientOverlay();
@@ -318,29 +316,29 @@ describe( 'ItemContent', () => {
 		};
 
 		// Act.
-		const { rerender } = renderControl( <ItemContent />, props );
+		const { rerender } = renderControl(<ItemContent />, props);
 
-		const colorTab = screen.getByText( 'Color', { selector: 'button' } );
+		const colorTab = screen.getByText('Color', { selector: 'button' });
 
-		fireEvent.click( colorTab );
+		fireEvent.click(colorTab);
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( initialBackgroundColorOverlay );
+		expect(setValue).toHaveBeenCalledWith(initialBackgroundColorOverlay);
 
 		setValue.mockClear();
 
 		// Act.
-		rerender( <ItemContent />, {
-			value: stubBackgroundColorOverlay( '#F54359' ),
-		} );
+		rerender(<ItemContent />, {
+			value: stubBackgroundColorOverlay('#F54359'),
+		});
 
-		const imageTab = screen.getByText( 'Image' );
-		fireEvent.click( imageTab );
+		const imageTab = screen.getByText('Image');
+		fireEvent.click(imageTab);
 
-		const gradientTab = screen.getByText( 'Gradient' );
-		fireEvent.click( gradientTab );
+		const gradientTab = screen.getByText('Gradient');
+		fireEvent.click(gradientTab);
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( gradientValue );
-	} );
-} );
+		expect(setValue).toHaveBeenCalledWith(gradientValue);
+	});
+});

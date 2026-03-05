@@ -9,18 +9,18 @@ import { slice } from './store';
 import { clearTemplatesStyles, templatesStylesProvider } from './templates-styles-provider';
 
 export function init() {
-	registerSlice( slice );
-	stylesRepository.register( templatesStylesProvider );
+	registerSlice(slice);
+	stylesRepository.register(templatesStylesProvider);
 
-	registerDataHook( 'after', 'editor/documents/attach-preview', async () => {
+	registerDataHook('after', 'editor/documents/attach-preview', async () => {
 		unloadTemplates();
 		clearTemplatesStyles();
 
 		await loadTemplates();
-	} );
+	});
 
-	injectIntoLogic( {
+	injectIntoLogic({
 		id: 'templates-styles',
 		component: RenderTemplateStyles,
-	} );
+	});
 }

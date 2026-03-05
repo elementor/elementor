@@ -25,85 +25,82 @@ type RemovedElementsResult = {
 	removedElements: RemovedElement[];
 };
 
-export const removeElements = ( {
+export const removeElements = ({
 	elementIds,
 	title,
-	subtitle = __( 'Item removed', 'elementor' ),
+	subtitle = __('Item removed', 'elementor'),
 	onRemoveElements,
 	onRestoreElements,
-}: RemoveElementsParams ): RemovedElementsResult => {
+}: RemoveElementsParams): RemovedElementsResult => {
 	const undoableRemove = undoable(
 		{
-			do: ( { elementIds: elementIdsParam }: { elementIds: string[] } ): RemovedElementsResult => {
+			do: ({ elementIds: elementIdsParam }: { elementIds: string[] }): RemovedElementsResult => {
 				const removedElements: RemovedElement[] = [];
 
-				elementIdsParam.forEach( ( elementId ) => {
-					const container = getContainer( elementId );
+				elementIdsParam.forEach((elementId) => {
+					const container = getContainer(elementId);
 
-					if ( container?.parent ) {
-						removedElements.push( {
+					if (container?.parent) {
+						removedElements.push({
 							container,
 							parent: container.parent,
 							model: container.model.toJSON(),
 							at: container.view?._index ?? 0,
-						} );
+						});
 					}
-				} );
+				});
 
 				onRemoveElements?.();
 
-				removedElements.forEach( ( { container } ) => {
-					deleteElement( {
+				removedElements.forEach(({ container }) => {
+					deleteElement({
 						container,
 						options: { useHistory: false },
-					} );
-				} );
+					});
+				});
 
 				return { removedElements };
 			},
-			undo: ( _: { elementIds: string[] }, { removedElements }: RemovedElementsResult ) => {
+			undo: (_: { elementIds: string[] }, { removedElements }: RemovedElementsResult) => {
 				onRestoreElements?.();
 
-				[ ...removedElements ].reverse().forEach( ( { parent, model, at } ) => {
+				[...removedElements].reverse().forEach(({ parent, model, at }) => {
 					const freshParent = parent.lookup?.();
 
-					if ( freshParent ) {
-						createElement( {
+					if (freshParent) {
+						createElement({
 							container: freshParent,
 							model,
 							options: { useHistory: false, at },
-						} );
+						});
 					}
-				} );
+				});
 			},
-			redo: (
-				_: { elementIds: string[] },
-				{ removedElements }: RemovedElementsResult
-			): RemovedElementsResult => {
+			redo: (_: { elementIds: string[] }, { removedElements }: RemovedElementsResult): RemovedElementsResult => {
 				onRemoveElements?.();
 
 				const newRemovedElements: RemovedElement[] = [];
 
-				removedElements.forEach( ( { container, parent, model, at } ) => {
+				removedElements.forEach(({ container, parent, model, at }) => {
 					const freshContainer = container.lookup?.();
 					const freshParent = parent.lookup?.();
 
-					if ( ! freshContainer || ! freshParent ) {
+					if (!freshContainer || !freshParent) {
 						return;
 					}
 
-					deleteElement( {
+					deleteElement({
 						container: freshContainer,
 						options: { useHistory: false },
-					} );
+					});
 
-					newRemovedElements.push( {
+					newRemovedElements.push({
 						container: freshContainer,
 						parent: freshParent,
 						model,
 						at,
-					} );
-				} );
+					});
+				});
 
 				return { removedElements: newRemovedElements };
 			},
@@ -114,5 +111,5 @@ export const removeElements = ( {
 		}
 	);
 
-	return undoableRemove( { elementIds } );
+	return undoableRemove({ elementIds });
 };

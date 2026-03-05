@@ -8,7 +8,7 @@ import { StepTitle } from '../../components/ui/styled-components';
 import { useOnboarding } from '../../hooks/use-onboarding';
 import { t } from '../../utils/translations';
 
-const DirectionalChevronIcon = withDirection( ChevronRightSmallIcon );
+const DirectionalChevronIcon = withDirection(ChevronRightSmallIcon);
 
 interface ExperienceLevelOption {
 	id: string;
@@ -16,7 +16,7 @@ interface ExperienceLevelOption {
 }
 
 interface ExperienceLevelProps {
-	onComplete: ( choice: Record< string, unknown > ) => void;
+	onComplete: (choice: Record<string, unknown>) => void;
 }
 
 const OPTIONS: ExperienceLevelOption[] = [
@@ -25,48 +25,48 @@ const OPTIONS: ExperienceLevelOption[] = [
 	{ id: 'advanced', labelKey: 'steps.experience_level.option_advanced' },
 ];
 
-export function ExperienceLevel( { onComplete }: ExperienceLevelProps ) {
+export function ExperienceLevel({ onComplete }: ExperienceLevelProps) {
 	const { choices, actions } = useOnboarding();
 
 	const selectedValue = choices.experience_level;
 
 	const handleSelect = useCallback(
-		( value: string ) => {
-			actions.setUserChoice( 'experience_level', value );
-			onComplete( { experience_level: value } );
+		(value: string) => {
+			actions.setUserChoice('experience_level', value);
+			onComplete({ experience_level: value });
 		},
-		[ actions, onComplete ]
+		[actions, onComplete]
 	);
 
 	return (
-		<Stack spacing={ 4 } width="100%" data-testid="experience-level-step">
-			<Stack spacing={ 1 } textAlign="center" alignItems="center" sx={ { pt: 2.5 } }>
-				<StepTitle color="text.primary" variant="h5" align="center" maxWidth={ 325 }>
-					{ t( 'steps.experience_level.title' ) }
+		<Stack spacing={4} width="100%" data-testid="experience-level-step">
+			<Stack spacing={1} textAlign="center" alignItems="center" sx={{ pt: 2.5 }}>
+				<StepTitle color="text.primary" variant="h5" align="center" maxWidth={325}>
+					{t('steps.experience_level.title')}
 				</StepTitle>
 				<Typography variant="body1" color="text.secondary">
-					{ t( 'steps.experience_level.subtitle' ) }
+					{t('steps.experience_level.subtitle')}
 				</Typography>
 			</Stack>
 
-			<Stack spacing={ 2 }>
-				{ OPTIONS.map( ( option ) => {
+			<Stack spacing={2}>
+				{OPTIONS.map((option) => {
 					const isSelected = selectedValue === option.id;
 
 					return (
 						<OptionButton
-							key={ option.id }
+							key={option.id}
 							variant="outlined"
 							fullWidth
-							className={ isSelected ? 'Mui-selected' : undefined }
-							endIcon={ <DirectionalChevronIcon /> }
-							onClick={ () => handleSelect( option.id ) }
-							aria-pressed={ isSelected }
+							className={isSelected ? 'Mui-selected' : undefined}
+							endIcon={<DirectionalChevronIcon />}
+							onClick={() => handleSelect(option.id)}
+							aria-pressed={isSelected}
 						>
-							{ t( option.labelKey ) }
+							{t(option.labelKey)}
 						</OptionButton>
 					);
-				} ) }
+				})}
 			</Stack>
 		</Stack>
 	);

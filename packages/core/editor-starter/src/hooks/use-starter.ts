@@ -11,113 +11,112 @@ import { deleteStarterConfig, getEditingPanelWidth, getStarterConfig, getTopBarH
 
 interface ElementorChannels {
 	panelElements?: {
-		on: ( event: string, callback: () => void ) => void;
-		off: ( event: string, callback: () => void ) => void;
+		on: (event: string, callback: () => void) => void;
+		off: (event: string, callback: () => void) => void;
 	};
 }
 
 function getElementorChannels(): ElementorChannels | undefined {
-	return ( window as unknown as { elementor?: { channels?: ElementorChannels } } ).elementor?.channels;
+	return (window as unknown as { elementor?: { channels?: ElementorChannels } }).elementor?.channels;
 }
 
-function dismissStarterApi( config: StarterConfig ) {
-	const apiFetch = ( window as unknown as { wp?: { apiFetch?: ( args: object ) => Promise< unknown > } } ).wp
-		?.apiFetch;
+function dismissStarterApi(config: StarterConfig) {
+	const apiFetch = (window as unknown as { wp?: { apiFetch?: (args: object) => Promise<unknown> } }).wp?.apiFetch;
 
-	apiFetch?.( {
+	apiFetch?.({
 		path: config.restPath,
 		method: 'POST',
 		data: { starter_dismissed: true },
-	} );
+	});
 }
 
 export function useStarter() {
-	const [ config, setConfig ] = useState< StarterConfig | null >( null );
-	const [ isDismissing, setIsDismissing ] = useState( false );
-	const [ panelWidth, setPanelWidth ] = useState( 0 );
-	const [ topOffset, setTopOffset ] = useState( 0 );
-	const dismissedRef = useRef( false );
+	const [config, setConfig] = useState<StarterConfig | null>(null);
+	const [isDismissing, setIsDismissing] = useState(false);
+	const [panelWidth, setPanelWidth] = useState(0);
+	const [topOffset, setTopOffset] = useState(0);
+	const dismissedRef = useRef(false);
 
-	useEffect( () => {
+	useEffect(() => {
 		const activate = () => {
 			const cfg = getStarterConfig();
 
-			if ( cfg ) {
-				setConfig( cfg );
-				setPanelWidth( getEditingPanelWidth() );
-				setTopOffset( getTopBarHeight() );
+			if (cfg) {
+				setConfig(cfg);
+				setPanelWidth(getEditingPanelWidth());
+				setTopOffset(getTopBarHeight());
 			}
 		};
 
-		const onCommandAfter = ( e: Event ) => {
-			const detail = ( e as CustomEvent )?.detail;
+		const onCommandAfter = (e: Event) => {
+			const detail = (e as CustomEvent)?.detail;
 
-			if ( detail?.command === 'editor/documents/attach-preview' ) {
+			if (detail?.command === 'editor/documents/attach-preview') {
 				activate();
 			}
 		};
 
-		window.addEventListener( 'elementor/commands/run/after', onCommandAfter );
+		window.addEventListener('elementor/commands/run/after', onCommandAfter);
 
-		return () => window.removeEventListener( 'elementor/commands/run/after', onCommandAfter );
-	}, [] );
+		return () => window.removeEventListener('elementor/commands/run/after', onCommandAfter);
+	}, []);
 
-	const dismiss = useCallback( () => {
-		if ( ! config || dismissedRef.current ) {
+	const dismiss = useCallback(() => {
+		if (!config || dismissedRef.current) {
 			return;
 		}
 
 		dismissedRef.current = true;
-		setIsDismissing( true );
+		setIsDismissing(true);
 
-		dismissStarterApi( config );
+		dismissStarterApi(config);
 		deleteStarterConfig();
-	}, [ config ] );
+	}, [config]);
 
-	useEffect( () => {
-		if ( ! config ) {
+	useEffect(() => {
+		if (!config) {
 			return;
 		}
 
 		const channels = getElementorChannels();
 
-		if ( ! channels?.panelElements ) {
+		if (!channels?.panelElements) {
 			return;
 		}
 
 		const handleDragStart = () => dismiss();
 
-		channels.panelElements.on( 'element:drag:start', handleDragStart );
+		channels.panelElements.on('element:drag:start', handleDragStart);
 
 		return () => {
-			channels.panelElements?.off( 'element:drag:start', handleDragStart );
+			channels.panelElements?.off('element:drag:start', handleDragStart);
 		};
-	}, [ config, dismiss ] );
+	}, [config, dismiss]);
 
-	useEffect( () => {
-		if ( ! config ) {
+	useEffect(() => {
+		if (!config) {
 			return;
 		}
 
-		return listenTo( windowEvent( 'elementor/edit-mode/change' ), () => {
-			if ( getCurrentEditMode() !== 'edit' ) {
+		return listenTo(windowEvent('elementor/edit-mode/change'), () => {
+			if (getCurrentEditMode() !== 'edit') {
 				dismiss();
 			}
-		} );
-	}, [ config, dismiss ] );
+		});
+	}, [config, dismiss]);
 
-	const openTemplatesLibrary = useCallback( () => {
+	const openTemplatesLibrary = useCallback(() => {
 		dismiss();
-		runCommand( 'library/open' );
-	}, [ dismiss ] );
+		runCommand('library/open');
+	}, [dismiss]);
 
-	const openAiPlanner = useCallback( () => {
+	const openAiPlanner = useCallback(() => {
 		dismiss();
 
-		if ( config?.aiPlannerUrl ) {
-			window.open( config.aiPlannerUrl, '_blank', 'noopener,noreferrer' );
+		if (config?.aiPlannerUrl) {
+			window.open(config.aiPlannerUrl, '_blank', 'noopener,noreferrer');
 		}
-	}, [ config, dismiss ] );
+	}, [config, dismiss]);
 
 	return {
 		config,
@@ -127,6 +126,6 @@ export function useStarter() {
 		dismiss,
 		openAiPlanner,
 		openTemplatesLibrary,
-		onExited: () => setConfig( null ),
+		onExited: () => setConfig(null),
 	};
 }

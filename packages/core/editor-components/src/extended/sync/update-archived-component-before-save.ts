@@ -4,28 +4,28 @@ import { apiClient } from '../../api';
 import { componentsSelectors } from '../../store/selectors';
 import { type DocumentSaveStatus } from '../../types';
 
-const failedNotification = ( message: string ): NotificationData => ( {
+const failedNotification = (message: string): NotificationData => ({
 	type: 'error',
-	message: `Failed to archive components: ${ message }`,
+	message: `Failed to archive components: ${message}`,
 	id: 'failed-archived-components-notification',
-} );
+});
 
-export const updateArchivedComponentBeforeSave = async ( status: DocumentSaveStatus ) => {
+export const updateArchivedComponentBeforeSave = async (status: DocumentSaveStatus) => {
 	try {
 		const archivedComponents = componentsSelectors.getArchivedThisSession();
 
-		if ( ! archivedComponents.length ) {
+		if (!archivedComponents.length) {
 			return;
 		}
 
-		const result = await apiClient.updateArchivedComponents( archivedComponents, status );
+		const result = await apiClient.updateArchivedComponents(archivedComponents, status);
 
-		const failedIds = result.failedIds.join( ', ' );
+		const failedIds = result.failedIds.join(', ');
 
-		if ( failedIds ) {
-			notify( failedNotification( failedIds ) );
+		if (failedIds) {
+			notify(failedNotification(failedIds));
 		}
-	} catch ( error ) {
-		throw new Error( `Failed to update archived components: ${ error }` );
+	} catch (error) {
+		throw new Error(`Failed to update archived components: ${error}`);
 	}
 };

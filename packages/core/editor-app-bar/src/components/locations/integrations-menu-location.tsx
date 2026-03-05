@@ -12,29 +12,29 @@ const { useMenuItems } = integrationsMenu;
 export default function IntegrationsMenuLocation() {
 	const menuItems = useMenuItems();
 
-	const popupState = usePopupState( {
+	const popupState = usePopupState({
 		variant: 'popover',
 		popupId: 'elementor-v2-app-bar-integrations',
-	} );
+	});
 
-	if ( menuItems.default.length === 0 ) {
+	if (menuItems.default.length === 0) {
 		return null;
 	}
 
 	return (
 		<>
-			<ToolbarMenuItem { ...bindTrigger( popupState ) } title={ __( 'Integrations', 'elementor' ) }>
+			<ToolbarMenuItem {...bindTrigger(popupState)} title={__('Integrations', 'elementor')}>
 				<PlugIcon />
 			</ToolbarMenuItem>
 			<PopoverMenu
-				onClick={ popupState.close }
-				{ ...bindMenu( popupState ) }
-				marginThreshold={ 8 }
-				open={ popupState.isOpen }
+				onClick={popupState.close}
+				{...bindMenu(popupState)}
+				marginThreshold={8}
+				open={popupState.isOpen}
 			>
-				{ menuItems.default.map( ( { MenuItem: IntegrationsMenuItem, id } ) => (
-					<IntegrationsMenuItem key={ id } />
-				) ) }
+				{menuItems.default.map(({ MenuItem: IntegrationsMenuItem, id }) => (
+					<IntegrationsMenuItem key={id} />
+				))}
 			</PopoverMenu>
 		</>
 	);

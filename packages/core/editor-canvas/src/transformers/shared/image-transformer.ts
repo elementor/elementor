@@ -10,18 +10,18 @@ type Image = {
 	size?: string;
 };
 
-export const imageTransformer = createTransformer( async ( value: Image ) => {
+export const imageTransformer = createTransformer(async (value: Image) => {
 	const { src, size } = value;
 
-	if ( ! src?.id ) {
+	if (!src?.id) {
 		return src?.url ? { src: src.url } : null;
 	}
 
-	const attachment = await getMediaAttachment( { id: src.id } );
+	const attachment = await getMediaAttachment({ id: src.id });
 
-	const sizedAttachment = attachment?.sizes?.[ size ?? '' ];
+	const sizedAttachment = attachment?.sizes?.[size ?? ''];
 
-	if ( sizedAttachment ) {
+	if (sizedAttachment) {
 		return {
 			src: sizedAttachment.url,
 			height: sizedAttachment.height,
@@ -29,7 +29,7 @@ export const imageTransformer = createTransformer( async ( value: Image ) => {
 		};
 	}
 
-	if ( attachment ) {
+	if (attachment) {
 		return {
 			src: attachment.url,
 			height: attachment.height,
@@ -38,4 +38,4 @@ export const imageTransformer = createTransformer( async ( value: Image ) => {
 	}
 
 	return null;
-} );
+});

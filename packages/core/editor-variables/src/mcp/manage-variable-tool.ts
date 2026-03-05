@@ -5,24 +5,24 @@ import { service } from '../service';
 import { GLOBAL_VARIABLES_URI } from './variables-resource';
 
 export const initManageVariableTool = () => {
-	getMCPByDomain( 'variables' ).addTool( {
+	getMCPByDomain('variables').addTool({
 		name: 'manage-global-variable',
 		schema: {
-			action: z.enum( [ 'create', 'update', 'delete' ] ).describe( 'Operation to perform' ),
+			action: z.enum(['create', 'update', 'delete']).describe('Operation to perform'),
 			id: z
 				.string()
 				.optional()
-				.describe( 'Variable id (required for update/delete). Get from list-global-variables.' ),
+				.describe('Variable id (required for update/delete). Get from list-global-variables.'),
 			type: z
 				.string()
 				.optional()
-				.describe( 'Variable type: "global-color-variable" or "global-font-variable" (required for create)' ),
-			label: z.string().optional().describe( 'Variable label (required for create/update)' ),
-			value: z.string().optional().describe( 'Variable value (required for create/update)' ),
+				.describe('Variable type: "global-color-variable" or "global-font-variable" (required for create)'),
+			label: z.string().optional().describe('Variable label (required for create/update)'),
+			value: z.string().optional().describe('Variable value (required for create/update)'),
 		},
 		outputSchema: {
-			status: z.enum( [ 'ok' ] ).describe( 'Operation status' ),
-			message: z.string().optional().describe( 'Error details if status is error' ),
+			status: z.enum(['ok']).describe('Operation status'),
+			message: z.string().optional().describe('Error details if status is error'),
 		},
 		modelPreferences: {
 			intelligencePriority: 0.75,
@@ -42,44 +42,44 @@ DELETE: requires id. DESTRUCTIVE - confirm with user first.
 # NAMING - IMPORTANT
 the variables names should ALWAYS be lowercased and dashed spaced. example: "Headline Primary" should be "headline-primary"
 `,
-		handler: async ( params ) => {
-			const operations = getServiceActions( service );
-			const op = operations[ params.action ];
-			if ( op ) {
-				await op( params );
+		handler: async (params) => {
+			const operations = getServiceActions(service);
+			const op = operations[params.action];
+			if (op) {
+				await op(params);
 				return {
 					status: 'ok',
 				};
 			}
-			throw new Error( `Unknown action ${ params.action }` );
+			throw new Error(`Unknown action ${params.action}`);
 		},
 		isDestructive: true, // Because delete is destructive
-	} );
+	});
 };
 
-type Opts< T extends Record< string, string > > = Partial< T > & {
-	[ k: string ]: unknown;
+type Opts<T extends Record<string, string>> = Partial<T> & {
+	[k: string]: unknown;
 };
 
-function getServiceActions( svc: typeof service ) {
+function getServiceActions(svc: typeof service) {
 	return {
-		create( { type, label, value }: Opts< { type: string; label: string; value: string } > ) {
-			if ( ! type || ! label || ! value ) {
-				throw new Error( 'Create requires type, label, and value' );
+		create({ type, label, value }: Opts<{ type: string; label: string; value: string }>) {
+			if (!type || !label || !value) {
+				throw new Error('Create requires type, label, and value');
 			}
-			return svc.create( { type, label, value } );
+			return svc.create({ type, label, value });
 		},
-		update( { id, label, value }: Opts< { id: string; label: string; value: string } > ) {
-			if ( ! id || ! label || ! value ) {
-				throw new Error( 'Update requires id, label, and value' );
+		update({ id, label, value }: Opts<{ id: string; label: string; value: string }>) {
+			if (!id || !label || !value) {
+				throw new Error('Update requires id, label, and value');
 			}
-			return svc.update( id, { label, value } );
+			return svc.update(id, { label, value });
 		},
-		delete( { id }: Opts< { id: string } > ) {
-			if ( ! id ) {
-				throw new Error( 'delete requires id' );
+		delete({ id }: Opts<{ id: string }>) {
+			if (!id) {
+				throw new Error('delete requires id');
 			}
-			return svc.delete( id );
+			return svc.delete(id);
 		},
 	};
 }

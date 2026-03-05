@@ -6,27 +6,27 @@ import { type Category, ItemSelector } from '../../components/item-selector';
 // Mock PopoverMenuList to trigger onChange and capture items
 const mockOnChange = jest.fn();
 let capturedItems: unknown[] = [];
-jest.mock( '@elementor/editor-ui', () => ( {
-	...jest.requireActual( '@elementor/editor-ui' ),
-	PopoverMenuList: ( props: { onChange: typeof mockOnChange; items: unknown[] } ) => {
-		mockOnChange.mockImplementation( props.onChange );
+jest.mock('@elementor/editor-ui', () => ({
+	...jest.requireActual('@elementor/editor-ui'),
+	PopoverMenuList: (props: { onChange: typeof mockOnChange; items: unknown[] }) => {
+		mockOnChange.mockImplementation(props.onChange);
 		capturedItems = props.items;
-		return React.createElement( 'ul', { role: 'listbox', 'data-testid': 'item-list' } );
+		return React.createElement('ul', { role: 'listbox', 'data-testid': 'item-list' });
 	},
-} ) );
+}));
 
-const MockIcon = ( { fontSize }: { fontSize: string } ) => React.createElement( 'div', { 'data-fontsize': fontSize } );
+const MockIcon = ({ fontSize }: { fontSize: string }) => React.createElement('div', { 'data-fontsize': fontSize });
 
-describe( 'ItemSelector', () => {
+describe('ItemSelector', () => {
 	const defaultProps = {
 		itemsList: [
 			{
 				label: 'System',
-				items: [ 'Font1', 'Font2' ],
+				items: ['Font1', 'Font2'],
 			},
 			{
 				label: 'Google',
-				items: [ 'Font3', 'Font4' ],
+				items: ['Font3', 'Font4'],
 			},
 		] as Category[],
 		selectedItem: null,
@@ -37,24 +37,24 @@ describe( 'ItemSelector', () => {
 		icon: MockIcon,
 	};
 
-	beforeEach( () => {
+	beforeEach(() => {
 		mockOnChange.mockClear();
 		capturedItems = [];
-	} );
+	});
 
-	it( 'should render the item-select component', () => {
+	it('should render the item-select component', () => {
 		// Act.
-		render( React.createElement( ItemSelector, defaultProps ) );
+		render(React.createElement(ItemSelector, defaultProps));
 
 		// Assert.
-		expect( screen.getByText( 'Select Item' ) ).toBeInTheDocument();
-		expect( screen.getByPlaceholderText( 'Search' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'listbox' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Select Item')).toBeInTheDocument();
+		expect(screen.getByPlaceholderText('Search')).toBeInTheDocument();
+		expect(screen.getByRole('listbox')).toBeInTheDocument();
+	});
 
-	it( 'should organize items under proper subsection', () => {
+	it('should organize items under proper subsection', () => {
 		// Act.
-		render( React.createElement( ItemSelector, defaultProps ) );
+		render(React.createElement(ItemSelector, defaultProps));
 
 		// Assert.
 		const expected = [
@@ -65,10 +65,10 @@ describe( 'ItemSelector', () => {
 			{ type: 'item', value: 'Font3', disabled: false },
 			{ type: 'item', value: 'Font4', disabled: false },
 		];
-		expect( capturedItems ).toStrictEqual( expected );
-	} );
+		expect(capturedItems).toStrictEqual(expected);
+	});
 
-	it( 'should call onDebounce when debouncing', async () => {
+	it('should call onDebounce when debouncing', async () => {
 		// Arrange.
 		jest.useFakeTimers();
 		const onDebounce = jest.fn();
@@ -78,16 +78,16 @@ describe( 'ItemSelector', () => {
 		};
 
 		// Act.
-		render( React.createElement( ItemSelector, propsWithDebounce ) );
+		render(React.createElement(ItemSelector, propsWithDebounce));
 
-		mockOnChange( [ { type: 'item', value: 'Font1' } ] );
+		mockOnChange([{ type: 'item', value: 'Font1' }]);
 
-		jest.advanceTimersByTime( 100 );
+		jest.advanceTimersByTime(100);
 
 		// Assert.
-		expect( onDebounce ).toHaveBeenCalledWith( 'Font1' );
+		expect(onDebounce).toHaveBeenCalledWith('Font1');
 
 		// Cleanup
 		jest.useRealTimers();
-	} );
-} );
+	});
+});

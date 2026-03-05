@@ -6,9 +6,9 @@ import { ELEMENTS_BASE_STYLES_PROVIDER_KEY } from '@elementor/editor-styles-repo
 import { type SnapshotPropValue } from '../types';
 import { createMockSnapshotField } from './mock-utils';
 
-const desktopNormal = { breakpoint: 'desktop', state: null } as StyleDefinitionVariant[ 'meta' ];
+const desktopNormal = { breakpoint: 'desktop', state: null } as StyleDefinitionVariant['meta'];
 
-export const styleLocalDisplayFlex = createMockStyleDefinition( {
+export const styleLocalDisplayFlex = createMockStyleDefinition({
 	id: 'e-b7cc960-bb78ae3',
 	label: 'local',
 	meta: desktopNormal,
@@ -18,9 +18,9 @@ export const styleLocalDisplayFlex = createMockStyleDefinition( {
 			value: 'flex',
 		},
 	},
-} );
+});
 
-export const styleGlobal1DisplayBlock = createMockStyleDefinition( {
+export const styleGlobal1DisplayBlock = createMockStyleDefinition({
 	id: 'g-a1bfd2d',
 	label: 'test',
 	meta: desktopNormal,
@@ -30,9 +30,9 @@ export const styleGlobal1DisplayBlock = createMockStyleDefinition( {
 			value: 'block',
 		},
 	},
-} );
+});
 
-const styleGlobal2DisplayBlock = createMockStyleDefinition( {
+const styleGlobal2DisplayBlock = createMockStyleDefinition({
 	id: 'g-random-1',
 	label: 'test-1',
 	meta: desktopNormal,
@@ -42,9 +42,9 @@ const styleGlobal2DisplayBlock = createMockStyleDefinition( {
 			value: 'block',
 		},
 	},
-} );
+});
 
-const styleEmptyDisplayInlineFlex = createMockStyleDefinition( {
+const styleEmptyDisplayInlineFlex = createMockStyleDefinition({
 	id: 'empty-element',
 	label: '',
 	meta: desktopNormal,
@@ -54,9 +54,9 @@ const styleEmptyDisplayInlineFlex = createMockStyleDefinition( {
 			value: 'inline-flex',
 		},
 	},
-} );
+});
 
-const styleBaseDisplayInlineFlex = createMockStyleDefinition( {
+const styleBaseDisplayInlineFlex = createMockStyleDefinition({
 	id: 'e-element-base',
 	label: '',
 	meta: desktopNormal,
@@ -66,30 +66,25 @@ const styleBaseDisplayInlineFlex = createMockStyleDefinition( {
 			value: 'inline-flex',
 		},
 	},
-} );
+});
 
 export const mockInheritanceChainWithDisplay: SnapshotPropValue[] = [
-	createMockSnapshotField( styleLocalDisplayFlex, desktopNormal, [ 'display' ], 'document-elements-2449' ),
-	createMockSnapshotField( styleGlobal1DisplayBlock, desktopNormal, [ 'display' ], 'global-classes' ),
-	createMockSnapshotField( styleGlobal2DisplayBlock, desktopNormal, [ 'display' ], 'global-classes' ),
+	createMockSnapshotField(styleLocalDisplayFlex, desktopNormal, ['display'], 'document-elements-2449'),
+	createMockSnapshotField(styleGlobal1DisplayBlock, desktopNormal, ['display'], 'global-classes'),
+	createMockSnapshotField(styleGlobal2DisplayBlock, desktopNormal, ['display'], 'global-classes'),
 ];
 
 export const mockInheritanceChainWithEmptyLabels: SnapshotPropValue[] = [
-	createMockSnapshotField( styleLocalDisplayFlex, desktopNormal, [ 'display' ], 'document-elements-2449' ),
-	createMockSnapshotField( styleEmptyDisplayInlineFlex, desktopNormal, [ 'display' ], 'global-classes' ),
+	createMockSnapshotField(styleLocalDisplayFlex, desktopNormal, ['display'], 'document-elements-2449'),
+	createMockSnapshotField(styleEmptyDisplayInlineFlex, desktopNormal, ['display'], 'global-classes'),
 ];
 
 export const mockInheritanceChainWithBaseLabels: SnapshotPropValue[] = [
-	createMockSnapshotField( styleLocalDisplayFlex, desktopNormal, [ 'display' ], 'document-elements-2449' ),
-	createMockSnapshotField(
-		styleBaseDisplayInlineFlex,
-		desktopNormal,
-		[ 'display' ],
-		ELEMENTS_BASE_STYLES_PROVIDER_KEY
-	),
+	createMockSnapshotField(styleLocalDisplayFlex, desktopNormal, ['display'], 'document-elements-2449'),
+	createMockSnapshotField(styleBaseDisplayInlineFlex, desktopNormal, ['display'], ELEMENTS_BASE_STYLES_PROVIDER_KEY),
 ];
 
-const styleLocalMargin50 = createMockStyleDefinition( {
+const styleLocalMargin50 = createMockStyleDefinition({
 	id: 'e-2092ca6-3909dda',
 	label: 'local',
 	meta: desktopNormal,
@@ -114,9 +109,9 @@ const styleLocalMargin50 = createMockStyleDefinition( {
 			},
 		},
 	},
-} );
+});
 
-const styleGlobalMargin10 = createMockStyleDefinition( {
+const styleGlobalMargin10 = createMockStyleDefinition({
 	id: 'g-500ccb4',
 	label: 'customMargin',
 	meta: desktopNormal,
@@ -146,16 +141,16 @@ const styleGlobalMargin10 = createMockStyleDefinition( {
 			},
 		},
 	},
-} );
+});
 
 export const mockInheritanceChainWithMarginMultiSizeOnly = [
-	createMockSnapshotField( styleLocalMargin50, desktopNormal, [ 'margin', 'block-start' ], 'document-elements-2483' ),
-	createMockSnapshotField( styleGlobalMargin10, desktopNormal, [ 'margin', 'block-start' ], 'global-classes' ),
+	createMockSnapshotField(styleLocalMargin50, desktopNormal, ['margin', 'block-start'], 'document-elements-2483'),
+	createMockSnapshotField(styleGlobalMargin10, desktopNormal, ['margin', 'block-start'], 'global-classes'),
 ];
 
-export const mockTestPropType = createMockPropType( { kind: 'plain', key: 'test-prop' } ) as PlainPropType;
+export const mockTestPropType = createMockPropType({ kind: 'plain', key: 'test-prop' }) as PlainPropType;
 
-const styleLocalTestProp1 = createMockStyleDefinition( {
+const styleLocalTestProp1 = createMockStyleDefinition({
 	id: 'g-random-1',
 	label: 'test-1',
 	meta: desktopNormal,
@@ -165,9 +160,9 @@ const styleLocalTestProp1 = createMockStyleDefinition( {
 			value: '1',
 		},
 	},
-} );
+});
 
-const styleLocalTestProp2 = createMockStyleDefinition( {
+const styleLocalTestProp2 = createMockStyleDefinition({
 	id: 'g-random-2',
 	label: 'test-2',
 	meta: desktopNormal,
@@ -177,14 +172,14 @@ const styleLocalTestProp2 = createMockStyleDefinition( {
 			value: '2',
 		},
 	},
-} );
+});
 
 export const mockInheritanceChainWithTestProp: SnapshotPropValue[] = [
-	createMockSnapshotField( styleLocalTestProp1, desktopNormal, [ 'someTestProp' ], 'document-elements-2483' ),
-	createMockSnapshotField( styleLocalTestProp2, desktopNormal, [ 'someTestProp' ], 'global-classes' ),
+	createMockSnapshotField(styleLocalTestProp1, desktopNormal, ['someTestProp'], 'document-elements-2483'),
+	createMockSnapshotField(styleLocalTestProp2, desktopNormal, ['someTestProp'], 'global-classes'),
 ];
 
-export const styleGlobalPartialMultiProps = createMockStyleDefinition( {
+export const styleGlobalPartialMultiProps = createMockStyleDefinition({
 	id: 'g-123456',
 	label: 'global-partial-multi-props',
 	meta: desktopNormal,
@@ -198,8 +193,8 @@ export const styleGlobalPartialMultiProps = createMockStyleDefinition( {
 			value: '#000000',
 		},
 	},
-} );
-export const styleGlobalMultipleProps = createMockStyleDefinition( {
+});
+export const styleGlobalMultipleProps = createMockStyleDefinition({
 	id: 'g-1234567',
 	label: 'global-multi-props',
 	meta: desktopNormal,
@@ -220,4 +215,4 @@ export const styleGlobalMultipleProps = createMockStyleDefinition( {
 			},
 		},
 	},
-} );
+});

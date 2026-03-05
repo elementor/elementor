@@ -18,42 +18,42 @@ import { getContainerByOriginId } from '../../../../utils/get-container-by-origi
 import { switchToComponent } from '../../../../utils/switch-to-component';
 import { ExtendedInstanceEditingPanel } from '../instance-editing-panel';
 
-jest.mock( '@elementor/editor-elements' );
+jest.mock('@elementor/editor-elements');
 
-jest.mock( '@elementor/session' );
+jest.mock('@elementor/session');
 
-jest.mock( '../../../../utils/switch-to-component' );
+jest.mock('../../../../utils/switch-to-component');
 
-jest.mock( '../../../../prop-types/component-instance-prop-type', () => ( {
+jest.mock('../../../../prop-types/component-instance-prop-type', () => ({
 	componentInstancePropTypeUtil: {
 		extract: jest.fn(),
 		key: 'component-instance',
 	},
-} ) );
+}));
 
-jest.mock( '@elementor/editor-current-user' );
+jest.mock('@elementor/editor-current-user');
 
-jest.mock( '../../../../utils/get-container-by-origin-id', () => ( {
+jest.mock('../../../../utils/get-container-by-origin-id', () => ({
 	getContainerByOriginId: jest.fn(),
-} ) );
+}));
 
-mockCurrentUserCapabilities( true );
+mockCurrentUserCapabilities(true);
 
 const MOCK_COMPONENT_ID = 456;
 const MOCK_COMPONENT_NAME = 'Test Component';
 const MOCK_INSTANCE_ID = 'instance-789';
-const MOCK_PROP_TYPE = createMockPropType( { kind: 'plain', key: 'string' } );
+const MOCK_PROP_TYPE = createMockPropType({ kind: 'plain', key: 'string' });
 const MOCK_ELEMENT_LABEL = 'Heading Block';
 const MOCK_CONTROL_TYPE = 'test-override-text';
 
-const MOCK_COMPONENT_INSTANCE_PROP_TYPE = createMockPropType( {
+const MOCK_COMPONENT_INSTANCE_PROP_TYPE = createMockPropType({
 	kind: 'object',
 	key: 'component-instance',
 	shape: {
-		component_id: createMockPropType( { kind: 'plain', key: 'number' } ),
-		overrides: createMockPropType( { kind: 'array', key: 'overrides' } ),
+		component_id: createMockPropType({ kind: 'plain', key: 'number' }),
+		overrides: createMockPropType({ kind: 'array', key: 'overrides' }),
 	},
-} );
+});
 
 const MOCK_ELEMENT = {
 	id: MOCK_INSTANCE_ID,
@@ -96,9 +96,9 @@ const MOCK_OVERRIDABLE_PROPS = {
 	},
 	groups: {
 		items: {
-			content: { id: 'content', label: 'Content', props: [ 'prop-1', 'prop-2' ] },
+			content: { id: 'content', label: 'Content', props: ['prop-1', 'prop-2'] },
 		},
-		order: [ 'content' ],
+		order: ['content'],
 	},
 };
 
@@ -131,11 +131,11 @@ function createMockWidgetsCache() {
 	};
 }
 
-function createMockElementType( widgetType: string ) {
+function createMockElementType(widgetType: string) {
 	const widgetsCache = createMockWidgetsCache();
-	const widget = widgetsCache[ widgetType as keyof typeof widgetsCache ];
+	const widget = widgetsCache[widgetType as keyof typeof widgetsCache];
 
-	if ( ! widget ) {
+	if (!widget) {
 		return null;
 	}
 
@@ -149,128 +149,128 @@ function createMockElementType( widgetType: string ) {
 	};
 }
 
-describe( '<ExtendedInstanceEditingPanel />', () => {
-	let store: Store< SliceState< typeof slice > >;
+describe('<ExtendedInstanceEditingPanel />', () => {
+	let store: Store<SliceState<typeof slice>>;
 
-	beforeAll( () => {
-		controlsRegistry.register( MOCK_CONTROL_TYPE, TextControl, 'full' );
-	} );
+	beforeAll(() => {
+		controlsRegistry.register(MOCK_CONTROL_TYPE, TextControl, 'full');
+	});
 
-	beforeEach( () => {
+	beforeEach(() => {
 		jest.clearAllMocks();
-		mockCurrentUserCapabilities( true );
-		registerSlice( slice );
+		mockCurrentUserCapabilities(true);
+		registerSlice(slice);
 		store = __createStore();
 
-		jest.mocked( componentInstancePropTypeUtil.extract ).mockReturnValue( {
+		jest.mocked(componentInstancePropTypeUtil.extract).mockReturnValue({
 			component_id: { $$type: 'number', value: MOCK_COMPONENT_ID },
 			overrides: { $$type: 'overrides', value: [] },
-		} );
-		jest.mocked( getElementLabel ).mockReturnValue( MOCK_ELEMENT_LABEL );
-		jest.mocked( getWidgetsCache ).mockReturnValue(
-			createMockWidgetsCache() as unknown as ReturnType< typeof getWidgetsCache >
+		});
+		jest.mocked(getElementLabel).mockReturnValue(MOCK_ELEMENT_LABEL);
+		jest.mocked(getWidgetsCache).mockReturnValue(
+			createMockWidgetsCache() as unknown as ReturnType<typeof getWidgetsCache>
 		);
-		jest.mocked( getElementType ).mockImplementation( createMockElementType );
-		jest.mocked( getContainer ).mockReturnValue( createMockContainer( MOCK_INSTANCE_ID, [] ) );
-		jest.mocked( getContainerByOriginId ).mockImplementation( ( originId ) => createMockContainer( originId, [] ) );
-	} );
+		jest.mocked(getElementType).mockImplementation(createMockElementType);
+		jest.mocked(getContainer).mockReturnValue(createMockContainer(MOCK_INSTANCE_ID, []));
+		jest.mocked(getContainerByOriginId).mockImplementation((originId) => createMockContainer(originId, []));
+	});
 
-	it( 'should render the component name in the header', () => {
+	it('should render the component name in the header', () => {
 		// Arrange.
 		setupComponent();
 
 		// Act.
-		renderPanel( store );
+		renderPanel(store);
 
 		// Assert.
-		expect( screen.getByText( MOCK_COMPONENT_NAME ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText(MOCK_COMPONENT_NAME)).toBeInTheDocument();
+	});
 
-	it( 'should show edit button when user is admin', () => {
+	it('should show edit button when user is admin', () => {
 		// Arrange.
 		setupComponent();
 
 		// Act.
-		renderPanel( store );
+		renderPanel(store);
 
 		// Assert.
-		expect( screen.getByLabelText( `Edit ${ MOCK_COMPONENT_NAME }` ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByLabelText(`Edit ${MOCK_COMPONENT_NAME}`)).toBeInTheDocument();
+	});
 
-	it( 'should not show edit button when user is not admin', () => {
+	it('should not show edit button when user is not admin', () => {
 		// Arrange.
-		mockCurrentUserCapabilities( false );
+		mockCurrentUserCapabilities(false);
 		setupComponent();
 
 		// Act.
-		renderPanel( store );
+		renderPanel(store);
 
 		// Assert.
-		expect( screen.queryByLabelText( `Edit ${ MOCK_COMPONENT_NAME }` ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.queryByLabelText(`Edit ${MOCK_COMPONENT_NAME}`)).not.toBeInTheDocument();
+	});
 
-	it( 'should call switchToComponent when edit button is clicked', () => {
+	it('should call switchToComponent when edit button is clicked', () => {
 		// Arrange.
 		setupComponent();
-		renderPanel( store );
+		renderPanel(store);
 
 		// Act.
-		const editButton = screen.getByLabelText( `Edit ${ MOCK_COMPONENT_NAME }` );
-		fireEvent.click( editButton );
+		const editButton = screen.getByLabelText(`Edit ${MOCK_COMPONENT_NAME}`);
+		fireEvent.click(editButton);
 
 		// Assert.
-		expect( switchToComponent ).toHaveBeenCalledTimes( 1 );
-		expect( switchToComponent ).toHaveBeenCalledWith( MOCK_COMPONENT_ID, MOCK_INSTANCE_ID );
-	} );
+		expect(switchToComponent).toHaveBeenCalledTimes(1);
+		expect(switchToComponent).toHaveBeenCalledWith(MOCK_COMPONENT_ID, MOCK_INSTANCE_ID);
+	});
 
-	it( 'should show empty state with edit button when admin and no props', () => {
+	it('should show empty state with edit button when admin and no props', () => {
 		// Arrange.
-		setupComponent( { isWithOverridableProps: false } );
+		setupComponent({ isWithOverridableProps: false });
 
 		// Act.
-		renderPanel( store );
+		renderPanel(store);
 
 		// Assert.
-		expect( screen.getByText( 'No properties yet' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Edit component' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('No properties yet')).toBeInTheDocument();
+		expect(screen.getByText('Edit component')).toBeInTheDocument();
+	});
 
-	it( 'should show empty state without edit button when non-admin', () => {
+	it('should show empty state without edit button when non-admin', () => {
 		// Arrange.
-		mockCurrentUserCapabilities( false );
-		setupComponent( { isWithOverridableProps: false } );
+		mockCurrentUserCapabilities(false);
+		setupComponent({ isWithOverridableProps: false });
 
 		// Act.
-		renderPanel( store );
+		renderPanel(store);
 
 		// Assert.
-		expect( screen.getByText( 'No properties yet' ) ).toBeInTheDocument();
-		expect( screen.queryByText( 'Edit component' ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.getByText('No properties yet')).toBeInTheDocument();
+		expect(screen.queryByText('Edit component')).not.toBeInTheDocument();
+	});
 
-	it( 'should render overridable props groups', () => {
+	it('should render overridable props groups', () => {
 		// Arrange.
 		setupComponent();
 
 		// Act.
-		renderPanel( store );
+		renderPanel(store);
 
 		// Assert.
-		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Title' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Subtitle' ) ).toBeInTheDocument();
-	} );
-} );
+		expect(screen.getByText('Content')).toBeInTheDocument();
+		expect(screen.getByText('Title')).toBeInTheDocument();
+		expect(screen.getByText('Subtitle')).toBeInTheDocument();
+	});
+});
 
 type SetupComponentOptions = {
 	isWithOverridableProps?: boolean;
 };
 
-function setupComponent( { isWithOverridableProps = true }: SetupComponentOptions = {} ) {
+function setupComponent({ isWithOverridableProps = true }: SetupComponentOptions = {}) {
 	const overridableProps = isWithOverridableProps ? MOCK_OVERRIDABLE_PROPS : MOCK_EMPTY_OVERRIDABLE_PROPS;
 
 	dispatch(
-		slice.actions.load( [
+		slice.actions.load([
 			{
 				id: MOCK_COMPONENT_ID,
 				uid: 'component-uid',
@@ -278,14 +278,14 @@ function setupComponent( { isWithOverridableProps = true }: SetupComponentOption
 				overridableProps,
 				isArchived: false,
 			},
-		] )
+		])
 	);
 }
 
-function renderPanel( store: Store< SliceState< typeof slice > > ) {
+function renderPanel(store: Store<SliceState<typeof slice>>) {
 	return renderWithStore(
-		<ControlActionsProvider items={ [] }>
-			<ElementProvider element={ MOCK_ELEMENT } elementType={ MOCK_ELEMENT_TYPE } settings={ {} }>
+		<ControlActionsProvider items={[]}>
+			<ElementProvider element={MOCK_ELEMENT} elementType={MOCK_ELEMENT_TYPE} settings={{}}>
 				<ExtendedInstanceEditingPanel />
 			</ElementProvider>
 		</ControlActionsProvider>,

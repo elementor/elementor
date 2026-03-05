@@ -15,45 +15,45 @@ export type TooltipAddItemActionProps = {
 	ariaLabel?: string;
 };
 
-export const TooltipAddItemAction = ( {
+export const TooltipAddItemAction = ({
 	disabled = false,
 	enableTooltip = false,
 	tooltipContent = null,
 	newItemIndex,
 	ariaLabel,
-}: TooltipAddItemActionProps ) => {
+}: TooltipAddItemActionProps) => {
 	const { addItem } = useRepeaterContext();
 
-	const onClick = ( ev: React.MouseEvent ) => addItem( ev, { index: newItemIndex } );
+	const onClick = (ev: React.MouseEvent) => addItem(ev, { index: newItemIndex });
 
 	return (
-		<ConditionalToolTip content={ tooltipContent } enable={ enableTooltip }>
-			<Box component="span" sx={ { cursor: disabled ? 'not-allowed' : 'pointer' } }>
+		<ConditionalToolTip content={tooltipContent} enable={enableTooltip}>
+			<Box component="span" sx={{ cursor: disabled ? 'not-allowed' : 'pointer' }}>
 				<IconButton
-					size={ SIZE }
-					disabled={ disabled }
-					onClick={ onClick }
+					size={SIZE}
+					disabled={disabled}
+					onClick={onClick}
 					/* Translators: %s: Aria label. */
-					aria-label={ sprintf( __( 'Add %s item', 'elementor' ), ariaLabel?.toLowerCase() ) }
+					aria-label={sprintf(__('Add %s item', 'elementor'), ariaLabel?.toLowerCase())}
 				>
-					<PlusIcon fontSize={ SIZE } />
+					<PlusIcon fontSize={SIZE} />
 				</IconButton>
 			</Box>
 		</ConditionalToolTip>
 	);
 };
 
-const ConditionalToolTip = ( {
+const ConditionalToolTip = ({
 	children,
 	enable,
 	content,
-}: React.PropsWithChildren< {
+}: React.PropsWithChildren<{
 	content?: React.ReactNode;
 	enable: boolean;
-} > ) =>
+}>) =>
 	enable && content ? (
-		<Infotip placement="right" color="secondary" content={ content }>
-			{ children }
+		<Infotip placement="right" color="secondary" content={content}>
+			{children}
 		</Infotip>
 	) : (
 		children

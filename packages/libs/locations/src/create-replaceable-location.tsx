@@ -16,18 +16,18 @@ import {
 	type ReplaceableLocation,
 } from './types';
 
-type ReplaceableInjectionsMap< TProps extends object = AnyProps > = Map< Id, ReplaceableInjection< TProps > >;
+type ReplaceableInjectionsMap<TProps extends object = AnyProps> = Map<Id, ReplaceableInjection<TProps>>;
 
-export function createReplaceableLocation< TProps extends object = AnyProps >(): ReplaceableLocation< TProps > {
-	const injections: ReplaceableInjectionsMap< TProps > = new Map();
+export function createReplaceableLocation<TProps extends object = AnyProps>(): ReplaceableLocation<TProps> {
+	const injections: ReplaceableInjectionsMap<TProps> = new Map();
 
-	const getInjections = createGetInjections( injections );
-	const useInjections = createUseInjections( getInjections );
-	const Slot = createReplaceable( useInjections );
-	const inject = createRegister( injections );
+	const getInjections = createGetInjections(injections);
+	const useInjections = createUseInjections(getInjections);
+	const Slot = createReplaceable(useInjections);
+	const inject = createRegister(injections);
 
 	// Push the clear function to the flushInjectionsFns array, so we can flush all injections at once.
-	flushInjectionsFns.push( () => injections.clear() );
+	flushInjectionsFns.push(() => injections.clear());
 
 	return {
 		getInjections,
@@ -37,29 +37,29 @@ export function createReplaceableLocation< TProps extends object = AnyProps >():
 	};
 }
 
-function createReplaceable< TProps extends PropsWithChildren< object > = AnyProps >(
-	useInjections: ReplaceableLocation< TProps >[ 'useInjections' ]
+function createReplaceable<TProps extends PropsWithChildren<object> = AnyProps>(
+	useInjections: ReplaceableLocation<TProps>['useInjections']
 ) {
-	return ( props: TProps ) => {
+	return (props: TProps) => {
 		const injections = useInjections();
 
-		const { component: Component } = injections.find( ( { condition } ) => condition?.( props ) ) ?? {};
+		const { component: Component } = injections.find(({ condition }) => condition?.(props)) ?? {};
 
-		if ( ! Component ) {
+		if (!Component) {
 			return props.children;
 		}
 
-		return <Component { ...props } />;
+		return <Component {...props} />;
 	};
 }
 
-function createRegister< TProps extends object = AnyProps >( injections: ReplaceableInjectionsMap< TProps > ) {
-	return ( { component, id, condition = () => true, options = {} }: ReplaceableInjectArgs< TProps > ) => {
-		injections.set( id, {
+function createRegister<TProps extends object = AnyProps>(injections: ReplaceableInjectionsMap<TProps>) {
+	return ({ component, id, condition = () => true, options = {} }: ReplaceableInjectArgs<TProps>) => {
+		injections.set(id, {
 			id,
-			component: wrapInjectedComponent( component ),
+			component: wrapInjectedComponent(component),
 			condition,
 			priority: options.priority ?? DEFAULT_PRIORITY,
-		} );
+		});
 	};
 }

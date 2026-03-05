@@ -8,9 +8,9 @@ const controlTypes = {
 } as const satisfies ControlRegistry;
 
 export const registerElementControls = () => {
-	Object.entries< ( typeof controlTypes )[ keyof typeof controlTypes ] >( controlTypes ).forEach(
-		( [ type, { component, layout } ] ) => {
-			controlsRegistry.register( type, component, layout );
+	Object.entries<(typeof controlTypes)[keyof typeof controlTypes]>(controlTypes).forEach(
+		([type, { component, layout }]) => {
+			controlsRegistry.register(type, component, layout);
 		}
 	);
 };

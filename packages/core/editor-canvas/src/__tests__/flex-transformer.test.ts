@@ -6,9 +6,9 @@ type Flex = {
 	flexBasis?: { size: number; unit: string } | string | null;
 };
 
-describe( 'flexTransformer', () => {
-	describe( 'when no values are provided', () => {
-		it( 'should return null when all values are null', () => {
+describe('flexTransformer', () => {
+	describe('when no values are provided', () => {
+		it('should return null when all values are null', () => {
 			// Arrange.
 			const value: Flex = {
 				flexGrow: null,
@@ -17,26 +17,26 @@ describe( 'flexTransformer', () => {
 			};
 
 			// Act.
-			const result = flexTransformer( value, { key: 'flex' } );
+			const result = flexTransformer(value, { key: 'flex' });
 
 			// Assert.
-			expect( result ).toBeNull();
-		} );
+			expect(result).toBeNull();
+		});
 
-		it( 'should return null when all values are undefined', () => {
+		it('should return null when all values are undefined', () => {
 			// Arrange.
 			const value: Flex = {};
 
 			// Act.
-			const result = flexTransformer( value, { key: 'flex' } );
+			const result = flexTransformer(value, { key: 'flex' });
 
 			// Assert.
-			expect( result ).toBeNull();
-		} );
-	} );
+			expect(result).toBeNull();
+		});
+	});
 
-	describe( 'when all three values are provided', () => {
-		it( 'should return "grow shrink basis" when all values are set', () => {
+	describe('when all three values are provided', () => {
+		it('should return "grow shrink basis" when all values are set', () => {
 			// Arrange.
 			const value: Flex = {
 				flexGrow: 2,
@@ -45,13 +45,13 @@ describe( 'flexTransformer', () => {
 			};
 
 			// Act.
-			const result = flexTransformer( value, { key: 'flex' } );
+			const result = flexTransformer(value, { key: 'flex' });
 
 			// Assert.
-			expect( result ).toBe( '2 1 100px' );
-		} );
+			expect(result).toBe('2 1 100px');
+		});
 
-		it( 'should handle string basis value', () => {
+		it('should handle string basis value', () => {
 			// Arrange.
 			const value: Flex = {
 				flexGrow: 1,
@@ -60,15 +60,15 @@ describe( 'flexTransformer', () => {
 			};
 
 			// Act.
-			const result = flexTransformer( value, { key: 'flex' } );
+			const result = flexTransformer(value, { key: 'flex' });
 
 			// Assert.
-			expect( result ).toBe( '1 0 auto' );
-		} );
-	} );
+			expect(result).toBe('1 0 auto');
+		});
+	});
 
-	describe( 'when only two values are provided', () => {
-		it( 'should return "grow shrink" when grow and shrink are set', () => {
+	describe('when only two values are provided', () => {
+		it('should return "grow shrink" when grow and shrink are set', () => {
 			// Arrange.
 			const value: Flex = {
 				flexGrow: 1,
@@ -77,13 +77,13 @@ describe( 'flexTransformer', () => {
 			};
 
 			// Act.
-			const result = flexTransformer( value, { key: 'flex' } );
+			const result = flexTransformer(value, { key: 'flex' });
 
 			// Assert.
-			expect( result ).toBe( '1 2' );
-		} );
+			expect(result).toBe('1 2');
+		});
 
-		it( 'should return "grow 1 basis" when grow and basis are set', () => {
+		it('should return "grow 1 basis" when grow and basis are set', () => {
 			// Arrange.
 			const value: Flex = {
 				flexGrow: 3,
@@ -92,13 +92,13 @@ describe( 'flexTransformer', () => {
 			};
 
 			// Act.
-			const result = flexTransformer( value, { key: 'flex' } );
+			const result = flexTransformer(value, { key: 'flex' });
 
 			// Assert.
-			expect( result ).toBe( '3 1 50%' );
-		} );
+			expect(result).toBe('3 1 50%');
+		});
 
-		it( 'should return "0 shrink basis" when shrink and basis are set', () => {
+		it('should return "0 shrink basis" when shrink and basis are set', () => {
 			// Arrange.
 			const value: Flex = {
 				flexGrow: null,
@@ -107,15 +107,15 @@ describe( 'flexTransformer', () => {
 			};
 
 			// Act.
-			const result = flexTransformer( value, { key: 'flex' } );
+			const result = flexTransformer(value, { key: 'flex' });
 
 			// Assert.
-			expect( result ).toBe( '0 1 200px' );
-		} );
-	} );
+			expect(result).toBe('0 1 200px');
+		});
+	});
 
-	describe( 'when only one value is provided', () => {
-		it( 'should return "grow" when only grow is set', () => {
+	describe('when only one value is provided', () => {
+		it('should return "grow" when only grow is set', () => {
 			// Arrange.
 			const value: Flex = {
 				flexGrow: 1,
@@ -124,13 +124,13 @@ describe( 'flexTransformer', () => {
 			};
 
 			// Act.
-			const result = flexTransformer( value, { key: 'flex' } );
+			const result = flexTransformer(value, { key: 'flex' });
 
 			// Assert.
-			expect( result ).toBe( '1' );
-		} );
+			expect(result).toBe('1');
+		});
 
-		it( 'should return "0 shrink" when only shrink is set', () => {
+		it('should return "0 shrink" when only shrink is set', () => {
 			// Arrange.
 			const value: Flex = {
 				flexGrow: null,
@@ -139,13 +139,13 @@ describe( 'flexTransformer', () => {
 			};
 
 			// Act.
-			const result = flexTransformer( value, { key: 'flex' } );
+			const result = flexTransformer(value, { key: 'flex' });
 
 			// Assert.
-			expect( result ).toBe( '0 2' );
-		} );
+			expect(result).toBe('0 2');
+		});
 
-		it( 'should return "0 1 basis" when only basis is set', () => {
+		it('should return "0 1 basis" when only basis is set', () => {
 			// Arrange.
 			const value: Flex = {
 				flexGrow: null,
@@ -154,13 +154,13 @@ describe( 'flexTransformer', () => {
 			};
 
 			// Act.
-			const result = flexTransformer( value, { key: 'flex' } );
+			const result = flexTransformer(value, { key: 'flex' });
 
 			// Assert.
-			expect( result ).toBe( '0 1 300px' );
-		} );
+			expect(result).toBe('0 1 300px');
+		});
 
-		it( 'should handle string basis when only basis is set', () => {
+		it('should handle string basis when only basis is set', () => {
 			// Arrange.
 			const value: Flex = {
 				flexGrow: null,
@@ -169,15 +169,15 @@ describe( 'flexTransformer', () => {
 			};
 
 			// Act.
-			const result = flexTransformer( value, { key: 'flex' } );
+			const result = flexTransformer(value, { key: 'flex' });
 
 			// Assert.
-			expect( result ).toBe( '0 1 content' );
-		} );
-	} );
+			expect(result).toBe('0 1 content');
+		});
+	});
 
-	describe( 'edge cases', () => {
-		it( 'should handle zero values correctly', () => {
+	describe('edge cases', () => {
+		it('should handle zero values correctly', () => {
 			// Arrange.
 			const value: Flex = {
 				flexGrow: 0,
@@ -186,13 +186,13 @@ describe( 'flexTransformer', () => {
 			};
 
 			// Act.
-			const result = flexTransformer( value, { key: 'flex' } );
+			const result = flexTransformer(value, { key: 'flex' });
 
 			// Assert.
-			expect( result ).toBe( '0 0 0px' );
-		} );
+			expect(result).toBe('0 0 0px');
+		});
 
-		it( 'should handle basis with empty unit', () => {
+		it('should handle basis with empty unit', () => {
 			// Arrange.
 			const value: Flex = {
 				flexGrow: 1,
@@ -201,13 +201,13 @@ describe( 'flexTransformer', () => {
 			};
 
 			// Act.
-			const result = flexTransformer( value, { key: 'flex' } );
+			const result = flexTransformer(value, { key: 'flex' });
 
 			// Assert.
-			expect( result ).toBe( '1 1 100' );
-		} );
+			expect(result).toBe('1 1 100');
+		});
 
-		it( 'should handle basis with undefined unit', () => {
+		it('should handle basis with undefined unit', () => {
 			// Arrange.
 			const value: Flex = {
 				flexGrow: 1,
@@ -216,13 +216,13 @@ describe( 'flexTransformer', () => {
 			};
 
 			// Act.
-			const result = flexTransformer( value, { key: 'flex' } );
+			const result = flexTransformer(value, { key: 'flex' });
 
 			// Assert.
-			expect( result ).toBe( '1 1 100' );
-		} );
+			expect(result).toBe('1 1 100');
+		});
 
-		it( 'should handle basis object without size property', () => {
+		it('should handle basis object without size property', () => {
 			// Arrange.
 			const value: Flex = {
 				flexGrow: 1,
@@ -231,15 +231,15 @@ describe( 'flexTransformer', () => {
 			};
 
 			// Act.
-			const result = flexTransformer( value, { key: 'flex' } );
+			const result = flexTransformer(value, { key: 'flex' });
 
 			// Assert.
-			expect( result ).toBe( '1 1 [object Object]' );
-		} );
-	} );
+			expect(result).toBe('1 1 [object Object]');
+		});
+	});
 
-	describe( 'CSS shorthand behavior', () => {
-		it( 'should follow CSS flex shorthand rules for single value', () => {
+	describe('CSS shorthand behavior', () => {
+		it('should follow CSS flex shorthand rules for single value', () => {
 			// Arrange.
 			const value: Flex = {
 				flexGrow: 2,
@@ -248,13 +248,13 @@ describe( 'flexTransformer', () => {
 			};
 
 			// Act.
-			const result = flexTransformer( value, { key: 'flex' } );
+			const result = flexTransformer(value, { key: 'flex' });
 
 			// Assert.
-			expect( result ).toBe( '2' );
-		} );
+			expect(result).toBe('2');
+		});
 
-		it( 'should follow CSS flex shorthand rules for two values', () => {
+		it('should follow CSS flex shorthand rules for two values', () => {
 			// Arrange.
 			const value: Flex = {
 				flexGrow: 1,
@@ -263,10 +263,10 @@ describe( 'flexTransformer', () => {
 			};
 
 			// Act.
-			const result = flexTransformer( value, { key: 'flex' } );
+			const result = flexTransformer(value, { key: 'flex' });
 
 			// Assert.
-			expect( result ).toBe( '1 2' );
-		} );
-	} );
-} );
+			expect(result).toBe('1 2');
+		});
+	});
+});

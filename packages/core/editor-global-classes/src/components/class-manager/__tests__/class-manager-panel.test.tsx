@@ -18,450 +18,450 @@ import { apiClient } from '../../../api';
 import { slice } from '../../../store';
 import { ClassManagerPanel, usePanelActions } from '../class-manager-panel';
 
-jest.mock( '@elementor/editor-documents' );
-jest.mock( '../class-manager-introduction' );
-jest.mock( '../start-sync-to-v3-modal' );
+jest.mock('@elementor/editor-documents');
+jest.mock('../class-manager-introduction');
+jest.mock('../start-sync-to-v3-modal');
 
-jest.mock( '../../../api' );
+jest.mock('../../../api');
 
-jest.mock( '@elementor/editor-current-user', () => ( {
-	useSuppressedMessage: jest.fn().mockReturnValue( [ false, jest.fn() ] ),
-} ) );
+jest.mock('@elementor/editor-current-user', () => ({
+	useSuppressedMessage: jest.fn().mockReturnValue([false, jest.fn()]),
+}));
 
-jest.mock( '@elementor/editor-v1-adapters', () => ( {
-	...jest.requireActual( '@elementor/editor-v1-adapters' ),
+jest.mock('@elementor/editor-v1-adapters', () => ({
+	...jest.requireActual('@elementor/editor-v1-adapters'),
 	__privateRunCommand: jest.fn(),
 	changeEditMode: jest.fn(),
-} ) );
+}));
 
-jest.mock( '@elementor/editor-panels', () => ( {
-	...jest.requireActual( '@elementor/editor-panels' ),
-	__createPanel: jest.fn().mockReturnValue( {
-		usePanelActions: jest.fn( () => ( {} ) ),
-	} ),
-} ) );
+jest.mock('@elementor/editor-panels', () => ({
+	...jest.requireActual('@elementor/editor-panels'),
+	__createPanel: jest.fn().mockReturnValue({
+		usePanelActions: jest.fn(() => ({})),
+	}),
+}));
 
-jest.mock( '../panel-interactions', () => ( {
+jest.mock('../panel-interactions', () => ({
 	blockPanelInteractions: jest.fn(),
 	unblockPanelInteractions: jest.fn(),
-} ) );
+}));
 
-jest.mock( '../../../utils/tracking', () => createMockTrackingModule( 'trackGlobalClasses' ) );
+jest.mock('../../../utils/tracking', () => createMockTrackingModule('trackGlobalClasses'));
 
-describe( 'ClassManagerPanel', () => {
-	let store: Store< SliceState< typeof slice > >;
+describe('ClassManagerPanel', () => {
+	let store: Store<SliceState<typeof slice>>;
 
-	const queryClient = new QueryClient( {
+	const queryClient = new QueryClient({
 		defaultOptions: {
 			queries: {
 				retry: false,
 			},
 		},
-	} );
+	});
 
-	beforeEach( () => {
-		__registerSlice( slice );
+	beforeEach(() => {
+		__registerSlice(slice);
 
 		store = __createStore();
 
-		const globalClass1 = createMockStyleDefinition( { id: 'class-1', label: 'Class 1' } );
-		const globalClass2 = createMockStyleDefinition( { id: 'class-2', label: 'Class 2' } );
+		const globalClass1 = createMockStyleDefinition({ id: 'class-1', label: 'Class 1' });
+		const globalClass2 = createMockStyleDefinition({ id: 'class-2', label: 'Class 2' });
 
 		const data = {
 			items: {
 				'class-1': globalClass1,
 				'class-2': globalClass2,
 			},
-			order: [ 'class-2', 'class-1' ],
+			order: ['class-2', 'class-1'],
 		};
 
 		__dispatch(
-			slice.actions.load( {
+			slice.actions.load({
 				frontend: data,
 				preview: data,
-			} )
+			})
 		);
 
-		jest.mocked( getCurrentDocument ).mockReturnValue( createMockDocument( { id: 1 } ) );
-	} );
+		jest.mocked(getCurrentDocument).mockReturnValue(createMockDocument({ id: 1 }));
+	});
 
-	it( 'should have a disabled "save changes" button when dirty state is false', () => {
+	it('should have a disabled "save changes" button when dirty state is false', () => {
 		// Act.
 		renderWithStore(
 			<ThemeProvider>
-				<QueryClientProvider client={ queryClient }>
+				<QueryClientProvider client={queryClient}>
 					<ClassManagerPanel />
 				</QueryClientProvider>
 			</ThemeProvider>,
 			store
 		);
 		// Assert.
-		expect( screen.getByRole( 'button', { name: 'Save changes' } ) ).toBeDisabled();
-	} );
+		expect(screen.getByRole('button', { name: 'Save changes' })).toBeDisabled();
+	});
 
-	it( 'should have an enabled "save changes" button when changing the order', async () => {
+	it('should have an enabled "save changes" button when changing the order', async () => {
 		// Act.
 		renderWithStore(
-			<QueryClientProvider client={ queryClient }>
+			<QueryClientProvider client={queryClient}>
 				<ClassManagerPanel />
 			</QueryClientProvider>,
 			store
 		);
 
-		act( () => {
-			__dispatch( slice.actions.setOrder( [ 'class-1', 'class-2' ] ) );
-		} );
+		act(() => {
+			__dispatch(slice.actions.setOrder(['class-1', 'class-2']));
+		});
 
-		const saveButton = screen.getByRole( 'button', { name: 'Save changes' } );
+		const saveButton = screen.getByRole('button', { name: 'Save changes' });
 
-		fireEvent.click( saveButton );
+		fireEvent.click(saveButton);
 
 		// Assert.
-		await waitFor( () => {
-			expect( apiClient.publish ).toHaveBeenCalledWith( {
+		await waitFor(() => {
+			expect(apiClient.publish).toHaveBeenCalledWith({
 				items: {
-					'class-1': createMockStyleDefinition( { id: 'class-1', label: 'Class 1' } ),
-					'class-2': createMockStyleDefinition( { id: 'class-2', label: 'Class 2' } ),
+					'class-1': createMockStyleDefinition({ id: 'class-1', label: 'Class 1' }),
+					'class-2': createMockStyleDefinition({ id: 'class-2', label: 'Class 2' }),
 				},
-				order: [ 'class-1', 'class-2' ],
+				order: ['class-1', 'class-2'],
 				changes: { added: [], deleted: [], modified: [] },
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	it( 'should have an enabled "save changes" button when deleting a class', async () => {
+	it('should have an enabled "save changes" button when deleting a class', async () => {
 		// Act.
 		renderWithStore(
-			<QueryClientProvider client={ queryClient }>
+			<QueryClientProvider client={queryClient}>
 				<ClassManagerPanel />
 			</QueryClientProvider>,
 			store
 		);
 
-		act( () => {
-			__dispatch( slice.actions.delete( 'class-1' ) );
-		} );
+		act(() => {
+			__dispatch(slice.actions.delete('class-1'));
+		});
 
-		const saveButton = screen.getByRole( 'button', { name: 'Save changes' } );
+		const saveButton = screen.getByRole('button', { name: 'Save changes' });
 
-		fireEvent.click( saveButton );
+		fireEvent.click(saveButton);
 
 		// Assert.
-		await waitFor( () => {
-			expect( apiClient.publish ).toHaveBeenCalledWith( {
+		await waitFor(() => {
+			expect(apiClient.publish).toHaveBeenCalledWith({
 				items: {
-					'class-2': createMockStyleDefinition( { id: 'class-2', label: 'Class 2' } ),
+					'class-2': createMockStyleDefinition({ id: 'class-2', label: 'Class 2' }),
 				},
-				order: [ 'class-2' ],
-				changes: { added: [], deleted: [ 'class-1' ], modified: [] },
-			} );
-		} );
-	} );
+				order: ['class-2'],
+				changes: { added: [], deleted: ['class-1'], modified: [] },
+			});
+		});
+	});
 
-	it( 'should have an enabled "save changes" button when renaming a class', async () => {
+	it('should have an enabled "save changes" button when renaming a class', async () => {
 		// Act.
 		renderWithStore(
-			<QueryClientProvider client={ queryClient }>
+			<QueryClientProvider client={queryClient}>
 				<ClassManagerPanel />
 			</QueryClientProvider>,
 			store
 		);
 
-		act( () => {
-			__dispatch( slice.actions.update( { style: { id: 'class-1', label: 'New label' } } ) );
-		} );
+		act(() => {
+			__dispatch(slice.actions.update({ style: { id: 'class-1', label: 'New label' } }));
+		});
 
-		const saveButton = screen.getByRole( 'button', { name: 'Save changes' } );
+		const saveButton = screen.getByRole('button', { name: 'Save changes' });
 
-		fireEvent.click( saveButton );
+		fireEvent.click(saveButton);
 
 		// Assert.
-		await waitFor( () => {
-			expect( apiClient.publish ).toHaveBeenCalledWith( {
+		await waitFor(() => {
+			expect(apiClient.publish).toHaveBeenCalledWith({
 				items: {
-					'class-1': createMockStyleDefinition( { id: 'class-1', label: 'New label' } ),
-					'class-2': createMockStyleDefinition( { id: 'class-2', label: 'Class 2' } ),
+					'class-1': createMockStyleDefinition({ id: 'class-1', label: 'New label' }),
+					'class-2': createMockStyleDefinition({ id: 'class-2', label: 'Class 2' }),
 				},
-				order: [ 'class-2', 'class-1' ],
-				changes: { added: [], deleted: [], modified: [ 'class-1' ] },
-			} );
-		} );
-	} );
+				order: ['class-2', 'class-1'],
+				changes: { added: [], deleted: [], modified: ['class-1'] },
+			});
+		});
+	});
 
-	it( 'should show a dialog when trying to close with unsaved changes, and allow to cancel the action', () => {
+	it('should show a dialog when trying to close with unsaved changes, and allow to cancel the action', () => {
 		// Arrange.
 		const close = jest.fn();
-		jest.mocked( usePanelActions ).mockReturnValue( { close, open: jest.fn() } );
+		jest.mocked(usePanelActions).mockReturnValue({ close, open: jest.fn() });
 
 		// Act.
 		renderWithStore(
-			<QueryClientProvider client={ queryClient }>
+			<QueryClientProvider client={queryClient}>
 				<ClassManagerPanel />
 			</QueryClientProvider>,
 			store
 		);
 
-		act( () => {
-			__dispatch( slice.actions.setOrder( [ 'class-1', 'class-2' ] ) );
-		} );
+		act(() => {
+			__dispatch(slice.actions.setOrder(['class-1', 'class-2']));
+		});
 
-		const closeButton = screen.getByRole( 'button', { name: 'Close' } );
+		const closeButton = screen.getByRole('button', { name: 'Close' });
 
-		fireEvent.click( closeButton );
+		fireEvent.click(closeButton);
 
 		// Assert.
-		expect( screen.getByText( 'You have unsaved changes' ) ).toBeInTheDocument();
-		expect( close ).not.toHaveBeenCalled();
+		expect(screen.getByText('You have unsaved changes')).toBeInTheDocument();
+		expect(close).not.toHaveBeenCalled();
 
 		// Act.
-		fireEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
+		fireEvent.click(screen.getByRole('button', { name: 'close' }));
 
 		// Assert.
-		expect( close ).not.toHaveBeenCalled();
-	} );
+		expect(close).not.toHaveBeenCalled();
+	});
 
-	it( 'should show a dialog when trying to close with unsaved changes, and allow to save and continue', async () => {
+	it('should show a dialog when trying to close with unsaved changes, and allow to save and continue', async () => {
 		// Arrange.
 		const close = jest.fn();
-		jest.mocked( usePanelActions ).mockReturnValue( { close, open: jest.fn() } );
+		jest.mocked(usePanelActions).mockReturnValue({ close, open: jest.fn() });
 
 		// Act.
 		renderWithStore(
-			<QueryClientProvider client={ queryClient }>
+			<QueryClientProvider client={queryClient}>
 				<ClassManagerPanel />
 			</QueryClientProvider>,
 			store
 		);
 
-		act( () => {
-			__dispatch( slice.actions.setOrder( [ 'class-1', 'class-2' ] ) );
-		} );
+		act(() => {
+			__dispatch(slice.actions.setOrder(['class-1', 'class-2']));
+		});
 
-		const closeButton = screen.getByRole( 'button', { name: 'Close' } );
+		const closeButton = screen.getByRole('button', { name: 'Close' });
 
-		fireEvent.click( closeButton );
+		fireEvent.click(closeButton);
 
 		// Assert.
-		expect( screen.getByText( 'You have unsaved changes' ) ).toBeInTheDocument();
-		expect( close ).not.toHaveBeenCalled();
+		expect(screen.getByText('You have unsaved changes')).toBeInTheDocument();
+		expect(close).not.toHaveBeenCalled();
 
 		// Act.
-		const saveAndContinueButton = screen.getByRole( 'button', { name: 'Save & Continue' } );
+		const saveAndContinueButton = screen.getByRole('button', { name: 'Save & Continue' });
 
-		fireEvent.click( saveAndContinueButton );
+		fireEvent.click(saveAndContinueButton);
 
 		// Assert.
-		await waitFor( () => {
-			expect( apiClient.publish ).toHaveBeenCalledWith( {
+		await waitFor(() => {
+			expect(apiClient.publish).toHaveBeenCalledWith({
 				items: {
-					'class-1': createMockStyleDefinition( { id: 'class-1', label: 'Class 1' } ),
-					'class-2': createMockStyleDefinition( { id: 'class-2', label: 'Class 2' } ),
+					'class-1': createMockStyleDefinition({ id: 'class-1', label: 'Class 1' }),
+					'class-2': createMockStyleDefinition({ id: 'class-2', label: 'Class 2' }),
 				},
-				order: [ 'class-1', 'class-2' ],
+				order: ['class-1', 'class-2'],
 				changes: { added: [], deleted: [], modified: [] },
-			} );
-		} );
+			});
+		});
 
-		await waitFor( () => {
-			expect( close ).toHaveBeenCalled();
-		} );
-	} );
+		await waitFor(() => {
+			expect(close).toHaveBeenCalled();
+		});
+	});
 
-	it( 'should not show the dialog when trying to close with no unsaved changes', () => {
+	it('should not show the dialog when trying to close with no unsaved changes', () => {
 		// Arrange.
 		const close = jest.fn();
-		jest.mocked( usePanelActions ).mockReturnValue( { close, open: jest.fn() } );
+		jest.mocked(usePanelActions).mockReturnValue({ close, open: jest.fn() });
 
 		// Act.
 		renderWithStore(
-			<QueryClientProvider client={ queryClient }>
+			<QueryClientProvider client={queryClient}>
 				<ClassManagerPanel />
 			</QueryClientProvider>,
 			store
 		);
 
-		const closeButton = screen.getByRole( 'button', { name: 'Close' } );
+		const closeButton = screen.getByRole('button', { name: 'Close' });
 
-		fireEvent.click( closeButton );
+		fireEvent.click(closeButton);
 
 		// Assert.
-		expect( screen.queryByText( 'You have unsaved changes' ) ).not.toBeInTheDocument();
-		expect( close ).toHaveBeenCalled();
-	} );
+		expect(screen.queryByText('You have unsaved changes')).not.toBeInTheDocument();
+		expect(close).toHaveBeenCalled();
+	});
 
-	it( 'should show the browser alert when trying to close with unsaved changes', () => {
+	it('should show the browser alert when trying to close with unsaved changes', () => {
 		// Act.
 		renderWithStore(
-			<QueryClientProvider client={ queryClient }>
+			<QueryClientProvider client={queryClient}>
 				<ClassManagerPanel />
 			</QueryClientProvider>,
 			store
 		);
 
-		act( () => {
-			__dispatch( slice.actions.setOrder( [ 'class-1', 'class-2' ] ) );
-		} );
+		act(() => {
+			__dispatch(slice.actions.setOrder(['class-1', 'class-2']));
+		});
 
 		// Assert.
-		expect( window.onbeforeunload ).toBeDefined();
-	} );
+		expect(window.onbeforeunload).toBeDefined();
+	});
 
-	it( 'should not show the browser alert when trying to close with no unsaved changes', () => {
+	it('should not show the browser alert when trying to close with no unsaved changes', () => {
 		// Act.
 		renderWithStore(
-			<QueryClientProvider client={ queryClient }>
+			<QueryClientProvider client={queryClient}>
 				<ClassManagerPanel />
 			</QueryClientProvider>,
 			store
 		);
 
 		// Assert.
-		expect( window.onbeforeunload ).toBeNull();
-	} );
+		expect(window.onbeforeunload).toBeNull();
+	});
 
-	it( 'should save deleted classes successfully', async () => {
+	it('should save deleted classes successfully', async () => {
 		// Act.
 		renderWithStore(
 			<ThemeProvider>
-				<QueryClientProvider client={ queryClient }>
+				<QueryClientProvider client={queryClient}>
 					<ClassManagerPanel />
 				</QueryClientProvider>
 			</ThemeProvider>,
 			store
 		);
 
-		const [ firstClass ] = screen.getAllByRole( 'listitem' );
+		const [firstClass] = screen.getAllByRole('listitem');
 
-		fireEvent.click( within( firstClass ).getByRole( 'button', { name: 'More actions' } ) );
+		fireEvent.click(within(firstClass).getByRole('button', { name: 'More actions' }));
 
-		const deleteButton = screen.getByRole( 'menuitem', { name: 'Delete' } );
+		const deleteButton = screen.getByRole('menuitem', { name: 'Delete' });
 
-		fireEvent.click( deleteButton );
-
-		// Assert.
-		await waitFor( () => {
-			expect( screen.getByRole( 'dialog', { name: 'Delete this class?' } ) ).toBeInTheDocument();
-		} );
-
-		// Act.
-		fireEvent.click( screen.getByRole( 'button', { name: 'Delete' } ) );
-
-		dispatchDependencyCommand( 'panel/open' );
+		fireEvent.click(deleteButton);
 
 		// Assert.
-		await waitFor( () => {
-			expect( screen.getByRole( 'button', { name: 'Save changes' } ) ).toBeEnabled();
-		} );
+		await waitFor(() => {
+			expect(screen.getByRole('dialog', { name: 'Delete this class?' })).toBeInTheDocument();
+		});
 
 		// Act.
-		fireEvent.click( screen.getByRole( 'button', { name: 'Save changes' } ) );
+		fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
+
+		dispatchDependencyCommand('panel/open');
+
+		// Assert.
+		await waitFor(() => {
+			expect(screen.getByRole('button', { name: 'Save changes' })).toBeEnabled();
+		});
+
+		// Act.
+		fireEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
 		// Assert - Verify that publish was called with deleted class
-		await waitFor( () => {
-			expect( apiClient.publish ).toHaveBeenCalledWith( {
+		await waitFor(() => {
+			expect(apiClient.publish).toHaveBeenCalledWith({
 				items: {
-					'class-1': createMockStyleDefinition( { id: 'class-1', label: 'Class 1' } ),
+					'class-1': createMockStyleDefinition({ id: 'class-1', label: 'Class 1' }),
 				},
-				order: [ 'class-1' ],
-				changes: { added: [], deleted: [ 'class-2' ], modified: [] },
-			} );
-		} );
-	} );
+				order: ['class-1'],
+				changes: { added: [], deleted: ['class-2'], modified: [] },
+			});
+		});
+	});
 
-	it( 'should not reload the current if the changes did not contain any deletions', async () => {
+	it('should not reload the current if the changes did not contain any deletions', async () => {
 		// Act.
 		renderWithStore(
 			<ThemeProvider>
-				<QueryClientProvider client={ queryClient }>
+				<QueryClientProvider client={queryClient}>
 					<ClassManagerPanel />
 				</QueryClientProvider>
 			</ThemeProvider>,
 			store
 		);
 
-		const [ firstClass ] = screen.getAllByRole( 'listitem' );
+		const [firstClass] = screen.getAllByRole('listitem');
 
-		fireEvent.click( within( firstClass ).getByRole( 'button', { name: 'More actions' } ) );
+		fireEvent.click(within(firstClass).getByRole('button', { name: 'More actions' }));
 
-		const renameButton = screen.getByRole( 'menuitem', { name: 'Rename' } );
+		const renameButton = screen.getByRole('menuitem', { name: 'Rename' });
 
 		// Assert.
-		expect( renameButton ).toBeInTheDocument();
+		expect(renameButton).toBeInTheDocument();
 
 		// Act.
-		fireEvent.click( renameButton );
+		fireEvent.click(renameButton);
 
 		// Assert.
 		// Menu should be closed after clicking rename.
-		await waitFor( () => {
-			expect( renameButton ).not.toBeInTheDocument();
-		} );
+		await waitFor(() => {
+			expect(renameButton).not.toBeInTheDocument();
+		});
 
-		const textboxes = await screen.findAllByRole( 'textbox' );
-		const editableField = textboxes.find( ( el ) => el.getAttribute( 'contenteditable' ) === 'true' );
+		const textboxes = await screen.findAllByRole('textbox');
+		const editableField = textboxes.find((el) => el.getAttribute('contenteditable') === 'true');
 
-		expect( editableField ).toBeInTheDocument();
-
-		// Act.
-		fireEvent.input( editableField as Element, { target: { innerText: 'New-Class-Name' } } );
-
-		fireEvent.blur( editableField as Element );
-
-		// Assert.
-		await waitFor( () => {
-			expect( screen.getByRole( 'button', { name: 'Save changes' } ) ).toBeEnabled();
-		} );
+		expect(editableField).toBeInTheDocument();
 
 		// Act.
-		fireEvent.click( screen.getByRole( 'button', { name: 'Save changes' } ) );
+		fireEvent.input(editableField as Element, { target: { innerText: 'New-Class-Name' } });
+
+		fireEvent.blur(editableField as Element);
 
 		// Assert.
-		await waitFor( () => {
-			expect( __privateRunCommand ).not.toHaveBeenCalled();
-		} );
-	} );
+		await waitFor(() => {
+			expect(screen.getByRole('button', { name: 'Save changes' })).toBeEnabled();
+		});
 
-	it( 'should restore to initial state on clicking "discard"', () => {
+		// Act.
+		fireEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+		// Assert.
+		await waitFor(() => {
+			expect(__privateRunCommand).not.toHaveBeenCalled();
+		});
+	});
+
+	it('should restore to initial state on clicking "discard"', () => {
 		// Arrange.
-		jest.spyOn( slice.actions, 'resetToInitialState' );
+		jest.spyOn(slice.actions, 'resetToInitialState');
 
-		act( () => __dispatch( slice.actions.setOrder( [ 'class-1', 'class-2' ] ) ) );
+		act(() => __dispatch(slice.actions.setOrder(['class-1', 'class-2'])));
 		// Act.
 		renderWithStore(
 			<ThemeProvider>
-				<QueryClientProvider client={ queryClient }>
+				<QueryClientProvider client={queryClient}>
 					<ClassManagerPanel />
 				</QueryClientProvider>
 			</ThemeProvider>,
 			store
 		);
-		const closeButton = screen.getByRole( 'button', { name: 'Close' } );
+		const closeButton = screen.getByRole('button', { name: 'Close' });
 
-		fireEvent.click( closeButton );
+		fireEvent.click(closeButton);
 
-		const discardButton = screen.getByText( 'Discard' );
-		fireEvent.click( discardButton );
-		expect( slice.actions.resetToInitialState ).toHaveBeenCalledWith( { context: 'frontend' } );
-		expect( store.getState().globalClasses.data.order ).toEqual( [ 'class-2', 'class-1' ] );
-	} );
+		const discardButton = screen.getByText('Discard');
+		fireEvent.click(discardButton);
+		expect(slice.actions.resetToInitialState).toHaveBeenCalledWith({ context: 'frontend' });
+		expect(store.getState().globalClasses.data.order).toEqual(['class-2', 'class-1']);
+	});
 
-	it( 'should track classManagerSearched event when search field is focused', () => {
+	it('should track classManagerSearched event when search field is focused', () => {
 		// Act
 		renderWithStore(
-			<QueryClientProvider client={ queryClient }>
+			<QueryClientProvider client={queryClient}>
 				<ClassManagerPanel />
 			</QueryClientProvider>,
 			store
 		);
 
-		const input = screen.getByRole( 'textbox' );
+		const input = screen.getByRole('textbox');
 
 		// Act
-		fireEvent.focus( input );
+		fireEvent.focus(input);
 
 		// Assert
-		expect( mockTracking ).toHaveBeenCalledWith( {
+		expect(mockTracking).toHaveBeenCalledWith({
 			event: 'classManagerSearched',
-		} );
-	} );
-} );
+		});
+	});
+});

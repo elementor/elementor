@@ -32,27 +32,27 @@ const UNDERLINE_KEYBOARD_SHORTCUT = 'u';
 
 type InlineEditorProps = {
 	value: string | null;
-	setValue: ( value: string | null ) => void;
+	setValue: (value: string | null) => void;
 	editorProps?: EditorProps;
 	elementClasses?: string;
-	sx?: SxProps< Theme >;
+	sx?: SxProps<Theme>;
 	onBlur?: () => void;
 	autofocus?: boolean;
 	expectedTag?: string | null;
-	onEditorCreate?: Dispatch< SetStateAction< Editor | null > >;
+	onEditorCreate?: Dispatch<SetStateAction<Editor | null>>;
 	wrapperClassName?: string;
-	onSelectionEnd?: ( view: EditorView ) => void;
+	onSelectionEnd?: (view: EditorView) => void;
 };
 
-type WrapperProps = PropsWithChildren< {
-	containerRef: RefObject< HTMLDivElement >;
-	editor: ReturnType< typeof useEditor >;
-	sx: SxProps< Theme >;
+type WrapperProps = PropsWithChildren<{
+	containerRef: RefObject<HTMLDivElement>;
+	editor: ReturnType<typeof useEditor>;
+	sx: SxProps<Theme>;
 	onBlur?: () => void;
 	className?: string;
-} >;
+}>;
 
-export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) => {
+export const InlineEditor = React.forwardRef((props: InlineEditorProps, ref) => {
 	const {
 		value,
 		setValue,
@@ -67,63 +67,63 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 		onSelectionEnd,
 	} = props;
 
-	const containerRef = useRef< HTMLDivElement >( null );
-	const documentContentSettings = !! expectedTag ? 'block+' : 'inline*';
+	const containerRef = useRef<HTMLDivElement>(null);
+	const documentContentSettings = !!expectedTag ? 'block+' : 'inline*';
 
-	const onUpdate = ( { editor: updatedEditor }: { editor: Editor } ) => {
+	const onUpdate = ({ editor: updatedEditor }: { editor: Editor }) => {
 		const newValue: string | null = updatedEditor.getHTML();
 
-		setValue( isEmpty( newValue ) ? null : newValue );
+		setValue(isEmpty(newValue) ? null : newValue);
 	};
 
-	const onKeyDown = ( _: Editor[ 'view' ], event: KeyboardEvent ) => {
-		if ( event.key === 'Escape' ) {
+	const onKeyDown = (_: Editor['view'], event: KeyboardEvent) => {
+		if (event.key === 'Escape') {
 			onBlur?.();
 		}
 
-		if ( ( ! event.metaKey && ! event.ctrlKey ) || event.altKey ) {
+		if ((!event.metaKey && !event.ctrlKey) || event.altKey) {
 			return;
 		}
 
-		if ( [ ITALIC_KEYBOARD_SHORTCUT, BOLD_KEYBOARD_SHORTCUT, UNDERLINE_KEYBOARD_SHORTCUT ].includes( event.key ) ) {
+		if ([ITALIC_KEYBOARD_SHORTCUT, BOLD_KEYBOARD_SHORTCUT, UNDERLINE_KEYBOARD_SHORTCUT].includes(event.key)) {
 			event.stopPropagation();
 		}
 	};
 
-	const editedElementAttributes = ( HTMLAttributes: Record< string, unknown > ) => ( {
+	const editedElementAttributes = (HTMLAttributes: Record<string, unknown>) => ({
 		...HTMLAttributes,
 		class: elementClasses,
-	} );
+	});
 
-	const editor = useEditor( {
+	const editor = useEditor({
 		extensions: [
-			Document.extend( {
+			Document.extend({
 				content: documentContentSettings,
-			} ),
-			Paragraph.extend( {
-				renderHTML( { HTMLAttributes } ) {
+			}),
+			Paragraph.extend({
+				renderHTML({ HTMLAttributes }) {
 					const tag = expectedTag ?? 'p';
-					return [ tag, editedElementAttributes( HTMLAttributes ), 0 ];
+					return [tag, editedElementAttributes(HTMLAttributes), 0];
 				},
-			} ),
-			Heading.extend( {
-				renderHTML( { node, HTMLAttributes } ) {
-					if ( expectedTag ) {
-						return [ expectedTag, editedElementAttributes( HTMLAttributes ), 0 ];
+			}),
+			Heading.extend({
+				renderHTML({ node, HTMLAttributes }) {
+					if (expectedTag) {
+						return [expectedTag, editedElementAttributes(HTMLAttributes), 0];
 					}
 
-					const level = this.options.levels.includes( node.attrs.level )
+					const level = this.options.levels.includes(node.attrs.level)
 						? node.attrs.level
-						: this.options.levels[ 0 ];
+						: this.options.levels[0];
 
-					return [ `h${ level }`, editedElementAttributes( HTMLAttributes ), 0 ];
+					return [`h${level}`, editedElementAttributes(HTMLAttributes), 0];
 				},
-			} ).configure( {
-				levels: [ 1, 2, 3, 4, 5, 6 ],
-			} ),
-			Link.configure( {
+			}).configure({
+				levels: [1, 2, 3, 4, 5, 6],
+			}),
+			Link.configure({
 				openOnClick: false,
-			} ),
+			}),
 			Text,
 			Bold,
 			Italic,
@@ -131,13 +131,13 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 			Superscript,
 			Subscript,
 			Underline,
-			HardBreak.extend( {
+			HardBreak.extend({
 				addKeyboardShortcuts() {
 					return {
 						Enter: () => this.editor.commands.setHardBreak(),
 					};
 				},
-			} ),
+			}),
 		],
 		content: value,
 		onUpdate,
@@ -148,79 +148,73 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 				keydown: onKeyDown,
 			},
 			attributes: {
-				...( editorProps.attributes ?? {} ),
+				...(editorProps.attributes ?? {}),
 				role: 'textbox',
 			},
 		},
-		onCreate: onEditorCreate ? ( { editor: mountedEditor } ) => onEditorCreate( mountedEditor ) : undefined,
+		onCreate: onEditorCreate ? ({ editor: mountedEditor }) => onEditorCreate(mountedEditor) : undefined,
 		onSelectionUpdate: onSelectionEnd
-			? ( { editor: updatedEditor } ) => onSelectionEnd( updatedEditor.view )
+			? ({ editor: updatedEditor }) => onSelectionEnd(updatedEditor.view)
 			: undefined,
-	} );
+	});
 
-	useOnUpdate( () => {
-		if ( ! editor ) {
+	useOnUpdate(() => {
+		if (!editor) {
 			return;
 		}
 
 		const currentContent = editor.getHTML();
 
-		if ( currentContent !== value ) {
-			editor.commands.setContent( value, { emitUpdate: false } );
+		if (currentContent !== value) {
+			editor.commands.setContent(value, { emitUpdate: false });
 		}
-	}, [ editor, value ] );
+	}, [editor, value]);
 
 	return (
 		<>
-			<Wrapper
-				containerRef={ containerRef }
-				editor={ editor }
-				sx={ sx }
-				onBlur={ onBlur }
-				className={ wrapperClassName }
-			>
-				<EditorContent ref={ ref } editor={ editor } />
+			<Wrapper containerRef={containerRef} editor={editor} sx={sx} onBlur={onBlur} className={wrapperClassName}>
+				<EditorContent ref={ref} editor={editor} />
 			</Wrapper>
 		</>
 	);
-} );
+});
 
-const Wrapper = ( { children, containerRef, editor, sx, onBlur, className }: WrapperProps ) => {
+const Wrapper = ({ children, containerRef, editor, sx, onBlur, className }: WrapperProps) => {
 	const wrappedChildren = (
-		<Box ref={ containerRef } { ...sx } className={ className }>
-			{ children }
+		<Box ref={containerRef} {...sx} className={className}>
+			{children}
 		</Box>
 	);
 
 	return onBlur ? (
 		<ClickAwayListener
-			onClickAway={ ( event: PointerEvent ) => {
+			onClickAway={(event: PointerEvent) => {
 				if (
-					containerRef.current?.contains( event.target as Node ) ||
-					editor.view.dom.contains( event.target as Node )
+					containerRef.current?.contains(event.target as Node) ||
+					editor.view.dom.contains(event.target as Node)
 				) {
 					return;
 				}
 
 				onBlur?.();
-			} }
+			}}
 		>
-			{ wrappedChildren }
+			{wrappedChildren}
 		</ClickAwayListener>
 	) : (
-		<>{ wrappedChildren }</>
+		<>{wrappedChildren}</>
 	);
 };
 
-const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void => {
-	const hasMounted = useRef( false );
+const useOnUpdate = (callback: () => void, dependencies: DependencyList): void => {
+	const hasMounted = useRef(false);
 
-	useEffect( () => {
-		if ( hasMounted.current ) {
+	useEffect(() => {
+		if (hasMounted.current) {
 			callback();
 		} else {
 			hasMounted.current = true;
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, dependencies );
+	}, dependencies);
 };

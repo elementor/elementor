@@ -1,4 +1,5 @@
 module.exports = {
+	root: true,
 	extends: [
 		'plugin:react/recommended',
 		'plugin:no-jquery/deprecated',

@@ -33,7 +33,7 @@ export default function QuotaNotification( { usagePercentage } ) {
 					<>
 						<strong>{ __( 'Website template storage is full.', 'elementor' ) }</strong>
 						{ ' ' }
-						{ __( 'Get more space ', 'elementor' ) }
+						{ __( 'Get more space', 'elementor' ) }
 					</>
 				),
 				actions: [
@@ -56,7 +56,7 @@ export default function QuotaNotification( { usagePercentage } ) {
 							sprintf( __( 'Website template storage is %1$s%% full.', 'elementor' ), Math.round( usagePercentage ) )
 						}</strong>
 						{ ' ' }
-						{ __( 'Get more space ', 'elementor' ) }
+						{ __( 'Get more space', 'elementor' ) }
 					</>
 				),
 				actions: [

@@ -1,6 +1,6 @@
 import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from './resources/widgets-schema-resource';
 
-const ELEMENT_SCHEMA_URI = WIDGET_SCHEMA_URI.replace( '{widgetType}', 'element-schema' );
+const ELEMENT_SCHEMA_URI = WIDGET_SCHEMA_URI.replace('{widgetType}', 'element-schema');
 
 export const mcpDescription = `Elementor Canvas MCP
 This MCP enables creation, configuration, and styling of elements on the Elementor canvas using the build_composition tool.
@@ -20,8 +20,8 @@ The \`$$type\` defines how Elementor interprets the value. Providing the correct
 ## Design System Resources
 - **Global Variables**: Reusable colors, sizes, and fonts (\`elementor://global-variables\`)
 - **Global Classes**: Reusable style sets that can be applied to elements (\`elementor://global-classes\`)
-- **Widget Schemas**: Configuration options for each widget type (\`${ WIDGET_SCHEMA_URI }\`)
-- **Style Schema**: Common styles shared across all widgets and containers (\`${ STYLE_SCHEMA_URI }\`)
+- **Widget Schemas**: Configuration options for each widget type (\`${WIDGET_SCHEMA_URI}\`)
+- **Style Schema**: Common styles shared across all widgets and containers (\`${STYLE_SCHEMA_URI}\`)
 
 # Building Compositions with build_composition
 
@@ -40,8 +40,8 @@ Always check existing resources before building:
 
 ### 3. Retrieve Widget Schemas
 For each widget you'll use:
-- List \`${ WIDGET_SCHEMA_URI }\` to see available widgets
-- Retrieve configuration schema from \`${ ELEMENT_SCHEMA_URI }\` for each widget
+- List \`${WIDGET_SCHEMA_URI}\` to see available widgets
+- Retrieve configuration schema from \`${ELEMENT_SCHEMA_URI}\` for each widget
 - Check the \`llm_guidance\` property to understand if a widget is a container (can have children)
 
 ### 4. Build XML Structure
@@ -71,7 +71,7 @@ Map each configuration-id to its widget properties using PropValues:
 \`\`\`
 
 ### 6. Create stylesConfig
-Map each configuration-id to style PropValues from \`${ STYLE_SCHEMA_URI }\`:
+Map each configuration-id to style PropValues from \`${STYLE_SCHEMA_URI}\`:
 - Use global variables for colors, sizes, and fonts
 - Example using global variable:
 \`\`\`json

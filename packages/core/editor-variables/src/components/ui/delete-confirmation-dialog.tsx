@@ -10,22 +10,22 @@ type DeleteConfirmationDialogProps = {
 	onConfirm: () => void;
 };
 
-export const DeleteConfirmationDialog = ( { open, label, closeDialog, onConfirm }: DeleteConfirmationDialogProps ) => {
+export const DeleteConfirmationDialog = ({ open, label, closeDialog, onConfirm }: DeleteConfirmationDialogProps) => {
 	return (
-		<ConfirmationDialog open={ open } onClose={ closeDialog }>
-			<ConfirmationDialog.Title>{ __( 'Delete this variable?', 'elementor' ) }</ConfirmationDialog.Title>
+		<ConfirmationDialog open={open} onClose={closeDialog}>
+			<ConfirmationDialog.Title>{__('Delete this variable?', 'elementor')}</ConfirmationDialog.Title>
 			<ConfirmationDialog.Content>
 				<ConfirmationDialog.ContentText>
-					{ __( 'All elements using', 'elementor' ) }
+					{__('All elements using', 'elementor')}
 					&nbsp;
-					<Typography variant="subtitle2" component="span" sx={ { lineBreak: 'anywhere' } }>
-						{ label }
+					<Typography variant="subtitle2" component="span" sx={{ lineBreak: 'anywhere' }}>
+						{label}
 					</Typography>
 					&nbsp;
-					{ __( 'will keep their current values, but the variable itself will be removed.', 'elementor' ) }
+					{__('will keep their current values, but the variable itself will be removed.', 'elementor')}
 				</ConfirmationDialog.ContentText>
 			</ConfirmationDialog.Content>
-			<ConfirmationDialog.Actions onClose={ closeDialog } onConfirm={ onConfirm } />
+			<ConfirmationDialog.Actions onClose={closeDialog} onConfirm={onConfirm} />
 		</ConfirmationDialog>
 	);
 };

@@ -8,16 +8,16 @@ export function useSanitizeOverridableProps(
 	// instanceElementId is used to find the component inner elements,
 	// and should be passed when editing component instance (not in component edit mode)
 ): OverridableProps | undefined {
-	const overridableProps = useOverridableProps( componentId );
-	const isSanitized = useIsSanitizedComponent( componentId, 'overridableProps' );
+	const overridableProps = useOverridableProps(componentId);
+	const isSanitized = useIsSanitizedComponent(componentId, 'overridableProps');
 
-	if ( ! overridableProps || ! componentId ) {
+	if (!overridableProps || !componentId) {
 		return undefined;
 	}
 
-	if ( isSanitized ) {
+	if (isSanitized) {
 		return overridableProps;
 	}
 
-	return filterValidOverridableProps( overridableProps, instanceElementId );
+	return filterValidOverridableProps(overridableProps, instanceElementId);
 }

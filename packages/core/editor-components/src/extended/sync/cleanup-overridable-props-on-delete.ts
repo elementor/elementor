@@ -13,66 +13,66 @@ export function initCleanupOverridablePropsOnDelete() {
 	// This hook is not a real dependency - it doesn't block the execution of the command in any case, only perform side effect.
 	// We use `dependency` and not `after` hook because the `after` hook doesn't include the children of a deleted container
 	// in the callback parameters (as they already were deleted).
-	registerDataHook( 'dependency', 'document/elements/delete', ( args: DeleteCommandArgs, options?: HookOptions ) => {
-		if ( isPartOfMoveCommand( options ) ) {
+	registerDataHook('dependency', 'document/elements/delete', (args: DeleteCommandArgs, options?: HookOptions) => {
+		if (isPartOfMoveCommand(options)) {
 			return true;
 		}
 
 		const currentComponentId = componentsSelectors.getCurrentComponentId();
 
-		if ( ! currentComponentId ) {
+		if (!currentComponentId) {
 			return true;
 		}
 
-		const overridableProps = componentsSelectors.getOverridableProps( currentComponentId );
+		const overridableProps = componentsSelectors.getOverridableProps(currentComponentId);
 
-		if ( ! overridableProps || Object.keys( overridableProps.props ).length === 0 ) {
+		if (!overridableProps || Object.keys(overridableProps.props).length === 0) {
 			return true;
 		}
 
-		const containers = args.containers ?? ( args.container ? [ args.container ] : [] );
+		const containers = args.containers ?? (args.container ? [args.container] : []);
 
-		if ( containers.length === 0 ) {
+		if (containers.length === 0) {
 			return true;
 		}
 
-		const deletedElementIds = collectDeletedElementIds( containers );
+		const deletedElementIds = collectDeletedElementIds(containers);
 
-		if ( deletedElementIds.length === 0 ) {
+		if (deletedElementIds.length === 0) {
 			return true;
 		}
 
-		const propKeysToDelete = Object.entries( overridableProps.props )
-			.filter( ( [ , prop ] ) => deletedElementIds.includes( prop.elementId ) )
-			.map( ( [ propKey ] ) => propKey );
+		const propKeysToDelete = Object.entries(overridableProps.props)
+			.filter(([, prop]) => deletedElementIds.includes(prop.elementId))
+			.map(([propKey]) => propKey);
 
-		if ( propKeysToDelete.length === 0 ) {
+		if (propKeysToDelete.length === 0) {
 			return true;
 		}
 
-		deleteOverridableProp( { componentId: currentComponentId, propKey: propKeysToDelete, source: 'system' } );
+		deleteOverridableProp({ componentId: currentComponentId, propKey: propKeysToDelete, source: 'system' });
 
 		return true;
-	} );
+	});
 }
 
-function collectDeletedElementIds( containers: V1Element[] ): string[] {
+function collectDeletedElementIds(containers: V1Element[]): string[] {
 	const elementIds = containers
-		.filter( Boolean )
-		.flatMap( ( container ) => [ container, ...getAllDescendants( container ) ] )
-		.map( ( element ) => element.model?.get?.( 'id' ) ?? element.id )
-		.filter( ( id ): id is string => Boolean( id ) );
+		.filter(Boolean)
+		.flatMap((container) => [container, ...getAllDescendants(container)])
+		.map((element) => element.model?.get?.('id') ?? element.id)
+		.filter((id): id is string => Boolean(id));
 
 	return elementIds;
 }
 
-function isPartOfMoveCommand( options?: HookOptions ): boolean {
+function isPartOfMoveCommand(options?: HookOptions): boolean {
 	// Skip cleanup if this delete is part of a move command
 	// Move = delete + create, and we don't want to delete the overridable prop in this case.
 	// See assets/dev/js/editor/document/elements/commands/move.js
 	const isMoveCommandInTrace =
-		options?.commandsCurrentTrace?.includes( 'document/elements/move' ) ||
-		options?.commandsCurrentTrace?.includes( 'document/repeater/move' );
+		options?.commandsCurrentTrace?.includes('document/elements/move') ||
+		options?.commandsCurrentTrace?.includes('document/repeater/move');
 
-	return Boolean( isMoveCommandInTrace );
+	return Boolean(isMoveCommandInTrace);
 }

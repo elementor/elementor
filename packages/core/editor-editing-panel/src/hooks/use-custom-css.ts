@@ -24,7 +24,7 @@ import { getSubtitle, getTitle, HISTORY_DEBOUNCE_WAIT } from './use-styles-field
 import { useStylesRerender } from './use-styles-rerender';
 
 type UpdateStyleArgs = {
-	styleId: StyleDefinition[ 'id' ];
+	styleId: StyleDefinition['id'];
 	provider: StylesProvider;
 	customCss: CustomCss;
 	propDisplayName: string;
@@ -38,13 +38,13 @@ type CreateStyleArgs = {
 };
 
 type UpdateStyleReturn = {
-	styleId: StyleDefinition[ 'id' ];
+	styleId: StyleDefinition['id'];
 	provider: StylesProvider;
 	prevCustomCss: CustomCss | null;
 };
 
 type CreateStyleReturn = {
-	createdStyleId: StyleDefinition[ 'id' ];
+	createdStyleId: StyleDefinition['id'];
 };
 
 type UndoableUpdateStylePayload = UpdateStyleArgs | CreateStyleArgs;
@@ -55,31 +55,28 @@ export const useCustomCss = () => {
 		element: { id: elementId },
 	} = useElement();
 	const { id: styleId, meta, provider } = useStyle();
-	const style = provider?.actions.get( styleId, { elementId } );
-	const undoableUpdateStyle = useUndoableActions( { elementId, meta } );
+	const style = provider?.actions.get(styleId, { elementId });
+	const undoableUpdateStyle = useUndoableActions({ elementId, meta });
 
 	const currentStyleId = styleId ? styleId : null;
 	const currentProvider = styleId ? provider : null;
 
 	useStylesRerender();
 
-	const variant = style ? getVariantByMeta( style, meta ) : null;
+	const variant = style ? getVariantByMeta(style, meta) : null;
 
-	const setCustomCss = (
-		raw: string,
-		{ history: { propDisplayName } }: { history: { propDisplayName: string } }
-	) => {
-		const newValue = { raw: encodeString( sanitize( raw ) ) };
+	const setCustomCss = (raw: string, { history: { propDisplayName } }: { history: { propDisplayName: string } }) => {
+		const newValue = { raw: encodeString(sanitize(raw)) };
 
-		undoableUpdateStyle( {
+		undoableUpdateStyle({
 			styleId: currentStyleId,
 			provider: currentProvider,
 			customCss: newValue,
 			propDisplayName,
-		} as UndoableUpdateStylePayload );
+		} as UndoableUpdateStylePayload);
 	};
 
-	const customCss = variant?.custom_css?.raw ? { raw: decodeString( variant.custom_css.raw ) } : null;
+	const customCss = variant?.custom_css?.raw ? { raw: decodeString(variant.custom_css.raw) } : null;
 
 	return {
 		customCss,
@@ -87,98 +84,98 @@ export const useCustomCss = () => {
 	};
 };
 
-function useUndoableActions( {
+function useUndoableActions({
 	elementId,
 	meta: { breakpoint, state },
 }: {
 	elementId: ElementID;
-	meta: StyleDefinitionVariant[ 'meta' ];
-} ) {
+	meta: StyleDefinitionVariant['meta'];
+}) {
 	const classesProp = useClassesProp();
 
-	return useMemo( () => {
+	return useMemo(() => {
 		const meta = { breakpoint, state };
 
 		const createStyleArgs = { elementId, classesProp, meta, label: ELEMENTS_STYLES_RESERVED_LABEL };
 
 		return undoable(
 			{
-				do: ( payload: UndoableUpdateStylePayload ): UndoableUpdateStyleReturn => {
-					if ( shouldCreateNewLocalStyle< StylesProvider >( payload ) ) {
-						return create( payload as CreateStyleArgs );
+				do: (payload: UndoableUpdateStylePayload): UndoableUpdateStyleReturn => {
+					if (shouldCreateNewLocalStyle<StylesProvider>(payload)) {
+						return create(payload as CreateStyleArgs);
 					}
-					return update( payload as UpdateStyleArgs );
+					return update(payload as UpdateStyleArgs);
 				},
-				undo: ( payload: UndoableUpdateStylePayload, doReturn: UndoableUpdateStyleReturn ) => {
-					if ( shouldCreateNewLocalStyle< StylesProvider >( payload ) ) {
-						return undoCreate( payload as CreateStyleArgs, doReturn as CreateStyleReturn );
+				undo: (payload: UndoableUpdateStylePayload, doReturn: UndoableUpdateStyleReturn) => {
+					if (shouldCreateNewLocalStyle<StylesProvider>(payload)) {
+						return undoCreate(payload as CreateStyleArgs, doReturn as CreateStyleReturn);
 					}
-					return undoUpdate( payload as UpdateStyleArgs, doReturn as UpdateStyleReturn );
+					return undoUpdate(payload as UpdateStyleArgs, doReturn as UpdateStyleReturn);
 				},
-				redo: ( payload: UndoableUpdateStylePayload, doReturn: UndoableUpdateStyleReturn ) => {
-					if ( shouldCreateNewLocalStyle< StylesProvider >( payload ) ) {
-						return create( payload as CreateStyleArgs, doReturn as CreateStyleReturn );
+				redo: (payload: UndoableUpdateStylePayload, doReturn: UndoableUpdateStyleReturn) => {
+					if (shouldCreateNewLocalStyle<StylesProvider>(payload)) {
+						return create(payload as CreateStyleArgs, doReturn as CreateStyleReturn);
 					}
-					return update( payload as UpdateStyleArgs );
+					return update(payload as UpdateStyleArgs);
 				},
 			},
 			{
-				title: ( { provider, styleId } ) => getTitle( { provider, styleId, elementId } ),
-				subtitle: ( { provider, styleId, propDisplayName } ) =>
-					getSubtitle( { provider, styleId, elementId, propDisplayName } ),
+				title: ({ provider, styleId }) => getTitle({ provider, styleId, elementId }),
+				subtitle: ({ provider, styleId, propDisplayName }) =>
+					getSubtitle({ provider, styleId, elementId, propDisplayName }),
 				debounce: { wait: HISTORY_DEBOUNCE_WAIT },
 			}
 		);
 
-		function create( { customCss }: CreateStyleArgs, redoArgs?: CreateStyleReturn ): CreateStyleReturn {
-			const createdStyle = createElementStyle( {
+		function create({ customCss }: CreateStyleArgs, redoArgs?: CreateStyleReturn): CreateStyleReturn {
+			const createdStyle = createElementStyle({
 				...createStyleArgs,
 				props: {},
 				custom_css: customCss ?? null,
 				styleId: redoArgs?.createdStyleId,
-			} );
+			});
 
 			return { createdStyleId: createdStyle };
 		}
 
-		function undoCreate( _: UndoableUpdateStylePayload, { createdStyleId }: CreateStyleReturn ) {
-			deleteElementStyle( elementId, createdStyleId );
+		function undoCreate(_: UndoableUpdateStylePayload, { createdStyleId }: CreateStyleReturn) {
+			deleteElementStyle(elementId, createdStyleId);
 		}
 
-		function update( { provider, styleId, customCss }: UpdateStyleArgs ): UpdateStyleReturn {
-			if ( ! provider.actions.updateCustomCss ) {
-				throw new StylesProviderCannotUpdatePropsError( {
+		function update({ provider, styleId, customCss }: UpdateStyleArgs): UpdateStyleReturn {
+			if (!provider.actions.updateCustomCss) {
+				throw new StylesProviderCannotUpdatePropsError({
 					context: { providerKey: provider.getKey() },
-				} );
+				});
 			}
 
-			const style = provider.actions.get( styleId, { elementId } );
-			const prevCustomCss = getCurrentCustomCss( style, meta );
+			const style = provider.actions.get(styleId, { elementId });
+			const prevCustomCss = getCurrentCustomCss(style, meta);
 
-			provider.actions.updateCustomCss( { id: styleId, meta, custom_css: customCss }, { elementId } );
+			provider.actions.updateCustomCss({ id: styleId, meta, custom_css: customCss }, { elementId });
 
 			return { styleId, provider, prevCustomCss };
 		}
 
-		function undoUpdate( _: UndoableUpdateStylePayload, { styleId, provider, prevCustomCss }: UpdateStyleReturn ) {
+		function undoUpdate(_: UndoableUpdateStylePayload, { styleId, provider, prevCustomCss }: UpdateStyleReturn) {
 			provider.actions.updateCustomCss?.(
 				{ id: styleId, meta, custom_css: prevCustomCss ?? { raw: '' } },
 				{ elementId }
 			);
 		}
-	}, [ elementId, breakpoint, state, classesProp ] );
+	}, [elementId, breakpoint, state, classesProp]);
 }
 
-function getCurrentCustomCss( style: StyleDefinition | null, meta: StyleDefinitionVariant[ 'meta' ] ) {
-	if ( ! style ) {
+function getCurrentCustomCss(style: StyleDefinition | null, meta: StyleDefinitionVariant['meta']) {
+	if (!style) {
 		return null;
 	}
 
-	const variant = getVariantByMeta( style, meta );
+	const variant = getVariantByMeta(style, meta);
 
 	return variant?.custom_css ?? null;
 }
 
-function sanitize( raw: string ) {
-	return stringPropTypeUtil.schema.safeParse( stringPropTypeUtil.create( raw ) ).data?.value?.trim() ?? '';
+function sanitize(raw: string) {
+	return stringPropTypeUtil.schema.safeParse(stringPropTypeUtil.create(raw)).data?.value?.trim() ?? '';
 }

@@ -16,35 +16,35 @@ import {
 
 const FORM_FIELDS_OUTSIDE_ALERT: NotificationData = {
 	type: 'default',
-	message: __( 'Form elements must be placed inside a form.', 'elementor' ),
+	message: __('Form elements must be placed inside a form.', 'elementor'),
 	id: 'form-fields-outside-form-blocked',
 };
 
 export function initFormAncestorEnforcement() {
-	blockCommand( {
+	blockCommand({
 		command: 'document/elements/create',
 		condition: blockFormFieldCreate,
-	} );
+	});
 
-	blockCommand( {
+	blockCommand({
 		command: 'document/elements/move',
 		condition: blockFormFieldMove,
-	} );
+	});
 
-	blockCommand( {
+	blockCommand({
 		command: 'document/elements/paste',
 		condition: blockFormFieldPaste,
-	} );
+	});
 }
 
-function blockFormFieldCreate( args: CreateArgs ): boolean {
-	const elementType = getArgsElementType( args );
+function blockFormFieldCreate(args: CreateArgs): boolean {
+	const elementType = getArgsElementType(args);
 
-	if ( ! elementType || ! FORM_FIELD_ELEMENT_TYPES.has( elementType ) ) {
+	if (!elementType || !FORM_FIELD_ELEMENT_TYPES.has(elementType)) {
 		return false;
 	}
 
-	if ( ! isWithinForm( args.container ) ) {
+	if (!isWithinForm(args.container)) {
 		handleBlockedFormField();
 
 		return true;
@@ -53,14 +53,14 @@ function blockFormFieldCreate( args: CreateArgs ): boolean {
 	return false;
 }
 
-function blockFormFieldMove( args: MoveArgs ): boolean {
-	const { containers = [ args.container ], target } = args;
+function blockFormFieldMove(args: MoveArgs): boolean {
+	const { containers = [args.container], target } = args;
 
-	const hasFormFieldElement = containers.some( ( container ) =>
-		container ? hasElementTypes( container, FORM_FIELD_ELEMENT_TYPES ) : false
+	const hasFormFieldElement = containers.some((container) =>
+		container ? hasElementTypes(container, FORM_FIELD_ELEMENT_TYPES) : false
 	);
 
-	if ( hasFormFieldElement && ! isWithinForm( target ) ) {
+	if (hasFormFieldElement && !isWithinForm(target)) {
 		handleBlockedFormField();
 
 		return true;
@@ -69,24 +69,24 @@ function blockFormFieldMove( args: MoveArgs ): boolean {
 	return false;
 }
 
-function blockFormFieldPaste( args: PasteArgs ): boolean {
+function blockFormFieldPaste(args: PasteArgs): boolean {
 	const { storageType } = args;
 
-	if ( storageType !== 'localstorage' ) {
+	if (storageType !== 'localstorage') {
 		return false;
 	}
 
 	const data = (
 		window as { elementorCommon?: { storage?: { get: () => StorageContent } } }
-	 )?.elementorCommon?.storage?.get();
+	)?.elementorCommon?.storage?.get();
 
-	if ( ! data?.clipboard?.elements ) {
+	if (!data?.clipboard?.elements) {
 		return false;
 	}
 
-	const hasFormFieldElement = hasClipboardElementTypes( data.clipboard.elements, FORM_FIELD_ELEMENT_TYPES );
+	const hasFormFieldElement = hasClipboardElementTypes(data.clipboard.elements, FORM_FIELD_ELEMENT_TYPES);
 
-	if ( hasFormFieldElement && ! isWithinForm( args.container ) ) {
+	if (hasFormFieldElement && !isWithinForm(args.container)) {
 		handleBlockedFormField();
 
 		return true;
@@ -96,5 +96,5 @@ function blockFormFieldPaste( args: PasteArgs ): boolean {
 }
 
 function handleBlockedFormField(): void {
-	notify( FORM_FIELDS_OUTSIDE_ALERT );
+	notify(FORM_FIELDS_OUTSIDE_ALERT);
 }

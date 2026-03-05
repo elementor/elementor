@@ -5,26 +5,26 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { PositionControl } from '../position-control';
 
-jest.mock( '@elementor/editor-v1-adapters' );
+jest.mock('@elementor/editor-v1-adapters');
 
-const propType = createMockPropType( {
+const propType = createMockPropType({
 	kind: 'union',
 	prop_types: {
-		string: createMockPropType( { kind: 'plain' } ),
-		'object-position': createMockPropType( {
+		string: createMockPropType({ kind: 'plain' }),
+		'object-position': createMockPropType({
 			kind: 'object',
 			shape: {
-				x: createMockPropType( { kind: 'plain' } ),
-				y: createMockPropType( { kind: 'plain' } ),
+				x: createMockPropType({ kind: 'plain' }),
+				y: createMockPropType({ kind: 'plain' }),
 			},
-		} ),
+		}),
 	},
-} );
+});
 
-jest.mocked( isExperimentActive ).mockReturnValue( true );
+jest.mocked(isExperimentActive).mockReturnValue(true);
 
-describe( 'PositionControl', () => {
-	it( 'should render position offset prop type values with custom position', () => {
+describe('PositionControl', () => {
+	it('should render position offset prop type values with custom position', () => {
 		// Arrange.
 		const setValue = jest.fn();
 
@@ -42,15 +42,15 @@ describe( 'PositionControl', () => {
 		};
 
 		// Act.
-		renderControl( <PositionControl />, props );
+		renderControl(<PositionControl />, props);
 
-		const [ x, y ] = screen.getAllByRole( 'spinbutton' );
-		expect( screen.getByText( 'Object position' ) ).toBeInTheDocument();
-		expect( x ).toHaveValue( 600 );
-		expect( y ).toHaveValue( 80 );
-	} );
+		const [x, y] = screen.getAllByRole('spinbutton');
+		expect(screen.getByText('Object position')).toBeInTheDocument();
+		expect(x).toHaveValue(600);
+		expect(y).toHaveValue(80);
+	});
 
-	it( 'should render position offset prop type values with plain value', () => {
+	it('should render position offset prop type values with plain value', () => {
 		// Arrange.
 		const setValue = jest.fn();
 		const props = {
@@ -64,14 +64,14 @@ describe( 'PositionControl', () => {
 		};
 
 		// Act.
-		renderControl( <PositionControl />, props );
+		renderControl(<PositionControl />, props);
 
 		// Assert.
-		expect( screen.getByText( 'Object position' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Center center' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Object position')).toBeInTheDocument();
+		expect(screen.getByText('Center center')).toBeInTheDocument();
+	});
 
-	it( 'should switch to custom position', async () => {
+	it('should switch to custom position', async () => {
 		// Arrange.
 		const setValue = jest.fn();
 		const props = {
@@ -84,26 +84,26 @@ describe( 'PositionControl', () => {
 			},
 		};
 
-		renderControl( <PositionControl />, props );
+		renderControl(<PositionControl />, props);
 
 		// Act.
-		const select = screen.getByRole( 'combobox' );
+		const select = screen.getByRole('combobox');
 
-		fireEvent.mouseDown( select );
+		fireEvent.mouseDown(select);
 
-		fireEvent.click( screen.getByText( 'Custom' ) );
+		fireEvent.click(screen.getByText('Custom'));
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( {
+		expect(setValue).toHaveBeenCalledWith({
 			$$type: 'object-position',
 			value: {
 				x: null,
 				y: null,
 			},
-		} );
-	} );
+		});
+	});
 
-	it( 'should switch to plain position', async () => {
+	it('should switch to plain position', async () => {
 		// Arrange.
 		const setValue = jest.fn();
 		const props = {
@@ -119,19 +119,19 @@ describe( 'PositionControl', () => {
 			},
 		};
 
-		renderControl( <PositionControl />, props );
+		renderControl(<PositionControl />, props);
 
 		// Act.
-		const select = screen.getByRole( 'combobox' );
+		const select = screen.getByRole('combobox');
 
-		fireEvent.mouseDown( select );
+		fireEvent.mouseDown(select);
 
-		fireEvent.click( screen.getByText( 'Center center' ) );
+		fireEvent.click(screen.getByText('Center center'));
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( {
+		expect(setValue).toHaveBeenCalledWith({
 			$$type: 'string',
 			value: 'center center',
-		} );
-	} );
-} );
+		});
+	});
+});

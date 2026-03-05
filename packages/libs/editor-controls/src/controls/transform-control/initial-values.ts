@@ -8,7 +8,7 @@ import {
 
 export type TransformFunction = 'transform-move' | 'transform-scale' | 'transform-rotate' | 'transform-skew';
 
-export const TransformFunctionKeys: Record< string, TransformFunction > = {
+export const TransformFunctionKeys: Record<string, TransformFunction> = {
 	move: 'transform-move',
 	scale: 'transform-scale',
 	rotate: 'transform-rotate',
@@ -40,19 +40,19 @@ export const initialTransformValue: TransformFunctionsItemPropValue = {
 	},
 };
 
-export const initialScaleValue = scaleTransformPropTypeUtil.create( {
-	x: numberPropTypeUtil.create( defaultValues.scale ),
-	y: numberPropTypeUtil.create( defaultValues.scale ),
-	z: numberPropTypeUtil.create( defaultValues.scale ),
-} );
+export const initialScaleValue = scaleTransformPropTypeUtil.create({
+	x: numberPropTypeUtil.create(defaultValues.scale),
+	y: numberPropTypeUtil.create(defaultValues.scale),
+	z: numberPropTypeUtil.create(defaultValues.scale),
+});
 
-export const initialRotateValue = rotateTransformPropTypeUtil.create( {
+export const initialRotateValue = rotateTransformPropTypeUtil.create({
 	x: { $$type: 'size', value: { size: defaultValues.rotate.size, unit: defaultValues.rotate.unit as 'deg' } },
 	y: { $$type: 'size', value: { size: defaultValues.rotate.size, unit: defaultValues.rotate.unit as 'deg' } },
 	z: { $$type: 'size', value: { size: defaultValues.rotate.size, unit: defaultValues.rotate.unit as 'deg' } },
-} );
+});
 
-export const initialSkewValue = skewTransformPropTypeUtil.create( {
+export const initialSkewValue = skewTransformPropTypeUtil.create({
 	x: { $$type: 'size', value: { size: defaultValues.skew.size, unit: defaultValues.skew.unit as 'deg' } },
 	y: { $$type: 'size', value: { size: defaultValues.skew.size, unit: defaultValues.skew.unit as 'deg' } },
-} );
+});

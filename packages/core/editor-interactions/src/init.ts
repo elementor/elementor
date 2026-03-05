@@ -12,48 +12,48 @@ import { documentElementsInteractionsProvider } from './providers/document-eleme
 
 export function init() {
 	try {
-		interactionsRepository.register( documentElementsInteractionsProvider );
+		interactionsRepository.register(documentElementsInteractionsProvider);
 
 		initCleanInteractionIdsOnDuplicate();
 
-		registerInteractionsControl( {
+		registerInteractionsControl({
 			type: 'trigger',
 			component: Trigger,
-			options: [ 'load', 'scrollIn' ],
-		} );
+			options: ['load', 'scrollIn'],
+		});
 
-		registerInteractionsControl( {
+		registerInteractionsControl({
 			type: 'easing',
 			component: Easing,
-			options: [ 'easeIn' ],
-		} );
+			options: ['easeIn'],
+		});
 
-		registerInteractionsControl( {
+		registerInteractionsControl({
 			type: 'replay',
 			component: Replay,
-			options: [ 'true', 'false' ],
-		} );
+			options: ['true', 'false'],
+		});
 
-		registerInteractionsControl( {
+		registerInteractionsControl({
 			type: 'effectType',
 			component: EffectType,
-			options: [ 'in', 'out' ],
-		} );
+			options: ['in', 'out'],
+		});
 
-		registerInteractionsControl( {
+		registerInteractionsControl({
 			type: 'direction',
 			component: Direction,
-			options: [ 'top', 'bottom', 'left', 'right' ],
-		} );
+			options: ['top', 'bottom', 'left', 'right'],
+		});
 
-		registerInteractionsControl( {
+		registerInteractionsControl({
 			type: 'effect',
 			component: Effect,
-			options: [ 'fade', 'slide', 'scale' ],
-		} );
+			options: ['fade', 'slide', 'scale'],
+		});
 
 		initMcpInteractions();
-	} catch ( error ) {
+	} catch (error) {
 		throw error;
 	}
 }

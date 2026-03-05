@@ -18,14 +18,14 @@ const getUserPayload: GetUserPayload = { params: { context: 'edit' } };
 export const apiClient = {
 	get: () =>
 		httpService()
-			.get< UserModel >( RESOURCE_URL, getUserPayload )
-			.then( ( res ) => {
+			.get<UserModel>(RESOURCE_URL, getUserPayload)
+			.then((res) => {
 				const { capabilities = [], suppressedMessages = [] } = res.data;
 
 				return { capabilities, suppressedMessages };
-			} ),
-	update: ( data: Partial< User > ) =>
-		httpService().patch< Partial< UserModel > >( RESOURCE_URL, {
+			}),
+	update: (data: Partial<User>) =>
+		httpService().patch<Partial<UserModel>>(RESOURCE_URL, {
 			suppressedMessages: data.suppressedMessages,
-		} ),
+		}),
 };

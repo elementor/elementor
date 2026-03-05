@@ -4,16 +4,16 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { GapControl } from '../gap-control';
 
-const propType = createMockPropType( {
+const propType = createMockPropType({
 	kind: 'object',
 	shape: {
-		column: createMockPropType( { kind: 'object' } ),
-		row: createMockPropType( { kind: 'object' } ),
+		column: createMockPropType({ kind: 'object' }),
+		row: createMockPropType({ kind: 'object' }),
 	},
-} );
+});
 
-describe( 'GapControl', () => {
-	it( 'should render the gap control with its props', () => {
+describe('GapControl', () => {
+	it('should render the gap control with its props', () => {
 		// Arrange.
 		const setValue = jest.fn();
 		const bind = 'gap';
@@ -28,17 +28,17 @@ describe( 'GapControl', () => {
 		const props = { setValue, value: mockValue, bind, propType };
 
 		// Act.
-		renderControl( <GapControl label={ label } />, props );
+		renderControl(<GapControl label={label} />, props);
 
 		// Assert.
-		const controlLabel = screen.getByText( label ),
-			toggleButton = screen.getByRole( 'button', { name: 'Link gaps' } );
+		const controlLabel = screen.getByText(label),
+			toggleButton = screen.getByRole('button', { name: 'Link gaps' });
 
-		expect( controlLabel ).toHaveTextContent( label );
-		expect( toggleButton ).toHaveAttribute( 'aria-pressed', 'false' );
-	} );
+		expect(controlLabel).toHaveTextContent(label);
+		expect(toggleButton).toHaveAttribute('aria-pressed', 'false');
+	});
 
-	it( 'should call the setValue function with the correct value when linking', () => {
+	it('should call the setValue function with the correct value when linking', () => {
 		// Arrange.
 		const setValue = jest.fn();
 		const bind = 'gap';
@@ -54,21 +54,21 @@ describe( 'GapControl', () => {
 
 		const props = { setValue, value: mockValue, bind, propType };
 
-		renderControl( <GapControl label={ label } />, props );
+		renderControl(<GapControl label={label} />, props);
 
-		const toggleButton = screen.getByRole( 'button', { name: 'Link gaps' } );
+		const toggleButton = screen.getByRole('button', { name: 'Link gaps' });
 
 		// Act.
-		fireEvent.click( toggleButton );
+		fireEvent.click(toggleButton);
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( {
+		expect(setValue).toHaveBeenCalledWith({
 			$$type: 'size',
 			value: { unit: 'px', size: 100 },
-		} );
-	} );
+		});
+	});
 
-	it( 'when linking: should apply row value if column is missing', () => {
+	it('when linking: should apply row value if column is missing', () => {
 		// Arrange.
 		const setValue = jest.fn();
 		const bind = 'gap';
@@ -84,21 +84,21 @@ describe( 'GapControl', () => {
 
 		const props = { setValue, value: mockValue, bind, propType };
 
-		renderControl( <GapControl label={ label } />, props );
+		renderControl(<GapControl label={label} />, props);
 
-		const toggleButton = screen.getByRole( 'button', { name: 'Link gaps' } );
+		const toggleButton = screen.getByRole('button', { name: 'Link gaps' });
 
 		// Act.
-		fireEvent.click( toggleButton );
+		fireEvent.click(toggleButton);
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( {
+		expect(setValue).toHaveBeenCalledWith({
 			$$type: 'size',
 			value: { unit: 'px', size: 10 },
-		} );
-	} );
+		});
+	});
 
-	it( 'should call the setValue function with the correct value when unlinking', () => {
+	it('should call the setValue function with the correct value when unlinking', () => {
 		// Arrange.
 		const setValue = jest.fn();
 		const bind = 'gap';
@@ -114,25 +114,25 @@ describe( 'GapControl', () => {
 
 		const props = { setValue, value: mockValue, bind, propType };
 
-		renderControl( <GapControl label={ label } />, props );
+		renderControl(<GapControl label={label} />, props);
 
-		const toggleButton = screen.getByRole( 'button', { name: 'Unlink gaps' } );
+		const toggleButton = screen.getByRole('button', { name: 'Unlink gaps' });
 
 		// Act.
-		fireEvent.click( toggleButton );
-		fireEvent.click( toggleButton );
+		fireEvent.click(toggleButton);
+		fireEvent.click(toggleButton);
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( {
+		expect(setValue).toHaveBeenCalledWith({
 			$$type: 'layout-direction',
 			value: {
 				column: { $$type: 'size', value: { unit: 'px', size: 100 } },
 				row: { $$type: 'size', value: { unit: 'px', size: 100 } },
 			},
-		} );
-	} );
+		});
+	});
 
-	it( 'should change all values when linked', () => {
+	it('should change all values when linked', () => {
 		// Arrange.
 		const setValue = jest.fn();
 		const bind = 'gap';
@@ -148,24 +148,24 @@ describe( 'GapControl', () => {
 
 		const props = { setValue, value: mockValue, bind, propType };
 
-		renderControl( <GapControl label={ label } />, props );
+		renderControl(<GapControl label={label} />, props);
 
-		const input = screen.getAllByRole( 'spinbutton' )[ 0 ];
+		const input = screen.getAllByRole('spinbutton')[0];
 
 		// Act.
-		fireEvent.input( input, { target: { value: 100 } } );
+		fireEvent.input(input, { target: { value: 100 } });
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( {
+		expect(setValue).toHaveBeenCalledWith({
 			$$type: 'size',
 			value: {
 				size: 100,
 				unit: 'px',
 			},
-		} );
-	} );
+		});
+	});
 
-	it( 'should change only one value when unlinked', () => {
+	it('should change only one value when unlinked', () => {
 		// Arrange.
 		const setValue = jest.fn();
 		const bind = 'gap';
@@ -181,24 +181,24 @@ describe( 'GapControl', () => {
 
 		const props = { setValue, value: mockValue, bind, propType };
 
-		renderControl( <GapControl label={ label } />, props );
+		renderControl(<GapControl label={label} />, props);
 
-		const input = screen.getAllByRole( 'spinbutton' )[ 0 ];
+		const input = screen.getAllByRole('spinbutton')[0];
 
 		// Act.
-		fireEvent.input( input, { target: { value: 100 } } );
+		fireEvent.input(input, { target: { value: 100 } });
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( {
+		expect(setValue).toHaveBeenCalledWith({
 			$$type: 'layout-direction',
 			value: {
 				column: { $$type: 'size', value: { unit: 'px', size: 100 } },
 				row: { $$type: 'size', value: { unit: 'px', size: 0 } },
 			},
-		} );
-	} );
+		});
+	});
 
-	it( 'should return undefined size props when clicking toggle link button with null layout direction props', () => {
+	it('should return undefined size props when clicking toggle link button with null layout direction props', () => {
 		// Arrange.
 		const setValue = jest.fn();
 		const bind = 'gap';
@@ -217,14 +217,14 @@ describe( 'GapControl', () => {
 			propType,
 		};
 
-		renderControl( <GapControl label={ label } />, props );
+		renderControl(<GapControl label={label} />, props);
 
-		const toggleButton = screen.getByRole( 'button', { name: 'Link gaps' } );
+		const toggleButton = screen.getByRole('button', { name: 'Link gaps' });
 
 		// Act.
-		fireEvent.click( toggleButton );
+		fireEvent.click(toggleButton);
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( null );
-	} );
-} );
+		expect(setValue).toHaveBeenCalledWith(null);
+	});
+});

@@ -25,29 +25,29 @@ export function ElementsOverlays() {
 	const currentEditMode = useEditMode();
 
 	const isEditMode = currentEditMode === 'edit';
-	const isKitRouteActive = useIsRouteActive( 'panel/global' );
-	const isActive = isEditMode && ! isKitRouteActive;
+	const isKitRouteActive = useIsRouteActive('panel/global');
+	const isActive = isEditMode && !isKitRouteActive;
 
-	if ( ! isActive ) {
+	if (!isActive) {
 		return null;
 	}
 
-	return elements.map( ( { id, domElement, isGlobal } ) => {
+	return elements.map(({ id, domElement, isGlobal }) => {
 		const isSelected = selected.element?.id === id;
 
 		return overlayRegistry.map(
-			( { shouldRender, component: Overlay }, index ) =>
-				shouldRender( { id, element: domElement, isSelected } ) && (
+			({ shouldRender, component: Overlay }, index) =>
+				shouldRender({ id, element: domElement, isSelected }) && (
 					<Overlay
-						key={ `${ id }-${ index }` }
-						id={ id }
-						element={ domElement }
-						isSelected={ isSelected }
-						isGlobal={ isGlobal }
+						key={`${id}-${index}`}
+						id={id}
+						element={domElement}
+						isSelected={isSelected}
+						isGlobal={isGlobal}
 					/>
 				)
 		);
-	} );
+	});
 }
 
 type ElementData = {
@@ -58,16 +58,16 @@ type ElementData = {
 
 function useElementsDom() {
 	return useListenTo(
-		[ windowEvent( 'elementor/editor/element-rendered' ), windowEvent( 'elementor/editor/element-destroyed' ) ],
+		[windowEvent('elementor/editor/element-rendered'), windowEvent('elementor/editor/element-destroyed')],
 		() => {
 			return getElements()
-				.filter( ( el ) => ELEMENTS_DATA_ATTR in ( el.view?.el?.dataset ?? {} ) )
-				.map( ( element ) => ( {
+				.filter((el) => ELEMENTS_DATA_ATTR in (el.view?.el?.dataset ?? {}))
+				.map((element) => ({
 					id: element.id,
-					domElement: element.view?.getDomElement?.()?.get?.( 0 ),
-					isGlobal: element.model.get( 'isGlobal' ) ?? false,
-				} ) )
-				.filter( ( item ): item is ElementData => !! item.domElement );
+					domElement: element.view?.getDomElement?.()?.get?.(0),
+					isGlobal: element.model.get('isGlobal') ?? false,
+				}))
+				.filter((item): item is ElementData => !!item.domElement);
 		}
 	);
 }

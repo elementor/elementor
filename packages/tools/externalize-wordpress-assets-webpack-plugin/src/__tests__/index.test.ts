@@ -9,10 +9,10 @@ import { webpack } from 'webpack';
 
 import { ExternalizeWordPressAssetsWebpackPlugin } from '../index';
 
-jest.mock( 'fs', () => jest.requireActual( 'memfs' ) );
+jest.mock('fs', () => jest.requireActual('memfs'));
 
-describe( '@elementor/externalize-wordpress-assets-webpack-plugin', () => {
-	beforeEach( () => {
+describe('@elementor/externalize-wordpress-assets-webpack-plugin', () => {
+	beforeEach(() => {
 		const fileContent = `
 			import editor from '@elementor/editor';
 			import editorPanels from '@elementor/editor-panels';
@@ -31,54 +31,54 @@ describe( '@elementor/externalize-wordpress-assets-webpack-plugin', () => {
 			export const test = 'This is test for exporting something';
 		`;
 
-		fs.writeFileSync( path.resolve( '/app.js' ), fileContent );
-	} );
+		fs.writeFileSync(path.resolve('/app.js'), fileContent);
+	});
 
-	afterEach( () => {
+	afterEach(() => {
 		vol.reset();
-	} );
+	});
 
-	xit( 'should externalize Elementor & WordPress assets', ( done ) => {
+	xit('should externalize Elementor & WordPress assets', (done) => {
 		// Arrange.
-		const compiler = webpack( {
+		const compiler = webpack({
 			mode: 'development',
 			devtool: false,
-			entry: { 'my-app-test': path.resolve( '/app.js' ) },
-			context: path.resolve( '/app.js' ),
+			entry: { 'my-app-test': path.resolve('/app.js') },
+			context: path.resolve('/app.js'),
 			optimization: { runtimeChunk: 'single' },
 			output: {
 				filename: '[name].js',
-				path: path.resolve( '/dist' ),
+				path: path.resolve('/dist'),
 			},
 			plugins: [
-				new ExternalizeWordPressAssetsWebpackPlugin( {
-					global: ( entryName ) => [ 'elementorPackages', entryName ],
+				new ExternalizeWordPressAssetsWebpackPlugin({
+					global: (entryName) => ['elementorPackages', entryName],
 					map: [
 						{ request: 'react', global: 'React' },
 						{ request: 'react-dom', global: 'ReactDOM' },
-						{ request: /^@elementor\/(.+)$/, global: [ 'elementorPackages', '$1' ] },
-						{ request: /^@wordpress\/(.+)$/, global: [ 'wp', '$1' ] },
+						{ request: /^@elementor\/(.+)$/, global: ['elementorPackages', '$1'] },
+						{ request: /^@wordpress\/(.+)$/, global: ['wp', '$1'] },
 						{ request: '@other/package-name', global: 'otherPackageName' },
 					],
-				} ),
+				}),
 			],
-		} );
+		});
 
 		// Expect.
-		expect.assertions( 4 );
+		expect.assertions(4);
 
 		// Act.
-		compiler?.run( ( err, stats ) => {
+		compiler?.run((err, stats) => {
 			// Assert.
-			expect( err ).toBe( null );
-			expect( stats?.hasErrors() ).toBe( false );
-			expect( stats?.hasWarnings() ).toBe( false );
+			expect(err).toBe(null);
+			expect(stats?.hasErrors()).toBe(false);
+			expect(stats?.hasWarnings()).toBe(false);
 
-			const fileContent = fs.readFileSync( path.resolve( `/dist/my-app-test.js` ), { encoding: 'utf8' } );
+			const fileContent = fs.readFileSync(path.resolve(`/dist/my-app-test.js`), { encoding: 'utf8' });
 
-			expect( fileContent ).toMatchSnapshot();
+			expect(fileContent).toMatchSnapshot();
 
 			done();
-		} );
-	} );
-} );
+		});
+	});
+});

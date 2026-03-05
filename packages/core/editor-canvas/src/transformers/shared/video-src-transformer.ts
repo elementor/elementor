@@ -7,17 +7,17 @@ type VideoSrc = {
 	url: string | null;
 };
 
-export const videoSrcTransformer = createTransformer( async ( value: VideoSrc ) => {
+export const videoSrcTransformer = createTransformer(async (value: VideoSrc) => {
 	const { id, url } = value;
 
-	if ( ! id ) {
+	if (!id) {
 		return { id: null, url };
 	}
 
-	const attachment = await getMediaAttachment( { id } );
+	const attachment = await getMediaAttachment({ id });
 
 	return {
 		id,
 		url: attachment?.url ?? url,
 	};
-} );
+});

@@ -7,25 +7,25 @@ import { validateValue } from '../../utils/validations';
 
 type ColorFieldProps = {
 	value: string;
-	onChange: ( value: string ) => void;
-	onValidationChange?: ( errorMessage: string ) => void;
+	onChange: (value: string) => void;
+	onValidationChange?: (errorMessage: string) => void;
 };
 
-export const ColorField = ( { value, onChange, onValidationChange }: ColorFieldProps ) => {
-	const [ color, setColor ] = useState( value );
-	const [ errorMessage, setErrorMessage ] = useState( '' );
+export const ColorField = ({ value, onChange, onValidationChange }: ColorFieldProps) => {
+	const [color, setColor] = useState(value);
+	const [errorMessage, setErrorMessage] = useState('');
 
-	const defaultRef = useRef< HTMLDivElement >( null );
+	const defaultRef = useRef<HTMLDivElement>(null);
 	const anchorRef = usePopoverContentRef() ?? defaultRef.current;
 
-	const handleChange = ( newValue: string ) => {
-		setColor( newValue );
+	const handleChange = (newValue: string) => {
+		setColor(newValue);
 
-		const errorMsg = validateValue( newValue );
-		setErrorMessage( errorMsg );
-		onValidationChange?.( errorMsg );
+		const errorMsg = validateValue(newValue);
+		setErrorMessage(errorMsg);
+		onValidationChange?.(errorMsg);
 
-		onChange( errorMsg ? '' : newValue );
+		onChange(errorMsg ? '' : newValue);
 	};
 
 	return (
@@ -33,10 +33,10 @@ export const ColorField = ( { value, onChange, onValidationChange }: ColorFieldP
 			id="color-variable-field"
 			size="tiny"
 			fullWidth
-			value={ color }
-			onChange={ handleChange }
-			error={ errorMessage || undefined }
-			slotProps={ {
+			value={color}
+			onChange={handleChange}
+			error={errorMessage || undefined}
+			slotProps={{
 				colorPicker: {
 					anchorEl: anchorRef,
 					anchorOrigin: { vertical: 'top', horizontal: 'right' },
@@ -50,7 +50,7 @@ export const ColorField = ( { value, onChange, onValidationChange }: ColorFieldP
 						},
 					},
 				},
-			} }
+			}}
 		/>
 	);
 };

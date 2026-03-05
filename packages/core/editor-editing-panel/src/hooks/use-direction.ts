@@ -5,7 +5,7 @@ export function useDirection() {
 	const theme = useTheme();
 
 	const isUiRtl = 'rtl' === theme.direction,
-		isSiteRtl = !! getElementorFrontendConfig()?.is_rtl;
+		isSiteRtl = !!getElementorFrontendConfig()?.is_rtl;
 
 	return { isSiteRtl, isUiRtl };
 }

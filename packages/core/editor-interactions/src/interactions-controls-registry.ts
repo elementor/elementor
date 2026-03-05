@@ -20,7 +20,7 @@ type InteractionsControlType =
 type InteractionsControlPropsMap = {
 	trigger: FieldProps;
 	effect: FieldProps;
-	customEffects: FieldProps< PropValue >;
+	customEffects: FieldProps<PropValue>;
 	effectType: FieldProps;
 	direction: DirectionFieldProps;
 	duration: FieldProps;
@@ -32,32 +32,32 @@ type InteractionsControlPropsMap = {
 	end: FieldProps;
 };
 
-type ControlOptions< T extends InteractionsControlType > = {
+type ControlOptions<T extends InteractionsControlType> = {
 	type: T;
-	component: ComponentType< InteractionsControlPropsMap[ T ] >;
+	component: ComponentType<InteractionsControlPropsMap[T]>;
 	options?: string[];
 };
 
 type StoredControlOptions = {
 	type: InteractionsControlType;
-	component: ComponentType< FieldProps | DirectionFieldProps | ReplayFieldProps >;
+	component: ComponentType<FieldProps | DirectionFieldProps | ReplayFieldProps>;
 	options?: string[];
 };
 
-const controlsRegistry = new Map< InteractionsControlType, StoredControlOptions >();
+const controlsRegistry = new Map<InteractionsControlType, StoredControlOptions>();
 
-export function registerInteractionsControl< T extends InteractionsControlType >( {
+export function registerInteractionsControl<T extends InteractionsControlType>({
 	type,
 	component,
 	options,
-}: ControlOptions< T > ) {
-	controlsRegistry.set( type, { type, component: component as StoredControlOptions[ 'component' ], options } );
+}: ControlOptions<T>) {
+	controlsRegistry.set(type, { type, component: component as StoredControlOptions['component'], options });
 }
 
-export function getInteractionsControl( type: InteractionsControlType ) {
-	return controlsRegistry.get( type );
+export function getInteractionsControl(type: InteractionsControlType) {
+	return controlsRegistry.get(type);
 }
 
-export function getInteractionsControlOptions( type: InteractionsControlType ) {
-	return controlsRegistry.get( type )?.options ?? [];
+export function getInteractionsControlOptions(type: InteractionsControlType) {
+	return controlsRegistry.get(type)?.options ?? [];
 }

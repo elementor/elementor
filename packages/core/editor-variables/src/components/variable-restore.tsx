@@ -21,65 +21,65 @@ type Props = {
 	onSubmit?: () => void;
 };
 
-export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
+export const VariableRestore = ({ variableId, onClose, onSubmit }: Props) => {
 	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = useVariableType();
 
 	const { setVariableValue: notifyBoundPropChange } = useVariableBoundProp();
 	const { propType } = useBoundProp();
 
-	const variable = useVariable( variableId );
+	const variable = useVariable(variableId);
 
-	if ( ! variable ) {
-		throw new Error( `Global ${ variableType } variable not found` );
+	if (!variable) {
+		throw new Error(`Global ${variableType} variable not found`);
 	}
 
-	const [ errorMessage, setErrorMessage ] = useState( '' );
-	const [ valueFieldError, setValueFieldError ] = useState( '' );
-	const [ label, setLabel ] = useState( variable.label );
-	const [ value, setValue ] = useState( variable.value );
-	const [ propTypeKey, setPropTypeKey ] = useState( variable?.type ?? propTypeUtil.key );
+	const [errorMessage, setErrorMessage] = useState('');
+	const [valueFieldError, setValueFieldError] = useState('');
+	const [label, setLabel] = useState(variable.label);
+	const [value, setValue] = useState(variable.value);
+	const [propTypeKey, setPropTypeKey] = useState(variable?.type ?? propTypeUtil.key);
 
-	const { labelFieldError, setLabelFieldError } = useLabelError( {
+	const { labelFieldError, setLabelFieldError } = useLabelError({
 		value: variable.label,
 		message: ERROR_MESSAGES.DUPLICATED_LABEL,
-	} );
+	});
 
 	const handleRestore = () => {
 		const typeChanged = propTypeKey !== variable.type;
 		const restorePromise = typeChanged
-			? restoreVariable( variableId, label, value, propTypeKey )
-			: restoreVariable( variableId, label, value );
+			? restoreVariable(variableId, label, value, propTypeKey)
+			: restoreVariable(variableId, label, value);
 
 		restorePromise
-			.then( () => {
-				notifyBoundPropChange( variableId );
+			.then(() => {
+				notifyBoundPropChange(variableId);
 				onSubmit?.();
-			} )
-			.catch( ( error ) => {
-				const mappedError = mapServerError( error );
-				if ( mappedError && 'label' === mappedError.field ) {
-					setLabel( '' );
-					setLabelFieldError( {
+			})
+			.catch((error) => {
+				const mappedError = mapServerError(error);
+				if (mappedError && 'label' === mappedError.field) {
+					setLabel('');
+					setLabelFieldError({
 						value: label,
 						message: mappedError.message,
-					} );
+					});
 					return;
 				}
 
-				setErrorMessage( ERROR_MESSAGES.UNEXPECTED_ERROR );
-			} );
+				setErrorMessage(ERROR_MESSAGES.UNEXPECTED_ERROR);
+			});
 	};
 
 	const hasEmptyFields = () => {
-		if ( '' === label.trim() ) {
+		if ('' === label.trim()) {
 			return true;
 		}
 
-		if ( 'string' === typeof value ) {
+		if ('string' === typeof value) {
 			return '' === value.trim();
 		}
 
-		return false === Boolean( value );
+		return false === Boolean(value);
 	};
 
 	const noValueChanged = () => {
@@ -87,13 +87,13 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 	};
 
 	const hasErrors = () => {
-		return !! errorMessage;
+		return !!errorMessage;
 	};
 
 	const isSubmitDisabled = noValueChanged() || hasEmptyFields() || hasErrors();
 
-	const handleKeyDown = ( event: KeyboardEvent< HTMLElement > ) => {
-		if ( event.key === 'Enter' && ! isSubmitDisabled ) {
+	const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+		if (event.key === 'Enter' && !isSubmitDisabled) {
 			event.preventDefault();
 			handleRestore();
 		}
@@ -103,63 +103,63 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 		<PopoverContentRefContextProvider>
 			<SectionPopoverBody height="auto">
 				<PopoverHeader
-					icon={ <VariableIcon fontSize={ SIZE } /> }
-					title={ __( 'Restore variable', 'elementor' ) }
-					onClose={ onClose }
+					icon={<VariableIcon fontSize={SIZE} />}
+					title={__('Restore variable', 'elementor')}
+					onClose={onClose}
 				/>
 
 				<Divider />
 
-				<PopoverContent p={ 2 }>
+				<PopoverContent p={2}>
 					<FormField
 						id="variable-label"
-						label={ __( 'Name', 'elementor' ) }
-						errorMsg={ labelFieldError?.message }
-						noticeMsg={ labelHint( label ) }
+						label={__('Name', 'elementor')}
+						errorMsg={labelFieldError?.message}
+						noticeMsg={labelHint(label)}
 					>
 						<LabelField
 							id="variable-label"
-							value={ label }
-							error={ labelFieldError }
-							onChange={ ( newValue ) => {
-								setLabel( newValue );
-								setErrorMessage( '' );
-							} }
-							onErrorChange={ ( errorMsg ) => {
-								setLabelFieldError( {
+							value={label}
+							error={labelFieldError}
+							onChange={(newValue) => {
+								setLabel(newValue);
+								setErrorMessage('');
+							}}
+							onErrorChange={(errorMsg) => {
+								setLabelFieldError({
 									value: label,
 									message: errorMsg,
-								} );
-							} }
-							onKeyDown={ handleKeyDown }
+								});
+							}}
+							onKeyDown={handleKeyDown}
 						/>
 					</FormField>
-					{ ValueField && (
-						<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
+					{ValueField && (
+						<FormField errorMsg={valueFieldError} label={__('Value', 'elementor')}>
 							<Typography variant="h5">
 								<ValueField
-									propTypeKey={ propTypeKey }
-									onPropTypeKeyChange={ ( key: string ) => setPropTypeKey( key ) }
-									value={ value }
-									onChange={ ( newValue ) => {
-										setValue( newValue );
-										setErrorMessage( '' );
-										setValueFieldError( '' );
-									} }
-									onValidationChange={ setValueFieldError }
-									propType={ propType }
-									onKeyDown={ handleKeyDown }
+									propTypeKey={propTypeKey}
+									onPropTypeKeyChange={(key: string) => setPropTypeKey(key)}
+									value={value}
+									onChange={(newValue) => {
+										setValue(newValue);
+										setErrorMessage('');
+										setValueFieldError('');
+									}}
+									onValidationChange={setValueFieldError}
+									propType={propType}
+									onKeyDown={handleKeyDown}
 								/>
 							</Typography>
 						</FormField>
-					) }
+					)}
 
-					{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }
+					{errorMessage && <FormHelperText error>{errorMessage}</FormHelperText>}
 				</PopoverContent>
 
-				<CardActions sx={ { pt: 0.5, pb: 1 } }>
-					<Button size="small" variant="contained" disabled={ isSubmitDisabled } onClick={ handleRestore }>
-						{ __( 'Restore', 'elementor' ) }
+				<CardActions sx={{ pt: 0.5, pb: 1 }}>
+					<Button size="small" variant="contained" disabled={isSubmitDisabled} onClick={handleRestore}>
+						{__('Restore', 'elementor')}
 					</Button>
 				</CardActions>
 			</SectionPopoverBody>

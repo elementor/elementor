@@ -19,7 +19,7 @@ export type StyleItem = {
 	state: StyleDefinitionState | null;
 };
 
-export type StyleRenderer = ReturnType< typeof createStylesRenderer >;
+export type StyleRenderer = ReturnType<typeof createStylesRenderer>;
 
 type CreateStyleRendererArgs = {
 	resolve: PropsResolver;
@@ -42,111 +42,110 @@ type PropsToCssArgs = {
 	signal?: AbortSignal;
 };
 
-const SELECTORS_MAP: Record< StyleDefinitionType, string > = {
+const SELECTORS_MAP: Record<StyleDefinitionType, string> = {
 	class: '.',
 };
 
-export function createStylesRenderer( { resolve, breakpoints, selectorPrefix = '' }: CreateStyleRendererArgs ) {
-	return async ( { styles, signal }: StyleRendererArgs ): Promise< StyleItem[] > => {
-		const seenIds = new Set< string >();
-		const uniqueStyles = styles.filter( ( style ) => {
-			if ( seenIds.has( style.id ) ) {
+export function createStylesRenderer({ resolve, breakpoints, selectorPrefix = '' }: CreateStyleRendererArgs) {
+	return async ({ styles, signal }: StyleRendererArgs): Promise<StyleItem[]> => {
+		const seenIds = new Set<string>();
+		const uniqueStyles = styles.filter((style) => {
+			if (seenIds.has(style.id)) {
 				return false;
 			}
-			seenIds.add( style.id );
+			seenIds.add(style.id);
 			return true;
-		} );
+		});
 
-		const stylesCssPromises = uniqueStyles.map( async ( style ) => {
-			const variantCssPromises = Object.values( style.variants ).map( async ( variant ) => {
-				const css = await propsToCss( { props: variant.props, resolve, signal } );
-				const customCss = customCssToString( variant.custom_css );
+		const stylesCssPromises = uniqueStyles.map(async (style) => {
+			const variantCssPromises = Object.values(style.variants).map(async (variant) => {
+				const css = await propsToCss({ props: variant.props, resolve, signal });
+				const customCss = customCssToString(variant.custom_css);
 
 				return createStyleWrapper()
-					.for( style.cssName, style.type )
-					.withPrefix( selectorPrefix )
-					.withState( variant.meta.state )
-					.withMediaQuery( variant.meta.breakpoint ? breakpoints[ variant.meta.breakpoint ] : null )
-					.wrap( css + customCss );
-			} );
+					.for(style.cssName, style.type)
+					.withPrefix(selectorPrefix)
+					.withState(variant.meta.state)
+					.withMediaQuery(variant.meta.breakpoint ? breakpoints[variant.meta.breakpoint] : null)
+					.wrap(css + customCss);
+			});
 
-			const variantsCss = await Promise.all( variantCssPromises );
+			const variantsCss = await Promise.all(variantCssPromises);
 
 			return {
 				id: style.id,
-				breakpoint: style?.variants[ 0 ]?.meta?.breakpoint || 'desktop',
-				value: variantsCss.join( '' ),
-				state: style?.variants[ 0 ]?.meta?.state || null,
+				breakpoint: style?.variants[0]?.meta?.breakpoint || 'desktop',
+				value: variantsCss.join(''),
+				state: style?.variants[0]?.meta?.state || null,
 			};
-		} );
+		});
 
-		return await Promise.all( stylesCssPromises );
+		return await Promise.all(stylesCssPromises);
 	};
 }
 
-function createStyleWrapper( value: string = '', wrapper?: ( css: string ) => string ) {
+function createStyleWrapper(value: string = '', wrapper?: (css: string) => string) {
 	return {
-		for: ( cssName: RendererStyleDefinition[ 'cssName' ], type: RendererStyleDefinition[ 'type' ] ) => {
-			const symbol = SELECTORS_MAP[ type ];
+		for: (cssName: RendererStyleDefinition['cssName'], type: RendererStyleDefinition['type']) => {
+			const symbol = SELECTORS_MAP[type];
 
-			if ( ! symbol ) {
-				throw new UnknownStyleTypeError( { context: { type } } );
+			if (!symbol) {
+				throw new UnknownStyleTypeError({ context: { type } });
 			}
 
-			return createStyleWrapper( `${ value }${ symbol }${ cssName }`, wrapper );
+			return createStyleWrapper(`${value}${symbol}${cssName}`, wrapper);
 		},
 
-		withPrefix: ( prefix: string ) =>
-			createStyleWrapper( [ prefix, value ].filter( Boolean ).join( ' ' ), wrapper ),
+		withPrefix: (prefix: string) => createStyleWrapper([prefix, value].filter(Boolean).join(' '), wrapper),
 
-		withState: ( state: StyleDefinitionState ) => {
-			const selector = getSelectorWithState( value, state );
+		withState: (state: StyleDefinitionState) => {
+			const selector = getSelectorWithState(value, state);
 
-			return createStyleWrapper( selector, wrapper );
+			return createStyleWrapper(selector, wrapper);
 		},
 
-		withMediaQuery: ( breakpoint: Breakpoint | null ) => {
-			if ( ! breakpoint?.type ) {
-				return createStyleWrapper( value, wrapper );
+		withMediaQuery: (breakpoint: Breakpoint | null) => {
+			if (!breakpoint?.type) {
+				return createStyleWrapper(value, wrapper);
 			}
 
-			const size = `${ breakpoint.type }:${ breakpoint.width }px`;
+			const size = `${breakpoint.type}:${breakpoint.width}px`;
 
-			return createStyleWrapper( value, ( css ) => `@media(${ size }){${ css }}` );
+			return createStyleWrapper(value, (css) => `@media(${size}){${css}}`);
 		},
 
-		wrap: ( css: string ) => {
-			const res = `${ value }{${ css }}`;
+		wrap: (css: string) => {
+			const res = `${value}{${css}}`;
 
-			if ( ! wrapper ) {
+			if (!wrapper) {
 				return res;
 			}
 
-			return wrapper( res );
+			return wrapper(res);
 		},
 	};
 }
 
-async function propsToCss( { props, resolve, signal }: PropsToCssArgs ) {
-	const transformed = await resolve( { props, signal } );
+async function propsToCss({ props, resolve, signal }: PropsToCssArgs) {
+	const transformed = await resolve({ props, signal });
 
-	return Object.entries( transformed )
-		.reduce< string[] >( ( acc, [ propName, propValue ] ) => {
-			if ( propValue === null ) {
+	return Object.entries(transformed)
+		.reduce<string[]>((acc, [propName, propValue]) => {
+			if (propValue === null) {
 				return acc;
 			}
 
-			acc.push( propName + ':' + propValue + ';' );
+			acc.push(propName + ':' + propValue + ';');
 
 			return acc;
-		}, [] )
-		.join( '' );
+		}, [])
+		.join('');
 }
 
-function customCssToString( customCss: CustomCss | null ): string {
-	const decoded = decodeString( customCss?.raw || '' );
+function customCssToString(customCss: CustomCss | null): string {
+	const decoded = decodeString(customCss?.raw || '');
 
-	if ( ! decoded.trim() ) {
+	if (!decoded.trim()) {
 		return '';
 	}
 

@@ -5,39 +5,39 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { ImageMediaControl } from '../image-media-control';
 
-jest.mock( '@elementor/wp-media', () => ( {
+jest.mock('@elementor/wp-media', () => ({
 	useWpMediaAttachment: jest.fn(),
 	useWpMediaFrame: jest.fn(),
-} ) );
+}));
 
-const propType = createMockPropType( {
+const propType = createMockPropType({
 	kind: 'object',
 	key: 'image-src',
 	shape: {
-		id: createMockPropType( { kind: 'plain' } ),
-		url: createMockPropType( { kind: 'plain' } ),
+		id: createMockPropType({ kind: 'plain' }),
+		url: createMockPropType({ kind: 'plain' }),
 	},
-} );
+});
 
-describe( 'ImageMediaControl', () => {
-	beforeEach( () => {
-		jest.mocked( useWpMediaAttachment ).mockReturnValue( {} as never );
-	} );
+describe('ImageMediaControl', () => {
+	beforeEach(() => {
+		jest.mocked(useWpMediaAttachment).mockReturnValue({} as never);
+	});
 
-	afterEach( () => {
+	afterEach(() => {
 		jest.resetAllMocks();
-	} );
+	});
 
-	it( 'should display attachment image from WP Media', () => {
+	it('should display attachment image from WP Media', () => {
 		// Arrange.
-		jest.mocked( useWpMediaAttachment ).mockReturnValue( {
+		jest.mocked(useWpMediaAttachment).mockReturnValue({
 			data: {
 				id: 1,
 				url: 'https://localhost/image.png',
 			},
-		} as never );
+		} as never);
 
-		jest.mocked( useWpMediaFrame ).mockReturnValue( { open: jest.fn() } );
+		jest.mocked(useWpMediaFrame).mockReturnValue({ open: jest.fn() });
 
 		const setValue = jest.fn();
 		const value = {
@@ -50,17 +50,17 @@ describe( 'ImageMediaControl', () => {
 		const props = { setValue, value, bind: 'src', propType };
 
 		// Act.
-		renderControl( <ImageMediaControl />, props );
+		renderControl(<ImageMediaControl />, props);
 
-		const control = screen.getByRole( 'img' );
+		const control = screen.getByRole('img');
 
 		// Assert.
-		expect( getComputedStyle( control ).backgroundImage ).toBe( 'url(https://localhost/image.png)' );
-	} );
+		expect(getComputedStyle(control).backgroundImage).toBe('url(https://localhost/image.png)');
+	});
 
-	it( 'should display image from image-url', () => {
+	it('should display image from image-url', () => {
 		// Arrange.
-		jest.mocked( useWpMediaFrame ).mockReturnValue( { open: jest.fn() } );
+		jest.mocked(useWpMediaFrame).mockReturnValue({ open: jest.fn() });
 
 		const setValue = jest.fn();
 		const value = {
@@ -77,49 +77,49 @@ describe( 'ImageMediaControl', () => {
 		const props = { setValue, value, bind: 'src', propType };
 
 		// Act.
-		renderControl( <ImageMediaControl />, props );
+		renderControl(<ImageMediaControl />, props);
 
-		const control = screen.getByRole( 'img' );
+		const control = screen.getByRole('img');
 
 		// Assert.
-		expect( getComputedStyle( control ).backgroundImage ).toBe( 'url(https://localhost/image.png)' );
-	} );
+		expect(getComputedStyle(control).backgroundImage).toBe('url(https://localhost/image.png)');
+	});
 
-	it( 'should open wp media frame in browse mode when clicking on select image', () => {
+	it('should open wp media frame in browse mode when clicking on select image', () => {
 		// Arrange.
 		const open = jest.fn();
-		jest.mocked( useWpMediaFrame ).mockReturnValue( { open } );
+		jest.mocked(useWpMediaFrame).mockReturnValue({ open });
 
 		const setValue = jest.fn();
 
 		const props = { setValue, value: {}, bind: 'src', propType };
 		// Act.
-		renderControl( <ImageMediaControl />, props );
-		const selectImage = screen.getByRole( 'button', { name: 'Select image' } );
+		renderControl(<ImageMediaControl />, props);
+		const selectImage = screen.getByRole('button', { name: 'Select image' });
 
-		fireEvent.click( selectImage );
+		fireEvent.click(selectImage);
 
 		// Assert.
-		expect( open ).toHaveBeenCalledWith( { mode: 'browse' } );
-	} );
+		expect(open).toHaveBeenCalledWith({ mode: 'browse' });
+	});
 
-	it( 'should open wp media frame in upload mode when clicking on upload image', () => {
+	it('should open wp media frame in upload mode when clicking on upload image', () => {
 		// Arrange.
 		const open = jest.fn();
-		jest.mocked( useWpMediaFrame ).mockReturnValue( { open } );
+		jest.mocked(useWpMediaFrame).mockReturnValue({ open });
 
 		const setValue = jest.fn();
 
 		const props = { setValue, value: {}, bind: 'src', propType };
 
 		// Act.
-		renderControl( <ImageMediaControl />, props );
+		renderControl(<ImageMediaControl />, props);
 
-		const uploadImage = screen.getByRole( 'button', { name: 'Upload' } );
+		const uploadImage = screen.getByRole('button', { name: 'Upload' });
 
-		fireEvent.click( uploadImage );
+		fireEvent.click(uploadImage);
 
 		// Assert.
-		expect( open ).toHaveBeenCalledWith( { mode: 'upload' } );
-	} );
-} );
+		expect(open).toHaveBeenCalledWith({ mode: 'upload' });
+	});
+});

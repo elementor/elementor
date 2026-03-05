@@ -41,113 +41,113 @@ type StorageContent = {
 
 const NON_ATOMIC_ELEMENT_ALERT: NotificationData = {
 	type: 'default',
-	message: __( "This widget isn't compatible with components. Use atomic elements instead.", 'elementor' ),
+	message: __("This widget isn't compatible with components. Use atomic elements instead.", 'elementor'),
 	id: 'non-atomic-element-blocked',
 };
 
 export function initNonAtomicNestingPrevention() {
-	blockCommand( {
+	blockCommand({
 		command: 'document/elements/create',
 		condition: blockNonAtomicCreate,
-	} );
+	});
 
-	blockCommand( {
+	blockCommand({
 		command: 'document/elements/move',
 		condition: blockNonAtomicMove,
-	} );
+	});
 
-	blockCommand( {
+	blockCommand({
 		command: 'document/elements/paste',
 		condition: blockNonAtomicPaste,
-	} );
+	});
 }
 
-export function isElementAtomic( elementType: string ): boolean {
-	return getElementType( elementType ) !== null;
+export function isElementAtomic(elementType: string): boolean {
+	return getElementType(elementType) !== null;
 }
 
-function blockNonAtomicCreate( args: CreateArgs ): boolean {
-	if ( ! isEditingComponent() ) {
+function blockNonAtomicCreate(args: CreateArgs): boolean {
+	if (!isEditingComponent()) {
 		return false;
 	}
 
 	const { model } = args;
 	const elementType = model?.widgetType || model?.elType;
 
-	if ( ! elementType ) {
+	if (!elementType) {
 		return false;
 	}
 
-	if ( isElementAtomic( elementType ) ) {
+	if (isElementAtomic(elementType)) {
 		return false;
 	}
 
-	notify( NON_ATOMIC_ELEMENT_ALERT );
+	notify(NON_ATOMIC_ELEMENT_ALERT);
 	return true;
 }
 
-function blockNonAtomicMove( args: MoveArgs ): boolean {
-	if ( ! isEditingComponent() ) {
+function blockNonAtomicMove(args: MoveArgs): boolean {
+	if (!isEditingComponent()) {
 		return false;
 	}
 
-	const { containers = [ args.container ] } = args;
+	const { containers = [args.container] } = args;
 
-	const hasNonAtomicElement = containers.some( ( container ) => {
-		if ( ! container ) {
+	const hasNonAtomicElement = containers.some((container) => {
+		if (!container) {
 			return false;
 		}
 
-		const allElements = getAllDescendants( container );
+		const allElements = getAllDescendants(container);
 
-		return allElements.some( ( element ) => ! isAtomicWidget( element ) );
-	} );
+		return allElements.some((element) => !isAtomicWidget(element));
+	});
 
-	if ( hasNonAtomicElement ) {
-		notify( NON_ATOMIC_ELEMENT_ALERT );
+	if (hasNonAtomicElement) {
+		notify(NON_ATOMIC_ELEMENT_ALERT);
 	}
 
 	return hasNonAtomicElement;
 }
 
-function blockNonAtomicPaste( args: PasteArgs ): boolean {
-	if ( ! isEditingComponent() ) {
+function blockNonAtomicPaste(args: PasteArgs): boolean {
+	if (!isEditingComponent()) {
 		return false;
 	}
 
 	const { storageType } = args;
 
-	if ( storageType !== 'localstorage' ) {
+	if (storageType !== 'localstorage') {
 		return false;
 	}
 
 	const data = (
 		window as unknown as ExtendedWindow & { elementorCommon?: { storage?: { get: () => StorageContent } } }
-	 )?.elementorCommon?.storage?.get();
+	)?.elementorCommon?.storage?.get();
 
-	if ( ! data?.clipboard?.elements ) {
+	if (!data?.clipboard?.elements) {
 		return false;
 	}
 
-	const hasNonAtomicElement = hasNonAtomicElementsInTree( data.clipboard.elements );
+	const hasNonAtomicElement = hasNonAtomicElementsInTree(data.clipboard.elements);
 
-	if ( hasNonAtomicElement ) {
-		notify( NON_ATOMIC_ELEMENT_ALERT );
+	if (hasNonAtomicElement) {
+		notify(NON_ATOMIC_ELEMENT_ALERT);
 	}
 
 	return hasNonAtomicElement;
 }
 
-export function hasNonAtomicElementsInTree( elements: ClipboardElement[] ): boolean {
-	for ( const element of elements ) {
+export function hasNonAtomicElementsInTree(elements: ClipboardElement[]): boolean {
+	for (const element of elements) {
 		const elementType = element.widgetType || element.elType;
 
-		if ( elementType && ! isElementAtomic( elementType ) ) {
+		if (elementType && !isElementAtomic(elementType)) {
 			return true;
 		}
 
-		if ( element.elements?.length ) {
-			if ( hasNonAtomicElementsInTree( element.elements ) ) {
+		if (element.elements?.length) {
+			if (hasNonAtomicElementsInTree(element.elements)) {
 				return true;
 			}
 		}
@@ -156,22 +156,22 @@ export function hasNonAtomicElementsInTree( elements: ClipboardElement[] ): bool
 	return false;
 }
 
-export function findNonAtomicElements( elements: ClipboardElement[] ): string[] {
+export function findNonAtomicElements(elements: ClipboardElement[]): string[] {
 	const nonAtomicElements: string[] = [];
 
-	for ( const element of elements ) {
+	for (const element of elements) {
 		const elementType = element.widgetType || element.elType;
 
-		if ( elementType && ! isElementAtomic( elementType ) ) {
-			nonAtomicElements.push( elementType );
+		if (elementType && !isElementAtomic(elementType)) {
+			nonAtomicElements.push(elementType);
 		}
 
-		if ( element.elements?.length ) {
-			nonAtomicElements.push( ...findNonAtomicElements( element.elements ) );
+		if (element.elements?.length) {
+			nonAtomicElements.push(...findNonAtomicElements(element.elements));
 		}
 	}
 
-	return [ ...new Set( nonAtomicElements ) ];
+	return [...new Set(nonAtomicElements)];
 }
 
 type V1ElementLike = {
@@ -180,19 +180,19 @@ type V1ElementLike = {
 	elements?: V1ElementLike[];
 };
 
-export function findNonAtomicElementsInElement( element: V1ElementLike ): string[] {
+export function findNonAtomicElementsInElement(element: V1ElementLike): string[] {
 	const nonAtomicElements: string[] = [];
 	const elementType = element.widgetType || element.elType;
 
-	if ( elementType && ! isElementAtomic( elementType ) ) {
-		nonAtomicElements.push( elementType );
+	if (elementType && !isElementAtomic(elementType)) {
+		nonAtomicElements.push(elementType);
 	}
 
-	if ( element.elements?.length ) {
-		for ( const child of element.elements ) {
-			nonAtomicElements.push( ...findNonAtomicElementsInElement( child ) );
+	if (element.elements?.length) {
+		for (const child of element.elements) {
+			nonAtomicElements.push(...findNonAtomicElementsInElement(child));
 		}
 	}
 
-	return [ ...new Set( nonAtomicElements ) ];
+	return [...new Set(nonAtomicElements)];
 }

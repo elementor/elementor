@@ -5,9 +5,9 @@ const EXPERIMENT_KEY = 'global_classes_should_enforce_capabilities';
 export const UPDATE_CLASS_CAPABILITY_KEY = 'elementor_global_classes_update_class';
 
 export const getCapabilities = (): UserCapabilities | undefined => {
-	const shouldEnforceCapabilities = isExperimentActive( EXPERIMENT_KEY );
+	const shouldEnforceCapabilities = isExperimentActive(EXPERIMENT_KEY);
 
-	if ( shouldEnforceCapabilities ) {
+	if (shouldEnforceCapabilities) {
 		return {
 			update: UPDATE_CLASS_CAPABILITY_KEY,
 			create: UPDATE_CLASS_CAPABILITY_KEY,

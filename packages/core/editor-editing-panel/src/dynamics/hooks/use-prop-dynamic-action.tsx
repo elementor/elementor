@@ -10,12 +10,12 @@ import { supportsDynamic } from '../utils';
 export const usePropDynamicAction = (): PopoverActionProps => {
 	const { propType } = useBoundProp();
 
-	const visible = !! propType && supportsDynamic( propType );
+	const visible = !!propType && supportsDynamic(propType);
 
 	return {
 		visible,
 		icon: DatabaseIcon,
-		title: __( 'Dynamic tags', 'elementor' ),
-		content: ( { close } ) => <DynamicSelection close={ close } />,
+		title: __('Dynamic tags', 'elementor'),
+		content: ({ close }) => <DynamicSelection close={close} />,
 	};
 };

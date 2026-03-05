@@ -1,8 +1,8 @@
 import { buildOperationsArray } from '../batch-operations';
 import { type TVariablesList } from '../storage';
 
-describe( 'batch-operations', () => {
-	const createMockVariables = (): TVariablesList => ( {
+describe('batch-operations', () => {
+	const createMockVariables = (): TVariablesList => ({
 		'e-gv-1': {
 			type: 'color',
 			label: 'Primary',
@@ -19,25 +19,25 @@ describe( 'batch-operations', () => {
 			value: '#0000FF',
 			deleted: true,
 		},
-	} );
+	});
 
-	describe( 'buildOperationsArray', () => {
+	describe('buildOperationsArray', () => {
 		let originalVariables: TVariablesList;
 
-		beforeEach( () => {
+		beforeEach(() => {
 			originalVariables = createMockVariables();
-		} );
+		});
 
-		it( 'should detect all CRUD operations correctly', () => {
+		it('should detect all CRUD operations correctly', () => {
 			// Arrange.
 			const currentVariables: TVariablesList = {
 				'e-gv-1': {
-					...originalVariables[ 'e-gv-1' ],
+					...originalVariables['e-gv-1'],
 					label: 'Updated Primary',
 					value: '#FF00FF',
 				},
 				'e-gv-2': {
-					...originalVariables[ 'e-gv-2' ],
+					...originalVariables['e-gv-2'],
 					deleted: true,
 				},
 				'e-gv-3': {
@@ -53,16 +53,16 @@ describe( 'batch-operations', () => {
 			};
 
 			// Act.
-			const operations = buildOperationsArray( originalVariables, currentVariables, [ 'e-gv-2' ] );
+			const operations = buildOperationsArray(originalVariables, currentVariables, ['e-gv-2']);
 
 			// Assert.
-			const createOps = operations.filter( ( op ) => op.type === 'create' );
-			const updateOps = operations.filter( ( op ) => op.type === 'update' );
-			const deleteOps = operations.filter( ( op ) => op.type === 'delete' );
-			const restoreOps = operations.filter( ( op ) => op.type === 'restore' );
+			const createOps = operations.filter((op) => op.type === 'create');
+			const updateOps = operations.filter((op) => op.type === 'update');
+			const deleteOps = operations.filter((op) => op.type === 'delete');
+			const restoreOps = operations.filter((op) => op.type === 'restore');
 
-			expect( createOps ).toHaveLength( 1 );
-			expect( createOps[ 0 ] ).toEqual( {
+			expect(createOps).toHaveLength(1);
+			expect(createOps[0]).toEqual({
 				type: 'create',
 				variable: {
 					id: 'tmp-123',
@@ -70,33 +70,33 @@ describe( 'batch-operations', () => {
 					label: 'New Color',
 					value: '#FFFF00',
 				},
-			} );
+			});
 
-			expect( updateOps ).toHaveLength( 1 );
-			expect( updateOps[ 0 ] ).toEqual( {
+			expect(updateOps).toHaveLength(1);
+			expect(updateOps[0]).toEqual({
 				type: 'update',
 				id: 'e-gv-1',
 				variable: {
 					label: 'Updated Primary',
 					value: '#FF00FF',
 				},
-			} );
+			});
 
-			expect( deleteOps ).toHaveLength( 1 );
-			expect( deleteOps[ 0 ] ).toEqual( {
+			expect(deleteOps).toHaveLength(1);
+			expect(deleteOps[0]).toEqual({
 				type: 'delete',
 				id: 'e-gv-2',
-			} );
+			});
 
-			expect( restoreOps ).toHaveLength( 1 );
-			expect( restoreOps[ 0 ] ).toEqual( {
+			expect(restoreOps).toHaveLength(1);
+			expect(restoreOps[0]).toEqual({
 				type: 'restore',
 				id: 'e-gv-3',
 				label: 'Restored Color',
-			} );
-		} );
+			});
+		});
 
-		it( 'should not send delete operations for new temporary variables', () => {
+		it('should not send delete operations for new temporary variables', () => {
 			// Arrange.
 			const currentVariables: TVariablesList = {
 				...originalVariables,
@@ -109,16 +109,16 @@ describe( 'batch-operations', () => {
 			};
 
 			// Act.
-			const operations = buildOperationsArray( originalVariables, currentVariables, [] );
-			const deleteOps = operations.filter( ( op ) => op.type === 'delete' );
+			const operations = buildOperationsArray(originalVariables, currentVariables, []);
+			const deleteOps = operations.filter((op) => op.type === 'delete');
 
 			// Assert.
-			expect( deleteOps ).toHaveLength( 0 );
-		} );
-	} );
+			expect(deleteOps).toHaveLength(0);
+		});
+	});
 
-	describe( 'API utilities', () => {
-		it( 'should create batch payload with watermark and operations', () => {
+	describe('API utilities', () => {
+		it('should create batch payload with watermark and operations', () => {
 			// Arrange.
 			const operations = [
 				{
@@ -136,10 +136,10 @@ describe( 'batch-operations', () => {
 			const payload = { operations, watermark: 9989 };
 
 			// Assert.
-			expect( payload ).toEqual( {
+			expect(payload).toEqual({
 				watermark: 9989,
 				operations,
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

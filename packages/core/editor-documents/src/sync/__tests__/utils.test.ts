@@ -9,11 +9,11 @@ import { getV1DocumentsManager } from '../utils';
  *
  * @see https://github.com/testing-library/react-testing-library/issues/624
  */
-describe( '@elementor/editor-documents - Sync Utils', () => {
-	it( 'should throw when V1 documents manager is not available', () => {
+describe('@elementor/editor-documents - Sync Utils', () => {
+	it('should throw when V1 documents manager is not available', () => {
 		// Act & Assert.
-		expect( () => {
+		expect(() => {
 			getV1DocumentsManager();
-		} ).toThrow( 'Elementor Editor V1 documents manager not found' );
-	} );
-} );
+		}).toThrow('Elementor Editor V1 documents manager not found');
+	});
+});

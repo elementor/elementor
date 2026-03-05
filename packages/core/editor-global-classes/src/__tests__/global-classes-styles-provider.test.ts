@@ -9,15 +9,15 @@ import { GlobalClassNotFoundError } from '../errors';
 import { globalClassesStylesProvider } from '../global-classes-styles-provider';
 import { type GlobalClasses, slice } from '../store';
 
-describe( 'globalClassesStylesProvider', () => {
-	beforeEach( () => {
-		registerSlice( slice );
+describe('globalClassesStylesProvider', () => {
+	beforeEach(() => {
+		registerSlice(slice);
 		createStore();
-	} );
+	});
 
-	it( 'should retrieve all global classes', () => {
+	it('should retrieve all global classes', () => {
 		// Arrange.
-		const items: Record< string, StyleDefinition > = {
+		const items: Record<string, StyleDefinition> = {
 			'style-1': {
 				id: 'style-1',
 				label: 'Style 1',
@@ -34,26 +34,26 @@ describe( 'globalClassesStylesProvider', () => {
 
 		const data = {
 			items,
-			order: [ 'style-1', 'style-2' ],
+			order: ['style-1', 'style-2'],
 		};
 
 		dispatch(
-			slice.actions.load( {
+			slice.actions.load({
 				preview: data,
 				frontend: data,
-			} )
+			})
 		);
 
 		// Act.
 		const globalClasses = globalClassesStylesProvider.actions.all();
 
 		// Assert.
-		expect( globalClasses ).toStrictEqual( Object.values( items ) );
-	} );
+		expect(globalClasses).toStrictEqual(Object.values(items));
+	});
 
-	it( 'should retrieve a global class by id', () => {
+	it('should retrieve a global class by id', () => {
 		// Arrange.
-		const items: Record< string, StyleDefinition > = {
+		const items: Record<string, StyleDefinition> = {
 			'style-1': {
 				id: 'style-1',
 				label: 'Style 1',
@@ -70,24 +70,24 @@ describe( 'globalClassesStylesProvider', () => {
 
 		const data = {
 			items,
-			order: [ 'style-1', 'style-2' ],
+			order: ['style-1', 'style-2'],
 		};
 
 		dispatch(
-			slice.actions.load( {
+			slice.actions.load({
 				preview: data,
 				frontend: data,
-			} )
+			})
 		);
 
 		// Act.
-		const globalClass = globalClassesStylesProvider.actions.get( 'style-1' );
+		const globalClass = globalClassesStylesProvider.actions.get('style-1');
 
 		// Assert.
-		expect( globalClass ).toStrictEqual( items[ 'style-1' ] );
-	} );
+		expect(globalClass).toStrictEqual(items['style-1']);
+	});
 
-	it( 'should create a new global class with the highest priority', () => {
+	it('should create a new global class with the highest priority', () => {
 		// Arrange.
 		const existingClass: StyleDefinition = {
 			id: 'g-123',
@@ -98,27 +98,27 @@ describe( 'globalClassesStylesProvider', () => {
 
 		const data = {
 			items: {
-				[ existingClass.id ]: existingClass,
+				[existingClass.id]: existingClass,
 			},
-			order: [ existingClass.id ],
+			order: [existingClass.id],
 		};
 
 		dispatch(
-			slice.actions.load( {
+			slice.actions.load({
 				preview: data,
 				frontend: data,
-			} )
+			})
 		);
 
 		// Act.
-		const createdId = globalClassesStylesProvider.actions?.create?.( 'Test label' );
+		const createdId = globalClassesStylesProvider.actions?.create?.('Test label');
 
 		// Assert.
 		const globalClasses = globalClassesStylesProvider.actions.all();
 
-		expect( createdId ).toMatch( /^g-[a-z0-9]{7}$/ );
+		expect(createdId).toMatch(/^g-[a-z0-9]{7}$/);
 
-		expect( globalClasses ).toStrictEqual( [
+		expect(globalClasses).toStrictEqual([
 			{
 				id: createdId,
 				type: 'class',
@@ -126,10 +126,10 @@ describe( 'globalClassesStylesProvider', () => {
 				variants: [],
 			},
 			existingClass,
-		] );
-	} );
+		]);
+	});
 
-	it( 'should throw when trying to update a non-existing global class', () => {
+	it('should throw when trying to update a non-existing global class', () => {
 		// Arrange.
 		const data: GlobalClasses = {
 			items: {
@@ -144,22 +144,21 @@ describe( 'globalClassesStylesProvider', () => {
 		};
 
 		dispatch(
-			slice.actions.load( {
+			slice.actions.load({
 				preview: data,
 				frontend: data,
-			} )
+			})
 		);
 
 		// Act & Assert.
-		expect(
-			() =>
-				globalClassesStylesProvider.actions?.updateProps?.( {
-					id: 'non-existing-id',
-					meta: { state: null, breakpoint: null },
-					props: {
-						prop: 'value',
-					},
-				} )
-		).toThrow( new GlobalClassNotFoundError() );
-	} );
-} );
+		expect(() =>
+			globalClassesStylesProvider.actions?.updateProps?.({
+				id: 'non-existing-id',
+				meta: { state: null, breakpoint: null },
+				props: {
+					prop: 'value',
+				},
+			})
+		).toThrow(new GlobalClassNotFoundError());
+	});
+});

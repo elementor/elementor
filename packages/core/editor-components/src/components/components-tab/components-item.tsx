@@ -7,7 +7,7 @@ import { Box, ListItemButton, ListItemIcon, styled, type Theme, Typography } fro
 import { type Component } from '../../types';
 
 export type ComponentItemProps = {
-	component: Omit< Component, 'id' > & { id?: number };
+	component: Omit<Component, 'id'> & { id?: number };
 	disabled?: boolean;
 	draggable?: boolean;
 	onDragStart?: React.DragEventHandler;
@@ -19,7 +19,7 @@ export type ComponentItemProps = {
 	endSlot?: React.ReactNode;
 };
 
-export const ComponentItem = forwardRef< HTMLElement, ComponentItemProps >(
+export const ComponentItem = forwardRef<HTMLElement, ComponentItemProps>(
 	(
 		{
 			component,
@@ -38,13 +38,13 @@ export const ComponentItem = forwardRef< HTMLElement, ComponentItemProps >(
 	) => {
 		return (
 			<ListItemButton
-				disabled={ disabled }
-				draggable={ draggable }
-				onDragStart={ onDragStart }
-				onDragEnd={ onDragEnd }
+				disabled={disabled}
+				draggable={draggable}
+				onDragStart={onDragStart}
+				onDragEnd={onDragEnd}
 				shape="rounded"
-				ref={ ref }
-				sx={ {
+				ref={ref}
+				sx={{
 					border: 'solid 1px',
 					borderColor: 'divider',
 					py: 0.5,
@@ -53,54 +53,54 @@ export const ComponentItem = forwardRef< HTMLElement, ComponentItemProps >(
 					width: '100%',
 					alignItems: 'center',
 					gap: 1,
-				} }
-				{ ...props }
+				}}
+				{...props}
 			>
-				<Box display="flex" alignItems="center" gap={ 1 } minWidth={ 0 } flexGrow={ 1 } onClick={ onClick }>
+				<Box display="flex" alignItems="center" gap={1} minWidth={0} flexGrow={1} onClick={onClick}>
 					<ListItemIcon size="tiny">
 						<ComponentsIcon fontSize="tiny" />
 					</ListItemIcon>
-					<Indicator isActive={ isEditing } isError={ !! error }>
-						<Box display="flex" flex={ 1 } minWidth={ 0 } flexGrow={ 1 }>
-							{ nameSlot ?? <ComponentName name={ component.name } /> }
+					<Indicator isActive={isEditing} isError={!!error}>
+						<Box display="flex" flex={1} minWidth={0} flexGrow={1}>
+							{nameSlot ?? <ComponentName name={component.name} />}
 						</Box>
 					</Indicator>
 				</Box>
-				{ endSlot }
+				{endSlot}
 			</ListItemButton>
 		);
 	}
 );
 
-const Indicator = styled( Box, {
-	shouldForwardProp: ( prop ) => prop !== 'isActive' && prop !== 'isError',
-} )( ( { theme, isActive, isError }: { theme: Theme; isActive: boolean; isError: boolean } ) => ( {
+const Indicator = styled(Box, {
+	shouldForwardProp: (prop) => prop !== 'isActive' && prop !== 'isError',
+})(({ theme, isActive, isError }: { theme: Theme; isActive: boolean; isError: boolean }) => ({
 	display: 'flex',
 	width: '100%',
 	flexGrow: 1,
-	borderRadius: theme.spacing( 0.5 ),
-	border: getIndicatorBorder( { isActive, isError, theme } ),
-	padding: `0 ${ theme.spacing( 1 ) }`,
-	marginLeft: isActive ? theme.spacing( 1 ) : 0,
+	borderRadius: theme.spacing(0.5),
+	border: getIndicatorBorder({ isActive, isError, theme }),
+	padding: `0 ${theme.spacing(1)}`,
+	marginLeft: isActive ? theme.spacing(1) : 0,
 	minWidth: 0,
-} ) );
+}));
 
-const getIndicatorBorder = ( { isActive, isError, theme }: { isActive: boolean; isError: boolean; theme: Theme } ) => {
-	if ( isError ) {
-		return `2px solid ${ theme.palette.error.main }`;
+const getIndicatorBorder = ({ isActive, isError, theme }: { isActive: boolean; isError: boolean; theme: Theme }) => {
+	if (isError) {
+		return `2px solid ${theme.palette.error.main}`;
 	}
 
-	if ( isActive ) {
-		return `2px solid ${ theme.palette.secondary.main }`;
+	if (isActive) {
+		return `2px solid ${theme.palette.secondary.main}`;
 	}
 
 	return 'none';
 };
 
 type EditableConfig = {
-	ref: React.Ref< HTMLElement >;
+	ref: React.Ref<HTMLElement>;
 	isEditing: boolean;
-	getProps: () => Record< string, unknown >;
+	getProps: () => Record<string, unknown>;
 };
 
 export type ComponentNameProps = {
@@ -108,10 +108,10 @@ export type ComponentNameProps = {
 	editable?: EditableConfig;
 };
 
-export function ComponentName( { name, editable }: ComponentNameProps ) {
-	if ( editable?.isEditing ) {
-		return <EditableField ref={ editable.ref } as={ Typography } variant="caption" { ...editable.getProps() } />;
+export function ComponentName({ name, editable }: ComponentNameProps) {
+	if (editable?.isEditing) {
+		return <EditableField ref={editable.ref} as={Typography} variant="caption" {...editable.getProps()} />;
 	}
 
-	return <EllipsisWithTooltip title={ name } as={ Typography } variant="caption" color="text.primary" />;
+	return <EllipsisWithTooltip title={name} as={Typography} variant="caption" color="text.primary" />;
 }

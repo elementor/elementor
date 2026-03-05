@@ -1,5 +1,5 @@
 export function createNoticeView() {
-	return window.Marionette?.CompositeView.extend( {
+	return window.Marionette?.CompositeView.extend({
 		template: `<div></div>`,
-	} );
+	});
 }

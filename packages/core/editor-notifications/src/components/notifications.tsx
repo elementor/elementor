@@ -12,32 +12,32 @@ import { type NotificationData, type Notifications } from '../types';
 // 8 seconds
 const AUTO_HIDE_DURATION = 8000;
 
-const DefaultCustomSnackbar = forwardRef( ( props: SnackbarProps, ref ) => {
-	const filteredProps = getFilteredSnackbarProps( props );
+const DefaultCustomSnackbar = forwardRef((props: SnackbarProps, ref) => {
+	const filteredProps = getFilteredSnackbarProps(props);
 	const panelWidth = getEditingPanelWidth();
 
 	return (
 		<ThemeProvider palette="unstable">
 			<SnackbarContent
-				ref={ ref }
-				{ ...filteredProps }
-				sx={ {
+				ref={ref}
+				{...filteredProps}
+				sx={{
 					'&.MuiPaper-root': { minWidth: 'max-content' },
 					ml: panelWidth + 'px',
-				} }
+				}}
 			/>
 		</ThemeProvider>
 	);
-} );
+});
 
 const muiToEuiMapper = {
 	default: DefaultCustomSnackbar,
 };
 
 const Handler = () => {
-	const notifications = useSelector( ( state: { notifications: Notifications } ) => state.notifications );
+	const notifications = useSelector((state: { notifications: Notifications }) => state.notifications);
 
-	useEnqueueNotification( notifications );
+	useEnqueueNotification(notifications);
 
 	return null;
 };
@@ -45,10 +45,10 @@ const Handler = () => {
 const Wrapper = () => {
 	return (
 		<SnackbarProvider
-			maxSnack={ 3 }
-			autoHideDuration={ AUTO_HIDE_DURATION }
-			anchorOrigin={ { horizontal: 'center', vertical: 'bottom' } }
-			Components={ muiToEuiMapper }
+			maxSnack={3}
+			autoHideDuration={AUTO_HIDE_DURATION}
+			anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
+			Components={muiToEuiMapper}
 		>
 			<Handler />
 		</SnackbarProvider>
@@ -59,33 +59,33 @@ const Wrapper = () => {
  * This function can be used to trigger notifications from anywhere in the code.
  * even if you're running in a JS environment as opposed to a React environment.
  */
-export function notify( notification: NotificationData ) {
+export function notify(notification: NotificationData) {
 	const store = getStore();
 
-	store?.dispatch( notifyAction( notification ) );
+	store?.dispatch(notifyAction(notification));
 }
 
 /*
  * This function can be used to trigger notifications from within a React component.
  * This is the preferred way to trigger notifications.
  */
-export function NotifyReact( notification: NotificationData ) {
+export function NotifyReact(notification: NotificationData) {
 	const dispatch = useDispatch();
-	dispatch( notifyAction( notification ) );
+	dispatch(notifyAction(notification));
 }
 
-function getFilteredSnackbarProps( props: SnackbarProps ) {
-	const forbiddenProps = [ 'autoHideDuration', 'persist', 'hideIconVariant', 'iconVariant', 'anchorOrigin' ];
+function getFilteredSnackbarProps(props: SnackbarProps) {
+	const forbiddenProps = ['autoHideDuration', 'persist', 'hideIconVariant', 'iconVariant', 'anchorOrigin'];
 
-	return Object.entries( props ).reduce(
-		( filteredProps, [ key, value ] ) => {
-			if ( ! forbiddenProps.includes( key ) ) {
-				filteredProps[ key ] = value;
+	return Object.entries(props).reduce(
+		(filteredProps, [key, value]) => {
+			if (!forbiddenProps.includes(key)) {
+				filteredProps[key] = value;
 			}
 
 			return filteredProps;
 		},
-		{} as Record< string, unknown >
+		{} as Record<string, unknown>
 	);
 }
 

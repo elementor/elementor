@@ -8,10 +8,10 @@ import { type OverridableProp, type PublishedComponent } from '../../types';
 import { getOverridableProp } from '../../utils/get-overridable-prop';
 import { extractInnerOverrideInfo } from '../../utils/overridable-props-utils';
 
-export function useResolvedOriginValue( override: ComponentInstanceOverride | null, overridableProp: OverridableProp ) {
-	const components = useSelector( selectData );
+export function useResolvedOriginValue(override: ComponentInstanceOverride | null, overridableProp: OverridableProp) {
+	const components = useSelector(selectData);
 
-	return resolveOriginValue( components, override, overridableProp );
+	return resolveOriginValue(components, override, overridableProp);
 }
 
 function resolveOriginValue(
@@ -21,55 +21,55 @@ function resolveOriginValue(
 ): PropValue {
 	const { originValue: fallbackOriginValue, originPropFields } = overridableProp;
 
-	if ( hasValue( fallbackOriginValue ) ) {
+	if (hasValue(fallbackOriginValue)) {
 		return fallbackOriginValue;
 	}
 
-	if ( matchingOverride ) {
-		const result = getOriginFromOverride( components, matchingOverride );
+	if (matchingOverride) {
+		const result = getOriginFromOverride(components, matchingOverride);
 
-		if ( hasValue( result ) ) {
+		if (hasValue(result)) {
 			return result;
 		}
 	}
 
 	const { elementId, propKey } = originPropFields ?? {};
 
-	if ( elementId && propKey ) {
-		return findOriginValueByElementId( components, elementId, propKey );
+	if (elementId && propKey) {
+		return findOriginValueByElementId(components, elementId, propKey);
 	}
 
 	return null;
 }
 
-function getOriginFromOverride( components: PublishedComponent[], override: ComponentInstanceOverride ): PropValue {
-	const innerOverrideInfo = extractInnerOverrideInfo( override );
+function getOriginFromOverride(components: PublishedComponent[], override: ComponentInstanceOverride): PropValue {
+	const innerOverrideInfo = extractInnerOverrideInfo(override);
 
-	if ( ! innerOverrideInfo ) {
+	if (!innerOverrideInfo) {
 		return null;
 	}
 
 	const { componentId, innerOverrideKey, overrideValue } = innerOverrideInfo;
 
-	const prop = getOverridableProp( { componentId, overrideKey: innerOverrideKey } );
+	const prop = getOverridableProp({ componentId, overrideKey: innerOverrideKey });
 
-	if ( hasValue( prop?.originValue ) ) {
+	if (hasValue(prop?.originValue)) {
 		return prop.originValue;
 	}
 
-	if ( prop?.originPropFields?.elementId ) {
+	if (prop?.originPropFields?.elementId) {
 		const targetPropKey = prop.originPropFields.propKey ?? prop.propKey;
-		const result = findOriginValueByElementId( components, prop.originPropFields.elementId, targetPropKey );
+		const result = findOriginValueByElementId(components, prop.originPropFields.elementId, targetPropKey);
 
-		if ( hasValue( result ) ) {
+		if (hasValue(result)) {
 			return result;
 		}
 	}
 
-	const nestedOverridable = componentOverridablePropTypeUtil.extract( overrideValue );
+	const nestedOverridable = componentOverridablePropTypeUtil.extract(overrideValue);
 
-	if ( nestedOverridable ) {
-		return getOriginFromOverride( components, componentOverridablePropTypeUtil.create( nestedOverridable ) );
+	if (nestedOverridable) {
+		return getOriginFromOverride(components, componentOverridablePropTypeUtil.create(nestedOverridable));
 	}
 
 	return null;
@@ -79,27 +79,27 @@ function findOriginValueByElementId(
 	components: PublishedComponent[],
 	targetElementId: string,
 	targetPropKey: string,
-	visited: Set< number > = new Set()
+	visited: Set<number> = new Set()
 ): PropValue {
-	for ( const component of components ) {
-		if ( visited.has( component.id ) ) {
+	for (const component of components) {
+		if (visited.has(component.id)) {
 			continue;
 		}
-		visited.add( component.id );
+		visited.add(component.id);
 
-		const matchingProp = Object.values( component.overridableProps?.props ?? {} ).find(
-			( { elementId, propKey } ) => elementId === targetElementId && propKey === targetPropKey
+		const matchingProp = Object.values(component.overridableProps?.props ?? {}).find(
+			({ elementId, propKey }) => elementId === targetElementId && propKey === targetPropKey
 		);
 
-		if ( ! matchingProp ) {
+		if (!matchingProp) {
 			continue;
 		}
 
-		if ( hasValue( matchingProp.originValue ) ) {
+		if (hasValue(matchingProp.originValue)) {
 			return matchingProp.originValue;
 		}
 
-		if ( matchingProp.originPropFields?.elementId ) {
+		if (matchingProp.originPropFields?.elementId) {
 			const innerPropKey = matchingProp.originPropFields.propKey ?? targetPropKey;
 
 			return findOriginValueByElementId(
@@ -114,6 +114,6 @@ function findOriginValueByElementId(
 	return null;
 }
 
-function hasValue< T >( value: T | null | undefined ): value is T {
+function hasValue<T>(value: T | null | undefined): value is T {
 	return value !== null && value !== undefined;
 }

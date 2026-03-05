@@ -12,25 +12,25 @@ export function InteractionsRenderer() {
 	const container = usePortalContainer();
 	const interactionItems = useInteractionsItems();
 
-	if ( ! container ) {
+	if (!container) {
 		return null;
 	}
 
-	const interactionsData = JSON.stringify( Array.isArray( interactionItems ) ? interactionItems : [] );
+	const interactionsData = JSON.stringify(Array.isArray(interactionItems) ? interactionItems : []);
 
 	return (
-		<Portal container={ container }>
+		<Portal container={container}>
 			<script
 				type="application/json"
 				data-e-interactions="true"
-				dangerouslySetInnerHTML={ {
+				dangerouslySetInnerHTML={{
 					__html: interactionsData,
-				} }
+				}}
 			/>
 		</Portal>
 	);
 }
 
 function usePortalContainer() {
-	return useListenTo( commandEndEvent( 'editor/documents/attach-preview' ), () => getCanvasIframeDocument()?.head );
+	return useListenTo(commandEndEvent('editor/documents/attach-preview'), () => getCanvasIframeDocument()?.head);
 }

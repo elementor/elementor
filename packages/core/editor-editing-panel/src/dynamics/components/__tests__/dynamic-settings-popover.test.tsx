@@ -8,12 +8,12 @@ import { useDynamicTag } from '../../hooks/use-dynamic-tag';
 import { type DynamicTag } from '../../types';
 import { DynamicSettingsPopover } from '../dynamic-selection-control';
 
-jest.mock( '@elementor/editor-controls', () => ( {
-	...jest.requireActual( '@elementor/editor-controls' ),
+jest.mock('@elementor/editor-controls', () => ({
+	...jest.requireActual('@elementor/editor-controls'),
 	useBoundProp: jest.fn(),
-} ) );
+}));
 
-jest.mock( '../../hooks/use-dynamic-tag' );
+jest.mock('../../hooks/use-dynamic-tag');
 
 const elementProviderProps = {
 	element: { type: 'element', id: '1' },
@@ -25,39 +25,39 @@ const elementProviderProps = {
 	},
 };
 
-describe( '<DynamicSettingsPopover />', () => {
-	beforeEach( () => {
-		jest.mocked( useBoundProp ).mockReturnValue( {
+describe('<DynamicSettingsPopover />', () => {
+	beforeEach(() => {
+		jest.mocked(useBoundProp).mockReturnValue({
 			value: '',
 			setValue: jest.fn(),
 			bind: '',
-			propType: createMockPropType( { kind: 'object' } ),
+			propType: createMockPropType({ kind: 'object' }),
 			path: [],
 			restoreValue: jest.fn(),
 			resetValue: jest.fn(),
-		} );
-	} );
+		});
+	});
 
-	afterEach( () => {
+	afterEach(() => {
 		jest.clearAllMocks();
-	} );
+	});
 
-	it( 'should not render settings popover button if the dynamic tag does not have controls', () => {
+	it('should not render settings popover button if the dynamic tag does not have controls', () => {
 		// Arrange.
-		const dynamicTag = mockDynamicTag( {
+		const dynamicTag = mockDynamicTag({
 			atomic_controls: [],
-		} );
+		});
 
 		// Act.
-		renderWithTheme( <DynamicSettingsPopover dynamicTag={ dynamicTag } /> );
+		renderWithTheme(<DynamicSettingsPopover dynamicTag={dynamicTag} />);
 
 		// Assert.
-		expect( screen.queryByRole( 'button', { name: 'Dynamic settings' } ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.queryByRole('button', { name: 'Dynamic settings' })).not.toBeInTheDocument();
+	});
 
-	it( 'should render settings popover button if the dynamic tag has controls', () => {
+	it('should render settings popover button if the dynamic tag has controls', () => {
 		// Arrange.
-		const dynamicTag = mockDynamicTag( {
+		const dynamicTag = mockDynamicTag({
 			atomic_controls: [
 				{
 					type: 'section',
@@ -76,18 +76,18 @@ describe( '<DynamicSettingsPopover />', () => {
 					},
 				},
 			],
-		} );
+		});
 
 		// Act.
-		renderWithTheme( <DynamicSettingsPopover dynamicTag={ dynamicTag } /> );
+		renderWithTheme(<DynamicSettingsPopover dynamicTag={dynamicTag} />);
 
 		// Assert.
-		expect( screen.getByRole( 'button', { name: 'Dynamic settings' } ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByRole('button', { name: 'Dynamic settings' })).toBeInTheDocument();
+	});
 
-	it( 'should open the settings popover when the settings button is clicked, and show its tabs and controls', () => {
+	it('should open the settings popover when the settings button is clicked, and show its tabs and controls', () => {
 		// Arrange.
-		const dynamicTag = mockDynamicTag( {
+		const dynamicTag = mockDynamicTag({
 			atomic_controls: [
 				{
 					type: 'section',
@@ -124,30 +124,30 @@ describe( '<DynamicSettingsPopover />', () => {
 					},
 				},
 			],
-		} );
+		});
 
 		// Act.
 		renderWithTheme(
-			<ElementProvider { ...elementProviderProps } settings={ {} }>
-				<DynamicSettingsPopover dynamicTag={ dynamicTag } />
+			<ElementProvider {...elementProviderProps} settings={{}}>
+				<DynamicSettingsPopover dynamicTag={dynamicTag} />
 			</ElementProvider>
 		);
-		fireEvent.click( screen.getByRole( 'button', { name: 'Dynamic settings' } ) );
+		fireEvent.click(screen.getByRole('button', { name: 'Dynamic settings' }));
 
 		// Assert.
-		expect( screen.getByText( 'Advanced' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Before' ) ).toBeInTheDocument();
+		expect(screen.getByText('Advanced')).toBeInTheDocument();
+		expect(screen.getByText('Before')).toBeInTheDocument();
 
 		// Act.
-		fireEvent.click( screen.getByText( 'Settings' ) ); // Move to second tab.
+		fireEvent.click(screen.getByText('Settings')); // Move to second tab.
 
 		// Assert.
-		expect( screen.getByText( 'After' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('After')).toBeInTheDocument();
+	});
 
-	it( 'should not render top-level non-section controls', () => {
+	it('should not render top-level non-section controls', () => {
 		// Arrange.
-		const dynamicTag = mockDynamicTag( {
+		const dynamicTag = mockDynamicTag({
 			atomic_controls: [
 				{
 					type: 'control',
@@ -176,25 +176,25 @@ describe( '<DynamicSettingsPopover />', () => {
 					},
 				},
 			],
-		} );
+		});
 
 		// Act.
 		renderWithTheme(
-			<ElementProvider { ...elementProviderProps } settings={ {} }>
-				<DynamicSettingsPopover dynamicTag={ dynamicTag } />
+			<ElementProvider {...elementProviderProps} settings={{}}>
+				<DynamicSettingsPopover dynamicTag={dynamicTag} />
 			</ElementProvider>
 		);
-		fireEvent.click( screen.getByRole( 'button', { name: 'Dynamic settings' } ) );
+		fireEvent.click(screen.getByRole('button', { name: 'Dynamic settings' }));
 
 		// Assert.
-		expect( screen.queryByText( 'Before' ) ).not.toBeInTheDocument();
-	} );
-} );
+		expect(screen.queryByText('Before')).not.toBeInTheDocument();
+	});
+});
 
-const mockDynamicTag = ( params: Partial< DynamicTag > = {} ) => {
+const mockDynamicTag = (params: Partial<DynamicTag> = {}) => {
 	const dynamicTag = {
 		name: 'author-info',
-		categories: [ 'text' ],
+		categories: ['text'],
 		label: 'Author Info',
 		group: 'author',
 		atomic_controls: [],
@@ -202,7 +202,7 @@ const mockDynamicTag = ( params: Partial< DynamicTag > = {} ) => {
 		...params,
 	} as DynamicTag;
 
-	jest.mocked( useDynamicTag ).mockReturnValue( dynamicTag );
+	jest.mocked(useDynamicTag).mockReturnValue(dynamicTag);
 
 	return dynamicTag;
 };

@@ -9,10 +9,10 @@ export function ElementsPanelTab() {
 	const tab = useActiveTab();
 
 	const TabComponent = tab?.component;
-	const container = document.getElementById( PANEL_WRAPPER_ID );
+	const container = document.getElementById(PANEL_WRAPPER_ID);
 
 	return TabComponent && container ? (
-		<Portal container={ container }>
+		<Portal container={container}>
 			<TabComponent />
 		</Portal>
 	) : null;

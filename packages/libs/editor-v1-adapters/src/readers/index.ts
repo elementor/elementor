@@ -4,14 +4,14 @@ export const EXPERIMENTAL_FEATURES = {
 	// Note: Add new experimental features here as needed
 };
 
-export function isRouteActive( route: string ) {
+export function isRouteActive(route: string) {
 	const extendedWindow = window as unknown as ExtendedWindow;
 
-	return !! extendedWindow.$e?.routes?.isPartOf( route );
+	return !!extendedWindow.$e?.routes?.isPartOf(route);
 }
 
-export const isExperimentActive = ( experiment: keyof typeof EXPERIMENTAL_FEATURES | string ) => {
+export const isExperimentActive = (experiment: keyof typeof EXPERIMENTAL_FEATURES | string) => {
 	const extendedWindow = window as unknown as ExtendedWindow;
 
-	return !! extendedWindow.elementorCommon?.config?.experimentalFeatures?.[ experiment ];
+	return !!extendedWindow.elementorCommon?.config?.experimentalFeatures?.[experiment];
 };

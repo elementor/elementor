@@ -7,14 +7,14 @@ type MenuContextValue = {
 	popupState?: PopupState;
 };
 
-const MenuContext = createContext< MenuContextValue >( {
+const MenuContext = createContext<MenuContextValue>({
 	type: 'toolbar',
-} );
+});
 
-export function MenuContextProvider( { type, popupState, children }: PropsWithChildren< MenuContextValue > ) {
-	return <MenuContext.Provider value={ { type, popupState } }>{ children }</MenuContext.Provider>;
+export function MenuContextProvider({ type, popupState, children }: PropsWithChildren<MenuContextValue>) {
+	return <MenuContext.Provider value={{ type, popupState }}>{children}</MenuContext.Provider>;
 }
 
 export function useMenuContext() {
-	return useContext( MenuContext );
+	return useContext(MenuContext);
 }

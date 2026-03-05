@@ -12,21 +12,21 @@ export type Props = {
 	visible?: boolean;
 	target?: string;
 	showExternalLinkIcon?: boolean;
-	onClick?: ( event: React.MouseEvent< HTMLElement > ) => void;
+	onClick?: (event: React.MouseEvent<HTMLElement>) => void;
 };
 
-export default function Link( { icon: Icon, title, visible = true, showExternalLinkIcon = false, ...props }: Props ) {
+export default function Link({ icon: Icon, title, visible = true, showExternalLinkIcon = false, ...props }: Props) {
 	const { type } = useMenuContext();
 
-	if ( ! visible ) {
+	if (!visible) {
 		return null;
 	}
 
 	return type === 'toolbar' ? (
-		<ToolbarMenuItem title={ title } { ...props }>
+		<ToolbarMenuItem title={title} {...props}>
 			<Icon />
 		</ToolbarMenuItem>
 	) : (
-		<PopoverMenuItem { ...props } text={ title } icon={ <Icon /> } showExternalLinkIcon={ showExternalLinkIcon } />
+		<PopoverMenuItem {...props} text={title} icon={<Icon />} showExternalLinkIcon={showExternalLinkIcon} />
 	);
 }

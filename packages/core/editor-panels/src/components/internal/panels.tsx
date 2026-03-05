@@ -7,7 +7,7 @@ export default function Panels() {
 	const openPanel = useOpenPanelInjection();
 	const Component = openPanel?.component ?? null;
 
-	if ( ! Component ) {
+	if (!Component) {
 		return null;
 	}
 

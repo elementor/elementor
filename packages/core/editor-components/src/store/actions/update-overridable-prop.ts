@@ -9,39 +9,39 @@ export function updateOverridableProp(
 	propValue: ComponentOverridablePropValue,
 	originPropFields?: OriginPropFields
 ) {
-	const overridableProps = componentsSelectors.getOverridableProps( componentId );
+	const overridableProps = componentsSelectors.getOverridableProps(componentId);
 
-	if ( ! overridableProps ) {
+	if (!overridableProps) {
 		return;
 	}
 
-	const existingOverridableProp = overridableProps.props[ propValue.override_key ];
+	const existingOverridableProp = overridableProps.props[propValue.override_key];
 
-	if ( ! existingOverridableProp ) {
+	if (!existingOverridableProp) {
 		return;
 	}
 
-	const originValue = resolveOverridePropValue( propValue.origin_value );
+	const originValue = resolveOverridePropValue(propValue.origin_value);
 
 	const newOverridableProp = originPropFields
 		? {
 				originValue,
 				originPropFields,
-		  }
+			}
 		: {
 				originValue,
-		  };
+			};
 
 	const newOverridableProps = {
 		...overridableProps,
 		props: {
 			...overridableProps.props,
-			[ existingOverridableProp.overrideKey ]: {
+			[existingOverridableProp.overrideKey]: {
 				...existingOverridableProp,
 				...newOverridableProp,
 			},
 		},
 	} satisfies OverridableProps;
 
-	componentsActions.setOverridableProps( componentId, newOverridableProps );
+	componentsActions.setOverridableProps(componentId, newOverridableProps);
 }

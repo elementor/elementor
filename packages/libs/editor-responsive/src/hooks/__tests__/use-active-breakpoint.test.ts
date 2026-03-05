@@ -4,8 +4,8 @@ import { act, renderHook } from '@testing-library/react';
 import { type BreakpointId, type ExtendedWindow } from '../../types';
 import { useActiveBreakpoint } from '../use-active-breakpoint';
 
-describe( 'useActiveBreakpoint', () => {
-	function setActiveBreakpoint( active: BreakpointId ) {
+describe('useActiveBreakpoint', () => {
+	function setActiveBreakpoint(active: BreakpointId) {
 		const extendedWindow = window as unknown as ExtendedWindow;
 
 		extendedWindow.elementor = {
@@ -18,34 +18,34 @@ describe( 'useActiveBreakpoint', () => {
 			},
 		};
 
-		dispatchWindowEvent( 'elementor/device-mode/change' );
+		dispatchWindowEvent('elementor/device-mode/change');
 	}
 
-	it( 'should return null when no breakpoint is active', () => {
+	it('should return null when no breakpoint is active', () => {
 		// Arrange.
-		setActiveBreakpoint( undefined as never );
+		setActiveBreakpoint(undefined as never);
 
 		// Act.
-		const { result } = renderHook( useActiveBreakpoint );
+		const { result } = renderHook(useActiveBreakpoint);
 
 		// Assert.
-		expect( result.current ).toEqual( null );
-	} );
+		expect(result.current).toEqual(null);
+	});
 
-	it( 'should return the active breakpoint', () => {
+	it('should return the active breakpoint', () => {
 		// Arrange.
-		setActiveBreakpoint( 'mobile' );
+		setActiveBreakpoint('mobile');
 
 		// Act.
-		const { result } = renderHook( useActiveBreakpoint );
+		const { result } = renderHook(useActiveBreakpoint);
 
 		// Assert.
-		expect( result.current ).toEqual( 'mobile' );
+		expect(result.current).toEqual('mobile');
 
 		// Act.
-		act( () => setActiveBreakpoint( 'tablet' ) );
+		act(() => setActiveBreakpoint('tablet'));
 
 		// Assert.
-		expect( result.current ).toEqual( 'tablet' );
-	} );
-} );
+		expect(result.current).toEqual('tablet');
+	});
+});

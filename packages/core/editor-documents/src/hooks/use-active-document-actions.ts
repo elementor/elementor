@@ -8,15 +8,15 @@ export default function useActiveDocumentActions() {
 
 	const permalink = document?.links?.permalink ?? '';
 
-	const save = useCallback( () => runCommand( 'document/save/default' ), [] );
+	const save = useCallback(() => runCommand('document/save/default'), []);
 
-	const saveDraft = useCallback( () => runCommand( 'document/save/draft' ), [] );
+	const saveDraft = useCallback(() => runCommand('document/save/draft'), []);
 
-	const saveTemplate = useCallback( () => openRoute( 'library/save-template' ), [] );
+	const saveTemplate = useCallback(() => openRoute('library/save-template'), []);
 
-	const copyAndShare = useCallback( () => {
-		navigator.clipboard.writeText( permalink );
-	}, [ permalink ] );
+	const copyAndShare = useCallback(() => {
+		navigator.clipboard.writeText(permalink);
+	}, [permalink]);
 
 	return {
 		save,

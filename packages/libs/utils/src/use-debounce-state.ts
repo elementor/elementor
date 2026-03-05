@@ -11,38 +11,38 @@ export type UseDebounceStateOptions = {
 export type UseDebounceStateResult = {
 	debouncedValue: string;
 	inputValue: string;
-	handleChange: ( val: string ) => void;
-	setInputValue: React.Dispatch< React.SetStateAction< string > >;
+	handleChange: (val: string) => void;
+	setInputValue: React.Dispatch<React.SetStateAction<string>>;
 };
 
-export function useDebounceState( options: UseDebounceStateOptions = {} ): UseDebounceStateResult {
+export function useDebounceState(options: UseDebounceStateOptions = {}): UseDebounceStateResult {
 	const { delay = 300, initialValue = '' } = options;
 
-	const [ debouncedValue, setDebouncedValue ] = useState( initialValue );
-	const [ inputValue, setInputValue ] = useState( initialValue );
+	const [debouncedValue, setDebouncedValue] = useState(initialValue);
+	const [inputValue, setInputValue] = useState(initialValue);
 
-	const runRef = useRef< ReturnType< typeof debounce > | null >( null );
+	const runRef = useRef<ReturnType<typeof debounce> | null>(null);
 
-	useEffect( () => {
+	useEffect(() => {
 		return () => {
 			runRef.current?.cancel?.();
 		};
-	}, [] );
+	}, []);
 
 	const debouncedSetValue = useCallback(
-		( val: string ) => {
+		(val: string) => {
 			runRef.current?.cancel?.();
-			runRef.current = debounce( () => {
-				setDebouncedValue( val );
-			}, delay );
+			runRef.current = debounce(() => {
+				setDebouncedValue(val);
+			}, delay);
 			runRef.current();
 		},
-		[ delay ]
+		[delay]
 	);
 
-	const handleChange = ( val: string ) => {
-		setInputValue( val );
-		debouncedSetValue( val );
+	const handleChange = (val: string) => {
+		setInputValue(val);
+		debouncedSetValue(val);
 	};
 
 	return {

@@ -1,4 +1,4 @@
-export const DEFAULT_STRINGS: Record< string, string > = {
+export const DEFAULT_STRINGS: Record<string, string> = {
 	'common.continue': 'Continue',
 	'common.skip': 'Skip',
 	'common.back': 'Back',

@@ -14,15 +14,15 @@ const transitionRepeaterMixpanelEvent = {
 };
 
 export function subscribeToTransitionEvent() {
-	eventBus.subscribe( 'transition-item-added', ( data ) => {
+	eventBus.subscribe('transition-item-added', (data) => {
 		const payload = data as { itemValue?: TransitionItemValue };
 		const value = payload?.itemValue?.selection?.value?.value?.value;
 		const selectedElements = getSelectedElements();
-		const widgetType = selectedElements[ 0 ]?.type ?? null;
-		trackEvent( {
+		const widgetType = selectedElements[0]?.type ?? null;
+		trackEvent({
 			transition_type: value ?? 'unknown',
 			...transitionRepeaterMixpanelEvent,
 			widget_type: widgetType,
-		} );
-	} );
+		});
+	});
 }

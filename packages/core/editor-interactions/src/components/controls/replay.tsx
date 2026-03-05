@@ -8,43 +8,43 @@ import { type ReplayFieldProps } from '../../types';
 import { InteractionsPromotionChip } from '../../ui/interactions-promotion-chip';
 
 export const REPLAY_OPTIONS = {
-	no: __( 'No', 'elementor' ),
-	yes: __( 'Yes', 'elementor' ),
+	no: __('No', 'elementor'),
+	yes: __('Yes', 'elementor'),
 };
 
-export const BASE_REPLAY: string[] = [ 'no' ];
+export const BASE_REPLAY: string[] = ['no'];
 
 const OVERLAY_GRID = '1 / 1';
 const CHIP_OFFSET = '50%';
 
-export function Replay( { onChange, anchorRef }: ReplayFieldProps ) {
-	const options: ToggleButtonGroupItem< boolean >[] = [
+export function Replay({ onChange, anchorRef }: ReplayFieldProps) {
+	const options: ToggleButtonGroupItem<boolean>[] = [
 		{
 			value: false,
 			disabled: false,
 			label: REPLAY_OPTIONS.no,
-			renderContent: ( { size } ) => <MinusIcon fontSize={ size } />,
+			renderContent: ({ size }) => <MinusIcon fontSize={size} />,
 			showTooltip: true,
 		},
 		{
 			value: true,
 			disabled: true,
 			label: REPLAY_OPTIONS.yes,
-			renderContent: ( { size } ) => <CheckIcon fontSize={ size } />,
+			renderContent: ({ size }) => <CheckIcon fontSize={size} />,
 			showTooltip: true,
 		},
 	];
 
 	return (
-		<Box sx={ { display: 'grid', alignItems: 'center' } }>
-			<Box sx={ { gridArea: OVERLAY_GRID } }>
-				<ToggleButtonGroupUi items={ options } exclusive onChange={ onChange } value={ false } />
+		<Box sx={{ display: 'grid', alignItems: 'center' }}>
+			<Box sx={{ gridArea: OVERLAY_GRID }}>
+				<ToggleButtonGroupUi items={options} exclusive onChange={onChange} value={false} />
 			</Box>
-			<Box sx={ { gridArea: OVERLAY_GRID, marginInlineEnd: CHIP_OFFSET, justifySelf: 'end' } }>
+			<Box sx={{ gridArea: OVERLAY_GRID, marginInlineEnd: CHIP_OFFSET, justifySelf: 'end' }}>
 				<InteractionsPromotionChip
-					content={ __( 'Upgrade to run the animation every time its trigger occurs.', 'elementor' ) }
-					upgradeUrl={ 'https://go.elementor.com/go-pro-interactions-replay-modal/' }
-					anchorRef={ anchorRef }
+					content={__('Upgrade to run the animation every time its trigger occurs.', 'elementor')}
+					upgradeUrl={'https://go.elementor.com/go-pro-interactions-replay-modal/'}
+					anchorRef={anchorRef}
 				/>
 			</Box>
 		</Box>

@@ -5,12 +5,12 @@ import { unknownChildrenSchema } from './utils';
 
 export const borderWidthPropTypeUtil = createPropUtils(
 	'border-width',
-	z.strictObject( {
+	z.strictObject({
 		'block-start': unknownChildrenSchema,
 		'block-end': unknownChildrenSchema,
 		'inline-start': unknownChildrenSchema,
 		'inline-end': unknownChildrenSchema,
-	} )
+	})
 );
 
-export type BorderWidthPropValue = z.infer< typeof borderWidthPropTypeUtil.schema >;
+export type BorderWidthPropValue = z.infer<typeof borderWidthPropTypeUtil.schema>;

@@ -7,21 +7,21 @@ import { type ActionProps, type ExtendedWindow } from '../../../types';
 export default function useActionProps(): ActionProps {
 	return {
 		icon: KeyboardIcon,
-		title: __( 'Keyboard Shortcuts', 'elementor' ),
+		title: __('Keyboard Shortcuts', 'elementor'),
 		onClick: () => {
 			const extendedWindow = window as unknown as ExtendedWindow;
 			const config = extendedWindow?.elementorCommon?.eventsManager?.config;
 
-			if ( config ) {
-				extendedWindow.elementorCommon.eventsManager.dispatchEvent( config.names.topBar.keyboardShortcuts, {
+			if (config) {
+				extendedWindow.elementorCommon.eventsManager.dispatchEvent(config.names.topBar.keyboardShortcuts, {
 					location: config.locations.topBar,
 					secondaryLocation: config.secondaryLocations.elementorLogo,
 					trigger: config.triggers.click,
 					element: config.elements.link,
-				} );
+				});
 			}
 
-			runCommand( 'shortcuts/open' );
+			runCommand('shortcuts/open');
 		},
 	};
 }

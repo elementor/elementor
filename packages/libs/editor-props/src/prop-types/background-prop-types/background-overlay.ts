@@ -6,10 +6,10 @@ import { backgroundGradientOverlayPropTypeUtil } from './background-gradient-ove
 import { backgroundImageOverlayPropTypeUtil } from './background-image-overlay';
 
 export const backgroundOverlayItem = backgroundColorOverlayPropTypeUtil.schema
-	.or( backgroundGradientOverlayPropTypeUtil.schema )
-	.or( backgroundImageOverlayPropTypeUtil.schema );
+	.or(backgroundGradientOverlayPropTypeUtil.schema)
+	.or(backgroundImageOverlayPropTypeUtil.schema);
 
-export const backgroundOverlayPropTypeUtil = createPropUtils( 'background-overlay', z.array( backgroundOverlayItem ) );
+export const backgroundOverlayPropTypeUtil = createPropUtils('background-overlay', z.array(backgroundOverlayItem));
 
-export type BackgroundOverlayPropValue = z.infer< typeof backgroundOverlayPropTypeUtil.schema >;
-export type BackgroundOverlayItemPropValue = z.infer< typeof backgroundOverlayItem >;
+export type BackgroundOverlayPropValue = z.infer<typeof backgroundOverlayPropTypeUtil.schema>;
+export type BackgroundOverlayItemPropValue = z.infer<typeof backgroundOverlayItem>;

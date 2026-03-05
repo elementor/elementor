@@ -6,46 +6,46 @@ import { __ } from '@wordpress/i18n';
 import { CUSTOM_SIZE_LABEL } from '../size-control';
 import { defaultValues, TransformFunctionKeys } from './initial-values';
 
-const orderedAxis = [ 'x', 'y', 'z' ];
+const orderedAxis = ['x', 'y', 'z'];
 
-const formatLabel = ( value: TransformFunctionsItemPropValue[ 'value' ], functionType: keyof typeof defaultValues ) => {
+const formatLabel = (value: TransformFunctionsItemPropValue['value'], functionType: keyof typeof defaultValues) => {
 	return orderedAxis
-		.map( ( axisKey ) => {
-			const axis = value[ axisKey as keyof typeof value ];
+		.map((axisKey) => {
+			const axis = value[axisKey as keyof typeof value];
 
-			if ( functionType === 'scale' ) {
-				return axis?.value || defaultValues[ functionType ];
+			if (functionType === 'scale') {
+				return axis?.value || defaultValues[functionType];
 			}
 
-			const defaults = defaultValues[ functionType ];
+			const defaults = defaultValues[functionType];
 			const size = axis?.value?.size ?? defaults.size;
 			const unit = axis?.value?.unit ?? defaults.unit;
 
-			return unit === 'custom' ? size || CUSTOM_SIZE_LABEL : `${ size }${ unit }`;
-		} )
-		.join( ', ' );
+			return unit === 'custom' ? size || CUSTOM_SIZE_LABEL : `${size}${unit}`;
+		})
+		.join(', ');
 };
 
-export const TransformLabel = ( props: { value: TransformFunctionsItemPropValue } ) => {
+export const TransformLabel = (props: { value: TransformFunctionsItemPropValue }) => {
 	const { $$type, value } = props.value;
-	switch ( $$type ) {
+	switch ($$type) {
 		case TransformFunctionKeys.move:
-			return <Label label={ __( 'Move', 'elementor' ) } value={ formatLabel( value, 'move' ) } />;
+			return <Label label={__('Move', 'elementor')} value={formatLabel(value, 'move')} />;
 		case TransformFunctionKeys.scale:
-			return <Label label={ __( 'Scale', 'elementor' ) } value={ formatLabel( value, 'scale' ) } />;
+			return <Label label={__('Scale', 'elementor')} value={formatLabel(value, 'scale')} />;
 		case TransformFunctionKeys.rotate:
-			return <Label label={ __( 'Rotate', 'elementor' ) } value={ formatLabel( value, 'rotate' ) } />;
+			return <Label label={__('Rotate', 'elementor')} value={formatLabel(value, 'rotate')} />;
 		case TransformFunctionKeys.skew:
-			return <Label label={ __( 'Skew', 'elementor' ) } value={ formatLabel( value, 'skew' ) } />;
+			return <Label label={__('Skew', 'elementor')} value={formatLabel(value, 'skew')} />;
 		default:
 			return '';
 	}
 };
 
-const Label = ( { label, value }: { label: string; value: string } ) => {
+const Label = ({ label, value }: { label: string; value: string }) => {
 	return (
 		<Box component="span">
-			{ label }: { value }
+			{label}: {value}
 		</Box>
 	);
 };

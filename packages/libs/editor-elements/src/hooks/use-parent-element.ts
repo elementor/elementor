@@ -2,22 +2,22 @@ import { __privateUseListenTo as useListenTo, commandEndEvent } from '@elementor
 
 import { type ExtendedWindow } from '../sync/types';
 
-export function useParentElement( elementId: string | null ) {
+export function useParentElement(elementId: string | null) {
 	return useListenTo(
-		[ commandEndEvent( 'document/elements/create' ) ],
+		[commandEndEvent('document/elements/create')],
 		() => {
-			if ( ! elementId ) {
+			if (!elementId) {
 				return null;
 			}
 
 			const extendedWindow = window as unknown as ExtendedWindow;
-			const element = extendedWindow?.elementor?.getContainer?.( elementId );
-			if ( ! element ) {
+			const element = extendedWindow?.elementor?.getContainer?.(elementId);
+			if (!element) {
 				return null;
 			}
 
 			return element.parent;
 		},
-		[ elementId ]
+		[elementId]
 	);
 }

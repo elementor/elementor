@@ -12,51 +12,51 @@ import { createControl } from '../create-control';
 const CHILDREN_PARSE_DEBOUNCE_MS = 300;
 
 export const InlineEditingControl = createControl(
-	( {
+	({
 		sx,
 		attributes,
 		props,
 	}: {
-		sx?: SxProps< Theme >;
-		attributes?: Record< string, string >;
-		props?: ComponentProps< 'div' >;
-	} ) => {
-		const { value, setValue } = useBoundProp( htmlV3PropTypeUtil );
-		const content = stringPropTypeUtil.extract( value?.content ?? null ) ?? '';
+		sx?: SxProps<Theme>;
+		attributes?: Record<string, string>;
+		props?: ComponentProps<'div'>;
+	}) => {
+		const { value, setValue } = useBoundProp(htmlV3PropTypeUtil);
+		const content = stringPropTypeUtil.extract(value?.content ?? null) ?? '';
 
 		const debouncedParse = useMemo(
 			() =>
-				debounce( ( html: string ) => {
-					const parsed = parseHtmlChildren( html );
+				debounce((html: string) => {
+					const parsed = parseHtmlChildren(html);
 
-					setValue( {
-						content: parsed.content ? stringPropTypeUtil.create( parsed.content ) : null,
+					setValue({
+						content: parsed.content ? stringPropTypeUtil.create(parsed.content) : null,
 						children: parsed.children,
-					} );
-				}, CHILDREN_PARSE_DEBOUNCE_MS ),
-			[ setValue ]
+					});
+				}, CHILDREN_PARSE_DEBOUNCE_MS),
+			[setValue]
 		);
 
 		const handleChange = useCallback(
-			( newValue: unknown ) => {
-				const html = ( newValue ?? '' ) as string;
+			(newValue: unknown) => {
+				const html = (newValue ?? '') as string;
 
-				setValue( {
-					content: html ? stringPropTypeUtil.create( html ) : null,
+				setValue({
+					content: html ? stringPropTypeUtil.create(html) : null,
 					children: value?.children ?? [],
-				} );
+				});
 
-				debouncedParse( html );
+				debouncedParse(html);
 			},
-			[ setValue, value?.children, debouncedParse ]
+			[setValue, value?.children, debouncedParse]
 		);
 
-		useEffect( () => () => debouncedParse.cancel(), [ debouncedParse ] );
+		useEffect(() => () => debouncedParse.cancel(), [debouncedParse]);
 
 		return (
 			<ControlActions>
 				<Box
-					sx={ {
+					sx={{
 						p: 0.8,
 						border: '1px solid',
 						borderColor: 'grey.200',
@@ -87,11 +87,11 @@ export const InlineEditingControl = createControl(
 							all: 'unset',
 						},
 						...sx,
-					} }
-					{ ...attributes }
-					{ ...props }
+					}}
+					{...attributes}
+					{...props}
 				>
-					<InlineEditor value={ content } setValue={ handleChange } />
+					<InlineEditor value={content} setValue={handleChange} />
 				</Box>
 			</ControlActions>
 		);

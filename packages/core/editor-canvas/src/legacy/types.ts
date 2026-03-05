@@ -1,9 +1,9 @@
 import { type V1Element } from '@elementor/editor-elements';
 import { type Props, type PropValue } from '@elementor/editor-props';
 
-export type RenderContext< T = unknown > = Record< string, T >;
+export type RenderContext<T = unknown> = Record<string, T>;
 
-export type NamespacedRenderContext< T = RenderContext > = Record< string, T | undefined >;
+export type NamespacedRenderContext<T = RenderContext> = Record<string, T | undefined>;
 
 export type LegacyWindow = Window & {
 	jQuery: JQueryStatic;
@@ -13,8 +13,8 @@ export type LegacyWindow = Window & {
 				is_administrator?: boolean;
 			};
 		};
-		createBackboneElementsCollection: ( children: unknown ) => BackboneCollection< ElementModel >;
-		getElementData: ( model: unknown ) => { title: string };
+		createBackboneElementsCollection: (children: unknown) => BackboneCollection<ElementModel>;
+		getElementData: (model: unknown) => { title: string };
 
 		modules: {
 			elements: {
@@ -24,25 +24,23 @@ export type LegacyWindow = Window & {
 				};
 				views: {
 					Widget: typeof ElementView;
-					createAtomicElementBase: (
-						type: string
-					) => typeof ElementView & MarionetteExtendable< ElementView >;
+					createAtomicElementBase: (type: string) => typeof ElementView & MarionetteExtendable<ElementView>;
 				};
 				models: {
-					AtomicElementBase: BackboneModelConstructor< ElementModel >;
+					AtomicElementBase: BackboneModelConstructor<ElementModel>;
 				};
 			};
 		};
 		elementsManager: {
-			registerElementType: ( type: ElementType ) => void;
-			getElementTypeClass: ( type: string ) => typeof ElementType | undefined;
-			_elementTypes: Record< string, ElementType >;
+			registerElementType: (type: ElementType) => void;
+			getElementTypeClass: (type: string) => typeof ElementType | undefined;
+			_elementTypes: Record<string, ElementType>;
 		};
 		$preview: JQueryElement &
 			[
 				{
 					contentWindow: {
-						dispatchEvent: ( event: Event ) => void;
+						dispatchEvent: (event: Event) => void;
 					};
 				},
 			];
@@ -53,7 +51,7 @@ export type LegacyWindow = Window & {
 	};
 };
 
-type JQueryStatic = ( html: string ) => JQueryElement;
+type JQueryStatic = (html: string) => JQueryElement;
 
 export declare class ElementType {
 	getType(): string;
@@ -61,10 +59,10 @@ export declare class ElementType {
 	getView(): typeof ElementView;
 }
 
-type MarionetteExtendable< TBase = unknown > = {
-	extend: < TExtended extends object >(
-		properties: TExtended & ThisType< TBase & TExtended >
-	) => TBase & TExtended & MarionetteExtendable< TBase & TExtended >;
+type MarionetteExtendable<TBase = unknown> = {
+	extend: <TExtended extends object>(
+		properties: TExtended & ThisType<TBase & TExtended>
+	) => TBase & TExtended & MarionetteExtendable<TBase & TExtended>;
 };
 
 export declare class ElementView {
@@ -75,34 +73,34 @@ export declare class ElementView {
 	$el: JQueryElement;
 	el: HTMLElement;
 
-	model: BackboneModel< ElementModel >;
+	model: BackboneModel<ElementModel>;
 
-	collection: BackboneCollection< ElementModel >;
+	collection: BackboneCollection<ElementModel>;
 
 	children: {
 		length: number;
-		findByIndex: ( index: number ) => ElementView;
-		each: ( callback: ( view: ElementView ) => void ) => void;
-		map: < T >( callback: ( view: ElementView ) => T ) => T[];
+		findByIndex: (index: number) => ElementView;
+		each: (callback: (view: ElementView) => void) => void;
+		map: <T>(callback: (view: ElementView) => T) => T[];
 	};
 
-	constructor( ...args: unknown[] );
+	constructor(...args: unknown[]);
 
-	onRender( ...args: unknown[] ): void;
+	onRender(...args: unknown[]): void;
 
-	onDestroy( ...args: unknown[] ): void;
+	onDestroy(...args: unknown[]): void;
 
-	attributes(): Record< string, unknown >;
+	attributes(): Record<string, unknown>;
 
-	behaviors(): Record< string, unknown >;
+	behaviors(): Record<string, unknown>;
 
 	getDomElement(): JQueryElement;
 
 	getHandlesOverlay(): JQueryElement | null;
 
-	setElement( element: JQueryElement ): void;
+	setElement(element: JQueryElement): void;
 
-	dispatchPreviewEvent( eventType: string ): void;
+	dispatchPreviewEvent(eventType: string): void;
 
 	getContextMenuGroups(): ContextMenuGroup[];
 
@@ -123,9 +121,9 @@ export declare class ElementView {
 
 	_afterRender(): void;
 
-	attachBuffer( collectionView: this, buffer: DocumentFragment ): void;
+	attachBuffer(collectionView: this, buffer: DocumentFragment): void;
 
-	triggerMethod( method: string, ...args: unknown[] ): void;
+	triggerMethod(method: string, ...args: unknown[]): void;
 
 	bindUIElements(): void;
 
@@ -139,15 +137,15 @@ export declare class ElementView {
 
 	isRendered: boolean;
 
-	_currentRenderPromise?: Promise< void >;
+	_currentRenderPromise?: Promise<void>;
 
 	options?: {
-		model: BackboneModel< ElementModel >;
+		model: BackboneModel<ElementModel>;
 	};
 
-	ui(): Record< string, unknown >;
+	ui(): Record<string, unknown>;
 
-	events(): Record< string, unknown >;
+	events(): Record<string, unknown>;
 
 	_parent?: ElementView;
 
@@ -159,63 +157,63 @@ export declare class ElementView {
 
 	invalidateRenderCache(): void;
 
-	_openEditingPanel( options?: { scrollIntoView: boolean } ): void;
+	_openEditingPanel(options?: { scrollIntoView: boolean }): void;
 
-	once: ( event: string, callback: () => void ) => void;
+	once: (event: string, callback: () => void) => void;
 }
 
 type JQueryElement = {
-	find: ( selector: string ) => JQueryElement;
-	html: ( html: string ) => void;
-	get: ( index: number ) => HTMLElement | undefined;
+	find: (selector: string) => JQueryElement;
+	html: (html: string) => void;
+	get: (index: number) => HTMLElement | undefined;
 	attr: {
-		( name: string ): string;
-		( name: string, value: string ): JQueryElement;
+		(name: string): string;
+		(name: string, value: string): JQueryElement;
 	};
-	prepend: ( element: JQueryElement ) => JQueryElement;
-	on: ( event: string, childrenSelectors: string, handler: ( event: Event ) => void ) => void;
-	off: ( event: string, childrenSelectors: string, handler?: ( event: Event ) => void ) => void;
+	prepend: (element: JQueryElement) => JQueryElement;
+	on: (event: string, childrenSelectors: string, handler: (event: Event) => void) => void;
+	off: (event: string, childrenSelectors: string, handler?: (event: Event) => void) => void;
 };
 
-export type BackboneModel< Model extends object > = {
+export type BackboneModel<Model extends object> = {
 	cid?: string;
-	get: < T extends keyof Model >( key: T ) => Model[ T ];
-	set: < T extends keyof Model >( key: T, value: Model[ T ] ) => void;
-	toJSON: () => ToJSON< Model >;
-	trigger: ( event: string, ...args: unknown[] ) => void;
+	get: <T extends keyof Model>(key: T) => Model[T];
+	set: <T extends keyof Model>(key: T, value: Model[T]) => void;
+	toJSON: () => ToJSON<Model>;
+	trigger: (event: string, ...args: unknown[]) => void;
 };
 
-export type BackboneModelConstructor< Model extends object > = {
-	new ( ...args: unknown[] ): BackboneModel< Model >;
-	extend: < ExtendedModel extends object >(
-		properties: Record< string, unknown >
-	) => BackboneModelConstructor< ExtendedModel >;
+export type BackboneModelConstructor<Model extends object> = {
+	new (...args: unknown[]): BackboneModel<Model>;
+	extend: <ExtendedModel extends object>(
+		properties: Record<string, unknown>
+	) => BackboneModelConstructor<ExtendedModel>;
 	prototype: {
-		initialize: ( attributes: unknown, options: unknown ) => void;
+		initialize: (attributes: unknown, options: unknown) => void;
 	};
-	getModel: () => BackboneModelConstructor< Model >;
+	getModel: () => BackboneModelConstructor<Model>;
 };
 
-type BackboneCollection< Model extends object > = {
-	models: BackboneModel< Model >[];
-	forEach: ( callback: ( model: BackboneModel< Model > ) => void ) => void;
+type BackboneCollection<Model extends object> = {
+	models: BackboneModel<Model>[];
+	forEach: (callback: (model: BackboneModel<Model>) => void) => void;
 };
 
 export type ElementModel = {
 	id: string;
 	elType: string;
-	settings: BackboneModel< Props >;
-	editor_settings: Record< string, unknown >;
+	settings: BackboneModel<Props>;
+	editor_settings: Record<string, unknown>;
 	widgetType: string;
-	editSettings?: BackboneModel< { inactive?: boolean } >;
-	elements?: BackboneCollection< ElementModel >;
+	editSettings?: BackboneModel<{ inactive?: boolean }>;
+	elements?: BackboneCollection<ElementModel>;
 	config: {
 		allowed_child_types?: string[];
 	};
 };
 
-type ToJSON< T > = {
-	[ K in keyof T ]: T[ K ] extends BackboneModel< infer M > ? ToJSON< M > : T[ K ];
+type ToJSON<T> = {
+	[K in keyof T]: T[K] extends BackboneModel<infer M> ? ToJSON<M> : T[K];
 };
 
 type ContextMenuGroup = {
@@ -226,15 +224,15 @@ type ContextMenuGroup = {
 export type ContextMenuAction = {
 	name: string;
 	icon: string;
-	title: string | ( () => string );
+	title: string | (() => string);
 	shortcut?: string;
 	isEnabled: () => boolean;
-	callback: ( _: unknown, eventData: unknown ) => void;
+	callback: (_: unknown, eventData: unknown) => void;
 };
 
 export type ReplacementSettings = {
-	getSetting: ( key: string ) => unknown;
-	setSetting: ( key: string, value: PropValue ) => void;
+	getSetting: (key: string) => unknown;
+	setSetting: (key: string, value: PropValue) => void;
 	type: string;
 	id: string;
 	element: HTMLElement;

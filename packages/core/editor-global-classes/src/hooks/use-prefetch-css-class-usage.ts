@@ -7,10 +7,10 @@ export function usePrefetchCssClassUsage() {
 	const queryClient = useQueryClient();
 
 	const prefetchClassesUsage = () =>
-		queryClient.prefetchQuery( {
-			queryKey: [ QUERY_KEY ],
+		queryClient.prefetchQuery({
+			queryKey: [QUERY_KEY],
 			queryFn: fetchCssClassUsage,
-		} );
+		});
 
 	return { prefetchClassesUsage };
 }

@@ -4,10 +4,10 @@ import { createPropUtils } from '../utils/create-prop-utils';
 
 export const layoutDirectionPropTypeUtil = createPropUtils(
 	'layout-direction',
-	z.object( {
+	z.object({
 		row: z.any(),
 		column: z.any(),
-	} )
+	})
 );
 
-export type LayoutDirectionPropValue = z.infer< typeof layoutDirectionPropTypeUtil.schema >;
+export type LayoutDirectionPropValue = z.infer<typeof layoutDirectionPropTypeUtil.schema>;

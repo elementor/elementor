@@ -12,19 +12,19 @@ type Options = {
 export type DropElementParams = {
 	containerId: string;
 	options?: Options;
-	model?: Omit< V1ElementModelProps, 'settings' | 'id' > & { settings?: V1ElementSettingsProps; id?: string };
+	model?: Omit<V1ElementModelProps, 'settings' | 'id'> & { settings?: V1ElementSettingsProps; id?: string };
 };
 
-export function dropElement( { containerId, model, options }: DropElementParams ) {
-	const container = getContainer( containerId );
+export function dropElement({ containerId, model, options }: DropElementParams) {
+	const container = getContainer(containerId);
 
-	if ( ! container ) {
-		throw new Error( `Container with ID "${ containerId }" not found` );
+	if (!container) {
+		throw new Error(`Container with ID "${containerId}" not found`);
 	}
 
-	return runCommandSync< V1Element >( 'preview/drop', {
+	return runCommandSync<V1Element>('preview/drop', {
 		container,
 		model,
 		options,
-	} );
+	});
 }

@@ -11,7 +11,7 @@ type VariableTableCellProps = {
 	sx?: SxProps;
 };
 
-export const VariableTableCell = ( {
+export const VariableTableCell = ({
 	children,
 	isHeader,
 	width,
@@ -19,20 +19,20 @@ export const VariableTableCell = ( {
 	align,
 	noPadding,
 	sx,
-}: VariableTableCellProps ) => {
+}: VariableTableCellProps) => {
 	const baseSx: SxProps = {
 		maxWidth: maxWidth ?? 150,
 		cursor: 'initial',
 		typography: 'caption',
-		...( isHeader && { color: 'text.primary', fontWeight: 'bold' } ),
-		...( isHeader && ! noPadding && { padding: '10px 16px' } ),
-		...( width && { width } ),
+		...(isHeader && { color: 'text.primary', fontWeight: 'bold' }),
+		...(isHeader && !noPadding && { padding: '10px 16px' }),
+		...(width && { width }),
 		...sx,
 	};
 
 	return (
-		<TableCell size="small" padding={ noPadding ? 'none' : undefined } align={ align } sx={ baseSx }>
-			{ children }
+		<TableCell size="small" padding={noPadding ? 'none' : undefined} align={align} sx={baseSx}>
+			{children}
 		</TableCell>
 	);
 };

@@ -8,7 +8,7 @@ export const StepId = {
 	SITE_FEATURES: 'site_features',
 } as const;
 
-export type StepIdType = ( typeof StepId )[ keyof typeof StepId ];
+export type StepIdType = (typeof StepId)[keyof typeof StepId];
 
 export type StepType = 'single' | 'multiple';
 

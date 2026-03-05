@@ -9,25 +9,25 @@ type RenameGroupParams = {
 	label: string;
 };
 
-export function renameOverridableGroup( { componentId, groupId, label }: RenameGroupParams ): boolean {
-	const overridableProps = componentsSelectors.getOverridableProps( componentId );
+export function renameOverridableGroup({ componentId, groupId, label }: RenameGroupParams): boolean {
+	const overridableProps = componentsSelectors.getOverridableProps(componentId);
 
-	if ( ! overridableProps ) {
+	if (!overridableProps) {
 		return false;
 	}
 
-	const group = overridableProps.groups.items[ groupId ];
+	const group = overridableProps.groups.items[groupId];
 
-	if ( ! group ) {
+	if (!group) {
 		return false;
 	}
 
-	const updatedGroups = renameGroup( overridableProps.groups, groupId, label );
+	const updatedGroups = renameGroup(overridableProps.groups, groupId, label);
 
-	componentsActions.setOverridableProps( componentId, {
+	componentsActions.setOverridableProps(componentId, {
 		...overridableProps,
 		groups: updatedGroups,
-	} );
+	});
 
 	return true;
 }

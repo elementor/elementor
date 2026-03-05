@@ -5,6 +5,6 @@ type Size = {
 	unit?: string;
 };
 
-export const sizeTransformer = createTransformer( ( value: Size ) => {
-	return value.unit === 'custom' ? value.size : `${ value.size }${ value.unit }`;
-} );
+export const sizeTransformer = createTransformer((value: Size) => {
+	return value.unit === 'custom' ? value.size : `${value.size}${value.unit}`;
+});

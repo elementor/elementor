@@ -22,7 +22,7 @@ type Props = {
 	onClose: () => void;
 };
 
-export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
+export const VariableCreation = ({ onGoBack, onClose }: Props) => {
 	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = useVariableType();
 
 	const { setVariableValue: setVariable, path } = useVariableBoundProp();
@@ -30,19 +30,19 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 
 	const initialValue = useInitialValue();
 
-	const [ value, setValue ] = useState( initialValue );
-	const [ label, setLabel ] = useState( '' );
-	const [ errorMessage, setErrorMessage ] = useState( '' );
-	const [ valueFieldError, setValueFieldError ] = useState( '' );
-	const [ propTypeKey, setPropTypeKey ] = useState( propTypeUtil.key );
+	const [value, setValue] = useState(initialValue);
+	const [label, setLabel] = useState('');
+	const [errorMessage, setErrorMessage] = useState('');
+	const [valueFieldError, setValueFieldError] = useState('');
+	const [propTypeKey, setPropTypeKey] = useState(propTypeUtil.key);
 
 	const { labelFieldError, setLabelFieldError } = useLabelError();
 
 	const resetFields = () => {
-		setValue( '' );
-		setLabel( '' );
-		setErrorMessage( '' );
-		setValueFieldError( '' );
+		setValue('');
+		setLabel('');
+		setErrorMessage('');
+		setValueFieldError('');
 	};
 
 	const closePopover = () => {
@@ -51,56 +51,56 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 	};
 
 	const handleCreateAndTrack = () => {
-		createVariable( {
+		createVariable({
 			value,
 			label,
 			type: propTypeKey,
-		} )
-			.then( ( key ) => {
-				setVariable( key );
+		})
+			.then((key) => {
+				setVariable(key);
 				closePopover();
-			} )
-			.catch( ( error ) => {
-				const mappedError = mapServerError( error );
-				if ( mappedError && 'label' === mappedError.field ) {
-					setLabel( '' );
-					setLabelFieldError( {
+			})
+			.catch((error) => {
+				const mappedError = mapServerError(error);
+				if (mappedError && 'label' === mappedError.field) {
+					setLabel('');
+					setLabelFieldError({
 						value: label,
 						message: mappedError.message,
-					} );
+					});
 					return;
 				}
 
-				setErrorMessage( ERROR_MESSAGES.UNEXPECTED_ERROR );
-			} );
+				setErrorMessage(ERROR_MESSAGES.UNEXPECTED_ERROR);
+			});
 
-		trackVariableEvent( {
+		trackVariableEvent({
 			varType: variableType,
-			controlPath: path.join( '.' ),
+			controlPath: path.join('.'),
 			action: 'save',
-		} );
+		});
 	};
 
 	const hasEmptyFields = () => {
-		if ( '' === label.trim() ) {
+		if ('' === label.trim()) {
 			return true;
 		}
 
-		if ( 'string' === typeof value ) {
+		if ('string' === typeof value) {
 			return '' === value.trim();
 		}
 
-		return false === Boolean( value );
+		return false === Boolean(value);
 	};
 
 	const hasErrors = () => {
-		return !! errorMessage;
+		return !!errorMessage;
 	};
 
 	const isSubmitDisabled = hasEmptyFields() || hasErrors();
 
-	const handleKeyDown = ( event: KeyboardEvent< HTMLElement > ) => {
-		if ( event.key === 'Enter' && ! isSubmitDisabled ) {
+	const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+		if (event.key === 'Enter' && !isSubmitDisabled) {
 			event.preventDefault();
 			handleCreateAndTrack();
 		}
@@ -111,75 +111,75 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 			<PopoverHeader
 				icon={
 					<>
-						{ onGoBack && (
-							<IconButton size={ SIZE } aria-label={ __( 'Go Back', 'elementor' ) } onClick={ onGoBack }>
-								<ArrowLeftIcon fontSize={ SIZE } />
+						{onGoBack && (
+							<IconButton size={SIZE} aria-label={__('Go Back', 'elementor')} onClick={onGoBack}>
+								<ArrowLeftIcon fontSize={SIZE} />
 							</IconButton>
-						) }
-						<VariableIcon fontSize={ SIZE } />
+						)}
+						<VariableIcon fontSize={SIZE} />
 					</>
 				}
-				title={ __( 'Create variable', 'elementor' ) }
-				onClose={ closePopover }
+				title={__('Create variable', 'elementor')}
+				onClose={closePopover}
 			/>
 
 			<Divider />
 
-			<PopoverContent p={ 2 }>
+			<PopoverContent p={2}>
 				<FormField
 					id="variable-label"
-					label={ __( 'Name', 'elementor' ) }
-					errorMsg={ labelFieldError?.message }
-					noticeMsg={ labelHint( label ) }
+					label={__('Name', 'elementor')}
+					errorMsg={labelFieldError?.message}
+					noticeMsg={labelHint(label)}
 				>
 					<LabelField
 						id="variable-label"
-						value={ label }
-						error={ labelFieldError }
-						onChange={ ( newValue ) => {
-							setLabel( newValue );
-							setErrorMessage( '' );
-						} }
-						onErrorChange={ ( errorMsg ) => {
-							setLabelFieldError( {
+						value={label}
+						error={labelFieldError}
+						onChange={(newValue) => {
+							setLabel(newValue);
+							setErrorMessage('');
+						}}
+						onErrorChange={(errorMsg) => {
+							setLabelFieldError({
 								value: label,
 								message: errorMsg,
-							} );
-						} }
-						onKeyDown={ handleKeyDown }
+							});
+						}}
+						onKeyDown={handleKeyDown}
 					/>
 				</FormField>
-				{ ValueField && (
-					<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
+				{ValueField && (
+					<FormField errorMsg={valueFieldError} label={__('Value', 'elementor')}>
 						<Typography variant="h5" id="variable-value-wrapper">
 							<ValueField
-								value={ value }
-								onPropTypeKeyChange={ ( key: string ) => setPropTypeKey( key ) }
-								onChange={ ( newValue ) => {
-									setValue( newValue );
-									setErrorMessage( '' );
-									setValueFieldError( '' );
-								} }
-								onValidationChange={ setValueFieldError }
-								propType={ propType }
-								onKeyDown={ handleKeyDown }
+								value={value}
+								onPropTypeKeyChange={(key: string) => setPropTypeKey(key)}
+								onChange={(newValue) => {
+									setValue(newValue);
+									setErrorMessage('');
+									setValueFieldError('');
+								}}
+								onValidationChange={setValueFieldError}
+								propType={propType}
+								onKeyDown={handleKeyDown}
 							/>
 						</Typography>
 					</FormField>
-				) }
+				)}
 
-				{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }
+				{errorMessage && <FormHelperText error>{errorMessage}</FormHelperText>}
 			</PopoverContent>
 
-			<CardActions sx={ { pt: 0.5, pb: 1 } }>
+			<CardActions sx={{ pt: 0.5, pb: 1 }}>
 				<Button
 					id="create-variable-button"
 					size="small"
 					variant="contained"
-					disabled={ isSubmitDisabled }
-					onClick={ handleCreateAndTrack }
+					disabled={isSubmitDisabled}
+					onClick={handleCreateAndTrack}
 				>
-					{ __( 'Create', 'elementor' ) }
+					{__('Create', 'elementor')}
 				</Button>
 			</CardActions>
 		</SectionPopoverBody>

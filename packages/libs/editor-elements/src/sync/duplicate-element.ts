@@ -13,12 +13,12 @@ export type DuplicateElementParams = {
 	options?: Options;
 };
 
-export function duplicateElement( { element, options = {} }: DuplicateElementParams ): V1Element {
+export function duplicateElement({ element, options = {} }: DuplicateElementParams): V1Element {
 	const currentIndex = element.view?._index ?? 0;
 	const insertPosition = options.clone !== false ? currentIndex + 1 : undefined;
 
-	return runCommandSync< V1Element >( 'document/elements/duplicate', {
+	return runCommandSync<V1Element>('document/elements/duplicate', {
 		container: element,
 		options: { at: insertPosition, edit: false, ...options },
-	} );
+	});
 }

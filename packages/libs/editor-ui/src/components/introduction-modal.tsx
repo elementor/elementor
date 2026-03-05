@@ -14,57 +14,52 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-type IntroductionModalProps = React.PropsWithChildren< {
+type IntroductionModalProps = React.PropsWithChildren<{
 	open: boolean;
-	handleClose: ( shouldShowAgain: boolean ) => void;
+	handleClose: (shouldShowAgain: boolean) => void;
 	title?: string;
-} >;
+}>;
 
-export const IntroductionModal = ( { open, handleClose, title, children }: IntroductionModalProps ) => {
-	const [ shouldShowAgain, setShouldShowAgain ] = useState( true );
+export const IntroductionModal = ({ open, handleClose, title, children }: IntroductionModalProps) => {
+	const [shouldShowAgain, setShouldShowAgain] = useState(true);
 
 	return (
-		<Dialog open={ open } onClose={ handleClose } maxWidth={ 'sm' } TransitionComponent={ Transition }>
-			{ title && (
-				<DialogHeader logo={ false }>
-					<DialogTitle>{ title }</DialogTitle>
+		<Dialog open={open} onClose={handleClose} maxWidth={'sm'} TransitionComponent={Transition}>
+			{title && (
+				<DialogHeader logo={false}>
+					<DialogTitle>{title}</DialogTitle>
 				</DialogHeader>
-			) }
-			{ children }
+			)}
+			{children}
 			<DialogActions>
 				<FormControlLabel
-					sx={ { marginRight: 'auto' } }
+					sx={{ marginRight: 'auto' }}
 					control={
-						<Checkbox
-							checked={ ! shouldShowAgain }
-							onChange={ () => setShouldShowAgain( ! shouldShowAgain ) }
-						/>
+						<Checkbox checked={!shouldShowAgain} onChange={() => setShouldShowAgain(!shouldShowAgain)} />
 					}
-					label={
-						<Typography variant={ 'body2' }>{ __( "Don't show this again", 'elementor' ) }</Typography>
-					}
+					label={<Typography variant={'body2'}>{__("Don't show this again", 'elementor')}</Typography>}
 				/>
 				<Button
-					size={ 'medium' }
+					size={'medium'}
 					variant="contained"
-					sx={ { minWidth: '135px' } }
-					aria-label={ __( 'Got it introduction', 'elementor' ) }
-					onClick={ () => handleClose( shouldShowAgain ) }
+					sx={{ minWidth: '135px' }}
+					aria-label={__('Got it introduction', 'elementor')}
+					onClick={() => handleClose(shouldShowAgain)}
 				>
-					{ __( 'Got it', 'elementor' ) }
+					{__('Got it', 'elementor')}
 				</Button>
 			</DialogActions>
 		</Dialog>
 	);
 };
 
-const Transition = React.forwardRef( ( props: FadeProps, ref: React.Ref< unknown > ) => (
+const Transition = React.forwardRef((props: FadeProps, ref: React.Ref<unknown>) => (
 	<Fade
-		ref={ ref }
-		{ ...props }
-		timeout={ {
+		ref={ref}
+		{...props}
+		timeout={{
 			enter: 1000,
 			exit: 200,
-		} }
+		}}
 	/>
-) );
+));

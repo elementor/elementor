@@ -8,7 +8,7 @@ import { type EqualUnequalItems, EqualUnequalSizesControl } from '../equal-unequ
 const mockPropType = 'mock-prop-value';
 
 type MockKeys = 'a' | 'b' | 'c' | 'd';
-type MockPropValueType = TransformablePropValue< typeof mockPropType, Record< MockKeys, SizePropValue > >;
+type MockPropValueType = TransformablePropValue<typeof mockPropType, Record<MockKeys, SizePropValue>>;
 
 const mockLabel = 'Test';
 const mockTooltipLabel = mockLabel;
@@ -84,165 +84,165 @@ const mockMixedValues: MockPropValueType = {
 
 const mockPropTypeUtil = createMockPropUtil(
 	mockPropType,
-	createMockSchema( 'object', {
-		a: createMockSchema( 'any' ),
-		b: createMockSchema( 'any' ),
-		c: createMockSchema( 'any' ),
-		d: createMockSchema( 'any' ),
-	} )
+	createMockSchema('object', {
+		a: createMockSchema('any'),
+		b: createMockSchema('any'),
+		c: createMockSchema('any'),
+		d: createMockSchema('any'),
+	})
 );
 
 const MockControl = () => (
 	<EqualUnequalSizesControl
-		label={ mockLabel }
-		items={ mockItems }
-		icon={ mockToggleIcon }
-		tooltipLabel={ mockTooltipLabel }
-		multiSizePropTypeUtil={ mockPropTypeUtil as never }
+		label={mockLabel}
+		items={mockItems}
+		icon={mockToggleIcon}
+		tooltipLabel={mockTooltipLabel}
+		multiSizePropTypeUtil={mockPropTypeUtil as never}
 	/>
 );
 
-const propType = createMockPropType( {
+const propType = createMockPropType({
 	kind: 'union',
 	prop_types: {
-		size: createMockPropType( {
+		size: createMockPropType({
 			kind: 'object',
 			shape: {
-				size: createMockPropType( { kind: 'plain' } ),
-				unit: createMockPropType( { kind: 'plain' } ),
+				size: createMockPropType({ kind: 'plain' }),
+				unit: createMockPropType({ kind: 'plain' }),
 			},
-		} ),
-		[ mockPropType ]: createMockPropType( {
+		}),
+		[mockPropType]: createMockPropType({
 			kind: 'object',
 			shape: {
-				a: createMockPropType( { kind: 'object' } ),
-				b: createMockPropType( { kind: 'object' } ),
-				c: createMockPropType( { kind: 'object' } ),
-				d: createMockPropType( { kind: 'object' } ),
+				a: createMockPropType({ kind: 'object' }),
+				b: createMockPropType({ kind: 'object' }),
+				c: createMockPropType({ kind: 'object' }),
+				d: createMockPropType({ kind: 'object' }),
 			},
-		} ),
+		}),
 	},
-} );
+});
 
-describe( 'EqualUnequalSizeControl', () => {
-	it( 'should render the label, and toggle icon, as well as all items clock-wise', () => {
+describe('EqualUnequalSizeControl', () => {
+	it('should render the label, and toggle icon, as well as all items clock-wise', () => {
 		// Arrange.
 		const setValue = jest.fn();
 
 		// Act.
-		renderControl( <MockControl />, { value: mockEqualValues, setValue, bind: mockBind, propType } );
+		renderControl(<MockControl />, { value: mockEqualValues, setValue, bind: mockBind, propType });
 
-		const controlIcon = screen.getByText( 'Open Popover' );
-		fireEvent.click( controlIcon );
+		const controlIcon = screen.getByText('Open Popover');
+		fireEvent.click(controlIcon);
 
 		// Assert.
-		const controlLabel = screen.getByText( mockLabel );
-		expect( controlLabel ).toBeInTheDocument();
-		expect( controlIcon ).toBeInTheDocument();
+		const controlLabel = screen.getByText(mockLabel);
+		expect(controlLabel).toBeInTheDocument();
+		expect(controlIcon).toBeInTheDocument();
 
-		mockItems.forEach( ( item ) => {
-			const label = screen.getByText( item.label );
-			const icon = screen.getByText( `${ item.bind.toUpperCase() } icon` );
-			expect( label ).toBeInTheDocument();
-			expect( icon ).toBeInTheDocument();
-		} );
-	} );
+		mockItems.forEach((item) => {
+			const label = screen.getByText(item.label);
+			const icon = screen.getByText(`${item.bind.toUpperCase()} icon`);
+			expect(label).toBeInTheDocument();
+			expect(icon).toBeInTheDocument();
+		});
+	});
 
-	it( 'should switch from multi to single value when all values are equal', () => {
+	it('should switch from multi to single value when all values are equal', () => {
 		// Arrange.
 		const setValue = jest.fn();
 
 		// Act.
-		renderControl( <MockControl />, { value: mockMixedValues, setValue, bind: mockBind, propType } );
+		renderControl(<MockControl />, { value: mockMixedValues, setValue, bind: mockBind, propType });
 
-		const controlIcon = screen.getByText( 'Open Popover' );
-		fireEvent.click( controlIcon );
+		const controlIcon = screen.getByText('Open Popover');
+		fireEvent.click(controlIcon);
 
-		const popover = screen.getByRole( 'presentation', { hidden: true } );
-		const input = within( popover ).getAllByRole( 'spinbutton', { hidden: true } )[ 1 ];
-		fireEvent.input( input, { target: { value: 5 } } );
+		const popover = screen.getByRole('presentation', { hidden: true });
+		const input = within(popover).getAllByRole('spinbutton', { hidden: true })[1];
+		fireEvent.input(input, { target: { value: 5 } });
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 5, unit: 'px' } } );
-	} );
+		expect(setValue).toHaveBeenCalledWith({ $$type: 'size', value: { size: 5, unit: 'px' } });
+	});
 
-	it( 'should render the main field with MIXED as its value when not all values are equal', () => {
+	it('should render the main field with MIXED as its value when not all values are equal', () => {
 		// Arrange.
 		const setValue = jest.fn();
 
 		// Act.
-		renderControl( <MockControl />, { value: mockMixedValues, setValue, bind: mockBind, propType } );
+		renderControl(<MockControl />, { value: mockMixedValues, setValue, bind: mockBind, propType });
 
 		// Assert.
-		const controlAllField = screen.getByRole( 'spinbutton' );
+		const controlAllField = screen.getByRole('spinbutton');
 
-		expect( controlAllField ).toHaveAttribute( 'placeholder', 'Mixed' );
-		expect( controlAllField ).toHaveValue( null );
-	} );
+		expect(controlAllField).toHaveAttribute('placeholder', 'Mixed');
+		expect(controlAllField).toHaveValue(null);
+	});
 
-	it( 'should render the main field with no placeholder if the value is empty', () => {
+	it('should render the main field with no placeholder if the value is empty', () => {
 		// Arrange.
 		const setValue = jest.fn();
 
 		// Act.
-		renderControl( <MockControl />, { value: null, setValue, bind: mockBind, propType } );
+		renderControl(<MockControl />, { value: null, setValue, bind: mockBind, propType });
 
 		// Assert.
-		const controlAllField = screen.getByRole( 'spinbutton' );
+		const controlAllField = screen.getByRole('spinbutton');
 
-		expect( controlAllField ).not.toHaveAttribute( 'placeholder', 'Mixed' );
-		expect( controlAllField ).toHaveValue( null );
-	} );
+		expect(controlAllField).not.toHaveAttribute('placeholder', 'Mixed');
+		expect(controlAllField).toHaveValue(null);
+	});
 
-	it( 'should set all values as the main value when changed from within the main field', () => {
+	it('should set all values as the main value when changed from within the main field', () => {
 		// Arrange.
 		const setValue = jest.fn();
 
 		// Act.
-		renderControl( <MockControl />, { value: null, setValue, bind: mockBind, propType } );
+		renderControl(<MockControl />, { value: null, setValue, bind: mockBind, propType });
 
-		const controlAllField = screen.getByRole( 'spinbutton' );
-		fireEvent.input( controlAllField, { target: { value: 5 } } );
+		const controlAllField = screen.getByRole('spinbutton');
+		fireEvent.input(controlAllField, { target: { value: 5 } });
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 5, unit: 'px' } } );
-	} );
+		expect(setValue).toHaveBeenCalledWith({ $$type: 'size', value: { size: 5, unit: 'px' } });
+	});
 
-	it( 'should open a popover when clicking on the icon', () => {
+	it('should open a popover when clicking on the icon', () => {
 		// Arrange.
 		const setValue = jest.fn();
 
 		// Act.
-		renderControl( <MockControl />, { value: mockEqualValues, setValue, bind: mockBind, propType } );
+		renderControl(<MockControl />, { value: mockEqualValues, setValue, bind: mockBind, propType });
 
-		const controlIcon = screen.getByText( 'Open Popover' );
-		fireEvent.click( controlIcon );
+		const controlIcon = screen.getByText('Open Popover');
+		fireEvent.click(controlIcon);
 
-		const popover = screen.getByRole( 'presentation', { hidden: true } );
-		const popoverInputs = within( popover ).getAllByRole( 'spinbutton', { hidden: true } );
+		const popover = screen.getByRole('presentation', { hidden: true });
+		const popoverInputs = within(popover).getAllByRole('spinbutton', { hidden: true });
 
 		// Assert.
-		popoverInputs.forEach( ( input ) => {
-			expect( input ).toHaveValue( 5 );
-		} );
-	} );
+		popoverInputs.forEach((input) => {
+			expect(input).toHaveValue(5);
+		});
+	});
 
-	it( 'should change the corresponding nested prop when changing a value from the popover', () => {
+	it('should change the corresponding nested prop when changing a value from the popover', () => {
 		// Arrange.
 		const setValue = jest.fn();
 
 		// Act.
-		renderControl( <MockControl />, { value: mockEqualValues, setValue, bind: mockBind, propType } );
+		renderControl(<MockControl />, { value: mockEqualValues, setValue, bind: mockBind, propType });
 
-		const controlIcon = screen.getByText( 'Open Popover' );
-		fireEvent.click( controlIcon );
+		const controlIcon = screen.getByText('Open Popover');
+		fireEvent.click(controlIcon);
 
-		const popover = screen.getByRole( 'presentation', { hidden: true } );
-		const input = within( popover ).getAllByRole( 'spinbutton', { hidden: true } )[ 1 ];
-		fireEvent.input( input, { target: { value: 10 } } );
+		const popover = screen.getByRole('presentation', { hidden: true });
+		const input = within(popover).getAllByRole('spinbutton', { hidden: true })[1];
+		fireEvent.input(input, { target: { value: 10 } });
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( {
+		expect(setValue).toHaveBeenCalledWith({
 			$$type: mockPropType,
 			value: {
 				a: { $$type: 'size', value: { size: 5, unit: 'px' } },
@@ -250,28 +250,28 @@ describe( 'EqualUnequalSizeControl', () => {
 				c: { $$type: 'size', value: { size: 5, unit: 'px' } },
 				d: { $$type: 'size', value: { size: 5, unit: 'px' } },
 			},
-		} );
-	} );
+		});
+	});
 
-	it( 'should change the general value to size if nested props are equal', () => {
+	it('should change the general value to size if nested props are equal', () => {
 		// Arrange.
 		const setValue = jest.fn();
 
 		// Act.
-		renderControl( <MockControl />, { value: mockMixedValues, setValue, bind: mockBind, propType } );
+		renderControl(<MockControl />, { value: mockMixedValues, setValue, bind: mockBind, propType });
 
-		const controlIcon = screen.getByText( 'Open Popover' );
-		fireEvent.click( controlIcon );
+		const controlIcon = screen.getByText('Open Popover');
+		fireEvent.click(controlIcon);
 
-		const popover = screen.getByRole( 'presentation', { hidden: true } );
-		const input = within( popover ).getAllByRole( 'spinbutton', { hidden: true } )[ 1 ];
-		fireEvent.input( input, { target: { value: 5 } } );
+		const popover = screen.getByRole('presentation', { hidden: true });
+		const input = within(popover).getAllByRole('spinbutton', { hidden: true })[1];
+		fireEvent.input(input, { target: { value: 5 } });
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 5, unit: 'px' } } );
-	} );
+		expect(setValue).toHaveBeenCalledWith({ $$type: 'size', value: { size: 5, unit: 'px' } });
+	});
 
-	it( 'should show a single value in the main field and set with multi sizes when a nested value is changed', () => {
+	it('should show a single value in the main field and set with multi sizes when a nested value is changed', () => {
 		// Arrange.
 		const setValue = jest.fn();
 
@@ -284,20 +284,20 @@ describe( 'EqualUnequalSizeControl', () => {
 		};
 
 		// Act.
-		renderControl( <MockControl />, { value: mockSingleValue, setValue, bind: mockBind, propType } );
+		renderControl(<MockControl />, { value: mockSingleValue, setValue, bind: mockBind, propType });
 
-		const controlAllField = screen.getByRole( 'spinbutton' );
-		expect( controlAllField ).toHaveValue( 5 );
+		const controlAllField = screen.getByRole('spinbutton');
+		expect(controlAllField).toHaveValue(5);
 
-		const controlIcon = screen.getByText( 'Open Popover' );
-		fireEvent.click( controlIcon );
+		const controlIcon = screen.getByText('Open Popover');
+		fireEvent.click(controlIcon);
 
-		const popover = screen.getByRole( 'presentation', { hidden: true } );
-		const input = within( popover ).getAllByRole( 'spinbutton', { hidden: true } )[ 1 ];
-		fireEvent.input( input, { target: { value: 10 } } );
+		const popover = screen.getByRole('presentation', { hidden: true });
+		const input = within(popover).getAllByRole('spinbutton', { hidden: true })[1];
+		fireEvent.input(input, { target: { value: 10 } });
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( {
+		expect(setValue).toHaveBeenCalledWith({
 			$$type: mockPropType,
 			value: {
 				a: { $$type: 'size', value: { size: 5, unit: 'px' } },
@@ -305,25 +305,25 @@ describe( 'EqualUnequalSizeControl', () => {
 				c: { $$type: 'size', value: { size: 5, unit: 'px' } },
 				d: { $$type: 'size', value: { size: 5, unit: 'px' } },
 			},
-		} );
-	} );
+		});
+	});
 
-	it( 'should be able to set partial mixed values', () => {
+	it('should be able to set partial mixed values', () => {
 		// Arrange.
 		const setValue = jest.fn();
 
 		// Act.
-		renderControl( <MockControl />, { value: null, setValue, bind: mockBind, propType } );
+		renderControl(<MockControl />, { value: null, setValue, bind: mockBind, propType });
 
-		const controlIcon = screen.getByText( 'Open Popover' );
-		fireEvent.click( controlIcon );
+		const controlIcon = screen.getByText('Open Popover');
+		fireEvent.click(controlIcon);
 
-		const popover = screen.getByRole( 'presentation', { hidden: true } );
-		const input = within( popover ).getAllByRole( 'spinbutton', { hidden: true } )[ 1 ];
-		fireEvent.input( input, { target: { value: 5 } } );
+		const popover = screen.getByRole('presentation', { hidden: true });
+		const input = within(popover).getAllByRole('spinbutton', { hidden: true })[1];
+		fireEvent.input(input, { target: { value: 5 } });
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( {
+		expect(setValue).toHaveBeenCalledWith({
 			$$type: mockPropType,
 			value: {
 				a: null,
@@ -331,6 +331,6 @@ describe( 'EqualUnequalSizeControl', () => {
 				c: null,
 				d: null,
 			},
-		} );
-	} );
-} );
+		});
+	});
+});

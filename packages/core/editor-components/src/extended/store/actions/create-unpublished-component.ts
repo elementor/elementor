@@ -19,19 +19,19 @@ type CreateUnpublishedComponentParams = {
 	source: Source;
 };
 
-export async function createUnpublishedComponent( {
+export async function createUnpublishedComponent({
 	name,
 	element,
 	eventData,
 	uid,
 	overridableProps,
 	source,
-}: CreateUnpublishedComponentParams ): Promise< { uid: string; instanceId: string } > {
-	const generatedUid = uid ?? generateUniqueId( 'component' );
+}: CreateUnpublishedComponentParams): Promise<{ uid: string; instanceId: string }> {
+	const generatedUid = uid ?? generateUniqueId('component');
 	const componentBase = { uid: generatedUid, name };
-	const elementDataWithOverridablesReverted = revertAllOverridablesInElementData( element );
+	const elementDataWithOverridablesReverted = revertAllOverridablesInElementData(element);
 
-	const container = getContainer( element.id );
+	const container = getContainer(element.id);
 	const modelFromContainer = container?.model?.toJSON?.() as V1ElementData | undefined;
 	const originalElement: OriginalElementData = {
 		model: modelFromContainer ?? element,
@@ -39,31 +39,31 @@ export async function createUnpublishedComponent( {
 		index: container?.view?._index ?? 0,
 	};
 
-	componentsActions.addUnpublished( {
+	componentsActions.addUnpublished({
 		...componentBase,
-		elements: [ elementDataWithOverridablesReverted ],
+		elements: [elementDataWithOverridablesReverted],
 		overridableProps,
-	} );
+	});
 
-	componentsActions.addCreatedThisSession( generatedUid );
+	componentsActions.addCreatedThisSession(generatedUid);
 
-	const componentInstance = await replaceElementWithComponent( element, componentBase );
+	const componentInstance = await replaceElementWithComponent(element, componentBase);
 
-	trackComponentEvent( {
+	trackComponentEvent({
 		action: 'created',
 		source,
 		component_uid: generatedUid,
 		component_name: name,
 		...eventData,
-	} );
+	});
 
 	try {
-		await runCommand( 'document/save/auto' );
-	} catch ( error ) {
-		restoreOriginalElement( originalElement, componentInstance.id );
+		await runCommand('document/save/auto');
+	} catch (error) {
+		restoreOriginalElement(originalElement, componentInstance.id);
 
-		componentsActions.removeUnpublished( generatedUid );
-		componentsActions.removeCreatedThisSession( generatedUid );
+		componentsActions.removeUnpublished(generatedUid);
+		componentsActions.removeCreatedThisSession(generatedUid);
 
 		throw error;
 	}
@@ -71,29 +71,29 @@ export async function createUnpublishedComponent( {
 	return { uid: generatedUid, instanceId: componentInstance.id };
 }
 
-function restoreOriginalElement( originalElement: OriginalElementData, componentInstanceId: string ): void {
-	const componentContainer = getContainer( componentInstanceId );
+function restoreOriginalElement(originalElement: OriginalElementData, componentInstanceId: string): void {
+	const componentContainer = getContainer(componentInstanceId);
 
-	if ( componentContainer ) {
-		deleteElement( { container: componentContainer, options: { useHistory: false } } );
+	if (componentContainer) {
+		deleteElement({ container: componentContainer, options: { useHistory: false } });
 	}
 
-	const parentContainer = getContainer( originalElement.parentId );
+	const parentContainer = getContainer(originalElement.parentId);
 
-	if ( ! parentContainer ) {
+	if (!parentContainer) {
 		return;
 	}
 
-	const clonedModel = structuredClone( originalElement.model );
+	const clonedModel = structuredClone(originalElement.model);
 
-	createElements( {
-		title: __( 'Restore Element', 'elementor' ),
+	createElements({
+		title: __('Restore Element', 'elementor'),
 		elements: [
 			{
 				container: parentContainer,
-				model: clonedModel as Parameters< typeof createElements >[ 0 ][ 'elements' ][ 0 ][ 'model' ],
+				model: clonedModel as Parameters<typeof createElements>[0]['elements'][0]['model'],
 				options: { at: originalElement.index },
 			},
 		],
-	} );
+	});
 }

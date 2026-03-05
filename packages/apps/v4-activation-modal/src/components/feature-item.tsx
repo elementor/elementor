@@ -8,28 +8,28 @@ type FeatureItemProps = {
 	onClick: () => void;
 };
 
-export const FeatureItem = ( { title, subtitle, selected, onClick }: FeatureItemProps ) => {
+export const FeatureItem = ({ title, subtitle, selected, onClick }: FeatureItemProps) => {
 	return (
 		<Box
-			onClick={ onClick }
-			sx={ {
+			onClick={onClick}
+			sx={{
 				pl: 2,
 				pr: 1,
 				cursor: 'pointer',
 				borderLeft: '3px solid',
 				borderColor: selected ? 'common.black' : 'transparent',
-				transition: ( theme: Theme ) =>
-					theme.transitions.create( [ 'border-color' ], {
+				transition: (theme: Theme) =>
+					theme.transitions.create(['border-color'], {
 						easing: theme.transitions.easing.sharp,
 						duration: theme.transitions.duration.enteringScreen,
-					} ),
-			} }
+					}),
+			}}
 		>
 			<Typography variant="subtitle2" color="text.primary">
-				{ title }
+				{title}
 			</Typography>
 			<Typography variant="body2" color="text.tertiary">
-				{ subtitle }
+				{subtitle}
 			</Typography>
 		</Box>
 	);

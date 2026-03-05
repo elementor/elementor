@@ -3,10 +3,10 @@ import { createContext, type PropsWithChildren, type ReactElement, useContext, u
 import { styled, UnstableFloatingActionBar } from '@elementor/ui';
 
 // CSS hack to hide empty floating bars.
-const FloatingBarContainer = styled( 'span' )`
+const FloatingBarContainer = styled('span')`
 	display: contents;
 
-	.MuiFloatingActionBar-popper:has( .MuiFloatingActionBar-actions:empty ) {
+	.MuiFloatingActionBar-popper:has(.MuiFloatingActionBar-actions:empty) {
 		display: none;
 	}
 
@@ -15,19 +15,19 @@ const FloatingBarContainer = styled( 'span' )`
 	}
 `;
 
-const FloatingActionsContext = createContext< null | {
+const FloatingActionsContext = createContext<null | {
 	open: boolean;
-	setOpen: React.Dispatch< React.SetStateAction< boolean > >;
-} >( null );
+	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}>(null);
 
-export function FloatingActionsBar( { actions, children }: PropsWithChildren< { actions: ReactElement[] } > ) {
-	const [ open, setOpen ] = useState< boolean >( false );
+export function FloatingActionsBar({ actions, children }: PropsWithChildren<{ actions: ReactElement[] }>) {
+	const [open, setOpen] = useState<boolean>(false);
 
 	return (
-		<FloatingActionsContext.Provider value={ { open, setOpen } }>
+		<FloatingActionsContext.Provider value={{ open, setOpen }}>
 			<FloatingBarContainer>
-				<UnstableFloatingActionBar actions={ actions } open={ open || undefined }>
-					{ children as ReactElement }
+				<UnstableFloatingActionBar actions={actions} open={open || undefined}>
+					{children as ReactElement}
 				</UnstableFloatingActionBar>
 			</FloatingBarContainer>
 		</FloatingActionsContext.Provider>
@@ -35,10 +35,10 @@ export function FloatingActionsBar( { actions, children }: PropsWithChildren< { 
 }
 
 export function useFloatingActionsBar() {
-	const context = useContext( FloatingActionsContext );
+	const context = useContext(FloatingActionsContext);
 
-	if ( ! context ) {
-		throw new Error( 'useFloatingActions must be used within a FloatingActionsBar' );
+	if (!context) {
+		throw new Error('useFloatingActions must be used within a FloatingActionsBar');
 	}
 
 	return context;

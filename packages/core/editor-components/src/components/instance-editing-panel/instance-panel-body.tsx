@@ -14,22 +14,22 @@ type InstancePanelBodyProps = {
 	componentInstanceId?: string;
 };
 
-export function InstancePanelBody( { groups, isEmpty, emptyState, componentInstanceId }: InstancePanelBodyProps ) {
+export function InstancePanelBody({ groups, isEmpty, emptyState, componentInstanceId }: InstancePanelBodyProps) {
 	return (
 		<PanelBody>
-			<ControlAdornmentsProvider items={ getFieldIndicators( 'settings' ) }>
-				{ isEmpty ? (
+			<ControlAdornmentsProvider items={getFieldIndicators('settings')}>
+				{isEmpty ? (
 					emptyState
 				) : (
 					<Stack direction="column" alignItems="stretch">
-						{ groups.map( ( group ) => (
-							<React.Fragment key={ group.id + componentInstanceId }>
-								<OverridePropsGroup group={ group } />
+						{groups.map((group) => (
+							<React.Fragment key={group.id + componentInstanceId}>
+								<OverridePropsGroup group={group} />
 								<Divider />
 							</React.Fragment>
-						) ) }
+						))}
 					</Stack>
-				) }
+				)}
 			</ControlAdornmentsProvider>
 		</PanelBody>
 	);

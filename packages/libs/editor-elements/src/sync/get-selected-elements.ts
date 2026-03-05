@@ -7,18 +7,18 @@ export function getSelectedElements(): Element[] {
 
 	const selectedElements = extendedWindow.elementor?.selection?.getElements?.() ?? [];
 
-	return selectedElements.reduce< Element[] >( ( acc, el ) => {
-		const type = el.model.get( 'widgetType' ) || el.model.get( 'elType' );
+	return selectedElements.reduce<Element[]>((acc, el) => {
+		const type = el.model.get('widgetType') || el.model.get('elType');
 
-		if ( type ) {
-			acc.push( {
-				id: el.model.get( 'id' ),
+		if (type) {
+			acc.push({
+				id: el.model.get('id'),
 				type,
-			} );
+			});
 		}
 
 		return acc;
-	}, [] );
+	}, []);
 }
 
 type GetSelectedElementTypeResult =
@@ -34,10 +34,10 @@ type GetSelectedElementTypeResult =
 export function getSelectedElement(): GetSelectedElementTypeResult {
 	const elements = getSelectedElements();
 
-	const [ element ] = elements;
-	const elementType = getElementType( element?.type );
+	const [element] = elements;
+	const elementType = getElementType(element?.type);
 
-	if ( elements.length !== 1 || ! elementType || ! element ) {
+	if (elements.length !== 1 || !elementType || !element) {
 		return { element: null, elementType: null };
 	}
 

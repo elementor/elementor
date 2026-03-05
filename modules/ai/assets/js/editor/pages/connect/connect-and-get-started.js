@@ -39,11 +39,11 @@ const ConnectAndGetStarted = ( { connectUrl, onSuccess, isConnected, getStartedA
 				<Checkbox id="e-ai-terms-approval" color="secondary" checked={ isTermsChecked } onClick={ () => setIsTermsChecked( ( prevState ) => ! prevState ) } />
 				<Stack>
 					<Typography variant="caption" sx={ { maxWidth: 520 } } component="label" htmlFor="e-ai-terms-approval">
-						{ __( 'I approve the ', 'elementor' ) }
+						{ __( 'I approve the', 'elementor' ) }
 						<Link href="https://go.elementor.com/ai-terms/" target="_blank" color="info.main">{ __( 'Terms of Service', 'elementor' ) }</Link>
 						{ ' & ' }
 						<Link href="https://go.elementor.com/ai-privacy-policy/" target="_blank" color="info.main">{ __( 'Privacy Policy', 'elementor' ) }</Link>
-						{ __( ' of the Elementor AI service. ', 'elementor' ) }
+						{ __( 'of the Elementor AI service.', 'elementor' ) }
 						{ __( 'This includes consenting to the collection and use of data to improve user experience.', 'elementor' ) }
 					</Typography>
 				</Stack>

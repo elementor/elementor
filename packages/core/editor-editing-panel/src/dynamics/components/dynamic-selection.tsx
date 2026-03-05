@@ -17,7 +17,7 @@ type Option = {
 	group: string;
 };
 
-type OptionEntry = [ string, Option[] ];
+type OptionEntry = [string, Option[]];
 
 const SIZE = 'tiny';
 const PROMO_TEXT_WIDTH = 170;
@@ -34,118 +34,114 @@ type NoResultsProps = {
 	onClear?: () => void;
 };
 
-export const DynamicSelection = ( { close: closePopover, expired = false }: DynamicSelectionProps ) => {
-	const [ searchValue, setSearchValue ] = useState( '' );
+export const DynamicSelection = ({ close: closePopover, expired = false }: DynamicSelectionProps) => {
+	const [searchValue, setSearchValue] = useState('');
 	const { groups: dynamicGroups } = getAtomicDynamicTags() || {};
 	const theme = useTheme();
 
 	const { value: anyValue } = useBoundProp();
-	const { bind, value: dynamicValue, setValue } = useBoundProp( dynamicPropTypeUtil );
+	const { bind, value: dynamicValue, setValue } = useBoundProp(dynamicPropTypeUtil);
 
-	const [ , updatePropValueHistory ] = usePersistDynamicValue( bind );
+	const [, updatePropValueHistory] = usePersistDynamicValue(bind);
 
-	const isCurrentValueDynamic = !! dynamicValue;
+	const isCurrentValueDynamic = !!dynamicValue;
 
-	const options = useFilteredOptions( searchValue );
+	const options = useFilteredOptions(searchValue);
 
-	const hasNoDynamicTags = ! options.length && ! searchValue.trim();
+	const hasNoDynamicTags = !options.length && !searchValue.trim();
 
-	const handleSearch = ( value: string ) => {
-		setSearchValue( value );
+	const handleSearch = (value: string) => {
+		setSearchValue(value);
 	};
 
-	const handleSetDynamicTag = ( value: string ) => {
-		if ( ! isCurrentValueDynamic ) {
-			updatePropValueHistory( anyValue );
+	const handleSetDynamicTag = (value: string) => {
+		if (!isCurrentValueDynamic) {
+			updatePropValueHistory(anyValue);
 		}
 
-		const selectedOption = options.flatMap( ( [ , items ] ) => items ).find( ( item ) => item.value === value );
+		const selectedOption = options.flatMap(([, items]) => items).find((item) => item.value === value);
 
-		setValue( { name: value, group: selectedOption?.group ?? '', settings: { label: selectedOption?.label } } );
+		setValue({ name: value, group: selectedOption?.group ?? '', settings: { label: selectedOption?.label } });
 
 		closePopover();
 	};
 
-	const virtualizedItems = options.flatMap( ( [ category, items ] ) => [
+	const virtualizedItems = options.flatMap(([category, items]) => [
 		{
 			type: 'category' as const,
 			value: category,
-			label: dynamicGroups?.[ category ]?.title || category,
+			label: dynamicGroups?.[category]?.title || category,
 		},
-		...items.map( ( item ) => ( {
+		...items.map((item) => ({
 			type: 'item' as const,
 			value: item.value,
 			label: item.label,
-		} ) ),
-	] );
+		})),
+	]);
 
 	const getPopOverContent = () => {
-		if ( hasNoDynamicTags ) {
+		if (hasNoDynamicTags) {
 			return <NoDynamicTags />;
 		}
 
-		if ( expired ) {
+		if (expired) {
 			return <ExpiredDynamicTags />;
 		}
 
 		return (
 			<Fragment>
 				<SearchField
-					value={ searchValue }
-					onSearch={ handleSearch }
-					placeholder={ __( 'Search dynamic tags…', 'elementor' ) }
+					value={searchValue}
+					onSearch={handleSearch}
+					placeholder={__('Search dynamic tags…', 'elementor')}
 				/>
 
 				<Divider />
 
 				<PopoverMenuList
-					items={ virtualizedItems }
-					onSelect={ handleSetDynamicTag }
-					onClose={ closePopover }
-					selectedValue={ dynamicValue?.name }
-					itemStyle={ ( item ) =>
-						item.type === 'item' ? { paddingInlineStart: theme.spacing( 3.5 ) } : {}
-					}
-					noResultsComponent={
-						<NoResults searchValue={ searchValue } onClear={ () => setSearchValue( '' ) } />
-					}
+					items={virtualizedItems}
+					onSelect={handleSetDynamicTag}
+					onClose={closePopover}
+					selectedValue={dynamicValue?.name}
+					itemStyle={(item) => (item.type === 'item' ? { paddingInlineStart: theme.spacing(3.5) } : {})}
+					noResultsComponent={<NoResults searchValue={searchValue} onClear={() => setSearchValue('')} />}
 				/>
 			</Fragment>
 		);
 	};
 
 	return (
-		<SectionPopoverBody aria-label={ __( 'Dynamic tags', 'elementor' ) }>
+		<SectionPopoverBody aria-label={__('Dynamic tags', 'elementor')}>
 			<PopoverHeader
-				title={ __( 'Dynamic tags', 'elementor' ) }
-				onClose={ closePopover }
-				icon={ <DatabaseIcon fontSize={ SIZE } /> }
+				title={__('Dynamic tags', 'elementor')}
+				onClose={closePopover}
+				icon={<DatabaseIcon fontSize={SIZE} />}
 			/>
-			{ getPopOverContent() }
+			{getPopOverContent()}
 		</SectionPopoverBody>
 	);
 };
 
-const NoResults = ( { searchValue, onClear }: NoResultsProps ) => (
+const NoResults = ({ searchValue, onClear }: NoResultsProps) => (
 	<Stack
-		gap={ 1 }
+		gap={1}
 		alignItems="center"
 		justifyContent="center"
 		height="100%"
-		p={ 2.5 }
+		p={2.5}
 		color="text.secondary"
-		sx={ { pb: 3.5 } }
+		sx={{ pb: 3.5 }}
 	>
 		<DatabaseIcon fontSize="large" />
 		<Typography align="center" variant="subtitle2">
-			{ __( 'Sorry, nothing matched', 'elementor' ) }
+			{__('Sorry, nothing matched', 'elementor')}
 			<br />
-			&ldquo;{ searchValue }&rdquo;.
+			&ldquo;{searchValue}&rdquo;.
 		</Typography>
-		<Typography align="center" variant="caption" sx={ { display: 'flex', flexDirection: 'column' } }>
-			{ __( 'Try something else.', 'elementor' ) }
-			<Link color="text.secondary" variant="caption" component="button" onClick={ onClear }>
-				{ __( 'Clear & try again', 'elementor' ) }
+		<Typography align="center" variant="caption" sx={{ display: 'flex', flexDirection: 'column' }}>
+			{__('Try something else.', 'elementor')}
+			<Link color="text.secondary" variant="caption" component="button" onClick={onClear}>
+				{__('Clear & try again', 'elementor')}
 			</Link>
 		</Typography>
 	</Stack>
@@ -155,22 +151,22 @@ const NoDynamicTags = () => (
 	<>
 		<Divider />
 		<Stack
-			gap={ 1 }
+			gap={1}
 			alignItems="center"
 			justifyContent="center"
 			height="100%"
-			p={ 2.5 }
+			p={2.5}
 			color="text.secondary"
-			sx={ { pb: 3.5 } }
+			sx={{ pb: 3.5 }}
 		>
 			<DatabaseIcon fontSize="large" />
 			<Typography align="center" variant="subtitle2">
-				{ __( 'Streamline your workflow with dynamic tags', 'elementor' ) }
+				{__('Streamline your workflow with dynamic tags', 'elementor')}
 			</Typography>
-			<Typography align="center" variant="caption" width={ PROMO_TEXT_WIDTH }>
-				{ __( 'Upgrade now to display your content dynamically.', 'elementor' ) }
+			<Typography align="center" variant="caption" width={PROMO_TEXT_WIDTH}>
+				{__('Upgrade now to display your content dynamically.', 'elementor')}
 			</Typography>
-			<CtaButton size="small" href={ PRO_DYNAMIC_TAGS_URL } />
+			<CtaButton size="small" href={PRO_DYNAMIC_TAGS_URL} />
 		</Stack>
 	</>
 );
@@ -179,44 +175,44 @@ const ExpiredDynamicTags = () => (
 	<>
 		<Divider />
 		<Stack
-			gap={ 1 }
+			gap={1}
 			alignItems="center"
 			justifyContent="center"
 			height="100%"
-			p={ 2.5 }
+			p={2.5}
 			color="text.secondary"
-			sx={ { pb: 3.5 } }
+			sx={{ pb: 3.5 }}
 		>
 			<DatabaseIcon fontSize="large" />
 			<Typography align="center" variant="subtitle2">
-				{ __( 'Unlock your Dynamic tags again', 'elementor' ) }
+				{__('Unlock your Dynamic tags again', 'elementor')}
 			</Typography>
-			<Typography align="center" variant="caption" width={ PROMO_TEXT_WIDTH }>
-				{ __( 'Dynamic tags need Elementor Pro. Renew now to keep them active.', 'elementor' ) }
+			<Typography align="center" variant="caption" width={PROMO_TEXT_WIDTH}>
+				{__('Dynamic tags need Elementor Pro. Renew now to keep them active.', 'elementor')}
 			</Typography>
-			<CtaButton size="small" href={ RENEW_DYNAMIC_TAGS_URL } children={ __( 'Renew Now', 'elementor' ) } />
+			<CtaButton size="small" href={RENEW_DYNAMIC_TAGS_URL} children={__('Renew Now', 'elementor')} />
 		</Stack>
 	</>
 );
 
-const useFilteredOptions = ( searchValue: string ): OptionEntry[] => {
+const useFilteredOptions = (searchValue: string): OptionEntry[] => {
 	const dynamicTags = usePropDynamicTags();
 
-	const options = dynamicTags.reduce< Map< string, Option[] > >( ( categories, { name, label, group } ) => {
-		const isVisible = label.toLowerCase().includes( searchValue.trim().toLowerCase() );
+	const options = dynamicTags.reduce<Map<string, Option[]>>((categories, { name, label, group }) => {
+		const isVisible = label.toLowerCase().includes(searchValue.trim().toLowerCase());
 
-		if ( ! isVisible ) {
+		if (!isVisible) {
 			return categories;
 		}
 
-		if ( ! categories.has( group ) ) {
-			categories.set( group, [] );
+		if (!categories.has(group)) {
+			categories.set(group, []);
 		}
 
-		categories.get( group )?.push( { label, group, value: name } );
+		categories.get(group)?.push({ label, group, value: name });
 
 		return categories;
-	}, new Map() );
+	}, new Map());
 
-	return [ ...options ];
+	return [...options];
 };

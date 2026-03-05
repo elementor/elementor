@@ -15,7 +15,7 @@ type CreatedElement = {
 	container: V1Element;
 	parentContainer: V1Element;
 	model: V1ElementModelProps;
-	options?: CreateElementParams[ 'options' ];
+	options?: CreateElementParams['options'];
 };
 
 type CreatedElementsResult = {
@@ -24,50 +24,50 @@ type CreatedElementsResult = {
 
 export type { CreateElementsParams, CreatedElement, CreatedElementsResult };
 
-export const createElements = ( {
+export const createElements = ({
 	elements,
 	title,
-	subtitle = __( 'Item added', 'elementor' ),
-}: CreateElementsParams ): CreatedElementsResult => {
+	subtitle = __('Item added', 'elementor'),
+}: CreateElementsParams): CreatedElementsResult => {
 	const undoableCreate = undoable(
 		{
-			do: ( { elements: elementsParam }: { elements: CreateElementParams[] } ): CreatedElementsResult => {
+			do: ({ elements: elementsParam }: { elements: CreateElementParams[] }): CreatedElementsResult => {
 				const createdElements: CreatedElement[] = [];
 
-				elementsParam.forEach( ( { container, options, ...elementParams } ) => {
+				elementsParam.forEach(({ container, options, ...elementParams }) => {
 					const parentContainer = container.lookup?.() ?? container;
 
-					if ( ! parentContainer ) {
-						throw new Error( 'Parent container not found' );
+					if (!parentContainer) {
+						throw new Error('Parent container not found');
 					}
 
-					const element = createElement( {
+					const element = createElement({
 						container: parentContainer,
 						...elementParams,
 						options: { ...options, useHistory: false },
-					} );
+					});
 
-					createdElements.push( {
+					createdElements.push({
 						container: element,
 						parentContainer,
 						model: element.model?.toJSON() || {},
 						options,
-					} );
-				} );
+					});
+				});
 
 				return { createdElements };
 			},
-			undo: ( _: { elements: CreateElementParams[] }, { createdElements }: CreatedElementsResult ) => {
-				[ ...createdElements ].reverse().forEach( ( { container } ) => {
+			undo: (_: { elements: CreateElementParams[] }, { createdElements }: CreatedElementsResult) => {
+				[...createdElements].reverse().forEach(({ container }) => {
 					const freshContainer = container.lookup?.();
 
-					if ( freshContainer ) {
-						deleteElement( {
+					if (freshContainer) {
+						deleteElement({
 							container: freshContainer,
 							options: { useHistory: false },
-						} );
+						});
 					}
-				} );
+				});
 			},
 			redo: (
 				_: { elements: CreateElementParams[] },
@@ -75,26 +75,26 @@ export const createElements = ( {
 			): CreatedElementsResult => {
 				const newElements: CreatedElement[] = [];
 
-				createdElements.forEach( ( { parentContainer, model, options } ) => {
+				createdElements.forEach(({ parentContainer, model, options }) => {
 					const freshParent = parentContainer.lookup?.();
 
-					if ( ! freshParent ) {
+					if (!freshParent) {
 						return;
 					}
 
-					const element = createElement( {
+					const element = createElement({
 						container: freshParent,
 						model,
 						options: { ...options, useHistory: false },
-					} );
+					});
 
-					newElements.push( {
+					newElements.push({
 						container: element,
 						parentContainer: freshParent,
 						model: element.model.toJSON(),
 						options,
-					} );
-				} );
+					});
+				});
 
 				return { createdElements: newElements };
 			},
@@ -105,5 +105,5 @@ export const createElements = ( {
 		}
 	);
 
-	return undoableCreate( { elements } );
+	return undoableCreate({ elements });
 };

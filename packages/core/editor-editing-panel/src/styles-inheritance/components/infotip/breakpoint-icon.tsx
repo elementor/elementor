@@ -18,7 +18,7 @@ type Props = {
 const SIZE = 'tiny';
 const DEFAULT_BREAKPOINT = 'desktop';
 
-const breakpointIconMap: Record< string, React.ElementType > = {
+const breakpointIconMap: Record<string, React.ElementType> = {
 	widescreen: WidescreenIcon,
 	desktop: DesktopIcon,
 	laptop: LaptopIcon,
@@ -28,20 +28,20 @@ const breakpointIconMap: Record< string, React.ElementType > = {
 	mobile: MobilePortraitIcon,
 };
 
-export const BreakpointIcon = ( { breakpoint }: Props ) => {
+export const BreakpointIcon = ({ breakpoint }: Props) => {
 	const breakpoints = useBreakpoints();
 	const currentBreakpoint = breakpoint || DEFAULT_BREAKPOINT;
-	const IconComponent = breakpointIconMap[ currentBreakpoint ];
+	const IconComponent = breakpointIconMap[currentBreakpoint];
 
-	if ( ! IconComponent ) {
+	if (!IconComponent) {
 		return null;
 	}
 
-	const breakpointLabel = breakpoints.find( ( breakpointItem ) => breakpointItem.id === currentBreakpoint )?.label;
+	const breakpointLabel = breakpoints.find((breakpointItem) => breakpointItem.id === currentBreakpoint)?.label;
 
 	return (
-		<Tooltip title={ breakpointLabel } placement="top">
-			<IconComponent fontSize={ SIZE } sx={ { mt: '2px' } } />
+		<Tooltip title={breakpointLabel} placement="top">
+			<IconComponent fontSize={SIZE} sx={{ mt: '2px' }} />
 		</Tooltip>
 	);
 };

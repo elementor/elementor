@@ -5,22 +5,22 @@ import { ElementLabelNotExistsError, ElementTypeNotExistsError } from '../../err
 import { getContainer } from '../get-container';
 import { type ExtendedWindow } from '../types';
 
-jest.mock( '../get-container' );
+jest.mock('../get-container');
 
-describe( 'getElementLabel', () => {
+describe('getElementLabel', () => {
 	const eWindow = window as unknown as ExtendedWindow;
 
-	it( 'should return element label', () => {
+	it('should return element label', () => {
 		// Arrange.
-		jest.mocked( getContainer ).mockImplementation( ( id ) => {
+		jest.mocked(getContainer).mockImplementation((id) => {
 			return id === 'test-element-id'
-				? createMockElement( {
+				? createMockElement({
 						model: {
 							widgetType: 'test-element-type',
 						},
-				  } )
+					})
 				: null;
-		} );
+		});
 
 		eWindow.elementor = {
 			widgetsCache: {
@@ -31,31 +31,31 @@ describe( 'getElementLabel', () => {
 		};
 
 		// Act.
-		const label = getElementLabel( 'test-element-id' );
+		const label = getElementLabel('test-element-id');
 
 		// Assert.
-		expect( label ).toBe( 'Test Element' );
-	} );
+		expect(label).toBe('Test Element');
+	});
 
-	it( 'should throw if element does not exist', () => {
+	it('should throw if element does not exist', () => {
 		// Arrange.
-		jest.mocked( getContainer ).mockReturnValue( null );
+		jest.mocked(getContainer).mockReturnValue(null);
 
 		// Act & Assert.
-		expect( () => getElementLabel( 'non-existing-element' ) ).toThrow( ElementTypeNotExistsError );
-	} );
+		expect(() => getElementLabel('non-existing-element')).toThrow(ElementTypeNotExistsError);
+	});
 
-	it( 'should throw if element type does not exist in widget cache', () => {
+	it('should throw if element type does not exist in widget cache', () => {
 		// Arrange.
-		jest.mocked( getContainer ).mockImplementation( ( id ) => {
+		jest.mocked(getContainer).mockImplementation((id) => {
 			return id === 'test-element-id'
-				? createMockElement( {
+				? createMockElement({
 						model: {
 							widgetType: 'non-existing-test-element-type',
 						},
-				  } )
+					})
 				: null;
-		} );
+		});
 
 		eWindow.elementor = {
 			widgetsCache: {
@@ -66,6 +66,6 @@ describe( 'getElementLabel', () => {
 		};
 
 		// Act & Assert.
-		expect( () => getElementLabel( 'test-element-id' ) ).toThrow( ElementLabelNotExistsError );
-	} );
-} );
+		expect(() => getElementLabel('test-element-id')).toThrow(ElementLabelNotExistsError);
+	});
+});

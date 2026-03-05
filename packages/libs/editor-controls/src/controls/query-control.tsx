@@ -20,22 +20,22 @@ import { type DestinationProp } from './link-control';
 
 type Props = {
 	queryOptions: {
-		params: Record< string, unknown >;
+		params: Record<string, unknown>;
 		url: string;
 	};
 	allowCustomValues?: boolean;
 	minInputLength?: number;
 	placeholder?: string;
-	onSetValue?: ( value: DestinationProp | null ) => void;
+	onSetValue?: (value: DestinationProp | null) => void;
 	ariaLabel?: string;
 };
 
-type Response = HttpResponse< { value: FlatOption[] | CategorizedOption[] } >;
+type Response = HttpResponse<{ value: FlatOption[] | CategorizedOption[] }>;
 
-type FetchOptionsParams = Record< string, unknown > & { term: string };
+type FetchOptionsParams = Record<string, unknown> & { term: string };
 
-export const QueryControl = createControl( ( props: Props ) => {
-	const { value, setValue } = useBoundProp< DestinationProp >();
+export const QueryControl = createControl((props: Props) => {
+	const { value, setValue } = useBoundProp<DestinationProp>();
 
 	const {
 		allowCustomValues = true,
@@ -46,16 +46,14 @@ export const QueryControl = createControl( ( props: Props ) => {
 		ariaLabel,
 	} = props || {};
 
-	const normalizedPlaceholder = placeholder || __( 'Search', 'elementor' );
+	const normalizedPlaceholder = placeholder || __('Search', 'elementor');
 
-	const [ options, setOptions ] = useState< FlatOption[] | CategorizedOption[] >(
-		generateFirstLoadedOption( value?.value )
-	);
+	const [options, setOptions] = useState<FlatOption[] | CategorizedOption[]>(generateFirstLoadedOption(value?.value));
 
-	const onOptionChange = ( newValue: number | null ) => {
-		if ( newValue === null ) {
-			setValue( null );
-			onSetValue?.( null );
+	const onOptionChange = (newValue: number | null) => {
+		if (newValue === null) {
+			setValue(null);
+			onSetValue?.(null);
 
 			return;
 		}
@@ -63,80 +61,80 @@ export const QueryControl = createControl( ( props: Props ) => {
 		const valueToSave = {
 			$$type: 'query',
 			value: {
-				id: numberPropTypeUtil.create( newValue ),
-				label: stringPropTypeUtil.create( findMatchingOption( options, newValue )?.label || null ),
+				id: numberPropTypeUtil.create(newValue),
+				label: stringPropTypeUtil.create(findMatchingOption(options, newValue)?.label || null),
 			},
 		};
 
-		setValue( valueToSave );
-		onSetValue?.( valueToSave );
+		setValue(valueToSave);
+		onSetValue?.(valueToSave);
 	};
 
-	const onTextChange = ( newValue: string | null ) => {
-		if ( ! newValue ) {
-			setValue( null );
-			onSetValue?.( null );
+	const onTextChange = (newValue: string | null) => {
+		if (!newValue) {
+			setValue(null);
+			onSetValue?.(null);
 
 			return;
 		}
 
 		const newLinkValue = newValue?.trim() || '';
-		const valueToSave = newLinkValue ? urlPropTypeUtil.create( newLinkValue ) : null;
+		const valueToSave = newLinkValue ? urlPropTypeUtil.create(newLinkValue) : null;
 
-		setValue( valueToSave );
-		onSetValue?.( valueToSave );
-		updateOptions( newValue );
+		setValue(valueToSave);
+		onSetValue?.(valueToSave);
+		updateOptions(newValue);
 	};
 
-	const updateOptions = ( newValue: string | null ) => {
-		setOptions( [] );
+	const updateOptions = (newValue: string | null) => {
+		setOptions([]);
 
-		if ( ! newValue || ! url || newValue.length < minInputLength ) {
+		if (!newValue || !url || newValue.length < minInputLength) {
 			return;
 		}
 
-		debounceFetch( { ...params, term: newValue } );
+		debounceFetch({ ...params, term: newValue });
 	};
 
 	const debounceFetch = useMemo(
 		() =>
 			debounce(
-				( queryParams: FetchOptionsParams ) =>
-					fetchOptions( url, queryParams ).then( ( newOptions ) => {
-						setOptions( formatOptions( newOptions ) );
-					} ),
+				(queryParams: FetchOptionsParams) =>
+					fetchOptions(url, queryParams).then((newOptions) => {
+						setOptions(formatOptions(newOptions));
+					}),
 				400
 			),
-		[ url ]
+		[url]
 	);
 
 	return (
 		<ControlActions>
 			<Autocomplete
-				options={ options }
-				allowCustomValues={ allowCustomValues }
-				placeholder={ normalizedPlaceholder }
-				startAdornment={ <SearchIcon fontSize="tiny" /> }
-				value={ value?.value?.id?.value || value?.value }
-				onOptionChange={ onOptionChange }
-				onTextChange={ onTextChange }
-				minInputLength={ minInputLength }
-				disablePortal={ false }
-				inputProps={ {
-					...( ariaLabel ? { 'aria-label': ariaLabel } : {} ),
-				} }
+				options={options}
+				allowCustomValues={allowCustomValues}
+				placeholder={normalizedPlaceholder}
+				startAdornment={<SearchIcon fontSize="tiny" />}
+				value={value?.value?.id?.value || value?.value}
+				onOptionChange={onOptionChange}
+				onTextChange={onTextChange}
+				minInputLength={minInputLength}
+				disablePortal={false}
+				inputProps={{
+					...(ariaLabel ? { 'aria-label': ariaLabel } : {}),
+				}}
 			/>
 		</ControlActions>
 	);
-} );
+});
 
-async function fetchOptions( ajaxUrl: string, params: FetchOptionsParams ) {
-	if ( ! params || ! ajaxUrl ) {
+async function fetchOptions(ajaxUrl: string, params: FetchOptionsParams) {
+	if (!params || !ajaxUrl) {
 		return [];
 	}
 
 	try {
-		const { data: response } = await httpService().get< Response >( ajaxUrl, { params } );
+		const { data: response } = await httpService().get<Response>(ajaxUrl, { params });
 
 		return response.data.value;
 	} catch {
@@ -144,15 +142,13 @@ async function fetchOptions( ajaxUrl: string, params: FetchOptionsParams ) {
 	}
 }
 
-function formatOptions( options: FlatOption[] | CategorizedOption[] ): FlatOption[] | CategorizedOption[] {
-	const compareKey = isCategorizedOptionPool( options ) ? 'groupLabel' : 'label';
+function formatOptions(options: FlatOption[] | CategorizedOption[]): FlatOption[] | CategorizedOption[] {
+	const compareKey = isCategorizedOptionPool(options) ? 'groupLabel' : 'label';
 
-	return options.sort( ( a, b ) =>
-		a[ compareKey ] && b[ compareKey ] ? a[ compareKey ].localeCompare( b[ compareKey ] ) : 0
-	);
+	return options.sort((a, b) => (a[compareKey] && b[compareKey] ? a[compareKey].localeCompare(b[compareKey]) : 0));
 }
 
-function generateFirstLoadedOption( unionValue: DestinationProp | null ): FlatOption[] {
+function generateFirstLoadedOption(unionValue: DestinationProp | null): FlatOption[] {
 	const value = unionValue?.id?.value;
 	const label = unionValue?.label?.value;
 	const type = unionValue?.id?.$$type || 'url';
@@ -163,6 +159,6 @@ function generateFirstLoadedOption( unionValue: DestinationProp | null ): FlatOp
 					id: value.toString(),
 					label,
 				},
-		  ]
+			]
 		: [];
 }

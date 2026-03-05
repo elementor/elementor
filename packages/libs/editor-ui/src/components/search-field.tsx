@@ -8,48 +8,48 @@ const SIZE = 'tiny';
 
 type Props = {
 	value: string;
-	onSearch: ( search: string ) => void;
+	onSearch: (search: string) => void;
 	placeholder: string;
 	id?: string;
 } & BoxProps;
 
-export const SearchField = ( { value, onSearch, placeholder, id, sx }: Props ) => {
-	const inputRef = useRef< HTMLInputElement | null >( null );
+export const SearchField = ({ value, onSearch, placeholder, id, sx }: Props) => {
+	const inputRef = useRef<HTMLInputElement | null>(null);
 
 	const handleClear = () => {
-		onSearch( '' );
+		onSearch('');
 
 		inputRef.current?.focus();
 	};
 
-	const handleInputChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-		onSearch( event.target.value );
+	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		onSearch(event.target.value);
 	};
 
 	return (
-		<Box sx={ { px: 2, pb: 1.5, ...sx } }>
+		<Box sx={{ px: 2, pb: 1.5, ...sx }}>
 			<TextField
 				// eslint-disable-next-line jsx-a11y/no-autofocus
 				autoFocus
 				fullWidth
-				id={ id }
-				size={ SIZE }
-				value={ value }
-				inputRef={ inputRef }
-				onChange={ handleInputChange }
-				placeholder={ placeholder }
-				InputProps={ {
+				id={id}
+				size={SIZE}
+				value={value}
+				inputRef={inputRef}
+				onChange={handleInputChange}
+				placeholder={placeholder}
+				InputProps={{
 					startAdornment: (
 						<InputAdornment position="start">
-							<SearchIcon fontSize={ SIZE } />
+							<SearchIcon fontSize={SIZE} />
 						</InputAdornment>
 					),
 					endAdornment: value && (
-						<IconButton size={ SIZE } onClick={ handleClear } aria-label={ __( 'Clear', 'elementor' ) }>
-							<XIcon color="action" fontSize={ SIZE } />
+						<IconButton size={SIZE} onClick={handleClear} aria-label={__('Clear', 'elementor')}>
+							<XIcon color="action" fontSize={SIZE} />
 						</IconButton>
 					),
-				} }
+				}}
 			/>
 		</Box>
 	);

@@ -21,31 +21,29 @@ import { isDynamicPropValue } from './utils';
 const { registerPopoverAction } = controlActionsMenu;
 
 export const init = () => {
-	registerControlReplacement( {
+	registerControlReplacement({
 		component: DynamicSelectionControl as ControlComponent,
-		condition: ( { value } ) => isDynamicPropValue( value ),
-	} );
+		condition: ({ value }) => isDynamicPropValue(value),
+	});
 
-	injectIntoRepeaterItemLabel( {
+	injectIntoRepeaterItemLabel({
 		id: 'dynamic-background-image',
-		condition: ( { value } ) =>
-			isDynamicPropValue( ( value as BackgroundOverlayPropType ).value?.image?.value?.src ),
-		component: BackgroundControlDynamicTagLabel as InjectedComponent< { value: PropValue } >,
-	} );
+		condition: ({ value }) => isDynamicPropValue((value as BackgroundOverlayPropType).value?.image?.value?.src),
+		component: BackgroundControlDynamicTagLabel as InjectedComponent<{ value: PropValue }>,
+	});
 
-	injectIntoRepeaterItemIcon( {
+	injectIntoRepeaterItemIcon({
 		id: 'dynamic-background-image',
-		condition: ( { value } ) =>
-			isDynamicPropValue( ( value as BackgroundOverlayPropType ).value?.image?.value?.src ),
+		condition: ({ value }) => isDynamicPropValue((value as BackgroundOverlayPropType).value?.image?.value?.src),
 		component: BackgroundControlDynamicTagIcon,
-	} );
+	});
 
-	registerPopoverAction( {
+	registerPopoverAction({
 		id: 'dynamic-tags',
 		priority: 20,
 		useProps: usePropDynamicAction,
-	} );
+	});
 
-	styleTransformersRegistry.register( 'dynamic', dynamicTransformer );
-	settingsTransformersRegistry.register( 'dynamic', dynamicTransformer );
+	styleTransformersRegistry.register('dynamic', dynamicTransformer);
+	settingsTransformersRegistry.register('dynamic', dynamicTransformer);
 };

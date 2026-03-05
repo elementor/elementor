@@ -11,16 +11,16 @@ import { ToastProvider } from './toast/toast-context';
 type ColorSchemePreference = 'auto' | 'dark' | 'light';
 type ResolvedColorScheme = 'dark' | 'light';
 
-function resolveColorScheme( preference: ColorSchemePreference ): ResolvedColorScheme {
-	if ( preference === 'dark' ) {
+function resolveColorScheme(preference: ColorSchemePreference): ResolvedColorScheme {
+	if (preference === 'dark') {
 		return 'dark';
 	}
 
-	if ( preference === 'light' ) {
+	if (preference === 'light') {
 		return 'light';
 	}
 
-	const prefersDark = window.matchMedia?.( '(prefers-color-scheme: dark)' ).matches;
+	const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
 
 	return prefersDark ? 'dark' : 'light';
 }
@@ -29,35 +29,35 @@ interface AppProps {
 	onClose?: () => void;
 }
 
-export function App( props: AppProps ) {
-	const store = useMemo( () => {
+export function App(props: AppProps) {
+	const store = useMemo(() => {
 		registerOnboardingSlice();
 
 		let existingStore = __getStore();
 
-		if ( ! existingStore ) {
+		if (!existingStore) {
 			existingStore = __createStore();
 		}
 
 		return existingStore;
-	}, [] );
+	}, []);
 
-	useEffect( () => {
-		store.dispatch( initFromConfig() );
-	}, [ store ] );
+	useEffect(() => {
+		store.dispatch(initFromConfig());
+	}, [store]);
 
-	const queryClient = useMemo( () => createQueryClient(), [] );
+	const queryClient = useMemo(() => createQueryClient(), []);
 
-	const uiTheme = window.elementorAppConfig?.[ 'e-onboarding' ]?.uiTheme ?? 'auto';
-	const colorScheme = useMemo( () => resolveColorScheme( uiTheme ), [ uiTheme ] );
+	const uiTheme = window.elementorAppConfig?.['e-onboarding']?.uiTheme ?? 'auto';
+	const colorScheme = useMemo(() => resolveColorScheme(uiTheme), [uiTheme]);
 
 	return (
-		<StoreProvider store={ store }>
-			<QueryClientProvider client={ queryClient }>
-				<DirectionProvider rtl={ window.document.dir === 'rtl' }>
-					<ThemeProvider colorScheme={ colorScheme } palette="argon-beta">
+		<StoreProvider store={store}>
+			<QueryClientProvider client={queryClient}>
+				<DirectionProvider rtl={window.document.dir === 'rtl'}>
+					<ThemeProvider colorScheme={colorScheme} palette="argon-beta">
 						<ToastProvider>
-							<AppContent { ...props } />
+							<AppContent {...props} />
 						</ToastProvider>
 					</ThemeProvider>
 				</DirectionProvider>

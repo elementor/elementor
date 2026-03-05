@@ -8,17 +8,17 @@ type Props = {
 	MenuItemProps: MenuItemPropsType;
 };
 
-export default function ActionMenuItem( { title, icon: Icon, MenuItemProps }: Props ) {
+export default function ActionMenuItem({ title, icon: Icon, MenuItemProps }: Props) {
 	return (
-		<MenuItem { ...MenuItemProps }>
+		<MenuItem {...MenuItemProps}>
 			<ListItemIcon
-				sx={ {
+				sx={{
 					color: 'inherit',
-				} }
+				}}
 			>
 				<Icon />
 			</ListItemIcon>
-			<ListItemText primary={ title } />
+			<ListItemText primary={title} />
 		</MenuItem>
 	);
 }

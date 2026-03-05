@@ -5,11 +5,11 @@ import { unknownChildrenSchema } from '../utils';
 
 export const transformOriginPropTypeUtil = createPropUtils(
 	'transform-origin',
-	z.strictObject( {
+	z.strictObject({
 		x: unknownChildrenSchema,
 		y: unknownChildrenSchema,
 		z: unknownChildrenSchema,
-	} )
+	})
 );
 
-export type TransformOriginPropValue = z.infer< typeof transformOriginPropTypeUtil.schema >;
+export type TransformOriginPropValue = z.infer<typeof transformOriginPropTypeUtil.schema>;

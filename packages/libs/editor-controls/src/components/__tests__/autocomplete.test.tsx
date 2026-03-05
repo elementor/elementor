@@ -35,169 +35,169 @@ const customValueProps: AutocompleteProps = {
 	allowCustomValues: true,
 };
 
-describe( 'Autocomplete', () => {
-	it( "should show no options when allowCustomValue is false, and input doesn't match options", () => {
+describe('Autocomplete', () => {
+	it("should show no options when allowCustomValue is false, and input doesn't match options", () => {
 		// Act.
-		renderWithTheme( <Autocomplete { ...basicProps } value={ 'Moses' } placeholder={ 'test' } /> );
+		renderWithTheme(<Autocomplete {...basicProps} value={'Moses'} placeholder={'test'} />);
 
-		const input = screen.getByPlaceholderText( 'test' );
-		fireEvent.input( input, { target: { value: 'Moses' } } );
+		const input = screen.getByPlaceholderText('test');
+		fireEvent.input(input, { target: { value: 'Moses' } });
 
 		// Assert.
-		expect( screen.getAllByRole( 'presentation' ).length ).toBeGreaterThan( 0 );
-	} );
+		expect(screen.getAllByRole('presentation').length).toBeGreaterThan(0);
+	});
 
-	it( 'should allow values outside of options when allowCustomValues is on', () => {
+	it('should allow values outside of options when allowCustomValues is on', () => {
 		// Act.
-		renderWithTheme( <Autocomplete { ...customValueProps } placeholder={ 'test' } /> );
+		renderWithTheme(<Autocomplete {...customValueProps} placeholder={'test'} />);
 
-		const input = screen.getByPlaceholderText( 'test' );
-		fireEvent.input( input, { target: { value: '31' } } );
+		const input = screen.getByPlaceholderText('test');
+		fireEvent.input(input, { target: { value: '31' } });
 
 		// Assert.
-		expect( screen.queryByText( 'No options' ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.queryByText('No options')).not.toBeInTheDocument();
+	});
 
-	it( 'should mark corresponding option to saved value', () => {
+	it('should mark corresponding option to saved value', () => {
 		// Act.
-		renderWithTheme( <Autocomplete { ...customValueProps } value={ 2 } placeholder={ 'test' } /> );
+		renderWithTheme(<Autocomplete {...customValueProps} value={2} placeholder={'test'} />);
 
-		const input: HTMLInputElement = screen.getByPlaceholderText( 'test' );
+		const input: HTMLInputElement = screen.getByPlaceholderText('test');
 
 		// Assert.
-		expect( flatOptions.some( ( { label } ) => label === input.value ) ).toBeTruthy();
-	} );
+		expect(flatOptions.some(({ label }) => label === input.value)).toBeTruthy();
+	});
 
-	it( 'should not display options when input length is bellow minimum (2)', async () => {
+	it('should not display options when input length is bellow minimum (2)', async () => {
 		// Act.
-		renderWithTheme( <Autocomplete { ...customValueProps } options={ flatOptions } placeholder={ 'test' } /> );
+		renderWithTheme(<Autocomplete {...customValueProps} options={flatOptions} placeholder={'test'} />);
 
-		const input: HTMLInputElement = screen.getByPlaceholderText( 'test' );
-		fireEvent.input( input, { target: { value: 'O' } } );
+		const input: HTMLInputElement = screen.getByPlaceholderText('test');
+		fireEvent.input(input, { target: { value: 'O' } });
 
 		// Assert.
-		expect( flatOptions.some( ( { label } ) => label === input.value ) ).toBeFalsy();
-	} );
+		expect(flatOptions.some(({ label }) => label === input.value)).toBeFalsy();
+	});
 
-	it( 'should display options', () => {
+	it('should display options', () => {
 		// Act.
-		renderWithTheme( <Autocomplete { ...customValueProps } placeholder={ 'test' } value={ 'One' } /> );
+		renderWithTheme(<Autocomplete {...customValueProps} placeholder={'test'} value={'One'} />);
 
-		const input: HTMLInputElement = screen.getByPlaceholderText( 'test' );
-		fireEvent.input( input, { target: { value: 'On' } } );
+		const input: HTMLInputElement = screen.getByPlaceholderText('test');
+		fireEvent.input(input, { target: { value: 'On' } });
 
 		// Assert.
-		expect( flatOptions.filter( ( { label } ) => screen.queryByText( label ) ).length ).toBe( 1 );
-	} );
+		expect(flatOptions.filter(({ label }) => screen.queryByText(label)).length).toBe(1);
+	});
 
-	it( 'should group options when groupLabel is present', () => {
-		// Act.
-		renderWithTheme(
-			<Autocomplete
-				{ ...customValueProps }
-				options={ categorizedOptions }
-				placeholder={ 'test' }
-				minInputLength={ 0 }
-				value={ 'Th' }
-			/>
-		);
-
-		const input = screen.getByPlaceholderText( 'test' );
-		fireEvent.input( input, { target: { value: 'T' } } );
-		let group1 = screen.queryByText( 'Group 1' );
-		let group2 = screen.queryByText( 'Group 2' );
-
-		// Assert.
-		expect( categorizedOptions.filter( ( { label } ) => screen.queryByText( label ) ).length ).toBe( 1 );
-		expect( group1 ).toBeVisible();
-		expect( group2 ).not.toBeInTheDocument();
-
-		// Act.
-		fireEvent.input( input, { target: { value: 'F' } } );
-
-		group1 = screen.queryByText( 'Group 1' );
-		group2 = screen.queryByText( 'Group 2' );
-		// Assert.
-		expect( categorizedOptions.filter( ( { label } ) => screen.queryByText( label ) ).length ).toBe( 1 );
-	} );
-
-	it( 'should NOT group options when only one groupLabel is present', () => {
+	it('should group options when groupLabel is present', () => {
 		// Act.
 		renderWithTheme(
 			<Autocomplete
-				{ ...customValueProps }
-				options={ singleCategoryOptions }
-				placeholder={ 'test' }
-				minInputLength={ 0 }
-				value={ '' }
+				{...customValueProps}
+				options={categorizedOptions}
+				placeholder={'test'}
+				minInputLength={0}
+				value={'Th'}
 			/>
 		);
 
-		const input = screen.getByPlaceholderText( 'test' );
-		fireEvent.input( input, { target: { value: 'F' } } );
+		const input = screen.getByPlaceholderText('test');
+		fireEvent.input(input, { target: { value: 'T' } });
+		let group1 = screen.queryByText('Group 1');
+		let group2 = screen.queryByText('Group 2');
 
 		// Assert.
-		const group1 = screen.queryByText( 'Group 1' );
-		expect( group1 ).not.toBeInTheDocument();
-	} );
+		expect(categorizedOptions.filter(({ label }) => screen.queryByText(label)).length).toBe(1);
+		expect(group1).toBeVisible();
+		expect(group2).not.toBeInTheDocument();
 
-	it( 'should clear input when clicking on clear input button, allowCustomValues is off', () => {
+		// Act.
+		fireEvent.input(input, { target: { value: 'F' } });
+
+		group1 = screen.queryByText('Group 1');
+		group2 = screen.queryByText('Group 2');
+		// Assert.
+		expect(categorizedOptions.filter(({ label }) => screen.queryByText(label)).length).toBe(1);
+	});
+
+	it('should NOT group options when only one groupLabel is present', () => {
+		// Act.
+		renderWithTheme(
+			<Autocomplete
+				{...customValueProps}
+				options={singleCategoryOptions}
+				placeholder={'test'}
+				minInputLength={0}
+				value={''}
+			/>
+		);
+
+		const input = screen.getByPlaceholderText('test');
+		fireEvent.input(input, { target: { value: 'F' } });
+
+		// Assert.
+		const group1 = screen.queryByText('Group 1');
+		expect(group1).not.toBeInTheDocument();
+	});
+
+	it('should clear input when clicking on clear input button, allowCustomValues is off', () => {
 		// Arrange.
 		const onTextChangeCallback = jest.fn();
 
 		// Act.
 		renderWithTheme(
 			<Autocomplete
-				{ ...basicProps }
-				value={ 4 }
-				options={ categorizedOptions }
-				onTextChange={ onTextChangeCallback }
-				placeholder={ 'test' }
+				{...basicProps}
+				value={4}
+				options={categorizedOptions}
+				onTextChange={onTextChangeCallback}
+				placeholder={'test'}
 			/>
 		);
 
-		const clearButton = screen.getByRole( 'button' );
+		const clearButton = screen.getByRole('button');
 
 		// Assert.
-		expect( clearButton ).toBeVisible();
+		expect(clearButton).toBeVisible();
 
 		// Act.
-		fireEvent.click( clearButton );
-		expect( onTextChangeCallback ).toHaveBeenCalledWith( null );
-	} );
+		fireEvent.click(clearButton);
+		expect(onTextChangeCallback).toHaveBeenCalledWith(null);
+	});
 
-	it( 'should clear input when clicking on clear input button, allowCustomValues is on', () => {
+	it('should clear input when clicking on clear input button, allowCustomValues is on', () => {
 		// Arrange.
 		const onTextChangeCallback = jest.fn();
 
 		// Act.
 		renderWithTheme(
 			<Autocomplete
-				onTextChange={ onTextChangeCallback }
-				{ ...customValueProps }
-				value={ 4 }
-				options={ flatOptions }
-				placeholder={ 'test' }
+				onTextChange={onTextChangeCallback}
+				{...customValueProps}
+				value={4}
+				options={flatOptions}
+				placeholder={'test'}
 			/>
 		);
 
-		const clearButton = screen.getByRole( 'button' );
+		const clearButton = screen.getByRole('button');
 
 		// Assert.
-		expect( clearButton ).toBeVisible();
+		expect(clearButton).toBeVisible();
 
 		// Act.
-		fireEvent.click( clearButton );
+		fireEvent.click(clearButton);
 
 		// Assert.
-		expect( onTextChangeCallback ).toHaveBeenCalledWith( null );
-	} );
+		expect(onTextChangeCallback).toHaveBeenCalledWith(null);
+	});
 
-	it( 'should not display clear button when value is empty', () => {
+	it('should not display clear button when value is empty', () => {
 		// Act.
-		renderWithTheme( <Autocomplete { ...basicProps } options={ flatOptions } placeholder={ 'test' } /> );
+		renderWithTheme(<Autocomplete {...basicProps} options={flatOptions} placeholder={'test'} />);
 
 		// Assert.
-		expect( screen.queryAllByRole( 'button' ) ).toStrictEqual( [] );
-	} );
-} );
+		expect(screen.queryAllByRole('button')).toStrictEqual([]);
+	});
+});

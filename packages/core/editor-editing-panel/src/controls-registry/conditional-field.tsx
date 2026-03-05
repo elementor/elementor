@@ -3,24 +3,24 @@ import { isDependency, isDependencyMet, type PropKey, type PropType } from '@ele
 
 import { useStylesFields } from '../hooks/use-styles-fields';
 
-export const ConditionalField: React.FC< {
+export const ConditionalField: React.FC<{
 	children: React.ReactNode;
-} > = ( { children } ) => {
+}> = ({ children }) => {
 	const { propType } = useBoundProp();
 
-	const depList = getDependencies( propType );
+	const depList = getDependencies(propType);
 
-	const { values: depValues } = useStylesFields( depList );
+	const { values: depValues } = useStylesFields(depList);
 
-	const isHidden = ! isDependencyMet( propType?.dependencies, depValues ).isMet;
+	const isHidden = !isDependencyMet(propType?.dependencies, depValues).isMet;
 
 	return isHidden ? null : children;
 };
 
-export function getDependencies( propType?: PropType ): PropKey[] {
-	if ( ! propType?.dependencies?.terms.length ) {
+export function getDependencies(propType?: PropType): PropKey[] {
+	if (!propType?.dependencies?.terms.length) {
 		return [];
 	}
 
-	return propType.dependencies.terms.flatMap( ( term ) => ( ! isDependency( term ) ? term.path : [] ) );
+	return propType.dependencies.terms.flatMap((term) => (!isDependency(term) ? term.path : []));
 }

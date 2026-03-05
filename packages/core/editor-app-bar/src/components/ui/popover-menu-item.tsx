@@ -13,10 +13,10 @@ type ExtraProps = {
 
 type PopoverMenuItemProps = MenuItemProps & ExtraProps;
 
-const DirectionalArrowIcon = withDirection( ArrowUpRightIcon );
-const DirectionalChevronIcon = withDirection( ChevronRightIcon );
+const DirectionalArrowIcon = withDirection(ArrowUpRightIcon);
+const DirectionalChevronIcon = withDirection(ChevronRightIcon);
 
-export default function PopoverMenuItem( {
+export default function PopoverMenuItem({
 	text,
 	icon,
 	onClick,
@@ -26,27 +26,27 @@ export default function PopoverMenuItem( {
 	isGroupParent,
 	showExternalLinkIcon,
 	...props
-}: PopoverMenuItemProps ) {
+}: PopoverMenuItemProps) {
 	const isExternalLink = href && target === '_blank' && showExternalLinkIcon;
 
 	return (
 		<MenuItem
-			{ ...props }
-			disabled={ disabled }
-			onClick={ onClick }
-			component={ href ? 'a' : 'div' }
-			href={ href }
-			target={ target }
-			sx={ {
+			{...props}
+			disabled={disabled}
+			onClick={onClick}
+			component={href ? 'a' : 'div'}
+			href={href}
+			target={target}
+			sx={{
 				'&:hover': {
 					color: 'text.primary', // Overriding global CSS from the editor.
 				},
-			} }
+			}}
 		>
-			<ListItemIcon>{ icon }</ListItemIcon>
-			<ListItemText primary={ text } />
-			{ isExternalLink && <DirectionalArrowIcon /> }
-			{ isGroupParent && <DirectionalChevronIcon /> }
+			<ListItemIcon>{icon}</ListItemIcon>
+			<ListItemText primary={text} />
+			{isExternalLink && <DirectionalArrowIcon />}
+			{isGroupParent && <DirectionalChevronIcon />}
 		</MenuItem>
 	);
 }

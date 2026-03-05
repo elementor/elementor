@@ -12,9 +12,9 @@ export function getMenuActionsForVariable(
 	variableType: string,
 	context: MenuActionContext
 ): VariableManagerMenuAction[] {
-	const typeOptions = getVariableType( variableType );
-	if ( typeOptions?.menuActionsFactory ) {
-		return typeOptions.menuActionsFactory( context );
+	const typeOptions = getVariableType(variableType);
+	if (typeOptions?.menuActionsFactory) {
+		return typeOptions.menuActionsFactory(context);
 	}
 	return [];
 }

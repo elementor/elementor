@@ -2,7 +2,7 @@ import { type PropTypeKey } from '@elementor/editor-props';
 
 import { type AnyTransformer, type TransformersMap } from './types';
 
-export type TransformersRegistry = ReturnType< typeof createTransformersRegistry >;
+export type TransformersRegistry = ReturnType<typeof createTransformersRegistry>;
 
 export function createTransformersRegistry() {
 	const transformers: TransformersMap = {};
@@ -10,18 +10,18 @@ export function createTransformersRegistry() {
 	let fallbackTransformer: AnyTransformer | null = null;
 
 	return {
-		register( type: PropTypeKey, transformer: AnyTransformer ) {
-			transformers[ type ] = transformer;
+		register(type: PropTypeKey, transformer: AnyTransformer) {
+			transformers[type] = transformer;
 
 			return this;
 		},
-		registerFallback( transformer: AnyTransformer ) {
+		registerFallback(transformer: AnyTransformer) {
 			fallbackTransformer = transformer;
 
 			return this;
 		},
-		get( type: PropTypeKey ): AnyTransformer | null {
-			return transformers[ type ] ?? fallbackTransformer;
+		get(type: PropTypeKey): AnyTransformer | null {
+			return transformers[type] ?? fallbackTransformer;
 		},
 		all() {
 			return { ...transformers };

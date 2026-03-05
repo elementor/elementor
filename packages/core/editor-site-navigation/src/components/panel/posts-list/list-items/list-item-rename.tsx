@@ -11,9 +11,9 @@ type Props = {
 	post: Post;
 };
 
-export default function ListItemRename( { post }: Props ) {
+export default function ListItemRename({ post }: Props) {
 	const { type, resetEditMode } = usePostListContext();
-	const { updatePost } = usePostActions( type );
+	const { updatePost } = usePostActions(type);
 	const { setError } = usePostListContext();
 	const activeDocument = useActiveDocument();
 	const rename = useRenameActiveDocument();
@@ -21,19 +21,19 @@ export default function ListItemRename( { post }: Props ) {
 	const isActive = activeDocument?.id === post.id;
 	const title = isActive ? activeDocument?.title : post.title.rendered;
 
-	const renamePostCallback = async ( inputValue: string ) => {
-		if ( inputValue === title ) {
+	const renamePostCallback = async (inputValue: string) => {
+		if (inputValue === title) {
 			resetEditMode();
 		}
 
 		try {
-			if ( isActive ) {
-				await rename( inputValue );
+			if (isActive) {
+				await rename(inputValue);
 			} else {
-				await updatePost.mutateAsync( {
+				await updatePost.mutateAsync({
 					id: post.id,
 					title: inputValue,
-				} );
+				});
 			}
 		} catch {
 			setError();
@@ -42,5 +42,5 @@ export default function ListItemRename( { post }: Props ) {
 		}
 	};
 
-	return <EditModeTemplate postTitle={ title } isLoading={ updatePost.isPending } callback={ renamePostCallback } />;
+	return <EditModeTemplate postTitle={title} isLoading={updatePost.isPending} callback={renamePostCallback} />;
 }

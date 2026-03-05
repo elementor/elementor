@@ -4,16 +4,16 @@ import { type PropValue, type TransformablePropValue } from '@elementor/editor-p
 import { type ComponentOverridable } from './types';
 
 export const componentOverridableTransformer = createTransformer(
-	( value: ComponentOverridable, options: TransformerOptions ) => {
+	(value: ComponentOverridable, options: TransformerOptions) => {
 		const { overrides } = options.renderContext ?? {};
 
-		const overrideValue = overrides?.[ value.override_key as keyof typeof overrides ];
+		const overrideValue = overrides?.[value.override_key as keyof typeof overrides];
 
-		if ( overrideValue ) {
-			const isOverride = isOriginValueOverride( value.origin_value );
+		if (overrideValue) {
+			const isOverride = isOriginValueOverride(value.origin_value);
 
-			if ( isOverride ) {
-				return transformOverride( value, options, overrideValue );
+			if (isOverride) {
+				return transformOverride(value, options, overrideValue);
 			}
 
 			return overrideValue;
@@ -30,25 +30,25 @@ function transformOverride(
 	},
 	overrideValue: PropValue
 ) {
-	const transformer = settingsTransformersRegistry.get( 'override' );
+	const transformer = settingsTransformersRegistry.get('override');
 
-	if ( ! transformer ) {
+	if (!transformer) {
 		return null;
 	}
 
-	const transformedValue = transformer( value.origin_value.value, options );
+	const transformedValue = transformer(value.origin_value.value, options);
 
-	if ( ! transformedValue ) {
+	if (!transformedValue) {
 		return null;
 	}
 
-	const [ key ] = Object.keys( transformedValue as Record< string, unknown > );
+	const [key] = Object.keys(transformedValue as Record<string, unknown>);
 
 	return {
-		[ key ]: overrideValue,
+		[key]: overrideValue,
 	};
 }
 
-function isOriginValueOverride( originValue: TransformablePropValue< string > ): boolean {
+function isOriginValueOverride(originValue: TransformablePropValue<string>): boolean {
 	return originValue.$$type === 'override';
 }

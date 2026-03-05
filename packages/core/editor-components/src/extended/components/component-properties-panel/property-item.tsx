@@ -13,11 +13,11 @@ type PropertyItemProps = {
 	isDragPlaceholder?: boolean;
 	groups: { value: string; label: string }[];
 	existingLabels: string[];
-	onDelete: ( propKey: string ) => void;
-	onUpdate: ( data: { label: string; group: string | null } ) => void;
+	onDelete: (propKey: string) => void;
+	onUpdate: (data: { label: string; group: string | null }) => void;
 };
 
-export function PropertyItem( {
+export function PropertyItem({
 	prop,
 	sortableTriggerProps,
 	isDragPlaceholder,
@@ -25,28 +25,28 @@ export function PropertyItem( {
 	existingLabels,
 	onDelete,
 	onUpdate,
-}: PropertyItemProps ) {
-	const popoverState = usePopupState( {
+}: PropertyItemProps) {
+	const popoverState = usePopupState({
 		variant: 'popover',
-	} );
-	const icon = getElementIcon( prop );
-	const popoverProps = bindPopover( popoverState );
+	});
+	const icon = getElementIcon(prop);
+	const popoverProps = bindPopover(popoverState);
 
-	const handleSubmit = ( data: { label: string; group: string | null } ) => {
-		onUpdate( data );
+	const handleSubmit = (data: { label: string; group: string | null }) => {
+		onUpdate(data);
 		popoverState.close();
 	};
 
-	const handleDelete = ( event: React.MouseEvent ) => {
+	const handleDelete = (event: React.MouseEvent) => {
 		event.stopPropagation();
-		onDelete( prop.overrideKey );
+		onDelete(prop.overrideKey);
 	};
 
 	return (
 		<>
 			<Box
-				{ ...bindTrigger( popoverState ) }
-				sx={ {
+				{...bindTrigger(popoverState)}
+				sx={{
 					position: 'relative',
 					pl: 0.5,
 					pr: 1,
@@ -75,50 +75,48 @@ export function PropertyItem( {
 					'& .delete-button': {
 						visibility: 'hidden',
 					},
-				} }
+				}}
 			>
-				<SortableTrigger { ...sortableTriggerProps } />
-				<Box
-					sx={ { display: 'flex', alignItems: 'center', color: 'text.primary', fontSize: 12, padding: 0.25 } }
-				>
-					<i className={ icon } />
+				<SortableTrigger {...sortableTriggerProps} />
+				<Box sx={{ display: 'flex', alignItems: 'center', color: 'text.primary', fontSize: 12, padding: 0.25 }}>
+					<i className={icon} />
 				</Box>
-				<Typography variant="caption" sx={ { color: 'text.primary', flexGrow: 1, fontSize: 10 } }>
-					{ prop.label }
+				<Typography variant="caption" sx={{ color: 'text.primary', flexGrow: 1, fontSize: 10 }}>
+					{prop.label}
 				</Typography>
-				<IconButton size="tiny" onClick={ handleDelete } aria-label="Delete property" sx={ { p: 0.25 } }>
+				<IconButton size="tiny" onClick={handleDelete} aria-label="Delete property" sx={{ p: 0.25 }}>
 					<XIcon fontSize="tiny" />
 				</IconButton>
 			</Box>
 
 			<Popover
-				{ ...popoverProps }
-				anchorOrigin={ { vertical: 'bottom', horizontal: 'left' } }
-				transformOrigin={ { vertical: 'top', horizontal: 'left' } }
-				PaperProps={ { sx: { width: popoverState.anchorEl?.getBoundingClientRect().width } } }
+				{...popoverProps}
+				anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+				transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+				PaperProps={{ sx: { width: popoverState.anchorEl?.getBoundingClientRect().width } }}
 			>
 				<OverridablePropForm
-					onSubmit={ handleSubmit }
-					currentValue={ prop }
-					groups={ groups }
-					existingLabels={ existingLabels }
-					sx={ { width: '100%' } }
+					onSubmit={handleSubmit}
+					currentValue={prop}
+					groups={groups}
+					existingLabels={existingLabels}
+					sx={{ width: '100%' }}
 				/>
 			</Popover>
 		</>
 	);
 }
 
-function getElementIcon( prop: OverridableProp ): string {
+function getElementIcon(prop: OverridableProp): string {
 	const elType = prop.elType === 'widget' ? prop.widgetType : prop.elType;
 
 	const widgetsCache = getWidgetsCache();
 
-	if ( ! widgetsCache ) {
+	if (!widgetsCache) {
 		return 'eicon-apps';
 	}
 
-	const widgetConfig = widgetsCache[ elType ];
+	const widgetConfig = widgetsCache[elType];
 
 	return widgetConfig?.icon || 'eicon-apps';
 }

@@ -27,8 +27,8 @@ import Rename from '../../actions-menu/actions/rename';
 import SetHome from '../../actions-menu/actions/set-home';
 import View from '../../actions-menu/actions/view';
 
-const DisabledPostTooltip = ( { children, isDisabled }: { children: React.ReactNode; isDisabled: boolean } ) => {
-	if ( isDisabled ) {
+const DisabledPostTooltip = ({ children, isDisabled }: { children: React.ReactNode; isDisabled: boolean }) => {
+	if (isDisabled) {
 		const title = (
 			<Typography variant="caption">
 				You cannot edit this page.
@@ -38,70 +38,66 @@ const DisabledPostTooltip = ( { children, isDisabled }: { children: React.ReactN
 		);
 
 		return (
-			<Tooltip title={ title } placement="bottom" arrow={ false }>
-				{ /* @see https://mui.com/material-ui/react-tooltip/#disabled-elements */ }
-				{ children }
+			<Tooltip title={title} placement="bottom" arrow={false}>
+				{/* @see https://mui.com/material-ui/react-tooltip/#disabled-elements */}
+				{children}
 			</Tooltip>
 		);
 	}
 
-	return <>{ children }</>;
+	return <>{children}</>;
 };
 
-export default function ListItemView( { post }: { post: Post } ) {
+export default function ListItemView({ post }: { post: Post }) {
 	const activeDocument = useActiveDocument();
 	const navigateToDocument = useNavigateToDocument();
 
-	const popupState = usePopupState( {
+	const popupState = usePopupState({
 		variant: 'popover',
 		popupId: 'post-actions',
 		disableAutoFocus: true,
-	} );
+	});
 
 	const isActive = activeDocument?.id === post.id;
 	const status = isActive ? activeDocument?.status.value : post.status;
 	const title = isActive ? activeDocument?.title : post.title.rendered;
-	const isDisabled = ! post.user_can.edit;
+	const isDisabled = !post.user_can.edit;
 
 	return (
 		<>
-			<DisabledPostTooltip isDisabled={ isDisabled }>
+			<DisabledPostTooltip isDisabled={isDisabled}>
 				<ListItem
 					disablePadding
 					secondaryAction={
-						<IconButton value size="small" { ...bindTrigger( popupState ) }>
+						<IconButton value size="small" {...bindTrigger(popupState)}>
 							<DotsVerticalIcon fontSize="small" />
 						</IconButton>
 					}
 				>
 					<ListItemButton
-						selected={ isActive }
-						disabled={ isDisabled }
-						onClick={ () => {
-							if ( ! isActive ) {
-								navigateToDocument( post.id );
+						selected={isActive}
+						disabled={isDisabled}
+						onClick={() => {
+							if (!isActive) {
+								navigateToDocument(post.id);
 							}
-						} }
+						}}
 						dense
 					>
-						<ListItemText disableTypography={ true }>
-							<PageTitleAndStatus title={ title } status={ status } />
+						<ListItemText disableTypography={true}>
+							<PageTitleAndStatus title={title} status={status} />
 						</ListItemText>
-						{ post.isHome && <HomeIcon titleAccess={ __( 'Homepage', 'elementor' ) } color="disabled" /> }
+						{post.isHome && <HomeIcon titleAccess={__('Homepage', 'elementor')} color="disabled" />}
 					</ListItemButton>
 				</ListItem>
 			</DisabledPostTooltip>
-			<Menu
-				PaperProps={ { sx: { mt: 2, width: 200 } } }
-				MenuListProps={ { dense: true } }
-				{ ...bindMenu( popupState ) }
-			>
-				<Rename post={ post } />
-				<Duplicate post={ post } popupState={ popupState } />
-				<Delete post={ post } />
-				<View post={ post } />
+			<Menu PaperProps={{ sx: { mt: 2, width: 200 } }} MenuListProps={{ dense: true }} {...bindMenu(popupState)}>
+				<Rename post={post} />
+				<Duplicate post={post} popupState={popupState} />
+				<Delete post={post} />
+				<View post={post} />
 				<Divider />
-				<SetHome post={ post } closeMenu={ () => popupState.close() } />
+				<SetHome post={post} closeMenu={() => popupState.close()} />
 			</Menu>
 		</>
 	);

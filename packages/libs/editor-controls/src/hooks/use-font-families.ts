@@ -4,10 +4,10 @@ import { __ } from '@wordpress/i18n';
 
 import { type FontCategory } from '../controls/font-family-control/font-family-control';
 
-const supportedCategories: Record< SupportedFonts, string > = {
-	system: __( 'System', 'elementor' ),
-	custom: __( 'Custom Fonts', 'elementor' ),
-	googlefonts: __( 'Google Fonts', 'elementor' ),
+const supportedCategories: Record<SupportedFonts, string> = {
+	system: __('System', 'elementor'),
+	custom: __('Custom Fonts', 'elementor'),
+	googlefonts: __('Google Fonts', 'elementor'),
 };
 
 const getFontFamilies = () => {
@@ -15,7 +15,7 @@ const getFontFamilies = () => {
 
 	const options = controls?.font?.options;
 
-	if ( ! options ) {
+	if (!options) {
 		return null;
 	}
 
@@ -25,28 +25,28 @@ const getFontFamilies = () => {
 export const useFontFamilies = () => {
 	const fontFamilies = getFontFamilies();
 
-	return useMemo( () => {
-		const categoriesOrder: SupportedFonts[] = [ 'system', 'custom', 'googlefonts' ];
+	return useMemo(() => {
+		const categoriesOrder: SupportedFonts[] = ['system', 'custom', 'googlefonts'];
 
-		return Object.entries( fontFamilies || {} )
-			.reduce< FontCategory[] >( ( acc, [ font, category ] ) => {
-				if ( ! supportedCategories[ category as SupportedFonts ] ) {
+		return Object.entries(fontFamilies || {})
+			.reduce<FontCategory[]>((acc, [font, category]) => {
+				if (!supportedCategories[category as SupportedFonts]) {
 					return acc;
 				}
 
-				const categoryIndex = categoriesOrder.indexOf( category );
+				const categoryIndex = categoriesOrder.indexOf(category);
 
-				if ( ! acc[ categoryIndex ] ) {
-					acc[ categoryIndex ] = {
-						label: supportedCategories[ category as SupportedFonts ],
+				if (!acc[categoryIndex]) {
+					acc[categoryIndex] = {
+						label: supportedCategories[category as SupportedFonts],
 						fonts: [],
 					};
 				}
 
-				acc[ categoryIndex ].fonts.push( font );
+				acc[categoryIndex].fonts.push(font);
 
 				return acc;
-			}, [] )
-			.filter( Boolean );
-	}, [ fontFamilies ] );
+			}, [])
+			.filter(Boolean);
+	}, [fontFamilies]);
 };

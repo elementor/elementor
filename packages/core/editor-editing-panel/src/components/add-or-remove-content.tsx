@@ -15,37 +15,37 @@ type Props = {
 	renderLabel: () => React.ReactNode;
 };
 
-export const AddOrRemoveContent = ( {
+export const AddOrRemoveContent = ({
 	isAdded,
 	onAdd,
 	onRemove,
 	children,
 	disabled,
 	renderLabel,
-}: PropsWithChildren< Props > ) => {
+}: PropsWithChildren<Props>) => {
 	return (
 		<SectionContent>
 			<Stack
 				direction="row"
-				sx={ {
+				sx={{
 					justifyContent: 'space-between',
 					alignItems: 'center',
 					marginInlineEnd: -0.75,
-				} }
+				}}
 			>
-				{ renderLabel() }
-				{ isAdded ? (
-					<IconButton size={ SIZE } onClick={ onRemove } aria-label="Remove" disabled={ disabled }>
-						<MinusIcon fontSize={ SIZE } />
+				{renderLabel()}
+				{isAdded ? (
+					<IconButton size={SIZE} onClick={onRemove} aria-label="Remove" disabled={disabled}>
+						<MinusIcon fontSize={SIZE} />
 					</IconButton>
 				) : (
-					<IconButton size={ SIZE } onClick={ onAdd } aria-label="Add" disabled={ disabled }>
-						<PlusIcon fontSize={ SIZE } />
+					<IconButton size={SIZE} onClick={onAdd} aria-label="Add" disabled={disabled}>
+						<PlusIcon fontSize={SIZE} />
 					</IconButton>
-				) }
+				)}
 			</Stack>
-			<Collapse in={ isAdded } unmountOnExit>
-				<SectionContent>{ children }</SectionContent>
+			<Collapse in={isAdded} unmountOnExit>
+				<SectionContent>{children}</SectionContent>
 			</Collapse>
 		</SectionContent>
 	);

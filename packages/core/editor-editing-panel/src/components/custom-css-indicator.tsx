@@ -16,62 +16,59 @@ export const CustomCssIndicator = () => {
 	} = useElement();
 
 	const style = React.useMemo(
-		() => ( styleId && provider ? provider.actions.get( styleId, { elementId } ) : null ),
-		[ styleId, provider, elementId ]
+		() => (styleId && provider ? provider.actions.get(styleId, { elementId }) : null),
+		[styleId, provider, elementId]
 	);
 
-	const hasContent = Boolean( customCss?.raw?.trim() );
+	const hasContent = Boolean(customCss?.raw?.trim());
 
-	const hasInheritedContent = React.useMemo( () => {
-		if ( hasContent ) {
+	const hasInheritedContent = React.useMemo(() => {
+		if (hasContent) {
 			return false;
 		}
 
-		return hasInheritedCustomCss( style, meta );
-	}, [ hasContent, style, meta ] );
+		return hasInheritedCustomCss(style, meta);
+	}, [hasContent, style, meta]);
 
-	if ( ! hasContent ) {
-		if ( hasInheritedContent ) {
+	if (!hasContent) {
+		if (hasInheritedContent) {
 			return <StyleIndicator />;
 		}
 		return null;
 	}
 
-	return <StyleIndicator getColor={ provider ? getStylesProviderThemeColor( provider.getKey() ) : undefined } />;
+	return <StyleIndicator getColor={provider ? getStylesProviderThemeColor(provider.getKey()) : undefined} />;
 };
 
-const hasInheritedCustomCss = (
-	style: StyleDefinition | null,
-	meta: StyleDefinitionVariant[ 'meta' ] | null
-): boolean => {
-	if ( ! style || ! meta ) {
+const hasInheritedCustomCss = (style: StyleDefinition | null, meta: StyleDefinitionVariant['meta'] | null): boolean => {
+	if (!style || !meta) {
 		return false;
 	}
 
-	const target = ( meta.breakpoint ?? 'desktop' ) as BreakpointId;
+	const target = (meta.breakpoint ?? 'desktop') as BreakpointId;
 	const root = getBreakpointsTree();
 	const state = meta.state;
 
-	function search( node: BreakpointNode, ancestorHasCss: boolean ): boolean | undefined {
-		if ( ! style ) {
+	function search(node: BreakpointNode, ancestorHasCss: boolean): boolean | undefined {
+		if (!style) {
 			return undefined;
 		}
 
 		const hasHere = Boolean(
-			getVariantByMeta( style, {
+			getVariantByMeta(style, {
 				breakpoint: node.id as BreakpointId,
 				state,
-			} )?.custom_css?.raw?.trim()
+			})?.custom_css?.raw?.trim()
 		);
 
-		if ( node.id === target ) {
+		if (node.id === target) {
 			return ancestorHasCss;
 		}
 
-		for ( const child of node.children ?? [] ) {
-			const res = search( child, ancestorHasCss || hasHere );
+		for (const child of node.children ?? []) {
+			const res = search(child, ancestorHasCss || hasHere);
 
-			if ( res !== undefined ) {
+			if (res !== undefined) {
 				return res;
 			}
 		}
@@ -79,5 +76,5 @@ const hasInheritedCustomCss = (
 		return undefined;
 	}
 
-	return Boolean( search( root, false ) );
+	return Boolean(search(root, false));
 };

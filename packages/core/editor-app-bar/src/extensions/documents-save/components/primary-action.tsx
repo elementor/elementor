@@ -28,94 +28,94 @@ export default function PrimaryAction() {
 
 	const isEditMode = editMode === 'edit';
 
-	const popupState = usePopupState( {
+	const popupState = usePopupState({
 		variant: 'popover',
 		popupId: 'document-save-options',
-	} );
+	});
 
-	if ( ! document ) {
+	if (!document) {
 		return null;
 	}
 
-	const isPublishDisabled = ! isEditMode || ! isPublishEnabled( document );
-	const isSaveOptionsDisabled = ! isEditMode || document.type.value === 'kit';
+	const isPublishDisabled = !isEditMode || !isPublishEnabled(document);
+	const isSaveOptionsDisabled = !isEditMode || document.type.value === 'kit';
 
 	// When the document is being saved, the spinner should not appear.
 	// Usually happens when the Kit is being saved.
-	const shouldShowSpinner = document.isSaving && ! isPublishDisabled;
+	const shouldShowSpinner = document.isSaving && !isPublishDisabled;
 
 	return (
 		<>
 			<ButtonGroup size="large" variant="contained">
 				<Button
-					onClick={ () => {
+					onClick={() => {
 						const extendedWindow = window as unknown as ExtendedWindow;
 						const config = extendedWindow?.elementorCommon?.eventsManager?.config;
 
-						if ( config ) {
+						if (config) {
 							extendedWindow.elementorCommon.eventsManager.dispatchEvent(
 								config.names.topBar.publishButton,
 								{
 									location: config.locations.topBar,
-									secondaryLocation: config.secondaryLocations[ 'publish-button' ],
+									secondaryLocation: config.secondaryLocations['publish-button'],
 									trigger: config.triggers.click,
 									element: config.elements.mainCta,
 								}
 							);
 						}
 
-						if ( ! document.isSaving ) {
+						if (!document.isSaving) {
 							save();
 						}
-					} }
-					sx={ {
+					}}
+					sx={{
 						height: '100%',
 						borderRadius: 0,
 						maxWidth: '158px',
 						'&.MuiButtonBase-root.MuiButtonGroup-grouped': {
 							minWidth: '110px',
 						},
-					} }
-					disabled={ isPublishDisabled }
+					}}
+					disabled={isPublishDisabled}
 				>
-					{ shouldShowSpinner ? <CircularProgress color="inherit" size="1.5em" /> : getLabel( document ) }
+					{shouldShowSpinner ? <CircularProgress color="inherit" size="1.5em" /> : getLabel(document)}
 				</Button>
 
 				<Tooltip
-					title={ __( 'Save Options', 'elementor' ) }
-					PopperProps={ {
+					title={__('Save Options', 'elementor')}
+					PopperProps={{
 						sx: {
 							'&.MuiTooltip-popper .MuiTooltip-tooltip.MuiTooltip-tooltipPlacementBottom': {
 								mt: 1,
 								mr: 0.25,
 							},
 						},
-					} }
+					}}
 				>
-					<Box component="span" aria-label={ undefined }>
+					<Box component="span" aria-label={undefined}>
 						<Button
 							size="small"
-							{ ...bindTrigger( popupState ) }
-							sx={ { px: 0, height: '100%', borderRadius: 0 } }
-							disabled={ isSaveOptionsDisabled }
-							aria-label={ __( 'Save Options', 'elementor' ) }
+							{...bindTrigger(popupState)}
+							sx={{ px: 0, height: '100%', borderRadius: 0 }}
+							disabled={isSaveOptionsDisabled}
+							aria-label={__('Save Options', 'elementor')}
 						>
 							<ChevronDownIcon />
 						</Button>
 					</Box>
 				</Tooltip>
 			</ButtonGroup>
-			<PrimaryActionMenu { ...bindMenu( popupState ) } onClick={ popupState.close } />
+			<PrimaryActionMenu {...bindMenu(popupState)} onClick={popupState.close} />
 		</>
 	);
 }
 
-function getLabel( document: Document ) {
-	return document.userCan.publish ? __( 'Publish', 'elementor' ) : __( 'Submit', 'elementor' );
+function getLabel(document: Document) {
+	return document.userCan.publish ? __('Publish', 'elementor') : __('Submit', 'elementor');
 }
 
-function isPublishEnabled( document: Document ) {
-	if ( document.type.value === 'kit' ) {
+function isPublishEnabled(document: Document) {
+	if (document.type.value === 'kit') {
 		return false;
 	}
 

@@ -2,17 +2,17 @@ import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters
 
 import { type ExtendedWindow, type V1Element } from './types';
 
-export function getContainer( id: string ): V1Element | null {
+export function getContainer(id: string): V1Element | null {
 	const extendedWindow = window as unknown as ExtendedWindow;
-	const container = extendedWindow.elementor?.getContainer?.( id );
+	const container = extendedWindow.elementor?.getContainer?.(id);
 
 	return container ?? null;
 }
 
-export const selectElement = ( elementId: string ) => {
+export const selectElement = (elementId: string) => {
 	try {
-		const container = getContainer( elementId );
+		const container = getContainer(elementId);
 
-		runCommand( 'document/elements/select', { container } );
+		runCommand('document/elements/select', { container });
 	} catch {}
 };

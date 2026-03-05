@@ -27,7 +27,7 @@ type Props = {
 	source: Source;
 };
 
-export function setOverridableProp( {
+export function setOverridableProp({
 	componentId,
 	overrideKey,
 	elementId,
@@ -39,16 +39,16 @@ export function setOverridableProp( {
 	originValue,
 	originPropFields,
 	source,
-}: Props ): OverridableProp | undefined {
-	const overridableProps = componentsSelectors.getOverridableProps( componentId );
+}: Props): OverridableProp | undefined {
+	const overridableProps = componentsSelectors.getOverridableProps(componentId);
 
-	if ( ! overridableProps ) {
+	if (!overridableProps) {
 		return;
 	}
 
-	const existingOverridableProp = overrideKey ? overridableProps.props[ overrideKey ] : null;
-	const duplicatedTargetProps = Object.values( overridableProps.props ).filter(
-		( prop ) => prop.elementId === elementId && prop.propKey === propKey && prop !== existingOverridableProp
+	const existingOverridableProp = overrideKey ? overridableProps.props[overrideKey] : null;
+	const duplicatedTargetProps = Object.values(overridableProps.props).filter(
+		(prop) => prop.elementId === elementId && prop.propKey === propKey && prop !== existingOverridableProp
 	);
 
 	const { groups: groupsAfterResolve, groupId: currentGroupId } = resolveOrCreateGroup(
@@ -57,7 +57,7 @@ export function setOverridableProp( {
 	);
 
 	const overridableProp: OverridableProp = {
-		overrideKey: existingOverridableProp?.overrideKey || generateUniqueId( 'prop' ),
+		overrideKey: existingOverridableProp?.overrideKey || generateUniqueId('prop'),
 		label,
 		elementId,
 		propKey,
@@ -75,26 +75,26 @@ export function setOverridableProp( {
 
 	const props = {
 		...stateAfterRemovingDuplicates.props,
-		[ overridableProp.overrideKey ]: overridableProp,
+		[overridableProp.overrideKey]: overridableProp,
 	};
 
-	let groups = addPropToGroup( stateAfterRemovingDuplicates.groups, currentGroupId, overridableProp.overrideKey );
-	groups = ensureGroupInOrder( groups, currentGroupId );
+	let groups = addPropToGroup(stateAfterRemovingDuplicates.groups, currentGroupId, overridableProp.overrideKey);
+	groups = ensureGroupInOrder(groups, currentGroupId);
 
 	const isChangingGroups = existingOverridableProp && existingOverridableProp.groupId !== currentGroupId;
 
-	if ( isChangingGroups ) {
-		groups = removePropFromGroup( groups, existingOverridableProp.groupId, overridableProp.overrideKey );
+	if (isChangingGroups) {
+		groups = removePropFromGroup(groups, existingOverridableProp.groupId, overridableProp.overrideKey);
 	}
 
-	componentsActions.setOverridableProps( componentId, { props, groups } );
+	componentsActions.setOverridableProps(componentId, { props, groups });
 
-	const isNewProperty = ! existingOverridableProp;
+	const isNewProperty = !existingOverridableProp;
 
-	if ( isNewProperty ) {
+	if (isNewProperty) {
 		const currentComponent = componentsSelectors.getCurrentComponent();
 
-		trackComponentEvent( {
+		trackComponentEvent({
 			action: 'propertyExposed',
 			source,
 			component_uid: currentComponent?.uid,
@@ -102,7 +102,7 @@ export function setOverridableProp( {
 			property_path: propKey,
 			property_name: label,
 			element_type: widgetType ?? elType,
-		} );
+		});
 	}
 
 	return overridableProp;

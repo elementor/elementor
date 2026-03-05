@@ -5,6 +5,6 @@ type HtmlV3Value = {
 	children: unknown[];
 };
 
-export const htmlV3Transformer = createTransformer( ( value: HtmlV3Value ) => {
+export const htmlV3Transformer = createTransformer((value: HtmlV3Value) => {
 	return value?.content ?? '';
-} );
+});

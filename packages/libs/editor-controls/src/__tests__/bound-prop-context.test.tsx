@@ -5,22 +5,22 @@ import { act, fireEvent, render, renderHook, screen } from '@testing-library/rea
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 
-describe( 'useBoundProp', () => {
-	it( 'should throw error if used outside of context', () => {
+describe('useBoundProp', () => {
+	it('should throw error if used outside of context', () => {
 		// Arrange
 		const mockConsoleError = jest.fn();
 		window.console.error = mockConsoleError;
 
 		// Act & Assert.
-		expect( () => {
-			renderHook( () => useBoundProp() );
-		} ).toThrow( 'Hook used outside of provider' );
+		expect(() => {
+			renderHook(() => useBoundProp());
+		}).toThrow('Hook used outside of provider');
 
 		// Suppress console.error from React.
-		expect( mockConsoleError ).toHaveBeenCalled();
-	} );
+		expect(mockConsoleError).toHaveBeenCalled();
+	});
 
-	it( 'should throw error if the prop type does not exist', () => {
+	it('should throw error if the prop type does not exist', () => {
 		// Arrange.
 		const mockConsoleError = jest.fn();
 		window.console.error = mockConsoleError;
@@ -30,33 +30,33 @@ describe( 'useBoundProp', () => {
 		};
 
 		// Act.
-		expect( () => {
-			renderHook( () => useBoundProp(), {
-				wrapper: ( { children } ) => (
+		expect(() => {
+			renderHook(() => useBoundProp(), {
+				wrapper: ({ children }) => (
 					// @ts-expect-error - empty propType for testing
-					<PropProvider value={ value } setValue={ jest.fn() } propType={ null }>
-						<PropKeyProvider bind="key-1">{ children }</PropKeyProvider>
+					<PropProvider value={value} setValue={jest.fn()} propType={null}>
+						<PropKeyProvider bind="key-1">{children}</PropKeyProvider>
 					</PropProvider>
 				),
-			} );
-		} ).toThrow( 'Prop type is missing' );
+			});
+		}).toThrow('Prop type is missing');
 
 		// Suppress console.error from React.
-		expect( mockConsoleError ).toHaveBeenCalled();
-	} );
+		expect(mockConsoleError).toHaveBeenCalled();
+	});
 
-	it( 'should return the nested object value by bind', () => {
+	it('should return the nested object value by bind', () => {
 		// Arrange.
-		const nestedPropType = createMockPropType( { kind: 'plain' } );
+		const nestedPropType = createMockPropType({ kind: 'plain' });
 		const nestedPropValue = { $$type: 'nested-key', value: 'nested-value' };
 
-		const propType = createMockPropType( {
+		const propType = createMockPropType({
 			kind: 'object',
 			shape: {
 				'key-1': nestedPropType,
-				'key-2': createMockPropType( { kind: 'object' } ),
+				'key-2': createMockPropType({ kind: 'object' }),
 			},
-		} );
+		});
 
 		const value = {
 			'key-1': nestedPropValue,
@@ -64,41 +64,41 @@ describe( 'useBoundProp', () => {
 		};
 
 		// Act.
-		const { result } = renderHook( () => useBoundProp(), {
-			wrapper: ( { children } ) => (
-				<PropProvider value={ value } setValue={ jest.fn() } propType={ propType }>
-					<PropKeyProvider bind="key-1">{ children }</PropKeyProvider>
+		const { result } = renderHook(() => useBoundProp(), {
+			wrapper: ({ children }) => (
+				<PropProvider value={value} setValue={jest.fn()} propType={propType}>
+					<PropKeyProvider bind="key-1">{children}</PropKeyProvider>
 				</PropProvider>
 			),
-		} );
+		});
 
 		// Assert.
-		expect( result.current.bind ).toEqual( 'key-1' );
-		expect( result.current.value ).toEqual( nestedPropValue );
-		expect( result.current.propType ).toEqual( nestedPropType );
-	} );
+		expect(result.current.bind).toEqual('key-1');
+		expect(result.current.value).toEqual(nestedPropValue);
+		expect(result.current.propType).toEqual(nestedPropType);
+	});
 
-	it( 'should make inner prop accessible for nested children, with its bind path.', () => {
+	it('should make inner prop accessible for nested children, with its bind path.', () => {
 		// Arrange.
-		const propType = createMockPropType( {
+		const propType = createMockPropType({
 			kind: 'object',
 			shape: {
-				'key-1': createMockPropType( {
+				'key-1': createMockPropType({
 					kind: 'object',
 					shape: {
-						'key-2': createMockPropType( {
+						'key-2': createMockPropType({
 							kind: 'array',
-							item_prop_type: createMockPropType( {
+							item_prop_type: createMockPropType({
 								kind: 'object',
 								shape: {
-									'key-3': createMockPropType( { kind: 'plain' } ),
+									'key-3': createMockPropType({ kind: 'plain' }),
 								},
-							} ),
-						} ),
+							}),
+						}),
 					},
-				} ),
+				}),
 			},
-		} );
+		});
 
 		const value = {
 			'key-1': {
@@ -124,58 +124,58 @@ describe( 'useBoundProp', () => {
 
 		const setValue = jest.fn();
 
-		const TopLevel = ( { children }: { children: React.ReactNode } ) => {
+		const TopLevel = ({ children }: { children: React.ReactNode }) => {
 			return (
-				<PropProvider propType={ propType } value={ value } setValue={ setValue }>
-					<PropKeyProvider bind="key-1">{ children }</PropKeyProvider>
+				<PropProvider propType={propType} value={value} setValue={setValue}>
+					<PropKeyProvider bind="key-1">{children}</PropKeyProvider>
 				</PropProvider>
 			);
 		};
 
-		const Parent1 = ( { children }: { children: React.ReactNode } ) => {
-			const propTypeUtil = createMockPropUtil( 'object-type', createMockSchema( 'object' ) );
-			const context = useBoundProp( propTypeUtil );
+		const Parent1 = ({ children }: { children: React.ReactNode }) => {
+			const propTypeUtil = createMockPropUtil('object-type', createMockSchema('object'));
+			const context = useBoundProp(propTypeUtil);
 
 			return (
-				<PropProvider { ...context }>
-					<PropKeyProvider bind="key-2">{ children }</PropKeyProvider>
+				<PropProvider {...context}>
+					<PropKeyProvider bind="key-2">{children}</PropKeyProvider>
 				</PropProvider>
 			);
 		};
 
-		const Parent2 = ( { children }: { children: React.ReactNode } ) => {
-			const propTypeUtil = createMockPropUtil( 'array-type', createMockSchema( 'array' ) );
-			const context = useBoundProp( propTypeUtil );
+		const Parent2 = ({ children }: { children: React.ReactNode }) => {
+			const propTypeUtil = createMockPropUtil('array-type', createMockSchema('array'));
+			const context = useBoundProp(propTypeUtil);
 
 			return (
-				<PropProvider { ...context }>
-					<PropKeyProvider bind="0">{ children }</PropKeyProvider>
+				<PropProvider {...context}>
+					<PropKeyProvider bind="0">{children}</PropKeyProvider>
 				</PropProvider>
 			);
 		};
 
-		const Parent3 = ( { children }: { children: React.ReactNode } ) => {
-			const propTypeUtil = createMockPropUtil( 'nested-object-type', createMockSchema( 'object' ) );
-			const context = useBoundProp( propTypeUtil );
+		const Parent3 = ({ children }: { children: React.ReactNode }) => {
+			const propTypeUtil = createMockPropUtil('nested-object-type', createMockSchema('object'));
+			const context = useBoundProp(propTypeUtil);
 
 			return (
-				<PropProvider { ...context }>
-					<PropKeyProvider bind="key-3">{ children }</PropKeyProvider>
+				<PropProvider {...context}>
+					<PropKeyProvider bind="key-3">{children}</PropKeyProvider>
 				</PropProvider>
 			);
 		};
 
 		const Child = () => {
-			const propTypeUtil = createMockPropUtil( 'nested-key', createMockSchema( 'string' ) );
-			const propContext = useBoundProp( propTypeUtil );
+			const propTypeUtil = createMockPropUtil('nested-key', createMockSchema('string'));
+			const propContext = useBoundProp(propTypeUtil);
 
 			return (
 				<div>
-					<p>Path: { propContext.path.join( ' -> ' ) }</p>
+					<p>Path: {propContext.path.join(' -> ')}</p>
 					<input
-						placeholder={ propContext.bind }
-						value={ propContext.value as unknown as string }
-						onChange={ ( e ) => propContext.setValue( e.target.value ) }
+						placeholder={propContext.bind}
+						value={propContext.value as unknown as string}
+						onChange={(e) => propContext.setValue(e.target.value)}
 					/>
 				</div>
 			);
@@ -195,32 +195,32 @@ describe( 'useBoundProp', () => {
 		);
 
 		// Assert.
-		const input = screen.getByPlaceholderText( 'key-3' );
-		expect( input ).toHaveValue( 'nested value' );
-		expect( screen.getByText( `Path: key-1 -> key-2 -> 0 -> key-3` ) );
+		const input = screen.getByPlaceholderText('key-3');
+		expect(input).toHaveValue('nested value');
+		expect(screen.getByText(`Path: key-1 -> key-2 -> 0 -> key-3`));
 
 		// Act.
-		fireEvent.change( input, { target: { value: 'new value' } } );
+		fireEvent.change(input, { target: { value: 'new value' } });
 
 		// Assert.
-		const expectedNewValue = structuredClone( value );
-		expectedNewValue[ 'key-1' ].value[ 'key-2' ].value[ 0 ].value[ 'key-3' ].value = 'new value';
+		const expectedNewValue = structuredClone(value);
+		expectedNewValue['key-1'].value['key-2'].value[0].value['key-3'].value = 'new value';
 
-		expect( setValue ).toHaveBeenCalledWith( expectedNewValue, {}, { bind: 'key-1' } );
-	} );
+		expect(setValue).toHaveBeenCalledWith(expectedNewValue, {}, { bind: 'key-1' });
+	});
 
-	it( 'should call the prop provider setValue with its value and created options', () => {
+	it('should call the prop provider setValue with its value and created options', () => {
 		// Arrange.
-		const nestedPropType = createMockPropType( { kind: 'plain' } );
+		const nestedPropType = createMockPropType({ kind: 'plain' });
 		const nestedPropValue = { $$type: 'nested-key', value: 'nested-value' };
 
-		const propType = createMockPropType( {
+		const propType = createMockPropType({
 			kind: 'object',
 			shape: {
 				'key-1': nestedPropType,
-				'key-2': createMockPropType( { kind: 'object' } ),
+				'key-2': createMockPropType({ kind: 'object' }),
 			},
-		} );
+		});
 
 		const value = {
 			'key-1': nestedPropValue,
@@ -229,21 +229,21 @@ describe( 'useBoundProp', () => {
 
 		const parentPropSetValue = jest.fn();
 
-		const propTypeUtil = createMockPropUtil( 'nested-key', createMockSchema( 'string' ) );
+		const propTypeUtil = createMockPropUtil('nested-key', createMockSchema('string'));
 
-		const { result } = renderHook( () => useBoundProp( propTypeUtil ), {
-			wrapper: ( { children } ) => (
-				<PropProvider value={ value } setValue={ parentPropSetValue } propType={ propType }>
-					<PropKeyProvider bind="key-1">{ children }</PropKeyProvider>
+		const { result } = renderHook(() => useBoundProp(propTypeUtil), {
+			wrapper: ({ children }) => (
+				<PropProvider value={value} setValue={parentPropSetValue} propType={propType}>
+					<PropKeyProvider bind="key-1">{children}</PropKeyProvider>
 				</PropProvider>
 			),
-		} );
+		});
 
 		// Act.
-		result.current.setValue( 'new value', { disabled: true } );
+		result.current.setValue('new value', { disabled: true });
 
 		// Assert.
-		expect( parentPropSetValue ).toHaveBeenCalledWith(
+		expect(parentPropSetValue).toHaveBeenCalledWith(
 			{
 				'key-1': { $$type: 'nested-key', value: 'new value', disabled: true },
 				'key-2': { $$type: 'nested-key', value: 'nested-value' },
@@ -252,246 +252,246 @@ describe( 'useBoundProp', () => {
 			{},
 			{ bind: 'key-1' }
 		);
-	} );
+	});
 
-	it.each( [ { kind: 'plain' }, { kind: 'union' } ] )(
+	it.each([{ kind: 'plain' }, { kind: 'union' }])(
 		'should throw error if PropKeyProvider is rendered inside $kind prop provider',
-		( { kind } ) => {
+		({ kind }) => {
 			// Arrange.
 			const mockConsoleError = jest.fn();
 			window.console.error = mockConsoleError;
-			const propType = createMockPropType( { kind } as never ) as PropType;
+			const propType = createMockPropType({ kind } as never) as PropType;
 			const value = {
 				'key-2': { $$type: 'nested-key', value: 'nested-value' },
 			};
 
 			// Act & Assert.
-			expect( () => {
+			expect(() => {
 				render(
-					<PropProvider value={ value } setValue={ jest.fn() } propType={ propType }>
+					<PropProvider value={value} setValue={jest.fn()} propType={propType}>
 						<PropKeyProvider bind="key"></PropKeyProvider>
 					</PropProvider>
 				);
-			} ).toThrow( 'Parent prop type is not supported' );
+			}).toThrow('Parent prop type is not supported');
 
 			// Suppress console.error from React.
-			expect( mockConsoleError ).toHaveBeenCalled();
+			expect(mockConsoleError).toHaveBeenCalled();
 		}
 	);
 
-	it( 'should not set empty value when the prop type is required', () => {
+	it('should not set empty value when the prop type is required', () => {
 		// Arrange.
-		const propType = createMockPropType( {
+		const propType = createMockPropType({
 			kind: 'object',
 			shape: {
-				key: createMockPropType( {
+				key: createMockPropType({
 					kind: 'plain',
 					settings: {
 						required: true,
 					},
-				} ),
+				}),
 			},
-		} );
+		});
 
 		const value = {
-			key: stringPropTypeUtil.create( '123' ),
+			key: stringPropTypeUtil.create('123'),
 		};
 
 		const setValue = jest.fn();
 
 		// Act.
-		const { result } = renderHook( () => useBoundProp( stringPropTypeUtil ), {
-			wrapper: ( { children } ) => (
-				<PropProvider value={ value } setValue={ setValue } propType={ propType }>
-					<PropKeyProvider bind="key">{ children }</PropKeyProvider>
+		const { result } = renderHook(() => useBoundProp(stringPropTypeUtil), {
+			wrapper: ({ children }) => (
+				<PropProvider value={value} setValue={setValue} propType={propType}>
+					<PropKeyProvider bind="key">{children}</PropKeyProvider>
 				</PropProvider>
 			),
-		} );
+		});
 
 		// Assert.
-		expect( result.current.value ).toBe( '123' );
+		expect(result.current.value).toBe('123');
 
 		// Act.
-		act( () => {
-			result.current.setValue( null, undefined, { validation: () => true } );
-		} );
+		act(() => {
+			result.current.setValue(null, undefined, { validation: () => true });
+		});
 
 		// Assert.
-		expect( setValue ).not.toHaveBeenCalled();
-		expect( result.current.value ).toBe( null );
+		expect(setValue).not.toHaveBeenCalled();
+		expect(result.current.value).toBe(null);
 
 		// Act.
-		act( () => {
+		act(() => {
 			result.current.restoreValue();
-		} );
+		});
 
 		// Assert.
-		expect( result.current.value ).toBe( '123' );
-	} );
+		expect(result.current.value).toBe('123');
+	});
 
-	it( 'should not set value when custom validation fails', () => {
+	it('should not set value when custom validation fails', () => {
 		// Arrange.
-		const propType = createMockPropType( {
+		const propType = createMockPropType({
 			kind: 'object',
 			shape: {
-				key: createMockPropType( {
+				key: createMockPropType({
 					kind: 'plain',
-				} ),
+				}),
 			},
-		} );
+		});
 
 		const value = {
-			key: stringPropTypeUtil.create( 'initial value' ),
+			key: stringPropTypeUtil.create('initial value'),
 		};
 
 		const setValue = jest.fn();
 
 		// Act.
-		const { result } = renderHook( () => useBoundProp( stringPropTypeUtil ), {
-			wrapper: ( { children } ) => (
-				<PropProvider value={ value } setValue={ setValue } propType={ propType }>
-					<PropKeyProvider bind="key">{ children }</PropKeyProvider>
+		const { result } = renderHook(() => useBoundProp(stringPropTypeUtil), {
+			wrapper: ({ children }) => (
+				<PropProvider value={value} setValue={setValue} propType={propType}>
+					<PropKeyProvider bind="key">{children}</PropKeyProvider>
 				</PropProvider>
 			),
-		} );
+		});
 
 		// Assert.
-		expect( result.current.value ).toBe( 'initial value' );
+		expect(result.current.value).toBe('initial value');
 
 		// Act.
-		act( () => {
-			result.current.setValue( 'invalid value', undefined, { validation: () => false } );
-		} );
+		act(() => {
+			result.current.setValue('invalid value', undefined, { validation: () => false });
+		});
 
 		// Assert.
-		expect( setValue ).not.toHaveBeenCalled();
-		expect( result.current.value ).toBe( null );
+		expect(setValue).not.toHaveBeenCalled();
+		expect(result.current.value).toBe(null);
 
 		// Act.
-		act( () => {
+		act(() => {
 			result.current.restoreValue();
-		} );
+		});
 
 		// Assert.
-		expect( result.current.value ).toBe( 'initial value' );
-	} );
+		expect(result.current.value).toBe('initial value');
+	});
 
-	it( 'should reset the valid state if the new value is valid', () => {
+	it('should reset the valid state if the new value is valid', () => {
 		// Arrange.
-		const propType = createMockPropType( {
+		const propType = createMockPropType({
 			kind: 'object',
 			shape: {
-				key: createMockPropType( {
+				key: createMockPropType({
 					kind: 'plain',
 					settings: {
 						required: true,
 					},
-				} ),
+				}),
 			},
-		} );
+		});
 
 		let value = {
-			key: stringPropTypeUtil.create( '123' ),
+			key: stringPropTypeUtil.create('123'),
 		};
 
-		const setValue = ( newValue: typeof value ) => {
+		const setValue = (newValue: typeof value) => {
 			value = newValue;
 		};
 
 		// Act.
-		const { result, rerender } = renderHook( () => useBoundProp( stringPropTypeUtil ), {
-			wrapper: ( { children } ) => (
-				<PropProvider value={ value } setValue={ setValue } propType={ propType }>
-					<PropKeyProvider bind="key">{ children }</PropKeyProvider>
+		const { result, rerender } = renderHook(() => useBoundProp(stringPropTypeUtil), {
+			wrapper: ({ children }) => (
+				<PropProvider value={value} setValue={setValue} propType={propType}>
+					<PropKeyProvider bind="key">{children}</PropKeyProvider>
 				</PropProvider>
 			),
-		} );
+		});
 
 		// Assert.
-		expect( result.current.value ).toBe( '123' );
+		expect(result.current.value).toBe('123');
 
 		// Act.
-		act( () => {
-			result.current.setValue( null );
-		} );
+		act(() => {
+			result.current.setValue(null);
+		});
 
 		// Assert.
-		expect( result.current.value ).toBe( null );
+		expect(result.current.value).toBe(null);
 
 		// Act.
-		act( () => {
-			result.current.setValue( 'abc' );
-		} );
+		act(() => {
+			result.current.setValue('abc');
+		});
 
 		rerender();
 
 		// Assert.
-		expect( result.current.value ).toBe( 'abc' );
-	} );
+		expect(result.current.value).toBe('abc');
+	});
 
-	it( 'should resetValue to null and call parent setValue with bind meta', () => {
+	it('should resetValue to null and call parent setValue with bind meta', () => {
 		// Arrange.
-		const propType = createMockPropType( {
+		const propType = createMockPropType({
 			kind: 'object',
 			shape: {
 				key: createMockPropType(),
 			},
-		} );
+		});
 
 		const value = {
-			key: stringPropTypeUtil.create( 'initial' ),
+			key: stringPropTypeUtil.create('initial'),
 		};
 
 		const setValue = jest.fn();
 
-		const { result } = renderHook( () => useBoundProp(), {
-			wrapper: ( { children } ) => (
-				<PropProvider value={ value } setValue={ setValue } propType={ propType }>
-					<PropKeyProvider bind="key">{ children }</PropKeyProvider>
+		const { result } = renderHook(() => useBoundProp(), {
+			wrapper: ({ children }) => (
+				<PropProvider value={value} setValue={setValue} propType={propType}>
+					<PropKeyProvider bind="key">{children}</PropKeyProvider>
 				</PropProvider>
 			),
-		} );
+		});
 
 		// Act.
-		act( () => {
+		act(() => {
 			result.current.resetValue();
-		} );
+		});
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( { key: null }, undefined, { bind: 'key' } );
-	} );
+		expect(setValue).toHaveBeenCalledWith({ key: null }, undefined, { bind: 'key' });
+	});
 
-	it( 'should resetValue to initial_value when initial_value is set', () => {
+	it('should resetValue to initial_value when initial_value is set', () => {
 		// Arrange.
-		const initialValue = sizePropTypeUtil.create( { size: 201, unit: 'rem' } );
-		const propType = createMockPropType( {
+		const initialValue = sizePropTypeUtil.create({ size: 201, unit: 'rem' });
+		const propType = createMockPropType({
 			kind: 'object',
 			shape: {
-				key: createMockPropType( {
+				key: createMockPropType({
 					kind: 'plain',
 					initial_value: initialValue,
-				} ),
+				}),
 			},
-		} );
+		});
 
 		const value = {
-			key: stringPropTypeUtil.create( 'current-value' ),
+			key: stringPropTypeUtil.create('current-value'),
 		};
 
 		const setValue = jest.fn();
 
-		const { result } = renderHook( () => useBoundProp(), {
-			wrapper: ( { children } ) => (
-				<PropProvider value={ value } setValue={ setValue } propType={ propType }>
-					<PropKeyProvider bind="key">{ children }</PropKeyProvider>
+		const { result } = renderHook(() => useBoundProp(), {
+			wrapper: ({ children }) => (
+				<PropProvider value={value} setValue={setValue} propType={propType}>
+					<PropKeyProvider bind="key">{children}</PropKeyProvider>
 				</PropProvider>
 			),
-		} );
+		});
 
 		// Act.
-		act( () => {
+		act(() => {
 			result.current.resetValue();
-		} );
+		});
 
 		const expected = {
 			$$type: 'size',
@@ -502,6 +502,6 @@ describe( 'useBoundProp', () => {
 		};
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( { key: expected }, undefined, { bind: 'key' } );
-	} );
-} );
+		expect(setValue).toHaveBeenCalledWith({ key: expected }, undefined, { bind: 'key' });
+	});
+});

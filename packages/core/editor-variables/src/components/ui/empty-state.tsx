@@ -12,21 +12,21 @@ type Props = {
 	children?: React.ReactNode;
 };
 
-export const EmptyState = ( { icon, title, message, onAdd, children }: Props ) => {
+export const EmptyState = ({ icon, title, message, onAdd, children }: Props) => {
 	const canAdd = usePermissions().canAdd();
-	const displayTitle = canAdd ? title : __( 'There are no variables', 'elementor' );
+	const displayTitle = canAdd ? title : __('There are no variables', 'elementor');
 	const displayMessage = canAdd
 		? message
-		: __( 'With your current role, you can only connect and detach variables.', 'elementor' );
+		: __('With your current role, you can only connect and detach variables.', 'elementor');
 
 	return (
-		<Content title={ displayTitle } message={ displayMessage } icon={ icon }>
-			{ children ||
-				( onAdd && (
-					<Button variant="outlined" color="secondary" size="small" onClick={ onAdd }>
-						{ __( 'Create a variable', 'elementor' ) }
+		<Content title={displayTitle} message={displayMessage} icon={icon}>
+			{children ||
+				(onAdd && (
+					<Button variant="outlined" color="secondary" size="small" onClick={onAdd}>
+						{__('Create a variable', 'elementor')}
 					</Button>
-				) ) }
+				))}
 		</Content>
 	);
 };
@@ -38,27 +38,27 @@ type NoVariablesContentProps = {
 	children?: React.ReactNode;
 };
 
-function Content( { title, message, icon, children }: NoVariablesContentProps ) {
+function Content({ title, message, icon, children }: NoVariablesContentProps) {
 	return (
 		<Stack
-			gap={ 1 }
+			gap={1}
 			alignItems="center"
 			justifyContent="flex-start"
 			height="100%"
 			color="text.secondary"
-			sx={ { p: 2.5, pt: 8, pb: 5.5 } }
+			sx={{ p: 2.5, pt: 8, pb: 5.5 }}
 		>
-			{ icon }
+			{icon}
 
 			<Typography align="center" variant="subtitle2">
-				{ title }
+				{title}
 			</Typography>
 
 			<Typography align="center" variant="caption" maxWidth="180px">
-				{ message }
+				{message}
 			</Typography>
 
-			{ children }
+			{children}
 		</Stack>
 	);
 }

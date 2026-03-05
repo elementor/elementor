@@ -6,21 +6,21 @@ import { render } from '@testing-library/react';
 import { App } from '../components/app';
 import { DEFAULT_STRINGS } from '../utils/default-strings';
 
-jest.mock( '@elementor/query', () => {
-	const actual = jest.requireActual( '@elementor/query' );
+jest.mock('@elementor/query', () => {
+	const actual = jest.requireActual('@elementor/query');
 	return {
 		...actual,
 		createQueryClient: () =>
-			new QueryClient( {
+			new QueryClient({
 				defaultOptions: {
 					queries: {
 						refetchOnWindowFocus: false,
 						refetchOnReconnect: false,
 					},
 				},
-			} ),
+			}),
 	};
-} );
+});
 
 export const mockFetch = jest.fn();
 global.fetch = mockFetch;
@@ -29,22 +29,22 @@ interface OnboardingConfig {
 	version: string;
 	restUrl: string;
 	nonce: string;
-	steps: Array< {
+	steps: Array<{
 		id: string;
 		label: string;
 		type: 'single' | 'multiple';
-	} >;
+	}>;
 	progress: {
 		current_step_id?: string;
 		current_step_index?: number;
 		completed_steps?: string[];
 	};
-	choices: Record< string, unknown >;
+	choices: Record<string, unknown>;
 	hadUnexpectedExit: boolean;
 	isConnected: boolean;
 	shouldShowProInstallScreen?: boolean;
 	userName?: string;
-	translations?: Record< string, string >;
+	translations?: Record<string, string>;
 	urls: {
 		dashboard: string;
 		editor: string;
@@ -91,9 +91,9 @@ const defaultConfig: OnboardingConfig = {
 	},
 };
 
-type ConfigOverrides = Partial< OnboardingConfig >;
+type ConfigOverrides = Partial<OnboardingConfig>;
 
-export const createMockConfig = ( overrides: ConfigOverrides = {} ): { 'e-onboarding': OnboardingConfig } => ( {
+export const createMockConfig = (overrides: ConfigOverrides = {}): { 'e-onboarding': OnboardingConfig } => ({
 	'e-onboarding': {
 		...defaultConfig,
 		...overrides,
@@ -102,25 +102,25 @@ export const createMockConfig = ( overrides: ConfigOverrides = {} ): { 'e-onboar
 			...overrides.progress,
 		},
 	},
-} );
+});
 
 export function setupOnboardingTests() {
-	beforeEach( () => {
+	beforeEach(() => {
 		__deleteStore();
 		mockFetch.mockReset();
-		mockFetch.mockResolvedValue( {
+		mockFetch.mockResolvedValue({
 			ok: true,
-			json: () => Promise.resolve( { success: true } ),
-		} );
-	} );
+			json: () => Promise.resolve({ success: true }),
+		});
+	});
 
-	afterEach( () => {
+	afterEach(() => {
 		window.elementorAppConfig = undefined;
 		__deleteStore();
-	} );
+	});
 }
 
-export function renderApp( overrides: ConfigOverrides = {} ) {
-	window.elementorAppConfig = createMockConfig( overrides );
-	return render( <App /> );
+export function renderApp(overrides: ConfigOverrides = {}) {
+	window.elementorAppConfig = createMockConfig(overrides);
+	return render(<App />);
 }

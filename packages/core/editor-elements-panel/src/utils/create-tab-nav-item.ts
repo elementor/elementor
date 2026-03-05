@@ -9,26 +9,26 @@ type Args = {
 	position?: number;
 };
 
-export function createTabNavItem( { id, label, route, isActive, position }: Args ): void {
+export function createTabNavItem({ id, label, route, isActive, position }: Args): void {
 	const wrapper = getNavigationWrapperElement();
 
-	const btn = document.createElement( 'button' );
+	const btn = document.createElement('button');
 
-	btn.className = [ 'elementor-component-tab', 'elementor-panel-navigation-tab', isActive ? 'elementor-active' : '' ]
-		.filter( Boolean )
-		.join( ' ' );
+	btn.className = ['elementor-component-tab', 'elementor-panel-navigation-tab', isActive ? 'elementor-active' : '']
+		.filter(Boolean)
+		.join(' ');
 
-	btn.setAttribute( 'data-tab', id );
+	btn.setAttribute('data-tab', id);
 
 	btn.textContent = label;
 
-	btn.addEventListener( 'click', () => {
-		getWindow().$e.route( route );
-	} );
+	btn.addEventListener('click', () => {
+		getWindow().$e.route(route);
+	});
 
-	if ( position !== undefined && wrapper.children[ position ] ) {
-		wrapper.insertBefore( btn, wrapper.children[ position ] );
+	if (position !== undefined && wrapper.children[position]) {
+		wrapper.insertBefore(btn, wrapper.children[position]);
 	} else {
-		wrapper.appendChild( btn );
+		wrapper.appendChild(btn);
 	}
 }

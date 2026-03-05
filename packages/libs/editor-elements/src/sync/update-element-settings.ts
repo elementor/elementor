@@ -10,10 +10,10 @@ export type UpdateElementSettingsArgs = {
 	withHistory?: boolean;
 };
 
-export const updateElementSettings = ( { id, props, withHistory = true }: UpdateElementSettingsArgs ) => {
-	const container = getContainer( id );
+export const updateElementSettings = ({ id, props, withHistory = true }: UpdateElementSettingsArgs) => {
+	const container = getContainer(id);
 
-	if ( ! container ) {
+	if (!container) {
 		return;
 	}
 
@@ -22,9 +22,9 @@ export const updateElementSettings = ( { id, props, withHistory = true }: Update
 		settings: { ...props },
 	};
 
-	if ( withHistory ) {
-		runCommandSync( 'document/elements/settings', args );
+	if (withHistory) {
+		runCommandSync('document/elements/settings', args);
 	} else {
-		runCommandSync( 'document/elements/set-settings', args, { internal: true } );
+		runCommandSync('document/elements/set-settings', args, { internal: true });
 	}
 };

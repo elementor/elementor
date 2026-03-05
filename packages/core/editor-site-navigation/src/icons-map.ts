@@ -8,7 +8,7 @@ import {
 } from '@elementor/icons';
 
 type IconsMap = {
-	[ key: string ]: React.ElementType;
+	[key: string]: React.ElementType;
 };
 
 const initialIconsMap: IconsMap = {
@@ -21,8 +21,8 @@ const initialIconsMap: IconsMap = {
 
 let iconsMap = { ...initialIconsMap };
 
-export function extendIconsMap( additionalIcons: IconsMap ) {
-	Object.assign( iconsMap, additionalIcons );
+export function extendIconsMap(additionalIcons: IconsMap) {
+	Object.assign(iconsMap, additionalIcons);
 }
 
 export function getIconsMap() {

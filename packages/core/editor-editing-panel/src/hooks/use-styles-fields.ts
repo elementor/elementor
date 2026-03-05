@@ -21,23 +21,23 @@ import { useStylesRerender } from './use-styles-rerender';
 
 export const HISTORY_DEBOUNCE_WAIT = 800;
 
-export function useStylesFields< T extends Props >( propNames: ( keyof T & string )[] ) {
+export function useStylesFields<T extends Props>(propNames: (keyof T & string)[]) {
 	const {
 		element: { id: elementId },
 	} = useElement();
 	const { id: styleId, meta, provider, canEdit } = useStyle();
 
-	const undoableUpdateStyle = useUndoableActions( { elementId, meta } );
+	const undoableUpdateStyle = useUndoableActions({ elementId, meta });
 
 	useStylesRerender();
 
-	const values = getProps< T >( { elementId, styleId, provider, meta, propNames } );
+	const values = getProps<T>({ elementId, styleId, provider, meta, propNames });
 
-	const setValues = ( props: T, { history: { propDisplayName } }: { history: { propDisplayName: string } } ) => {
-		if ( ! styleId ) {
-			undoableUpdateStyle( { styleId: null, provider: null, props, propDisplayName } );
+	const setValues = (props: T, { history: { propDisplayName } }: { history: { propDisplayName: string } }) => {
+		if (!styleId) {
+			undoableUpdateStyle({ styleId: null, provider: null, props, propDisplayName });
 		} else {
-			undoableUpdateStyle( { styleId, provider, props, propDisplayName } );
+			undoableUpdateStyle({ styleId, provider, props, propDisplayName });
 		}
 	};
 
@@ -46,36 +46,34 @@ export function useStylesFields< T extends Props >( propNames: ( keyof T & strin
 
 type GetPropsArgs = {
 	provider: StylesProvider | null;
-	styleId: StyleDefinition[ 'id' ] | null;
+	styleId: StyleDefinition['id'] | null;
 	elementId: ElementID;
-	meta: StyleDefinitionVariant[ 'meta' ];
+	meta: StyleDefinitionVariant['meta'];
 	propNames: string[];
 };
 
-type NullableValues< T extends Props > = {
-	[ K in keyof T ]: T[ K ] | null;
+type NullableValues<T extends Props> = {
+	[K in keyof T]: T[K] | null;
 };
 
-function getProps< T extends Props >( { styleId, elementId, provider, meta, propNames }: GetPropsArgs ) {
-	if ( ! provider || ! styleId ) {
+function getProps<T extends Props>({ styleId, elementId, provider, meta, propNames }: GetPropsArgs) {
+	if (!provider || !styleId) {
 		return null;
 	}
 
-	const style = provider.actions.get( styleId, { elementId } );
+	const style = provider.actions.get(styleId, { elementId });
 
-	if ( ! style ) {
-		throw new StyleNotFoundUnderProviderError( { context: { styleId, providerKey: provider.getKey() } } );
+	if (!style) {
+		throw new StyleNotFoundUnderProviderError({ context: { styleId, providerKey: provider.getKey() } });
 	}
 
-	const variant = getVariantByMeta( style, meta );
+	const variant = getVariantByMeta(style, meta);
 
-	return Object.fromEntries(
-		propNames.map( ( key ) => [ key, variant?.props[ key ] ?? null ] )
-	) as NullableValues< T >;
+	return Object.fromEntries(propNames.map((key) => [key, variant?.props[key] ?? null])) as NullableValues<T>;
 }
 
 type UpdateStyleArgs = {
-	styleId: StyleDefinition[ 'id' ];
+	styleId: StyleDefinition['id'];
 	provider: StylesProvider;
 	props: Props;
 	propDisplayName: string;
@@ -89,106 +87,106 @@ type CreateStyleArgs = {
 };
 
 type UpdateStyleReturn = {
-	styleId: StyleDefinition[ 'id' ];
+	styleId: StyleDefinition['id'];
 	provider: StylesProvider;
 	prevProps: Props;
 };
 
 type CreateStyleReturn = {
-	createdStyleId: StyleDefinition[ 'id' ];
+	createdStyleId: StyleDefinition['id'];
 };
 
 type UndoableUpdateStylePayload = UpdateStyleArgs | CreateStyleArgs;
 type UndoableUpdateStyleReturn = UpdateStyleReturn | CreateStyleReturn;
 
-function useUndoableActions( {
+function useUndoableActions({
 	elementId,
 	meta: { breakpoint, state },
 }: {
 	elementId: ElementID;
-	meta: StyleDefinitionVariant[ 'meta' ];
-} ) {
+	meta: StyleDefinitionVariant['meta'];
+}) {
 	const classesProp = useClassesProp();
 
-	return useMemo( () => {
+	return useMemo(() => {
 		const meta = { breakpoint, state };
 
 		const createStyleArgs = { elementId, classesProp, meta, label: ELEMENTS_STYLES_RESERVED_LABEL };
 
 		return undoable(
 			{
-				do: ( payload: UndoableUpdateStylePayload ): UndoableUpdateStyleReturn => {
-					if ( shouldCreateNewLocalStyle< StylesProvider >( payload ) ) {
-						return create( payload as CreateStyleArgs );
+				do: (payload: UndoableUpdateStylePayload): UndoableUpdateStyleReturn => {
+					if (shouldCreateNewLocalStyle<StylesProvider>(payload)) {
+						return create(payload as CreateStyleArgs);
 					}
-					return update( payload as UpdateStyleArgs );
+					return update(payload as UpdateStyleArgs);
 				},
-				undo: ( payload: UndoableUpdateStylePayload, doReturn: UndoableUpdateStyleReturn ) => {
-					const wasLocalStyleCreated = shouldCreateNewLocalStyle< StylesProvider >( payload );
+				undo: (payload: UndoableUpdateStylePayload, doReturn: UndoableUpdateStyleReturn) => {
+					const wasLocalStyleCreated = shouldCreateNewLocalStyle<StylesProvider>(payload);
 
-					if ( wasLocalStyleCreated ) {
-						return undoCreate( payload as CreateStyleArgs, doReturn as CreateStyleReturn );
+					if (wasLocalStyleCreated) {
+						return undoCreate(payload as CreateStyleArgs, doReturn as CreateStyleReturn);
 					}
-					return undo( payload as UpdateStyleArgs, doReturn as UpdateStyleReturn );
+					return undo(payload as UpdateStyleArgs, doReturn as UpdateStyleReturn);
 				},
-				redo: ( payload: UndoableUpdateStylePayload, doReturn: UndoableUpdateStyleReturn ) => {
-					const wasLocalStyleCreated = shouldCreateNewLocalStyle< StylesProvider >( payload );
+				redo: (payload: UndoableUpdateStylePayload, doReturn: UndoableUpdateStyleReturn) => {
+					const wasLocalStyleCreated = shouldCreateNewLocalStyle<StylesProvider>(payload);
 
-					if ( wasLocalStyleCreated ) {
-						return create( payload as CreateStyleArgs, doReturn as CreateStyleReturn );
+					if (wasLocalStyleCreated) {
+						return create(payload as CreateStyleArgs, doReturn as CreateStyleReturn);
 					}
-					return update( payload as UpdateStyleArgs );
+					return update(payload as UpdateStyleArgs);
 				},
 			},
 			{
-				title: ( { provider, styleId } ) => getTitle( { provider, styleId, elementId } ),
-				subtitle: ( { provider, styleId, propDisplayName } ) =>
-					getSubtitle( { provider, styleId, elementId, propDisplayName } ),
+				title: ({ provider, styleId }) => getTitle({ provider, styleId, elementId }),
+				subtitle: ({ provider, styleId, propDisplayName }) =>
+					getSubtitle({ provider, styleId, elementId, propDisplayName }),
 				debounce: { wait: HISTORY_DEBOUNCE_WAIT },
 			}
 		);
 
-		function create( { props }: CreateStyleArgs, redoArgs?: CreateStyleReturn ): CreateStyleReturn {
-			const createdStyle = createElementStyle( { ...createStyleArgs, props, styleId: redoArgs?.createdStyleId } );
+		function create({ props }: CreateStyleArgs, redoArgs?: CreateStyleReturn): CreateStyleReturn {
+			const createdStyle = createElementStyle({ ...createStyleArgs, props, styleId: redoArgs?.createdStyleId });
 
 			return { createdStyleId: createdStyle };
 		}
 
-		function undoCreate( _: UndoableUpdateStylePayload, { createdStyleId }: CreateStyleReturn ) {
-			deleteElementStyle( elementId, createdStyleId );
+		function undoCreate(_: UndoableUpdateStylePayload, { createdStyleId }: CreateStyleReturn) {
+			deleteElementStyle(elementId, createdStyleId);
 		}
 
-		function update( { provider, styleId, props }: UpdateStyleArgs ): UpdateStyleReturn {
-			if ( ! provider.actions.updateProps ) {
-				throw new StylesProviderCannotUpdatePropsError( {
+		function update({ provider, styleId, props }: UpdateStyleArgs): UpdateStyleReturn {
+			if (!provider.actions.updateProps) {
+				throw new StylesProviderCannotUpdatePropsError({
 					context: { providerKey: provider.getKey() },
-				} );
+				});
 			}
 
-			const style = provider.actions.get( styleId, { elementId } );
-			const prevProps = getCurrentProps( style, meta );
+			const style = provider.actions.get(styleId, { elementId });
+			const prevProps = getCurrentProps(style, meta);
 
-			provider.actions.updateProps( { id: styleId, meta, props }, { elementId } );
+			provider.actions.updateProps({ id: styleId, meta, props }, { elementId });
 
 			return { styleId, provider, prevProps };
 		}
 
-		function undo( _: UndoableUpdateStylePayload, { styleId, provider, prevProps }: UpdateStyleReturn ) {
-			provider.actions.updateProps?.( { id: styleId, meta, props: prevProps }, { elementId } );
+		function undo(_: UndoableUpdateStylePayload, { styleId, provider, prevProps }: UpdateStyleReturn) {
+			provider.actions.updateProps?.({ id: styleId, meta, props: prevProps }, { elementId });
 		}
-	}, [ elementId, breakpoint, state, classesProp ] );
+	}, [elementId, breakpoint, state, classesProp]);
 }
 
-function getCurrentProps( style: StyleDefinition | null, meta: StyleDefinitionVariant[ 'meta' ] ) {
-	if ( ! style ) {
+function getCurrentProps(style: StyleDefinition | null, meta: StyleDefinitionVariant['meta']) {
+	if (!style) {
 		return {};
 	}
 
-	const variant = getVariantByMeta( style, meta );
+	const variant = getVariantByMeta(style, meta);
 
 	const props = variant?.props ?? {};
 
-	return structuredClone( props );
+	return structuredClone(props);
 }
 
 type DefaultHistoryTitleArgs = {
@@ -197,25 +195,25 @@ type DefaultHistoryTitleArgs = {
 
 type DefaultHistorySubtitleArgs = {
 	provider: StylesProvider;
-	styleId: StyleDefinition[ 'id' ];
+	styleId: StyleDefinition['id'];
 	elementId: ElementID;
 	propDisplayName: string;
 };
 
 const defaultHistoryTitles = {
-	title: ( { provider }: DefaultHistoryTitleArgs ) => {
+	title: ({ provider }: DefaultHistoryTitleArgs) => {
 		const providerLabel = provider.labels?.singular;
-		return providerLabel ? capitalize( providerLabel ) : __( 'Style', 'elementor' );
+		return providerLabel ? capitalize(providerLabel) : __('Style', 'elementor');
 	},
-	subtitle: ( { provider, styleId, elementId, propDisplayName }: DefaultHistorySubtitleArgs ) => {
-		const styleLabel = provider.actions.get( styleId, { elementId } )?.label;
+	subtitle: ({ provider, styleId, elementId, propDisplayName }: DefaultHistorySubtitleArgs) => {
+		const styleLabel = provider.actions.get(styleId, { elementId })?.label;
 
-		if ( ! styleLabel ) {
-			throw new Error( `Style ${ styleId } not found` );
+		if (!styleLabel) {
+			throw new Error(`Style ${styleId} not found`);
 		}
 
 		// translators: %s$1 is the style label, %s$2 is the name of the style property being edited
-		return __( `%s$1 %s$2 edited`, 'elementor' ).replace( '%s$1', styleLabel ).replace( '%s$2', propDisplayName );
+		return __(`%s$1 %s$2 edited`, 'elementor').replace('%s$1', styleLabel).replace('%s$2', propDisplayName);
 	},
 };
 
@@ -228,18 +226,18 @@ type LocalStyleHistorySubtitleArgs = {
 };
 
 const localStyleHistoryTitles = {
-	title: ( { elementId }: LocalStyleHistoryTitleArgs ) => getElementLabel( elementId ),
-	subtitle: ( { propDisplayName }: LocalStyleHistorySubtitleArgs ) =>
+	title: ({ elementId }: LocalStyleHistoryTitleArgs) => getElementLabel(elementId),
+	subtitle: ({ propDisplayName }: LocalStyleHistorySubtitleArgs) =>
 		// translators: %s is the name of the style property being edited
-		__( `%s edited`, 'elementor' ).replace( '%s', propDisplayName ),
+		__(`%s edited`, 'elementor').replace('%s', propDisplayName),
 };
 
-function capitalize( str: string ) {
-	return str.charAt( 0 ).toUpperCase() + str.slice( 1 );
+function capitalize(str: string) {
+	return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-const isLocalStyle = ( provider: StylesProvider | null, styleId: StyleDefinition[ 'id' ] | null ) =>
-	! provider || ! styleId || isElementsStylesProvider( provider.getKey() );
+const isLocalStyle = (provider: StylesProvider | null, styleId: StyleDefinition['id'] | null) =>
+	!provider || !styleId || isElementsStylesProvider(provider.getKey());
 
 type TitleOptions = {
 	provider: StylesProvider | null;
@@ -249,27 +247,27 @@ type TitleOptions = {
 
 type SubtitleOptions = TitleOptions & { propDisplayName: string };
 
-export const getTitle = ( { provider, styleId, elementId }: TitleOptions ) => {
-	const isLocal = isLocalStyle( provider, styleId );
+export const getTitle = ({ provider, styleId, elementId }: TitleOptions) => {
+	const isLocal = isLocalStyle(provider, styleId);
 
-	if ( isLocal ) {
-		return localStyleHistoryTitles.title( { elementId } );
+	if (isLocal) {
+		return localStyleHistoryTitles.title({ elementId });
 	}
 
-	return defaultHistoryTitles.title( { provider: provider as StylesProvider } );
+	return defaultHistoryTitles.title({ provider: provider as StylesProvider });
 };
 
-export const getSubtitle = ( { provider, styleId, propDisplayName, elementId }: SubtitleOptions ) => {
-	const isLocal = isLocalStyle( provider, styleId );
+export const getSubtitle = ({ provider, styleId, propDisplayName, elementId }: SubtitleOptions) => {
+	const isLocal = isLocalStyle(provider, styleId);
 
-	if ( isLocal ) {
-		return localStyleHistoryTitles.subtitle( { propDisplayName } );
+	if (isLocal) {
+		return localStyleHistoryTitles.subtitle({ propDisplayName });
 	}
 
-	return defaultHistoryTitles.subtitle( {
+	return defaultHistoryTitles.subtitle({
 		provider: provider as StylesProvider,
-		styleId: styleId as StyleDefinition[ 'id' ],
+		styleId: styleId as StyleDefinition['id'],
 		elementId,
 		propDisplayName,
-	} );
+	});
 };

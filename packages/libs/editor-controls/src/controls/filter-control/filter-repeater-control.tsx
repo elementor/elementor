@@ -26,59 +26,59 @@ type FilterPropName = {
 };
 
 type Config = {
-	propTypeUtil: PropTypeUtil< string, FilterItemPropValue[] >;
+	propTypeUtil: PropTypeUtil<string, FilterItemPropValue[]>;
 	label: string;
 };
 
-const FILTER_CONFIG: Record< string, Config > = {
+const FILTER_CONFIG: Record<string, Config> = {
 	filter: {
 		propTypeUtil: filterPropTypeUtil,
-		label: __( 'Filters', 'elementor' ),
+		label: __('Filters', 'elementor'),
 	},
 	'backdrop-filter': {
 		propTypeUtil: backdropFilterPropTypeUtil,
-		label: __( 'Backdrop filters', 'elementor' ),
+		label: __('Backdrop filters', 'elementor'),
 	},
 } as const;
 
-export const FilterRepeaterControl = createControl( ( { filterPropName = 'filter' }: FilterPropName ) => {
-	const { propTypeUtil, label } = ensureFilterConfig( filterPropName );
-	const { propType, value: filterValues, setValue } = useBoundProp( propTypeUtil );
+export const FilterRepeaterControl = createControl(({ filterPropName = 'filter' }: FilterPropName) => {
+	const { propTypeUtil, label } = ensureFilterConfig(filterPropName);
+	const { propType, value: filterValues, setValue } = useBoundProp(propTypeUtil);
 
 	return (
 		<FilterConfigProvider>
-			<PropProvider propType={ propType } value={ filterValues } setValue={ setValue }>
+			<PropProvider propType={propType} value={filterValues} setValue={setValue}>
 				<Repeater
-					propTypeUtil={ propTypeUtil as PropTypeUtil< string, RepeatablePropValue[] > }
-					label={ label }
-					filterPropName={ filterPropName }
+					propTypeUtil={propTypeUtil as PropTypeUtil<string, RepeatablePropValue[]>}
+					label={label}
+					filterPropName={filterPropName}
 				/>
 			</PropProvider>
 		</FilterConfigProvider>
 	);
-} );
+});
 
 type RepeaterProps = {
-	propTypeUtil: PropTypeUtil< string, RepeatablePropValue[] >;
+	propTypeUtil: PropTypeUtil<string, RepeatablePropValue[]>;
 	label: string;
 	filterPropName: string;
 };
 
-const Repeater = ( { propTypeUtil, label, filterPropName }: RepeaterProps ) => {
+const Repeater = ({ propTypeUtil, label, filterPropName }: RepeaterProps) => {
 	const { getInitialValue } = useFilterConfig();
 
 	return (
-		<ControlRepeater initial={ getInitialValue() as RepeatablePropValue } propTypeUtil={ propTypeUtil }>
-			<RepeaterHeader label={ label }>
+		<ControlRepeater initial={getInitialValue() as RepeatablePropValue} propTypeUtil={propTypeUtil}>
+			<RepeaterHeader label={label}>
 				<TooltipAddItemAction
-					newItemIndex={ 0 }
-					ariaLabel={ filterPropName === 'backdrop-filter' ? 'backdrop filter' : 'filter' }
+					newItemIndex={0}
+					ariaLabel={filterPropName === 'backdrop-filter' ? 'backdrop filter' : 'filter'}
 				/>
 			</RepeaterHeader>
 			<ItemsContainer>
 				<Item
-					Label={ FilterLabel }
-					Icon={ FilterIcon }
+					Label={FilterLabel}
+					Icon={FilterIcon}
 					actions={
 						<>
 							<DuplicateItemAction />
@@ -95,9 +95,9 @@ const Repeater = ( { propTypeUtil, label, filterPropName }: RepeaterProps ) => {
 	);
 };
 
-function ensureFilterConfig( name: string ): Config {
-	if ( name && name in FILTER_CONFIG ) {
-		return FILTER_CONFIG[ name ];
+function ensureFilterConfig(name: string): Config {
+	if (name && name in FILTER_CONFIG) {
+		return FILTER_CONFIG[name];
 	}
 
 	return FILTER_CONFIG.filter;

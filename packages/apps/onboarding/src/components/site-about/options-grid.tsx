@@ -7,21 +7,21 @@ import { CardGrid } from './styled-components';
 
 interface OptionsGridProps {
 	selectedValues: string[];
-	onToggle: ( value: string ) => void;
+	onToggle: (value: string) => void;
 }
 
-export function OptionsGrid( { selectedValues, onToggle }: OptionsGridProps ) {
+export function OptionsGrid({ selectedValues, onToggle }: OptionsGridProps) {
 	return (
 		<CardGrid>
-			{ SITE_ABOUT_OPTIONS.map( ( option ) => (
+			{SITE_ABOUT_OPTIONS.map((option) => (
 				<OptionCard
-					key={ option.value }
-					label={ t( option.labelKey ) }
-					icon={ option.icon }
-					selected={ selectedValues.includes( option.value ) }
-					onClick={ () => onToggle( option.value ) }
+					key={option.value}
+					label={t(option.labelKey)}
+					icon={option.icon}
+					selected={selectedValues.includes(option.value)}
+					onClick={() => onToggle(option.value)}
 				/>
-			) ) }
+			))}
 		</CardGrid>
 	);
 }

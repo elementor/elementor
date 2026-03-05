@@ -25,32 +25,32 @@ import {
 	urlPropType,
 } from './prop-types';
 
-jest.mock( '@elementor/wp-media' );
+jest.mock('@elementor/wp-media');
 
-jest.mock( '@elementor/editor-styles-repository', () => ( {
-	...jest.requireActual( '@elementor/editor-styles-repository' ),
+jest.mock('@elementor/editor-styles-repository', () => ({
+	...jest.requireActual('@elementor/editor-styles-repository'),
 	stylesRepository: {
-		getProviders: jest.fn( () => [] ),
+		getProviders: jest.fn(() => []),
 	},
-} ) );
+}));
 
 type Payload = {
 	name: string;
 	prepare?: () => void;
 	props: Props;
 	schema: PropsSchema;
-	expected: Record< string, unknown >;
+	expected: Record<string, unknown>;
 };
 
-describe( 'settings props resolver', () => {
-	it.each< Payload >( [
+describe('settings props resolver', () => {
+	it.each<Payload>([
 		{
 			name: 'plain props',
 			props: {
-				string: stringPropTypeUtil.create( 'test' ),
-				url: urlPropTypeUtil.create( 'url' ),
-				number: numberPropTypeUtil.create( 123 ),
-				boolean: booleanPropTypeUtil.create( true ),
+				string: stringPropTypeUtil.create('test'),
+				url: urlPropTypeUtil.create('url'),
+				number: numberPropTypeUtil.create(123),
+				boolean: booleanPropTypeUtil.create(true),
 			},
 			schema: {
 				string: stringPropType(),
@@ -68,14 +68,14 @@ describe( 'settings props resolver', () => {
 		{
 			name: 'link',
 			props: {
-				link1: linkPropTypeUtil.create( {
+				link1: linkPropTypeUtil.create({
 					destination: 'https://elementor.com/blank',
 					isTargetBlank: true,
-				} ),
-				link2: linkPropTypeUtil.create( {
+				}),
+				link2: linkPropTypeUtil.create({
 					destination: 'https://elementor.com/self',
 					isTargetBlank: false,
-				} ),
+				}),
 			},
 			schema: {
 				link1: linkPropType(),
@@ -89,13 +89,13 @@ describe( 'settings props resolver', () => {
 		{
 			name: 'image (url)',
 			props: {
-				image: imagePropTypeUtil.create( {
-					src: imageSrcPropTypeUtil.create( {
+				image: imagePropTypeUtil.create({
+					src: imageSrcPropTypeUtil.create({
 						id: null,
-						url: urlPropTypeUtil.create( 'https://localhost.test/test-image.png' ),
-					} ),
-					size: stringPropTypeUtil.create( 'full' ),
-				} ),
+						url: urlPropTypeUtil.create('https://localhost.test/test-image.png'),
+					}),
+					size: stringPropTypeUtil.create('full'),
+				}),
 			},
 			schema: {
 				image: imagePropType(),
@@ -109,18 +109,18 @@ describe( 'settings props resolver', () => {
 		{
 			name: 'image (attachment with size)',
 			prepare: () => {
-				jest.mocked( getMediaAttachment ).mockImplementation(
-					( args ) => Promise.resolve( mockAttachmentData( args.id ) ) as never
+				jest.mocked(getMediaAttachment).mockImplementation(
+					(args) => Promise.resolve(mockAttachmentData(args.id)) as never
 				);
 			},
 			props: {
-				image: imagePropTypeUtil.create( {
-					src: imageSrcPropTypeUtil.create( {
-						id: imageAttachmentIdPropType.create( 123 ),
+				image: imagePropTypeUtil.create({
+					src: imageSrcPropTypeUtil.create({
+						id: imageAttachmentIdPropType.create(123),
 						url: null,
-					} ),
-					size: stringPropTypeUtil.create( 'large' ),
-				} ),
+					}),
+					size: stringPropTypeUtil.create('large'),
+				}),
 			},
 			schema: {
 				image: imagePropType(),
@@ -136,18 +136,18 @@ describe( 'settings props resolver', () => {
 		{
 			name: 'image (attachment with non existing size)',
 			prepare: () => {
-				jest.mocked( getMediaAttachment ).mockImplementation(
-					( args ) => Promise.resolve( mockAttachmentData( args.id ) ) as never
+				jest.mocked(getMediaAttachment).mockImplementation(
+					(args) => Promise.resolve(mockAttachmentData(args.id)) as never
 				);
 			},
 			props: {
-				image: imagePropTypeUtil.create( {
-					src: imageSrcPropTypeUtil.create( {
-						id: imageAttachmentIdPropType.create( 123 ),
+				image: imagePropTypeUtil.create({
+					src: imageSrcPropTypeUtil.create({
+						id: imageAttachmentIdPropType.create(123),
 						url: null,
-					} ),
-					size: stringPropTypeUtil.create( 'non-existing-size' ),
-				} ),
+					}),
+					size: stringPropTypeUtil.create('non-existing-size'),
+				}),
 			},
 			schema: {
 				image: imagePropType(),
@@ -160,21 +160,21 @@ describe( 'settings props resolver', () => {
 				},
 			},
 		},
-	] )( 'it should resolve props for `$name`', async ( { prepare, props, expected, schema } ) => {
+	])('it should resolve props for `$name`', async ({ prepare, props, expected, schema }) => {
 		// Arrange.
 		prepare?.();
 
 		initSettingsTransformers();
 
-		const resolve = createPropsResolver( {
+		const resolve = createPropsResolver({
 			transformers: settingsTransformersRegistry,
 			schema,
-		} );
+		});
 
 		// Act.
-		const result = await resolve( { props } );
+		const result = await resolve({ props });
 
 		// Assert.
-		expect( result ).toStrictEqual( expected );
-	} );
-} );
+		expect(result).toStrictEqual(expected);
+	});
+});

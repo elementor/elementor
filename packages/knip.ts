@@ -10,11 +10,11 @@ export default {
 	],
 
 	typedoc: {
-		config: [ 'typedoc.config.js', 'typedoc/typedoc.config.js', 'typedoc/typedoc.packages.config.js' ],
+		config: ['typedoc.config.js', 'typedoc/typedoc.config.js', 'typedoc/typedoc.packages.config.js'],
 	},
 
 	tsup: {
-		config: [ 'tsup.config.ts' ],
+		config: ['tsup.config.ts'],
 	},
 
 	ignore: [

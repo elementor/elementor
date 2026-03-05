@@ -6,26 +6,26 @@ import { componentsActions } from '../../../store/dispatchers';
 
 const TITLE_EXTERNAL_CHANGE_COMMAND = 'title_external_change';
 
-export const renameComponent = ( componentUid: string, newName: string ) => {
-	componentsActions.rename( componentUid, newName );
+export const renameComponent = (componentUid: string, newName: string) => {
+	componentsActions.rename(componentUid, newName);
 
-	setDocumentModifiedStatus( true );
+	setDocumentModifiedStatus(true);
 
-	refreshComponentInstanceTitles( componentUid );
+	refreshComponentInstanceTitles(componentUid);
 };
 
-function refreshComponentInstanceTitles( componentUid: string ) {
+function refreshComponentInstanceTitles(componentUid: string) {
 	const documentContainer = getDocumentContainer();
 
-	if ( ! documentContainer ) {
+	if (!documentContainer) {
 		return;
 	}
 
-	const componentInstances = findComponentInstancesByUid( documentContainer, componentUid );
+	const componentInstances = findComponentInstancesByUid(documentContainer, componentUid);
 
-	componentInstances.forEach( ( element ) => {
-		element.model.trigger?.( TITLE_EXTERNAL_CHANGE_COMMAND );
-	} );
+	componentInstances.forEach((element) => {
+		element.model.trigger?.(TITLE_EXTERNAL_CHANGE_COMMAND);
+	});
 }
 
 function getDocumentContainer(): V1Element | undefined {
@@ -34,15 +34,15 @@ function getDocumentContainer(): V1Element | undefined {
 	return documentsManager?.getCurrent()?.container as V1Element | undefined;
 }
 
-function findComponentInstancesByUid( documentContainer: V1Element, componentUid: string ): V1Element[] {
-	const allDescendants = getAllDescendants( documentContainer );
+function findComponentInstancesByUid(documentContainer: V1Element, componentUid: string): V1Element[] {
+	const allDescendants = getAllDescendants(documentContainer);
 
-	return allDescendants.filter( ( element ) => {
-		const widgetType = element.model.get( 'widgetType' );
-		const editorSettings = element.model.get( 'editor_settings' );
+	return allDescendants.filter((element) => {
+		const widgetType = element.model.get('widgetType');
+		const editorSettings = element.model.get('editor_settings');
 
 		const isMatch = widgetType === COMPONENT_WIDGET_TYPE && editorSettings?.component_uid === componentUid;
 
 		return isMatch;
-	} );
+	});
 }

@@ -7,30 +7,30 @@ type MissingVariableAlertProps = {
 	onClear?: () => void;
 };
 
-export const MissingVariableAlert = ( { onClose, onClear }: MissingVariableAlertProps ) => {
+export const MissingVariableAlert = ({ onClose, onClear }: MissingVariableAlertProps) => {
 	return (
-		<ClickAwayListener onClickAway={ onClose }>
+		<ClickAwayListener onClickAway={onClose}>
 			<Alert
 				variant="standard"
 				severity="warning"
-				onClose={ onClose }
+				onClose={onClose}
 				action={
 					<>
-						{ onClear && (
-							<AlertAction variant="contained" onClick={ onClear }>
-								{ __( 'Clear', 'elementor' ) }
+						{onClear && (
+							<AlertAction variant="contained" onClick={onClear}>
+								{__('Clear', 'elementor')}
 							</AlertAction>
-						) }
+						)}
 					</>
 				}
-				sx={ { maxWidth: 300 } }
+				sx={{ maxWidth: 300 }}
 			>
-				<AlertTitle>{ __( 'This variable is missing', 'elementor' ) }</AlertTitle>
+				<AlertTitle>{__('This variable is missing', 'elementor')}</AlertTitle>
 				<Typography variant="body2" color="textPrimary">
-					{ __(
+					{__(
 						'It may have been deleted. Try clearing this field and select a different value or variable.',
 						'elementor'
-					) }
+					)}
 				</Typography>
 			</Alert>
 		</ClickAwayListener>

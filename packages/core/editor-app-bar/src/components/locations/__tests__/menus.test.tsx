@@ -7,66 +7,66 @@ import MainMenuLocation from '../main-menu-location';
 import ToolsMenuLocation from '../tools-menu-location';
 import UtilitiesMenuLocation from '../utilities-menu-location';
 
-describe( 'Menus components', () => {
-	describe( 'Main menu', () => {
-		it( 'should render ordered menu items in a popover', () => {
+describe('Menus components', () => {
+	describe('Main menu', () => {
+		it('should render ordered menu items in a popover', () => {
 			// Arrange.
-			mainMenu.registerAction( {
+			mainMenu.registerAction({
 				...createMockMenuAction(),
 				id: 'test-action',
-			} );
+			});
 
-			mainMenu.registerToggleAction( {
+			mainMenu.registerToggleAction({
 				...createMockMenuToggleAction(),
 				id: 'test-toggle-action',
-			} );
+			});
 
-			mainMenu.registerLink( {
+			mainMenu.registerLink({
 				...createMockMenuLink(),
 				group: 'exits',
 				id: 'test-link',
-			} );
+			});
 
 			// Act.
-			renderWithTheme( <MainMenuLocation /> );
+			renderWithTheme(<MainMenuLocation />);
 
-			fireEvent.click( screen.getByRole( 'button' ) ); // Opens the popover menu
+			fireEvent.click(screen.getByRole('button')); // Opens the popover menu
 
 			// Assert.
-			const menuItems = screen.getAllByRole( 'menuitem' );
+			const menuItems = screen.getAllByRole('menuitem');
 
-			expect( menuItems ).toHaveLength( 3 );
+			expect(menuItems).toHaveLength(3);
 
 			// Ensure the last one is the link, so the order is correct (`default`, then `exits`).
-			expect( menuItems[ 2 ] ).toHaveAttribute( 'href', 'https://elementor.com' );
-		} );
+			expect(menuItems[2]).toHaveAttribute('href', 'https://elementor.com');
+		});
 
-		it( 'should render the integrations menu inside the tools menu if there are registered integrations', () => {
-			integrationsMenu.registerAction( {
+		it('should render the integrations menu inside the tools menu if there are registered integrations', () => {
+			integrationsMenu.registerAction({
 				...createMockMenuAction(),
-			} );
+			});
 
-			renderWithTheme( <ToolsMenuLocation /> );
+			renderWithTheme(<ToolsMenuLocation />);
 
-			expect( screen.getByLabelText( 'Integrations' ) ).toBeInTheDocument();
+			expect(screen.getByLabelText('Integrations')).toBeInTheDocument();
 
-			fireEvent.click( screen.getByLabelText( 'Integrations' ) ); // Opens the integrations menu.
+			fireEvent.click(screen.getByLabelText('Integrations')); // Opens the integrations menu.
 
-			expect( screen.getByText( 'Test' ) ).toBeInTheDocument();
-		} );
+			expect(screen.getByText('Test')).toBeInTheDocument();
+		});
 
-		it( 'should NOT render the integrations menu inside if there are no registered integrations', () => {
+		it('should NOT render the integrations menu inside if there are no registered integrations', () => {
 			// Act.
-			renderWithTheme( <MainMenuLocation /> );
+			renderWithTheme(<MainMenuLocation />);
 
-			fireEvent.click( screen.getByRole( 'button' ) ); // Opens the popover menu
+			fireEvent.click(screen.getByRole('button')); // Opens the popover menu
 
 			// Assert.
-			expect( screen.queryByText( 'Integrations' ) ).not.toBeInTheDocument();
-		} );
-	} );
+			expect(screen.queryByText('Integrations')).not.toBeInTheDocument();
+		});
+	});
 
-	describe.each( [
+	describe.each([
 		{
 			menuName: 'Tools',
 			menu: toolsMenu,
@@ -79,36 +79,36 @@ describe( 'Menus components', () => {
 			maxItems: 4,
 			Component: UtilitiesMenuLocation,
 		},
-	] )( '$menuName menu', ( { maxItems, menu, Component } ) => {
-		it( `should render ${ maxItems } menu items in a toolbar and the rest in a popover`, () => {
+	])('$menuName menu', ({ maxItems, menu, Component }) => {
+		it(`should render ${maxItems} menu items in a toolbar and the rest in a popover`, () => {
 			// Arrange.
 			const extraAfterMax = 2;
 
-			for ( let i = 0; i < maxItems + extraAfterMax; i++ ) {
-				menu.registerAction( {
-					id: `test-${ i }`,
+			for (let i = 0; i < maxItems + extraAfterMax; i++) {
+				menu.registerAction({
+					id: `test-${i}`,
 					props: {
-						title: `Test ${ i }`,
+						title: `Test ${i}`,
 						icon: () => <span>a</span>,
 					},
-				} );
+				});
 			}
 
 			// Act.
-			renderWithTheme( <Component /> );
+			renderWithTheme(<Component />);
 
 			// Assert.
-			const toolbarButtons = screen.getAllByRole( 'button' );
-			const popoverButton = toolbarButtons[ maxItems ];
+			const toolbarButtons = screen.getAllByRole('button');
+			const popoverButton = toolbarButtons[maxItems];
 
-			expect( toolbarButtons ).toHaveLength( maxItems + 1 ); // Including the popover button.
-			expect( popoverButton ).toHaveAttribute( 'aria-label', 'More' );
+			expect(toolbarButtons).toHaveLength(maxItems + 1); // Including the popover button.
+			expect(popoverButton).toHaveAttribute('aria-label', 'More');
 
 			// Act.
-			fireEvent.click( popoverButton );
+			fireEvent.click(popoverButton);
 
 			// Assert.
-			expect( screen.getAllByRole( 'menuitem' ) ).toHaveLength( extraAfterMax );
-		} );
-	} );
-} );
+			expect(screen.getAllByRole('menuitem')).toHaveLength(extraAfterMax);
+		});
+	});
+});

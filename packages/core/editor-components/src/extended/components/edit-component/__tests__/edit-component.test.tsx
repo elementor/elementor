@@ -14,186 +14,186 @@ import { slice } from '../../../../store/store';
 import { COMPONENT_DOCUMENT_TYPE } from '../../../consts';
 import { EditComponent } from '../edit-component';
 
-jest.mock( '../component-modal', () => ( {
-	ComponentModal: ( { onClose }: { onClose: () => void } ) =>
+jest.mock('../component-modal', () => ({
+	ComponentModal: ({ onClose }: { onClose: () => void }) =>
 		// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-		( <div aria-label="mock-backdrop" onClick={ onClose }></div> ) as unknown as React.ComponentType< {
+		(<div aria-label="mock-backdrop" onClick={onClose}></div>) as unknown as React.ComponentType<{
 			onClose: () => void;
-		} >,
-} ) );
+		}>,
+}));
 
-jest.mock( '@elementor/editor-documents', () => ( {
+jest.mock('@elementor/editor-documents', () => ({
 	getV1DocumentsManager: jest.fn(),
 	switchToDocument: jest.fn(),
 	invalidateDocumentData: jest.fn(),
-} ) );
+}));
 
-jest.mock( '../../../../api' );
+jest.mock('../../../../api');
 
 const MOCK_DOCUMENT_ID = 1;
 const MOCK_COMPONENT_ID = 123;
 const MOCK_NESTED_COMPONENT_ID = 456;
 
 const MOCK_POST_DATA = {
-	[ MOCK_DOCUMENT_ID ]: mockDocument( MOCK_DOCUMENT_ID ),
-	[ MOCK_COMPONENT_ID ]: mockDocument( MOCK_COMPONENT_ID, true ),
-	[ MOCK_NESTED_COMPONENT_ID ]: mockDocument( MOCK_NESTED_COMPONENT_ID, true ),
+	[MOCK_DOCUMENT_ID]: mockDocument(MOCK_DOCUMENT_ID),
+	[MOCK_COMPONENT_ID]: mockDocument(MOCK_COMPONENT_ID, true),
+	[MOCK_NESTED_COMPONENT_ID]: mockDocument(MOCK_NESTED_COMPONENT_ID, true),
 };
 
-describe( '<EditComponent />', () => {
-	let store: Store< SliceState< typeof slice > >;
+describe('<EditComponent />', () => {
+	let store: Store<SliceState<typeof slice>>;
 	let editedDocument: V1Document;
 	const switchDocumentCallback = jest.fn();
 
-	beforeEach( () => {
+	beforeEach(() => {
 		jest.clearAllMocks();
 		jest.useFakeTimers();
-		registerSlice( slice );
+		registerSlice(slice);
 		store = __createStore();
 
-		editedDocument = MOCK_POST_DATA[ MOCK_DOCUMENT_ID ];
+		editedDocument = MOCK_POST_DATA[MOCK_DOCUMENT_ID];
 
-		jest.mocked( getV1DocumentsManager ).mockReturnValue( {
+		jest.mocked(getV1DocumentsManager).mockReturnValue({
 			getCurrent: () => editedDocument,
 			getCurrentId: () => editedDocument.id,
 			getInitialId: () => MOCK_DOCUMENT_ID,
 			invalidateCache: jest.fn(),
-			get: ( id: number ) => MOCK_POST_DATA[ id as keyof typeof MOCK_POST_DATA ],
+			get: (id: number) => MOCK_POST_DATA[id as keyof typeof MOCK_POST_DATA],
 			documents: {},
-		} as unknown as V1DocumentsManager );
+		} as unknown as V1DocumentsManager);
 
-		jest.mocked( switchDocumentCallback ).mockImplementation( ( { id }: { id: number } ) => {
-			editedDocument = MOCK_POST_DATA[ id as keyof typeof MOCK_POST_DATA ];
+		jest.mocked(switchDocumentCallback).mockImplementation(({ id }: { id: number }) => {
+			editedDocument = MOCK_POST_DATA[id as keyof typeof MOCK_POST_DATA];
 
 			updateCurrentDocument();
-		} );
+		});
 
-		jest.mocked( switchToDocument ).mockImplementation( async ( id, options ) => {
-			switchDocumentCallback( { id, ...options } );
-		} );
-	} );
+		jest.mocked(switchToDocument).mockImplementation(async (id, options) => {
+			switchDocumentCallback({ id, ...options });
+		});
+	});
 
-	it( 'should show the modal when a component is edited', () => {
+	it('should show the modal when a component is edited', () => {
 		// Arrange.
-		renderWithStore( <EditComponent />, store );
+		renderWithStore(<EditComponent />, store);
 
 		// Act.
-		editedDocument = MOCK_POST_DATA[ MOCK_DOCUMENT_ID ];
+		editedDocument = MOCK_POST_DATA[MOCK_DOCUMENT_ID];
 		updateCurrentDocument();
 
 		// Assert.
-		expect( screen.queryByLabelText( 'mock-backdrop' ) ).not.toBeInTheDocument();
+		expect(screen.queryByLabelText('mock-backdrop')).not.toBeInTheDocument();
 
 		// Act.
-		editedDocument = MOCK_POST_DATA[ MOCK_COMPONENT_ID ];
+		editedDocument = MOCK_POST_DATA[MOCK_COMPONENT_ID];
 		updateCurrentDocument();
 
 		// Assert.
-		expect( screen.getByLabelText( 'mock-backdrop' ) ).toBeInTheDocument();
-		expect( apiClient.lockComponent ).not.toHaveBeenCalled();
-	} );
+		expect(screen.getByLabelText('mock-backdrop')).toBeInTheDocument();
+		expect(apiClient.lockComponent).not.toHaveBeenCalled();
+	});
 
-	it( 'should close the modal when the backdrop is clicked', () => {
+	it('should close the modal when the backdrop is clicked', () => {
 		// Arrange.
-		editedDocument = MOCK_POST_DATA[ MOCK_COMPONENT_ID ];
-		renderWithStore( <EditComponent />, store );
+		editedDocument = MOCK_POST_DATA[MOCK_COMPONENT_ID];
+		renderWithStore(<EditComponent />, store);
 		updateCurrentDocument();
 
 		// Assert.
-		expect( screen.getByLabelText( 'mock-backdrop' ) ).toBeInTheDocument();
+		expect(screen.getByLabelText('mock-backdrop')).toBeInTheDocument();
 
 		// Act.
-		const backdrop = screen.getByLabelText( 'mock-backdrop' );
-		fireEvent.click( backdrop );
+		const backdrop = screen.getByLabelText('mock-backdrop');
+		fireEvent.click(backdrop);
 
 		// Assert.
-		expect( switchDocumentCallback ).toHaveBeenCalledWith( {
+		expect(switchDocumentCallback).toHaveBeenCalledWith({
 			id: MOCK_DOCUMENT_ID,
 			mode: 'autosave',
 			setAsInitial: false,
 			shouldScroll: false,
-		} );
-		expect( screen.queryByLabelText( 'mock-backdrop' ) ).not.toBeInTheDocument();
+		});
+		expect(screen.queryByLabelText('mock-backdrop')).not.toBeInTheDocument();
 
-		expect( apiClient.unlockComponent ).toHaveBeenCalledTimes( 1 );
-		expect( apiClient.unlockComponent ).toHaveBeenCalledWith( MOCK_COMPONENT_ID );
-	} );
+		expect(apiClient.unlockComponent).toHaveBeenCalledTimes(1);
+		expect(apiClient.unlockComponent).toHaveBeenCalledWith(MOCK_COMPONENT_ID);
+	});
 
-	it( 'should responsively go back upon backdrop clicks through components ancestry chain', () => {
+	it('should responsively go back upon backdrop clicks through components ancestry chain', () => {
 		// Arrange.
-		editedDocument = MOCK_POST_DATA[ MOCK_DOCUMENT_ID ];
-		renderWithStore( <EditComponent />, store );
+		editedDocument = MOCK_POST_DATA[MOCK_DOCUMENT_ID];
+		renderWithStore(<EditComponent />, store);
 		updateCurrentDocument();
 
 		// Assert.
-		expect( screen.queryByLabelText( 'mock-backdrop' ) ).not.toBeInTheDocument();
+		expect(screen.queryByLabelText('mock-backdrop')).not.toBeInTheDocument();
 
-		[ MOCK_COMPONENT_ID, MOCK_NESTED_COMPONENT_ID ].forEach( ( id ) => {
-			editedDocument = MOCK_POST_DATA[ id as keyof typeof MOCK_POST_DATA ];
+		[MOCK_COMPONENT_ID, MOCK_NESTED_COMPONENT_ID].forEach((id) => {
+			editedDocument = MOCK_POST_DATA[id as keyof typeof MOCK_POST_DATA];
 			updateCurrentDocument();
 
 			// Assert.
-			expect( screen.getByLabelText( 'mock-backdrop' ) ).toBeInTheDocument();
-		} );
+			expect(screen.getByLabelText('mock-backdrop')).toBeInTheDocument();
+		});
 
-		expect( apiClient.unlockComponent ).toHaveBeenNthCalledWith( 1, MOCK_COMPONENT_ID );
+		expect(apiClient.unlockComponent).toHaveBeenNthCalledWith(1, MOCK_COMPONENT_ID);
 
 		// Act.
-		let backdrop = screen.getByLabelText( 'mock-backdrop' );
-		fireEvent.click( backdrop );
+		let backdrop = screen.getByLabelText('mock-backdrop');
+		fireEvent.click(backdrop);
 
 		// Assert.
-		expect( switchDocumentCallback ).toHaveBeenNthCalledWith( 1, {
+		expect(switchDocumentCallback).toHaveBeenNthCalledWith(1, {
 			id: MOCK_COMPONENT_ID,
 			mode: 'autosave',
 			selector: '[data-id="123"]',
 			setAsInitial: false,
 			shouldScroll: false,
-		} );
+		});
 
-		expect( apiClient.unlockComponent ).toHaveBeenNthCalledWith( 2, MOCK_NESTED_COMPONENT_ID );
+		expect(apiClient.unlockComponent).toHaveBeenNthCalledWith(2, MOCK_NESTED_COMPONENT_ID);
 
 		// Act.
-		backdrop = screen.getByLabelText( 'mock-backdrop' );
-		fireEvent.click( backdrop );
+		backdrop = screen.getByLabelText('mock-backdrop');
+		fireEvent.click(backdrop);
 
 		// Assert.
-		expect( screen.queryByLabelText( 'mock-backdrop' ) ).not.toBeInTheDocument();
-		expect( switchDocumentCallback ).toHaveBeenNthCalledWith( 2, {
+		expect(screen.queryByLabelText('mock-backdrop')).not.toBeInTheDocument();
+		expect(switchDocumentCallback).toHaveBeenNthCalledWith(2, {
 			id: MOCK_DOCUMENT_ID,
 			mode: 'autosave',
 			setAsInitial: false,
 			shouldScroll: false,
-		} );
+		});
 
-		expect( apiClient.unlockComponent ).toHaveBeenNthCalledWith( 3, MOCK_COMPONENT_ID );
-		expect( apiClient.unlockComponent ).toHaveBeenCalledTimes( 3 );
-	} );
-} );
+		expect(apiClient.unlockComponent).toHaveBeenNthCalledWith(3, MOCK_COMPONENT_ID);
+		expect(apiClient.unlockComponent).toHaveBeenCalledTimes(3);
+	});
+});
 
-function mockDocument( id: number, isComponent: boolean = false ) {
+function mockDocument(id: number, isComponent: boolean = false) {
 	return {
-		...createMockDocument( {
+		...createMockDocument({
 			id,
-		} ),
+		}),
 		container: {
 			view: {
-				el: createDOMElement( {
+				el: createDOMElement({
 					tag: 'div',
 					dataset: isComponent
 						? {
 								id: id.toString(),
-						  }
+							}
 						: {},
 					children: [
-						createDOMElement( {
+						createDOMElement({
 							tag: 'div',
 							children: [
-								createDOMElement( { tag: 'div' } ), // the component's actual root element
+								createDOMElement({ tag: 'div' }), // the component's actual root element
 							],
-						} ),
+						}),
 					],
-				} ),
+				}),
 			},
 		},
 		config: {
@@ -203,7 +203,7 @@ function mockDocument( id: number, isComponent: boolean = false ) {
 }
 
 function updateCurrentDocument() {
-	act( () => {
-		dispatchCommandAfter( 'editor/documents/open' );
-	} );
+	act(() => {
+		dispatchCommandAfter('editor/documents/open');
+	});
 }

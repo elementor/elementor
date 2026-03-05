@@ -17,42 +17,42 @@ type ImageControlProps = {
 	label?: string;
 };
 
-export const ImageControl = createControl( ( { sizes, label = __( 'Image', 'elementor' ) }: ImageControlProps ) => {
-	const propContext = useBoundProp( imagePropTypeUtil );
+export const ImageControl = createControl(({ sizes, label = __('Image', 'elementor') }: ImageControlProps) => {
+	const propContext = useBoundProp(imagePropTypeUtil);
 
 	return (
-		<PropProvider { ...propContext }>
-			<Stack gap={ 1.5 }>
-				<ControlLabel>{ label }</ControlLabel>
+		<PropProvider {...propContext}>
+			<Stack gap={1.5}>
+				<ControlLabel>{label}</ControlLabel>
 				<ImageSrcControl />
-				<Grid container gap={ 1.5 } alignItems="center" flexWrap="nowrap">
-					<Grid item xs={ 6 }>
-						<ControlFormLabel>{ __( 'Resolution', 'elementor' ) }</ControlFormLabel>
+				<Grid container gap={1.5} alignItems="center" flexWrap="nowrap">
+					<Grid item xs={6}>
+						<ControlFormLabel>{__('Resolution', 'elementor')}</ControlFormLabel>
 					</Grid>
-					<Grid item xs={ 6 } sx={ { overflow: 'hidden' } }>
-						<ImageSizeControl sizes={ sizes } />
+					<Grid item xs={6} sx={{ overflow: 'hidden' }}>
+						<ImageSizeControl sizes={sizes} />
 					</Grid>
 				</Grid>
 			</Stack>
 		</PropProvider>
 	);
-} );
+});
 
 const ImageSrcControl = () => {
 	const { data: allowSvgUpload } = useUnfilteredFilesUpload();
-	const mediaTypes: MediaType[] = allowSvgUpload ? [ 'image', 'svg' ] : [ 'image' ];
+	const mediaTypes: MediaType[] = allowSvgUpload ? ['image', 'svg'] : ['image'];
 
 	return (
-		<PropKeyProvider bind={ 'src' }>
-			<ImageMediaControl mediaTypes={ mediaTypes } />
+		<PropKeyProvider bind={'src'}>
+			<ImageMediaControl mediaTypes={mediaTypes} />
 		</PropKeyProvider>
 	);
 };
 
-const ImageSizeControl = ( { sizes }: { sizes: ImageControlProps[ 'sizes' ] } ) => {
+const ImageSizeControl = ({ sizes }: { sizes: ImageControlProps['sizes'] }) => {
 	return (
-		<PropKeyProvider bind={ 'size' }>
-			<SelectControl options={ sizes } />
+		<PropKeyProvider bind={'size'}>
+			<SelectControl options={sizes} />
 		</PropKeyProvider>
 	);
 };

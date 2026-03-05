@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 
-export function useReverseHtmlEntities( escapedHTML = '' ) {
-	return useMemo( () => {
-		const textarea = document.createElement( 'textarea' );
+export function useReverseHtmlEntities(escapedHTML = '') {
+	return useMemo(() => {
+		const textarea = document.createElement('textarea');
 		textarea.innerHTML = escapedHTML;
 
 		const { value } = textarea;
@@ -10,5 +10,5 @@ export function useReverseHtmlEntities( escapedHTML = '' ) {
 		textarea.remove();
 
 		return value;
-	}, [ escapedHTML ] );
+	}, [escapedHTML]);
 }

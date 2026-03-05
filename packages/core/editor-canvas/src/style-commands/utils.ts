@@ -7,56 +7,56 @@ export type ContainerArgs = {
 	containers?: V1Element[];
 };
 
-export function hasAtomicWidgets( args: ContainerArgs ): boolean {
-	const { containers = [ args.container ] } = args;
+export function hasAtomicWidgets(args: ContainerArgs): boolean {
+	const { containers = [args.container] } = args;
 
-	return containers.some( isAtomicWidget );
+	return containers.some(isAtomicWidget);
 }
 
-export function isAtomicWidget( container: V1Element | undefined ): boolean {
-	if ( ! container ) {
+export function isAtomicWidget(container: V1Element | undefined): boolean {
+	if (!container) {
 		return false;
 	}
 
-	return Boolean( getContainerSchema( container ) );
+	return Boolean(getContainerSchema(container));
 }
 
-export function getClassesProp( container: V1Element ): string | null {
-	const propsSchema = getContainerSchema( container );
+export function getClassesProp(container: V1Element): string | null {
+	const propsSchema = getContainerSchema(container);
 
-	if ( ! propsSchema ) {
+	if (!propsSchema) {
 		return null;
 	}
 
-	const [ propKey ] =
-		Object.entries( propsSchema ).find(
-			( [ , propType ] ) => propType.kind === 'plain' && propType.key === CLASSES_PROP_KEY
+	const [propKey] =
+		Object.entries(propsSchema).find(
+			([, propType]) => propType.kind === 'plain' && propType.key === CLASSES_PROP_KEY
 		) ?? [];
 
 	return propKey ?? null;
 }
 
-function getContainerSchema( container: V1Element ): PropsSchema | null {
-	const type = container?.model.get( 'widgetType' ) || container?.model.get( 'elType' );
+function getContainerSchema(container: V1Element): PropsSchema | null {
+	const type = container?.model.get('widgetType') || container?.model.get('elType');
 
 	const widgetsCache = getWidgetsCache();
-	const elementType = widgetsCache?.[ type ];
+	const elementType = widgetsCache?.[type];
 
 	return elementType?.atomic_props_schema ?? null;
 }
 
 type ClipboardElements = V1ElementModelProps[];
 
-export function getClipboardElements( storageKey: string = 'clipboard' ): ClipboardElements | undefined {
+export function getClipboardElements(storageKey: string = 'clipboard'): ClipboardElements | undefined {
 	try {
-		const storedData = JSON.parse( localStorage.getItem( 'elementor' ) ?? '{}' );
+		const storedData = JSON.parse(localStorage.getItem('elementor') ?? '{}');
 
-		return storedData[ storageKey ]?.elements as ClipboardElements;
+		return storedData[storageKey]?.elements as ClipboardElements;
 	} catch {
 		return undefined;
 	}
 }
 
-export function getTitleForContainers( containers: V1Element[] ): string {
-	return containers.length > 1 ? __( 'Elements', 'elementor' ) : getElementLabel( containers[ 0 ].id );
+export function getTitleForContainers(containers: V1Element[]): string {
+	return containers.length > 1 ? __('Elements', 'elementor') : getElementLabel(containers[0].id);
 }

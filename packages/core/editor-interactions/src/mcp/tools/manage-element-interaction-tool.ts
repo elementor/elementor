@@ -21,22 +21,22 @@ const EMPTY_INTERACTIONS: ElementInteractions = {
 	items: [],
 };
 
-export const initManageElementInteractionTool = ( reg: MCPRegistryEntry ) => {
+export const initManageElementInteractionTool = (reg: MCPRegistryEntry) => {
 	const { addTool } = reg;
 	const extendedSchema = isProActive() ? { ...baseSchema, ...proSchema } : baseSchema;
 	const schema = {
-		elementId: z.string().describe( 'The ID of the element to read or modify interactions on' ),
+		elementId: z.string().describe('The ID of the element to read or modify interactions on'),
 		action: z
-			.enum( [ 'get', 'add', 'update', 'delete', 'clear' ] )
-			.describe( 'Operation to perform. Use "get" first to inspect existing interactions.' ),
+			.enum(['get', 'add', 'update', 'delete', 'clear'])
+			.describe('Operation to perform. Use "get" first to inspect existing interactions.'),
 		interactionId: z
 			.string()
 			.optional()
-			.describe( 'Interaction ID — required for update and delete. Obtain from a prior "get" call.' ),
+			.describe('Interaction ID — required for update and delete. Obtain from a prior "get" call.'),
 		...extendedSchema,
 	};
 
-	addTool( {
+	addTool({
 		name: 'manage-element-interaction',
 		description: `Manage the element interaction.`,
 		schema,
@@ -45,45 +45,45 @@ export const initManageElementInteractionTool = ( reg: MCPRegistryEntry ) => {
 		],
 		isDestructive: true,
 		outputSchema: {
-			success: z.boolean().describe( 'Whether the action was successful' ),
+			success: z.boolean().describe('Whether the action was successful'),
 			action: z
-				.enum( [ 'get', 'add', 'update', 'delete', 'clear' ] )
-				.describe( 'Operation to perform. Use "get" first to inspect existing interactions.' ),
-			elementId: z.string().optional().describe( 'The ID of the element to read or modify interactions on' ),
-			interactions: z.array( z.any() ).optional().describe( 'The interactions on the element' ),
-			count: z.number().optional().describe( 'The number of interactions on the element' ),
+				.enum(['get', 'add', 'update', 'delete', 'clear'])
+				.describe('Operation to perform. Use "get" first to inspect existing interactions.'),
+			elementId: z.string().optional().describe('The ID of the element to read or modify interactions on'),
+			interactions: z.array(z.any()).optional().describe('The interactions on the element'),
+			count: z.number().optional().describe('The number of interactions on the element'),
 		},
-		handler: ( input: {
+		handler: (input: {
 			elementId: string;
 			action: 'get' | 'add' | 'update' | 'delete' | 'clear';
 			interactionId?: string;
-			[ key: string ]: unknown;
-		} ) => {
+			[key: string]: unknown;
+		}) => {
 			const { elementId, action, interactionId, ...animationData } = input;
 
 			const allInteractions = interactionsRepository.all();
-			const elementData = allInteractions.find( ( data ) => data.elementId === elementId );
+			const elementData = allInteractions.find((data) => data.elementId === elementId);
 			const currentInteractions: ElementInteractions = elementData?.interactions ?? EMPTY_INTERACTIONS;
 
-			if ( action === 'get' ) {
-				const summary = currentInteractions.items.map( ( item ) => {
+			if (action === 'get') {
+				const summary = currentInteractions.items.map((item) => {
 					const { value } = item;
 					const animValue = value.animation.value;
 					const timingValue = animValue.timing_config.value;
 					const configValue = animValue.config.value;
 
 					return {
-						id: extractString( value.interaction_id ),
-						trigger: extractString( value.trigger ),
-						effect: extractString( animValue.effect ),
-						effectType: extractString( animValue.type ),
-						direction: extractString( animValue.direction ),
-						duration: extractSize( timingValue.duration ),
-						delay: extractSize( timingValue.delay ),
-						easing: extractString( configValue.easing ),
-						excludedBreakpoints: extractExcludedBreakpoints( value.breakpoints ),
+						id: extractString(value.interaction_id),
+						trigger: extractString(value.trigger),
+						effect: extractString(animValue.effect),
+						effectType: extractString(animValue.type),
+						direction: extractString(animValue.direction),
+						duration: extractSize(timingValue.duration),
+						delay: extractSize(timingValue.delay),
+						easing: extractString(configValue.easing),
+						excludedBreakpoints: extractExcludedBreakpoints(value.breakpoints),
 					};
-				} );
+				});
 
 				return {
 					success: true,
@@ -94,67 +94,63 @@ export const initManageElementInteractionTool = ( reg: MCPRegistryEntry ) => {
 				};
 			}
 
-			let updatedItems = [ ...currentInteractions.items ];
+			let updatedItems = [...currentInteractions.items];
 
-			switch ( action ) {
+			switch (action) {
 				case 'add': {
-					if ( updatedItems.length >= MAX_INTERACTIONS_PER_ELEMENT ) {
+					if (updatedItems.length >= MAX_INTERACTIONS_PER_ELEMENT) {
 						throw new Error(
-							`Cannot add more than ${ MAX_INTERACTIONS_PER_ELEMENT } interactions per element. Current count: ${ updatedItems.length }. Delete an existing interaction first.`
+							`Cannot add more than ${MAX_INTERACTIONS_PER_ELEMENT} interactions per element. Current count: ${updatedItems.length}. Delete an existing interaction first.`
 						);
 					}
 
-					const newItem = createInteractionItem( {
+					const newItem = createInteractionItem({
 						interactionId: generateTempInteractionId(),
 						...animationData,
-					} );
+					});
 
-					updatedItems = [ ...updatedItems, newItem ];
+					updatedItems = [...updatedItems, newItem];
 					break;
 				}
 
 				case 'update': {
-					if ( ! interactionId ) {
-						throw new Error( 'interactionId is required for the update action.' );
+					if (!interactionId) {
+						throw new Error('interactionId is required for the update action.');
 					}
 
 					const itemIndex = updatedItems.findIndex(
-						( item ) => extractString( item.value.interaction_id ) === interactionId
+						(item) => extractString(item.value.interaction_id) === interactionId
 					);
 
-					if ( itemIndex === -1 ) {
-						throw new Error(
-							`Interaction with ID "${ interactionId }" not found on element "${ elementId }".`
-						);
+					if (itemIndex === -1) {
+						throw new Error(`Interaction with ID "${interactionId}" not found on element "${elementId}".`);
 					}
 
-					const updatedItem = createInteractionItem( {
+					const updatedItem = createInteractionItem({
 						interactionId,
 						...animationData,
-					} );
+					});
 
 					updatedItems = [
-						...updatedItems.slice( 0, itemIndex ),
+						...updatedItems.slice(0, itemIndex),
 						updatedItem,
-						...updatedItems.slice( itemIndex + 1 ),
+						...updatedItems.slice(itemIndex + 1),
 					];
 					break;
 				}
 
 				case 'delete': {
-					if ( ! interactionId ) {
-						throw new Error( 'interactionId is required for the delete action.' );
+					if (!interactionId) {
+						throw new Error('interactionId is required for the delete action.');
 					}
 
 					const beforeCount = updatedItems.length;
 					updatedItems = updatedItems.filter(
-						( item ) => extractString( item.value.interaction_id ) !== interactionId
+						(item) => extractString(item.value.interaction_id) !== interactionId
 					);
 
-					if ( updatedItems.length === beforeCount ) {
-						throw new Error(
-							`Interaction with ID "${ interactionId }" not found on element "${ elementId }".`
-						);
+					if (updatedItems.length === beforeCount) {
+						throw new Error(`Interaction with ID "${interactionId}" not found on element "${elementId}".`);
 					}
 					break;
 				}
@@ -171,10 +167,10 @@ export const initManageElementInteractionTool = ( reg: MCPRegistryEntry ) => {
 			};
 
 			try {
-				updateElementInteractions( { elementId, interactions: updatedInteractions } );
-			} catch ( error ) {
+				updateElementInteractions({ elementId, interactions: updatedInteractions });
+			} catch (error) {
 				throw new Error(
-					`Failed to update interactions for element "${ elementId }": ${
+					`Failed to update interactions for element "${elementId}": ${
 						error instanceof Error ? error.message : 'Unknown error'
 					}`
 				);
@@ -187,5 +183,5 @@ export const initManageElementInteractionTool = ( reg: MCPRegistryEntry ) => {
 				count: updatedItems.length,
 			};
 		},
-	} );
+	});
 };

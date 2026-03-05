@@ -21,29 +21,29 @@ import { slice } from '../../../store';
 import { type SearchAndFilterContextType, useSearchAndFilters } from '../../search-and-filter/context';
 import { GlobalClassesList } from '../global-classes-list';
 
-jest.mock( '@elementor/editor-v1-adapters', () => ( {
-	...jest.requireActual( '@elementor/editor-v1-adapters' ),
+jest.mock('@elementor/editor-v1-adapters', () => ({
+	...jest.requireActual('@elementor/editor-v1-adapters'),
 	blockCommand: jest.fn(),
-} ) );
-jest.mock( '@elementor/editor-documents' );
-jest.mock( '../../../hooks/use-filters' );
-jest.mock( '../../search-and-filter/context' );
-jest.mock( '@elementor/editor-styles-repository' );
-jest.mock( '../../../hooks/use-css-class-usage', () => ( {
-	useCssClassUsage: jest.fn().mockReturnValue( {
+}));
+jest.mock('@elementor/editor-documents');
+jest.mock('../../../hooks/use-filters');
+jest.mock('../../search-and-filter/context');
+jest.mock('@elementor/editor-styles-repository');
+jest.mock('../../../hooks/use-css-class-usage', () => ({
+	useCssClassUsage: jest.fn().mockReturnValue({
 		data: {}, // or whatever shape your hook expects
 		isLoading: false,
-	} ),
-	useCssClassUsageByID: jest.fn().mockReturnValue( {
+	}),
+	useCssClassUsageByID: jest.fn().mockReturnValue({
 		isLoading: false,
 		data: {
 			total: 1,
-			content: [ { title: 'Test Page', elements: [ 'el1' ], pageId: '123', total: 1, type: 'Page' } ],
+			content: [{ title: 'Test Page', elements: ['el1'], pageId: '123', total: 1, type: 'Page' }],
 		},
-	} ),
-} ) );
+	}),
+}));
 
-jest.mock( '../../../utils/tracking', () => createMockTrackingModule( 'trackGlobalClasses' ) );
+jest.mock('../../../utils/tracking', () => createMockTrackingModule('trackGlobalClasses'));
 
 const mockUseSearchAndFiltersProps: SearchAndFilterContextType = {
 	search: {
@@ -59,325 +59,325 @@ const mockUseSearchAndFiltersProps: SearchAndFilterContextType = {
 	},
 };
 
-describe( 'GlobalClassesList', () => {
-	let store: ReturnType< typeof createStore >;
+describe('GlobalClassesList', () => {
+	let store: ReturnType<typeof createStore>;
 
-	beforeEach( () => {
+	beforeEach(() => {
 		jest.clearAllMocks();
-		jest.mocked( getCurrentDocument ).mockReturnValue( createMockDocument( { id: 1 } ) );
+		jest.mocked(getCurrentDocument).mockReturnValue(createMockDocument({ id: 1 }));
 
-		jest.mocked( validateStyleLabel ).mockReturnValue( { isValid: true, errorMessage: null } );
+		jest.mocked(validateStyleLabel).mockReturnValue({ isValid: true, errorMessage: null });
 
-		registerSlice( slice );
+		registerSlice(slice);
 
 		store = createStore();
-		jest.mocked( useSearchAndFilters ).mockReturnValue( { ...mockUseSearchAndFiltersProps } );
-	} );
+		jest.mocked(useSearchAndFilters).mockReturnValue({ ...mockUseSearchAndFiltersProps });
+	});
 
-	it( 'should render the list of classes with its order', async () => {
+	it('should render the list of classes with its order', async () => {
 		// Arrange.
-		mockClasses( [
+		mockClasses([
 			{ id: 'class-1', label: 'Class 1' },
 			{ id: 'class-2', label: 'Class 2' },
-		] );
+		]);
 
 		// Act.
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore(<GlobalClassesList />, store);
 
 		// Assert.
-		const [ firstClass, secondClass ] = await screen.findAllByRole( 'listitem' );
+		const [firstClass, secondClass] = await screen.findAllByRole('listitem');
 
-		expect( within( firstClass ).getByText( 'Class 1' ) ).toBeInTheDocument();
-		expect( within( secondClass ).getByText( 'Class 2' ) ).toBeInTheDocument();
-	} );
+		expect(within(firstClass).getByText('Class 1')).toBeInTheDocument();
+		expect(within(secondClass).getByText('Class 2')).toBeInTheDocument();
+	});
 
-	it( 'should allow renaming a class on click', async () => {
+	it('should allow renaming a class on click', async () => {
 		// Arrange.
-		mockClasses( [ { id: 'class-1', label: 'Class 1' } ] );
+		mockClasses([{ id: 'class-1', label: 'Class 1' }]);
 
 		// Act.
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore(<GlobalClassesList />, store);
 
-		fireEvent.doubleClick( screen.getByRole( 'button', { name: 'Class 1' } ) );
+		fireEvent.doubleClick(screen.getByRole('button', { name: 'Class 1' }));
 
-		const editableField = screen.getByRole( 'textbox' );
+		const editableField = screen.getByRole('textbox');
 
 		// Assert.
-		expect( editableField ).toBeInTheDocument();
+		expect(editableField).toBeInTheDocument();
 
 		// Act.
-		fireEvent.input( editableField, { target: { innerText: 'New-Class-Name' } } );
+		fireEvent.input(editableField, { target: { innerText: 'New-Class-Name' } });
 
-		fireEvent.blur( editableField );
+		fireEvent.blur(editableField);
 
 		// Assert.
-		expect( editableField ).not.toBeInTheDocument();
+		expect(editableField).not.toBeInTheDocument();
 
-		expect( screen.getByText( 'New-Class-Name' ) ).toBeInTheDocument();
-		expect( mockTracking ).toHaveBeenCalledWith( {
+		expect(screen.getByText('New-Class-Name')).toBeInTheDocument();
+		expect(mockTracking).toHaveBeenCalledWith({
 			event: 'classRenamed',
 			classId: 'class-1',
 			oldValue: 'Class 1',
 			newValue: 'New-Class-Name',
 			source: 'class-manager',
-		} );
-	} );
+		});
+	});
 
-	it( 'should not allow rename if the name is invalid', () => {
+	it('should not allow rename if the name is invalid', () => {
 		// Arrange.
-		mockClasses( [
+		mockClasses([
 			{ id: 'class-1', label: 'Class-1' },
 			{ id: 'class-2', label: 'Class-2' },
-		] );
+		]);
 
-		jest.mocked( validateStyleLabel ).mockReturnValue( { isValid: false, errorMessage: 'Test Error' } );
-
-		// Act.
-		renderWithStore( <GlobalClassesList />, store );
-
-		fireEvent.doubleClick( screen.getByRole( 'button', { name: 'Class-1' } ) );
-
-		const editableField = screen.getByRole( 'textbox' );
-
-		// Assert.
-		expect( editableField ).toBeInTheDocument();
+		jest.mocked(validateStyleLabel).mockReturnValue({ isValid: false, errorMessage: 'Test Error' });
 
 		// Act.
-		fireEvent.input( editableField, { target: { innerText: 'new-name' } } );
+		renderWithStore(<GlobalClassesList />, store);
 
-		fireEvent.keyDown( editableField, { key: 'Enter' } );
+		fireEvent.doubleClick(screen.getByRole('button', { name: 'Class-1' }));
+
+		const editableField = screen.getByRole('textbox');
 
 		// Assert.
-		expect( editableField ).toBeInTheDocument();
+		expect(editableField).toBeInTheDocument();
 
-		expect( screen.queryByText( 'new-name' ) ).not.toBeInTheDocument();
-	} );
+		// Act.
+		fireEvent.input(editableField, { target: { innerText: 'new-name' } });
 
-	it( 'should allow renaming a class from actions menu', async () => {
+		fireEvent.keyDown(editableField, { key: 'Enter' });
+
+		// Assert.
+		expect(editableField).toBeInTheDocument();
+
+		expect(screen.queryByText('new-name')).not.toBeInTheDocument();
+	});
+
+	it('should allow renaming a class from actions menu', async () => {
 		// Arrange.
-		mockClasses( [ { id: 'class-1', label: 'Class 1' } ] );
+		mockClasses([{ id: 'class-1', label: 'Class 1' }]);
 
 		// Act.
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore(<GlobalClassesList />, store);
 
-		fireEvent.click( screen.getByRole( 'button', { name: 'More actions' } ) );
+		fireEvent.click(screen.getByRole('button', { name: 'More actions' }));
 
-		const renameButton = screen.getByRole( 'menuitem', { name: 'Rename' } );
+		const renameButton = screen.getByRole('menuitem', { name: 'Rename' });
 
 		// Assert.
-		expect( renameButton ).toBeInTheDocument();
+		expect(renameButton).toBeInTheDocument();
 
 		// Act.
-		fireEvent.click( renameButton );
+		fireEvent.click(renameButton);
 
-		const editableField = screen.getByRole( 'textbox' );
+		const editableField = screen.getByRole('textbox');
 
 		// Assert.
 		// Menu should be closed after clicking rename.
-		await waitFor( () => {
-			expect( renameButton ).not.toBeInTheDocument();
-		} );
+		await waitFor(() => {
+			expect(renameButton).not.toBeInTheDocument();
+		});
 
-		expect( editableField ).toBeInTheDocument();
+		expect(editableField).toBeInTheDocument();
 
 		// Act.
-		fireEvent.input( editableField, { target: { innerText: 'New-Class-Name' } } );
+		fireEvent.input(editableField, { target: { innerText: 'New-Class-Name' } });
 
-		fireEvent.blur( editableField );
+		fireEvent.blur(editableField);
 
 		// Assert.
-		expect( editableField ).not.toBeInTheDocument();
+		expect(editableField).not.toBeInTheDocument();
 
-		expect( screen.getByText( 'New-Class-Name' ) ).toBeInTheDocument();
-		expect( mockTracking ).toHaveBeenCalledWith( {
+		expect(screen.getByText('New-Class-Name')).toBeInTheDocument();
+		expect(mockTracking).toHaveBeenCalledWith({
 			event: 'classRenamed',
 			classId: 'class-1',
 			oldValue: 'Class 1',
 			newValue: 'New-Class-Name',
 			source: 'class-manager',
-		} );
-	} );
+		});
+	});
 
-	it( 'should show empty state when there are no classes', () => {
+	it('should show empty state when there are no classes', () => {
 		// Arrange.
-		mockClasses( [] );
+		mockClasses([]);
 
 		// Act.
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore(<GlobalClassesList />, store);
 
 		// Assert.
-		expect( screen.getByText( 'There are no global classes yet.' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('There are no global classes yet.')).toBeInTheDocument();
+	});
 
-	it( 'should allow deleting a class from actions menu', async () => {
+	it('should allow deleting a class from actions menu', async () => {
 		// Arrange.
-		mockClasses( [
+		mockClasses([
 			{ id: 'class-1', label: 'Class 1' },
 			{ id: 'class-2', label: 'Class 2' },
-		] );
+		]);
 
 		// Act.
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore(<GlobalClassesList />, store);
 
-		const [ firstClass ] = screen.getAllByRole( 'listitem' );
+		const [firstClass] = screen.getAllByRole('listitem');
 
-		fireEvent.click( within( firstClass ).getByRole( 'button', { name: 'More actions' } ) );
+		fireEvent.click(within(firstClass).getByRole('button', { name: 'More actions' }));
 
-		const deleteButton = screen.getByRole( 'menuitem', { name: 'Delete' } );
+		const deleteButton = screen.getByRole('menuitem', { name: 'Delete' });
 
-		fireEvent.click( deleteButton );
+		fireEvent.click(deleteButton);
 
 		// Assert.
-		await waitFor( () => {
-			expect( screen.getByRole( 'dialog', { name: 'Delete this class?' } ) ).toBeInTheDocument();
-		} );
+		await waitFor(() => {
+			expect(screen.getByRole('dialog', { name: 'Delete this class?' })).toBeInTheDocument();
+		});
 
 		// Act.
-		fireEvent.click( screen.getByRole( 'button', { name: 'Delete' } ) );
+		fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
 
 		// Assert.
-		await waitFor( () => {
-			expect( screen.queryByText( 'Class 1' ) ).not.toBeInTheDocument();
-		} );
-		expect( screen.getByText( 'Class 2' ) ).toBeInTheDocument();
-		await waitFor( () => {
-			expect( mockTracking ).toHaveBeenCalledWith( {
+		await waitFor(() => {
+			expect(screen.queryByText('Class 1')).not.toBeInTheDocument();
+		});
+		expect(screen.getByText('Class 2')).toBeInTheDocument();
+		await waitFor(() => {
+			expect(mockTracking).toHaveBeenCalledWith({
 				event: 'classDeleted',
 				classId: 'class-1',
-				runAction: expect.any( Function ),
-			} );
-		} );
-	} );
+				runAction: expect.any(Function),
+			});
+		});
+	});
 
-	it( 'should close the delete dialog when clicking cancel, without deleting', async () => {
+	it('should close the delete dialog when clicking cancel, without deleting', async () => {
 		// Arrange.
-		mockClasses( [ { id: 'class-1', label: 'Class 1' } ] );
+		mockClasses([{ id: 'class-1', label: 'Class 1' }]);
 
 		// Act.
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore(<GlobalClassesList />, store);
 
-		fireEvent.click( screen.getByRole( 'button', { name: 'More actions' } ) );
+		fireEvent.click(screen.getByRole('button', { name: 'More actions' }));
 
-		const deleteButton = screen.getByRole( 'menuitem', { name: 'Delete' } );
+		const deleteButton = screen.getByRole('menuitem', { name: 'Delete' });
 
-		fireEvent.click( deleteButton );
+		fireEvent.click(deleteButton);
 
 		// Assert.
-		await waitFor( () => {
-			expect( screen.getByRole( 'dialog', { name: 'Delete this class?' } ) ).toBeInTheDocument();
-		} );
+		await waitFor(() => {
+			expect(screen.getByRole('dialog', { name: 'Delete this class?' })).toBeInTheDocument();
+		});
 
 		// Act.
-		fireEvent.click( screen.getByRole( 'button', { name: 'Not now' } ) );
+		fireEvent.click(screen.getByRole('button', { name: 'Not now' }));
 
 		// Assert.
-		expect( screen.queryByRole( 'dialog', { name: 'Delete this class?' } ) ).not.toBeInTheDocument();
-		expect( screen.getByText( 'Class 1' ) ).toBeInTheDocument();
-	} );
+		expect(screen.queryByRole('dialog', { name: 'Delete this class?' })).not.toBeInTheDocument();
+		expect(screen.getByText('Class 1')).toBeInTheDocument();
+	});
 
-	it( 'should show 1 class based on search value', () => {
-		jest.mocked( useSearchAndFilters ).mockReturnValue( {
+	it('should show 1 class based on search value', () => {
+		jest.mocked(useSearchAndFilters).mockReturnValue({
 			...mockUseSearchAndFiltersProps,
 			search: {
 				inputValue: 'foo',
 				debouncedValue: 'foo',
-			} as SearchAndFilterContextType[ 'search' ],
-		} );
-		mockClasses( [
+			} as SearchAndFilterContextType['search'],
+		});
+		mockClasses([
 			{ id: 'class-1', label: 'Header' },
 			{ id: 'class-2', label: 'Footer' },
-		] );
+		]);
 
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore(<GlobalClassesList />, store);
 
-		expect( screen.queryByText( 'Header' ) ).not.toBeInTheDocument();
-		expect( screen.getByText( 'Footer' ) ).toBeInTheDocument();
-	} );
+		expect(screen.queryByText('Header')).not.toBeInTheDocument();
+		expect(screen.getByText('Footer')).toBeInTheDocument();
+	});
 
-	it( 'should show 2 class based on search value', () => {
-		jest.mocked( useSearchAndFilters ).mockReturnValue( {
+	it('should show 2 class based on search value', () => {
+		jest.mocked(useSearchAndFilters).mockReturnValue({
 			...mockUseSearchAndFiltersProps,
 			search: {
 				inputValue: 'ER',
 				debouncedValue: 'ER',
-			} as SearchAndFilterContextType[ 'search' ],
-		} );
-		mockClasses( [
+			} as SearchAndFilterContextType['search'],
+		});
+		mockClasses([
 			{ id: 'class-1', label: 'Header' },
 			{ id: 'class-2', label: 'Footer' },
-		] );
+		]);
 
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore(<GlobalClassesList />, store);
 
-		expect( screen.getByText( 'Header' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Footer' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Header')).toBeInTheDocument();
+		expect(screen.getByText('Footer')).toBeInTheDocument();
+	});
 
-	it( 'should show not found message if no match found with searchValue', () => {
-		jest.mocked( useSearchAndFilters ).mockReturnValue( {
+	it('should show not found message if no match found with searchValue', () => {
+		jest.mocked(useSearchAndFilters).mockReturnValue({
 			...mockUseSearchAndFiltersProps,
 			search: {
 				inputValue: 'notFound',
 				debouncedValue: 'notFound',
-			} as SearchAndFilterContextType[ 'search' ],
-		} );
-		mockClasses( [
+			} as SearchAndFilterContextType['search'],
+		});
+		mockClasses([
 			{ id: 'class-1', label: 'Header' },
 			{ id: 'class-2', label: 'Footer' },
-		] );
-		renderWithStore( <GlobalClassesList />, store );
+		]);
+		renderWithStore(<GlobalClassesList />, store);
 
-		expect( screen.getByText( /Sorry, nothing match/i ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: /clear & try again/i } ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText(/Sorry, nothing match/i)).toBeInTheDocument();
+		expect(screen.getByRole('button', { name: /clear & try again/i })).toBeInTheDocument();
+	});
 
-	it( 'should call onClearSearch when "Clear & try again" is clicked', () => {
+	it('should call onClearSearch when "Clear & try again" is clicked', () => {
 		const mockOnClearSearch = jest.fn();
-		jest.mocked( useSearchAndFilters ).mockReturnValue( {
+		jest.mocked(useSearchAndFilters).mockReturnValue({
 			...mockUseSearchAndFiltersProps,
 			search: {
 				inputValue: 'notfound',
 				debouncedValue: 'notfound',
 				onClearSearch: mockOnClearSearch as () => void,
-			} as SearchAndFilterContextType[ 'search' ],
-		} );
+			} as SearchAndFilterContextType['search'],
+		});
 
-		mockClasses( [ { id: 'class-1', label: 'Header' } ] );
+		mockClasses([{ id: 'class-1', label: 'Header' }]);
 
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore(<GlobalClassesList />, store);
 
-		const clearBtn = screen.getByRole( 'button', { name: /clear & try again/i } );
+		const clearBtn = screen.getByRole('button', { name: /clear & try again/i });
 
-		fireEvent.click( clearBtn );
+		fireEvent.click(clearBtn);
 
-		expect( mockOnClearSearch ).toHaveBeenCalled();
-	} );
+		expect(mockOnClearSearch).toHaveBeenCalled();
+	});
 
-	it( 'should show full list when searchValue is too short', () => {
-		jest.mocked( useSearchAndFilters ).mockReturnValue( {
+	it('should show full list when searchValue is too short', () => {
+		jest.mocked(useSearchAndFilters).mockReturnValue({
 			...mockUseSearchAndFiltersProps,
 			search: {
 				inputValue: 'H',
 				debouncedValue: 'H',
-			} as SearchAndFilterContextType[ 'search' ],
-		} );
+			} as SearchAndFilterContextType['search'],
+		});
 
-		mockClasses( [
+		mockClasses([
 			{ id: 'class-1', label: 'Header' },
 			{ id: 'class-2', label: 'Footer' },
-		] );
+		]);
 
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore(<GlobalClassesList />, store);
 
-		expect( screen.getByText( 'Header' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Footer' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Header')).toBeInTheDocument();
+		expect(screen.getByText('Footer')).toBeInTheDocument();
+	});
 
 	// Add these tests to the existing GlobalClassesList test suite
 
-	it( 'should show only unused classes when unused filter is active', () => {
-		jest.mocked( useFilters ).mockReturnValue( [ 'class-2' ] );
-		jest.mocked( useSearchAndFilters ).mockReturnValue( {
+	it('should show only unused classes when unused filter is active', () => {
+		jest.mocked(useFilters).mockReturnValue(['class-2']);
+		jest.mocked(useSearchAndFilters).mockReturnValue({
 			...mockUseSearchAndFiltersProps,
 			filters: {
 				...mockUseSearchAndFiltersProps.filters,
@@ -387,23 +387,23 @@ describe( 'GlobalClassesList', () => {
 					onThisPage: false,
 				},
 			},
-		} );
+		});
 
-		mockClasses( [
+		mockClasses([
 			{ id: 'class-1', label: 'Header' },
 			{ id: 'class-2', label: 'Footer' },
-		] );
+		]);
 
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore(<GlobalClassesList />, store);
 
-		expect( screen.queryByText( 'Header' ) ).not.toBeInTheDocument();
-		expect( screen.getByText( 'Footer' ) ).toBeInTheDocument();
-	} );
+		expect(screen.queryByText('Header')).not.toBeInTheDocument();
+		expect(screen.getByText('Footer')).toBeInTheDocument();
+	});
 
-	it( 'should show only empty classes when empty filter is active', () => {
-		jest.mocked( useFilters ).mockReturnValue( [ 'empty' ] );
+	it('should show only empty classes when empty filter is active', () => {
+		jest.mocked(useFilters).mockReturnValue(['empty']);
 
-		jest.mocked( useSearchAndFilters ).mockReturnValue( {
+		jest.mocked(useSearchAndFilters).mockReturnValue({
 			...mockUseSearchAndFiltersProps,
 			filters: {
 				...mockUseSearchAndFiltersProps.filters,
@@ -413,25 +413,25 @@ describe( 'GlobalClassesList', () => {
 					onThisPage: false,
 				},
 			},
-		} );
+		});
 
-		mockClasses( [
+		mockClasses([
 			{ id: 'class-1', label: 'Header' },
 			{ id: 'class-2', label: 'Footer' },
 			{ id: 'empty', label: 'emptyClass' },
-		] );
+		]);
 
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore(<GlobalClassesList />, store);
 
-		expect( screen.queryByText( 'Header' ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'Footer' ) ).not.toBeInTheDocument();
-		expect( screen.getByText( 'emptyClass' ) ).toBeInTheDocument();
-	} );
+		expect(screen.queryByText('Header')).not.toBeInTheDocument();
+		expect(screen.queryByText('Footer')).not.toBeInTheDocument();
+		expect(screen.getByText('emptyClass')).toBeInTheDocument();
+	});
 
-	it( 'should show only classes used on this page when onThisPage filter is active', () => {
-		jest.mocked( useFilters ).mockReturnValue( [ 'class-1' ] );
+	it('should show only classes used on this page when onThisPage filter is active', () => {
+		jest.mocked(useFilters).mockReturnValue(['class-1']);
 
-		jest.mocked( useSearchAndFilters ).mockReturnValue( {
+		jest.mocked(useSearchAndFilters).mockReturnValue({
 			...mockUseSearchAndFiltersProps,
 			filters: {
 				...mockUseSearchAndFiltersProps.filters,
@@ -441,23 +441,23 @@ describe( 'GlobalClassesList', () => {
 					onThisPage: true,
 				},
 			},
-		} );
+		});
 
-		mockClasses( [
+		mockClasses([
 			{ id: 'class-1', label: 'Header' },
 			{ id: 'class-2', label: 'Footer' },
-		] );
+		]);
 
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore(<GlobalClassesList />, store);
 
-		expect( screen.getByText( 'Header' ) ).toBeInTheDocument();
-		expect( screen.queryByText( 'Footer' ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.getByText('Header')).toBeInTheDocument();
+		expect(screen.queryByText('Footer')).not.toBeInTheDocument();
+	});
 
-	it( 'should combine search and filters correctly', () => {
-		jest.mocked( useFilters ).mockReturnValue( [ 'class-1', 'class-2', 'class-3' ] );
+	it('should combine search and filters correctly', () => {
+		jest.mocked(useFilters).mockReturnValue(['class-1', 'class-2', 'class-3']);
 
-		jest.mocked( useSearchAndFilters ).mockReturnValue( {
+		jest.mocked(useSearchAndFilters).mockReturnValue({
 			...mockUseSearchAndFiltersProps,
 			search: {
 				inputValue: 'head',
@@ -473,25 +473,25 @@ describe( 'GlobalClassesList', () => {
 					onThisPage: false,
 				},
 			},
-		} );
+		});
 
-		mockClasses( [
+		mockClasses([
 			{ id: 'class-1', label: 'Header' },
 			{ id: 'class-2', label: 'Header-unused' },
 			{ id: 'class-3', label: 'Footer' },
-		] );
+		]);
 
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore(<GlobalClassesList />, store);
 
-		expect( screen.getByText( 'Header' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Header-unused' ) ).toBeInTheDocument();
-		expect( screen.queryByText( 'Footer' ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.getByText('Header')).toBeInTheDocument();
+		expect(screen.getByText('Header-unused')).toBeInTheDocument();
+		expect(screen.queryByText('Footer')).not.toBeInTheDocument();
+	});
 
-	it( 'should show not found message when no results match filters', () => {
-		jest.mocked( useFilters ).mockReturnValue( [] );
+	it('should show not found message when no results match filters', () => {
+		jest.mocked(useFilters).mockReturnValue([]);
 
-		jest.mocked( useSearchAndFilters ).mockReturnValue( {
+		jest.mocked(useSearchAndFilters).mockReturnValue({
 			...mockUseSearchAndFiltersProps,
 			filters: {
 				...mockUseSearchAndFiltersProps.filters,
@@ -501,21 +501,21 @@ describe( 'GlobalClassesList', () => {
 					onThisPage: true,
 				},
 			},
-		} );
+		});
 
-		mockClasses( [
+		mockClasses([
 			{ id: 'class-1', label: 'Header' },
 			{ id: 'class-2', label: 'Footer' },
-		] );
+		]);
 
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore(<GlobalClassesList />, store);
 
-		expect( screen.getByText( /Sorry, nothing match/i ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: /clear & try again/i } ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText(/Sorry, nothing match/i)).toBeInTheDocument();
+		expect(screen.getByRole('button', { name: /clear & try again/i })).toBeInTheDocument();
+	});
 
-	it( 'should show not found message when no results match combined search and filters', () => {
-		jest.mocked( useSearchAndFilters ).mockReturnValue( {
+	it('should show not found message when no results match combined search and filters', () => {
+		jest.mocked(useSearchAndFilters).mockReturnValue({
 			...mockUseSearchAndFiltersProps,
 			search: {
 				inputValue: 'nonexistent',
@@ -531,23 +531,23 @@ describe( 'GlobalClassesList', () => {
 					onThisPage: false,
 				},
 			},
-		} );
+		});
 
-		mockClasses( [
+		mockClasses([
 			{ id: 'class-1', label: 'Header' },
 			{ id: 'class-2', label: 'Footer' },
-		] );
+		]);
 
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore(<GlobalClassesList />, store);
 
-		expect( screen.getByText( /Sorry, nothing match/i ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: /clear & try again/i } ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText(/Sorry, nothing match/i)).toBeInTheDocument();
+		expect(screen.getByRole('button', { name: /clear & try again/i })).toBeInTheDocument();
+	});
 
-	it( 'should show all classes when no filters are active', () => {
-		jest.mocked( useFilters ).mockReturnValue( null );
+	it('should show all classes when no filters are active', () => {
+		jest.mocked(useFilters).mockReturnValue(null);
 
-		jest.mocked( useSearchAndFilters ).mockReturnValue( {
+		jest.mocked(useSearchAndFilters).mockReturnValue({
 			...mockUseSearchAndFiltersProps,
 			filters: {
 				...mockUseSearchAndFiltersProps.filters,
@@ -557,74 +557,72 @@ describe( 'GlobalClassesList', () => {
 					onThisPage: false,
 				},
 			},
-		} );
+		});
 
-		mockClasses( [
+		mockClasses([
 			{ id: 'class-1', label: 'Header' },
 			{ id: 'class-2', label: 'Footer' },
-		] );
+		]);
 
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore(<GlobalClassesList />, store);
 
-		expect( screen.getByText( 'Header' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Footer' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Header')).toBeInTheDocument();
+		expect(screen.getByText('Footer')).toBeInTheDocument();
+	});
 
-	it( 'should show sort indicator on hover when there are more than 1 class', () => {
-		mockClasses( [
+	it('should show sort indicator on hover when there are more than 1 class', () => {
+		mockClasses([
 			{ id: 'class-1', label: 'Header' },
 			{ id: 'class-2', label: 'Footer' },
-		] );
+		]);
 
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore(<GlobalClassesList />, store);
 
-		const triggers = screen.getAllByRole( 'button', { name: 'sort' } );
+		const triggers = screen.getAllByRole('button', { name: 'sort' });
 
-		expect( triggers ).toHaveLength( 2 );
-	} );
+		expect(triggers).toHaveLength(2);
+	});
 
-	it( 'should not show sort indicator when there is only 1 class', () => {
-		mockClasses( [ { id: 'class-1', label: 'Header' } ] );
+	it('should not show sort indicator when there is only 1 class', () => {
+		mockClasses([{ id: 'class-1', label: 'Header' }]);
 
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore(<GlobalClassesList />, store);
 
-		const triggers = screen.queryAllByRole( 'button', { name: 'sort' } );
+		const triggers = screen.queryAllByRole('button', { name: 'sort' });
 
-		expect( triggers ).toHaveLength( 0 );
-	} );
+		expect(triggers).toHaveLength(0);
+	});
 
-	it( 'should not show sort indicator when filters are applied', () => {
-		jest.mocked( useFilters ).mockReturnValue( [ 'class-' ] );
+	it('should not show sort indicator when filters are applied', () => {
+		jest.mocked(useFilters).mockReturnValue(['class-']);
 
-		mockClasses( [
+		mockClasses([
 			{ id: 'class-1', label: 'Header' },
 			{ id: 'class-2', label: 'Footer' },
 			{ id: 'class-3', label: 'Footer' },
-		] );
+		]);
 
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore(<GlobalClassesList />, store);
 
-		const triggers = screen.queryAllByRole( 'button', { name: 'sort' } );
+		const triggers = screen.queryAllByRole('button', { name: 'sort' });
 
-		expect( triggers ).toHaveLength( 0 );
-		expect( mockTracking ).not.toHaveBeenCalled();
-	} );
-} );
+		expect(triggers).toHaveLength(0);
+		expect(mockTracking).not.toHaveBeenCalled();
+	});
+});
 
-const mockClasses = ( classes: Pick< StyleDefinition, 'id' | 'label' >[] ) => {
+const mockClasses = (classes: Pick<StyleDefinition, 'id' | 'label'>[]) => {
 	const data = {
-		items: Object.fromEntries(
-			classes.map( ( { id, label } ) => [ id, createMockStyleDefinition( { id, label } ) ] )
-		),
-		order: classes.map( ( { id } ) => id ),
+		items: Object.fromEntries(classes.map(({ id, label }) => [id, createMockStyleDefinition({ id, label })])),
+		order: classes.map(({ id }) => id),
 	};
 
-	act( () =>
+	act(() =>
 		dispatch(
-			slice.actions.load( {
+			slice.actions.load({
 				preview: data,
 				frontend: data,
-			} )
+			})
 		)
 	);
 };

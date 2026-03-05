@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { SvgIcon, type SvgIconProps } from '@elementor/ui';
 
-export function CorePlaceholderIcon( props: SvgIconProps ) {
+export function CorePlaceholderIcon(props: SvgIconProps) {
 	return (
-		<SvgIcon viewBox="0 0 26 26" { ...props }>
+		<SvgIcon viewBox="0 0 26 26" {...props}>
 			<path
 				d="M12.0835 12.7497C12.0835 12.9265 12.1537 13.0961 12.2788 13.2211C12.4038 13.3461 12.5734 13.4163 12.7502 13.4163C12.927 13.4163 13.0965 13.3461 13.2216 13.2211C13.3466 13.0961 13.4168 12.9265 13.4168 12.7497C13.4168 12.5729 13.3466 12.4033 13.2216 12.2783C13.0965 12.1532 12.927 12.083 12.7502 12.083C12.5734 12.083 12.4038 12.1532 12.2788 12.2783C12.1537 12.4033 12.0835 12.5729 12.0835 12.7497Z"
 				fill="currentColor"

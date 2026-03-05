@@ -9,8 +9,8 @@ export function init() {
 
 	initExtensions();
 
-	injectIntoTop( {
+	injectIntoTop({
 		id: 'app-bar',
 		component: AppBar,
-	} );
+	});
 }

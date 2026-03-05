@@ -28,23 +28,23 @@ type ComponentsState = {
 	unpublishedData: UnpublishedComponent[];
 	loadStatus: Status;
 	styles: StylesDefinition;
-	createdThisSession: Component[ 'uid' ][];
+	createdThisSession: Component['uid'][];
 	archivedThisSession: ComponentId[];
 	path: ComponentsPathItem[];
-	currentComponentId: V1Document[ 'id' ] | null;
-	updatedComponentNames: Record< number, string >;
+	currentComponentId: V1Document['id'] | null;
+	updatedComponentNames: Record<number, string>;
 
 	// We use this map to flag any sanitized attribute of a given component
 	// This map currently resets in response to the `editor/documents/open` command
-	sanitized: Record< ComponentId, Partial< Record< SanitizeAttributes, boolean > > >;
+	sanitized: Record<ComponentId, Partial<Record<SanitizeAttributes, boolean>>>;
 };
 
-export type ComponentsSlice = SliceState< typeof slice >;
+export type ComponentsSlice = SliceState<typeof slice>;
 
 export type ComponentsPathItem = {
 	instanceId?: string;
 	instanceTitle?: string;
-	componentId: V1Document[ 'id' ];
+	componentId: V1Document['id'];
 };
 
 export const initialState: ComponentsState = {
@@ -62,157 +62,155 @@ export const initialState: ComponentsState = {
 
 export const SLICE_NAME = 'components';
 
-export const slice = createSlice( {
+export const slice = createSlice({
 	name: SLICE_NAME,
 	initialState,
 	reducers: {
-		add: ( state, { payload }: PayloadAction< PublishedComponent | PublishedComponent[] > ) => {
-			if ( Array.isArray( payload ) ) {
-				state.data = [ ...payload, ...state.data ];
+		add: (state, { payload }: PayloadAction<PublishedComponent | PublishedComponent[]>) => {
+			if (Array.isArray(payload)) {
+				state.data = [...payload, ...state.data];
 			} else {
-				state.data.unshift( payload );
+				state.data.unshift(payload);
 			}
 		},
-		load: ( state, { payload }: PayloadAction< PublishedComponent[] > ) => {
+		load: (state, { payload }: PayloadAction<PublishedComponent[]>) => {
 			state.data = payload;
 		},
-		addUnpublished: ( state, { payload }: PayloadAction< UnpublishedComponent > ) => {
-			state.unpublishedData.unshift( payload );
+		addUnpublished: (state, { payload }: PayloadAction<UnpublishedComponent>) => {
+			state.unpublishedData.unshift(payload);
 		},
-		removeUnpublished: ( state, { payload }: PayloadAction< string | string[] > ) => {
-			const uidsToRemove = Array.isArray( payload ) ? payload : [ payload ];
-			state.unpublishedData = state.unpublishedData.filter(
-				( component ) => ! uidsToRemove.includes( component.uid )
-			);
+		removeUnpublished: (state, { payload }: PayloadAction<string | string[]>) => {
+			const uidsToRemove = Array.isArray(payload) ? payload : [payload];
+			state.unpublishedData = state.unpublishedData.filter((component) => !uidsToRemove.includes(component.uid));
 		},
-		resetUnpublished: ( state ) => {
+		resetUnpublished: (state) => {
 			state.unpublishedData = [];
 		},
-		removeStyles( state, { payload }: PayloadAction< { id: ComponentId } > ) {
-			const { [ payload.id ]: _, ...rest } = state.styles;
+		removeStyles(state, { payload }: PayloadAction<{ id: ComponentId }>) {
+			const { [payload.id]: _, ...rest } = state.styles;
 
 			state.styles = rest;
 		},
-		addStyles: ( state, { payload } ) => {
+		addStyles: (state, { payload }) => {
 			state.styles = { ...state.styles, ...payload };
 		},
-		addCreatedThisSession: ( state, { payload }: PayloadAction< string > ) => {
-			state.createdThisSession.push( payload );
+		addCreatedThisSession: (state, { payload }: PayloadAction<string>) => {
+			state.createdThisSession.push(payload);
 		},
-		removeCreatedThisSession: ( state, { payload }: PayloadAction< string > ) => {
-			state.createdThisSession = state.createdThisSession.filter( ( uid ) => uid !== payload );
+		removeCreatedThisSession: (state, { payload }: PayloadAction<string>) => {
+			state.createdThisSession = state.createdThisSession.filter((uid) => uid !== payload);
 		},
-		archive: ( state, { payload }: PayloadAction< number > ) => {
-			const component = state.data.find( ( comp ) => comp.id === payload );
+		archive: (state, { payload }: PayloadAction<number>) => {
+			const component = state.data.find((comp) => comp.id === payload);
 
-			if ( component ) {
+			if (component) {
 				component.isArchived = true;
-				state.archivedThisSession.push( payload );
+				state.archivedThisSession.push(payload);
 			}
 		},
-		setCurrentComponentId: ( state, { payload }: PayloadAction< V1Document[ 'id' ] | null > ) => {
+		setCurrentComponentId: (state, { payload }: PayloadAction<V1Document['id'] | null>) => {
 			state.currentComponentId = payload;
 		},
-		setPath: ( state, { payload }: PayloadAction< ComponentsPathItem[] > ) => {
+		setPath: (state, { payload }: PayloadAction<ComponentsPathItem[]>) => {
 			state.path = payload;
 		},
 		setOverridableProps: (
 			state,
-			{ payload }: PayloadAction< { componentId: ComponentId; overridableProps: OverridableProps } >
+			{ payload }: PayloadAction<{ componentId: ComponentId; overridableProps: OverridableProps }>
 		) => {
-			const component = state.data.find( ( comp ) => comp.id === payload.componentId );
+			const component = state.data.find((comp) => comp.id === payload.componentId);
 
-			if ( ! component ) {
+			if (!component) {
 				return;
 			}
 
 			component.overridableProps = payload.overridableProps;
 		},
-		rename: ( state, { payload }: PayloadAction< { componentUid: string; name: string } > ) => {
-			const component = state.data.find( ( comp ) => comp.uid === payload.componentUid );
+		rename: (state, { payload }: PayloadAction<{ componentUid: string; name: string }>) => {
+			const component = state.data.find((comp) => comp.uid === payload.componentUid);
 
-			if ( ! component ) {
+			if (!component) {
 				return;
 			}
-			if ( component.id ) {
-				state.updatedComponentNames[ component.id ] = payload.name;
+			if (component.id) {
+				state.updatedComponentNames[component.id] = payload.name;
 			}
 			component.name = payload.name;
 		},
-		cleanUpdatedComponentNames: ( state ) => {
+		cleanUpdatedComponentNames: (state) => {
 			state.updatedComponentNames = {};
 		},
 		updateComponentSanitizedAttribute: (
 			state,
 			{
 				payload: { componentId, attribute },
-			}: PayloadAction< { componentId: ComponentId; attribute: SanitizeAttributes } >
+			}: PayloadAction<{ componentId: ComponentId; attribute: SanitizeAttributes }>
 		) => {
-			if ( ! state.sanitized[ componentId ] ) {
-				state.sanitized[ componentId ] = {};
+			if (!state.sanitized[componentId]) {
+				state.sanitized[componentId] = {};
 			}
 
-			state.sanitized[ componentId ][ attribute ] = true;
+			state.sanitized[componentId][attribute] = true;
 		},
-		resetSanitizedComponents: ( state ) => {
+		resetSanitizedComponents: (state) => {
 			state.sanitized = {};
 		},
 	},
-	extraReducers: ( builder ) => {
-		builder.addCase( loadComponents.fulfilled, ( state, { payload }: PayloadAction< GetComponentResponse > ) => {
+	extraReducers: (builder) => {
+		builder.addCase(loadComponents.fulfilled, (state, { payload }: PayloadAction<GetComponentResponse>) => {
 			state.data = payload;
 			state.loadStatus = 'idle';
-		} );
-		builder.addCase( loadComponents.pending, ( state ) => {
+		});
+		builder.addCase(loadComponents.pending, (state) => {
 			state.loadStatus = 'pending';
-		} );
-		builder.addCase( loadComponents.rejected, ( state ) => {
+		});
+		builder.addCase(loadComponents.rejected, (state) => {
 			state.loadStatus = 'error';
-		} );
+		});
 	},
-} );
+});
 
-export const selectData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].data;
-export const selectArchivedThisSession = ( state: ComponentsSlice ) => state[ SLICE_NAME ].archivedThisSession;
-const selectLoadStatus = ( state: ComponentsSlice ) => state[ SLICE_NAME ].loadStatus;
-const selectStylesDefinitions = ( state: ComponentsSlice ) => state[ SLICE_NAME ].styles ?? {};
-const selectUnpublishedData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].unpublishedData;
-const getCreatedThisSession = ( state: ComponentsSlice ) => state[ SLICE_NAME ].createdThisSession;
-const getPath = ( state: ComponentsSlice ) => state[ SLICE_NAME ].path;
-const getCurrentComponentId = ( state: ComponentsSlice ) => state[ SLICE_NAME ].currentComponentId;
-export const selectComponent = ( state: ComponentsSlice, componentId: ComponentId ) =>
-	state[ SLICE_NAME ].data.find( ( component ) => component.id === componentId );
-export const useComponent = ( componentId: ComponentId | null ) => {
-	return useSelector( ( state: ComponentsSlice ) => ( componentId ? selectComponent( state, componentId ) : null ) );
+export const selectData = (state: ComponentsSlice) => state[SLICE_NAME].data;
+export const selectArchivedThisSession = (state: ComponentsSlice) => state[SLICE_NAME].archivedThisSession;
+const selectLoadStatus = (state: ComponentsSlice) => state[SLICE_NAME].loadStatus;
+const selectStylesDefinitions = (state: ComponentsSlice) => state[SLICE_NAME].styles ?? {};
+const selectUnpublishedData = (state: ComponentsSlice) => state[SLICE_NAME].unpublishedData;
+const getCreatedThisSession = (state: ComponentsSlice) => state[SLICE_NAME].createdThisSession;
+const getPath = (state: ComponentsSlice) => state[SLICE_NAME].path;
+const getCurrentComponentId = (state: ComponentsSlice) => state[SLICE_NAME].currentComponentId;
+export const selectComponent = (state: ComponentsSlice, componentId: ComponentId) =>
+	state[SLICE_NAME].data.find((component) => component.id === componentId);
+export const useComponent = (componentId: ComponentId | null) => {
+	return useSelector((state: ComponentsSlice) => (componentId ? selectComponent(state, componentId) : null));
 };
 
-export const selectComponentByUid = ( state: ComponentsSlice, componentUid: string ) =>
-	state[ SLICE_NAME ].data.find( ( component ) => component.uid === componentUid ) ??
-	state[ SLICE_NAME ].unpublishedData.find( ( component ) => component.uid === componentUid );
+export const selectComponentByUid = (state: ComponentsSlice, componentUid: string) =>
+	state[SLICE_NAME].data.find((component) => component.uid === componentUid) ??
+	state[SLICE_NAME].unpublishedData.find((component) => component.uid === componentUid);
 
 export const selectComponents = createSelector(
 	selectData,
 	selectUnpublishedData,
-	( data: PublishedComponent[], unpublishedData: UnpublishedComponent[] ) => [
-		...unpublishedData.map( ( item ) => ( {
+	(data: PublishedComponent[], unpublishedData: UnpublishedComponent[]) => [
+		...unpublishedData.map((item) => ({
 			uid: item.uid,
 			name: item.name,
 			overridableProps: item.overridableProps,
-		} ) ),
-		...data.filter( ( component ) => ! component.isArchived ),
+		})),
+		...data.filter((component) => !component.isArchived),
 	]
 );
 export const selectUnpublishedComponents = createSelector(
 	selectUnpublishedData,
-	( unpublishedData: UnpublishedComponent[] ) => unpublishedData
+	(unpublishedData: UnpublishedComponent[]) => unpublishedData
 );
-export const selectLoadIsPending = createSelector( selectLoadStatus, ( status ) => status === 'pending' );
-export const selectLoadIsError = createSelector( selectLoadStatus, ( status ) => status === 'error' );
-export const selectStyles = ( state: ComponentsSlice ) => state[ SLICE_NAME ].styles ?? {};
-export const selectFlatStyles = createSelector( selectStylesDefinitions, ( data ) => Object.values( data ).flat() );
+export const selectLoadIsPending = createSelector(selectLoadStatus, (status) => status === 'pending');
+export const selectLoadIsError = createSelector(selectLoadStatus, (status) => status === 'error');
+export const selectStyles = (state: ComponentsSlice) => state[SLICE_NAME].styles ?? {};
+export const selectFlatStyles = createSelector(selectStylesDefinitions, (data) => Object.values(data).flat());
 export const selectCreatedThisSession = createSelector(
 	getCreatedThisSession,
-	( createdThisSession ) => createdThisSession
+	(createdThisSession) => createdThisSession
 );
 
 const DEFAULT_OVERRIDABLE_PROPS: OverridableProps = {
@@ -223,63 +221,58 @@ const DEFAULT_OVERRIDABLE_PROPS: OverridableProps = {
 	},
 };
 
-export const selectOverridableProps = createSelector(
-	selectComponent,
-	( component: PublishedComponent | undefined ) => {
-		if ( ! component ) {
-			return undefined;
-		}
-
-		return component.overridableProps ?? DEFAULT_OVERRIDABLE_PROPS;
+export const selectOverridableProps = createSelector(selectComponent, (component: PublishedComponent | undefined) => {
+	if (!component) {
+		return undefined;
 	}
-);
-export const useOverridableProps = ( componentId: ComponentId | null ) => {
-	return useSelector( ( state: ComponentsSlice ) =>
-		componentId ? selectOverridableProps( state, componentId ) : null
-	);
+
+	return component.overridableProps ?? DEFAULT_OVERRIDABLE_PROPS;
+});
+export const useOverridableProps = (componentId: ComponentId | null) => {
+	return useSelector((state: ComponentsSlice) => (componentId ? selectOverridableProps(state, componentId) : null));
 };
 export const selectIsOverridablePropsLoaded = createSelector(
 	selectComponent,
-	( component: PublishedComponent | undefined ) => {
-		return !! component?.overridableProps;
+	(component: PublishedComponent | undefined) => {
+		return !!component?.overridableProps;
 	}
 );
-export const selectPath = createSelector( getPath, ( path ) => path );
+export const selectPath = createSelector(getPath, (path) => path);
 
 export const selectCurrentComponentId = createSelector(
 	getCurrentComponentId,
-	( currentComponentId ) => currentComponentId
+	(currentComponentId) => currentComponentId
 );
 
-export const selectCurrentComponent = createSelector( selectData, getCurrentComponentId, ( data, currentComponentId ) =>
-	data.find( ( component ) => component.id === currentComponentId )
+export const selectCurrentComponent = createSelector(selectData, getCurrentComponentId, (data, currentComponentId) =>
+	data.find((component) => component.id === currentComponentId)
 );
 
 export const useCurrentComponentId = () => {
-	return useSelector( selectCurrentComponentId );
+	return useSelector(selectCurrentComponentId);
 };
 export const useCurrentComponent = () => {
-	return useSelector( selectCurrentComponent );
+	return useSelector(selectCurrentComponent);
 };
 
 export const selectUpdatedComponentNames = createSelector(
-	( state: ComponentsSlice ) => state[ SLICE_NAME ].updatedComponentNames,
-	( updatedComponentNames ) =>
-		Object.entries( updatedComponentNames ).map( ( [ componentId, title ] ) => ( {
-			componentId: Number( componentId ),
+	(state: ComponentsSlice) => state[SLICE_NAME].updatedComponentNames,
+	(updatedComponentNames) =>
+		Object.entries(updatedComponentNames).map(([componentId, title]) => ({
+			componentId: Number(componentId),
 			title,
-		} ) )
+		}))
 );
 
 const useSanitizedComponents = () => {
-	return useSelector( ( state: ComponentsSlice ) => state[ SLICE_NAME ].sanitized );
+	return useSelector((state: ComponentsSlice) => state[SLICE_NAME].sanitized);
 };
-export const useIsSanitizedComponent = ( componentId: ComponentId | null, key: SanitizeAttributes ) => {
+export const useIsSanitizedComponent = (componentId: ComponentId | null, key: SanitizeAttributes) => {
 	const sanitizedComponents = useSanitizedComponents();
 
-	if ( ! componentId ) {
+	if (!componentId) {
 		return false;
 	}
 
-	return !! sanitizedComponents[ componentId ]?.[ key ];
+	return !!sanitizedComponents[componentId]?.[key];
 };

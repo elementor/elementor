@@ -6,19 +6,19 @@ import { selectPath } from '../../store/store';
 import { switchToComponent } from '../../utils/switch-to-component';
 
 export function useNavigateBack() {
-	const path = useSelector( selectPath );
+	const path = useSelector(selectPath);
 
 	const documentsManager = getV1DocumentsManager();
 
-	return useCallback( () => {
-		const { componentId: prevComponentId, instanceId: prevComponentInstanceId } = path.at( -2 ) ?? {};
+	return useCallback(() => {
+		const { componentId: prevComponentId, instanceId: prevComponentInstanceId } = path.at(-2) ?? {};
 
-		if ( prevComponentId && prevComponentInstanceId ) {
-			switchToComponent( prevComponentId, prevComponentInstanceId );
+		if (prevComponentId && prevComponentInstanceId) {
+			switchToComponent(prevComponentId, prevComponentInstanceId);
 
 			return;
 		}
 
-		switchToComponent( documentsManager.getInitialId() );
-	}, [ path, documentsManager ] );
+		switchToComponent(documentsManager.getInitialId());
+	}, [path, documentsManager]);
 }

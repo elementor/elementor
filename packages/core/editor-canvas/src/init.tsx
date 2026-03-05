@@ -31,30 +31,30 @@ export function init() {
 
 	initSettingsTransformers();
 
-	injectIntoTop( {
+	injectIntoTop({
 		id: 'elements-overlays',
 		component: ElementsOverlays,
-	} );
+	});
 
-	injectIntoTop( {
+	injectIntoTop({
 		id: 'canvas-style-render',
 		component: StyleRenderer,
-	} );
+	});
 
-	injectIntoTop( {
+	injectIntoTop({
 		id: 'canvas-interactions-render',
 		component: InteractionsRenderer,
-	} );
+	});
 
-	injectIntoLogic( {
+	injectIntoLogic({
 		id: 'classes-rename',
 		component: ClassesRename,
-	} );
+	});
 
 	initCanvasMcp(
-		getMCPByDomain( 'canvas', {
+		getMCPByDomain('canvas', {
 			instructions: mcpDescription,
-		} )
+		})
 	);
 
 	initTabsModelExtensions();

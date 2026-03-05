@@ -13,27 +13,27 @@ import { useElement } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
 import { useStylesFields } from '../use-styles-fields';
 
-jest.mock( '../../contexts/element-context' );
-jest.mock( '../../contexts/style-context' );
-jest.mock( '../../contexts/classes-prop-context' );
-jest.mock( '@elementor/editor-elements', () => ( {
-	...jest.requireActual( '@elementor/editor-elements' ),
+jest.mock('../../contexts/element-context');
+jest.mock('../../contexts/style-context');
+jest.mock('../../contexts/classes-prop-context');
+jest.mock('@elementor/editor-elements', () => ({
+	...jest.requireActual('@elementor/editor-elements'),
 	deleteElementStyle: jest.fn(),
 	getElementLabel: jest.fn(),
 	createElementStyle: jest.fn(),
-} ) );
+}));
 
-type StyleValue = ReturnType< typeof useStyle >;
+type StyleValue = ReturnType<typeof useStyle>;
 
-describe( 'useStylesFields', () => {
+describe('useStylesFields', () => {
 	const historyMock = mockHistoryManager();
 
-	beforeEach( () => {
+	beforeEach(() => {
 		historyMock.beforeEach();
 
 		jest.useFakeTimers();
 
-		jest.mocked( useElement ).mockReturnValue( {
+		jest.mocked(useElement).mockReturnValue({
 			element: {
 				id: 'test-element-id',
 				type: 'test',
@@ -45,36 +45,36 @@ describe( 'useStylesFields', () => {
 				propsSchema: {},
 			},
 			settings: {},
-		} );
+		});
 
-		jest.mocked( getElementLabel ).mockImplementation( ( id ) => {
+		jest.mocked(getElementLabel).mockImplementation((id) => {
 			return id === 'test-element-id' ? 'Test Element' : '';
-		} );
-	} );
+		});
+	});
 
-	afterEach( () => {
+	afterEach(() => {
 		historyMock.afterEach();
-	} );
+	});
 
-	it( 'should create an element style when there is no active style, delete on undo, and re-create on redo', () => {
+	it('should create an element style when there is no active style, delete on undo, and re-create on redo', () => {
 		// Arrange.
-		jest.mocked( useStyle ).mockReturnValue( {
+		jest.mocked(useStyle).mockReturnValue({
 			id: null,
 			provider: null,
 			meta: {
 				breakpoint: null,
 				state: null,
 			},
-		} as StyleValue );
+		} as StyleValue);
 
-		jest.mocked( createElementStyle ).mockReturnValue( 'test-style-id' );
+		jest.mocked(createElementStyle).mockReturnValue('test-style-id');
 
-		jest.mocked( useClassesProp ).mockReturnValue( 'test-classes-prop' );
+		jest.mocked(useClassesProp).mockReturnValue('test-classes-prop');
 
-		const { result } = renderHook( () => useStylesFields< { 'test-prop': string } >( [ 'test-prop' ] ) );
+		const { result } = renderHook(() => useStylesFields<{ 'test-prop': string }>(['test-prop']));
 
 		// Act.
-		result.current.setValues( { 'test-prop': 'test-value' }, { history: { propDisplayName: 'Test Prop' } } );
+		result.current.setValues({ 'test-prop': 'test-value' }, { history: { propDisplayName: 'Test Prop' } });
 
 		jest.runAllTimers();
 
@@ -87,37 +87,37 @@ describe( 'useStylesFields', () => {
 			classesProp: 'test-classes-prop',
 		} satisfies CreateElementStyleArgs;
 
-		expect( createElementStyle ).toHaveBeenCalledTimes( 1 );
-		expect( createElementStyle ).toHaveBeenCalledWith( createArgs );
+		expect(createElementStyle).toHaveBeenCalledTimes(1);
+		expect(createElementStyle).toHaveBeenCalledWith(createArgs);
 
 		const historyItem = historyMock.instance.get();
 
-		expect( historyItem?.title ).toBe( 'Test Element' );
-		expect( historyItem?.subTitle ).toBe( 'Test Prop edited' );
+		expect(historyItem?.title).toBe('Test Element');
+		expect(historyItem?.subTitle).toBe('Test Prop edited');
 
 		// Act - Undo.
-		act( () => {
+		act(() => {
 			historyMock.instance.undo();
-		} );
+		});
 
 		// Assert - Style deleted.
-		expect( deleteElementStyle ).toHaveBeenCalledTimes( 1 );
-		expect( deleteElementStyle ).toHaveBeenCalledWith( 'test-element-id', 'test-style-id' );
+		expect(deleteElementStyle).toHaveBeenCalledTimes(1);
+		expect(deleteElementStyle).toHaveBeenCalledWith('test-element-id', 'test-style-id');
 
 		// Act - Redo.
-		act( () => {
+		act(() => {
 			historyMock.instance.redo();
-		} );
+		});
 
 		// Assert - Style re-created.
-		expect( createElementStyle ).toHaveBeenCalledTimes( 2 );
-		expect( createElementStyle ).toHaveBeenNthCalledWith( 2, {
+		expect(createElementStyle).toHaveBeenCalledTimes(2);
+		expect(createElementStyle).toHaveBeenNthCalledWith(2, {
 			...createArgs,
 			styleId: 'test-style-id',
-		} );
-	} );
+		});
+	});
 
-	it( 'should update a prop value, re-render, revert to previous props on undo, and set new props on redo', () => {
+	it('should update a prop value, re-render, revert to previous props on undo, and set new props on redo', () => {
 		// Arrange.
 		const mockProvider = createMockStylesProvider(
 			{
@@ -153,7 +153,7 @@ describe( 'useStylesFields', () => {
 			]
 		);
 
-		jest.mocked( useStyle ).mockReturnValue( {
+		jest.mocked(useStyle).mockReturnValue({
 			id: 'test-style-id',
 			provider: mockProvider,
 			meta: {
@@ -162,42 +162,42 @@ describe( 'useStylesFields', () => {
 			},
 			setId: jest.fn(),
 			setMetaState: jest.fn(),
-		} );
+		});
 
 		// Act - Initial render.
-		const { result } = renderHook( () => useStylesFields< { 'prop-1': string } >( [ 'prop-1' ] ) );
+		const { result } = renderHook(() => useStylesFields<{ 'prop-1': string }>(['prop-1']));
 
 		// Assert
-		expect( result.current.values?.[ 'prop-1' ] ).toBe( 'value1-hover' );
+		expect(result.current.values?.['prop-1']).toBe('value1-hover');
 
 		// Act - Update prop value.
-		act( () => {
-			result.current.setValues( { 'prop-1': 'updated-value' }, { history: { propDisplayName: 'Prop 1' } } );
-		} );
+		act(() => {
+			result.current.setValues({ 'prop-1': 'updated-value' }, { history: { propDisplayName: 'Prop 1' } });
+		});
 
 		jest.runAllTimers();
 
 		// Assert.
 		const historyItem = historyMock.instance.get();
 
-		expect( result.current.values?.[ 'prop-1' ] ).toBe( 'updated-value' );
-		expect( historyItem?.title ).toBe( 'Class' );
-		expect( historyItem?.subTitle ).toBe( 'test-class Prop 1 edited' );
+		expect(result.current.values?.['prop-1']).toBe('updated-value');
+		expect(historyItem?.title).toBe('Class');
+		expect(historyItem?.subTitle).toBe('test-class Prop 1 edited');
 
 		// Act - Undo.
-		act( () => {
+		act(() => {
 			historyMock.instance.undo();
-		} );
+		});
 
 		// Assert.
-		expect( result.current.values?.[ 'prop-1' ] ).toBe( 'value1-hover' );
+		expect(result.current.values?.['prop-1']).toBe('value1-hover');
 
 		// Act - Redo.
-		act( () => {
+		act(() => {
 			historyMock.instance.redo();
-		} );
+		});
 
 		// Assert.
-		expect( result.current.values?.[ 'prop-1' ] ).toBe( 'updated-value' );
-	} );
-} );
+		expect(result.current.values?.['prop-1']).toBe('updated-value');
+	});
+});

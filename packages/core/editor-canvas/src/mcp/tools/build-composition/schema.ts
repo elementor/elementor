@@ -3,39 +3,39 @@ import { zod as z } from '@elementor/editor-mcp';
 import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 
 export const inputSchema = {
-	xmlStructure: z.string().describe( 'The XML structure representing the composition to be built' ),
+	xmlStructure: z.string().describe('The XML structure representing the composition to be built'),
 	elementConfig: z
 		.record(
-			z.string().describe( 'The configuration id' ),
+			z.string().describe('The configuration id'),
 			z.record(
-				z.string().describe( 'property name' ),
-				z.any().describe( `The PropValue for the property, refer to ${ WIDGET_SCHEMA_URI }` )
+				z.string().describe('property name'),
+				z.any().describe(`The PropValue for the property, refer to ${WIDGET_SCHEMA_URI}`)
 			)
 		)
-		.describe( 'A record mapping element IDs to their configuration objects. REQUIRED' ),
+		.describe('A record mapping element IDs to their configuration objects. REQUIRED'),
 	stylesConfig: z
 		.record(
-			z.string().describe( 'The configuration id' ),
+			z.string().describe('The configuration id'),
 			z.record(
-				z.string().describe( 'StyleSchema property name' ),
-				z.any().describe( `The PropValue for the style property. MANDATORY, refer to [${ STYLE_SCHEMA_URI }]` )
+				z.string().describe('StyleSchema property name'),
+				z.any().describe(`The PropValue for the style property. MANDATORY, refer to [${STYLE_SCHEMA_URI}]`)
 			)
 		)
 		.describe(
-			`A record mapping element IDs to their styles configuration objects. Use the actual styles schema from [${ STYLE_SCHEMA_URI }].`
+			`A record mapping element IDs to their styles configuration objects. Use the actual styles schema from [${STYLE_SCHEMA_URI}].`
 		)
-		.default( {} ),
+		.default({}),
 	customCSS: z
 		.record(
-			z.string().describe( 'The configuration id' ),
-			z.string().describe( 'The custom CSS for the element. MANDATORY' )
+			z.string().describe('The configuration id'),
+			z.string().describe('The custom CSS for the element. MANDATORY')
 		)
-		.describe( 'A record mapping element IDs to their custom CSS.' )
-		.default( {} ),
+		.describe('A record mapping element IDs to their custom CSS.')
+		.default({}),
 };
 
 export const outputSchema = {
-	errors: z.string().describe( 'Error message if the composition building failed' ).optional(),
+	errors: z.string().describe('Error message if the composition building failed').optional(),
 	xmlStructure: z
 		.string()
 		.describe(
@@ -44,6 +44,6 @@ export const outputSchema = {
 		.optional(),
 	llm_instructions: z
 		.string()
-		.describe( 'Instructions what to do next, Important to follow these instructions!' )
+		.describe('Instructions what to do next, Important to follow these instructions!')
 		.optional(),
 };

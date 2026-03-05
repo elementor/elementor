@@ -16,47 +16,44 @@ import { createRepeaterToItemsTransformer } from './transformers/repeater-to-ite
 export function initStylesInheritanceTransformers() {
 	const originalStyleTransformers = styleTransformersRegistry.all();
 
-	Object.entries( originalStyleTransformers ).forEach( ( [ propType, transformer ] ) => {
-		if ( excludePropTypeTransformers.has( propType ) ) {
+	Object.entries(originalStyleTransformers).forEach(([propType, transformer]) => {
+		if (excludePropTypeTransformers.has(propType)) {
 			return;
 		}
 
-		stylesInheritanceTransformersRegistry.register( propType, transformer );
-	} );
+		stylesInheritanceTransformersRegistry.register(propType, transformer);
+	});
 
 	stylesInheritanceTransformersRegistry.registerFallback(
-		createTransformer( ( value: unknown ) => {
+		createTransformer((value: unknown) => {
 			return value;
-		} )
+		})
 	);
 
-	registerCustomTransformers( originalStyleTransformers );
+	registerCustomTransformers(originalStyleTransformers);
 }
 
-function registerCustomTransformers( originalStyleTransformers: ReturnType< typeof styleTransformersRegistry.all > ) {
-	stylesInheritanceTransformersRegistry.register( 'color', colorTransformer );
-	stylesInheritanceTransformersRegistry.register( 'background-color-overlay', backgroundColorOverlayTransformer );
-	stylesInheritanceTransformersRegistry.register(
-		'background-gradient-overlay',
-		backgroundGradientOverlayTransformer
-	);
-	stylesInheritanceTransformersRegistry.register( 'background-image-overlay', backgroundImageOverlayTransformer );
-	stylesInheritanceTransformersRegistry.register( 'shadow', boxShadowTransformer );
+function registerCustomTransformers(originalStyleTransformers: ReturnType<typeof styleTransformersRegistry.all>) {
+	stylesInheritanceTransformersRegistry.register('color', colorTransformer);
+	stylesInheritanceTransformersRegistry.register('background-color-overlay', backgroundColorOverlayTransformer);
+	stylesInheritanceTransformersRegistry.register('background-gradient-overlay', backgroundGradientOverlayTransformer);
+	stylesInheritanceTransformersRegistry.register('background-image-overlay', backgroundImageOverlayTransformer);
+	stylesInheritanceTransformersRegistry.register('shadow', boxShadowTransformer);
 
 	stylesInheritanceTransformersRegistry.register(
 		'filter',
-		createRepeaterToItemsTransformer( originalStyleTransformers.filter )
+		createRepeaterToItemsTransformer(originalStyleTransformers.filter)
 	);
 	stylesInheritanceTransformersRegistry.register(
 		'backdrop-filter',
-		createRepeaterToItemsTransformer( originalStyleTransformers[ 'backdrop-filter' ] )
+		createRepeaterToItemsTransformer(originalStyleTransformers['backdrop-filter'])
 	);
 	stylesInheritanceTransformersRegistry.register(
 		'transition',
-		createRepeaterToItemsTransformer( originalStyleTransformers.transition, ', ' )
+		createRepeaterToItemsTransformer(originalStyleTransformers.transition, ', ')
 	);
 
-	[ 'background-overlay', 'box-shadow', 'transform-functions' ].forEach( ( propType ) =>
-		stylesInheritanceTransformersRegistry.register( propType, arrayTransformer )
+	['background-overlay', 'box-shadow', 'transform-functions'].forEach((propType) =>
+		stylesInheritanceTransformersRegistry.register(propType, arrayTransformer)
 	);
 }

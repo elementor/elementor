@@ -10,34 +10,34 @@ import { WarningVariableTag } from '../tags/warning-variable-tag';
 export const MissingVariable = () => {
 	const { setValue } = useBoundProp();
 
-	const [ infotipVisible, setInfotipVisible ] = useState< boolean >( false );
-	const toggleInfotip = () => setInfotipVisible( ( prev ) => ! prev );
-	const closeInfotip = () => setInfotipVisible( false );
+	const [infotipVisible, setInfotipVisible] = useState<boolean>(false);
+	const toggleInfotip = () => setInfotipVisible((prev) => !prev);
+	const closeInfotip = () => setInfotipVisible(false);
 
-	const clearValue = () => setValue( null );
+	const clearValue = () => setValue(null);
 
 	return (
 		<>
-			{ infotipVisible && <Backdrop open onClick={ closeInfotip } invisible /> }
+			{infotipVisible && <Backdrop open onClick={closeInfotip} invisible />}
 			<Infotip
 				color="warning"
 				placement="right-start"
-				open={ infotipVisible }
+				open={infotipVisible}
 				disableHoverListener
-				onClose={ closeInfotip }
-				content={ <MissingVariableAlert onClose={ closeInfotip } onClear={ clearValue } /> }
-				slotProps={ {
+				onClose={closeInfotip}
+				content={<MissingVariableAlert onClose={closeInfotip} onClear={clearValue} />}
+				slotProps={{
 					popper: {
 						modifiers: [
 							{
 								name: 'offset',
-								options: { offset: [ 0, 24 ] },
+								options: { offset: [0, 24] },
 							},
 						],
 					},
-				} }
+				}}
 			>
-				<WarningVariableTag label={ __( 'Missing variable', 'elementor' ) } onClick={ toggleInfotip } />
+				<WarningVariableTag label={__('Missing variable', 'elementor')} onClick={toggleInfotip} />
 			</Infotip>
 		</>
 	);

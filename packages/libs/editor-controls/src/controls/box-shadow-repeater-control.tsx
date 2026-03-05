@@ -19,19 +19,19 @@ import { ColorControl } from './color-control';
 import { SelectControl } from './select-control';
 import { CUSTOM_SIZE_LABEL, SizeControl } from './size-control';
 
-export const BoxShadowRepeaterControl = createControl( () => {
-	const { propType, value, setValue, disabled } = useBoundProp( boxShadowPropTypeUtil );
+export const BoxShadowRepeaterControl = createControl(() => {
+	const { propType, value, setValue, disabled } = useBoundProp(boxShadowPropTypeUtil);
 
 	return (
-		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ () => disabled }>
-			<ControlRepeater initial={ initialShadow } propTypeUtil={ boxShadowPropTypeUtil }>
-				<RepeaterHeader label={ __( 'Box shadow', 'elementor' ) }>
-					<TooltipAddItemAction newItemIndex={ 0 } disabled={ disabled } ariaLabel={ 'Box shadow' } />
+		<PropProvider propType={propType} value={value} setValue={setValue} isDisabled={() => disabled}>
+			<ControlRepeater initial={initialShadow} propTypeUtil={boxShadowPropTypeUtil}>
+				<RepeaterHeader label={__('Box shadow', 'elementor')}>
+					<TooltipAddItemAction newItemIndex={0} disabled={disabled} ariaLabel={'Box shadow'} />
 				</RepeaterHeader>
 				<ItemsContainer>
 					<Item
-						Icon={ ItemIcon }
-						Label={ ItemLabel }
+						Icon={ItemIcon}
+						Label={ItemLabel}
 						actions={
 							<>
 								<DuplicateItemAction />
@@ -47,53 +47,53 @@ export const BoxShadowRepeaterControl = createControl( () => {
 			</ControlRepeater>
 		</PropProvider>
 	);
-} );
+});
 
-const StyledUnstableColorIndicator = styled( UnstableColorIndicator )( ( { theme } ) => ( {
+const StyledUnstableColorIndicator = styled(UnstableColorIndicator)(({ theme }) => ({
 	height: '1rem',
 	width: '1rem',
-	borderRadius: `${ theme.shape.borderRadius / 2 }px`,
-} ) );
+	borderRadius: `${theme.shape.borderRadius / 2}px`,
+}));
 
-const ItemIcon = ( { value }: { value: ShadowPropValue } ) => (
-	<StyledUnstableColorIndicator size="inherit" component="span" value={ value.value.color?.value } />
+const ItemIcon = ({ value }: { value: ShadowPropValue }) => (
+	<StyledUnstableColorIndicator size="inherit" component="span" value={value.value.color?.value} />
 );
 
 const Content = () => {
-	const context = useBoundProp( shadowPropTypeUtil );
-	const rowRef: RefObject< HTMLDivElement >[] = [ useRef( null ), useRef( null ) ];
+	const context = useBoundProp(shadowPropTypeUtil);
+	const rowRef: RefObject<HTMLDivElement>[] = [useRef(null), useRef(null)];
 	const { rowRef: anchorEl } = useRepeaterContext();
 
 	return (
-		<PropProvider { ...context }>
-			<PopoverContent p={ 1.5 }>
+		<PropProvider {...context}>
+			<PopoverContent p={1.5}>
 				<PopoverGridContainer>
-					<Control bind="color" label={ __( 'Color', 'elementor' ) }>
-						<ColorControl anchorEl={ anchorEl } />
+					<Control bind="color" label={__('Color', 'elementor')}>
+						<ColorControl anchorEl={anchorEl} />
 					</Control>
-					<Control bind="position" label={ __( 'Position', 'elementor' ) } sx={ { overflow: 'hidden' } }>
+					<Control bind="position" label={__('Position', 'elementor')} sx={{ overflow: 'hidden' }}>
 						<SelectControl
-							options={ [
-								{ label: __( 'Inset', 'elementor' ), value: 'inset' },
-								{ label: __( 'Outset', 'elementor' ), value: null },
-							] }
+							options={[
+								{ label: __('Inset', 'elementor'), value: 'inset' },
+								{ label: __('Outset', 'elementor'), value: null },
+							]}
 						/>
 					</Control>
 				</PopoverGridContainer>
-				<PopoverGridContainer ref={ rowRef[ 0 ] }>
-					<Control bind="hOffset" label={ __( 'Horizontal', 'elementor' ) }>
-						<SizeControl anchorRef={ rowRef[ 0 ] } />
+				<PopoverGridContainer ref={rowRef[0]}>
+					<Control bind="hOffset" label={__('Horizontal', 'elementor')}>
+						<SizeControl anchorRef={rowRef[0]} />
 					</Control>
-					<Control bind="vOffset" label={ __( 'Vertical', 'elementor' ) }>
-						<SizeControl anchorRef={ rowRef[ 0 ] } />
+					<Control bind="vOffset" label={__('Vertical', 'elementor')}>
+						<SizeControl anchorRef={rowRef[0]} />
 					</Control>
 				</PopoverGridContainer>
-				<PopoverGridContainer ref={ rowRef[ 1 ] }>
-					<Control bind="blur" label={ __( 'Blur', 'elementor' ) }>
-						<SizeControl anchorRef={ rowRef[ 1 ] } />
+				<PopoverGridContainer ref={rowRef[1]}>
+					<Control bind="blur" label={__('Blur', 'elementor')}>
+						<SizeControl anchorRef={rowRef[1]} />
 					</Control>
-					<Control bind="spread" label={ __( 'Spread', 'elementor' ) }>
-						<SizeControl anchorRef={ rowRef[ 1 ] } />
+					<Control bind="spread" label={__('Spread', 'elementor')}>
+						<SizeControl anchorRef={rowRef[1]} />
 					</Control>
 				</PopoverGridContainer>
 			</PopoverContent>
@@ -101,7 +101,7 @@ const Content = () => {
 	);
 };
 
-const Control = ( {
+const Control = ({
 	label,
 	bind,
 	children,
@@ -110,23 +110,23 @@ const Control = ( {
 	bind: string;
 	label: string;
 	children: React.ReactNode;
-	sx?: SxProps< Theme >;
-} ) => (
-	<PropKeyProvider bind={ bind }>
-		<Grid item xs={ 6 } sx={ sx }>
-			<Grid container gap={ 0.75 } alignItems="center">
-				<Grid item xs={ 12 }>
-					<FormLabel size="tiny">{ label }</FormLabel>
+	sx?: SxProps<Theme>;
+}) => (
+	<PropKeyProvider bind={bind}>
+		<Grid item xs={6} sx={sx}>
+			<Grid container gap={0.75} alignItems="center">
+				<Grid item xs={12}>
+					<FormLabel size="tiny">{label}</FormLabel>
 				</Grid>
-				<Grid item xs={ 12 }>
-					{ children }
+				<Grid item xs={12}>
+					{children}
 				</Grid>
 			</Grid>
 		</Grid>
 	</PropKeyProvider>
 );
 
-const ItemLabel = ( { value }: { value: ShadowPropValue } ) => {
+const ItemLabel = ({ value }: { value: ShadowPropValue }) => {
 	const { position, hOffset, vOffset, blur, spread } = value.value;
 
 	const { size: blurSize = '', unit: blurUnit = '' } = blur?.value || {};
@@ -136,23 +136,23 @@ const ItemLabel = ( { value }: { value: ShadowPropValue } ) => {
 	const positionLabel = position?.value || 'outset';
 
 	const sizes = [
-		[ hOffsetSize, hOffsetUnit ],
-		[ vOffsetSize, vOffsetUnit ],
-		[ blurSize, blurUnit ],
-		[ spreadSize, spreadUnit ],
+		[hOffsetSize, hOffsetUnit],
+		[vOffsetSize, vOffsetUnit],
+		[blurSize, blurUnit],
+		[spreadSize, spreadUnit],
 	]
-		.map( ( [ size, unit ] ) => {
-			if ( unit !== 'custom' ) {
+		.map(([size, unit]) => {
+			if (unit !== 'custom') {
 				return size + unit;
 			}
 
-			return ! size ? CUSTOM_SIZE_LABEL : size;
-		} )
-		.join( ' ' );
+			return !size ? CUSTOM_SIZE_LABEL : size;
+		})
+		.join(' ');
 
 	return (
-		<span style={ { textTransform: 'capitalize' } }>
-			{ positionLabel }: { sizes }
+		<span style={{ textTransform: 'capitalize' }}>
+			{positionLabel}: {sizes}
 		</span>
 	);
 };

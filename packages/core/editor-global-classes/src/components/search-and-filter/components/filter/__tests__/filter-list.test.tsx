@@ -7,17 +7,17 @@ import { type SearchAndFilterContextType, useSearchAndFilters } from '../../../c
 import { FilterList } from '../filter-list';
 import { mockSetFilters, setupMocks } from './test-utils';
 
-jest.mock( '../../../context' );
-jest.mock( '../../../../../hooks/use-filtered-css-class-usage' );
+jest.mock('../../../context');
+jest.mock('../../../../../hooks/use-filtered-css-class-usage');
 
-jest.mock( '../../../../../utils/tracking', () => createMockTrackingModule( 'trackGlobalClasses' ) );
+jest.mock('../../../../../utils/tracking', () => createMockTrackingModule('trackGlobalClasses'));
 
-describe( 'FilterList', () => {
-	beforeEach( () => {
+describe('FilterList', () => {
+	beforeEach(() => {
 		jest.clearAllMocks();
 		setupMocks();
-		jest.mocked( useSearchAndFilters ).mockReturnValue( {
-			search: {} as SearchAndFilterContextType[ 'search' ],
+		jest.mocked(useSearchAndFilters).mockReturnValue({
+			search: {} as SearchAndFilterContextType['search'],
 			filters: {
 				filters: {
 					unused: false,
@@ -27,43 +27,43 @@ describe( 'FilterList', () => {
 				setFilters: mockSetFilters,
 				onClearFilter: jest.fn(),
 			},
-		} );
+		});
 
-		jest.mocked( useFilteredCssClassUsage ).mockReturnValue( {
-			unused: [ 'class1', 'class2' ],
-			empty: [ 'class3' ],
-			onThisPage: [ 'class4', 'class5', 'class6' ],
-		} );
-	} );
+		jest.mocked(useFilteredCssClassUsage).mockReturnValue({
+			unused: ['class1', 'class2'],
+			empty: ['class3'],
+			onThisPage: ['class4', 'class5', 'class6'],
+		});
+	});
 
-	it( 'should render all filter options with correct counts', () => {
-		render( <FilterList /> );
+	it('should render all filter options with correct counts', () => {
+		render(<FilterList />);
 
-		expect( screen.getByText( 'Unused' ) ).toBeInTheDocument();
-		expect( screen.getByText( '2' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Empty' ) ).toBeInTheDocument();
-		expect( screen.getByText( '1' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'On this page' ) ).toBeInTheDocument();
-		expect( screen.getByText( '3' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Unused')).toBeInTheDocument();
+		expect(screen.getByText('2')).toBeInTheDocument();
+		expect(screen.getByText('Empty')).toBeInTheDocument();
+		expect(screen.getByText('1')).toBeInTheDocument();
+		expect(screen.getByText('On this page')).toBeInTheDocument();
+		expect(screen.getByText('3')).toBeInTheDocument();
+	});
 
-	it( 'should toggle filter when clicking checkbox', async () => {
-		render( <FilterList /> );
+	it('should toggle filter when clicking checkbox', async () => {
+		render(<FilterList />);
 
-		fireEvent.click( screen.getByText( 'Unused' ) );
+		fireEvent.click(screen.getByText('Unused'));
 
-		expect( mockSetFilters ).toHaveBeenCalledWith( expect.any( Function ) );
-		expect( mockTracking ).toHaveBeenCalledWith( {
+		expect(mockSetFilters).toHaveBeenCalledWith(expect.any(Function));
+		expect(mockTracking).toHaveBeenCalledWith({
 			event: 'classManagerFilterUsed',
 			action: 'apply',
 			type: 'unused',
 			trigger: 'menu',
-		} );
-	} );
+		});
+	});
 
-	it( 'should track filter removal when clicking active filter', () => {
-		jest.mocked( useSearchAndFilters ).mockReturnValue( {
-			search: {} as SearchAndFilterContextType[ 'search' ],
+	it('should track filter removal when clicking active filter', () => {
+		jest.mocked(useSearchAndFilters).mockReturnValue({
+			search: {} as SearchAndFilterContextType['search'],
 			filters: {
 				filters: {
 					unused: true,
@@ -73,18 +73,18 @@ describe( 'FilterList', () => {
 				setFilters: mockSetFilters,
 				onClearFilter: jest.fn(),
 			},
-		} );
+		});
 
-		render( <FilterList /> );
+		render(<FilterList />);
 
-		fireEvent.click( screen.getByText( 'Unused' ) );
+		fireEvent.click(screen.getByText('Unused'));
 
-		expect( mockSetFilters ).toHaveBeenCalledWith( expect.any( Function ) );
-		expect( mockTracking ).toHaveBeenCalledWith( {
+		expect(mockSetFilters).toHaveBeenCalledWith(expect.any(Function));
+		expect(mockTracking).toHaveBeenCalledWith({
 			event: 'classManagerFilterUsed',
 			action: 'remove',
 			type: 'unused',
 			trigger: 'menu',
-		} );
-	} );
-} );
+		});
+	});
+});

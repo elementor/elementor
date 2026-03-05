@@ -8,4 +8,4 @@ export const backgroundImagePositionOffsetPropTypeUtil = createPropUtils(
 	unknownChildrenSchema
 );
 
-export type BackgroundImagePositionOffsetPropValue = z.infer< typeof backgroundImagePositionOffsetPropTypeUtil.schema >;
+export type BackgroundImagePositionOffsetPropValue = z.infer<typeof backgroundImagePositionOffsetPropTypeUtil.schema>;

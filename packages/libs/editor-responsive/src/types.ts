@@ -11,7 +11,7 @@ export type Breakpoint = {
 	type?: 'min-width' | 'max-width';
 };
 
-export type BreakpointsMap = Record< BreakpointId, Breakpoint >;
+export type BreakpointsMap = Record<BreakpointId, Breakpoint>;
 
 export type BreakpointNode = Breakpoint & {
 	children: BreakpointNode[];
@@ -24,7 +24,7 @@ type V1Breakpoint = {
 	label: BreakpointLabel;
 };
 
-export type V1Breakpoints = Record< Exclude< BreakpointId, 'desktop' >, V1Breakpoint >;
+export type V1Breakpoints = Record<Exclude<BreakpointId, 'desktop'>, V1Breakpoint>;
 
 export type ExtendedWindow = Window & {
 	elementor?: {
@@ -35,7 +35,7 @@ export type ExtendedWindow = Window & {
 		};
 		channels?: {
 			deviceMode?: {
-				request?: ( request: 'currentMode' ) => BreakpointId;
+				request?: (request: 'currentMode') => BreakpointId;
 			};
 		};
 	};

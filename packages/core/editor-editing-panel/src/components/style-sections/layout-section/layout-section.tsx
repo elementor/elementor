@@ -20,33 +20,33 @@ import { GapControlField } from './gap-control-field';
 import { JustifyContentField } from './justify-content-field';
 import { WrapField } from './wrap-field';
 
-const DISPLAY_LABEL = __( 'Display', 'elementor' );
-const FLEX_WRAP_LABEL = __( 'Flex wrap', 'elementor' );
+const DISPLAY_LABEL = __('Display', 'elementor');
+const FLEX_WRAP_LABEL = __('Flex wrap', 'elementor');
 
 export const LayoutSection = () => {
-	const { value: display } = useStylesField< StringPropValue >( 'display', {
+	const { value: display } = useStylesField<StringPropValue>('display', {
 		history: { propDisplayName: DISPLAY_LABEL },
-	} );
+	});
 	const displayPlaceholder = useDisplayPlaceholderValue();
-	const isDisplayFlex = shouldDisplayFlexFields( display, displayPlaceholder as StringPropValue );
+	const isDisplayFlex = shouldDisplayFlexFields(display, displayPlaceholder as StringPropValue);
 	const { element } = useElement();
-	const parent = useParentElement( element.id );
-	const parentStyle = useComputedStyle( parent?.id || null );
+	const parent = useParentElement(element.id);
+	const parentStyle = useComputedStyle(parent?.id || null);
 	const parentStyleDirection = parentStyle?.flexDirection ?? 'row';
 
 	return (
 		<SectionContent>
 			<DisplayField />
-			{ isDisplayFlex && <FlexFields /> }
-			{ 'flex' === parentStyle?.display && <FlexChildFields parentStyleDirection={ parentStyleDirection } /> }
+			{isDisplayFlex && <FlexFields />}
+			{'flex' === parentStyle?.display && <FlexChildFields parentStyleDirection={parentStyleDirection} />}
 		</SectionContent>
 	);
 };
 
 const FlexFields = () => {
-	const { value: flexWrap } = useStylesField< StringPropValue >( 'flex-wrap', {
+	const { value: flexWrap } = useStylesField<StringPropValue>('flex-wrap', {
 		history: { propDisplayName: FLEX_WRAP_LABEL },
-	} );
+	});
 
 	return (
 		<>
@@ -56,25 +56,25 @@ const FlexFields = () => {
 			<PanelDivider />
 			<GapControlField />
 			<WrapField />
-			{ [ 'wrap', 'wrap-reverse' ].includes( flexWrap?.value as string ) && <AlignContentField /> }
+			{['wrap', 'wrap-reverse'].includes(flexWrap?.value as string) && <AlignContentField />}
 		</>
 	);
 };
 
-const FlexChildFields = ( { parentStyleDirection }: { parentStyleDirection: string } ) => (
+const FlexChildFields = ({ parentStyleDirection }: { parentStyleDirection: string }) => (
 	<>
 		<PanelDivider />
-		<ControlFormLabel>{ __( 'Flex child', 'elementor' ) }</ControlFormLabel>
-		<AlignSelfChild parentStyleDirection={ parentStyleDirection as FlexDirection } />
+		<ControlFormLabel>{__('Flex child', 'elementor')}</ControlFormLabel>
+		<AlignSelfChild parentStyleDirection={parentStyleDirection as FlexDirection} />
 		<FlexOrderField />
 		<FlexSizeField />
 	</>
 );
 
-const shouldDisplayFlexFields = ( display: StringPropValue | null, local: StringPropValue ) => {
+const shouldDisplayFlexFields = (display: StringPropValue | null, local: StringPropValue) => {
 	const value = display?.value ?? local?.value;
 
-	if ( ! value ) {
+	if (!value) {
 		return false;
 	}
 

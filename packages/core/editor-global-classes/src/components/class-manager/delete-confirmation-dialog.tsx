@@ -8,44 +8,44 @@ import { __ } from '@wordpress/i18n';
 import { useCssClassUsageByID } from '../../hooks/use-css-class-usage-by-id';
 import { deleteClass } from './delete-class';
 
-type DeleteClassDialogProps = Pick< StyleDefinition, 'id' | 'label' >;
+type DeleteClassDialogProps = Pick<StyleDefinition, 'id' | 'label'>;
 
 type DeleteConfirmationContext = {
-	openDialog: ( props: DeleteClassDialogProps ) => void;
+	openDialog: (props: DeleteClassDialogProps) => void;
 	closeDialog: () => void;
 	dialogProps: DeleteClassDialogProps | null;
 };
 
-const context = createContext< DeleteConfirmationContext | null >( null );
+const context = createContext<DeleteConfirmationContext | null>(null);
 
-export const DeleteConfirmationProvider = ( { children }: React.PropsWithChildren ) => {
-	const [ dialogProps, setDialogProps ] = useState< DeleteClassDialogProps | null >( null );
+export const DeleteConfirmationProvider = ({ children }: React.PropsWithChildren) => {
+	const [dialogProps, setDialogProps] = useState<DeleteClassDialogProps | null>(null);
 
-	const openDialog = ( props: DeleteClassDialogProps ) => {
-		setDialogProps( props );
+	const openDialog = (props: DeleteClassDialogProps) => {
+		setDialogProps(props);
 	};
 
 	const closeDialog = () => {
-		setDialogProps( null );
+		setDialogProps(null);
 	};
 
 	return (
-		<context.Provider value={ { openDialog, closeDialog, dialogProps } }>
-			{ children }
-			{ !! dialogProps && <DeleteClassDialog { ...dialogProps } /> }
+		<context.Provider value={{ openDialog, closeDialog, dialogProps }}>
+			{children}
+			{!!dialogProps && <DeleteClassDialog {...dialogProps} />}
 		</context.Provider>
 	);
 };
 
-const DeleteClassDialog = ( { label, id }: DeleteClassDialogProps ) => {
+const DeleteClassDialog = ({ label, id }: DeleteClassDialogProps) => {
 	const { closeDialog } = useDeleteConfirmation();
 	const {
 		data: { total, content },
-	} = useCssClassUsageByID( id );
+	} = useCssClassUsageByID(id);
 
 	const handleConfirm = () => {
 		closeDialog();
-		deleteClass( id );
+		deleteClass(id);
 	};
 
 	// translators: %1: total usage count, %2: number of pages
@@ -54,36 +54,36 @@ const DeleteClassDialog = ( { label, id }: DeleteClassDialogProps ) => {
 			? __(
 					'Will permanently remove it from your project and may affect the design across all elements using it. Used %1 times across %2 pages. This action cannot be undone.',
 					'elementor'
-			  )
-					.replace( '%1', total.toString() )
-					.replace( '%2', content.length.toString() )
+				)
+					.replace('%1', total.toString())
+					.replace('%2', content.length.toString())
 			: __(
 					'Will permanently remove it from your project and may affect the design across all elements using it. This action cannot be undone.',
 					'elementor'
-			  );
+				);
 
 	return (
-		<ConfirmationDialog open onClose={ closeDialog }>
-			<ConfirmationDialog.Title>{ __( 'Delete this class?', 'elementor' ) }</ConfirmationDialog.Title>
+		<ConfirmationDialog open onClose={closeDialog}>
+			<ConfirmationDialog.Title>{__('Delete this class?', 'elementor')}</ConfirmationDialog.Title>
 			<ConfirmationDialog.Content>
 				<ConfirmationDialog.ContentText>
-					{ __( 'Deleting', 'elementor' ) }
+					{__('Deleting', 'elementor')}
 					<Typography variant="subtitle2" component="span">
-						&nbsp;{ label }&nbsp;
+						&nbsp;{label}&nbsp;
 					</Typography>
-					{ text }
+					{text}
 				</ConfirmationDialog.ContentText>
 			</ConfirmationDialog.Content>
-			<ConfirmationDialog.Actions onClose={ closeDialog } onConfirm={ handleConfirm } />
+			<ConfirmationDialog.Actions onClose={closeDialog} onConfirm={handleConfirm} />
 		</ConfirmationDialog>
 	);
 };
 
 export const useDeleteConfirmation = () => {
-	const contextValue = useContext( context );
+	const contextValue = useContext(context);
 
-	if ( ! contextValue ) {
-		throw new Error( 'useDeleteConfirmation must be used within a DeleteConfirmationProvider' );
+	if (!contextValue) {
+		throw new Error('useDeleteConfirmation must be used within a DeleteConfirmationProvider');
 	}
 
 	return contextValue;

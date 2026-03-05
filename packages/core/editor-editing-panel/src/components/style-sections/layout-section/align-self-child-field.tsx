@@ -15,82 +15,82 @@ import { StylesFieldLayout } from '../../styles-field-layout';
 import { type FlexDirection } from './flex-direction-field';
 import { RotatedIcon } from './utils/rotated-icon';
 
-const ALIGN_SELF_LABEL = __( 'Align self', 'elementor' );
+const ALIGN_SELF_LABEL = __('Align self', 'elementor');
 
-const ALIGN_SELF_CHILD_OFFSET_MAP: Record< FlexDirection, number > = {
+const ALIGN_SELF_CHILD_OFFSET_MAP: Record<FlexDirection, number> = {
 	row: 90,
 	'row-reverse': 90,
 	column: 0,
 	'column-reverse': 0,
 };
 
-const StartIcon = withDirection( LayoutAlignLeftIcon );
-const EndIcon = withDirection( LayoutAlignRightIcon );
+const StartIcon = withDirection(LayoutAlignLeftIcon);
+const EndIcon = withDirection(LayoutAlignRightIcon);
 
 const iconProps = {
 	isClockwise: false,
 };
 
-const getOptions = ( parentStyleDirection: FlexDirection ) => [
+const getOptions = (parentStyleDirection: FlexDirection) => [
 	{
 		value: 'start',
-		label: __( 'Start', 'elementor' ),
-		renderContent: ( { size }: { size: ToggleButtonProps[ 'size' ] } ) => (
+		label: __('Start', 'elementor'),
+		renderContent: ({ size }: { size: ToggleButtonProps['size'] }) => (
 			<RotatedIcon
-				icon={ StartIcon }
-				size={ size }
-				offset={ ALIGN_SELF_CHILD_OFFSET_MAP[ parentStyleDirection ] }
-				{ ...iconProps }
+				icon={StartIcon}
+				size={size}
+				offset={ALIGN_SELF_CHILD_OFFSET_MAP[parentStyleDirection]}
+				{...iconProps}
 			/>
 		),
 		showTooltip: true,
 	},
 	{
 		value: 'center',
-		label: __( 'Center', 'elementor' ),
-		renderContent: ( { size }: { size: ToggleButtonProps[ 'size' ] } ) => (
+		label: __('Center', 'elementor'),
+		renderContent: ({ size }: { size: ToggleButtonProps['size'] }) => (
 			<RotatedIcon
-				icon={ CenterIcon }
-				size={ size }
-				offset={ ALIGN_SELF_CHILD_OFFSET_MAP[ parentStyleDirection ] }
-				{ ...iconProps }
+				icon={CenterIcon}
+				size={size}
+				offset={ALIGN_SELF_CHILD_OFFSET_MAP[parentStyleDirection]}
+				{...iconProps}
 			/>
 		),
 		showTooltip: true,
 	},
 	{
 		value: 'end',
-		label: __( 'End', 'elementor' ),
-		renderContent: ( { size }: { size: ToggleButtonProps[ 'size' ] } ) => (
+		label: __('End', 'elementor'),
+		renderContent: ({ size }: { size: ToggleButtonProps['size'] }) => (
 			<RotatedIcon
-				icon={ EndIcon }
-				size={ size }
-				offset={ ALIGN_SELF_CHILD_OFFSET_MAP[ parentStyleDirection ] }
-				{ ...iconProps }
+				icon={EndIcon}
+				size={size}
+				offset={ALIGN_SELF_CHILD_OFFSET_MAP[parentStyleDirection]}
+				{...iconProps}
 			/>
 		),
 		showTooltip: true,
 	},
 	{
 		value: 'stretch',
-		label: __( 'Stretch', 'elementor' ),
-		renderContent: ( { size }: { size: ToggleButtonProps[ 'size' ] } ) => (
+		label: __('Stretch', 'elementor'),
+		renderContent: ({ size }: { size: ToggleButtonProps['size'] }) => (
 			<RotatedIcon
-				icon={ JustifyIcon }
-				size={ size }
-				offset={ ALIGN_SELF_CHILD_OFFSET_MAP[ parentStyleDirection ] }
-				{ ...iconProps }
+				icon={JustifyIcon}
+				size={size}
+				offset={ALIGN_SELF_CHILD_OFFSET_MAP[parentStyleDirection]}
+				{...iconProps}
 			/>
 		),
 		showTooltip: true,
 	},
 ];
 
-export const AlignSelfChild = ( { parentStyleDirection }: { parentStyleDirection: FlexDirection } ) => (
-	<StylesField bind="align-self" propDisplayName={ ALIGN_SELF_LABEL }>
+export const AlignSelfChild = ({ parentStyleDirection }: { parentStyleDirection: FlexDirection }) => (
+	<StylesField bind="align-self" propDisplayName={ALIGN_SELF_LABEL}>
 		<UiProviders>
-			<StylesFieldLayout label={ ALIGN_SELF_LABEL }>
-				<ToggleControl options={ getOptions( parentStyleDirection ) } />
+			<StylesFieldLayout label={ALIGN_SELF_LABEL}>
+				<ToggleControl options={getOptions(parentStyleDirection)} />
 			</StylesFieldLayout>
 		</UiProviders>
 	</StylesField>

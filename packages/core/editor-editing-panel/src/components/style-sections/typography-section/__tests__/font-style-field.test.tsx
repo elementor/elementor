@@ -6,29 +6,29 @@ import { fireEvent, screen } from '@testing-library/react';
 import { useStylesFields } from '../../../../hooks/use-styles-fields';
 import { FontStyleField } from '../font-style-field';
 
-jest.mock( '@elementor/editor-styles' );
-jest.mock( '../../../../hooks/use-styles-fields' );
-jest.mock( '../../../../contexts/styles-inheritance-context', () => ( {
+jest.mock('@elementor/editor-styles');
+jest.mock('../../../../hooks/use-styles-fields');
+jest.mock('../../../../contexts/styles-inheritance-context', () => ({
 	useStylesInheritanceChain: () => [],
-} ) );
+}));
 
 const renderFontStyleField = () => {
-	return renderField( <FontStyleField />, {
+	return renderField(<FontStyleField />, {
 		propTypes: {
-			'font-style': createMockPropType( { kind: 'plain' } ),
+			'font-style': createMockPropType({ kind: 'plain' }),
 		},
-	} );
+	});
 };
 
-describe( '<FontStyleField />', () => {
-	it.each( [
-		[ 'Italic', 'Normal' ],
-		[ 'Normal', 'Italic' ],
-	] )( 'should toggle between %s and %s when clicked', ( initialValue, expectedValue ) => {
+describe('<FontStyleField />', () => {
+	it.each([
+		['Italic', 'Normal'],
+		['Normal', 'Italic'],
+	])('should toggle between %s and %s when clicked', (initialValue, expectedValue) => {
 		// Arrange.
 		const setValues = jest.fn();
 
-		jest.mocked( useStylesFields ).mockReturnValue( {
+		jest.mocked(useStylesFields).mockReturnValue({
 			values: {
 				'font-style': {
 					$$type: 'string',
@@ -37,21 +37,21 @@ describe( '<FontStyleField />', () => {
 			},
 			setValues,
 			canEdit: true,
-		} );
+		});
 
 		renderFontStyleField();
 
-		const toggleButton = screen.getByRole( 'button', { name: initialValue } );
-		const expectedToggleButton = screen.getByRole( 'button', { name: expectedValue } );
+		const toggleButton = screen.getByRole('button', { name: initialValue });
+		const expectedToggleButton = screen.getByRole('button', { name: expectedValue });
 
 		// Assert.
-		expect( toggleButton ).toHaveAttribute( 'aria-pressed', 'true' );
+		expect(toggleButton).toHaveAttribute('aria-pressed', 'true');
 
 		// Act.
-		fireEvent.click( expectedToggleButton );
+		fireEvent.click(expectedToggleButton);
 
 		// Assert.
-		expect( setValues ).toHaveBeenCalledWith(
+		expect(setValues).toHaveBeenCalledWith(
 			{
 				'font-style': {
 					$$type: 'string',
@@ -60,13 +60,13 @@ describe( '<FontStyleField />', () => {
 			},
 			{ history: { propDisplayName: 'Font style' } }
 		);
-	} );
+	});
 
-	it.each( [ 'Italic', 'Normal' ] )( 'should pass null on click if `%s` was selected before', ( param ) => {
+	it.each(['Italic', 'Normal'])('should pass null on click if `%s` was selected before', (param) => {
 		// Arrange.
 		const setValues = jest.fn();
 
-		jest.mocked( useStylesFields ).mockReturnValue( {
+		jest.mocked(useStylesFields).mockReturnValue({
 			values: {
 				'font-style': {
 					$$type: 'string',
@@ -75,32 +75,29 @@ describe( '<FontStyleField />', () => {
 			},
 			setValues,
 			canEdit: true,
-		} );
+		});
 
 		// Act.
 		renderFontStyleField();
 
-		const toggleButton = screen.getByRole( 'button', { name: param } );
+		const toggleButton = screen.getByRole('button', { name: param });
 
 		// Assert.
-		expect( toggleButton ).toHaveAttribute( 'aria-pressed', 'true' );
+		expect(toggleButton).toHaveAttribute('aria-pressed', 'true');
 
 		// Act.
-		fireEvent.click( toggleButton );
+		fireEvent.click(toggleButton);
 
 		// Assert.
-		expect( setValues ).toHaveBeenCalledWith(
-			{ 'font-style': null },
-			{ history: { propDisplayName: 'Font style' } }
-		);
-	} );
+		expect(setValues).toHaveBeenCalledWith({ 'font-style': null }, { history: { propDisplayName: 'Font style' } });
+	});
 
-	it( 'should render font style prop type with plain value', () => {
+	it('should render font style prop type with plain value', () => {
 		// Arrange.
 		const setValue = jest.fn();
 		const props = {
 			setValue,
-			propType: createMockPropType( { kind: 'plain' } ),
+			propType: createMockPropType({ kind: 'plain' }),
 			bind: 'font-style',
 			value: {
 				$$type: 'string',
@@ -110,17 +107,17 @@ describe( '<FontStyleField />', () => {
 
 		// Act.
 		renderControl(
-			<ControlActionsProvider items={ [] }>
+			<ControlActionsProvider items={[]}>
 				<FontStyleField />
 			</ControlActionsProvider>,
 			props
 		);
 
-		const button = screen.getByLabelText( 'Normal' );
+		const button = screen.getByLabelText('Normal');
 
 		// Assert.
-		expect( screen.getByText( 'Font style' ) ).toBeInTheDocument();
-		expect( button ).toBeInTheDocument();
-		expect( button ).toHaveAttribute( 'aria-pressed', 'true' );
-	} );
-} );
+		expect(screen.getByText('Font style')).toBeInTheDocument();
+		expect(button).toBeInTheDocument();
+		expect(button).toHaveAttribute('aria-pressed', 'true');
+	});
+});

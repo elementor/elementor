@@ -4,54 +4,54 @@ import { type V1ElementData } from '@elementor/editor-elements';
 import { getComponentDocumentData } from '../component-document-data';
 import { getComponentDocuments } from '../get-component-documents';
 
-jest.mock( '../component-document-data' );
+jest.mock('../component-document-data');
 
-describe( 'getComponentDocuments', () => {
+describe('getComponentDocuments', () => {
 	const mockGetComponentDocumentData = getComponentDocumentData as jest.Mock;
 
-	beforeEach( () => {
+	beforeEach(() => {
 		jest.clearAllMocks();
-	} );
+	});
 
-	it( 'should return empty map for empty elements array', async () => {
+	it('should return empty map for empty elements array', async () => {
 		// Arrange
 		const elements: V1ElementData[] = [];
 
 		// Act
-		const result = await getComponentDocuments( elements );
+		const result = await getComponentDocuments(elements);
 
 		// Assert
-		expect( result.size ).toBe( 0 );
-	} );
+		expect(result.size).toBe(0);
+	});
 
-	it( 'should return empty map for non-component elements', async () => {
+	it('should return empty map for non-component elements', async () => {
 		// Arrange
 		const elements = [
-			createMockElementData( {
+			createMockElementData({
 				widgetType: 'heading',
 				elType: 'widget',
-			} ),
-			createMockElementData( {
+			}),
+			createMockElementData({
 				widgetType: 'button',
 				elType: 'widget',
-			} ),
+			}),
 		];
 
 		// Act
-		const result = await getComponentDocuments( elements );
+		const result = await getComponentDocuments(elements);
 
 		// Assert
-		expect( result.size ).toBe( 0 );
-	} );
+		expect(result.size).toBe(0);
+	});
 
-	it( 'should return document for single component element', async () => {
+	it('should return document for single component element', async () => {
 		// Arrange
 		const componentId = 123;
-		const mockDocument = createMockDocumentData( { id: componentId } );
-		mockGetComponentDocumentData.mockResolvedValueOnce( mockDocument );
+		const mockDocument = createMockDocumentData({ id: componentId });
+		mockGetComponentDocumentData.mockResolvedValueOnce(mockDocument);
 
 		const elements = [
-			createMockElementData( {
+			createMockElementData({
 				widgetType: 'e-component',
 				settings: {
 					component_instance: {
@@ -61,25 +61,25 @@ describe( 'getComponentDocuments', () => {
 						},
 					},
 				},
-			} ),
+			}),
 		];
 
 		// Act
-		const result = await getComponentDocuments( elements );
+		const result = await getComponentDocuments(elements);
 
 		// Assert
-		expect( result.size ).toBe( 1 );
-		expect( result.has( componentId ) ).toBe( true );
-		expect( result.get( componentId ) ).toEqual( mockDocument );
-	} );
+		expect(result.size).toBe(1);
+		expect(result.has(componentId)).toBe(true);
+		expect(result.get(componentId)).toEqual(mockDocument);
+	});
 
-	it( 'should return document when elType is e-component', async () => {
+	it('should return document when elType is e-component', async () => {
 		// Arrange
 		const componentId = 456;
-		const mockDocument = createMockDocumentData( { id: componentId } );
-		mockGetComponentDocumentData.mockResolvedValueOnce( mockDocument );
+		const mockDocument = createMockDocumentData({ id: componentId });
+		mockGetComponentDocumentData.mockResolvedValueOnce(mockDocument);
 
-		const element = createMockElementData( {
+		const element = createMockElementData({
 			widgetType: 'widget',
 			settings: {
 				component_instance: {
@@ -89,29 +89,29 @@ describe( 'getComponentDocuments', () => {
 					},
 				},
 			},
-		} );
+		});
 		element.elType = 'e-component';
-		const elements = [ element ];
+		const elements = [element];
 
 		// Act
-		const result = await getComponentDocuments( elements );
+		const result = await getComponentDocuments(elements);
 
 		// Assert
-		expect( result.size ).toBe( 1 );
-		expect( result.has( componentId ) ).toBe( true );
-	} );
+		expect(result.size).toBe(1);
+		expect(result.has(componentId)).toBe(true);
+	});
 
-	it( 'should return multiple documents for multiple component elements', async () => {
+	it('should return multiple documents for multiple component elements', async () => {
 		// Arrange
 		const componentId1 = 100;
 		const componentId2 = 200;
-		const mockDocument1 = createMockDocumentData( { id: componentId1 } );
-		const mockDocument2 = createMockDocumentData( { id: componentId2 } );
+		const mockDocument1 = createMockDocumentData({ id: componentId1 });
+		const mockDocument2 = createMockDocumentData({ id: componentId2 });
 
-		mockGetComponentDocumentData.mockResolvedValueOnce( mockDocument1 ).mockResolvedValueOnce( mockDocument2 );
+		mockGetComponentDocumentData.mockResolvedValueOnce(mockDocument1).mockResolvedValueOnce(mockDocument2);
 
 		const elements = [
-			createMockElementData( {
+			createMockElementData({
 				widgetType: 'e-component',
 				settings: {
 					component_instance: {
@@ -121,8 +121,8 @@ describe( 'getComponentDocuments', () => {
 						},
 					},
 				},
-			} ),
-			createMockElementData( {
+			}),
+			createMockElementData({
 				widgetType: 'e-component',
 				settings: {
 					component_instance: {
@@ -132,25 +132,25 @@ describe( 'getComponentDocuments', () => {
 						},
 					},
 				},
-			} ),
+			}),
 		];
 
 		// Act
-		const result = await getComponentDocuments( elements );
+		const result = await getComponentDocuments(elements);
 
 		// Assert
-		expect( result.size ).toBe( 2 );
-		expect( [ ...result.keys() ] ).toEqual( [ componentId1, componentId2 ] );
-	} );
+		expect(result.size).toBe(2);
+		expect([...result.keys()]).toEqual([componentId1, componentId2]);
+	});
 
-	it( 'should deduplicate when same component appears multiple times', async () => {
+	it('should deduplicate when same component appears multiple times', async () => {
 		// Arrange
 		const componentId = 300;
-		const mockDocument = createMockDocumentData( { id: componentId } );
-		mockGetComponentDocumentData.mockResolvedValue( mockDocument );
+		const mockDocument = createMockDocumentData({ id: componentId });
+		mockGetComponentDocumentData.mockResolvedValue(mockDocument);
 
 		const elements = [
-			createMockElementData( {
+			createMockElementData({
 				widgetType: 'e-component',
 				settings: {
 					component_instance: {
@@ -160,8 +160,8 @@ describe( 'getComponentDocuments', () => {
 						},
 					},
 				},
-			} ),
-			createMockElementData( {
+			}),
+			createMockElementData({
 				widgetType: 'e-component',
 				settings: {
 					component_instance: {
@@ -171,23 +171,23 @@ describe( 'getComponentDocuments', () => {
 						},
 					},
 				},
-			} ),
+			}),
 		];
 
 		// Act
-		const result = await getComponentDocuments( elements );
+		const result = await getComponentDocuments(elements);
 
 		// Assert
-		expect( result.size ).toBe( 1 );
-		expect( mockGetComponentDocumentData ).toHaveBeenCalledTimes( 1 );
-	} );
+		expect(result.size).toBe(1);
+		expect(mockGetComponentDocumentData).toHaveBeenCalledTimes(1);
+	});
 
-	it( 'should recursively process nested components', async () => {
+	it('should recursively process nested components', async () => {
 		// Arrange
 		const parentComponentId = 400;
 		const childComponentId = 500;
 
-		const childElement = createMockElementData( {
+		const childElement = createMockElementData({
 			widgetType: 'e-component',
 			settings: {
 				component_instance: {
@@ -197,18 +197,18 @@ describe( 'getComponentDocuments', () => {
 					},
 				},
 			},
-		} );
+		});
 
 		const parentDocument = {
-			...createMockDocumentData( { id: parentComponentId } ),
-			elements: [ childElement ],
+			...createMockDocumentData({ id: parentComponentId }),
+			elements: [childElement],
 		};
 
-		const childDocument = createMockDocumentData( { id: childComponentId } );
+		const childDocument = createMockDocumentData({ id: childComponentId });
 
-		mockGetComponentDocumentData.mockResolvedValueOnce( parentDocument ).mockResolvedValueOnce( childDocument );
+		mockGetComponentDocumentData.mockResolvedValueOnce(parentDocument).mockResolvedValueOnce(childDocument);
 
-		const parentElement = createMockElementData( {
+		const parentElement = createMockElementData({
 			widgetType: 'e-component',
 			settings: {
 				component_instance: {
@@ -218,23 +218,23 @@ describe( 'getComponentDocuments', () => {
 					},
 				},
 			},
-		} );
+		});
 
 		// Act
-		const result = await getComponentDocuments( [ parentElement ] );
+		const result = await getComponentDocuments([parentElement]);
 
 		// Assert
-		expect( result.size ).toBe( 2 );
-		expect( [ ...result.keys() ] ).toEqual( [ parentComponentId, childComponentId ] );
-	} );
+		expect(result.size).toBe(2);
+		expect([...result.keys()]).toEqual([parentComponentId, childComponentId]);
+	});
 
-	it( 'should recursively process nested child elements', async () => {
+	it('should recursively process nested child elements', async () => {
 		// Arrange
 		const componentId1 = 600;
 		const componentId2 = 700;
 		const componentId3 = 800;
 
-		const nestedChild = createMockElementData( {
+		const nestedChild = createMockElementData({
 			widgetType: 'e-component',
 			settings: {
 				component_instance: {
@@ -244,9 +244,9 @@ describe( 'getComponentDocuments', () => {
 					},
 				},
 			},
-		} );
+		});
 
-		const child = createMockElementData( {
+		const child = createMockElementData({
 			widgetType: 'e-component',
 			settings: {
 				component_instance: {
@@ -256,9 +256,9 @@ describe( 'getComponentDocuments', () => {
 					},
 				},
 			},
-		} );
+		});
 
-		const parent = createMockElementData( {
+		const parent = createMockElementData({
 			widgetType: 'e-component',
 			settings: {
 				component_instance: {
@@ -268,45 +268,45 @@ describe( 'getComponentDocuments', () => {
 					},
 				},
 			},
-		} );
+		});
 
 		const document1 = {
-			...createMockDocumentData( { id: componentId1 } ),
-			elements: [ child ],
+			...createMockDocumentData({ id: componentId1 }),
+			elements: [child],
 		};
 
 		const document2 = {
-			...createMockDocumentData( { id: componentId2 } ),
-			elements: [ nestedChild ],
+			...createMockDocumentData({ id: componentId2 }),
+			elements: [nestedChild],
 		};
 
 		const document3 = {
-			...createMockDocumentData( { id: componentId3 } ),
+			...createMockDocumentData({ id: componentId3 }),
 			elements: [],
 		};
 
 		mockGetComponentDocumentData
-			.mockResolvedValueOnce( document1 )
-			.mockResolvedValueOnce( document2 )
-			.mockResolvedValueOnce( document3 );
+			.mockResolvedValueOnce(document1)
+			.mockResolvedValueOnce(document2)
+			.mockResolvedValueOnce(document3);
 
 		// Act
-		const result = await getComponentDocuments( [ parent ] );
+		const result = await getComponentDocuments([parent]);
 
 		// Assert
-		expect( result.size ).toBe( 3 );
-		expect( [ ...result.keys() ] ).toEqual( [ componentId1, componentId2, componentId3 ] );
-	} );
+		expect(result.size).toBe(3);
+		expect([...result.keys()]).toEqual([componentId1, componentId2, componentId3]);
+	});
 
-	it( 'should handle mixed component and non-component elements', async () => {
+	it('should handle mixed component and non-component elements', async () => {
 		// Arrange
 		const componentId = 1100;
-		const mockDocument = createMockDocumentData( { id: componentId } );
-		mockGetComponentDocumentData.mockResolvedValueOnce( mockDocument );
+		const mockDocument = createMockDocumentData({ id: componentId });
+		mockGetComponentDocumentData.mockResolvedValueOnce(mockDocument);
 
 		const elements = [
-			createMockElementData( { widgetType: 'heading' } ),
-			createMockElementData( {
+			createMockElementData({ widgetType: 'heading' }),
+			createMockElementData({
 				widgetType: 'e-component',
 				settings: {
 					component_instance: {
@@ -316,15 +316,15 @@ describe( 'getComponentDocuments', () => {
 						},
 					},
 				},
-			} ),
-			createMockElementData( { widgetType: 'button' } ),
+			}),
+			createMockElementData({ widgetType: 'button' }),
 		];
 
 		// Act
-		const result = await getComponentDocuments( elements );
+		const result = await getComponentDocuments(elements);
 
 		// Assert
-		expect( result.size ).toBe( 1 );
-		expect( result.has( componentId ) ).toBe( true );
-	} );
-} );
+		expect(result.size).toBe(1);
+		expect(result.has(componentId)).toBe(true);
+	});
+});

@@ -7,20 +7,20 @@ export type PopoverMenuProps = MenuProps & {
 	popupState?: PopupState;
 };
 
-export default function PopoverMenu( { children, popupState, ...props }: PopoverMenuProps ) {
+export default function PopoverMenu({ children, popupState, ...props }: PopoverMenuProps) {
 	return (
-		<MenuContextProvider type={ 'popover' } popupState={ popupState }>
+		<MenuContextProvider type={'popover'} popupState={popupState}>
 			<Menu
-				PaperProps={ {
+				PaperProps={{
 					sx: { mt: 1.5 },
-				} }
-				{ ...props }
-				MenuListProps={ {
+				}}
+				{...props}
+				MenuListProps={{
 					component: 'div',
 					dense: true,
-				} }
+				}}
 			>
-				{ children }
+				{children}
 			</Menu>
 		</MenuContextProvider>
 	);

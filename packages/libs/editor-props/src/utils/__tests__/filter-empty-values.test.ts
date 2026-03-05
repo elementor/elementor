@@ -1,7 +1,7 @@
 import { filterEmptyValues } from '../filter-empty-values';
 
-describe( 'filterEmptyValues', () => {
-	it.each( [
+describe('filterEmptyValues', () => {
+	it.each([
 		// empty values
 		{
 			value: '',
@@ -24,7 +24,7 @@ describe( 'filterEmptyValues', () => {
 			expected: null,
 		},
 		{
-			value: [ undefined, null, '' ],
+			value: [undefined, null, ''],
 			expected: null,
 		},
 		{
@@ -37,7 +37,7 @@ describe( 'filterEmptyValues', () => {
 			expected: null,
 		},
 		{
-			value: [ [ undefined ], [ null, '' ], undefined, null, '' ],
+			value: [[undefined], [null, ''], undefined, null, ''],
 			expected: null,
 		},
 		{
@@ -143,8 +143,8 @@ describe( 'filterEmptyValues', () => {
 		},
 		{
 			value: {
-				a: [ 0, false, null, undefined, '', 'a' ],
-				b: [ null, undefined, '' ],
+				a: [0, false, null, undefined, '', 'a'],
+				b: [null, undefined, ''],
 				c: { d: null },
 				e: [
 					{
@@ -158,7 +158,7 @@ describe( 'filterEmptyValues', () => {
 				],
 			},
 			expected: {
-				a: [ 0, false, 'a' ],
+				a: [0, false, 'a'],
 				e: [
 					{
 						g: true,
@@ -170,8 +170,8 @@ describe( 'filterEmptyValues', () => {
 			value: {
 				$$type: 'test-type',
 				value: {
-					a: [ 0, false, null, undefined, '', 'a' ],
-					b: [ null, undefined, '' ],
+					a: [0, false, null, undefined, '', 'a'],
+					b: [null, undefined, ''],
 					c: { d: null },
 					e: [
 						{
@@ -188,7 +188,7 @@ describe( 'filterEmptyValues', () => {
 			expected: {
 				$$type: 'test-type',
 				value: {
-					a: [ 0, false, 'a' ],
+					a: [0, false, 'a'],
 					e: [
 						{
 							g: true,
@@ -197,7 +197,7 @@ describe( 'filterEmptyValues', () => {
 				},
 			},
 		},
-	] )( 'should filter empty values from %s', ( { value, expected } ) => {
-		expect( filterEmptyValues( value ) ).toStrictEqual( expected );
-	} );
-} );
+	])('should filter empty values from %s', ({ value, expected }) => {
+		expect(filterEmptyValues(value)).toStrictEqual(expected);
+	});
+});

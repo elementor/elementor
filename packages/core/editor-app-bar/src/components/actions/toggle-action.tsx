@@ -15,18 +15,18 @@ export type Props = {
 	value?: string;
 };
 
-export default function ToggleAction( { icon: Icon, title, value, visible = true, ...props }: Props ) {
+export default function ToggleAction({ icon: Icon, title, value, visible = true, ...props }: Props) {
 	const { type } = useMenuContext();
 
-	if ( ! visible ) {
+	if (!visible) {
 		return null;
 	}
 
 	return type === 'toolbar' ? (
-		<ToolbarMenuToggleItem value={ value || title } title={ title } { ...props }>
+		<ToolbarMenuToggleItem value={value || title} title={title} {...props}>
 			<Icon />
 		</ToolbarMenuToggleItem>
 	) : (
-		<PopoverMenuItem { ...props } text={ title } icon={ <Icon /> } />
+		<PopoverMenuItem {...props} text={title} icon={<Icon />} />
 	);
 }

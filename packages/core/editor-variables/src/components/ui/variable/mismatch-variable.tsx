@@ -13,84 +13,84 @@ type Props = {
 	variable: Variable;
 };
 
-export const MismatchVariable = ( { variable }: Props ) => {
+export const MismatchVariable = ({ variable }: Props) => {
 	const { setValue, value } = useBoundProp();
 
-	const anchorRef = useRef< HTMLDivElement >( null );
+	const anchorRef = useRef<HTMLDivElement>(null);
 
 	const popupId = useId();
-	const popupState = usePopupState( {
+	const popupState = usePopupState({
 		variant: 'popover',
-		popupId: `elementor-variables-list-${ popupId }`,
-	} );
+		popupId: `elementor-variables-list-${popupId}`,
+	});
 
-	const [ infotipVisible, setInfotipVisible ] = useState( false );
+	const [infotipVisible, setInfotipVisible] = useState(false);
 
-	const toggleInfotip = () => setInfotipVisible( ( prev ) => ! prev );
-	const closeInfotip = () => setInfotipVisible( false );
+	const toggleInfotip = () => setInfotipVisible((prev) => !prev);
+	const closeInfotip = () => setInfotipVisible(false);
 
 	const triggerSelect = () => {
 		closeInfotip();
 
-		popupState.setAnchorEl( anchorRef.current );
+		popupState.setAnchorEl(anchorRef.current);
 		popupState.open();
 	};
 
 	const clearValue = () => {
 		closeInfotip();
-		setValue( null );
+		setValue(null);
 	};
 
-	const showClearButton = !! value;
+	const showClearButton = !!value;
 
 	return (
-		<Box ref={ anchorRef }>
-			{ infotipVisible && <Backdrop open onClick={ closeInfotip } invisible /> }
+		<Box ref={anchorRef}>
+			{infotipVisible && <Backdrop open onClick={closeInfotip} invisible />}
 			<Infotip
 				color="warning"
 				placement="right-start"
-				open={ infotipVisible }
+				open={infotipVisible}
 				disableHoverListener
-				onClose={ closeInfotip }
+				onClose={closeInfotip}
 				content={
 					<MismatchVariableAlert
-						onClose={ closeInfotip }
-						onClear={ showClearButton ? clearValue : undefined }
-						triggerSelect={ triggerSelect }
+						onClose={closeInfotip}
+						onClear={showClearButton ? clearValue : undefined}
+						triggerSelect={triggerSelect}
 					/>
 				}
-				slotProps={ {
+				slotProps={{
 					popper: {
 						modifiers: [
 							{
 								name: 'offset',
-								options: { offset: [ 0, 24 ] },
+								options: { offset: [0, 24] },
 							},
 						],
 					},
-				} }
+				}}
 			>
 				<WarningVariableTag
-					label={ variable.label }
-					onClick={ toggleInfotip }
-					suffix={ __( 'changed', 'elementor' ) }
+					label={variable.label}
+					onClick={toggleInfotip}
+					suffix={__('changed', 'elementor')}
 				/>
 			</Infotip>
 
 			<Popover
 				disableScrollLock
-				anchorEl={ anchorRef.current }
-				anchorOrigin={ { vertical: 'bottom', horizontal: 'right' } }
-				transformOrigin={ { vertical: 'top', horizontal: 'right' } }
-				PaperProps={ {
+				anchorEl={anchorRef.current}
+				anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+				transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+				PaperProps={{
 					sx: { my: 1 },
-				} }
-				{ ...bindPopover( popupState ) }
+				}}
+				{...bindPopover(popupState)}
 			>
 				<VariableSelectionPopover
-					selectedVariable={ variable }
-					closePopover={ popupState.close }
-					propTypeKey={ variable.type }
+					selectedVariable={variable}
+					closePopover={popupState.close}
+					propTypeKey={variable.type}
 				/>
 			</Popover>
 		</Box>

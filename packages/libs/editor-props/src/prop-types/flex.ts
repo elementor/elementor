@@ -5,11 +5,11 @@ import { unknownChildrenSchema } from './utils';
 
 export const flexPropTypeUtil = createPropUtils(
 	'flex',
-	z.strictObject( {
+	z.strictObject({
 		flexGrow: unknownChildrenSchema,
 		flexShrink: unknownChildrenSchema,
 		flexBasis: unknownChildrenSchema,
-	} )
+	})
 );
 
-export type FlexPropValue = z.infer< typeof flexPropTypeUtil.schema >;
+export type FlexPropValue = z.infer<typeof flexPropTypeUtil.schema>;

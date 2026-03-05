@@ -5,7 +5,7 @@ import { unknownChildrenSchema } from '../../utils';
 
 export const intensityFilterPropTypeUtil = createPropUtils(
 	'intensity',
-	z.strictObject( {
+	z.strictObject({
 		size: unknownChildrenSchema,
-	} )
+	})
 );

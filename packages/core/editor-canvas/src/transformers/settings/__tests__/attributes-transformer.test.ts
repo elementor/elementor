@@ -1,7 +1,7 @@
 import { attributesTransformer } from '../attributes-transformer';
 
-describe( 'attributesTransformer', () => {
-	it( 'always returns empty string in core', () => {
+describe('attributesTransformer', () => {
+	it('always returns empty string in core', () => {
 		const result = attributesTransformer(
 			[
 				{ key: 'data-id', value: '123' },
@@ -10,6 +10,6 @@ describe( 'attributesTransformer', () => {
 			{ key: 'attributes' }
 		);
 
-		expect( result ).toBe( '' );
-	} );
-} );
+		expect(result).toBe('');
+	});
+});

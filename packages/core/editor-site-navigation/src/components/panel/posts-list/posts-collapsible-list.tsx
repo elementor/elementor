@@ -15,7 +15,7 @@ type Props = {
 	isOpenByDefault?: boolean;
 };
 
-export default function PostsCollapsibleList( { isOpenByDefault = false }: Props ) {
+export default function PostsCollapsibleList({ isOpenByDefault = false }: Props) {
 	const { type, editMode } = usePostListContext();
 	const {
 		data: { posts, total },
@@ -24,50 +24,50 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 		fetchNextPage,
 		hasNextPage,
 		isFetchingNextPage,
-	} = usePosts( type );
+	} = usePosts(type);
 	const { data: homepageId } = useHomepage();
 
-	if ( postsError ) {
+	if (postsError) {
 		return <ErrorState />;
 	}
 
-	if ( ! posts || postsLoading ) {
+	if (!posts || postsLoading) {
 		return (
-			<Box sx={ { px: 5 } }>
+			<Box sx={{ px: 5 }}>
 				<Box display="flex" justifyContent="flex-end" alignItems="center">
-					<Skeleton sx={ { my: 4 } } animation="wave" variant="rounded" width="110px" height="28px" />
+					<Skeleton sx={{ my: 4 }} animation="wave" variant="rounded" width="110px" height="28px" />
 				</Box>
 				<Box>
-					<Skeleton sx={ { my: 3 } } animation="wave" variant="rounded" width="100%" height="24px" />
-					<Skeleton sx={ { my: 3 } } animation="wave" variant="rounded" width="70%" height="24px" />
-					<Skeleton sx={ { my: 3 } } animation="wave" variant="rounded" width="70%" height="24px" />
-					<Skeleton sx={ { my: 3 } } animation="wave" variant="rounded" width="70%" height="24px" />
+					<Skeleton sx={{ my: 3 }} animation="wave" variant="rounded" width="100%" height="24px" />
+					<Skeleton sx={{ my: 3 }} animation="wave" variant="rounded" width="70%" height="24px" />
+					<Skeleton sx={{ my: 3 }} animation="wave" variant="rounded" width="70%" height="24px" />
+					<Skeleton sx={{ my: 3 }} animation="wave" variant="rounded" width="70%" height="24px" />
 				</Box>
 			</Box>
 		);
 	}
 
-	const label = `${ postTypesMap[ type ].labels.plural_name } (${ total.toString() })`;
+	const label = `${postTypesMap[type].labels.plural_name} (${total.toString()})`;
 
-	const mappedPosts = posts.map( ( post ) => {
-		if ( post.id === homepageId ) {
+	const mappedPosts = posts.map((post) => {
+		if (post.id === homepageId) {
 			return { ...post, isHome: true };
 		}
 
 		return post;
-	} );
+	});
 
-	const sortedPosts = mappedPosts.sort( ( a, b ) => {
-		if ( a.id === homepageId ) {
+	const sortedPosts = mappedPosts.sort((a, b) => {
+		if (a.id === homepageId) {
 			return -1;
 		}
 
-		if ( b.id === homepageId ) {
+		if (b.id === homepageId) {
 			return 1;
 		}
 
 		return 0;
-	} );
+	});
 
 	return (
 		<>
@@ -75,31 +75,31 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 				display="flex"
 				justifyContent="flex-end"
 				alignItems="center"
-				sx={ {
+				sx={{
 					py: 1,
 					px: 2,
-				} }
+				}}
 			>
 				<AddNewButton />
 			</Box>
 			<List dense>
-				<CollapsibleList label={ label } Icon={ PageTypeIcon } isOpenByDefault={ isOpenByDefault || false }>
-					{ sortedPosts.map( ( post ) => {
-						return <PostListItem key={ post.id } post={ post } />;
-					} ) }
-					{ [ 'duplicate', 'create' ].includes( editMode.mode ) && <PostListItem /> }
-					{ hasNextPage && (
+				<CollapsibleList label={label} Icon={PageTypeIcon} isOpenByDefault={isOpenByDefault || false}>
+					{sortedPosts.map((post) => {
+						return <PostListItem key={post.id} post={post} />;
+					})}
+					{['duplicate', 'create'].includes(editMode.mode) && <PostListItem />}
+					{hasNextPage && (
 						<Box
-							sx={ {
+							sx={{
 								display: 'flex',
 								justifyContent: 'center',
-							} }
+							}}
 						>
-							<Button onClick={ fetchNextPage } color="secondary">
-								{ isFetchingNextPage ? <CircularProgress /> : 'Load More' }
+							<Button onClick={fetchNextPage} color="secondary">
+								{isFetchingNextPage ? <CircularProgress /> : 'Load More'}
 							</Button>
 						</Box>
-					) }
+					)}
 				</CollapsibleList>
 			</List>
 		</>

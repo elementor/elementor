@@ -3,24 +3,24 @@ import { useMutation } from '@elementor/query';
 import { getConfig } from '../utils/get-config';
 import { withRetry } from '../utils/retry';
 
-async function installProRequest(): Promise< { success: boolean; message: string } > {
+async function installProRequest(): Promise<{ success: boolean; message: string }> {
 	const config = getConfig();
 
-	if ( ! config ) {
-		throw new Error( 'Onboarding config not found' );
+	if (!config) {
+		throw new Error('Onboarding config not found');
 	}
 
-	const response = await fetch( `${ config.restUrl }install-pro`, {
+	const response = await fetch(`${config.restUrl}install-pro`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
 			'X-WP-Nonce': config.nonce,
 		},
-	} );
+	});
 
-	if ( ! response.ok ) {
-		const error = await response.json().catch( () => null );
-		throw new Error( error?.message || 'Failed to install Elementor Pro' );
+	if (!response.ok) {
+		const error = await response.json().catch(() => null);
+		throw new Error(error?.message || 'Failed to install Elementor Pro');
 	}
 
 	const json = await response.json();
@@ -29,7 +29,7 @@ async function installProRequest(): Promise< { success: boolean; message: string
 }
 
 export function useInstallPro() {
-	return useMutation( {
-		mutationFn: () => withRetry( installProRequest ),
-	} );
+	return useMutation({
+		mutationFn: () => withRetry(installProRequest),
+	});
 }

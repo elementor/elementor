@@ -13,7 +13,7 @@ import { VariableEditableCell } from '../variable-editable-cell';
 import { VariableEditMenu, type VariableManagerMenuAction } from './variable-edit-menu';
 import { VariableTableCell } from './variable-table-cell';
 
-export type Row = ReturnType< typeof getVariableType > & {
+export type Row = ReturnType<typeof getVariableType> & {
 	id: string;
 	type: string;
 	name: string;
@@ -23,12 +23,12 @@ export const VariableRow = (
 	props: UnstableSortableItemRenderProps & {
 		row: Row;
 		variables: TVariablesList;
-		handleOnChange: ( variables: TVariablesList ) => void;
+		handleOnChange: (variables: TVariablesList) => void;
 		autoEditVariableId?: string;
 		onAutoEditComplete?: () => void;
-		onFieldError?: ( hasError: boolean ) => void;
-		menuActions: ( variableId: string ) => VariableManagerMenuAction[];
-		handleRowRef: ( id: string ) => ( ref: HTMLTableRowElement | null ) => void;
+		onFieldError?: (hasError: boolean) => void;
+		menuActions: (variableId: string) => VariableManagerMenuAction[];
+		handleRowRef: (id: string) => (ref: HTMLTableRowElement | null) => void;
 	}
 ) => {
 	const {
@@ -50,35 +50,35 @@ export const VariableRow = (
 		setTriggerRef,
 		isSorting,
 	} = props;
-	const promotionRef = useRef< VariablePromotionChipRef >( null );
-	const isDisabled = ! useQuotaPermissions( row.type ).canEdit();
+	const promotionRef = useRef<VariablePromotionChipRef>(null);
+	const isDisabled = !useQuotaPermissions(row.type).canEdit();
 
 	const showIndicationBefore = showDropIndication && dropPosition === 'before';
 	const showIndicationAfter = showDropIndication && dropPosition === 'after';
 
 	return (
 		<TableRow
-			{ ...itemProps }
-			ref={ itemProps.ref }
-			selected={ isDragged }
-			sx={ {
-				...( isDisabled && {
+			{...itemProps}
+			ref={itemProps.ref}
+			selected={isDragged}
+			sx={{
+				...(isDisabled && {
 					'& td, & th': {
 						color: 'text.disabled',
 					},
-				} ),
-				...( showIndicationBefore && {
+				}),
+				...(showIndicationBefore && {
 					'& td, & th': {
 						borderTop: '2px solid',
 						borderTopColor: 'primary.main',
 					},
-				} ),
-				...( showIndicationAfter && {
+				}),
+				...(showIndicationAfter && {
 					'& td, & th': {
 						borderBottom: '2px solid',
 						borderBottomColor: 'primary.main',
 					},
-				} ),
+				}),
 				'&:hover, &:focus-within': {
 					backgroundColor: 'action.hover',
 					'& [role="toolbar"], & [draggable]': {
@@ -88,121 +88,121 @@ export const VariableRow = (
 				'& [role="toolbar"], & [draggable]': {
 					opacity: 0,
 				},
-			} }
-			style={ { ...itemStyle, ...triggerStyle } }
-			onClick={ () => {
-				if ( isDisabled ) {
+			}}
+			style={{ ...itemStyle, ...triggerStyle }}
+			onClick={() => {
+				if (isDisabled) {
 					promotionRef.current?.toggle();
 				}
-			} }
+			}}
 		>
-			<VariableTableCell noPadding width={ 10 } maxWidth={ 10 }>
-				<IconButton size="small" ref={ setTriggerRef } { ...triggerProps } disabled={ isSorting } draggable>
+			<VariableTableCell noPadding width={10} maxWidth={10}>
+				<IconButton size="small" ref={setTriggerRef} {...triggerProps} disabled={isSorting} draggable>
 					<GripVerticalIcon fontSize="inherit" />
 				</IconButton>
 			</VariableTableCell>
 			<VariableTableCell>
 				<VariableEditableCell
-					initialValue={ row.name }
-					onChange={ ( value ) => {
-						if ( value !== row.name && ! isDisabled ) {
-							handleOnChange( {
+					initialValue={row.name}
+					onChange={(value) => {
+						if (value !== row.name && !isDisabled) {
+							handleOnChange({
 								...variables,
-								[ row.id ]: { ...variables[ row.id ], label: value },
-							} );
+								[row.id]: { ...variables[row.id], label: value },
+							});
 						}
-					} }
-					prefixElement={ createElement( row.icon, {
+					}}
+					prefixElement={createElement(row.icon, {
 						fontSize: 'inherit',
 						color: isDisabled ? 'disabled' : 'inherit',
-					} ) }
-					editableElement={ ( { value, onChange, onValidationChange, error } ) => (
+					})}
+					editableElement={({ value, onChange, onValidationChange, error }) => (
 						<LabelField
-							id={ 'variable-label-' + row.id }
+							id={'variable-label-' + row.id}
 							size="tiny"
-							value={ value }
-							onChange={ onChange }
-							onErrorChange={ ( errorMsg ) => {
-								onValidationChange?.( errorMsg );
-								onFieldError?.( !! errorMsg );
-							} }
-							error={ error }
+							value={value}
+							onChange={onChange}
+							onErrorChange={(errorMsg) => {
+								onValidationChange?.(errorMsg);
+								onFieldError?.(!!errorMsg);
+							}}
+							error={error}
 							focusOnShow
-							selectOnShow={ autoEditVariableId === row.id }
-							showWarningInfotip={ true }
-							variables={ variables }
+							selectOnShow={autoEditVariableId === row.id}
+							showWarningInfotip={true}
+							variables={variables}
 						/>
-					) }
-					autoEdit={ autoEditVariableId === row.id && ! isDisabled }
-					onRowRef={ handleRowRef( row.id ) }
-					onAutoEditComplete={ autoEditVariableId === row.id ? onAutoEditComplete : undefined }
+					)}
+					autoEdit={autoEditVariableId === row.id && !isDisabled}
+					onRowRef={handleRowRef(row.id)}
+					onAutoEditComplete={autoEditVariableId === row.id ? onAutoEditComplete : undefined}
 					fieldType="label"
-					disabled={ isDisabled }
+					disabled={isDisabled}
 				>
-					<EllipsisWithTooltip title={ row.name } sx={ { border: '4px solid transparent' } }>
-						{ row.name }
+					<EllipsisWithTooltip title={row.name} sx={{ border: '4px solid transparent' }}>
+						{row.name}
 					</EllipsisWithTooltip>
 				</VariableEditableCell>
 			</VariableTableCell>
 			<VariableTableCell>
 				<VariableEditableCell
-					initialValue={ row.value }
-					onChange={ ( value ) => {
-						if ( value !== row.value && ! isDisabled ) {
-							handleOnChange( {
+					initialValue={row.value}
+					onChange={(value) => {
+						if (value !== row.value && !isDisabled) {
+							handleOnChange({
 								...variables,
-								[ row.id ]: { ...variables[ row.id ], value },
-							} );
+								[row.id]: { ...variables[row.id], value },
+							});
 						}
-					} }
-					editableElement={ ( { value, onChange, onValidationChange, error } ) =>
-						row.valueField?.( {
+					}}
+					editableElement={({ value, onChange, onValidationChange, error }) =>
+						row.valueField?.({
 							value,
 							onChange,
-							onPropTypeKeyChange: ( type ) => {
-								if ( ! isDisabled ) {
-									handleOnChange( {
+							onPropTypeKeyChange: (type) => {
+								if (!isDisabled) {
+									handleOnChange({
 										...variables,
-										[ row.id ]: { ...variables[ row.id ], type },
-									} );
+										[row.id]: { ...variables[row.id], type },
+									});
 								}
 							},
 							propTypeKey: row.type,
-							onValidationChange: ( errorMsg ) => {
-								onValidationChange?.( errorMsg );
-								onFieldError?.( !! errorMsg );
+							onValidationChange: (errorMsg) => {
+								onValidationChange?.(errorMsg);
+								onFieldError?.(!!errorMsg);
 							},
 							error,
-						} ) ?? <></>
+						}) ?? <></>
 					}
-					onRowRef={ handleRowRef( row.id ) }
-					gap={ 0.25 }
+					onRowRef={handleRowRef(row.id)}
+					gap={0.25}
 					fieldType="value"
-					disabled={ isDisabled }
+					disabled={isDisabled}
 				>
-					{ row.startIcon && row.startIcon( { value: row.value } ) }
+					{row.startIcon && row.startIcon({ value: row.value })}
 					<EllipsisWithTooltip
-						title={ row.value }
-						sx={ {
+						title={row.value}
+						sx={{
 							border: '4px solid transparent',
 							lineHeight: '1',
 							pt: 0.25,
-						} }
+						}}
 					>
-						{ row.value }
+						{row.value}
 					</EllipsisWithTooltip>
 				</VariableEditableCell>
 			</VariableTableCell>
-			<VariableTableCell align="right" noPadding width={ 16 } maxWidth={ 16 } sx={ { paddingInlineEnd: 1 } }>
+			<VariableTableCell align="right" noPadding width={16} maxWidth={16} sx={{ paddingInlineEnd: 1 }}>
 				<Stack role="toolbar" direction="row" justifyContent="flex-end" alignItems="center">
-					{ isDisabled && (
+					{isDisabled && (
 						<VariablePromotionChip
-							variableType={ row.variableType }
-							upgradeUrl={ `https://go.elementor.com/renew-license-manager-${ row.variableType }-variable` }
-							ref={ promotionRef }
+							variableType={row.variableType}
+							upgradeUrl={`https://go.elementor.com/renew-license-manager-${row.variableType}-variable`}
+							ref={promotionRef}
 						/>
-					) }
-					<VariableEditMenu menuActions={ menuActions( row.id ) } disabled={ isSorting } itemId={ row.id } />
+					)}
+					<VariableEditMenu menuActions={menuActions(row.id)} disabled={isSorting} itemId={row.id} />
 				</Stack>
 			</VariableTableCell>
 		</TableRow>

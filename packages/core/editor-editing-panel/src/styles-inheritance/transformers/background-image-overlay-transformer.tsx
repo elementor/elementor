@@ -15,66 +15,66 @@ type Image = {
 	};
 };
 
-export const backgroundImageOverlayTransformer = createTransformer( ( value: Image ) => (
-	<Stack direction="row" gap={ 1 } alignItems="center">
-		<ItemIconImage value={ value } />
-		<ItemLabelImage value={ value } />
+export const backgroundImageOverlayTransformer = createTransformer((value: Image) => (
+	<Stack direction="row" gap={1} alignItems="center">
+		<ItemIconImage value={value} />
+		<ItemLabelImage value={value} />
 	</Stack>
-) );
+));
 
-const ItemIconImage = ( { value }: { value: Image } ) => {
-	const { imageUrl } = useImage( value );
+const ItemIconImage = ({ value }: { value: Image }) => {
+	const { imageUrl } = useImage(value);
 
 	return (
 		<CardMedia
-			image={ imageUrl }
-			sx={ ( theme: Theme ) => ( {
+			image={imageUrl}
+			sx={(theme: Theme) => ({
 				height: '1em',
 				width: '1em',
-				borderRadius: `${ theme.shape.borderRadius / 2 }px`,
-				outline: `1px solid ${ theme.palette.action.disabled }`,
+				borderRadius: `${theme.shape.borderRadius / 2}px`,
+				outline: `1px solid ${theme.palette.action.disabled}`,
 				flexShrink: 0,
-			} ) }
+			})}
 		/>
 	);
 };
 
-const ItemLabelImage = ( { value }: { value: Image } ) => {
-	const { imageTitle } = useImage( value );
+const ItemLabelImage = ({ value }: { value: Image }) => {
+	const { imageTitle } = useImage(value);
 
 	return (
-		<EllipsisWithTooltip title={ imageTitle }>
-			<span>{ imageTitle }</span>
+		<EllipsisWithTooltip title={imageTitle}>
+			<span>{imageTitle}</span>
 		</EllipsisWithTooltip>
 	);
 };
 
-const useImage = ( image: Image ) => {
+const useImage = (image: Image) => {
 	let imageTitle,
 		imageUrl: string | null = null;
 
 	const imageSrc = image?.image.src;
-	const { data: attachment } = useWpMediaAttachment( imageSrc.id || null );
+	const { data: attachment } = useWpMediaAttachment(imageSrc.id || null);
 
-	if ( imageSrc.id ) {
-		const imageFileTypeExtension = getFileExtensionFromFilename( attachment?.filename );
-		imageTitle = `${ attachment?.title }${ imageFileTypeExtension }` || null;
+	if (imageSrc.id) {
+		const imageFileTypeExtension = getFileExtensionFromFilename(attachment?.filename);
+		imageTitle = `${attachment?.title}${imageFileTypeExtension}` || null;
 		imageUrl = attachment?.url || null;
-	} else if ( imageSrc.url ) {
+	} else if (imageSrc.url) {
 		imageUrl = imageSrc.url;
-		imageTitle = imageUrl?.substring( imageUrl.lastIndexOf( '/' ) + 1 ) || null;
+		imageTitle = imageUrl?.substring(imageUrl.lastIndexOf('/') + 1) || null;
 	}
 
 	return { imageTitle, imageUrl };
 };
 
-const getFileExtensionFromFilename = ( filename?: string ) => {
-	if ( ! filename ) {
+const getFileExtensionFromFilename = (filename?: string) => {
+	if (!filename) {
 		return '';
 	}
 
 	// get the substring after the last . in the filename
-	const extension = filename.substring( filename.lastIndexOf( '.' ) + 1 );
+	const extension = filename.substring(filename.lastIndexOf('.') + 1);
 
-	return `.${ extension }`;
+	return `.${extension}`;
 };

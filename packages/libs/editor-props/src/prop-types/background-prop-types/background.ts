@@ -5,11 +5,11 @@ import { unknownChildrenSchema } from '../utils';
 
 export const backgroundPropTypeUtil = createPropUtils(
 	'background',
-	z.strictObject( {
+	z.strictObject({
 		color: unknownChildrenSchema,
 		clip: unknownChildrenSchema,
 		'background-overlay': unknownChildrenSchema,
-	} )
+	})
 );
 
-export type BackgroundPropValue = z.infer< typeof backgroundPropTypeUtil.schema >;
+export type BackgroundPropValue = z.infer<typeof backgroundPropTypeUtil.schema>;

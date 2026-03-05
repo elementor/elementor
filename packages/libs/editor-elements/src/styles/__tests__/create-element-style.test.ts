@@ -8,12 +8,12 @@ import { updateElementSettings } from '../../sync/update-element-settings';
 import { ELEMENT_STYLE_CHANGE_EVENT } from '../consts';
 import { createElementStyle } from '../create-element-style';
 
-jest.mock( '@elementor/editor-v1-adapters' );
-jest.mock( '../../sync/get-container' );
-jest.mock( '../../sync/update-element-settings' );
+jest.mock('@elementor/editor-v1-adapters');
+jest.mock('../../sync/get-container');
+jest.mock('../../sync/update-element-settings');
 
-describe( 'createElementStyle', () => {
-	it( 'should create a new style and add it to the element classes, and notify the changes', () => {
+describe('createElementStyle', () => {
+	it('should create a new style and add it to the element classes, and notify the changes', () => {
 		// Arrange.
 		const existingStyle: StyleDefinition = {
 			id: 'existing-style-id',
@@ -28,31 +28,31 @@ describe( 'createElementStyle', () => {
 			],
 		};
 
-		const element = createMockElement( {
+		const element = createMockElement({
 			model: {
 				id: 'test-element-id',
 				styles: {
-					[ existingStyle.id ]: existingStyle,
+					[existingStyle.id]: existingStyle,
 				},
 			},
 			settings: {
 				classes: {
 					$$type: 'classes',
-					value: [ existingStyle.id ],
+					value: [existingStyle.id],
 				},
 			},
-		} );
+		});
 
-		jest.mocked( getContainer ).mockImplementation( ( elementId ) => {
+		jest.mocked(getContainer).mockImplementation((elementId) => {
 			return elementId === 'test-element-id' ? element : null;
-		} );
+		});
 
 		const listener = jest.fn();
 
-		window.addEventListener( ELEMENT_STYLE_CHANGE_EVENT, listener );
+		window.addEventListener(ELEMENT_STYLE_CHANGE_EVENT, listener);
 
 		// Act.
-		const createdId = createElementStyle( {
+		const createdId = createElementStyle({
 			elementId: 'test-element-id',
 			meta: { breakpoint: null, state: null },
 			label: 'Test Style',
@@ -60,26 +60,26 @@ describe( 'createElementStyle', () => {
 			props: {
 				testProp: 'testValue',
 			},
-		} );
+		});
 
 		// Assert.
-		expect( createdId ).toMatch( /^e-test-element-id-[a-z0-9]+$/ );
+		expect(createdId).toMatch(/^e-test-element-id-[a-z0-9]+$/);
 
-		expect( updateElementSettings ).toHaveBeenNthCalledWith( 1, {
+		expect(updateElementSettings).toHaveBeenNthCalledWith(1, {
 			id: 'test-element-id',
 			props: {
 				classes: {
 					$$type: 'classes',
-					value: [ existingStyle.id, createdId ],
+					value: [existingStyle.id, createdId],
 				},
 			},
 			withHistory: false,
-		} );
+		});
 
-		expect( element.model.get( 'styles' ) ).toStrictEqual( {
-			[ existingStyle.id ]: existingStyle,
+		expect(element.model.get('styles')).toStrictEqual({
+			[existingStyle.id]: existingStyle,
 
-			[ createdId ]: {
+			[createdId]: {
 				id: createdId,
 				label: 'Test Style',
 				type: 'class',
@@ -93,19 +93,19 @@ describe( 'createElementStyle', () => {
 					},
 				],
 			},
-		} );
+		});
 
-		expect( listener ).toHaveBeenCalledTimes( 1 );
-		expect( runCommandSync ).toHaveBeenCalledWith(
+		expect(listener).toHaveBeenCalledTimes(1);
+		expect(runCommandSync).toHaveBeenCalledWith(
 			'document/save/set-is-modified',
 			{ status: true },
 			{ internal: true }
 		);
-	} );
+	});
 
-	it( 'should recreate a style with a user-passed id', () => {
+	it('should recreate a style with a user-passed id', () => {
 		// Arrange.
-		const element = createMockElement( {
+		const element = createMockElement({
 			model: {
 				widgetType: 'test-element',
 				id: 'test-element-id',
@@ -117,14 +117,14 @@ describe( 'createElementStyle', () => {
 					value: [],
 				},
 			},
-		} );
+		});
 
-		jest.mocked( getContainer ).mockImplementation( ( elementId ) => {
+		jest.mocked(getContainer).mockImplementation((elementId) => {
 			return elementId === 'test-element-id' ? element : null;
-		} );
+		});
 
 		// Act.
-		createElementStyle( {
+		createElementStyle({
 			styleId: 'test-id',
 			elementId: 'test-element-id',
 			meta: { breakpoint: null, state: null },
@@ -133,17 +133,17 @@ describe( 'createElementStyle', () => {
 			props: {
 				testProp: 'testValue',
 			},
-		} );
+		});
 
 		// Assert.
-		const createdId = Object.keys( element.model.get( 'styles' ) ?? {} )[ 0 ];
+		const createdId = Object.keys(element.model.get('styles') ?? {})[0];
 
-		expect( createdId ).toBe( 'test-id' );
-	} );
+		expect(createdId).toBe('test-id');
+	});
 
-	it( 'should create a new classes prop if it does not exist', () => {
+	it('should create a new classes prop if it does not exist', () => {
 		// Arrange.
-		const element = createMockElement( {
+		const element = createMockElement({
 			model: {
 				id: 'test-element-id',
 				styles: {},
@@ -151,14 +151,14 @@ describe( 'createElementStyle', () => {
 			settings: {
 				notClasses: 'no-classes-prop',
 			},
-		} );
+		});
 
-		jest.mocked( getContainer ).mockImplementation( ( elementId ) => {
+		jest.mocked(getContainer).mockImplementation((elementId) => {
 			return elementId === 'test-element-id' ? element : null;
-		} );
+		});
 
 		// Act.
-		createElementStyle( {
+		createElementStyle({
 			elementId: 'test-element-id',
 			meta: { breakpoint: null, state: null },
 			label: 'Test Style',
@@ -166,30 +166,30 @@ describe( 'createElementStyle', () => {
 			props: {
 				testProp: 'testValue',
 			},
-		} );
+		});
 
 		// Assert.
-		const createdId = Object.keys( element.model.get( 'styles' ) ?? {} )[ 0 ];
+		const createdId = Object.keys(element.model.get('styles') ?? {})[0];
 
-		expect( updateElementSettings ).toHaveBeenNthCalledWith( 1, {
+		expect(updateElementSettings).toHaveBeenNthCalledWith(1, {
 			id: 'test-element-id',
 			props: {
 				classes: {
 					$$type: 'classes',
-					value: [ createdId ],
+					value: [createdId],
 				},
 			},
 			withHistory: false,
-		} );
-	} );
+		});
+	});
 
-	it( 'should throw for non existing element', () => {
+	it('should throw for non existing element', () => {
 		// Arrange.
-		jest.mocked( getContainer ).mockReturnValue( null );
+		jest.mocked(getContainer).mockReturnValue(null);
 
 		// Act & Assert.
-		expect( () => {
-			createElementStyle( {
+		expect(() => {
+			createElementStyle({
 				elementId: 'test-element-id',
 				meta: { breakpoint: null, state: null },
 				label: 'Test Style',
@@ -197,31 +197,31 @@ describe( 'createElementStyle', () => {
 				props: {
 					testProp: 'testValue',
 				},
-			} );
-		} ).toThrow( 'Element not found.' );
-	} );
+			});
+		}).toThrow('Element not found.');
+	});
 
-	it( 'should save custom_css to model', () => {
+	it('should save custom_css to model', () => {
 		// Arrange.
-		const element = createMockElement( {
+		const element = createMockElement({
 			model: {
 				id: 'test-element-id',
 				styles: {},
 			},
 			settings: {},
-		} );
+		});
 
-		jest.mocked( getContainer ).mockImplementation( ( elementId ) => {
+		jest.mocked(getContainer).mockImplementation((elementId) => {
 			return elementId === 'test-element-id' ? element : null;
-		} );
-		jest.mocked( updateElementSettings ).mockImplementation( ( { props }: UpdateElementSettingsArgs ) => {
-			Object.keys( props ).forEach( ( key ) =>
-				element.model.set( key as keyof V1ElementModelProps, props[ key ] as never )
+		});
+		jest.mocked(updateElementSettings).mockImplementation(({ props }: UpdateElementSettingsArgs) => {
+			Object.keys(props).forEach((key) =>
+				element.model.set(key as keyof V1ElementModelProps, props[key] as never)
 			);
-		} );
+		});
 
 		// Act.
-		const createdId = createElementStyle( {
+		const createdId = createElementStyle({
 			elementId: 'test-element-id',
 			meta: { breakpoint: null, state: null },
 			label: 'Test Style',
@@ -230,11 +230,11 @@ describe( 'createElementStyle', () => {
 				testProp: 'testValue',
 			},
 			custom_css: { raw: 'color: red;' },
-		} );
+		});
 
 		// Assert.
-		expect( element.model.get( 'styles' ) ).toStrictEqual( {
-			[ createdId ]: {
+		expect(element.model.get('styles')).toStrictEqual({
+			[createdId]: {
 				id: createdId,
 				label: 'Test Style',
 				type: 'class',
@@ -248,6 +248,6 @@ describe( 'createElementStyle', () => {
 					},
 				],
 			},
-		} );
-	} );
-} );
+		});
+	});
+});

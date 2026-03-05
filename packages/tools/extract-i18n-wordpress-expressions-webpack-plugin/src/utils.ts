@@ -15,15 +15,15 @@ const TRANSLATIONS_REGEXPS = [
 	/\b_(?:_|n|nx|x)\(.*?,\s*(?<c>['"`])[\w-]+\k<c>\s*?\)/gs,
 ] as const;
 
-export function createStringsFilePath( path: string, suffix = '.strings.js' ) {
-	return path.replace( /(\.min)?\.js$/i, suffix );
+export function createStringsFilePath(path: string, suffix = '.strings.js') {
+	return path.replace(/(\.min)?\.js$/i, suffix);
 }
 
-export function getFilesPaths( pattern: string ) {
-	return glob( pattern, {
+export function getFilesPaths(pattern: string) {
+	return glob(pattern, {
 		ignore: {
-			ignored: ( p ) => ! /\.(js|ts|jsx|tsx)$/.test( p.name ),
-			childrenIgnored: ( p ) => p.isNamed( '__tests__' ) || p.isNamed( '__mocks__' ),
+			ignored: (p) => !/\.(js|ts|jsx|tsx)$/.test(p.name),
+			childrenIgnored: (p) => p.isNamed('__tests__') || p.isNamed('__mocks__'),
 		},
 
 		/**
@@ -36,38 +36,38 @@ export function getFilesPaths( pattern: string ) {
 		 * @see https://github.com/isaacs/node-glob/issues/212#issuecomment-1449062925
 		 */
 		windowsPathsNoEscape: true,
-	} );
+	});
 }
 
-export function getFilesContents( paths: string[] ) {
-	return Promise.all( paths.map( ( filePath ) => fs.promises.readFile( filePath, 'utf-8' ) ) );
+export function getFilesContents(paths: string[]) {
+	return Promise.all(paths.map((filePath) => fs.promises.readFile(filePath, 'utf-8')));
 }
 
-export function generateStringsFileContent( contents: string[] ) {
+export function generateStringsFileContent(contents: string[]) {
 	return (
 		contents
-			.map( ( content ) => extractExpressions( content ) )
+			.map((content) => extractExpressions(content))
 			.flat()
 			// Add a semicolon when needed.
-			.map( ( expr ) => `${ expr.value }${ expr.type === 'comment' ? '' : ';' }` )
+			.map((expr) => `${expr.value}${expr.type === 'comment' ? '' : ';'}`)
 			// Join all the expressions to a single string with line-breaks between them.
-			.join( '\n' )
+			.join('\n')
 	);
 }
 
-function extractExpressions( content: string ): TranslationCallExpression[] {
+function extractExpressions(content: string): TranslationCallExpression[] {
 	const expressions: TranslationCallExpression[] = [];
 
-	[ ...TRANSLATIONS_REGEXPS, ...COMMENTS_REGEXPS ].forEach( ( regexp ) => {
-		[ ...content.matchAll( regexp ) ].forEach( ( res ) => {
-			expressions.push( {
-				type: COMMENTS_REGEXPS.includes( regexp ) ? 'comment' : 'call-expression',
+	[...TRANSLATIONS_REGEXPS, ...COMMENTS_REGEXPS].forEach((regexp) => {
+		[...content.matchAll(regexp)].forEach((res) => {
+			expressions.push({
+				type: COMMENTS_REGEXPS.includes(regexp) ? 'comment' : 'call-expression',
 				index: res.index || 0,
-				value: res[ 0 ],
-			} );
-		} );
-	} );
+				value: res[0],
+			});
+		});
+	});
 
 	// Sort by the index it was found in the file based on the regexp (and not by the order it was added to the array).
-	return expressions.sort( ( a, b ) => a.index - b.index );
+	return expressions.sort((a, b) => a.index - b.index);
 }

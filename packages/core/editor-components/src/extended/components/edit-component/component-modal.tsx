@@ -11,37 +11,37 @@ type ModalProps = {
 	onClose: () => void;
 };
 
-export function ComponentModal( { topLevelElementDom, onClose }: ModalProps ) {
+export function ComponentModal({ topLevelElementDom, onClose }: ModalProps) {
 	const canvasDocument = useCanvasDocument();
 
-	useEffect( () => {
-		const handleEsc = ( event: KeyboardEvent ) => {
-			if ( event.key === 'Escape' ) {
+	useEffect(() => {
+		const handleEsc = (event: KeyboardEvent) => {
+			if (event.key === 'Escape') {
 				onClose();
 			}
 		};
 
-		canvasDocument?.body.addEventListener( 'keydown', handleEsc );
+		canvasDocument?.body.addEventListener('keydown', handleEsc);
 
 		return () => {
-			canvasDocument?.body.removeEventListener( 'keydown', handleEsc );
+			canvasDocument?.body.removeEventListener('keydown', handleEsc);
 		};
-	}, [ canvasDocument, onClose ] );
+	}, [canvasDocument, onClose]);
 
-	if ( ! canvasDocument?.body ) {
+	if (!canvasDocument?.body) {
 		return null;
 	}
 
 	return createPortal(
 		<>
 			<BlockEditPage />
-			<Backdrop canvas={ canvasDocument } element={ topLevelElementDom } onClose={ onClose } />
+			<Backdrop canvas={canvasDocument} element={topLevelElementDom} onClose={onClose} />
 		</>,
 		canvasDocument.body
 	);
 }
 
-function Backdrop( {
+function Backdrop({
 	canvas,
 	element,
 	onClose,
@@ -49,9 +49,9 @@ function Backdrop( {
 	canvas: HTMLDocument;
 	element: HTMLElement | null;
 	onClose: () => void;
-} ) {
-	const rect = useElementRect( element );
-	const clipPath = element ? getRectPath( rect, canvas.defaultView as Window ) : undefined;
+}) {
+	const rect = useElementRect(element);
+	const clipPath = element ? getRectPath(rect, canvas.defaultView as Window) : undefined;
 	const backdropStyle: CSSProperties = {
 		position: 'fixed',
 		top: 0,
@@ -65,8 +65,8 @@ function Backdrop( {
 		clipPath,
 	};
 
-	const handleKeyDown = ( event: React.KeyboardEvent ) => {
-		if ( event.key === 'Enter' || event.key === ' ' ) {
+	const handleKeyDown = (event: React.KeyboardEvent) => {
+		if (event.key === 'Enter' || event.key === ' ') {
 			event.preventDefault();
 			onClose();
 		}
@@ -74,34 +74,34 @@ function Backdrop( {
 
 	return (
 		<div
-			style={ backdropStyle }
-			onClick={ onClose }
-			onKeyDown={ handleKeyDown }
+			style={backdropStyle}
+			onClick={onClose}
+			onKeyDown={handleKeyDown}
 			role="button"
-			tabIndex={ 0 }
-			aria-label={ __( 'Exit component editing mode', 'elementor' ) }
+			tabIndex={0}
+			aria-label={__('Exit component editing mode', 'elementor')}
 		/>
 	);
 }
 
-function getRectPath( rect: DOMRect, viewport: Window ) {
+function getRectPath(rect: DOMRect, viewport: Window) {
 	const { x, y, width, height } = rect;
 	const { innerWidth: vw, innerHeight: vh } = viewport;
 
 	const path = `path(evenodd, 'M 0 0 
-		L ${ vw } 0
-		L ${ vw } ${ vh }
-		L 0 ${ vh }
+		L ${vw} 0
+		L ${vw} ${vh}
+		L 0 ${vh}
 		Z
-		M ${ x } ${ y }
-		L ${ x + width } ${ y }
-		L ${ x + width } ${ y + height }
-		L ${ x } ${ y + height }
-		L ${ x } ${ y }
+		M ${x} ${y}
+		L ${x + width} ${y}
+		L ${x + width} ${y + height}
+		L ${x} ${y + height}
+		L ${x} ${y}
     	Z'
 	)`;
 
-	return path.replace( /\s{2,}/g, ' ' );
+	return path.replace(/\s{2,}/g, ' ');
 }
 
 /**
@@ -129,5 +129,5 @@ function BlockEditPage() {
 	}
 	`;
 
-	return <style data-e-style-id="e-block-v3-document-handles-styles">{ blockV3DocumentHandlesStyles }</style>;
+	return <style data-e-style-id="e-block-v3-document-handles-styles">{blockV3DocumentHandlesStyles}</style>;
 }

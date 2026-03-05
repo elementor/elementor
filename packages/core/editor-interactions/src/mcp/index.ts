@@ -5,14 +5,14 @@ import { initInteractionsSchemaResource } from './resources/interactions-schema-
 import { initManageElementInteractionTool } from './tools/manage-element-interaction-tool';
 
 export const initMcpInteractions = () => {
-	const reg = getMCPByDomain( 'interactions', {
+	const reg = getMCPByDomain('interactions', {
 		instructions: `
 		MCP server for managing element interactions and animations. Use this to add, modify, or remove animations and motion effects triggered by user events such as page load or scroll-into-view.
 		** IMPORTANT **
 		Use the "interactions-schema" resource to get the schema of the interactions.
 		Actions:
 		- get: Read the current interactions on the element.
-		- add: Add a new interaction (max ${ MAX_INTERACTIONS_PER_ELEMENT } per element).
+		- add: Add a new interaction (max ${MAX_INTERACTIONS_PER_ELEMENT} per element).
 		- update: Update an existing interaction by its interactionId.
 		- delete: Remove a specific interaction by its interactionId.
 		- clear: Remove all interactions from the element.
@@ -66,9 +66,9 @@ export const initMcpInteractions = () => {
 			"action": "clear",
 		}
 		`,
-	} );
-	reg.waitForReady().then( () => {
-		initInteractionsSchemaResource( reg );
-		initManageElementInteractionTool( reg );
-	} );
+	});
+	reg.waitForReady().then(() => {
+		initInteractionsSchemaResource(reg);
+		initManageElementInteractionTool(reg);
+	});
 };

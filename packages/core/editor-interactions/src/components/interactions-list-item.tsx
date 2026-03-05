@@ -11,62 +11,53 @@ import { InteractionSettings } from './interaction-settings';
 
 type InteractionTabValue = 'details' | 'settings';
 
-export const InteractionsListItem = ( {
+export const InteractionsListItem = ({
 	index,
 	value: interaction,
 }: {
 	index: number;
 	value: InteractionItemPropValue;
-} ) => {
-	const { getTabsProps, getTabProps, getTabPanelProps } = useTabs< InteractionTabValue >( 'details' );
+}) => {
+	const { getTabsProps, getTabProps, getTabPanelProps } = useTabs<InteractionTabValue>('details');
 
 	const context = useInteractionItemContext();
 
 	const handleChange = useCallback(
-		( newInteractionValue: InteractionItemValue ) => {
-			context?.onInteractionChange( index, newInteractionValue );
+		(newInteractionValue: InteractionItemValue) => {
+			context?.onInteractionChange(index, newInteractionValue);
 		},
-		[ context, index ]
+		[context, index]
 	);
 
 	const handlePlayInteraction = useCallback(
-		( interactionId: string ) => {
-			context?.onPlayInteraction( interactionId );
+		(interactionId: string) => {
+			context?.onPlayInteraction(interactionId);
 		},
-		[ context ]
+		[context]
 	);
 
-	const interactionId = extractString( interaction.value.interaction_id );
+	const interactionId = extractString(interaction.value.interaction_id);
 
 	return (
 		<>
-			<Tabs
-				size="small"
-				variant="fullWidth"
-				aria-label={ __( 'Interaction', 'elementor' ) }
-				{ ...getTabsProps() }
-			>
-				<Tab label={ __( 'Details', 'elementor' ) } { ...getTabProps( 'details' ) } />
-				<Tab label={ __( 'Settings', 'elementor' ) } { ...getTabProps( 'settings' ) } />
+			<Tabs size="small" variant="fullWidth" aria-label={__('Interaction', 'elementor')} {...getTabsProps()}>
+				<Tab label={__('Details', 'elementor')} {...getTabProps('details')} />
+				<Tab label={__('Settings', 'elementor')} {...getTabProps('settings')} />
 			</Tabs>
 
 			<Divider />
 
-			<TabPanel sx={ { p: 0 } } { ...getTabPanelProps( 'details' ) }>
+			<TabPanel sx={{ p: 0 }} {...getTabPanelProps('details')}>
 				<InteractionDetails
-					key={ interactionId }
-					interaction={ interaction.value }
-					onChange={ handleChange }
-					onPlayInteraction={ handlePlayInteraction }
+					key={interactionId}
+					interaction={interaction.value}
+					onChange={handleChange}
+					onPlayInteraction={handlePlayInteraction}
 				/>
 			</TabPanel>
 
-			<TabPanel sx={ { p: 0 } } { ...getTabPanelProps( 'settings' ) }>
-				<InteractionSettings
-					key={ interactionId }
-					interaction={ interaction.value }
-					onChange={ handleChange }
-				/>
+			<TabPanel sx={{ p: 0 }} {...getTabPanelProps('settings')}>
+				<InteractionSettings key={interactionId} interaction={interaction.value} onChange={handleChange} />
 			</TabPanel>
 		</>
 	);

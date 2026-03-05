@@ -1,11 +1,11 @@
 import { type V1Document } from '../../types';
 
-export function makeDocumentsManager( documentsArray: V1Document[], current = 1, initial = current ) {
-	const documents = documentsArray.reduce( ( acc: Record< number, V1Document >, document ) => {
-		acc[ document.id ] = document;
+export function makeDocumentsManager(documentsArray: V1Document[], current = 1, initial = current) {
+	const documents = documentsArray.reduce((acc: Record<number, V1Document>, document) => {
+		acc[document.id] = document;
 
 		return acc;
-	}, {} );
+	}, {});
 
 	return {
 		documents,
@@ -16,7 +16,7 @@ export function makeDocumentsManager( documentsArray: V1Document[], current = 1,
 			return initial;
 		},
 		getCurrent() {
-			return this.documents[ this.getCurrentId() ];
+			return this.documents[this.getCurrentId()];
 		},
 		invalidateCache() {},
 	};

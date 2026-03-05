@@ -12,20 +12,20 @@ import { getStylesProviderThemeColor } from '../../utils/get-styles-provider-col
 import { type SnapshotPropValue } from '../types';
 import { getValueFromInheritanceChain } from '../utils';
 import { StylesInheritanceInfotip } from './styles-inheritance-infotip';
-export const StylesInheritanceIndicator = ( {
+export const StylesInheritanceIndicator = ({
 	customContext,
 }: {
 	customContext?: { path: string[]; propType: PropType };
-} ) => {
+}) => {
 	const context = useBoundProp();
 	const { path, propType } = customContext || context;
-	const inheritanceChain = useStylesInheritanceChain( path );
+	const inheritanceChain = useStylesInheritanceChain(path);
 
-	if ( ! path || ! inheritanceChain.length ) {
+	if (!path || !inheritanceChain.length) {
 		return null;
 	}
 
-	return <Indicator inheritanceChain={ inheritanceChain } path={ path } propType={ propType } />;
+	return <Indicator inheritanceChain={inheritanceChain} path={path} propType={propType} />;
 };
 
 type IndicatorProps = {
@@ -35,54 +35,54 @@ type IndicatorProps = {
 	isDisabled?: boolean;
 };
 
-const Indicator = ( { inheritanceChain, path, propType, isDisabled }: IndicatorProps ) => {
+const Indicator = ({ inheritanceChain, path, propType, isDisabled }: IndicatorProps) => {
 	const { id: currentStyleId, provider: currentStyleProvider, meta: currentStyleMeta } = useStyle();
 
 	const currentItem = currentStyleId
-		? getValueFromInheritanceChain( inheritanceChain, currentStyleId, currentStyleMeta )
+		? getValueFromInheritanceChain(inheritanceChain, currentStyleId, currentStyleMeta)
 		: null;
 
-	const hasValue = ! isEmpty( currentItem?.value );
+	const hasValue = !isEmpty(currentItem?.value);
 
-	const [ actualStyle ] = inheritanceChain;
+	const [actualStyle] = inheritanceChain;
 
-	if ( actualStyle.provider === ELEMENTS_BASE_STYLES_PROVIDER_KEY ) {
+	if (actualStyle.provider === ELEMENTS_BASE_STYLES_PROVIDER_KEY) {
 		return null;
 	}
 
 	const isFinalValue = currentItem === actualStyle;
 
-	const label = getLabel( { isFinalValue, hasValue } );
+	const label = getLabel({ isFinalValue, hasValue });
 
-	const styleIndicatorProps: ComponentProps< typeof StyleIndicator > = {
+	const styleIndicatorProps: ComponentProps<typeof StyleIndicator> = {
 		getColor:
 			isFinalValue && currentStyleProvider
-				? getStylesProviderThemeColor( currentStyleProvider.getKey() )
+				? getStylesProviderThemeColor(currentStyleProvider.getKey())
 				: undefined,
-		isOverridden: hasValue && ! isFinalValue ? true : undefined,
+		isOverridden: hasValue && !isFinalValue ? true : undefined,
 	};
 
 	return (
 		<StylesInheritanceInfotip
-			inheritanceChain={ inheritanceChain }
-			path={ path }
-			propType={ propType }
-			label={ label }
-			isDisabled={ isDisabled }
+			inheritanceChain={inheritanceChain}
+			path={path}
+			propType={propType}
+			label={label}
+			isDisabled={isDisabled}
 		>
-			<StyleIndicator { ...styleIndicatorProps } />
+			<StyleIndicator {...styleIndicatorProps} />
 		</StylesInheritanceInfotip>
 	);
 };
 
-const getLabel = ( { isFinalValue, hasValue }: { isFinalValue: boolean; hasValue: boolean } ) => {
-	if ( isFinalValue ) {
-		return __( 'This is the final value', 'elementor' );
+const getLabel = ({ isFinalValue, hasValue }: { isFinalValue: boolean; hasValue: boolean }) => {
+	if (isFinalValue) {
+		return __('This is the final value', 'elementor');
 	}
 
-	if ( hasValue ) {
-		return __( 'This value is overridden by another style', 'elementor' );
+	if (hasValue) {
+		return __('This value is overridden by another style', 'elementor');
 	}
 
-	return __( 'This has value from another style', 'elementor' );
+	return __('This has value from another style', 'elementor');
 };

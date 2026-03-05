@@ -8,39 +8,39 @@ import { StylesFieldLayout } from '../../styles-field-layout';
 
 type Decoration = 'none' | 'underline' | 'line-through' | 'overline';
 
-const TEXT_DECORATION_LABEL = __( 'Line decoration', 'elementor' );
+const TEXT_DECORATION_LABEL = __('Line decoration', 'elementor');
 
-const options: ToggleControlProps< Decoration >[ 'options' ] = [
+const options: ToggleControlProps<Decoration>['options'] = [
 	{
 		value: 'none',
-		label: __( 'None', 'elementor' ),
-		renderContent: ( { size } ) => <MinusIcon fontSize={ size } />,
+		label: __('None', 'elementor'),
+		renderContent: ({ size }) => <MinusIcon fontSize={size} />,
 		showTooltip: true,
 		exclusive: true,
 	},
 	{
 		value: 'underline',
-		label: __( 'Underline', 'elementor' ),
-		renderContent: ( { size } ) => <UnderlineIcon fontSize={ size } />,
+		label: __('Underline', 'elementor'),
+		renderContent: ({ size }) => <UnderlineIcon fontSize={size} />,
 		showTooltip: true,
 	},
 	{
 		value: 'line-through',
-		label: __( 'Line-through', 'elementor' ),
-		renderContent: ( { size } ) => <StrikethroughIcon fontSize={ size } />,
+		label: __('Line-through', 'elementor'),
+		renderContent: ({ size }) => <StrikethroughIcon fontSize={size} />,
 		showTooltip: true,
 	},
 	{
 		value: 'overline',
-		label: __( 'Overline', 'elementor' ),
-		renderContent: ( { size } ) => <OverlineIcon fontSize={ size } />,
+		label: __('Overline', 'elementor'),
+		renderContent: ({ size }) => <OverlineIcon fontSize={size} />,
 		showTooltip: true,
 	},
 ];
 export const TextDecorationField = () => (
-	<StylesField bind="text-decoration" propDisplayName={ TEXT_DECORATION_LABEL }>
-		<StylesFieldLayout label={ TEXT_DECORATION_LABEL }>
-			<ToggleControl options={ options } exclusive={ false } />
+	<StylesField bind="text-decoration" propDisplayName={TEXT_DECORATION_LABEL}>
+		<StylesFieldLayout label={TEXT_DECORATION_LABEL}>
+			<ToggleControl options={options} exclusive={false} />
 		</StylesFieldLayout>
 	</StylesField>
 );

@@ -363,7 +363,7 @@ const TemplateLibraryManager = function() {
 							name: 'undo_bulk',
 							text: __( 'Undo', 'elementor' ),
 							callback: () => {
-								self.onUndoDelete( );
+								self.onUndoDelete();
 							},
 						},
 					] : null;
@@ -1010,7 +1010,7 @@ const TemplateLibraryManager = function() {
 				if ( onUpdate ) {
 					onUpdate();
 				}
-			} ).finally( ( ) => {
+			} ).finally( () => {
 				isLoading = false;
 			} );
 		};

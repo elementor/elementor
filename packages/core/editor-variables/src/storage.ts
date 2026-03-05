@@ -8,7 +8,7 @@ export type TVariable = {
 	sync_to_v3?: boolean;
 };
 
-export type TVariablesList = Record< string, TVariable >;
+export type TVariablesList = Record<string, TVariable>;
 
 const STORAGE_KEY = 'elementor-global-variables';
 const STORAGE_WATERMARK_KEY = 'elementor-global-variables-watermark';
@@ -23,7 +23,7 @@ export class Storage {
 	};
 
 	notifyChange() {
-		window.dispatchEvent( new Event( 'variables:updated' ) );
+		window.dispatchEvent(new Event('variables:updated'));
 	}
 
 	constructor() {
@@ -34,51 +34,51 @@ export class Storage {
 	}
 
 	load() {
-		this.state.watermark = parseInt( localStorage.getItem( STORAGE_WATERMARK_KEY ) || '-1' );
-		this.state.variables = JSON.parse( localStorage.getItem( STORAGE_KEY ) || '{}' ) as TVariablesList;
+		this.state.watermark = parseInt(localStorage.getItem(STORAGE_WATERMARK_KEY) || '-1');
+		this.state.variables = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}') as TVariablesList;
 		return this.state.variables;
 	}
 
-	fill( variables: TVariablesList, watermark: number ) {
+	fill(variables: TVariablesList, watermark: number) {
 		this.state.variables = {};
-		if ( variables && Object.keys( variables ).length ) {
+		if (variables && Object.keys(variables).length) {
 			this.state.variables = variables;
 		}
 
 		this.state.watermark = watermark;
 
-		localStorage.setItem( STORAGE_WATERMARK_KEY, this.state.watermark.toString() );
-		localStorage.setItem( STORAGE_KEY, JSON.stringify( this.state.variables ) );
+		localStorage.setItem(STORAGE_WATERMARK_KEY, this.state.watermark.toString());
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(this.state.variables));
 		this.notifyChange();
 	}
 
-	add( id: string, variable: TVariable ) {
+	add(id: string, variable: TVariable) {
 		this.load();
-		this.state.variables[ id ] = variable;
-		localStorage.setItem( STORAGE_KEY, JSON.stringify( this.state.variables ) );
+		this.state.variables[id] = variable;
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(this.state.variables));
 		this.notifyChange();
 	}
 
-	update( id: string, variable: TVariable ) {
+	update(id: string, variable: TVariable) {
 		this.load();
-		this.state.variables[ id ] = variable;
-		localStorage.setItem( STORAGE_KEY, JSON.stringify( this.state.variables ) );
+		this.state.variables[id] = variable;
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(this.state.variables));
 		this.notifyChange();
 	}
 
-	watermark( watermark: number ) {
+	watermark(watermark: number) {
 		this.state.watermark = watermark;
-		localStorage.setItem( STORAGE_WATERMARK_KEY, this.state.watermark.toString() );
+		localStorage.setItem(STORAGE_WATERMARK_KEY, this.state.watermark.toString());
 	}
 
-	watermarkDiff( operation: string, newWatermark: number ) {
+	watermarkDiff(operation: string, newWatermark: number) {
 		const diff = newWatermark - this.state.watermark;
 
-		if ( OP_RW === operation ) {
+		if (OP_RW === operation) {
 			return 1 !== diff;
 		}
 
-		if ( OP_RO === operation ) {
+		if (OP_RO === operation) {
 			return 0 !== diff;
 		}
 

@@ -6,21 +6,21 @@ type VariableEventData = {
 	action: 'open' | 'add' | 'connect' | 'save';
 };
 
-export const trackVariableEvent = ( { varType, controlPath, action }: VariableEventData ) => {
+export const trackVariableEvent = ({ varType, controlPath, action }: VariableEventData) => {
 	const { dispatchEvent, config } = getMixpanel();
-	if ( ! config?.names?.variables?.[ action ] ) {
+	if (!config?.names?.variables?.[action]) {
 		return;
 	}
 
-	const name = config.names.variables[ action ];
-	dispatchEvent?.( name, {
+	const name = config.names.variables[action];
+	dispatchEvent?.(name, {
 		location: config?.locations?.variables || '',
 		secondaryLocation: config?.secondaryLocations?.variablesPopover || '',
 		trigger: config?.triggers?.click || '',
 		var_type: varType,
 		control_path: controlPath,
 		action_type: name,
-	} );
+	});
 };
 
 type VariablesManagerEventData = {
@@ -29,26 +29,26 @@ type VariablesManagerEventData = {
 	controlPath?: string;
 };
 
-export const trackVariablesManagerEvent = ( { action, varType, controlPath }: VariablesManagerEventData ) => {
+export const trackVariablesManagerEvent = ({ action, varType, controlPath }: VariablesManagerEventData) => {
 	const { dispatchEvent, config } = getMixpanel();
-	if ( ! config?.names?.variables?.[ action ] ) {
+	if (!config?.names?.variables?.[action]) {
 		return;
 	}
 
-	const name = config.names.variables[ action ];
-	const eventData: Record< string, string > = {
+	const name = config.names.variables[action];
+	const eventData: Record<string, string> = {
 		location: config?.locations?.variablesManager || '',
 		trigger: config?.triggers?.click || '',
 		action_type: name,
 	};
 
-	if ( varType ) {
+	if (varType) {
 		eventData.var_type = varType;
 	}
 
-	if ( controlPath ) {
+	if (controlPath) {
 		eventData.style_control_path = controlPath;
 	}
 
-	dispatchEvent?.( name, eventData );
+	dispatchEvent?.(name, eventData);
 };

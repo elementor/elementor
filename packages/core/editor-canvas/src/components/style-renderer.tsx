@@ -16,48 +16,48 @@ export function StyleRenderer() {
 	const styleItems = useStyleItems();
 	const linksAttrs = useDocumentsCssLinks();
 
-	if ( ! container ) {
+	if (!container) {
 		return null;
 	}
 
 	return (
-		<Portal container={ container }>
-			{ filterUniqueStyleDefinitions( styleItems ).map( ( item ) => (
-				<style key={ `${ item.id }-${ item.breakpoint }-${ item.state ?? 'normal' }` }>{ item.value }</style>
-			) ) }
-			{ linksAttrs.map( ( attrs ) => (
-				<link { ...attrs } key={ attrs.id } />
-			) ) }
+		<Portal container={container}>
+			{filterUniqueStyleDefinitions(styleItems).map((item) => (
+				<style key={`${item.id}-${item.breakpoint}-${item.state ?? 'normal'}`}>{item.value}</style>
+			))}
+			{linksAttrs.map((attrs) => (
+				<link {...attrs} key={attrs.id} />
+			))}
 		</Portal>
 	);
 }
 
 function usePortalContainer() {
-	return useListenTo( commandEndEvent( 'editor/documents/attach-preview' ), () => getCanvasIframeDocument()?.head );
+	return useListenTo(commandEndEvent('editor/documents/attach-preview'), () => getCanvasIframeDocument()?.head);
 }
 
 // we load local styles also from components, which are handled differently
 // to avoid having "Encountered two children with the same key" - adding this filtering to avoid rendering the same style twice
-function filterUniqueStyleDefinitions( styleItems: StyleItem[] ) {
-	const seen = new Map< string, StyleItem[] >();
+function filterUniqueStyleDefinitions(styleItems: StyleItem[]) {
+	const seen = new Map<string, StyleItem[]>();
 
-	return styleItems.filter( ( style ) => {
-		const existingStyle = seen.get( style.id );
+	return styleItems.filter((style) => {
+		const existingStyle = seen.get(style.id);
 
-		if ( existingStyle ) {
+		if (existingStyle) {
 			const existingStyleVariant = existingStyle.find(
-				( s ) => s.breakpoint === style.breakpoint && s.state === style.state
+				(s) => s.breakpoint === style.breakpoint && s.state === style.state
 			);
 
-			if ( existingStyleVariant ) {
+			if (existingStyleVariant) {
 				return false;
 			}
 
-			existingStyle.push( style );
+			existingStyle.push(style);
 			return true;
 		}
 
-		seen.set( style.id, [ style ] );
+		seen.set(style.id, [style]);
 		return true;
-	} );
+	});
 }

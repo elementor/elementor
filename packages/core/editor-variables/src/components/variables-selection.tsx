@@ -23,213 +23,209 @@ import { NoSearchResults } from './ui/no-search-results';
 import { VariablesStyledMenuList } from './ui/styled-menu-list';
 
 const SIZE = 'tiny';
-const CREATE_LABEL = __( 'Create variable', 'elementor' );
-const MANAGER_LABEL = __( 'Variables Manager', 'elementor' );
+const CREATE_LABEL = __('Create variable', 'elementor');
+const MANAGER_LABEL = __('Variables Manager', 'elementor');
 
-const getProUpgradeUrl = ( variableType: string ) =>
-	`https://go.elementor.com/renew-license-panel-${ variableType }-variable`;
+const getProUpgradeUrl = (variableType: string) =>
+	`https://go.elementor.com/renew-license-panel-${variableType}-variable`;
 
 type Props = {
 	closePopover: () => void;
 	onAdd?: () => void;
-	onEdit?: ( key: string ) => void;
+	onEdit?: (key: string) => void;
 	onSettings?: () => void;
 	disabled?: boolean;
 };
 
-export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, disabled = false }: Props ) => {
+export const VariablesSelection = ({ closePopover, onAdd, onEdit, onSettings, disabled = false }: Props) => {
 	const { icon: VariableIcon, startIcon, variableType, propTypeUtil, emptyState } = useVariableType();
 
 	const { value: variable, setValue: setVariable, path } = useVariableBoundProp();
-	const [ searchValue, setSearchValue ] = useState( '' );
+	const [searchValue, setSearchValue] = useState('');
 
 	const {
 		list: variables,
 		hasMatches: hasSearchResults,
 		isSourceNotEmpty: hasVariables,
 		hasNoCompatibleVariables,
-	} = useFilteredVariables( searchValue, propTypeUtil.key );
+	} = useFilteredVariables(searchValue, propTypeUtil.key);
 
-	const handleSetVariable = ( key: string ) => {
-		setVariable( key );
-		trackVariableEvent( {
+	const handleSetVariable = (key: string) => {
+		setVariable(key);
+		trackVariableEvent({
 			varType: variableType,
-			controlPath: path.join( '.' ),
+			controlPath: path.join('.'),
 			action: 'connect',
-		} );
+		});
 		closePopover();
 	};
 
 	const onAddAndTrack = () => {
 		onAdd?.();
-		trackVariableEvent( {
+		trackVariableEvent({
 			varType: variableType,
-			controlPath: path.join( '.' ),
+			controlPath: path.join('.'),
 			action: 'add',
-		} );
+		});
 	};
 
 	const actions = [];
 
-	if ( onAdd ) {
+	if (onAdd) {
 		actions.push(
-			<Tooltip key="add" placement="top" title={ CREATE_LABEL }>
+			<Tooltip key="add" placement="top" title={CREATE_LABEL}>
 				<span>
 					<IconButton
 						id="add-variable-button"
-						size={ SIZE }
-						onClick={ onAddAndTrack }
-						aria-label={ CREATE_LABEL }
-						disabled={ disabled }
+						size={SIZE}
+						onClick={onAddAndTrack}
+						aria-label={CREATE_LABEL}
+						disabled={disabled}
 					>
-						<PlusIcon fontSize={ SIZE } />
+						<PlusIcon fontSize={SIZE} />
 					</IconButton>
 				</span>
 			</Tooltip>
 		);
 	}
 
-	if ( onSettings ) {
+	if (onSettings) {
 		const handleOpenManager = () => {
 			onSettings();
-			trackVariablesManagerEvent( {
+			trackVariablesManagerEvent({
 				action: 'openManager',
 				varType: variableType,
-				controlPath: path.join( '.' ),
-			} );
+				controlPath: path.join('.'),
+			});
 		};
 
 		actions.push(
-			<Tooltip key="settings" placement="top" title={ MANAGER_LABEL }>
+			<Tooltip key="settings" placement="top" title={MANAGER_LABEL}>
 				<IconButton
 					id="variables-manager-button"
-					size={ SIZE }
-					onClick={ handleOpenManager }
-					aria-label={ MANAGER_LABEL }
+					size={SIZE}
+					onClick={handleOpenManager}
+					aria-label={MANAGER_LABEL}
 				>
-					<SettingsIcon fontSize={ SIZE } />
+					<SettingsIcon fontSize={SIZE} />
 				</IconButton>
 			</Tooltip>
 		);
 	}
 
-	const StartIcon = startIcon || ( () => <VariableIcon fontSize={ SIZE } /> );
+	const StartIcon = startIcon || (() => <VariableIcon fontSize={SIZE} />);
 
-	const items: ExtendedVirtualizedItem[] = variables.map( ( { value, label, key } ) => ( {
+	const items: ExtendedVirtualizedItem[] = variables.map(({ value, label, key }) => ({
 		type: 'item' as const,
 		value: key,
 		label,
-		icon: <StartIcon value={ value } />,
+		icon: <StartIcon value={value} />,
 		secondaryText: value,
-		onEdit: onEdit ? () => onEdit?.( key ) : undefined,
-	} ) );
+		onEdit: onEdit ? () => onEdit?.(key) : undefined,
+	}));
 
-	const handleSearch = ( search: string ) => {
-		setSearchValue( search );
+	const handleSearch = (search: string) => {
+		setSearchValue(search);
 	};
 
 	const handleClearSearch = () => {
-		setSearchValue( '' );
+		setSearchValue('');
 	};
 
 	return (
 		<SectionPopoverBody>
 			<PopoverHeader
-				title={ __( 'Variables', 'elementor' ) }
-				icon={ <ColorFilterIcon fontSize={ SIZE } /> }
-				onClose={ closePopover }
-				actions={ actions }
+				title={__('Variables', 'elementor')}
+				icon={<ColorFilterIcon fontSize={SIZE} />}
+				onClose={closePopover}
+				actions={actions}
 			/>
 
-			{ hasVariables && (
-				<SearchField
-					value={ searchValue }
-					onSearch={ handleSearch }
-					placeholder={ __( 'Search', 'elementor' ) }
-				/>
-			) }
+			{hasVariables && (
+				<SearchField value={searchValue} onSearch={handleSearch} placeholder={__('Search', 'elementor')} />
+			)}
 
 			<Divider />
 
-			{ hasVariables && hasSearchResults && (
+			{hasVariables && hasSearchResults && (
 				<>
 					<PopoverMenuList
-						items={ items }
-						onSelect={ disabled ? () => {} : handleSetVariable }
-						onClose={ () => {} }
-						selectedValue={ variable }
-						data-testid={ `${ variableType }-variables-list` }
-						menuListTemplate={ ( props ) => <VariablesStyledMenuList { ...props } disabled={ disabled } /> }
-						menuItemContentTemplate={ ( item: VirtualizedItem< 'item', string > ) => (
-							<MenuItemContent item={ item } disabled={ disabled } />
-						) }
+						items={items}
+						onSelect={disabled ? () => {} : handleSetVariable}
+						onClose={() => {}}
+						selectedValue={variable}
+						data-testid={`${variableType}-variables-list`}
+						menuListTemplate={(props) => <VariablesStyledMenuList {...props} disabled={disabled} />}
+						menuItemContentTemplate={(item: VirtualizedItem<'item', string>) => (
+							<MenuItemContent item={item} disabled={disabled} />
+						)}
 					/>
-					{ disabled && (
+					{disabled && (
 						<PromotionAlert
-							message={ sprintf(
+							message={sprintf(
 								/* translators: %s: Variable Type. */
-								__( 'Upgrade to continue creating and editing %s variables.', 'elementor' ),
+								__('Upgrade to continue creating and editing %s variables.', 'elementor'),
 								variableType
-							) }
-							upgradeUrl={ getProUpgradeUrl( variableType ) }
+							)}
+							upgradeUrl={getProUpgradeUrl(variableType)}
 						/>
-					) }
+					)}
 				</>
-			) }
+			)}
 
-			{ ! hasSearchResults && hasVariables && (
+			{!hasSearchResults && hasVariables && (
 				<NoSearchResults
-					searchValue={ searchValue }
-					onClear={ handleClearSearch }
-					icon={ <VariableIcon fontSize="large" /> }
+					searchValue={searchValue}
+					onClear={handleClearSearch}
+					icon={<VariableIcon fontSize="large" />}
 				/>
-			) }
+			)}
 
-			{ disabled && ! hasVariables && (
+			{disabled && !hasVariables && (
 				<EmptyState
-					title={ sprintf(
+					title={sprintf(
 						/* translators: %s: Variable Type. */
-						__( 'No %s variables yet', 'elementor' ),
+						__('No %s variables yet', 'elementor'),
 						variableType
-					) }
-					message={ sprintf(
+					)}
+					message={sprintf(
 						/* translators: %s: Variable Type. */
-						__( 'Upgrade to create %s variables and maintain consistent element sizing.', 'elementor' ),
+						__('Upgrade to create %s variables and maintain consistent element sizing.', 'elementor'),
 						variableType
-					) }
-					icon={ <VariableIcon fontSize="large" /> }
+					)}
+					icon={<VariableIcon fontSize="large" />}
 				>
-					{ emptyState }
+					{emptyState}
 				</EmptyState>
-			) }
+			)}
 
-			{ ! hasVariables && ! hasNoCompatibleVariables && ! disabled && (
+			{!hasVariables && !hasNoCompatibleVariables && !disabled && (
 				<EmptyState
-					title={ sprintf(
+					title={sprintf(
 						/* translators: %s: Variable Type. */
-						__( 'Create your first %s variable', 'elementor' ),
+						__('Create your first %s variable', 'elementor'),
 						variableType
-					) }
-					message={ __(
+					)}
+					message={__(
 						'Variables are saved attributes that you can apply anywhere on your site.',
 						'elementor'
-					) }
-					icon={ <VariableIcon fontSize="large" /> }
-					onAdd={ onAdd }
+					)}
+					icon={<VariableIcon fontSize="large" />}
+					onAdd={onAdd}
 				/>
-			) }
+			)}
 
-			{ hasNoCompatibleVariables && ! disabled && (
+			{hasNoCompatibleVariables && !disabled && (
 				<EmptyState
-					title={ __( 'No compatible variables', 'elementor' ) }
-					message={ __(
+					title={__('No compatible variables', 'elementor')}
+					message={__(
 						'Looks like none of your variables work with this control. Create a new variable to use it here.',
 						'elementor'
-					) }
-					icon={ <VariableIcon fontSize="large" /> }
-					onAdd={ onAdd }
+					)}
+					icon={<VariableIcon fontSize="large" />}
+					onAdd={onAdd}
 				/>
-			) }
+			)}
 		</SectionPopoverBody>
 	);
 };

@@ -7,10 +7,10 @@ import { renderHook } from '@testing-library/react';
 
 import useDocumentSaveDraftProps from '../use-document-save-draft-props';
 
-jest.mock( '@elementor/editor-documents', () => ( {
+jest.mock('@elementor/editor-documents', () => ({
 	__useActiveDocument: jest.fn(),
 	__useActiveDocumentActions: jest.fn(),
-} ) );
+}));
 
 const documentActions = {
 	save: jest.fn(),
@@ -19,51 +19,51 @@ const documentActions = {
 	copyAndShare: jest.fn(),
 };
 
-describe( '@elementor/editor-app-bar - useDocumentSaveDraftProps', () => {
-	it( 'should save a draft of the current document', () => {
+describe('@elementor/editor-app-bar - useDocumentSaveDraftProps', () => {
+	it('should save a draft of the current document', () => {
 		// Arrange.
-		jest.mocked( useActiveDocumentActions ).mockReturnValue( documentActions );
-		jest.mocked( useActiveDocument ).mockReturnValue( createMockDocument() );
+		jest.mocked(useActiveDocumentActions).mockReturnValue(documentActions);
+		jest.mocked(useActiveDocument).mockReturnValue(createMockDocument());
 
 		// Act.
-		const { result } = renderHook( () => useDocumentSaveDraftProps() );
+		const { result } = renderHook(() => useDocumentSaveDraftProps());
 		result.current.onClick?.();
 
 		// Assert.
-		expect( documentActions.saveDraft ).toBeCalledTimes( 1 );
-	} );
+		expect(documentActions.saveDraft).toBeCalledTimes(1);
+	});
 
-	it.each( [
+	it.each([
 		{
 			condition: 'there is no document',
 			document: null,
 		},
 		{
 			condition: 'a draft is being saved',
-			document: createMockDocument( {
+			document: createMockDocument({
 				isSavingDraft: true,
-			} ),
+			}),
 		},
 		{
 			condition: 'the document is being saved',
-			document: createMockDocument( {
+			document: createMockDocument({
 				isSaving: true,
-			} ),
+			}),
 		},
 		{
 			condition: 'the document is pristine',
-			document: createMockDocument( {
+			document: createMockDocument({
 				isDirty: false,
-			} ),
+			}),
 		},
-	] )( 'should be disabled when $condition', ( { document } ) => {
+	])('should be disabled when $condition', ({ document }) => {
 		// Arrange.
-		jest.mocked( useActiveDocument ).mockReturnValue( document );
+		jest.mocked(useActiveDocument).mockReturnValue(document);
 
 		// Act.
-		const { result } = renderHook( () => useDocumentSaveDraftProps() );
+		const { result } = renderHook(() => useDocumentSaveDraftProps());
 
 		// Assert.
-		expect( result.current.disabled ).toBe( true );
-	} );
-} );
+		expect(result.current.disabled).toBe(true);
+	});
+});

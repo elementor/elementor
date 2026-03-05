@@ -6,17 +6,17 @@ import { type Editor } from '@tiptap/react';
 
 import { InlineEditorToolbar } from '../inline-editor-toolbar';
 
-jest.mock( '@elementor/editor-elements', () => ( {
+jest.mock('@elementor/editor-elements', () => ({
 	getContainer: jest.fn(),
 	getElementSetting: jest.fn(),
-} ) );
+}));
 
 type MockEditorOptions = {
 	activeFormats?: string[];
 	linkAttributes?: { href?: string; target?: string };
 };
 
-const createMockEditor = ( options: MockEditorOptions = {} ): Editor => {
+const createMockEditor = (options: MockEditorOptions = {}): Editor => {
 	const { activeFormats = [], linkAttributes = {} } = options;
 
 	const mockChain = {
@@ -35,208 +35,208 @@ const createMockEditor = ( options: MockEditorOptions = {} ): Editor => {
 	};
 
 	return {
-		chain: jest.fn().mockReturnValue( mockChain ),
-		isActive: jest.fn( ( format: string ) => activeFormats.includes( format ) ),
-		getAttributes: jest.fn( () => linkAttributes ),
+		chain: jest.fn().mockReturnValue(mockChain),
+		isActive: jest.fn((format: string) => activeFormats.includes(format)),
+		getAttributes: jest.fn(() => linkAttributes),
 		on: jest.fn(),
 		off: jest.fn(),
 	} as unknown as Editor;
 };
 
-describe( 'InlineEditorToolbar', () => {
-	beforeEach( () => {
-		jest.mocked( getContainer ).mockReturnValue( null );
-		jest.mocked( getElementSetting ).mockReturnValue( null );
-	} );
+describe('InlineEditorToolbar', () => {
+	beforeEach(() => {
+		jest.mocked(getContainer).mockReturnValue(null);
+		jest.mocked(getElementSetting).mockReturnValue(null);
+	});
 
-	it( 'should render all toolbar buttons', () => {
+	it('should render all toolbar buttons', () => {
 		// Arrange.
 		const mockEditor = createMockEditor();
 
 		// Act.
-		renderWithTheme( <InlineEditorToolbar editor={ mockEditor } /> );
+		renderWithTheme(<InlineEditorToolbar editor={mockEditor} />);
 
 		// Assert.
-		expect( screen.getByLabelText( 'Clear' ) ).toBeInTheDocument();
-		expect( screen.getByLabelText( 'Bold' ) ).toBeInTheDocument();
-		expect( screen.getByLabelText( 'Italic' ) ).toBeInTheDocument();
-		expect( screen.getByLabelText( 'Underline' ) ).toBeInTheDocument();
-		expect( screen.getByLabelText( 'Strikethrough' ) ).toBeInTheDocument();
-		expect( screen.getByLabelText( 'Superscript' ) ).toBeInTheDocument();
-		expect( screen.getByLabelText( 'Subscript' ) ).toBeInTheDocument();
-		expect( screen.getByLabelText( 'Link' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByLabelText('Clear')).toBeInTheDocument();
+		expect(screen.getByLabelText('Bold')).toBeInTheDocument();
+		expect(screen.getByLabelText('Italic')).toBeInTheDocument();
+		expect(screen.getByLabelText('Underline')).toBeInTheDocument();
+		expect(screen.getByLabelText('Strikethrough')).toBeInTheDocument();
+		expect(screen.getByLabelText('Superscript')).toBeInTheDocument();
+		expect(screen.getByLabelText('Subscript')).toBeInTheDocument();
+		expect(screen.getByLabelText('Link')).toBeInTheDocument();
+	});
 
-	it( 'should highlight active formats', () => {
+	it('should highlight active formats', () => {
 		// Arrange.
-		const mockEditor = createMockEditor( { activeFormats: [ 'bold', 'italic' ] } );
+		const mockEditor = createMockEditor({ activeFormats: ['bold', 'italic'] });
 
 		// Act.
-		renderWithTheme( <InlineEditorToolbar editor={ mockEditor } /> );
+		renderWithTheme(<InlineEditorToolbar editor={mockEditor} />);
 
-		const boldButton = screen.getByLabelText( 'Bold' );
-		const italicButton = screen.getByLabelText( 'Italic' );
-		const underlineButton = screen.getByLabelText( 'Underline' );
-
-		// Assert.
-		expect( boldButton ).toHaveClass( 'Mui-selected' );
-		expect( italicButton ).toHaveClass( 'Mui-selected' );
-		expect( underlineButton ).not.toHaveClass( 'Mui-selected' );
-	} );
-
-	it( 'should call editor methods when buttons are clicked', () => {
-		// Arrange.
-		const mockEditor = createMockEditor();
-		const mockChain = mockEditor.chain();
-
-		// Act.
-		renderWithTheme( <InlineEditorToolbar editor={ mockEditor } /> );
-
-		const boldButton = screen.getByLabelText( 'Bold' );
-		fireEvent.click( boldButton );
+		const boldButton = screen.getByLabelText('Bold');
+		const italicButton = screen.getByLabelText('Italic');
+		const underlineButton = screen.getByLabelText('Underline');
 
 		// Assert.
-		expect( mockEditor.chain ).toHaveBeenCalled();
-		expect( mockChain.focus ).toHaveBeenCalled();
-		expect( mockChain.toggleBold ).toHaveBeenCalled();
-		expect( mockChain.run ).toHaveBeenCalled();
-	} );
+		expect(boldButton).toHaveClass('Mui-selected');
+		expect(italicButton).toHaveClass('Mui-selected');
+		expect(underlineButton).not.toHaveClass('Mui-selected');
+	});
 
-	it( 'should call reset formatting when reset button is clicked', () => {
+	it('should call editor methods when buttons are clicked', () => {
 		// Arrange.
 		const mockEditor = createMockEditor();
 		const mockChain = mockEditor.chain();
 
 		// Act.
-		renderWithTheme( <InlineEditorToolbar editor={ mockEditor } /> );
+		renderWithTheme(<InlineEditorToolbar editor={mockEditor} />);
 
-		const resetButton = screen.getByLabelText( 'Clear' );
-		fireEvent.click( resetButton );
+		const boldButton = screen.getByLabelText('Bold');
+		fireEvent.click(boldButton);
 
 		// Assert.
-		expect( mockEditor.chain ).toHaveBeenCalled();
-		expect( mockChain.focus ).toHaveBeenCalled();
-		expect( mockChain.clearNodes ).toHaveBeenCalled();
-		expect( mockChain.unsetAllMarks ).toHaveBeenCalled();
-		expect( mockChain.run ).toHaveBeenCalled();
-	} );
+		expect(mockEditor.chain).toHaveBeenCalled();
+		expect(mockChain.focus).toHaveBeenCalled();
+		expect(mockChain.toggleBold).toHaveBeenCalled();
+		expect(mockChain.run).toHaveBeenCalled();
+	});
 
-	describe( 'Link functionality', () => {
-		it( 'should open URL popover when clicking link button', () => {
+	it('should call reset formatting when reset button is clicked', () => {
+		// Arrange.
+		const mockEditor = createMockEditor();
+		const mockChain = mockEditor.chain();
+
+		// Act.
+		renderWithTheme(<InlineEditorToolbar editor={mockEditor} />);
+
+		const resetButton = screen.getByLabelText('Clear');
+		fireEvent.click(resetButton);
+
+		// Assert.
+		expect(mockEditor.chain).toHaveBeenCalled();
+		expect(mockChain.focus).toHaveBeenCalled();
+		expect(mockChain.clearNodes).toHaveBeenCalled();
+		expect(mockChain.unsetAllMarks).toHaveBeenCalled();
+		expect(mockChain.run).toHaveBeenCalled();
+	});
+
+	describe('Link functionality', () => {
+		it('should open URL popover when clicking link button', () => {
 			// Arrange.
 			const mockEditor = createMockEditor();
 
 			// Act.
-			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } /> );
+			renderWithTheme(<InlineEditorToolbar editor={mockEditor} />);
 
-			const linkButton = screen.getByLabelText( 'Link' );
-			fireEvent.click( linkButton );
+			const linkButton = screen.getByLabelText('Link');
+			fireEvent.click(linkButton);
 
 			// Assert.
-			expect( screen.getByPlaceholderText( 'Type a URL' ) ).toBeInTheDocument();
-		} );
+			expect(screen.getByPlaceholderText('Type a URL')).toBeInTheDocument();
+		});
 
-		it( 'should call setLink with target="_blank" when openInNewTab is enabled', () => {
+		it('should call setLink with target="_blank" when openInNewTab is enabled', () => {
 			// Arrange.
 			const mockEditor = createMockEditor();
 			const mockChain = mockEditor.chain();
 
 			// Act.
-			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } /> );
+			renderWithTheme(<InlineEditorToolbar editor={mockEditor} />);
 
-			const linkButton = screen.getByLabelText( 'Link' );
-			fireEvent.click( linkButton );
+			const linkButton = screen.getByLabelText('Link');
+			fireEvent.click(linkButton);
 
-			const urlInput = screen.getByPlaceholderText( 'Type a URL' );
-			fireEvent.change( urlInput, { target: { value: 'https://elementor.com' } } );
+			const urlInput = screen.getByPlaceholderText('Type a URL');
+			fireEvent.change(urlInput, { target: { value: 'https://elementor.com' } });
 
-			const newTabButton = screen.getByLabelText( 'Open in a new tab' );
-			fireEvent.click( newTabButton );
+			const newTabButton = screen.getByLabelText('Open in a new tab');
+			fireEvent.click(newTabButton);
 
-			fireEvent.keyDown( urlInput, { key: 'Escape' } );
+			fireEvent.keyDown(urlInput, { key: 'Escape' });
 
 			// Assert.
-			expect( mockChain.setLink ).toHaveBeenCalledWith( {
+			expect(mockChain.setLink).toHaveBeenCalledWith({
 				href: 'https://elementor.com',
 				target: '_blank',
-			} );
-		} );
+			});
+		});
 
-		it( 'should call unsetLink when URL is empty', () => {
+		it('should call unsetLink when URL is empty', () => {
 			// Arrange.
-			const mockEditor = createMockEditor( { linkAttributes: { href: 'https://old-url.com' } } );
+			const mockEditor = createMockEditor({ linkAttributes: { href: 'https://old-url.com' } });
 			const mockChain = mockEditor.chain();
 
 			// Act.
-			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } /> );
+			renderWithTheme(<InlineEditorToolbar editor={mockEditor} />);
 
-			const linkButton = screen.getByLabelText( 'Link' );
-			fireEvent.click( linkButton );
+			const linkButton = screen.getByLabelText('Link');
+			fireEvent.click(linkButton);
 
-			const urlInput = screen.getByPlaceholderText( 'Type a URL' );
-			fireEvent.change( urlInput, { target: { value: '' } } );
+			const urlInput = screen.getByPlaceholderText('Type a URL');
+			fireEvent.change(urlInput, { target: { value: '' } });
 
-			fireEvent.keyDown( urlInput, { key: 'Escape' } );
+			fireEvent.keyDown(urlInput, { key: 'Escape' });
 
 			// Assert.
-			expect( mockChain.unsetLink ).toHaveBeenCalled();
-		} );
+			expect(mockChain.unsetLink).toHaveBeenCalled();
+		});
 
-		it( 'should initialize openInNewTab state from existing link attributes', () => {
+		it('should initialize openInNewTab state from existing link attributes', () => {
 			// Arrange.
-			const mockEditor = createMockEditor( {
+			const mockEditor = createMockEditor({
 				linkAttributes: { href: 'https://elementor.com', target: '_blank' },
-			} );
+			});
 
 			// Act.
-			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } /> );
+			renderWithTheme(<InlineEditorToolbar editor={mockEditor} />);
 
-			const linkButton = screen.getByLabelText( 'Link' );
-			fireEvent.click( linkButton );
+			const linkButton = screen.getByLabelText('Link');
+			fireEvent.click(linkButton);
 
-			const newTabButton = screen.getByLabelText( 'Open in a new tab' );
+			const newTabButton = screen.getByLabelText('Open in a new tab');
 
 			// Assert.
-			expect( newTabButton ).toHaveAttribute( 'aria-pressed', 'true' );
-		} );
-	} );
+			expect(newTabButton).toHaveAttribute('aria-pressed', 'true');
+		});
+	});
 
-	describe( 'Link button visibility based on LinkControl', () => {
+	describe('Link button visibility based on LinkControl', () => {
 		const ELEMENT_ID = 'test-element-123';
 
-		beforeEach( () => {
+		beforeEach(() => {
 			jest.clearAllMocks();
-		} );
+		});
 
-		it( 'should hide link button when element has LinkControl link', () => {
+		it('should hide link button when element has LinkControl link', () => {
 			// Arrange
 			const mockEditor = createMockEditor();
 
-			jest.mocked( getElementSetting ).mockReturnValue( {
+			jest.mocked(getElementSetting).mockReturnValue({
 				$$type: 'link',
 				value: {
 					destination: 'https://example.com',
 				},
-			} );
+			});
 
 			// Act
-			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } elementId={ ELEMENT_ID } /> );
+			renderWithTheme(<InlineEditorToolbar editor={mockEditor} elementId={ELEMENT_ID} />);
 
 			// Assert
-			expect( screen.queryByLabelText( 'Link' ) ).not.toBeInTheDocument();
-		} );
+			expect(screen.queryByLabelText('Link')).not.toBeInTheDocument();
+		});
 
-		it( 'should show link button when element has no LinkControl link', () => {
+		it('should show link button when element has no LinkControl link', () => {
 			// Arrange
 			const mockEditor = createMockEditor();
 
-			jest.mocked( getElementSetting ).mockReturnValue( null );
+			jest.mocked(getElementSetting).mockReturnValue(null);
 
 			// Act
-			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } elementId={ ELEMENT_ID } /> );
+			renderWithTheme(<InlineEditorToolbar editor={mockEditor} elementId={ELEMENT_ID} />);
 
 			// Assert
-			expect( screen.getByLabelText( 'Link' ) ).toBeInTheDocument();
-		} );
-	} );
-} );
+			expect(screen.getByLabelText('Link')).toBeInTheDocument();
+		});
+	});
+});

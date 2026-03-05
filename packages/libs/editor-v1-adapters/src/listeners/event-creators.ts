@@ -1,6 +1,6 @@
 import { type CommandEventDescriptor, type RouteEventDescriptor, type WindowEventDescriptor } from './types';
 
-export const commandStartEvent = ( command: CommandEventDescriptor[ 'name' ] ): CommandEventDescriptor => {
+export const commandStartEvent = (command: CommandEventDescriptor['name']): CommandEventDescriptor => {
 	return {
 		type: 'command',
 		name: command,
@@ -8,7 +8,7 @@ export const commandStartEvent = ( command: CommandEventDescriptor[ 'name' ] ): 
 	};
 };
 
-export const commandEndEvent = ( command: CommandEventDescriptor[ 'name' ] ): CommandEventDescriptor => {
+export const commandEndEvent = (command: CommandEventDescriptor['name']): CommandEventDescriptor => {
 	return {
 		type: 'command',
 		name: command,
@@ -16,7 +16,7 @@ export const commandEndEvent = ( command: CommandEventDescriptor[ 'name' ] ): Co
 	};
 };
 
-export const routeOpenEvent = ( route: RouteEventDescriptor[ 'name' ] ): RouteEventDescriptor => {
+export const routeOpenEvent = (route: RouteEventDescriptor['name']): RouteEventDescriptor => {
 	return {
 		type: 'route',
 		name: route,
@@ -24,7 +24,7 @@ export const routeOpenEvent = ( route: RouteEventDescriptor[ 'name' ] ): RouteEv
 	};
 };
 
-export const routeCloseEvent = ( route: RouteEventDescriptor[ 'name' ] ): RouteEventDescriptor => {
+export const routeCloseEvent = (route: RouteEventDescriptor['name']): RouteEventDescriptor => {
 	return {
 		type: 'route',
 		name: route,
@@ -32,7 +32,7 @@ export const routeCloseEvent = ( route: RouteEventDescriptor[ 'name' ] ): RouteE
 	};
 };
 
-export const windowEvent = ( event: WindowEventDescriptor[ 'name' ] ): WindowEventDescriptor => {
+export const windowEvent = (event: WindowEventDescriptor['name']): WindowEventDescriptor => {
 	return {
 		type: 'window-event',
 		name: event,
@@ -40,5 +40,5 @@ export const windowEvent = ( event: WindowEventDescriptor[ 'name' ] ): WindowEve
 };
 
 export const v1ReadyEvent = () => {
-	return windowEvent( 'elementor/initialized' );
+	return windowEvent('elementor/initialized');
 };

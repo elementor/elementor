@@ -12,28 +12,28 @@ type TransformAxisRowProps = {
 	label: string;
 	bind: 'x' | 'y' | 'z';
 	startIcon: React.ReactNode;
-	anchorRef?: RefObject< HTMLDivElement | null >;
+	anchorRef?: RefObject<HTMLDivElement | null>;
 	units?: AngleUnit[] | LengthUnit[];
 	variant?: 'length' | 'angle';
 };
 
-export const AxisRow = ( { label, bind, startIcon, anchorRef, units, variant = 'angle' }: TransformAxisRowProps ) => {
-	const safeId = label.replace( /\s+/g, '-' ).toLowerCase();
+export const AxisRow = ({ label, bind, startIcon, anchorRef, units, variant = 'angle' }: TransformAxisRowProps) => {
+	const safeId = label.replace(/\s+/g, '-').toLowerCase();
 	return (
-		<Grid item xs={ 12 }>
-			<PopoverGridContainer ref={ anchorRef }>
-				<Grid item xs={ 6 }>
-					<ControlLabel htmlFor={ safeId }>{ label }</ControlLabel>
+		<Grid item xs={12}>
+			<PopoverGridContainer ref={anchorRef}>
+				<Grid item xs={6}>
+					<ControlLabel htmlFor={safeId}>{label}</ControlLabel>
 				</Grid>
-				<Grid item xs={ 6 }>
-					<PropKeyProvider bind={ bind }>
+				<Grid item xs={6}>
+					<PropKeyProvider bind={bind}>
 						<SizeControl
-							anchorRef={ anchorRef }
-							startIcon={ startIcon }
-							units={ units }
-							variant={ variant }
-							min={ -Number.MAX_SAFE_INTEGER }
-							id={ safeId }
+							anchorRef={anchorRef}
+							startIcon={startIcon}
+							units={units}
+							variant={variant}
+							min={-Number.MAX_SAFE_INTEGER}
+							id={safeId}
 						/>
 					</PropKeyProvider>
 				</Grid>

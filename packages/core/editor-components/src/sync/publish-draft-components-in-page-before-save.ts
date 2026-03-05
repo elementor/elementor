@@ -10,20 +10,20 @@ type Options = {
 	elements: V1ElementData[];
 };
 
-export async function publishDraftComponentsInPageBeforeSave( { status, elements }: Options ) {
-	if ( status !== 'publish' ) {
+export async function publishDraftComponentsInPageBeforeSave({ status, elements }: Options) {
+	if (status !== 'publish') {
 		return;
 	}
 
-	const documents = await getComponentDocuments( elements );
+	const documents = await getComponentDocuments(elements);
 
-	const draftIds = [ ...documents.values() ].filter( isDocumentDirty ).map( ( document ) => document.id );
+	const draftIds = [...documents.values()].filter(isDocumentDirty).map((document) => document.id);
 
-	if ( draftIds.length === 0 ) {
+	if (draftIds.length === 0) {
 		return;
 	}
 
-	await apiClient.updateStatuses( draftIds, 'publish' );
+	await apiClient.updateStatuses(draftIds, 'publish');
 
-	draftIds.forEach( ( id ) => invalidateDocumentData( id ) );
+	draftIds.forEach((id) => invalidateDocumentData(id));
 }

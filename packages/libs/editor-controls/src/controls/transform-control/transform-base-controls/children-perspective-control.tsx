@@ -15,22 +15,22 @@ type FieldProps = {
 	units: LengthUnit[];
 };
 
-const ORIGIN_UNITS: LengthUnit[] = [ 'px', '%', 'em', 'rem' ];
+const ORIGIN_UNITS: LengthUnit[] = ['px', '%', 'em', 'rem'];
 
 const PERSPECTIVE_CONTROL_FIELD: FieldProps = {
-	label: __( 'Perspective', 'elementor' ),
+	label: __('Perspective', 'elementor'),
 	bind: 'perspective',
-	units: [ 'px', 'em', 'rem', 'vw', 'vh' ],
+	units: ['px', 'em', 'rem', 'vw', 'vh'],
 };
 
 const CHILDREN_PERSPECTIVE_FIELDS: FieldProps[] = [
 	{
-		label: __( 'Origin X', 'elementor' ),
+		label: __('Origin X', 'elementor'),
 		bind: 'x',
 		units: ORIGIN_UNITS,
 	},
 	{
-		label: __( 'Origin Y', 'elementor' ),
+		label: __('Origin Y', 'elementor'),
 		bind: 'y',
 		units: ORIGIN_UNITS,
 	},
@@ -38,8 +38,8 @@ const CHILDREN_PERSPECTIVE_FIELDS: FieldProps[] = [
 
 export const ChildrenPerspectiveControl = () => {
 	return (
-		<Stack direction="column" spacing={ 1.5 }>
-			<ControlFormLabel>{ __( 'Children perspective', 'elementor' ) }</ControlFormLabel>
+		<Stack direction="column" spacing={1.5}>
+			<ControlFormLabel>{__('Children perspective', 'elementor')}</ControlFormLabel>
 			<PerspectiveControl />
 			<PerspectiveOriginControl />
 		</Stack>
@@ -47,41 +47,41 @@ export const ChildrenPerspectiveControl = () => {
 };
 
 const PerspectiveControl = () => (
-	<PropKeyProvider bind={ 'perspective' }>
-		<ControlFields control={ PERSPECTIVE_CONTROL_FIELD } key={ PERSPECTIVE_CONTROL_FIELD.bind } />
+	<PropKeyProvider bind={'perspective'}>
+		<ControlFields control={PERSPECTIVE_CONTROL_FIELD} key={PERSPECTIVE_CONTROL_FIELD.bind} />
 	</PropKeyProvider>
 );
 
 const PerspectiveOriginControl = () => (
-	<PropKeyProvider bind={ 'perspective-origin' }>
+	<PropKeyProvider bind={'perspective-origin'}>
 		<PerspectiveOriginControlProvider />
 	</PropKeyProvider>
 );
 
 const PerspectiveOriginControlProvider = () => {
-	const context = useBoundProp( perspectiveOriginPropTypeUtil );
+	const context = useBoundProp(perspectiveOriginPropTypeUtil);
 
 	return (
-		<PropProvider { ...context }>
-			{ CHILDREN_PERSPECTIVE_FIELDS.map( ( control ) => (
-				<PropKeyProvider bind={ control.bind } key={ control.bind }>
-					<ControlFields control={ control } />
+		<PropProvider {...context}>
+			{CHILDREN_PERSPECTIVE_FIELDS.map((control) => (
+				<PropKeyProvider bind={control.bind} key={control.bind}>
+					<ControlFields control={control} />
 				</PropKeyProvider>
-			) ) }
+			))}
 		</PropProvider>
 	);
 };
 
-const ControlFields = ( { control }: { control: FieldProps } ) => {
-	const rowRef = React.useRef< HTMLDivElement >( null );
+const ControlFields = ({ control }: { control: FieldProps }) => {
+	const rowRef = React.useRef<HTMLDivElement>(null);
 
 	return (
-		<PopoverGridContainer ref={ rowRef }>
-			<Grid item xs={ 6 }>
-				<ControlFormLabel>{ control.label }</ControlFormLabel>
+		<PopoverGridContainer ref={rowRef}>
+			<Grid item xs={6}>
+				<ControlFormLabel>{control.label}</ControlFormLabel>
 			</Grid>
-			<Grid item xs={ 6 }>
-				<SizeControl variant="length" units={ control.units } anchorRef={ rowRef } disableCustom />
+			<Grid item xs={6}>
+				<SizeControl variant="length" units={control.units} anchorRef={rowRef} disableCustom />
 			</Grid>
 		</PopoverGridContainer>
 	);

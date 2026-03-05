@@ -30,11 +30,11 @@ const Connect = ( { connectUrl, onSuccess } ) => {
 			<Typography variant="body2">{ __( 'Create smarter with AI text and code generators built right into the editor.', 'elementor' ) }</Typography>
 
 			<Typography variant="caption" sx={ { maxWidth: 520, textAlign: 'center' } }>
-				{ __( 'By clicking "Connect", I approve the ', 'elementor' ) }
+				{ __( 'By clicking "Connect", I approve the', 'elementor' ) }
 				<Link href="https://go.elementor.com/ai-terms/" target="_blank" color="info.main">{ __( 'Terms of Service', 'elementor' ) }</Link>
 				{ ' & ' }
 				<Link href="https://go.elementor.com/ai-privacy-policy/" target="_blank" color="info.main">{ __( 'Privacy Policy', 'elementor' ) }</Link>
-				{ __( ' of the Elementor AI service.', 'elementor' ) }
+				{ __( 'of the Elementor AI service.', 'elementor' ) }
 			</Typography>
 
 			<Button

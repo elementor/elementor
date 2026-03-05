@@ -18,73 +18,73 @@ type PasteStylesCommandArgs = ContainerArgs & {
 export function initPasteStyleCommand() {
 	const pasteElementStyleCommand = undoablePasteElementStyle();
 
-	blockCommand( {
+	blockCommand({
 		command: 'document/elements/paste-style',
 		condition: hasAtomicWidgets,
-	} );
+	});
 
-	listenTo( commandStartEvent( 'document/elements/paste-style' ), ( e ) =>
-		pasteStyles( ( e as CommandEvent ).args, pasteElementStyleCommand )
+	listenTo(commandStartEvent('document/elements/paste-style'), (e) =>
+		pasteStyles((e as CommandEvent).args, pasteElementStyleCommand)
 	);
 }
 
-function pasteStyles( args: PasteStylesCommandArgs, pasteLocalStyle: ReturnType< typeof undoablePasteElementStyle > ) {
-	const { containers = [ args.container ], storageKey } = args;
+function pasteStyles(args: PasteStylesCommandArgs, pasteLocalStyle: ReturnType<typeof undoablePasteElementStyle>) {
+	const { containers = [args.container], storageKey } = args;
 
-	const atomicContainers = containers.filter( isAtomicWidget ) as V1Element[];
+	const atomicContainers = containers.filter(isAtomicWidget) as V1Element[];
 
-	if ( ! atomicContainers.length ) {
+	if (!atomicContainers.length) {
 		return;
 	}
 
-	const clipboardElements = getClipboardElements( storageKey );
-	const [ clipboardElement ] = clipboardElements ?? [];
+	const clipboardElements = getClipboardElements(storageKey);
+	const [clipboardElement] = clipboardElements ?? [];
 
-	const clipboardContainer = getContainer( clipboardElement.id );
-	if ( ! clipboardElement || ! clipboardContainer || ! isAtomicWidget( clipboardContainer ) ) {
+	const clipboardContainer = getContainer(clipboardElement.id);
+	if (!clipboardElement || !clipboardContainer || !isAtomicWidget(clipboardContainer)) {
 		return;
 	}
 
 	const elementStyles = clipboardElement.styles;
-	const elementStyle = Object.values( elementStyles ?? {} )[ 0 ]; // we currently support only one local style
+	const elementStyle = Object.values(elementStyles ?? {})[0]; // we currently support only one local style
 
-	const classesSetting = getClassesWithoutLocalStyle( clipboardContainer, elementStyle );
-	if ( classesSetting.length ) {
-		pasteClasses( atomicContainers, classesSetting );
+	const classesSetting = getClassesWithoutLocalStyle(clipboardContainer, elementStyle);
+	if (classesSetting.length) {
+		pasteClasses(atomicContainers, classesSetting);
 	}
 
-	if ( elementStyle ) {
-		pasteLocalStyle( { containers: atomicContainers, newStyle: elementStyle } );
+	if (elementStyle) {
+		pasteLocalStyle({ containers: atomicContainers, newStyle: elementStyle });
 	}
 }
 
-function getClassesWithoutLocalStyle( clipboardContainer: V1Element, style: StyleDefinition | null ): string[] {
-	const classesProp = getClassesProp( clipboardContainer );
+function getClassesWithoutLocalStyle(clipboardContainer: V1Element, style: StyleDefinition | null): string[] {
+	const classesProp = getClassesProp(clipboardContainer);
 
-	if ( ! classesProp ) {
+	if (!classesProp) {
 		return [];
 	}
 
-	const classesSetting = getElementSetting< ClassesPropValue >( clipboardContainer.id, classesProp );
+	const classesSetting = getElementSetting<ClassesPropValue>(clipboardContainer.id, classesProp);
 
-	return classesSetting?.value.filter( ( styleId ) => styleId !== style?.id ) ?? [];
+	return classesSetting?.value.filter((styleId) => styleId !== style?.id) ?? [];
 }
 
-function pasteClasses( containers: V1Element[], classes: string[] ) {
-	containers.forEach( ( container ) => {
-		const classesProp = getClassesProp( container );
-		if ( ! classesProp ) {
+function pasteClasses(containers: V1Element[], classes: string[]) {
+	containers.forEach((container) => {
+		const classesProp = getClassesProp(container);
+		if (!classesProp) {
 			return;
 		}
 
-		const classesSetting = getElementSetting< ClassesPropValue >( container.id, classesProp );
-		const currentClasses = classesPropTypeUtil.extract( classesSetting ) ?? [];
+		const classesSetting = getElementSetting<ClassesPropValue>(container.id, classesProp);
+		const currentClasses = classesPropTypeUtil.extract(classesSetting) ?? [];
 
-		const newClasses = classesPropTypeUtil.create( Array.from( new Set( [ ...classes, ...currentClasses ] ) ) );
+		const newClasses = classesPropTypeUtil.create(Array.from(new Set([...classes, ...currentClasses])));
 
-		updateElementSettings( {
+		updateElementSettings({
 			id: container.id,
-			props: { [ classesProp ]: newClasses },
-		} );
-	} );
+			props: { [classesProp]: newClasses },
+		});
+	});
 }

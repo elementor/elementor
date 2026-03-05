@@ -7,18 +7,18 @@ import { NumberInput } from '../components/number-input';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
 
-const isEmptyOrNaN = ( value?: string | number | null ) =>
-	value === null || value === undefined || value === '' || Number.isNaN( Number( value ) );
+const isEmptyOrNaN = (value?: string | number | null) =>
+	value === null || value === undefined || value === '' || Number.isNaN(Number(value));
 
-const renderSuffix = ( propType: PropType ) => {
-	if ( propType.meta?.suffix ) {
-		return <InputAdornment position="end">{ propType.meta.suffix }</InputAdornment>;
+const renderSuffix = (propType: PropType) => {
+	if (propType.meta?.suffix) {
+		return <InputAdornment position="end">{propType.meta.suffix}</InputAdornment>;
 	}
 	return <></>;
 };
 
 export const NumberControl = createControl(
-	( {
+	({
 		placeholder: labelPlaceholder,
 		max = Number.MAX_SAFE_INTEGER,
 		min = -Number.MAX_SAFE_INTEGER,
@@ -32,10 +32,10 @@ export const NumberControl = createControl(
 		step?: number;
 		shouldForceInt?: boolean;
 		startIcon?: React.ReactNode;
-	} ) => {
-		const { value, setValue, placeholder, disabled, restoreValue, propType } = useBoundProp( numberPropTypeUtil );
+	}) => {
+		const { value, setValue, placeholder, disabled, restoreValue, propType } = useBoundProp(numberPropTypeUtil);
 
-		const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 			const {
 				value: eventValue,
 				validity: { valid: isInputValid },
@@ -43,18 +43,18 @@ export const NumberControl = createControl(
 
 			let updatedValue;
 
-			if ( isEmptyOrNaN( eventValue ) ) {
+			if (isEmptyOrNaN(eventValue)) {
 				updatedValue = null;
 			} else {
-				const formattedValue = shouldForceInt ? +parseInt( eventValue ) : Number( eventValue );
+				const formattedValue = shouldForceInt ? +parseInt(eventValue) : Number(eventValue);
 
 				updatedValue = Math.min(
-					Math.max( formattedValue, min ?? Number.MIN_SAFE_INTEGER ),
+					Math.max(formattedValue, min ?? Number.MIN_SAFE_INTEGER),
 					max ?? Number.MAX_SAFE_INTEGER
 				);
 			}
 
-			setValue( updatedValue, undefined, { validation: () => isInputValid } );
+			setValue(updatedValue, undefined, { validation: () => isInputValid });
 		};
 
 		return (
@@ -63,20 +63,20 @@ export const NumberControl = createControl(
 					size="tiny"
 					type="number"
 					fullWidth
-					disabled={ disabled }
-					value={ isEmptyOrNaN( value ) ? '' : value }
-					onInput={ handleChange }
-					onBlur={ restoreValue }
-					placeholder={ labelPlaceholder ?? ( isEmptyOrNaN( placeholder ) ? '' : String( placeholder ) ) }
-					inputProps={ { step, min } }
-					InputProps={ {
+					disabled={disabled}
+					value={isEmptyOrNaN(value) ? '' : value}
+					onInput={handleChange}
+					onBlur={restoreValue}
+					placeholder={labelPlaceholder ?? (isEmptyOrNaN(placeholder) ? '' : String(placeholder))}
+					inputProps={{ step, min }}
+					InputProps={{
 						startAdornment: startIcon ? (
-							<InputAdornment position="start" disabled={ disabled }>
-								{ startIcon }
+							<InputAdornment position="start" disabled={disabled}>
+								{startIcon}
 							</InputAdornment>
 						) : undefined,
-						endAdornment: renderSuffix( propType ),
-					} }
+						endAdornment: renderSuffix(propType),
+					}}
 				/>
 			</ControlActions>
 		);

@@ -16,13 +16,13 @@ export const getNotFoundType = (
 	const filterNotFound = filters && filters.length === 0;
 	const filterAndSearchNotFound = searchNotFound && filterNotFound;
 
-	if ( filterAndSearchNotFound ) {
+	if (filterAndSearchNotFound) {
 		return 'filterAndSearch';
 	}
-	if ( searchNotFound ) {
+	if (searchNotFound) {
 		return 'search';
 	}
-	if ( filterNotFound ) {
+	if (filterNotFound) {
 		return 'filter';
 	}
 	return undefined;
@@ -32,18 +32,18 @@ export type NotFoundType = 'filter' | 'search' | 'filterAndSearch';
 
 const notFound = {
 	filterAndSearch: {
-		mainText: __( 'Sorry, nothing matched.', 'elementor' ),
-		sceneryText: __( 'Try something else.', 'elementor' ),
+		mainText: __('Sorry, nothing matched.', 'elementor'),
+		sceneryText: __('Try something else.', 'elementor'),
 		icon: <PhotoIcon color="inherit" fontSize="large" />,
 	},
 	search: {
-		mainText: __( 'Sorry, nothing matched', 'elementor' ),
-		sceneryText: __( 'Clear your input and try something else.', 'elementor' ),
+		mainText: __('Sorry, nothing matched', 'elementor'),
+		sceneryText: __('Clear your input and try something else.', 'elementor'),
 		icon: <PhotoIcon color="inherit" fontSize="large" />,
 	},
 	filter: {
-		mainText: __( 'Sorry, nothing matched that search.', 'elementor' ),
-		sceneryText: __( 'Clear the filters and try something else.', 'elementor' ),
+		mainText: __('Sorry, nothing matched that search.', 'elementor'),
+		sceneryText: __('Clear the filters and try something else.', 'elementor'),
 		icon: <ColorSwatchIcon color="inherit" fontSize="large" />,
 	},
 };
@@ -52,25 +52,25 @@ type GetNotFoundConfigProps = {
 	notFoundType: NotFoundType;
 };
 
-export const NotFound = ( { notFoundType }: GetNotFoundConfigProps ): React.ReactElement => {
+export const NotFound = ({ notFoundType }: GetNotFoundConfigProps): React.ReactElement => {
 	const {
 		search: { onClearSearch, inputValue },
 		filters: { onClearFilter },
 	} = useSearchAndFilters();
 
-	switch ( notFoundType ) {
+	switch (notFoundType) {
 		case 'filter':
-			return <NotFoundLayout { ...notFound.filter } onClear={ onClearFilter } />;
+			return <NotFoundLayout {...notFound.filter} onClear={onClearFilter} />;
 		case 'search':
-			return <NotFoundLayout { ...notFound.search } searchValue={ inputValue } onClear={ onClearSearch } />;
+			return <NotFoundLayout {...notFound.search} searchValue={inputValue} onClear={onClearSearch} />;
 		case 'filterAndSearch':
 			return (
 				<NotFoundLayout
-					{ ...notFound.filterAndSearch }
-					onClear={ () => {
+					{...notFound.filterAndSearch}
+					onClear={() => {
 						onClearFilter();
 						onClearSearch();
-					} }
+					}}
 				/>
 			);
 	}
@@ -84,54 +84,47 @@ type NotFoundLayoutProps = {
 	icon: React.ReactElement;
 };
 
-export const NotFoundLayout: FC< NotFoundLayoutProps > = ( { onClear, searchValue, mainText, sceneryText, icon } ) => (
-	<Stack
-		color={ 'text.secondary' }
-		pt={ 5 }
-		alignItems="center"
-		gap={ 1 }
-		overflow={ 'hidden' }
-		justifySelf={ 'center' }
-	>
-		{ icon }
+export const NotFoundLayout: FC<NotFoundLayoutProps> = ({ onClear, searchValue, mainText, sceneryText, icon }) => (
+	<Stack color={'text.secondary'} pt={5} alignItems="center" gap={1} overflow={'hidden'} justifySelf={'center'}>
+		{icon}
 		<Box
-			sx={ {
+			sx={{
 				width: '100%',
-			} }
+			}}
 		>
 			<Typography align="center" variant="subtitle2" color="inherit">
-				{ mainText }
+				{mainText}
 			</Typography>
-			{ searchValue && (
+			{searchValue && (
 				<Typography
 					variant="subtitle2"
 					color="inherit"
-					sx={ {
+					sx={{
 						display: 'flex',
 						width: '100%',
 						justifyContent: 'center',
-					} }
+					}}
 				>
 					<span>&ldquo;</span>
 					<span
-						style={ {
+						style={{
 							maxWidth: '80%',
 							overflow: 'hidden',
 							textOverflow: 'ellipsis',
-						} }
+						}}
 					>
-						{ searchValue }
+						{searchValue}
 					</span>
 					<span>&rdquo;.</span>
 				</Typography>
-			) }
+			)}
 		</Box>
 		<Typography align="center" variant="caption" color="inherit">
-			{ sceneryText }
+			{sceneryText}
 		</Typography>
 		<Typography align="center" variant="caption" color="inherit">
-			<Link color="secondary" variant="caption" component="button" onClick={ onClear }>
-				{ __( 'Clear & try again', 'elementor' ) }
+			<Link color="secondary" variant="caption" component="button" onClick={onClear}>
+				{__('Clear & try again', 'elementor')}
 			</Link>
 		</Typography>
 	</Stack>

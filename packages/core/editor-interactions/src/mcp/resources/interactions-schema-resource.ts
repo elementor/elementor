@@ -5,7 +5,7 @@ import { baseSchema, proSchema } from '../tools/schema';
 
 export const INTERACTIONS_SCHEMA_URI = 'elementor://interactions/schema';
 
-export const initInteractionsSchemaResource = ( reg: MCPRegistryEntry ) => {
+export const initInteractionsSchemaResource = (reg: MCPRegistryEntry) => {
 	const { resource } = reg;
 	const schema = isProActive() ? { ...baseSchema, ...proSchema } : baseSchema;
 
@@ -21,7 +21,7 @@ export const initInteractionsSchemaResource = ( reg: MCPRegistryEntry ) => {
 					{
 						uri: INTERACTIONS_SCHEMA_URI,
 						mimeType: 'application/json',
-						text: JSON.stringify( schema ),
+						text: JSON.stringify(schema),
 					},
 				],
 			};

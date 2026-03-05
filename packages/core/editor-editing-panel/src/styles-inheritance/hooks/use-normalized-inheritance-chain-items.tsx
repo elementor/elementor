@@ -17,7 +17,7 @@ const MAXIMUM_ITEMS = 2;
 type NormalizedItem = {
 	id: string | number;
 	provider: string;
-	breakpoint?: StyleDefinitionVariant[ 'meta' ][ 'breakpoint' ];
+	breakpoint?: StyleDefinitionVariant['meta']['breakpoint'];
 	displayLabel: string;
 	value: ReactNode | string;
 };
@@ -27,30 +27,30 @@ export const useNormalizedInheritanceChainItems = (
 	bind: PropKey,
 	resolve: PropsResolver
 ) => {
-	const [ items, setItems ] = useState< NormalizedItem[] >( [] );
+	const [items, setItems] = useState<NormalizedItem[]>([]);
 
-	useEffect( () => {
-		( async () => {
+	useEffect(() => {
+		(async () => {
 			const normalizedItems = await Promise.all(
 				inheritanceChain
-					.filter( ( { style } ) => style )
-					.map( ( item, index ) => normalizeInheritanceItem( item, index, bind, resolve ) )
+					.filter(({ style }) => style)
+					.map((item, index) => normalizeInheritanceItem(item, index, bind, resolve))
 			);
 
 			const validItems = normalizedItems
-				.map( ( item ) => ( {
+				.map((item) => ({
 					...item,
 					displayLabel:
 						ELEMENTS_BASE_STYLES_PROVIDER_KEY !== item.provider
 							? item.displayLabel
-							: __( 'Base', 'elementor' ),
-				} ) )
-				.filter( ( item ) => ! item.value || item.displayLabel !== '' )
-				.slice( 0, MAXIMUM_ITEMS );
+							: __('Base', 'elementor'),
+				}))
+				.filter((item) => !item.value || item.displayLabel !== '')
+				.slice(0, MAXIMUM_ITEMS);
 
-			setItems( validItems );
-		} )();
-	}, [ inheritanceChain, bind, resolve ] );
+			setItems(validItems);
+		})();
+	}, [inheritanceChain, bind, resolve]);
 
 	return items;
 };
@@ -62,7 +62,7 @@ export const normalizeInheritanceItem = async (
 	index: number,
 	bind: PropKey,
 	resolve: PropsResolver
-): Promise< NormalizedItem > => {
+): Promise<NormalizedItem> => {
 	const {
 		variant: {
 			meta: { state, breakpoint },
@@ -70,55 +70,55 @@ export const normalizeInheritanceItem = async (
 		style: { label, id },
 	} = item;
 
-	const displayLabel = getDisplayLabel( { label, state } );
+	const displayLabel = getDisplayLabel({ label, state });
 
 	return {
-		id: id ? id + ( state ?? '' ) : index,
+		id: id ? id + (state ?? '') : index,
 		provider: item.provider || '',
 		breakpoint: breakpoint ?? DEFAULT_BREAKPOINT,
 		displayLabel,
-		value: await getTransformedValue( item, bind, resolve ),
+		value: await getTransformedValue(item, bind, resolve),
 	};
 };
 
-function getDisplayLabel( { label, state }: { label: string; state: StyleDefinitionState } ) {
-	if ( ! state ) {
+function getDisplayLabel({ label, state }: { label: string; state: StyleDefinitionState }) {
+	if (!state) {
 		return label;
 	}
 
-	if ( isClassState( state ) ) {
-		return `${ label }.${ state }`;
+	if (isClassState(state)) {
+		return `${label}.${state}`;
 	}
 
-	if ( isPseudoState( state ) ) {
-		return `${ label }:${ state }`;
+	if (isPseudoState(state)) {
+		return `${label}:${state}`;
 	}
 
-	throw new UnknownStyleStateError( { context: { state } } );
+	throw new UnknownStyleStateError({ context: { state } });
 }
 const getTransformedValue = async (
 	item: SnapshotPropValue,
 	bind: PropKey,
 	resolve: PropsResolver
-): Promise< ReactNode | string > => {
+): Promise<ReactNode | string> => {
 	try {
-		const result = await resolve( {
+		const result = await resolve({
 			props: {
-				[ bind ]: item.value,
+				[bind]: item.value,
 			},
-		} );
+		});
 
-		const value = result?.[ bind ] ?? result;
+		const value = result?.[bind] ?? result;
 
-		if ( isValidElement( value ) ) {
+		if (isValidElement(value)) {
 			return value;
 		}
 
-		if ( typeof value === 'object' ) {
-			return JSON.stringify( value );
+		if (typeof value === 'object') {
+			return JSON.stringify(value);
 		}
 
-		return String( value );
+		return String(value);
 	} catch {
 		return '';
 	}

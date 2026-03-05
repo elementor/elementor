@@ -6,14 +6,14 @@ import { baseUrl } from '../../api/recent-posts';
 import useRecentPosts from '../use-recent-posts';
 
 // Mock apiFetch to return a promise that resolves to an empty array.
-jest.mock( '@wordpress/api-fetch' );
+jest.mock('@wordpress/api-fetch');
 
-describe( 'useRecentPosts', () => {
-	afterEach( () => {
+describe('useRecentPosts', () => {
+	afterEach(() => {
 		jest.clearAllMocks();
-	} );
+	});
 
-	it( 'should return an array of posts when the request succeeds', async () => {
+	it('should return an array of posts when the request succeeds', async () => {
 		const posts = [
 			{
 				id: 1,
@@ -25,17 +25,17 @@ describe( 'useRecentPosts', () => {
 			},
 		];
 
-		jest.mocked( apiFetch ).mockImplementation( () => Promise.resolve( posts ) );
+		jest.mocked(apiFetch).mockImplementation(() => Promise.resolve(posts));
 
 		// Act.
-		const { component } = renderHookWithQuery( () => useRecentPosts() );
+		const { component } = renderHookWithQuery(() => useRecentPosts());
 
-		expect( apiFetch ).toHaveBeenCalledWith( {
-			path: `${ baseUrl }?posts_per_page=6`,
-		} );
+		expect(apiFetch).toHaveBeenCalledWith({
+			path: `${baseUrl}?posts_per_page=6`,
+		});
 
-		await waitFor( () => {
-			expect( component.result.current.data ).toBe( posts );
-		} );
-	} );
-} );
+		await waitFor(() => {
+			expect(component.result.current.data).toBe(posts);
+		});
+	});
+});

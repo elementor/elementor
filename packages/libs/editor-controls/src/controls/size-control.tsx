@@ -24,13 +24,13 @@ import {
 	type Unit,
 } from '../utils/size-control';
 
-type SizeValue = SizePropValue[ 'value' ];
+type SizeValue = SizePropValue['value'];
 
 type SizeVariant = 'length' | 'angle' | 'time';
 
-type UnitProps< T extends readonly Unit[] > = {
+type UnitProps<T extends readonly Unit[]> = {
 	units?: T;
-	defaultUnit?: T[ number ];
+	defaultUnit?: T[number];
 };
 
 type BaseSizeControlProps = {
@@ -38,7 +38,7 @@ type BaseSizeControlProps = {
 	startIcon?: React.ReactNode;
 	extendedOptions?: ExtendedOption[];
 	disableCustom?: boolean;
-	anchorRef?: RefObject< HTMLDivElement | null >;
+	anchorRef?: RefObject<HTMLDivElement | null>;
 	min?: number;
 	enablePropTypeUnits?: boolean;
 	id?: string;
@@ -46,17 +46,17 @@ type BaseSizeControlProps = {
 };
 
 type LengthSizeControlProps = BaseSizeControlProps &
-	UnitProps< LengthUnit[] > & {
+	UnitProps<LengthUnit[]> & {
 		variant: 'length';
 	};
 
 type AngleSizeControlProps = BaseSizeControlProps &
-	UnitProps< AngleUnit[] > & {
+	UnitProps<AngleUnit[]> & {
 		variant: 'angle';
 	};
 
 type TimeSizeControlProps = BaseSizeControlProps &
-	UnitProps< TimeUnit[] > & {
+	UnitProps<TimeUnit[]> & {
 		variant: 'time';
 	};
 
@@ -68,23 +68,23 @@ type State = {
 	unit: Unit | ExtendedOption;
 };
 
-const defaultSelectedUnit: Record< SizeControlProps[ 'variant' ], Unit > = {
+const defaultSelectedUnit: Record<SizeControlProps['variant'], Unit> = {
 	length: 'px',
 	angle: 'deg',
 	time: 'ms',
 } as const;
 
-const defaultUnits: Record< SizeControlProps[ 'variant' ], Unit[] > = {
-	length: [ ...lengthUnits ] as LengthUnit[],
-	angle: [ ...angleUnits ] as AngleUnit[],
-	time: [ ...timeUnits ] as TimeUnit[],
+const defaultUnits: Record<SizeControlProps['variant'], Unit[]> = {
+	length: [...lengthUnits] as LengthUnit[],
+	angle: [...angleUnits] as AngleUnit[],
+	time: [...timeUnits] as TimeUnit[],
 } as const;
 
 export const CUSTOM_SIZE_LABEL = 'fx';
 
 export const SizeControl = createControl(
-	( {
-		variant = 'length' as SizeControlProps[ 'variant' ],
+	({
+		variant = 'length' as SizeControlProps['variant'],
 		defaultUnit,
 		units,
 		placeholder,
@@ -96,7 +96,7 @@ export const SizeControl = createControl(
 		enablePropTypeUnits = false,
 		id,
 		ariaLabel,
-	}: Omit< SizeControlProps, 'variant' > & { variant?: SizeVariant } ) => {
+	}: Omit<SizeControlProps, 'variant'> & { variant?: SizeVariant }) => {
 		const {
 			value: sizeValue,
 			setValue: setSizeValue,
@@ -104,108 +104,108 @@ export const SizeControl = createControl(
 			restoreValue,
 			placeholder: externalPlaceholder,
 			propType,
-		} = useBoundProp( sizePropTypeUtil );
+		} = useBoundProp(sizePropTypeUtil);
 
-		const actualDefaultUnit = defaultUnit ?? externalPlaceholder?.unit ?? defaultSelectedUnit[ variant ];
+		const actualDefaultUnit = defaultUnit ?? externalPlaceholder?.unit ?? defaultSelectedUnit[variant];
 		const activeBreakpoint = useActiveBreakpoint();
-		const actualExtendedOptions = useSizeExtendedOptions( extendedOptions || [], disableCustom ?? false );
-		const actualUnits = resolveUnits( propType, enablePropTypeUnits, variant, units, actualExtendedOptions );
+		const actualExtendedOptions = useSizeExtendedOptions(extendedOptions || [], disableCustom ?? false);
+		const actualUnits = resolveUnits(propType, enablePropTypeUnits, variant, units, actualExtendedOptions);
 
-		const popupState = usePopupState( { variant: 'popover' } );
+		const popupState = usePopupState({ variant: 'popover' });
 
 		const memorizedExternalState = useMemo(
-			() => createStateFromSizeProp( sizeValue, actualDefaultUnit ),
-			[ sizeValue, actualDefaultUnit ]
+			() => createStateFromSizeProp(sizeValue, actualDefaultUnit),
+			[sizeValue, actualDefaultUnit]
 		);
 
-		const [ state, setState ] = useSyncExternalState( {
+		const [state, setState] = useSyncExternalState({
 			external: memorizedExternalState,
-			setExternal: ( newState: State | null, options, meta ) =>
-				setSizeValue( extractValueFromState( newState ), options, meta ),
-			persistWhen: ( newState ) => !! extractValueFromState( newState ),
-			fallback: ( newState ) => ( {
+			setExternal: (newState: State | null, options, meta) =>
+				setSizeValue(extractValueFromState(newState), options, meta),
+			persistWhen: (newState) => !!extractValueFromState(newState),
+			fallback: (newState) => ({
 				unit: newState?.unit ?? actualDefaultUnit,
 				numeric: newState?.numeric ?? DEFAULT_SIZE,
 				custom: newState?.custom ?? '',
-			} ),
-		} );
+			}),
+		});
 
 		const { size: controlSize = DEFAULT_SIZE, unit: controlUnit = actualDefaultUnit } =
-			extractValueFromState( state, true ) || {};
+			extractValueFromState(state, true) || {};
 
-		const handleUnitChange = ( newUnit: Unit | ExtendedOption ) => {
-			if ( newUnit === 'custom' ) {
-				popupState.open( anchorRef?.current );
+		const handleUnitChange = (newUnit: Unit | ExtendedOption) => {
+			if (newUnit === 'custom') {
+				popupState.open(anchorRef?.current);
 			}
 
-			setState( ( prev ) => ( { ...prev, unit: newUnit } ) );
+			setState((prev) => ({ ...prev, unit: newUnit }));
 		};
 
-		const handleSizeChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 			const size = event.target.value;
 			const isInputValid = event.target.validity.valid;
 
-			if ( controlUnit === 'auto' ) {
-				setState( ( prev ) => ( { ...prev, unit: controlUnit } ) );
+			if (controlUnit === 'auto') {
+				setState((prev) => ({ ...prev, unit: controlUnit }));
 
 				return;
 			}
 
 			setState(
-				( prev ) => ( {
+				(prev) => ({
 					...prev,
-					[ controlUnit === 'custom' ? 'custom' : 'numeric' ]: formatSize( size, controlUnit ),
+					[controlUnit === 'custom' ? 'custom' : 'numeric']: formatSize(size, controlUnit),
 					unit: controlUnit,
-				} ),
+				}),
 				undefined,
 				{ validation: () => isInputValid }
 			);
 		};
 
-		const onInputClick = ( event: React.MouseEvent ) => {
-			if ( ( event.target as HTMLElement ).closest( 'input' ) && 'custom' === state.unit ) {
-				popupState.open( anchorRef?.current );
+		const onInputClick = (event: React.MouseEvent) => {
+			if ((event.target as HTMLElement).closest('input') && 'custom' === state.unit) {
+				popupState.open(anchorRef?.current);
 			}
 		};
 
-		const maybeClosePopup = React.useCallback( () => {
-			if ( popupState && popupState.isOpen ) {
+		const maybeClosePopup = React.useCallback(() => {
+			if (popupState && popupState.isOpen) {
 				popupState.close();
 			}
-		}, [ popupState ] );
+		}, [popupState]);
 
-		useEffect( () => {
+		useEffect(() => {
 			maybeClosePopup();
 			// eslint-disable-next-line react-hooks/exhaustive-deps
-		}, [ activeBreakpoint ] );
+		}, [activeBreakpoint]);
 
 		return (
 			<>
 				<SizeInput
-					disabled={ disabled }
-					size={ controlSize }
-					unit={ controlUnit }
-					units={ [ ...actualUnits ] }
-					placeholder={ placeholder }
-					startIcon={ startIcon }
-					handleSizeChange={ handleSizeChange }
-					handleUnitChange={ handleUnitChange }
-					onBlur={ restoreValue }
-					onClick={ onInputClick }
-					popupState={ popupState }
-					min={ min }
-					id={ id }
-					ariaLabel={ ariaLabel }
+					disabled={disabled}
+					size={controlSize}
+					unit={controlUnit}
+					units={[...actualUnits]}
+					placeholder={placeholder}
+					startIcon={startIcon}
+					handleSizeChange={handleSizeChange}
+					handleUnitChange={handleUnitChange}
+					onBlur={restoreValue}
+					onClick={onInputClick}
+					popupState={popupState}
+					min={min}
+					id={id}
+					ariaLabel={ariaLabel}
 				/>
-				{ anchorRef?.current && popupState.isOpen && (
+				{anchorRef?.current && popupState.isOpen && (
 					<TextFieldPopover
-						popupState={ popupState }
-						anchorRef={ anchorRef }
-						restoreValue={ restoreValue }
-						value={ controlSize as string }
-						onChange={ handleSizeChange }
+						popupState={popupState}
+						anchorRef={anchorRef}
+						restoreValue={restoreValue}
+						value={controlSize as string}
+						onChange={handleSizeChange}
 					/>
-				) }
+				)}
 			</>
 		);
 	}
@@ -218,21 +218,21 @@ function resolveUnits(
 	externalUnits?: Unit[],
 	actualExtendedOptions?: ExtendedOption[]
 ) {
-	const fallback = [ ...defaultUnits[ variant ] ];
+	const fallback = [...defaultUnits[variant]];
 
-	if ( ! enablePropTypeUnits ) {
-		return [ ...( externalUnits ?? fallback ), ...( actualExtendedOptions || [] ) ];
+	if (!enablePropTypeUnits) {
+		return [...(externalUnits ?? fallback), ...(actualExtendedOptions || [])];
 	}
 
-	return ( propType.settings?.available_units as Unit[] ) ?? fallback;
+	return (propType.settings?.available_units as Unit[]) ?? fallback;
 }
 
-function formatSize< TSize extends string | number >( size: TSize, unit: Unit | ExtendedOption ): TSize {
-	if ( isUnitExtendedOption( unit ) ) {
-		return unit === 'auto' ? ( '' as TSize ) : ( String( size ?? '' ) as TSize );
+function formatSize<TSize extends string | number>(size: TSize, unit: Unit | ExtendedOption): TSize {
+	if (isUnitExtendedOption(unit)) {
+		return unit === 'auto' ? ('' as TSize) : (String(size ?? '') as TSize);
 	}
 
-	return size || size === 0 ? ( Number( size ) as TSize ) : ( NaN as TSize );
+	return size || size === 0 ? (Number(size) as TSize) : (NaN as TSize);
 }
 
 function createStateFromSizeProp(
@@ -246,36 +246,34 @@ function createStateFromSizeProp(
 
 	return {
 		numeric:
-			! isUnitExtendedOption( unit ) && ! isNaN( Number( size ) ) && ( size || size === 0 )
-				? Number( size )
-				: DEFAULT_SIZE,
-		custom: unit === 'custom' ? String( size ) : customState,
+			!isUnitExtendedOption(unit) && !isNaN(Number(size)) && (size || size === 0) ? Number(size) : DEFAULT_SIZE,
+		custom: unit === 'custom' ? String(size) : customState,
 		unit,
 	};
 }
 
-function extractValueFromState( state: State | null, allowEmpty: boolean = false ): SizeValue | null {
-	if ( ! state ) {
+function extractValueFromState(state: State | null, allowEmpty: boolean = false): SizeValue | null {
+	if (!state) {
 		return null;
 	}
 
-	if ( ! state?.unit ) {
+	if (!state?.unit) {
 		return { size: DEFAULT_SIZE, unit: DEFAULT_UNIT };
 	}
 
 	const { unit } = state;
 
-	if ( unit === 'auto' ) {
+	if (unit === 'auto') {
 		return { size: '', unit };
 	}
 
-	if ( unit === 'custom' ) {
+	if (unit === 'custom') {
 		return { size: state.custom ?? '', unit: 'custom' };
 	}
 
 	const numeric = state.numeric;
 
-	if ( ! allowEmpty && ( numeric === undefined || numeric === null || Number.isNaN( numeric ) ) ) {
+	if (!allowEmpty && (numeric === undefined || numeric === null || Number.isNaN(numeric))) {
 		return null;
 	}
 

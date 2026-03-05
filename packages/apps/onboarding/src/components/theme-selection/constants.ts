@@ -15,7 +15,7 @@ export const HELLO_THEME: ThemeDefinition = {
 	labelKey: 'steps.theme_selection.theme_hello_label',
 	descriptionKey: 'steps.theme_selection.theme_hello_description',
 	previewBgColor: '#f6f6f6',
-	previewImage: getOnboardingAssetUrl( 'theme-hello.png' ),
+	previewImage: getOnboardingAssetUrl('theme-hello.png'),
 };
 
 export const HELLO_BIZ_THEME: ThemeDefinition = {
@@ -23,7 +23,7 @@ export const HELLO_BIZ_THEME: ThemeDefinition = {
 	labelKey: 'steps.theme_selection.theme_hello_biz_label',
 	descriptionKey: 'steps.theme_selection.theme_hello_biz_description',
 	previewBgColor: '#ffb8e5',
-	previewImage: getOnboardingAssetUrl( 'theme-hello-biz.png' ),
+	previewImage: getOnboardingAssetUrl('theme-hello-biz.png'),
 };
 
 /**
@@ -39,18 +39,18 @@ export const HELLO_BIZ_THEME: ThemeDefinition = {
  * @param choices.site_about
  * @param choices.experience_level
  */
-export function getRecommendedTheme( choices: {
+export function getRecommendedTheme(choices: {
 	building_for: string | null;
 	site_about: string[];
 	experience_level: string | null;
-} ): ThemeSlug {
-	const buildingForQualifies = [ 'myself', 'business' ].includes( choices.building_for ?? '' );
+}): ThemeSlug {
+	const buildingForQualifies = ['myself', 'business'].includes(choices.building_for ?? '');
 	const experienceQualifies = choices.experience_level === 'beginner';
 	const siteAboutQualifies =
-		Array.isArray( choices.site_about ) &&
-		choices.site_about.some( ( item ) => [ 'local_services', 'ecommerce' ].includes( item ) );
+		Array.isArray(choices.site_about) &&
+		choices.site_about.some((item) => ['local_services', 'ecommerce'].includes(item));
 
-	if ( ( buildingForQualifies || experienceQualifies ) && siteAboutQualifies ) {
+	if ((buildingForQualifies || experienceQualifies) && siteAboutQualifies) {
 		return 'hello-biz';
 	}
 
@@ -61,10 +61,10 @@ export function getRecommendedTheme( choices: {
  * Determines the greeting text based on the user's experience level choice.
  * @param experienceLevel
  */
-export function getGreetingText( experienceLevel: string | null ): string {
-	if ( experienceLevel === 'beginner' ) {
-		return t( 'steps.theme_selection.greeting_beginner' );
+export function getGreetingText(experienceLevel: string | null): string {
+	if (experienceLevel === 'beginner') {
+		return t('steps.theme_selection.greeting_beginner');
 	}
 
-	return t( 'steps.theme_selection.greeting_default' );
+	return t('steps.theme_selection.greeting_default');
 }

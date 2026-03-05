@@ -19,38 +19,38 @@ import { useFilterConfig } from './context/filter-config-context';
 import { DropShadowItemContent } from './drop-shadow/drop-shadow-item-content';
 import { SingleSizeItemContent } from './single-size/single-size-item-content';
 
-type Value = FilterItemPropValue[ 'value' ];
+type Value = FilterItemPropValue['value'];
 
 export const FilterContent = () => {
-	const propContext = useBoundProp( cssFilterFunctionPropUtil );
+	const propContext = useBoundProp(cssFilterFunctionPropUtil);
 	const { filterOptions, getFilterFunctionConfig } = useFilterConfig();
 
-	const handleValueChange = ( value: Value, _?: CreateOptions, meta?: { bind?: PropKey } ) => {
-		let newValue = structuredClone( value );
-		const funcConfig = getFilterFunctionConfig( newValue?.func.value as FilterFunction );
+	const handleValueChange = (value: Value, _?: CreateOptions, meta?: { bind?: PropKey }) => {
+		let newValue = structuredClone(value);
+		const funcConfig = getFilterFunctionConfig(newValue?.func.value as FilterFunction);
 
-		if ( meta?.bind === 'func' ) {
-			newValue = funcConfig.defaultValue.value as FilterItemPropValue[ 'value' ];
+		if (meta?.bind === 'func') {
+			newValue = funcConfig.defaultValue.value as FilterItemPropValue['value'];
 		}
 
-		if ( ! newValue.args ) {
+		if (!newValue.args) {
 			return;
 		}
 
-		propContext.setValue( newValue );
+		propContext.setValue(newValue);
 	};
 
 	return (
-		<PropProvider { ...propContext } setValue={ handleValueChange }>
+		<PropProvider {...propContext} setValue={handleValueChange}>
 			<PropKeyProvider bind="css-filter-func">
-				<PopoverContent p={ 1.5 }>
+				<PopoverContent p={1.5}>
 					<PopoverGridContainer>
-						<Grid item xs={ 6 }>
-							<ControlFormLabel>{ __( 'Filter', 'elementor' ) }</ControlFormLabel>
+						<Grid item xs={6}>
+							<ControlFormLabel>{__('Filter', 'elementor')}</ControlFormLabel>
 						</Grid>
-						<Grid item xs={ 6 }>
+						<Grid item xs={6}>
 							<PropKeyProvider bind="func">
-								<SelectControl options={ filterOptions } />
+								<SelectControl options={filterOptions} />
 							</PropKeyProvider>
 						</Grid>
 					</PopoverGridContainer>
@@ -65,14 +65,14 @@ export const FilterContent = () => {
 
 const FilterValueContent = () => {
 	const { openItemIndex, items } = useRepeaterContext();
-	const currentItem = items[ openItemIndex ];
+	const currentItem = items[openItemIndex];
 
-	const filterFunc = ( currentItem.item.value as FilterItemPropValue[ 'value' ] ).func.value;
+	const filterFunc = (currentItem.item.value as FilterItemPropValue['value']).func.value;
 	const isDropShadow = filterFunc === 'drop-shadow';
 
-	if ( isDropShadow ) {
+	if (isDropShadow) {
 		return <DropShadowItemContent />;
 	}
 
-	return <SingleSizeItemContent filterFunc={ filterFunc as FilterFunction } />;
+	return <SingleSizeItemContent filterFunc={filterFunc as FilterFunction} />;
 };

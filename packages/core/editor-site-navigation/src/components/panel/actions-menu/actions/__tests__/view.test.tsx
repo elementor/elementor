@@ -5,15 +5,15 @@ import { fireEvent, screen } from '@testing-library/react';
 import { type Post } from '../../../../../types';
 import View from '../view';
 
-describe( '@elementor/editor-site-navigation - View', () => {
-	afterAll( () => {
+describe('@elementor/editor-site-navigation - View', () => {
+	afterAll(() => {
 		jest.clearAllMocks();
-	} );
+	});
 
-	it( 'should open page in a different tab', () => {
+	it('should open page in a different tab', () => {
 		// Arrange.
-		const spy = jest.spyOn( window, 'open' );
-		spy.mockImplementation( () => null );
+		const spy = jest.spyOn(window, 'open');
+		spy.mockImplementation(() => null);
 		const page: Post = {
 			id: 1,
 			title: { rendered: 'Page Title' },
@@ -27,14 +27,14 @@ describe( '@elementor/editor-site-navigation - View', () => {
 		};
 
 		// Act.
-		renderWithTheme( <View post={ page } /> );
-		const button = screen.getByRole( 'menuitem' );
+		renderWithTheme(<View post={page} />);
+		const button = screen.getByRole('menuitem');
 
 		// Open menu
-		fireEvent.click( button );
+		fireEvent.click(button);
 
 		// Assert.
-		expect( spy ).toHaveBeenCalledTimes( 1 );
-		expect( spy ).toHaveBeenCalledWith( 'mock-link', '_blank' );
-	} );
-} );
+		expect(spy).toHaveBeenCalledTimes(1);
+		expect(spy).toHaveBeenCalledWith('mock-link', '_blank');
+	});
+});

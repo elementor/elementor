@@ -6,12 +6,12 @@ type Props = {
 	value: React.ReactNode;
 };
 
-export const ValueComponent = ( { index, value }: Props ) => {
+export const ValueComponent = ({ index, value }: Props) => {
 	return (
 		<Typography
 			variant="caption"
 			color="text.tertiary"
-			sx={ {
+			sx={{
 				mt: '1px',
 				textDecoration: index === 0 ? 'none' : 'line-through',
 				overflow: 'hidden',
@@ -20,9 +20,9 @@ export const ValueComponent = ( { index, value }: Props ) => {
 				pl: 2.5,
 				minWidth: 0,
 				maxWidth: '100%',
-			} }
+			}}
 		>
-			{ value }
+			{value}
 		</Typography>
 	);
 };

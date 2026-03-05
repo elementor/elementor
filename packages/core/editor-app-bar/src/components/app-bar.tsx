@@ -16,13 +16,13 @@ export default function AppBar() {
 		<ThemeProvider colorScheme="dark">
 			<BaseAppBar position="sticky">
 				<Toolbar disableGutters variant="dense">
-					<Box display="grid" gridTemplateColumns="repeat(3, 1fr)" flexGrow={ 1 }>
+					<Box display="grid" gridTemplateColumns="repeat(3, 1fr)" flexGrow={1}>
 						<Grid container flexWrap="nowrap">
 							<MainMenuLocation />
-							{ document?.permissions?.allowAddingWidgets && <ToolsMenuLocation /> }
+							{document?.permissions?.allowAddingWidgets && <ToolsMenuLocation />}
 						</Grid>
 						<Grid container justifyContent="center">
-							<ToolbarMenu spacing={ 1.5 }>
+							<ToolbarMenu spacing={1.5}>
 								<Divider orientation="vertical" />
 								<PageIndicationLocation />
 								<Divider orientation="vertical" />

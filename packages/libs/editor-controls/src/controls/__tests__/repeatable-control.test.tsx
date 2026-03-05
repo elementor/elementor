@@ -5,15 +5,15 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { RepeatableControl } from '../repeatable-control';
 
-jest.mock( '../../bound-prop-context', () => ( {
-	...jest.requireActual( '../../bound-prop-context' ),
+jest.mock('../../bound-prop-context', () => ({
+	...jest.requireActual('../../bound-prop-context'),
 	useBoundProp: jest.fn(),
-} ) );
+}));
 
 import { useBoundProp } from '../../bound-prop-context';
-const mockUseBoundProp = useBoundProp as jest.MockedFunction< typeof useBoundProp >;
+const mockUseBoundProp = useBoundProp as jest.MockedFunction<typeof useBoundProp>;
 
-const stringPropType = createMockPropType( { kind: 'object' } );
+const stringPropType = createMockPropType({ kind: 'object' });
 
 const baseProps = {
 	bind: 'items',
@@ -22,16 +22,16 @@ const baseProps = {
 	value: [],
 };
 
-const mockTextControl = jest.fn( ( { placeholder } ) => (
-	<input title="text-control" defaultValue={ placeholder } data-testid="text-control" />
-) );
+const mockTextControl = jest.fn(({ placeholder }) => (
+	<input title="text-control" defaultValue={placeholder} data-testid="text-control" />
+));
 
-describe( '<RepeatableControl />', () => {
-	beforeEach( () => {
+describe('<RepeatableControl />', () => {
+	beforeEach(() => {
 		jest.clearAllMocks();
-	} );
+	});
 
-	it( 'should create string-array prop type from child prop type', () => {
+	it('should create string-array prop type from child prop type', () => {
 		const childControlConfig = {
 			component: mockTextControl,
 			props: { placeholder: 'Enter text' },
@@ -40,15 +40,15 @@ describe( '<RepeatableControl />', () => {
 
 		const setValue = jest.fn();
 
-		mockUseBoundProp.mockReturnValue( {
-			propType: createMockPropType( { kind: 'array' } ),
+		mockUseBoundProp.mockReturnValue({
+			propType: createMockPropType({ kind: 'array' }),
 			value: [],
 			setValue,
 			bind: 'items',
 			path: [],
 			restoreValue: jest.fn(),
 			resetValue: jest.fn(),
-		} );
+		});
 
 		const props = {
 			...baseProps,
@@ -61,22 +61,22 @@ describe( '<RepeatableControl />', () => {
 			<RepeatableControl
 				label="Text Items"
 				repeaterLabel="Text items"
-				childControlConfig={ childControlConfig }
-				patternLabel={ '' }
+				childControlConfig={childControlConfig}
+				patternLabel={''}
 			/>,
 			props
 		);
 
-		const addButton = screen.getByRole( 'button', { name: /Add text items item/i } );
-		fireEvent.click( addButton );
+		const addButton = screen.getByRole('button', { name: /Add text items item/i });
+		fireEvent.click(addButton);
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( {
+		expect(setValue).toHaveBeenCalledWith({
 			$$type: 'string-array',
-			value: [ { $$type: 'string', value: null } ],
-		} );
-	} );
+			value: [{ $$type: 'string', value: null }],
+		});
+	});
 
-	it( 'should create number-array prop type from number prop type', () => {
+	it('should create number-array prop type from number prop type', () => {
 		const childControlConfig = {
 			component: mockTextControl,
 			props: { placeholder: 'Enter number' },
@@ -85,15 +85,15 @@ describe( '<RepeatableControl />', () => {
 
 		const setValue = jest.fn();
 
-		mockUseBoundProp.mockReturnValue( {
-			propType: createMockPropType( { kind: 'array' } ),
+		mockUseBoundProp.mockReturnValue({
+			propType: createMockPropType({ kind: 'array' }),
 			value: [],
 			setValue,
 			bind: 'items',
 			path: [],
 			restoreValue: jest.fn(),
 			resetValue: jest.fn(),
-		} );
+		});
 
 		const props = {
 			...baseProps,
@@ -106,22 +106,22 @@ describe( '<RepeatableControl />', () => {
 			<RepeatableControl
 				label="Number Items"
 				repeaterLabel="Number items"
-				childControlConfig={ childControlConfig }
+				childControlConfig={childControlConfig}
 			/>,
 			props
 		);
 
-		const addButton = screen.getByRole( 'button', { name: /Add number items item/i } );
-		fireEvent.click( addButton );
+		const addButton = screen.getByRole('button', { name: /Add number items item/i });
+		fireEvent.click(addButton);
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( {
+		expect(setValue).toHaveBeenCalledWith({
 			$$type: 'number-array',
-			value: [ { $$type: 'number', value: null } ],
-		} );
-	} );
+			value: [{ $$type: 'number', value: null }],
+		});
+	});
 
-	it( 'should pass label prop to Repeater', () => {
+	it('should pass label prop to Repeater', () => {
 		// Arrange.
 		const childControlConfig = {
 			component: mockTextControl,
@@ -139,17 +139,17 @@ describe( '<RepeatableControl />', () => {
 			<RepeatableControl
 				label="Custom Label"
 				repeaterLabel="Custom label"
-				childControlConfig={ childControlConfig }
+				childControlConfig={childControlConfig}
 			/>,
 			props
 		);
 
 		// Assert.
-		expect( screen.getByText( 'Custom label' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: /Add custom label item/i } ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Custom label')).toBeInTheDocument();
+		expect(screen.getByRole('button', { name: /Add custom label item/i })).toBeInTheDocument();
+	});
 
-	it( 'should render child control when add item button is pressed and valid config is provided', () => {
+	it('should render child control when add item button is pressed and valid config is provided', () => {
 		// Arrange.
 		const childControlConfig = {
 			component: mockTextControl,
@@ -164,18 +164,14 @@ describe( '<RepeatableControl />', () => {
 
 		// Act.
 		renderControl(
-			<RepeatableControl
-				label="Text Items"
-				repeaterLabel="Text items"
-				childControlConfig={ childControlConfig }
-			/>,
+			<RepeatableControl label="Text Items" repeaterLabel="Text items" childControlConfig={childControlConfig} />,
 			props
 		);
 
-		const addButton = screen.getByRole( 'button', { name: /Add text items item/i } );
-		fireEvent.click( addButton );
+		const addButton = screen.getByRole('button', { name: /Add text items item/i });
+		fireEvent.click(addButton);
 
 		// Assert.
-		expect( screen.getByDisplayValue( 'Enter text' ) ).toBeInTheDocument();
-	} );
-} );
+		expect(screen.getByDisplayValue('Enter text')).toBeInTheDocument();
+	});
+});

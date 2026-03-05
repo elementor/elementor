@@ -11,33 +11,33 @@ import { type SearchAndFilterContextType, useSearchAndFilters } from '../../../c
 import { CssClassFilter } from '../css-class-filter';
 import { setupMocks } from './test-utils';
 
-jest.mock( '@elementor/editor-documents' );
-jest.mock( '../../../context' );
-jest.mock( '../../../../../hooks/use-filtered-css-class-usage' );
+jest.mock('@elementor/editor-documents');
+jest.mock('../../../context');
+jest.mock('../../../../../hooks/use-filtered-css-class-usage');
 
-jest.mock( '../../../../../utils/tracking', () => createMockTrackingModule( 'trackGlobalClasses' ) );
+jest.mock('../../../../../utils/tracking', () => createMockTrackingModule('trackGlobalClasses'));
 
-describe( 'CssClassFilter', () => {
-	let store: ReturnType< typeof createStore >;
+describe('CssClassFilter', () => {
+	let store: ReturnType<typeof createStore>;
 	let queryClient: QueryClient;
 
-	beforeEach( () => {
+	beforeEach(() => {
 		jest.clearAllMocks();
-		jest.mocked( getCurrentDocument ).mockReturnValue( createMockDocument( { id: 1 } ) );
-		registerSlice( slice );
+		jest.mocked(getCurrentDocument).mockReturnValue(createMockDocument({ id: 1 }));
+		registerSlice(slice);
 
 		store = createStore();
 		setupMocks();
 
 		// Mock the filtered usage hook
-		jest.mocked( useFilteredCssClassUsage ).mockReturnValue( {
+		jest.mocked(useFilteredCssClassUsage).mockReturnValue({
 			unused: [],
 			empty: [],
 			onThisPage: [],
-		} );
+		});
 
-		jest.mocked( useSearchAndFilters ).mockReturnValue( {
-			search: {} as SearchAndFilterContextType[ 'search' ],
+		jest.mocked(useSearchAndFilters).mockReturnValue({
+			search: {} as SearchAndFilterContextType['search'],
 			filters: {
 				filters: {
 					unused: false,
@@ -47,67 +47,67 @@ describe( 'CssClassFilter', () => {
 				setFilters: jest.fn(),
 				onClearFilter: jest.fn(),
 			},
-		} );
+		});
 
 		// Set up QueryClient
-		queryClient = new QueryClient( {
+		queryClient = new QueryClient({
 			defaultOptions: {
 				queries: {
 					retry: false,
 				},
 			},
-		} );
-	} );
+		});
+	});
 
-	afterEach( () => {
+	afterEach(() => {
 		queryClient.clear();
-	} );
+	});
 
 	const renderComponent = () => {
 		return renderWithStore(
-			<QueryClientProvider client={ queryClient }>
+			<QueryClientProvider client={queryClient}>
 				<CssClassFilter />
 			</QueryClientProvider>,
 			store
 		);
 	};
 
-	it( 'should render filter button with tooltip', () => {
+	it('should render filter button with tooltip', () => {
 		renderComponent();
 
-		expect( screen.getByRole( 'button', { name: /filters/i } ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByRole('button', { name: /filters/i })).toBeInTheDocument();
+	});
 
-	it( 'should open popover when clicking filter button', async () => {
+	it('should open popover when clicking filter button', async () => {
 		renderComponent();
 
-		const button = screen.getByRole( 'button', { name: /filters/i } );
-		fireEvent.click( button );
+		const button = screen.getByRole('button', { name: /filters/i });
+		fireEvent.click(button);
 
-		expect( screen.getByRole( 'presentation' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Filters' ) ).toBeInTheDocument();
-		expect( mockTracking ).toHaveBeenCalledWith( {
+		expect(screen.getByRole('presentation')).toBeInTheDocument();
+		expect(screen.getByText('Filters')).toBeInTheDocument();
+		expect(mockTracking).toHaveBeenCalledWith({
 			event: 'classManagerFiltersOpened',
-		} );
-	} );
+		});
+	});
 
-	it( 'should close popover when clicking close button', async () => {
+	it('should close popover when clicking close button', async () => {
 		renderComponent();
 
-		const button = screen.getByRole( 'button', { name: /filters/i } );
-		fireEvent.click( button );
+		const button = screen.getByRole('button', { name: /filters/i });
+		fireEvent.click(button);
 
-		const clsButton = screen.getByRole( 'button', { name: /close/i } );
-		fireEvent.click( clsButton );
+		const clsButton = screen.getByRole('button', { name: /close/i });
+		fireEvent.click(clsButton);
 
-		expect( screen.queryByRole( 'presentation' ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.queryByRole('presentation')).not.toBeInTheDocument();
+	});
 
-	it( 'should track filter cleared when clicking clear all button in popover', async () => {
+	it('should track filter cleared when clicking clear all button in popover', async () => {
 		// Arrange
 		const mockOnClearFilter = jest.fn();
-		jest.mocked( useSearchAndFilters ).mockReturnValue( {
-			search: {} as SearchAndFilterContextType[ 'search' ],
+		jest.mocked(useSearchAndFilters).mockReturnValue({
+			search: {} as SearchAndFilterContextType['search'],
 			filters: {
 				filters: {
 					unused: true,
@@ -117,23 +117,23 @@ describe( 'CssClassFilter', () => {
 				setFilters: jest.fn(),
 				onClearFilter: mockOnClearFilter,
 			},
-		} );
+		});
 
 		renderComponent();
 
-		const button = screen.getByRole( 'button', { name: /filters/i } );
-		fireEvent.click( button );
+		const button = screen.getByRole('button', { name: /filters/i });
+		fireEvent.click(button);
 
-		const clearButton = screen.getByRole( 'button', { name: /clear all/i } );
+		const clearButton = screen.getByRole('button', { name: /clear all/i });
 
 		// Act
-		fireEvent.click( clearButton );
+		fireEvent.click(clearButton);
 
 		// Assert
-		expect( mockOnClearFilter ).toHaveBeenCalledWith( 'menu' );
-		expect( mockTracking ).toHaveBeenCalledWith( {
+		expect(mockOnClearFilter).toHaveBeenCalledWith('menu');
+		expect(mockTracking).toHaveBeenCalledWith({
 			event: 'classManagerFilterCleared',
 			trigger: 'menu',
-		} );
-	} );
-} );
+		});
+	});
+});

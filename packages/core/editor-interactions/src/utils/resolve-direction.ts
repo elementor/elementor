@@ -5,15 +5,15 @@ export const resolveDirection = (
 	currentDirection?: string,
 	currentEffect?: string
 ) => {
-	if ( newEffect === 'slide' && ! newDirection ) {
+	if (newEffect === 'slide' && !newDirection) {
 		return 'top';
 	}
 
-	if ( currentEffect === 'slide' && hasDirection ) {
+	if (currentEffect === 'slide' && hasDirection) {
 		return newDirection ?? 'top';
 	}
 	// Why? - New direction can be undefined when the effect is not slide, so if the updates object includes direction, we take it always!
-	if ( hasDirection ) {
+	if (hasDirection) {
 		return newDirection;
 	}
 	return currentDirection;

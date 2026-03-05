@@ -7,34 +7,34 @@ import { type Post } from '../../../../../types';
 import SetHome from '../set-home';
 
 const mockMutateAsync = jest.fn();
-jest.mock( '../../../../../hooks/use-homepage-actions', () => ( {
+jest.mock('../../../../../hooks/use-homepage-actions', () => ({
 	__esModule: true,
-	useHomepageActions: jest.fn( () => ( {
+	useHomepageActions: jest.fn(() => ({
 		updateSettingsMutation: {
 			mutateAsync: mockMutateAsync,
 			isPending: false,
 		},
-	} ) ),
-} ) );
+	})),
+}));
 
-jest.mock( '../../../../../hooks/use-user', () => ( {
-	default: jest.fn( () => ( {
+jest.mock('../../../../../hooks/use-user', () => ({
+	default: jest.fn(() => ({
 		isLoading: false,
 		data: {
 			capabilities: {
 				manage_options: true,
 			},
 		},
-	} ) ),
+	})),
 	__esModule: true,
-} ) );
+}));
 
-describe( '@elementor/editor-site-navigation - SetHome', () => {
-	afterAll( () => {
+describe('@elementor/editor-site-navigation - SetHome', () => {
+	afterAll(() => {
 		jest.clearAllMocks();
-	} );
+	});
 
-	it( 'should render Set as homepage', () => {
+	it('should render Set as homepage', () => {
 		// Arrange.
 		const post: Post = {
 			id: 1,
@@ -52,18 +52,18 @@ describe( '@elementor/editor-site-navigation - SetHome', () => {
 		};
 
 		// Act.
-		renderWithTheme( <SetHome post={ post } closeMenu={ () => {} } /> );
+		renderWithTheme(<SetHome post={post} closeMenu={() => {}} />);
 
 		// Assert.
-		const button = screen.getByRole( 'menuitem' );
-		expect( button ).not.toHaveAttribute( 'aria-disabled' );
+		const button = screen.getByRole('menuitem');
+		expect(button).not.toHaveAttribute('aria-disabled');
 
-		fireEvent.click( button );
+		fireEvent.click(button);
 
-		expect( mockMutateAsync ).toHaveBeenCalledTimes( 1 );
-	} );
+		expect(mockMutateAsync).toHaveBeenCalledTimes(1);
+	});
 
-	it( 'should render Set as homepage disabled when the page status is draft', () => {
+	it('should render Set as homepage disabled when the page status is draft', () => {
 		// Arrange.
 		const post: Post = {
 			id: 1,
@@ -81,23 +81,23 @@ describe( '@elementor/editor-site-navigation - SetHome', () => {
 		};
 
 		// Act.
-		renderWithTheme( <SetHome post={ post } closeMenu={ () => {} } /> );
+		renderWithTheme(<SetHome post={post} closeMenu={() => {}} />);
 
 		// Assert.
-		const button = screen.getByRole( 'menuitem' );
-		expect( button ).toHaveAttribute( 'aria-disabled', 'true' );
-	} );
+		const button = screen.getByRole('menuitem');
+		expect(button).toHaveAttribute('aria-disabled', 'true');
+	});
 
-	it( 'should render Set as homepage disabled when the user cant manage options', () => {
+	it('should render Set as homepage disabled when the user cant manage options', () => {
 		// Arrange.
-		jest.mocked( useUser ).mockReturnValue( {
+		jest.mocked(useUser).mockReturnValue({
 			isLoading: false,
 			data: {
 				capabilities: {
 					manage_options: false,
 				},
 			},
-		} as unknown as ReturnType< typeof useUser > );
+		} as unknown as ReturnType<typeof useUser>);
 
 		const post: Post = {
 			id: 1,
@@ -115,10 +115,10 @@ describe( '@elementor/editor-site-navigation - SetHome', () => {
 		};
 
 		// Act.
-		renderWithTheme( <SetHome post={ post } closeMenu={ () => {} } /> );
+		renderWithTheme(<SetHome post={post} closeMenu={() => {}} />);
 
 		// Assert.
-		const button = screen.getByRole( 'menuitem' );
-		expect( button ).toHaveAttribute( 'aria-disabled', 'true' );
-	} );
-} );
+		const button = screen.getByRole('menuitem');
+		expect(button).toHaveAttribute('aria-disabled', 'true');
+	});
+});

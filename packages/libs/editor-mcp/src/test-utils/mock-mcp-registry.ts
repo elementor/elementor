@@ -7,7 +7,7 @@ const mock = new Proxy(
 	{
 		get: () => {
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			function mockedFn( ..._: unknown[] ) {}
+			function mockedFn(..._: unknown[]) {}
 			return mockedFn;
 		},
 	}

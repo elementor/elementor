@@ -1,14 +1,14 @@
 type TransitionCategory = { label: string };
 
-describe( 'transition properties conditional loading', () => {
+describe('transition properties conditional loading', () => {
 	const originalElementorPro = window.elementorPro;
 
-	afterEach( () => {
+	afterEach(() => {
 		window.elementorPro = originalElementorPro;
 		jest.resetModules();
-	} );
+	});
 
-	it.each( [
+	it.each([
 		{
 			scenario: 'Pro not installed',
 			proConfig: undefined,
@@ -27,17 +27,17 @@ describe( 'transition properties conditional loading', () => {
 			expectedLength: 1,
 			expectedHasMargin: false,
 		},
-	] )( 'should load correct properties when $scenario', ( { proConfig, expectedLength, expectedHasMargin } ) => {
+	])('should load correct properties when $scenario', ({ proConfig, expectedLength, expectedHasMargin }) => {
 		window.elementorPro = proConfig;
 
-		const { transitionProperties: props } = require( '../data' );
+		const { transitionProperties: props } = require('../data');
 
-		if ( expectedLength === 'greater than 1' ) {
-			expect( props.length ).toBeGreaterThan( 1 );
+		if (expectedLength === 'greater than 1') {
+			expect(props.length).toBeGreaterThan(1);
 		} else {
-			expect( props.length ).toBe( expectedLength );
+			expect(props.length).toBe(expectedLength);
 		}
 
-		expect( props.some( ( cat: TransitionCategory ) => cat.label === 'Margin' ) ).toBe( expectedHasMargin );
-	} );
-} );
+		expect(props.some((cat: TransitionCategory) => cat.label === 'Margin')).toBe(expectedHasMargin);
+	});
+});

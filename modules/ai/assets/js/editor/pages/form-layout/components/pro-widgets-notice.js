@@ -22,7 +22,7 @@ export const ProWidgetsNotice = () => {
 				severity="info"
 				variant="filled"
 				color="promotion"
-				onClose={ () => markAsViewed( ) }
+				onClose={ () => markAsViewed() }
 				icon={ <LockIcon /> }
 				sx={ {
 					'& .MuiAlert-message': {

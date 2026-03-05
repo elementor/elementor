@@ -10,7 +10,7 @@ type InstancePanelData = {
 	componentId: number;
 	component: Component;
 	overrides: ComponentInstanceOverridesPropValue;
-	overridableProps: NonNullable< ReturnType< typeof useSanitizeOverridableProps > >;
+	overridableProps: NonNullable<ReturnType<typeof useSanitizeOverridableProps>>;
 	groups: OverridablePropsGroup[];
 	isEmpty: boolean;
 	componentInstanceId: string | undefined;
@@ -23,23 +23,23 @@ export function useInstancePanelData(): InstancePanelData | null {
 
 	const overrides = settings?.overrides?.value;
 
-	const component = useComponent( componentId ?? null );
+	const component = useComponent(componentId ?? null);
 
 	const componentInstanceId = element?.id;
 
-	const overridableProps = useSanitizeOverridableProps( componentId ?? null, componentInstanceId );
+	const overridableProps = useSanitizeOverridableProps(componentId ?? null, componentInstanceId);
 
-	if ( ! componentId || ! overridableProps || ! component ) {
+	if (!componentId || !overridableProps || !component) {
 		return null;
 	}
 
-	const isNonEmptyGroup = ( group: OverridablePropsGroup | null ) => group !== null && group.props.length > 0;
+	const isNonEmptyGroup = (group: OverridablePropsGroup | null) => group !== null && group.props.length > 0;
 
 	const groups = overridableProps.groups.order
-		.map( ( groupId ) => overridableProps.groups.items[ groupId ] ?? null )
-		.filter( isNonEmptyGroup );
+		.map((groupId) => overridableProps.groups.items[groupId] ?? null)
+		.filter(isNonEmptyGroup);
 
-	const isEmpty = groups.length === 0 || Object.keys( overridableProps.props ).length === 0;
+	const isEmpty = groups.length === 0 || Object.keys(overridableProps.props).length === 0;
 
 	return { componentId, component, overrides, overridableProps, groups, isEmpty, componentInstanceId };
 }
@@ -47,5 +47,5 @@ export function useInstancePanelData(): InstancePanelData | null {
 function useComponentInstanceSettings() {
 	const { element, settings } = useElement();
 
-	return { element, settings: componentInstancePropTypeUtil.extract( settings.component_instance ) };
+	return { element, settings: componentInstancePropTypeUtil.extract(settings.component_instance) };
 }

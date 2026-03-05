@@ -11,43 +11,43 @@ const { useMenuItems } = mainMenu;
 export default function MainMenuLocation() {
 	const menuItems = useMenuItems();
 
-	const popupState = usePopupState( {
+	const popupState = usePopupState({
 		variant: 'popover',
 		popupId: 'elementor-v2-app-bar-main-menu',
-	} );
+	});
 
-	const toolbarLogoProps = bindTrigger( popupState );
+	const toolbarLogoProps = bindTrigger(popupState);
 
-	const onToolbarClick: React.MouseEventHandler = ( e ) => {
+	const onToolbarClick: React.MouseEventHandler = (e) => {
 		const extendedWindow = window as unknown as ExtendedWindow;
 		const config = extendedWindow?.elementorCommon?.eventsManager?.config;
 
-		if ( config ) {
-			extendedWindow.elementorCommon.eventsManager.dispatchEvent( config.names.topBar.elementorLogoDropdown, {
+		if (config) {
+			extendedWindow.elementorCommon.eventsManager.dispatchEvent(config.names.topBar.elementorLogoDropdown, {
 				location: config.locations.topBar,
 				secondaryLocation: config.secondaryLocations.eLogoMenu,
 				trigger: config.triggers.dropdownClick,
 				element: config.elements.buttonIcon,
-			} );
+			});
 		}
 
-		toolbarLogoProps.onClick( e );
+		toolbarLogoProps.onClick(e);
 	};
 
 	return (
-		<Stack sx={ { paddingInlineStart: 3 } } direction="row" alignItems="center">
-			<ToolbarLogo { ...toolbarLogoProps } onClick={ onToolbarClick } selected={ popupState.isOpen } />
-			<PopoverMenu onClick={ popupState.close } { ...bindMenu( popupState ) } marginThreshold={ 8 }>
-				{ menuItems.default.map( ( { MenuItem, id } ) => (
-					<MenuItem key={ id } />
-				) ) }
+		<Stack sx={{ paddingInlineStart: 3 }} direction="row" alignItems="center">
+			<ToolbarLogo {...toolbarLogoProps} onClick={onToolbarClick} selected={popupState.isOpen} />
+			<PopoverMenu onClick={popupState.close} {...bindMenu(popupState)} marginThreshold={8}>
+				{menuItems.default.map(({ MenuItem, id }) => (
+					<MenuItem key={id} />
+				))}
 				<Divider />
-				{ menuItems.help.map( ( { MenuItem, id } ) => (
-					<MenuItem key={ id } />
-				) ) }
-				{ menuItems.exits.map( ( { MenuItem, id } ) => (
-					<MenuItem key={ id } />
-				) ) }
+				{menuItems.help.map(({ MenuItem, id }) => (
+					<MenuItem key={id} />
+				))}
+				{menuItems.exits.map(({ MenuItem, id }) => (
+					<MenuItem key={id} />
+				))}
 			</PopoverMenu>
 		</Stack>
 	);

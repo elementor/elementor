@@ -1,7 +1,7 @@
 type EditorElementsPanelExtendsWindow = Window & {
 	Marionette: {
 		CompositeView: {
-			extend: ( options: { template: string; initialize: () => void } ) => {
+			extend: (options: { template: string; initialize: () => void }) => {
 				new (): {
 					template: string;
 					initialize: () => void;
@@ -22,16 +22,16 @@ type EditorElementsPanelExtendsWindow = Window & {
 
 	$e: {
 		routes: {
-			getCurrent: () => Record< string, string >;
+			getCurrent: () => Record<string, string>;
 		};
 
-		route: ( route: string ) => void;
+		route: (route: string) => void;
 
 		components: {
-			get: ( componentName: string ) =>
+			get: (componentName: string) =>
 				| {
-						addTab: ( id: string, options: { title: string } ) => void;
-						removeTab: ( id: string ) => void;
+						addTab: (id: string, options: { title: string }) => void;
+						removeTab: (id: string) => void;
 				  }
 				| undefined;
 		};

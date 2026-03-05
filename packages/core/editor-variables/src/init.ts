@@ -21,47 +21,47 @@ export function init() {
 	registerVariableTypes();
 	registerRepeaterInjections();
 
-	registerControlReplacement( {
+	registerControlReplacement({
 		component: VariableControl,
-		condition: ( { value, placeholder } ) => {
-			if ( hasVariableAssigned( value ) ) {
+		condition: ({ value, placeholder }) => {
+			if (hasVariableAssigned(value)) {
 				return true;
 			}
 
-			if ( value ) {
+			if (value) {
 				return false;
 			}
 
-			return hasVariableAssigned( placeholder );
+			return hasVariableAssigned(placeholder);
 		},
-	} );
+	});
 
-	registerPopoverAction( {
+	registerPopoverAction({
 		id: 'variables',
 		priority: 40,
 		useProps: usePropVariableAction,
-	} );
+	});
 
-	variablesService.init().then( () => {
+	variablesService.init().then(() => {
 		initMcp();
-	} );
+	});
 
-	injectIntoTop( {
+	injectIntoTop({
 		id: 'canvas-style-variables-render',
 		component: StyleVariablesRenderer,
-	} );
+	});
 
-	injectIntoLogic( {
+	injectIntoLogic({
 		id: 'variables-open-panel-from-url',
 		component: OpenPanelFromUrl,
-	} );
+	});
 
-	registerPanel( panel );
+	registerPanel(panel);
 }
 
-function hasVariableAssigned( value: PropValue ) {
-	if ( isTransformable( value ) ) {
-		return hasVariableType( value.$$type );
+function hasVariableAssigned(value: PropValue) {
+	if (isTransformable(value)) {
+		return hasVariableType(value.$$type);
 	}
 
 	return false;

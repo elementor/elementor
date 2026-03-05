@@ -1,20 +1,20 @@
 import * as React from 'react';
 import { Popover, type PopoverProps } from '@elementor/ui';
 
-export const RepeaterPopover = ( { children, width, ...props }: PopoverProps & { width?: number } ) => {
+export const RepeaterPopover = ({ children, width, ...props }: PopoverProps & { width?: number }) => {
 	return (
 		<Popover
 			disablePortal
 			disableEnforceFocus
-			anchorOrigin={ { vertical: 'bottom', horizontal: 'left' } }
-			slotProps={ {
+			anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+			slotProps={{
 				paper: {
 					sx: { marginBlockStart: 0.5, width, overflow: 'visible' },
 				},
-			} }
-			{ ...props }
+			}}
+			{...props}
 		>
-			{ children }
+			{children}
 		</Popover>
 	);
 };

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { SvgIcon } from '@elementor/ui';
 
-const CustomCodeIcon = React.forwardRef< SVGSVGElement, React.ComponentProps< typeof SvgIcon > >( ( props, ref ) => {
+const CustomCodeIcon = React.forwardRef<SVGSVGElement, React.ComponentProps<typeof SvgIcon>>((props, ref) => {
 	return (
-		<SvgIcon viewBox="0 0 32 32" { ...props } ref={ ref } width="32" height="32">
+		<SvgIcon viewBox="0 0 32 32" {...props} ref={ref} width="32" height="32">
 			<path
 				d="M9.33333 10.666L4 15.9993L9.33333 21.3327"
 				fill="none"
@@ -30,6 +30,6 @@ const CustomCodeIcon = React.forwardRef< SVGSVGElement, React.ComponentProps< ty
 			/>
 		</SvgIcon>
 	);
-} );
+});
 
 export default CustomCodeIcon;

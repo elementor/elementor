@@ -12,35 +12,30 @@ import { AxisRow } from './axis-row';
 
 const skewAxisControls: { label: string; bind: 'x' | 'y'; startIcon: React.ReactNode }[] = [
 	{
-		label: __( 'Skew X', 'elementor' ),
+		label: __('Skew X', 'elementor'),
 		bind: 'x',
-		startIcon: <ArrowRightIcon fontSize={ 'tiny' } />,
+		startIcon: <ArrowRightIcon fontSize={'tiny'} />,
 	},
 	{
-		label: __( 'Skew Y', 'elementor' ),
+		label: __('Skew Y', 'elementor'),
 		bind: 'y',
-		startIcon: <ArrowLeftIcon fontSize="tiny" style={ { transform: 'scaleX(-1) rotate(-90deg)' } } />,
+		startIcon: <ArrowLeftIcon fontSize="tiny" style={{ transform: 'scaleX(-1) rotate(-90deg)' }} />,
 	},
 ];
 
-const skewUnits: AngleUnit[] = [ 'deg', 'rad', 'grad', 'turn' ];
+const skewUnits: AngleUnit[] = ['deg', 'rad', 'grad', 'turn'];
 
 export const Skew = () => {
-	const context = useBoundProp( skewTransformPropTypeUtil );
-	const rowRefs: RefObject< HTMLDivElement >[] = [ useRef( null ), useRef( null ), useRef( null ) ];
+	const context = useBoundProp(skewTransformPropTypeUtil);
+	const rowRefs: RefObject<HTMLDivElement>[] = [useRef(null), useRef(null), useRef(null)];
 
 	return (
-		<Grid container spacing={ 1.5 }>
-			<PropProvider { ...context }>
-				<PropKeyProvider bind={ TransformFunctionKeys.skew }>
-					{ skewAxisControls.map( ( control, index ) => (
-						<AxisRow
-							key={ control.bind }
-							{ ...control }
-							anchorRef={ rowRefs[ index ] }
-							units={ skewUnits }
-						/>
-					) ) }
+		<Grid container spacing={1.5}>
+			<PropProvider {...context}>
+				<PropKeyProvider bind={TransformFunctionKeys.skew}>
+					{skewAxisControls.map((control, index) => (
+						<AxisRow key={control.bind} {...control} anchorRef={rowRefs[index]} units={skewUnits} />
+					))}
 				</PropKeyProvider>
 			</PropProvider>
 		</Grid>

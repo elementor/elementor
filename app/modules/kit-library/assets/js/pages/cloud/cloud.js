@@ -188,7 +188,7 @@ export default function Cloud( {
 								queryParams.search ? (
 									<ErrorScreen
 										title={ __( 'No Website Templates found for your search', 'elementor' ) }
-										description={ __( 'Try different keywords or ', 'elementor' ) }
+										description={ __( 'Try different keywords or', 'elementor' ) }
 										button={ {
 											text: __( 'Continue browsing.', 'elementor' ),
 											action: clearQueryParams,

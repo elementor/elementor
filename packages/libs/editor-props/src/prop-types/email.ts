@@ -5,7 +5,7 @@ import { unknownChildrenSchema } from './utils';
 
 export const emailPropTypeUtil = createPropUtils(
 	'email',
-	z.strictObject( {
+	z.strictObject({
 		to: unknownChildrenSchema,
 		subject: unknownChildrenSchema,
 		message: unknownChildrenSchema,
@@ -16,7 +16,7 @@ export const emailPropTypeUtil = createPropUtils(
 		'reply-to': unknownChildrenSchema,
 		cc: unknownChildrenSchema,
 		bcc: unknownChildrenSchema,
-	} )
+	})
 );
 
-export type EmailPropValue = z.infer< typeof emailPropTypeUtil.schema >;
+export type EmailPropValue = z.infer<typeof emailPropTypeUtil.schema>;

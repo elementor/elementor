@@ -18,48 +18,48 @@ export const TAB_ELEMENT_TYPE = 'e-tab';
 export const TAB_CONTENT_ELEMENT_TYPE = 'e-tab-content';
 
 export const useActions = () => {
-	const { value, setValue: setDefaultActiveTab } = useBoundProp( numberPropTypeUtil );
+	const { value, setValue: setDefaultActiveTab } = useBoundProp(numberPropTypeUtil);
 	const defaultActiveTab = value ?? 0;
 
-	const duplicateItem = ( {
+	const duplicateItem = ({
 		items,
 		tabContentAreaId,
 	}: {
-		items: ItemsActionPayload< TabItem >;
+		items: ItemsActionPayload<TabItem>;
 		tabContentAreaId: string;
-	} ) => {
-		const newDefault = calculateDefaultOnDuplicate( {
+	}) => {
+		const newDefault = calculateDefaultOnDuplicate({
 			items,
 			defaultActiveTab,
-		} );
+		});
 
-		items.forEach( ( { item, index } ) => {
+		items.forEach(({ item, index }) => {
 			const tabId = item.id as string;
-			const tabContentAreaContainer = getContainer( tabContentAreaId );
-			const tabContentId = tabContentAreaContainer?.children?.[ index ]?.id;
+			const tabContentAreaContainer = getContainer(tabContentAreaId);
+			const tabContentId = tabContentAreaContainer?.children?.[index]?.id;
 
-			if ( ! tabContentId ) {
-				throw new Error( 'Original content ID is required for duplication' );
+			if (!tabContentId) {
+				throw new Error('Original content ID is required for duplication');
 			}
 
-			duplicateElements( {
-				elementIds: [ tabId, tabContentId ],
-				title: __( 'Duplicate Tab', 'elementor' ),
+			duplicateElements({
+				elementIds: [tabId, tabContentId],
+				title: __('Duplicate Tab', 'elementor'),
 				onDuplicateElements: () => {
-					if ( newDefault !== defaultActiveTab ) {
-						setDefaultActiveTab( newDefault, {}, { withHistory: false } );
+					if (newDefault !== defaultActiveTab) {
+						setDefaultActiveTab(newDefault, {}, { withHistory: false });
 					}
 				},
 				onRestoreElements: () => {
-					if ( newDefault !== defaultActiveTab ) {
-						setDefaultActiveTab( defaultActiveTab, {}, { withHistory: false } );
+					if (newDefault !== defaultActiveTab) {
+						setDefaultActiveTab(defaultActiveTab, {}, { withHistory: false });
 					}
 				},
-			} );
-		} );
+			});
+		});
 	};
 
-	const moveItem = ( {
+	const moveItem = ({
 		toIndex,
 		tabsMenuId,
 		tabContentAreaId,
@@ -71,28 +71,28 @@ export const useActions = () => {
 		tabContentAreaId: string;
 		movedElementId: string;
 		movedElementIndex: number;
-	} ) => {
-		const tabContentContainer = getContainer( tabContentAreaId );
-		const tabContent = tabContentContainer?.children?.[ movedElementIndex ];
-		const movedElement = getContainer( movedElementId );
-		const tabsMenu = getContainer( tabsMenuId );
+	}) => {
+		const tabContentContainer = getContainer(tabContentAreaId);
+		const tabContent = tabContentContainer?.children?.[movedElementIndex];
+		const movedElement = getContainer(movedElementId);
+		const tabsMenu = getContainer(tabsMenuId);
 
-		if ( ! tabContent ) {
-			throw new Error( 'Content element is required' );
+		if (!tabContent) {
+			throw new Error('Content element is required');
 		}
 
-		if ( ! movedElement || ! tabsMenu ) {
-			throw new Error( 'Tab element or menu not found' );
+		if (!movedElement || !tabsMenu) {
+			throw new Error('Tab element or menu not found');
 		}
 
-		const newDefault = calculateDefaultOnMove( {
+		const newDefault = calculateDefaultOnMove({
 			from: movedElementIndex,
 			to: toIndex,
 			defaultActiveTab,
-		} );
+		});
 
-		moveElements( {
-			title: __( 'Reorder Tabs', 'elementor' ),
+		moveElements({
+			title: __('Reorder Tabs', 'elementor'),
 			moves: [
 				{
 					element: movedElement,
@@ -106,95 +106,95 @@ export const useActions = () => {
 				},
 			],
 			onMoveElements: () => {
-				if ( newDefault !== defaultActiveTab ) {
-					setDefaultActiveTab( newDefault, {}, { withHistory: false } );
+				if (newDefault !== defaultActiveTab) {
+					setDefaultActiveTab(newDefault, {}, { withHistory: false });
 				}
 			},
 			onRestoreElements: () => {
-				if ( newDefault !== defaultActiveTab ) {
-					setDefaultActiveTab( defaultActiveTab, {}, { withHistory: false } );
+				if (newDefault !== defaultActiveTab) {
+					setDefaultActiveTab(defaultActiveTab, {}, { withHistory: false });
 				}
 			},
-		} );
+		});
 	};
 
-	const removeItem = ( {
+	const removeItem = ({
 		items,
 		tabContentAreaId,
 	}: {
-		items: ItemsActionPayload< TabItem >;
+		items: ItemsActionPayload<TabItem>;
 		tabContentAreaId: string;
-	} ) => {
-		const newDefault = calculateDefaultOnRemove( {
+	}) => {
+		const newDefault = calculateDefaultOnRemove({
 			items,
 			defaultActiveTab,
-		} );
+		});
 
-		removeElements( {
-			title: __( 'Tabs', 'elementor' ),
-			elementIds: items.flatMap( ( { item, index } ) => {
+		removeElements({
+			title: __('Tabs', 'elementor'),
+			elementIds: items.flatMap(({ item, index }) => {
 				const tabId = item.id as string;
-				const tabContentContainer = getContainer( tabContentAreaId );
-				const tabContentId = tabContentContainer?.children?.[ index ]?.id;
+				const tabContentContainer = getContainer(tabContentAreaId);
+				const tabContentId = tabContentContainer?.children?.[index]?.id;
 
-				if ( ! tabContentId ) {
-					throw new Error( 'Content ID is required' );
+				if (!tabContentId) {
+					throw new Error('Content ID is required');
 				}
 
-				return [ tabId, tabContentId ];
-			} ),
+				return [tabId, tabContentId];
+			}),
 			onRemoveElements: () => {
-				if ( newDefault !== defaultActiveTab ) {
-					setDefaultActiveTab( newDefault, {}, { withHistory: false } );
+				if (newDefault !== defaultActiveTab) {
+					setDefaultActiveTab(newDefault, {}, { withHistory: false });
 				}
 			},
 			onRestoreElements: () => {
-				if ( newDefault !== defaultActiveTab ) {
-					setDefaultActiveTab( defaultActiveTab, {}, { withHistory: false } );
+				if (newDefault !== defaultActiveTab) {
+					setDefaultActiveTab(defaultActiveTab, {}, { withHistory: false });
 				}
 			},
-		} );
+		});
 	};
 
-	const addItem = ( {
+	const addItem = ({
 		tabContentAreaId,
 		tabsMenuId,
 		items,
 	}: {
 		tabContentAreaId: string;
 		tabsMenuId: string;
-		items: ItemsActionPayload< TabItem >;
-	} ) => {
-		const tabContentArea = getContainer( tabContentAreaId );
-		const tabsMenu = getContainer( tabsMenuId );
+		items: ItemsActionPayload<TabItem>;
+	}) => {
+		const tabContentArea = getContainer(tabContentAreaId);
+		const tabsMenu = getContainer(tabsMenuId);
 
-		if ( ! tabContentArea || ! tabsMenu ) {
-			throw new Error( 'Tab containers not found' );
+		if (!tabContentArea || !tabsMenu) {
+			throw new Error('Tab containers not found');
 		}
 
-		items.forEach( ( { index } ) => {
+		items.forEach(({ index }) => {
 			const position = index + 1;
 
-			createElements( {
-				title: __( 'Tabs', 'elementor' ),
+			createElements({
+				title: __('Tabs', 'elementor'),
 				elements: [
 					{
 						container: tabContentArea,
 						model: {
 							elType: TAB_CONTENT_ELEMENT_TYPE,
-							editor_settings: { title: `Tab ${ position } content`, initial_position: position },
+							editor_settings: { title: `Tab ${position} content`, initial_position: position },
 						},
 					},
 					{
 						container: tabsMenu,
 						model: {
 							elType: TAB_ELEMENT_TYPE,
-							editor_settings: { title: `Tab ${ position } trigger`, initial_position: position },
+							editor_settings: { title: `Tab ${position} trigger`, initial_position: position },
 						},
 					},
 				],
-			} );
-		} );
+			});
+		});
 	};
 
 	return {
@@ -205,7 +205,7 @@ export const useActions = () => {
 	};
 };
 
-const calculateDefaultOnMove = ( {
+const calculateDefaultOnMove = ({
 	from,
 	to,
 	defaultActiveTab,
@@ -213,49 +213,49 @@ const calculateDefaultOnMove = ( {
 	from: number;
 	to: number;
 	defaultActiveTab: number;
-} ) => {
-	if ( from === defaultActiveTab ) {
+}) => {
+	if (from === defaultActiveTab) {
 		return to;
 	}
 
-	if ( from < defaultActiveTab && to >= defaultActiveTab ) {
+	if (from < defaultActiveTab && to >= defaultActiveTab) {
 		return defaultActiveTab - 1;
 	}
 
-	if ( from > defaultActiveTab && to <= defaultActiveTab ) {
+	if (from > defaultActiveTab && to <= defaultActiveTab) {
 		return defaultActiveTab + 1;
 	}
 
 	return defaultActiveTab;
 };
 
-const calculateDefaultOnRemove = ( {
+const calculateDefaultOnRemove = ({
 	items,
 	defaultActiveTab,
 }: {
-	items: ItemsActionPayload< TabItem >;
+	items: ItemsActionPayload<TabItem>;
 	defaultActiveTab: number;
-} ) => {
-	const isDefault = items.some( ( { index } ) => index === defaultActiveTab );
+}) => {
+	const isDefault = items.some(({ index }) => index === defaultActiveTab);
 
-	if ( isDefault ) {
+	if (isDefault) {
 		return 0;
 	}
 
-	const defaultGap = items.reduce( ( acc, { index } ) => ( index < defaultActiveTab ? acc + 1 : acc ), 0 );
+	const defaultGap = items.reduce((acc, { index }) => (index < defaultActiveTab ? acc + 1 : acc), 0);
 	return defaultActiveTab - defaultGap;
 };
 
-const calculateDefaultOnDuplicate = ( {
+const calculateDefaultOnDuplicate = ({
 	items,
 	defaultActiveTab,
 }: {
-	items: ItemsActionPayload< TabItem >;
+	items: ItemsActionPayload<TabItem>;
 	defaultActiveTab: number;
-} ) => {
-	const duplicatesBefore = items.reduce( ( acc, { index } ) => {
+}) => {
+	const duplicatesBefore = items.reduce((acc, { index }) => {
 		const isDuplicatedBeforeDefault = index < defaultActiveTab;
 		return isDuplicatedBeforeDefault ? acc + 1 : acc;
-	}, 0 );
+	}, 0);
 	return defaultActiveTab + duplicatesBefore;
 };

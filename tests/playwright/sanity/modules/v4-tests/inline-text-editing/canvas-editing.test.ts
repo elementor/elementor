@@ -190,7 +190,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 	} );
 
 	for ( const atom of supportedAtoms ) {
-		test( `ensure html tags for styling aren't stripped by twig for ${ atom } widget`, async ( ) => {
+		test( `ensure html tags for styling aren't stripped by twig for ${ atom } widget`, async () => {
 		// Arrange
 			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 			const atomIds: Partial< Record< typeof supportedAtoms[number], string > > = {};

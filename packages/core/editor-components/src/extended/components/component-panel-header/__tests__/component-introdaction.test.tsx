@@ -5,75 +5,75 @@ import { __ } from '@wordpress/i18n';
 
 import { ComponentIntroduction } from '../../component-introduction';
 
-jest.mock( '@wordpress/i18n' );
+jest.mock('@wordpress/i18n');
 
-describe( 'ComponentIntroduction', () => {
-	const anchorRef = React.createRef< HTMLDivElement >();
+describe('ComponentIntroduction', () => {
+	const anchorRef = React.createRef<HTMLDivElement>();
 	const mockOnClose = jest.fn();
 
-	beforeEach( () => {
+	beforeEach(() => {
 		jest.clearAllMocks();
-		( __ as jest.Mock ).mockImplementation( ( str ) => str );
+		(__ as jest.Mock).mockImplementation((str) => str);
 
 		// Create a mock anchor element
-		const anchorElement = document.createElement( 'div' );
-		document.body.appendChild( anchorElement );
-		( anchorRef as React.MutableRefObject< HTMLDivElement > ).current = anchorElement;
-	} );
+		const anchorElement = document.createElement('div');
+		document.body.appendChild(anchorElement);
+		(anchorRef as React.MutableRefObject<HTMLDivElement>).current = anchorElement;
+	});
 
-	afterEach( () => {
-		if ( anchorRef.current ) {
-			document.body.removeChild( anchorRef.current );
+	afterEach(() => {
+		if (anchorRef.current) {
+			document.body.removeChild(anchorRef.current);
 		}
-	} );
+	});
 
-	it( 'should render the introduction popover when shouldShowIntroduction is true', () => {
+	it('should render the introduction popover when shouldShowIntroduction is true', () => {
 		// Act
 		renderWithTheme(
-			<ComponentIntroduction anchorRef={ anchorRef } shouldShowIntroduction={ true } onClose={ mockOnClose } />
+			<ComponentIntroduction anchorRef={anchorRef} shouldShowIntroduction={true} onClose={mockOnClose} />
 		);
 
 		// Assert
-		expect( screen.getByText( 'Add your first property' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Properties make instances flexible.' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Got it' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Add your first property')).toBeInTheDocument();
+		expect(screen.getByText('Properties make instances flexible.')).toBeInTheDocument();
+		expect(screen.getByText('Got it')).toBeInTheDocument();
+	});
 
-	it( 'should not render the introduction popover when shouldShowIntroduction is false', () => {
+	it('should not render the introduction popover when shouldShowIntroduction is false', () => {
 		// Act
 		renderWithTheme(
-			<ComponentIntroduction anchorRef={ anchorRef } shouldShowIntroduction={ false } onClose={ mockOnClose } />
+			<ComponentIntroduction anchorRef={anchorRef} shouldShowIntroduction={false} onClose={mockOnClose} />
 		);
 
 		// Assert
-		expect( screen.queryByText( 'Add your first property' ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.queryByText('Add your first property')).not.toBeInTheDocument();
+	});
 
-	it( 'should call onClose when clicking the "Got it" button', () => {
+	it('should call onClose when clicking the "Got it" button', () => {
 		// Act
 		renderWithTheme(
-			<ComponentIntroduction anchorRef={ anchorRef } shouldShowIntroduction={ true } onClose={ mockOnClose } />
+			<ComponentIntroduction anchorRef={anchorRef} shouldShowIntroduction={true} onClose={mockOnClose} />
 		);
 
-		const gotItButton = screen.getByRole( 'button', { name: 'Got it' } );
+		const gotItButton = screen.getByRole('button', { name: 'Got it' });
 
-		fireEvent.click( gotItButton );
+		fireEvent.click(gotItButton);
 
 		// Assert
-		expect( mockOnClose ).toHaveBeenCalled();
-	} );
+		expect(mockOnClose).toHaveBeenCalled();
+	});
 
-	it( 'should call onClose when clicking the close button', () => {
+	it('should call onClose when clicking the close button', () => {
 		// Act
 		renderWithTheme(
-			<ComponentIntroduction anchorRef={ anchorRef } shouldShowIntroduction={ true } onClose={ mockOnClose } />
+			<ComponentIntroduction anchorRef={anchorRef} shouldShowIntroduction={true} onClose={mockOnClose} />
 		);
 
-		const closeButton = screen.getByRole( 'button', { name: 'close' } );
+		const closeButton = screen.getByRole('button', { name: 'close' });
 
-		fireEvent.click( closeButton );
+		fireEvent.click(closeButton);
 
 		// Assert
-		expect( mockOnClose ).toHaveBeenCalled();
-	} );
-} );
+		expect(mockOnClose).toHaveBeenCalled();
+	});
+});

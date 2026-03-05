@@ -5,10 +5,10 @@ import { unknownChildrenSchema } from './utils';
 
 export const queryPropTypeUtil = createPropUtils(
 	'query',
-	z.strictObject( {
+	z.strictObject({
 		id: unknownChildrenSchema,
 		label: unknownChildrenSchema,
-	} )
+	})
 );
 
-export type QueryPropValue = z.infer< typeof queryPropTypeUtil.schema >;
+export type QueryPropValue = z.infer<typeof queryPropTypeUtil.schema>;

@@ -19,32 +19,32 @@ type Config = {
 	position?: number;
 };
 
-export function injectTab( { id, label, component, position }: Config ) {
-	registerTab( { id, label, component } );
+export function injectTab({ id, label, component, position }: Config) {
+	registerTab({ id, label, component });
 
-	listenTo( v1ReadyEvent(), () => {
-		window.elementor?.hooks?.addFilter( 'panel/elements/regionViews', ( regions, { elements } ) => {
+	listenTo(v1ReadyEvent(), () => {
+		window.elementor?.hooks?.addFilter('panel/elements/regionViews', (regions, { elements }) => {
 			// Creating a empty legacy view that will be replaced by react component.
-			regions[ id ] = { region: elements, view: createLegacyView() };
+			regions[id] = { region: elements, view: createLegacyView() };
 
 			return regions;
-		} );
-	} );
+		});
+	});
 
-	listenTo( windowEvent( 'elementor/panel/init' ), () => {
+	listenTo(windowEvent('elementor/panel/init'), () => {
 		// when adding a tab to the legacy elements panel, it will generate new route based on the id.
-		getLegacyElementsPanelComponent().addTab( id, { title: label } );
-	} );
+		getLegacyElementsPanelComponent().addTab(id, { title: label });
+	});
 
-	listenTo( routeOpenEvent( LEGACY_ELEMENTS_PANEL_ROUTE_PREFIX ), ( e ) => {
-		const route = `${ LEGACY_ELEMENTS_PANEL_ROUTE_PREFIX }${ id }`;
+	listenTo(routeOpenEvent(LEGACY_ELEMENTS_PANEL_ROUTE_PREFIX), (e) => {
+		const route = `${LEGACY_ELEMENTS_PANEL_ROUTE_PREFIX}${id}`;
 
-		createTabNavItem( {
+		createTabNavItem({
 			id,
 			label,
 			route,
 			isActive: 'route' in e && e.route === route,
 			position,
-		} );
-	} );
+		});
+	});
 }

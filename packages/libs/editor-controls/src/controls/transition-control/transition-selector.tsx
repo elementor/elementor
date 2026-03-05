@@ -11,10 +11,10 @@ import { ItemSelector } from '../../components/item-selector';
 import ControlActions from '../../control-actions/control-actions';
 import { transitionProperties, transitionsItemsList } from './data';
 
-const toTransitionSelectorValue = ( label: string ) => {
-	for ( const category of transitionProperties ) {
-		const property = category.properties.find( ( prop ) => prop.label === label );
-		if ( property ) {
+const toTransitionSelectorValue = (label: string) => {
+	for (const category of transitionProperties) {
+		const property = category.properties.find((prop) => prop.label === label);
+		if (property) {
 			return {
 				key: { value: property.label, $$type: 'string' },
 				value: { value: property.value, $$type: 'string' },
@@ -25,14 +25,14 @@ const toTransitionSelectorValue = ( label: string ) => {
 	return null;
 };
 
-export function getTransitionPropertyByValue( item?: StringPropValue | null ) {
-	if ( ! item?.value ) {
+export function getTransitionPropertyByValue(item?: StringPropValue | null) {
+	if (!item?.value) {
 		return null;
 	}
 
-	for ( const category of transitionProperties ) {
-		for ( const property of category.properties ) {
-			if ( property.value === item.value ) {
+	for (const category of transitionProperties) {
+		for (const property of category.properties) {
+			if (property.value === item.value) {
 				return property;
 			}
 		}
@@ -41,15 +41,15 @@ export function getTransitionPropertyByValue( item?: StringPropValue | null ) {
 	return null;
 }
 
-const includeCurrentValueInOptions = ( value: KeyValuePropValue[ 'value' ], disabledItems: string[] ) => {
-	return disabledItems.filter( ( item ) => {
+const includeCurrentValueInOptions = (value: KeyValuePropValue['value'], disabledItems: string[]) => {
+	return disabledItems.filter((item) => {
 		return item !== value.key.value;
-	} );
+	});
 };
 
 const PRO_UPGRADE_URL = 'https://go.elementor.com/go-pro-transitions-modal/';
 
-export const TransitionSelector = ( {
+export const TransitionSelector = ({
 	recentlyUsedList = [],
 	disabledItems = [],
 	showPromotion = false,
@@ -57,59 +57,57 @@ export const TransitionSelector = ( {
 	recentlyUsedList: string[];
 	disabledItems?: string[];
 	showPromotion?: boolean;
-} ) => {
-	const { value, setValue } = useBoundProp( keyValuePropTypeUtil );
+}) => {
+	const { value, setValue } = useBoundProp(keyValuePropTypeUtil);
 	const {
 		key: { value: transitionLabel },
 	} = value;
-	const defaultRef = useRef< HTMLDivElement >( null );
-	const popoverState = usePopupState( { variant: 'popover' } );
+	const defaultRef = useRef<HTMLDivElement>(null);
+	const popoverState = usePopupState({ variant: 'popover' });
 
-	const disabledCategories = useMemo( () => {
+	const disabledCategories = useMemo(() => {
 		return new Set(
-			transitionProperties
-				.filter( ( cat ) => cat.properties.some( ( prop ) => prop.isDisabled ) )
-				.map( ( cat ) => cat.label )
+			transitionProperties.filter((cat) => cat.properties.some((prop) => prop.isDisabled)).map((cat) => cat.label)
 		);
-	}, [] );
+	}, []);
 
 	const getItemList = () => {
 		const recentItems = recentlyUsedList
-			.map( ( item ) => getTransitionPropertyByValue( { value: item, $$type: 'string' } )?.label )
-			.filter( ( item ) => !! item ) as string[];
-		const filteredItems = transitionsItemsList.map( ( category ) => {
+			.map((item) => getTransitionPropertyByValue({ value: item, $$type: 'string' })?.label)
+			.filter((item) => !!item) as string[];
+		const filteredItems = transitionsItemsList.map((category) => {
 			return {
 				...category,
-				items: category.items.filter( ( item ) => ! recentItems.includes( item ) ),
+				items: category.items.filter((item) => !recentItems.includes(item)),
 			};
-		} );
-		if ( recentItems.length === 0 ) {
+		});
+		if (recentItems.length === 0) {
 			return filteredItems;
 		}
-		const [ first, ...rest ] = filteredItems;
+		const [first, ...rest] = filteredItems;
 		return [
 			first,
 			{
-				label: __( 'Recently Used', 'elementor' ),
+				label: __('Recently Used', 'elementor'),
 				items: recentItems,
 			},
 			...rest,
 		];
 	};
 
-	const handleTransitionPropertyChange = ( newLabel: string ) => {
-		const newValue = toTransitionSelectorValue( newLabel );
+	const handleTransitionPropertyChange = (newLabel: string) => {
+		const newValue = toTransitionSelectorValue(newLabel);
 
-		if ( ! newValue ) {
+		if (!newValue) {
 			return;
 		}
 
-		setValue( newValue );
+		setValue(newValue);
 		popoverState.close();
 	};
 
 	const getAnchorPosition = () => {
-		if ( ! defaultRef.current ) {
+		if (!defaultRef.current) {
 			return undefined;
 		}
 
@@ -121,55 +119,55 @@ export const TransitionSelector = ( {
 	};
 
 	return (
-		<Box ref={ defaultRef }>
+		<Box ref={defaultRef}>
 			<ControlActions>
 				<UnstableTag
 					variant="outlined"
-					label={ transitionLabel }
-					endIcon={ <ChevronDownIcon fontSize="tiny" /> }
-					{ ...bindTrigger( popoverState ) }
+					label={transitionLabel}
+					endIcon={<ChevronDownIcon fontSize="tiny" />}
+					{...bindTrigger(popoverState)}
 					fullWidth
 				/>
 			</ControlActions>
 			<Popover
 				disablePortal
 				disableScrollLock
-				{ ...bindPopover( popoverState ) }
+				{...bindPopover(popoverState)}
 				anchorReference="anchorPosition"
-				anchorPosition={ getAnchorPosition() }
-				anchorOrigin={ { vertical: 'top', horizontal: 'right' } }
-				transformOrigin={ { vertical: 'top', horizontal: 'left' } }
+				anchorPosition={getAnchorPosition()}
+				anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+				transformOrigin={{ vertical: 'top', horizontal: 'left' }}
 			>
 				<ItemSelector
-					itemsList={ getItemList() }
-					selectedItem={ transitionLabel }
-					onItemChange={ handleTransitionPropertyChange }
-					onClose={ popoverState.close }
-					sectionWidth={ 268 }
-					title={ __( 'Transition Property', 'elementor' ) }
-					icon={ VariationsIcon as React.ElementType< { fontSize: string } > }
-					disabledItems={ includeCurrentValueInOptions( value, disabledItems ) }
-					categoryItemContentTemplate={ ( item ) => (
+					itemsList={getItemList()}
+					selectedItem={transitionLabel}
+					onItemChange={handleTransitionPropertyChange}
+					onClose={popoverState.close}
+					sectionWidth={268}
+					title={__('Transition Property', 'elementor')}
+					icon={VariationsIcon as React.ElementType<{ fontSize: string }>}
+					disabledItems={includeCurrentValueInOptions(value, disabledItems)}
+					categoryItemContentTemplate={(item) => (
 						<Box
-							sx={ {
+							sx={{
 								display: 'flex',
 								alignItems: 'center',
 								justifyContent: 'space-between',
 								width: '100%',
-							} }
+							}}
 						>
-							<span>{ item.value }</span>
-							{ showPromotion && disabledCategories.has( item.value ) && <PromotionChip /> }
+							<span>{item.value}</span>
+							{showPromotion && disabledCategories.has(item.value) && <PromotionChip />}
 						</Box>
-					) }
+					)}
 					footer={
 						showPromotion ? (
 							<PromotionAlert
-								message={ __(
+								message={__(
 									'Upgrade to customize transition properties and control effects.',
 									'elementor'
-								) }
-								upgradeUrl={ PRO_UPGRADE_URL }
+								)}
+								upgradeUrl={PRO_UPGRADE_URL}
 							/>
 						) : null
 					}

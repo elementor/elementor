@@ -9,6 +9,6 @@ export function isReady() {
 	return ready;
 }
 
-export function setReady( value: boolean ) {
+export function setReady(value: boolean) {
 	ready = value;
 }

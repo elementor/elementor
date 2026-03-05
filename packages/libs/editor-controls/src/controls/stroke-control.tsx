@@ -18,35 +18,35 @@ type StrokeProps = {
 	children: React.ReactNode;
 };
 
-const units: LengthUnit[] = [ 'px', 'em', 'rem' ];
+const units: LengthUnit[] = ['px', 'em', 'rem'];
 
-export const StrokeControl = createControl( () => {
-	const propContext = useBoundProp( strokePropTypeUtil );
-	const rowRef = useRef< HTMLDivElement >( null );
+export const StrokeControl = createControl(() => {
+	const propContext = useBoundProp(strokePropTypeUtil);
+	const rowRef = useRef<HTMLDivElement>(null);
 
 	return (
-		<PropProvider { ...propContext }>
+		<PropProvider {...propContext}>
 			<SectionContent>
-				<Control bind="width" label={ __( 'Stroke width', 'elementor' ) } ref={ rowRef }>
-					<SizeControl units={ units } anchorRef={ rowRef } />
+				<Control bind="width" label={__('Stroke width', 'elementor')} ref={rowRef}>
+					<SizeControl units={units} anchorRef={rowRef} />
 				</Control>
-				<Control bind="color" label={ __( 'Stroke color', 'elementor' ) }>
+				<Control bind="color" label={__('Stroke color', 'elementor')}>
 					<ColorControl />
 				</Control>
 			</SectionContent>
 		</PropProvider>
 	);
-} );
+});
 
-const Control = forwardRef( ( { bind, label, children }: StrokeProps, ref ) => (
-	<PropKeyProvider bind={ bind }>
-		<Grid container gap={ 2 } alignItems="center" flexWrap="nowrap" ref={ ref }>
-			<Grid item xs={ 6 }>
-				<ControlFormLabel>{ label }</ControlFormLabel>
+const Control = forwardRef(({ bind, label, children }: StrokeProps, ref) => (
+	<PropKeyProvider bind={bind}>
+		<Grid container gap={2} alignItems="center" flexWrap="nowrap" ref={ref}>
+			<Grid item xs={6}>
+				<ControlFormLabel>{label}</ControlFormLabel>
 			</Grid>
-			<Grid item xs={ 6 }>
-				{ children }
+			<Grid item xs={6}>
+				{children}
 			</Grid>
 		</Grid>
 	</PropKeyProvider>
-) );
+));

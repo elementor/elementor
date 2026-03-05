@@ -9,41 +9,41 @@ type DeletedVariableAlertProps = {
 	label: string;
 };
 
-export const DeletedVariableAlert = ( { onClose, onUnlink, onRestore, label }: DeletedVariableAlertProps ) => {
+export const DeletedVariableAlert = ({ onClose, onUnlink, onRestore, label }: DeletedVariableAlertProps) => {
 	return (
-		<ClickAwayListener onClickAway={ onClose }>
+		<ClickAwayListener onClickAway={onClose}>
 			<Alert
 				variant="standard"
 				severity="warning"
-				onClose={ onClose }
+				onClose={onClose}
 				action={
 					<>
-						{ onUnlink && (
-							<AlertAction variant="contained" onClick={ onUnlink }>
-								{ __( 'Unlink', 'elementor' ) }
+						{onUnlink && (
+							<AlertAction variant="contained" onClick={onUnlink}>
+								{__('Unlink', 'elementor')}
 							</AlertAction>
-						) }
-						{ onRestore && (
-							<AlertAction variant="outlined" onClick={ onRestore }>
-								{ __( 'Restore', 'elementor' ) }
+						)}
+						{onRestore && (
+							<AlertAction variant="outlined" onClick={onRestore}>
+								{__('Restore', 'elementor')}
 							</AlertAction>
-						) }
+						)}
 					</>
 				}
-				sx={ { maxWidth: 300 } }
+				sx={{ maxWidth: 300 }}
 			>
-				<AlertTitle>{ __( 'Deleted variable', 'elementor' ) }</AlertTitle>
+				<AlertTitle>{__('Deleted variable', 'elementor')}</AlertTitle>
 				<Typography variant="body2" color="textPrimary">
-					{ __( 'The variable', 'elementor' ) }
+					{__('The variable', 'elementor')}
 					&nbsp;&apos;
-					<Typography variant="body2" component="span" sx={ { lineBreak: 'anywhere' } }>
-						{ label }
+					<Typography variant="body2" component="span" sx={{ lineBreak: 'anywhere' }}>
+						{label}
 					</Typography>
 					&apos;&nbsp;
-					{ __(
+					{__(
 						'has been deleted, but it is still referenced in this location. You may restore the variable or unlink it to assign a different value.',
 						'elementor'
-					) }
+					)}
 				</Typography>
 			</Alert>
 		</ClickAwayListener>

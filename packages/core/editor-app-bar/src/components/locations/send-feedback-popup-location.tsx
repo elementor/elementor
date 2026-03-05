@@ -37,87 +37,87 @@ type FeedbackResult = {
 };
 
 export default function SendFeedbackPopupLocation() {
-	const isActive = isExperimentActive( EXPERIMENT_NAME );
+	const isActive = isExperimentActive(EXPERIMENT_NAME);
 	const extendedWindow = window as unknown as ExtendedWindow;
-	const [ isUserConnected, setIsUserConnected ] = useState< boolean >( checkIfUserIsConnected() );
+	const [isUserConnected, setIsUserConnected] = useState<boolean>(checkIfUserIsConnected());
 	const connectUrl = extendedWindow?.elementor?.config.user.top_bar.connect_url;
-	const [ feedbackContent, setFeedbackContent ] = useState( '' );
-	const [ feedbackResult, setFeedbackResult ] = useState< FeedbackResult | null >( null );
-	const [ submitDisabled, setSubmitDisabled ] = useState( true );
-	const { dispatchEvent: trackEvent = ( ...args: unknown[] ) => void args } = useMixpanel();
-	const popupState = usePopupState( {
+	const [feedbackContent, setFeedbackContent] = useState('');
+	const [feedbackResult, setFeedbackResult] = useState<FeedbackResult | null>(null);
+	const [submitDisabled, setSubmitDisabled] = useState(true);
+	const { dispatchEvent: trackEvent = (...args: unknown[]) => void args } = useMixpanel();
+	const popupState = usePopupState({
 		variant: 'dialog',
 		popupId: FEEDBACK_TOGGLE_EVENT,
-	} );
-	const [ isFetching, setIsFetching ] = useState( false );
-	useEffect( () => {
+	});
+	const [isFetching, setIsFetching] = useState(false);
+	useEffect(() => {
 		const handler = () => {
 			popupState.toggle();
 			// reason to re-check: clicking "connect to elementor" closes the dialog. At this time the user can perform connect, and the state might change externally.
-			setIsUserConnected( checkIfUserIsConnected() );
-			setFeedbackResult( null );
-			trackEvent( 'feedback_modal_opened', {
+			setIsUserConnected(checkIfUserIsConnected());
+			setFeedbackResult(null);
+			trackEvent('feedback_modal_opened', {
 				source: 'top_bar',
 				context: 'v4_beta',
-			} );
+			});
 		};
-		window.addEventListener( FEEDBACK_TOGGLE_EVENT, handler );
+		window.addEventListener(FEEDBACK_TOGGLE_EVENT, handler);
 		return () => {
-			window.removeEventListener( FEEDBACK_TOGGLE_EVENT, handler );
+			window.removeEventListener(FEEDBACK_TOGGLE_EVENT, handler);
 		};
-	}, [ popupState, trackEvent ] );
+	}, [popupState, trackEvent]);
 
-	useEffect( () => {
-		setSubmitDisabled( feedbackContent.trim().length < 10 || ! isUserConnected || isFetching );
-	}, [ feedbackContent, feedbackResult, isUserConnected, isFetching ] );
+	useEffect(() => {
+		setSubmitDisabled(feedbackContent.trim().length < 10 || !isUserConnected || isFetching);
+	}, [feedbackContent, feedbackResult, isUserConnected, isFetching]);
 
 	const handleClose = () => {
 		popupState.close();
-		trackEvent( 'feedback_modal_closed', {
+		trackEvent('feedback_modal_closed', {
 			feedback_text: feedbackContent,
-		} );
+		});
 	};
 	const handleStartAntoher = () => {
-		setFeedbackContent( '' );
-		setFeedbackResult( null );
+		setFeedbackContent('');
+		setFeedbackResult(null);
 	};
 	const submitFeedback = () => {
-		setIsFetching( true );
+		setIsFetching(true);
 		httpService()
-			.post( 'elementor/v1/feedback/submit', {
+			.post('elementor/v1/feedback/submit', {
 				description: feedbackContent.trim(),
-			} )
-			.then( ( response ) => {
-				setFeedbackResult( {
+			})
+			.then((response) => {
+				setFeedbackResult({
 					message: response.data.message,
 					success: response.data.success,
-				} );
+				});
 				// check if unauthorized - not signed in or expired, needs to reconnect to my-elementor account
 				if (
-					( ! response.data.success && response.data.code.toString() === '401' ) ||
+					(!response.data.success && response.data.code.toString() === '401') ||
 					response.data.code.toString() === '403'
 				) {
-					setIsUserConnected( false );
+					setIsUserConnected(false);
 				}
-				trackEvent( response.data.success ? 'feedback_submitted' : 'feedback_error', {
+				trackEvent(response.data.success ? 'feedback_submitted' : 'feedback_error', {
 					feedback_length: feedbackContent.length,
 					error_type: response.data.success ? undefined : 'server',
 					error_message: response.data.success ? undefined : response.data.message,
-				} );
-			} )
-			.finally( () => setIsFetching( false ) );
+				});
+			})
+			.finally(() => setIsFetching(false));
 	};
 
-	if ( ! isActive ) {
+	if (!isActive) {
 		return null;
 	}
 
 	return (
 		<ThemeProvider>
-			<Popover { ...bindDialog( popupState ) } onClose={ () => handleClose() }>
-				<Dialog open={ popupState.isOpen }>
-					<DialogHeader style={ { width: '100%', minWidth: '35rem' } }>
-						<DialogTitle style={ { width: '100%' } }>
+			<Popover {...bindDialog(popupState)} onClose={() => handleClose()}>
+				<Dialog open={popupState.isOpen}>
+					<DialogHeader style={{ width: '100%', minWidth: '35rem' }}>
+						<DialogTitle style={{ width: '100%' }}>
 							<Stack
 								display="flex"
 								direction="row"
@@ -125,59 +125,59 @@ export default function SendFeedbackPopupLocation() {
 								justifyContent="space-between"
 								width="100%"
 							>
-								{ __( 'Submit Feedback', 'elementor' ) }
-								<CloseButton onClick={ popupState.close } />
+								{__('Submit Feedback', 'elementor')}
+								<CloseButton onClick={popupState.close} />
 							</Stack>
 						</DialogTitle>
 					</DialogHeader>
 					<DialogContent>
-						<Stack direction="column" gap={ 2 }>
-							{ isUserConnected ? (
+						<Stack direction="column" gap={2}>
+							{isUserConnected ? (
 								<>
 									<TextField
 										autofocus
-										placeholder={ __(
+										placeholder={__(
 											'E.g. Can you add ABC features? I want to do ABC and it’s important because …',
 											'elementor'
-										) }
+										)}
 										fullwith
-										label={ __( 'Your Feedback', 'elementor' ) }
+										label={__('Your Feedback', 'elementor')}
 										multiline
 										id="elementor-feedback-usercontent"
-										rows={ 6 }
-										cols={ 80 }
-										disabled={ isFetching || feedbackResult?.success }
-										onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
-											setFeedbackContent( event.target.value )
+										rows={6}
+										cols={80}
+										disabled={isFetching || feedbackResult?.success}
+										onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+											setFeedbackContent(event.target.value)
 										}
-										value={ feedbackContent }
+										value={feedbackContent}
 									/>
-									<Stack direction="row" justifyContent="flex-end" alignItems="center" gap={ 2 }>
-										{ feedbackResult && (
+									<Stack direction="row" justifyContent="flex-end" alignItems="center" gap={2}>
+										{feedbackResult && (
 											<>
-												{ feedbackResult.success ? (
+												{feedbackResult.success ? (
 													<CheckIcon color="success" />
 												) : (
 													<AlertCircleIcon color="error" />
-												) }
-												{ feedbackResult.message }
+												)}
+												{feedbackResult.message}
 											</>
-										) }
-										{ feedbackResult?.success ? (
-											<Button variant="text" onClick={ () => handleStartAntoher() }>
-												{ __( 'Submit Another Feedback', 'elementor' ) }
+										)}
+										{feedbackResult?.success ? (
+											<Button variant="text" onClick={() => handleStartAntoher()}>
+												{__('Submit Another Feedback', 'elementor')}
 											</Button>
 										) : (
 											<Button
-												disabled={ submitDisabled }
-												onClick={ submitFeedback }
+												disabled={submitDisabled}
+												onClick={submitFeedback}
 												variant="contained"
 												color="primary"
 												size="small"
 											>
-												{ __( 'Submit', 'elementor' ) }
+												{__('Submit', 'elementor')}
 											</Button>
-										) }
+										)}
 									</Stack>
 								</>
 							) : (
@@ -186,15 +186,15 @@ export default function SendFeedbackPopupLocation() {
 										variant="contained"
 										color="primary"
 										size="large"
-										href={ connectUrl }
+										href={connectUrl}
 										target="_blank"
 										rel="noopener"
-										onClick={ popupState.close }
+										onClick={popupState.close}
 									>
-										{ __( 'Connect to Elementor', 'elementor' ) }
+										{__('Connect to Elementor', 'elementor')}
 									</Button>
 								</>
-							) }
+							)}
 						</Stack>
 					</DialogContent>
 				</Dialog>

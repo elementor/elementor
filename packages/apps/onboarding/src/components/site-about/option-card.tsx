@@ -13,26 +13,22 @@ interface OptionCardProps {
 	onClick: () => void;
 }
 
-export function OptionCard( { label, icon: Icon, selected, onClick }: OptionCardProps ) {
+export function OptionCard({ label, icon: Icon, selected, onClick }: OptionCardProps) {
 	const theme = useTheme();
 
 	return (
-		<OptionCardRoot
-			className={ selected ? 'Mui-selected' : undefined }
-			onClick={ onClick }
-			aria-pressed={ selected }
-		>
-			{ selected && <SelectionBadge icon={ CheckIcon } /> }
-			<Icon sx={ { fontSize: theme.spacing( 4 ), color: 'text.primary' } } />
+		<OptionCardRoot className={selected ? 'Mui-selected' : undefined} onClick={onClick} aria-pressed={selected}>
+			{selected && <SelectionBadge icon={CheckIcon} />}
+			<Icon sx={{ fontSize: theme.spacing(4), color: 'text.primary' }} />
 			<Typography
 				variant="body2"
 				color="text.secondary"
 				display="flex"
 				alignItems="center"
 				align="center"
-				sx={ { minHeight: theme.spacing( 5 ) } }
+				sx={{ minHeight: theme.spacing(5) }}
 			>
-				{ label }
+				{label}
 			</Typography>
 		</OptionCardRoot>
 	);

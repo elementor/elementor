@@ -11,52 +11,52 @@ import { TransformOriginControl } from './transform-base-controls/transform-orig
 
 const SIZE = 'tiny';
 
-export const TransformSettingsControl = ( {
+export const TransformSettingsControl = ({
 	popupState,
 	anchorRef,
 	showChildrenPerspective,
 }: {
 	popupState: PopupState;
-	anchorRef: React.RefObject< HTMLDivElement | null >;
+	anchorRef: React.RefObject<HTMLDivElement | null>;
 	showChildrenPerspective: boolean;
-} ) => {
-	const popupProps = bindPopover( {
+}) => {
+	const popupProps = bindPopover({
 		...popupState,
 		anchorEl: anchorRef.current ?? undefined,
-	} );
+	});
 
 	return (
 		<Popover
 			disablePortal
-			anchorOrigin={ { vertical: 'bottom', horizontal: 'left' } }
-			slotProps={ {
+			anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+			slotProps={{
 				paper: {
 					sx: {
-						width: ( anchorRef.current?.offsetWidth || 0 ) - 6 + 'px',
+						width: (anchorRef.current?.offsetWidth || 0) - 6 + 'px',
 						mt: 0.5,
 					},
 				},
-			} }
-			{ ...popupProps }
+			}}
+			{...popupProps}
 		>
 			<PopoverHeader
-				title={ __( 'Transform settings', 'elementor' ) }
-				onClose={ popupState.close }
-				icon={ <AdjustmentsIcon fontSize={ SIZE } /> }
+				title={__('Transform settings', 'elementor')}
+				onClose={popupState.close}
+				icon={<AdjustmentsIcon fontSize={SIZE} />}
 			/>
 			<Divider />
-			<PopoverContent sx={ { px: 2, py: 1.5 } }>
-				<PropKeyProvider bind={ 'transform-origin' }>
+			<PopoverContent sx={{ px: 2, py: 1.5 }}>
+				<PropKeyProvider bind={'transform-origin'}>
 					<TransformOriginControl />
 				</PropKeyProvider>
-				{ showChildrenPerspective && (
+				{showChildrenPerspective && (
 					<>
-						<Box sx={ { my: 0.5 } }>
+						<Box sx={{ my: 0.5 }}>
 							<Divider />
 						</Box>
 						<ChildrenPerspectiveControl />
 					</>
-				) }
+				)}
 			</PopoverContent>
 		</Popover>
 	);

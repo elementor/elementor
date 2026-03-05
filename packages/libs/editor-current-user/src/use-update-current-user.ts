@@ -6,8 +6,8 @@ import { EDITOR_CURRENT_USER_QUERY_KEY } from './use-current-user';
 export const useUpdateCurrentUser = () => {
 	const queryClient = useQueryClient();
 
-	return useMutation( {
+	return useMutation({
 		mutationFn: apiClient.update,
-		onSuccess: () => queryClient.invalidateQueries( { queryKey: [ EDITOR_CURRENT_USER_QUERY_KEY ] } ),
-	} );
+		onSuccess: () => queryClient.invalidateQueries({ queryKey: [EDITOR_CURRENT_USER_QUERY_KEY] }),
+	});
 };

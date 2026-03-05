@@ -5,8 +5,8 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { Repeater, type RepeaterItem } from '../repeater/repeater';
 
-describe( 'Repeater', () => {
-	it( 'should render the repeater with no items', () => {
+describe('Repeater', () => {
+	it('should render the repeater with no items', () => {
 		// Arrange.
 		const itemSettings = {
 			Icon: () => <span>Item Icon</span>,
@@ -16,25 +16,23 @@ describe( 'Repeater', () => {
 				$$type: 'example',
 				value: 'Hello World',
 			},
-			getId: ( { index }: { index: number } ) => `item-${ index }`,
+			getId: ({ index }: { index: number }) => `item-${index}`,
 		};
 
 		// Act.
-		renderWithTheme(
-			<Repeater label={ 'Repeater' } itemSettings={ itemSettings } values={ [] } setValues={ jest.fn() } />
-		);
+		renderWithTheme(<Repeater label={'Repeater'} itemSettings={itemSettings} values={[]} setValues={jest.fn()} />);
 
 		// Assert.
-		expect( screen.getByText( 'Repeater' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Add item' } ) ).toBeInTheDocument();
-		expect( screen.queryByText( 'Item Icon' ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'Item label' ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.getByText('Repeater')).toBeInTheDocument();
+		expect(screen.getByRole('button', { name: 'Add item' })).toBeInTheDocument();
+		expect(screen.queryByText('Item Icon')).not.toBeInTheDocument();
+		expect(screen.queryByText('Item label')).not.toBeInTheDocument();
+	});
 
-	it( 'should render the repeater with initial item, and pass the value to its components', () => {
+	it('should render the repeater with initial item, and pass the value to its components', () => {
 		// Arrange.
-		const Icon = ( { value }: { value: { value: string } } ) => <span>Item Icon - { value.value }</span>;
-		const Label = ( { value }: { value: { value: string } } ) => <span>Item label - { value.value }</span>;
+		const Icon = ({ value }: { value: { value: string } }) => <span>Item Icon - {value.value}</span>;
+		const Label = ({ value }: { value: { value: string } }) => <span>Item label - {value.value}</span>;
 
 		const itemSettings = {
 			Icon,
@@ -44,25 +42,25 @@ describe( 'Repeater', () => {
 				$$type: 'example',
 				value: 'Hello World',
 			},
-			getId: ( { index }: { index: number } ) => `item-${ index }`,
+			getId: ({ index }: { index: number }) => `item-${index}`,
 		};
 
 		// Act.
 		renderWithTheme(
 			<Repeater
-				label={ 'Repeater' }
-				itemSettings={ itemSettings }
-				values={ [ itemSettings.initialValues ] }
-				setValues={ jest.fn() }
+				label={'Repeater'}
+				itemSettings={itemSettings}
+				values={[itemSettings.initialValues]}
+				setValues={jest.fn()}
 			/>
 		);
 
 		// Assert.
-		expect( screen.getByText( 'Item Icon - Hello World' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Item label - Hello World' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Item Icon - Hello World')).toBeInTheDocument();
+		expect(screen.getByText('Item label - Hello World')).toBeInTheDocument();
+	});
 
-	it( 'should add a new item to the bottom when the add button is clicked', () => {
+	it('should add a new item to the bottom when the add button is clicked', () => {
 		// Arrange.
 		const itemSettings = {
 			Icon: () => <span>Item Icon</span>,
@@ -72,7 +70,7 @@ describe( 'Repeater', () => {
 				$$type: 'example',
 				value: 'Initial item',
 			},
-			getId: ( { index }: { index: number } ) => `item-${ index }`,
+			getId: ({ index }: { index: number }) => `item-${index}`,
 		};
 
 		const values = [
@@ -86,25 +84,25 @@ describe( 'Repeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<Repeater label={ 'Repeater' } itemSettings={ itemSettings } setValues={ setValues } values={ values } />
+			<Repeater label={'Repeater'} itemSettings={itemSettings} setValues={setValues} values={values} />
 		);
 
-		const addButton = screen.getByRole( 'button', { name: 'Add item' } );
+		const addButton = screen.getByRole('button', { name: 'Add item' });
 
-		fireEvent.click( addButton );
+		fireEvent.click(addButton);
 
 		// Assert.
-		expect( setValues ).toHaveBeenCalledTimes( 1 );
-		expect( setValues ).toHaveBeenCalledWith(
-			[ ...values, itemSettings.initialValues ],
+		expect(setValues).toHaveBeenCalledTimes(1);
+		expect(setValues).toHaveBeenCalledWith(
+			[...values, itemSettings.initialValues],
 			{},
 			{
-				action: { type: 'add', payload: [ { index: 1, item: itemSettings.initialValues } ] },
+				action: { type: 'add', payload: [{ index: 1, item: itemSettings.initialValues }] },
 			}
 		);
-	} );
+	});
 
-	it( 'should duplicate an item when the duplicate button is clicked, and add it right after the clicked item', () => {
+	it('should duplicate an item when the duplicate button is clicked, and add it right after the clicked item', () => {
 		// Arrange.
 		const itemSettings = {
 			Icon: () => <span>Item Icon</span>,
@@ -114,7 +112,7 @@ describe( 'Repeater', () => {
 				$$type: 'example',
 				value: 'Hello World',
 			},
-			getId: ( { index }: { index: number } ) => `item-${ index }`,
+			getId: ({ index }: { index: number }) => `item-${index}`,
 		};
 
 		const setValues = jest.fn();
@@ -131,15 +129,15 @@ describe( 'Repeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<Repeater label={ 'Repeater' } itemSettings={ itemSettings } values={ values } setValues={ setValues } />
+			<Repeater label={'Repeater'} itemSettings={itemSettings} values={values} setValues={setValues} />
 		);
 		// eslint-disable-next-line testing-library/no-node-access
-		const duplicateButton = document.querySelector( 'button[aria-label="Duplicate"]' );
+		const duplicateButton = document.querySelector('button[aria-label="Duplicate"]');
 
-		fireEvent.click( duplicateButton as Element );
+		fireEvent.click(duplicateButton as Element);
 
 		// Assert.
-		expect( setValues ).toHaveBeenCalledWith(
+		expect(setValues).toHaveBeenCalledWith(
 			[
 				{
 					$$type: 'example',
@@ -155,11 +153,11 @@ describe( 'Repeater', () => {
 				},
 			],
 			{},
-			{ action: { type: 'duplicate', payload: [ { index: 0, item: values[ 0 ] } ] } }
+			{ action: { type: 'duplicate', payload: [{ index: 0, item: values[0] }] } }
 		);
-	} );
+	});
 
-	it( 'should remove the item when the remove button is clicked', () => {
+	it('should remove the item when the remove button is clicked', () => {
 		// Arrange.
 		const itemSettings = {
 			Icon: () => <span>Item Icon</span>,
@@ -169,7 +167,7 @@ describe( 'Repeater', () => {
 				$$type: 'example',
 				value: 'Hello World',
 			},
-			getId: ( { index }: { index: number } ) => `item-${ index }`,
+			getId: ({ index }: { index: number }) => `item-${index}`,
 		};
 
 		const setValues = jest.fn();
@@ -186,15 +184,15 @@ describe( 'Repeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<Repeater label={ 'Repeater' } itemSettings={ itemSettings } values={ values } setValues={ setValues } />
+			<Repeater label={'Repeater'} itemSettings={itemSettings} values={values} setValues={setValues} />
 		);
 		// eslint-disable-next-line testing-library/no-node-access
-		const removeButton = document.querySelector( 'button[aria-label="Remove"]' );
+		const removeButton = document.querySelector('button[aria-label="Remove"]');
 
-		fireEvent.click( removeButton as Element );
+		fireEvent.click(removeButton as Element);
 
 		// Assert.
-		expect( setValues ).toHaveBeenCalledWith(
+		expect(setValues).toHaveBeenCalledWith(
 			[
 				{
 					$$type: 'example',
@@ -202,40 +200,40 @@ describe( 'Repeater', () => {
 				},
 			],
 			{},
-			{ action: { type: 'remove', payload: [ { index: 0, item: values[ 0 ] } ] } }
+			{ action: { type: 'remove', payload: [{ index: 0, item: values[0] }] } }
 		);
-	} );
+	});
 
-	it( 'should render the item content and pass the index as bind prop', () => {
+	it('should render the item content and pass the index as bind prop', () => {
 		// Arrange.
 		const itemSettings = {
 			Icon: () => <span>Item Icon</span>,
 			Label: () => <span>Item label</span>,
-			Content: ( { bind }: { bind: string } ) => <span>Content - { bind }</span>,
+			Content: ({ bind }: { bind: string }) => <span>Content - {bind}</span>,
 			initialValues: {
 				$$type: 'example',
 				value: 'Hello World',
 			},
-			getId: ( { index }: { index: number } ) => `item-${ index }`,
+			getId: ({ index }: { index: number }) => `item-${index}`,
 		};
 
 		const setValues = jest.fn();
-		const values = Array( 3 ).fill( itemSettings.initialValues );
+		const values = Array(3).fill(itemSettings.initialValues);
 
 		// Act.
 		renderWithTheme(
-			<Repeater label={ 'Repeater' } itemSettings={ itemSettings } values={ values } setValues={ setValues } />
+			<Repeater label={'Repeater'} itemSettings={itemSettings} values={values} setValues={setValues} />
 		);
 
-		const [ , secondItem ] = screen.getAllByRole( 'button', { name: 'Open item' } );
+		const [, secondItem] = screen.getAllByRole('button', { name: 'Open item' });
 
-		fireEvent.click( secondItem );
+		fireEvent.click(secondItem);
 
 		// Assert.
-		expect( screen.getByText( 'Content - 1' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Content - 1')).toBeInTheDocument();
+	});
 
-	it( 'should disable the item when the disable button is clicked', () => {
+	it('should disable the item when the disable button is clicked', () => {
 		// Arrange.
 		const itemSettings = {
 			Icon: () => <span>Item Icon</span>,
@@ -245,7 +243,7 @@ describe( 'Repeater', () => {
 				$$type: 'example',
 				value: 'Hello World',
 			},
-			getId: ( { index }: { index: number } ) => `item-${ index }`,
+			getId: ({ index }: { index: number }) => `item-${index}`,
 		};
 
 		const setValues = jest.fn();
@@ -258,15 +256,15 @@ describe( 'Repeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<Repeater label={ 'Repeater' } itemSettings={ itemSettings } values={ values } setValues={ setValues } />
+			<Repeater label={'Repeater'} itemSettings={itemSettings} values={values} setValues={setValues} />
 		);
 		// eslint-disable-next-line testing-library/no-node-access
-		const disableButton = document.querySelector( 'button[aria-label="Hide"]' );
+		const disableButton = document.querySelector('button[aria-label="Hide"]');
 
-		fireEvent.click( disableButton as Element );
+		fireEvent.click(disableButton as Element);
 
 		// Assert.
-		expect( setValues ).toHaveBeenCalledWith(
+		expect(setValues).toHaveBeenCalledWith(
 			[
 				{
 					$$type: 'example',
@@ -277,9 +275,9 @@ describe( 'Repeater', () => {
 			{},
 			{ action: { type: 'toggle-disable' } }
 		);
-	} );
+	});
 
-	it( 'should remove the disabled property when the enable button is clicked', () => {
+	it('should remove the disabled property when the enable button is clicked', () => {
 		// Arrange.
 		const itemSettings = {
 			Icon: () => <span>Item Icon</span>,
@@ -290,23 +288,23 @@ describe( 'Repeater', () => {
 				value: 'First item',
 				disabled: true,
 			},
-			getId: ( { index }: { index: number } ) => `item-${ index }`,
+			getId: ({ index }: { index: number }) => `item-${index}`,
 		};
 
 		const setValues = jest.fn();
-		const values = [ itemSettings.initialValues ];
+		const values = [itemSettings.initialValues];
 
 		// Act.
 		renderWithTheme(
-			<Repeater label={ 'Repeater' } itemSettings={ itemSettings } values={ values } setValues={ setValues } />
+			<Repeater label={'Repeater'} itemSettings={itemSettings} values={values} setValues={setValues} />
 		);
 		// eslint-disable-next-line testing-library/no-node-access
-		const enableButton = document.querySelector( 'button[aria-label="Show"]' );
+		const enableButton = document.querySelector('button[aria-label="Show"]');
 
-		fireEvent.click( enableButton as Element );
+		fireEvent.click(enableButton as Element);
 
 		// Assert.
-		expect( setValues ).toHaveBeenCalledWith(
+		expect(setValues).toHaveBeenCalledWith(
 			[
 				{
 					$$type: 'example',
@@ -316,55 +314,55 @@ describe( 'Repeater', () => {
 			{},
 			{ action: { type: 'toggle-disable' } }
 		);
-	} );
+	});
 
-	it( 'should open the last repeater item popover, if the newly added item was added to bottom and "openOnAdd" is true', () => {
+	it('should open the last repeater item popover, if the newly added item was added to bottom and "openOnAdd" is true', () => {
 		// Arrange.
 		const itemSettings = {
 			Icon: () => <span>Item Icon</span>,
 			Label: () => <span>Item label</span>,
-			Content: ( { bind }: { bind: string } ) => <span>Content - { bind }</span>,
+			Content: ({ bind }: { bind: string }) => <span>Content - {bind}</span>,
 			initialValues: {
 				$$type: 'example',
 				value: 'Hello World',
 			},
-			getId: ( { index }: { index: number } ) => `item-${ index }`,
+			getId: ({ index }: { index: number }) => `item-${index}`,
 		};
 
-		type TestItem = RepeaterItem< { $$type: string; value: string } >;
+		type TestItem = RepeaterItem<{ $$type: string; value: string }>;
 
 		const TestWrapper = () => {
-			const [ values, setValues ] = useState< TestItem[] >( [] );
+			const [values, setValues] = useState<TestItem[]>([]);
 
 			return (
 				<Repeater
 					openOnAdd
-					label={ 'Repeater' }
-					itemSettings={ itemSettings }
-					values={ values }
-					setValues={ setValues }
+					label={'Repeater'}
+					itemSettings={itemSettings}
+					values={values}
+					setValues={setValues}
 				/>
 			);
 		};
 
 		// Act.
-		renderWithTheme( <TestWrapper /> );
+		renderWithTheme(<TestWrapper />);
 
-		const addButton = screen.getByRole( 'button', { name: 'Add item' } );
+		const addButton = screen.getByRole('button', { name: 'Add item' });
 
-		fireEvent.click( addButton );
+		fireEvent.click(addButton);
 
 		// Assert.
-		expect( screen.getByText( 'Content - 0' ) ).toBeInTheDocument();
+		expect(screen.getByText('Content - 0')).toBeInTheDocument();
 
 		// Act.
-		fireEvent.click( addButton );
+		fireEvent.click(addButton);
 
 		// Assert.
-		expect( screen.getByText( 'Content - 1' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Content - 1')).toBeInTheDocument();
+	});
 
-	it( 'should not open the added item popover when "openOnAdd" prop not passed', () => {
+	it('should not open the added item popover when "openOnAdd" prop not passed', () => {
 		// Arrange.
 		const itemSettings = {
 			Icon: () => <span>Item Icon</span>,
@@ -374,23 +372,21 @@ describe( 'Repeater', () => {
 				$$type: 'example',
 				value: 'Hello World',
 			},
-			getId: ( { index }: { index: number } ) => `item-${ index }`,
+			getId: ({ index }: { index: number }) => `item-${index}`,
 		};
 
 		// Act.
-		renderWithTheme(
-			<Repeater label={ 'Repeater' } itemSettings={ itemSettings } values={ [] } setValues={ jest.fn() } />
-		);
+		renderWithTheme(<Repeater label={'Repeater'} itemSettings={itemSettings} values={[]} setValues={jest.fn()} />);
 
-		const addButton = screen.getByRole( 'button', { name: 'Add item' } );
+		const addButton = screen.getByRole('button', { name: 'Add item' });
 
-		fireEvent.click( addButton );
+		fireEvent.click(addButton);
 
 		// Assert.
-		expect( screen.queryByText( 'Content' ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.queryByText('Content')).not.toBeInTheDocument();
+	});
 
-	it( 'should hide the duplicate button when showDuplicate is false', () => {
+	it('should hide the duplicate button when showDuplicate is false', () => {
 		// Arrange.
 		const itemSettings = {
 			Icon: () => <span>Item Icon</span>,
@@ -400,7 +396,7 @@ describe( 'Repeater', () => {
 				$$type: 'example',
 				value: 'Hello World',
 			},
-			getId: ( { index }: { index: number } ) => `item-${ index }`,
+			getId: ({ index }: { index: number }) => `item-${index}`,
 		};
 
 		const values = [
@@ -413,20 +409,20 @@ describe( 'Repeater', () => {
 		// Act.
 		renderWithTheme(
 			<Repeater
-				label={ 'Repeater' }
-				itemSettings={ itemSettings }
-				values={ values }
-				setValues={ jest.fn() }
-				showDuplicate={ false }
+				label={'Repeater'}
+				itemSettings={itemSettings}
+				values={values}
+				setValues={jest.fn()}
+				showDuplicate={false}
 			/>
 		);
 
 		// Assert.
-		const duplicateButton = screen.queryByRole( 'button', { name: 'Duplicate' } );
-		expect( duplicateButton ).not.toBeInTheDocument();
-	} );
+		const duplicateButton = screen.queryByRole('button', { name: 'Duplicate' });
+		expect(duplicateButton).not.toBeInTheDocument();
+	});
 
-	it( 'should hide the toggle button when showToggle is false', () => {
+	it('should hide the toggle button when showToggle is false', () => {
 		// Arrange.
 		const itemSettings = {
 			Icon: () => <span>Item Icon</span>,
@@ -436,7 +432,7 @@ describe( 'Repeater', () => {
 				$$type: 'example',
 				value: 'Hello World',
 			},
-			getId: ( { index }: { index: number } ) => `item-${ index }`,
+			getId: ({ index }: { index: number }) => `item-${index}`,
 		};
 
 		const values = [
@@ -449,20 +445,20 @@ describe( 'Repeater', () => {
 		// Act.
 		renderWithTheme(
 			<Repeater
-				label={ 'Repeater' }
-				itemSettings={ itemSettings }
-				values={ values }
-				setValues={ jest.fn() }
-				showToggle={ false }
+				label={'Repeater'}
+				itemSettings={itemSettings}
+				values={values}
+				setValues={jest.fn()}
+				showToggle={false}
 			/>
 		);
 
 		// Assert.
-		const toggleButton = screen.queryByLabelText( 'Hide' );
-		expect( toggleButton ).not.toBeInTheDocument();
-	} );
+		const toggleButton = screen.queryByLabelText('Hide');
+		expect(toggleButton).not.toBeInTheDocument();
+	});
 
-	it( 'should hide the remove button when showRemove is false', () => {
+	it('should hide the remove button when showRemove is false', () => {
 		// Arrange.
 		const itemSettings = {
 			Icon: () => <span>Item Icon</span>,
@@ -472,7 +468,7 @@ describe( 'Repeater', () => {
 				$$type: 'example',
 				value: 'First item',
 			},
-			getId: ( { index }: { index: number } ) => `item-${ index }`,
+			getId: ({ index }: { index: number }) => `item-${index}`,
 		};
 
 		const values = [
@@ -485,16 +481,16 @@ describe( 'Repeater', () => {
 		// Act.
 		renderWithTheme(
 			<Repeater
-				label={ 'Repeater' }
-				itemSettings={ itemSettings }
-				values={ values }
-				setValues={ jest.fn() }
-				showRemove={ false }
+				label={'Repeater'}
+				itemSettings={itemSettings}
+				values={values}
+				setValues={jest.fn()}
+				showRemove={false}
 			/>
 		);
 
 		// Assert.
-		const removeButton = screen.queryByLabelText( 'Remove' );
-		expect( removeButton ).not.toBeInTheDocument();
-	} );
-} );
+		const removeButton = screen.queryByLabelText('Remove');
+		expect(removeButton).not.toBeInTheDocument();
+	});
+});

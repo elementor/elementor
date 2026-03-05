@@ -2,7 +2,7 @@ import { type V1ElementModelProps, type V1ElementSettingsProps } from '@elemento
 
 import { type StorageContent } from '../prevent-link-in-link-commands';
 
-export type ElementModelProps = Omit< V1ElementModelProps, 'id' > & {
+export type ElementModelProps = Omit<V1ElementModelProps, 'id'> & {
 	custom: {
 		isPreset: boolean;
 		preset_settings?: V1ElementSettingsProps;
@@ -10,8 +10,8 @@ export type ElementModelProps = Omit< V1ElementModelProps, 'id' > & {
 };
 
 type Channel = {
-	reply: ( event: string, data: unknown ) => Channel;
-	trigger: ( event: string ) => void;
+	reply: (event: string, data: unknown) => Channel;
+	trigger: (event: string) => void;
 };
 
 type ElementorChannels = {
@@ -21,19 +21,19 @@ type ElementorChannels = {
 
 export type CanvasExtendedWindow = Window & {
 	elementor?: {
-		$preview?: [ HTMLIFrameElement ];
+		$preview?: [HTMLIFrameElement];
 		channels?: ElementorChannels;
 		modules?: {
 			elements?: {
 				models?: {
-					Element?: new ( props: ElementModelProps ) => unknown;
+					Element?: new (props: ElementModelProps) => unknown;
 				};
 			};
 		};
 	};
 	elementorCommon?: {
 		storage?: {
-			get: ( key?: string ) => StorageContent;
+			get: (key?: string) => StorageContent;
 		};
 		config?: {
 			urls?: {

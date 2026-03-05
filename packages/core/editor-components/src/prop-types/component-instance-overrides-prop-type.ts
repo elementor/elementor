@@ -7,13 +7,13 @@ import { componentOverridablePropTypeUtil } from './component-overridable-prop-t
 export const componentInstanceOverridesPropTypeUtil = createPropUtils(
 	'overrides',
 	z
-		.array( z.union( [ componentInstanceOverridePropTypeUtil.schema, componentOverridablePropTypeUtil.schema ] ) )
+		.array(z.union([componentInstanceOverridePropTypeUtil.schema, componentOverridablePropTypeUtil.schema]))
 		.optional()
-		.default( [] )
+		.default([])
 );
 
 export type ComponentInstanceOverridesPropValue = z.infer<
 	typeof componentInstanceOverridesPropTypeUtil.schema
->[ 'value' ];
+>['value'];
 
-export type ComponentInstanceOverride = NonNullable< ComponentInstanceOverridesPropValue >[ number ];
+export type ComponentInstanceOverride = NonNullable<ComponentInstanceOverridesPropValue>[number];

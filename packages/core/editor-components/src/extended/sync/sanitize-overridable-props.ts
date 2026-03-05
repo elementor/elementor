@@ -7,26 +7,26 @@ import { updateComponentSanitizedAttribute } from '../store/actions/update-compo
 
 export function SanitizeOverridableProps() {
 	const currentComponentId = useCurrentComponentId();
-	const overridableProps = useOverridableProps( currentComponentId );
-	const isSanitized = useIsSanitizedComponent( currentComponentId, 'overridableProps' );
+	const overridableProps = useOverridableProps(currentComponentId);
+	const isSanitized = useIsSanitizedComponent(currentComponentId, 'overridableProps');
 
-	useEffect( () => {
-		if ( isSanitized || ! overridableProps || ! currentComponentId ) {
+	useEffect(() => {
+		if (isSanitized || !overridableProps || !currentComponentId) {
 			return;
 		}
 
-		const filtered = filterValidOverridableProps( overridableProps );
+		const filtered = filterValidOverridableProps(overridableProps);
 
-		const propsToDelete = Object.keys( overridableProps.props ?? {} ).filter( ( key ) => ! filtered.props[ key ] );
+		const propsToDelete = Object.keys(overridableProps.props ?? {}).filter((key) => !filtered.props[key]);
 
-		if ( propsToDelete.length > 0 ) {
-			propsToDelete.forEach( ( key ) => {
-				deleteOverridableProp( { componentId: currentComponentId, propKey: key, source: 'system' } );
-			} );
+		if (propsToDelete.length > 0) {
+			propsToDelete.forEach((key) => {
+				deleteOverridableProp({ componentId: currentComponentId, propKey: key, source: 'system' });
+			});
 		}
 
-		updateComponentSanitizedAttribute( currentComponentId, 'overridableProps' );
-	}, [ currentComponentId, isSanitized, overridableProps ] );
+		updateComponentSanitizedAttribute(currentComponentId, 'overridableProps');
+	}, [currentComponentId, isSanitized, overridableProps]);
 
 	return null;
 }

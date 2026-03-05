@@ -17,18 +17,18 @@ import { StepId } from '../../types';
 import { t } from '../../utils/translations';
 
 interface ThemeSelectionProps {
-	onComplete: ( choice: Record< string, unknown > ) => void;
+	onComplete: (choice: Record<string, unknown>) => void;
 }
 
-export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
+export function ThemeSelection({ onComplete }: ThemeSelectionProps) {
 	const { choices, completedSteps, actions } = useOnboarding();
 
 	const selectedValue = choices.theme_selection as ThemeSlug | null;
-	const isStepCompleted = completedSteps.includes( StepId.THEME_SELECTION );
-	const isInstalled = isStepCompleted && !! selectedValue;
+	const isStepCompleted = completedSteps.includes(StepId.THEME_SELECTION);
+	const isInstalled = isStepCompleted && !!selectedValue;
 
-	const recommendedTheme = useMemo( () => getRecommendedTheme( choices ), [ choices ] );
-	const greetingText = useMemo( () => getGreetingText( choices.experience_level ), [ choices.experience_level ] );
+	const recommendedTheme = useMemo(() => getRecommendedTheme(choices), [choices]);
+	const greetingText = useMemo(() => getGreetingText(choices.experience_level), [choices.experience_level]);
 
 	// Show both themes when Hello Biz is recommended.
 	// TODO: Once the site_about step (S2) is implemented, this will work automatically.
@@ -37,46 +37,43 @@ export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
 
 	// Pre-select the recommended theme if no explicit selection was made yet.
 	// `actions` is omitted from deps because it is a stable memoized object (useMemo + dispatch).
-	useEffect( () => {
-		if ( ! selectedValue ) {
-			actions.setUserChoice( 'theme_selection', recommendedTheme );
+	useEffect(() => {
+		if (!selectedValue) {
+			actions.setUserChoice('theme_selection', recommendedTheme);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ selectedValue, recommendedTheme ] );
+	}, [selectedValue, recommendedTheme]);
 
 	const handleSelect = useCallback(
-		( slug: ThemeSlug ) => {
-			if ( isInstalled ) {
+		(slug: ThemeSlug) => {
+			if (isInstalled) {
 				// If already installed, clicking just continues (same as footer button).
-				onComplete( { theme_selection: selectedValue } );
+				onComplete({ theme_selection: selectedValue });
 				return;
 			}
 
-			actions.setUserChoice( 'theme_selection', slug );
+			actions.setUserChoice('theme_selection', slug);
 		},
-		[ actions, isInstalled, onComplete, selectedValue ]
+		[actions, isInstalled, onComplete, selectedValue]
 	);
 
-	const themes = useMemo(
-		() => ( showBothThemes ? [ HELLO_THEME, HELLO_BIZ_THEME ] : [ HELLO_THEME ] ),
-		[ showBothThemes ]
-	);
+	const themes = useMemo(() => (showBothThemes ? [HELLO_THEME, HELLO_BIZ_THEME] : [HELLO_THEME]), [showBothThemes]);
 
 	const effectiveSelection = selectedValue ?? recommendedTheme;
 
 	return (
-		<Stack spacing={ 7.5 } data-testid="theme-selection-step">
-			<Stack width="100%" maxWidth={ 386 } alignSelf="center">
-				<GreetingBanner>{ greetingText }</GreetingBanner>
+		<Stack spacing={7.5} data-testid="theme-selection-step">
+			<Stack width="100%" maxWidth={386} alignSelf="center">
+				<GreetingBanner>{greetingText}</GreetingBanner>
 			</Stack>
 
-			<Stack spacing={ 4 }>
-				<Stack spacing={ 1 } textAlign="center">
+			<Stack spacing={4}>
+				<Stack spacing={1} textAlign="center">
 					<StepTitle color="text.primary" variant="h5" align="center">
-						{ t( 'steps.theme_selection.title' ) }
+						{t('steps.theme_selection.title')}
 					</StepTitle>
 					<Typography variant="body1" color="text.secondary">
-						{ t( 'steps.theme_selection.subtitle' ) }
+						{t('steps.theme_selection.subtitle')}
 					</Typography>
 				</Stack>
 
@@ -84,31 +81,31 @@ export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
 					direction="row"
 					justifyContent="center"
 					flexWrap="wrap"
-					gap={ 4 }
+					gap={4}
 					role="radiogroup"
-					aria-label={ t( 'steps.theme_selection.aria_label' ) }
+					aria-label={t('steps.theme_selection.aria_label')}
 				>
-					{ themes.map( ( theme ) => {
+					{themes.map((theme) => {
 						const isSelected = effectiveSelection === theme.slug;
 						const isThemeInstalled = isInstalled && selectedValue === theme.slug;
 						const isRecommended = theme.slug === recommendedTheme;
 
 						return (
 							<ThemeCard
-								key={ theme.slug }
-								slug={ theme.slug }
-								label={ t( theme.labelKey ) }
-								description={ t( theme.descriptionKey ) }
-								previewBgColor={ theme.previewBgColor }
-								previewImage={ theme.previewImage }
-								selected={ isSelected }
-								recommended={ isRecommended }
-								installed={ isThemeInstalled }
-								disabled={ isInstalled && ! isSelected }
-								onClick={ handleSelect }
+								key={theme.slug}
+								slug={theme.slug}
+								label={t(theme.labelKey)}
+								description={t(theme.descriptionKey)}
+								previewBgColor={theme.previewBgColor}
+								previewImage={theme.previewImage}
+								selected={isSelected}
+								recommended={isRecommended}
+								installed={isThemeInstalled}
+								disabled={isInstalled && !isSelected}
+								onClick={handleSelect}
 							/>
 						);
-					} ) }
+					})}
 				</Stack>
 			</Stack>
 		</Stack>

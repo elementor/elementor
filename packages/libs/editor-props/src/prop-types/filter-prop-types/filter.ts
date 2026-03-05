@@ -10,20 +10,20 @@ import { intensityFilterPropTypeUtil } from './filter-functions/intensity-filter
 
 export const cssFilterFunctionPropUtil = createPropUtils(
 	'css-filter-func',
-	z.object( {
+	z.object({
 		func: stringPropTypeUtil.schema,
-		args: z.union( [
+		args: z.union([
 			blurFilterPropTypeUtil.schema,
 			intensityFilterPropTypeUtil.schema,
 			colorToneFilterPropTypeUtil.schema,
 			hueRotateFilterPropTypeUtil.schema,
 			dropShadowFilterPropTypeUtil.schema,
-		] ),
-	} )
+		]),
+	})
 );
 
-export const filterPropTypeUtil = createPropUtils( 'filter', z.array( cssFilterFunctionPropUtil.schema ) );
+export const filterPropTypeUtil = createPropUtils('filter', z.array(cssFilterFunctionPropUtil.schema));
 
-export type FilterItemPropValue = z.infer< typeof cssFilterFunctionPropUtil.schema >;
+export type FilterItemPropValue = z.infer<typeof cssFilterFunctionPropUtil.schema>;
 
-export type FilterPropValue = z.infer< typeof filterPropTypeUtil.schema >;
+export type FilterPropValue = z.infer<typeof filterPropTypeUtil.schema>;

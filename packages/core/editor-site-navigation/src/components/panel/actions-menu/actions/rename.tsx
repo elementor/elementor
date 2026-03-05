@@ -6,24 +6,24 @@ import { usePostListContext } from '../../../../contexts/post-list-context';
 import { type Post } from '../../../../types';
 import ActionMenuItem from '../action-menu-item';
 
-export default function Rename( { post }: { post: Post } ) {
+export default function Rename({ post }: { post: Post }) {
 	const { setEditMode } = usePostListContext();
 
 	return (
 		<ActionMenuItem
-			title={ __( 'Rename', 'elementor' ) }
-			icon={ EraseIcon }
-			MenuItemProps={ {
-				disabled: ! post.user_can.edit,
+			title={__('Rename', 'elementor')}
+			icon={EraseIcon}
+			MenuItemProps={{
+				disabled: !post.user_can.edit,
 				onClick: () => {
-					setEditMode( {
+					setEditMode({
 						mode: 'rename',
 						details: {
 							postId: post.id,
 						},
-					} );
+					});
 				},
-			} }
+			}}
 		/>
 	);
 }

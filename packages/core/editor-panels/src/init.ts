@@ -8,7 +8,7 @@ import { sync } from './sync';
 export function init() {
 	sync();
 
-	__registerSlice( slice );
+	__registerSlice(slice);
 
-	injectIntoTop( { id: 'panels', component: Panels } );
+	injectIntoTop({ id: 'panels', component: Panels });
 }

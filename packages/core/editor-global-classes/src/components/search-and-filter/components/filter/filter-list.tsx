@@ -6,10 +6,10 @@ import { type FilterKey, useFilteredCssClassUsage } from '../../../../hooks/use-
 import { trackGlobalClasses } from '../../../../utils/tracking';
 import { useSearchAndFilters } from '../../context';
 
-export const filterConfig: Record< FilterKey, string > = {
-	unused: __( 'Unused', 'elementor' ),
-	empty: __( 'Empty', 'elementor' ),
-	onThisPage: __( 'On this page', 'elementor' ),
+export const filterConfig: Record<FilterKey, string> = {
+	unused: __('Unused', 'elementor'),
+	empty: __('Empty', 'elementor'),
+	onThisPage: __('On this page', 'elementor'),
 };
 
 export const FilterList = () => {
@@ -18,39 +18,37 @@ export const FilterList = () => {
 	} = useSearchAndFilters();
 	const filteredCssClass = useFilteredCssClassUsage();
 
-	const handleOnClick = ( value: FilterKey ) => {
-		setFilters( ( prev ) => ( { ...prev, [ value ]: ! prev[ value ] } ) );
-		trackGlobalClasses( {
+	const handleOnClick = (value: FilterKey) => {
+		setFilters((prev) => ({ ...prev, [value]: !prev[value] }));
+		trackGlobalClasses({
 			event: 'classManagerFilterUsed',
-			action: filters[ value ] ? 'remove' : 'apply',
+			action: filters[value] ? 'remove' : 'apply',
 			type: value,
 			trigger: 'menu',
-		} );
+		});
 	};
 
 	return (
 		<MenuList>
-			<MenuItem onClick={ () => handleOnClick( 'unused' ) }>
+			<MenuItem onClick={() => handleOnClick('unused')}>
 				<LabeledCheckbox
-					label={ filterConfig.unused }
-					checked={ filters.unused }
-					suffix={ <Chip size={ 'tiny' } sx={ { ml: 'auto' } } label={ filteredCssClass.unused.length } /> }
+					label={filterConfig.unused}
+					checked={filters.unused}
+					suffix={<Chip size={'tiny'} sx={{ ml: 'auto' }} label={filteredCssClass.unused.length} />}
 				/>
 			</MenuItem>
-			<MenuItem onClick={ () => handleOnClick( 'empty' ) }>
+			<MenuItem onClick={() => handleOnClick('empty')}>
 				<LabeledCheckbox
-					label={ filterConfig.empty }
-					checked={ filters.empty }
-					suffix={ <Chip size={ 'tiny' } sx={ { ml: 'auto' } } label={ filteredCssClass.empty.length } /> }
+					label={filterConfig.empty}
+					checked={filters.empty}
+					suffix={<Chip size={'tiny'} sx={{ ml: 'auto' }} label={filteredCssClass.empty.length} />}
 				/>
 			</MenuItem>
-			<MenuItem onClick={ () => handleOnClick( 'onThisPage' ) }>
+			<MenuItem onClick={() => handleOnClick('onThisPage')}>
 				<LabeledCheckbox
-					label={ filterConfig.onThisPage }
-					checked={ filters.onThisPage }
-					suffix={
-						<Chip size={ 'tiny' } sx={ { ml: 'auto' } } label={ filteredCssClass.onThisPage.length } />
-					}
+					label={filterConfig.onThisPage}
+					checked={filters.onThisPage}
+					suffix={<Chip size={'tiny'} sx={{ ml: 'auto' }} label={filteredCssClass.onThisPage.length} />}
 				/>
 			</MenuItem>
 		</MenuList>
@@ -63,22 +61,22 @@ type LabeledCheckboxProps = {
 	checked: boolean;
 };
 
-const LabeledCheckbox = ( { label, suffix, checked }: LabeledCheckboxProps ) => (
-	<Stack direction="row" alignItems="center" gap={ 0.5 } flex={ 1 }>
+const LabeledCheckbox = ({ label, suffix, checked }: LabeledCheckboxProps) => (
+	<Stack direction="row" alignItems="center" gap={0.5} flex={1}>
 		<Checkbox
-			size={ 'small' }
-			checked={ checked }
-			sx={ {
+			size={'small'}
+			checked={checked}
+			sx={{
 				padding: 0,
 				color: 'text.tertiary',
 				'&.Mui-checked': {
 					color: 'text.tertiary',
 				},
-			} }
+			}}
 		/>
-		<Typography variant="caption" sx={ { color: 'text.secondary' } }>
-			{ label }
+		<Typography variant="caption" sx={{ color: 'text.secondary' }}>
+			{label}
 		</Typography>
-		{ suffix }
+		{suffix}
 	</Stack>
 );

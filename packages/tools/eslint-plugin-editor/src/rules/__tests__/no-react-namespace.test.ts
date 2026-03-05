@@ -2,7 +2,7 @@ import { RuleTester } from '@typescript-eslint/rule-tester';
 
 import { noReactNamespace } from '../no-react-namespace';
 
-const ruleTester = new RuleTester( {
+const ruleTester = new RuleTester({
 	languageOptions: {
 		parserOptions: {
 			ecmaFeatures: {
@@ -10,9 +10,9 @@ const ruleTester = new RuleTester( {
 			},
 		},
 	},
-} );
+});
 
-ruleTester.run( 'no-react-namespace', noReactNamespace, {
+ruleTester.run('no-react-namespace', noReactNamespace, {
 	valid: [
 		'const Component = () => { const [state, setState] = useState(); };',
 
@@ -37,4 +37,4 @@ ruleTester.run( 'no-react-namespace', noReactNamespace, {
 			],
 		},
 	],
-} );
+});

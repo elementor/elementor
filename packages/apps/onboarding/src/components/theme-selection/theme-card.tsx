@@ -16,10 +16,10 @@ export interface ThemeCardProps {
 	recommended: boolean;
 	installed: boolean;
 	disabled: boolean;
-	onClick: ( slug: ThemeSlug ) => void;
+	onClick: (slug: ThemeSlug) => void;
 }
 
-export function ThemeCard( {
+export function ThemeCard({
 	slug,
 	label,
 	description,
@@ -30,43 +30,43 @@ export function ThemeCard( {
 	installed,
 	disabled,
 	onClick,
-}: ThemeCardProps ) {
+}: ThemeCardProps) {
 	return (
 		<ThemeCardRoot
-			selected={ selected }
-			disabled={ disabled }
-			onClick={ () => ! disabled && onClick( slug ) }
+			selected={selected}
+			disabled={disabled}
+			onClick={() => !disabled && onClick(slug)}
 			role="radio"
-			aria-checked={ selected }
-			aria-label={ label }
-			tabIndex={ 0 }
-			onKeyDown={ ( e: React.KeyboardEvent ) => {
-				if ( ( e.key === 'Enter' || e.key === ' ' ) && ! disabled ) {
+			aria-checked={selected}
+			aria-label={label}
+			tabIndex={0}
+			onKeyDown={(e: React.KeyboardEvent) => {
+				if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
 					e.preventDefault();
-					onClick( slug );
+					onClick(slug);
 				}
-			} }
+			}}
 		>
-			<ThemePreview bgColor={ previewBgColor } previewImage={ previewImage }>
-				{ installed && (
+			<ThemePreview bgColor={previewBgColor} previewImage={previewImage}>
+				{installed && (
 					<InstalledChip
-						label={ t( 'common.installed' ) }
+						label={t('common.installed')}
 						size="small"
 						color="success"
-						icon={ <CheckedCircleIcon /> }
+						icon={<CheckedCircleIcon />}
 					/>
-				) }
-				{ recommended && ! installed && (
-					<RecommendedChip label={ t( 'common.recommended' ) } size="small" color="default" />
-				) }
+				)}
+				{recommended && !installed && (
+					<RecommendedChip label={t('common.recommended')} size="small" color="default" />
+				)}
 			</ThemePreview>
 
-			<Stack spacing={ 1 } alignItems="center" sx={ { textAlign: 'center', px: 2.25 } }>
+			<Stack spacing={1} alignItems="center" sx={{ textAlign: 'center', px: 2.25 }}>
 				<Typography variant="subtitle1" color="text.primary">
-					{ label }
+					{label}
 				</Typography>
 				<Typography variant="body2" color="text.secondary">
-					{ description }
+					{description}
 				</Typography>
 			</Stack>
 		</ThemeCardRoot>

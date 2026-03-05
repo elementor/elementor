@@ -5,10 +5,10 @@ import { unknownChildrenSchema } from './utils';
 
 export const positionPropTypeUtil = createPropUtils(
 	'object-position',
-	z.strictObject( {
+	z.strictObject({
 		x: unknownChildrenSchema,
 		y: unknownChildrenSchema,
-	} )
+	})
 );
 
-export type PositionPropTypeValue = z.infer< typeof positionPropTypeUtil.schema >;
+export type PositionPropTypeValue = z.infer<typeof positionPropTypeUtil.schema>;

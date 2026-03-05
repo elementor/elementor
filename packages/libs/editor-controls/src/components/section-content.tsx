@@ -2,15 +2,15 @@ import { type FC, type PropsWithChildren } from 'react';
 import * as React from 'react';
 import { Stack } from '@elementor/ui';
 
-type SectionContentProps = PropsWithChildren< {
+type SectionContentProps = PropsWithChildren<{
 	gap?: number;
 	sx?: {
 		pt?: number;
 	};
-} >;
+}>;
 
-export const SectionContent: FC< SectionContentProps > = ( { gap = 0.5, sx, children } ) => (
-	<Stack gap={ gap } sx={ { ...sx } }>
-		{ children }
+export const SectionContent: FC<SectionContentProps> = ({ gap = 0.5, sx, children }) => (
+	<Stack gap={gap} sx={{ ...sx }}>
+		{children}
 	</Stack>
 );

@@ -23,128 +23,128 @@ import { useCssClassUsageByID } from '../../../hooks/use-css-class-usage-by-id';
 import { trackGlobalClasses } from '../../../utils/tracking';
 import { type ContentType } from '../types';
 
-type CssClassUsageRecord = VirtualizedItem< 'item', string > & { docType: ContentType };
+type CssClassUsageRecord = VirtualizedItem<'item', string> & { docType: ContentType };
 
-const iconMapper: Record< ContentType, { label: string; icon: React.ReactElement } > = {
+const iconMapper: Record<ContentType, { label: string; icon: React.ReactElement }> = {
 	'wp-post': {
-		label: __( 'Post', 'elementor' ),
-		icon: <PostTypeIcon fontSize={ 'inherit' } />,
+		label: __('Post', 'elementor'),
+		icon: <PostTypeIcon fontSize={'inherit'} />,
 	},
 	'wp-page': {
-		label: __( 'Page', 'elementor' ),
-		icon: <PagesIcon fontSize={ 'inherit' } />,
+		label: __('Page', 'elementor'),
+		icon: <PagesIcon fontSize={'inherit'} />,
 	},
 	popup: {
-		label: __( 'Popup', 'elementor' ),
-		icon: <PopupTemplateIcon fontSize={ 'inherit' } />,
+		label: __('Popup', 'elementor'),
+		icon: <PopupTemplateIcon fontSize={'inherit'} />,
 	},
 	header: {
-		label: __( 'Header', 'elementor' ),
-		icon: <HeaderTemplateIcon fontSize={ 'inherit' } />,
+		label: __('Header', 'elementor'),
+		icon: <HeaderTemplateIcon fontSize={'inherit'} />,
 	},
 	footer: {
-		label: __( 'Footer', 'elementor' ),
-		icon: <FooterTemplateIcon fontSize={ 'inherit' } />,
+		label: __('Footer', 'elementor'),
+		icon: <FooterTemplateIcon fontSize={'inherit'} />,
 	},
 };
 
-export const CssClassUsagePopover = ( {
+export const CssClassUsagePopover = ({
 	cssClassID,
 	onClose,
 }: {
-	onClose: React.ComponentProps< typeof PopoverHeader >[ 'onClose' ];
+	onClose: React.ComponentProps<typeof PopoverHeader>['onClose'];
 	cssClassID: string;
-} ) => {
-	const { data: classUsage } = useCssClassUsageByID( cssClassID );
+}) => {
+	const { data: classUsage } = useCssClassUsageByID(cssClassID);
 	const onNavigate = useOpenDocumentInNewTab();
 
 	const cssClassUsageRecords: CssClassUsageRecord[] =
 		classUsage?.content.map(
-			( { title, elements, pageId, type } ) =>
-				( {
+			({ title, elements, pageId, type }) =>
+				({
 					type: 'item',
 					value: pageId,
 					label: title,
 					secondaryText: elements.length.toString(),
 					docType: type,
-				} ) as CssClassUsageRecord
+				}) as CssClassUsageRecord
 		) ?? [];
 
-	const handleSelect = ( value: string ) => {
-		onNavigate( +value );
-		trackGlobalClasses( {
+	const handleSelect = (value: string) => {
+		onNavigate(+value);
+		trackGlobalClasses({
 			event: 'classUsageLocate',
 			classId: cssClassID,
-		} );
+		});
 	};
 
 	return (
 		<>
 			<PopoverHeader
-				icon={ <CurrentLocationIcon fontSize={ 'tiny' } /> }
+				icon={<CurrentLocationIcon fontSize={'tiny'} />}
 				title={
-					<Stack flexDirection={ 'row' } gap={ 1 } alignItems={ 'center' }>
-						<Box aria-label={ 'header-title' }>{ __( 'Locator', 'elementor' ) }</Box>
+					<Stack flexDirection={'row'} gap={1} alignItems={'center'}>
+						<Box aria-label={'header-title'}>{__('Locator', 'elementor')}</Box>
 						<Box>
-							<Chip sx={ { lineHeight: 1 } } size={ 'tiny' } label={ classUsage.total } />
+							<Chip sx={{ lineHeight: 1 }} size={'tiny'} label={classUsage.total} />
 						</Box>
 					</Stack>
 				}
-				onClose={ onClose }
+				onClose={onClose}
 			/>
 			<Divider />
-			<PopoverBody width={ 300 }>
+			<PopoverBody width={300}>
 				<PopoverMenuList
-					onSelect={ handleSelect }
-					items={ cssClassUsageRecords }
-					onClose={ () => {} }
-					menuListTemplate={ StyledCssClassUsageItem }
-					menuItemContentTemplate={ ( cssClassUsageRecord ) => (
-						<Stack flexDirection={ 'row' } flex={ 1 } alignItems={ 'center' }>
-							<Box display={ 'flex' } sx={ { pr: 1 } }>
+					onSelect={handleSelect}
+					items={cssClassUsageRecords}
+					onClose={() => {}}
+					menuListTemplate={StyledCssClassUsageItem}
+					menuItemContentTemplate={(cssClassUsageRecord) => (
+						<Stack flexDirection={'row'} flex={1} alignItems={'center'}>
+							<Box display={'flex'} sx={{ pr: 1 }}>
 								<Tooltip
 									disableInteractive
 									title={
-										iconMapper?.[ cssClassUsageRecord.docType as ContentType ]?.label ??
+										iconMapper?.[cssClassUsageRecord.docType as ContentType]?.label ??
 										cssClassUsageRecord.docType
 									}
 									placement="top"
 								>
-									<Icon fontSize={ 'small' }>
-										{ iconMapper?.[ cssClassUsageRecord.docType as ContentType ]?.icon || (
-											<PagesIcon fontSize={ 'inherit' } />
-										) }
+									<Icon fontSize={'small'}>
+										{iconMapper?.[cssClassUsageRecord.docType as ContentType]?.icon || (
+											<PagesIcon fontSize={'inherit'} />
+										)}
 									</Icon>
 								</Tooltip>
 							</Box>
-							<Box sx={ { pr: 0.5, maxWidth: '173px' } } display={ 'flex' }>
+							<Box sx={{ pr: 0.5, maxWidth: '173px' }} display={'flex'}>
 								<EllipsisWithTooltip
-									title={ cssClassUsageRecord.label }
-									as={ Typography }
+									title={cssClassUsageRecord.label}
+									as={Typography}
 									variant="caption"
 									maxWidth="173px"
-									sx={ {
+									sx={{
 										lineHeight: 1,
-									} }
+									}}
 								/>
 							</Box>
-							<ExternalLinkIcon className={ 'hover-only-icon' } fontSize={ 'tiny' } />
+							<ExternalLinkIcon className={'hover-only-icon'} fontSize={'tiny'} />
 							<Chip
-								sx={ {
+								sx={{
 									ml: 'auto',
-								} }
-								size={ 'tiny' }
-								label={ cssClassUsageRecord.secondaryText }
+								}}
+								size={'tiny'}
+								label={cssClassUsageRecord.secondaryText}
 							/>
 						</Stack>
-					) }
+					)}
 				/>
 			</PopoverBody>
 		</>
 	);
 };
 
-const StyledCssClassUsageItem = styled( MenuList )( ( { theme } ) => ( {
+const StyledCssClassUsageItem = styled(MenuList)(({ theme }) => ({
 	'& > li': {
 		display: 'flex',
 		cursor: 'pointer',
@@ -154,7 +154,7 @@ const StyledCssClassUsageItem = styled( MenuList )( ( { theme } ) => ( {
 	'& > [role="option"]': {
 		...theme.typography.caption,
 		lineHeight: 'inherit',
-		padding: theme.spacing( 0.5, 1, 0.5, 2 ),
+		padding: theme.spacing(0.5, 1, 0.5, 2),
 		textOverflow: 'ellipsis',
 		position: 'absolute',
 		top: 0,
@@ -165,7 +165,7 @@ const StyledCssClassUsageItem = styled( MenuList )( ( { theme } ) => ( {
 			opacity: 0,
 		},
 		'&:hover': {
-			borderRadius: theme.spacing( 0.5 ),
+			borderRadius: theme.spacing(0.5),
 			backgroundColor: theme.palette.action.hover,
 			'.hover-only-icon': {
 				color: theme.palette.text.disabled,
@@ -175,4 +175,4 @@ const StyledCssClassUsageItem = styled( MenuList )( ( { theme } ) => ( {
 	},
 	width: '100%',
 	position: 'relative',
-} ) );
+}));

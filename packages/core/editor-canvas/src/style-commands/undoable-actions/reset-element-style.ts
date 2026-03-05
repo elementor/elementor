@@ -12,49 +12,47 @@ type ResetElementStyleArgs = {
 export const undoableResetElementStyle = () =>
 	undoable(
 		{
-			do: ( { containers }: ResetElementStyleArgs ) => {
-				return containers.map( ( container ) => {
-					const elementId = container.model.get( 'id' );
+			do: ({ containers }: ResetElementStyleArgs) => {
+				return containers.map((container) => {
+					const elementId = container.model.get('id');
 
-					const containerStyles = getElementStyles( elementId );
+					const containerStyles = getElementStyles(elementId);
 
-					Object.keys( containerStyles ?? {} ).forEach( ( styleId ) =>
-						deleteElementStyle( elementId, styleId )
-					);
+					Object.keys(containerStyles ?? {}).forEach((styleId) => deleteElementStyle(elementId, styleId));
 
 					return containerStyles;
-				} );
+				});
 			},
 
-			undo: ( { containers }, revertDataItems ) => {
-				containers.forEach( ( container, index ) => {
-					const classesProp = getClassesProp( container );
+			undo: ({ containers }, revertDataItems) => {
+				containers.forEach((container, index) => {
+					const classesProp = getClassesProp(container);
 
-					if ( ! classesProp ) {
+					if (!classesProp) {
 						return;
 					}
 
-					const elementId = container.model.get( 'id' );
-					const containerStyles = revertDataItems[ index ];
+					const elementId = container.model.get('id');
+					const containerStyles = revertDataItems[index];
 
-					Object.entries( containerStyles ?? {} ).forEach( ( [ styleId, style ] ) => {
-						const [ firstVariant ] = style.variants;
-						const additionalVariants = style.variants.slice( 1 );
+					Object.entries(containerStyles ?? {}).forEach(([styleId, style]) => {
+						const [firstVariant] = style.variants;
+						const additionalVariants = style.variants.slice(1);
 
-						createElementStyle( {
+						createElementStyle({
 							elementId,
 							classesProp,
 							styleId,
 							label: ELEMENTS_STYLES_RESERVED_LABEL,
 							...firstVariant,
 							additionalVariants,
-						} );
-					} );
-				} );
+						});
+					});
+				});
 			},
 		},
 		{
-			title: ( { containers } ) => getTitleForContainers( containers ),
-			subtitle: __( 'Style Reset', 'elementor' ),
+			title: ({ containers }) => getTitleForContainers(containers),
+			subtitle: __('Style Reset', 'elementor'),
 		}
 	);

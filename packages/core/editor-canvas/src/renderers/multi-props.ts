@@ -5,22 +5,22 @@ type MultiProps = {
 	value: Props;
 };
 
-export const isMultiProps = ( propValue: PropValue ): propValue is MultiProps => {
+export const isMultiProps = (propValue: PropValue): propValue is MultiProps => {
 	return (
-		!! propValue &&
+		!!propValue &&
 		typeof propValue === 'object' &&
 		'$$multi-props' in propValue &&
-		propValue[ '$$multi-props' ] === true
+		propValue['$$multi-props'] === true
 	);
 };
 
-export const createMultiPropsValue = ( props: Props ): MultiProps => {
+export const createMultiPropsValue = (props: Props): MultiProps => {
 	return {
 		'$$multi-props': true,
 		value: props,
 	};
 };
 
-export const getMultiPropsValue = ( multiProps: MultiProps ): Props => {
+export const getMultiPropsValue = (multiProps: MultiProps): Props => {
 	return multiProps.value;
 };

@@ -3,13 +3,13 @@ import { useId } from 'react';
 import { MenuListItem } from '@elementor/editor-ui';
 import { bindMenu, bindTrigger, Button, Menu, styled, usePopupState } from '@elementor/ui';
 
-export type UnitSelectorProps< T extends string > = {
+export type UnitSelectorProps<T extends string> = {
 	options: T[];
 	value: T;
-	onSelect: ( value: T ) => void;
+	onSelect: (value: T) => void;
 	isActive: boolean;
-	menuItemsAttributes?: { [ key in T ]?: Record< string, unknown > };
-	optionLabelOverrides?: { [ key in T ]?: React.ReactNode };
+	menuItemsAttributes?: { [key in T]?: Record<string, unknown> };
+	optionLabelOverrides?: { [key in T]?: React.ReactNode };
 	disabled?: boolean;
 };
 
@@ -19,7 +19,7 @@ const menuItemContentStyles = {
 	justifyContent: 'center',
 };
 
-export const UnitSelector = < T extends string >( {
+export const UnitSelector = <T extends string>({
 	value,
 	isActive,
 	onSelect,
@@ -27,54 +27,54 @@ export const UnitSelector = < T extends string >( {
 	disabled,
 	menuItemsAttributes = {},
 	optionLabelOverrides = {},
-}: UnitSelectorProps< T > ) => {
-	const popupState = usePopupState( {
+}: UnitSelectorProps<T>) => {
+	const popupState = usePopupState({
 		variant: 'popover',
 		popupId: useId(),
-	} );
+	});
 
-	const handleMenuItemClick = ( option: T ) => {
-		onSelect( option );
+	const handleMenuItemClick = (option: T) => {
+		onSelect(option);
 
 		popupState.close();
 	};
 
 	return (
 		<>
-			<StyledButton isActive={ isActive } disabled={ disabled } size="small" { ...bindTrigger( popupState ) }>
-				{ optionLabelOverrides[ value ] ?? value }
+			<StyledButton isActive={isActive} disabled={disabled} size="small" {...bindTrigger(popupState)}>
+				{optionLabelOverrides[value] ?? value}
 			</StyledButton>
 
-			<Menu MenuListProps={ { dense: true } } { ...bindMenu( popupState ) }>
-				{ options.map( ( option ) => (
+			<Menu MenuListProps={{ dense: true }} {...bindMenu(popupState)}>
+				{options.map((option) => (
 					<MenuListItem
-						key={ option }
-						onClick={ () => handleMenuItemClick( option ) }
-						{ ...menuItemsAttributes?.[ option ] }
-						primaryTypographyProps={ {
+						key={option}
+						onClick={() => handleMenuItemClick(option)}
+						{...menuItemsAttributes?.[option]}
+						primaryTypographyProps={{
 							variant: 'caption',
 							sx: {
 								...menuItemContentStyles,
 								lineHeight: '1',
 							},
-						} }
-						menuItemTextProps={ {
+						}}
+						menuItemTextProps={{
 							sx: menuItemContentStyles,
-						} }
+						}}
 					>
-						{ optionLabelOverrides[ option ] ?? option.toUpperCase() }
+						{optionLabelOverrides[option] ?? option.toUpperCase()}
 					</MenuListItem>
-				) ) }
+				))}
 			</Menu>
 		</>
 	);
 };
 
-const StyledButton = styled( Button, {
-	shouldForwardProp: ( prop ) => prop !== 'isActive',
-} )( ( { isActive, theme } ) => ( {
+const StyledButton = styled(Button, {
+	shouldForwardProp: (prop) => prop !== 'isActive',
+})(({ isActive, theme }) => ({
 	color: isActive ? theme.palette.text.primary : theme.palette.text.tertiary,
 	font: 'inherit',
 	minWidth: 'initial',
 	textTransform: 'uppercase',
-} ) );
+}));

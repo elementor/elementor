@@ -15,43 +15,43 @@ import { EmptyTransformer } from './transformers/empty-transformer';
 import { registerVariableType } from './variables-registry/variable-type-registry';
 
 export function registerVariableTypes() {
-	registerVariableType( {
+	registerVariableType({
 		key: colorVariablePropTypeUtil.key,
 		valueField: ColorField,
 		icon: BrushIcon,
 		propTypeUtil: colorVariablePropTypeUtil,
 		fallbackPropTypeUtil: colorPropTypeUtil,
 		variableType: 'color',
-		startIcon: ( { value } ) => <ColorIndicator size="inherit" component="span" value={ value } />,
+		startIcon: ({ value }) => <ColorIndicator size="inherit" component="span" value={value} />,
 		defaultValue: '#ffffff',
-		menuActionsFactory: ( { variable, variableId, handlers } ) => {
+		menuActionsFactory: ({ variable, variableId, handlers }) => {
 			const actions = [];
 
-			if ( ! isExperimentActive( 'e_design_system_sync' ) ) {
+			if (!isExperimentActive('e_design_system_sync')) {
 				return [];
 			}
 
-			if ( variable.sync_to_v3 ) {
-				actions.push( {
-					name: __( 'Stop syncing to Version 3', 'elementor' ),
+			if (variable.sync_to_v3) {
+				actions.push({
+					name: __('Stop syncing to Version 3', 'elementor'),
 					icon: ResetIcon,
 					color: 'text.primary',
-					onClick: () => handlers.onStopSync( variableId ),
-				} );
+					onClick: () => handlers.onStopSync(variableId),
+				});
 			} else {
-				actions.push( {
-					name: __( 'Sync to Version 3', 'elementor' ),
+				actions.push({
+					name: __('Sync to Version 3', 'elementor'),
 					icon: ResetIcon,
 					color: 'text.primary',
-					onClick: () => handlers.onStartSync( variableId ),
-				} );
+					onClick: () => handlers.onStartSync(variableId),
+				});
 			}
 
 			return actions;
 		},
-	} );
+	});
 
-	registerVariableType( {
+	registerVariableType({
 		key: fontVariablePropTypeUtil.key,
 		valueField: FontField,
 		icon: TextIcon,
@@ -59,7 +59,7 @@ export function registerVariableTypes() {
 		fallbackPropTypeUtil: stringPropTypeUtil,
 		variableType: 'font',
 		defaultValue: 'Roboto',
-	} );
+	});
 
 	const sizePromotions = {
 		isActive: false,
@@ -69,17 +69,17 @@ export function registerVariableTypes() {
 		styleTransformer: EmptyTransformer,
 		variableType: 'size',
 		selectionFilter: () => [],
-		emptyState: <CtaButton size="small" href={ 'https://go.elementor.com/go-pro-panel-size-variable/' } />,
+		emptyState: <CtaButton size="small" href={'https://go.elementor.com/go-pro-panel-size-variable/'} />,
 	};
 
-	registerVariableType( {
+	registerVariableType({
 		...sizePromotions,
 		key: sizeVariablePropTypeUtil.key,
 		defaultValue: '0px',
-	} );
+	});
 
-	registerVariableType( {
+	registerVariableType({
 		...sizePromotions,
 		key: 'global-custom-size-variable',
-	} );
+	});
 }

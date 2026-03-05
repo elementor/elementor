@@ -10,29 +10,29 @@ import { ToggleControl } from '../../../toggle-control';
 
 type Repeaters = 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat';
 
-const repeatControlOptions: ToggleButtonGroupItem< Repeaters >[] = [
+const repeatControlOptions: ToggleButtonGroupItem<Repeaters>[] = [
 	{
 		value: 'repeat',
-		label: __( 'Repeat', 'elementor' ),
-		renderContent: ( { size } ) => <GridDotsIcon fontSize={ size } />,
+		label: __('Repeat', 'elementor'),
+		renderContent: ({ size }) => <GridDotsIcon fontSize={size} />,
 		showTooltip: true,
 	},
 	{
 		value: 'repeat-x',
-		label: __( 'Repeat-x', 'elementor' ),
-		renderContent: ( { size } ) => <DotsHorizontalIcon fontSize={ size } />,
+		label: __('Repeat-x', 'elementor'),
+		renderContent: ({ size }) => <DotsHorizontalIcon fontSize={size} />,
 		showTooltip: true,
 	},
 	{
 		value: 'repeat-y',
-		label: __( 'Repeat-y', 'elementor' ),
-		renderContent: ( { size } ) => <DotsVerticalIcon fontSize={ size } />,
+		label: __('Repeat-y', 'elementor'),
+		renderContent: ({ size }) => <DotsVerticalIcon fontSize={size} />,
 		showTooltip: true,
 	},
 	{
 		value: 'no-repeat',
-		label: __( 'No-repeat', 'elementor' ),
-		renderContent: ( { size } ) => <XIcon fontSize={ size } />,
+		label: __('No-repeat', 'elementor'),
+		renderContent: ({ size }) => <XIcon fontSize={size} />,
 		showTooltip: true,
 	},
 ];
@@ -40,11 +40,11 @@ const repeatControlOptions: ToggleButtonGroupItem< Repeaters >[] = [
 export const BackgroundImageOverlayRepeat = () => {
 	return (
 		<PopoverGridContainer>
-			<Grid item xs={ 6 }>
-				<ControlFormLabel>{ __( 'Repeat', 'elementor' ) }</ControlFormLabel>
+			<Grid item xs={6}>
+				<ControlFormLabel>{__('Repeat', 'elementor')}</ControlFormLabel>
 			</Grid>
-			<Grid item xs={ 6 } sx={ { display: 'flex', justifyContent: 'flex-end' } }>
-				<ToggleControl options={ repeatControlOptions } />
+			<Grid item xs={6} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+				<ToggleControl options={repeatControlOptions} />
 			</Grid>
 		</PopoverGridContainer>
 	);

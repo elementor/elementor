@@ -4,11 +4,11 @@ import { Stack, type StackProps, useTheme } from '@elementor/ui';
 import { ElementorIcon } from './elementor-icon';
 import { ElementorWordmark } from './elementor-wordmark';
 
-interface ElementorLogoProps extends Omit< StackProps, 'direction' > {
+interface ElementorLogoProps extends Omit<StackProps, 'direction'> {
 	height?: number;
 }
 
-export function ElementorLogo( { height = 20, sx, ...props }: ElementorLogoProps ) {
+export function ElementorLogo({ height = 20, sx, ...props }: ElementorLogoProps) {
 	const theme = useTheme();
 
 	// Icon is square
@@ -22,15 +22,15 @@ export function ElementorLogo( { height = 20, sx, ...props }: ElementorLogoProps
 		<Stack
 			direction="row"
 			alignItems="center"
-			spacing={ 0.5 }
-			sx={ {
+			spacing={0.5}
+			sx={{
 				color: theme.palette.text.primary,
 				...sx,
-			} }
-			{ ...props }
+			}}
+			{...props}
 		>
-			<ElementorIcon sx={ { width: iconSize, height: iconSize } } />
-			<ElementorWordmark sx={ { width: wordmarkWidth, height: wordmarkHeight } } />
+			<ElementorIcon sx={{ width: iconSize, height: iconSize }} />
+			<ElementorWordmark sx={{ width: wordmarkWidth, height: wordmarkHeight }} />
 		</Stack>
 	);
 }

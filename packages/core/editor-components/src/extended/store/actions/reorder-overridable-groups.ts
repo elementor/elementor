@@ -7,18 +7,18 @@ type ReorderGroupsParams = {
 	newOrder: string[];
 };
 
-export function reorderOverridableGroups( { componentId, newOrder }: ReorderGroupsParams ): void {
-	const overridableProps = componentsSelectors.getOverridableProps( componentId );
+export function reorderOverridableGroups({ componentId, newOrder }: ReorderGroupsParams): void {
+	const overridableProps = componentsSelectors.getOverridableProps(componentId);
 
-	if ( ! overridableProps ) {
+	if (!overridableProps) {
 		return;
 	}
 
-	componentsActions.setOverridableProps( componentId, {
+	componentsActions.setOverridableProps(componentId, {
 		...overridableProps,
 		groups: {
 			...overridableProps.groups,
 			order: newOrder,
 		},
-	} );
+	});
 }

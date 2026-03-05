@@ -1,7 +1,7 @@
 type ExtendedWindow = Window & {
 	$e?: {
 		components?: {
-			get?: ( name: 'panel' ) =>
+			get?: (name: 'panel') =>
 				| {
 						blockUserInteractions?: () => void;
 						unblockUserInteractions?: () => void;
@@ -14,11 +14,11 @@ type ExtendedWindow = Window & {
 export function blockPanelInteractions() {
 	const extendedWindow = window as unknown as ExtendedWindow;
 
-	extendedWindow.$e?.components?.get?.( 'panel' )?.blockUserInteractions?.();
+	extendedWindow.$e?.components?.get?.('panel')?.blockUserInteractions?.();
 }
 
 export function unblockPanelInteractions() {
 	const extendedWindow = window as unknown as ExtendedWindow;
 
-	extendedWindow.$e?.components?.get?.( 'panel' )?.unblockUserInteractions?.();
+	extendedWindow.$e?.components?.get?.('panel')?.unblockUserInteractions?.();
 }

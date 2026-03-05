@@ -5,7 +5,7 @@ type ImageSrc = {
 	url?: unknown;
 };
 
-export const imageSrcTransformer = createTransformer( ( value: ImageSrc ) => ( {
+export const imageSrcTransformer = createTransformer((value: ImageSrc) => ({
 	id: value.id ?? null,
 	url: value.url ?? null,
-} ) );
+}));

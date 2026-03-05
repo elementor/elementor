@@ -27,15 +27,15 @@ import { SplitLayout } from './ui/split-layout';
 import { TopBar } from './ui/top-bar';
 import { TopBarContent } from './ui/top-bar-content';
 
-const isChoiceEmpty = ( choice: unknown ): boolean => {
-	return choice === null || choice === undefined || ( Array.isArray( choice ) && choice.length === 0 );
+const isChoiceEmpty = (choice: unknown): boolean => {
+	return choice === null || choice === undefined || (Array.isArray(choice) && choice.length === 0);
 };
 
 interface AppContentProps {
 	onClose?: () => void;
 }
 
-export function AppContent( { onClose }: AppContentProps ) {
+export function AppContent({ onClose }: AppContentProps) {
 	const {
 		stepId,
 		stepIndex,
@@ -53,74 +53,74 @@ export function AppContent( { onClose }: AppContentProps ) {
 		actions,
 	} = useOnboarding();
 
-	const [ isCompleting, setIsCompleting ] = useState( false );
+	const [isCompleting, setIsCompleting] = useState(false);
 	const { showToast } = useToast();
 
 	const updateProgress = useUpdateProgress();
 	const updateChoices = useUpdateChoices();
 	const installTheme = useInstallTheme();
 
-	useEffect( () => {
-		if ( hadUnexpectedExit ) {
+	useEffect(() => {
+		if (hadUnexpectedExit) {
 			actions.clearUnexpectedExit();
 		}
-	}, [ hadUnexpectedExit, actions ] );
+	}, [hadUnexpectedExit, actions]);
 
 	const checkProInstallScreen = useCheckProInstallScreen();
 
-	const handleConnectSuccess = useCallback( async () => {
+	const handleConnectSuccess = useCallback(async () => {
 		const result = await checkProInstallScreen();
-		actions.setShouldShowProInstallScreen( result.shouldShowProInstallScreen );
-		actions.setConnected( true );
-	}, [ actions, checkProInstallScreen ] );
+		actions.setShouldShowProInstallScreen(result.shouldShowProInstallScreen);
+		actions.setConnected(true);
+	}, [actions, checkProInstallScreen]);
 
-	const handleConnect = useElementorConnect( {
+	const handleConnect = useElementorConnect({
 		connectUrl: urls.connect,
 		onSuccess: handleConnectSuccess,
-	} );
+	});
 
 	const handleContinueAsGuest = useCallback(
-		( event: React.SyntheticEvent ) => {
+		(event: React.SyntheticEvent) => {
 			event.preventDefault();
-			actions.setGuest( true );
+			actions.setGuest(true);
 		},
-		[ actions ]
+		[actions]
 	);
 
-	const handleClose = useCallback( () => {
-		window.dispatchEvent( new CustomEvent( 'e-onboarding-user-exit' ) );
+	const handleClose = useCallback(() => {
+		window.dispatchEvent(new CustomEvent('e-onboarding-user-exit'));
 
 		updateProgress.mutate(
 			{ user_exit: true },
 			{
 				onSuccess: () => {
-					actions.setExitType( 'user_exit' );
+					actions.setExitType('user_exit');
 					onClose?.();
 				},
 				onError: () => {
-					actions.setExitType( 'user_exit' );
+					actions.setExitType('user_exit');
 					onClose?.();
 				},
 			}
 		);
-	}, [ actions, onClose, updateProgress ] );
+	}, [actions, onClose, updateProgress]);
 
-	const handleBack = useCallback( () => {
-		if ( isFirst ) {
-			actions.setGuest( false );
+	const handleBack = useCallback(() => {
+		if (isFirst) {
+			actions.setGuest(false);
 		} else {
 			actions.prevStep();
 		}
-	}, [ actions, isFirst ] );
+	}, [actions, isFirst]);
 
-	const redirectToNewPage = useCallback( () => {
+	const redirectToNewPage = useCallback(() => {
 		const redirectUrl = urls.createNewPage || urls.editor || urls.dashboard;
 		window.location.href = redirectUrl;
-	}, [ urls ] );
+	}, [urls]);
 
-	const handleSkip = useCallback( () => {
-		if ( isLast ) {
-			setIsCompleting( true );
+	const handleSkip = useCallback(() => {
+		if (isLast) {
+			setIsCompleting(true);
 			updateProgress.mutate(
 				{
 					skip_step: true,
@@ -151,30 +151,30 @@ export function AppContent( { onClose }: AppContentProps ) {
 				},
 			}
 		);
-	}, [ actions, isLast, stepIndex, totalSteps, updateProgress, redirectToNewPage ] );
+	}, [actions, isLast, stepIndex, totalSteps, updateProgress, redirectToNewPage]);
 
 	const saveChoicesFireAndForget = useCallback(
-		( choiceData: Record< string, unknown > ) => {
-			updateChoices.mutate( choiceData );
+		(choiceData: Record<string, unknown>) => {
+			updateChoices.mutate(choiceData);
 		},
-		[ updateChoices ]
+		[updateChoices]
 	);
 
 	const handleContinue = useCallback(
-		( directChoice?: Record< string, unknown > ) => {
-			const storedChoice = choices[ stepId as keyof typeof choices ];
-			const choiceData = directChoice ?? ( isChoiceEmpty( storedChoice ) ? null : { [ stepId ]: storedChoice } );
+		(directChoice?: Record<string, unknown>) => {
+			const storedChoice = choices[stepId as keyof typeof choices];
+			const choiceData = directChoice ?? (isChoiceEmpty(storedChoice) ? null : { [stepId]: storedChoice });
 
-			if ( choiceData ) {
-				saveChoicesFireAndForget( choiceData );
+			if (choiceData) {
+				saveChoicesFireAndForget(choiceData);
 			}
 
-			if ( stepId === StepId.THEME_SELECTION ) {
-				const themeSlug = ( choiceData?.theme_selection ?? choices.theme_selection ) as string;
+			if (stepId === StepId.THEME_SELECTION) {
+				const themeSlug = (choiceData?.theme_selection ?? choices.theme_selection) as string;
 
-				if ( themeSlug && isLast ) {
-					setIsCompleting( true );
-					installTheme.mutate( themeSlug, {
+				if (themeSlug && isLast) {
+					setIsCompleting(true);
+					installTheme.mutate(themeSlug, {
 						onSuccess: () => {
 							updateProgress.mutate(
 								{
@@ -190,7 +190,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 							);
 						},
 						onError: () => {
-							showToast( t( 'error.theme_install_failed' ) );
+							showToast(t('error.theme_install_failed'));
 							updateProgress.mutate(
 								{
 									complete_step: stepId,
@@ -204,21 +204,21 @@ export function AppContent( { onClose }: AppContentProps ) {
 								}
 							);
 						},
-					} );
+					});
 					return;
 				}
 
-				if ( themeSlug ) {
-					installTheme.mutate( themeSlug, {
+				if (themeSlug) {
+					installTheme.mutate(themeSlug, {
 						onError: () => {
-							showToast( t( 'error.theme_install_failed' ) );
+							showToast(t('error.theme_install_failed'));
 						},
-					} );
+					});
 				}
 			}
 
-			if ( isLast ) {
-				setIsCompleting( true );
+			if (isLast) {
+				setIsCompleting(true);
 				updateProgress.mutate(
 					{
 						complete_step: stepId,
@@ -242,11 +242,11 @@ export function AppContent( { onClose }: AppContentProps ) {
 				},
 				{
 					onSuccess: () => {
-						actions.completeStep( stepId );
+						actions.completeStep(stepId);
 						actions.nextStep();
 					},
 					onError: () => {
-						actions.completeStep( stepId );
+						actions.completeStep(stepId);
 						actions.nextStep();
 					},
 				}
@@ -267,70 +267,70 @@ export function AppContent( { onClose }: AppContentProps ) {
 		]
 	);
 
-	const rightPanelConfig = useMemo( () => getStepVisualConfig( stepId ), [ stepId ] );
+	const rightPanelConfig = useMemo(() => getStepVisualConfig(stepId), [stepId]);
 	const isPending = updateProgress.isPending || isLoading;
 
-	const choiceForStep = choices[ stepId as keyof typeof choices ];
-	const continueDisabled = ! isLast && isChoiceEmpty( choiceForStep );
+	const choiceForStep = choices[stepId as keyof typeof choices];
+	const continueDisabled = !isLast && isChoiceEmpty(choiceForStep);
 	const isBackDisabled = isFirst && isConnected;
 
 	const getContinueLabel = () => {
-		if ( stepId === StepId.THEME_SELECTION && ! completedSteps.includes( StepId.THEME_SELECTION ) ) {
-			return t( 'steps.theme_selection.continue_with_theme' );
+		if (stepId === StepId.THEME_SELECTION && !completedSteps.includes(StepId.THEME_SELECTION)) {
+			return t('steps.theme_selection.continue_with_theme');
 		}
 
-		if ( stepId === StepId.SITE_FEATURES && ! completedSteps.includes( StepId.SITE_FEATURES ) ) {
-			return t( 'steps.site_features.continue_with_free' );
+		if (stepId === StepId.SITE_FEATURES && !completedSteps.includes(StepId.SITE_FEATURES)) {
+			return t('steps.site_features.continue_with_free');
 		}
 
-		if ( isLast ) {
-			return t( 'common.finish' );
+		if (isLast) {
+			return t('common.finish');
 		}
 
-		return t( 'common.continue' );
+		return t('common.continue');
 	};
 
 	const renderStepContent = () => {
-		switch ( stepId ) {
+		switch (stepId) {
 			case StepId.BUILDING_FOR:
-				return <BuildingFor onComplete={ handleContinue } />;
+				return <BuildingFor onComplete={handleContinue} />;
 			case StepId.SITE_ABOUT:
 				return <SiteAbout />;
 			case StepId.EXPERIENCE_LEVEL:
-				return <ExperienceLevel onComplete={ handleContinue } />;
+				return <ExperienceLevel onComplete={handleContinue} />;
 			case StepId.THEME_SELECTION:
-				return <ThemeSelection onComplete={ handleContinue } />;
+				return <ThemeSelection onComplete={handleContinue} />;
 			case StepId.SITE_FEATURES:
 				return <SiteFeatures />;
 			default:
-				return <Box sx={ { flex: 1, width: '100%' } } />;
+				return <Box sx={{ flex: 1, width: '100%' }} />;
 		}
 	};
 
-	if ( isCompleting ) {
+	if (isCompleting) {
 		return <CompletionScreen />;
 	}
 
-	if ( ! hasPassedLogin ) {
+	if (!hasPassedLogin) {
 		return (
 			<BaseLayout
 				topBar={
 					<TopBar>
-						<TopBarContent showUpgrade={ false } showClose={ false } />
+						<TopBarContent showUpgrade={false} showClose={false} />
 					</TopBar>
 				}
 			>
-				<Login onConnect={ handleConnect } onContinueAsGuest={ handleContinueAsGuest } />
+				<Login onConnect={handleConnect} onContinueAsGuest={handleContinueAsGuest} />
 			</BaseLayout>
 		);
 	}
 
-	if ( shouldShowProInstall ) {
+	if (shouldShowProInstall) {
 		return (
 			<BaseLayout
 				topBar={
 					<TopBar>
-						<TopBarContent showUpgrade={ false } showClose={ false } />
+						<TopBarContent showUpgrade={false} showClose={false} />
 					</TopBar>
 				}
 			>
@@ -345,9 +345,9 @@ export function AppContent( { onClose }: AppContentProps ) {
 			topBar={
 				<TopBar>
 					<TopBarContent
-						showClose={ false }
-						onClose={ handleClose }
-						onUpgrade={ () => window.open( urls.upgradeUrl, '_blank' ) }
+						showClose={false}
+						onClose={handleClose}
+						onUpgrade={() => window.open(urls.upgradeUrl, '_blank')}
 					/>
 				</TopBar>
 			}
@@ -357,21 +357,21 @@ export function AppContent( { onClose }: AppContentProps ) {
 						showBack
 						showSkip
 						showContinue
-						isBackDisabled={ isBackDisabled }
-						continueLabel={ getContinueLabel() }
-						continueDisabled={ continueDisabled }
-						continueLoading={ isPending }
-						onBack={ handleBack }
-						onSkip={ handleSkip }
-						onContinue={ () => handleContinue() }
+						isBackDisabled={isBackDisabled}
+						continueLabel={getContinueLabel()}
+						continueDisabled={continueDisabled}
+						continueLoading={isPending}
+						onBack={handleBack}
+						onSkip={handleSkip}
+						onContinue={() => handleContinue()}
 					/>
 				</Footer>
 			}
 		>
 			<SplitLayout
-				left={ renderStepContent() }
-				rightConfig={ rightPanelConfig }
-				progress={ { currentStep: stepIndex, totalSteps } }
+				left={renderStepContent()}
+				rightConfig={rightPanelConfig}
+				progress={{ currentStep: stepIndex, totalSteps }}
 			/>
 		</BaseLayout>
 	);

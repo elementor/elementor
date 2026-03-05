@@ -6,21 +6,21 @@ import { mainMenu } from '../../locations';
 import { type ExtendedWindow } from '../../types';
 
 export function init() {
-	mainMenu.registerLink( {
+	mainMenu.registerLink({
 		id: 'exit-to-wordpress',
 		group: 'exits',
 		priority: 20,
 		useProps: () => {
 			const document = useActiveDocument();
 			return {
-				title: __( 'Exit to WordPress', 'elementor' ),
+				title: __('Exit to WordPress', 'elementor'),
 				href: document?.links?.platformEdit,
 				icon: WordpressIcon,
 				onClick: () => {
 					const extendedWindow = window as unknown as ExtendedWindow;
 					const config = extendedWindow?.elementorCommon?.eventsManager?.config;
 
-					if ( config ) {
+					if (config) {
 						extendedWindow.elementorCommon.eventsManager.dispatchEvent(
 							config.names.topBar.exitToWordpress,
 							{
@@ -34,5 +34,5 @@ export function init() {
 				},
 			};
 		},
-	} );
+	});
 }

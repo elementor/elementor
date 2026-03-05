@@ -16,39 +16,39 @@ import { RotatedIcon } from './utils/rotated-icon';
 
 type AlignItems = 'start' | 'center' | 'end' | 'stretch';
 
-const ALIGN_ITEMS_LABEL = __( 'Align items', 'elementor' );
+const ALIGN_ITEMS_LABEL = __('Align items', 'elementor');
 
-const StartIcon = withDirection( LayoutAlignLeftIcon );
-const EndIcon = withDirection( LayoutAlignRightIcon );
+const StartIcon = withDirection(LayoutAlignLeftIcon);
+const EndIcon = withDirection(LayoutAlignRightIcon);
 
 const iconProps = {
 	isClockwise: false,
 	offset: 90,
 };
 
-const options: ToggleButtonGroupItem< AlignItems >[] = [
+const options: ToggleButtonGroupItem<AlignItems>[] = [
 	{
 		value: 'start',
-		label: __( 'Start', 'elementor' ),
-		renderContent: ( { size } ) => <RotatedIcon icon={ StartIcon } size={ size } { ...iconProps } />,
+		label: __('Start', 'elementor'),
+		renderContent: ({ size }) => <RotatedIcon icon={StartIcon} size={size} {...iconProps} />,
 		showTooltip: true,
 	},
 	{
 		value: 'center',
-		label: __( 'Center', 'elementor' ),
-		renderContent: ( { size } ) => <RotatedIcon icon={ CenterIcon } size={ size } { ...iconProps } />,
+		label: __('Center', 'elementor'),
+		renderContent: ({ size }) => <RotatedIcon icon={CenterIcon} size={size} {...iconProps} />,
 		showTooltip: true,
 	},
 	{
 		value: 'end',
-		label: __( 'End', 'elementor' ),
-		renderContent: ( { size } ) => <RotatedIcon icon={ EndIcon } size={ size } { ...iconProps } />,
+		label: __('End', 'elementor'),
+		renderContent: ({ size }) => <RotatedIcon icon={EndIcon} size={size} {...iconProps} />,
 		showTooltip: true,
 	},
 	{
 		value: 'stretch',
-		label: __( 'Stretch', 'elementor' ),
-		renderContent: ( { size } ) => <RotatedIcon icon={ JustifyIcon } size={ size } { ...iconProps } />,
+		label: __('Stretch', 'elementor'),
+		renderContent: ({ size }) => <RotatedIcon icon={JustifyIcon} size={size} {...iconProps} />,
 		showTooltip: true,
 	},
 ];
@@ -56,9 +56,9 @@ const options: ToggleButtonGroupItem< AlignItems >[] = [
 export const AlignItemsField = () => {
 	return (
 		<UiProviders>
-			<StylesField bind="align-items" propDisplayName={ ALIGN_ITEMS_LABEL }>
-				<StylesFieldLayout label={ ALIGN_ITEMS_LABEL }>
-					<ToggleControl options={ options } />
+			<StylesField bind="align-items" propDisplayName={ALIGN_ITEMS_LABEL}>
+				<StylesFieldLayout label={ALIGN_ITEMS_LABEL}>
+					<ToggleControl options={options} />
 				</StylesFieldLayout>
 			</StylesField>
 		</UiProviders>

@@ -7,135 +7,135 @@ import {
 import { useUserStylesCapability } from '@elementor/editor-styles-repository';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
-jest.mock( '@elementor/editor-documents' );
-jest.mock( '@elementor/editor-styles-repository', () => ( {
-	...jest.requireActual( '@elementor/editor-styles-repository' ),
-	useUserStylesCapability: jest.fn( () => ( {
-		userCan: jest.fn().mockReturnValue( { update: true } ),
-	} ) ),
-} ) );
+jest.mock('@elementor/editor-documents');
+jest.mock('@elementor/editor-styles-repository', () => ({
+	...jest.requireActual('@elementor/editor-styles-repository'),
+	useUserStylesCapability: jest.fn(() => ({
+		userCan: jest.fn().mockReturnValue({ update: true }),
+	})),
+}));
 
-jest.mock( '../class-manager-panel', () => ( {
-	usePanelActions: jest.fn( () => ( { open: jest.fn() } ) ),
-} ) );
+jest.mock('../class-manager-panel', () => ({
+	usePanelActions: jest.fn(() => ({ open: jest.fn() })),
+}));
 
-jest.mock( '../../../utils/tracking', () => createMockTrackingModule( 'trackGlobalClasses' ) );
+jest.mock('../../../utils/tracking', () => createMockTrackingModule('trackGlobalClasses'));
 
 import { ClassManagerButton } from '../class-manager-button';
 import { usePanelActions } from '../class-manager-panel';
 
-describe( 'ClassManagerButton', () => {
+describe('ClassManagerButton', () => {
 	const unsavedChangesMessage = 'You have unsaved changes';
 
-	it( 'should navigate to the panel on click when the document is pristine', () => {
+	it('should navigate to the panel on click when the document is pristine', () => {
 		// Arrange.
 		const openPanel = jest.fn();
 
-		jest.mocked( usePanelActions ).mockReturnValue( { open: openPanel } as never );
+		jest.mocked(usePanelActions).mockReturnValue({ open: openPanel } as never);
 
-		jest.mocked( useActiveDocument ).mockReturnValue( {
+		jest.mocked(useActiveDocument).mockReturnValue({
 			isDirty: false,
-		} as never );
+		} as never);
 
-		jest.mocked( useActiveDocumentActions ).mockReturnValue( {
+		jest.mocked(useActiveDocumentActions).mockReturnValue({
 			save: jest.fn(),
-		} as never );
+		} as never);
 
 		// Act.
-		renderWithQuery( <ClassManagerButton /> );
+		renderWithQuery(<ClassManagerButton />);
 
-		fireEvent.click( screen.getByLabelText( 'Class Manager' ) );
+		fireEvent.click(screen.getByLabelText('Class Manager'));
 
 		// Assert.
-		expect( openPanel ).toHaveBeenCalled();
-		expect( mockTracking ).toHaveBeenCalledWith( {
+		expect(openPanel).toHaveBeenCalled();
+		expect(mockTracking).toHaveBeenCalledWith({
 			event: 'classManagerOpened',
 			source: 'style-panel',
-		} );
-	} );
+		});
+	});
 
-	it( 'should open the dialog if the document is dirty, and allow to cancel the action', () => {
+	it('should open the dialog if the document is dirty, and allow to cancel the action', () => {
 		// Arrange.
 		const save = jest.fn();
 		const openPanel = jest.fn();
 
-		jest.mocked( usePanelActions ).mockReturnValue( { open: openPanel } as never );
+		jest.mocked(usePanelActions).mockReturnValue({ open: openPanel } as never);
 
-		jest.mocked( useActiveDocument ).mockReturnValue( {
+		jest.mocked(useActiveDocument).mockReturnValue({
 			isDirty: true,
-		} as never );
+		} as never);
 
-		jest.mocked( useActiveDocumentActions ).mockReturnValue( {
+		jest.mocked(useActiveDocumentActions).mockReturnValue({
 			save,
-		} as never );
+		} as never);
 
 		// Act.
-		renderWithQuery( <ClassManagerButton /> );
+		renderWithQuery(<ClassManagerButton />);
 
-		fireEvent.click( screen.getByLabelText( 'Class Manager' ) );
+		fireEvent.click(screen.getByLabelText('Class Manager'));
 
 		// Assert.
-		expect( screen.getByText( unsavedChangesMessage ) ).toBeInTheDocument();
+		expect(screen.getByText(unsavedChangesMessage)).toBeInTheDocument();
 
 		// Act.
-		fireEvent.click( screen.getByRole( 'button', { name: 'Stay here' } ) );
+		fireEvent.click(screen.getByRole('button', { name: 'Stay here' }));
 
 		// Assert.
-		expect( screen.queryByText( unsavedChangesMessage ) ).not.toBeInTheDocument();
-		expect( save ).not.toHaveBeenCalled();
-		expect( openPanel ).not.toHaveBeenCalled();
-		expect( mockTracking ).not.toHaveBeenCalled();
-	} );
+		expect(screen.queryByText(unsavedChangesMessage)).not.toBeInTheDocument();
+		expect(save).not.toHaveBeenCalled();
+		expect(openPanel).not.toHaveBeenCalled();
+		expect(mockTracking).not.toHaveBeenCalled();
+	});
 
-	it( 'should open the dialog if the document is dirty, and allow to save and continue', async () => {
+	it('should open the dialog if the document is dirty, and allow to save and continue', async () => {
 		// Arrange.
-		const save = jest.fn().mockResolvedValue( null );
+		const save = jest.fn().mockResolvedValue(null);
 		const openPanel = jest.fn();
 
-		jest.mocked( usePanelActions ).mockReturnValue( { open: openPanel } as never );
+		jest.mocked(usePanelActions).mockReturnValue({ open: openPanel } as never);
 
-		jest.mocked( useActiveDocument ).mockReturnValue( {
+		jest.mocked(useActiveDocument).mockReturnValue({
 			isDirty: true,
-		} as never );
+		} as never);
 
-		jest.mocked( useActiveDocumentActions ).mockReturnValue( {
+		jest.mocked(useActiveDocumentActions).mockReturnValue({
 			save,
-		} as never );
+		} as never);
 
-		renderWithQuery( <ClassManagerButton /> );
-
-		// Act.
-		fireEvent.click( screen.getByLabelText( 'Class Manager' ) );
-
-		// Assert.
-		expect( screen.getByText( unsavedChangesMessage ) ).toBeInTheDocument();
+		renderWithQuery(<ClassManagerButton />);
 
 		// Act.
-		fireEvent.click( screen.getByRole( 'button', { name: 'Save & Continue' } ) );
+		fireEvent.click(screen.getByLabelText('Class Manager'));
 
 		// Assert.
-		await waitFor( () => {
-			expect( screen.queryByText( unsavedChangesMessage ) ).not.toBeInTheDocument();
-		} );
+		expect(screen.getByText(unsavedChangesMessage)).toBeInTheDocument();
 
-		expect( save ).toHaveBeenCalled();
-		expect( openPanel ).toHaveBeenCalled();
-		expect( mockTracking ).toHaveBeenCalledWith( {
+		// Act.
+		fireEvent.click(screen.getByRole('button', { name: 'Save & Continue' }));
+
+		// Assert.
+		await waitFor(() => {
+			expect(screen.queryByText(unsavedChangesMessage)).not.toBeInTheDocument();
+		});
+
+		expect(save).toHaveBeenCalled();
+		expect(openPanel).toHaveBeenCalled();
+		expect(mockTracking).toHaveBeenCalledWith({
 			event: 'classManagerOpened',
 			source: 'style-panel',
-		} );
-	} );
+		});
+	});
 
-	it( 'should not render the button if the user does not have permission to update classes', () => {
+	it('should not render the button if the user does not have permission to update classes', () => {
 		// Arrange.
-		jest.mocked( useUserStylesCapability ).mockReturnValue( {
-			userCan: jest.fn().mockReturnValue( { update: false } ),
-		} );
+		jest.mocked(useUserStylesCapability).mockReturnValue({
+			userCan: jest.fn().mockReturnValue({ update: false }),
+		});
 
 		// Act.
-		const { container } = renderWithQuery( <ClassManagerButton /> );
+		const { container } = renderWithQuery(<ClassManagerButton />);
 
 		// Assert.
-		expect( container ).toBeEmptyDOMElement();
-	} );
-} );
+		expect(container).toBeEmptyDOMElement();
+	});
+});

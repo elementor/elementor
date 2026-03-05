@@ -1,7 +1,7 @@
 import { type ControlItem } from '@elementor/editor-elements';
 import { type PropsSchema, type TransformablePropType, type TransformablePropValue } from '@elementor/editor-props';
 
-export type DynamicTags = Record< DynamicTag[ 'name' ], DynamicTag >;
+export type DynamicTags = Record<DynamicTag['name'], DynamicTag>;
 
 export type DynamicTag = {
 	name: string;
@@ -23,15 +23,12 @@ export type DynamicPropType = TransformablePropType & {
 	};
 };
 
-export type DynamicPropValue = TransformablePropValue<
-	'dynamic',
-	{ name: string; settings?: Record< string, unknown > }
->;
+export type DynamicPropValue = TransformablePropValue<'dynamic', { name: string; settings?: Record<string, unknown> }>;
 
 export type DynamicTagsManager = {
-	createTag: ( id: string, name: string, settings: Record< string, unknown > ) => TagInstance;
-	loadTagDataFromCache: ( tag: TagInstance ) => unknown;
-	refreshCacheFromServer: ( callback: () => void ) => void;
+	createTag: (id: string, name: string, settings: Record<string, unknown>) => TagInstance;
+	loadTagDataFromCache: (tag: TagInstance) => unknown;
+	refreshCacheFromServer: (callback: () => void) => void;
 };
 
 export type TagInstance = {
@@ -40,6 +37,6 @@ export type TagInstance = {
 		name: string;
 	};
 	model: {
-		toJSON: () => Record< string, unknown >;
+		toJSON: () => Record<string, unknown>;
 	};
 };

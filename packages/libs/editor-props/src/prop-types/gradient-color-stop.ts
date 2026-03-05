@@ -5,7 +5,7 @@ import { colorStopPropTypeUtil } from './color-stop';
 
 export const gradientColorStopPropTypeUtil = createPropUtils(
 	'gradient-color-stop',
-	z.array( colorStopPropTypeUtil.schema )
+	z.array(colorStopPropTypeUtil.schema)
 );
 
-export type GradientColorStopPropValue = z.infer< typeof gradientColorStopPropTypeUtil.schema >;
+export type GradientColorStopPropValue = z.infer<typeof gradientColorStopPropTypeUtil.schema>;

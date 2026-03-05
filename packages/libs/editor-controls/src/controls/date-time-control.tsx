@@ -12,92 +12,88 @@ import { createControl } from '../create-control';
 const DATE_FORMAT = 'YYYY-MM-DD';
 const TIME_FORMAT = 'HH:mm';
 
-export const DateTimeControl = createControl( ( { inputDisabled }: { inputDisabled?: boolean } ) => {
-	const { value, setValue, ...propContext } = useBoundProp( DateTimePropTypeUtil );
+export const DateTimeControl = createControl(({ inputDisabled }: { inputDisabled?: boolean }) => {
+	const { value, setValue, ...propContext } = useBoundProp(DateTimePropTypeUtil);
 
-	const handleChange = ( newValue: Props, meta: { bind: 'date' | 'time' } ) => {
+	const handleChange = (newValue: Props, meta: { bind: 'date' | 'time' }) => {
 		const field = meta.bind;
-		const fieldValue = newValue[ field as 'date' | 'time' ];
+		const fieldValue = newValue[field as 'date' | 'time'];
 
-		if ( isTransformable( fieldValue ) ) {
-			return setValue( { ...value, [ field ]: fieldValue } );
+		if (isTransformable(fieldValue)) {
+			return setValue({ ...value, [field]: fieldValue });
 		}
 
 		let formattedValue = '';
 
-		if ( fieldValue ) {
+		if (fieldValue) {
 			const dayjsValue = fieldValue as Dayjs;
-			formattedValue = field === 'date' ? dayjsValue.format( DATE_FORMAT ) : dayjsValue.format( TIME_FORMAT );
+			formattedValue = field === 'date' ? dayjsValue.format(DATE_FORMAT) : dayjsValue.format(TIME_FORMAT);
 		}
 
-		setValue( {
+		setValue({
 			...value,
-			[ field ]: {
+			[field]: {
 				$$type: 'string',
 				value: formattedValue,
 			},
-		} );
+		});
 	};
 
-	const parseDateValue = ( dateStr?: string | null ): Dayjs | null => {
-		if ( ! dateStr ) {
+	const parseDateValue = (dateStr?: string | null): Dayjs | null => {
+		if (!dateStr) {
 			return null;
 		}
 
-		const d = ( dayjs as unknown as { default: ( s?: string | number | Date ) => Dayjs } ).default( dateStr );
+		const d = (dayjs as unknown as { default: (s?: string | number | Date) => Dayjs }).default(dateStr);
 
 		return d && typeof d.isValid === 'function' && d.isValid() ? d : null;
 	};
 
-	const parseTimeValue = ( timeStr?: string | null ): Dayjs | null => {
-		if ( ! timeStr ) {
+	const parseTimeValue = (timeStr?: string | null): Dayjs | null => {
+		if (!timeStr) {
 			return null;
 		}
 
-		const [ hours, minutes ] = timeStr.split( ':' );
-		const h = Number.parseInt( hours ?? '', 10 );
-		const m = Number.parseInt( minutes ?? '', 10 );
+		const [hours, minutes] = timeStr.split(':');
+		const h = Number.parseInt(hours ?? '', 10);
+		const m = Number.parseInt(minutes ?? '', 10);
 
-		if ( Number.isNaN( h ) || Number.isNaN( m ) ) {
+		if (Number.isNaN(h) || Number.isNaN(m)) {
 			return null;
 		}
 
-		const base = ( dayjs as unknown as { default: () => Dayjs } ).default();
-		return base.hour( h ).minute( m ).second( 0 ).millisecond( 0 );
+		const base = (dayjs as unknown as { default: () => Dayjs }).default();
+		return base.hour(h).minute(m).second(0).millisecond(0);
 	};
 
 	return (
-		<PropProvider { ...propContext } value={ value } setValue={ setValue }>
+		<PropProvider {...propContext} value={value} setValue={setValue}>
 			<ControlActions>
 				<LocalizationProvider>
-					<Box display="flex" gap={ 1 } alignItems="center">
+					<Box display="flex" gap={1} alignItems="center">
 						<PropKeyProvider bind="date">
 							<DatePicker
-								value={ parseDateValue( stringPropTypeUtil.extract( value?.date ) ) }
-								onChange={ ( v: Dayjs | null ) =>
-									handleChange( { date: v } as Props, { bind: 'date' } )
-								}
-								disabled={ inputDisabled }
-								slotProps={ {
+								value={parseDateValue(stringPropTypeUtil.extract(value?.date))}
+								onChange={(v: Dayjs | null) => handleChange({ date: v } as Props, { bind: 'date' })}
+								disabled={inputDisabled}
+								slotProps={{
 									textField: { size: 'tiny' },
 									openPickerButton: { size: 'tiny' },
 									openPickerIcon: { fontSize: 'tiny' },
-								} }
+								}}
 							/>
 						</PropKeyProvider>
 
 						<PropKeyProvider bind="time">
 							<TimePicker
-								value={ parseTimeValue( stringPropTypeUtil.extract( value?.time ) ) }
-								onChange={ ( v: Dayjs | null ) =>
-									handleChange( { time: v } as Props, { bind: 'time' } )
-								}
-								disabled={ inputDisabled }
-								slotProps={ {
+								value={parseTimeValue(stringPropTypeUtil.extract(value?.time))}
+								onChange={(v: Dayjs | null) => handleChange({ time: v } as Props, { bind: 'time' })}
+								disabled={inputDisabled}
+								slotProps={{
 									textField: { size: 'tiny' },
 									openPickerButton: { size: 'tiny' },
 									openPickerIcon: { fontSize: 'tiny' },
-								} }
+								}}
 							/>
 						</PropKeyProvider>
 					</Box>
@@ -105,4 +101,4 @@ export const DateTimeControl = createControl( ( { inputDisabled }: { inputDisabl
 			</ControlActions>
 		</PropProvider>
 	);
-} );
+});

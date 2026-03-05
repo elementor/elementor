@@ -28,64 +28,64 @@ import { transitionTransformer } from './transformers/styles/transition-transfor
 
 export function initStyleTransformers() {
 	styleTransformersRegistry
-		.register( 'size', sizeTransformer )
-		.register( 'shadow', shadowTransformer )
-		.register( 'stroke', strokeTransformer )
+		.register('size', sizeTransformer)
+		.register('shadow', shadowTransformer)
+		.register('stroke', strokeTransformer)
 		.register(
 			'dimensions',
 			createMultiPropsTransformer(
-				[ 'block-start', 'block-end', 'inline-start', 'inline-end' ],
-				( { propKey, key } ) => `${ propKey }-${ key }`
+				['block-start', 'block-end', 'inline-start', 'inline-end'],
+				({ propKey, key }) => `${propKey}-${key}`
 			)
 		)
-		.register( 'filter', filterTransformer )
-		.register( 'backdrop-filter', filterTransformer )
-		.register( 'box-shadow', createCombineArrayTransformer( ',' ) )
-		.register( 'background', backgroundTransformer )
-		.register( 'background-overlay', backgroundOverlayTransformer )
-		.register( 'background-color-overlay', backgroundColorOverlayTransformer )
-		.register( 'background-image-overlay', backgroundImageOverlayTransformer )
-		.register( 'background-gradient-overlay', backgroundGradientOverlayTransformer )
-		.register( 'gradient-color-stop', createCombineArrayTransformer( ',' ) )
-		.register( 'color-stop', colorStopTransformer )
-		.register( 'background-image-position-offset', positionTransformer )
-		.register( 'background-image-size-scale', backgroundImageSizeScaleTransformer )
-		.register( 'image-src', imageSrcTransformer )
-		.register( 'image', imageTransformer )
-		.register( 'object-position', positionTransformer )
-		.register( 'transform-origin', transformOriginTransformer )
-		.register( 'perspective-origin', perspectiveOriginTransformer )
-		.register( 'transform-move', transformMoveTransformer )
-		.register( 'transform-scale', transformScaleTransformer )
-		.register( 'transform-rotate', transformRotateTransformer )
-		.register( 'transform-skew', transformSkewTransformer )
-		.register( 'transform-functions', transformFunctionsTransformer )
+		.register('filter', filterTransformer)
+		.register('backdrop-filter', filterTransformer)
+		.register('box-shadow', createCombineArrayTransformer(','))
+		.register('background', backgroundTransformer)
+		.register('background-overlay', backgroundOverlayTransformer)
+		.register('background-color-overlay', backgroundColorOverlayTransformer)
+		.register('background-image-overlay', backgroundImageOverlayTransformer)
+		.register('background-gradient-overlay', backgroundGradientOverlayTransformer)
+		.register('gradient-color-stop', createCombineArrayTransformer(','))
+		.register('color-stop', colorStopTransformer)
+		.register('background-image-position-offset', positionTransformer)
+		.register('background-image-size-scale', backgroundImageSizeScaleTransformer)
+		.register('image-src', imageSrcTransformer)
+		.register('image', imageTransformer)
+		.register('object-position', positionTransformer)
+		.register('transform-origin', transformOriginTransformer)
+		.register('perspective-origin', perspectiveOriginTransformer)
+		.register('transform-move', transformMoveTransformer)
+		.register('transform-scale', transformScaleTransformer)
+		.register('transform-rotate', transformRotateTransformer)
+		.register('transform-skew', transformSkewTransformer)
+		.register('transform-functions', transformFunctionsTransformer)
 		.register(
 			'transform',
 			createMultiPropsTransformer(
-				[ 'transform-functions', 'transform-origin', 'perspective', 'perspective-origin' ],
-				( { key } ) => ( key === 'transform-functions' ? 'transform' : key )
+				['transform-functions', 'transform-origin', 'perspective', 'perspective-origin'],
+				({ key }) => (key === 'transform-functions' ? 'transform' : key)
 			)
 		)
-		.register( 'transition', transitionTransformer )
+		.register('transition', transitionTransformer)
 		.register(
 			'layout-direction',
-			createMultiPropsTransformer( [ 'row', 'column' ], ( { propKey, key } ) => `${ key }-${ propKey }` )
+			createMultiPropsTransformer(['row', 'column'], ({ propKey, key }) => `${key}-${propKey}`)
 		)
-		.register( 'flex', flexTransformer )
+		.register('flex', flexTransformer)
 		.register(
 			'border-width',
 			createMultiPropsTransformer(
-				[ 'block-start', 'block-end', 'inline-start', 'inline-end' ],
-				( { key } ) => `border-${ key }-width`
+				['block-start', 'block-end', 'inline-start', 'inline-end'],
+				({ key }) => `border-${key}-width`
 			)
 		)
 		.register(
 			'border-radius',
 			createMultiPropsTransformer(
-				[ 'start-start', 'start-end', 'end-start', 'end-end' ],
-				( { key } ) => `border-${ key }-radius`
+				['start-start', 'start-end', 'end-start', 'end-end'],
+				({ key }) => `border-${key}-radius`
 			)
 		)
-		.registerFallback( plainTransformer );
+		.registerFallback(plainTransformer);
 }

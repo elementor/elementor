@@ -4,7 +4,7 @@ import { useStyle } from '../contexts/style-context';
 
 export const useStylesRerender = () => {
 	const { provider } = useStyle();
-	const [ , reRender ] = useReducer( ( p ) => ! p, false );
+	const [, reRender] = useReducer((p) => !p, false);
 
-	useEffect( () => provider?.subscribe( reRender ), [ provider ] );
+	useEffect(() => provider?.subscribe(reRender), [provider]);
 };

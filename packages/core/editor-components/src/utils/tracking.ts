@@ -7,7 +7,7 @@ import { type ExtendedWindow } from '../types';
 
 export type Source = 'user' | 'mcp_tool' | 'system';
 
-type ComponentEventData = Record< string, unknown > & {
+type ComponentEventData = Record<string, unknown> & {
 	action:
 		| 'createClicked'
 		| 'created'
@@ -23,37 +23,37 @@ type ComponentEventData = Record< string, unknown > & {
 
 const FEATURE_NAME = 'Components';
 
-export const trackComponentEvent = ( { action, source, ...data }: ComponentEventData ) => {
-	if ( source === 'system' ) {
+export const trackComponentEvent = ({ action, source, ...data }: ComponentEventData) => {
+	if (source === 'system') {
 		return;
 	}
 
 	const { dispatchEvent, config } = getMixpanel();
-	if ( ! config?.names?.components?.[ action ] ) {
+	if (!config?.names?.components?.[action]) {
 		return;
 	}
 
-	const name = config.names.components[ action ];
-	dispatchEvent?.( name, { ...data, source, 'Feature name': FEATURE_NAME } );
+	const name = config.names.components[action];
+	dispatchEvent?.(name, { ...data, source, 'Feature name': FEATURE_NAME });
 };
 
-export const onElementDrop = ( _args: unknown, element: V1Element ) => {
-	if ( ! ( element?.model?.get( 'widgetType' ) === 'e-component' ) ) {
+export const onElementDrop = (_args: unknown, element: V1Element) => {
+	if (!(element?.model?.get('widgetType') === 'e-component')) {
 		return;
 	}
 
-	const editorSettings = element.model.get( 'editor_settings' );
+	const editorSettings = element.model.get('editor_settings');
 	const componentName = editorSettings?.title;
 	const componentUID = editorSettings?.component_uid;
 	const instanceId = element.id;
 
-	const createdThisSession = selectCreatedThisSession( getState() );
-	const isSameSessionReuse = componentUID && createdThisSession.includes( componentUID );
+	const createdThisSession = selectCreatedThisSession(getState());
+	const isSameSessionReuse = componentUID && createdThisSession.includes(componentUID);
 
-	const eventsManagerConfig = ( window as unknown as ExtendedWindow ).elementorCommon.eventsManager.config;
+	const eventsManagerConfig = (window as unknown as ExtendedWindow).elementorCommon.eventsManager.config;
 	const { locations, secondaryLocations } = eventsManagerConfig;
 
-	trackComponentEvent( {
+	trackComponentEvent({
 		action: 'instanceAdded',
 		source: 'user',
 		instance_id: instanceId,
@@ -62,5 +62,5 @@ export const onElementDrop = ( _args: unknown, element: V1Element ) => {
 		is_same_session_reuse: isSameSessionReuse,
 		location: locations.widgetPanel,
 		secondary_location: secondaryLocations.componentsTab,
-	} );
+	});
 };

@@ -12,7 +12,7 @@ type Options = {
 	container: V1Element & {
 		document: V1Document;
 		model: {
-			get: ( key: 'elements' ) => {
+			get: (key: 'elements') => {
 				toJSON: () => V1ElementData[];
 			};
 		};
@@ -20,33 +20,33 @@ type Options = {
 	status: DocumentSaveStatus;
 };
 
-export const beforeSave = ( { container, status }: Options ) => {
-	const elements = container?.model.get( 'elements' ).toJSON?.() ?? [];
+export const beforeSave = ({ container, status }: Options) => {
+	const elements = container?.model.get('elements').toJSON?.() ?? [];
 
-	return Promise.all( [
-		syncComponents( { elements, status } ),
-		setComponentOverridablePropsSettingsBeforeSave( { container } ),
-	] );
+	return Promise.all([
+		syncComponents({ elements, status }),
+		setComponentOverridablePropsSettingsBeforeSave({ container }),
+	]);
 };
 
 // These operations run sequentially to prevent race conditions when multiple
 // edits occur on the same component simultaneously.
 // TODO: Consolidate these into a single PUT /components endpoint.
-const syncComponents = async ( { elements, status }: { elements: V1ElementData[]; status: DocumentSaveStatus } ) => {
+const syncComponents = async ({ elements, status }: { elements: V1ElementData[]; status: DocumentSaveStatus }) => {
 	// This order is important - first update existing components, then create new components,
 	// Since new component validation depends on the existing components (preventing duplicate names).
-	await updateExistingComponentsBeforeSave( { elements, status } );
-	await createComponentsBeforeSave( { elements, status } );
+	await updateExistingComponentsBeforeSave({ elements, status });
+	await createComponentsBeforeSave({ elements, status });
 };
 
-const updateExistingComponentsBeforeSave = async ( {
+const updateExistingComponentsBeforeSave = async ({
 	elements,
 	status,
 }: {
 	elements: V1ElementData[];
 	status: DocumentSaveStatus;
-} ) => {
-	await updateComponentTitleBeforeSave( status );
-	await updateArchivedComponentBeforeSave( status );
-	await publishDraftComponentsInPageBeforeSave( { elements, status } );
+}) => {
+	await updateComponentTitleBeforeSave(status);
+	await updateArchivedComponentBeforeSave(status);
+	await publishDraftComponentsInPageBeforeSave({ elements, status });
 };

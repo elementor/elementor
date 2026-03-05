@@ -15,24 +15,24 @@ export default function useDocumentSaveDraftProps(): ActionProps {
 
 	return {
 		icon: FileReportIcon,
-		title: __( 'Save Draft', 'elementor' ),
+		title: __('Save Draft', 'elementor'),
 		onClick: () => {
 			const eventName = config?.names?.editorOne?.topBarPublishDropdown;
-			if ( eventName ) {
-				dispatchEvent?.( eventName, {
+			if (eventName) {
+				dispatchEvent?.(eventName, {
 					app_type: config?.appTypes?.editor,
 					window_name: config?.appTypes?.editor,
 					interaction_type: config?.triggers?.click?.toLowerCase(),
 					target_type: config?.targetTypes?.dropdownItem,
 					target_name: config?.targetNames?.publishDropdown?.saveDraft,
 					interaction_result: config?.interactionResults?.actionSelected,
-					target_location: config?.locations?.topBar?.replace( /\s+/g, '_' ).toLowerCase(),
-					location_l1: config?.secondaryLocations?.publishDropdown?.replace( /\s+/g, '_' ).toLowerCase(),
+					target_location: config?.locations?.topBar?.replace(/\s+/g, '_').toLowerCase(),
+					location_l1: config?.secondaryLocations?.publishDropdown?.replace(/\s+/g, '_').toLowerCase(),
 					location_l2: config?.targetTypes?.dropdownItem,
-				} );
+				});
 			}
 			saveDraft();
 		},
-		disabled: ! document || document.isSaving || document.isSavingDraft || ! document.isDirty,
+		disabled: !document || document.isSaving || document.isSavingDraft || !document.isDirty,
 	};
 }

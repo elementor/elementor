@@ -15,12 +15,12 @@ import {
 	useStylesInheritanceSnapshot,
 } from '../styles-inheritance-context';
 
-export const initStyleInheritanceMocks = ( id: string ) => {
-	jest.mocked( useClassesProp ).mockReturnValue( 'classes' );
+export const initStyleInheritanceMocks = (id: string) => {
+	jest.mocked(useClassesProp).mockReturnValue('classes');
 
-	jest.mocked( getBreakpointsTree ).mockImplementation( createMockBreakpointsTree );
+	jest.mocked(getBreakpointsTree).mockImplementation(createMockBreakpointsTree);
 
-	jest.mocked( useStyle ).mockReturnValue( {
+	jest.mocked(useStyle).mockReturnValue({
 		id,
 		setId: jest.fn(),
 		meta: {
@@ -28,40 +28,35 @@ export const initStyleInheritanceMocks = ( id: string ) => {
 			state: null,
 		},
 		setMetaState: jest.fn(),
-		provider: createMockStylesProvider( { key: `${ ELEMENTS_STYLES_PROVIDER_KEY_PREFIX }1` } ),
-	} );
+		provider: createMockStylesProvider({ key: `${ELEMENTS_STYLES_PROVIDER_KEY_PREFIX}1` }),
+	});
 };
 
-export const getInheritanceChainForPath = (
-	element: Element,
-	elementType: ElementType,
-	path: string[],
-	settings = {}
-) =>
-	renderHook( () => useStylesInheritanceChain( path ), {
-		wrapper: ( { children } ) => (
-			<ElementProvider element={ element } elementType={ elementType } settings={ settings }>
-				<StyleInheritanceProvider>{ children }</StyleInheritanceProvider>
+export const getInheritanceChainForPath = (element: Element, elementType: ElementType, path: string[], settings = {}) =>
+	renderHook(() => useStylesInheritanceChain(path), {
+		wrapper: ({ children }) => (
+			<ElementProvider element={element} elementType={elementType} settings={settings}>
+				<StyleInheritanceProvider>{children}</StyleInheritanceProvider>
 			</ElementProvider>
 		),
-	} );
+	});
 
-export const getInheritanceSnapshot = ( element: Element, elementType: ElementType, settings = {} ) =>
-	renderHook( () => useStylesInheritanceSnapshot(), {
-		wrapper: ( { children } ) => (
-			<ElementProvider element={ element } elementType={ elementType } settings={ settings }>
-				<StyleInheritanceProvider>{ children }</StyleInheritanceProvider>
+export const getInheritanceSnapshot = (element: Element, elementType: ElementType, settings = {}) =>
+	renderHook(() => useStylesInheritanceSnapshot(), {
+		wrapper: ({ children }) => (
+			<ElementProvider element={element} elementType={elementType} settings={settings}>
+				<StyleInheritanceProvider>{children}</StyleInheritanceProvider>
 			</ElementProvider>
 		),
-	} );
+	});
 
-export const mockElementStyles = ( styles: StyleDefinition[] ) => {
-	jest.mocked( stylesRepository.all ).mockReturnValue( styles );
+export const mockElementStyles = (styles: StyleDefinition[]) => {
+	jest.mocked(stylesRepository.all).mockReturnValue(styles);
 
 	return {
 		classes: {
 			$$type: 'classes',
-			value: styles.map( ( { id } ) => id ),
+			value: styles.map(({ id }) => id),
 		},
 	};
 };

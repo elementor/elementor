@@ -8,26 +8,26 @@ type Props = {
 	icon?: React.ReactNode;
 };
 
-export const NoSearchResults = ( { searchValue, onClear, icon }: Props ) => {
+export const NoSearchResults = ({ searchValue, onClear, icon }: Props) => {
 	return (
 		<Stack
-			gap={ 1 }
+			gap={1}
 			alignItems="center"
 			justifyContent="center"
-			p={ 2.5 }
+			p={2.5}
 			color="text.secondary"
-			sx={ { pb: 3.5, pt: 8 } }
+			sx={{ pb: 3.5, pt: 8 }}
 		>
-			{ icon }
+			{icon}
 			<Typography align="center" variant="subtitle2">
-				{ __( 'Sorry, nothing matched', 'elementor' ) }
+				{__('Sorry, nothing matched', 'elementor')}
 				<br />
-				&ldquo;{ searchValue }&rdquo;.
+				&ldquo;{searchValue}&rdquo;.
 			</Typography>
-			<Typography align="center" variant="caption" sx={ { display: 'flex', flexDirection: 'column' } }>
-				{ __( 'Try something else.', 'elementor' ) }
-				<Link color="text.secondary" variant="caption" component="button" onClick={ onClear }>
-					{ __( 'Clear & try again', 'elementor' ) }
+			<Typography align="center" variant="caption" sx={{ display: 'flex', flexDirection: 'column' }}>
+				{__('Try something else.', 'elementor')}
+				<Link color="text.secondary" variant="caption" component="button" onClick={onClear}>
+					{__('Clear & try again', 'elementor')}
 				</Link>
 			</Typography>
 		</Stack>

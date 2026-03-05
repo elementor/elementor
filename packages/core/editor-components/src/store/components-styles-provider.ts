@@ -3,22 +3,22 @@ import { __getState as getState, __subscribeWithSelector as subscribeWithSelecto
 
 import { selectFlatStyles, SLICE_NAME } from './store';
 
-export const componentsStylesProvider = createStylesProvider( {
+export const componentsStylesProvider = createStylesProvider({
 	key: 'components-styles',
 	priority: 100,
-	subscribe: ( cb ) =>
+	subscribe: (cb) =>
 		subscribeWithSelector(
-			( state ) => state[ SLICE_NAME ],
+			(state) => state[SLICE_NAME],
 			() => {
 				cb();
 			}
 		),
 	actions: {
 		all: () => {
-			return selectFlatStyles( getState() );
+			return selectFlatStyles(getState());
 		},
-		get: ( id ) => {
-			return selectFlatStyles( getState() ).find( ( style ) => style.id === id ) ?? null;
+		get: (id) => {
+			return selectFlatStyles(getState()).find((style) => style.id === id) ?? null;
 		},
 	},
-} );
+});

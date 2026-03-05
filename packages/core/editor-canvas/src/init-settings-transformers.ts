@@ -13,15 +13,15 @@ import { videoSrcTransformer } from './transformers/shared/video-src-transformer
 
 export function initSettingsTransformers() {
 	settingsTransformersRegistry
-		.register( 'classes', createClassesTransformer() )
-		.register( 'link', linkTransformer )
-		.register( 'query', queryTransformer )
-		.register( 'image', imageTransformer )
-		.register( 'image-src', imageSrcTransformer )
-		.register( 'video-src', videoSrcTransformer )
-		.register( 'attributes', attributesTransformer )
-		.register( 'date-time', dateTimeTransformer )
-		.register( 'html-v2', htmlV2Transformer )
-		.register( 'html-v3', htmlV3Transformer )
-		.registerFallback( plainTransformer );
+		.register('classes', createClassesTransformer())
+		.register('link', linkTransformer)
+		.register('query', queryTransformer)
+		.register('image', imageTransformer)
+		.register('image-src', imageSrcTransformer)
+		.register('video-src', videoSrcTransformer)
+		.register('attributes', attributesTransformer)
+		.register('date-time', dateTimeTransformer)
+		.register('html-v2', htmlV2Transformer)
+		.register('html-v3', htmlV3Transformer)
+		.registerFallback(plainTransformer);
 }

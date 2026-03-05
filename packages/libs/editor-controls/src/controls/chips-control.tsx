@@ -18,20 +18,20 @@ type ChipsControlProps = {
 
 const SIZE = 'tiny';
 
-export const ChipsControl = createControl( ( { options }: ChipsControlProps ) => {
-	const { value, setValue, disabled } = useBoundProp( stringArrayPropTypeUtil );
+export const ChipsControl = createControl(({ options }: ChipsControlProps) => {
+	const { value, setValue, disabled } = useBoundProp(stringArrayPropTypeUtil);
 
-	const selectedValues: string[] = ( value || [] )
-		.map( ( item ) => stringPropTypeUtil.extract( item ) )
-		.filter( ( val ): val is string => val !== null );
+	const selectedValues: string[] = (value || [])
+		.map((item) => stringPropTypeUtil.extract(item))
+		.filter((val): val is string => val !== null);
 
 	const selectedOptions = selectedValues
-		.map( ( val ) => options.find( ( opt ) => opt.value === val ) )
-		.filter( ( opt ): opt is ChipsOption => opt !== undefined );
+		.map((val) => options.find((opt) => opt.value === val))
+		.filter((opt): opt is ChipsOption => opt !== undefined);
 
-	const handleChange = ( _: SyntheticEvent, newValue: ChipsOption[] ) => {
-		const values = newValue.map( ( option ) => stringPropTypeUtil.create( option.value ) );
-		setValue( values );
+	const handleChange = (_: SyntheticEvent, newValue: ChipsOption[]) => {
+		const values = newValue.map((option) => stringPropTypeUtil.create(option.value));
+		setValue(values);
 	};
 
 	return (
@@ -39,21 +39,21 @@ export const ChipsControl = createControl( ( { options }: ChipsControlProps ) =>
 			<Autocomplete
 				fullWidth
 				multiple
-				size={ SIZE }
-				disabled={ disabled }
-				value={ selectedOptions }
-				onChange={ handleChange }
-				options={ options }
-				getOptionLabel={ ( option ) => option.label }
-				isOptionEqualToValue={ ( option, val ) => option.value === val.value }
-				renderInput={ ( params ) => <TextField { ...params } /> }
-				renderTags={ ( values, getTagProps ) =>
-					values.map( ( option, index ) => {
-						const { key, ...chipProps } = getTagProps( { index } );
-						return <Chip key={ key } size="tiny" label={ option.label } { ...chipProps } />;
-					} )
+				size={SIZE}
+				disabled={disabled}
+				value={selectedOptions}
+				onChange={handleChange}
+				options={options}
+				getOptionLabel={(option) => option.label}
+				isOptionEqualToValue={(option, val) => option.value === val.value}
+				renderInput={(params) => <TextField {...params} />}
+				renderTags={(values, getTagProps) =>
+					values.map((option, index) => {
+						const { key, ...chipProps } = getTagProps({ index });
+						return <Chip key={key} size="tiny" label={option.label} {...chipProps} />;
+					})
 				}
 			/>
 		</ControlActions>
 	);
-} );
+});

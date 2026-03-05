@@ -3,7 +3,7 @@ type PartialWpAttachmentJSON = {
 };
 
 export type BackboneAttachmentModel = {
-	fetch: () => Promise< WpAttachmentJSON >;
+	fetch: () => Promise<WpAttachmentJSON>;
 	toJSON: () => WpAttachmentJSON | PartialWpAttachmentJSON;
 };
 
@@ -15,24 +15,24 @@ export type CreateMediaFrameOptions = {
 	};
 };
 
-type CreateMediaFrame = ( options: CreateMediaFrameOptions ) => MediaFrame;
+type CreateMediaFrame = (options: CreateMediaFrameOptions) => MediaFrame;
 
 export type MediaFrame = {
 	content: {
-		mode: ( mode: string ) => void;
+		mode: (mode: string) => void;
 	};
 	uploader: {
 		uploader: {
-			param: ( key: string, value: string ) => void;
+			param: (key: string, value: string) => void;
 		};
 	};
 	state: () => {
-		get: ( key: 'selection' ) => {
-			set: ( attachments: BackboneAttachmentModel[] ) => void;
+		get: (key: 'selection') => {
+			set: (attachments: BackboneAttachmentModel[]) => void;
 			toJSON: () => WpAttachmentJSON[];
 		};
 	};
-	on: ( event: string, callback: () => void ) => MediaFrame;
+	on: (event: string, callback: () => void) => MediaFrame;
 	open: () => void;
 	detach: () => void;
 	remove: () => void;
@@ -67,7 +67,7 @@ export type WpAttachmentJSON = {
 export type WpMediaWindow = {
 	wp?: {
 		media?: {
-			attachment: ( id: number ) => BackboneAttachmentModel;
+			attachment: (id: number) => BackboneAttachmentModel;
 		} & CreateMediaFrame;
 	};
 };

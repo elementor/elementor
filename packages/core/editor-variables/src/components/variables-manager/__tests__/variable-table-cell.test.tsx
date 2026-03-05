@@ -3,118 +3,118 @@ import { render, screen } from '@testing-library/react';
 
 import { VariableTableCell } from '../ui/variable-table-cell';
 
-jest.mock( '@elementor/ui', () => ( {
-	...jest.requireActual( '@elementor/ui' ),
-	TableCell: jest.fn( ( props ) => {
+jest.mock('@elementor/ui', () => ({
+	...jest.requireActual('@elementor/ui'),
+	TableCell: jest.fn((props) => {
 		const { children, ...rest } = props;
-		return <td data-testprops={ JSON.stringify( rest ) }>{ children }</td>;
-	} ),
-} ) );
+		return <td data-testprops={JSON.stringify(rest)}>{children}</td>;
+	}),
+}));
 
-describe( 'VariableTableCell', () => {
-	const renderComponent = ( props = {} ) => {
+describe('VariableTableCell', () => {
+	const renderComponent = (props = {}) => {
 		return render(
 			<table>
 				<tbody>
 					<tr>
-						<VariableTableCell { ...props }>Cell Content</VariableTableCell>
+						<VariableTableCell {...props}>Cell Content</VariableTableCell>
 					</tr>
 				</tbody>
 			</table>
 		);
 	};
 
-	beforeEach( () => {
+	beforeEach(() => {
 		jest.clearAllMocks();
-	} );
+	});
 
-	it( 'should render content correctly', () => {
+	it('should render content correctly', () => {
 		// Arrange & Act
 		renderComponent();
 
 		// Assert
-		expect( screen.getByText( 'Cell Content' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Cell Content')).toBeInTheDocument();
+	});
 
-	it( 'should pass correct props to TableCell when isHeader is true', () => {
+	it('should pass correct props to TableCell when isHeader is true', () => {
 		// Arrange & Act
-		renderComponent( { isHeader: true } );
+		renderComponent({ isHeader: true });
 
 		// Assert
-		const cell = screen.getByRole( 'cell' );
-		const props = JSON.parse( cell.getAttribute( 'data-testprops' ) || '{}' );
-		expect( props.sx ).toEqual(
-			expect.objectContaining( {
+		const cell = screen.getByRole('cell');
+		const props = JSON.parse(cell.getAttribute('data-testprops') || '{}');
+		expect(props.sx).toEqual(
+			expect.objectContaining({
 				color: 'text.primary',
 				fontWeight: 'bold',
 				padding: '10px 16px',
-			} )
+			})
 		);
-	} );
+	});
 
-	it( 'should pass width prop to sx', () => {
+	it('should pass width prop to sx', () => {
 		// Arrange & Act
-		renderComponent( { width: 100 } );
+		renderComponent({ width: 100 });
 
 		// Assert
-		const cell = screen.getByRole( 'cell' );
-		const props = JSON.parse( cell.getAttribute( 'data-testprops' ) || '{}' );
-		expect( props.sx ).toEqual(
-			expect.objectContaining( {
+		const cell = screen.getByRole('cell');
+		const props = JSON.parse(cell.getAttribute('data-testprops') || '{}');
+		expect(props.sx).toEqual(
+			expect.objectContaining({
 				width: 100,
-			} )
+			})
 		);
-	} );
+	});
 
-	it( 'should pass maxWidth prop to sx', () => {
+	it('should pass maxWidth prop to sx', () => {
 		// Arrange & Act
-		renderComponent( { maxWidth: 200 } );
+		renderComponent({ maxWidth: 200 });
 
 		// Assert
-		const cell = screen.getByRole( 'cell' );
-		const props = JSON.parse( cell.getAttribute( 'data-testprops' ) || '{}' );
-		expect( props.sx ).toEqual(
-			expect.objectContaining( {
+		const cell = screen.getByRole('cell');
+		const props = JSON.parse(cell.getAttribute('data-testprops') || '{}');
+		expect(props.sx).toEqual(
+			expect.objectContaining({
 				maxWidth: 200,
-			} )
+			})
 		);
-	} );
+	});
 
-	it( 'should use default maxWidth when not provided', () => {
+	it('should use default maxWidth when not provided', () => {
 		// Arrange & Act
 		renderComponent();
 
 		// Assert
-		const cell = screen.getByRole( 'cell' );
-		const props = JSON.parse( cell.getAttribute( 'data-testprops' ) || '{}' );
-		expect( props.sx ).toEqual(
-			expect.objectContaining( {
+		const cell = screen.getByRole('cell');
+		const props = JSON.parse(cell.getAttribute('data-testprops') || '{}');
+		expect(props.sx).toEqual(
+			expect.objectContaining({
 				maxWidth: 150,
-			} )
+			})
 		);
-	} );
+	});
 
-	it( 'should pass noPadding prop correctly', () => {
+	it('should pass noPadding prop correctly', () => {
 		// Arrange & Act
-		renderComponent( { noPadding: true } );
+		renderComponent({ noPadding: true });
 
 		// Assert
-		const cell = screen.getByRole( 'cell' );
-		const props = JSON.parse( cell.getAttribute( 'data-testprops' ) || '{}' );
-		expect( props.padding ).toBe( 'none' );
-	} );
+		const cell = screen.getByRole('cell');
+		const props = JSON.parse(cell.getAttribute('data-testprops') || '{}');
+		expect(props.padding).toBe('none');
+	});
 
-	it( 'should pass alignment prop correctly', () => {
+	it('should pass alignment prop correctly', () => {
 		// Arrange & Act
-		renderComponent( { align: 'right' } );
+		renderComponent({ align: 'right' });
 
 		// Assert
-		const cell = screen.getByRole( 'cell' );
-		const props = JSON.parse( cell.getAttribute( 'data-testprops' ) || '{}' );
-		expect( props.align ).toBe( 'right' );
-	} );
+		const cell = screen.getByRole('cell');
+		const props = JSON.parse(cell.getAttribute('data-testprops') || '{}');
+		expect(props.align).toBe('right');
+	});
 
-	it( 'should merge custom sx props with base styles', () => {
+	it('should merge custom sx props with base styles', () => {
 		// Arrange
 		const customSx = {
 			backgroundColor: 'red',
@@ -122,27 +122,27 @@ describe( 'VariableTableCell', () => {
 		};
 
 		// Act
-		renderComponent( { sx: customSx } );
+		renderComponent({ sx: customSx });
 
 		// Assert
-		const cell = screen.getByRole( 'cell' );
-		const props = JSON.parse( cell.getAttribute( 'data-testprops' ) || '{}' );
-		expect( props.sx ).toEqual(
-			expect.objectContaining( {
+		const cell = screen.getByRole('cell');
+		const props = JSON.parse(cell.getAttribute('data-testprops') || '{}');
+		expect(props.sx).toEqual(
+			expect.objectContaining({
 				...customSx,
 				maxWidth: 150,
-			} )
+			})
 		);
-	} );
+	});
 
-	it( 'should not apply header padding when noPadding is true', () => {
+	it('should not apply header padding when noPadding is true', () => {
 		// Arrange & Act
-		renderComponent( { isHeader: true, noPadding: true } );
+		renderComponent({ isHeader: true, noPadding: true });
 
 		// Assert
-		const cell = screen.getByRole( 'cell' );
-		const props = JSON.parse( cell.getAttribute( 'data-testprops' ) || '{}' );
-		expect( props.sx.padding ).toBeUndefined();
-		expect( props.padding ).toBe( 'none' );
-	} );
-} );
+		const cell = screen.getByRole('cell');
+		const props = JSON.parse(cell.getAttribute('data-testprops') || '{}');
+		expect(props.sx.padding).toBeUndefined();
+		expect(props.padding).toBe('none');
+	});
+});

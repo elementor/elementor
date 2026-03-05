@@ -6,25 +6,25 @@ type SizeArgs = { size: string };
 
 type FilterValue = { func: string; args: SizeArgs | DropShadowArgs };
 
-export const filterTransformer = createTransformer( ( filterValues: FilterValue[] ) => {
-	if ( filterValues?.length < 1 ) {
+export const filterTransformer = createTransformer((filterValues: FilterValue[]) => {
+	if (filterValues?.length < 1) {
 		return null;
 	}
 
-	return filterValues.filter( Boolean ).map( mapToFilterFunctionString ).join( ' ' );
-} );
+	return filterValues.filter(Boolean).map(mapToFilterFunctionString).join(' ');
+});
 
-const mapToFilterFunctionString = ( value: FilterValue ): string => {
-	if ( value.func === 'drop-shadow' ) {
+const mapToFilterFunctionString = (value: FilterValue): string => {
+	if (value.func === 'drop-shadow') {
 		const { xAxis, yAxis, blur, color } = value.args as DropShadowArgs;
-		return `drop-shadow(${ xAxis || '0px' } ${ yAxis || '0px' } ${ blur || '10px' } ${ color || 'transparent' })`;
+		return `drop-shadow(${xAxis || '0px'} ${yAxis || '0px'} ${blur || '10px'} ${color || 'transparent'})`;
 	}
 
-	const size = ( value.args as SizeArgs )?.size;
+	const size = (value.args as SizeArgs)?.size;
 
-	if ( ! value.func || ! size ) {
+	if (!value.func || !size) {
 		return '';
 	}
 
-	return `${ value.func }(${ size })`;
+	return `${value.func}(${size})`;
 };

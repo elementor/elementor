@@ -5,9 +5,9 @@ import Wrapper from './components/notifications';
 import { notificationsSlice } from './slice';
 
 export function init() {
-	registerSlice( notificationsSlice );
-	injectIntoTop( {
+	registerSlice(notificationsSlice);
+	injectIntoTop({
 		id: 'notifications',
 		component: Wrapper,
-	} );
+	});
 }

@@ -10,19 +10,19 @@ import {
 	type UnstableSortableProviderProps,
 } from '@elementor/ui';
 
-export const SortableProvider = < T extends string >( props: UnstableSortableProviderProps< T > ) => (
-	<UnstableSortableProvider restrictAxis variant="static" dragPlaceholderStyle={ { opacity: '1' } } { ...props } />
+export const SortableProvider = <T extends string>(props: UnstableSortableProviderProps<T>) => (
+	<UnstableSortableProvider restrictAxis variant="static" dragPlaceholderStyle={{ opacity: '1' }} {...props} />
 );
 
-export type SortableTriggerProps = React.HTMLAttributes< HTMLDivElement > & {
+export type SortableTriggerProps = React.HTMLAttributes<HTMLDivElement> & {
 	triggerClassName?: string;
 };
 
-export const SortableTrigger = ( { triggerClassName, ...props }: SortableTriggerProps ) => (
+export const SortableTrigger = ({ triggerClassName, ...props }: SortableTriggerProps) => (
 	<StyledSortableTrigger
-		{ ...props }
+		{...props}
 		role="button"
-		className={ `sortable-trigger ${ triggerClassName ?? '' }`.trim() }
+		className={`sortable-trigger ${triggerClassName ?? ''}`.trim()}
 		aria-label="sort"
 	>
 		<GripVerticalIcon fontSize="tiny" />
@@ -30,21 +30,21 @@ export const SortableTrigger = ( { triggerClassName, ...props }: SortableTrigger
 );
 
 type SortableItemProps = {
-	id: UnstableSortableItemProps[ 'id' ];
-	children: ( props: SortableItemRenderData ) => React.ReactNode;
+	id: UnstableSortableItemProps['id'];
+	children: (props: SortableItemRenderData) => React.ReactNode;
 };
 
 export type SortableItemRenderData = {
 	isDragged: boolean;
 	isDragPlaceholder: boolean;
-	triggerProps: React.HTMLAttributes< HTMLElement >;
+	triggerProps: React.HTMLAttributes<HTMLElement>;
 	triggerStyle: React.CSSProperties;
 };
 
-export const SortableItem = ( { children, id }: SortableItemProps ) => (
+export const SortableItem = ({ children, id }: SortableItemProps) => (
 	<UnstableSortableItem
-		id={ id }
-		render={ ( {
+		id={id}
+		render={({
 			itemProps,
 			isDragged,
 			triggerProps,
@@ -54,39 +54,39 @@ export const SortableItem = ( { children, id }: SortableItemProps ) => (
 			showDropIndication,
 			isDragOverlay,
 			isDragPlaceholder,
-		}: UnstableSortableItemRenderProps ) => (
+		}: UnstableSortableItemRenderProps) => (
 			<Box
-				{ ...itemProps }
-				style={ itemStyle }
+				{...itemProps}
+				style={itemStyle}
 				component="div"
 				role="listitem"
-				sx={ {
+				sx={{
 					backgroundColor: isDragOverlay ? 'background.paper' : undefined,
-				} }
+				}}
 			>
-				{ children( {
+				{children({
 					isDragged,
 					isDragPlaceholder,
 					triggerProps,
 					triggerStyle,
-				} ) }
-				{ showDropIndication && <SortableItemIndicator style={ dropIndicationStyle } /> }
+				})}
+				{showDropIndication && <SortableItemIndicator style={dropIndicationStyle} />}
 			</Box>
-		) }
+		)}
 	/>
 );
 
-const StyledSortableTrigger = styled( 'div' )( ( { theme } ) => ( {
+const StyledSortableTrigger = styled('div')(({ theme }) => ({
 	position: 'absolute',
 	left: '-2px',
 	top: '50%',
-	transform: `translate( -${ theme.spacing( 1.5 ) }, -50% )`,
+	transform: `translate( -${theme.spacing(1.5)}, -50% )`,
 	color: theme.palette.action.active,
 	cursor: 'grab',
-} ) );
+}));
 
-const SortableItemIndicator = styled( Box )`
+const SortableItemIndicator = styled(Box)`
 	width: 100%;
 	height: 1px;
-	background-color: ${ ( { theme } ) => theme.palette.text.primary };
+	background-color: ${({ theme }) => theme.palette.text.primary};
 `;

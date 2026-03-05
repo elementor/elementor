@@ -11,11 +11,11 @@ type Props = {
 	ariaLabel?: string;
 };
 
-export const TextAreaControl = createControl( ( { placeholder, ariaLabel }: Props ) => {
-	const { value, setValue, disabled } = useBoundProp( stringPropTypeUtil );
+export const TextAreaControl = createControl(({ placeholder, ariaLabel }: Props) => {
+	const { value, setValue, disabled } = useBoundProp(stringPropTypeUtil);
 
-	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-		setValue( event.target.value );
+	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setValue(event.target.value);
 	};
 
 	return (
@@ -24,15 +24,15 @@ export const TextAreaControl = createControl( ( { placeholder, ariaLabel }: Prop
 				size="tiny"
 				multiline
 				fullWidth
-				minRows={ 5 }
-				disabled={ disabled }
-				value={ value ?? '' }
-				onChange={ handleChange }
-				placeholder={ placeholder }
-				inputProps={ {
-					...( ariaLabel ? { 'aria-label': ariaLabel } : {} ),
-				} }
+				minRows={5}
+				disabled={disabled}
+				value={value ?? ''}
+				onChange={handleChange}
+				placeholder={placeholder}
+				inputProps={{
+					...(ariaLabel ? { 'aria-label': ariaLabel } : {}),
+				}}
 			/>
 		</ControlActions>
 	);
-} );
+});

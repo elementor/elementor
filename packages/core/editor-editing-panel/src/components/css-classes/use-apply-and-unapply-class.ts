@@ -31,30 +31,30 @@ export function useApplyClass() {
 	const applyClass = useApply();
 	const unapplyClass = useUnapply();
 
-	return useMemo( () => {
+	return useMemo(() => {
 		return undoable(
 			{
-				do: ( { classId }: UndoableClassActionPayload ) => {
+				do: ({ classId }: UndoableClassActionPayload) => {
 					const prevActiveId = activeId;
 
-					applyClass( classId );
+					applyClass(classId);
 
 					return prevActiveId;
 				},
-				undo: ( { classId }: UndoableClassActionPayload, prevActiveId: string | null ) => {
-					unapplyClass( classId );
-					setActiveId( prevActiveId );
+				undo: ({ classId }: UndoableClassActionPayload, prevActiveId: string | null) => {
+					unapplyClass(classId);
+					setActiveId(prevActiveId);
 				},
 			},
 			{
-				title: getElementLabel( element.id ),
-				subtitle: ( { classLabel } ) => {
+				title: getElementLabel(element.id),
+				subtitle: ({ classLabel }) => {
 					/* translators: %s is the class name. */
-					return __( `class %s applied`, 'elementor' ).replace( '%s', classLabel );
+					return __(`class %s applied`, 'elementor').replace('%s', classLabel);
 				},
 			}
 		);
-	}, [ activeId, applyClass, element.id, unapplyClass, setActiveId ] );
+	}, [activeId, applyClass, element.id, unapplyClass, setActiveId]);
 }
 
 export function useUnapplyClass() {
@@ -64,77 +64,77 @@ export function useUnapplyClass() {
 	const applyClass = useApply();
 	const unapplyClass = useUnapply();
 
-	return useMemo( () => {
+	return useMemo(() => {
 		return undoable(
 			{
-				do: ( { classId }: UndoableClassActionPayload ) => {
+				do: ({ classId }: UndoableClassActionPayload) => {
 					const prevActiveId = activeId;
 
-					unapplyClass( classId );
+					unapplyClass(classId);
 
 					return prevActiveId;
 				},
-				undo: ( { classId }: UndoableClassActionPayload, prevActiveId: string | null ) => {
-					applyClass( classId );
-					setActiveId( prevActiveId );
+				undo: ({ classId }: UndoableClassActionPayload, prevActiveId: string | null) => {
+					applyClass(classId);
+					setActiveId(prevActiveId);
 				},
 			},
 			{
-				title: getElementLabel( element.id ),
-				subtitle: ( { classLabel } ) => {
+				title: getElementLabel(element.id),
+				subtitle: ({ classLabel }) => {
 					/* translators: %s is the class name. */
-					return __( `class %s removed`, 'elementor' ).replace( '%s', classLabel );
+					return __(`class %s removed`, 'elementor').replace('%s', classLabel);
 				},
 			}
 		);
-	}, [ activeId, applyClass, element.id, unapplyClass, setActiveId ] );
+	}, [activeId, applyClass, element.id, unapplyClass, setActiveId]);
 }
 
 export function useCreateAndApplyClass() {
 	const { id: activeId, setId: setActiveId } = useStyle();
 
-	const [ provider, createAction ] = useGetStylesRepositoryCreateAction() ?? [ null, null ];
+	const [provider, createAction] = useGetStylesRepositoryCreateAction() ?? [null, null];
 	const deleteAction = provider?.actions.delete;
 
 	const applyClass = useApply();
 	const unapplyClass = useUnapply();
 
-	const undoableCreateAndApply = useMemo( () => {
-		if ( ! provider || ! createAction ) {
+	const undoableCreateAndApply = useMemo(() => {
+		if (!provider || !createAction) {
 			return;
 		}
 
 		return undoable(
 			{
-				do: ( { classLabel }: CreateAndApplyClassPayload ): CreateAndApplyClassUndoData => {
+				do: ({ classLabel }: CreateAndApplyClassPayload): CreateAndApplyClassUndoData => {
 					const prevActiveId = activeId;
 
-					const createdId = createAction( classLabel );
-					applyClass( createdId );
+					const createdId = createAction(classLabel);
+					applyClass(createdId);
 					return { prevActiveId, createdId };
 				},
-				undo: ( _: CreateAndApplyClassPayload, { prevActiveId, createdId }: CreateAndApplyClassUndoData ) => {
-					unapplyClass( createdId );
-					deleteAction?.( createdId );
+				undo: (_: CreateAndApplyClassPayload, { prevActiveId, createdId }: CreateAndApplyClassUndoData) => {
+					unapplyClass(createdId);
+					deleteAction?.(createdId);
 
-					setActiveId( prevActiveId );
+					setActiveId(prevActiveId);
 				},
 			},
 			{
-				title: __( 'Class', 'elementor' ),
-				subtitle: ( { classLabel } ) => {
+				title: __('Class', 'elementor'),
+				subtitle: ({ classLabel }) => {
 					/* translators: %s is the class name. */
-					return __( `%s created`, 'elementor' ).replace( '%s', classLabel );
+					return __(`%s created`, 'elementor').replace('%s', classLabel);
 				},
 			}
 		);
-	}, [ activeId, applyClass, createAction, deleteAction, provider, setActiveId, unapplyClass ] );
+	}, [activeId, applyClass, createAction, deleteAction, provider, setActiveId, unapplyClass]);
 
-	if ( ! provider || ! undoableCreateAndApply ) {
-		return [ null, null ];
+	if (!provider || !undoableCreateAndApply) {
+		return [null, null];
 	}
 
-	return [ provider, undoableCreateAndApply ] as const;
+	return [provider, undoableCreateAndApply] as const;
 }
 
 function useApply() {
@@ -143,20 +143,20 @@ function useApply() {
 	const { setClasses, getAppliedClasses } = useClasses();
 
 	return useCallback(
-		( classIDToApply: StyleDefinitionID ) => {
+		(classIDToApply: StyleDefinitionID) => {
 			const appliedClasses = getAppliedClasses();
 
-			if ( appliedClasses.includes( classIDToApply ) ) {
+			if (appliedClasses.includes(classIDToApply)) {
 				throw new Error(
-					`Class ${ classIDToApply } is already applied to element ${ element.id }, cannot re-apply.`
+					`Class ${classIDToApply} is already applied to element ${element.id}, cannot re-apply.`
 				);
 			}
 
-			const updatedClassesIds = [ ...appliedClasses, classIDToApply ];
-			setClasses( updatedClassesIds );
-			setActiveId( classIDToApply );
+			const updatedClassesIds = [...appliedClasses, classIDToApply];
+			setClasses(updatedClassesIds);
+			setActiveId(classIDToApply);
 		},
-		[ element.id, getAppliedClasses, setActiveId, setClasses ]
+		[element.id, getAppliedClasses, setActiveId, setClasses]
 	);
 }
 
@@ -166,23 +166,23 @@ function useUnapply() {
 	const { setClasses, getAppliedClasses } = useClasses();
 
 	return useCallback(
-		( classIDToUnapply: StyleDefinitionID ) => {
+		(classIDToUnapply: StyleDefinitionID) => {
 			const appliedClasses = getAppliedClasses();
 
-			if ( ! appliedClasses.includes( classIDToUnapply ) ) {
+			if (!appliedClasses.includes(classIDToUnapply)) {
 				throw new Error(
-					`Class ${ classIDToUnapply } is not applied to element ${ element.id }, cannot unapply it.`
+					`Class ${classIDToUnapply} is not applied to element ${element.id}, cannot unapply it.`
 				);
 			}
 
-			const updatedClassesIds = appliedClasses.filter( ( id ) => id !== classIDToUnapply );
-			setClasses( updatedClassesIds );
+			const updatedClassesIds = appliedClasses.filter((id) => id !== classIDToUnapply);
+			setClasses(updatedClassesIds);
 
-			if ( activeId === classIDToUnapply ) {
-				setActiveId( updatedClassesIds[ 0 ] ?? null );
+			if (activeId === classIDToUnapply) {
+				setActiveId(updatedClassesIds[0] ?? null);
 			}
 		},
-		[ activeId, element.id, getAppliedClasses, setActiveId, setClasses ]
+		[activeId, element.id, getAppliedClasses, setActiveId, setClasses]
 	);
 }
 
@@ -190,13 +190,13 @@ function useClasses() {
 	const { element } = useElement();
 	const currentClassesProp = useClassesProp();
 
-	return useMemo( () => {
-		const setClasses = ( ids: StyleDefinitionID[] ) => {
-			doApplyClasses( element.id, ids, currentClassesProp );
+	return useMemo(() => {
+		const setClasses = (ids: StyleDefinitionID[]) => {
+			doApplyClasses(element.id, ids, currentClassesProp);
 		};
 
-		const getAppliedClasses = () => doGetAppliedClasses( element.id, currentClassesProp ) || [];
+		const getAppliedClasses = () => doGetAppliedClasses(element.id, currentClassesProp) || [];
 
 		return { setClasses, getAppliedClasses };
-	}, [ currentClassesProp, element.id ] );
+	}, [currentClassesProp, element.id]);
 }

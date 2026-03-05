@@ -10,17 +10,17 @@ type AddGroupParams = {
 	source: Source;
 };
 
-export function addOverridableGroup( {
+export function addOverridableGroup({
 	componentId,
 	groupId,
 	label,
 	source,
-}: AddGroupParams ): OverridablePropsGroup | undefined {
+}: AddGroupParams): OverridablePropsGroup | undefined {
 	const currentComponent = componentsSelectors.getCurrentComponent();
 
-	const overridableProps = componentsSelectors.getOverridableProps( componentId );
+	const overridableProps = componentsSelectors.getOverridableProps(componentId);
 
-	if ( ! overridableProps ) {
+	if (!overridableProps) {
 		return;
 	}
 
@@ -30,24 +30,24 @@ export function addOverridableGroup( {
 		props: [],
 	};
 
-	componentsActions.setOverridableProps( componentId, {
+	componentsActions.setOverridableProps(componentId, {
 		...overridableProps,
 		groups: {
 			...overridableProps.groups,
 			items: {
 				...overridableProps.groups.items,
-				[ groupId ]: newGroup,
+				[groupId]: newGroup,
 			},
-			order: [ groupId, ...overridableProps.groups.order ],
+			order: [groupId, ...overridableProps.groups.order],
 		},
-	} );
+	});
 
-	trackComponentEvent( {
+	trackComponentEvent({
 		action: 'propertiesGroupCreated',
 		source,
 		component_uid: currentComponent?.uid,
 		group_name: label,
-	} );
+	});
 
 	return newGroup;
 }

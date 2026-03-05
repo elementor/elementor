@@ -6,7 +6,7 @@ export default function Shell() {
 	return (
 		<>
 			<TopSlot />
-			<div style={ { display: 'none' } }>
+			<div style={{ display: 'none' }}>
 				<LogicSlot />
 			</div>
 		</>

@@ -13,21 +13,21 @@ export function filterValidOverridableProps(
 	// and should be passed when editing component instance (not in component edit mode)
 	instanceElementId?: string
 ): OverridableProps {
-	const validProps: Record< string, OverridableProp > = {};
+	const validProps: Record<string, OverridableProp> = {};
 
-	for ( const [ key, prop ] of Object.entries( overridableProps.props ) ) {
-		if ( isExposedPropValid( prop, instanceElementId ) ) {
-			validProps[ key ] = prop;
+	for (const [key, prop] of Object.entries(overridableProps.props)) {
+		if (isExposedPropValid(prop, instanceElementId)) {
+			validProps[key] = prop;
 		}
 	}
 
-	const validPropKeys = new Set( Object.keys( validProps ) );
+	const validPropKeys = new Set(Object.keys(validProps));
 	const filteredGroups = {
 		items: Object.fromEntries(
-			Object.entries( overridableProps.groups.items ).map( ( [ groupId, group ] ) => [
+			Object.entries(overridableProps.groups.items).map(([groupId, group]) => [
 				groupId,
-				{ ...group, props: group.props.filter( ( propKey ) => validPropKeys.has( propKey ) ) },
-			] )
+				{ ...group, props: group.props.filter((propKey) => validPropKeys.has(propKey)) },
+			])
 		),
 		order: overridableProps.groups.order,
 	};
@@ -35,60 +35,60 @@ export function filterValidOverridableProps(
 	return { props: validProps, groups: filteredGroups };
 }
 
-export function isExposedPropValid( prop: OverridableProp, instanceElementId?: string ): boolean {
-	if ( ! prop.originPropFields ) {
+export function isExposedPropValid(prop: OverridableProp, instanceElementId?: string): boolean {
+	if (!prop.originPropFields) {
 		// if no originPropFields - the prop is on the widget level itself, therefore no need to lookup for a corresponding component's overridables
 		return true;
 	}
 
-	const innerComponentInstanceElement = getContainerByOriginId( prop.elementId, instanceElementId );
+	const innerComponentInstanceElement = getContainerByOriginId(prop.elementId, instanceElementId);
 
-	if ( ! innerComponentInstanceElement ) {
+	if (!innerComponentInstanceElement) {
 		return false;
 	}
 
-	const setting = innerComponentInstanceElement.settings?.get( 'component_instance' ) ?? null;
-	const componentInstance = componentInstancePropTypeUtil.extract( setting );
+	const setting = innerComponentInstanceElement.settings?.get('component_instance') ?? null;
+	const componentInstance = componentInstancePropTypeUtil.extract(setting);
 
-	if ( ! componentInstance?.component_id?.value ) {
+	if (!componentInstance?.component_id?.value) {
 		return false;
 	}
 
-	const overrides = componentInstanceOverridesPropTypeUtil.extract( componentInstance.overrides ) ?? undefined;
-	const matchingOverride = findOverrideByOuterKey( overrides, prop.overrideKey );
-	const innerOverrideInfo = extractInnerOverrideInfo( matchingOverride );
+	const overrides = componentInstanceOverridesPropTypeUtil.extract(componentInstance.overrides) ?? undefined;
+	const matchingOverride = findOverrideByOuterKey(overrides, prop.overrideKey);
+	const innerOverrideInfo = extractInnerOverrideInfo(matchingOverride);
 
-	if ( ! innerOverrideInfo ) {
+	if (!innerOverrideInfo) {
 		return false;
 	}
 
 	const { componentId, innerOverrideKey } = innerOverrideInfo;
-	const innerOverridableProp = getOverridableProp( { componentId, overrideKey: innerOverrideKey } );
+	const innerOverridableProp = getOverridableProp({ componentId, overrideKey: innerOverrideKey });
 
-	if ( ! innerOverridableProp ) {
+	if (!innerOverridableProp) {
 		return false;
 	}
 
-	return isExposedPropValid( innerOverridableProp, innerComponentInstanceElement.id );
+	return isExposedPropValid(innerOverridableProp, innerComponentInstanceElement.id);
 }
 
 function findOverrideByOuterKey(
 	overrides: ComponentInstanceOverride[] | undefined,
 	outerKey: string
 ): ComponentInstanceOverride | null {
-	if ( ! overrides ) {
+	if (!overrides) {
 		return null;
 	}
 
 	return (
-		overrides.find( ( override ) => {
-			const overridableValue = componentOverridablePropTypeUtil.extract( override );
+		overrides.find((override) => {
+			const overridableValue = componentOverridablePropTypeUtil.extract(override);
 
-			if ( overridableValue ) {
+			if (overridableValue) {
 				return overridableValue.override_key === outerKey;
 			}
 
 			return override.value.override_key === outerKey;
-		} ) ?? null
+		}) ?? null
 	);
 }

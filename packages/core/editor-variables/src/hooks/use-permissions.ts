@@ -4,8 +4,8 @@ export const usePermissions = () => {
 	const { canUser, isAdmin } = useCurrentUserCapabilities();
 
 	return {
-		canAssign: () => canUser( 'edit_posts' ),
-		canUnlink: () => canUser( 'edit_posts' ),
+		canAssign: () => canUser('edit_posts'),
+		canUnlink: () => canUser('edit_posts'),
 		canAdd: () => isAdmin,
 		canDelete: () => isAdmin,
 		canEdit: () => isAdmin,

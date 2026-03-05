@@ -19,7 +19,7 @@ import { GlobalClassNotFoundError } from './errors';
 import { SnapshotHistory } from './utils/snapshot-history';
 
 export type GlobalClasses = {
-	items: Record< StyleDefinitionID, StyleDefinition >;
+	items: Record<StyleDefinitionID, StyleDefinition>;
 	order: StyleDefinitionID[];
 };
 
@@ -33,13 +33,13 @@ type GlobalClassesState = {
 };
 
 export type ModifiedLabels = {
-	[ id: string ]: {
+	[id: string]: {
 		original: string;
 		modified: string;
 	};
 };
 
-const localHistory = SnapshotHistory.get< GlobalClasses >( 'global-classes' );
+const localHistory = SnapshotHistory.get<GlobalClasses>('global-classes');
 
 const initialState: GlobalClassesState = {
 	data: { items: {}, order: [] },
@@ -50,12 +50,12 @@ const initialState: GlobalClassesState = {
 	isDirty: false,
 };
 
-export type StateWithGlobalClasses = SliceState< typeof slice >;
+export type StateWithGlobalClasses = SliceState<typeof slice>;
 
 // Slice
 const SLICE_NAME = 'globalClasses';
 
-export const slice = createSlice( {
+export const slice = createSlice({
 	name: SLICE_NAME,
 	initialState,
 	reducers: {
@@ -63,10 +63,10 @@ export const slice = createSlice( {
 			state,
 			{
 				payload: { frontend, preview },
-			}: PayloadAction< {
+			}: PayloadAction<{
 				frontend: GlobalClasses;
 				preview: GlobalClasses;
-			} >
+			}>
 		) {
 			state.initialData.frontend = frontend;
 			state.initialData.preview = preview;
@@ -75,51 +75,49 @@ export const slice = createSlice( {
 			state.isDirty = false;
 		},
 
-		add( state, { payload }: PayloadAction< StyleDefinition > ) {
-			localHistory.next( state.data );
-			state.data.items[ payload.id ] = payload;
-			state.data.order.unshift( payload.id );
+		add(state, { payload }: PayloadAction<StyleDefinition>) {
+			localHistory.next(state.data);
+			state.data.items[payload.id] = payload;
+			state.data.order.unshift(payload.id);
 
 			state.isDirty = true;
 		},
 
-		delete( state, { payload }: PayloadAction< StyleDefinitionID > ) {
-			localHistory.next( state.data );
-			state.data.items = Object.fromEntries(
-				Object.entries( state.data.items ).filter( ( [ id ] ) => id !== payload )
-			);
+		delete(state, { payload }: PayloadAction<StyleDefinitionID>) {
+			localHistory.next(state.data);
+			state.data.items = Object.fromEntries(Object.entries(state.data.items).filter(([id]) => id !== payload));
 
-			state.data.order = state.data.order.filter( ( id ) => id !== payload );
+			state.data.order = state.data.order.filter((id) => id !== payload);
 
 			state.isDirty = true;
 		},
 
-		setOrder( state, { payload }: PayloadAction< StyleDefinitionID[] > ) {
-			localHistory.next( state.data );
+		setOrder(state, { payload }: PayloadAction<StyleDefinitionID[]>) {
+			localHistory.next(state.data);
 			state.data.order = payload;
 
 			state.isDirty = true;
 		},
 
-		update( state, { payload }: PayloadAction< { style: UpdateActionPayload } > ) {
-			localHistory.next( state.data );
-			const style = state.data.items[ payload.style.id ];
+		update(state, { payload }: PayloadAction<{ style: UpdateActionPayload }>) {
+			localHistory.next(state.data);
+			const style = state.data.items[payload.style.id];
 
 			const mergedData = {
 				...style,
 				...payload.style,
 			};
 
-			state.data.items[ payload.style.id ] = mergedData;
+			state.data.items[payload.style.id] = mergedData;
 
 			state.isDirty = true;
 		},
 
-		updateMultiple( state, { payload }: PayloadAction< ModifiedLabels > ) {
-			localHistory.next( state.data );
-			Object.entries( payload ).forEach( ( [ id, { modified } ] ) => {
-				state.data.items[ id ].label = modified;
-			} );
+		updateMultiple(state, { payload }: PayloadAction<ModifiedLabels>) {
+			localHistory.next(state.data);
+			Object.entries(payload).forEach(([id, { modified }]) => {
+				state.data.items[id].label = modified;
+			});
 
 			state.isDirty = false;
 		},
@@ -127,42 +125,42 @@ export const slice = createSlice( {
 			state,
 			{
 				payload,
-			}: PayloadAction< {
+			}: PayloadAction<{
 				id: StyleDefinitionID;
-				meta: StyleDefinitionVariant[ 'meta' ];
+				meta: StyleDefinitionVariant['meta'];
 				props: Props;
 				custom_css?: CustomCss | null;
-			} >
+			}>
 		) {
-			const style = state.data.items[ payload.id ];
+			const style = state.data.items[payload.id];
 
-			if ( ! style ) {
-				throw new GlobalClassNotFoundError( { context: { styleId: payload.id } } );
+			if (!style) {
+				throw new GlobalClassNotFoundError({ context: { styleId: payload.id } });
 			}
 
-			localHistory.next( state.data );
+			localHistory.next(state.data);
 
-			const variant = getVariantByMeta( style, payload.meta );
-			let customCss = ( 'custom_css' in payload ? payload.custom_css : variant?.custom_css ) ?? null;
+			const variant = getVariantByMeta(style, payload.meta);
+			let customCss = ('custom_css' in payload ? payload.custom_css : variant?.custom_css) ?? null;
 			customCss = customCss?.raw ? customCss : null;
 
-			if ( variant ) {
+			if (variant) {
 				// mergeProps fails with Proxy objects from store, manually re-create clones
-				const variantProps = JSON.parse( JSON.stringify( variant.props ) ) as Props;
-				const payloadProps = JSON.parse( JSON.stringify( payload.props ) ) as Props;
-				variant.props = mergeProps( variantProps, payloadProps );
+				const variantProps = JSON.parse(JSON.stringify(variant.props)) as Props;
+				const payloadProps = JSON.parse(JSON.stringify(payload.props)) as Props;
+				variant.props = mergeProps(variantProps, payloadProps);
 				variant.custom_css = customCss;
 
-				style.variants = getNonEmptyVariants( style );
+				style.variants = getNonEmptyVariants(style);
 			} else {
-				style.variants.push( { meta: payload.meta, props: payload.props, custom_css: customCss } );
+				style.variants.push({ meta: payload.meta, props: payload.props, custom_css: customCss });
 			}
 
 			state.isDirty = true;
 		},
 
-		reset( state, { payload: { context } }: PayloadAction< { context: ApiContext } > ) {
-			if ( context === 'frontend' ) {
+		reset(state, { payload: { context } }: PayloadAction<{ context: ApiContext }>) {
+			if (context === 'frontend') {
 				localHistory.reset();
 				state.initialData.frontend = state.data;
 
@@ -172,12 +170,12 @@ export const slice = createSlice( {
 			state.initialData.preview = state.data;
 		},
 
-		undo( state ) {
-			if ( localHistory.isLast() ) {
-				localHistory.next( state.data ); // store current before undo
+		undo(state) {
+			if (localHistory.isLast()) {
+				localHistory.next(state.data); // store current before undo
 			}
 			const data = localHistory.prev();
-			if ( data ) {
+			if (data) {
 				state.data = data;
 				state.isDirty = true;
 			} else {
@@ -185,69 +183,67 @@ export const slice = createSlice( {
 			}
 		},
 
-		resetToInitialState( state, { payload: { context } }: PayloadAction< { context: ApiContext } > ) {
+		resetToInitialState(state, { payload: { context } }: PayloadAction<{ context: ApiContext }>) {
 			localHistory.reset();
-			state.data = state.initialData[ context ];
+			state.data = state.initialData[context];
 			state.isDirty = false;
 		},
 
-		redo( state ) {
+		redo(state) {
 			const data = localHistory.next();
-			if ( localHistory.isLast() ) {
+			if (localHistory.isLast()) {
 				localHistory.prev();
 			}
-			if ( data ) {
+			if (data) {
 				state.data = data;
 				state.isDirty = true;
 			}
 		},
 	},
-} );
+});
 
-const mergeProps = ( current: Props, updates: Props ): Props => {
+const mergeProps = (current: Props, updates: Props): Props => {
 	// edge case, the server returns an array instead of an object when empty props because of PHP array / object conversion
-	const props = Array.isArray( current ) ? {} : current;
+	const props = Array.isArray(current) ? {} : current;
 
-	Object.entries( updates ).forEach( ( [ key, value ] ) => {
-		if ( value === null || value === undefined ) {
+	Object.entries(updates).forEach(([key, value]) => {
+		if (value === null || value === undefined) {
 			// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-			delete props[ key ];
+			delete props[key];
 		} else {
-			props[ key ] = value;
+			props[key] = value;
 		}
-	} );
+	});
 
 	return props;
 };
 
-const getNonEmptyVariants = ( style: StyleDefinition ) => {
+const getNonEmptyVariants = (style: StyleDefinition) => {
 	return style.variants.filter(
-		( { props, custom_css: customCss }: StyleDefinitionVariant ) => Object.keys( props ).length || customCss?.raw
+		({ props, custom_css: customCss }: StyleDefinitionVariant) => Object.keys(props).length || customCss?.raw
 	);
 };
 
 // Selectors
-export const selectData = ( state: SliceState< typeof slice > ) => state[ SLICE_NAME ].data;
+export const selectData = (state: SliceState<typeof slice>) => state[SLICE_NAME].data;
 
-export const selectFrontendInitialData = ( state: SliceState< typeof slice > ) =>
-	state[ SLICE_NAME ].initialData.frontend;
+export const selectFrontendInitialData = (state: SliceState<typeof slice>) => state[SLICE_NAME].initialData.frontend;
 
-export const selectPreviewInitialData = ( state: SliceState< typeof slice > ) =>
-	state[ SLICE_NAME ].initialData.preview;
+export const selectPreviewInitialData = (state: SliceState<typeof slice>) => state[SLICE_NAME].initialData.preview;
 
-export const selectOrder = createSelector( selectData, ( { order } ) => order );
+export const selectOrder = createSelector(selectData, ({ order }) => order);
 
-export const selectGlobalClasses = createSelector( selectData, ( { items } ) => items );
+export const selectGlobalClasses = createSelector(selectData, ({ items }) => items);
 
-export const selectIsDirty = ( state: SliceState< typeof slice > ) => state[ SLICE_NAME ].isDirty;
+export const selectIsDirty = (state: SliceState<typeof slice>) => state[SLICE_NAME].isDirty;
 
-export const selectOrderedClasses = createSelector( selectGlobalClasses, selectOrder, ( items, order ) =>
-	order.map( ( id ) => items[ id ] )
+export const selectOrderedClasses = createSelector(selectGlobalClasses, selectOrder, (items, order) =>
+	order.map((id) => items[id])
 );
 
-export const selectClass = ( state: SliceState< typeof slice >, id: StyleDefinitionID ) =>
-	state[ SLICE_NAME ].data.items[ id ] ?? null;
+export const selectClass = (state: SliceState<typeof slice>, id: StyleDefinitionID) =>
+	state[SLICE_NAME].data.items[id] ?? null;
 
-export const selectEmptyCssClass = createSelector( selectData, ( { items } ) =>
-	Object.values( items ).filter( ( cssClass ) => cssClass.variants.length === 0 )
+export const selectEmptyCssClass = createSelector(selectData, ({ items }) =>
+	Object.values(items).filter((cssClass) => cssClass.variants.length === 0)
 );

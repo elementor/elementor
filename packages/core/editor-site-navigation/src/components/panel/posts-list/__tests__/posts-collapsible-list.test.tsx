@@ -8,8 +8,8 @@ import { usePosts } from '../../../../hooks/use-posts';
 import PostsCollapsibleList from '../posts-collapsible-list';
 
 const mockMutateAsync = jest.fn();
-jest.mock( '../../../../hooks/use-posts-actions', () => ( {
-	usePostActions: () => ( {
+jest.mock('../../../../hooks/use-posts-actions', () => ({
+	usePostActions: () => ({
 		createPost: {
 			mutateAsync: mockMutateAsync,
 			isPending: false,
@@ -18,12 +18,12 @@ jest.mock( '../../../../hooks/use-posts-actions', () => ( {
 			mutateAsync: mockMutateAsync,
 			isPending: false,
 		},
-	} ),
-} ) );
+	}),
+}));
 
-jest.mock( '../../../../hooks/use-posts', () => ( {
+jest.mock('../../../../hooks/use-posts', () => ({
 	__esModule: true,
-	usePosts: jest.fn( () => ( {
+	usePosts: jest.fn(() => ({
 		isLoading: false,
 		data: {
 			posts: [
@@ -46,144 +46,144 @@ jest.mock( '../../../../hooks/use-posts', () => ( {
 			],
 			total: 2,
 		},
-	} ) ),
-} ) );
+	})),
+}));
 
-jest.mock( '../../../../hooks/use-homepage', () => ( {
+jest.mock('../../../../hooks/use-homepage', () => ({
 	__esModule: true,
-	useHomepage: jest.fn( () => ( {
+	useHomepage: jest.fn(() => ({
 		isLoading: false,
 		data: 1,
-	} ) ),
-} ) );
+	})),
+}));
 
-jest.mock( '@elementor/editor-documents', () => ( {
+jest.mock('@elementor/editor-documents', () => ({
 	__useActiveDocument: jest.fn(),
 	__useNavigateToDocument: jest.fn(),
-} ) );
+}));
 
-jest.mock( '../../../../hooks/use-user', () => ( {
-	default: jest.fn( () => ( {
+jest.mock('../../../../hooks/use-user', () => ({
+	default: jest.fn(() => ({
 		isLoading: false,
 		data: {
 			capabilities: {
 				edit_pages: true,
 			},
 		},
-	} ) ),
+	})),
 	__esModule: true,
-} ) );
+}));
 
-describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
-	beforeEach( () => {
-		jest.mocked( useActiveDocument ).mockReturnValue(
-			createMockDocument( {
+describe('@elementor/editor-site-navigation - PostsCollapsibleList', () => {
+	beforeEach(() => {
+		jest.mocked(useActiveDocument).mockReturnValue(
+			createMockDocument({
 				id: 3,
-			} )
+			})
 		);
-	} );
+	});
 
-	afterEach( () => {
+	afterEach(() => {
 		jest.clearAllMocks();
-	} );
+	});
 
-	it( 'should render closed list', () => {
+	it('should render closed list', () => {
 		// Act.
-		renderWithQuery( <PostsCollapsibleList isOpenByDefault={ false } /> );
+		renderWithQuery(<PostsCollapsibleList isOpenByDefault={false} />);
 
 		// Assert.
-		const label = screen.getByText( `Pages (2)` );
-		expect( label ).toBeInTheDocument();
+		const label = screen.getByText(`Pages (2)`);
+		expect(label).toBeInTheDocument();
 
-		const postInList = screen.queryByText( 'Home' );
-		expect( postInList ).not.toBeInTheDocument();
-	} );
+		const postInList = screen.queryByText('Home');
+		expect(postInList).not.toBeInTheDocument();
+	});
 
-	it( 'should render open list with home icon and page status', () => {
+	it('should render open list with home icon and page status', () => {
 		// Act.
-		renderWithQuery( <PostsCollapsibleList isOpenByDefault={ true } /> );
+		renderWithQuery(<PostsCollapsibleList isOpenByDefault={true} />);
 
 		// Assert.
-		const items = screen.getAllByRole( 'listitem' );
+		const items = screen.getAllByRole('listitem');
 
-		expect( items.length ).toBe( 3 );
+		expect(items.length).toBe(3);
 
 		// First item is the list title.
-		expect( items[ 0 ] ).toHaveTextContent( `Pages (2)` );
-		expect( items[ 1 ] ).toHaveTextContent( 'Home' );
-		expect( items[ 1 ] ).toHaveTextContent( 'Homepage' ); // Home icon.
-		expect( items[ 2 ] ).toHaveTextContent( 'About' );
-		expect( items[ 2 ] ).toHaveTextContent( '(draft)' );
-	} );
+		expect(items[0]).toHaveTextContent(`Pages (2)`);
+		expect(items[1]).toHaveTextContent('Home');
+		expect(items[1]).toHaveTextContent('Homepage'); // Home icon.
+		expect(items[2]).toHaveTextContent('About');
+		expect(items[2]).toHaveTextContent('(draft)');
+	});
 
-	it( 'should create a new post after clicking "Add New" button', async () => {
+	it('should create a new post after clicking "Add New" button', async () => {
 		// Arrange.
 		renderWithQuery(
-			<PostListContextProvider type={ 'page' } setError={ () => {} }>
-				<PostsCollapsibleList isOpenByDefault={ true } />
+			<PostListContextProvider type={'page'} setError={() => {}}>
+				<PostsCollapsibleList isOpenByDefault={true} />
 			</PostListContextProvider>
 		);
 
 		// Act.
-		const addNewButton = screen.getByRole( 'button', { name: 'Add New' } );
-		fireEvent.click( addNewButton );
+		const addNewButton = screen.getByRole('button', { name: 'Add New' });
+		fireEvent.click(addNewButton);
 
-		const input = screen.getByRole( 'textbox' );
+		const input = screen.getByRole('textbox');
 
-		if ( ! input || ! ( input instanceof HTMLInputElement ) ) {
-			throw new Error( 'No input field found.' );
+		if (!input || !(input instanceof HTMLInputElement)) {
+			throw new Error('No input field found.');
 		}
 
-		expect( input ).toHaveValue( 'New Page' );
+		expect(input).toHaveValue('New Page');
 
-		fireEvent.change( input, { target: { value: 'New Page Title' } } );
-		fireEvent.blur( input );
+		fireEvent.change(input, { target: { value: 'New Page Title' } });
+		fireEvent.blur(input);
 
 		// Assert.
-		waitFor( () => {
-			expect( input ).toHaveAttribute( 'aria-disabled', 'true' );
-		} ).then();
+		waitFor(() => {
+			expect(input).toHaveAttribute('aria-disabled', 'true');
+		}).then();
 
-		expect( mockMutateAsync ).toHaveBeenCalledTimes( 1 );
+		expect(mockMutateAsync).toHaveBeenCalledTimes(1);
 
-		waitFor( () => {
-			expect( input ).not.toBeInTheDocument();
-		} ).then();
+		waitFor(() => {
+			expect(input).not.toBeInTheDocument();
+		}).then();
 
-		waitFor( () => {
-			expect( screen.getByText( 'New Page Title' ) ).toBeInTheDocument();
-		} ).then();
-	} );
+		waitFor(() => {
+			expect(screen.getByText('New Page Title')).toBeInTheDocument();
+		}).then();
+	});
 
-	it( 'should append a new list item in edit mode, when "Duplicate" action is clicked', () => {
+	it('should append a new list item in edit mode, when "Duplicate" action is clicked', () => {
 		// Arrange.
 		renderWithQuery(
-			<PostListContextProvider type={ 'page' } setError={ () => {} }>
-				<PostsCollapsibleList isOpenByDefault={ true } />
+			<PostListContextProvider type={'page'} setError={() => {}}>
+				<PostsCollapsibleList isOpenByDefault={true} />
 			</PostListContextProvider>
 		);
 
 		// Act.
-		const buttons = screen.getAllByRole( 'button' );
-		fireEvent.click( buttons[ 3 ] ); // Button to open the actions' menu of the first post.
+		const buttons = screen.getAllByRole('button');
+		fireEvent.click(buttons[3]); // Button to open the actions' menu of the first post.
 
-		const duplicateButton = screen.getByRole( 'menuitem', { name: 'Duplicate' } );
-		fireEvent.click( duplicateButton );
+		const duplicateButton = screen.getByRole('menuitem', { name: 'Duplicate' });
+		fireEvent.click(duplicateButton);
 
 		// Assert.
-		waitFor( () => {
-			expect( duplicateButton ).not.toBeInTheDocument();
-		} ).then();
+		waitFor(() => {
+			expect(duplicateButton).not.toBeInTheDocument();
+		}).then();
 
-		const input = screen.getByRole( 'textbox' );
+		const input = screen.getByRole('textbox');
 
-		expect( input ).toBeInTheDocument();
-		expect( input ).toHaveValue( 'Home copy' );
-	} );
+		expect(input).toBeInTheDocument();
+		expect(input).toHaveValue('Home copy');
+	});
 
-	it( 'Should not render load button when there is no next page', () => {
+	it('Should not render load button when there is no next page', () => {
 		// Arrange.
-		jest.mocked( usePosts ).mockReturnValue( {
+		jest.mocked(usePosts).mockReturnValue({
 			hasNextPage: false,
 			isLoading: false,
 			data: {
@@ -207,16 +207,16 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 				],
 				total: 2,
 			},
-		} as ReturnType< typeof usePosts > );
-		renderWithQuery( <PostsCollapsibleList isOpenByDefault={ true } /> );
+		} as ReturnType<typeof usePosts>);
+		renderWithQuery(<PostsCollapsibleList isOpenByDefault={true} />);
 
 		// Assert.
-		expect( screen.queryByRole( 'button', { name: 'Load More' } ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.queryByRole('button', { name: 'Load More' })).not.toBeInTheDocument();
+	});
 
-	it( 'Should render load button when there is next page', () => {
+	it('Should render load button when there is next page', () => {
 		// Arrange.
-		jest.mocked( usePosts ).mockReturnValue( {
+		jest.mocked(usePosts).mockReturnValue({
 			hasNextPage: true,
 			isLoading: false,
 			data: {
@@ -240,10 +240,10 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 				],
 				total: 2,
 			},
-		} as ReturnType< typeof usePosts > );
-		renderWithQuery( <PostsCollapsibleList isOpenByDefault={ true } /> );
+		} as ReturnType<typeof usePosts>);
+		renderWithQuery(<PostsCollapsibleList isOpenByDefault={true} />);
 
 		// Assert.
-		expect( screen.getByRole( 'button', { name: 'Load More' } ) ).toBeInTheDocument();
-	} );
-} );
+		expect(screen.getByRole('button', { name: 'Load More' })).toBeInTheDocument();
+	});
+});

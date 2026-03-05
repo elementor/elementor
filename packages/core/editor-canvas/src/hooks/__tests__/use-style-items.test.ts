@@ -7,56 +7,56 @@ import { act, renderHook } from '@testing-library/react';
 import { useStyleItems } from '../use-style-items';
 import { useStyleRenderer } from '../use-style-renderer';
 
-jest.mock( '@elementor/editor-styles-repository', () => ( {
-	...jest.requireActual( '@elementor/editor-styles-repository' ),
+jest.mock('@elementor/editor-styles-repository', () => ({
+	...jest.requireActual('@elementor/editor-styles-repository'),
 	stylesRepository: {
 		getProviders: jest.fn(),
 	},
-} ) );
+}));
 
-jest.mock( '@elementor/editor-v1-adapters', () => ( {
-	...jest.requireActual( '@elementor/editor-v1-adapters' ),
+jest.mock('@elementor/editor-v1-adapters', () => ({
+	...jest.requireActual('@elementor/editor-v1-adapters'),
 	registerDataHook: jest.fn(),
-} ) );
+}));
 
-jest.mock( '../use-style-prop-resolver', () => ( {
+jest.mock('../use-style-prop-resolver', () => ({
 	useStylePropResolver: jest.fn(),
-} ) );
+}));
 
-jest.mock( '../use-style-renderer', () => ( {
+jest.mock('../use-style-renderer', () => ({
 	useStyleRenderer: jest.fn(),
-} ) );
+}));
 
-jest.mock( '@elementor/editor-responsive', () => ( {
-	useBreakpoints: jest.fn().mockReturnValue( [
+jest.mock('@elementor/editor-responsive', () => ({
+	useBreakpoints: jest.fn().mockReturnValue([
 		{ id: 'desktop', label: 'Desktop' },
 		{ id: 'tablet', label: 'Tablet' },
 		{ id: 'mobile', label: 'Mobile' },
-	] ),
-} ) );
+	]),
+}));
 
-describe( 'useStyleItems', () => {
-	beforeEach( () => {
-		jest.mocked( useStyleRenderer ).mockReturnValue(
-			jest.fn().mockImplementation( ( { styles } ) =>
+describe('useStyleItems', () => {
+	beforeEach(() => {
+		jest.mocked(useStyleRenderer).mockReturnValue(
+			jest.fn().mockImplementation(({ styles }) =>
 				Promise.resolve(
-					styles.map( ( style: StyleDefinition ) => ( {
+					styles.map((style: StyleDefinition) => ({
 						id: style.id,
-						breakpoint: style?.variants[ 0 ]?.meta.breakpoint || 'desktop',
-					} ) )
+						breakpoint: style?.variants[0]?.meta.breakpoint || 'desktop',
+					}))
 				)
 			)
 		);
-	} );
+	});
 
-	it( 'should return style items from providers when subscribed', async () => {
+	it('should return style items from providers when subscribed', async () => {
 		// Arrange.
 		const mockProvider1 = createMockStylesProvider(
 			{
 				key: 'provider1',
 				priority: 2,
 			},
-			[ createMockStyleDefinition( { id: 'style1' } ), createMockStyleDefinition( { id: 'style2' } ) ]
+			[createMockStyleDefinition({ id: 'style1' }), createMockStyleDefinition({ id: 'style2' })]
 		);
 
 		const mockProvider2 = createMockStylesProvider(
@@ -64,58 +64,58 @@ describe( 'useStyleItems', () => {
 				key: 'provider2',
 				priority: 1,
 			},
-			[ createMockStyleDefinition( { id: 'style3' } ), createMockStyleDefinition( { id: 'style4' } ) ]
+			[createMockStyleDefinition({ id: 'style3' }), createMockStyleDefinition({ id: 'style4' })]
 		);
 
-		jest.mocked( stylesRepository ).getProviders.mockReturnValue( [ mockProvider1, mockProvider2 ] );
+		jest.mocked(stylesRepository).getProviders.mockReturnValue([mockProvider1, mockProvider2]);
 
 		// Act.
-		const { result } = renderHook( () => useStyleItems() );
+		const { result } = renderHook(() => useStyleItems());
 
 		// Assert.
-		expect( result.current ).toEqual( [] );
+		expect(result.current).toEqual([]);
 
 		// Act.
-		await act( async () => {
-			mockProvider1.actions.updateProps?.( {
+		await act(async () => {
+			mockProvider1.actions.updateProps?.({
 				id: 'style1',
 				meta: { breakpoint: null, state: null },
 				props: { a: 1 },
-			} );
-		} );
+			});
+		});
 
 		// Assert.
-		expect( result.current ).toEqual( [
+		expect(result.current).toEqual([
 			{ id: 'style2', breakpoint: 'desktop' },
 			{ id: 'style1', breakpoint: 'desktop' },
-		] );
+		]);
 
 		// Act.
-		await act( async () => {
-			mockProvider2.actions.updateProps?.( {
+		await act(async () => {
+			mockProvider2.actions.updateProps?.({
 				id: 'style3',
 				meta: { breakpoint: null, state: null },
 				props: { a: 1 },
-			} );
-		} );
+			});
+		});
 
 		// Assert.
-		expect( result.current ).toEqual( [
+		expect(result.current).toEqual([
 			{ id: 'style4', breakpoint: 'desktop' },
 			{ id: 'style3', breakpoint: 'desktop' },
 			{ id: 'style2', breakpoint: 'desktop' },
 			{ id: 'style1', breakpoint: 'desktop' },
-		] );
-	} );
+		]);
+	});
 
-	it( 'should return style items when attach-preview command is triggered', async () => {
+	it('should return style items when attach-preview command is triggered', async () => {
 		// Arrange.
 		const mockProvider1 = createMockStylesProvider(
 			{
 				key: 'provider1',
 				priority: 2,
 			},
-			[ createMockStyleDefinition( { id: 'style1' } ), createMockStyleDefinition( { id: 'style2' } ) ]
+			[createMockStyleDefinition({ id: 'style1' }), createMockStyleDefinition({ id: 'style2' })]
 		);
 
 		const mockProvider2 = createMockStylesProvider(
@@ -123,42 +123,42 @@ describe( 'useStyleItems', () => {
 				key: 'provider2',
 				priority: 1,
 			},
-			[ createMockStyleDefinition( { id: 'style3' } ), createMockStyleDefinition( { id: 'style4' } ) ]
+			[createMockStyleDefinition({ id: 'style3' }), createMockStyleDefinition({ id: 'style4' })]
 		);
 
-		jest.mocked( stylesRepository ).getProviders.mockReturnValue( [ mockProvider1, mockProvider2 ] );
+		jest.mocked(stylesRepository).getProviders.mockReturnValue([mockProvider1, mockProvider2]);
 
-		let attachPreviewCallback: () => Promise< void >;
+		let attachPreviewCallback: () => Promise<void>;
 
-		jest.mocked( registerDataHook ).mockImplementation( ( position, command, callback ) => {
-			if ( command === 'editor/documents/attach-preview' && position === 'after' ) {
+		jest.mocked(registerDataHook).mockImplementation((position, command, callback) => {
+			if (command === 'editor/documents/attach-preview' && position === 'after') {
 				attachPreviewCallback = callback as never;
 			}
 
 			return null as never;
-		} );
+		});
 
 		// Act.
-		const { result } = renderHook( () => useStyleItems() );
+		const { result } = renderHook(() => useStyleItems());
 
 		// Assert.
-		expect( result.current ).toEqual( [] );
+		expect(result.current).toEqual([]);
 
 		// Act.
-		await act( async () => {
+		await act(async () => {
 			await attachPreviewCallback?.();
-		} );
+		});
 
 		// Assert.
-		expect( result.current ).toEqual( [
+		expect(result.current).toEqual([
 			{ id: 'style4', breakpoint: 'desktop' },
 			{ id: 'style3', breakpoint: 'desktop' },
 			{ id: 'style2', breakpoint: 'desktop' },
 			{ id: 'style1', breakpoint: 'desktop' },
-		] );
-	} );
+		]);
+	});
 
-	it( 'should return style items ordered by provider priority and breakpoint', async () => {
+	it('should return style items ordered by provider priority and breakpoint', async () => {
 		// Arrange.
 		const mockProvider1 = createMockStylesProvider(
 			{
@@ -166,7 +166,7 @@ describe( 'useStyleItems', () => {
 				priority: 2,
 			},
 			[
-				createMockStyleDefinitionWithVariants( {
+				createMockStyleDefinitionWithVariants({
 					id: 'style1',
 					variants: [
 						{
@@ -184,8 +184,8 @@ describe( 'useStyleItems', () => {
 							custom_css: null,
 						},
 					],
-				} ),
-				createMockStyleDefinition( { id: 'style2' } ),
+				}),
+				createMockStyleDefinition({ id: 'style2' }),
 			]
 		);
 
@@ -195,142 +195,142 @@ describe( 'useStyleItems', () => {
 				priority: 1,
 			},
 			[
-				createMockStyleDefinition( { id: 'style3', meta: { breakpoint: 'tablet', state: null } } ),
-				createMockStyleDefinition( { id: 'style4' } ),
+				createMockStyleDefinition({ id: 'style3', meta: { breakpoint: 'tablet', state: null } }),
+				createMockStyleDefinition({ id: 'style4' }),
 			]
 		);
 
-		jest.mocked( stylesRepository ).getProviders.mockReturnValue( [ mockProvider1, mockProvider2 ] );
+		jest.mocked(stylesRepository).getProviders.mockReturnValue([mockProvider1, mockProvider2]);
 
-		let attachPreviewCallback: () => Promise< void >;
+		let attachPreviewCallback: () => Promise<void>;
 
-		jest.mocked( registerDataHook ).mockImplementation( ( position, command, callback ) => {
-			if ( command === 'editor/documents/attach-preview' && position === 'after' ) {
+		jest.mocked(registerDataHook).mockImplementation((position, command, callback) => {
+			if (command === 'editor/documents/attach-preview' && position === 'after') {
 				attachPreviewCallback = callback as never;
 			}
 
 			return null as never;
-		} );
+		});
 
 		// Act.
-		const { result } = renderHook( () => useStyleItems() );
+		const { result } = renderHook(() => useStyleItems());
 
 		// Assert.
-		expect( result.current ).toEqual( [] );
+		expect(result.current).toEqual([]);
 
 		// Act.
-		await act( async () => {
+		await act(async () => {
 			await attachPreviewCallback?.();
-		} );
+		});
 
 		// Assert.
-		expect( result.current ).toEqual( [
+		expect(result.current).toEqual([
 			{ id: 'style4', breakpoint: 'desktop' },
 			{ id: 'style2', breakpoint: 'desktop' },
 			{ id: 'style3', breakpoint: 'tablet' },
 			{ id: 'style1', breakpoint: 'mobile' },
-		] );
-	} );
+		]);
+	});
 
-	it( 'should use cached items when no changes detected', async () => {
+	it('should use cached items when no changes detected', async () => {
 		// Arrange.
-		const renderStylesMock = jest.fn().mockImplementation( ( { styles } ) =>
+		const renderStylesMock = jest.fn().mockImplementation(({ styles }) =>
 			Promise.resolve(
-				styles.map( ( style: StyleDefinition ) => ( {
+				styles.map((style: StyleDefinition) => ({
 					id: style.id,
-					breakpoint: style?.variants[ 0 ]?.meta.breakpoint || 'desktop',
-				} ) )
+					breakpoint: style?.variants[0]?.meta.breakpoint || 'desktop',
+				}))
 			)
 		);
 
-		jest.mocked( useStyleRenderer ).mockReturnValue( renderStylesMock );
+		jest.mocked(useStyleRenderer).mockReturnValue(renderStylesMock);
 
-		const mockProvider = createMockStylesProvider( { key: 'provider1', priority: 1 }, [
-			createMockStyleDefinition( { id: 'style1' } ),
-			createMockStyleDefinition( { id: 'style2' } ),
-		] );
+		const mockProvider = createMockStylesProvider({ key: 'provider1', priority: 1 }, [
+			createMockStyleDefinition({ id: 'style1' }),
+			createMockStyleDefinition({ id: 'style2' }),
+		]);
 
-		jest.mocked( stylesRepository ).getProviders.mockReturnValue( [ mockProvider ] );
+		jest.mocked(stylesRepository).getProviders.mockReturnValue([mockProvider]);
 
 		// Act - initial render.
-		const { result } = renderHook( () => useStyleItems() );
+		const { result } = renderHook(() => useStyleItems());
 
-		await act( async () => {
-			mockProvider.actions.updateProps?.( {
+		await act(async () => {
+			mockProvider.actions.updateProps?.({
 				id: 'style1',
 				meta: { breakpoint: null, state: null },
 				props: { a: 1 },
-			} );
-		} );
+			});
+		});
 
 		// Assert.
-		expect( renderStylesMock ).toHaveBeenCalledTimes( 1 );
-		expect( result.current ).toHaveLength( 2 );
+		expect(renderStylesMock).toHaveBeenCalledTimes(1);
+		expect(result.current).toHaveLength(2);
 
 		// Act - trigger update with same props (updateProps mutates in place, same reference).
 		renderStylesMock.mockClear();
 
-		await act( async () => {
-			mockProvider.actions.updateProps?.( {
+		await act(async () => {
+			mockProvider.actions.updateProps?.({
 				id: 'style1',
 				meta: { breakpoint: null, state: null },
 				props: { a: 1 },
-			} );
-		} );
+			});
+		});
 
 		// Assert - renderStyles should not be called when no changes detected.
-		expect( renderStylesMock ).not.toHaveBeenCalled();
-		expect( result.current ).toHaveLength( 2 );
-	} );
+		expect(renderStylesMock).not.toHaveBeenCalled();
+		expect(result.current).toHaveLength(2);
+	});
 
-	it( 'should only re-render changed styles on differential update', async () => {
+	it('should only re-render changed styles on differential update', async () => {
 		// Arrange.
-		const renderStylesMock = jest.fn().mockImplementation( ( { styles } ) =>
+		const renderStylesMock = jest.fn().mockImplementation(({ styles }) =>
 			Promise.resolve(
-				styles.map( ( style: StyleDefinition ) => ( {
+				styles.map((style: StyleDefinition) => ({
 					id: style.id,
-					breakpoint: style?.variants[ 0 ]?.meta.breakpoint || 'desktop',
-				} ) )
+					breakpoint: style?.variants[0]?.meta.breakpoint || 'desktop',
+				}))
 			)
 		);
 
-		jest.mocked( useStyleRenderer ).mockReturnValue( renderStylesMock );
+		jest.mocked(useStyleRenderer).mockReturnValue(renderStylesMock);
 
-		const mockProvider = createMockStylesProvider( { key: 'provider1', priority: 1 }, [
-			createMockStyleDefinition( { id: 'style1' } ),
-			createMockStyleDefinition( { id: 'style2' } ),
-			createMockStyleDefinition( { id: 'style3' } ),
-		] );
+		const mockProvider = createMockStylesProvider({ key: 'provider1', priority: 1 }, [
+			createMockStyleDefinition({ id: 'style1' }),
+			createMockStyleDefinition({ id: 'style2' }),
+			createMockStyleDefinition({ id: 'style3' }),
+		]);
 
-		jest.mocked( stylesRepository ).getProviders.mockReturnValue( [ mockProvider ] );
+		jest.mocked(stylesRepository).getProviders.mockReturnValue([mockProvider]);
 
 		// Act - initial render.
-		const { result } = renderHook( () => useStyleItems() );
+		const { result } = renderHook(() => useStyleItems());
 
-		await act( async () => {
-			mockProvider.actions.updateProps?.( {
+		await act(async () => {
+			mockProvider.actions.updateProps?.({
 				id: 'style1',
 				meta: { breakpoint: null, state: null },
 				props: { a: 1 },
-			} );
-		} );
+			});
+		});
 
 		// Assert - initial render includes all styles.
-		expect( renderStylesMock ).toHaveBeenCalledTimes( 1 );
-		expect( renderStylesMock.mock.calls[ 0 ][ 0 ].styles ).toHaveLength( 3 );
-		expect( result.current ).toHaveLength( 3 );
+		expect(renderStylesMock).toHaveBeenCalledTimes(1);
+		expect(renderStylesMock.mock.calls[0][0].styles).toHaveLength(3);
+		expect(result.current).toHaveLength(3);
 
 		// Act - update style2 using update action (creates new object reference).
 		renderStylesMock.mockClear();
 
-		await act( async () => {
-			mockProvider.actions.update?.( { id: 'style2', label: 'Updated Style 2' } );
-		} );
+		await act(async () => {
+			mockProvider.actions.update?.({ id: 'style2', label: 'Updated Style 2' });
+		});
 
 		// Assert - only the changed style should be rendered.
-		expect( renderStylesMock ).toHaveBeenCalledTimes( 1 );
-		expect( renderStylesMock.mock.calls[ 0 ][ 0 ].styles ).toHaveLength( 1 );
-		expect( renderStylesMock.mock.calls[ 0 ][ 0 ].styles[ 0 ].id ).toBe( 'style2' );
-		expect( result.current ).toHaveLength( 3 );
-	} );
-} );
+		expect(renderStylesMock).toHaveBeenCalledTimes(1);
+		expect(renderStylesMock.mock.calls[0][0].styles).toHaveLength(1);
+		expect(renderStylesMock.mock.calls[0][0].styles[0].id).toBe('style2');
+		expect(result.current).toHaveLength(3);
+	});
+});

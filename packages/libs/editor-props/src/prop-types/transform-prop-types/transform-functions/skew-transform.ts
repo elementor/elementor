@@ -6,10 +6,10 @@ import { TransformFunctionKeys } from '../types';
 
 export const skewTransformPropTypeUtil = createPropUtils(
 	TransformFunctionKeys.skew,
-	z.strictObject( {
+	z.strictObject({
 		x: unknownChildrenSchema,
 		y: unknownChildrenSchema,
-	} )
+	})
 );
 
-export type SkewTransformPropValue = z.infer< typeof skewTransformPropTypeUtil.schema >;
+export type SkewTransformPropValue = z.infer<typeof skewTransformPropTypeUtil.schema>;

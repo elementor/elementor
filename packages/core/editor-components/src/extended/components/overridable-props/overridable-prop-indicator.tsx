@@ -20,20 +20,20 @@ import { OverridablePropForm } from './overridable-prop-form';
 export function OverridablePropIndicator() {
 	const { propType } = useBoundProp();
 	const componentId = useCurrentComponentId();
-	const overridableProps = useSanitizeOverridableProps( componentId );
+	const overridableProps = useSanitizeOverridableProps(componentId);
 
-	if ( ! isPropAllowed( propType ) || ! componentId || ! overridableProps ) {
+	if (!isPropAllowed(propType) || !componentId || !overridableProps) {
 		return null;
 	}
 
-	return <Content componentId={ componentId } overridableProps={ overridableProps } />;
+	return <Content componentId={componentId} overridableProps={overridableProps} />;
 }
 
 type Props = {
 	componentId: number;
 	overridableProps?: OverridableProps;
 };
-export function Content( { componentId, overridableProps }: Props ) {
+export function Content({ componentId, overridableProps }: Props) {
 	const {
 		element: { id: elementId },
 		elementType,
@@ -53,25 +53,25 @@ export function Content( { componentId, overridableProps }: Props ) {
 	 */
 	const overridableValue = boundPropOverridableValue ?? contextOverridableValue;
 
-	const popupState = usePopupState( {
+	const popupState = usePopupState({
 		variant: 'popover',
-	} );
+	});
 
-	const triggerProps = bindTrigger( popupState );
-	const popoverProps = bindPopover( popupState );
+	const triggerProps = bindTrigger(popupState);
+	const popoverProps = bindPopover(popupState);
 
-	const { elType } = getWidgetsCache()?.[ elementType.key ] ?? { elType: 'widget' };
+	const { elType } = getWidgetsCache()?.[elementType.key] ?? { elType: 'widget' };
 
-	const handleSubmit = ( { label, group }: { label: string; group: string | null } ) => {
+	const handleSubmit = ({ label, group }: { label: string; group: string | null }) => {
 		const propTypeDefault = propType.default ?? {};
 
-		const originValue = resolveOverridePropValue( overridableValue?.origin_value ) ?? value ?? propTypeDefault;
+		const originValue = resolveOverridePropValue(overridableValue?.origin_value) ?? value ?? propTypeDefault;
 
 		const matchingOverridableProp = overridableValue
-			? overridableProps?.props?.[ overridableValue.override_key ]
+			? overridableProps?.props?.[overridableValue.override_key]
 			: undefined;
 
-		const overridablePropConfig = setOverridableProp( {
+		const overridablePropConfig = setOverridableProp({
 			componentId,
 			overrideKey: overridableValue?.override_key ?? null,
 			elementId: componentInstanceElement?.element.id ?? elementId,
@@ -83,56 +83,56 @@ export function Content( { componentId, overridableProps }: Props ) {
 			originValue,
 			originPropFields: matchingOverridableProp?.originPropFields,
 			source: 'user',
-		} );
+		});
 
-		if ( ! overridableValue && overridablePropConfig ) {
-			setOverridableValue( {
+		if (!overridableValue && overridablePropConfig) {
+			setOverridableValue({
 				override_key: overridablePropConfig.overrideKey,
-				origin_value: originValue as TransformablePropValue< string, unknown >,
-			} );
+				origin_value: originValue as TransformablePropValue<string, unknown>,
+			});
 		}
 
 		popupState.close();
 	};
 
 	const overridableConfig = overridableValue
-		? getOverridableProp( { componentId, overrideKey: overridableValue.override_key } )
+		? getOverridableProp({ componentId, overrideKey: overridableValue.override_key })
 		: undefined;
 
 	return (
 		<>
-			<Tooltip placement="top" title={ __( 'Override Property', 'elementor' ) }>
-				<Indicator { ...triggerProps } isOpen={ !! popoverProps.open } isOverridable={ !! overridableValue } />
+			<Tooltip placement="top" title={__('Override Property', 'elementor')}>
+				<Indicator {...triggerProps} isOpen={!!popoverProps.open} isOverridable={!!overridableValue} />
 			</Tooltip>
 			<Popover
 				disableScrollLock
-				anchorOrigin={ {
+				anchorOrigin={{
 					vertical: 'bottom',
 					horizontal: 'right',
-				} }
-				transformOrigin={ {
+				}}
+				transformOrigin={{
 					vertical: 'top',
 					horizontal: 'right',
-				} }
-				PaperProps={ {
+				}}
+				PaperProps={{
 					sx: { my: 2.5 },
-				} }
-				{ ...popoverProps }
+				}}
+				{...popoverProps}
 			>
 				<OverridablePropForm
-					onSubmit={ handleSubmit }
-					groups={ overridableProps?.groups.order.map( ( groupId ) => ( {
+					onSubmit={handleSubmit}
+					groups={overridableProps?.groups.order.map((groupId) => ({
 						value: groupId,
-						label: overridableProps.groups.items[ groupId ].label,
-					} ) ) }
-					existingLabels={ Object.values( overridableProps?.props ?? {} ).map( ( prop ) => prop.label ) }
-					currentValue={ overridableConfig }
+						label: overridableProps.groups.items[groupId].label,
+					}))}
+					existingLabels={Object.values(overridableProps?.props ?? {}).map((prop) => prop.label)}
+					currentValue={overridableConfig}
 				/>
 			</Popover>
 		</>
 	);
 }
 
-function isPropAllowed( propType: PropType ) {
+function isPropAllowed(propType: PropType) {
 	return propType.meta.overridable !== false;
 }

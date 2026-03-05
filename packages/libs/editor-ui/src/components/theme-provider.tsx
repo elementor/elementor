@@ -3,14 +3,14 @@ import { ThemeProvider as ThemeProviderBase, type ThemeProviderProps } from '@el
 
 import { useColorScheme } from '../hooks/use-color-scheme';
 
-const EDITOR_PALLETTE: ThemeProviderProps[ 'palette' ] = 'unstable';
+const EDITOR_PALLETTE: ThemeProviderProps['palette'] = 'unstable';
 
-export default function ThemeProvider( { children }: { children: React.ReactNode } ) {
+export default function ThemeProvider({ children }: { children: React.ReactNode }) {
 	const colorScheme = useColorScheme();
 
 	return (
-		<ThemeProviderBase colorScheme={ colorScheme } palette={ EDITOR_PALLETTE }>
-			{ children }
+		<ThemeProviderBase colorScheme={colorScheme} palette={EDITOR_PALLETTE}>
+			{children}
 		</ThemeProviderBase>
 	);
 }

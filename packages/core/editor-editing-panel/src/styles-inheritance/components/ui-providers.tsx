@@ -7,12 +7,12 @@ interface UiProvidersProps {
 	children: React.ReactNode;
 }
 
-export const UiProviders: React.FC< UiProvidersProps > = ( { children } ) => {
+export const UiProviders: React.FC<UiProvidersProps> = ({ children }) => {
 	const { isSiteRtl } = useDirection();
 
 	return (
-		<DirectionProvider rtl={ isSiteRtl }>
-			<ThemeProvider>{ children }</ThemeProvider>
+		<DirectionProvider rtl={isSiteRtl}>
+			<ThemeProvider>{children}</ThemeProvider>
 		</DirectionProvider>
 	);
 };

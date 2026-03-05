@@ -11,47 +11,47 @@ type DeletePropParams = {
 	source: Source;
 };
 
-export function deleteOverridableProp( { componentId, propKey, source }: DeletePropParams ): void {
-	const overridableProps = componentsSelectors.getOverridableProps( componentId );
+export function deleteOverridableProp({ componentId, propKey, source }: DeletePropParams): void {
+	const overridableProps = componentsSelectors.getOverridableProps(componentId);
 
-	if ( ! overridableProps || Object.keys( overridableProps.props ).length === 0 ) {
+	if (!overridableProps || Object.keys(overridableProps.props).length === 0) {
 		return;
 	}
 
-	const propKeysToDelete = Array.isArray( propKey ) ? propKey : [ propKey ];
+	const propKeysToDelete = Array.isArray(propKey) ? propKey : [propKey];
 	const deletedProps: OverridableProp[] = [];
 
-	for ( const key of propKeysToDelete ) {
-		const prop = overridableProps.props[ key ];
+	for (const key of propKeysToDelete) {
+		const prop = overridableProps.props[key];
 
-		if ( ! prop ) {
+		if (!prop) {
 			continue;
 		}
 
-		deletedProps.push( prop );
-		revertElementOverridableSetting( prop.elementId, prop.propKey, prop.originValue, key );
+		deletedProps.push(prop);
+		revertElementOverridableSetting(prop.elementId, prop.propKey, prop.originValue, key);
 	}
 
-	if ( deletedProps.length === 0 ) {
+	if (deletedProps.length === 0) {
 		return;
 	}
 
 	const remainingProps = Object.fromEntries(
-		Object.entries( overridableProps.props ).filter( ( [ key ] ) => ! propKeysToDelete.includes( key ) )
+		Object.entries(overridableProps.props).filter(([key]) => !propKeysToDelete.includes(key))
 	);
 
-	const updatedGroups = removePropFromAllGroups( overridableProps.groups, propKey );
+	const updatedGroups = removePropFromAllGroups(overridableProps.groups, propKey);
 
-	componentsActions.setOverridableProps( componentId, {
+	componentsActions.setOverridableProps(componentId, {
 		...overridableProps,
 		props: remainingProps,
 		groups: updatedGroups,
-	} );
+	});
 
 	const currentComponent = componentsSelectors.getCurrentComponent();
 
-	for ( const prop of deletedProps ) {
-		trackComponentEvent( {
+	for (const prop of deletedProps) {
+		trackComponentEvent({
 			action: 'propertyRemoved',
 			source,
 			component_uid: currentComponent?.uid,
@@ -59,6 +59,6 @@ export function deleteOverridableProp( { componentId, propKey, source }: DeleteP
 			property_path: prop.propKey,
 			property_name: prop.label,
 			element_type: prop.widgetType ?? prop.elType,
-		} );
+		});
 	}
 }

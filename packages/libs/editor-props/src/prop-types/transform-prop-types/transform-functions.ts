@@ -7,12 +7,12 @@ import { scaleTransformPropTypeUtil } from './transform-functions/scale-transfor
 import { skewTransformPropTypeUtil } from './transform-functions/skew-transform';
 
 const filterTypes = moveTransformPropTypeUtil.schema
-	.or( scaleTransformPropTypeUtil.schema )
-	.or( rotateTransformPropTypeUtil.schema )
-	.or( skewTransformPropTypeUtil.schema );
+	.or(scaleTransformPropTypeUtil.schema)
+	.or(rotateTransformPropTypeUtil.schema)
+	.or(skewTransformPropTypeUtil.schema);
 
-export const transformFunctionsPropTypeUtil = createPropUtils( 'transform-functions', z.array( filterTypes ) );
+export const transformFunctionsPropTypeUtil = createPropUtils('transform-functions', z.array(filterTypes));
 
-export type TransformFunctionsPropValue = z.infer< typeof transformFunctionsPropTypeUtil.schema >;
+export type TransformFunctionsPropValue = z.infer<typeof transformFunctionsPropTypeUtil.schema>;
 
-export type TransformFunctionsItemPropValue = z.infer< typeof filterTypes >;
+export type TransformFunctionsItemPropValue = z.infer<typeof filterTypes>;

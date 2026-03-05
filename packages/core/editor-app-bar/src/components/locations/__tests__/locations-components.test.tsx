@@ -7,8 +7,8 @@ import PageIndicationLocation from '../page-indication-location';
 import PrimaryActionLocation from '../primary-action-location';
 import ResponsiveLocation from '../responsive-location';
 
-describe( 'Locations components', () => {
-	it.each( [
+describe('Locations components', () => {
+	it.each([
 		{
 			name: 'page indication',
 			component: PageIndicationLocation,
@@ -24,16 +24,16 @@ describe( 'Locations components', () => {
 			component: PrimaryActionLocation,
 			inject: injectIntoPrimaryAction,
 		},
-	] )( 'should inject into $name', ( { inject, component: Component } ) => {
+	])('should inject into $name', ({ inject, component: Component }) => {
 		// Act.
-		inject( {
+		inject({
 			id: 'test',
 			component: () => <span>test</span>,
-		} );
+		});
 
 		// Assert.
-		renderWithTheme( <Component /> );
+		renderWithTheme(<Component />);
 
-		expect( screen.getByText( 'test' ) ).toBeInTheDocument();
-	} );
-} );
+		expect(screen.getByText('test')).toBeInTheDocument();
+	});
+});

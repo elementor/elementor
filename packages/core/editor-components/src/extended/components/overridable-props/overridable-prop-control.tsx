@@ -22,82 +22,80 @@ import { useCurrentComponentId, useOverridableProps } from '../../../store/store
 import { getPropTypeForComponentOverride } from '../../../utils/get-prop-type-for-component-override';
 import { OVERRIDABLE_PROP_REPLACEMENT_ID } from '../../consts';
 
-export function OverridablePropControl< T extends object >( {
+export function OverridablePropControl<T extends object>({
 	OriginalControl,
 	...props
-}: T & { OriginalControl: ComponentType< T > } ) {
+}: T & { OriginalControl: ComponentType<T> }) {
 	const { elementType } = useElement();
 
-	const { value, bind, setValue, placeholder, ...propContext } = useBoundProp( componentOverridablePropTypeUtil );
+	const { value, bind, setValue, placeholder, ...propContext } = useBoundProp(componentOverridablePropTypeUtil);
 	const componentId = useCurrentComponentId();
-	const overridableProps = useOverridableProps( componentId );
+	const overridableProps = useOverridableProps(componentId);
 	const filteredReplacements = getControlReplacements().filter(
-		( r ) => ! r.id || r.id !== OVERRIDABLE_PROP_REPLACEMENT_ID
+		(r) => !r.id || r.id !== OVERRIDABLE_PROP_REPLACEMENT_ID
 	);
 
-	if ( ! componentId ) {
+	if (!componentId) {
 		return null;
 	}
 
-	if ( ! value?.override_key ) {
-		throw new Error( 'Override key is required' );
+	if (!value?.override_key) {
+		throw new Error('Override key is required');
 	}
 
 	const isComponentInstance = elementType.key === 'e-component';
-	const overridablePropData = overridableProps?.props?.[ value.override_key ];
+	const overridablePropData = overridableProps?.props?.[value.override_key];
 
-	const setOverridableValue = ( newValue: Record< typeof bind, PropValue | null > ) => {
+	const setOverridableValue = (newValue: Record<typeof bind, PropValue | null>) => {
 		const propValue = {
 			...value,
-			origin_value: newValue[ bind ],
+			origin_value: newValue[bind],
 		} as ComponentOverridablePropValue;
 
-		setValue( propValue );
+		setValue(propValue);
 
-		if ( ! isComponentInstance ) {
-			updateOverridableProp( componentId, propValue, overridablePropData?.originPropFields );
+		if (!isComponentInstance) {
+			updateOverridableProp(componentId, propValue, overridablePropData?.originPropFields);
 		}
 	};
 
-	const defaultPropType = elementType.propsSchema[ bind ];
-	const overridePropType = overridablePropData ? getPropTypeForComponentOverride( overridablePropData ) : undefined;
+	const defaultPropType = elementType.propsSchema[bind];
+	const overridePropType = overridablePropData ? getPropTypeForComponentOverride(overridablePropData) : undefined;
 
 	const resolvedPropType = overridePropType ?? defaultPropType;
 
-	if ( ! resolvedPropType ) {
+	if (!resolvedPropType) {
 		return null;
 	}
 
-	const propType = createTopLevelObjectType( {
+	const propType = createTopLevelObjectType({
 		schema: {
-			[ bind ]: resolvedPropType,
+			[bind]: resolvedPropType,
 		},
-	} );
+	});
 
 	const propValue = (
 		isComponentInstance
-			? ( value.origin_value?.value as ComponentInstanceOverridePropValue ).override_value
+			? (value.origin_value?.value as ComponentInstanceOverridePropValue).override_value
 			: value.origin_value
 	) as PropValue;
 
-	const objectPlaceholder: Record< string, PropValue > | undefined = placeholder
-		? { [ bind ]: placeholder }
-		: undefined;
+	const objectPlaceholder: Record<string, PropValue> | undefined = placeholder ? { [bind]: placeholder } : undefined;
 
 	return (
-		<OverridablePropProvider value={ value }>
+		<OverridablePropProvider value={value}>
 			<PropProvider
-				{ ...propContext }
-				propType={ propType }
-				setValue={ setOverridableValue }
-				value={ {
-					[ bind ]: propValue,
-				} }
-				placeholder={ objectPlaceholder }
+				{...propContext}
+				propType={propType}
+				setValue={setOverridableValue}
+				value={{
+					[bind]: propValue,
+				}}
+				placeholder={objectPlaceholder}
 			>
-				<PropKeyProvider bind={ bind }>
-					<ControlReplacementsProvider replacements={ filteredReplacements }>
-						<ControlWithReplacements OriginalControl={ OriginalControl } props={ props as T } />
+				<PropKeyProvider bind={bind}>
+					<ControlReplacementsProvider replacements={filteredReplacements}>
+						<ControlWithReplacements OriginalControl={OriginalControl} props={props as T} />
 					</ControlReplacementsProvider>
 				</PropKeyProvider>
 			</PropProvider>
@@ -105,23 +103,23 @@ export function OverridablePropControl< T extends object >( {
 	);
 }
 
-type ControlComponentType = ComponentType< object & { OriginalControl: ComponentType } >;
+type ControlComponentType = ComponentType<object & { OriginalControl: ComponentType }>;
 
-function ControlWithReplacements< T extends object >( {
+function ControlWithReplacements<T extends object>({
 	OriginalControl,
 	props,
 }: {
-	OriginalControl: ComponentType< T >;
+	OriginalControl: ComponentType<T>;
 	props: T;
-} ) {
-	const { ControlToRender, isReplaced } = useControlReplacement( OriginalControl as ControlComponentType );
+}) {
+	const { ControlToRender, isReplaced } = useControlReplacement(OriginalControl as ControlComponentType);
 
-	if ( isReplaced ) {
+	if (isReplaced) {
 		const ReplacementControl = ControlToRender as unknown as ComponentType<
-			T & { OriginalControl: ComponentType< T > }
+			T & { OriginalControl: ComponentType<T> }
 		>;
-		return <ReplacementControl { ...props } OriginalControl={ OriginalControl } />;
+		return <ReplacementControl {...props} OriginalControl={OriginalControl} />;
 	}
 
-	return <OriginalControl { ...props } />;
+	return <OriginalControl {...props} />;
 }

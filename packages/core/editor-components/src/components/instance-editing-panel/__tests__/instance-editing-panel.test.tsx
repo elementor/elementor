@@ -23,41 +23,41 @@ import { slice } from '../../../store/store';
 import { getContainerByOriginId } from '../../../utils/get-container-by-origin-id';
 import { InstanceEditingPanel } from '../instance-editing-panel';
 
-jest.mock( '@elementor/editor-elements' );
+jest.mock('@elementor/editor-elements');
 
-jest.mock( '@elementor/session' );
+jest.mock('@elementor/session');
 
-jest.mock( '../../../prop-types/component-instance-prop-type', () => ( {
+jest.mock('../../../prop-types/component-instance-prop-type', () => ({
 	componentInstancePropTypeUtil: {
 		extract: jest.fn(),
 		key: 'component-instance',
 	},
-} ) );
+}));
 
-jest.mock( '@elementor/editor-current-user' );
+jest.mock('@elementor/editor-current-user');
 
-jest.mock( '../../../utils/get-container-by-origin-id', () => ( {
+jest.mock('../../../utils/get-container-by-origin-id', () => ({
 	getContainerByOriginId: jest.fn(),
-} ) );
+}));
 
-mockCurrentUserCapabilities( true );
+mockCurrentUserCapabilities(true);
 
 const MOCK_ELEMENT_ID = 'element-123';
 const MOCK_COMPONENT_ID = 456;
 const MOCK_INNER_COMPONENT_ID = 789;
 const MOCK_COMPONENT_NAME = 'Test Component';
-const MOCK_PROP_TYPE = createMockPropType( { kind: 'plain', key: 'string' } );
+const MOCK_PROP_TYPE = createMockPropType({ kind: 'plain', key: 'string' });
 const MOCK_ELEMENT_LABEL = 'Heading Block';
 const MOCK_CONTROL_TYPE = 'test-override-text';
 
-const MOCK_COMPONENT_INSTANCE_PROP_TYPE = createMockPropType( {
+const MOCK_COMPONENT_INSTANCE_PROP_TYPE = createMockPropType({
 	kind: 'object',
 	key: 'component-instance',
 	shape: {
-		component_id: createMockPropType( { kind: 'plain', key: 'number' } ),
-		overrides: createMockPropType( { kind: 'array', key: 'overrides' } ),
+		component_id: createMockPropType({ kind: 'plain', key: 'number' }),
+		overrides: createMockPropType({ kind: 'array', key: 'overrides' }),
 	},
-} );
+});
 
 const MOCK_ELEMENT = {
 	id: MOCK_ELEMENT_ID,
@@ -97,9 +97,9 @@ const MOCK_INNER_COMPONENT_OVERRIDABLE_PROPS = {
 	},
 	groups: {
 		items: {
-			'inner-content': { id: 'inner-content', label: 'Inner Content', props: [ 'inner-prop-1' ] },
+			'inner-content': { id: 'inner-content', label: 'Inner Content', props: ['inner-prop-1'] },
 		},
-		order: [ 'inner-content' ],
+		order: ['inner-content'],
 	},
 };
 
@@ -138,10 +138,10 @@ const MOCK_OVERRIDABLE_PROPS = {
 	},
 	groups: {
 		items: {
-			content: { id: 'content', label: 'Content', props: [ 'prop-1', 'prop-2' ] },
-			settings: { id: 'settings', label: 'Settings', props: [ 'prop-3' ] },
+			content: { id: 'content', label: 'Content', props: ['prop-1', 'prop-2'] },
+			settings: { id: 'settings', label: 'Settings', props: ['prop-3'] },
 		},
-		order: [ 'content', 'settings' ],
+		order: ['content', 'settings'],
 	},
 };
 
@@ -160,10 +160,10 @@ const MOCK_OVERRIDABLE_PROPS_WITH_EMPTY_GROUP = {
 	},
 	groups: {
 		items: {
-			content: { id: 'content', label: 'Content', props: [ 'prop-1' ] },
+			content: { id: 'content', label: 'Content', props: ['prop-1'] },
 			empty: { id: 'empty', label: 'Empty Group', props: [] },
 		},
-		order: [ 'content', 'empty' ],
+		order: ['content', 'empty'],
 	},
 };
 
@@ -200,10 +200,10 @@ const MOCK_OVERRIDABLE_PROPS_WITH_NESTED = {
 	},
 	groups: {
 		items: {
-			content: { id: 'content', label: 'Content', props: [ 'prop-1' ] },
-			nested: { id: 'nested', label: 'Nested Component Props', props: [ 'nested-prop-1' ] },
+			content: { id: 'content', label: 'Content', props: ['prop-1'] },
+			nested: { id: 'nested', label: 'Nested Component Props', props: ['nested-prop-1'] },
 		},
-		order: [ 'content', 'nested' ],
+		order: ['content', 'nested'],
 	},
 };
 
@@ -250,11 +250,11 @@ function createMockWidgetsCache() {
 	};
 }
 
-function createMockElementType( widgetType: string ) {
+function createMockElementType(widgetType: string) {
 	const widgetsCache = createMockWidgetsCache();
-	const widget = widgetsCache[ widgetType as keyof typeof widgetsCache ];
+	const widget = widgetsCache[widgetType as keyof typeof widgetsCache];
 
-	if ( ! widget ) {
+	if (!widget) {
 		return null;
 	}
 
@@ -268,170 +268,170 @@ function createMockElementType( widgetType: string ) {
 	};
 }
 
-describe( '<InstanceEditingPanel />', () => {
-	let store: Store< SliceState< typeof slice > >;
+describe('<InstanceEditingPanel />', () => {
+	let store: Store<SliceState<typeof slice>>;
 
-	beforeAll( () => {
-		controlsRegistry.register( MOCK_CONTROL_TYPE, TextControl, 'full' );
-	} );
+	beforeAll(() => {
+		controlsRegistry.register(MOCK_CONTROL_TYPE, TextControl, 'full');
+	});
 
-	beforeEach( () => {
+	beforeEach(() => {
 		jest.clearAllMocks();
-		registerSlice( slice );
+		registerSlice(slice);
 		store = __createStore();
 
-		jest.mocked( componentInstancePropTypeUtil.extract ).mockReturnValue( {
+		jest.mocked(componentInstancePropTypeUtil.extract).mockReturnValue({
 			component_id: { $$type: 'number', value: MOCK_COMPONENT_ID },
 			overrides: { $$type: 'overrides', value: [] },
-		} );
-		jest.mocked( getElementLabel ).mockReturnValue( MOCK_ELEMENT_LABEL );
-		jest.mocked( getWidgetsCache ).mockReturnValue(
-			createMockWidgetsCache() as unknown as ReturnType< typeof getWidgetsCache >
+		});
+		jest.mocked(getElementLabel).mockReturnValue(MOCK_ELEMENT_LABEL);
+		jest.mocked(getWidgetsCache).mockReturnValue(
+			createMockWidgetsCache() as unknown as ReturnType<typeof getWidgetsCache>
 		);
-		jest.mocked( getElementType ).mockImplementation( createMockElementType );
-		jest.mocked( getContainer ).mockReturnValue( createMockContainer( MOCK_ELEMENT_ID, [] ) );
-		jest.mocked( getContainerByOriginId ).mockImplementation( ( originId ) => createMockContainer( originId, [] ) );
-	} );
+		jest.mocked(getElementType).mockImplementation(createMockElementType);
+		jest.mocked(getContainer).mockReturnValue(createMockContainer(MOCK_ELEMENT_ID, []));
+		jest.mocked(getContainerByOriginId).mockImplementation((originId) => createMockContainer(originId, []));
+	});
 
-	it( 'should render the component name in the header', () => {
+	it('should render the component name in the header', () => {
 		// Arrange.
 		setupComponent();
 
 		// Act.
-		renderEditInstancePanel( store );
+		renderEditInstancePanel(store);
 
 		// Assert.
-		expect( screen.getByText( MOCK_COMPONENT_NAME ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText(MOCK_COMPONENT_NAME)).toBeInTheDocument();
+	});
 
-	it( 'should render all overridable props groups with correct headings', () => {
+	it('should render all overridable props groups with correct headings', () => {
 		// Arrange.
 		setupComponent();
 
 		// Act.
-		renderEditInstancePanel( store );
+		renderEditInstancePanel(store);
 
 		// Assert.
-		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Settings' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Content')).toBeInTheDocument();
+		expect(screen.getByText('Settings')).toBeInTheDocument();
+	});
 
-	it( 'should render overridable prop labels', () => {
+	it('should render overridable prop labels', () => {
 		// Arrange.
 		setupComponent();
 
 		// Act.
-		renderEditInstancePanel( store );
+		renderEditInstancePanel(store);
 
 		// Assert.
-		expect( screen.getByText( 'Title' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Subtitle' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Link' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Title')).toBeInTheDocument();
+		expect(screen.getByText('Subtitle')).toBeInTheDocument();
+		expect(screen.getByText('Link')).toBeInTheDocument();
+	});
 
-	it( 'should show edit button as disabled in core panel', () => {
+	it('should show edit button as disabled in core panel', () => {
 		// Arrange.
 		setupComponent();
 
 		// Act.
-		renderEditInstancePanel( store );
+		renderEditInstancePanel(store);
 
 		// Assert.
-		const editButton = screen.getByLabelText( `Edit ${ MOCK_COMPONENT_NAME }` );
-		expect( editButton ).toBeDisabled();
-	} );
+		const editButton = screen.getByLabelText(`Edit ${MOCK_COMPONENT_NAME}`);
+		expect(editButton).toBeDisabled();
+	});
 
-	it( 'should not render when componentId is missing', () => {
+	it('should not render when componentId is missing', () => {
 		// Arrange.
 		setupComponent();
-		jest.mocked( componentInstancePropTypeUtil.extract ).mockReturnValue( {
+		jest.mocked(componentInstancePropTypeUtil.extract).mockReturnValue({
 			component_id: { $$type: 'number', value: null },
 			overrides: { $$type: 'overrides', value: [] },
-		} );
+		});
 
 		// Act.
-		const { container } = renderEditInstancePanel( store );
+		const { container } = renderEditInstancePanel(store);
 
 		// Assert.
-		expect( container ).toBeEmptyDOMElement();
-	} );
+		expect(container).toBeEmptyDOMElement();
+	});
 
-	it( 'should show empty state without edit button when no overridable props', () => {
+	it('should show empty state without edit button when no overridable props', () => {
 		// Arrange.
-		setupComponent( { isWithOverridableProps: false } );
+		setupComponent({ isWithOverridableProps: false });
 
 		// Act.
-		renderEditInstancePanel( store );
+		renderEditInstancePanel(store);
 
 		// Assert.
-		expect( screen.getByText( MOCK_COMPONENT_NAME ) ).toBeInTheDocument();
-		expect( screen.getByText( 'No properties yet' ) ).toBeInTheDocument();
-		expect( screen.queryByText( 'Edit component' ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'Content' ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'Settings' ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.getByText(MOCK_COMPONENT_NAME)).toBeInTheDocument();
+		expect(screen.getByText('No properties yet')).toBeInTheDocument();
+		expect(screen.queryByText('Edit component')).not.toBeInTheDocument();
+		expect(screen.queryByText('Content')).not.toBeInTheDocument();
+		expect(screen.queryByText('Settings')).not.toBeInTheDocument();
+	});
 
-	it( 'should render overridable props from nested components', () => {
+	it('should render overridable props from nested components', () => {
 		// Arrange.
-		setupComponent( { isWithOverridableProps: true, isWithNestedOverridableProps: true } );
+		setupComponent({ isWithOverridableProps: true, isWithNestedOverridableProps: true });
 
 		// Act.
-		renderEditInstancePanel( store );
+		renderEditInstancePanel(store);
 
 		// Assert.
-		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Nested Component Props' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Content')).toBeInTheDocument();
+		expect(screen.getByText('Nested Component Props')).toBeInTheDocument();
+	});
 
-	it( 'should render nested component prop labels', () => {
+	it('should render nested component prop labels', () => {
 		// Arrange.
-		setupComponent( { isWithOverridableProps: true, isWithNestedOverridableProps: true } );
+		setupComponent({ isWithOverridableProps: true, isWithNestedOverridableProps: true });
 
 		// Act.
-		renderEditInstancePanel( store );
+		renderEditInstancePanel(store);
 
 		// Assert.
-		expect( screen.getByText( 'Title' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Nested Component Title' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Title')).toBeInTheDocument();
+		expect(screen.getByText('Nested Component Title')).toBeInTheDocument();
+	});
 
-	it( 'should not display groups that have no props', () => {
+	it('should not display groups that have no props', () => {
 		// Arrange.
-		setupComponent( { isWithOverridableProps: true, isWithEmptyGroup: true } );
+		setupComponent({ isWithOverridableProps: true, isWithEmptyGroup: true });
 
 		// Act.
-		renderEditInstancePanel( store );
+		renderEditInstancePanel(store);
 
 		// Assert.
-		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
-		expect( screen.queryByText( 'Empty Group' ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.getByText('Content')).toBeInTheDocument();
+		expect(screen.queryByText('Empty Group')).not.toBeInTheDocument();
+	});
 
-	it( 'should render panel for archived component instance', () => {
+	it('should render panel for archived component instance', () => {
 		// Arrange.
-		setupComponent( { isArchived: true } );
+		setupComponent({ isArchived: true });
 
 		// Act.
-		renderEditInstancePanel( store );
+		renderEditInstancePanel(store);
 
 		// Assert.
-		expect( screen.getByText( MOCK_COMPONENT_NAME ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText(MOCK_COMPONENT_NAME)).toBeInTheDocument();
+		expect(screen.getByText('Content')).toBeInTheDocument();
+	});
 
-	it( 'should render panel for component archived during session', () => {
+	it('should render panel for component archived during session', () => {
 		// Arrange.
 		setupComponent();
-		dispatch( slice.actions.archive( MOCK_COMPONENT_ID ) );
+		dispatch(slice.actions.archive(MOCK_COMPONENT_ID));
 
 		// Act.
-		renderEditInstancePanel( store );
+		renderEditInstancePanel(store);
 
 		// Assert.
-		expect( screen.getByText( MOCK_COMPONENT_NAME ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
-	} );
-} );
+		expect(screen.getByText(MOCK_COMPONENT_NAME)).toBeInTheDocument();
+		expect(screen.getByText('Content')).toBeInTheDocument();
+	});
+});
 
 type SetupComponentOptions = {
 	isWithOverridableProps?: boolean;
@@ -440,17 +440,17 @@ type SetupComponentOptions = {
 	isArchived?: boolean;
 };
 
-function setupComponent( {
+function setupComponent({
 	isWithOverridableProps = true,
 	isWithNestedOverridableProps = false,
 	isWithEmptyGroup = false,
 	isArchived = false,
-}: SetupComponentOptions = {} ) {
+}: SetupComponentOptions = {}) {
 	const getOverridableProps = () => {
-		if ( isWithNestedOverridableProps ) {
+		if (isWithNestedOverridableProps) {
 			return MOCK_OVERRIDABLE_PROPS_WITH_NESTED;
 		}
-		if ( isWithEmptyGroup ) {
+		if (isWithEmptyGroup) {
 			return MOCK_OVERRIDABLE_PROPS_WITH_EMPTY_GROUP;
 		}
 		return MOCK_OVERRIDABLE_PROPS;
@@ -466,9 +466,9 @@ function setupComponent( {
 		isArchived,
 	};
 
-	const componentsToLoad = [ componentData ];
+	const componentsToLoad = [componentData];
 
-	if ( isWithNestedOverridableProps ) {
+	if (isWithNestedOverridableProps) {
 		const innerComponentData = {
 			id: MOCK_INNER_COMPONENT_ID,
 			uid: 'inner-component-uid',
@@ -476,7 +476,7 @@ function setupComponent( {
 			overridableProps: MOCK_INNER_COMPONENT_OVERRIDABLE_PROPS,
 			isArchived: false,
 		};
-		componentsToLoad.push( innerComponentData as unknown as typeof componentData );
+		componentsToLoad.push(innerComponentData as unknown as typeof componentData);
 
 		const nestedComponentInstanceValue = {
 			component_id: { $$type: 'number', value: MOCK_INNER_COMPONENT_ID },
@@ -501,9 +501,9 @@ function setupComponent( {
 			},
 		};
 
-		jest.mocked( getContainerByOriginId ).mockImplementation( ( originId ) => {
-			if ( originId === 'nested-instance-1' ) {
-				return createMockElement( {
+		jest.mocked(getContainerByOriginId).mockImplementation((originId) => {
+			if (originId === 'nested-instance-1') {
+				return createMockElement({
 					model: { id: 'nested-instance-1', widgetType: 'e-component' },
 					settings: {
 						component_instance: {
@@ -511,33 +511,33 @@ function setupComponent( {
 							value: nestedComponentInstanceValue,
 						},
 					},
-				} );
+				});
 			}
-			return createMockContainer( originId, [] );
-		} );
+			return createMockContainer(originId, []);
+		});
 
-		jest.mocked( componentInstancePropTypeUtil.extract ).mockImplementation( ( value: unknown ) => {
+		jest.mocked(componentInstancePropTypeUtil.extract).mockImplementation((value: unknown) => {
 			const typedValue = value as { $$type?: string; value?: { component_id?: { value?: number } } } | undefined;
 			if (
 				typedValue?.$$type === 'component-instance' &&
 				typedValue?.value?.component_id?.value === MOCK_INNER_COMPONENT_ID
 			) {
-				return nestedComponentInstanceValue as ReturnType< typeof componentInstancePropTypeUtil.extract >;
+				return nestedComponentInstanceValue as ReturnType<typeof componentInstancePropTypeUtil.extract>;
 			}
 			return {
 				component_id: { $$type: 'number' as const, value: MOCK_COMPONENT_ID },
 				overrides: { $$type: 'overrides' as const, value: [] },
 			};
-		} );
+		});
 	}
 
-	dispatch( slice.actions.load( componentsToLoad ) );
+	dispatch(slice.actions.load(componentsToLoad));
 }
 
-function renderEditInstancePanel( store: Store< SliceState< typeof slice > > ) {
+function renderEditInstancePanel(store: Store<SliceState<typeof slice>>) {
 	return renderWithStore(
-		<ControlActionsProvider items={ [] }>
-			<ElementProvider element={ MOCK_ELEMENT } elementType={ MOCK_ELEMENT_TYPE } settings={ {} }>
+		<ControlActionsProvider items={[]}>
+			<ElementProvider element={MOCK_ELEMENT} elementType={MOCK_ELEMENT_TYPE} settings={{}}>
 				<InstanceEditingPanel />
 			</ElementProvider>
 		</ControlActionsProvider>,

@@ -23,51 +23,51 @@ import { useStylesFields } from '../../hooks/use-styles-fields';
 import { StylesInheritanceIndicator } from '../../styles-inheritance/components/styles-inheritance-indicator';
 import { StylesField } from '../styles-field';
 
-jest.mock( '@elementor/editor-responsive' );
-jest.mock( '@elementor/editor-styles' );
-jest.mock( '@elementor/editor-styles-repository', () => ( {
-	...jest.requireActual( '@elementor/editor-styles-repository' ),
+jest.mock('@elementor/editor-responsive');
+jest.mock('@elementor/editor-styles');
+jest.mock('@elementor/editor-styles-repository', () => ({
+	...jest.requireActual('@elementor/editor-styles-repository'),
 	stylesRepository: {
 		all: jest.fn(),
 		subscribe: jest.fn(),
 	},
-} ) );
+}));
 
-jest.mock( '../../hooks/use-styles-fields' );
-jest.mock( '../../contexts/classes-prop-context' );
-jest.mock( '../../contexts/element-context' );
-jest.mock( '../../contexts/style-context' );
-jest.mock( '../../contexts/styles-inheritance-context' );
+jest.mock('../../hooks/use-styles-fields');
+jest.mock('../../contexts/classes-prop-context');
+jest.mock('../../contexts/element-context');
+jest.mock('../../contexts/style-context');
+jest.mock('../../contexts/styles-inheritance-context');
 
 const desktopNormalMeta = {
 	breakpoint: 'desktop',
 	state: null,
-} as StyleDefinitionVariant[ 'meta' ];
+} as StyleDefinitionVariant['meta'];
 
 const mobileNormalMeta = {
 	breakpoint: 'mobile',
 	state: null,
-} as StyleDefinitionVariant[ 'meta' ];
+} as StyleDefinitionVariant['meta'];
 
-describe( 'StylesField with inheritance', () => {
-	beforeEach( () => {
-		jest.mocked( getStylesSchema ).mockReturnValue( mockStylesSchema );
-		jest.mocked( usePanelElementSetting ).mockReturnValue( {} );
-		jest.mocked( getBreakpointsTree ).mockImplementation( createMockBreakpointsTree );
+describe('StylesField with inheritance', () => {
+	beforeEach(() => {
+		jest.mocked(getStylesSchema).mockReturnValue(mockStylesSchema);
+		jest.mocked(usePanelElementSetting).mockReturnValue({});
+		jest.mocked(getBreakpointsTree).mockImplementation(createMockBreakpointsTree);
 
-		registerFieldIndicator( {
+		registerFieldIndicator({
 			fieldType: 'styles',
 			id: 'inheritance-indicator',
 			indicator: StylesInheritanceIndicator,
 			priority: 1,
-		} );
-	} );
+		});
+	});
 
-	afterEach( () => {
+	afterEach(() => {
 		jest.resetAllMocks();
-	} );
+	});
 
-	it.each( [
+	it.each([
 		{
 			state: 'affecting',
 			style: {
@@ -77,14 +77,14 @@ describe( 'StylesField with inheritance', () => {
 			},
 			stylesInheritance: [
 				{
-					style: createMockStyleDefinition( { id: 'style-id-1' } ),
-					variant: createMockStyleVariant( desktopNormalMeta ),
+					style: createMockStyleDefinition({ id: 'style-id-1' }),
+					variant: createMockStyleVariant(desktopNormalMeta),
 					provider: null,
 					value: '5px',
 				},
 				{
-					style: createMockStyleDefinition( { id: 'style-id-2' } ),
-					variant: createMockStyleVariant( desktopNormalMeta ),
+					style: createMockStyleDefinition({ id: 'style-id-2' }),
+					variant: createMockStyleVariant(desktopNormalMeta),
 					provider: null,
 					value: '10px',
 				},
@@ -100,14 +100,14 @@ describe( 'StylesField with inheritance', () => {
 			},
 			stylesInheritance: [
 				{
-					style: createMockStyleDefinition( { id: 'style-id-1' } ),
-					variant: createMockStyleVariant( desktopNormalMeta ),
+					style: createMockStyleDefinition({ id: 'style-id-1' }),
+					variant: createMockStyleVariant(desktopNormalMeta),
 					provider: null,
 					value: '5px',
 				},
 				{
-					style: createMockStyleDefinition( { id: 'style-id-2' } ),
-					variant: createMockStyleVariant( desktopNormalMeta ),
+					style: createMockStyleDefinition({ id: 'style-id-2' }),
+					variant: createMockStyleVariant(desktopNormalMeta),
 					provider: null,
 					value: '10px',
 				},
@@ -123,8 +123,8 @@ describe( 'StylesField with inheritance', () => {
 			},
 			stylesInheritance: [
 				{
-					style: createMockStyleDefinition( { id: 'style-id-2' } ),
-					variant: createMockStyleVariant( desktopNormalMeta ),
+					style: createMockStyleDefinition({ id: 'style-id-2' }),
+					variant: createMockStyleVariant(desktopNormalMeta),
 					provider: null,
 					value: '10px',
 				},
@@ -140,8 +140,8 @@ describe( 'StylesField with inheritance', () => {
 			},
 			stylesInheritance: [
 				{
-					style: createMockStyleDefinition( { id: 'style-id-1' } ),
-					variant: createMockStyleVariant( desktopNormalMeta ),
+					style: createMockStyleDefinition({ id: 'style-id-1' }),
+					variant: createMockStyleVariant(desktopNormalMeta),
 					provider: null,
 					value: '10px',
 				},
@@ -157,8 +157,8 @@ describe( 'StylesField with inheritance', () => {
 			},
 			stylesInheritance: [
 				{
-					style: createMockStyleDefinition( { id: 'style-id-1' } ),
-					variant: createMockStyleVariant( desktopNormalMeta ),
+					style: createMockStyleDefinition({ id: 'style-id-1' }),
+					variant: createMockStyleVariant(desktopNormalMeta),
 					provider: null,
 					value: '10px',
 				},
@@ -184,35 +184,35 @@ describe( 'StylesField with inheritance', () => {
 			},
 			stylesInheritance: [
 				{
-					style: createMockStyleDefinition( { id: 'test-base-style' } ),
-					variant: createMockStyleVariant( mobileNormalMeta ),
+					style: createMockStyleDefinition({ id: 'test-base-style' }),
+					variant: createMockStyleVariant(mobileNormalMeta),
 					provider: ELEMENTS_BASE_STYLES_PROVIDER_KEY,
 					value: '5px',
 				},
 				{
-					style: createMockStyleDefinition( { id: 'test-base-style' } ),
-					variant: createMockStyleVariant( desktopNormalMeta ),
+					style: createMockStyleDefinition({ id: 'test-base-style' }),
+					variant: createMockStyleVariant(desktopNormalMeta),
 					provider: ELEMENTS_BASE_STYLES_PROVIDER_KEY,
 					value: '10px',
 				},
 			],
 			expectedLabel: null,
 		},
-	] )( 'should handle $state', ( { style, stylesInheritance, expectedLabel } ) => {
+	])('should handle $state', ({ style, stylesInheritance, expectedLabel }) => {
 		// Arrange.
-		jest.mocked( useStylesInheritanceChain ).mockReturnValue( stylesInheritance );
-		jest.mocked( useStylesFields ).mockReturnValue( {
+		jest.mocked(useStylesInheritanceChain).mockReturnValue(stylesInheritance);
+		jest.mocked(useStylesFields).mockReturnValue({
 			values: { 'font-size': style.value },
 			setValues: jest.fn(),
 			canEdit: true,
-		} );
-		jest.mocked( useStyle ).mockReturnValue( {
+		});
+		jest.mocked(useStyle).mockReturnValue({
 			id: style.id,
-			provider: createMockStylesProvider( { key: `${ ELEMENTS_STYLES_PROVIDER_KEY_PREFIX }1` } ),
+			provider: createMockStylesProvider({ key: `${ELEMENTS_STYLES_PROVIDER_KEY_PREFIX}1` }),
 			meta: style.meta,
 			setMetaState: jest.fn(),
 			setId: jest.fn(),
-		} );
+		});
 
 		// Act.
 		const { container } = renderWithTheme(
@@ -222,20 +222,20 @@ describe( 'StylesField with inheritance', () => {
 		);
 
 		// Assert.
-		if ( expectedLabel !== null ) {
-			expect( screen.getByText( 'Label' ) ).toBeInTheDocument();
-			expect( screen.getByLabelText( expectedLabel ) ).toBeInTheDocument();
+		if (expectedLabel !== null) {
+			expect(screen.getByText('Label')).toBeInTheDocument();
+			expect(screen.getByLabelText(expectedLabel)).toBeInTheDocument();
 
-			expect( container.childNodes[ 0 ].childNodes.length ).toBe( 2 );
+			expect(container.childNodes[0].childNodes.length).toBe(2);
 		} else {
-			expect( screen.getByText( 'Label' ) ).toBeInTheDocument();
+			expect(screen.getByText('Label')).toBeInTheDocument();
 
-			expect( container.childNodes[ 0 ].childNodes.length ).toBe( 1 );
+			expect(container.childNodes[0].childNodes.length).toBe(1);
 		}
-	} );
-} );
+	});
+});
 
-function createMockStyleVariant( meta: StyleDefinitionVariant[ 'meta' ] ) {
+function createMockStyleVariant(meta: StyleDefinitionVariant['meta']) {
 	return {
 		props: {},
 		meta,

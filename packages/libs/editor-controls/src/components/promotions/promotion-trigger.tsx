@@ -5,8 +5,8 @@ import { Box } from '@elementor/ui';
 
 import type { V4PromotionData, V4PromotionKey } from './types';
 
-function getV4Promotion( key: V4PromotionKey ): V4PromotionData | undefined {
-	return window.elementor?.config?.v4Promotions?.[ key ];
+function getV4Promotion(key: V4PromotionKey): V4PromotionData | undefined {
+	return window.elementor?.config?.v4Promotions?.[key];
 }
 
 type PromotionTriggerProps = {
@@ -18,40 +18,40 @@ export type PromotionTriggerRef = {
 	toggle: () => void;
 };
 
-export const PromotionTrigger = forwardRef< PromotionTriggerRef, PromotionTriggerProps >(
-	( { promotionKey, children }, ref ) => {
-		const [ isOpen, setIsOpen ] = useState( false );
-		const promotion = getV4Promotion( promotionKey );
+export const PromotionTrigger = forwardRef<PromotionTriggerRef, PromotionTriggerProps>(
+	({ promotionKey, children }, ref) => {
+		const [isOpen, setIsOpen] = useState(false);
+		const promotion = getV4Promotion(promotionKey);
 
-		const toggle = () => setIsOpen( ( prev ) => ! prev );
+		const toggle = () => setIsOpen((prev) => !prev);
 
-		useImperativeHandle( ref, () => ( { toggle } ), [] );
+		useImperativeHandle(ref, () => ({ toggle }), []);
 
 		return (
 			<>
-				{ promotion && (
+				{promotion && (
 					<PromotionInfotip
-						title={ promotion.title }
-						content={ promotion.content }
-						assetUrl={ promotion.image }
-						ctaUrl={ promotion.ctaUrl }
-						open={ isOpen }
-						onClose={ ( e: MouseEvent ) => {
+						title={promotion.title}
+						content={promotion.content}
+						assetUrl={promotion.image}
+						ctaUrl={promotion.ctaUrl}
+						open={isOpen}
+						onClose={(e: MouseEvent) => {
 							e.stopPropagation();
-							setIsOpen( false );
-						} }
+							setIsOpen(false);
+						}}
 					>
 						<Box
-							onClick={ ( e: MouseEvent ) => {
+							onClick={(e: MouseEvent) => {
 								e.stopPropagation();
 								toggle();
-							} }
-							sx={ { cursor: 'pointer', display: 'inline-flex' } }
+							}}
+							sx={{ cursor: 'pointer', display: 'inline-flex' }}
 						>
-							{ children ?? <PromotionChip /> }
+							{children ?? <PromotionChip />}
 						</Box>
 					</PromotionInfotip>
-				) }
+				)}
 			</>
 		);
 	}

@@ -5,12 +5,12 @@ import { unknownChildrenSchema } from './utils';
 
 export const borderRadiusPropTypeUtil = createPropUtils(
 	'border-radius',
-	z.strictObject( {
+	z.strictObject({
 		'start-start': unknownChildrenSchema,
 		'start-end': unknownChildrenSchema,
 		'end-start': unknownChildrenSchema,
 		'end-end': unknownChildrenSchema,
-	} )
+	})
 );
 
-export type BorderRadiusPropValue = z.infer< typeof borderRadiusPropTypeUtil.schema >;
+export type BorderRadiusPropValue = z.infer<typeof borderRadiusPropTypeUtil.schema>;

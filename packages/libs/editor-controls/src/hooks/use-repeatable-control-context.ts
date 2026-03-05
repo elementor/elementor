@@ -5,11 +5,11 @@ import type { Item, RepeatablePropValue } from '../components/control-repeater/t
 
 export type ChildControlConfig = {
 	component: React.ComponentType;
-	props?: Record< string, unknown >;
+	props?: Record<string, unknown>;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	propTypeUtil: PropTypeUtil< string, any >;
+	propTypeUtil: PropTypeUtil<string, any>;
 	label?: string;
-	isItemDisabled?: ( item: Item< RepeatablePropValue > ) => boolean;
+	isItemDisabled?: (item: Item<RepeatablePropValue>) => boolean;
 };
 
 type RepeatableControlContextType = ChildControlConfig & {
@@ -17,13 +17,13 @@ type RepeatableControlContextType = ChildControlConfig & {
 	patternLabel: string;
 };
 
-const RepeatableControlContext = createContext< RepeatableControlContextType | undefined >( undefined );
+const RepeatableControlContext = createContext<RepeatableControlContextType | undefined>(undefined);
 
 const useRepeatableControlContext = () => {
-	const context = useContext( RepeatableControlContext );
+	const context = useContext(RepeatableControlContext);
 
-	if ( ! context ) {
-		throw new Error( 'useRepeatableControlContext must be used within RepeatableControl' );
+	if (!context) {
+		throw new Error('useRepeatableControlContext must be used within RepeatableControl');
 	}
 
 	return context;

@@ -5,5 +5,5 @@ import {
 } from '@elementor/editor-v1-adapters';
 
 export function useCanvasDocument() {
-	return useListenTo( commandEndEvent( 'editor/documents/attach-preview' ), () => getCanvasIframeDocument() );
+	return useListenTo(commandEndEvent('editor/documents/attach-preview'), () => getCanvasIframeDocument());
 }

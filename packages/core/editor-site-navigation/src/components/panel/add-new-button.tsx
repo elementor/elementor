@@ -12,17 +12,17 @@ export default function AddNewButton() {
 
 	return (
 		<Button
-			size={ 'small' }
-			startIcon={ <PlusIcon /> }
-			disabled={ ! user?.capabilities?.edit_pages }
-			onClick={ () => {
-				setEditMode( { mode: 'create', details: {} } );
-			} }
-			sx={ {
+			size={'small'}
+			startIcon={<PlusIcon />}
+			disabled={!user?.capabilities?.edit_pages}
+			onClick={() => {
+				setEditMode({ mode: 'create', details: {} });
+			}}
+			sx={{
 				px: 1.5,
-			} }
+			}}
 		>
-			{ __( 'Add New', 'elementor' ) }
+			{__('Add New', 'elementor')}
 		</Button>
 	);
 }

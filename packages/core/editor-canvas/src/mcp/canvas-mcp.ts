@@ -7,7 +7,7 @@ import { initBuildCompositionsTool } from './tools/build-composition/tool';
 import { initConfigureElementTool } from './tools/configure-element/tool';
 import { initGetElementConfigTool } from './tools/get-element-config/tool';
 
-export const initCanvasMcp = ( reg: MCPRegistryEntry ) => {
+export const initCanvasMcp = (reg: MCPRegistryEntry) => {
 	const { setMCPDescription } = reg;
 	setMCPDescription(
 		`Everything related to creative design, layout, styling and building the pages, specifically element of type "widget".
@@ -19,10 +19,10 @@ export const initCanvasMcp = ( reg: MCPRegistryEntry ) => {
 - Build valid XML with minimal inline styles (layout/positioning only)
 - Apply global classes to elements`
 	);
-	initWidgetsSchemaResource( reg );
-	initDocumentStructureResource( reg );
-	initBuildCompositionsTool( reg );
-	initGetElementConfigTool( reg );
-	initConfigureElementTool( reg );
-	initBreakpointsResource( reg );
+	initWidgetsSchemaResource(reg);
+	initDocumentStructureResource(reg);
+	initBuildCompositionsTool(reg);
+	initGetElementConfigTool(reg);
+	initConfigureElementTool(reg);
+	initBreakpointsResource(reg);
 };

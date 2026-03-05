@@ -12,22 +12,22 @@ export type DynamicToggleOption = {
 
 export const convertToggleOptionsToAtomic = (
 	options: DynamicToggleOption[]
-): Array< ToggleButtonGroupItem< string > & { exclusive?: boolean } > => {
-	return options.map( ( option ) => {
+): Array<ToggleButtonGroupItem<string> & { exclusive?: boolean }> => {
+	return options.map((option) => {
 		const iconName = option.icon;
-		const IconComponent = Icons[ iconName as keyof typeof Icons ];
+		const IconComponent = Icons[iconName as keyof typeof Icons];
 
 		return {
 			value: option.value,
 			label: option.label,
-			renderContent: ( { size } ) => {
-				if ( IconComponent ) {
-					return <IconComponent fontSize={ size } />;
+			renderContent: ({ size }) => {
+				if (IconComponent) {
+					return <IconComponent fontSize={size} />;
 				}
 				return option.label;
 			},
 			showTooltip: option.showTooltip,
 			exclusive: option.exclusive,
 		};
-	} );
+	});
 };

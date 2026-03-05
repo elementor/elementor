@@ -2,36 +2,36 @@ import { useState } from 'react';
 
 import { type ValidationEvent, type ValidationResult } from './types';
 
-export function useInputState( validate?: ( value: string, event: ValidationEvent ) => ValidationResult ) {
-	const [ inputValue, setInputValue ] = useState( '' );
-	const [ error, setError ] = useState< string | null >( null );
+export function useInputState(validate?: (value: string, event: ValidationEvent) => ValidationResult) {
+	const [inputValue, setInputValue] = useState('');
+	const [error, setError] = useState<string | null>(null);
 
-	const handleInputChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const { value } = event.target;
 
-		setInputValue( value );
+		setInputValue(value);
 
-		if ( ! validate ) {
+		if (!validate) {
 			return;
 		}
 
-		if ( ! value ) {
-			setError( null );
+		if (!value) {
+			setError(null);
 			return;
 		}
 
-		const { isValid, errorMessage } = validate( value, 'inputChange' );
+		const { isValid, errorMessage } = validate(value, 'inputChange');
 
-		if ( isValid ) {
-			setError( null );
+		if (isValid) {
+			setError(null);
 		} else {
-			setError( errorMessage );
+			setError(errorMessage);
 		}
 	};
 
 	const handleInputBlur = () => {
-		setInputValue( '' );
-		setError( null );
+		setInputValue('');
+		setError(null);
 	};
 
 	return {
@@ -46,11 +46,11 @@ export function useInputState( validate?: ( value: string, event: ValidationEven
 	};
 }
 
-export function useOpenState( initialOpen: boolean = false ) {
-	const [ open, setOpen ] = useState( initialOpen );
+export function useOpenState(initialOpen: boolean = false) {
+	const [open, setOpen] = useState(initialOpen);
 
-	const openDropdown = () => setOpen( true );
-	const closeDropdown = () => setOpen( false );
+	const openDropdown = () => setOpen(true);
+	const closeDropdown = () => setOpen(false);
 
 	return { open, openDropdown, closeDropdown };
 }

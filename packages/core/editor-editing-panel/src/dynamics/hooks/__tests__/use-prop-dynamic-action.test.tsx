@@ -10,44 +10,44 @@ import { type DynamicTag } from '../../types';
 import { usePropDynamicAction } from '../use-prop-dynamic-action';
 import { usePropDynamicTags } from '../use-prop-dynamic-tags';
 
-jest.mock( '../../../contexts/element-context' );
-jest.mock( '@elementor/editor-controls' );
-jest.mock( '../../sync/get-atomic-dynamic-tags' );
-jest.mock( '../use-prop-dynamic-tags' );
+jest.mock('../../../contexts/element-context');
+jest.mock('@elementor/editor-controls');
+jest.mock('../../sync/get-atomic-dynamic-tags');
+jest.mock('../use-prop-dynamic-tags');
 
-describe( 'usePropDynamicAction', () => {
+describe('usePropDynamicAction', () => {
 	const originalGetBoundingClientRect = globalThis.Element.prototype.getBoundingClientRect;
 
-	beforeEach( () => {
-		globalThis.Element.prototype.getBoundingClientRect = jest.fn().mockReturnValue( { height: 1000, width: 1000 } );
-	} );
+	beforeEach(() => {
+		globalThis.Element.prototype.getBoundingClientRect = jest.fn().mockReturnValue({ height: 1000, width: 1000 });
+	});
 
-	afterEach( () => {
+	afterEach(() => {
 		jest.clearAllMocks();
 
 		globalThis.Element.prototype.getBoundingClientRect = originalGetBoundingClientRect;
-	} );
+	});
 
-	it.each( [
+	it.each([
 		{
 			name: 'prop without sub types',
-			propSchema: createMockPropType( { kind: 'plain', default: 'test value' } ),
+			propSchema: createMockPropType({ kind: 'plain', default: 'test value' }),
 			bind: 'title',
 		},
 		{
 			name: 'prop without support of dynamics',
-			propSchema: createMockPropType( {
+			propSchema: createMockPropType({
 				kind: 'union',
 				prop_types: {
-					string: createMockPropType( { kind: 'plain', key: 'string' } ),
-					'something-else': createMockPropType( {
+					string: createMockPropType({ kind: 'plain', key: 'string' }),
+					'something-else': createMockPropType({
 						kind: 'plain',
 						key: 'something-else',
 						settings: { categories: [] },
-					} ),
+					}),
 				},
 				default: 'test value',
-			} ),
+			}),
 			bind: 'title',
 		},
 		{
@@ -55,78 +55,78 @@ describe( 'usePropDynamicAction', () => {
 			propSchema: null as never,
 			bind: 'title',
 		},
-	] )( 'return an invisible action for $name', ( { propSchema, bind } ) => {
-		mockElementPropSchema( bind, propSchema );
+	])('return an invisible action for $name', ({ propSchema, bind }) => {
+		mockElementPropSchema(bind, propSchema);
 
 		// Act.
-		const { result } = renderHook( () => usePropDynamicAction() );
+		const { result } = renderHook(() => usePropDynamicAction());
 
 		// Assert.
-		expect( result.current.visible ).toBeFalsy();
-	} );
+		expect(result.current.visible).toBeFalsy();
+	});
 
-	it.skip( 'should return a valid control-action object - visible and functional', () => {
+	it.skip('should return a valid control-action object - visible and functional', () => {
 		// TODO: Fix me!
 		// Arrange
 		mockElementPropSchema(
 			'title',
-			createMockPropType( {
+			createMockPropType({
 				kind: 'union',
 				default: 'test value',
 				prop_types: {
-					string: createMockPropType( { kind: 'plain', key: 'string' } ),
-					dynamic: createMockPropType( {
+					string: createMockPropType({ kind: 'plain', key: 'string' }),
+					dynamic: createMockPropType({
 						kind: 'plain',
 						key: 'dynamic',
-						settings: { categories: [ 'url', 'string' ] },
-					} ),
+						settings: { categories: ['url', 'string'] },
+					}),
 				},
-			} )
+			})
 		);
 
-		mockDynamicTags( [
+		mockDynamicTags([
 			{ name: 'tag1', label: 'Tag 1', group: 'group1' },
 			{ name: 'tag2', label: 'Tag 2', group: 'group1' },
-		] );
+		]);
 
 		// Act.
-		const { result } = renderHook( usePropDynamicAction );
+		const { result } = renderHook(usePropDynamicAction);
 
 		// Assert.
-		expect( result.current.visible ).toBeTruthy();
+		expect(result.current.visible).toBeTruthy();
 
 		// Arrange.
 		const onClose = jest.fn();
 		const PopoverContent = result.current.content;
 
 		// Act.
-		renderWithTheme( <PopoverContent close={ onClose } /> );
+		renderWithTheme(<PopoverContent close={onClose} />);
 
-		const tag1 = screen.getByText( 'Tag 1' );
+		const tag1 = screen.getByText('Tag 1');
 
 		// Assert.
-		expect( tag1 ).toBeInTheDocument();
+		expect(tag1).toBeInTheDocument();
 
 		// Act.
-		fireEvent.click( tag1 );
+		fireEvent.click(tag1);
 
 		// Assert.
-		expect( onClose ).toHaveBeenCalled();
-	} );
-} );
+		expect(onClose).toHaveBeenCalled();
+	});
+});
 
-const mockElementPropSchema = ( bind: string, propSchema: PropType ) => {
+const mockElementPropSchema = (bind: string, propSchema: PropType) => {
 	const mockElementType: ElementType = {
 		key: 'heading',
 		controls: [],
 		title: 'Heading',
 		propsSchema: {
-			[ bind ]: propSchema,
+			[bind]: propSchema,
 		},
 	};
 
-	jest.mocked( useElement ).mockReturnValue( { elementType: mockElementType, element: {} as never, settings: {} } );
-	jest.mocked( useBoundProp ).mockReturnValue( {
+	jest.mocked(useElement).mockReturnValue({ elementType: mockElementType, element: {} as never, settings: {} });
+	jest.mocked(useBoundProp).mockReturnValue({
 		value: '',
 		setValue: jest.fn(),
 		bind,
@@ -134,9 +134,9 @@ const mockElementPropSchema = ( bind: string, propSchema: PropType ) => {
 		path: [],
 		restoreValue: jest.fn(),
 		resetValue: jest.fn(),
-	} );
+	});
 };
 
-const mockDynamicTags = ( tags: Partial< DynamicTag >[] ) => {
-	jest.mocked( usePropDynamicTags ).mockReturnValue( tags as DynamicTag[] );
+const mockDynamicTags = (tags: Partial<DynamicTag>[]) => {
+	jest.mocked(usePropDynamicTags).mockReturnValue(tags as DynamicTag[]);
 };

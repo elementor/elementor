@@ -5,35 +5,35 @@ import { screen } from '@testing-library/react';
 
 import { BoxShadowRepeaterControl } from '../box-shadow-repeater-control';
 
-describe( 'BoxShadowRepeaterControl', () => {
-	it( 'should render the box shadow repeater with its label', () => {
-		const propType = createMockPropType( {
+describe('BoxShadowRepeaterControl', () => {
+	it('should render the box shadow repeater with its label', () => {
+		const propType = createMockPropType({
 			kind: 'array',
-			item_prop_type: createMockPropType( { kind: 'object' } ),
-		} );
+			item_prop_type: createMockPropType({ kind: 'object' }),
+		});
 
 		// Act.
-		renderControl( <BoxShadowRepeaterControl />, { value: mockBoxShadow, propType } );
+		renderControl(<BoxShadowRepeaterControl />, { value: mockBoxShadow, propType });
 
 		// Assert.
-		expect( screen.getByText( 'Box shadow' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'inset: 1px 2px 3px 4px' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Box shadow')).toBeInTheDocument();
+		expect(screen.getByText('inset: 1px 2px 3px 4px')).toBeInTheDocument();
+	});
 
-	it( "should render the box shadow repeater with the position as 'outset' if it's null", () => {
-		const propType = createMockPropType( {
+	it("should render the box shadow repeater with the position as 'outset' if it's null", () => {
+		const propType = createMockPropType({
 			kind: 'array',
-			item_prop_type: createMockPropType( { kind: 'object' } ),
-		} );
+			item_prop_type: createMockPropType({ kind: 'object' }),
+		});
 
 		// Act.
-		renderControl( <BoxShadowRepeaterControl />, { value: mockBoxShadowInitial, propType } );
+		renderControl(<BoxShadowRepeaterControl />, { value: mockBoxShadowInitial, propType });
 
 		// Assert.
-		expect( screen.getByText( 'Box shadow' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'outset: 0px 0px 10px 0px' ) ).toBeInTheDocument();
-	} );
-} );
+		expect(screen.getByText('Box shadow')).toBeInTheDocument();
+		expect(screen.getByText('outset: 0px 0px 10px 0px')).toBeInTheDocument();
+	});
+});
 
 const mockBoxShadow: BoxShadowPropValue = {
 	$$type: 'box-shadow',

@@ -13,23 +13,23 @@ const { useMenuItems } = toolsMenu;
 export default function ToolsMenuLocation() {
 	const menuItems = useMenuItems();
 
-	const toolbarMenuItems = menuItems.default.slice( 0, MAX_TOOLBAR_ACTIONS );
-	const popoverMenuItems = menuItems.default.slice( MAX_TOOLBAR_ACTIONS );
+	const toolbarMenuItems = menuItems.default.slice(0, MAX_TOOLBAR_ACTIONS);
+	const popoverMenuItems = menuItems.default.slice(MAX_TOOLBAR_ACTIONS);
 
 	return (
 		<ToolbarMenu>
-			{ toolbarMenuItems.map( ( { MenuItem, id } ) => (
-				<MenuItem key={ id } />
-			) ) }
+			{toolbarMenuItems.map(({ MenuItem, id }) => (
+				<MenuItem key={id} />
+			))}
 			<SendFeedbackPopupLocation />
 			<IntegrationsMenuLocation />
-			{ popoverMenuItems.length > 0 && (
+			{popoverMenuItems.length > 0 && (
 				<ToolbarMenuMore id="elementor-editor-app-bar-tools-more">
-					{ popoverMenuItems.map( ( { MenuItem, id } ) => (
-						<MenuItem key={ id } />
-					) ) }
+					{popoverMenuItems.map(({ MenuItem, id }) => (
+						<MenuItem key={id} />
+					))}
 				</ToolbarMenuMore>
-			) }
+			)}
 		</ToolbarMenu>
 	);
 }

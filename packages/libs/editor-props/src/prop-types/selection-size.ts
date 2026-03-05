@@ -7,10 +7,10 @@ import { unknownChildrenSchema } from './utils';
 
 export const selectionSizePropTypeUtil = createPropUtils(
 	'selection-size',
-	z.strictObject( {
-		selection: z.union( [ keyValuePropTypeUtil.schema, stringPropTypeUtil.schema ] ),
+	z.strictObject({
+		selection: z.union([keyValuePropTypeUtil.schema, stringPropTypeUtil.schema]),
 		size: unknownChildrenSchema,
-	} )
+	})
 );
 
-export type SelectionSizePropValue = z.infer< typeof selectionSizePropTypeUtil.schema >;
+export type SelectionSizePropValue = z.infer<typeof selectionSizePropTypeUtil.schema>;

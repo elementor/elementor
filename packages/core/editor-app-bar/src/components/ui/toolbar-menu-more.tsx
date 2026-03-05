@@ -7,23 +7,23 @@ import { __ } from '@wordpress/i18n';
 import PopoverMenu from './popover-menu';
 import ToolbarMenuItem from './toolbar-menu-item';
 
-type ToolbarMenuMoreProps = PropsWithChildren< {
+type ToolbarMenuMoreProps = PropsWithChildren<{
 	id: string;
-} >;
+}>;
 
-export default function ToolbarMenuMore( { children, id }: ToolbarMenuMoreProps ) {
-	const popupState = usePopupState( {
+export default function ToolbarMenuMore({ children, id }: ToolbarMenuMoreProps) {
+	const popupState = usePopupState({
 		variant: 'popover',
 		popupId: id,
-	} );
+	});
 
 	return (
 		<>
-			<ToolbarMenuItem { ...bindTrigger( popupState ) } title={ __( 'More', 'elementor' ) }>
+			<ToolbarMenuItem {...bindTrigger(popupState)} title={__('More', 'elementor')}>
 				<DotsVerticalIcon />
 			</ToolbarMenuItem>
-			<PopoverMenu onClick={ popupState.close } { ...bindMenu( popupState ) }>
-				{ children }
+			<PopoverMenu onClick={popupState.close} {...bindMenu(popupState)}>
+				{children}
 			</PopoverMenu>
 		</>
 	);

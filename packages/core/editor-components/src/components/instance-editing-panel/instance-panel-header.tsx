@@ -10,13 +10,13 @@ type InstancePanelHeaderProps = {
 	actions?: React.ReactNode;
 };
 
-export function InstancePanelHeader( { componentName, actions }: InstancePanelHeaderProps ) {
+export function InstancePanelHeader({ componentName, actions }: InstancePanelHeaderProps) {
 	return (
-		<PanelHeader sx={ { justifyContent: 'start', px: 2 } }>
-			<Stack direction="row" alignItems="center" flexGrow={ 1 } gap={ 1 } maxWidth="100%">
-				<ComponentsIcon fontSize="small" sx={ { color: 'text.tertiary' } } />
-				<EllipsisWithTooltip title={ componentName } as={ PanelHeaderTitle } sx={ { flexGrow: 1 } } />
-				{ actions }
+		<PanelHeader sx={{ justifyContent: 'start', px: 2 }}>
+			<Stack direction="row" alignItems="center" flexGrow={1} gap={1} maxWidth="100%">
+				<ComponentsIcon fontSize="small" sx={{ color: 'text.tertiary' }} />
+				<EllipsisWithTooltip title={componentName} as={PanelHeaderTitle} sx={{ flexGrow: 1 }} />
+				{actions}
 			</Stack>
 		</PanelHeader>
 	);
@@ -29,10 +29,10 @@ type EditComponentActionProps = {
 	icon: ElementType;
 };
 
-export function EditComponentAction( { label, onClick, disabled = false, icon: Icon }: EditComponentActionProps ) {
+export function EditComponentAction({ label, onClick, disabled = false, icon: Icon }: EditComponentActionProps) {
 	return (
-		<Tooltip title={ label }>
-			<IconButton size="tiny" onClick={ onClick } aria-label={ label } disabled={ disabled }>
+		<Tooltip title={label}>
+			<IconButton size="tiny" onClick={onClick} aria-label={label} disabled={disabled}>
 				<Icon fontSize="tiny" />
 			</IconButton>
 		</Tooltip>

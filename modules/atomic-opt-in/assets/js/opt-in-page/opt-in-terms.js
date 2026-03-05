@@ -20,7 +20,7 @@ const i18n = {
 
 	optIn: {
 		titleText: __( 'You are about to enable Atomic Editor features!', 'elementor' ),
-		introText: __( 'By activating, you’ll get access to the next generation of Elementor’s Editor. This is your chance to explore new capabilities and help shape the future of Elementor! ', 'elementor' ),
+		introText: __( 'By activating, you’ll get access to the next generation of Elementor’s Editor. This is your chance to explore new capabilities and help shape the future of Elementor!', 'elementor' ),
 		details: [
 			__( 'When you activate, you’ll also be activating Containers and Nested Elements. You can turn them back off by going to: WP Admin > Elementor > Settings > Features.', 'elementor' ),
 		],

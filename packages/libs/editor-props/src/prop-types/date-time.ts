@@ -5,10 +5,10 @@ import { unknownChildrenSchema } from './utils';
 
 export const DateTimePropTypeUtil = createPropUtils(
 	'date-time',
-	z.strictObject( {
+	z.strictObject({
 		date: unknownChildrenSchema,
 		time: unknownChildrenSchema,
-	} )
+	})
 );
 
-export type DateTimePropValue = z.infer< typeof DateTimePropTypeUtil.schema >;
+export type DateTimePropValue = z.infer<typeof DateTimePropTypeUtil.schema>;

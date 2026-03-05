@@ -10,36 +10,36 @@ import { TransformSettingsControl } from '../transform-settings-control';
 const CHILDREN_PERSPECTIVE_LABEL = 'Children perspective';
 const TRANSFORM_LABEL = 'Transform';
 
-describe( 'TransformSettingsControl', () => {
-	const sizePropType = createMockPropType( {
+describe('TransformSettingsControl', () => {
+	const sizePropType = createMockPropType({
 		kind: 'object',
 		shape: {
-			unit: createMockPropType( { kind: 'plain' } ),
-			size: createMockPropType( { kind: 'plain' } ),
+			unit: createMockPropType({ kind: 'plain' }),
+			size: createMockPropType({ kind: 'plain' }),
 		},
-	} );
+	});
 
-	const propType = createMockPropType( {
+	const propType = createMockPropType({
 		kind: 'object',
 		shape: {
-			'transform-origin': createMockPropType( {
+			'transform-origin': createMockPropType({
 				kind: 'object',
 				shape: {
 					x: sizePropType,
 					y: sizePropType,
 					z: sizePropType,
 				},
-			} ),
+			}),
 			perspective: sizePropType,
-			'perspective-origin': createMockPropType( {
+			'perspective-origin': createMockPropType({
 				kind: 'object',
 				shape: {
 					x: sizePropType,
 					y: sizePropType,
 				},
-			} ),
+			}),
 		},
-	} );
+	});
 
 	const mockPopupState = {
 		isOpen: true,
@@ -62,73 +62,73 @@ describe( 'TransformSettingsControl', () => {
 		_setChildPopupState: jest.fn(),
 	} as PopupState;
 
-	const anchorRef = { current: document.createElement( 'div' ) };
+	const anchorRef = { current: document.createElement('div') };
 
-	it( 'should render transform origin control', () => {
+	it('should render transform origin control', () => {
 		// Arrange & Act
 		render(
-			<ControlActionsProvider items={ [] }>
-				<PropProvider propType={ propType } value={ null } setValue={ jest.fn() }>
+			<ControlActionsProvider items={[]}>
+				<PropProvider propType={propType} value={null} setValue={jest.fn()}>
 					<TransformSettingsControl
-						popupState={ mockPopupState }
-						anchorRef={ anchorRef }
-						showChildrenPerspective={ false }
+						popupState={mockPopupState}
+						anchorRef={anchorRef}
+						showChildrenPerspective={false}
 					/>
 				</PropProvider>
 			</ControlActionsProvider>
 		);
 
 		// Assert
-		expect( screen.getByText( TRANSFORM_LABEL ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText(TRANSFORM_LABEL)).toBeInTheDocument();
+	});
 
-	it( 'should show children perspective control when showChildrenPerspective is true', () => {
+	it('should show children perspective control when showChildrenPerspective is true', () => {
 		// Arrange & Act
 		render(
-			<ControlActionsProvider items={ [] }>
-				<PropProvider propType={ propType } value={ null } setValue={ jest.fn() }>
+			<ControlActionsProvider items={[]}>
+				<PropProvider propType={propType} value={null} setValue={jest.fn()}>
 					<TransformSettingsControl
-						popupState={ mockPopupState }
-						anchorRef={ anchorRef }
-						showChildrenPerspective={ true }
+						popupState={mockPopupState}
+						anchorRef={anchorRef}
+						showChildrenPerspective={true}
 					/>
 				</PropProvider>
 			</ControlActionsProvider>
 		);
 
 		// Assert
-		expect( screen.getByText( TRANSFORM_LABEL ) ).toBeInTheDocument();
-		expect( screen.getByText( CHILDREN_PERSPECTIVE_LABEL ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText(TRANSFORM_LABEL)).toBeInTheDocument();
+		expect(screen.getByText(CHILDREN_PERSPECTIVE_LABEL)).toBeInTheDocument();
+	});
 
-	it( 'should hide children perspective control when showChildrenPerspective is false', () => {
+	it('should hide children perspective control when showChildrenPerspective is false', () => {
 		// Arrange & Act
 		render(
-			<ControlActionsProvider items={ [] }>
-				<PropProvider propType={ propType } value={ null } setValue={ jest.fn() }>
+			<ControlActionsProvider items={[]}>
+				<PropProvider propType={propType} value={null} setValue={jest.fn()}>
 					<TransformSettingsControl
-						popupState={ mockPopupState }
-						anchorRef={ anchorRef }
-						showChildrenPerspective={ false }
+						popupState={mockPopupState}
+						anchorRef={anchorRef}
+						showChildrenPerspective={false}
 					/>
 				</PropProvider>
 			</ControlActionsProvider>
 		);
 
 		// Assert
-		expect( screen.getByText( TRANSFORM_LABEL ) ).toBeInTheDocument();
-		expect( screen.queryByText( CHILDREN_PERSPECTIVE_LABEL ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.getByText(TRANSFORM_LABEL)).toBeInTheDocument();
+		expect(screen.queryByText(CHILDREN_PERSPECTIVE_LABEL)).not.toBeInTheDocument();
+	});
 
-	it( 'should not render divider before children perspective when showChildrenPerspective is false', () => {
+	it('should not render divider before children perspective when showChildrenPerspective is false', () => {
 		// Arrange & Act
 		const { baseElement } = render(
-			<ControlActionsProvider items={ [] }>
-				<PropProvider propType={ propType } value={ null } setValue={ jest.fn() }>
+			<ControlActionsProvider items={[]}>
+				<PropProvider propType={propType} value={null} setValue={jest.fn()}>
 					<TransformSettingsControl
-						popupState={ mockPopupState }
-						anchorRef={ anchorRef }
-						showChildrenPerspective={ false }
+						popupState={mockPopupState}
+						anchorRef={anchorRef}
+						showChildrenPerspective={false}
 					/>
 				</PropProvider>
 			</ControlActionsProvider>
@@ -136,19 +136,19 @@ describe( 'TransformSettingsControl', () => {
 
 		// Assert
 		// eslint-disable-next-line testing-library/no-node-access
-		const dividers = baseElement.querySelectorAll( 'hr' );
-		expect( dividers ).toHaveLength( 1 );
-	} );
+		const dividers = baseElement.querySelectorAll('hr');
+		expect(dividers).toHaveLength(1);
+	});
 
-	it( 'should render divider before children perspective when showChildrenPerspective is true', () => {
+	it('should render divider before children perspective when showChildrenPerspective is true', () => {
 		// Arrange & Act
 		const { baseElement } = render(
-			<ControlActionsProvider items={ [] }>
-				<PropProvider propType={ propType } value={ null } setValue={ jest.fn() }>
+			<ControlActionsProvider items={[]}>
+				<PropProvider propType={propType} value={null} setValue={jest.fn()}>
 					<TransformSettingsControl
-						popupState={ mockPopupState }
-						anchorRef={ anchorRef }
-						showChildrenPerspective={ true }
+						popupState={mockPopupState}
+						anchorRef={anchorRef}
+						showChildrenPerspective={true}
 					/>
 				</PropProvider>
 			</ControlActionsProvider>
@@ -156,7 +156,7 @@ describe( 'TransformSettingsControl', () => {
 
 		// Assert
 		// eslint-disable-next-line testing-library/no-node-access
-		const dividers = baseElement.querySelectorAll( 'hr' );
-		expect( dividers ).toHaveLength( 2 );
-	} );
-} );
+		const dividers = baseElement.querySelectorAll('hr');
+		expect(dividers).toHaveLength(2);
+	});
+});

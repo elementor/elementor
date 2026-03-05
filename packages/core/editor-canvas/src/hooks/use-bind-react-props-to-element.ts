@@ -1,43 +1,43 @@
 import { useEffect } from 'react';
 
-type Props = Record< string, unknown >;
+type Props = Record<string, unknown>;
 
-export function useBindReactPropsToElement( element: HTMLElement, getProps: () => Props ) {
-	useEffect( () => {
+export function useBindReactPropsToElement(element: HTMLElement, getProps: () => Props) {
+	useEffect(() => {
 		const el = element;
 
-		const { events, attrs } = groupProps( getProps() );
+		const { events, attrs } = groupProps(getProps());
 
-		events.forEach( ( [ eventName, listener ] ) => el.addEventListener( eventName, listener ) );
-		attrs.forEach( ( [ attrName, attrValue ] ) => el.setAttribute( attrName, attrValue ) );
+		events.forEach(([eventName, listener]) => el.addEventListener(eventName, listener));
+		attrs.forEach(([attrName, attrValue]) => el.setAttribute(attrName, attrValue));
 
 		return () => {
-			events.forEach( ( [ eventName, listener ] ) => el.removeEventListener( eventName, listener ) );
-			attrs.forEach( ( [ attrName ] ) => el.removeAttribute( attrName ) );
+			events.forEach(([eventName, listener]) => el.removeEventListener(eventName, listener));
+			attrs.forEach(([attrName]) => el.removeAttribute(attrName));
 		};
-	}, [ getProps, element ] );
+	}, [getProps, element]);
 }
 
 type GroupedProps = {
-	events: Array< [ string, () => void ] >;
-	attrs: Array< [ string, string ] >;
+	events: Array<[string, () => void]>;
+	attrs: Array<[string, string]>;
 };
 
-function groupProps( props: Props ) {
+function groupProps(props: Props) {
 	const eventRegex = /^on(?=[A-Z])/;
 
-	return Object.entries( props ).reduce< GroupedProps >(
-		( acc, [ propName, propValue ] ) => {
-			if ( ! eventRegex.test( propName ) ) {
-				acc.attrs.push( [ propName, propValue as string ] );
+	return Object.entries(props).reduce<GroupedProps>(
+		(acc, [propName, propValue]) => {
+			if (!eventRegex.test(propName)) {
+				acc.attrs.push([propName, propValue as string]);
 
 				return acc;
 			}
 
-			const eventName = propName.replace( eventRegex, '' ).toLowerCase();
+			const eventName = propName.replace(eventRegex, '').toLowerCase();
 			const listener = propValue as () => void;
 
-			acc.events.push( [ eventName, listener ] );
+			acc.events.push([eventName, listener]);
 
 			return acc;
 		},

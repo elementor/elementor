@@ -38,103 +38,103 @@ type MovedElementsResult = {
 
 export type { MoveElementsParams, MoveInput, MovedElement, MovedElementsResult };
 
-export const moveElements = ( {
+export const moveElements = ({
 	moves: movesToMake,
 	title,
-	subtitle = __( 'Elements moved', 'elementor' ),
+	subtitle = __('Elements moved', 'elementor'),
 	onMoveElements,
 	onRestoreElements,
-}: MoveElementsParams ): MovedElementsResult => {
+}: MoveElementsParams): MovedElementsResult => {
 	const undoableMove = undoable(
 		{
-			do: ( { moves }: { moves: MoveInput[] } ): MovedElementsResult => {
+			do: ({ moves }: { moves: MoveInput[] }): MovedElementsResult => {
 				const movedElements: MovedElement[] = [];
 				onMoveElements?.();
 
-				moves.forEach( ( { element, targetContainer, options } ) => {
+				moves.forEach(({ element, targetContainer, options }) => {
 					const sourceElement = element.lookup?.() ?? element;
 					const target = targetContainer.lookup?.() ?? targetContainer;
 
-					if ( ! sourceElement ) {
-						throw new Error( 'Element not found' );
+					if (!sourceElement) {
+						throw new Error('Element not found');
 					}
 
-					if ( ! target ) {
-						throw new Error( 'Target container not found' );
+					if (!target) {
+						throw new Error('Target container not found');
 					}
 
-					if ( ! sourceElement.parent ) {
-						throw new Error( 'Element has no parent container' );
+					if (!sourceElement.parent) {
+						throw new Error('Element has no parent container');
 					}
 
 					const originalContainer = sourceElement.parent;
-					const originalIndex = originalContainer.children?.indexOf( sourceElement ) ?? -1;
+					const originalIndex = originalContainer.children?.indexOf(sourceElement) ?? -1;
 
-					const newElement = moveElement( {
+					const newElement = moveElement({
 						element: sourceElement,
 						targetContainer: target,
 						options: { ...options, useHistory: false },
-					} );
+					});
 
-					movedElements.push( {
+					movedElements.push({
 						element: newElement,
 						originalContainer,
 						originalIndex,
 						targetContainer: target,
 						options,
-					} );
-				} );
+					});
+				});
 
 				return { movedElements };
 			},
-			undo: ( _: { moves: MoveInput[] }, { movedElements }: MovedElementsResult ) => {
+			undo: (_: { moves: MoveInput[] }, { movedElements }: MovedElementsResult) => {
 				onRestoreElements?.();
 
-				[ ...movedElements ].reverse().forEach( ( { element, originalContainer, originalIndex } ) => {
+				[...movedElements].reverse().forEach(({ element, originalContainer, originalIndex }) => {
 					const freshElement = element.lookup?.();
 					const freshOriginalContainer = originalContainer.lookup?.();
 
-					if ( ! freshElement || ! freshOriginalContainer ) {
+					if (!freshElement || !freshOriginalContainer) {
 						return;
 					}
 
-					moveElement( {
+					moveElement({
 						element: freshElement,
 						targetContainer: freshOriginalContainer,
 						options: {
 							useHistory: false,
 							at: originalIndex >= 0 ? originalIndex : undefined,
 						},
-					} );
-				} );
+					});
+				});
 			},
-			redo: ( _: { moves: MoveInput[] }, { movedElements }: MovedElementsResult ): MovedElementsResult => {
+			redo: (_: { moves: MoveInput[] }, { movedElements }: MovedElementsResult): MovedElementsResult => {
 				const newMovedElements: MovedElement[] = [];
 				onMoveElements?.();
 
-				movedElements.forEach( ( { element, originalContainer, originalIndex, targetContainer, options } ) => {
+				movedElements.forEach(({ element, originalContainer, originalIndex, targetContainer, options }) => {
 					const freshElement = element.lookup?.();
 					const freshOriginalContainer = originalContainer.lookup?.();
 					const freshTarget = targetContainer.lookup?.();
 
-					if ( ! freshElement || ! freshOriginalContainer || ! freshTarget ) {
+					if (!freshElement || !freshOriginalContainer || !freshTarget) {
 						return;
 					}
 
-					const newElement = moveElement( {
+					const newElement = moveElement({
 						element: freshElement,
 						targetContainer: freshTarget,
 						options: { ...options, useHistory: false },
-					} );
+					});
 
-					newMovedElements.push( {
+					newMovedElements.push({
 						element: newElement,
 						originalContainer: freshOriginalContainer,
 						originalIndex,
 						targetContainer: freshTarget,
 						options,
-					} );
-				} );
+					});
+				});
 
 				return { movedElements: newMovedElements };
 			},
@@ -145,5 +145,5 @@ export const moveElements = ( {
 		}
 	);
 
-	return undoableMove( { moves: movesToMake } );
+	return undoableMove({ moves: movesToMake });
 };

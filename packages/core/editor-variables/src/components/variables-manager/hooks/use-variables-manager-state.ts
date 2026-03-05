@@ -9,22 +9,22 @@ import { applySelectionFilters, variablesToList } from '../../../utils/variables
 import { getVariableTypes } from '../../../variables-registry/variable-type-registry';
 
 export const useVariablesManagerState = () => {
-	const [ variables, setVariables ] = useState( () => getVariables( false ) );
-	const [ deletedVariables, setDeletedVariables ] = useState< string[] >( [] );
-	const [ isSaveDisabled, setIsSaveDisabled ] = useState( false );
-	const [ isDirty, setIsDirty ] = useState( false );
-	const [ isSaving, setIsSaving ] = useState( false );
-	const [ searchValue, setSearchValue ] = useState( '' );
+	const [variables, setVariables] = useState(() => getVariables(false));
+	const [deletedVariables, setDeletedVariables] = useState<string[]>([]);
+	const [isSaveDisabled, setIsSaveDisabled] = useState(false);
+	const [isDirty, setIsDirty] = useState(false);
+	const [isSaving, setIsSaving] = useState(false);
+	const [searchValue, setSearchValue] = useState('');
 
 	const handleOnChange = useCallback(
-		( newVariables: TVariablesList ) => {
-			setVariables( { ...variables, ...newVariables } );
-			setIsDirty( true );
+		(newVariables: TVariablesList) => {
+			setVariables({ ...variables, ...newVariables });
+			setIsDirty(true);
 		},
-		[ variables ]
+		[variables]
 	);
 
-	const createVariable = useCallback( ( type: string, defaultName: string, defaultValue: string ) => {
+	const createVariable = useCallback((type: string, defaultName: string, defaultValue: string) => {
 		const newId = generateTempId();
 		const newVariable = {
 			id: newId,
@@ -33,62 +33,62 @@ export const useVariablesManagerState = () => {
 			type,
 		};
 
-		setVariables( ( prev ) => ( { ...prev, [ newId ]: newVariable } ) );
-		setIsDirty( true );
+		setVariables((prev) => ({ ...prev, [newId]: newVariable }));
+		setIsDirty(true);
 
 		return newId;
-	}, [] );
+	}, []);
 
-	const handleDeleteVariable = useCallback( ( itemId: string ) => {
-		setDeletedVariables( ( prev ) => [ ...prev, itemId ] );
-		setVariables( ( prev ) => ( { ...prev, [ itemId ]: { ...prev[ itemId ], deleted: true } } ) );
-		setIsDirty( true );
-	}, [] );
+	const handleDeleteVariable = useCallback((itemId: string) => {
+		setDeletedVariables((prev) => [...prev, itemId]);
+		setVariables((prev) => ({ ...prev, [itemId]: { ...prev[itemId], deleted: true } }));
+		setIsDirty(true);
+	}, []);
 
-	const handleStartSync = useCallback( ( itemId: string ) => {
-		setVariables( ( prev ) => ( {
+	const handleStartSync = useCallback((itemId: string) => {
+		setVariables((prev) => ({
 			...prev,
-			[ itemId ]: { ...prev[ itemId ], sync_to_v3: true },
-		} ) );
-		setIsDirty( true );
-	}, [] );
+			[itemId]: { ...prev[itemId], sync_to_v3: true },
+		}));
+		setIsDirty(true);
+	}, []);
 
-	const handleStopSync = useCallback( ( itemId: string ) => {
-		setVariables( ( prev ) => ( {
+	const handleStopSync = useCallback((itemId: string) => {
+		setVariables((prev) => ({
 			...prev,
-			[ itemId ]: { ...prev[ itemId ], sync_to_v3: false },
-		} ) );
-		setIsDirty( true );
-	}, [] );
+			[itemId]: { ...prev[itemId], sync_to_v3: false },
+		}));
+		setIsDirty(true);
+	}, []);
 
-	const handleSearch = ( searchTerm: string ) => {
-		setSearchValue( searchTerm );
+	const handleSearch = (searchTerm: string) => {
+		setSearchValue(searchTerm);
 	};
 
-	const handleSave = useCallback( async (): Promise< { success: boolean } > => {
-		const originalVariables = getVariables( false );
-		setIsSaving( true );
-		const result = await service.batchSave( originalVariables, variables, deletedVariables );
+	const handleSave = useCallback(async (): Promise<{ success: boolean }> => {
+		const originalVariables = getVariables(false);
+		setIsSaving(true);
+		const result = await service.batchSave(originalVariables, variables, deletedVariables);
 
-		if ( result.success ) {
+		if (result.success) {
 			await service.load();
 			const updatedVariables = service.variables();
 
-			setVariables( updatedVariables );
-			setDeletedVariables( [] );
-			setIsDirty( false );
+			setVariables(updatedVariables);
+			setDeletedVariables([]);
+			setIsDirty(false);
 		}
 
 		return { success: result.success };
-	}, [ variables, deletedVariables ] );
+	}, [variables, deletedVariables]);
 
-	const filteredVariables = useCallback( () => {
-		const list = variablesToList( variables ).filter( ( v ) => ! v.deleted );
-		const typeFiltered = applySelectionFilters( list, getVariableTypes() );
-		const searchFiltered = filterBySearch( typeFiltered, searchValue );
+	const filteredVariables = useCallback(() => {
+		const list = variablesToList(variables).filter((v) => !v.deleted);
+		const typeFiltered = applySelectionFilters(list, getVariableTypes());
+		const searchFiltered = filterBySearch(typeFiltered, searchValue);
 
-		return Object.fromEntries( searchFiltered.map( ( { key, ...rest } ) => [ key, rest ] ) );
-	}, [ variables, searchValue ] );
+		return Object.fromEntries(searchFiltered.map(({ key, ...rest }) => [key, rest]));
+	}, [variables, searchValue]);
 
 	return {
 		variables: filteredVariables(),

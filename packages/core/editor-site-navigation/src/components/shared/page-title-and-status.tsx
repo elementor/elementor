@@ -3,8 +3,8 @@ import { Box, Typography } from '@elementor/ui';
 
 import { useReverseHtmlEntities } from '../../hooks/use-reverse-html-entities';
 
-const PageStatus = ( { status }: { status: string } ) => {
-	if ( 'publish' === status ) {
+const PageStatus = ({ status }: { status: string }) => {
+	if ('publish' === status) {
 		return null;
 	}
 
@@ -13,20 +13,20 @@ const PageStatus = ( { status }: { status: string } ) => {
 			component="span"
 			variant="body2"
 			color="text.secondary"
-			sx={ {
+			sx={{
 				textTransform: 'capitalize',
 				fontStyle: 'italic',
 				whiteSpace: 'nowrap',
 				flexBasis: 'content',
-			} }
+			}}
 		>
-			({ status })
+			({status})
 		</Typography>
 	);
 };
 
-const PageTitle = ( { title }: { title: string } ) => {
-	const modifiedTitle = useReverseHtmlEntities( title );
+const PageTitle = ({ title }: { title: string }) => {
+	const modifiedTitle = useReverseHtmlEntities(title);
 
 	return (
 		<Typography
@@ -34,21 +34,21 @@ const PageTitle = ( { title }: { title: string } ) => {
 			variant="body2"
 			color="text.secondary"
 			noWrap
-			sx={ {
+			sx={{
 				flexBasis: 'auto',
-			} }
+			}}
 		>
-			{ modifiedTitle }
+			{modifiedTitle}
 		</Typography>
 	);
 };
 
-export default function PageTitleAndStatus( { title, status }: { title: string; status: string } ) {
+export default function PageTitleAndStatus({ title, status }: { title: string; status: string }) {
 	return (
 		<Box display="flex">
-			<PageTitle title={ title } />
+			<PageTitle title={title} />
 			&nbsp;
-			<PageStatus status={ status } />
+			<PageStatus status={status} />
 		</Box>
 	);
 }

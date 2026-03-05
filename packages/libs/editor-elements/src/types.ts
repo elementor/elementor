@@ -17,7 +17,7 @@ export type ElementType = {
 	key: string;
 	controls: ControlItem[];
 	propsSchema: PropsSchema;
-	dependenciesPerTargetMapping?: Record< string, string[] >;
+	dependenciesPerTargetMapping?: Record<string, string[]>;
 	styleStates?: ClassState[];
 	pseudoStates?: PseudoState[];
 	title: string;
@@ -39,7 +39,7 @@ export type Control = {
 		label?: string;
 		description?: string;
 		type: string;
-		props: Record< string, unknown >;
+		props: Record<string, unknown>;
 		meta?: {
 			layout?: ControlLayout;
 			topDivider?: boolean;
@@ -52,7 +52,7 @@ export type ElementControl = {
 	value: {
 		type: string;
 		label?: string;
-		props: Record< string, unknown >;
+		props: Record<string, unknown>;
 		meta?: {
 			layout?: ControlLayout;
 			topDivider?: boolean;

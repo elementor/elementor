@@ -4,32 +4,32 @@ import { act, renderHook } from '@testing-library/react';
 
 import type { ExtendedWindow } from '../edit-mode';
 
-describe( 'edit mode', () => {
-	it( 'should return the current edit mode, and listen for changes', () => {
+describe('edit mode', () => {
+	it('should return the current edit mode, and listen for changes', () => {
 		// Arrange.
-		mockEditMode( 'edit' );
+		mockEditMode('edit');
 
 		// Act.
-		const { result } = renderHook( useEditMode );
+		const { result } = renderHook(useEditMode);
 
 		// Assert.
-		expect( result.current ).toBe( 'edit' );
+		expect(result.current).toBe('edit');
 
 		// Act.
-		act( () => {
-			changeEditMode( 'preview' );
-		} );
+		act(() => {
+			changeEditMode('preview');
+		});
 
 		// Assert.
-		expect( result.current ).toBe( 'preview' );
-	} );
-} );
+		expect(result.current).toBe('preview');
+	});
+});
 
-function mockEditMode( initialMode: EditMode ) {
+function mockEditMode(initialMode: EditMode) {
 	let currentMode: EditMode = initialMode;
 
-	( window as unknown as ExtendedWindow ).elementor = {
-		changeEditMode: ( newMode ) => {
+	(window as unknown as ExtendedWindow).elementor = {
+		changeEditMode: (newMode) => {
 			currentMode = newMode;
 
 			dispatchEditModeChange();

@@ -24,31 +24,31 @@ const initTextStroke = {
 	},
 };
 
-const TEXT_STROKE_LABEL = __( 'Text stroke', 'elementor' );
+const TEXT_STROKE_LABEL = __('Text stroke', 'elementor');
 
 export const TextStrokeField = () => {
-	const { value, setValue, canEdit } = useStylesField( 'stroke', {
+	const { value, setValue, canEdit } = useStylesField('stroke', {
 		history: { propDisplayName: TEXT_STROKE_LABEL },
-	} );
+	});
 
 	const addTextStroke = () => {
-		setValue( initTextStroke );
+		setValue(initTextStroke);
 	};
 
 	const removeTextStroke = () => {
-		setValue( null );
+		setValue(null);
 	};
 
-	const hasTextStroke = Boolean( value );
+	const hasTextStroke = Boolean(value);
 
 	return (
-		<StylesField bind={ 'stroke' } propDisplayName={ TEXT_STROKE_LABEL }>
+		<StylesField bind={'stroke'} propDisplayName={TEXT_STROKE_LABEL}>
 			<AddOrRemoveContent
-				isAdded={ hasTextStroke }
-				onAdd={ addTextStroke }
-				onRemove={ removeTextStroke }
-				disabled={ ! canEdit }
-				renderLabel={ () => <ControlLabel>{ TEXT_STROKE_LABEL }</ControlLabel> }
+				isAdded={hasTextStroke}
+				onAdd={addTextStroke}
+				onRemove={removeTextStroke}
+				disabled={!canEdit}
+				renderLabel={() => <ControlLabel>{TEXT_STROKE_LABEL}</ControlLabel>}
 			>
 				<StrokeControl />
 			</AddOrRemoveContent>

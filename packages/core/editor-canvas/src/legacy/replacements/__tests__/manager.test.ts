@@ -4,45 +4,45 @@ import { createTemplatedElementTypeWithReplacements } from '../manager';
 
 const MOCK_ELEMENT_TYPE = 'test-element';
 
-const createMockRenderer = () => ( {
+const createMockRenderer = () => ({
 	register: jest.fn(),
-	render: jest.fn( () => Promise.resolve( '<div>Element</div>' ) ),
-} );
+	render: jest.fn(() => Promise.resolve('<div>Element</div>')),
+});
 
-const createMockElementConfig = () => ( {
+const createMockElementConfig = () => ({
 	twig_templates: {},
 	twig_main_template: 'main',
 	atomic_props_schema: {},
 	base_styles_dictionary: {},
-} );
+});
 
-describe( 'createTemplatedElementTypeWithReplacements', () => {
-	beforeEach( () => {
+describe('createTemplatedElementTypeWithReplacements', () => {
+	beforeEach(() => {
 		mockLegacyElementor();
-	} );
+	});
 
-	it( 'should return the correct element type', () => {
+	it('should return the correct element type', () => {
 		// Arrange
-		const ElementType = createTemplatedElementTypeWithReplacements( {
+		const ElementType = createTemplatedElementTypeWithReplacements({
 			type: MOCK_ELEMENT_TYPE,
 			renderer: createMockRenderer(),
 			element: createMockElementConfig(),
-		} );
+		});
 
 		// Act
 		const typeInstance = new ElementType();
 
 		// Assert
-		expect( typeInstance.getType() ).toBe( MOCK_ELEMENT_TYPE );
-	} );
+		expect(typeInstance.getType()).toBe(MOCK_ELEMENT_TYPE);
+	});
 
-	it( 'should return the same view class for multiple type instances', () => {
+	it('should return the same view class for multiple type instances', () => {
 		// Arrange
-		const ElementType = createTemplatedElementTypeWithReplacements( {
+		const ElementType = createTemplatedElementTypeWithReplacements({
 			type: MOCK_ELEMENT_TYPE,
 			renderer: createMockRenderer(),
 			element: createMockElementConfig(),
-		} );
+		});
 
 		// Act
 		const typeInstance1 = new ElementType();
@@ -51,6 +51,6 @@ describe( 'createTemplatedElementTypeWithReplacements', () => {
 		const viewClass2 = typeInstance2.getView();
 
 		// Assert
-		expect( viewClass1 ).toBe( viewClass2 );
-	} );
-} );
+		expect(viewClass1).toBe(viewClass2);
+	});
+});

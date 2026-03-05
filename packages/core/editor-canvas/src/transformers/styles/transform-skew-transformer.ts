@@ -7,9 +7,9 @@ type TransformSkew = {
 
 const defaultSkew = '0deg';
 
-export const transformSkewTransformer = createTransformer( ( value: TransformSkew ) => {
+export const transformSkewTransformer = createTransformer((value: TransformSkew) => {
 	const x = value?.x ?? defaultSkew;
 	const y = value?.y ?? defaultSkew;
 
-	return `skew(${ x }, ${ y })`;
-} );
+	return `skew(${x}, ${y})`;
+});

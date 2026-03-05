@@ -6,7 +6,7 @@ import { screen } from '@testing-library/react';
 
 import { colorVariablePropTypeUtil } from '../../prop-types/color-variable-prop-type';
 
-describe( 'BoxShadowRepeaterControl with editor-variables', () => {
+describe('BoxShadowRepeaterControl with editor-variables', () => {
 	const TEST_COLOR_VARIABLE_ID = 'e-gc-1';
 
 	const mockBoxShadowWithGlobalColor: BoxShadowPropValue = {
@@ -41,11 +41,11 @@ describe( 'BoxShadowRepeaterControl with editor-variables', () => {
 		],
 	};
 
-	it( 'should render box shadow repeater with global color variable', () => {
-		const propType = createMockPropType( {
+	it('should render box shadow repeater with global color variable', () => {
+		const propType = createMockPropType({
 			kind: 'array',
-			item_prop_type: createMockPropType( { kind: 'object' } ),
-		} );
+			item_prop_type: createMockPropType({ kind: 'object' }),
+		});
 
 		const props = {
 			value: mockBoxShadowWithGlobalColor,
@@ -53,10 +53,10 @@ describe( 'BoxShadowRepeaterControl with editor-variables', () => {
 		};
 
 		// Act.
-		renderControl( <BoxShadowRepeaterControl />, props );
+		renderControl(<BoxShadowRepeaterControl />, props);
 
 		// Assert.
-		expect( screen.getByText( 'Box shadow' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'outset: 0px 0px 10px 0px' ) ).toBeInTheDocument();
-	} );
-} );
+		expect(screen.getByText('Box shadow')).toBeInTheDocument();
+		expect(screen.getByText('outset: 0px 0px 10px 0px')).toBeInTheDocument();
+	});
+});

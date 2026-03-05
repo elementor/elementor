@@ -4,20 +4,20 @@ import { type PropTypeKey } from '@elementor/editor-props';
 
 import { getVariableType } from '../variables-registry/variable-type-registry';
 
-type Props = PropsWithChildren< { propTypeKey: PropTypeKey } >;
+type Props = PropsWithChildren<{ propTypeKey: PropTypeKey }>;
 
-const VariableTypeContext = createContext< PropTypeKey | null >( null );
+const VariableTypeContext = createContext<PropTypeKey | null>(null);
 
-export function VariableTypeProvider( { children, propTypeKey }: Props ) {
-	return <VariableTypeContext.Provider value={ propTypeKey }>{ children }</VariableTypeContext.Provider>;
+export function VariableTypeProvider({ children, propTypeKey }: Props) {
+	return <VariableTypeContext.Provider value={propTypeKey}>{children}</VariableTypeContext.Provider>;
 }
 
 export function useVariableType() {
-	const context = useContext( VariableTypeContext );
+	const context = useContext(VariableTypeContext);
 
-	if ( context === null ) {
-		throw new Error( 'useVariableType must be used within a VariableTypeProvider' );
+	if (context === null) {
+		throw new Error('useVariableType must be used within a VariableTypeProvider');
 	}
 
-	return getVariableType( context );
+	return getVariableType(context);
 }

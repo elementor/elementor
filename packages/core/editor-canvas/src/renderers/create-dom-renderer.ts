@@ -1,16 +1,16 @@
 import { createArrayLoader, createEnvironment, type TwingArrayLoader, type TwingEnvironment } from '@elementor/twing';
 
 export type DomRenderer = {
-	register: TwingArrayLoader[ 'setTemplate' ];
-	render: TwingEnvironment[ 'render' ];
+	register: TwingArrayLoader['setTemplate'];
+	render: TwingEnvironment['render'];
 };
 
 export function createDomRenderer(): DomRenderer {
-	const loader = createArrayLoader( {} );
-	const environment = createEnvironment( loader );
+	const loader = createArrayLoader({});
+	const environment = createEnvironment(loader);
 
-	environment.registerEscapingStrategy( escapeHtmlTag, 'html_tag' );
-	environment.registerEscapingStrategy( escapeURL, 'full_url' );
+	environment.registerEscapingStrategy(escapeHtmlTag, 'html_tag');
+	environment.registerEscapingStrategy(escapeURL, 'full_url');
 
 	return {
 		register: loader.setTemplate,
@@ -18,7 +18,7 @@ export function createDomRenderer(): DomRenderer {
 	};
 }
 
-function escapeHtmlTag( value: string ) {
+function escapeHtmlTag(value: string) {
 	const allowedTags = [
 		'a',
 		'article',
@@ -40,16 +40,16 @@ function escapeHtmlTag( value: string ) {
 		'span',
 	];
 
-	return allowedTags.includes( value ) ? value : 'div';
+	return allowedTags.includes(value) ? value : 'div';
 }
 
-function escapeURL( value: string ) {
-	const allowedProtocols = [ 'http:', 'https:', 'mailto:', 'tel:' ];
+function escapeURL(value: string) {
+	const allowedProtocols = ['http:', 'https:', 'mailto:', 'tel:'];
 
 	try {
-		const parsed = new URL( value );
+		const parsed = new URL(value);
 
-		return allowedProtocols.includes( parsed.protocol ) ? value : '';
+		return allowedProtocols.includes(parsed.protocol) ? value : '';
 	} catch {
 		return '';
 	}

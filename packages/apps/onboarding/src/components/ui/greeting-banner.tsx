@@ -8,11 +8,11 @@ interface GreetingBannerProps {
 	children: ReactNode;
 }
 
-export function GreetingBanner( { children }: GreetingBannerProps ) {
+export function GreetingBanner({ children }: GreetingBannerProps) {
 	return (
 		<GreetingBannerRoot>
 			<Typography variant="body1" color="text.primary" align="center">
-				{ children }
+				{children}
 			</Typography>
 		</GreetingBannerRoot>
 	);

@@ -17,7 +17,7 @@ type Props = {
 	excludedBreakpoints?: string[];
 };
 
-export const createInteractionItemValue = ( overrides: Props = {} ): InteractionItemValue => {
+export const createInteractionItemValue = (overrides: Props = {}): InteractionItemValue => {
 	const {
 		interactionId = 'test-id',
 		trigger = 'load',
@@ -31,9 +31,9 @@ export const createInteractionItemValue = ( overrides: Props = {} ): Interaction
 	} = overrides;
 
 	const baseValue: InteractionItemValue = {
-		interaction_id: createString( interactionId ),
-		trigger: createString( trigger ),
-		animation: createAnimationPreset( {
+		interaction_id: createString(interactionId),
+		trigger: createString(trigger),
+		animation: createAnimationPreset({
 			effect,
 			type,
 			direction,
@@ -41,13 +41,13 @@ export const createInteractionItemValue = ( overrides: Props = {} ): Interaction
 			delay,
 			replay,
 			easing,
-		} ),
+		}),
 	};
 
 	const { excludedBreakpoints } = overrides;
 
-	if ( excludedBreakpoints && excludedBreakpoints.length > 0 ) {
-		baseValue.breakpoints = createInteractionBreakpoints( excludedBreakpoints );
+	if (excludedBreakpoints && excludedBreakpoints.length > 0) {
+		baseValue.breakpoints = createInteractionBreakpoints(excludedBreakpoints);
 	}
 
 	return baseValue;

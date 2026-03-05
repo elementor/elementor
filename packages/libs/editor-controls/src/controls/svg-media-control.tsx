@@ -17,130 +17,130 @@ import { useUnfilteredFilesUpload } from '../hooks/use-unfiltered-files-upload';
 const TILE_SIZE = 8;
 const TILE_WHITE = 'transparent';
 const TILE_BLACK = '#c1c1c1';
-export const TILES_GRADIENT_FORMULA = `linear-gradient(45deg, ${ TILE_BLACK } 25%, ${ TILE_WHITE } 0, ${ TILE_WHITE } 75%, ${ TILE_BLACK } 0, ${ TILE_BLACK })`;
+export const TILES_GRADIENT_FORMULA = `linear-gradient(45deg, ${TILE_BLACK} 25%, ${TILE_WHITE} 0, ${TILE_WHITE} 75%, ${TILE_BLACK} 0, ${TILE_BLACK})`;
 
-const StyledCard = styled( Card )`
+const StyledCard = styled(Card)`
 	background-color: white;
-	background-image: ${ TILES_GRADIENT_FORMULA }, ${ TILES_GRADIENT_FORMULA };
-	background-size: ${ TILE_SIZE }px ${ TILE_SIZE }px;
+	background-image: ${TILES_GRADIENT_FORMULA}, ${TILES_GRADIENT_FORMULA};
+	background-size: ${TILE_SIZE}px ${TILE_SIZE}px;
 	background-position:
 		0 0,
-		${ TILE_SIZE / 2 }px ${ TILE_SIZE / 2 }px;
+		${TILE_SIZE / 2}px ${TILE_SIZE / 2}px;
 	border: none;
 `;
 
-const StyledCardMediaContainer = styled( Stack )`
+const StyledCardMediaContainer = styled(Stack)`
 	position: relative;
 	height: 140px;
 	object-fit: contain;
 	padding: 5px;
 	justify-content: center;
 	align-items: center;
-	background-color: rgba( 255, 255, 255, 0.37 );
+	background-color: rgba(255, 255, 255, 0.37);
 `;
 
 const MODE_BROWSE: OpenOptions = { mode: 'browse' };
 const MODE_UPLOAD: OpenOptions = { mode: 'upload' };
 
-export const SvgMediaControl = createControl( () => {
-	const { value, setValue } = useBoundProp( imageSrcPropTypeUtil );
+export const SvgMediaControl = createControl(() => {
+	const { value, setValue } = useBoundProp(imageSrcPropTypeUtil);
 	const { id, url } = value ?? {};
-	const { data: attachment, isFetching } = useWpMediaAttachment( id?.value || null );
+	const { data: attachment, isFetching } = useWpMediaAttachment(id?.value || null);
 	const src = attachment?.url ?? url?.value ?? null;
 	const { data: allowSvgUpload } = useUnfilteredFilesUpload();
-	const [ unfilteredModalOpenState, setUnfilteredModalOpenState ] = useState( false );
+	const [unfilteredModalOpenState, setUnfilteredModalOpenState] = useState(false);
 	const { isAdmin } = useCurrentUserCapabilities();
 
-	const { open } = useWpMediaFrame( {
-		mediaTypes: [ 'svg' ],
+	const { open } = useWpMediaFrame({
+		mediaTypes: ['svg'],
 		multiple: false,
 		selected: id?.value || null,
-		onSelect: ( selectedAttachment ) => {
-			setValue( {
+		onSelect: (selectedAttachment) => {
+			setValue({
 				id: {
 					$$type: 'image-attachment-id',
 					value: selectedAttachment.id,
 				},
 				url: null,
-			} );
+			});
 		},
-	} );
+	});
 
-	const onCloseUnfilteredModal = ( enabled: boolean ) => {
-		setUnfilteredModalOpenState( false );
+	const onCloseUnfilteredModal = (enabled: boolean) => {
+		setUnfilteredModalOpenState(false);
 
-		if ( enabled ) {
-			open( MODE_UPLOAD );
+		if (enabled) {
+			open(MODE_UPLOAD);
 		}
 	};
 
-	const handleClick = ( openOptions?: OpenOptions ) => {
-		if ( ! allowSvgUpload && openOptions === MODE_UPLOAD ) {
-			setUnfilteredModalOpenState( true );
+	const handleClick = (openOptions?: OpenOptions) => {
+		if (!allowSvgUpload && openOptions === MODE_UPLOAD) {
+			setUnfilteredModalOpenState(true);
 		} else {
-			open( openOptions );
+			open(openOptions);
 		}
 	};
 
 	const infotipProps = {
-		title: __( "Sorry, you can't upload that file yet.", 'elementor' ),
+		title: __("Sorry, you can't upload that file yet.", 'elementor'),
 		description: (
 			<>
-				{ __( 'To upload them anyway, ask the site administrator to enable unfiltered', 'elementor' ) }
+				{__('To upload them anyway, ask the site administrator to enable unfiltered', 'elementor')}
 				<br />
-				{ __( 'file uploads.', 'elementor' ) }
+				{__('file uploads.', 'elementor')}
 			</>
 		),
-		isEnabled: ! isAdmin,
+		isEnabled: !isAdmin,
 	};
 
 	return (
-		<Stack gap={ 1 } aria-label="SVG Control">
-			<EnableUnfilteredModal open={ unfilteredModalOpenState } onClose={ onCloseUnfilteredModal } />
+		<Stack gap={1} aria-label="SVG Control">
+			<EnableUnfilteredModal open={unfilteredModalOpenState} onClose={onCloseUnfilteredModal} />
 			<ControlActions>
 				<StyledCard variant="outlined">
 					<StyledCardMediaContainer>
-						{ isFetching ? (
+						{isFetching ? (
 							<CircularProgress role="progressbar" />
 						) : (
 							<CardMedia
 								component="img"
-								image={ src }
-								alt={ __( 'Preview SVG', 'elementor' ) }
-								sx={ { maxHeight: '140px', width: '50px' } }
+								image={src}
+								alt={__('Preview SVG', 'elementor')}
+								sx={{ maxHeight: '140px', width: '50px' }}
 							/>
-						) }
+						)}
 					</StyledCardMediaContainer>
 					<CardOverlay
-						sx={ {
+						sx={{
 							'&:hover': {
 								backgroundColor: 'rgba( 0, 0, 0, 0.75 )',
 							},
-						} }
+						}}
 					>
-						<Stack gap={ 1 }>
+						<Stack gap={1}>
 							<Button
 								size="tiny"
 								color="inherit"
 								variant="outlined"
-								onClick={ () => handleClick( MODE_BROWSE ) }
+								onClick={() => handleClick(MODE_BROWSE)}
 								aria-label="Select SVG"
 							>
-								{ __( 'Select SVG', 'elementor' ) }
+								{__('Select SVG', 'elementor')}
 							</Button>
-							<ConditionalControlInfotip { ...infotipProps }>
+							<ConditionalControlInfotip {...infotipProps}>
 								<span>
-									<ThemeProvider colorScheme={ isAdmin ? 'light' : 'dark' }>
+									<ThemeProvider colorScheme={isAdmin ? 'light' : 'dark'}>
 										<Button
 											size="tiny"
 											variant="text"
 											color="inherit"
-											startIcon={ <UploadIcon /> }
-											disabled={ ! isAdmin }
-											onClick={ () => isAdmin && handleClick( MODE_UPLOAD ) }
+											startIcon={<UploadIcon />}
+											disabled={!isAdmin}
+											onClick={() => isAdmin && handleClick(MODE_UPLOAD)}
 											aria-label="Upload SVG"
 										>
-											{ __( 'Upload', 'elementor' ) }
+											{__('Upload', 'elementor')}
 										</Button>
 									</ThemeProvider>
 								</span>
@@ -151,4 +151,4 @@ export const SvgMediaControl = createControl( () => {
 			</ControlActions>
 		</Stack>
 	);
-} );
+});

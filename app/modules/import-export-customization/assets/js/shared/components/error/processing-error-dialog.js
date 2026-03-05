@@ -39,7 +39,7 @@ export const messagesContent = {
 	general: {
 		title: __( 'Unable to download the Website Template', 'elementor' ),
 		text: <>
-			{ __( 'We couldn’t download the Website Template due to technical difficulties on our part. Try again and if the problem persists contact ', 'elementor' ) }
+			{ __( 'We couldn’t download the Website Template due to technical difficulties on our part. Try again and if the problem persists contact', 'elementor' ) }
 			<Link href="https://my.elementor.com/support-center/">
 				{ __( 'Support', 'elementor' ) }
 			</Link>
@@ -52,7 +52,7 @@ export const messagesContent = {
 	'invalid-zip-file': {
 		title: __( 'Couldn’t use the .zip file', 'elementor' ),
 		text: <>
-			{ __( 'Seems like there is a problem with the zip’s files. Try installing again and if the problem persists contact ', 'elementor' ) }
+			{ __( 'Seems like there is a problem with the zip’s files. Try installing again and if the problem persists contact', 'elementor' ) }
 			<Link href="https://my.elementor.com/support-center/">
 				{ __( 'Support', 'elementor' ) }
 			</Link>
@@ -62,11 +62,11 @@ export const messagesContent = {
 		title: __( 'Unable to download the Website Template', 'elementor' ),
 		text: (
 			<>
-				{ __( 'It took too much time to download your Website Template and we were unable to complete the process. If all the Website Template’s parts don’t appear in ', 'elementor' ) }
+				{ __( 'It took too much time to download your Website Template and we were unable to complete the process. If all the Website Template’s parts don’t appear in', 'elementor' ) }
 				<Link href={ elementorAppConfig.pages_url } >
 					{ __( 'Pages', 'elementor' ) }
 				</Link>
-				{ __( ', try again and if the problem persists contact ', 'elementor' ) }
+				{ __( ', try again and if the problem persists contact', 'elementor' ) }
 				<Link href="https://my.elementor.com/support-center/">
 					{ __( 'Support', 'elementor' ) }
 				</Link>
@@ -76,7 +76,7 @@ export const messagesContent = {
 	'invalid-kit-library-zip-error': {
 		title: __( 'Unable to download the Website Template', 'elementor' ),
 		text: <>
-			{ __( 'We couldn’t download the Website Template due to technical difficulty on our part. Try again in a few minutes and if the problem persists contact ', 'elementor' ) }
+			{ __( 'We couldn’t download the Website Template due to technical difficulty on our part. Try again in a few minutes and if the problem persists contact', 'elementor' ) }
 			<Link href="https://my.elementor.com/support-center/" >
 				{ __( 'Support', 'elementor' ) }
 			</Link>
@@ -102,7 +102,7 @@ export const messagesContent = {
 		title: __( 'Couldn’t Export the Website Template', 'elementor' ),
 		text: (
 			<>
-				{ __( 'The export failed because it will pass the maximum Website Templates you can export. ', 'elementor' ) }
+				{ __( 'The export failed because it will pass the maximum Website Templates you can export.', 'elementor' ) }
 				<Link href="https://go.elementor.com/app-general-load-issue/" >
 					{ __( 'Learn more', 'elementor' ) }
 				</Link>
@@ -113,7 +113,7 @@ export const messagesContent = {
 		title: __( 'Couldn’t fetch quota', 'elementor' ),
 		text: (
 			<>
-				{ __( 'Failed to fetch quota, please try again. If the problem continues, contact ', 'elementor' ) }
+				{ __( 'Failed to fetch quota, please try again. If the problem continues, contact', 'elementor' ) }
 				<Link href="https://my.elementor.com/support-center/">
 					{ __( 'Support', 'elementor' ) }
 				</Link>
@@ -128,7 +128,7 @@ export const messagesContent = {
 		title: __( 'Couldn’t Upload to Library', 'elementor' ),
 		text: (
 			<>
-				{ __( 'We couldn’t add your export to the library. Try again. ', 'elementor' ) }
+				{ __( 'We couldn’t add your export to the library. Try again.', 'elementor' ) }
 				<Link href="https://go.elementor.com/app-import-export-common-errors" >
 					{ __( 'Learn more', 'elementor' ) }
 				</Link>
@@ -139,7 +139,7 @@ export const messagesContent = {
 		title: __( 'Unable to download the Website Template', 'elementor' ),
 		text: (
 			<>
-				{ __( 'We couldn’t download the Website Template due to technical difficulties on our part. Try again and if the problem persists contact ', 'elementor' ) }
+				{ __( 'We couldn’t download the Website Template due to technical difficulties on our part. Try again and if the problem persists contact', 'elementor' ) }
 				<Link href="https://my.elementor.com/support-center/">
 					{ __( 'Support', 'elementor' ) }
 				</Link>
@@ -154,7 +154,7 @@ export const messagesContent = {
 		title: __( 'Couldn’t save media files to the cloud', 'elementor' ),
 		text: (
 			<>
-				{ __( 'We ran into a problem while saving your media files to the cloud. Please try again. If the issue persists, edit the Content section and choose "Link to media" to save it as a reference. ', 'elementor' ) }
+				{ __( 'We ran into a problem while saving your media files to the cloud. Please try again. If the issue persists, edit the Content section and choose "Link to media" to save it as a reference.', 'elementor' ) }
 				<Link href="https://go.elementor.com/app-import-export-common-errors">
 					{ __( 'Learn more', 'elementor' ) }
 				</Link>
@@ -173,7 +173,7 @@ export const messagesContent = {
 				</Typography>
 				<Typography variant="body2">
 					{ sprintf( /* Translators: %s: Quota threshold in GB */
-						__( 'The maximum website template library size is %s GB. To save this file, you can either export it locally as a .zip file or get more storage by ', 'elementor' ),
+						__( 'The maximum website template library size is %s GB. To save this file, you can either export it locally as a .zip file or get more storage by', 'elementor' ),
 						maxSize,
 					) }
 					<Link href="https://go.elementor.com/go-pro-cloud-website-templates-library-advanced/">

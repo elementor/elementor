@@ -5,16 +5,16 @@ import { __privateListenTo as listenTo, v1ReadyEvent } from '@elementor/editor-v
 import { NoticePortal } from './components/notice-portal';
 import { createNoticeView } from './utils/create-notice-view';
 
-export function register( Component: React.ComponentType ) {
-	injectIntoTop( {
+export function register(Component: React.ComponentType) {
+	injectIntoTop({
 		id: 'editor-elements-panel-notice',
-		component: () => <NoticePortal component={ Component } />,
-	} );
+		component: () => <NoticePortal component={Component} />,
+	});
 
-	listenTo( v1ReadyEvent(), () => {
+	listenTo(v1ReadyEvent(), () => {
 		window.elementor?.hooks?.addFilter(
 			'panel/elements/regionViews',
-			( regionViews, { notice }: Record< string, unknown > ) => {
+			(regionViews, { notice }: Record<string, unknown>) => {
 				regionViews.notice = {
 					region: notice,
 					view: createNoticeView(),
@@ -23,5 +23,5 @@ export function register( Component: React.ComponentType ) {
 				return regionViews;
 			}
 		);
-	} );
+	});
 }

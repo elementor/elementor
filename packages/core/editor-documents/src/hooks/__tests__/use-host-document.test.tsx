@@ -4,47 +4,47 @@ import { __createStore, __dispatch, __registerSlice, type SliceState, type Store
 import { slice } from '../../store';
 import useHostDocument from '../use-host-document';
 
-describe( '@elementor/editor-documents - useHostDocument', () => {
+describe('@elementor/editor-documents - useHostDocument', () => {
 	const mockDocument = createMockDocument();
 
-	let store: Store< SliceState< typeof slice > >;
+	let store: Store<SliceState<typeof slice>>;
 
-	beforeEach( () => {
-		__registerSlice( slice );
+	beforeEach(() => {
+		__registerSlice(slice);
 		store = __createStore();
-	} );
+	});
 
-	it( 'should return the host document', () => {
+	it('should return the host document', () => {
 		// Arrange.
 		__dispatch(
-			slice.actions.init( {
-				entities: { [ mockDocument.id ]: mockDocument },
+			slice.actions.init({
+				entities: { [mockDocument.id]: mockDocument },
 				activeId: null,
 				hostId: mockDocument.id,
-			} )
+			})
 		);
 
 		// Act.
-		const { result } = renderHookWithStore( useHostDocument, store );
+		const { result } = renderHookWithStore(useHostDocument, store);
 
 		// Assert.
-		expect( result.current ).toEqual( expect.objectContaining( { id: mockDocument.id } ) );
-	} );
+		expect(result.current).toEqual(expect.objectContaining({ id: mockDocument.id }));
+	});
 
-	it( 'should return null when the host document is not found', () => {
+	it('should return null when the host document is not found', () => {
 		// Arrange.
 		__dispatch(
-			slice.actions.init( {
-				entities: { [ mockDocument.id ]: mockDocument },
+			slice.actions.init({
+				entities: { [mockDocument.id]: mockDocument },
 				activeId: null,
 				hostId: null,
-			} )
+			})
 		);
 
 		// Act.
-		const { result } = renderHookWithStore( useHostDocument, store );
+		const { result } = renderHookWithStore(useHostDocument, store);
 
 		// Assert.
-		expect( result.current ).toBeNull();
-	} );
-} );
+		expect(result.current).toBeNull();
+	});
+});

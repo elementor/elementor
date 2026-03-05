@@ -6,20 +6,19 @@ import {
 import { type Document, type ExtendedWindow, type V1Document } from '../types';
 
 export function getV1DocumentsManager() {
-	const documentsManager = ( window as unknown as ExtendedWindow ).elementor?.documents;
+	const documentsManager = (window as unknown as ExtendedWindow).elementor?.documents;
 
-	if ( ! documentsManager ) {
-		throw new Error( 'Elementor Editor V1 documents manager not found' );
+	if (!documentsManager) {
+		throw new Error('Elementor Editor V1 documents manager not found');
 	}
 
 	return documentsManager;
 }
 
-export function getV1DocumentsExitTo( documentData: V1Document ) {
-	const exitPreference =
-		( window as unknown as ExtendedWindow ).elementor?.getPreferences?.( 'exit_to' ) || 'this_post';
+export function getV1DocumentsExitTo(documentData: V1Document) {
+	const exitPreference = (window as unknown as ExtendedWindow).elementor?.getPreferences?.('exit_to') || 'this_post';
 
-	switch ( exitPreference ) {
+	switch (exitPreference) {
 		case 'dashboard':
 			return documentData.config.urls.main_dashboard;
 
@@ -32,22 +31,22 @@ export function getV1DocumentsExitTo( documentData: V1Document ) {
 	}
 }
 
-function getV1DocumentShowCopyAndShare( documentData: V1Document | null ) {
+function getV1DocumentShowCopyAndShare(documentData: V1Document | null) {
 	return documentData?.config?.panel?.show_copy_and_share ?? false;
 }
 
-export function getV1DocumentPermalink( documentData: V1Document ) {
+export function getV1DocumentPermalink(documentData: V1Document) {
 	return documentData.config.urls.permalink ?? '';
 }
 
-export function normalizeV1Document( documentData: V1Document ): Document {
+export function normalizeV1Document(documentData: V1Document): Document {
 	// Draft or autosave.
 	const isUnpublishedRevision = documentData.config.revisions.current_id !== documentData.id;
-	const exitToUrl = getV1DocumentsExitTo( documentData );
+	const exitToUrl = getV1DocumentsExitTo(documentData);
 
 	return {
 		id: documentData.id,
-		title: documentData.container.settings.get( 'post_title' ),
+		title: documentData.container.settings.get('post_title'),
 		type: {
 			value: documentData.config.type,
 			label: documentData.config.panel.title,
@@ -57,7 +56,7 @@ export function normalizeV1Document( documentData: V1Document ): Document {
 			label: documentData.config.status.label,
 		},
 		links: {
-			permalink: getV1DocumentPermalink( documentData ),
+			permalink: getV1DocumentPermalink(documentData),
 			platformEdit: exitToUrl,
 		},
 		isDirty: documentData.editor.isChanged || isUnpublishedRevision,
@@ -65,7 +64,7 @@ export function normalizeV1Document( documentData: V1Document ): Document {
 		isSavingDraft: false,
 		permissions: {
 			allowAddingWidgets: documentData.config.panel?.allow_adding_widgets ?? true,
-			showCopyAndShare: getV1DocumentShowCopyAndShare( documentData ),
+			showCopyAndShare: getV1DocumentShowCopyAndShare(documentData),
 		},
 		userCan: {
 			publish: documentData.config.user.can_publish,
@@ -73,15 +72,15 @@ export function normalizeV1Document( documentData: V1Document ): Document {
 	};
 }
 
-export function setDocumentModifiedStatus( status: boolean ) {
-	runCommandSync( 'document/save/set-is-modified', { status }, { internal: true } );
+export function setDocumentModifiedStatus(status: boolean) {
+	runCommandSync('document/save/set-is-modified', { status }, { internal: true });
 }
 
 export function getV1CurrentDocument(): V1Document {
-	return ( window as unknown as ExtendedWindow ).elementor?.documents?.getCurrent();
+	return (window as unknown as ExtendedWindow).elementor?.documents?.getCurrent();
 }
 
-export function isDocumentDirty( document: Document ) {
+export function isDocumentDirty(document: Document) {
 	const isDraft = document.status.value === 'draft';
 
 	// When the document is published, but have draft version.
@@ -90,10 +89,10 @@ export function isDocumentDirty( document: Document ) {
 	return isDraft || hasAutosave;
 }
 
-export function invalidateDocumentData( documentId: number ) {
+export function invalidateDocumentData(documentId: number) {
 	const documentsManager = getV1DocumentsManager();
 
-	documentsManager.invalidateCache( documentId );
+	documentsManager.invalidateCache(documentId);
 }
 
 export function switchToDocument(
@@ -106,8 +105,8 @@ export function switchToDocument(
 		shouldNavigateToDefaultRoute?: boolean;
 	}
 ) {
-	return runCommand( 'editor/documents/switch', {
+	return runCommand('editor/documents/switch', {
 		id: documentId,
 		...options,
-	} );
+	});
 }

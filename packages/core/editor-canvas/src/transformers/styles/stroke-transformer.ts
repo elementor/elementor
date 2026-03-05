@@ -6,12 +6,12 @@ type Stroke = {
 	color?: string;
 };
 
-export const strokeTransformer = createTransformer( ( value: Stroke ) => {
+export const strokeTransformer = createTransformer((value: Stroke) => {
 	const parsed = {
-		'-webkit-text-stroke': `${ value.width } ${ value.color }`,
-		stroke: `${ value.color }`,
-		'stroke-width': `${ value.width }`,
+		'-webkit-text-stroke': `${value.width} ${value.color}`,
+		stroke: `${value.color}`,
+		'stroke-width': `${value.width}`,
 	};
 
-	return createMultiPropsValue( parsed );
-} );
+	return createMultiPropsValue(parsed);
+});

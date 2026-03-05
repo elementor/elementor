@@ -5,23 +5,23 @@ import media from '../../media';
 import { type Attachment } from '../../types/attachment';
 import { type WpAttachmentJSON } from '../../types/wp-media';
 
-jest.mock( '../../media', () => ( {
+jest.mock('../../media', () => ({
 	__esModule: true,
-	default: jest.fn().mockReturnValue( {
+	default: jest.fn().mockReturnValue({
 		attachment: jest.fn(),
-	} ),
-} ) );
+	}),
+}));
 
-describe( 'getMediaAttachment', () => {
-	it( 'should return null when there is no attachment id', async () => {
+describe('getMediaAttachment', () => {
+	it('should return null when there is no attachment id', async () => {
 		// Act.
-		const result = await getMediaAttachment( { id: null } );
+		const result = await getMediaAttachment({ id: null });
 
 		// Assert.
-		expect( result ).toBeNull();
-	} );
+		expect(result).toBeNull();
+	});
 
-	it( "should return the normalized attachment if it's fetched", async () => {
+	it("should return the normalized attachment if it's fetched", async () => {
 		// Arrange.
 		const wpAttachment: WpAttachmentJSON = {
 			id: 0,
@@ -42,16 +42,16 @@ describe( 'getMediaAttachment', () => {
 			authorName: 'authorName',
 		};
 
-		jest.mocked( media().attachment ).mockImplementation( ( id ) => {
+		jest.mocked(media().attachment).mockImplementation((id) => {
 			return {
-				toJSON: () => ( { ...wpAttachment, id } ),
-				fetch: () => Promise.resolve( { ...wpAttachment, id } ),
+				toJSON: () => ({ ...wpAttachment, id }),
+				fetch: () => Promise.resolve({ ...wpAttachment, id }),
 			};
-		} );
+		});
 
 		// Act.
 
-		const result = await getMediaAttachment( { id: 123 } );
+		const result = await getMediaAttachment({ id: 123 });
 
 		// Assert.
 		const expected: Attachment = {
@@ -77,12 +77,12 @@ describe( 'getMediaAttachment', () => {
 			},
 		};
 
-		await waitFor( () => {
-			expect( result ).toEqual( expected );
-		} );
-	} );
+		await waitFor(() => {
+			expect(result).toEqual(expected);
+		});
+	});
 
-	it( 'should fetch the attachment and return it normalized', async () => {
+	it('should fetch the attachment and return it normalized', async () => {
 		// Arrange.
 		const wpAttachment: WpAttachmentJSON = {
 			id: 0,
@@ -103,15 +103,15 @@ describe( 'getMediaAttachment', () => {
 			authorName: 'authorName',
 		};
 
-		jest.mocked( media().attachment ).mockImplementation( ( id ) => {
+		jest.mocked(media().attachment).mockImplementation((id) => {
 			return {
-				toJSON: () => ( { id } ),
-				fetch: () => Promise.resolve( { ...wpAttachment, id } ),
+				toJSON: () => ({ id }),
+				fetch: () => Promise.resolve({ ...wpAttachment, id }),
 			};
-		} );
+		});
 
 		// Act.
-		const result = await getMediaAttachment( { id: 123 } );
+		const result = await getMediaAttachment({ id: 123 });
 
 		// Assert.
 		const expected: Attachment = {
@@ -137,27 +137,27 @@ describe( 'getMediaAttachment', () => {
 			},
 		};
 
-		await waitFor( () => {
-			expect( result ).toEqual( expected );
-		} );
-	} );
+		await waitFor(() => {
+			expect(result).toEqual(expected);
+		});
+	});
 
-	it( "should return null when the attachment can't be fetched", async () => {
+	it("should return null when the attachment can't be fetched", async () => {
 		// Arrange.
-		jest.mocked( media().attachment ).mockImplementation( ( id ) => {
+		jest.mocked(media().attachment).mockImplementation((id) => {
 			return {
-				toJSON: () => ( { id } ),
+				toJSON: () => ({ id }),
 				fetch: () => Promise.reject(),
 			};
-		} );
+		});
 
 		// Act.
 
-		const result = await getMediaAttachment( { id: 123 } );
+		const result = await getMediaAttachment({ id: 123 });
 
 		// Assert.
-		await waitFor( () => {
-			expect( result ).toBeNull();
-		} );
-	} );
-} );
+		await waitFor(() => {
+			expect(result).toBeNull();
+		});
+	});
+});

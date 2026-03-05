@@ -3,5 +3,5 @@ import { __privateUseListenTo as useListenTo, v1ReadyEvent } from '@elementor/ed
 import { getBreakpoints } from '../sync/get-breakpoints';
 
 export function useBreakpoints() {
-	return useListenTo( v1ReadyEvent(), getBreakpoints );
+	return useListenTo(v1ReadyEvent(), getBreakpoints);
 }

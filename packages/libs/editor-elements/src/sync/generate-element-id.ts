@@ -5,6 +5,6 @@ export const generateElementId = () => {
 
 	return (
 		extendedWindow.elementorCommon?.helpers?.getUniqueId?.() ??
-		`el-${ Date.now() }-${ Math.random().toString( 36 ).substring( 2, 9 ) }`
+		`el-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
 	);
 };

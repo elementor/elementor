@@ -6,16 +6,16 @@ import { unknownChildrenSchema } from './utils';
 export const videoSrcPropTypeUtil = createPropUtils(
 	'video-src',
 	z
-		.strictObject( {
+		.strictObject({
 			id: unknownChildrenSchema,
 			url: z.null(),
-		} )
+		})
 		.or(
-			z.strictObject( {
+			z.strictObject({
 				id: z.null(),
 				url: unknownChildrenSchema,
-			} )
+			})
 		)
 );
 
-export type VideoSrcPropValue = z.infer< typeof videoSrcPropTypeUtil.schema >;
+export type VideoSrcPropValue = z.infer<typeof videoSrcPropTypeUtil.schema>;

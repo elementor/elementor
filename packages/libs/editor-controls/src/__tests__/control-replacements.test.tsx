@@ -6,156 +6,156 @@ import { useBoundProp } from '../bound-prop-context';
 import { ControlReplacementsProvider, createControlReplacementsRegistry } from '../control-replacements';
 import { createControl } from '../create-control';
 
-jest.mock( '../bound-prop-context' );
+jest.mock('../bound-prop-context');
 
-describe( 'control-replacements', () => {
-	const Control = createControl( ( { text }: { text: string } ) => <p>{ text }</p> );
+describe('control-replacements', () => {
+	const Control = createControl(({ text }: { text: string }) => <p>{text}</p>);
 
-	beforeEach( () => {
-		jest.mocked( useBoundProp ).mockReturnValue( { value: 'value' } as never );
-	} );
+	beforeEach(() => {
+		jest.mocked(useBoundProp).mockReturnValue({ value: 'value' } as never);
+	});
 
-	it( 'should render the first matching replacement control component when its condition is met', () => {
+	it('should render the first matching replacement control component when its condition is met', () => {
 		// Arrange.
 		const { registerControlReplacement, getControlReplacements } = createControlReplacementsRegistry();
 
-		jest.mocked( useBoundProp )
-			.mockReturnValueOnce( {
+		jest.mocked(useBoundProp)
+			.mockReturnValueOnce({
 				value: 'should-not-be-replaced',
-			} as never )
-			.mockReturnValueOnce( {
+			} as never)
+			.mockReturnValueOnce({
 				value: 'should-be-replaced-by-2-or-3',
-			} as never );
+			} as never);
 
-		registerControlReplacement( {
+		registerControlReplacement({
 			component: () => <div>replacement-1</div>,
-			condition: ( { value } ) => value === 'should-be-replaced-by-1',
-		} );
+			condition: ({ value }) => value === 'should-be-replaced-by-1',
+		});
 
-		registerControlReplacement( {
+		registerControlReplacement({
 			component: () => <div>replacement-2</div>,
-			condition: ( { value } ) => value === 'should-be-replaced-by-2-or-3',
-		} );
+			condition: ({ value }) => value === 'should-be-replaced-by-2-or-3',
+		});
 
-		registerControlReplacement( {
+		registerControlReplacement({
 			component: () => <div>replacement-3</div>,
-			condition: ( { value } ) => value === 'should-be-replaced-by-2-or-3',
-		} );
+			condition: ({ value }) => value === 'should-be-replaced-by-2-or-3',
+		});
 
 		// Act.
 		renderWithTheme(
-			<ControlReplacementsProvider replacements={ getControlReplacements() }>
+			<ControlReplacementsProvider replacements={getControlReplacements()}>
 				<Control text="should-not-be-replaced" />
 				<Control text="should-be-replaced" />
 			</ControlReplacementsProvider>
 		);
 
 		// Assert.
-		expect( screen.getByText( 'should-not-be-replaced' ) ).toBeInTheDocument();
+		expect(screen.getByText('should-not-be-replaced')).toBeInTheDocument();
 
-		expect( screen.queryByText( 'should-be-replaced' ) ).not.toBeInTheDocument();
-		expect( screen.getByText( 'replacement-2' ) ).toBeInTheDocument();
+		expect(screen.queryByText('should-be-replaced')).not.toBeInTheDocument();
+		expect(screen.getByText('replacement-2')).toBeInTheDocument();
 
-		expect( screen.queryByText( 'replacement-1' ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'replacement-3' ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.queryByText('replacement-1')).not.toBeInTheDocument();
+		expect(screen.queryByText('replacement-3')).not.toBeInTheDocument();
+	});
 
-	it( 'should not replace if the condition throws', () => {
+	it('should not replace if the condition throws', () => {
 		// Arrange.
 		const { registerControlReplacement, getControlReplacements } = createControlReplacementsRegistry();
 
-		registerControlReplacement( {
+		registerControlReplacement({
 			component: () => <div>replacement</div>,
 			condition: () => {
-				throw new Error( 'Error' );
+				throw new Error('Error');
 			},
-		} );
+		});
 
 		// Act.
 		renderWithTheme(
-			<ControlReplacementsProvider replacements={ getControlReplacements() }>
+			<ControlReplacementsProvider replacements={getControlReplacements()}>
 				<Control text="control-text" />
 			</ControlReplacementsProvider>
 		);
 
 		// Assert.
-		expect( screen.getByText( 'control-text' ) ).toBeInTheDocument();
-		expect( screen.queryByText( 'replacement' ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.getByText('control-text')).toBeInTheDocument();
+		expect(screen.queryByText('replacement')).not.toBeInTheDocument();
+	});
 
-	it( 'should pass placeholder value to condition function', () => {
+	it('should pass placeholder value to condition function', () => {
 		// Arrange.
 		const { registerControlReplacement, getControlReplacements } = createControlReplacementsRegistry();
 
-		jest.mocked( useBoundProp ).mockReturnValue( {
+		jest.mocked(useBoundProp).mockReturnValue({
 			value: 'test-value',
 			placeholder: 'test-placeholder',
-		} as never );
+		} as never);
 
-		registerControlReplacement( {
+		registerControlReplacement({
 			component: () => <div>replacement-with-placeholder</div>,
-			condition: ( { value, placeholder } ) => value === 'test-value' && placeholder === 'test-placeholder',
-		} );
+			condition: ({ value, placeholder }) => value === 'test-value' && placeholder === 'test-placeholder',
+		});
 
 		// Act.
 		renderWithTheme(
-			<ControlReplacementsProvider replacements={ getControlReplacements() }>
+			<ControlReplacementsProvider replacements={getControlReplacements()}>
 				<Control text="control-text" />
 			</ControlReplacementsProvider>
 		);
 
 		// Assert.
-		expect( screen.queryByText( 'control-text' ) ).not.toBeInTheDocument();
-		expect( screen.getByText( 'replacement-with-placeholder' ) ).toBeInTheDocument();
-	} );
+		expect(screen.queryByText('control-text')).not.toBeInTheDocument();
+		expect(screen.getByText('replacement-with-placeholder')).toBeInTheDocument();
+	});
 
-	it( 'should handle undefined placeholder value', () => {
+	it('should handle undefined placeholder value', () => {
 		// Arrange.
 		const { registerControlReplacement, getControlReplacements } = createControlReplacementsRegistry();
 
-		jest.mocked( useBoundProp ).mockReturnValue( {
+		jest.mocked(useBoundProp).mockReturnValue({
 			value: 'test-value',
-		} as never );
+		} as never);
 
-		registerControlReplacement( {
+		registerControlReplacement({
 			component: () => <div>replacement-no-placeholder</div>,
-			condition: ( { placeholder } ) => typeof placeholder === 'undefined',
-		} );
+			condition: ({ placeholder }) => typeof placeholder === 'undefined',
+		});
 
 		// Act.
 		renderWithTheme(
-			<ControlReplacementsProvider replacements={ getControlReplacements() }>
+			<ControlReplacementsProvider replacements={getControlReplacements()}>
 				<Control text="control-text" />
 			</ControlReplacementsProvider>
 		);
 
 		// Assert.
-		expect( screen.queryByText( 'control-text' ) ).not.toBeInTheDocument();
-		expect( screen.getByText( 'replacement-no-placeholder' ) ).toBeInTheDocument();
-	} );
+		expect(screen.queryByText('control-text')).not.toBeInTheDocument();
+		expect(screen.getByText('replacement-no-placeholder')).toBeInTheDocument();
+	});
 
-	it( 'should use placeholder value when making replacement decisions', () => {
+	it('should use placeholder value when making replacement decisions', () => {
 		// Arrange.
 		const { registerControlReplacement, getControlReplacements } = createControlReplacementsRegistry();
 
-		jest.mocked( useBoundProp ).mockReturnValue( {
+		jest.mocked(useBoundProp).mockReturnValue({
 			placeholder: 'special-placeholder',
-		} as never );
+		} as never);
 
-		registerControlReplacement( {
+		registerControlReplacement({
 			component: () => <div>placeholder-based-replacement</div>,
-			condition: ( { placeholder } ) => placeholder === 'special-placeholder',
-		} );
+			condition: ({ placeholder }) => placeholder === 'special-placeholder',
+		});
 
 		// Act.
 		renderWithTheme(
-			<ControlReplacementsProvider replacements={ getControlReplacements() }>
+			<ControlReplacementsProvider replacements={getControlReplacements()}>
 				<Control text="control-text" />
 			</ControlReplacementsProvider>
 		);
 
 		// Assert.
-		expect( screen.queryByText( 'control-text' ) ).not.toBeInTheDocument();
-		expect( screen.getByText( 'placeholder-based-replacement' ) ).toBeInTheDocument();
-	} );
-} );
+		expect(screen.queryByText('control-text')).not.toBeInTheDocument();
+		expect(screen.getByText('placeholder-based-replacement')).toBeInTheDocument();
+	});
+});

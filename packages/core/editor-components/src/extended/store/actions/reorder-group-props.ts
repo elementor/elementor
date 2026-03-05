@@ -8,30 +8,30 @@ type ReorderGroupPropsParams = {
 	newPropsOrder: string[];
 };
 
-export function reorderGroupProps( { componentId, groupId, newPropsOrder }: ReorderGroupPropsParams ): void {
-	const overridableProps = componentsSelectors.getOverridableProps( componentId );
+export function reorderGroupProps({ componentId, groupId, newPropsOrder }: ReorderGroupPropsParams): void {
+	const overridableProps = componentsSelectors.getOverridableProps(componentId);
 
-	if ( ! overridableProps ) {
+	if (!overridableProps) {
 		return;
 	}
 
-	const group = overridableProps.groups.items[ groupId ];
+	const group = overridableProps.groups.items[groupId];
 
-	if ( ! group ) {
+	if (!group) {
 		return;
 	}
 
-	componentsActions.setOverridableProps( componentId, {
+	componentsActions.setOverridableProps(componentId, {
 		...overridableProps,
 		groups: {
 			...overridableProps.groups,
 			items: {
 				...overridableProps.groups.items,
-				[ groupId ]: {
+				[groupId]: {
 					...group,
 					props: newPropsOrder,
 				},
 			},
 		},
-	} );
+	});
 }

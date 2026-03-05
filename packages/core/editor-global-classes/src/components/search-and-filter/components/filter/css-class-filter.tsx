@@ -13,46 +13,41 @@ export const CssClassFilter = () => {
 	const {
 		filters: { filters },
 	} = useSearchAndFilters();
-	const popupState = usePopupState( {
+	const popupState = usePopupState({
 		variant: 'popover',
 		disableAutoFocus: true,
-	} );
+	});
 
-	React.useEffect( () => {
-		if ( popupState.isOpen ) {
-			trackGlobalClasses( {
+	React.useEffect(() => {
+		if (popupState.isOpen) {
+			trackGlobalClasses({
 				event: 'classManagerFiltersOpened',
-			} as TrackingEvent );
+			} as TrackingEvent);
 		}
-	}, [ popupState.isOpen ] );
+	}, [popupState.isOpen]);
 
-	const showCleanIcon = Object.values( filters ).some( ( value ) => value );
+	const showCleanIcon = Object.values(filters).some((value) => value);
 
 	return (
 		<>
-			<Tooltip title={ __( 'Filters', 'elementor' ) } placement="top">
-				<ToggleButton
-					value="filter"
-					size={ 'tiny' }
-					selected={ popupState.isOpen }
-					{ ...bindToggle( popupState ) }
-				>
+			<Tooltip title={__('Filters', 'elementor')} placement="top">
+				<ToggleButton value="filter" size={'tiny'} selected={popupState.isOpen} {...bindToggle(popupState)}>
 					<FilterIcon fontSize="tiny" />
 				</ToggleButton>
 			</Tooltip>
 			<Popover
-				sx={ {
+				sx={{
 					maxWidth: '344px',
-				} }
-				anchorOrigin={ {
+				}}
+				anchorOrigin={{
 					vertical: 'top',
 					horizontal: 'right',
-				} }
-				transformOrigin={ {
+				}}
+				transformOrigin={{
 					vertical: 'top',
 					horizontal: -21,
-				} }
-				{ ...bindPopover( popupState ) }
+				}}
+				{...bindPopover(popupState)}
 			>
 				<PopoverHeader
 					actions={
@@ -61,21 +56,21 @@ export const CssClassFilter = () => {
 									<ClearIconButton
 										trigger="menu"
 										key="clear-all-button"
-										tooltipText={ __( 'Clear all', 'elementor' ) }
+										tooltipText={__('Clear all', 'elementor')}
 									/>,
-							  ]
+								]
 							: []
 					}
-					onClose={ popupState.close }
-					title={ __( 'Filters', 'elementor' ) }
-					icon={ <FilterIcon fontSize={ 'tiny' } /> }
+					onClose={popupState.close}
+					title={__('Filters', 'elementor')}
+					icon={<FilterIcon fontSize={'tiny'} />}
 				/>
 				<Divider
-					sx={ {
+					sx={{
 						borderWidth: '1px 0 0 0',
-					} }
+					}}
 				/>
-				<PopoverBody width={ 344 } height={ 125 }>
+				<PopoverBody width={344} height={125}>
 					<FilterList />
 				</PopoverBody>
 			</Popover>

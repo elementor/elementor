@@ -3,81 +3,81 @@ import { type ElementType } from '@elementor/editor-elements';
 import { getEditingPanelReplacement, registerEditingPanelReplacement } from '../editing-panel-replacement-registry';
 import { mockElement } from './utils';
 
-const mockElementType = ( key = 'e-heading' ): ElementType => ( {
+const mockElementType = (key = 'e-heading'): ElementType => ({
 	key,
 	controls: [],
 	propsSchema: {},
 	title: key,
-} );
+});
 
 const MockComponent = () => null;
 const AnotherMockComponent = () => null;
 
-describe( 'editing-panel-replacement-registry', () => {
-	it( 'should return replacement when condition is met', () => {
+describe('editing-panel-replacement-registry', () => {
+	it('should return replacement when condition is met', () => {
 		// Arrange
-		const element = mockElement( { type: 'test-condition-met' } );
-		const elementType = mockElementType( 'test-condition-met' );
+		const element = mockElement({ type: 'test-condition-met' });
+		const elementType = mockElementType('test-condition-met');
 
-		registerEditingPanelReplacement( {
+		registerEditingPanelReplacement({
 			id: 'test-condition-met-replacement',
-			condition: ( _, type ) => type.key === 'test-condition-met',
+			condition: (_, type) => type.key === 'test-condition-met',
 			component: MockComponent,
-		} );
+		});
 
 		// Act
-		const result = getEditingPanelReplacement( element, elementType );
+		const result = getEditingPanelReplacement(element, elementType);
 
 		// Assert
-		expect( result ).not.toBeNull();
-		expect( result?.component ).toBe( MockComponent );
-	} );
+		expect(result).not.toBeNull();
+		expect(result?.component).toBe(MockComponent);
+	});
 
-	it( 'should return null when no condition is met', () => {
+	it('should return null when no condition is met', () => {
 		// Arrange
-		const element = mockElement( { type: 'test-no-condition-met' } );
-		const elementType = mockElementType( 'test-no-condition-met' );
+		const element = mockElement({ type: 'test-no-condition-met' });
+		const elementType = mockElementType('test-no-condition-met');
 
-		registerEditingPanelReplacement( {
+		registerEditingPanelReplacement({
 			id: 'test-no-condition-met-replacement',
-			condition: ( _, type ) => type.key === 'replacement-type',
+			condition: (_, type) => type.key === 'replacement-type',
 			component: MockComponent,
-		} );
+		});
 
 		// Act
-		const result = getEditingPanelReplacement( element, elementType );
+		const result = getEditingPanelReplacement(element, elementType);
 
 		// Assert
-		expect( result ).toBeNull();
-	} );
+		expect(result).toBeNull();
+	});
 
-	it( 'should return highest priority (i.e. lowest value) replacement when multiple conditions match', () => {
+	it('should return highest priority (i.e. lowest value) replacement when multiple conditions match', () => {
 		// Arrange
-		const element = mockElement( { type: 'replacement-type' } );
-		const elementType = mockElementType( 'replacement-type' );
+		const element = mockElement({ type: 'replacement-type' });
+		const elementType = mockElementType('replacement-type');
 		const HIGH_PRIORITY = 5;
 		const LOW_PRIORITY = 20;
 
-		registerEditingPanelReplacement( {
+		registerEditingPanelReplacement({
 			id: 'test-priority-low',
-			condition: ( _, type ) => type.key === 'replacement-type',
+			condition: (_, type) => type.key === 'replacement-type',
 			component: AnotherMockComponent,
 			priority: LOW_PRIORITY,
-		} );
+		});
 
-		registerEditingPanelReplacement( {
+		registerEditingPanelReplacement({
 			id: 'test-priority-high',
-			condition: ( _, type ) => type.key === 'replacement-type',
+			condition: (_, type) => type.key === 'replacement-type',
 			component: MockComponent,
 			priority: HIGH_PRIORITY,
-		} );
+		});
 
 		// Act
-		const result = getEditingPanelReplacement( element, elementType );
+		const result = getEditingPanelReplacement(element, elementType);
 
 		// Assert
-		expect( result ).not.toBeNull();
-		expect( result?.component ).toBe( MockComponent );
-		expect( result?.priority ).toBe( HIGH_PRIORITY );
-	} );
-} );
+		expect(result).not.toBeNull();
+		expect(result?.component).toBe(MockComponent);
+		expect(result?.priority).toBe(HIGH_PRIORITY);
+	});
+});

@@ -8,23 +8,23 @@ import { colorVariablePropTypeUtil } from '../prop-types/color-variable-prop-typ
 import { service } from '../service';
 import { resolveCssVariable } from './utils/resolve-css-variable';
 
-export const inheritanceTransformer = createTransformer( ( id: string ) => {
+export const inheritanceTransformer = createTransformer((id: string) => {
 	const variables = service.variables();
-	const variable = variables[ id ];
+	const variable = variables[id];
 
-	if ( ! variable ) {
-		return <span>{ __( 'Missing variable', 'elementor' ) }</span>;
+	if (!variable) {
+		return <span>{__('Missing variable', 'elementor')}</span>;
 	}
 
 	const showColorIndicator = variable.type === colorVariablePropTypeUtil.key;
-	const css = resolveCssVariable( id, variable );
+	const css = resolveCssVariable(id, variable);
 
 	return (
-		<Stack direction="row" spacing={ 0.5 } sx={ { paddingInline: '1px' } } alignItems="center">
-			{ showColorIndicator && <ColorIndicator size="inherit" value={ variable.value } /> }
+		<Stack direction="row" spacing={0.5} sx={{ paddingInline: '1px' }} alignItems="center">
+			{showColorIndicator && <ColorIndicator size="inherit" value={variable.value} />}
 			<Typography variant="caption" overflow="hidden" whiteSpace="nowrap" textOverflow="ellipsis">
-				{ css }
+				{css}
 			</Typography>
 		</Stack>
 	);
-} );
+});

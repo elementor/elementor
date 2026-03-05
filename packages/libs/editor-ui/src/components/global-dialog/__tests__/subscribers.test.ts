@@ -3,45 +3,45 @@ import { waitFor } from '@testing-library/react';
 
 import { closeDialog, type DialogContent, openDialog, subscribeToDialogState } from '../subscribers';
 
-describe( 'subscribers', () => {
+describe('subscribers', () => {
 	// Clean up state after each test
-	afterEach( () => {
+	afterEach(() => {
 		closeDialog();
-	} );
+	});
 
-	it( 'should update state when openDialog is called', async () => {
+	it('should update state when openDialog is called', async () => {
 		// Arrange
 		const callback = jest.fn();
-		const testComponent = React.createElement( 'div', { children: 'Test' } );
+		const testComponent = React.createElement('div', { children: 'Test' });
 		const dialogContent: DialogContent = { component: testComponent };
 
-		subscribeToDialogState( callback );
+		subscribeToDialogState(callback);
 		callback.mockClear(); // Clear the initial call
 
 		// Act
-		openDialog( dialogContent );
+		openDialog(dialogContent);
 
 		// Assert
-		await waitFor( () => {
-			expect( callback ).toHaveBeenCalledWith( { component: testComponent } );
-		} );
-		await waitFor( () => {
-			expect( callback ).toHaveBeenCalledTimes( 1 );
-		} );
-	} );
+		await waitFor(() => {
+			expect(callback).toHaveBeenCalledWith({ component: testComponent });
+		});
+		await waitFor(() => {
+			expect(callback).toHaveBeenCalledTimes(1);
+		});
+	});
 
-	it( 'should reset state to null when closeDialog is called', async () => {
+	it('should reset state to null when closeDialog is called', async () => {
 		// Arrange
 		const callback = jest.fn();
-		const testComponent = React.createElement( 'div', { children: 'Test' } );
+		const testComponent = React.createElement('div', { children: 'Test' });
 
-		subscribeToDialogState( callback );
-		openDialog( { component: testComponent } );
+		subscribeToDialogState(callback);
+		openDialog({ component: testComponent });
 
 		// Wait for the openDialog to complete
-		await waitFor( () => {
-			expect( callback ).toHaveBeenCalledWith( { component: testComponent } );
-		} );
+		await waitFor(() => {
+			expect(callback).toHaveBeenCalledWith({ component: testComponent });
+		});
 
 		callback.mockClear(); // Clear previous calls
 
@@ -49,42 +49,42 @@ describe( 'subscribers', () => {
 		closeDialog();
 
 		// Assert
-		await waitFor( () => {
-			expect( callback ).toHaveBeenCalledWith( null );
-		} );
-		await waitFor( () => {
-			expect( callback ).toHaveBeenCalledTimes( 1 );
-		} );
-	} );
+		await waitFor(() => {
+			expect(callback).toHaveBeenCalledWith(null);
+		});
+		await waitFor(() => {
+			expect(callback).toHaveBeenCalledTimes(1);
+		});
+	});
 
-	it( 'should call callback immediately with current state on subscription', () => {
+	it('should call callback immediately with current state on subscription', () => {
 		// Arrange
-		const testComponent = React.createElement( 'div', { children: 'Test' } );
-		openDialog( { component: testComponent } );
+		const testComponent = React.createElement('div', { children: 'Test' });
+		openDialog({ component: testComponent });
 
 		const callback = jest.fn();
 
 		// Act
-		subscribeToDialogState( callback );
+		subscribeToDialogState(callback);
 
 		// Assert
-		expect( callback ).toHaveBeenCalledWith( { component: testComponent } );
-		expect( callback ).toHaveBeenCalledTimes( 1 );
-	} );
+		expect(callback).toHaveBeenCalledWith({ component: testComponent });
+		expect(callback).toHaveBeenCalledTimes(1);
+	});
 
-	it( 'should unsubscribe callback when unsubscribe function is called', () => {
+	it('should unsubscribe callback when unsubscribe function is called', () => {
 		// Arrange
 		const callback = jest.fn();
-		const testComponent = React.createElement( 'div', { children: 'Test' } );
+		const testComponent = React.createElement('div', { children: 'Test' });
 
-		const unsubscribe = subscribeToDialogState( callback );
+		const unsubscribe = subscribeToDialogState(callback);
 		callback.mockClear(); // Clear initial call
 
 		// Act
 		unsubscribe();
-		openDialog( { component: testComponent } );
+		openDialog({ component: testComponent });
 
 		// Assert
-		expect( callback ).not.toHaveBeenCalled();
-	} );
-} );
+		expect(callback).not.toHaveBeenCalled();
+	});
+});

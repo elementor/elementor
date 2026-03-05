@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { SvgIcon } from '@elementor/ui';
 
-const ThemeBuilderIcon = React.forwardRef< SVGSVGElement, React.ComponentProps< typeof SvgIcon > >( ( props, ref ) => {
+const ThemeBuilderIcon = React.forwardRef<SVGSVGElement, React.ComponentProps<typeof SvgIcon>>((props, ref) => {
 	return (
-		<SvgIcon viewBox="0 0 32 32" { ...props } ref={ ref } width="32" height="32">
+		<SvgIcon viewBox="0 0 32 32" {...props} ref={ref} width="32" height="32">
 			<path
 				d="M4.5 5.9375C4.5 5.55625 4.65145 5.19062 4.92103 4.92103C5.19062 4.65145 5.55625 4.5 5.9375 4.5H26.0625C26.4437 4.5 26.8094 4.65145 27.079 4.92103C27.3486 5.19062 27.5 5.55625 27.5 5.9375V8.8125C27.5 9.19375 27.3486 9.55938 27.079 9.82897C26.8094 10.0985 26.4437 10.25 26.0625 10.25H5.9375C5.55625 10.25 5.19062 10.0985 4.92103 9.82897C4.65145 9.55938 4.5 9.19375 4.5 8.8125V5.9375Z"
 				fill="none"
@@ -46,6 +46,6 @@ const ThemeBuilderIcon = React.forwardRef< SVGSVGElement, React.ComponentProps< 
 			/>
 		</SvgIcon>
 	);
-} );
+});
 
 export default ThemeBuilderIcon;

@@ -5,10 +5,10 @@ import { unknownChildrenSchema } from './utils';
 
 export const keyValuePropTypeUtil = createPropUtils(
 	'key-value',
-	z.strictObject( {
+	z.strictObject({
 		key: unknownChildrenSchema,
 		value: unknownChildrenSchema,
-	} )
+	})
 );
 
-export type KeyValuePropValue = z.infer< typeof keyValuePropTypeUtil.schema >;
+export type KeyValuePropValue = z.infer<typeof keyValuePropTypeUtil.schema>;

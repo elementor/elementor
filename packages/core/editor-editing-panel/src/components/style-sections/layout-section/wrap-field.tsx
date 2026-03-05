@@ -9,35 +9,35 @@ import { StylesFieldLayout } from '../../styles-field-layout';
 
 type FlexWrap = 'nowrap' | 'wrap' | 'wrap-reverse';
 
-const FLEX_WRAP_LABEL = __( 'Wrap', 'elementor' );
+const FLEX_WRAP_LABEL = __('Wrap', 'elementor');
 
-const options: ToggleButtonGroupItem< FlexWrap >[] = [
+const options: ToggleButtonGroupItem<FlexWrap>[] = [
 	{
 		value: 'nowrap',
-		label: __( 'No wrap', 'elementor' ),
-		renderContent: ( { size } ) => <ArrowRightIcon fontSize={ size } />,
+		label: __('No wrap', 'elementor'),
+		renderContent: ({ size }) => <ArrowRightIcon fontSize={size} />,
 		showTooltip: true,
 	},
 	{
 		value: 'wrap',
-		label: __( 'Wrap', 'elementor' ),
-		renderContent: ( { size } ) => <ArrowBackIcon fontSize={ size } />,
+		label: __('Wrap', 'elementor'),
+		renderContent: ({ size }) => <ArrowBackIcon fontSize={size} />,
 		showTooltip: true,
 	},
 	{
 		value: 'wrap-reverse',
-		label: __( 'Reversed wrap', 'elementor' ),
-		renderContent: ( { size } ) => <ArrowForwardIcon fontSize={ size } />,
+		label: __('Reversed wrap', 'elementor'),
+		renderContent: ({ size }) => <ArrowForwardIcon fontSize={size} />,
 		showTooltip: true,
 	},
 ];
 
 export const WrapField = () => {
 	return (
-		<StylesField bind="flex-wrap" propDisplayName={ FLEX_WRAP_LABEL }>
+		<StylesField bind="flex-wrap" propDisplayName={FLEX_WRAP_LABEL}>
 			<UiProviders>
-				<StylesFieldLayout label={ FLEX_WRAP_LABEL }>
-					<ToggleControl options={ options } />
+				<StylesFieldLayout label={FLEX_WRAP_LABEL}>
+					<ToggleControl options={options} />
 				</StylesFieldLayout>
 			</UiProviders>
 		</StylesField>

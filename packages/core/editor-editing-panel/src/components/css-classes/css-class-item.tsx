@@ -29,31 +29,31 @@ type CssClassItemProps = {
 	label: string;
 	fixed?: boolean;
 	isActive: boolean;
-	color: ChipOwnProps[ 'color' ];
+	color: ChipOwnProps['color'];
 	icon: ReactElement | null;
-	chipProps: ReturnType< AutocompleteRenderGetTagProps >;
-	onClickActive: ( id: string | null ) => void;
-	renameLabel: ( newLabel: string ) => void;
-	validateLabel?: ( newLabel: string ) => string | undefined | null;
-	setError?: ( error: string | null ) => void;
+	chipProps: ReturnType<AutocompleteRenderGetTagProps>;
+	onClickActive: (id: string | null) => void;
+	renameLabel: (newLabel: string) => void;
+	validateLabel?: (newLabel: string) => string | undefined | null;
+	setError?: (error: string | null) => void;
 };
 
 const CHIP_SIZE = 'tiny';
 
-export function CssClassItem( props: CssClassItemProps ) {
+export function CssClassItem(props: CssClassItemProps) {
 	const { chipProps, icon, color: colorProp, fixed, ...classProps } = props;
 	const { id, provider, label, isActive, onClickActive, renameLabel, setError } = classProps;
 
 	const { elementStates } = useElementStates();
 
 	const { meta, setMetaState } = useStyle();
-	const popupState = usePopupState( { variant: 'popover' } );
-	const [ chipRef, setChipRef ] = useState< HTMLElement | null >( null );
+	const popupState = usePopupState({ variant: 'popover' });
+	const [chipRef, setChipRef] = useState<HTMLElement | null>(null);
 	const { onDelete, ...chipGroupProps } = chipProps;
 
 	const { userCan } = useUserStylesCapability();
 
-	const [ convertedFromLocalId, , clearConvertedFromLocalId ] = useSessionStorage(
+	const [convertedFromLocalId, , clearConvertedFromLocalId] = useSessionStorage(
 		'last-converted-class-generated-name',
 		'app'
 	);
@@ -64,120 +64,120 @@ export function CssClassItem( props: CssClassItemProps ) {
 		openEditMode,
 		error,
 		getProps: getEditableProps,
-	} = useEditable( {
+	} = useEditable({
 		value: label,
 		onSubmit: renameLabel,
 		validation: validateLabel,
 		onError: setError,
-	} );
+	});
 
 	const color = error ? 'error' : colorProp;
 
-	const providerActions = provider ? stylesRepository.getProviderByKey( provider )?.actions : null;
-	const allowRename = Boolean( providerActions?.update ) && userCan( provider ?? '' )?.update;
+	const providerActions = provider ? stylesRepository.getProviderByKey(provider)?.actions : null;
+	const allowRename = Boolean(providerActions?.update) && userCan(provider ?? '')?.update;
 
 	const isShowingState = isActive && meta.state;
 
-	const stateLabel = useMemo( () => {
-		if ( meta.state && isClassState( meta.state ) ) {
-			return elementStates.find( ( state ) => state.value === meta.state )?.label;
+	const stateLabel = useMemo(() => {
+		if (meta.state && isClassState(meta.state)) {
+			return elementStates.find((state) => state.value === meta.state)?.label;
 		}
 
 		return meta.state;
-	}, [ meta.state, elementStates ] );
+	}, [meta.state, elementStates]);
 
-	useEffect( () => {
-		if ( convertedFromLocalId && id === convertedFromLocalId ) {
+	useEffect(() => {
+		if (convertedFromLocalId && id === convertedFromLocalId) {
 			clearConvertedFromLocalId();
 			openEditMode();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ id, convertedFromLocalId ] );
+	}, [id, convertedFromLocalId]);
 
 	return (
 		<ThemeProvider palette="default">
 			<UnstableChipGroup
-				ref={ setChipRef }
-				{ ...chipGroupProps }
-				aria-label={ `Edit ${ label }` }
+				ref={setChipRef}
+				{...chipGroupProps}
+				aria-label={`Edit ${label}`}
 				role="group"
-				sx={ ( theme: Theme ) => ( {
-					'&.MuiChipGroup-root.MuiAutocomplete-tag': { margin: theme.spacing( 0.125 ) },
-				} ) }
+				sx={(theme: Theme) => ({
+					'&.MuiChipGroup-root.MuiAutocomplete-tag': { margin: theme.spacing(0.125) },
+				})}
 			>
 				<Chip
-					size={ CHIP_SIZE }
+					size={CHIP_SIZE}
 					label={
 						isEditing ? (
-							<EditableField ref={ ref } { ...getEditableProps() } />
+							<EditableField ref={ref} {...getEditableProps()} />
 						) : (
-							<EllipsisWithTooltip maxWidth="10ch" title={ label } as="div" />
+							<EllipsisWithTooltip maxWidth="10ch" title={label} as="div" />
 						)
 					}
-					variant={ isActive && ! meta.state && ! isEditing ? 'filled' : 'standard' }
+					variant={isActive && !meta.state && !isEditing ? 'filled' : 'standard'}
 					shape="rounded"
-					icon={ icon }
-					color={ color }
-					onClick={ () => {
-						if ( isShowingState ) {
-							setMetaState( null );
+					icon={icon}
+					color={color}
+					onClick={() => {
+						if (isShowingState) {
+							setMetaState(null);
 							return;
 						}
 
-						if ( allowRename && isActive ) {
+						if (allowRename && isActive) {
 							openEditMode();
 							return;
 						}
 
-						onClickActive( id );
-					} }
-					aria-pressed={ isActive }
-					sx={ ( theme: Theme ) => ( {
+						onClickActive(id);
+					}}
+					aria-pressed={isActive}
+					sx={(theme: Theme) => ({
 						lineHeight: 1,
-						cursor: isActive && allowRename && ! isShowingState ? 'text' : 'pointer',
-						borderRadius: `${ theme.shape.borderRadius * 0.75 }px`,
+						cursor: isActive && allowRename && !isShowingState ? 'text' : 'pointer',
+						borderRadius: `${theme.shape.borderRadius * 0.75}px`,
 						'&.Mui-focusVisible': {
 							boxShadow: 'none !important',
 						},
-					} ) }
+					})}
 				/>
-				{ ! isEditing && (
+				{!isEditing && (
 					<Chip
-						icon={ isShowingState ? undefined : <DotsVerticalIcon fontSize="tiny" /> }
-						size={ CHIP_SIZE }
+						icon={isShowingState ? undefined : <DotsVerticalIcon fontSize="tiny" />}
+						size={CHIP_SIZE}
 						label={
 							isShowingState ? (
-								<Stack direction="row" gap={ 0.5 } alignItems="center">
-									<Typography variant="inherit">{ stateLabel }</Typography>
+								<Stack direction="row" gap={0.5} alignItems="center">
+									<Typography variant="inherit">{stateLabel}</Typography>
 									<DotsVerticalIcon fontSize="tiny" />
 								</Stack>
 							) : undefined
 						}
 						variant="filled"
 						shape="rounded"
-						color={ color }
-						{ ...bindTrigger( popupState ) }
-						aria-label={ __( 'Open CSS Class Menu', 'elementor' ) }
-						sx={ ( theme: Theme ) => ( {
-							borderRadius: `${ theme.shape.borderRadius * 0.75 }px`,
+						color={color}
+						{...bindTrigger(popupState)}
+						aria-label={__('Open CSS Class Menu', 'elementor')}
+						sx={(theme: Theme) => ({
+							borderRadius: `${theme.shape.borderRadius * 0.75}px`,
 							paddingRight: 0,
-							...( ! isShowingState ? { paddingLeft: 0 } : {} ),
+							...(!isShowingState ? { paddingLeft: 0 } : {}),
 							'.MuiChip-label': isShowingState ? { paddingRight: 0 } : { padding: 0 },
-						} ) }
+						})}
 					/>
-				) }
+				)}
 			</UnstableChipGroup>
-			<CssClassProvider { ...classProps } handleRename={ openEditMode }>
-				<CssClassMenu popupState={ popupState } anchorEl={ chipRef } fixed={ fixed } />
+			<CssClassProvider {...classProps} handleRename={openEditMode}>
+				<CssClassMenu popupState={popupState} anchorEl={chipRef} fixed={fixed} />
 			</CssClassProvider>
 		</ThemeProvider>
 	);
 }
 
-const validateLabel = ( newLabel: string ) => {
-	const result = validateStyleLabel( newLabel, 'rename' );
+const validateLabel = (newLabel: string) => {
+	const result = validateStyleLabel(newLabel, 'rename');
 
-	if ( result.isValid ) {
+	if (result.isValid) {
 		return null;
 	}
 

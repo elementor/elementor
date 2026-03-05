@@ -10,19 +10,19 @@ export function useToggleButtonProps(): ToggleActionProps {
 	const { open, close } = usePanelActions();
 
 	return {
-		title: __( 'Pages', 'elementor' ),
+		title: __('Pages', 'elementor'),
 		icon: PagesIcon,
 		onClick: () => {
 			const extendedWindow = window as unknown as ExtendedWindow;
 			const config = extendedWindow?.elementorCommon?.eventsManager?.config;
 
-			if ( config ) {
-				extendedWindow.elementorCommon.eventsManager.dispatchEvent( 'top_bar_pages', {
+			if (config) {
+				extendedWindow.elementorCommon.eventsManager.dispatchEvent('top_bar_pages', {
 					location: config.locations.topBar,
 					secondaryLocation: config.secondaryLocations.elementorLogo,
 					trigger: config.triggers.click,
 					element: config.elements.buttonIcon,
-				} );
+				});
 			}
 
 			return selectedState ? close() : open();

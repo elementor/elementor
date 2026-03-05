@@ -1,9 +1,9 @@
 import { toolPrompts } from '@elementor/editor-mcp';
 
 export const generatePrompt = () => {
-	const buildCompositionsToolPrompt = toolPrompts( 'build-compositions' );
+	const buildCompositionsToolPrompt = toolPrompts('build-compositions');
 
-	buildCompositionsToolPrompt.description( `
+	buildCompositionsToolPrompt.description(`
 # RESOURCES (Read before use)
 - [elementor://global-classes] - Check FIRST for reusable classes
 - [elementor://global-variables] - ONLY use variables defined here
@@ -102,9 +102,9 @@ BAD: \`<e-flexbox style="height:100vh"><e-div-block style="height:100vh">overflo
 - **elementConfig**: configuration-id → widget PropValues
 - **stylesConfig**: configuration-id → style PropValues (layout only)
 - **customCSS**: configuration-id → CSS rules (no selectors, semicolon-separated)
-  ` );
+  `);
 
-	buildCompositionsToolPrompt.example( `
+	buildCompositionsToolPrompt.example(`
 Section with heading + button (NO explicit heights - content sizes naturally):
 {
   xmlStructure: "<e-flexbox configuration-id="Main Section"><e-heading configuration-id="Section Title"></e-heading><e-button configuration-id="Call to Action"></e-button></e-flexbox>",
@@ -122,14 +122,14 @@ Section with heading + button (NO explicit heights - content sizes naturally):
   }
 }
 Note: No height/width specified on any element - flexbox handles layout automatically.
-` );
+`);
 
 	buildCompositionsToolPrompt.parameter(
 		'xmlStructure',
 		`Valid XML structure with custom elementor tags and configuration-id attributes.`
 	);
 
-	buildCompositionsToolPrompt.parameter( 'elementConfig', `Record mapping configuration IDs to widget PropValues.` );
+	buildCompositionsToolPrompt.parameter('elementConfig', `Record mapping configuration IDs to widget PropValues.`);
 
 	buildCompositionsToolPrompt.parameter(
 		'stylesConfig',

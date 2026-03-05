@@ -10,51 +10,51 @@ const CSS_LINK_ID_PREFIX = 'elementor-post-';
 const CSS_LINK_ID_SUFFIX = '-css';
 
 export function useDocumentsCssLinks() {
-	return useListenTo( commandEndEvent( 'editor/documents/attach-preview' ), () => {
+	return useListenTo(commandEndEvent('editor/documents/attach-preview'), () => {
 		const iframeDocument = getCanvasIframeDocument();
 
-		if ( ! iframeDocument ) {
+		if (!iframeDocument) {
 			return [];
 		}
 
-		const relevantLinkIds = getDocumentsIdsInCanvas( iframeDocument ).map(
-			( id ) => `${ CSS_LINK_ID_PREFIX }${ id }${ CSS_LINK_ID_SUFFIX }`
+		const relevantLinkIds = getDocumentsIdsInCanvas(iframeDocument).map(
+			(id) => `${CSS_LINK_ID_PREFIX}${id}${CSS_LINK_ID_SUFFIX}`
 		);
 
-		const links = getDocumentsCssLinks( iframeDocument ).filter( ( link ) =>
-			relevantLinkIds.includes( link.getAttribute( 'id' ) ?? '' )
+		const links = getDocumentsCssLinks(iframeDocument).filter((link) =>
+			relevantLinkIds.includes(link.getAttribute('id') ?? '')
 		);
 
-		links.forEach( ( link ) => {
-			if ( ! link.hasAttribute( REMOVED_ATTR ) ) {
+		links.forEach((link) => {
+			if (!link.hasAttribute(REMOVED_ATTR)) {
 				link.remove();
 			}
-		} );
+		});
 
-		return links.map( ( link ) => ( {
-			...getLinkAttrs( link ),
-			id: link.getAttribute( 'id' ) ?? '',
-			[ REMOVED_ATTR ]: true,
-		} ) );
-	} );
+		return links.map((link) => ({
+			...getLinkAttrs(link),
+			id: link.getAttribute('id') ?? '',
+			[REMOVED_ATTR]: true,
+		}));
+	});
 }
 
-function getDocumentsIdsInCanvas( document: Document ) {
-	return [ ...( document.body.querySelectorAll< HTMLElement >( `[${ DOCUMENT_WRAPPER_ATTR }]` ) ?? [] ) ].map(
-		( el ) => el.getAttribute( DOCUMENT_WRAPPER_ATTR ) || ''
+function getDocumentsIdsInCanvas(document: Document) {
+	return [...(document.body.querySelectorAll<HTMLElement>(`[${DOCUMENT_WRAPPER_ATTR}]`) ?? [])].map(
+		(el) => el.getAttribute(DOCUMENT_WRAPPER_ATTR) || ''
 	);
 }
 
-function getDocumentsCssLinks( document: Document ) {
+function getDocumentsCssLinks(document: Document) {
 	return [
-		...( document.head.querySelectorAll< HTMLLinkElement >(
-			`link[rel="stylesheet"][id^=${ CSS_LINK_ID_PREFIX }][id$=${ CSS_LINK_ID_SUFFIX }]`
-		) ?? [] ),
+		...(document.head.querySelectorAll<HTMLLinkElement>(
+			`link[rel="stylesheet"][id^=${CSS_LINK_ID_PREFIX}][id$=${CSS_LINK_ID_SUFFIX}]`
+		) ?? []),
 	];
 }
 
-function getLinkAttrs( el: HTMLLinkElement ) {
-	const entries = [ ...el.attributes ].map( ( attr ) => [ attr.name, attr.value ] as const );
+function getLinkAttrs(el: HTMLLinkElement) {
+	const entries = [...el.attributes].map((attr) => [attr.name, attr.value] as const);
 
-	return Object.fromEntries( entries );
+	return Object.fromEntries(entries);
 }

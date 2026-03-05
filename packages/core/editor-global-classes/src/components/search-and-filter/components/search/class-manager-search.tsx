@@ -12,27 +12,27 @@ export const ClassManagerSearch = () => {
 	} = useSearchAndFilters();
 
 	return (
-		<Stack direction="row" gap={ 0.5 } sx={ { width: '100%' } }>
-			<Box sx={ { flexGrow: 1 } }>
+		<Stack direction="row" gap={0.5} sx={{ width: '100%' }}>
+			<Box sx={{ flexGrow: 1 }}>
 				<TextField
-					role={ 'search' }
+					role={'search'}
 					fullWidth
-					size={ 'tiny' }
-					value={ inputValue }
-					onFocus={ () => {
-						trackGlobalClasses( {
+					size={'tiny'}
+					value={inputValue}
+					onFocus={() => {
+						trackGlobalClasses({
 							event: 'classManagerSearched',
-						} as TrackingEvent );
-					} }
-					placeholder={ __( 'Search', 'elementor' ) }
-					onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) => handleChange( e.target.value ) }
-					InputProps={ {
+						} as TrackingEvent);
+					}}
+					placeholder={__('Search', 'elementor')}
+					onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(e.target.value)}
+					InputProps={{
 						startAdornment: (
 							<InputAdornment position="start">
-								<SearchIcon fontSize={ 'tiny' } />
+								<SearchIcon fontSize={'tiny'} />
 							</InputAdornment>
 						),
-					} }
+					}}
 				/>
 			</Box>
 		</Stack>

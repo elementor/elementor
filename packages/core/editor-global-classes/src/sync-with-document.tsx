@@ -7,13 +7,13 @@ import { syncWithDocumentSave } from './sync-with-document-save';
 export function SyncWithDocumentSave() {
 	const panelActions = usePanelActions();
 
-	useEffect( () => {
-		listenTo( v1ReadyEvent(), () => {
-			syncWithDocumentSave( panelActions );
-		} );
+	useEffect(() => {
+		listenTo(v1ReadyEvent(), () => {
+			syncWithDocumentSave(panelActions);
+		});
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
+	}, []);
 
 	return null;
 }

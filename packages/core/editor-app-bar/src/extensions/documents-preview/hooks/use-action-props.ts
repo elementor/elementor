@@ -10,25 +10,25 @@ export default function useActionProps() {
 
 	return {
 		icon: EyeIcon,
-		title: __( 'Preview Changes', 'elementor' ),
+		title: __('Preview Changes', 'elementor'),
 		onClick: () => {
 			const extendedWindow = window as unknown as ExtendedWindow;
 			const config = extendedWindow?.elementorCommon?.eventsManager?.config;
 
-			if ( config ) {
-				extendedWindow.elementorCommon.eventsManager.dispatchEvent( config.names.topBar.previewPage, {
+			if (config) {
+				extendedWindow.elementorCommon.eventsManager.dispatchEvent(config.names.topBar.previewPage, {
 					location: config.locations.topBar,
-					secondaryLocation: config.secondaryLocations[ 'preview-page' ],
+					secondaryLocation: config.secondaryLocations['preview-page'],
 					trigger: config.triggers.click,
 					element: config.elements.buttonIcon,
-				} );
+				});
 			}
 
-			if ( document ) {
-				runCommand( 'editor/documents/preview', {
+			if (document) {
+				runCommand('editor/documents/preview', {
 					id: document.id,
 					force: true,
-				} );
+				});
 			}
 		},
 	};

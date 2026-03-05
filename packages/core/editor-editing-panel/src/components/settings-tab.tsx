@@ -12,53 +12,53 @@ export const SettingsTab = () => {
 	const { elementType, element } = useElement();
 	const settingsDefault = useDefaultPanelSettings();
 
-	const isDefaultExpanded = ( sectionId: string ) =>
-		settingsDefault.defaultSectionsExpanded.settings?.includes( sectionId );
+	const isDefaultExpanded = (sectionId: string) =>
+		settingsDefault.defaultSectionsExpanded.settings?.includes(sectionId);
 
 	return (
-		<SessionStorageProvider prefix={ element.id }>
+		<SessionStorageProvider prefix={element.id}>
 			<SectionsList>
-				{ elementType.controls.map( ( control, index ) => {
-					if ( isControl( control ) ) {
-						return <SettingsControl key={ getKey( control, element ) } control={ control } />;
+				{elementType.controls.map((control, index) => {
+					if (isControl(control)) {
+						return <SettingsControl key={getKey(control, element)} control={control} />;
 					}
 
 					const { type, value } = control;
 
-					if ( type === 'section' ) {
+					if (type === 'section') {
 						return (
 							<Section
-								title={ value.label }
-								key={ type + '.' + index }
-								defaultExpanded={ isDefaultExpanded( value.label ) }
+								title={value.label}
+								key={type + '.' + index}
+								defaultExpanded={isDefaultExpanded(value.label)}
 							>
-								{ value.items?.map( ( item ) => {
-									if ( isControl( item ) ) {
-										return <SettingsControl key={ getKey( item, element ) } control={ item } />;
+								{value.items?.map((item) => {
+									if (isControl(item)) {
+										return <SettingsControl key={getKey(item, element)} control={item} />;
 									}
 
 									// TODO: Handle 2nd level sections
 									return null;
-								} ) }
+								})}
 							</Section>
 						);
 					}
 
 					return null;
-				} ) }
+				})}
 			</SectionsList>
 		</SessionStorageProvider>
 	);
 };
 
-function getKey( control: Control | ElementControl, element: Element ) {
-	if ( control.type === 'control' ) {
+function getKey(control: Control | ElementControl, element: Element) {
+	if (control.type === 'control') {
 		return control.value.bind + '.' + element.id;
 	}
 
 	return control.value.type + '.' + element.id;
 }
 
-function isControl( control: ControlItem ): control is Control | ElementControl {
+function isControl(control: ControlItem): control is Control | ElementControl {
 	return control.type === 'control' || control.type === 'element-control';
 }

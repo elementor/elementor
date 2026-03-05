@@ -1,5 +1,5 @@
-export const escapeHtmlAttr = ( value: string ): string => {
-	const specialChars: Record< string, string > = {
+export const escapeHtmlAttr = (value: string): string => {
+	const specialChars: Record<string, string> = {
 		'&': '&amp;',
 		'<': '&lt;',
 		'>': '&gt;',
@@ -7,5 +7,5 @@ export const escapeHtmlAttr = ( value: string ): string => {
 		'"': '&quot;',
 	};
 
-	return value.replace( /[&<>'"]/g, ( char ) => specialChars[ char ] || char );
+	return value.replace(/[&<>'"]/g, (char) => specialChars[char] || char);
 };

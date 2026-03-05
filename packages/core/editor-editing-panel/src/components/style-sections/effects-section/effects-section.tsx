@@ -17,44 +17,44 @@ import { SectionContent } from '../../section-content';
 import { BlendModeField } from './blend-mode-field';
 import { OpacityControlField } from './opacity-control-field';
 
-const BOX_SHADOW_LABEL = __( 'Box shadow', 'elementor' );
-const FILTER_LABEL = __( 'Filters', 'elementor' );
-const TRANSFORM_LABEL = __( 'Transform', 'elementor' );
-const BACKDROP_FILTER_LABEL = __( 'Backdrop filters', 'elementor' );
-const TRANSITIONS_LABEL = __( 'Transitions', 'elementor' );
+const BOX_SHADOW_LABEL = __('Box shadow', 'elementor');
+const FILTER_LABEL = __('Filters', 'elementor');
+const TRANSFORM_LABEL = __('Transform', 'elementor');
+const BACKDROP_FILTER_LABEL = __('Backdrop filters', 'elementor');
+const TRANSITIONS_LABEL = __('Transitions', 'elementor');
 
 export const EffectsSection = () => {
 	const { element } = useElement();
 	const { meta } = useStyle();
 
-	const canHaveChildren = canElementHaveChildren( element?.id ?? '' );
+	const canHaveChildren = canElementHaveChildren(element?.id ?? '');
 
 	return (
-		<SectionContent gap={ 1 }>
+		<SectionContent gap={1}>
 			<BlendModeField />
 			<PanelDivider />
 			<OpacityControlField />
 			<PanelDivider />
-			<StylesField bind="box-shadow" propDisplayName={ BOX_SHADOW_LABEL }>
+			<StylesField bind="box-shadow" propDisplayName={BOX_SHADOW_LABEL}>
 				<BoxShadowRepeaterControl />
 			</StylesField>
 			<PanelDivider />
-			<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
-				<TransformRepeaterControl showChildrenPerspective={ canHaveChildren } />
+			<StylesField bind="transform" propDisplayName={TRANSFORM_LABEL}>
+				<TransformRepeaterControl showChildrenPerspective={canHaveChildren} />
 			</StylesField>
 			<PanelDivider />
-			<StylesField bind="transition" propDisplayName={ TRANSITIONS_LABEL }>
+			<StylesField bind="transition" propDisplayName={TRANSITIONS_LABEL}>
 				<TransitionRepeaterControl
-					currentStyleState={ meta.state }
-					recentlyUsedListGetter={ () => getRecentlyUsedList( element?.id ?? '' ) }
+					currentStyleState={meta.state}
+					recentlyUsedListGetter={() => getRecentlyUsedList(element?.id ?? '')}
 				/>
 			</StylesField>
 			<PanelDivider />
-			<StylesField bind="filter" propDisplayName={ FILTER_LABEL }>
+			<StylesField bind="filter" propDisplayName={FILTER_LABEL}>
 				<FilterRepeaterControl />
 			</StylesField>
 			<PanelDivider />
-			<StylesField bind="backdrop-filter" propDisplayName={ BACKDROP_FILTER_LABEL }>
+			<StylesField bind="backdrop-filter" propDisplayName={BACKDROP_FILTER_LABEL}>
 				<FilterRepeaterControl filterPropName="backdrop-filter" />
 			</StylesField>
 		</SectionContent>

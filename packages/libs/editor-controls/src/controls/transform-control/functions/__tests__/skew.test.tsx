@@ -4,25 +4,25 @@ import { screen } from '@testing-library/react';
 
 import { Skew } from '../skew';
 
-describe( 'Skew Transform', () => {
+describe('Skew Transform', () => {
 	const createAxisProp = () =>
-		createMockPropType( {
+		createMockPropType({
 			kind: 'object',
 			shape: {
-				unit: createMockPropType( { kind: 'plain' } ),
-				size: createMockPropType( { kind: 'plain' } ),
+				unit: createMockPropType({ kind: 'plain' }),
+				size: createMockPropType({ kind: 'plain' }),
 			},
-		} );
+		});
 
-	const propType = createMockPropType( {
+	const propType = createMockPropType({
 		kind: 'object',
 		shape: {
 			x: createAxisProp(),
 			y: createAxisProp(),
 		},
-	} );
+	});
 
-	it.each( [
+	it.each([
 		[
 			'full value',
 			{
@@ -44,10 +44,10 @@ describe( 'Skew Transform', () => {
 				y: null,
 			},
 		],
-	] )( 'should render labels with mock case: %s', ( _label, mockValue ) => {
-		renderControl( <Skew />, { value: mockValue, propType } );
+	])('should render labels with mock case: %s', (_label, mockValue) => {
+		renderControl(<Skew />, { value: mockValue, propType });
 
-		expect( screen.getByText( 'Skew X' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Skew Y' ) ).toBeInTheDocument();
-	} );
-} );
+		expect(screen.getByText('Skew X')).toBeInTheDocument();
+		expect(screen.getByText('Skew Y')).toBeInTheDocument();
+	});
+});

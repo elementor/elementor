@@ -8,6 +8,6 @@ type TransformMove = {
 
 const defaultMove = '0px';
 
-export const transformMoveTransformer = createTransformer( ( value: TransformMove ) => {
-	return `translate3d(${ value.x ?? defaultMove }, ${ value.y ?? defaultMove }, ${ value.z ?? defaultMove })`;
-} );
+export const transformMoveTransformer = createTransformer((value: TransformMove) => {
+	return `translate3d(${value.x ?? defaultMove}, ${value.y ?? defaultMove}, ${value.z ?? defaultMove})`;
+});

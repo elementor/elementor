@@ -1,8 +1,8 @@
 /* eslint-disable testing-library/render-result-naming-convention */
 import { createDomRenderer } from '../create-dom-renderer';
 
-describe( 'createDomRenderer', () => {
-	it.each( [
+describe('createDomRenderer', () => {
+	it.each([
 		{
 			title: 'basic string',
 			template: 'Hello {{ name }}',
@@ -51,16 +51,16 @@ describe( 'createDomRenderer', () => {
 			context: { url: 'javascript:alert(123)' },
 			expected: '',
 		},
-	] )( 'should render template with $title', async ( { template, context, expected } ) => {
+	])('should render template with $title', async ({ template, context, expected }) => {
 		// Arrange.
 		const domRenderer = createDomRenderer();
 
-		domRenderer.register( 'test-template', template );
+		domRenderer.register('test-template', template);
 
 		// Act.
-		const result = await domRenderer.render( 'test-template', context );
+		const result = await domRenderer.render('test-template', context);
 
 		// Assert.
-		expect( result ).toBe( expected );
-	} );
-} );
+		expect(result).toBe(expected);
+	});
+});

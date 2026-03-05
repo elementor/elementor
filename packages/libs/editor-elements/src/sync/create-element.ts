@@ -10,14 +10,14 @@ type Options = {
 
 export type CreateElementParams = {
 	container: V1Element;
-	model?: Omit< V1ElementModelProps, 'settings' | 'id' > & { settings?: V1ElementSettingsProps; id?: string };
+	model?: Omit<V1ElementModelProps, 'settings' | 'id'> & { settings?: V1ElementSettingsProps; id?: string };
 	options?: Options;
 };
 
-export function createElement( { container, model, options }: CreateElementParams ): V1Element {
-	return runCommandSync< V1Element >( 'document/elements/create', {
+export function createElement({ container, model, options }: CreateElementParams): V1Element {
+	return runCommandSync<V1Element>('document/elements/create', {
 		container,
 		model,
 		options: { edit: false, ...options },
-	} );
+	});
 }

@@ -6,16 +6,16 @@ import { unknownChildrenSchema } from './utils';
 export const imageSrcPropTypeUtil = createPropUtils(
 	'image-src',
 	z
-		.strictObject( {
+		.strictObject({
 			id: unknownChildrenSchema,
 			url: z.null(),
-		} )
+		})
 		.or(
-			z.strictObject( {
+			z.strictObject({
 				id: z.null(),
 				url: unknownChildrenSchema,
-			} )
+			})
 		)
 );
 
-export type ImageSrcPropValue = z.infer< typeof imageSrcPropTypeUtil.schema >;
+export type ImageSrcPropValue = z.infer<typeof imageSrcPropTypeUtil.schema>;

@@ -17,10 +17,10 @@ import {
 import { DEFAULT_STATE, getBreakpointKey, getStateKey } from './utils';
 
 export function createSnapshotsManager(
-	getStylesByMeta: ( meta: StyleInheritanceMetaProps ) => StyleVariantDetails[],
+	getStylesByMeta: (meta: StyleInheritanceMetaProps) => StyleVariantDetails[],
 	breakpointsRoot: BreakpointNode
 ): StylesInheritanceSnapshotGetter {
-	const breakpointsInheritancePaths = makeBreakpointsInheritancePaths( breakpointsRoot );
+	const breakpointsInheritancePaths = makeBreakpointsInheritancePaths(breakpointsRoot);
 	const allBreakpointStatesSnapshots: BreakpointsStatesSnapshotsMapping = {};
 
 	const buildMissingSnapshotsForBreakpoint = (
@@ -28,13 +28,13 @@ export function createSnapshotsManager(
 		parentBreakpoint: BreakpointStatesSlotsMapping | undefined,
 		state: StyleDefinitionState
 	) => {
-		const currentBreakpointKey = getBreakpointKey( currentBreakpointId );
-		const stateKey = getStateKey( state );
+		const currentBreakpointKey = getBreakpointKey(currentBreakpointId);
+		const stateKey = getStateKey(state);
 
-		if ( ! allBreakpointStatesSnapshots[ currentBreakpointKey ] ) {
-			allBreakpointStatesSnapshots[ currentBreakpointKey ] = {
-				[ DEFAULT_STATE ]: buildStateSnapshotSlot(
-					getStylesByMeta( { breakpoint: currentBreakpointId, state: null } ),
+		if (!allBreakpointStatesSnapshots[currentBreakpointKey]) {
+			allBreakpointStatesSnapshots[currentBreakpointKey] = {
+				[DEFAULT_STATE]: buildStateSnapshotSlot(
+					getStylesByMeta({ breakpoint: currentBreakpointId, state: null }),
 					parentBreakpoint,
 					{},
 					null
@@ -42,40 +42,40 @@ export function createSnapshotsManager(
 			};
 		}
 
-		if ( state && ! allBreakpointStatesSnapshots[ currentBreakpointKey ]?.[ stateKey ] ) {
-			allBreakpointStatesSnapshots[ currentBreakpointKey ][ stateKey ] = buildStateSnapshotSlot(
-				getStylesByMeta( { breakpoint: currentBreakpointId, state } ),
+		if (state && !allBreakpointStatesSnapshots[currentBreakpointKey]?.[stateKey]) {
+			allBreakpointStatesSnapshots[currentBreakpointKey][stateKey] = buildStateSnapshotSlot(
+				getStylesByMeta({ breakpoint: currentBreakpointId, state }),
 				parentBreakpoint,
-				allBreakpointStatesSnapshots[ currentBreakpointKey ] ?? {},
+				allBreakpointStatesSnapshots[currentBreakpointKey] ?? {},
 				state
 			);
 		}
 	};
 
-	return ( meta: StyleInheritanceMetaProps ) => {
+	return (meta: StyleInheritanceMetaProps) => {
 		const { breakpoint, state } = meta;
 
-		const stateKey = getStateKey( state );
-		const breakpointKey = getBreakpointKey( breakpoint );
+		const stateKey = getStateKey(state);
+		const breakpointKey = getBreakpointKey(breakpoint);
 
-		if ( allBreakpointStatesSnapshots[ breakpointKey ]?.[ stateKey ] ) {
+		if (allBreakpointStatesSnapshots[breakpointKey]?.[stateKey]) {
 			// snapshot was already made for this breakpoint+state
-			return allBreakpointStatesSnapshots[ breakpointKey ]?.[ stateKey ]?.snapshot;
+			return allBreakpointStatesSnapshots[breakpointKey]?.[stateKey]?.snapshot;
 		}
 
-		const breakpointsChain = [ ...breakpointsInheritancePaths[ breakpointKey ], breakpoint ];
+		const breakpointsChain = [...breakpointsInheritancePaths[breakpointKey], breakpoint];
 
-		breakpointsChain.forEach( ( breakpointId, index ) => {
-			const parentBreakpointId = index > 0 ? breakpointsChain[ index - 1 ] : null;
+		breakpointsChain.forEach((breakpointId, index) => {
+			const parentBreakpointId = index > 0 ? breakpointsChain[index - 1] : null;
 
 			buildMissingSnapshotsForBreakpoint(
 				breakpointId,
-				parentBreakpointId ? allBreakpointStatesSnapshots[ parentBreakpointId ] : undefined,
+				parentBreakpointId ? allBreakpointStatesSnapshots[parentBreakpointId] : undefined,
 				state
 			);
-		} );
+		});
 
-		return allBreakpointStatesSnapshots[ breakpointKey ]?.[ stateKey ]?.snapshot;
+		return allBreakpointStatesSnapshots[breakpointKey]?.[stateKey]?.snapshot;
 	};
 }
 
@@ -86,20 +86,20 @@ export function createSnapshotsManager(
  * 	mobile: [ 'desktop', 'tablet' ]
  * @param root
  */
-function makeBreakpointsInheritancePaths( root: BreakpointNode ): BreakpointsInheritancePath {
-	const breakpoints: Partial< BreakpointsInheritancePath > = {};
+function makeBreakpointsInheritancePaths(root: BreakpointNode): BreakpointsInheritancePath {
+	const breakpoints: Partial<BreakpointsInheritancePath> = {};
 
-	const traverse = ( node: BreakpointNode, parent?: BreakpointId[] ) => {
+	const traverse = (node: BreakpointNode, parent?: BreakpointId[]) => {
 		const { id, children } = node;
 
-		breakpoints[ id ] = parent ? [ ...parent ] : [];
+		breakpoints[id] = parent ? [...parent] : [];
 
-		children?.forEach( ( child ) => {
-			traverse( child, [ ...( breakpoints[ id ] ?? [] ), id ] );
-		} );
+		children?.forEach((child) => {
+			traverse(child, [...(breakpoints[id] ?? []), id]);
+		});
 	};
 
-	traverse( root );
+	traverse(root);
 
 	return breakpoints as BreakpointsInheritancePath;
 }
@@ -111,51 +111,51 @@ function buildStateSnapshotSlot(
 	currentBreakpoint: BreakpointStatesSlotsMapping,
 	state: StyleDefinitionState
 ): StylesInheritanceSnapshotsSlot {
-	const initialSlot = buildInitialSnapshotFromStyles( styles );
+	const initialSlot = buildInitialSnapshotFromStyles(styles);
 
-	if ( ! state ) {
+	if (!state) {
 		return {
-			snapshot: mergeSnapshots( [ initialSlot.snapshot, parentBreakpoint?.[ DEFAULT_STATE ]?.snapshot ] ),
+			snapshot: mergeSnapshots([initialSlot.snapshot, parentBreakpoint?.[DEFAULT_STATE]?.snapshot]),
 			stateSpecificSnapshot: undefined,
 		};
 	}
 
 	return {
-		snapshot: mergeSnapshots( [
+		snapshot: mergeSnapshots([
 			initialSlot.snapshot,
-			parentBreakpoint?.[ state ]?.stateSpecificSnapshot,
-			currentBreakpoint[ DEFAULT_STATE ]?.snapshot,
-		] ),
-		stateSpecificSnapshot: mergeSnapshots( [
+			parentBreakpoint?.[state]?.stateSpecificSnapshot,
+			currentBreakpoint[DEFAULT_STATE]?.snapshot,
+		]),
+		stateSpecificSnapshot: mergeSnapshots([
 			initialSlot.stateSpecificSnapshot,
-			parentBreakpoint?.[ state ]?.stateSpecificSnapshot,
-		] ),
+			parentBreakpoint?.[state]?.stateSpecificSnapshot,
+		]),
 	};
 }
 
 // creates an initial snapshot based on the passed style variants only
-function buildInitialSnapshotFromStyles( styles: StyleVariantDetails[] ): StylesInheritanceSnapshotsSlot {
+function buildInitialSnapshotFromStyles(styles: StyleVariantDetails[]): StylesInheritanceSnapshotsSlot {
 	const snapshot: StylesInheritanceSnapshot = {};
 
-	styles.forEach( ( styleData ) => {
+	styles.forEach((styleData) => {
 		const {
 			variant: { props },
 		} = styleData;
 
-		Object.entries( props ).forEach( ( [ key, value ] ) => {
-			const filteredValue = filterEmptyValues( value );
+		Object.entries(props).forEach(([key, value]) => {
+			const filteredValue = filterEmptyValues(value);
 			const filteredVariableValue =
-				( filteredValue as TransformablePropValue< string, string > )?.$$type?.includes( 'variable' ) &&
-				! hasVariable( ( filteredValue as TransformablePropValue< string, string > )?.value )
+				(filteredValue as TransformablePropValue<string, string>)?.$$type?.includes('variable') &&
+				!hasVariable((filteredValue as TransformablePropValue<string, string>)?.value)
 					? null
 					: filteredValue;
 
-			if ( filteredVariableValue === null ) {
+			if (filteredVariableValue === null) {
 				return;
 			}
 
-			if ( ! snapshot[ key ] ) {
-				snapshot[ key ] = [];
+			if (!snapshot[key]) {
+				snapshot[key] = [];
 			}
 
 			const snapshotPropValue: SnapshotPropValue = {
@@ -163,9 +163,9 @@ function buildInitialSnapshotFromStyles( styles: StyleVariantDetails[] ): Styles
 				value: filteredVariableValue,
 			};
 
-			snapshot[ key ].push( snapshotPropValue );
-		} );
-	} );
+			snapshot[key].push(snapshotPropValue);
+		});
+	});
 
 	return {
 		snapshot,
@@ -174,18 +174,18 @@ function buildInitialSnapshotFromStyles( styles: StyleVariantDetails[] ): Styles
 }
 
 // merge previous snapshot into the current one - first value of each prop is the strongest
-function mergeSnapshots( snapshots: ( StylesInheritanceSnapshot | undefined )[] ) {
+function mergeSnapshots(snapshots: (StylesInheritanceSnapshot | undefined)[]) {
 	const snapshot: StylesInheritanceSnapshot = {};
 
-	snapshots.filter( Boolean ).forEach( ( currentSnapshot ) =>
-		Object.entries( currentSnapshot as StylesInheritanceSnapshot ).forEach( ( [ key, values ] ) => {
-			if ( ! snapshot[ key ] ) {
-				snapshot[ key ] = [];
+	snapshots.filter(Boolean).forEach((currentSnapshot) =>
+		Object.entries(currentSnapshot as StylesInheritanceSnapshot).forEach(([key, values]) => {
+			if (!snapshot[key]) {
+				snapshot[key] = [];
 			}
 
 			// concatenate the previous snapshot's prop values to the current ones
-			snapshot[ key ] = snapshot[ key ].concat( values );
-		} )
+			snapshot[key] = snapshot[key].concat(values);
+		})
 	);
 
 	return snapshot;

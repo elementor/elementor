@@ -26,48 +26,48 @@ type Handlers = {
 	onRestore?: () => void;
 };
 
-export const DeletedVariable = ( { variable, propTypeKey }: Props ) => {
-	const { propTypeUtil } = getVariableType( propTypeKey );
+export const DeletedVariable = ({ variable, propTypeKey }: Props) => {
+	const { propTypeUtil } = getVariableType(propTypeKey);
 
 	const boundProp = useBoundProp();
 
 	const userPermissions = usePermissions();
 
-	const [ showInfotip, setShowInfotip ] = useState< boolean >( false );
-	const toggleInfotip = () => setShowInfotip( ( prev ) => ! prev );
-	const closeInfotip = () => setShowInfotip( false );
+	const [showInfotip, setShowInfotip] = useState<boolean>(false);
+	const toggleInfotip = () => setShowInfotip((prev) => !prev);
+	const closeInfotip = () => setShowInfotip(false);
 
-	const deletedChipAnchorRef = useRef< HTMLDivElement >( null );
+	const deletedChipAnchorRef = useRef<HTMLDivElement>(null);
 
 	const popupId = useId();
-	const popupState = usePopupState( {
+	const popupState = usePopupState({
 		variant: 'popover',
-		popupId: `elementor-variables-restore-${ popupId }`,
-	} );
+		popupId: `elementor-variables-restore-${popupId}`,
+	});
 
 	const handlers: Handlers = {};
 
-	if ( userPermissions.canUnlink() ) {
-		handlers.onUnlink = createUnlinkHandler( variable, propTypeKey, boundProp.setValue );
+	if (userPermissions.canUnlink()) {
+		handlers.onUnlink = createUnlinkHandler(variable, propTypeKey, boundProp.setValue);
 	}
 
-	if ( userPermissions.canRestore() ) {
+	if (userPermissions.canRestore()) {
 		handlers.onRestore = () => {
-			if ( ! variable.key ) {
+			if (!variable.key) {
 				return;
 			}
 
-			restoreVariable( variable.key )
-				.then( ( id ) => {
-					resolveBoundPropAndSetValue( propTypeUtil.create( id ), boundProp );
+			restoreVariable(variable.key)
+				.then((id) => {
+					resolveBoundPropAndSetValue(propTypeUtil.create(id), boundProp);
 
 					closeInfotip();
-				} )
-				.catch( () => {
+				})
+				.catch(() => {
 					closeInfotip();
-					popupState.setAnchorEl( deletedChipAnchorRef.current );
+					popupState.setAnchorEl(deletedChipAnchorRef.current);
 					popupState.open();
-				} );
+				});
 		};
 	}
 
@@ -77,54 +77,54 @@ export const DeletedVariable = ( { variable, propTypeKey }: Props ) => {
 
 	return (
 		<>
-			<Box ref={ deletedChipAnchorRef }>
-				{ showInfotip && <Backdrop open onClick={ closeInfotip } invisible /> }
+			<Box ref={deletedChipAnchorRef}>
+				{showInfotip && <Backdrop open onClick={closeInfotip} invisible />}
 				<Infotip
 					color="warning"
 					placement="right-start"
-					open={ showInfotip }
+					open={showInfotip}
 					disableHoverListener
-					onClose={ closeInfotip }
+					onClose={closeInfotip}
 					content={
 						<DeletedVariableAlert
-							onClose={ closeInfotip }
-							onUnlink={ handlers.onUnlink }
-							onRestore={ handlers.onRestore }
-							label={ variable.label }
+							onClose={closeInfotip}
+							onUnlink={handlers.onUnlink}
+							onRestore={handlers.onRestore}
+							label={variable.label}
 						/>
 					}
-					slotProps={ {
+					slotProps={{
 						popper: {
 							modifiers: [
 								{
 									name: 'offset',
-									options: { offset: [ 0, 24 ] },
+									options: { offset: [0, 24] },
 								},
 							],
 						},
-					} }
+					}}
 				>
 					<WarningVariableTag
-						label={ variable.label }
-						onClick={ toggleInfotip }
-						suffix={ __( 'deleted', 'elementor' ) }
+						label={variable.label}
+						onClick={toggleInfotip}
+						suffix={__('deleted', 'elementor')}
 					/>
 				</Infotip>
 
 				<Popover
 					disableScrollLock
-					anchorOrigin={ { vertical: 'bottom', horizontal: 'right' } }
-					transformOrigin={ { vertical: 'top', horizontal: 'right' } }
-					PaperProps={ {
+					anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+					transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+					PaperProps={{
 						sx: { my: 1 },
-					} }
-					{ ...bindPopover( popupState ) }
+					}}
+					{...bindPopover(popupState)}
 				>
-					<VariableTypeProvider propTypeKey={ propTypeKey }>
+					<VariableTypeProvider propTypeKey={propTypeKey}>
 						<VariableRestore
-							variableId={ variable.key ?? '' }
-							onClose={ popupState.close }
-							onSubmit={ handleRestoreWithOverrides }
+							variableId={variable.key ?? ''}
+							onClose={popupState.close}
+							onSubmit={handleRestoreWithOverrides}
 						/>
 					</VariableTypeProvider>
 				</Popover>

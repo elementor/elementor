@@ -1,33 +1,33 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function debounce< TArgs extends any[] >( fn: ( ...args: TArgs ) => void, wait: number ) {
-	let timer: ReturnType< typeof setTimeout > | null = null;
+export function debounce<TArgs extends any[]>(fn: (...args: TArgs) => void, wait: number) {
+	let timer: ReturnType<typeof setTimeout> | null = null;
 
 	const cancel = () => {
-		if ( ! timer ) {
+		if (!timer) {
 			return;
 		}
 
-		clearTimeout( timer );
+		clearTimeout(timer);
 		timer = null;
 	};
 
-	const flush = ( ...args: TArgs ) => {
+	const flush = (...args: TArgs) => {
 		cancel();
 
-		fn( ...args );
+		fn(...args);
 	};
 
-	const run = ( ...args: TArgs ) => {
+	const run = (...args: TArgs) => {
 		cancel();
 
-		timer = setTimeout( () => {
-			fn( ...args );
+		timer = setTimeout(() => {
+			fn(...args);
 
 			timer = null;
-		}, wait );
+		}, wait);
 	};
 
-	const pending = () => !! timer;
+	const pending = () => !!timer;
 
 	run.flush = flush;
 	run.cancel = cancel;

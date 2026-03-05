@@ -10,6 +10,6 @@ export const useCssClassUsageByID = (
 	id: string
 ): { data: EnhancedCssClassUsageContent; isLoading: boolean; isSuccess?: boolean } => {
 	const { data, ...rest } = useCssClassUsage();
-	const classData = data?.[ id ] ?? EMPTY_CLASS_USAGE;
+	const classData = data?.[id] ?? EMPTY_CLASS_USAGE;
 	return { ...rest, data: classData };
 };

@@ -12,7 +12,7 @@ type EditMode =
 	  }
 	| {
 			mode: 'create';
-			details: Record< string, never >;
+			details: Record<string, never>;
 	  }
 	| {
 			mode: 'duplicate';
@@ -23,13 +23,13 @@ type EditMode =
 	  }
 	| {
 			mode: 'none';
-			details: Record< string, never >;
+			details: Record<string, never>;
 	  };
 
 type ContextType = {
 	type: Slug;
 	editMode: EditMode;
-	setEditMode: Dispatch< SetStateAction< EditMode > >;
+	setEditMode: Dispatch<SetStateAction<EditMode>>;
 	resetEditMode: () => void;
 	setError: () => void;
 };
@@ -42,43 +42,43 @@ const defaultValues: ContextType = {
 	setError: () => null,
 };
 
-const PostListContext = createContext< ContextType >( defaultValues );
+const PostListContext = createContext<ContextType>(defaultValues);
 
-export const PostListContextProvider = ( {
+export const PostListContextProvider = ({
 	type,
 	setError,
 	children,
 }: {
-	type: ContextType[ 'type' ];
-	setError: ContextType[ 'setError' ];
+	type: ContextType['type'];
+	setError: ContextType['setError'];
 	children: ReactNode;
-} ) => {
-	const [ editMode, setEditMode ] = useState( defaultValues.editMode );
+}) => {
+	const [editMode, setEditMode] = useState(defaultValues.editMode);
 
 	const resetEditMode = () => {
-		setEditMode( defaultValues.editMode );
+		setEditMode(defaultValues.editMode);
 	};
 
 	return (
 		<PostListContext.Provider
-			value={ {
+			value={{
 				type,
 				editMode,
 				setEditMode,
 				resetEditMode,
 				setError,
-			} }
+			}}
 		>
-			{ children }
+			{children}
 		</PostListContext.Provider>
 	);
 };
 
 export function usePostListContext() {
-	const context = useContext( PostListContext );
+	const context = useContext(PostListContext);
 
-	if ( ! context ) {
-		throw new Error( 'The `usePostListContext()` hook must be used within an `<PostListContextProvider />`' );
+	if (!context) {
+		throw new Error('The `usePostListContext()` hook must be used within an `<PostListContextProvider />`');
 	}
 
 	return context;

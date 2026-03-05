@@ -9,25 +9,25 @@ import { useVariableType } from '../../context/variable-type-context';
 import { colorVariablePropTypeUtil } from '../../prop-types/color-variable-prop-type';
 import { resolveBoundPropAndSetValue, useVariableBoundProp } from '../use-variable-bound-prop';
 
-jest.mock( '@elementor/editor-controls', () => ( {
+jest.mock('@elementor/editor-controls', () => ({
 	useBoundProp: jest.fn(),
-} ) );
+}));
 
-jest.mock( '../../context/variable-type-context', () => ( {
+jest.mock('../../context/variable-type-context', () => ({
 	useVariableType: jest.fn(),
-} ) );
+}));
 
-const mockUseBoundProp = jest.mocked( useBoundProp );
-const mockUseVariableType = jest.mocked( useVariableType );
+const mockUseBoundProp = jest.mocked(useBoundProp);
+const mockUseVariableType = jest.mocked(useVariableType);
 
-function createMockBoundProp( overrides: Partial< Record< string, string > > = {} ) {
+function createMockBoundProp(overrides: Partial<Record<string, string>> = {}) {
 	return {
 		bind: 'test-bind',
 		setValue: jest.fn(),
 		value: null as string | null,
 		propType: createMockPropType(),
 		placeholder: null as string | null | object,
-		path: [ 'background', 'color' ],
+		path: ['background', 'color'],
 		restoreValue: jest.fn(),
 		resetValue: jest.fn(),
 		isDisabled: jest.fn(),
@@ -38,117 +38,117 @@ function createMockBoundProp( overrides: Partial< Record< string, string > > = {
 	};
 }
 
-describe( 'useVariableBoundProp', () => {
-	beforeEach( () => {
+describe('useVariableBoundProp', () => {
+	beforeEach(() => {
 		jest.clearAllMocks();
 
-		mockUseVariableType.mockReturnValue( {
+		mockUseVariableType.mockReturnValue({
 			propTypeUtil: colorVariablePropTypeUtil,
 			icon: BrushIcon,
 			valueField: ColorField,
 			variableType: 'color',
-			startIcon: () => ( { type: 'div' } ) as JSX.Element,
+			startIcon: () => ({ type: 'div' }) as JSX.Element,
 			fallbackPropTypeUtil: colorPropTypeUtil,
-		} );
-	} );
+		});
+	});
 
-	it( 'should return bounded prop with custom setValue function', () => {
+	it('should return bounded prop with custom setValue function', () => {
 		// Arrange
-		const mockBoundProp = createMockBoundProp( {
+		const mockBoundProp = createMockBoundProp({
 			value: 'e-gv-a01',
 			placeholder: 'e-gv-placeholder',
-		} );
+		});
 
-		mockUseBoundProp.mockReturnValue( mockBoundProp );
+		mockUseBoundProp.mockReturnValue(mockBoundProp);
 
 		// Act
-		const { result } = renderHook( () => useVariableBoundProp() );
+		const { result } = renderHook(() => useVariableBoundProp());
 
 		// Assert
-		expect( result.current ).toEqual( {
+		expect(result.current).toEqual({
 			...mockBoundProp,
-			setVariableValue: expect.any( Function ),
+			setVariableValue: expect.any(Function),
 			variableId: 'e-gv-a01',
-		} );
-	} );
+		});
+	});
 
-	it( 'should use placeholder when value is null', () => {
+	it('should use placeholder when value is null', () => {
 		// Arrange
-		const mockBoundProp = createMockBoundProp( {
+		const mockBoundProp = createMockBoundProp({
 			placeholder: 'e-gv-placeholder',
-		} );
+		});
 
-		mockUseBoundProp.mockReturnValue( mockBoundProp );
+		mockUseBoundProp.mockReturnValue(mockBoundProp);
 
 		// Act
-		const { result } = renderHook( () => useVariableBoundProp() );
+		const { result } = renderHook(() => useVariableBoundProp());
 
 		// Assert
-		expect( result.current.variableId ).toBe( 'e-gv-placeholder' );
-	} );
+		expect(result.current.variableId).toBe('e-gv-placeholder');
+	});
 
-	it( 'should use placeholder when value is undefined', () => {
+	it('should use placeholder when value is undefined', () => {
 		// Arrange
-		const mockBoundProp = createMockBoundProp( {
+		const mockBoundProp = createMockBoundProp({
 			value: undefined,
 			placeholder: 'e-gv-placeholder',
-		} );
+		});
 
-		mockUseBoundProp.mockReturnValue( mockBoundProp );
+		mockUseBoundProp.mockReturnValue(mockBoundProp);
 
 		// Act
-		const { result } = renderHook( () => useVariableBoundProp() );
+		const { result } = renderHook(() => useVariableBoundProp());
 
 		// Assert
-		expect( result.current.variableId ).toBe( 'e-gv-placeholder' );
-	} );
+		expect(result.current.variableId).toBe('e-gv-placeholder');
+	});
 
-	it( 'should call resolveBoundPropAndSetValue when setValue is called', () => {
+	it('should call resolveBoundPropAndSetValue when setValue is called', () => {
 		// Arrange
 		const mockBoundProp = createMockBoundProp();
-		mockUseBoundProp.mockReturnValue( mockBoundProp );
+		mockUseBoundProp.mockReturnValue(mockBoundProp);
 
 		// Act
-		const { result } = renderHook( () => useVariableBoundProp() );
-		result.current.setVariableValue( 'new-value' );
+		const { result } = renderHook(() => useVariableBoundProp());
+		result.current.setVariableValue('new-value');
 
 		// Assert
-		expect( mockBoundProp.setValue ).toHaveBeenCalledWith( 'new-value' );
-	} );
-} );
+		expect(mockBoundProp.setValue).toHaveBeenCalledWith('new-value');
+	});
+});
 
-describe( 'resolveBoundPropAndSetValue', () => {
-	let mockBoundProp: ReturnType< typeof createMockBoundProp >;
+describe('resolveBoundPropAndSetValue', () => {
+	let mockBoundProp: ReturnType<typeof createMockBoundProp>;
 
-	beforeEach( () => {
+	beforeEach(() => {
 		mockBoundProp = createMockBoundProp();
-	} );
+	});
 
-	it( 'should set null when no current value and new value matches placeholder', () => {
+	it('should set null when no current value and new value matches placeholder', () => {
 		// Arrange
 		mockBoundProp.value = null;
 		mockBoundProp.placeholder = 'e-gv-placeholder';
 
 		// Act
-		resolveBoundPropAndSetValue( 'e-gv-placeholder', mockBoundProp );
+		resolveBoundPropAndSetValue('e-gv-placeholder', mockBoundProp);
 
 		// Assert
-		expect( mockBoundProp.setValue ).toHaveBeenCalledWith( null );
-	} );
+		expect(mockBoundProp.setValue).toHaveBeenCalledWith(null);
+	});
 
-	it( 'should set value when no current value and new value does not match placeholder', () => {
+	it('should set value when no current value and new value does not match placeholder', () => {
 		// Arrange
 		mockBoundProp.value = null;
 		mockBoundProp.placeholder = 'e-gv-placeholder';
 
 		// Act
-		resolveBoundPropAndSetValue( 'e-gv-new-value', mockBoundProp );
+		resolveBoundPropAndSetValue('e-gv-new-value', mockBoundProp);
 
 		// Assert
-		expect( mockBoundProp.setValue ).toHaveBeenCalledWith( 'e-gv-new-value' );
-	} );
+		expect(mockBoundProp.setValue).toHaveBeenCalledWith('e-gv-new-value');
+	});
 
-	it( 'should set value when current value exists', () => {
+	it('should set value when current value exists', () => {
 		// Arrange
 		mockBoundProp.value = 'e-gv-current';
 		mockBoundProp.placeholder = 'e-gv-placeholder';
@@ -163,13 +163,13 @@ describe( 'resolveBoundPropAndSetValue', () => {
 		);
 
 		// Assert
-		expect( mockBoundProp.setValue ).toHaveBeenCalledWith( {
+		expect(mockBoundProp.setValue).toHaveBeenCalledWith({
 			$$type: 'size-variable',
 			value: 'e-gv-current',
-		} );
-	} );
+		});
+	});
 
-	it( 'should handle object values with value property', () => {
+	it('should handle object values with value property', () => {
 		// Arrange
 		mockBoundProp.value = null;
 		mockBoundProp.placeholder = {
@@ -178,21 +178,21 @@ describe( 'resolveBoundPropAndSetValue', () => {
 		};
 
 		// Act
-		resolveBoundPropAndSetValue( { $$type: 'color', value: 'e-gv-placeholder' }, mockBoundProp );
+		resolveBoundPropAndSetValue({ $$type: 'color', value: 'e-gv-placeholder' }, mockBoundProp);
 
 		// Assert
-		expect( mockBoundProp.setValue ).toHaveBeenCalledWith( null );
-	} );
+		expect(mockBoundProp.setValue).toHaveBeenCalledWith(null);
+	});
 
-	it( 'should handle mixed string and object values', () => {
+	it('should handle mixed string and object values', () => {
 		// Arrange
 		mockBoundProp.value = null;
 		mockBoundProp.placeholder = 'e-gv-placeholder';
 
 		// Act
-		resolveBoundPropAndSetValue( { $$type: 'color', value: 'e-gv-placeholder' }, mockBoundProp );
+		resolveBoundPropAndSetValue({ $$type: 'color', value: 'e-gv-placeholder' }, mockBoundProp);
 
 		// Assert
-		expect( mockBoundProp.setValue ).toHaveBeenCalledWith( null );
-	} );
-} );
+		expect(mockBoundProp.setValue).toHaveBeenCalledWith(null);
+	});
+});

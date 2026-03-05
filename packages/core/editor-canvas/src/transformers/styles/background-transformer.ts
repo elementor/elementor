@@ -8,12 +8,12 @@ type Background = {
 	clip?: 'border-box' | 'padding-box' | 'content-box' | 'text' | null;
 };
 
-export const backgroundTransformer = createTransformer( ( value: Background ) => {
+export const backgroundTransformer = createTransformer((value: Background) => {
 	const { color = null, 'background-overlay': overlays = null, clip = null } = value;
 
-	return createMultiPropsValue( {
+	return createMultiPropsValue({
 		...overlays,
 		'background-color': color,
 		'background-clip': clip,
-	} );
-} );
+	});
+});

@@ -8,15 +8,15 @@ import { InteractionsPromotionChip, type InteractionsPromotionChipRef } from './
 
 type PromotionSelectProps = {
 	value: string;
-	onChange?: ( value: string ) => void;
-	baseOptions: Record< string, string >;
-	disabledOptions: Record< string, string >;
+	onChange?: (value: string) => void;
+	baseOptions: Record<string, string>;
+	disabledOptions: Record<string, string>;
 	promotionLabel?: string;
 	promotionContent: string;
 	upgradeUrl: string;
 };
 
-export function PromotionSelect( {
+export function PromotionSelect({
 	value,
 	onChange,
 	baseOptions,
@@ -24,53 +24,53 @@ export function PromotionSelect( {
 	promotionLabel,
 	promotionContent,
 	upgradeUrl,
-}: PromotionSelectProps ) {
-	const promotionRef = useRef< InteractionsPromotionChipRef >( null );
-	const anchorRef = useRef< HTMLElement >( null );
+}: PromotionSelectProps) {
+	const promotionRef = useRef<InteractionsPromotionChipRef>(null);
+	const anchorRef = useRef<HTMLElement>(null);
 
 	return (
 		<Select
-			value={ value }
-			onChange={ ( e: SelectChangeEvent< string > ) => onChange?.( e.target.value ) }
+			value={value}
+			onChange={(e: SelectChangeEvent<string>) => onChange?.(e.target.value)}
 			fullWidth
 			displayEmpty
 			size="tiny"
-			MenuProps={ { disablePortal: true } }
+			MenuProps={{ disablePortal: true }}
 		>
-			{ Object.entries( baseOptions ).map( ( [ key, label ] ) => (
-				<MenuListItem key={ key } value={ key }>
-					{ label }
+			{Object.entries(baseOptions).map(([key, label]) => (
+				<MenuListItem key={key} value={key}>
+					{label}
 				</MenuListItem>
-			) ) }
+			))}
 
 			<MenuSubheader
-				ref={ anchorRef }
-				sx={ {
+				ref={anchorRef}
+				sx={{
 					cursor: 'pointer',
 					color: 'text.tertiary',
 					fontWeight: '400',
 					display: 'flex',
 					alignItems: 'center',
-				} }
-				onMouseDown={ ( e: MouseEvent ) => {
+				}}
+				onMouseDown={(e: MouseEvent) => {
 					e.stopPropagation();
 					promotionRef.current?.toggle();
-				} }
+				}}
 			>
-				{ promotionLabel ?? __( 'PRO features', 'elementor' ) }
+				{promotionLabel ?? __('PRO features', 'elementor')}
 				<InteractionsPromotionChip
-					content={ promotionContent }
-					upgradeUrl={ upgradeUrl }
-					ref={ promotionRef }
-					anchorRef={ anchorRef }
+					content={promotionContent}
+					upgradeUrl={upgradeUrl}
+					ref={promotionRef}
+					anchorRef={anchorRef}
 				/>
 			</MenuSubheader>
 
-			{ Object.entries( disabledOptions ).map( ( [ key, label ] ) => (
-				<MenuListItem key={ key } value={ key } disabled sx={ { pl: 3 } }>
-					{ label }
+			{Object.entries(disabledOptions).map(([key, label]) => (
+				<MenuListItem key={key} value={key} disabled sx={{ pl: 3 }}>
+					{label}
 				</MenuListItem>
-			) ) }
+			))}
 		</Select>
 	);
 }

@@ -25,114 +25,112 @@ type Props = {
 	onClose: () => void;
 };
 
-export function ComponentPropertiesPanelContent( { onClose }: Props ) {
+export function ComponentPropertiesPanelContent({ onClose }: Props) {
 	const currentComponentId = useCurrentComponentId();
-	const overridableProps = useSanitizeOverridableProps( currentComponentId );
-	const [ isAddingGroup, setIsAddingGroup ] = useState( false );
-	const introductionRef = useRef< HTMLButtonElement >( null );
+	const overridableProps = useSanitizeOverridableProps(currentComponentId);
+	const [isAddingGroup, setIsAddingGroup] = useState(false);
+	const introductionRef = useRef<HTMLButtonElement>(null);
 	const groupLabelEditable = useCurrentEditableItem();
 
-	const groups = useMemo( () => {
-		if ( ! overridableProps ) {
+	const groups = useMemo(() => {
+		if (!overridableProps) {
 			return [];
 		}
 
 		return overridableProps.groups.order
-			.map( ( groupId ) => overridableProps.groups.items[ groupId ] ?? null )
-			.filter( Boolean );
-	}, [ overridableProps ] );
+			.map((groupId) => overridableProps.groups.items[groupId] ?? null)
+			.filter(Boolean);
+	}, [overridableProps]);
 
 	const allGroupsForSelect = useMemo(
-		() => groups.map( ( group ) => ( { value: group.id, label: group.label } ) ),
-		[ groups ]
+		() => groups.map((group) => ({ value: group.id, label: group.label })),
+		[groups]
 	);
 
-	if ( ! currentComponentId || ! overridableProps ) {
+	if (!currentComponentId || !overridableProps) {
 		return null;
 	}
 
 	const hasGroups = groups.length > 0;
-	const showEmptyState = ! hasGroups && ! isAddingGroup;
+	const showEmptyState = !hasGroups && !isAddingGroup;
 	const groupIds = overridableProps.groups.order;
 
 	const handleAddGroupClick = () => {
-		if ( isAddingGroup ) {
+		if (isAddingGroup) {
 			return;
 		}
 
-		const newGroupId = generateUniqueId( 'group' );
-		const newLabel = generateUniqueLabel( groups );
+		const newGroupId = generateUniqueId('group');
+		const newLabel = generateUniqueLabel(groups);
 
-		addOverridableGroup( {
+		addOverridableGroup({
 			componentId: currentComponentId,
 			groupId: newGroupId,
 			label: newLabel,
 			source: 'user',
-		} );
-		setDocumentModifiedStatus( true );
-		setIsAddingGroup( false );
+		});
+		setDocumentModifiedStatus(true);
+		setIsAddingGroup(false);
 
-		groupLabelEditable.setEditingGroupId( newGroupId );
+		groupLabelEditable.setEditingGroupId(newGroupId);
 	};
 
-	const handleGroupsReorder = ( newOrder: string[] ) => {
-		reorderOverridableGroups( { componentId: currentComponentId, newOrder } );
-		setDocumentModifiedStatus( true );
+	const handleGroupsReorder = (newOrder: string[]) => {
+		reorderOverridableGroups({ componentId: currentComponentId, newOrder });
+		setDocumentModifiedStatus(true);
 	};
 
-	const handlePropsReorder = ( groupId: string, newPropsOrder: string[] ) => {
-		reorderGroupProps( { componentId: currentComponentId, groupId, newPropsOrder } );
-		setDocumentModifiedStatus( true );
+	const handlePropsReorder = (groupId: string, newPropsOrder: string[]) => {
+		reorderGroupProps({ componentId: currentComponentId, groupId, newPropsOrder });
+		setDocumentModifiedStatus(true);
 	};
 
-	const handlePropertyDelete = ( propKey: string ) => {
-		deleteOverridableProp( { componentId: currentComponentId, propKey, source: 'user' } );
-		setDocumentModifiedStatus( true );
+	const handlePropertyDelete = (propKey: string) => {
+		deleteOverridableProp({ componentId: currentComponentId, propKey, source: 'user' });
+		setDocumentModifiedStatus(true);
 	};
 
-	const handlePropertyUpdate = ( overrideKey: string, data: { label: string; group: string | null } ) => {
-		updateOverridablePropParams( {
+	const handlePropertyUpdate = (overrideKey: string, data: { label: string; group: string | null }) => {
+		updateOverridablePropParams({
 			componentId: currentComponentId,
 			overrideKey,
 			label: data.label,
 			groupId: data.group,
-		} );
-		setDocumentModifiedStatus( true );
+		});
+		setDocumentModifiedStatus(true);
 	};
 
-	const handleGroupDelete = ( groupId: string ) => {
-		deleteOverridableGroup( { componentId: currentComponentId, groupId } );
-		setDocumentModifiedStatus( true );
+	const handleGroupDelete = (groupId: string) => {
+		deleteOverridableGroup({ componentId: currentComponentId, groupId });
+		setDocumentModifiedStatus(true);
 	};
 
 	return (
 		<>
-			<PanelHeader sx={ { justifyContent: 'start', pl: 1.5, pr: 1, py: 1 } }>
-				<Stack direction="row" alignItems="center" gap={ 0.5 } flexGrow={ 1 }>
+			<PanelHeader sx={{ justifyContent: 'start', pl: 1.5, pr: 1, py: 1 }}>
+				<Stack direction="row" alignItems="center" gap={0.5} flexGrow={1}>
 					<ComponentPropListIcon fontSize="tiny" />
-					<PanelHeaderTitle variant="subtitle2">
-						{ __( 'Component properties', 'elementor' ) }
-					</PanelHeaderTitle>
+					<PanelHeaderTitle variant="subtitle2">{__('Component properties', 'elementor')}</PanelHeaderTitle>
 				</Stack>
 
-				{ ! showEmptyState && (
-					<Tooltip title={ __( 'Add new group', 'elementor' ) }>
+				{!showEmptyState && (
+					<Tooltip title={__('Add new group', 'elementor')}>
 						<IconButton
 							size="tiny"
-							aria-label={ __( 'Add new group', 'elementor' ) }
-							onClick={ handleAddGroupClick }
+							aria-label={__('Add new group', 'elementor')}
+							onClick={handleAddGroupClick}
 						>
 							<FolderPlusIcon fontSize="tiny" />
 						</IconButton>
 					</Tooltip>
-				) }
+				)}
 
-				<Tooltip title={ __( 'Close panel', 'elementor' ) }>
+				<Tooltip title={__('Close panel', 'elementor')}>
 					<IconButton
-						ref={ introductionRef }
+						ref={introductionRef}
 						size="tiny"
-						aria-label={ __( 'Close panel', 'elementor' ) }
-						onClick={ onClose }
+						aria-label={__('Close panel', 'elementor')}
+						onClick={onClose}
 					>
 						<XIcon fontSize="tiny" />
 					</IconButton>
@@ -142,34 +140,34 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 			<Divider />
 
 			<PanelBody>
-				{ showEmptyState ? (
-					<PropertiesEmptyState introductionRef={ introductionRef } />
+				{showEmptyState ? (
+					<PropertiesEmptyState introductionRef={introductionRef} />
 				) : (
-					<List sx={ { p: 2, display: 'flex', flexDirection: 'column', gap: 2 } }>
-						<SortableProvider value={ groupIds } onChange={ handleGroupsReorder }>
-							{ groups.map( ( group ) => (
-								<SortableItem key={ group.id } id={ group.id }>
-									{ ( { triggerProps, triggerStyle, isDragPlaceholder } ) => (
+					<List sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+						<SortableProvider value={groupIds} onChange={handleGroupsReorder}>
+							{groups.map((group) => (
+								<SortableItem key={group.id} id={group.id}>
+									{({ triggerProps, triggerStyle, isDragPlaceholder }) => (
 										<PropertiesGroup
-											group={ group }
-											props={ overridableProps.props }
-											allGroups={ allGroupsForSelect }
-											allGroupsRecord={ overridableProps.groups.items }
-											sortableTriggerProps={ { ...triggerProps, style: triggerStyle } }
-											isDragPlaceholder={ isDragPlaceholder }
-											setIsAddingGroup={ setIsAddingGroup }
-											onPropsReorder={ ( newOrder ) => handlePropsReorder( group.id, newOrder ) }
-											onPropertyDelete={ handlePropertyDelete }
-											onPropertyUpdate={ handlePropertyUpdate }
-											editableLabelProps={ groupLabelEditable }
-											onGroupDelete={ handleGroupDelete }
+											group={group}
+											props={overridableProps.props}
+											allGroups={allGroupsForSelect}
+											allGroupsRecord={overridableProps.groups.items}
+											sortableTriggerProps={{ ...triggerProps, style: triggerStyle }}
+											isDragPlaceholder={isDragPlaceholder}
+											setIsAddingGroup={setIsAddingGroup}
+											onPropsReorder={(newOrder) => handlePropsReorder(group.id, newOrder)}
+											onPropertyDelete={handlePropertyDelete}
+											onPropertyUpdate={handlePropertyUpdate}
+											editableLabelProps={groupLabelEditable}
+											onGroupDelete={handleGroupDelete}
 										/>
-									) }
+									)}
 								</SortableItem>
-							) ) }
+							))}
 						</SortableProvider>
 					</List>
-				) }
+				)}
 			</PanelBody>
 		</>
 	);

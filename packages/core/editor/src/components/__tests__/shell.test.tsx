@@ -5,18 +5,18 @@ import { screen } from '@testing-library/react';
 import { injectIntoTop } from '../../locations';
 import Shell from '../shell';
 
-describe( '<Shell />', () => {
-	it( 'should render', () => {
+describe('<Shell />', () => {
+	it('should render', () => {
 		// Arrange.
-		injectIntoTop( {
+		injectIntoTop({
 			id: 'test',
 			component: () => <div>test</div>,
-		} );
+		});
 
 		// Act.
-		renderWithQuery( <Shell /> );
+		renderWithQuery(<Shell />);
 
 		// Assert.
-		expect( screen.getByText( 'test' ) ).toBeInTheDocument();
-	} );
-} );
+		expect(screen.getByText('test')).toBeInTheDocument();
+	});
+});

@@ -18,14 +18,14 @@ export type BackgroundImageTransformed = {
 	position: string | null;
 };
 
-export const backgroundImageOverlayTransformer = createTransformer( ( value: BackgroundImageOverlay ) => {
+export const backgroundImageOverlayTransformer = createTransformer((value: BackgroundImageOverlay) => {
 	const { image, size = null, position = null, repeat = null, attachment = null } = value;
 
-	if ( ! image ) {
+	if (!image) {
 		return null;
 	}
 
-	const src = image.src ? `url(${ image.src })` : null;
+	const src = image.src ? `url(${image.src})` : null;
 
 	const backgroundStyles: BackgroundImageTransformed = {
 		src,
@@ -36,4 +36,4 @@ export const backgroundImageOverlayTransformer = createTransformer( ( value: Bac
 	};
 
 	return backgroundStyles;
-} );
+});

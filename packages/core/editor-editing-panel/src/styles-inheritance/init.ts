@@ -5,10 +5,10 @@ import { initStylesInheritanceTransformers } from './init-styles-inheritance-tra
 export const init = () => {
 	initStylesInheritanceTransformers();
 
-	registerFieldIndicator( {
+	registerFieldIndicator({
 		fieldType: FIELD_TYPE.STYLES,
 		id: 'styles-inheritance',
 		priority: 1,
 		indicator: StylesInheritanceIndicator,
-	} );
+	});
 };

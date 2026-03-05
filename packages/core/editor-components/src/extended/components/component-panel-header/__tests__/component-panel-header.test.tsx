@@ -18,20 +18,20 @@ import { ComponentPanelHeader } from '../component-panel-header';
 
 const mockOpenPropertiesPanel = jest.fn();
 
-jest.mock( '@elementor/editor-documents', () => ( {
+jest.mock('@elementor/editor-documents', () => ({
 	getV1DocumentsManager: jest.fn(),
 	switchToDocument: jest.fn(),
 	invalidateDocumentData: jest.fn(),
-} ) );
+}));
 
-jest.mock( '../../component-properties-panel/component-properties-panel', () => ( {
-	usePanelActions: () => ( {
+jest.mock('../../component-properties-panel/component-properties-panel', () => ({
+	usePanelActions: () => ({
 		open: mockOpenPropertiesPanel,
-	} ),
-} ) );
+	}),
+}));
 
-jest.mock( '@elementor/editor-current-user' );
-jest.mock( '@wordpress/i18n' );
+jest.mock('@elementor/editor-current-user');
+jest.mock('@wordpress/i18n');
 
 const MOCK_INITIAL_DOCUMENT_ID = 1;
 const MOCK_COMPONENT_ID = 123;
@@ -64,78 +64,78 @@ const MOCK_OVERRIDABLE_PROPS = {
 	},
 	groups: {
 		items: {
-			default: { id: 'default', label: 'Default', props: [ 'prop-1', 'prop-2' ] },
+			default: { id: 'default', label: 'Default', props: ['prop-1', 'prop-2'] },
 		},
-		order: [ 'default' ],
+		order: ['default'],
 	},
 };
 
-describe( '<ComponentPanelHeader />', () => {
-	let store: Store< SliceState< typeof slice > >;
+describe('<ComponentPanelHeader />', () => {
+	let store: Store<SliceState<typeof slice>>;
 
-	beforeEach( () => {
+	beforeEach(() => {
 		jest.clearAllMocks();
-		registerSlice( slice );
+		registerSlice(slice);
 		store = __createStore();
 
-		jest.mocked( getV1DocumentsManager ).mockReturnValue( {
-			getCurrent: () => ( {
+		jest.mocked(getV1DocumentsManager).mockReturnValue({
+			getCurrent: () => ({
 				id: MOCK_COMPONENT_ID,
 				container: {
 					settings: {
-						get: ( key: string ) => ( key === 'post_title' ? MOCK_COMPONENT_NAME : undefined ),
+						get: (key: string) => (key === 'post_title' ? MOCK_COMPONENT_NAME : undefined),
 					},
 				},
-			} ),
+			}),
 			getInitialId: () => MOCK_INITIAL_DOCUMENT_ID,
 			invalidateCache: jest.fn(),
-		} as unknown as V1DocumentsManager );
+		} as unknown as V1DocumentsManager);
 
-		jest.mocked( useSuppressedMessage ).mockReturnValue( [ true, jest.fn() ] );
-		( __ as jest.Mock ).mockImplementation( ( str ) => str );
+		jest.mocked(useSuppressedMessage).mockReturnValue([true, jest.fn()]);
+		(__ as jest.Mock).mockImplementation((str) => str);
 
 		dispatch(
-			slice.actions.updateComponentSanitizedAttribute( {
+			slice.actions.updateComponentSanitizedAttribute({
 				componentId: MOCK_COMPONENT_ID,
 				attribute: 'overridableProps',
-			} )
+			})
 		);
-	} );
+	});
 
-	it( 'should not render when not editing a component', () => {
+	it('should not render when not editing a component', () => {
 		// Arrange & Act
-		renderWithStore( <ComponentPanelHeader />, store );
+		renderWithStore(<ComponentPanelHeader />, store);
 
 		// Assert
-		expect( screen.queryByLabelText( 'Back' ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.queryByLabelText('Back')).not.toBeInTheDocument();
+	});
 
-	it( 'should render when editing a component', () => {
+	it('should render when editing a component', () => {
 		// Arrange
 		setupComponentEditing();
 
 		// Act
-		renderWithStore( <ComponentPanelHeader />, store );
+		renderWithStore(<ComponentPanelHeader />, store);
 
 		// Assert
-		expect( screen.getByLabelText( 'Back' ) ).toBeInTheDocument();
-		expect( screen.getByText( MOCK_COMPONENT_NAME ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByLabelText('Back')).toBeInTheDocument();
+		expect(screen.getByText(MOCK_COMPONENT_NAME)).toBeInTheDocument();
+	});
 
-	it( 'should display the component name from post_title when no custom instance title is set', () => {
+	it('should display the component name from post_title when no custom instance title is set', () => {
 		// Arrange
 		setupComponentEditing();
 
 		// Act
-		renderWithStore( <ComponentPanelHeader />, store );
+		renderWithStore(<ComponentPanelHeader />, store);
 
 		// Assert
-		expect( screen.getByText( MOCK_COMPONENT_NAME ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText(MOCK_COMPONENT_NAME)).toBeInTheDocument();
+	});
 
-	it( 'should display custom instance title when instanceTitle is set in path', () => {
+	it('should display custom instance title when instanceTitle is set in path', () => {
 		// Arrange
-		setupComponentEditing( {
+		setupComponentEditing({
 			path: [
 				{
 					componentId: MOCK_COMPONENT_ID,
@@ -143,122 +143,122 @@ describe( '<ComponentPanelHeader />', () => {
 					instanceTitle: MOCK_CUSTOM_INSTANCE_TITLE,
 				},
 			],
-		} );
+		});
 
 		// Act
-		renderWithStore( <ComponentPanelHeader />, store );
+		renderWithStore(<ComponentPanelHeader />, store);
 
 		// Assert
-		expect( screen.getByText( MOCK_CUSTOM_INSTANCE_TITLE ) ).toBeInTheDocument();
-		expect( screen.queryByText( MOCK_COMPONENT_NAME ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.getByText(MOCK_CUSTOM_INSTANCE_TITLE)).toBeInTheDocument();
+		expect(screen.queryByText(MOCK_COMPONENT_NAME)).not.toBeInTheDocument();
+	});
 
-	it( 'should fallback to post_title when instanceTitle is undefined', () => {
+	it('should fallback to post_title when instanceTitle is undefined', () => {
 		// Arrange
-		setupComponentEditing( {
-			path: [ { componentId: MOCK_COMPONENT_ID, instanceId: 'instance-123', instanceTitle: undefined } ],
-		} );
+		setupComponentEditing({
+			path: [{ componentId: MOCK_COMPONENT_ID, instanceId: 'instance-123', instanceTitle: undefined }],
+		});
 
 		// Act
-		renderWithStore( <ComponentPanelHeader />, store );
+		renderWithStore(<ComponentPanelHeader />, store);
 
 		// Assert
-		expect( screen.getByText( MOCK_COMPONENT_NAME ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText(MOCK_COMPONENT_NAME)).toBeInTheDocument();
+	});
 
-	it( 'should display overrides count badge when there are overridable props', () => {
+	it('should display overrides count badge when there are overridable props', () => {
 		// Arrange
-		setupComponentEditing( { withOverridableProps: true } );
+		setupComponentEditing({ withOverridableProps: true });
 
 		// Act
-		renderWithStore( <ComponentPanelHeader />, store );
+		renderWithStore(<ComponentPanelHeader />, store);
 
 		// Assert
-		const expectedCount = Object.keys( MOCK_OVERRIDABLE_PROPS.props ).length;
-		expect( screen.getByText( expectedCount.toString() ) ).toBeInTheDocument();
-	} );
+		const expectedCount = Object.keys(MOCK_OVERRIDABLE_PROPS.props).length;
+		expect(screen.getByText(expectedCount.toString())).toBeInTheDocument();
+	});
 
-	it( 'should hide badge when there are no overridable props', () => {
+	it('should hide badge when there are no overridable props', () => {
 		// Arrange
-		setupComponentEditing( { withOverridableProps: false } );
+		setupComponentEditing({ withOverridableProps: false });
 
 		// Act
-		renderWithStore( <ComponentPanelHeader />, store );
+		renderWithStore(<ComponentPanelHeader />, store);
 
 		// Assert
-		expect( screen.queryByText( '0' ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.queryByText('0')).not.toBeInTheDocument();
+	});
 
-	it( 'should open properties panel when badge is clicked', () => {
+	it('should open properties panel when badge is clicked', () => {
 		// Arrange
-		setupComponentEditing( { withOverridableProps: true } );
-		renderWithStore( <ComponentPanelHeader />, store );
+		setupComponentEditing({ withOverridableProps: true });
+		renderWithStore(<ComponentPanelHeader />, store);
 
 		// Act
-		const badgeButton = screen.getByLabelText( 'Component properties' );
-		fireEvent.click( badgeButton );
+		const badgeButton = screen.getByLabelText('Component properties');
+		fireEvent.click(badgeButton);
 
 		// Assert
-		expect( mockOpenPropertiesPanel ).toHaveBeenCalledTimes( 1 );
-	} );
+		expect(mockOpenPropertiesPanel).toHaveBeenCalledTimes(1);
+	});
 
-	it( 'should navigate back to initial document when back button is clicked', () => {
+	it('should navigate back to initial document when back button is clicked', () => {
 		// Arrange
 		setupComponentEditing();
 
 		// Act
-		renderWithStore( <ComponentPanelHeader />, store );
-		const backButton = screen.getByLabelText( 'Back' );
-		fireEvent.click( backButton );
+		renderWithStore(<ComponentPanelHeader />, store);
+		const backButton = screen.getByLabelText('Back');
+		fireEvent.click(backButton);
 
 		// Assert
-		expect( switchToDocument ).toHaveBeenCalledWith( MOCK_INITIAL_DOCUMENT_ID, {
+		expect(switchToDocument).toHaveBeenCalledWith(MOCK_INITIAL_DOCUMENT_ID, {
 			mode: 'autosave',
 			setAsInitial: false,
 			shouldScroll: false,
-		} );
-	} );
+		});
+	});
 
-	it( 'should navigate to previous component when in nested component path', () => {
+	it('should navigate to previous component when in nested component path', () => {
 		// Arrange
 		const parentComponentId = 100;
-		setupComponentEditing( {
+		setupComponentEditing({
 			path: [
 				{ componentId: parentComponentId, instanceId: MOCK_INSTANCE_ID },
 				{ componentId: MOCK_COMPONENT_ID, instanceId: 'current-instance' },
 			],
-		} );
+		});
 
 		// Act
-		renderWithStore( <ComponentPanelHeader />, store );
-		const backButton = screen.getByLabelText( 'Back' );
-		fireEvent.click( backButton );
+		renderWithStore(<ComponentPanelHeader />, store);
+		const backButton = screen.getByLabelText('Back');
+		fireEvent.click(backButton);
 
 		// Assert
-		expect( switchToDocument ).toHaveBeenCalledWith( parentComponentId, {
-			selector: `[data-id="${ MOCK_INSTANCE_ID }"]`,
+		expect(switchToDocument).toHaveBeenCalledWith(parentComponentId, {
+			selector: `[data-id="${MOCK_INSTANCE_ID}"]`,
 			mode: 'autosave',
 			setAsInitial: false,
 			shouldScroll: false,
-		} );
-	} );
+		});
+	});
 
-	it( 'should hide introduction when message is suppressed', () => {
+	it('should hide introduction when message is suppressed', () => {
 		// Arrange
 		setupComponentEditing();
-		jest.mocked( useSuppressedMessage ).mockReturnValue( [ true, jest.fn() ] );
+		jest.mocked(useSuppressedMessage).mockReturnValue([true, jest.fn()]);
 
 		// Act
-		renderWithStore( <ComponentPanelHeader />, store );
+		renderWithStore(<ComponentPanelHeader />, store);
 
 		// Assert
-		expect( screen.queryByText( 'Add your first property' ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.queryByText('Add your first property')).not.toBeInTheDocument();
+	});
 
 	function setupComponentEditing(
 		options: {
 			withOverridableProps?: boolean;
-			path?: Array< { componentId: number; instanceId: string; instanceTitle?: string } >;
+			path?: Array<{ componentId: number; instanceId: string; instanceTitle?: string }>;
 		} = {}
 	) {
 		const { withOverridableProps = false, path } = options;
@@ -270,8 +270,8 @@ describe( '<ComponentPanelHeader />', () => {
 			overridableProps: withOverridableProps ? MOCK_OVERRIDABLE_PROPS : undefined,
 		};
 
-		dispatch( slice.actions.load( [ componentData ] ) );
-		dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
-		dispatch( slice.actions.setPath( path ?? [ { componentId: MOCK_COMPONENT_ID, instanceId: 'instance-123' } ] ) );
+		dispatch(slice.actions.load([componentData]));
+		dispatch(slice.actions.setCurrentComponentId(MOCK_COMPONENT_ID));
+		dispatch(slice.actions.setPath(path ?? [{ componentId: MOCK_COMPONENT_ID, instanceId: 'instance-123' }]));
 	}
-} );
+});

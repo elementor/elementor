@@ -16,43 +16,41 @@ import {
 
 const TITLE_ID = 'save-changes-dialog';
 
-export const SaveChangesDialog = ( { children, onClose }: Pick< DialogProps, 'children' | 'onClose' > ) => (
-	<Dialog open onClose={ onClose } aria-labelledby={ TITLE_ID } maxWidth="xs">
-		{ children }
+export const SaveChangesDialog = ({ children, onClose }: Pick<DialogProps, 'children' | 'onClose'>) => (
+	<Dialog open onClose={onClose} aria-labelledby={TITLE_ID} maxWidth="xs">
+		{children}
 	</Dialog>
 );
 
-const SaveChangesDialogTitle = ( { children, onClose }: React.PropsWithChildren & { onClose?: () => void } ) => (
+const SaveChangesDialogTitle = ({ children, onClose }: React.PropsWithChildren & { onClose?: () => void }) => (
 	<DialogTitle
-		id={ TITLE_ID }
+		id={TITLE_ID}
 		display="flex"
 		alignItems="center"
-		gap={ 1 }
-		sx={ { lineHeight: 1, justifyContent: 'space-between' } }
+		gap={1}
+		sx={{ lineHeight: 1, justifyContent: 'space-between' }}
 	>
-		<Stack direction="row" alignItems="center" gap={ 1 }>
+		<Stack direction="row" alignItems="center" gap={1}>
 			<AlertTriangleFilledIcon color="secondary" />
-			{ children }
+			{children}
 		</Stack>
-		{ onClose && (
-			<IconButton onClick={ onClose } size="small">
+		{onClose && (
+			<IconButton onClick={onClose} size="small">
 				<XIcon />
 			</IconButton>
-		) }
+		)}
 	</DialogTitle>
 );
 
-const SaveChangesDialogContent = ( { children }: React.PropsWithChildren ) => (
-	<DialogContent>{ children }</DialogContent>
-);
+const SaveChangesDialogContent = ({ children }: React.PropsWithChildren) => <DialogContent>{children}</DialogContent>;
 
-const SaveChangesDialogContentText = ( props: DialogContentTextProps ) => (
-	<DialogContentText variant="body2" color="textPrimary" display="flex" flexDirection="column" { ...props } />
+const SaveChangesDialogContentText = (props: DialogContentTextProps) => (
+	<DialogContentText variant="body2" color="textPrimary" display="flex" flexDirection="column" {...props} />
 );
 
 type Action = {
 	label: string;
-	action: () => void | Promise< void >;
+	action: () => void | Promise<void>;
 };
 
 type ConfirmationDialogActionsProps = {
@@ -63,29 +61,29 @@ type ConfirmationDialogActionsProps = {
 	};
 };
 
-const SaveChangesDialogActions = ( { actions }: ConfirmationDialogActionsProps ) => {
-	const [ isConfirming, setIsConfirming ] = useState( false );
+const SaveChangesDialogActions = ({ actions }: ConfirmationDialogActionsProps) => {
+	const [isConfirming, setIsConfirming] = useState(false);
 	const { cancel, confirm, discard } = actions;
 
 	const onConfirm = async () => {
-		setIsConfirming( true );
+		setIsConfirming(true);
 		await confirm.action();
-		setIsConfirming( false );
+		setIsConfirming(false);
 	};
 	return (
 		<DialogActions>
-			{ cancel && (
-				<Button variant="text" color="secondary" onClick={ cancel.action }>
-					{ cancel.label }
+			{cancel && (
+				<Button variant="text" color="secondary" onClick={cancel.action}>
+					{cancel.label}
 				</Button>
-			) }
-			{ discard && (
-				<Button variant="text" color="secondary" onClick={ discard.action }>
-					{ discard.label }
+			)}
+			{discard && (
+				<Button variant="text" color="secondary" onClick={discard.action}>
+					{discard.label}
 				</Button>
-			) }
-			<Button variant="contained" color="secondary" onClick={ onConfirm } loading={ isConfirming }>
-				{ confirm.label }
+			)}
+			<Button variant="contained" color="secondary" onClick={onConfirm} loading={isConfirming}>
+				{confirm.label}
 			</Button>
 		</DialogActions>
 	);
@@ -97,10 +95,10 @@ SaveChangesDialog.ContentText = SaveChangesDialogContentText;
 SaveChangesDialog.Actions = SaveChangesDialogActions;
 
 export const useDialog = () => {
-	const [ isOpen, setIsOpen ] = useState( false );
+	const [isOpen, setIsOpen] = useState(false);
 
-	const open = () => setIsOpen( true );
-	const close = () => setIsOpen( false );
+	const open = () => setIsOpen(true);
+	const close = () => setIsOpen(false);
 
 	return { isOpen, open, close };
 };

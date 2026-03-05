@@ -6,7 +6,7 @@ import { Alert, AlertAction, AlertTitle, Box, Infotip, Link } from '@elementor/u
 import { __ } from '@wordpress/i18n';
 
 const learnMoreButton = {
-	label: __( 'Learn More', 'elementor' ),
+	label: __('Learn More', 'elementor'),
 	href: 'https://go.elementor.com/element-link-inside-link-infotip',
 };
 
@@ -21,59 +21,54 @@ const INFOTIP_CONTENT = {
 	),
 };
 
-type RestrictedLinkInfotipProps = PropsWithChildren< {
+type RestrictedLinkInfotipProps = PropsWithChildren<{
 	linkInLinkRestriction: LinkInLinkRestriction;
 	isVisible: boolean;
-} >;
+}>;
 
-export const RestrictedLinkInfotip: React.FC< RestrictedLinkInfotipProps > = ( {
+export const RestrictedLinkInfotip: React.FC<RestrictedLinkInfotipProps> = ({
 	linkInLinkRestriction,
 	isVisible,
 	children,
-} ) => {
+}) => {
 	const { shouldRestrict, reason, elementId } = linkInLinkRestriction;
 
 	const handleTakeMeClick = () => {
-		if ( elementId ) {
-			selectElement( elementId );
+		if (elementId) {
+			selectElement(elementId);
 		}
 	};
 
 	const content = (
 		<Alert
 			color="secondary"
-			icon={ <InfoCircleFilledIcon /> }
+			icon={<InfoCircleFilledIcon />}
 			action={
 				<AlertAction
-					sx={ { width: 'fit-content' } }
+					sx={{ width: 'fit-content' }}
 					variant="contained"
 					color="secondary"
-					onClick={ handleTakeMeClick }
+					onClick={handleTakeMeClick}
 				>
-					{ __( 'Take me there', 'elementor' ) }
+					{__('Take me there', 'elementor')}
 				</AlertAction>
 			}
 		>
-			<AlertTitle>{ __( 'Nested links', 'elementor' ) }</AlertTitle>
+			<AlertTitle>{__('Nested links', 'elementor')}</AlertTitle>
 			<Box component="span">
-				{ INFOTIP_CONTENT[ reason ?? 'descendant' ] }{ ' ' }
-				<Link href={ learnMoreButton.href } target="_blank" color="info.main">
-					{ learnMoreButton.label }
+				{INFOTIP_CONTENT[reason ?? 'descendant']}{' '}
+				<Link href={learnMoreButton.href} target="_blank" color="info.main">
+					{learnMoreButton.label}
 				</Link>
 			</Box>
 		</Alert>
 	);
 
 	return shouldRestrict && isVisible ? (
-		<Infotip
-			placement="right"
-			content={ content }
-			color="secondary"
-			slotProps={ { popper: { sx: { width: 300 } } } }
-		>
-			<Box>{ children }</Box>
+		<Infotip placement="right" content={content} color="secondary" slotProps={{ popper: { sx: { width: 300 } } }}>
+			<Box>{children}</Box>
 		</Infotip>
 	) : (
-		<>{ children }</>
+		<>{children}</>
 	);
 };

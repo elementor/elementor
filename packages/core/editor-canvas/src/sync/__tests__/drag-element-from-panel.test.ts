@@ -1,12 +1,12 @@
 import { endDragElementFromPanel, startDragElementFromPanel } from '../drag-element-from-panel';
 import { type CanvasExtendedWindow } from '../types';
 
-const EXPECTED_DRAG_GROUPS = [ 'elementor-element' ];
+const EXPECTED_DRAG_GROUPS = ['elementor-element'];
 
 const mockTrigger = jest.fn();
-const mockReply = jest.fn( () => ( { trigger: mockTrigger } ) );
+const mockReply = jest.fn(() => ({ trigger: mockTrigger }));
 
-describe( 'drag-element-from-panel', () => {
+describe('drag-element-from-panel', () => {
 	const extendedWindow = window as unknown as CanvasExtendedWindow;
 
 	extendedWindow.elementor = {
@@ -17,14 +17,14 @@ describe( 'drag-element-from-panel', () => {
 		modules: {
 			elements: {
 				models: {
-					Element: jest.fn( ( props ) => props ),
+					Element: jest.fn((props) => props),
 				},
 			},
 		},
 	};
 
-	describe( 'startDragElementFromPanel', () => {
-		it( 'should set dataTransfer with drag groups', () => {
+	describe('startDragElementFromPanel', () => {
+		it('should set dataTransfer with drag groups', () => {
 			// Arrange
 			const mockSetData = jest.fn();
 			const mockEvent = {
@@ -35,35 +35,35 @@ describe( 'drag-element-from-panel', () => {
 			} as unknown as React.DragEvent;
 
 			// Act
-			startDragElementFromPanel( { elType: 'widget', widgetType: 'test' }, mockEvent );
+			startDragElementFromPanel({ elType: 'widget', widgetType: 'test' }, mockEvent);
 
 			// Assert
-			expect( mockSetData ).toHaveBeenCalledWith( JSON.stringify( { groups: EXPECTED_DRAG_GROUPS } ), 'true' );
-		} );
+			expect(mockSetData).toHaveBeenCalledWith(JSON.stringify({ groups: EXPECTED_DRAG_GROUPS }), 'true');
+		});
 
-		it( 'should trigger panel element events', () => {
+		it('should trigger panel element events', () => {
 			// Arrange
 			const mockEvent = {
 				dataTransfer: { setData: jest.fn(), getData: () => '' },
 			} as unknown as React.DragEvent;
 
 			// Act
-			startDragElementFromPanel( { elType: 'widget', widgetType: 'test' }, mockEvent );
+			startDragElementFromPanel({ elType: 'widget', widgetType: 'test' }, mockEvent);
 
 			// Assert
-			expect( mockReply ).toHaveBeenCalledWith( 'element:dragged', null );
-			expect( mockReply ).toHaveBeenCalledWith( 'element:selected', expect.any( Object ) );
-			expect( mockTrigger ).toHaveBeenCalledWith( 'element:drag:start' );
-		} );
-	} );
+			expect(mockReply).toHaveBeenCalledWith('element:dragged', null);
+			expect(mockReply).toHaveBeenCalledWith('element:selected', expect.any(Object));
+			expect(mockTrigger).toHaveBeenCalledWith('element:drag:start');
+		});
+	});
 
-	describe( 'endDragElementFromPanel', () => {
-		it( 'should trigger element:drag:end event', () => {
+	describe('endDragElementFromPanel', () => {
+		it('should trigger element:drag:end event', () => {
 			// Act
 			endDragElementFromPanel();
 
 			// Assert
-			expect( mockTrigger ).toHaveBeenCalledWith( 'element:drag:end' );
-		} );
-	} );
-} );
+			expect(mockTrigger).toHaveBeenCalledWith('element:drag:end');
+		});
+	});
+});

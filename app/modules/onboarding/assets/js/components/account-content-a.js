@@ -15,7 +15,7 @@ export default function AccountContentA( {
 		<PageContentLayout
 			image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Illustration_Account.svg' }
 			title={ elementorAppConfig.onboarding.experiment ? __( 'You\'re here!', 'elementor' ) : __( 'You\'re here! Let\'s set things up.', 'elementor' ) }
-			secondLineTitle={ elementorAppConfig.onboarding.experiment ? __( ' Let\'s get connected.', 'elementor' ) : '' }
+			secondLineTitle={ elementorAppConfig.onboarding.experiment ? __( 'Let's get connected.', 'elementor' ) : '' }
 			actionButton={ actionButton }
 			skipButton={ skipButton }
 			noticeState={ noticeState }

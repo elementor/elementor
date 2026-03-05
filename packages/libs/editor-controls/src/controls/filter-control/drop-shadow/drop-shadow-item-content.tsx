@@ -13,53 +13,53 @@ import { SizeControl } from '../../size-control';
 const items = [
 	{
 		bind: 'xAxis',
-		label: __( 'X-axis', 'elementor' ),
+		label: __('X-axis', 'elementor'),
 		rowIndex: 0,
 	},
 	{
 		bind: 'yAxis',
-		label: __( 'Y-axis', 'elementor' ),
+		label: __('Y-axis', 'elementor'),
 		rowIndex: 0,
 	},
 	{
 		bind: 'blur',
-		label: __( 'Blur', 'elementor' ),
+		label: __('Blur', 'elementor'),
 		rowIndex: 1,
 	},
 	{
 		bind: 'color',
-		label: __( 'Color', 'elementor' ),
+		label: __('Color', 'elementor'),
 		rowIndex: 1,
 	},
 ];
 
-export const DropShadowItemContent = ( { anchorEl }: { anchorEl?: HTMLElement | null } ) => {
-	const context = useBoundProp( dropShadowFilterPropTypeUtil );
-	const rowRefs = [ useRef< HTMLDivElement >( null ), useRef< HTMLDivElement >( null ) ];
+export const DropShadowItemContent = ({ anchorEl }: { anchorEl?: HTMLElement | null }) => {
+	const context = useBoundProp(dropShadowFilterPropTypeUtil);
+	const rowRefs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
 
 	return (
-		<PropProvider { ...context }>
-			{ items.map( ( item ) => (
-				<PopoverGridContainer key={ item.bind } ref={ rowRefs[ item.rowIndex ] ?? null }>
-					<PropKeyProvider bind={ item.bind }>
-						<Grid item xs={ 6 }>
-							<ControlFormLabel>{ item.label }</ControlFormLabel>
+		<PropProvider {...context}>
+			{items.map((item) => (
+				<PopoverGridContainer key={item.bind} ref={rowRefs[item.rowIndex] ?? null}>
+					<PropKeyProvider bind={item.bind}>
+						<Grid item xs={6}>
+							<ControlFormLabel>{item.label}</ControlFormLabel>
 						</Grid>
-						<Grid item xs={ 6 }>
-							{ item.bind === 'color' ? (
-								<ColorControl anchorEl={ anchorEl } />
+						<Grid item xs={6}>
+							{item.bind === 'color' ? (
+								<ColorControl anchorEl={anchorEl} />
 							) : (
 								<SizeControl
-									anchorRef={ rowRefs[ item.rowIndex ] }
+									anchorRef={rowRefs[item.rowIndex]}
 									enablePropTypeUnits
-									min={ item.bind === 'blur' ? 0 : -Number.MAX_SAFE_INTEGER }
+									min={item.bind === 'blur' ? 0 : -Number.MAX_SAFE_INTEGER}
 									defaultUnit="px"
 								/>
-							) }
+							)}
 						</Grid>
 					</PropKeyProvider>
 				</PopoverGridContainer>
-			) ) }
+			))}
 		</PropProvider>
 	);
 };

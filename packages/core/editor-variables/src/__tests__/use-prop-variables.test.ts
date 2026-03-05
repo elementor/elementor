@@ -6,20 +6,20 @@ import { useFilteredVariables } from '../hooks/use-prop-variables';
 import { service } from '../service';
 import { getVariableType, getVariableTypes } from '../variables-registry/variable-type-registry';
 
-jest.mock( '../service' );
+jest.mock('../service');
 
-jest.mock( '@elementor/editor-controls', () => ( {
+jest.mock('@elementor/editor-controls', () => ({
 	useBoundProp: jest.fn(),
-} ) );
+}));
 
-jest.mock( '../variables-registry/variable-type-registry', () => ( {
+jest.mock('../variables-registry/variable-type-registry', () => ({
 	getVariableType: jest.fn(),
 	getVariableTypes: jest.fn(),
-} ) );
+}));
 
-jest.mock( '../context/variable-type-context', () => ( {
+jest.mock('../context/variable-type-context', () => ({
 	useVariableType: jest.fn(),
-} ) );
+}));
 
 const variablesMockData = {
 	'a-01': {
@@ -53,59 +53,59 @@ const variablesMockData = {
 	},
 };
 
-describe( 'useFilteredVariables', () => {
-	beforeEach( () => {
+describe('useFilteredVariables', () => {
+	beforeEach(() => {
 		jest.clearAllMocks();
 
-		jest.mocked( service.variables ).mockReturnValue( variablesMockData );
+		jest.mocked(service.variables).mockReturnValue(variablesMockData);
 
-		jest.mocked( useBoundProp ).mockReturnValue( {
+		jest.mocked(useBoundProp).mockReturnValue({
 			propType: { kind: 'plain' },
-			path: [ 'test' ],
-		} as never );
+			path: ['test'],
+		} as never);
 
-		jest.mocked( useVariableType ).mockReturnValue( {
+		jest.mocked(useVariableType).mockReturnValue({
 			selectionFilter: undefined,
-		} as never );
+		} as never);
 
-		jest.mocked( getVariableTypes ).mockReturnValue( {
+		jest.mocked(getVariableTypes).mockReturnValue({
 			'global-color-variable': { variableType: 'color' },
 			'global-font-variable': { variableType: 'font' },
-		} as never );
+		} as never);
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		jest.mocked( getVariableType ).mockImplementation( ( propKey: string ): any => {
-			if ( propKey === 'global-color-variable' ) {
+		jest.mocked(getVariableType).mockImplementation((propKey: string): any => {
+			if (propKey === 'global-color-variable') {
 				return { variableType: 'color' };
 			}
-			if ( propKey === 'global-font-variable' ) {
+			if (propKey === 'global-font-variable') {
 				return { variableType: 'font' };
 			}
 			return { variableType: propKey };
-		} );
-	} );
+		});
+	});
 
-	it( 'should not include deleted variables in the list', () => {
-		const { result: colorResult } = renderHook( () => useFilteredVariables( '', 'global-color-variable' ) );
+	it('should not include deleted variables in the list', () => {
+		const { result: colorResult } = renderHook(() => useFilteredVariables('', 'global-color-variable'));
 
-		expect( colorResult.current.list ).toEqual( [
+		expect(colorResult.current.list).toEqual([
 			{
 				key: 'a-02',
 				label: 'B',
 				value: '#cccccc',
 				order: undefined,
 			},
-		] );
+		]);
 
-		const { result: fontResult } = renderHook( () => useFilteredVariables( '', 'global-font-variable' ) );
+		const { result: fontResult } = renderHook(() => useFilteredVariables('', 'global-font-variable'));
 
-		expect( fontResult.current.list ).toEqual( [
+		expect(fontResult.current.list).toEqual([
 			{
 				key: 'a-04',
 				label: 'D',
 				value: 'Roboto',
 				order: undefined,
 			},
-		] );
-	} );
-} );
+		]);
+	});
+});

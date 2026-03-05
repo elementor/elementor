@@ -29,7 +29,7 @@ export const TypographySection = () => {
 			<TextAlignmentField />
 			<TextColorField />
 			<StyleTabCollapsibleContent
-				fields={ [
+				fields={[
 					'line-height',
 					'letter-spacing',
 					'word-spacing',
@@ -39,9 +39,9 @@ export const TypographySection = () => {
 					'direction',
 					'font-style',
 					'stroke',
-				] }
+				]}
 			>
-				<SectionContent sx={ { pt: 2 } }>
+				<SectionContent sx={{ pt: 2 }}>
 					<LineHeightField />
 					<LetterSpacingField />
 					<WordSpacingField />

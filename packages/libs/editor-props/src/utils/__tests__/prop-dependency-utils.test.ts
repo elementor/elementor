@@ -7,10 +7,10 @@ type TestCase = DependencyTerm & {
 	actualValue: PropValue;
 };
 
-describe( 'prop-dependency-utils', () => {
-	describe( 'evaluateTerm', () => {
-		describe( 'equality operators', () => {
-			it.each( [
+describe('prop-dependency-utils', () => {
+	describe('evaluateTerm', () => {
+		describe('equality operators', () => {
+			it.each([
 				{
 					operator: 'eq',
 					actualValue: 'test',
@@ -53,19 +53,19 @@ describe( 'prop-dependency-utils', () => {
 					expected: false,
 					description: 'should return false when values are equal',
 				},
-			] as TestCase[] )( '$description', ( { operator, actualValue, value, expected } ) => {
+			] as TestCase[])('$description', ({ operator, actualValue, value, expected }) => {
 				const term: DependencyTerm = {
 					operator,
-					path: [ 'test' ],
+					path: ['test'],
 					value,
 				};
 
-				expect( evaluateTerm( term, actualValue ) ).toBe( expected );
-			} );
-		} );
+				expect(evaluateTerm(term, actualValue)).toBe(expected);
+			});
+		});
 
-		describe( 'numeric comparison operators', () => {
-			it.each( [
+		describe('numeric comparison operators', () => {
+			it.each([
 				{
 					operator: 'gt',
 					actualValue: 10,
@@ -136,51 +136,51 @@ describe( 'prop-dependency-utils', () => {
 					expected: false,
 					description: 'should return false when actual value is greater than target',
 				},
-			] as TestCase[] )( '$description', ( { operator, actualValue, value, expected } ) => {
+			] as TestCase[])('$description', ({ operator, actualValue, value, expected }) => {
 				const term: DependencyTerm = {
 					operator,
-					path: [ 'test' ],
+					path: ['test'],
 					value,
 				};
 
-				expect( evaluateTerm( term, actualValue ) ).toBe( expected );
-			} );
-		} );
+				expect(evaluateTerm(term, actualValue)).toBe(expected);
+			});
+		});
 
-		describe( 'array operators', () => {
-			it.each( [
+		describe('array operators', () => {
+			it.each([
 				{
 					operator: 'in',
 					actualValue: 'apple',
-					value: [ 'apple', 'banana', 'orange' ],
+					value: ['apple', 'banana', 'orange'],
 					expected: true,
 					description: 'should return true when value is in array',
 				},
 				{
 					operator: 'in',
 					actualValue: 'grape',
-					value: [ 'apple', 'banana', 'orange' ],
+					value: ['apple', 'banana', 'orange'],
 					expected: false,
 					description: 'should return false when value is not in array',
 				},
 				{
 					operator: 'in',
 					actualValue: 5,
-					value: [ 1, 2, 3, 4, 5 ],
+					value: [1, 2, 3, 4, 5],
 					expected: true,
 					description: 'should handle numbers in arrays',
 				},
 				{
 					operator: 'nin',
 					actualValue: 'grape',
-					value: [ 'apple', 'banana', 'orange' ],
+					value: ['apple', 'banana', 'orange'],
 					expected: true,
 					description: 'should return true when value is not in array',
 				},
 				{
 					operator: 'nin',
 					actualValue: 'apple',
-					value: [ 'apple', 'banana', 'orange' ],
+					value: ['apple', 'banana', 'orange'],
 					expected: false,
 					description: 'should return false when value is in array',
 				},
@@ -191,19 +191,19 @@ describe( 'prop-dependency-utils', () => {
 					expected: false,
 					description: 'should return false when value is not an array',
 				},
-			] as TestCase[] )( '$description', ( { operator, actualValue, value, expected } ) => {
+			] as TestCase[])('$description', ({ operator, actualValue, value, expected }) => {
 				const term: DependencyTerm = {
 					operator,
-					path: [ 'test' ],
+					path: ['test'],
 					value,
 				};
 
-				expect( evaluateTerm( term, actualValue ) ).toBe( expected );
-			} );
-		} );
+				expect(evaluateTerm(term, actualValue)).toBe(expected);
+			});
+		});
 
-		describe( 'string operators', () => {
-			it.each( [
+		describe('string operators', () => {
+			it.each([
 				{
 					operator: 'contains',
 					actualValue: 'hello world',
@@ -246,19 +246,19 @@ describe( 'prop-dependency-utils', () => {
 					expected: false,
 					description: 'should return false when target value is not a string',
 				},
-			] as TestCase[] )( '$description', ( { operator, actualValue, value, expected } ) => {
+			] as TestCase[])('$description', ({ operator, actualValue, value, expected }) => {
 				const term: DependencyTerm = {
 					operator,
-					path: [ 'test' ],
+					path: ['test'],
 					value,
 				};
 
-				expect( evaluateTerm( term, actualValue ) ).toBe( expected );
-			} );
-		} );
+				expect(evaluateTerm(term, actualValue)).toBe(expected);
+			});
+		});
 
-		describe( 'existence operators', () => {
-			it.each( [
+		describe('existence operators', () => {
+			it.each([
 				{
 					operator: 'exists',
 					actualValue: 'test',
@@ -322,42 +322,42 @@ describe( 'prop-dependency-utils', () => {
 					expected: false,
 					description: 'should return false when value exists (string)',
 				},
-			] as TestCase[] )( '$description', ( { operator, actualValue, value, expected } ) => {
+			] as TestCase[])('$description', ({ operator, actualValue, value, expected }) => {
 				const term: DependencyTerm = {
 					operator,
-					path: [ 'test' ],
+					path: ['test'],
 					value,
 				};
 
-				expect( evaluateTerm( term, actualValue ) ).toBe( expected );
-			} );
-		} );
+				expect(evaluateTerm(term, actualValue)).toBe(expected);
+			});
+		});
 
-		describe( 'unknown operators', () => {
-			it( 'should return true for unknown operators', () => {
+		describe('unknown operators', () => {
+			it('should return true for unknown operators', () => {
 				const term: DependencyTerm = {
 					operator: 'unknown' as never,
-					path: [ 'test' ],
+					path: ['test'],
 					value: 'test',
 				};
 
-				expect( evaluateTerm( term, 'test' ) ).toBe( true );
-			} );
-		} );
-	} );
+				expect(evaluateTerm(term, 'test')).toBe(true);
+			});
+		});
+	});
 
-	describe( 'shouldApplyEffect', () => {
-		describe( 'simple dependencies', () => {
-			it( 'should return true when no terms are provided', () => {
+	describe('shouldApplyEffect', () => {
+		describe('simple dependencies', () => {
+			it('should return true when no terms are provided', () => {
 				const dependency: Dependency = {
 					relation: 'and',
 					terms: [],
 				};
 
-				expect( isDependencyMet( dependency, {} ).isMet ).toBe( true );
-			} );
+				expect(isDependencyMet(dependency, {}).isMet).toBe(true);
+			});
 
-			it( 'should return true when all terms are met (AND)', () => {
+			it('should return true when all terms are met (AND)', () => {
 				const values = {
 					test1: {
 						$$type: 'plain',
@@ -374,21 +374,21 @@ describe( 'prop-dependency-utils', () => {
 					terms: [
 						{
 							operator: 'eq',
-							path: [ 'test1' ],
+							path: ['test1'],
 							value: 'value1',
 						},
 						{
 							operator: 'gt',
-							path: [ 'test2' ],
+							path: ['test2'],
 							value: 5,
 						},
 					],
 				};
 
-				expect( isDependencyMet( dependency, values ).isMet ).toBe( true );
-			} );
+				expect(isDependencyMet(dependency, values).isMet).toBe(true);
+			});
 
-			it( 'should return false when any term is not met (AND)', () => {
+			it('should return false when any term is not met (AND)', () => {
 				const values = {
 					test1: {
 						$$type: 'plain',
@@ -405,21 +405,21 @@ describe( 'prop-dependency-utils', () => {
 					terms: [
 						{
 							operator: 'eq',
-							path: [ 'test1' ],
+							path: ['test1'],
 							value: 'value1',
 						},
 						{
 							operator: 'gt',
-							path: [ 'test2' ],
+							path: ['test2'],
 							value: 15,
 						},
 					],
 				};
 
-				expect( isDependencyMet( dependency, values ).isMet ).toBe( false );
-			} );
+				expect(isDependencyMet(dependency, values).isMet).toBe(false);
+			});
 
-			it( 'should return true when any term is met (OR)', () => {
+			it('should return true when any term is met (OR)', () => {
 				const values = {
 					test1: {
 						$$type: 'string',
@@ -435,21 +435,21 @@ describe( 'prop-dependency-utils', () => {
 					terms: [
 						{
 							operator: 'eq',
-							path: [ 'test1' ],
+							path: ['test1'],
 							value: 'value1',
 						},
 						{
 							operator: 'gt',
-							path: [ 'test2' ],
+							path: ['test2'],
 							value: 5,
 						},
 					],
 				};
 
-				expect( isDependencyMet( dependency, values ).isMet ).toBe( true );
-			} );
+				expect(isDependencyMet(dependency, values).isMet).toBe(true);
+			});
 
-			it( 'should return false when no terms are met (OR)', () => {
+			it('should return false when no terms are met (OR)', () => {
 				const values = {
 					test1: {
 						value: 'different',
@@ -464,23 +464,23 @@ describe( 'prop-dependency-utils', () => {
 					terms: [
 						{
 							operator: 'eq',
-							path: [ 'test1' ],
+							path: ['test1'],
 							value: 'value1',
 						},
 						{
 							operator: 'gt',
-							path: [ 'test2' ],
+							path: ['test2'],
 							value: 15,
 						},
 					],
 				};
 
-				expect( isDependencyMet( dependency, values ).isMet ).toBe( false );
-			} );
-		} );
+				expect(isDependencyMet(dependency, values).isMet).toBe(false);
+			});
+		});
 
-		describe( 'nested dependencies', () => {
-			it( 'should handle nested AND dependencies', () => {
+		describe('nested dependencies', () => {
+			it('should handle nested AND dependencies', () => {
 				const values = {
 					status: {
 						$$type: 'string',
@@ -501,7 +501,7 @@ describe( 'prop-dependency-utils', () => {
 					terms: [
 						{
 							operator: 'eq',
-							path: [ 'status' ],
+							path: ['status'],
 							value: 'active',
 						},
 						{
@@ -509,12 +509,12 @@ describe( 'prop-dependency-utils', () => {
 							terms: [
 								{
 									operator: 'gt',
-									path: [ 'priority' ],
+									path: ['priority'],
 									value: 5,
 								},
 								{
 									operator: 'contains',
-									path: [ 'title' ],
+									path: ['title'],
 									value: 'important',
 								},
 							],
@@ -522,10 +522,10 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isDependencyMet( dependency, values ).isMet ).toBe( true );
-			} );
+				expect(isDependencyMet(dependency, values).isMet).toBe(true);
+			});
 
-			it( 'should handle nested OR dependencies', () => {
+			it('should handle nested OR dependencies', () => {
 				const values = {
 					status: {
 						$$type: 'string',
@@ -546,7 +546,7 @@ describe( 'prop-dependency-utils', () => {
 					terms: [
 						{
 							operator: 'eq',
-							path: [ 'status' ],
+							path: ['status'],
 							value: 'active',
 						},
 						{
@@ -554,12 +554,12 @@ describe( 'prop-dependency-utils', () => {
 							terms: [
 								{
 									operator: 'gt',
-									path: [ 'priority' ],
+									path: ['priority'],
 									value: 10,
 								},
 								{
 									operator: 'contains',
-									path: [ 'title' ],
+									path: ['title'],
 									value: 'urgent',
 								},
 							],
@@ -567,10 +567,10 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isDependencyMet( dependency, values ).isMet ).toBe( true );
-			} );
+				expect(isDependencyMet(dependency, values).isMet).toBe(true);
+			});
 
-			it( 'should handle mixed nested dependencies', () => {
+			it('should handle mixed nested dependencies', () => {
 				const values = {
 					user: {
 						$$type: 'object',
@@ -591,7 +591,7 @@ describe( 'prop-dependency-utils', () => {
 					terms: [
 						{
 							operator: 'exists',
-							path: [ 'user' ],
+							path: ['user'],
 							value: null,
 						},
 						{
@@ -599,25 +599,25 @@ describe( 'prop-dependency-utils', () => {
 							terms: [
 								{
 									operator: 'eq',
-									path: [ 'role' ],
+									path: ['role'],
 									value: 'admin',
 								},
 								{
 									operator: 'in',
-									path: [ 'permissions' ],
-									value: [ 'read', 'write' ],
+									path: ['permissions'],
+									value: ['read', 'write'],
 								},
 							],
 						},
 					],
 				};
 
-				expect( isDependencyMet( dependency, values ).isMet ).toBe( true );
-			} );
-		} );
+				expect(isDependencyMet(dependency, values).isMet).toBe(true);
+			});
+		});
 
-		describe( 'complex scenarios', () => {
-			it( 'should handle deep nested dependencies', () => {
+		describe('complex scenarios', () => {
+			it('should handle deep nested dependencies', () => {
 				const values = {
 					environment: {
 						$$type: 'string',
@@ -642,7 +642,7 @@ describe( 'prop-dependency-utils', () => {
 					terms: [
 						{
 							operator: 'eq',
-							path: [ 'environment' ],
+							path: ['environment'],
 							value: 'production',
 						},
 						{
@@ -650,7 +650,7 @@ describe( 'prop-dependency-utils', () => {
 							terms: [
 								{
 									operator: 'gte',
-									path: [ 'version' ],
+									path: ['version'],
 									value: 2.0,
 								},
 								{
@@ -658,12 +658,12 @@ describe( 'prop-dependency-utils', () => {
 									terms: [
 										{
 											operator: 'exists',
-											path: [ 'feature_flags' ],
+											path: ['feature_flags'],
 											value: null,
 										},
 										{
 											operator: 'eq',
-											path: [ 'legacy_mode' ],
+											path: ['legacy_mode'],
 											value: false,
 										},
 									],
@@ -673,10 +673,10 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isDependencyMet( dependency, values ).isMet ).toBe( true );
-			} );
+				expect(isDependencyMet(dependency, values).isMet).toBe(true);
+			});
 
-			it( 'should handle complex conditional logic', () => {
+			it('should handle complex conditional logic', () => {
 				const values = {
 					user_type: {
 						$$type: 'string',
@@ -700,12 +700,12 @@ describe( 'prop-dependency-utils', () => {
 							terms: [
 								{
 									operator: 'eq',
-									path: [ 'user_type' ],
+									path: ['user_type'],
 									value: 'premium',
 								},
 								{
 									operator: 'gt',
-									path: [ 'subscription_days' ],
+									path: ['subscription_days'],
 									value: 30,
 								},
 							],
@@ -715,12 +715,12 @@ describe( 'prop-dependency-utils', () => {
 							terms: [
 								{
 									operator: 'eq',
-									path: [ 'user_type' ],
+									path: ['user_type'],
 									value: 'admin',
 								},
 								{
 									operator: 'contains',
-									path: [ 'capabilities' ],
+									path: ['capabilities'],
 									value: 'beta_access',
 								},
 							],
@@ -728,12 +728,12 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isDependencyMet( dependency, values ).isMet ).toBe( true );
-			} );
-		} );
+				expect(isDependencyMet(dependency, values).isMet).toBe(true);
+			});
+		});
 
-		describe( 'edge cases', () => {
-			it( 'should throw error for unsupported relation', () => {
+		describe('edge cases', () => {
+			it('should throw error for unsupported relation', () => {
 				const values = {
 					test: {
 						value: 'value',
@@ -748,16 +748,16 @@ describe( 'prop-dependency-utils', () => {
 					terms: [
 						{
 							operator: 'eq',
-							path: [ 'test' ],
+							path: ['test'],
 							value: 'value',
 						},
 					],
 				} as unknown as Dependency;
 
-				expect( () => isDependencyMet( dependency, values ).isMet ).toThrow();
-			} );
+				expect(() => isDependencyMet(dependency, values).isMet).toThrow();
+			});
 
-			it( 'should handle single term dependencies', () => {
+			it('should handle single term dependencies', () => {
 				const values = {
 					test: {
 						$$type: 'string',
@@ -774,16 +774,16 @@ describe( 'prop-dependency-utils', () => {
 					terms: [
 						{
 							operator: 'eq',
-							path: [ 'test' ],
+							path: ['test'],
 							value: 'value',
 						},
 					],
 				};
 
-				expect( isDependencyMet( dependency, values ).isMet ).toBe( true );
-			} );
+				expect(isDependencyMet(dependency, values).isMet).toBe(true);
+			});
 
-			it( 'should handle single term dependencies that fail', () => {
+			it('should handle single term dependencies that fail', () => {
 				const values = {
 					test: {
 						$$type: 'string',
@@ -800,19 +800,19 @@ describe( 'prop-dependency-utils', () => {
 					terms: [
 						{
 							operator: 'eq',
-							path: [ 'test' ],
+							path: ['test'],
 							value: 'value',
 						},
 					],
 				};
 
-				expect( isDependencyMet( dependency, values ).isMet ).toBe( false );
-			} );
-		} );
-	} );
+				expect(isDependencyMet(dependency, values).isMet).toBe(false);
+			});
+		});
+	});
 
-	describe( 'extractValue', () => {
-		it( 'should extract a value from a simple path', () => {
+	describe('extractValue', () => {
+		it('should extract a value from a simple path', () => {
 			const values = {
 				key: {
 					$$type: 'string',
@@ -820,15 +820,15 @@ describe( 'prop-dependency-utils', () => {
 				},
 			};
 
-			const result = extractValue( [ 'key' ], values );
+			const result = extractValue(['key'], values);
 
-			expect( result ).toEqual( {
+			expect(result).toEqual({
 				$$type: 'string',
 				value: 'value',
-			} );
-		} );
+			});
+		});
 
-		it( 'should extract a value from a nested path through non-transformable objects', () => {
+		it('should extract a value from a nested path through non-transformable objects', () => {
 			const values = {
 				level1: {
 					level2: {
@@ -840,15 +840,15 @@ describe( 'prop-dependency-utils', () => {
 				},
 			};
 
-			const result = extractValue( [ 'level1', 'level2', 'key' ], values );
+			const result = extractValue(['level1', 'level2', 'key'], values);
 
-			expect( result ).toEqual( {
+			expect(result).toEqual({
 				$$type: 'number',
 				value: 42,
-			} );
-		} );
+			});
+		});
 
-		it( 'should extract a value from a nested path through transformable objects', () => {
+		it('should extract a value from a nested path through transformable objects', () => {
 			const values = {
 				level1: {
 					$$type: 'object',
@@ -861,15 +861,15 @@ describe( 'prop-dependency-utils', () => {
 				},
 			};
 
-			const result = extractValue( [ 'level1', 'key' ], values );
+			const result = extractValue(['level1', 'key'], values);
 
-			expect( result ).toEqual( {
+			expect(result).toEqual({
 				$$type: 'boolean',
 				value: true,
-			} );
-		} );
+			});
+		});
 
-		it( 'should return null/undefined for non-existent paths', () => {
+		it('should return null/undefined for non-existent paths', () => {
 			const values = {
 				key: {
 					$$type: 'string',
@@ -877,12 +877,12 @@ describe( 'prop-dependency-utils', () => {
 				},
 			};
 
-			const result = extractValue( [ 'nonExistent' ], values );
+			const result = extractValue(['nonExistent'], values);
 
-			expect( result ).toBeUndefined();
-		} );
+			expect(result).toBeUndefined();
+		});
 
-		it( 'should return undefined when path is broken mid-way', () => {
+		it('should return undefined when path is broken mid-way', () => {
 			const values = {
 				level1: {
 					$$type: 'string',
@@ -891,12 +891,12 @@ describe( 'prop-dependency-utils', () => {
 			};
 
 			// Trying to access property of a string value which isn't an object in the structure
-			const result = extractValue( [ 'level1', 'level2' ], values );
+			const result = extractValue(['level1', 'level2'], values);
 
-			expect( result ).toBeUndefined();
-		} );
+			expect(result).toBeUndefined();
+		});
 
-		it( 'should handle nestedPath parameter', () => {
+		it('should handle nestedPath parameter', () => {
 			const values = {
 				key: {
 					$$type: 'object',
@@ -908,15 +908,15 @@ describe( 'prop-dependency-utils', () => {
 				},
 			};
 
-			const result = extractValue( [ 'key' ], values, [ 'nested', 'deep' ] );
+			const result = extractValue(['key'], values, ['nested', 'deep']);
 
-			expect( result ).toEqual( {
+			expect(result).toEqual({
 				$$type: 'unknown',
 				value: 'found',
-			} );
-		} );
+			});
+		});
 
-		it( 'should return undefined for invalid nestedPath', () => {
+		it('should return undefined for invalid nestedPath', () => {
 			const values = {
 				key: {
 					$$type: 'object',
@@ -926,15 +926,15 @@ describe( 'prop-dependency-utils', () => {
 				},
 			};
 
-			const result = extractValue( [ 'key' ], values, [ 'nested', 'invalid' ] );
+			const result = extractValue(['key'], values, ['nested', 'invalid']);
 
-			expect( result ).toEqual( {
+			expect(result).toEqual({
 				$$type: 'unknown',
 				value: undefined,
-			} );
-		} );
+			});
+		});
 
-		it( 'should handle empty path (return root)', () => {
+		it('should handle empty path (return root)', () => {
 			const values = {
 				key: {
 					$$type: 'string',
@@ -942,9 +942,9 @@ describe( 'prop-dependency-utils', () => {
 				},
 			};
 
-			const result = extractValue( [], values );
+			const result = extractValue([], values);
 
-			expect( result ).toEqual( values );
-		} );
-	} );
-} );
+			expect(result).toEqual(values);
+		});
+	});
+});

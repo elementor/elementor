@@ -13,40 +13,40 @@ export const ActiveFilters = () => {
 		filters: { filters, setFilters },
 	} = useSearchAndFilters();
 
-	const handleRemove = ( key: FilterKey ) => {
-		setFilters( ( prev ) => ( { ...prev, [ key ]: false } ) );
-		trackGlobalClasses( {
+	const handleRemove = (key: FilterKey) => {
+		setFilters((prev) => ({ ...prev, [key]: false }));
+		trackGlobalClasses({
 			event: 'classManagerFilterUsed',
 			action: 'remove',
 			type: key,
 			trigger: 'header',
-		} );
+		});
 	};
 
-	const activeKeys = Object.keys( filters ).filter( ( key ): key is FilterKey => filters[ key as FilterKey ] );
+	const activeKeys = Object.keys(filters).filter((key): key is FilterKey => filters[key as FilterKey]);
 
 	const showClearIcon = activeKeys.length > 0;
 
 	return (
 		<Stack direction="row" alignItems="center" justifyContent="space-between">
-			<Stack direction="row" gap={ 0.5 } alignItems="center" flexWrap="wrap">
-				{ activeKeys.map( ( key ) => (
+			<Stack direction="row" gap={0.5} alignItems="center" flexWrap="wrap">
+				{activeKeys.map((key) => (
 					<Chip
-						key={ key }
-						label={ filterConfig[ key ] }
-						onDelete={ () => handleRemove( key ) }
-						sx={ chipSx }
+						key={key}
+						label={filterConfig[key]}
+						onDelete={() => handleRemove(key)}
+						sx={chipSx}
 						size="tiny"
 					/>
-				) ) }
+				))}
 			</Stack>
-			{ showClearIcon && (
+			{showClearIcon && (
 				<ClearIconButton
 					trigger="header"
-					tooltipText={ __( 'Clear Filters', 'elementor' ) }
-					sx={ { margin: '0 0 auto auto' } }
+					tooltipText={__('Clear Filters', 'elementor')}
+					sx={{ margin: '0 0 auto auto' }}
 				/>
-			) }
+			)}
 		</Stack>
 	);
 };

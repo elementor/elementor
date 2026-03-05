@@ -5,11 +5,11 @@ import { componentInstanceOverridesPropTypeUtil } from './component-instance-ove
 
 export const componentInstancePropTypeUtil = createPropUtils(
 	'component-instance',
-	z.object( {
+	z.object({
 		component_id: numberPropTypeUtil.schema,
-		overrides: z.optional( componentInstanceOverridesPropTypeUtil.schema ),
-	} )
+		overrides: z.optional(componentInstanceOverridesPropTypeUtil.schema),
+	})
 );
 
-export type ComponentInstanceProp = z.infer< typeof componentInstancePropTypeUtil.schema >;
-export type ComponentInstancePropValue = ComponentInstanceProp[ 'value' ];
+export type ComponentInstanceProp = z.infer<typeof componentInstancePropTypeUtil.schema>;
+export type ComponentInstancePropValue = ComponentInstanceProp['value'];

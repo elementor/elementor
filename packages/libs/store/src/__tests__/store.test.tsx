@@ -26,27 +26,27 @@ interface SliceStateRoot {
 }
 
 interface Config {
-	initialValue?: SliceStateRoot[ 'slice' ][ 'value' ];
+	initialValue?: SliceStateRoot['slice']['value'];
 }
 
-const createStoreEntities = ( { initialValue = 1 }: Config = {} ) => {
-	const slice = __createSlice( {
+const createStoreEntities = ({ initialValue = 1 }: Config = {}) => {
+	const slice = __createSlice({
 		name: 'slice',
 		initialState: {
 			value: initialValue,
 		},
 		reducers: {
-			setValue: ( state, action ) => {
+			setValue: (state, action) => {
 				state.value = action.payload;
 			},
 		},
-	} );
+	});
 
-	__registerSlice( slice );
+	__registerSlice(slice);
 
 	const store = __createStore();
 
-	const wrapper = ( { children }: PropsWithChildren ) => <StoreProvider store={ store }>{ children }</StoreProvider>;
+	const wrapper = ({ children }: PropsWithChildren) => <StoreProvider store={store}>{children}</StoreProvider>;
 
 	return {
 		slice,
@@ -55,20 +55,20 @@ const createStoreEntities = ( { initialValue = 1 }: Config = {} ) => {
 	};
 };
 
-describe( '@elementor/store', () => {
-	it( 'should set an initial state of a slice', () => {
+describe('@elementor/store', () => {
+	it('should set an initial state of a slice', () => {
 		// Arrange.
 		const { wrapper } = createStoreEntities();
 
-		const { result } = renderHook( () => useSelector( ( state: SliceStateRoot ) => state.slice.value ), {
+		const { result } = renderHook(() => useSelector((state: SliceStateRoot) => state.slice.value), {
 			wrapper,
-		} );
+		});
 
 		// Assert.
-		expect( result.current ).toBe( 1 );
-	} );
+		expect(result.current).toBe(1);
+	});
 
-	it( 'should update the state value of the slice', () => {
+	it('should update the state value of the slice', () => {
 		// Arrange.
 		const { slice, wrapper } = createStoreEntities();
 
@@ -77,66 +77,66 @@ describe( '@elementor/store', () => {
 			() => {
 				const dispatchAction = useDispatch();
 
-				dispatchAction( slice.actions.setValue( 3 ) );
+				dispatchAction(slice.actions.setValue(3));
 
-				return useSelector( ( state: SliceStateRoot ) => state.slice.value );
+				return useSelector((state: SliceStateRoot) => state.slice.value);
 			},
 			{ wrapper }
 		);
 
 		// Assert.
-		expect( result.current ).toBe( 3 );
-	} );
+		expect(result.current).toBe(3);
+	});
 
-	it( 'should subscribe to state changes using a selector', () => {
+	it('should subscribe to state changes using a selector', () => {
 		// Arrange.
-		const slice1 = __createSlice( {
+		const slice1 = __createSlice({
 			name: 'slice1',
 			initialState: {
 				value: 0,
 			},
 			reducers: {
-				increment: ( state ) => {
+				increment: (state) => {
 					state.value++;
 				},
 			},
-		} );
+		});
 
-		const slice2 = __createSlice( {
+		const slice2 = __createSlice({
 			name: 'slice2',
 			initialState: {
 				value: 0,
 			},
 			reducers: {
-				increment: ( state ) => {
+				increment: (state) => {
 					state.value++;
 				},
 			},
-		} );
+		});
 
-		__registerSlice( slice1 );
-		__registerSlice( slice2 );
+		__registerSlice(slice1);
+		__registerSlice(slice2);
 
 		__createStore();
 
 		const subscriber = jest.fn();
 
-		type State = Record< 'slice1' | 'slice2', { value: number } >;
+		type State = Record<'slice1' | 'slice2', { value: number }>;
 
-		const unsubscribe = __subscribeWithSelector( ( state: State ) => state.slice2, subscriber );
-
-		// Act.
-		__dispatch( slice1.actions.increment() );
-
-		// Assert.
-		expect( subscriber ).not.toHaveBeenCalled();
+		const unsubscribe = __subscribeWithSelector((state: State) => state.slice2, subscriber);
 
 		// Act.
-		__dispatch( slice2.actions.increment() );
+		__dispatch(slice1.actions.increment());
 
 		// Assert.
-		expect( subscriber ).toHaveBeenCalledTimes( 1 );
-		expect( subscriber ).toHaveBeenCalledWith( { value: 1 } );
+		expect(subscriber).not.toHaveBeenCalled();
+
+		// Act.
+		__dispatch(slice2.actions.increment());
+
+		// Assert.
+		expect(subscriber).toHaveBeenCalledTimes(1);
+		expect(subscriber).toHaveBeenCalledWith({ value: 1 });
 
 		// Reset.
 		subscriber.mockClear();
@@ -144,53 +144,53 @@ describe( '@elementor/store', () => {
 		// Act.
 		unsubscribe();
 
-		__dispatch( slice2.actions.increment() );
+		__dispatch(slice2.actions.increment());
 
 		// Assert.
-		expect( subscriber ).not.toHaveBeenCalled();
-	} );
+		expect(subscriber).not.toHaveBeenCalled();
+	});
 
-	it( 'should throw an error when trying to add a slice with the same name more than once', () => {
+	it('should throw an error when trying to add a slice with the same name more than once', () => {
 		// Arrange.
-		const slice = __createSlice( {
+		const slice = __createSlice({
 			name: 'slice',
 			initialState: {
 				value: 1,
 			},
 			reducers: {},
-		} );
+		});
 
-		__registerSlice( slice );
+		__registerSlice(slice);
 
 		// Assert.
-		expect( () => {
-			__registerSlice( slice );
-		} ).toThrow( 'Slice with name "slice" already exists.' );
-	} );
+		expect(() => {
+			__registerSlice(slice);
+		}).toThrow('Slice with name "slice" already exists.');
+	});
 
-	it( 'should throw an error when trying to re-create the store', () => {
+	it('should throw an error when trying to re-create the store', () => {
 		// Arrange.
-		const slice = __createSlice( {
+		const slice = __createSlice({
 			name: 'slice',
 			initialState: {
 				value: 1,
 			},
 			reducers: {},
-		} );
+		});
 
-		__registerSlice( slice );
+		__registerSlice(slice);
 
 		__createStore();
 
 		// Assert.
-		expect( () => __createStore() ).toThrow( 'The store instance already exists.' );
-	} );
+		expect(() => __createStore()).toThrow('The store instance already exists.');
+	});
 
-	it( 'should add a middleware that blocks the state update by not running next(action)', () => {
+	it('should add a middleware that blocks the state update by not running next(action)', () => {
 		// Arrange.
-		__addMiddleware( () => () => () => {
+		__addMiddleware(() => () => () => {
 			return null;
-		} );
+		});
 
 		const { slice, wrapper } = createStoreEntities();
 
@@ -199,26 +199,26 @@ describe( '@elementor/store', () => {
 			() => {
 				const dispatchAction = useDispatch();
 
-				dispatchAction( slice.actions.setValue( 4 ) );
+				dispatchAction(slice.actions.setValue(4));
 
-				return useSelector( ( state: SliceStateRoot ) => state.slice.value );
+				return useSelector((state: SliceStateRoot) => state.slice.value);
 			},
 			{ wrapper }
 		);
 
 		// Assert.
-		expect( result.current ).toBe( 1 );
-	} );
+		expect(result.current).toBe(1);
+	});
 
-	it( 'should add a middleware that does not interfere with the state update', () => {
+	it('should add a middleware that does not interfere with the state update', () => {
 		// Arrange.
 		const middlewareNextAction = jest.fn();
 
-		__addMiddleware( () => ( next: Dispatch< AnyAction > ) => ( action: AnyAction ) => {
-			middlewareNextAction( action );
+		__addMiddleware(() => (next: Dispatch<AnyAction>) => (action: AnyAction) => {
+			middlewareNextAction(action);
 
-			next( action );
-		} );
+			next(action);
+		});
 
 		const { slice, wrapper } = createStoreEntities();
 
@@ -227,68 +227,68 @@ describe( '@elementor/store', () => {
 			() => {
 				const dispatchAction = useDispatch();
 
-				dispatchAction( slice.actions.setValue( 4 ) );
+				dispatchAction(slice.actions.setValue(4));
 
-				return useSelector( ( state: SliceStateRoot ) => state.slice.value );
+				return useSelector((state: SliceStateRoot) => state.slice.value);
 			},
 			{ wrapper }
 		);
 
 		// Assert.
-		expect( result.current ).toBe( 4 );
+		expect(result.current).toBe(4);
 
-		expect( middlewareNextAction ).toHaveBeenCalledWith( slice.actions.setValue( 4 ) );
-	} );
+		expect(middlewareNextAction).toHaveBeenCalledWith(slice.actions.setValue(4));
+	});
 
-	it( 'should dispatch an action without using hooks', () => {
+	it('should dispatch an action without using hooks', () => {
 		// Arrange.
-		const slice = __createSlice( {
+		const slice = __createSlice({
 			name: 'slice',
 			initialState: {
 				value: 1,
 			},
 			reducers: {
-				setValue: ( state, action ) => {
+				setValue: (state, action) => {
 					state.value = action.payload;
 				},
 			},
-		} );
+		});
 
-		__registerSlice( slice );
+		__registerSlice(slice);
 
 		const store = __createStore();
 
 		// Act.
-		store.dispatch( slice.actions.setValue( 6 ) );
+		store.dispatch(slice.actions.setValue(6));
 
 		const stateResult = store.getState().slice.value;
 
 		// Assert.
-		expect( stateResult ).toBe( 6 );
-	} );
+		expect(stateResult).toBe(6);
+	});
 
-	it( 'should collect actions that are dispatched before the store exist, and run them when the store instance is created', () => {
+	it('should collect actions that are dispatched before the store exist, and run them when the store instance is created', () => {
 		// Act.
-		__dispatch( { type: 'slice/setValue', payload: 7 } );
+		__dispatch({ type: 'slice/setValue', payload: 7 });
 
 		const { wrapper } = createStoreEntities();
 
-		const { result } = renderHook( () => useSelector( ( state: SliceStateRoot ) => state.slice.value ), {
+		const { result } = renderHook(() => useSelector((state: SliceStateRoot) => state.slice.value), {
 			wrapper,
-		} );
+		});
 
 		// Assert.
-		expect( result.current ).toBe( 7 );
-	} );
+		expect(result.current).toBe(7);
+	});
 
-	it( 'should delete the store instance', () => {
+	it('should delete the store instance', () => {
 		// Arrange.
 		const { store } = createStoreEntities();
 
 		let instance = __getStore();
 
 		// Assert.
-		expect( instance ).toEqual( store );
+		expect(instance).toEqual(store);
 
 		// Act.
 		__deleteStore();
@@ -296,10 +296,10 @@ describe( '@elementor/store', () => {
 		instance = __getStore();
 
 		// Assert.
-		expect( instance ).toBeNull();
-	} );
+		expect(instance).toBeNull();
+	});
 
-	it( 'should delete the added slices', () => {
+	it('should delete the added slices', () => {
 		// Arrange.
 		const mockConsoleError = jest.fn();
 		window.console.error = mockConsoleError;
@@ -311,23 +311,21 @@ describe( '@elementor/store', () => {
 		// Arrange.
 		const store = __createStore();
 
-		const wrapper = ( { children }: PropsWithChildren ) => (
-			<StoreProvider store={ store }>{ children }</StoreProvider>
-		);
+		const wrapper = ({ children }: PropsWithChildren) => <StoreProvider store={store}>{children}</StoreProvider>;
 
-		const { result } = renderHook( () => useSelector( ( state: SliceStateRoot ) => state.slice ), { wrapper } );
+		const { result } = renderHook(() => useSelector((state: SliceStateRoot) => state.slice), { wrapper });
 
 		// Assert.
-		expect( result.current ).toBeUndefined();
-		expect( mockConsoleError ).toHaveBeenCalled();
-	} );
+		expect(result.current).toBeUndefined();
+		expect(mockConsoleError).toHaveBeenCalled();
+	});
 
-	it( 'should delete the added middlewares', () => {
+	it('should delete the added middlewares', () => {
 		// Arrange.
 		// Registering a middleware that blocks the state update by not running next(action).
-		__addMiddleware( () => () => () => {
+		__addMiddleware(() => () => () => {
 			return null;
-		} );
+		});
 
 		createStoreEntities();
 
@@ -340,55 +338,55 @@ describe( '@elementor/store', () => {
 			() => {
 				const dispatchAction = useDispatch();
 
-				dispatchAction( slice.actions.setValue( 8 ) );
+				dispatchAction(slice.actions.setValue(8));
 
-				return useSelector( ( state: SliceStateRoot ) => state.slice.value );
+				return useSelector((state: SliceStateRoot) => state.slice.value);
 			},
 			{ wrapper }
 		);
 
 		// Assert.
-		expect( result.current ).toBe( 8 );
-	} );
+		expect(result.current).toBe(8);
+	});
 
-	it( 'should support dispatching async actions', async () => {
+	it('should support dispatching async actions', async () => {
 		// Arrange.
-		const incrementBy = __createAsyncThunk( 'value/incrementBy', async ( value: number ) => {
+		const incrementBy = __createAsyncThunk('value/incrementBy', async (value: number) => {
 			return value;
-		} );
+		});
 
-		const slice = __createSlice( {
+		const slice = __createSlice({
 			name: 'slice',
 			initialState: {
 				value: 1,
 			},
 			reducers: {
-				increment: ( state ) => {
+				increment: (state) => {
 					state.value += 1;
 				},
 			},
-			extraReducers: ( builder ) => {
-				builder.addCase( incrementBy.fulfilled, ( state, action ) => {
+			extraReducers: (builder) => {
+				builder.addCase(incrementBy.fulfilled, (state, action) => {
 					state.value += action.payload;
-				} );
+				});
 			},
-		} );
+		});
 
-		__registerSlice( slice );
+		__registerSlice(slice);
 
 		const store = __createStore();
 
 		// Act.
 		jest.useFakeTimers();
 
-		store.dispatch( incrementBy( 2 ) );
+		store.dispatch(incrementBy(2));
 
 		// Regular reducer usage to ensure it works properly.
-		store.dispatch( slice.actions.increment() );
+		store.dispatch(slice.actions.increment());
 
 		await jest.runAllTimersAsync();
 
 		// Assert.
-		expect( store.getState().slice.value ).toBe( 4 );
-	} );
-} );
+		expect(store.getState().slice.value).toBe(4);
+	});
+});

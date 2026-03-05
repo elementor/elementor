@@ -3,5 +3,5 @@ import { getBreakpointsByWidths } from './utils/get-breakpoints-by-widths';
 
 export function getBreakpoints(): Breakpoint[] {
 	const { minWidth, defaults, maxWidth } = getBreakpointsByWidths();
-	return [ ...minWidth, ...defaults, ...maxWidth ];
+	return [...minWidth, ...defaults, ...maxWidth];
 }

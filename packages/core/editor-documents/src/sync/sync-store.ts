@@ -26,12 +26,12 @@ export function syncStore() {
 function syncInitialization() {
 	const { init } = slice.actions;
 
-	listenTo( v1ReadyEvent(), () => {
+	listenTo(v1ReadyEvent(), () => {
 		const documentsManager = getV1DocumentsManager();
 
-		const entities = Object.entries( documentsManager.documents ).reduce(
-			( acc: Record< string, Document >, [ id, document ] ) => {
-				acc[ id ] = normalizeV1Document( document );
+		const entities = Object.entries(documentsManager.documents).reduce(
+			(acc: Record<string, Document>, [id, document]) => {
+				acc[id] = normalizeV1Document(document);
 
 				return acc;
 			},
@@ -39,35 +39,35 @@ function syncInitialization() {
 		);
 
 		__dispatch(
-			init( {
+			init({
 				entities,
 				hostId: documentsManager.getInitialId(),
 				activeId: documentsManager.getCurrentId(),
-			} )
+			})
 		);
-	} );
+	});
 }
 
 function syncActiveDocument() {
 	const { activateDocument, setAsHost } = slice.actions;
 
-	listenTo( commandEndEvent( 'editor/documents/open' ), () => {
+	listenTo(commandEndEvent('editor/documents/open'), () => {
 		const documentsManager = getV1DocumentsManager();
-		const currentDocument = normalizeV1Document( documentsManager.getCurrent() );
+		const currentDocument = normalizeV1Document(documentsManager.getCurrent());
 
-		__dispatch( activateDocument( currentDocument ) );
+		__dispatch(activateDocument(currentDocument));
 
-		if ( documentsManager.getInitialId() === currentDocument.id ) {
-			__dispatch( setAsHost( currentDocument.id ) );
+		if (documentsManager.getInitialId() === currentDocument.id) {
+			__dispatch(setAsHost(currentDocument.id));
 		}
-	} );
+	});
 }
 
 function syncOnDocumentSave() {
 	const { startSaving, endSaving, startSavingDraft, endSavingDraft } = slice.actions;
 
-	const isDraft = ( e: ListenerEvent ) => {
-		const event = e as CommandEvent< { status: string } >;
+	const isDraft = (e: ListenerEvent) => {
+		const event = e as CommandEvent<{ status: string }>;
 
 		/**
 		 * @see https://github.com/elementor/elementor/blob/5f815d40a/assets/dev/js/editor/document/save/hooks/ui/save/before.js#L18-L22
@@ -75,86 +75,86 @@ function syncOnDocumentSave() {
 		return event.args?.status === 'autosave';
 	};
 
-	listenTo( commandStartEvent( 'document/save/save' ), ( e ) => {
-		if ( isDraft( e ) ) {
-			__dispatch( startSavingDraft() );
+	listenTo(commandStartEvent('document/save/save'), (e) => {
+		if (isDraft(e)) {
+			__dispatch(startSavingDraft());
 			return;
 		}
 
-		__dispatch( startSaving() );
-	} );
+		__dispatch(startSaving());
+	});
 
-	listenTo( commandEndEvent( 'document/save/save' ), ( e ) => {
-		const activeDocument = normalizeV1Document( getV1DocumentsManager().getCurrent() );
+	listenTo(commandEndEvent('document/save/save'), (e) => {
+		const activeDocument = normalizeV1Document(getV1DocumentsManager().getCurrent());
 
-		if ( isDraft( e ) ) {
-			__dispatch( endSavingDraft( activeDocument ) );
+		if (isDraft(e)) {
+			__dispatch(endSavingDraft(activeDocument));
 		} else {
-			__dispatch( endSaving( activeDocument ) );
+			__dispatch(endSaving(activeDocument));
 		}
-	} );
+	});
 }
 
 function syncOnTitleChange() {
 	const { updateActiveDocument } = slice.actions;
 
-	const updateTitle = debounce( ( e: ListenerEvent ) => {
-		const event = e as CommandEvent< { settings: { post_title?: string } } >;
+	const updateTitle = debounce((e: ListenerEvent) => {
+		const event = e as CommandEvent<{ settings: { post_title?: string } }>;
 
-		if ( ! ( 'post_title' in event.args?.settings ) ) {
+		if (!('post_title' in event.args?.settings)) {
 			return;
 		}
 
 		const currentDocument = getV1DocumentsManager().getCurrent();
-		const newTitle = currentDocument.container.settings.get( 'post_title' );
+		const newTitle = currentDocument.container.settings.get('post_title');
 
-		__dispatch( updateActiveDocument( { title: newTitle } ) );
-	}, 400 );
+		__dispatch(updateActiveDocument({ title: newTitle }));
+	}, 400);
 
-	listenTo( commandEndEvent( 'document/elements/settings' ), updateTitle );
+	listenTo(commandEndEvent('document/elements/settings'), updateTitle);
 }
 
 function syncOnExitToChange() {
 	const { updateActiveDocument } = slice.actions;
 
-	const updateExitTo = debounce( ( e: ListenerEvent ) => {
-		const event = e as CommandEvent< { settings: { exit_to?: string } } >;
+	const updateExitTo = debounce((e: ListenerEvent) => {
+		const event = e as CommandEvent<{ settings: { exit_to?: string } }>;
 
-		if ( ! ( 'exit_to' in event.args?.settings ) ) {
+		if (!('exit_to' in event.args?.settings)) {
 			return;
 		}
 
 		const currentDocument = getV1DocumentsManager().getCurrent();
-		const newExitTo = getV1DocumentsExitTo( currentDocument );
-		const permalink = getV1DocumentPermalink( currentDocument );
+		const newExitTo = getV1DocumentsExitTo(currentDocument);
+		const permalink = getV1DocumentPermalink(currentDocument);
 
-		__dispatch( updateActiveDocument( { links: { platformEdit: newExitTo, permalink } } ) );
-	}, 400 );
+		__dispatch(updateActiveDocument({ links: { platformEdit: newExitTo, permalink } }));
+	}, 400);
 
-	listenTo( commandEndEvent( 'document/elements/settings' ), updateExitTo );
+	listenTo(commandEndEvent('document/elements/settings'), updateExitTo);
 }
 
 function syncOnDocumentChange() {
 	const { markAsDirty, markAsPristine } = slice.actions;
 
-	listenTo( commandEndEvent( 'document/save/set-is-modified' ), () => {
+	listenTo(commandEndEvent('document/save/set-is-modified'), () => {
 		// Skip the dirtiness check if the document is currently being saved, to prevent the UI
 		// from showing a disabled publish button while there is a save process. The state will
 		// be updated when the save process ends and the whole document state it normalized
 		// (see `syncOnDocumentSave`)
-		const isSaving = selectActiveDocument( getState() )?.isSaving;
+		const isSaving = selectActiveDocument(getState())?.isSaving;
 
-		if ( isSaving ) {
+		if (isSaving) {
 			return;
 		}
 
 		const currentDocument = getV1DocumentsManager().getCurrent();
 
-		if ( currentDocument.editor.isChanged ) {
-			__dispatch( markAsDirty() );
+		if (currentDocument.editor.isChanged) {
+			__dispatch(markAsDirty());
 			return;
 		}
 
-		__dispatch( markAsPristine() );
-	} );
+		__dispatch(markAsPristine());
+	});
 }

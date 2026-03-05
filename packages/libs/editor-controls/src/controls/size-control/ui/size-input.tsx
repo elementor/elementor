@@ -12,14 +12,14 @@ type Props = {
 	focused?: boolean;
 	disabled?: boolean;
 	id?: string;
-	onChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
-	onKeyDown?: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
-	onKeyUp?: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
-	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
-	InputProps: TextFieldProps[ 'InputProps' ] & {
+	onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+	onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+	onKeyUp?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+	onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
+	InputProps: TextFieldProps['InputProps'] & {
 		endAdornment: React.JSX.Element;
 	};
-	inputProps?: TextFieldProps[ 'inputProps' ];
+	inputProps?: TextFieldProps['inputProps'];
 };
 
 export const SizeInput = forwardRef(
@@ -42,27 +42,27 @@ export const SizeInput = forwardRef(
 	) => {
 		return (
 			<NumberInput
-				id={ id }
-				ref={ ref }
+				id={id}
+				ref={ref}
 				size="tiny"
 				fullWidth
-				type={ type }
-				value={ value }
-				placeholder={ placeholder }
-				onKeyUp={ onKeyUp }
-				focused={ focused }
-				disabled={ disabled }
-				onKeyDown={ onKeyDown }
-				onInput={ onChange }
-				onBlur={ onBlur }
-				InputProps={ InputProps }
-				inputProps={ inputProps }
-				sx={ getCursorStyle( InputProps?.readOnly ?? false ) }
+				type={type}
+				value={value}
+				placeholder={placeholder}
+				onKeyUp={onKeyUp}
+				focused={focused}
+				disabled={disabled}
+				onKeyDown={onKeyDown}
+				onInput={onChange}
+				onBlur={onBlur}
+				InputProps={InputProps}
+				inputProps={inputProps}
+				sx={getCursorStyle(InputProps?.readOnly ?? false)}
 			/>
 		);
 	}
 );
 
-const getCursorStyle = ( readOnly: boolean ) => ( {
+const getCursorStyle = (readOnly: boolean) => ({
 	input: { cursor: readOnly ? 'default !important' : undefined },
-} );
+});

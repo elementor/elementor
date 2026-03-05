@@ -9,22 +9,19 @@ export const useFilters = () => {
 	} = useSearchAndFilters();
 	const allFilters = useFilteredCssClassUsage();
 
-	return useMemo( () => {
-		const activeEntries = Object.entries( filters ).filter( ( [ , isActive ] ) => isActive ) as [
-			FilterKey,
-			true,
-		][];
+	return useMemo(() => {
+		const activeEntries = Object.entries(filters).filter(([, isActive]) => isActive) as [FilterKey, true][];
 
-		if ( activeEntries.length === 0 ) {
+		if (activeEntries.length === 0) {
 			return null;
 		}
 
-		return activeEntries.reduce< string[] >( ( acc, [ key ], index ) => {
-			const current = allFilters[ key ] || [];
-			if ( index === 0 ) {
+		return activeEntries.reduce<string[]>((acc, [key], index) => {
+			const current = allFilters[key] || [];
+			if (index === 0) {
 				return current;
 			}
-			return acc.filter( ( val ) => current.includes( val ) );
-		}, [] );
-	}, [ filters, allFilters ] );
+			return acc.filter((val) => current.includes(val));
+		}, []);
+	}, [filters, allFilters]);
 };

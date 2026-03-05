@@ -12,13 +12,13 @@ export const getSettings = () => {
 
 	const uri = baseUri;
 
-	return apiFetch< Homepage >( { path: uri } );
+	return apiFetch<Homepage>({ path: uri });
 };
 
-export const updateSettings = ( settings: Settings ) => {
-	return apiFetch( {
+export const updateSettings = (settings: Settings) => {
+	return apiFetch({
 		path: '/wp/v2/settings',
 		method: 'POST',
 		data: settings,
-	} );
+	});
 };

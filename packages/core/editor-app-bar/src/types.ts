@@ -1,20 +1,20 @@
 export type ExtendedWindow = Window & {
 	elementorCommon: {
 		eventsManager: {
-			dispatchEvent: ( name: string, data: Record< string, string > ) => void;
+			dispatchEvent: (name: string, data: Record<string, string>) => void;
 			config: {
-				locations: Record< string, string >;
-				secondaryLocations: Record< string, string >;
-				triggers: Record< string, string >;
-				elements: Record< string, string >;
+				locations: Record<string, string>;
+				secondaryLocations: Record<string, string>;
+				triggers: Record<string, string>;
+				elements: Record<string, string>;
 				names: {
-					topBar: Record< string, string >;
+					topBar: Record<string, string>;
 				};
 			};
 		};
 
 		ajax?: {
-			addRequest: ( action: string, options?: Record< string, unknown > ) => Promise< unknown >;
+			addRequest: (action: string, options?: Record<string, unknown>) => Promise<unknown>;
 		};
 
 		config: {
@@ -48,7 +48,7 @@ export type ExtendedWindow = Window & {
 	};
 	jQuery: {
 		fn?: {
-			elementorConnect?: ( selector: string ) => never;
+			elementorConnect?: (selector: string) => never;
 		};
 	};
 };

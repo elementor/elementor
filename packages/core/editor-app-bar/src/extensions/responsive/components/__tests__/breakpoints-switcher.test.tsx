@@ -10,38 +10,38 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import BreakpointsSwitcher from '../breakpoints-switcher';
 
-jest.mock( '@elementor/editor-responsive' );
+jest.mock('@elementor/editor-responsive');
 
-describe( '<BreakpointsSwitcher />', () => {
-	beforeEach( () => {
+describe('<BreakpointsSwitcher />', () => {
+	beforeEach(() => {
 		jest.resetAllMocks();
-	} );
+	});
 
-	it( 'should not render when there are no breakpoints', () => {
+	it('should not render when there are no breakpoints', () => {
 		// Arrange.
-		jest.mocked( useBreakpoints ).mockReturnValue( [] );
-		jest.mocked( useActiveBreakpoint ).mockReturnValue( 'desktop' );
+		jest.mocked(useBreakpoints).mockReturnValue([]);
+		jest.mocked(useActiveBreakpoint).mockReturnValue('desktop');
 
 		// Act.
-		const { container } = renderWithTheme( <BreakpointsSwitcher /> );
+		const { container } = renderWithTheme(<BreakpointsSwitcher />);
 
 		// Assert.
-		expect( container ).toBeEmptyDOMElement();
-	} );
+		expect(container).toBeEmptyDOMElement();
+	});
 
-	it( 'should not render when there is no active breakpoint', () => {
+	it('should not render when there is no active breakpoint', () => {
 		// Arrange.
-		jest.mocked( useBreakpoints ).mockReturnValue( [ { id: 'desktop', label: 'Desktop' } ] );
-		jest.mocked( useActiveBreakpoint ).mockReturnValue( null );
+		jest.mocked(useBreakpoints).mockReturnValue([{ id: 'desktop', label: 'Desktop' }]);
+		jest.mocked(useActiveBreakpoint).mockReturnValue(null);
 
 		// Act.
-		const { container } = renderWithTheme( <BreakpointsSwitcher /> );
+		const { container } = renderWithTheme(<BreakpointsSwitcher />);
 
 		// Assert.
-		expect( container ).toBeEmptyDOMElement();
-	} );
+		expect(container).toBeEmptyDOMElement();
+	});
 
-	it( 'should render all of the breakpoints', () => {
+	it('should render all of the breakpoints', () => {
 		// Arrange.
 		const sortedBreakpoints: Breakpoint[] = [
 			{ id: 'widescreen', label: 'Widescreen', width: 2400, type: 'min-width' },
@@ -53,14 +53,14 @@ describe( '<BreakpointsSwitcher />', () => {
 			{ id: 'mobile', label: 'Mobile Portrait', width: 767, type: 'max-width' },
 		];
 
-		jest.mocked( useBreakpoints ).mockReturnValue( sortedBreakpoints );
-		jest.mocked( useActiveBreakpoint ).mockReturnValue( 'desktop' );
+		jest.mocked(useBreakpoints).mockReturnValue(sortedBreakpoints);
+		jest.mocked(useActiveBreakpoint).mockReturnValue('desktop');
 
 		// Act.
-		renderWithTheme( <BreakpointsSwitcher /> );
+		renderWithTheme(<BreakpointsSwitcher />);
 
 		// Assert.
-		const tabs = screen.getAllByRole( 'tab' );
+		const tabs = screen.getAllByRole('tab');
 		const expectedLabels = [
 			'Widescreen (2400px and up)',
 			'Desktop',
@@ -71,38 +71,38 @@ describe( '<BreakpointsSwitcher />', () => {
 			'Mobile Portrait (up to 767px)',
 		];
 
-		expect( tabs ).toHaveLength( 7 );
+		expect(tabs).toHaveLength(7);
 
-		tabs.forEach( ( tab, index ) => {
-			expect( tab ).toHaveAttribute( 'aria-label', expectedLabels[ index ] );
-		} );
+		tabs.forEach((tab, index) => {
+			expect(tab).toHaveAttribute('aria-label', expectedLabels[index]);
+		});
 
 		// Desktop should be active.
-		expect( tabs[ 1 ] ).toHaveAttribute( 'aria-selected', 'true' );
-	} );
+		expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
+	});
 
-	it( 'should activate a breakpoint on click', () => {
+	it('should activate a breakpoint on click', () => {
 		// Arrange.
 		const activate = jest.fn();
 
-		jest.mocked( useActivateBreakpoint ).mockReturnValue( activate );
-		jest.mocked( useActiveBreakpoint ).mockReturnValue( 'desktop' );
+		jest.mocked(useActivateBreakpoint).mockReturnValue(activate);
+		jest.mocked(useActiveBreakpoint).mockReturnValue('desktop');
 
-		jest.mocked( useBreakpoints ).mockReturnValue( [
+		jest.mocked(useBreakpoints).mockReturnValue([
 			{ id: 'mobile', label: 'Mobile Portrait' },
 			{ id: 'desktop', label: 'Desktop' },
-		] );
+		]);
 
 		// Act.
-		renderWithTheme( <BreakpointsSwitcher /> );
+		renderWithTheme(<BreakpointsSwitcher />);
 
-		const mobileTab = screen.getByLabelText( 'Mobile Portrait', {
+		const mobileTab = screen.getByLabelText('Mobile Portrait', {
 			selector: 'button',
-		} );
+		});
 
-		fireEvent.click( mobileTab );
+		fireEvent.click(mobileTab);
 
 		// Assert.
-		expect( activate ).toHaveBeenCalledWith( 'mobile' );
-	} );
-} );
+		expect(activate).toHaveBeenCalledWith('mobile');
+	});
+});

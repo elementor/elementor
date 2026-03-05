@@ -4,11 +4,11 @@ import { type PropValue } from '@elementor/editor-props';
 
 import { useBoundProp } from './bound-prop-context';
 
-type ControlComponent = ComponentType< object & { OriginalControl: ComponentType } >;
+type ControlComponent = ComponentType<object & { OriginalControl: ComponentType }>;
 export type ControlReplacement = {
 	id?: string;
 	component: ControlComponent;
-	condition: ( { value }: ConditionArgs ) => boolean;
+	condition: ({ value }: ConditionArgs) => boolean;
 };
 
 type ConditionArgs = {
@@ -16,25 +16,25 @@ type ConditionArgs = {
 	placeholder?: PropValue;
 };
 
-type Props = PropsWithChildren< { replacements: ControlReplacement[] } >;
+type Props = PropsWithChildren<{ replacements: ControlReplacement[] }>;
 
-const ControlReplacementContext = createContext< ControlReplacement[] >( [] );
+const ControlReplacementContext = createContext<ControlReplacement[]>([]);
 
-export const ControlReplacementsProvider = ( { replacements, children }: Props ) => {
-	return <ControlReplacementContext.Provider value={ replacements }>{ children }</ControlReplacementContext.Provider>;
+export const ControlReplacementsProvider = ({ replacements, children }: Props) => {
+	return <ControlReplacementContext.Provider value={replacements}>{children}</ControlReplacementContext.Provider>;
 };
 
-export const useControlReplacement = ( OriginalComponent: ControlComponent ) => {
+export const useControlReplacement = (OriginalComponent: ControlComponent) => {
 	const { value, placeholder } = useBoundProp();
-	const replacements = useContext( ControlReplacementContext );
+	const replacements = useContext(ControlReplacementContext);
 
 	try {
-		const replacement = replacements.find( ( r ) => r.condition( { value, placeholder } ) );
+		const replacement = replacements.find((r) => r.condition({ value, placeholder }));
 
 		return {
 			ControlToRender: replacement?.component ?? OriginalComponent,
 			OriginalControl: OriginalComponent,
-			isReplaced: !! replacement,
+			isReplaced: !!replacement,
 		};
 	} catch {
 		return { ControlToRender: OriginalComponent, OriginalControl: OriginalComponent };
@@ -44,8 +44,8 @@ export const useControlReplacement = ( OriginalComponent: ControlComponent ) => 
 export const createControlReplacementsRegistry = () => {
 	const controlReplacements: ControlReplacement[] = [];
 
-	function registerControlReplacement( replacement: ControlReplacement ) {
-		controlReplacements.push( replacement );
+	function registerControlReplacement(replacement: ControlReplacement) {
+		controlReplacements.push(replacement);
 	}
 
 	function getControlReplacements() {

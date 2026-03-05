@@ -11,15 +11,15 @@ type ActionProps = {
 	onClick: () => void;
 };
 
-export default function Action( { title, visible = true, icon: Icon, onClick }: ActionProps ) {
-	if ( ! visible ) {
+export default function Action({ title, visible = true, icon: Icon, onClick }: ActionProps) {
+	if (!visible) {
 		return null;
 	}
 
 	return (
-		<Tooltip placement="top" title={ title } arrow={ true }>
-			<IconButton aria-label={ title } size={ SIZE } onClick={ onClick }>
-				<Icon fontSize={ SIZE } />
+		<Tooltip placement="top" title={title} arrow={true}>
+			<IconButton aria-label={title} size={SIZE} onClick={onClick}>
+				<Icon fontSize={SIZE} />
 			</IconButton>
 		</Tooltip>
 	);

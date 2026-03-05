@@ -13,64 +13,64 @@ import { type DynamicTag } from '../../types';
 import { isDynamicTagSupported } from '../../utils';
 import { DynamicSelectionControl } from '../dynamic-selection-control';
 
-jest.mock( '@elementor/editor-controls' );
-jest.mock( '../../hooks/use-dynamic-tag' );
-jest.mock( '../../hooks/use-prop-dynamic-tags' );
-jest.mock( '../../../hooks/use-persist-dynamic-value' );
-jest.mock( '../../../hooks/use-license-config' );
-jest.mock( '../../../contexts/element-context' );
-jest.mock( '../../utils' );
+jest.mock('@elementor/editor-controls');
+jest.mock('../../hooks/use-dynamic-tag');
+jest.mock('../../hooks/use-prop-dynamic-tags');
+jest.mock('../../../hooks/use-persist-dynamic-value');
+jest.mock('../../../hooks/use-license-config');
+jest.mock('../../../contexts/element-context');
+jest.mock('../../utils');
 
-describe( '<DynamicSelectionControl />', () => {
-	beforeEach( () => {
-		jest.mocked( useBoundProp ).mockReturnValue( {
+describe('<DynamicSelectionControl />', () => {
+	beforeEach(() => {
+		jest.mocked(useBoundProp).mockReturnValue({
 			value: 'value',
 			setValue: jest.fn(),
 			bind: '',
-			propType: createMockPropType( { kind: 'plain' } ),
+			propType: createMockPropType({ kind: 'plain' }),
 			path: [],
 			restoreValue: jest.fn(),
 			resetValue: jest.fn(),
-		} );
+		});
 
-		jest.mocked( useDynamicTag ).mockReturnValue( {
+		jest.mocked(useDynamicTag).mockReturnValue({
 			name: 'author-info',
 			label: 'Author Info',
 			categories: [],
 			props_schema: {},
 			group: 'author',
 			atomic_controls: [],
-		} );
+		});
 
-		jest.mocked( usePersistDynamicValue ).mockReturnValue( [] as never );
+		jest.mocked(usePersistDynamicValue).mockReturnValue([] as never);
 
 		const element = mockElement();
 		const elementType = createMockElementType();
-		jest.mocked( useElement ).mockReturnValue( { element, elementType, settings: {} } );
+		jest.mocked(useElement).mockReturnValue({ element, elementType, settings: {} });
 
-		jest.mocked( isDynamicTagSupported ).mockReturnValue( true );
+		jest.mocked(isDynamicTagSupported).mockReturnValue(true);
 
-		jest.mocked( useLicenseConfig ).mockReturnValue( { expired: false } );
-	} );
+		jest.mocked(useLicenseConfig).mockReturnValue({ expired: false });
+	});
 
-	afterEach( () => {
+	afterEach(() => {
 		jest.clearAllMocks();
 		jest.resetAllMocks();
-	} );
+	});
 
-	it( 'should render the control label', () => {
+	it('should render the control label', () => {
 		// Act.
-		renderWithTheme( <DynamicSelectionControl /> );
+		renderWithTheme(<DynamicSelectionControl />);
 
 		// Assert.
-		expect( screen.getByText( 'Author Info' ) ).toBeInTheDocument();
-	} );
+		expect(screen.getByText('Author Info')).toBeInTheDocument();
+	});
 
-	it( 'should open the selection popover when the control is clicked', async () => {
+	it('should open the selection popover when the control is clicked', async () => {
 		// Arrange.
 		const dynamicTag: DynamicTag = {
 			name: 'author-info',
-			categories: [ 'text' ],
+			categories: ['text'],
 			label: 'Author Info',
 			group: 'author',
 			props_schema: {},
@@ -94,91 +94,91 @@ describe( '<DynamicSelectionControl />', () => {
 			],
 		};
 
-		jest.mocked( useDynamicTag ).mockReturnValue( dynamicTag );
+		jest.mocked(useDynamicTag).mockReturnValue(dynamicTag);
 
-		jest.mocked( usePropDynamicTags ).mockReturnValue( [ dynamicTag ] );
+		jest.mocked(usePropDynamicTags).mockReturnValue([dynamicTag]);
 
 		// Act.
-		renderWithTheme( <DynamicSelectionControl /> );
+		renderWithTheme(<DynamicSelectionControl />);
 
-		fireEvent.click( screen.getByRole( 'button' ) );
+		fireEvent.click(screen.getByRole('button'));
 
 		// Assert.
-		await waitFor( () => {
-			expect( screen.getByText( 'Dynamic tags' ) ).toBeInTheDocument();
-		} );
-	} );
+		await waitFor(() => {
+			expect(screen.getByText('Dynamic tags')).toBeInTheDocument();
+		});
+	});
 
-	it( 'should set the the prop value from saved history on remove', () => {
+	it('should set the the prop value from saved history on remove', () => {
 		// Arrange.
 		const setValue = jest.fn();
-		jest.mocked( useBoundProp ).mockReturnValue( {
+		jest.mocked(useBoundProp).mockReturnValue({
 			value: 'value',
 			setValue,
 			bind: '',
-			propType: createMockPropType( { kind: 'plain' } ),
+			propType: createMockPropType({ kind: 'plain' }),
 			path: [],
 			restoreValue: jest.fn(),
 			resetValue: jest.fn(),
-		} );
-		jest.mocked( usePersistDynamicValue ).mockReturnValue( [ 'My last title', jest.fn(), jest.fn() ] );
+		});
+		jest.mocked(usePersistDynamicValue).mockReturnValue(['My last title', jest.fn(), jest.fn()]);
 
 		// Act.
-		renderWithTheme( <DynamicSelectionControl /> );
+		renderWithTheme(<DynamicSelectionControl />);
 
-		const removeButton = screen.getByLabelText( 'Remove dynamic value' );
-		fireEvent.click( removeButton );
+		const removeButton = screen.getByLabelText('Remove dynamic value');
+		fireEvent.click(removeButton);
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( 'My last title' );
-	} );
+		expect(setValue).toHaveBeenCalledWith('My last title');
+	});
 
-	it( 'should set null if there is no value saved in history on remove', () => {
+	it('should set null if there is no value saved in history on remove', () => {
 		// Arrange.
 		const setValue = jest.fn();
-		jest.mocked( useBoundProp ).mockReturnValue( {
+		jest.mocked(useBoundProp).mockReturnValue({
 			value: 'value',
 			setValue,
 			bind: '',
-			propType: createMockPropType( { kind: 'plain' } ),
+			propType: createMockPropType({ kind: 'plain' }),
 			path: [],
 			restoreValue: jest.fn(),
 			resetValue: jest.fn(),
-		} );
-		jest.mocked( usePersistDynamicValue ).mockReturnValue( [ undefined, jest.fn(), jest.fn() ] );
+		});
+		jest.mocked(usePersistDynamicValue).mockReturnValue([undefined, jest.fn(), jest.fn()]);
 
 		// Act.
-		renderWithTheme( <DynamicSelectionControl /> );
+		renderWithTheme(<DynamicSelectionControl />);
 
-		const removeButton = screen.getByLabelText( 'Remove dynamic value' );
-		fireEvent.click( removeButton );
+		const removeButton = screen.getByLabelText('Remove dynamic value');
+		fireEvent.click(removeButton);
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( null );
-	} );
+		expect(setValue).toHaveBeenCalledWith(null);
+	});
 
-	it( 'should render replacement control when tag is not supported', async () => {
+	it('should render replacement control when tag is not supported', async () => {
 		// Arrange.
-		jest.mocked( isDynamicTagSupported ).mockReturnValue( false );
+		jest.mocked(isDynamicTagSupported).mockReturnValue(false);
 		const Replacement = () => <></>;
 
 		// Act.
-		renderWithTheme( <DynamicSelectionControl OriginalControl={ Replacement as unknown as ControlComponent } /> );
+		renderWithTheme(<DynamicSelectionControl OriginalControl={Replacement as unknown as ControlComponent} />);
 
 		// Assert.
-		expect( screen.queryByText( 'Author Info' ) ).not.toBeInTheDocument();
-	} );
+		expect(screen.queryByText('Author Info')).not.toBeInTheDocument();
+	});
 
-	describe( 'readonly mode', () => {
-		beforeEach( () => {
-			jest.mocked( useLicenseConfig ).mockReturnValue( { expired: true } );
-		} );
+	describe('readonly mode', () => {
+		beforeEach(() => {
+			jest.mocked(useLicenseConfig).mockReturnValue({ expired: true });
+		});
 
-		it( 'should hide settings button when readonly', () => {
+		it('should hide settings button when readonly', () => {
 			// Arrange.
 			const dynamicTag: DynamicTag = {
 				name: 'author-info',
-				categories: [ 'text' ],
+				categories: ['text'],
 				label: 'Author Info',
 				group: 'author',
 				props_schema: {},
@@ -202,47 +202,47 @@ describe( '<DynamicSelectionControl />', () => {
 				],
 			};
 
-			jest.mocked( useDynamicTag ).mockReturnValue( dynamicTag );
+			jest.mocked(useDynamicTag).mockReturnValue(dynamicTag);
 
 			// Act.
-			renderWithTheme( <DynamicSelectionControl /> );
+			renderWithTheme(<DynamicSelectionControl />);
 
 			// Assert
-			const settingsButton = screen.getByLabelText( 'Dynamic settings' );
-			expect( settingsButton ).toBeDisabled();
-		} );
+			const settingsButton = screen.getByLabelText('Dynamic settings');
+			expect(settingsButton).toBeDisabled();
+		});
 
-		it( 'should still show remove button when readonly', () => {
+		it('should still show remove button when readonly', () => {
 			// Act.
-			renderWithTheme( <DynamicSelectionControl /> );
+			renderWithTheme(<DynamicSelectionControl />);
 
 			// Assert - button exists even if hidden by showActionsOnHover.
-			expect( screen.getByLabelText( 'Remove dynamic value' ) ).toBeInTheDocument();
-		} );
+			expect(screen.getByLabelText('Remove dynamic value')).toBeInTheDocument();
+		});
 
-		it( 'should pass expired prop to DynamicSelection', async () => {
+		it('should pass expired prop to DynamicSelection', async () => {
 			// Arrange.
 			const dynamicTag: DynamicTag = {
 				name: 'author-info',
-				categories: [ 'text' ],
+				categories: ['text'],
 				label: 'Author Info',
 				group: 'author',
 				props_schema: {},
 				atomic_controls: [],
 			};
 
-			jest.mocked( useDynamicTag ).mockReturnValue( dynamicTag );
-			jest.mocked( usePropDynamicTags ).mockReturnValue( [] );
+			jest.mocked(useDynamicTag).mockReturnValue(dynamicTag);
+			jest.mocked(usePropDynamicTags).mockReturnValue([]);
 
 			// Act.
-			renderWithTheme( <DynamicSelectionControl /> );
+			renderWithTheme(<DynamicSelectionControl />);
 
-			fireEvent.click( screen.getByRole( 'button' ) );
+			fireEvent.click(screen.getByRole('button'));
 
 			// Assert
-			await waitFor( () => {
-				expect( screen.getByText( 'Streamline your workflow with dynamic tags' ) ).toBeInTheDocument();
-			} );
-		} );
-	} );
-} );
+			await waitFor(() => {
+				expect(screen.getByText('Streamline your workflow with dynamic tags')).toBeInTheDocument();
+			});
+		});
+	});
+});

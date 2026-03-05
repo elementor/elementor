@@ -12,7 +12,7 @@ import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
 
 const RATIO_OPTIONS = [
-	{ label: __( 'Auto', 'elementor' ), value: 'auto' },
+	{ label: __('Auto', 'elementor'), value: 'auto' },
 	{ label: '1/1', value: '1/1' },
 	{ label: '4/3', value: '4/3' },
 	{ label: '3/4', value: '3/4' },
@@ -24,138 +24,136 @@ const RATIO_OPTIONS = [
 
 const CUSTOM_RATIO = 'custom';
 
-export const AspectRatioControl = createControl( ( { label }: { label: string } ) => {
+export const AspectRatioControl = createControl(({ label }: { label: string }) => {
 	const {
 		value: currentPropValue,
 		setValue: setAspectRatioValue,
 		disabled,
 		placeholder: externalPlaceholder,
-	} = useBoundProp( stringPropTypeUtil );
+	} = useBoundProp(stringPropTypeUtil);
 
 	const aspectRatioValue = currentPropValue ?? externalPlaceholder;
 
-	const isCustomSelected =
-		aspectRatioValue && ! RATIO_OPTIONS.some( ( option ) => option.value === aspectRatioValue );
-	const [ initialWidth, initialHeight ] = isCustomSelected ? aspectRatioValue.split( '/' ) : [ '', '' ];
+	const isCustomSelected = aspectRatioValue && !RATIO_OPTIONS.some((option) => option.value === aspectRatioValue);
+	const [initialWidth, initialHeight] = isCustomSelected ? aspectRatioValue.split('/') : ['', ''];
 
-	const [ isCustom, setIsCustom ] = useState( isCustomSelected );
-	const [ customWidth, setCustomWidth ] = useState< string >( initialWidth );
-	const [ customHeight, setCustomHeight ] = useState< string >( initialHeight );
-	const [ selectedValue, setSelectedValue ] = useState< string >(
+	const [isCustom, setIsCustom] = useState(isCustomSelected);
+	const [customWidth, setCustomWidth] = useState<string>(initialWidth);
+	const [customHeight, setCustomHeight] = useState<string>(initialHeight);
+	const [selectedValue, setSelectedValue] = useState<string>(
 		isCustomSelected ? CUSTOM_RATIO : aspectRatioValue || ''
 	);
 
-	useEffect( () => {
-		const isCustomValue =
-			aspectRatioValue && ! RATIO_OPTIONS.some( ( option ) => option.value === aspectRatioValue );
+	useEffect(() => {
+		const isCustomValue = aspectRatioValue && !RATIO_OPTIONS.some((option) => option.value === aspectRatioValue);
 
-		if ( isCustomValue ) {
-			const [ width, height ] = aspectRatioValue.split( '/' );
-			setCustomWidth( width || '' );
-			setCustomHeight( height || '' );
-			setSelectedValue( CUSTOM_RATIO );
-			setIsCustom( true );
+		if (isCustomValue) {
+			const [width, height] = aspectRatioValue.split('/');
+			setCustomWidth(width || '');
+			setCustomHeight(height || '');
+			setSelectedValue(CUSTOM_RATIO);
+			setIsCustom(true);
 		} else {
-			setSelectedValue( aspectRatioValue || '' );
-			setIsCustom( false );
-			setCustomWidth( '' );
-			setCustomHeight( '' );
+			setSelectedValue(aspectRatioValue || '');
+			setIsCustom(false);
+			setCustomWidth('');
+			setCustomHeight('');
 		}
-	}, [ aspectRatioValue ] );
+	}, [aspectRatioValue]);
 
-	const handleSelectChange = ( event: SelectChangeEvent< string > ) => {
+	const handleSelectChange = (event: SelectChangeEvent<string>) => {
 		const newValue = event.target.value;
 		const isCustomRatio = newValue === CUSTOM_RATIO;
 
-		setIsCustom( isCustomRatio );
-		setSelectedValue( newValue );
+		setIsCustom(isCustomRatio);
+		setSelectedValue(newValue);
 
-		if ( isCustomRatio ) {
+		if (isCustomRatio) {
 			return;
 		}
 
-		setAspectRatioValue( newValue );
+		setAspectRatioValue(newValue);
 	};
-	const handleCustomWidthChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+	const handleCustomWidthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const newWidth = event.target.value;
-		setCustomWidth( newWidth );
+		setCustomWidth(newWidth);
 
-		if ( newWidth && customHeight ) {
-			setAspectRatioValue( `${ newWidth }/${ customHeight }` );
+		if (newWidth && customHeight) {
+			setAspectRatioValue(`${newWidth}/${customHeight}`);
 		}
 	};
 
-	const handleCustomHeightChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+	const handleCustomHeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const newHeight = event.target.value;
-		setCustomHeight( newHeight );
+		setCustomHeight(newHeight);
 
-		if ( customWidth && newHeight ) {
-			setAspectRatioValue( `${ customWidth }/${ newHeight }` );
+		if (customWidth && newHeight) {
+			setAspectRatioValue(`${customWidth}/${newHeight}`);
 		}
 	};
 
 	const lookup = currentPropValue ?? externalPlaceholder;
-	const selectedOption = RATIO_OPTIONS.find( ( option ) => option.value === lookup );
+	const selectedOption = RATIO_OPTIONS.find((option) => option.value === lookup);
 
 	return (
 		<ControlActions>
-			<Stack direction="column" gap={ 2 }>
-				<Grid container gap={ 2 } alignItems="center" flexWrap="nowrap">
-					<Grid item xs={ 6 }>
-						<ControlLabel>{ label }</ControlLabel>
+			<Stack direction="column" gap={2}>
+				<Grid container gap={2} alignItems="center" flexWrap="nowrap">
+					<Grid item xs={6}>
+						<ControlLabel>{label}</ControlLabel>
 					</Grid>
-					<Grid item xs={ 6 }>
+					<Grid item xs={6}>
 						<Select
 							size="tiny"
 							displayEmpty
-							sx={ { overflow: 'hidden' } }
-							disabled={ disabled }
-							value={ selectedValue }
-							onChange={ handleSelectChange }
-							renderValue={ isCustomSelected ? undefined : () => selectedOption?.label }
+							sx={{ overflow: 'hidden' }}
+							disabled={disabled}
+							value={selectedValue}
+							onChange={handleSelectChange}
+							renderValue={isCustomSelected ? undefined : () => selectedOption?.label}
 							fullWidth
 						>
-							{ [ ...RATIO_OPTIONS, { label: __( 'Custom', 'elementor' ), value: CUSTOM_RATIO } ].map(
-								( { label: optionLabel, ...props } ) => (
-									<MenuListItem key={ props.value } { ...props } value={ props.value ?? '' }>
-										{ optionLabel }
+							{[...RATIO_OPTIONS, { label: __('Custom', 'elementor'), value: CUSTOM_RATIO }].map(
+								({ label: optionLabel, ...props }) => (
+									<MenuListItem key={props.value} {...props} value={props.value ?? ''}>
+										{optionLabel}
 									</MenuListItem>
 								)
-							) }
+							)}
 						</Select>
 					</Grid>
 				</Grid>
-				{ isCustom && (
-					<Grid container gap={ 2 } alignItems="center" flexWrap="nowrap">
-						<Grid item xs={ 6 }>
+				{isCustom && (
+					<Grid container gap={2} alignItems="center" flexWrap="nowrap">
+						<Grid item xs={6}>
 							<TextField
 								size="tiny"
 								type="number"
 								fullWidth
-								disabled={ disabled }
-								value={ customWidth }
-								onChange={ handleCustomWidthChange }
-								InputProps={ {
+								disabled={disabled}
+								value={customWidth}
+								onChange={handleCustomWidthChange}
+								InputProps={{
 									startAdornment: <ArrowsMoveHorizontalIcon fontSize="tiny" />,
-								} }
+								}}
 							/>
 						</Grid>
-						<Grid item xs={ 6 }>
+						<Grid item xs={6}>
 							<TextField
 								size="tiny"
 								type="number"
 								fullWidth
-								disabled={ disabled }
-								value={ customHeight }
-								onChange={ handleCustomHeightChange }
-								InputProps={ {
+								disabled={disabled}
+								value={customHeight}
+								onChange={handleCustomHeightChange}
+								InputProps={{
 									startAdornment: <ArrowsMoveVerticalIcon fontSize="tiny" />,
-								} }
+								}}
 							/>
 						</Grid>
 					</Grid>
-				) }
+				)}
 			</Stack>
 		</ControlActions>
 	);
-} );
+});

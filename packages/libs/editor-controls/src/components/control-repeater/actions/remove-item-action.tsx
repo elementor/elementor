@@ -10,17 +10,17 @@ const SIZE = 'tiny';
 export const RemoveItemAction = () => {
 	const { removeItem, index = -1 } = useRepeaterContext();
 
-	if ( index === -1 ) {
+	if (index === -1) {
 		return null;
 	}
 
-	const removeLabel = __( 'Remove', 'elementor' );
+	const removeLabel = __('Remove', 'elementor');
 
-	const onClick = () => removeItem( index );
+	const onClick = () => removeItem(index);
 	return (
-		<Tooltip title={ removeLabel } placement="top">
-			<IconButton size={ SIZE } onClick={ onClick } aria-label={ removeLabel }>
-				<XIcon fontSize={ SIZE } />
+		<Tooltip title={removeLabel} placement="top">
+			<IconButton size={SIZE} onClick={onClick} aria-label={removeLabel}>
+				<XIcon fontSize={SIZE} />
 			</IconButton>
 		</Tooltip>
 	);

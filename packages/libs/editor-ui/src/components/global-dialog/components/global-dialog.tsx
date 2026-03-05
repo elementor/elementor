@@ -7,23 +7,23 @@ import { closeDialog, subscribeToDialogState } from '../subscribers';
 import { type DialogContent } from '../subscribers';
 
 export const GlobalDialog = () => {
-	const [ content, setContent ] = useState< DialogContent | null >( null );
+	const [content, setContent] = useState<DialogContent | null>(null);
 
-	useEffect( () => {
-		const unsubscribe = subscribeToDialogState( setContent );
+	useEffect(() => {
+		const unsubscribe = subscribeToDialogState(setContent);
 		return () => {
 			unsubscribe();
 		};
-	}, [] );
+	}, []);
 
-	if ( ! content ) {
+	if (!content) {
 		return null;
 	}
 
 	return (
 		<ThemeProvider>
-			<Dialog role="dialog" open onClose={ closeDialog } maxWidth="sm" fullWidth>
-				{ content.component }
+			<Dialog role="dialog" open onClose={closeDialog} maxWidth="sm" fullWidth>
+				{content.component}
 			</Dialog>
 		</ThemeProvider>
 	);

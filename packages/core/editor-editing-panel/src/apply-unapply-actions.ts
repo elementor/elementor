@@ -5,26 +5,26 @@ import { type StyleDefinitionID } from '@elementor/editor-styles';
 
 // Externalized for use outside of Hooks
 
-export function doGetAppliedClasses( elementId: string, classesPropType = 'classes' ) {
-	return getElementSetting< ClassesPropValue >( elementId, classesPropType )?.value || [];
+export function doGetAppliedClasses(elementId: string, classesPropType = 'classes') {
+	return getElementSetting<ClassesPropValue>(elementId, classesPropType)?.value || [];
 }
 
-export function doApplyClasses( elementId: string, classIds: StyleDefinitionID[], classesPropType = 'classes' ) {
-	updateElementSettings( {
+export function doApplyClasses(elementId: string, classIds: StyleDefinitionID[], classesPropType = 'classes') {
+	updateElementSettings({
 		id: elementId,
-		props: { [ classesPropType ]: classesPropTypeUtil.create( classIds ) },
+		props: { [classesPropType]: classesPropTypeUtil.create(classIds) },
 		withHistory: false,
-	} );
-	setDocumentModifiedStatus( true );
+	});
+	setDocumentModifiedStatus(true);
 }
 
-export function doUnapplyClass( elementId: string, classId: StyleDefinitionID, classesPropType = 'classes' ) {
-	const appliedClasses = getElementSetting< ClassesPropValue >( elementId, classesPropType )?.value || [];
-	if ( ! appliedClasses.includes( classId ) ) {
+export function doUnapplyClass(elementId: string, classId: StyleDefinitionID, classesPropType = 'classes') {
+	const appliedClasses = getElementSetting<ClassesPropValue>(elementId, classesPropType)?.value || [];
+	if (!appliedClasses.includes(classId)) {
 		return false;
 	}
 
-	const updatedClassIds = appliedClasses.filter( ( id ) => id !== classId );
-	doApplyClasses( elementId, updatedClassIds, classesPropType );
+	const updatedClassIds = appliedClasses.filter((id) => id !== classId);
+	doApplyClasses(elementId, updatedClassIds, classesPropType);
 	return true;
 }

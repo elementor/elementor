@@ -11,50 +11,50 @@ type ElementLocation = {
 
 type ReplaceElementArgs = {
 	currentElement: V1ElementData;
-	newElement: Omit< V1ElementModelProps, 'id' >;
+	newElement: Omit<V1ElementModelProps, 'id'>;
 	withHistory?: boolean;
 };
 
-export const replaceElement = async ( { currentElement, newElement, withHistory = true }: ReplaceElementArgs ) => {
-	const currentElementContainer = getContainer( currentElement.id );
+export const replaceElement = async ({ currentElement, newElement, withHistory = true }: ReplaceElementArgs) => {
+	const currentElementContainer = getContainer(currentElement.id);
 
-	if ( ! currentElementContainer ) {
-		throw new ElementNotFoundError( { context: { elementId: currentElement.id } } );
+	if (!currentElementContainer) {
+		throw new ElementNotFoundError({ context: { elementId: currentElement.id } });
 	}
 
-	const { container, index } = getNewElementContainer( currentElementContainer, newElement );
+	const { container, index } = getNewElementContainer(currentElementContainer, newElement);
 
-	const newElementInstance = createElement( {
+	const newElementInstance = createElement({
 		container,
 		model: newElement,
 		options: { at: index, useHistory: withHistory },
-	} );
+	});
 
-	await deleteElement( { container: currentElementContainer, options: { useHistory: withHistory } } );
+	await deleteElement({ container: currentElementContainer, options: { useHistory: withHistory } });
 
 	return newElementInstance;
 };
 
 function getNewElementContainer(
 	currentElementContainer: V1Element,
-	newElement: Omit< V1ElementModelProps, 'id' >
+	newElement: Omit<V1ElementModelProps, 'id'>
 ): ElementLocation {
 	const { parent } = currentElementContainer;
 
-	if ( ! parent ) {
-		throw new ElementParentNotFoundError( { context: { elementId: currentElementContainer.id } } );
+	if (!parent) {
+		throw new ElementParentNotFoundError({ context: { elementId: currentElementContainer.id } });
 	}
 
 	const elementIndex = currentElementContainer.view?._index ?? 0;
 
-	if ( elementIndex === -1 ) {
-		throw new ElementIndexNotFoundError( { context: { elementId: currentElementContainer.id } } );
+	if (elementIndex === -1) {
+		throw new ElementIndexNotFoundError({ context: { elementId: currentElementContainer.id } });
 	}
 
 	let location: ElementLocation = { container: parent, index: elementIndex };
 
-	if ( parent.id === 'document' && newElement.elType === 'widget' ) {
-		location = createWrapperForWidget( parent, elementIndex );
+	if (parent.id === 'document' && newElement.elType === 'widget') {
+		location = createWrapperForWidget(parent, elementIndex);
 	}
 
 	return location;
@@ -62,12 +62,12 @@ function getNewElementContainer(
 
 const DEFAULT_CONTAINER_TYPE = 'e-flexbox';
 
-function createWrapperForWidget( parent: V1Element, elementIndex: number ): ElementLocation {
-	const container = createElement( {
+function createWrapperForWidget(parent: V1Element, elementIndex: number): ElementLocation {
+	const container = createElement({
 		container: parent,
 		model: { elType: DEFAULT_CONTAINER_TYPE },
 		options: { at: elementIndex, useHistory: false },
-	} );
+	});
 
 	return { container, index: 0 };
 }

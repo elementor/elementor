@@ -16,30 +16,30 @@ export function getMatchingOverride(
 	overrideKey: string
 ): ComponentInstanceOverride | null {
 	return (
-		overrides?.find( ( override ) => {
-			const overridableValue = componentOverridablePropTypeUtil.extract( override );
+		overrides?.find((override) => {
+			const overridableValue = componentOverridablePropTypeUtil.extract(override);
 
-			if ( overridableValue ) {
-				const overrideValue = componentInstanceOverridePropTypeUtil.extract( overridableValue.origin_value );
+			if (overridableValue) {
+				const overrideValue = componentInstanceOverridePropTypeUtil.extract(overridableValue.origin_value);
 				return overrideValue?.override_key === overrideKey;
 			}
 
 			return override.value.override_key === overrideKey;
-		} ) ?? null
+		}) ?? null
 	);
 }
 
-export function extractInnerOverrideInfo( override: ComponentInstanceOverride | null ): InnerOverrideInfo | null {
-	if ( ! override ) {
+export function extractInnerOverrideInfo(override: ComponentInstanceOverride | null): InnerOverrideInfo | null {
+	if (!override) {
 		return null;
 	}
 
-	const overridableValue = componentOverridablePropTypeUtil.extract( override );
+	const overridableValue = componentOverridablePropTypeUtil.extract(override);
 	const innerOverride = overridableValue
-		? componentInstanceOverridePropTypeUtil.extract( overridableValue.origin_value )
-		: componentInstanceOverridePropTypeUtil.extract( override );
+		? componentInstanceOverridePropTypeUtil.extract(overridableValue.origin_value)
+		: componentInstanceOverridePropTypeUtil.extract(override);
 
-	if ( ! innerOverride ) {
+	if (!innerOverride) {
 		return null;
 	}
 
@@ -50,7 +50,7 @@ export function extractInnerOverrideInfo( override: ComponentInstanceOverride | 
 	} = innerOverride;
 	const componentId = schemaSource?.id;
 
-	if ( ! componentId || ! innerOverrideKey ) {
+	if (!componentId || !innerOverrideKey) {
 		return null;
 	}
 

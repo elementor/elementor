@@ -6,56 +6,56 @@ import { useCurrentUser } from '../use-current-user';
 import { useSuppressedMessage } from '../use-suppressed-message';
 import { useUpdateCurrentUser } from '../use-update-current-user';
 
-jest.mock( '../use-current-user' );
-jest.mock( '../use-update-current-user' );
+jest.mock('../use-current-user');
+jest.mock('../use-update-current-user');
 
-describe( 'useSuppressedMessage', () => {
-	it( 'returns false and suppressMessage function when message is not suppressed', () => {
+describe('useSuppressedMessage', () => {
+	it('returns false and suppressMessage function when message is not suppressed', () => {
 		// Arrange.
-		jest.mocked( useCurrentUser ).mockReturnValue( {
-			data: { suppressedMessages: [ 'non-existing-message' ] },
-		} as UseQueryResult< User, Error > );
+		jest.mocked(useCurrentUser).mockReturnValue({
+			data: { suppressedMessages: ['non-existing-message'] },
+		} as UseQueryResult<User, Error>);
 
 		const mutate = jest.fn();
-		jest.mocked( useUpdateCurrentUser ).mockReturnValue( { mutate } as never );
+		jest.mocked(useUpdateCurrentUser).mockReturnValue({ mutate } as never);
 
 		// Act.
-		const { result } = renderHook( () => useSuppressedMessage( 'test-message' ) );
+		const { result } = renderHook(() => useSuppressedMessage('test-message'));
 
 		// Assert.
-		const [ isMessageSuppressed, suppressMessage ] = result.current;
+		const [isMessageSuppressed, suppressMessage] = result.current;
 
-		expect( isMessageSuppressed ).toBe( false );
+		expect(isMessageSuppressed).toBe(false);
 
-		act( () => {
+		act(() => {
 			suppressMessage();
-		} );
+		});
 
-		expect( mutate ).toHaveBeenCalledWith( { suppressedMessages: [ 'non-existing-message', 'test-message' ] } );
-	} );
+		expect(mutate).toHaveBeenCalledWith({ suppressedMessages: ['non-existing-message', 'test-message'] });
+	});
 
-	it( 'returns true and suppressMessage function when message is already suppressed', () => {
+	it('returns true and suppressMessage function when message is already suppressed', () => {
 		// Arrange.
-		jest.mocked( useCurrentUser ).mockReturnValue( {
-			data: { suppressedMessages: [ 'test-message' ] },
-		} as UseQueryResult< User, Error > );
+		jest.mocked(useCurrentUser).mockReturnValue({
+			data: { suppressedMessages: ['test-message'] },
+		} as UseQueryResult<User, Error>);
 
 		const mutate = jest.fn();
 
-		jest.mocked( useUpdateCurrentUser ).mockReturnValue( { mutate } as never );
+		jest.mocked(useUpdateCurrentUser).mockReturnValue({ mutate } as never);
 
 		// Act.
-		const { result } = renderHook( () => useSuppressedMessage( 'test-message' ) );
+		const { result } = renderHook(() => useSuppressedMessage('test-message'));
 
 		// Assert.
-		const [ isMessageSuppressed, suppressMessage ] = result.current;
+		const [isMessageSuppressed, suppressMessage] = result.current;
 
-		expect( isMessageSuppressed ).toBe( true );
+		expect(isMessageSuppressed).toBe(true);
 
-		act( () => {
+		act(() => {
 			suppressMessage();
-		} );
+		});
 
-		expect( mutate ).not.toHaveBeenCalled();
-	} );
-} );
+		expect(mutate).not.toHaveBeenCalled();
+	});
+});
