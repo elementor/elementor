@@ -202,13 +202,15 @@ class Interactions_Frontend_Handler {
 	}
 
 	private function enqueue_interactions_assets() {
+		$handle = apply_filters( 'elementor/interactions/frontend_script_handle', Module::HANDLE_FRONTEND );
+
 		wp_enqueue_script( Module::HANDLE_MOTION_JS );
-		wp_enqueue_script( Module::HANDLE_FRONTEND );
+		wp_enqueue_script( $handle );
 
 		$config = $this->config_provider ? call_user_func( $this->config_provider ) : [];
 
 		wp_localize_script(
-			Module::HANDLE_FRONTEND,
+			$handle,
 			Module::JS_CONFIG_OBJECT,
 			$config
 		);
