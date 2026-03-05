@@ -25,12 +25,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Check JS files diff
         id: js_diff_files
-        uses: technote-space/get-diff-action@v6
-        with:
-          PATTERNS: |
-            **/*.+(js|ts|json|jsx|tsx)
-            package*.json
-            .github/**/*.yml
+        run: echo "diff=true" >> $GITHUB_OUTPUT
 
   jest:
     runs-on: ubuntu-22.04
