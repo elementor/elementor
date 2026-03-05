@@ -666,14 +666,15 @@ abstract class Base_App {
 		?>
 		<script>
 			if ( opener && opener !== window ) {
+				var cbId = '<?php echo esc_js( Utils::get_super_global_value( $_REQUEST, 'callback_id' ) ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here. ?>';
+				var eventData = <?php echo wp_json_encode( $data ); ?>;
+
 				opener.jQuery( 'body' ).trigger(
-					'elementor/connect/success/<?php echo esc_attr( Utils::get_super_global_value( $_REQUEST, 'callback_id' ) ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here. ?>',
-					<?php echo wp_json_encode( $data ); ?>
+					'elementor/connect/success/' + cbId,
+					eventData
 				);
 
-				opener.dispatchEvent( new CustomEvent( 'elementor/connect/success' ),
-					<?php echo wp_json_encode( $data ); ?>
-				);
+				opener.dispatchEvent( new CustomEvent( 'elementor/connect/success/' + cbId, { detail: eventData } ) );
 
 				window.close();
 				opener.focus();

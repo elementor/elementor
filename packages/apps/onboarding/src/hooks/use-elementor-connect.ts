@@ -14,7 +14,10 @@ const POPUP_LEFT = 0;
 
 let callbackCounter = 0;
 
-export function useElementorConnect( { connectUrl, onSuccess }: ConnectOptions ) {
+export function useElementorConnect( {
+	connectUrl,
+	onSuccess,
+}: ConnectOptions ) {
 	const onSuccessRef = useRef( onSuccess );
 	onSuccessRef.current = onSuccess;
 
@@ -22,29 +25,17 @@ export function useElementorConnect( { connectUrl, onSuccess }: ConnectOptions )
 
 	useEffect( () => {
 		const cbId = callbackIdRef.current;
-		const jqEventName = `elementor/connect/success/${ cbId }`;
+		const nativeEventName = `elementor/connect/success/${ cbId }`;
 
-		const handleSuccess = ( _event: unknown, data: ConnectSuccessData ) => {
+		const handleNativeSuccess = ( event: Event ) => {
+			const data = ( event as CustomEvent ).detail as ConnectSuccessData;
 			onSuccessRef.current?.( data ?? {} );
 		};
 
-		const jq = (
-			window as unknown as {
-				jQuery?: ( sel: string ) => {
-					on: ( evt: string, cb: unknown ) => void;
-					off: ( evt: string, cb: unknown ) => void;
-				};
-			}
-		 ).jQuery;
-
-		if ( jq ) {
-			jq( 'body' ).on( jqEventName, handleSuccess );
-		}
+		window.addEventListener( nativeEventName, handleNativeSuccess );
 
 		return () => {
-			if ( jq ) {
-				jq( 'body' ).off( jqEventName, handleSuccess );
-			}
+			window.removeEventListener( nativeEventName, handleNativeSuccess );
 		};
 	}, [] );
 
