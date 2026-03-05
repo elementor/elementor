@@ -19,6 +19,32 @@ test.describe( 'Atomic Components @v4-tests', () => {
 
 	const headingControlLabel = 'Title';
 
+	const proMockScript = `<script>window.elementorPro = { config: { isActive: true, version: '4.0.0' } };</script>`;
+
+	const proMockRouteHandler = async ( route: import( '@playwright/test' ).Route ) => {
+		const response = await route.fetch();
+		const contentType = response.headers()[ 'content-type' ] ?? '';
+
+		if ( ! contentType.includes( 'text/html' ) ) {
+			await route.fulfill( { response } );
+			return;
+		}
+
+		const html = await response.text();
+		await route.fulfill( {
+			response,
+			body: html.replace( '<head>', `<head>${ proMockScript }` ),
+		} );
+	};
+
+	const enableProMock = async () => {
+		await page.route( '**/*action=elementor*', proMockRouteHandler );
+	};
+
+	const disableProMock = async () => {
+		await page.unroute( '**/*action=elementor*', proMockRouteHandler );
+	};
+
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		context = await browser.newContext();
 		page = await context.newPage();
@@ -36,17 +62,9 @@ test.describe( 'Atomic Components @v4-tests', () => {
 		await context?.close();
 	} );
 
-	type ProWindow = Window & { elementorPro?: { config: { isActive: boolean } } };
-
-	const mockProAsActive = async () => {
-		await page.evaluate( () => {
-			( window as unknown as ProWindow ).elementorPro = { config: { isActive: true } };
-		} );
-	};
-
 	test.beforeEach( async () => {
+		await enableProMock();
 		editor = await wpAdminPage.openNewPage();
-		await mockProAsActive();
 	} );
 
 	test( 'should allow converting an atomic container into a component', async () => {
@@ -236,7 +254,6 @@ test.describe( 'Atomic Components @v4-tests', () => {
 			await page.goto( `/wp-admin/post.php?post=${ pageId }&action=elementor` );
 			await page.waitForLoadState( 'load', { timeout: 20000 } );
 			await wpAdminPage.waitForPanel();
-			await mockProAsActive();
 		} );
 
 		await test.step( 'Verify exposed prop appears in instance panel and override it', async () => {
@@ -305,7 +322,7 @@ test.describe( 'Atomic Components @v4-tests', () => {
 	test.describe( 'Pro gating on canvas actions', () => {
 		const mockProState = async ( targetPage: Page, state: { installed: boolean; active: boolean } ) => {
 			await targetPage.evaluate( ( { installed, active } ) => {
-				const w = window as unknown as ProWindow;
+				const w = window as unknown as Record< string, unknown >;
 
 				if ( installed ) {
 					w.elementorPro = { config: { isActive: active } };
@@ -348,6 +365,7 @@ test.describe( 'Atomic Components @v4-tests', () => {
 			} );
 
 			await test.step( 'Reload page to reset Pro state (test env has no Pro installed)', async () => {
+				await disableProMock();
 				await page.reload( { waitUntil: 'load' } );
 				await wpAdminPage.waitForPanel();
 			} );
