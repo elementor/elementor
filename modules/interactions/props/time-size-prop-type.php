@@ -11,6 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Time_Size_Prop_Type extends Size_Prop_Type {
 	public static function make() {
-		return parent::make()->units( Size_Constants::TIME_UNITS )->default_unit( Size_Constants::UNIT_MILLI_SECOND );
+		return parent::make()->units( Size_Constants::time() )->default_unit( Size_Constants::UNIT_MILLI_SECOND );
 	}
 }
