@@ -1,4 +1,4 @@
-import { hasProInstalled, isProActive } from '../is-pro';
+import { hasProInstalled, isProActive, isProAtLeast } from '../is-pro';
 
 describe( 'is-pro-user utilities', () => {
 	let originalElementor: Window[ 'elementor' ];
@@ -75,6 +75,64 @@ describe( 'is-pro-user utilities', () => {
 
 			// Act & Assert
 			expect( isProActive() ).toBe( false );
+		} );
+	} );
+
+	describe( 'isProAtLeast', () => {
+		it( 'should return true when version equals targetVersion', () => {
+			// Arrange
+			window.elementorPro = { config: { version: '3.9' } };
+
+			// Act & Assert
+			expect( isProAtLeast( '3.9' ) ).toBe( true );
+		} );
+
+		it( 'should return true when major is greater than targetVersion major', () => {
+			// Arrange
+			window.elementorPro = { config: { version: '4.2' } };
+
+			// Act & Assert
+			expect( isProAtLeast( '3.9' ) ).toBe( true );
+		} );
+
+		it( 'should return true when major matches and minor is greater', () => {
+			// Arrange
+			window.elementorPro = { config: { version: '3.21' } };
+
+			// Act & Assert
+			expect( isProAtLeast( '3.9' ) ).toBe( true );
+		} );
+
+		it( 'should return false when major is less than targetVersion major', () => {
+			// Arrange
+			window.elementorPro = { config: { version: '2.9' } };
+
+			// Act & Assert
+			expect( isProAtLeast( '3.0' ) ).toBe( false );
+		} );
+
+		it( 'should return false when major matches and minor is less', () => {
+			// Arrange
+			window.elementorPro = { config: { version: '3.9.0' } };
+
+			// Act & Assert
+			expect( isProAtLeast( '3.21' ) ).toBe( false );
+		} );
+
+		it( 'should return false when elementorPro is not defined', () => {
+			// Arrange
+			window.elementorPro = undefined;
+
+			// Act & Assert
+			expect( isProAtLeast( '3.9' ) ).toBe( false );
+		} );
+
+		it( 'should return false when version is not defined', () => {
+			// Arrange
+			window.elementorPro = { config: {} };
+
+			// Act & Assert
+			expect( isProAtLeast( '3.9' ) ).toBe( false );
 		} );
 	} );
 } );
