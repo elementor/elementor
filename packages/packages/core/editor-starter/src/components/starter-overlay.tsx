@@ -30,7 +30,7 @@ export default function StarterOverlay() {
 			<Slide direction="down" in={ ! isDismissing } mountOnEnter unmountOnExit onExited={ onExited }>
 				<Paper
 					elevation={ 0 }
-					sx={ ( theme: Theme ) => ( {
+					sx={ {
 						display: 'flex',
 						flexDirection: 'column',
 						alignItems: 'center',
@@ -39,8 +39,7 @@ export default function StarterOverlay() {
 						pb: 4,
 						px: 2.5,
 						backgroundColor: '#f9f9fb',
-						zIndex: theme.zIndex.appBar + 1,
-					} ) }
+					} }
 				>
 					<CloseButton
 						onClick={ dismiss }

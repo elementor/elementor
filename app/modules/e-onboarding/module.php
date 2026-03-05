@@ -69,7 +69,7 @@ class Module extends BaseModule {
 			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_starter_settings' ] );
 			add_filter( 'elementor/editor/v2/packages', [ $this, 'add_starter_packages' ] );
 			add_action( 'elementor/editor/v2/styles/enqueue', [ $this, 'enqueue_fonts' ] );
-			add_action( 'elementor/editor/v2/styles/enqueue', [ $this, 'enqueue_starter_layout_css' ] );
+			add_action( 'elementor/preview/enqueue_styles', [ $this, 'enqueue_starter_preview_css' ] );
 		}
 	}
 
@@ -91,22 +91,15 @@ class Module extends BaseModule {
 		);
 	}
 
-	public function enqueue_starter_layout_css(): void {
+	public function enqueue_starter_preview_css(): void {
 		$css = '
-			#elementor-starter-container {
-				position: absolute;
-				inset-block-start: 0;
-				inset-inline-start: 0;
-				inset-inline-end: 0;
-			}
-			#elementor-preview-responsive-wrapper:has(#elementor-starter-container) #elementor-preview-iframe {
-				margin-block-start: 150px;
-			}
+			#site-header,
+			.page-header { display: var(--e-starter-header-display, none); }
 		';
 
-		wp_register_style( 'elementor-starter-layout', false );
-		wp_enqueue_style( 'elementor-starter-layout' );
-		wp_add_inline_style( 'elementor-starter-layout', $css );
+		wp_register_style( 'elementor-starter-preview', false );
+		wp_enqueue_style( 'elementor-starter-preview' );
+		wp_add_inline_style( 'elementor-starter-preview', $css );
 	}
 
 	public function progress_manager(): Onboarding_Progress_Manager {
