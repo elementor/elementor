@@ -97,6 +97,102 @@ describe( 'useFontFamilies', () => {
 		} );
 	} );
 
+	it( 'should group local fonts under Custom Fonts', () => {
+		// Arrange.
+		const mockFontFamilies: Record< string, SupportedFonts > = {
+			Arial: 'system',
+			'My Custom Font': 'custom',
+			'My Local Font': 'local',
+			Roboto: 'googlefonts',
+		};
+
+		jest.mocked( getElementorConfig ).mockReturnValue( {
+			controls: {
+				font: {
+					options: mockFontFamilies,
+				},
+			},
+		} );
+
+		// Act.
+		const { result } = renderHook( () => useFontFamilies() );
+
+		// Assert.
+		expect( result.current ).toHaveLength( 3 );
+		expect( result.current[ 1 ] ).toEqual( {
+			label: 'Custom Fonts',
+			fonts: [ 'My Custom Font', 'My Local Font' ],
+		} );
+	} );
+
+	it( 'should group earlyaccess fonts under Google Fonts', () => {
+		// Arrange.
+		const mockFontFamilies: Record< string, SupportedFonts > = {
+			Arial: 'system',
+			Roboto: 'googlefonts',
+			'Noto Sans Hebrew': 'earlyaccess',
+		};
+
+		jest.mocked( getElementorConfig ).mockReturnValue( {
+			controls: {
+				font: {
+					options: mockFontFamilies,
+				},
+			},
+		} );
+
+		// Act.
+		const { result } = renderHook( () => useFontFamilies() );
+
+		// Assert.
+		expect( result.current ).toHaveLength( 2 );
+		expect( result.current[ 0 ] ).toEqual( {
+			label: 'System',
+			fonts: [ 'Arial' ],
+		} );
+		expect( result.current[ 1 ] ).toEqual( {
+			label: 'Google Fonts',
+			fonts: [ 'Roboto', 'Noto Sans Hebrew' ],
+		} );
+	} );
+
+	it( 'should handle local and earlyaccess fonts together with all other types', () => {
+		// Arrange.
+		const mockFontFamilies: Record< string, SupportedFonts > = {
+			Arial: 'system',
+			'Custom Font': 'custom',
+			'Local Font': 'local',
+			Roboto: 'googlefonts',
+			'Alef Hebrew': 'earlyaccess',
+		};
+
+		jest.mocked( getElementorConfig ).mockReturnValue( {
+			controls: {
+				font: {
+					options: mockFontFamilies,
+				},
+			},
+		} );
+
+		// Act.
+		const { result } = renderHook( () => useFontFamilies() );
+
+		// Assert.
+		expect( result.current ).toHaveLength( 3 );
+		expect( result.current[ 0 ] ).toEqual( {
+			label: 'System',
+			fonts: [ 'Arial' ],
+		} );
+		expect( result.current[ 1 ] ).toEqual( {
+			label: 'Custom Fonts',
+			fonts: [ 'Custom Font', 'Local Font' ],
+		} );
+		expect( result.current[ 2 ] ).toEqual( {
+			label: 'Google Fonts',
+			fonts: [ 'Roboto', 'Alef Hebrew' ],
+		} );
+	} );
+
 	it( 'should return empty array when font options are not available', () => {
 		// Arrange.
 		jest.mocked( getElementorConfig ).mockReturnValue( {

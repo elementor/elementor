@@ -1,1 +1,1 @@
-export type SupportedFonts = 'system' | 'googlefonts' | 'custom';
+export type SupportedFonts = 'system' | 'googlefonts' | 'earlyaccess' | 'custom' | 'local';
