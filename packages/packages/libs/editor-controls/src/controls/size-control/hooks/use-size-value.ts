@@ -3,8 +3,8 @@ import { type SizePropValue } from '@elementor/editor-props';
 
 import { useSyncExternalState } from '../../../hooks/use-sync-external-state';
 import { type SizeUnit } from '../types';
-import { DEFAULT_SIZE, DEFAULT_SIZE_UNIT, resolveSizeValue } from '../utils/resolve-size-value';
 import { isExtendedUnit } from '../utils/is-extended-unit';
+import { createDefaultSizeValue, resolveSizeOnUnitChange, resolveSizeValue } from '../utils/resolve-size-value';
 
 type SizeValue = SizePropValue[ 'value' ];
 
@@ -29,9 +29,17 @@ export const useSizeValue = < T extends SizeValue, U extends SizeUnit >( {
 
 	const [ sizeValue, setSizeValue ] = useSyncExternalState< T >( {
 		external: resolvedValue as T,
-		setExternal: ( newState ) => onChange( newState ), // TODO we will need to handle options, meta if context need them
+		setExternal: ( newState ) => {
+			// TODO we need to check behaviour that low level doesn't set to null only the high level components size component
+			// This will fix the issue of if size is empty string '' it gets sends to the model
+			// but on blur the size component set to null.
+			// But we need to test this behaviour
+			if ( newState !== null ) {
+				onChange( newState );
+			}
+		}, // TODO we will need to handle options, meta if context need them
 		persistWhen: ( next ) => hasChanged( next, resolvedValue as T ),
-		fallback: () => ( { size: DEFAULT_SIZE, unit: defaultUnit ?? DEFAULT_SIZE_UNIT } ) as T,
+		fallback: () => createDefaultSizeValue< T >( defaultUnit ),
 	} );
 
 	const setSize = ( newSize: string ) => {
@@ -51,7 +59,7 @@ export const useSizeValue = < T extends SizeValue, U extends SizeUnit >( {
 	};
 
 	const setUnit = ( unit: SizeValue[ 'unit' ] ) => {
-		setSizeValue( { ...sizeValue, unit } );
+		setSizeValue( { unit, size: resolveSizeOnUnitChange( sizeValue.size, unit ) } as T );
 	};
 
 	return {

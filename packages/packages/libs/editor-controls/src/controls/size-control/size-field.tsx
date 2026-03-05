@@ -45,7 +45,16 @@ export const SizeField = < T extends SizePropValue[ 'value' ], U extends SizeUni
 
 	const handleKeyDown = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
 		onUnitKeyDown( event );
+
 		onKeyDown?.( event );
+	};
+
+	const handleBlur = ( event: React.FocusEvent< HTMLInputElement > ) => {
+		if ( ! hasValue( size ) ) {
+			onChange( null );
+		}
+
+		onBlur?.( event );
 	};
 
 	const inputType = isExtendedUnit( unit ) ? 'text' : 'number';
@@ -54,7 +63,7 @@ export const SizeField = < T extends SizePropValue[ 'value' ], U extends SizeUni
 		<SizeInput
 			type={ inputType }
 			value={ size }
-			onBlur={ onBlur }
+			onBlur={ handleBlur }
 			onKeyDown={ handleKeyDown }
 			onChange={ ( event ) => setSize( event.target.value ) }
 			InputProps={ {
@@ -83,5 +92,5 @@ export const SizeField = < T extends SizePropValue[ 'value' ], U extends SizeUni
 };
 
 const hasValue = ( value: PropValue ): boolean => {
-	return value !== null && value !== '';
+	return Boolean( value ) || value === 0;
 };

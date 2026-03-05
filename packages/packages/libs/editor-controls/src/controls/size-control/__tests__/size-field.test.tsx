@@ -148,4 +148,139 @@ describe( 'SizeField', () => {
 			expect( mockOnKeyDown ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
+
+	describe( 'Blur behavior', () => {
+		it( 'should call onChange with null when input is blurred with empty string', () => {
+			// Arrange.
+			const onChange = jest.fn();
+
+			Object.assign( defaultUseSizeValueReturn, { size: '', unit: 'px' } );
+
+			renderSizeField( { onChange } );
+
+			const input = screen.getByRole( 'spinbutton' );
+
+			// Act.
+			fireEvent.blur( input );
+
+			// Assert.
+			expect( onChange ).toHaveBeenCalledWith( null );
+		} );
+
+		it( 'should call onChange with null when input is blurred with null size', () => {
+			// Arrange.
+			const onChange = jest.fn();
+
+			Object.assign( defaultUseSizeValueReturn, { size: '', unit: 'px' } );
+
+			renderSizeField( { onChange } );
+
+			const input = screen.getByRole( 'spinbutton' );
+
+			// Act.
+			fireEvent.blur( input );
+
+			// Assert.
+			expect( onChange ).toHaveBeenCalledWith( null );
+		} );
+
+		it( 'should not call onChange when input is blurred with a valid size', () => {
+			// Arrange.
+			const onChange = jest.fn();
+
+			renderSizeField( { onChange } );
+
+			const input = screen.getByRole( 'spinbutton' );
+
+			// Act.
+			fireEvent.blur( input );
+
+			// Assert.
+			expect( onChange ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should call onBlur prop when input is blurred', () => {
+			// Arrange.
+			const onBlur = jest.fn();
+
+			renderSizeField( { onBlur } );
+
+			const input = screen.getByRole( 'spinbutton' );
+
+			// Act.
+			fireEvent.blur( input );
+
+			// Assert.
+			expect( onBlur ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'should call onBlur prop even when onChange with null is triggered', () => {
+			// Arrange.
+			const onChange = jest.fn();
+			const onBlur = jest.fn();
+
+			Object.assign( defaultUseSizeValueReturn, { size: '', unit: 'px' } );
+
+			renderSizeField( { onChange, onBlur } );
+
+			const input = screen.getByRole( 'spinbutton' );
+
+			// Act.
+			fireEvent.blur( input );
+
+			// Assert.
+			expect( onChange ).toHaveBeenCalledWith( null );
+			expect( onBlur ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'should call onChange with null when input is blurred with undefined size', () => {
+			// Arrange.
+			const onChange = jest.fn();
+
+			Object.assign( defaultUseSizeValueReturn, { size: undefined, unit: 'px' } );
+
+			renderSizeField( { onChange } );
+
+			const input = screen.getByRole( 'spinbutton' );
+
+			// Act.
+			fireEvent.blur( input );
+
+			// Assert.
+			expect( onChange ).toHaveBeenCalledWith( null );
+		} );
+	} );
+
+	describe( 'KeyDown behavior', () => {
+		it( 'should call onKeyDown prop when key is pressed', () => {
+			// Arrange.
+			const onKeyDown = jest.fn();
+
+			renderSizeField( { onKeyDown } );
+
+			const input = screen.getByRole( 'spinbutton' );
+
+			// Act.
+			fireEvent.keyDown( input, { key: 'ArrowUp' } );
+
+			// Assert.
+			expect( onKeyDown ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'should call both onUnitKeyDown and onKeyDown prop when key is pressed', () => {
+			// Arrange.
+			const onKeyDown = jest.fn();
+
+			renderSizeField( { onKeyDown } );
+
+			const input = screen.getByRole( 'spinbutton' );
+
+			// Act.
+			fireEvent.keyDown( input, { key: 'r' } );
+
+			// Assert.
+			expect( mockOnKeyDown ).toHaveBeenCalledTimes( 1 );
+			expect( onKeyDown ).toHaveBeenCalledTimes( 1 );
+		} );
+	} );
 } );

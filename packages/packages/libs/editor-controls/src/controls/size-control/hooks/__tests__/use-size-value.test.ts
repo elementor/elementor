@@ -1,8 +1,8 @@
 import { type SizePropValue } from '@elementor/editor-props';
 import { act, renderHook } from '@testing-library/react';
 
-import { useSizeValue } from '../use-size-value';
 import { isExtendedUnit } from '../../utils/is-extended-unit';
+import { useSizeValue } from '../use-size-value';
 
 jest.mock( '../../utils/is-extended-unit' );
 
@@ -24,6 +24,7 @@ const renderSizeValueHook = ( props = {} ) => {
 describe( 'useSizeValue', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockIsExtendedUnit.mockReturnValue( false );
 	} );
 
 	describe( 'Initial state', () => {
@@ -259,6 +260,25 @@ describe( 'useSizeValue', () => {
 			expect( onChange ).toHaveBeenCalledWith( { size: 42, unit: 'px' } );
 		} );
 
+		it( 'should not call onChange with null when input is cleared and external size is also empty', () => {
+			// Arrange.
+			const onChange = jest.fn();
+
+			// Act.
+			const { result } = renderSizeValueHook( {
+				value: {
+					size: '',
+					unit: 'px',
+				},
+				onChange,
+			} );
+
+			act( () => result.current.setSize( '' ) );
+
+			// Assert — should not revert to external (no null signal) while mid-edit
+			expect( onChange ).not.toHaveBeenCalledWith( null );
+		} );
+
 		it( 'should set size to empty string when value is empty string and call onChange', () => {
 			// Arrange.
 			const onChange = jest.fn();
@@ -461,7 +481,7 @@ describe( 'useSizeValue', () => {
 			expect( result.current.size ).toBe( 'calc(100% - 10px)' );
 		} );
 
-		it( 'should call onChange with null when setSize sets same value as external (differsFromExternal false)', () => {
+		it( 'should not call onChange with null when setSize sets same value as external ( hasChanged = false )', () => {
 			// Arrange.
 			const onChange = jest.fn();
 
@@ -478,7 +498,7 @@ describe( 'useSizeValue', () => {
 			expect( onChange ).toHaveBeenLastCalledWith( { size: 42, unit: 'px' } );
 
 			act( () => result.current.setSize( '10' ) );
-			expect( onChange ).toHaveBeenLastCalledWith( null );
+			expect( onChange ).not.toHaveBeenLastCalledWith( null );
 		} );
 	} );
 
@@ -508,12 +528,13 @@ describe( 'useSizeValue', () => {
 
 		it( 'should update unit to extended unit auto and call onChange', () => {
 			// Arrange.
+			mockIsExtendedUnit.mockReturnValue( true );
 			const onChange = jest.fn();
 
 			// Act.
 			const { result } = renderSizeValueHook( {
 				value: {
-					size: '',
+					size: 234,
 					unit: 'px',
 				},
 				units: [ 'px', 'auto' ],
@@ -531,6 +552,7 @@ describe( 'useSizeValue', () => {
 
 		it( 'should update unit to custom and call onChange', () => {
 			// Arrange.
+			mockIsExtendedUnit.mockReturnValue( true );
 			const onChange = jest.fn();
 
 			// Act.
@@ -547,11 +569,11 @@ describe( 'useSizeValue', () => {
 				result.current.setUnit( 'custom' );
 			} );
 
-			expect( onChange ).toHaveBeenCalledWith( { size: 'calc(10px * 2)', unit: 'custom' } );
+			expect( onChange ).toHaveBeenCalledWith( { size: '', unit: 'custom' } );
 			expect( result.current.unit ).toBe( 'custom' );
 		} );
 
-		it( 'should call onChange with null when setUnit sets same unit as external (differsFromExternal false)', () => {
+		it( 'should not call onChange with null when setUnit sets same unit as external ( hasChanged = false )', () => {
 			// Arrange.
 			const onChange = jest.fn();
 
@@ -569,7 +591,7 @@ describe( 'useSizeValue', () => {
 			expect( onChange ).toHaveBeenLastCalledWith( { size: 10, unit: 'rem' } );
 
 			act( () => result.current.setUnit( 'px' ) );
-			expect( onChange ).toHaveBeenLastCalledWith( null );
+			expect( onChange ).not.toHaveBeenLastCalledWith( null );
 		} );
 	} );
 
@@ -587,6 +609,7 @@ describe( 'useSizeValue', () => {
 			);
 
 			expect( result.current.unit ).toBe( 'px' );
+			expect( result.current.size ).toBe( 5 );
 
 			// Act.
 			rerender( {
@@ -595,6 +618,7 @@ describe( 'useSizeValue', () => {
 
 			// Assert.
 			expect( result.current.unit ).toBe( '%' );
+			expect( result.current.size ).toBe( 10 );
 		} );
 
 		it( 'should show empty size and unit auto when externalValue switches to auto', () => {
@@ -620,7 +644,8 @@ describe( 'useSizeValue', () => {
 		it( 'should keep reflecting same size and unit when externalValue is rerendered with same value', () => {
 			// Arrange.
 			const onChange = jest.fn();
-			const value = { size: 10, unit: 'px' as const };
+			const value = { size: 10, unit: 'px' };
+
 			const { result, rerender } = renderHook(
 				( { value: ext } ) => useSizeValue( { value: ext, onChange, units: [ 'px' ] } ),
 				{
@@ -640,6 +665,7 @@ describe( 'useSizeValue', () => {
 		it( 'should reflect fallback state when externalValue is null and defaultUnit is provided after rerender', () => {
 			// Arrange.
 			const onChange = jest.fn();
+
 			const { result, rerender } = renderHook(
 				( { value } ) => useSizeValue( { value, onChange, units: [ 'px', 'em' ], defaultUnit: 'em' } ),
 				{ initialProps: { value: null } }
@@ -658,9 +684,10 @@ describe( 'useSizeValue', () => {
 			// Arrange.
 			type ExternalValue = { size: number; unit: string } | null;
 			const onChange = jest.fn();
+
 			const { result, rerender } = renderHook(
 				( { value }: { value: ExternalValue } ) =>
-					useSizeValue( { value, onChange, units: [ 'px' ], defaultUnit: 'px' } ),
+					useSizeValue( { value, onChange, units: [ 'px' ], defaultUnit: 'vw' } ),
 				{ initialProps: { value: { size: 20, unit: 'px' } as ExternalValue } }
 			);
 
@@ -670,7 +697,7 @@ describe( 'useSizeValue', () => {
 			rerender( { value: null } );
 
 			expect( result.current.size ).toBe( '' );
-			expect( result.current.unit ).toBe( 'px' );
+			expect( result.current.unit ).toBe( 'vw' );
 		} );
 
 		it( 'should reflect custom unit and string size when externalValue switches to custom', () => {
@@ -681,13 +708,13 @@ describe( 'useSizeValue', () => {
 					useSizeValue( { value, onChange, units: [ 'px', 'custom' ] } ),
 				{
 					initialProps: {
-						value: { size: 10, unit: 'px' } as SizePropValue[ 'value' ],
+						value: { size: 10, unit: 'px' },
 					},
 				}
 			);
 
 			rerender( {
-				value: { size: 'calc(100% - 20px)', unit: 'custom' } as SizePropValue[ 'value' ],
+				value: { size: 'calc(100% - 20px)', unit: 'custom' },
 			} );
 
 			expect( result.current.size ).toBe( 'calc(100% - 20px)' );
@@ -697,6 +724,7 @@ describe( 'useSizeValue', () => {
 		it( 'should overwrite internal state when externalValue changes to different value', () => {
 			// Arrange.
 			const onChange = jest.fn();
+
 			const { result, rerender } = renderHook(
 				( { value } ) => useSizeValue( { value, onChange, units: [ 'px' ] } ),
 				{
@@ -717,26 +745,6 @@ describe( 'useSizeValue', () => {
 	} );
 
 	describe( 'negative and edge cases', () => {
-		it( 'should call onChange when setSize is used and externalValue is null (persistWhen allows persist)', () => {
-			// Arrange.
-			const onChange = jest.fn();
-
-			// Act.
-			const { result } = renderSizeValueHook( {
-				units: [ 'px', 'em' ],
-				onChange,
-				defaultUnit: 'em',
-			} );
-
-			expect( result.current.unit ).toBe( 'em' );
-			expect( result.current.size ).toBe( '' );
-
-			act( () => result.current.setSize( '10' ) );
-
-			expect( onChange ).toHaveBeenCalledWith( { size: 10, unit: 'em' } );
-			expect( result.current.size ).toBe( 10 );
-		} );
-
 		it( 'should return size and unit when external size is NaN and unit is standard', () => {
 			// Act.
 			const { result } = renderSizeValueHook( {

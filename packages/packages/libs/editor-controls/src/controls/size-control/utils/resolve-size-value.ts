@@ -1,6 +1,7 @@
 import { type SizePropValue } from '@elementor/editor-props';
 
 import { type SizeUnit } from '../types';
+import { isExtendedUnit } from './is-extended-unit';
 
 type SizeValue = SizePropValue[ 'value' ];
 
@@ -9,9 +10,9 @@ type ResolverContext< U > = {
 	defaultUnit?: U;
 };
 
-export const DEFAULT_SIZE_UNIT = 'px';
+const DEFAULT_SIZE_UNIT = 'px';
 
-export const DEFAULT_SIZE = '';
+const DEFAULT_SIZE = '';
 
 export const EXTENDED_UNITS = {
 	auto: 'auto',
@@ -42,6 +43,17 @@ export const resolveSizeValue = < TValue extends SizeValue | null, TUnit extends
 		size: sanitizeSize( value.size ) ?? DEFAULT_SIZE,
 		unit,
 	};
+};
+
+export const resolveSizeOnUnitChange = (
+	size: SizeValue[ 'size' ],
+	unit: SizeValue[ 'unit' ]
+): SizeValue[ 'size' ] => {
+	return isExtendedUnit( unit ) ? DEFAULT_SIZE : size;
+};
+
+export const createDefaultSizeValue = < T extends SizeValue >( defaultUnit?: SizeUnit ): T => {
+	return { size: DEFAULT_SIZE, unit: defaultUnit ?? DEFAULT_SIZE_UNIT } as T;
 };
 
 const resolveFallbackUnit = < TUnit extends SizeUnit >(
