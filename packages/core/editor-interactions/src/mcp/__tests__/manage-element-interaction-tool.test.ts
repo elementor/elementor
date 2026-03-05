@@ -96,14 +96,15 @@ describe('manage-element-interaction tool', () => {
 			const result = callHandler({ elementId: 'el-456', action: 'get' }) as any;
 
 			expect(result.count).toBe(1);
-			const returned = result.interactions[0];
-			expect(returned.value.interaction_id.value).toBe('temp-abc123');
-			expect(returned.value.trigger.value).toBe('load');
-			expect(returned.value.animation.value.effect.value).toBe('fade');
-			expect(returned.value.animation.value.type.value).toBe('in');
-			expect(returned.value.animation.value.direction.value).toBe('');
-			expect(returned.value.animation.value.config.value.easing.value).toBe('easeIn');
-			expect(returned.value.breakpoints).toBeUndefined();
+			expect(result.interactions[0]).toMatchObject({
+				id: 'temp-abc123',
+				trigger: 'load',
+				effect: 'fade',
+				effectType: 'in',
+				direction: '',
+				easing: 'easeIn',
+				excludedBreakpoints: [],
+			});
 		});
 
 		it('includes excludedBreakpoints in the response', () => {
@@ -125,10 +126,7 @@ describe('manage-element-interaction tool', () => {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const result = callHandler({ elementId: 'el-bp', action: 'get' }) as any;
 
-			const bpValues = result.interactions[0].value.breakpoints.value.excluded.value.map(
-				(bp: { value: string }) => bp.value
-			);
-			expect(bpValues).toEqual(['mobile', 'tablet']);
+			expect(result.interactions[0].excludedBreakpoints).toEqual(['mobile', 'tablet']);
 		});
 
 		it('does not call updateElementInteractions', () => {
