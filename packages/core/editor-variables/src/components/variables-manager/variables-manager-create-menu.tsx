@@ -142,13 +142,19 @@ const MenuOption = ({
 export const getDefaultName = (variables: TVariablesList, baseName: string) => {
 	const pattern = new RegExp(`^${baseName}-(\\d+)$`, 'i');
 
-	let counter = 1;
+	const takenNumbers = new Set<number>();
 
 	Object.values(variables).forEach((variable) => {
-		if (pattern.test(variable.label)) {
-			counter = Math.max(counter, parseInt(variable.label.match(pattern)?.[1] ?? '0', 10) + 1);
+		const match = variable.label.match(pattern);
+		if (match) {
+			takenNumbers.add(parseInt(match[1], 10));
 		}
 	});
+
+	let counter = 1;
+	while (takenNumbers.has(counter)) {
+		counter++;
+	}
 
 	return `${baseName}-${counter}`;
 };
