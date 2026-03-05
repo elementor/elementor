@@ -6,6 +6,7 @@ export type NotificationData = {
 	message: string | React.ReactNode;
 	id: string;
 	additionalActionProps?: Partial< ButtonProps >[];
+	autoHideDuration?: number;
 };
 
 type NotificationId = string;

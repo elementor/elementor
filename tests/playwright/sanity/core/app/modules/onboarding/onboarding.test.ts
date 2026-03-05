@@ -9,6 +9,8 @@ const BUTTON_CLASSES = {
 	disabled: /e-onboarding__button--disabled/,
 };
 
+const GOOD_TO_GO_SCREEN_TITLE = /Welcome aboard! What's next\?|How would you like to create your website?|All set! Choose how to start/;
+
 test.describe( 'On boarding @onBoarding', async () => {
 	let originalActiveTheme: string;
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -142,7 +144,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 		await expect( nextButton ).toHaveClass( BUTTON_CLASSES.disabled );
 		await skipButton.click();
 
-		await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Welcome aboard! What\'s next?' );
+		await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( GOOD_TO_GO_SCREEN_TITLE );
 	} );
 
 	/**
@@ -150,6 +152,14 @@ test.describe( 'On boarding @onBoarding', async () => {
 	 */
 	test( 'Onboarding Good to Go Page - Open Kit Library', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding/goodToGo' );
+
+		const isExperiment402B = await page.evaluate( () => {
+			return 'B' === localStorage.getItem( 'elementor_onboarding_experiment402_variant' );
+		} );
+
+		if ( isExperiment402B ) {
+			test.skip( true, 'Skipping Kit Library navigation test in Experiment 402 Variant B' );
+		}
 
 		const nextButton = page.locator( '.e-onboarding__cards-grid > a:nth-child(2)' );
 
@@ -247,7 +257,7 @@ test.describe( 'Onboarding @onBoarding', async () => {
 
 			await expect(
 				page.locator( EditorSelectors.onboarding.screenTitle ),
-			).toHaveText( /Welcome aboard! What's next\?|How would you like to create your website?|All set! Choose how to start/ );
+			).toHaveText( GOOD_TO_GO_SCREEN_TITLE );
 		} );
 	} );
 
@@ -262,7 +272,7 @@ test.describe( 'Onboarding @onBoarding', async () => {
 			await skipButton.click();
 			expect( page.url() ).toContain( 'onboarding/goodToGo' );
 			await expect( page.locator( EditorSelectors.onboarding.progressBar.skippedItem ) ).toContainText( 'Choose Features' );
-			await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Welcome aboard! What\'s next?' );
+			await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( GOOD_TO_GO_SCREEN_TITLE );
 		} );
 	} );
 } );
