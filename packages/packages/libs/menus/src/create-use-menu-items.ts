@@ -16,25 +16,17 @@ export function createUseMenuItems< TGroups extends string >(
 	locations: LocationsMap< MenuGroups< TGroups > >,
 	subscribe: ( listener: () => void ) => () => void
 ): UseMenuItems< TGroups > {
-	let cachedMenuItems: GroupedMenuItems< TGroups > | null = null;
-	let cachedInjectionIds: string | null = null;
+	let snapshot: GroupedMenuItems< TGroups > | null = null;
+
+	subscribe( () => {
+		snapshot = null;
+	} );
 
 	const getMenuItems = () => {
-		const currentInjectionIds = Object.entries( locations )
-			.map( ( [ , location ] ) =>
-				location
-					.getInjections()
-					.map( ( i ) => i.id )
-					.join( ',' )
-			)
-			.join( '|' );
-
-		if ( currentInjectionIds === cachedInjectionIds && cachedMenuItems ) {
-			return cachedMenuItems;
+		if ( snapshot ) {
+			return snapshot;
 		}
-
-		cachedInjectionIds = currentInjectionIds;
-		cachedMenuItems = Object.entries( locations ).reduce( ( carry, [ groupName, location ] ) => {
+		snapshot = Object.entries( locations ).reduce( ( carry, [ groupName, location ] ) => {
 			const items = location.getInjections().map( ( injection ) => ( {
 				id: injection.id,
 				MenuItem: injection.component,
@@ -46,7 +38,7 @@ export function createUseMenuItems< TGroups extends string >(
 			};
 		}, {} as GroupedMenuItems< TGroups > );
 
-		return cachedMenuItems;
+		return snapshot;
 	};
 
 	return () => useSyncExternalStore( subscribe, getMenuItems );
