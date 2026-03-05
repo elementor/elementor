@@ -1,5 +1,4 @@
 import { getSDK } from './utils/get-sdk';
-export { z as zod } from '@elementor/schema';
 
 export {
 	McpServer,
