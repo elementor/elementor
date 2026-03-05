@@ -42,7 +42,6 @@ class Module extends BaseModule {
 		add_filter( 'elementor/atomic-widgets/props-schema', fn ( $schema ) => $this->modify_props_schema( $schema ) );
 		add_action( 'elementor/documents/register', fn ( $documents_manager ) => $this->register_document_type( $documents_manager ) );
 		add_action( 'elementor/document/before_save', fn( Document $document, array $data ) => $this->validate_circular_dependencies( $document, $data ), 10, 2 );
-		add_action( 'elementor/document/before_save', fn( Document $document, array $data ) => $this->validate_override_additions( $document, $data ), 10, 2 );
 		add_action( 'elementor/document/after_save', fn( Document $document, array $data ) => $this->set_component_overridable_props( $document, $data ), 10, 2 );
 		add_filter( 'elementor/global_classes/additional_post_types', fn( $post_types ) => array_merge( $post_types, [ Component_Document::TYPE ] ) );
 
@@ -146,20 +145,4 @@ class Module extends BaseModule {
 		$transformers->register( Override_Prop_Type::get_key(), new Override_Transformer() );
 	}
 
-	private function validate_override_additions( Document $document, array $data ) {
-		if ( Components_Access_Controller::can_add_overrides() ) {
-			return;
-		}
-
-		if ( ! isset( $data['elements'] ) || empty( $data['elements'] ) ) {
-			return;
-		}
-
-		$validator = new Override_Addition_Validator( $document );
-		$result = $validator->validate( $data['elements'] );
-
-		if ( ! $result['success'] ) {
-			throw new \Exception( esc_html__( 'You do not have permission to add new component overrides.', 'elementor' ) );
-		}
-	}
 }

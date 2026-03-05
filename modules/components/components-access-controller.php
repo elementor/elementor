@@ -61,10 +61,6 @@ class Components_Access_Controller {
 		return self::is_expired_or_pro_tier();
 	}
 
-	public static function can_add_overrides(): bool {
-		return self::is_expired_or_pro_tier();
-	}
-
 	public static function can_lock(): bool {
 		return self::is_expired_or_pro_tier();
 	}
