@@ -10,6 +10,7 @@ export {
 } from './events';
 export type {
 	ConnectSuccessData,
+	ErrorReportedTarget,
 	ObSummaryMetadataItem,
 	ObSummarySnapshot,
 	OnboardingEventPayload,

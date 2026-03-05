@@ -16,6 +16,7 @@ export const OnboardingEventName = {
 	RESUME_ONBOARDING: 'ob_resume_onboarding',
 	SITE_STARTER_SELECTED: 'ob_site_starter_selected',
 	SUMMARY: 'ob_summary',
+	ERROR_REPORTED: 'ob_error_reported',
 } as const;
 
 export const STEP_NUMBERS: Record< string, string > = {
@@ -127,3 +128,9 @@ export interface ConnectSuccessData {
 	access_tier?: string;
 	plan_type?: string;
 }
+
+/** Enforces target_type/target_name pairing for ob_error_reported. */
+export type ErrorReportedTarget =
+	| { targetType: 'install'; targetName: 'install_pro_on_this_site' | 'continue_with_this_theme' }
+	| { targetType: 'save'; targetName: string }
+	| { targetType: 'request'; targetName: string };

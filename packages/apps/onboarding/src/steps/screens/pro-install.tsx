@@ -20,7 +20,7 @@ export function ProInstall() {
 	const { actions } = useOnboarding();
 	const installPro = useInstallPro();
 	const { showToast } = useToast();
-	const { trackProInstall, trackStepViewed } = useOnboardingEvent();
+	const { trackProInstall, trackStepViewed, trackErrorReported } = useOnboardingEvent();
 
 	const hasTrackedView = React.useRef( false );
 
@@ -37,12 +37,18 @@ export function ProInstall() {
 			onSuccess: () => {
 				actions.markProInstalled();
 			},
-			onError: () => {
+			onError: ( error ) => {
+				trackErrorReported( {
+					targetType: 'install',
+					targetName: 'install_pro_on_this_site',
+					stepId: 'pro_install',
+					errorBody: error instanceof Error ? error.message : 'Failed to install Elementor Pro',
+				} );
 				showToast( t( 'error.pro_install_failed' ) );
 				actions.dismissProInstallScreen();
 			},
 		} );
-	}, [ installPro, actions, showToast, trackProInstall ] );
+	}, [ installPro, actions, showToast, trackProInstall, trackErrorReported ] );
 
 	const handleDismiss = useCallback(
 		( event: React.SyntheticEvent ) => {

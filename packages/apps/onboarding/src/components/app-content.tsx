@@ -75,6 +75,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 		trackUpgradeClicked,
 		trackResumeOnboarding,
 		trackSummary,
+		trackErrorReported,
 		activateTracking,
 		flushQueue,
 	} = useOnboardingEvent();
@@ -161,13 +162,19 @@ export function AppContent( { onClose }: AppContentProps ) {
 					actions.setExitType( 'user_exit' );
 					onClose?.();
 				},
-				onError: () => {
+				onError: ( error ) => {
+					trackErrorReported( {
+						targetType: 'request',
+						targetName: 'user_exit',
+						stepId,
+						errorBody: error instanceof Error ? error.message : 'Failed to update progress',
+					} );
 					actions.setExitType( 'user_exit' );
 					onClose?.();
 				},
 			}
 		);
-	}, [ actions, choices, completedSteps, isConnected, isGuest, onClose, trackSummary, updateProgress ] );
+	}, [ actions, choices, completedSteps, isConnected, isGuest, onClose, stepId, trackErrorReported, trackSummary, updateProgress ] );
 
 	const handleBack = useCallback( () => {
 		trackBackClicked( stepId );
@@ -204,7 +211,15 @@ export function AppContent( { onClose }: AppContentProps ) {
 				},
 				{
 					onSuccess: redirectToNewPage,
-					onError: redirectToNewPage,
+					onError: ( error ) => {
+						trackErrorReported( {
+							targetType: 'request',
+							targetName: 'skip_and_complete',
+							stepId,
+							errorBody: error instanceof Error ? error.message : 'Failed to update progress',
+						} );
+						redirectToNewPage();
+					},
 				}
 			);
 			return;
@@ -220,7 +235,13 @@ export function AppContent( { onClose }: AppContentProps ) {
 				onSuccess: () => {
 					actions.nextStep();
 				},
-				onError: () => {
+				onError: ( error ) => {
+					trackErrorReported( {
+						targetType: 'request',
+						targetName: 'skip_step',
+						stepId,
+						errorBody: error instanceof Error ? error.message : 'Failed to update progress',
+					} );
 					actions.nextStep();
 				},
 			}
@@ -235,6 +256,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 		stepId,
 		stepIndex,
 		totalSteps,
+		trackErrorReported,
 		trackSkipClicked,
 		trackSummary,
 		updateProgress,
@@ -243,9 +265,18 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 	const saveChoicesFireAndForget = useCallback(
 		( choiceData: Record< string, unknown > ) => {
-			updateChoices.mutate( choiceData );
+			updateChoices.mutate( choiceData, {
+				onError: ( error ) => {
+					trackErrorReported( {
+						targetType: 'save',
+						targetName: Object.keys( choiceData )[ 0 ] ?? stepId,
+						stepId,
+						errorBody: error instanceof Error ? error.message : 'Failed to save choices',
+					} );
+				},
+			} );
 		},
-		[ updateChoices ]
+		[ updateChoices, trackErrorReported, stepId ]
 	);
 
 	const handleContinue = useCallback(
@@ -280,11 +311,25 @@ export function AppContent( { onClose }: AppContentProps ) {
 								},
 								{
 									onSuccess: redirectToNewPage,
-									onError: redirectToNewPage,
+									onError: ( error ) => {
+										trackErrorReported( {
+											targetType: 'request',
+											targetName: 'complete_step',
+											stepId,
+											errorBody: error instanceof Error ? error.message : 'Failed to update progress',
+										} );
+										redirectToNewPage();
+									},
 								}
 							);
 						},
-						onError: () => {
+						onError: ( error ) => {
+							trackErrorReported( {
+								targetType: 'install',
+								targetName: 'continue_with_this_theme',
+								stepId: 'theme_selection',
+								errorBody: error instanceof Error ? error.message : 'Failed to install theme',
+							} );
 							showToast( t( 'error.theme_install_failed' ) );
 							updateProgress.mutate(
 								{
@@ -295,7 +340,15 @@ export function AppContent( { onClose }: AppContentProps ) {
 								},
 								{
 									onSuccess: redirectToNewPage,
-									onError: redirectToNewPage,
+									onError: ( progressError ) => {
+										trackErrorReported( {
+											targetType: 'request',
+											targetName: 'complete_step',
+											stepId,
+											errorBody: progressError instanceof Error ? progressError.message : 'Failed to update progress',
+										} );
+										redirectToNewPage();
+									},
 								}
 							);
 						},
@@ -305,7 +358,13 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 				if ( themeSlug ) {
 					installTheme.mutate( themeSlug, {
-						onError: () => {
+						onError: ( error ) => {
+							trackErrorReported( {
+								targetType: 'install',
+								targetName: 'continue_with_this_theme',
+								stepId: 'theme_selection',
+								errorBody: error instanceof Error ? error.message : 'Failed to install theme',
+							} );
 							showToast( t( 'error.theme_install_failed' ) );
 						},
 					} );
@@ -329,7 +388,15 @@ export function AppContent( { onClose }: AppContentProps ) {
 					},
 					{
 						onSuccess: redirectToNewPage,
-						onError: redirectToNewPage,
+						onError: ( error ) => {
+							trackErrorReported( {
+								targetType: 'request',
+								targetName: 'complete_step',
+								stepId,
+								errorBody: error instanceof Error ? error.message : 'Failed to update progress',
+							} );
+							redirectToNewPage();
+						},
 					}
 				);
 				return;
@@ -346,7 +413,13 @@ export function AppContent( { onClose }: AppContentProps ) {
 						actions.completeStep( stepId );
 						actions.nextStep();
 					},
-					onError: () => {
+					onError: ( error ) => {
+						trackErrorReported( {
+							targetType: 'request',
+							targetName: 'complete_step',
+							stepId,
+							errorBody: error instanceof Error ? error.message : 'Failed to update progress',
+						} );
 						actions.completeStep( stepId );
 						actions.nextStep();
 					},
@@ -368,6 +441,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 			installTheme,
 			showToast,
 			redirectToNewPage,
+			trackErrorReported,
 			trackProFeaturesSelected,
 			trackSummary,
 		]

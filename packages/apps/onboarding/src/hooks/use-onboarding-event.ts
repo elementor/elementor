@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { canSendEvents, getMixpanel } from '@elementor/events';
 
 import type {
+	ErrorReportedTarget,
 	ObSummaryMetadataItem,
 	ObSummarySnapshot,
 	OnboardingEventPayload,
@@ -413,6 +414,23 @@ export function useOnboardingEvent() {
 		[ trackEvent ]
 	);
 
+	const trackErrorReported = useCallback(
+		( params: ErrorReportedTarget & { stepId: string; errorBody: string } ) => {
+			trackEvent( OnboardingEventName.ERROR_REPORTED, {
+				interaction_type: 'action_failed',
+				target_type: params.targetType,
+				target_name: params.targetName,
+				interaction_result: 'error_reported',
+				target_value: STEP_NUMBERS[ params.stepId ] ?? params.stepId,
+				target_location: 'onboarding',
+				location_l1: STEP_NUMBERS[ params.stepId ] ?? params.stepId,
+				interaction_description: 'onboarding step loaded',
+				metadata: { error_title: params.errorBody },
+			} );
+		},
+		[ trackEvent ]
+	);
+
 	return {
 		trackOnboardingInitialized,
 		trackLoginType,
@@ -431,6 +449,7 @@ export function useOnboardingEvent() {
 		trackResumeOnboarding,
 		trackSiteStarterSelected,
 		trackSummary,
+		trackErrorReported,
 		activateTracking,
 		flushQueue,
 	};
