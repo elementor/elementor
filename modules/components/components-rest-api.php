@@ -339,6 +339,10 @@ class Components_REST_API {
 	}
 
 	private function create_components( \WP_REST_Request $request ) {
+		if ( ! Components_Access_Controller::can_create() ) {
+			return $this->get_insufficient_permissions_error( 'create' );
+		}
+
 		$save_status = $request->get_param( 'status' );
 
 		$items = Collection::make( $request->get_param( 'items' ) );
@@ -409,6 +413,10 @@ class Components_REST_API {
 	}
 
 	private function update_statuses( \WP_REST_Request $request ) {
+		if ( ! Components_Access_Controller::can_publish() ) {
+			return $this->get_insufficient_permissions_error( 'publish' );
+		}
+
 		$result = Collection::make( $request->get_param( 'ids' ) )
 			->reduce(
 				function ( $result, int $component_id ) {
@@ -435,6 +443,10 @@ class Components_REST_API {
 	}
 
 	private function lock_component( \WP_REST_Request $request ) {
+		if ( ! Components_Access_Controller::can_lock() ) {
+			return $this->get_insufficient_permissions_error( 'lock' );
+		}
+
 		$component_id = $request->get_param( 'componentId' );
 		try {
 			$success = $this->get_component_lock_manager()->lock( $component_id );
@@ -457,6 +469,10 @@ class Components_REST_API {
 	}
 
 	private function unlock_component( \WP_REST_Request $request ) {
+		if ( ! Components_Access_Controller::can_lock() ) {
+			return $this->get_insufficient_permissions_error( 'unlock' );
+		}
+
 		$component_id = $request->get_param( 'componentId' );
 		try {
 			$success = $this->get_component_lock_manager()->unlock( $component_id );
@@ -478,6 +494,10 @@ class Components_REST_API {
 	}
 
 	private function get_lock_status( \WP_REST_Request $request ) {
+		if ( ! Components_Access_Controller::can_lock() ) {
+			return $this->get_insufficient_permissions_error( 'lock_status' );
+		}
+
 		$component_id = (int) $request->get_param( 'componentId' );
 		try {
 			$lock_manager = $this->get_component_lock_manager();
@@ -521,6 +541,10 @@ class Components_REST_API {
 	}
 
 	private function archive_components( \WP_REST_Request $request ) {
+		if ( ! Components_Access_Controller::can_delete() ) {
+			return $this->get_insufficient_permissions_error( 'delete' );
+		}
+
 		$component_ids = $request->get_param( 'componentIds' );
 		$status = $request->get_param( 'status' );
 
@@ -538,6 +562,10 @@ class Components_REST_API {
 	}
 
 	private function update_components_title( \WP_REST_Request $request ) {
+		if ( ! Components_Access_Controller::can_rename() ) {
+			return $this->get_insufficient_permissions_error( 'rename' );
+		}
+
 		$failed_ids = [];
 		$success_ids = [];
 		$components = $request->get_param( 'components' );
@@ -560,6 +588,10 @@ class Components_REST_API {
 	}
 
 	private function create_validate_components( \WP_REST_Request $request ) {
+		if ( ! Components_Access_Controller::can_create() ) {
+			return $this->get_insufficient_permissions_error( 'create' );
+		}
+
 		$items = Collection::make( $request->get_param( 'items' ) );
 		$components = $this->get_repository()->all();
 
@@ -650,5 +682,13 @@ class Components_REST_API {
 		}
 
 		return $response;
+	}
+
+	private function get_insufficient_permissions_error( string $action ) {
+		return Error_Builder::make( 'insufficient_permissions' )
+			->set_status( 403 )
+			->set_message( __( 'You do not have permission to perform this action.', 'elementor' ) )
+			->set_meta( [ 'action' => $action, 'tier' => Components_Access_Controller::get_access_tier() ] )
+			->build();
 	}
 }
