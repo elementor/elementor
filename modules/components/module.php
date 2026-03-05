@@ -144,5 +144,4 @@ class Module extends BaseModule {
 		$transformers->register( Overridable_Prop_Type::get_key(), new Overridable_Transformer() );
 		$transformers->register( Override_Prop_Type::get_key(), new Override_Transformer() );
 	}
-
 }
