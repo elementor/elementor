@@ -74,6 +74,8 @@ export type ConfigPropValue = {
 		replay: BooleanPropValue;
 		easing: StringPropValue;
 		relativeTo: StringPropValue;
+		repeat?: StringPropValue;
+		times?: NumberPropValue;
 		start?: SizePropValue;
 		end?: SizePropValue;
 	};

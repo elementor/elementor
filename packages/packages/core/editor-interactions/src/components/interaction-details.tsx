@@ -37,6 +37,8 @@ export const DEFAULT_VALUES = {
 	relativeTo: 'viewport',
 	start: 85,
 	end: 15,
+	repeat: 'loop',
+	times: 1,
 };
 
 const TRIGGERS_WITHOUT_REPLAY = [ 'load', 'scrollOn', 'hover', 'click' ];
@@ -53,7 +55,9 @@ type InteractionsControlType =
 	| 'relativeTo'
 	| 'start'
 	| 'end'
-	| 'customEffects';
+	| 'customEffects'
+	| 'repeat'
+	| 'times';
 
 type InteractionValues = {
 	trigger: string;
@@ -68,6 +72,8 @@ type InteractionValues = {
 	start: SizeStringValue;
 	end: SizeStringValue;
 	customEffects?: PropValue;
+	repeat?: string;
+	times?: number;
 };
 
 type ControlVisibilityConfig = {
@@ -82,6 +88,8 @@ const controlVisibilityConfig: ControlVisibilityConfig = {
 	relativeTo: ( values ) => values.trigger === 'scrollOn',
 	start: ( values ) => values.trigger === 'scrollOn',
 	end: ( values ) => values.trigger === 'scrollOn',
+	repeat: ( values ) => values.trigger !== 'scrollOn',
+	times: ( values ) => values.trigger !== 'scrollOn' && values.repeat === 'times',
 
 	duration: ( values ) => {
 		const isRelativeToVisible = values.trigger === 'scrollOn';
@@ -113,6 +121,12 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const replay = extractBoolean( interaction.animation.value.config?.value.replay, DEFAULT_VALUES.replay );
 	const easing = extractString( interaction.animation.value.config?.value.easing, DEFAULT_VALUES.easing );
 	const relativeTo = extractString( interaction.animation.value.config?.value.relativeTo, DEFAULT_VALUES.relativeTo );
+	const repeat =
+		( interaction.animation.value.config?.value as { repeat?: { value?: string } } | undefined )?.repeat?.value ??
+		DEFAULT_VALUES.repeat;
+	const times =
+		( interaction.animation.value.config?.value as { times?: { value: number } } | undefined )?.times?.value ??
+		DEFAULT_VALUES.times;
 
 	const start = extractSize( interaction.animation.value.config?.value.start, DEFAULT_VALUES.start );
 	const end = extractSize( interaction.animation.value.config?.value.end, DEFAULT_VALUES.end );
@@ -127,6 +141,8 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		easing,
 		replay,
 		relativeTo,
+		repeat,
+		times,
 		start,
 		end,
 		customEffects,
@@ -151,6 +167,13 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		controlVisibilityConfig.effectType( interactionValues )
 	);
 	const DirectionControl = useControlComponent( 'direction', controlVisibilityConfig.direction( interactionValues ) );
+	const RepeatControl = useControlComponent(
+		'repeat',
+		controlVisibilityConfig.repeat( interactionValues )
+	) as ComponentType< FieldProps< string > >;
+	const TimesControl = useControlComponent( 'times', controlVisibilityConfig.times( interactionValues ) ) as ComponentType<
+		FieldProps< number >
+	>;
 	const EasingControl = useControlComponent( 'easing' );
 
 	const containerRef = useRef< HTMLDivElement >( null );
@@ -166,6 +189,8 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			replay: boolean;
 			easing?: string;
 			relativeTo: string;
+			repeat: string;
+			times: number;
 			start: SizeStringValue;
 			end: SizeStringValue;
 			customEffects?: PropValue;
@@ -192,6 +217,8 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 				replay: updates.replay ?? replay,
 				easing: updates.easing ?? easing,
 				relativeTo: updates.relativeTo ?? relativeTo,
+				repeat: updates.repeat ?? repeat,
+				times: updates.times ?? times,
 				start: updates.start ?? start,
 				end: updates.end ?? end,
 				customEffects: updates.customEffects ?? customEffects,
@@ -262,6 +289,28 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 								value={ direction }
 								onChange={ ( v ) => updateInteraction( { direction: v } ) }
 								interactionType={ type }
+							/>
+						</Field>
+					) }
+
+					{ RepeatControl && (
+						<Field label={ __( 'Repeat', 'elementor' ) }>
+							<RepeatControl
+								value={ repeat }
+								onChange={ ( v ) => updateInteraction( { repeat: String( v ) } ) }
+							/>
+						</Field>
+					) }
+
+					{ TimesControl && (
+						<Field label={ __( 'Times', 'elementor' ) }>
+							<TimesControl
+								value={ times }
+								onChange={ ( v ) =>
+									updateInteraction( {
+										times: typeof v === 'number' ? v : Number( v ) || DEFAULT_VALUES.times,
+									} )
+								}
 							/>
 						</Field>
 					) }
