@@ -230,6 +230,30 @@ describe( 'manage-element-interaction tool', () => {
 			expect( result.count ).toBe( 2 );
 		} );
 
+		it( 'defaults effectType to "in" when not provided for fade effect', () => {
+			mockAll.mockReturnValue( [] );
+			const callHandler = createRegistryAndGetHandler();
+			callHandler( { elementId: 'el-default-type', action: 'add', trigger: 'load', effect: 'fade' } );
+
+			const createdItem = mockUpdateElementInteractions.mock.calls[ 0 ][ 0 ].interactions.items[ 0 ];
+			expect( createdItem.value.animation.value.type.value ).toBe( 'in' );
+		} );
+
+		it( 'uses provided effectType when given', () => {
+			mockAll.mockReturnValue( [] );
+			const callHandler = createRegistryAndGetHandler();
+			callHandler( {
+				elementId: 'el-explicit-type',
+				action: 'add',
+				trigger: 'load',
+				effect: 'fade',
+				effectType: 'out',
+			} );
+
+			const createdItem = mockUpdateElementInteractions.mock.calls[ 0 ][ 0 ].interactions.items[ 0 ];
+			expect( createdItem.value.animation.value.type.value ).toBe( 'out' );
+		} );
+
 		it( `throws when element already has ${ MAX_INTERACTIONS_PER_ELEMENT } interactions`, () => {
 			const items = Array.from( { length: MAX_INTERACTIONS_PER_ELEMENT }, ( _, i ) =>
 				createInteractionItem( {
