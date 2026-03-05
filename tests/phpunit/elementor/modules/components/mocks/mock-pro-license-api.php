@@ -1,9 +1,5 @@
 <?php
 
-if ( ! defined( 'ELEMENTOR_PRO_VERSION' ) ) {
-	define( 'ELEMENTOR_PRO_VERSION', '99.0.0' );
-}
-
 if ( ! class_exists( '\ElementorPro\License\API' ) ) {
 	// phpcs:ignore Generic.Files.OneObjectStructurePerFile.MultipleFound
 	class Mock_Pro_License_API {

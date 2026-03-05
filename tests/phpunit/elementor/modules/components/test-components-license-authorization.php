@@ -13,19 +13,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/mocks/component-mocks.php';
 require_once __DIR__ . '/mocks/mock-pro-license-api.php';
 
-/**
- * @runTestsInSeparateProcesses
- * @preserveGlobalState disabled
- */
 class Test_Components_License_Authorization extends Elementor_Test_Base {
 
 	private $mock_component_1_content;
 
 	public function setUp(): void {
 		parent::setUp();
-
-		require_once __DIR__ . '/mocks/component-mocks.php';
-		require_once __DIR__ . '/mocks/mock-pro-license-api.php';
 
 		$this->mock_component_1_content = Component_Mocks::get_component_1_data();
 

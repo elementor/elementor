@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\Components;
 
-use Elementor\Utils;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -14,10 +12,6 @@ class Components_Access_Controller {
 	const TIER_PRO = 'pro';
 
 	public static function get_access_tier(): string {
-		if ( ! Utils::has_pro() ) {
-			return self::TIER_CORE;
-		}
-
 		if ( ! class_exists( '\ElementorPro\License\API' ) ) {
 			return self::TIER_CORE;
 		}
