@@ -2,7 +2,9 @@
 
 import { getActiveBreakpoint } from './interactions-breakpoints.js';
 
-export const config = window.ElementorInteractionsConfig?.constants ?? {};
+export function config() {
+	return window.ElementorInteractionsConfig?.constants ?? {};
+}
 
 export function skipInteraction( interaction ) {
 	const breakpoint = getActiveBreakpoint();
