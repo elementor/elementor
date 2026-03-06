@@ -3,11 +3,12 @@ import type { ReactNode } from 'react';
 import { Box, styled } from '@elementor/ui';
 
 import type { StepVisualConfig } from '../../types';
+import { LAYOUT_PADDING } from './base-layout';
 import { ProgressBar } from './progress-bar';
 import { RightPanel } from './right-panel';
 
 const LAYOUT_GAP = 4;
-export const LAYOUT_PADDING = 4;
+export { LAYOUT_PADDING };
 export const LAYOUT_TRANSITION_MS = 300;
 const LEFT_PANEL_CONTENT_WIDTH = 386;
 const LEFT_PANEL_PADDING_X = 80;

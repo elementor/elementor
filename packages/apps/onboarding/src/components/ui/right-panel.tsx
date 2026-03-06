@@ -4,8 +4,7 @@ import { Box, styled } from '@elementor/ui';
 
 import { isVideoPreloaded } from '../../hooks/use-video-preload';
 import type { StepVisualConfig } from '../../types';
-import { FOOTER_HEIGHT, TOPBAR_HEIGHT } from './base-layout';
-import { LAYOUT_PADDING } from './split-layout';
+import { FOOTER_HEIGHT, LAYOUT_PADDING, TOPBAR_HEIGHT } from './base-layout';
 
 const PANEL_RADIUS_MULTIPLIER = 2;
 const PANEL_MIN_HEIGHT = 36;
