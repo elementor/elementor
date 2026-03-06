@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Box, styled } from '@elementor/ui';
 
 import type { AssetAnimation, RightPanelAsset, StepVisualConfig } from '../../types';
-import { LAYOUT_TRANSITION_MS } from './split-layout';
+import { isVideoPreloaded } from '../../hooks/use-video-preload';
 
 const ANIMATION_DURATION_MS = 400;
 const ANIMATION_OFFSET_PX = 24;
@@ -71,14 +71,7 @@ const RightPanelAssetItem = React.memo( function RightPanelAssetItem( { asset }:
 } );
 
 const VideoPanel = React.memo( function VideoPanel( { src }: { src: string } ) {
-	const [ isReady, setIsReady ] = useState( false );
-
-	useEffect( () => {
-		const timer = setTimeout( () => setIsReady( true ), LAYOUT_TRANSITION_MS );
-		return () => clearTimeout( timer );
-	}, [] );
-
-	if ( ! isReady ) {
+	if ( ! isVideoPreloaded( src ) ) {
 		return null;
 	}
 
