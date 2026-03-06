@@ -8,6 +8,7 @@ export const getMixpanel = () => {
 		enableTracking: eventsManager.enableTracking?.bind( eventsManager ),
 		isMixpanelReady: eventsManager.isMixpanelReady?.bind( eventsManager ),
 		trackingEnabled: eventsManager.trackingEnabled ?? false,
+		getMixpanelInstance: eventsManager.getMixpanelInstance?.bind( eventsManager ),
 	};
 };
 
@@ -43,7 +44,9 @@ export const enableTracking = (): void => getMixpanel().enableTracking?.();
 export const initializeMixpanel = ( onLoaded?: () => void ): void =>
 	getMixpanel().initializeMixpanel?.( onLoaded ?? ( () => {} ) );
 
-export function initializeAndEnableTracking( onReady?: () => void ): void {
+export function initializeAndEnableTracking(
+	onReady?: ( mpInstance?: unknown ) => void
+): void {
 	const mixpanel = getMixpanel();
 
 	if ( ! mixpanel.dispatchEvent ) {
@@ -51,18 +54,18 @@ export function initializeAndEnableTracking( onReady?: () => void ): void {
 	}
 
 	if ( mixpanel.trackingEnabled ) {
-		onReady?.();
+		onReady?.( mixpanel.getMixpanelInstance?.() );
 		return;
 	}
 
 	if ( mixpanel.isMixpanelReady?.() ) {
 		mixpanel.enableTracking?.();
-		onReady?.();
+		onReady?.( mixpanel.getMixpanelInstance?.() );
 		return;
 	}
 
-	mixpanel.initializeMixpanel?.( () => {
+	mixpanel.initializeMixpanel?.( ( mpInstance: unknown ) => {
 		mixpanel.enableTracking?.();
-		onReady?.();
+		onReady?.( mpInstance );
 	} );
 }

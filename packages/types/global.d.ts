@@ -50,10 +50,11 @@ declare global {
 		eventsManager?: {
 			dispatchEvent?: (name: string, data: unknown, options?: Record<string, unknown>) => void;
 			canSendEvents?: () => boolean;
-			initializeMixpanel?: (onLoaded: () => void) => void;
+			initializeMixpanel?: (onLoaded: ( mpInstance?: unknown ) => void) => void;
 			enableTracking?: () => void;
 			isMixpanelReady?: () => boolean;
 			trackingEnabled?: boolean;
+			getMixpanelInstance?: () => unknown;
 			config?: {
 				locations?: Record<string, string>;
 				secondaryLocations?: Record<string, string>;

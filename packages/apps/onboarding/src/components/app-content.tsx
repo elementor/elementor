@@ -4,6 +4,7 @@ import { Box } from '@elementor/ui';
 
 import type { ConnectSuccessData } from '../analytics';
 import { canSendEvents, initializeAndEnableTracking, setCanSendEvents, updateLibraryConnectConfig } from '../analytics';
+import { getMixpanel } from '@elementor/events';
 import { useCheckProInstallScreen } from '../hooks/use-check-pro-install-screen';
 import { useElementorConnect } from '../hooks/use-elementor-connect';
 import { useInstallTheme } from '../hooks/use-install-theme';
@@ -58,6 +59,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 	} = useOnboarding();
 
 	const [ isCompleting, setIsCompleting ] = useState( false );
+	const isCompletingRef = useRef( false );
 	const { showToast } = useToast();
 
 	const updateProgress = useUpdateProgress();
@@ -96,7 +98,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 			return;
 		}
 
-		if ( hasPassedLogin && stepId ) {
+		if ( hasPassedLogin && stepId && ! isCompletingRef.current ) {
 			trackStepViewed( stepId );
 		}
 	}, [
@@ -123,7 +125,10 @@ export function AppContent( { onClose }: AppContentProps ) {
 			}
 
 			if ( shouldEnableTracking ) {
-				initializeAndEnableTracking( () => {
+				initializeAndEnableTracking( ( mp ) => {
+					( mp as { set_config?: ( c: object ) => void } )?.set_config?.( {
+						api_transport: 'sendbeacon',
+					} );
 					activateTracking();
 					flushQueue();
 				} );
@@ -202,6 +207,10 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 	const redirectToNewPage = useCallback( () => {
 		const redirectUrl = urls.createNewPage || urls.editor || urls.dashboard;
+		const mp = getMixpanel().getMixpanelInstance?.() as
+			| { request_batchers?: { events?: { flush: () => void } } }
+			| undefined;
+		mp?.request_batchers?.events?.flush?.();
 		window.location.href = redirectUrl;
 	}, [ urls ] );
 
@@ -215,6 +224,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 				isConnected,
 				isGuest,
 			} );
+			isCompletingRef.current = true;
 			setIsCompleting( true );
 			updateProgress.mutate(
 				{
@@ -313,6 +323,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 				const themeSlug = ( choiceData?.theme_selection ?? choices.theme_selection ) as string;
 
 				if ( themeSlug && isLast ) {
+					isCompletingRef.current = true;
 					setIsCompleting( true );
 					installTheme.mutate( themeSlug, {
 						onSuccess: () => {
@@ -396,6 +407,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 					isConnected,
 					isGuest,
 				} );
+				isCompletingRef.current = true;
 				setIsCompleting( true );
 				updateProgress.mutate(
 					{
