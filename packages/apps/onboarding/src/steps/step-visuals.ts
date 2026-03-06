@@ -1,11 +1,12 @@
 import { StepId, type StepIdType, type StepVisualConfig } from '../types';
 
 const ONBOARDING_ASSETS_PATH = 'images/app/e-onboarding/';
-const ONBOARDING_VIDEOS_PATH = 'videos/';
 
 const CONTENT_MAX_WIDTH_WIDE_ELEMENT = 724;
 
 const getAssetsBaseUrl = () => window.elementorCommon?.config?.urls?.assets ?? '';
+
+const getVideosBaseUrl = () => window.elementorAppConfig?.[ 'e-onboarding' ]?.urls?.videosBaseUrl ?? '';
 
 export const getOnboardingAssetUrl = ( fileName: string ) => {
 	const baseUrl = getAssetsBaseUrl();
@@ -15,10 +16,9 @@ export const getOnboardingAssetUrl = ( fileName: string ) => {
 };
 
 export const getOnboardingVideoUrl = ( fileName: string ) => {
-	const baseUrl = getAssetsBaseUrl();
-	const path = `${ ONBOARDING_VIDEOS_PATH }${ fileName }`;
+	const baseUrl = getVideosBaseUrl();
 
-	return baseUrl ? `${ baseUrl }${ path }` : path;
+	return baseUrl ? `${ baseUrl }${ fileName }` : '';
 };
 
 const buildBackground = ( fileName: string ) => {

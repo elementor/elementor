@@ -7,7 +7,7 @@ import { ProgressBar } from './progress-bar';
 import { RightPanel } from './right-panel';
 
 const LAYOUT_GAP = 4;
-const LAYOUT_PADDING = 4;
+export const LAYOUT_PADDING = 4;
 export const LAYOUT_TRANSITION_MS = 300;
 const LEFT_PANEL_CONTENT_WIDTH = 386;
 const LEFT_PANEL_PADDING_X = 80;

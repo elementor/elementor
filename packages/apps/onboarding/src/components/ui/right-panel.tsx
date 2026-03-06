@@ -2,8 +2,10 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Box, styled } from '@elementor/ui';
 
-import type { AssetAnimation, RightPanelAsset, StepVisualConfig } from '../../types';
 import { isVideoPreloaded } from '../../hooks/use-video-preload';
+import type { AssetAnimation, RightPanelAsset, StepVisualConfig } from '../../types';
+import { FOOTER_HEIGHT, TOPBAR_HEIGHT } from './base-layout';
+import { LAYOUT_PADDING } from './split-layout';
 
 const ANIMATION_DURATION_MS = 400;
 const ANIMATION_OFFSET_PX = 24;
@@ -16,16 +18,19 @@ interface RightPanelRootProps {
 
 const RightPanelRoot = styled( Box, {
 	shouldForwardProp: ( prop ) => prop !== 'background',
-} )< RightPanelRootProps >( ( { theme, background } ) => ( {
-	position: 'relative',
-	width: '100%',
-	height: '100%',
-	minHeight: theme.spacing( PANEL_MIN_HEIGHT ),
-	borderRadius: theme.shape.borderRadius * PANEL_RADIUS_MULTIPLIER,
-	overflow: 'hidden',
-	background,
-	backgroundPosition: 'left center',
-} ) );
+} )< RightPanelRootProps >( ( { theme, background } ) => {
+	const height = `calc(100vh - ${ TOPBAR_HEIGHT }px - ${ FOOTER_HEIGHT }px - ${ theme.spacing( LAYOUT_PADDING * 2 ) })`;
+
+	return {
+		position: 'relative',
+		width: '100%',
+		height,
+		minHeight: theme.spacing( PANEL_MIN_HEIGHT ),
+		borderRadius: theme.shape.borderRadius * PANEL_RADIUS_MULTIPLIER,
+		overflow: 'hidden',
+		background,
+	};
+} );
 
 const AssetImage = styled( 'img' )( {
 	position: 'absolute',
@@ -71,7 +76,9 @@ const RightPanelAssetItem = React.memo( function RightPanelAssetItem( { asset }:
 } );
 
 const VideoPanel = React.memo( function VideoPanel( { src }: { src: string } ) {
-	if ( ! isVideoPreloaded( src ) ) {
+	const [ hasError, setHasError ] = useState( false );
+
+	if ( ! isVideoPreloaded( src ) || hasError ) {
 		return null;
 	}
 
@@ -82,6 +89,7 @@ const VideoPanel = React.memo( function VideoPanel( { src }: { src: string } ) {
 			autoPlay
 			muted
 			playsInline
+			onError={ () => setHasError( true ) }
 			sx={ {
 				position: 'absolute',
 				inset: 0,

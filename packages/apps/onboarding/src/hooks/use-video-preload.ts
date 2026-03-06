@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { getVideoUrls } from '../steps/step-visuals';
 
-const preloadedUrls = new Set<string>();
+const preloadedUrls = new Set< string >();
 
 export function isVideoPreloaded( url: string ): boolean {
 	return preloadedUrls.has( url );
@@ -20,7 +20,14 @@ export function useVideoPreload() {
 			const video = document.createElement( 'video' );
 			video.preload = 'auto';
 			video.src = url;
-			video.addEventListener( 'canplaythrough', () => preloadedUrls.add( url ), { once: true } );
+			video.addEventListener(
+				'canplaythrough',
+				() => {
+					preloadedUrls.add( url );
+				},
+				{ once: true }
+			);
+			video.addEventListener( 'error', () => {}, { once: true } );
 		} );
 	}, [] );
 }
