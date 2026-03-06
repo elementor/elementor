@@ -1457,7 +1457,7 @@ class Container extends Element_Base {
 				'label' => esc_html__( 'Row Span', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'' => ' Default',
+					'' => ' ' . esc_html__( 'Default', 'elementor' ),
 					'1' => '1',
 					'2' => '2',
 					'3' => '3',
