@@ -1,4 +1,4 @@
-import { zod as z } from '@elementor/editor-mcp';
+import { z } from '@elementor/schema';
 
 import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 

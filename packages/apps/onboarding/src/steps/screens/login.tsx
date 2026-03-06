@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Divider, Stack, Typography } from '@elementor/ui';
+import { Box, Stack, Typography, useTheme } from '@elementor/ui';
 
 import {
 	FullscreenCard,
@@ -9,8 +9,8 @@ import {
 	TextButton,
 } from '../../components/fullscreen-card';
 import { ElementorIcon } from '../../components/ui/elementor-icon';
+import { AppleIcon, FacebookIcon, GoogleIcon } from '../../icons';
 import { t } from '../../utils/translations';
-import { AppleIcon, FacebookIcon, GoogleIcon } from '../components/login/social-icons';
 
 interface LoginProps {
 	onConnect?: () => void;
@@ -18,6 +18,8 @@ interface LoginProps {
 }
 
 export function Login( { onConnect, onContinueAsGuest }: LoginProps ) {
+	const theme = useTheme();
+
 	return (
 		<FullscreenCard data-testid="login-screen">
 			<Stack display="flex" alignItems="center" marginBottom={ -1 }>
@@ -26,18 +28,10 @@ export function Login( { onConnect, onContinueAsGuest }: LoginProps ) {
 			<Typography variant="h5" color="text.primary" align="center" fontWeight={ 500 } fontFamily="Poppins">
 				{ t( 'login.title' ) }
 			</Typography>
-			<Stack spacing={ 3 } width="100%">
+			<Stack width="100%" gap={ theme.spacing( 2 ) }>
 				<PrimaryButton variant="contained" color="primary" fullWidth size="large" onClick={ onConnect }>
 					{ t( 'login.sign_in' ) }
 				</PrimaryButton>
-
-				<Stack direction="row" alignItems="center" justifyContent="center" spacing={ 2 }>
-					<Divider sx={ { width: 80 } } />
-					<Typography variant="body2" color="text.tertiary">
-						{ t( 'login.or' ) }
-					</Typography>
-					<Divider sx={ { width: 80 } } />
-				</Stack>
 
 				<Stack spacing={ 6 }>
 					<Stack spacing={ 2 } alignItems="center">
@@ -63,7 +57,9 @@ export function Login( { onConnect, onContinueAsGuest }: LoginProps ) {
 						href={ '#' }
 						color="info.main"
 						align="center"
+						variant="body2"
 						onClick={ ( event: React.SyntheticEvent ) => onContinueAsGuest?.( event ) }
+						sx={ { textDecoration: 'none' } }
 					>
 						{ t( 'login.continue_as_guest' ) }
 					</TextButton>

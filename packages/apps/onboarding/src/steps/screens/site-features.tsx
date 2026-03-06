@@ -1,20 +1,20 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
-import {
-	CodeIcon,
-	ColorSwatchIcon,
-	ElementorAccessibilityIcon,
-	ElementorAIIcon,
-	ElementorEmailDeliverabilityIcon,
-	ElementorImageOptimizerIcon,
-	ThemeBuilderIcon,
-} from '@elementor/icons';
-import { Stack, type Theme, Typography } from '@elementor/ui';
+import { Stack, Typography, useTheme } from '@elementor/ui';
 
-import { CorePlaceholderIcon } from '../../components/ui/core-placeholder-icon';
 import { StepTitle } from '../../components/ui/styled-components';
-import { WoocommerceIcon } from '../../components/ui/woocommerce-icon';
 import { useOnboarding } from '../../hooks/use-onboarding';
+import {
+	AccessibilityToolsIcon,
+	AIGeneratorIcon,
+	ClassesVariablesIcon,
+	CorePlaceholderIcon,
+	CustomCodeIcon,
+	EmailDeliverabilityIcon,
+	ImageOptimizationIcon,
+	ThemeBuilderIcon,
+	WoocommerceIcon,
+} from '../../icons';
 import { t } from '../../utils/translations';
 import { FeatureGrid, type FeatureOption, ProPlanNotice } from '../components/site-features';
 
@@ -22,7 +22,7 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 	{
 		id: 'classes_variables',
 		labelKey: 'steps.site_features.option_classes_variables',
-		Icon: ( props ) => <ColorSwatchIcon { ...props } sx={ { transform: 'rotate(90deg)' } } />,
+		Icon: ClassesVariablesIcon,
 		licenseType: 'core',
 	},
 	{
@@ -46,31 +46,31 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 	{
 		id: 'custom_code_css',
 		labelKey: 'steps.site_features.option_custom_code',
-		Icon: CodeIcon,
+		Icon: CustomCodeIcon,
 		licenseType: 'pro',
 	},
 	{
 		id: 'email_deliverability',
 		labelKey: 'steps.site_features.option_email_deliverability',
-		Icon: ElementorEmailDeliverabilityIcon,
+		Icon: EmailDeliverabilityIcon,
 		licenseType: 'one',
 	},
 	{
 		id: 'ai_features',
 		labelKey: 'steps.site_features.option_ai_generator',
-		Icon: ElementorAIIcon,
+		Icon: AIGeneratorIcon,
 		licenseType: 'one',
 	},
 	{
 		id: 'image_optimization',
 		labelKey: 'steps.site_features.option_image_optimization',
-		Icon: ElementorImageOptimizerIcon,
+		Icon: ImageOptimizationIcon,
 		licenseType: 'one',
 	},
 	{
 		id: 'accessibility',
 		labelKey: 'steps.site_features.option_accessibility_tools',
-		Icon: ElementorAccessibilityIcon,
+		Icon: AccessibilityToolsIcon,
 		licenseType: 'one',
 	},
 	{
@@ -89,6 +89,8 @@ const FEATURE_OPTION_IDS = new Set( FEATURE_OPTIONS.map( ( featureOption ) => fe
 
 export function SiteFeatures() {
 	const { choices, actions } = useOnboarding();
+
+	const theme = useTheme();
 
 	const storedPaidFeatures = useMemo(
 		() => ( ( choices.site_features as string[] ) || [] ).filter( ( id ) => FEATURE_OPTION_IDS.has( id ) ),
@@ -126,19 +128,9 @@ export function SiteFeatures() {
 	}, [ storedPaidFeatures ] );
 
 	return (
-		<Stack
-			spacing={ 4 }
-			width="100%"
-			marginBottom={ 10 }
-			data-testid="site-features-step"
-			sx={ ( theme: Theme ) => ( {
-				[ theme.breakpoints.down( 'sm' ) ]: {
-					marginBottom: theme.spacing( 10 ),
-				},
-			} ) }
-		>
+		<Stack spacing={ 4 } width="100%" data-testid="site-features-step">
 			<Stack spacing={ 1 } textAlign="center" alignItems="center">
-				<StepTitle color="text.primary" variant="h5" align="center">
+				<StepTitle color="text.primary" variant="h5" align="center" paddingBlockStart={ theme.spacing( 2.5 ) }>
 					{ t( 'steps.site_features.title' ) }
 				</StepTitle>
 				<Typography variant="body1" color="text.secondary">

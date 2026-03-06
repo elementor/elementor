@@ -26,8 +26,10 @@ const SplitLayoutRoot = styled( Box )( ( { theme } ) => {
 		gridTemplateColumns: `2fr 1fr`,
 		gap: theme.spacing( LAYOUT_GAP ),
 		padding: theme.spacing( LAYOUT_PADDING ),
-		minHeight: 0,
 		transition: `grid-template-columns ${ LAYOUT_TRANSITION_MS }ms ease`,
+		[ theme.breakpoints.up( 'md' ) ]: {
+			minHeight: 0,
+		},
 		[ `@media (max-width: ${ hideImageBreakpoint }px)` ]: {
 			gridTemplateColumns: '1fr',
 			'& > *:last-child': {
