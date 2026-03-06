@@ -22,14 +22,23 @@ export const SizeComponent = ( { anchorRef, ...sizeFieldProps }: Props ) => {
 	const hasCustomUnitOption = sizeFieldProps.units.includes( EXTENDED_UNITS.custom );
 
 	useEffect( () => {
-		if ( isCustomUnit && anchorRef?.current ) {
+		if ( isCustomUnit && anchorRef?.current && ! popupState.isOpen ) {
 			popupState.open( anchorRef?.current );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ isCustomUnit, anchorRef, popupState.isOpen ] );
+	}, [ isCustomUnit ] );
 
 	const handleSizeChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-		sizeFieldProps.onChange( { size: event.target.value, unit: EXTENDED_UNITS.custom } );
+		sizeFieldProps.onChange( {
+			size: event.target.value,
+			unit: EXTENDED_UNITS.custom,
+		} );
+	};
+
+	const handleInputClick = ( event: React.MouseEvent ) => {
+		if ( ( event.target as HTMLElement ).closest( 'input' ) && isCustomUnit ) {
+			popupState.open( anchorRef?.current );
+		}
 	};
 
 	const popupAttributes = {
@@ -41,7 +50,10 @@ export const SizeComponent = ( { anchorRef, ...sizeFieldProps }: Props ) => {
 		<>
 			<SizeField
 				{ ...sizeFieldProps }
-				InputProps={ popupAttributes }
+				InputProps={ {
+					...popupAttributes,
+					onClick: handleInputClick,
+				} }
 				unitSelectorProps={ {
 					menuItemsAttributes: hasCustomUnitOption ? { custom: popupAttributes } : undefined,
 				} }

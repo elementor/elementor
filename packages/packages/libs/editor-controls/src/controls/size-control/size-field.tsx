@@ -10,13 +10,13 @@ import { SizeInput } from './ui/size-input';
 import { UnitSelector, type UnitSelectorProps } from './ui/unit-selector';
 import { isExtendedUnit } from './utils/is-extended-unit';
 
-export type SizeFieldProps< TValue, TUnit extends SizeUnit > = {
+export type SizeFieldProps< TValue extends SizePropValue[ 'value' ], TUnit extends SizeUnit > = {
 	units: TUnit[];
 	value: TValue | null;
 	placeholder?: string;
 	defaultUnit?: SizeUnit;
 	startIcon?: React.ReactNode;
-	onChange: ( value: TValue | null ) => void;
+	onChange: ( value: TValue ) => void;
 	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 	onKeyDown?: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
 	disabled?: boolean;
@@ -49,26 +49,19 @@ export const SizeField = < T extends SizePropValue[ 'value' ], U extends SizeUni
 		onKeyDown?.( event );
 	};
 
-	const handleBlur = ( event: React.FocusEvent< HTMLInputElement > ) => {
-		if ( ! hasValue( size ) ) {
-			onChange( null );
-		}
-
-		onBlur?.( event );
-	};
-
 	const inputType = isExtendedUnit( unit ) ? 'text' : 'number';
 
 	return (
 		<SizeInput
 			type={ inputType }
 			value={ size }
-			onBlur={ handleBlur }
+			onBlur={ onBlur }
 			onKeyDown={ handleKeyDown }
 			onChange={ ( event ) => setSize( event.target.value ) }
 			InputProps={ {
 				...InputProps,
 				autoComplete: 'off',
+				readOnly: isExtendedUnit( unit ),
 				startAdornment: startIcon && (
 					<InputAdornment position="start" disabled={ disabled }>
 						{ startIcon }

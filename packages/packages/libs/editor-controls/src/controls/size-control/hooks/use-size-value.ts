@@ -10,7 +10,7 @@ type SizeValue = SizePropValue[ 'value' ];
 
 type UseSizeValueProps< T, U > = {
 	value: T | null;
-	onChange: ( value: T | null ) => void;
+	onChange: ( value: T ) => void;
 	units: U[];
 	defaultUnit?: U;
 };
