@@ -4,11 +4,11 @@ import { Box } from '@elementor/ui';
 
 import { useCheckProInstallScreen } from '../hooks/use-check-pro-install-screen';
 import { useElementorConnect } from '../hooks/use-elementor-connect';
-import { useVideoPreload } from '../hooks/use-video-preload';
 import { useInstallTheme } from '../hooks/use-install-theme';
 import { useOnboarding } from '../hooks/use-onboarding';
 import { useUpdateChoices } from '../hooks/use-update-choices';
 import { useUpdateProgress } from '../hooks/use-update-progress';
+import { useVideoPreload } from '../hooks/use-video-preload';
 import { BuildingFor } from '../steps/screens/building-for';
 import { ExperienceLevel } from '../steps/screens/experience-level';
 import { Login } from '../steps/screens/login';

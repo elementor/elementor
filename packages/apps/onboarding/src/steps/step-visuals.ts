@@ -29,38 +29,31 @@ const buildBackground = ( fileName: string ) => {
 
 const DEFAULT_CONFIG: StepVisualConfig = {
 	background: buildBackground( 'step-1.png' ),
-	assets: [],
 };
 
 export const LOGIN_CONFIG: StepVisualConfig = {
 	background: buildBackground( 'login.png' ),
-	assets: [],
 };
 
 const stepVisuals: Record< StepIdType, StepVisualConfig > = {
 	[ StepId.BUILDING_FOR ]: {
 		background: buildBackground( 'step-1.png' ),
-		assets: [],
 	},
 	[ StepId.SITE_ABOUT ]: {
 		background: buildBackground( 'step-2.png' ),
-		assets: [],
 		video: getOnboardingVideoUrl( 'step-2.webm' ),
 	},
 	[ StepId.EXPERIENCE_LEVEL ]: {
 		background: buildBackground( 'step-3.png' ),
-		assets: [],
 		video: getOnboardingVideoUrl( 'step-3.webm' ),
 	},
 	[ StepId.THEME_SELECTION ]: {
 		background: buildBackground( 'step-4.png' ),
-		assets: [],
 		video: getOnboardingVideoUrl( 'step-4.webm' ),
 		contentMaxWidth: CONTENT_MAX_WIDTH_WIDE_ELEMENT,
 	},
 	[ StepId.SITE_FEATURES ]: {
 		background: buildBackground( 'step-5.png' ),
-		assets: [],
 		video: getOnboardingVideoUrl( 'step-5.webm' ),
 		contentMaxWidth: CONTENT_MAX_WIDTH_WIDE_ELEMENT,
 	},
