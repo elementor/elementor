@@ -13,7 +13,7 @@ describe( 'ExperienceLevel', () => {
 		} );
 
 		// Assert
-		expect( screen.getByText( 'How much experience do you have with Elementor?' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'How experienced are you with Elementor?' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'This helps us adjust the editor to your workflow.' ) ).toBeInTheDocument();
 	} );
 
