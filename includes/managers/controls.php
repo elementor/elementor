@@ -1361,7 +1361,7 @@ class Controls_Manager {
 						<i class="eicon-lock"></i>
 					</span>
 					<div class="elementor-control-input-wrapper elementor-control-unit-5 e-control-' . $id . '-promotion">
-					<div class="select-promotion elementor-control-unit-5">None</div>
+					<div class="select-promotion elementor-control-unit-5">' . esc_html__( 'None', 'elementor' ) . '</div>
 					</div>
 				</div>
 			</div>
