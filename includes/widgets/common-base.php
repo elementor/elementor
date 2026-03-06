@@ -446,7 +446,7 @@ class Widget_Common_Base extends Widget_Base {
 					'10' => '10',
 					'11' => '11',
 					'12' => '12',
-					'custom' => 'Custom',
+					'custom' => esc_html__( 'Custom', 'elementor' ),
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'grid-row: span {{VALUE}};',
