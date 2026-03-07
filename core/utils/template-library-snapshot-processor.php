@@ -17,12 +17,16 @@ abstract class Template_Library_Snapshot_Processor {
 	abstract protected function count_current_items( array $items ): int;
 	abstract protected function save_data( array $items, array $metadata ): array;
 
-	protected function get_comparison_ignore_keys(): array {
-		return [];
-	}
-
 	protected function normalize_for_comparison( array $item ): array {
 		return $item;
+	}
+
+	protected function is_matching_item( array $existing_item, array $incoming_item ): bool {
+		return Template_Library_Import_Export_Utils::items_equal_ignoring_keys(
+			$this->normalize_for_comparison( $existing_item ),
+			$incoming_item,
+			[]
+		);
 	}
 
 	protected function get_empty_result(): array {
@@ -46,7 +50,6 @@ abstract class Template_Library_Snapshot_Processor {
 		$current_items = $current['items'] ?? [];
 		$existing_labels = Template_Library_Import_Export_Utils::extract_labels( $current_items );
 		$label_to_id = Template_Library_Import_Export_Utils::build_label_to_id_index( $current_items );
-		$ignore_keys = $this->get_comparison_ignore_keys();
 
 		$id_map = [];
 		$ids_to_flatten = [];
@@ -65,11 +68,7 @@ abstract class Template_Library_Snapshot_Processor {
 			$matching_id = is_string( $incoming_label ) ? ( $label_to_id[ $incoming_label ] ?? null ) : null;
 
 			if ( null !== $matching_id && isset( $updated_items[ $matching_id ] ) ) {
-				$is_same = Template_Library_Import_Export_Utils::items_equal_ignoring_keys(
-					$this->normalize_for_comparison( $updated_items[ $matching_id ] ),
-					$incoming_item,
-					$ignore_keys
-				);
+				$is_same = $this->is_matching_item( $updated_items[ $matching_id ], $incoming_item );
 
 				if ( $is_same ) {
 					if ( $matching_id !== $incoming_id ) {

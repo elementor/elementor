@@ -86,7 +86,7 @@ class Test_Template_Library_Global_Classes_Utils extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'g-missing', $snapshot['items'] );
 	}
 
-	public function test_merge_snapshot_and_get_id_map_remaps_conflict_and_updates_labels() {
+	public function test_merge_snapshot_and_get_id_map_matches_by_label_ignoring_variants() {
 		$this->act_as_admin();
 
 		$this->seed_global_classes( [
@@ -113,26 +113,24 @@ class Test_Template_Library_Global_Classes_Utils extends Elementor_Test_Base {
 
 		$incoming = [
 			'items' => [
-				'g-1' => [
-					'id' => 'g-1',
+				'g-remote' => [
+					'id' => 'g-remote',
 					'type' => 'class',
 					'label' => 'Same',
 					'variants' => [],
 				],
 			],
-			'order' => [ 'g-1' ],
+			'order' => [ 'g-remote' ],
 		];
 
 		$result = Template_Library_Global_Classes_Snapshot_Builder::merge_snapshot_and_get_id_map( $incoming );
 
-		$this->assertArrayHasKey( 'g-1', $result['id_map'] );
-		$new_id = $result['id_map']['g-1'];
-		$this->assertStringStartsWith( 'g-', $new_id );
-		$this->assertNotSame( 'g-1', $new_id );
+		$this->assertArrayHasKey( 'g-remote', $result['id_map'] );
+		$this->assertSame( 'g-1', $result['id_map']['g-remote'] );
 
 		$current = Global_Classes_Repository::make()->all()->get();
-		$this->assertArrayHasKey( $new_id, $current['items'] );
-		$this->assertStringStartsWith( Template_Library_Import_Export_Utils::LABEL_PREFIX, $current['items'][ $new_id ]['label'] );
+		$this->assertCount( 1, $current['items'] );
+		$this->assertArrayHasKey( 'g-1', $current['items'] );
 	}
 
 	public function test_merge_snapshot_matches_by_name_and_maps_id_when_content_equal() {

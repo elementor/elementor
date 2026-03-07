@@ -96,8 +96,10 @@ class Template_Library_Global_Classes_Snapshot_Builder extends Template_Library_
 		return self::make()->create_all_as_new( $snapshot );
 	}
 
-	protected function get_comparison_ignore_keys(): array {
-		return [ 'id' ];
+	protected function is_matching_item( array $existing_item, array $incoming_item ): bool {
+		// For global classes, if the labels match, we consider them the same item
+		// when merging, so we reuse the existing class and ignore incoming variants or extra fields.
+		return true;
 	}
 
 	protected function normalize_for_comparison( array $item ): array {
