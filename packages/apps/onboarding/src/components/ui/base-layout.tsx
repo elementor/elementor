@@ -52,4 +52,5 @@ export function BaseLayout( { children, topBar, footer, testId }: BaseLayoutProp
 	);
 }
 
+export const LAYOUT_PADDING = 4;
 export { TOPBAR_HEIGHT, FOOTER_HEIGHT };
