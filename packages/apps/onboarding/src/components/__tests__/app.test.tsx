@@ -53,6 +53,7 @@ interface OnboardingConfig {
 		comparePlans?: string;
 		createNewPage?: string;
 		upgradeUrl: string;
+		videosBaseUrl: string;
 	};
 }
 
@@ -105,6 +106,7 @@ const defaultConfig: OnboardingConfig = {
 		createNewPage: 'https://test.local/wp-admin/edit.php?action=elementor_new_post&post_type=page',
 		upgradeUrl:
 			'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar&utm_term=2.0.0',
+		videosBaseUrl: 'https://test.local/videos/',
 	},
 };
 
