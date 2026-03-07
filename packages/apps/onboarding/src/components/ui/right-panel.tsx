@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Box, styled } from '@elementor/ui';
 
-import type { AssetAnimation, RightPanelAsset, StepVisualConfig } from '../../types';
+import { isVideoPreloaded } from '../../hooks/use-video-preload';
+import type { StepVisualConfig } from '../../types';
+import { FOOTER_HEIGHT, LAYOUT_PADDING, TOPBAR_HEIGHT } from './base-layout';
 
-const ANIMATION_DURATION_MS = 400;
-const ANIMATION_OFFSET_PX = 24;
 const PANEL_RADIUS_MULTIPLIER = 2;
 const PANEL_MIN_HEIGHT = 36;
 
@@ -15,55 +15,44 @@ interface RightPanelRootProps {
 
 const RightPanelRoot = styled( Box, {
 	shouldForwardProp: ( prop ) => prop !== 'background',
-} )< RightPanelRootProps >( ( { theme, background } ) => ( {
-	position: 'relative',
-	width: '100%',
-	height: '100%',
-	minHeight: theme.spacing( PANEL_MIN_HEIGHT ),
-	borderRadius: theme.shape.borderRadius * PANEL_RADIUS_MULTIPLIER,
-	overflow: 'hidden',
-	background,
-} ) );
+} )< RightPanelRootProps >( ( { theme, background } ) => {
+	const height = `calc(100vh - ${ TOPBAR_HEIGHT }px - ${ FOOTER_HEIGHT }px - ${ theme.spacing(
+		LAYOUT_PADDING * 2
+	) })`;
 
-const AssetImage = styled( 'img' )( {
-	position: 'absolute',
-	maxWidth: '100%',
-	height: 'auto',
-	transition: `opacity ${ ANIMATION_DURATION_MS }ms ease, transform ${ ANIMATION_DURATION_MS }ms ease`,
+	return {
+		position: 'relative',
+		width: '100%',
+		height,
+		minHeight: theme.spacing( PANEL_MIN_HEIGHT ),
+		borderRadius: theme.shape.borderRadius * PANEL_RADIUS_MULTIPLIER,
+		overflow: 'hidden',
+		background,
+	};
 } );
 
-const getAnimationStyle = ( animation: AssetAnimation, isVisible: boolean ) => {
-	if ( animation === 'none' ) {
-		return {
-			opacity: 1,
-			transform: 'translateY(0)',
-		};
+const VideoPanel = React.memo( ( props: { src: string } ) => {
+	const [ hasError, setHasError ] = useState( false );
+
+	if ( ! isVideoPreloaded( props.src ) || hasError ) {
+		return null;
 	}
 
-	const opacity = isVisible ? 1 : 0;
-	const transform =
-		animation === 'fade-up' ? `translateY(${ isVisible ? 0 : ANIMATION_OFFSET_PX }px)` : 'translateY(0)';
-
-	return { opacity, transform };
-};
-
-const RightPanelAssetItem = React.memo( function RightPanelAssetItem( { asset }: { asset: RightPanelAsset } ) {
-	const [ isVisible, setIsVisible ] = useState( false );
-
-	useEffect( () => {
-		setIsVisible( true );
-	}, [] );
-
-	const animation = asset.animation ?? 'fade-in';
-	const animationStyle = getAnimationStyle( animation, isVisible );
-
 	return (
-		<AssetImage
-			src={ asset.src }
-			alt={ asset.alt ?? '' }
-			aria-hidden={ ! asset.alt }
-			draggable={ false }
-			style={ { ...asset.style, ...animationStyle } }
+		<Box
+			component="video"
+			src={ props.src }
+			autoPlay
+			muted
+			playsInline
+			onError={ () => setHasError( true ) }
+			sx={ {
+				position: 'absolute',
+				inset: 0,
+				width: '100%',
+				height: '100%',
+				objectFit: 'cover',
+			} }
 		/>
 	);
 } );
@@ -75,9 +64,7 @@ interface RightPanelProps {
 export const RightPanel = React.memo( function RightPanel( { config }: RightPanelProps ) {
 	return (
 		<RightPanelRoot background={ config.background }>
-			{ config.assets.map( ( asset ) => (
-				<RightPanelAssetItem key={ asset.id } asset={ asset } />
-			) ) }
+			{ config.video && <VideoPanel key={ config.video } src={ config.video } /> }
 		</RightPanelRoot>
 	);
 } );
