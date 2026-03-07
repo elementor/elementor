@@ -76,7 +76,7 @@ class Test_Global_Classes_Template_Bundle extends Elementor_Test_Base {
 		$this->assertSame( [ 'g-123' ], $decoded['global_classes']['order'] );
 	}
 
-	public function test_import_merges_global_classes_and_remaps_on_conflict() {
+	public function test_import_merges_global_classes_and_reuses_on_conflict() {
 		// Arrange.
 		$this->act_as_admin();
 
@@ -142,27 +142,19 @@ class Test_Global_Classes_Template_Bundle extends Elementor_Test_Base {
 		$prepared = $this->get_local_source()->prepare_import_template_data( $tmp );
 		unlink( $tmp );
 
-		// Assert: content remapped away from g-123.
+		// Assert: content remapped to use the existing g-123.
 		$this->assertIsArray( $prepared );
 		$this->assertIsArray( $prepared['content'] );
-		$this->assertSame( 'g-123', $template_json['content'][0]['settings']['classes']['value'][0] );
+		$this->assertSame( 'g-123', $prepared['content'][0]['settings']['classes']['value'][0] );
 
 		$current = Global_Classes_Repository::make()->all()->get();
 		$current_ids = array_keys( $current['items'] ?? [] );
 
 		$this->assertContains( 'g-123', $current_ids );
-		$this->assertGreaterThanOrEqual( 2, count( $current_ids ) );
+		$this->assertCount( 1, $current_ids );
 
-		$new_ids = array_values( array_diff( $current_ids, [ 'g-123' ] ) );
-		$new_id = $new_ids[0];
-
-		$this->assertSame( $new_id, $prepared['content'][0]['settings']['classes']['value'][0] );
-		$this->assertStringStartsWith( 'g-', $new_id );
-		$this->assertNotSame( 'g-123', $new_id );
-
-		// The duplicated label should be auto-renamed.
+		// The existing label should be untouched.
 		$this->assertSame( 'Existing', $current['items']['g-123']['label'] );
-		$this->assertStringStartsWith( 'DUP_', $current['items'][ $new_id ]['label'] );
 	}
 
 	public function test_import_keep_flatten_does_not_add_global_classes_to_repository() {
