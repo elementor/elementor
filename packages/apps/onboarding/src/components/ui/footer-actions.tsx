@@ -26,9 +26,6 @@ const BackButton = styled( Button )( ( { theme } ) => ( {
 	fontWeight: 500,
 	lineHeight: theme.typography.pxToRem( 24 ),
 	letterSpacing: '0.4px',
-	'&:hover': {
-		backgroundColor: 'transparent',
-	},
 } ) );
 
 const SkipButton = styled( Button )( ( { theme } ) => {
@@ -46,15 +43,12 @@ const SkipButton = styled( Button )( ( { theme } ) => {
 		lineHeight: theme.typography.pxToRem( 24 ),
 		letterSpacing: '0.4px',
 		'&:hover': {
-			backgroundColor: 'transparent',
 			borderColor: outlinedBorderColor,
 		},
 	};
 } );
 
 const ContinueButton = styled( Button )( ( { theme } ) => ( {
-	backgroundColor: theme.palette.primary.main,
-	color: theme.palette.primary.contrastText,
 	padding: theme.spacing( 0.75, 2 ),
 	minHeight: 0,
 	borderRadius: theme.shape.borderRadius,
@@ -63,8 +57,8 @@ const ContinueButton = styled( Button )( ( { theme } ) => ( {
 	fontWeight: 500,
 	lineHeight: theme.typography.pxToRem( 24 ),
 	letterSpacing: '0.4px',
-	'&:hover': {
-		backgroundColor: theme.palette.primary.main,
+	'&:focus-visible': {
+		backgroundColor: theme.palette.promotion.main,
 	},
 } ) );
 
@@ -75,6 +69,7 @@ interface FooterActionsProps {
 	backLabel?: string;
 	skipLabel?: string;
 	continueLabel?: string;
+	isBackDisabled?: boolean;
 	continueDisabled?: boolean;
 	continueLoading?: boolean;
 	onBack?: () => void;
@@ -89,6 +84,7 @@ export function FooterActions( {
 	backLabel = t( 'common.back' ),
 	skipLabel = t( 'common.skip' ),
 	continueLabel = t( 'common.continue' ),
+	isBackDisabled = false,
 	continueDisabled = false,
 	continueLoading = false,
 	onBack,
@@ -99,7 +95,12 @@ export function FooterActions( {
 		<>
 			<LeftActions>
 				{ showBack && (
-					<BackButton variant="text" onClick={ onBack } startIcon={ <ArrowLeftIcon fontSize="tiny" /> }>
+					<BackButton
+						variant="text"
+						onClick={ onBack }
+						disabled={ isBackDisabled }
+						startIcon={ <ArrowLeftIcon fontSize="tiny" /> }
+					>
 						{ backLabel }
 					</BackButton>
 				) }
@@ -114,6 +115,7 @@ export function FooterActions( {
 
 				{ showContinue && (
 					<ContinueButton
+						color="primary"
 						variant="contained"
 						onClick={ onContinue }
 						disabled={ continueDisabled || continueLoading }
