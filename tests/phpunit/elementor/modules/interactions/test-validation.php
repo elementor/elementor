@@ -403,7 +403,7 @@ class Test_Validation extends TestCase {
 		$this->assertEquals( [], $result['elements'][0]['interactions'] );
 	}
 
-	public function test_sanitize__will_strip_interaction_with_times_without_times_repeat_mode() {
+	public function test_sanitize__will_accept_interaction_with_times_when_repeat_is_loop() {
 		$interaction = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0, '1' );
 		$interaction['value']['animation']['value']['config'] = $this->create_config_prop( [
 			'replay' => false,
@@ -428,6 +428,6 @@ class Test_Validation extends TestCase {
 
 		$result = $this->validation()->sanitize( $document );
 
-		$this->assertEquals( [], $result['elements'][0]['interactions'] );
+		$this->assertNotEmpty( $result['elements'][0]['interactions'] );
 	}
 }
