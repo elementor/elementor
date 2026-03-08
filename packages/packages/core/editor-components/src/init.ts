@@ -23,6 +23,7 @@ import { InstanceEditingPanel } from './components/instance-editing-panel/instan
 import { LoadTemplateComponents } from './components/load-template-components';
 import { COMPONENT_WIDGET_TYPE, createComponentType } from './create-component-type';
 import { initExtended } from './extended/init';
+import { initCreateComponentShortcut } from './extended/shortcuts/create-component-shortcut';
 import { PopulateStore } from './populate-store';
 import { initCircularNestingPrevention } from './prevent-circular-nesting';
 import { loadComponentsAssets } from './store/actions/load-components-assets';
@@ -89,5 +90,9 @@ export function init() {
 
 	if ( !! window.elementorPro && ! isProAtLeast( PRO_EXTENDED_MIGRATION_VERSION ) ) {
 		initExtended();
+	}
+
+	if ( !! window.elementorPro ) {
+		initCreateComponentShortcut();
 	}
 }
