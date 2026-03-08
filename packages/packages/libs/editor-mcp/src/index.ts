@@ -13,4 +13,6 @@ export * from './mcp-registry';
 export { createSampler } from './sampler';
 export { toolPrompts } from './utils/prompt-builder';
 export { ANGIE_MODEL_PREFERENCES, type AngieModelPreferences } from './angie-annotations';
+export { sendPromptToAngie } from './utils/send-prompt-to-angie';
+export { redirectToInstallation } from './utils/redirect-to-installation';
 export const getAngieSdk = () => getSDK();
