@@ -52,7 +52,7 @@
     "setup:testing": "bash scripts/setup-testing.sh",
     "restart:testing": "bash scripts/setup-testing.sh --restart",
     "packages:version": "npm run version -w elementor-packages",
-    "packages:release": "npm run release -w elementor-packages",
+    "packages:release": "turbo build && npm run release -w elementor-packages",
     "wp-playground": "npx -y @wp-playground/cli server --mount=.:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/local.json",
     "wp-playground:ci": "npx -y @wp-playground/cli server --mount=./build:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/ci.json",
     "full-e2e-local": "npx concurrently \"npm run watch\" \"npm run wp-playground\" \"npm run test:playwright -- --ui\"",

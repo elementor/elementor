@@ -1,0 +1,24 @@
+{
+  "name": "elementor-packages",
+  "author": "Elementor Team",
+  "license": "GPL-3.0-or-later",
+  "engines": {
+    "node": ">=20.19.0",
+    "npm": ">=10.0.0"
+  },
+  "scripts": {
+    "test": "jest --config='./jest.config.js'",
+    "test:coverage": "npm run test -- --coverage",
+    "lint": "concurrently -n eslint,tsc -c magenta,blue \"eslint . --report-unused-disable-directives-severity error\" \"tsc\"",
+    "lint:fix": "eslint . --fix --report-unused-disable-directives-severity error",
+    "check-unused": "knip",
+    "spell-check": "cspell . --quiet",
+    "format": "eslint . --fix",
+    "version": "node scripts/version-manager/index.js set",
+    "version:list": "node scripts/version-manager/index.js list",
+    "version:validate": "node scripts/version-manager/index.js validate",
+    "version:bump": "node scripts/version-manager/index.js bump",
+    "version:set": "node scripts/version-manager/index.js set",
+    "release": "node scripts/version-manager/index.js publish"
+  }
+}
