@@ -849,6 +849,17 @@ const TemplateLibraryManager = function() {
 		return hasClasses || hasVariables;
 	};
 
+	this.syncGlobalStylesBeforeSave = function() {
+		const promises = [];
+		const event = new CustomEvent( 'elementor/global-styles/before-save', {
+			detail: { promises },
+		} );
+
+		window.dispatchEvent( event );
+
+		return Promise.allSettled( promises );
+	};
+
 	this.markAsFavorite = function( templateModel, favorite ) {
 		this.clearLastRemovedItems();
 

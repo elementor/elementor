@@ -321,6 +321,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			// Proceed even if auto-save fails or is rejected.
 		}
 
+		await elementor.templates.syncGlobalStylesBeforeSave();
+
 		elementor.templates.saveTemplate( this.getSaveType(), formData );
 	},
 
