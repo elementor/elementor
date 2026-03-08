@@ -47,7 +47,7 @@ export async function createUnpublishedComponent( {
 
 	componentsActions.addCreatedThisSession( generatedUid );
 
-	const componentInstance = await replaceElementWithComponent( element, componentBase );
+	const componentInstance = replaceElementWithComponent( element, componentBase );
 
 	trackComponentEvent( {
 		action: 'created',
