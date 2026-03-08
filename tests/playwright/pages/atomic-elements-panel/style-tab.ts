@@ -242,7 +242,7 @@ export default class StyleTab extends BasePage {
 	}
 
 	async setFontFamily( fontName: string, fontType: 'system' | 'google' = 'system' ): Promise<void> {
-		const categorySelector = 'google' === fontType ? 'Google Fonts' : 'System';
+		const categorySelector = 'google' === fontType ? 'Google' : 'System';
 
 		await this.page.getByRole( 'button', { name: 'Font family' } ).click();
 		await this.page.locator( '.MuiListSubheader-root', { hasText: new RegExp( categorySelector, 'i' ) } ).click();
