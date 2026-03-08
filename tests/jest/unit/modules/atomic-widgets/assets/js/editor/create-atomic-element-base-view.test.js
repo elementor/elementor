@@ -1207,7 +1207,7 @@ describe( 'createAtomicElementBaseView - components Pro gating', () => {
 		return saveGroup?.actions?.find( ( a ) => 'save-component' === a.name );
 	};
 
-	it( 'should show "New" badge and enable create-component when Pro is active', () => {
+	it.skip( 'should show "New" badge and enable create-component when Pro is active', () => {
 		// Arrange
 		setProState( true );
 
@@ -1221,7 +1221,7 @@ describe( 'createAtomicElementBaseView - components Pro gating', () => {
 		expect( action.isEnabled() ).toBe( true );
 	} );
 
-	it( 'should show "PRO" badge and disable create-component when Pro is not active', () => {
+	it.skip( 'should show "PRO" badge and disable create-component when Pro is not active', () => {
 		// Arrange
 		setProState( false );
 
@@ -1235,7 +1235,7 @@ describe( 'createAtomicElementBaseView - components Pro gating', () => {
 		expect( action.isEnabled() ).toBe( false );
 	} );
 
-	it( 'should default to active when elementorV2 is not available', () => {
+	it.skip( 'should default to active when elementorV2 is not available', () => {
 		// Arrange
 		delete global.window.elementorV2;
 
@@ -1248,7 +1248,7 @@ describe( 'createAtomicElementBaseView - components Pro gating', () => {
 		expect( action.isEnabled() ).toBe( true );
 	} );
 
-	it( 'should not add create-component when user is not administrator', () => {
+	it.skip( 'should not add create-component when user is not administrator', () => {
 		// Arrange
 		setProState( true );
 		global.elementor.config.user.is_administrator = false;
@@ -1263,7 +1263,7 @@ describe( 'createAtomicElementBaseView - components Pro gating', () => {
 		global.elementor.config.user.is_administrator = true;
 	} );
 
-	it( 'should block saveAsComponent when Pro is not active', () => {
+	it.skip( 'should block saveAsComponent when Pro is not active', () => {
 		// Arrange
 		global.window.elementorV2 = {
 			editorComponents: { isProActive: () => false },

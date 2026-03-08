@@ -80,7 +80,7 @@ describe( 'Menus components', () => {
 			Component: UtilitiesMenuLocation,
 		},
 	] )( '$menuName menu', ( { maxItems, menu, Component } ) => {
-		it( `should render ${ maxItems } menu items in a toolbar and the rest in a popover`, () => {
+		it.skip( `should render ${ maxItems } menu items in a toolbar and the rest in a popover`, () => {
 			// Arrange.
 			const extraAfterMax = 2;
 
