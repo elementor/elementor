@@ -18,6 +18,7 @@ class Validation {
 	private const VALID_EFFECTS = [ 'fade', 'slide', 'scale', 'custom' ];
 	private const VALID_TYPES = [ 'in', 'out' ];
 	private const VALID_DIRECTIONS = [ '', 'left', 'right', 'top', 'bottom' ];
+	private const VALID_REPEAT_MODES = [ 'loop', 'times' ];
 
 	public function sanitize( $document ) {
 		return $this->sanitize_document_data( $document );
@@ -179,6 +180,24 @@ class Validation {
 		return StringValueValidator::is_valid( $data[ $key ], $allowed_values );
 	}
 
+	private function get_string_prop_value( $data, $key ) {
+		if ( ! isset( $data[ $key ] ) || ! is_array( $data[ $key ] ) ) {
+			return null;
+		}
+
+		$prop = $data[ $key ];
+
+		if ( ! isset( $prop['$$type'] ) || 'string' !== $prop['$$type'] ) {
+			return null;
+		}
+
+		if ( ! array_key_exists( 'value', $prop ) || ! is_string( $prop['value'] ) ) {
+			return null;
+		}
+
+		return $prop['value'];
+	}
+
 	private function is_valid_boolean_prop( $data, $key ) {
 		if ( ! isset( $data[ $key ] ) || ! is_array( $data[ $key ] ) ) {
 			return false;
@@ -259,6 +278,25 @@ class Validation {
 		}
 
 		if ( isset( $config_value['relativeTo'] ) && ! $this->is_valid_string_prop( $config_value, 'relativeTo' ) ) {
+			return false;
+		}
+
+		if ( isset( $config_value['repeat'] ) && ! $this->is_valid_string_prop( $config_value, 'repeat', self::VALID_REPEAT_MODES ) ) {
+			return false;
+		}
+
+		if ( isset( $config_value['times'] ) && ! $this->is_valid_number_prop_in_range( $config_value, 'times', 1 ) ) {
+			return false;
+		}
+
+		$repeat_mode = $this->get_string_prop_value( $config_value, 'repeat' );
+		$has_times = isset( $config_value['times'] );
+
+		if ( $has_times && 'times' !== $repeat_mode ) {
+			return false;
+		}
+
+		if ( 'times' === $repeat_mode && ! $has_times ) {
 			return false;
 		}
 

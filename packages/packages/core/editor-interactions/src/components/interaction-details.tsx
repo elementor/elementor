@@ -6,7 +6,7 @@ import { Box, Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getInteractionsControl } from '../interactions-controls-registry';
-import { type FieldProps, type InteractionItemValue, type SizeStringValue } from '../types';
+import { type FieldProps, type InteractionItemValue, type RepeatMode, type SizeStringValue } from '../types';
 import {
 	createAnimationPreset,
 	createString,
@@ -37,8 +37,6 @@ export const DEFAULT_VALUES = {
 	relativeTo: 'viewport',
 	start: 85,
 	end: 15,
-	repeat: 'loop',
-	times: 1,
 };
 
 const TRIGGERS_WITHOUT_REPLAY = [ 'load', 'scrollOn', 'hover', 'click' ];
@@ -72,7 +70,7 @@ type InteractionValues = {
 	start: SizeStringValue;
 	end: SizeStringValue;
 	customEffects?: PropValue;
-	repeat?: string;
+	repeat?: RepeatMode;
 	times?: number;
 };
 
@@ -101,6 +99,21 @@ const controlVisibilityConfig: ControlVisibilityConfig = {
 	},
 };
 
+function normalizeRepeatMode( value: unknown ): RepeatMode | undefined {
+	if ( 'loop' === value || 'times' === value ) {
+		return value;
+	}
+	return undefined;
+}
+
+function normalizeTimesValue( value: unknown, fallback: number ): number {
+	const numericValue = Number( value );
+	if ( ! Number.isFinite( numericValue ) ) {
+		return fallback;
+	}
+	return Math.max( 1, Math.floor( numericValue ) );
+}
+
 function useControlComponent( controlName: InteractionsControlType, isVisible: boolean = true ) {
 	return useMemo( () => {
 		if ( ! isVisible ) {
@@ -122,11 +135,14 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const easing = extractString( interaction.animation.value.config?.value.easing, DEFAULT_VALUES.easing );
 	const relativeTo = extractString( interaction.animation.value.config?.value.relativeTo, DEFAULT_VALUES.relativeTo );
 	const repeat =
-		( interaction.animation.value.config?.value as { repeat?: { value?: string } } | undefined )?.repeat?.value ??
-		DEFAULT_VALUES.repeat;
+		normalizeRepeatMode(
+			( interaction.animation.value.config?.value as { repeat?: { value?: string } } | undefined )?.repeat?.value
+		) ?? undefined;
 	const times =
-		( interaction.animation.value.config?.value as { times?: { value: number } } | undefined )?.times?.value ??
-		DEFAULT_VALUES.times;
+		normalizeTimesValue(
+			( interaction.animation.value.config?.value as { times?: { value: number } } | undefined )?.times?.value, undefined
+		) ??
+		undefined;
 
 	const start = extractSize( interaction.animation.value.config?.value.start, DEFAULT_VALUES.start );
 	const end = extractSize( interaction.animation.value.config?.value.end, DEFAULT_VALUES.end );
@@ -170,7 +186,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const RepeatControl = useControlComponent(
 		'repeat',
 		controlVisibilityConfig.repeat( interactionValues )
-	) as ComponentType< FieldProps< string > >;
+	) as ComponentType< FieldProps< RepeatMode | undefined > >;
 	const TimesControl = useControlComponent( 'times', controlVisibilityConfig.times( interactionValues ) ) as ComponentType<
 		FieldProps< number >
 	>;
@@ -189,7 +205,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			replay: boolean;
 			easing?: string;
 			relativeTo: string;
-			repeat: string;
+			repeat: RepeatMode | undefined;
 			times: number;
 			start: SizeStringValue;
 			end: SizeStringValue;
@@ -217,7 +233,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 				replay: updates.replay ?? replay,
 				easing: updates.easing ?? easing,
 				relativeTo: updates.relativeTo ?? relativeTo,
-				repeat: updates.repeat ?? repeat,
+				repeat: 'repeat' in updates ? updates.repeat : repeat,
 				times: updates.times ?? times,
 				start: updates.start ?? start,
 				end: updates.end ?? end,
@@ -297,7 +313,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 						<Field label={ __( 'Repeat', 'elementor' ) }>
 							<RepeatControl
 								value={ repeat }
-								onChange={ ( v ) => updateInteraction( { repeat: String( v ) } ) }
+								onChange={ ( v ) => updateInteraction( { repeat: normalizeRepeatMode( v ) } ) }
 							/>
 						</Field>
 					) }
@@ -308,7 +324,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 								value={ times }
 								onChange={ ( v ) =>
 									updateInteraction( {
-										times: typeof v === 'number' ? v : Number( v ) || DEFAULT_VALUES.times,
+										times: normalizeTimesValue( v, DEFAULT_VALUES.times ),
 									} )
 								}
 							/>

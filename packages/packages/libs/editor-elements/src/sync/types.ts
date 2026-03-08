@@ -50,6 +50,8 @@ export type StringPropValue = {
 	value: string;
 };
 
+export type RepeatMode = 'loop' | 'times';
+
 export type NumberPropValue = {
 	$$type: 'number';
 	value: number;
@@ -74,7 +76,10 @@ export type ConfigPropValue = {
 		replay: BooleanPropValue;
 		easing: StringPropValue;
 		relativeTo: StringPropValue;
-		repeat?: StringPropValue;
+		repeat?: {
+			$$type: 'string';
+			value: RepeatMode;
+		};
 		times?: NumberPropValue;
 		start?: SizePropValue;
 		end?: SizePropValue;
