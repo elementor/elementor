@@ -57,7 +57,7 @@ class Components_Access_Controller {
 		return self::is_pro_tier();
 	}
 
-	public static function can_edit_source(): bool {
+	public static function can_edit(): bool {
 		return self::is_expired_or_pro_tier();
 	}
 

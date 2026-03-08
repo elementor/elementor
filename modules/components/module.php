@@ -127,7 +127,7 @@ class Module extends BaseModule {
 			return;
 		}
 
-		if ( ! Components_Access_Controller::can_edit_source() ) {
+		if ( ! Components_Access_Controller::can_edit() ) {
 			throw new \Exception( esc_html__( 'You do not have permission to edit component source.', 'elementor' ) );
 		}
 
