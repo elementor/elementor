@@ -25,7 +25,8 @@ type PropsOrUseProps< TProps extends object > =
 
 export function createRegisterItem< TGroups extends string, TComponent extends ComponentType >(
 	locations: LocationsMap< MenuGroups< TGroups > >,
-	component: TComponent
+	component: TComponent,
+	notify: () => void
 ): RegisterItem< TGroups, TComponent > {
 	return ( { id, group = 'default', priority = 10, overwrite = false, props: _props, useProps: _useProps } ) => {
 		if ( ! ( group in locations ) ) {
@@ -49,5 +50,7 @@ export function createRegisterItem< TGroups extends string, TComponent extends C
 				overwrite,
 			},
 		} );
+
+		notify();
 	};
 }
