@@ -16,10 +16,7 @@ const mockFontConfig = ( groups: Record< string, string >, options: Record< stri
 describe( 'useFontFamilies', () => {
 	it( 'should return empty array when there are no font families', () => {
 		// Arrange.
-		mockFontConfig(
-			{ system: 'System', googlefonts: 'Google' },
-			{},
-		);
+		mockFontConfig( { system: 'System', googlefonts: 'Google' }, {} );
 
 		// Act.
 		const { result } = renderHook( () => useFontFamilies() );
@@ -43,7 +40,7 @@ describe( 'useFontFamilies', () => {
 				'Custom Font 2': 'custom',
 				Roboto: 'googlefonts',
 				'Open Sans': 'googlefonts',
-			},
+			}
 		);
 
 		// Act.
@@ -73,7 +70,7 @@ describe( 'useFontFamilies', () => {
 				Arial: 'system',
 				Roboto: 'googlefonts',
 				'Unknown Font': 'not-registered',
-			},
+			}
 		);
 
 		// Act.
@@ -103,7 +100,7 @@ describe( 'useFontFamilies', () => {
 				Arial: 'system',
 				'My Font': 'custom',
 				Roboto: 'googlefonts',
-			},
+			}
 		);
 
 		// Act.
@@ -134,7 +131,7 @@ describe( 'useFontFamilies', () => {
 				'My Variable Font': 'variable',
 				Roboto: 'googlefonts',
 				'Noto Sans Hebrew': 'earlyaccess',
-			},
+			}
 		);
 
 		// Act.
@@ -179,7 +176,7 @@ describe( 'useFontFamilies', () => {
 			{
 				Arial: 'system',
 				Roboto: 'googlefonts',
-			},
+			}
 		);
 
 		// Act.
