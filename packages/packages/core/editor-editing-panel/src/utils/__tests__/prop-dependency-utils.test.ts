@@ -17,8 +17,6 @@ const plain = ( opts: { default?: ReturnType< typeof str > | null } = {} ) => ( 
 	initial_value: null,
 } );
 
-// ─── tests ───────────────────────────────────────────────────────────────────
-
 describe( 'getElementSettingsWithDefaults', () => {
 	const defaultString = str( 'default-value' );
 	const defaultArray = arr( 'email' );
