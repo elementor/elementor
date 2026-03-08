@@ -120,8 +120,8 @@ describe( 'ComponentsTab', () => {
 			expect( screen.getByText( 'Create your first component' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Learn more' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Or' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Generate a custom component using Angie' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Generate Component' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Create a custom component with Angie' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Create component' ) ).toBeInTheDocument();
 			expect( screen.getByText( /Shift \+ K/ ) ).toBeInTheDocument();
 		} );
 
@@ -236,7 +236,7 @@ describe( 'ComponentsTab', () => {
 			expect( screen.getByText( 'Create your first component' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Learn more' ) ).toBeInTheDocument();
 			expect( screen.queryByText( 'Or' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Generate Component' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Create component' ) ).not.toBeInTheDocument();
 		} );
 
 		describe( 'Angie Integration', () => {
@@ -265,7 +265,7 @@ describe( 'ComponentsTab', () => {
 					store
 				);
 
-				fireEvent.click( screen.getByText( 'Generate Component' ) );
+				fireEvent.click( screen.getByText( 'Create component' ) );
 
 				// Assert
 				expect( mcpMock().sendPromptToAngie ).toHaveBeenCalled();
@@ -284,11 +284,11 @@ describe( 'ComponentsTab', () => {
 					store
 				);
 
-				fireEvent.click( screen.getByText( 'Generate Component' ) );
+				fireEvent.click( screen.getByText( 'Create component' ) );
 
 				// Assert
 				expect( screen.getByText( 'Meet Angie' ) ).toBeInTheDocument();
-				expect( screen.getByText( 'You can now generate custom components using Angie' ) ).toBeInTheDocument();
+				expect( screen.getByText( 'Build components using simple instructions.' ) ).toBeInTheDocument();
 			} );
 
 			it( 'should show installation dialog when Angie is not available', () => {
@@ -303,7 +303,7 @@ describe( 'ComponentsTab', () => {
 					store
 				);
 
-				fireEvent.click( screen.getByText( 'Generate Component' ) );
+				fireEvent.click( screen.getByText( 'Create component' ) );
 
 				// Assert
 				expect( screen.getByText( 'Install Angie to build custom components' ) ).toBeInTheDocument();

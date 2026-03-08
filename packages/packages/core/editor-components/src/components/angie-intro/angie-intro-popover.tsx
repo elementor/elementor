@@ -19,7 +19,7 @@ import {
 import { __ } from '@wordpress/i18n';
 
 export const ANGIE_INTRO_MESSAGE_KEY = 'angie-components-intro';
-const INTRO_IMAGE_URL = 'https://assets.elementor.com/packages/v1/images/angie-promotion.svg';
+const INTRO_IMAGE_URL = 'https://assets.elementor.com/packages/v1/images/angie-components-promotion.png';
 const IMAGE_OVERLAY_COLOR = 'rgba(255, 0, 191, 0.6)';
 const BUTTON_COLOR = '#f0abfc';
 const BUTTON_HOVER_COLOR = '#e879f9';
@@ -124,7 +124,7 @@ function AngieIntroCard( { onClose, onConfirm }: AngieIntroCardProps ) {
 				</Box>
 				<CardContent sx={ { px: 2, py: 1 } }>
 					<Typography variant="body2" color="text.secondary">
-						{ __( 'You can now generate custom components using Angie', 'elementor' ) }
+						{ __( 'Build components using simple instructions.', 'elementor' ) }
 					</Typography>
 				</CardContent>
 				<CardActions sx={ { justifyContent: 'flex-end', px: 2, pb: 1.5, pt: 1 } }>
@@ -138,7 +138,7 @@ function AngieIntroCard( { onClose, onConfirm }: AngieIntroCardProps ) {
 							'&:hover': { backgroundColor: BUTTON_HOVER_COLOR },
 						} }
 					>
-						{ __( "Let's Try", 'elementor' ) }
+						{ __( 'Start building', 'elementor' ) }
 					</Button>
 				</CardActions>
 			</Card>

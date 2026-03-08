@@ -33,8 +33,8 @@ describe( 'AngieIntroPopover', () => {
 		// Assert
 		expect( screen.getByText( 'Meet Angie' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'New' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'You can now generate custom components using Angie' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: "Let's Try" } ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Build components using simple instructions.' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Start building' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'should not render content when closed', () => {
@@ -74,7 +74,7 @@ describe( 'AngieIntroPopover', () => {
 				/>
 			</>
 		);
-		fireEvent.click( screen.getByRole( 'button', { name: "Let's Try" } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Start building' } ) );
 
 		// Assert
 		expect( onConfirm ).toHaveBeenCalled();
