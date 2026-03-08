@@ -23,7 +23,7 @@ class Stylesheet_Manager {
 		$written = file_put_contents( $path, $css );
 
 		if ( false === $written ) {
-			throw new \RuntimeException( 'Failed to write sync stylesheet to ' . $path );
+			throw new \RuntimeException( 'Failed to write sync stylesheet to ' . esc_html( $path ) );
 		}
 
 		return [
