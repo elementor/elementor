@@ -59,7 +59,7 @@ test.describe.skip( 'V4-V3 Color Variable Sync @v4-tests', () => {
 			const variableRow = page.locator( 'tr', { hasText: syncedColorName } );
 			await variableRow.hover();
 			await variableRow.getByRole( 'toolbar' ).click();
-			await page.getByRole( 'menuitem', { name: 'Sync to Version 3', includeHidden: true } ).click();
+			await page.getByRole( 'menuitem', { name: 'Sync to Global Colors', includeHidden: true } ).click();
 			await variablesManagerPage.saveAndExitVariableManager( false );
 		} );
 
@@ -87,7 +87,7 @@ test.describe.skip( 'V4-V3 Color Variable Sync @v4-tests', () => {
 			const variableRow = page.locator( 'tr', { hasText: syncedColorName } );
 			await variableRow.hover();
 			await variableRow.getByRole( 'toolbar' ).click();
-			await page.getByRole( 'menuitem', { name: 'Sync to Version 3', includeHidden: true } ).click();
+			await page.getByRole( 'menuitem', { name: 'Sync to Global Colors', includeHidden: true } ).click();
 			await variablesManagerPage.saveAndExitVariableManager( false );
 		} );
 
