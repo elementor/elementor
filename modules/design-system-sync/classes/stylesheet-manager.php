@@ -16,14 +16,19 @@ class Stylesheet_Manager {
 
 	public function generate(): array {
 		$css = $this->build_css();
+		$path = $this->get_path();
 
 		$this->ensure_dir();
 
-		file_put_contents( $this->get_path(), $css );
+		$written = file_put_contents( $path, $css );
+
+		if ( false === $written ) {
+			throw new \RuntimeException( 'Failed to write sync stylesheet to ' . $path );
+		}
 
 		return [
 			'url' => $this->get_url(),
-			'version' => (string) filemtime( $this->get_path() ),
+			'version' => (string) filemtime( $path ),
 		];
 	}
 

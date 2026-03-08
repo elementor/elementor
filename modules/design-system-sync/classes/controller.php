@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\DesignSystemSync\Classes;
 
+use Exception;
 use WP_REST_Server;
 use WP_REST_Response;
 
@@ -12,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Controller {
 	const API_NAMESPACE = 'elementor/v1';
 	const API_BASE = 'design-system-sync';
+	const HTTP_CREATED = 201;
+	const HTTP_INTERNAL_SERVER_ERROR = 500;
 
 	public function register_hooks() {
 		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
@@ -26,13 +29,17 @@ class Controller {
 	}
 
 	public function generate(): WP_REST_Response {
-		$stylesheet = new Stylesheet_Manager();
-		$result = $stylesheet->generate();
+		try {
+			$stylesheet = new Stylesheet_Manager();
+			$result = $stylesheet->generate();
 
-		return new WP_REST_Response( [
-			'success' => true,
-			'data' => $result,
-		] );
+			return new WP_REST_Response( $result, self::HTTP_CREATED );
+		} catch ( Exception $e ) {
+			return new WP_REST_Response(
+				[ 'message' => $e->getMessage() ],
+				self::HTTP_INTERNAL_SERVER_ERROR
+			);
+		}
 	}
 
 	public function has_permission(): bool {

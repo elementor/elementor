@@ -14,14 +14,20 @@
 				'X-WP-Nonce': wpApiSettings.nonce,
 			},
 		} )
-			.then( ( response ) => response.json() )
-			.then( ( result ) => {
-				if ( ! result?.success ) {
+			.then( ( response ) => {
+				if ( ! response.ok ) {
+					return;
+				}
+
+				return response.json();
+			} )
+			.then( ( data ) => {
+				if ( ! data ) {
 					return;
 				}
 
 				refreshGlobals();
-				reloadSyncStylesheet( result.data );
+				reloadCanvasDesignSyncStyles( data );
 			} );
 	}
 
@@ -31,7 +37,7 @@
 		globals?.populateGlobalData();
 	}
 
-	function reloadSyncStylesheet( { url, version } ) {
+	function reloadCanvasDesignSyncStyles( { url, version } ) {
 		const previewFrame = document.getElementById( 'elementor-preview-iframe' );
 
 		if ( ! previewFrame?.contentDocument ) {
