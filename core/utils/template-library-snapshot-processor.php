@@ -199,7 +199,7 @@ abstract class Template_Library_Snapshot_Processor
 
     protected function add_item_with_label(array $item, string $target_id, array &$updated_items, array &$existing_ids, array &$existing_labels, array &$updated_order): void
     {
-        $item = $this->prepare_item_for_save($item);
+        $item = $this->prepare_item_for_save($item, $target_id);
         $item = Template_Library_Import_Export_Utils::apply_unique_label($item, $existing_labels);
         $updated_items[$target_id] = $item;
         $existing_ids[$target_id] = true;
@@ -209,7 +209,7 @@ abstract class Template_Library_Snapshot_Processor
         }
     }
 
-    protected function prepare_item_for_save(array $item): array
+    protected function prepare_item_for_save(array $item, string $target_id): array
     {
         return $item;
     }
