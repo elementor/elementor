@@ -27,10 +27,10 @@ type SettingsFieldProps = {
 
 const HISTORY_DEBOUNCE_WAIT = 800;
 
-const getElementSettigsWithDefaults = ( propsSchema: PropsSchema, elementSettings?: Props ) => {
+const getElementSettingsWithDefaults = ( propsSchema: PropsSchema, elementSettings?: Props ) => {
 	const elementSettingsWithDefaults = { ...elementSettings };
 	Object.keys( propsSchema ).forEach( ( key ) => {
-		if ( ! ( key in elementSettingsWithDefaults ) ) {
+		if ( ! ( key in elementSettingsWithDefaults ) || elementSettingsWithDefaults[ key ] === null ) {
 			if ( propsSchema[ key ].default !== null ) {
 				elementSettingsWithDefaults[ key ] = propsSchema[ key ].default as Values[ keyof Values ];
 			}
@@ -40,7 +40,7 @@ const getElementSettigsWithDefaults = ( propsSchema: PropsSchema, elementSetting
 };
 
 const extractDependencyEffect = ( bind: string, propsSchema: PropsSchema, currentElementSettings: Props ) => {
-	const elementSettingsForDepCheck = getElementSettigsWithDefaults( propsSchema, currentElementSettings );
+	const elementSettingsForDepCheck = getElementSettingsWithDefaults( propsSchema, currentElementSettings );
 	const propType = propsSchema[ bind ];
 	const depCheck = isDependencyMet( propType?.dependencies, elementSettingsForDepCheck );
 	const isHidden =
