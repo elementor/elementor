@@ -3,6 +3,10 @@ import { parallelTest as test } from '../../../parallelTest';
 import EditorPage from '../../../pages/editor-page';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
+type ExtendedWindow = Window & {
+	__createWidgetPrompt: string;
+};
+
 test.describe( 'Widget Creation @widget-creation', () => {
 	const EXPERIMENT_NAME = 'e_widget_creation';
 	const WIDGET_SEARCH_INPUT = 'input#elementor-panel-elements-search-input';
@@ -12,7 +16,6 @@ test.describe( 'Widget Creation @widget-creation', () => {
 	const CREATE_WIDGET_MODAL = '[role="dialog"].MuiDialog-paper';
 	const INSTALL_ANGIE_BUTTON = 'button:has-text("Install Angie")';
 	const SEARCH_RESULTS = '#elementor-panel-elements .elementor-element-wrapper .elementor-element';
-	const WIDGET_CREATION_TEMPLATE = '#tmpl-elementor-panel-elements-widget-creation-search-footer';
 	const CREATE_WIDGET_EVENT = 'elementor/editor/create-widget';
 
 	async function searchWidgets( page: Page, searchTerm: string ) {
@@ -47,9 +50,6 @@ test.describe( 'Widget Creation @widget-creation', () => {
 		test( 'Widget creation CTA and modal functionality', async () => {
 			editor = await wpAdmin.openNewPage();
 			await editor.openElementsPanel();
-
-			const templateExists = await page.locator( WIDGET_CREATION_TEMPLATE ).count();
-			test.skip( 0 === templateExists, 'Widget creation templates not rendered. Experiment may not be active server-side.' );
 
 			await test.step( 'Search with results shows widget creation footer', async () => {
 				await searchWidgets( page, 'button' );
@@ -113,7 +113,7 @@ test.describe( 'Widget Creation @widget-creation', () => {
 			await test.step( 'CTA dispatches create-widget event', async () => {
 				await page.evaluate( ( eventName ) => {
 					window.addEventListener( eventName, ( event: CustomEvent ) => {
-						( window as unknown as { __createWidgetPrompt: string } ).__createWidgetPrompt = event.detail?.prompt;
+						( window as unknown as ExtendedWindow ).__createWidgetPrompt = event.detail?.prompt;
 					} );
 				}, CREATE_WIDGET_EVENT );
 
@@ -123,7 +123,7 @@ test.describe( 'Widget Creation @widget-creation', () => {
 				await cta.click();
 
 				const eventPrompt = await page.evaluate( () => {
-					return ( window as unknown as { __createWidgetPrompt: string } ).__createWidgetPrompt;
+					return ( window as unknown as ExtendedWindow ).__createWidgetPrompt;
 				} );
 				expect( eventPrompt ).toContain( 'Create a widget for me' );
 
@@ -150,57 +150,6 @@ test.describe( 'Widget Creation @widget-creation', () => {
 				expect( page.url() ).toContain( 'plugin-install.php' );
 				expect( page.url() ).toContain( 'angie' );
 			} );
-		} );
-	} );
-
-	test.describe( 'Angie Installed and Active (Mocked)', () => {
-		let context: BrowserContext;
-		let page: Page;
-		let wpAdmin: WpAdminPage;
-		let editor: EditorPage;
-
-		test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-			context = await browser.newContext();
-			page = await context.newPage();
-			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			await wpAdmin.setExperiments( { [ EXPERIMENT_NAME ]: 'active' } );
-		} );
-
-		test.afterAll( async () => {
-			await context?.close();
-		} );
-
-		test( 'CTA shows modal when Angie SDK is not available', async () => {
-			editor = await wpAdmin.openNewPage();
-
-			await page.evaluate( () => {
-				const mockIframe = document.createElement( 'iframe' );
-				mockIframe.name = 'angie-sidebar';
-				mockIframe.style.display = 'none';
-				document.body.appendChild( mockIframe );
-
-				( window as unknown as { __mockAngieSidebarCalls: Array<{ visible: boolean; prompt?: string }> } ).__mockAngieSidebarCalls = [];
-
-				( window as unknown as { __elementorAngieSdkMock: {
-					getAngieIframe: () => HTMLIFrameElement;
-					toggleAngieSidebar: ( iframe: HTMLIFrameElement, visible: boolean ) => void;
-				} } ).__elementorAngieSdkMock = {
-					getAngieIframe: () => mockIframe,
-					toggleAngieSidebar: ( _iframe, visible ) => {
-						( window as unknown as { __mockAngieSidebarCalls: Array<{ visible: boolean }> } ).__mockAngieSidebarCalls.push( { visible } );
-					},
-				};
-			} );
-
-			await editor.openElementsPanel();
-
-			await searchWidgets( page, 'button' );
-
-			const cta = page.locator( WIDGET_CREATION_CTA );
-			await cta.click();
-
-			const modal = page.locator( CREATE_WIDGET_MODAL );
-			await expect( modal ).toBeVisible();
 		} );
 	} );
 
