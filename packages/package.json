@@ -6,6 +6,11 @@
     "node": ">=20.19.0",
     "npm": ">=10.0.0"
   },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.6.0",
+    "@typescript-eslint/parser": "^8.6.0",
+    "@wordpress/eslint-plugin": "^21.1.0"
+  },
   "scripts": {
     "test": "jest --config='./jest.config.js'",
     "test:coverage": "npm run test -- --coverage",
