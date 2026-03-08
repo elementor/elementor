@@ -114,7 +114,7 @@ describe( 'create-component-shortcut', () => {
 			jest.mocked( getSelectedElements ).mockReturnValue( [
 				{ id: MOCK_ELEMENT_ID, type: ATOMIC_ELEMENT_TYPE } as Element,
 			] );
-			jest.mocked( getElementType ).mockReturnValue( undefined );
+			jest.mocked( getElementType ).mockReturnValue( null );
 
 			// Act
 			const result = isCreateComponentAllowed();
@@ -154,7 +154,7 @@ describe( 'create-component-shortcut', () => {
 			} as never );
 			jest.mocked( isProActive ).mockReturnValue( true );
 			jest.mocked( getWidgetsCache ).mockReturnValue( {
-				[ WIDGET_ELEMENT_TYPE ]: { elType: 'widget' },
+				[ WIDGET_ELEMENT_TYPE ]: { elType: 'widget', title: 'Widget', controls: {} },
 			} );
 
 			// Act
@@ -176,7 +176,7 @@ describe( 'create-component-shortcut', () => {
 			} as never );
 			jest.mocked( isProActive ).mockReturnValue( true );
 			jest.mocked( getWidgetsCache ).mockReturnValue( {
-				[ ATOMIC_ELEMENT_TYPE ]: { atomic_props_schema: {} },
+				[ ATOMIC_ELEMENT_TYPE ]: { atomic_props_schema: {}, title: 'Heading', controls: {} },
 			} );
 			mockGetContainer.mockReturnValue( createMockContainer( { isLocked: true } ) );
 
@@ -199,7 +199,7 @@ describe( 'create-component-shortcut', () => {
 			} as never );
 			jest.mocked( isProActive ).mockReturnValue( true );
 			jest.mocked( getWidgetsCache ).mockReturnValue( {
-				[ ATOMIC_ELEMENT_TYPE ]: { atomic_props_schema: {} },
+				[ ATOMIC_ELEMENT_TYPE ]: { atomic_props_schema: {}, title: 'Heading', controls: {} },
 			} );
 			mockGetContainer.mockReturnValue( createMockContainer() );
 
@@ -284,7 +284,7 @@ describe( 'create-component-shortcut', () => {
 			} as never );
 			jest.mocked( isProActive ).mockReturnValue( true );
 			jest.mocked( getWidgetsCache ).mockReturnValue( {
-				[ ATOMIC_ELEMENT_TYPE ]: { atomic_props_schema: {} },
+				[ ATOMIC_ELEMENT_TYPE ]: { atomic_props_schema: {}, title: 'Heading', controls: {} },
 			} );
 			mockGetContainer.mockReturnValue( createMockContainer() );
 
