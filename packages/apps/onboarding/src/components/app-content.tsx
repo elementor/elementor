@@ -12,6 +12,7 @@ import { useOnboarding } from '../hooks/use-onboarding';
 import { useOnboardingEvent } from '../hooks/use-onboarding-event';
 import { useUpdateChoices } from '../hooks/use-update-choices';
 import { useUpdateProgress } from '../hooks/use-update-progress';
+import { useVideoPreload } from '../hooks/use-video-preload';
 import { BuildingFor } from '../steps/screens/building-for';
 import { ExperienceLevel } from '../steps/screens/experience-level';
 import { Login } from '../steps/screens/login';
@@ -61,6 +62,8 @@ export function AppContent( { onClose }: AppContentProps ) {
 	const [ isCompleting, setIsCompleting ] = useState( false );
 	const isCompletingRef = useRef( false );
 	const { showToast } = useToast();
+
+	useVideoPreload();
 
 	const updateProgress = useUpdateProgress();
 	const updateChoices = useUpdateChoices();
