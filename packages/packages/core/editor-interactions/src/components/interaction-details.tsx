@@ -140,9 +140,9 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		) ?? undefined;
 	const times =
 		normalizeTimesValue(
-			( interaction.animation.value.config?.value as { times?: { value: number } } | undefined )?.times?.value, undefined
-		) ??
-		undefined;
+			( interaction.animation.value.config?.value as { times?: { value: number } } | undefined )?.times?.value,
+			undefined
+		) ?? undefined;
 
 	const start = extractSize( interaction.animation.value.config?.value.start, DEFAULT_VALUES.start );
 	const end = extractSize( interaction.animation.value.config?.value.end, DEFAULT_VALUES.end );
@@ -187,9 +187,10 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		'repeat',
 		controlVisibilityConfig.repeat( interactionValues )
 	) as ComponentType< FieldProps< RepeatMode | undefined > >;
-	const TimesControl = useControlComponent( 'times', controlVisibilityConfig.times( interactionValues ) ) as ComponentType<
-		FieldProps< number >
-	>;
+	const TimesControl = useControlComponent(
+		'times',
+		controlVisibilityConfig.times( interactionValues )
+	) as ComponentType< FieldProps< number > >;
 	const EasingControl = useControlComponent( 'easing' );
 
 	const containerRef = useRef< HTMLDivElement >( null );

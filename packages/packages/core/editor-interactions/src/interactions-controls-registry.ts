@@ -4,8 +4,8 @@ import { type PropValue } from '@elementor/editor-props';
 import {
 	type DirectionFieldProps,
 	type FieldProps,
-	type ReplayFieldProps,
 	type RepeatFieldProps,
+	type ReplayFieldProps,
 	type TimesFieldProps,
 } from './types';
 

@@ -67,12 +67,12 @@ export const createConfig = ( {
 			replay: createBoolean( replay ),
 			easing: createString( easing ),
 			relativeTo: createString( relativeTo ),
-		...( repeat !== undefined ? { repeat: createString( repeat ) } : {} ),
-		...( times !== undefined ? { times: createNumber( times ) } : {} ),
+			...( repeat !== undefined ? { repeat: createString( repeat ) } : {} ),
+			...( times !== undefined ? { times: createNumber( times ) } : {} ),
 			start: createSize( start, '%' ),
 			end: createSize( end, '%' ),
 		},
-	} as ConfigPropValue );
+	} ) as ConfigPropValue;
 
 const createSize = ( value?: SizeStringValue, defaultUnit?: Unit, defaultValue?: SizeStringValue ) => {
 	if ( ! value ) {
