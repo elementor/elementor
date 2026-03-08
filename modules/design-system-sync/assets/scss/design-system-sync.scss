@@ -50,6 +50,16 @@
 	}
 }
 
+.e-v4-color-variable-list__edit-btn {
+	background: transparent;
+	opacity: 0;
+	transition: opacity 0.2s;
+
+	&:hover {
+		opacity: 1;
+	}
+}
+
 .e-v4-typography-list__edit-btn {
 	opacity: 0.5;
 	cursor: default;
