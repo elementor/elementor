@@ -10,7 +10,6 @@ import {
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
 import { ConfirmationDialog, SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
-import { reloadKitCss } from '@elementor/editor-canvas';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { AlertTriangleFilledIcon, ColorFilterIcon, TrashIcon } from '@elementor/icons';
 import {
@@ -56,7 +55,6 @@ export const { panel, usePanelActions } = createPanel( {
 	},
 	onClose: async () => {
 		changeEditMode( 'edit' );
-		reloadKitCss();
 	},
 	isOpenPreviousElement: true,
 } );
@@ -438,7 +436,7 @@ const StopSyncConfirmationDialog = ( { open, onClose, onConfirm }: StopSyncConfi
 			<ConfirmationDialog.Content>
 				<ConfirmationDialog.ContentText>
 					{ __(
-						'This will disconnect the variable color from version 3. Existing uses on your site will automatically switch to a default color.',
+						'This will disconnect the variable color from Global Colors. Existing uses on your site will automatically switch to a default color.',
 						'elementor'
 					) }
 				</ConfirmationDialog.ContentText>

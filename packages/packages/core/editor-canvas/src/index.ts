@@ -31,4 +31,3 @@ export {
 } from './transformers/create-transformers-registry';
 export { type AnyTransformer, type TransformerOptions } from './transformers/types';
 export { UnknownStyleTypeError, UnknownStyleStateError } from './renderers/errors';
-export { reloadKitCss } from './sync/reload-kit-css';

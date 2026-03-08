@@ -1,9 +1,9 @@
 ( function() {
 	'use strict';
 
-	const SYNC_ENDPOINT = '/wp-json/elementor/v1/design-system-sync/stylesheet';
-	const SYNC_STYLESHEET_ID = 'elementor-design-system-sync-mappings-css';
-	const DEBOUNCE_MS = 200;
+	const SYNC_ENDPOINT = wpApiSettings.root + 'elementor/v1/design-system-sync/stylesheet';
+	const SYNC_STYLESHEET_ID = 'elementor-design-system-sync-css';
+	const DEBOUNCE_MS = 500;
 
 	let syncTimeout;
 

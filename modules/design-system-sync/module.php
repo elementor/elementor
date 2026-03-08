@@ -4,7 +4,8 @@ namespace Elementor\Modules\DesignSystemSync;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as ExperimentsManager;
-use Elementor\Modules\DesignSystemSync\Classes\Kit_Stylesheet_Extended;
+use Elementor\Modules\DesignSystemSync\Classes\Stylesheet_Manager;
+use Elementor\Modules\DesignSystemSync\Classes\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -44,13 +45,14 @@ class Module extends BaseModule {
 	}
 
 	private function register_hooks() {
-		( new Kit_Stylesheet_Extended() )->register_hooks();
 		( new Classes\Global_Colors_Extension() )->register_hooks();
 		( new Classes\Global_Typography_Extension() )->register_hooks();
+		( new Controller() )->register_hooks();
 
 		add_action( 'elementor/controls/register', [ $this, 'register_controls' ] );
 		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_editor_styles' ] );
 		add_action( 'elementor/global_classes/update', [ $this, 'clear_classes_cache' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_sync_stylesheet' ] );
 	}
 
 	public function register_controls( $controls_manager ) {
@@ -72,5 +74,9 @@ class Module extends BaseModule {
 
 	public function clear_classes_cache() {
 		Classes\Classes_Provider::clear_cache();
+	}
+
+	public function enqueue_sync_stylesheet() {
+		( new Stylesheet_Manager() )->enqueue();
 	}
 }
