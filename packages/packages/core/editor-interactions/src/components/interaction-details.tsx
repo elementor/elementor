@@ -139,11 +139,10 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		normalizeRepeatMode(
 			( interaction.animation.value.config?.value as { repeat?: { value?: string } } | undefined )?.repeat?.value
 		) ?? undefined;
-	const times =
-		normalizeTimesValue(
-			( interaction.animation.value.config?.value as { times?: { value?: number } } | undefined )?.times?.value,
-			DEFAULT_VALUES.times
-		);
+	const times = normalizeTimesValue(
+		( interaction.animation.value.config?.value as { times?: { value?: number } } | undefined )?.times?.value,
+		DEFAULT_VALUES.times
+	);
 
 	const start = extractSize( interaction.animation.value.config?.value.start, DEFAULT_VALUES.start );
 	const end = extractSize( interaction.animation.value.config?.value.end, DEFAULT_VALUES.end );
