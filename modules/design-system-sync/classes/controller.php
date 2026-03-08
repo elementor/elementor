@@ -21,7 +21,7 @@ class Controller {
 	}
 
 	public function register_routes() {
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/stylesheet' , [
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/stylesheet', [
 			'methods' => WP_REST_Server::CREATABLE,
 			'callback' => [ $this, 'generate' ],
 			'permission_callback' => [ $this, 'has_permission' ],
