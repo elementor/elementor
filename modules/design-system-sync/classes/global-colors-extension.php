@@ -6,7 +6,6 @@ use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Modules\DesignSystemSync\Controls\V4_Color_Variable_List;
 use Elementor\Plugin;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -15,20 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Global_Colors_Extension {
 	public function register_hooks() {
 		add_action( 'elementor/kit/global-colors/register_controls', [ $this, 'add_v4_variables_section' ] );
-		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_editor_scripts' ] );
 		add_filter( 'elementor/globals/colors/items', [ $this, 'add_v4_variables_section_to_color_selector' ] );
-	}
-
-	public function enqueue_editor_scripts() {
-		$min_suffix = Utils::is_script_debug() ? '' : '.min';
-
-		wp_enqueue_script(
-			'elementor-design-system-sync-editor',
-			plugins_url( '../assets/js/design-system-sync-handler' . $min_suffix . '.js', __FILE__ ),
-			[],
-			ELEMENTOR_VERSION,
-			true
-		);
 	}
 
 	public function add_v4_variables_section( Global_Colors $tab ) {

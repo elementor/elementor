@@ -50,6 +50,7 @@ class Module extends BaseModule {
 		( new Controller() )->register_hooks();
 
 		add_action( 'elementor/controls/register', [ $this, 'register_controls' ] );
+		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_editor_scripts' ] );
 		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_editor_styles' ] );
 		add_action( 'elementor/global_classes/update', [ $this, 'clear_classes_cache' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_sync_stylesheet' ] );
@@ -61,6 +62,16 @@ class Module extends BaseModule {
 
 		$controls_manager->register( new Controls\V4_Color_Variable_List() );
 		$controls_manager->register( new Controls\V4_Typography_List() );
+	}
+
+	public function enqueue_editor_scripts() {
+		wp_enqueue_script(
+			'elementor-design-system-sync-editor',
+			$this->get_js_assets_url( 'design-system-sync' ),
+			[],
+			ELEMENTOR_VERSION,
+			true
+		);
 	}
 
 	public function enqueue_editor_styles() {
