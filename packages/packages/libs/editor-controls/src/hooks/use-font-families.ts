@@ -1,52 +1,41 @@
 import { useMemo } from 'react';
-import { getElementorConfig, type SupportedFonts } from '@elementor/editor-v1-adapters';
-import { __ } from '@wordpress/i18n';
+import { getElementorConfig } from '@elementor/editor-v1-adapters';
 
 import { type FontCategory } from '../controls/font-family-control/font-family-control';
 
-const SYSTEM_GROUP = 0;
-const CUSTOM_GROUP = 1;
-const GOOGLE_GROUP = 2;
-
-const knownCategoryGroup: Partial< Record< SupportedFonts, number > > = {
-	system: SYSTEM_GROUP,
-	googlefonts: GOOGLE_GROUP,
-	earlyaccess: GOOGLE_GROUP,
+type FontControlConfig = {
+	groups?: Record< string, string >;
+	options?: Record< string, string >;
 };
 
-const groupLabels: Record< number, string > = {
-	[ SYSTEM_GROUP ]: __( 'System', 'elementor' ),
-	[ CUSTOM_GROUP ]: __( 'Custom Fonts', 'elementor' ),
-	[ GOOGLE_GROUP ]: __( 'Google Fonts', 'elementor' ),
-};
-
-const resolveGroupIndex = ( category: string ): number => {
-	return knownCategoryGroup[ category as SupportedFonts ] ?? CUSTOM_GROUP;
-};
-
-const getFontFamilies = () => {
+const getFontControlConfig = (): FontControlConfig => {
 	const { controls } = getElementorConfig();
 
-	const options = controls?.font?.options;
-
-	if ( ! options ) {
-		return null;
-	}
-
-	return options;
+	return controls?.font ?? {};
 };
 
 export const useFontFamilies = () => {
-	const fontFamilies = getFontFamilies();
+	const { groups, options } = getFontControlConfig();
 
 	return useMemo( () => {
-		return Object.entries( fontFamilies || {} )
+		if ( ! groups || ! options ) {
+			return [];
+		}
+
+		const groupKeys = Object.keys( groups );
+		const groupIndexMap = new Map( groupKeys.map( ( key, index ) => [ key, index ] ) );
+
+		return Object.entries( options )
 			.reduce< FontCategory[] >( ( acc, [ font, category ] ) => {
-				const groupIndex = resolveGroupIndex( category as string );
+				const groupIndex = groupIndexMap.get( category );
+
+				if ( groupIndex === undefined ) {
+					return acc;
+				}
 
 				if ( ! acc[ groupIndex ] ) {
 					acc[ groupIndex ] = {
-						label: groupLabels[ groupIndex ],
+						label: groups[ category ],
 						fonts: [],
 					};
 				}
@@ -56,5 +45,5 @@ export const useFontFamilies = () => {
 				return acc;
 			}, [] )
 			.filter( Boolean );
-	}, [ fontFamilies ] );
+	}, [ groups, options ] );
 };

@@ -1,20 +1,25 @@
-import { getElementorConfig, type SupportedFonts } from '@elementor/editor-v1-adapters';
+import { getElementorConfig } from '@elementor/editor-v1-adapters';
 import { renderHook } from '@testing-library/react';
 
 import { useFontFamilies } from '../use-font-families';
 
 jest.mock( '@elementor/editor-v1-adapters' );
 
+const mockFontConfig = ( groups: Record< string, string >, options: Record< string, string > ) => {
+	jest.mocked( getElementorConfig ).mockReturnValue( {
+		controls: {
+			font: { groups, options },
+		},
+	} );
+};
+
 describe( 'useFontFamilies', () => {
 	it( 'should return empty array when there are no font families', () => {
 		// Arrange.
-		jest.mocked( getElementorConfig ).mockReturnValue( {
-			controls: {
-				font: {
-					options: {},
-				},
-			},
-		} );
+		mockFontConfig(
+			{ system: 'System', googlefonts: 'Google' },
+			{},
+		);
 
 		// Act.
 		const { result } = renderHook( () => useFontFamilies() );
@@ -23,24 +28,23 @@ describe( 'useFontFamilies', () => {
 		expect( result.current ).toEqual( [] );
 	} );
 
-	it( 'should group font families by category', () => {
+	it( 'should group font families by their config groups', () => {
 		// Arrange.
-		const mockFontFamilies: Record< string, SupportedFonts > = {
-			Arial: 'system',
-			Helvetica: 'system',
-			'Custom Font 1': 'custom',
-			'Custom Font 2': 'custom',
-			Roboto: 'googlefonts',
-			'Open Sans': 'googlefonts',
-		};
-
-		jest.mocked( getElementorConfig ).mockReturnValue( {
-			controls: {
-				font: {
-					options: mockFontFamilies,
-				},
+		mockFontConfig(
+			{
+				system: 'System',
+				custom: 'Custom Fonts',
+				googlefonts: 'Google',
 			},
-		} );
+			{
+				Arial: 'system',
+				Helvetica: 'system',
+				'Custom Font 1': 'custom',
+				'Custom Font 2': 'custom',
+				Roboto: 'googlefonts',
+				'Open Sans': 'googlefonts',
+			},
+		);
 
 		// Act.
 		const { result } = renderHook( () => useFontFamilies() );
@@ -56,90 +60,21 @@ describe( 'useFontFamilies', () => {
 			fonts: [ 'Custom Font 1', 'Custom Font 2' ],
 		} );
 		expect( result.current[ 2 ] ).toEqual( {
-			label: 'Google Fonts',
+			label: 'Google',
 			fonts: [ 'Roboto', 'Open Sans' ],
 		} );
 	} );
 
-	it( 'should group unknown font categories under Custom Fonts', () => {
+	it( 'should skip fonts whose category is not in groups', () => {
 		// Arrange.
-		const mockFontFamilies: Record< string, SupportedFonts > = {
-			Arial: 'system',
-			'Custom Font': 'custom',
-			Roboto: 'googlefonts',
-			'Unknown Font': 'some-future-type',
-		};
-
-		jest.mocked( getElementorConfig ).mockReturnValue( {
-			controls: {
-				font: {
-					options: mockFontFamilies,
-				},
+		mockFontConfig(
+			{ system: 'System', googlefonts: 'Google' },
+			{
+				Arial: 'system',
+				Roboto: 'googlefonts',
+				'Unknown Font': 'not-registered',
 			},
-		} );
-
-		// Act.
-		const { result } = renderHook( () => useFontFamilies() );
-
-		// Assert.
-		expect( result.current ).toHaveLength( 3 );
-		expect( result.current[ 0 ] ).toEqual( {
-			label: 'System',
-			fonts: [ 'Arial' ],
-		} );
-		expect( result.current[ 1 ] ).toEqual( {
-			label: 'Custom Fonts',
-			fonts: [ 'Custom Font', 'Unknown Font' ],
-		} );
-		expect( result.current[ 2 ] ).toEqual( {
-			label: 'Google Fonts',
-			fonts: [ 'Roboto' ],
-		} );
-	} );
-
-	it( 'should group local fonts under Custom Fonts', () => {
-		// Arrange.
-		const mockFontFamilies: Record< string, SupportedFonts > = {
-			Arial: 'system',
-			'My Custom Font': 'custom',
-			'My Local Font': 'local',
-			Roboto: 'googlefonts',
-		};
-
-		jest.mocked( getElementorConfig ).mockReturnValue( {
-			controls: {
-				font: {
-					options: mockFontFamilies,
-				},
-			},
-		} );
-
-		// Act.
-		const { result } = renderHook( () => useFontFamilies() );
-
-		// Assert.
-		expect( result.current ).toHaveLength( 3 );
-		expect( result.current[ 1 ] ).toEqual( {
-			label: 'Custom Fonts',
-			fonts: [ 'My Custom Font', 'My Local Font' ],
-		} );
-	} );
-
-	it( 'should group earlyaccess fonts under Google Fonts', () => {
-		// Arrange.
-		const mockFontFamilies: Record< string, SupportedFonts > = {
-			Arial: 'system',
-			Roboto: 'googlefonts',
-			'Noto Sans Hebrew': 'earlyaccess',
-		};
-
-		jest.mocked( getElementorConfig ).mockReturnValue( {
-			controls: {
-				font: {
-					options: mockFontFamilies,
-				},
-			},
-		} );
+		);
 
 		// Act.
 		const { result } = renderHook( () => useFontFamilies() );
@@ -151,74 +86,109 @@ describe( 'useFontFamilies', () => {
 			fonts: [ 'Arial' ],
 		} );
 		expect( result.current[ 1 ] ).toEqual( {
-			label: 'Google Fonts',
-			fonts: [ 'Roboto', 'Noto Sans Hebrew' ],
+			label: 'Google',
+			fonts: [ 'Roboto' ],
 		} );
 	} );
 
-	it( 'should handle local and earlyaccess fonts together with all other types', () => {
+	it( 'should preserve group order from config', () => {
 		// Arrange.
-		const mockFontFamilies: Record< string, SupportedFonts > = {
-			Arial: 'system',
-			'Custom Font': 'custom',
-			'Local Font': 'local',
-			Roboto: 'googlefonts',
-			'Alef Hebrew': 'earlyaccess',
-		};
-
-		jest.mocked( getElementorConfig ).mockReturnValue( {
-			controls: {
-				font: {
-					options: mockFontFamilies,
-				},
+		mockFontConfig(
+			{
+				custom: 'Custom Fonts',
+				system: 'System',
+				googlefonts: 'Google',
 			},
-		} );
+			{
+				Arial: 'system',
+				'My Font': 'custom',
+				Roboto: 'googlefonts',
+			},
+		);
 
 		// Act.
 		const { result } = renderHook( () => useFontFamilies() );
 
 		// Assert.
 		expect( result.current ).toHaveLength( 3 );
+		expect( result.current[ 0 ].label ).toBe( 'Custom Fonts' );
+		expect( result.current[ 1 ].label ).toBe( 'System' );
+		expect( result.current[ 2 ].label ).toBe( 'Google' );
+	} );
+
+	it( 'should render Pro font groups with their own labels', () => {
+		// Arrange.
+		mockFontConfig(
+			{
+				custom: 'Custom Fonts',
+				typekit: 'Adobe Fonts',
+				variable: 'Variable Fonts',
+				system: 'System',
+				googlefonts: 'Google',
+				earlyaccess: 'Google (Early Access)',
+			},
+			{
+				Arial: 'system',
+				'My Custom Font': 'custom',
+				'My Typekit Font': 'typekit',
+				'My Variable Font': 'variable',
+				Roboto: 'googlefonts',
+				'Noto Sans Hebrew': 'earlyaccess',
+			},
+		);
+
+		// Act.
+		const { result } = renderHook( () => useFontFamilies() );
+
+		// Assert.
+		expect( result.current ).toHaveLength( 6 );
 		expect( result.current[ 0 ] ).toEqual( {
+			label: 'Custom Fonts',
+			fonts: [ 'My Custom Font' ],
+		} );
+		expect( result.current[ 1 ] ).toEqual( {
+			label: 'Adobe Fonts',
+			fonts: [ 'My Typekit Font' ],
+		} );
+		expect( result.current[ 2 ] ).toEqual( {
+			label: 'Variable Fonts',
+			fonts: [ 'My Variable Font' ],
+		} );
+		expect( result.current[ 3 ] ).toEqual( {
 			label: 'System',
 			fonts: [ 'Arial' ],
 		} );
-		expect( result.current[ 1 ] ).toEqual( {
-			label: 'Custom Fonts',
-			fonts: [ 'Custom Font', 'Local Font' ],
+		expect( result.current[ 4 ] ).toEqual( {
+			label: 'Google',
+			fonts: [ 'Roboto' ],
 		} );
-		expect( result.current[ 2 ] ).toEqual( {
-			label: 'Google Fonts',
-			fonts: [ 'Roboto', 'Alef Hebrew' ],
+		expect( result.current[ 5 ] ).toEqual( {
+			label: 'Google (Early Access)',
+			fonts: [ 'Noto Sans Hebrew' ],
 		} );
 	} );
 
-	it( 'should group variable and typekit fonts under Custom Fonts', () => {
+	it( 'should skip empty groups', () => {
 		// Arrange.
-		const mockFontFamilies: Record< string, SupportedFonts > = {
-			Arial: 'system',
-			'My Variable Font': 'variable',
-			'My Typekit Font': 'typekit',
-			Roboto: 'googlefonts',
-		};
-
-		jest.mocked( getElementorConfig ).mockReturnValue( {
-			controls: {
-				font: {
-					options: mockFontFamilies,
-				},
+		mockFontConfig(
+			{
+				system: 'System',
+				custom: 'Custom Fonts',
+				googlefonts: 'Google',
 			},
-		} );
+			{
+				Arial: 'system',
+				Roboto: 'googlefonts',
+			},
+		);
 
 		// Act.
 		const { result } = renderHook( () => useFontFamilies() );
 
 		// Assert.
-		expect( result.current ).toHaveLength( 3 );
-		expect( result.current[ 1 ] ).toEqual( {
-			label: 'Custom Fonts',
-			fonts: [ 'My Variable Font', 'My Typekit Font' ],
-		} );
+		expect( result.current ).toHaveLength( 2 );
+		expect( result.current[ 0 ].label ).toBe( 'System' );
+		expect( result.current[ 1 ].label ).toBe( 'Google' );
 	} );
 
 	it( 'should return empty array when font options are not available', () => {
@@ -227,6 +197,24 @@ describe( 'useFontFamilies', () => {
 			controls: {
 				font: {
 					options: undefined,
+				},
+			},
+		} );
+
+		// Act.
+		const { result } = renderHook( () => useFontFamilies() );
+
+		// Assert.
+		expect( result.current ).toEqual( [] );
+	} );
+
+	it( 'should return empty array when font groups are not available', () => {
+		// Arrange.
+		jest.mocked( getElementorConfig ).mockReturnValue( {
+			controls: {
+				font: {
+					groups: undefined,
+					options: { Arial: 'system' },
 				},
 			},
 		} );

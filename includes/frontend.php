@@ -901,6 +901,18 @@ class Frontend extends App {
 	 * @access public
 	 */
 	public function print_fonts_links() {
+		/**
+		 * Register font styles.
+		 *
+		 * Fires before fonts are processed, allowing add-ons to register
+		 * proper stylesheets for their custom font types via the WordPress API.
+		 *
+		 * @since 3.29.0
+		 *
+		 * @param string[] $fonts_to_enqueue List of font families to be enqueued.
+		 */
+		do_action( 'elementor/fonts/register_styles', $this->fonts_to_enqueue );
+
 		$google_fonts = $this->get_list_of_google_fonts_by_type();
 
 		$this->enqueue_google_fonts( $google_fonts );
