@@ -35,6 +35,7 @@ export const DEFAULT_VALUES = {
 	replay: false,
 	easing: 'easeIn',
 	relativeTo: 'viewport',
+	times: 1,
 	start: 85,
 	end: 15,
 };
@@ -140,9 +141,9 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		) ?? undefined;
 	const times =
 		normalizeTimesValue(
-			( interaction.animation.value.config?.value as { times?: { value: number } } | undefined )?.times?.value,
-			undefined
-		) ?? undefined;
+			( interaction.animation.value.config?.value as { times?: { value?: number } } | undefined )?.times?.value,
+			DEFAULT_VALUES.times
+		);
 
 	const start = extractSize( interaction.animation.value.config?.value.start, DEFAULT_VALUES.start );
 	const end = extractSize( interaction.animation.value.config?.value.end, DEFAULT_VALUES.end );
