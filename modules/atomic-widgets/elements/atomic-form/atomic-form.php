@@ -97,7 +97,10 @@ class Atomic_Form extends Atomic_Element_Base {
 				->default( [] ),
 			'submissions_metadata' => String_Array_Prop_Type::make()
 				->set_dependencies( $submissions_metadata_dependencies )
-				->default( [ self::METADATA_REMOTE_IP, self::METADATA_USER_AGENT ] ),
+				->default( [
+					String_Prop_Type::generate( self::METADATA_REMOTE_IP ),
+					String_Prop_Type::generate( self::METADATA_USER_AGENT ),
+				] ),
 			'email' => Email_Prop_Type::make()
 				->set_dependencies( $email_dependencies )
 				->default( [] ),
@@ -209,18 +212,21 @@ class Atomic_Form extends Atomic_Element_Base {
 	}
 
 	protected function define_default_children() {
+
+		$prefix = 'e-form-';
+
 		return [
-			$this->build_label( __( 'First name', 'elementor' ), 'first-name' ),
-			$this->build_input( __( 'First name', 'elementor' ), 'text' ),
+			$this->build_label( __( 'First name', 'elementor' ), $prefix . '-first-name' ),
+			$this->build_input( __( 'First name', 'elementor' ), 'text', $prefix . '-first-name' ),
 
-			$this->build_label( __( 'Last name', 'elementor' ), 'last-name' ),
-			$this->build_input( __( 'Last name', 'elementor' ), 'text' ),
+			$this->build_label( __( 'Last name', 'elementor' ), $prefix . '-last-name' ),
+			$this->build_input( __( 'Last name', 'elementor' ), 'text', $prefix . '-last-name' ),
 
-			$this->build_label( __( 'Email', 'elementor' ), 'email' ),
-			$this->build_input( __( 'your@mail.com', 'elementor' ), 'email' ),
+			$this->build_label( __( 'Email', 'elementor' ), $prefix . '-email' ),
+			$this->build_input( __( 'your@mail.com', 'elementor' ), 'email', $prefix . '-email' ),
 
-			$this->build_label( __( 'Message', 'elementor' ), 'message' ),
-			$this->build_input( __( 'Your message', 'elementor' ), 'textarea' ),
+			$this->build_label( __( 'Message', 'elementor' ), $prefix . '-message' ),
+			$this->build_input( __( 'Your message', 'elementor' ), 'textarea', $prefix . '-message' ),
 
 			Widget_Builder::make( 'e-form-submit-button' )
 				->settings( [
@@ -243,6 +249,7 @@ class Atomic_Form extends Atomic_Element_Base {
 			),
 		];
 	}
+
 	private function build_label( string $text, string $input_id ): array {
 		return Widget_Builder::make( 'e-form-label' )
 			->settings( [
@@ -255,12 +262,13 @@ class Atomic_Form extends Atomic_Element_Base {
 			->build();
 	}
 
-	private function build_input( string $placeholder, string $type = 'text' ): array {
+	private function build_input( string $placeholder, string $type = 'text', $input_id = '' ): array {
 		if ( 'textarea' === $type ) {
 			return Widget_Builder::make( 'e-form-textarea' )
 				->settings( [
 					'placeholder' => String_Prop_Type::generate( $placeholder ),
 					'rows' => Number_Prop_Type::generate( 4 ),
+					'_cssid' => String_Prop_Type::generate( $input_id ),
 				] )
 				->build();
 		}
@@ -269,6 +277,7 @@ class Atomic_Form extends Atomic_Element_Base {
 			->settings( [
 				'placeholder' => String_Prop_Type::generate( $placeholder ),
 				'type' => String_Prop_Type::generate( $type ),
+				'_cssid' => String_Prop_Type::generate( $input_id ),
 			] )
 			->build();
 	}
