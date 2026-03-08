@@ -245,7 +245,7 @@ export default class StyleTab extends BasePage {
 		const categorySelector = 'google' === fontType ? 'Google' : 'System';
 
 		await this.page.getByRole( 'button', { name: 'Font family' } ).click();
-		await this.page.locator( '.MuiListSubheader-root', { hasText: new RegExp( categorySelector, 'i' ) } ).click();
+		await this.page.locator( '.MuiListSubheader-root' ).getByText( categorySelector, { exact: true } ).click();
 		await this.page.locator( 'input[placeholder="Search"]' ).fill( fontName );
 		await this.page.waitForTimeout( timeouts.short );
 		await this.page.locator( '[role="option"]', { hasText: fontName } ).first().click();
