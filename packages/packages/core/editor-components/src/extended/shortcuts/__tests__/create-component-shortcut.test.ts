@@ -21,7 +21,9 @@ jest.mock( '@elementor/utils', () => ( {
 
 describe( 'create-component-shortcut', () => {
 	const MOCK_ELEMENT_ID = 'test-element-123';
-	const ATOMIC_ELEMENT_TYPE = 'e-heading';
+	const CONTAINER_ELEMENT_TYPE = 'e-flexbox';
+	const DIV_BLOCK_ELEMENT_TYPE = 'e-div-block';
+	const ATOMIC_WIDGET_ELEMENT_TYPE = 'e-heading';
 	const WIDGET_ELEMENT_TYPE = 'widget';
 
 	let mockShortcutsRegister: jest.Mock;
@@ -36,7 +38,7 @@ describe( 'create-component-shortcut', () => {
 			id: MOCK_ELEMENT_ID,
 			toJSON: jest.fn().mockReturnValue( {
 				id: MOCK_ELEMENT_ID,
-				elType: ATOMIC_ELEMENT_TYPE,
+				elType: CONTAINER_ELEMENT_TYPE,
 				settings: {},
 			} ),
 		},
@@ -98,8 +100,8 @@ describe( 'create-component-shortcut', () => {
 		it( 'should return false when multiple elements are selected', () => {
 			// Arrange
 			jest.mocked( getSelectedElements ).mockReturnValue( [
-				{ id: MOCK_ELEMENT_ID, type: ATOMIC_ELEMENT_TYPE } as Element,
-				{ id: 'another-id', type: ATOMIC_ELEMENT_TYPE } as Element,
+				{ id: MOCK_ELEMENT_ID, type: CONTAINER_ELEMENT_TYPE } as Element,
+				{ id: 'another-id', type: CONTAINER_ELEMENT_TYPE } as Element,
 			] );
 
 			// Act
@@ -112,7 +114,7 @@ describe( 'create-component-shortcut', () => {
 		it( 'should return false when element type is not found', () => {
 			// Arrange
 			jest.mocked( getSelectedElements ).mockReturnValue( [
-				{ id: MOCK_ELEMENT_ID, type: ATOMIC_ELEMENT_TYPE } as Element,
+				{ id: MOCK_ELEMENT_ID, type: CONTAINER_ELEMENT_TYPE } as Element,
 			] );
 			jest.mocked( getElementType ).mockReturnValue( null );
 
@@ -126,10 +128,10 @@ describe( 'create-component-shortcut', () => {
 		it( 'should return false when Pro is not active', () => {
 			// Arrange
 			jest.mocked( getSelectedElements ).mockReturnValue( [
-				{ id: MOCK_ELEMENT_ID, type: ATOMIC_ELEMENT_TYPE } as Element,
+				{ id: MOCK_ELEMENT_ID, type: CONTAINER_ELEMENT_TYPE } as Element,
 			] );
 			jest.mocked( getElementType ).mockReturnValue( {
-				key: ATOMIC_ELEMENT_TYPE,
+				key: CONTAINER_ELEMENT_TYPE,
 				controls: {},
 				propsSchema: {},
 			} as never );
@@ -142,7 +144,7 @@ describe( 'create-component-shortcut', () => {
 			expect( result.allowed ).toBe( false );
 		} );
 
-		it( 'should return false for widget element type (non-atomic)', () => {
+		it( 'should return false for legacy widget element type (non-atomic)', () => {
 			// Arrange
 			jest.mocked( getSelectedElements ).mockReturnValue( [
 				{ id: MOCK_ELEMENT_ID, type: WIDGET_ELEMENT_TYPE } as Element,
@@ -164,19 +166,41 @@ describe( 'create-component-shortcut', () => {
 			expect( result.allowed ).toBe( false );
 		} );
 
-		it( 'should return false when element is locked', () => {
+		it( 'should return false for atomic widget element type (e.g. e-heading)', () => {
 			// Arrange
 			jest.mocked( getSelectedElements ).mockReturnValue( [
-				{ id: MOCK_ELEMENT_ID, type: ATOMIC_ELEMENT_TYPE } as Element,
+				{ id: MOCK_ELEMENT_ID, type: ATOMIC_WIDGET_ELEMENT_TYPE } as Element,
 			] );
 			jest.mocked( getElementType ).mockReturnValue( {
-				key: ATOMIC_ELEMENT_TYPE,
+				key: ATOMIC_WIDGET_ELEMENT_TYPE,
 				controls: {},
 				propsSchema: {},
 			} as never );
 			jest.mocked( isProActive ).mockReturnValue( true );
 			jest.mocked( getWidgetsCache ).mockReturnValue( {
-				[ ATOMIC_ELEMENT_TYPE ]: { atomic_props_schema: {}, title: 'Heading', controls: {} },
+				[ ATOMIC_WIDGET_ELEMENT_TYPE ]: { atomic_props_schema: {}, elType: 'widget', title: 'Heading', controls: {} },
+			} );
+
+			// Act
+			const result = isCreateComponentAllowed();
+
+			// Assert
+			expect( result.allowed ).toBe( false );
+		} );
+
+		it( 'should return false when element is locked', () => {
+			// Arrange
+			jest.mocked( getSelectedElements ).mockReturnValue( [
+				{ id: MOCK_ELEMENT_ID, type: CONTAINER_ELEMENT_TYPE } as Element,
+			] );
+			jest.mocked( getElementType ).mockReturnValue( {
+				key: CONTAINER_ELEMENT_TYPE,
+				controls: {},
+				propsSchema: {},
+			} as never );
+			jest.mocked( isProActive ).mockReturnValue( true );
+			jest.mocked( getWidgetsCache ).mockReturnValue( {
+				[ CONTAINER_ELEMENT_TYPE ]: { atomic_props_schema: {}, show_in_panel: true, elType: 'container', title: 'Flexbox', controls: {} },
 			} );
 			mockGetContainer.mockReturnValue( createMockContainer( { isLocked: true } ) );
 
@@ -187,19 +211,22 @@ describe( 'create-component-shortcut', () => {
 			expect( result.allowed ).toBe( false );
 		} );
 
-		it( 'should return true for valid atomic element', () => {
+		it.each( [
+			{ type: CONTAINER_ELEMENT_TYPE, title: 'Flexbox' },
+			{ type: DIV_BLOCK_ELEMENT_TYPE, title: 'Div Block' },
+		] )( 'should return true for $title element', ( { type, title } ) => {
 			// Arrange
 			jest.mocked( getSelectedElements ).mockReturnValue( [
-				{ id: MOCK_ELEMENT_ID, type: ATOMIC_ELEMENT_TYPE } as Element,
+				{ id: MOCK_ELEMENT_ID, type } as Element,
 			] );
 			jest.mocked( getElementType ).mockReturnValue( {
-				key: ATOMIC_ELEMENT_TYPE,
+				key: type,
 				controls: {},
 				propsSchema: {},
 			} as never );
 			jest.mocked( isProActive ).mockReturnValue( true );
 			jest.mocked( getWidgetsCache ).mockReturnValue( {
-				[ ATOMIC_ELEMENT_TYPE ]: { atomic_props_schema: {}, title: 'Heading', controls: {} },
+				[ type ]: { atomic_props_schema: {}, show_in_panel: true, elType: 'container', title, controls: {} },
 			} );
 			mockGetContainer.mockReturnValue( createMockContainer() );
 
@@ -275,16 +302,16 @@ describe( 'create-component-shortcut', () => {
 		it( 'should trigger form when callback is invoked with valid element', () => {
 			// Arrange
 			jest.mocked( getSelectedElements ).mockReturnValue( [
-				{ id: MOCK_ELEMENT_ID, type: ATOMIC_ELEMENT_TYPE } as Element,
+				{ id: MOCK_ELEMENT_ID, type: CONTAINER_ELEMENT_TYPE } as Element,
 			] );
 			jest.mocked( getElementType ).mockReturnValue( {
-				key: ATOMIC_ELEMENT_TYPE,
+				key: CONTAINER_ELEMENT_TYPE,
 				controls: {},
 				propsSchema: {},
 			} as never );
 			jest.mocked( isProActive ).mockReturnValue( true );
 			jest.mocked( getWidgetsCache ).mockReturnValue( {
-				[ ATOMIC_ELEMENT_TYPE ]: { atomic_props_schema: {}, title: 'Heading', controls: {} },
+				[ CONTAINER_ELEMENT_TYPE ]: { atomic_props_schema: {}, show_in_panel: true, elType: 'container', title: 'Flexbox', controls: {} },
 			} );
 			mockGetContainer.mockReturnValue( createMockContainer() );
 

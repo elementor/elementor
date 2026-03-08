@@ -56,7 +56,7 @@ export function isCreateComponentAllowed(): CreateComponentAllowedResult {
 	const widgetsCache = getWidgetsCache();
 	const elementConfig = widgetsCache?.[ element.type ];
 
-	if ( ! elementConfig?.atomic_props_schema ) {
+	if ( ! elementConfig?.atomic_props_schema || ! elementConfig?.show_in_panel || elementConfig?.elType === 'widget' ) {
 		return { allowed: false };
 	}
 
