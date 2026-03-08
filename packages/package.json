@@ -9,7 +9,8 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.6.0",
     "@typescript-eslint/parser": "^8.6.0",
-    "@wordpress/eslint-plugin": "^21.1.0"
+    "@wordpress/eslint-plugin": "^21.1.0",
+    "tsup": "^8.3.5"
   },
   "scripts": {
     "test": "jest --config='./jest.config.js'",
