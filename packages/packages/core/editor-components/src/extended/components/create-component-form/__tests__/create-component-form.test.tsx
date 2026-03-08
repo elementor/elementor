@@ -83,7 +83,7 @@ describe( 'CreateComponentForm', () => {
 			}
 			return Promise.resolve();
 		} );
-		mockReplaceElement.mockResolvedValue( createMockElement( { model: { id: CREATED_COMPONENT_INSTANCE_ID } } ) );
+		mockReplaceElement.mockReturnValue( createMockElement( { model: { id: CREATED_COMPONENT_INSTANCE_ID } } ) );
 
 		act( () => {
 			__dispatch(
@@ -302,7 +302,7 @@ describe( 'CreateComponentForm', () => {
 			// Assert.
 			await waitFor( () => {
 				expect( mockReplaceElement ).toHaveBeenCalledWith( {
-					currentElement: mockElement,
+					currentElementId: mockElement.id,
 					newElement: expect.objectContaining( {
 						elType: 'widget',
 						widgetType: 'e-component',
