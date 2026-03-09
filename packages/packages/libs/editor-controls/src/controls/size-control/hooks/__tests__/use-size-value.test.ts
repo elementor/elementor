@@ -680,6 +680,32 @@ describe( 'useSizeValue', () => {
 			expect( result.current.size ).toBe( '' );
 		} );
 
+		it( 'should reflect fallback state with first unit picked when externalValue is null and defaultUnit is not provided', () => {
+			// Arrange.
+			const onChange = jest.fn();
+
+			const { result } = renderHook(
+				( { value } ) => useSizeValue( { value, onChange, units: [ 'vh', 'em' ] } ),
+				{ initialProps: { value: null } }
+			);
+
+			expect( result.current.unit ).toBe( 'vh' );
+			expect( result.current.size ).toBe( '' );
+		} );
+
+		it( 'should reflect fallback state with first unit picked when externalValue is null and defaultUnit is not in the units lists', () => {
+			// Arrange.
+			const onChange = jest.fn();
+
+			const { result } = renderHook(
+				( { value } ) => useSizeValue( { value, onChange, units: [ '%', 'em' ], defaultUnit: 'ch' } ),
+				{ initialProps: { value: null } }
+			);
+
+			expect( result.current.unit ).toBe( '%' );
+			expect( result.current.size ).toBe( '' );
+		} );
+
 		it( 'should reflect fallback state when externalValue changes from non-null to null', () => {
 			// Arrange.
 			type ExternalValue = { size: number; unit: string } | null;
