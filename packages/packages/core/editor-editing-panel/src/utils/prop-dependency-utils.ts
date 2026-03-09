@@ -3,6 +3,7 @@ import {
 	type DependencyTerm,
 	extractValue,
 	isDependencyMet,
+	type Props,
 	type PropsSchema,
 	type PropType,
 	type TransformablePropValue,
@@ -12,6 +13,17 @@ import { getSessionStorageItem, removeSessionStorageItem, setSessionStorageItem 
 type Value = TransformablePropValue< string > | null;
 
 export type Values = Record< string, Value >;
+
+export function getElementSettingsWithDefaults( propsSchema: PropsSchema, elementSettings?: Props ): Values {
+	const elementSettingsWithDefaults = { ...elementSettings };
+	Object.keys( propsSchema ).forEach( ( key ) => {
+		if ( elementSettingsWithDefaults[ key ] === null && propsSchema[ key ].default !== null ) {
+			elementSettingsWithDefaults[ key ] = propsSchema[ key ].default as Values[ keyof Values ];
+		}
+	} );
+
+	return elementSettingsWithDefaults as Values;
+}
 
 export function extractOrderedDependencies( dependenciesPerTargetMapping: Record< string, string[] > ): string[] {
 	return Object.values( dependenciesPerTargetMapping )
