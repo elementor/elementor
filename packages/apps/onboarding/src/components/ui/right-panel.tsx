@@ -1,13 +1,16 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { Box, styled } from '@elementor/ui';
 
-import { isVideoPreloaded } from '../../hooks/use-video-preload';
 import type { StepVisualConfig } from '../../types';
+import { getVideoUrls } from '../../steps/step-visuals';
 import { FOOTER_HEIGHT, LAYOUT_PADDING, TOPBAR_HEIGHT } from './base-layout';
 
 const PANEL_RADIUS_MULTIPLIER = 2;
 const PANEL_MIN_HEIGHT = 36;
+const VIDEO_TRANSITION_MS = 400;
+
+const ALL_VIDEO_URLS = getVideoUrls();
 
 interface RightPanelRootProps {
 	background: string;
@@ -31,29 +34,48 @@ const RightPanelRoot = styled( Box, {
 	};
 } );
 
-const VideoPanel = React.memo( ( props: { src: string } ) => {
-	const [ hasError, setHasError ] = useState( false );
+const VideoStack = React.memo( function VideoStack( { activeUrl }: { activeUrl: string | undefined } ) {
+	const refs = useRef< Map< string, HTMLVideoElement > >( new Map() );
 
-	if ( ! isVideoPreloaded( props.src ) || hasError ) {
-		return null;
-	}
+	useEffect( () => {
+		refs.current.forEach( ( element, url ) => {
+			if ( url === activeUrl ) {
+				element.currentTime = 0;
+				element.play().catch( () => {} );
+			} else {
+				element.pause();
+			}
+		} );
+	}, [ activeUrl ] );
 
 	return (
-		<Box
-			component="video"
-			src={ props.src }
-			autoPlay
-			muted
-			playsInline
-			onError={ () => setHasError( true ) }
-			sx={ {
-				position: 'absolute',
-				inset: 0,
-				width: '100%',
-				height: '100%',
-				objectFit: 'cover',
-			} }
-		/>
+		<>
+			{ ALL_VIDEO_URLS.map( ( url ) => (
+				<Box
+					key={ url }
+					component="video"
+					src={ url }
+					muted
+					playsInline
+					ref={ ( element: HTMLVideoElement | null ) => {
+						if ( element ) {
+							refs.current.set( url, element );
+						} else {
+							refs.current.delete( url );
+						}
+					} }
+					sx={ {
+						position: 'absolute',
+						inset: 0,
+						width: '100%',
+						height: '100%',
+						objectFit: 'cover',
+						opacity: url === activeUrl ? 1 : 0,
+						transition: `opacity ${ VIDEO_TRANSITION_MS }ms ease`,
+					} }
+				/>
+			) ) }
+		</>
 	);
 } );
 
@@ -64,7 +86,7 @@ interface RightPanelProps {
 export const RightPanel = React.memo( function RightPanel( { config }: RightPanelProps ) {
 	return (
 		<RightPanelRoot background={ config.background }>
-			{ config.video && <VideoPanel key={ config.video } src={ config.video } /> }
+			<VideoStack activeUrl={ config.video } />
 		</RightPanelRoot>
 	);
 } );
