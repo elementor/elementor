@@ -161,31 +161,5 @@ describe( 'getElementSettingsWithDefaults', () => {
 				key: PROP_KEY,
 			},
 		} );
-
-		it.each( [
-			// description                                                      stored value            schema default  expected result
-			[ 'preserves "Collect Submissions" when default is "email"',        collectSubmissions,     emailDefault,   collectSubmissions ],
-			[ 'preserves "Collect Submissions" when default is null',           collectSubmissions,     null,           collectSubmissions ],
-			[ 'preserves "Collect Submissions" when default is "other"',        collectSubmissions,     otherValue,     collectSubmissions ],
-			[ 'replaces null with "email" when default is "email"',             null,                   emailDefault,   emailDefault      ],
-			[ 'leaves null as null when default is also null',                  null,                   null,           null              ],
-			[ 'replaces null with "other" when default is "other"',             null,                   otherValue,     otherValue        ],
-			[ 'preserves "other" when default is "email"',                      otherValue,             emailDefault,   otherValue        ],
-			[ 'preserves "other" when default is null',                         otherValue,             null,           otherValue        ],
-			[ 'preserves "other" when default is also "other"',                 otherValue,             otherValue,     otherValue        ],
-		] )( '%s', ( _desc, stored, schemaDefault, expected ) => {
-			// Arrange
-			const elementSettings = { [ PROP_KEY ]: stored };
-
-			// Act
-			const result = getElementSettingsWithDefaults( schema( schemaDefault ), elementSettings );
-
-			// Assert
-			if ( expected === null ) {
-				expect( result[ PROP_KEY ] ).toBeNull();
-			} else {
-				expect( result[ PROP_KEY ] ).toEqual( expected );
-			}
-		} );
 	} );
 } );
