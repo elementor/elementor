@@ -16,7 +16,12 @@ import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
-import { extractOrderedDependencies, getElementSettingsWithDefaults, getUpdatedValues, type Values } from '../utils/prop-dependency-utils';
+import {
+	extractOrderedDependencies,
+	getElementSettingsWithDefaults,
+	getUpdatedValues,
+	type Values,
+} from '../utils/prop-dependency-utils';
 import { createTopLevelObjectType } from './create-top-level-object-type';
 
 type SettingsFieldProps = {

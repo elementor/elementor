@@ -17,6 +17,8 @@ const plain = ( opts: { default?: ReturnType< typeof str > | null } = {} ) => ( 
 	initial_value: null,
 } );
 
+// ─── tests ───────────────────────────────────────────────────────────────────
+
 describe( 'getElementSettingsWithDefaults', () => {
 	const defaultString = str( 'default-value' );
 	const defaultArray = arr( 'email' );
@@ -140,24 +142,6 @@ describe( 'getElementSettingsWithDefaults', () => {
 
 			// Assert
 			expect( result.conditional ).toEqual( defaultString );
-		} );
-	} );
-
-	describe( 'actions-after-submit scenarios', () => {
-		const PROP_KEY = 'actions-after-submit';
-		const COLLECT_SUBMISSIONS = 'Collect Submissions';
-		const EMAIL = 'email';
-		const OTHER = 'other';
-
-		const collectSubmissions = str( COLLECT_SUBMISSIONS );
-		const emailDefault = str( EMAIL );
-		const otherValue = str( OTHER );
-
-		const schema = ( schemaDefault: ReturnType< typeof str > | null ): PropsSchema => ( {
-			[ PROP_KEY ]: {
-				...plain( { default: schemaDefault } ),
-				key: PROP_KEY,
-			},
 		} );
 	} );
 } );
