@@ -28,6 +28,12 @@ class V4_Color_Variable_List extends Base_UI_Control {
 				<div class="elementor-repeater-fields" role="listitem">
 					<div class="elementor-repeater-row-controls e-v4-color-variable-list__row">
 						<span class="elementor-control-title e-v4-color-variable-list__title">{{{ title }}}</span>
+						<span class="e-v4-color-variable-list__edit-btn-wrapper">
+							<button class="e-v4-color-variable-list__edit-btn" onclick="window.dispatchEvent( new CustomEvent( 'elementor/open-variables-manager' ) )">
+								<i class="eicon-pencil" aria-hidden="true"></i>
+							</button>
+							<span class="e-v4-color-variable-list__tooltip"><?php echo esc_html__( 'Edit in Variables manager', 'elementor' ); ?></span>
+						</span>
 						<span class="e-v4-color-variable-list__color-value">{{ color }}</span>
 						<span class="e-v4-color-variable-list__color-swatch" style="background-color:{{ color }}; box-shadow: inset 0 0 0 7px var(--e-a-bg-default), 0 0 0 1px var(--e-a-border-color);"></span>
 					</div>
