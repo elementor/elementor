@@ -2326,6 +2326,23 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 'publish', $response->get_data()['data']['meta']['action'] );
 	}
 
+	public function test_update_statuses__allowed_for_expired_tier() {
+		// Arrange
+		$component_id = $this->create_test_component( 'Draft Component', $this->mock_component_1_content, 'draft' );
+		\Mock_Pro_License_API::set_license_state( false, true );
+
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components/status' );
+		$request->set_param( 'ids', [ $component_id ] );
+		$request->set_param( 'status', 'publish' );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( [ $component_id ], $response->get_data()['data']['success'] );
+	}
+
 	public function test_archive__blocked_for_core_tier() {
 		// Arrange
 		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
