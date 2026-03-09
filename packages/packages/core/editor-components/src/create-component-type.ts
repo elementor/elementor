@@ -13,6 +13,7 @@ import {
 } from '@elementor/editor-canvas';
 import { getCurrentDocument } from '@elementor/editor-documents';
 import { type V1ElementData } from '@elementor/editor-elements';
+import { notify } from '@elementor/editor-notifications';
 import { __getState as getState } from '@elementor/store';
 import { hasProInstalled } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
@@ -53,6 +54,26 @@ type ComponentModelInstance = BackboneModel< ComponentModel > & {
 export const COMPONENT_WIDGET_TYPE = 'e-component';
 
 const EDIT_COMPONENT_UPGRADE_URL = 'https://go.elementor.com/go-pro-components-edit/';
+
+const COMPONENT_EDIT_UPGRADE_NOTIFICATION_ID = 'component-edit-upgrade';
+
+function notifyComponentEditUpgrade() {
+	notify( {
+		type: 'promotion',
+		id: COMPONENT_EDIT_UPGRADE_NOTIFICATION_ID,
+		message: __( 'Your Pro subscription has expired. Renew to edit components.', 'elementor' ),
+		additionalActionProps: [
+			{
+				size: 'small',
+				variant: 'contained',
+				color: 'promotion',
+				href: EDIT_COMPONENT_UPGRADE_URL,
+				target: '_blank',
+				children: __( 'Upgrade Now', 'elementor' ),
+			},
+		],
+	} );
+}
 
 const updateGroups = ( groups: ContextMenuGroup[], config: ContextMenuGroupConfig ): ContextMenuGroup[] => {
 	const disableMap = new Map( Object.entries( config.disable ?? {} ) );
@@ -279,7 +300,12 @@ function createComponentView(
 		handleDblClick( e: MouseEvent ) {
 			e.stopPropagation();
 
-			if ( ! isUserAdministrator() || ! hasProInstalled() ) {
+			if ( ! isUserAdministrator() ) {
+				return;
+			}
+
+			if ( ! hasProInstalled() ) {
+				notifyComponentEditUpgrade();
 				return;
 			}
 
