@@ -1,4 +1,5 @@
 import { generateElementId, type V1ElementData } from '@elementor/editor-elements';
+import { type PropValue } from '@elementor/editor-props';
 
 import {
 	type ComponentInstanceOverrideProp,
@@ -62,15 +63,32 @@ function createOverrideMap( overrides: ComponentInstanceOverride[] ): Map< strin
 	const map = new Map< string, ComponentInstanceOverrideProp >();
 
 	overrides.forEach( ( item ) => {
+		let override: ComponentInstanceOverrideProp | null = null;
+
 		if ( componentInstanceOverridePropTypeUtil.isValid( item ) ) {
-			map.set( item.value.override_key, item );
+			override = item;
 		} else if ( componentOverridablePropTypeUtil.isValid( item ) ) {
-			const override = item.value.origin_value;
-			if ( override && componentInstanceOverridePropTypeUtil.isValid( override ) ) {
-				map.set( override.value.override_key, override );
-			}
+			override = getOverridableOverride( item );
+		}
+
+		if ( override ) {
+			const overrideKey = override.value.override_key;
+			map.set( overrideKey, override );
 		}
 	} );
 
 	return map;
+}
+
+export function getOverridableOverride( propValue: PropValue ): ComponentInstanceOverrideProp | null {
+	if ( ! componentOverridablePropTypeUtil.isValid( propValue ) ) {
+		return null;
+	}
+
+	const originValue = componentOverridablePropTypeUtil.extract( propValue )?.origin_value;
+	if ( ! componentInstanceOverridePropTypeUtil.isValid( originValue ) ) {
+		return null;
+	}
+
+	return originValue;
 }

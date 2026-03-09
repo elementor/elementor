@@ -20,29 +20,17 @@ export function resolveOverridableSettings(
 		return resolveOverridableSettingsForComponentInstance( element, overrideMap );
 	}
 
-	return resolveOverridableSettingsForRegularElement( element, overrideMap );
+	return resolveOverridableSettingsForElement( element, overrideMap );
 }
 
-function resolveOverridableSettingsForRegularElement(
+function resolveOverridableSettingsForElement(
 	element: V1ElementData,
 	overrideMap: Map< string, ComponentInstanceOverrideProp >
 ): V1ElementSettingsProps {
-	const updatedSettings = { ...( element.settings ?? {} ) };
+	const updatedSettings = element.settings ? { ...element.settings } : {};
 
 	for ( const [ settingKey, settingValue ] of Object.entries( element.settings ?? {} ) ) {
-		if ( ! componentOverridablePropTypeUtil.isValid( settingValue ) ) {
-			continue;
-		}
-
-		const innerOverrideKey = settingValue.value.override_key;
-		const matchingOverride = overrideMap.get( innerOverrideKey );
-
-		if ( ! matchingOverride ) {
-			updatedSettings[ settingKey ] = settingValue.value.origin_value as PropValue;
-			continue;
-		}
-
-		updatedSettings[ settingKey ] = matchingOverride.value.override_value as PropValue;
+		updatedSettings[ settingKey ] = resolvePropValue( settingValue, overrideMap );
 	}
 
 	return updatedSettings;
@@ -64,25 +52,9 @@ function resolveOverridableSettingsForComponentInstance(
 		return element.settings ?? {};
 	}
 
-	const updatedOverrides = instanceOverrides.map( ( item ) => {
-		if ( ! componentOverridablePropTypeUtil.isValid( item ) ) {
-			return item;
-		}
-
-		const innerOverrideKey = item.value.override_key;
-		const matchingOverride = overrideMap.get( innerOverrideKey );
-		const innerOriginValue = item.value.origin_value as ComponentInstanceOverrideProp;
-
-		if ( ! matchingOverride ) {
-			return innerOriginValue;
-		}
-
-		return componentInstanceOverridePropTypeUtil.create( {
-			override_key: innerOriginValue.value.override_key,
-			override_value: matchingOverride.value.override_value,
-			schema_source: innerOriginValue.value.schema_source,
-		} );
-	} );
+	const updatedOverrides = instanceOverrides.map( ( item ) =>
+		resolvePropValue( item, overrideMap, { isOverridableOverride: true } )
+	);
 
 	return {
 		...element.settings,
@@ -97,4 +69,53 @@ function resolveOverridableSettingsForComponentInstance(
 			},
 		},
 	};
+}
+
+function resolvePropValue(
+	propValue: PropValue,
+	overrideMap: Map< string, ComponentInstanceOverrideProp >,
+	options?: { isOverridableOverride?: boolean }
+): PropValue | null {
+	const { isOverridableOverride = false } = options ?? {};
+
+	// if it's not an overridable, return the prop value as is
+	if ( ! componentOverridablePropTypeUtil.isValid( propValue ) ) {
+		return propValue;
+	}
+
+	const overridableKey = propValue.value.override_key;
+	const matchingOverride = overrideMap.get( overridableKey );
+
+	const originValue = componentOverridablePropTypeUtil.extract( propValue )?.origin_value;
+
+	// if no matching override, return the overridable's origin value
+	if ( ! matchingOverride ) {
+		return originValue;
+	}
+
+	if ( isOverridableOverride ) {
+		return resolveOverridableOverride( matchingOverride, originValue );
+	}
+
+	// for regular props, when there's a matching override, return the matching override value
+	const matchingOverrideValue = componentInstanceOverridePropTypeUtil.extract( matchingOverride )
+		?.override_value as PropValue | null;
+	return matchingOverrideValue;
+}
+
+function resolveOverridableOverride(
+	matchingOverride: ComponentInstanceOverrideProp,
+	originValue: PropValue
+): ComponentInstanceOverrideProp | null {
+	if ( ! originValue || ! componentInstanceOverridePropTypeUtil.isValid( originValue ) ) {
+		return null;
+	}
+
+	// for overridable overrides, we should create a new override with the matching override value
+	// but keep the origin value's override key and schema source, so they'll match the inner component.
+	return componentInstanceOverridePropTypeUtil.create( {
+		override_value: matchingOverride.value.override_value,
+		override_key: originValue.value.override_key,
+		schema_source: originValue.value.schema_source,
+	} );
 }
