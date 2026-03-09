@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useCallback, useState } from 'react';
-import { useElementInteractions } from '@elementor/editor-elements';
+import { useElementInteractions } from '../hooks/use-element-interactions';
 import { SessionStorageProvider } from '@elementor/session';
 import { Stack } from '@elementor/ui';
 
