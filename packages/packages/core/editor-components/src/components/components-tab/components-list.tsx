@@ -86,8 +86,7 @@ export function ComponentsList() {
 	);
 }
 
-const GENERATE_COMPONENT_PROMPT =
-	'Create a reusable component for me. Goal: [What should this component help me accomplish?]';
+const GENERATE_COMPONENT_PROMPT = 'Tell Angie what component you want to build';
 
 export const EmptyState = () => {
 	const { canCreate } = useComponentsPermissions();

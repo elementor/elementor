@@ -39,16 +39,13 @@ export function AngieInstallDialog( { open, onClose, prompt }: AngieInstallDialo
 					/>
 					<Stack gap={ 2 } justifyContent="center" p={ 4 }>
 						<Typography variant="h6" fontWeight={ 600 } whiteSpace="nowrap">
-							{ __( 'Install Angie to build custom components', 'elementor' ) }
+							{ __( 'Install Angie to build components', 'elementor' ) }
 						</Typography>
 						<Typography variant="body2" color="text.secondary">
 							{ __(
-								'Angie lets you generate custom components using simple instructions.',
+								'Angie lets you create components, widgets, sections, and code using simple instructions.',
 								'elementor'
 							) }
-						</Typography>
-						<Typography variant="body2" color="text.secondary">
-							{ __( 'Install once to start building directly inside the editor.', 'elementor' ) }
 						</Typography>
 						<Stack direction="row" justifyContent="flex-end" sx={ { mt: 2 } }>
 							<Button variant="contained" color="accent" onClick={ handleInstall }>
