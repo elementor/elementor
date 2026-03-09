@@ -35,6 +35,8 @@ export const DEFAULT_VALUES = {
 	replay: false,
 	easing: 'easeIn',
 	relativeTo: 'viewport',
+	repeat: '',
+	times: 1,
 	start: 85,
 	end: 15,
 };
@@ -53,7 +55,9 @@ type InteractionsControlType =
 	| 'relativeTo'
 	| 'start'
 	| 'end'
-	| 'customEffects';
+	| 'customEffects'
+	| 'repeat'
+	| 'times';
 
 type InteractionValues = {
 	trigger: string;
@@ -68,6 +72,8 @@ type InteractionValues = {
 	start: SizeStringValue;
 	end: SizeStringValue;
 	customEffects?: PropValue;
+	repeat: string;
+	times: number;
 };
 
 type ControlVisibilityConfig = {
@@ -82,6 +88,8 @@ const controlVisibilityConfig: ControlVisibilityConfig = {
 	relativeTo: ( values ) => values.trigger === 'scrollOn',
 	start: ( values ) => values.trigger === 'scrollOn',
 	end: ( values ) => values.trigger === 'scrollOn',
+	repeat: ( values ) => values.trigger !== 'scrollOn',
+	times: ( values ) => values.trigger !== 'scrollOn' && values.repeat === 'times',
 
 	duration: ( values ) => {
 		const isRelativeToVisible = values.trigger === 'scrollOn';
@@ -92,6 +100,14 @@ const controlVisibilityConfig: ControlVisibilityConfig = {
 		return ! isRelativeToVisible;
 	},
 };
+
+function normalizeTimesValue( value: unknown, fallback: number ): number {
+	const numericValue = Number( value );
+	if ( ! Number.isFinite( numericValue ) ) {
+		return fallback;
+	}
+	return Math.max( 1, Math.floor( numericValue ) );
+}
 
 function useControlComponent( controlName: InteractionsControlType, isVisible: boolean = true ) {
 	return useMemo( () => {
@@ -113,6 +129,9 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const replay = extractBoolean( interaction.animation.value.config?.value.replay, DEFAULT_VALUES.replay );
 	const easing = extractString( interaction.animation.value.config?.value.easing, DEFAULT_VALUES.easing );
 	const relativeTo = extractString( interaction.animation.value.config?.value.relativeTo, DEFAULT_VALUES.relativeTo );
+	const configValue = interaction.animation.value.config?.value;
+	const repeat = extractString( configValue?.repeat, DEFAULT_VALUES.repeat );
+	const times = normalizeTimesValue( configValue?.times?.value, DEFAULT_VALUES.times );
 
 	const start = extractSize( interaction.animation.value.config?.value.start, DEFAULT_VALUES.start );
 	const end = extractSize( interaction.animation.value.config?.value.end, DEFAULT_VALUES.end );
@@ -127,6 +146,8 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		easing,
 		replay,
 		relativeTo,
+		repeat,
+		times,
 		start,
 		end,
 		customEffects,
@@ -151,6 +172,14 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		controlVisibilityConfig.effectType( interactionValues )
 	);
 	const DirectionControl = useControlComponent( 'direction', controlVisibilityConfig.direction( interactionValues ) );
+	const RepeatControl = useControlComponent(
+		'repeat',
+		controlVisibilityConfig.repeat( interactionValues )
+	) as ComponentType< FieldProps< string > >;
+	const TimesControl = useControlComponent(
+		'times',
+		controlVisibilityConfig.times( interactionValues )
+	) as ComponentType< FieldProps< number > >;
 	const EasingControl = useControlComponent( 'easing' );
 
 	const containerRef = useRef< HTMLDivElement >( null );
@@ -166,6 +195,8 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			replay: boolean;
 			easing?: string;
 			relativeTo: string;
+			repeat: string;
+			times?: number;
 			start: SizeStringValue;
 			end: SizeStringValue;
 			customEffects?: PropValue;
@@ -192,6 +223,8 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 				replay: updates.replay ?? replay,
 				easing: updates.easing ?? easing,
 				relativeTo: updates.relativeTo ?? relativeTo,
+				repeat: updates.repeat ?? repeat,
+				times: updates.times ?? times,
 				start: updates.start ?? start,
 				end: updates.end ?? end,
 				customEffects: updates.customEffects ?? customEffects,
@@ -262,6 +295,25 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 								value={ direction }
 								onChange={ ( v ) => updateInteraction( { direction: v } ) }
 								interactionType={ type }
+							/>
+						</Field>
+					) }
+
+					{ RepeatControl && (
+						<Field label={ __( 'Repeat', 'elementor' ) }>
+							<RepeatControl value={ repeat } onChange={ ( v ) => updateInteraction( { repeat: v } ) } />
+						</Field>
+					) }
+
+					{ TimesControl && (
+						<Field label={ __( 'Times', 'elementor' ) }>
+							<TimesControl
+								value={ times }
+								onChange={ ( v ) =>
+									updateInteraction( {
+										times: normalizeTimesValue( v, DEFAULT_VALUES.times ),
+									} )
+								}
 							/>
 						</Field>
 					) }
