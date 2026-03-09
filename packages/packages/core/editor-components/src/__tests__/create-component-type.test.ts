@@ -5,9 +5,14 @@ import type {
 	ElementModel,
 	LegacyWindow,
 } from '@elementor/editor-canvas';
+import { notify } from '@elementor/editor-notifications';
 
 import { COMPONENT_WIDGET_TYPE, createComponentType } from '../create-component-type';
 import type { ExtendedWindow } from '../types';
+
+jest.mock( '@elementor/editor-notifications' );
+
+const mockNotify = jest.mocked( notify );
 
 type TestWindow = LegacyWindow & ExtendedWindow;
 
@@ -378,10 +383,12 @@ describe( 'createComponentType', () => {
 		} );
 	} );
 
-	it( 'should not call editComponent when user is not administrator', () => {
+	it( 'should not call editComponent or notify when user is not administrator', () => {
 		// Arrange
 		const viewInstance = createMockViewInstance( false ) as unknown as ComponentViewInstance;
 		const mockEvent = { stopPropagation: jest.fn() } as unknown as MouseEvent;
+
+		setProState( { installed: false, active: false } );
 
 		// Act
 		viewInstance.handleDblClick( mockEvent );
@@ -389,9 +396,10 @@ describe( 'createComponentType', () => {
 		// Assert
 		expect( mockEvent.stopPropagation ).toHaveBeenCalled();
 		expect( viewInstance.editComponent ).not.toHaveBeenCalled();
+		expect( mockNotify ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should silently block dblclick when Pro is not installed', () => {
+	it( 'should show upgrade notification on dblclick when Pro is not installed', () => {
 		// Arrange
 		const viewInstance = createMockViewInstance( true ) as unknown as ComponentViewInstance;
 		const mockEvent = { stopPropagation: jest.fn() } as unknown as MouseEvent;
@@ -404,6 +412,12 @@ describe( 'createComponentType', () => {
 		// Assert
 		expect( mockEvent.stopPropagation ).toHaveBeenCalled();
 		expect( viewInstance.editComponent ).not.toHaveBeenCalled();
+		expect( mockNotify ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				id: 'component-edit-upgrade',
+				type: 'promotion',
+			} )
+		);
 	} );
 
 	it( 'should allow dblclick edit when Pro is installed but expired', () => {
