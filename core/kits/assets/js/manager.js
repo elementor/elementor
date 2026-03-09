@@ -5,6 +5,8 @@ import PanelHeaderBehavior from './panel-header-behavior';
 import GlobalControlSelect from './globals/global-select-behavior';
 import ControlsCSSParser from 'elementor-assets-js/editor/utils/controls-css-parser';
 
+const V4_GROUP = 'v4';
+
 export default class Manager extends elementorModules.editor.utils.Module {
 	loadingTriggers = {
 		preview: false,
@@ -137,7 +139,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 		$e.data.get( 'globals/index' ).then( ( { data } ) => {
 			if ( data.colors ) {
 				Object.values( data.colors ).forEach( ( item ) => {
-					if ( 'v4' === item.group ) {
+					if ( V4_GROUP === item.group ) {
 						return;
 					}
 
@@ -153,6 +155,10 @@ export default class Manager extends elementorModules.editor.utils.Module {
 
 			if ( data.typography ) {
 				Object.values( data.typography ).forEach( ( item ) => {
+					if ( V4_GROUP === item.group ) {
+						return;
+					}
+
 					const controls = elementor.config.kit_config.design_system_controls.typography,
 						values = {
 							_id: item.id,

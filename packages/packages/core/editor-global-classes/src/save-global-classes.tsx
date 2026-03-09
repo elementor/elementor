@@ -24,6 +24,11 @@ export async function saveGlobalClasses( { context, onApprove }: Options ) {
 	} );
 
 	dispatch( slice.actions.reset( { context } ) );
+
+	window.dispatchEvent( new CustomEvent( 'classes:updated', {
+		detail: { context },
+	} ) );
+
 	if ( response?.data?.data?.code === API_ERROR_CODES.DUPLICATED_LABEL ) {
 		dispatch( slice.actions.updateMultiple( response.data.data.modifiedLabels ) );
 		trackGlobalClasses( {

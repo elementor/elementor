@@ -56,8 +56,21 @@
 		link.href = url + '?ver=' + version;
 	}
 
-	window.addEventListener( 'variables:updated', () => {
+	function debouncedSync() {
 		clearTimeout( syncTimeout );
 		syncTimeout = setTimeout( syncDesignSystem, DEBOUNCE_MS );
-	} );
+	}
+
+	function onClassesUpdated( event ) {
+		const { context } = event.detail;
+
+		if ( context !== 'frontend' ) {
+			return;
+		}
+
+		debouncedSync();
+	}
+
+	window.addEventListener( 'variables:updated', debouncedSync );
+	window.addEventListener( 'classes:updated', onClassesUpdated );
 }() );
