@@ -219,27 +219,29 @@ describe( 'createComponentType', () => {
 		return viewInstance;
 	};
 
-	it( 'should add edit component action to context menu when user is administrator', () => {
+	it( 'should add edit component and detach instance actions to context menu when user is administrator', () => {
 		const viewInstance = createMockViewInstance( true );
 		const groups = viewInstance.getContextMenuGroups();
 
 		const generalGroup = groups.find( ( group ) => group.name === 'general' );
 		const actions = generalGroup?.actions ?? [];
 		expect( generalGroup ).toBeDefined();
-		expect( actions ).toHaveLength( 2 );
+		expect( actions ).toHaveLength( 3 );
 		expect( actions.some( ( action ) => action.name === 'edit component' ) ).toBe( true );
+		expect( actions.some( ( action ) => action.name === 'detach instance' ) ).toBe( true );
 		expect( actions.some( ( action ) => action.name === 'copy' ) ).toBe( true );
 	} );
 
-	it( 'should not add edit component action to context menu when user is editor', () => {
+	it( 'should add only detach instance action (not edit component) to context menu when user is editor', () => {
 		const viewInstance = createMockViewInstance( false );
 		const groups = viewInstance.getContextMenuGroups();
 
 		const generalGroup = groups.find( ( group ) => group.name === 'general' );
 		const actions = generalGroup?.actions ?? [];
 		expect( generalGroup ).toBeDefined();
-		expect( actions ).toHaveLength( 1 );
+		expect( actions ).toHaveLength( 2 );
 		expect( actions.some( ( action ) => action.name === 'edit component' ) ).toBe( false );
+		expect( actions.some( ( action ) => action.name === 'detach instance' ) ).toBe( true );
 		expect( actions.some( ( action ) => action.name === 'copy' ) ).toBe( true );
 	} );
 
