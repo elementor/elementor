@@ -86,6 +86,12 @@ declare global {
 					tags: DynamicTags;
 					groups: Record< DynamicTag[ 'group' ], { title: string } >;
 				};
+				size_units?: {
+					length?: string[];
+					angle?: string[];
+					time?: string[];
+					extended_units?: string[];
+				}
 				v4Promotions?: Record< V4PromotionKey, V4PromotionData >;
 			};
 			dynamicTags?: DynamicTagsManager;

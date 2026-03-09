@@ -47,24 +47,31 @@ export const createConfig = ( {
 	replay,
 	easing = 'easeIn',
 	relativeTo = '',
+	repeat = '',
+	times = 1,
 	start = 85,
 	end = 15,
 }: {
 	replay: boolean;
 	easing?: string;
 	relativeTo?: string;
+	repeat?: string;
+	times?: number;
 	start?: SizeStringValue;
 	end?: SizeStringValue;
-} ): ConfigPropValue => ( {
-	$$type: 'config',
-	value: {
-		replay: createBoolean( replay ),
-		easing: createString( easing ),
-		relativeTo: createString( relativeTo ),
-		start: createSize( start, '%' ),
-		end: createSize( end, '%' ),
-	},
-} );
+} ): ConfigPropValue =>
+	( {
+		$$type: 'config',
+		value: {
+			replay: createBoolean( replay ),
+			easing: createString( easing ),
+			relativeTo: createString( relativeTo ),
+			repeat: createString( repeat ),
+			times: createNumber( times ),
+			start: createSize( start, '%' ),
+			end: createSize( end, '%' ),
+		},
+	} ) as ConfigPropValue;
 
 const createSize = ( value?: SizeStringValue, defaultUnit?: Unit, defaultValue?: SizeStringValue ) => {
 	if ( ! value ) {
@@ -103,6 +110,8 @@ export const createAnimationPreset = ( {
 	replay = false,
 	easing = 'easeIn',
 	relativeTo,
+	repeat,
+	times,
 	start,
 	end,
 	customEffects,
@@ -115,6 +124,8 @@ export const createAnimationPreset = ( {
 	replay: boolean;
 	easing?: string;
 	relativeTo?: string;
+	repeat?: string;
+	times?: number;
 	start?: SizeStringValue;
 	end?: SizeStringValue;
 	customEffects?: PropValue;
@@ -130,6 +141,8 @@ export const createAnimationPreset = ( {
 			replay,
 			easing,
 			relativeTo,
+			repeat,
+			times,
 			start,
 			end,
 		} ),
@@ -147,6 +160,8 @@ export const createInteractionItem = ( {
 	replay = false,
 	easing = 'easeIn',
 	relativeTo,
+	repeat,
+	times,
 	start,
 	end,
 	excludedBreakpoints,
@@ -162,6 +177,8 @@ export const createInteractionItem = ( {
 	replay?: boolean;
 	easing?: string;
 	relativeTo?: string;
+	repeat?: string;
+	times?: number;
 	start?: number;
 	end?: number;
 	excludedBreakpoints?: string[];
@@ -180,6 +197,8 @@ export const createInteractionItem = ( {
 			replay,
 			easing,
 			relativeTo,
+			repeat,
+			times,
 			start,
 			end,
 			customEffects,
