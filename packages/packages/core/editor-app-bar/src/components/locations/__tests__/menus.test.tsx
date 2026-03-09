@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createMockMenuAction, createMockMenuLink, createMockMenuToggleAction, renderWithTheme } from 'test-utils';
-import { fireEvent, screen } from '@testing-library/react';
 import { __flushAllInjections } from '@elementor/locations';
+import { fireEvent, screen } from '@testing-library/react';
 
 import { integrationsMenu, mainMenu, toolsMenu, utilitiesMenu } from '../../../locations';
 import MainMenuLocation from '../main-menu-location';
