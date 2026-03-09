@@ -4,8 +4,9 @@ import {
 	type ElementInteractions,
 	playElementInteractions,
 	updateElementInteractions,
-	useElementInteractions,
 } from '@elementor/editor-elements';
+
+import { useElementInteractions } from '../hooks/use-element-interactions';
 
 type InteractionsContextValue = {
 	interactions: ElementInteractions;
