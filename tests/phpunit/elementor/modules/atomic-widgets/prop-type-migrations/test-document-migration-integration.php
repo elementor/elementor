@@ -250,29 +250,13 @@ class Test_Document_Migration_Integration extends Elementor_Test_Base {
 		// Arrange
 		add_filter( 'elementor/atomic-widgets/props-schema', [ $this, 'extend_schema_with_overridable' ], 999999 );
 
-		$post_id = 1002;
-
-		$document_data = [
-			[
-				'id' => 'element_1',
-				'elType' => 'widget',
-				'widgetType' => 'e-heading',
-				'settings' => [
-					'title' => [
-						'$$type' => 'overridable',
-						'value' => [
-							'override_key' => 'prop-123',
-							'origin_value' => [
-								'$$type' => 'html',
-								'value' => 'Overridable Title',
-							],
-						],
-					],
-				],
-			],
-		];
+		$document_data = json_decode(
+			file_get_contents( $this->fixtures_path . 'overridable-migration-data.json' ),
+			true
+		);
 
 		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
+		$post_id = 1002;
 
 		// Act
 		$orchestrator->migrate(
