@@ -39,7 +39,7 @@ export const useSizeValue = < T extends SizeValue, U extends SizeUnit >( {
 			}
 		}, // TODO we will need to handle options, meta if context need them
 		persistWhen: ( next ) => hasChanged( next, resolvedValue as T ),
-		fallback: () => createDefaultSizeValue< T >( defaultUnit ),
+		fallback: () => createDefaultSizeValue< T >( units, defaultUnit ),
 	} );
 
 	const setSize = ( newSize: string ) => {

@@ -149,7 +149,7 @@ describe( 'useSizeValue', () => {
 			expect( result.current.size ).toBe( '' );
 		} );
 
-		it( 'should use system default unit when value is null and defaultUnit is not provided', () => {
+		it( 'should use first unit in units list as default when value is null and defaultUnit is not provided', () => {
 			// Act.
 			const { result } = renderSizeValueHook( {
 				units: [ 'px' ],
@@ -177,22 +177,22 @@ describe( 'useSizeValue', () => {
 			expect( result.current.size ).toBe( 1 );
 		} );
 
-		it( 'should fallback to system default unit if provided default unit and value unit doesnt conform to units list', () => {
+		it( 'should fallback to first unit in units list as default if provided default unit and value unit doesnt conform to units list', () => {
 			// Act.
 			const { result } = renderSizeValueHook( {
 				value: {
 					size: 2,
 					unit: 'deg',
 				},
-				units: [ 'px', 'vh', 'vw' ],
+				units: [ 'ch', 'vh', 'vw' ],
 				defaultUnit: 'turn',
 			} );
 
-			expect( result.current.unit ).toBe( 'px' );
+			expect( result.current.unit ).toBe( 'ch' );
 			expect( result.current.size ).toBe( 2 );
 		} );
 
-		it( 'should fallback to first unit in unit list if provided default unit, value unit and system default doesnt conform to units list', () => {
+		it( 'should fallback to first unit in unit list if provided default unit and value unit conform to units list', () => {
 			// Act.
 			const { result } = renderSizeValueHook( {
 				value: {
@@ -222,7 +222,7 @@ describe( 'useSizeValue', () => {
 			expect( result.current.size ).toBe( 3 );
 		} );
 
-		it( 'should resolve unit system default when value unit is not in units list and defaultUnit is not provided', () => {
+		it( 'should resolve unit first unit in units list when value unit is not in units list and defaultUnit is not provided', () => {
 			// Act.
 			const { result } = renderSizeValueHook( {
 				value: {
@@ -232,7 +232,7 @@ describe( 'useSizeValue', () => {
 				units: [ 'rem', 'px', 'vh' ],
 			} );
 
-			expect( result.current.unit ).toBe( 'px' );
+			expect( result.current.unit ).toBe( 'rem' );
 			expect( result.current.size ).toBe( 90 );
 		} );
 	} );
@@ -697,7 +697,7 @@ describe( 'useSizeValue', () => {
 			rerender( { value: null } );
 
 			expect( result.current.size ).toBe( '' );
-			expect( result.current.unit ).toBe( 'vw' );
+			expect( result.current.unit ).toBe( 'px' );
 		} );
 
 		it( 'should reflect custom unit and string size when externalValue switches to custom', () => {

@@ -17,6 +17,10 @@ export const useSizeUnitKeyboard = ( { unit, units, onUnitChange }: Props ) => {
 	const { appendKey, startsWith } = useTypingBuffer();
 
 	const onUnitKeyDown = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
+		if ( units.length === 0 ) {
+			return;
+		}
+
 		const { key, altKey, ctrlKey, metaKey } = event;
 
 		if ( altKey || ctrlKey || metaKey ) {

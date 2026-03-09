@@ -142,7 +142,7 @@ describe( 'useSizeKeyboard', () => {
 			expect( onUnitChange ).toHaveBeenCalledWith( 'em' );
 		} );
 
-		it( 'should not call onUnitChange when unit is extended( auto ), key is digit, and units is empty', () => {
+		it( 'should not call onUnitChange when units is empty', () => {
 			// Arrange.
 			isExtendedUnitMock.mockReturnValue( true );
 			const onUnitChange = jest.fn();
@@ -426,7 +426,6 @@ describe( 'useSizeKeyboard', () => {
 			result.current.onUnitKeyDown( asKeyboardEvent( event ) );
 
 			// Assert.
-			expect( event.preventDefault ).toHaveBeenCalled();
 			expect( onUnitChange ).not.toHaveBeenCalled();
 		} );
 
