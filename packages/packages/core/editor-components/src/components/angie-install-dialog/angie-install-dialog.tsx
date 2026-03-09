@@ -4,7 +4,7 @@ import { XIcon } from '@elementor/icons';
 import { Button, Dialog, DialogContent, IconButton, Image, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-const PROMOTION_IMAGE_URL = 'https://assets.elementor.com/packages/v1/images/angie-components-promotion.png';
+const PROMOTION_IMAGE_URL = 'https://assets.elementor.com/packages/v1/images/angie-components-promotion.svg';
 
 type AngieInstallDialogProps = {
 	open: boolean;

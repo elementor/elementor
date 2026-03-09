@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createRef } from 'react';
-import { fireEvent, screen } from '@testing-library/react';
 import { renderWithTheme } from 'test-utils';
+import { fireEvent, screen } from '@testing-library/react';
 
 import { AngieIntroPopover } from '../angie-intro-popover';
 
@@ -21,12 +21,7 @@ describe( 'AngieIntroPopover', () => {
 		renderWithTheme(
 			<>
 				<button ref={ anchorRef }>Anchor</button>
-				<AngieIntroPopover
-					open={ true }
-					onClose={ onClose }
-					onConfirm={ onConfirm }
-					anchorRef={ anchorRef }
-				/>
+				<AngieIntroPopover open={ true } onClose={ onClose } onConfirm={ onConfirm } anchorRef={ anchorRef } />
 			</>
 		);
 
@@ -45,12 +40,7 @@ describe( 'AngieIntroPopover', () => {
 		renderWithTheme(
 			<>
 				<button ref={ anchorRef }>Anchor</button>
-				<AngieIntroPopover
-					open={ false }
-					onClose={ onClose }
-					onConfirm={ onConfirm }
-					anchorRef={ anchorRef }
-				/>
+				<AngieIntroPopover open={ false } onClose={ onClose } onConfirm={ onConfirm } anchorRef={ anchorRef } />
 			</>
 		);
 
@@ -66,12 +56,7 @@ describe( 'AngieIntroPopover', () => {
 		renderWithTheme(
 			<>
 				<button ref={ anchorRef }>Anchor</button>
-				<AngieIntroPopover
-					open={ true }
-					onClose={ onClose }
-					onConfirm={ onConfirm }
-					anchorRef={ anchorRef }
-				/>
+				<AngieIntroPopover open={ true } onClose={ onClose } onConfirm={ onConfirm } anchorRef={ anchorRef } />
 			</>
 		);
 		fireEvent.click( screen.getByRole( 'button', { name: 'Start building' } ) );
