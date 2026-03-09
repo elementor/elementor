@@ -2,14 +2,15 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { Box, styled } from '@elementor/ui';
 
-import type { StepVisualConfig } from '../../types';
-import { getVideoUrls } from '../../steps/step-visuals';
 import { isVideoPreloaded } from '../../hooks/use-video-preload';
+import { getVideoUrls } from '../../steps/step-visuals';
+import type { StepVisualConfig } from '../../types';
 import { FOOTER_HEIGHT, LAYOUT_PADDING, TOPBAR_HEIGHT } from './base-layout';
 
 const PANEL_RADIUS_MULTIPLIER = 2;
 const PANEL_MIN_HEIGHT = 36;
 const VIDEO_TRANSITION_MS = 400;
+const DELAY_BACKGROUND_UNTIL_VIDEO_PLAYS_MS = 500;
 
 const ALL_VIDEO_URLS = getVideoUrls();
 
@@ -86,8 +87,23 @@ interface RightPanelProps {
 }
 
 export const RightPanel = React.memo( function RightPanel( { config }: RightPanelProps ) {
+	const [ displayedBackground, setDisplayedBackground ] = useState( config.background );
+
+	useEffect( () => {
+		if ( ! config.video ) {
+			setDisplayedBackground( config.background );
+			return;
+		}
+
+		const timeoutId = setTimeout( () => {
+			setDisplayedBackground( config.background );
+		}, DELAY_BACKGROUND_UNTIL_VIDEO_PLAYS_MS );
+
+		return () => clearTimeout( timeoutId );
+	}, [ config.video, config.background ] );
+
 	return (
-		<RightPanelRoot background={ config.background }>
+		<RightPanelRoot background={ displayedBackground }>
 			<VideoStack activeUrl={ config.video } />
 		</RightPanelRoot>
 	);
