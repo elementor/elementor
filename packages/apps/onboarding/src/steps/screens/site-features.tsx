@@ -12,6 +12,7 @@ import {
 	CustomCodeIcon,
 	EmailDeliverabilityIcon,
 	ImageOptimizationIcon,
+	InteractionsIcon,
 	ThemeBuilderIcon,
 	WoocommerceIcon,
 } from '../../icons';
@@ -26,9 +27,9 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 		licenseType: 'core',
 	},
 	{
-		id: 'core_placeholder',
-		labelKey: 'steps.site_features.option_core_placeholder',
-		Icon: CorePlaceholderIcon,
+		id: 'interactions',
+		labelKey: 'steps.site_features.option_interactions',
+		Icon: InteractionsIcon,
 		licenseType: 'core',
 	},
 	{

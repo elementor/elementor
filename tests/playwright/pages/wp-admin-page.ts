@@ -299,7 +299,15 @@ export default class WpAdminPage extends BasePage {
 				}
 			}, `.elementor_experiment-${ id }` );
 
-			await selectElement.selectOption( state ? 'active' : 'inactive', { timeout: 5000 } );
+			let optionValue: string;
+
+			if ( 'string' === typeof state ) {
+				optionValue = state;
+			} else {
+				optionValue = state ? 'active' : 'inactive';
+			}
+
+			await selectElement.selectOption( optionValue, { timeout: 5000 } );
 
 			await this.confirmExperimentModalIfOpen();
 		}

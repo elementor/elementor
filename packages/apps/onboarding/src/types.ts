@@ -1,5 +1,3 @@
-import type { CSSProperties } from 'react';
-
 export const StepId = {
 	BUILDING_FOR: 'building_for',
 	SITE_ABOUT: 'site_about',
@@ -20,18 +18,10 @@ export interface Step {
 
 export type AssetAnimation = 'fade-in' | 'fade-up' | 'none';
 
-export interface RightPanelAsset {
-	id: string;
-	src: string;
-	alt?: string;
-	style?: CSSProperties;
-	animation?: AssetAnimation;
-}
-
 export interface StepVisualConfig {
 	background: string;
-	assets: RightPanelAsset[];
 	contentMaxWidth?: number;
+	video?: string;
 }
 
 export interface OnboardingProgress {
