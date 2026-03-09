@@ -11,6 +11,7 @@ import { injectTab } from '@elementor/editor-elements-panel';
 import { stylesRepository } from '@elementor/editor-styles-repository';
 import { registerDataHook } from '@elementor/editor-v1-adapters';
 import { __registerSlice as registerSlice } from '@elementor/store';
+import { isProAtLeast } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { componentInstanceTransformer } from './component-instance-transformer';
@@ -22,6 +23,7 @@ import { InstanceEditingPanel } from './components/instance-editing-panel/instan
 import { LoadTemplateComponents } from './components/load-template-components';
 import { COMPONENT_WIDGET_TYPE, createComponentType } from './create-component-type';
 import { initExtended } from './extended/init';
+import { initCreateComponentShortcut } from './extended/shortcuts/create-component-shortcut';
 import { PopulateStore } from './populate-store';
 import { initCircularNestingPrevention } from './prevent-circular-nesting';
 import { loadComponentsAssets } from './store/actions/load-components-assets';
@@ -31,6 +33,8 @@ import { slice } from './store/store';
 import { beforeSave } from './sync/before-save';
 import { initLoadComponentDataAfterInstanceAdded } from './sync/load-component-data-after-instance-added';
 import { type ExtendedWindow } from './types';
+
+const PRO_EXTENDED_MIGRATION_VERSION = '4.0.0';
 
 export function init() {
 	stylesRepository.register( componentsStylesProvider );
@@ -84,5 +88,11 @@ export function init() {
 
 	initLoadComponentDataAfterInstanceAdded();
 
-	initExtended();
+	if ( !! window.elementorPro && ! isProAtLeast( PRO_EXTENDED_MIGRATION_VERSION ) ) {
+		initExtended();
+	}
+
+	if ( !! window.elementorPro ) {
+		initCreateComponentShortcut();
+	}
 }

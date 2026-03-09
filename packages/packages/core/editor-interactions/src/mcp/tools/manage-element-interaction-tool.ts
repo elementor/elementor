@@ -5,7 +5,12 @@ import { isProActive } from '@elementor/utils';
 
 import { interactionsRepository } from '../../interactions-repository';
 import { type ElementInteractions } from '../../types';
-import { createInteractionItem, extractString } from '../../utils/prop-value-utils';
+import {
+	createInteractionItem,
+	extractExcludedBreakpoints,
+	extractSize,
+	extractString,
+} from '../../utils/prop-value-utils';
 import { generateTempInteractionId } from '../../utils/temp-id-utils';
 import { MAX_INTERACTIONS_PER_ELEMENT } from '../constants';
 import { INTERACTIONS_SCHEMA_URI } from '../resources/interactions-schema-resource';
@@ -15,6 +20,8 @@ const EMPTY_INTERACTIONS: ElementInteractions = {
 	version: 1,
 	items: [],
 };
+
+const EFFECTS_WITHOUT_TYPE = [ 'custom' ];
 
 export const initManageElementInteractionTool = ( reg: MCPRegistryEntry ) => {
 	const { addTool } = reg;
@@ -55,18 +62,44 @@ export const initManageElementInteractionTool = ( reg: MCPRegistryEntry ) => {
 			[ key: string ]: unknown;
 		} ) => {
 			const { elementId, action, interactionId, ...animationData } = input;
+			const { effectType, ...restAnimationData } = animationData as {
+				effectType?: string;
+				[ key: string ]: unknown;
+			};
+			const effect = restAnimationData.effect as string | undefined;
+			const resolvedType =
+				effectType ?? ( effect && ! EFFECTS_WITHOUT_TYPE.includes( effect ) ? 'in' : undefined );
 
 			const allInteractions = interactionsRepository.all();
 			const elementData = allInteractions.find( ( data ) => data.elementId === elementId );
 			const currentInteractions: ElementInteractions = elementData?.interactions ?? EMPTY_INTERACTIONS;
 
 			if ( action === 'get' ) {
+				const summary = currentInteractions.items.map( ( item ) => {
+					const { value } = item;
+					const animValue = value.animation.value;
+					const timingValue = animValue.timing_config.value;
+					const configValue = animValue.config.value;
+
+					return {
+						id: extractString( value.interaction_id ),
+						trigger: extractString( value.trigger ),
+						effect: extractString( animValue.effect ),
+						effectType: extractString( animValue.type ),
+						direction: extractString( animValue.direction ),
+						duration: extractSize( timingValue.duration ),
+						delay: extractSize( timingValue.delay ),
+						easing: extractString( configValue.easing ),
+						excludedBreakpoints: extractExcludedBreakpoints( value.breakpoints ),
+					};
+				} );
+
 				return {
 					success: true,
 					elementId,
 					action,
-					interactions: currentInteractions.items,
-					count: currentInteractions.items.length,
+					interactions: summary,
+					count: summary.length,
 				};
 			}
 
@@ -82,7 +115,8 @@ export const initManageElementInteractionTool = ( reg: MCPRegistryEntry ) => {
 
 					const newItem = createInteractionItem( {
 						interactionId: generateTempInteractionId(),
-						...animationData,
+						...restAnimationData,
+						type: resolvedType,
 					} );
 
 					updatedItems = [ ...updatedItems, newItem ];
@@ -106,7 +140,8 @@ export const initManageElementInteractionTool = ( reg: MCPRegistryEntry ) => {
 
 					const updatedItem = createInteractionItem( {
 						interactionId,
-						...animationData,
+						...restAnimationData,
+						type: resolvedType,
 					} );
 
 					updatedItems = [
