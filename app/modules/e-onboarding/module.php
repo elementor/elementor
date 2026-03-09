@@ -3,6 +3,7 @@
 namespace Elementor\App\Modules\E_Onboarding;
 
 use Elementor\App\Modules\E_Onboarding\Data\Controller;
+use Elementor\App\Modules\E_Onboarding\Data\Endpoints\Install_Theme;
 use Elementor\App\Modules\E_Onboarding\Storage\Entities\User_Choices;
 use Elementor\App\Modules\E_Onboarding\Storage\Entities\User_Progress;
 use Elementor\App\Modules\E_Onboarding\Storage\Onboarding_Progress_Manager;
@@ -22,6 +23,7 @@ class Module extends BaseModule {
 	const VERSION = '1.0.0';
 	const EXPERIMENT_NAME = 'e_onboarding';
 	const ASSETS_BASE_URL = 'https://assets.elementor.com/onboarding/v1/strings/';
+	const VIDEOS_BASE_URL = 'https://assets.elementor.com/onboarding/v1/videos/';
 
 	const SUPPORTED_LOCALES = [
 		'de_DE',
@@ -65,9 +67,9 @@ class Module extends BaseModule {
 		add_action( 'elementor/init', [ $this, 'on_elementor_init' ], 12 );
 
 		if ( $this->should_show_starter() ) {
-			add_filter( 'elementor/editor/show_starter', '__return_true' );
 			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_starter_settings' ] );
-			add_action( 'elementor/preview/enqueue_styles', [ $this, 'enqueue_fonts' ] );
+			add_filter( 'elementor/editor/v2/packages', [ $this, 'add_starter_packages' ] );
+			add_action( 'elementor/editor/v2/styles/enqueue', [ $this, 'enqueue_fonts' ] );
 		}
 	}
 
@@ -128,6 +130,7 @@ class Module extends BaseModule {
 				'comparePlans' => 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash',
 				'createNewPage' => Plugin::$instance->documents->get_create_new_post_url(),
 				'upgradeUrl' => 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar&utm_term=2.0.0',
+				'videosBaseUrl' => self::VIDEOS_BASE_URL,
 			],
 		] );
 	}
@@ -227,6 +230,12 @@ class Module extends BaseModule {
 		$progress = $this->progress_manager->get_progress();
 
 		return null !== $progress->get_completed_at() && ! $progress->is_starter_dismissed();
+	}
+
+	public function add_starter_packages( array $packages ): array {
+		$packages[] = 'editor-starter';
+
+		return $packages;
 	}
 
 	public function add_starter_settings( array $settings ): array {
@@ -330,7 +339,7 @@ class Module extends BaseModule {
 
 	private function is_elementor_theme_active(): bool {
 		$active_theme = get_stylesheet();
-		$is_active = in_array( $active_theme, Onboarding_Progress_Manager::ALLOWED_THEMES, true );
+		$is_active = in_array( $active_theme, Install_Theme::ALLOWED_THEMES, true );
 
 		return (bool) apply_filters( 'elementor/e-onboarding/is_elementor_theme_active', $is_active );
 	}

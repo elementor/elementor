@@ -9,6 +9,8 @@ const BUTTON_CLASSES = {
 	disabled: /e-onboarding__button--disabled/,
 };
 
+const GOOD_TO_GO_SCREEN_TITLE = /Welcome aboard! What's next\?|How would you like to create your website?|All set! Choose how to start/;
+
 test.describe( 'On boarding @onBoarding', async () => {
 	let originalActiveTheme: string;
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -29,7 +31,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 	/**
 	 *  Test that the "Upgrade" popover appears when overing over the "Upgrade" button.
 	 */
-	test.skip( 'Onboarding Upgrade Popover', async ( { page } ) => {
+	test( 'Onboarding Upgrade Popover', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
 
 		const goProHeaderButton = page.locator( '#eps-app-header-btn-go-pro' );
@@ -41,7 +43,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 		await expect( goProPopover ).toBeVisible();
 	} );
 
-	test.skip( 'Onboarding Create Account Popup Open', async ( { page } ) => {
+	test( 'Onboarding Create Account Popup Open', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
 
 		const variantA = page.locator( 'a.e-onboarding__button-action' );
@@ -76,7 +78,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 	/**
 	 * Test the "Skip" button - to make sure it skips to the next step.
 	 */
-	test.skip( 'Onboarding Skip to Hello Theme Page', async ( { page } ) => {
+	test( 'Onboarding Skip to Hello Theme Page', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
 
 		const variantASkip = page.locator( 'text=Skip' );
@@ -96,7 +98,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 	 * filled.
 	 * 2. Clicking on 'Skip' should take the user to the Site Logo screen
 	 */
-	test.skip( 'Onboarding Site Name Page', async ( { page } ) => {
+	test( 'Onboarding Site Name Page', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding/siteName' );
 
 		await page.fill( 'input[type="text"]', '' );
@@ -123,7 +125,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 	 * 2. Clicking on 'Skip' should take the user to the Good to Go screen
 	 */
 
-	test.skip( 'Onboarding Site Logo Page', async ( { page } ) => {
+	test( 'Onboarding Site Logo Page', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding/siteLogo' );
 
 		const nextButton = page.locator( 'text=Next' );
@@ -142,14 +144,22 @@ test.describe( 'On boarding @onBoarding', async () => {
 		await expect( nextButton ).toHaveClass( BUTTON_CLASSES.disabled );
 		await skipButton.click();
 
-		await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Welcome aboard! What\'s next?' );
+		await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( GOOD_TO_GO_SCREEN_TITLE );
 	} );
 
 	/**
 	 * In the Good to Go page - tests that clicking on the Kit Library card/button navigates the user to the Kit Library.
 	 */
-	test.skip( 'Onboarding Good to Go Page - Open Kit Library', async ( { page } ) => {
+	test( 'Onboarding Good to Go Page - Open Kit Library', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding/goodToGo' );
+
+		const isExperiment402B = await page.evaluate( () => {
+			return 'B' === localStorage.getItem( 'elementor_onboarding_experiment402_variant' );
+		} );
+
+		if ( isExperiment402B ) {
+			test.skip( true, 'Skipping Kit Library navigation test in Experiment 402 Variant B' );
+		}
 
 		const nextButton = page.locator( '.e-onboarding__cards-grid > a:nth-child(2)' );
 
@@ -164,7 +174,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 test.describe( 'Onboarding @onBoarding', async () => {
 	const chooseFeaturesUrl = '/wp-admin/admin.php?page=elementor-app#onboarding/chooseFeatures';
 
-	test.skip( 'Onboarding Choose Features page', async ( { page } ) => {
+	test( 'Onboarding Choose Features page', async ( { page } ) => {
 		await page.goto( chooseFeaturesUrl );
 
 		const chooseFeaturesScreen = page.locator( '.e-onboarding__page-chooseFeatures' ),
@@ -220,7 +230,7 @@ test.describe( 'Onboarding @onBoarding', async () => {
 		} );
 	} );
 
-	test.skip( 'Onboarding Choose Features page - Upgrade button', async ( { page } ) => {
+	test( 'Onboarding Choose Features page - Upgrade button', async ( { page } ) => {
 		await page.goto( chooseFeaturesUrl );
 
 		const upgradeNowBtn = page.locator( EditorSelectors.onboarding.upgradeButton );
@@ -244,11 +254,14 @@ test.describe( 'Onboarding @onBoarding', async () => {
 		await test.step( 'Check that step was changed to Good to Go', async () => {
 			expect( page.url() ).toContain( 'onboarding/goodToGo' );
 			await expect( page.locator( EditorSelectors.onboarding.progressBar.completedItem ) ).toContainText( 'Choose Features' );
-			await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Welcome aboard! What\'s next?' );
+
+			await expect(
+				page.locator( EditorSelectors.onboarding.screenTitle ),
+			).toHaveText( GOOD_TO_GO_SCREEN_TITLE );
 		} );
 	} );
 
-	test.skip( 'Onboarding Choose Features page - Skip button', async ( { page } ) => {
+	test( 'Onboarding Choose Features page - Skip button', async ( { page } ) => {
 		await page.goto( chooseFeaturesUrl );
 
 		const skipButton = page.locator( EditorSelectors.onboarding.skipButton );
@@ -259,7 +272,7 @@ test.describe( 'Onboarding @onBoarding', async () => {
 			await skipButton.click();
 			expect( page.url() ).toContain( 'onboarding/goodToGo' );
 			await expect( page.locator( EditorSelectors.onboarding.progressBar.skippedItem ) ).toContainText( 'Choose Features' );
-			await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Welcome aboard! What\'s next?' );
+			await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( GOOD_TO_GO_SCREEN_TITLE );
 		} );
 	} );
 } );
