@@ -38,8 +38,8 @@ const VideoStack = React.memo( function VideoStack( { activeUrl }: { activeUrl: 
 	const refs = useRef< Map< string, HTMLVideoElement > >( new Map() );
 
 	useEffect( () => {
-		refs.current.forEach( ( element, url ) => {
-			if ( url === activeUrl ) {
+		refs.current.forEach( ( element, videoUrl ) => {
+			if ( videoUrl === activeUrl ) {
 				element.currentTime = 0;
 				element.play().catch( () => {} );
 			} else {
@@ -50,18 +50,18 @@ const VideoStack = React.memo( function VideoStack( { activeUrl }: { activeUrl: 
 
 	return (
 		<>
-			{ ALL_VIDEO_URLS.map( ( url ) => (
+			{ ALL_VIDEO_URLS.map( ( videoUrl ) => (
 				<Box
-					key={ url }
+					key={ videoUrl }
 					component="video"
-					src={ url }
+					src={ videoUrl }
 					muted
 					playsInline
 					ref={ ( element: HTMLVideoElement | null ) => {
 						if ( element ) {
-							refs.current.set( url, element );
+							refs.current.set( videoUrl, element );
 						} else {
-							refs.current.delete( url );
+							refs.current.delete( videoUrl );
 						}
 					} }
 					sx={ {
@@ -70,7 +70,7 @@ const VideoStack = React.memo( function VideoStack( { activeUrl }: { activeUrl: 
 						width: '100%',
 						height: '100%',
 						objectFit: 'cover',
-						opacity: url === activeUrl ? 1 : 0,
+						opacity: videoUrl === activeUrl ? 1 : 0,
 						transition: `opacity ${ VIDEO_TRANSITION_MS }ms ease`,
 					} }
 				/>
