@@ -376,6 +376,34 @@ class Test_Validation extends TestCase {
 		$this->assertNotEmpty( $result['elements'][0]['interactions'] );
 	}
 
+	public function test_sanitize__will_accept_interaction_with_empty_repeat_mode() {
+		$interaction = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0, '1' );
+		$interaction['value']['animation']['value']['config'] = $this->create_config_prop( [
+			'replay' => false,
+			'easing' => 'easeIn',
+			'repeat' => '',
+			'times' => 1,
+		] );
+
+		$document = [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( [
+						'items' => [ $interaction ],
+						'version' => 1,
+					] ),
+				],
+			],
+		];
+
+		$result = $this->validation()->sanitize( $document );
+
+		$this->assertNotEmpty( $result['elements'][0]['interactions'] );
+	}
+
 	public function test_sanitize__will_strip_interaction_with_invalid_repeat_mode() {
 		$interaction = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0, '1' );
 		$interaction['value']['animation']['value']['config'] = $this->create_config_prop( [

@@ -12,7 +12,6 @@ import {
 	type InteractionItemPropValue,
 	type InteractionItemValue,
 	type NumberPropValue,
-	type RepeatMode,
 	type SizeStringValue,
 	type StringPropValue,
 	type TimingConfigPropValue,
@@ -48,15 +47,15 @@ export const createConfig = ( {
 	replay,
 	easing = 'easeIn',
 	relativeTo = '',
-	repeat,
-	times,
+	repeat = '',
+	times = 1,
 	start = 85,
 	end = 15,
 }: {
 	replay: boolean;
 	easing?: string;
 	relativeTo?: string;
-	repeat?: RepeatMode;
+	repeat?: string;
 	times?: number;
 	start?: SizeStringValue;
 	end?: SizeStringValue;
@@ -67,8 +66,8 @@ export const createConfig = ( {
 			replay: createBoolean( replay ),
 			easing: createString( easing ),
 			relativeTo: createString( relativeTo ),
-			...( repeat !== undefined ? { repeat: createString( repeat ) } : {} ),
-			...( times !== undefined ? { times: createNumber( times ) } : {} ),
+			repeat: createString( repeat ),
+			times: createNumber( times ),
 			start: createSize( start, '%' ),
 			end: createSize( end, '%' ),
 		},
@@ -125,7 +124,7 @@ export const createAnimationPreset = ( {
 	replay: boolean;
 	easing?: string;
 	relativeTo?: string;
-	repeat?: RepeatMode;
+	repeat?: string;
 	times?: number;
 	start?: SizeStringValue;
 	end?: SizeStringValue;
@@ -178,7 +177,7 @@ export const createInteractionItem = ( {
 	replay?: boolean;
 	easing?: string;
 	relativeTo?: string;
-	repeat?: RepeatMode;
+	repeat?: string;
 	times?: number;
 	start?: number;
 	end?: number;

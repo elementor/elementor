@@ -18,7 +18,7 @@ class Validation {
 	private const VALID_EFFECTS = [ 'fade', 'slide', 'scale', 'custom' ];
 	private const VALID_TYPES = [ 'in', 'out' ];
 	private const VALID_DIRECTIONS = [ '', 'left', 'right', 'top', 'bottom' ];
-	private const VALID_REPEAT_MODES = [ 'loop', 'times' ];
+	private const VALID_REPEAT_MODES = [ '', 'loop', 'times' ];
 
 	public function sanitize( $document ) {
 		return $this->sanitize_document_data( $document );

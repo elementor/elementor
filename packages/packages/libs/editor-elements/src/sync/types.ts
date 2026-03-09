@@ -76,11 +76,8 @@ export type ConfigPropValue = {
 		replay: BooleanPropValue;
 		easing: StringPropValue;
 		relativeTo: StringPropValue;
-		repeat?: {
-			$$type: 'string';
-			value: RepeatMode;
-		};
-		times?: NumberPropValue;
+		repeat: StringPropValue;
+		times: NumberPropValue;
 		start?: SizePropValue;
 		end?: SizePropValue;
 	};
@@ -94,7 +91,7 @@ export type AnimationPresetPropValue = {
 		type: StringPropValue;
 		direction: StringPropValue;
 		timing_config: TimingConfigPropValue;
-		config: ConfigPropValue;
+		config?: ConfigPropValue;
 	};
 };
 
