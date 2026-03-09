@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { ElementProvider, usePanelActions as useEditingPanelActions } from '@elementor/editor-editing-panel';
-import { useSelectedElement } from '@elementor/editor-elements';
+import { usePanelActions as useEditingPanelActions } from '@elementor/editor-editing-panel';
 import { __createPanel as createPanel, Panel } from '@elementor/editor-panels';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { Alert, Box, ErrorBoundary } from '@elementor/ui';
@@ -16,27 +15,20 @@ export const { panel, usePanelActions } = createPanel( {
 } );
 
 function ComponentPropertiesPanel() {
-	const { element, elementType } = useSelectedElement();
 	const { close: closePanel } = usePanelActions();
 	const { open: openEditingPanel } = useEditingPanelActions();
-
-	if ( ! element || ! elementType ) {
-		return null;
-	}
 
 	return (
 		<ThemeProvider>
 			<ErrorBoundary fallback={ <ErrorBoundaryFallback /> }>
-				<ElementProvider element={ element } elementType={ elementType }>
-					<Panel>
-						<ComponentPropertiesPanelContent
-							onClose={ () => {
-								closePanel();
-								openEditingPanel();
-							} }
-						/>
-					</Panel>
-				</ElementProvider>
+				<Panel>
+					<ComponentPropertiesPanelContent
+						onClose={ () => {
+							closePanel();
+							openEditingPanel();
+						} }
+					/>
+				</Panel>
 			</ErrorBoundary>
 		</ThemeProvider>
 	);

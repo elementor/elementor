@@ -29,6 +29,7 @@ interface EOnboardingConfig {
 	shouldShowProInstallScreen?: boolean;
 	userName?: string;
 	uiTheme?: 'auto' | 'dark' | 'light';
+	translations?: Record< string, string >;
 	steps: Array<{
 		id: string;
 		label: string;
@@ -39,7 +40,8 @@ interface EOnboardingConfig {
 		editor: string;
 		connect: string;
 		comparePlans?: string;
-		exploreFeatures?: string;
+		upgradeUrl: string;
+		videosBaseUrl: string;
 	};
 }
 
@@ -98,6 +100,21 @@ declare global {
 			getContainer?: ( id: string ) => V1Element;
 			helpers?: {
 				enqueueFont?: EnqueueFont;
+				hasPro?: () => boolean;
+			};
+			hooks?: {
+				addFilter: (
+					filterName: string,
+					callback: (
+						regionViews: Record< string, unknown >,
+						options: { notice: unknown, elements: unknown }
+					) => Record< string, unknown >
+				) => void;
+			};
+		};
+		Marionette?: {
+			CompositeView: {
+				extend: ( options: Record< string, unknown > ) => unknown;
 			};
 		};
 		elementorFrontend?: {
@@ -108,6 +125,7 @@ declare global {
 		elementorPro?: {
 			config?: {
 				version?: string;
+				isActive?: boolean;
 			};
 		};
 		elementorAppConfig?: {

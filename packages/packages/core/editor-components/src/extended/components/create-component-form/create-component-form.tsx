@@ -4,18 +4,17 @@ import { getElementLabel, type V1ElementData } from '@elementor/editor-elements'
 import { type NotificationData, notify } from '@elementor/editor-notifications';
 import { Form as FormElement, ThemeProvider, useTextFieldAutoSelect } from '@elementor/editor-ui';
 import { ComponentsIcon } from '@elementor/icons';
-import { __getState as getState } from '@elementor/store';
 import { Button, FormLabel, Grid, Popover, Stack, TextField, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../../hooks/use-components';
-import { selectComponentByUid } from '../../../store/store';
+import { componentsSelectors } from '../../../store/selectors';
 import { type ComponentFormValues, type PublishedComponent } from '../../../types';
-import { createBaseComponentSchema, createSubmitComponentSchema } from '../../../utils/component-form-schema';
 import { switchToComponent } from '../../../utils/switch-to-component';
 import { trackComponentEvent } from '../../../utils/tracking';
 import { createUnpublishedComponent } from '../../store/actions/create-unpublished-component';
 import { findNonAtomicElementsInElement } from '../../sync/prevent-non-atomic-nesting';
+import { createBaseComponentSchema, createSubmitComponentSchema } from '../../utils/component-form-schema';
 import { useForm } from './hooks/use-form';
 import {
 	type ComponentEventData,
@@ -84,7 +83,7 @@ export function CreateComponentForm() {
 				source: 'user',
 			} );
 
-			const publishedComponentId = ( selectComponentByUid( getState(), uid ) as PublishedComponent )?.id;
+			const publishedComponentId = ( componentsSelectors.getComponentByUid( uid ) as PublishedComponent )?.id;
 
 			if ( publishedComponentId ) {
 				switchToComponent( publishedComponentId, instanceId );

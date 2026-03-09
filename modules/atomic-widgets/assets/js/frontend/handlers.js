@@ -236,15 +236,8 @@ function setFormState( element, state ) {
 		return;
 	}
 
-	element.setAttribute( 'data-form-state', state );
-
-	const id = extractId( element );
-	const container = id ? window.elementor?.getContainer?.( id ) : null;
-	container?.view?._updateStatusVisibility?.();
-}
-
-function extractId( element ) {
-	return element?.dataset?.id || null;
+	element.classList.remove( 'form-state-default', 'form-state-success', 'form-state-error' );
+	element.classList.add( `form-state-${ state }` );
 }
 
 function getPostId() {

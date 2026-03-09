@@ -3,12 +3,14 @@
 namespace Elementor\App\Modules\E_Onboarding;
 
 use Elementor\App\Modules\E_Onboarding\Data\Controller;
+use Elementor\App\Modules\E_Onboarding\Data\Endpoints\Install_Theme;
 use Elementor\App\Modules\E_Onboarding\Storage\Entities\User_Choices;
 use Elementor\App\Modules\E_Onboarding\Storage\Entities\User_Progress;
 use Elementor\App\Modules\E_Onboarding\Storage\Onboarding_Progress_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -20,6 +22,21 @@ class Module extends BaseModule {
 
 	const VERSION = '1.0.0';
 	const EXPERIMENT_NAME = 'e_onboarding';
+	const ASSETS_BASE_URL = 'https://assets.elementor.com/onboarding/v1/strings/';
+	const VIDEOS_BASE_URL = 'https://assets.elementor.com/onboarding/v1/videos/';
+
+	const SUPPORTED_LOCALES = [
+		'de_DE',
+		'es_ES',
+		'fr_FR',
+		'he_IL',
+		'id_ID',
+		'it_IT',
+		'nl_NL',
+		'pl_PL',
+		'pt_BR',
+		'tr_TR',
+	];
 
 	private Onboarding_Progress_Manager $progress_manager;
 
@@ -40,25 +57,25 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
-		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
+		if ( ! Plugin::instance()->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			return;
 		}
 
 		$this->progress_manager = Onboarding_Progress_Manager::instance();
 
-		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
+		Plugin::instance()->data_manager_v2->register_controller( new Controller() );
 
 		add_action( 'elementor/init', [ $this, 'on_elementor_init' ], 12 );
 
 		if ( $this->should_show_starter() ) {
-			add_filter( 'elementor/editor/show_starter', '__return_true' );
 			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_starter_settings' ] );
-			add_action( 'elementor/preview/enqueue_styles', [ $this, 'enqueue_fonts' ] );
+			add_filter( 'elementor/editor/v2/packages', [ $this, 'add_starter_packages' ] );
+			add_action( 'elementor/editor/v2/styles/enqueue', [ $this, 'enqueue_fonts' ] );
 		}
 	}
 
 	public function on_elementor_init(): void {
-		if ( ! Plugin::$instance->app->is_current() ) {
+		if ( ! Plugin::instance()->app->is_current() ) {
 			return;
 		}
 
@@ -80,7 +97,7 @@ class Module extends BaseModule {
 	}
 
 	private function set_onboarding_settings(): void {
-		if ( ! Plugin::$instance->common ) {
+		if ( ! Plugin::instance()->common ) {
 			return;
 		}
 
@@ -105,14 +122,16 @@ class Module extends BaseModule {
 			'userName' => $this->get_user_display_name(),
 			'steps' => $steps,
 			'uiTheme' => $this->get_ui_theme_preference(),
+			'translations' => $this->get_translated_strings(),
 			'shouldShowProInstallScreen' => $is_connected ? $this->should_show_pro_install_screen() : false,
 			'urls' => [
 				'dashboard' => admin_url(),
 				'editor' => admin_url( 'edit.php?post_type=elementor_library' ),
 				'connect' => $this->get_connect_url(),
 				'comparePlans' => 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash',
-				'exploreFeatures' => 'https://elementor.com/features/?utm_source=onboarding&utm_medium=wp-dash',
 				'createNewPage' => Plugin::$instance->documents->get_create_new_post_url(),
+				'upgradeUrl' => 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar&utm_term=2.0.0',
+				'videosBaseUrl' => self::VIDEOS_BASE_URL,
 			],
 		] );
 	}
@@ -153,7 +172,7 @@ class Module extends BaseModule {
 	}
 
 	private function get_library_app() {
-		$connect = Plugin::$instance->common->get_component( 'connect' );
+		$connect = Plugin::instance()->common->get_component( 'connect' );
 
 		if ( ! $connect ) {
 			return null;
@@ -163,7 +182,7 @@ class Module extends BaseModule {
 	}
 
 	public static function should_show_pro_install_screen(): bool {
-		if ( Utils::has_pro() || Utils::is_pro_installed_and_not_active() ) {
+		if ( self::is_elementor_pro_installed() ) {
 			return false;
 		}
 
@@ -214,6 +233,12 @@ class Module extends BaseModule {
 		return null !== $progress->get_completed_at() && ! $progress->is_starter_dismissed();
 	}
 
+	public function add_starter_packages( array $packages ): array {
+		$packages[] = 'editor-starter';
+
+		return $packages;
+	}
+
 	public function add_starter_settings( array $settings ): array {
 		$settings['starter'] = [
 			'restPath' => 'elementor/v1/e-onboarding/user-progress',
@@ -248,6 +273,28 @@ class Module extends BaseModule {
 		} ) );
 	}
 
+	private function get_translated_strings(): array {
+		$locale = $this->get_onboarding_locale();
+
+		$api = new EditorAssetsAPI( [
+			EditorAssetsAPI::ASSETS_DATA_URL => self::ASSETS_BASE_URL . $locale . '.json',
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_onboarding_strings_' . $locale,
+			EditorAssetsAPI::ASSETS_DATA_KEY => 'translations',
+		] );
+
+		return $api->get_assets_data();
+	}
+
+	private function get_onboarding_locale(): string {
+		$user_locale = get_user_locale();
+
+		if ( in_array( $user_locale, self::SUPPORTED_LOCALES, true ) ) {
+			return $user_locale;
+		}
+
+		return 'en';
+	}
+
 	private function get_steps_config(): array {
 		$steps = [
 			[
@@ -265,14 +312,17 @@ class Module extends BaseModule {
 				'label' => __( 'How much experience do you have with Elementor?', 'elementor' ),
 				'type' => 'single',
 			],
-			[
+		];
+
+		if ( ! $this->is_elementor_theme_active() ) {
+			$steps[] = [
 				'id' => 'theme_selection',
 				'label' => __( 'Start with a theme that fits your needs', 'elementor' ),
 				'type' => 'single',
-			],
-		];
+			];
+		}
 
-		if ( ! $this->is_elementor_pro_active() ) {
+		if ( ! self::is_elementor_pro_installed() ) {
 			$steps[] = [
 				'id' => 'site_features',
 				'label' => __( 'What do you want to include in your site?', 'elementor' ),
@@ -283,7 +333,15 @@ class Module extends BaseModule {
 		return apply_filters( 'elementor/e-onboarding/steps', $steps );
 	}
 
-	private function is_elementor_pro_active(): bool {
-		return (bool) apply_filters( 'elementor/e-onboarding/is_elementor_pro_active', Utils::has_pro() );
+	private static function is_elementor_pro_installed(): bool {
+		$is_pro_installed = Utils::has_pro() || Utils::is_pro_installed_and_not_active();
+		return (bool) apply_filters( 'elementor/e-onboarding/is_elementor_pro_installed', $is_pro_installed );
+	}
+
+	private function is_elementor_theme_active(): bool {
+		$active_theme = get_stylesheet();
+		$is_active = in_array( $active_theme, Install_Theme::ALLOWED_THEMES, true );
+
+		return (bool) apply_filters( 'elementor/e-onboarding/is_elementor_theme_active', $is_active );
 	}
 }

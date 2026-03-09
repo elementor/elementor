@@ -25,15 +25,7 @@ export function init() {
 				return;
 			}
 
-			window.dispatchEvent(
-				new CustomEvent( 'elementor/element/render', {
-					detail: {
-						id,
-						type: eType,
-						element,
-					},
-				} )
-			);
+			onElementRender( { element: el, elementType: eType, elementId: id } );
 		} );
 	} );
 }
