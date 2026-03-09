@@ -77,6 +77,9 @@ const eventsConfig = {
 		canvas: 'Canvas',
 		leftPanel: 'Left Panel',
 		elementorLibrary: 'Elementor Library',
+		components: {
+			instanceEditingPanel: 'Instance Editing Panel',
+		},
 	},
 
 	secondaryLocations: {
@@ -240,6 +243,7 @@ const eventsConfig = {
 			propertiesGroupCreated: 'component_properties_group_created',
 			propertyExposed: 'component_property_exposed',
 			propertyRemoved: 'component_property_removed',
+			detached: 'component_detached',
 		},
 		global_classes: {
 			classApplied: 'class_applied',
