@@ -23,7 +23,6 @@ class Module extends BaseModule {
 	const VERSION = '1.0.0';
 	const EXPERIMENT_NAME = 'e_onboarding';
 	const ASSETS_BASE_URL = 'https://assets.elementor.com/onboarding/v1/strings/';
-	const VIDEOS_BASE_URL = 'https://assets.elementor.com/onboarding/v1/videos/';
 
 	const SUPPORTED_LOCALES = [
 		'de_DE',
