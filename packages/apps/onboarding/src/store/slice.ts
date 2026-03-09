@@ -75,7 +75,7 @@ function getEmptyState(): OnboardingState {
 		isConnected: false,
 		isGuest: false,
 		userName: '',
-		urls: { dashboard: '', editor: '', connect: '', comparePlans: '', upgradeUrl: '', videosBaseUrl: '' },
+		urls: { dashboard: '', editor: '', connect: '', comparePlans: '', upgradeUrl: '' },
 		shouldShowProInstallScreen: false,
 		hasProInstallScreenDismissed: false,
 	};

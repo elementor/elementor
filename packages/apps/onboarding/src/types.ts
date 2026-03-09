@@ -69,7 +69,6 @@ export interface OnboardingConfig {
 		comparePlans?: string;
 		createNewPage?: string;
 		upgradeUrl: string;
-		videosBaseUrl: string;
 	};
 }
 
@@ -99,6 +98,5 @@ export interface OnboardingState {
 		comparePlans?: string;
 		createNewPage?: string;
 		upgradeUrl: string;
-		videosBaseUrl: string;
 	};
 }
