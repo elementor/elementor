@@ -64,8 +64,6 @@ const VideoStack = React.memo( function VideoStack( { activeUrl }: { activeUrl: 
 					ref={ ( element: HTMLVideoElement | null ) => {
 						if ( element ) {
 							videoRefs.current.set( videoUrl, element );
-						} else {
-							videoRefs.current.delete( videoUrl );
 						}
 					} }
 					sx={ {
