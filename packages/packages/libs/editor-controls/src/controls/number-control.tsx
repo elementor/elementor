@@ -12,7 +12,11 @@ const isEmptyOrNaN = ( value?: string | number | null ) =>
 
 const renderSuffix = ( propType: PropType ) => {
 	if ( propType.meta?.suffix ) {
-		return <InputAdornment position="end">{ propType.meta.suffix }</InputAdornment>;
+		return (
+			<InputAdornment position="end">
+				<span style={ { fontSize: '0.75rem' } }>{ propType.meta.suffix as string }</span>
+			</InputAdornment>
+		);
 	}
 	return <></>;
 };
