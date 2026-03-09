@@ -91,7 +91,7 @@ export type AnimationPresetPropValue = {
 		type: StringPropValue;
 		direction: StringPropValue;
 		timing_config: TimingConfigPropValue;
-		config?: ConfigPropValue;
+		config: ConfigPropValue;
 	};
 };
 
