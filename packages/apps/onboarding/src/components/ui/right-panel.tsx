@@ -2,9 +2,9 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { Box, styled } from '@elementor/ui';
 
-import type { StepVisualConfig } from '../../types';
-import { getVideoUrls } from '../../steps/step-visuals';
 import { isVideoPreloaded } from '../../hooks/use-video-preload';
+import { getVideoUrls } from '../../steps/step-visuals';
+import type { StepVisualConfig } from '../../types';
 import { FOOTER_HEIGHT, LAYOUT_PADDING, TOPBAR_HEIGHT } from './base-layout';
 
 const PANEL_RADIUS_MULTIPLIER = 2;
