@@ -190,7 +190,14 @@ BaseElementView = BaseContainer.extend( {
 					}, {
 						name: 'pasteInteractions',
 						title: __( 'Paste interactions', 'elementor' ),
-						isEnabled: () => !! elementorCommon.storage.get( 'clipboard' ),
+						isEnabled: () => {
+							const clipboard = elementorCommon.storage.get( 'clipboard' );
+							if ( ! clipboard ) {
+								return false;
+							}
+							const elements = elementor.selection.getElements( this.getContainer() );
+							return elements.length > 0 && elements.every( ( c ) => elementor.helpers.isAtomicWidget( c.model ) );
+						},
 						callback: () => {
 							$e.run( 'document/elements/paste-interactions', {
 								containers: elementor.selection.getElements( this.getContainer() ),
