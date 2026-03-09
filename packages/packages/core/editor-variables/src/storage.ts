@@ -39,16 +39,25 @@ export class Storage {
 		return this.state.variables;
 	}
 
-	fill( variables: TVariablesList, watermark: number ) {
+	fillVariables( variables: TVariablesList ) {
 		this.state.variables = {};
 		if ( variables && Object.keys( variables ).length ) {
 			this.state.variables = variables;
 		}
-
-		this.state.watermark = watermark;
-
-		localStorage.setItem( STORAGE_WATERMARK_KEY, this.state.watermark.toString() );
 		localStorage.setItem( STORAGE_KEY, JSON.stringify( this.state.variables ) );
+	}
+
+	fillWatermark( watermark: number ) {
+		this.state.watermark = -1;
+		if ( watermark && watermark !== this.state.watermark ) {
+			this.state.watermark = watermark;
+		}
+		localStorage.setItem( STORAGE_WATERMARK_KEY, this.state.watermark.toString() );
+	}
+
+	fill( variables: TVariablesList, watermark: number ) {
+		this.fillVariables( variables );
+		this.fillWatermark( watermark );
 		this.notifyChange();
 	}
 
