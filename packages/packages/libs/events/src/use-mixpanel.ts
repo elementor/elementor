@@ -44,9 +44,7 @@ export const enableTracking = (): void => getMixpanel().enableTracking?.();
 export const initializeMixpanel = ( onLoaded?: () => void ): void =>
 	getMixpanel().initializeMixpanel?.( onLoaded ?? ( () => {} ) );
 
-export function initializeAndEnableTracking(
-	onReady?: ( mpInstance?: unknown ) => void
-): void {
+export function initializeAndEnableTracking( onReady?: ( mpInstance?: unknown ) => void ): void {
 	const mixpanel = getMixpanel();
 
 	if ( ! mixpanel.dispatchEvent ) {

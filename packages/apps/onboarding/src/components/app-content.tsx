@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { getMixpanel } from '@elementor/events';
 import { Box } from '@elementor/ui';
 
 import type { ConnectSuccessData } from '../analytics';
 import { canSendEvents, initializeAndEnableTracking, setCanSendEvents, updateLibraryConnectConfig } from '../analytics';
-import { getMixpanel } from '@elementor/events';
 import { useCheckProInstallScreen } from '../hooks/use-check-pro-install-screen';
 import { useElementorConnect } from '../hooks/use-elementor-connect';
 import { useInstallTheme } from '../hooks/use-install-theme';
