@@ -4,6 +4,7 @@ import { Box, styled } from '@elementor/ui';
 
 import type { StepVisualConfig } from '../../types';
 import { getVideoUrls } from '../../steps/step-visuals';
+import { isVideoPreloaded } from '../../hooks/use-video-preload';
 import { FOOTER_HEIGHT, LAYOUT_PADDING, TOPBAR_HEIGHT } from './base-layout';
 
 const PANEL_RADIUS_MULTIPLIER = 2;
@@ -36,7 +37,6 @@ const RightPanelRoot = styled( Box, {
 
 const VideoStack = React.memo( function VideoStack( { activeUrl }: { activeUrl: string | undefined } ) {
 	const videoRefs = useRef< Map< string, HTMLVideoElement > >( new Map() );
-	const readyUrlsRef = useRef< Set< string > >( new Set() );
 	const [ visibleUrl, setVisibleUrl ] = useState< string | undefined >( undefined );
 
 	useEffect( () => {
@@ -49,7 +49,7 @@ const VideoStack = React.memo( function VideoStack( { activeUrl }: { activeUrl: 
 			}
 		} );
 
-		setVisibleUrl( activeUrl && readyUrlsRef.current.has( activeUrl ) ? activeUrl : undefined );
+		setVisibleUrl( activeUrl && isVideoPreloaded( activeUrl ) ? activeUrl : undefined );
 	}, [ activeUrl ] );
 
 	return (
@@ -67,9 +67,6 @@ const VideoStack = React.memo( function VideoStack( { activeUrl }: { activeUrl: 
 						} else {
 							videoRefs.current.delete( videoUrl );
 						}
-					} }
-					onCanPlay={ () => {
-						readyUrlsRef.current.add( videoUrl );
 					} }
 					sx={ {
 						position: 'absolute',
