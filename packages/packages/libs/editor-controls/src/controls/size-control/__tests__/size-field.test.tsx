@@ -103,6 +103,37 @@ describe( 'SizeField', () => {
 		} );
 	} );
 
+	describe( 'readOnly when extended unit', () => {
+		it( 'should set input readOnly when unit is extended (auto)', () => {
+			isExtendedUnitMock.mockReturnValue( true );
+			Object.assign( defaultUseSizeValueReturn, { size: '', unit: 'auto' } );
+
+			renderSizeField( { value: { size: '', unit: 'auto' } } );
+
+			const input = screen.getByRole( 'textbox' );
+			expect( input ).toHaveAttribute( 'readonly' );
+		} );
+
+		it( 'should set input readOnly when unit is extended (custom)', () => {
+			isExtendedUnitMock.mockReturnValue( true );
+			Object.assign( defaultUseSizeValueReturn, { size: 'calc(1em)', unit: 'custom' } );
+
+			renderSizeField( { value: { size: 'calc(1em)', unit: 'custom' } } );
+
+			const input = screen.getByRole( 'textbox' );
+			expect( input ).toHaveAttribute( 'readonly' );
+		} );
+
+		it( 'should not set input readOnly when unit is not extended', () => {
+			isExtendedUnitMock.mockReturnValue( false );
+
+			renderSizeField();
+
+			const input = screen.getByRole( 'spinbutton' );
+			expect( input ).not.toHaveAttribute( 'readonly' );
+		} );
+	} );
+
 	describe( 'Event handlers', () => {
 		it( 'should call setSize when input value changes', () => {
 			// Arrange.

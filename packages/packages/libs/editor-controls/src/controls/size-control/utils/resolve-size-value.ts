@@ -10,8 +10,6 @@ type ResolverContext< U > = {
 	defaultUnit?: U;
 };
 
-const DEFAULT_SIZE_UNIT = 'px';
-
 const DEFAULT_SIZE = '';
 
 export const EXTENDED_UNITS = {
@@ -52,8 +50,14 @@ export const resolveSizeOnUnitChange = (
 	return isExtendedUnit( unit ) ? DEFAULT_SIZE : size;
 };
 
-export const createDefaultSizeValue = < T extends SizeValue >( defaultUnit?: SizeUnit ): T => {
-	return { size: DEFAULT_SIZE, unit: defaultUnit ?? DEFAULT_SIZE_UNIT } as T;
+export const createDefaultSizeValue = < T extends SizeValue >( units: SizeUnit[], defaultUnit?: SizeUnit ): T => {
+	let unit = units[ 0 ];
+
+	if ( defaultUnit !== undefined ) {
+		unit = resolveFallbackUnit( defaultUnit, units ) as SizeUnit;
+	}
+
+	return { size: DEFAULT_SIZE, unit } as T;
 };
 
 const resolveFallbackUnit = < TUnit extends SizeUnit >(
@@ -67,10 +71,6 @@ const resolveFallbackUnit = < TUnit extends SizeUnit >(
 
 	if ( defaultUnit && units.includes( defaultUnit ) ) {
 		return defaultUnit;
-	}
-
-	if ( units.includes( DEFAULT_SIZE_UNIT as TUnit ) ) {
-		return DEFAULT_SIZE_UNIT;
 	}
 
 	return units[ 0 ] ?? '';
