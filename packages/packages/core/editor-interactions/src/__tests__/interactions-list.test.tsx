@@ -63,6 +63,8 @@ const createInteraction = (
 								replay: { $$type: 'boolean', value: false },
 								easing: { $$type: 'string', value: 'easeIn' },
 								relativeTo: { $$type: 'string', value: 'viewport' },
+								repeat: { $$type: 'string', value: '' },
+        times: { $$type: 'number', value: 1 }, 
 								start: { $$type: 'size', value: { size: 85, unit: '%' } },
 								end: { $$type: 'size', value: { size: 15, unit: '%' } },
 							},

@@ -6,11 +6,7 @@ import { Box, Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getInteractionsControl } from '../interactions-controls-registry';
-import {
-	type FieldProps,
-	type InteractionItemValue,
-	type SizeStringValue,
-} from '../types';
+import { type FieldProps, type InteractionItemValue, type SizeStringValue } from '../types';
 import {
 	createAnimationPreset,
 	createString,
@@ -305,10 +301,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 
 					{ RepeatControl && (
 						<Field label={ __( 'Repeat', 'elementor' ) }>
-							<RepeatControl
-								value={ repeat }
-								onChange={ ( v ) => updateInteraction( { repeat: v } ) }
-							/>
+							<RepeatControl value={ repeat } onChange={ ( v ) => updateInteraction( { repeat: v } ) } />
 						</Field>
 					) }
 
