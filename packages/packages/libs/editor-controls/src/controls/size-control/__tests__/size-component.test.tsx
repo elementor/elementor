@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createRef } from 'react';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { SizeComponent } from '../size-component';
 
