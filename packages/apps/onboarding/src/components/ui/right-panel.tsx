@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Box, styled } from '@elementor/ui';
 
 import type { StepVisualConfig } from '../../types';
@@ -35,10 +35,12 @@ const RightPanelRoot = styled( Box, {
 } );
 
 const VideoStack = React.memo( function VideoStack( { activeUrl }: { activeUrl: string | undefined } ) {
-	const refs = useRef< Map< string, HTMLVideoElement > >( new Map() );
+	const videoRefs = useRef< Map< string, HTMLVideoElement > >( new Map() );
+	const readyUrlsRef = useRef< Set< string > >( new Set() );
+	const [ visibleUrl, setVisibleUrl ] = useState< string | undefined >( undefined );
 
 	useEffect( () => {
-		refs.current.forEach( ( element, videoUrl ) => {
+		videoRefs.current.forEach( ( element, videoUrl ) => {
 			if ( videoUrl === activeUrl ) {
 				element.currentTime = 0;
 				element.play().catch( () => {} );
@@ -46,6 +48,8 @@ const VideoStack = React.memo( function VideoStack( { activeUrl }: { activeUrl: 
 				element.pause();
 			}
 		} );
+
+		setVisibleUrl( activeUrl && readyUrlsRef.current.has( activeUrl ) ? activeUrl : undefined );
 	}, [ activeUrl ] );
 
 	return (
@@ -59,10 +63,13 @@ const VideoStack = React.memo( function VideoStack( { activeUrl }: { activeUrl: 
 					playsInline
 					ref={ ( element: HTMLVideoElement | null ) => {
 						if ( element ) {
-							refs.current.set( videoUrl, element );
+							videoRefs.current.set( videoUrl, element );
 						} else {
-							refs.current.delete( videoUrl );
+							videoRefs.current.delete( videoUrl );
 						}
+					} }
+					onCanPlay={ () => {
+						readyUrlsRef.current.add( videoUrl );
 					} }
 					sx={ {
 						position: 'absolute',
@@ -70,7 +77,7 @@ const VideoStack = React.memo( function VideoStack( { activeUrl }: { activeUrl: 
 						width: '100%',
 						height: '100%',
 						objectFit: 'cover',
-						opacity: videoUrl === activeUrl ? 1 : 0,
+						opacity: videoUrl === visibleUrl ? 1 : 0,
 						transition: `opacity ${ VIDEO_TRANSITION_MS }ms ease`,
 					} }
 				/>
