@@ -1,7 +1,6 @@
 import { useState } from 'react';
+import { type ElementID, type ElementInteractions, getElementInteractions } from '@elementor/editor-elements';
 import { __privateUseListenTo as useListenTo, windowEvent } from '@elementor/editor-v1-adapters';
-
-import { getElementInteractions, type ElementInteractions, type ElementID } from '@elementor/editor-elements';
 
 export const useElementInteractions = ( elementId: ElementID ) => {
 	const [ interactions, setInteractions ] = useState< ElementInteractions >( () => {
