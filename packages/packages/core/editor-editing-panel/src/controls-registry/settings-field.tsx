@@ -16,7 +16,12 @@ import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
-import { extractOrderedDependencies, getUpdatedValues, type Values } from '../utils/prop-dependency-utils';
+import {
+	extractOrderedDependencies,
+	getElementSettingsWithDefaults,
+	getUpdatedValues,
+	type Values,
+} from '../utils/prop-dependency-utils';
 import { createTopLevelObjectType } from './create-top-level-object-type';
 
 type SettingsFieldProps = {
@@ -26,18 +31,6 @@ type SettingsFieldProps = {
 };
 
 const HISTORY_DEBOUNCE_WAIT = 800;
-
-const getElementSettingsWithDefaults = ( propsSchema: PropsSchema, elementSettings?: Props ) => {
-	const elementSettingsWithDefaults = { ...elementSettings };
-	Object.keys( propsSchema ).forEach( ( key ) => {
-		if ( ! ( key in elementSettingsWithDefaults ) || elementSettingsWithDefaults[ key ] === null ) {
-			if ( propsSchema[ key ].default !== null ) {
-				elementSettingsWithDefaults[ key ] = propsSchema[ key ].default as Values[ keyof Values ];
-			}
-		}
-	} );
-	return elementSettingsWithDefaults;
-};
 
 const extractDependencyEffect = ( bind: string, propsSchema: PropsSchema, currentElementSettings: Props ) => {
 	const elementSettingsForDepCheck = getElementSettingsWithDefaults( propsSchema, currentElementSettings );
