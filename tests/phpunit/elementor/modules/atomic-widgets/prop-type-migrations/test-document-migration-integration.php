@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
+use Elementor\Modules\Components\Overridable_Schema_Extender;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -239,6 +240,54 @@ class Test_Document_Migration_Integration extends Elementor_Test_Base {
 		$this->assertCount( 1, $document_data[0]['interactions']['items'] );
 		$this->assertEquals( 'interaction-item', $document_data[0]['interactions']['items'][0]['$$type'] );
 		$this->assertEquals( 'string', $document_data[0]['interactions']['items'][0]['value']['interaction_id']['$$type'], 'interaction_id should be migrated from old-string to string' );
+	}
+
+	public function extend_schema_with_overridable( $schema ) {
+		return Overridable_Schema_Extender::make()->get_extended_schema( $schema );
+	}
+
+	public function test_migrate_prop_nested_inside_overridable() {
+		// Arrange
+		add_filter( 'elementor/atomic-widgets/props-schema', [ $this, 'extend_schema_with_overridable' ], 999999 );
+
+		$post_id = 1002;
+
+		$document_data = [
+			[
+				'id' => 'element_1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'settings' => [
+					'title' => [
+						'$$type' => 'overridable',
+						'value' => [
+							'override_key' => 'prop-123',
+							'origin_value' => [
+								'$$type' => 'html',
+								'value' => 'Overridable Title',
+							],
+						],
+					],
+				],
+			],
+		];
+
+		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
+
+		// Act
+		$orchestrator->migrate(
+			$document_data,
+			$post_id,
+			'_elementor_data',
+			function() {}
+		);
+
+		// Assert
+		$this->assertEquals( 'overridable', $document_data[0]['settings']['title']['$$type'] );
+		$this->assertEquals( 'html-v3', $document_data[0]['settings']['title']['value']['origin_value']['$$type'], 'origin_value should be migrated from html to html-v3' );
+		$this->assertEquals( 'prop-123', $document_data[0]['settings']['title']['value']['override_key'] );
+
+		remove_filter( 'elementor/atomic-widgets/props-schema', [ $this, 'extend_schema_with_overridable' ], 999999 );
 	}
 
 	public function test_widget_migration_edge_cases() {
