@@ -200,6 +200,19 @@ class Atomic_Form extends Atomic_Element_Base {
 							'unit' => 'px',
 						] ) )
 				),
+			static::BASE_STYLE_KEY . ' .e-form-checkbox-row' => Style_Definition::make()
+			->add_variant(
+				Style_Variant::make()
+					->add_prop( 'align-items', String_Prop_Type::generate( 'center' ) )
+					->add_prop( 'gap', Size_Prop_Type::generate( [
+						'size' => 8,
+						'unit' => 'px',
+					] ) )
+					->add_prop( 'padding', Size_Prop_Type::generate( [
+						'size' => 0,
+						'unit' => 'px',
+					] ) )
+			),
 		];
 	}
 
@@ -228,6 +241,8 @@ class Atomic_Form extends Atomic_Element_Base {
 			$this->build_label( __( 'Message', 'elementor' ), $prefix . '-message' ),
 			$this->build_input( __( 'Your message', 'elementor' ), 'textarea', $prefix . '-message' ),
 
+			$this->build_checkbox_row( __( 'Checkbox', 'elementor' ), $prefix . '-agree' ),
+
 			Widget_Builder::make( 'e-form-submit-button' )
 				->settings( [
 					'text' => Html_V3_Prop_Type::generate( [
@@ -247,6 +262,23 @@ class Atomic_Form extends Atomic_Element_Base {
 				__( 'Error message', 'elementor' )
 			),
 		];
+	}
+
+	private function build_checkbox_row( string $label_text, string $checkbox_id ): array {
+		$checkbox = Widget_Builder::make( 'e-form-checkbox' )
+			->settings( [
+				'_cssid' => String_Prop_Type::generate( $checkbox_id ),
+			] )
+			->build();
+
+		$label = $this->build_label( $label_text, $checkbox_id );
+
+		return Element_Builder::make( 'e-flexbox' )
+			->children( [ $checkbox, $label ] )
+			->settings( [
+				'classes' => Classes_Prop_Type::generate( [ 'e-form-checkbox-row' ] ),
+			] )
+			->build();
 	}
 
 	private function build_label( string $text, string $input_id ): array {
