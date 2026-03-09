@@ -19,8 +19,8 @@ import { classesPropTypeUtil } from '@elementor/editor-props';
 import { type StyleDefinition } from '@elementor/editor-styles';
 import { ELEMENTS_STYLES_RESERVED_LABEL } from '@elementor/editor-styles-repository';
 
-import { initPasteStyleCommand } from '../paste-style';
 import { getClipboardElements } from '../../utils/command-utils';
+import { initPasteStyleCommand } from '../paste-style';
 
 jest.mock( '@elementor/editor-elements' );
 

@@ -3,14 +3,14 @@ import {
 	getElementInteractions,
 	getElementLabel,
 	getWidgetsCache,
+	updateElementInteractions,
 	type V1Element,
 	type V1ElementModelProps,
-	updateElementInteractions,
 } from '@elementor/editor-elements';
 import {
 	__privateListenTo as listenTo,
-	commandStartEvent,
 	type CommandEvent,
+	commandStartEvent,
 	undoable,
 } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
@@ -18,7 +18,6 @@ import { __ } from '@wordpress/i18n';
 import type { ElementInteractions } from '../types';
 import { createString } from '../utils/prop-value-utils';
 import { generateTempInteractionId } from '../utils/temp-id-utils';
-
 import { getClipboardElements } from './get-clipboard-elements';
 
 function isAtomicContainer( container: V1Element ): boolean {
@@ -45,12 +44,11 @@ function getTitleForContainers( containers: V1Element[] ): string {
 }
 
 function normalizeClipboardInteractions( raw: V1ElementModelProps[ 'interactions' ] ): ElementInteractions | null {
-	if ( raw == null ) {
+	if ( ! raw ) {
 		return null;
 	}
 
-	const parsed: ElementInteractions =
-		typeof raw === 'string' ? ( JSON.parse( raw ) as ElementInteractions ) : raw;
+	const parsed: ElementInteractions = typeof raw === 'string' ? ( JSON.parse( raw ) as ElementInteractions ) : raw;
 
 	if ( ! parsed?.items?.length ) {
 		return null;
@@ -89,7 +87,7 @@ export function initPasteInteractionsCommand() {
 					return { elementId, previous: previous ?? { version: 1, items: [] } };
 				} );
 			},
-			undo: ( { containers }: PasteInteractionsPayload, revertData ) => {
+			undo: ( _: PasteInteractionsPayload, revertData ) => {
 				revertData.forEach( ( { elementId, previous } ) => {
 					updateElementInteractions( {
 						elementId,

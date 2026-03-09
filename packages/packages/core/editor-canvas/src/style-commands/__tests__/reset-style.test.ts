@@ -7,8 +7,8 @@ import {
 import { createElementStyle, deleteElementStyle, getElementStyles } from '@elementor/editor-elements';
 import { ELEMENTS_STYLES_RESERVED_LABEL } from '@elementor/editor-styles-repository';
 
-import { initResetStyleCommand } from '../reset-style';
 import { getClassesProp, hasAtomicWidgets, isAtomicWidget } from '../../utils/command-utils';
+import { initResetStyleCommand } from '../reset-style';
 
 jest.mock( '@elementor/editor-elements' );
 

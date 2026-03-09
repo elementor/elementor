@@ -6,8 +6,8 @@ import {
 	commandStartEvent,
 } from '@elementor/editor-v1-adapters';
 
-import { undoableResetElementStyle } from './undoable-actions/reset-element-style';
 import { type ContainerArgs, hasAtomicWidgets, isAtomicWidget } from '../utils/command-utils';
+import { undoableResetElementStyle } from './undoable-actions/reset-element-style';
 
 export function initResetStyleCommand() {
 	const resetElementStyles = undoableResetElementStyle();

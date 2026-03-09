@@ -8,7 +8,6 @@ import {
 	commandStartEvent,
 } from '@elementor/editor-v1-adapters';
 
-import { undoablePasteElementStyle } from './undoable-actions/paste-element-style';
 import {
 	type ContainerArgs,
 	getClassesProp,
@@ -16,6 +15,7 @@ import {
 	hasAtomicWidgets,
 	isAtomicWidget,
 } from '../utils/command-utils';
+import { undoablePasteElementStyle } from './undoable-actions/paste-element-style';
 
 type PasteStylesCommandArgs = ContainerArgs & {
 	storageKey?: string;
