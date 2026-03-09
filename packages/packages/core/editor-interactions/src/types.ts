@@ -50,6 +50,8 @@ export type FieldProps< T = string > = {
 };
 
 export type ReplayFieldProps = FieldProps< boolean >;
+export type RepeatFieldProps = FieldProps< string >;
+export type TimesFieldProps = FieldProps< number >;
 export type DirectionFieldProps = FieldProps< string > & {
 	interactionType: string;
 };
