@@ -3,13 +3,16 @@ import { undoable } from '@elementor/editor-v1-adapters';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
-import { componentInstanceOverridesPropTypeUtil } from '../prop-types/component-instance-overrides-prop-type';
-import { type ComponentInstanceProp, componentInstancePropTypeUtil } from '../prop-types/component-instance-prop-type';
-import { selectComponent, selectCurrentComponentId, selectOverridableProps, slice } from '../store/store';
-import { type OverridableProps } from '../types';
-import { getComponentDocumentData } from './component-document-data';
+import { componentInstanceOverridesPropTypeUtil } from '../../prop-types/component-instance-overrides-prop-type';
+import {
+	type ComponentInstanceProp,
+	componentInstancePropTypeUtil,
+} from '../../prop-types/component-instance-prop-type';
+import { selectComponent, selectCurrentComponentId, selectOverridableProps, slice } from '../../store/store';
+import { type OverridableProps } from '../../types';
+import { getComponentDocumentData } from '../component-document-data';
+import { trackComponentEvent } from '../tracking';
 import { resolveDetachedInstance } from './resolve-detached-instance';
-import { trackComponentEvent } from './tracking';
 
 type DetachParams = {
 	instanceId: string;

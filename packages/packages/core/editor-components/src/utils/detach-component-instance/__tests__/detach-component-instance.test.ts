@@ -2,7 +2,7 @@ import { createMockContainer, createMockElementData, mockHistoryManager } from '
 import { type Document } from '@elementor/editor-documents';
 import { getContainer, replaceElement, type V1Element } from '@elementor/editor-elements';
 
-import { getComponentDocumentData } from '../component-document-data';
+import { getComponentDocumentData } from '../../component-document-data';
 import { detachComponentInstance } from '../detach-component-instance';
 import { resolveDetachedInstance } from '../resolve-detached-instance';
 
@@ -18,9 +18,9 @@ jest.mock( '@elementor/store', () => ( {
 	} ) ),
 	__dispatch: jest.fn(),
 } ) );
-jest.mock( '../component-document-data' );
+jest.mock( '../../component-document-data' );
 jest.mock( '../resolve-detached-instance' );
-jest.mock( '../tracking' );
+jest.mock( '../../tracking' );
 
 const mockGetContainer = getContainer as jest.MockedFunction< typeof getContainer >;
 const mockReplaceElement = replaceElement as jest.MockedFunction< typeof replaceElement >;
