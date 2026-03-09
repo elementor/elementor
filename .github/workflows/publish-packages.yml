@@ -49,7 +49,7 @@ jobs:
             registry-url: 'https://registry.npmjs.org/'
 
       - name: Install Dependencies
-        run: npm ci
+        run: npm run install:ci
 
       - name: Validate Inputs
         run: |
