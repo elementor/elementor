@@ -1,5 +1,6 @@
 import { type PropsSchema } from '@elementor/editor-props';
-import { describe, it, expect } from '@jest/globals';
+import { describe, expect, it } from '@jest/globals';
+
 import { getElementSettingsWithDefaults } from '../prop-dependency-utils';
 
 const str = ( value: string ) => ( { $$type: 'string' as const, value } );
@@ -7,7 +8,7 @@ const arr = ( ...items: string[] ) => ( {
 	$$type: 'string-array' as const,
 	value: items.map( str ),
 } );
-const plain = ( opts: { default?: ReturnType< typeof str > | null } = {} ) => ( {
+const plain = ( opts: { default?: ReturnType< typeof str > | ReturnType< typeof arr > | null } = {} ) => ( {
 	kind: 'plain' as const,
 	key: 'test',
 	default: opts.default ?? null,
