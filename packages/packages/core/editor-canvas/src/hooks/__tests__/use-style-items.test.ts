@@ -128,6 +128,9 @@ describe( 'useStyleItems', () => {
 
 		jest.mocked( stylesRepository ).getProviders.mockReturnValue( [ mockProvider1, mockProvider2 ] );
 
+		const provider1OriginalOrder = mockProvider1.actions.all().map( ( s ) => s.id );
+		const provider2OriginalOrder = mockProvider2.actions.all().map( ( s ) => s.id );
+
 		let attachPreviewCallback: () => Promise< void >;
 
 		jest.mocked( registerDataHook ).mockImplementation( ( position, command, callback ) => {
@@ -156,6 +159,9 @@ describe( 'useStyleItems', () => {
 			{ id: 'style2', breakpoint: 'desktop' },
 			{ id: 'style1', breakpoint: 'desktop' },
 		] );
+
+		expect( mockProvider1.actions.all().map( ( s ) => s.id ) ).toEqual( provider1OriginalOrder );
+		expect( mockProvider2.actions.all().map( ( s ) => s.id ) ).toEqual( provider2OriginalOrder );
 	} );
 
 	it( 'should return style items ordered by provider priority and breakpoint', async () => {
