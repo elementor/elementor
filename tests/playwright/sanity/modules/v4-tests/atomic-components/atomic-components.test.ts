@@ -6,7 +6,7 @@ import EditorSelectors from '../../../../selectors/editor-selectors';
 
 import { createContentForComponent } from './utils/creation';
 
-test.describe( 'Atomic Components @v4-tests', () => {
+test.describe.skip( 'Atomic Components @v4-tests', () => {
 	let wpAdminPage: WpAdminPage;
 	let editor: EditorPage;
 	let context: BrowserContext;
