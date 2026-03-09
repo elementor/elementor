@@ -50,8 +50,6 @@ export type StringPropValue = {
 	value: string;
 };
 
-export type RepeatMode = 'loop' | 'times';
-
 export type NumberPropValue = {
 	$$type: 'number';
 	value: number;
