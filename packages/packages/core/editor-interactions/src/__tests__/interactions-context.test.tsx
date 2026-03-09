@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { playElementInteractions, useElementInteractions } from '@elementor/editor-elements';
+import { playElementInteractions } from '@elementor/editor-elements';
 import { act, renderHook } from '@testing-library/react';
 
 import { InteractionsProvider, useInteractionsContext } from '../contexts/interactions-context';
+import { useElementInteractions } from '../hooks/use-element-interactions';
 
 jest.mock( '@elementor/editor-elements' );
+jest.mock( '../hooks/use-element-interactions' );
 
 describe( 'InteractionsContext', () => {
 	const mockElementId = 'element-123';
