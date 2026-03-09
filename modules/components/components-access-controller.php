@@ -50,7 +50,7 @@ class Components_Access_Controller {
 	}
 
 	public static function can_publish(): bool {
-		return self::is_pro_tier();
+		return self::is_expired_or_pro_tier();
 	}
 
 	public static function can_add_to_page(): bool {
