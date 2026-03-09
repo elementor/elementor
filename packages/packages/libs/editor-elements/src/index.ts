@@ -62,6 +62,5 @@ export {
 export { deleteElementStyle } from './styles/delete-element-style';
 export { updateElementStyle, type UpdateElementStyleArgs } from './styles/update-element-style';
 
-export { useElementInteractions } from './hooks/use-element-interactions';
 export { getElementInteractions } from './sync/get-element-interactions';
 export { playElementInteractions, updateElementInteractions } from './sync/update-element-interactions';
