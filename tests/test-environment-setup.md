@@ -59,7 +59,7 @@ If you prefer step-by-step control:
 
 ```bash
 # 1. Prepare dependencies
-npm run prepare-environment:ci
+npm run install:ci
 
 # 2. Build from current branch
 npm run build:packages
