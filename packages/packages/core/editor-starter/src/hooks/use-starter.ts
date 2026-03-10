@@ -5,6 +5,9 @@ import type { StarterConfig } from '../types';
 import { deleteStarterConfig, getStarterConfig } from '../utils';
 
 const PREVIEW_WRAPPER_SELECTOR = '#elementor-preview-responsive-wrapper';
+const PREVIEW_IFRAME_ID = 'elementor-preview-iframe';
+const NAVIGATOR_ID = 'elementor-navigator';
+const STARTER_CONTAINER_ID = 'elementor-starter-container';
 
 interface ElementorChannels {
 	panelElements?: {
@@ -47,7 +50,7 @@ const STARTER_HIDE_CSS = `
 let iframeLoadHandler: ( () => void ) | null = null;
 
 function hideIframeElements() {
-	const iframe = document.getElementById( 'elementor-preview-iframe' ) as HTMLIFrameElement | null;
+	const iframe = document.getElementById( PREVIEW_IFRAME_ID ) as HTMLIFrameElement | null;
 
 	if ( ! iframe ) {
 		return;
@@ -72,7 +75,7 @@ function hideIframeElements() {
 }
 
 function closeNavigator() {
-	const navigatorEl = document.getElementById( 'elementor-navigator' );
+	const navigatorEl = document.getElementById( NAVIGATOR_ID );
 
 	if ( navigatorEl ) {
 		runCommand( 'navigator/close' );
@@ -84,7 +87,7 @@ function showIframeElements() {
 	iframeDoc?.documentElement?.style.setProperty( '--e-starter-header-display', 'block' );
 	iframeDoc?.getElementById( STARTER_HIDE_STYLE_ID )?.remove();
 
-	const iframe = document.getElementById( 'elementor-preview-iframe' ) as HTMLIFrameElement | null;
+	const iframe = document.getElementById( PREVIEW_IFRAME_ID ) as HTMLIFrameElement | null;
 
 	if ( iframe ) {
 		iframe.style.boxShadow = '';
@@ -97,7 +100,7 @@ function showIframeElements() {
 }
 
 function observeSectionWrap( onChildAdded: () => void ): MutationObserver | null {
-	const iframe = document.getElementById( 'elementor-preview-iframe' ) as HTMLIFrameElement | null;
+	const iframe = document.getElementById( PREVIEW_IFRAME_ID ) as HTMLIFrameElement | null;
 	const sectionWrap = iframe?.contentDocument?.querySelector( '.elementor-section-wrap.ui-sortable' );
 
 	if ( ! sectionWrap ) {
@@ -157,7 +160,7 @@ export function useStarter() {
 			}
 
 			const container = document.createElement( 'div' );
-			container.id = 'elementor-starter-container';
+			container.id = STARTER_CONTAINER_ID;
 
 			wrapper.prepend( container );
 
