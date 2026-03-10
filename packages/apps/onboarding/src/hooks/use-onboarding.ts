@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { __useDispatch, __useSelector } from '@elementor/store';
 
 import {
+	clearResumeStepIdForTracking,
 	clearUnexpectedExit,
 	completeOnboarding,
 	completeStep,
@@ -24,6 +25,7 @@ import {
 	selectIsGuest,
 	selectIsLastStep,
 	selectIsLoading,
+	selectResumeStepIdForTracking,
 	selectShouldShowProInstall,
 	selectSteps,
 	selectTotalSteps,
@@ -56,6 +58,7 @@ export function useOnboarding() {
 	const isLoading = __useSelector( selectIsLoading );
 	const error = __useSelector( selectError );
 	const hadUnexpectedExit = __useSelector( selectHadUnexpectedExit );
+	const resumeStepIdForTracking = __useSelector( selectResumeStepIdForTracking );
 	const isConnected = __useSelector( selectIsConnected );
 	const isGuest = __useSelector( selectIsGuest );
 	const hasPassedLogin = __useSelector( selectHasPassedLogin );
@@ -79,6 +82,7 @@ export function useOnboarding() {
 			setLoading: ( loading: boolean ) => dispatch( setLoading( loading ) ),
 			setError: ( err: string | null ) => dispatch( setError( err ) ),
 			clearUnexpectedExit: () => dispatch( clearUnexpectedExit() ),
+			clearResumeStepIdForTracking: () => dispatch( clearResumeStepIdForTracking() ),
 			setConnected: ( connected: boolean ) => dispatch( setConnected( connected ) ),
 			setGuest: ( guest: boolean ) => dispatch( setGuest( guest ) ),
 			setShouldShowProInstallScreen: ( value: boolean ) => dispatch( setShouldShowProInstallScreen( value ) ),
@@ -101,6 +105,7 @@ export function useOnboarding() {
 		isLoading,
 		error,
 		hadUnexpectedExit,
+		resumeStepIdForTracking,
 		isConnected,
 		isGuest,
 		hasPassedLogin,

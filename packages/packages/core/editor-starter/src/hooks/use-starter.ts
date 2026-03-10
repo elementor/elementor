@@ -1,13 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-	__privateListenTo as listenTo,
-	__privateRunCommand as runCommand,
-	getCurrentEditMode,
-	windowEvent,
-} from '@elementor/editor-v1-adapters';
+import { __privateRunCommand as runCommand, getCanvasIframeDocument } from '@elementor/editor-v1-adapters';
 
 import type { StarterConfig } from '../types';
-import { deleteStarterConfig, getEditingPanelWidth, getStarterConfig, getTopBarHeight } from '../utils';
+import { deleteStarterConfig, getStarterConfig } from '../utils';
+
+const PREVIEW_WRAPPER_SELECTOR = '#elementor-preview-responsive-wrapper';
 
 interface ElementorChannels {
 	panelElements?: {
@@ -21,8 +18,11 @@ function getElementorChannels(): ElementorChannels | undefined {
 }
 
 function dismissStarterApi( config: StarterConfig ) {
-	const apiFetch = ( window as unknown as { wp?: { apiFetch?: ( args: object ) => Promise< unknown > } } ).wp
-		?.apiFetch;
+	const apiFetch = (
+		window as unknown as {
+			wp?: { apiFetch?: ( args: object ) => Promise< unknown > };
+		}
+	 ).wp?.apiFetch;
 
 	apiFetch?.( {
 		path: config.restPath,
@@ -31,22 +31,57 @@ function dismissStarterApi( config: StarterConfig ) {
 	} );
 }
 
+function showIframeHeader() {
+	const iframeDoc = getCanvasIframeDocument();
+	iframeDoc?.documentElement?.style.setProperty( '--e-starter-header-display', 'block' );
+}
+
 export function useStarter() {
 	const [ config, setConfig ] = useState< StarterConfig | null >( null );
 	const [ isDismissing, setIsDismissing ] = useState( false );
-	const [ panelWidth, setPanelWidth ] = useState( 0 );
-	const [ topOffset, setTopOffset ] = useState( 0 );
+	const [ portalContainer, setPortalContainer ] = useState< Element | null >( null );
 	const dismissedRef = useRef( false );
+	const dismissRef = useRef< () => void >( () => {} );
+
+	const runDismiss = useCallback( () => {
+		if ( ! config || dismissedRef.current ) {
+			return;
+		}
+
+		dismissedRef.current = true;
+		setIsDismissing( true );
+
+		dismissStarterApi( config );
+		deleteStarterConfig();
+	}, [ config ] );
+
+	dismissRef.current = runDismiss;
+
+	const dismiss = useCallback( () => {
+		dismissRef.current();
+	}, [] );
 
 	useEffect( () => {
 		const activate = () => {
 			const cfg = getStarterConfig();
 
-			if ( cfg ) {
-				setConfig( cfg );
-				setPanelWidth( getEditingPanelWidth() );
-				setTopOffset( getTopBarHeight() );
+			if ( ! cfg ) {
+				return;
 			}
+
+			const wrapper = document.querySelector( PREVIEW_WRAPPER_SELECTOR );
+
+			if ( ! wrapper ) {
+				return;
+			}
+
+			const container = document.createElement( 'div' );
+			container.id = 'elementor-starter-container';
+
+			wrapper.prepend( container );
+
+			setConfig( cfg );
+			setPortalContainer( container );
 		};
 
 		const onCommandAfter = ( e: Event ) => {
@@ -62,71 +97,59 @@ export function useStarter() {
 		return () => window.removeEventListener( 'elementor/commands/run/after', onCommandAfter );
 	}, [] );
 
-	const dismiss = useCallback( () => {
-		if ( ! config || dismissedRef.current ) {
-			return;
-		}
-
-		dismissedRef.current = true;
-		setIsDismissing( true );
-
-		dismissStarterApi( config );
-		deleteStarterConfig();
-	}, [ config ] );
-
 	useEffect( () => {
 		if ( ! config ) {
 			return;
 		}
 
+		const onElementAdded = ( e: Event ) => {
+			const detail = ( e as CustomEvent )?.detail;
+
+			if ( detail?.command === 'preview/drop' ) {
+				dismiss();
+			}
+		};
+
 		const channels = getElementorChannels();
-
-		if ( ! channels?.panelElements ) {
-			return;
-		}
-
 		const handleDragStart = () => dismiss();
 
-		channels.panelElements.on( 'element:drag:start', handleDragStart );
+		window.addEventListener( 'elementor/commands/run/after', onElementAdded );
+		channels?.panelElements?.on( 'element:drag:start', handleDragStart );
 
 		return () => {
-			channels.panelElements?.off( 'element:drag:start', handleDragStart );
+			window.removeEventListener( 'elementor/commands/run/after', onElementAdded );
+			channels?.panelElements?.off( 'element:drag:start', handleDragStart );
 		};
 	}, [ config, dismiss ] );
 
-	useEffect( () => {
-		if ( ! config ) {
-			return;
-		}
-
-		return listenTo( windowEvent( 'elementor/edit-mode/change' ), () => {
-			if ( getCurrentEditMode() !== 'edit' ) {
-				dismiss();
-			}
-		} );
-	}, [ config, dismiss ] );
-
-	const openTemplatesLibrary = useCallback( () => {
+	function openTemplatesLibrary() {
 		dismiss();
 		runCommand( 'library/open' );
-	}, [ dismiss ] );
+	}
 
-	const openAiPlanner = useCallback( () => {
+	function openAiPlanner() {
 		dismiss();
 
 		if ( config?.aiPlannerUrl ) {
 			window.open( config.aiPlannerUrl, '_blank', 'noopener,noreferrer' );
 		}
-	}, [ config, dismiss ] );
+	}
+
+	const onExited = useCallback( () => {
+		showIframeHeader();
+
+		portalContainer?.remove();
+		setPortalContainer( null );
+		setConfig( null );
+	}, [ portalContainer ] );
 
 	return {
 		config,
 		isDismissing,
-		panelWidth,
-		topOffset,
+		portalContainer,
 		dismiss,
 		openAiPlanner,
 		openTemplatesLibrary,
-		onExited: () => setConfig( null ),
+		onExited,
 	};
 }
