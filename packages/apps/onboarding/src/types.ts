@@ -1,3 +1,11 @@
+export type ExtendedWindow = Window & {
+	elementorCommon?: {
+		config?: {
+			library_connect?: Record< string, unknown >;
+		};
+	};
+};
+
 export const StepId = {
 	BUILDING_FOR: 'building_for',
 	SITE_ABOUT: 'site_about',
@@ -77,6 +85,7 @@ export interface OnboardingState {
 	isLoading: boolean;
 	error: string | null;
 	hadUnexpectedExit: boolean;
+	resumeStepIdForTracking: StepIdType | null;
 	isConnected: boolean;
 	isGuest: boolean;
 	userName: string;
