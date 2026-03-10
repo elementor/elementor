@@ -1,0 +1,19 @@
+[
+  {
+    "id": "element_1",
+    "elType": "widget",
+    "widgetType": "e-heading",
+    "settings": {
+      "title": {
+        "$$type": "overridable",
+        "value": {
+          "override_key": "prop-123",
+          "origin_value": {
+            "$$type": "html",
+            "value": "Overridable Title"
+          }
+        }
+      }
+    }
+  }
+]
