@@ -21,7 +21,7 @@ const isPluginErrorResponse = ( response: unknown ): response is PluginErrorResp
 
 const activatePlugin = async ( pluginPath: string ): Promise< PluginResponse > => {
 	return apiFetch< PluginResponse >( {
-		path: `/wp/v2/plugins/${ encodeURIComponent( pluginPath ) }`,
+		path: `/wp/v2/plugins/${ pluginPath }`,
 		method: 'POST',
 		data: { status: 'active' },
 	} );
@@ -39,7 +39,7 @@ const installPlugin = async (): Promise< PluginResponse > => {
 		} );
 	} catch ( error: unknown ) {
 		if ( isPluginErrorResponse( error ) && error.code === 'folder_exists' ) {
-			return activatePlugin( ANGIE_SLUG );
+			return activatePlugin( `${ANGIE_SLUG}/${ANGIE_SLUG}` );
 		}
 
 		throw error;

@@ -60,6 +60,8 @@ export function CreateWidget() {
 
 		if ( ! result.success ) {
 			setInstallState( 'error' );
+
+			return;
 		}
 
 		redirectToAppAdmin( prompt );
