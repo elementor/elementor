@@ -66,13 +66,22 @@ class Variable_Type_Keys {
 		$value = trim( strtolower( $value ) );
 
 		if ( 'auto' === $value ) {
-			return [ 'size' => '', 'unit' => 'auto' ];
+			return [
+				'size' => '',
+				'unit' => 'auto',
+			];
 		}
 
 		if ( preg_match( '/^(-?\d*\.?\d+)([a-z%]+)$/i', $value, $matches ) ) {
-			return [ 'size' => $matches[1] + 0, 'unit' => strtolower( $matches[2] ) ];
+			return [
+				'size' => $matches[1] + 0,
+				'unit' => strtolower( $matches[2] ),
+			];
 		}
 
-		return [ 'size' => $value, 'unit' => Size_Constants::DEFAULT_UNIT ];
+		return [
+			'size' => $value,
+			'unit' => Size_Constants::DEFAULT_UNIT,
+		];
 	}
 }

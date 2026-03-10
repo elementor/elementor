@@ -105,12 +105,12 @@ class Template_Library_Variables_Element_Transformer {
 				$resolved_value = $variable['value'] ?? null;
 				$resolved_type = Variable_Type_Keys::get_resolved_type( $data['$$type'] );
 
-			if ( null !== $resolved_value && null !== $resolved_type ) {
-				return [
-					'$$type' => $resolved_type,
-					'value' => Variable_Type_Keys::convert_value_for_resolved_type( $resolved_type, $resolved_value ),
-				];
-			}
+				if ( null !== $resolved_value && null !== $resolved_type ) {
+					return [
+						'$$type' => $resolved_type,
+						'value' => Variable_Type_Keys::convert_value_for_resolved_type( $resolved_type, $resolved_value ),
+					];
+				}
 			}
 
 			return $data;
