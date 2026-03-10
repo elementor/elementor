@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -222,6 +223,14 @@ class Migrations_Orchestrator {
 
 			foreach ( $value['value'] as &$item ) {
 				if ( $this->migrate_prop( $item, $item_type ) ) {
+					$has_changes = true;
+				}
+			}
+		} elseif ( $actual_prop_type instanceof Overridable_Prop_Type && is_array( $value['value'] ) ) {
+			$origin_prop_type = $actual_prop_type->get_origin_prop_type();
+
+			if ( $origin_prop_type instanceof Prop_Type && isset( $value['value']['origin_value'] ) ) {
+				if ( $this->migrate_prop( $value['value']['origin_value'], $origin_prop_type ) ) {
 					$has_changes = true;
 				}
 			}
