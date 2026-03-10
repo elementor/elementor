@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { Box } from '@elementor/ui';
 
 import { useCheckProInstallScreen } from '../hooks/use-check-pro-install-screen';
@@ -21,7 +21,6 @@ import { StepId } from '../types';
 import { t } from '../utils/translations';
 import { useToast } from './toast/toast-context';
 import { BaseLayout } from './ui/base-layout';
-import { CompletionScreen } from './ui/completion-screen';
 import { Footer } from './ui/footer';
 import { FooterActions } from './ui/footer-actions';
 import { SplitLayout } from './ui/split-layout';
@@ -54,7 +53,6 @@ export function AppContent( { onClose }: AppContentProps ) {
 		actions,
 	} = useOnboarding();
 
-	const [ isCompleting, setIsCompleting ] = useState( false );
 	const { showToast } = useToast();
 
 	useVideoPreload();
@@ -124,7 +122,6 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 	const handleSkip = useCallback( () => {
 		if ( isLast ) {
-			setIsCompleting( true );
 			updateProgress.mutate(
 				{
 					skip_step: true,
@@ -177,7 +174,6 @@ export function AppContent( { onClose }: AppContentProps ) {
 				const themeSlug = ( choiceData?.theme_selection ?? choices.theme_selection ) as string;
 
 				if ( themeSlug && isLast ) {
-					setIsCompleting( true );
 					installTheme.mutate( themeSlug, {
 						onSuccess: () => {
 							updateProgress.mutate(
@@ -222,7 +218,6 @@ export function AppContent( { onClose }: AppContentProps ) {
 			}
 
 			if ( isLast ) {
-				setIsCompleting( true );
 				updateProgress.mutate(
 					{
 						complete_step: stepId,
@@ -310,10 +305,6 @@ export function AppContent( { onClose }: AppContentProps ) {
 				return <Box sx={ { flex: 1, width: '100%' } } />;
 		}
 	};
-
-	if ( isCompleting ) {
-		return <CompletionScreen />;
-	}
 
 	if ( ! hasPassedLogin ) {
 		return (
