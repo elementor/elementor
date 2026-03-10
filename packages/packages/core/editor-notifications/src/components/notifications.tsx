@@ -45,10 +45,10 @@ const PromotionSnackbar = forwardRef< HTMLDivElement, CustomContentProps >( ( pr
 				action={ props.action }
 				onClose={ () => closeSnackbar( props.id ) }
 				sx={ {
-				ml: panelWidth + 'px',
-				'& .MuiAlert-message': { display: 'flex', flexWrap: 'nowrap', alignItems: 'center' },
-				'& .MuiAlert-content': { whiteSpace: 'nowrap' },
-			} }
+					ml: panelWidth + 'px',
+					'& .MuiAlert-message': { display: 'flex', flexWrap: 'nowrap', alignItems: 'center' },
+					'& .MuiAlert-content': { whiteSpace: 'nowrap' },
+				} }
 			>
 				{ props.message }
 			</Alert>
