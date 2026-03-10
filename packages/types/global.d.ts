@@ -41,7 +41,6 @@ interface EOnboardingConfig {
 		connect: string;
 		comparePlans?: string;
 		upgradeUrl: string;
-		videosBaseUrl: string;
 	};
 }
 
@@ -49,7 +48,13 @@ declare global {
 	interface Window {
 		elementorCommon?: {
 		eventsManager?: {
-			dispatchEvent?: (name: string, data: unknown) => void;
+			dispatchEvent?: (name: string, data: unknown, options?: Record<string, unknown>) => void;
+			canSendEvents?: () => boolean;
+			initializeMixpanel?: (onLoaded: ( mpInstance?: unknown ) => void) => void;
+			enableTracking?: () => void;
+			isMixpanelReady?: () => boolean;
+			trackingEnabled?: boolean;
+			getMixpanelInstance?: () => unknown;
 			config?: {
 				locations?: Record<string, string>;
 				secondaryLocations?: Record<string, string>;
@@ -66,6 +71,25 @@ declare global {
 				experimentalFeatures?: Record< string, boolean >;
 				urls?: {
 					assets?: string;
+				};
+				editor_events?: {
+					can_send_events?: boolean;
+					token?: string;
+					subscription_id?: string | null;
+					site_url?: string;
+					wp_version?: string;
+					elementor_version?: string;
+					site_language?: string;
+					site_key?: string;
+					flags_enabled?: boolean;
+				};
+				library_connect?: {
+					is_connected?: boolean;
+					current_access_level?: number;
+					current_access_tier?: string;
+					plan_type?: string;
+					user_id?: string | null;
+					user_roles?: string[];
 				};
 			};
 		};
@@ -85,6 +109,12 @@ declare global {
 					tags: DynamicTags;
 					groups: Record< DynamicTag[ 'group' ], { title: string } >;
 				};
+				size_units?: {
+					length?: string[];
+					angle?: string[];
+					time?: string[];
+					extended_units?: string[];
+				}
 				v4Promotions?: Record< V4PromotionKey, V4PromotionData >;
 			};
 			dynamicTags?: DynamicTagsManager;

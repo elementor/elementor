@@ -17,6 +17,7 @@ export { EmptyState as InstanceEmptyState } from './components/instance-editing-
 export { InstancePanelBody } from './components/instance-editing-panel/instance-panel-body';
 export { EditComponentAction, InstancePanelHeader } from './components/instance-editing-panel/instance-panel-header';
 export { useInstancePanelData } from './components/instance-editing-panel/use-instance-panel-data';
+export { DetachAction } from './components/instance-editing-panel/detach-action';
 
 export { COMPONENT_WIDGET_TYPE } from './create-component-type';
 

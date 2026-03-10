@@ -18,6 +18,7 @@ class Validation {
 	private const VALID_EFFECTS = [ 'fade', 'slide', 'scale', 'custom' ];
 	private const VALID_TYPES = [ 'in', 'out' ];
 	private const VALID_DIRECTIONS = [ '', 'left', 'right', 'top', 'bottom' ];
+	private const VALID_REPEAT_MODES = [ '', 'loop', 'times' ];
 
 	public function sanitize( $document ) {
 		return $this->sanitize_document_data( $document );
@@ -259,6 +260,14 @@ class Validation {
 		}
 
 		if ( isset( $config_value['relativeTo'] ) && ! $this->is_valid_string_prop( $config_value, 'relativeTo' ) ) {
+			return false;
+		}
+
+		if ( isset( $config_value['repeat'] ) && ! $this->is_valid_string_prop( $config_value, 'repeat', self::VALID_REPEAT_MODES ) ) {
+			return false;
+		}
+
+		if ( isset( $config_value['times'] ) && ! $this->is_valid_number_prop_in_range( $config_value, 'times', 1 ) ) {
 			return false;
 		}
 
