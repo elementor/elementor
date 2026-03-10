@@ -9,6 +9,7 @@ import {
 import { useElementInteractions } from '../hooks/use-element-interactions';
 
 type InteractionsContextValue = {
+	elementId: string;
 	interactions: ElementInteractions;
 	setInteractions: ( value: ElementInteractions | undefined ) => void;
 	playInteractions: ( interactionId: string ) => void;
@@ -45,6 +46,7 @@ export const InteractionsProvider = ( { children, elementId }: { children: React
 	};
 
 	const contextValue: InteractionsContextValue = {
+		elementId,
 		interactions,
 		setInteractions,
 		playInteractions,
