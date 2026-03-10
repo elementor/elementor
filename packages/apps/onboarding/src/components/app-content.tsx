@@ -118,6 +118,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 	const redirectToNewPage = useCallback( () => {
 		const redirectUrl = urls.createNewPage || urls.editor || urls.dashboard;
+		document.cookie = 'e_onboarding=1; path=/; max-age=30; SameSite=Lax';
 		window.location.href = redirectUrl;
 	}, [ urls ] );
 
