@@ -8,6 +8,12 @@ export type PromotionTrackingData = {
 	location_l2?: 'style' | 'general' | 'interactions';
 };
 
+type PromotionEventOptions = {
+	eventName: string | undefined;
+	interactionResult: string;
+	interactionDescription: string;
+};
+
 type MixpanelConfig = ReturnType< typeof getMixpanel >[ 'config' ];
 
 const getBaseEventProperties = ( data: PromotionTrackingData, config: MixpanelConfig ) => ( {
@@ -22,11 +28,7 @@ const getBaseEventProperties = ( data: PromotionTrackingData, config: MixpanelCo
 
 const dispatchPromotionEvent = (
 	data: PromotionTrackingData,
-	resolveOptions: ( config: MixpanelConfig ) => {
-		eventName: string | undefined;
-		interactionResult: string;
-		interactionDescription: string;
-	},
+	resolveOptions: ( config: MixpanelConfig ) => PromotionEventOptions,
 ) => {
 	const { dispatchEvent, config } = getMixpanel();
 	const { eventName, interactionResult, interactionDescription } = resolveOptions( config );
