@@ -181,6 +181,7 @@ function getAtomicFormFieldLabel( field, form ) {
 	}
 
 	const placeholder = field.getAttribute( 'placeholder' );
+	
 	return placeholder || '';
 }
 
