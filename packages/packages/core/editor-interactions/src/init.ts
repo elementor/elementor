@@ -33,7 +33,7 @@ export function init() {
 		registerInteractionsControl( {
 			type: 'replay',
 			component: Replay,
-			options: [ 'true', 'false' ],
+			options: [ 'no' ],
 		} );
 
 		registerInteractionsControl( {
