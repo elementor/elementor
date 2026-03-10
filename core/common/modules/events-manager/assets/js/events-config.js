@@ -27,6 +27,8 @@ const eventsConfig = {
 		resultsUpdated: 'results_updated',
 		noResults: 'no_results',
 		selected: 'selected',
+		promotionViewed: 'promotion_viewed',
+		upgradeNow: 'upgrade_now',
 	},
 
 	targetNames: {
@@ -280,6 +282,10 @@ const eventsConfig = {
 		},
 		interactions: {
 			created: 'interactions_created',
+    },
+		promotions: {
+			viewPromotion: 'view_promotion',
+			upgradePromotionClick: 'upgrade_promotion_click',
 		},
 	},
 };
