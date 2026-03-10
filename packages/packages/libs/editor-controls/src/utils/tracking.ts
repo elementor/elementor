@@ -20,9 +20,16 @@ const getBaseEventProperties = ( data: PromotionTrackingData, config: MixpanelCo
 	...( data.location_l2 && { location_l2: data.location_l2 } ),
 } );
 
-export const trackViewPromotion = ( data: PromotionTrackingData ) => {
+const dispatchPromotionEvent = (
+	data: PromotionTrackingData,
+	resolveOptions: ( config: MixpanelConfig ) => {
+		eventName: string | undefined;
+		interactionResult: string;
+		interactionDescription: string;
+	},
+) => {
 	const { dispatchEvent, config } = getMixpanel();
-	const eventName = config?.names?.promotions?.viewPromotion;
+	const { eventName, interactionResult, interactionDescription } = resolveOptions( config );
 
 	if ( ! eventName ) {
 		return;
@@ -30,22 +37,23 @@ export const trackViewPromotion = ( data: PromotionTrackingData ) => {
 
 	dispatchEvent?.( eventName, {
 		...getBaseEventProperties( data, config ),
-		interaction_result: config?.interactionResults?.promotionViewed ?? 'promotion_viewed',
-		interaction_description: 'user_viewed_promotion',
+		interaction_result: interactionResult,
+		interaction_description: interactionDescription,
 	} );
 };
 
+export const trackViewPromotion = ( data: PromotionTrackingData ) => {
+	dispatchPromotionEvent( data, ( config ) => ( {
+		eventName: config?.names?.promotions?.viewPromotion,
+		interactionResult: config?.interactionResults?.promotionViewed ?? 'promotion_viewed',
+		interactionDescription: 'user_viewed_promotion',
+	} ) );
+};
+
 export const trackUpgradePromotionClick = ( data: PromotionTrackingData ) => {
-	const { dispatchEvent, config } = getMixpanel();
-	const eventName = config?.names?.promotions?.upgradePromotionClick;
-
-	if ( ! eventName ) {
-		return;
-	}
-
-	dispatchEvent?.( eventName, {
-		...getBaseEventProperties( data, config ),
-		interaction_result: config?.interactionResults?.upgradeNow ?? 'upgrade_now',
-		interaction_description: 'user_clicked_upgrade_now',
-	} );
+	dispatchPromotionEvent( data, ( config ) => ( {
+		eventName: config?.names?.promotions?.upgradePromotionClick,
+		interactionResult: config?.interactionResults?.upgradeNow ?? 'upgrade_now',
+		interactionDescription: 'user_clicked_upgrade_now',
+	} ) );
 };
