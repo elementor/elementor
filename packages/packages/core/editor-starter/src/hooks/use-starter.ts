@@ -96,6 +96,27 @@ function showIframeElements() {
 	}
 }
 
+function observeSectionWrap( onChildAdded: () => void ): MutationObserver | null {
+	const iframe = document.getElementById( 'elementor-preview-iframe' ) as HTMLIFrameElement | null;
+	const sectionWrap = iframe?.contentDocument?.querySelector( '.elementor-section-wrap.ui-sortable' );
+
+	if ( ! sectionWrap ) {
+		return null;
+	}
+
+	const observer = new MutationObserver( ( mutations ) => {
+		const hasAddedNodes = mutations.some( ( mutation ) => mutation.addedNodes.length > 0 );
+
+		if ( hasAddedNodes && sectionWrap.children.length > 0 ) {
+			onChildAdded();
+		}
+	} );
+
+	observer.observe( sectionWrap, { childList: true } );
+
+	return observer;
+}
+
 export function useStarter() {
 	const [ config, setConfig ] = useState< StarterConfig | null >( null );
 	const [ isDismissing, setIsDismissing ] = useState( false );
@@ -123,9 +144,9 @@ export function useStarter() {
 
 	useEffect( () => {
 		const activate = () => {
-			const cfg = getStarterConfig();
+			const starterConfig = getStarterConfig();
 
-			if ( ! cfg ) {
+			if ( ! starterConfig ) {
 				return;
 			}
 
@@ -140,12 +161,12 @@ export function useStarter() {
 
 			wrapper.prepend( container );
 
-			dismissStarterApi( cfg );
+			dismissStarterApi( starterConfig );
 
 			hideIframeElements();
 			closeNavigator();
 
-			setConfig( cfg );
+			setConfig( starterConfig );
 			setPortalContainer( container );
 		};
 
@@ -178,21 +199,7 @@ export function useStarter() {
 		const channels = getElementorChannels();
 		const handleDragStart = () => dismiss();
 
-		const iframe = document.getElementById( 'elementor-preview-iframe' ) as HTMLIFrameElement | null;
-		const sectionWrap = iframe?.contentDocument?.querySelector( '.elementor-section-wrap.ui-sortable' );
-		let observer: MutationObserver | null = null;
-
-		if ( sectionWrap ) {
-			observer = new MutationObserver( ( mutations ) => {
-				const hasAddedNodes = mutations.some( ( m ) => m.addedNodes.length > 0 );
-
-				if ( hasAddedNodes && sectionWrap.children.length > 0 ) {
-					dismiss();
-				}
-			} );
-
-			observer.observe( sectionWrap, { childList: true } );
-		}
+		const observer = observeSectionWrap( dismiss );
 
 		window.addEventListener( 'elementor/commands/run/after', onElementAdded );
 		channels?.panelElements?.on( 'element:drag:start', handleDragStart );
