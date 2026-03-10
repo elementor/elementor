@@ -56,6 +56,8 @@ export { componentsActions } from './store/dispatchers';
 export { componentsSelectors } from './store/selectors';
 export {
 	SLICE_NAME,
+	createComponentsAction,
+	registerComponentsReducer,
 	selectOverridableProps,
 	selectPath,
 	slice,
@@ -64,7 +66,7 @@ export {
 	useIsSanitizedComponent,
 	useOverridableProps,
 } from './store/store';
-export type { ComponentsPathItem, ComponentsSlice, SanitizeAttributes } from './store/store';
+export type { ComponentsPathItem, ComponentsSlice, ComponentsState, SanitizeAttributes } from './store/store';
 
 export { publishDraftComponentsInPageBeforeSave } from './sync/publish-draft-components-in-page-before-save';
 
