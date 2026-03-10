@@ -38,11 +38,10 @@ const STARTER_HIDE_CSS = `
 	${ EMPTY_WRAP } header.wp-block-template-part,
 	${ EMPTY_WRAP } footer.wp-block-template-part,
 	${ EMPTY_WRAP } [data-elementor-type="floating-buttons"] { display: none !important; }
-	${ EMPTY_WRAP } { background-color: #F3F3F4 !important; padding-top: 0 !important; }
+	${ EMPTY_WRAP } { background-color: #fff !important; padding-top: 0 !important; }
 	${ EMPTY_WRAP } #elementor-add-new-section { margin-top: 0 !important; }
 	${ EMPTY_WRAP } .elementor-section-wrap.ui-sortable { min-height: 0 !important; }
-	${ EMPTY_WRAP } .elementor-add-section { max-width: 879px !important; }
-	${ EMPTY_WRAP } .elementor-add-section:not(.elementor-dragging-on-child) .elementor-add-section-inner { background-color: transparent !important; }
+	${ EMPTY_WRAP } .elementor-add-section:not(.elementor-dragging-on-child) .elementor-add-section-inner { background-color: transparent !important; max-width: 604px !important; margin-top: 120px !important; }
 `;
 
 let iframeLoadHandler: ( () => void ) | null = null;

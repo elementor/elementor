@@ -35,8 +35,7 @@ export default function StarterOverlay() {
 						flexDirection: 'column',
 						alignItems: 'center',
 						gap: 3,
-						pt: 15.5,
-						pb: 2,
+						py: 7.5,
 						px: 2.5,
 						backgroundColor: '#F3F3F4',
 					} }
@@ -63,8 +62,24 @@ export default function StarterOverlay() {
 					</Typography>
 
 					<Stack direction="row" spacing={ 3 } justifyContent="center">
-						<Card sx={ { width: 280, borderRadius: 3, boxShadow: '0 3px 14px 2px rgba(0, 0, 0, 0.12)' } }>
-							<CardActionArea onClick={ openAiPlanner } sx={ { pt: 1.5, pb: 3, px: 1.5 } }>
+						<Card
+							sx={ {
+								width: 280,
+								borderRadius: 3,
+								boxShadow: 'none',
+								transition: 'box-shadow 0.2s',
+								'&:hover': { boxShadow: '0 3px 14px 2px rgba(0, 0, 0, 0.12)' },
+							} }
+						>
+							<CardActionArea
+								onClick={ openAiPlanner }
+								sx={ {
+									pt: 1.5,
+									pb: 3,
+									px: 1.5,
+									'&:hover .MuiCardActionArea-focusHighlight': { opacity: 0 },
+								} }
+							>
 								<CardMedia
 									component="img"
 									image={ getAssetUrl( 'ai-site-planner.png' ) }
@@ -97,8 +112,24 @@ export default function StarterOverlay() {
 							</CardActionArea>
 						</Card>
 
-						<Card sx={ { width: 280, borderRadius: 3, boxShadow: '0 3px 14px 2px rgba(0, 0, 0, 0.12)' } }>
-							<CardActionArea onClick={ openTemplatesLibrary } sx={ { pt: 1.5, pb: 3, px: 1.5 } }>
+						<Card
+							sx={ {
+								width: 280,
+								borderRadius: 3,
+								boxShadow: 'none',
+								transition: 'box-shadow 0.2s',
+								'&:hover': { boxShadow: '0 3px 14px 2px rgba(0, 0, 0, 0.12)' },
+							} }
+						>
+							<CardActionArea
+								onClick={ openTemplatesLibrary }
+								sx={ {
+									pt: 1.5,
+									pb: 3,
+									px: 1.5,
+									'&:hover .MuiCardActionArea-focusHighlight': { opacity: 0 },
+								} }
+							>
 								<CardMedia
 									component="img"
 									image={ getAssetUrl( 'website-templates.png' ) }
