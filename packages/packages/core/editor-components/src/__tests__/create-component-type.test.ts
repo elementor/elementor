@@ -435,7 +435,7 @@ describe( 'createComponentType', () => {
 		expect( viewInstance.editComponent ).toHaveBeenCalled();
 	} );
 
-	it( 'should disable edit action and show PRO badge when Pro is not installed', () => {
+	it( 'should disable edit action and show promotion crown badge when Pro is not installed', () => {
 		// Arrange
 		const viewInstance = createMockViewInstance( true );
 		setProState( { installed: false, active: false } );
@@ -448,7 +448,7 @@ describe( 'createComponentType', () => {
 		// Assert
 		expect( editAction ).toBeDefined();
 		expect( editAction?.isEnabled() ).toBe( false );
-		expect( editAction?.shortcut ).toContain( 'PRO' );
+		expect( editAction?.shortcut ).toContain( 'eicon-upgrade-crown' );
 		expect( editAction?.shortcut ).toContain( 'go-pro-components-edit' );
 	} );
 
