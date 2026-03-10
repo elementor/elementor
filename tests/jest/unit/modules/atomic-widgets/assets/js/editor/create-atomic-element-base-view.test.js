@@ -1223,7 +1223,7 @@ describe( 'createAtomicElementBaseView - components Pro gating', () => {
 		expect( action.isEnabled() ).toBe( true );
 	} );
 
-	it( 'should show "PRO" badge and disable create-component when Pro is not active', () => {
+	it( 'should show promotion crown badge and disable create-component when Pro is not active', () => {
 		// Arrange
 		setProState( false );
 
@@ -1232,7 +1232,7 @@ describe( 'createAtomicElementBaseView - components Pro gating', () => {
 
 		// Assert
 		expect( action ).toBeDefined();
-		expect( action.shortcut ).toContain( 'PRO' );
+		expect( action.shortcut ).toContain( 'eicon-upgrade-crown' );
 		expect( action.shortcut ).toContain( 'go-pro-components-create' );
 		expect( action.isEnabled() ).toBe( false );
 	} );

@@ -1,19 +1,24 @@
 import * as React from 'react';
 import { PencilIcon } from '@elementor/icons';
 import { Box, Stack } from '@elementor/ui';
+import { hasProInstalled } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { useComponentsPermissions } from '../../hooks/use-components-permissions';
 import { ComponentInstanceProvider } from '../../provider/component-instance-context';
+import { ComponentsUpgradeAlert } from '../components-upgrade-alert';
 import { DetachAction } from './detach-action';
 import { EmptyState } from './empty-state';
 import { InstancePanelBody } from './instance-panel-body';
 import { EditComponentAction, InstancePanelHeader } from './instance-panel-header';
 import { useInstancePanelData } from './use-instance-panel-data';
 
+const EDIT_UPGRADE_URL = 'https://go.elementor.com/go-pro-components-edit/';
+
 export function InstanceEditingPanel() {
 	const { canEdit } = useComponentsPermissions();
 	const data = useInstancePanelData();
+	const hasPro = hasProInstalled();
 
 	if ( ! data ) {
 		return null;
@@ -32,7 +37,7 @@ export function InstanceEditingPanel() {
 	);
 
 	return (
-		<Box data-testid="instance-editing-panel">
+		<Box data-testid="instance-editing-panel" sx={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
 			<ComponentInstanceProvider
 				componentId={ componentId }
 				overrides={ overrides }
@@ -46,6 +51,13 @@ export function InstanceEditingPanel() {
 					componentInstanceId={ componentInstanceId }
 				/>
 			</ComponentInstanceProvider>
+			{ ! hasPro && (
+				<ComponentsUpgradeAlert
+					title={ __( 'Edit components', 'elementor' ) }
+					description={ __( 'Editing components requires an active Pro subscription.', 'elementor' ) }
+					upgradeUrl={ EDIT_UPGRADE_URL }
+				/>
+			) }
 		</Box>
 	);
 }
