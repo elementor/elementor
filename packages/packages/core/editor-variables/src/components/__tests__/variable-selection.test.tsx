@@ -389,7 +389,7 @@ describe( 'VariablesSelection', () => {
 			expect( trackViewPromotion ).toHaveBeenCalledWith( {
 				target_name: 'variables_popover',
 				target_location: 'widget_panel',
-				location_l1: 'variables list',
+				location_l1: 'variables_list',
 			} );
 		} );
 
