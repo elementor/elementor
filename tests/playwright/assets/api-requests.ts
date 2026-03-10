@@ -198,6 +198,24 @@ export default class ApiRequests {
 		return await response.json();
 	}
 
+	public async post( request: APIRequestContext, restRoute: string, data ) {
+		const response = await request.post( `${ this.baseUrl }/${ restRoute }`, {
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+			data,
+		} );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+				Failed to post to ${ restRoute }: ${ response.status() }.
+				${ await response.text() }
+			` );
+		}
+
+		return await response.json();
+	}
+
 	public async customPut( request: APIRequestContext, restRoute: string, data ) {
 		const response = await request.put( `${ this.baseUrl }/${ restRoute }`, {
 			headers: {
