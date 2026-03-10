@@ -309,7 +309,7 @@ import 'elementor-app/event-track/wp-dashboard-tracking';
 					placeholderUrl = $rollbackButton.data( 'placeholder-url' );
 
 				$rollbackButton.html( placeholderText.replace( '{VERSION}', $this.val() ) );
-				$rollbackButton.attr( 'href', placeholderUrl.replace( 'VERSION', $this.val() ) );
+				$rollbackButton.data( 'href', placeholderUrl.replace( 'VERSION', $this.val() ) );
 			} ).trigger( 'change' );
 
 			$( '.elementor-rollback-button' ).on( 'click', function( event ) {
@@ -327,7 +327,7 @@ import 'elementor-app/event-track/wp-dashboard-tracking';
 					onConfirm() {
 						$this.addClass( 'loading' );
 
-						location.href = $this.attr( 'href' );
+						location.href = $this.data( 'href' );
 					},
 				} ).show();
 			} );

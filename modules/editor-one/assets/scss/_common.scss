@@ -176,6 +176,10 @@
 				bottom: 1px;
 				padding: 0;
 				vertical-align: middle;
+				height: 10px;
+				font: normal 20px / 0.5 dashicons;
+				bottom: 2px;
+				position: relative;
 			}
 		}
 	}
@@ -240,6 +244,7 @@
 		box-shadow: none;
 		height: auto;
 		line-height: normal;
+		min-height: 34px;
 
 		&:hover,
 		&:focus {
@@ -271,6 +276,7 @@
 		box-shadow: none;
 		height: auto;
 		line-height: normal;
+		min-height: 34px;
 
 		&:hover,
 		&:focus {
