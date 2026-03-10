@@ -7,7 +7,7 @@ import { filterInteractions } from '../utils/filter-interactions';
 export const useElementInteractions = ( elementId: ElementID ) => {
 	const [ interactions, setInteractions ] = useState< ElementInteractions >( () => {
 		const initial = getElementInteractions( elementId );
-		const filteredInteractions = filterInteractions(initial?.items ?? []);
+		const filteredInteractions = filterInteractions( initial?.items ?? [] );
 
 		return { version: initial?.version ?? 1, items: filteredInteractions };
 	} );
@@ -16,7 +16,7 @@ export const useElementInteractions = ( elementId: ElementID ) => {
 		windowEvent( 'elementor/element/update_interactions' ),
 		() => {
 			const newInteractions = getElementInteractions( elementId );
-			const filteredInteractions = filterInteractions(newInteractions?.items ?? []);
+			const filteredInteractions = filterInteractions( newInteractions?.items ?? [] );
 			setInteractions( { version: newInteractions?.version ?? 1, items: filteredInteractions } );
 		},
 		[ elementId ]
