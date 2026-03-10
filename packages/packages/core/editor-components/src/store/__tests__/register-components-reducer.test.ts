@@ -12,7 +12,7 @@ describe( 'registerComponentsReducer', () => {
 
 	it( 'should run registered reducer when matching action is dispatched', () => {
 		// Arrange
-		registerComponentsReducer< { value: string } >( 'components/customAction', ( state, action ) => {
+		registerComponentsReducer< { value: string } >( 'customAction', ( state, action ) => {
 			state.updatedComponentNames = { 1: action.payload.value };
 		} );
 
@@ -42,11 +42,11 @@ describe( 'registerComponentsReducer', () => {
 
 	it( 'should allow multiple custom reducers', () => {
 		// Arrange
-		registerComponentsReducer< string >( 'components/actionA', ( state, action ) => {
+		registerComponentsReducer< string >( 'actionA', ( state, action ) => {
 			state.createdThisSession.push( action.payload );
 		} );
 
-		registerComponentsReducer< string >( 'components/actionB', ( state, action ) => {
+		registerComponentsReducer< string >( 'actionB', ( state, action ) => {
 			state.archivedThisSession.push( Number( action.payload ) );
 		} );
 

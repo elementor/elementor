@@ -17,21 +17,17 @@ type ComponentsReducer< P > = ( state: ComponentsState, action: PayloadAction< P
 
 const extraReducersMap = new Map< string, ComponentsReducer< unknown > >();
 
-export function registerComponentsReducer< P >(
-	actionType: `components/${ string }`,
-	reducer: ComponentsReducer< P >
-) {
-	extraReducersMap.set( actionType, reducer as ComponentsReducer< unknown > );
+export function registerComponentsReducer< P >( name: string, reducer: ComponentsReducer< P > ) {
+	extraReducersMap.set( `${ SLICE_NAME }/${ name }`, reducer as ComponentsReducer< unknown > );
 }
 
 export function createComponentsAction< P >( name: string ) {
-	const actionType = `${ SLICE_NAME }/${ name }` as const;
-	const action = createAction< P >( actionType );
+	const action = createAction< P >( `${ SLICE_NAME }/${ name }` );
 
 	return {
 		action,
 		register( reducer: ComponentsReducer< P > ) {
-			registerComponentsReducer( actionType, reducer );
+			registerComponentsReducer( name, reducer );
 		},
 		dispatch( payload: P ) {
 			dispatch( action( payload ) );
