@@ -52,7 +52,7 @@ function notifyPublishUpgrade() {
 	notify( {
 		type: 'promotion',
 		id: PUBLISH_UPGRADE_NOTIFICATION_ID,
-		message: __( 'Your Pro subscription has expired. Renew to publish components.', 'elementor' ),
+		message: __( 'You have unpublished component on this page. You need a pro version to publish it.', 'elementor' ),
 		additionalActionProps: [
 			{
 				size: 'small',
