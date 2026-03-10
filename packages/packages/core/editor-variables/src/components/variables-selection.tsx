@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as React from 'react';
+import { trackViewPromotion } from '@elementor/editor-controls';
 import {
 	PopoverHeader,
 	PopoverMenuList,
@@ -131,6 +132,16 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, d
 	const handleClearSearch = () => {
 		setSearchValue( '' );
 	};
+
+	useEffect( () => {
+		if ( disabled ) {
+			trackViewPromotion( {
+				target_name: 'variables_popover',
+				target_location: 'widget_panel',
+				location_l1: 'variables_list',
+			} );
+		}
+	}, [ disabled ] );
 
 	return (
 		<SectionPopoverBody>
