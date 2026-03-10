@@ -20,6 +20,7 @@ type InfotipCardProps = {
 	assetUrl: string;
 	ctaUrl: string;
 	onClose: ( e: MouseEvent ) => void;
+	onCtaClick?: () => void;
 };
 
 type PromotionInfotipProps = React.PropsWithChildren<
@@ -28,17 +29,17 @@ type PromotionInfotipProps = React.PropsWithChildren<
 	}
 >;
 
-export const PromotionInfotip = ( { children, open, onClose, ...cardProps }: PromotionInfotipProps ) => {
+export const PromotionInfotip = ( { children, open, onClose, onCtaClick, ...cardProps }: PromotionInfotipProps ) => {
 	useCanvasClickHandler( !! open, onClose );
 
 	return (
-		<Infotip placement="right" content={ <InfotipCard onClose={ onClose } { ...cardProps } /> } open={ open }>
+		<Infotip placement="right" content={ <InfotipCard onClose={ onClose } onCtaClick={ onCtaClick } { ...cardProps } /> } open={ open }>
 			{ children }
 		</Infotip>
 	);
 };
 
-function InfotipCard( { title, content, assetUrl, ctaUrl, onClose }: InfotipCardProps ) {
+function InfotipCard( { title, content, assetUrl, ctaUrl, onClose, onCtaClick }: InfotipCardProps ) {
 	return (
 		<ClickAwayListener
 			disableReactTree={ true }
@@ -58,7 +59,7 @@ function InfotipCard( { title, content, assetUrl, ctaUrl, onClose }: InfotipCard
 					</Typography>
 				</CardContent>
 				<CardActions sx={ { justifyContent: 'flex-start' } }>
-					<CtaButton href={ ctaUrl } />
+					<CtaButton href={ ctaUrl } onClick={ onCtaClick } />
 				</CardActions>
 			</Card>
 		</ClickAwayListener>

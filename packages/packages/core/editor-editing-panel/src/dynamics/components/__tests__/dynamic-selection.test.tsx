@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
+import { trackUpgradePromotionClick, trackViewPromotion } from '@elementor/editor-controls';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { usePersistDynamicValue } from '../../../hooks/use-persist-dynamic-value';
@@ -7,6 +8,12 @@ import { usePropDynamicTags } from '../../hooks/use-prop-dynamic-tags';
 import { getAtomicDynamicTags } from '../../sync/get-atomic-dynamic-tags';
 import { type DynamicTag } from '../../types';
 import { DynamicSelection } from '../dynamic-selection';
+
+jest.mock( '@elementor/editor-controls', () => ( {
+	...jest.requireActual( '@elementor/editor-controls' ),
+	trackViewPromotion: jest.fn(),
+	trackUpgradePromotionClick: jest.fn(),
+} ) );
 
 jest.mock( '../../hooks/use-prop-dynamic-tags' );
 jest.mock( '../../sync/get-atomic-dynamic-tags' );
@@ -294,6 +301,115 @@ describe( '<DynamicSelection />', () => {
 
 		const ctaLink = screen.getByRole( 'link' );
 		expect( ctaLink ).toHaveAttribute( 'href', 'https://go.elementor.com/go-pro-dynamic-tags-modal/' );
+	} );
+
+	describe( 'Tracking', () => {
+		it( 'should call trackViewPromotion when no dynamic tags are available', () => {
+			// Arrange.
+			jest.mocked( usePropDynamicTags ).mockReturnValue( [] );
+			jest.mocked( getAtomicDynamicTags ).mockReturnValue( { groups: {} } as never );
+
+			const props = {
+				value: {},
+				propType: createMockPropType( { kind: 'object' } ),
+			};
+
+			// Act.
+			renderControl( <DynamicSelection close={ jest.fn() } />, props );
+
+			// Assert.
+			expect( trackViewPromotion ).toHaveBeenCalledWith( {
+				target_name: 'dynamic_tags',
+				location_l1: 'style',
+			} );
+		} );
+
+		it( 'should call trackViewPromotion when expired prop is true', () => {
+			// Arrange.
+			jest.mocked( usePropDynamicTags ).mockReturnValue( [] );
+			jest.mocked( getAtomicDynamicTags ).mockReturnValue( { groups: {} } as never );
+
+			const props = {
+				value: {},
+				propType: createMockPropType( { kind: 'object' } ),
+			};
+
+			// Act.
+			renderControl( <DynamicSelection close={ jest.fn() } expired />, props );
+
+			// Assert.
+			expect( trackViewPromotion ).toHaveBeenCalledWith( {
+				target_name: 'dynamic_tags',
+			} );
+		} );
+
+		it( 'should call trackUpgradePromotionClick when CTA in NoDynamicTags is clicked', () => {
+			// Arrange.
+			jest.mocked( usePropDynamicTags ).mockReturnValue( [] );
+			jest.mocked( getAtomicDynamicTags ).mockReturnValue( { groups: {} } as never );
+
+			const props = {
+				value: {},
+				propType: createMockPropType( { kind: 'object' } ),
+			};
+
+			// Act.
+			renderControl( <DynamicSelection close={ jest.fn() } />, props );
+
+			const ctaLink = screen.getByRole( 'link' );
+			fireEvent.click( ctaLink );
+
+			// Assert.
+			expect( trackUpgradePromotionClick ).toHaveBeenCalledWith( {
+				target_name: 'dynamic_tags',
+				location_l1: 'style',
+			} );
+		} );
+
+		it( 'should call trackUpgradePromotionClick when CTA in ExpiredDynamicTags is clicked', () => {
+			// Arrange.
+			jest.mocked( usePropDynamicTags ).mockReturnValue(
+				mockDynamicTags( [
+					{ name: 'tag1', label: 'Tag 1', group: 'group1' },
+				] )
+			);
+
+			const props = {
+				value: {},
+				propType: createMockPropType( { kind: 'object' } ),
+			};
+
+			// Act.
+			renderControl( <DynamicSelection close={ jest.fn() } expired />, props );
+
+			const ctaLink = screen.getByRole( 'link' );
+			fireEvent.click( ctaLink );
+
+			// Assert.
+			expect( trackUpgradePromotionClick ).toHaveBeenCalledWith( {
+				target_name: 'dynamic_tags',
+			} );
+		} );
+
+		it( 'should not call trackViewPromotion when dynamic tags are available and not expired', () => {
+			// Arrange.
+			jest.mocked( usePropDynamicTags ).mockReturnValue(
+				mockDynamicTags( [
+					{ name: 'tag1', label: 'Tag 1', group: 'group1' },
+				] )
+			);
+
+			const props = {
+				value: {},
+				propType: createMockPropType( { kind: 'object' } ),
+			};
+
+			// Act.
+			renderControl( <DynamicSelection close={ jest.fn() } />, props );
+
+			// Assert.
+			expect( trackViewPromotion ).not.toHaveBeenCalled();
+		} );
 	} );
 } );
 

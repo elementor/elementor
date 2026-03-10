@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { forwardRef, type MouseEvent, useImperativeHandle, useState } from 'react';
+import { forwardRef, type MouseEvent, useCallback, useImperativeHandle, useState } from 'react';
+import { type PromotionTrackingData, trackViewPromotion, trackUpgradePromotionClick } from '@elementor/editor-controls';
 import { PromotionChip, PromotionPopover, useCanvasClickHandler } from '@elementor/editor-ui';
 import { Box } from '@elementor/ui';
 import { capitalize } from '@elementor/utils';
@@ -8,6 +9,7 @@ import { __, sprintf } from '@wordpress/i18n';
 type VariablePromotionChipProps = {
 	variableType: string;
 	upgradeUrl: string;
+	trackingData: PromotionTrackingData;
 };
 
 export type VariablePromotionChipRef = {
@@ -15,14 +17,21 @@ export type VariablePromotionChipRef = {
 };
 
 export const VariablePromotionChip = forwardRef< VariablePromotionChipRef, VariablePromotionChipProps >(
-	( { variableType, upgradeUrl }, ref ) => {
+	( { variableType, upgradeUrl, trackingData }, ref ) => {
 		const [ isOpen, setIsOpen ] = useState( false );
 
 		useCanvasClickHandler( isOpen, () => setIsOpen( false ) );
 
-		const toggle = () => setIsOpen( ( prev ) => ! prev );
+		const toggle = useCallback( () => {
+			setIsOpen( ( prev ) => {
+				if ( ! prev ) {
+					trackViewPromotion( trackingData );
+				}
+				return ! prev;
+			} );
+		}, [ trackingData ] );
 
-		useImperativeHandle( ref, () => ( { toggle } ), [] );
+		useImperativeHandle( ref, () => ( { toggle } ), [ toggle ] );
 
 		const title = sprintf(
 			/* translators: %s: Variable Type. */
@@ -47,6 +56,7 @@ export const VariablePromotionChip = forwardRef< VariablePromotionChipRef, Varia
 					e.stopPropagation();
 					setIsOpen( false );
 				} }
+				onCtaClick={ () => trackUpgradePromotionClick( trackingData ) }
 			>
 				<Box
 					onClick={ ( e: MouseEvent ) => {

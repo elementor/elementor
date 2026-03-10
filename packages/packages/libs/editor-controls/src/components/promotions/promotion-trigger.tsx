@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { forwardRef, type ReactNode, useImperativeHandle, useState } from 'react';
+import { forwardRef, type ReactNode, useCallback, useImperativeHandle, useState } from 'react';
 import { PromotionChip, PromotionInfotip } from '@elementor/editor-ui';
 import { Box } from '@elementor/ui';
 
+import { trackViewPromotion, trackUpgradePromotionClick, type PromotionTrackingData } from '../../utils/tracking';
 import type { V4PromotionData, V4PromotionKey } from './types';
 
 function getV4Promotion( key: V4PromotionKey ): V4PromotionData | undefined {
@@ -12,6 +13,7 @@ function getV4Promotion( key: V4PromotionKey ): V4PromotionData | undefined {
 type PromotionTriggerProps = {
 	promotionKey: V4PromotionKey;
 	children?: ReactNode;
+	trackingData: PromotionTrackingData;
 };
 
 export type PromotionTriggerRef = {
@@ -19,13 +21,20 @@ export type PromotionTriggerRef = {
 };
 
 export const PromotionTrigger = forwardRef< PromotionTriggerRef, PromotionTriggerProps >(
-	( { promotionKey, children }, ref ) => {
+	( { promotionKey, children, trackingData }, ref ) => {
 		const [ isOpen, setIsOpen ] = useState( false );
 		const promotion = getV4Promotion( promotionKey );
 
-		const toggle = () => setIsOpen( ( prev ) => ! prev );
+		const toggle = useCallback( () => {
+			setIsOpen( ( prev ) => {
+				if ( ! prev ) {
+					trackViewPromotion( trackingData );
+				}
+				return ! prev;
+			} );
+		}, [ trackingData ] );
 
-		useImperativeHandle( ref, () => ( { toggle } ), [] );
+		useImperativeHandle( ref, () => ( { toggle } ), [ toggle ] );
 
 		return (
 			<>
@@ -40,6 +49,7 @@ export const PromotionTrigger = forwardRef< PromotionTriggerRef, PromotionTrigge
 							e.stopPropagation();
 							setIsOpen( false );
 						} }
+						onCtaClick={ () => trackUpgradePromotionClick( trackingData ) }
 					>
 						<Box
 							onClick={ ( e: MouseEvent ) => {
