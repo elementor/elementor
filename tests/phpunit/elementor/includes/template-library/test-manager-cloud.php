@@ -384,16 +384,23 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 
 	public function test_export_template__template_type() {
 		// Arrange
+		$mock_content = [ [ 'id' => 'abc', 'elType' => 'container', 'elements' => [], 'settings' => [] ] ];
 		$data = [
 			'id' => 456,
 			'title' => 'Template 1',
 			'type' => 'TEMPLATE',
 			'parentId' => null,
 			'templateType' => 'container',
-			'content' => json_encode(['content' => 'mock_content']),
+			'content' => json_encode(['content' => $mock_content]),
 		];
 
-		$expected_file_content = '{"content":"mock_content","page_settings":[],"version":"'.DB::DB_VERSION.'","title":"Template 1","type":"container"}';
+		$expected_file_content = wp_json_encode( [
+			'content' => $mock_content,
+			'page_settings' => [],
+			'version' => DB::DB_VERSION,
+			'title' => 'Template 1',
+			'type' => 'container',
+		] );
 		$expected_file_name = 'elementor-' . $data['id'] . '-' . gmdate( 'Y-m-d' ) . '.json';
 
 		$this->cloud_library_app_mock->method( 'get_resource' )->willReturn( $data );
@@ -423,9 +430,11 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			'templateType' => 'folder',
 		];
 
+		$mock_content = [ [ 'id' => 'abc', 'elType' => 'container', 'elements' => [], 'settings' => [] ] ];
+
 		$this->cloud_library_app_mock
 			->method( 'get_resource' )
-			->willReturnCallback( function ( $args ) use ( $folder ) {
+			->willReturnCallback( function ( $args ) use ( $folder, $mock_content ) {
 				$data = [
 					123 => $folder,
 					101 => [
@@ -434,7 +443,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 						'type' => 'TEMPLATE',
 						'parentId' => $folder['id'],
 						'templateType' => 'container',
-						'content' => '{"content":"value"}',
+						'content' => wp_json_encode( [ 'content' => $mock_content ] ),
 					],
 					102 => [
 						'id' => 102,
@@ -442,7 +451,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 						'type' => 'TEMPLATE',
 						'parentId' => $folder['id'],
 						'templateType' => 'container',
-						'content' => '{"content":"value"}',
+						'content' => wp_json_encode( [ 'content' => $mock_content ] ),
 					],
 					103 => [
 						'id' => 103,
@@ -450,7 +459,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 						'type' => 'TEMPLATE',
 						'parentId' => $folder['id'],
 						'templateType' => 'container',
-						'content' => '{"content":"value"}',
+						'content' => wp_json_encode( [ 'content' => $mock_content ] ),
 					],
 				];
 
