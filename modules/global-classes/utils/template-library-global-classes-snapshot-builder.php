@@ -122,7 +122,7 @@ class Template_Library_Global_Classes_Snapshot_Builder extends Template_Library_
 	}
 
 	protected function get_item_prefix(): string {
-		return 'g-';
+		return Template_Library_Import_Export_Utils::GLOBAL_CLASS_ID_PREFIX;
 	}
 
 	protected function get_max_items(): int {

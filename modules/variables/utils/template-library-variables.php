@@ -194,13 +194,13 @@ class Template_Library_Variables {
 				$resolved_type = $type_map[ $type ] ?? null;
 				$resolved_value = $variable_data[ $var_id ]['value'] ?? null;
 
-				if ( $resolved_type && null !== $resolved_value ) {
-					$data[ $key ] = [
-						'$$type' => $resolved_type,
-						'value' => $resolved_value,
-					];
-				}
-				continue;
+			if ( $resolved_type && null !== $resolved_value ) {
+				$data[ $key ] = [
+					'$$type' => $resolved_type,
+					'value' => Variable_Type_Keys::convert_value_for_resolved_type( $resolved_type, $resolved_value ),
+				];
+			}
+			continue;
 			}
 
 			$data[ $key ] = self::flatten_variable_refs_in_props( $value, $variable_data, $variable_types, $type_map, $ids_to_flatten );

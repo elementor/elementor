@@ -414,4 +414,169 @@ class Test_Template_Library_Global_Classes_Utils extends Elementor_Test_Base {
 		$this->assertSame( 'local', $result[0]['styles'][ $local_id ]['label'] );
 		$this->assertNotEmpty( $result[0]['styles'][ $local_id ]['variants'] );
 	}
+
+	public function test_flatten_merges_into_existing_local_class() {
+		$existing_variant = [
+			'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
+			'props' => [ 'padding' => [ '$$type' => 'size', 'value' => '10px' ] ],
+		];
+
+		$elements = [
+			[
+				'id' => 'abc12345',
+				'elType' => 'widget',
+				'settings' => [
+					'classes' => [
+						'value' => [ 'e-abc12345-local1', 'g-1' ],
+					],
+				],
+				'styles' => [
+					'e-abc12345-local1' => [
+						'id' => 'e-abc12345-local1',
+						'label' => 'local',
+						'type' => 'class',
+						'variants' => [ $existing_variant ],
+					],
+				],
+				'elements' => [],
+			],
+		];
+
+		$incoming_variant = [
+			'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
+			'props' => [ 'color' => [ '$$type' => 'color', 'value' => '#fff' ] ],
+		];
+
+		$global_classes = [
+			'items' => [
+				'g-1' => [
+					'id' => 'g-1',
+					'type' => 'class',
+					'label' => 'Main',
+					'variants' => [ $incoming_variant ],
+				],
+			],
+		];
+
+		$result = Template_Library_Global_Classes_Element_Transformer::flatten_elements_classes( $elements, $global_classes );
+
+		$classes = $result[0]['settings']['classes']['value'];
+		$this->assertContains( 'e-abc12345-local1', $classes );
+		$this->assertNotContains( 'g-1', $classes );
+
+		$local_style = $result[0]['styles']['e-abc12345-local1'];
+		$this->assertSame( 'local', $local_style['label'] );
+		$this->assertCount( 2, $local_style['variants'] );
+		$this->assertSame( $existing_variant, $local_style['variants'][0] );
+		$this->assertSame( $incoming_variant, $local_style['variants'][1] );
+	}
+
+	public function test_flatten_multiple_global_classes_creates_single_local_class() {
+		$elements = [
+			[
+				'id' => 'abc12345',
+				'elType' => 'widget',
+				'settings' => [
+					'classes' => [
+						'value' => [ 'g-1', 'g-2' ],
+					],
+				],
+				'styles' => [],
+				'elements' => [],
+			],
+		];
+
+		$variant_1 = [
+			'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
+			'props' => [ 'color' => [ '$$type' => 'color', 'value' => '#000' ] ],
+		];
+
+		$variant_2 = [
+			'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
+			'props' => [ 'padding' => [ '$$type' => 'size', 'value' => '8px' ] ],
+		];
+
+		$global_classes = [
+			'items' => [
+				'g-1' => [
+					'id' => 'g-1',
+					'type' => 'class',
+					'label' => 'First',
+					'variants' => [ $variant_1 ],
+				],
+				'g-2' => [
+					'id' => 'g-2',
+					'type' => 'class',
+					'label' => 'Second',
+					'variants' => [ $variant_2 ],
+				],
+			],
+		];
+
+		$result = Template_Library_Global_Classes_Element_Transformer::flatten_elements_classes( $elements, $global_classes );
+
+		$classes = $result[0]['settings']['classes']['value'];
+		$this->assertCount( 1, $classes );
+		$this->assertNotContains( 'g-1', $classes );
+		$this->assertNotContains( 'g-2', $classes );
+
+		$local_id = $classes[0];
+		$this->assertStringStartsWith( 'e-', $local_id );
+
+		$local_style = $result[0]['styles'][ $local_id ];
+		$this->assertSame( 'local', $local_style['label'] );
+		$this->assertCount( 2, $local_style['variants'] );
+		$this->assertSame( $variant_1, $local_style['variants'][0] );
+		$this->assertSame( $variant_2, $local_style['variants'][1] );
+	}
+
+	public function test_flatten_does_not_duplicate_local_class_id_in_classes_value() {
+		$elements = [
+			[
+				'id' => 'abc12345',
+				'elType' => 'widget',
+				'settings' => [
+					'classes' => [
+						'value' => [ 'g-1', 'g-2', 'e-some-other' ],
+					],
+				],
+				'styles' => [
+					'e-some-other' => [
+						'id' => 'e-some-other',
+						'label' => 'custom',
+						'type' => 'class',
+						'variants' => [],
+					],
+				],
+				'elements' => [],
+			],
+		];
+
+		$global_classes = [
+			'items' => [
+				'g-1' => [
+					'id' => 'g-1',
+					'type' => 'class',
+					'label' => 'A',
+					'variants' => [ [ 'meta' => [ 'breakpoint' => 'desktop', 'state' => null ], 'props' => [] ] ],
+				],
+				'g-2' => [
+					'id' => 'g-2',
+					'type' => 'class',
+					'label' => 'B',
+					'variants' => [ [ 'meta' => [ 'breakpoint' => 'mobile', 'state' => null ], 'props' => [] ] ],
+				],
+			],
+		];
+
+		$result = Template_Library_Global_Classes_Element_Transformer::flatten_elements_classes( $elements, $global_classes );
+
+		$classes = $result[0]['settings']['classes']['value'];
+		$local_class_ids = array_filter( $classes, fn( $id ) => $id !== 'e-some-other' );
+		$this->assertCount( 1, $local_class_ids, 'Only one local class ID should be added for all flattened globals' );
+
+		$styles = $result[0]['styles'];
+		$local_styles = array_filter( $styles, fn( $s ) => 'local' === ( $s['label'] ?? '' ) );
+		$this->assertCount( 1, $local_styles, 'Only one local style entry should exist' );
+	}
 }

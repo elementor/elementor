@@ -77,6 +77,9 @@ class Template_Library_Global_Classes_Element_Transformer {
 		$updated_values = [];
 		$element_styles = $element_data['styles'] ?? [];
 
+		$local_style_id = self::find_existing_local_style_id( $element_styles );
+		$local_style_used = false;
+
 		foreach ( $class_values as $class_id ) {
 			if ( ! is_string( $class_id ) || '' === $class_id ) {
 				continue;
@@ -95,16 +98,39 @@ class Template_Library_Global_Classes_Element_Transformer {
 			}
 
 			$global_class = $items[ $class_id ];
-			$local_id = self::create_local_class_id( $element_data );
-			$element_styles[ $local_id ] = self::build_local_class_style( $local_id, $global_class );
-			$updated_values[] = $local_id;
+			$incoming_variants = $global_class['variants'] ?? [];
+
+			if ( null === $local_style_id ) {
+				$local_style_id = self::create_local_class_id( $element_data );
+				$element_styles[ $local_style_id ] = self::build_local_class_style( $local_style_id, [] );
+			}
+
+			$element_styles[ $local_style_id ]['variants'] = array_merge(
+				$element_styles[ $local_style_id ]['variants'],
+				$incoming_variants
+			);
+
+			if ( ! $local_style_used ) {
+				$updated_values[] = $local_style_id;
+				$local_style_used = true;
+			}
 		}
 
 		return [ $updated_values, $element_styles ];
 	}
 
+	private static function find_existing_local_style_id( array $element_styles ): ?string {
+		foreach ( $element_styles as $style_id => $style ) {
+			if ( isset( $style['label'] ) && Template_Library_Import_Export_Utils::LOCAL_CLASS_LABEL === $style['label'] ) {
+				return $style_id;
+			}
+		}
+
+		return null;
+	}
+
 	private static function is_global_class_id( string $class_id ): bool {
-		return str_starts_with( $class_id, 'g-' );
+		return str_starts_with( $class_id, Template_Library_Import_Export_Utils::GLOBAL_CLASS_ID_PREFIX );
 	}
 
 	private static function should_flatten_class_id( string $class_id, array $items, ?array $ids_to_flatten ): bool {
@@ -120,15 +146,18 @@ class Template_Library_Global_Classes_Element_Transformer {
 	}
 
 	private static function create_local_class_id( array $element_data ): string {
-		return 'e-' . substr( $element_data['id'] ?? '', 0, 8 ) . '-' . Template_Library_Import_Export_Utils::generate_random_string( 7 );
+		return Template_Library_Import_Export_Utils::LOCAL_CLASS_ID_PREFIX
+			. substr( $element_data['id'] ?? '', 0, 8 )
+			. '-'
+			. Template_Library_Import_Export_Utils::generate_random_string();
 	}
 
-	private static function build_local_class_style( string $local_id, array $global_class ): array {
+	private static function build_local_class_style( string $local_id, array $variants ): array {
 		return [
 			'id' => $local_id,
-			'label' => 'local',
+			'label' => Template_Library_Import_Export_Utils::LOCAL_CLASS_LABEL,
 			'type' => 'class',
-			'variants' => $global_class['variants'] ?? [],
+			'variants' => $variants,
 		];
 	}
 }

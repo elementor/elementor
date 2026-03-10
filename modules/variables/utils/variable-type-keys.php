@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Variables\Utils;
 
+use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
@@ -51,5 +52,27 @@ class Variable_Type_Keys {
 
 	public static function get_resolved_type( string $variable_type ): ?string {
 		return self::get_type_mappings()[ $variable_type ] ?? null;
+	}
+
+	public static function convert_value_for_resolved_type( string $resolved_type, $value ) {
+		if ( 'size' !== $resolved_type || ! is_string( $value ) ) {
+			return $value;
+		}
+
+		return self::parse_size_string( $value );
+	}
+
+	private static function parse_size_string( string $value ): array {
+		$value = trim( strtolower( $value ) );
+
+		if ( 'auto' === $value ) {
+			return [ 'size' => '', 'unit' => 'auto' ];
+		}
+
+		if ( preg_match( '/^(-?\d*\.?\d+)([a-z%]+)$/i', $value, $matches ) ) {
+			return [ 'size' => $matches[1] + 0, 'unit' => strtolower( $matches[2] ) ];
+		}
+
+		return [ 'size' => $value, 'unit' => Size_Constants::DEFAULT_UNIT ];
 	}
 }

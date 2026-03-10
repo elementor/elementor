@@ -239,48 +239,9 @@ export default class Component extends ComponentModalBase {
 
 				if ( this.manager.hasGlobalStyles( data ) ) {
 					try {
-						const { mode } = await showGlobalStylesDialog();
-						withPageSettings = 'match_site' === mode;
-
-						this.manager.layout.showLoadingView();
-
-						try {
-							const result = await new Promise( ( resolve, reject ) => {
-								elementorCommon.ajax.addRequest( 'process_global_styles', {
-									data: {
-										content: JSON.stringify( data.content ),
-										import_mode: mode,
-										global_classes: data.global_classes ? JSON.stringify( data.global_classes ) : null,
-										global_variables: data.global_variables ? JSON.stringify( data.global_variables ) : null,
-									},
-									success: resolve,
-									error: reject,
-								} );
-							} );
-
-							processedData = {
-								...data,
-								content: result.content,
-							};
-
-							if ( result.updated_global_classes || result.updated_global_variables ) {
-								window.dispatchEvent( new CustomEvent( 'elementor/global-styles/imported', {
-									detail: {
-										global_classes: result.updated_global_classes,
-										global_variables: result.updated_global_variables,
-									},
-								} ) );
-							}
-
-							processedData.flattened_classes_count = result.flattened_classes_count || 0;
-							processedData.flattened_variables_count = result.flattened_variables_count || 0;
-						} catch ( ajaxError ) {
-							this.manager.showErrorDialog( ajaxError );
-							this.manager.layout.hideLoadingView();
-							return;
-						}
-
-						this.manager.layout.hideLoadingView();
+						const globalStylesResult = await this.processGlobalStylesImport( data );
+						processedData = globalStylesResult.data;
+						withPageSettings = globalStylesResult.withPageSettings;
 					} catch ( e ) {
 						return;
 					}
@@ -313,6 +274,53 @@ export default class Component extends ComponentModalBase {
 				this.manager.layout.hideLoadingView();
 			},
 		} );
+	}
+
+	async processGlobalStylesImport( data ) {
+		const { mode } = await showGlobalStylesDialog();
+
+		this.manager.layout.showLoadingView();
+
+		try {
+			const result = await new Promise( ( resolve, reject ) => {
+				elementorCommon.ajax.addRequest( 'process_global_styles', {
+					data: {
+						content: JSON.stringify( data.content ),
+						import_mode: mode,
+						global_classes: data.global_classes ? JSON.stringify( data.global_classes ) : null,
+						global_variables: data.global_variables ? JSON.stringify( data.global_variables ) : null,
+					},
+					success: resolve,
+					error: reject,
+				} );
+			} );
+
+			const processedData = {
+				...data,
+				content: result.content,
+				flattened_classes_count: result.flattened_classes_count || 0,
+				flattened_variables_count: result.flattened_variables_count || 0,
+			};
+
+			if ( result.updated_global_classes || result.updated_global_variables ) {
+				window.dispatchEvent( new CustomEvent( 'elementor/global-styles/imported', {
+					detail: {
+						global_classes: result.updated_global_classes,
+						global_variables: result.updated_global_variables,
+					},
+				} ) );
+			}
+
+			return {
+				data: processedData,
+				withPageSettings: 'match_site' === mode,
+			};
+		} catch ( ajaxError ) {
+			this.manager.showErrorDialog( ajaxError );
+			throw ajaxError;
+		} finally {
+			this.manager.layout.hideLoadingView();
+		}
 	}
 
 	getImportSettingsDialog() {

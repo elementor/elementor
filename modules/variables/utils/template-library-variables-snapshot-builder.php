@@ -112,7 +112,7 @@ class Template_Library_Variables_Snapshot_Builder extends Template_Library_Snaps
 	}
 
 	protected function get_item_prefix(): string {
-		return 'e-gv-';
+		return Template_Library_Import_Export_Utils::VARIABLE_ID_PREFIX;
 	}
 
 	protected function get_max_items(): int {

@@ -13,6 +13,10 @@ class Template_Library_Import_Export_Utils {
 	const IMPORT_MODE_MATCH_SITE = 'match_site';
 	const IMPORT_MODE_KEEP_CREATE = 'keep_create';
 	const IMPORT_MODE_KEEP_FLATTEN = 'keep_flatten';
+	const LOCAL_CLASS_LABEL = 'local';
+	const GLOBAL_CLASS_ID_PREFIX = 'g-';
+	const VARIABLE_ID_PREFIX = 'e-gv-';
+	const LOCAL_CLASS_ID_PREFIX = 'e-';
 
 	public static function items_equal( array $a, array $b ): bool {
 		$a = self::recursive_ksort( $a );
@@ -97,7 +101,7 @@ class Template_Library_Import_Export_Utils {
 		return $item;
 	}
 
-	public static function generate_unique_id( array $existing_ids, string $prefix = 'g-' ): string {
+	public static function generate_unique_id( array $existing_ids, string $prefix = self::GLOBAL_CLASS_ID_PREFIX ): string {
 		$existing = array_fill_keys( $existing_ids, true );
 		$max_attempts = 1000;
 		$attempts = 0;
