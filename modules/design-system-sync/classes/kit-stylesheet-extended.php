@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\DesignSystemSync\Classes;
 
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Plugin;
@@ -20,24 +21,34 @@ class Kit_Stylesheet_Extended {
 			return;
 		}
 
-		$css_entries = [];
+		$kit_selector = '.elementor-kit-' . $post_css->get_post_id();
+
+		$grouped_entries = [];
 
 		$synced_variables = Variables_Provider::get_synced_color_variables();
 
 		if ( ! empty( $synced_variables ) ) {
-			$css_entries = array_merge( $css_entries, $this->get_variables_css_entries( $synced_variables ) );
+			$grouped_entries[ Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP ] = $this->get_variables_css_entries( $synced_variables );
 		}
 
-		$synced_classes = Classes_Provider::get_synced_classes();
+		$classes_css_entries = $this->get_classes_css_entries( Classes_Provider::get_synced_classes() );
 
-		if ( ! empty( $synced_classes ) ) {
-			$css_entries = array_merge( $css_entries, $this->get_classes_css_entries( $synced_classes ) );
+		foreach ( $classes_css_entries as $device => $entries ) {
+			$grouped_entries[ $device ] = array_merge( $grouped_entries[ $device ] ?? [], $entries );
 		}
 
-		if ( ! empty( $css_entries ) ) {
-			$post_css->get_stylesheet()->add_raw_css(
-				':root { ' . implode( ' ', $css_entries ) . ' }'
-			);
+		foreach ( $grouped_entries as $device => $entries ) {
+			if ( empty( $entries ) ) {
+				continue;
+			}
+
+			$css = $kit_selector . ' { ' . implode( ' ', $entries ) . ' }';
+
+			if ( Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP === $device ) {
+				$post_css->get_stylesheet()->add_raw_css( $css );
+			} else {
+				$post_css->get_stylesheet()->add_raw_css( $css, $device );
+			}
 		}
 	}
 
@@ -71,7 +82,7 @@ class Kit_Stylesheet_Extended {
 	}
 
 	private function get_classes_css_entries( array $synced_classes ): array {
-		$css_entries = [];
+		$grouped_entries = [];
 
 		$schema = Style_Schema::get();
 		$props_resolver = Render_Props_Resolver::for_styles();
@@ -84,27 +95,38 @@ class Kit_Stylesheet_Extended {
 			}
 
 			$variants = $class['variants'] ?? [];
+			$all_variant_props = Classes_Provider::get_all_normal_state_variant_props( $variants );
 
-			$props = Classes_Provider::get_default_breakpoint_props( $variants );
-
-			if ( empty( $props ) ) {
+			if ( empty( $all_variant_props ) ) {
 				continue;
 			}
 
-			if ( ! Classes_Provider::has_typography_props( $props ) ) {
+			$desktop_props = $all_variant_props[ Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP ] ?? [];
+
+			if ( ! Classes_Provider::has_typography_props( $desktop_props ) ) {
 				continue;
 			}
 
-			$resolved_props = $props_resolver->resolve( $schema, $props );
+			foreach ( $all_variant_props as $device => $props ) {
+				if ( empty( $props ) ) {
+					continue;
+				}
 
-			$this->add_typography_css_entries( $label, $resolved_props, $css_entries );
+				$resolved_props = $props_resolver->resolve( $schema, $props );
+
+				if ( ! isset( $grouped_entries[ $device ] ) ) {
+					$grouped_entries[ $device ] = [];
+				}
+
+				$this->add_typography_css_entries( $label, $resolved_props, $grouped_entries[ $device ] );
+			}
 		}
 
-		return $css_entries;
+		return $grouped_entries;
 	}
 
 	private function add_typography_css_entries( string $label, array $resolved_props, array &$css_entries ): void {
-		foreach ( Classes_Provider::TYPOGRAPHY_PROPS as $prop_name ) {
+		foreach ( Sync_Typography_Props::get_css_props() as $prop_name ) {
 			if ( ! isset( $resolved_props[ $prop_name ] ) || empty( $resolved_props[ $prop_name ] ) ) {
 				continue;
 			}
