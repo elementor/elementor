@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Button, Link, Paper, styled, useTheme } from '@elementor/ui';
+import { Box, Button, Link, Paper, styled } from '@elementor/ui';
 
 import { getOnboardingAssetUrl } from '../steps/step-visuals';
 
