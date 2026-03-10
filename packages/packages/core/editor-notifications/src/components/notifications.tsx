@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { forwardRef } from 'react';
-import { SnackbarProvider } from 'notistack';
+import { closeSnackbar, type CustomContentProps, SnackbarProvider } from 'notistack';
+import { CrownFilledIcon } from '@elementor/icons';
 import { __getStore as getStore, __useDispatch as useDispatch, __useSelector as useSelector } from '@elementor/store';
-import { SnackbarContent, type SnackbarProps, ThemeProvider } from '@elementor/ui';
+import { Alert, SnackbarContent, type SnackbarProps, ThemeProvider } from '@elementor/ui';
 
 import { useEnqueueNotification } from '../hooks/use-enqueue-notifications';
 import { notifyAction } from '../slice';
@@ -30,8 +31,34 @@ const DefaultCustomSnackbar = forwardRef( ( props: SnackbarProps, ref ) => {
 	);
 } );
 
+const PromotionSnackbar = forwardRef< HTMLDivElement, CustomContentProps >( ( props, ref ) => {
+	const panelWidth = getEditingPanelWidth();
+
+	return (
+		<ThemeProvider colorScheme="light" palette="unstable">
+			<Alert
+				ref={ ref }
+				variant="standard"
+				color="promotion"
+				icon={ <CrownFilledIcon /> }
+				role="alert"
+				action={ props.action }
+				onClose={ () => closeSnackbar( props.id ) }
+				sx={ {
+					ml: panelWidth + 'px',
+					'& .MuiAlert-message': { display: 'flex', flexWrap: 'nowrap', alignItems: 'center' },
+					'& .MuiAlert-content': { whiteSpace: 'nowrap' },
+				} }
+			>
+				{ props.message }
+			</Alert>
+		</ThemeProvider>
+	);
+} );
+
 const muiToEuiMapper = {
 	default: DefaultCustomSnackbar,
+	promotion: PromotionSnackbar,
 };
 
 const Handler = () => {

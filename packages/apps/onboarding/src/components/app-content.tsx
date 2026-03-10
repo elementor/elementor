@@ -1,11 +1,15 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { getMixpanel } from '@elementor/events';
 import { Box } from '@elementor/ui';
 
+import type { ConnectSuccessData } from '../analytics';
+import { canSendEvents, initializeAndEnableTracking, setCanSendEvents, updateLibraryConnectConfig } from '../analytics';
 import { useCheckProInstallScreen } from '../hooks/use-check-pro-install-screen';
 import { useElementorConnect } from '../hooks/use-elementor-connect';
 import { useInstallTheme } from '../hooks/use-install-theme';
 import { useOnboarding } from '../hooks/use-onboarding';
+import { useOnboardingEvent } from '../hooks/use-onboarding-event';
 import { useUpdateChoices } from '../hooks/use-update-choices';
 import { useUpdateProgress } from '../hooks/use-update-progress';
 import { useVideoPreload } from '../hooks/use-video-preload';
@@ -43,7 +47,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 		isFirst,
 		isLast,
 		totalSteps,
-		hadUnexpectedExit,
+		resumeStepIdForTracking,
 		isLoading,
 		isConnected,
 		hasPassedLogin,
@@ -52,9 +56,11 @@ export function AppContent( { onClose }: AppContentProps ) {
 		completedSteps,
 		urls,
 		actions,
+		isGuest,
 	} = useOnboarding();
 
 	const [ isCompleting, setIsCompleting ] = useState( false );
+	const isCompletingRef = useRef( false );
 	const { showToast } = useToast();
 
 	useVideoPreload();
@@ -63,34 +69,101 @@ export function AppContent( { onClose }: AppContentProps ) {
 	const updateChoices = useUpdateChoices();
 	const installTheme = useInstallTheme();
 
+	const {
+		trackOnboardingInitialized,
+		trackLoginType,
+		trackConnect,
+		trackStepViewed,
+		trackProFeaturesSelected,
+		trackBackClicked,
+		trackSkipClicked,
+		trackUpgradeClicked,
+		trackResumeOnboarding,
+		trackSummary,
+		trackErrorReported,
+		activateTracking,
+		flushQueue,
+	} = useOnboardingEvent();
+
+	const hasTrackedInit = useRef( false );
+
 	useEffect( () => {
-		if ( hadUnexpectedExit ) {
-			actions.clearUnexpectedExit();
+		if ( ! hasTrackedInit.current ) {
+			hasTrackedInit.current = true;
+			trackOnboardingInitialized();
+
+			if ( resumeStepIdForTracking ) {
+				trackResumeOnboarding( resumeStepIdForTracking );
+				actions.clearResumeStepIdForTracking();
+			} else {
+				trackStepViewed( 'login' );
+			}
+			return;
 		}
-	}, [ hadUnexpectedExit, actions ] );
+
+		if ( hasPassedLogin && stepId && ! isCompletingRef.current ) {
+			trackStepViewed( stepId );
+		}
+	}, [
+		stepId,
+		resumeStepIdForTracking,
+		hasPassedLogin,
+		actions,
+		trackOnboardingInitialized,
+		trackResumeOnboarding,
+		trackStepViewed,
+	] );
 
 	const checkProInstallScreen = useCheckProInstallScreen();
 
-	const handleConnectSuccess = useCallback( async () => {
-		const result = await checkProInstallScreen();
-		actions.setShouldShowProInstallScreen( result.shouldShowProInstallScreen );
-		actions.setConnected( true );
-	}, [ actions, checkProInstallScreen ] );
+	const handleConnectSuccess = useCallback(
+		async ( data: ConnectSuccessData ) => {
+			trackConnect( true );
+			trackLoginType( 'elementor_login' );
+
+			const shouldEnableTracking = data.tracking_opted_in || canSendEvents();
+
+			if ( data.tracking_opted_in ) {
+				setCanSendEvents( true );
+			}
+
+			if ( shouldEnableTracking ) {
+				initializeAndEnableTracking( ( mp ) => {
+					( mp as { set_config?: ( c: object ) => void } )?.set_config?.( {
+						api_transport: 'sendbeacon',
+					} );
+					activateTracking();
+					flushQueue();
+				} );
+			}
+
+			updateLibraryConnectConfig( data );
+
+			const result = await checkProInstallScreen();
+			actions.setShouldShowProInstallScreen( result.shouldShowProInstallScreen );
+			actions.setConnected( true );
+		},
+		[ actions, checkProInstallScreen, trackConnect, trackLoginType, activateTracking, flushQueue ]
+	);
 
 	const handleConnect = useElementorConnect( {
 		connectUrl: urls.connect,
 		onSuccess: handleConnectSuccess,
 	} );
 
-	const handleContinueAsGuest = useCallback(
-		( event: React.SyntheticEvent ) => {
-			event.preventDefault();
-			actions.setGuest( true );
-		},
-		[ actions ]
-	);
+	function handleContinueAsGuest( event: React.SyntheticEvent ) {
+		event.preventDefault();
+		trackLoginType( 'guest' );
+		actions.setGuest( true );
+	}
 
 	const handleClose = useCallback( () => {
+		trackSummary( {
+			choices,
+			completedSteps: [ ...completedSteps ],
+			isConnected,
+			isGuest,
+		} );
 		window.dispatchEvent( new CustomEvent( 'e-onboarding-user-exit' ) );
 
 		updateProgress.mutate(
@@ -100,29 +173,61 @@ export function AppContent( { onClose }: AppContentProps ) {
 					actions.setExitType( 'user_exit' );
 					onClose?.();
 				},
-				onError: () => {
+				onError: ( error ) => {
+					trackErrorReported( {
+						targetType: 'request',
+						targetName: 'user_exit',
+						stepId,
+						errorBody: error instanceof Error ? error.message : 'Failed to update progress',
+					} );
 					actions.setExitType( 'user_exit' );
 					onClose?.();
 				},
 			}
 		);
-	}, [ actions, onClose, updateProgress ] );
+	}, [
+		actions,
+		choices,
+		completedSteps,
+		isConnected,
+		isGuest,
+		onClose,
+		stepId,
+		trackErrorReported,
+		trackSummary,
+		updateProgress,
+	] );
 
-	const handleBack = useCallback( () => {
+	function handleBack() {
+		trackBackClicked( stepId );
+
 		if ( isFirst ) {
 			actions.setGuest( false );
 		} else {
 			actions.prevStep();
 		}
-	}, [ actions, isFirst ] );
+	}
 
 	const redirectToNewPage = useCallback( () => {
 		const redirectUrl = urls.createNewPage || urls.editor || urls.dashboard;
+		const mp = getMixpanel().getMixpanelInstance?.() as
+			| { request_batchers?: { events?: { flush: () => void } } }
+			| undefined;
+		mp?.request_batchers?.events?.flush?.();
 		window.location.href = redirectUrl;
 	}, [ urls ] );
 
 	const handleSkip = useCallback( () => {
+		trackSkipClicked( stepId );
+
 		if ( isLast ) {
+			trackSummary( {
+				choices,
+				completedSteps: [ ...completedSteps, stepId ],
+				isConnected,
+				isGuest,
+			} );
+			isCompletingRef.current = true;
 			setIsCompleting( true );
 			updateProgress.mutate(
 				{
@@ -133,7 +238,15 @@ export function AppContent( { onClose }: AppContentProps ) {
 				},
 				{
 					onSuccess: redirectToNewPage,
-					onError: redirectToNewPage,
+					onError: ( error ) => {
+						trackErrorReported( {
+							targetType: 'request',
+							targetName: 'skip_and_complete',
+							stepId,
+							errorBody: error instanceof Error ? error.message : 'Failed to update progress',
+						} );
+						redirectToNewPage();
+					},
 				}
 			);
 			return;
@@ -149,22 +262,59 @@ export function AppContent( { onClose }: AppContentProps ) {
 				onSuccess: () => {
 					actions.nextStep();
 				},
-				onError: () => {
+				onError: ( error ) => {
+					trackErrorReported( {
+						targetType: 'request',
+						targetName: 'skip_step',
+						stepId,
+						errorBody: error instanceof Error ? error.message : 'Failed to update progress',
+					} );
 					actions.nextStep();
 				},
 			}
 		);
-	}, [ actions, isLast, stepIndex, totalSteps, updateProgress, redirectToNewPage ] );
+	}, [
+		actions,
+		choices,
+		completedSteps,
+		isConnected,
+		isGuest,
+		isLast,
+		stepId,
+		stepIndex,
+		totalSteps,
+		trackErrorReported,
+		trackSkipClicked,
+		trackSummary,
+		updateProgress,
+		redirectToNewPage,
+	] );
 
 	const saveChoicesFireAndForget = useCallback(
 		( choiceData: Record< string, unknown > ) => {
-			updateChoices.mutate( choiceData );
+			updateChoices.mutate( choiceData, {
+				onError: ( error ) => {
+					trackErrorReported( {
+						targetType: 'save',
+						targetName: Object.keys( choiceData )[ 0 ] ?? stepId,
+						stepId,
+						errorBody: error instanceof Error ? error.message : 'Failed to save choices',
+					} );
+				},
+			} );
 		},
-		[ updateChoices ]
+		[ updateChoices, trackErrorReported, stepId ]
 	);
 
 	const handleContinue = useCallback(
 		( directChoice?: Record< string, unknown > ) => {
+			if ( stepId === StepId.SITE_FEATURES ) {
+				trackProFeaturesSelected( {
+					targetName: 'continue_with_free',
+					features: ( choices.site_features as string[] ) || [],
+				} );
+			}
+
 			const storedChoice = choices[ stepId as keyof typeof choices ];
 			const choiceData = directChoice ?? ( isChoiceEmpty( storedChoice ) ? null : { [ stepId ]: storedChoice } );
 
@@ -176,6 +326,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 				const themeSlug = ( choiceData?.theme_selection ?? choices.theme_selection ) as string;
 
 				if ( themeSlug && isLast ) {
+					isCompletingRef.current = true;
 					setIsCompleting( true );
 					installTheme.mutate( themeSlug, {
 						onSuccess: () => {
@@ -188,11 +339,26 @@ export function AppContent( { onClose }: AppContentProps ) {
 								},
 								{
 									onSuccess: redirectToNewPage,
-									onError: redirectToNewPage,
+									onError: ( error ) => {
+										trackErrorReported( {
+											targetType: 'request',
+											targetName: 'complete_step',
+											stepId,
+											errorBody:
+												error instanceof Error ? error.message : 'Failed to update progress',
+										} );
+										redirectToNewPage();
+									},
 								}
 							);
 						},
-						onError: () => {
+						onError: ( error ) => {
+							trackErrorReported( {
+								targetType: 'install',
+								targetName: 'continue_with_this_theme',
+								stepId: 'theme_selection',
+								errorBody: error instanceof Error ? error.message : 'Failed to install theme',
+							} );
 							showToast( t( 'error.theme_install_failed' ) );
 							updateProgress.mutate(
 								{
@@ -203,7 +369,18 @@ export function AppContent( { onClose }: AppContentProps ) {
 								},
 								{
 									onSuccess: redirectToNewPage,
-									onError: redirectToNewPage,
+									onError: ( progressError ) => {
+										trackErrorReported( {
+											targetType: 'request',
+											targetName: 'complete_step',
+											stepId,
+											errorBody:
+												progressError instanceof Error
+													? progressError.message
+													: 'Failed to update progress',
+										} );
+										redirectToNewPage();
+									},
 								}
 							);
 						},
@@ -213,7 +390,13 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 				if ( themeSlug ) {
 					installTheme.mutate( themeSlug, {
-						onError: () => {
+						onError: ( error ) => {
+							trackErrorReported( {
+								targetType: 'install',
+								targetName: 'continue_with_this_theme',
+								stepId: 'theme_selection',
+								errorBody: error instanceof Error ? error.message : 'Failed to install theme',
+							} );
 							showToast( t( 'error.theme_install_failed' ) );
 						},
 					} );
@@ -221,6 +404,13 @@ export function AppContent( { onClose }: AppContentProps ) {
 			}
 
 			if ( isLast ) {
+				trackSummary( {
+					choices,
+					completedSteps: [ ...completedSteps, stepId ],
+					isConnected,
+					isGuest,
+				} );
+				isCompletingRef.current = true;
 				setIsCompleting( true );
 				updateProgress.mutate(
 					{
@@ -231,7 +421,15 @@ export function AppContent( { onClose }: AppContentProps ) {
 					},
 					{
 						onSuccess: redirectToNewPage,
-						onError: redirectToNewPage,
+						onError: ( error ) => {
+							trackErrorReported( {
+								targetType: 'request',
+								targetName: 'complete_step',
+								stepId,
+								errorBody: error instanceof Error ? error.message : 'Failed to update progress',
+							} );
+							redirectToNewPage();
+						},
 					}
 				);
 				return;
@@ -248,7 +446,13 @@ export function AppContent( { onClose }: AppContentProps ) {
 						actions.completeStep( stepId );
 						actions.nextStep();
 					},
-					onError: () => {
+					onError: ( error ) => {
+						trackErrorReported( {
+							targetType: 'request',
+							targetName: 'complete_step',
+							stepId,
+							errorBody: error instanceof Error ? error.message : 'Failed to update progress',
+						} );
 						actions.completeStep( stepId );
 						actions.nextStep();
 					},
@@ -256,17 +460,23 @@ export function AppContent( { onClose }: AppContentProps ) {
 			);
 		},
 		[
+			actions,
+			choices,
+			completedSteps,
+			isConnected,
+			isGuest,
+			isLast,
 			stepId,
 			stepIndex,
 			totalSteps,
-			choices,
-			actions,
-			isLast,
 			updateProgress,
 			saveChoicesFireAndForget,
 			installTheme,
 			showToast,
 			redirectToNewPage,
+			trackErrorReported,
+			trackProFeaturesSelected,
+			trackSummary,
 		]
 	);
 
@@ -350,7 +560,10 @@ export function AppContent( { onClose }: AppContentProps ) {
 					<TopBarContent
 						showClose={ false }
 						onClose={ handleClose }
-						onUpgrade={ () => window.open( urls.upgradeUrl, '_blank' ) }
+						onUpgrade={ () => {
+							trackUpgradeClicked( stepId );
+							window.open( urls.upgradeUrl, '_blank' );
+						} }
 					/>
 				</TopBar>
 			}

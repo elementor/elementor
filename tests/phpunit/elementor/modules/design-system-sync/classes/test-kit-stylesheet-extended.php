@@ -126,7 +126,7 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 		$stylesheet = $this->createMock( \Elementor\Stylesheet::class );
 		$stylesheet->expects( $this->once() )
 			->method( 'add_raw_css' )
-			->with( ':root { --e-global-color-v4-primary:var(--Primary); }' );
+			->with( '.elementor-kit-' . $kit_id . ' { --e-global-color-v4-primary:var(--Primary); }' );
 
 		$post_css = $this->createMock( \Elementor\Core\Files\CSS\Post::class );
 		$post_css->method( 'get_post_id' )->willReturn( $kit_id );
@@ -171,7 +171,7 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 		$stylesheet = $this->createMock( \Elementor\Stylesheet::class );
 		$stylesheet->expects( $this->once() )
 			->method( 'add_raw_css' )
-			->with( ':root { --e-global-color-v4-primary:var(--Primary); --e-global-color-v4-secondary:var(--Secondary); }' );
+			->with( '.elementor-kit-' . $kit_id . ' { --e-global-color-v4-primary:var(--Primary); --e-global-color-v4-secondary:var(--Secondary); }' );
 
 		$post_css = $this->createMock( \Elementor\Core\Files\CSS\Post::class );
 		$post_css->method( 'get_post_id' )->willReturn( $kit_id );
@@ -216,7 +216,7 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 		$stylesheet = $this->createMock( \Elementor\Stylesheet::class );
 		$stylesheet->expects( $this->once() )
 			->method( 'add_raw_css' )
-			->with( ':root { --e-global-color-v4-valid:var(--Valid); }' );
+			->with( '.elementor-kit-' . $kit_id . ' { --e-global-color-v4-valid:var(--Valid); }' );
 
 		$post_css = $this->createMock( \Elementor\Core\Files\CSS\Post::class );
 		$post_css->method( 'get_post_id' )->willReturn( $kit_id );
@@ -425,7 +425,7 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 		// Assert - expectations verified by mock
 	}
 
-	public function test_add_v3_mapping_css__only_processes_desktop_normal_variant() {
+	public function test_add_v3_mapping_css__excludes_hover_state_variants() {
 		// Arrange
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 		$kit_id = $kit->get_main_id();
@@ -448,21 +448,6 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 									'$$type' => 'size',
 									'value' => [
 										'size' => 24,
-										'unit' => 'px',
-									],
-								],
-							],
-						],
-						[
-							'meta' => [
-								'breakpoint' => 'mobile',
-								'state' => null,
-							],
-							'props' => [
-								'font-size' => [
-									'$$type' => 'size',
-									'value' => [
-										'size' => 16,
 										'unit' => 'px',
 									],
 								],
@@ -505,6 +490,102 @@ class Test_Kit_Stylesheet_Extended extends Elementor_Test_Base {
 		$this->handler->add_v3_mapping_css( $post_css );
 
 		// Assert - expectations verified by mock
+	}
+
+	public function test_add_v3_mapping_css__generates_responsive_css_for_tablet_mobile_variants() {
+		// Arrange
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$kit_id = $kit->get_main_id();
+
+		$classes_data = [
+			'items' => [
+				'g-1' => [
+					'id' => 'g-1',
+					'type' => 'class',
+					'label' => 'Heading',
+					'sync_to_v3' => true,
+					'variants' => [
+						[
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+							'props' => [
+								'font-size' => [
+									'$$type' => 'size',
+									'value' => [
+										'size' => 24,
+										'unit' => 'px',
+									],
+								],
+							],
+						],
+						[
+							'meta' => [
+								'breakpoint' => 'tablet',
+								'state' => null,
+							],
+							'props' => [
+								'font-size' => [
+									'$$type' => 'size',
+									'value' => [
+										'size' => 20,
+										'unit' => 'px',
+									],
+								],
+							],
+						],
+						[
+							'meta' => [
+								'breakpoint' => 'mobile',
+								'state' => null,
+							],
+							'props' => [
+								'font-size' => [
+									'$$type' => 'size',
+									'value' => [
+										'size' => 16,
+										'unit' => 'px',
+									],
+								],
+							],
+						],
+					],
+				],
+		],
+		'order' => [ 'g-1' ],
+	];
+
+	$kit->update_json_meta( '_elementor_global_classes', $classes_data );
+	Classes_Provider::clear_cache();
+
+	$captured_calls = [];
+
+	$stylesheet = $this->createMock( \Elementor\Stylesheet::class );
+	$stylesheet->expects( $this->exactly( 3 ) )
+		->method( 'add_raw_css' )
+		->willReturnCallback( function ( $css, $device = '' ) use ( &$captured_calls ) {
+			$captured_calls[] = [ 'css' => $css, 'device' => $device ];
+		} );
+
+		$post_css = $this->createMock( \Elementor\Core\Files\CSS\Post::class );
+		$post_css->method( 'get_post_id' )->willReturn( $kit_id );
+		$post_css->method( 'get_stylesheet' )->willReturn( $stylesheet );
+
+		// Act
+		$this->handler->add_v3_mapping_css( $post_css );
+
+		// Assert
+		$this->assertCount( 3, $captured_calls );
+
+		$this->assertStringContainsString( '--e-global-typography-v4-Heading-font-size:', $captured_calls[0]['css'] );
+		$this->assertSame( '', $captured_calls[0]['device'] );
+
+		$this->assertStringContainsString( '--e-global-typography-v4-Heading-font-size:', $captured_calls[1]['css'] );
+		$this->assertSame( 'tablet', $captured_calls[1]['device'] );
+
+		$this->assertStringContainsString( '--e-global-typography-v4-Heading-font-size:', $captured_calls[2]['css'] );
+		$this->assertSame( 'mobile', $captured_calls[2]['device'] );
 	}
 
 	public function test_add_v3_mapping_css__handles_all_typography_properties() {

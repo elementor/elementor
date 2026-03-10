@@ -38,6 +38,8 @@ const bind = 'text';
 const otherBind = 'other';
 const arrBind = 'arr';
 const objBind = 'obj';
+const boolBind = 'bool';
+const boolBindWithDefaultTrue = 'boolWithDefaultTrue';
 
 const dependencyTestCases: {
 	desc: string;
@@ -45,6 +47,30 @@ const dependencyTestCases: {
 	values: Record< string, PropValue >;
 	enabled: boolean;
 }[] = [
+	{
+		desc: 'should detect default value and disable if dependency is not met (boolean -> false)',
+		dependencies: {
+			relation: 'or',
+			terms: [ { path: [ boolBindWithDefaultTrue ], operator: 'eq', value: false } ],
+		},
+		values: {
+			[ bind ]: { $$type: 'string', value: 'foo' },
+			[ boolBindWithDefaultTrue ]: null,
+		},
+		enabled: false,
+	},
+	{
+		desc: 'should detect default value and enable if dependency is met (boolean -> true)',
+		dependencies: {
+			relation: 'or',
+			terms: [ { path: [ boolBindWithDefaultTrue ], operator: 'eq', value: true } ],
+		},
+		values: {
+			[ bind ]: { $$type: 'string', value: 'foo' },
+			[ boolBindWithDefaultTrue ]: null,
+		},
+		enabled: true,
+	},
 	{
 		desc: 'should disable if ne dependency is met (string)',
 		dependencies: {
@@ -1270,6 +1296,24 @@ function setup( {
 				},
 			},
 			...schemaOverrides[ objBind ],
+		},
+		[ boolBind ]: {
+			kind: 'boolean',
+			key: boolBind,
+			settings: {},
+			meta: {},
+			...schemaOverrides[ boolBind ],
+		},
+		[ boolBindWithDefaultTrue ]: {
+			kind: 'boolean',
+			key: boolBindWithDefaultTrue,
+			default: {
+				$$type: 'boolean',
+				value: true,
+			},
+			settings: {},
+			meta: {},
+			...schemaOverrides[ boolBindWithDefaultTrue ],
 		},
 	} as PropsSchema;
 

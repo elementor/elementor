@@ -20,10 +20,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
-	const VERSION = '1.0.0';
+	const VERSION = '2.0.0';
 	const EXPERIMENT_NAME = 'e_onboarding';
 	const ASSETS_BASE_URL = 'https://assets.elementor.com/onboarding/v1/strings/';
-	const VIDEOS_BASE_URL = 'https://assets.elementor.com/onboarding/v1/videos/';
 
 	const SUPPORTED_LOCALES = [
 		'de_DE',
@@ -70,6 +69,7 @@ class Module extends BaseModule {
 			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_starter_settings' ] );
 			add_filter( 'elementor/editor/v2/packages', [ $this, 'add_starter_packages' ] );
 			add_action( 'elementor/editor/v2/styles/enqueue', [ $this, 'enqueue_fonts' ] );
+			add_action( 'elementor/preview/enqueue_styles', [ $this, 'enqueue_starter_preview_css' ] );
 		}
 	}
 
@@ -89,6 +89,17 @@ class Module extends BaseModule {
 			[],
 			ELEMENTOR_VERSION
 		);
+	}
+
+	public function enqueue_starter_preview_css(): void {
+		$css = '
+			#site-header,
+			.page-header { display: var(--e-starter-header-display, none); }
+		';
+
+		wp_register_style( 'elementor-starter-preview', false );
+		wp_enqueue_style( 'elementor-starter-preview' );
+		wp_add_inline_style( 'elementor-starter-preview', $css );
 	}
 
 	public function progress_manager(): Onboarding_Progress_Manager {
@@ -127,10 +138,9 @@ class Module extends BaseModule {
 				'dashboard' => admin_url(),
 				'editor' => admin_url( 'edit.php?post_type=elementor_library' ),
 				'connect' => $this->get_connect_url(),
-				'comparePlans' => 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash',
+				'comparePlans' => 'https://go.elementor.com/go-pro-onboarding-editor-features-step-upgrade/',
 				'createNewPage' => Plugin::$instance->documents->get_create_new_post_url(),
-				'upgradeUrl' => 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar&utm_term=2.0.0',
-				'videosBaseUrl' => self::VIDEOS_BASE_URL,
+				'upgradeUrl' => 'https://go.elementor.com/go-pro-onboarding-editor-header-upgrade/',
 			],
 		] );
 	}
@@ -167,7 +177,13 @@ class Module extends BaseModule {
 			return '';
 		}
 
-		return $library->get_admin_url( 'authorize' ) ?? '';
+		return $library->get_admin_url( 'authorize', [
+			'utm_source' => 'onboarding-wizard',
+			'utm_campaign' => 'connect-account',
+			'utm_medium' => 'wp-dash',
+			'utm_term' => self::VERSION,
+			'source' => 'generic',
+		] ) ?? '';
 	}
 
 	private function get_library_app() {
