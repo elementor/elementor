@@ -41,7 +41,6 @@ interface EOnboardingConfig {
 		connect: string;
 		comparePlans?: string;
 		upgradeUrl: string;
-		videosBaseUrl: string;
 	};
 }
 

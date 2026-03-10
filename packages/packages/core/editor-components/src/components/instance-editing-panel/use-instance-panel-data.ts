@@ -13,7 +13,7 @@ type InstancePanelData = {
 	overridableProps: NonNullable< ReturnType< typeof useSanitizeOverridableProps > >;
 	groups: OverridablePropsGroup[];
 	isEmpty: boolean;
-	componentInstanceId: string | undefined;
+	componentInstanceId: string;
 };
 
 export function useInstancePanelData(): InstancePanelData | null {
@@ -29,7 +29,7 @@ export function useInstancePanelData(): InstancePanelData | null {
 
 	const overridableProps = useSanitizeOverridableProps( componentId ?? null, componentInstanceId );
 
-	if ( ! componentId || ! overridableProps || ! component ) {
+	if ( ! componentId || ! overridableProps || ! component || ! componentInstanceId ) {
 		return null;
 	}
 
