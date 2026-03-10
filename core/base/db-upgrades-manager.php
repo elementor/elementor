@@ -149,7 +149,10 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 	protected function start_run() {
 		$updater = $this->get_task_runner();
 
-		if ( $updater->is_running() ) {
+		// Skip if process is actively running (has lock) or queue already has items.
+		// Stuck queues (items exist but no lock) are handled by the shutdown fallback
+		// registered in the constructor, so we don't need to re-push callbacks here.
+		if ( $updater->is_process_locked() || $updater->is_running() ) {
 			return;
 		}
 
@@ -225,6 +228,15 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 			add_action( 'admin_notices', [ $this, 'admin_notice_upgrade_is_completed' ] );
 		}
 
+		// Don't run upgrade logic during background process AJAX requests.
+		// The AJAX handler (maybe_handle) will process the queue.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$ajax_action = isset( $_REQUEST['action'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['action'] ) ) : '';
+
+		if ( wp_doing_ajax() && $ajax_action && false !== strpos( $ajax_action, 'updater' ) ) {
+			return;
+		}
+
 		if ( ! $this->should_upgrade() ) {
 			return;
 		}
@@ -232,6 +244,13 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 		$updater = $this->get_task_runner();
 
 		$this->start_run();
+
+		// If queue has items but process is not locked, it's stuck - try to process on shutdown.
+		if ( $updater->is_running() && ! $updater->is_process_locked() ) {
+			if ( is_admin() && ! wp_doing_ajax() && ! wp_doing_cron() ) {
+				add_action( 'shutdown', [ $updater, 'maybe_handle_on_shutdown' ], 0 );
+			}
+		}
 
 		if ( $updater->is_running() && current_user_can( 'update_plugins' ) ) {
 			add_action( 'admin_notices', [ $this, 'admin_notice_upgrade_is_running' ] );

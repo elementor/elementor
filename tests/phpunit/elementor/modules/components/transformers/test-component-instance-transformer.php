@@ -9,6 +9,8 @@ use Elementor\Modules\Components\Transformers\Component_Instance_Transformer;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use PHPUnit\Framework\MockObject\MockObject;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Render_Context;
+use Elementor\Modules\Components\Widgets\Component_Instance;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -17,8 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Component_Instance_Transformer extends Elementor_Test_Base {
 	const COMPONENT_ID_A = 123;
 	const COMPONENT_ID_B = 456;
-	const MOCK_CONTENT_A = '<div class="component-a">Component A Content</div>';
-	const MOCK_CONTENT_B = '<div class="component-b">Component B Content</div>';
+	const MOCK_CONTENT_A = 'Component A Content';
+	const MOCK_CONTENT_B = 'Component B Content';
 
 	private Documents_Manager $original_documents_manager;
 	private MockObject $documents_manager_mock;
@@ -28,6 +30,7 @@ class Test_Component_Instance_Transformer extends Elementor_Test_Base {
 
 		Component_Instance_Transformer::reset_rendering_stack();
 		$this->mock_documents_manager();
+		Render_Context::push( Component_Instance::class, [ 'instance_id' => 'mock-instance-id' ] );
 	}
 
 	public function tearDown(): void {
@@ -35,6 +38,7 @@ class Test_Component_Instance_Transformer extends Elementor_Test_Base {
 
 		Component_Instance_Transformer::reset_rendering_stack();
 		$this->restore_documents_manager();
+		Render_Context::pop( Component_Instance::class );
 	}
 
 	public function test_transform__returns_content_for_valid_component() {
@@ -49,7 +53,7 @@ class Test_Component_Instance_Transformer extends Elementor_Test_Base {
 		);
 
 		// Assert
-		$this->assertStringContainsString( 'component-a', $result );
+		$this->assertStringContainsString( 'Component A Content', $result );
 	}
 
 	public function test_transform__returns_empty_string_for_direct_circular_reference() {
@@ -112,14 +116,15 @@ class Test_Component_Instance_Transformer extends Elementor_Test_Base {
 
 		$this->documents_manager_mock
 			->method( 'get' )
-			->with( $component_id )
-			->willReturn( $component );
+			->willReturnCallback( function( $id ) use ( $component, $component_id ) {
+				return $id === $component_id ? $component : null;
+			} );
 	}
 }
 
-class Mock_Simple_Component extends Component {
-	private int $id;
-	private string $content;
+abstract class Base_Mock_Component extends Component {
+	protected int $id;
+	protected string $content = '';
 
 	public function __construct( int $id, string $content ) {
 		$this->id = $id;
@@ -135,34 +140,43 @@ class Mock_Simple_Component extends Component {
 	}
 
 	public function get_elements_data( $status = self::STATUS_PUBLISH ): array {
-		return [ 'mock' => 'data' ];
+		return [
+			[
+				'id' => 'flexbox-id',
+				'elType' => 'e-flexbox',
+				'elements' => [
+					[
+						'id' => 'heading-id',
+						'elType' => 'widget',
+						'widgetType' => 'e-heading',
+						'settings' => [
+							'title' => [
+								'$$type' => 'html-v3',
+								'value' => [
+									'content' => ['$$type' => 'string', 'value' => $this->content],
+									'children' => [],
+								],
+							],
+						],
+						'elements' => [],
+					],
+				],
+			],
+		];
 	}
-
-	public function print_elements( $data ): void {
-		echo $this->content;
+}
+class Mock_Simple_Component extends Base_Mock_Component {
+	public function do_print_elements( $data ): void {
+		echo '<div>' . $this->content . '</div>';
 	}
 }
 
-class Mock_Self_Nesting_Component extends Component {
-	private int $id;
-
+class Mock_Self_Nesting_Component extends Base_Mock_Component {
 	public function __construct( int $id ) {
 		$this->id = $id;
 	}
 
-	public function get_post(): object {
-		return (object) [ 'ID' => $this->id ];
-	}
-
-	public function is_built_with_elementor(): bool {
-		return true;
-	}
-
-	public function get_elements_data( $status = self::STATUS_PUBLISH ): array {
-		return [ 'mock' => 'data' ];
-	}
-
-	public function print_elements( $data ): void {
+	public function do_print_elements( $data ): void {
 		$transformer = new Component_Instance_Transformer();
 		$result = $transformer->transform(
 			[ 'component_id' => $this->id ],
@@ -172,8 +186,7 @@ class Mock_Self_Nesting_Component extends Component {
 	}
 }
 
-class Mock_Nesting_Component extends Component {
-	private int $id;
+class Mock_Nesting_Component extends Base_Mock_Component {
 	private int $nested_id;
 
 	public function __construct( int $id, int $nested_id ) {
@@ -185,15 +198,7 @@ class Mock_Nesting_Component extends Component {
 		return (object) [ 'ID' => $this->id ];
 	}
 
-	public function is_built_with_elementor(): bool {
-		return true;
-	}
-
-	public function get_elements_data( $status = self::STATUS_PUBLISH ): array {
-		return [ 'mock' => 'data' ];
-	}
-
-	public function print_elements( $data ): void {
+	public function do_print_elements( $data ): void {
 		$transformer = new Component_Instance_Transformer();
 		$result = $transformer->transform(
 			[ 'component_id' => $this->nested_id ],

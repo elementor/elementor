@@ -16,7 +16,7 @@ const popoverData = {
 	image_alt: __( 'Atomic Elements', 'elementor' ),
 	title: __( 'Atomic Elements', 'elementor' ),
 	description: [
-		__( 'The new Atomic Elements are part of version 4, which is now in beta and ready for you to use in production.', 'elementor' ),
+		__( 'The new generation of high-performance, flexible building blocks designed for precise styling and a unified experience.', 'elementor' ),
 	],
 	upgrade_text: __( 'Learn more', 'elementor' ),
 	upgrade_url: 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/',
@@ -62,9 +62,9 @@ const PopoverCard = ( { doClose } ) => {
 					<Button
 						variant="contained"
 						size="small"
-						color="accent"
+						color="inherit"
 						onClick={ redirectHandler }
-						sx={ { ml: 'auto' } }
+						sx={ { ml: 'auto', bgcolor: 'text.primary', color: 'background.paper', '&:hover': { bgcolor: 'text.secondary', color: 'background.paper' } } }
 					>{ ctaText }</Button>
 				</Stack>
 			</Box>

@@ -144,4 +144,8 @@ class Component extends Document {
 
 		return $success;
 	}
+
+	public function print_elements_without_cache( array $elements_data ) {
+		$this->do_print_elements( $elements_data );
+	}
 }

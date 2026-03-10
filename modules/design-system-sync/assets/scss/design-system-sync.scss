@@ -1,0 +1,108 @@
+/* Shared row and title styles for V4 list controls */
+.e-v4-color-variable-list__row,
+.e-v4-typography-list__row {
+	display: flex;
+	align-items: center;
+	min-height: 40px;
+}
+
+.e-v4-color-variable-list__title,
+.e-v4-typography-list__title {
+	flex: 1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* V4 Color Variable List */
+.e-v4-color-variable-list__color-value {
+	font-size: 10px;
+	padding: 0 5px;
+	margin-inline-end: 5px;
+}
+
+.e-v4-color-variable-list__color-swatch {
+	display: inline-block;
+	width: 27px;
+	height: 27px;
+	flex-shrink: 0;
+	margin-inline-end: 5px;
+}
+
+/* Shared edit button styles for V4 list controls */
+.e-v4-color-variable-list__edit-btn,
+.e-v4-typography-list__edit-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	background: var(--e-a-bg-active);
+	border: none;
+	border-radius: 50%;
+	flex-shrink: 0;
+	cursor: pointer;
+	opacity: 0.7;
+	transition: opacity 0.2s;
+
+	&:hover {
+		opacity: 1;
+	}
+}
+
+.e-v4-color-variable-list__edit-btn {
+	background: transparent;
+	opacity: 0;
+	transition: opacity 0.2s;
+
+	&:hover {
+		opacity: 1;
+	}
+}
+
+.e-v4-typography-list__edit-btn {
+	opacity: 0.5;
+	cursor: default;
+
+	&:hover {
+		opacity: 0.5;
+	}
+}
+
+/* V4 Color Variable List - Tooltip */
+.e-v4-color-variable-list__edit-btn-wrapper {
+	position: relative;
+	display: inline-flex;
+	margin-inline-end: 2px;
+}
+
+.e-v4-color-variable-list__tooltip {
+	position: absolute;
+	bottom: calc(100% + 8px);
+	left: 50%;
+	transform: translateX(-50%);
+	background: var(--e-a-color-txt);
+	color: var(--e-a-bg-default);
+	font-size: 12px;
+	line-height: 1.4;
+	padding: 6px 10px;
+	border-radius: var(--e-a-border-radius);
+	white-space: nowrap;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 0.2s;
+
+	&::after {
+		content: "";
+		position: absolute;
+		top: 100%;
+		left: 50%;
+		transform: translateX(-50%);
+		border: 5px solid transparent;
+		border-top-color: var(--e-a-color-txt);
+	}
+}
+
+.e-v4-color-variable-list__edit-btn-wrapper:hover .e-v4-color-variable-list__tooltip {
+	opacity: 1;
+}

@@ -1,11 +1,27 @@
 'use strict';
 
-export const config = window.ElementorInteractionsConfig?.constants || {
-	defaultDuration: 600,
-	defaultDelay: 0,
-	slideDistance: 100,
-	scaleStart: 0,
-	defaultEasing: 'easeIn',
+import {
+	config as getConfig,
+	skipInteraction,
+	extractInteractionId,
+	getAnimateFunction,
+	getInViewFunction,
+	waitForAnimateFunction,
+	parseInteractionsData,
+	unwrapInteractionValue,
+	timingValueToMs,
+} from './interactions-shared-utils.js';
+
+export {
+	getConfig as config,
+	skipInteraction,
+	extractInteractionId,
+	getAnimateFunction,
+	getInViewFunction,
+	waitForAnimateFunction,
+	parseInteractionsData,
+	unwrapInteractionValue,
+	timingValueToMs,
 };
 
 export function getKeyframes( effect, type, direction ) {
@@ -15,6 +31,8 @@ export function getKeyframes( effect, type, direction ) {
 	if ( 'fade' === effect ) {
 		keyframes.opacity = isIn ? [ 0, 1 ] : [ 1, 0 ];
 	}
+
+	const config = getConfig();
 
 	if ( 'scale' === effect ) {
 		keyframes.scale = isIn ? [ config.scaleStart, 1 ] : [ 1, config.scaleStart ];
@@ -47,6 +65,8 @@ export function parseAnimationName( name ) {
 		,
 	] = name.split( '-' );
 
+	const config = getConfig();
+
 	return {
 		trigger,
 		effect,
@@ -57,76 +77,6 @@ export function parseAnimationName( name ) {
 		replay: false,
 		easing: config.defaultEasing,
 	};
-}
-
-export function extractInteractionId( interaction ) {
-	if ( 'interaction-item' === interaction?.$$type && interaction?.value ) {
-		return interaction.value.interaction_id?.value || null;
-	}
-	return null;
-}
-
-export function getAnimateFunction() {
-	return 'undefined' !== typeof animate ? animate : window.Motion?.animate;
-}
-
-export function getInViewFunction() {
-	return 'undefined' !== typeof inView ? inView : window.Motion?.inView;
-}
-
-export function waitForAnimateFunction( callback, maxAttempts = 10 ) {
-	if ( getAnimateFunction() ) {
-		callback();
-		return;
-	}
-
-	if ( maxAttempts > 0 ) {
-		setTimeout( () => waitForAnimateFunction( callback, maxAttempts - 1 ), 100 );
-	}
-}
-
-export function parseInteractionsData( data ) {
-	if ( 'string' === typeof data ) {
-		try {
-			return JSON.parse( data );
-		} catch {
-			return null;
-		}
-	}
-	return data;
-}
-
-function unwrapInteractionValue( interaction ) {
-	// Supports Elementor's typed wrapper shape: { $$type: '...', value: ... }.
-	return ( interaction && 'object' === typeof interaction && '$$type' in interaction )
-		? interaction.value
-		: interaction;
-}
-
-function timingValueToMs( timingValue, fallbackMs ) {
-	if ( null === timingValue || undefined === timingValue ) {
-		return fallbackMs;
-	}
-
-	const unwrapped = unwrapInteractionValue( timingValue );
-
-	if ( 'number' === typeof unwrapped ) {
-		return unwrapped;
-	}
-
-	const sizeObj = unwrapInteractionValue( unwrapped );
-	const size = sizeObj?.size;
-	const unit = sizeObj?.unit || 'ms';
-
-	if ( 'number' !== typeof size ) {
-		return fallbackMs;
-	}
-
-	if ( 's' === unit ) {
-		return size * 1000;
-	}
-
-	return size;
 }
 
 /**
@@ -148,6 +98,22 @@ export function getInteractionsData() {
 
 export function findElementByDataId( dataId ) {
 	return document.querySelector( `[data-interaction-id="${ dataId }"]` );
+}
+
+function unwrapInteractionBreakpoints( propValue ) {
+	const breakpointsConfig = unwrapInteractionValue( propValue, {} );
+
+	const excluded = unwrapInteractionValue( breakpointsConfig?.excluded, [] );
+
+	if ( 1 > excluded.length ) {
+		return {};
+	}
+
+	const breakpoints = {
+		excluded: excluded.map( ( breakpoint ) => unwrapInteractionValue( breakpoint, '' ) ),
+	};
+
+	return breakpoints;
 }
 
 export function extractAnimationConfig( interaction ) {
@@ -173,6 +139,10 @@ export function extractAnimationConfig( interaction ) {
 		return null;
 	}
 
+	const breakpoints = unwrapInteractionBreakpoints( payload.breakpoints );
+
+	const config = getConfig();
+
 	const effect = unwrapInteractionValue( animation.effect ) || animation.effect || 'fade';
 	const type = unwrapInteractionValue( animation.type ) || animation.type || 'in';
 	const direction = unwrapInteractionValue( animation.direction ) || animation.direction || '';
@@ -185,6 +155,7 @@ export function extractAnimationConfig( interaction ) {
 
 	return {
 		trigger,
+		breakpoints,
 		effect,
 		type,
 		direction,

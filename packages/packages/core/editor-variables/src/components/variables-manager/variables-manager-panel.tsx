@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
+import { useSuppressedMessage } from '@elementor/editor-current-user';
 import {
 	__createPanel as createPanel,
 	Panel,
@@ -8,7 +9,7 @@ import {
 	PanelHeader,
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
-import { SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
+import { ConfirmationDialog, SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { AlertTriangleFilledIcon, ColorFilterIcon, TrashIcon } from '@elementor/icons';
 import {
@@ -30,7 +31,6 @@ import { getMenuActionsForVariable, getVariableType } from '../../variables-regi
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
 import { EmptyState } from '../ui/empty-state';
 import { NoSearchResults } from '../ui/no-search-results';
-import { StopSyncConfirmationDialog } from '../ui/stop-sync-confirmation-dialog';
 import { useAutoEdit } from './hooks/use-auto-edit';
 import { useErrorNavigation } from './hooks/use-error-navigation';
 import { useVariablesManagerState } from './hooks/use-variables-manager-state';
@@ -38,6 +38,13 @@ import { SIZE, VariableManagerCreateMenu } from './variables-manager-create-menu
 import { VariablesManagerTable } from './variables-manager-table';
 
 const id = 'variables-manager';
+const STOP_SYNC_MESSAGE_KEY = 'stop-sync-variable';
+
+type StopSyncConfirmationDialogProps = {
+	open: boolean;
+	onClose: () => void;
+	onConfirm: () => void;
+};
 
 export const { panel, usePanelActions } = createPanel( {
 	id,
@@ -55,6 +62,7 @@ export const { panel, usePanelActions } = createPanel( {
 export function VariablesManagerPanel() {
 	const { close: closePanel } = usePanelActions();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
+	const [ isStopSyncSuppressed ] = useSuppressedMessage( STOP_SYNC_MESSAGE_KEY );
 
 	const createMenuState = usePopupState( {
 		variant: 'popover',
@@ -151,6 +159,17 @@ export function VariablesManagerPanel() {
 		[ handleStopSync ]
 	);
 
+	const handleShowStopSyncDialog = useCallback(
+		( itemId: string ) => {
+			if ( ! isStopSyncSuppressed ) {
+				setStopSyncConfirmation( itemId );
+			} else {
+				handleStopSync( itemId );
+			}
+		},
+		[ isStopSyncSuppressed, handleStopSync ]
+	);
+
 	const buildMenuActions = useCallback(
 		( variableId: string ) => {
 			const variable = variables[ variableId ];
@@ -163,7 +182,7 @@ export function VariablesManagerPanel() {
 				variableId,
 				handlers: {
 					onStartSync: handleStartSync,
-					onStopSync: ( itemId: string ) => setStopSyncConfirmation( itemId ),
+					onStopSync: handleShowStopSyncDialog,
 				},
 			} );
 
@@ -184,7 +203,7 @@ export function VariablesManagerPanel() {
 
 			return [ ...typeActions, deleteAction ];
 		},
-		[ variables, handleStartSync ]
+		[ variables, handleStartSync, handleShowStopSyncDialog ]
 	);
 
 	const hasVariables = Object.keys( variables ).length > 0;
@@ -348,7 +367,7 @@ export function VariablesManagerPanel() {
 			{ stopSyncConfirmation && (
 				<StopSyncConfirmationDialog
 					open
-					closeDialog={ () => setStopSyncConfirmation( null ) }
+					onClose={ () => setStopSyncConfirmation( null ) }
 					onConfirm={ () => handleStopSyncWithConfirmation( stopSyncConfirmation ) }
 				/>
 			) }
@@ -404,4 +423,33 @@ const usePreventUnload = ( isDirty: boolean ) => {
 			window.removeEventListener( 'beforeunload', handleBeforeUnload );
 		};
 	}, [ isDirty ] );
+};
+
+const StopSyncConfirmationDialog = ( { open, onClose, onConfirm }: StopSyncConfirmationDialogProps ) => {
+	const [ , suppressStopSyncMessage ] = useSuppressedMessage( STOP_SYNC_MESSAGE_KEY );
+
+	return (
+		<ConfirmationDialog open={ open } onClose={ onClose }>
+			<ConfirmationDialog.Title icon={ ColorFilterIcon } iconColor="primary">
+				{ __( 'Stop syncing variable color', 'elementor' ) }
+			</ConfirmationDialog.Title>
+			<ConfirmationDialog.Content>
+				<ConfirmationDialog.ContentText>
+					{ __(
+						'This will disconnect the variable color from version 3. Existing uses on your site will automatically switch to a default color.',
+						'elementor'
+					) }
+				</ConfirmationDialog.ContentText>
+			</ConfirmationDialog.Content>
+			<ConfirmationDialog.Actions
+				onClose={ onClose }
+				onConfirm={ onConfirm }
+				cancelLabel={ __( 'Cancel', 'elementor' ) }
+				confirmLabel={ __( 'Got it', 'elementor' ) }
+				color="primary"
+				onSuppressMessage={ suppressStopSyncMessage }
+				suppressLabel={ __( "Don't show again", 'elementor' ) }
+			/>
+		</ConfirmationDialog>
+	);
 };

@@ -1,3 +1,4 @@
+import environment from 'elementor-common/utils/environment';
 import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 import AtomicElementEmptyView from './container/atomic-element-empty-view';
 
@@ -57,7 +58,29 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		className() {
-			return `${ BaseElementView.prototype.className.apply( this ) } e-con e-atomic-element ${ this.getClassString() }`;
+			const generatedClasses = this.getGeneratedClasses();
+			return `${ BaseElementView.prototype.className.apply( this ) } e-con e-atomic-element ${ this.getClassString() } ${ generatedClasses }`;
+		},
+
+		getGeneratedClasses() {
+			const propsSchema = this.model.config.atomic_props_schema || {};
+			const generatedClasses = [];
+
+			Object.keys( propsSchema ).forEach( ( key ) => {
+				const propMeta = propsSchema[ key ]?.meta;
+				if ( propMeta?.generates_class ) {
+					const classPattern = propMeta.generates_class;
+					const settingValue = this.model.getSetting( key );
+					const value = settingValue?.value ?? settingValue;
+
+					if ( value && 'string' === typeof value ) {
+						const className = classPattern.replace( '{value}', value );
+						generatedClasses.push( className );
+					}
+				}
+			} );
+
+			return generatedClasses.join( ' ' );
 		},
 
 		// TODO: Copied from `views/column.js`.
@@ -158,9 +181,13 @@ export default function createAtomicElementBaseView( type ) {
 				return;
 			}
 
-			if ( changed.classes ) {
-				// Preserve runtime state classes (e.g., e--selected) that are managed by Alpine
-				// and would be lost when replacing the class attribute.
+			// Check if classes changed OR if any setting with generates_class metadata changed
+			const propsSchema = this.model.config.atomic_props_schema || {};
+			const hasGeneratesClassChange = Object.keys( changed ).some( ( key ) => propsSchema[ key ]?.meta?.generates_class );
+
+			if ( changed.classes || hasGeneratesClassChange ) {
+			// Preserve runtime state classes (e.g., e--selected) that are managed by Alpine
+			// and would be lost when replacing the class attribute.
 				const preservedClasses = Array.from( this.$el[ 0 ].classList ).filter( ( cls ) => cls.startsWith( 'e--' ) );
 				this.$el.attr( 'class', this.className() );
 				preservedClasses.forEach( ( cls ) => this.$el[ 0 ].classList.add( cls ) );
@@ -418,12 +445,19 @@ export default function createAtomicElementBaseView( type ) {
 			const isExperimentalFeaturesEnabled = elementorCommon.config.experimentalFeatures?.e_components;
 
 			if ( isExperimentalFeaturesEnabled && isAdministrator ) {
+				const isProActive = window.elementorV2?.utils?.isProActive?.() ?? true;
+
+				const controlSign = environment.mac ? '&#8984;' : '^';
+				const shortcutLabel = controlSign + '+⇧+K';
+				const proBadge = `<a href="https://go.elementor.com/go-pro-components-create/" target="_blank" onclick="event.stopPropagation()" class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'PRO', 'elementor' ) }</a>`;
+
 				saveActions.unshift( {
 					name: 'save-component',
 					title: __( 'Create component', 'elementor' ),
-					shortcut: `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`,
+					shortcut: isProActive ? shortcutLabel : proBadge,
+					hasShortcutAction: ! isProActive,
 					callback: this.saveAsComponent.bind( this ),
-					isEnabled: () => ! this.getContainer().isLocked(),
+					isEnabled: () => isProActive && ! this.getContainer().isLocked(),
 				} );
 			}
 
@@ -452,6 +486,12 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		saveAsComponent( openContextMenuEvent, options ) {
+			const isProActive = window.elementorV2?.utils?.isProActive?.() ?? true;
+
+			if ( ! isProActive ) {
+				return;
+			}
+
 			// Calculate the absolute position where the context menu was opened.
 			const openMenuOriginalEvent = openContextMenuEvent.originalEvent;
 			const iframeRect = elementor.$preview[ 0 ].getBoundingClientRect();

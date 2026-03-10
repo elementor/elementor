@@ -17,6 +17,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  * working with the Interactions_Collector for data storage and Adapter for data transformation.
  */
 class Interactions_Frontend_Handler {
+	/**
+	 * @var callable|null
+	 */
+	private $config_provider;
+
+	public function __construct( $config_provider = null ) {
+		$this->config_provider = is_callable( $config_provider ) ? $config_provider : null;
+	}
 
 	/**
 	 * Collect interactions from document elements during frontend render.
@@ -147,11 +155,13 @@ class Interactions_Frontend_Handler {
 			return;
 		}
 
+		$this->enqueue_interactions_assets();
+
 		// Output as JSON script tag
 		$json_data = wp_json_encode( $elements_with_interactions, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON data is already encoded
-		echo '<script type="application/json" id="elementor-interactions-data">' . $json_data . '</script>';
+		echo '<script type="application/json" id="' . Module::SCRIPT_ID_INTERACTIONS_DATA . '">' . $json_data . '</script>';
 	}
 
 	/**
@@ -189,5 +199,18 @@ class Interactions_Frontend_Handler {
 		}
 
 		return [];
+	}
+
+	private function enqueue_interactions_assets() {
+		wp_enqueue_script( Module::HANDLE_MOTION_JS );
+		wp_enqueue_script( Module::HANDLE_FRONTEND );
+
+		$config = $this->config_provider ? call_user_func( $this->config_provider ) : [];
+
+		wp_localize_script(
+			Module::HANDLE_FRONTEND,
+			Module::JS_CONFIG_OBJECT,
+			$config
+		);
 	}
 }

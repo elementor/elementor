@@ -2,7 +2,7 @@ name: Playwright
 
 on:
   pull_request:
-    types: [labeled, synchronize, opened, reopened, ready_for_review]
+    types: [labeled, synchronize, opened, reopened]
     branches:
       - main
       - '[0-9].[0-9][0-9]'
@@ -15,6 +15,7 @@ on:
       - 'docs/**'
       - '.vscode/**'
       - '**/package.json'
+      - 'tests/phpunit/**'
   schedule:
     - cron: '30 08 * * 0,1,2,3,4,5'
   workflow_dispatch:
@@ -46,7 +47,7 @@ jobs:
   build-plugin:
     if: |
       contains(github.event.pull_request.labels.*.name, 'run-tests') ||
-      (!github.event.pull_request.draft && github.event_name == 'pull_request') ||
+      github.event_name == 'pull_request' ||
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch'
     name: Build plugin
@@ -59,7 +60,7 @@ jobs:
     if: |
       github.event.inputs.tag == '' &&
       (contains(github.event.pull_request.labels.*.name, 'run-tests') ||
-      (!github.event.pull_request.draft && github.event_name == 'pull_request') ||
+      github.event_name == 'pull_request' ||
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch')
     strategy:
@@ -68,7 +69,8 @@ jobs:
         shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
         shardTotal: [17]
         include:
-          - shardIndex: "elements-regression"
+          - shardIndex: "elements-regression-core"
+          - shardIndex: "elements-regression-atomic"
           - shardIndex: "plugin_tester_section"
           - shardIndex: "plugin_tester_container"
           - shardIndex: "import_export_customization"
@@ -90,7 +92,7 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: |
-          npm run prepare-environment:ci
+          npm run install:ci
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
@@ -124,7 +126,8 @@ jobs:
           npx playwright install chromium
       - name: Run Playwright tests
         if: ${{
-          matrix.shardIndex != 'elements-regression' &&
+          matrix.shardIndex != 'elements-regression-core' &&
+          matrix.shardIndex != 'elements-regression-atomic' &&
           matrix.shardIndex != 'plugin_tester_container' &&
           matrix.shardIndex != 'plugin_tester_section' &&
           matrix.shardIndex != 'import_export_customization'
@@ -140,9 +143,12 @@ jobs:
       - name: Run import export customization tests
         if: ${{ matrix.shardIndex == 'import_export_customization' }}
         run: npm run test:playwright -- --grep="@import_export_customization"
-      - name: Run element regression tests
-        if: ${{ matrix.shardIndex == 'elements-regression' }}
-        run: npm run test:playwright:elements-regression
+      - name: Run core element regression tests
+        if: ${{ matrix.shardIndex == 'elements-regression-core' }}
+        run: npm run test:playwright:elements-regression:core
+      - name: Run atomic element regression tests
+        if: ${{ matrix.shardIndex == 'elements-regression-atomic' }}
+        run: npm run test:playwright:elements-regression:atomic
       - uses: actions/upload-artifact@v4
         name: Upload Allure result
         if: always()
@@ -177,7 +183,7 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: |
-          npm run prepare-environment:ci
+          npm run install:ci
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:

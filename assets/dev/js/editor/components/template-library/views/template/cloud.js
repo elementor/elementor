@@ -22,6 +22,8 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 				'data-template_id': data.template_id,
 				'data-type': data.type,
 				'data-status': data.status,
+				tabindex: '0',
+				'aria-label': data.title || '',
 			};
 		}
 	},
@@ -29,12 +31,45 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 	ui() {
 		return _.extend( TemplateLibraryTemplateLocalView.prototype.ui.apply( this, arguments ), {
 			previewImg: '.elementor-template-library-template-thumbnail img',
+			insertButton: '.elementor-template-library-template-insert',
+		} );
+	},
+
+	events() {
+		return _.extend( TemplateLibraryTemplateLocalView.prototype.events.apply( this, arguments ), {
+			keydown: 'onGridCardKeyDown',
 		} );
 	},
 
 	modelEvents: _.extend( {}, TemplateLibraryTemplateLocalView.prototype.modelEvents, {
 		'change:preview_url': 'onPreviewUrlChange',
 	} ),
+
+	onGridCardKeyDown( event ) {
+		if ( 'grid' !== elementor.templates.getViewSelection() ) {
+			return;
+		}
+
+		// Only handle keydown events directly on the card element itself, not on children
+		if ( event.target !== this.el ) {
+			return;
+		}
+
+		if ( 'Enter' === event.key || ' ' === event.key ) {
+			event.preventDefault();
+
+			if ( 'FOLDER' === this.model.get( 'subType' ) ) {
+				$e.route( 'library/view-folder', {
+					model: this.model,
+					onAfter: () => {
+						elementor.templates.resetBulkActionBar();
+					},
+				} );
+			} else {
+				this.handleGridViewItemSingleClick();
+			}
+		}
+	},
 
 	onRender() {
 		const previewUrl = this.model.get( 'preview_url' );

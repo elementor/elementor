@@ -1,7 +1,7 @@
 import type { InteractionsConfig, DynamicTags, DynamicTagsManager, DynamicTag } from '@elementor/editor-editing-panel';
 import type { ControlItem, V1Element } from '@elementor/editor-elements';
 import type { PropsSchema } from '@elementor/editor-props';
-import type { SupportedFonts, EnqueueFont } from '@elementor/editor-v1-adapters';
+import type { EnqueueFont } from '@elementor/editor-v1-adapters';
 import type { V4PromotionData, V4PromotionKey } from '@elementor/editor-controls';
 
 interface EOnboardingConfig {
@@ -26,8 +26,10 @@ interface EOnboardingConfig {
 	};
 	hadUnexpectedExit: boolean;
 	isConnected: boolean;
+	shouldShowProInstallScreen?: boolean;
 	userName?: string;
 	uiTheme?: 'auto' | 'dark' | 'light';
+	translations?: Record< string, string >;
 	steps: Array<{
 		id: string;
 		label: string;
@@ -37,26 +39,57 @@ interface EOnboardingConfig {
 		dashboard: string;
 		editor: string;
 		connect: string;
+		comparePlans?: string;
+		upgradeUrl: string;
 	};
 }
 
 declare global {
 	interface Window {
 		elementorCommon?: {
-			eventsManager?: {
-				dispatchEvent?: (name: string, data: unknown) => void;
-				config?: {
-					locations?: Record<string, string>;
-					secondaryLocations?: Record<string, string>;
-					names?: Record<string, Record<string, string>>;
-					triggers?: Record<string, string>;
-					elements?: Record<string, string>;
-				};
+		eventsManager?: {
+			dispatchEvent?: (name: string, data: unknown, options?: Record<string, unknown>) => void;
+			canSendEvents?: () => boolean;
+			initializeMixpanel?: (onLoaded: ( mpInstance?: unknown ) => void) => void;
+			enableTracking?: () => void;
+			isMixpanelReady?: () => boolean;
+			trackingEnabled?: boolean;
+			getMixpanelInstance?: () => unknown;
+			config?: {
+				locations?: Record<string, string>;
+				secondaryLocations?: Record<string, string>;
+				names?: Record<string, Record<string, string>>;
+				triggers?: Record<string, string>;
+				elements?: Record<string, string>;
+				appTypes?: Record<string, string>;
+				targetTypes?: Record<string, string>;
+				interactionResults?: Record<string, string>;
+				targetNames?: Record<string, Record<string, string>>;
 			};
+		};
 			config?: {
 				experimentalFeatures?: Record< string, boolean >;
 				urls?: {
 					assets?: string;
+				};
+				editor_events?: {
+					can_send_events?: boolean;
+					token?: string;
+					subscription_id?: string | null;
+					site_url?: string;
+					wp_version?: string;
+					elementor_version?: string;
+					site_language?: string;
+					site_key?: string;
+					flags_enabled?: boolean;
+				};
+				library_connect?: {
+					is_connected?: boolean;
+					current_access_level?: number;
+					current_access_tier?: string;
+					plan_type?: string;
+					user_id?: string | null;
+					user_roles?: string[];
 				};
 			};
 		};
@@ -69,13 +102,20 @@ declare global {
 			config?: {
 				controls?: {
 					font?: {
-						options?: Record< string, SupportedFonts >;
+						groups?: Record< string, string >;
+						options?: Record< string, string >;
 					};
 				};
 				atomicDynamicTags?: {
 					tags: DynamicTags;
 					groups: Record< DynamicTag[ 'group' ], { title: string } >;
 				};
+				size_units?: {
+					length?: string[];
+					angle?: string[];
+					time?: string[];
+					extended_units?: string[];
+				}
 				v4Promotions?: Record< V4PromotionKey, V4PromotionData >;
 			};
 			dynamicTags?: DynamicTagsManager;
@@ -91,6 +131,21 @@ declare global {
 			getContainer?: ( id: string ) => V1Element;
 			helpers?: {
 				enqueueFont?: EnqueueFont;
+				hasPro?: () => boolean;
+			};
+			hooks?: {
+				addFilter: (
+					filterName: string,
+					callback: (
+						regionViews: Record< string, unknown >,
+						options: { notice: unknown, elements: unknown }
+					) => Record< string, unknown >
+				) => void;
+			};
+		};
+		Marionette?: {
+			CompositeView: {
+				extend: ( options: Record< string, unknown > ) => unknown;
 			};
 		};
 		elementorFrontend?: {
@@ -101,6 +156,7 @@ declare global {
 		elementorPro?: {
 			config?: {
 				version?: string;
+				isActive?: boolean;
 			};
 		};
 		elementorAppConfig?: {

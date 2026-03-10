@@ -5,7 +5,6 @@ import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../hooks/use-components';
 import { useComponentsPermissions } from '../../hooks/use-components-permissions';
-import { renameComponent } from '../../store/actions/rename-component';
 import { ComponentItem } from './components-item';
 import { LoadingComponents } from './loading-components';
 import { useSearch } from './search-provider';
@@ -25,30 +24,23 @@ export function ComponentsList() {
 	if ( isLoading ) {
 		return <LoadingComponents />;
 	}
-	const isEmpty = ! components || components.length === 0;
+
+	const isEmpty = ! components?.length;
+
 	if ( isEmpty ) {
-		if ( searchValue.length > 0 ) {
-			return <EmptySearchResult />;
-		}
-		return <EmptyState />;
+		return searchValue.length ? <EmptySearchResult /> : <EmptyState />;
 	}
 
 	return (
 		<List sx={ { display: 'flex', flexDirection: 'column', gap: 1, px: 2 } }>
 			{ components.map( ( component ) => (
-				<ComponentItem
-					key={ component.uid }
-					component={ component }
-					renameComponent={ ( newName ) => {
-						renameComponent( component.uid, newName );
-					} }
-				/>
+				<ComponentItem key={ component.uid } component={ component } />
 			) ) }
 		</List>
 	);
 }
 
-const EmptyState = () => {
+export const EmptyState = () => {
 	const { canCreate } = useComponentsPermissions();
 
 	return (
@@ -114,7 +106,7 @@ const EmptyState = () => {
 	);
 };
 
-const EmptySearchResult = () => {
+export const EmptySearchResult = () => {
 	const { searchValue, clearSearch } = useSearch();
 	return (
 		<Stack
@@ -171,7 +163,7 @@ const EmptySearchResult = () => {
 	);
 };
 
-const useFilteredComponents = () => {
+export const useFilteredComponents = () => {
 	const { components, isLoading } = useComponents();
 	const { searchValue } = useSearch();
 

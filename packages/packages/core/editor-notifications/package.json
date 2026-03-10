@@ -41,6 +41,7 @@
   },
   "dependencies": {
     "@elementor/editor": "4.0.0",
+    "@elementor/icons": "^1.68.0",
     "@elementor/store": "4.0.0",
     "@elementor/ui": "1.36.17",
     "notistack": "^3.0.2"

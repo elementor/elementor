@@ -1,5 +1,13 @@
 {
-  "widgetKeys": {},
+  "widgetKeys": {
+    "e-heading": [
+      { "from": "old-title", "to": "title" },
+      { "from": "old-tag", "to": "tag" }
+		],
+    "e-image": [
+      { "from": "old-image", "to": "image" }
+		]
+  },
   "propTypes": {
     "a-string-to-html": {
       "fromType": "a-string",
@@ -30,6 +38,11 @@
       "fromType": "old-string",
       "toType": "string",
       "path": "old-string-to-string.json"
+    },
+    "old-url-to-url": {
+      "fromType": "old-url",
+      "toType": "url",
+      "path": "old-url-to-url.json"
     }
   }
 }

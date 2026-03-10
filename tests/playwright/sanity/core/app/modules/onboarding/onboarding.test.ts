@@ -2,13 +2,14 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../../parallelTest';
 import WpAdminPage from '../../../../../pages/wp-admin-page';
 import EditorSelectors from '../../../../../selectors/editor-selectors';
+import { timeouts } from '../../../../../config/timeouts';
 
 const BUTTON_CLASSES = {
 	active: /e-onboarding__button-action/,
 	disabled: /e-onboarding__button--disabled/,
 };
 
-const POPUP_NAVIGATION_TIMEOUT = 3000;
+const GOOD_TO_GO_SCREEN_TITLE = /Welcome aboard! What's next\?|How would you like to create your website?|All set! Choose how to start/;
 
 test.describe( 'On boarding @onBoarding', async () => {
 	let originalActiveTheme: string;
@@ -45,14 +46,18 @@ test.describe( 'On boarding @onBoarding', async () => {
 	test( 'Onboarding Create Account Popup Open', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
 
-		const ctaButton = await page.waitForSelector( 'a.e-onboarding__button-action' );
+		const variantA = page.locator( 'a.e-onboarding__button-action' );
+		const variantB = page.getByRole( 'button', { name: 'Connect your account' } );
+		const ctaButton = variantA.or( variantB );
+		await ctaButton.waitFor( { timeout: timeouts.longAction } );
 
-		expect( await ctaButton.innerText() ).toBe( 'Start setup' );
+		const buttonText = ( await ctaButton.innerText() ).trim();
+		expect( [ 'Start setup', 'Connect your account' ] ).toContain( buttonText );
 
-		const popupPromise = page.waitForEvent( 'popup', { timeout: POPUP_NAVIGATION_TIMEOUT } ).catch( () => null );
-		const navigationPromise = page.waitForURL( /my\.elementor\.com/, { timeout: POPUP_NAVIGATION_TIMEOUT } ).then( () => true ).catch( () => false );
+		const popupPromise = page.waitForEvent( 'popup', { timeout: timeouts.action } ).catch( () => null );
+		const navigationPromise = page.waitForURL( /my\.elementor\.com|elementor-connect/, { timeout: timeouts.action } ).then( () => true ).catch( () => false );
 
-		await page.click( 'a.e-onboarding__button-action' );
+		await ctaButton.click();
 
 		const [ popup, navigated ] = await Promise.all( [ popupPromise, navigationPromise ] );
 		if ( popup ) {
@@ -61,9 +66,8 @@ test.describe( 'On boarding @onBoarding', async () => {
 			await popup.close();
 		}
 
-		// Some browsers may not support popups.
 		if ( navigated && ! popup ) {
-			expect( page.url() ).toContain( 'my.elementor.com/signup' );
+			expect( page.url() ).toMatch( /my\.elementor\.com|elementor-connect/ );
 		}
 
 		if ( ! navigated && ! popup ) {
@@ -76,9 +80,11 @@ test.describe( 'On boarding @onBoarding', async () => {
 	 */
 	test( 'Onboarding Skip to Hello Theme Page', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
-		await page.waitForLoadState( 'networkidle' );
 
-		const skipButton = await page.waitForSelector( 'text=Skip' );
+		const variantASkip = page.locator( 'text=Skip' );
+		const variantBSkip = page.getByRole( 'button', { name: 'Continue as a guest' } );
+		const skipButton = variantASkip.or( variantBSkip );
+		await skipButton.waitFor( { timeout: timeouts.longAction } );
 
 		await skipButton.click();
 
@@ -138,7 +144,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 		await expect( nextButton ).toHaveClass( BUTTON_CLASSES.disabled );
 		await skipButton.click();
 
-		await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Welcome aboard! What\'s next?' );
+		await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( GOOD_TO_GO_SCREEN_TITLE );
 	} );
 
 	/**
@@ -146,6 +152,14 @@ test.describe( 'On boarding @onBoarding', async () => {
 	 */
 	test( 'Onboarding Good to Go Page - Open Kit Library', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding/goodToGo' );
+
+		const isExperiment402B = await page.evaluate( () => {
+			return 'B' === localStorage.getItem( 'elementor_onboarding_experiment402_variant' );
+		} );
+
+		if ( isExperiment402B ) {
+			test.skip( true, 'Skipping Kit Library navigation test in Experiment 402 Variant B' );
+		}
 
 		const nextButton = page.locator( '.e-onboarding__cards-grid > a:nth-child(2)' );
 
@@ -240,7 +254,10 @@ test.describe( 'Onboarding @onBoarding', async () => {
 		await test.step( 'Check that step was changed to Good to Go', async () => {
 			expect( page.url() ).toContain( 'onboarding/goodToGo' );
 			await expect( page.locator( EditorSelectors.onboarding.progressBar.completedItem ) ).toContainText( 'Choose Features' );
-			await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Welcome aboard! What\'s next?' );
+
+			await expect(
+				page.locator( EditorSelectors.onboarding.screenTitle ),
+			).toHaveText( GOOD_TO_GO_SCREEN_TITLE );
 		} );
 	} );
 
@@ -255,7 +272,7 @@ test.describe( 'Onboarding @onBoarding', async () => {
 			await skipButton.click();
 			expect( page.url() ).toContain( 'onboarding/goodToGo' );
 			await expect( page.locator( EditorSelectors.onboarding.progressBar.skippedItem ) ).toContainText( 'Choose Features' );
-			await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Welcome aboard! What\'s next?' );
+			await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( GOOD_TO_GO_SCREEN_TITLE );
 		} );
 	} );
 } );

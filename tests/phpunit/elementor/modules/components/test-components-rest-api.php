@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once __DIR__ . '/mocks/component-mocks.php';
 require_once __DIR__ . '/mocks/component-overrides-mocks.php';
+require_once __DIR__ . '/mocks/mock-pro-license-api.php';
 
 class Test_Components_Rest_Api extends Elementor_Test_Base {
 
@@ -44,6 +45,8 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 			'public' => false,
 			'supports' => Component_Document::get_supported_features(),
 		] );
+
+		\Mock_Pro_License_API::set_license_state( true );
 	}
 
 	public function tearDown(): void {
@@ -704,9 +707,9 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'widgetType' => 'e-button',
 					'propKey' => 'text',
 					'originValue' => [
-						'$$type' => 'html-v2',
+						'$$type' => 'html-v3',
 						'value' => [
-							'content' => 'Component 2 Button',
+							'content' => ['$$type' => 'string', 'value' => 'Component 2 Button'],
 							'children' => [],
 						],
 					],
@@ -787,8 +790,8 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'prop-button-link', $decoded_props['props'] );
 		
 		// Verify the originValue structures are intact
-		$this->assertEquals( 'html-v2', $decoded_props['props']['prop-button-text']['originValue']['$$type'] );
-		$this->assertEquals( 'Component 2 Button', $decoded_props['props']['prop-button-text']['originValue']['value']['content'] );
+		$this->assertEquals( 'html-v3', $decoded_props['props']['prop-button-text']['originValue']['$$type'] );
+		$this->assertEquals( 'Component 2 Button', $decoded_props['props']['prop-button-text']['originValue']['value']['content']['value'] );
 		
 		$this->assertEquals( 'link', $decoded_props['props']['prop-button-link']['originValue']['$$type'] );
 		$this->assertEquals( '#inner-link', $decoded_props['props']['prop-button-link']['originValue']['value']['destination']['value'] );
@@ -809,9 +812,9 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'widgetType' => 'e-button',
 					'propKey' => 'text',
 					'originValue' => [
-						'$$type' => 'html-v2',
+						'$$type' => 'html-v3',
 						'value' => [
-							'content' => 'Test Button Text',
+							'content' => ['$$type' => 'string', 'value' => 'Test Button Text'],
 							'children' => [],
 						],
 					],
@@ -1760,9 +1763,9 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 						'widgetType' => 'e-button',
 						'settings' => [
 							'text' => [
-								'$$type' => 'html-v2',
+								'$$type' => 'html-v3',
 								'value' => [
-									'content' => 'Button Text',
+									'content' => ['$$type' => 'string', 'value' => 'Button Text'],
 									'children' => [],
 								],
 							],
@@ -2252,4 +2255,216 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$wpdb->update( $wpdb->posts, [ 'post_modified_gmt' => $past_time ], [ 'ID' => $main_doc_id ] );
 		clean_post_cache( $main_doc_id );
 	}
+
+	public function test_create_component__blocked_for_core_tier() {
+		// Arrange
+		$this->act_as_admin();
+		\Mock_Pro_License_API::set_license_state( false );
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'publish',
+			'items' => [
+				[
+					'uid' => '100',
+					'title' => 'Test Component',
+					'elements' => $this->mock_component_1_content,
+				],
+			],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 403, $response->get_status() );
+		$this->assertEquals( 'insufficient_permissions', $response->get_data()['code'] );
+		$this->assertEquals( 'create', $response->get_data()['data']['meta']['action'] );
+		$this->assertEquals( 'core', $response->get_data()['data']['meta']['tier'] );
+	}
+
+	public function test_create_validate__blocked_for_core_tier() {
+		// Arrange
+		$this->act_as_admin();
+		\Mock_Pro_License_API::set_license_state( false );
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/create-validate' );
+		$request->set_body_params( [
+			'items' => [
+				[
+					'uid' => 'test-uid',
+					'title' => 'Test Component',
+					'elements' => $this->mock_component_1_content,
+				],
+			],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 403, $response->get_status() );
+		$this->assertEquals( 'insufficient_permissions', $response->get_data()['code'] );
+		$this->assertEquals( 'create', $response->get_data()['data']['meta']['action'] );
+	}
+
+	public function test_update_statuses__blocked_for_core_tier() {
+		// Arrange
+		$component_id = $this->create_test_component( 'Draft Component', $this->mock_component_1_content, 'draft' );
+		\Mock_Pro_License_API::set_license_state( false );
+
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components/status' );
+		$request->set_param( 'ids', [ $component_id ] );
+		$request->set_param( 'status', 'publish' );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 403, $response->get_status() );
+		$this->assertEquals( 'insufficient_permissions', $response->get_data()['code'] );
+		$this->assertEquals( 'publish', $response->get_data()['data']['meta']['action'] );
+	}
+
+	public function test_update_statuses__allowed_for_expired_tier() {
+		// Arrange
+		$component_id = $this->create_test_component( 'Draft Component', $this->mock_component_1_content, 'draft' );
+		\Mock_Pro_License_API::set_license_state( false, true );
+
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components/status' );
+		$request->set_param( 'ids', [ $component_id ] );
+		$request->set_param( 'status', 'publish' );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( [ $component_id ], $response->get_data()['data']['success'] );
+	}
+
+	public function test_archive__blocked_for_core_tier() {
+		// Arrange
+		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
+		\Mock_Pro_License_API::set_license_state( false );
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/archive' );
+		$request->set_param( 'componentIds', [ $component_id ] );
+		$request->set_param( 'status', 'publish' );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 403, $response->get_status() );
+		$this->assertEquals( 'insufficient_permissions', $response->get_data()['code'] );
+		$this->assertEquals( 'delete', $response->get_data()['data']['meta']['action'] );
+	}
+
+	public function test_update_titles__blocked_for_core_tier() {
+		// Arrange
+		$component_id = $this->create_test_component( 'Original Title', $this->mock_component_1_content );
+		\Mock_Pro_License_API::set_license_state( false );
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/update-titles' );
+		$request->set_param( 'components', [
+			[ 'componentId' => $component_id, 'title' => 'New Title' ],
+		] );
+		$request->set_param( 'status', 'publish' );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 403, $response->get_status() );
+		$this->assertEquals( 'insufficient_permissions', $response->get_data()['code'] );
+		$this->assertEquals( 'rename', $response->get_data()['data']['meta']['action'] );
+	}
+
+	public function test_lock__blocked_for_core_tier() {
+		// Arrange
+		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
+		\Mock_Pro_License_API::set_license_state( false );
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/lock' );
+		$request->set_param( 'componentId', $component_id );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 403, $response->get_status() );
+		$this->assertEquals( 'insufficient_permissions', $response->get_data()['code'] );
+		$this->assertEquals( 'lock', $response->get_data()['data']['meta']['action'] );
+	}
+
+	public function test_unlock__blocked_for_core_tier() {
+		// Arrange
+		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
+		\Mock_Pro_License_API::set_license_state( false );
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/unlock' );
+		$request->set_param( 'componentId', $component_id );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 403, $response->get_status() );
+		$this->assertEquals( 'insufficient_permissions', $response->get_data()['code'] );
+		$this->assertEquals( 'unlock', $response->get_data()['data']['meta']['action'] );
+	}
+
+	public function test_lock_status__blocked_for_core_tier() {
+		// Arrange
+		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
+		\Mock_Pro_License_API::set_license_state( false );
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/lock-status' );
+		$request->set_param( 'componentId', (string) $component_id );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 403, $response->get_status() );
+		$this->assertEquals( 'insufficient_permissions', $response->get_data()['code'] );
+		$this->assertEquals( 'lock_status', $response->get_data()['data']['meta']['action'] );
+	}
+
+	public function test_get_components__allowed_for_core_tier() {
+		// Arrange
+		$this->create_test_component( 'Test Component', $this->mock_component_1_content );
+		\Mock_Pro_License_API::set_license_state( false );
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components' );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+	}
+
+	public function test_get_styles__allowed_for_core_tier() {
+		// Arrange
+		$this->create_test_component( 'Test Component', $this->mock_component_1_content );
+		\Mock_Pro_License_API::set_license_state( false );
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/styles' );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+	}
+
+	public function test_get_overridable_props__allowed_for_core_tier() {
+		// Arrange
+		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
+		\Mock_Pro_License_API::set_license_state( false );
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/overridable-props' );
+		$request->set_param( 'componentId', $component_id );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+	}
+
 }

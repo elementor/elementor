@@ -1,6 +1,44 @@
 $remote-templates-items-space: 30px;
 
+@mixin button-reset {
+	background: transparent;
+	margin: 0;
+	font-size: inherit;
+	font-family: inherit;
+	color: inherit;
+	border: none;
+}
+
+@mixin focus-outline($offset: 2px, $radius: null) {
+	&:focus-visible {
+		outline: 2px solid var(--e-a-border-color-focus);
+		outline-offset: $offset;
+
+		@if $radius {
+			border-radius: $radius;
+		}
+	}
+}
+
 #elementor-template-library-modal {
+
+	// Global focus-visible styles for accessibility (QA #4)
+	button,
+	a,
+	input,
+	select,
+	[tabindex="0"],
+	[role="tab"],
+	[role="radio"],
+	[role="menuitem"] {
+		@include focus-outline($radius: 2px);
+	}
+
+	// Reset button styles for the close button changed from div to button
+	button.elementor-templates-modal__header__close {
+		@include button-reset;
+		cursor: pointer;
+	}
 
 	a.elementor-template-library-blank-footer-link {
 		font-style: normal;
@@ -44,13 +82,16 @@ $remote-templates-items-space: 30px;
 	padding: 17px 20px;
 	border-block-end: 3px solid transparent;
 	cursor: pointer;
+	@include button-reset;
 
 	&:hover {
 		background-color: var(--e-a-bg-hover);
 		border-color: var(--e-a-bg-hover);
 	}
 
-	&.elementor-active {
+	&.elementor-active,
+	&[aria-selected="true"] {
+		border-block-end: 3px solid;
 		border-color: var(--e-a-border-color-accent);
 		color: var(--e-a-color-txt-accent);
 	}
@@ -59,8 +100,12 @@ $remote-templates-items-space: 30px;
 #elementor-template-library-header-actions {
 	display: flex;
 
-	> div {
+	> div,
+	> button {
+		@include button-reset;
 		padding-inline-end: 16px;
+		cursor: pointer;
+		@include focus-outline($offset: -2px, $radius: 2px);
 	}
 }
 
@@ -88,6 +133,15 @@ $remote-templates-items-space: 30px;
 	border-inline-end: var(--e-a-border);
 	cursor: pointer;
 	transition: color .5s;
+
+	.elementor-template-library-header-back-button {
+		@include button-reset;
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		cursor: pointer;
+		@include focus-outline($radius: 2px);
+	}
 
 	&:hover {
 		color: var(--e-a-color-txt-hover);
@@ -136,6 +190,8 @@ $remote-templates-items-space: 30px;
 			.quota-progress-container {
 				display: flex;
 				align-items: baseline;
+				border-radius: 3px;
+				@include focus-outline;
 			}
 
 			.quota-progress-info {
@@ -312,6 +368,7 @@ $remote-templates-items-space: 30px;
 		gap: 8px;
 
 		.elementor-template-library-action-item {
+			@include button-reset;
 			cursor: pointer;
 			font-size: 20px;
 			padding: 0 5px;
@@ -366,31 +423,34 @@ $remote-templates-items-space: 30px;
 				grid-column: 1 / -1;
 			}
 
-			.elementor-template-library-template-view-grid {
-				display: flex;
-				position: relative;
-				flex-direction: column;
-				height: 158px;
-				padding: 8px;
-				border: var(--e-a-border);
-				border-radius: 3px;
+		.elementor-template-library-template-view-grid {
+			display: flex;
+			position: relative;
+			flex-direction: column;
+			height: 158px;
+			padding: 8px;
+			border: var(--e-a-border);
+			border-radius: 3px;
+			@include focus-outline;
 
-				&:not([data-status="locked"]):hover {
-					.elementor-template-library-template-preview {
-						display: flex;
+			&:not([data-status="locked"]):hover,
+			&:not([data-status="locked"]):focus,
+			&:not([data-status="locked"]):focus-within {
+				.elementor-template-library-template-preview {
+					display: flex;
+				}
+
+				.elementor-template-library-card-footer {
+
+					.elementor-template-library-template-name {
+						display: none;
 					}
 
-					.elementor-template-library-card-footer {
-
-						.elementor-template-library-template-name {
-							display: none;
-						}
-
-						.elementor-template-library-template-card-footer-overlay {
-							display: flex !important;
-						}
+					.elementor-template-library-template-card-footer-overlay {
+						display: flex !important;
 					}
 				}
+			}
 
 				.elementor-template-library-template-thumbnail {
 					width: 190px;
@@ -504,14 +564,23 @@ $remote-templates-items-space: 30px;
 		align-items: center;
 		flex: 1;
 
-		i {
+		button {
+			@include button-reset;
 			cursor: pointer;
-			font-size: 18px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
 
 			&.disabled {
 				pointer-events: none;
 				opacity: 0.3;
+				cursor: not-allowed;
 			}
+		}
+
+		i {
+			cursor: pointer;
+			font-size: 18px;
 		}
 
 		.eicon-editor-close {
@@ -610,9 +679,9 @@ $remote-templates-items-space: 30px;
 		}
 
 		.new-badge {
-			border: 1px solid var(--e-a-color-primary-bold);
+			border: 1px solid var(--e-a-color-primary-bold-dark);
 			padding: 2px 4px;
-			color: var(--e-a-color-primary-bold);
+			color: var(--e-a-color-primary-bold-dark);
 			border-radius: 10px;
 			font-size: 10px;
 			margin-inline-start: 5px;
@@ -818,15 +887,28 @@ label.elementor-template-library-order-label {
 	border: var(--e-a-border);
 	border-radius: 3px;
 
-	&:hover {
+	@include focus-outline;
+
+	&:hover,
+	&:focus,
+	&:focus-within {
 		background-color: var(--e-a-bg-hover);
+
+		.elementor-template-library-template-preview {
+			opacity: 1;
+		}
 
 		.elementor-template-library-template-name {
 			display: none;
 		}
+
+		.elementor-template-library-favorite,
+		.elementor-template-library-template-action {
+			display: initial;
+		}
 	}
 
-	&:not(:hover) {
+	&:not(:hover):not(:focus):not(:focus-within) {
 
 		.elementor-template-library-template-preview {
 			opacity: 0;
@@ -880,7 +962,7 @@ label.elementor-template-library-order-label {
 			display: none;
 		}
 
-		&:not(:hover) {
+		&:not(:hover):not(:focus):not(:focus-within) {
 
 			.elementor-template-library-template-footer {
 				transform: translateY(100%)
@@ -940,7 +1022,20 @@ label.elementor-template-library-order-label {
 	}
 
 	.elementor-template-library-template-favorite-input {
-		display: none;
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+
+		&:focus-visible + .elementor-template-library-template-favorite-label {
+			outline: 2px solid var(--e-a-border-color-focus);
+			outline-offset: 2px;
+		}
 
 		&:checked {
 
@@ -1067,31 +1162,32 @@ label.elementor-template-library-order-label {
 		inset-block-start: 100%;
 		inset-inline-end: 0;
 		z-index: 1;
+		list-style: none;
+		margin: 0;
+		padding: 0;
 
-		> div {
-			padding: 10px 20px;
-			font-size: 11px;
-			cursor: pointer;
-			display: flex;
-			align-items: center;
-			gap: 8px;
+		> li {
+			button,
+			a {
+				@include button-reset;
+				padding: 10px 20px;
+				font-size: 11px;
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				gap: 8px;
+				width: 100%;
 
-			&.disabled {
-				cursor: not-allowed;
-				color: var(--e-a-color-txt-disabled);
-
-				a {
-					color: var(--e-a-color-txt-disabled);
+				&.disabled {
 					cursor: not-allowed;
+					color: var(--e-a-color-txt-disabled);
 				}
 			}
-		}
 
-		a {
-			color: var(--e-a-color-txt);
-			display: flex;
-			align-items: center;
-			gap: 8px;
+			a {
+				color: var(--e-a-color-txt);
+				text-decoration: none;
+			}
 		}
 
 		.elementor-template-library-template-delete {
@@ -1106,6 +1202,12 @@ label.elementor-template-library-order-label {
 	.elementor-template-library-template-more-toggle {
 		margin-inline-start: auto;
 		cursor: pointer;
+		background: none;
+		border: none;
+		padding: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 
 		i {
 			font-size: 20px;
@@ -1166,7 +1268,8 @@ label.elementor-template-library-order-label {
 		display: flex;
 		align-items: center;
 
-		> div {
+		> div,
+		> button {
 			cursor: pointer;
 			transition: color .5s;
 		}
@@ -1305,13 +1408,20 @@ label.elementor-template-library-order-label {
 			display: inline;
 			background: var(--e-a-bg-hover);
 			padding: 0 2px 1px;
+			border: none;
 			border-radius: 2px;
 			vertical-align: bottom;
 			cursor: pointer;
+			font-family: inherit;
+			font-size: inherit;
+			color: inherit;
+			line-height: inherit;
 
 			&:hover {
 				background: var(--e-a-bg-active);
 			}
+
+			@include focus-outline;
 		}
 
 		&.promotion,
@@ -1388,6 +1498,7 @@ label.elementor-template-library-order-label {
 			&.cloud,
 			&.local {
 				@include ellipsis;
+				overflow: visible; // Override ellipsis mixin to prevent clipping focus outlines
 				display: inline-flex;
 				align-items: baseline;
 				line-height: 27px;
@@ -1478,6 +1589,7 @@ label.elementor-template-library-order-label {
 			.folder-item {
 				padding: 5px 15px;
 				cursor: pointer;
+				list-style: none;
 
 				&[data-id="0"] .eicon-folder-o {
 					display: none;
@@ -1492,9 +1604,12 @@ label.elementor-template-library-order-label {
 				}
 
 				&:hover,
-				&.selected {
+				&.selected,
+				&:focus {
 					background: var(--e-a-border-color);
 				}
+
+				@include focus-outline($offset: -2px);
 
 				&.disabled {
 					pointer-events: none;

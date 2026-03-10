@@ -8,13 +8,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="elementor-templates-modal__header__menu-area"></div>
 	<div class="elementor-templates-modal__header__items-area">
 		<# if ( closeType ) { #>
-			<div class="elementor-templates-modal__header__close elementor-templates-modal__header__close--{{{ closeType }}} elementor-templates-modal__header__item">
+			<button type="button" class="elementor-templates-modal__header__close elementor-templates-modal__header__close--{{{ closeType }}} elementor-templates-modal__header__item" aria-label="<?php echo esc_attr__( 'Close', 'elementor' ); ?>">
 				<# if ( 'skip' === closeType ) { #>
 				<span><?php echo esc_html__( 'Skip', 'elementor' ); ?></span>
 				<# } #>
 				<i class="eicon-close" aria-hidden="true"></i>
 				<span class="elementor-screen-only">{{{ $e.components?.get( 'document/elements' )?.utils?.getTitleForLibraryClose() }}}</span>
-			</div>
+			</button>
 		<# } #>
 		<div id="elementor-template-library-header-tools"></div>
 	</div>

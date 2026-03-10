@@ -15,6 +15,7 @@ class User_Progress {
 	private ?int $last_active_timestamp = null;
 	private ?int $started_at = null;
 	private ?int $completed_at = null;
+	private bool $starter_dismissed = false;
 
 	public static function from_array( array $data ): self {
 		$instance = new self();
@@ -26,6 +27,7 @@ class User_Progress {
 		$instance->last_active_timestamp = $data['last_active_timestamp'] ?? null;
 		$instance->started_at = $data['started_at'] ?? null;
 		$instance->completed_at = $data['completed_at'] ?? null;
+		$instance->starter_dismissed = ! empty( $data['starter_dismissed'] );
 
 		return $instance;
 	}
@@ -40,6 +42,7 @@ class User_Progress {
 			'last_active_timestamp' => $this->last_active_timestamp,
 			'started_at' => $this->started_at,
 			'completed_at' => $this->completed_at,
+			'starter_dismissed' => $this->starter_dismissed,
 		];
 	}
 
@@ -119,6 +122,14 @@ class User_Progress {
 
 	public function set_completed_at( ?int $timestamp ): void {
 		$this->completed_at = $timestamp;
+	}
+
+	public function is_starter_dismissed(): bool {
+		return $this->starter_dismissed;
+	}
+
+	public function set_starter_dismissed( bool $dismissed ): void {
+		$this->starter_dismissed = $dismissed;
 	}
 
 	public function had_unexpected_exit(): bool {

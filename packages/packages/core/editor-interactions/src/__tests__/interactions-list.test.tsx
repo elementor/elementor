@@ -5,7 +5,17 @@ import { InteractionsList } from '../components/interactions-list';
 import { PopupStateProvider } from '../contexts/popup-state-context';
 import { type ElementInteractions } from '../types';
 
-jest.mock( '../utils/get-interactions-config' );
+jest.mock( '../utils/get-interactions-config', () => ( {
+	getInteractionsConfig: jest.fn( () => ( {
+		constants: {
+			defaultDuration: 600,
+			defaultDelay: 0,
+			slideDistance: 100,
+			scaleStart: 0,
+			defaultEasing: 'easeIn',
+		},
+	} ) ),
+} ) );
 
 const createInteraction = (
 	trigger: string,
@@ -53,8 +63,10 @@ const createInteraction = (
 								replay: { $$type: 'boolean', value: false },
 								easing: { $$type: 'string', value: 'easeIn' },
 								relativeTo: { $$type: 'string', value: 'viewport' },
-								offsetTop: { $$type: 'size', value: { size: 15, unit: '%' } },
-								offsetBottom: { $$type: 'size', value: { size: 85, unit: '%' } },
+								repeat: { $$type: 'string', value: '' },
+								times: { $$type: 'number', value: 1 },
+								start: { $$type: 'size', value: { size: 85, unit: '%' } },
+								end: { $$type: 'size', value: { size: 15, unit: '%' } },
 							},
 						},
 					},

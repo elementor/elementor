@@ -166,11 +166,6 @@ function getAtomicFormFieldLabel( field, form ) {
 		return ariaLabel;
 	}
 
-	const placeholder = field.getAttribute( 'placeholder' );
-	if ( placeholder ) {
-		return placeholder;
-	}
-
 	const fieldId = field.getAttribute( 'id' );
 	if ( fieldId ) {
 		const labelElement = form.querySelector( `label[for="${ fieldId }"]` );
@@ -181,7 +176,13 @@ function getAtomicFormFieldLabel( field, form ) {
 	}
 
 	const parentLabelText = field.closest( 'label' )?.textContent?.trim();
-	return parentLabelText || '';
+	if ( parentLabelText ) {
+		return parentLabelText;
+	}
+
+	const placeholder = field.getAttribute( 'placeholder' );
+
+	return placeholder || '';
 }
 
 function getAtomicFormFieldType( field ) {
@@ -236,15 +237,8 @@ function setFormState( element, state ) {
 		return;
 	}
 
-	element.setAttribute( 'data-form-state', state );
-
-	const id = extractId( element );
-	const container = id ? window.elementor?.getContainer?.( id ) : null;
-	container?.view?._updateStatusVisibility?.();
-}
-
-function extractId( element ) {
-	return element?.dataset?.id || null;
+	element.classList.remove( 'form-state-default', 'form-state-success', 'form-state-error' );
+	element.classList.add( `form-state-${ state }` );
 }
 
 function getPostId() {

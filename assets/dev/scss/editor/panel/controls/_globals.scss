@@ -88,6 +88,19 @@
 		@include webkit-scrollbar(7px, $editor-lighter, 10px)
 	}
 
+	&__group-header {
+		padding: 12px 20px 5px;
+		font-weight: 500;
+		font-size: 11px;
+		color: var(--e-a-color-txt-muted);
+	}
+
+	&__group-divider {
+		height: 1px;
+		background-color: var(--e-a-border-color);
+		margin: 10px 20px;
+	}
+
 	&__manage-button {
 		font-weight: 500;
 		cursor: pointer;
