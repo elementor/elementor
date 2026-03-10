@@ -3,6 +3,7 @@ import { act, renderHook } from '@testing-library/react';
 import { useAutoplayCarousel } from '../use-autoplay-carousel';
 
 const ITEMS = [ 'a', 'b', 'c' ];
+const INTERVAL_MS = 3000;
 
 beforeEach( () => {
 	jest.useFakeTimers();
@@ -24,7 +25,7 @@ describe( 'useAutoplayCarousel', () => {
 		const { result } = renderHook( () => useAutoplayCarousel( ITEMS ) );
 
 		act( () => {
-			jest.advanceTimersByTime( 5000 );
+			jest.advanceTimersByTime( INTERVAL_MS );
 		} );
 
 		expect( result.current.selectedItem ).toBe( 'b' );
@@ -34,7 +35,7 @@ describe( 'useAutoplayCarousel', () => {
 		const { result } = renderHook( () => useAutoplayCarousel( ITEMS ) );
 
 		act( () => {
-			jest.advanceTimersByTime( 5000 * ITEMS.length );
+			jest.advanceTimersByTime( INTERVAL_MS * ITEMS.length );
 		} );
 
 		expect( result.current.selectedItem ).toBe( 'a' );
