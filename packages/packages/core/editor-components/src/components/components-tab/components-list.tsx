@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { ComponentsIcon } from '@elementor/icons';
-import { Box, Divider, Link, List, Stack, Typography } from '@elementor/ui';
+import { ComponentsIcon, CrownFilledIcon } from '@elementor/icons';
+import { Box, Button, Divider, Link, List, Stack, Typography } from '@elementor/ui';
+import { hasProInstalled } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../hooks/use-components';
@@ -10,6 +11,7 @@ import { LoadingComponents } from './loading-components';
 import { useSearch } from './search-provider';
 
 const LEARN_MORE_URL = 'http://go.elementor.com/components-guide-article';
+const UPGRADE_URL = 'https://go.elementor.com/go-pro-components/';
 
 // Override legacy panel CSS reset that sets h1-h6 to font-size:100% and font-weight:normal.
 // See: assets/dev/scss/editor/panel/_reset.scss (applied via :where() selector in panel.scss).
@@ -28,7 +30,11 @@ export function ComponentsList() {
 	const isEmpty = ! components?.length;
 
 	if ( isEmpty ) {
-		return searchValue.length ? <EmptySearchResult /> : <EmptyState />;
+		if ( searchValue.length ) {
+			return <EmptySearchResult />;
+		}
+
+		return hasProInstalled() ? <EmptyState /> : <ProUpgradeEmptyState />;
 	}
 
 	return (
@@ -40,7 +46,44 @@ export function ComponentsList() {
 	);
 }
 
-export const EmptyState = () => {
+const ProUpgradeEmptyState = () => {
+	return (
+		<Stack
+			alignItems="center"
+			justifyContent="start"
+			height="100%"
+			sx={ { px: 2, py: 4 } }
+			gap={ 2 }
+			overflow="hidden"
+		>
+			<Stack alignItems="center" gap={ 1 }>
+				<ComponentsIcon fontSize="large" sx={ { color: 'text.secondary' } } />
+
+				<Typography align="center" variant="subtitle2" color="text.secondary" sx={ SUBTITLE_OVERRIDE_SX }>
+					{ __( 'Create Reusable Components', 'elementor' ) }
+				</Typography>
+
+				<Typography align="center" variant="caption" color="secondary" sx={ { maxWidth: 200 } }>
+					{ __( 'Create design elements that sync across your entire site.', 'elementor' ) }
+				</Typography>
+			</Stack>
+
+			<Button
+				variant="contained"
+				color="promotion"
+				size="small"
+				startIcon={ <CrownFilledIcon /> }
+				href={ UPGRADE_URL }
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				{ __( 'Upgrade Now', 'elementor' ) }
+			</Button>
+		</Stack>
+	);
+};
+
+const EmptyState = () => {
 	const { canCreate } = useComponentsPermissions();
 
 	return (

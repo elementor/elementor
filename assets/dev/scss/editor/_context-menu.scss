@@ -80,6 +80,19 @@
 					border-radius: 10px;
 					font-size: 10px;
 				}
+
+				&__promotion-badge {
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					width: 24px;
+					height: 24px;
+					border-radius: 50%;
+					background-color: rgba($e-accent-promotion, 0.12);
+					color: var(--e-a-color-accent-promotion, #{$e-accent-promotion});
+					font-size: 16px;
+					cursor: pointer;
+				}
 			}
 
 			&__title,

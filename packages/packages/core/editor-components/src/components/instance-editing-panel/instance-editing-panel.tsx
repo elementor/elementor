@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { PencilIcon } from '@elementor/icons';
-import { Box, Stack } from '@elementor/ui';
+import { CrownFilledIcon, PencilIcon } from '@elementor/icons';
+import { Alert, AlertAction, AlertTitle, Box, Stack, Typography } from '@elementor/ui';
+import { hasProInstalled } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { useComponentsPermissions } from '../../hooks/use-components-permissions';
@@ -11,9 +12,12 @@ import { InstancePanelBody } from './instance-panel-body';
 import { EditComponentAction, InstancePanelHeader } from './instance-panel-header';
 import { useInstancePanelData } from './use-instance-panel-data';
 
+const EDIT_UPGRADE_URL = 'https://go.elementor.com/go-pro-components-edit/';
+
 export function InstanceEditingPanel() {
 	const { canEdit } = useComponentsPermissions();
 	const data = useInstancePanelData();
+	const hasPro = hasProInstalled();
 
 	if ( ! data ) {
 		return null;
@@ -32,7 +36,7 @@ export function InstanceEditingPanel() {
 	);
 
 	return (
-		<Box data-testid="instance-editing-panel">
+		<Box data-testid="instance-editing-panel" sx={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
 			<ComponentInstanceProvider
 				componentId={ componentId }
 				overrides={ overrides }
@@ -46,6 +50,40 @@ export function InstanceEditingPanel() {
 					componentInstanceId={ componentInstanceId }
 				/>
 			</ComponentInstanceProvider>
+			{ ! hasPro && <InstanceEditUpgradeAlert /> }
+		</Box>
+	);
+}
+
+function InstanceEditUpgradeAlert() {
+	return (
+		<Box sx={ { mt: 'auto' } }>
+			<Alert
+				variant="standard"
+				color="promotion"
+				icon={ <CrownFilledIcon fontSize="tiny" /> }
+				role="status"
+				size="small"
+				action={
+					<AlertAction
+						variant="contained"
+						color="promotion"
+						href={ EDIT_UPGRADE_URL }
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						{ __( 'Upgrade Now', 'elementor' ) }
+					</AlertAction>
+				}
+				sx={ { m: 2, mt: 1 } }
+			>
+				<AlertTitle>{ __( 'Edit Component', 'elementor' ) }</AlertTitle>
+				<Typography variant="caption">
+					{ __( 'Your Pro subscription has expired.', 'elementor' ) }
+					<br />
+					{ __( 'Reactivate to enable components again.', 'elementor' ) }
+				</Typography>
+			</Alert>
 		</Box>
 	);
 }
