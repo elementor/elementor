@@ -1,7 +1,7 @@
 import type { InteractionsConfig, DynamicTags, DynamicTagsManager, DynamicTag } from '@elementor/editor-editing-panel';
 import type { ControlItem, V1Element } from '@elementor/editor-elements';
 import type { PropsSchema } from '@elementor/editor-props';
-import type { SupportedFonts, EnqueueFont } from '@elementor/editor-v1-adapters';
+import type { EnqueueFont } from '@elementor/editor-v1-adapters';
 import type { V4PromotionData, V4PromotionKey } from '@elementor/editor-controls';
 
 interface EOnboardingConfig {
@@ -102,7 +102,8 @@ declare global {
 			config?: {
 				controls?: {
 					font?: {
-						options?: Record< string, SupportedFonts >;
+						groups?: Record< string, string >;
+						options?: Record< string, string >;
 					};
 				};
 				atomicDynamicTags?: {
