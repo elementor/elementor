@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Button, Link, Paper, styled } from '@elementor/ui';
+import { Box, Button, Link, Paper, styled, useTheme } from '@elementor/ui';
 
 import { getOnboardingAssetUrl } from '../steps/step-visuals';
 
@@ -115,10 +115,13 @@ interface FullscreenCardProps {
 }
 
 export function FullscreenCard( { children, 'data-testid': testId }: FullscreenCardProps ) {
+	const theme = useTheme();
+	const elevation = theme.palette.mode === 'dark' ? 0 : 24;
+
 	return (
 		<FullscreenCardRoot backgroundUrl={ backgroundUrl } data-testid={ testId }>
 			<Backdrop />
-			<Card elevation={ 24 }>{ children }</Card>
+			<Card elevation={ elevation }>{ children }</Card>
 		</FullscreenCardRoot>
 	);
 }

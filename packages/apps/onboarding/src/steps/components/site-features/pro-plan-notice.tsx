@@ -46,7 +46,7 @@ export function ProPlanNotice( { planName }: LicenseNoticeProps ) {
 			<Link
 				href={ comparePlansUrl }
 				target="_blank"
-				color="promotion.main"
+				color={ theme.palette.mode === 'dark' ? 'common.white' : 'promotion.main' }
 				sx={ {
 					display: 'flex',
 					alignItems: 'center',
