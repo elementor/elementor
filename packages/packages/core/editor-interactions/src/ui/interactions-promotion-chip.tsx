@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { forwardRef, type MouseEvent, type RefObject, useImperativeHandle, useState } from 'react';
+import { forwardRef, type MouseEvent, type RefObject, useCallback, useImperativeHandle, useState } from 'react';
+import { type PromotionTrackingData, trackUpgradePromotionClick, trackViewPromotion } from '@elementor/editor-controls';
 import { PromotionChip, PromotionPopover, useCanvasClickHandler } from '@elementor/editor-ui';
 import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -8,6 +9,7 @@ export type InteractionsPromotionChipProps = {
 	content: string;
 	upgradeUrl: string;
 	anchorRef?: RefObject< HTMLElement | null >;
+	trackingData: PromotionTrackingData;
 };
 
 export type InteractionsPromotionChipRef = {
@@ -15,14 +17,21 @@ export type InteractionsPromotionChipRef = {
 };
 
 export const InteractionsPromotionChip = forwardRef< InteractionsPromotionChipRef, InteractionsPromotionChipProps >(
-	( { content, upgradeUrl, anchorRef }, ref ) => {
+	( { content, upgradeUrl, anchorRef, trackingData }, ref ) => {
 		const [ isOpen, setIsOpen ] = useState( false );
 
 		useCanvasClickHandler( isOpen, () => setIsOpen( false ) );
 
-		const toggle = () => setIsOpen( ( prev ) => ! prev );
+		const toggle = useCallback( () => {
+			setIsOpen( ( prev ) => {
+				if ( ! prev ) {
+					trackViewPromotion( trackingData );
+				}
+				return ! prev;
+			} );
+		}, [ trackingData ] );
 
-		useImperativeHandle( ref, () => ( { toggle } ), [] );
+		useImperativeHandle( ref, () => ( { toggle } ), [ toggle ] );
 
 		const handleToggle = ( e: MouseEvent ) => {
 			e.stopPropagation();
@@ -42,6 +51,7 @@ export const InteractionsPromotionChip = forwardRef< InteractionsPromotionChipRe
 					e.stopPropagation();
 					setIsOpen( false );
 				} }
+				onCtaClick={ () => trackUpgradePromotionClick( trackingData ) }
 			>
 				<Box
 					onMouseDown={ ( e: MouseEvent ) => e.stopPropagation() }
