@@ -486,8 +486,8 @@ class Test_Global_Classes_Template_Bundle extends Elementor_Test_Base {
 		$this->assertContains( 'e-66257faa-0a6ca5b', $first['settings']['classes']['value'] );
 
 		$new_first_ids = array_values( array_diff( $first['settings']['classes']['value'], [ 'e-66257faa-0a6ca5b' ] ) );
-		$this->assertCount( 1, $new_first_ids );
-		$new_first_id = $new_first_ids[0];
+		$this->assertSame( [], $new_first_ids );
+		$new_first_id = 'e-66257faa-0a6ca5b';
 
 		$this->assertStringStartsWith( 'e-', $new_first_id );
 		$this->assertArrayHasKey( $new_first_id, $first['styles'] );
