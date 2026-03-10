@@ -61,7 +61,7 @@ function notifyComponentEditUpgrade() {
 	notify( {
 		type: 'promotion',
 		id: COMPONENT_EDIT_UPGRADE_NOTIFICATION_ID,
-		message: __( 'Your Pro subscription has expired. Renew to edit components.', 'elementor' ),
+		message: __( 'Editing components requires an active Pro subscription.', 'elementor' ),
 		additionalActionProps: [
 			{
 				size: 'small',
@@ -236,9 +236,8 @@ function createComponentView( options: ComponentTypeOptions ): typeof ElementVie
 			const isAdministrator = isUserAdministrator();
 			const hasPro = hasProInstalled();
 
-			const proLabel = __( 'PRO', 'elementor' );
-			const badgeClass = 'elementor-context-menu-list__item__shortcut__new-badge';
-			const proBadge = `<a href="${ EDIT_COMPONENT_UPGRADE_URL }" target="_blank" onclick="event.stopPropagation()" class="${ badgeClass }">${ proLabel }</a>`;
+			const badgeClass = 'elementor-context-menu-list__item__shortcut__promotion-badge';
+			const proBadge = `<a href="${ EDIT_COMPONENT_UPGRADE_URL }" target="_blank" onclick="event.stopPropagation()" class="${ badgeClass }"><i class="eicon-upgrade-crown"></i></a>`;
 
 			const editComponentAction: ContextMenuAction = {
 				name: 'edit component',
