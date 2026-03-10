@@ -4,7 +4,6 @@ namespace Elementor\Modules\DesignSystemSync;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as ExperimentsManager;
-use Elementor\Core\Files\CSS\Post;
 use Elementor\Modules\DesignSystemSync\Classes\Kit_Stylesheet_Extended;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -53,7 +52,6 @@ class Module extends BaseModule {
 		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_editor_styles' ] );
 		add_action( 'elementor/global_classes/update', function () {
 			$this->clear_classes_cache();
-			$this->clear_css_cache();
 		} );
 	}
 
@@ -76,12 +74,5 @@ class Module extends BaseModule {
 
 	public function clear_classes_cache() {
 		Classes\Classes_Provider::clear_cache();
-	}
-
-	public function clear_css_cache() {
-		$kit = \Elementor\Plugin::$instance->kits_manager->get_active_kit();
-		if ( $kit ) {
-			( new Post( $kit->get_main_id() ) )->delete();
-		}
 	}
 }
