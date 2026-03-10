@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Button, Link, Paper, styled } from '@elementor/ui';
+import { Box, Button, Link, Paper, styled, useTheme } from '@elementor/ui';
 
 import { getLoginVisualConfig } from '../steps/step-visuals';
 
@@ -25,7 +25,7 @@ const FullscreenCardRoot = styled( Box, {
 const Backdrop = styled( Box )( ( { theme } ) => ( {
 	position: 'absolute',
 	inset: 0,
-	backgroundColor: theme.palette.text.primary,
+	backgroundColor: theme.palette.mode === 'dark' ? theme.palette.common.black : theme.palette.text.primary,
 	opacity: BACKDROP_OPACITY,
 } ) );
 
@@ -71,6 +71,8 @@ export const SecondaryButton = styled( Button )( ( { theme } ) => ( {
 } ) );
 
 export const SocialIconWrapper = styled( Paper )( ( { theme } ) => ( {
+	backgroundImage: 'none',
+	backgroundColor: 'transparent',
 	width: theme.spacing( 3.5 ),
 	height: theme.spacing( 3.5 ),
 	borderRadius: '50%',
