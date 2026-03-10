@@ -35,10 +35,10 @@ export default function StarterOverlay() {
 						flexDirection: 'column',
 						alignItems: 'center',
 						gap: 3,
-						py: 3,
-						pb: 4,
+						pt: 15.5,
+						pb: 2,
 						px: 2.5,
-						backgroundColor: '#f9f9fb',
+						backgroundColor: '#F3F3F4',
 					} }
 				>
 					<CloseButton
@@ -63,50 +63,68 @@ export default function StarterOverlay() {
 					</Typography>
 
 					<Stack direction="row" spacing={ 3 } justifyContent="center">
-						<Card sx={ { width: 280 } }>
-							<CardActionArea onClick={ openAiPlanner }>
+						<Card sx={ { width: 280, borderRadius: 3, boxShadow: '0 3px 14px 2px rgba(0, 0, 0, 0.12)' } }>
+							<CardActionArea onClick={ openAiPlanner } sx={ { pt: 1.5, pb: 3, px: 1.5 } }>
 								<CardMedia
 									component="img"
 									image={ getAssetUrl( 'ai-site-planner.png' ) }
 									alt={ __( 'AI Site Planner', 'elementor' ) }
 									sx={ {
-										height: 138,
-										p: 1.5,
-										boxSizing: 'border-box',
+										height: 114,
 										objectFit: 'cover',
-										borderRadius: 1,
+										borderRadius: 2,
+										backgroundColor: '#fae4fa',
 									} }
 								/>
-								<CardContent sx={ { textAlign: 'center' } }>
+								<CardContent
+									sx={ {
+										textAlign: 'center',
+										pt: 2,
+										px: 0,
+										pb: 0,
+										gap: 1,
+										display: 'flex',
+										flexDirection: 'column',
+									} }
+								>
 									<Typography variant="subtitle1" color="text.primary">
 										{ __( 'AI Site Planner', 'elementor' ) }
 									</Typography>
-									<Typography variant="body2" color="text.secondary" sx={ { mt: 1 } }>
+									<Typography variant="body2" color="text.secondary">
 										{ __( 'Generate your wireframe with AI', 'elementor' ) }
 									</Typography>
 								</CardContent>
 							</CardActionArea>
 						</Card>
 
-						<Card sx={ { width: 280 } }>
-							<CardActionArea onClick={ openTemplatesLibrary }>
+						<Card sx={ { width: 280, borderRadius: 3, boxShadow: '0 3px 14px 2px rgba(0, 0, 0, 0.12)' } }>
+							<CardActionArea onClick={ openTemplatesLibrary } sx={ { pt: 1.5, pb: 3, px: 1.5 } }>
 								<CardMedia
 									component="img"
 									image={ getAssetUrl( 'website-templates.png' ) }
 									alt={ __( 'Website templates', 'elementor' ) }
 									sx={ {
-										height: 138,
-										p: 1.5,
-										boxSizing: 'border-box',
+										height: 114,
 										objectFit: 'cover',
-										borderRadius: 1,
+										borderRadius: 2,
+										backgroundColor: '#fae4fa',
 									} }
 								/>
-								<CardContent sx={ { textAlign: 'center' } }>
+								<CardContent
+									sx={ {
+										textAlign: 'center',
+										pt: 2,
+										px: 0,
+										pb: 0,
+										gap: 1,
+										display: 'flex',
+										flexDirection: 'column',
+									} }
+								>
 									<Typography variant="subtitle1" color="text.primary">
 										{ __( 'Website templates', 'elementor' ) }
 									</Typography>
-									<Typography variant="body2" color="text.secondary" sx={ { mt: 1 } }>
+									<Typography variant="body2" color="text.secondary">
 										{ __( 'Start with a ready-made design', 'elementor' ) }
 									</Typography>
 								</CardContent>

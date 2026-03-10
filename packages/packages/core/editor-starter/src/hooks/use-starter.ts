@@ -31,9 +31,70 @@ function dismissStarterApi( config: StarterConfig ) {
 	} );
 }
 
-function showIframeHeader() {
+const STARTER_HIDE_STYLE_ID = 'e-starter-hide-elements';
+const EMPTY_WRAP = 'body:not(:has(.elementor-section-wrap.ui-sortable *))';
+
+const STARTER_HIDE_CSS = `
+	${ EMPTY_WRAP } header.wp-block-template-part,
+	${ EMPTY_WRAP } footer.wp-block-template-part,
+	${ EMPTY_WRAP } [data-elementor-type="floating-buttons"] { display: none !important; }
+	${ EMPTY_WRAP } { background-color: #F3F3F4 !important; padding-top: 0 !important; }
+	${ EMPTY_WRAP } #elementor-add-new-section { margin-top: 0 !important; }
+	${ EMPTY_WRAP } .elementor-section-wrap.ui-sortable { min-height: 0 !important; }
+	${ EMPTY_WRAP } .elementor-add-section { max-width: 879px !important; }
+	${ EMPTY_WRAP } .elementor-add-section:not(.elementor-dragging-on-child) .elementor-add-section-inner { background-color: transparent !important; }
+`;
+
+let iframeLoadHandler: ( () => void ) | null = null;
+
+function hideIframeElements() {
+	const iframe = document.getElementById( 'elementor-preview-iframe' ) as HTMLIFrameElement | null;
+
+	if ( ! iframe ) {
+		return;
+	}
+
+	const injectStyle = () => {
+		if ( ! iframe.contentDocument || iframe.contentDocument.getElementById( STARTER_HIDE_STYLE_ID ) ) {
+			return;
+		}
+
+		const style = iframe.contentDocument.createElement( 'style' );
+		style.id = STARTER_HIDE_STYLE_ID;
+		style.textContent = STARTER_HIDE_CSS;
+		iframe.contentDocument.head.appendChild( style );
+	};
+
+	iframeLoadHandler = injectStyle;
+	iframe.addEventListener( 'load', injectStyle );
+	injectStyle();
+
+	iframe.style.boxShadow = 'initial';
+}
+
+function closeNavigator() {
+	const navigatorEl = document.getElementById( 'elementor-navigator' );
+
+	if ( navigatorEl ) {
+		runCommand( 'navigator/close' );
+	}
+}
+
+function showIframeElements() {
 	const iframeDoc = getCanvasIframeDocument();
 	iframeDoc?.documentElement?.style.setProperty( '--e-starter-header-display', 'block' );
+	iframeDoc?.getElementById( STARTER_HIDE_STYLE_ID )?.remove();
+
+	const iframe = document.getElementById( 'elementor-preview-iframe' ) as HTMLIFrameElement | null;
+
+	if ( iframe ) {
+		iframe.style.boxShadow = '';
+
+		if ( iframeLoadHandler ) {
+			iframe.removeEventListener( 'load', iframeLoadHandler );
+			iframeLoadHandler = null;
+		}
+	}
 }
 
 export function useStarter() {
@@ -80,6 +141,11 @@ export function useStarter() {
 
 			wrapper.prepend( container );
 
+			dismissStarterApi( cfg );
+
+			hideIframeElements();
+			closeNavigator();
+
 			setConfig( cfg );
 			setPortalContainer( container );
 		};
@@ -113,30 +179,44 @@ export function useStarter() {
 		const channels = getElementorChannels();
 		const handleDragStart = () => dismiss();
 
+		const iframe = document.getElementById( 'elementor-preview-iframe' ) as HTMLIFrameElement | null;
+		const sectionWrap = iframe?.contentDocument?.querySelector( '.elementor-section-wrap.ui-sortable' );
+		let observer: MutationObserver | null = null;
+
+		if ( sectionWrap ) {
+			observer = new MutationObserver( ( mutations ) => {
+				const hasAddedNodes = mutations.some( ( m ) => m.addedNodes.length > 0 );
+
+				if ( hasAddedNodes && sectionWrap.children.length > 0 ) {
+					dismiss();
+				}
+			} );
+
+			observer.observe( sectionWrap, { childList: true } );
+		}
+
 		window.addEventListener( 'elementor/commands/run/after', onElementAdded );
 		channels?.panelElements?.on( 'element:drag:start', handleDragStart );
 
 		return () => {
 			window.removeEventListener( 'elementor/commands/run/after', onElementAdded );
 			channels?.panelElements?.off( 'element:drag:start', handleDragStart );
+			observer?.disconnect();
 		};
 	}, [ config, dismiss ] );
 
 	function openTemplatesLibrary() {
-		dismiss();
 		runCommand( 'library/open' );
 	}
 
 	function openAiPlanner() {
-		dismiss();
-
 		if ( config?.aiPlannerUrl ) {
 			window.open( config.aiPlannerUrl, '_blank', 'noopener,noreferrer' );
 		}
 	}
 
 	const onExited = useCallback( () => {
-		showIframeHeader();
+		showIframeElements();
 
 		portalContainer?.remove();
 		setPortalContainer( null );
