@@ -381,11 +381,11 @@ class Tools extends Settings_Page {
 								'label' => esc_html__( 'Rollback Version', 'elementor' ),
 								'field_args' => [
 									'type' => 'raw_html',
-									'html' => sprintf(
-										$rollback_html . '<a data-placeholder-text="%1$s v{VERSION}" href="#" data-placeholder-url="%2$s" class="button elementor-button-spinner elementor-rollback-button">%1$s</a>',
-										esc_html__( 'Reinstall', 'elementor' ),
-										wp_nonce_url( admin_url( 'admin-post.php?action=elementor_rollback&version=VERSION' ), 'elementor_rollback' )
-									),
+								'html' => sprintf(
+									$rollback_html . '<button data-placeholder-text="%1$s v{VERSION}" data-placeholder-url="%2$s" class="button elementor-button-spinner elementor-rollback-button">%1$s</button>',
+									esc_html__( 'Reinstall', 'elementor' ),
+									wp_nonce_url( admin_url( 'admin-post.php?action=elementor_rollback&version=VERSION' ), 'elementor_rollback' )
+								),
 									'desc' => $this->get_warning_span( esc_html__( 'Warning: Please backup your database before making the rollback.', 'elementor' ) ),
 								],
 							],
