@@ -5,8 +5,6 @@ namespace Elementor\Modules\DesignSystemSync\Classes;
 use Elementor\Controls_Manager;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
-use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\DesignSystemSync\Controls\V4_Typography_List;
 use Elementor\Plugin;
 
@@ -77,9 +75,6 @@ class Global_Typography_Extension {
 			return $items;
 		}
 
-		$schema = Style_Schema::get();
-		$props_resolver = Render_Props_Resolver::for_styles();
-
 		$v4_items = [];
 
 		foreach ( $v4_classes as $class ) {
@@ -96,8 +91,7 @@ class Global_Typography_Extension {
 				continue;
 			}
 
-			$resolved_props = $props_resolver->resolve( $schema, $props );
-			$value = $this->convert_v4_props_to_v3_format( $resolved_props );
+			$value = $this->convert_v4_props_to_v3_format( $props );
 
 			$variants_props = $class['variants_props'] ?? [];
 
@@ -110,8 +104,7 @@ class Global_Typography_Extension {
 					continue;
 				}
 
-				$resolved_bp_props = $props_resolver->resolve( $schema, $bp_props );
-				$bp_values = $this->convert_v4_props_to_v3_format( $resolved_bp_props );
+				$bp_values = $this->convert_v4_props_to_v3_format( $bp_props );
 
 				foreach ( $bp_values as $key => $val ) {
 					if ( $this->is_responsive_prop( $key ) ) {
@@ -160,11 +153,7 @@ class Global_Typography_Extension {
 				continue;
 			}
 
-			if ( $this->is_responsive_prop( $v3_prop ) ) {
-				$v3_format[ $v3_prop ] = $this->parse_css_size_value( $v4_props[ $v4_prop ] );
-			} else {
-				$v3_format[ $v3_prop ] = $v4_props[ $v4_prop ];
-			}
+			$v3_format[ $v3_prop ] = $this->extract_v4_prop_value( $v4_props[ $v4_prop ] );
 		}
 
 		if ( ! empty( $v3_format ) ) {
@@ -174,17 +163,11 @@ class Global_Typography_Extension {
 		return $v3_format;
 	}
 
-	private function parse_css_size_value( string $css_value ): array {
-		if ( preg_match( '/^(-?[\d.]+)\s*([a-z%]+)$/i', $css_value, $matches ) ) {
-			return [
-				'size' => (float) $matches[1],
-				'unit' => $matches[2],
-			];
+	private function extract_v4_prop_value( $prop ) {
+		if ( ! empty( $prop['value'] ) ) {
+			return $prop['value'];
 		}
 
-		return [
-			'size' => (float) $css_value,
-			'unit' => 'px',
-		];
+		return $prop;
 	}
 }

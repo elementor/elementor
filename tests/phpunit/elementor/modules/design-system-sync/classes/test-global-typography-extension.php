@@ -75,8 +75,17 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 								'state' => 'normal',
 							],
 							'props' => [
-								'font-family' => 'Roboto',
-								'font-size' => '24px',
+								'font-family' => [
+									'$$type' => 'string',
+									'value' => 'Roboto',
+								],
+								'font-size' => [
+									'$$type' => 'size',
+									'value' => [
+										'size' => 24,
+										'unit' => 'px',
+									],
+								],
 							],
 						],
 					],
@@ -143,10 +152,28 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 								'state' => 'normal',
 							],
 							'props' => [
-								'font-family' => 'Roboto',
-								'font-size' => '24px',
-								'font-weight' => 'bold',
-								'line-height' => '1.5',
+								'font-family' => [
+									'$$type' => 'string',
+									'value' => 'Roboto',
+								],
+								'font-size' => [
+									'$$type' => 'size',
+									'value' => [
+										'size' => 24,
+										'unit' => 'px',
+									],
+								],
+								'font-weight' => [
+									'$$type' => 'string',
+									'value' => 'bold',
+								],
+								'line-height' => [
+									'$$type' => 'size',
+									'value' => [
+										'size' => 1.5,
+										'unit' => 'em',
+									],
+								],
 							],
 						],
 					],
@@ -183,10 +210,25 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 								'state' => 'normal',
 							],
 							'props' => [
-								'font-family' => 'Arial',
-								'font-size' => '16px',
-								'font-weight' => '400',
-								'font-style' => 'italic',
+								'font-family' => [
+									'$$type' => 'string',
+									'value' => 'Arial',
+								],
+								'font-size' => [
+									'$$type' => 'size',
+									'value' => [
+										'size' => 16,
+										'unit' => 'px',
+									],
+								],
+								'font-weight' => [
+									'$$type' => 'string',
+									'value' => '400',
+								],
+								'font-style' => [
+									'$$type' => 'string',
+									'value' => 'italic',
+								],
 							],
 						],
 					],
@@ -203,7 +245,7 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 		// Assert
 		$value = $result['v4-Body']['value'];
 		$this->assertEquals( 'Arial', $value['typography_font_family'] );
-		$this->assertEquals( [ 'size' => 16.0, 'unit' => 'px' ], $value['typography_font_size'] );
+		$this->assertEquals( [ 'size' => 16, 'unit' => 'px' ], $value['typography_font_size'] );
 		$this->assertEquals( '400', $value['typography_font_weight'] );
 		$this->assertEquals( 'italic', $value['typography_font_style'] );
 		$this->assertEquals( 'custom', $value['typography_typography'] );
@@ -224,7 +266,10 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 								'state' => 'normal',
 							],
 							'props' => [
-								'font-family' => 'Roboto',
+								'font-family' => [
+									'$$type' => 'string',
+									'value' => 'Roboto',
+								],
 							],
 						],
 					],
@@ -296,7 +341,10 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 								'state' => 'normal',
 							],
 							'props' => [
-								'font-family' => 'Roboto',
+								'font-family' => [
+									'$$type' => 'string',
+									'value' => 'Roboto',
+								],
 							],
 						],
 					],
@@ -329,8 +377,17 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 								'state' => 'normal',
 							],
 							'props' => [
-								'font-family' => 'Roboto',
-								'font-size' => '24px',
+								'font-family' => [
+									'$$type' => 'string',
+									'value' => 'Roboto',
+								],
+								'font-size' => [
+									'$$type' => 'size',
+									'value' => [
+										'size' => 24,
+										'unit' => 'px',
+									],
+								],
 							],
 						],
 						[
@@ -339,7 +396,13 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 								'state' => null,
 							],
 							'props' => [
-								'font-size' => '20px',
+								'font-size' => [
+									'$$type' => 'size',
+									'value' => [
+										'size' => 20,
+										'unit' => 'px',
+									],
+								],
 							],
 						],
 						[
@@ -348,7 +411,13 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 								'state' => null,
 							],
 							'props' => [
-								'font-size' => '16px',
+								'font-size' => [
+									'$$type' => 'size',
+									'value' => [
+										'size' => 16,
+										'unit' => 'px',
+									],
+								],
 							],
 						],
 					],
@@ -364,9 +433,9 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 
 		// Assert
 		$value = $result['v4-Heading']['value'];
-		$this->assertEquals( [ 'size' => 24.0, 'unit' => 'px' ], $value['typography_font_size'] );
-		$this->assertEquals( [ 'size' => 20.0, 'unit' => 'px' ], $value['typography_font_size_tablet'] );
-		$this->assertEquals( [ 'size' => 16.0, 'unit' => 'px' ], $value['typography_font_size_mobile'] );
+		$this->assertEquals( [ 'size' => 24, 'unit' => 'px' ], $value['typography_font_size'] );
+		$this->assertEquals( [ 'size' => 20, 'unit' => 'px' ], $value['typography_font_size_tablet'] );
+		$this->assertEquals( [ 'size' => 16, 'unit' => 'px' ], $value['typography_font_size_mobile'] );
 	}
 
 	public function test_add_v4_classes_to_typography_selector__only_adds_responsive_suffix_to_responsive_props() {
@@ -384,8 +453,17 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 								'state' => 'normal',
 							],
 							'props' => [
-								'font-family' => 'Roboto',
-								'font-size' => '24px',
+								'font-family' => [
+									'$$type' => 'string',
+									'value' => 'Roboto',
+								],
+								'font-size' => [
+									'$$type' => 'size',
+									'value' => [
+										'size' => 24,
+										'unit' => 'px',
+									],
+								],
 							],
 						],
 						[
@@ -394,8 +472,17 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 								'state' => null,
 							],
 							'props' => [
-								'font-family' => 'Arial',
-								'font-size' => '20px',
+								'font-family' => [
+									'$$type' => 'string',
+									'value' => 'Arial',
+								],
+								'font-size' => [
+									'$$type' => 'size',
+									'value' => [
+										'size' => 20,
+										'unit' => 'px',
+									],
+								],
 							],
 						],
 					],
@@ -411,7 +498,7 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 
 		// Assert
 		$value = $result['v4-Heading']['value'];
-		$this->assertEquals( [ 'size' => 20.0, 'unit' => 'px' ], $value['typography_font_size_tablet'] );
+		$this->assertEquals( [ 'size' => 20, 'unit' => 'px' ], $value['typography_font_size_tablet'] );
 		$this->assertArrayNotHasKey( 'typography_font_family_tablet', $value );
 	}
 
@@ -430,7 +517,10 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 								'state' => 'normal',
 							],
 							'props' => [
-								'font-family' => 'Roboto',
+								'font-family' => [
+									'$$type' => 'string',
+									'value' => 'Roboto',
+								],
 							],
 						],
 					],
@@ -446,7 +536,10 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 								'state' => 'normal',
 							],
 							'props' => [
-								'font-family' => 'Arial',
+								'font-family' => [
+									'$$type' => 'string',
+									'value' => 'Arial',
+								],
 							],
 						],
 					],

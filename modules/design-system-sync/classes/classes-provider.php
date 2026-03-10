@@ -4,7 +4,6 @@ namespace Elementor\Modules\DesignSystemSync\Classes;
 
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -60,32 +59,9 @@ class Classes_Provider {
 	}
 
 	public static function get_default_breakpoint_props( array $variants ): array {
-		foreach ( $variants as $variant ) {
-			if ( ! isset( $variant['meta'] ) ) {
-				continue;
-			}
+		$all = self::get_all_normal_state_variant_props( $variants );
 
-			$meta = $variant['meta'];
-
-			if ( ! array_key_exists( 'breakpoint', $meta ) || ! array_key_exists( 'state', $meta ) ) {
-				continue;
-			}
-
-			$breakpoint = $meta['breakpoint'];
-			$state = $meta['state'];
-
-			if ( ! in_array( $breakpoint, [ null, Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP ], true ) ) {
-				continue;
-			}
-
-			if ( ! in_array( $state, [ null, 'normal' ], true ) ) {
-				continue;
-			}
-
-			return $variant['props'] ?? [];
-		}
-
-		return [];
+		return $all[ Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP ] ?? [];
 	}
 
 	public static function get_all_normal_state_variant_props( array $variants ): array {
@@ -136,6 +112,8 @@ class Classes_Provider {
 
 		$typography_classes = [];
 
+		$typography_keys = array_flip( self::TYPOGRAPHY_PROPS );
+
 		foreach ( $synced_classes as $id => $class ) {
 			$variants = $class['variants'] ?? [];
 			$default_props = self::get_default_breakpoint_props( $variants );
@@ -150,11 +128,16 @@ class Classes_Provider {
 
 			$all_variant_props = self::get_all_normal_state_variant_props( $variants );
 
+			$filtered_variant_props = [];
+			foreach ( $all_variant_props as $breakpoint => $props ) {
+				$filtered_variant_props[ $breakpoint ] = array_intersect_key( $props, $typography_keys );
+			}
+
 			$typography_classes[] = [
 				'id' => $id,
 				'label' => $class['label'] ?? '',
-				'props' => $default_props,
-				'variants_props' => $all_variant_props,
+				'props' => array_intersect_key( $default_props, $typography_keys ),
+				'variants_props' => $filtered_variant_props,
 			];
 		}
 

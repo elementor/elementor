@@ -4,6 +4,7 @@ namespace Elementor\Modules\DesignSystemSync;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as ExperimentsManager;
+use Elementor\Core\Files\CSS\Post;
 use Elementor\Modules\DesignSystemSync\Classes\Kit_Stylesheet_Extended;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -80,8 +81,7 @@ class Module extends BaseModule {
 	public function clear_css_cache() {
 		$kit = \Elementor\Plugin::$instance->kits_manager->get_active_kit();
 		if ( $kit ) {
-			$kit_id = $kit->get_main_id();
-			delete_post_meta( $kit_id, '_elementor_css' );
+			( new Post( $kit->get_main_id() ) )->delete();
 		}
 	}
 }
