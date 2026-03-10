@@ -165,17 +165,19 @@ export const TransitionSelector = ( {
 					) }
 					footer={
 						showPromotion ? (
-						<PromotionAlert
-							message={ __(
-								'Upgrade to customize transition properties and control effects.',
-								'elementor'
-							) }
-							upgradeUrl={ PRO_UPGRADE_URL }
-							onCtaClick={ () => trackUpgradePromotionClick( {
-								target_name: 'transition_property',
-								location_l2: 'style',
-							} ) }
-						/>
+							<PromotionAlert
+								message={ __(
+									'Upgrade to customize transition properties and control effects.',
+									'elementor'
+								) }
+								upgradeUrl={ PRO_UPGRADE_URL }
+								onCtaClick={ () =>
+									trackUpgradePromotionClick( {
+										target_name: 'transition_property',
+										location_l2: 'style',
+									} )
+								}
+							/>
 						) : null
 					}
 				/>

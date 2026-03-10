@@ -176,19 +176,20 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, d
 						) }
 					/>
 					{ disabled && (
-					<PromotionAlert
-						message={ sprintf(
-							/* translators: %s: Variable Type. */
-							__( 'Upgrade to continue creating and editing %s variables.', 'elementor' ),
-							variableType
-						) }
-						upgradeUrl={ getProUpgradeUrl( variableType ) }
-						onCtaClick={ () => trackUpgradePromotionClick( {
-							target_name: 'variables_popover',
-							target_location: 'widget_panel',
-							location_l1: 'variables_list',
-						} ) }
-					/>
+						<PromotionAlert
+							message={ sprintf(
+								/* translators: %s: Variable Type. */
+								__( 'Upgrade to continue creating and editing %s variables.', 'elementor' ),
+								variableType
+							) }
+							upgradeUrl={ getProUpgradeUrl( variableType ) }
+							onCtaClick={ () =>
+								trackUpgradePromotionClick( {
+									target_name: 'variables_popover',
+									location_l1: 'variables_list',
+								} )
+							}
+						/>
 					) }
 				</>
 			) }
