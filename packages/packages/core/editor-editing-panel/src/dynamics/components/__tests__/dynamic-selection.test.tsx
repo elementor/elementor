@@ -326,8 +326,9 @@ describe( '<DynamicSelection />', () => {
 
 		it( 'should call trackViewPromotion when expired prop is true', () => {
 			// Arrange.
-			jest.mocked( usePropDynamicTags ).mockReturnValue( [] );
-			jest.mocked( getAtomicDynamicTags ).mockReturnValue( { groups: {} } as never );
+			jest.mocked( usePropDynamicTags ).mockReturnValue(
+				mockDynamicTags( [ { name: 'tag1', label: 'Tag 1', group: 'group1' } ] )
+			);
 
 			const props = {
 				value: {},

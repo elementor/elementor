@@ -53,14 +53,10 @@ export const DynamicSelection = ( { close: closePopover, expired = false }: Dyna
 	useEffect( () => {
 		if ( hasNoDynamicTags ) {
 			trackViewPromotion( { target_name: 'dynamic_tags', location_l1: 'style' } );
-		}
-	}, [ hasNoDynamicTags ] );
-
-	useEffect( () => {
-		if ( expired ) {
+		} else if ( expired ) {
 			trackViewPromotion( { target_name: 'dynamic_tags' } );
 		}
-	}, [ expired ] );
+	}, [ hasNoDynamicTags, expired ] );
 
 	const handleSearch = ( value: string ) => {
 		setSearchValue( value );
