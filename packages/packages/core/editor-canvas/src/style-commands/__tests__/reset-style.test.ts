@@ -7,13 +7,13 @@ import {
 import { createElementStyle, deleteElementStyle, getElementStyles } from '@elementor/editor-elements';
 import { ELEMENTS_STYLES_RESERVED_LABEL } from '@elementor/editor-styles-repository';
 
+import { getClassesProp, hasAtomicWidgets, isAtomicWidget } from '../../utils/command-utils';
 import { initResetStyleCommand } from '../reset-style';
-import { getClassesProp, hasAtomicWidgets, isAtomicWidget } from '../utils';
 
 jest.mock( '@elementor/editor-elements' );
 
-jest.mock( '../utils', () => ( {
-	...jest.requireActual( '../utils' ),
+jest.mock( '../../utils/command-utils', () => ( {
+	...jest.requireActual( '../../utils/command-utils' ),
 	getClassesProp: jest.fn(),
 	hasAtomicWidgets: jest.fn(),
 	isAtomicWidget: jest.fn(),
