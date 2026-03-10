@@ -3,7 +3,7 @@ import { getInteractionsControlOptions } from '../../interactions-controls-regis
 import { type InteractionItemPropValue } from '../../types';
 import { isSupportedInteractionItem } from '../../utils/is-supported-interaction-item';
 
-jest.mock( '../interactions-controls-registry', () => ( {
+jest.mock( '../../interactions-controls-registry', () => ( {
 	getInteractionsControlOptions: jest.fn(),
 } ) );
 
