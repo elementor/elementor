@@ -104,6 +104,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 					}
 				}
 			} catch ( parseError ) {
+				console.warn( 'Failed to parse template JSON for global styles check:', parseError ); // eslint-disable-line no-console
 			}
 		}
 

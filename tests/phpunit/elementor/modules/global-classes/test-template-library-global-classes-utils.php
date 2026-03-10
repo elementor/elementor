@@ -281,6 +281,76 @@ class Test_Template_Library_Global_Classes_Utils extends Elementor_Test_Base {
 		$this->assertSame( [ 'g-9', 'g-2' ], $result[0]['settings']['classes']['value'] );
 	}
 
+	public function test_create_all_as_new_assigns_fresh_ids() {
+		$this->act_as_admin();
+
+		$this->seed_global_classes( [
+			'g-1' => [
+				'id' => 'g-1',
+				'type' => 'class',
+				'label' => 'Existing',
+				'variants' => [],
+			],
+		], [ 'g-1' ] );
+
+		$incoming = [
+			'items' => [
+				'g-remote' => [
+					'id' => 'g-remote',
+					'type' => 'class',
+					'label' => 'Imported',
+					'variants' => [],
+				],
+			],
+			'order' => [ 'g-remote' ],
+		];
+
+		$result = Template_Library_Global_Classes_Snapshot_Builder::create_snapshot_as_new( $incoming );
+
+		$this->assertArrayHasKey( 'g-remote', $result['id_map'] );
+		$new_id = $result['id_map']['g-remote'];
+		$this->assertStringStartsWith( 'g-', $new_id );
+		$this->assertNotSame( 'g-remote', $new_id );
+
+		$current = Global_Classes_Repository::make()->all()->get();
+		$this->assertCount( 2, $current['items'] );
+		$this->assertArrayHasKey( $new_id, $current['items'] );
+	}
+
+	public function test_create_all_as_new_with_label_collision_renames() {
+		$this->act_as_admin();
+
+		$this->seed_global_classes( [
+			'g-1' => [
+				'id' => 'g-1',
+				'type' => 'class',
+				'label' => 'Button',
+				'variants' => [],
+			],
+		], [ 'g-1' ] );
+
+		$incoming = [
+			'items' => [
+				'g-remote' => [
+					'id' => 'g-remote',
+					'type' => 'class',
+					'label' => 'Button',
+					'variants' => [],
+				],
+			],
+			'order' => [ 'g-remote' ],
+		];
+
+		$result = Template_Library_Global_Classes_Snapshot_Builder::create_snapshot_as_new( $incoming );
+
+		$new_id = $result['id_map']['g-remote'];
+		$current = Global_Classes_Repository::make()->all()->get();
+		$new_label = $current['items'][ $new_id ]['label'];
+
+		$this->assertNotSame( 'Button', $new_label );
+		$this->assertStringStartsWith( 'DUP_', $new_label );
+	}
+
 	public function test_flatten_elements_classes_replaces_global_with_local_style() {
 		$elements = [
 			[

@@ -9,6 +9,7 @@ use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 use Elementor\Modules\Variables\Storage\Constants;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
+use Elementor\Modules\Variables\Utils\Template_Library_Variables;
 use Elementor\Modules\Variables\Utils\Template_Library_Variables_Element_Transformer;
 use Elementor\Modules\Variables\Utils\Template_Library_Variables_Snapshot_Builder;
 use Elementor\Plugin;
@@ -283,5 +284,164 @@ class Test_Template_Library_Variables_Utils extends Elementor_Test_Base {
 		$this->assertSame( '#123456', $result[0]['settings']['text_color']['value'] );
 		$this->assertSame( Size_Variable_Prop_Type::get_key(), $result[0]['settings']['padding']['$$type'] );
 		$this->assertSame( 'e-gv-2', $result[0]['settings']['padding']['value'] );
+	}
+
+	public function test_create_all_as_new_assigns_fresh_ids() {
+		$this->act_as_admin();
+
+		$this->seed_variables( [
+			'e-gv-1' => [
+				'type' => Color_Variable_Prop_Type::get_key(),
+				'label' => 'Existing',
+				'value' => '#000000',
+				'order' => 1,
+			],
+		] );
+
+		$incoming = [
+			'data' => [
+				'e-gv-remote' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Imported',
+					'value' => '#ffffff',
+					'order' => 1,
+				],
+			],
+		];
+
+		$result = Template_Library_Variables_Snapshot_Builder::create_snapshot_as_new( $incoming );
+
+		$this->assertArrayHasKey( 'e-gv-remote', $result['id_map'] );
+		$new_id = $result['id_map']['e-gv-remote'];
+		$this->assertStringStartsWith( 'e-gv-', $new_id );
+		$this->assertNotSame( 'e-gv-remote', $new_id );
+
+		$current = $this->repository()->load()->serialize();
+		$this->assertArrayHasKey( $new_id, $current['data'] );
+	}
+
+	public function test_create_all_as_new_with_label_collision_renames() {
+		$this->act_as_admin();
+
+		$this->seed_variables( [
+			'e-gv-1' => [
+				'type' => Color_Variable_Prop_Type::get_key(),
+				'label' => 'Brand',
+				'value' => '#ff0000',
+				'order' => 1,
+			],
+		] );
+
+		$incoming = [
+			'data' => [
+				'e-gv-remote' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Brand',
+					'value' => '#00ff00',
+					'order' => 1,
+				],
+			],
+		];
+
+		$result = Template_Library_Variables_Snapshot_Builder::create_snapshot_as_new( $incoming );
+		$new_id = $result['id_map']['e-gv-remote'];
+		$current = $this->repository()->load()->serialize();
+
+		$this->assertNotSame( 'Brand', $current['data'][ $new_id ]['label'] );
+		$this->assertStringStartsWith( 'DUP_', $current['data'][ $new_id ]['label'] );
+	}
+
+	public function test_transform_variables_in_classes_snapshot_rewrites_ids() {
+		$classes_snapshot = [
+			'items' => [
+				'g-1' => [
+					'id' => 'g-1',
+					'type' => 'class',
+					'label' => 'Card',
+					'variants' => [
+						[
+							'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
+							'props' => [
+								'color' => [
+									'$$type' => Color_Variable_Prop_Type::get_key(),
+									'value' => 'e-gv-old',
+								],
+							],
+						],
+					],
+				],
+			],
+			'order' => [ 'g-1' ],
+		];
+
+		$result_context = [
+			'variables_id_map' => [ 'e-gv-old' => 'e-gv-new' ],
+			'variables_to_flatten' => [],
+			'variables_snapshot' => null,
+		];
+
+		$transformed = Template_Library_Variables::transform_variables_in_classes_snapshot(
+			$classes_snapshot,
+			'keep_create',
+			$result_context,
+			[]
+		);
+
+		$prop_value = $transformed['items']['g-1']['variants'][0]['props']['color']['value'];
+		$this->assertSame( 'e-gv-new', $prop_value );
+	}
+
+	public function test_transform_variables_in_classes_snapshot_flattens_in_keep_flatten_mode() {
+		$classes_snapshot = [
+			'items' => [
+				'g-1' => [
+					'id' => 'g-1',
+					'type' => 'class',
+					'label' => 'Card',
+					'variants' => [
+						[
+							'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
+							'props' => [
+								'color' => [
+									'$$type' => Color_Variable_Prop_Type::get_key(),
+									'value' => 'e-gv-1',
+								],
+							],
+						],
+					],
+				],
+			],
+			'order' => [ 'g-1' ],
+		];
+
+		$variables_snapshot = [
+			'data' => [
+				'e-gv-1' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Primary',
+					'value' => '#abcdef',
+					'order' => 1,
+				],
+			],
+		];
+
+		$result_context = [
+			'variables_id_map' => [],
+			'variables_to_flatten' => [],
+			'variables_snapshot' => $variables_snapshot,
+		];
+
+		$data = [ 'global_variables' => $variables_snapshot ];
+
+		$transformed = Template_Library_Variables::transform_variables_in_classes_snapshot(
+			$classes_snapshot,
+			'keep_flatten',
+			$result_context,
+			$data
+		);
+
+		$color_prop = $transformed['items']['g-1']['variants'][0]['props']['color'];
+		$this->assertSame( 'color', $color_prop['$$type'] );
+		$this->assertSame( '#abcdef', $color_prop['value'] );
 	}
 }

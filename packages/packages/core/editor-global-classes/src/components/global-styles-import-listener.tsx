@@ -26,8 +26,8 @@ export function GlobalStylesImportListener() {
 				);
 			}
 
-			Promise.all( [ apiClient.all( 'preview' ), apiClient.all( 'frontend' ) ] ).then(
-				( [ previewRes, frontendRes ] ) => {
+			Promise.all( [ apiClient.all( 'preview' ), apiClient.all( 'frontend' ) ] )
+				.then( ( [ previewRes, frontendRes ] ) => {
 					const { data: previewData } = previewRes;
 					const { data: frontendData } = frontendRes;
 
@@ -43,8 +43,8 @@ export function GlobalStylesImportListener() {
 							},
 						} )
 					);
-				}
-			);
+				} )
+				.catch( () => {} );
 		};
 
 		window.addEventListener( 'elementor/global-styles/imported', handleGlobalStylesImported as EventListener );

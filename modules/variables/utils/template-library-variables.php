@@ -46,54 +46,21 @@ class Template_Library_Variables {
 			return $result;
 		}
 
-		$content = $result['content'];
+		$processed = Template_Library_Import_Export_Utils::process_import_by_mode(
+			$import_mode,
+			$result['content'],
+			$snapshot,
+			[ self::class, 'merge_snapshot_and_get_id_map' ],
+			[ self::class, 'create_all_as_new' ],
+			[ self::class, 'rewrite_elements_variable_ids' ],
+			[ self::class, 'flatten_elements_variables' ]
+		);
 
-		switch ( $import_mode ) {
-			case Template_Library_Import_Export_Utils::IMPORT_MODE_KEEP_FLATTEN:
-				$content = self::flatten_elements_variables( $content, $snapshot );
-				break;
-
-			case Template_Library_Import_Export_Utils::IMPORT_MODE_KEEP_CREATE:
-				$create_result = self::create_all_as_new( $snapshot );
-				$id_map = $create_result['id_map'] ?? [];
-				$variables_to_flatten = $create_result['ids_to_flatten'] ?? [];
-
-				if ( ! empty( $id_map ) ) {
-					$content = self::rewrite_elements_variable_ids( $content, $id_map );
-				}
-
-				if ( ! empty( $variables_to_flatten ) ) {
-					$content = self::flatten_elements_variables( $content, $snapshot, $variables_to_flatten );
-				}
-
-				$result['updated_global_variables'] = $create_result['variables'] ?? null;
-				$result['variables_id_map'] = $id_map;
-				$result['variables_to_flatten'] = $variables_to_flatten;
-				$result['variables_snapshot'] = $snapshot;
-				break;
-
-			case Template_Library_Import_Export_Utils::IMPORT_MODE_MATCH_SITE:
-			default:
-				$merge_result = self::merge_snapshot_and_get_id_map( $snapshot );
-				$id_map = $merge_result['id_map'] ?? [];
-				$variables_to_flatten = $merge_result['ids_to_flatten'] ?? [];
-
-				if ( ! empty( $id_map ) ) {
-					$content = self::rewrite_elements_variable_ids( $content, $id_map );
-				}
-
-				if ( ! empty( $variables_to_flatten ) ) {
-					$content = self::flatten_elements_variables( $content, $snapshot, $variables_to_flatten );
-				}
-
-				$result['updated_global_variables'] = $merge_result['variables'] ?? null;
-				$result['variables_id_map'] = $id_map;
-				$result['variables_to_flatten'] = $variables_to_flatten;
-				$result['variables_snapshot'] = $snapshot;
-				break;
-		}
-
-		$result['content'] = $content;
+		$result['content'] = $processed['content'];
+		$result['updated_global_variables'] = $processed['operation_result']['variables'] ?? null;
+		$result['variables_id_map'] = $processed['id_map'];
+		$result['variables_to_flatten'] = $processed['ids_to_flatten'];
+		$result['variables_snapshot'] = $snapshot;
 
 		return $result;
 	}
@@ -102,19 +69,19 @@ class Template_Library_Variables {
 		return Template_Library_Variables_Snapshot_Builder::build_snapshot_for_elements( $elements, $global_classes_snapshot );
 	}
 
-	private static function merge_snapshot_and_get_id_map( array $snapshot ): array {
+	public static function merge_snapshot_and_get_id_map( array $snapshot ): array {
 		return Template_Library_Variables_Snapshot_Builder::merge_snapshot_and_get_id_map( $snapshot );
 	}
 
-	private static function rewrite_elements_variable_ids( array $elements, array $id_map ): array {
+	public static function rewrite_elements_variable_ids( array $elements, array $id_map ): array {
 		return Template_Library_Variables_Element_Transformer::rewrite_elements_variable_ids( $elements, $id_map );
 	}
 
-	private static function flatten_elements_variables( array $elements, array $global_variables, ?array $only_ids = null ): array {
+	public static function flatten_elements_variables( array $elements, array $global_variables, ?array $only_ids = null ): array {
 		return Template_Library_Variables_Element_Transformer::flatten_elements_variables( $elements, $global_variables, $only_ids );
 	}
 
-	private static function create_all_as_new( array $snapshot ): array {
+	public static function create_all_as_new( array $snapshot ): array {
 		return Template_Library_Variables_Snapshot_Builder::create_snapshot_as_new( $snapshot );
 	}
 

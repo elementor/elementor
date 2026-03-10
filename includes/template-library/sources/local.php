@@ -745,21 +745,7 @@ class Source_Local extends Source_Base {
 		}
 
 		if ( ! empty( $content ) ) {
-			$snapshots = apply_filters(
-				'elementor/template_library/export/build_snapshots',
-				[],
-				$content,
-				$template_id,
-				$data
-			);
-
-			if ( ! empty( $snapshots['global_classes'] ) ) {
-				$data['global_classes'] = $snapshots['global_classes'];
-			}
-
-			if ( ! empty( $snapshots['global_variables'] ) ) {
-				$data['global_variables'] = $snapshots['global_variables'];
-			}
+			$this->attach_global_styles_to_data( $data, $content, $template_id );
 		}
 
 		return $data;
@@ -1603,21 +1589,7 @@ class Source_Local extends Source_Base {
 			'type' => self::get_template_type( $template_id ),
 		];
 
-		$snapshots = apply_filters(
-			'elementor/template_library/export/build_snapshots',
-			[],
-			$content,
-			$template_id,
-			$export_data
-		);
-
-		if ( ! empty( $snapshots['global_classes'] ) ) {
-			$export_data['global_classes'] = $snapshots['global_classes'];
-		}
-
-		if ( ! empty( $snapshots['global_variables'] ) ) {
-			$export_data['global_variables'] = $snapshots['global_variables'];
-		}
+		$this->attach_global_styles_to_data( $export_data, $content, $template_id );
 
 		return [
 			'name' => 'elementor-' . $template_id . '-' . gmdate( 'Y-m-d' ) . '.json',

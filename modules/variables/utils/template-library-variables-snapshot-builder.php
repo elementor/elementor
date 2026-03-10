@@ -17,7 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Template_Library_Variables_Snapshot_Builder extends Template_Library_Snapshot_Processor {
 
 	private static ?self $instance = null;
-	private ?Variables_Repository $repository = null;
 
 	public static function make(): self {
 		if ( null === self::$instance ) {
@@ -121,16 +120,13 @@ class Template_Library_Variables_Snapshot_Builder extends Template_Library_Snaps
 	}
 
 	protected function can_access_repository(): bool {
-		$this->repository = $this->get_repository_or_null();
-		return null !== $this->repository;
+		return null !== $this->get_repository_or_null();
 	}
 
 	protected function load_current_data(): array {
-		if ( ! $this->repository ) {
-			$this->repository = $this->get_repository_or_null();
-		}
+		$repository = $this->get_repository_or_null();
 
-		if ( ! $this->repository ) {
+		if ( ! $repository ) {
 			return [
 				'items' => [],
 				'order' => [],
@@ -139,7 +135,7 @@ class Template_Library_Variables_Snapshot_Builder extends Template_Library_Snaps
 			];
 		}
 
-		$collection = $this->repository->load();
+		$collection = $repository->load();
 		$serialized = $collection->serialize();
 
 		return [
@@ -173,13 +169,19 @@ class Template_Library_Variables_Snapshot_Builder extends Template_Library_Snaps
 	}
 
 	protected function save_data( array $items, array $metadata ): array {
+		$repository = $this->get_repository_or_null();
+
+		if ( ! $repository ) {
+			return [];
+		}
+
 		$updated_collection = Variables_Collection::hydrate( [
 			'data' => $items,
 			'watermark' => $metadata['watermark'] ?? 0,
 			'version' => $metadata['version'] ?? Constants::FORMAT_VERSION_V1,
 		] );
 
-		$this->repository->save( $updated_collection );
+		$repository->save( $updated_collection );
 
 		return [
 			'variables' => [

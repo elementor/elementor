@@ -88,13 +88,7 @@ class Source_Cloud extends Source_Base {
 			$data
 		);
 
-		if ( ! empty( $snapshots['global_classes'] ) ) {
-			$data['global_classes'] = $snapshots['global_classes'];
-		}
-
-		if ( ! empty( $snapshots['global_variables'] ) ) {
-			$data['global_variables'] = $snapshots['global_variables'];
-		}
+		static::attach_global_styles_to_data_static( $data, $snapshots );
 
 		// After the upload complete, set the elementor upload state back to false
 		Plugin::$instance->uploads_manager->set_elementor_upload_state( false );
@@ -123,28 +117,7 @@ class Source_Cloud extends Source_Base {
 		];
 
 		if ( is_array( $template_data['content'] ?? null ) ) {
-			$export_context = [
-				'content' => $template_data['content'],
-				'page_settings' => $template_data['page_settings'],
-				'title' => $template_data['title'] ?? '',
-				'type' => $template_data['type'] ?? '',
-			];
-
-			$snapshots = apply_filters(
-				'elementor/template_library/export/build_snapshots',
-				[],
-				$template_data['content'],
-				0,
-				$export_context
-			);
-
-			if ( ! empty( $snapshots['global_classes'] ) ) {
-				$content_payload['global_classes'] = $snapshots['global_classes'];
-			}
-
-			if ( ! empty( $snapshots['global_variables'] ) ) {
-				$content_payload['global_variables'] = $snapshots['global_variables'];
-			}
+			$this->attach_global_styles_to_data( $content_payload, $template_data['content'], 0 );
 		}
 
 		return [
@@ -239,26 +212,15 @@ class Source_Cloud extends Source_Base {
 			'type' => $data['templateType'],
 		];
 
-		$existing_snapshots = [
-			'global_classes' => $data['content']['global_classes'] ?? null,
-			'global_variables' => $data['content']['global_variables'] ?? null,
-		];
-
-		$snapshots = apply_filters(
-			'elementor/template_library/export/build_snapshots',
-			$existing_snapshots,
+		$this->attach_global_styles_to_data(
+			$export_data,
 			$export_data['content'],
 			(int) ( $data['id'] ?? 0 ),
-			$export_data
+			[
+				'global_classes' => $data['content']['global_classes'] ?? null,
+				'global_variables' => $data['content']['global_variables'] ?? null,
+			]
 		);
-
-		if ( ! empty( $snapshots['global_classes'] ) ) {
-			$export_data['global_classes'] = $snapshots['global_classes'];
-		}
-
-		if ( ! empty( $snapshots['global_variables'] ) ) {
-			$export_data['global_variables'] = $snapshots['global_variables'];
-		}
 
 		return [
 			'name' => 'elementor-' . $data['id'] . '-' . gmdate( 'Y-m-d' ) . '.json',

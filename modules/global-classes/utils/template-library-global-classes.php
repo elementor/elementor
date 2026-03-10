@@ -53,50 +53,19 @@ class Template_Library_Global_Classes {
 			$data
 		);
 
-		$content = $result['content'];
+		$processed = Template_Library_Import_Export_Utils::process_import_by_mode(
+			$import_mode,
+			$result['content'],
+			$snapshot,
+			[ Template_Library_Global_Classes_Snapshot_Builder::class, 'merge_snapshot_and_get_id_map' ],
+			[ Template_Library_Global_Classes_Snapshot_Builder::class, 'create_snapshot_as_new' ],
+			[ Template_Library_Global_Classes_Element_Transformer::class, 'rewrite_elements_classes_ids' ],
+			[ Template_Library_Global_Classes_Element_Transformer::class, 'flatten_elements_classes' ]
+		);
 
-		switch ( $import_mode ) {
-			case Template_Library_Import_Export_Utils::IMPORT_MODE_KEEP_FLATTEN:
-				$content = Template_Library_Global_Classes_Element_Transformer::flatten_elements_classes( $content, $snapshot );
-				break;
-
-			case Template_Library_Import_Export_Utils::IMPORT_MODE_KEEP_CREATE:
-				$create_result = Template_Library_Global_Classes_Snapshot_Builder::create_snapshot_as_new( $snapshot );
-				$id_map = $create_result['id_map'] ?? [];
-				$classes_to_flatten = $create_result['ids_to_flatten'] ?? [];
-
-				if ( ! empty( $id_map ) ) {
-					$content = Template_Library_Global_Classes_Element_Transformer::rewrite_elements_classes_ids( $content, $id_map );
-				}
-
-				if ( ! empty( $classes_to_flatten ) ) {
-					$content = Template_Library_Global_Classes_Element_Transformer::flatten_elements_classes( $content, $snapshot, $classes_to_flatten );
-				}
-
-				$result['updated_global_classes'] = $create_result['global_classes'] ?? null;
-				$result['classes_to_flatten'] = $classes_to_flatten;
-				break;
-
-			case Template_Library_Import_Export_Utils::IMPORT_MODE_MATCH_SITE:
-			default:
-				$merge_result = Template_Library_Global_Classes_Snapshot_Builder::merge_snapshot_and_get_id_map( $snapshot );
-				$id_map = $merge_result['id_map'] ?? [];
-				$classes_to_flatten = $merge_result['ids_to_flatten'] ?? [];
-
-				if ( ! empty( $id_map ) ) {
-					$content = Template_Library_Global_Classes_Element_Transformer::rewrite_elements_classes_ids( $content, $id_map );
-				}
-
-				if ( ! empty( $classes_to_flatten ) ) {
-					$content = Template_Library_Global_Classes_Element_Transformer::flatten_elements_classes( $content, $snapshot, $classes_to_flatten );
-				}
-
-				$result['updated_global_classes'] = $merge_result['global_classes'] ?? null;
-				$result['classes_to_flatten'] = $classes_to_flatten;
-				break;
-		}
-
-		$result['content'] = $content;
+		$result['content'] = $processed['content'];
+		$result['updated_global_classes'] = $processed['operation_result']['global_classes'] ?? null;
+		$result['classes_to_flatten'] = $processed['ids_to_flatten'];
 
 		return $result;
 	}

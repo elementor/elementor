@@ -552,4 +552,38 @@ abstract class Source_Base {
 		// PHPCS - Export widget json
 		echo $file_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
+
+	protected function build_global_styles_snapshots( array $content, $template_id, array $context_data, array $existing_snapshots = [] ): array {
+		$snapshots = apply_filters(
+			'elementor/template_library/export/build_snapshots',
+			$existing_snapshots,
+			$content,
+			$template_id,
+			$context_data
+		);
+
+		return $snapshots;
+	}
+
+	protected function attach_global_styles_to_data( array &$data, array $content, $template_id, array $existing_snapshots = [] ): void {
+		$snapshots = $this->build_global_styles_snapshots( $content, $template_id, $data, $existing_snapshots );
+
+		if ( ! empty( $snapshots['global_classes'] ) ) {
+			$data['global_classes'] = $snapshots['global_classes'];
+		}
+
+		if ( ! empty( $snapshots['global_variables'] ) ) {
+			$data['global_variables'] = $snapshots['global_variables'];
+		}
+	}
+
+	protected static function attach_global_styles_to_data_static( array &$data, array $snapshots ): void {
+		if ( ! empty( $snapshots['global_classes'] ) ) {
+			$data['global_classes'] = $snapshots['global_classes'];
+		}
+
+		if ( ! empty( $snapshots['global_variables'] ) ) {
+			$data['global_variables'] = $snapshots['global_variables'];
+		}
+	}
 }

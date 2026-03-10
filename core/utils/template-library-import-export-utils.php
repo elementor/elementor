@@ -99,9 +99,15 @@ class Template_Library_Import_Export_Utils {
 
 	public static function generate_unique_id( array $existing_ids, string $prefix = 'g-' ): string {
 		$existing = array_fill_keys( $existing_ids, true );
+		$max_attempts = 1000;
+		$attempts = 0;
 
 		do {
-			$random = substr( strtolower( dechex( wp_rand( 0, PHP_INT_MAX ) ) ), 0, 7 );
+			if ( ++$attempts > $max_attempts ) {
+				return $prefix . self::generate_random_string( 12 );
+			}
+
+			$random = substr( strtolower( dechex( wp_rand( 0, PHP_INT_MAX ) ) ), 0, self::DEFAULT_RANDOM_STRING_LENGTH );
 			$id = $prefix . $random;
 		} while ( isset( $existing[ $id ] ) );
 
@@ -156,6 +162,7 @@ class Template_Library_Import_Export_Utils {
 				$new_label = $prefix . $base_label . $counter;
 			}
 		} else {
+			$available_length = strlen( $original_label );
 			$new_label = $prefix . $original_label;
 
 			if ( strlen( $new_label ) > $max_length ) {
@@ -164,7 +171,7 @@ class Template_Library_Import_Export_Utils {
 			}
 
 			$counter = 1;
-			$base_label = substr( $original_label, 0, $available_length ?? strlen( $original_label ) );
+			$base_label = substr( $original_label, 0, $available_length );
 
 			while ( in_array( $new_label, $existing_labels, true ) ) {
 				$new_label = $prefix . $base_label . $counter;
@@ -180,6 +187,62 @@ class Template_Library_Import_Export_Utils {
 		}
 
 		return $new_label;
+	}
+
+	public static function process_import_by_mode(
+		string $import_mode,
+		array $content,
+		array $snapshot,
+		callable $merge_fn,
+		callable $create_fn,
+		callable $rewrite_fn,
+		callable $flatten_fn
+	): array {
+		$id_map = [];
+		$ids_to_flatten = [];
+		$operation_result = [];
+
+		switch ( $import_mode ) {
+			case self::IMPORT_MODE_KEEP_FLATTEN:
+				$content = $flatten_fn( $content, $snapshot );
+				break;
+
+			case self::IMPORT_MODE_KEEP_CREATE:
+				$operation_result = $create_fn( $snapshot );
+				$id_map = $operation_result['id_map'] ?? [];
+				$ids_to_flatten = $operation_result['ids_to_flatten'] ?? [];
+
+				if ( ! empty( $id_map ) ) {
+					$content = $rewrite_fn( $content, $id_map );
+				}
+
+				if ( ! empty( $ids_to_flatten ) ) {
+					$content = $flatten_fn( $content, $snapshot, $ids_to_flatten );
+				}
+				break;
+
+			case self::IMPORT_MODE_MATCH_SITE:
+			default:
+				$operation_result = $merge_fn( $snapshot );
+				$id_map = $operation_result['id_map'] ?? [];
+				$ids_to_flatten = $operation_result['ids_to_flatten'] ?? [];
+
+				if ( ! empty( $id_map ) ) {
+					$content = $rewrite_fn( $content, $id_map );
+				}
+
+				if ( ! empty( $ids_to_flatten ) ) {
+					$content = $flatten_fn( $content, $snapshot, $ids_to_flatten );
+				}
+				break;
+		}
+
+		return [
+			'content' => $content,
+			'id_map' => $id_map,
+			'ids_to_flatten' => $ids_to_flatten,
+			'operation_result' => $operation_result,
+		];
 	}
 
 	public static function filter_items_by_ids( array $items, array $ids ): array {
