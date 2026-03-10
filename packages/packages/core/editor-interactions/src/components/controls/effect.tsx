@@ -5,6 +5,8 @@ import { type FieldProps } from '../../types';
 import { PromotionSelect } from '../../ui/promotion-select';
 import { DEFAULT_VALUES } from '../interaction-details';
 
+const TRACKING_DATA = { target_name: 'interactions_effect', location_l2: 'interactions' } as const;
+
 export const EFFECT_OPTIONS = {
 	fade: __( 'Fade', 'elementor' ),
 	slide: __( 'Slide', 'elementor' ),
@@ -35,6 +37,7 @@ export function Effect( { value, onChange }: FieldProps ) {
 				'elementor'
 			) }
 			upgradeUrl="https://go.elementor.com/go-pro-interactions-custom-effect-modal/"
+			trackingData={ TRACKING_DATA }
 		/>
 	);
 }
