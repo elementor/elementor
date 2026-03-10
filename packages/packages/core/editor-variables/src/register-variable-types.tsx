@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { trackUpgradePromotionClick } from '@elementor/editor-controls';
 import { colorPropTypeUtil, sizePropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 import { CtaButton } from '@elementor/editor-ui';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
@@ -69,7 +70,15 @@ export function registerVariableTypes() {
 		styleTransformer: EmptyTransformer,
 		variableType: 'size',
 		selectionFilter: () => [],
-		emptyState: <CtaButton size="small" href={ 'https://go.elementor.com/go-pro-panel-size-variable/' } />,
+		emptyState: (
+			<CtaButton
+				size="small"
+				href={ 'https://go.elementor.com/go-pro-panel-size-variable/' }
+				onClick={ () =>
+					trackUpgradePromotionClick( { target_name: 'variables_popover', location_l1: 'variables_list' } )
+				}
+			/>
+		),
 	};
 
 	registerVariableType( {
