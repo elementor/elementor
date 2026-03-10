@@ -181,7 +181,7 @@ const NoDynamicTags = () => (
 			<CtaButton
 				size="small"
 				href={ PRO_DYNAMIC_TAGS_URL }
-				onClick={ () => trackUpgradePromotionClick( { target_name: 'dynamic_tags', location_l1: 'style' } ) }
+				onClick={ () => trackUpgradePromotionClick( { target_name: 'dynamic_tags' } ) }
 			/>
 		</Stack>
 	</>

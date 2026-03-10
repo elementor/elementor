@@ -320,7 +320,6 @@ describe( '<DynamicSelection />', () => {
 			// Assert.
 			expect( trackViewPromotion ).toHaveBeenCalledWith( {
 				target_name: 'dynamic_tags',
-				location_l1: 'style',
 			} );
 		} );
 
@@ -363,7 +362,6 @@ describe( '<DynamicSelection />', () => {
 			// Assert.
 			expect( trackUpgradePromotionClick ).toHaveBeenCalledWith( {
 				target_name: 'dynamic_tags',
-				location_l1: 'style',
 			} );
 		} );
 
