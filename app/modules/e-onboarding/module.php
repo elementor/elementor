@@ -23,7 +23,6 @@ class Module extends BaseModule {
 	const VERSION = '1.0.0';
 	const EXPERIMENT_NAME = 'e_onboarding';
 	const ASSETS_BASE_URL = 'https://assets.elementor.com/onboarding/v1/strings/';
-	const VIDEOS_BASE_URL = 'https://assets.elementor.com/onboarding/v1/videos/';
 
 	const SUPPORTED_LOCALES = [
 		'de_DE',
@@ -70,6 +69,7 @@ class Module extends BaseModule {
 			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_starter_settings' ] );
 			add_filter( 'elementor/editor/v2/packages', [ $this, 'add_starter_packages' ] );
 			add_action( 'elementor/editor/v2/styles/enqueue', [ $this, 'enqueue_fonts' ] );
+			add_action( 'elementor/preview/enqueue_styles', [ $this, 'enqueue_starter_preview_css' ] );
 		}
 	}
 
@@ -89,6 +89,17 @@ class Module extends BaseModule {
 			[],
 			ELEMENTOR_VERSION
 		);
+	}
+
+	public function enqueue_starter_preview_css(): void {
+		$css = '
+			#site-header,
+			.page-header { display: var(--e-starter-header-display, none); }
+		';
+
+		wp_register_style( 'elementor-starter-preview', false );
+		wp_enqueue_style( 'elementor-starter-preview' );
+		wp_add_inline_style( 'elementor-starter-preview', $css );
 	}
 
 	public function progress_manager(): Onboarding_Progress_Manager {
@@ -130,7 +141,6 @@ class Module extends BaseModule {
 				'comparePlans' => 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash',
 				'createNewPage' => Plugin::$instance->documents->get_create_new_post_url(),
 				'upgradeUrl' => 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar&utm_term=2.0.0',
-				'videosBaseUrl' => self::VIDEOS_BASE_URL,
 			],
 		] );
 	}
