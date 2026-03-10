@@ -28,7 +28,7 @@ const FullscreenCardRoot = styled( Box, {
 const Backdrop = styled( Box )( ( { theme } ) => ( {
 	position: 'absolute',
 	inset: 0,
-	backgroundColor: theme.palette.text.primary,
+	backgroundColor: theme.palette.mode === 'dark' ? theme.palette.common.black : theme.palette.text.primary,
 	opacity: BACKDROP_OPACITY,
 } ) );
 
@@ -74,6 +74,8 @@ export const SecondaryButton = styled( Button )( ( { theme } ) => ( {
 } ) );
 
 export const SocialIconWrapper = styled( Paper )( ( { theme } ) => ( {
+	backgroundImage: 'none',
+	backgroundColor: 'transparent',
 	width: theme.spacing( 3.5 ),
 	height: theme.spacing( 3.5 ),
 	borderRadius: '50%',
@@ -115,13 +117,10 @@ interface FullscreenCardProps {
 }
 
 export function FullscreenCard( { children, 'data-testid': testId }: FullscreenCardProps ) {
-	const theme = useTheme();
-	const elevation = theme.palette.mode === 'dark' ? 0 : 24;
-
 	return (
 		<FullscreenCardRoot backgroundUrl={ backgroundUrl } data-testid={ testId }>
 			<Backdrop />
-			<Card elevation={ elevation }>{ children }</Card>
+			<Card elevation="24">{ children }</Card>
 		</FullscreenCardRoot>
 	);
 }
