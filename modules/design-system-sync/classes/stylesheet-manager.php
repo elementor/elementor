@@ -2,9 +2,9 @@
 
 namespace Elementor\Modules\DesignSystemSync\Classes;
 
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Files\Base as Base_File;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
-use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -62,100 +62,52 @@ class Stylesheet_Manager {
 	}
 
 	private function build_css(): string {
-		$css_entries = [];
+		$grouped_entries = [];
+		$desktop_key = Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP;
 
-		$synced_variables = Variables_Provider::get_synced_color_variables();
+		$color_entries = Variables_Provider::get_synced_color_css_entries();
 
-		if ( ! empty( $synced_variables ) ) {
-			$css_entries = array_merge( $css_entries, $this->get_variables_css_entries( $synced_variables ) );
+		if ( ! empty( $color_entries ) ) {
+			$grouped_entries[ $desktop_key ] = $color_entries;
 		}
 
-		$synced_classes = Classes_Provider::get_synced_classes();
+		$typography_entries = Classes_Provider::get_synced_typography_css_entries();
 
-		if ( ! empty( $synced_classes ) ) {
-			$css_entries = array_merge( $css_entries, $this->get_classes_css_entries( $synced_classes ) );
+		foreach ( $typography_entries as $device => $entries ) {
+			$grouped_entries[ $device ] = array_merge( $grouped_entries[ $device ] ?? [], $entries );
 		}
 
-		if ( empty( $css_entries ) ) {
+		if ( empty( $grouped_entries ) ) {
 			return '';
 		}
 
-		return ':root { ' . implode( ' ', $css_entries ) . ' }';
+		return $this->render_grouped_css( $grouped_entries );
 	}
 
-	private function get_v3_global_type( string $type ): string {
-		$type_map = [
-			'global-color-variable' => 'color',
-			'global-font-variable' => 'typography',
-		];
+	private function render_grouped_css( array $grouped_entries ): string {
+		$css = '';
+		$desktop_key = Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP;
 
-		return $type_map[ $type ] ?? 'color';
-	}
-
-	private function get_variables_css_entries( array $synced_variables ): array {
-		$css_entries = [];
-
-		foreach ( $synced_variables as $id => $variable ) {
-			$label = sanitize_text_field( $variable['label'] ?? '' );
-
-			if ( empty( $label ) ) {
-				continue;
-			}
-
-			$v3_id = Variables_Provider::get_v4_variable_id( $label );
-			$type = $variable['type'];
-			$global_type = $this->get_v3_global_type( $type ?? '' );
-
-			$css_entries[] = "--e-global-{$global_type}-{$v3_id}:var(--{$label});";
+		if ( ! empty( $grouped_entries[ $desktop_key ] ) ) {
+			$css .= ':root { ' . implode( ' ', $grouped_entries[ $desktop_key ] ) . ' }';
 		}
 
-		return $css_entries;
-	}
+		$breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
-	private function get_classes_css_entries( array $synced_classes ): array {
-		$css_entries = [];
-
-		$schema = Style_Schema::get();
-		$props_resolver = Render_Props_Resolver::for_styles();
-
-		foreach ( $synced_classes as $id => $class ) {
-			$label = sanitize_text_field( $class['label'] ?? '' );
-
-			if ( empty( $label ) ) {
+		foreach ( $grouped_entries as $device => $entries ) {
+			if ( $desktop_key === $device || empty( $entries ) ) {
 				continue;
 			}
 
-			$variants = $class['variants'] ?? [];
-
-			$props = Classes_Provider::get_default_breakpoint_props( $variants );
-
-			if ( empty( $props ) ) {
+			if ( ! isset( $breakpoints[ $device ] ) ) {
 				continue;
 			}
 
-			if ( ! Classes_Provider::has_typography_props( $props ) ) {
-				continue;
-			}
-
-			$resolved_props = $props_resolver->resolve( $schema, $props );
-
-			$this->add_typography_css_entries( $label, $resolved_props, $css_entries );
+			$max_width = $breakpoints[ $device ]->get_value();
+			$css .= " @media(max-width:{$max_width}px){ :root { " . implode( ' ', $entries ) . ' } }';
 		}
 
-		return $css_entries;
-	}
-
-	private function add_typography_css_entries( string $label, array $resolved_props, array &$css_entries ): void {
-		foreach ( Classes_Provider::TYPOGRAPHY_PROPS as $prop_name ) {
-			if ( ! isset( $resolved_props[ $prop_name ] ) || empty( $resolved_props[ $prop_name ] ) ) {
-				continue;
-			}
-
-			$css_value = $resolved_props[ $prop_name ];
-			$v3_id = 'v4-' . $label;
-
-			$css_entries[] = "--e-global-typography-{$v3_id}-{$prop_name}:{$css_value};";
-		}
+		return $css;
 	}
 
 	private function get_base_dir(): string {

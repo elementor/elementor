@@ -61,4 +61,23 @@ class Variables_Provider {
 	public static function get_v4_variable_id( string $label ): string {
 		return 'v4-' . strtolower( $label );
 	}
+
+	public static function get_synced_color_css_entries(): array {
+		$synced_variables = self::get_synced_color_variables();
+		$css_entries = [];
+
+		foreach ( $synced_variables as $id => $variable ) {
+			$label = sanitize_text_field( $variable['label'] ?? '' );
+
+			if ( empty( $label ) ) {
+				continue;
+			}
+
+			$v3_id = self::get_v4_variable_id( $label );
+
+			$css_entries[] = "--e-global-color-{$v3_id}:var(--{$label});";
+		}
+
+		return $css_entries;
+	}
 }

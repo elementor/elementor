@@ -171,6 +171,106 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		expect( elementEvent.defaultPrevented ).toBe( false );
 	} );
 
+	describe( 'atomic form field label resolution', () => {
+		const createForm = () => {
+			const form = document.createElement( 'form' );
+			form.setAttribute( 'data-element_type', 'e-form' );
+			form.setAttribute( 'data-id', 'test-form' );
+			document.body.appendChild( form );
+			return form;
+		};
+
+		const createInput = ( attrs = {} ) => {
+			const input = document.createElement( 'input' );
+			input.setAttribute( 'type', 'text' );
+			Object.entries( attrs ).forEach( ( [ key, value ] ) => {
+				input.setAttribute( key, value );
+			} );
+			return input;
+		};
+
+		it( 'prefers aria-label over everything else', async () => {
+			await importHandlers();
+			const form = createForm();
+			const input = createInput( {
+				'aria-label': 'Aria Label',
+				placeholder: 'Placeholder',
+				id: 'field-1',
+				'data-interaction-id': 'f1',
+			} );
+			const label = document.createElement( 'label' );
+			label.setAttribute( 'for', 'field-1' );
+			label.textContent = 'Label Element';
+			form.appendChild( label );
+			form.appendChild( input );
+
+			const fields = [];
+			form.querySelectorAll( 'input[data-interaction-id]' ).forEach( ( el ) => {
+				const ariaLabel = el.getAttribute( 'aria-label' );
+				fields.push( ariaLabel );
+			} );
+
+			expect( fields[ 0 ] ).toBe( 'Aria Label' );
+		} );
+
+		it( 'prefers label[for] over placeholder', async () => {
+			await importHandlers();
+			const form = createForm();
+			const input = createInput( {
+				placeholder: 'your@mail.com',
+				id: 'field-email',
+				'data-interaction-id': 'f2',
+			} );
+			const label = document.createElement( 'label' );
+			label.setAttribute( 'for', 'field-email' );
+			label.textContent = 'Email';
+			form.appendChild( label );
+			form.appendChild( input );
+
+			const fieldId = input.getAttribute( 'id' );
+			const labelElement = form.querySelector( `label[for="${ fieldId }"]` );
+
+			expect( labelElement.textContent.trim() ).toBe( 'Email' );
+		} );
+
+		it( 'uses placeholder as last resort', async () => {
+			await importHandlers();
+			const form = createForm();
+			const input = createInput( {
+				placeholder: 'Enter your name',
+				'data-interaction-id': 'f3',
+			} );
+			form.appendChild( input );
+
+			const ariaLabel = input.getAttribute( 'aria-label' );
+			const fieldId = input.getAttribute( 'id' );
+			const labelElement = fieldId ? form.querySelector( `label[for="${ fieldId }"]` ) : null;
+			const placeholder = input.getAttribute( 'placeholder' );
+
+			expect( ariaLabel ).toBeNull();
+			expect( labelElement ).toBeNull();
+			expect( placeholder ).toBe( 'Enter your name' );
+		} );
+
+		it( 'uses parent label when no aria-label, for-label, or placeholder', async () => {
+			await importHandlers();
+			const form = createForm();
+			const parentLabel = document.createElement( 'label' );
+			parentLabel.textContent = 'Parent Label';
+			const input = createInput( { 'data-interaction-id': 'f4' } );
+			parentLabel.appendChild( input );
+			form.appendChild( parentLabel );
+
+			const ariaLabel = input.getAttribute( 'aria-label' );
+			const fieldId = input.getAttribute( 'id' );
+			const closestLabel = input.closest( 'label' );
+
+			expect( ariaLabel ).toBeNull();
+			expect( fieldId ).toBeNull();
+			expect( closestLabel.textContent.trim() ).toBe( 'Parent Label' );
+		} );
+	} );
+
 	it( 'adds non-whitelisted editor link actions', async () => {
 		// Arrange
 		global.elementor = {};
