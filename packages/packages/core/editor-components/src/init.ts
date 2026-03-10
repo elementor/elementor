@@ -18,11 +18,13 @@ import { componentInstanceTransformer } from './component-instance-transformer';
 import { componentOverridableTransformer } from './component-overridable-transformer';
 import { componentOverrideTransformer } from './component-override-transformer';
 import { Components } from './components/components-tab/components';
+import { openDetachConfirmDialog } from './components/detach-instance-confirmation-dialog';
 import { openEditModeDialog } from './components/in-edit-mode';
 import { InstanceEditingPanel } from './components/instance-editing-panel/instance-editing-panel';
 import { LoadTemplateComponents } from './components/load-template-components';
 import { COMPONENT_WIDGET_TYPE, createComponentType } from './create-component-type';
 import { initExtended } from './extended/init';
+import { initCreateComponentShortcut } from './extended/shortcuts/create-component-shortcut';
 import { PopulateStore } from './populate-store';
 import { initCircularNestingPrevention } from './prevent-circular-nesting';
 import { loadComponentsAssets } from './store/actions/load-components-assets';
@@ -41,7 +43,11 @@ export function init() {
 	registerSlice( slice );
 
 	registerElementType( COMPONENT_WIDGET_TYPE, ( options: CreateTemplatedElementTypeOptions ) =>
-		createComponentType( { ...options, showLockedByModal: openEditModeDialog } )
+		createComponentType( {
+			...options,
+			showLockedByModal: openEditModeDialog,
+			showDetachConfirmDialog: openDetachConfirmDialog,
+		} )
 	);
 
 	( window as unknown as ExtendedWindow ).elementorCommon.__beforeSave = beforeSave;
@@ -89,5 +95,9 @@ export function init() {
 
 	if ( !! window.elementorPro && ! isProAtLeast( PRO_EXTENDED_MIGRATION_VERSION ) ) {
 		initExtended();
+	}
+
+	if ( !! window.elementorPro ) {
+		initCreateComponentShortcut();
 	}
 }
