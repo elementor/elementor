@@ -144,8 +144,13 @@
     "write": "^2.0.0"
   },
   "dependencies": {
+<<<<<<< HEAD
     "@elementor/elementor-one-assets": "0.4.26",
     "@elementor/icons": "1.63.0",
+=======
+    "@elementor/elementor-one-assets": "0.4.28",
+    "@elementor/icons": "1.68.0",
+>>>>>>> 7257de37f8 (Internal: Bump packages [ED-23219] (#35049))
     "@elementor/ui": "1.36.17",
     "@reach/router": "1.3.4",
     "@reduxjs/toolkit": "^1.8.3",
