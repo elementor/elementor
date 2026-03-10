@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { CrownFilledIcon, PencilIcon } from '@elementor/icons';
-import { Alert, AlertAction, AlertTitle, Box, Stack, Typography } from '@elementor/ui';
+import { PencilIcon } from '@elementor/icons';
+import { Box, Stack } from '@elementor/ui';
 import { hasProInstalled } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { useComponentsPermissions } from '../../hooks/use-components-permissions';
 import { ComponentInstanceProvider } from '../../provider/component-instance-context';
+import { ComponentsUpgradeAlert } from '../components-upgrade-alert';
 import { DetachAction } from './detach-action';
 import { EmptyState } from './empty-state';
 import { InstancePanelBody } from './instance-panel-body';
@@ -50,38 +51,13 @@ export function InstanceEditingPanel() {
 					componentInstanceId={ componentInstanceId }
 				/>
 			</ComponentInstanceProvider>
-			{ ! hasPro && <InstanceEditUpgradeAlert /> }
-		</Box>
-	);
-}
-
-function InstanceEditUpgradeAlert() {
-	return (
-		<Box sx={ { mt: 'auto' } }>
-			<Alert
-				variant="standard"
-				color="promotion"
-				icon={ <CrownFilledIcon fontSize="tiny" /> }
-				role="status"
-				size="small"
-				action={
-					<AlertAction
-						variant="contained"
-						color="promotion"
-						href={ EDIT_UPGRADE_URL }
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						{ __( 'Upgrade now', 'elementor' ) }
-					</AlertAction>
-				}
-				sx={ { m: 2, mt: 1 } }
-			>
-				<AlertTitle>{ __( 'Edit components', 'elementor' ) }</AlertTitle>
-				<Typography variant="caption">
-					{ __( 'Editing components requires an active Pro subscription.', 'elementor' ) }
-				</Typography>
-			</Alert>
+			{ ! hasPro && (
+				<ComponentsUpgradeAlert
+					title={ __( 'Edit components', 'elementor' ) }
+					description={ __( 'Editing components requires an active Pro subscription.', 'elementor' ) }
+					upgradeUrl={ EDIT_UPGRADE_URL }
+				/>
+			) }
 		</Box>
 	);
 }
