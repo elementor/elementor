@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
-	const VERSION = '1.0.0';
+	const VERSION = '2.0.0';
 	const EXPERIMENT_NAME = 'e_onboarding';
 	const ASSETS_BASE_URL = 'https://assets.elementor.com/onboarding/v1/strings/';
 
@@ -138,9 +138,9 @@ class Module extends BaseModule {
 				'dashboard' => admin_url(),
 				'editor' => admin_url( 'edit.php?post_type=elementor_library' ),
 				'connect' => $this->get_connect_url(),
-				'comparePlans' => 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash',
+				'comparePlans' => 'https://go.elementor.com/go-pro-onboarding-editor-features-step-upgrade/',
 				'createNewPage' => Plugin::$instance->documents->get_create_new_post_url(),
-				'upgradeUrl' => 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar&utm_term=2.0.0',
+				'upgradeUrl' => 'https://go.elementor.com/go-pro-onboarding-editor-header-upgrade/',
 			],
 		] );
 	}
@@ -177,7 +177,13 @@ class Module extends BaseModule {
 			return '';
 		}
 
-		return $library->get_admin_url( 'authorize' ) ?? '';
+		return $library->get_admin_url( 'authorize', [
+			'utm_source' => 'onboarding-wizard',
+			'utm_campaign' => 'connect-account',
+			'utm_medium' => 'wp-dash',
+			'utm_term' => self::VERSION,
+			'source' => 'generic',
+		] ) ?? '';
 	}
 
 	private function get_library_app() {
