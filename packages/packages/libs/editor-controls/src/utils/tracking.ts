@@ -28,7 +28,7 @@ const getBaseEventProperties = ( data: PromotionTrackingData, config: MixpanelCo
 
 const dispatchPromotionEvent = (
 	data: PromotionTrackingData,
-	resolveOptions: ( config: MixpanelConfig ) => PromotionEventOptions,
+	resolveOptions: ( config: MixpanelConfig ) => PromotionEventOptions
 ) => {
 	const { dispatchEvent, config } = getMixpanel();
 	const { eventName, interactionResult, interactionDescription } = resolveOptions( config );
