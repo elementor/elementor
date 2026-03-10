@@ -138,7 +138,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, d
 			trackViewPromotion( {
 				target_name: 'variables_popover',
 				target_location: 'widget_panel',
-				location_l1: 'variables list',
+				location_l1: 'variables_list',
 			} );
 		}
 	}, [ disabled ] );
