@@ -135,7 +135,6 @@
                             "classes": {
                                 "$$type": "classes",
                                 "value": [
-                                    "e-ELEMID00-LOCAL00",
                                     "e-ELEMID00-LOCAL00"
                                 ]
                             }
@@ -150,31 +149,31 @@
                                 "label": "local",
                                 "type": "class",
                                 "variants": [
-     {
-      "meta": {
-       "breakpoint": "desktop",
-       "state": null
-      },
-      "props": {
-       "font-family": {
-        "$$type": "string",
-        "value": "Verdana"
-       },
-       "font-weight": {
-        "$$type": "string",
-        "value": "700"
-       },
-       "display": {
-        "$$type": "string",
-        "value": "flex"
-       },
-       "justify-content": {
-        "$$type": "string",
-        "value": "center"
-       }
-      },
-      "custom_css": null
-     },
+                                    {
+                                        "meta": {
+                                            "breakpoint": "desktop",
+                                            "state": null
+                                        },
+                                        "props": {
+                                            "font-family": {
+                                                "$$type": "string",
+                                                "value": "Verdana"
+                                            },
+                                            "font-weight": {
+                                                "$$type": "string",
+                                                "value": "700"
+                                            },
+                                            "display": {
+                                                "$$type": "string",
+                                                "value": "flex"
+                                            },
+                                            "justify-content": {
+                                                "$$type": "string",
+                                                "value": "center"
+                                            }
+                                        },
+                                        "custom_css": null
+                                    },
                                     {
                                         "meta": {
                                             "breakpoint": "desktop",
