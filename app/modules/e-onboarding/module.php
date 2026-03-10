@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
-	const VERSION = '1.0.0';
+	const VERSION = '2.0.0';
 	const EXPERIMENT_NAME = 'e_onboarding';
 	const ASSETS_BASE_URL = 'https://assets.elementor.com/onboarding/v1/strings/';
 
@@ -165,7 +165,13 @@ class Module extends BaseModule {
 			return '';
 		}
 
-		return $library->get_admin_url( 'authorize' ) ?? '';
+		return $library->get_admin_url( 'authorize', [
+			'utm_source' => 'onboarding-wizard',
+			'utm_campaign' => 'connect-account',
+			'utm_medium' => 'wp-dash',
+			'utm_term' => self::VERSION,
+			'source' => 'generic',
+		] ) ?? '';
 	}
 
 	private function get_library_app() {
