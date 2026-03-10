@@ -3,6 +3,9 @@
  * The code should be moved to the appropriate packages.
  */
 
+import { EyeIcon } from '@elementor/icons';
+
+import { toolsMenu } from '../locations';
 import { init as initConnect } from './connect';
 import { init as initDocumentsPreview } from './documents-preview';
 import { init as initDocumentsSave } from './documents-save';
@@ -37,4 +40,22 @@ export function init() {
 	initUserPreferences();
 	initWordpress();
 	initConnect();
+
+	setTimeout( () => {
+		toolsMenu.registerAction( {
+			id: 'test-promotion-modal',
+			priority: 30,
+			props: {
+				id: 'test-promotion-modal',
+				title: 'Test Promotion Modal',
+				icon: EyeIcon,
+				promotionModal: {
+					content: 'This is a test promotion modal',
+					ctaLabel: 'Test CTA',
+					condition: () => true,
+				},
+				onClick: () => console.log( 'miau' ), // eslint-disable-line no-console
+			},
+		} );
+	}, 1000 );
 }
