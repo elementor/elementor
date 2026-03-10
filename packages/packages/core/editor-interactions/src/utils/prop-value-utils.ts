@@ -259,7 +259,7 @@ export const buildDisplayLabel = ( item: InteractionItemValue ): string => {
 
 	const triggerLabel = TRIGGER_LABELS[ trigger ] || capitalize( trigger );
 	const effectLabel = capitalize( effect );
-	const typeLabel = capitalize( type );
+	const typeLabel = 'custom' === effect ? '' : capitalize( type );
 
 	return `${ triggerLabel }: ${ effectLabel } ${ typeLabel }`;
 };
