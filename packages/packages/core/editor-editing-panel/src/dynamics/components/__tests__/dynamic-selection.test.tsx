@@ -369,9 +369,7 @@ describe( '<DynamicSelection />', () => {
 		it( 'should call trackUpgradePromotionClick when CTA in ExpiredDynamicTags is clicked', () => {
 			// Arrange.
 			jest.mocked( usePropDynamicTags ).mockReturnValue(
-				mockDynamicTags( [
-					{ name: 'tag1', label: 'Tag 1', group: 'group1' },
-				] )
+				mockDynamicTags( [ { name: 'tag1', label: 'Tag 1', group: 'group1' } ] )
 			);
 
 			const props = {
@@ -394,9 +392,7 @@ describe( '<DynamicSelection />', () => {
 		it( 'should not call trackViewPromotion when dynamic tags are available and not expired', () => {
 			// Arrange.
 			jest.mocked( usePropDynamicTags ).mockReturnValue(
-				mockDynamicTags( [
-					{ name: 'tag1', label: 'Tag 1', group: 'group1' },
-				] )
+				mockDynamicTags( [ { name: 'tag1', label: 'Tag 1', group: 'group1' } ] )
 			);
 
 			const props = {

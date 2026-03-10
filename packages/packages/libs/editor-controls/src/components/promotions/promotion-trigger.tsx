@@ -3,7 +3,7 @@ import { forwardRef, type ReactNode, useCallback, useImperativeHandle, useState 
 import { PromotionChip, PromotionInfotip } from '@elementor/editor-ui';
 import { Box } from '@elementor/ui';
 
-import { trackViewPromotion, trackUpgradePromotionClick, type PromotionTrackingData } from '../../utils/tracking';
+import { type PromotionTrackingData, trackUpgradePromotionClick, trackViewPromotion } from '../../utils/tracking';
 import type { V4PromotionData, V4PromotionKey } from './types';
 
 function getV4Promotion( key: V4PromotionKey ): V4PromotionData | undefined {

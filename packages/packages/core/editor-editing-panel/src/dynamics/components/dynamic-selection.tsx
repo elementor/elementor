@@ -1,6 +1,6 @@
-import { Fragment, useEffect, useState } from 'react';
 import * as React from 'react';
-import { useBoundProp, trackUpgradePromotionClick, trackViewPromotion } from '@elementor/editor-controls';
+import { Fragment, useEffect, useState } from 'react';
+import { trackUpgradePromotionClick, trackViewPromotion, useBoundProp } from '@elementor/editor-controls';
 import { CtaButton, PopoverHeader, PopoverMenuList, SearchField, SectionPopoverBody } from '@elementor/editor-ui';
 import { DatabaseIcon } from '@elementor/icons';
 import { Divider, Link, Stack, Typography, useTheme } from '@elementor/ui';
@@ -182,7 +182,11 @@ const NoDynamicTags = () => (
 			<Typography align="center" variant="caption" width={ PROMO_TEXT_WIDTH }>
 				{ __( 'Upgrade now to display your content dynamically.', 'elementor' ) }
 			</Typography>
-			<CtaButton size="small" href={ PRO_DYNAMIC_TAGS_URL } onClick={ () => trackUpgradePromotionClick( { target_name: 'dynamic_tags', location_l1: 'style' } ) } />
+			<CtaButton
+				size="small"
+				href={ PRO_DYNAMIC_TAGS_URL }
+				onClick={ () => trackUpgradePromotionClick( { target_name: 'dynamic_tags', location_l1: 'style' } ) }
+			/>
 		</Stack>
 	</>
 );
@@ -206,7 +210,12 @@ const ExpiredDynamicTags = () => (
 			<Typography align="center" variant="caption" width={ PROMO_TEXT_WIDTH }>
 				{ __( 'Dynamic tags need Elementor Pro. Renew now to keep them active.', 'elementor' ) }
 			</Typography>
-			<CtaButton size="small" href={ RENEW_DYNAMIC_TAGS_URL } onClick={ () => trackUpgradePromotionClick( { target_name: 'dynamic_tags' } ) } children={ __( 'Renew Now', 'elementor' ) } />
+			<CtaButton
+				size="small"
+				href={ RENEW_DYNAMIC_TAGS_URL }
+				onClick={ () => trackUpgradePromotionClick( { target_name: 'dynamic_tags' } ) }
+				children={ __( 'Renew Now', 'elementor' ) }
+			/>
 		</Stack>
 	</>
 );

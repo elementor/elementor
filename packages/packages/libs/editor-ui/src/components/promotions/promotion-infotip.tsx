@@ -33,7 +33,11 @@ export const PromotionInfotip = ( { children, open, onClose, onCtaClick, ...card
 	useCanvasClickHandler( !! open, onClose );
 
 	return (
-		<Infotip placement="right" content={ <InfotipCard onClose={ onClose } onCtaClick={ onCtaClick } { ...cardProps } /> } open={ open }>
+		<Infotip
+			placement="right"
+			content={ <InfotipCard onClose={ onClose } onCtaClick={ onCtaClick } { ...cardProps } /> }
+			open={ open }
+		>
 			{ children }
 		</Infotip>
 	);

@@ -16,7 +16,9 @@ export const CustomCssSection = () => {
 				name: 'Custom CSS',
 				title: __( 'Custom CSS', 'elementor' ),
 				action: {
-					component: <PromotionTrigger ref={ triggerRef } promotionKey="customCss" trackingData={ TRACKING_DATA } />,
+					component: (
+						<PromotionTrigger ref={ triggerRef } promotionKey="customCss" trackingData={ TRACKING_DATA } />
+					),
 					onClick: () => triggerRef.current?.toggle(),
 				},
 			} }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { forwardRef, type MouseEvent, type RefObject, useCallback, useImperativeHandle, useState } from 'react';
-import { type PromotionTrackingData, trackViewPromotion, trackUpgradePromotionClick } from '@elementor/editor-controls';
+import { type PromotionTrackingData, trackUpgradePromotionClick, trackViewPromotion } from '@elementor/editor-controls';
 import { PromotionChip, PromotionPopover, useCanvasClickHandler } from '@elementor/editor-ui';
 import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
