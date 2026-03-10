@@ -71,6 +71,7 @@ function getEmptyState(): OnboardingState {
 		isLoading: false,
 		error: null,
 		hadUnexpectedExit: false,
+		resumeStepIdForTracking: null,
 		isConnected: false,
 		isGuest: false,
 		userName: '',
@@ -110,7 +111,8 @@ function buildStateFromConfig(
 		choices: { ...getDefaultChoices(), ...config.choices },
 		isLoading: false,
 		error: null,
-		hadUnexpectedExit: config.hadUnexpectedExit ?? false,
+		hadUnexpectedExit: false,
+		resumeStepIdForTracking: config.hadUnexpectedExit ? currentStepId : null,
 		isConnected: config.isConnected ?? false,
 		isGuest: false,
 		userName: config.userName ?? '',
@@ -134,8 +136,7 @@ export const slice = __createSlice( {
 			const config = window.elementorAppConfig?.[ 'e-onboarding' ];
 
 			if ( config ) {
-				const newState = buildStateFromConfig( config );
-				return newState;
+				return buildStateFromConfig( config );
 			}
 
 			return state;
@@ -222,6 +223,10 @@ export const slice = __createSlice( {
 			state.hadUnexpectedExit = false;
 		},
 
+		clearResumeStepIdForTracking: ( state ) => {
+			state.resumeStepIdForTracking = null;
+		},
+
 		setConnected: ( state, action: PayloadAction< boolean > ) => {
 			state.isConnected = action.payload;
 		},
@@ -260,6 +265,7 @@ export const {
 	setLoading,
 	setError,
 	clearUnexpectedExit,
+	clearResumeStepIdForTracking,
 	setConnected,
 	setGuest,
 	setShouldShowProInstallScreen,

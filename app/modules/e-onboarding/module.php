@@ -69,6 +69,7 @@ class Module extends BaseModule {
 			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_starter_settings' ] );
 			add_filter( 'elementor/editor/v2/packages', [ $this, 'add_starter_packages' ] );
 			add_action( 'elementor/editor/v2/styles/enqueue', [ $this, 'enqueue_fonts' ] );
+			add_action( 'elementor/preview/enqueue_styles', [ $this, 'enqueue_starter_preview_css' ] );
 		}
 	}
 
@@ -88,6 +89,17 @@ class Module extends BaseModule {
 			[],
 			ELEMENTOR_VERSION
 		);
+	}
+
+	public function enqueue_starter_preview_css(): void {
+		$css = '
+			#site-header,
+			.page-header { display: var(--e-starter-header-display, none); }
+		';
+
+		wp_register_style( 'elementor-starter-preview', false );
+		wp_enqueue_style( 'elementor-starter-preview' );
+		wp_add_inline_style( 'elementor-starter-preview', $css );
 	}
 
 	public function progress_manager(): Onboarding_Progress_Manager {
