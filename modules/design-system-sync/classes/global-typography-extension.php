@@ -3,9 +3,8 @@
 namespace Elementor\Modules\DesignSystemSync\Classes;
 
 use Elementor\Controls_Manager;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
-use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\DesignSystemSync\Controls\V4_Typography_List;
 use Elementor\Plugin;
 
@@ -76,9 +75,6 @@ class Global_Typography_Extension {
 			return $items;
 		}
 
-		$schema = Style_Schema::get();
-		$props_resolver = Render_Props_Resolver::for_styles();
-
 		$v4_items = [];
 
 		foreach ( $v4_classes as $class ) {
@@ -95,8 +91,27 @@ class Global_Typography_Extension {
 				continue;
 			}
 
-			$resolved_props = $props_resolver->resolve( $schema, $props );
-			$value = $this->convert_v4_props_to_v3_format( $resolved_props );
+			$value = $this->convert_v4_props_to_v3_format( $props );
+
+			$variants_props = $class['variants_props'] ?? [];
+
+			foreach ( $variants_props as $breakpoint => $bp_props ) {
+				if ( Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP === $breakpoint ) {
+					continue;
+				}
+
+				if ( empty( $bp_props ) ) {
+					continue;
+				}
+
+				$bp_values = $this->convert_v4_props_to_v3_format( $bp_props );
+
+				foreach ( $bp_values as $key => $val ) {
+					if ( $this->is_responsive_prop( $key ) ) {
+						$value[ $key . '_' . $breakpoint ] = $val;
+					}
+				}
+			}
 
 			$v4_items[ $id ] = [
 				'id' => $id,
@@ -109,25 +124,19 @@ class Global_Typography_Extension {
 		return array_merge( $v4_items, $items );
 	}
 
+	private function is_responsive_prop( string $v3_key ): bool {
+		return in_array( $v3_key, Sync_Typography_Props::RESPONSIVE_V3_PROPS, true );
+	}
+
 	private function convert_v4_props_to_v3_format( array $v4_props ): array {
 		$v3_format = [];
 
-		$prop_map = [
-			'font-family' => 'typography_font_family',
-			'font-size' => 'typography_font_size',
-			'font-weight' => 'typography_font_weight',
-			'font-style' => 'typography_font_style',
-			'text-decoration' => 'typography_text_decoration',
-			'line-height' => 'typography_line_height',
-			'letter-spacing' => 'typography_letter_spacing',
-			'word-spacing' => 'typography_word_spacing',
-			'text-transform' => 'typography_text_transform',
-		];
-
-		foreach ( $prop_map as $v4_prop => $v3_prop ) {
-			if ( isset( $v4_props[ $v4_prop ] ) && ! empty( $v4_props[ $v4_prop ] ) ) {
-				$v3_format[ $v3_prop ] = $v4_props[ $v4_prop ];
+		foreach ( Sync_Typography_Props::PROP_MAP as $v4_prop => $v3_prop ) {
+			if ( ! isset( $v4_props[ $v4_prop ] ) || empty( $v4_props[ $v4_prop ] ) ) {
+				continue;
 			}
+
+			$v3_format[ $v3_prop ] = $this->extract_v4_prop_value( $v4_props[ $v4_prop ] );
 		}
 
 		if ( ! empty( $v3_format ) ) {
@@ -135,5 +144,13 @@ class Global_Typography_Extension {
 		}
 
 		return $v3_format;
+	}
+
+	private function extract_v4_prop_value( $prop ) {
+		if ( ! empty( $prop['value'] ) ) {
+			return $prop['value'];
+		}
+
+		return $prop;
 	}
 }
