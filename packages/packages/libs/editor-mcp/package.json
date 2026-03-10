@@ -47,6 +47,7 @@
     "@elementor/schema": "4.0.0",
     "@elementor/store": "4.0.0",
     "@modelcontextprotocol/sdk": "1.27.1",
+    "@wordpress/api-fetch": "^6.42.0",
     "zod-to-json-schema": "3.24.6"
   }
 }

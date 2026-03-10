@@ -17,7 +17,8 @@ type ComponentEventData = Record< string, unknown > & {
 		| 'propertyExposed'
 		| 'propertyRemoved'
 		| 'propertiesPanelOpened'
-		| 'propertiesGroupCreated';
+		| 'propertiesGroupCreated'
+		| 'detached';
 	source: Source;
 };
 

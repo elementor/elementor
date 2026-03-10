@@ -2,6 +2,7 @@ import {
 	type BackboneModel,
 	type BackboneModelConstructor,
 	type ContextMenuAction,
+	type ContextMenuEventData,
 	type CreateTemplatedElementTypeOptions,
 	createTemplatedElementView,
 	type ElementModel,
@@ -13,6 +14,7 @@ import {
 } from '@elementor/editor-canvas';
 import { getCurrentDocument } from '@elementor/editor-documents';
 import { type V1ElementData } from '@elementor/editor-elements';
+import { notify } from '@elementor/editor-notifications';
 import { __getState as getState } from '@elementor/store';
 import { hasProInstalled } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
@@ -21,15 +23,14 @@ import { apiClient } from './api';
 import { type ComponentInstanceProp } from './prop-types/component-instance-prop-type';
 import { type ComponentsSlice, selectComponentByUid } from './store/store';
 import { type ComponentRenderContext, type ExtendedWindow } from './types';
+import { detachComponentInstance } from './utils/detach-component-instance';
 import { formatComponentElementsId } from './utils/format-component-elements-id';
 import { switchToComponent } from './utils/switch-to-component';
 import { trackComponentEvent } from './utils/tracking';
 
-type ContextMenuEventData = { location: string; secondaryLocation: string; trigger: string };
-
 type ContextMenuGroupConfig = {
 	disable: Record< string, string[] >;
-	add: Record< string, { index: number; action: ContextMenuAction } >;
+	add: Record< string, { index: number; actions: ContextMenuAction[] } >;
 };
 
 type ContextMenuGroup = {
@@ -54,6 +55,26 @@ export const COMPONENT_WIDGET_TYPE = 'e-component';
 
 const EDIT_COMPONENT_UPGRADE_URL = 'https://go.elementor.com/go-pro-components-edit/';
 
+const COMPONENT_EDIT_UPGRADE_NOTIFICATION_ID = 'component-edit-upgrade';
+
+function notifyComponentEditUpgrade() {
+	notify( {
+		type: 'promotion',
+		id: COMPONENT_EDIT_UPGRADE_NOTIFICATION_ID,
+		message: __( 'Editing components requires an active Pro subscription.', 'elementor' ),
+		additionalActionProps: [
+			{
+				size: 'small',
+				variant: 'contained',
+				color: 'promotion',
+				href: EDIT_COMPONENT_UPGRADE_URL,
+				target: '_blank',
+				children: __( 'Upgrade Now', 'elementor' ),
+			},
+		],
+	} );
+}
+
 const updateGroups = ( groups: ContextMenuGroup[], config: ContextMenuGroupConfig ): ContextMenuGroup[] => {
 	const disableMap = new Map( Object.entries( config.disable ?? {} ) );
 	const addMap = new Map( Object.entries( config.add ?? {} ) );
@@ -67,18 +88,21 @@ const updateGroups = ( groups: ContextMenuGroup[], config: ContextMenuGroupConfi
 			disabledActions.includes( action.name ) ? { ...action, isEnabled: () => false } : action
 		);
 
-		// Insert additional action if needed
+		// Insert additional actions if needed
 		if ( addConfig ) {
-			updatedActions.splice( addConfig.index, 0, addConfig.action );
+			updatedActions.splice( addConfig.index, 0, ...addConfig.actions );
 		}
 
 		return { ...group, actions: updatedActions };
 	} );
 };
 
-export function createComponentType(
-	options: CreateTemplatedElementTypeOptions & { showLockedByModal?: ( lockedBy: string ) => void }
-): typeof ElementType {
+type ComponentTypeOptions = CreateTemplatedElementTypeOptions & {
+	showLockedByModal?: ( lockedBy: string ) => void;
+	showDetachConfirmDialog?: ( onConfirm: () => void ) => void;
+};
+
+export function createComponentType( options: ComponentTypeOptions ): typeof ElementType {
 	const legacyWindow = window as unknown as LegacyWindow;
 	const WidgetType = legacyWindow.elementor.modules.elements.types.Widget;
 
@@ -99,11 +123,7 @@ export function createComponentType(
 	};
 }
 
-function createComponentView(
-	options: CreateTemplatedElementTypeOptions & {
-		showLockedByModal?: ( lockedBy: string ) => void;
-	}
-): typeof ElementView {
+function createComponentView( options: ComponentTypeOptions ): typeof ElementView {
 	const legacyWindow = window as unknown as LegacyWindow & ExtendedWindow;
 
 	return class extends createTemplatedElementView( options ) {
@@ -216,21 +236,32 @@ function createComponentView(
 			const isAdministrator = isUserAdministrator();
 			const hasPro = hasProInstalled();
 
-			const proLabel = __( 'PRO', 'elementor' );
-			const badgeClass = 'elementor-context-menu-list__item__shortcut__new-badge';
-			const proBadge = `<a href="${ EDIT_COMPONENT_UPGRADE_URL }" target="_blank" onclick="event.stopPropagation()" class="${ badgeClass }">${ proLabel }</a>`;
+			const badgeClass = 'elementor-context-menu-list__item__shortcut__promotion-badge';
+			const proBadge = `<a href="${ EDIT_COMPONENT_UPGRADE_URL }" target="_blank" onclick="event.stopPropagation()" class="${ badgeClass }"><i class="eicon-upgrade-crown"></i></a>`;
+
+			const editComponentAction: ContextMenuAction = {
+				name: 'edit component',
+				icon: 'eicon-edit',
+				title: () => __( 'Edit Component', 'elementor' ),
+				...( ! hasPro && { shortcut: proBadge, hasShortcutAction: true } ),
+				isEnabled: () => hasPro,
+				callback: ( _: unknown, eventData: ContextMenuEventData ) => this.editComponent( eventData ),
+			};
+
+			const detachInstanceAction: ContextMenuAction = {
+				name: 'detach instance',
+				icon: 'eicon-chain-broken',
+				title: () => __( 'Detach from Component', 'elementor' ),
+				isEnabled: () => true,
+				callback: ( _: unknown, eventData: ContextMenuEventData ) => this.detachInstance( eventData ),
+			};
+
+			const actions = isAdministrator ? [ editComponentAction, detachInstanceAction ] : [ detachInstanceAction ];
 
 			const addedGroup = {
 				general: {
 					index: 1,
-					action: {
-						name: 'edit component',
-						icon: 'eicon-edit',
-						title: () => __( 'Edit Component', 'elementor' ),
-						...( ! hasPro && { shortcut: proBadge, hasShortcutAction: true } ),
-						isEnabled: () => hasPro,
-						callback: ( _: unknown, eventData: ContextMenuEventData ) => this.editComponent( eventData ),
-					},
+					actions,
 				},
 			};
 
@@ -238,7 +269,7 @@ function createComponentView(
 				clipboard: [ 'pasteStyle', 'resetStyle' ],
 			};
 
-			return { add: isAdministrator ? addedGroup : {}, disable: disabledGroup };
+			return { add: addedGroup, disable: disabledGroup };
 		}
 
 		async switchDocument() {
@@ -276,10 +307,42 @@ function createComponentView(
 			} );
 		}
 
+		detachInstance( { trigger, location, secondaryLocation }: ContextMenuEventData ) {
+			const componentId = this.getComponentId();
+			const instanceId = this.model.get( 'id' );
+
+			if ( ! componentId || ! instanceId ) {
+				return;
+			}
+
+			const handleConfirm = async () => {
+				try {
+					await detachComponentInstance( {
+						instanceId,
+						componentId,
+						trackingInfo: { location, secondaryLocation, trigger },
+					} );
+				} catch {
+					notify( {
+						type: 'error',
+						message: __( 'Failed to detach component instance.', 'elementor' ),
+						id: 'detach-component-instance-failed',
+					} );
+				}
+			};
+
+			options.showDetachConfirmDialog?.( handleConfirm );
+		}
+
 		handleDblClick( e: MouseEvent ) {
 			e.stopPropagation();
 
-			if ( ! isUserAdministrator() || ! hasProInstalled() ) {
+			if ( ! isUserAdministrator() ) {
+				return;
+			}
+
+			if ( ! hasProInstalled() ) {
+				notifyComponentEditUpgrade();
 				return;
 			}
 

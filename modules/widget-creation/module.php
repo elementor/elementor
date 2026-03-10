@@ -27,7 +27,7 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Widget Creation', 'elementor' ),
 			'description' => esc_html__( 'Promote widget creation with Angie plugin.', 'elementor' ),
 			'hidden' => true,
-			'default' => ExperimentsManager::STATE_INACTIVE,
+			'default' => ExperimentsManager::STATE_ACTIVE,
 			'release_status' => ExperimentsManager::RELEASE_STATUS_ALPHA,
 		];
 	}

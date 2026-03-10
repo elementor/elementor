@@ -74,7 +74,7 @@ export type ExtendedWindow = Window & {
 	elementorCommon: Record< string, unknown > & {
 		eventsManager: {
 			config: {
-				locations: Record< string, string >;
+				locations: Record< string, string | Record< string, string > >;
 				secondaryLocations: Record< string, string >;
 				triggers: Record< string, string >;
 			};
