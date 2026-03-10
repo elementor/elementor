@@ -3,6 +3,7 @@ import { type Page, expect } from '@playwright/test';
 export const ONBOARDING_URL = '/wp-admin/admin.php?page=elementor-app#onboarding';
 export const USER_CHOICES_ENDPOINT = '/wp-json/elementor/v1/e-onboarding/user-choices';
 export const USER_PROGRESS_ENDPOINT = '/wp-json/elementor/v1/e-onboarding/user-progress';
+const INSTALL_THEME_ENDPOINT = '/wp-json/elementor/v1/e-onboarding/install-theme';
 
 export async function mockOnboardingApi( page: Page ) {
 	const choicesRequests: Record< string, unknown >[] = [];
@@ -36,6 +37,17 @@ export async function mockOnboardingApi( page: Page ) {
 				status: 200,
 				contentType: 'application/json',
 				body: JSON.stringify( { data: 'success' } ),
+			} );
+		},
+	);
+
+	await page.route(
+		( url ) => url.pathname.includes( INSTALL_THEME_ENDPOINT ),
+		async ( route ) => {
+			await route.fulfill( {
+				status: 200,
+				contentType: 'application/json',
+				body: JSON.stringify( { data: { success: true, message: 'Theme installed' } } ),
 			} );
 		},
 	);
@@ -74,6 +86,9 @@ export async function navigateToSiteFeaturesStep( page: Page ) {
 	await doAndWaitForProgress( page, () =>
 		page.getByRole( 'button', { name: 'I have some experience' } ).click(),
 	);
+
+	await expect( page.getByTestId( 'theme-selection-step' ) ).toBeVisible();
+	await page.getByRole( 'radio', { name: 'Hello', exact: true } ).click();
 
 	await doAndWaitForProgress( page, () =>
 		page.getByRole( 'button', { name: 'Continue with this theme' } ).click(),

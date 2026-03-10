@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Stack, Typography, useTheme } from '@elementor/ui';
 
 import { StepTitle } from '../../components/ui/styled-components';
@@ -82,7 +82,7 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 	},
 ];
 
-const CORE_FEATURE_IDS = new Set(
+export const CORE_FEATURE_IDS = new Set(
 	FEATURE_OPTIONS.flatMap( ( option ) => ( option.licenseType === 'core' ? [ option.id ] : [] ) )
 );
 
@@ -103,21 +103,18 @@ export function SiteFeatures() {
 		return combined.filter( ( id, index ) => combined.indexOf( id ) === index );
 	}, [ storedPaidFeatures ] );
 
-	const handleFeatureClick = useCallback(
-		( id: string ) => {
-			if ( CORE_FEATURE_IDS.has( id ) && selectedValues.includes( id ) ) {
-				return;
-			}
+	function handleFeatureClick( id: string ) {
+		if ( CORE_FEATURE_IDS.has( id ) && selectedValues.includes( id ) ) {
+			return;
+		}
 
-			const hasPaidFeaturesSelected = storedPaidFeatures.includes( id );
-			const updatedPaidFeatureSelection = hasPaidFeaturesSelected
-				? storedPaidFeatures.filter( ( featureId ) => featureId !== id )
-				: [ ...storedPaidFeatures, id ];
+		const hasPaidFeaturesSelected = storedPaidFeatures.includes( id );
+		const updatedPaidFeatureSelection = hasPaidFeaturesSelected
+			? storedPaidFeatures.filter( ( featureId ) => featureId !== id )
+			: [ ...storedPaidFeatures, id ];
 
-			actions.setUserChoice( 'site_features', updatedPaidFeatureSelection );
-		},
-		[ storedPaidFeatures, selectedValues, actions ]
-	);
+		actions.setUserChoice( 'site_features', updatedPaidFeatureSelection );
+	}
 
 	const planName = useMemo( () => {
 		const hasOneFeature = storedPaidFeatures.some( ( optionId ) => {
