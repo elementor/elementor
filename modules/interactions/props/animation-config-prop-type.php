@@ -22,6 +22,9 @@ class Animation_Config_Prop_Type extends Object_Prop_Type {
 		return [
 			'replay' => Boolean_Prop_Type::make()->meta( 'pro', true )->description( 'Whether to replay the animation' ),
 			'easing' => String_Prop_Type::make()->meta( 'enum', Presets::easing_options() )->default( Presets::DEFAULT_EASING )->meta( 'pro', Presets::ADDITIONAL_EASING )->description( 'The easing function to use for the animation' ),
+			'relativeTo' => String_Prop_Type::make()->meta( 'pro', true )->description( 'The container scope used by scroll-based interactions' ),
+			'repeat' => String_Prop_Type::make()->meta( 'enum', Presets::REPEAT_OPTIONS )->default( Presets::DEFAULT_REPEAT )->meta( 'pro', true )->description( 'Repeat mode for interactions that can run multiple times' ),
+			'times' => Number_Prop_Type::make()->meta( 'pro', true )->description( 'Total number of times to play when repeat mode is "times"' ),
 			'start' => Number_Prop_Type::make()->meta( 'pro', true )->description( 'The start to use for the animation' ),
 			'end' => Number_Prop_Type::make()->meta( 'pro', true )->description( 'The end to use for the animation' ),
 		];
