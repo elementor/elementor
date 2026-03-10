@@ -77,7 +77,7 @@ const ProUpgradeEmptyState = () => {
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				{ __( 'Upgrade Now', 'elementor' ) }
+				{ __( 'Upgrade now', 'elementor' ) }
 			</Button>
 		</Stack>
 	);

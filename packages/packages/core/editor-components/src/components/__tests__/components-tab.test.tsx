@@ -258,9 +258,10 @@ describe( 'ComponentsTab', () => {
 			renderWithStore( <Components />, store );
 
 			// Assert
-			expect( screen.getByText( 'Create New Components' ) ).toBeInTheDocument();
-			expect( screen.getByText( /Your Pro subscription has expired\./i ) ).toBeInTheDocument();
-			expect( screen.getByText( /Reactivate to enable components again\./i ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Create new components' ) ).toBeInTheDocument();
+			expect(
+				screen.getByText( /Creating new components requires an active Pro subscription\./i )
+			).toBeInTheDocument();
 		} );
 
 		it( 'should not render notification when no components exist and no Pro', () => {
@@ -274,7 +275,7 @@ describe( 'ComponentsTab', () => {
 			renderWithStore( <Components />, store );
 
 			// Assert
-			expect( screen.queryByText( 'Create New Components' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Create new components' ) ).not.toBeInTheDocument();
 			expect( screen.getByText( 'Create Reusable Components' ) ).toBeInTheDocument();
 		} );
 
@@ -286,7 +287,7 @@ describe( 'ComponentsTab', () => {
 			renderWithStore( <Components />, store );
 
 			// Assert
-			expect( screen.queryByText( 'Create New Components' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Create new components' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -311,7 +312,7 @@ describe( 'ComponentsTab', () => {
 			expect(
 				screen.getByText( 'Create design elements that sync across your entire site.' )
 			).toBeInTheDocument();
-			expect( screen.getByText( 'Upgrade Now' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Upgrade now' ) ).toBeInTheDocument();
 			expect( screen.queryByText( 'No components yet' ) ).not.toBeInTheDocument();
 		} );
 	} );

@@ -10,17 +10,18 @@ describe( 'ComponentsProNotification', () => {
 		renderWithTheme( <ComponentsProNotification /> );
 
 		// Assert
-		expect( screen.getByText( 'Create New Components' ) ).toBeInTheDocument();
-		expect( screen.getByText( /Your Pro subscription has expired\./i ) ).toBeInTheDocument();
-		expect( screen.getByText( /Reactivate to enable components again\./i ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Create new components' ) ).toBeInTheDocument();
+		expect(
+			screen.getByText( /Creating new components requires an active Pro subscription\./i )
+		).toBeInTheDocument();
 	} );
 
-	it( 'should render Upgrade Now button with link', () => {
+	it( 'should render Upgrade now button with link', () => {
 		// Act
 		renderWithTheme( <ComponentsProNotification /> );
 
 		// Assert
-		const upgradeLink = screen.getByRole( 'link', { name: /Upgrade Now/i } );
+		const upgradeLink = screen.getByRole( 'link', { name: /Upgrade now/i } );
 		expect( upgradeLink ).toBeInTheDocument();
 		expect( upgradeLink ).toHaveAttribute( 'href', 'https://go.elementor.com/go-pro-components-create/' );
 	} );

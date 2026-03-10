@@ -608,9 +608,10 @@ describe( '<InstanceEditingPanel />', () => {
 			renderEditInstancePanel( store );
 
 			// Assert
-			expect( screen.getByText( 'Edit Component' ) ).toBeInTheDocument();
-			expect( screen.getByText( /Your Pro subscription has expired\./i ) ).toBeInTheDocument();
-			expect( screen.getByText( /Reactivate to enable components again\./i ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Edit components' ) ).toBeInTheDocument();
+			expect(
+				screen.getByText( /Editing components requires an active Pro subscription\./i )
+			).toBeInTheDocument();
 		} );
 
 		it( 'should not show upgrade alert when Pro is installed', () => {
@@ -621,7 +622,9 @@ describe( '<InstanceEditingPanel />', () => {
 			renderEditInstancePanel( store );
 
 			// Assert
-			expect( screen.queryByText( /Your Pro subscription has expired\./i ) ).not.toBeInTheDocument();
+			expect(
+				screen.queryByText( /Editing components requires an active Pro subscription\./i )
+			).not.toBeInTheDocument();
 		} );
 	} );
 } );

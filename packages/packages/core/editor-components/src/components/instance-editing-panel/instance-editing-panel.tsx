@@ -72,16 +72,14 @@ function InstanceEditUpgradeAlert() {
 						target="_blank"
 						rel="noopener noreferrer"
 					>
-						{ __( 'Upgrade Now', 'elementor' ) }
+						{ __( 'Upgrade now', 'elementor' ) }
 					</AlertAction>
 				}
 				sx={ { m: 2, mt: 1 } }
 			>
-				<AlertTitle>{ __( 'Edit Component', 'elementor' ) }</AlertTitle>
+				<AlertTitle>{ __( 'Edit components', 'elementor' ) }</AlertTitle>
 				<Typography variant="caption">
-					{ __( 'Your Pro subscription has expired.', 'elementor' ) }
-					<br />
-					{ __( 'Reactivate to enable components again.', 'elementor' ) }
+					{ __( 'Editing components requires an active Pro subscription.', 'elementor' ) }
 				</Typography>
 			</Alert>
 		</Box>

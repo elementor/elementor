@@ -22,14 +22,14 @@ export function ComponentsProNotification() {
 						target="_blank"
 						rel="noopener noreferrer"
 					>
-						{ __( 'Upgrade Now', 'elementor' ) }
+						{ __( 'Upgrade now', 'elementor' ) }
 					</AlertAction>
 				}
 				sx={ { m: 2, mt: 1 } }
 			>
-				<AlertTitle>{ __( 'Create New Components', 'elementor' ) }</AlertTitle>
+				<AlertTitle>{ __( 'Create new components', 'elementor' ) }</AlertTitle>
 				<Typography variant="caption">
-					{ __( 'Your Pro subscription has expired. Reactivate to enable components again.', 'elementor' ) }
+					{ __( 'Creating new components requires an active Pro subscription.', 'elementor' ) }
 				</Typography>
 			</Alert>
 		</Box>

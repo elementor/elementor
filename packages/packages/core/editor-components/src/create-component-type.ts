@@ -61,7 +61,7 @@ function notifyComponentEditUpgrade() {
 	notify( {
 		type: 'promotion',
 		id: COMPONENT_EDIT_UPGRADE_NOTIFICATION_ID,
-		message: __( 'Your Pro subscription has expired. Reactivate to enable components again.', 'elementor' ),
+		message: __( 'Editing components requires an active Pro subscription.', 'elementor' ),
 		additionalActionProps: [
 			{
 				size: 'small',
