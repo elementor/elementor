@@ -75,7 +75,7 @@ export function registerVariableTypes() {
 				size="small"
 				href={ 'https://go.elementor.com/go-pro-panel-size-variable/' }
 				onClick={ () =>
-					trackUpgradePromotionClick( { target_name: 'variables_popover', location_l1: 'variables list' } )
+					trackUpgradePromotionClick( { target_name: 'variables_popover', location_l1: 'variables_list' } )
 				}
 			/>
 		),
