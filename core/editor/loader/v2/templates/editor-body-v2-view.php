@@ -20,14 +20,14 @@ $from_onboarding = ! empty( $_COOKIE['e_onboarding'] );
 	align-items: center;
 	justify-content: center;
 	gap: 32px;
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	font-family: var(--e-a-font-family);
 }
 #elementor-loading.e-from-onboarding .elementor-loader-wrapper { display: none; }
 .e-ob-track {
 	width: 192px;
 	height: 4px;
 	border-radius: 22px;
-	background: var(--e-a-border-color-bold, rgba(0, 0, 0, .12));
+	background: var(--e-a-border-color-bold);
 	position: relative;
 	overflow: hidden;
 }
@@ -38,10 +38,26 @@ $from_onboarding = ! empty( $_COOKIE['e_onboarding'] );
 	height: 100%;
 	width: 40%;
 	border-radius: 22px;
-	background: var(--e-a-color-txt);
+	background: var(--e-a-color-txt-active);
 	animation: e-ob-slide 1.5s linear infinite;
 }
 @keyframes e-ob-slide { 0% { left: -40%; } 100% { left: 140%; } }
+.e-ob-text {
+	text-align: center;
+}
+.e-ob-heading {
+	margin: 0 0 8px;
+	font-size: 24px;
+	font-weight: 500;
+	font-family: Poppins, var(--e-a-font-family);
+	color: var(--e-a-color-txt-active);
+}
+.e-ob-subtext {
+	margin: 0;
+	font-size: 16px;
+	font-family: var(--e-a-font-family);
+	color: var(--e-a-color-txt-hover);
+}
 </style>
 <?php endif; ?>
 
@@ -49,9 +65,9 @@ $from_onboarding = ! empty( $_COOKIE['e_onboarding'] );
 	<?php if ( $from_onboarding ) : ?>
 	<script>document.cookie = 'e_onboarding=; path=/; max-age=0; SameSite=Lax';</script>
 	<div class="e-ob-track"><div class="e-ob-fill"></div></div>
-	<div style="text-align:center">
-		<p style="margin:0 0 8px;font-size:20px;font-weight:500;color:var(--e-a-color-txt)"><?php echo esc_html__( 'Getting things ready', 'elementor' ); ?></p>
-		<p style="margin:0;font-size:16px;color:var(--e-a-color-txt-disabled)"><?php echo esc_html__( 'Tailoring the editor to your goals and workflow…', 'elementor' ); ?></p>
+	<div class="e-ob-text">
+		<p class="e-ob-heading"><?php echo esc_html__( 'Getting things ready', 'elementor' ); ?></p>
+		<p class="e-ob-subtext"><?php echo esc_html__( 'Tailoring the editor to your goals and workflow…', 'elementor' ); ?></p>
 	</div>
 	<?php else : ?>
 	<div class="elementor-loader-wrapper">
