@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
+import { Stack } from '@elementor/ui';
+import { hasProInstalled } from '@elementor/utils';
 
 import { useComponents } from '../../hooks/use-components';
 import { ComponentSearch } from './component-search';
@@ -10,13 +12,15 @@ import { SearchProvider } from './search-provider';
 const ComponentsContent = () => {
 	const { components, isLoading } = useComponents();
 	const hasComponents = ! isLoading && components.length > 0;
+	const hasPro = hasProInstalled();
+	const showProNotification = ! hasPro && hasComponents;
 
 	return (
-		<>
+		<Stack sx={ { height: '100%' } }>
 			{ hasComponents && <ComponentSearch /> }
-			{ hasComponents && <ComponentsProNotification /> }
 			<ComponentsList />
-		</>
+			{ showProNotification && <ComponentsProNotification /> }
+		</Stack>
 	);
 };
 
