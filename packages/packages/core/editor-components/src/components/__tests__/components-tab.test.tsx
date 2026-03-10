@@ -259,12 +259,8 @@ describe( 'ComponentsTab', () => {
 
 			// Assert
 			expect( screen.getByText( 'Create New Components' ) ).toBeInTheDocument();
-			expect(
-				screen.getByText( /Your Pro subscription has expired\./i )
-			).toBeInTheDocument();
-			expect(
-				screen.getByText( /Reactivate to enable components again\./i )
-			).toBeInTheDocument();
+			expect( screen.getByText( /Your Pro subscription has expired\./i ) ).toBeInTheDocument();
+			expect( screen.getByText( /Reactivate to enable components again\./i ) ).toBeInTheDocument();
 		} );
 
 		it( 'should not render notification when no components exist and no Pro', () => {
