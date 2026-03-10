@@ -125,30 +125,13 @@ class Global_Typography_Extension {
 	}
 
 	private function is_responsive_prop( string $v3_key ): bool {
-		return in_array( $v3_key, [
-			'typography_font_size',
-			'typography_line_height',
-			'typography_letter_spacing',
-			'typography_word_spacing',
-		], true );
+		return in_array( $v3_key, Sync_Typography_Props::RESPONSIVE_V3_PROPS, true );
 	}
 
 	private function convert_v4_props_to_v3_format( array $v4_props ): array {
 		$v3_format = [];
 
-		$prop_map = [
-			'font-family' => 'typography_font_family',
-			'font-size' => 'typography_font_size',
-			'font-weight' => 'typography_font_weight',
-			'font-style' => 'typography_font_style',
-			'text-decoration' => 'typography_text_decoration',
-			'line-height' => 'typography_line_height',
-			'letter-spacing' => 'typography_letter_spacing',
-			'word-spacing' => 'typography_word_spacing',
-			'text-transform' => 'typography_text_transform',
-		];
-
-		foreach ( $prop_map as $v4_prop => $v3_prop ) {
+		foreach ( Sync_Typography_Props::PROP_MAP as $v4_prop => $v3_prop ) {
 			if ( ! isset( $v4_props[ $v4_prop ] ) || empty( $v4_props[ $v4_prop ] ) ) {
 				continue;
 			}

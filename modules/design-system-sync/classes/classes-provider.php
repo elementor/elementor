@@ -12,18 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Classes_Provider {
 	private static $cached_classes = null;
 
-	const TYPOGRAPHY_PROPS = [
-		'font-family',
-		'font-size',
-		'font-weight',
-		'font-style',
-		'text-decoration',
-		'line-height',
-		'letter-spacing',
-		'word-spacing',
-		'text-transform',
-	];
-
 	public static function get_all_classes(): array {
 		if ( null !== self::$cached_classes ) {
 			return self::$cached_classes;
@@ -94,7 +82,7 @@ class Classes_Provider {
 	}
 
 	public static function has_typography_props( array $props ): bool {
-		foreach ( self::TYPOGRAPHY_PROPS as $key ) {
+		foreach ( Sync_Typography_Props::get_css_props() as $key ) {
 			if ( isset( $props[ $key ] ) ) {
 				return true;
 			}
@@ -112,8 +100,6 @@ class Classes_Provider {
 
 		$typography_classes = [];
 
-		$typography_keys = array_flip( self::TYPOGRAPHY_PROPS );
-
 		foreach ( $synced_classes as $id => $class ) {
 			$variants = $class['variants'] ?? [];
 			$default_props = self::get_default_breakpoint_props( $variants );
@@ -126,18 +112,11 @@ class Classes_Provider {
 				continue;
 			}
 
-			$all_variant_props = self::get_all_normal_state_variant_props( $variants );
-
-			$filtered_variant_props = [];
-			foreach ( $all_variant_props as $breakpoint => $props ) {
-				$filtered_variant_props[ $breakpoint ] = array_intersect_key( $props, $typography_keys );
-			}
-
 			$typography_classes[] = [
 				'id' => $id,
 				'label' => $class['label'] ?? '',
-				'props' => array_intersect_key( $default_props, $typography_keys ),
-				'variants_props' => $filtered_variant_props,
+				'props' => $default_props,
+				'variants_props' => self::get_all_normal_state_variant_props( $variants ),
 			];
 		}
 

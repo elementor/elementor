@@ -126,7 +126,7 @@ class Kit_Stylesheet_Extended {
 	}
 
 	private function add_typography_css_entries( string $label, array $resolved_props, array &$css_entries ): void {
-		foreach ( Classes_Provider::TYPOGRAPHY_PROPS as $prop_name ) {
+		foreach ( Sync_Typography_Props::get_css_props() as $prop_name ) {
 			if ( ! isset( $resolved_props[ $prop_name ] ) || empty( $resolved_props[ $prop_name ] ) ) {
 				continue;
 			}
