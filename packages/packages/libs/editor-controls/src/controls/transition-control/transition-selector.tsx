@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { useBoundProp } from '../../bound-prop-context';
 import { ItemSelector } from '../../components/item-selector';
 import ControlActions from '../../control-actions/control-actions';
+import { trackUpgradePromotionClick } from '../../utils/tracking';
 import { transitionProperties, transitionsItemsList } from './data';
 
 const toTransitionSelectorValue = ( label: string ) => {
@@ -164,13 +165,17 @@ export const TransitionSelector = ( {
 					) }
 					footer={
 						showPromotion ? (
-							<PromotionAlert
-								message={ __(
-									'Upgrade to customize transition properties and control effects.',
-									'elementor'
-								) }
-								upgradeUrl={ PRO_UPGRADE_URL }
-							/>
+						<PromotionAlert
+							message={ __(
+								'Upgrade to customize transition properties and control effects.',
+								'elementor'
+							) }
+							upgradeUrl={ PRO_UPGRADE_URL }
+							onCtaClick={ () => trackUpgradePromotionClick( {
+								target_name: 'transition_property',
+								location_l2: 'style',
+							} ) }
+						/>
 						) : null
 					}
 				/>
