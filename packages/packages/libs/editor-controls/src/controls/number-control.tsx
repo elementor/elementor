@@ -14,7 +14,9 @@ const renderSuffix = ( propType: PropType ) => {
 	if ( propType.meta?.suffix ) {
 		return (
 			<InputAdornment position="end">
-				<Typography variant="caption" color="text.secondary">{ propType.meta.suffix as string }</Typography>
+				<Typography variant="caption" color="text.secondary">
+					{ propType.meta.suffix as string }
+				</Typography>
 			</InputAdornment>
 		);
 	}
