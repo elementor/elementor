@@ -39,7 +39,7 @@ const installPlugin = async (): Promise< PluginResponse > => {
 		} );
 	} catch ( error: unknown ) {
 		if ( isPluginErrorResponse( error ) && error.code === 'folder_exists' ) {
-			return activatePlugin( `${ANGIE_SLUG}/${ANGIE_SLUG}` );
+			return activatePlugin( `${ ANGIE_SLUG }/${ ANGIE_SLUG }` );
 		}
 
 		throw error;
