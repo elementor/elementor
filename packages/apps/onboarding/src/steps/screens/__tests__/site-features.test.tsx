@@ -15,9 +15,8 @@ const STEP_SUBTITLE = "We'll use this to tailor suggestions for you.";
 const BUILT_IN_LABEL = 'Included';
 const FINISH_BUTTON_LABEL = 'Continue with Free';
 const USER_CHOICES_ENDPOINT = 'user-choices';
-const PRO_PLAN_NOTICE_TEXT = 'Some features you selected are available in Pro plan.';
-const COMPARE_PLANS_BUTTON_LABEL = 'Compare plans';
-const TARGET_BLANK = '_blank';
+const PRO_PLAN_NOTICE_PATTERN = /Elementor (Pro|One)/;
+const COMPARE_PLANS_LABEL = 'View plans';
 
 const getFirstProOption = () => {
 	const option = FEATURE_OPTIONS.find( ( featureOption ) => featureOption.licenseType === 'pro' );
@@ -136,19 +135,17 @@ describe( 'SiteFeatures', () => {
 	} );
 
 	describe( 'External links', () => {
-		it( '"Compare plans" opens pricing URL in new tab', () => {
+		it( '"View plans" links to pricing URL in new tab', () => {
 			const firstProOption = getFirstProOption();
-			const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
 			renderApp( {
 				isConnected: true,
 				progress: SITE_FEATURES_PROGRESS,
 				choices: { site_features: [ firstProOption.id ] },
 			} );
 
-			fireEvent.click( screen.getByRole( 'button', { name: COMPARE_PLANS_BUTTON_LABEL } ) );
-
-			expect( openSpy ).toHaveBeenCalledWith( DEFAULT_TEST_URLS.comparePlans, TARGET_BLANK );
-			openSpy.mockRestore();
+			const link = screen.getByRole( 'link', { name: /View plans/ } );
+			expect( link ).toHaveAttribute( 'href', DEFAULT_TEST_URLS.comparePlans );
+			expect( link ).toHaveAttribute( 'target', '_blank' );
 		} );
 	} );
 
@@ -188,12 +185,12 @@ describe( 'SiteFeatures', () => {
 				progress: SITE_FEATURES_PROGRESS,
 			} );
 
-			expect( screen.queryByText( PRO_PLAN_NOTICE_TEXT ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( PRO_PLAN_NOTICE_PATTERN ) ).not.toBeInTheDocument();
 		} );
 	} );
 
 	describe( 'ProPlanNotice plan name', () => {
-		it( 'shows "Pro" plan name when only pro features are selected', () => {
+		it( 'shows Pro notice when only pro features are selected', () => {
 			const firstProOption = getFirstProOption();
 			renderApp( {
 				isConnected: true,
@@ -201,10 +198,10 @@ describe( 'SiteFeatures', () => {
 				choices: { site_features: [ firstProOption.id ] },
 			} );
 
-			expect( screen.getByText( /recommend the/, { selector: 'p' } ) ).toHaveTextContent( /Pro plan/ );
+			expect( screen.getByText( /Elementor Pro/ ) ).toBeInTheDocument();
 		} );
 
-		it( 'shows "One" plan name when a one-license feature is selected', () => {
+		it( 'shows One notice when a one-license feature is selected', () => {
 			const firstOneOption = getFirstOneOption();
 			renderApp( {
 				isConnected: true,
@@ -212,10 +209,10 @@ describe( 'SiteFeatures', () => {
 				choices: { site_features: [ firstOneOption.id ] },
 			} );
 
-			expect( screen.getByText( /recommend the/, { selector: 'p' } ) ).toHaveTextContent( /One plan/ );
+			expect( screen.getByText( /Elementor One/ ) ).toBeInTheDocument();
 		} );
 
-		it( 'shows "One" plan name when both pro and one-license features are selected', () => {
+		it( 'shows One notice when both pro and one-license features are selected', () => {
 			const firstProOption = getFirstProOption();
 			const firstOneOption = getFirstOneOption();
 			renderApp( {
@@ -224,7 +221,7 @@ describe( 'SiteFeatures', () => {
 				choices: { site_features: [ firstProOption.id, firstOneOption.id ] },
 			} );
 
-			expect( screen.getByText( /recommend the/, { selector: 'p' } ) ).toHaveTextContent( /One plan/ );
+			expect( screen.getByText( /Elementor One/ ) ).toBeInTheDocument();
 		} );
 	} );
 } );

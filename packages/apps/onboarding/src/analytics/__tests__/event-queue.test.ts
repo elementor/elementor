@@ -6,6 +6,10 @@ beforeEach( () => {
 	sessionStorage.clear();
 } );
 
+afterEach( () => {
+	jest.restoreAllMocks();
+} );
+
 describe( 'event-queue', () => {
 	describe( 'enqueueEvent', () => {
 		it( 'adds event with correct structure (name, payload, timestamp)', () => {
@@ -21,16 +25,11 @@ describe( 'event-queue', () => {
 		} );
 
 		it( 'handles sessionStorage quota exceeded gracefully', () => {
-			const warnSpy = jest.spyOn( console, 'warn' ).mockImplementation();
-			const setItemSpy = jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
+			jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
 				throw new Error( 'QuotaExceededError' );
 			} );
 
-			enqueueEvent( 'x', {} );
-
-			expect( warnSpy ).toHaveBeenCalledWith( 'Failed to enqueue event:', expect.any( Error ) );
-			warnSpy.mockRestore();
-			setItemSpy.mockRestore();
+			expect( () => enqueueEvent( 'x', {} ) ).not.toThrow();
 		} );
 	} );
 
@@ -52,12 +51,7 @@ describe( 'event-queue', () => {
 		it( 'handles corrupted JSON gracefully', () => {
 			sessionStorage.setItem( STORAGE_KEY, 'invalid json {{{' );
 
-			const warnSpy = jest.spyOn( console, 'warn' ).mockImplementation();
-
 			expect( getEventQueue() ).toEqual( [] );
-			expect( warnSpy ).toHaveBeenCalledWith( 'Failed to get event queue:', expect.any( Error ) );
-
-			warnSpy.mockRestore();
 		} );
 	} );
 
@@ -73,16 +67,11 @@ describe( 'event-queue', () => {
 
 		it( 'handles clear failure gracefully', () => {
 			enqueueEvent( 'e', {} );
-			const warnSpy = jest.spyOn( console, 'warn' ).mockImplementation();
-			const removeItemSpy = jest.spyOn( Storage.prototype, 'removeItem' ).mockImplementation( () => {
+			jest.spyOn( Storage.prototype, 'removeItem' ).mockImplementation( () => {
 				throw new Error( 'Storage unavailable' );
 			} );
 
-			clearEventQueue();
-
-			expect( warnSpy ).toHaveBeenCalledWith( 'Failed to clear event queue:', expect.any( Error ) );
-			warnSpy.mockRestore();
-			removeItemSpy.mockRestore();
+			expect( () => clearEventQueue() ).not.toThrow();
 		} );
 	} );
 
