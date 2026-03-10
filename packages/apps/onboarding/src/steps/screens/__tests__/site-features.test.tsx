@@ -16,7 +16,6 @@ const BUILT_IN_LABEL = 'Included';
 const FINISH_BUTTON_LABEL = 'Continue with Free';
 const USER_CHOICES_ENDPOINT = 'user-choices';
 const PRO_PLAN_NOTICE_PATTERN = /Elementor (Pro|One)/;
-const COMPARE_PLANS_LABEL = 'View plans';
 
 const getFirstProOption = () => {
 	const option = FEATURE_OPTIONS.find( ( featureOption ) => featureOption.licenseType === 'pro' );
