@@ -280,6 +280,9 @@ const eventsConfig = {
 			canvasEmptyBoxAction: 'canvas_empty_box_action',
 			widgetPanelSearch: 'widget_panel_search',
 		},
+		interactions: {
+			created: 'interactions_created',
+    },
 		promotions: {
 			viewPromotion: 'view_promotion',
 			upgradePromotionClick: 'upgrade_promotion_click',
