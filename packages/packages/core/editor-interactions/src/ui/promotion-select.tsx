@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { type MouseEvent, useRef } from 'react';
+import { type PromotionTrackingData } from '@elementor/editor-controls';
 import { MenuListItem } from '@elementor/editor-ui';
 import { MenuSubheader, Select, type SelectChangeEvent } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -14,6 +15,7 @@ type PromotionSelectProps = {
 	promotionLabel?: string;
 	promotionContent: string;
 	upgradeUrl: string;
+	trackingData: PromotionTrackingData;
 };
 
 export function PromotionSelect( {
@@ -24,6 +26,7 @@ export function PromotionSelect( {
 	promotionLabel,
 	promotionContent,
 	upgradeUrl,
+	trackingData,
 }: PromotionSelectProps ) {
 	const promotionRef = useRef< InteractionsPromotionChipRef >( null );
 	const anchorRef = useRef< HTMLElement >( null );
@@ -63,6 +66,7 @@ export function PromotionSelect( {
 					upgradeUrl={ upgradeUrl }
 					ref={ promotionRef }
 					anchorRef={ anchorRef }
+					trackingData={ trackingData }
 				/>
 			</MenuSubheader>
 
