@@ -2,7 +2,7 @@ name: Playwright
 
 on:
   pull_request:
-    types: [labeled, synchronize, opened, reopened]
+    types: [labeled, synchronize, opened, reopened, ready_for_review]
     branches:
       - main
       - '[0-9].[0-9][0-9]'
@@ -47,7 +47,7 @@ jobs:
   build-plugin:
     if: |
       contains(github.event.pull_request.labels.*.name, 'run-tests') ||
-      github.event_name == 'pull_request' ||
+      (!github.event.pull_request.draft && github.event_name == 'pull_request') ||
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch'
     name: Build plugin
@@ -60,7 +60,7 @@ jobs:
     if: |
       github.event.inputs.tag == '' &&
       (contains(github.event.pull_request.labels.*.name, 'run-tests') ||
-      github.event_name == 'pull_request' ||
+      (!github.event.pull_request.draft && github.event_name == 'pull_request') ||
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch')
     strategy:
@@ -92,7 +92,7 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: |
-          npm run install:ci
+          npm run prepare-environment:ci
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
@@ -113,7 +113,7 @@ jobs:
         run: |
           npm run start-local-server
       - name: Update wordpress to nightly build
-        if: ${{ github.event_name == 'schedule' }}
+        if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
         run: npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip"
       - name: Setup test data
         run: npm run test:setup:playwright
@@ -183,7 +183,7 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: |
-          npm run install:ci
+          npm run prepare-environment:ci
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
@@ -203,6 +203,8 @@ jobs:
       - name: Install WordPress environment
         run: |
           npm run start-local-server
+      - name: Update wordpress to nightly build
+        run: npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip"
       - name: Setup test data
         run: npm run test:setup:playwright
       - name: WordPress debug information
@@ -426,3 +428,4 @@ jobs:
       - name: Check Playwright matrix status
         if: ${{ (needs.Playwright.result != 'success' && needs.Playwright.result != 'skipped') || (needs.PlaywrightWithTag.result != 'success' && needs.PlaywrightWithTag.result != 'skipped') }}
         run: exit 1
+        
