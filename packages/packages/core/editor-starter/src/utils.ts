@@ -21,11 +21,3 @@ export function getAssetUrl( fileName: string ): string {
 		? `${ baseUrl }${ ONBOARDING_ASSETS_PATH }${ fileName }`
 		: `${ ONBOARDING_ASSETS_PATH }${ fileName }`;
 }
-
-export function getEditingPanelWidth(): number {
-	return document.querySelector( '.elementor-panel' )?.clientWidth || 0;
-}
-
-export function getTopBarHeight(): number {
-	return document.querySelector( '.MuiAppBar-root' )?.clientHeight || 48;
-}
