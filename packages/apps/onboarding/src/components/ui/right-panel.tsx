@@ -44,7 +44,7 @@ const VideoStack = React.memo( function VideoStack( { activeUrl }: { activeUrl: 
 		videoRefs.current.forEach( ( element, videoUrl ) => {
 			if ( videoUrl === activeUrl ) {
 				element.currentTime = 0;
-				element.play().catch( () => {} );
+				element.play()?.catch( () => {} );
 			} else {
 				element.pause();
 			}
