@@ -1,123 +1,19 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { __privateRunCommand as runCommand, getCanvasIframeDocument } from '@elementor/editor-v1-adapters';
+import apiFetch from '@wordpress/api-fetch';
+import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 
 import type { StarterConfig } from '../types';
 import { deleteStarterConfig, getStarterConfig } from '../utils';
 
-const PREVIEW_WRAPPER_SELECTOR = '#elementor-preview-responsive-wrapper';
-const PREVIEW_IFRAME_ID = 'elementor-preview-iframe';
-const NAVIGATOR_ID = 'elementor-navigator';
+const EDITOR_WRAPPER_SELECTOR = '#elementor-editor-wrapper';
 const STARTER_CONTAINER_ID = 'elementor-starter-container';
 
-interface ElementorChannels {
-	panelElements?: {
-		on: ( event: string, callback: () => void ) => void;
-		off: ( event: string, callback: () => void ) => void;
-	};
-}
-
-function getElementorChannels(): ElementorChannels | undefined {
-	return ( window as unknown as { elementor?: { channels?: ElementorChannels } } ).elementor?.channels;
-}
-
 function dismissStarterApi( config: StarterConfig ) {
-	const apiFetch = (
-		window as unknown as {
-			wp?: { apiFetch?: ( args: object ) => Promise< unknown > };
-		}
-	 ).wp?.apiFetch;
-
-	apiFetch?.( {
+	apiFetch( {
 		path: config.restPath,
 		method: 'POST',
 		data: { starter_dismissed: true },
 	} );
-}
-
-const STARTER_HIDE_STYLE_ID = 'e-starter-hide-elements';
-const EMPTY_WRAP = 'body:not(:has(.elementor-section-wrap.ui-sortable *))';
-
-const STARTER_HIDE_CSS = `
-	${ EMPTY_WRAP } header.wp-block-template-part,
-	${ EMPTY_WRAP } footer.wp-block-template-part,
-	${ EMPTY_WRAP } [data-elementor-type="floating-buttons"] { display: none !important; }
-	${ EMPTY_WRAP } { background-color: #fff !important; padding-top: 0 !important; }
-	${ EMPTY_WRAP } #elementor-add-new-section { margin-top: 0 !important; }
-	${ EMPTY_WRAP } .elementor-section-wrap.ui-sortable { min-height: 0 !important; }
-	${ EMPTY_WRAP } .elementor-add-section:not(.elementor-dragging-on-child) .elementor-add-section-inner { background-color: transparent !important; max-width: 604px !important; margin-top: 120px !important; }
-`;
-
-let iframeLoadHandler: ( () => void ) | null = null;
-
-function hideIframeElements() {
-	const iframe = document.getElementById( PREVIEW_IFRAME_ID ) as HTMLIFrameElement | null;
-
-	if ( ! iframe ) {
-		return;
-	}
-
-	const injectStyle = () => {
-		if ( ! iframe.contentDocument || iframe.contentDocument.getElementById( STARTER_HIDE_STYLE_ID ) ) {
-			return;
-		}
-
-		const style = iframe.contentDocument.createElement( 'style' );
-		style.id = STARTER_HIDE_STYLE_ID;
-		style.textContent = STARTER_HIDE_CSS;
-		iframe.contentDocument.head.appendChild( style );
-	};
-
-	iframeLoadHandler = injectStyle;
-	iframe.addEventListener( 'load', injectStyle );
-	injectStyle();
-
-	iframe.style.boxShadow = 'initial';
-}
-
-function closeNavigator() {
-	const navigatorEl = document.getElementById( NAVIGATOR_ID );
-
-	if ( navigatorEl ) {
-		runCommand( 'navigator/close' );
-	}
-}
-
-function showIframeElements() {
-	const iframeDoc = getCanvasIframeDocument();
-	iframeDoc?.documentElement?.style.setProperty( '--e-starter-header-display', 'block' );
-	iframeDoc?.getElementById( STARTER_HIDE_STYLE_ID )?.remove();
-
-	const iframe = document.getElementById( PREVIEW_IFRAME_ID ) as HTMLIFrameElement | null;
-
-	if ( iframe ) {
-		iframe.style.boxShadow = '';
-
-		if ( iframeLoadHandler ) {
-			iframe.removeEventListener( 'load', iframeLoadHandler );
-			iframeLoadHandler = null;
-		}
-	}
-}
-
-function observeSectionWrap( onChildAdded: () => void ): MutationObserver | null {
-	const iframe = document.getElementById( PREVIEW_IFRAME_ID ) as HTMLIFrameElement | null;
-	const sectionWrap = iframe?.contentDocument?.querySelector( '.elementor-section-wrap.ui-sortable' );
-
-	if ( ! sectionWrap ) {
-		return null;
-	}
-
-	const observer = new MutationObserver( ( mutations ) => {
-		const hasAddedNodes = mutations.some( ( mutation ) => mutation.addedNodes.length > 0 );
-
-		if ( hasAddedNodes && sectionWrap.children.length > 0 ) {
-			onChildAdded();
-		}
-	} );
-
-	observer.observe( sectionWrap, { childList: true } );
-
-	return observer;
 }
 
 export function useStarter() {
@@ -125,9 +21,8 @@ export function useStarter() {
 	const [ isDismissing, setIsDismissing ] = useState( false );
 	const [ portalContainer, setPortalContainer ] = useState< Element | null >( null );
 	const dismissedRef = useRef( false );
-	const dismissRef = useRef< () => void >( () => {} );
 
-	const runDismiss = useCallback( () => {
+	const dismiss = useCallback( () => {
 		if ( ! config || dismissedRef.current ) {
 			return;
 		}
@@ -139,12 +34,6 @@ export function useStarter() {
 		deleteStarterConfig();
 	}, [ config ] );
 
-	dismissRef.current = runDismiss;
-
-	const dismiss = useCallback( () => {
-		dismissRef.current();
-	}, [] );
-
 	useEffect( () => {
 		const activate = () => {
 			const starterConfig = getStarterConfig();
@@ -153,7 +42,7 @@ export function useStarter() {
 				return;
 			}
 
-			const wrapper = document.querySelector( PREVIEW_WRAPPER_SELECTOR );
+			const wrapper = document.querySelector( EDITOR_WRAPPER_SELECTOR );
 
 			if ( ! wrapper ) {
 				return;
@@ -162,12 +51,9 @@ export function useStarter() {
 			const container = document.createElement( 'div' );
 			container.id = STARTER_CONTAINER_ID;
 
-			wrapper.prepend( container );
+			wrapper.append( container );
 
 			dismissStarterApi( starterConfig );
-
-			hideIframeElements();
-			closeNavigator();
 
 			setConfig( starterConfig );
 			setPortalContainer( container );
@@ -191,27 +77,17 @@ export function useStarter() {
 			return;
 		}
 
-		const onElementAdded = ( e: Event ) => {
-			const detail = ( e as CustomEvent )?.detail;
+		const onCommandAfter = ( event: Event ) => {
+			const detail = ( event as CustomEvent )?.detail;
 
-			if ( detail?.command === 'preview/drop' ) {
+			if ( detail?.command === 'document/elements/import' ) {
 				dismiss();
 			}
 		};
 
-		const channels = getElementorChannels();
-		const handleDragStart = () => dismiss();
+		window.addEventListener( 'elementor/commands/run/after', onCommandAfter );
 
-		const observer = observeSectionWrap( dismiss );
-
-		window.addEventListener( 'elementor/commands/run/after', onElementAdded );
-		channels?.panelElements?.on( 'element:drag:start', handleDragStart );
-
-		return () => {
-			window.removeEventListener( 'elementor/commands/run/after', onElementAdded );
-			channels?.panelElements?.off( 'element:drag:start', handleDragStart );
-			observer?.disconnect();
-		};
+		return () => window.removeEventListener( 'elementor/commands/run/after', onCommandAfter );
 	}, [ config, dismiss ] );
 
 	function openTemplatesLibrary() {
@@ -225,8 +101,6 @@ export function useStarter() {
 	}
 
 	const onExited = useCallback( () => {
-		showIframeElements();
-
 		portalContainer?.remove();
 		setPortalContainer( null );
 		setConfig( null );
