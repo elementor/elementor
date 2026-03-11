@@ -1,6 +1,6 @@
 {
   "name": "@elementor/editor-widget-creation",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -39,9 +39,9 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/editor": "4.0.0",
-    "@elementor/editor-mcp": "4.0.0",
-    "@elementor/editor-ui": "4.0.0",
+    "@elementor/editor": "4.1.0",
+    "@elementor/editor-mcp": "4.1.0",
+    "@elementor/editor-ui": "4.1.0",
     "@elementor/icons": "^1.63.0",
     "@elementor/ui": "1.36.17",
     "@wordpress/i18n": "^5.13.0"
