@@ -188,11 +188,11 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 		$result = $this->extension->add_v4_classes_to_typography_selector( $items );
 
 		// Assert
-		$this->assertArrayHasKey( 'v4-Heading', $result );
-		$this->assertEquals( 'v4-Heading', $result['v4-Heading']['id'] );
-		$this->assertEquals( 'Heading', $result['v4-Heading']['title'] );
-		$this->assertEquals( 'v4', $result['v4-Heading']['group'] );
-		$this->assertIsArray( $result['v4-Heading']['value'] );
+		$this->assertArrayHasKey( 'v4-heading', $result );
+		$this->assertEquals( 'v4-heading', $result['v4-heading']['id'] );
+		$this->assertEquals( 'Heading', $result['v4-heading']['title'] );
+		$this->assertEquals( 'v4', $result['v4-heading']['group'] );
+		$this->assertIsArray( $result['v4-heading']['value'] );
 	}
 
 	public function test_add_v4_classes_to_typography_selector__converts_props_to_v3_format() {
@@ -243,7 +243,7 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 		$result = $this->extension->add_v4_classes_to_typography_selector( $items );
 
 		// Assert
-		$value = $result['v4-Body']['value'];
+		$value = $result['v4-body']['value'];
 		$this->assertEquals( 'Arial', $value['typography_font_family'] );
 		$this->assertEquals( [ 'size' => 16, 'unit' => 'px' ], $value['typography_font_size'] );
 		$this->assertEquals( '400', $value['typography_font_weight'] );
@@ -291,7 +291,7 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 
 		// Assert
 		$keys = array_keys( $result );
-		$this->assertEquals( 'v4-V4Class', $keys[0] );
+		$this->assertEquals( 'v4-v4class', $keys[0] );
 		$this->assertEquals( 'v3-item', $keys[1] );
 	}
 
@@ -432,7 +432,7 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 		$result = $this->extension->add_v4_classes_to_typography_selector( $items );
 
 		// Assert
-		$value = $result['v4-Heading']['value'];
+		$value = $result['v4-heading']['value'];
 		$this->assertEquals( [ 'size' => 24, 'unit' => 'px' ], $value['typography_font_size'] );
 		$this->assertEquals( [ 'size' => 20, 'unit' => 'px' ], $value['typography_font_size_tablet'] );
 		$this->assertEquals( [ 'size' => 16, 'unit' => 'px' ], $value['typography_font_size_mobile'] );
@@ -497,7 +497,7 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 		$result = $this->extension->add_v4_classes_to_typography_selector( $items );
 
 		// Assert
-		$value = $result['v4-Heading']['value'];
+		$value = $result['v4-heading']['value'];
 		$this->assertEquals( [ 'size' => 20, 'unit' => 'px' ], $value['typography_font_size_tablet'] );
 		$this->assertArrayNotHasKey( 'typography_font_family_tablet', $value );
 	}
@@ -555,7 +555,7 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertCount( 2, $result );
-		$this->assertArrayHasKey( 'v4-Heading', $result );
-		$this->assertArrayHasKey( 'v4-Body', $result );
+		$this->assertArrayHasKey( 'v4-heading', $result );
+		$this->assertArrayHasKey( 'v4-body', $result );
 	}
 }
