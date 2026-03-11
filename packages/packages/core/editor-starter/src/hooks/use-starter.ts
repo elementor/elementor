@@ -50,7 +50,7 @@ export function useStarter() {
 			const container = document.createElement( 'div' );
 			container.id = STARTER_CONTAINER_ID;
 
-			wrapper.append( container );
+			wrapper.prepend( container );
 
 			setConfig( starterConfig );
 			setPortalContainer( container );
