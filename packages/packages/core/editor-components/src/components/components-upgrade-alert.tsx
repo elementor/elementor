@@ -11,7 +11,7 @@ interface ComponentsUpgradeAlertProps {
 
 export function ComponentsUpgradeAlert( { title, description, upgradeUrl }: ComponentsUpgradeAlertProps ) {
 	return (
-		<Box sx={ { mt: 'auto' } }>
+		<Box sx={ { mt: 'auto', position: 'sticky', bottom: 0 } }>
 			<Alert
 				variant="standard"
 				color="promotion"
