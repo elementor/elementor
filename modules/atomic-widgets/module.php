@@ -174,7 +174,7 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Atomic Widgets', 'elementor' ),
 			'description' => esc_html__( 'Enable atomic widgets.', 'elementor' ),
-			'hidden' => false,
+			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
 			'new_site' => [
