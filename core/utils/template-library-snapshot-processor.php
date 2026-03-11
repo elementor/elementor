@@ -8,8 +8,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Template_Library_Snapshot_Processor {
 
-
-
 	abstract protected function get_item_prefix(): string;
 	abstract protected function get_max_items(): int;
 	abstract protected function can_access_repository(): bool;

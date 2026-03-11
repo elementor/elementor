@@ -15,12 +15,12 @@ class Template_Library_Variables_Element_Transformer {
 			return $elements;
 		}
 
-		$variable_types = Variable_Type_Keys::get_all();
+		$variable_types_map = array_fill_keys( Variable_Type_Keys::get_all(), true );
 
 		return Template_Library_Element_Iterator::iterate(
 			$elements,
-			function ( $element_data ) use ( $id_map, $variable_types ) {
-				return self::rewrite_variable_ids_in_element( $element_data, $id_map, $variable_types );
+			function ( $element_data ) use ( $id_map, $variable_types_map ) {
+				return self::rewrite_variable_ids_in_element( $element_data, $id_map, $variable_types_map );
 			}
 		);
 	}
@@ -32,35 +32,35 @@ class Template_Library_Variables_Element_Transformer {
 			return $elements;
 		}
 
-		$variable_types = Variable_Type_Keys::get_all();
+		$variable_types_map = array_fill_keys( Variable_Type_Keys::get_all(), true );
 		$ids_to_flatten = null !== $only_ids ? array_fill_keys( $only_ids, true ) : null;
 
 		return Template_Library_Element_Iterator::iterate(
 			$elements,
-			function ( $element_data ) use ( $variable_data, $variable_types, $ids_to_flatten ) {
-				return self::flatten_variable_refs_in_element( $element_data, $variable_data, $variable_types, $ids_to_flatten );
+			function ( $element_data ) use ( $variable_data, $variable_types_map, $ids_to_flatten ) {
+				return self::flatten_variable_refs_in_element( $element_data, $variable_data, $variable_types_map, $ids_to_flatten );
 			}
 		);
 	}
 
-	private static function rewrite_variable_ids_in_element( array $element_data, array $id_map, array $variable_types ): array {
+	private static function rewrite_variable_ids_in_element( array $element_data, array $id_map, array $variable_types_map ): array {
 		if ( ! empty( $element_data['settings'] ) && is_array( $element_data['settings'] ) ) {
-			$element_data['settings'] = self::rewrite_variable_ids_recursive( $element_data['settings'], $id_map, $variable_types );
+			$element_data['settings'] = self::rewrite_variable_ids_recursive( $element_data['settings'], $id_map, $variable_types_map );
 		}
 
 		if ( ! empty( $element_data['styles'] ) && is_array( $element_data['styles'] ) ) {
-			$element_data['styles'] = self::rewrite_variable_ids_recursive( $element_data['styles'], $id_map, $variable_types );
+			$element_data['styles'] = self::rewrite_variable_ids_recursive( $element_data['styles'], $id_map, $variable_types_map );
 		}
 
 		return $element_data;
 	}
 
-	private static function rewrite_variable_ids_recursive( $data, array $id_map, array $variable_types ) {
+	private static function rewrite_variable_ids_recursive( $data, array $id_map, array $variable_types_map ) {
 		if ( ! is_array( $data ) ) {
 			return $data;
 		}
 
-		if ( isset( $data['$$type'] ) && in_array( $data['$$type'], $variable_types, true ) ) {
+		if ( isset( $data['$$type'], $variable_types_map[ $data['$$type'] ] ) ) {
 			if ( isset( $data['value'] ) && is_string( $data['value'] ) && isset( $id_map[ $data['value'] ] ) ) {
 				$data['value'] = $id_map[ $data['value'] ];
 			}
@@ -69,31 +69,31 @@ class Template_Library_Variables_Element_Transformer {
 
 		foreach ( $data as $key => $value ) {
 			if ( is_array( $value ) ) {
-				$data[ $key ] = self::rewrite_variable_ids_recursive( $value, $id_map, $variable_types );
+				$data[ $key ] = self::rewrite_variable_ids_recursive( $value, $id_map, $variable_types_map );
 			}
 		}
 
 		return $data;
 	}
 
-	private static function flatten_variable_refs_in_element( array $element_data, array $variable_data, array $variable_types, ?array $ids_to_flatten ): array {
+	private static function flatten_variable_refs_in_element( array $element_data, array $variable_data, array $variable_types_map, ?array $ids_to_flatten ): array {
 		if ( ! empty( $element_data['settings'] ) && is_array( $element_data['settings'] ) ) {
-			$element_data['settings'] = self::flatten_variable_refs_recursive( $element_data['settings'], $variable_data, $variable_types, $ids_to_flatten );
+			$element_data['settings'] = self::flatten_variable_refs_recursive( $element_data['settings'], $variable_data, $variable_types_map, $ids_to_flatten );
 		}
 
 		if ( ! empty( $element_data['styles'] ) && is_array( $element_data['styles'] ) ) {
-			$element_data['styles'] = self::flatten_variable_refs_recursive( $element_data['styles'], $variable_data, $variable_types, $ids_to_flatten );
+			$element_data['styles'] = self::flatten_variable_refs_recursive( $element_data['styles'], $variable_data, $variable_types_map, $ids_to_flatten );
 		}
 
 		return $element_data;
 	}
 
-	private static function flatten_variable_refs_recursive( $data, array $variable_data, array $variable_types, ?array $ids_to_flatten = null ) {
+	private static function flatten_variable_refs_recursive( $data, array $variable_data, array $variable_types_map, ?array $ids_to_flatten = null ) {
 		if ( ! is_array( $data ) ) {
 			return $data;
 		}
 
-		if ( isset( $data['$$type'] ) && in_array( $data['$$type'], $variable_types, true ) ) {
+		if ( isset( $data['$$type'], $variable_types_map[ $data['$$type'] ] ) ) {
 			$var_id = $data['value'] ?? null;
 
 			if ( is_string( $var_id ) && isset( $variable_data[ $var_id ] ) ) {
@@ -118,7 +118,7 @@ class Template_Library_Variables_Element_Transformer {
 
 		foreach ( $data as $key => $value ) {
 			if ( is_array( $value ) ) {
-				$data[ $key ] = self::flatten_variable_refs_recursive( $value, $variable_data, $variable_types, $ids_to_flatten );
+				$data[ $key ] = self::flatten_variable_refs_recursive( $value, $variable_data, $variable_types_map, $ids_to_flatten );
 			}
 		}
 

@@ -85,34 +85,31 @@ class Template_Library_Global_Classes_Element_Transformer {
 				continue;
 			}
 
-			if ( ! self::should_flatten_class_id( $class_id, $items, $ids_to_flatten ) ) {
-				if ( self::is_global_class_id( $class_id ) ) {
-					if ( null !== $ids_to_flatten && isset( $items[ $class_id ] ) ) {
-						$updated_values[] = $class_id;
-					}
+			if ( self::should_flatten_class_id( $class_id, $items, $ids_to_flatten ) ) {
+				$incoming_variants = $items[ $class_id ]['variants'] ?? [];
 
-					continue;
+				if ( null === $local_style_id ) {
+					$local_style_id = self::create_local_class_id( $element_data );
+					$element_styles[ $local_style_id ] = self::build_local_class_style( $local_style_id, [] );
 				}
-				$updated_values[] = $class_id;
+
+				$element_styles[ $local_style_id ]['variants'] = array_merge(
+					$element_styles[ $local_style_id ]['variants'],
+					$incoming_variants
+				);
+
+				if ( ! $local_style_used ) {
+					$updated_values[] = $local_style_id;
+					$local_style_used = true;
+				}
+
 				continue;
 			}
 
-			$global_class = $items[ $class_id ];
-			$incoming_variants = $global_class['variants'] ?? [];
+			$is_global = self::is_global_class_id( $class_id );
 
-			if ( null === $local_style_id ) {
-				$local_style_id = self::create_local_class_id( $element_data );
-				$element_styles[ $local_style_id ] = self::build_local_class_style( $local_style_id, [] );
-			}
-
-			$element_styles[ $local_style_id ]['variants'] = array_merge(
-				$element_styles[ $local_style_id ]['variants'],
-				$incoming_variants
-			);
-
-			if ( ! $local_style_used ) {
-				$updated_values[] = $local_style_id;
-				$local_style_used = true;
+			if ( ! $is_global || ( null !== $ids_to_flatten && isset( $items[ $class_id ] ) ) ) {
+				$updated_values[] = $class_id;
 			}
 		}
 
