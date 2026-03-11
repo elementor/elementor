@@ -1,3 +1,4 @@
+import { initPasteInteractionsCommand } from './commands/paste-interactions';
 import { Direction } from './components/controls/direction';
 import { Easing } from './components/controls/easing';
 import { Effect } from './components/controls/effect';
@@ -15,6 +16,7 @@ export function init() {
 		interactionsRepository.register( documentElementsInteractionsProvider );
 
 		initCleanInteractionIdsOnDuplicate();
+		initPasteInteractionsCommand();
 
 		registerInteractionsControl( {
 			type: 'trigger',
@@ -31,7 +33,7 @@ export function init() {
 		registerInteractionsControl( {
 			type: 'replay',
 			component: Replay,
-			options: [ 'true', 'false' ],
+			options: [ 'no' ],
 		} );
 
 		registerInteractionsControl( {

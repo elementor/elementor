@@ -17,6 +17,15 @@ jest.mock( '../utils/get-interactions-config', () => ( {
 	} ) ),
 } ) );
 
+jest.mock( '../contexts/interactions-context', () => ( {
+	useInteractionsContext: jest.fn( () => ( {
+		elementId: 'test-element-id',
+		interactions: { version: 1, items: [] },
+		setInteractions: jest.fn(),
+		playInteractions: jest.fn(),
+	} ) ),
+} ) );
+
 const createInteraction = (
 	trigger: string,
 	effect: string,
@@ -63,6 +72,8 @@ const createInteraction = (
 								replay: { $$type: 'boolean', value: false },
 								easing: { $$type: 'string', value: 'easeIn' },
 								relativeTo: { $$type: 'string', value: 'viewport' },
+								repeat: { $$type: 'string', value: '' },
+								times: { $$type: 'number', value: 1 },
 								start: { $$type: 'size', value: { size: 85, unit: '%' } },
 								end: { $$type: 'size', value: { size: 15, unit: '%' } },
 							},
