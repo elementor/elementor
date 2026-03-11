@@ -56,11 +56,28 @@ const mockComponents = [
 	{ id: 7, name: 'ExistingComponent', uid: 'f73880da-522c-442e-815a-b2c9849b7421' },
 ];
 
+const extendedWindow = window as unknown as ExtendedWindow;
+
+function setHasPro( value: boolean ) {
+	extendedWindow.elementor = {
+		...extendedWindow.elementor,
+		helpers: {
+			...extendedWindow.elementor?.helpers,
+			hasPro: () => value,
+		},
+	};
+}
+
 describe( 'ComponentsTab', () => {
 	let store: Store< SliceState< typeof slice > >;
+	let originalElementor: ExtendedWindow[ 'elementor' ];
+	let originalElementorPro: ExtendedWindow[ 'elementorPro' ];
 
 	beforeEach( () => {
 		jest.useFakeTimers();
+		originalElementor = extendedWindow.elementor;
+		originalElementorPro = extendedWindow.elementorPro;
+		setHasPro( true );
 		registerSlice( slice );
 		store = __createStore();
 		act( () => {
@@ -69,6 +86,8 @@ describe( 'ComponentsTab', () => {
 	} );
 
 	afterEach( () => {
+		extendedWindow.elementor = originalElementor;
+		extendedWindow.elementorPro = originalElementorPro;
 		if ( jest.isMockFunction( setTimeout ) ) {
 			jest.runOnlyPendingTimers();
 			jest.clearAllTimers();
@@ -231,49 +250,23 @@ describe( 'ComponentsTab', () => {
 	} );
 
 	describe( 'ComponentsProNotification', () => {
-		const extendedWindow = window as unknown as ExtendedWindow;
-		let originalElementor: ExtendedWindow[ 'elementor' ];
-		let originalElementorPro: ExtendedWindow[ 'elementorPro' ];
-
-		beforeEach( () => {
-			originalElementor = extendedWindow.elementor;
-			originalElementorPro = extendedWindow.elementorPro;
-		} );
-
-		afterEach( () => {
-			extendedWindow.elementor = originalElementor;
-			extendedWindow.elementorPro = originalElementorPro;
-		} );
-
-		it( 'should render notification for Core users without Pro when components exist', () => {
+		it( 'should render upgrade notification for users without Pro when components exist', () => {
 			// Arrange
-			extendedWindow.elementor = {
-				helpers: {
-					hasPro: () => false,
-				},
-			};
-			extendedWindow.elementorPro = undefined;
+			setHasPro( false );
 
 			// Act
 			renderWithStore( <Components />, store );
 
 			// Assert
-			expect( screen.getByText( /Try Components for free:/i ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Create new components' ) ).toBeInTheDocument();
 			expect(
-				screen.getByText(
-					/Soon Components will be part of the Pro subscription, but what you create now will remain on your site\./i
-				)
+				screen.getByText( /Creating new components requires an active Pro subscription\./i )
 			).toBeInTheDocument();
 		} );
 
-		it( 'should not render notification when no components exist', () => {
+		it( 'should not render notification when no components exist and no Pro', () => {
 			// Arrange
-			extendedWindow.elementor = {
-				helpers: {
-					hasPro: () => false,
-				},
-			};
-			extendedWindow.elementorPro = undefined;
+			setHasPro( false );
 			act( () => {
 				dispatch( slice.actions.load( [] ) );
 			} );
@@ -282,7 +275,45 @@ describe( 'ComponentsTab', () => {
 			renderWithStore( <Components />, store );
 
 			// Assert
-			expect( screen.queryByText( /Try Components for free:/i ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Create new components' ) ).not.toBeInTheDocument();
+			expect( screen.getByText( 'Create Reusable Components' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should not render notification when Pro is installed', () => {
+			// Arrange
+			setHasPro( true );
+
+			// Act
+			renderWithStore( <Components />, store );
+
+			// Assert
+			expect( screen.queryByText( 'Create new components' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'Pro Upgrade Empty State', () => {
+		it( 'should show upgrade empty state when no Pro and no components', () => {
+			// Arrange
+			setHasPro( false );
+			act( () => {
+				dispatch( slice.actions.load( [] ) );
+			} );
+
+			// Act
+			renderWithStore(
+				<SearchProvider localStorageKey="test-search">
+					<ComponentsList />
+				</SearchProvider>,
+				store
+			);
+
+			// Assert
+			expect( screen.getByText( 'Create Reusable Components' ) ).toBeInTheDocument();
+			expect(
+				screen.getByText( 'Create design elements that sync across your entire site.' )
+			).toBeInTheDocument();
+			expect( screen.getByText( 'Upgrade now' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'No components yet' ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );

@@ -67,7 +67,7 @@ abstract class Form_Message extends Atomic_Element_Base {
 				->add_variant(
 					Style_Variant::make()
 						->add_props( [
-							'display' => String_Prop_Type::generate( 'block' ),
+							'display' => String_Prop_Type::generate( 'none' ),
 							'background' => Background_Prop_Type::generate( [
 								'color' => Color_Prop_Type::generate( static::get_background_color() ),
 							] ),

@@ -1,52 +1,49 @@
 import { useMemo } from 'react';
-import { getElementorConfig, type SupportedFonts } from '@elementor/editor-v1-adapters';
-import { __ } from '@wordpress/i18n';
+import { getElementorConfig } from '@elementor/editor-v1-adapters';
 
 import { type FontCategory } from '../controls/font-family-control/font-family-control';
 
-const supportedCategories: Record< SupportedFonts, string > = {
-	system: __( 'System', 'elementor' ),
-	custom: __( 'Custom Fonts', 'elementor' ),
-	googlefonts: __( 'Google Fonts', 'elementor' ),
+type FontControlConfig = {
+	groups?: Record< string, string >;
+	options?: Record< string, string >;
 };
 
-const getFontFamilies = () => {
+const getFontControlConfig = (): FontControlConfig => {
 	const { controls } = getElementorConfig();
 
-	const options = controls?.font?.options;
-
-	if ( ! options ) {
-		return null;
-	}
-
-	return options;
+	return controls?.font ?? {};
 };
 
 export const useFontFamilies = () => {
-	const fontFamilies = getFontFamilies();
+	const { groups, options } = getFontControlConfig();
 
 	return useMemo( () => {
-		const categoriesOrder: SupportedFonts[] = [ 'system', 'custom', 'googlefonts' ];
+		if ( ! groups || ! options ) {
+			return [];
+		}
 
-		return Object.entries( fontFamilies || {} )
+		const groupKeys = Object.keys( groups );
+		const groupIndexMap = new Map( groupKeys.map( ( key, index ) => [ key, index ] ) );
+
+		return Object.entries( options )
 			.reduce< FontCategory[] >( ( acc, [ font, category ] ) => {
-				if ( ! supportedCategories[ category as SupportedFonts ] ) {
+				const groupIndex = groupIndexMap.get( category );
+
+				if ( groupIndex === undefined ) {
 					return acc;
 				}
 
-				const categoryIndex = categoriesOrder.indexOf( category );
-
-				if ( ! acc[ categoryIndex ] ) {
-					acc[ categoryIndex ] = {
-						label: supportedCategories[ category as SupportedFonts ],
+				if ( ! acc[ groupIndex ] ) {
+					acc[ groupIndex ] = {
+						label: groups[ category ],
 						fonts: [],
 					};
 				}
 
-				acc[ categoryIndex ].fonts.push( font );
+				acc[ groupIndex ].fonts.push( font );
 
 				return acc;
 			}, [] )
 			.filter( Boolean );
-	}, [ fontFamilies ] );
+	}, [ groups, options ] );
 };

@@ -300,8 +300,18 @@ function cleanupEventsManagerConfig() {
 	delete ( window as unknown as Record< string, unknown > ).elementorCommon;
 }
 
+type ExtendedWindow = Window & {
+	elementor?: {
+		helpers?: {
+			hasPro?: () => boolean;
+		};
+	};
+};
+
 describe( '<InstanceEditingPanel />', () => {
 	let store: Store< SliceState< typeof slice > >;
+	const extendedWindow = window as unknown as ExtendedWindow;
+	let originalElementor: ExtendedWindow[ 'elementor' ];
 
 	beforeAll( () => {
 		controlsRegistry.register( MOCK_CONTROL_TYPE, TextControl, 'full' );
@@ -309,6 +319,11 @@ describe( '<InstanceEditingPanel />', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		originalElementor = extendedWindow.elementor;
+		extendedWindow.elementor = {
+			...extendedWindow.elementor,
+			helpers: { hasPro: () => true },
+		};
 		registerSlice( slice );
 		store = __createStore();
 		setupEventsManagerConfig();
@@ -327,6 +342,7 @@ describe( '<InstanceEditingPanel />', () => {
 	} );
 
 	afterEach( () => {
+		extendedWindow.elementor = originalElementor;
 		cleanupEventsManagerConfig();
 	} );
 
@@ -393,7 +409,7 @@ describe( '<InstanceEditingPanel />', () => {
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
-	it( 'should show empty state without edit button when no overridable props', () => {
+	it( 'should show empty state with disabled edit button when no overridable props', () => {
 		// Arrange.
 		setupComponent( { isWithOverridableProps: false } );
 
@@ -403,7 +419,7 @@ describe( '<InstanceEditingPanel />', () => {
 		// Assert.
 		expect( screen.getByText( MOCK_COMPONENT_NAME ) ).toBeInTheDocument();
 		expect( screen.getByText( 'No properties yet' ) ).toBeInTheDocument();
-		expect( screen.queryByText( 'Edit component' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: /edit component/i } ) ).toBeDisabled();
 		expect( screen.queryByText( 'Content' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Settings' ) ).not.toBeInTheDocument();
 	} );
@@ -576,6 +592,39 @@ describe( '<InstanceEditingPanel />', () => {
 					id: 'detach-component-instance-failed',
 				} );
 			} );
+		} );
+	} );
+
+	describe( 'Pro upgrade alert', () => {
+		it( 'should show upgrade alert when Pro is not installed', () => {
+			// Arrange
+			extendedWindow.elementor = {
+				...extendedWindow.elementor,
+				helpers: { hasPro: () => false },
+			};
+			setupComponent();
+
+			// Act
+			renderEditInstancePanel( store );
+
+			// Assert
+			expect( screen.getByText( 'Edit components' ) ).toBeInTheDocument();
+			expect(
+				screen.getByText( /Editing components requires an active Pro subscription\./i )
+			).toBeInTheDocument();
+		} );
+
+		it( 'should not show upgrade alert when Pro is installed', () => {
+			// Arrange
+			setupComponent();
+
+			// Act
+			renderEditInstancePanel( store );
+
+			// Assert
+			expect(
+				screen.queryByText( /Editing components requires an active Pro subscription\./i )
+			).not.toBeInTheDocument();
 		} );
 	} );
 } );

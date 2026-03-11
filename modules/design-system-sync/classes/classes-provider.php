@@ -2,8 +2,8 @@
 
 namespace Elementor\Modules\DesignSystemSync\Classes;
 
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -11,18 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Classes_Provider {
 	private static $cached_classes = null;
-
-	const TYPOGRAPHY_PROPS = [
-		'font-family',
-		'font-size',
-		'font-weight',
-		'font-style',
-		'text-decoration',
-		'line-height',
-		'letter-spacing',
-		'word-spacing',
-		'text-transform',
-	];
 
 	public static function get_all_classes(): array {
 		if ( null !== self::$cached_classes ) {
@@ -59,6 +47,14 @@ class Classes_Provider {
 	}
 
 	public static function get_default_breakpoint_props( array $variants ): array {
+		$all = self::get_all_normal_state_variant_props( $variants );
+
+		return $all[ Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP ] ?? [];
+	}
+
+	public static function get_all_normal_state_variant_props( array $variants ): array {
+		$result = [];
+
 		foreach ( $variants as $variant ) {
 			if ( ! isset( $variant['meta'] ) ) {
 				continue;
@@ -70,25 +66,23 @@ class Classes_Provider {
 				continue;
 			}
 
-			$breakpoint = $meta['breakpoint'];
 			$state = $meta['state'];
-
-			if ( ! in_array( $breakpoint, [ null, 'desktop' ], true ) ) {
-				continue;
-			}
 
 			if ( ! in_array( $state, [ null, 'normal' ], true ) ) {
 				continue;
 			}
 
-			return $variant['props'] ?? [];
+			$breakpoint = $meta['breakpoint'];
+			$breakpoint_key = ( null === $breakpoint ) ? Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP : $breakpoint;
+
+			$result[ $breakpoint_key ] = $variant['props'] ?? [];
 		}
 
-		return [];
+		return $result;
 	}
 
 	public static function has_typography_props( array $props ): bool {
-		foreach ( self::TYPOGRAPHY_PROPS as $key ) {
+		foreach ( Sync_Typography_Props::get_css_props() as $key ) {
 			if ( isset( $props[ $key ] ) ) {
 				return true;
 			}
@@ -122,6 +116,7 @@ class Classes_Provider {
 				'id' => $id,
 				'label' => $class['label'] ?? '',
 				'props' => $default_props,
+				'variants_props' => self::get_all_normal_state_variant_props( $variants ),
 			];
 		}
 
