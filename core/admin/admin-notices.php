@@ -651,7 +651,7 @@ class Admin_Notices extends Module {
 					$button_text = esc_html__( 'Install now', 'elementor' );
 					$button_url = $this->get_plugin_button_install_url( $plugin_slug );
 					$campaign_data = [
-						'name' => 'elementor_site_mailer_promotion',
+						'name' => 'elementor_site_mailer_campaign',
 						'campaign' => 'sm-plg-one',
 						'source' => 'sm-core-woo-one-install',
 						'medium' => 'wp-dash',
@@ -661,7 +661,7 @@ class Admin_Notices extends Module {
 					$button_text = esc_html__( 'Activate now', 'elementor' );
 					$button_url = $this->get_plugin_button_activate_url( $plugin_file_path );
 					$campaign_data = [
-						'name' => 'elementor_site_mailer_promotion',
+						'name' => 'elementor_site_mailer_campaign',
 						'campaign' => 'sm-plg-one',
 						'source' => 'sm-core-woo-one-activate',
 						'medium' => 'wp-dash',
@@ -675,7 +675,7 @@ class Admin_Notices extends Module {
 					$button_text = esc_html__( 'Install now', 'elementor' );
 					$button_url = $this->get_plugin_button_install_url( $plugin_slug );
 					$campaign_data = [
-						'name' => 'elementor_site_mailer_promotion',
+						'name' => 'elementor_site_mailer_campaign',
 						'campaign' => 'sm-plg-one',
 						'source' => 'sm-core-form-one-install',
 						'medium' => 'wp-dash',
@@ -685,7 +685,7 @@ class Admin_Notices extends Module {
 					$button_text = esc_html__( 'Activate now', 'elementor' );
 					$button_url = $this->get_plugin_button_activate_url( $plugin_file_path );
 					$campaign_data = [
-						'name' => 'elementor_site_mailer_promotion',
+						'name' => 'elementor_site_mailer_campaign',
 						'campaign' => 'sm-plg-one',
 						'source' => 'sm-core-form-one-activate',
 						'medium' => 'wp-dash',
@@ -702,7 +702,7 @@ class Admin_Notices extends Module {
 					$button_text = esc_html__( 'Install now', 'elementor' );
 					$button_url = $this->get_plugin_button_install_url( $plugin_slug );
 					$campaign_data = [
-						'name' => 'elementor_site_mailer_promotion',
+						'name' => 'elementor_site_mailer_campaign',
 						'campaign' => 'sm-plg',
 						'source' => 'sm-core-woo-install',
 						'medium' => 'wp-dash',
@@ -711,7 +711,7 @@ class Admin_Notices extends Module {
 					$button_text = esc_html__( 'Activate now', 'elementor' );
 					$button_url = $this->get_plugin_button_activate_url( $plugin_file_path );
 					$campaign_data = [
-						'name' => 'elementor_site_mailer_promotion',
+						'name' => 'elementor_site_mailer_campaign',
 						'campaign' => 'sm-plg',
 						'source' => 'sm-core-woo-activate',
 						'medium' => 'wp-dash',
@@ -725,7 +725,7 @@ class Admin_Notices extends Module {
 					$button_text = esc_html__( 'Install now', 'elementor' );
 					$button_url = $this->get_plugin_button_install_url( $plugin_slug );
 					$campaign_data = [
-						'name' => 'elementor_site_mailer_promotion',
+						'name' => 'elementor_site_mailer_campaign',
 						'campaign' => 'sm-plg',
 						'source' => 'sm-core-form-install',
 						'medium' => 'wp-dash',
@@ -734,7 +734,7 @@ class Admin_Notices extends Module {
 					$button_text = esc_html__( 'Activate now', 'elementor' );
 					$button_url = $this->get_plugin_button_activate_url( $plugin_file_path );
 					$campaign_data = [
-						'name' => 'elementor_site_mailer_promotion',
+						'name' => 'elementor_site_mailer_campaign',
 						'campaign' => 'sm-plg',
 						'source' => 'sm-core-form-activate',
 						'medium' => 'wp-dash',
