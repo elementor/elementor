@@ -7,6 +7,8 @@ import { __ } from '@wordpress/i18n';
 import { type ReplayFieldProps } from '../../types';
 import { InteractionsPromotionChip } from '../../ui/interactions-promotion-chip';
 
+const TRACKING_DATA = { target_name: 'interactions_replay', location_l2: 'interactions' } as const;
+
 export const REPLAY_OPTIONS = {
 	no: __( 'No', 'elementor' ),
 	yes: __( 'Yes', 'elementor' ),
@@ -45,6 +47,7 @@ export function Replay( { onChange, anchorRef }: ReplayFieldProps ) {
 					content={ __( 'Upgrade to run the animation every time its trigger occurs.', 'elementor' ) }
 					upgradeUrl={ 'https://go.elementor.com/go-pro-interactions-replay-modal/' }
 					anchorRef={ anchorRef }
+					trackingData={ TRACKING_DATA }
 				/>
 			</Box>
 		</Box>

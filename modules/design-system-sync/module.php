@@ -50,7 +50,9 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/controls/register', [ $this, 'register_controls' ] );
 		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_editor_styles' ] );
-		add_action( 'elementor/global_classes/update', [ $this, 'clear_classes_cache' ] );
+		add_action( 'elementor/global_classes/update', function () {
+			$this->clear_classes_cache();
+		} );
 	}
 
 	public function register_controls( $controls_manager ) {

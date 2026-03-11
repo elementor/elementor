@@ -73,8 +73,8 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick }: Featur
 				display: 'grid',
 				gridTemplateColumns: {
 					xs: 'repeat(auto-fit, minmax(100px, 135px))',
-					sm: 'repeat(4, 1fr)',
-					md: 'repeat(5, 1fr)',
+					sm: 'repeat(4, 140px)',
+					md: 'repeat(5, 140px)',
 				},
 				gap: 2,
 				width: '100%',

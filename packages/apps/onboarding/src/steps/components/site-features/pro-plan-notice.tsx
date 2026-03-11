@@ -7,7 +7,8 @@ import { useOnboarding } from '../../../hooks/use-onboarding';
 import { useOnboardingEvent } from '../../../hooks/use-onboarding-event';
 import { t } from '../../../utils/translations';
 
-const PRO_PLAN_NOTICE_BG = '#FAE4FA';
+const PRO_PLAN_NOTICE_BG_LIGHT = '#FAE4FA';
+const PRO_PLAN_NOTICE_BG_DARK = '#491146';
 
 const ProPlanNoticeRoot = styled( Box )( ( { theme } ) => ( {
 	display: 'flex',
@@ -15,7 +16,7 @@ const ProPlanNoticeRoot = styled( Box )( ( { theme } ) => ( {
 	gap: theme.spacing( 1 ),
 	padding: theme.spacing( 1.5, 3 ),
 	borderRadius: theme.spacing( 2 ),
-	backgroundColor: PRO_PLAN_NOTICE_BG,
+	backgroundColor: theme.palette.mode === 'dark' ? PRO_PLAN_NOTICE_BG_DARK : PRO_PLAN_NOTICE_BG_LIGHT,
 	width: 'max-content',
 	maxWidth: '100%',
 	[ theme.breakpoints.down( 'sm' ) ]: {
@@ -55,7 +56,7 @@ export function ProPlanNotice( { planName }: LicenseNoticeProps ) {
 			<Link
 				href={ comparePlansUrl }
 				target="_blank"
-				color="promotion.main"
+				color={ theme.palette.mode === 'dark' ? 'common.white' : 'promotion.main' }
 				onClick={ handleComparePlansClick }
 				sx={ {
 					display: 'flex',
