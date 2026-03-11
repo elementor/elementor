@@ -15,7 +15,6 @@ const LEARN_MORE_URL = 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/'
 export function AtomicElementsPromo() {
 	const [ suppressed, toggleSuppressMessage ] = usePromoSuppressedMessage();
 	const isAdmin = getCurrentUser()?.capabilities?.includes( 'manage_options' );
-	console.log( 'isAdmin', isAdmin );
 	if ( ! isAdmin ) {
 		return null;
 	}
