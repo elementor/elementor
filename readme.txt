@@ -352,6 +352,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.35.7 - 2026-03-11 =
+
+* Fix: General UI issues in Editor screens in WordPress Admin
+
 = 3.35.6 - 2026-03-03 =
 
 * Tweak: Improved compatibility with WordPress 7.0
