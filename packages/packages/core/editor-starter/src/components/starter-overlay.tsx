@@ -68,14 +68,13 @@ export default function StarterOverlay() {
 			onClose={ dismiss }
 			container={ portalContainer }
 			TransitionProps={ { onExited } }
-			maxWidth={ false }
+			maxWidth={ theme.spacing( 104 ) }
 			BackdropProps={ {
 				sx: { backgroundColor: 'rgba(0, 0, 0, 0.6)' },
 			} }
 			PaperProps={ {
 				elevation: 0,
 				sx: {
-					width: theme.spacing( 104 ),
 					display: 'flex',
 					flexDirection: 'column',
 					alignItems: 'center',
