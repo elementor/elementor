@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useCallback } from 'react';
+import { getCurrentUser } from '@elementor/editor-current-user';
 import { notify } from '@elementor/editor-notifications';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { httpService } from '@elementor/http-client';
@@ -7,7 +8,6 @@ import { Box, Button, Chip, CloseButton, Divider, Typography } from '@elementor/
 import { __ } from '@wordpress/i18n';
 
 import { usePromoSuppressedMessage } from '../hooks/use-promo-suppressed-message';
-import { getCurrentUser } from '@elementor/editor-current-user';
 
 const PROMO_IMAGE = 'https://assets.elementor.com/v4-promotion/v1/images/v4_chip_new.png';
 const LEARN_MORE_URL = 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/';
@@ -15,10 +15,7 @@ const LEARN_MORE_URL = 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/'
 export function AtomicElementsPromo() {
 	const [ suppressed, toggleSuppressMessage ] = usePromoSuppressedMessage();
 	const isAdmin = getCurrentUser()?.capabilities?.includes( 'manage_options' );
-	if ( ! isAdmin ) {
-		return null;
-	}
-
+	
 	const activateAtomicElements = useCallback( async () => {
 		try {
 			const response = await httpService().post( 'elementor/v1/operations/opt-in-v4' );
@@ -33,8 +30,8 @@ export function AtomicElementsPromo() {
 			} );
 		}
 	}, [] );
-
-	if ( suppressed ) {
+	
+	if ( suppressed || ! isAdmin ) {
 		return null;
 	}
 
