@@ -31,6 +31,13 @@ const sass = {
 			},
 			{
 				expand: true,
+				cwd: 'app/modules/e-onboarding/assets/scss',
+				src: 'editor-loading.scss',
+				dest: 'assets/css/modules/e-onboarding',
+				ext: '.css',
+			},
+			{
+				expand: true,
 				cwd: 'modules/container-converter/assets/scss',
 				src: 'editor.scss',
 				dest: 'assets/css/modules/container-converter',

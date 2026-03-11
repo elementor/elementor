@@ -16,6 +16,7 @@ class User_Progress {
 	private ?int $started_at = null;
 	private ?int $completed_at = null;
 	private bool $starter_dismissed = false;
+	private bool $pending_editor_redirect = false;
 
 	public static function from_array( array $data ): self {
 		$instance = new self();
@@ -28,6 +29,7 @@ class User_Progress {
 		$instance->started_at = $data['started_at'] ?? null;
 		$instance->completed_at = $data['completed_at'] ?? null;
 		$instance->starter_dismissed = ! empty( $data['starter_dismissed'] );
+		$instance->pending_editor_redirect = ! empty( $data['pending_editor_redirect'] );
 
 		return $instance;
 	}
@@ -43,6 +45,7 @@ class User_Progress {
 			'started_at' => $this->started_at,
 			'completed_at' => $this->completed_at,
 			'starter_dismissed' => $this->starter_dismissed,
+			'pending_editor_redirect' => $this->pending_editor_redirect,
 		];
 	}
 
@@ -130,6 +133,14 @@ class User_Progress {
 
 	public function set_starter_dismissed( bool $dismissed ): void {
 		$this->starter_dismissed = $dismissed;
+	}
+
+	public function is_pending_editor_redirect(): bool {
+		return $this->pending_editor_redirect;
+	}
+
+	public function set_pending_editor_redirect( bool $pending ): void {
+		$this->pending_editor_redirect = $pending;
 	}
 
 	public function had_unexpected_exit(): bool {

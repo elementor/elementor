@@ -11,10 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 $notice = Plugin::$instance->editor->notice_bar->get_notice();
 ?>
 
-<?php Editor_Loading_Handler::maybe_render_styles(); ?>
-
 <div id="elementor-loading">
-	<?php Editor_Loading_Handler::maybe_render_content(); ?>
+	<?php Editor_Loading_Handler::maybe_render_onboarding_loading_content(); ?>
 	<div class="elementor-loader-wrapper">
 		<div class="elementor-loader" aria-hidden="true">
 			<div class="elementor-loader-boxes">

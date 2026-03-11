@@ -3,6 +3,7 @@
 namespace Elementor\App\Modules\E_Onboarding;
 
 use Elementor\App\Modules\E_Onboarding\Data\Controller;
+use Elementor\App\Modules\E_Onboarding\Editor_Loading_Handler;
 use Elementor\App\Modules\E_Onboarding\Data\Endpoints\Install_Theme;
 use Elementor\App\Modules\E_Onboarding\Storage\Entities\User_Choices;
 use Elementor\App\Modules\E_Onboarding\Storage\Entities\User_Progress;
@@ -65,6 +66,12 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/init', [ $this, 'on_elementor_init' ], 12 );
 
+		if ( $this->is_pending_editor_redirect() ) {
+			Editor_Loading_Handler::set_from_onboarding();
+			add_action( 'elementor/editor/v2/scripts/enqueue', [ $this, 'enqueue_loading_scripts' ] );
+			add_action( 'elementor/editor/v2/styles/enqueue', [ $this, 'enqueue_loading_styles' ] );
+		}
+
 		if ( $this->should_show_starter() ) {
 			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_starter_settings' ] );
 			add_filter( 'elementor/editor/v2/packages', [ $this, 'add_starter_packages' ] );
@@ -79,6 +86,25 @@ class Module extends BaseModule {
 
 		$this->set_onboarding_settings();
 		$this->enqueue_fonts();
+	}
+
+	public function enqueue_loading_styles(): void {
+		wp_enqueue_style(
+			'elementor-onboarding-editor-loading',
+			ELEMENTOR_URL . 'assets/css/modules/e-onboarding/editor-loading.css',
+			[],
+			ELEMENTOR_VERSION
+		);
+	}
+
+	public function enqueue_loading_scripts(): void {
+		wp_enqueue_script(
+			'e-onboarding-editor-loading',
+			ELEMENTOR_URL . 'assets/js/e-onboarding-editor-loading.js',
+			[],
+			ELEMENTOR_VERSION,
+			false
+		);
 	}
 
 	public function enqueue_fonts(): void {
@@ -218,6 +244,19 @@ class Module extends BaseModule {
 		$user = $library->get( 'user' );
 
 		return $user->first_name ?? '';
+	}
+
+	private function is_pending_editor_redirect(): bool {
+		$progress = $this->progress_manager->get_progress();
+
+		if ( ! $progress->is_pending_editor_redirect() ) {
+			return false;
+		}
+
+		$progress->set_pending_editor_redirect( false );
+		$this->progress_manager->save_progress( $progress );
+
+		return true;
 	}
 
 	public function should_show_starter(): bool {
