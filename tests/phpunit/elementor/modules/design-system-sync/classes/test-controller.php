@@ -21,13 +21,13 @@ class Test_Controller extends Elementor_Test_Base {
 		$this->controller = new Controller();
 		Variables_Provider::clear_cache();
 		$this->clear_kit_variables();
-		$this->cleanup_generated_file();
+		( new Stylesheet_Manager() )->delete();
 	}
 
 	public function tearDown(): void {
 		Variables_Provider::clear_cache();
 		$this->clear_kit_variables();
-		$this->cleanup_generated_file();
+		( new Stylesheet_Manager() )->delete();
 
 		parent::tearDown();
 	}
@@ -148,12 +148,4 @@ class Test_Controller extends Elementor_Test_Base {
 		}
 	}
 
-	private function cleanup_generated_file(): void {
-		$stylesheet = new Stylesheet_Manager();
-		$path = $stylesheet->get_path();
-
-		if ( file_exists( $path ) ) {
-			unlink( $path );
-		}
-	}
 }

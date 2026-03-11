@@ -24,7 +24,7 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 		$this->clear_kit_variables();
 		$this->clear_kit_classes();
 		$this->stylesheet_manager = new Stylesheet_Manager();
-		$this->cleanup_generated_file();
+		$this->stylesheet_manager->delete();
 	}
 
 	public function tearDown(): void {
@@ -32,7 +32,7 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 		Classes_Provider::clear_cache();
 		$this->clear_kit_variables();
 		$this->clear_kit_classes();
-		$this->cleanup_generated_file();
+		$this->stylesheet_manager->delete();
 
 		parent::tearDown();
 	}
@@ -76,9 +76,10 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 		// Assert
 		$this->assertStringContainsString( Stylesheet_Manager::FILE_NAME, $result['url'] );
 		$this->assertNotEmpty( $result['version'] );
+		$this->assertIsInt( $result['version'] );
 	}
 
-	public function test_generate__creates_empty_file_when_no_synced_variables() {
+	public function test_generate__deletes_file_when_no_synced_variables() {
 		// Arrange
 		$this->set_kit_variables( [
 			'var-1' => [
@@ -93,8 +94,7 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 		$this->stylesheet_manager->generate();
 
 		// Assert
-		$css = file_get_contents( $this->stylesheet_manager->get_path() );
-		$this->assertEmpty( $css );
+		$this->assertFileDoesNotExist( $this->stylesheet_manager->get_path() );
 	}
 
 	public function test_generate__excludes_non_synced_variables() {
@@ -232,7 +232,7 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 		$url = $this->stylesheet_manager->get_url();
 
 		// Assert
-		$this->assertStringContainsString( Base_File::UPLOADS_DIR . Stylesheet_Manager::FILES_DIR . Stylesheet_Manager::FILE_NAME, $url );
+		$this->assertStringContainsString( Base_File::UPLOADS_DIR . Stylesheet_Manager::DEFAULT_FILES_DIR . Stylesheet_Manager::FILE_NAME, $url );
 	}
 
 	public function test_generate__creates_file_with_synced_typography_class() {
@@ -260,8 +260,8 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 
 		// Assert
 		$css = file_get_contents( $this->stylesheet_manager->get_path() );
-		$this->assertStringContainsString( '--e-global-typography-v4-Heading-font-size:', $css );
-		$this->assertStringContainsString( '--e-global-typography-v4-Heading-font-weight:', $css );
+		$this->assertStringContainsString( '--e-global-typography-v4-heading-font-size:', $css );
+		$this->assertStringContainsString( '--e-global-typography-v4-heading-font-weight:', $css );
 	}
 
 	public function test_generate__skips_non_synced_classes() {
@@ -302,7 +302,7 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 
 		// Assert
 		$css = file_get_contents( $this->stylesheet_manager->get_path() );
-		$this->assertStringContainsString( '--e-global-typography-v4-Synced-font-size:', $css );
+		$this->assertStringContainsString( '--e-global-typography-v4-synced-font-size:', $css );
 		$this->assertStringNotContainsString( 'NotSynced', $css );
 	}
 
@@ -336,7 +336,7 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 
 		// Assert
 		$css = file_get_contents( $this->stylesheet_manager->get_path() );
-		$this->assertStringContainsString( '--e-global-typography-v4-Heading-font-size:', $css );
+		$this->assertStringContainsString( '--e-global-typography-v4-heading-font-size:', $css );
 		$this->assertStringNotContainsString( '32px', $css );
 	}
 
@@ -372,15 +372,15 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 
 		// Assert
 		$css = file_get_contents( $this->stylesheet_manager->get_path() );
-		$this->assertStringContainsString( '--e-global-typography-v4-RichText-font-family:', $css );
-		$this->assertStringContainsString( '--e-global-typography-v4-RichText-font-size:', $css );
-		$this->assertStringContainsString( '--e-global-typography-v4-RichText-font-weight:', $css );
-		$this->assertStringContainsString( '--e-global-typography-v4-RichText-font-style:', $css );
-		$this->assertStringContainsString( '--e-global-typography-v4-RichText-text-decoration:', $css );
-		$this->assertStringContainsString( '--e-global-typography-v4-RichText-line-height:', $css );
-		$this->assertStringContainsString( '--e-global-typography-v4-RichText-letter-spacing:', $css );
-		$this->assertStringContainsString( '--e-global-typography-v4-RichText-word-spacing:', $css );
-		$this->assertStringContainsString( '--e-global-typography-v4-RichText-text-transform:', $css );
+		$this->assertStringContainsString( '--e-global-typography-v4-richtext-font-family:', $css );
+		$this->assertStringContainsString( '--e-global-typography-v4-richtext-font-size:', $css );
+		$this->assertStringContainsString( '--e-global-typography-v4-richtext-font-weight:', $css );
+		$this->assertStringContainsString( '--e-global-typography-v4-richtext-font-style:', $css );
+		$this->assertStringContainsString( '--e-global-typography-v4-richtext-text-decoration:', $css );
+		$this->assertStringContainsString( '--e-global-typography-v4-richtext-line-height:', $css );
+		$this->assertStringContainsString( '--e-global-typography-v4-richtext-letter-spacing:', $css );
+		$this->assertStringContainsString( '--e-global-typography-v4-richtext-word-spacing:', $css );
+		$this->assertStringContainsString( '--e-global-typography-v4-richtext-text-transform:', $css );
 	}
 
 	public function test_generate__combines_variables_and_classes() {
@@ -417,7 +417,7 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 		// Assert
 		$css = file_get_contents( $this->stylesheet_manager->get_path() );
 		$this->assertStringContainsString( '--e-global-color-v4-primary:var(--Primary);', $css );
-		$this->assertStringContainsString( '--e-global-typography-v4-Heading-font-size:', $css );
+		$this->assertStringContainsString( '--e-global-typography-v4-heading-font-size:', $css );
 	}
 
 	public function test_generate__includes_responsive_typography_in_media_queries() {
@@ -456,7 +456,7 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 
 		// Assert
 		$css = file_get_contents( $this->stylesheet_manager->get_path() );
-		$this->assertStringContainsString( '--e-global-typography-v4-Heading-font-size:', $css );
+		$this->assertStringContainsString( '--e-global-typography-v4-heading-font-size:', $css );
 		$this->assertStringContainsString( '@media', $css );
 	}
 
@@ -495,11 +495,4 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 		}
 	}
 
-	private function cleanup_generated_file(): void {
-		$path = $this->stylesheet_manager->get_path();
-
-		if ( file_exists( $path ) ) {
-			unlink( $path );
-		}
-	}
 }

@@ -15,6 +15,10 @@ class Module extends BaseModule {
 	const MODULE_NAME = 'design-system-sync';
 	const EXPERIMENT_NAME = 'e_design_system_sync';
 
+	public static function get_v3_sync_id( string $label ): string {
+		return 'v4-' . strtolower( $label );
+	}
+
 	public function get_name() {
 		return self::MODULE_NAME;
 	}

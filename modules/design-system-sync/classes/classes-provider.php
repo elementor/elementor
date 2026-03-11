@@ -5,6 +5,7 @@ namespace Elementor\Modules\DesignSystemSync\Classes;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Modules\DesignSystemSync\Module;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -151,7 +152,7 @@ class Classes_Provider {
 				continue;
 			}
 
-			$v3_id = 'v4-' . $label;
+			$v3_id = Module::get_v3_sync_id( $label );
 
 			foreach ( $all_variant_props as $device => $props ) {
 				if ( empty( $props ) ) {

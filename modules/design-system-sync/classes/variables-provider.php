@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\DesignSystemSync\Classes;
 
+use Elementor\Modules\DesignSystemSync\Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
@@ -58,10 +59,6 @@ class Variables_Provider {
 		self::$cached_variables = null;
 	}
 
-	public static function get_v4_variable_id( string $label ): string {
-		return 'v4-' . strtolower( $label );
-	}
-
 	public static function get_synced_color_css_entries(): array {
 		$synced_variables = self::get_synced_color_variables();
 		$css_entries = [];
@@ -73,7 +70,7 @@ class Variables_Provider {
 				continue;
 			}
 
-			$v3_id = self::get_v4_variable_id( $label );
+			$v3_id = Module::get_v3_sync_id( $label );
 
 			$css_entries[] = "--e-global-color-{$v3_id}:var(--{$label});";
 		}

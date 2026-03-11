@@ -5,51 +5,36 @@ namespace Elementor\Modules\DesignSystemSync\Classes;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Files\Base as Base_File;
 use Elementor\Plugin;
+use Elementor\Stylesheet;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Stylesheet_Manager {
+class Stylesheet_Manager extends Base_File {
 	const FILE_NAME = 'design-system-sync.css';
-	const FILES_DIR = 'design-system-sync/';
+	const DEFAULT_FILES_DIR = 'design-system-sync/';
+	const META_KEY = '_elementor_design_system_sync_css_meta';
+
+	public function __construct() {
+		parent::__construct( self::FILE_NAME );
+	}
 
 	public function generate(): array {
-		$css = $this->build_css();
-		$path = $this->get_path();
-
-		$this->ensure_dir();
-
-		$written = file_put_contents( $path, $css );
-
-		if ( false === $written ) {
-			throw new \RuntimeException( 'Failed to write sync stylesheet to ' . esc_html( $path ) );
-		}
+		$this->update();
 
 		return [
 			'url' => $this->get_url(),
-			'version' => (string) filemtime( $path ),
+			'version' => $this->get_meta( 'time' ),
 		];
 	}
 
-	public function get_path(): string {
-		return $this->get_base_dir() . self::FILE_NAME;
-	}
-
-	public function get_url(): string {
-		$wp_upload_dir = wp_upload_dir( null, false );
-
-		return $wp_upload_dir['baseurl'] . '/' . Base_File::UPLOADS_DIR . self::FILES_DIR . self::FILE_NAME;
-	}
-
 	public function enqueue(): void {
-		$path = $this->get_path();
-
-		if ( ! file_exists( $path ) ) {
+		if ( ! file_exists( $this->get_path() ) ) {
 			$this->generate();
 		}
 
-		if ( ! file_exists( $path ) ) {
+		if ( ! file_exists( $this->get_path() ) ) {
 			return;
 		}
 
@@ -57,70 +42,34 @@ class Stylesheet_Manager {
 			'elementor-design-system-sync',
 			$this->get_url(),
 			[],
-			(string) filemtime( $path )
+			$this->get_meta( 'time' )
 		);
 	}
 
-	private function build_css(): string {
-		$grouped_entries = [];
-		$desktop_key = Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP;
+	protected function parse_content(): string {
+		$stylesheet = new Stylesheet();
+
+		$breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
+
+		foreach ( $breakpoints as $breakpoint_name => $breakpoint ) {
+			$stylesheet->add_device( $breakpoint_name, $breakpoint->get_value() );
+		}
 
 		$color_entries = Variables_Provider::get_synced_color_css_entries();
 
 		if ( ! empty( $color_entries ) ) {
-			$grouped_entries[ $desktop_key ] = $color_entries;
+			$stylesheet->add_raw_css( ':root { ' . implode( ' ', $color_entries ) . ' }' );
 		}
 
 		$typography_entries = Classes_Provider::get_synced_typography_css_entries();
 
 		foreach ( $typography_entries as $device => $entries ) {
-			$grouped_entries[ $device ] = array_merge( $grouped_entries[ $device ] ?? [], $entries );
+			$css = ':root { ' . implode( ' ', $entries ) . ' }';
+			$device_key = ( Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP === $device ) ? '' : $device;
+
+			$stylesheet->add_raw_css( $css, $device_key );
 		}
 
-		if ( empty( $grouped_entries ) ) {
-			return '';
-		}
-
-		return $this->render_grouped_css( $grouped_entries );
-	}
-
-	private function render_grouped_css( array $grouped_entries ): string {
-		$css = '';
-		$desktop_key = Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP;
-
-		if ( ! empty( $grouped_entries[ $desktop_key ] ) ) {
-			$css .= ':root { ' . implode( ' ', $grouped_entries[ $desktop_key ] ) . ' }';
-		}
-
-		$breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
-
-		foreach ( $grouped_entries as $device => $entries ) {
-			if ( $desktop_key === $device || empty( $entries ) ) {
-				continue;
-			}
-
-			if ( ! isset( $breakpoints[ $device ] ) ) {
-				continue;
-			}
-
-			$max_width = $breakpoints[ $device ]->get_value();
-			$css .= " @media(max-width:{$max_width}px){ :root { " . implode( ' ', $entries ) . ' } }';
-		}
-
-		return $css;
-	}
-
-	private function get_base_dir(): string {
-		$wp_upload_dir = wp_upload_dir( null, false );
-
-		return $wp_upload_dir['basedir'] . '/' . Base_File::UPLOADS_DIR . self::FILES_DIR;
-	}
-
-	private function ensure_dir(): void {
-		$dir = $this->get_base_dir();
-
-		if ( ! is_dir( $dir ) ) {
-			wp_mkdir_p( $dir );
-		}
+		return (string) $stylesheet;
 	}
 }
