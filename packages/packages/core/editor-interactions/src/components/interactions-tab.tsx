@@ -7,6 +7,8 @@ import { InteractionsProvider, useInteractionsContext } from '../contexts/intera
 import { PopupStateProvider } from '../contexts/popup-state-context';
 import { useElementInteractions } from '../hooks/use-element-interactions';
 import type { ElementInteractions } from '../types';
+import { createDefaultInteractionItem } from '../utils/prop-value-utils';
+import { trackInteractionCreated } from '../utils/tracking';
 import { EmptyState } from './empty-state';
 import { InteractionsList } from './interactions-list';
 
@@ -33,6 +35,7 @@ function InteractionsTabContent( { elementId }: { elementId: string } ) {
 				<EmptyState
 					onCreateInteraction={ () => {
 						firstInteractionState[ 1 ]( true );
+						trackInteractionCreated( elementId, createDefaultInteractionItem() );
 					} }
 				/>
 			) }
