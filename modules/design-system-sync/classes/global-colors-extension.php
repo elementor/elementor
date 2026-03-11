@@ -5,6 +5,7 @@ namespace Elementor\Modules\DesignSystemSync\Classes;
 use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Modules\DesignSystemSync\Controls\V4_Color_Variable_List;
+use Elementor\Modules\DesignSystemSync\Module;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -69,7 +70,7 @@ class Global_Colors_Extension {
 				continue;
 			}
 
-			$id = Variables_Provider::get_v4_variable_id( $label );
+			$id = Module::get_v3_sync_id( $label );
 
 			$items[ $id ] = [
 				'id' => $id,

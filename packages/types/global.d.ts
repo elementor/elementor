@@ -1,7 +1,7 @@
 import type { InteractionsConfig, DynamicTags, DynamicTagsManager, DynamicTag } from '@elementor/editor-editing-panel';
 import type { ControlItem, V1Element } from '@elementor/editor-elements';
 import type { PropsSchema } from '@elementor/editor-props';
-import type { SupportedFonts, EnqueueFont } from '@elementor/editor-v1-adapters';
+import type { EnqueueFont } from '@elementor/editor-v1-adapters';
 import type { V4PromotionData, V4PromotionKey } from '@elementor/editor-controls';
 
 interface EOnboardingConfig {
@@ -41,7 +41,6 @@ interface EOnboardingConfig {
 		connect: string;
 		comparePlans?: string;
 		upgradeUrl: string;
-		videosBaseUrl: string;
 	};
 }
 
@@ -49,7 +48,13 @@ declare global {
 	interface Window {
 		elementorCommon?: {
 		eventsManager?: {
-			dispatchEvent?: (name: string, data: unknown) => void;
+			dispatchEvent?: (name: string, data: unknown, options?: Record<string, unknown>) => void;
+			canSendEvents?: () => boolean;
+			initializeMixpanel?: (onLoaded: ( mpInstance?: unknown ) => void) => void;
+			enableTracking?: () => void;
+			isMixpanelReady?: () => boolean;
+			trackingEnabled?: boolean;
+			getMixpanelInstance?: () => unknown;
 			config?: {
 				locations?: Record<string, string>;
 				secondaryLocations?: Record<string, string>;
@@ -67,6 +72,25 @@ declare global {
 				urls?: {
 					assets?: string;
 				};
+				editor_events?: {
+					can_send_events?: boolean;
+					token?: string;
+					subscription_id?: string | null;
+					site_url?: string;
+					wp_version?: string;
+					elementor_version?: string;
+					site_language?: string;
+					site_key?: string;
+					flags_enabled?: boolean;
+				};
+				library_connect?: {
+					is_connected?: boolean;
+					current_access_level?: number;
+					current_access_tier?: string;
+					plan_type?: string;
+					user_id?: string | null;
+					user_roles?: string[];
+				};
 			};
 		};
 		elementor?: {
@@ -78,13 +102,20 @@ declare global {
 			config?: {
 				controls?: {
 					font?: {
-						options?: Record< string, SupportedFonts >;
+						groups?: Record< string, string >;
+						options?: Record< string, string >;
 					};
 				};
 				atomicDynamicTags?: {
 					tags: DynamicTags;
 					groups: Record< DynamicTag[ 'group' ], { title: string } >;
 				};
+				size_units?: {
+					length?: string[];
+					angle?: string[];
+					time?: string[];
+					extended_units?: string[];
+				}
 				v4Promotions?: Record< V4PromotionKey, V4PromotionData >;
 			};
 			dynamicTags?: DynamicTagsManager;

@@ -84,15 +84,11 @@ class Module extends BaseModule {
 	}
 
 	private function is_existing_user_upgraded_to_target_version( string $target_version ): bool {
-
 		if ( version_compare( ELEMENTOR_VERSION, $target_version, '<' ) ) {
 			return false;
 		}
 
-		$installs_history = \Elementor\Core\Upgrade\Manager::get_installs_history();
-
-		return ! empty( $installs_history ) &&
-			version_compare( array_key_first( $installs_history ), $target_version, '<' );
+		return \Elementor\Core\Upgrade\Manager::had_install_prior_to( $target_version );
 	}
 
 	private function add_packages( $packages ) {
