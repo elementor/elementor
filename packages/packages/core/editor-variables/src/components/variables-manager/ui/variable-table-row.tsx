@@ -13,6 +13,8 @@ import { VariableEditableCell } from '../variable-editable-cell';
 import { VariableEditMenu, type VariableManagerMenuAction } from './variable-edit-menu';
 import { VariableTableCell } from './variable-table-cell';
 
+const TRACKING_DATA = { target_name: 'variables_manager', target_location: 'variables_manager' } as const;
+
 export type Row = ReturnType< typeof getVariableType > & {
 	id: string;
 	type: string;
@@ -200,6 +202,7 @@ export const VariableRow = (
 							variableType={ row.variableType }
 							upgradeUrl={ `https://go.elementor.com/renew-license-manager-${ row.variableType }-variable` }
 							ref={ promotionRef }
+							trackingData={ TRACKING_DATA }
 						/>
 					) }
 					<VariableEditMenu menuActions={ menuActions( row.id ) } disabled={ isSorting } itemId={ row.id } />
