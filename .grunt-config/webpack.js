@@ -156,6 +156,7 @@ const entry = {
 	'floating-elements-modal': path.resolve( __dirname, '../assets/dev/js/admin/floating-elements/new-floating-elements.js' ),
 	'cloud-library-screenshot': path.resolve( __dirname, '../modules/cloud-library/assets/js/preview/screenshot.js' ),
 	'pro-install-events': path.resolve( __dirname, '../modules/pro-install/assets/js/pro-install-events.js' ),
+	'design-system-sync': path.resolve( __dirname, '../modules/design-system-sync/assets/js/design-system-sync-handler.js' ),
 };
 
 const frontendEntries = {
