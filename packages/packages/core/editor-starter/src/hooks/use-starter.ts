@@ -8,7 +8,7 @@ import { deleteStarterConfig, getStarterConfig } from '../utils';
 const EDITOR_WRAPPER_SELECTOR = '#elementor-editor-wrapper';
 const STARTER_CONTAINER_ID = 'elementor-starter-container';
 
-function dismissStarterApi( config: StarterConfig ) {
+function markStarterDismissed( config: StarterConfig ) {
 	apiFetch( {
 		path: config.restPath,
 		method: 'POST',
@@ -22,7 +22,7 @@ export function useStarter() {
 	const [ portalContainer, setPortalContainer ] = useState< Element | null >( null );
 	const dismissedRef = useRef( false );
 
-	const runDismiss = useCallback( () => {
+	const dismiss = useCallback( () => {
 		if ( ! config || dismissedRef.current ) {
 			return;
 		}
@@ -30,12 +30,11 @@ export function useStarter() {
 		dismissedRef.current = true;
 		setIsDismissing( true );
 
-		dismissStarterApi( config );
 		deleteStarterConfig();
 	}, [ config ] );
 
 	useEffect( () => {
-		const activate = () => {
+		const insertStarters = () => {
 			const starterConfig = getStarterConfig();
 
 			if ( ! starterConfig ) {
@@ -53,23 +52,22 @@ export function useStarter() {
 
 			wrapper.append( container );
 
-			dismissStarterApi( starterConfig );
-
 			setConfig( starterConfig );
 			setPortalContainer( container );
+			markStarterDismissed( starterConfig );
 		};
 
-		const onCommandAfter = ( event: Event ) => {
+		const onInsertStarters = ( event: Event ) => {
 			const detail = ( event as CustomEvent )?.detail;
 
 			if ( detail?.command === 'editor/documents/attach-preview' ) {
-				activate();
+				insertStarters();
 			}
 		};
 
-		window.addEventListener( 'elementor/commands/run/after', onCommandAfter );
+		window.addEventListener( 'elementor/commands/run/after', onInsertStarters );
 
-		return () => window.removeEventListener( 'elementor/commands/run/after', onCommandAfter );
+		return () => window.removeEventListener( 'elementor/commands/run/after', onInsertStarters );
 	}, [] );
 
 	useEffect( () => {
@@ -77,18 +75,18 @@ export function useStarter() {
 			return;
 		}
 
-		const onCommandAfter = ( event: Event ) => {
+		const onTemplateImport = ( event: Event ) => {
 			const detail = ( event as CustomEvent )?.detail;
 
 			if ( detail?.command === 'document/elements/import' ) {
-				runDismiss();
+				dismiss();
 			}
 		};
 
-		window.addEventListener( 'elementor/commands/run/after', onCommandAfter );
+		window.addEventListener( 'elementor/commands/run/after', onTemplateImport );
 
-		return () => window.removeEventListener( 'elementor/commands/run/after', onCommandAfter );
-	}, [ config, runDismiss ] );
+		return () => window.removeEventListener( 'elementor/commands/run/after', onTemplateImport );
+	}, [ config, dismiss ] );
 
 	function openTemplatesLibrary() {
 		runCommand( 'library/open' );
@@ -110,7 +108,7 @@ export function useStarter() {
 		config,
 		isDismissing,
 		portalContainer,
-		runDismiss,
+		dismiss,
 		openAiPlanner,
 		openTemplatesLibrary,
 		onExited,
