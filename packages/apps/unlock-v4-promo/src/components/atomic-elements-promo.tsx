@@ -9,7 +9,7 @@ import { __ } from '@wordpress/i18n';
 
 import { usePromoSuppressedMessage } from '../hooks/use-promo-suppressed-message';
 
-const PROMO_IMAGE = 'https://assets.elementor.com/v4-promotion/v1/images/v4_chip_new.png';
+const PROMO_IMAGE = 'https://assets.elementor.com/v4-promotion/v1/images/atomic_elements_section_260.png';
 const LEARN_MORE_URL = 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/';
 
 export function AtomicElementsPromo() {
@@ -119,7 +119,7 @@ export function AtomicElementsPromo() {
 						} }
 						onClick={ activateAtomicElements }
 					>
-						{ __( 'Unlock for free', 'elementor' ) }
+						{ __( 'Activate now', 'elementor' ) }
 					</Button>
 				</Box>
 			</Box>
