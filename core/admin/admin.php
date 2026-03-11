@@ -1181,7 +1181,7 @@ class Admin extends App {
 	}
 
 	public function register_ajax_hints( $ajax_manager ) {
-		$ajax_manager->register_ajax_action( 'elementor_image_optimization_campaign', [ $this, 'ajax_set_image_optimization_campaign' ] );
+		$ajax_manager->register_ajax_action( 'elementor_image_optimization_campaign', [ $this, 'ajax_image_optimization_campaign' ] );
 		$ajax_manager->register_ajax_action( 'elementor_core_site_mailer_campaign', [ $this, 'ajax_site_mailer_campaign' ] );
 		$ajax_manager->register_ajax_action( 'elementor_core_ally_campaign', [ $this, 'ajax_ally_campaign' ] );
 	}
@@ -1192,23 +1192,23 @@ class Admin extends App {
 		}
 
 		$campaign_data = [
-			'campaign' => sanitize_key( $request['campaign'] ),
-			'source' => sanitize_key( $request['source'] ),
-			'medium' => sanitize_key( $request['medium'] ),
+			'campaign' => sanitize_key( $request['campaign'] ?? '' ),
+			'source' => sanitize_key( $request['source'] ?? '' ),
+			'medium' => sanitize_key( $request['medium'] ?? '' ),
 		];
 
 		set_transient( 'elementor_ea11y_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
 	}
 
-	public function ajax_set_image_optimization_campaign( $request ) {
+	public function ajax_image_optimization_campaign( $request ) {
 		if ( ! current_user_can( 'install_plugins' ) ) {
 			return;
 		}
 
 		$campaign_data = [
-			'campaign' => sanitize_key( $request['campaign'] ),
-			'source' => sanitize_key( $request['source'] ),
-			'medium' => sanitize_key( $request['medium'] ),
+			'campaign' => sanitize_key( $request['campaign'] ?? '' ),
+			'source' => sanitize_key( $request['source'] ?? '' ),
+			'medium' => sanitize_key( $request['medium'] ?? '' ),
 		];
 
 		set_transient( 'elementor_image_optimization_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
@@ -1220,9 +1220,9 @@ class Admin extends App {
 		}
 
 		$campaign_data = [
-			'campaign' => sanitize_key( $request['campaign'] ),
-			'source' => sanitize_key( $request['source'] ),
-			'medium' => sanitize_key( $request['medium'] ),
+			'campaign' => sanitize_key( $request['campaign'] ?? '' ),
+			'source' => sanitize_key( $request['source'] ?? '' ),
+			'medium' => sanitize_key( $request['medium'] ?? '' ),
 		];
 
 		set_transient( 'elementor_site_mailer_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
