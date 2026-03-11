@@ -5,12 +5,7 @@ export { apiClient } from './api';
 export { ComponentSearch } from './components/components-tab/component-search';
 export { ComponentItem, ComponentName } from './components/components-tab/components-item';
 export type { ComponentItemProps } from './components/components-tab/components-item';
-export {
-	ComponentsList,
-	EmptySearchResult,
-	EmptyState as ComponentsEmptyState,
-	useFilteredComponents,
-} from './components/components-tab/components-list';
+export { ComponentsList, EmptySearchResult, useFilteredComponents } from './components/components-tab/components-list';
 export { LoadingComponents } from './components/components-tab/loading-components';
 export { SearchProvider } from './components/components-tab/search-provider';
 export { EmptyState as InstanceEmptyState } from './components/instance-editing-panel/empty-state';
@@ -56,6 +51,8 @@ export { componentsActions } from './store/dispatchers';
 export { componentsSelectors } from './store/selectors';
 export {
 	SLICE_NAME,
+	createComponentsAction,
+	registerComponentsReducer,
 	selectOverridableProps,
 	selectPath,
 	slice,
@@ -64,7 +61,7 @@ export {
 	useIsSanitizedComponent,
 	useOverridableProps,
 } from './store/store';
-export type { ComponentsPathItem, ComponentsSlice, SanitizeAttributes } from './store/store';
+export type { ComponentsPathItem, ComponentsSlice, ComponentsState, SanitizeAttributes } from './store/store';
 
 export { publishDraftComponentsInPageBeforeSave } from './sync/publish-draft-components-in-page-before-save';
 

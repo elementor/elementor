@@ -115,7 +115,8 @@ describe( 'ThemeSelection', () => {
 			// Arrange
 			navigateToThemeSelection();
 
-			// Act
+			// Act – explicitly select the Hello theme (recommended theme is visual-only)
+			fireEvent.click( screen.getByRole( 'radio', { name: 'Hello' } ) );
 			fireEvent.click( screen.getByText( 'Continue with this theme' ) );
 
 			// Assert
@@ -134,7 +135,8 @@ describe( 'ThemeSelection', () => {
 			// Arrange
 			navigateToThemeSelection();
 
-			// Act
+			// Act – explicitly select first to enable Continue
+			fireEvent.click( screen.getByRole( 'radio', { name: 'Hello' } ) );
 			fireEvent.click( screen.getByText( 'Continue with this theme' ) );
 
 			// Assert

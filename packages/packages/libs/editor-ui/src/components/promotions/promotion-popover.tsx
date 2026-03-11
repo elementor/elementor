@@ -18,6 +18,7 @@ type PromotionPopoverCardProps = {
 	ctaUrl: string;
 	ctaText?: string;
 	onClose: ( e: MouseEvent ) => void;
+	onCtaClick?: () => void;
 };
 
 type PromotionPopoverProps = React.PropsWithChildren<
@@ -66,7 +67,7 @@ export const PromotionPopover = ( {
 	);
 };
 
-function PopoverAlert( { title, content, ctaUrl, ctaText, onClose }: PromotionPopoverCardProps ) {
+function PopoverAlert( { title, content, ctaUrl, ctaText, onClose, onCtaClick }: PromotionPopoverCardProps ) {
 	return (
 		<ClickAwayListener
 			disableReactTree={ true }
@@ -89,6 +90,7 @@ function PopoverAlert( { title, content, ctaUrl, ctaText, onClose }: PromotionPo
 						href={ ctaUrl }
 						target="_blank"
 						rel="noopener noreferrer"
+						onClick={ onCtaClick }
 					>
 						{ ctaText }
 					</AlertAction>

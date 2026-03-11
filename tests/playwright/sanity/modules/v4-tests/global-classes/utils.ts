@@ -13,6 +13,7 @@ type GlobalClassItem = {
 	type: 'class';
 	label: string;
 	variants: GlobalClassVariant[];
+	sync_to_v3?: boolean;
 };
 
 export async function getGlobalClasses( apiRequests: ApiRequests, request: APIRequestContext ): Promise<{ items: Record<string, GlobalClassItem>; order: string[] }> {
@@ -76,10 +77,14 @@ export async function openClassManager( page: Page, editor: EditorPage, divBlock
 		await saveAndContinueButton.click();
 	}
 
-	const gotItButton = page.locator( '[aria-label="Got it introduction"]' );
-	if ( await gotItButton.isVisible( { timeout: 2000 } ).catch( () => false ) ) {
-		await gotItButton.click();
-	}
+	await dismissClassManagerIntro( page );
+}
+
+export async function dismissClassManagerIntro( page: Page ): Promise<void> {
+	const introDialog = page.getByRole( 'dialog' ).filter( { hasText: "Don't show this again" } );
+	const gotItButton = introDialog.getByRole( 'button', { name: 'Got it introduction' } );
+
+	await gotItButton.click( { timeout: 2000, force: true } ).catch( () => {} );
 }
 
 export async function saveAndCloseClassManager( page: Page ): Promise<void> {
@@ -95,6 +100,20 @@ export async function saveAndCloseClassManager( page: Page ): Promise<void> {
 
 	await page.getByRole( 'button', { name: 'Close' } ).click();
 	await page.waitForTimeout( 500 );
+}
+
+export async function startSyncToV3( page: Page, className: string ): Promise<void> {
+	const classItem = page.locator( 'li[role="listitem"]' ).filter( { hasText: className } );
+	await classItem.hover();
+	await classItem.locator( 'button[aria-label="More actions"]' ).click();
+
+	await page.getByRole( 'menuitem' ).filter( { hasText: 'Sync to Version 3' } ).click();
+	await page.getByRole( 'button', { name: 'Sync to version 3' } ).click();
+}
+
+export async function saveAndCloseClassManagerViaDialog( page: Page ): Promise<void> {
+	await page.getByRole( 'button', { name: 'Close' } ).click();
+	await page.getByRole( 'dialog', { name: 'You have unsaved changes' } ).getByRole( 'button', { name: 'Save & Continue' } ).click();
 }
 
 export async function reorderClassInClassManager(
