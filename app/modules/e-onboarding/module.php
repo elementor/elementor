@@ -20,7 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
-
 	const VERSION = '2.0.0';
 	const EXPERIMENT_NAME = 'e_onboarding';
 	const ASSETS_BASE_URL = 'https://assets.elementor.com/onboarding/v1/strings/';
