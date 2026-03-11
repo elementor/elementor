@@ -6,6 +6,7 @@ use Elementor\Controls_Manager;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Modules\DesignSystemSync\Controls\V4_Typography_List;
+use Elementor\Modules\DesignSystemSync\Module;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -84,7 +85,7 @@ class Global_Typography_Extension {
 				continue;
 			}
 
-			$id = 'v4-' . $label;
+			$id = Module::get_v3_sync_id( $label );
 			$props = $class['props'] ?? [];
 
 			if ( empty( $props ) ) {
