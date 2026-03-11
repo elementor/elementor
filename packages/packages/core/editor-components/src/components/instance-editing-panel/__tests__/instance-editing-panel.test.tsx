@@ -409,7 +409,7 @@ describe( '<InstanceEditingPanel />', () => {
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
-	it( 'should show empty state without edit button when no overridable props', () => {
+	it( 'should show empty state with disabled edit button when no overridable props', () => {
 		// Arrange.
 		setupComponent( { isWithOverridableProps: false } );
 
@@ -419,7 +419,7 @@ describe( '<InstanceEditingPanel />', () => {
 		// Assert.
 		expect( screen.getByText( MOCK_COMPONENT_NAME ) ).toBeInTheDocument();
 		expect( screen.getByText( 'No properties yet' ) ).toBeInTheDocument();
-		expect( screen.queryByText( 'Edit component' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: /edit component/i } ) ).toBeDisabled();
 		expect( screen.queryByText( 'Content' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Settings' ) ).not.toBeInTheDocument();
 	} );
