@@ -29,7 +29,6 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 		const page = await context.newPage();
 
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
 
 		editor = await wpAdmin.openNewPage();
 	} );
@@ -72,14 +71,14 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 		}
 	}
 
-	sections.forEach( ( section ) => {
-		test( `expand ${ section } section and compare screenshot`, async () => {
+	test( `expand sections and compare screenshot`, async () => {
+		for ( const section of sections ) {
 			await editor.addWidget( { widgetType: atomicWidget.name } );
 			await editor.v4Panel.openTab( 'style' );
 			await editor.openV2Section( section );
 
 			await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( `expanded-${ section }-section.png` );
-		} );
+		}
 	} );
 
 	test( 'should show/hide tabs header when scrolling up/down in the panel', async () => {
