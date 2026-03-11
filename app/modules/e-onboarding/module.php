@@ -66,11 +66,7 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/init', [ $this, 'on_elementor_init' ], 12 );
 
-		if ( $this->is_pending_editor_redirect() ) {
-			Editor_Loading_Handler::set_from_onboarding();
-			add_action( 'elementor/editor/v2/scripts/enqueue', [ $this, 'enqueue_loading_scripts' ] );
-			add_action( 'elementor/editor/v2/styles/enqueue', [ $this, 'enqueue_loading_styles' ] );
-		}
+		add_action( 'elementor/editor/v2/styles/enqueue', [ $this, 'enqueue_loading_styles' ] );
 
 		if ( $this->should_show_starter() ) {
 			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_starter_settings' ] );
@@ -89,22 +85,20 @@ class Module extends BaseModule {
 	}
 
 	public function enqueue_loading_styles(): void {
+		if ( ! $this->is_pending_editor_redirect() ) {
+			return;
+		}
+
+		Editor_Loading_Handler::set_from_onboarding();
+
 		wp_enqueue_style(
 			'elementor-onboarding-editor-loading',
 			ELEMENTOR_URL . 'assets/css/modules/e-onboarding/editor-loading.css',
 			[],
 			ELEMENTOR_VERSION
 		);
-	}
 
-	public function enqueue_loading_scripts(): void {
-		wp_enqueue_script(
-			'e-onboarding-editor-loading',
-			ELEMENTOR_URL . 'assets/js/e-onboarding-editor-loading.js',
-			[],
-			ELEMENTOR_VERSION,
-			false
-		);
+		$this->enqueue_fonts();
 	}
 
 	public function enqueue_fonts(): void {
@@ -247,15 +241,23 @@ class Module extends BaseModule {
 	}
 
 	private function is_pending_editor_redirect(): bool {
+		static $result = null;
+
+		if ( null !== $result ) {
+			return $result;
+		}
+
 		$progress = $this->progress_manager->get_progress();
 
 		if ( ! $progress->is_pending_editor_redirect() ) {
+			$result = false;
 			return false;
 		}
 
 		$progress->set_pending_editor_redirect( false );
 		$this->progress_manager->save_progress( $progress );
 
+		$result = true;
 		return true;
 	}
 

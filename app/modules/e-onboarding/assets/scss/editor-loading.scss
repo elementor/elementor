@@ -1,4 +1,6 @@
-#elementor-loading.e-from-onboarding {
+body:has(.e-from-onboarding-track) #nprogress { display: none; }
+
+#elementor-loading:has(.e-from-onboarding-track) {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -8,6 +10,9 @@
 	background-color: var(--e-a-bg-default);
 
 	.elementor-loader-wrapper { display: none; }
+}
+
+#elementor-loading .e-from-onboarding {
 
 	&-track {
 		width: 192px;
@@ -20,8 +25,8 @@
 
 	&-fill {
 		position: absolute;
-		top: 0;
-		left: 0;
+		inset-block-start: 0;
+		inset-inline-start: 0;
 		height: 100%;
 		width: 0;
 		border-radius: 22px;
@@ -30,11 +35,13 @@
 	}
 
 	&-text {
-		text-align: center;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 8px;
 	}
 
 	&-heading {
-		margin: 0 0 8px;
 		font-size: 24px;
 		font-weight: 500;
 		font-family: Poppins, var(--e-a-font-family);
