@@ -20,21 +20,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
+
 	const VERSION = '2.0.0';
 	const EXPERIMENT_NAME = 'e_onboarding';
 	const ASSETS_BASE_URL = 'https://assets.elementor.com/onboarding/v1/strings/';
 
 	const SUPPORTED_LOCALES = [
-		'de_DE',
-		'es_ES',
-		'fr_FR',
-		'he_IL',
-		'id_ID',
-		'it_IT',
-		'nl_NL',
-		'pl_PL',
-		'pt_BR',
-		'tr_TR',
+		'de_DE' => 'de',
+		'es_ES' => 'es',
+		'fr_FR' => 'fr',
+		'he_IL' => 'he',
+		'id_ID' => 'id',
+		'it_IT' => 'it',
+		'nl_NL' => 'nl',
+		'pl_PL' => 'pl',
+		'pt_BR' => 'pt',
+		'tr_TR' => 'tr',
 	];
 
 	private Onboarding_Progress_Manager $progress_manager;
@@ -121,7 +122,7 @@ class Module extends BaseModule {
 
 		$is_connected = $this->is_user_connected();
 
-		Plugin::$instance->app->set_settings( 'e-onboarding', [
+		Plugin::$instance->app->set_settings('e-onboarding', [
 			'version' => self::VERSION,
 			'restUrl' => rest_url( 'elementor/v1/e-onboarding/' ),
 			'nonce' => wp_create_nonce( 'wp_rest' ),
@@ -142,7 +143,7 @@ class Module extends BaseModule {
 				'createNewPage' => Plugin::$instance->documents->get_create_new_post_url(),
 				'upgradeUrl' => 'https://go.elementor.com/go-pro-onboarding-editor-header-upgrade/',
 			],
-		] );
+		]);
 	}
 
 	private function validate_progress_for_steps( User_Progress $progress, array $steps ): array {
@@ -177,13 +178,13 @@ class Module extends BaseModule {
 			return '';
 		}
 
-		return $library->get_admin_url( 'authorize', [
+		return $library->get_admin_url('authorize', [
 			'utm_source' => 'onboarding-wizard',
 			'utm_campaign' => 'connect-account',
 			'utm_medium' => 'wp-dash',
 			'utm_term' => self::VERSION,
 			'source' => 'generic',
-		] ) ?? '';
+		]) ?? '';
 	}
 
 	private function get_library_app() {
@@ -283,19 +284,19 @@ class Module extends BaseModule {
 	}
 
 	private function filter_out_theme_selection_step( array $steps ): array {
-		return array_values( array_filter( $steps, function ( $step ) {
+		return array_values(array_filter($steps, function ( $step ) {
 			return 'theme_selection' !== $step;
-		} ) );
+		}));
 	}
 
 	private function get_translated_strings(): array {
 		$locale = $this->get_onboarding_locale();
 
-		$api = new EditorAssetsAPI( [
+		$api = new EditorAssetsAPI([
 			EditorAssetsAPI::ASSETS_DATA_URL => self::ASSETS_BASE_URL . $locale . '.json',
 			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_onboarding_strings_' . $locale,
 			EditorAssetsAPI::ASSETS_DATA_KEY => 'translations',
-		] );
+		]);
 
 		return $api->get_assets_data();
 	}
@@ -303,8 +304,14 @@ class Module extends BaseModule {
 	private function get_onboarding_locale(): string {
 		$user_locale = get_user_locale();
 
-		if ( in_array( $user_locale, self::SUPPORTED_LOCALES, true ) ) {
+		if ( isset( self::SUPPORTED_LOCALES[ $user_locale ] ) ) {
 			return $user_locale;
+		}
+
+		$locale = substr( $user_locale, 0, 2 );
+		$flipped_locales = array_flip( self::SUPPORTED_LOCALES );
+		if ( isset( $flipped_locales[ $locale ] ) ) {
+			return $flipped_locales[ $locale ];
 		}
 
 		return 'en';
