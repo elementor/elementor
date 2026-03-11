@@ -197,8 +197,7 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 		$this->stylesheet_manager->generate();
 
 		// Assert
-		$css = file_get_contents( $this->stylesheet_manager->get_path() );
-		$this->assertEmpty( $css );
+		$this->assertFileDoesNotExist( $this->stylesheet_manager->get_path() );
 	}
 
 	public function test_generate__handles_multiple_synced_color_variables() {
