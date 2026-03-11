@@ -35,9 +35,7 @@ export const service = {
 				return;
 			}
 
-			styleVariablesRepository.update(
-				storage.load()
-			);
+			styleVariablesRepository.update( storage.load() );
 		} );
 
 		return service.load();
