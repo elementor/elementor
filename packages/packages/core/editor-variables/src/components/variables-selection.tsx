@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import * as React from 'react';
-import { trackViewPromotion } from '@elementor/editor-controls';
+import { trackUpgradePromotionClick, trackViewPromotion } from '@elementor/editor-controls';
 import {
 	PopoverHeader,
 	PopoverMenuList,
@@ -183,6 +183,12 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, d
 								variableType
 							) }
 							upgradeUrl={ getProUpgradeUrl( variableType ) }
+							onCtaClick={ () =>
+								trackUpgradePromotionClick( {
+									target_name: 'variables_popover',
+									location_l1: 'variables_list',
+								} )
+							}
 						/>
 					) }
 				</>
