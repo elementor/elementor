@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import apiFetch from '@wordpress/api-fetch';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
+import apiFetch from '@wordpress/api-fetch';
 
 import type { StarterConfig } from '../types';
 import { deleteStarterConfig, getStarterConfig } from '../utils';
