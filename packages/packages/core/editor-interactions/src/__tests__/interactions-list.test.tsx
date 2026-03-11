@@ -17,6 +17,15 @@ jest.mock( '../utils/get-interactions-config', () => ( {
 	} ) ),
 } ) );
 
+jest.mock( '../contexts/interactions-context', () => ( {
+	useInteractionsContext: jest.fn( () => ( {
+		elementId: 'test-element-id',
+		interactions: { version: 1, items: [] },
+		setInteractions: jest.fn(),
+		playInteractions: jest.fn(),
+	} ) ),
+} ) );
+
 const createInteraction = (
 	trigger: string,
 	effect: string,
