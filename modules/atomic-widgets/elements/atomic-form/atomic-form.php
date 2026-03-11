@@ -235,7 +235,6 @@ class Atomic_Form extends Atomic_Element_Base {
 						'children' => [],
 					] ),
 				] )
-				->is_locked( true )
 				->build(),
 			$this->build_status_message(
 				__( 'Great! We’ve received your information.', 'elementor' ),
