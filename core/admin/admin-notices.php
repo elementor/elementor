@@ -756,6 +756,11 @@ class Admin_Notices extends Module {
 				'text' => $button_text,
 				'url' => self::add_plg_campaign_data( $button_url, $campaign_data ),
 				'type' => 'cta',
+				'data' => [
+					'campaign' => $campaign_data['campaign'],
+					'source' => $campaign_data['source'],
+					'medium' => $campaign_data['medium'],
+				],
 			],
 			'button_secondary' => [
 				'text' => esc_html__( 'Learn more', 'elementor' ),
@@ -936,6 +941,11 @@ class Admin_Notices extends Module {
 				'text' => $button_text,
 				'url' => self::add_plg_campaign_data( $button_url, $campaign_data ),
 				'type' => 'cta',
+				'data' => [
+					'campaign' => $campaign_data['campaign'],
+					'source' => $campaign_data['source'],
+					'medium' => $campaign_data['medium'],
+				],
 			],
 		];
 
