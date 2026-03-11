@@ -15,7 +15,7 @@ const LEARN_MORE_URL = 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/'
 export function AtomicElementsPromo() {
 	const [ suppressed, toggleSuppressMessage ] = usePromoSuppressedMessage();
 	const isAdmin = getCurrentUser()?.capabilities?.includes( 'manage_options' );
-	
+
 	const activateAtomicElements = useCallback( async () => {
 		try {
 			const response = await httpService().post( 'elementor/v1/operations/opt-in-v4' );
@@ -30,7 +30,7 @@ export function AtomicElementsPromo() {
 			} );
 		}
 	}, [] );
-	
+
 	if ( suppressed || ! isAdmin ) {
 		return null;
 	}
