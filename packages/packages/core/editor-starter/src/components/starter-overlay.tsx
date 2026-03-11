@@ -20,11 +20,10 @@ import { getAssetUrl } from '../utils';
 const StyledCard = styled( Card )( ( { theme } ) => ( {
 	width: theme.spacing( 30 ),
 	borderRadius: theme.spacing( 1 ),
-	boxShadow: 'none',
 	transition: 'box-shadow 0.2s',
 	border: `1px solid ${ theme.palette.divider }`,
 	paddingBlockEnd: theme.spacing( 3 ),
-	'&:hover': { boxShadow: `0 3px 14px 2px ${ theme.palette.divider }` },
+	'&:hover': { borderColor: theme.palette.text.primary },
 } ) );
 
 const StyledCardMedia = styled( CardMedia )( ( { theme } ) => ( {
@@ -73,13 +72,13 @@ export default function StarterOverlay() {
 				sx: { backgroundColor: 'rgba(0, 0, 0, 0.6)' },
 			} }
 			PaperProps={ {
-				elevation: 0,
 				sx: {
 					display: 'flex',
 					flexDirection: 'column',
 					alignItems: 'center',
 					gap: theme.spacing( 3 ),
 					p: 4,
+					borderRadius: theme.spacing( 2 ),
 				},
 			} }
 		>
