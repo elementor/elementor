@@ -22,7 +22,7 @@ export function useStarter() {
 	const [ portalContainer, setPortalContainer ] = useState< Element | null >( null );
 	const dismissedRef = useRef( false );
 
-	const dismiss = useCallback( () => {
+	const runDismiss = useCallback( () => {
 		if ( ! config || dismissedRef.current ) {
 			return;
 		}
@@ -59,8 +59,8 @@ export function useStarter() {
 			setPortalContainer( container );
 		};
 
-		const onCommandAfter = ( e: Event ) => {
-			const detail = ( e as CustomEvent )?.detail;
+		const onCommandAfter = ( event: Event ) => {
+			const detail = ( event as CustomEvent )?.detail;
 
 			if ( detail?.command === 'editor/documents/attach-preview' ) {
 				activate();
@@ -81,14 +81,14 @@ export function useStarter() {
 			const detail = ( event as CustomEvent )?.detail;
 
 			if ( detail?.command === 'document/elements/import' ) {
-				dismiss();
+				runDismiss();
 			}
 		};
 
 		window.addEventListener( 'elementor/commands/run/after', onCommandAfter );
 
 		return () => window.removeEventListener( 'elementor/commands/run/after', onCommandAfter );
-	}, [ config, dismiss ] );
+	}, [ config, runDismiss ] );
 
 	function openTemplatesLibrary() {
 		runCommand( 'library/open' );
@@ -110,7 +110,7 @@ export function useStarter() {
 		config,
 		isDismissing,
 		portalContainer,
-		dismiss,
+		runDismiss,
 		openAiPlanner,
 		openTemplatesLibrary,
 		onExited,

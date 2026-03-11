@@ -9,8 +9,8 @@ import {
 	Dialog,
 	Stack,
 	styled,
-	type Theme,
 	Typography,
+	useTheme,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -30,7 +30,7 @@ const StyledCard = styled( Card )( ( { theme } ) => ( {
 const StyledCardMedia = styled( CardMedia )( ( { theme } ) => ( {
 	height: theme.spacing( 14 ),
 	objectFit: 'cover',
-	backgroundColor: '#fae4fa',
+	backgroundColor: '#d5dadf',
 } ) );
 
 const StyledBlankCardThumbnail = styled( 'div' )( ( { theme } ) => ( {
@@ -44,15 +44,17 @@ const StyledBlankCardThumbnail = styled( 'div' )( ( { theme } ) => ( {
 
 const StyledCardContent = styled( CardContent )( ( { theme } ) => ( {
 	textAlign: 'center',
-	paddingTop: theme.spacing( 2 ),
+	paddingBlockStart: theme.spacing( 2 ),
 	paddingInline: 0,
-	paddingBottom: 0,
+	paddingBlockEnd: 0,
 	gap: theme.spacing( 1 ),
 	display: 'flex',
 	flexDirection: 'column',
 } ) );
 
 export default function StarterOverlay() {
+	const theme = useTheme();
+
 	const { config, isDismissing, portalContainer, dismiss, openAiPlanner, openTemplatesLibrary, onExited } =
 		useStarter();
 
@@ -73,11 +75,11 @@ export default function StarterOverlay() {
 			PaperProps={ {
 				elevation: 0,
 				sx: {
-					width: 832,
+					width: theme.spacing( 104 ),
 					display: 'flex',
 					flexDirection: 'column',
 					alignItems: 'center',
-					gap: 3,
+					gap: theme.spacing( 3 ),
 					p: 4,
 				},
 			} }
@@ -85,11 +87,11 @@ export default function StarterOverlay() {
 			<CloseButton
 				onClick={ dismiss }
 				aria-label={ __( 'Close', 'elementor' ) }
-				sx={ ( theme: Theme ) => ( {
+				sx={ {
 					position: 'absolute',
 					insetBlockStart: theme.spacing( 2 ),
 					insetInlineEnd: theme.spacing( 2 ),
-				} ) }
+				} }
 			/>
 
 			<Typography
@@ -158,7 +160,7 @@ export default function StarterOverlay() {
 						} }
 					>
 						<StyledBlankCardThumbnail>
-							<CirclePlusIcon sx={ { fontSize: 40 } } />
+							<CirclePlusIcon sx={ { fontSize: theme.spacing( 5 ) } } />
 						</StyledBlankCardThumbnail>
 						<StyledCardContent>
 							<Typography variant="subtitle1" color="text.primary">
