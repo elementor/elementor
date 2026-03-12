@@ -90,6 +90,16 @@ export function timingValueToMs( timingValue, fallbackMs ) {
 	return size;
 }
 
+export function resetElementStyles( element ) {
+	if ( ! element ) {
+		return;
+	}
+
+	element.style.transition = '';
+	element.style.transform = '';
+	element.style.opacity = '';
+}
+
 // Expose on elementorModules for Pro and other consumers.
 window.elementorModules = window.elementorModules || {};
 window.elementorModules.interactions = {
@@ -102,4 +112,5 @@ window.elementorModules.interactions = {
 	parseInteractionsData,
 	unwrapInteractionValue,
 	timingValueToMs,
+	resetElementStyles,
 };
