@@ -95,7 +95,6 @@ export function AppContent( { onClose }: AppContentProps ) {
 	} = useOnboardingEvent();
 
 	const hasTrackedInit = useRef( false );
-	const isCompletingRef = useRef( false );
 
 	useEffect( () => {
 		if ( ! hasTrackedInit.current ) {
@@ -111,7 +110,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 			return;
 		}
 
-		if ( hasPassedLogin && stepId && ! isCompletingRef.current ) {
+		if ( hasPassedLogin && stepId ) {
 			trackStepViewed( stepId );
 		}
 	}, [
@@ -219,7 +218,6 @@ export function AppContent( { onClose }: AppContentProps ) {
 	}
 
 	const redirectToNewPage = useCallback( () => {
-		isCompletingRef.current = true;
 		const redirectUrl = urls.createNewPage || urls.editor || urls.dashboard;
 		const mp = getMixpanel().getMixpanelInstance?.() as
 			| { request_batchers?: { events?: { flush: () => void } } }
