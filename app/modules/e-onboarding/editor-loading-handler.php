@@ -8,21 +8,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Editor_Loading_Handler {
 
-	private static bool $from_onboarding = false;
+	private bool $from_onboarding = false;
 
-	public static function set_from_onboarding(): void {
-		self::$from_onboarding = true;
+	public function set_from_onboarding(): void {
+		$this->from_onboarding = true;
 	}
 
-	public static function maybe_render_onboarding_loading_content(): void {
-		if ( ! self::$from_onboarding ) {
+	public function maybe_render_onboarding_loading_content(): void {
+		if ( ! $this->from_onboarding ) {
 			return;
 		}
 
-		self::render_loading_content();
+		$this->render_loading_content();
 	}
 
-	private static function render_loading_content(): void {
+	private function render_loading_content(): void {
 		?>
 		<div class="e-from-onboarding-track"><div class="e-from-onboarding-fill"></div></div>
 		<div class="e-from-onboarding-text">

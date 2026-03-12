@@ -39,6 +39,7 @@ class Module extends BaseModule {
 	];
 
 	private Onboarding_Progress_Manager $progress_manager;
+	private Editor_Loading_Handler $loading_handler;
 
 	public function get_name(): string {
 		return 'e-onboarding';
@@ -61,12 +62,14 @@ class Module extends BaseModule {
 		}
 
 		$this->progress_manager = Onboarding_Progress_Manager::instance();
+		$this->loading_handler = new Editor_Loading_Handler();
 
 		Plugin::instance()->data_manager_v2->register_controller( new Controller() );
 
 		add_action( 'elementor/init', [ $this, 'on_elementor_init' ], 12 );
 
 		add_action( 'elementor/editor/v2/styles/enqueue', [ $this, 'enqueue_loading_styles' ] );
+		add_action( 'elementor/editor/v2/loading_content', [ $this->loading_handler, 'maybe_render_onboarding_loading_content' ] );
 
 		if ( $this->should_show_starter() ) {
 			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_starter_settings' ] );
@@ -90,7 +93,8 @@ class Module extends BaseModule {
 			return;
 		}
 
-		Editor_Loading_Handler::set_from_onboarding();
+		$this->clear_pending_editor_redirect();
+		$this->loading_handler->set_from_onboarding();
 
 		wp_enqueue_style(
 			'elementor-onboarding-editor-loading',
@@ -266,17 +270,14 @@ class Module extends BaseModule {
 		}
 
 		$progress = $this->progress_manager->get_progress();
+		$result = $progress->is_pending_editor_redirect();
+		return $result;
+	}
 
-		if ( ! $progress->is_pending_editor_redirect() ) {
-			$result = false;
-			return false;
-		}
-
+	private function clear_pending_editor_redirect(): void {
+		$progress = $this->progress_manager->get_progress();
 		$progress->set_pending_editor_redirect( false );
 		$this->progress_manager->save_progress( $progress );
-
-		$result = true;
-		return true;
 	}
 
 	public function should_show_starter(): bool {
