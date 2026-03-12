@@ -35,6 +35,18 @@ const isChoiceEmpty = ( choice: unknown ): boolean => {
 	return choice === null || choice === undefined || ( Array.isArray( choice ) && choice.length === 0 );
 };
 
+const isContinueDisabled = ( stepId: string | null, isLast: boolean, choiceForStep: unknown ): boolean => {
+	if ( stepId === StepId.THEME_SELECTION ) {
+		return false;
+	}
+
+	if ( isLast ) {
+		return false;
+	}
+
+	return isChoiceEmpty( choiceForStep );
+};
+
 interface AppContentProps {
 	onClose?: () => void;
 }
@@ -477,7 +489,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 	const isPending = updateProgress.isPending || isLoading;
 
 	const choiceForStep = choices[ stepId as keyof typeof choices ];
-	const continueDisabled = ! isLast && isChoiceEmpty( choiceForStep );
+	const continueDisabled = isContinueDisabled( stepId, isLast, choiceForStep );
 	const isBackDisabled = isFirst && isConnected;
 
 	const getContinueLabel = () => {
