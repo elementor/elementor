@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Tests\Phpunit\Elementor\App\Modules\E_Onboarding\Storage\Entities;
+namespace Elementor\Tests\Phpunit\Elementor\App\Modules\Onboarding\Storage\Entities;
 
-use Elementor\App\Modules\E_Onboarding\Storage\Entities\User_Progress;
+use Elementor\App\Modules\Onboarding\Storage\Entities\User_Progress;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {

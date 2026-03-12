@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Tests\Phpunit\Elementor\App\Modules\E_Onboarding\Validation;
+namespace Elementor\Tests\Phpunit\Elementor\App\Modules\Onboarding\Validation;
 
-use Elementor\App\Modules\E_Onboarding\Validation\User_Choices_Validator;
+use Elementor\App\Modules\Onboarding\Validation\User_Choices_Validator;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {

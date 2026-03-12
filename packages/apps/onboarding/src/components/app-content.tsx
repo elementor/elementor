@@ -176,7 +176,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 			isConnected,
 			isGuest,
 		} );
-		window.dispatchEvent( new CustomEvent( 'e-onboarding-user-exit' ) );
+		window.dispatchEvent( new CustomEvent( 'onboarding-user-exit' ) );
 
 		updateProgress.mutate(
 			{ user_exit: true },

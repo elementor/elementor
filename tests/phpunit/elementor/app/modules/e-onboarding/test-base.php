@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Tests\Phpunit\Elementor\App\Modules\E_Onboarding;
+namespace Elementor\Tests\Phpunit\Elementor\App\Modules\Onboarding;
 
-use Elementor\App\Modules\E_Onboarding\Storage\Onboarding_Progress_Manager;
+use Elementor\App\Modules\Onboarding\Storage\Onboarding_Progress_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {

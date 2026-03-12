@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Tests\Phpunit\Elementor\App\Modules\E_Onboarding\Storage;
+namespace Elementor\Tests\Phpunit\Elementor\App\Modules\Onboarding\Storage;
 
-use Elementor\Tests\Phpunit\Elementor\App\Modules\E_Onboarding\Test_Base;
+use Elementor\Tests\Phpunit\Elementor\App\Modules\Onboarding\Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

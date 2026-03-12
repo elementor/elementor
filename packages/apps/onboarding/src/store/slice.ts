@@ -82,7 +82,7 @@ function getEmptyState(): OnboardingState {
 }
 
 function buildStateFromConfig(
-	config: NonNullable< typeof window.elementorAppConfig >[ 'e-onboarding' ]
+	config: NonNullable< typeof window.elementorAppConfig >[ 'onboarding' ]
 ): OnboardingState {
 	if ( ! config ) {
 		return getEmptyState();
@@ -133,7 +133,7 @@ export const slice = __createSlice( {
 	initialState: getEmptyState(),
 	reducers: {
 		initFromConfig: ( state ) => {
-			const config = window.elementorAppConfig?.[ 'e-onboarding' ];
+			const config = window.elementorAppConfig?.onboarding;
 
 			if ( config ) {
 				return buildStateFromConfig( config );

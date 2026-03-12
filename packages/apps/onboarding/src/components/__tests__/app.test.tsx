@@ -58,7 +58,7 @@ interface OnboardingConfig {
 
 const defaultConfig: OnboardingConfig = {
 	version: '1.0.0',
-	restUrl: 'https://test.local/wp-json/elementor/v1/e-onboarding/',
+	restUrl: 'https://test.local/wp-json/elementor/v1/onboarding/',
 	nonce: 'test-nonce',
 	steps: [
 		{
@@ -110,8 +110,8 @@ const defaultConfig: OnboardingConfig = {
 
 type ConfigOverrides = Partial< OnboardingConfig >;
 
-const createMockConfig = ( overrides: ConfigOverrides = {} ): { 'e-onboarding': OnboardingConfig } => ( {
-	'e-onboarding': {
+const createMockConfig = ( overrides: ConfigOverrides = {} ): { onboarding: OnboardingConfig } => ( {
+	onboarding: {
 		...defaultConfig,
 		...overrides,
 		progress: {

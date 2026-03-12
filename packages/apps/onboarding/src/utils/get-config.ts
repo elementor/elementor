@@ -4,5 +4,5 @@ interface OnboardingRestConfig {
 }
 
 export function getConfig(): OnboardingRestConfig | null {
-	return window.elementorAppConfig?.[ 'e-onboarding' ] ?? null;
+	return window.elementorAppConfig?.onboarding ?? null;
 }

@@ -1,562 +1,374 @@
 <?php
+
 namespace Elementor\App\Modules\Onboarding;
 
-use Automatic_Upgrader_Skin;
+use Elementor\App\Modules\Onboarding\Data\Controller;
+use Elementor\App\Modules\Onboarding\Data\Endpoints\Install_Theme;
+use Elementor\App\Modules\Onboarding\Storage\Entities\User_Choices;
+use Elementor\App\Modules\Onboarding\Storage\Entities\User_Progress;
+use Elementor\App\Modules\Onboarding\Storage\Onboarding_Progress_Manager;
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
-use Elementor\Core\Common\Modules\Connect\Apps\Library;
-use Elementor\Core\Files\Uploads_Manager;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Plugin;
 use Elementor\Utils;
-use Plugin_Upgrader;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
+	exit;
 }
 
-/**
- * Onboarding Module
- *
- * Responsible for initializing Elementor App functionality
- *
- * @since 3.6.0
- */
 class Module extends BaseModule {
 
-	const VERSION = '1.0.0';
-	const ONBOARDING_OPTION = 'elementor_onboarded';
+	const VERSION = '2.0.0';
+	const EXPERIMENT_NAME = 'Onboarding';
+	const ASSETS_BASE_URL = 'https://assets.elementor.com/onboarding/v1/strings/';
 
-	const EXPERIMENT_EMPHASIZE_CONNECT_BENEFITS = 'emphasizeConnectBenefits101';
-	const EXPERIMENT_EMPHASIZE_THEME_VALUE_AUDIENCE_202 = 'emphasizeThemeValueAudience202';
-	const EXPERIMENT_UPDATE_COPY_VISUALS = 'updateCopyVisuals401';
-	const EXPERIMENT_REDUCE_HIERARCHY_BLANK_OPTION = 'reduceHierarchyBlankOption402';
+	const SUPPORTED_LOCALES = [
+		'de_DE' => 'de',
+		'es_ES' => 'es',
+		'fr_FR' => 'fr',
+		'he_IL' => 'he',
+		'id_ID' => 'id',
+		'it_IT' => 'it',
+		'nl_NL' => 'nl',
+		'pl_PL' => 'pl',
+		'pt_BR' => 'pt',
+		'tr_TR' => 'tr',
+	];
 
-	private ?API $editor_assets_api = null;
+	private Onboarding_Progress_Manager $progress_manager;
 
-	/**
-	 * Get name.
-	 *
-	 * @since 3.6.0
-	 * @access public
-	 *
-	 * @return string
-	 */
-	public function get_name() {
+	public function get_name(): string {
 		return 'onboarding';
 	}
 
-	private function is_experiment_enabled( string $experiment_key ) {
-		$editor_assets_api = $this->get_editor_assets_api();
-
-		if ( null === $editor_assets_api ) {
-			return false;
-		}
-
-		return $editor_assets_api->is_experiment_enabled( $experiment_key );
-	}
-
-	private function is_hello_theme_activated(): bool {
-		$current_theme = get_option( 'template' );
-		$hello_theme_variants = [ 'hello-elementor', 'hello-biz', 'hello-commerce', 'hello-theme' ];
-
-		return in_array( $current_theme, $hello_theme_variants, true );
-	}
-
-	private function get_editor_assets_api(): ?API {
-		if ( null !== $this->editor_assets_api ) {
-			return $this->editor_assets_api;
-		}
-
-		$editor_assets_api_instance = new EditorAssetsAPI( $this->get_editor_assets_api_config() );
-		$this->editor_assets_api = new API( $editor_assets_api_instance );
-
-		return $this->editor_assets_api;
-	}
-
-	private function get_editor_assets_api_config(): array {
+	public static function get_experimental_data(): array {
 		return [
-			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.elementor.com/ab-testing/v1/ab-testing.json',
-			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_ab_testing_data',
-			EditorAssetsAPI::ASSETS_DATA_KEY => 'ab-testing',
+			'name' => self::EXPERIMENT_NAME,
+			'title' => esc_html__( 'New Onboarding', 'elementor' ),
+			'description' => esc_html__( 'New onboarding experience for 2026 with improved user journey and progress tracking.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		];
-	}
-
-	/**
-	 * Set Onboarding Settings
-	 *
-	 * Creates an array of module settings that is localized into the JS App config.
-	 *
-	 * @since 3.6.0
-	 */
-	private function set_onboarding_settings() {
-		if ( ! Plugin::$instance->common ) {
-			return;
-		}
-
-		// Get the published pages and posts
-		$pages_and_posts = new \WP_Query( [
-			'post_type' => [ 'page', 'post' ],
-			'post_status' => 'publish',
-			'update_post_meta_cache' => false,
-			'update_post_term_cache' => false,
-			'no_found_rows' => true,
-		] );
-
-		$custom_site_logo_id = get_theme_mod( 'custom_logo' );
-		$custom_logo_src = wp_get_attachment_image_src( $custom_site_logo_id, 'full' );
-		$site_name = get_option( 'blogname', '' );
-
-		$hello_theme = wp_get_theme( 'hello-elementor' );
-		$hello_theme_errors = is_object( $hello_theme->errors() ) ? $hello_theme->errors()->errors : [];
-
-		/** @var Library $library */
-		$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
-
-		Plugin::$instance->app->set_settings( 'onboarding', [
-			'eventPlacement' => 'Onboarding wizard',
-			'onboardingAlreadyRan' => get_option( self::ONBOARDING_OPTION ),
-			'onboardingVersion' => self::VERSION,
-			'isLibraryConnected' => $library->is_connected(),
-			// Used to check if the Hello Elementor theme is installed but not activated.
-			'helloInstalled' => empty( $hello_theme_errors['theme_not_found'] ),
-			'helloActivated' => $this->is_hello_theme_activated(),
-			// The "Use Hello theme on my site" checkbox should be checked by default only if this condition is met.
-			'helloOptOut' => count( $pages_and_posts->posts ) < 5,
-			'siteName' => esc_html( $site_name ),
-			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
-			'urls' => [
-				'kitLibrary' => Plugin::$instance->app->get_base_url() . '&source=onboarding#/kit-library?order[direction]=desc&order[by]=featuredIndex',
-				'sitePlanner' => add_query_arg( [
-					'type' => 'editor',
-					'siteUrl' => esc_url( home_url() ),
-					'siteName' => esc_html( $site_name ),
-					'siteDescription' => esc_html( get_bloginfo( 'description' ) ),
-					'siteLanguage' => get_locale(),
-				], 'https://planner.elementor.com/onboarding.html' ),
-				'createNewPage' => Plugin::$instance->documents->get_create_new_post_url(),
-				'connect' => $library->get_admin_url( 'authorize', [
-					'utm_source' => 'onboarding-wizard',
-					'utm_campaign' => 'connect-account',
-					'utm_medium' => 'wp-dash',
-					'utm_term' => self::VERSION,
-					'source' => 'generic',
-				] ),
-				'upgrade' => 'https://go.elementor.com/go-pro-onboarding-wizard-upgrade/',
-				'signUp' => $library->get_admin_url( 'authorize', [
-					'utm_source' => 'onboarding-wizard',
-					'utm_campaign' => 'connect-account',
-					'utm_medium' => 'wp-dash',
-					'utm_term' => self::VERSION,
-					'source' => 'generic',
-					'screen_hint' => 'signup',
-				] ),
-				'uploadPro' => Plugin::$instance->app->get_base_url() . '#/onboarding/uploadAndInstallPro?mode=popup',
-			],
-			'siteLogo' => [
-				'id' => $custom_site_logo_id,
-				'url' => $custom_logo_src ? $custom_logo_src[0] : '',
-			],
-			'utms' => [
-				'connectTopBar' => '&utm_content=top-bar',
-				'connectCta' => '&utm_content=cta-button',
-				'connectCtaLink' => '&utm_content=cta-link',
-				'downloadPro' => '?utm_source=onboarding-wizard&utm_campaign=my-account-subscriptions&utm_medium=wp-dash&utm_content=import-pro-plugin&utm_term=' . self::VERSION,
-			],
-			'nonce' => wp_create_nonce( 'onboarding' ),
-			'experiment' => true,
-			'isExperiment101Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_EMPHASIZE_CONNECT_BENEFITS ),
-			'isExperiment202Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_EMPHASIZE_THEME_VALUE_AUDIENCE_202 ),
-			'isExperiment401Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_UPDATE_COPY_VISUALS ),
-			'isExperiment402Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_REDUCE_HIERARCHY_BLANK_OPTION ),
-			'experimentNames' => [
-				'101' => self::EXPERIMENT_EMPHASIZE_CONNECT_BENEFITS,
-				'202' => self::EXPERIMENT_EMPHASIZE_THEME_VALUE_AUDIENCE_202,
-				'401' => self::EXPERIMENT_UPDATE_COPY_VISUALS,
-				'402' => self::EXPERIMENT_REDUCE_HIERARCHY_BLANK_OPTION,
-			],
-			'pageSubheading' => __( 'Choose the capabilities you need to bring your vision to life', 'elementor' ),
-			'pageHeading' => __( ' Elevate your website with additional features.', 'elementor' ),
-		] );
-	}
-
-	/**
-	 * Get Permission Error Response
-	 *
-	 * Returns the response that is returned when the user's capabilities are not sufficient for performing an action.
-	 *
-	 * @since 3.6.4
-	 *
-	 * @return array
-	 */
-	private function get_permission_error_response() {
-		return [
-			'status' => 'error',
-			'payload' => [
-				'error_message' => esc_html__( 'You do not have permission to perform this action.', 'elementor' ),
-			],
-		];
-	}
-
-	/**
-	 * Maybe Update Site Logo
-	 *
-	 * If a new name is provided, it will be updated as the Site Name.
-	 *
-	 * @since 3.6.0
-	 *
-	 * @return array
-	 */
-	private function maybe_update_site_name() {
-		$problem_error = [
-			'status' => 'error',
-			'payload' => [
-				'error_message' => esc_html__( 'There was a problem setting your site name.', 'elementor' ),
-			],
-		];
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		if ( empty( $_POST['data'] ) ) {
-			return $problem_error;
-		}
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$data = json_decode( Utils::get_super_global_value( $_POST, 'data' ), true );
-
-		if ( ! isset( $data['siteName'] ) ) {
-			return $problem_error;
-		}
-
-		/**
-		 * Onboarding Site Name
-		 *
-		 * Filters the new site name passed by the user to update in Elementor's onboarding process.
-		 * Elementor runs `esc_html()` on the Site Name passed by the user for security reasons. If a user wants to
-		 * include special characters in their site name, they can use this filter to override it.
-		 *
-		 * @since 3.6.0
-		 *
-		 * @param string Escaped new site name
-		 */
-		$new_site_name = apply_filters( 'elementor/onboarding/site-name', $data['siteName'] );
-
-		// The site name is sanitized in `update_options()`
-		update_option( 'blogname', $new_site_name );
-
-		return [
-			'status' => 'success',
-			'payload' => [
-				'siteNameUpdated' => true,
-			],
-		];
-	}
-
-	/**
-	 * Maybe Update Site Logo
-	 *
-	 * If an image attachment ID is provided, it will be updated as the Site Logo Theme Mod.
-	 *
-	 * @since 3.6.0
-	 *
-	 * @return array
-	 */
-	private function maybe_update_site_logo() {
-		if ( ! current_user_can( 'edit_theme_options' ) ) {
-			return $this->get_permission_error_response();
-		}
-
-		$data_error = [
-			'status' => 'error',
-			'payload' => [
-				'error_message' => esc_html__( 'There was a problem setting your site logo.', 'elementor' ),
-			],
-		];
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		if ( empty( $_POST['data'] ) ) {
-			return $data_error;
-		}
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$data = json_decode( Utils::get_super_global_value( $_POST, 'data' ), true );
-
-		// If there is no attachment ID passed or it is not a valid ID, exit here.
-		if ( empty( $data['attachmentId'] ) ) {
-			return $data_error;
-		}
-
-		$absint_attachment_id = absint( $data['attachmentId'] );
-
-		if ( 0 === $absint_attachment_id ) {
-			return $data_error;
-		}
-
-		$attachment_url = wp_get_attachment_url( $data['attachmentId'] );
-
-		// Check if the attachment exists. If it does not, exit here.
-		if ( ! $attachment_url ) {
-			return $data_error;
-		}
-
-		set_theme_mod( 'custom_logo', $absint_attachment_id );
-
-		return [
-			'status' => 'success',
-			'payload' => [
-				'siteLogoUpdated' => true,
-			],
-		];
-	}
-
-	/**
-	 * Maybe Upload Logo Image
-	 *
-	 * If an image file upload is provided, and it passes validation, it will be uploaded to the site's Media Library.
-	 *
-	 * @since 3.6.0
-	 *
-	 * @return array
-	 */
-	private function maybe_upload_logo_image() {
-		$error_message = esc_html__( 'There was a problem uploading your file.', 'elementor' );
-
-		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		if ( ! is_array( $file ) || empty( $file['type'] ) ) {
-			return [
-				'status' => 'error',
-				'payload' => [
-					'error_message' => $error_message,
-				],
-			];
-		}
-
-		// If the user has allowed it, set the Request's state as an "Elementor Upload" request, in order to add
-		// support for non-standard file uploads.
-		if ( 'image/svg+xml' === $file['type'] ) {
-			if ( Uploads_Manager::are_unfiltered_uploads_enabled() ) {
-				Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
-			} else {
-				wp_send_json_error( 'To upload SVG files, you must allow uploading unfiltered files.' );
-			}
-		}
-
-		// If the image is an SVG file, sanitation is performed during the import (upload) process.
-		$image_attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import( $file );
-
-		if ( 'image/svg+xml' === $file['type'] && Uploads_Manager::are_unfiltered_uploads_enabled() ) {
-			// Reset Upload state.
-			Plugin::$instance->uploads_manager->set_elementor_upload_state( false );
-		}
-
-		if ( $image_attachment && ! is_wp_error( $image_attachment ) ) {
-			$result = [
-				'status' => 'success',
-				'payload' => [
-					'imageAttachment' => $image_attachment,
-				],
-			];
-		} else {
-			$result = [
-				'status' => 'error',
-				'payload' => [
-					'error_message' => $error_message,
-				],
-			];
-		}
-
-		return $result;
-	}
-
-	/**
-	 * Activate Hello Theme
-	 *
-	 * @since 3.6.0
-	 *
-	 * @return array
-	 */
-	private function maybe_activate_hello_theme() {
-		if ( ! current_user_can( 'switch_themes' ) ) {
-			return $this->get_permission_error_response();
-		}
-
-		$theme_slug = Utils::get_super_global_value( $_POST, 'theme_slug' ) ?? 'hello-biz'; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$allowed_themes = [ 'hello-elementor', 'hello-biz' ];
-		if ( ! in_array( $theme_slug, $allowed_themes, true ) ) {
-			$theme_slug = 'hello-biz';
-		}
-
-		switch_theme( $theme_slug );
-
-		return [
-			'status' => 'success',
-			'payload' => [
-				'helloThemeActivated' => true,
-			],
-		];
-	}
-
-	/**
-	 * Upload and Install Elementor Pro
-	 *
-	 * @since 3.6.0
-	 *
-	 * @return array
-	 */
-	private function upload_and_install_pro() {
-		if ( ! current_user_can( 'install_plugins' ) || ! current_user_can( 'activate_plugins' ) ) {
-			return $this->get_permission_error_response();
-		}
-
-		$error_message = esc_html__( 'There was a problem uploading your file.', 'elementor' );
-
-		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' ) ?? []; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		if ( ! is_array( $file ) || empty( $file['type'] ) ) {
-			return [
-				'status' => 'error',
-				'payload' => [
-					'error_message' => $error_message,
-				],
-			];
-		}
-
-		$result = [];
-
-		if ( ! class_exists( 'Automatic_Upgrader_Skin' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
-		}
-
-		$skin = new Automatic_Upgrader_Skin();
-		$upgrader = new Plugin_Upgrader( $skin );
-		$upload_result = $upgrader->install( $file['tmp_name'], [ 'overwrite_package' => false ] );
-
-		if ( ! $upload_result || is_wp_error( $upload_result ) ) {
-			$result = [
-				'status' => 'error',
-				'payload' => [
-					'error_message' => $error_message,
-				],
-			];
-		} else {
-			$activated = activate_plugin( WP_PLUGIN_DIR . '/elementor-pro/elementor-pro.php', false, false, true );
-
-			if ( ! is_wp_error( $activated ) ) {
-				$result = [
-					'status' => 'success',
-					'payload' => [
-						'elementorProInstalled' => true,
-					],
-				];
-			} else {
-				$result = [
-					'status' => 'error',
-					'payload' => [
-						'error_message' => $error_message,
-						'elementorProInstalled' => false,
-					],
-				];
-			}
-		}
-
-		return $result;
-	}
-
-	private function maybe_update_onboarding_db_option() {
-		$db_option = get_option( self::ONBOARDING_OPTION );
-
-		if ( ! $db_option ) {
-			update_option( self::ONBOARDING_OPTION, true );
-		}
-
-		return [
-			'status' => 'success',
-			'payload' => 'onboarding DB',
-		];
-	}
-
-	/**
-	 * Maybe Handle Ajax
-	 *
-	 * This method checks if there are any AJAX actions being
-	 *
-	 * @since 3.6.0
-	 */
-	private function maybe_handle_ajax() {
-		$result = [];
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		switch ( Utils::get_super_global_value( $_POST, 'action' ) ) {
-			case 'elementor_update_site_name':
-				// If no value is passed for any reason, no need to update the site name.
-				$result = $this->maybe_update_site_name();
-				break;
-			case 'elementor_update_site_logo':
-				$result = $this->maybe_update_site_logo();
-				break;
-			case 'elementor_upload_site_logo':
-				$result = $this->maybe_upload_logo_image();
-				break;
-			case 'elementor_activate_hello_theme':
-				$result = $this->maybe_activate_hello_theme();
-				break;
-			case 'elementor_upload_and_install_pro':
-				$result = $this->upload_and_install_pro();
-				break;
-			case 'elementor_update_onboarding_option':
-				$result = $this->maybe_update_onboarding_db_option();
-				break;
-			case 'elementor_save_onboarding_features':
-				// phpcs:ignore WordPress.Security.NonceVerification.Missing
-				$result = $this->get_component( 'features_usage' )->save_onboarding_features( Utils::get_super_global_value( $_POST, 'data' ) ?? [] );
-		}
-
-		if ( ! empty( $result ) ) {
-			if ( 'success' === $result['status'] ) {
-				wp_send_json_success( $result['payload'] );
-			} else {
-				wp_send_json_error( $result['payload'] );
-			}
-		}
 	}
 
 	public function __construct() {
-		$this->add_component( 'features_usage', new Features_Usage() );
+		if ( ! Plugin::instance()->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
+			return;
+		}
 
-		add_action( 'elementor/init', function() {
-			// Only load when viewing the onboarding app.
-			if ( Plugin::$instance->app->is_current() ) {
-				$this->set_onboarding_settings();
-				// Needed for installing the Hello Elementor theme.
-				wp_enqueue_script( 'updates' );
-				// Needed for uploading Logo from WP Media Library.
-				wp_enqueue_media();
-			}
-		}, 12 );
+		$this->progress_manager = Onboarding_Progress_Manager::instance();
 
-		// Needed for uploading Logo from WP Media Library. The 'admin_menu' hook is used because it runs before
-		// 'admin_init', and the App triggers printing footer scripts on 'admin_init' at priority 0.
-		add_action( 'admin_menu', function () {
-			add_action( 'wp_print_footer_scripts', function () {
-				if ( function_exists( 'wp_print_media_templates' ) ) {
-					wp_print_media_templates();
-				}
-			} );
-		} );
+		Plugin::instance()->data_manager_v2->register_controller( new Controller() );
 
-		add_action( 'admin_init', function() {
-			if ( wp_doing_ajax() &&
-				isset( $_POST['action'] ) &&
-				isset( $_POST['_nonce'] ) &&
-				wp_verify_nonce( Utils::get_super_global_value( $_POST, '_nonce' ), Ajax::NONCE_KEY ) &&
-				current_user_can( 'manage_options' )
-			) {
-				$this->maybe_handle_ajax();
-			}
-		} );
+		add_action( 'elementor/init', [ $this, 'on_elementor_init' ], 12 );
 
-		$this->get_component( 'features_usage' )->register();
+		if ( $this->should_show_starter() ) {
+			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_starter_settings' ] );
+			add_filter( 'elementor/editor/v2/packages', [ $this, 'add_starter_packages' ] );
+			add_action( 'elementor/editor/v2/styles/enqueue', [ $this, 'enqueue_fonts' ] );
+			add_action( 'elementor/preview/enqueue_styles', [ $this, 'enqueue_starter_preview_css' ] );
+		}
+	}
+
+	public function on_elementor_init(): void {
+		if ( ! Plugin::instance()->app->is_current() ) {
+			return;
+		}
+
+		$this->set_onboarding_settings();
+		$this->enqueue_fonts();
+	}
+
+	public function enqueue_fonts(): void {
+		wp_enqueue_style(
+			'elementor-onboarding-fonts',
+			'https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap',
+			[],
+			ELEMENTOR_VERSION
+		);
+	}
+
+	public function enqueue_starter_preview_css(): void {
+		$css = '
+			#site-header,
+			.page-header { display: var(--e-starter-header-display, none); }
+		';
+
+		wp_register_style( 'elementor-starter-preview', false );
+		wp_enqueue_style( 'elementor-starter-preview' );
+		wp_add_inline_style( 'elementor-starter-preview', $css );
+	}
+
+	public function progress_manager(): Onboarding_Progress_Manager {
+		return $this->progress_manager;
+	}
+
+	private function set_onboarding_settings(): void {
+		if ( ! Plugin::instance()->common ) {
+			return;
+		}
+
+		$progress = $this->progress_manager->get_progress();
+		$choices = $this->progress_manager->get_choices();
+		$steps = $this->get_steps_config();
+
+		// If the user previously selected a theme but it's no longer the active theme,
+		// clear the theme selection so the user can re-select.
+		$this->maybe_invalidate_theme_selection( $progress, $choices );
+
+		$is_connected = $this->is_user_connected();
+
+		Plugin::$instance->app->set_settings( 'onboarding', [
+			'version' => self::VERSION,
+			'restUrl' => rest_url( 'elementor/v1/onboarding/' ),
+			'nonce' => wp_create_nonce( 'wp_rest' ),
+			'progress' => $this->validate_progress_for_steps( $progress, $steps ),
+			'choices' => $choices->to_array(),
+			'hadUnexpectedExit' => $progress->had_unexpected_exit(),
+			'isConnected' => $is_connected,
+			'userName' => $this->get_user_display_name(),
+			'steps' => $steps,
+			'uiTheme' => $this->get_ui_theme_preference(),
+			'translations' => $this->get_translated_strings(),
+			'shouldShowProInstallScreen' => $is_connected ? $this->should_show_pro_install_screen() : false,
+			'urls' => [
+				'dashboard' => admin_url(),
+				'editor' => admin_url( 'edit.php?post_type=elementor_library' ),
+				'connect' => $this->get_connect_url(),
+				'comparePlans' => 'https://go.elementor.com/go-pro-onboarding-editor-features-step-upgrade/',
+				'createNewPage' => Plugin::$instance->documents->get_create_new_post_url(),
+				'upgradeUrl' => 'https://go.elementor.com/go-pro-onboarding-editor-header-upgrade/',
+			],
+		] );
+	}
+
+	private function validate_progress_for_steps( User_Progress $progress, array $steps ): array {
+		$progress_data = $progress->to_array();
+		$step_count = count( $steps );
+		$current_step_index = $progress->get_current_step_index() ?? 0;
+		$current_step_id = $progress->get_current_step_id() ?? $steps[0]['id'] ?? 'building_for';
+
+		$is_invalid_step_index = $current_step_index < 0 || $current_step_index >= $step_count;
+
+		if ( $is_invalid_step_index ) {
+			$current_step_id = $steps[0]['id'];
+			$current_step_index = 0;
+		}
+
+		$progress_data['current_step_id'] = $current_step_id;
+		$progress_data['current_step_index'] = $current_step_index;
+
+		return $progress_data;
+	}
+
+	private function is_user_connected(): bool {
+		$library = $this->get_library_app();
+
+		return $library ? $library->is_connected() : false;
+	}
+
+	private function get_connect_url(): string {
+		$library = $this->get_library_app();
+
+		if ( ! $library ) {
+			return '';
+		}
+
+		return $library->get_admin_url( 'authorize', [
+			'utm_source' => 'onboarding-wizard',
+			'utm_campaign' => 'connect-account',
+			'utm_medium' => 'wp-dash',
+			'utm_term' => self::VERSION,
+			'source' => 'generic',
+		] ) ?? '';
+	}
+
+	private function get_library_app() {
+		$connect = Plugin::instance()->common->get_component( 'connect' );
+
+		if ( ! $connect ) {
+			return null;
+		}
+
+		return $connect->get_app( 'library' );
+	}
+
+	public static function should_show_pro_install_screen(): bool {
+		if ( self::is_elementor_pro_installed() ) {
+			return false;
+		}
+
+		$connect = Plugin::$instance->common->get_component( 'connect' );
+
+		if ( ! $connect ) {
+			return false;
+		}
+
+		$pro_install_app = $connect->get_app( 'pro-install' );
+
+		if ( ! $pro_install_app || ! $pro_install_app->is_connected() ) {
+			return false;
+		}
+
+		$download_link = $pro_install_app->get_download_link();
+
+		return ! empty( $download_link );
+	}
+
+	private function get_ui_theme_preference(): string {
+		$editor_preferences = SettingsManager::get_settings_managers( 'editorPreferences' );
+
+		$ui_theme = $editor_preferences->get_model()->get_settings( 'ui_theme' );
+
+		return $ui_theme ? $ui_theme : 'auto';
+	}
+
+	private function get_user_display_name(): string {
+		$library = $this->get_library_app();
+
+		if ( ! $library || ! $library->is_connected() ) {
+			return '';
+		}
+
+		$user = $library->get( 'user' );
+
+		return $user->first_name ?? '';
+	}
+
+	public function should_show_starter(): bool {
+		if ( ! Plugin::instance()->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
+			return false;
+		}
+
+		$progress = $this->progress_manager->get_progress();
+
+		return null !== $progress->get_completed_at() && ! $progress->is_starter_dismissed();
+	}
+
+	public function add_starter_packages( array $packages ): array {
+		$packages[] = 'editor-starter';
+
+		return $packages;
+	}
+
+	public function add_starter_settings( array $settings ): array {
+		$settings['starter'] = [
+			'restPath' => 'elementor/v1/onboarding/user-progress',
+			'aiPlannerUrl' => 'https://planner.elementor.com/home.html',
+		];
+
+		return $settings;
+	}
+
+	private function maybe_invalidate_theme_selection( User_Progress $progress, User_Choices $choices ): void {
+		$selected_theme = $choices->get_theme_selection();
+
+		if ( empty( $selected_theme ) ) {
+			return;
+		}
+
+		$active_theme = get_stylesheet();
+
+		if ( $active_theme !== $selected_theme ) {
+			$completed = $this->filter_out_theme_selection_step( $progress->get_completed_steps() );
+			$progress->set_completed_steps( $completed );
+			$this->progress_manager->save_progress( $progress );
+
+			$choices->set_theme_selection( null );
+			$this->progress_manager->save_choices( $choices );
+		}
+	}
+
+	private function filter_out_theme_selection_step( array $steps ): array {
+		return array_values( array_filter( $steps, function ( $step ) {
+			return 'theme_selection' !== $step;
+		} ) );
+	}
+
+	private function get_translated_strings(): array {
+		$locale = $this->get_onboarding_locale();
+
+		$api = new EditorAssetsAPI( [
+			EditorAssetsAPI::ASSETS_DATA_URL => self::ASSETS_BASE_URL . $locale . '.json',
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_onboarding_strings_' . $locale,
+			EditorAssetsAPI::ASSETS_DATA_KEY => 'translations',
+		] );
+
+		return $api->get_assets_data();
+	}
+
+	private function get_onboarding_locale(): string {
+		static $flipped_locales = null;
+
+		if ( null === $flipped_locales ) {
+			$flipped_locales = array_flip( self::SUPPORTED_LOCALES );
+		}
+
+		$user_locale = get_user_locale();
+
+		if ( isset( self::SUPPORTED_LOCALES[ $user_locale ] ) ) {
+			return $user_locale;
+		}
+
+		$locale = substr( $user_locale, 0, 2 );
+
+		if ( isset( $flipped_locales[ $locale ] ) ) {
+			return $flipped_locales[ $locale ];
+		}
+
+		return 'en';
+	}
+
+	private function get_steps_config(): array {
+		$steps = [
+			[
+				'id' => 'building_for',
+				'label' => __( 'Who are you building for?', 'elementor' ),
+				'type' => 'single',
+			],
+			[
+				'id' => 'site_about',
+				'label' => __( 'What is your site about?', 'elementor' ),
+				'type' => 'multiple',
+			],
+			[
+				'id' => 'experience_level',
+				'label' => __( 'How much experience do you have with Elementor?', 'elementor' ),
+				'type' => 'single',
+			],
+		];
+
+		if ( ! $this->is_elementor_theme_active() ) {
+			$steps[] = [
+				'id' => 'theme_selection',
+				'label' => __( 'Start with a theme that fits your needs', 'elementor' ),
+				'type' => 'single',
+			];
+		}
+
+		if ( ! self::is_elementor_pro_installed() ) {
+			$steps[] = [
+				'id' => 'site_features',
+				'label' => __( 'What do you want to include in your site?', 'elementor' ),
+				'type' => 'multiple',
+			];
+		}
+
+		return apply_filters( 'elementor/onboarding/steps', $steps );
+	}
+
+	private static function is_elementor_pro_installed(): bool {
+		$is_pro_installed = Utils::has_pro() || Utils::is_pro_installed_and_not_active();
+		return (bool) apply_filters( 'elementor/onboarding/is_elementor_pro_installed', $is_pro_installed );
+	}
+
+	private function is_elementor_theme_active(): bool {
+		$active_theme = get_stylesheet();
+		$is_active = in_array( $active_theme, Install_Theme::ALLOWED_THEMES, true );
+
+		return (bool) apply_filters( 'elementor/onboarding/is_elementor_theme_active', $is_active );
 	}
 }

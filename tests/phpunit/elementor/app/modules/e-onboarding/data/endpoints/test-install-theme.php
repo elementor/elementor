@@ -1,10 +1,10 @@
 <?php
 
-namespace Elementor\Tests\Phpunit\Elementor\App\Modules\E_Onboarding\Data\Endpoints;
+namespace Elementor\Tests\Phpunit\Elementor\App\Modules\Onboarding\Data\Endpoints;
 
-use Elementor\App\Modules\E_Onboarding\Data\Endpoints\Install_Theme;
+use Elementor\App\Modules\Onboarding\Data\Endpoints\Install_Theme;
 use Elementor\Plugin;
-use Elementor\Tests\Phpunit\Elementor\App\Modules\E_Onboarding\Test_Base;
+use Elementor\Tests\Phpunit\Elementor\App\Modules\Onboarding\Test_Base;
 use WP_REST_Request;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,8 +19,8 @@ class Test_Install_Theme extends Test_Base {
 		parent::setUp();
 
 		Plugin::$instance->data_manager_v2->run_server();
-		$controller = Plugin::$instance->data_manager_v2->get_controller( 'e-onboarding' );
-		$this->endpoint = $controller->endpoints['e-onboarding/install-theme'];
+		$controller = Plugin::$instance->data_manager_v2->get_controller( 'onboarding' );
+		$this->endpoint = $controller->endpoints['onboarding/install-theme'];
 	}
 
 	public function test_allowed_themes_constant_contains_expected_themes() {

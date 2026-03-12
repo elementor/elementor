@@ -1,9 +1,9 @@
 <?php
 
-namespace Elementor\Tests\Phpunit\Elementor\App\Modules\E_Onboarding\Data;
+namespace Elementor\Tests\Phpunit\Elementor\App\Modules\Onboarding\Data;
 
-use Elementor\App\Modules\E_Onboarding\Data\Controller;
-use Elementor\Tests\Phpunit\Elementor\App\Modules\E_Onboarding\Test_Base;
+use Elementor\App\Modules\Onboarding\Data\Controller;
+use Elementor\Tests\Phpunit\Elementor\App\Modules\Onboarding\Test_Base;
 use WP_REST_Request;
 
 if ( ! defined( 'ABSPATH' ) ) {
