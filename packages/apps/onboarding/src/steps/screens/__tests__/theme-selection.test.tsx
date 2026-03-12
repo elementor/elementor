@@ -42,7 +42,7 @@ describe( 'ThemeSelection', () => {
 			renderApp( {
 				isConnected: true,
 				progress: { current_step_id: 'theme_selection', current_step_index: 3 },
-				choices: { building_for: 'business', site_about: [ 'ecommerce' ] },
+				choices: { building_for: 'business', site_about: [ 'online_store' ] },
 			} );
 
 			// Assert
@@ -65,7 +65,7 @@ describe( 'ThemeSelection', () => {
 			renderApp( {
 				isConnected: true,
 				progress: { current_step_id: 'theme_selection', current_step_index: 3 },
-				choices: { building_for: 'business', site_about: [ 'ecommerce' ] },
+				choices: { building_for: 'business', site_about: [ 'online_store' ] },
 			} );
 
 			// Assert
@@ -132,7 +132,7 @@ describe( 'ThemeSelection', () => {
 			renderApp( {
 				isConnected: true,
 				progress: { current_step_id: 'theme_selection', current_step_index: 3 },
-				choices: { building_for: 'business', site_about: [ 'ecommerce' ] },
+				choices: { building_for: 'business', site_about: [ 'online_store' ] },
 			} );
 
 			// Act
@@ -188,7 +188,7 @@ describe( 'ThemeSelection', () => {
 			renderApp( {
 				isConnected: true,
 				progress: { current_step_id: 'theme_selection', current_step_index: 3 },
-				choices: { building_for: 'business', site_about: [ 'ecommerce' ] },
+				choices: { building_for: 'business', site_about: [ 'online_store' ] },
 			} );
 			fireEvent.click( screen.getByRole( 'radio', { name: 'Hello Biz' } ) );
 
@@ -214,7 +214,7 @@ describe( 'ThemeSelection', () => {
 			renderApp( {
 				isConnected: true,
 				progress: { current_step_id: 'theme_selection', current_step_index: 3 },
-				choices: { building_for: 'business', site_about: [ 'ecommerce' ], theme_selection: 'hello-biz' },
+				choices: { building_for: 'business', site_about: [ 'online_store' ], theme_selection: 'hello-biz' },
 			} );
 
 			// Assert
