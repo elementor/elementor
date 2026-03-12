@@ -2,6 +2,7 @@
 
 namespace Elementor\App\Modules\Onboarding\Storage;
 
+use Elementor\App\Modules\Onboarding\Module;
 use Elementor\App\Modules\Onboarding\Storage\Entities\User_Choices;
 use Elementor\App\Modules\Onboarding\Storage\Entities\User_Progress;
 
@@ -85,6 +86,7 @@ class Onboarding_Progress_Manager {
 		if ( isset( $params['complete'] ) && $params['complete'] ) {
 			$progress->set_completed_at( current_time( 'timestamp' ) );
 			$progress->set_exit_type( 'user_exit' );
+			update_option( Module::ONBOARDING_OPTION, true );
 		}
 
 		if ( isset( $params['user_exit'] ) && $params['user_exit'] ) {

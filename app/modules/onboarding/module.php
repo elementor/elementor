@@ -8,7 +8,6 @@ use Elementor\App\Modules\Onboarding\Storage\Entities\User_Choices;
 use Elementor\App\Modules\Onboarding\Storage\Entities\User_Progress;
 use Elementor\App\Modules\Onboarding\Storage\Onboarding_Progress_Manager;
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Plugin;
@@ -21,9 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 
 	const VERSION = '2.0.0';
-	const EXPERIMENT_NAME = 'Onboarding';
 	const ASSETS_BASE_URL = 'https://assets.elementor.com/onboarding/v1/strings/';
-	const LEGACY_ONBOARDING_OPTION = 'elementor_onboarded';
+	const ONBOARDING_OPTION = 'elementor_onboarded';
 
 	const SUPPORTED_LOCALES = [
 		'de_DE' => 'de',
@@ -44,32 +42,11 @@ class Module extends BaseModule {
 		return 'onboarding';
 	}
 
-	public static function get_experimental_data(): array {
-		return [
-			'name' => self::EXPERIMENT_NAME,
-			'title' => esc_html__( 'New Onboarding', 'elementor' ),
-			'description' => esc_html__( 'New onboarding experience for 2026 with improved user journey and progress tracking.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		];
-	}
-
 	public static function has_user_finished_onboarding(): bool {
-		if ( get_option( self::LEGACY_ONBOARDING_OPTION ) ) {
-			return true;
-		}
-
-		$progress = Onboarding_Progress_Manager::instance()->get_progress();
-
-		return null !== $progress->get_completed_at();
+		return (bool) get_option( self::ONBOARDING_OPTION );
 	}
 
 	public function __construct() {
-		if ( ! Plugin::instance()->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
-			return;
-		}
-
 		$this->progress_manager = Onboarding_Progress_Manager::instance();
 
 		Plugin::instance()->data_manager_v2->register_controller( new Controller() );
@@ -250,10 +227,6 @@ class Module extends BaseModule {
 	}
 
 	public function should_show_starter(): bool {
-		if ( ! Plugin::instance()->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
-			return false;
-		}
-
 		$progress = $this->progress_manager->get_progress();
 
 		return null !== $progress->get_completed_at() && ! $progress->is_starter_dismissed();
