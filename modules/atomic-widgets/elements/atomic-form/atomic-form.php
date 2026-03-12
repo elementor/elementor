@@ -229,19 +229,19 @@ class Atomic_Form extends Atomic_Element_Base {
 		$prefix = 'e-form-';
 
 		return [
-			$this->build_label( __( 'First name', 'elementor' ), $prefix . '-first-name' ),
-			$this->build_input( __( 'First name', 'elementor' ), 'text', $prefix . '-first-name' ),
+			$this->build_label( __( 'First name', 'elementor' ), $prefix . 'first-name' ),
+			$this->build_input( __( 'First name', 'elementor' ), 'text', $prefix . 'first-name' ),
 
-			$this->build_label( __( 'Last name', 'elementor' ), $prefix . '-last-name' ),
-			$this->build_input( __( 'Last name', 'elementor' ), 'text', $prefix . '-last-name' ),
+			$this->build_label( __( 'Last name', 'elementor' ), $prefix . 'last-name' ),
+			$this->build_input( __( 'Last name', 'elementor' ), 'text', $prefix . 'last-name' ),
 
-			$this->build_label( __( 'Email', 'elementor' ), $prefix . '-email' ),
-			$this->build_input( __( 'your@mail.com', 'elementor' ), 'email', $prefix . '-email' ),
+			$this->build_label( __( 'Email', 'elementor' ), $prefix . 'email' ),
+			$this->build_input( __( 'your@mail.com', 'elementor' ), 'email', $prefix . 'email' ),
 
-			$this->build_label( __( 'Message', 'elementor' ), $prefix . '-message' ),
-			$this->build_input( __( 'Your message', 'elementor' ), 'textarea', $prefix . '-message' ),
+			$this->build_label( __( 'Message', 'elementor' ), $prefix . 'message' ),
+			$this->build_input( __( 'Your message', 'elementor' ), 'textarea', $prefix . 'message' ),
 
-			$this->build_checkbox_row( __( 'Checkbox', 'elementor' ), $prefix . '-agree' ),
+			$this->build_checkbox_row( __( 'Checkbox', 'elementor' ), $prefix . 'checkbox' ),
 
 			Widget_Builder::make( 'e-form-submit-button' )
 				->settings( [
