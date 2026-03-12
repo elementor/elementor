@@ -151,8 +151,8 @@ export const ClassItem = ( {
 					>
 						<Typography variant="caption" sx={ { color: 'text.primary' } }>
 							{ syncToV3
-								? __( 'Stop syncing to Version 3', 'elementor' )
-								: __( 'Sync to Version 3', 'elementor' ) }
+								? __( 'Stop syncing to Global Fonts', 'elementor' )
+								: __( 'Sync to Global Fonts', 'elementor' ) }
 						</Typography>
 					</MenuListItem>
 				) }

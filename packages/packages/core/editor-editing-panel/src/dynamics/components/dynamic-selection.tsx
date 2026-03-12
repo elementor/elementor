@@ -52,7 +52,7 @@ export const DynamicSelection = ( { close: closePopover, expired = false }: Dyna
 
 	useEffect( () => {
 		if ( hasNoDynamicTags ) {
-			trackViewPromotion( { target_name: 'dynamic_tags', location_l1: 'style' } );
+			trackViewPromotion( { target_name: 'dynamic_tags' } );
 		} else if ( expired ) {
 			trackViewPromotion( { target_name: 'dynamic_tags' } );
 		}
@@ -181,7 +181,7 @@ const NoDynamicTags = () => (
 			<CtaButton
 				size="small"
 				href={ PRO_DYNAMIC_TAGS_URL }
-				onClick={ () => trackUpgradePromotionClick( { target_name: 'dynamic_tags', location_l1: 'style' } ) }
+				onClick={ () => trackUpgradePromotionClick( { target_name: 'dynamic_tags' } ) }
 			/>
 		</Stack>
 	</>

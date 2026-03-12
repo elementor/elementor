@@ -174,7 +174,7 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Atomic Widgets', 'elementor' ),
 			'description' => esc_html__( 'Enable atomic widgets.', 'elementor' ),
-			'hidden' => false,
+			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
 			'new_site' => [
@@ -436,11 +436,9 @@ class Module extends BaseModule {
 	private function add_inline_styles() {
 		$inline_css = implode( '', [
 			'.e-heading-base a, .e-paragraph-base a { all: unset; cursor: pointer; }',
-			'form[data-element_type="e-form"].form-state-default .message-success,',
-			'form[data-element_type="e-form"].form-state-default .message-error,',
-			'form[data-element_type="e-form"].form-state-success .message-error,',
-			'form[data-element_type="e-form"].form-state-error .message-success',
-			'{ display: none; }',
+			'form[data-element_type="e-form"].form-state-success .message-success,',
+			'form[data-element_type="e-form"].form-state-error .message-error',
+			'{ display: block; }',
 		] );
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 		wp_add_inline_style( 'elementor-editor', $inline_css );
