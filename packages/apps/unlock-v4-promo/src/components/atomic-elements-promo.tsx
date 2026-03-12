@@ -88,7 +88,7 @@ export function AtomicElementsPromo() {
 				<Box sx={ { pl: 2.5, pr: 4, pt: 2 } }>
 					<Typography variant="caption" color="text.tertiary">
 						{ __(
-							'The new generation of high-performance, flexible building blocks designed for precise styling and a unified experience.',
+							'Build with modern, flexible elements designed for reusable styles and cleaner layouts. Your existing site and content stay exactly the same.',
 							'elementor'
 						) }
 					</Typography>
