@@ -57,7 +57,7 @@ interface OnboardingConfig {
 }
 
 const defaultConfig: OnboardingConfig = {
-	version: '1.0.0',
+	version: '2.0.0',
 	restUrl: 'https://test.local/wp-json/elementor/v1/onboarding/',
 	nonce: 'test-nonce',
 	steps: [
