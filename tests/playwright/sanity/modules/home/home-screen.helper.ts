@@ -129,6 +129,16 @@ export const navigateToHomeScreen = async ( page: Page ) => {
 	return page.locator( '#e-home-screen' );
 };
 
+export const getScreenshotName = async ( page: Page, baseName: string ): Promise<string> => {
+	const hasBranch7 = await page.locator( '[class*="branch-7"]' ).count() > 0;
+	if ( ! hasBranch7 ) {
+		return baseName;
+	}
+
+	const extension = baseName.lastIndexOf( '.' );
+	return `${ baseName.slice( 0, extension ) }-with-wordpress7${ baseName.slice( extension ) }`;
+};
+
 export const saveHomepageSettings = async ( apiRequests: ApiRequests, requestContext: APIRequestContext ): Promise<HomepageSettings> => {
 	try {
 		const homepageResponse = await apiRequests.customGet( requestContext, 'index.php?rest_route=/wp/v2/options/page_on_front' );
