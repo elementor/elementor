@@ -36,14 +36,9 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-<<<<<<< HEAD
-    "@elementor/editor": "4.0.0",
-    "@elementor/editor-v1-adapters": "4.0.0",
-=======
     "@elementor/editor": "4.1.0",
     "@elementor/editor-v1-adapters": "4.1.0",
     "@elementor/icons": "1.68.0",
->>>>>>> 0d8e2d7fcd (Internal: Update starter styling [ED-23236] (#35061))
     "@elementor/ui": "1.36.17",
     "@wordpress/api-fetch": "^7.12.0",
     "@wordpress/i18n": "^5.13.0"
