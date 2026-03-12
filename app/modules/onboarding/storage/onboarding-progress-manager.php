@@ -11,8 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Onboarding_Progress_Manager {
 
-	const PROGRESS_OPTION_KEY = 'elementor_Onboarding_progress';
-	const CHOICES_OPTION_KEY = 'elementor_Onboarding_choices';
+	const PROGRESS_OPTION_KEY = 'elementor_onboarding_progress';
+	const CHOICES_OPTION_KEY = 'elementor_onboarding_choices';
 	const DEFAULT_TOTAL_STEPS = 5;
 
 	private static ?Onboarding_Progress_Manager $instance = null;

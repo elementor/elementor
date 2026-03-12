@@ -9,7 +9,7 @@ import {
 	navigateToSiteFeaturesStep,
 } from './onboarding-utils';
 
-test.describe( 'E-Onboarding @onboarding', () => {
+test.describe( 'Onboarding @onboarding', () => {
 	let originalActiveTheme: string;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
