@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Stack, Typography } from '@elementor/ui';
 
 import {
@@ -32,10 +32,7 @@ export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
 	const recommendedTheme = useMemo( () => getRecommendedTheme( choices ), [ choices ] );
 	const greetingText = useMemo( () => getGreetingText( choices.experience_level ), [ choices.experience_level ] );
 
-	// Show both themes when Hello Biz is recommended.
-	// TODO: Once the site_about step (S2) is implemented, this will work automatically.
-	// For now, always show both themes so the UI can be tested.
-	const showBothThemes = true;
+	const showBothThemes = recommendedTheme === 'hello-biz';
 
 	const hasTrackedSuggestion = React.useRef( false );
 
@@ -46,23 +43,17 @@ export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
 		}
 	}, [ recommendedTheme, trackThemeSuggested ] );
 
-	const handleSelect = useCallback(
-		( slug: ThemeSlug ) => {
-			if ( isInstalled ) {
-				onComplete( { theme_selection: selectedValue } );
-				return;
-			}
+	const handleSelect = ( slug: ThemeSlug ) => {
+		if ( isInstalled ) {
+			onComplete( { theme_selection: selectedValue } );
+			return;
+		}
 
-			trackThemeSelected( slug );
-			actions.setUserChoice( 'theme_selection', slug );
-		},
-		[ actions, isInstalled, onComplete, selectedValue, trackThemeSelected ]
-	);
+		trackThemeSelected( slug );
+		actions.setUserChoice( 'theme_selection', slug );
+	};
 
-	const themes = useMemo(
-		() => ( showBothThemes ? [ HELLO_THEME, HELLO_BIZ_THEME ] : [ HELLO_THEME ] ),
-		[ showBothThemes ]
-	);
+	const themes = showBothThemes ? [ HELLO_THEME, HELLO_BIZ_THEME ] : [ HELLO_THEME ];
 
 	const effectiveSelection = selectedValue ?? recommendedTheme;
 

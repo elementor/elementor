@@ -229,7 +229,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 		window.location.href = redirectUrl;
 	}, [ urls ] );
 
-	const handleSkip = useCallback( () => {
+	const handleSkip = () => {
 		trackSkipClicked( stepId );
 
 		if ( isLast ) {
@@ -285,22 +285,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 				},
 			}
 		);
-	}, [
-		actions,
-		choices,
-		completedSteps,
-		isConnected,
-		isGuest,
-		isLast,
-		stepId,
-		stepIndex,
-		totalSteps,
-		trackErrorReported,
-		trackSkipClicked,
-		trackSummary,
-		updateProgress,
-		redirectToNewPage,
-	] );
+	};
 
 	const saveChoicesFireAndForget = useCallback(
 		( choiceData: Record< string, unknown > ) => {
@@ -318,179 +303,118 @@ export function AppContent( { onClose }: AppContentProps ) {
 		[ updateChoices, trackErrorReported, stepId ]
 	);
 
-	const handleContinue = useCallback(
-		( directChoice?: Record< string, unknown > ) => {
-			if ( stepId === StepId.SITE_FEATURES ) {
-				trackProFeaturesSelected( {
-					targetName: 'continue_with_free',
-					features: ( choices.site_features as string[] ) || [],
-				} );
-			}
-
-			const storedChoice = choices[ stepId as keyof typeof choices ];
-			const choiceData = directChoice ?? ( isChoiceEmpty( storedChoice ) ? null : { [ stepId ]: storedChoice } );
-
-			if ( choiceData ) {
-				saveChoicesFireAndForget( choiceData );
-			}
-
-			if ( stepId === StepId.THEME_SELECTION ) {
-				const themeSlug = ( choiceData?.theme_selection ?? choices.theme_selection ) as string;
-
-				if ( themeSlug && isLast ) {
-					isCompletingRef.current = true;
-					setIsCompleting( true );
-					installTheme.mutate( themeSlug, {
-						onSuccess: () => {
-							updateProgress.mutate(
-								{
-									complete_step: stepId,
-									complete: true,
-									step_index: stepIndex,
-									total_steps: totalSteps,
-								},
-								{
-									onSuccess: redirectToNewPage,
-									onError: ( error ) => {
-										trackErrorReported( {
-											targetType: 'request',
-											targetName: 'complete_step',
-											stepId,
-											errorBody:
-												error instanceof Error ? error.message : 'Failed to update progress',
-										} );
-										redirectToNewPage();
-									},
-								}
-							);
-						},
-						onError: ( error ) => {
-							trackErrorReported( {
-								targetType: 'install',
-								targetName: 'continue_with_this_theme',
-								stepId: 'theme_selection',
-								errorBody: error instanceof Error ? error.message : 'Failed to install theme',
-							} );
-							showToast( t( 'error.theme_install_failed' ) );
-							updateProgress.mutate(
-								{
-									complete_step: stepId,
-									complete: true,
-									step_index: stepIndex,
-									total_steps: totalSteps,
-								},
-								{
-									onSuccess: redirectToNewPage,
-									onError: ( progressError ) => {
-										trackErrorReported( {
-											targetType: 'request',
-											targetName: 'complete_step',
-											stepId,
-											errorBody:
-												progressError instanceof Error
-													? progressError.message
-													: 'Failed to update progress',
-										} );
-										redirectToNewPage();
-									},
-								}
-							);
-						},
+	function completeAndRedirect() {
+		isCompletingRef.current = true;
+		setIsCompleting( true );
+		updateProgress.mutate(
+			{
+				complete_step: stepId,
+				complete: true,
+				step_index: stepIndex,
+				total_steps: totalSteps,
+			},
+			{
+				onSuccess: redirectToNewPage,
+				onError: ( error ) => {
+					trackErrorReported( {
+						targetType: 'request',
+						targetName: 'complete_step',
+						stepId,
+						errorBody: error instanceof Error ? error.message : 'Failed to update progress',
 					} );
-					return;
-				}
-
-				if ( themeSlug ) {
-					installTheme.mutate( themeSlug, {
-						onError: ( error ) => {
-							trackErrorReported( {
-								targetType: 'install',
-								targetName: 'continue_with_this_theme',
-								stepId: 'theme_selection',
-								errorBody: error instanceof Error ? error.message : 'Failed to install theme',
-							} );
-							showToast( t( 'error.theme_install_failed' ) );
-						},
-					} );
-				}
+					redirectToNewPage();
+				},
 			}
+		);
+	}
 
-			if ( isLast ) {
-				trackSummary( {
-					choices,
-					completedSteps: [ ...completedSteps, stepId ],
-					isConnected,
-					isGuest,
-				} );
+	function handleContinue( directChoice?: Record< string, unknown > ) {
+		if ( stepId === StepId.SITE_FEATURES ) {
+			trackProFeaturesSelected( {
+				targetName: 'continue_with_free',
+				features: ( choices.site_features as string[] ) || [],
+			} );
+		}
+
+		const storedChoice = choices[ stepId as keyof typeof choices ];
+		const choiceData = directChoice ?? ( isChoiceEmpty( storedChoice ) ? null : { [ stepId ]: storedChoice } );
+
+		if ( choiceData ) {
+			saveChoicesFireAndForget( choiceData );
+		}
+
+		if ( stepId === StepId.THEME_SELECTION ) {
+			const themeSlug = ( choiceData?.theme_selection ?? choices.theme_selection ) as string;
+
+			if ( themeSlug && isLast ) {
 				isCompletingRef.current = true;
 				setIsCompleting( true );
-				updateProgress.mutate(
-					{
-						complete_step: stepId,
-						complete: true,
-						step_index: stepIndex,
-						total_steps: totalSteps,
+				installTheme.mutate( themeSlug, {
+					onSuccess: completeAndRedirect,
+					onError: ( error ) => {
+						trackErrorReported( {
+							targetType: 'install',
+							targetName: 'continue_with_this_theme',
+							stepId: 'theme_selection',
+							errorBody: error instanceof Error ? error.message : 'Failed to install theme',
+						} );
+						showToast( t( 'error.theme_install_failed' ) );
+						completeAndRedirect();
 					},
-					{
-						onSuccess: redirectToNewPage,
-						onError: ( error ) => {
-							trackErrorReported( {
-								targetType: 'request',
-								targetName: 'complete_step',
-								stepId,
-								errorBody: error instanceof Error ? error.message : 'Failed to update progress',
-							} );
-							redirectToNewPage();
-						},
-					}
-				);
+				} );
 				return;
 			}
 
-			updateProgress.mutate(
-				{
-					complete_step: stepId,
-					step_index: stepIndex,
-					total_steps: totalSteps,
-				},
-				{
-					onSuccess: () => {
-						actions.completeStep( stepId );
-						actions.nextStep();
-					},
+			if ( themeSlug ) {
+				installTheme.mutate( themeSlug, {
 					onError: ( error ) => {
 						trackErrorReported( {
-							targetType: 'request',
-							targetName: 'complete_step',
-							stepId,
-							errorBody: error instanceof Error ? error.message : 'Failed to update progress',
+							targetType: 'install',
+							targetName: 'continue_with_this_theme',
+							stepId: 'theme_selection',
+							errorBody: error instanceof Error ? error.message : 'Failed to install theme',
 						} );
-						actions.completeStep( stepId );
-						actions.nextStep();
+						showToast( t( 'error.theme_install_failed' ) );
 					},
-				}
-			);
-		},
-		[
-			actions,
-			choices,
-			completedSteps,
-			isConnected,
-			isGuest,
-			isLast,
-			stepId,
-			stepIndex,
-			totalSteps,
-			updateProgress,
-			saveChoicesFireAndForget,
-			installTheme,
-			showToast,
-			redirectToNewPage,
-			trackErrorReported,
-			trackProFeaturesSelected,
-			trackSummary,
-		]
-	);
+				} );
+			}
+		}
+
+		if ( isLast ) {
+			trackSummary( {
+				choices,
+				completedSteps: [ ...completedSteps, stepId ],
+				isConnected,
+				isGuest,
+			} );
+			completeAndRedirect();
+			return;
+		}
+
+		updateProgress.mutate(
+			{
+				complete_step: stepId,
+				step_index: stepIndex,
+				total_steps: totalSteps,
+			},
+			{
+				onSuccess: () => {
+					actions.completeStep( stepId );
+					actions.nextStep();
+				},
+				onError: ( error ) => {
+					trackErrorReported( {
+						targetType: 'request',
+						targetName: 'complete_step',
+						stepId,
+						errorBody: error instanceof Error ? error.message : 'Failed to update progress',
+					} );
+					actions.completeStep( stepId );
+					actions.nextStep();
+				},
+			}
+		);
+	}
 
 	const rightPanelConfig = useMemo( () => getStepVisualConfig( stepId ), [ stepId ] );
 	const isPending = updateProgress.isPending || isLoading;
