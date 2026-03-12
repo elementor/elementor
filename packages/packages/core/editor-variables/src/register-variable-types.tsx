@@ -34,14 +34,14 @@ export function registerVariableTypes() {
 
 			if ( variable.sync_to_v3 ) {
 				actions.push( {
-					name: __( 'Stop syncing to Version 3', 'elementor' ),
+					name: __( 'Stop syncing to Global Colors', 'elementor' ),
 					icon: ResetIcon,
 					color: 'text.primary',
 					onClick: () => handlers.onStopSync( variableId ),
 				} );
 			} else {
 				actions.push( {
-					name: __( 'Sync to Version 3', 'elementor' ),
+					name: __( 'Sync to Global Colors', 'elementor' ),
 					icon: ResetIcon,
 					color: 'text.primary',
 					onClick: () => handlers.onStartSync( variableId ),
