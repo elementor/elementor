@@ -18,25 +18,25 @@ const FEATURE_ITEMS = [
 		id: 'combineWidgets',
 		title: __( 'Use Atomic Elements alongside your existing widgets', 'elementor' ),
 		subtitle: __( 'No need to rebuild pages. Combine legacy & new workflows.', 'elementor' ),
-		image: '',
+		image: 'https://assets.elementor.com/v4-promotion/v1/images/pop_up_combine_widgets.svg',
 	},
 	{
 		id: 'designSystems',
 		title: __( 'Build reusable design systems', 'elementor' ),
 		subtitle: __( 'Classes, Variables & Components give a clear path for scale.', 'elementor' ),
-		image: '',
+		image: 'https://assets.elementor.com/v4-promotion/v1/images/pop_up_design_systems.svg',
 	},
 	{
 		id: 'consistentStyling',
 		title: __( 'Keep styles consistent across your site', 'elementor' ),
 		subtitle: __( 'A unified Style tab with full control over responsive design.', 'elementor' ),
-		image: '',
+		image: 'https://assets.elementor.com/v4-promotion/v1/images/pop_up_consistent_styling.svg',
 	},
 	{
 		id: 'performance',
 		title: __( 'Get unparalleled performance', 'elementor' ),
 		subtitle: __( 'Clean code and a light CSS footprint with single-div wrappers.', 'elementor' ),
-		image: '',
+		image: 'https://assets.elementor.com/v4-promotion/v1/images/pop_up_performance.svg',
 	},
 ];
 
