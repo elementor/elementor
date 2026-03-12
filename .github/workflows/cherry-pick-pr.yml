@@ -32,28 +32,43 @@ jobs:
 
       - name: Check if PR is from fork
         id: check_fork
+        env:
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPO: ${{ github.repository }}
         run: |
-          IS_FORK="${{ github.event.pull_request.head.repo.full_name != github.repository }}"
+          IS_FORK="false"
+          if [ "$HEAD_REPO" != "$BASE_REPO" ]; then
+            IS_FORK="true"
+          fi
           echo "is_fork=$IS_FORK" >> "$GITHUB_OUTPUT"
-          echo "Fork status: $IS_FORK"
         shell: bash
 
       - name: Log trigger and PR information
+        env:
+          EVENT_ACTION: ${{ github.event.action }}
+          ADDED_LABEL: ${{ github.event.label.name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          TARGET_REPO: ${{ github.repository }}
+          IS_FORK: ${{ steps.check_fork.outputs.is_fork }}
+          PR_MERGED: ${{ github.event.pull_request.merged }}
         run: |
-          echo "Trigger: ${{ github.event.action }}"
-          if [ "${{ github.event.action }}" = "labeled" ]; then
-            echo "Added label: ${{ github.event.label.name }}"
+          echo "Trigger: $EVENT_ACTION"
+          if [ "$EVENT_ACTION" = "labeled" ]; then
+            echo "Added label: $ADDED_LABEL"
           fi
-          echo "PR #${{ github.event.pull_request.number }} from: ${{ github.event.pull_request.head.repo.full_name }}"
-          echo "Target repository: ${{ github.repository }}"
-          echo "Is fork PR: ${{ steps.check_fork.outputs.is_fork }}"
-          echo "PR merged: ${{ github.event.pull_request.merged }}"
+          echo "PR #${PR_NUMBER} from: $HEAD_REPO"
+          echo "Target repository: $TARGET_REPO"
+          echo "Is fork PR: $IS_FORK"
+          echo "PR merged: $PR_MERGED"
         shell: bash
 
       - name: Get branch labels
         id: get_labels
+        env:
+          LABELS_JSON: ${{ toJSON(github.event.pull_request.labels) }}
         run: |
-          LABELS=$(jq -r '.[].name' <<< '${{ toJSON(github.event.pull_request.labels) }}' | grep '^cp_' | paste -sd ',' || echo "")
+          LABELS=$(jq -r '.[].name' <<< "$LABELS_JSON" | grep '^cp_' | paste -sd ',' || echo "")
           echo "filtered_labels_csv=$LABELS" >> "$GITHUB_OUTPUT"
         shell: bash
 
@@ -67,15 +82,19 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_USER_LOGIN: ${{ github.event.pull_request.user.login }}
           LABEL_NAME: ${{ github.event.label.name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+          ORIG_URL: ${{ github.event.pull_request.html_url }}
+          FILTERED_LABELS_CSV: ${{ steps.get_labels.outputs.filtered_labels_csv }}
+          EVENT_ACTION: ${{ github.event.action }}
+          SOURCE_REPO: ${{ github.event.pull_request.head.repo.full_name }}
         run: |
-          PR_NUMBER="${{ github.event.pull_request.number }}"
-          MERGE_SHA="${{ github.event.pull_request.merge_commit_sha }}"
-          ORIG_URL="${{ github.event.pull_request.html_url }}"
+          PR_TITLE=$(echo "$PR_TITLE" | sed 's/[;&|<>`$()]//g')
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          IFS=',' read -ra BRANCHES <<< "${{ steps.get_labels.outputs.filtered_labels_csv }}"
+          IFS=',' read -ra BRANCHES <<< "$FILTERED_LABELS_CSV"
           for lbl in "${BRANCHES[@]}"; do
             TARGET=${lbl#cp_}
 
@@ -118,7 +137,7 @@ jobs:
                 # Create draft PR with conflict information
                 if ! gh pr list --head "$CONFLICT_BRANCH" --base "$TARGET" --state open | grep -q .; then
                   CONFLICT_TRIGGER_INFO=""
-                  if [ "${{ github.event.action }}" = "labeled" ]; then
+                  if [ "$EVENT_ACTION" = "labeled" ]; then
                     CONFLICT_TRIGGER_INFO="
                   **Trigger:** Label \`${LABEL_NAME}\` added to closed PR"
                   fi
@@ -184,7 +203,7 @@ jobs:
               echo "PR already exists for branch $BRANCH -> $TARGET, skipping creation"
             else
               TRIGGER_INFO=""
-              if [ "${{ github.event.action }}" = "labeled" ]; then
+              if [ "$EVENT_ACTION" = "labeled" ]; then
                 TRIGGER_INFO="
                 **Trigger:** Label \`${LABEL_NAME}\` added to closed PR"
               fi
@@ -195,7 +214,7 @@ jobs:
                 --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET}${TICKET_SUFFIX}" \
                 --body "Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch.
 
-                **Source:** ${{ github.event.pull_request.head.repo.full_name }}
+                **Source:** ${SOURCE_REPO}
                 **Original Author:** @${PR_USER_LOGIN}${TRIGGER_INFO}")
               
               NEW_PR=$(echo "$PR_URL" | grep -oE '/pull/[0-9]+' | grep -oE '[0-9]+' || echo "")
