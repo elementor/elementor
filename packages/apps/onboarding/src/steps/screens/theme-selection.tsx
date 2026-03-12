@@ -32,7 +32,7 @@ export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
 	const recommendedTheme = useMemo( () => getRecommendedTheme( choices ), [ choices ] );
 	const greetingText = useMemo( () => getGreetingText( choices.experience_level ), [ choices.experience_level ] );
 
-	const showBothThemes = recommendedTheme === 'hello-biz';
+	const showBothThemes = recommendedTheme === HELLO_BIZ_THEME.slug;
 
 	const hasTrackedSuggestion = React.useRef( false );
 
