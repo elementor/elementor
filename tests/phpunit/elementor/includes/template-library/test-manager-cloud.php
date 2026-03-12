@@ -2,6 +2,7 @@
 namespace Elementor\Testing\Includes\TemplateLibrary;
 
 use Elementor\Core\Utils\Exceptions;
+use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\DB;
@@ -184,6 +185,92 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		] );
 	}
 
+	public function test_save_template__embeds_global_classes_snapshot() {
+		// Arrange.
+		$post_resource_response = [
+			"id" => 1,
+			"createdAt" => "2025-01-21T10:45:32.541Z",
+			"updatedAt" => "2025-01-21T10:45:32.541Z",
+			"parentId" => null,
+			"authorId" => "123",
+			"authorEmail" => "mock@email.com",
+			"title" => "AFolder",
+			"type" => "FOLDER",
+			"templateType" => "",
+		];
+
+		Global_Classes_Repository::make()->put( [
+			'g-123' => [
+				'id' => 'g-123',
+				'type' => 'class',
+				'label' => 'Used',
+				'variants' => [],
+			],
+		], [ 'g-123' ] );
+
+		$mock_content = [
+			[
+				'id' => 'test',
+				'elType' => 'widget',
+				'widgetType' => 'heading',
+				'settings' => [
+					'classes' => [
+						'$$type' => 'classes',
+						'value' => [ 'g-123' ],
+					],
+				],
+				'elements' => [],
+			],
+		];
+
+		$expected_snapshot = [
+			'items' => [
+				'g-123' => [
+					'id' => 'g-123',
+					'type' => 'class',
+					'label' => 'Used',
+					'variants' => [],
+				],
+			],
+			'order' => [ 'g-123' ],
+		];
+
+		$mock_post_resource_content = wp_json_encode( [
+			'content' => $mock_content,
+			'page_settings' => [],
+			'global_classes' => $expected_snapshot,
+		] );
+
+		// Assert.
+		$this->cloud_library_app_mock
+			->method( 'get_resource' )
+			->with( [ 'id' => 1 ] );
+
+		$this->cloud_library_app_mock
+			->expects( $this->once() )
+			->method( 'post_resource' )
+			->with( [
+				'title' => 'ATemplate',
+				'type' => 'TEMPLATE',
+				'templateType' => 'container',
+				'parentId' => null,
+				'content' => $mock_post_resource_content,
+				'hasPageSettings' => false,
+			] )
+			->willReturn( $post_resource_response );
+
+		// Act.
+		$this->manager->save_template( [
+			'post_id' => 1,
+			'source' => 'cloud',
+			'title' => 'ATemplate',
+			'type' => 'container',
+			'resourceType' => 'TEMPLATE',
+			'content' => wp_json_encode( $mock_content ),
+			'parentId' => null,
+		] );
+	}
+
 	public function test_rename_template() {
 		// Arrange & Assert
 		$this->cloud_library_app_mock
@@ -297,16 +384,23 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 
 	public function test_export_template__template_type() {
 		// Arrange
+		$mock_content = [ [ 'id' => 'abc', 'elType' => 'container', 'elements' => [], 'settings' => [] ] ];
 		$data = [
 			'id' => 456,
 			'title' => 'Template 1',
 			'type' => 'TEMPLATE',
 			'parentId' => null,
 			'templateType' => 'container',
-			'content' => json_encode(['content' => 'mock_content']),
+			'content' => json_encode(['content' => $mock_content]),
 		];
 
-		$expected_file_content = '{"content":"mock_content","page_settings":[],"version":"'.DB::DB_VERSION.'","title":"Template 1","type":"container"}';
+		$expected_file_content = wp_json_encode( [
+			'content' => $mock_content,
+			'page_settings' => [],
+			'version' => DB::DB_VERSION,
+			'title' => 'Template 1',
+			'type' => 'container',
+		] );
 		$expected_file_name = 'elementor-' . $data['id'] . '-' . gmdate( 'Y-m-d' ) . '.json';
 
 		$this->cloud_library_app_mock->method( 'get_resource' )->willReturn( $data );
@@ -336,9 +430,11 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			'templateType' => 'folder',
 		];
 
+		$mock_content = [ [ 'id' => 'abc', 'elType' => 'container', 'elements' => [], 'settings' => [] ] ];
+
 		$this->cloud_library_app_mock
 			->method( 'get_resource' )
-			->willReturnCallback( function ( $args ) use ( $folder ) {
+			->willReturnCallback( function ( $args ) use ( $folder, $mock_content ) {
 				$data = [
 					123 => $folder,
 					101 => [
@@ -347,7 +443,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 						'type' => 'TEMPLATE',
 						'parentId' => $folder['id'],
 						'templateType' => 'container',
-						'content' => '{"content":"value"}',
+						'content' => wp_json_encode( [ 'content' => $mock_content ] ),
 					],
 					102 => [
 						'id' => 102,
@@ -355,7 +451,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 						'type' => 'TEMPLATE',
 						'parentId' => $folder['id'],
 						'templateType' => 'container',
-						'content' => '{"content":"value"}',
+						'content' => wp_json_encode( [ 'content' => $mock_content ] ),
 					],
 					103 => [
 						'id' => 103,
@@ -363,7 +459,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 						'type' => 'TEMPLATE',
 						'parentId' => $folder['id'],
 						'templateType' => 'container',
-						'content' => '{"content":"value"}',
+						'content' => wp_json_encode( [ 'content' => $mock_content ] ),
 					],
 				];
 
