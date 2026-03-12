@@ -37,13 +37,9 @@ describe( 'ThemeSelection', () => {
 			).toBeInTheDocument();
 		} );
 
-		it( 'should render the Hello Biz theme card when it is recommended', () => {
+		it( 'should render the Hello Biz theme card', () => {
 			// Arrange & Act
-			renderApp( {
-				isConnected: true,
-				progress: { current_step_id: 'theme_selection', current_step_index: 3 },
-				choices: { building_for: 'business', site_about: [ 'online_store' ] },
-			} );
+			navigateToThemeSelection();
 
 			// Assert
 			expect( screen.getByText( 'Hello Biz' ) ).toBeInTheDocument();
@@ -56,30 +52,6 @@ describe( 'ThemeSelection', () => {
 
 			// Assert
 			expect( screen.getByRole( 'radiogroup', { name: 'Theme selection' } ) ).toBeInTheDocument();
-		} );
-	} );
-
-	describe( 'Theme visibility', () => {
-		it( 'should show both themes when hello-biz is recommended', () => {
-			// Arrange & Act
-			renderApp( {
-				isConnected: true,
-				progress: { current_step_id: 'theme_selection', current_step_index: 3 },
-				choices: { building_for: 'business', site_about: [ 'online_store' ] },
-			} );
-
-			// Assert
-			expect( screen.getByRole( 'radio', { name: 'Hello' } ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'radio', { name: 'Hello Biz' } ) ).toBeInTheDocument();
-		} );
-
-		it( 'should show only the Hello theme when hello-elementor is recommended', () => {
-			// Arrange & Act
-			navigateToThemeSelection();
-
-			// Assert
-			expect( screen.getByRole( 'radio', { name: 'Hello' } ) ).toBeInTheDocument();
-			expect( screen.queryByRole( 'radio', { name: 'Hello Biz' } ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -127,13 +99,22 @@ describe( 'ThemeSelection', () => {
 			expect( helloCard ).toBeChecked();
 		} );
 
-		it( 'should allow selecting a different theme', () => {
-			// Arrange
+		it( 'should pre-select hello-biz when it is the recommended theme', () => {
+			// Arrange & Act
 			renderApp( {
 				isConnected: true,
 				progress: { current_step_id: 'theme_selection', current_step_index: 3 },
 				choices: { building_for: 'business', site_about: [ 'online_store' ] },
 			} );
+
+			// Assert
+			const helloBizCard = screen.getByRole( 'radio', { name: 'Hello Biz' } );
+			expect( helloBizCard ).toBeChecked();
+		} );
+
+		it( 'should allow selecting a different theme', () => {
+			// Arrange
+			navigateToThemeSelection();
 
 			// Act
 			fireEvent.click( screen.getByRole( 'radio', { name: 'Hello Biz' } ) );
@@ -185,11 +166,7 @@ describe( 'ThemeSelection', () => {
 
 		it( 'should send selected theme slug when Hello Biz is selected and Continue is clicked', async () => {
 			// Arrange
-			renderApp( {
-				isConnected: true,
-				progress: { current_step_id: 'theme_selection', current_step_index: 3 },
-				choices: { building_for: 'business', site_about: [ 'online_store' ] },
-			} );
+			navigateToThemeSelection();
 			fireEvent.click( screen.getByRole( 'radio', { name: 'Hello Biz' } ) );
 
 			// Act
@@ -214,7 +191,7 @@ describe( 'ThemeSelection', () => {
 			renderApp( {
 				isConnected: true,
 				progress: { current_step_id: 'theme_selection', current_step_index: 3 },
-				choices: { building_for: 'business', site_about: [ 'online_store' ], theme_selection: 'hello-biz' },
+				choices: { theme_selection: 'hello-biz' },
 			} );
 
 			// Assert
