@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 import { Stack, Typography } from '@elementor/ui';
 
 import { OptionsGrid } from '../../components/site-about';
@@ -13,8 +14,14 @@ export function SiteAbout() {
 	const { choices, actions } = useOnboarding();
 	const { trackSiteTopicSelected } = useOnboardingEvent();
 
-	const selectedValues: string[] = Array.isArray( choices.site_about ) ? choices.site_about : [];
-	const greetingText = getGreeting( choices.building_for ?? '' );
+	const selectedValues: string[] = useMemo(
+		() => ( Array.isArray( choices.site_about ) ? choices.site_about : [] ),
+		[ choices.site_about ]
+	);
+
+	const greetingText = useMemo( () => {
+		return getGreeting( choices.building_for ?? '' );
+	}, [ choices.building_for ] );
 
 	function handleToggle( value: string ) {
 		const next = selectedValues.includes( value )
