@@ -24,6 +24,8 @@ class Module extends BaseModule {
 	const VERSION = '2.0.0';
 	const EXPERIMENT_NAME = 'e_onboarding';
 	const ASSETS_BASE_URL = 'https://assets.elementor.com/onboarding/v1/strings/';
+	const FONTS_STYLE_HANDLE = 'elementor-onboarding-fonts';
+	const FONTS_STYLE_URL = 'https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap';
 
 	const SUPPORTED_LOCALES = [
 		'de_DE',
@@ -62,14 +64,15 @@ class Module extends BaseModule {
 		}
 
 		$this->progress_manager = Onboarding_Progress_Manager::instance();
-		$this->loading_handler = new Editor_Loading_Handler();
+		$this->loading_handler = new Editor_Loading_Handler( $this->progress_manager );
+
+		wp_register_style( self::FONTS_STYLE_HANDLE, self::FONTS_STYLE_URL, [], ELEMENTOR_VERSION );
 
 		Plugin::instance()->data_manager_v2->register_controller( new Controller() );
 
 		add_action( 'elementor/init', [ $this, 'on_elementor_init' ], 12 );
 
-		add_action( 'elementor/editor/v2/styles/enqueue', [ $this, 'enqueue_loading_styles' ] );
-		add_action( 'elementor/editor/v2/loading_content', [ $this->loading_handler, 'maybe_render_onboarding_loading_content' ] );
+		add_action( 'elementor/editor/v2/styles/enqueue', [ $this->loading_handler, 'maybe_setup' ] );
 
 		if ( $this->should_show_starter() ) {
 			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_starter_settings' ] );
@@ -88,31 +91,8 @@ class Module extends BaseModule {
 		$this->enqueue_fonts();
 	}
 
-	public function enqueue_loading_styles(): void {
-		if ( ! $this->is_pending_editor_redirect() ) {
-			return;
-		}
-
-		$this->clear_pending_editor_redirect();
-		$this->loading_handler->set_from_onboarding();
-
-		wp_enqueue_style(
-			'elementor-onboarding-editor-loading',
-			ELEMENTOR_URL . 'assets/css/modules/e-onboarding/editor-loading.css',
-			[],
-			ELEMENTOR_VERSION
-		);
-
-		$this->enqueue_fonts();
-	}
-
 	public function enqueue_fonts(): void {
-		wp_enqueue_style(
-			'elementor-onboarding-fonts',
-			'https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap',
-			[],
-			ELEMENTOR_VERSION
-		);
+		wp_enqueue_style( self::FONTS_STYLE_HANDLE );
 	}
 
 	public function enqueue_starter_preview_css(): void {
@@ -260,24 +240,6 @@ class Module extends BaseModule {
 		$user = $library->get( 'user' );
 
 		return $user->first_name ?? '';
-	}
-
-	private function is_pending_editor_redirect(): bool {
-		static $result = null;
-
-		if ( null !== $result ) {
-			return $result;
-		}
-
-		$progress = $this->progress_manager->get_progress();
-		$result = $progress->is_pending_editor_redirect();
-		return $result;
-	}
-
-	private function clear_pending_editor_redirect(): void {
-		$progress = $this->progress_manager->get_progress();
-		$progress->set_pending_editor_redirect( false );
-		$this->progress_manager->save_progress( $progress );
 	}
 
 	public function should_show_starter(): bool {

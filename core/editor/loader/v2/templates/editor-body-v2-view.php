@@ -11,7 +11,7 @@ $notice = Plugin::$instance->editor->notice_bar->get_notice();
 ?>
 
 <div id="elementor-loading">
-	<?php do_action( 'elementor/editor/v2/loading_content' ); ?>
+	<?php do_action( 'elementor/editor/v2/loading_content_from_onboarding' ); ?>
 	<div class="elementor-loader-wrapper">
 		<div class="elementor-loader" aria-hidden="true">
 			<div class="elementor-loader-boxes">
