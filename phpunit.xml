@@ -14,6 +14,7 @@
 
 	<testsuites>
 		<testsuite name="elementor">
+			<file>./tests/phpunit/elementor/app/modules/onboarding/test-base.php</file>
 			<directory prefix="test-" suffix=".php">./tests/phpunit/</directory>
 		</testsuite>
 	</testsuites>

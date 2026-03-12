@@ -85,7 +85,7 @@ class Admin extends App {
 			return;
 		}
 
-		$already_had_onboarding = get_option( Onboarding_Module::ONBOARDING_OPTION );
+		$already_had_onboarding = Onboarding_Module::has_user_finished_onboarding();
 
 		// Get the latest installation from Elementor's Install log in the DB.
 		$latest_install = key( Upgrade_Manager::get_installs_history() );

@@ -23,6 +23,7 @@ class Module extends BaseModule {
 	const VERSION = '2.0.0';
 	const EXPERIMENT_NAME = 'Onboarding';
 	const ASSETS_BASE_URL = 'https://assets.elementor.com/onboarding/v1/strings/';
+	const LEGACY_ONBOARDING_OPTION = 'elementor_onboarded';
 
 	const SUPPORTED_LOCALES = [
 		'de_DE' => 'de',
@@ -52,6 +53,16 @@ class Module extends BaseModule {
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		];
+	}
+
+	public static function has_user_finished_onboarding(): bool {
+		if ( get_option( self::LEGACY_ONBOARDING_OPTION ) ) {
+			return true;
+		}
+
+		$progress = Onboarding_Progress_Manager::instance()->get_progress();
+
+		return null !== $progress->get_completed_at();
 	}
 
 	public function __construct() {
