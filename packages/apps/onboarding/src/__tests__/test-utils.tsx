@@ -69,7 +69,7 @@ export const DEFAULT_TEST_URLS = {
 } as const;
 
 const defaultConfig: OnboardingConfig = {
-	version: '1.0.0',
+	version: '2.0.0',
 	restUrl: 'https://test.local/wp-json/elementor/v1/onboarding/',
 	nonce: 'test-nonce',
 	steps: DEFAULT_STEPS,
@@ -93,8 +93,8 @@ const defaultConfig: OnboardingConfig = {
 
 type ConfigOverrides = Partial< OnboardingConfig >;
 
-export const createMockConfig = ( overrides: ConfigOverrides = {} ): { 'onboarding': OnboardingConfig } => ( {
-	'onboarding': {
+export const createMockConfig = ( overrides: ConfigOverrides = {} ): { onboarding: OnboardingConfig } => ( {
+	onboarding: {
 		...defaultConfig,
 		...overrides,
 		progress: {
