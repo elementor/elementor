@@ -2,6 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\App\Modules\Onboarding\Storage;
 
+use Elementor\App\Modules\Onboarding\Module;
 use Elementor\Tests\Phpunit\Elementor\App\Modules\Onboarding\Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -60,7 +61,7 @@ class Test_Onboarding_Progress_Manager extends Test_Base {
 
 		// Test complete action
 		$progress = $this->progress_manager->update_progress( [ 'complete' => true ] );
-		$this->assertNotNull( $progress->get_completed_at() );
+		$this->assertSame( Module::VERSION, get_option( Module::ONBOARDING_OPTION ) );
 		$this->assertSame( 'user_exit', $progress->get_exit_type() );
 	}
 

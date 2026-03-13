@@ -20,7 +20,6 @@ class Test_User_Progress extends TestCase {
 			'exit_type' => 'user_exit',
 			'last_active_timestamp' => 1700000000,
 			'started_at' => 1699999000,
-			'completed_at' => 1700001000,
 		];
 
 		// Act
@@ -33,7 +32,6 @@ class Test_User_Progress extends TestCase {
 		$this->assertSame( 'user_exit', $progress->get_exit_type() );
 		$this->assertSame( 1700000000, $progress->get_last_active_timestamp() );
 		$this->assertSame( 1699999000, $progress->get_started_at() );
-		$this->assertSame( 1700001000, $progress->get_completed_at() );
 	}
 
 	public function test_supports_legacy_current_step_field() {
@@ -65,21 +63,19 @@ class Test_User_Progress extends TestCase {
 
 		// No unexpected exit at first step
 		$progress->set_current_step( 0 );
-		$this->assertFalse( $progress->had_unexpected_exit() );
+		$this->assertFalse( $progress->had_unexpected_exit( false ) );
 
-		// Unexpected exit when in progress without exit type
+		// Unexpected exit when in progress without exit type and not completed
 		$progress->set_current_step( 2 );
 		$progress->set_exit_type( null );
-		$progress->set_completed_at( null );
-		$this->assertTrue( $progress->had_unexpected_exit() );
+		$this->assertTrue( $progress->had_unexpected_exit( false ) );
 
 		// No unexpected exit when exit_type is set
 		$progress->set_exit_type( 'user_exit' );
-		$this->assertFalse( $progress->had_unexpected_exit() );
+		$this->assertFalse( $progress->had_unexpected_exit( false ) );
 
 		// No unexpected exit when completed
 		$progress->set_exit_type( null );
-		$progress->set_completed_at( 1700001000 );
-		$this->assertFalse( $progress->had_unexpected_exit() );
+		$this->assertFalse( $progress->had_unexpected_exit( true ) );
 	}
 }

@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\App\Modules\Onboarding\Data\Endpoints;
 
 use Elementor\App\Modules\Onboarding\Data\Endpoints\User_Progress;
+use Elementor\App\Modules\Onboarding\Module;
 use Elementor\Plugin;
 use Elementor\Tests\Phpunit\Elementor\App\Modules\Onboarding\Test_Base;
 use WP_REST_Request;
@@ -120,7 +121,7 @@ class Test_User_Progress extends Test_Base {
 		$this->assertNotNull( $result['progress']['started_at'] );
 	}
 
-	public function test_complete_action_sets_completed_timestamp() {
+	public function test_complete_action_sets_onboarding_option_and_exit_type() {
 		// Arrange
 		$request = new WP_REST_Request( 'POST' );
 		$request->set_body( json_encode( [ 'complete' => true ] ) );
@@ -130,7 +131,7 @@ class Test_User_Progress extends Test_Base {
 		$result = $this->endpoint->update_items( $request );
 
 		// Assert
-		$this->assertNotNull( $result['progress']['completed_at'] );
+		$this->assertSame( Module::VERSION, get_option( Module::ONBOARDING_OPTION ) );
 		$this->assertSame( 'user_exit', $result['progress']['exit_type'] );
 	}
 
