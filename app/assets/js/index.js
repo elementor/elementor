@@ -5,6 +5,7 @@ import ImportExportCustomization from '../../modules/import-export-customization
 import KitLibrary from '../../modules/kit-library/assets/js/module';
 import Onboarding from '../../modules/onboarding/assets/js/module';
 import EOnboarding from '../../modules/e-onboarding/assets/js/module';
+import SiteBuilder from '../../modules/site-builder/assets/js/module';
 import { Module as SiteEditor } from '@elementor/site-editor';
 
 import AppProvider from './app-context';
@@ -12,6 +13,7 @@ import AppProvider from './app-context';
 new ImportExport();
 new KitLibrary();
 new SiteEditor();
+new SiteBuilder();
 
 if ( elementorCommon?.config?.experimentalFeatures?.e_onboarding ) {
 	new EOnboarding();

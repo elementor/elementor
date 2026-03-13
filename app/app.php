@@ -24,6 +24,7 @@ use Elementor\App\Modules\ImportExportCustomization\Module as ImportExportCustom
 use Elementor\App\Modules\SiteEditor\Module as SiteEditorModule;
 use Elementor\App\Modules\Onboarding\Module as OnboardingModule;
 use Elementor\App\Modules\E_Onboarding\Module as EOnboardingModule;
+use Elementor\App\Modules\SiteBuilder\Module as SiteBuilderModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -170,7 +171,7 @@ class App extends BaseApp {
 				return ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
 			} );
 
-		Collection::make( [ 'ui', 'icons', 'store', 'query', 'utils', 'events', 'onboarding' ] )
+		Collection::make( [ 'ui', 'icons', 'store', 'query', 'utils', 'events', 'onboarding', 'site-builder' ] )
 			->each( function( $package ) use ( $assets_config_provider ) {
 				$suffix = Utils::is_script_debug() ? '' : '.min';
 				$config = $assets_config_provider->load( $package )->get( $package );
@@ -258,6 +259,7 @@ class App extends BaseApp {
 				'elementor-v2-ui',
 				'elementor-v2-icons',
 				'elementor-v2-onboarding',
+				'elementor-v2-site-builder',
 				'react',
 				'react-dom',
 				'select2',
@@ -312,6 +314,7 @@ class App extends BaseApp {
 		$this->register_e_onboarding_experiment();
 
 		$this->add_component( 'site-editor', new SiteEditorModule() );
+		$this->add_component( 'site-builder', new SiteBuilderModule() );
 
 		if ( current_user_can( 'manage_options' ) || Utils::is_wp_cli() ) {
 			$this->add_component( 'import-export', new ImportExportModule() );
