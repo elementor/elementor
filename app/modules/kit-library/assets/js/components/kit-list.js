@@ -2,8 +2,6 @@ import Kit from '../models/kit';
 import KitListItem from './kit-list-item';
 import { CssGrid } from '@elementor/app-ui';
 
-// What was the purpose of this component?
-// Are we breaking something?
 export default function KitList( props ) {
 	return (
 		<CssGrid spacing={ 24 } colMinWidth={ 290 }>
