@@ -15,7 +15,6 @@ interface OnboardingConfig {
 		exit_type?: 'user_exit' | 'unexpected' | null;
 		last_active_timestamp?: number | null;
 		started_at?: number | null;
-		completed_at?: number | null;
 	};
 	choices: {
 		building_for?: string | null;

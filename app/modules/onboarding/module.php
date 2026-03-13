@@ -115,7 +115,7 @@ class Module extends BaseModule {
 			'nonce' => wp_create_nonce( 'wp_rest' ),
 			'progress' => $this->validate_progress_for_steps( $progress, $steps ),
 			'choices' => $choices->to_array(),
-			'hadUnexpectedExit' => $progress->had_unexpected_exit(),
+			'hadUnexpectedExit' => $progress->had_unexpected_exit( self::has_user_finished_onboarding() ),
 			'isConnected' => $is_connected,
 			'userName' => $this->get_user_display_name(),
 			'steps' => $steps,
@@ -229,7 +229,7 @@ class Module extends BaseModule {
 	public function should_show_starter(): bool {
 		$progress = $this->progress_manager->get_progress();
 
-		return null !== $progress->get_completed_at() && ! $progress->is_starter_dismissed();
+		return self::VERSION === get_option( self::ONBOARDING_OPTION ) && ! $progress->is_starter_dismissed();
 	}
 
 	public function add_starter_packages( array $packages ): array {

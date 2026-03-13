@@ -84,9 +84,8 @@ class Onboarding_Progress_Manager {
 		}
 
 		if ( isset( $params['complete'] ) && $params['complete'] ) {
-			$progress->set_completed_at( current_time( 'timestamp' ) );
 			$progress->set_exit_type( 'user_exit' );
-			update_option( Module::ONBOARDING_OPTION, true );
+			update_option( Module::ONBOARDING_OPTION, Module::VERSION );
 		}
 
 		if ( isset( $params['user_exit'] ) && $params['user_exit'] ) {

@@ -2,6 +2,7 @@
 
 namespace Elementor\App\Modules\Onboarding\Data\Endpoints;
 
+use Elementor\App\Modules\Onboarding\Module;
 use Elementor\App\Modules\Onboarding\Storage\Onboarding_Progress_Manager;
 use Elementor\App\Modules\Onboarding\Validation\User_Progress_Validator;
 use Elementor\Data\V2\Base\Endpoint as Endpoint_Base;
@@ -39,7 +40,7 @@ class User_Progress extends Endpoint_Base {
 		return [
 			'data' => $progress->to_array(),
 			'meta' => [
-				'had_unexpected_exit' => $progress->had_unexpected_exit(),
+				'had_unexpected_exit' => $progress->had_unexpected_exit( Module::has_user_finished_onboarding() ),
 			],
 		];
 	}
