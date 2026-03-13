@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useTabFocus } from './use-tab-focus';
 
 const DEFAULT_CLASSES_LIMIT = 100;
 const DEFAULT_VARIABLES_LIMIT = 100;
@@ -67,6 +68,8 @@ export function useClassesVariablesLimits( { open, isImport } ) {
 		fetchCounts();
 	}, [ fetchCounts ] );
 
+	useTabFocus( fetchCounts );
+
 	const calculateLimitInfo = useCallback( ( existingCount, importedCount, limit ) => {
 		const totalAfterImport = existingCount + importedCount;
 		const isExceeded = totalAfterImport > limit;
@@ -87,5 +90,6 @@ export function useClassesVariablesLimits( { open, isImport } ) {
 		isLoading,
 		error,
 		calculateLimitInfo,
+		refetch: fetchCounts,
 	};
 }
