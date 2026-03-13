@@ -25,6 +25,13 @@ export const inputSchema = {
 			`A record mapping element IDs to their styles configuration objects. Use the actual styles schema from [${ STYLE_SCHEMA_URI }].`
 		)
 		.default( {} ),
+	customCSS: z
+		.record(
+			z.string().describe( 'The configuration id' ),
+			z.string().describe( 'The custom CSS for the element. MANDATORY' )
+		)
+		.describe( 'A record mapping element IDs to their custom CSS.' )
+		.default( {} ),
 };
 
 export const outputSchema = {
@@ -34,5 +41,9 @@ export const outputSchema = {
 		.describe(
 			'The built XML structure as a string. Must use this XML after completion of building the composition, it contains real IDs.'
 		)
+		.optional(),
+	llm_instructions: z
+		.string()
+		.describe( 'Instructions what to do next, Important to follow these instructions!' )
 		.optional(),
 };

@@ -35,11 +35,11 @@ describe( 'useStylesInheritanceChain', () => {
 			},
 		} );
 
-		mockElementStyles( [ mockStyleBasic1, mockStyleBasic2 ] );
+		const settings = mockElementStyles( [ mockStyleBasic1, mockStyleBasic2 ] );
 
 		// Act.
-		const { result: prop1Result } = getInheritanceChainForPath( element, elementType, [ 'prop1' ] );
-		const { result: prop2Result } = getInheritanceChainForPath( element, elementType, [ 'prop2' ] );
+		const { result: prop1Result } = getInheritanceChainForPath( element, elementType, [ 'prop1' ], settings );
+		const { result: prop2Result } = getInheritanceChainForPath( element, elementType, [ 'prop2' ], settings );
 
 		// Assert.
 		expect( prop1Result.current ).toEqual( [
@@ -78,11 +78,21 @@ describe( 'useStylesInheritanceChain', () => {
 			},
 		} );
 
-		mockElementStyles( [ mockStyleObject1, mockStyleObject2 ] );
+		const settings = mockElementStyles( [ mockStyleObject1, mockStyleObject2 ] );
 
 		// Act.
-		const { result: prop1Result } = getInheritanceChainForPath( element, elementType, [ 'myObject', 'prop1' ] );
-		const { result: prop2Result } = getInheritanceChainForPath( element, elementType, [ 'myObject', 'prop2' ] );
+		const { result: prop1Result } = getInheritanceChainForPath(
+			element,
+			elementType,
+			[ 'myObject', 'prop1' ],
+			settings
+		);
+		const { result: prop2Result } = getInheritanceChainForPath(
+			element,
+			elementType,
+			[ 'myObject', 'prop2' ],
+			settings
+		);
 
 		// Assert.
 		expect( prop1Result.current ).toEqual( [
@@ -173,11 +183,25 @@ describe( 'useStylesInheritanceChain', () => {
 			},
 		} );
 
-		mockElementStyles( [ styleWithAllNestedProps, styleWithoutMatchingType, styleWithSomeNestedProps ] );
+		const settings = mockElementStyles( [
+			styleWithAllNestedProps,
+			styleWithoutMatchingType,
+			styleWithSomeNestedProps,
+		] );
 
 		// Act.
-		const { result: resultForProp1 } = getInheritanceChainForPath( element, elementType, [ 'unionProp', 'prop1' ] );
-		const { result: resultForProp2 } = getInheritanceChainForPath( element, elementType, [ 'unionProp', 'prop2' ] );
+		const { result: resultForProp1 } = getInheritanceChainForPath(
+			element,
+			elementType,
+			[ 'unionProp', 'prop1' ],
+			settings
+		);
+		const { result: resultForProp2 } = getInheritanceChainForPath(
+			element,
+			elementType,
+			[ 'unionProp', 'prop2' ],
+			settings
+		);
 
 		// Assert.
 		expect( resultForProp1.current ).toEqual( [

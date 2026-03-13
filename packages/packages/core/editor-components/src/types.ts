@@ -1,5 +1,5 @@
 import { type RenderContext } from '@elementor/editor-canvas';
-import { type V1ElementData } from '@elementor/editor-elements';
+import { type V1Element, type V1ElementData } from '@elementor/editor-elements';
 import { type PropValue, type TransformablePropValue } from '@elementor/editor-props';
 import type { StyleDefinition } from '@elementor/editor-styles';
 
@@ -74,12 +74,19 @@ export type ExtendedWindow = Window & {
 	elementorCommon: Record< string, unknown > & {
 		eventsManager: {
 			config: {
-				locations: Record< string, string >;
+				locations: Record< string, string | Record< string, string > >;
 				secondaryLocations: Record< string, string >;
 				triggers: Record< string, string >;
 			};
 		};
 		storage: ElementorStorage;
+	};
+	elementor?: {
+		getContainerByKeyValue?: ( args: {
+			key: string;
+			value: string;
+			parent?: V1Element[ 'view' ];
+		} ) => V1Element | null;
 	};
 };
 

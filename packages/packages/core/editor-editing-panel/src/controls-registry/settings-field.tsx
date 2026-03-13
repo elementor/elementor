@@ -2,26 +2,26 @@ import * as React from 'react';
 import { useMemo } from 'react';
 import { PropKeyProvider, PropProvider, type SetValueMeta } from '@elementor/editor-controls';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
-import {
-	type ElementID,
-	getElementLabel,
-	getElementSettings,
-	updateElementSettings,
-	useElementSettings,
-} from '@elementor/editor-elements';
+import { type ElementID, getElementLabel, getElementSettings, updateElementSettings } from '@elementor/editor-elements';
 import {
 	type CreateOptions,
+	isDependency,
 	isDependencyMet,
 	type PropKey,
 	type Props,
+	type PropsSchema,
 	type PropType,
-	type PropValue,
 } from '@elementor/editor-props';
 import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
-import { extractOrderedDependencies, getUpdatedValues, type Values } from '../utils/prop-dependency-utils';
+import {
+	extractOrderedDependencies,
+	getElementSettingsWithDefaults,
+	getUpdatedValues,
+	type Values,
+} from '../utils/prop-dependency-utils';
 import { createTopLevelObjectType } from './create-top-level-object-type';
 
 type SettingsFieldProps = {
@@ -32,15 +32,32 @@ type SettingsFieldProps = {
 
 const HISTORY_DEBOUNCE_WAIT = 800;
 
+const extractDependencyEffect = ( bind: string, propsSchema: PropsSchema, currentElementSettings: Props ) => {
+	const elementSettingsForDepCheck = getElementSettingsWithDefaults( propsSchema, currentElementSettings );
+	const propType = propsSchema[ bind ];
+	const depCheck = isDependencyMet( propType?.dependencies, elementSettingsForDepCheck );
+	const isHidden =
+		! depCheck.isMet &&
+		! isDependency( depCheck.failingDependencies[ 0 ] ) &&
+		depCheck.failingDependencies[ 0 ]?.effect === 'hide';
+	return {
+		isDisabled: ( prop: PropType ) => {
+			const result = ! isDependencyMet( prop?.dependencies, elementSettingsForDepCheck ).isMet;
+			return result;
+		},
+		isHidden,
+		settingsWithDefaults: elementSettingsForDepCheck as Values,
+	};
+};
+
 export const SettingsField = ( { bind, children, propDisplayName }: SettingsFieldProps ) => {
 	const {
 		element: { id: elementId },
 		elementType: { propsSchema, dependenciesPerTargetMapping = {} },
+		settings: currentElementSettings,
 	} = useElement();
 
-	const elementSettingValues = useElementSettings< PropValue >( elementId, Object.keys( propsSchema ) ) as Values;
-
-	const value = { [ bind ]: elementSettingValues?.[ bind ] ?? null };
+	const value = { [ bind ]: currentElementSettings?.[ bind ] ?? null };
 
 	const propType = createTopLevelObjectType( { schema: propsSchema } );
 
@@ -48,21 +65,27 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 		elementId,
 		propDisplayName,
 	} );
+	const { isDisabled, isHidden, settingsWithDefaults } = extractDependencyEffect(
+		bind,
+		propsSchema,
+		currentElementSettings
+	);
+	if ( isHidden ) {
+		return null;
+	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const setValue = ( newValue: Values, _: CreateOptions = {}, meta?: SetValueMeta ) => {
 		const { withHistory = true } = meta ?? {};
 		const dependents = extractOrderedDependencies( dependenciesPerTargetMapping );
 
-		const settings = getUpdatedValues( newValue, dependents, propsSchema, elementSettingValues, elementId );
+		const settings = getUpdatedValues( newValue, dependents, propsSchema, settingsWithDefaults, elementId );
 		if ( withHistory ) {
 			undoableUpdateElementProp( settings );
 		} else {
 			updateElementSettings( { id: elementId, props: settings, withHistory: false } );
 		}
 	};
-
-	const isDisabled = ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, elementSettingValues ).isMet;
 
 	return (
 		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>

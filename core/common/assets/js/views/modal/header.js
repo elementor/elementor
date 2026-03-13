@@ -1,4 +1,8 @@
 export default class extends Marionette.LayoutView {
+	tagName() {
+		return 'header';
+	}
+
 	className() {
 		return 'elementor-templates-modal__header';
 	}

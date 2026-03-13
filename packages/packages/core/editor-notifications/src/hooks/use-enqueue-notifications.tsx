@@ -5,7 +5,31 @@ import { __useDispatch as useDispatch } from '@elementor/store';
 import { Button, CloseButton } from '@elementor/ui';
 
 import { clearAction } from '../slice';
-import type { Notifications } from '../types';
+import type { NotificationData, Notifications } from '../types';
+
+const AUTO_HIDE_DURATION = 8000;
+
+function createDefaultAction( notification: NotificationData, onDismiss: () => void ) {
+	return (
+		<Fragment key={ notification.id }>
+			{ notification.additionalActionProps?.map( ( additionalAction, index ) => (
+				<Button key={ `${ index }` } { ...additionalAction } />
+			) ) }
+
+			<CloseButton aria-label="close" color="inherit" onClick={ onDismiss } />
+		</Fragment>
+	);
+}
+
+function createPromotionAction( notification: NotificationData ) {
+	return (
+		<Fragment key={ notification.id }>
+			{ notification.additionalActionProps?.map( ( additionalAction, index ) => (
+				<Button key={ `${ index }` } { ...additionalAction } />
+			) ) }
+		</Fragment>
+	);
+}
 
 export const useEnqueueNotification = ( notifications: Notifications ) => {
 	const { enqueueSnackbar } = useSnackbar();
@@ -13,29 +37,24 @@ export const useEnqueueNotification = ( notifications: Notifications ) => {
 
 	useEffect( () => {
 		Object.values( notifications ).forEach( ( notification ) => {
-			const Action = () => (
-				<Fragment key={ notification.id }>
-					{ notification.additionalActionProps?.map( ( additionalAction, index ) => (
-						<Button key={ `${ index }` } { ...additionalAction } />
-					) ) }
+			const dismiss = () => {
+				closeSnackbar( notification.id );
+				dispatch( clearAction( { id: notification.id } ) );
+			};
 
-					<CloseButton
-						aria-label="close"
-						color="inherit"
-						onClick={ () => {
-							closeSnackbar( notification.id );
-							dispatch( clearAction( { id: notification.id } ) );
-						} }
-					></CloseButton>
-				</Fragment>
-			);
+			const isPromotion = notification.type === 'promotion';
+
+			const action = isPromotion
+				? createPromotionAction( notification )
+				: createDefaultAction( notification, dismiss );
 
 			enqueueSnackbar( notification.message, {
 				variant: notification.type as VariantType,
 				key: notification.id,
 				onClose: () => dispatch( clearAction( { id: notification.id } ) ),
 				preventDuplicate: true,
-				action: <Action />,
+				action,
+				autoHideDuration: notification.autoHideDuration ?? AUTO_HIDE_DURATION,
 			} );
 		} );
 	}, [ notifications, enqueueSnackbar, dispatch ] );

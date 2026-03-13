@@ -8,8 +8,8 @@ import { OnboardingEventTracking, ONBOARDING_STORAGE_KEYS } from '../../utils/on
 export default function ProgressBar() {
 	const { state } = useContext( OnboardingContext ),
 		navigate = useNavigate(),
-		experiment201Variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT ),
-		isExperiment201VariantB = 'B' === experiment201Variant,
+		experiment202Variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT202_VARIANT ),
+		isExperiment202VariantB = 'B' === experiment202Variant,
 		experiment401Variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT401_VARIANT ),
 		isExperiment401VariantB = 'B' === experiment401Variant,
 		experiment402Variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT402_VARIANT ),
@@ -26,7 +26,7 @@ export default function ProgressBar() {
 	if ( ! elementorAppConfig.onboarding.helloActivated ) {
 		progressBarItemsConfig.push( {
 			id: 'hello',
-			title: isExperiment201VariantB ? __( 'Choose Theme', 'elementor' ) : __( 'Hello Biz Theme', 'elementor' ),
+			title: isExperiment202VariantB ? __( 'Hello Biz Theme', 'elementor' ) : __( 'Choose Theme', 'elementor' ),
 			route: 'hello',
 		} );
 	}

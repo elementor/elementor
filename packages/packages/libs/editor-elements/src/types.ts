@@ -8,12 +8,18 @@ export type Element = {
 	type: string;
 };
 
+export type PseudoState = {
+	name: string;
+	value: string;
+};
+
 export type ElementType = {
 	key: string;
 	controls: ControlItem[];
 	propsSchema: PropsSchema;
 	dependenciesPerTargetMapping?: Record< string, string[] >;
 	styleStates?: ClassState[];
+	pseudoStates?: PseudoState[];
 	title: string;
 };
 

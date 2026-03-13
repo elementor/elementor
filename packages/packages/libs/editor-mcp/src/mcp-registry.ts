@@ -125,17 +125,14 @@ type ResourceList = {
 type ToolRegistrationOptions<
 	InputArgs extends undefined | z.ZodRawShape = undefined,
 	OutputSchema extends undefined | z.ZodRawShape = undefined,
-	ExpectedOutput = OutputSchema extends z.ZodRawShape
-		? z.objectOutputType< OutputSchema & { llm_instructions?: string }, z.ZodTypeAny >
-		: string,
+	ExpectedOutput = OutputSchema extends z.ZodRawShape ? z.objectOutputType< OutputSchema, z.ZodTypeAny > : string,
 > = {
 	name: string;
 	description: string;
 	schema?: InputArgs;
 	/**
 	 * Auto added fields:
-	 * @param llm_instructions z.string().optional().describe('Instructions what to do next, Important to follow these instructions!')
-	 * @param errors           z.string().optional().describe('Error message if the tool failed')
+	 * @param errors z.string().optional().describe('Error message if the tool failed')
 	 */
 	outputSchema?: OutputSchema;
 	handler: InputArgs extends z.ZodRawShape
@@ -161,15 +158,6 @@ function createToolRegistry( server: McpServer ) {
 		if ( outputSchema ) {
 			Object.assign(
 				outputSchema,
-				outputSchema.llm_instructions ?? {
-					llm_instruction: z
-						.string()
-						.optional()
-						.describe( 'Instructions for what to do next, Important to follow these Instructions!' ),
-				}
-			);
-			Object.assign(
-				outputSchema,
 				outputSchema.errors ?? {
 					errors: z.string().optional().describe( 'Error message if the tool failed' ),
 				}
@@ -181,7 +169,8 @@ function createToolRegistry( server: McpServer ) {
 			try {
 				const invocationResult = await opts.handler( opts.schema ? args : {}, extra );
 				return {
-					structuredContent: typeof invocationResult === 'string' ? undefined : invocationResult,
+					// TODO: Uncomment this when the outputSchema is stable
+					// structuredContent: typeof invocationResult === 'string' ? undefined : invocationResult,
 					content: [
 						{
 							type: 'text',
@@ -223,7 +212,8 @@ function createToolRegistry( server: McpServer ) {
 			{
 				description: opts.description,
 				inputSchema,
-				outputSchema,
+				// TODO: Uncomment this when the outputSchema is stable
+				// outputSchema,
 				title: opts.name,
 				annotations,
 			},

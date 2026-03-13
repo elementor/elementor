@@ -1,11 +1,7 @@
 <?php
 namespace Elementor\Modules\GlobalClasses;
 
-use Elementor\Core\Base\Document;
-use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
-use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
+use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,28 +18,47 @@ class Global_Classes_Repository {
 
 	private string $context = self::CONTEXT_FRONTEND;
 
+	private ?Global_Classes $cache = null;
+
 	public static function make(): Global_Classes_Repository {
 		return new self();
 	}
 
 	public function context( string $context ): self {
 		$this->context = $context;
+		$this->cache = null;
 
 		return $this;
 	}
 
-	public function all() {
+	public function all( bool $force = false ): Global_Classes {
+		if ( ! $force && null !== $this->cache ) {
+			return $this->cache;
+		}
+
 		$meta_key = $this->get_meta_key();
-		$all = $this->get_kit()->get_json_meta( $meta_key );
+		$kit = $this->get_kit();
+		$all = $kit->get_json_meta( $meta_key );
 
 		$is_preview = static::META_KEY_PREVIEW === $meta_key;
 		$is_empty = empty( $all );
 
 		if ( $is_preview && $is_empty ) {
-			$all = $this->get_kit()->get_json_meta( static::META_KEY_FRONTEND );
+			$all = $kit->get_json_meta( static::META_KEY_FRONTEND );
 		}
 
-		return Global_Classes::make( $all['items'] ?? [], $all['order'] ?? [] );
+		Migrations_Orchestrator::make()->migrate(
+			$all,
+			$kit->get_id(),
+			$meta_key,
+			function( $migrated_data ) use ( $kit, $meta_key ) {
+				$kit->update_json_meta( $meta_key, $migrated_data );
+			}
+		);
+
+		$this->cache = Global_Classes::make( $all['items'] ?? [], $all['order'] ?? [] );
+
+		return $this->cache;
 	}
 
 	public function put( array $items, array $order ) {
@@ -71,6 +86,8 @@ class Global_Classes_Repository {
 		if ( ! $value ) {
 			throw new \Exception( 'Failed to update global classes' );
 		}
+
+		$this->cache = null;
 
 		do_action( 'elementor/global_classes/update', $this->context, $updated_value, $current_value );
 	}

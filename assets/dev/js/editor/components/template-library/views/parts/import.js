@@ -1,9 +1,12 @@
 import FilesUploadHandler from '../../../../utils/files-upload-handler';
 import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-upload-warning-message';
+import { showGlobalStylesDialog } from './global-styles-dialog';
 
 var TemplateLibraryImportView;
 
 TemplateLibraryImportView = Marionette.ItemView.extend( {
+	tagName: 'main',
+
 	template: '#tmpl-elementor-template-library-import',
 
 	id: 'elementor-template-library-import',
@@ -88,6 +91,22 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 			introductionMap: window.elementor.config.user.introduction,
 			IntroductionClass: window.elementorModules.editor.utils.Introduction,
 		} );
+
+		if ( fileName.endsWith( '.json' ) ) {
+			try {
+				const jsonContent = JSON.parse( atob( fileData ) );
+				if ( elementor.templates.hasGlobalStyles( jsonContent ) ) {
+					try {
+						const { mode } = await showGlobalStylesDialog();
+						this.options.data.import_mode = mode;
+					} catch ( e ) {
+						return;
+					}
+				}
+			} catch ( parseError ) {
+				console.warn( 'Failed to parse template JSON for global styles check:', parseError ); // eslint-disable-line no-console
+			}
+		}
 
 		if ( ! elementorCommon.config.filesUpload.unfilteredFiles ) {
 			const enableUnfilteredFilesModal = FilesUploadHandler.getUnfilteredFilesNotEnabledImportTemplateDialog( () => this.sendImportRequest() );

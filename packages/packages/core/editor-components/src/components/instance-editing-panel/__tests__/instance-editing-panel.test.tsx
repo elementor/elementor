@@ -1,16 +1,15 @@
 import * as React from 'react';
-import { createMockContainer, createMockPropType, mockCurrentUserCapabilities, renderWithStore } from 'test-utils';
+import {
+	createMockContainer,
+	createMockElement,
+	createMockPropType,
+	mockCurrentUserCapabilities,
+	renderWithStore,
+} from 'test-utils';
 import { ControlActionsProvider, TextControl } from '@elementor/editor-controls';
 import { controlsRegistry, ElementProvider } from '@elementor/editor-editing-panel';
-import {
-	getContainer,
-	getElementLabel,
-	getElementSetting,
-	getElementType,
-	getWidgetsCache,
-	useElementSetting,
-	useSelectedElement,
-} from '@elementor/editor-elements';
+import { getContainer, getElementLabel, getElementType, getWidgetsCache } from '@elementor/editor-elements';
+import { notify } from '@elementor/editor-notifications';
 import {
 	__createStore,
 	__dispatch as dispatch,
@@ -18,18 +17,17 @@ import {
 	type SliceState,
 	type Store,
 } from '@elementor/store';
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { componentInstancePropTypeUtil } from '../../../prop-types/component-instance-prop-type';
 import { slice } from '../../../store/store';
-import { switchToComponent } from '../../../utils/switch-to-component';
+import { detachComponentInstance } from '../../../utils/detach-component-instance';
+import { getContainerByOriginId } from '../../../utils/get-container-by-origin-id';
 import { InstanceEditingPanel } from '../instance-editing-panel';
 
 jest.mock( '@elementor/editor-elements' );
 
 jest.mock( '@elementor/session' );
-
-jest.mock( '../../../utils/switch-to-component' );
 
 jest.mock( '../../../prop-types/component-instance-prop-type', () => ( {
 	componentInstancePropTypeUtil: {
@@ -40,16 +38,28 @@ jest.mock( '../../../prop-types/component-instance-prop-type', () => ( {
 
 jest.mock( '@elementor/editor-current-user' );
 
+jest.mock( '../../../utils/get-container-by-origin-id', () => ( {
+	getContainerByOriginId: jest.fn(),
+} ) );
+
+jest.mock( '../../../utils/detach-component-instance', () => ( {
+	detachComponentInstance: jest.fn(),
+} ) );
+
+jest.mock( '@elementor/editor-notifications' );
+
 mockCurrentUserCapabilities( true );
 
 const MOCK_ELEMENT_ID = 'element-123';
 const MOCK_COMPONENT_ID = 456;
 const MOCK_INNER_COMPONENT_ID = 789;
 const MOCK_COMPONENT_NAME = 'Test Component';
-const MOCK_INSTANCE_ID = 'instance-789';
 const MOCK_PROP_TYPE = createMockPropType( { kind: 'plain', key: 'string' } );
 const MOCK_ELEMENT_LABEL = 'Heading Block';
 const MOCK_CONTROL_TYPE = 'test-override-text';
+
+const MOCK_TRACKING_LOCATION = 'Instance Editing Panel';
+const MOCK_TRACKING_TRIGGER = 'click';
 
 const MOCK_COMPONENT_INSTANCE_PROP_TYPE = createMockPropType( {
 	kind: 'object',
@@ -269,8 +279,39 @@ function createMockElementType( widgetType: string ) {
 	};
 }
 
+function setupEventsManagerConfig() {
+	( window as unknown as Record< string, unknown > ).elementorCommon = {
+		eventsManager: {
+			config: {
+				locations: {
+					components: {
+						instanceEditingPanel: MOCK_TRACKING_LOCATION,
+					},
+				},
+				triggers: {
+					click: MOCK_TRACKING_TRIGGER,
+				},
+			},
+		},
+	};
+}
+
+function cleanupEventsManagerConfig() {
+	delete ( window as unknown as Record< string, unknown > ).elementorCommon;
+}
+
+type ExtendedWindow = Window & {
+	elementor?: {
+		helpers?: {
+			hasPro?: () => boolean;
+		};
+	};
+};
+
 describe( '<InstanceEditingPanel />', () => {
 	let store: Store< SliceState< typeof slice > >;
+	const extendedWindow = window as unknown as ExtendedWindow;
+	let originalElementor: ExtendedWindow[ 'elementor' ];
 
 	beforeAll( () => {
 		controlsRegistry.register( MOCK_CONTROL_TYPE, TextControl, 'full' );
@@ -278,14 +319,15 @@ describe( '<InstanceEditingPanel />', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		originalElementor = extendedWindow.elementor;
+		extendedWindow.elementor = {
+			...extendedWindow.elementor,
+			helpers: { hasPro: () => true },
+		};
 		registerSlice( slice );
 		store = __createStore();
+		setupEventsManagerConfig();
 
-		jest.mocked( useElementSetting ).mockReturnValue( {} );
-		jest.mocked( useSelectedElement ).mockReturnValue( {
-			element: { id: MOCK_INSTANCE_ID, type: 'component-instance' },
-			elementType: MOCK_ELEMENT_TYPE,
-		} );
 		jest.mocked( componentInstancePropTypeUtil.extract ).mockReturnValue( {
 			component_id: { $$type: 'number', value: MOCK_COMPONENT_ID },
 			overrides: { $$type: 'overrides', value: [] },
@@ -296,6 +338,12 @@ describe( '<InstanceEditingPanel />', () => {
 		);
 		jest.mocked( getElementType ).mockImplementation( createMockElementType );
 		jest.mocked( getContainer ).mockReturnValue( createMockContainer( MOCK_ELEMENT_ID, [] ) );
+		jest.mocked( getContainerByOriginId ).mockImplementation( ( originId ) => createMockContainer( originId, [] ) );
+	} );
+
+	afterEach( () => {
+		extendedWindow.elementor = originalElementor;
+		cleanupEventsManagerConfig();
 	} );
 
 	it( 'should render the component name in the header', () => {
@@ -334,43 +382,16 @@ describe( '<InstanceEditingPanel />', () => {
 		expect( screen.getByText( 'Link' ) ).toBeInTheDocument();
 	} );
 
-	it( 'should call switchToComponent when edit button is clicked', () => {
+	it( 'should show edit button as disabled in core panel', () => {
 		// Arrange.
-		setupComponent();
-		renderEditInstancePanel( store );
-
-		// Act.
-		const editButtonLabel = `Edit ${ MOCK_COMPONENT_NAME }`;
-		const editButton = screen.getByLabelText( editButtonLabel );
-		fireEvent.click( editButton );
-
-		// Assert.
-		expect( switchToComponent ).toHaveBeenCalledTimes( 1 );
-		expect( switchToComponent ).toHaveBeenCalledWith( MOCK_COMPONENT_ID, MOCK_INSTANCE_ID );
-	} );
-
-	it( 'should show edit button when user is admin', () => {
-		// Arrange.
-		mockCurrentUserCapabilities( true );
 		setupComponent();
 
 		// Act.
 		renderEditInstancePanel( store );
 
 		// Assert.
-		expect( screen.getByLabelText( `Edit ${ MOCK_COMPONENT_NAME }` ) ).toBeInTheDocument();
-	} );
-
-	it( 'should not show edit button when user is not admin', () => {
-		// Arrange.
-		mockCurrentUserCapabilities( false );
-		setupComponent();
-
-		// Act.
-		renderEditInstancePanel( store );
-
-		// Assert.
-		expect( screen.queryByLabelText( `Edit ${ MOCK_COMPONENT_NAME }` ) ).not.toBeInTheDocument();
+		const editButton = screen.getByLabelText( `Edit ${ MOCK_COMPONENT_NAME }` );
+		expect( editButton ).toBeDisabled();
 	} );
 
 	it( 'should not render when componentId is missing', () => {
@@ -388,7 +409,7 @@ describe( '<InstanceEditingPanel />', () => {
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
-	it( 'should not render any sections when no overridable props', () => {
+	it( 'should show empty state with disabled edit button when no overridable props', () => {
 		// Arrange.
 		setupComponent( { isWithOverridableProps: false } );
 
@@ -397,6 +418,8 @@ describe( '<InstanceEditingPanel />', () => {
 
 		// Assert.
 		expect( screen.getByText( MOCK_COMPONENT_NAME ) ).toBeInTheDocument();
+		expect( screen.getByText( 'No properties yet' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: /edit component/i } ) ).toBeDisabled();
 		expect( screen.queryByText( 'Content' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Settings' ) ).not.toBeInTheDocument();
 	} );
@@ -460,6 +483,149 @@ describe( '<InstanceEditingPanel />', () => {
 		// Assert.
 		expect( screen.getByText( MOCK_COMPONENT_NAME ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
+	} );
+
+	describe( 'Detach functionality', () => {
+		it( 'should show detach button', () => {
+			// Arrange.
+			setupComponent();
+
+			// Act.
+			renderEditInstancePanel( store );
+
+			// Assert.
+			expect( screen.getByLabelText( 'Detach from Component' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should show confirmation dialog when detach button is clicked', async () => {
+			// Arrange.
+			setupComponent();
+			renderEditInstancePanel( store );
+
+			// Act.
+			const detachButton = screen.getByLabelText( 'Detach from Component' );
+			fireEvent.click( detachButton );
+
+			// Assert.
+			await waitFor( () => {
+				expect( screen.getByText( 'Detach from Component?' ) ).toBeInTheDocument();
+			} );
+		} );
+
+		it( 'should close dialog when cancel is clicked', async () => {
+			// Arrange.
+			setupComponent();
+			renderEditInstancePanel( store );
+
+			// Act.
+			const detachButton = screen.getByLabelText( 'Detach from Component' );
+			fireEvent.click( detachButton );
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Detach from Component?' ) ).toBeInTheDocument();
+			} );
+
+			const cancelButton = screen.getByRole( 'button', { name: /not now/i } );
+			fireEvent.click( cancelButton );
+
+			// Assert.
+			await waitFor( () => {
+				expect( screen.queryByText( 'Detach from Component?' ) ).not.toBeInTheDocument();
+			} );
+		} );
+
+		it( 'should call detachComponentInstance and close dialog when confirm is clicked', async () => {
+			// Arrange.
+			setupComponent();
+			renderEditInstancePanel( store );
+
+			// Act.
+			const detachButton = screen.getByLabelText( 'Detach from Component' );
+			fireEvent.click( detachButton );
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Detach from Component?' ) ).toBeInTheDocument();
+			} );
+
+			const confirmButton = screen.getByRole( 'button', { name: /detach/i } );
+			fireEvent.click( confirmButton );
+
+			// Assert.
+			await waitFor( () => {
+				expect( detachComponentInstance ).toHaveBeenCalledWith( {
+					instanceId: MOCK_ELEMENT_ID,
+					componentId: MOCK_COMPONENT_ID,
+					trackingInfo: {
+						location: MOCK_TRACKING_LOCATION,
+						trigger: MOCK_TRACKING_TRIGGER,
+					},
+				} );
+			} );
+
+			await waitFor( () => {
+				expect( screen.queryByText( 'Detach from Component?' ) ).not.toBeInTheDocument();
+			} );
+		} );
+
+		it( 'should show error notification when detach fails', async () => {
+			// Arrange.
+			jest.mocked( detachComponentInstance ).mockRejectedValue( new Error( 'detach failed' ) );
+			setupComponent();
+			renderEditInstancePanel( store );
+
+			// Act.
+			const detachButton = screen.getByLabelText( 'Detach from Component' );
+			fireEvent.click( detachButton );
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Detach from Component?' ) ).toBeInTheDocument();
+			} );
+
+			const confirmButton = screen.getByRole( 'button', { name: /detach/i } );
+			fireEvent.click( confirmButton );
+
+			// Assert.
+			await waitFor( () => {
+				expect( notify ).toHaveBeenCalledWith( {
+					type: 'error',
+					message: 'Failed to detach component instance.',
+					id: 'detach-component-instance-failed',
+				} );
+			} );
+		} );
+	} );
+
+	describe( 'Pro upgrade alert', () => {
+		it( 'should show upgrade alert when Pro is not installed', () => {
+			// Arrange
+			extendedWindow.elementor = {
+				...extendedWindow.elementor,
+				helpers: { hasPro: () => false },
+			};
+			setupComponent();
+
+			// Act
+			renderEditInstancePanel( store );
+
+			// Assert
+			expect( screen.getByText( 'Edit components' ) ).toBeInTheDocument();
+			expect(
+				screen.getByText( /Editing components requires an active Pro subscription\./i )
+			).toBeInTheDocument();
+		} );
+
+		it( 'should not show upgrade alert when Pro is installed', () => {
+			// Arrange
+			setupComponent();
+
+			// Act
+			renderEditInstancePanel( store );
+
+			// Assert
+			expect(
+				screen.queryByText( /Editing components requires an active Pro subscription\./i )
+			).not.toBeInTheDocument();
+		} );
 	} );
 } );
 
@@ -531,14 +697,19 @@ function setupComponent( {
 			},
 		};
 
-		jest.mocked( getElementSetting ).mockImplementation( ( elementId, settingKey ) => {
-			if ( elementId === 'nested-instance-1' && settingKey === 'component_instance' ) {
-				return {
-					$$type: 'component-instance',
-					value: nestedComponentInstanceValue,
-				};
+		jest.mocked( getContainerByOriginId ).mockImplementation( ( originId ) => {
+			if ( originId === 'nested-instance-1' ) {
+				return createMockElement( {
+					model: { id: 'nested-instance-1', widgetType: 'e-component' },
+					settings: {
+						component_instance: {
+							$$type: 'component-instance',
+							value: nestedComponentInstanceValue,
+						},
+					},
+				} );
 			}
-			return undefined;
+			return createMockContainer( originId, [] );
 		} );
 
 		jest.mocked( componentInstancePropTypeUtil.extract ).mockImplementation( ( value: unknown ) => {
@@ -562,7 +733,7 @@ function setupComponent( {
 function renderEditInstancePanel( store: Store< SliceState< typeof slice > > ) {
 	return renderWithStore(
 		<ControlActionsProvider items={ [] }>
-			<ElementProvider element={ MOCK_ELEMENT } elementType={ MOCK_ELEMENT_TYPE }>
+			<ElementProvider element={ MOCK_ELEMENT } elementType={ MOCK_ELEMENT_TYPE } settings={ {} }>
 				<InstanceEditingPanel />
 			</ElementProvider>
 		</ControlActionsProvider>,

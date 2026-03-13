@@ -16,8 +16,8 @@ import {
 	SettingsField,
 	useElement,
 } from '@elementor/editor-editing-panel';
-import { type Control, getContainer, getElementType } from '@elementor/editor-elements';
-import { type PropType, type PropValue } from '@elementor/editor-props';
+import { type Control, getElementSettings, getElementType } from '@elementor/editor-elements';
+import { type AnyTransformable, type PropType, type PropValue } from '@elementor/editor-props';
 import { Stack } from '@elementor/ui';
 
 import { useControlsByWidgetType } from '../../hooks/use-controls-by-widget-type';
@@ -43,6 +43,7 @@ import { OverridablePropProvider } from '../../provider/overridable-prop-context
 import { updateOverridableProp } from '../../store/actions/update-overridable-prop';
 import { useCurrentComponentId } from '../../store/store';
 import { type OriginPropFields, type OverridableProp, type OverridableProps } from '../../types';
+import { getContainerByOriginId } from '../../utils/get-container-by-origin-id';
 import { getPropTypeForComponentOverride } from '../../utils/get-prop-type-for-component-override';
 import { getMatchingOverride } from '../../utils/overridable-props-utils';
 import { resolveOverridePropValue } from '../../utils/resolve-override-prop-value';
@@ -167,14 +168,19 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 		overridableProp.label
 	);
 
-	const { elementId, widgetType, elType, propKey } = overridableProp.originPropFields ?? overridableProp;
+	const {
+		elementId: originElementId,
+		widgetType,
+		elType,
+		propKey,
+	} = overridableProp.originPropFields ?? overridableProp;
 
-	const elementContainer = getContainer( elementId );
-	if ( ! elementContainer ) {
-		throw new OverrideControlInnerElementNotFoundError( {
-			context: { componentId, elementId },
-		} );
+	const element = getContainerByOriginId( originElementId, componentInstanceElement.element.id );
+
+	if ( ! element ) {
+		throw new OverrideControlInnerElementNotFoundError( { context: { componentId, elementId: originElementId } } );
 	}
+	const elementId = element.id;
 
 	const type = elType === 'widget' ? widgetType : elType;
 	const elementType = getElementType( type );
@@ -182,6 +188,8 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 	if ( ! elementType ) {
 		return null;
 	}
+
+	const settings = getElementSettings< AnyTransformable >( elementId, Object.keys( elementType.propsSchema ) );
 
 	const propTypeSchema = createTopLevelObjectType( {
 		schema: {
@@ -194,7 +202,7 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 			value={ componentOverridablePropTypeUtil.extract( matchingOverride ) ?? undefined }
 			componentInstanceElement={ componentInstanceElement }
 		>
-			<ElementProvider element={ { id: elementId, type } } elementType={ elementType }>
+			<ElementProvider element={ { id: elementId, type } } elementType={ elementType } settings={ settings }>
 				<SettingsField bind={ propKey } propDisplayName={ overridableProp.label }>
 					<PropProvider
 						propType={ propTypeSchema }

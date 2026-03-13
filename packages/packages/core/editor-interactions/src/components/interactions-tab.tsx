@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { useCallback, useState } from 'react';
-import { useElementInteractions } from '@elementor/editor-elements';
 import { SessionStorageProvider } from '@elementor/session';
 import { Stack } from '@elementor/ui';
 
 import { InteractionsProvider, useInteractionsContext } from '../contexts/interactions-context';
 import { PopupStateProvider } from '../contexts/popup-state-context';
+import { useElementInteractions } from '../hooks/use-element-interactions';
 import type { ElementInteractions } from '../types';
+import { createDefaultInteractionItem } from '../utils/prop-value-utils';
+import { trackInteractionCreated } from '../utils/tracking';
 import { EmptyState } from './empty-state';
 import { InteractionsList } from './interactions-list';
 
@@ -33,6 +35,7 @@ function InteractionsTabContent( { elementId }: { elementId: string } ) {
 				<EmptyState
 					onCreateInteraction={ () => {
 						firstInteractionState[ 1 ]( true );
+						trackInteractionCreated( elementId, createDefaultInteractionItem() );
 					} }
 				/>
 			) }

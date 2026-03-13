@@ -1,18 +1,22 @@
-import { getElementSetting } from '@elementor/editor-elements';
-
-import { getOverridableProp } from '../components/overridable-props/utils/get-overridable-prop';
 import { type ComponentInstanceOverride } from '../prop-types/component-instance-overrides-prop-type';
 import { componentInstanceOverridesPropTypeUtil } from '../prop-types/component-instance-overrides-prop-type';
 import { componentInstancePropTypeUtil } from '../prop-types/component-instance-prop-type';
 import { componentOverridablePropTypeUtil } from '../prop-types/component-overridable-prop-type';
 import { type OverridableProp, type OverridableProps } from '../types';
+import { getContainerByOriginId } from './get-container-by-origin-id';
+import { getOverridableProp } from './get-overridable-prop';
 import { extractInnerOverrideInfo } from './overridable-props-utils';
 
-export function filterValidOverridableProps( overridableProps: OverridableProps ): OverridableProps {
+export function filterValidOverridableProps(
+	overridableProps: OverridableProps,
+	// instanceElementId is used to find the component inner elements,
+	// and should be passed when editing component instance (not in component edit mode)
+	instanceElementId?: string
+): OverridableProps {
 	const validProps: Record< string, OverridableProp > = {};
 
 	for ( const [ key, prop ] of Object.entries( overridableProps.props ) ) {
-		if ( isExposedPropValid( prop ) ) {
+		if ( isExposedPropValid( prop, instanceElementId ) ) {
 			validProps[ key ] = prop;
 		}
 	}
@@ -31,13 +35,19 @@ export function filterValidOverridableProps( overridableProps: OverridableProps 
 	return { props: validProps, groups: filteredGroups };
 }
 
-export function isExposedPropValid( prop: OverridableProp ): boolean {
+export function isExposedPropValid( prop: OverridableProp, instanceElementId?: string ): boolean {
 	if ( ! prop.originPropFields ) {
 		// if no originPropFields - the prop is on the widget level itself, therefore no need to lookup for a corresponding component's overridables
 		return true;
 	}
 
-	const setting = getElementSetting( prop.elementId, 'component_instance' );
+	const innerComponentInstanceElement = getContainerByOriginId( prop.elementId, instanceElementId );
+
+	if ( ! innerComponentInstanceElement ) {
+		return false;
+	}
+
+	const setting = innerComponentInstanceElement.settings?.get( 'component_instance' ) ?? null;
 	const componentInstance = componentInstancePropTypeUtil.extract( setting );
 
 	if ( ! componentInstance?.component_id?.value ) {
@@ -59,7 +69,7 @@ export function isExposedPropValid( prop: OverridableProp ): boolean {
 		return false;
 	}
 
-	return isExposedPropValid( innerOverridableProp );
+	return isExposedPropValid( innerOverridableProp, innerComponentInstanceElement.id );
 }
 
 function findOverrideByOuterKey(

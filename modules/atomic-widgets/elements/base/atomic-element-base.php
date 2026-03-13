@@ -64,6 +64,10 @@ abstract class Atomic_Element_Base extends Element_Base {
 		return [];
 	}
 
+	protected function define_atomic_pseudo_states(): array {
+		return [];
+	}
+
 	public function get_global_scripts() {
 		return [];
 	}
@@ -76,6 +80,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['atomic_controls'] = $this->get_atomic_controls();
 		$config['atomic_props_schema'] = $props_schema;
 		$config['atomic_style_states'] = $this->define_atomic_style_states();
+		$config['atomic_pseudo_states'] = $this->define_atomic_pseudo_states();
 		$config['dependencies_per_target_mapping'] = Dependency_Manager::get_source_to_dependents( $props_schema );
 		$config['base_styles'] = $this->get_base_styles();
 		$config['version'] = $this->version;
@@ -121,12 +126,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 	protected function add_render_attributes() {
 		parent::add_render_attributes();
 
-		$interaction_ids = $this->get_interactions_ids();
-
-		if ( ! empty( $interaction_ids ) ) {
-			$this->add_render_attribute( '_wrapper', 'data-interaction-id', $this->get_id() );
-			$this->add_render_attribute( '_wrapper', 'data-interactions', json_encode( $interaction_ids ) );
-		}
+		$this->add_render_attribute( '_wrapper', 'data-interaction-id', $this->get_id() );
 	}
 
 	/**

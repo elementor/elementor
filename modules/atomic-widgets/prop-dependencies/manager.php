@@ -36,7 +36,8 @@ class Manager {
 	 *             operator: string,
 	 *             path: array<string>,
 	 *             value?: mixed,
-	 *             newValue?: array
+	 *             newValue?: array,
+	 *             effect?: 'hide'|'disable'
 	 *         }
 	 *     }
 	 */
@@ -72,6 +73,7 @@ class Manager {
 	 *  path: array<string>,
 	 *  value?: mixed,
 	 *  newValue?: array,
+	 *  effect?: 'hide'|'disable'
 	 * }
 	 * @return self
 	 */
@@ -85,6 +87,7 @@ class Manager {
 				'terms' => $config['terms'],
 				'relation' => $config['relation'] ?? self::RELATION_OR,
 				'newValue' => $new_value ?? null,
+				'effect' => $config['effect'] ?? 'disable',
 			];
 			$this->dependencies['terms'][] = $term;
 
@@ -105,6 +108,7 @@ class Manager {
 			'nestedPath' => $config['nestedPath'] ?? null,
 			'value' => $config['value'] ?? null,
 			'newValue' => $config['newValue'] ?? null,
+			'effect' => $config['effect'] ?? 'disable',
 		];
 
 		if ( empty( $this->dependencies ) ) {

@@ -3,7 +3,7 @@
 		class="e-heading-base" 
 		 
 		
-			>
+	>
 	
 			This is a title
 		</h2>

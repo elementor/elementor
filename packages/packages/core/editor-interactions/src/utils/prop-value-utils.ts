@@ -1,5 +1,5 @@
 import { type Unit } from '@elementor/editor-controls';
-import { sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
+import { type PropValue, sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 
 import { DEFAULT_TIME_UNIT, TIME_UNITS } from '../configs/time-constants';
 import {
@@ -17,6 +17,7 @@ import {
 	type TimingConfigPropValue,
 } from '../types';
 import { formatSizeValue, parseSizeValue } from '../utils/size-transform-utils';
+import { getInteractionsConfig } from './get-interactions-config';
 import { generateTempInteractionId } from './temp-id-utils';
 
 export const createString = ( value: string ): StringPropValue => ( {
@@ -46,24 +47,31 @@ export const createConfig = ( {
 	replay,
 	easing = 'easeIn',
 	relativeTo = '',
-	offsetTop = 0,
-	offsetBottom = 85,
+	repeat = '',
+	times = 1,
+	start = 85,
+	end = 15,
 }: {
 	replay: boolean;
 	easing?: string;
 	relativeTo?: string;
-	offsetTop?: SizeStringValue;
-	offsetBottom?: SizeStringValue;
-} ): ConfigPropValue => ( {
-	$$type: 'config',
-	value: {
-		replay: createBoolean( replay ),
-		easing: createString( easing ),
-		relativeTo: createString( relativeTo ),
-		offsetTop: createSize( offsetTop, '%' ),
-		offsetBottom: createSize( offsetBottom, '%' ),
-	},
-} );
+	repeat?: string;
+	times?: number;
+	start?: SizeStringValue;
+	end?: SizeStringValue;
+} ): ConfigPropValue =>
+	( {
+		$$type: 'config',
+		value: {
+			replay: createBoolean( replay ),
+			easing: createString( easing ),
+			relativeTo: createString( relativeTo ),
+			repeat: createString( repeat ),
+			times: createNumber( times ),
+			start: createSize( start, '%' ),
+			end: createSize( end, '%' ),
+		},
+	} ) as ConfigPropValue;
 
 const createSize = ( value?: SizeStringValue, defaultUnit?: Unit, defaultValue?: SizeStringValue ) => {
 	if ( ! value ) {
@@ -102,8 +110,11 @@ export const createAnimationPreset = ( {
 	replay = false,
 	easing = 'easeIn',
 	relativeTo,
-	offsetTop,
-	offsetBottom,
+	repeat,
+	times,
+	start,
+	end,
+	customEffects,
 }: {
 	effect: string;
 	type: string;
@@ -113,12 +124,16 @@ export const createAnimationPreset = ( {
 	replay: boolean;
 	easing?: string;
 	relativeTo?: string;
-	offsetTop?: SizeStringValue;
-	offsetBottom?: SizeStringValue;
+	repeat?: string;
+	times?: number;
+	start?: SizeStringValue;
+	end?: SizeStringValue;
+	customEffects?: PropValue;
 } ): AnimationPresetPropValue => ( {
 	$$type: 'animation-preset-props',
 	value: {
 		effect: createString( effect ),
+		custom_effect: customEffects,
 		type: createString( type ),
 		direction: createString( direction ?? '' ),
 		timing_config: createTimingConfig( duration, delay ),
@@ -126,8 +141,10 @@ export const createAnimationPreset = ( {
 			replay,
 			easing,
 			relativeTo,
-			offsetTop,
-			offsetBottom,
+			repeat,
+			times,
+			start,
+			end,
 		} ),
 	},
 } );
@@ -143,39 +160,48 @@ export const createInteractionItem = ( {
 	replay = false,
 	easing = 'easeIn',
 	relativeTo,
-	offsetTop,
-	offsetBottom,
+	repeat,
+	times,
+	start,
+	end,
 	excludedBreakpoints,
+	customEffects,
 }: {
-	trigger: string;
-	effect: string;
-	type: string;
+	trigger?: string;
+	effect?: string;
+	type?: string;
 	direction?: string;
-	duration: SizeStringValue;
-	delay: SizeStringValue;
+	duration?: SizeStringValue;
+	delay?: SizeStringValue;
 	interactionId?: string;
-	replay: boolean;
+	replay?: boolean;
 	easing?: string;
 	relativeTo?: string;
-	offsetTop?: number;
-	offsetBottom?: number;
+	repeat?: string;
+	times?: number;
+	start?: number;
+	end?: number;
 	excludedBreakpoints?: string[];
+	customEffects?: PropValue;
 } ): InteractionItemPropValue => ( {
 	$$type: 'interaction-item',
 	value: {
 		...( interactionId && { interaction_id: createString( interactionId ) } ),
-		trigger: createString( trigger ),
+		trigger: createString( trigger ?? '' ),
 		animation: createAnimationPreset( {
-			effect,
-			type,
+			effect: effect ?? '',
+			type: type ?? '',
 			direction,
-			duration,
-			delay,
+			duration: duration ?? 0,
+			delay: delay ?? 0,
 			replay,
 			easing,
 			relativeTo,
-			offsetTop,
-			offsetBottom,
+			repeat,
+			times,
+			start,
+			end,
+			customEffects,
 		} ),
 		...( excludedBreakpoints &&
 			excludedBreakpoints.length > 0 && {
@@ -185,14 +211,15 @@ export const createInteractionItem = ( {
 } );
 
 export const createDefaultInteractionItem = (): InteractionItemPropValue => {
+	const { constants } = getInteractionsConfig();
 	return createInteractionItem( {
 		trigger: 'load',
 		effect: 'fade',
 		type: 'in',
-		duration: 600,
-		delay: 0,
+		duration: constants.defaultDuration,
+		delay: constants.defaultDelay,
 		replay: false,
-		easing: 'easeIn',
+		easing: constants.defaultEasing,
 		interactionId: generateTempInteractionId(),
 	} );
 };
@@ -232,7 +259,7 @@ export const buildDisplayLabel = ( item: InteractionItemValue ): string => {
 
 	const triggerLabel = TRIGGER_LABELS[ trigger ] || capitalize( trigger );
 	const effectLabel = capitalize( effect );
-	const typeLabel = capitalize( type );
+	const typeLabel = 'custom' === effect ? '' : capitalize( type );
 
 	return `${ triggerLabel }: ${ effectLabel } ${ typeLabel }`;
 };

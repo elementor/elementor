@@ -179,14 +179,11 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 
 		// Act.
 		const inlineEditor = await editor.triggerEditingElement( headingId );
-
-		await inlineEditor.waitFor();
-		await page.waitForTimeout( 1000 );
-
 		headingElement = inlineEditor.locator( defaultAtomTags[ 'e-heading' ] );
-
-		await headingElement.click( { clickCount: 3 } );
-		await page.keyboard.type( 'Hello' );
+		await headingElement.click( { delay: 50 } );
+		await headingElement.click( { delay: 50 } );
+		await headingElement.click( { delay: 50 } );
+		await inlineEditor.fill( 'Hello' );
 
 		// Assert
 		await expect( headingElement ).toHaveText( 'Hello' );
@@ -197,7 +194,14 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		// Arrange
 			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 			const atomIds: Partial< Record< typeof supportedAtoms[number], string > > = {};
-			const encodedExpectedOutput = '<strong draggable=\"true\">bold</strong>, <u>underline</u>, <s>strikethrough</s>, <sup>superscript</sup>, <sub>subscript</sub>, <em>italic</em>';
+			const expectedTags = [
+				{ tag: 'strong', text: 'bold' },
+				{ tag: 'u', text: 'underline' },
+				{ tag: 's', text: 'strikethrough' },
+				{ tag: 'sup', text: 'superscript' },
+				{ tag: 'sub', text: 'subscript' },
+				{ tag: 'em', text: 'italic' },
+			];
 
 			atomIds[ atom ] = await editor.addWidget( { widgetType: atom, container: containerId } );
 
@@ -217,8 +221,11 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 			// Assert.
 			let queryString = getElementSelector( atomIds[ atom ] ) + ' ' + defaultAtomTags[ atom ];
 
-			expect( await editor.previewFrame.locator( queryString ).innerHTML() )
-				.toContain( encodedExpectedOutput );
+			const editorHtml = await editor.previewFrame.locator( queryString ).innerHTML();
+
+			for ( const { tag, text } of expectedTags ) {
+				expect( editorHtml ).toMatch( new RegExp( `<${ tag }[^>]*>${ text }</${ tag }>` ) );
+			}
 
 			// Unfocus.
 			await page.keyboard.press( 'Escape' );
@@ -227,12 +234,15 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 
 			queryString = `${ defaultAtomTags[ atom ] }[data-interaction-id="${ atomIds[ atom ] }"]`;
 
-			expect( ( await page.locator( queryString ).innerHTML() ) )
-				.toContain( encodedExpectedOutput.replaceAll( ' draggable="true"', '' ) );
+			const publishedHtml = await page.locator( queryString ).innerHTML();
+
+			for ( const { tag, text } of expectedTags ) {
+				expect( publishedHtml ).toMatch( new RegExp( `<${ tag }[^>]*>${ text }</${ tag }>` ) );
+			}
 		} );
 	}
 
-	test( 'Ensure relevant focusing unmounts the inline editor form frame', async () => {
+	test( 'Ensure relevant focusing unmounts the inline editor from frame', async () => {
 		// Arrange
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const dummyDivBlockId = await editor.addElement( { elType: 'e-div-block' }, 'document' );

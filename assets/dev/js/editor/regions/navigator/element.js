@@ -1,4 +1,5 @@
 import ElementEmpty from './element-empty';
+import InlineChildren from './inline-children';
 import RootEmpty from './root-empty';
 
 const NEW_NESTABLE_CLASS = 'elementor-navigator__element-new-nestable';
@@ -44,6 +45,10 @@ export default class extends Marionette.CompositeView {
 	getEmptyView() {
 		if ( this.isNavigatorContainer() ) {
 			return RootEmpty;
+		}
+
+		if ( this.inlineChildren.get() ) {
+			return null;
 		}
 
 		if ( this.hasChildren() ) {
@@ -112,6 +117,8 @@ export default class extends Marionette.CompositeView {
 
 		this.childViewContainer = '.elementor-navigator__elements';
 
+		this.inlineChildren = new InlineChildren( this );
+
 		this.listenTo( this.model, 'change', this.onModelChange )
 			.listenTo( this.model.get( 'settings' ), 'change', this.onModelSettingsChange );
 		this.listenTo( this.model, 'change:editor_settings', this.onModelEditorSettingsChange );
@@ -148,7 +155,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	hasChildren() {
-		return this.model.get( 'elements' )?.length || 'widget' !== this.model.get( 'elType' );
+		return this.model.get( 'elements' )?.length || 'widget' !== this.model.get( 'elType' ) || !! this.inlineChildren?.get();
 	}
 
 	toggleList( state, callback ) {
@@ -294,7 +301,7 @@ export default class extends Marionette.CompositeView {
 		}
 
 		this.ui.elements.sortable( {
-			items: '> .elementor-navigator__element',
+			items: '> .elementor-navigator__element:not(.elementor-navigator__inline-child)',
 			placeholder: 'ui-sortable-placeholder',
 			axis: 'y',
 			forcePlaceholderSize: true,
@@ -356,6 +363,8 @@ export default class extends Marionette.CompositeView {
 	 */
 	deselect() {
 		this.removeEditingClass();
+
+		this.inlineChildren.clearHighlights();
 	}
 
 	onRender() {
@@ -368,8 +377,8 @@ export default class extends Marionette.CompositeView {
 		this.ui.item.css( 'padding-inline-start', this.getIndent() + 'px' );
 
 		this.toggleHiddenClass();
-
 		this.renderIndicators();
+		this.inlineChildren.render();
 	}
 
 	onModelChange() {
@@ -401,6 +410,15 @@ export default class extends Marionette.CompositeView {
 				return false;
 			}
 		} );
+
+		const hasHtmlV3Change = Object.values( settingsModel.changed ).some(
+			( attribute ) => attribute && 'html-v3' === attribute.$$type,
+		);
+
+		if ( hasHtmlV3Change ) {
+			this.inlineChildren.invalidateCache();
+			this.inlineChildren.render();
+		}
 	}
 
 	onItemPress( event ) {

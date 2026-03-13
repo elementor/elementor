@@ -10,7 +10,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -55,8 +55,11 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->default( 'h2' )
 				->description( 'The HTML tag for the heading element. Could be h1, h2, up to h6' ),
 
-			'title' => Html_Prop_Type::make()
-				->default( __( 'This is a title', 'elementor' ) )
+			'title' => Html_V3_Prop_Type::make()
+				->default( [
+					'content'  => String_Prop_Type::generate( __( 'This is a title', 'elementor' ) ),
+					'children' => [],
+				] )
 				->description( 'The text content of the heading.' ),
 
 			'link' => Link_Prop_Type::make(),

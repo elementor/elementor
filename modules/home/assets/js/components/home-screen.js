@@ -6,8 +6,13 @@ import SideBarPromotion from './sidebar-promotion';
 import ExternalLinksSection from './external-links-section';
 import GetStarted from './get-started-section';
 import CreateWithAIBanner from './create-with-ai-banner';
+import LoadFallbackMessage from './load-fallback-message';
 
 const EditorScreen = ( props ) => {
+	if ( ! props.homeScreenData?.get_started ) {
+		return <LoadFallbackMessage />;
+	}
+
 	const hasSidebarPromotion = props.homeScreenData.hasOwnProperty( 'sidebar_promotion_variants' );
 
 	return (

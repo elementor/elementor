@@ -841,6 +841,25 @@ const TemplateLibraryManager = function() {
 		return elementorCommon.ajax.addRequest( 'get_template_data', options );
 	};
 
+	this.hasGlobalStyles = function( templateData ) {
+		const hasClasses = templateData.global_classes?.items &&
+			Object.keys( templateData.global_classes.items ).length > 0;
+		const hasVariables = templateData.global_variables?.data &&
+			Object.keys( templateData.global_variables.data ).length > 0;
+		return hasClasses || hasVariables;
+	};
+
+	this.syncGlobalStylesBeforeSave = function() {
+		const promises = [];
+		const event = new CustomEvent( 'elementor/global-styles/before-save', {
+			detail: { promises },
+		} );
+
+		window.dispatchEvent( event );
+
+		return Promise.allSettled( promises );
+	};
+
 	this.markAsFavorite = function( templateModel, favorite ) {
 		this.clearLastRemovedItems();
 
@@ -985,15 +1004,6 @@ const TemplateLibraryManager = function() {
 		// TODO: Remove - it when all the data commands is ready, manage the cache!.
 		if ( 'local' === query.source || 'cloud' === query.source ) {
 			options.refresh = true;
-		}
-
-		const shouldStartSessionRecording = 'cloud' === query.source &&
-			elementorCommon.config.editor_events.session_replays?.cloudTemplates &&
-			! elementor.templates.eventManager.isSessionRecordingInProgress();
-
-		if ( shouldStartSessionRecording ) {
-			elementor.templates.eventManager.startSessionRecording();
-			elementor.templates.eventManager.sendCloudTemplatesSessionRecordingStartEvent();
 		}
 
 		this.setFilter( 'parent', null, query );

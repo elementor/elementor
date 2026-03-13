@@ -3,10 +3,10 @@ namespace Elementor\Modules\Components\Widgets;
 
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
-use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
-use Elementor\Modules\Components\Transformers\Overridable_Transformer;
+use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
+use Elementor\Modules\Components\Transformers\Overridable_Transformer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -66,8 +66,13 @@ class Component_Instance extends Atomic_Widget_Base {
 		$merged_overrides = $this->get_merged_overrides( $resolved_overrides );
 
 		return [
-			'context_key' => Overridable_Transformer::class,
-			'context' => [ 'overrides' => $merged_overrides ],
+			[
+				'context_key' => Overridable_Transformer::class,
+				'context' => [ 'overrides' => $merged_overrides ],
+			],
+			[
+				'context' => [ 'instance_id' => $this->get_id() ],
+			],
 		];
 	}
 

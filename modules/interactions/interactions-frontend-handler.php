@@ -17,6 +17,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  * working with the Interactions_Collector for data storage and Adapter for data transformation.
  */
 class Interactions_Frontend_Handler {
+	/**
+	 * @var callable|null
+	 */
+	private $config_provider;
+
+	public function __construct( $config_provider = null ) {
+		$this->config_provider = is_callable( $config_provider ) ? $config_provider : null;
+	}
 
 	/**
 	 * Collect interactions from document elements during frontend render.
@@ -135,24 +143,11 @@ class Interactions_Frontend_Handler {
 				continue;
 			}
 
-			// Clean $$type markers from all interaction items
-			$cleaned_items = [];
-			foreach ( $items as $item ) {
-				if ( ! is_array( $item ) ) {
-					continue;
-				}
-				$cleaned_items[] = Adapter::clean_prop_types( $item );
-			}
-
-			if ( empty( $cleaned_items ) ) {
-				continue;
-			}
-
 			// Build element entry with elementId, dataId, and cleaned interactions array
 			$elements_with_interactions[] = [
 				'elementId' => $element_id,
 				'dataId' => $element_id,
-				'interactions' => $cleaned_items,
+				'interactions' => $items,
 			];
 		}
 
@@ -160,11 +155,13 @@ class Interactions_Frontend_Handler {
 			return;
 		}
 
+		$this->enqueue_interactions_assets();
+
 		// Output as JSON script tag
 		$json_data = wp_json_encode( $elements_with_interactions, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON data is already encoded
-		echo '<script type="application/json" id="elementor-interactions-data">' . $json_data . '</script>';
+		echo '<script type="application/json" id="' . Module::SCRIPT_ID_INTERACTIONS_DATA . '">' . $json_data . '</script>';
 	}
 
 	/**
@@ -187,11 +184,6 @@ class Interactions_Frontend_Handler {
 		if ( isset( $interactions['items'] ) ) {
 			$items = $interactions['items'];
 
-			// If items is wrapped with $$type (v2 format), extract the value
-			if ( isset( $items['$$type'] ) && Adapter::ITEMS_TYPE === $items['$$type'] ) {
-				return isset( $items['value'] ) && is_array( $items['value'] ) ? $items['value'] : [];
-			}
-
 			return is_array( $items ) ? $items : [];
 		}
 
@@ -207,5 +199,18 @@ class Interactions_Frontend_Handler {
 		}
 
 		return [];
+	}
+
+	private function enqueue_interactions_assets() {
+		wp_enqueue_script( Module::HANDLE_MOTION_JS );
+		wp_enqueue_script( Module::HANDLE_FRONTEND );
+
+		$config = $this->config_provider ? call_user_func( $this->config_provider ) : [];
+
+		wp_localize_script(
+			Module::HANDLE_FRONTEND,
+			Module::JS_CONFIG_OBJECT,
+			$config
+		);
 	}
 }

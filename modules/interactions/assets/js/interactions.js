@@ -1,8 +1,9 @@
+'use strict';
+
 import {
 	config,
 	getKeyframes,
-	parseAnimationName,
-	extractAnimationId,
+	skipInteraction,
 	extractAnimationConfig,
 	getAnimateFunction,
 	getInViewFunction,
@@ -10,7 +11,7 @@ import {
 	parseInteractionsData,
 } from './interactions-utils.js';
 
-import { initBreakpoints, getActiveBreakpoint } from './interactions-breakpoints.js';
+import { initBreakpoints } from './interactions-breakpoints.js';
 
 function scrollOutAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc ) {
 	const viewOptions = { amount: 0.85, root: null };
@@ -54,7 +55,7 @@ function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	const options = {
 		duration: animConfig.duration / 1000,
 		delay: animConfig.delay / 1000,
-		ease: config.defaultEasing,
+		ease: config().defaultEasing,
 	};
 
 	// WHY - Transition can be set on elements but once it sets it destroys all animations, so we basically put it aside.
@@ -69,42 +70,15 @@ function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	}
 }
 
-function skipInteraction( interaction ) {
-	const activeBreakpoint = getActiveBreakpoint();
-	if ( interaction.breakpoints && interaction.breakpoints?.excluded?.includes( activeBreakpoint ) ) {
-		return true;
-	}
-	return false;
-}
-
 function processElementInteractions( element, interactions, animateFunc, inViewFunc ) {
 	if ( ! interactions || ! Array.isArray( interactions ) ) {
 		return;
 	}
 
 	interactions.forEach( ( interaction ) => {
-		if ( skipInteraction( interaction ) ) {
-			return;
-		}
-
 		const animConfig = extractAnimationConfig( interaction );
 
-		if ( animConfig ) {
-			applyAnimation( element, animConfig, animateFunc, inViewFunc );
-		}
-	} );
-}
-
-function processElementInteractionsLegacy( element, interactions, animateFunc, inViewFunc ) {
-	if ( ! interactions || ! Array.isArray( interactions ) ) {
-		return;
-	}
-
-	interactions.forEach( ( interaction ) => {
-		const animationName = extractAnimationId( interaction );
-		const animConfig = animationName && parseAnimationName( animationName );
-
-		if ( animConfig ) {
+		if ( animConfig && ! skipInteraction( animConfig ) ) {
 			applyAnimation( element, animConfig, animateFunc, inViewFunc );
 		}
 	} );
@@ -150,7 +124,7 @@ function initInteractions() {
 			const interactionsData = element.getAttribute( 'data-interactions' );
 			const parsedData = parseInteractionsData( interactionsData );
 
-			processElementInteractionsLegacy( element, parsedData, animateFunc, inViewFunc );
+			processElementInteractions( element, parsedData, animateFunc, inViewFunc );
 		} );
 	} );
 }

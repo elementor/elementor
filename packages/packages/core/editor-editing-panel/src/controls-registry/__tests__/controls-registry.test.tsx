@@ -6,6 +6,7 @@ import {
 	keyValuePropTypeUtil,
 	linkPropTypeUtil,
 	sizePropTypeUtil,
+	stringArrayPropTypeUtil,
 	stringPropTypeUtil,
 } from '@elementor/editor-props';
 
@@ -21,6 +22,7 @@ describe( 'Controls Registry', () => {
 			textarea: stringPropTypeUtil,
 			size: sizePropTypeUtil,
 			select: stringPropTypeUtil,
+			chips: stringArrayPropTypeUtil,
 			link: linkPropTypeUtil,
 			url: stringPropTypeUtil,
 			switch: booleanPropTypeUtil,

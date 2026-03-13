@@ -641,6 +641,9 @@ class Test_Module extends Elementor_Test_Base {
 	}
 
 	public function test_atomic_widget_usage_counter_with_custom_css() {
+		$restore_custom_css = fn( $filtered_styles, $original_styles ) => $original_styles;
+		add_filter( 'elementor/atomic_widgets/editor_data/element_styles', $restore_custom_css, 10, 2 );
+
 		// Arrange.
 		$document = $this->factory()->documents->publish_and_get( [
 			'meta_input' => [
@@ -650,6 +653,9 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Act.
 		$usage = $document->get_meta( Module::META_KEY );
+
+		// Cleanup.
+		remove_filter( 'elementor/atomic_widgets/editor_data/element_styles', $restore_custom_css );
 
 		// Assert - Check that custom CSS is tracked in Style tab under Styles section.
 		$this->assertArrayHasKey( 'e-heading', $usage );

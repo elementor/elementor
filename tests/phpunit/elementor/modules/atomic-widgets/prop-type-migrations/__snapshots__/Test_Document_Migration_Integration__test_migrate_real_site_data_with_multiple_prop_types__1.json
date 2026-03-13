@@ -7,8 +7,8 @@
                 "value": []
             },
             "title": {
-                "$$type": "html",
-                "value": "This needs upgrade from a-string to html"
+                "$$type": "html-v3",
+                "value": "This needs upgrade from a-string to html-v2"
             },
             "tag": {
                 "$$type": "string",
@@ -29,8 +29,8 @@
                 "value": []
             },
             "title": {
-                "$$type": "html",
-                "value": "This needs downgrade from html-v2 to html"
+                "$$type": "html-v3",
+                "value": "This needs downgrade from html-v3 to html-v2"
             },
             "tag": {
                 "$$type": "string",

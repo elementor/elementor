@@ -9,6 +9,9 @@ on:
       - 'bin/**'
       - '.gitignore'
       - 'docs/**'
+      - '.vscode/**'
+      - 'tests/playwright/**'
+      - 'tests/phpunit/**'
 jobs:
   build-plugin:
     name: Build plugin

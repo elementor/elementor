@@ -57,6 +57,8 @@ const getBuildFiles = [
 	'!*.log',
 	'!hello-elementor/**',
 	'!.env',
+	'!Dockerfile',
+	'!.dockerignore',
 
 	// Conflict with above rule.
 	'core/files/assets/**',

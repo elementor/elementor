@@ -3,7 +3,7 @@
 namespace Elementor\Modules\Promotions\Widgets;
 
 use Elementor\Core\Utils\Hints;
-use Elementor\Modules\Promotions\Module;
+use Elementor\Modules\Promotions\Module as Promotions;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -31,7 +31,7 @@ class Ally_Dashboard_Widget {
 	public static function ally_widget_render(): void {
 		$is_scanner_run = self::is_scanner_run();
 		$submit_id = $is_scanner_run ? 'e-dashboard-ally-submitted' : 'e-dashboard-ally-submit';
-		$link = $is_scanner_run ? self::ALLY_PUBLIC_URL : Module::get_ally_external_scanner_url() . '?url=' . home_url();
+		$link = $is_scanner_run ? self::ALLY_PUBLIC_URL : Promotions::get_ally_external_scanner_url() . '?url=' . home_url();
 		?>
 		<div class="e-dashboard-ally e-dashboard-widget">
 			<div class="e-dashboard-ally-img">
@@ -75,7 +75,7 @@ class Ally_Dashboard_Widget {
 	 *
 	 * @access public
 	 */
-	public function handle_click() {
+	public static function handle_click() {
 		check_ajax_referer( self::ALLY_NONCE_KEY, 'nonce' );
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( 'Insufficient permissions' );

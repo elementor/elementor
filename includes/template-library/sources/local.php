@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\TemplateLibrary;
 
-use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Editor\Editor;
 use Elementor\Core\Utils\Collection;
@@ -354,72 +353,6 @@ class Source_Local extends Source_Base {
 		register_taxonomy( self::TAXONOMY_CATEGORY_SLUG, self::CPT, $args );
 	}
 
-	/**
-	 * Remove Add New item from admin menu.
-	 *
-	 * Fired by `admin_menu` action.
-	 *
-	 * @since 2.4.0
-	 * @access public
-	 */
-	private function admin_menu_reorder( Admin_Menu_Manager $admin_menu ) {
-		global $submenu;
-
-		if ( ! isset( $submenu[ static::ADMIN_MENU_SLUG ] ) ) {
-			return;
-		}
-
-		remove_submenu_page( static::ADMIN_MENU_SLUG, static::ADMIN_MENU_SLUG );
-
-		$add_new_slug = 'post-new.php?post_type=' . static::CPT;
-		$category_slug = 'edit-tags.php?taxonomy=' . static::TAXONOMY_CATEGORY_SLUG . '&amp;post_type=' . static::CPT;
-
-		$library_submenu = new Collection( $submenu[ static::ADMIN_MENU_SLUG ] );
-
-		$add_new_item = $library_submenu->find( function ( $item ) use ( $add_new_slug ) {
-			return $add_new_slug === $item[2];
-		} );
-
-		$categories_item = $library_submenu->find( function ( $item ) use ( $category_slug ) {
-			return $category_slug === $item[2];
-		} );
-
-		if ( $add_new_item ) {
-			remove_submenu_page( static::ADMIN_MENU_SLUG, $add_new_slug );
-
-			$admin_menu->register( admin_url( static::ADMIN_MENU_SLUG . '#add_new' ), new Add_New_Template_Menu_Item() );
-		}
-
-		if ( $categories_item ) {
-			remove_submenu_page( static::ADMIN_MENU_SLUG, $category_slug );
-
-			$admin_menu->register( $category_slug, new Templates_Categories_Menu_Item() );
-		}
-	}
-
-	/**
-	 * Add a `current` CSS class to the `Saved Templates` submenu page when it's active.
-	 * It should work by default, but since we interfere with WordPress' builtin CPT menus it doesn't work properly.
-	 *
-	 * @return void
-	 */
-	private function admin_menu_set_current() {
-		global $submenu;
-
-		if ( $this->is_current_screen() ) {
-			$library_submenu = &$submenu[ static::ADMIN_MENU_SLUG ];
-			$library_title = $this->get_library_title();
-
-			foreach ( $library_submenu as &$item ) {
-				if ( $library_title === $item[0] ) {
-					if ( ! isset( $item[4] ) ) {
-						$item[4] = '';
-					}
-					$item[4] .= ' current';
-				}
-			}
-		}
-	}
 
 	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
 		$menu_data_provider->register_menu( new Editor_One_Templates_Menu() );
@@ -811,6 +744,10 @@ class Source_Local extends Source_Base {
 			$data['page_settings'] = $page->get_data( 'settings' );
 		}
 
+		if ( ! empty( $content ) ) {
+			$this->attach_global_styles_to_data( $data, $content, $template_id );
+		}
+
 		return $data;
 	}
 
@@ -987,7 +924,7 @@ class Source_Local extends Source_Base {
 	 * @param string $path - The file path.
 	 * @return \WP_Error|array An array of items on success, 'WP_Error' on failure.
 	 */
-	public function import_template( $name, $path ) {
+	public function import_template( $name, $path, $import_mode = 'match_site' ) {
 		if ( empty( $path ) ) {
 			return new \WP_Error( 'file_error', 'Please upload a file to import' );
 		}
@@ -1014,7 +951,7 @@ class Source_Local extends Source_Base {
 					continue;
 				}
 
-				$import_result = $this->import_single_template( $file_path );
+				$import_result = $this->import_single_template( $file_path, $import_mode );
 
 				if ( is_wp_error( $import_result ) ) {
 					// Skip failed files
@@ -1028,7 +965,7 @@ class Source_Local extends Source_Base {
 			Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
 		} else {
 			// If the import file is a single JSON file
-			$import_result = $this->import_single_template( $path );
+			$import_result = $this->import_single_template( $path, $import_mode );
 
 			if ( is_wp_error( $import_result ) ) {
 				return $import_result;
@@ -1142,6 +1079,21 @@ class Source_Local extends Source_Base {
 	public function block_template_frontend() {
 		if ( is_singular( self::CPT ) && ! current_user_can( Editor::EDITING_CAPABILITY ) ) {
 			wp_safe_redirect( site_url(), 301 );
+			die;
+		}
+	}
+
+	public function redirect_categories_page_to_saved_templates_page() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$taxonomy = sanitize_key( wp_unslash( $_GET['taxonomy'] ?? '' ) );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$post_type = sanitize_key( wp_unslash( $_GET['post_type'] ?? '' ) );
+		$is_categories_page = 'edit-tags.php' === $GLOBALS['pagenow']
+			&& self::TAXONOMY_CATEGORY_SLUG === $taxonomy
+			&& self::CPT === $post_type;
+
+		if ( $is_categories_page ) {
+			wp_safe_redirect( admin_url( 'edit.php?post_type=' . self::CPT . '&tabs_group=library' ) );
 			die;
 		}
 	}
@@ -1578,8 +1530,8 @@ class Source_Local extends Source_Base {
 	 * @return \WP_Error|int|array Local template array, or template ID, or
 	 *                             `WP_Error`.
 	 */
-	private function import_single_template( $file_path ) {
-		$data = $this->prepare_import_template_data( $file_path );
+	private function import_single_template( $file_path, $import_mode = 'match_site' ) {
+		$data = $this->prepare_import_template_data( $file_path, $import_mode );
 
 		if ( is_wp_error( $data ) ) {
 			return $data;
@@ -1636,6 +1588,8 @@ class Source_Local extends Source_Base {
 			'title' => $document->get_main_post()->post_title,
 			'type' => self::get_template_type( $template_id ),
 		];
+
+		$this->attach_global_styles_to_data( $export_data, $content, $template_id );
 
 		return [
 			'name' => 'elementor-' . $template_id . '-' . gmdate( 'Y-m-d' ) . '.json',
@@ -1784,6 +1738,8 @@ class Source_Local extends Source_Base {
 	 */
 	private function add_actions() {
 		if ( is_admin() ) {
+			add_action( 'admin_init', [ $this, 'redirect_categories_page_to_saved_templates_page' ] );
+
 			add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 				$this->register_editor_one_menu( $menu_data_provider );
 			} );
@@ -1804,14 +1760,6 @@ class Source_Local extends Source_Base {
 				$post_types[] = self::CPT;
 
 				return $post_types;
-			} );
-
-			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
-				$this->admin_menu_reorder( $admin_menu );
-			}, 800 );
-
-			add_action( 'elementor/admin/menu/after_register', function () {
-				$this->admin_menu_set_current();
 			} );
 
 			add_filter( 'admin_title', [ $this, 'admin_title' ], 10, 2 );

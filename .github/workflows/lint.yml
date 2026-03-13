@@ -9,6 +9,7 @@ on:
       - 'bin/**'
       - '.gitignore'
       - 'docs/**'
+      - '.vscode/**'
   merge_group:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
@@ -58,7 +59,7 @@ jobs:
           node-version: 20.x
           cache: npm
       - name: Install Dependencies
-        run: npm run prepare-environment:ci
+        run: npm run install:ci
       - name: Build tools
         run: npm run build:tools
       - name: Run Lint

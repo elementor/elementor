@@ -20,6 +20,12 @@ export default class ElementRegressionHelper {
 		return isPublished ? 'published' : 'editor';
 	}
 
+	private async waitForPublishedContentReady(): Promise<void> {
+		await this.page.waitForLoadState( 'load' );
+		const container = this.page.locator( EditorSelectors.container ).first();
+		await container.waitFor( { state: 'visible' } );
+	}
+
 	async doScreenshot( widgetType: string, isPublished: boolean ) {
 		if ( widgetType.includes( 'hover' ) ) {
 			return;
@@ -36,7 +42,9 @@ export default class ElementRegressionHelper {
 
 		const label = this.getLabel( isPublished );
 
-		if ( ! isPublished ) {
+		if ( isPublished ) {
+			await this.waitForPublishedContentReady();
+		} else {
 			await this.page.evaluate( async () => {
 				const iframe = document.getElementById( 'elementor-preview-iframe' );
 				iframe.style.height = '3000px';
@@ -86,6 +94,7 @@ export default class ElementRegressionHelper {
 		if ( args.isPublished ) {
 			page = this.page;
 			await page.setViewportSize( deviceParams[ args.device ] );
+			await this.waitForPublishedContentReady();
 
 			if ( 'container_grid' === args.widgetType && 'mobile' === args.device ) {
 				await page.waitForTimeout( 500 );

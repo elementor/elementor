@@ -1,7 +1,11 @@
 import { elementSelectorHandlers, elementTypeHandlers } from './handlers-registry';
 
-const unmountElementTypeCallbacks: Map< string, Map< string, () => void > > = new Map();
-const unmountElementSelectorCallbacks: Map< string, Map< string, () => void > > = new Map();
+type UnmountEntry = {
+	controller: AbortController;
+	manualUnmount: ( () => void )[];
+};
+
+const unmountCallbacks = new WeakMap< Element, UnmountEntry >();
 
 const ELEMENT_RENDERED_EVENT_NAME = 'elementor/element/rendered';
 const ELEMENT_DESTROYED_EVENT_NAME = 'elementor/element/destroyed';
@@ -30,11 +34,13 @@ export const onElementRender = ( {
 	elementType: string;
 	elementId: string;
 } ) => {
+	cleanupOnUnmount( element );
+
 	const controller = new AbortController();
 	const manualUnmount: ( () => void )[] = [];
 
 	const dispatchRenderedEvent = () => {
-		onElementSelectorRender( { element, elementId, controller } );
+		onElementSelectorRender( { element, controller } );
 
 		element.dispatchEvent(
 			new CustomEvent( ELEMENT_RENDERED_EVENT_NAME, {
@@ -60,6 +66,8 @@ export const onElementRender = ( {
 	if ( ! elementTypeHandlers.has( elementType ) ) {
 		return;
 	}
+
+	setUnmountEntry( { element, controller, manualUnmount } );
 
 	Array.from( elementTypeHandlers.get( elementType )?.values() ?? [] ).forEach( ( handler ) => {
 		const settings = element.getAttribute( 'data-e-settings' );
@@ -92,33 +100,24 @@ export const onElementRender = ( {
 			manualUnmount.push( unmount );
 		}
 	} );
-
-	if ( ! unmountElementTypeCallbacks.has( elementType ) ) {
-		unmountElementTypeCallbacks.set( elementType, new Map() );
-	}
-
-	unmountElementTypeCallbacks.get( elementType )?.set( elementId, () => {
-		controller.abort();
-
-		manualUnmount.forEach( ( callback ) => callback() );
-	} );
 };
 
 export const onElementSelectorRender = ( {
 	element,
-	elementId,
 	controller,
 }: {
 	element: Element;
-	elementId: string;
 	controller: AbortController;
 } ) => {
+	let requiresCleanup = false;
+	const manualUnmount: ( () => void )[] = [];
+
 	Array.from( elementSelectorHandlers.entries() ?? [] ).forEach( ( [ selector, handlers ] ) => {
 		if ( ! element.matches( selector ) ) {
 			return;
 		}
 
-		const manualUnmount: ( () => void )[] = [];
+		requiresCleanup = true;
 
 		Array.from( handlers.values() ?? [] ).forEach( ( handler ) => {
 			const settings = element.getAttribute( 'data-e-settings' );
@@ -133,21 +132,11 @@ export const onElementSelectorRender = ( {
 				manualUnmount.push( unmount );
 			}
 		} );
-
-		if ( ! manualUnmount.length ) {
-			return;
-		}
-
-		if ( ! unmountElementSelectorCallbacks.get( elementId ) ) {
-			unmountElementSelectorCallbacks.set( elementId, new Map() );
-		}
-
-		unmountElementSelectorCallbacks.get( elementId )?.set( selector, () => {
-			controller.abort();
-
-			manualUnmount.forEach( ( callback ) => callback() );
-		} );
 	} );
+
+	if ( requiresCleanup ) {
+		setUnmountEntry( { element, controller, manualUnmount } );
+	}
 };
 
 export const onElementDestroy = ( {
@@ -159,31 +148,39 @@ export const onElementDestroy = ( {
 	elementId: string;
 	element?: Element;
 } ) => {
-	const unmount = unmountElementTypeCallbacks.get( elementType )?.get( elementId );
-	const unmountSelector = unmountElementSelectorCallbacks.get( elementId );
-
-	if ( element ) {
-		dispatchDestroyedEvent( { element, elementType, elementId } );
+	if ( ! element ) {
+		return;
 	}
 
-	if ( unmount ) {
-		unmount();
+	cleanupOnUnmount( element );
+
+	dispatchDestroyedEvent( { element, elementType, elementId } );
+};
+
+const setUnmountEntry = ( {
+	element,
+	controller,
+	manualUnmount,
+}: {
+	element: Element;
+	controller: AbortController;
+	manualUnmount: ( () => void )[];
+} ) => {
+	const existingEntry = unmountCallbacks.get( element );
+
+	if ( existingEntry ) {
+		existingEntry.manualUnmount.push( ...manualUnmount );
+	} else {
+		unmountCallbacks.set( element, { controller, manualUnmount } );
 	}
+};
 
-	if ( unmountSelector?.size ) {
-		Array.from( unmountSelector.values() ).forEach( ( selectorUnmount ) => {
-			selectorUnmount();
-		} );
-	}
+const cleanupOnUnmount = ( element: Element ) => {
+	const entry = unmountCallbacks.get( element );
 
-	unmountElementTypeCallbacks.get( elementType )?.delete( elementId );
-	unmountElementSelectorCallbacks.delete( elementId );
-
-	if ( unmountElementTypeCallbacks.get( elementType )?.size === 0 ) {
-		unmountElementTypeCallbacks.delete( elementType );
-	}
-
-	if ( unmountElementSelectorCallbacks.size === 0 ) {
-		unmountElementSelectorCallbacks.delete( elementId );
+	if ( entry ) {
+		entry.controller.abort();
+		entry.manualUnmount.forEach( ( callback ) => callback() );
+		unmountCallbacks.delete( element );
 	}
 };
