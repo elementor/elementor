@@ -114,6 +114,8 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 	const {
 		existingClassesCount,
 		existingVariablesCount,
+		classesLimit,
+		variablesLimit,
 		calculateLimitInfo,
 	} = useClassesVariablesLimits( { open, isImport } );
 
@@ -121,13 +123,13 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 	const importedVariablesCount = contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.variablesCount ?? 0;
 
 	const classesLimitInfo = useMemo(
-		() => calculateLimitInfo( existingClassesCount, importedClassesCount, 100 ),
-		[ existingClassesCount, importedClassesCount, calculateLimitInfo ],
+		() => calculateLimitInfo( existingClassesCount, importedClassesCount, classesLimit ),
+		[ existingClassesCount, importedClassesCount, classesLimit, calculateLimitInfo ],
 	);
 
 	const variablesLimitInfo = useMemo(
-		() => calculateLimitInfo( existingVariablesCount, importedVariablesCount, 100 ),
-		[ existingVariablesCount, importedVariablesCount, calculateLimitInfo ],
+		() => calculateLimitInfo( existingVariablesCount, importedVariablesCount, variablesLimit ),
+		[ existingVariablesCount, importedVariablesCount, variablesLimit, calculateLimitInfo ],
 	);
 
 	const [ settings, setSettings ] = useState( () => {
