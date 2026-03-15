@@ -61,13 +61,14 @@ export function createNestedTemplatedElementType( {
 	};
 }
 
-function buildEditorAttributes( model: { get: ( key: 'id' ) => string; cid?: string } ): string {
+function buildEditorAttributes( model: ElementView[ 'model' ] ): string {
 	const id = model.get( 'id' );
+	const originId = model.get( 'originId' );
 	const cid = model.cid ?? '';
 
 	const attrs: Record< string, string > = {
 		'data-model-cid': cid,
-		'data-interaction-id': id,
+		'data-interaction-id': originId ?? id,
 		'x-ignore': 'true',
 	};
 
