@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - 'main'
-      - '3.*'
+      - '[0-9].[0-9][0-9]'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -31,11 +31,13 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
+      - name: Remove package.json
+        run: rm -f package*.json
+
       - name: Install Node.js 20.x
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          cache: 'npm'
 
       - name: Download build artifact
         uses: actions/download-artifact@v4
@@ -62,8 +64,6 @@ jobs:
           enable-svg-upload: true
           experiments: |-
             e_optimized_markup:true
-            e_atomic_elements:true
-            e_classes:true
           templates: |-
             templates
 
