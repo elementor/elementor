@@ -1,6 +1,5 @@
+import { COMPONENT_DOCUMENT_TYPE } from '@elementor/editor-documents';
 import { type V1Element } from '@elementor/editor-elements';
-
-const COMPONENT_DOCUMENT_TYPE = 'elementor_component';
 
 export function getCompositionTargetContainer(
 	documentContainer: V1Element,
