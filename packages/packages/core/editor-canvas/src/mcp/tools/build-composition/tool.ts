@@ -12,7 +12,6 @@ import { CompositionBuilder } from '../../../composition-builder/composition-bui
 import { BEST_PRACTICES_URI, STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 import { doUpdateElementProperty } from '../../utils/do-update-element-property';
 import { getCompositionTargetContainer } from '../../utils/get-composition-target-container';
-import { notifyElementsRendered } from '../../utils/notify-elements-rendered';
 import { generatePrompt } from './prompt';
 import { inputSchema as schema, outputSchema } from './schema';
 
@@ -121,8 +120,6 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				) }`;
 				throw new Error( errorText );
 			}
-			notifyElementsRendered();
-
 			return {
 				xmlStructure: generatedXML,
 				errors: errors?.length
