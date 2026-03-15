@@ -5,5 +5,11 @@ export function getCompositionTargetContainer(
 	documentContainer: V1Element,
 	documentType: string | undefined
 ): V1Element {
-	return documentType === COMPONENT_DOCUMENT_TYPE && documentContainer.children?.[ 0 ] ?? documentContainer
+	const firstChild = documentContainer.children?.[ 0 ];
+
+	if ( documentType === COMPONENT_DOCUMENT_TYPE && firstChild ) {
+		return firstChild;
+	}
+
+	return documentContainer;
 }
