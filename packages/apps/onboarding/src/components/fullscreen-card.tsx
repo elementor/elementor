@@ -71,8 +71,11 @@ export const SecondaryButton = styled( Button )( ( { theme } ) => ( {
 } ) );
 
 export const SocialIconWrapper = styled( Paper )( ( { theme } ) => ( {
-	backgroundImage: 'none',
-	backgroundColor: 'transparent',
+	backgroundColor: theme.palette.background.paper,
+	backgroundImage:
+		theme.palette.mode === 'dark'
+			? 'linear-gradient(rgba(255, 255, 255, 0.165), rgba(255, 255, 255, 0.165))'
+			: 'none',
 	width: theme.spacing( 3.5 ),
 	height: theme.spacing( 3.5 ),
 	borderRadius: '50%',

@@ -13,7 +13,7 @@ export const usePromoSuppressedMessage = () => {
 			setSuppressMessage();
 			notify( {
 				type: 'default',
-				message: __( 'You can re-activate Atomic elements via Editor Settings > Atomic Editor', 'elementor' ),
+				message: __( 'You can enable the Atomic editor anytime from Editor Settings.', 'elementor' ),
 				id: MESSAGE_KEY,
 			} );
 		}

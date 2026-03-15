@@ -62,7 +62,8 @@ export const waitForAutosave = async ( page: Page ): Promise< void > => {
 };
 
 const dismissOnboardingDialog = async ( page: Page ): Promise< void > => {
-	const onboardingDismiss = page.getByRole( 'button', { name: 'Got it' } );
+	const introDialog = page.getByRole( 'dialog' ).filter( { hasText: "Don't show this again" } );
+	const onboardingDismiss = introDialog.getByRole( 'button', { name: 'Got it introduction' } );
 
 	const isVisible = await isOnboardingDialogDisplayed( onboardingDismiss );
 	if ( isVisible ) {
