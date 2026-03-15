@@ -1213,7 +1213,7 @@ describe( 'createAtomicElementBaseView - components Pro gating', () => {
 		return saveGroup?.actions?.find( ( a ) => 'save-component' === a.name );
 	};
 
-	it( 'should show keyboard shortcut and enable create-component when Pro is active', () => {
+	it( 'should show new badge and enable create-component when Pro is active', () => {
 		// Arrange
 		setProState( { isActive: true, hasInstalled: true, isAtLeast: true } );
 
@@ -1222,8 +1222,8 @@ describe( 'createAtomicElementBaseView - components Pro gating', () => {
 
 		// Assert
 		expect( action ).toBeDefined();
-		expect( action.shortcut ).toContain( '+⇧+K' );
-		expect( action.shortcut ).not.toContain( 'PRO' );
+		expect( action.shortcut ).toContain( 'new-badge' );
+		expect( action.shortcut ).toContain( 'New' );
 		expect( action.isEnabled() ).toBe( true );
 	} );
 
@@ -1250,7 +1250,7 @@ describe( 'createAtomicElementBaseView - components Pro gating', () => {
 
 		// Assert
 		expect( action ).toBeDefined();
-		expect( action.shortcut ).toContain( '+⇧+K' );
+		expect( action.shortcut ).toContain( 'new-badge' );
 		expect( action.isEnabled() ).toBe( true );
 	} );
 
@@ -1318,7 +1318,7 @@ describe( 'createAtomicElementBaseView - components Pro gating', () => {
 		);
 	} );
 
-	it( 'should show keyboard shortcut and enable create-component when Pro is outdated', () => {
+	it( 'should show new badge and enable create-component when Pro is outdated', () => {
 		// Arrange
 		setProState( { isActive: false, hasInstalled: true, isAtLeast: false } );
 
@@ -1327,7 +1327,7 @@ describe( 'createAtomicElementBaseView - components Pro gating', () => {
 
 		// Assert
 		expect( action ).toBeDefined();
-		expect( action.shortcut ).toContain( '+⇧+K' );
+		expect( action.shortcut ).toContain( 'new-badge' );
 		expect( action.shortcut ).not.toContain( 'eicon-upgrade-crown' );
 		expect( action.isEnabled() ).toBe( true );
 	} );
