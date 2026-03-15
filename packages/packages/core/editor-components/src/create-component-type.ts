@@ -64,11 +64,14 @@ const UPDATE_PLUGINS_URL = '/wp-admin/plugins.php';
 const COMPONENT_EDIT_UPGRADE_NOTIFICATION_ID = 'component-edit-upgrade';
 const COMPONENT_EDIT_UPDATE_NOTIFICATION_ID = 'component-edit-update';
 
+const COMPONENT_EDIT_UPGRADE_AUTO_HIDE_DURATION = 2000;
+
 function notifyComponentEditUpgrade() {
 	notify( {
 		type: 'promotion',
 		id: COMPONENT_EDIT_UPGRADE_NOTIFICATION_ID,
 		message: __( 'Editing components requires an active Pro subscription.', 'elementor' ),
+		autoHideDuration: COMPONENT_EDIT_UPGRADE_AUTO_HIDE_DURATION,
 		additionalActionProps: [
 			{
 				size: 'small',
