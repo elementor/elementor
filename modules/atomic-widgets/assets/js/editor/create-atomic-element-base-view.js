@@ -446,6 +446,9 @@ export default function createAtomicElementBaseView( type ) {
 
 			if ( isExperimentalFeaturesEnabled && isAdministrator ) {
 				const isProActive = window.elementorV2?.utils?.isProActive?.() ?? true;
+				const hasProInstalled = window.elementorV2?.utils?.hasProInstalled?.() ?? false;
+				const isProOutdated = hasProInstalled && ! ( window.elementorV2?.utils?.isProAtLeast?.( '4.0' ) ?? false );
+				const showPromoBadge = ! isProActive && ! isProOutdated;
 
 				const controlSign = environment.mac ? '&#8984;' : '^';
 				const shortcutLabel = controlSign + '+⇧+K';
@@ -455,10 +458,10 @@ export default function createAtomicElementBaseView( type ) {
 				saveActions.unshift( {
 					name: 'save-component',
 					title: __( 'Create component', 'elementor' ),
-					shortcut: isProActive ? shortcutLabel : proBadge,
-					hasShortcutAction: ! isProActive,
+					shortcut: ( isProActive || isProOutdated ) ? shortcutLabel : proBadge,
+					hasShortcutAction: showPromoBadge,
 					callback: this.saveAsComponent.bind( this ),
-					isEnabled: () => isProActive && ! this.getContainer().isLocked(),
+					isEnabled: () => ( isProActive || isProOutdated ) && ! this.getContainer().isLocked(),
 				} );
 			}
 
@@ -487,6 +490,26 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		saveAsComponent( openContextMenuEvent, options ) {
+			const hasProInstalled = window.elementorV2?.utils?.hasProInstalled?.() ?? false;
+			const isProOutdated = hasProInstalled && ! ( window.elementorV2?.utils?.isProAtLeast?.( '4.0' ) ?? false );
+
+			if ( isProOutdated ) {
+				window.elementorV2?.editorNotifications?.notify?.( {
+					type: 'info',
+					id: 'component-create-update',
+					message: __( 'To create new components, update Elementor Pro to the latest version.', 'elementor' ),
+					additionalActionProps: [ {
+						size: 'small',
+						variant: 'contained',
+						color: 'info',
+						href: '/wp-admin/plugins.php',
+						target: '_blank',
+						children: __( 'Update Now', 'elementor' ),
+					} ],
+				} );
+				return;
+			}
+
 			const isProActive = window.elementorV2?.utils?.isProActive?.() ?? true;
 
 			if ( ! isProActive ) {

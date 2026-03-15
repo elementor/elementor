@@ -25,6 +25,7 @@ import { type ComponentsSlice, selectComponentByUid } from './store/store';
 import { type ComponentRenderContext, type ExtendedWindow } from './types';
 import { detachComponentInstance } from './utils/detach-component-instance';
 import { formatComponentElementsId } from './utils/format-component-elements-id';
+import { isProComponentsSupported, isProOutdatedForComponents } from './utils/is-pro-components-supported';
 import { switchToComponent } from './utils/switch-to-component';
 import { trackComponentEvent } from './utils/tracking';
 
@@ -54,8 +55,10 @@ type ComponentModelInstance = BackboneModel< ComponentModel > & {
 export const COMPONENT_WIDGET_TYPE = 'e-component';
 
 const EDIT_COMPONENT_UPGRADE_URL = 'https://go.elementor.com/go-pro-components-edit/';
+const UPDATE_PLUGINS_URL = '/wp-admin/plugins.php';
 
 const COMPONENT_EDIT_UPGRADE_NOTIFICATION_ID = 'component-edit-upgrade';
+const COMPONENT_EDIT_UPDATE_NOTIFICATION_ID = 'component-edit-update';
 
 function notifyComponentEditUpgrade() {
 	notify( {
@@ -70,6 +73,24 @@ function notifyComponentEditUpgrade() {
 				href: EDIT_COMPONENT_UPGRADE_URL,
 				target: '_blank',
 				children: __( 'Upgrade Now', 'elementor' ),
+			},
+		],
+	} );
+}
+
+function notifyComponentEditUpdate() {
+	notify( {
+		type: 'info',
+		id: COMPONENT_EDIT_UPDATE_NOTIFICATION_ID,
+		message: __( 'To edit components, update Elementor Pro to the latest version.', 'elementor' ),
+		additionalActionProps: [
+			{
+				size: 'small',
+				variant: 'contained',
+				color: 'info',
+				href: UPDATE_PLUGINS_URL,
+				target: '_blank',
+				children: __( 'Update Now', 'elementor' ),
 			},
 		],
 	} );
@@ -235,6 +256,8 @@ function createComponentView( options: ComponentTypeOptions ): typeof ElementVie
 		_getContextMenuConfig() {
 			const isAdministrator = isUserAdministrator();
 			const hasPro = hasProInstalled();
+			const isOutdated = isProOutdatedForComponents();
+			const showPromoBadge = ! hasPro && ! isOutdated;
 
 			const badgeClass = 'elementor-context-menu-list__item__shortcut__promotion-badge';
 			const proBadge = `<a href="${ EDIT_COMPONENT_UPGRADE_URL }" target="_blank" onclick="event.stopPropagation()" class="${ badgeClass }"><i class="eicon-upgrade-crown"></i></a>`;
@@ -243,8 +266,8 @@ function createComponentView( options: ComponentTypeOptions ): typeof ElementVie
 				name: 'edit component',
 				icon: 'eicon-edit',
 				title: () => __( 'Edit Component', 'elementor' ),
-				...( ! hasPro && { shortcut: proBadge, hasShortcutAction: true } ),
-				isEnabled: () => hasPro,
+				...( showPromoBadge && { shortcut: proBadge, hasShortcutAction: true } ),
+				isEnabled: () => isProComponentsSupported() || isOutdated,
 				callback: ( _: unknown, eventData: ContextMenuEventData ) => this.editComponent( eventData ),
 			};
 
@@ -286,9 +309,12 @@ function createComponentView( options: ComponentTypeOptions ): typeof ElementVie
 		}
 
 		editComponent( { trigger, location, secondaryLocation }: ContextMenuEventData ) {
-			const hasPro = hasProInstalled();
+			if ( isProOutdatedForComponents() ) {
+				notifyComponentEditUpdate();
+				return;
+			}
 
-			if ( ! hasPro || this.isComponentCurrentlyEdited() ) {
+			if ( ! isProComponentsSupported() || this.isComponentCurrentlyEdited() ) {
 				return;
 			}
 
@@ -338,6 +364,11 @@ function createComponentView( options: ComponentTypeOptions ): typeof ElementVie
 			e.stopPropagation();
 
 			if ( ! isUserAdministrator() ) {
+				return;
+			}
+
+			if ( isProOutdatedForComponents() ) {
+				notifyComponentEditUpdate();
 				return;
 			}
 
