@@ -2,12 +2,13 @@ import * as React from 'react';
 import { useLayoutEffect } from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { Stack } from '@elementor/ui';
-import { hasProInstalled } from '@elementor/utils';
 
 import { useComponents } from '../../hooks/use-components';
+import { isProComponentsSupported, isProOutdatedForComponents } from '../../utils/is-pro-components-supported';
 import { ComponentSearch } from './component-search';
 import { ComponentsList } from './components-list';
 import { ComponentsProNotification } from './components-pro-notification';
+import { ComponentsUpdateNotification } from './components-update-notification';
 import { SearchProvider } from './search-provider';
 
 const FULL_HEIGHT_STYLE_ID = 'components-full-height-panel';
@@ -54,8 +55,8 @@ const useFullHeightPanel = () => {
 const ComponentsContent = () => {
 	const { components, isLoading } = useComponents();
 	const hasComponents = ! isLoading && components.length > 0;
-	const hasPro = hasProInstalled();
-	const showProNotification = ! hasPro && hasComponents;
+	const showProNotification = ! isProComponentsSupported() && hasComponents;
+	const isOutdated = isProOutdatedForComponents();
 
 	useFullHeightPanel();
 
@@ -63,7 +64,7 @@ const ComponentsContent = () => {
 		<Stack justifyContent="space-between" sx={ { flex: 1, minHeight: 0 } }>
 			{ hasComponents && <ComponentSearch /> }
 			<ComponentsList />
-			{ showProNotification && <ComponentsProNotification /> }
+			{ showProNotification && ( isOutdated ? <ComponentsUpdateNotification /> : <ComponentsProNotification /> ) }
 		</Stack>
 	);
 };
