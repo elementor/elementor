@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { forwardRef } from 'react';
 import { closeSnackbar, type CustomContentProps, SnackbarProvider } from 'notistack';
-import { CrownFilledIcon } from '@elementor/icons';
+import { CrownFilledIcon, InfoCircleFilledIcon } from '@elementor/icons';
 import { __getStore as getStore, __useDispatch as useDispatch, __useSelector as useSelector } from '@elementor/store';
 import { Alert, SnackbarContent, type SnackbarProps, ThemeProvider } from '@elementor/ui';
 
@@ -31,7 +31,12 @@ const DefaultCustomSnackbar = forwardRef( ( props: SnackbarProps, ref ) => {
 	);
 } );
 
-const PromotionSnackbar = forwardRef< HTMLDivElement, CustomContentProps >( ( props, ref ) => {
+interface AlertSnackbarProps extends CustomContentProps {
+	color: 'promotion' | 'info';
+	icon: React.ReactElement;
+}
+
+const AlertSnackbar = forwardRef< HTMLDivElement, AlertSnackbarProps >( ( { color, icon, ...props }, ref ) => {
 	const panelWidth = getEditingPanelWidth();
 
 	return (
@@ -39,8 +44,8 @@ const PromotionSnackbar = forwardRef< HTMLDivElement, CustomContentProps >( ( pr
 			<Alert
 				ref={ ref }
 				variant="standard"
-				color="promotion"
-				icon={ <CrownFilledIcon /> }
+				color={ color }
+				icon={ icon }
 				role="alert"
 				action={ props.action }
 				onClose={ () => closeSnackbar( props.id ) }
@@ -56,9 +61,18 @@ const PromotionSnackbar = forwardRef< HTMLDivElement, CustomContentProps >( ( pr
 	);
 } );
 
+const PromotionSnackbar = forwardRef< HTMLDivElement, CustomContentProps >( ( props, ref ) => (
+	<AlertSnackbar ref={ ref } color="promotion" icon={ <CrownFilledIcon /> } { ...props } />
+) );
+
+const InfoSnackbar = forwardRef< HTMLDivElement, CustomContentProps >( ( props, ref ) => (
+	<AlertSnackbar ref={ ref } color="info" icon={ <InfoCircleFilledIcon /> } { ...props } />
+) );
+
 const muiToEuiMapper = {
 	default: DefaultCustomSnackbar,
 	promotion: PromotionSnackbar,
+	info: InfoSnackbar,
 };
 
 const Handler = () => {
