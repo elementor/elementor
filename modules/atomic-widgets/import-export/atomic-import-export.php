@@ -4,12 +4,15 @@ namespace Elementor\Modules\AtomicWidgets\ImportExport;
 
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\ImportExport\Modifiers\Interactions_Ids_Modifier;
+use Elementor\Modules\AtomicWidgets\ImportExport\Modifiers\Interactions_Props_Modifier;
 use Elementor\Modules\AtomicWidgets\ImportExport\Modifiers\Settings_Props_Modifier;
 use Elementor\Modules\AtomicWidgets\ImportExport\Modifiers\Styles_Ids_Modifier;
 use Elementor\Modules\AtomicWidgets\ImportExport\Modifiers\Styles_Props_Modifier;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Import_Export_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Utils\Utils;
+use Elementor\Modules\Interactions\Schema\Interactions_Schema;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -52,9 +55,13 @@ class Atomic_Import_Export {
 				return $element;
 			}
 
+			$interactions_schema = Interactions_Schema::get();
+			$interaction_item_schema = ! empty( $interactions_schema['items'][0] ) ? $interactions_schema['items'][0]->get_shape() : [];
+
 			$runners = [
 				Settings_Props_Modifier::make( $props_resolver, $element_instance::get_props_schema() ),
 				Styles_Props_Modifier::make( $props_resolver, Style_Schema::get() ),
+				Interactions_Props_Modifier::make( $props_resolver, $interaction_item_schema ),
 			];
 
 			foreach ( $runners as $runner ) {
@@ -77,6 +84,8 @@ class Atomic_Import_Export {
 			return $element;
 		}
 
-		return Styles_Ids_Modifier::make()->run( $element );
+		$element = Styles_Ids_Modifier::make()->run( $element );
+
+		return Interactions_Ids_Modifier::make()->run( $element );
 	}
 }
