@@ -16,7 +16,7 @@ const popoverData = {
 	image_alt: __( 'Atomic Elements', 'elementor' ),
 	title: __( 'Atomic Elements', 'elementor' ),
 	description: [
-		__( 'The new generation of high-performance, flexible building blocks designed for precise styling and a unified experience.', 'elementor' ),
+		__( 'Modern, flexible elements designed for reusable styles and cleaner layouts.', 'elementor' ),
 	],
 	upgrade_text: __( 'Learn more', 'elementor' ),
 	upgrade_url: 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/',
