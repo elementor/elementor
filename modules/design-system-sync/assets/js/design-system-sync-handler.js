@@ -56,6 +56,18 @@
 		link.href = url + '?ver=' + version;
 	}
 
+	function onClassesUpdated( event ) {
+		const { context } = event.detail;
+
+		if ( context !== 'frontend' ) {
+			return;
+		}
+
+		clearTimeout( syncTimeout );
+		syncTimeout = setTimeout( syncDesignSystem, DEBOUNCE_MS );
+	}
+
+	window.addEventListener( 'classes:updated', onClassesUpdated );
 	window.addEventListener( 'variables:updated', () => {
 		clearTimeout( syncTimeout );
 		syncTimeout = setTimeout( syncDesignSystem, DEBOUNCE_MS );
