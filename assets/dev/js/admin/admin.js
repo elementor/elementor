@@ -129,21 +129,21 @@ import 'elementor-app/event-track/wp-dashboard-tracking';
 					const $button = $( this );
 					elementorCommon.ajax.addRequest( campaignNotices[ noticeId ], {
 						data: {
-							campaign: $button.data( 'campaign' ),
-							source: $button.data( 'source' ),
-							medium: $button.data( 'medium' ),
+							campaign: $button?.data( 'campaign' ) || '',
+							source: $button?.data( 'source' ) || '',
+							medium: $button?.data( 'medium' ) || '',
 						},
 					} );
 				} );
 			} );
 
 			$( '.e-a-apps .e-a-item[data-plugin="image-optimization/image-optimization.php"] a.e-btn' ).on( 'click', function() {
-				const $item = $( this ).closest( '.e-a-item' );
-				const source = $item.data( 'source' ) || 'io-esetting-addons-install';
-
+				const $button = $( this );
 				elementorCommon.ajax.addRequest( 'elementor_image_optimization_campaign', {
 					data: {
-						source,
+						campaign: $button?.data( 'campaign' ) || '',
+						source: $button?.data( 'source' ) || '',
+						medium: $button?.data( 'medium' ) || '',
 					},
 				} );
 			} );
