@@ -10,6 +10,7 @@ import {
 	parseInteractionsData,
 	unwrapInteractionValue,
 	timingValueToMs,
+	resetElementStyles,
 } from './interactions-shared-utils.js';
 
 export {
@@ -22,6 +23,7 @@ export {
 	parseInteractionsData,
 	unwrapInteractionValue,
 	timingValueToMs,
+	resetElementStyles,
 };
 
 export function getKeyframes( effect, type, direction ) {
