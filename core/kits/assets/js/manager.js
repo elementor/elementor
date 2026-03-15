@@ -7,7 +7,6 @@ import ControlsCSSParser from 'elementor-assets-js/editor/utils/controls-css-par
 
 const V4_GROUP = 'v4';
 
-
 export default class Manager extends elementorModules.editor.utils.Module {
 	loadingTriggers = {
 		preview: false,
