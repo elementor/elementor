@@ -137,6 +137,10 @@ export default class Manager extends elementorModules.editor.utils.Module {
 		$e.data.get( 'globals/index' ).then( ( { data } ) => {
 			if ( data.colors ) {
 				Object.values( data.colors ).forEach( ( item ) => {
+					if ( 'v4' === item.group ) {
+						return;
+					}
+
 					const controls = elementor.config.kit_config.design_system_controls.colors,
 						values = {
 							_id: item.id,

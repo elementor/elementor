@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useCallback } from 'react';
+import { getCurrentUser } from '@elementor/editor-current-user';
 import { notify } from '@elementor/editor-notifications';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { httpService } from '@elementor/http-client';
@@ -8,11 +9,12 @@ import { __ } from '@wordpress/i18n';
 
 import { usePromoSuppressedMessage } from '../hooks/use-promo-suppressed-message';
 
-const PROMO_IMAGE = 'https://assets.elementor.com/v4-promotion/v1/images/v4_chip_new.png';
+const PROMO_IMAGE = 'https://assets.elementor.com/v4-promotion/v1/images/atomic_elements_section_260.png';
 const LEARN_MORE_URL = 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/';
 
 export function AtomicElementsPromo() {
 	const [ suppressed, toggleSuppressMessage ] = usePromoSuppressedMessage();
+	const isAdmin = getCurrentUser()?.capabilities?.includes( 'manage_options' );
 
 	const activateAtomicElements = useCallback( async () => {
 		try {
@@ -29,7 +31,7 @@ export function AtomicElementsPromo() {
 		}
 	}, [] );
 
-	if ( suppressed ) {
+	if ( suppressed || ! isAdmin ) {
 		return null;
 	}
 
@@ -86,7 +88,7 @@ export function AtomicElementsPromo() {
 				<Box sx={ { pl: 2.5, pr: 4, pt: 2 } }>
 					<Typography variant="caption" color="text.tertiary">
 						{ __(
-							'The new generation of high-performance, flexible building blocks designed for precise styling and a unified experience.',
+							'Build with modern, flexible elements designed for reusable styles and cleaner layouts. Your existing site and content stay exactly the same.',
 							'elementor'
 						) }
 					</Typography>
@@ -117,7 +119,7 @@ export function AtomicElementsPromo() {
 						} }
 						onClick={ activateAtomicElements }
 					>
-						{ __( 'Unlock for free', 'elementor' ) }
+						{ __( 'Activate now', 'elementor' ) }
 					</Button>
 				</Box>
 			</Box>

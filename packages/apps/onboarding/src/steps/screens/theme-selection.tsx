@@ -32,11 +32,6 @@ export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
 	const recommendedTheme = useMemo( () => getRecommendedTheme( choices ), [ choices ] );
 	const greetingText = useMemo( () => getGreetingText( choices.experience_level ), [ choices.experience_level ] );
 
-	// Show both themes when Hello Biz is recommended.
-	// TODO: Once the site_about step (S2) is implemented, this will work automatically.
-	// For now, always show both themes so the UI can be tested.
-	const showBothThemes = true;
-
 	const hasTrackedSuggestion = React.useRef( false );
 
 	useEffect( () => {
@@ -59,10 +54,7 @@ export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
 		[ actions, isInstalled, onComplete, selectedValue, trackThemeSelected ]
 	);
 
-	const themes = useMemo(
-		() => ( showBothThemes ? [ HELLO_THEME, HELLO_BIZ_THEME ] : [ HELLO_THEME ] ),
-		[ showBothThemes ]
-	);
+	const themes = [ HELLO_THEME, HELLO_BIZ_THEME ];
 
 	const effectiveSelection = selectedValue ?? recommendedTheme;
 
