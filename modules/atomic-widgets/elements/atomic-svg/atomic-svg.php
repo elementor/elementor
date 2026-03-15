@@ -137,7 +137,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 
 		$data_attributes_string = sprintf(
 			'data-interaction-id="%s"',
-			esc_attr( $this->get_id() )
+			esc_attr( $this->get_interaction_id() )
 		);
 
 		$attributes_string = trim( $data_attributes_string . ' ' . $all_attributes );
