@@ -56,11 +56,6 @@
 		link.href = url + '?ver=' + version;
 	}
 
-	function debouncedSync() {
-		clearTimeout( syncTimeout );
-		syncTimeout = setTimeout( syncDesignSystem, DEBOUNCE_MS );
-	}
-
 	function onClassesUpdated( event ) {
 		const { context } = event.detail;
 
@@ -68,9 +63,13 @@
 			return;
 		}
 
-		debouncedSync();
+		clearTimeout( syncTimeout );
+		syncTimeout = setTimeout( syncDesignSystem, DEBOUNCE_MS );
 	}
 
-	window.addEventListener( 'variables:updated', debouncedSync );
 	window.addEventListener( 'classes:updated', onClassesUpdated );
+	window.addEventListener( 'variables:updated', () => {
+		clearTimeout( syncTimeout );
+		syncTimeout = setTimeout( syncDesignSystem, DEBOUNCE_MS );
+	} );
 }() );

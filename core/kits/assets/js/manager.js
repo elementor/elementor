@@ -139,7 +139,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 		$e.data.get( 'globals/index' ).then( ( { data } ) => {
 			if ( data.colors ) {
 				Object.values( data.colors ).forEach( ( item ) => {
-					if ( V4_GROUP === item.group ) {
+					if ( 'v4' === item.group ) {
 						return;
 					}
 
