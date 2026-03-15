@@ -141,7 +141,15 @@ describe( 'createComponentType', () => {
 		delete window.elementorPro;
 	} );
 
-	const setProState = ( { installed, active, version = '4.0' }: { installed: boolean; active: boolean; version?: string } ) => {
+	const setProState = ( {
+		installed,
+		active,
+		version = '4.0',
+	}: {
+		installed: boolean;
+		active: boolean;
+		version?: string;
+	} ) => {
 		( window as unknown as TestWindow ).elementor.helpers = { hasPro: () => installed };
 		window.elementorPro = { config: { isActive: active, version } };
 	};

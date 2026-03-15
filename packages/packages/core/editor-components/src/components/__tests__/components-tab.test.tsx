@@ -68,9 +68,7 @@ function setHasPro( value: boolean, version = '4.0' ) {
 		},
 	};
 
-	extendedWindow.elementorPro = value
-		? { config: { isActive: true, version } }
-		: undefined;
+	extendedWindow.elementorPro = value ? { config: { isActive: true, version } } : undefined;
 }
 
 describe( 'ComponentsTab', () => {
