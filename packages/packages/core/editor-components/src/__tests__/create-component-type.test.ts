@@ -416,6 +416,7 @@ describe( 'createComponentType', () => {
 			expect.objectContaining( {
 				id: 'component-edit-upgrade',
 				type: 'promotion',
+				autoHideDuration: 2000,
 			} )
 		);
 	} );

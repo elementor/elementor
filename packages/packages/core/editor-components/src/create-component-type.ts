@@ -57,11 +57,14 @@ const EDIT_COMPONENT_UPGRADE_URL = 'https://go.elementor.com/go-pro-components-e
 
 const COMPONENT_EDIT_UPGRADE_NOTIFICATION_ID = 'component-edit-upgrade';
 
+const COMPONENT_EDIT_UPGRADE_AUTO_HIDE_DURATION = 2000;
+
 function notifyComponentEditUpgrade() {
 	notify( {
 		type: 'promotion',
 		id: COMPONENT_EDIT_UPGRADE_NOTIFICATION_ID,
 		message: __( 'Editing components requires an active Pro subscription.', 'elementor' ),
+		autoHideDuration: COMPONENT_EDIT_UPGRADE_AUTO_HIDE_DURATION,
 		additionalActionProps: [
 			{
 				size: 'small',
