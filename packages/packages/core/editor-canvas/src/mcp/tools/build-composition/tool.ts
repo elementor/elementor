@@ -1,3 +1,4 @@
+import { getCurrentDocument } from '@elementor/editor-documents';
 import {
 	createElement,
 	deleteElement,
@@ -10,6 +11,7 @@ import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { CompositionBuilder } from '../../../composition-builder/composition-builder';
 import { BEST_PRACTICES_URI, STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 import { doUpdateElementProperty } from '../../utils/do-update-element-property';
+import { getCompositionTargetContainer } from '../../utils/get-composition-target-container';
 import { notifyElementsRendered } from '../../utils/notify-elements-rendered';
 import { generatePrompt } from './prompt';
 import { inputSchema as schema, outputSchema } from './schema';
@@ -38,6 +40,8 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 			const errors: Error[] = [];
 			const rootContainers: V1Element[] = [];
 			const documentContainer = getContainer( 'document' ) as unknown as V1Element;
+			const currentDocument = getCurrentDocument();
+			const targetContainer = getCompositionTargetContainer( documentContainer, currentDocument?.type.value );
 			try {
 				const compositionBuilder = CompositionBuilder.fromXMLString( xmlStructure, {
 					createElement,
@@ -51,7 +55,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 					configErrors,
 					invalidStyles,
 					rootContainers: generatedRootContainers,
-				} = compositionBuilder.build( documentContainer );
+				} = compositionBuilder.build( targetContainer );
 
 				rootContainers.push( ...generatedRootContainers );
 				generatedXML = new XMLSerializer().serializeToString( compositionBuilder.getXML() );
