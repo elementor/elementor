@@ -2,6 +2,7 @@ import { type Unit } from '@elementor/editor-controls';
 import { type PropValue, sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 
 import { DEFAULT_TIME_UNIT, TIME_UNITS } from '../configs/time-constants';
+import { type PlainCustomEffect, toCustomEffectPropValue } from './custom-effect-to-prop-value';
 import {
 	type AnimationPresetPropValue,
 	type BooleanPropValue,
@@ -46,7 +47,7 @@ export const createBoolean = ( value: boolean ): BooleanPropValue => ( {
 export const createConfig = ( {
 	replay,
 	easing = 'easeIn',
-	relativeTo = '',
+	relativeTo = 'viewport',
 	repeat = '',
 	times = 1,
 	start = 85,
@@ -128,26 +129,29 @@ export const createAnimationPreset = ( {
 	times?: number;
 	start?: SizeStringValue;
 	end?: SizeStringValue;
-	customEffects?: PropValue;
-} ): AnimationPresetPropValue => ( {
-	$$type: 'animation-preset-props',
-	value: {
-		effect: createString( effect ),
-		custom_effect: customEffects,
-		type: createString( type ),
-		direction: createString( direction ?? '' ),
-		timing_config: createTimingConfig( duration, delay ),
-		config: createConfig( {
-			replay,
-			easing,
-			relativeTo,
-			repeat,
-			times,
-			start,
-			end,
-		} ),
-	},
-} );
+	customEffects?: PropValue | PlainCustomEffect;
+} ): AnimationPresetPropValue => {
+	const customEffectProp = toCustomEffectPropValue( customEffects );
+	return {
+		$$type: 'animation-preset-props',
+		value: {
+			effect: createString( effect ),
+			...( customEffectProp !== undefined && { custom_effect: customEffectProp } ),
+			type: createString( type ),
+			direction: createString( direction ?? '' ),
+			timing_config: createTimingConfig( duration, delay ),
+			config: createConfig( {
+				replay,
+				easing,
+				relativeTo,
+				repeat,
+				times,
+				start,
+				end,
+			} ),
+		},
+	};
+};
 
 export const createInteractionItem = ( {
 	trigger,
@@ -182,7 +186,7 @@ export const createInteractionItem = ( {
 	start?: number;
 	end?: number;
 	excludedBreakpoints?: string[];
-	customEffects?: PropValue;
+	customEffects?: PropValue | PlainCustomEffect;
 } ): InteractionItemPropValue => ( {
 	$$type: 'interaction-item',
 	value: {
