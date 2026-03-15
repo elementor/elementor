@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets;
 
-
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Elements_Manager;
