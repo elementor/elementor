@@ -46,14 +46,21 @@ const SELECTORS_MAP: Record< StyleDefinitionType, string > = {
 	class: '.',
 };
 
+function getStyleUniqueKey( style: RendererStyleDefinition ): string {
+	const breakpoint = style.variants[ 0 ]?.meta?.breakpoint ?? 'desktop';
+	const state = style.variants[ 0 ]?.meta?.state ?? 'normal';
+	return `${ style.id }-${ breakpoint }-${ state }`;
+}
+
 export function createStylesRenderer( { resolve, breakpoints, selectorPrefix = '' }: CreateStyleRendererArgs ) {
 	return async ( { styles, signal }: StyleRendererArgs ): Promise< StyleItem[] > => {
-		const seenIds = new Set< string >();
+		const seenKeys = new Set< string >();
 		const uniqueStyles = styles.filter( ( style ) => {
-			if ( seenIds.has( style.id ) ) {
+			const key = getStyleUniqueKey( style );
+			if ( seenKeys.has( key ) ) {
 				return false;
 			}
-			seenIds.add( style.id );
+			seenKeys.add( key );
 			return true;
 		} );
 
