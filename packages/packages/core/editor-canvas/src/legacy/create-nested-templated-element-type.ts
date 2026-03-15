@@ -182,6 +182,7 @@ export function createNestedTemplatedElementView( {
 
 					const context = {
 						id: model.get( 'id' ),
+						interaction_id: this.getInteractionId(),
 						type,
 						settings,
 						base_styles: baseStylesDictionary,
@@ -361,6 +362,13 @@ export function createNestedTemplatedElementView( {
 
 		_openEditingPanel( options?: { scrollIntoView: boolean } ) {
 			this._doAfterRender( () => parentOpenEditingPanel.call( this, options ) );
+		},
+
+		getInteractionId() {
+			const originId = this.model.get( 'originId' );
+			const id = this.model.get( 'id' );
+
+			return originId ?? id;
 		},
 	} ) as unknown as typeof ElementView;
 }
