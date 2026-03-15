@@ -10,6 +10,7 @@ import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { CompositionBuilder } from '../../../composition-builder/composition-builder';
 import { BEST_PRACTICES_URI, STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 import { doUpdateElementProperty } from '../../utils/do-update-element-property';
+import { notifyElementsRendered } from '../../utils/notify-elements-rendered';
 import { generatePrompt } from './prompt';
 import { inputSchema as schema, outputSchema } from './schema';
 
@@ -116,6 +117,8 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				) }`;
 				throw new Error( errorText );
 			}
+			notifyElementsRendered();
+
 			return {
 				xmlStructure: generatedXML,
 				errors: errors?.length
