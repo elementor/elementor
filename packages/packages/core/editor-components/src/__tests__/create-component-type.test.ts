@@ -141,9 +141,9 @@ describe( 'createComponentType', () => {
 		delete window.elementorPro;
 	} );
 
-	const setProState = ( { installed, active }: { installed: boolean; active: boolean } ) => {
+	const setProState = ( { installed, active, version = '4.0' }: { installed: boolean; active: boolean; version?: string } ) => {
 		( window as unknown as TestWindow ).elementor.helpers = { hasPro: () => installed };
-		window.elementorPro = { config: { isActive: active } };
+		window.elementorPro = { config: { isActive: active, version } };
 	};
 
 	const createMockViewInstance = ( isAdministrator: boolean ) => {
@@ -449,7 +449,7 @@ describe( 'createComponentType', () => {
 		expect( editAction ).toBeDefined();
 		expect( editAction?.isEnabled() ).toBe( false );
 		expect( editAction?.shortcut ).toContain( 'eicon-upgrade-crown' );
-		expect( editAction?.shortcut ).toContain( 'go-pro-components-edit' );
+		expect( editAction?.shortcut ).toContain( 'go-pro-components-Instance-edit-context-menu' );
 	} );
 
 	it( 'should enable edit action without badge when Pro is installed but expired', () => {
@@ -466,5 +466,42 @@ describe( 'createComponentType', () => {
 		expect( editAction ).toBeDefined();
 		expect( editAction?.isEnabled() ).toBe( true );
 		expect( editAction?.shortcut ).toBeUndefined();
+	} );
+
+	it( 'should enable edit action without badge when Pro is outdated', () => {
+		// Arrange
+		const viewInstance = createMockViewInstance( true );
+		setProState( { installed: true, active: false, version: '3.35' } );
+
+		// Act
+		const groups = viewInstance.getContextMenuGroups();
+		const generalGroup = groups.find( ( group ) => group.name === 'general' );
+		const editAction = ( generalGroup?.actions ?? [] ).find( ( action ) => action.name === 'edit component' );
+
+		// Assert
+		expect( editAction ).toBeDefined();
+		expect( editAction?.isEnabled() ).toBe( true );
+		expect( editAction?.shortcut ).toBeUndefined();
+	} );
+
+	it( 'should show info notification on dblclick when Pro is outdated', () => {
+		// Arrange
+		const viewInstance = createMockViewInstance( true ) as unknown as ComponentViewInstance;
+		const mockEvent = { stopPropagation: jest.fn() } as unknown as MouseEvent;
+
+		setProState( { installed: true, active: false, version: '3.35' } );
+
+		// Act
+		viewInstance.handleDblClick( mockEvent );
+
+		// Assert
+		expect( mockEvent.stopPropagation ).toHaveBeenCalled();
+		expect( viewInstance.editComponent ).not.toHaveBeenCalled();
+		expect( mockNotify ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				id: 'component-edit-update',
+				type: 'info',
+			} )
+		);
 	} );
 } );
