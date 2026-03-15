@@ -14,7 +14,7 @@ import { InstancePanelBody } from './instance-panel-body';
 import { EditComponentAction, InstancePanelHeader } from './instance-panel-header';
 import { useInstancePanelData } from './use-instance-panel-data';
 
-const EDIT_UPGRADE_URL = 'https://go.elementor.com/go-pro-components-edit/';
+const EDIT_UPGRADE_URL = 'https://go.elementor.com/go-pro-components-Instance-edit-footer/';
 
 export function InstanceEditingPanel() {
 	const { canEdit } = useComponentsPermissions();

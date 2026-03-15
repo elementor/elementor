@@ -54,7 +54,11 @@ type ComponentModelInstance = BackboneModel< ComponentModel > & {
 
 export const COMPONENT_WIDGET_TYPE = 'e-component';
 
-const EDIT_COMPONENT_UPGRADE_URL = 'https://go.elementor.com/go-pro-components-edit/';
+const EDIT_COMPONENT_DB_CLICK_UPGRADE_URL =
+	'https://go.elementor.com/go-pro-components-Instance-edit-canvas-double-click/';
+const EDIT_COMPONENT_CONTEXT_MENU_UPGRADE_URL =
+	'https://go.elementor.com/go-pro-components-Instance-edit-context-menu/';
+
 const UPDATE_PLUGINS_URL = '/wp-admin/plugins.php';
 
 const COMPONENT_EDIT_UPGRADE_NOTIFICATION_ID = 'component-edit-upgrade';
@@ -70,7 +74,7 @@ function notifyComponentEditUpgrade() {
 				size: 'small',
 				variant: 'contained',
 				color: 'promotion',
-				href: EDIT_COMPONENT_UPGRADE_URL,
+				href: EDIT_COMPONENT_DB_CLICK_UPGRADE_URL,
 				target: '_blank',
 				children: __( 'Upgrade Now', 'elementor' ),
 			},
@@ -260,7 +264,7 @@ function createComponentView( options: ComponentTypeOptions ): typeof ElementVie
 			const showPromoBadge = ! hasPro && ! isOutdated;
 
 			const badgeClass = 'elementor-context-menu-list__item__shortcut__promotion-badge';
-			const proBadge = `<a href="${ EDIT_COMPONENT_UPGRADE_URL }" target="_blank" onclick="event.stopPropagation()" class="${ badgeClass }"><i class="eicon-upgrade-crown"></i></a>`;
+			const proBadge = `<a href="${ EDIT_COMPONENT_CONTEXT_MENU_UPGRADE_URL }" target="_blank" onclick="event.stopPropagation()" class="${ badgeClass }"><i class="eicon-upgrade-crown"></i></a>`;
 
 			const editComponentAction: ContextMenuAction = {
 				name: 'edit component',

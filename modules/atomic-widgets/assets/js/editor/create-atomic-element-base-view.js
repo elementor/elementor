@@ -453,7 +453,7 @@ export default function createAtomicElementBaseView( type ) {
 				const controlSign = environment.mac ? '&#8984;' : '^';
 				const shortcutLabel = controlSign + '+⇧+K';
 				const badgeClass = 'elementor-context-menu-list__item__shortcut__promotion-badge';
-				const proBadge = `<a href="https://go.elementor.com/go-pro-components-create/" target="_blank" onclick="event.stopPropagation()" class="${ badgeClass }"><i class="eicon-upgrade-crown"></i></a>`;
+				const proBadge = `<a href="https://go.elementor.com/go-pro-components-Instance-create-context-menu/" target="_blank" onclick="event.stopPropagation()" class="${ badgeClass }"><i class="eicon-upgrade-crown"></i></a>`;
 
 				saveActions.unshift( {
 					name: 'save-component',
