@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - 'main'
-      - '3.*'
+      - '[0-9].[0-9][0-9]'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -30,6 +30,14 @@ jobs:
 
       - name: Checkout source code
         uses: actions/checkout@v4
+
+      - name: Remove package.json
+        run: rm -f package*.json
+
+      - name: Add minimal package.json for setup-node
+        run: |
+          echo '{"name":"elementor","version":"1.0.0"}' > package.json
+          echo '{"name":"elementor","version":"1.0.0","lockfileVersion":3,"packages":{"":{"name":"elementor","version":"1.0.0"}}}' > package-lock.json
 
       - name: Install Node.js 20.x
         uses: actions/setup-node@v4
