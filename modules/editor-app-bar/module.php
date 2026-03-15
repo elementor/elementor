@@ -91,6 +91,8 @@ class Module extends BaseModule {
 		return \Elementor\Core\Upgrade\Manager::had_install_prior_to( $target_version );
 	}
 
+	
+
 	private function add_packages( $packages ) {
 		return array_merge( $packages, self::PACKAGES );
 	}
