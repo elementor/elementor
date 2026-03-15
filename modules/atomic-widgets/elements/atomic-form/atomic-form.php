@@ -200,6 +200,19 @@ class Atomic_Form extends Atomic_Element_Base {
 							'unit' => 'px',
 						] ) )
 				),
+			static::BASE_STYLE_KEY . ' .e-form-checkbox-row' => Style_Definition::make()
+			->add_variant(
+				Style_Variant::make()
+					->add_prop( 'align-items', String_Prop_Type::generate( 'center' ) )
+					->add_prop( 'gap', Size_Prop_Type::generate( [
+						'size' => 8,
+						'unit' => 'px',
+					] ) )
+					->add_prop( 'padding', Size_Prop_Type::generate( [
+						'size' => 0,
+						'unit' => 'px',
+					] ) )
+			),
 		];
 	}
 
@@ -216,17 +229,19 @@ class Atomic_Form extends Atomic_Element_Base {
 		$prefix = 'e-form-';
 
 		return [
-			$this->build_label( __( 'First name', 'elementor' ), $prefix . '-first-name' ),
-			$this->build_input( __( 'First name', 'elementor' ), 'text', $prefix . '-first-name' ),
+			$this->build_label( __( 'First name', 'elementor' ), $prefix . 'first-name' ),
+			$this->build_input( __( 'First name', 'elementor' ), 'text', $prefix . 'first-name' ),
 
-			$this->build_label( __( 'Last name', 'elementor' ), $prefix . '-last-name' ),
-			$this->build_input( __( 'Last name', 'elementor' ), 'text', $prefix . '-last-name' ),
+			$this->build_label( __( 'Last name', 'elementor' ), $prefix . 'last-name' ),
+			$this->build_input( __( 'Last name', 'elementor' ), 'text', $prefix . 'last-name' ),
 
-			$this->build_label( __( 'Email', 'elementor' ), $prefix . '-email' ),
-			$this->build_input( __( 'your@mail.com', 'elementor' ), 'email', $prefix . '-email' ),
+			$this->build_label( __( 'Email', 'elementor' ), $prefix . 'email' ),
+			$this->build_input( __( 'your@mail.com', 'elementor' ), 'email', $prefix . 'email' ),
 
-			$this->build_label( __( 'Message', 'elementor' ), $prefix . '-message' ),
-			$this->build_input( __( 'Your message', 'elementor' ), 'textarea', $prefix . '-message' ),
+			$this->build_label( __( 'Message', 'elementor' ), $prefix . 'message' ),
+			$this->build_input( __( 'Your message', 'elementor' ), 'textarea', $prefix . 'message' ),
+
+			$this->build_checkbox_row( __( 'Checkbox', 'elementor' ), $prefix . 'checkbox' ),
 
 			Widget_Builder::make( 'e-form-submit-button' )
 				->settings( [
@@ -247,6 +262,23 @@ class Atomic_Form extends Atomic_Element_Base {
 				__( 'Error message', 'elementor' )
 			),
 		];
+	}
+
+	private function build_checkbox_row( string $label_text, string $checkbox_id ): array {
+		$checkbox = Widget_Builder::make( 'e-form-checkbox' )
+			->settings( [
+				'_cssid' => String_Prop_Type::generate( $checkbox_id ),
+			] )
+			->build();
+
+		$label = $this->build_label( $label_text, $checkbox_id );
+
+		return Element_Builder::make( 'e-flexbox' )
+			->children( [ $checkbox, $label ] )
+			->settings( [
+				'classes' => Classes_Prop_Type::generate( [ 'e-form-checkbox-row' ] ),
+			] )
+			->build();
 	}
 
 	private function build_label( string $text, string $input_id ): array {
