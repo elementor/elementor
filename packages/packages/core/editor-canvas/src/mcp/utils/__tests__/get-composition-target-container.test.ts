@@ -8,7 +8,7 @@ const createMockContainer = ( id: string, children?: V1Element[] ): V1Element =>
 		model: { get: jest.fn(), set: jest.fn(), toJSON: jest.fn() },
 		settings: { get: jest.fn(), set: jest.fn(), toJSON: jest.fn() },
 		children,
-	} as unknown as V1Element );
+	} ) as unknown as V1Element;
 
 describe( 'getCompositionTargetContainer', () => {
 	it( 'should return first child when document type is elementor_component', () => {
