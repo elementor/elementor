@@ -1,20 +1,21 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg;
 
+use Elementor\Core\Utils\Svg\Svg_Sanitizer;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
-use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
-use Elementor\Core\Utils\Svg\Svg_Sanitizer;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Svg_Control;
-use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Utils;
 
@@ -23,6 +24,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Svg extends Atomic_Widget_Base {
+	use Has_Template;
+
 	const BASE_STYLE_KEY = 'base';
 	const DEFAULT_SVG = 'images/default-svg.svg';
 	const DEFAULT_SVG_PATH = ELEMENTOR_ASSETS_PATH . self::DEFAULT_SVG;
@@ -102,19 +105,30 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		];
 	}
 
-	protected function render() {
-		$settings = $this->get_atomic_settings();
+	protected function build_template_context(): array {
+		$context = $this->build_base_template_context();
+		$context['svg_html'] = $this->get_processed_svg_html( $context['settings'] );
 
+		return $context;
+	}
+
+	protected function get_templates(): array {
+		return [
+			'elementor/elements/atomic-svg' => __DIR__ . '/atomic-svg.html.twig',
+		];
+	}
+
+	private function get_processed_svg_html( array $settings ): string {
 		$svg = $this->get_svg_content( $settings );
 
 		if ( ! $svg ) {
-			return;
+			return '';
 		}
 
 		$svg = new \WP_HTML_Tag_Processor( $svg );
 
 		if ( ! $svg->next_tag( 'svg' ) ) {
-			return;
+			return '';
 		}
 
 		$svg->set_attribute( 'fill', 'currentColor' );
@@ -122,49 +136,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 
 		$this->add_svg_style( $svg, 'width: 100%; height: 100%; overflow: unset;' );
 
-		$svg_html = ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
-
-		$classes = array_filter( array_merge(
-			[ self::BASE_STYLE_KEY => $this->get_base_styles_dictionary()[ self::BASE_STYLE_KEY ] ],
-			$settings['classes']
-		) );
-
-		$classes_string = implode( ' ', $classes );
-
-		$cssid_attribute = ! empty( $settings['_cssid'] ) ? 'id="' . esc_attr( $settings['_cssid'] ) . '"' : '';
-
-		$all_attributes = trim( $cssid_attribute . ' ' . $settings['attributes'] );
-
-		$data_attributes_string = sprintf(
-			'data-interaction-id="%s"',
-			esc_attr( $this->get_interaction_id() )
-		);
-
-		$attributes_string = trim( $data_attributes_string . ' ' . $all_attributes );
-
-		if ( isset( $settings['link'] ) && ! empty( $settings['link']['href'] ) ) {
-			$html_tag = Utils::validate_html_tag( $settings['link']['tag'] ?? 'a' );
-			$link_attributes = $this->get_link_attributes( $settings['link'], true );
-			$link_attribute_key = $link_attributes['key'];
-			$link_destination = $link_attributes[ $link_attribute_key ];
-
-			$svg_html = sprintf(
-				'<%s %s="%s" target="%s" class="%s" %s>%s</%s>',
-				$html_tag,
-				$link_attribute_key,
-				$link_destination,
-				esc_attr( $settings['link']['target'] ),
-				esc_attr( $classes_string ),
-				$attributes_string,
-				$svg_html,
-				$html_tag
-			);
-		} else {
-			$svg_html = sprintf( '<div class="%s" %s>%s</div>', esc_attr( $classes_string ), $attributes_string, $svg_html );
-		}
-
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo $svg_html;
+		return ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
 	}
 
 	private function get_svg_content( $settings ) {
