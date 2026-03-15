@@ -23,15 +23,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		if ( ! $this->is_experiment_active() ) {
-			return;
-		}
-
 		$this->register_hooks();
-	}
-
-	private function is_experiment_active(): bool {
-		return \Elementor\Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 	}
 
 	private function register_hooks() {
