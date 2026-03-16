@@ -36,27 +36,9 @@ export function App() {
 				type: 'referrer/info',
 				instanceId: event.data?.payload?.instanceId ?? '',
 				info: {
-					authToken: '',
-					origin: window.location.origin,
-					connectAuth: config?.connectAuth || undefined,
+					connectAuth: config?.connectAuth,
 					page: {
 						url: window.location.href,
-						editorSessionId: 'site-builder',
-						elementorAiCurrentContext: {},
-						bodyStyle: {
-							backgroundColor: '',
-							backgroundImage: '',
-						},
-					},
-					products: {
-						core: { version: '4.1.0' },
-						pro: { isPro: false, accessLevel: '', accessTier: '' },
-						ai: {
-							config: { usage: {} },
-							hasSubscription: false,
-							usagePercentage: 0,
-							subscription: { id: '', type: '', usedQuota: 0, quota: 0, status: '' },
-						},
 					},
 					user: { isAdmin: true },
 				},
