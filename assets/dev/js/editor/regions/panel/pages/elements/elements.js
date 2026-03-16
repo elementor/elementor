@@ -122,8 +122,13 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 		if ( elementorCommon.config.experimentalFeatures.container ) {
 			jQuery.each( elementor.config.elementsPresets, ( index, widget ) => {
-				const originalWidget = elementor.widgetsCache[ widget.replacements.custom.originalWidget ],
-					replacements = widget.replacements,
+				const originalWidget = elementor.widgetsCache[ widget.replacements.custom.originalWidget ];
+
+				if ( ! originalWidget ) {
+					return;
+				}
+
+				const replacements = widget.replacements,
 					presetWidget = this.deepMerge( originalWidget, replacements );
 
 				if ( ! this.shouldAddWidget( presetWidget ) ) {
