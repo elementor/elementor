@@ -116,15 +116,6 @@ export function SiteFeatures() {
 		actions.setUserChoice( 'site_features', updatedPaidFeatureSelection );
 	}
 
-	const planName: 'Pro' | 'One' = useMemo( () => {
-		const hasOneFeature = storedPaidFeatures.some( ( optionId ) => {
-			const option = FEATURE_OPTIONS.find( ( featureOption ) => featureOption.id === optionId );
-			return option?.licenseType === 'one';
-		} );
-
-		return hasOneFeature ? 'One' : 'Pro';
-	}, [ storedPaidFeatures ] );
-
 	return (
 		<Stack spacing={ 4 } width="100%" data-testid="site-features-step">
 			<Stack spacing={ 1 } textAlign="center" alignItems="center">
@@ -140,8 +131,6 @@ export function SiteFeatures() {
 				options={ FEATURE_OPTIONS }
 				selectedValues={ selectedValues }
 				onFeatureClick={ handleFeatureClick }
-				shouldDisplayProPlanNotice={ storedPaidFeatures.length > 0 }
-				planName={ planName }
 			/>
 		</Stack>
 	);

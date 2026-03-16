@@ -22,8 +22,6 @@ interface FeatureGridProps {
 	options: FeatureOption[];
 	selectedValues: string[];
 	onFeatureClick: ( id: string ) => void;
-	shouldDisplayProPlanNotice: boolean;
-	planName: 'Pro' | 'One';
 }
 
 const IncludedInCoreChip = styled( Chip )( ( { theme } ) => ( {
@@ -59,14 +57,22 @@ const FeatureCard = styled( Box, {
 	} ),
 } ) );
 
-export function FeatureGrid( {
-	options,
-	selectedValues,
-	onFeatureClick,
-	shouldDisplayProPlanNotice,
-	planName,
-}: FeatureGridProps ) {
+export function FeatureGrid( { options, selectedValues, onFeatureClick }: FeatureGridProps ) {
 	const theme = useTheme();
+
+	const selectedPaidFeatures = selectedValues.filter( ( id ) => {
+		const featureOption = options.find( ( item ) => item.id === id );
+		return featureOption && featureOption.licenseType !== 'core';
+	} );
+
+	const shouldDisplayProPlanNotice = selectedPaidFeatures.length > 0;
+
+	const planName: 'Pro' | 'One' = selectedPaidFeatures.some( ( id ) => {
+		const featureOption = options.find( ( item ) => item.id === id );
+		return featureOption?.licenseType === 'one';
+	} )
+		? 'One'
+		: 'Pro';
 
 	const handleKeyDown = ( event: React.KeyboardEvent, handler: () => void ) => {
 		if ( [ 'Enter', ' ' ].includes( event.key ) ) {
