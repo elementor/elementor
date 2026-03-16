@@ -4,6 +4,7 @@ import { Box, Chip, styled, Typography, useTheme } from '@elementor/ui';
 
 import { SelectionBadge } from '../../../components/ui/selection-badge';
 import { t } from '../../../utils/translations';
+import { ProPlanNotice } from './pro-plan-notice';
 
 export interface FeatureOption {
 	id: string;
@@ -21,6 +22,8 @@ interface FeatureGridProps {
 	options: FeatureOption[];
 	selectedValues: string[];
 	onFeatureClick: ( id: string ) => void;
+	shouldDisplayProPlanNotice: boolean;
+	planName: 'Pro' | 'One';
 }
 
 const IncludedInCoreChip = styled( Chip )( ( { theme } ) => ( {
@@ -56,7 +59,13 @@ const FeatureCard = styled( Box, {
 	} ),
 } ) );
 
-export function FeatureGrid( { options, selectedValues, onFeatureClick }: FeatureGridProps ) {
+export function FeatureGrid( {
+	options,
+	selectedValues,
+	onFeatureClick,
+	shouldDisplayProPlanNotice,
+	planName,
+}: FeatureGridProps ) {
 	const theme = useTheme();
 
 	const handleKeyDown = ( event: React.KeyboardEvent, handler: () => void ) => {
@@ -136,6 +145,8 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick }: Featur
 					</FeatureCard>
 				);
 			} ) }
+
+			{ shouldDisplayProPlanNotice && <ProPlanNotice planName={ planName } /> }
 		</Box>
 	);
 }

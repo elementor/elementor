@@ -17,7 +17,7 @@ import {
 	WoocommerceIcon,
 } from '../../icons';
 import { t } from '../../utils/translations';
-import { FeatureGrid, type FeatureOption, ProPlanNotice } from '../components/site-features';
+import { FeatureGrid, type FeatureOption } from '../components/site-features';
 
 export const FEATURE_OPTIONS: FeatureOption[] = [
 	{
@@ -116,7 +116,7 @@ export function SiteFeatures() {
 		actions.setUserChoice( 'site_features', updatedPaidFeatureSelection );
 	}
 
-	const planName = useMemo( () => {
+	const planName: 'Pro' | 'One' = useMemo( () => {
 		const hasOneFeature = storedPaidFeatures.some( ( optionId ) => {
 			const option = FEATURE_OPTIONS.find( ( featureOption ) => featureOption.id === optionId );
 			return option?.licenseType === 'one';
@@ -140,9 +140,9 @@ export function SiteFeatures() {
 				options={ FEATURE_OPTIONS }
 				selectedValues={ selectedValues }
 				onFeatureClick={ handleFeatureClick }
+				shouldDisplayProPlanNotice={ storedPaidFeatures.length > 0 }
+				planName={ planName }
 			/>
-
-			{ storedPaidFeatures.length > 0 && <ProPlanNotice planName={ planName } /> }
 		</Stack>
 	);
 }
