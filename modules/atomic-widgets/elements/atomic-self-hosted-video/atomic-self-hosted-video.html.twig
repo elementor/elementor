@@ -14,7 +14,7 @@
 {% if settings.source.url is not empty %}
   {% set video_url = settings.source.url | e('full_url') %}
 	<video
-    data-id="{{ id }}" data-interaction-id="{{ id }}"
+    data-id="{{ id }}" data-interaction-id="{{ interaction_id }}"
     data-e-type="{{ type }}" data-interactions="{{ interactions | json_encode | e('html_attr') }}"
     {{ id_attribute }}
     class="{{ classes }}"

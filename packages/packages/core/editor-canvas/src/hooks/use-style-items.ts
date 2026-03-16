@@ -191,7 +191,7 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, cach
 		return renderStyles( { styles: breakToBreakpoints( styles ), signal } ).then( ( rendered ) => {
 			rebuildCache( cache, allStyles, rendered );
 
-			return rendered;
+			return getOrderedItems( cache );
 		} );
 	}
 
