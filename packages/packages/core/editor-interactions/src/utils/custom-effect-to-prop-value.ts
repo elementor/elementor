@@ -31,7 +31,7 @@ const isPlainCustomEffect = ( v: unknown ): v is PlainCustomEffect =>
 	v !== null &&
 	'keyframes' in v &&
 	Array.isArray( ( v as PlainCustomEffect ).keyframes ) &&
-	!( '$$type' in v );
+	! ( '$$type' in v );
 
 const toSizePropValue = ( size: number, unit: string = UNIT_PERCENT ): PropValue => ( {
 	$$type: SIZE_TYPE,
@@ -96,12 +96,7 @@ const toKeyframeStopSettingsPropValue = ( plain: PlainKeyframeValue ): PropValue
 		);
 	}
 	if ( plain.move !== undefined ) {
-		value.move = toDimensionalSizePropValue(
-			TRANSFORM_MOVE_TYPE,
-			plain.move,
-			{ x: 0, y: 0, z: 0 },
-			UNIT_PX
-		);
+		value.move = toDimensionalSizePropValue( TRANSFORM_MOVE_TYPE, plain.move, { x: 0, y: 0, z: 0 }, UNIT_PX );
 	}
 	if ( plain.skew !== undefined ) {
 		value.skew = toSkewPropValue( plain.skew );
@@ -110,11 +105,7 @@ const toKeyframeStopSettingsPropValue = ( plain: PlainKeyframeValue ): PropValue
 };
 
 const isPlainKeyframe = ( v: unknown ): v is PlainKeyframe =>
-	typeof v === 'object' &&
-	v !== null &&
-	'stop' in v &&
-	'value' in v &&
-	!( '$$type' in v );
+	typeof v === 'object' && v !== null && 'stop' in v && 'value' in v && ! ( '$$type' in v );
 
 const toKeyframeStopPropValue = ( item: PlainKeyframe | PropValue ): PropValue => {
 	if ( ! isPlainKeyframe( item ) ) {
