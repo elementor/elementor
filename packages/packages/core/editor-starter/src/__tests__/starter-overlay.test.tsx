@@ -1,5 +1,6 @@
-import { render, screen, fireEvent } from '@testing-library/react';
 import * as React from 'react';
+import { fireEvent, render, screen } from '@testing-library/react';
+
 import StarterOverlay from '../components/starter-overlay';
 import { useStarter } from '../hooks/use-starter';
 

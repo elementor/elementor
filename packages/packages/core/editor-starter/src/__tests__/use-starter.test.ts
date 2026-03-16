@@ -1,7 +1,8 @@
-import { renderHook, act } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
+import apiFetch from '@wordpress/api-fetch';
+
 import { useStarter } from '../hooks/use-starter';
 import * as utils from '../utils';
-import apiFetch from '@wordpress/api-fetch';
 
 jest.mock( '@wordpress/api-fetch' );
 jest.mock( '../utils' );
@@ -41,11 +42,13 @@ describe( 'useStarter hook', () => {
 
 	it( 'should initialize with config when editor/documents/attach-preview is triggered', () => {
 		expect( result.current.config ).toEqual( mockConfig );
-		expect( mockApiFetch ).toHaveBeenCalledWith( expect.objectContaining( {
-			path: mockConfig.restPath,
-			method: 'POST',
-			data: { starter_dismissed: true },
-		} ) );
+		expect( mockApiFetch ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				path: mockConfig.restPath,
+				method: 'POST',
+				data: { starter_dismissed: true },
+			} )
+		);
 	} );
 
 	it( 'should call deleteStarterConfig and set isDismissing when dismiss is called', () => {
@@ -62,11 +65,7 @@ describe( 'useStarter hook', () => {
 			result.current.openAiPlanner();
 		} );
 
-		expect( window.open ).toHaveBeenCalledWith(
-			mockConfig.aiPlannerUrl,
-			'_blank',
-			'noopener,noreferrer'
-		);
+		expect( window.open ).toHaveBeenCalledWith( mockConfig.aiPlannerUrl, '_blank', 'noopener,noreferrer' );
 	} );
 
 	it( 'should open Kit Library in a new tab with onboarding referrer', () => {
@@ -77,10 +76,6 @@ describe( 'useStarter hook', () => {
 		const expectedUrl = new URL( mockConfig.kitLibraryUrl );
 		expectedUrl.searchParams.set( 'referrer', 'onboarding' );
 
-		expect( window.open ).toHaveBeenCalledWith(
-			expectedUrl.toString(),
-			'_blank',
-			'noopener,noreferrer'
-		);
+		expect( window.open ).toHaveBeenCalledWith( expectedUrl.toString(), '_blank', 'noopener,noreferrer' );
 	} );
 } );
