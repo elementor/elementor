@@ -68,13 +68,47 @@ class Div_Block extends Atomic_Element_Base {
 				],
 			] )->get();
 
+		$tag_dependencies_for_overridable = Dependency_Manager::make( Dependency_Manager::RELATION_AND )
+			->where( [
+				'operator' => 'ne',
+				'path' => [ 'link', 'origin_value', 'destination' ],
+				'nestedPath' => [ 'group' ],
+				'value' => 'action',
+				'newValue' => [
+					'$$type' => 'string',
+					'value' => 'button',
+				],
+			] )->where( [
+				'operator' => 'not_exist',
+				'path' => [ 'link', 'origin_value', 'destination' ],
+				'newValue' => [
+					'$$type' => 'string',
+					'value' => 'a',
+				],
+			] )->get();
+
+		$new_dep = [
+				'terms' => [ 
+					[
+						'terms' => [ $tag_dependencies_for_overridable ], 
+						'newValue' => [
+							'$$type' => 'string',
+							'value' => 'a',
+						],
+						'relation' => Dependency_Manager::RELATION_AND,
+					], 
+					$tag_dependencies,
+				],
+				'relation' => Dependency_Manager::RELATION_AND,
+			];
+
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer', 'a', 'button' ] )
 				->default( 'div' )
-				->set_dependencies( $tag_dependencies ),
+				->set_dependencies( $new_dep ),
 			'link' => Link_Prop_Type::make(),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];

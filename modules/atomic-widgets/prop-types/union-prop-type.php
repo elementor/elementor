@@ -26,7 +26,7 @@ class Union_Prop_Type implements Prop_Type {
 	private ?array $dependencies = null;
 
 	/** @var Array<string, Transformable_Prop_Type> */
-	protected array $prop_types = [];
+	public array $prop_types = [];
 
 	public static function get_key(): string {
 		return 'union';

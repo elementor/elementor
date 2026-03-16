@@ -143,6 +143,31 @@ function evaluatePropType( props: {
 	return prop[ key as keyof typeof prop ] as PropType;
 }
 
+function isOverridableValue( val: unknown ): val is TransformablePropValue< 'overridable' > {
+	return (
+		typeof val === 'object' &&
+		val !== null &&
+		( val as Record< string, unknown > ).$$type === 'overridable' &&
+		'value' in ( val as Record< string, unknown > )
+	);
+}
+
+function rewrapIfOverridable( originalValue: Value, newInnerValue: Value ): Value {
+	if ( ! isOverridableValue( originalValue ) ) {
+		return newInnerValue;
+	}
+
+	const overridableData = originalValue.value as Record< string, unknown >;
+
+	return {
+		$$type: 'overridable',
+		value: {
+			...overridableData,
+			origin_value: newInnerValue,
+		},
+	} as Value;
+}
+
 function updateValue( path: string[], value: Value, values: Values ) {
 	const topPropKey = path[ 0 ];
 	const newValue: Values = { ...values };
@@ -153,7 +178,7 @@ function updateValue( path: string[], value: Value, values: Values ) {
 		}
 
 		if ( index === path.length - 1 ) {
-			carry[ key ] = value ?? null;
+			carry[ key ] = rewrapIfOverridable( carry[ key ] as Value, value ) ?? null;
 
 			return ( carry[ key ]?.value as Values ) ?? carry.value;
 		}
