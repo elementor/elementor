@@ -14,23 +14,29 @@ describe( 'StarterOverlay', () => {
 	const mockOpenTemplatesLibrary = jest.fn();
 	const mockOnExited = jest.fn();
 
-	const defaultProps = {
-		config: {
-			restPath: 'test-rest-path',
-			aiPlannerUrl: 'https://planner.test',
-			kitLibraryUrl: 'https://kit-library.test',
-		},
-		isDismissing: false,
-		portalContainer: document.createElement( 'div' ),
-		dismiss: mockDismiss,
-		openAiPlanner: mockOpenAiPlanner,
-		openTemplatesLibrary: mockOpenTemplatesLibrary,
-		onExited: mockOnExited,
-	};
+	let portalContainer: HTMLDivElement;
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockUseStarter.mockReturnValue( defaultProps );
+		portalContainer = document.createElement( 'div' );
+		document.body.appendChild( portalContainer );
+		mockUseStarter.mockReturnValue( {
+			config: {
+				restPath: 'test-rest-path',
+				aiPlannerUrl: 'https://planner.test',
+				kitLibraryUrl: 'https://kit-library.test',
+			},
+			isDismissing: false,
+			portalContainer,
+			dismiss: mockDismiss,
+			openAiPlanner: mockOpenAiPlanner,
+			openTemplatesLibrary: mockOpenTemplatesLibrary,
+			onExited: mockOnExited,
+		} );
+	} );
+
+	afterEach( () => {
+		document.body.removeChild( portalContainer );
 	} );
 
 	it( 'should call openAiPlanner when AI Site Planner card is clicked', () => {
