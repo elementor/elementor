@@ -53,13 +53,12 @@ interface OnboardingConfig {
 		comparePlans?: string;
 		createNewPage?: string;
 		upgradeUrl: string;
-		videosBaseUrl: string;
 	};
 }
 
 const defaultConfig: OnboardingConfig = {
-	version: '1.0.0',
-	restUrl: 'https://test.local/wp-json/elementor/v1/e-onboarding/',
+	version: '2.0.0',
+	restUrl: 'https://test.local/wp-json/elementor/v1/onboarding/',
 	nonce: 'test-nonce',
 	steps: [
 		{
@@ -106,14 +105,13 @@ const defaultConfig: OnboardingConfig = {
 		createNewPage: 'https://test.local/wp-admin/edit.php?action=elementor_new_post&post_type=page',
 		upgradeUrl:
 			'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar&utm_term=2.0.0',
-		videosBaseUrl: 'https://test.local/videos/',
 	},
 };
 
 type ConfigOverrides = Partial< OnboardingConfig >;
 
-const createMockConfig = ( overrides: ConfigOverrides = {} ): { 'e-onboarding': OnboardingConfig } => ( {
-	'e-onboarding': {
+const createMockConfig = ( overrides: ConfigOverrides = {} ): { onboarding: OnboardingConfig } => ( {
+	onboarding: {
 		...defaultConfig,
 		...overrides,
 		progress: {

@@ -1,6 +1,6 @@
 import type { StarterConfig } from './types';
 
-const ONBOARDING_ASSETS_PATH = 'images/app/e-onboarding/';
+const ONBOARDING_ASSETS_PATH = 'images/app/onboarding/';
 
 export function getStarterConfig(): StarterConfig | null {
 	return ( ( window.elementor?.config as Record< string, unknown > )?.starter as StarterConfig | null ) ?? null;
@@ -20,12 +20,4 @@ export function getAssetUrl( fileName: string ): string {
 	return baseUrl
 		? `${ baseUrl }${ ONBOARDING_ASSETS_PATH }${ fileName }`
 		: `${ ONBOARDING_ASSETS_PATH }${ fileName }`;
-}
-
-export function getEditingPanelWidth(): number {
-	return document.querySelector( '.elementor-panel' )?.clientWidth || 0;
-}
-
-export function getTopBarHeight(): number {
-	return document.querySelector( '.MuiAppBar-root' )?.clientHeight || 48;
 }

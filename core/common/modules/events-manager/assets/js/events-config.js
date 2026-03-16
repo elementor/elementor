@@ -27,6 +27,8 @@ const eventsConfig = {
 		resultsUpdated: 'results_updated',
 		noResults: 'no_results',
 		selected: 'selected',
+		promotionViewed: 'promotion_viewed',
+		upgradeNow: 'upgrade_now',
 	},
 
 	targetNames: {
@@ -77,6 +79,9 @@ const eventsConfig = {
 		canvas: 'Canvas',
 		leftPanel: 'Left Panel',
 		elementorLibrary: 'Elementor Library',
+		components: {
+			instanceEditingPanel: 'Instance Editing Panel',
+		},
 	},
 
 	secondaryLocations: {
@@ -240,6 +245,7 @@ const eventsConfig = {
 			propertiesGroupCreated: 'component_properties_group_created',
 			propertyExposed: 'component_property_exposed',
 			propertyRemoved: 'component_property_removed',
+			detached: 'component_detached',
 		},
 		global_classes: {
 			classApplied: 'class_applied',
@@ -273,6 +279,13 @@ const eventsConfig = {
 			finderResultSelect: 'finder_result_select',
 			canvasEmptyBoxAction: 'canvas_empty_box_action',
 			widgetPanelSearch: 'widget_panel_search',
+		},
+		interactions: {
+			created: 'interactions_created',
+    },
+		promotions: {
+			viewPromotion: 'view_promotion',
+			upgradePromotionClick: 'upgrade_promotion_click',
 		},
 	},
 };

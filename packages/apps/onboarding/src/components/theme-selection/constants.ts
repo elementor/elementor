@@ -48,7 +48,7 @@ export function getRecommendedTheme( choices: {
 	const experienceQualifies = choices.experience_level === 'beginner';
 	const siteAboutQualifies =
 		Array.isArray( choices.site_about ) &&
-		choices.site_about.some( ( item ) => [ 'local_services', 'ecommerce' ].includes( item ) );
+		choices.site_about.some( ( item ) => [ 'booking', 'online_store' ].includes( item ) );
 
 	if ( ( buildingForQualifies || experienceQualifies ) && siteAboutQualifies ) {
 		return 'hello-biz';

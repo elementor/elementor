@@ -1,5 +1,7 @@
 import { createMockDocument } from 'test-utils';
 import { invalidateDocumentData } from '@elementor/editor-documents';
+import { notify } from '@elementor/editor-notifications';
+import { AxiosError } from '@elementor/http-client';
 
 import { apiClient } from '../../api';
 import { type ComponentDocumentsMap, getComponentDocuments } from '../../utils/get-component-documents';
@@ -9,6 +11,7 @@ jest.mock( '@elementor/editor-documents', () => ( {
 	...jest.requireActual( '@elementor/editor-documents' ),
 	invalidateDocumentData: jest.fn(),
 } ) );
+jest.mock( '@elementor/editor-notifications' );
 jest.mock( '../../utils/get-component-documents' );
 jest.mock( '../../api' );
 
@@ -182,5 +185,81 @@ describe( 'publishDraftComponentsInPageBeforeSave', () => {
 		// Assert
 		expect( apiClient.updateStatuses ).not.toHaveBeenCalled();
 		expect( invalidateDocumentData ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should show promotion notification and not throw when updateStatuses fails with insufficient_permissions', async () => {
+		// Arrange
+		jest.mocked( getComponentDocuments ).mockResolvedValue( createMockDocumentsMap( [ 1000 ] ) );
+
+		const insufficientPermissionsError = new AxiosError( 'Request failed' );
+		insufficientPermissionsError.response = {
+			data: { code: 'insufficient_permissions' },
+			status: 403,
+			statusText: 'Forbidden',
+			headers: {},
+			config: {} as never,
+		};
+		jest.mocked( apiClient.updateStatuses ).mockRejectedValue( insufficientPermissionsError );
+
+		const elements = [
+			{
+				elType: 'widget',
+				id: '2',
+				widgetType: 'e-component',
+				settings: {
+					component_instance: {
+						$$type: 'component-instance',
+						value: {
+							component_id: { $$type: 'number', value: 1000 },
+						},
+					},
+				},
+			},
+		];
+
+		// Act
+		await publishDraftComponentsInPageBeforeSave( {
+			elements,
+			status: 'publish',
+		} );
+
+		// Assert
+		expect( notify ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				type: 'promotion',
+			} )
+		);
+	} );
+
+	it( 'should re-throw when updateStatuses fails with a non-permissions error', async () => {
+		// Arrange
+		jest.mocked( getComponentDocuments ).mockResolvedValue( createMockDocumentsMap( [ 1000 ] ) );
+		jest.mocked( apiClient.updateStatuses ).mockRejectedValue( new Error( 'Network error' ) );
+
+		const elements = [
+			{
+				elType: 'widget',
+				id: '2',
+				widgetType: 'e-component',
+				settings: {
+					component_instance: {
+						$$type: 'component-instance',
+						value: {
+							component_id: { $$type: 'number', value: 1000 },
+						},
+					},
+				},
+			},
+		];
+
+		// Act & Assert
+		await expect(
+			publishDraftComponentsInPageBeforeSave( {
+				elements,
+				status: 'publish',
+			} )
+		).rejects.toThrow( 'Network error' );
+
+		expect( notify ).not.toHaveBeenCalled();
 	} );
 } );

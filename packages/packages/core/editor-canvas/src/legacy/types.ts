@@ -203,6 +203,7 @@ type BackboneCollection< Model extends object > = {
 
 export type ElementModel = {
 	id: string;
+	originId?: string;
 	elType: string;
 	settings: BackboneModel< Props >;
 	editor_settings: Record< string, unknown >;
@@ -223,13 +224,14 @@ type ContextMenuGroup = {
 	actions: ContextMenuAction[];
 };
 
+export type ContextMenuEventData = { location: string; secondaryLocation: string; trigger: string };
 export type ContextMenuAction = {
 	name: string;
 	icon: string;
 	title: string | ( () => string );
 	shortcut?: string;
 	isEnabled: () => boolean;
-	callback: ( _: unknown, eventData: unknown ) => void;
+	callback: ( _: unknown, eventData: ContextMenuEventData ) => void;
 };
 
 export type ReplacementSettings = {

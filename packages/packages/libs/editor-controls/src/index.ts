@@ -82,6 +82,8 @@ export type { FontCategory } from './controls/font-family-control/font-family-co
 export type { InlineEditorToolbarProps } from './components/inline-editor-toolbar';
 export type { V4PromotionData, V4PromotionKey } from './components/promotions/types';
 export type { PromotionTriggerRef } from './components/promotions/promotion-trigger';
+export { trackViewPromotion, trackUpgradePromotionClick } from './utils/tracking';
+export type { PromotionTrackingData } from './utils/tracking';
 
 // providers
 export {

@@ -129,6 +129,16 @@ export const navigateToHomeScreen = async ( page: Page ) => {
 	return page.locator( '#e-home-screen' );
 };
 
+export const getScreenshotName = async ( page: Page, baseName: string ): Promise<string> => {
+	const hasBranch7 = await page.locator( '[class*="branch-7"]' ).count() > 0;
+	if ( ! hasBranch7 ) {
+		return baseName;
+	}
+
+	const extension = baseName.lastIndexOf( '.' );
+	return `${ baseName.slice( 0, extension ) }-with-wordpress7${ baseName.slice( extension ) }`;
+};
+
 export const saveHomepageSettings = async ( apiRequests: ApiRequests, requestContext: APIRequestContext ): Promise<HomepageSettings> => {
 	try {
 		const homepageResponse = await apiRequests.customGet( requestContext, 'index.php?rest_route=/wp/v2/options/page_on_front' );
@@ -138,7 +148,7 @@ export const saveHomepageSettings = async ( apiRequests: ApiRequests, requestCon
 			homepageId: homepageResponse?.value || null,
 			showOnFront: showOnFrontResponse?.value || null,
 		};
-	} catch ( error ) {
+	} catch {
 		return {
 			homepageId: null,
 			showOnFront: null,
@@ -158,7 +168,8 @@ export const restoreHomepageSettings = async ( apiRequests: ApiRequests, request
 		if ( settings.showOnFront !== null ) {
 			await apiRequests.customPut( requestContext, 'index.php?rest_route=/wp/v2/options/show_on_front', { value: settings.showOnFront } );
 		}
-	} catch ( error ) {
+	} catch {
+		// Ignore errors
 	}
 };
 
