@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useRef, useState } from 'react';
 import { validateStyleLabel } from '@elementor/editor-styles-repository';
 import { EditableField, EllipsisWithTooltip, MenuListItem, useEditable, WarningInfotip } from '@elementor/editor-ui';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { DotsVerticalIcon } from '@elementor/icons';
 import {
 	bindMenu,
@@ -142,7 +141,7 @@ export const ClassItem = ( {
 						{ __( 'Rename', 'elementor' ) }
 					</Typography>
 				</MenuListItem>
-				{ isExperimentActive( 'e_design_system_sync' ) && onToggleSync && (
+				{ onToggleSync && (
 					<MenuListItem
 						onClick={ () => {
 							popupState.close();
