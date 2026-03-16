@@ -46,6 +46,7 @@ export { AttributesControl } from './components/promotions/attributes-control';
 export { PromotionTrigger } from './components/promotions/promotion-trigger';
 export { ControlToggleButtonGroup } from './components/control-toggle-button-group';
 export { ToggleButtonGroupUi } from './components/control-toggle-button-group';
+export { StyledToggleButtonGroup, StyledToggleButton } from './components/control-toggle-button-group';
 export { ClearIconButton } from './components/icon-buttons/clear-icon-button';
 export {
 	Repeater,
