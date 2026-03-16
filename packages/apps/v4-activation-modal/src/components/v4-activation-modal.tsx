@@ -37,17 +37,17 @@ export const V4ActivationModal = ( {
 				maxWidth={ false }
 				onClose={ onClose }
 				PaperProps={ {
-				sx: {
-					width: MODAL_WIDTH,
-					maxWidth: '100%',
-					overflow: 'hidden',
-					opacity: 0,
-					transform: 'scale(0.95)',
-					animation: `v4-modal-reveal ${ ANIMATION_DURATION_MS }ms ease ${ CONTENT_DELAY_MS }ms forwards`,
-					'@keyframes v4-modal-reveal': {
-						to: { opacity: 1, transform: 'scale(1)' },
+					sx: {
+						width: MODAL_WIDTH,
+						maxWidth: '100%',
+						overflow: 'hidden',
+						opacity: 0,
+						transform: 'scale(0.95)',
+						animation: `v4-modal-reveal ${ ANIMATION_DURATION_MS }ms ease ${ CONTENT_DELAY_MS }ms forwards`,
+						'@keyframes v4-modal-reveal': {
+							to: { opacity: 1, transform: 'scale(1)' },
+						},
 					},
-				},
 				} }
 				BackdropProps={ {
 					sx: {
