@@ -409,6 +409,20 @@ class Widgets_Manager {
 		return $config;
 	}
 
+	/**
+	 * @throws \Exception If current user don't have permissions to edit the post.
+	 */
+	public function ajax_refresh_widgets_config( array $data ) {
+		Plugin::$instance->documents->check_permissions( $data['editor_post_id'] );
+
+		wp_raise_memory_limit( 'admin' );
+
+		return [
+			'widgets' => $this->get_widget_types_config(),
+			'categories' => Plugin::$instance->elements_manager->get_categories(),
+		];
+	}
+
 	public function ajax_get_widgets_default_value_translations( array $data = [] ) {
 		$locale = empty( $data['locale'] )
 			? get_locale()
@@ -738,6 +752,8 @@ class Widgets_Manager {
 		$ajax_manager->register_ajax_action( 'render_widget', [ $this, 'ajax_render_widget' ] );
 		$ajax_manager->register_ajax_action( 'editor_get_wp_widget_form', [ $this, 'ajax_get_wp_widget_form' ] );
 		$ajax_manager->register_ajax_action( 'get_widgets_config', [ $this, 'ajax_get_widget_types_controls_config' ] );
+
+		$ajax_manager->register_ajax_action( 'refresh_widgets_config', [ $this, 'ajax_refresh_widgets_config' ] );
 
 		$ajax_manager->register_ajax_action( 'get_widgets_default_value_translations', function ( array $data ) {
 			return $this->ajax_get_widgets_default_value_translations( $data );
