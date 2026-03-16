@@ -1,10 +1,17 @@
 import Kit from '../models/kit';
 import KitListItem from './kit-list-item';
+import NewPageKitListItem from './new-page-kit-list-item';
 import { CssGrid } from '@elementor/app-ui';
 
 export default function KitList( props ) {
+	const referrer = new URLSearchParams( window.location.search ).get( 'referrer' );
+
 	return (
 		<CssGrid spacing={ 24 } colMinWidth={ 290 }>
+			{
+				'onboarding' === referrer &&
+				<NewPageKitListItem />
+			}
 			{
 				props.data.map( ( model, index ) => (
 					// The + 1 was added in order to start the map.index from 1 and not from 0.
@@ -19,6 +26,7 @@ KitList.propTypes = {
 	data: PropTypes.arrayOf( PropTypes.instanceOf( Kit ) ),
 	queryParams: PropTypes.shape( {
 		search: PropTypes.string,
+		referrer: PropTypes.string,
 	} ),
 	source: PropTypes.string,
 };

@@ -70,26 +70,12 @@ export function useStarter() {
 		return () => window.removeEventListener( 'elementor/commands/run/after', onInsertStarters );
 	}, [] );
 
-	useEffect( () => {
-		if ( ! config ) {
-			return;
-		}
-
-		const onTemplateImport = ( event: Event ) => {
-			const detail = ( event as CustomEvent )?.detail;
-
-			if ( detail?.command === 'document/elements/import' ) {
-				dismiss();
-			}
-		};
-
-		window.addEventListener( 'elementor/commands/run/after', onTemplateImport );
-
-		return () => window.removeEventListener( 'elementor/commands/run/after', onTemplateImport );
-	}, [ config, dismiss ] );
-
 	function openTemplatesLibrary() {
-		runCommand( 'library/open' );
+		if ( config?.kitLibraryUrl ) {
+			const url = new URL( config.kitLibraryUrl, window.location.origin );
+			url.searchParams.set( 'referrer', 'onboarding' );
+			window.open( url.toString(), '_blank', 'noopener,noreferrer' );
+		}
 	}
 
 	function openAiPlanner() {
