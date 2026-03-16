@@ -46,9 +46,12 @@ const SELECTORS_MAP: Record< StyleDefinitionType, string > = {
 	class: '.',
 };
 
+const DEFAULT_BREAKPOINT = 'desktop';
+const DEFAULT_STATE = 'normal';
+
 function getStyleUniqueKey( style: RendererStyleDefinition ): string {
-	const breakpoint = style.variants[ 0 ]?.meta?.breakpoint ?? 'desktop';
-	const state = style.variants[ 0 ]?.meta?.state ?? 'normal';
+	const breakpoint = style.variants[ 0 ]?.meta?.breakpoint ?? DEFAULT_BREAKPOINT;
+	const state = style.variants[ 0 ]?.meta?.state ?? DEFAULT_STATE;
 	return `${ style.id }-${ breakpoint }-${ state }`;
 }
 
