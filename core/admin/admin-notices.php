@@ -939,7 +939,10 @@ class Admin_Notices extends Module {
 			$notice_classes[] = 'e-notice--' . $options['type'];
 		}
 
-		$wrapper_attributes = [];
+		$wrapper_attributes = [
+			'role' => 'region',
+			'aria-label' => esc_html__( 'Elementor notice', 'elementor' ),
+		];
 
 		if ( $options['dismissible'] ) {
 			$label = esc_html__( 'Dismiss this notice.', 'elementor' );
@@ -1096,6 +1099,7 @@ class Admin_Notices extends Module {
 	public function __construct() {
 		add_action( 'admin_notices', [ $this, 'admin_notices' ], 20 );
 		add_action( 'admin_action_install-plugin', [ $this, 'maybe_log_campaign' ] );
+		add_action( 'admin_action_activate', [ $this, 'maybe_log_campaign' ] );
 	}
 
 	/**
