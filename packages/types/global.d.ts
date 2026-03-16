@@ -161,6 +161,17 @@ declare global {
 		};
 		elementorAppConfig?: {
 			'e-onboarding'?: EOnboardingConfig;
+		'site-builder'?: {
+			wpRestUrl: string;
+			nonce: string;
+				connectAuth?: {
+					signature: string;
+					accessToken: string;
+					clientId: string;
+					homeUrl: string;
+					siteKey: string;
+				};
+			};
 		};
 		ElementorInteractionsConfig?: InteractionsConfig;
 		ElementorVariablesQuotaConfig?: Record< string, number >;
