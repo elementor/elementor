@@ -10,7 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-
 class Module extends BaseModule {
 	const MODULE_NAME = 'design-system-sync';
 	public static function get_v3_sync_id( string $label ): string {
