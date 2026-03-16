@@ -68,18 +68,9 @@ export function App() {
 		if ( type === 'site-planner/deploy-website' ) {
 			const iframe = iframeRef.current;
 			const origin = event.origin;
-			const config = getConfig();
-
-			if ( ! config?.wpRestUrl || ! config?.nonce ) {
-				iframe?.contentWindow?.postMessage( {
-					type: 'site-planner/deploy-website/result',
-					payload: { status: 'error', error: 'Missing REST configuration' },
-				}, origin || '*' );
-				return;
-			}
 
 			try {
-				const result = await deployWebsite( config, event.data.payload );
+				const result = await deployWebsite( event.data.payload );
 
 				iframe?.contentWindow?.postMessage( {
 					type: 'site-planner/deploy-website/result',

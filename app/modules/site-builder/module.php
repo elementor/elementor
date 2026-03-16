@@ -62,14 +62,11 @@ class Module extends BaseModule {
 		$site_key = $app->get_site_key();
 		$access_token_secret = $app->get( 'access_token_secret' );
 
-		// Must match the hardcoded values in the AI API's auth.service.ts validateConnectAuth()
 		$connect_data = [
 			'access-token' => $access_token,
 			'app' => 'library',
 			'client-id' => $client_id,
-			'endpoint' => 'text\\completion',
 			'home-url' => $home_url,
-			'local-id' => '1',
 			'site-key' => $site_key,
 		];
 
