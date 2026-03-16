@@ -1,27 +1,32 @@
 import * as React from 'react';
-import { Link, Stack, Typography } from '@elementor/ui';
+import { Button, Stack, Typography } from '@elementor/ui';
+
+type FooterLink = {
+	text: string;
+	url: string;
+};
 
 type ModalFooterProps = {
 	helpText: string;
-	learnMoreText: string;
-	learnMoreUrl: string;
+	link: FooterLink;
 };
 
-export const ModalFooter = ( { helpText, learnMoreText, learnMoreUrl }: ModalFooterProps ) => {
+export const ModalFooter = ( { helpText, link }: ModalFooterProps ) => {
 	return (
-		<Stack direction="row" alignItems="center" gap={ 1.5 }>
-			<Typography variant="body2" color="text.secondary">
+		<Stack direction="row" alignItems="center" gap={ 1 }>
+			<Typography variant="caption" color="text.tertiary" sx={ { fontSize: '11px', lineHeight: 'normal' } }>
 				{ helpText }
 			</Typography>
-			<Link
-				href={ learnMoreUrl }
+			<Button
+				href={ link.url }
 				target="_blank"
-				variant="body2"
-				color="info.main"
-				sx={ { textDecoration: 'none' } }
+				variant="text"
+				size="small"
+				color="info"
+				sx={ { fontSize: '11px' } }
 			>
-				{ learnMoreText }
-			</Link>
+				{ link.text }
+			</Button>
 		</Stack>
 	);
 };
