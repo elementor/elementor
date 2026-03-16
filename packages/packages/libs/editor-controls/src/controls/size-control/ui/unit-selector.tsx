@@ -7,7 +7,7 @@ export type UnitSelectorProps< T extends string > = {
 	options: T[];
 	value: T;
 	onSelect: ( value: T ) => void;
-	isActive: boolean; // test general unit, auto, custom
+	isActive: boolean;
 	menuItemsAttributes?: { [ key in T ]?: Record< string, unknown > };
 	optionLabelOverrides?: { [ key in T ]?: React.ReactNode };
 	disabled?: boolean;

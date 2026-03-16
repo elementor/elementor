@@ -51,8 +51,8 @@ export const SizeComponent = ( {
 	};
 
 	const handleUnitChange = ( unit: SizeUnit ) => {
-		if ( unit === EXTENDED_UNITS.custom ) {
-			popupState.open( anchorRef?.current );
+		if ( unit === EXTENDED_UNITS.custom && anchorRef?.current ) {
+			popupState.open( anchorRef.current );
 		}
 	};
 

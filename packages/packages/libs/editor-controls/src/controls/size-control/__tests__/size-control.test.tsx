@@ -2,25 +2,23 @@ import * as React from 'react';
 import type { RefObject } from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
 import type { SizePropValue } from '@elementor/editor-props';
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 
-import { getAngleUnits, getLengthUnits } from '../sync/get-units';
+import { getAngleUnits, getLengthUnits, getTimeUnits } from '../sync/get-units';
 import { UnstableSizeControl } from '../unstable-size-control';
-import { getDefaultUnit } from '../utils/settings/get-default-unit';
 import { isExtendedUnit } from '../utils/is-extended-unit';
 
 jest.mock( '../utils/is-extended-unit' );
 jest.mock( '../sync/get-units' );
-jest.mock( '../utils/settings/get-default-unit' );
 
 const mockIsExtendedUnit = jest.mocked( isExtendedUnit );
-const mockGetLengthUnits = jest.mocked( getLengthUnits );
 const mockGetAngleUnits = jest.mocked( getAngleUnits );
-const mockGetDefaultUnit = jest.mocked( getDefaultUnit );
+const mockGetLengthUnits = jest.mocked( getLengthUnits );
+const mockGetTimeUnits = jest.mocked( getTimeUnits );
 
 const mockSizeProp = ( value?: SizePropValue[ 'value' ] ) => ( {
 	$$type: 'size',
-	value: { unit: '', size: null, ...value },
+	value: { unit: 'px', size: null, ...value },
 } );
 
 const mockLengthUnits = () => [ 'px', 'rem', '%', 'em' ];
@@ -38,12 +36,11 @@ const createSizePropType = ( options: object = {} ) => {
 		},
 	} );
 };
-// should not open custom wen rendering component only wen triggering thrun input click and selection
+
 describe( 'SizeControl', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockIsExtendedUnit.mockReturnValue( false );
-		mockGetDefaultUnit.mockReturnValue( undefined );
 	} );
 
 	it( 'should render the size control with its props', () => {
@@ -54,7 +51,7 @@ describe( 'SizeControl', () => {
 		const props = {
 			setValue,
 			value: mockSizeProp(),
-			bind: 'select',
+			bind: 'size',
 			propType: createSizePropType( {
 				settings: {
 					units,
@@ -66,16 +63,90 @@ describe( 'SizeControl', () => {
 		renderControl( <UnstableSizeControl placeholder="Enter size" />, props );
 
 		// Assert.
-		const numberInput = screen.getByRole( 'spinbutton' );
-		const selectInput = screen.getByRole( 'button' );
+		const sizeInput = screen.getByRole( 'spinbutton' );
+		const unitSelectorButton = screen.getByRole( 'button' );
 
-		expect( numberInput ).toHaveAttribute( 'placeholder', 'Enter size' );
+		expect( sizeInput ).toHaveAttribute( 'placeholder', 'Enter size' );
 
-		fireEvent.click( selectInput );
+		fireEvent.click( unitSelectorButton );
 
 		screen.getAllByRole( 'menuitem' ).forEach( ( option, index ) => {
 			expect( option ).toHaveTextContent( units[ index ].toUpperCase() );
 		} );
+	} );
+
+	it( 'should render null value correctly', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const units = mockLengthUnits();
+
+		const props = {
+			setValue,
+			value: null,
+			bind: 'select',
+			propType: createSizePropType( {
+				settings: {
+					units,
+				},
+			} ),
+		};
+
+		// Act.
+		renderControl( <UnstableSizeControl />, props );
+
+		// Assert.
+		expect( screen.getByRole( 'spinbutton' ) ).toHaveDisplayValue( '' );
+		expect( screen.getByRole( 'button', { name: 'px' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render undefined size & undefined unit values', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const units = mockLengthUnits();
+
+		const props = {
+			setValue,
+			value: mockSizeProp( { size: undefined, unit: undefined } as unknown as SizePropValue[ 'value' ] ),
+			bind: 'size',
+			propType: createSizePropType( {
+				settings: {
+					units,
+					default_unit: '%',
+				},
+			} ),
+		};
+
+		// Act.
+		renderControl( <UnstableSizeControl />, props );
+
+		// Assert.
+		expect( screen.getByRole( 'spinbutton' ) ).toHaveDisplayValue( '' );
+		expect( screen.getByRole( 'button', { name: '%' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render null size & null unit values', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const units = mockLengthUnits();
+
+		const props = {
+			setValue,
+			value: mockSizeProp( { size: null, unit: null } as unknown as SizePropValue[ 'value' ] ),
+			bind: 'size',
+			propType: createSizePropType( {
+				settings: {
+					units,
+					default_unit: 'rem',
+				},
+			} ),
+		};
+
+		// Act.
+		renderControl( <UnstableSizeControl />, props );
+
+		// Assert.
+		expect( screen.getByRole( 'spinbutton' ) ).toHaveDisplayValue( '' );
+		expect( screen.getByRole( 'button', { name: 'rem' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'should pass the updated unit on change', () => {
@@ -86,7 +157,7 @@ describe( 'SizeControl', () => {
 		const props = {
 			setValue,
 			value: mockSizeProp( { size: 10, unit: 'px' } ),
-			bind: 'select',
+			bind: 'size',
 			propType: createSizePropType( {
 				settings: {
 					units,
@@ -99,12 +170,11 @@ describe( 'SizeControl', () => {
 
 		const select = screen.getByRole( 'button' );
 
-		// Act.
 		fireEvent.click( select );
 
-		const option2 = screen.getByText( 'REM' );
+		const remOption = screen.getByText( 'REM' );
 
-		fireEvent.click( option2 );
+		fireEvent.click( remOption );
 
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 10, unit: 'rem' } } );
@@ -118,7 +188,7 @@ describe( 'SizeControl', () => {
 		const props = {
 			setValue,
 			value: mockSizeProp( { size: 10, unit: 'px' } ),
-			bind: 'select',
+			bind: 'size',
 			propType: createSizePropType( {
 				settings: {
 					units,
@@ -135,7 +205,7 @@ describe( 'SizeControl', () => {
 		expect( sizeInput ).toHaveValue( 10 );
 
 		// Act.
-		fireEvent.input( sizeInput, { target: { value: '20' } } ); // pass 20 as string and make sure it's converted to number.
+		fireEvent.input( sizeInput, { target: { value: '20' } } );
 
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 20, unit: 'px' } } );
@@ -149,7 +219,7 @@ describe( 'SizeControl', () => {
 		const props = {
 			setValue,
 			value: mockSizeProp( { size: 10, unit: 'px' } ),
-			bind: 'select',
+			bind: 'size',
 			propType: createSizePropType( {
 				settings: {
 					units,
@@ -162,7 +232,6 @@ describe( 'SizeControl', () => {
 
 		const sizeInput = screen.getByRole( 'spinbutton' );
 
-		// Act.
 		fireEvent.input( sizeInput, { target: { value: 'invalid' } } );
 
 		// Assert.
@@ -183,7 +252,7 @@ describe( 'SizeControl', () => {
 		const props = {
 			setValue,
 			value: mockSizeProp( { size: 10, unit: 'px' } ),
-			bind: 'select',
+			bind: 'size',
 			propType: createSizePropType( {
 				settings: {
 					units,
@@ -196,7 +265,6 @@ describe( 'SizeControl', () => {
 
 		const sizeInput = screen.getByRole( 'spinbutton' );
 
-		// Act.
 		fireEvent.input( sizeInput, { target: { value: '' } } );
 
 		// Assert.
@@ -218,7 +286,7 @@ describe( 'SizeControl', () => {
 		const props = {
 			setValue,
 			value: mockSizeProp( { size: 10, unit: 'px' } ),
-			bind: 'select',
+			bind: 'size',
 			propType: createSizePropType( {
 				settings: {
 					units: [ 'px', 'rem', 'auto' ],
@@ -273,22 +341,51 @@ describe( 'SizeControl', () => {
 
 		const sizeInput = screen.getByRole( 'spinbutton' );
 
-		// Act.
 		fireEvent.input( sizeInput, { target: { value: '' } } );
 
-		// Assert. WE now allow to sent empty string
-		expect( setValue ).not.toHaveBeenCalled();
+		// Assert.
+		expect( sizeInput ).toHaveDisplayValue( '' );
 
-		// Act.
 		fireEvent.blur( sizeInput );
 
-		// Assert.
 		expect( sizeInput ).toHaveDisplayValue( '10' );
+	} );
+
+	it( 'should not call setValue when required and size is cleared (validation blocks empty value)', () => {
+		// Arrange.
+		const setValue = jest.fn();
+
+		const requiredPropType = createMockPropType( {
+			key: 'size',
+			kind: 'plain',
+			settings: {
+				required: true,
+				units: [ 'px', 'rem', 'vh' ],
+			},
+		} );
+
+		const props = {
+			setValue,
+			value: mockSizeProp( { size: 10, unit: 'vh' } ),
+			bind: 'select',
+			propType: requiredPropType,
+		};
+
+		// Act.
+		renderControl( <UnstableSizeControl />, props );
+
+		const sizeInput = screen.getByRole( 'spinbutton' );
+		fireEvent.input( sizeInput, { target: { value: '' } } );
+
+		// Assert.
+		expect( setValue ).not.toHaveBeenCalled();
+		expect( sizeInput ).toHaveDisplayValue( '' );
 	} );
 
 	it( 'should not restore the previous value on blur when the size is empty and the field is not required', () => {
 		// Arrange.
 		const setValue = jest.fn();
+		const bind = 'select';
 
 		const notRequiredPropType = createMockPropType( {
 			key: 'size',
@@ -302,22 +399,20 @@ describe( 'SizeControl', () => {
 		const props = {
 			setValue,
 			value: mockSizeProp( { size: 10, unit: 'px' } ),
-			bind: 'select',
+			bind,
 			propType: notRequiredPropType,
 		};
 
 		// Act.
-		renderControl( <UnstableSizeControl />, props );
+		const { rerender } = renderControl( <UnstableSizeControl />, props );
 
 		const sizeInput = screen.getByRole( 'spinbutton' );
 
 		// Assert.
 		expect( sizeInput ).toHaveDisplayValue( '10' );
 
-		// Act.
 		fireEvent.input( sizeInput, { target: { value: '' } } );
 
-		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( {
 			$$type: 'size',
 			value: {
@@ -326,11 +421,73 @@ describe( 'SizeControl', () => {
 			},
 		} );
 
-		// Act.
+		rerender( <UnstableSizeControl />, {
+			value: { [ bind ]: mockSizeProp( { size: '', unit: 'px' } ) },
+		} );
+
 		fireEvent.blur( sizeInput );
 
 		// Assert.
 		expect( sizeInput ).toHaveDisplayValue( '' );
+		expect( setValue ).toHaveBeenLastCalledWith( null );
+	} );
+
+	it( 'should not call setValue(null) on blur when not required and unit is auto', () => {
+		// Arrange.
+		const setValue = jest.fn();
+
+		const props = {
+			setValue,
+			value: mockSizeProp( { size: '', unit: 'auto' } ),
+			bind: 'select',
+			propType: createSizePropType( {
+				settings: {
+					required: false,
+					units: [ 'px', 'auto' ],
+				},
+			} ),
+		};
+
+		// Act.
+		renderControl( <UnstableSizeControl />, props );
+
+		const sizeInput = screen.getByRole( 'spinbutton' );
+		fireEvent.blur( sizeInput );
+
+		// Assert.
+		expect( setValue ).not.toHaveBeenCalledWith( null );
+	} );
+
+	it( 'should not call setValue(null) on blur when not required and unit is custom', () => {
+		// Arrange.
+		mockIsExtendedUnit.mockReturnValue( true );
+
+		const setValue = jest.fn();
+
+		const props = {
+			setValue,
+			value: mockSizeProp( { size: 'my-custom', unit: 'custom' } ),
+			bind: 'select',
+			propType: createSizePropType( {
+				settings: {
+					required: false,
+					units: [ 'px', 'custom' ],
+				},
+			} ),
+		};
+
+		const anchorEl = {
+			current: document.body,
+		} as unknown as RefObject< HTMLDivElement | null >;
+
+		// Act.
+		renderControl( <UnstableSizeControl anchorRef={ anchorEl } />, props );
+
+		const customInput = screen.getByDisplayValue( 'my-custom' );
+		fireEvent.blur( customInput );
+
+		// Assert.
+		expect( setValue ).not.toHaveBeenCalledWith( null );
 	} );
 
 	it( 'should render 0 as a valid size', () => {
@@ -357,7 +514,6 @@ describe( 'SizeControl', () => {
 		expect( sizeInput ).toHaveDisplayValue( '10' );
 
 		// Act.
-		fireEvent.input( sizeInput, { target: { value: '1' } } );
 		fireEvent.input( sizeInput, { target: { value: '0' } } );
 
 		// Assert.
@@ -365,8 +521,6 @@ describe( 'SizeControl', () => {
 		expect( setValue ).toHaveBeenLastCalledWith( { $$type: 'size', value: { size: 0, unit: 'px' } } );
 	} );
 
-	// custom should be triggered by only 2 things
-	// changing of unit && clicking of input
 	it( 'should render custom value correctly', async () => {
 		// Arrange.
 		mockIsExtendedUnit.mockReturnValue( true );
@@ -406,28 +560,24 @@ describe( 'SizeControl', () => {
 		expect( selectButton ).toContainHTML( customOptionElement );
 	} );
 
-	it( 'should close the custom popover and update the size when the enter key is pressed', () => {
+	it( 'should open custom popover and update value and close popover on "enter" key is press', async () => {
 		// Arrange.
 		mockIsExtendedUnit.mockReturnValue( true );
 
 		const setValue = jest.fn();
-		const customOptionElement =
-			'M11 2.25C11.7293 2.25 12.4286 2.53994 12.9443 3.05566C13.4601 3.57139 13.75 4.27065 13.75 5C13.75 5.41421 13.4142 5.75 13 5.75C12.5858 5.75 12.25 5.41421 12.25 5C12.25 4.66848 12.1182 4.35063 11.8838 4.11621C11.6788 3.9112 11.41 3.78436 11.124 3.75586L11 3.75C10.814 3.75 10.6506 3.81583 10.4551 4.11426C10.2346 4.45097 10.039 4.99859 9.85547 5.79395C9.67493 6.57636 9.5225 7.51803 9.34961 8.60254C9.21917 9.42077 9.07773 10.3124 8.90625 11.25H11C11.4142 11.25 11.75 11.5858 11.75 12C11.75 12.4142 11.4142 12.75 11 12.75H8.62109C8.43063 13.7634 8.27485 14.7306 8.13086 15.6338C7.96004 16.7053 7.79989 17.7015 7.60547 18.5439C7.41407 19.3732 7.17193 20.1385 6.79883 20.708C6.4006 21.3157 5.81393 21.75 5 21.75C4.27065 21.75 3.57139 21.4601 3.05566 20.9443C2.53994 20.4286 2.25 19.7293 2.25 19C2.25 18.5858 2.58579 18.25 3 18.25C3.41421 18.25 3.75 18.5858 3.75 19C3.75 19.3315 3.88179 19.6494 4.11621 19.8838C4.35063 20.1182 4.66848 20.25 5 20.25C5.18595 20.25 5.3494 20.1842 5.54492 19.8857C5.76544 19.549 5.96099 19.0014 6.14453 18.2061C6.32507 17.4236 6.4775 16.482 6.65039 15.3975C6.78083 14.5792 6.92227 13.6876 7.09375 12.75H5C4.58579 12.75 4.25 12.4142 4.25 12C4.25 11.5858 4.58579 11.25 5 11.25H7.37891C7.56937 10.2366 7.72515 9.26942 7.86914 8.36621C8.03996 7.29469 8.20011 6.29853 8.39453 5.45605C8.58593 4.62675 8.82807 3.86147 9.20117 3.29199C9.5994 2.6843 10.1861 2.25 11 2.25Z';
-
-		const requiredPropType = createMockPropType( {
-			key: 'size',
-			kind: 'plain',
-			settings: {
-				required: true,
-				units: [ 'custom' ],
-			},
-		} );
 
 		const props = {
 			setValue,
 			value: mockSizeProp( { size: 'my-custom-size', unit: 'custom' } ),
 			bind: 'select',
-			propType: requiredPropType,
+			propType: createMockPropType( {
+				key: 'size',
+				kind: 'plain',
+				settings: {
+					required: true,
+					units: [ 'custom' ],
+				},
+			} ),
 		};
 
 		const anchorEl = {
@@ -437,69 +587,37 @@ describe( 'SizeControl', () => {
 		// Act.
 		renderControl( <UnstableSizeControl anchorRef={ anchorEl } />, props );
 
-		const selectButton = screen.getByRole( 'button' );
-		expect( selectButton ).toContainHTML( customOptionElement );
+		expect( screen.queryByText( 'CSS function' ) ).not.toBeInTheDocument();
 
-		const customInput = screen.getByDisplayValue( 'my-custom-size' );
+		// open custom popover by input click
+		fireEvent.click( screen.getByDisplayValue( 'my-custom-size' ) );
 
-		fireEvent.input( customInput, { target: { value: 'updated:my-custom-size' } } );
-		fireEvent.keyPress( customInput, { key: 'Enter' } );
+		await waitFor( () => {
+			expect( screen.getByText( 'CSS function' ) ).toBeInTheDocument();
+		} );
 
-		// Assert. Things changed here but need to be tested
-		// Why do we need to restore on enter
+		const [ , popoverInput ] = screen.getAllByRole( 'textbox', { hidden: true } );
+
+		fireEvent.input( popoverInput, { target: { value: 'updated:my-custom-size' } } );
+
+		expect( setValue ).toHaveBeenCalledWith( {
+			$$type: 'size',
+			value: {
+				size: 'updated:my-custom-size',
+				unit: 'custom',
+			},
+		} );
+
+		setValue.mockClear();
+
+		fireEvent.keyDown( popoverInput, { key: 'Enter' } );
+
 		expect( setValue ).not.toHaveBeenCalled();
-		// expect( setValue ).toHaveBeenCalledWith( {
-		// 	$$type: 'size',
-		// 	value: {
-		// 		size: 'updated:my-custom-size',
-		// 		unit: 'custom',
-		// 	},
-		// } );
-	} );
-
-	// BE now controls the order of the units
-	it.skip( "should make sure custom unit is always last in unit's list", async () => {
-		// Arrange.
-		// const setValue = jest.fn();
-		//
-		// const requiredPropType = createMockPropType( {
-		// 	key: 'size',
-		// 	kind: 'plain',
-		// 	settings: {
-		// 		required: true,
-		// 	},
-		// } );
-
-		// const props = {
-		// 	setValue,
-		// 	value: mockSizeProp( { size: 10, unit: 'px' } ),
-		// 	bind: 'select',
-		// 	propType: requiredPropType,
-		// };
-
-		// const anchorEl = {
-		// 	current: document.body,
-		// } as unknown as RefObject< HTMLDivElement | null >;
-
-		// Act.
-		// renderControl(
-		// 	<SizeControl units={ mockLengthUnits() } extendedOptions={ [ 'auto' ] } anchorRef={ anchorEl } />,
-		// 	props
-		// );
-
-		const selectButton = screen.getByRole( 'button' );
-
-		// Act.
-		fireEvent.click( selectButton );
-
-		// const options = screen.getAllByRole( 'menuitem' );
-
-		// Assert.
-		// expect( options.slice( -1 )[ 0 ] ).toContainHTML( customOptionElement );
+		expect( screen.queryByText( 'CSS function' ) ).not.toBeInTheDocument();
 	} );
 
 	describe( 'Units', () => {
-		it( 'should use system config units if units is not available in prop type settings', () => {
+		it( 'should use BE config units if units is not available in prop type settings', () => {
 			// Arrange.
 			mockGetLengthUnits.mockReturnValue( [ 'px', 'ch', '%' ] );
 
@@ -528,7 +646,6 @@ describe( 'SizeControl', () => {
 			expect( options[ 2 ] ).toHaveTextContent( '%' );
 		} );
 
-		//    to default variant units when enablePropTypeUnits is true but no available_units in propType
 		it( 'should use angle units if variant of angle provided ', () => {
 			// Arrange.
 			mockGetLengthUnits.mockReturnValue( [ 'px', 'ch', '%' ] );
@@ -557,6 +674,37 @@ describe( 'SizeControl', () => {
 				expect( option ).toHaveTextContent( expected[ index ].toUpperCase() );
 			} );
 		} );
+
+		it( 'should use time units if variant of time provided', () => {
+			// Arrange.
+			mockGetTimeUnits.mockReturnValue( [ 's', 'ms' ] );
+
+			const setValue = jest.fn();
+
+			const props = {
+				setValue,
+				value: mockSizeProp( { size: 1, unit: 's' } ),
+				bind: 'select',
+				propType: createSizePropType(),
+			};
+
+			// Act.
+			renderControl( <UnstableSizeControl variant="time" />, props );
+
+			const select = screen.getByRole( 'button' );
+			fireEvent.click( select );
+
+			const options = screen.getAllByRole( 'menuitem' );
+
+			// Assert.
+			const units = [ 's', 'ms' ];
+
+			expect( options ).toHaveLength( units.length );
+
+			options.forEach( ( option, index ) => {
+				expect( option ).toHaveTextContent( units[ index ].toUpperCase() );
+			} );
+		} );
 	} );
 
 	describe( 'Keyboard Unit Selection', () => {
@@ -582,7 +730,6 @@ describe( 'SizeControl', () => {
 				} ),
 			};
 
-			// disable custom flag it has to come from backend or and filter from backend
 			// Act.
 			renderControl( <UnstableSizeControl />, props );
 
@@ -601,7 +748,7 @@ describe( 'SizeControl', () => {
 			}
 		} );
 
-		it( 'should handle buffer overflow in unit selection (max 3 chars)', () => {
+		it( 'should handle buffer in unit selection (max 3 chars)', () => {
 			// Arrange.
 			const setValue = jest.fn();
 			const props = {
@@ -659,11 +806,9 @@ describe( 'SizeControl', () => {
 			expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: '', unit: 'auto' } } );
 		} );
 
-
 		it( 'should handle buffer overflow in unit selection (max 3 chars) - custom', () => {
 			// Arrange.
 			const setValue = jest.fn();
-			// const props = { setValue, value: mockSizeProp( { size: 10, unit: 'px' } ), bind: 'select', propType };
 			const props = {
 				setValue,
 				value: mockSizeProp( { size: 10, unit: 'px' } ),
@@ -674,20 +819,8 @@ describe( 'SizeControl', () => {
 					},
 				} ),
 			};
+			renderControl( <UnstableSizeControl />, props );
 
-			const anchorEl = {
-				current: document.body,
-			} as unknown as RefObject< HTMLDivElement | null >;
-
-			// Act.
-			renderControl( <UnstableSizeControl anchorRef={ anchorEl } />, props );
-
-
-			// Act.
-			// renderControl(
-			// 	<SizeControl units={ mockLengthUnits() } extendedOptions={ [ 'auto' ] } anchorRef={ anchorEl } />,
-			// 	props
-			// );
 			mockIsExtendedUnit.mockReturnValue( true );
 
 			const sizeInput = screen.getByRole( 'spinbutton' );
@@ -707,12 +840,8 @@ describe( 'SizeControl', () => {
 			} );
 		} );
 
-
-
 		it( 'should handle default unit when defaultUnit is provided', () => {
 			// Arrange.
-			mockGetDefaultUnit.mockReturnValue( 'rem' );
-
 			const setValue = jest.fn();
 
 			const props = {
@@ -722,6 +851,7 @@ describe( 'SizeControl', () => {
 				propType: createSizePropType( {
 					settings: {
 						units: [ 'px', 'auto', '%', 'rem' ],
+						default_unit: 'rem',
 					},
 				} ),
 			};
@@ -759,6 +889,7 @@ describe( 'SizeControl', () => {
 
 			fireEvent.keyDown( sizeInput, { key: 'a', ctrlKey: true } );
 
+			// Assert.
 			expect( setValue ).not.toHaveBeenCalled();
 		} );
 
@@ -784,17 +915,13 @@ describe( 'SizeControl', () => {
 
 				fireEvent.keyDown( sizeInput, { key: 'd' } );
 
+				// Assert.
 				expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 45, unit: 'deg' } } );
 			} );
 
 			it( 'should handle angle unit keyboard shortcuts "rad"', () => {
 				// Arrange.
 				const setValue = jest.fn();
-				// const props = { setValue, value: mockSizeProp( { size: 45, unit: 'rad' } ), bind: 'select', propType };
-
-				// Arrange.
-				// const setValue = jest.fn();
-
 				const props = {
 					setValue,
 					value: mockSizeProp( { size: 45, unit: 'deg' } ),
@@ -808,29 +935,17 @@ describe( 'SizeControl', () => {
 				// Act.
 				renderControl( <UnstableSizeControl />, props );
 
-				// Act.
-				// renderControl( <SizeControl variant="angle" units={ mockAngleUnits() } disableCustom />, props );
-
 				const sizeInput = screen.getByRole( 'spinbutton' );
 
 				fireEvent.keyDown( sizeInput, { key: 'r' } );
 
+				// Assert.
 				expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 45, unit: 'rad' } } );
 			} );
 
 			it( 'should handle angle unit keyboard shortcuts "grad"', () => {
 				// Arrange.
-				// const setValue = jest.fn();
-				// const props = { setValue, value: mockSizeProp( { size: 45, unit: 'grad' } ), bind: 'select', propType };
-				//
-				// // Act.
-				// renderControl( <SizeControl variant="angle" units={ mockAngleUnits() } disableCustom />, props );
-
 				const setValue = jest.fn();
-				// const props = { setValue, value: mockSizeProp( { size: 45, unit: 'rad' } ), bind: 'select', propType };
-
-				// Arrange.
-				// const setValue = jest.fn();
 
 				const props = {
 					setValue,
@@ -850,21 +965,13 @@ describe( 'SizeControl', () => {
 				fireEvent.keyDown( sizeInput, { key: 'g' } );
 				fireEvent.keyDown( sizeInput, { key: 'r' } );
 
+				// Assert.
 				expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 45, unit: 'grad' } } );
 			} );
 
 			it( 'should handle angle unit keyboard shortcuts "turn"', () => {
 				// Arrange.
-				// const setValue = jest.fn();
-				// const props = { setValue, value: mockSizeProp( { size: 45, unit: 'turn' } ), bind: 'select', propType };
-				//
-				// // Act.
-				// renderControl( <SizeControl variant="angle" units={ mockAngleUnits() } disableCustom />, props );
 				const setValue = jest.fn();
-				// const props = { setValue, value: mockSizeProp( { size: 45, unit: 'rad' } ), bind: 'select', propType };
-
-				// Arrange.
-				// const setValue = jest.fn();
 
 				const props = {
 					setValue,
@@ -884,6 +991,7 @@ describe( 'SizeControl', () => {
 				fireEvent.keyDown( sizeInput, { key: 't' } );
 				fireEvent.keyDown( sizeInput, { key: 'u' } );
 
+				// Assert.
 				expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 45, unit: 'turn' } } );
 			} );
 		} );
@@ -914,7 +1022,6 @@ describe( 'SizeControl', () => {
 			};
 
 			// Act.
-			// renderControl( <SizeControl placeholder="Mixed Values" />, props );
 			renderControl( <UnstableSizeControl placeholder="Mixed Values" />, props );
 
 			const sizeInput = screen.getByRole( 'spinbutton' );
@@ -957,7 +1064,7 @@ describe( 'SizeControl', () => {
 			expect( unitButton ).toHaveTextContent( 'em' );
 		} );
 
-		it( 'should not show placeholder if value is provided', () => {
+		it( 'should show value if provided even if placeholder is available', () => {
 			// Arrange.
 			const setValue = jest.fn();
 
@@ -995,11 +1102,10 @@ describe( 'SizeControl', () => {
 		} );
 
 		it( 'should show no placeholder when neither prop nor bound prop placeholder is provided', () => {
-			// Arrange
+			// Arrange.
 			const setValue = jest.fn();
 			const units = mockLengthUnits();
 
-			// wat happens wen disabled is sent
 			const props = {
 				setValue,
 				value: mockSizeProp(),
@@ -1023,7 +1129,7 @@ describe( 'SizeControl', () => {
 			expect( unitButton ).toHaveTextContent( 'px' );
 		} );
 
-		it( 'should keep the placeholder unit when value got changed', () => {
+		it( 'should use placeholder unit when value got changed', () => {
 			// Arrange.
 			const setValue = jest.fn();
 			const units = mockLengthUnits();
@@ -1050,12 +1156,20 @@ describe( 'SizeControl', () => {
 			renderControl( <UnstableSizeControl />, props );
 
 			const sizeInput = screen.getByRole( 'spinbutton' );
+
 			fireEvent.input( sizeInput, { target: { value: '123' } } );
 			const unitButton = screen.getByRole( 'button' );
 
 			// Assert.
 			expect( sizeInput ).toHaveDisplayValue( '123' );
 			expect( unitButton ).toHaveTextContent( '%' );
+			expect( setValue ).toHaveBeenCalledWith( {
+				$$type: 'size',
+				value: {
+					size: 123,
+					unit: '%',
+				},
+			} );
 		} );
 	} );
 } );

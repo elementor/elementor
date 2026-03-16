@@ -19,7 +19,7 @@ export const resolveBoundPropValue = (
 	const size = value?.size;
 	const unit = value?.unit ?? boundPropPlaceholder?.unit;
 
-	const hasValue = size || unit;
+	const hasValue = size !== null || unit !== null;
 
 	return {
 		sizeValue: ( hasValue ? { size, unit } : null ) as SizeValue,
@@ -57,12 +57,3 @@ const shouldActivateUnit = ( value: SizePropValue[ 'value' ] | null ) => {
 
 	return hasSizeValue( value.size );
 };
-
-// // Todo wat if we dont both have unit & size we need to send null
-// if ( ! value && ! placeholder ) {
-// 	return null;
-// }
-
-// if ( value.unit === EXTENDED_UNITS.custom && hasSizeValue( value.size ) ) {
-// 	return true;
-// }
