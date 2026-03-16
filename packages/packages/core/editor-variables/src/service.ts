@@ -216,17 +216,17 @@ export const service = {
 
 				if ( results ) {
 					results.forEach( ( result: OperationResult ) => {
-						if ( result.variable ) {
-							const { id: variableId, ...variableData } = result.variable;
+						const variableId = result.id;
 
+						if ( result.variable ) {
 							if ( result.type === 'create' ) {
-								storage.add( variableId, variableData );
+								storage.add( variableId, result.variable );
 							} else {
-								storage.update( variableId, variableData );
+								storage.update( variableId, result.variable );
 							}
 
 							styleVariablesRepository.update( {
-								[ variableId ]: variableData,
+								[ variableId ]: result.variable,
 							} );
 						}
 					} );

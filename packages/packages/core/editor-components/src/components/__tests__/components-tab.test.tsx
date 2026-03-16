@@ -26,6 +26,7 @@ type ExtendedWindow = Window & {
 	elementorPro?: {
 		config?: {
 			isActive?: boolean;
+			version?: string;
 		};
 	};
 };
@@ -58,7 +59,7 @@ const mockComponents = [
 
 const extendedWindow = window as unknown as ExtendedWindow;
 
-function setHasPro( value: boolean ) {
+function setHasPro( value: boolean, version = '4.0' ) {
 	extendedWindow.elementor = {
 		...extendedWindow.elementor,
 		helpers: {
@@ -66,6 +67,8 @@ function setHasPro( value: boolean ) {
 			hasPro: () => value,
 		},
 	};
+
+	extendedWindow.elementorPro = value ? { config: { isActive: true, version } } : undefined;
 }
 
 describe( 'ComponentsTab', () => {
