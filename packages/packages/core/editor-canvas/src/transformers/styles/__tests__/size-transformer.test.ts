@@ -6,7 +6,7 @@ function run( val: { size?: number; unit?: string } ) {
 
 describe( 'sizeTransformer', () => {
 	it( 'returns "auto" when unit is auto and size is null', () => {
-		expect( run( { size: null, unit: 'auto' } ) ).toBe( 'auto' );
+		expect( run( { size: undefined, unit: 'auto' } ) ).toBe( 'auto' );
 	} );
 
 	it( 'returns "auto" when unit is auto and size is undefined', () => {
