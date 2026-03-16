@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type { PropValue, SizePropValue } from '@elementor/editor-props';
+import type { SizePropValue } from '@elementor/editor-props';
 import { MathFunctionIcon } from '@elementor/icons';
 import { InputAdornment, type TextFieldProps } from '@elementor/ui';
 
@@ -8,6 +8,7 @@ import { useSizeValue } from './hooks/use-size-value';
 import { type SizeUnit } from './types';
 import { SizeInput } from './ui/size-input';
 import { UnitSelector, type UnitSelectorProps } from './ui/unit-selector';
+import { hasSizeValue } from './utils/has-size-value';
 import { isExtendedUnit } from './utils/is-extended-unit';
 
 export type SizeFieldProps< TValue extends SizePropValue[ 'value' ], TUnit extends SizeUnit > = {
@@ -19,6 +20,7 @@ export type SizeFieldProps< TValue extends SizePropValue[ 'value' ], TUnit exten
 	onChange: ( value: TValue ) => void;
 	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 	onKeyDown?: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
+	onUnitChange?: ( unit: SizeUnit ) => void;
 	disabled?: boolean;
 	InputProps?: TextFieldProps[ 'InputProps' ];
 	unitSelectorProps?: Partial< UnitSelectorProps< TUnit > >;
@@ -33,6 +35,8 @@ export const SizeField = < T extends SizePropValue[ 'value' ], U extends SizeUni
 	disabled,
 	InputProps,
 	defaultUnit,
+	placeholder,
+	onUnitChange,
 	startIcon,
 	onKeyDown,
 	onChange,
@@ -41,12 +45,29 @@ export const SizeField = < T extends SizePropValue[ 'value' ], U extends SizeUni
 	unitSelectorProps,
 }: SizeFieldProps< T, U > ) => {
 	const { size, unit, setSize, setUnit } = useSizeValue( { value, onChange, units, defaultUnit } );
-	const { onUnitKeyDown } = useSizeUnitKeyboard( { unit, onUnitChange: setUnit, units } );
+
+	const handleUnitChange = ( newUnit: SizeUnit ) => {
+		setUnit( newUnit );
+
+		onUnitChange?.( newUnit );
+	};
+
+	const { onUnitKeyDown } = useSizeUnitKeyboard( { unit, onUnitChange: handleUnitChange, units } );
 
 	const handleKeyDown = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
 		onUnitKeyDown( event );
 
 		onKeyDown?.( event );
+	};
+
+	// Does low level need to set null only high components
+	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		const newSize = event.target.value;
+		const isInputValid = event.target.validity.valid; // We need to cover this
+
+		if ( isInputValid ) {
+			setSize( newSize );
+		}
 	};
 
 	const inputType = isExtendedUnit( unit ) ? 'text' : 'number';
@@ -55,9 +76,10 @@ export const SizeField = < T extends SizePropValue[ 'value' ], U extends SizeUni
 		<SizeInput
 			type={ inputType }
 			value={ size }
+			placeholder={ placeholder }
 			onBlur={ onBlur }
 			onKeyDown={ handleKeyDown }
-			onChange={ ( event ) => setSize( event.target.value ) }
+			onChange={ handleChange }
 			InputProps={ {
 				...InputProps,
 				autoComplete: 'off',
@@ -72,8 +94,8 @@ export const SizeField = < T extends SizePropValue[ 'value' ], U extends SizeUni
 						<UnitSelector< U >
 							options={ units }
 							value={ unit as U }
-							onSelect={ ( newUnit ) => setUnit( newUnit ) }
-							isActive={ hasValue( size ) }
+							onSelect={ handleUnitChange }
+							isActive={ unitSelectorProps?.isActive ?? hasSizeValue( size ) }
 							{ ...unitSelectorProps }
 							optionLabelOverrides={ UNIT_DISPLAY_LABELS_OVERRIDES }
 						/>
@@ -82,8 +104,4 @@ export const SizeField = < T extends SizePropValue[ 'value' ], U extends SizeUni
 			} }
 		/>
 	);
-};
-
-const hasValue = ( value: PropValue ): boolean => {
-	return Boolean( value ) || value === 0;
 };

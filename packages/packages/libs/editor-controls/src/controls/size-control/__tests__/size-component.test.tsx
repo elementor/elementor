@@ -25,16 +25,21 @@ const renderComponent = ( props = {} ) => {
 	);
 };
 
-const closePopover = async () => {
+const createAnchorRef = () => {
+	const anchorRef = createRef< HTMLDivElement >() as React.MutableRefObject< HTMLDivElement >;
+
+	anchorRef.current = document.createElement( 'div' );
+
+	return anchorRef;
+};
+
+const openPopover = async () => {
+	const sizeInput = screen.getByRole( 'textbox', { hidden: true } );
+
+	fireEvent.click( sizeInput );
+
 	await waitFor( () => {
 		expect( screen.getByText( 'CSS function' ) ).toBeInTheDocument();
-	} );
-
-	const closeButton = screen.getByRole( 'button', { name: /close/i, hidden: true } );
-	fireEvent.click( closeButton );
-
-	await waitFor( () => {
-		expect( screen.queryByText( 'CSS function' ) ).not.toBeInTheDocument();
 	} );
 };
 
@@ -63,27 +68,26 @@ describe( 'SizeComponent', () => {
 		} );
 
 		it( 'should not render TextFieldPopover when anchorRef.current is null', () => {
-			// Arrange.
-			const anchorRef = createRef< HTMLDivElement | null >();
+			// Arrange & Act.
+			renderComponent( {
+				anchorRef: createAnchorRef(),
+				value: { size: 'calc(100% - 10px)', unit: 'custom' },
+			} );
 
-			// Act.
-			renderComponent( { anchorRef, value: { size: 'calc(100% - 10px)', unit: 'custom' } } );
-
-			// Assert - popover only opens when anchorRef.current is set (useEffect in component).
+			// Assert.
 			expect( screen.queryByText( 'CSS function' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'should render TextFieldPopover when unit is custom and anchorRef has current and popup is open', async () => {
 			// Arrange.
-			const anchorRef = createRef< HTMLDivElement >() as React.MutableRefObject< HTMLDivElement >;
-			anchorRef.current = document.createElement( 'div' );
+			const anchorRef = createAnchorRef();
 
 			// Act.
 			renderComponent( { anchorRef, value: { size: 'calc(100% - 10px)', unit: 'custom' } } );
 
-			await waitFor( () => {
-				expect( screen.getByText( 'CSS function' ) ).toBeInTheDocument();
+			await openPopover();
 
+			await waitFor( () => {
 				const [ sizeInput, customTextField ] = screen.getAllByRole( 'textbox', { hidden: true } );
 
 				expect( sizeInput ).toHaveValue( 'calc(100% - 10px)' );
@@ -95,16 +99,13 @@ describe( 'SizeComponent', () => {
 	describe( 'onChange', () => {
 		it( 'should call onChange with custom unit when popover input value changes', async () => {
 			// Arrange.
-			const anchorRef = createRef< HTMLDivElement >() as React.MutableRefObject< HTMLDivElement >;
-			anchorRef.current = document.createElement( 'div' );
+			const anchorRef = createAnchorRef();
 
 			const onChange = jest.fn();
 
 			renderComponent( { anchorRef, value: { size: '10px', unit: 'custom' }, onChange } );
 
-			await waitFor( () => {
-				expect( screen.getByText( 'CSS function' ) ).toBeInTheDocument();
-			} );
+			await openPopover();
 
 			const [ , customTextField ] = screen.getAllByRole( 'textbox', { hidden: true } );
 
@@ -117,10 +118,11 @@ describe( 'SizeComponent', () => {
 		} );
 
 		it( 'should reflect parent value update in both size field and popover input when controlled', async () => {
-			const anchorRef = createRef< HTMLDivElement >() as React.MutableRefObject< HTMLDivElement >;
-			anchorRef.current = document.createElement( 'div' );
+			// Arrange.
 			const onChange = jest.fn();
+			const anchorRef = createAnchorRef();
 
+			// Act.
 			const { rerender } = render(
 				<SizeComponent
 					value={ { size: 'calc(100% - 10px)', unit: 'custom' } }
@@ -130,9 +132,7 @@ describe( 'SizeComponent', () => {
 				/>
 			);
 
-			await waitFor( () => {
-				expect( screen.getByText( 'CSS function' ) ).toBeInTheDocument();
-			} );
+			await openPopover();
 
 			const [ mainInput, popoverInput ] = screen.getAllByRole( 'textbox', { hidden: true } );
 			expect( mainInput ).toHaveValue( 'calc(100% - 10px)' );
@@ -147,6 +147,7 @@ describe( 'SizeComponent', () => {
 				/>
 			);
 
+			// Assert.
 			await waitFor( () => {
 				const [ main, popover ] = screen.getAllByRole( 'textbox', { hidden: true } );
 				expect( main ).toHaveValue( 'clamp(1 + 20 + 4)' );
@@ -156,16 +157,16 @@ describe( 'SizeComponent', () => {
 	} );
 
 	describe( 'Click to open custom popover', () => {
-		it( 'should open or keep popover open when main size field input is clicked and unit is custom', async () => {
-			const anchorRef = createRef< HTMLDivElement >() as React.MutableRefObject< HTMLDivElement >;
-			anchorRef.current = document.createElement( 'div' );
+		it( 'should open popover when main size field input is clicked and unit is custom', async () => {
+			// Arrange.
+			const anchorRef = createAnchorRef();
 
+			// Act.
 			renderComponent( { anchorRef, value: { size: 'calc(1em)', unit: 'custom' } } );
-
-			await closePopover();
 
 			const [ mainInput, popoverInput ] = screen.getAllByRole( 'textbox', { hidden: true } );
 
+			// Assert.
 			expect( popoverInput ).toBeUndefined();
 
 			fireEvent.click( mainInput );
@@ -176,17 +177,17 @@ describe( 'SizeComponent', () => {
 		} );
 
 		it( 'should not open custom popover when unit selector is clicked (not the input)', async () => {
-			const anchorRef = createRef< HTMLDivElement >() as React.MutableRefObject< HTMLDivElement >;
-			anchorRef.current = document.createElement( 'div' );
+			// Arrange.
+			const anchorRef = createAnchorRef();
 
+			// Act.
 			renderComponent( { anchorRef, value: { size: '10px', unit: 'custom' } } );
-
-			await closePopover();
 
 			const buttons = screen.getAllByRole( 'button', { hidden: true } );
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			fireEvent.click( buttons.find( ( btn ) => btn.getAttribute( 'aria-haspopup' ) === 'true' )! );
 
+			// Assert.
 			expect( screen.getByRole( 'menuitem', { name: 'REM' } ) ).toBeInTheDocument();
 			expect( screen.queryByText( 'CSS function' ) ).not.toBeInTheDocument();
 		} );

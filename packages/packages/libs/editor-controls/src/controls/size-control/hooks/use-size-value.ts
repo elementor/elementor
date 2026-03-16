@@ -22,13 +22,13 @@ export const useSizeValue = < T extends SizeValue, U extends SizeUnit >( {
 	defaultUnit,
 }: UseSizeValueProps< T, U > ) => {
 	const resolvedValue = useMemo(
-		() => resolveSizeValue( value, { units, defaultUnit } ),
+		() => resolveSizeValue( value, { units, defaultUnit } ) as T,
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ value?.size, value?.unit, defaultUnit ]
 	);
 
 	const [ sizeValue, setSizeValue ] = useSyncExternalState< T >( {
-		external: resolvedValue as T,
+		external: resolvedValue,
 		setExternal: ( newState ) => {
 			// TODO we need to check behaviour that low level doesn't set to null only the high level components size component
 			// This will fix the issue of if size is empty string '' it gets sends to the model
@@ -38,8 +38,8 @@ export const useSizeValue = < T extends SizeValue, U extends SizeUnit >( {
 				onChange( newState );
 			}
 		}, // TODO we will need to handle options, meta if context need them
-		persistWhen: ( next ) => hasChanged( next, resolvedValue as T ),
-		fallback: () => createDefaultSizeValue< T >( units, defaultUnit ),
+		persistWhen: ( next ) => hasChanged( next, resolvedValue ),
+		fallback: () => createDefaultSizeValue( units, defaultUnit ),
 	} );
 
 	const setSize = ( newSize: string ) => {

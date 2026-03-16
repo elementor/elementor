@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { type RefObject, useEffect } from 'react';
 import type { SizePropValue } from '@elementor/editor-props';
-import { usePopupState } from '@elementor/ui';
+import { useActiveBreakpoint } from '@elementor/editor-responsive';
+import { Box, usePopupState } from '@elementor/ui';
 
 import { SizeField, type SizeFieldProps } from './size-field';
 import { TextFieldPopover } from './ui/text-field-popover';
@@ -13,21 +14,28 @@ type SizeUnit = SizePropValue[ 'value' ][ 'unit' ];
 
 type Props = SizeFieldProps< SizeValue, SizeUnit > & {
 	anchorRef?: RefObject< HTMLDivElement | null >;
+	isUnitActive?: boolean;
+	SizeFieldWrapper?: React.ComponentType< { children: React.ReactNode } >;
 };
 
-export const SizeComponent = ( { anchorRef, ...sizeFieldProps }: Props ) => {
+export const SizeComponent = ( {
+	anchorRef,
+	isUnitActive,
+	SizeFieldWrapper = React.Fragment,
+	...sizeFieldProps
+}: Props ) => {
 	const popupState = usePopupState( { variant: 'popover' } );
+	const activeBreakpoint = useActiveBreakpoint();
 
 	const isCustomUnit = sizeFieldProps?.value?.unit === EXTENDED_UNITS.custom;
 	const hasCustomUnitOption = sizeFieldProps.units.includes( EXTENDED_UNITS.custom );
 
 	useEffect( () => {
-		if ( isCustomUnit && anchorRef?.current && ! popupState.isOpen ) {
-			popupState.open( anchorRef?.current );
+		if ( popupState && popupState.isOpen ) {
+			popupState.close();
 		}
-
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ anchorRef, isCustomUnit ] );
+	}, [ activeBreakpoint ] );
 
 	const handleCustomSizeChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		sizeFieldProps.onChange( {
@@ -42,6 +50,12 @@ export const SizeComponent = ( { anchorRef, ...sizeFieldProps }: Props ) => {
 		}
 	};
 
+	const handleUnitChange = ( unit: SizeUnit ) => {
+		if ( unit === EXTENDED_UNITS.custom ) {
+			popupState.open( anchorRef?.current );
+		}
+	};
+
 	const popupAttributes = {
 		'aria-controls': popupState.isOpen ? popupState.popupId : undefined,
 		'aria-haspopup': true,
@@ -49,16 +63,22 @@ export const SizeComponent = ( { anchorRef, ...sizeFieldProps }: Props ) => {
 
 	return (
 		<>
-			<SizeField
-				{ ...sizeFieldProps }
-				InputProps={ {
-					...popupAttributes,
-					onClick: handleSizeFieldClick,
-				} }
-				unitSelectorProps={ {
-					menuItemsAttributes: hasCustomUnitOption ? { custom: popupAttributes } : undefined,
-				} }
-			/>
+			<SizeFieldWrapper>
+				<Box>
+					<SizeField
+						{ ...sizeFieldProps }
+						onUnitChange={ handleUnitChange }
+						InputProps={ {
+							...popupAttributes,
+							onClick: handleSizeFieldClick,
+						} }
+						unitSelectorProps={ {
+							menuItemsAttributes: hasCustomUnitOption ? { custom: popupAttributes } : undefined,
+							isActive: isUnitActive,
+						} }
+					/>
+				</Box>
+			</SizeFieldWrapper>
 			{ popupState.isOpen && anchorRef?.current && (
 				<TextFieldPopover
 					popupState={ popupState }
