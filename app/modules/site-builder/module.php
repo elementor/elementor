@@ -25,10 +25,7 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$settings = [
-			'wpRestUrl' => esc_url_raw( rest_url() ),
-			'nonce' => wp_create_nonce( 'wp_rest' ),
-		];
+		$settings = [];
 
 		$connect_auth = $this->get_connect_auth();
 
