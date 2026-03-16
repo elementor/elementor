@@ -36,6 +36,7 @@ export {
 	getElementChildren as getElementChildrenWithFallback,
 	type ModelResult,
 } from './sync/model-utils';
+export { findElementById } from './sync/find-element-by-id';
 export { getElements } from './sync/get-elements';
 export { getSelectedElements } from './sync/get-selected-elements';
 export { getWidgetsCache } from './sync/get-widgets-cache';

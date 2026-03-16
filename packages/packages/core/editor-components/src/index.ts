@@ -82,6 +82,7 @@ export type {
 	UpdatedComponentName,
 } from './types';
 
+export { applyOverridablesToElements } from './utils/apply-overridables-to-elements';
 export { filterValidOverridableProps } from './utils/filter-valid-overridable-props';
 export { getContainerByOriginId } from './utils/get-container-by-origin-id';
 export { getOverridableProp } from './utils/get-overridable-prop';
