@@ -118,7 +118,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		}
 
 		$svg->set_attribute( 'fill', 'currentColor' );
-		$svg->set_attribute( 'data-interaction-id', $this->get_id() );
+		$svg->set_attribute( 'data-interaction-id', $this->get_interaction_id() );
 
 		$this->add_svg_style( $svg, 'width: 100%; height: 100%; overflow: unset;' );
 
@@ -137,7 +137,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 
 		$data_attributes_string = sprintf(
 			'data-interaction-id="%s"',
-			esc_attr( $this->get_id() )
+			esc_attr( $this->get_interaction_id() )
 		);
 
 		$attributes_string = trim( $data_attributes_string . ' ' . $all_attributes );
