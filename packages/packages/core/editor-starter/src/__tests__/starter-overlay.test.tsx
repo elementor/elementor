@@ -42,8 +42,7 @@ describe( 'StarterOverlay', () => {
 	it( 'should call openAiPlanner when AI Site Planner card is clicked', () => {
 		render( <StarterOverlay /> );
 
-		const aiPlannerCard = screen.getByText( 'AI Site Planner' ).closest( 'button' );
-		fireEvent.click( aiPlannerCard! );
+		fireEvent.click( screen.getByRole( 'button', { name: /AI Site Planner/i } ) );
 
 		expect( mockOpenAiPlanner ).toHaveBeenCalledTimes( 1 );
 	} );
@@ -51,8 +50,7 @@ describe( 'StarterOverlay', () => {
 	it( 'should call openTemplatesLibrary when Website templates card is clicked', () => {
 		render( <StarterOverlay /> );
 
-		const templatesCard = screen.getByText( 'Website templates' ).closest( 'button' );
-		fireEvent.click( templatesCard! );
+		fireEvent.click( screen.getByRole( 'button', { name: /Website templates/i } ) );
 
 		expect( mockOpenTemplatesLibrary ).toHaveBeenCalledTimes( 1 );
 	} );
@@ -60,8 +58,7 @@ describe( 'StarterOverlay', () => {
 	it( 'should call dismiss when Blank site card is clicked', () => {
 		render( <StarterOverlay /> );
 
-		const blankSiteCard = screen.getByText( 'Blank site' ).closest( 'button' );
-		fireEvent.click( blankSiteCard! );
+		fireEvent.click( screen.getByRole( 'button', { name: /Blank site/i } ) );
 
 		expect( mockDismiss ).toHaveBeenCalledTimes( 1 );
 	} );

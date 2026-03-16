@@ -21,15 +21,15 @@ describe( 'useStarter hook', () => {
 		kitLibraryUrl: 'https://kit-library.test',
 	};
 
-	let result: ReturnType< typeof renderHook< ReturnType< typeof useStarter >, unknown > >[ 'result' ];
-
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockGetStarterConfig.mockReturnValue( mockConfig );
 		document.body.innerHTML = '<div id="elementor-editor-wrapper"></div>';
 		window.open = jest.fn();
+	} );
 
-		( { result } = renderHook( () => useStarter() ) );
+	function setup() {
+		const { result } = renderHook( () => useStarter() );
 
 		act( () => {
 			window.dispatchEvent(
@@ -38,9 +38,13 @@ describe( 'useStarter hook', () => {
 				} )
 			);
 		} );
-	} );
+
+		return { result };
+	}
 
 	it( 'should initialize with config when editor/documents/attach-preview is triggered', () => {
+		const { result } = setup();
+
 		expect( result.current.config ).toEqual( mockConfig );
 		expect( mockApiFetch ).toHaveBeenCalledWith(
 			expect.objectContaining( {
@@ -52,6 +56,8 @@ describe( 'useStarter hook', () => {
 	} );
 
 	it( 'should call deleteStarterConfig and set isDismissing when dismiss is called', () => {
+		const { result } = setup();
+
 		act( () => {
 			result.current.dismiss();
 		} );
@@ -61,6 +67,8 @@ describe( 'useStarter hook', () => {
 	} );
 
 	it( 'should open AI Planner in a new tab', () => {
+		const { result } = setup();
+
 		act( () => {
 			result.current.openAiPlanner();
 		} );
@@ -69,6 +77,8 @@ describe( 'useStarter hook', () => {
 	} );
 
 	it( 'should open Kit Library in a new tab with onboarding referrer', () => {
+		const { result } = setup();
+
 		act( () => {
 			result.current.openTemplatesLibrary();
 		} );
