@@ -289,6 +289,57 @@ describe( 'useStyleItems', () => {
 		expect( result.current ).toHaveLength( 2 );
 	} );
 
+	it( 'should maintain breakpoint order after style update', async () => {
+		// Arrange.
+		const renderStylesMock = jest.fn().mockImplementation( ( { styles } ) =>
+			Promise.resolve(
+				styles.map( ( style: StyleDefinition ) => ( {
+					id: style.id,
+					breakpoint: style?.variants[ 0 ]?.meta.breakpoint || 'desktop',
+				} ) )
+			)
+		);
+
+		jest.mocked( useStyleRenderer ).mockReturnValue( renderStylesMock );
+
+		const mockProvider = createMockStylesProvider( { key: 'provider1', priority: 1 }, [
+			createMockStyleDefinitionWithVariants( {
+				id: 'style1',
+				variants: [
+					{ meta: { breakpoint: null, state: null }, props: { padding: '10px' }, custom_css: null },
+					{ meta: { breakpoint: 'tablet', state: null }, props: { padding: '8px' }, custom_css: null },
+					{ meta: { breakpoint: 'mobile', state: null }, props: { padding: '5px' }, custom_css: null },
+				],
+			} ),
+		] );
+
+		jest.mocked( stylesRepository ).getProviders.mockReturnValue( [ mockProvider ] );
+
+		// Act - initial render.
+		const { result } = renderHook( () => useStyleItems() );
+
+		await act( async () => {
+			mockProvider.actions.updateProps?.( {
+				id: 'style1',
+				meta: { breakpoint: 'tablet', state: null },
+				props: { padding: '12px' },
+			} );
+		} );
+
+		// Assert - items should be ordered by breakpoint (desktop, tablet, mobile).
+		const breakpointOrder = result.current.map( ( item ) => item.breakpoint );
+		expect( breakpointOrder ).toEqual( [ 'desktop', 'tablet', 'mobile' ] );
+
+		// Act - update again (should maintain order).
+		await act( async () => {
+			mockProvider.actions.update?.( { id: 'style1', label: 'Updated' } );
+		} );
+
+		// Assert - order should still be maintained.
+		const breakpointOrderAfterUpdate = result.current.map( ( item ) => item.breakpoint );
+		expect( breakpointOrderAfterUpdate ).toEqual( [ 'desktop', 'tablet', 'mobile' ] );
+	} );
+
 	it( 'should only re-render changed styles on differential update', async () => {
 		// Arrange.
 		const renderStylesMock = jest.fn().mockImplementation( ( { styles } ) =>
