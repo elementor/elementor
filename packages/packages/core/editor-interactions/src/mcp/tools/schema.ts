@@ -25,7 +25,7 @@ export const proSchema = {
 		.optional()
 		.describe( 'Event that triggers the animation' ),
 	effect: z.enum( [ 'fade', 'slide', 'scale', 'custom' ] ).optional().describe( 'Animation effect type' ),
-	customEffect: z
+	customEffects: z
 		.object( {
 			keyframes: z
 				.array(

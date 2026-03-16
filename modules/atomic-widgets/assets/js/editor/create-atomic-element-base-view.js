@@ -1,4 +1,3 @@
-import environment from 'elementor-common/utils/environment';
 import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 import AtomicElementEmptyView from './container/atomic-element-empty-view';
 
@@ -103,7 +102,7 @@ export default function createAtomicElementBaseView( type ) {
 				local.id = cssId.value;
 			}
 
-			local[ 'data-interaction-id' ] = this.model.get( 'id' );
+			local[ 'data-interaction-id' ] = this.getInteractionId();
 
 			customAttributes.forEach( ( attribute ) => {
 				const key = attribute.value?.key?.value;
@@ -446,19 +445,21 @@ export default function createAtomicElementBaseView( type ) {
 
 			if ( isExperimentalFeaturesEnabled && isAdministrator ) {
 				const isProActive = window.elementorV2?.utils?.isProActive?.() ?? true;
+				const hasProInstalled = window.elementorV2?.utils?.hasProInstalled?.() ?? false;
+				const isProOutdated = hasProInstalled && ! ( window.elementorV2?.utils?.isProAtLeast?.( '4.0' ) ?? false );
+				const showPromoBadge = ! isProActive && ! isProOutdated;
 
-				const controlSign = environment.mac ? '&#8984;' : '^';
-				const shortcutLabel = controlSign + '+⇧+K';
+				const newBadge = `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`;
 				const badgeClass = 'elementor-context-menu-list__item__shortcut__promotion-badge';
-				const proBadge = `<a href="https://go.elementor.com/go-pro-components-create/" target="_blank" onclick="event.stopPropagation()" class="${ badgeClass }"><i class="eicon-upgrade-crown"></i></a>`;
+				const proBadge = `<a href="https://go.elementor.com/go-pro-components-Instance-create-context-menu/" target="_blank" onclick="event.stopPropagation()" class="${ badgeClass }"><i class="eicon-upgrade-crown"></i></a>`;
 
 				saveActions.unshift( {
 					name: 'save-component',
 					title: __( 'Create component', 'elementor' ),
-					shortcut: isProActive ? shortcutLabel : proBadge,
-					hasShortcutAction: ! isProActive,
+					shortcut: ( isProActive || isProOutdated ) ? newBadge : proBadge,
+					hasShortcutAction: showPromoBadge,
 					callback: this.saveAsComponent.bind( this ),
-					isEnabled: () => isProActive && ! this.getContainer().isLocked(),
+					isEnabled: () => ( isProActive || isProOutdated ) && ! this.getContainer().isLocked(),
 				} );
 			}
 
@@ -487,6 +488,26 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		saveAsComponent( openContextMenuEvent, options ) {
+			const hasProInstalled = window.elementorV2?.utils?.hasProInstalled?.() ?? false;
+			const isProOutdated = hasProInstalled && ! ( window.elementorV2?.utils?.isProAtLeast?.( '4.0' ) ?? false );
+
+			if ( isProOutdated ) {
+				window.elementorV2?.editorNotifications?.notify?.( {
+					type: 'info',
+					id: 'component-create-update',
+					message: __( 'To create new components, update Elementor Pro to the latest version.', 'elementor' ),
+					additionalActionProps: [ {
+						size: 'small',
+						variant: 'contained',
+						color: 'info',
+						href: '/wp-admin/plugins.php',
+						target: '_blank',
+						children: __( 'Update Now', 'elementor' ),
+					} ],
+				} );
+				return;
+			}
+
 			const isProActive = window.elementorV2?.utils?.isProActive?.() ?? true;
 
 			if ( ! isProActive ) {
@@ -890,6 +911,13 @@ export default function createAtomicElementBaseView( type ) {
 			const transformed = transformer( prop.value, { key: 'overridable', renderContext } );
 
 			return this._resolvePropValue( transformed, renderContext );
+		},
+
+		getInteractionId() {
+			const originId = this.model.get( 'originId' );
+			const id = this.model.get( 'id' );
+
+			return originId ?? id;
 		},
 	} );
 

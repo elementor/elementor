@@ -37,7 +37,7 @@
 		globals?.populateGlobalData();
 	}
 
-	function reloadCanvasDesignSyncStyles( { url, version } ) {
+	function reloadCanvasDesignSyncStyles( { url } ) {
 		const previewFrame = document.getElementById( 'elementor-preview-iframe' );
 
 		if ( ! previewFrame?.contentDocument ) {
@@ -53,9 +53,21 @@
 			previewFrame.contentDocument.head.appendChild( link );
 		}
 
-		link.href = url + '?ver=' + version;
+		link.href = url;
 	}
 
+	function onClassesUpdated( event ) {
+		const { context } = event.detail;
+
+		if ( context !== 'frontend' ) {
+			return;
+		}
+
+		clearTimeout( syncTimeout );
+		syncTimeout = setTimeout( syncDesignSystem, DEBOUNCE_MS );
+	}
+
+	window.addEventListener( 'classes:updated', onClassesUpdated );
 	window.addEventListener( 'variables:updated', () => {
 		clearTimeout( syncTimeout );
 		syncTimeout = setTimeout( syncDesignSystem, DEBOUNCE_MS );

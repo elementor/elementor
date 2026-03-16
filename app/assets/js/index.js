@@ -4,7 +4,6 @@ import ImportExport from '../../modules/import-export/assets/js/module';
 import ImportExportCustomization from '../../modules/import-export-customization/assets/js/module';
 import KitLibrary from '../../modules/kit-library/assets/js/module';
 import Onboarding from '../../modules/onboarding/assets/js/module';
-import EOnboarding from '../../modules/e-onboarding/assets/js/module';
 import SiteBuilder from '../../modules/site-builder/assets/js/module';
 import { Module as SiteEditor } from '@elementor/site-editor';
 
@@ -15,11 +14,7 @@ new KitLibrary();
 new SiteEditor();
 new SiteBuilder();
 
-if ( elementorCommon?.config?.experimentalFeatures?.e_onboarding ) {
-	new EOnboarding();
-} else {
-	new Onboarding();
-}
+new Onboarding();
 
 if ( elementorCommon?.config?.experimentalFeatures?.[ 'import-export-customization' ] ) {
 	new ImportExportCustomization();
