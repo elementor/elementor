@@ -74,8 +74,11 @@ describe( 'useStarter hook', () => {
 			result.current.openTemplatesLibrary();
 		} );
 
+		const expectedUrl = new URL( mockConfig.kitLibraryUrl );
+		expectedUrl.searchParams.set( 'referrer', 'onboarding' );
+
 		expect( window.open ).toHaveBeenCalledWith(
-			mockConfig.kitLibraryUrl + '/?referrer=onboarding',
+			expectedUrl.toString(),
 			'_blank',
 			'noopener,noreferrer'
 		);
