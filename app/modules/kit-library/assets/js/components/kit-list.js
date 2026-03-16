@@ -26,7 +26,6 @@ KitList.propTypes = {
 	data: PropTypes.arrayOf( PropTypes.instanceOf( Kit ) ),
 	queryParams: PropTypes.shape( {
 		search: PropTypes.string,
-		referrer: PropTypes.string,
 	} ),
 	source: PropTypes.string,
 };

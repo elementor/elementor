@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
-import { useStarter } from '../use-starter';
+import { useStarter } from '../hooks/use-starter';
 import * as utils from '../utils';
 import apiFetch from '@wordpress/api-fetch';
 
@@ -20,31 +20,26 @@ describe( 'useStarter hook', () => {
 		kitLibraryUrl: 'https://kit-library.test',
 	};
 
+	let result: ReturnType< typeof renderHook< ReturnType< typeof useStarter >, unknown > >[ 'result' ];
+
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockGetStarterConfig.mockReturnValue( mockConfig );
-		setupEditorWrapper();
+		document.body.innerHTML = '<div id="elementor-editor-wrapper"></div>';
 		window.open = jest.fn();
+
+		( { result } = renderHook( () => useStarter() ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'elementor/commands/run/after', {
+					detail: { command: 'editor/documents/attach-preview' },
+				} )
+			);
+		} );
 	} );
 
-	const setupEditorWrapper = () => {
-		document.body.innerHTML = '<div id="elementor-editor-wrapper"></div>';
-	};
-
-	const triggerAttachPreviewEvent = () => {
-		act( () => {
-			const event = new CustomEvent( 'elementor/commands/run/after', {
-				detail: { command: 'editor/documents/attach-preview' },
-			} );
-			window.dispatchEvent( event );
-		} );
-	};
-
 	it( 'should initialize with config when editor/documents/attach-preview is triggered', () => {
-		const { result } = renderHook( () => useStarter() );
-
-		triggerAttachPreviewEvent();
-
 		expect( result.current.config ).toEqual( mockConfig );
 		expect( mockApiFetch ).toHaveBeenCalledWith( expect.objectContaining( {
 			path: mockConfig.restPath,
@@ -54,10 +49,6 @@ describe( 'useStarter hook', () => {
 	} );
 
 	it( 'should call deleteStarterConfig and set isDismissing when dismiss is called', () => {
-		const { result } = renderHook( () => useStarter() );
-
-		triggerAttachPreviewEvent();
-
 		act( () => {
 			result.current.dismiss();
 		} );
@@ -67,10 +58,6 @@ describe( 'useStarter hook', () => {
 	} );
 
 	it( 'should open AI Planner in a new tab', () => {
-		const { result } = renderHook( () => useStarter() );
-
-		triggerAttachPreviewEvent();
-
 		act( () => {
 			result.current.openAiPlanner();
 		} );
@@ -83,10 +70,6 @@ describe( 'useStarter hook', () => {
 	} );
 
 	it( 'should open Kit Library in a new tab with onboarding referrer', () => {
-		const { result } = renderHook( () => useStarter() );
-
-		triggerAttachPreviewEvent();
-
 		act( () => {
 			result.current.openTemplatesLibrary();
 		} );
