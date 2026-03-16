@@ -1,4 +1,5 @@
 import { type Document, getV1CurrentDocument } from '@elementor/editor-documents';
+import { type V1ElementData, type V1ElementSettingsProps } from '@elementor/editor-elements';
 import { ajax, getCanvasIframeDocument } from '@elementor/editor-v1-adapters';
 import { __dispatch as dispatch } from '@elementor/store';
 
@@ -6,6 +7,7 @@ import { slice } from './store';
 
 const TEMPLATE_ATTRIBUTE = 'data-elementor-post-type="elementor_library"';
 const DOCUMENT_WRAPPER_ATTR = 'data-elementor-id';
+const TEMPLATE_WIDGET_TYPES = [ 'template', 'loop-grid' ];
 
 export async function loadTemplates() {
 	const iframeDocument = getCanvasIframeDocument();
@@ -14,8 +16,7 @@ export async function loadTemplates() {
 		return;
 	}
 
-	const currentDocumentId = getV1CurrentDocument()?.id;
-	const templateIds = getTemplateIds( iframeDocument, currentDocumentId );
+	const templateIds = getTemplateIds( iframeDocument );
 
 	if ( ! templateIds.length ) {
 		return;
@@ -30,14 +31,36 @@ export function unloadTemplates() {
 	dispatch( slice.actions.clearTemplates() );
 }
 
-function getTemplateIds( iframeDocument: globalThis.Document, currentDocumentId?: number ): number[] {
-	const elements = [ ...iframeDocument.body.querySelectorAll< HTMLElement >( `[${ TEMPLATE_ATTRIBUTE }]` ) ];
+function getTemplateIds( iframeDocument: globalThis.Document ): number[] {
+	const fromDom = getTemplateIdsFromDomElements( iframeDocument );
+	const fromConfig = getTemplateIdsFromConfig();
 
-	const ids = elements
+	return [ ...new Set( [ ...fromDom, ...fromConfig ] ) ];
+}
+
+function getTemplateIdsFromDomElements( iframeDocument: globalThis.Document ) {
+	const { id: currentDocumentId } = getV1CurrentDocument();
+	const domElements = [ ...iframeDocument.body.querySelectorAll< HTMLElement >( `[${ TEMPLATE_ATTRIBUTE }]` ) ];
+
+	return domElements
 		.map( ( el ) => Number( el.getAttribute( DOCUMENT_WRAPPER_ATTR ) ) )
 		.filter( ( id ) => ! isNaN( id ) && id !== currentDocumentId );
+}
 
-	return [ ...new Set( ids ) ];
+function getTemplateIdsFromConfig() {
+	const {
+		config: { elements = [] },
+	} = getV1CurrentDocument();
+
+	const flattenElements = ( els: V1ElementData[] ): V1ElementData[] => {
+		return els.flatMap( ( element ) => [ element, ...flattenElements( element.elements ?? [] ) ] );
+	};
+
+	return (
+		flattenElements( elements as V1ElementData[] ).filter(
+			( element ) => TEMPLATE_WIDGET_TYPES.includes( element.widgetType ?? '' ) && element.settings?.template_id
+		) as ( V1ElementData & { settings: V1ElementSettingsProps & { template_id: number } } )[]
+	 ).map( ( element ) => element.settings.template_id );
 }
 
 async function fetchDocuments( ids: number[] ): Promise< Document[] > {
