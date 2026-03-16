@@ -8,6 +8,10 @@ test.describe( 'V4 activation welcome modal @promotions', () => {
 		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
 	} );
 
+	test.beforeEach( async () => {
+		await wpCli( 'wp user meta delete 1 elementor_welcome_popover_displayed' );
+	} );
+
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
