@@ -102,7 +102,7 @@ export default function createAtomicElementBaseView( type ) {
 				local.id = cssId.value;
 			}
 
-			local[ 'data-interaction-id' ] = this.model.get( 'id' );
+			local[ 'data-interaction-id' ] = this.getInteractionId();
 
 			customAttributes.forEach( ( attribute ) => {
 				const key = attribute.value?.key?.value;
@@ -911,6 +911,13 @@ export default function createAtomicElementBaseView( type ) {
 			const transformed = transformer( prop.value, { key: 'overridable', renderContext } );
 
 			return this._resolvePropValue( transformed, renderContext );
+		},
+
+		getInteractionId() {
+			const originId = this.model.get( 'originId' );
+			const id = this.model.get( 'id' );
+
+			return originId ?? id;
 		},
 	} );
 
