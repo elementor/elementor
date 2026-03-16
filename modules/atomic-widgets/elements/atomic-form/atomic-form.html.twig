@@ -4,7 +4,7 @@
       data-id="{{ id }}"
       data-element_type="{{ type }}"
       data-e-type="{{ type }}"
-      data-interaction-id="{{ id }}"
+      data-interaction-id="{{ interaction_id }}"
       data-interactions="{{ interactions | json_encode | e('html_attr') }}"
       x-data="eForm{{ id }}"
       x-on:submit="submit"
