@@ -30,14 +30,10 @@ export const useSizeValue = < T extends SizeValue, U extends SizeUnit >( {
 	const [ sizeValue, setSizeValue ] = useSyncExternalState< T >( {
 		external: resolvedValue,
 		setExternal: ( newState ) => {
-			// TODO we need to check behaviour that low level doesn't set to null only the high level components size component
-			// This will fix the issue of if size is empty string '' it gets sends to the model
-			// but on blur the size component set to null.
-			// But we need to test this behaviour
 			if ( newState !== null ) {
 				onChange( newState );
 			}
-		}, // TODO we will need to handle options, meta if context need them
+		},
 		persistWhen: ( next ) => hasChanged( next, resolvedValue ),
 		fallback: () => createDefaultSizeValue( units, defaultUnit ),
 	} );
