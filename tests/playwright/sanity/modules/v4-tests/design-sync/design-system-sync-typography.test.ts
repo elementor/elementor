@@ -21,7 +21,6 @@ test.describe.skip( 'Design System Sync - Typography V4 - V3 @v4-tests', () => {
 		await wpAdmin.setExperiments( {
 			e_atomic_elements: 'active',
 			e_classes: 'active',
-			e_design_system_sync: 'active',
 		} );
 
 		const { request } = page.context();
