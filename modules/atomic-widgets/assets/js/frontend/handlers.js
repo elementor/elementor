@@ -86,7 +86,17 @@ function handleAtomicFormSubmit( element ) {
 			if ( payload ) {
 				try {
 					const response = await submitAtomicForm( payload );
-					setFormState( element, response?.success ? 'success' : 'error' );
+					const state = response?.success ? 'success' : 'error';
+
+					setFormState( element, state );
+
+					if ( response?.success ) {
+						form.reset();
+
+						form.addEventListener( 'input', () => {
+							setFormState( element, 'default' );
+						}, { once: true } );
+					}
 				} catch ( error ) {
 					setFormState( element, 'error' );
 				} finally {
@@ -166,11 +176,6 @@ function getAtomicFormFieldLabel( field, form ) {
 		return ariaLabel;
 	}
 
-	const placeholder = field.getAttribute( 'placeholder' );
-	if ( placeholder ) {
-		return placeholder;
-	}
-
 	const fieldId = field.getAttribute( 'id' );
 	if ( fieldId ) {
 		const labelElement = form.querySelector( `label[for="${ fieldId }"]` );
@@ -181,7 +186,13 @@ function getAtomicFormFieldLabel( field, form ) {
 	}
 
 	const parentLabelText = field.closest( 'label' )?.textContent?.trim();
-	return parentLabelText || '';
+	if ( parentLabelText ) {
+		return parentLabelText;
+	}
+
+	const placeholder = field.getAttribute( 'placeholder' );
+
+	return placeholder || '';
 }
 
 function getAtomicFormFieldType( field ) {

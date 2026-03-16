@@ -146,9 +146,9 @@ test.describe( 'Widget Creation @widget-creation', () => {
 				const installButton = modal.locator( INSTALL_ANGIE_BUTTON );
 				await installButton.click();
 
-				await page.waitForURL( /plugin-install\.php.*angie/ );
-				expect( page.url() ).toContain( 'plugin-install.php' );
-				expect( page.url() ).toContain( 'angie' );
+				await page.waitForURL( /admin\.php.*angie-app/ );
+				expect( page.url() ).toContain( 'admin.php' );
+				expect( page.url() ).toContain( 'angie-app' );
 			} );
 		} );
 	} );

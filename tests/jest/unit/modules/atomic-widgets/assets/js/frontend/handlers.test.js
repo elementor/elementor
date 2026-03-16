@@ -171,6 +171,204 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		expect( elementEvent.defaultPrevented ).toBe( false );
 	} );
 
+	describe( 'atomic form field label resolution', () => {
+		const createForm = () => {
+			const form = document.createElement( 'form' );
+			form.setAttribute( 'data-element_type', 'e-form' );
+			form.setAttribute( 'data-id', 'test-form' );
+			document.body.appendChild( form );
+			return form;
+		};
+
+		const createInput = ( attrs = {} ) => {
+			const input = document.createElement( 'input' );
+			input.setAttribute( 'type', 'text' );
+			Object.entries( attrs ).forEach( ( [ key, value ] ) => {
+				input.setAttribute( key, value );
+			} );
+			return input;
+		};
+
+		it( 'prefers aria-label over everything else', async () => {
+			await importHandlers();
+			const form = createForm();
+			const input = createInput( {
+				'aria-label': 'Aria Label',
+				placeholder: 'Placeholder',
+				id: 'field-1',
+				'data-interaction-id': 'f1',
+			} );
+			const label = document.createElement( 'label' );
+			label.setAttribute( 'for', 'field-1' );
+			label.textContent = 'Label Element';
+			form.appendChild( label );
+			form.appendChild( input );
+
+			const fields = [];
+			form.querySelectorAll( 'input[data-interaction-id]' ).forEach( ( el ) => {
+				const ariaLabel = el.getAttribute( 'aria-label' );
+				fields.push( ariaLabel );
+			} );
+
+			expect( fields[ 0 ] ).toBe( 'Aria Label' );
+		} );
+
+		it( 'prefers label[for] over placeholder', async () => {
+			await importHandlers();
+			const form = createForm();
+			const input = createInput( {
+				placeholder: 'your@mail.com',
+				id: 'field-email',
+				'data-interaction-id': 'f2',
+			} );
+			const label = document.createElement( 'label' );
+			label.setAttribute( 'for', 'field-email' );
+			label.textContent = 'Email';
+			form.appendChild( label );
+			form.appendChild( input );
+
+			const fieldId = input.getAttribute( 'id' );
+			const labelElement = form.querySelector( `label[for="${ fieldId }"]` );
+
+			expect( labelElement.textContent.trim() ).toBe( 'Email' );
+		} );
+
+		it( 'uses placeholder as last resort', async () => {
+			await importHandlers();
+			const form = createForm();
+			const input = createInput( {
+				placeholder: 'Enter your name',
+				'data-interaction-id': 'f3',
+			} );
+			form.appendChild( input );
+
+			const ariaLabel = input.getAttribute( 'aria-label' );
+			const fieldId = input.getAttribute( 'id' );
+			const labelElement = fieldId ? form.querySelector( `label[for="${ fieldId }"]` ) : null;
+			const placeholder = input.getAttribute( 'placeholder' );
+
+			expect( ariaLabel ).toBeNull();
+			expect( labelElement ).toBeNull();
+			expect( placeholder ).toBe( 'Enter your name' );
+		} );
+
+		it( 'uses parent label when no aria-label, for-label, or placeholder', async () => {
+			await importHandlers();
+			const form = createForm();
+			const parentLabel = document.createElement( 'label' );
+			parentLabel.textContent = 'Parent Label';
+			const input = createInput( { 'data-interaction-id': 'f4' } );
+			parentLabel.appendChild( input );
+			form.appendChild( parentLabel );
+
+			const ariaLabel = input.getAttribute( 'aria-label' );
+			const fieldId = input.getAttribute( 'id' );
+			const closestLabel = input.closest( 'label' );
+
+			expect( ariaLabel ).toBeNull();
+			expect( fieldId ).toBeNull();
+			expect( closestLabel.textContent.trim() ).toBe( 'Parent Label' );
+		} );
+	} );
+
+	describe( 'atomic form submission behavior', () => {
+		const createFormWithInput = () => {
+			const form = document.createElement( 'form' );
+			form.setAttribute( 'data-element_type', 'e-form' );
+			form.setAttribute( 'data-id', 'test-form' );
+			form.setAttribute( 'x-data', 'eFormtest-form' );
+
+			const input = document.createElement( 'input' );
+			input.setAttribute( 'type', 'text' );
+			input.setAttribute( 'data-interaction-id', 'field-1' );
+			input.setAttribute( 'aria-label', 'Name' );
+			form.appendChild( input );
+
+			const button = document.createElement( 'button' );
+			button.setAttribute( 'type', 'submit' );
+			form.appendChild( button );
+
+			document.body.appendChild( form );
+			return { form, input };
+		};
+
+		const setupFormHandler = async ( form ) => {
+			const { getRegistration } = await importHandlers();
+			const formRegistration = getRegistration( ATOMIC_FORM_HANDLER_ID );
+			formRegistration.callback( { element: form } );
+
+			const { Alpine } = jest.requireMock( '@elementor/alpinejs' );
+			const lastCall = Alpine.data.mock.calls[ Alpine.data.mock.calls.length - 1 ];
+			return lastCall[ 1 ]();
+		};
+
+		beforeEach( () => {
+			global.elementorFrontend = {
+				config: { post: { id: 123 } },
+				utils: { urlActions: { runAction: jest.fn() } },
+			};
+			global.elementorFrontendConfig = {
+				urls: { ajaxurl: 'http://test.local/wp-admin/admin-ajax.php' },
+				nonces: { atomicFormsSendForm: 'test-nonce' },
+			};
+		} );
+
+		afterEach( () => {
+			delete global.fetch;
+			delete global.elementorFrontendConfig;
+		} );
+
+		it( 'clears form fields on successful submission', async () => {
+			const { form, input } = createFormWithInput();
+			input.value = 'Test value';
+
+			const instance = await setupFormHandler( form );
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( { success: true } ),
+			} );
+
+			await instance.submit( new Event( 'submit', { cancelable: true } ) );
+
+			expect( input.value ).toBe( '' );
+		} );
+
+		it( 'does not clear form fields on failed submission', async () => {
+			const { form, input } = createFormWithInput();
+			input.value = 'Test value';
+
+			const instance = await setupFormHandler( form );
+
+			global.fetch = jest.fn().mockResolvedValue( { ok: false } );
+
+			await instance.submit( new Event( 'submit', { cancelable: true } ) );
+
+			expect( input.value ).toBe( 'Test value' );
+		} );
+
+		it( 'dismisses success message when user starts typing', async () => {
+			const { form, input } = createFormWithInput();
+			input.value = 'Test value';
+
+			const instance = await setupFormHandler( form );
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( { success: true } ),
+			} );
+
+			await instance.submit( new Event( 'submit', { cancelable: true } ) );
+
+			expect( form.classList.contains( 'form-state-success' ) ).toBe( true );
+
+			input.dispatchEvent( new Event( 'input', { bubbles: true } ) );
+
+			expect( form.classList.contains( 'form-state-default' ) ).toBe( true );
+			expect( form.classList.contains( 'form-state-success' ) ).toBe( false );
+		} );
+	} );
+
 	it( 'adds non-whitelisted editor link actions', async () => {
 		// Arrange
 		global.elementor = {};

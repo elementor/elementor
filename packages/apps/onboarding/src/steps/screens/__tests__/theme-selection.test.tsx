@@ -99,6 +99,19 @@ describe( 'ThemeSelection', () => {
 			expect( helloCard ).toBeChecked();
 		} );
 
+		it( 'should pre-select hello-biz when it is the recommended theme', () => {
+			// Arrange & Act
+			renderApp( {
+				isConnected: true,
+				progress: { current_step_id: 'theme_selection', current_step_index: 3 },
+				choices: { building_for: 'business', site_about: [ 'online_store' ] },
+			} );
+
+			// Assert
+			const helloBizCard = screen.getByRole( 'radio', { name: 'Hello Biz' } );
+			expect( helloBizCard ).toBeChecked();
+		} );
+
 		it( 'should allow selecting a different theme', () => {
 			// Arrange
 			navigateToThemeSelection();
@@ -115,7 +128,8 @@ describe( 'ThemeSelection', () => {
 			// Arrange
 			navigateToThemeSelection();
 
-			// Act
+			// Act – explicitly select the Hello theme (recommended theme is visual-only)
+			fireEvent.click( screen.getByRole( 'radio', { name: 'Hello' } ) );
 			fireEvent.click( screen.getByText( 'Continue with this theme' ) );
 
 			// Assert
@@ -134,7 +148,8 @@ describe( 'ThemeSelection', () => {
 			// Arrange
 			navigateToThemeSelection();
 
-			// Act
+			// Act – explicitly select first to enable Continue
+			fireEvent.click( screen.getByRole( 'radio', { name: 'Hello' } ) );
 			fireEvent.click( screen.getByText( 'Continue with this theme' ) );
 
 			// Assert

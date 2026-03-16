@@ -12,6 +12,7 @@ import {
 import { GreetingBanner } from '../../components/ui/greeting-banner';
 import { StepTitle } from '../../components/ui/styled-components';
 import { useOnboarding } from '../../hooks/use-onboarding';
+import { useOnboardingEvent } from '../../hooks/use-onboarding-event';
 import type { ThemeSlug } from '../../types';
 import { StepId } from '../../types';
 import { t } from '../../utils/translations';
@@ -22,6 +23,7 @@ interface ThemeSelectionProps {
 
 export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
 	const { choices, completedSteps, actions } = useOnboarding();
+	const { trackThemeSuggested, trackThemeSelected } = useOnboardingEvent();
 
 	const selectedValue = choices.theme_selection as ThemeSlug | null;
 	const isStepCompleted = completedSteps.includes( StepId.THEME_SELECTION );
@@ -30,37 +32,29 @@ export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
 	const recommendedTheme = useMemo( () => getRecommendedTheme( choices ), [ choices ] );
 	const greetingText = useMemo( () => getGreetingText( choices.experience_level ), [ choices.experience_level ] );
 
-	// Show both themes when Hello Biz is recommended.
-	// TODO: Once the site_about step (S2) is implemented, this will work automatically.
-	// For now, always show both themes so the UI can be tested.
-	const showBothThemes = true;
+	const hasTrackedSuggestion = React.useRef( false );
 
-	// Pre-select the recommended theme if no explicit selection was made yet.
-	// `actions` is omitted from deps because it is a stable memoized object (useMemo + dispatch).
 	useEffect( () => {
-		if ( ! selectedValue ) {
-			actions.setUserChoice( 'theme_selection', recommendedTheme );
+		if ( recommendedTheme && ! hasTrackedSuggestion.current ) {
+			hasTrackedSuggestion.current = true;
+			trackThemeSuggested( recommendedTheme );
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ selectedValue, recommendedTheme ] );
+	}, [ recommendedTheme, trackThemeSuggested ] );
 
 	const handleSelect = useCallback(
 		( slug: ThemeSlug ) => {
 			if ( isInstalled ) {
-				// If already installed, clicking just continues (same as footer button).
 				onComplete( { theme_selection: selectedValue } );
 				return;
 			}
 
+			trackThemeSelected( slug );
 			actions.setUserChoice( 'theme_selection', slug );
 		},
-		[ actions, isInstalled, onComplete, selectedValue ]
+		[ actions, isInstalled, onComplete, selectedValue, trackThemeSelected ]
 	);
 
-	const themes = useMemo(
-		() => ( showBothThemes ? [ HELLO_THEME, HELLO_BIZ_THEME ] : [ HELLO_THEME ] ),
-		[ showBothThemes ]
-	);
+	const themes = [ HELLO_THEME, HELLO_BIZ_THEME ];
 
 	const effectiveSelection = selectedValue ?? recommendedTheme;
 

@@ -66,22 +66,22 @@ function getEmptyState(): OnboardingState {
 		exitType: null,
 		lastActiveTimestamp: null,
 		startedAt: null,
-		completedAt: null,
 		choices: getDefaultChoices(),
 		isLoading: false,
 		error: null,
 		hadUnexpectedExit: false,
+		resumeStepIdForTracking: null,
 		isConnected: false,
 		isGuest: false,
 		userName: '',
-		urls: { dashboard: '', editor: '', connect: '', comparePlans: '', upgradeUrl: '', videosBaseUrl: '' },
+		urls: { dashboard: '', editor: '', connect: '', comparePlans: '', upgradeUrl: '' },
 		shouldShowProInstallScreen: false,
 		hasProInstallScreenDismissed: false,
 	};
 }
 
 function buildStateFromConfig(
-	config: NonNullable< typeof window.elementorAppConfig >[ 'e-onboarding' ]
+	config: NonNullable< typeof window.elementorAppConfig >[ 'onboarding' ]
 ): OnboardingState {
 	if ( ! config ) {
 		return getEmptyState();
@@ -106,11 +106,11 @@ function buildStateFromConfig(
 		exitType: progress.exit_type ?? null,
 		lastActiveTimestamp: progress.last_active_timestamp ?? null,
 		startedAt: progress.started_at ?? null,
-		completedAt: progress.completed_at ?? null,
 		choices: { ...getDefaultChoices(), ...config.choices },
 		isLoading: false,
 		error: null,
-		hadUnexpectedExit: config.hadUnexpectedExit ?? false,
+		hadUnexpectedExit: false,
+		resumeStepIdForTracking: config.hadUnexpectedExit ? currentStepId : null,
 		isConnected: config.isConnected ?? false,
 		isGuest: false,
 		userName: config.userName ?? '',
@@ -131,11 +131,10 @@ export const slice = __createSlice( {
 	initialState: getEmptyState(),
 	reducers: {
 		initFromConfig: ( state ) => {
-			const config = window.elementorAppConfig?.[ 'e-onboarding' ];
+			const config = window.elementorAppConfig?.onboarding;
 
 			if ( config ) {
-				const newState = buildStateFromConfig( config );
-				return newState;
+				return buildStateFromConfig( config );
 			}
 
 			return state;
@@ -206,7 +205,6 @@ export const slice = __createSlice( {
 		},
 
 		completeOnboarding: ( state ) => {
-			state.completedAt = Date.now();
 			state.exitType = 'user_exit';
 		},
 
@@ -220,6 +218,10 @@ export const slice = __createSlice( {
 
 		clearUnexpectedExit: ( state ) => {
 			state.hadUnexpectedExit = false;
+		},
+
+		clearResumeStepIdForTracking: ( state ) => {
+			state.resumeStepIdForTracking = null;
 		},
 
 		setConnected: ( state, action: PayloadAction< boolean > ) => {
@@ -260,6 +262,7 @@ export const {
 	setLoading,
 	setError,
 	clearUnexpectedExit,
+	clearResumeStepIdForTracking,
 	setConnected,
 	setGuest,
 	setShouldShowProInstallScreen,

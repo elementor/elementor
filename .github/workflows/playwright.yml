@@ -2,7 +2,7 @@ name: Playwright
 
 on:
   pull_request:
-    types: [labeled, synchronize, opened, reopened, ready_for_review]
+    types: [labeled, synchronize, opened, reopened]
     branches:
       - main
       - '[0-9].[0-9][0-9]'
@@ -28,6 +28,14 @@ on:
       tag:
         description: 'Provide @tag or a keyword'
         required: false
+      run_mode:
+        type: choice
+        description: 'Run mode'
+        required: true
+        default: 'standard'
+        options:
+          - standard
+          - nightly
 
 permissions:
   contents: write
@@ -47,7 +55,7 @@ jobs:
   build-plugin:
     if: |
       contains(github.event.pull_request.labels.*.name, 'run-tests') ||
-      (!github.event.pull_request.draft && github.event_name == 'pull_request') ||
+      github.event_name == 'pull_request' ||
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch'
     name: Build plugin
@@ -60,7 +68,7 @@ jobs:
     if: |
       github.event.inputs.tag == '' &&
       (contains(github.event.pull_request.labels.*.name, 'run-tests') ||
-      (!github.event.pull_request.draft && github.event_name == 'pull_request') ||
+      github.event_name == 'pull_request' ||
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch')
     strategy:
@@ -113,7 +121,7 @@ jobs:
         run: |
           npm run start-local-server
       - name: Update wordpress to nightly build
-        if: ${{ github.event_name == 'schedule' }}
+        if: ${{ github.event_name == 'schedule' || inputs.run_mode == 'nightly' }}
         run: npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip"
       - name: Setup test data
         run: npm run test:setup:playwright

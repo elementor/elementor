@@ -28,6 +28,9 @@ class Presets {
 	const BASE_EASING = [ 'easeIn' ];
 	const ADDITIONAL_EASING = [ 'easeOut', 'easeInOut', 'backIn', 'backInOut', 'backOut', 'linear' ];
 
+	const DEFAULT_REPEAT = '';
+	const REPEAT_OPTIONS = [ 'loop', 'times', '' ];
+
 	public static function easing_options() {
 		return array_merge( self::BASE_EASING, self::ADDITIONAL_EASING );
 	}
@@ -48,6 +51,7 @@ class Presets {
 			'scaleStart' => self::DEFAULT_SCALE_START,
 			'defaultEasing' => self::DEFAULT_EASING,
 			'relativeTo' => self::DEFAULT_RELATIVE_TO,
+			'repeat' => self::DEFAULT_REPEAT,
 			'start' => self::DEFAULT_START,
 			'end' => self::DEFAULT_END,
 		];

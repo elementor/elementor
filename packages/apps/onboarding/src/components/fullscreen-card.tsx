@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { Box, Button, Link, Paper, styled } from '@elementor/ui';
 
-import { getOnboardingAssetUrl } from '../steps/step-visuals';
+import { getLoginVisualConfig } from '../steps/step-visuals';
 
 const BACKDROP_OPACITY = 0.6;
 
 interface FullscreenCardRootProps {
-	backgroundUrl: string;
+	background: string;
 }
 
 const FullscreenCardRoot = styled( Box, {
-	shouldForwardProp: ( prop ) => prop !== 'backgroundUrl',
-} )< FullscreenCardRootProps >( ( { theme, backgroundUrl } ) => ( {
+	shouldForwardProp: ( prop ) => prop !== 'background',
+} )< FullscreenCardRootProps >( ( { theme, background } ) => ( {
 	position: 'relative',
 	minHeight: '100%',
 	width: '100%',
@@ -19,16 +19,13 @@ const FullscreenCardRoot = styled( Box, {
 	alignItems: 'center',
 	justifyContent: 'center',
 	padding: theme.spacing( 4 ),
-	backgroundImage: `url(${ backgroundUrl })`,
-	backgroundSize: 'cover',
-	backgroundPosition: 'center',
-	backgroundRepeat: 'no-repeat',
+	background,
 } ) );
 
 const Backdrop = styled( Box )( ( { theme } ) => ( {
 	position: 'absolute',
 	inset: 0,
-	backgroundColor: theme.palette.text.primary,
+	backgroundColor: theme.palette.mode === 'dark' ? theme.palette.common.black : theme.palette.text.primary,
 	opacity: BACKDROP_OPACITY,
 } ) );
 
@@ -74,6 +71,11 @@ export const SecondaryButton = styled( Button )( ( { theme } ) => ( {
 } ) );
 
 export const SocialIconWrapper = styled( Paper )( ( { theme } ) => ( {
+	backgroundColor: theme.palette.background.paper,
+	backgroundImage:
+		theme.palette.mode === 'dark'
+			? 'linear-gradient(rgba(255, 255, 255, 0.165), rgba(255, 255, 255, 0.165))'
+			: 'none',
 	width: theme.spacing( 3.5 ),
 	height: theme.spacing( 3.5 ),
 	borderRadius: '50%',
@@ -107,16 +109,15 @@ export const TextButton = styled( Link )( ( { theme } ) => ( {
 	lineHeight: theme.typography.pxToRem( 22 ),
 } ) );
 
-const backgroundUrl = getOnboardingAssetUrl( 'login.png' );
-
 interface FullscreenCardProps {
 	children: React.ReactNode;
 	'data-testid'?: string;
 }
 
 export function FullscreenCard( { children, 'data-testid': testId }: FullscreenCardProps ) {
+	const { background } = getLoginVisualConfig();
 	return (
-		<FullscreenCardRoot backgroundUrl={ backgroundUrl } data-testid={ testId }>
+		<FullscreenCardRoot background={ background } data-testid={ testId }>
 			<Backdrop />
 			<Card elevation={ 24 }>{ children }</Card>
 		</FullscreenCardRoot>

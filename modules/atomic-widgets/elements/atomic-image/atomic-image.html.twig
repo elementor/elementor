@@ -6,12 +6,12 @@
 			{{ linkAttr }}="{{ settings.link.href | raw }}"
 			class="{{ base_styles['link-base'] }}"
 			target="{{ settings.link.target }}"
-			data-interaction-id="{{ id }}"
+			data-interaction-id="{{ interaction_id }}"
 		>
 	{% endif %}
 	<img class="{{ base_styles['base'] }} {{ settings.classes | join(' ') }}" 
 		{% if not settings.link.href %}
-			data-interaction-id="{{ id }}" 
+			data-interaction-id="{{ interaction_id }}" 
 		{% endif %} 
 		{{ id_attribute }} {{ settings.attributes | raw }}
 		{% for attr, value in settings.image %}

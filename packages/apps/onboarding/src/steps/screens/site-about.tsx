@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Stack, Typography } from '@elementor/ui';
 
 import { OptionsGrid } from '../../components/site-about';
@@ -7,10 +7,12 @@ import { getGreeting } from '../../components/site-about/constants';
 import { GreetingBanner } from '../../components/ui/greeting-banner';
 import { StepTitle } from '../../components/ui/styled-components';
 import { useOnboarding } from '../../hooks/use-onboarding';
+import { useOnboardingEvent } from '../../hooks/use-onboarding-event';
 import { t } from '../../utils/translations';
 
 export function SiteAbout() {
 	const { choices, actions } = useOnboarding();
+	const { trackSiteTopicSelected } = useOnboardingEvent();
 
 	const selectedValues: string[] = useMemo(
 		() => ( Array.isArray( choices.site_about ) ? choices.site_about : [] ),
@@ -21,16 +23,14 @@ export function SiteAbout() {
 		return getGreeting( choices.building_for ?? '' );
 	}, [ choices.building_for ] );
 
-	const handleToggle = useCallback(
-		( value: string ) => {
-			const next = selectedValues.includes( value )
-				? selectedValues.filter( ( v ) => v !== value )
-				: [ ...selectedValues, value ];
+	function handleToggle( value: string ) {
+		const next = selectedValues.includes( value )
+			? selectedValues.filter( ( v ) => v !== value )
+			: [ ...selectedValues, value ];
 
-			actions.setUserChoice( 'site_about', next );
-		},
-		[ selectedValues, actions ]
-	);
+		trackSiteTopicSelected( next );
+		actions.setUserChoice( 'site_about', next );
+	}
 
 	return (
 		<Stack spacing={ 7.5 } data-testid="site-about-step">
