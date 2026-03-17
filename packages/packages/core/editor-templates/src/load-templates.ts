@@ -59,8 +59,8 @@ function getTemplateIdsFromConfig() {
 	return (
 		flattenElements( elements as V1ElementData[] ).filter(
 			( element ) => TEMPLATE_WIDGET_TYPES.includes( element.widgetType ?? '' ) && element.settings?.template_id
-		) as ( V1ElementData & { settings: V1ElementSettingsProps & { template_id: number } } )[]
-	 ).map( ( element ) => element.settings.template_id );
+		) as ( V1ElementData & { settings: V1ElementSettingsProps & { template_id: string } } )[]
+	 ).map( ( element ) => Number( element.settings.template_id ) );
 }
 
 async function fetchDocuments( ids: number[] ): Promise< Document[] > {
