@@ -45,7 +45,7 @@ export function App() {
 						user: { isAdmin: true },
 					},
 				},
-				'*',
+				'*'
 			);
 
 			return;
@@ -63,7 +63,7 @@ export function App() {
 						type: 'site-planner/deploy-website/result',
 						payload: result,
 					},
-					origin || '*',
+					origin || '*'
 				);
 
 				if ( result.status === 'success' && result.homePageId ) {
@@ -78,7 +78,7 @@ export function App() {
 							error: err instanceof Error ? err.message : 'Deploy failed',
 						},
 					},
-					origin || '*',
+					origin || '*'
 				);
 			}
 		}

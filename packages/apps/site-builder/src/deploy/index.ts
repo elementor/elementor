@@ -1,10 +1,10 @@
+import { updateKitSettings } from './steps/kit-settings';
+import { uploadLogo } from './steps/logo';
 import { createMenus } from './steps/menus';
 import { createPages, setHomePage } from './steps/pages';
 import { createSamplePosts } from './steps/sample-posts';
 import { setSiteMetadata } from './steps/site-metadata';
 import { createThemeParts } from './steps/theme-parts';
-import { updateKitSettings } from './steps/kit-settings';
-import { uploadLogo } from './steps/logo';
 
 import type { ThemePartEntry } from './steps/theme-parts';
 import type { DeployPayload, DeployResult } from './types';
