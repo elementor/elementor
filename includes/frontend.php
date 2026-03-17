@@ -697,6 +697,7 @@ class Frontend extends App {
 				$post_id = Plugin::$instance->preview->get_post_id();
 				if ( $post_id ) {
 					do_action( 'elementor/post/render', $post_id );
+					$this->handle_page_assets( $post_id );
 				}
 			}
 
