@@ -23,7 +23,7 @@ export class LoadAnimationAssets extends After {
 			settingKeys.some( ( key ) => {
 				const control = container.controls?.[ key ];
 				return control && Object.keys( ANIMATION_CONTROL_TYPES ).includes( control.type );
-			} )
+			} ),
 		);
 	}
 

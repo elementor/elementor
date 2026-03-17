@@ -153,7 +153,7 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<EditorPage>}
 	 */
 	async editExistingPostWithElementor( postId: string, { page, testInfo }: { page: Page; testInfo: TestInfo; } ): Promise<EditorPage> {
-		page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
+		await page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
 
 		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
 		await this.waitForPanel();

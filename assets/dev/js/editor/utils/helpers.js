@@ -51,7 +51,7 @@ module.exports = {
 	/**
 	 * @param {string}                                url
 	 * @param {jQuery}                                $document
-	 * @param {{ crossOrigin: boolean, id: string }} options
+	 * @param {{ crossOrigin: boolean, id: string }}  options
 	 */
 	enqueueCSS( url, $document, options = {} ) {
 		const selector = options.id ? `#${ options.id }` : `link[href="${ url }"]`;
