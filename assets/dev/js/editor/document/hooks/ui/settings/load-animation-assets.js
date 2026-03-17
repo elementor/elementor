@@ -54,7 +54,7 @@ export class LoadAnimationAssets extends After {
 				const filePrefix = ANIMATION_CONTROL_TYPES[ control.type ];
 				const url = `${ urls.assets }lib/animations/styles/${ filePrefix }${ value }${ fileSuffix }.css`;
 
-				elementor.helpers.enqueuePreviewStylesheet( url );
+				elementor.helpers.enqueuePreviewStylesheet( url, { id: `e-animation-${ value }-css` } );
 			} );
 		} );
 	}
