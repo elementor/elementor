@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { ArrowDownSmallIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpSmallIcon } from '@elementor/icons';
 import { StyledToggleButton, StyledToggleButtonGroup } from '@elementor/editor-controls';
+import { ArrowDownSmallIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpSmallIcon } from '@elementor/icons';
 import { Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
