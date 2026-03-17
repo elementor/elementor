@@ -132,6 +132,7 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 								} );
 							} }
 							onKeyDown={ handleKeyDown }
+							focusOnShow
 						/>
 					</FormField>
 					{ ValueField && (
