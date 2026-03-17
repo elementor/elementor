@@ -17,11 +17,7 @@ function getConfig() {
 	return window.elementorAppConfig?.[ 'site-builder' ];
 }
 
-function sendReferrerInfo(
-	iframe: HTMLIFrameElement,
-	event: MessageEvent,
-	targetOrigin: string
-) {
+function sendReferrerInfo( iframe: HTMLIFrameElement, event: MessageEvent, targetOrigin: string ) {
 	const config = getConfig();
 
 	iframe.contentWindow?.postMessage(
@@ -38,10 +34,7 @@ function sendReferrerInfo(
 	);
 }
 
-async function handleDeploy(
-	iframe: HTMLIFrameElement | null,
-	event: MessageEvent
-) {
+async function handleDeploy( iframe: HTMLIFrameElement | null, event: MessageEvent ) {
 	const origin = event.origin || '*';
 
 	try {
@@ -64,8 +57,7 @@ async function handleDeploy(
 				type: 'site-planner/deploy-website/result',
 				payload: {
 					status: 'error',
-					error:
-						err instanceof Error ? err.message : 'Deploy failed',
+					error: err instanceof Error ? err.message : 'Deploy failed',
 				},
 			},
 			origin
@@ -101,11 +93,7 @@ export function App() {
 			if ( type === 'get/referrer/info' ) {
 				const iframe = iframeRef.current;
 				if ( iframe?.contentWindow ) {
-					sendReferrerInfo(
-						iframe,
-						event,
-						allowedOrigin || '*'
-					);
+					sendReferrerInfo( iframe, event, allowedOrigin || '*' );
 				}
 				return;
 			}
