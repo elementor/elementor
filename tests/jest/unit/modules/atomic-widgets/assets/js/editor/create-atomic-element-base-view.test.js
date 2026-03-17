@@ -1196,11 +1196,15 @@ describe( 'createAtomicElementBaseView - components Pro gating', () => {
 		}
 	} );
 
-	const setProState = ( isActive ) => {
+	const setProState = ( { isActive, hasInstalled = false, isAtLeast = false } = {} ) => {
 		global.window = global.window || {};
 		global.window.elementorV2 = {
 			...( global.window.elementorV2 || {} ),
-			utils: { isProActive: jest.fn( () => isActive ) },
+			utils: {
+				isProActive: jest.fn( () => isActive ),
+				hasProInstalled: jest.fn( () => hasInstalled ),
+				isProAtLeast: jest.fn( () => isAtLeast ),
+			},
 		};
 	};
 
@@ -1209,23 +1213,23 @@ describe( 'createAtomicElementBaseView - components Pro gating', () => {
 		return saveGroup?.actions?.find( ( a ) => 'save-component' === a.name );
 	};
 
-	it( 'should show keyboard shortcut and enable create-component when Pro is active', () => {
+	it( 'should show new badge and enable create-component when Pro is active', () => {
 		// Arrange
-		setProState( true );
+		setProState( { isActive: true, hasInstalled: true, isAtLeast: true } );
 
 		// Act
 		const action = findCreateAction( viewInstance.getContextMenuGroups() );
 
 		// Assert
 		expect( action ).toBeDefined();
-		expect( action.shortcut ).toContain( '+⇧+K' );
-		expect( action.shortcut ).not.toContain( 'PRO' );
+		expect( action.shortcut ).toContain( 'new-badge' );
+		expect( action.shortcut ).toContain( 'New' );
 		expect( action.isEnabled() ).toBe( true );
 	} );
 
-	it( 'should show promotion crown badge and disable create-component when Pro is not active', () => {
+	it( 'should show promotion crown badge and disable create-component when Pro is not installed', () => {
 		// Arrange
-		setProState( false );
+		setProState( { isActive: false } );
 
 		// Act
 		const action = findCreateAction( viewInstance.getContextMenuGroups() );
@@ -1233,7 +1237,7 @@ describe( 'createAtomicElementBaseView - components Pro gating', () => {
 		// Assert
 		expect( action ).toBeDefined();
 		expect( action.shortcut ).toContain( 'eicon-upgrade-crown' );
-		expect( action.shortcut ).toContain( 'go-pro-components-create' );
+		expect( action.shortcut ).toContain( 'go-pro-components-Instance-create-context-menu' );
 		expect( action.isEnabled() ).toBe( false );
 	} );
 
@@ -1246,13 +1250,13 @@ describe( 'createAtomicElementBaseView - components Pro gating', () => {
 
 		// Assert
 		expect( action ).toBeDefined();
-		expect( action.shortcut ).toContain( '+⇧+K' );
+		expect( action.shortcut ).toContain( 'new-badge' );
 		expect( action.isEnabled() ).toBe( true );
 	} );
 
 	it( 'should not add create-component when user is not administrator', () => {
 		// Arrange
-		setProState( true );
+		setProState( { isActive: true, hasInstalled: true, isAtLeast: true } );
 		global.elementor.config.user.is_administrator = false;
 
 		// Act
@@ -1268,7 +1272,11 @@ describe( 'createAtomicElementBaseView - components Pro gating', () => {
 	it( 'should block saveAsComponent when Pro is not active', () => {
 		// Arrange
 		global.window.elementorV2 = {
-			utils: { isProActive: () => false },
+			utils: {
+				isProActive: () => false,
+				hasProInstalled: () => false,
+				isProAtLeast: () => false,
+			},
 		};
 
 		// Act
@@ -1281,7 +1289,11 @@ describe( 'createAtomicElementBaseView - components Pro gating', () => {
 	it( 'should allow saveAsComponent when Pro is active', () => {
 		// Arrange
 		global.window.elementorV2 = {
-			utils: { isProActive: () => true },
+			utils: {
+				isProActive: () => true,
+				hasProInstalled: () => true,
+				isProAtLeast: () => true,
+			},
 		};
 
 		// Act
@@ -1303,6 +1315,45 @@ describe( 'createAtomicElementBaseView - components Pro gating', () => {
 		// Assert
 		expect( dispatchEventSpy ).toHaveBeenCalledWith(
 			expect.objectContaining( { type: 'elementor/editor/open-save-as-component-form' } ),
+		);
+	} );
+
+	it( 'should show new badge and enable create-component when Pro is outdated', () => {
+		// Arrange
+		setProState( { isActive: false, hasInstalled: true, isAtLeast: false } );
+
+		// Act
+		const action = findCreateAction( viewInstance.getContextMenuGroups() );
+
+		// Assert
+		expect( action ).toBeDefined();
+		expect( action.shortcut ).toContain( 'new-badge' );
+		expect( action.shortcut ).not.toContain( 'eicon-upgrade-crown' );
+		expect( action.isEnabled() ).toBe( true );
+	} );
+
+	it( 'should show info notification and block saveAsComponent when Pro is outdated', () => {
+		// Arrange
+		const notifySpy = jest.fn();
+		global.window.elementorV2 = {
+			utils: {
+				isProActive: () => false,
+				hasProInstalled: () => true,
+				isProAtLeast: () => false,
+			},
+			editorNotifications: { notify: notifySpy },
+		};
+
+		// Act
+		viewInstance.saveAsComponent( { originalEvent: { clientX: 0, clientY: 0 } } );
+
+		// Assert
+		expect( dispatchEventSpy ).not.toHaveBeenCalled();
+		expect( notifySpy ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				type: 'info',
+				id: 'component-create-update',
+			} ),
 		);
 	} );
 } );

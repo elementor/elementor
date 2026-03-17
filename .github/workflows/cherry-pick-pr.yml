@@ -39,10 +39,12 @@ jobs:
         shell: bash
 
       - name: Log trigger and PR information
+        env:
+          LABEL_NAME: ${{ github.event.label.name }}
         run: |
           echo "Trigger: ${{ github.event.action }}"
           if [ "${{ github.event.action }}" = "labeled" ]; then
-            echo "Added label: ${{ github.event.label.name }}"
+            echo "Added label: $LABEL_NAME"
           fi
           echo "PR #${{ github.event.pull_request.number }} from: ${{ github.event.pull_request.head.repo.full_name }}"
           echo "Target repository: ${{ github.repository }}"
@@ -52,8 +54,10 @@ jobs:
 
       - name: Get branch labels
         id: get_labels
+        env:
+          PR_LABELS_JSON: ${{ toJSON(github.event.pull_request.labels) }}
         run: |
-          LABELS=$(jq -r '.[].name' <<< '${{ toJSON(github.event.pull_request.labels) }}' | grep '^cp_' | paste -sd ',' || echo "")
+          LABELS=$(jq -r '.[].name' <<< "$PR_LABELS_JSON" | grep '^cp_' | paste -sd ',' || echo "")
           echo "filtered_labels_csv=$LABELS" >> "$GITHUB_OUTPUT"
         shell: bash
 
@@ -67,6 +71,7 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_USER_LOGIN: ${{ github.event.pull_request.user.login }}
           LABEL_NAME: ${{ github.event.label.name }}
+          FILTERED_LABELS_CSV: ${{ steps.get_labels.outputs.filtered_labels_csv }}
         run: |
           PR_NUMBER="${{ github.event.pull_request.number }}"
           MERGE_SHA="${{ github.event.pull_request.merge_commit_sha }}"
@@ -75,7 +80,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          IFS=',' read -ra BRANCHES <<< "${{ steps.get_labels.outputs.filtered_labels_csv }}"
+          IFS=',' read -ra BRANCHES <<< "$FILTERED_LABELS_CSV"
           for lbl in "${BRANCHES[@]}"; do
             TARGET=${lbl#cp_}
 
@@ -113,6 +118,9 @@ jobs:
                 TICKET_SUFFIX=" [NO-TICKET]"
               fi
 
+              # Extract title body by stripping the leading "Type: " prefix
+              PR_TITLE_BODY=$(echo "$PR_TITLE" | sed 's/^[A-Za-z]*: *//')
+
               # Push the conflict branch
               if git push --force-with-lease origin "$BRANCH:$CONFLICT_BRANCH"; then
                 # Create draft PR with conflict information
@@ -126,7 +134,7 @@ jobs:
                   gh pr create \
                     --base "$TARGET" \
                     --head "$CONFLICT_BRANCH" \
-                    --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET} with conflicts${TICKET_SUFFIX}" \
+                    --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET} with conflicts: ${PR_TITLE_BODY}" \
                     --body "⚠️ **Manual Resolution Required**
 
                   This cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch has conflicts that need manual resolution.
@@ -178,6 +186,9 @@ jobs:
               TICKET_SUFFIX=" [NO-TICKET]"
             fi
 
+            # Extract title body by stripping the leading "Type: " prefix
+            PR_TITLE_BODY=$(echo "$PR_TITLE" | sed 's/^[A-Za-z]*: *//')
+
             # Create PR via gh CLI (token already in env: GH_TOKEN)
             # Check if PR already exists
             if gh pr list --head "$BRANCH" --base "$TARGET" --state open | grep -q .; then
@@ -192,7 +203,7 @@ jobs:
               PR_URL=$(gh pr create \
                 --base "$TARGET" \
                 --head "$BRANCH" \
-                --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET}${TICKET_SUFFIX}" \
+                --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET}: ${PR_TITLE_BODY}" \
                 --body "Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch.
 
                 **Source:** ${{ github.event.pull_request.head.repo.full_name }}

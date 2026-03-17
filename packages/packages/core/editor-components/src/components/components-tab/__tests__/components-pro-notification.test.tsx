@@ -2,7 +2,7 @@ import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
 import { screen } from '@testing-library/react';
 
-import { ComponentsProNotification } from '../components-pro-notification';
+import { ComponentsProNotification, UPGRADE_URL } from '../components-pro-notification';
 
 describe( 'ComponentsProNotification', () => {
 	it( 'should render upgrade notification with title and description', () => {
@@ -23,6 +23,6 @@ describe( 'ComponentsProNotification', () => {
 		// Assert
 		const upgradeLink = screen.getByRole( 'link', { name: /Upgrade now/i } );
 		expect( upgradeLink ).toBeInTheDocument();
-		expect( upgradeLink ).toHaveAttribute( 'href', 'https://go.elementor.com/go-pro-components-create/' );
+		expect( upgradeLink ).toHaveAttribute( 'href', UPGRADE_URL );
 	} );
 } );
