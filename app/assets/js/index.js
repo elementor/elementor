@@ -12,7 +12,10 @@ import AppProvider from './app-context';
 new ImportExport();
 new KitLibrary();
 new SiteEditor();
-new SiteBuilder();
+
+if ( elementorCommon?.config?.experimentalFeatures?.[ 'site-builder' ] ) {
+	new SiteBuilder();
+}
 
 new Onboarding();
 

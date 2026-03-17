@@ -162,6 +162,7 @@ declare global {
 			'onboarding'?: OnboardingConfig;
 		'site-builder'?: {
 			iframeUrl?: string;
+			isAdmin?: boolean;
 			connectAuth?: {
 					signature: string;
 					accessToken: string;

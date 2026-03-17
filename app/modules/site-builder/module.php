@@ -17,7 +17,27 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		$this->register_experiment();
+
+		if ( ! $this->is_experiment_active() ) {
+			return;
+		}
+
 		add_action( 'elementor/init', [ $this, 'on_elementor_init' ], 12 );
+	}
+
+	private function register_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => 'site-builder',
+			'title' => esc_html__( 'Site Builder', 'elementor' ),
+			'description' => esc_html__( 'Enable Site Builder.', 'elementor' ),
+			'release_status' => Plugin::$instance->experiments::RELEASE_STATUS_DEV,
+			'hidden' => true,
+		] );
+	}
+
+	private function is_experiment_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( 'site-builder' );
 	}
 
 	public function on_elementor_init() {
@@ -27,6 +47,7 @@ class Module extends BaseModule {
 
 		$settings = [
 			'iframeUrl' => $this->get_iframe_url(),
+			'isAdmin' => current_user_can( 'manage_options' ),
 		];
 
 		$connect_auth = $this->get_connect_auth();
