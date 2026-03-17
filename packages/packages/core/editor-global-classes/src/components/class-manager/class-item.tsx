@@ -149,11 +149,7 @@ export const ClassItem = ( {
 						} }
 					>
 						<Stack direction="row" alignItems="center" gap={ 1 }>
-							{ syncToV3 ? (
-								<RefreshOffIcon fontSize="tiny" />
-							) : (
-								<RefreshIcon fontSize="tiny" />
-							) }
+							{ syncToV3 ? <RefreshOffIcon fontSize="tiny" /> : <RefreshIcon fontSize="tiny" /> }
 							<Typography variant="caption" sx={ { color: 'text.primary' } }>
 								{ syncToV3
 									? __( 'Stop syncing to Global Fonts', 'elementor' )
