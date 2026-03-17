@@ -8,11 +8,11 @@ const animationContent = JSON.parse(
 	readFileSync( _path.resolve( __dirname, './templates/animation-deduplication.json' ), 'utf-8' ),
 );
 
-async function createPageWithAnimationContent( page: any ): Promise<string> {
+async function createPageWithAnimationContent( page: import( '@playwright/test' ).Page ): Promise<string> {
 	await page.goto( '/wp-admin' );
 	await page.waitForLoadState( 'load' );
 
-	const nonce: string = await page.evaluate( () => ( window as any ).wpApiSettings?.nonce ?? '' );
+	const nonce: string = await page.evaluate( () => ( window as Window & { wpApiSettings?: { nonce?: string } } ).wpApiSettings?.nonce ?? '' );
 	const baseUrl = new URL( page.url() ).origin;
 
 	const response = await page.context().request.post( `${ baseUrl }/index.php`, {
@@ -93,7 +93,7 @@ test.describe( 'Animation CSS deduplication', () => {
 								}
 							}
 						} catch {
-							// skip cross-origin sheets
+							// Skip cross-origin sheets
 						}
 					}
 
