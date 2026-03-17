@@ -186,6 +186,7 @@ const externals = [
 		'@elementor/alpinejs': 'elementorV2.alpinejs',
 		'@elementor/query': 'elementorV2.query',
 		'@elementor/onboarding': 'elementorV2.onboarding',
+		'@elementor/site-builder': [ 'elementorV2', 'siteBuilder' ],
 		'@elementor/v4-activation-modal': [ 'elementorV2', 'v4-activation-modal' ],
 		'@wordpress/dom-ready': 'wp.domReady',
 		'@wordpress/components': 'wp.components',

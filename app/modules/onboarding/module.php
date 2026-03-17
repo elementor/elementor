@@ -242,6 +242,7 @@ class Module extends BaseModule {
 		$settings['starter'] = [
 			'restPath' => 'elementor/v1/onboarding/user-progress',
 			'aiPlannerUrl' => 'https://planner.elementor.com/home.html',
+			'kitLibraryUrl' => Plugin::$instance->app->get_base_url() . '#/kit-library',
 		];
 
 		return $settings;
