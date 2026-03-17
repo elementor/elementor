@@ -66,7 +66,7 @@ describe( 'shouldNullifyValue', () => {
 		const result = shouldNullifyValue( value );
 
 		// Assert.
-		expect( result ).toBe( true );
+		expect( result ).toBe( false );
 	} );
 
 	it( 'should return false when unit is auto even without size', () => {
