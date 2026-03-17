@@ -26,7 +26,7 @@ describe( 'resolveBoundPropValue', () => {
 			expect( result.sizeValue ).toEqual( { size: 42, unit: 'px' } );
 		} );
 
-		it( 'should return sizeValue with zero size and unit when value has both', () => {
+		it( 'should return null sizeValue when value is invalid size', () => {
 			// Arrange.
 			const value = { size: 0, unit: null } as unknown as SizePropValue[ 'value' ];
 
@@ -60,7 +60,7 @@ describe( 'resolveBoundPropValue', () => {
 			expect( result.sizeValue ).toEqual( null );
 		} );
 
-		it( 'should return sizeValue when only unit is set via boundPropPlaceholder', () => {
+		it( 'should return null sizeValue when value && boundPropPlaceholder are invalid size', () => {
 			// Arrange.
 			const value = null;
 			const boundPropPlaceholder = { size: undefined, unit: 'em' } as unknown as SizePropValue[ 'value' ];
