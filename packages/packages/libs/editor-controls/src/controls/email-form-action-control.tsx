@@ -64,7 +64,7 @@ const FromEmailField = () => (
 	<EmailField
 		bind="from"
 		label={ __( 'From email', 'elementor' ) }
-		placeholder={ __( 'What email address should appear as the sender?', 'elementor' ) }
+		placeholder={ __( 'What email should appear as the sender?', 'elementor' ) }
 	/>
 );
 
