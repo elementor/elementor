@@ -4,8 +4,10 @@ import { createPortal } from 'react-dom';
 import { XIcon } from '@elementor/icons';
 import { Box, Dialog, DialogContent, IconButton, Stack } from '@elementor/ui';
 
+export const MODAL_Z_INDEX = 99999;
 const MODAL_WIDTH = 955;
 const MODAL_HEIGHT = 481;
+
 const ANIMATION_DURATION_MS = 500;
 const CONTENT_DELAY_MS = 2500;
 
@@ -55,7 +57,7 @@ export const V4ActivationModal = ( {
 					},
 				} }
 				sx={ {
-					zIndex: 99999,
+					zIndex: MODAL_Z_INDEX,
 				} }
 			>
 				<DialogContent

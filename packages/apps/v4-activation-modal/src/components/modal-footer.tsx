@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { Button, Stack, Typography } from '@elementor/ui';
 
-type FooterLink = {
+type FooterLinkData = {
 	text: string;
 	url: string;
 };
 
 type ModalFooterProps = {
 	helpText: string;
-	link: FooterLink;
+	link: FooterLinkData;
 };
 
 export const ModalFooter = ( { helpText, link }: ModalFooterProps ) => {
