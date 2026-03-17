@@ -29,7 +29,7 @@ const EmailField = ( { bind, label, placeholder }: { bind: string; label: string
 const SendToField = () => (
 	<EmailField
 		bind="to"
-		label={ __( 'Send To', 'elementor' ) }
+		label={ __( 'Send to', 'elementor' ) }
 		placeholder={ __( 'Where should we send new submissions?', 'elementor' ) }
 	/>
 );
@@ -37,7 +37,7 @@ const SendToField = () => (
 const SubjectField = () => (
 	<EmailField
 		bind="subject"
-		label={ __( 'Email Subject', 'elementor' ) }
+		label={ __( 'Email subject', 'elementor' ) }
 		placeholder={ __( 'New form submission', 'elementor' ) }
 	/>
 );
@@ -85,7 +85,7 @@ const BccField = () => <EmailField bind="bcc" label={ __( 'Bcc', 'elementor' ) }
 const MetaDataField = () => (
 	<PropKeyProvider bind="meta-data">
 		<Stack gap={ 0.5 }>
-			<ControlLabel>{ __( 'Meta data', 'elementor' ) }</ControlLabel>
+			<ControlLabel>{ __( 'Metadata', 'elementor' ) }</ControlLabel>
 			<ChipsControl
 				options={ [
 					{ label: __( 'Date', 'elementor' ), value: 'date' },
