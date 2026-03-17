@@ -147,6 +147,7 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 							} );
 						} }
 						onKeyDown={ handleKeyDown }
+						focusOnShow
 					/>
 				</FormField>
 				{ ValueField && (
