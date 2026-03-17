@@ -7,9 +7,15 @@ import { loadTemplates, unloadTemplates } from './load-templates';
 import { RenderTemplateStyles } from './render-template-styles';
 import { slice } from './store';
 import { clearTemplatesStyles, templatesStylesProvider } from './templates-styles-provider';
+import { isHandlingTemplateStyles } from './utils';
 
 export function init() {
 	registerSlice( slice );
+
+	if ( ! isHandlingTemplateStyles() ) {
+		return;
+	}
+
 	stylesRepository.register( templatesStylesProvider );
 
 	registerDataHook( 'after', 'editor/documents/attach-preview', async () => {

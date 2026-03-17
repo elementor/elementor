@@ -9,6 +9,7 @@ import { registerEditingPanelReplacement } from '@elementor/editor-editing-panel
 import { type V1ElementData } from '@elementor/editor-elements';
 import { injectTab } from '@elementor/editor-elements-panel';
 import { stylesRepository } from '@elementor/editor-styles-repository';
+import { isHandlingTemplateStyles } from '@elementor/editor-templates';
 import { registerDataHook } from '@elementor/editor-v1-adapters';
 import { __registerSlice as registerSlice } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
@@ -69,10 +70,12 @@ export function init() {
 		await loadComponentsAssets( ( config?.elements as V1ElementData[] ) ?? [] );
 	} );
 
-	injectIntoLogic( {
-		id: 'templates',
-		component: LoadTemplateComponents,
-	} );
+	if ( isHandlingTemplateStyles() ) {
+		injectIntoLogic( {
+			id: 'templates',
+			component: LoadTemplateComponents,
+		} );
+	}
 
 	registerEditingPanelReplacement( {
 		id: 'component-instance-edit-panel',
