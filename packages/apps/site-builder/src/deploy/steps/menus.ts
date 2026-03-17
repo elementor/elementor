@@ -1,11 +1,12 @@
 import apiFetch from '@wordpress/api-fetch';
+
 import type { DeployMenuItem, DeployPayload, WpMenu } from '../types';
 
 async function createMenu(
 	name: string,
 	items: DeployMenuItem[],
 	pageIdMap: Record< string, number >,
-	location: string,
+	location: string
 ) {
 	const menu = await apiFetch< WpMenu >( {
 		path: '/wp/v2/menus',
@@ -43,10 +44,7 @@ async function createMenu(
 	await Promise.all( menuItemPromises );
 }
 
-export async function createMenus(
-	menus: DeployPayload[ 'menus' ],
-	pageIdMap: Record< string, number >,
-) {
+export async function createMenus( menus: DeployPayload[ 'menus' ], pageIdMap: Record< string, number > ) {
 	if ( menus.header?.length ) {
 		await createMenu( `Header-${ Date.now() }`, menus.header, pageIdMap, 'primary' );
 	}

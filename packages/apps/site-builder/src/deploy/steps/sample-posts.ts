@@ -1,4 +1,5 @@
 import apiFetch from '@wordpress/api-fetch';
+
 import type { DeploySamplePost } from '../types';
 
 export async function createSamplePosts( posts: DeploySamplePost[] ) {

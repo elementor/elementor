@@ -1,4 +1,5 @@
 import apiFetch from '@wordpress/api-fetch';
+
 import type { DeployPage, WpPost } from '../types';
 
 function triggerMediaImport( postId: number ) {

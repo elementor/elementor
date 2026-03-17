@@ -1,4 +1,5 @@
 import apiFetch from '@wordpress/api-fetch';
+
 import type { DeployThemePart, WpPost } from '../types';
 
 export interface ThemePartEntry {
@@ -40,6 +41,18 @@ function triggerMediaImport( postId: number ) {
 	} ).catch( () => {} );
 }
 
+function getConditionBucket( type: DeployThemePart[ 'type' ] ): string {
+	if ( type === 'header' ) {
+		return 'header';
+	}
+
+	if ( type === 'footer' ) {
+		return 'footer';
+	}
+
+	return 'single';
+}
+
 export async function createThemeParts( parts: ThemePartEntry[] ) {
 	const supportedTypes = await getSupportedDocumentTypes();
 	const supported = parts.filter( ( { part } ) => supportedTypes.includes( part.type ) );
@@ -79,9 +92,7 @@ export async function createThemeParts( parts: ThemePartEntry[] ) {
 		}
 
 		const conditionValue = part.themeBuilderCondition || 'include/general';
-		const bucket = part.type === 'header' ? 'header'
-			: part.type === 'footer' ? 'footer'
-				: 'single';
+		const bucket = getConditionBucket( part.type );
 
 		if ( ! conditions[ bucket ] ) {
 			conditions[ bucket ] = {};

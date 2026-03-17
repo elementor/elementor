@@ -1,4 +1,5 @@
 import apiFetch from '@wordpress/api-fetch';
+
 import type { DeployLogo, WpPost } from '../types';
 
 export async function uploadLogo( logo: DeployLogo ) {

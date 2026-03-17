@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { useEffect, useRef, useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
+
 import { deployWebsite } from '../deploy';
 
 const IFRAME_URL = 'http://localhost:4000/website-planner/chat';
@@ -32,17 +33,20 @@ export function App() {
 
 			const config = getConfig();
 
-			iframe.contentWindow.postMessage( {
-				type: 'referrer/info',
-				instanceId: event.data?.payload?.instanceId ?? '',
-				info: {
-					connectAuth: config?.connectAuth,
-					page: {
-						url: window.location.href,
+			iframe.contentWindow.postMessage(
+				{
+					type: 'referrer/info',
+					instanceId: event.data?.payload?.instanceId ?? '',
+					info: {
+						connectAuth: config?.connectAuth,
+						page: {
+							url: window.location.href,
+						},
+						user: { isAdmin: true },
 					},
-					user: { isAdmin: true },
 				},
-			}, '*' );
+				'*',
+			);
 
 			return;
 		}
@@ -54,22 +58,28 @@ export function App() {
 			try {
 				const result = await deployWebsite( event.data.payload );
 
-				iframe?.contentWindow?.postMessage( {
-					type: 'site-planner/deploy-website/result',
-					payload: result,
-				}, origin || '*' );
+				iframe?.contentWindow?.postMessage(
+					{
+						type: 'site-planner/deploy-website/result',
+						payload: result,
+					},
+					origin || '*',
+				);
 
 				if ( result.status === 'success' && result.homePageId ) {
 					window.location.href = `/wp-admin/post.php?post=${ result.homePageId }&action=elementor`;
 				}
 			} catch ( err ) {
-				iframe?.contentWindow?.postMessage( {
-					type: 'site-planner/deploy-website/result',
-					payload: {
-						status: 'error',
-						error: err instanceof Error ? err.message : 'Deploy failed',
+				iframe?.contentWindow?.postMessage(
+					{
+						type: 'site-planner/deploy-website/result',
+						payload: {
+							status: 'error',
+							error: err instanceof Error ? err.message : 'Deploy failed',
+						},
 					},
-				}, origin || '*' );
+					origin || '*',
+				);
 			}
 		}
 	}, [] );

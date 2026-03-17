@@ -1,4 +1,5 @@
 import apiFetch from '@wordpress/api-fetch';
+
 import type { DeployPayload } from '../types';
 
 export async function setSiteMetadata( siteMeta: DeployPayload[ 'siteMeta' ] ) {
