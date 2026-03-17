@@ -1,0 +1,32 @@
+[
+	{
+		"id": "eb83c91",
+		"elType": "container",
+		"settings": [],
+		"elements": [
+			{
+				"id": "e62279f",
+				"elType": "widget",
+				"settings": {
+					"title": "Add Your Heading Text Here",
+					"_animation": "fadeInDown",
+					"_animation_delay": 400
+				},
+				"elements": [],
+				"widgetType": "heading"
+			},
+			{
+				"id": "77fc2bb",
+				"elType": "widget",
+				"settings": {
+					"title": "Add Your Heading Text Here",
+					"_animation": "fadeInLeft",
+					"_animation_delay": 300
+				},
+				"elements": [],
+				"widgetType": "heading"
+			}
+		],
+		"isInner": false
+	}
+]
