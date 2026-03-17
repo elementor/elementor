@@ -169,9 +169,7 @@ class Variables_Service {
 
 		$collection->assert_limit_not_reached();
 
-		if ( isset( $overrides['label'] ) ) {
-			$collection->assert_label_is_unique( $overrides['label'], $variable->id() );
-		}
+		$collection->assert_label_is_unique( $overrides['label'], $variable->id() );
 
 		$variable->apply_changes( $overrides );
 		$variable->validate();
