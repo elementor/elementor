@@ -1,3 +1,31 @@
+# Publish Packages with Build Number
+#
+# Builds and publishes all packages under packages/ to npm.
+#
+# Triggers:
+#   push to main (packages/** paths) — automatic build, version suffix = run number, dist-tag = "build"
+#   workflow_call                    — called by other workflows (e.g. one-click-release); permission check is the caller's responsibility
+#   workflow_dispatch                — manual run from the GitHub Actions UI; restricted to permitted users in config.json
+#
+# Inputs (workflow_call / workflow_dispatch):
+#   version        — base semver (e.g. 1.2.3). Omit to read from package.json.
+#   version_suffix — pre-release label appended to the version (e.g. beta1 → 1.2.3-beta1).
+#                    If omitted, falls back to the tag value (legacy behavior).
+#   tag            — npm dist-tag. Special values:
+#                      ""  / "manual" → published under dist-tag "manual"
+#                      "latest"       → no version suffix, published as latest
+#                      <other>        → used as dist-tag; version_suffix (or tag) appended to version
+#
+# Examples:
+#   Publish 1.2.3-beta1 under dist-tag "beta":
+#     version=1.2.3  version_suffix=beta1  tag=beta
+#
+#   Publish 1.2.3 as latest:
+#     version=1.2.3  tag=latest
+#
+#   Manual snapshot from current package.json version:
+#     (leave all inputs empty)
+
 name: Publish Packages with Build Number
 
 on:
@@ -8,16 +36,21 @@ on:
       - 'packages/**'
   workflow_call:
     inputs:
-      tag:
-        type: string
-        required: false
-        default: ''
-        description: 'Tag to use. Empty/"manual" = manual tag, "latest" = no tag suffix (latest), other = use as version tag suffix'
       version:
         type: string
         required: false
         default: ''
-        description: 'Base version to use. If not provided, reads from package.json'
+        description: 'Base semver version to publish (e.g., 1.2.3). If omitted, reads from package.json.'
+      version_suffix:
+        type: string
+        required: false
+        default: ''
+        description: 'Pre-release suffix appended to the version (e.g., beta1 → 1.2.3-beta1). If omitted, falls back to the tag value (legacy behavior).'
+      tag:
+        type: string
+        required: false
+        default: ''
+        description: 'npm dist-tag for the published packages. Empty/"manual" = "manual", "latest" = no version suffix and published as latest, other = custom dist-tag.'
     secrets:
       NPMJS_CLOUD_DEVOPS_TOKEN:
         required: true
@@ -25,11 +58,21 @@ on:
         required: true
   workflow_dispatch:
     inputs:
+      version:
+        type: string
+        required: false
+        default: ''
+        description: 'Base semver version to publish (e.g., 1.2.3). If omitted, reads from package.json.'
+      version_suffix:
+        type: string
+        required: false
+        default: ''
+        description: 'Pre-release suffix appended to the version (e.g., beta1 → 1.2.3-beta1). If omitted, falls back to the tag value (legacy behavior).'
       tag:
         type: string
         required: false
         default: ''
-        description: 'Tag to use. Empty/"manual" = manual tag, "latest" = no tag suffix (latest), other = use as version tag suffix'
+        description: 'npm dist-tag for the published packages. Empty/"manual" = "manual", "latest" = no version suffix and published as latest, other = custom dist-tag.'
 
 jobs:
   publish-packages:
@@ -51,12 +94,36 @@ jobs:
       - name: Install Dependencies
         run: npm run install:ci
 
+      - name: Get Configuration
+        if: github.event_name == 'workflow_dispatch'
+        id: configuration
+        uses: rgarcia-phi/json-to-variables@9835d537368468c4e4de5254dc3efeadda183793
+        with:
+          filename: "./.github/workflows/config.json"
+          prefix: config
+
+      - name: Test permissions
+        if: github.event_name == 'workflow_dispatch'
+        uses: ./.github/workflows/permissions
+        with:
+          ENVIRONMENT: ${{ env.config_deployment_environment }}
+          DEPLOYMENT_PERMITTED: ${{ env.config_deployment_permitted }}
+          DEPLOYMENT_REPOSITORY_OWNER: ${{ env.config_deployment_repository_owner }}
+
       - name: Validate Inputs
         run: |
-          # Validate version format if provided (semver)
+          # Validate version format if provided (semver X.Y.Z, no pre-release suffix here)
           if [ -n "${{ inputs.version }}" ]; then
             if ! [[ "${{ inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-              echo "Error: version must be in semver format (e.g., 1.2.3)"
+              echo "Error: version must be a base semver version (e.g., 1.2.3). Use version_suffix for pre-release labels."
+              exit 1
+            fi
+          fi
+
+          # Validate version_suffix contains only alphanumeric, dots, and hyphens
+          if [ -n "${{ inputs.version_suffix }}" ]; then
+            if [[ "${{ inputs.version_suffix }}" =~ [^a-zA-Z0-9.-] ]]; then
+              echo "Error: version_suffix contains invalid characters (allowed: alphanumeric, dots, hyphens)"
               exit 1
             fi
           fi
@@ -79,21 +146,21 @@ jobs:
             NPM_DIST_TAG="build"
           elif [ -z "${{ inputs.tag }}" ] || [ "${{ inputs.tag }}" == "manual" ]; then
             # Manual tag
-            TAG_SUFFIX="manual"
+            TAG_SUFFIX="${{ inputs.version_suffix != '' && inputs.version_suffix || 'manual' }}"
             NPM_DIST_TAG="manual"
           elif [ "${{ inputs.tag }}" == "latest" ]; then
-            # Latest - no version suffix
+            # Latest - no version suffix (version_suffix is ignored for latest)
             TAG_SUFFIX=""
             NPM_DIST_TAG="latest"
           else
-            # Custom tag
-            TAG_SUFFIX="${{ inputs.tag }}"
+            # Custom dist-tag; version_suffix overrides tag for the version string if provided
+            TAG_SUFFIX="${{ inputs.version_suffix != '' && inputs.version_suffix || inputs.tag }}"
             NPM_DIST_TAG="${{ inputs.tag }}"
           fi
 
           echo "TAG_SUFFIX=$TAG_SUFFIX" >> $GITHUB_OUTPUT
           echo "NPM_DIST_TAG=$NPM_DIST_TAG" >> $GITHUB_OUTPUT
-          echo "Using tag suffix: $TAG_SUFFIX"
+          echo "Using version suffix: $TAG_SUFFIX"
           echo "Using npm dist-tag: $NPM_DIST_TAG"
       
       - name: Build Packages
