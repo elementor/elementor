@@ -9,7 +9,7 @@ test.describe( 'V4 activation welcome modal @promotions', () => {
 	} );
 
 	test.beforeEach( async () => {
-		await wpCli( 'wp user meta delete 1 elementor_welcome_popover_displayed' );
+		await wpCli( 'wp user meta update 1 elementor_welcome_popover_displayed 0' );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
