@@ -213,6 +213,7 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 								} );
 							} }
 							onKeyDown={ handleKeyDown }
+							focusOnShow
 						/>
 					</FormField>
 					{ ValueField && (
