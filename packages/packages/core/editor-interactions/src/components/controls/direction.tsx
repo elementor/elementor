@@ -63,7 +63,7 @@ export function Direction( { value, onChange, interactionType }: DirectionFieldP
 				Icon: isIn ? ArrowLeftIcon : ArrowRightIcon,
 			},
 		],
-		[ interactionType ]
+		[ interactionType, isIn ]
 	);
 
 	const selectedDirections = useMemo( () => parseValue( value ), [ value ] );
