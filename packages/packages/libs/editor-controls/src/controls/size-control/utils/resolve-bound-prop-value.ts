@@ -19,7 +19,10 @@ export const resolveBoundPropValue = (
 	const size = value?.size;
 	const unit = value?.unit ?? boundPropPlaceholder?.unit;
 
-	const hasValue = size !== null || unit !== null;
+	const hasSize = size !== null && size !== undefined;
+	const hasUnit = unit !== null && unit !== undefined;
+
+	const hasValue = hasSize || hasUnit;
 
 	return {
 		sizeValue: ( hasValue ? { size, unit } : null ) as SizeValue,
