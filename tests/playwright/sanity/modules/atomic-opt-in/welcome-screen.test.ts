@@ -35,40 +35,48 @@ test.describe( 'V4 activation welcome modal @promotions', () => {
 		await context?.close();
 	} );
 
-	test( 'Welcome modal shows header content', async () => {
-		await expect( dialog ).toBeVisible();
-		await expect( dialog.getByText( 'now using the Atomic editor' ) ).toBeVisible();
-		await expect( dialog.getByText( 'new editing experience is now active' ) ).toBeVisible();
+	test.describe( 'Header', () => {
+		test( 'shows header content', async () => {
+			await expect( dialog ).toBeVisible();
+			await expect( dialog.getByText( 'now using the Atomic editor' ) ).toBeVisible();
+			await expect( dialog.getByText( 'new editing experience is now active' ) ).toBeVisible();
+		} );
 	} );
 
-	test( 'Welcome modal shows feature items', async () => {
-		await expect( dialog ).toBeVisible();
-		await expect( dialog.getByText( 'Use Atomic Elements alongside your existing widgets' ) ).toBeVisible();
-		await expect( dialog.getByText( 'Build reusable design systems' ) ).toBeVisible();
-		await expect( dialog.getByText( 'Keep styles consistent across your site' ) ).toBeVisible();
-		await expect( dialog.getByText( 'Get unparalleled performance' ) ).toBeVisible();
+	test.describe( 'Feature items', () => {
+		test( 'shows all feature items', async () => {
+			await expect( dialog ).toBeVisible();
+			await expect( dialog.getByText( 'Use Atomic Elements alongside your existing widgets' ) ).toBeVisible();
+			await expect( dialog.getByText( 'Build reusable design systems' ) ).toBeVisible();
+			await expect( dialog.getByText( 'Keep styles consistent across your site' ) ).toBeVisible();
+			await expect( dialog.getByText( 'Get unparalleled performance' ) ).toBeVisible();
+		} );
+
+		test( 'clicking an item updates the right panel image', async () => {
+			await expect( dialog ).toBeVisible();
+			await dialog.getByText( 'Build reusable design systems' ).click();
+
+			await expect( dialog.getByAltText( 'Modal image designSystems' ) ).toBeVisible();
+		} );
 	} );
 
-	test( 'Welcome modal shows footer content', async () => {
-		await expect( dialog ).toBeVisible();
-		await expect( dialog.getByText( 'Need help getting started?' ) ).toBeVisible();
-		const learnMoreLink = dialog.getByRole( 'link', { name: 'Learn more' } );
-		await expect( learnMoreLink ).toBeVisible();
-		await expect( learnMoreLink ).toHaveAttribute( 'href', 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/' );
-		await expect( learnMoreLink ).toHaveAttribute( 'target', '_blank' );
+	test.describe( 'Footer', () => {
+		test( 'shows footer content with learn more link', async () => {
+			await expect( dialog ).toBeVisible();
+			await expect( dialog.getByText( 'Need help getting started?' ) ).toBeVisible();
+			const learnMoreLink = dialog.getByRole( 'link', { name: 'Learn more' } );
+			await expect( learnMoreLink ).toBeVisible();
+			await expect( learnMoreLink ).toHaveAttribute( 'href', 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/' );
+			await expect( learnMoreLink ).toHaveAttribute( 'target', '_blank' );
+		} );
 	} );
 
-	test( 'Clicking a feature item updates the right panel image', async () => {
-		await expect( dialog ).toBeVisible();
-		await dialog.getByText( 'Build reusable design systems' ).click();
+	test.describe( 'Modal behavior', () => {
+		test( 'can be closed with Escape key', async ( { page } ) => {
+			await expect( dialog ).toBeVisible();
+			await page.keyboard.press( 'Escape' );
 
-		await expect( dialog.getByAltText( 'Modal image designSystems' ) ).toBeVisible();
-	} );
-
-	test( 'Modal can be closed', async ( { page } ) => {
-		await expect( dialog ).toBeVisible();
-		await page.keyboard.press( 'Escape' );
-
-		await expect( dialog ).not.toBeVisible();
+			await expect( dialog ).not.toBeVisible();
+		} );
 	} );
 } );
