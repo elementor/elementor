@@ -17,10 +17,10 @@ describe( 'resolveBoundPropValue', () => {
 
 		it( 'should return sizeValue with size and unit when value has both', () => {
 			// Arrange.
-			const value = { size: 42, unit: 'px' as const };
+			const value = { size: 42, unit: 'px' };
 
 			// Act.
-			const result = resolveBoundPropValue( value );
+			const result = resolveBoundPropValue( value as SizePropValue[ 'value' ] );
 
 			// Assert.
 			expect( result.sizeValue ).toEqual( { size: 42, unit: 'px' } );
@@ -34,7 +34,7 @@ describe( 'resolveBoundPropValue', () => {
 			const result = resolveBoundPropValue( value );
 
 			// Assert.
-			expect( result.sizeValue ).toEqual( { size: 0, unit: undefined } );
+			expect( result.sizeValue ).toEqual( null );
 		} );
 
 		it( 'should use boundPropPlaceholder unit when value has no unit', () => {
@@ -46,7 +46,7 @@ describe( 'resolveBoundPropValue', () => {
 			const result = resolveBoundPropValue( value, boundPropPlaceholder );
 
 			// Assert.
-			expect( result.sizeValue ).toEqual( { size: 10, unit: 'rem' } );
+			expect( result.sizeValue ).toEqual( { size: 0, unit: 'rem' } );
 		} );
 
 		it( 'should return sizeValue with null when value has no size and no unit', () => {
@@ -69,7 +69,7 @@ describe( 'resolveBoundPropValue', () => {
 			const result = resolveBoundPropValue( value, boundPropPlaceholder );
 
 			// Assert.
-			expect( result.sizeValue ).toEqual( { size: undefined, unit: 'em' } );
+			expect( result.sizeValue ).toEqual( null );
 		} );
 	} );
 
@@ -82,7 +82,7 @@ describe( 'resolveBoundPropValue', () => {
 			const result = resolveBoundPropValue( value );
 
 			// Assert.
-			expect( result.isUnitActive ).toBe( false );
+			expect( result.isUnitHighlighted ).toBe( false );
 		} );
 
 		it( 'should return true when unit is auto', () => {
@@ -93,7 +93,7 @@ describe( 'resolveBoundPropValue', () => {
 			const result = resolveBoundPropValue( value );
 
 			// Assert.
-			expect( result.isUnitActive ).toBe( true );
+			expect( result.isUnitHighlighted ).toBe( true );
 		} );
 
 		it( 'should return true when size is a number', () => {
@@ -104,7 +104,7 @@ describe( 'resolveBoundPropValue', () => {
 			const result = resolveBoundPropValue( value );
 
 			// Assert.
-			expect( result.isUnitActive ).toBe( true );
+			expect( result.isUnitHighlighted ).toBe( true );
 		} );
 
 		it( 'should return true when size is zero', () => {
@@ -115,7 +115,7 @@ describe( 'resolveBoundPropValue', () => {
 			const result = resolveBoundPropValue( value );
 
 			// Assert.
-			expect( result.isUnitActive ).toBe( true );
+			expect( result.isUnitHighlighted ).toBe( true );
 		} );
 
 		it( 'should return false when size is empty string and unit is not auto', () => {
@@ -126,7 +126,7 @@ describe( 'resolveBoundPropValue', () => {
 			const result = resolveBoundPropValue( value );
 
 			// Assert.
-			expect( result.isUnitActive ).toBe( false );
+			expect( result.isUnitHighlighted ).toBe( false );
 		} );
 
 		it( 'should return false when size is null and unit is standard', () => {
@@ -137,7 +137,7 @@ describe( 'resolveBoundPropValue', () => {
 			const result = resolveBoundPropValue( value );
 
 			// Assert.
-			expect( result.isUnitActive ).toBe( false );
+			expect( result.isUnitHighlighted ).toBe( false );
 		} );
 	} );
 

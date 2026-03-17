@@ -1,4 +1,4 @@
-import { type SizePropValue } from '@elementor/editor-props';
+import { sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 
 import { hasSizeValue } from './has-size-value';
 import { EXTENDED_UNITS } from './resolve-size-value';
@@ -7,28 +7,38 @@ type SizeValue = SizePropValue[ 'value' ] | null;
 
 export type ResolvedBoundProp = {
 	sizeValue: SizeValue;
-	isUnitActive: boolean;
+	isUnitHighlighted: boolean;
 	placeholder: string | undefined;
 };
 
-export const resolveBoundPropValue = (
-	value: SizeValue,
-	boundPropPlaceholder?: SizeValue,
+export const resolveBoundPropValue = < T extends SizeValue >(
+	value?: T | null,
+	boundPropPlaceholder?: T | null,
 	propPlaceholder?: string
 ): ResolvedBoundProp => {
-	const size = value?.size;
-	const unit = value?.unit ?? boundPropPlaceholder?.unit;
+	let sizeValue: T | null = null;
 
-	const hasSize = size !== null && size !== undefined;
-	const hasUnit = unit !== null && unit !== undefined;
-
-	const hasValue = hasSize || hasUnit;
+	if ( validateSizeValue( value ) ) {
+		sizeValue = value;
+	} else if ( validateSizeValue( boundPropPlaceholder ) ) {
+		sizeValue = boundPropPlaceholder;
+	}
 
 	return {
-		sizeValue: ( hasValue ? { size, unit } : null ) as SizeValue,
-		isUnitActive: shouldActivateUnit( value ),
+		sizeValue,
+		isUnitHighlighted: shouldHighlightUnit( value ),
 		placeholder: resolvePlaceholder( propPlaceholder, boundPropPlaceholder ),
 	};
+};
+
+const validateSizeValue = ( value?: SizeValue | null ): value is SizeValue => {
+	if ( ! value ) {
+		return false;
+	}
+
+	const sizePropValue = sizePropTypeUtil.create( value );
+
+	return sizePropTypeUtil.isValid( sizePropValue );
 };
 
 const resolvePlaceholder = ( propPlaceholder?: string, boundPropPlaceholder?: SizeValue ): string | undefined => {
@@ -49,7 +59,7 @@ const resolvePlaceholder = ( propPlaceholder?: string, boundPropPlaceholder?: Si
 	return size;
 };
 
-const shouldActivateUnit = ( value: SizePropValue[ 'value' ] | null ) => {
+const shouldHighlightUnit = ( value?: SizePropValue[ 'value' ] | null ) => {
 	if ( ! value ) {
 		return false;
 	}
