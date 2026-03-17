@@ -7,7 +7,6 @@ import { slice } from './store';
 
 const TEMPLATE_ATTRIBUTE = 'data-elementor-post-type="elementor_library"';
 const DOCUMENT_WRAPPER_ATTR = 'data-elementor-id';
-const TEMPLATE_WIDGET_TYPES = [ 'template', 'loop-grid' ];
 
 export async function loadTemplates() {
 	const iframeDocument = getCanvasIframeDocument();
@@ -58,7 +57,7 @@ function getTemplateIdsFromConfig() {
 
 	return (
 		flattenElements( elements as V1ElementData[] ).filter(
-			( element ) => TEMPLATE_WIDGET_TYPES.includes( element.widgetType ?? '' ) && element.settings?.template_id
+			( element ) => element.settings?.template_id
 		) as ( V1ElementData & { settings: V1ElementSettingsProps & { template_id: string } } )[]
 	 ).map( ( element ) => Number( element.settings.template_id ) );
 }
