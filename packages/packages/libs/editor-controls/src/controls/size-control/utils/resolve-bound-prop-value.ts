@@ -21,7 +21,7 @@ export const resolveBoundPropValue = < T extends SizeValue >(
 	if ( validateSizeValue( value ) ) {
 		sizeValue = value;
 	} else if ( validateSizeValue( boundPropPlaceholder ) ) {
-		sizeValue = boundPropPlaceholder;
+		sizeValue = { size: '', unit: boundPropPlaceholder?.unit } as T;
 	}
 
 	return {

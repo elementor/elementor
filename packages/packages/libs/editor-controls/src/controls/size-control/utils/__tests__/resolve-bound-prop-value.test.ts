@@ -46,7 +46,7 @@ describe( 'resolveBoundPropValue', () => {
 			const result = resolveBoundPropValue( value, boundPropPlaceholder );
 
 			// Assert.
-			expect( result.sizeValue ).toEqual( { size: 0, unit: 'rem' } );
+			expect( result.sizeValue ).toEqual( { size: '', unit: 'rem' } );
 		} );
 
 		it( 'should return sizeValue with null when value has no size and no unit', () => {
