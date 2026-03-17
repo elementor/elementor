@@ -14,10 +14,10 @@ const getVariantUnits = ( variant: SizeVariant ): SizeUnit[] => {
 	return map[ variant ]();
 };
 
-const getSettingsUnits = ( propType?: PropType ) => {
+const getSettingsUnits = ( propType: PropType ) => {
 	return getPropTypeSettings( propType )?.units;
 };
 
-export const getSizeUnits = ( variant: SizeVariant, propType?: PropType ): SizeUnit[] => {
+export const getSizeUnits = ( propType: PropType, variant: SizeVariant ): SizeUnit[] => {
 	return getSettingsUnits( propType ) ?? getVariantUnits( variant );
 };

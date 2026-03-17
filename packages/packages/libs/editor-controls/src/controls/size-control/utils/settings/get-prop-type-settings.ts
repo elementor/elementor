@@ -7,6 +7,6 @@ type Settings = {
 	default_unit?: SizeUnit;
 };
 
-export const getPropTypeSettings = ( propType?: PropType ) => {
-	return propType?.settings as Settings;
+export const getPropTypeSettings = ( propType: PropType ) => {
+	return propType.settings as Settings;
 };

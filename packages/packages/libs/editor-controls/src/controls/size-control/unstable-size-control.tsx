@@ -34,7 +34,7 @@ export const UnstableSizeControl = createControl(
 			propPlaceholder
 		);
 
-		const units = getSizeUnits( variant, propType );
+		const units = getSizeUnits( propType, variant );
 		const defaultUnit = getDefaultUnit( propType );
 
 		const handleBlur = () => {
