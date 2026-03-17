@@ -1,11 +1,20 @@
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { expect } from '@playwright/test';
+import { expect, type BrowserContext } from '@playwright/test';
 import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'V4 activation welcome modal @promotions', () => {
-	test.beforeAll( async () => {
-		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
+	let context: BrowserContext;
+	let wpAdmin: WpAdminPage;
+
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		context = await browser.newContext();
+		const page = await context.newPage();
+		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.setExperiments( {
+			e_atomic_elements: 'active',
+			e_opt_in_v4: 'active',
+		} );
 	} );
 
 	test.beforeEach( async () => {
@@ -13,20 +22,17 @@ test.describe( 'V4 activation welcome modal @promotions', () => {
 
 		await wpCli( 'wp user meta update 1 _e_welcome_popover_displayed 0' );
 
-		await wpCli( `wp eval "update_option('elementor_install_history',['0.0.1'=>1]);"` );
+		await wpCli( "wp eval update_option('elementor_install_history',['0.0.1'=>1]);" );
 	} );
 
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-		await page.close();
+	test.afterAll( async () => {
+		await wpAdmin?.resetExperiments();
+		await context?.close();
 	} );
 
 	test( 'Welcome modal appears and shows expected content', async ( { page, apiRequests }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.openNewPage();
+		const testWpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await testWpAdmin.openNewPage();
 
 		const dialog = page.getByRole( 'dialog' ).filter( { hasText: 'Atomic editor' } );
 		await expect( dialog ).toBeVisible();
@@ -52,8 +58,8 @@ test.describe( 'V4 activation welcome modal @promotions', () => {
 	} );
 
 	test( 'Clicking a feature item updates the right panel image', async ( { page, apiRequests }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.openNewPage();
+		const testWpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await testWpAdmin.openNewPage();
 
 		const dialog = page.getByRole( 'dialog' ).filter( { hasText: 'Atomic editor' } );
 		await expect( dialog ).toBeVisible();
