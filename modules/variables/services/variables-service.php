@@ -167,9 +167,15 @@ class Variables_Service {
 		$collection = $this->repo->load();
 		$variable = $collection->find_or_fail( $id );
 
+		$label = $variable->label();
+
+		if ( isset( $overrides['label'] ) ) {
+			$label = $overrides['label'];
+		}
+
 		$collection->assert_limit_not_reached();
 
-		$collection->assert_label_is_unique( $overrides['label'], $variable->id() );
+		$collection->assert_label_is_unique( $label, $variable->id() );
 
 		$variable->apply_changes( $overrides );
 		$variable->validate();
