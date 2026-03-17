@@ -9,7 +9,11 @@ test.describe( 'V4 activation welcome modal @promotions', () => {
 	} );
 
 	test.beforeEach( async () => {
+		await wpCli( `wp user meta update 1 elementor_editor_counter 3` );
+
 		await wpCli( 'wp user meta update 1 elementor_welcome_popover_displayed 0' );
+
+		await wpCli( `wp eval "update_option( 'elementor_install_history', [ '0.0.1' => 1 ] );"` );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
