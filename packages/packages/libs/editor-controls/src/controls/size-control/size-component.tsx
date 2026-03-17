@@ -38,7 +38,7 @@ export const SizeComponent = ( {
 	}, [ activeBreakpoint ] );
 
 	const handleCustomSizeChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-		sizeFieldProps.onChange( {
+		sizeFieldProps.setValue( {
 			size: event.target.value,
 			unit: EXTENDED_UNITS.custom,
 		} );
@@ -66,7 +66,7 @@ export const SizeComponent = ( {
 			<SizeFieldWrapper>
 				<Box>
 					<SizeField
-						{ ...sizeFieldProps }
+						focused={ popupState.isOpen ? true : undefined }
 						onUnitChange={ handleUnitChange }
 						InputProps={ {
 							...popupAttributes,
@@ -76,6 +76,7 @@ export const SizeComponent = ( {
 							menuItemsAttributes: hasCustomUnitOption ? { custom: popupAttributes } : undefined,
 							isActive: isUnitActive,
 						} }
+						{ ...sizeFieldProps }
 					/>
 				</Box>
 			</SizeFieldWrapper>

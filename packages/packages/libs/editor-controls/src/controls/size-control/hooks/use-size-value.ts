@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { type SizePropValue } from '@elementor/editor-props';
 
 import { useSyncExternalState } from '../../../hooks/use-sync-external-state';
-import { type SizeUnit } from '../types';
+import { type SetSizeValue, type SizeUnit } from '../types';
 import { isExtendedUnit } from '../utils/is-extended-unit';
 import { createDefaultSizeValue, resolveSizeOnUnitChange, resolveSizeValue } from '../utils/resolve-size-value';
 
@@ -10,14 +10,14 @@ type SizeValue = SizePropValue[ 'value' ];
 
 type UseSizeValueProps< T, U > = {
 	value: T | null;
-	onChange: ( value: T ) => void;
+	setValue: SetSizeValue< T >;
 	units: U[];
 	defaultUnit?: U;
 };
 
 export const useSizeValue = < T extends SizeValue, U extends SizeUnit >( {
 	value,
-	onChange,
+	setValue,
 	units,
 	defaultUnit,
 }: UseSizeValueProps< T, U > ) => {
@@ -29,16 +29,17 @@ export const useSizeValue = < T extends SizeValue, U extends SizeUnit >( {
 
 	const [ sizeValue, setSizeValue ] = useSyncExternalState< T >( {
 		external: resolvedValue,
-		setExternal: ( newState ) => {
+		setExternal: ( newState, options, meta ) => {
+			// Do we need to just pass the size and not care about the null
 			if ( newState !== null ) {
-				onChange( newState );
+				setValue( newState, options, meta );
 			}
 		},
 		persistWhen: ( next ) => hasChanged( next, resolvedValue ),
 		fallback: () => createDefaultSizeValue( units, defaultUnit ),
 	} );
 
-	const setSize = ( newSize: string ) => {
+	const setSize = ( newSize: string, isInputValid = true ) => {
 		if ( isExtendedUnit( sizeValue.unit ) ) {
 			return;
 		}
@@ -51,7 +52,7 @@ export const useSizeValue = < T extends SizeValue, U extends SizeUnit >( {
 			size: trimmed && ! isNaN( parsed ) ? parsed : '',
 		};
 
-		setSizeValue( newState );
+		setSizeValue( newState, undefined, { validation: () => isInputValid } );
 	};
 
 	const setUnit = ( unit: SizeValue[ 'unit' ] ) => {

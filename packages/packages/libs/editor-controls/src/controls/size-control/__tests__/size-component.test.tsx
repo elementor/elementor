@@ -19,7 +19,7 @@ const renderComponent = ( props = {} ) => {
 		<SizeComponent
 			value={ { size: 10, unit: 'px' } }
 			units={ [ 'px', 'rem', 'custom', 'em' ] }
-			onChange={ jest.fn() }
+			setValue={ jest.fn() }
 			{ ...props }
 		/>
 	);
@@ -96,14 +96,14 @@ describe( 'SizeComponent', () => {
 		} );
 	} );
 
-	describe( 'onChange', () => {
-		it( 'should call onChange with custom unit when popover input value changes', async () => {
+	describe( 'setValue', () => {
+		it( 'should call setValue with custom unit when popover input value changes', async () => {
 			// Arrange.
 			const anchorRef = createAnchorRef();
 
-			const onChange = jest.fn();
+			const setValue = jest.fn();
 
-			renderComponent( { anchorRef, value: { size: '10px', unit: 'custom' }, onChange } );
+			renderComponent( { anchorRef, value: { size: '10px', unit: 'custom' }, setValue } );
 
 			await openPopover();
 
@@ -113,13 +113,13 @@ describe( 'SizeComponent', () => {
 			fireEvent.change( customTextField, { target: { value: 'calc(50% + 20px)' } } );
 
 			// Assert.
-			expect( onChange ).toHaveBeenCalledTimes( 1 );
-			expect( onChange ).toHaveBeenCalledWith( { size: 'calc(50% + 20px)', unit: 'custom' } );
+			expect( setValue ).toHaveBeenCalledTimes( 1 );
+			expect( setValue ).toHaveBeenCalledWith( { size: 'calc(50% + 20px)', unit: 'custom' } );
 		} );
 
 		it( 'should reflect parent value update in both size field and popover input when controlled', async () => {
 			// Arrange.
-			const onChange = jest.fn();
+			const setValue = jest.fn();
 			const anchorRef = createAnchorRef();
 
 			// Act.
@@ -127,7 +127,7 @@ describe( 'SizeComponent', () => {
 				<SizeComponent
 					value={ { size: 'calc(100% - 10px)', unit: 'custom' } }
 					units={ [ 'px', 'rem', 'custom', 'em' ] }
-					onChange={ onChange }
+					setValue={ setValue }
 					anchorRef={ anchorRef }
 				/>
 			);
@@ -142,7 +142,7 @@ describe( 'SizeComponent', () => {
 				<SizeComponent
 					value={ { size: 'clamp(1 + 20 + 4)', unit: 'custom' } }
 					units={ [ 'px', 'rem', 'custom', 'em' ] }
-					onChange={ onChange }
+					setValue={ setValue }
 					anchorRef={ anchorRef }
 				/>
 			);

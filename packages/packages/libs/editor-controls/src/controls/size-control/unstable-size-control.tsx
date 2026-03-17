@@ -1,8 +1,8 @@
 import * as React from 'react';
 import type { RefObject } from 'react';
-import { sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
+import { type CreateOptions, sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 
-import { useBoundProp } from '../../bound-prop-context';
+import { type SetValueMeta, useBoundProp } from '../../bound-prop-context';
 import ControlActions from '../../control-actions/control-actions';
 import { createControl } from '../../create-control';
 import { SizeComponent } from './size-component';
@@ -16,10 +16,14 @@ type Props = {
 	placeholder?: string;
 	variant?: SizeVariant;
 	anchorRef?: RefObject< HTMLDivElement | null >;
+	startIcon?: React.ReactNode;
+	ariaLabel?: string;
+	min?: number;
+	id?: string;
 };
 
 export const UnstableSizeControl = createControl(
-	( { variant = 'length', placeholder: propPlaceholder, anchorRef }: Props ) => {
+	( { variant = 'length', placeholder: propPlaceholder, anchorRef, startIcon, ariaLabel, min = 0 }: Props ) => {
 		const {
 			value,
 			setValue,
@@ -49,10 +53,15 @@ export const UnstableSizeControl = createControl(
 			}
 		};
 
-		const handleChange = ( newValue: SizePropValue[ 'value' ] ) => {
-			setValue( newValue, undefined, {
+		const handleChange = ( newValue: SizePropValue[ 'value' ], options?: CreateOptions, meta?: SetValueMeta ) => {
+			setValue( newValue, options, {
+				...meta,
 				validation: () => {
-					return ! ( newValue.size === '' && propType.settings.required );
+					if ( propType.settings.required ) {
+						return newValue.size !== '';
+					}
+
+					return meta?.validation ? meta.validation( newValue ) : true;
 				},
 			} );
 		};
@@ -66,8 +75,11 @@ export const UnstableSizeControl = createControl(
 				defaultUnit={ defaultUnit }
 				isUnitActive={ isUnitHighlighted }
 				onBlur={ handleBlur }
-				onChange={ handleChange }
+				setValue={ handleChange }
 				SizeFieldWrapper={ ControlActions }
+				startIcon={ startIcon }
+				ariaLabel={ ariaLabel }
+				min={ min }
 			/>
 		);
 	}
