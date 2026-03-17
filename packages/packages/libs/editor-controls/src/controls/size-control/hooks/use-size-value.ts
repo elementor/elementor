@@ -30,7 +30,6 @@ export const useSizeValue = < T extends SizeValue, U extends SizeUnit >( {
 	const [ sizeValue, setSizeValue ] = useSyncExternalState< T >( {
 		external: resolvedValue,
 		setExternal: ( newState, options, meta ) => {
-			// Do we need to just pass the size and not care about the null
 			if ( newState !== null ) {
 				setValue( newState, options, meta );
 			}
