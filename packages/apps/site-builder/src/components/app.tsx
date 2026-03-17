@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { deployWebsite } from '../deploy';
-
-const IFRAME_URL = 'http://localhost:4000/website-planner/chat';
 
 const iframeStyle: React.CSSProperties = {
 	position: 'fixed',
@@ -22,7 +20,21 @@ function getConfig() {
 export function App() {
 	const iframeRef = useRef< HTMLIFrameElement >( null );
 
+	const iframeUrl = useMemo( () => getConfig()?.iframeUrl ?? '', [] );
+
+	const allowedOrigin = useMemo( () => {
+		try {
+			return new URL( iframeUrl ).origin;
+		} catch {
+			return '';
+		}
+	}, [ iframeUrl ] );
+
 	const handleMessage = useCallback( async ( event: MessageEvent ) => {
+		if ( allowedOrigin && event.origin !== allowedOrigin ) {
+			return;
+		}
+
 		const { type } = event.data ?? {};
 
 		if ( type === 'get/referrer/info' ) {
@@ -45,7 +57,7 @@ export function App() {
 						user: { isAdmin: true },
 					},
 				},
-				'*'
+				allowedOrigin || '*'
 			);
 
 			return;
@@ -82,7 +94,7 @@ export function App() {
 				);
 			}
 		}
-	}, [] );
+	}, [ allowedOrigin ] );
 
 	useEffect( () => {
 		window.addEventListener( 'message', handleMessage );
@@ -92,7 +104,7 @@ export function App() {
 	return (
 		<iframe
 			ref={ iframeRef }
-			src={ IFRAME_URL }
+			src={ iframeUrl }
 			style={ iframeStyle }
 			title="Website Planner"
 			allow="clipboard-read; clipboard-write"

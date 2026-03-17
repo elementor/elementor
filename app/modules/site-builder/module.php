@@ -25,7 +25,9 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$settings = [];
+		$settings = [
+			'iframeUrl' => $this->get_iframe_url(),
+		];
 
 		$connect_auth = $this->get_connect_auth();
 
@@ -34,6 +36,14 @@ class Module extends BaseModule {
 		}
 
 		Plugin::$instance->app->set_settings( 'site-builder', $settings );
+	}
+
+	private function get_iframe_url(): string {
+		if ( defined( 'ELEMENTOR_SITE_BUILDER_IFRAME_URL' ) ) {
+			return ELEMENTOR_SITE_BUILDER_IFRAME_URL;
+		}
+
+		return 'https://planner.elementor.com/chat.html';
 	}
 
 	private function get_connect_auth(): ?array {

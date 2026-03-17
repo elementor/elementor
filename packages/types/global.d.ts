@@ -161,6 +161,7 @@ declare global {
 		elementorAppConfig?: {
 			'onboarding'?: OnboardingConfig;
 		'site-builder'?: {
+			iframeUrl?: string;
 			connectAuth?: {
 					signature: string;
 					accessToken: string;
