@@ -49,9 +49,9 @@ module.exports = {
 	},
 
 	/**
-	 * @param {string}                                url
-	 * @param {jQuery}                                $document
-	 * @param {{ crossOrigin: boolean, id: string }}  options
+	 * @param {string} url
+	 * @param {jQuery} $document
+	 * @param {{ crossOrigin: boolean, id: string }} options
 	 */
 	enqueueCSS( url, $document, options = {} ) {
 		const selector = options.id ? `#${ options.id }` : `link[href="${ url }"]`;
@@ -164,12 +164,11 @@ module.exports = {
 	},
 
 	/**
-	 *
-	 * @param {*}      view       - view to refresh if needed
-	 * @param {*}      icon       - icon control data
-	 * @param {*}      attributes - default {} - attributes to attach to rendered html tag
-	 * @param {string} tag        - default i - html tag to render
-	 * @param {*}      returnType - default value - return type
+	 * @param {*} view - view to refresh if needed
+	 * @param {*} icon - icon control data
+	 * @param {*} attributes - default {} - attributes to attach to rendered html tag
+	 * @param {string} tag - default i - html tag to render
+	 * @param {*} returnType - default value - return type
 	 * @return {string|undefined|*} result
 	 */
 	renderIcon( view, icon, attributes = {}, tag = 'i', returnType = 'value' ) {

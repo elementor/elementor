@@ -683,26 +683,38 @@ class Frontend extends App {
 			 */
 			do_action( 'elementor/frontend/after_enqueue_styles' );
 
-			if ( ! Plugin::$instance->preview->is_preview_mode() ) {
-				$post_id = get_the_ID();
-				// Check $post_id for virtual pages. check is singular because the $post_id is set to the first post on archive pages.
-				if ( $post_id && is_singular() ) {
-					do_action( 'elementor/post/render', $post_id );
-					$this->handle_page_assets( $post_id );
+			$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
 
-					$css_file = Post_CSS::create( get_the_ID() );
-					$css_file->enqueue();
-				}
-			} else {
-				$post_id = Plugin::$instance->preview->get_post_id();
-				if ( $post_id ) {
-					do_action( 'elementor/post/render', $post_id );
-					$this->handle_page_assets( $post_id );
-				}
+			$singular_post_id = $this->get_singular_post_id();
+
+			$post_id = $is_preview_mode
+				? Plugin::$instance->preview->get_post_id()
+				: $singular_post_id;
+
+			if ( $post_id ) {
+				do_action( 'elementor/post/render', $post_id );
+				$this->handle_page_assets( $post_id );
+			}
+
+			if ( $singular_post_id ) {
+				$css_file = Post_CSS::create( $singular_post_id );
+				$css_file->enqueue();
 			}
 
 			do_action( 'elementor/frontend/after_enqueue_post_styles' );
 		}
+	}
+
+	/**
+	 * Returns the current post ID only on singular pages.
+	 * Returns false for virtual pages (no post ID) and archive pages,
+	 * where get_the_ID() returns the first post in the loop rather than a page ID.
+	 *
+	 * @return int|false
+	 */
+	private function get_singular_post_id() {
+		$post_id = get_the_ID();
+		return ( $post_id && is_singular() ) ? $post_id : false;
 	}
 
 	private function handle_page_assets( $post_id ): void {
