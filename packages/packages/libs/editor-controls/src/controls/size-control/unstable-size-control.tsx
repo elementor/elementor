@@ -23,7 +23,7 @@ type Props = {
 };
 
 export const UnstableSizeControl = createControl(
-	( { variant = 'length', placeholder: propPlaceholder, anchorRef, startIcon, ariaLabel, min = 0 }: Props ) => {
+	( { variant = 'length', placeholder: propPlaceholder, anchorRef, startIcon, ariaLabel, min }: Props ) => {
 		const {
 			value,
 			setValue,
