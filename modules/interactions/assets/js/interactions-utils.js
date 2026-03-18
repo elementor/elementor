@@ -49,7 +49,11 @@ export function getKeyframes( effect, type, direction ) {
 			bottom: { y: isIn ? [ distance, 0 ] : [ 0, distance ] },
 		};
 
-		Object.assign( keyframes, movement[ direction ] );
+		direction.split( '-' ).forEach( ( part ) => {
+			if ( movement[ part ] ) {
+				Object.assign( keyframes, movement[ part ] );
+			}
+		} );
 	}
 
 	return keyframes;
