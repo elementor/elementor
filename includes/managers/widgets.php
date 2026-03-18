@@ -417,8 +417,21 @@ class Widgets_Manager {
 
 		wp_raise_memory_limit( 'admin' );
 
+		$widgets = [];
+
+		foreach ( $this->get_widget_types() as $widget_key => $widget ) {
+			$widget_config = $widget->get_config();
+
+			// get_config() omits controls when the stack isn't initialized yet (see Widget_Base::get_initial_config).
+			// During an AJAX refresh the instances are fresh, so we force-initialize and merge them explicitly.
+			$widget_config['controls'] = $widget->get_stack( false )['controls'];
+			$widget_config['tabs_controls'] = $widget->get_tabs_controls();
+
+			$widgets[ $widget_key ] = $widget_config;
+		}
+
 		return [
-			'widgets' => $this->get_widget_types_config(),
+			'widgets' => $widgets,
 			'categories' => Plugin::$instance->elements_manager->get_categories(),
 		];
 	}
