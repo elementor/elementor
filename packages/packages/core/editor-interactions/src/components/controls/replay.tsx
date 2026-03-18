@@ -2,12 +2,11 @@ import * as React from 'react';
 import { useRef } from 'react';
 import { type ToggleButtonGroupItem, ToggleButtonGroupUi } from '@elementor/editor-controls';
 import { CheckIcon, MinusIcon } from '@elementor/icons';
-import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type ReplayFieldProps } from '../../types';
 import { InteractionsPromotionChip } from '../../ui/interactions-promotion-chip';
-import { PROMOTION_CHIP_OFFSET, PROMOTION_OVERLAY_GRID } from '../../utils/promotion-layout-constants';
+import { PromotionOverlayLayout } from '../../ui/promotion-overlay-layout';
 
 const TRACKING_DATA = { target_name: 'interactions_replay', location_l2: 'interactions' } as const;
 
@@ -38,20 +37,18 @@ export function Replay( { onChange }: ReplayFieldProps ) {
 	];
 
 	return (
-		<Box ref={ replayContainerRef } sx={ { display: 'grid', alignItems: 'center' } }>
-			<Box sx={ { gridArea: PROMOTION_OVERLAY_GRID } }>
-				<ToggleButtonGroupUi items={ options } exclusive onChange={ onChange } value={ false } />
-			</Box>
-			<Box
-				sx={ { gridArea: PROMOTION_OVERLAY_GRID, marginInlineEnd: PROMOTION_CHIP_OFFSET, justifySelf: 'end' } }
-			>
+		<PromotionOverlayLayout
+			ref={ replayContainerRef }
+			promotionChip={
 				<InteractionsPromotionChip
 					content={ __( 'Upgrade to run the animation every time its trigger occurs.', 'elementor' ) }
 					upgradeUrl={ 'https://go.elementor.com/go-pro-interactions-replay-modal/' }
 					anchorRef={ replayContainerRef }
 					trackingData={ TRACKING_DATA }
 				/>
-			</Box>
-		</Box>
+			}
+		>
+			<ToggleButtonGroupUi items={ options } exclusive onChange={ onChange } value={ false } />
+		</PromotionOverlayLayout>
 	);
 }
