@@ -218,6 +218,40 @@ describe( 'LinkedDimensionsControl', () => {
 			expect( sizeInputs[ 3 ] ).toHaveAttribute( 'placeholder', '1' );
 		} );
 
+		it( 'should display size placeholder in unlinked state when inherited from a linked value', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const props = {
+				setValue,
+				value: {
+					$$type: 'dimensions',
+					value: {
+						'block-start': { $$type: 'size', value: { unit: 'px', size: 20 } },
+						'block-end': null,
+						'inline-start': null,
+						'inline-end': null,
+					},
+				},
+				bind: 'padding',
+				propType,
+				placeholder: {
+					$$type: 'size',
+					value: { size: 10, unit: 'px' },
+				},
+			};
+
+			// Act.
+			renderControl( <LinkedDimensionsControl label="Padding" />, props );
+
+			// Assert.
+			const sizeInputs = screen.getAllByRole( 'spinbutton' );
+			// Inputs order: block-start, inline-end, block-end, inline-start
+			// block-start has an explicit value of 20 — no placeholder
+			expect( sizeInputs[ 1 ] ).toHaveAttribute( 'placeholder', '10' ); // inline-end
+			expect( sizeInputs[ 2 ] ).toHaveAttribute( 'placeholder', '10' ); // block-end
+			expect( sizeInputs[ 3 ] ).toHaveAttribute( 'placeholder', '10' ); // inline-start
+		} );
+
 		it( 'should prioritize user values over placeholders', () => {
 			// Arrange.
 			const setValue = jest.fn();
