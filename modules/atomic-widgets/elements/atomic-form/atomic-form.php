@@ -104,8 +104,8 @@ class Atomic_Form extends Atomic_Element_Base {
 				] ),
 			'email' => Email_Prop_Type::make()
 				->set_dependencies( $email_dependencies )
-				->default( [] )
-				->meta( Overridable_Prop_Type::ignore() ),
+				->meta( Overridable_Prop_Type::ignore() )
+				->default( [] ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
 	}
