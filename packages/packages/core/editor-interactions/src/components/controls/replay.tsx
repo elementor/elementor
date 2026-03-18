@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useRef } from 'react';
 import { type ToggleButtonGroupItem, ToggleButtonGroupUi } from '@elementor/editor-controls';
 import { CheckIcon, MinusIcon } from '@elementor/icons';
 import { Box } from '@elementor/ui';
@@ -6,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 
 import { type ReplayFieldProps } from '../../types';
 import { InteractionsPromotionChip } from '../../ui/interactions-promotion-chip';
+import { PROMOTION_CHIP_OFFSET, PROMOTION_OVERLAY_GRID } from '../../utils/promotion-layout-constants';
 
 const TRACKING_DATA = { target_name: 'interactions_replay', location_l2: 'interactions' } as const;
 
@@ -16,10 +18,8 @@ export const REPLAY_OPTIONS = {
 
 export const BASE_REPLAY: string[] = [ 'no' ];
 
-const OVERLAY_GRID = '1 / 1';
-const CHIP_OFFSET = '50%';
-
-export function Replay( { onChange, anchorRef }: ReplayFieldProps ) {
+export function Replay( { onChange }: ReplayFieldProps ) {
+	const replayContainerRef = useRef< HTMLDivElement >( null );
 	const options: ToggleButtonGroupItem< boolean >[] = [
 		{
 			value: false,
@@ -38,15 +38,17 @@ export function Replay( { onChange, anchorRef }: ReplayFieldProps ) {
 	];
 
 	return (
-		<Box sx={ { display: 'grid', alignItems: 'center' } }>
-			<Box sx={ { gridArea: OVERLAY_GRID } }>
+		<Box ref={ replayContainerRef } sx={ { display: 'grid', alignItems: 'center' } }>
+			<Box sx={ { gridArea: PROMOTION_OVERLAY_GRID } }>
 				<ToggleButtonGroupUi items={ options } exclusive onChange={ onChange } value={ false } />
 			</Box>
-			<Box sx={ { gridArea: OVERLAY_GRID, marginInlineEnd: CHIP_OFFSET, justifySelf: 'end' } }>
+			<Box
+				sx={ { gridArea: PROMOTION_OVERLAY_GRID, marginInlineEnd: PROMOTION_CHIP_OFFSET, justifySelf: 'end' } }
+			>
 				<InteractionsPromotionChip
 					content={ __( 'Upgrade to run the animation every time its trigger occurs.', 'elementor' ) }
 					upgradeUrl={ 'https://go.elementor.com/go-pro-interactions-replay-modal/' }
-					anchorRef={ anchorRef }
+					anchorRef={ replayContainerRef }
 					trackingData={ TRACKING_DATA }
 				/>
 			</Box>
