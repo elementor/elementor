@@ -152,6 +152,10 @@ class Uploads_Manager extends Base_Object {
 		$validation_result = $this->validate_file( $data, $allowed_file_extensions );
 
 		if ( is_wp_error( $validation_result ) ) {
+			if ( ! empty( $data['tmp_name'] ) ) {
+				$this->remove_file_or_dir( dirname( $data['tmp_name'] ) );
+			}
+
 			return $validation_result;
 		}
 
@@ -268,7 +272,8 @@ class Uploads_Manager extends Base_Object {
 	 * Check if path is within the allowed Elementor uploads directory.
 	 *
 	 * Prevents path traversal and arbitrary directory deletion by ensuring the path
-	 * resolves under wp-content/uploads/elementor/.
+	 * resolves under wp-content/uploads/elementor/ or under the configured temp dir
+	 * (elementor/files/temp-dir filter), so that cleanup works when temp dir is customized.
 	 *
 	 * @since 3.35.4
 	 * @access private
@@ -293,11 +298,20 @@ class Uploads_Manager extends Base_Object {
 		$wp_upload_dir = wp_upload_dir();
 		$elementor_base = realpath( $wp_upload_dir['basedir'] . DIRECTORY_SEPARATOR . self::ELEMENTOR_UPLOAD_DIR );
 
-		if ( false === $elementor_base ) {
-			return false;
+		if ( false !== $elementor_base ) {
+			$allowed = $real_path === $elementor_base || 0 === strpos( $real_path, $elementor_base . DIRECTORY_SEPARATOR );
+			if ( $allowed ) {
+				return true;
+			}
 		}
 
-		return $real_path === $elementor_base || 0 === strpos( $real_path, $elementor_base . DIRECTORY_SEPARATOR );
+		$temp_dir = realpath( $this->get_temp_dir() );
+		if ( false !== $temp_dir ) {
+			$temp_dir = rtrim( $temp_dir, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
+			return 0 === strpos( $real_path, $temp_dir );
+		}
+
+		return false;
 	}
 
 	/**
