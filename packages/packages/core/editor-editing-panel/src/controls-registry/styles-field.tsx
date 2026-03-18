@@ -63,7 +63,11 @@ function buildResolvedPlaceholder( chain: { value: PropValue }[], startIndex: nu
 		} else if ( dimensionsPropTypeUtil.isValid( val ) ) {
 			const dims = dimensionsPropTypeUtil.extract( val );
 			DIMENSION_SIDES.forEach( ( side ) => {
-				if ( ( merged[ side ] === null || merged[ side ] === undefined ) && dims?.[ side ] !== null && dims?.[ side ] !== undefined ) {
+				if (
+					( merged[ side ] === null || merged[ side ] === undefined ) &&
+					dims?.[ side ] !== null &&
+					dims?.[ side ] !== undefined
+				) {
 					merged[ side ] = dims[ side ];
 				}
 			} );
