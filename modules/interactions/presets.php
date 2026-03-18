@@ -23,7 +23,7 @@ class Presets {
 	const ADDITIONAL_EFFECTS = [ 'custom' ];
 
 	const TYPES = [ 'in', 'out' ];
-	const DIRECTIONS = [ 'left', 'right', 'top', 'bottom', '' ];
+	const DIRECTIONS = [ 'left', 'right', 'top', 'bottom', 'top-left', 'top-right', 'bottom-left', 'bottom-right', '' ];
 
 	const BASE_EASING = [ 'easeIn' ];
 	const ADDITIONAL_EASING = [ 'easeOut', 'easeInOut', 'backIn', 'backInOut', 'backOut', 'linear' ];
