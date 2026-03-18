@@ -252,6 +252,43 @@ describe( 'LinkedDimensionsControl', () => {
 			expect( sizeInputs[ 3 ] ).toHaveAttribute( 'placeholder', '10' ); // inline-start
 		} );
 
+		it( 'should display merged dimensions placeholder when no local value and tablet has partial dims', () => {
+			// Arrange.
+			// Simulates: desktop = 10px (uniform size), tablet = inline-start 5px only,
+			// mobile = no local value. StylesField's buildResolvedPlaceholder merges the chain
+			// into a full dimensions placeholder (missing sides filled from desktop's size).
+			const setValue = jest.fn();
+			const props = {
+				setValue,
+				value: null,
+				bind: 'padding',
+				propType,
+				placeholder: {
+					$$type: 'dimensions',
+					value: {
+						'block-start': { $$type: 'size', value: { unit: 'px', size: 10 } },
+						'block-end': { $$type: 'size', value: { unit: 'px', size: 10 } },
+						'inline-start': { $$type: 'size', value: { unit: 'px', size: 5 } },
+						'inline-end': { $$type: 'size', value: { unit: 'px', size: 10 } },
+					},
+				},
+			};
+
+			// Act.
+			renderControl( <LinkedDimensionsControl label="Padding" />, props );
+
+			// Assert — control shows as unlinked (tablet has unlinked dims) and all sides have placeholders.
+			const toggleButton = screen.getByRole( 'button', { name: 'Link padding' } );
+			expect( toggleButton ).toHaveAttribute( 'aria-pressed', 'false' );
+
+			// Inputs order: block-start, inline-end, block-end, inline-start
+			const sizeInputs = screen.getAllByRole( 'spinbutton' );
+			expect( sizeInputs[ 0 ] ).toHaveAttribute( 'placeholder', '10' ); // block-start
+			expect( sizeInputs[ 1 ] ).toHaveAttribute( 'placeholder', '10' ); // inline-end
+			expect( sizeInputs[ 2 ] ).toHaveAttribute( 'placeholder', '10' ); // block-end
+			expect( sizeInputs[ 3 ] ).toHaveAttribute( 'placeholder', '5' );  // inline-start
+		} );
+
 		it( 'should prioritize user values over placeholders', () => {
 			// Arrange.
 			const setValue = jest.fn();

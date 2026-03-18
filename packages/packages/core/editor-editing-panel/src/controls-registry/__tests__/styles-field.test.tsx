@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { createMockPropType, renderWithTheme } from 'test-utils';
 import { useBoundProp } from '@elementor/editor-controls';
+import { dimensionsPropTypeUtil, sizePropTypeUtil } from '@elementor/editor-props';
 import { getStylesSchema } from '@elementor/editor-styles';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { fireEvent, screen } from '@testing-library/react';
@@ -108,6 +109,92 @@ describe( '<StylesField />', () => {
 			expect( screen.getByRole( 'textbox', { name: 'padding' } ) ).toHaveProperty( 'placeholder', '15px' );
 		} );
 
+		it( 'should use chain[1] (inherited) as placeholder when there is a local value', () => {
+			// Arrange.
+			const mockInheritanceChain = [
+				{
+					value: '10px',
+					style: { id: 'style-1' },
+					variant: { meta: { breakpoint: 'mobile', state: null } },
+					provider: 'test',
+				},
+				{
+					value: '15px',
+					style: { id: 'style-1' },
+					variant: { meta: { breakpoint: 'tablet', state: null } },
+					provider: 'test',
+				},
+			];
+
+			const { useStylesInheritanceChain } = require( '../../contexts/styles-inheritance-context' );
+			jest.mocked( useStylesInheritanceChain ).mockReturnValue( mockInheritanceChain );
+
+			mockStyles( { padding: '10px' } );
+
+			// Act.
+			renderWithTheme(
+				<StylesField bind="padding" propDisplayName="Padding">
+					<MockControl />
+				</StylesField>
+			);
+
+			// Assert — placeholder should be chain[1] (tablet's value), not chain[0] (mobile's own value).
+			expect( screen.getByRole( 'textbox', { name: 'padding' } ) ).toHaveProperty( 'placeholder', '15px' );
+		} );
+
+		it( 'should merge partial dimensions placeholder with a size fallback in the chain', () => {
+			// Arrange — simulates: desktop = size 10px, tablet = partial dims (inline-start only).
+			// Mobile has no local value so it should inherit a MERGED placeholder where
+			// inline-start = 5px (from tablet) and all other sides = 10px (from desktop's size).
+			const size10 = sizePropTypeUtil.create( { size: 10, unit: 'px' } );
+			const size5 = sizePropTypeUtil.create( { size: 5, unit: 'px' } );
+
+			const tabletPartialDims = dimensionsPropTypeUtil.create( {
+				'block-start': null,
+				'block-end': null,
+				'inline-start': size5,
+				'inline-end': null,
+			} );
+
+			const mockInheritanceChain = [
+				{
+					value: tabletPartialDims,
+					style: { id: 'style-1' },
+					variant: { meta: { breakpoint: 'tablet', state: null } },
+					provider: 'test',
+				},
+				{
+					value: size10,
+					style: { id: 'style-1' },
+					variant: { meta: { breakpoint: null, state: null } },
+					provider: 'test',
+				},
+			];
+
+			const { useStylesInheritanceChain } = require( '../../contexts/styles-inheritance-context' );
+			jest.mocked( useStylesInheritanceChain ).mockReturnValue( mockInheritanceChain );
+
+			mockStyles( { padding: null as never } );
+
+			// Act.
+			renderWithTheme(
+				<StylesField bind="padding" propDisplayName="Padding">
+					<MockPlaceholderControl />
+				</StylesField>
+			);
+
+			// Assert — the resolved placeholder should be a full dimensions object.
+			const placeholder = JSON.parse( screen.getByTestId( 'placeholder' ).dataset.value ?? 'null' );
+
+			expect( dimensionsPropTypeUtil.isValid( placeholder ) ).toBe( true );
+
+			const dims = dimensionsPropTypeUtil.extract( placeholder );
+			expect( sizePropTypeUtil.extract( dims?.[ 'block-start' ] ) ).toEqual( { size: 10, unit: 'px' } );
+			expect( sizePropTypeUtil.extract( dims?.[ 'block-end' ] ) ).toEqual( { size: 10, unit: 'px' } );
+			expect( sizePropTypeUtil.extract( dims?.[ 'inline-start' ] ) ).toEqual( { size: 5, unit: 'px' } );
+			expect( sizePropTypeUtil.extract( dims?.[ 'inline-end' ] ) ).toEqual( { size: 10, unit: 'px' } );
+		} );
+
 		it( 'should have empty placeholder when inheritance chain is empty', () => {
 			// Arrange.
 			const { useStylesInheritanceChain } = require( '../../contexts/styles-inheritance-context' );
@@ -171,4 +258,11 @@ const MockControl = () => {
 			placeholder={ placeholder ? String( placeholder ) : '' }
 		/>
 	);
+};
+
+// A control that exposes the raw placeholder as a JSON data attribute for structural assertions.
+const MockPlaceholderControl = () => {
+	const { placeholder } = useBoundProp();
+
+	return <div data-testid="placeholder" data-value={ JSON.stringify( placeholder ?? null ) } />;
 };
