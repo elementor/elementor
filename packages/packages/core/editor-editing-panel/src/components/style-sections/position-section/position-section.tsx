@@ -59,16 +59,15 @@ export const PositionSection = () => {
 	const { values: positionDependentValues, setValues: setPositionDependentValues } =
 		useStylesFields< PositionDependentValues >( [ ...POSITION_DEPENDENT_PROP_NAMES ] );
 
-	const dimensions: DimensionsValues = {
-		'inset-block-start': positionDependentValues?.[ 'inset-block-start' ],
-		'inset-block-end': positionDependentValues?.[ 'inset-block-end' ],
-		'inset-inline-start': positionDependentValues?.[ 'inset-inline-start' ],
-		'inset-inline-end': positionDependentValues?.[ 'inset-inline-end' ],
-	};
-
 	const [ dimensionsValuesFromHistory, updateDimensionsHistory, clearDimensionsHistory ] = usePersistDimensions();
 
 	const clearPositionDependentProps = useCallback( () => {
+		const dimensions: DimensionsValues = {
+			'inset-block-start': positionDependentValues?.[ 'inset-block-start' ],
+			'inset-block-end': positionDependentValues?.[ 'inset-block-end' ],
+			'inset-inline-start': positionDependentValues?.[ 'inset-inline-start' ],
+			'inset-inline-end': positionDependentValues?.[ 'inset-inline-end' ],
+		};
 		const meta = { history: { propDisplayName: DIMENSIONS_LABEL } };
 		const hasValuesToClear =
 			Object.values( dimensions ).some( ( v ) => v !== null ) || positionDependentValues?.[ 'z-index' ] !== null;
@@ -77,7 +76,7 @@ export const PositionSection = () => {
 			updateDimensionsHistory( dimensions );
 			setPositionDependentValues( CLEARED_POSITION_DEPENDENT_VALUES, meta );
 		}
-	}, [ dimensions, positionDependentValues, updateDimensionsHistory, setPositionDependentValues ] );
+	}, [ positionDependentValues, updateDimensionsHistory, setPositionDependentValues ] );
 
 	useEffect( () => {
 		if ( positionValue?.value === 'static' || positionValue === null ) {
