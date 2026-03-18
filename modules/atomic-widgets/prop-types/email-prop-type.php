@@ -22,7 +22,7 @@ class Email_Prop_Type extends Object_Prop_Type {
 			'subject' => String_Prop_Type::make(),
 			'message' => String_Prop_Type::make(),
 			'from' => String_Prop_Type::make(),
-			'meta-data' => String_Array_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
+			'meta-data' => String_Array_Prop_Type::make(),
 			'send-as' => String_Prop_Type::make()
 				->enum( [ 'html', 'plain' ] )
 				->default( 'html' ),
