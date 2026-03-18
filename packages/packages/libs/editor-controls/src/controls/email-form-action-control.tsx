@@ -85,7 +85,7 @@ const BccField = () => <EmailField bind="bcc" label={ __( 'Bcc', 'elementor' ) }
 const MetaDataField = () => (
 	<PropKeyProvider bind="meta-data">
 		<Stack gap={ 0.5 }>
-			<ControlLabel>{ __( 'Meta data', 'elementor' ) }</ControlLabel>
+			<ControlLabel>{ __( 'Metadata', 'elementor' ) }</ControlLabel>
 			<ChipsControl
 				options={ [
 					{ label: __( 'Date', 'elementor' ), value: 'date' },
@@ -139,7 +139,7 @@ export const EmailFormActionControl = createControl( () => {
 	return (
 		<PropProvider { ...propContext } value={ value } setValue={ setValue }>
 			<Stack gap={ 2 }>
-				<ControlFormLabel>{ __( 'Email settings', 'elementor' ) }</ControlFormLabel>
+				<ControlLabel>{ __( 'Email settings', 'elementor' ) }</ControlLabel>
 				<SendToField />
 				<SubjectField />
 				<MessageField />
