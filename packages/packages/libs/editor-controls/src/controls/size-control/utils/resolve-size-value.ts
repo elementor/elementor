@@ -51,10 +51,10 @@ export const resolveSizeOnUnitChange = (
 };
 
 export const createDefaultSizeValue = < T extends SizeValue >( units: SizeUnit[], defaultUnit?: SizeUnit ): T => {
-	let unit = units[ 0 ];
+	let [ unit ] = units;
 
 	if ( defaultUnit !== undefined ) {
-		unit = resolveFallbackUnit( defaultUnit, units ) as SizeUnit;
+		unit = resolveFallbackUnit( defaultUnit, units );
 	}
 
 	return { size: DEFAULT_SIZE, unit } as T;
@@ -64,7 +64,7 @@ const resolveFallbackUnit = < TUnit extends SizeUnit >(
 	unit: TUnit,
 	units: readonly TUnit[],
 	defaultUnit?: TUnit
-): TUnit | string => {
+): TUnit => {
 	if ( units.includes( unit ) ) {
 		return unit;
 	}
@@ -80,5 +80,6 @@ const sanitizeSize = ( size: SizeValue[ 'size' ] ): SizeValue[ 'size' ] => {
 	if ( typeof size === 'number' && isNaN( size ) ) {
 		return DEFAULT_SIZE;
 	}
+
 	return size;
 };

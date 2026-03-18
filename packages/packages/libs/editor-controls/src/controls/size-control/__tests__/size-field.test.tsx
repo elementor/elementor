@@ -35,7 +35,7 @@ const renderSizeField = ( props = {} ) => {
 		<SizeField
 			value={ { size: 10, unit: 'px' } }
 			units={ [ 'px', 'rem', 'em' ] }
-			onChange={ jest.fn() }
+			setValue={ jest.fn() }
 			{ ...props }
 		/>
 	);
@@ -146,7 +146,7 @@ describe( 'SizeField', () => {
 
 			// Assert.
 			expect( mockSetSize ).toHaveBeenCalledTimes( 1 );
-			expect( mockSetSize ).toHaveBeenCalledWith( '20' );
+			expect( mockSetSize ).toHaveBeenCalledWith( '20', true );
 		} );
 
 		it( 'should call setUnit when unit is selected from selector', () => {
