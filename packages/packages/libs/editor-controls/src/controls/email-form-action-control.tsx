@@ -139,7 +139,7 @@ export const EmailFormActionControl = createControl( () => {
 	return (
 		<PropProvider { ...propContext } value={ value } setValue={ setValue }>
 			<Stack gap={ 2 }>
-				<ControlFormLabel>{ __( 'Email settings', 'elementor' ) }</ControlFormLabel>
+				<ControlLabel>{ __( 'Email settings', 'elementor' ) }</ControlLabel>
 				<SendToField />
 				<SubjectField />
 				<MessageField />
