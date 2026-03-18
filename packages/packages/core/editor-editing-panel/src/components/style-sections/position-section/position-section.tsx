@@ -71,7 +71,7 @@ export const PositionSection = () => {
 	const clearPositionDependentProps = useCallback( () => {
 		const meta = { history: { propDisplayName: DIMENSIONS_LABEL } };
 		const hasValuesToClear =
-			Object.values( dimensions ).some( ( v ) => v != null ) || positionDependentValues?.[ 'z-index' ] != null;
+			Object.values( dimensions ).some( ( v ) => v !== null ) || positionDependentValues?.[ 'z-index' ] !== null;
 
 		if ( hasValuesToClear ) {
 			updateDimensionsHistory( dimensions );
