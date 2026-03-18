@@ -236,7 +236,17 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		_shouldSkipFullRender() {
-			return this.isRendered && this.children?.length > 0;
+			return this.isRendered && this._hasConnectedChildren();
+		},
+
+		_hasConnectedChildren() {
+			if ( ! this.children?.length ) {
+				return false;
+			}
+
+			// If the parent's innerHTML was replaced, all children are detached together.
+			const firstChild = this.children.findByIndex( 0 );
+			return firstChild?.$el?.get( 0 )?.isConnected ?? false;
 		},
 
 		_renderWithoutDomRecreation( resolve ) {
