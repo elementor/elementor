@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useRef } from 'react';
 import { type ToggleButtonGroupItem, ToggleButtonGroupUi } from '@elementor/editor-controls';
 import { CheckIcon, MinusIcon } from '@elementor/icons';
 import { Box } from '@elementor/ui';
@@ -19,7 +20,8 @@ export const BASE_REPLAY: string[] = [ 'no' ];
 const OVERLAY_GRID = '1 / 1';
 const CHIP_OFFSET = '50%';
 
-export function Replay( { onChange, anchorRef }: ReplayFieldProps ) {
+export function Replay( { onChange }: ReplayFieldProps ) {
+	const replayContainerRef = useRef< HTMLDivElement >( null );
 	const options: ToggleButtonGroupItem< boolean >[] = [
 		{
 			value: false,
@@ -38,7 +40,7 @@ export function Replay( { onChange, anchorRef }: ReplayFieldProps ) {
 	];
 
 	return (
-		<Box sx={ { display: 'grid', alignItems: 'center' } }>
+		<Box ref={ replayContainerRef } sx={ { display: 'grid', alignItems: 'center' } }>
 			<Box sx={ { gridArea: OVERLAY_GRID } }>
 				<ToggleButtonGroupUi items={ options } exclusive onChange={ onChange } value={ false } />
 			</Box>
@@ -46,7 +48,7 @@ export function Replay( { onChange, anchorRef }: ReplayFieldProps ) {
 				<InteractionsPromotionChip
 					content={ __( 'Upgrade to run the animation every time its trigger occurs.', 'elementor' ) }
 					upgradeUrl={ 'https://go.elementor.com/go-pro-interactions-replay-modal/' }
-					anchorRef={ anchorRef }
+					anchorRef={ replayContainerRef }
 					trackingData={ TRACKING_DATA }
 				/>
 			</Box>

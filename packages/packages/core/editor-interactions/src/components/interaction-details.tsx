@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type ComponentType, useMemo, useRef } from 'react';
+import { type ComponentType, useMemo } from 'react';
 import { PopoverContent } from '@elementor/editor-controls';
 import { type PropValue } from '@elementor/editor-props';
 import { Box, Divider, Grid } from '@elementor/ui';
@@ -182,8 +182,6 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	) as ComponentType< FieldProps< number > >;
 	const EasingControl = useControlComponent( 'easing' );
 
-	const containerRef = useRef< HTMLDivElement >( null );
-
 	const updateInteraction = (
 		updates: Partial< {
 			trigger: string;
@@ -241,7 +239,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	};
 
 	return (
-		<Box ref={ containerRef }>
+		<>
 			<PopoverContent p={ 1.5 }>
 				<Grid container spacing={ 1.5 }>
 					{ TriggerControl && (
@@ -259,7 +257,6 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 								value={ replay }
 								onChange={ ( v ) => updateInteraction( { replay: v } ) }
 								disabled={ true }
-								anchorRef={ containerRef }
 							/>
 						</Field>
 					) }
@@ -385,6 +382,6 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 					</Grid>
 				) }
 			</PopoverContent>
-		</Box>
+		</>
 	);
 };
