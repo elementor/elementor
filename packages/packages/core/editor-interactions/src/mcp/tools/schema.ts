@@ -7,7 +7,9 @@ export const baseSchema = {
 	direction: z
 		.enum( [ 'top', 'bottom', 'left', 'right', 'top-left', 'top-right', 'bottom-left', 'bottom-right' ] )
 		.optional()
-		.describe( 'Direction of the Animation. Can be one of the following or empty if not needed. At slide effect, this is required field.' ),
+		.describe(
+			'Direction of the Animation. Can be one of the following or empty if not needed. At slide effect, this is required field.'
+		),
 	duration: z.number().min( 0 ).max( 10000 ).optional().describe( 'Animation duration in milliseconds' ),
 	delay: z.number().min( 0 ).max( 10000 ).optional().describe( 'Animation delay in milliseconds' ),
 	easing: z.string().optional().describe( 'Easing function. See interactions schema for options.' ),
