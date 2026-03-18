@@ -75,6 +75,9 @@ const common = {
 	output: {
 		path: path.resolve( __dirname, '../assets/js/packages/' ),
 	},
+	performance: {
+		hints: false,
+	},
 }
 
 const devConfig = {
