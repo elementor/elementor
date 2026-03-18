@@ -184,7 +184,9 @@ describe( '<StylesField />', () => {
 			);
 
 			// Assert — the resolved placeholder should be a full dimensions object.
-			const placeholder = JSON.parse( screen.getByTestId( 'placeholder' ).dataset.value ?? 'null' );
+			const placeholder = JSON.parse(
+				screen.getByRole( 'status', { name: 'resolved-placeholder' } ).dataset.value ?? 'null'
+			);
 
 			expect( dimensionsPropTypeUtil.isValid( placeholder ) ).toBe( true );
 
@@ -264,5 +266,5 @@ const MockControl = () => {
 const MockPlaceholderControl = () => {
 	const { placeholder } = useBoundProp();
 
-	return <div data-testid="placeholder" data-value={ JSON.stringify( placeholder ?? null ) } />;
+	return <output aria-label="resolved-placeholder" data-value={ JSON.stringify( placeholder ?? null ) } />;
 };

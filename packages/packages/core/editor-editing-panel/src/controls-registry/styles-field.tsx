@@ -39,13 +39,13 @@ function buildResolvedPlaceholder( chain: { value: PropValue }[], startIndex: nu
 
 	const firstDims = dimensionsPropTypeUtil.extract( firstValue );
 
-	if ( DIMENSION_SIDES.every( ( side ) => firstDims?.[ side ] != null ) ) {
+	if ( DIMENSION_SIDES.every( ( side ) => firstDims?.[ side ] !== null && firstDims?.[ side ] !== undefined ) ) {
 		return firstValue;
 	}
 
 	const merged: Partial< Record< ( typeof DIMENSION_SIDES )[ number ], PropValue > > = {};
 	DIMENSION_SIDES.forEach( ( side ) => {
-		if ( firstDims?.[ side ] != null ) {
+		if ( firstDims?.[ side ] !== null && firstDims?.[ side ] !== undefined ) {
 			merged[ side ] = firstDims[ side ];
 		}
 	} );
@@ -55,7 +55,7 @@ function buildResolvedPlaceholder( chain: { value: PropValue }[], startIndex: nu
 
 		if ( sizePropTypeUtil.isValid( val ) ) {
 			DIMENSION_SIDES.forEach( ( side ) => {
-				if ( merged[ side ] == null ) {
+				if ( merged[ side ] === null || merged[ side ] === undefined ) {
 					merged[ side ] = val;
 				}
 			} );
@@ -63,13 +63,13 @@ function buildResolvedPlaceholder( chain: { value: PropValue }[], startIndex: nu
 		} else if ( dimensionsPropTypeUtil.isValid( val ) ) {
 			const dims = dimensionsPropTypeUtil.extract( val );
 			DIMENSION_SIDES.forEach( ( side ) => {
-				if ( merged[ side ] == null && dims?.[ side ] != null ) {
+				if ( ( merged[ side ] === null || merged[ side ] === undefined ) && dims?.[ side ] !== null && dims?.[ side ] !== undefined ) {
 					merged[ side ] = dims[ side ];
 				}
 			} );
 		}
 
-		if ( DIMENSION_SIDES.every( ( side ) => merged[ side ] != null ) ) {
+		if ( DIMENSION_SIDES.every( ( side ) => merged[ side ] !== null && merged[ side ] !== undefined ) ) {
 			break;
 		}
 	}
