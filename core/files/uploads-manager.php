@@ -27,6 +27,7 @@ class Uploads_Manager extends Base_Object {
 
 	const UNFILTERED_FILE_UPLOADS_KEY = 'elementor_unfiltered_files_upload';
 	const INVALID_FILE_CONTENT = 'Invalid Content In File';
+	const ELEMENTOR_UPLOAD_DIR = 'elementor';
 
 	/**
 	 * @var File_Type_Base[]
@@ -136,6 +137,16 @@ class Uploads_Manager extends Base_Object {
 
 		if ( is_wp_error( $data ) ) {
 			return $data;
+		}
+
+		if ( ! isset( $data['fileData'] ) ) {
+			if ( empty( $data['tmp_name'] ) ) {
+				return new \WP_Error( 'file_error', esc_html__( 'Invalid temporary file path.', 'elementor' ) );
+			}
+
+			if ( ! $this->is_path_in_allowed_dir( $data['tmp_name'] ) ) {
+				return new \WP_Error( 'file_error', esc_html__( 'Invalid temporary file path.', 'elementor' ) );
+			}
 		}
 
 		$validation_result = $this->validate_file( $data, $allowed_file_extensions );
@@ -254,9 +265,46 @@ class Uploads_Manager extends Base_Object {
 	}
 
 	/**
+	 * Check if path is within the allowed Elementor uploads directory.
+	 *
+	 * Prevents path traversal and arbitrary directory deletion by ensuring the path
+	 * resolves under wp-content/uploads/elementor/.
+	 *
+	 * @since 3.35.4
+	 * @access private
+	 *
+	 * @param string $path
+	 * @return bool
+	 */
+	private function is_path_in_allowed_dir( $path ) {
+		if ( ! is_string( $path ) || '' === $path ) {
+			return false;
+		}
+
+		$real_path = realpath( $path );
+
+		if ( false === $real_path ) {
+			$real_path = realpath( dirname( $path ) );
+			if ( false === $real_path ) {
+				return false;
+			}
+		}
+
+		$wp_upload_dir = wp_upload_dir();
+		$elementor_base = realpath( $wp_upload_dir['basedir'] . DIRECTORY_SEPARATOR . self::ELEMENTOR_UPLOAD_DIR );
+
+		if ( false === $elementor_base ) {
+			return false;
+		}
+
+		return $real_path === $elementor_base || 0 === strpos( $real_path, $elementor_base . DIRECTORY_SEPARATOR );
+	}
+
+	/**
 	 * Remove File Or Directory
 	 *
 	 * Directory is deleted recursively with all of its contents (subdirectories and files).
+	 * Only paths under wp-content/uploads/elementor/ are allowed (security: prevents arbitrary directory deletion).
 	 *
 	 * @since 3.3.0
 	 * @access public
@@ -264,6 +312,10 @@ class Uploads_Manager extends Base_Object {
 	 * @param string $path
 	 */
 	public function remove_file_or_dir( $path ) {
+		if ( ! $this->is_path_in_allowed_dir( $path ) ) {
+			return;
+		}
+
 		if ( is_dir( $path ) ) {
 			$this->remove_directory_with_files( $path );
 		} elseif ( is_file( $path ) ) {
@@ -322,7 +374,7 @@ class Uploads_Manager extends Base_Object {
 		if ( ! $this->temp_dir ) {
 			$wp_upload_dir = wp_upload_dir();
 
-			$temp_dir = implode( DIRECTORY_SEPARATOR, [ $wp_upload_dir['basedir'], 'elementor', 'tmp' ] ) . DIRECTORY_SEPARATOR;
+			$temp_dir = implode( DIRECTORY_SEPARATOR, [ $wp_upload_dir['basedir'], self::ELEMENTOR_UPLOAD_DIR, 'tmp' ] ) . DIRECTORY_SEPARATOR;
 
 			/**
 			 * Temp File Path
