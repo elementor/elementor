@@ -16,6 +16,7 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import type { ElementInteractions } from '../types';
+import { isSupportedInteractionItem } from '../utils/is-supported-interaction-item';
 import { createString } from '../utils/prop-value-utils';
 import { generateTempInteractionId } from '../utils/temp-id-utils';
 import { getClipboardElements } from './get-clipboard-elements';
@@ -50,11 +51,16 @@ function normalizeClipboardInteractions( raw: V1ElementModelProps[ 'interactions
 
 	const parsed: ElementInteractions = typeof raw === 'string' ? ( JSON.parse( raw ) as ElementInteractions ) : raw;
 
-	if ( ! parsed?.items?.length ) {
+	const payload = {
+		version: parsed?.version ?? 1,
+		items: structuredClone( parsed?.items?.filter( ( item ) => isSupportedInteractionItem( item ) ) ?? [] ),
+	};
+
+	if ( ! payload.items.length ) {
 		return null;
 	}
 
-	return { version: parsed.version ?? 1, items: parsed.items };
+	return payload;
 }
 
 function regenerateInteractionIds( interactions: ElementInteractions ): ElementInteractions {
