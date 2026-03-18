@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { type StringPropValue } from '@elementor/editor-props';
 import { useSessionStorage } from '@elementor/session';
 import { __ } from '@wordpress/i18n';
@@ -32,6 +32,8 @@ type DimensionsValues = {
 type PositionDependentValues = DimensionsValues & {
 	'z-index': number | undefined | null;
 };
+
+const POSITION_STATIC = 'static' as const;
 
 const POSITION_LABEL = __( 'Position', 'elementor' );
 const DIMENSIONS_LABEL = __( 'Dimensions', 'elementor' );
@@ -78,26 +80,32 @@ export const PositionSection = () => {
 		}
 	}, [ positionDependentValues, updateDimensionsHistory, setPositionDependentValues ] );
 
+	const clearPositionDependentPropsRef = useRef( clearPositionDependentProps );
+	clearPositionDependentPropsRef.current = clearPositionDependentProps;
+
 	useEffect( () => {
-		if ( positionValue?.value === 'static' || positionValue === null ) {
-			clearPositionDependentProps();
+		if ( positionValue?.value === POSITION_STATIC || positionValue === null ) {
+			clearPositionDependentPropsRef.current();
 		}
-	}, [ positionValue?.value, positionValue, clearPositionDependentProps ] );
+	}, [ positionValue ] );
 
 	const onPositionChange = ( newPosition: string | null, previousPosition: string | null | undefined ) => {
 		const meta = { history: { propDisplayName: DIMENSIONS_LABEL } };
 
-		if ( newPosition === 'static' ) {
+		if ( newPosition === POSITION_STATIC ) {
 			clearPositionDependentProps();
-		} else if ( previousPosition === 'static' ) {
+		} else if ( previousPosition === POSITION_STATIC ) {
 			if ( dimensionsValuesFromHistory ) {
-				setPositionDependentValues( { ...dimensionsValuesFromHistory } as PositionDependentValues, meta );
+				setPositionDependentValues(
+					{ ...dimensionsValuesFromHistory, 'z-index': undefined } as PositionDependentValues,
+					meta
+				);
 				clearDimensionsHistory();
 			}
 		}
 	};
 
-	const isNotStatic = positionValue && positionValue?.value !== 'static';
+	const isNotStatic = positionValue && positionValue?.value !== POSITION_STATIC;
 
 	return (
 		<SectionContent>
