@@ -53,7 +53,7 @@ function normalizeClipboardInteractions( raw: V1ElementModelProps[ 'interactions
 
 	const payload = {
 		version: parsed?.version ?? 1,
-		items: structuredClone( parsed?.items?.filter( ( item ) => isSupportedInteractionItem( item ) ) ?? [] ),
+		items: parsed?.items?.filter( ( item ) => isSupportedInteractionItem( item ) ) ?? [],
 	};
 
 	if ( ! payload.items.length ) {
