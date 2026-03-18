@@ -26,6 +26,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -54,7 +55,7 @@ class Atomic_Form extends Atomic_Element_Base {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Form', 'elementor' );
+		return esc_html__( 'Atomic form', 'elementor' );
 	}
 
 	public function get_keywords() {
@@ -103,8 +104,9 @@ class Atomic_Form extends Atomic_Element_Base {
 				] ),
 			'email' => Email_Prop_Type::make()
 				->set_dependencies( $email_dependencies )
+				->meta( Overridable_Prop_Type::ignore() )
 				->default( [] ),
-			'attributes' => Attributes_Prop_Type::make(),
+			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
 	}
 
@@ -137,7 +139,7 @@ class Atomic_Form extends Atomic_Element_Base {
 				->set_label( __( 'Content', 'elementor' ) )
 				->set_items( [
 					Text_Control::bind_to( 'form-name' )
-						->set_label( __( 'Form Name', 'elementor' ) ),
+						->set_label( __( 'Form name', 'elementor' ) ),
 					$state_control,
 					Chips_Control::bind_to( 'actions-after-submit' )
 						->set_label( __( 'Actions after submit', 'elementor' ) )
@@ -191,6 +193,7 @@ class Atomic_Form extends Atomic_Element_Base {
 						->add_prop( 'flex', String_Prop_Type::generate( '1' ) )
 						->add_prop( 'flex-direction', String_Prop_Type::generate( 'row' ) )
 						->add_prop( 'flex-wrap', String_Prop_Type::generate( 'wrap' ) )
+						->add_prop( 'align-items', String_Prop_Type::generate( 'flex-start' ) )
 						->add_prop( 'gap', Size_Prop_Type::generate( [
 							'size' => 10,
 							'unit' => 'px',
