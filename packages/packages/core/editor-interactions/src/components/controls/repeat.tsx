@@ -5,8 +5,8 @@ import { Number123Icon, RepeatIcon } from '@elementor/icons';
 import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { type RepeatFieldProps } from '../../types';
 import { InteractionsPromotionChip } from '../../ui/interactions-promotion-chip';
+import { PROMOTION_CHIP_OFFSET, PROMOTION_OVERLAY_GRID } from '../../utils/promotion-layout-constants';
 
 const TRACKING_DATA = { target_name: 'interactions_repeat', location_l2: 'interactions' } as const;
 
@@ -22,10 +22,7 @@ export const REPEAT_TOOLTIPS = {
 
 export const BASE_REPEAT: string[] = [];
 
-const OVERLAY_GRID = '1 / 1';
-const CHIP_OFFSET = '50%';
-
-export function Repeat( _: RepeatFieldProps ) {
+export function Repeat() {
 	const repeatContainerRef = useRef< HTMLDivElement >( null );
 
 	const options: ToggleButtonGroupItem< string >[] = [
@@ -47,10 +44,12 @@ export function Repeat( _: RepeatFieldProps ) {
 
 	return (
 		<Box ref={ repeatContainerRef } sx={ { display: 'grid', alignItems: 'center' } }>
-			<Box sx={ { gridArea: OVERLAY_GRID } }>
+			<Box sx={ { gridArea: PROMOTION_OVERLAY_GRID } }>
 				<ToggleButtonGroupUi items={ options } exclusive onChange={ () => {} } value={ '' } />
 			</Box>
-			<Box sx={ { gridArea: OVERLAY_GRID, marginInlineEnd: CHIP_OFFSET, justifySelf: 'end' } }>
+			<Box
+				sx={ { gridArea: PROMOTION_OVERLAY_GRID, marginInlineEnd: PROMOTION_CHIP_OFFSET, justifySelf: 'end' } }
+			>
 				<InteractionsPromotionChip
 					content={ __( 'Upgrade to control how many times the animation repeats.', 'elementor' ) }
 					upgradeUrl={ 'https://go.elementor.com/go-pro-interactions-repeat-modal/' }
