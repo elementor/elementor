@@ -92,10 +92,7 @@ export const PositionSection = () => {
 			clearPositionDependentProps();
 		} else if ( previousPosition === 'static' ) {
 			if ( dimensionsValuesFromHistory ) {
-				setPositionDependentValues(
-					{ ...dimensionsValuesFromHistory } as PositionDependentValues,
-					meta
-				);
+				setPositionDependentValues( { ...dimensionsValuesFromHistory } as PositionDependentValues, meta );
 				clearDimensionsHistory();
 			}
 		}
