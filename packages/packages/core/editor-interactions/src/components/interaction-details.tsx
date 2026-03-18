@@ -239,7 +239,6 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	};
 
 	return (
-		<>
 			<PopoverContent p={ 1.5 }>
 				<Grid container spacing={ 1.5 }>
 					{ TriggerControl && (
@@ -382,6 +381,5 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 					</Grid>
 				) }
 			</PopoverContent>
-		</>
 	);
 };
