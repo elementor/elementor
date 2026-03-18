@@ -5,7 +5,7 @@ export const baseSchema = {
 	effect: z.enum( [ 'fade', 'slide', 'scale' ] ).optional().describe( 'Animation effect type' ),
 	effectType: z.enum( [ 'in', 'out' ] ).optional().describe( 'Whether the animation plays in or out' ),
 	direction: z
-		.enum( [ 'top', 'bottom', 'left', 'right', '' ] )
+		.enum( [ 'top', 'bottom', 'left', 'right', 'top-left', 'top-right', 'bottom-left', 'bottom-right' ] )
 		.optional()
 		.describe( 'Direction for slide effect. Use empty string for fade/scale.' ),
 	duration: z.number().min( 0 ).max( 10000 ).optional().describe( 'Animation duration in milliseconds' ),
