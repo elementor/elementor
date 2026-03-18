@@ -85,7 +85,7 @@ const BccField = () => <EmailField bind="bcc" label={ __( 'Bcc', 'elementor' ) }
 const MetaDataField = () => (
 	<PropKeyProvider bind="meta-data">
 		<Stack gap={ 0.5 }>
-			<ControlLabel>{ __( 'Metadata', 'elementor' ) }</ControlLabel>
+			<ControlLabel>{ __( 'Meta data', 'elementor' ) }</ControlLabel>
 			<ChipsControl
 				options={ [
 					{ label: __( 'Date', 'elementor' ), value: 'date' },
