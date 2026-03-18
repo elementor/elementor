@@ -22,10 +22,14 @@ const DIMENSION_SIDES = [ 'block-start', 'block-end', 'inline-start', 'inline-en
  * the other three sides get 10px from desktop's uniform size.
  *
  * Non-dimensions values (color, font-size, …) are returned as-is — no merging needed there.
+ * @param chain
+ * @param startIndex
  */
 function buildResolvedPlaceholder( chain: { value: PropValue }[], startIndex: number ): PropValue | undefined {
 	const firstEntry = chain[ startIndex ];
-	if ( ! firstEntry ) return undefined;
+	if ( ! firstEntry ) {
+		return undefined;
+	}
 
 	const firstValue = firstEntry.value;
 
@@ -51,7 +55,9 @@ function buildResolvedPlaceholder( chain: { value: PropValue }[], startIndex: nu
 
 		if ( sizePropTypeUtil.isValid( val ) ) {
 			DIMENSION_SIDES.forEach( ( side ) => {
-				if ( merged[ side ] == null ) merged[ side ] = val;
+				if ( merged[ side ] == null ) {
+					merged[ side ] = val;
+				}
 			} );
 			break;
 		} else if ( dimensionsPropTypeUtil.isValid( val ) ) {

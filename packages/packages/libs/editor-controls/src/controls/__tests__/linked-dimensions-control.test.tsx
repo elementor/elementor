@@ -286,7 +286,7 @@ describe( 'LinkedDimensionsControl', () => {
 			expect( sizeInputs[ 0 ] ).toHaveAttribute( 'placeholder', '10' ); // block-start
 			expect( sizeInputs[ 1 ] ).toHaveAttribute( 'placeholder', '10' ); // inline-end
 			expect( sizeInputs[ 2 ] ).toHaveAttribute( 'placeholder', '10' ); // block-end
-			expect( sizeInputs[ 3 ] ).toHaveAttribute( 'placeholder', '5' );  // inline-start
+			expect( sizeInputs[ 3 ] ).toHaveAttribute( 'placeholder', '5' ); // inline-start
 		} );
 
 		it( 'should prioritize user values over placeholders', () => {
