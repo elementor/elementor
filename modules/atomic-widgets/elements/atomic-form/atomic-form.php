@@ -55,7 +55,7 @@ class Atomic_Form extends Atomic_Element_Base {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Form', 'elementor' );
+		return esc_html__( 'Atomic form', 'elementor' );
 	}
 
 	public function get_keywords() {
@@ -139,7 +139,7 @@ class Atomic_Form extends Atomic_Element_Base {
 				->set_label( __( 'Content', 'elementor' ) )
 				->set_items( [
 					Text_Control::bind_to( 'form-name' )
-						->set_label( __( 'Form Name', 'elementor' ) ),
+						->set_label( __( 'Form name', 'elementor' ) ),
 					$state_control,
 					Chips_Control::bind_to( 'actions-after-submit' )
 						->set_label( __( 'Actions after submit', 'elementor' ) )
