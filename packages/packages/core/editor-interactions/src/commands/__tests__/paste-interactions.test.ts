@@ -28,19 +28,21 @@ const SUPPORTED_TRIGGERS = [ 'click', 'load', 'hover' ];
 const SUPPORTED_EFFECTS = [ 'fade' ];
 const SUPPORTED_EASINGS = [ 'easeIn' ];
 
-function mockSupportedOptions( overrides?: {
-	trigger?: string[];
-	effect?: string[];
-	easing?: string[];
-} ) {
+function mockSupportedOptions( overrides?: { trigger?: string[]; effect?: string[]; easing?: string[] } ) {
 	const triggers = overrides?.trigger ?? SUPPORTED_TRIGGERS;
 	const effects = overrides?.effect ?? SUPPORTED_EFFECTS;
 	const easings = overrides?.easing ?? SUPPORTED_EASINGS;
 
 	jest.mocked( getInteractionsControlOptions ).mockImplementation( ( type ) => {
-		if ( type === 'trigger' ) return triggers;
-		if ( type === 'effect' ) return effects;
-		if ( type === 'easing' ) return easings;
+		if ( type === 'trigger' ) {
+			return triggers;
+		}
+		if ( type === 'effect' ) {
+			return effects;
+		}
+		if ( type === 'easing' ) {
+			return easings;
+		}
 		return [];
 	} );
 }
