@@ -9,11 +9,11 @@ type ModalHeaderProps = {
 
 export const ModalHeader = ( { title, subtitle }: ModalHeaderProps ) => {
 	return (
-		<Stack gap={ 1 }>
-			<Typography variant="h4" color="text.primary" maxWidth={ 320 }>
+		<Stack gap={ 0.75 }>
+			<Typography variant="h4" color="text.primary" maxWidth={ 310 }>
 				{ title }
 			</Typography>
-			<Typography variant="body2" color="text.primary">
+			<Typography variant="subtitle2" color="text.primary">
 				{ subtitle }
 			</Typography>
 		</Stack>
