@@ -21,7 +21,7 @@ describe( 'lazyLoadScripts', () => {
 
 			cache[ key ] = urls.reduce(
 				( promise, src ) => promise.then( () => loadScript( src ) ),
-				Promise.resolve()
+				Promise.resolve(),
 			);
 
 			return cache[ key ];
@@ -34,6 +34,8 @@ describe( 'lazyLoadScripts', () => {
 
 	test( 'injects script tags for each URL in order', async () => {
 		const promise = lazyLoadScripts( 'test', [ 'http://example.com/a.js', 'http://example.com/b.js' ] );
+
+		await Promise.resolve();
 
 		const firstScript = document.head.querySelector( 'script[src="http://example.com/a.js"]' );
 		expect( firstScript ).not.toBeNull();
@@ -55,9 +57,11 @@ describe( 'lazyLoadScripts', () => {
 		expect( firstCall ).toBe( secondCall );
 	} );
 
-	test( 'injects only one script tag when called concurrently with the same key', () => {
+	test( 'injects only one script tag when called concurrently with the same key', async () => {
 		lazyLoadScripts( 'ace', [ 'http://example.com/ace.js' ] );
 		lazyLoadScripts( 'ace', [ 'http://example.com/ace.js' ] );
+
+		await Promise.resolve();
 
 		const injectedScripts = document.head.querySelectorAll( 'script[src="http://example.com/ace.js"]' );
 		expect( injectedScripts.length ).toBe( 1 );
@@ -72,6 +76,8 @@ describe( 'lazyLoadScripts', () => {
 
 	test( 'rejects when a script fails to load', async () => {
 		const promise = lazyLoadScripts( 'bad', [ 'http://example.com/bad.js' ] );
+
+		await Promise.resolve();
 
 		const failedScript = document.head.querySelector( 'script[src="http://example.com/bad.js"]' );
 		failedScript.onerror( new Error( 'network error' ) );
@@ -141,7 +147,7 @@ describe( 'loadAce', () => {
 			[
 				'https://cdn.jsdelivr.net/npm/ace-builds@1.43.2/src-min-noconflict/ace.min.js',
 				'https://cdn.jsdelivr.net/npm/ace-builds@1.43.2/src-min-noconflict/ext-language_tools.js',
-			]
+			],
 		);
 	} );
 
