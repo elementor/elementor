@@ -471,7 +471,7 @@ describe( 'ClassManagerPanel', () => {
 			__dispatch( slice.actions.update( { style: { id: 'class-2', sync_to_v3: true } } ) );
 		} );
 
-		// Act.
+		// Act
 		renderWithStore(
 			<ThemeProvider>
 				<QueryClientProvider client={ queryClient }>
@@ -489,15 +489,15 @@ describe( 'ClassManagerPanel', () => {
 
 		fireEvent.click( stopSyncButton );
 
-		// Assert - confirmation dialog should appear.
+		// Assert
 		await waitFor( () => {
 			expect( screen.getByText( 'Un-sync typography class' ) ).toBeInTheDocument();
 		} );
 
-		// Act - confirm the dialog.
+		// Act
 		fireEvent.click( screen.getByRole( 'button', { name: 'Got it' } ) );
 
-		// Assert.
+		// Assert
 		await waitFor( () => {
 			expect( mockTracking ).toHaveBeenCalledWith( {
 				event: 'classSyncToV3',
