@@ -34,11 +34,16 @@ export const initBreakpointsResource = ( reg: MCPRegistryEntry ) => {
 		],
 	} );
 
-	resource( 'breakpoints ', BREAKPOINTS_SCHEMA_URI, {
-		description: 'Breakpoints list.',
-	}, () => {
-		return buildResourceResponse();
-	} );
+	resource(
+		'breakpoints ',
+		BREAKPOINTS_SCHEMA_URI,
+		{
+			description: 'Breakpoints list.',
+		},
+		() => {
+			return buildResourceResponse();
+		}
+	);
 
 	window.addEventListener( v1ReadyEvent().name, () => {
 		sendResourceUpdated( {
