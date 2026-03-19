@@ -224,6 +224,7 @@ describe( 'Dimensions values persistence', () => {
 			'inset-block-end',
 			'inset-inline-start',
 			'inset-inline-end',
+			'z-index',
 		] );
 		expect( setStylesFields ).toHaveBeenCalledWith(
 			{
@@ -231,6 +232,79 @@ describe( 'Dimensions values persistence', () => {
 				'inset-block-end': undefined,
 				'inset-inline-start': undefined,
 				'inset-inline-end': undefined,
+				'z-index': undefined,
+			},
+			{ history: { propDisplayName: 'Dimensions' } }
+		);
+	} );
+
+	it( 'should reset z-index when changing position to static', () => {
+		// Arrange.
+		const setStylesFields = jest.fn();
+		mockPosition( 'absolute' );
+		jest.mocked( useStylesFields ).mockReturnValue( {
+			values: {
+				'inset-block-start': undefined,
+				'inset-block-end': undefined,
+				'inset-inline-start': undefined,
+				'inset-inline-end': undefined,
+				'z-index': 10,
+			},
+			setValues: setStylesFields,
+			canEdit: true,
+		} );
+		jest.mocked( useSessionStorage ).mockImplementation( () => [ null, jest.fn(), jest.fn() ] );
+
+		// Act.
+		renderPositionSection();
+
+		const select = screen.getByRole( 'combobox' );
+		fireEvent.mouseDown( select );
+
+		const staticOption = screen.getByText( 'Static' );
+		fireEvent.click( staticOption );
+
+		// Assert.
+		expect( setStylesFields ).toHaveBeenCalledWith(
+			{
+				'inset-block-start': undefined,
+				'inset-block-end': undefined,
+				'inset-inline-start': undefined,
+				'inset-inline-end': undefined,
+				'z-index': undefined,
+			},
+			{ history: { propDisplayName: 'Dimensions' } }
+		);
+	} );
+
+	it( 'should clear position-dependent props when position is cleared via the Clear button (useEffect path)', () => {
+		// Arrange.
+		const setStylesFields = jest.fn();
+		mockPosition( null );
+		jest.mocked( useStylesFields ).mockReturnValue( {
+			values: {
+				'inset-block-start': { value: { size: 20, unit: 'px' }, $$type: 'size' },
+				'inset-block-end': undefined,
+				'inset-inline-start': undefined,
+				'inset-inline-end': undefined,
+				'z-index': 5,
+			},
+			setValues: setStylesFields,
+			canEdit: true,
+		} );
+		jest.mocked( useSessionStorage ).mockImplementation( () => [ null, jest.fn(), jest.fn() ] );
+
+		// Act — mount with position already null (simulates Clear button having been clicked).
+		renderPositionSection();
+
+		// Assert — useEffect should have fired and cleared all position-dependent props.
+		expect( setStylesFields ).toHaveBeenCalledWith(
+			{
+				'inset-block-start': undefined,
+				'inset-block-end': undefined,
+				'inset-inline-start': undefined,
+				'inset-inline-end': undefined,
+				'z-index': undefined,
 			},
 			{ history: { propDisplayName: 'Dimensions' } }
 		);
@@ -282,6 +356,7 @@ describe( 'Dimensions values persistence', () => {
 			'inset-block-end',
 			'inset-inline-start',
 			'inset-inline-end',
+			'z-index',
 		] );
 
 		expect( setStylesFields ).toHaveBeenCalledWith(
