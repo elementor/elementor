@@ -21,17 +21,17 @@ const LAZY_CONTROLS: LazyControlConfig[] = [
 	},
 ];
 
-async function collectMatchingRequests(
+async function trackNetworkRequests(
 	page: Page,
 	pattern: RegExp,
 	action: () => Promise<unknown>,
 	stopWhen?: () => Promise<unknown>,
 ): Promise<Request[]> {
-	const matched: Request[] = [];
+	const matchedRequests: Request[] = [];
 
 	const capture = ( req: Request ) => {
 		if ( pattern.test( req.url() ) ) {
-			matched.push( req );
+			matchedRequests.push( req );
 		}
 	};
 
@@ -47,7 +47,7 @@ async function collectMatchingRequests(
 		page.off( 'request', capture );
 	}
 
-	return matched;
+	return matchedRequests;
 }
 
 async function waitForEditorTTI( page: Page ): Promise<void> {
@@ -80,7 +80,7 @@ test.describe( 'Editor Performance — Lazy Control Scripts', () => {
 
 			// Act.
 			const start = Date.now();
-			const libraryRequests = await collectMatchingRequests( page, control.scriptUrlPattern, () => wpAdmin.openNewPage() );
+			const libraryRequests = await trackNetworkRequests( page, control.scriptUrlPattern, () => wpAdmin.openNewPage() );
 			await reportTiming( testInfo, `Editor TTI — ${ control.name } — Experiment OFF`, Date.now() - start );
 
 			// Assert.
@@ -94,7 +94,7 @@ test.describe( 'Editor Performance — Lazy Control Scripts', () => {
 
 			// Act.
 			const start = Date.now();
-			const libraryRequests = await collectMatchingRequests( page, control.scriptUrlPattern, () => wpAdmin.openNewPage(), () => waitForEditorTTI( page ) );
+			const libraryRequests = await trackNetworkRequests( page, control.scriptUrlPattern, () => wpAdmin.openNewPage(), () => waitForEditorTTI( page ) );
 			await reportTiming( testInfo, `Editor TTI — ${ control.name } — Experiment ON`, Date.now() - start );
 
 			// Assert.
