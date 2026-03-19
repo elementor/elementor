@@ -1,13 +1,14 @@
 import * as React from 'react';
-import type { PropValue, SizePropValue } from '@elementor/editor-props';
+import type { SizePropValue } from '@elementor/editor-props';
 import { MathFunctionIcon } from '@elementor/icons';
 import { InputAdornment, type TextFieldProps } from '@elementor/ui';
 
 import { useSizeUnitKeyboard } from './hooks/use-size-unit-keyboard';
 import { useSizeValue } from './hooks/use-size-value';
-import { type SizeUnit } from './types';
+import { type SetSizeValue, type SizeUnit } from './types';
 import { SizeInput } from './ui/size-input';
 import { UnitSelector, type UnitSelectorProps } from './ui/unit-selector';
+import { hasSizeValue } from './utils/has-size-value';
 import { isExtendedUnit } from './utils/is-extended-unit';
 
 export type SizeFieldProps< TValue extends SizePropValue[ 'value' ], TUnit extends SizeUnit > = {
@@ -16,10 +17,14 @@ export type SizeFieldProps< TValue extends SizePropValue[ 'value' ], TUnit exten
 	placeholder?: string;
 	defaultUnit?: SizeUnit;
 	startIcon?: React.ReactNode;
-	onChange: ( value: TValue ) => void;
+	setValue: SetSizeValue< TValue >;
 	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 	onKeyDown?: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
+	onUnitChange?: ( unit: SizeUnit ) => void;
 	disabled?: boolean;
+	focused?: boolean;
+	ariaLabel?: string;
+	min?: number;
 	InputProps?: TextFieldProps[ 'InputProps' ];
 	unitSelectorProps?: Partial< UnitSelectorProps< TUnit > >;
 };
@@ -30,18 +35,30 @@ const UNIT_DISPLAY_LABELS_OVERRIDES: Partial< Record< SizeUnit, React.ReactNode 
 
 export const SizeField = < T extends SizePropValue[ 'value' ], U extends SizeUnit >( {
 	value,
+	focused,
 	disabled,
 	InputProps,
 	defaultUnit,
+	placeholder,
+	onUnitChange,
 	startIcon,
+	ariaLabel,
 	onKeyDown,
-	onChange,
+	setValue,
 	onBlur,
 	units,
+	min,
 	unitSelectorProps,
 }: SizeFieldProps< T, U > ) => {
-	const { size, unit, setSize, setUnit } = useSizeValue( { value, onChange, units, defaultUnit } );
-	const { onUnitKeyDown } = useSizeUnitKeyboard( { unit, onUnitChange: setUnit, units } );
+	const { size, unit, setSize, setUnit } = useSizeValue( { value, setValue, units, defaultUnit } );
+
+	const handleUnitChange = ( newUnit: SizeUnit ) => {
+		setUnit( newUnit );
+
+		onUnitChange?.( newUnit );
+	};
+
+	const { onUnitKeyDown } = useSizeUnitKeyboard( { unit, onUnitChange: handleUnitChange, units } );
 
 	const handleKeyDown = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
 		onUnitKeyDown( event );
@@ -49,15 +66,25 @@ export const SizeField = < T extends SizePropValue[ 'value' ], U extends SizeUni
 		onKeyDown?.( event );
 	};
 
+	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		const newSize = event.target.value;
+		const isInputValid = event.target.validity.valid;
+
+		setSize( newSize, isInputValid );
+	};
+
 	const inputType = isExtendedUnit( unit ) ? 'text' : 'number';
 
 	return (
 		<SizeInput
+			disabled={ disabled }
+			focused={ focused }
 			type={ inputType }
 			value={ size }
+			placeholder={ placeholder }
 			onBlur={ onBlur }
 			onKeyDown={ handleKeyDown }
-			onChange={ ( event ) => setSize( event.target.value ) }
+			onChange={ handleChange }
 			InputProps={ {
 				...InputProps,
 				autoComplete: 'off',
@@ -72,18 +99,15 @@ export const SizeField = < T extends SizePropValue[ 'value' ], U extends SizeUni
 						<UnitSelector< U >
 							options={ units }
 							value={ unit as U }
-							onSelect={ ( newUnit ) => setUnit( newUnit ) }
-							isActive={ hasValue( size ) }
+							onSelect={ handleUnitChange }
+							isActive={ unitSelectorProps?.isActive ?? hasSizeValue( size ) }
 							{ ...unitSelectorProps }
 							optionLabelOverrides={ UNIT_DISPLAY_LABELS_OVERRIDES }
 						/>
 					</InputAdornment>
 				),
 			} }
+			inputProps={ { min, step: 'any', 'arial-label': ariaLabel } }
 		/>
 	);
-};
-
-const hasValue = ( value: PropValue ): boolean => {
-	return Boolean( value ) || value === 0;
 };
