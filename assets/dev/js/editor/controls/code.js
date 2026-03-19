@@ -23,9 +23,21 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 	onReady() {
 		var self = this;
 
+		this.$spinner = jQuery( '<span>', { class: 'elementor-control-spinner' } )
+			.html( '<i class="eicon-spinner eicon-animation-spin"></i>' );
+
+		this.ui.editor.attr( 'disabled', true );
+		this.ui.editor.after( this.$spinner );
+
 		this.loadAce()
-			.then( () => self.initAceEditor() )
+			.then( () => {
+				self.$spinner.remove();
+				self.ui.editor.removeAttr( 'disabled' );
+				self.initAceEditor();
+			} )
 			.catch( ( error ) => {
+				self.$spinner.remove();
+				self.ui.editor.removeAttr( 'disabled' );
 				if ( window.elementorCommon?.debug ) {
 					// eslint-disable-next-line no-console
 					console.warn( 'ACE Editor failed to load:', error );
@@ -129,5 +141,23 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 		return undefined !== isEditable ? isEditable : true;
 	},
 } );
+
+function scheduleAcePreload() {
+	const { ace: aceSrc, aceLangTools } = window._elementorLazyScripts || {};
+
+	if ( ! aceSrc ) {
+		return;
+	}
+
+	const doPreload = () => ControlBaseDataView.prototype.lazyLoadScripts.call( {}, 'ace', [ aceSrc, aceLangTools ] );
+
+	if ( typeof requestIdleCallback === 'function' ) {
+		requestIdleCallback( doPreload );
+	} else {
+		setTimeout( doPreload, 0 );
+	}
+}
+
+window.addEventListener( 'elementor/init', scheduleAcePreload, { once: true } );
 
 module.exports = ControlCodeEditorItemView;

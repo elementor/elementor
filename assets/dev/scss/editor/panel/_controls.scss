@@ -41,6 +41,19 @@
 		align-items: center;
 	}
 
+	.elementor-control-input-wrapper {
+		&:has( .elementor-code-editor:disabled ) {
+			position: relative;
+
+			.elementor-control-spinner {
+				position: absolute;
+				inset: 0;
+				justify-content: center;
+				z-index: 1;
+			}
+		}
+	}
+
 	&.elementor-control-type-divider {
 		padding: 0;
 
