@@ -21,7 +21,6 @@ const LAZY_CONTROLS: LazyControlConfig[] = [
 	},
 ];
 
-
 async function isScriptPhpEnqueued( page: Page, pattern: RegExp ): Promise<boolean> {
 	return page.evaluate( ( patternStr ) => {
 		const scriptPattern = new RegExp( patternStr );
