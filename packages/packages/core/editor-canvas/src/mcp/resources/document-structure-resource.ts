@@ -39,7 +39,7 @@ type ElementorContainer = {
 export const DOCUMENT_STRUCTURE_URI = 'elementor://document/structure';
 
 export const initDocumentStructureResource = ( reg: MCPRegistryEntry ) => {
-	const { mcpServer, sendResourceUpdated } = reg;
+		const { resource, waitForReady, sendResourceUpdated } = reg;
 
 	let currentDocumentStructure: string | null = null;
 
@@ -49,7 +49,7 @@ export const initDocumentStructureResource = ( reg: MCPRegistryEntry ) => {
 
 		if ( newStructure !== currentDocumentStructure ) {
 			currentDocumentStructure = newStructure;
-			sendResourceUpdated( { uri: DOCUMENT_STRUCTURE_URI } );
+			waitForReady().then( () => sendResourceUpdated( { uri: DOCUMENT_STRUCTURE_URI } ) );
 		}
 	};
 
@@ -69,14 +69,14 @@ export const initDocumentStructureResource = ( reg: MCPRegistryEntry ) => {
 	// Initialize on load
 	updateDocumentStructure();
 
-	mcpServer.resource( 'document-structure', DOCUMENT_STRUCTURE_URI, async () => {
-		const structure = getDocumentStructure();
-
+	resource( 'document-structure', DOCUMENT_STRUCTURE_URI, {
+		description: 'Document structure.',
+	}, async () => {
 		return {
 			contents: [
 				{
 					uri: DOCUMENT_STRUCTURE_URI,
-					text: JSON.stringify( structure, null, 2 ),
+					text: JSON.stringify( getDocumentStructure(), null, 2 ),
 				},
 			],
 		};
