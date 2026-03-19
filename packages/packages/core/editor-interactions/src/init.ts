@@ -3,6 +3,7 @@ import { Direction } from './components/controls/direction';
 import { Easing } from './components/controls/easing';
 import { Effect } from './components/controls/effect';
 import { EffectType } from './components/controls/effect-type';
+import { Repeat } from './components/controls/repeat';
 import { Replay } from './components/controls/replay';
 import { Trigger } from './components/controls/trigger';
 import { initCleanInteractionIdsOnDuplicate } from './hooks/on-duplicate';
@@ -52,6 +53,11 @@ export function init() {
 			type: 'effect',
 			component: Effect,
 			options: [ 'fade', 'slide', 'scale' ],
+		} );
+
+		registerInteractionsControl( {
+			type: 'repeat',
+			component: Repeat,
 		} );
 
 		initMcpInteractions();
