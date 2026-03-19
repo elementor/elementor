@@ -17,7 +17,9 @@ type DuplicateElementsParams = {
 
 type DuplicatedElement = {
 	container: V1Element;
+	containerId: string;
 	parentContainer: V1Element;
+	parentContainerId: string;
 	model: V1ElementModelProps;
 	at?: number;
 };
@@ -27,6 +29,16 @@ type DuplicatedElementsResult = {
 };
 
 export type { DuplicateElementsParams, DuplicatedElement, DuplicatedElementsResult };
+
+function resolveContainer( container: V1Element, id: string ): V1Element | null {
+	const looked = container.lookup?.();
+
+	if ( looked?.view?.el?.isConnected ) {
+		return looked;
+	}
+
+	return getContainer( id );
+}
 
 export const duplicateElements = ( {
 	elementIds,
@@ -59,7 +71,9 @@ export const duplicateElements = ( {
 
 					duplicatedElements.push( {
 						container: duplicatedElement,
+						containerId: duplicatedElement.id,
 						parentContainer: duplicatedElement.parent,
+						parentContainerId: duplicatedElement.parent.id,
 						model: duplicatedElement.model.toJSON(),
 						at: duplicatedElement.view?._index,
 					} );
@@ -69,11 +83,15 @@ export const duplicateElements = ( {
 			},
 			undo: ( _: { elementIds: string[] }, { duplicatedElements }: DuplicatedElementsResult ) => {
 				onRestoreElements?.();
-				[ ...duplicatedElements ].reverse().forEach( ( { container } ) => {
-					deleteElement( {
-						container,
-						options: { useHistory: false },
-					} );
+				[ ...duplicatedElements ].reverse().forEach( ( { container, containerId } ) => {
+					const freshContainer = resolveContainer( container, containerId );
+
+					if ( freshContainer ) {
+						deleteElement( {
+							container: freshContainer,
+							options: { useHistory: false },
+						} );
+					}
 				} );
 			},
 			redo: (
@@ -83,8 +101,8 @@ export const duplicateElements = ( {
 				onDuplicateElements?.();
 				const duplicatedElements: DuplicatedElement[] = [];
 
-				previousElements.forEach( ( { parentContainer, model, at } ) => {
-					const freshParent = parentContainer.lookup?.();
+				previousElements.forEach( ( { parentContainer, parentContainerId, model, at } ) => {
+					const freshParent = resolveContainer( parentContainer, parentContainerId );
 
 					if ( freshParent ) {
 						const createdElement = createElement( {
@@ -95,7 +113,9 @@ export const duplicateElements = ( {
 
 						duplicatedElements.push( {
 							container: createdElement,
+							containerId: createdElement.id,
 							parentContainer: freshParent,
+							parentContainerId,
 							model,
 							at,
 						} );

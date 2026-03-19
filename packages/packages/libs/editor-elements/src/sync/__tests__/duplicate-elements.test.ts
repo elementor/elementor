@@ -246,7 +246,7 @@ function setupMockElementsForDuplication( mockGetContainer: jest.Mock ) {
 		widgetType: 'button',
 	} );
 	mockDuplicatedElement1.parent = mockParent;
-	mockDuplicatedElement1.view = { _index: 1 };
+	mockDuplicatedElement1.view = { ...mockDuplicatedElement1.view, _index: 1 };
 
 	const mockElement1ToJSON = jest.spyOn( mockDuplicatedElement1.model, 'toJSON' );
 	mockElement1ToJSON.mockReturnValue( {
@@ -263,7 +263,7 @@ function setupMockElementsForDuplication( mockGetContainer: jest.Mock ) {
 	} );
 
 	mockDuplicatedElement2.parent = mockParent;
-	mockDuplicatedElement2.view = { _index: 2 };
+	mockDuplicatedElement2.view = { ...mockDuplicatedElement2.view, _index: 2 };
 
 	const mockElement2ToJSON = jest.spyOn( mockDuplicatedElement2.model, 'toJSON' );
 	mockElement2ToJSON.mockReturnValue( {

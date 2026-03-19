@@ -25,11 +25,19 @@ function createMockSettings( data: V1ElementSettingsProps = {} ): V1Settings {
 	} as V1Settings;
 }
 
+function createConnectedView( index = 0 ): V1Element[ 'view' ] {
+	const el = document.createElement( 'div' );
+	document.body.appendChild( el );
+
+	return { el, _index: index };
+}
+
 export function createMockChild( modelData: V1ElementModelProps ): V1Element {
 	const mockChild: Partial< V1Element > = {
 		id: modelData.id,
 		model: createMockModel( modelData ),
 		settings: createMockSettings(),
+		view: createConnectedView(),
 	};
 
 	mockChild.lookup = jest.fn( () => mockChild as V1Element );
@@ -84,6 +92,7 @@ export function createMockContainer( id: string, children: V1Element[] = [], elT
 		model: createMockModel( modelData ),
 		settings: createMockSettings(),
 		children: createMockChildren( children ),
+		view: createConnectedView(),
 	};
 
 	mockContainer.lookup = jest.fn( () => mockContainer as V1Element );

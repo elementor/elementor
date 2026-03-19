@@ -16,7 +16,9 @@ type RemoveElementsParams = {
 
 type RemovedElement = {
 	container: V1Element;
+	containerId: string;
 	parent: V1Element;
+	parentId: string;
 	model: V1ElementModelProps;
 	at: number;
 };
@@ -24,6 +26,16 @@ type RemovedElement = {
 type RemovedElementsResult = {
 	removedElements: RemovedElement[];
 };
+
+function resolveContainer( container: V1Element, id: string ): V1Element | null {
+	const looked = container.lookup?.();
+
+	if ( looked?.view?.el?.isConnected ) {
+		return looked;
+	}
+
+	return getContainer( id );
+}
 
 export const removeElements = ( {
 	elementIds,
@@ -43,7 +55,9 @@ export const removeElements = ( {
 					if ( container?.parent ) {
 						removedElements.push( {
 							container,
+							containerId: container.id,
 							parent: container.parent,
+							parentId: container.parent.id,
 							model: container.model.toJSON(),
 							at: container.view?._index ?? 0,
 						} );
@@ -64,8 +78,8 @@ export const removeElements = ( {
 			undo: ( _: { elementIds: string[] }, { removedElements }: RemovedElementsResult ) => {
 				onRestoreElements?.();
 
-				[ ...removedElements ].reverse().forEach( ( { parent, model, at } ) => {
-					const freshParent = parent.lookup?.();
+				[ ...removedElements ].reverse().forEach( ( { parent, parentId, model, at } ) => {
+					const freshParent = resolveContainer( parent, parentId );
 
 					if ( freshParent ) {
 						createElement( {
@@ -84,9 +98,9 @@ export const removeElements = ( {
 
 				const newRemovedElements: RemovedElement[] = [];
 
-				removedElements.forEach( ( { container, parent, model, at } ) => {
-					const freshContainer = container.lookup?.();
-					const freshParent = parent.lookup?.();
+				removedElements.forEach( ( { container, containerId, parent, parentId, model, at } ) => {
+					const freshContainer = resolveContainer( container, containerId );
+					const freshParent = resolveContainer( parent, parentId );
 
 					if ( ! freshContainer || ! freshParent ) {
 						return;
@@ -99,7 +113,9 @@ export const removeElements = ( {
 
 					newRemovedElements.push( {
 						container: freshContainer,
+						containerId,
 						parent: freshParent,
+						parentId,
 						model,
 						at,
 					} );

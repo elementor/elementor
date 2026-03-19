@@ -1,6 +1,7 @@
 import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
+import { getContainer } from './get-container';
 import { moveElement } from './move-element';
 import { type V1Element } from './types';
 
@@ -26,9 +27,12 @@ type MoveElementsParams = {
 
 type MovedElement = {
 	element: V1Element;
+	elementId: string;
 	originalContainer: V1Element;
+	originalContainerId: string;
 	originalIndex: number;
 	targetContainer: V1Element;
+	targetContainerId: string;
 	options?: MoveOptions;
 };
 
@@ -37,6 +41,16 @@ type MovedElementsResult = {
 };
 
 export type { MoveElementsParams, MoveInput, MovedElement, MovedElementsResult };
+
+function resolveContainer( container: V1Element, id: string ): V1Element | null {
+	const looked = container.lookup?.();
+
+	if ( looked?.view?.el?.isConnected ) {
+		return looked;
+	}
+
+	return getContainer( id );
+}
 
 export const moveElements = ( {
 	moves: movesToMake,
@@ -78,9 +92,12 @@ export const moveElements = ( {
 
 					movedElements.push( {
 						element: newElement,
+						elementId: newElement.id,
 						originalContainer,
+						originalContainerId: originalContainer.id,
 						originalIndex,
 						targetContainer: target,
+						targetContainerId: target.id,
 						options,
 					} );
 				} );
@@ -90,51 +107,67 @@ export const moveElements = ( {
 			undo: ( _: { moves: MoveInput[] }, { movedElements }: MovedElementsResult ) => {
 				onRestoreElements?.();
 
-				[ ...movedElements ].reverse().forEach( ( { element, originalContainer, originalIndex } ) => {
-					const freshElement = element.lookup?.();
-					const freshOriginalContainer = originalContainer.lookup?.();
+				[ ...movedElements ]
+					.reverse()
+					.forEach( ( { element, elementId, originalContainer, originalContainerId, originalIndex } ) => {
+						const freshElement = resolveContainer( element, elementId );
+						const freshOriginalContainer = resolveContainer( originalContainer, originalContainerId );
 
-					if ( ! freshElement || ! freshOriginalContainer ) {
-						return;
-					}
+						if ( ! freshElement || ! freshOriginalContainer ) {
+							return;
+						}
 
-					moveElement( {
-						element: freshElement,
-						targetContainer: freshOriginalContainer,
-						options: {
-							useHistory: false,
-							at: originalIndex >= 0 ? originalIndex : undefined,
-						},
+						moveElement( {
+							element: freshElement,
+							targetContainer: freshOriginalContainer,
+							options: {
+								useHistory: false,
+								at: originalIndex >= 0 ? originalIndex : undefined,
+							},
+						} );
 					} );
-				} );
 			},
 			redo: ( _: { moves: MoveInput[] }, { movedElements }: MovedElementsResult ): MovedElementsResult => {
 				const newMovedElements: MovedElement[] = [];
 				onMoveElements?.();
 
-				movedElements.forEach( ( { element, originalContainer, originalIndex, targetContainer, options } ) => {
-					const freshElement = element.lookup?.();
-					const freshOriginalContainer = originalContainer.lookup?.();
-					const freshTarget = targetContainer.lookup?.();
-
-					if ( ! freshElement || ! freshOriginalContainer || ! freshTarget ) {
-						return;
-					}
-
-					const newElement = moveElement( {
-						element: freshElement,
-						targetContainer: freshTarget,
-						options: { ...options, useHistory: false },
-					} );
-
-					newMovedElements.push( {
-						element: newElement,
-						originalContainer: freshOriginalContainer,
+				movedElements.forEach(
+					( {
+						element,
+						elementId,
+						originalContainer,
+						originalContainerId,
 						originalIndex,
-						targetContainer: freshTarget,
+						targetContainer,
+						targetContainerId,
 						options,
-					} );
-				} );
+					} ) => {
+						const freshElement = resolveContainer( element, elementId );
+						const freshOriginalContainer = resolveContainer( originalContainer, originalContainerId );
+						const freshTarget = resolveContainer( targetContainer, targetContainerId );
+
+						if ( ! freshElement || ! freshOriginalContainer || ! freshTarget ) {
+							return;
+						}
+
+						const newElement = moveElement( {
+							element: freshElement,
+							targetContainer: freshTarget,
+							options: { ...options, useHistory: false },
+						} );
+
+						newMovedElements.push( {
+							element: newElement,
+							elementId: newElement.id,
+							originalContainer: freshOriginalContainer,
+							originalContainerId,
+							originalIndex,
+							targetContainer: freshTarget,
+							targetContainerId,
+							options,
+						} );
+					}
+				);
 
 				return { movedElements: newMovedElements };
 			},
