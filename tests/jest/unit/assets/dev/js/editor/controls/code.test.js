@@ -10,17 +10,17 @@ describe( 'lazyLoadScripts', () => {
 				return cache[ key ];
 			}
 
-			const loadScript = ( src ) => new Promise( ( resolve, reject ) => {
-				const script = document.createElement( 'script' );
-				script.setAttribute( 'data-test', '' );
-				script.src = src;
-				script.onload = resolve;
-				script.onerror = reject;
-				document.head.appendChild( script );
-			} );
-
 			cache[ key ] = urls.reduce(
-				( promise, src ) => promise.then( () => loadScript( src ) ),
+				( promise, src ) => new Promise( ( resolve, reject ) => {
+					promise.then( () => {
+						const script = document.createElement( 'script' );
+						script.setAttribute( 'data-test', '' );
+						script.src = src;
+						script.onload = resolve;
+						script.onerror = reject;
+						document.head.appendChild( script );
+					} );
+				} ),
 				Promise.resolve(),
 			);
 
@@ -41,7 +41,6 @@ describe( 'lazyLoadScripts', () => {
 		expect( firstScript ).not.toBeNull();
 		firstScript.onload();
 
-		await Promise.resolve();
 		await Promise.resolve();
 
 		const secondScript = document.head.querySelector( 'script[src="http://example.com/b.js"]' );

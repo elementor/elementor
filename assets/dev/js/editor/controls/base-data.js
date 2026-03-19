@@ -491,19 +491,6 @@ ControlBaseDataView = ControlBaseView.extend( {
 	updateElementModel( value ) {
 		this.setValue( value );
 	},
-}, {
-	// Static methods
-	getStyleValue( placeholder, controlValue, controlData ) {
-		if ( 'DEFAULT' === placeholder ) {
-			return controlData.default;
-		}
-
-		return controlValue;
-	},
-
-	onPasteStyle() {
-		return true;
-	},
 
 	lazyLoadScripts( key, urls ) {
 		const cache = ControlBaseDataView.lazyLoadCache;
@@ -526,6 +513,19 @@ ControlBaseDataView = ControlBaseView.extend( {
 		);
 
 		return cache[ key ];
+	},
+}, {
+	// Static methods
+	getStyleValue( placeholder, controlValue, controlData ) {
+		if ( 'DEFAULT' === placeholder ) {
+			return controlData.default;
+		}
+
+		return controlValue;
+	},
+
+	onPasteStyle() {
+		return true;
 	},
 } );
 
