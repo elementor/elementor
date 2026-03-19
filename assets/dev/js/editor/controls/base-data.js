@@ -504,6 +504,31 @@ ControlBaseDataView = ControlBaseView.extend( {
 	onPasteStyle() {
 		return true;
 	},
+
+	lazyLoadScripts( key, urls ) {
+		const cache = ControlBaseDataView.lazyLoadCache;
+
+		if ( cache[ key ] ) {
+			return cache[ key ];
+		}
+
+		const loadScript = ( src ) => new Promise( ( resolve, reject ) => {
+			const script = document.createElement( 'script' );
+			script.src = src;
+			script.onload = resolve;
+			script.onerror = reject;
+			document.head.appendChild( script );
+		} );
+
+		cache[ key ] = urls.reduce(
+			( promise, src ) => promise.then( () => loadScript( src ) ),
+			Promise.resolve()
+		);
+
+		return cache[ key ];
+	},
 } );
+
+ControlBaseDataView.lazyLoadCache = {};
 
 module.exports = ControlBaseDataView;

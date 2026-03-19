@@ -15,24 +15,9 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 			return Promise.resolve();
 		}
 
-		const aceVersion = '1.43.2';
-		const aceBase = `https://cdn.jsdelivr.net/npm/ace-builds@${ aceVersion }/src-min-noconflict`;
+		const { ace: aceSrc, aceLangTools } = window._elementorLazyScripts || {};
 
-		const loadScript = ( src ) => new Promise( ( resolve, reject ) => {
-			if ( document.querySelector( `script[src="${ src }"]` ) ) {
-				resolve();
-				return;
-			}
-
-			const script = document.createElement( 'script' );
-			script.src = src;
-			script.onload = resolve;
-			script.onerror = reject;
-			document.head.appendChild( script );
-		} );
-
-		return loadScript( `${ aceBase }/ace.min.js` )
-			.then( () => loadScript( `${ aceBase }/ext-language_tools.js` ) );
+		return this.lazyLoadScripts( 'ace', [ aceSrc, aceLangTools ] );
 	},
 
 	onReady() {

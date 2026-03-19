@@ -197,6 +197,19 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 	 */
 	public function enqueue_scripts() {
 		wp_enqueue_script( 'elementor-responsive-bar' );
+
+		if ( Plugin::$instance->experiments->is_feature_active( Editor::EXPERIMENT_EDITOR_LOADING_OPTIMIZATION ) ) {
+			$registered = wp_scripts()->registered;
+
+			wp_add_inline_script(
+				'elementor-editor',
+				'window._elementorLazyScripts = ' . wp_json_encode( [
+					'ace' => $registered['ace']->src,
+					'aceLangTools' => $registered['ace-language-tools']->src,
+				] ) . ';',
+				'before'
+			);
+		}
 	}
 
 	/**
