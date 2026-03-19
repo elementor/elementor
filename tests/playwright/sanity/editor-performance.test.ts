@@ -1,4 +1,4 @@
-import { expect, Page, Request, TestInfo } from '@playwright/test';
+import { expect, Page, TestInfo } from '@playwright/test';
 import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 import { timeouts } from '../config/timeouts';
@@ -21,34 +21,6 @@ const LAZY_CONTROLS: LazyControlConfig[] = [
 	},
 ];
 
-async function trackNetworkRequests(
-	page: Page,
-	pattern: RegExp,
-	action: () => Promise<unknown>,
-	stopWhen?: () => Promise<unknown>,
-): Promise<Request[]> {
-	const matchedRequests: Request[] = [];
-
-	const capture = ( req: Request ) => {
-		if ( pattern.test( req.url() ) ) {
-			matchedRequests.push( req );
-		}
-	};
-
-	page.on( 'request', capture );
-
-	if ( stopWhen ) {
-		const actionPromise = action();
-		await stopWhen();
-		page.off( 'request', capture );
-		await actionPromise;
-	} else {
-		await action();
-		page.off( 'request', capture );
-	}
-
-	return matchedRequests;
-}
 
 async function isScriptPhpEnqueued( page: Page, pattern: RegExp ): Promise<boolean> {
 	return page.evaluate( ( patternStr ) => {
