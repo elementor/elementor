@@ -194,6 +194,7 @@ class Atomic_Form extends Atomic_Element_Base {
 						->add_prop( 'flex-direction', String_Prop_Type::generate( 'row' ) )
 						->add_prop( 'flex-wrap', String_Prop_Type::generate( 'wrap' ) )
 						->add_prop( 'align-items', String_Prop_Type::generate( 'flex-start' ) )
+						->add_prop( 'align-content', String_Prop_Type::generate( 'start' ) )
 						->add_prop( 'gap', Size_Prop_Type::generate( [
 							'size' => 10,
 							'unit' => 'px',
