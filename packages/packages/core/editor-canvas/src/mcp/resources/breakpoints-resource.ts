@@ -39,9 +39,11 @@ export const initBreakpointsResource = ( reg: MCPRegistryEntry ) => {
 	} );
 
 	window.addEventListener( v1ReadyEvent().name, () => {
-		waitForReady().then( () => sendResourceUpdated( {
-			uri: BREAKPOINTS_SCHEMA_URI,
-			...buildResourceResponse(),
-		} ) );
+		waitForReady().then( () =>
+			sendResourceUpdated( {
+				uri: BREAKPOINTS_SCHEMA_URI,
+				...buildResourceResponse(),
+			} )
+		);
 	} );
 };

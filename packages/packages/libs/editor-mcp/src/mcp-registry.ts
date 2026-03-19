@@ -6,9 +6,9 @@ import { type ServerNotification, type ServerRequest } from '@modelcontextprotoc
 
 import {
 	ANGIE_MODEL_PREFERENCES,
+	ANGIE_REQUIRED_RESOURCES,
 	type AngieModelPreferences,
 	createDefaultModelPreferences,
-	ANGIE_REQUIRED_RESOURCES,
 } from './angie-annotations';
 import { mockMcpRegistry } from './test-utils/mock-mcp-registry';
 import { getSDK } from './utils/get-sdk';
@@ -83,7 +83,9 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 			return mcpServer.registerResource( ...args );
 		},
 		sendResourceUpdated: ( ...args: Parameters< McpServer[ 'server' ][ 'sendResourceUpdated' ] > ) => {
-			return getSDK().waitForReady().then( () => mcpServer.server.sendResourceUpdated( ...args ) )
+			return getSDK()
+				.waitForReady()
+				.then( () => mcpServer.server.sendResourceUpdated( ...args ) )
 				.catch( ( error: Error ) => {
 					if ( error?.message?.includes( 'Not connected' ) ) {
 						return; // Expected when no MCP client is connected yet
@@ -209,18 +211,19 @@ function createToolRegistry( server: McpServer ) {
 			title: opts.name,
 		};
 		const angieAnnotations = {
-			[ANGIE_MODEL_PREFERENCES]: opts.modelPreferences ?? createDefaultModelPreferences(),
-			[ANGIE_REQUIRED_RESOURCES]: opts.requiredResources ?? undefined
-		}
+			[ ANGIE_MODEL_PREFERENCES ]: opts.modelPreferences ?? createDefaultModelPreferences(),
+			[ ANGIE_REQUIRED_RESOURCES ]: opts.requiredResources ?? undefined,
+		};
 		server.registerTool(
 			opts.name,
 			{
 				description: opts.description,
 				inputSchema,
+				// TODO: Uncomment this when the outputSchema is stable
 				// outputSchema,
 				title: opts.name,
 				annotations,
-				_meta: angieAnnotations
+				_meta: angieAnnotations,
 			},
 			toolCallback
 		);

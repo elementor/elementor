@@ -39,7 +39,7 @@ type ElementorContainer = {
 export const DOCUMENT_STRUCTURE_URI = 'elementor://document/structure';
 
 export const initDocumentStructureResource = ( reg: MCPRegistryEntry ) => {
-		const { resource, waitForReady, sendResourceUpdated } = reg;
+	const { resource, waitForReady, sendResourceUpdated } = reg;
 
 	let currentDocumentStructure: string | null = null;
 
@@ -69,18 +69,23 @@ export const initDocumentStructureResource = ( reg: MCPRegistryEntry ) => {
 	// Initialize on load
 	updateDocumentStructure();
 
-	resource( 'document-structure', DOCUMENT_STRUCTURE_URI, {
-		description: 'Document structure.',
-	}, async () => {
-		return {
-			contents: [
-				{
-					uri: DOCUMENT_STRUCTURE_URI,
-					text: JSON.stringify( getDocumentStructure(), null, 2 ),
-				},
-			],
-		};
-	} );
+	resource(
+		'document-structure',
+		DOCUMENT_STRUCTURE_URI,
+		{
+			description: 'Document structure.',
+		},
+		async () => {
+			return {
+				contents: [
+					{
+						uri: DOCUMENT_STRUCTURE_URI,
+						text: JSON.stringify( getDocumentStructure(), null, 2 ),
+					},
+				],
+			};
+		}
+	);
 };
 
 function getDocumentStructure() {
