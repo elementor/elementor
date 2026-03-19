@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Editor\Loader;
 
+use Elementor\Core\Editor\Editor;
 use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
@@ -140,31 +141,40 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			true
 		);
 
+		$is_loading_optimization_active = Plugin::$instance->experiments->is_feature_active(
+			Editor::EXPERIMENT_EDITOR_LOADING_OPTIMIZATION
+		);
+
+		$editor_deps = [
+			'elementor-common',
+			'elementor-editor-modules',
+			'elementor-editor-document',
+			'wp-auth-check',
+			'jquery-ui-sortable',
+			'jquery-ui-resizable',
+			'perfect-scrollbar',
+			'nprogress',
+			'tipsy',
+			'imagesloaded',
+			'heartbeat',
+			'jquery-elementor-select2',
+			'flatpickr',
+			'jquery-hover-intent',
+			'nouislider',
+			'pickr',
+			'react',
+			'react-dom',
+		];
+
+		if ( ! $is_loading_optimization_active ) {
+			$editor_deps[] = 'ace';
+			$editor_deps[] = 'ace-language-tools';
+		}
+
 		wp_register_script(
 			'elementor-editor',
 			"{$assets_url}js/editor{$min_suffix}.js",
-			[
-				'elementor-common',
-				'elementor-editor-modules',
-				'elementor-editor-document',
-				'wp-auth-check',
-				'jquery-ui-sortable',
-				'jquery-ui-resizable',
-				'perfect-scrollbar',
-				'nprogress',
-				'tipsy',
-				'imagesloaded',
-				'heartbeat',
-				'jquery-elementor-select2',
-				'flatpickr',
-				'ace',
-				'ace-language-tools',
-				'jquery-hover-intent',
-				'nouislider',
-				'pickr',
-				'react',
-				'react-dom',
-			],
+			$editor_deps,
 			ELEMENTOR_VERSION,
 			true
 		);

@@ -10,12 +10,41 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 		return ui;
 	},
 
+	loadAce() {
+		if ( 'undefined' !== typeof ace ) {
+			return Promise.resolve();
+		}
+
+		const aceVersion = '1.43.2';
+		const aceBase = `https://cdn.jsdelivr.net/npm/ace-builds@${ aceVersion }/src-min-noconflict`;
+
+		const loadScript = ( src ) => new Promise( ( resolve, reject ) => {
+			if ( document.querySelector( `script[src="${ src }"]` ) ) {
+				resolve();
+				return;
+			}
+
+			const script = document.createElement( 'script' );
+			script.src = src;
+			script.onload = resolve;
+			script.onerror = reject;
+			document.head.appendChild( script );
+		} );
+
+		return loadScript( `${ aceBase }/ace.min.js` )
+			.then( () => loadScript( `${ aceBase }/ext-language_tools.js` ) );
+	},
+
 	onReady() {
 		var self = this;
 
-		if ( 'undefined' === typeof ace ) {
-			return;
-		}
+		this.loadAce()
+			.then( () => self.initAceEditor() )
+			.catch( () => { /* ACE failed to load; plain textarea remains functional */ } );
+	},
+
+	initAceEditor() {
+		var self = this;
 
 		const langTools = ace.require( 'ace/ext/language_tools' ),
 			uiTheme = elementor.settings.editorPreferences.model.get( 'ui_theme' ),
