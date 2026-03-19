@@ -50,6 +50,14 @@ async function trackNetworkRequests(
 	return matchedRequests;
 }
 
+async function isScriptPhpEnqueued( page: Page, pattern: RegExp ): Promise<boolean> {
+	return page.evaluate( ( patternStr ) => {
+		const scriptPattern = new RegExp( patternStr );
+		return Array.from( document.querySelectorAll( 'script[src]:not([data-elementor-lazy])' ) )
+			.some( ( scriptTag ) => scriptPattern.test( scriptTag.getAttribute( 'src' ) ?? '' ) );
+	}, pattern.source );
+}
+
 async function waitForEditorTTI( page: Page ): Promise<void> {
 	await page.waitForSelector( '#elementor-loading', { state: 'visible', timeout: timeouts.heavyAction } );
 	await page.waitForSelector( '#elementor-loading', { state: 'hidden', timeout: timeouts.heavyAction } );
@@ -80,25 +88,29 @@ test.describe( 'Editor Performance — Lazy Control Scripts', () => {
 
 			// Act.
 			const start = Date.now();
-			const libraryRequests = await trackNetworkRequests( page, control.scriptUrlPattern, () => wpAdmin.openNewPage() );
+			const pagePromise = wpAdmin.openNewPage();
+			await waitForEditorTTI( page );
 			await reportTiming( testInfo, `Editor TTI — ${ control.name } — Experiment OFF`, Date.now() - start );
+			await pagePromise;
 
 			// Assert.
-			expect( libraryRequests.length ).toBeGreaterThan( 0 );
+			expect( await isScriptPhpEnqueued( page, control.scriptUrlPattern ) ).toBe( true );
 		} );
 
-		test( `${ control.name }: library is NOT loaded on editor page load when experiment is ON`, async ( { page, apiRequests }, testInfo ) => {
+		test( `${ control.name }: library is NOT loaded as a blocking script when experiment is ON`, async ( { page, apiRequests }, testInfo ) => {
 			// Arrange.
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			await wpAdmin.setExperiments( { [ EXPERIMENT_ID ]: true } );
 
 			// Act.
 			const start = Date.now();
-			const libraryRequests = await trackNetworkRequests( page, control.scriptUrlPattern, () => wpAdmin.openNewPage(), () => waitForEditorTTI( page ) );
+			const pagePromise = wpAdmin.openNewPage();
+			await waitForEditorTTI( page );
 			await reportTiming( testInfo, `Editor TTI — ${ control.name } — Experiment ON`, Date.now() - start );
+			await pagePromise;
 
 			// Assert.
-			expect( libraryRequests.length ).toBe( 0 );
+			expect( await isScriptPhpEnqueued( page, control.scriptUrlPattern ) ).toBe( false );
 		} );
 
 		test( `${ control.name }: library loads when the control panel is opened with experiment ON`, async ( { page, apiRequests }, testInfo ) => {

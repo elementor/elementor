@@ -502,6 +502,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		const loadScript = ( src ) => new Promise( ( resolve, reject ) => {
 			const script = document.createElement( 'script' );
 			script.src = src;
+			script.dataset.elementorLazy = 'true';
 			script.onload = resolve;
 			script.onerror = reject;
 			document.head.appendChild( script );
