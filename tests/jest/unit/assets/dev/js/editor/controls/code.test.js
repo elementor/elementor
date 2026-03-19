@@ -42,6 +42,7 @@ describe( 'lazyLoadScripts', () => {
 		firstScript.onload();
 
 		await Promise.resolve();
+		await Promise.resolve();
 
 		const secondScript = document.head.querySelector( 'script[src="http://example.com/b.js"]' );
 		expect( secondScript ).not.toBeNull();

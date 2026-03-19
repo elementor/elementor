@@ -522,7 +522,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 		cache[ key ] = urls.reduce(
 			( promise, src ) => promise.then( () => loadScript( src ) ),
-			Promise.resolve()
+			Promise.resolve(),
 		);
 
 		return cache[ key ];

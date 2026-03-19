@@ -17,7 +17,7 @@ const LAZY_CONTROLS: LazyControlConfig[] = [
 		name: 'Code (ACE Editor)',
 		widgetType: 'html',
 		scriptUrlPattern: /ace-builds.*\/ace(\.min)?\.js/,
-		initializedSelector: '.elementor-code-editor .ace_editor',
+		initializedSelector: '.elementor-code-editor.ace_editor',
 	},
 ];
 

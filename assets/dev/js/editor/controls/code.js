@@ -27,6 +27,7 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 			.then( () => self.initAceEditor() )
 			.catch( ( error ) => {
 				if ( window.elementorCommon?.debug ) {
+					// eslint-disable-next-line no-console
 					console.warn( 'ACE Editor failed to load:', error );
 				}
 			} );
