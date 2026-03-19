@@ -3,7 +3,6 @@ import type * as React from 'react';
 import { useTypingBuffer } from '../../../hooks/use-typing-buffer';
 import { type SizeUnit } from '../types';
 import { isExtendedUnit } from '../utils/is-extended-unit';
-import { isNumericValue } from '../utils/is-numeric-value';
 
 const UNIT_KEY_PATTERN = /^[a-zA-Z%]$/;
 
@@ -52,4 +51,16 @@ export const useSizeUnitKeyboard = ( { unit, units, onUnitChange }: Props ) => {
 	};
 
 	return { onUnitKeyDown };
+};
+
+const isNumericValue = ( value: unknown ): boolean => {
+	if ( typeof value === 'number' ) {
+		return ! isNaN( value );
+	}
+
+	if ( typeof value === 'string' ) {
+		return value.trim() !== '' && ! isNaN( Number( value ) );
+	}
+
+	return false;
 };
