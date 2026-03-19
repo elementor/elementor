@@ -464,4 +464,46 @@ describe( 'ClassManagerPanel', () => {
 			event: 'classManagerSearched',
 		} );
 	} );
+
+	it( 'should track syncToV3 unsync event when stopping sync via confirmation dialog', async () => {
+		// Arrange
+		act( () => {
+			__dispatch( slice.actions.update( { style: { id: 'class-2', sync_to_v3: true } } ) );
+		} );
+
+		// Act.
+		renderWithStore(
+			<ThemeProvider>
+				<QueryClientProvider client={ queryClient }>
+					<ClassManagerPanel />
+				</QueryClientProvider>
+			</ThemeProvider>,
+			store
+		);
+
+		const [ firstClass ] = screen.getAllByRole( 'listitem' );
+
+		fireEvent.click( within( firstClass ).getByRole( 'button', { name: 'More actions' } ) );
+
+		const stopSyncButton = screen.getByRole( 'menuitem', { name: /Stop syncing to Global Fonts/i } );
+
+		fireEvent.click( stopSyncButton );
+
+		// Assert - confirmation dialog should appear.
+		await waitFor( () => {
+			expect( screen.getByText( 'Un-sync typography class' ) ).toBeInTheDocument();
+		} );
+
+		// Act - confirm the dialog.
+		fireEvent.click( screen.getByRole( 'button', { name: 'Got it' } ) );
+
+		// Assert.
+		await waitFor( () => {
+			expect( mockTracking ).toHaveBeenCalledWith( {
+				event: 'classSyncToV3',
+				classId: 'class-2',
+				action: 'unsync',
+			} );
+		} );
+	} );
 } );

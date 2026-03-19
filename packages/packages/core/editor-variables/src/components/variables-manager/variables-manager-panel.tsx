@@ -25,7 +25,7 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { trackVariablesManagerEvent } from '../../utils/tracking';
+import { trackVariablesManagerEvent, trackVariableSyncToV3 } from '../../utils/tracking';
 import { type ErrorResponse, type MappedError, mapServerError } from '../../utils/validations';
 import { getMenuActionsForVariable, getVariableType } from '../../variables-registry/variable-type-registry';
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
@@ -151,12 +151,34 @@ export function VariablesManagerPanel() {
 		[ handleDeleteVariable ]
 	);
 
-	const handleStopSyncWithConfirmation = useCallback(
+	const handleStartSyncWithTracking = useCallback(
+		( itemId: string ) => {
+			handleStartSync( itemId );
+			const variable = variables[ itemId ];
+			if ( variable ) {
+				trackVariableSyncToV3( { variableLabel: variable.label, action: 'sync' } );
+			}
+		},
+		[ handleStartSync, variables ]
+	);
+
+	const handleStopSyncWithTracking = useCallback(
 		( itemId: string ) => {
 			handleStopSync( itemId );
+			const variable = variables[ itemId ];
+			if ( variable ) {
+				trackVariableSyncToV3( { variableLabel: variable.label, action: 'unsync' } );
+			}
+		},
+		[ handleStopSync, variables ]
+	);
+
+	const handleStopSyncWithConfirmation = useCallback(
+		( itemId: string ) => {
+			handleStopSyncWithTracking( itemId );
 			setStopSyncConfirmation( null );
 		},
-		[ handleStopSync ]
+		[ handleStopSyncWithTracking ]
 	);
 
 	const handleShowStopSyncDialog = useCallback(
@@ -164,10 +186,10 @@ export function VariablesManagerPanel() {
 			if ( ! isStopSyncSuppressed ) {
 				setStopSyncConfirmation( itemId );
 			} else {
-				handleStopSync( itemId );
+				handleStopSyncWithTracking( itemId );
 			}
 		},
-		[ isStopSyncSuppressed, handleStopSync ]
+		[ isStopSyncSuppressed, handleStopSyncWithTracking ]
 	);
 
 	const buildMenuActions = useCallback(
@@ -181,7 +203,7 @@ export function VariablesManagerPanel() {
 				variable,
 				variableId,
 				handlers: {
-					onStartSync: handleStartSync,
+					onStartSync: handleStartSyncWithTracking,
 					onStopSync: handleShowStopSyncDialog,
 				},
 			} );
@@ -203,7 +225,7 @@ export function VariablesManagerPanel() {
 
 			return [ ...typeActions, deleteAction ];
 		},
-		[ variables, handleStartSync, handleShowStopSyncDialog ]
+		[ variables, handleStartSyncWithTracking, handleShowStopSyncDialog ]
 	);
 
 	const hasVariables = Object.keys( variables ).length > 0;

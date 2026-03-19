@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
 	Box,
 	Button,
@@ -12,22 +12,39 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { trackGlobalClasses } from '../../utils/tracking';
+
 const IMAGE_URL = 'https://assets.elementor.com/packages/v1/images/class-manager-sync-modal.png';
 
 type StartSyncToV3ModalProps = {
 	externalOpen?: boolean;
+	classId?: string;
 	onExternalClose?: () => void;
 	onConfirm?: () => void;
 };
 
-export const StartSyncToV3Modal = ( { externalOpen, onExternalClose, onConfirm }: StartSyncToV3ModalProps = {} ) => {
+export const StartSyncToV3Modal = ( { externalOpen, classId, onExternalClose, onConfirm }: StartSyncToV3ModalProps = {} ) => {
 	const [ shouldShowAgain, setShouldShowAgain ] = useState( true );
+	const hasTrackedExposure = useRef( false );
+
+	useEffect( () => {
+		if ( externalOpen && classId && ! hasTrackedExposure.current ) {
+			hasTrackedExposure.current = true;
+			trackGlobalClasses( { event: 'classSyncToV3PopupShown', classId } );
+		}
+	}, [ externalOpen, classId ] );
 
 	const handleClose = () => {
+		if ( classId ) {
+			trackGlobalClasses( { event: 'classSyncToV3PopupClick', classId, action: 'cancel' } );
+		}
 		onExternalClose?.();
 	};
 
 	const handleConfirm = () => {
+		if ( classId ) {
+			trackGlobalClasses( { event: 'classSyncToV3PopupClick', classId, action: 'sync' } );
+		}
 		onConfirm?.();
 		onExternalClose?.();
 	};

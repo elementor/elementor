@@ -72,6 +72,17 @@ type EventMap = {
 		type: string;
 		source: 'global' | 'local';
 	};
+	classSyncToV3PopupShown: {
+		classId: StyleDefinitionID;
+	};
+	classSyncToV3: {
+		classId: StyleDefinitionID;
+		action: 'sync' | 'unsync';
+	};
+	classSyncToV3PopupClick: {
+		classId: StyleDefinitionID;
+		action: 'sync' | 'cancel';
+	};
 };
 
 export type TrackingEvent = {
@@ -138,6 +149,43 @@ const getSanitizedData = async ( payload: TrackingEvent ): Promise< Record< stri
 				return { ...payload, classTitle: getCssClass( payload.classId ).label };
 			}
 			break;
+		case 'classSyncToV3PopupShown':
+			return {
+				...payload,
+				interaction_type: 'popup_shown',
+				target_type: 'popup',
+				target_name: 'sync_to_v3_popup',
+				interaction_result: 'popup_viewed',
+				target_location: 'widget_panel',
+				location_l1: 'class_manager',
+			};
+		case 'classSyncToV3': {
+			const classLabel = getCssClass( payload.classId ).label;
+			const isSync = payload.action === 'sync';
+			return {
+				...payload,
+				interaction_type: 'click',
+				target_type: classLabel,
+				target_name: isSync ? 'sync_to_v3' : 'unsync_to_v3',
+				interaction_result: isSync ? 'class_is_synced_to_V3' : 'class_is_unsynced_from_V3',
+				target_location: 'widget_panel',
+				location_l1: 'class_manager',
+				interaction_description: isSync
+					? `user_synced_${ classLabel }_to_v3`
+					: `user_unsync_${ classLabel }_from_v3`,
+			};
+		}
+		case 'classSyncToV3PopupClick': {
+			const isSyncAction = payload.action === 'sync';
+			return {
+				...payload,
+				interaction_type: 'click',
+				target_type: 'button',
+				target_name: isSyncAction ? 'sync_to_v3' : 'cancel',
+				interaction_result: isSyncAction ? 'class_is_synced' : 'cancel',
+				target_location: 'sync_to_v3_popup',
+			};
+		}
 		default:
 			return payload;
 	}

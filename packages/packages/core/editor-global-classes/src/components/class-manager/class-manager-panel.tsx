@@ -34,6 +34,7 @@ import { useDirtyState } from '../../hooks/use-dirty-state';
 import { useFilters } from '../../hooks/use-filters';
 import { saveGlobalClasses } from '../../save-global-classes';
 import { slice } from '../../store';
+import { trackGlobalClasses } from '../../utils/tracking';
 import { ActiveFilters } from '../search-and-filter/components/filter/active-filters';
 import { CssClassFilter } from '../search-and-filter/components/filter/css-class-filter';
 import { ClassManagerSearch } from '../search-and-filter/components/search/class-manager-search';
@@ -113,6 +114,7 @@ export function ClassManagerPanel() {
 				},
 			} )
 		);
+		trackGlobalClasses( { event: 'classSyncToV3', classId, action: 'unsync' } );
 		setStopSyncConfirmation( null );
 	}, [] );
 
@@ -125,6 +127,7 @@ export function ClassManagerPanel() {
 				},
 			} )
 		);
+		trackGlobalClasses( { event: 'classSyncToV3', classId, action: 'sync' } );
 		setStartSyncConfirmation( null );
 	}, [] );
 
@@ -221,6 +224,7 @@ export function ClassManagerPanel() {
 			{ startSyncConfirmation && (
 				<StartSyncToV3Modal
 					externalOpen
+					classId={ startSyncConfirmation }
 					onExternalClose={ () => setStartSyncConfirmation( null ) }
 					onConfirm={ () => handleStartSync( startSyncConfirmation ) }
 				/>
