@@ -25,7 +25,11 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 
 		this.loadAce()
 			.then( () => self.initAceEditor() )
-			.catch( () => { /* ACE failed to load; plain textarea remains functional */ } );
+			.catch( ( error ) => {
+				if ( window.elementorCommon?.debug ) {
+					console.warn( 'ACE Editor failed to load:', error );
+				}
+			} );
 	},
 
 	initAceEditor() {
