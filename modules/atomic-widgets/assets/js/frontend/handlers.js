@@ -157,7 +157,7 @@ function getAtomicFormFields( form ) {
 
 		const label = getAtomicFormFieldLabel( input, form );
 		const type = getAtomicFormFieldType( input );
-		const value = input.value;
+		const value = getAtomicFormFieldValue( input, type );
 
 		fields.push( {
 			id,
@@ -193,6 +193,14 @@ function getAtomicFormFieldLabel( field, form ) {
 	const placeholder = field.getAttribute( 'placeholder' );
 
 	return placeholder || '';
+}
+
+function getAtomicFormFieldValue( input, type ) {
+	if ( 'checkbox' !== type ) {
+		return input.value;
+	}
+
+	return input.checked ? input.value || 'on' : '';
 }
 
 function getAtomicFormFieldType( field ) {
