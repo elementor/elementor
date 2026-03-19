@@ -8,7 +8,6 @@ const REGISTRATION_SELECTOR = `${ ACTION_LINK_SELECTOR }, :has(> ${ ACTION_LINK_
 const ATOMIC_FORM_SELECTOR = '[data-element_type="e-form"]';
 const ATOMIC_FORM_FIELD_SELECTOR = 'input[data-interaction-id], textarea[data-interaction-id]';
 
-
 registerBySelector( {
 	id: 'atomic-link-action-handler',
 	selector: REGISTRATION_SELECTOR,
