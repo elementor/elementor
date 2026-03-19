@@ -5,7 +5,7 @@ import { v1ReadyEvent } from '@elementor/editor-v1-adapters';
 export const BREAKPOINTS_SCHEMA_URI = 'elementor://breakpoints/list';
 
 export const initBreakpointsResource = ( reg: MCPRegistryEntry ) => {
-	const { mcpServer, sendResourceUpdated } = reg;
+	const { resource, sendResourceUpdated } = reg;
 
 	const getBreakpointsList = () => {
 		const { breakpoints } = ( window as unknown as ExtendedWindow ).elementor?.config?.responsive || {};
@@ -34,9 +34,16 @@ export const initBreakpointsResource = ( reg: MCPRegistryEntry ) => {
 		],
 	} );
 
-	mcpServer.resource( 'breakpoints ', BREAKPOINTS_SCHEMA_URI, () => {
-		return buildResourceResponse();
-	} );
+	resource(
+		'breakpoints ',
+		BREAKPOINTS_SCHEMA_URI,
+		{
+			description: 'Breakpoints list.',
+		},
+		() => {
+			return buildResourceResponse();
+		}
+	);
 
 	window.addEventListener( v1ReadyEvent().name, () => {
 		sendResourceUpdated( {
