@@ -23,7 +23,12 @@ type StartSyncToV3ModalProps = {
 	onConfirm?: () => void;
 };
 
-export const StartSyncToV3Modal = ( { externalOpen, classId, onExternalClose, onConfirm }: StartSyncToV3ModalProps = {} ) => {
+export const StartSyncToV3Modal = ( {
+	externalOpen,
+	classId,
+	onExternalClose,
+	onConfirm,
+}: StartSyncToV3ModalProps = {} ) => {
 	const [ shouldShowAgain, setShouldShowAgain ] = useState( true );
 	const hasTrackedExposure = useRef( false );
 

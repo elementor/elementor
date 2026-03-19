@@ -84,7 +84,12 @@ describe( 'StartSyncToV3Modal', () => {
 	it( 'should track exposure again when modal is reopened', async () => {
 		const { rerender } = render(
 			<ThemeProvider>
-				<StartSyncToV3Modal externalOpen classId="class-1" onExternalClose={ jest.fn() } onConfirm={ jest.fn() } />
+				<StartSyncToV3Modal
+					externalOpen
+					classId="class-1"
+					onExternalClose={ jest.fn() }
+					onConfirm={ jest.fn() }
+				/>
 			</ThemeProvider>
 		);
 
@@ -99,13 +104,23 @@ describe( 'StartSyncToV3Modal', () => {
 
 		rerender(
 			<ThemeProvider>
-				<StartSyncToV3Modal externalOpen={ false } classId="class-1" onExternalClose={ jest.fn() } onConfirm={ jest.fn() } />
+				<StartSyncToV3Modal
+					externalOpen={ false }
+					classId="class-1"
+					onExternalClose={ jest.fn() }
+					onConfirm={ jest.fn() }
+				/>
 			</ThemeProvider>
 		);
 
 		rerender(
 			<ThemeProvider>
-				<StartSyncToV3Modal externalOpen classId="class-2" onExternalClose={ jest.fn() } onConfirm={ jest.fn() } />
+				<StartSyncToV3Modal
+					externalOpen
+					classId="class-2"
+					onExternalClose={ jest.fn() }
+					onConfirm={ jest.fn() }
+				/>
 			</ThemeProvider>
 		);
 
