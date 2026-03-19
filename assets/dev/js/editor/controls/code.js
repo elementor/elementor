@@ -151,7 +151,7 @@ function scheduleAcePreload() {
 
 	const doPreload = () => ControlBaseDataView.prototype.lazyLoadScripts.call( {}, 'ace', [ aceSrc, aceLangTools ] );
 
-	if ( typeof requestIdleCallback === 'function' ) {
+	if ( 'function' === typeof requestIdleCallback ) {
 		requestIdleCallback( doPreload );
 	} else {
 		setTimeout( doPreload, 0 );

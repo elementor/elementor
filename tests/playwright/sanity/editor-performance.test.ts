@@ -25,8 +25,10 @@ async function collectMatchingRequests(
 	page: Page,
 	pattern: RegExp,
 	action: () => Promise<unknown>,
+	stopWhen?: () => Promise<unknown>,
 ): Promise<Request[]> {
 	const matched: Request[] = [];
+
 	const capture = ( req: Request ) => {
 		if ( pattern.test( req.url() ) ) {
 			matched.push( req );
@@ -34,10 +36,23 @@ async function collectMatchingRequests(
 	};
 
 	page.on( 'request', capture );
-	await action();
-	page.off( 'request', capture );
+
+	if ( stopWhen ) {
+		const actionPromise = action();
+		await stopWhen();
+		page.off( 'request', capture );
+		await actionPromise;
+	} else {
+		await action();
+		page.off( 'request', capture );
+	}
 
 	return matched;
+}
+
+async function waitForEditorTTI( page: Page ): Promise<void> {
+	await page.waitForSelector( '#elementor-loading', { state: 'visible', timeout: timeouts.heavyAction } );
+	await page.waitForSelector( '#elementor-loading', { state: 'hidden', timeout: timeouts.heavyAction } );
 }
 
 async function reportTiming( testInfo: TestInfo, label: string, ms: number ): Promise<void> {
@@ -79,7 +94,7 @@ test.describe( 'Editor Performance — Lazy Control Scripts', () => {
 
 			// Act.
 			const start = Date.now();
-			const libraryRequests = await collectMatchingRequests( page, control.scriptUrlPattern, () => wpAdmin.openNewPage() );
+			const libraryRequests = await collectMatchingRequests( page, control.scriptUrlPattern, () => wpAdmin.openNewPage(), () => waitForEditorTTI( page ) );
 			await reportTiming( testInfo, `Editor TTI — ${ control.name } — Experiment ON`, Date.now() - start );
 
 			// Assert.
