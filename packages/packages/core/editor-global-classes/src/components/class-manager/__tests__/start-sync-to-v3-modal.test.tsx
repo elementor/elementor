@@ -80,4 +80,40 @@ describe( 'StartSyncToV3Modal', () => {
 
 		expect( mockTracking ).not.toHaveBeenCalled();
 	} );
+
+	it( 'should track exposure again when modal is reopened', async () => {
+		const { rerender } = render(
+			<ThemeProvider>
+				<StartSyncToV3Modal externalOpen classId="class-1" onExternalClose={ jest.fn() } onConfirm={ jest.fn() } />
+			</ThemeProvider>
+		);
+
+		await waitFor( () => {
+			expect( mockTracking ).toHaveBeenCalledWith( {
+				event: 'classSyncToV3PopupShown',
+				classId: 'class-1',
+			} );
+		} );
+
+		mockTracking.mockClear();
+
+		rerender(
+			<ThemeProvider>
+				<StartSyncToV3Modal externalOpen={ false } classId="class-1" onExternalClose={ jest.fn() } onConfirm={ jest.fn() } />
+			</ThemeProvider>
+		);
+
+		rerender(
+			<ThemeProvider>
+				<StartSyncToV3Modal externalOpen classId="class-2" onExternalClose={ jest.fn() } onConfirm={ jest.fn() } />
+			</ThemeProvider>
+		);
+
+		await waitFor( () => {
+			expect( mockTracking ).toHaveBeenCalledWith( {
+				event: 'classSyncToV3PopupShown',
+				classId: 'class-2',
+			} );
+		} );
+	} );
 } );

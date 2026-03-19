@@ -32,6 +32,10 @@ export const StartSyncToV3Modal = ( { externalOpen, classId, onExternalClose, on
 			hasTrackedExposure.current = true;
 			trackGlobalClasses( { event: 'classSyncToV3PopupShown', classId } );
 		}
+
+		if ( ! externalOpen ) {
+			hasTrackedExposure.current = false;
+		}
 	}, [ externalOpen, classId ] );
 
 	const handleClose = () => {
