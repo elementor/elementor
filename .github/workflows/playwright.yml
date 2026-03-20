@@ -123,6 +123,11 @@ jobs:
       - name: Update wordpress to nightly build
         if: ${{ github.event_name == 'schedule' || inputs.run_mode == 'nightly' }}
         run: npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip"
+      - name: Export WordPress major version
+        if: ${{ github.event_name == 'schedule' }}
+        run: |
+          WP_VER=$(npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version" 2>&1 | grep -oE '^[0-9]+' | head -1)
+          echo "WP_MAJOR_VERSION=$WP_VER" >> $GITHUB_ENV
       - name: Setup test data
         run: npm run test:setup:playwright
       - name: WordPress debug information

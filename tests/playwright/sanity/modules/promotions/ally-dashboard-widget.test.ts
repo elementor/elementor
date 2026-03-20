@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
+import { getScreenshotName } from '../../../utils/screenshot-name';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
 const ALLY_WIDGET_SELECTOR = '#e-dashboard-ally.postbox';
@@ -18,6 +19,6 @@ test.describe( 'Ally dashboard widget @promotions', () => {
 		await expect( allyWidget.getByRole( 'link', { name: /Run free scan|Get it free/ } ) ).toBeVisible();
 
 		// Assert 2.
-		await expect( page.locator( ALLY_WIDGET_SELECTOR ) ).toHaveScreenshot( 'ally-dashboard-widget.png' );
+		await expect( page.locator( ALLY_WIDGET_SELECTOR ) ).toHaveScreenshot( await getScreenshotName( 'ally-dashboard-widget.png' ) );
 	} );
 } );
