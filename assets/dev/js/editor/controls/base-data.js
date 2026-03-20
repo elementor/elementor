@@ -517,6 +517,10 @@ ControlBaseDataView = ControlBaseView.extend( {
 			} );
 	},
 
+	lazyLoadScript( config ) {
+		return this.lazyLoadScripts( config.key, config.getUrls() );
+	},
+
 	lazyLoadScripts( key, urls ) {
 		const cache = ControlBaseDataView.lazyLoadCache;
 
@@ -556,6 +560,20 @@ ControlBaseDataView = ControlBaseView.extend( {
 } );
 
 ControlBaseDataView.lazyLoadCache = {};
+
+ControlBaseDataView.registerScriptPreload = function( config ) {
+	window.addEventListener( 'elementor/init', () => {
+		ControlBaseDataView.scheduleScriptPreload( config.key, config.getUrls() );
+	}, { once: true } );
+
+	return function() {
+		if ( config.isLoaded?.() ) {
+			return Promise.resolve();
+		}
+
+		return this.lazyLoadScript( config );
+	};
+};
 
 ControlBaseDataView.scheduleScriptPreload = function( key, urls ) {
 	if ( ! urls[ 0 ] ) {

@@ -89,17 +89,29 @@ describe( 'lazyLoadScripts', () => {
 describe( 'loadAce', () => {
 	let lazyLoadScriptsMock;
 
+	const ACE_SCRIPTS = {
+		key: 'ace',
+		isLoaded: () => 'undefined' !== typeof ace,
+		getUrls() {
+			const { ace: aceSrc, aceLangTools } = window._elementorLazyScripts || {};
+
+			return [ aceSrc, aceLangTools ];
+		},
+	};
+
 	const buildCodeControlView = () => ( {
 		lazyLoadScripts: lazyLoadScriptsMock,
 
+		lazyLoadScript( config ) {
+			return this.lazyLoadScripts( config.key, config.getUrls() );
+		},
+
 		loadAce() {
-			if ( 'undefined' !== typeof ace ) {
+			if ( ACE_SCRIPTS.isLoaded?.() ) {
 				return Promise.resolve();
 			}
 
-			const { ace: aceSrc, aceLangTools } = window._elementorLazyScripts || {};
-
-			return this.lazyLoadScripts( 'ace', [ aceSrc, aceLangTools ] );
+			return this.lazyLoadScript( ACE_SCRIPTS );
 		},
 	} );
 

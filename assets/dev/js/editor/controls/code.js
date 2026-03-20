@@ -1,13 +1,15 @@
 var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	ControlCodeEditorItemView;
 
-const ACE_SCRIPT_KEY = 'ace';
+const ACE_SCRIPTS = {
+	key: 'ace',
+	isLoaded: () => 'undefined' !== typeof ace,
+	getUrls() {
+		const { ace: aceSrc, aceLangTools } = window._elementorLazyScripts || {};
 
-function getAceScripts() {
-	const { ace: aceSrc, aceLangTools } = window._elementorLazyScripts || {};
-
-	return [ aceSrc, aceLangTools ];
-}
+		return [ aceSrc, aceLangTools ];
+	},
+};
 
 ControlCodeEditorItemView = ControlBaseDataView.extend( {
 	ui() {
@@ -18,13 +20,7 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 		return ui;
 	},
 
-	loadAce() {
-		if ( 'undefined' !== typeof ace ) {
-			return Promise.resolve();
-		}
-
-		return this.lazyLoadScripts( ACE_SCRIPT_KEY, getAceScripts() );
-	},
+	loadAce: ControlBaseDataView.registerScriptPreload( ACE_SCRIPTS ),
 
 	onReady() {
 		this.loadScriptWithSpinner( this.ui.editor, this.loadAce.bind( this ), this.initAceEditor.bind( this ) );
@@ -126,9 +122,5 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 		return undefined !== isEditable ? isEditable : true;
 	},
 } );
-
-window.addEventListener( 'elementor/init', () => {
-	ControlBaseDataView.scheduleScriptPreload( ACE_SCRIPT_KEY, getAceScripts() );
-}, { once: true } );
 
 module.exports = ControlCodeEditorItemView;
