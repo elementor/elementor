@@ -73,14 +73,13 @@ describe( 'trackVariableSyncToV3', () => {
 			throw new Error( 'dispatch failed' );
 		} );
 
-		expect( () =>
-			trackVariableSyncToV3( { variableLabel: 'Primary Color', action: 'sync' } )
-		).not.toThrow();
+		expect( () => trackVariableSyncToV3( { variableLabel: 'Primary Color', action: 'sync' } ) ).not.toThrow();
 
-		expect( consoleErrorSpy ).toHaveBeenCalledWith(
-			'Failed to track variable sync to V3:',
-			expect.any( Error )
-		);
+		expect( consoleErrorSpy ).toHaveBeenCalledWith( 'Failed to track variable sync to V3', {
+			variableLabel: 'Primary Color',
+			action: 'sync',
+			error: expect.any( Error ),
+		} );
 
 		consoleErrorSpy.mockRestore();
 	} );

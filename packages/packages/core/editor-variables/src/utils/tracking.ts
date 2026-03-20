@@ -80,6 +80,11 @@ export const trackVariableSyncToV3 = ( { variableLabel, action }: VariableSyncTo
 				: `user_unsync_${ variableLabel }_from_v3`,
 		} );
 	} catch ( error ) {
-		console.error( 'Failed to track variable sync to V3:', error );
+		// eslint-disable-next-line no-console
+		console.error( 'Failed to track variable sync to V3', {
+			variableLabel,
+			action,
+			error,
+		} );
 	}
 };
