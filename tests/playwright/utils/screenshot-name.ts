@@ -1,11 +1,4 @@
-export async function getScreenshotName( name: string ): Promise<string> {
-	if ( resolveWpMajorVersion() >= 7 ) {
-		return name.replace( /\.png$/, '-with-wordpress7.png' );
-	}
-	return name;
-}
-
-function resolveWpMajorVersion(): number {
-	const raw = process.env.WP_MAJOR_VERSION;
-	return raw ? parseInt( raw, 10 ) : 0;
+export function getWpVersionedScreenshotName( name: string ): string {
+	const suffix = process.env.WP_MAJOR_VERSION ? '-new' : '';
+	return name.replace( /\.png$/, `${ suffix }.png` );
 }
