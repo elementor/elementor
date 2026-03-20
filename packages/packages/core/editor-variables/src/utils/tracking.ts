@@ -59,23 +59,27 @@ type VariableSyncToV3Data = {
 };
 
 export const trackVariableSyncToV3 = ( { variableLabel, action }: VariableSyncToV3Data ) => {
-	const { dispatchEvent, config } = getMixpanel();
-	if ( ! config?.names?.variables?.variableSyncToV3 ) {
-		return;
+	try {
+		const { dispatchEvent, config } = getMixpanel();
+		if ( ! config?.names?.variables?.variableSyncToV3 ) {
+			return;
+		}
+
+		const name = config.names.variables.variableSyncToV3;
+		const isSync = action === 'sync';
+
+		dispatchEvent?.( name, {
+			interaction_type: 'click',
+			target_type: variableLabel,
+			target_name: isSync ? 'sync_to_v3' : 'unsync_to_v3',
+			interaction_result: isSync ? 'var_is_synced_to_V3' : 'var_is_unsynced_from_V3',
+			target_location: 'widget_panel',
+			location_l1: 'var_manager',
+			interaction_description: isSync
+				? `user_synced_${ variableLabel }_to_v3`
+				: `user_unsync_${ variableLabel }_from_v3`,
+		} );
+	} catch ( error ) {
+		console.error( 'Failed to track variable sync to V3:', error );
 	}
-
-	const name = config.names.variables.variableSyncToV3;
-	const isSync = action === 'sync';
-
-	dispatchEvent?.( name, {
-		interaction_type: 'click',
-		target_type: variableLabel,
-		target_name: isSync ? 'sync_to_v3' : 'unsync_to_v3',
-		interaction_result: isSync ? 'var_is_synced_to_V3' : 'var_is_unsynced_from_V3',
-		target_location: 'widget_panel',
-		location_l1: 'var_manager',
-		interaction_description: isSync
-			? `user_synced_${ variableLabel }_to_v3`
-			: `user_unsync_${ variableLabel }_from_v3`,
-	} );
 };

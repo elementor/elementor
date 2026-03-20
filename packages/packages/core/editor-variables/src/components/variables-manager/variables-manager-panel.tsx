@@ -76,8 +76,8 @@ export function VariablesManagerPanel() {
 		handleOnChange,
 		createVariable,
 		handleDeleteVariable,
-		handleStartSync,
-		handleStopSync,
+		handleStartSync: startSyncFromState,
+		handleStopSync: stopSyncFromState,
 		handleSave,
 		isSaving,
 		handleSearch,
@@ -151,45 +151,37 @@ export function VariablesManagerPanel() {
 		[ handleDeleteVariable ]
 	);
 
-	const handleStartSyncWithTracking = useCallback(
+	const commitStopSync = useCallback(
 		( itemId: string ) => {
-			handleStartSync( itemId );
-			const variable = variables[ itemId ];
-			if ( variable ) {
-				trackVariableSyncToV3( { variableLabel: variable.label, action: 'sync' } );
-			}
-		},
-		[ handleStartSync, variables ]
-	);
-
-	const handleStopSyncWithTracking = useCallback(
-		( itemId: string ) => {
-			handleStopSync( itemId );
+			stopSyncFromState( itemId );
 			const variable = variables[ itemId ];
 			if ( variable ) {
 				trackVariableSyncToV3( { variableLabel: variable.label, action: 'unsync' } );
 			}
 		},
-		[ handleStopSync, variables ]
+		[ stopSyncFromState, variables ]
 	);
 
-	const handleStopSyncWithConfirmation = useCallback(
+	const handleStartSync = useCallback(
 		( itemId: string ) => {
-			handleStopSyncWithTracking( itemId );
-			setStopSyncConfirmation( null );
+			startSyncFromState( itemId );
+			const variable = variables[ itemId ];
+			if ( variable ) {
+				trackVariableSyncToV3( { variableLabel: variable.label, action: 'sync' } );
+			}
 		},
-		[ handleStopSyncWithTracking ]
+		[ startSyncFromState, variables ]
 	);
 
-	const handleShowStopSyncDialog = useCallback(
+	const handleStopSync = useCallback(
 		( itemId: string ) => {
 			if ( ! isStopSyncSuppressed ) {
 				setStopSyncConfirmation( itemId );
 			} else {
-				handleStopSyncWithTracking( itemId );
+				commitStopSync( itemId );
 			}
 		},
-		[ isStopSyncSuppressed, handleStopSyncWithTracking ]
+		[ isStopSyncSuppressed, commitStopSync ]
 	);
 
 	const buildMenuActions = useCallback(
@@ -203,8 +195,8 @@ export function VariablesManagerPanel() {
 				variable,
 				variableId,
 				handlers: {
-					onStartSync: handleStartSyncWithTracking,
-					onStopSync: handleShowStopSyncDialog,
+					onStartSync: handleStartSync,
+					onStopSync: handleStopSync,
 				},
 			} );
 
@@ -225,7 +217,7 @@ export function VariablesManagerPanel() {
 
 			return [ ...typeActions, deleteAction ];
 		},
-		[ variables, handleStartSyncWithTracking, handleShowStopSyncDialog ]
+		[ variables, handleStartSync, handleStopSync ]
 	);
 
 	const hasVariables = Object.keys( variables ).length > 0;
@@ -390,7 +382,10 @@ export function VariablesManagerPanel() {
 				<StopSyncConfirmationDialog
 					open
 					onClose={ () => setStopSyncConfirmation( null ) }
-					onConfirm={ () => handleStopSyncWithConfirmation( stopSyncConfirmation ) }
+					onConfirm={ () => {
+						commitStopSync( stopSyncConfirmation );
+						setStopSyncConfirmation( null );
+					} }
 				/>
 			) }
 
