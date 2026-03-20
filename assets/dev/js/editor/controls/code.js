@@ -1,6 +1,14 @@
 var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	ControlCodeEditorItemView;
 
+const ACE_SCRIPT_KEY = 'ace';
+
+function getAceScripts() {
+	const { ace: aceSrc, aceLangTools } = window._elementorLazyScripts || {};
+
+	return [ aceSrc, aceLangTools ];
+}
+
 ControlCodeEditorItemView = ControlBaseDataView.extend( {
 	ui() {
 		var ui = ControlBaseDataView.prototype.ui.apply( this, arguments );
@@ -15,34 +23,11 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 			return Promise.resolve();
 		}
 
-		const { ace: aceSrc, aceLangTools } = window._elementorLazyScripts || {};
-
-		return this.lazyLoadScripts( 'ace', [ aceSrc, aceLangTools ] );
+		return this.lazyLoadScripts( ACE_SCRIPT_KEY, getAceScripts() );
 	},
 
 	onReady() {
-		var self = this;
-
-		this.$spinner = jQuery( '<span>', { class: 'elementor-control-spinner' } )
-			.html( '<i class="eicon-spinner eicon-animation-spin"></i>' );
-
-		this.ui.editor.attr( 'disabled', true );
-		this.ui.editor.after( this.$spinner );
-
-		this.loadAce()
-			.then( () => {
-				self.$spinner.remove();
-				self.ui.editor.removeAttr( 'disabled' );
-				self.initAceEditor();
-			} )
-			.catch( ( error ) => {
-				self.$spinner.remove();
-				self.ui.editor.removeAttr( 'disabled' );
-				if ( window.elementorCommon?.debug ) {
-					// eslint-disable-next-line no-console
-					console.warn( 'ACE Editor failed to load:', error );
-				}
-			} );
+		this.loadScriptWithSpinner( this.ui.editor, this.loadAce.bind( this ), this.initAceEditor.bind( this ) );
 	},
 
 	initAceEditor() {
@@ -142,22 +127,8 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 	},
 } );
 
-function scheduleAcePreload() {
-	const { ace: aceSrc, aceLangTools } = window._elementorLazyScripts || {};
-
-	if ( ! aceSrc ) {
-		return;
-	}
-
-	const doPreload = () => ControlBaseDataView.prototype.lazyLoadScripts.call( {}, 'ace', [ aceSrc, aceLangTools ] );
-
-	if ( 'function' === typeof requestIdleCallback ) {
-		requestIdleCallback( doPreload );
-	} else {
-		setTimeout( doPreload, 0 );
-	}
-}
-
-window.addEventListener( 'elementor/init', scheduleAcePreload, { once: true } );
+window.addEventListener( 'elementor/init', () => {
+	ControlBaseDataView.scheduleScriptPreload( ACE_SCRIPT_KEY, getAceScripts() );
+}, { once: true } );
 
 module.exports = ControlCodeEditorItemView;

@@ -492,6 +492,31 @@ ControlBaseDataView = ControlBaseView.extend( {
 		this.setValue( value );
 	},
 
+	loadScriptWithSpinner( editorEl, scriptLoaderFn, onSuccess ) {
+		const self = this;
+
+		this.$spinner = jQuery( '<span>', { class: 'elementor-control-spinner' } )
+			.html( '<i class="eicon-spinner eicon-animation-spin"></i>' );
+
+		editorEl.attr( 'disabled', true );
+		editorEl.after( this.$spinner );
+
+		scriptLoaderFn()
+			.then( () => {
+				self.$spinner.remove();
+				editorEl.removeAttr( 'disabled' );
+				onSuccess();
+			} )
+			.catch( ( error ) => {
+				self.$spinner.remove();
+				editorEl.removeAttr( 'disabled' );
+				if ( window.elementorCommon?.debug ) {
+					// eslint-disable-next-line no-console
+					console.warn( 'Script failed to load:', error );
+				}
+			} );
+	},
+
 	lazyLoadScripts( key, urls ) {
 		const cache = ControlBaseDataView.lazyLoadCache;
 
@@ -531,5 +556,19 @@ ControlBaseDataView = ControlBaseView.extend( {
 } );
 
 ControlBaseDataView.lazyLoadCache = {};
+
+ControlBaseDataView.scheduleScriptPreload = function( key, urls ) {
+	if ( ! urls[ 0 ] ) {
+		return;
+	}
+
+	const doPreload = () => ControlBaseDataView.prototype.lazyLoadScripts.call( {}, key, urls );
+
+	if ( 'function' === typeof requestIdleCallback ) {
+		requestIdleCallback( doPreload );
+	} else {
+		setTimeout( doPreload, 0 );
+	}
+};
 
 module.exports = ControlBaseDataView;
