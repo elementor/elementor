@@ -26,6 +26,158 @@ export {
 	resetElementStyles,
 };
 
+const TRANSFORM_EPSILON = 0.001;
+
+const radiansToDegrees = ( radians ) => radians * ( 180 / Math.PI );
+
+const isNear = ( value, expected ) => Math.abs( value - expected ) <= TRANSFORM_EPSILON;
+
+const isNearZero = ( value ) => isNear( value, 0 );
+
+const isNearOne = ( value ) => isNear( value, 1 );
+
+function parseMatrixValues( transformValue ) {
+	const match = transformValue.match( /^matrix(3d)?\((.+)\)$/ );
+
+	if ( ! match ) {
+		return null;
+	}
+
+	return match[ 2 ]
+		.split( ',' )
+		.map( ( token ) => Number.parseFloat( token.trim() ) )
+		.filter( ( value ) => Number.isFinite( value ) );
+}
+
+function createMatrixFromTransform( transformValue ) {
+	if ( ! transformValue || 'none' === transformValue ) {
+		return null;
+	}
+
+	const matrixFactories = [ window.DOMMatrixReadOnly, window.DOMMatrix ].filter(
+		( Factory ) => 'function' === typeof Factory,
+	);
+
+	for ( const MatrixFactory of matrixFactories ) {
+		try {
+			const matrix = new MatrixFactory( transformValue );
+			const compactMatrix = {
+				a: matrix.a ?? matrix.m11 ?? 1,
+				b: matrix.b ?? matrix.m12 ?? 0,
+				c: matrix.c ?? matrix.m21 ?? 0,
+				d: matrix.d ?? matrix.m22 ?? 1,
+				e: matrix.e ?? matrix.m41 ?? 0,
+				f: matrix.f ?? matrix.m42 ?? 0,
+			};
+
+			if ( Object.values( compactMatrix ).every( Number.isFinite ) ) {
+				return compactMatrix;
+			}
+		} catch {}
+	}
+
+	const parsedValues = parseMatrixValues( transformValue );
+
+	if ( ! parsedValues ) {
+		return null;
+	}
+
+	if ( 6 === parsedValues.length ) {
+		const [ a, b, c, d, e, f ] = parsedValues;
+
+		return { a, b, c, d, e, f };
+	}
+
+	if ( 16 === parsedValues.length ) {
+		const [ a, b, , , c, d, , , , , , , e, f ] = parsedValues;
+
+		return { a, b, c, d, e, f };
+	}
+
+	return null;
+}
+
+export function getTransformBaselineFromComputedStyle( element ) {
+	if ( ! element ) {
+		return null;
+	}
+
+	const computedStyle = window.getComputedStyle( element );
+	const matrix = createMatrixFromTransform( computedStyle?.transform || '' );
+
+	if ( ! matrix ) {
+		return null;
+	}
+
+	const { a, b, c, d, e, f } = matrix;
+	const scaleX = Math.hypot( a, b );
+	const determinant = ( a * d ) - ( b * c );
+	const scaleY = scaleX ? determinant / scaleX : Math.hypot( c, d );
+	const rotate = radiansToDegrees( Math.atan2( b, a ) );
+	const shear = scaleX ? ( ( a * c ) + ( b * d ) ) / ( scaleX * scaleX ) : 0;
+	const skewX = radiansToDegrees( Math.atan( shear ) );
+
+	return {
+		x: e,
+		y: f,
+		scaleX: Number.isFinite( scaleX ) ? scaleX : 1,
+		scaleY: Number.isFinite( scaleY ) ? scaleY : 1,
+		rotate: Number.isFinite( rotate ) ? rotate : 0,
+		skewX: Number.isFinite( skewX ) ? skewX : 0,
+	};
+}
+
+export function preserveTransformKeyframes( keyframes, baseline ) {
+	if ( ! baseline ) {
+		return keyframes;
+	}
+
+	const mergedKeyframes = { ...keyframes };
+	const hasScaleShorthand = mergedKeyframes.scale !== undefined;
+	const canSetScaleX = mergedKeyframes.scaleX === undefined && ! isNearOne( baseline.scaleX );
+	const canSetScaleY = mergedKeyframes.scaleY === undefined && ! isNearOne( baseline.scaleY );
+
+	if ( mergedKeyframes.x === undefined && ! isNearZero( baseline.x ) ) {
+		mergedKeyframes.x = [ baseline.x, baseline.x ];
+	}
+
+	if ( mergedKeyframes.y === undefined && ! isNearZero( baseline.y ) ) {
+		mergedKeyframes.y = [ baseline.y, baseline.y ];
+	}
+
+	if ( ! hasScaleShorthand ) {
+		if ( canSetScaleX && canSetScaleY && isNear( baseline.scaleX, baseline.scaleY ) ) {
+			mergedKeyframes.scale = [ baseline.scaleX, baseline.scaleX ];
+		} else {
+			if ( canSetScaleX ) {
+				mergedKeyframes.scaleX = [ baseline.scaleX, baseline.scaleX ];
+			}
+
+			if ( canSetScaleY ) {
+				mergedKeyframes.scaleY = [ baseline.scaleY, baseline.scaleY ];
+			}
+		}
+	}
+
+	if (
+		mergedKeyframes.rotate === undefined &&
+		mergedKeyframes.rotateZ === undefined &&
+		! isNearZero( baseline.rotate )
+	) {
+		mergedKeyframes.rotate = [ baseline.rotate, baseline.rotate ];
+	}
+
+	if (
+		mergedKeyframes.skew === undefined &&
+		mergedKeyframes.skewX === undefined &&
+		! isNearZero( baseline.skewX )
+	) {
+		mergedKeyframes.skewX = [ baseline.skewX, baseline.skewX ];
+	}
+
+	return mergedKeyframes;
+}
+
 export function getKeyframes( effect, type, direction ) {
 	const isIn = 'in' === type;
 	const keyframes = {};
@@ -40,7 +192,7 @@ export function getKeyframes( effect, type, direction ) {
 		keyframes.scale = isIn ? [ config.scaleStart, 1 ] : [ 1, config.scaleStart ];
 	}
 
-	if ( direction ) {
+	if ( direction && 'string' === typeof direction ) {
 		const distance = config.slideDistance;
 		const movement = {
 			left: { x: isIn ? [ -distance, 0 ] : [ 0, -distance ] },
@@ -151,7 +303,8 @@ export function extractAnimationConfig( interaction ) {
 
 	const effect = unwrapInteractionValue( animation.effect ) || animation.effect || 'fade';
 	const type = unwrapInteractionValue( animation.type ) || animation.type || 'in';
-	const direction = unwrapInteractionValue( animation.direction ) || animation.direction || '';
+	const directionUnwrapped = unwrapInteractionValue( animation.direction );
+	const direction = 'string' === typeof directionUnwrapped ? directionUnwrapped : '';
 	const easing = config.defaultEasing;
 	const replay = false;
 

@@ -3,6 +3,8 @@
 import {
 	config,
 	getKeyframes,
+	getTransformBaselineFromComputedStyle,
+	preserveTransformKeyframes,
 	extractAnimationConfig,
 	extractInteractionId,
 	getAnimateFunction,
@@ -22,7 +24,11 @@ function applyAnimation( element, animConfig, animateFunc ) {
 		playingInteractionsToStop[ id ].cancel();
 		delete playingInteractionsToStop[ id ];
 	}
-	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
+	const baseline = getTransformBaselineFromComputedStyle( element );
+	const keyframes = preserveTransformKeyframes(
+		getKeyframes( animConfig.effect, animConfig.type, animConfig.direction ),
+		baseline,
+	);
 
 	const options = {
 		duration: animConfig.duration / 1000,
