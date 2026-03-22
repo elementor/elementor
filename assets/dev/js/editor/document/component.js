@@ -77,6 +77,27 @@ export default class Component extends ComponentBase {
 
 				return result;
 			},
+			findModelById: ( id, collection ) => {
+				collection = collection || elementor.elementsModel.get( 'elements' );
+
+				for ( const model of collection.models ) {
+					if ( model.get( 'id' ) === id ) {
+						return model;
+					}
+
+					const childElements = model.get( 'elements' );
+
+					if ( childElements ) {
+						const found = this.utils.findModelById( id, childElements );
+
+						if ( found ) {
+							return found;
+						}
+					}
+				}
+
+				return null;
+			},
 		};
 	}
 }

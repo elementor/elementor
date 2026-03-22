@@ -325,7 +325,7 @@ describe( 'removeElements', () => {
 		expect( mockCreateElement ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should skip redo when container lookup returns null', () => {
+	it( 'should skip redo when container lookup and getContainer both return null', () => {
 		// Arrange.
 		const { mockElement1 } = setupMockElementsForRemoval();
 
@@ -343,6 +343,7 @@ describe( 'removeElements', () => {
 		} );
 
 		mockElement1.lookup = jest.fn().mockReturnValue( null );
+		mockGetContainer.mockReturnValue( null );
 
 		act( () => {
 			historyMock.instance.redo();

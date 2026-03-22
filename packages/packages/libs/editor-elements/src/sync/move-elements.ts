@@ -2,6 +2,7 @@ import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { moveElement } from './move-element';
+import { findAtomicAncestorId, resolveContainer } from './resolve-element';
 import { type V1Element } from './types';
 
 type MoveOptions = {
@@ -30,6 +31,10 @@ type MovedElement = {
 	originalIndex: number;
 	targetContainer: V1Element;
 	options?: MoveOptions;
+	elementId: string;
+	originalContainerId: string;
+	targetContainerId: string;
+	atomicAncestorId?: string;
 };
 
 type MovedElementsResult = {
@@ -82,6 +87,10 @@ export const moveElements = ( {
 						originalIndex,
 						targetContainer: target,
 						options,
+						elementId: newElement.id,
+						originalContainerId: originalContainer.id,
+						targetContainerId: target.id,
+						atomicAncestorId: findAtomicAncestorId( sourceElement ),
 					} );
 				} );
 
@@ -90,51 +99,72 @@ export const moveElements = ( {
 			undo: ( _: { moves: MoveInput[] }, { movedElements }: MovedElementsResult ) => {
 				onRestoreElements?.();
 
-				[ ...movedElements ].reverse().forEach( ( { element, originalContainer, originalIndex } ) => {
-					const freshElement = element.lookup?.();
-					const freshOriginalContainer = originalContainer.lookup?.();
+				// Atomic nested elements (e.g. Tabs) render children asynchronously via Twig, so
+				// the view tree may not contain the child views when undo/redo runs. resolveContainer
+				// tries lookup() then getContainer(); if both fail, the move is skipped. See ED-22825.
+				[ ...movedElements ]
+					.reverse()
+					.forEach( ( { element, elementId, originalContainer, originalContainerId, originalIndex } ) => {
+						const freshElement = resolveContainer( element, elementId );
+						const freshOriginalContainer = resolveContainer( originalContainer, originalContainerId );
 
-					if ( ! freshElement || ! freshOriginalContainer ) {
-						return;
-					}
+						if ( ! freshElement || ! freshOriginalContainer ) {
+							return;
+						}
 
-					moveElement( {
-						element: freshElement,
-						targetContainer: freshOriginalContainer,
-						options: {
-							useHistory: false,
-							at: originalIndex >= 0 ? originalIndex : undefined,
-						},
+						moveElement( {
+							element: freshElement,
+							targetContainer: freshOriginalContainer,
+							options: {
+								useHistory: false,
+								at: originalIndex >= 0 ? originalIndex : undefined,
+							},
+						} );
 					} );
-				} );
 			},
 			redo: ( _: { moves: MoveInput[] }, { movedElements }: MovedElementsResult ): MovedElementsResult => {
 				const newMovedElements: MovedElement[] = [];
 				onMoveElements?.();
 
-				movedElements.forEach( ( { element, originalContainer, originalIndex, targetContainer, options } ) => {
-					const freshElement = element.lookup?.();
-					const freshOriginalContainer = originalContainer.lookup?.();
-					const freshTarget = targetContainer.lookup?.();
-
-					if ( ! freshElement || ! freshOriginalContainer || ! freshTarget ) {
-						return;
-					}
-
-					const newElement = moveElement( {
-						element: freshElement,
-						targetContainer: freshTarget,
-						options: { ...options, useHistory: false },
-					} );
-
-					newMovedElements.push( {
-						element: newElement,
-						originalContainer: freshOriginalContainer,
+				movedElements.forEach(
+					( {
+						element,
+						elementId,
+						originalContainer,
+						originalContainerId,
 						originalIndex,
-						targetContainer: freshTarget,
+						targetContainer,
+						targetContainerId,
+						atomicAncestorId,
 						options,
-					} );
-				} );
+					} ) => {
+						const freshElement = resolveContainer( element, elementId );
+						const freshOriginalContainer = resolveContainer( originalContainer, originalContainerId );
+						const freshTarget = resolveContainer( targetContainer, targetContainerId );
+
+						if ( ! freshElement || ! freshOriginalContainer || ! freshTarget ) {
+							return;
+						}
+
+						const newElement = moveElement( {
+							element: freshElement,
+							targetContainer: freshTarget,
+							options: { ...options, useHistory: false },
+						} );
+
+						newMovedElements.push( {
+							element: newElement,
+							originalContainer: freshOriginalContainer,
+							originalIndex,
+							targetContainer: freshTarget,
+							options,
+							elementId: newElement.id,
+							originalContainerId: freshOriginalContainer.id,
+							targetContainerId: freshTarget.id,
+							atomicAncestorId,
+						} );
+					}
+				);
 
 				return { movedElements: newMovedElements };
 			},

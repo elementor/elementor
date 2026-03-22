@@ -4,6 +4,15 @@ import { type ClassState, type StyleDefinition, type StyleDefinitionID } from '@
 import { type ControlItem, type PseudoState } from '../types';
 
 export type ExtendedWindow = Window & {
+	$e?: {
+		components?: {
+			get?: ( name: string ) => {
+				utils?: {
+					findModelById?: ( id: string, collection?: unknown ) => BackboneModel | null;
+				};
+			};
+		};
+	};
 	elementor?: {
 		selection?: {
 			getElements: () => V1Element[];
@@ -18,12 +27,28 @@ export type ExtendedWindow = Window & {
 			getCurrentId?: () => number;
 		};
 		getContainer?: ( id: string ) => V1Element | undefined;
+		helpers?: {
+			isAtomicWidget?: ( model: unknown ) => boolean;
+		};
 	};
 	elementorCommon?: {
 		helpers?: {
 			getUniqueId?: () => string;
 		};
 	};
+};
+
+export type BackboneModel = {
+	get: ( key: string ) => unknown;
+	set: ( key: string, value: unknown ) => void;
+	toJSON: () => Record< string, unknown >;
+};
+
+export type BackboneCollection = {
+	models: BackboneModel[];
+	add: ( model: unknown, options?: Record< string, unknown > ) => void;
+	remove: ( model: BackboneModel, options?: Record< string, unknown > ) => void;
+	findWhere: ( attrs: Record< string, unknown > ) => BackboneModel | undefined;
 };
 
 export type V1Element = {
