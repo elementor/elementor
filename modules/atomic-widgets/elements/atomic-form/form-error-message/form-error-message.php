@@ -12,7 +12,7 @@ class Form_Error_Message extends Form_Message {
 	public static function get_type() {
 		return 'e-form-error-message';
 	}
-	
+
 	public static function get_element_type(): string {
 		return 'e-form-error-message';
 	}
