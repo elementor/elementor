@@ -46,14 +46,16 @@ export class Create extends $e.modules.editor.document.CommandHistoryBase {
 		containers.forEach( ( container ) => {
 			container = container.lookup();
 
+			// Fallback for async-rendered nested elements whose views may not exist yet (ED-22825).
+			if ( ! container?.view ) {
+				this.addViaModelTree( container, model, options );
+				return;
+			}
+
 			const createdContainer = container.view.addElement( model, options ).getContainer();
 
 			result.push( createdContainer );
 
-			/**
-			 * Acknowledge history of each created item, because we cannot pass the elements when they do not exist
-			 * in getHistory().
-			 */
 			if ( this.isHistoryActive() && this.history ) {
 				$e.internal( 'document/history/log-sub-item', {
 					container,
@@ -73,6 +75,38 @@ export class Create extends $e.modules.editor.document.CommandHistoryBase {
 		}
 
 		return result;
+	}
+
+	addViaModelTree( container, model, options ) {
+		const parentModel = $e.components.get( 'document' ).utils.findModelById( container.id );
+
+		if ( ! parentModel ) {
+			return;
+		}
+
+		const elements = parentModel.get( 'elements' );
+
+		if ( ! elements ) {
+			return;
+		}
+
+		elements.add( model, { at: options.at, silent: true } );
+
+		this.rerenderAtomicAncestor( container );
+	}
+
+	rerenderAtomicAncestor( container ) {
+		let current = container;
+
+		while ( current ) {
+			if ( elementor.helpers.isAtomicWidget( current.model ) && current.view ) {
+				current.view.invalidateRenderCache?.();
+				current.view.render?.();
+				return;
+			}
+
+			current = current.parent;
+		}
 	}
 }
 
