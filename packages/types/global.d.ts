@@ -160,6 +160,17 @@ declare global {
 		};
 		elementorAppConfig?: {
 			'onboarding'?: OnboardingConfig;
+		'site-builder'?: {
+			iframeUrl?: string;
+			isAdmin?: boolean;
+			connectAuth?: {
+					signature: string;
+					accessToken: string;
+					clientId: string;
+					homeUrl: string;
+					siteKey: string;
+				};
+			};
 		};
 		ElementorInteractionsConfig?: InteractionsConfig;
 		ElementorVariablesQuotaConfig?: Record< string, number >;

@@ -5,9 +5,11 @@ export const baseSchema = {
 	effect: z.enum( [ 'fade', 'slide', 'scale' ] ).optional().describe( 'Animation effect type' ),
 	effectType: z.enum( [ 'in', 'out' ] ).optional().describe( 'Whether the animation plays in or out' ),
 	direction: z
-		.enum( [ 'top', 'bottom', 'left', 'right', '' ] )
+		.enum( [ 'top', 'bottom', 'left', 'right', 'top-left', 'top-right', 'bottom-left', 'bottom-right' ] )
 		.optional()
-		.describe( 'Direction for slide effect. Use empty string for fade/scale.' ),
+		.describe(
+			'Direction of the Animation. Can be one of the following or empty if not needed. At slide effect, this is required field.'
+		),
 	duration: z.number().min( 0 ).max( 10000 ).optional().describe( 'Animation duration in milliseconds' ),
 	delay: z.number().min( 0 ).max( 10000 ).optional().describe( 'Animation delay in milliseconds' ),
 	easing: z.string().optional().describe( 'Easing function. See interactions schema for options.' ),
@@ -25,7 +27,7 @@ export const proSchema = {
 		.optional()
 		.describe( 'Event that triggers the animation' ),
 	effect: z.enum( [ 'fade', 'slide', 'scale', 'custom' ] ).optional().describe( 'Animation effect type' ),
-	customEffect: z
+	customEffects: z
 		.object( {
 			keyframes: z
 				.array(

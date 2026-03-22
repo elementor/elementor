@@ -436,6 +436,70 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		} );
 	} );
 
+	test( 'Direction control: multi-select pairing rules', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		await test.step( 'Add heading widget and navigate to interactions tab', async () => {
+			const container = await editor.addElement( { elType: 'container' }, 'document' );
+			await editor.addWidget( { widgetType: 'e-heading', container } );
+
+			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
+			await interactionsTab.click();
+			await expect( interactionsTab ).toHaveAttribute( 'aria-selected', 'true' );
+		} );
+
+		await test.step( 'Create an interaction and switch effect to Slide', async () => {
+			await page.getByRole( 'button', { name: 'Create an interaction' } ).click();
+			await page.waitForSelector( '.MuiPopover-root' );
+
+			const popover = page.locator( '.MuiPopover-root' ).first();
+
+			// Direction buttons are now visible with "From …" labels (type defaults to "in").
+			await expect( popover.getByLabel( 'From top', { exact: true } ) ).toBeVisible();
+		} );
+
+		const popover = page.locator( '.MuiPopover-root' ).first();
+
+		await test.step( 'top and left can be selected together (valid diagonal)', async () => {
+			await popover.getByLabel( 'From top', { exact: true } ).click();
+			await popover.getByLabel( 'From left', { exact: true } ).click();
+
+			await expect( popover.getByLabel( 'From top', { exact: true } ) )
+				.toHaveAttribute( 'aria-pressed', 'true' );
+			await expect( popover.getByLabel( 'From left', { exact: true } ) )
+				.toHaveAttribute( 'aria-pressed', 'true' );
+			await expect( popover.getByLabel( 'From bottom', { exact: true } ) )
+				.toHaveAttribute( 'aria-pressed', 'false' );
+			await expect( popover.getByLabel( 'From right', { exact: true } ) )
+				.toHaveAttribute( 'aria-pressed', 'false' );
+		} );
+
+		await test.step( 'top and bottom cannot be selected together (same vertical axis — bottom replaces top)', async () => {
+			// Current state: top-left. Click "bottom" → should replace "top", giving bottom-left.
+			await popover.getByLabel( 'From bottom', { exact: true } ).click();
+
+			await expect( popover.getByLabel( 'From bottom', { exact: true } ) )
+				.toHaveAttribute( 'aria-pressed', 'true' );
+			await expect( popover.getByLabel( 'From left', { exact: true } ) )
+				.toHaveAttribute( 'aria-pressed', 'true' );
+			await expect( popover.getByLabel( 'From top', { exact: true } ) )
+				.toHaveAttribute( 'aria-pressed', 'false' );
+		} );
+
+		await test.step( 'left and right cannot be selected together (same horizontal axis — right replaces left)', async () => {
+			// Current state: bottom-left. Click "right" → should replace "left", giving bottom-right.
+			await popover.getByLabel( 'From right', { exact: true } ).click();
+
+			await expect( popover.getByLabel( 'From right', { exact: true } ) )
+				.toHaveAttribute( 'aria-pressed', 'true' );
+			await expect( popover.getByLabel( 'From bottom', { exact: true } ) )
+				.toHaveAttribute( 'aria-pressed', 'true' );
+			await expect( popover.getByLabel( 'From left', { exact: true } ) )
+				.toHaveAttribute( 'aria-pressed', 'false' );
+		} );
+	} );
+
 	test( 'Multiple interactions on same element have unique IDs', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();

@@ -271,6 +271,104 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		} );
 	} );
 
+	describe( 'atomic form submission behavior', () => {
+		const createFormWithInput = () => {
+			const form = document.createElement( 'form' );
+			form.setAttribute( 'data-element_type', 'e-form' );
+			form.setAttribute( 'data-id', 'test-form' );
+			form.setAttribute( 'x-data', 'eFormtest-form' );
+
+			const input = document.createElement( 'input' );
+			input.setAttribute( 'type', 'text' );
+			input.setAttribute( 'data-interaction-id', 'field-1' );
+			input.setAttribute( 'aria-label', 'Name' );
+			form.appendChild( input );
+
+			const button = document.createElement( 'button' );
+			button.setAttribute( 'type', 'submit' );
+			form.appendChild( button );
+
+			document.body.appendChild( form );
+			return { form, input };
+		};
+
+		const setupFormHandler = async ( form ) => {
+			const { getRegistration } = await importHandlers();
+			const formRegistration = getRegistration( ATOMIC_FORM_HANDLER_ID );
+			formRegistration.callback( { element: form } );
+
+			const { Alpine } = jest.requireMock( '@elementor/alpinejs' );
+			const lastCall = Alpine.data.mock.calls[ Alpine.data.mock.calls.length - 1 ];
+			return lastCall[ 1 ]();
+		};
+
+		beforeEach( () => {
+			global.elementorFrontend = {
+				config: { post: { id: 123 } },
+				utils: { urlActions: { runAction: jest.fn() } },
+			};
+			global.elementorFrontendConfig = {
+				urls: { ajaxurl: 'http://test.local/wp-admin/admin-ajax.php' },
+				nonces: { atomicFormsSendForm: 'test-nonce' },
+			};
+		} );
+
+		afterEach( () => {
+			delete global.fetch;
+			delete global.elementorFrontendConfig;
+		} );
+
+		it( 'clears form fields on successful submission', async () => {
+			const { form, input } = createFormWithInput();
+			input.value = 'Test value';
+
+			const instance = await setupFormHandler( form );
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( { success: true } ),
+			} );
+
+			await instance.submit( new Event( 'submit', { cancelable: true } ) );
+
+			expect( input.value ).toBe( '' );
+		} );
+
+		it( 'does not clear form fields on failed submission', async () => {
+			const { form, input } = createFormWithInput();
+			input.value = 'Test value';
+
+			const instance = await setupFormHandler( form );
+
+			global.fetch = jest.fn().mockResolvedValue( { ok: false } );
+
+			await instance.submit( new Event( 'submit', { cancelable: true } ) );
+
+			expect( input.value ).toBe( 'Test value' );
+		} );
+
+		it( 'dismisses success message when user starts typing', async () => {
+			const { form, input } = createFormWithInput();
+			input.value = 'Test value';
+
+			const instance = await setupFormHandler( form );
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( { success: true } ),
+			} );
+
+			await instance.submit( new Event( 'submit', { cancelable: true } ) );
+
+			expect( form.classList.contains( 'form-state-success' ) ).toBe( true );
+
+			input.dispatchEvent( new Event( 'input', { bubbles: true } ) );
+
+			expect( form.classList.contains( 'form-state-default' ) ).toBe( true );
+			expect( form.classList.contains( 'form-state-success' ) ).toBe( false );
+		} );
+	} );
+
 	it( 'adds non-whitelisted editor link actions', async () => {
 		// Arrange
 		global.elementor = {};
