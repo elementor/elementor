@@ -50,6 +50,11 @@ const isAlphabet = ( str: string ): string | never => {
 	return str;
 };
 
+const toMCPTitle = ( namespace: string ): string => {
+	const capitalized = namespace.charAt( 0 ).toUpperCase() + namespace.slice( 1 );
+	return `Editor${ capitalized }`;
+};
+
 /**
  *
  * @param namespace            The namespace of the MCP server. It should contain only lowercase alphabetic characters.
@@ -76,6 +81,7 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 	const mcpServer = mcpRegistry[ namespace ];
 	const { addTool } = createToolRegistry( mcpServer );
 	return {
+		title: toMCPTitle( namespace ),
 		waitForReady: () => getSDK().waitForReady(),
 		// @ts-expect-error: TS is unable to infer the type here
 		resource: async ( ...args: Parameters< McpServer[ 'registerResource' ] > ) => {
@@ -115,7 +121,20 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 	};
 };
 
+/**
+ * Async version of getMCPByDomain that waits for the SDK to load before returning the registry entry.
+ *
+ * @param namespace            The namespace of the MCP server. It should contain only lowercase alphabetic characters.
+ * @param options
+ * @param options.instructions
+ */
+export const getAsyncMCPByDomain = async ( namespace: string, options?: { instructions?: string } ): Promise< MCPRegistryEntry > => {
+	await getSDK().waitForReady();
+	return getMCPByDomain( namespace, options );
+};
+
 export interface MCPRegistryEntry {
+	title: string;
 	addTool: < T extends undefined | z.ZodRawShape = undefined, O extends undefined | z.ZodRawShape = undefined >(
 		opts: ToolRegistrationOptions< T, O >
 	) => void;
