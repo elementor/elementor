@@ -1,13 +1,13 @@
 import * as React from 'react';
+import { type ReactNode } from 'react';
 import { createTransformer } from '@elementor/editor-canvas';
-import { Stack } from '@elementor/ui';
 
 type Shadow = {
 	hOffset?: string;
 	vOffset?: string;
 	blur?: string;
 	spread?: string;
-	color?: string;
+	color?: ReactNode;
 	position?: string | null;
 };
 
@@ -23,10 +23,8 @@ export const boxShadowTransformer = createTransformer( ( value: Shadow ) => {
 	const positionValue = position || 'outset';
 
 	return (
-		<Stack direction="column" gap={ 0.5 } pb={ 1 }>
-			<span>
-				{ colorValue } { positionValue }, { sizes }
-			</span>
-		</Stack>
+		<>
+			{ colorValue } { positionValue }, { sizes }
+		</>
 	);
 } );
