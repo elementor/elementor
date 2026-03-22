@@ -9,6 +9,8 @@ on:
     types: [closed]
     branches:
       - main
+      - '[0-9].[0-9][0-9]'
+      - '[0-9][0-9].[0-9][0-9]'
 
 permissions:
   contents: write
@@ -22,14 +24,14 @@ concurrency:
 
 jobs:
   latest_release:
-    if: github.event.pull_request.merged == true && github.base_ref == 'main' && !contains(github.event.pull_request.labels.*.name, 'skip release' )
+    if: github.event.pull_request.merged == true && !contains(github.event.pull_request.labels.*.name, 'skip release' )
     permissions: write-all
     runs-on: ubuntu-22.04
     steps:
       - name: checkout branch
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.event.pull_request.base.ref }}
       - name: Get Configuration
         id: configuration
         uses: rgarcia-phi/json-to-variables@9835d537368468c4e4de5254dc3efeadda183793
