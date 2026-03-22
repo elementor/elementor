@@ -97,6 +97,29 @@ test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 		await expect( firstContent ).not.toBeVisible();
 	} );
 
+	test( 'Outer tab selection persists when nesting atomic tabs', async () => {
+		const outerTabsId = await editor.addElement( { elType: tabsType }, 'document' );
+		const outerRoot = getTabsRoot( outerTabsId );
+		const outerTabItems = getMenuTabs( outerRoot );
+		const firstTab = outerTabItems.nth( 0 );
+		const secondTab = outerTabItems.nth( 1 );
+
+		await secondTab.dispatchEvent( 'click' );
+		await expect( secondTab ).toHaveAttribute( 'aria-selected', 'true' );
+		await expect( firstTab ).toHaveAttribute( 'aria-selected', 'false' );
+
+		const tabContentIds = await getIdsByType( outerRoot, tabContentType );
+		const secondTabContentContainerId = tabContentIds[ 1 ];
+		expect( secondTabContentContainerId ).toBeDefined();
+
+		await editor.addElement( { elType: tabsType }, secondTabContentContainerId as string );
+
+		await expect.poll( async () => outerRoot.locator( `[data-element_type="${ tabsType }"]` ).count() ).toBe( 1 );
+
+		await expect( secondTab ).toHaveAttribute( 'aria-selected', 'true' );
+		await expect( firstTab ).toHaveAttribute( 'aria-selected', 'false' );
+	} );
+
 	test( 'Add a tab via tabs control', async () => {
 		// Arrange
 		const tabsId = await editor.addElement( { elType: tabsType }, 'document' );
