@@ -4,13 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { createElement } from './create-element';
 import { deleteElement } from './delete-element';
 import { getContainer } from './get-container';
-import {
-	addModelToParent,
-	findAtomicAncestorId,
-	removeModelFromParent,
-	rerenderAncestor,
-	resolveContainer,
-} from './resolve-element';
+import { addModelToParent, removeModelFromParent, resolveContainer } from './resolve-element';
 import { type V1Element, type V1ElementModelProps } from './types';
 
 type RemoveElementsParams = {
@@ -28,7 +22,6 @@ type RemovedElement = {
 	at: number;
 	containerId: string;
 	parentId: string;
-	atomicAncestorId?: string;
 };
 
 type RemovedElementsResult = {
@@ -58,7 +51,6 @@ export const removeElements = ( {
 							at: container.view?._index ?? 0,
 							containerId: container.id,
 							parentId: container.parent.id,
-							atomicAncestorId: findAtomicAncestorId( container ),
 						} );
 					}
 				} );
@@ -77,10 +69,7 @@ export const removeElements = ( {
 			undo: ( _: { elementIds: string[] }, { removedElements }: RemovedElementsResult ) => {
 				onRestoreElements?.();
 
-				// Fallback for async-rendered nested elements whose views may not exist yet (ED-22825).
-				let ancestorToRerender: string | undefined;
-
-				[ ...removedElements ].reverse().forEach( ( { parent, parentId, atomicAncestorId, model, at } ) => {
+				[ ...removedElements ].reverse().forEach( ( { parent, parentId, model, at } ) => {
 					const freshParent = resolveContainer( parent, parentId );
 
 					if ( freshParent ) {
@@ -93,14 +82,8 @@ export const removeElements = ( {
 						return;
 					}
 
-					if ( addModelToParent( parentId, model, { at } ) ) {
-						ancestorToRerender = atomicAncestorId;
-					}
+					addModelToParent( parentId, model, { at } );
 				} );
-
-				if ( ancestorToRerender ) {
-					rerenderAncestor( ancestorToRerender );
-				}
 			},
 			redo: (
 				_: { elementIds: string[] },
@@ -109,51 +92,40 @@ export const removeElements = ( {
 				onRemoveElements?.();
 
 				const newRemovedElements: RemovedElement[] = [];
-				let ancestorToRerender: string | undefined;
 
-				removedElements.forEach(
-					( { container, parent, model, at, containerId, parentId, atomicAncestorId } ) => {
-						const freshContainer = resolveContainer( container, containerId );
-						const freshParent = resolveContainer( parent, parentId );
+				removedElements.forEach( ( { container, parent, model, at, containerId, parentId } ) => {
+					const freshContainer = resolveContainer( container, containerId );
+					const freshParent = resolveContainer( parent, parentId );
 
-						if ( freshContainer && freshParent ) {
-							deleteElement( {
-								container: freshContainer,
-								options: { useHistory: false },
-							} );
-
-							newRemovedElements.push( {
-								container: freshContainer,
-								parent: freshParent,
-								model,
-								at,
-								containerId,
-								parentId,
-								atomicAncestorId,
-							} );
-
-							return;
-						}
-
-						if ( removeModelFromParent( parentId, containerId ) ) {
-							ancestorToRerender = atomicAncestorId;
-						}
+					if ( freshContainer && freshParent ) {
+						deleteElement( {
+							container: freshContainer,
+							options: { useHistory: false },
+						} );
 
 						newRemovedElements.push( {
-							container,
-							parent,
+							container: freshContainer,
+							parent: freshParent,
 							model,
 							at,
 							containerId,
 							parentId,
-							atomicAncestorId,
 						} );
-					}
-				);
 
-				if ( ancestorToRerender ) {
-					rerenderAncestor( ancestorToRerender );
-				}
+						return;
+					}
+
+					removeModelFromParent( parentId, containerId );
+
+					newRemovedElements.push( {
+						container,
+						parent,
+						model,
+						at,
+						containerId,
+						parentId,
+					} );
+				} );
 
 				return { removedElements: newRemovedElements };
 			},

@@ -36,8 +36,9 @@ export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 			container = container.lookup();
 
 			// Fallback for async-rendered nested elements whose views may not exist yet (ED-22825).
-			if ( ! container?.view ) {
-				this.deleteViaModelTree( container );
+			if ( ! container?.view || container.view.isDestroyed ) {
+				const fresh = $e.components.get( 'document' ).utils.findContainerById( container.id );
+				this.deleteViaModelTree( fresh );
 				return;
 			}
 
@@ -92,22 +93,6 @@ export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 		}
 
 		elements.remove( child, { silent: true } );
-
-		this.rerenderAtomicAncestor( container );
-	}
-
-	rerenderAtomicAncestor( container ) {
-		let current = container.parent;
-
-		while ( current ) {
-			if ( elementor.helpers.isAtomicWidget( current.model ) && current.view ) {
-				current.view.invalidateRenderCache?.();
-				current.view.render?.();
-				return;
-			}
-
-			current = current.parent;
-		}
 	}
 
 	dispatchDeleteEvent( container, callerName ) {

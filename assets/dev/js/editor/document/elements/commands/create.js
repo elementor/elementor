@@ -46,13 +46,25 @@ export class Create extends $e.modules.editor.document.CommandHistoryBase {
 		containers.forEach( ( container ) => {
 			container = container.lookup();
 
-			// Fallback for async-rendered nested elements whose views may not exist yet (ED-22825).
-			if ( ! container?.view ) {
+			if ( ! container?.view || container.view.isDestroyed ) {
+				const fresh = $e.components.get( 'document' ).utils.findContainerById( container.id );
+
+				if ( fresh ) {
+					container = fresh;
+				}
+			}
+
+			if ( ! container?.view || container.view.isDestroyed ) {
 				this.addViaModelTree( container, model, options );
 				return;
 			}
 
-			const createdContainer = container.view.addElement( model, options ).getContainer();
+			const createdContainer = container.view.addElement( model, options )?.getContainer();
+
+			if ( ! createdContainer ) {
+				this.addViaModelTree( container, model, options );
+				return;
+			}
 
 			result.push( createdContainer );
 
@@ -91,22 +103,6 @@ export class Create extends $e.modules.editor.document.CommandHistoryBase {
 		}
 
 		elements.add( model, { at: options.at, silent: true } );
-
-		this.rerenderAtomicAncestor( container );
-	}
-
-	rerenderAtomicAncestor( container ) {
-		let current = container;
-
-		while ( current ) {
-			if ( elementor.helpers.isAtomicWidget( current.model ) && current.view ) {
-				current.view.invalidateRenderCache?.();
-				current.view.render?.();
-				return;
-			}
-
-			current = current.parent;
-		}
 	}
 }
 

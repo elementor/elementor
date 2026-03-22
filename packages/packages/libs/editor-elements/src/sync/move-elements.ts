@@ -2,7 +2,7 @@ import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { moveElement } from './move-element';
-import { findAtomicAncestorId, resolveContainer } from './resolve-element';
+import { resolveContainer } from './resolve-element';
 import { type V1Element } from './types';
 
 type MoveOptions = {
@@ -34,7 +34,6 @@ type MovedElement = {
 	elementId: string;
 	originalContainerId: string;
 	targetContainerId: string;
-	atomicAncestorId?: string;
 };
 
 type MovedElementsResult = {
@@ -90,7 +89,6 @@ export const moveElements = ( {
 						elementId: newElement.id,
 						originalContainerId: originalContainer.id,
 						targetContainerId: target.id,
-						atomicAncestorId: findAtomicAncestorId( sourceElement ),
 					} );
 				} );
 
@@ -133,7 +131,6 @@ export const moveElements = ( {
 						originalIndex,
 						targetContainer,
 						targetContainerId,
-						atomicAncestorId,
 						options,
 					} ) => {
 						const freshElement = resolveContainer( element, elementId );
@@ -159,7 +156,6 @@ export const moveElements = ( {
 							elementId: newElement.id,
 							originalContainerId: freshOriginalContainer.id,
 							targetContainerId: freshTarget.id,
-							atomicAncestorId,
 						} );
 					}
 				);

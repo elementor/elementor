@@ -7,9 +7,7 @@ import { duplicateElement } from './duplicate-element';
 import { getContainer } from './get-container';
 import {
 	addModelToParent,
-	findAtomicAncestorId,
 	removeModelFromParent,
-	rerenderAncestor,
 	resolveContainer,
 } from './resolve-element';
 import { type V1Element, type V1ElementModelProps } from './types';
@@ -29,7 +27,6 @@ type DuplicatedElement = {
 	at?: number;
 	containerId: string;
 	parentContainerId: string;
-	atomicAncestorId?: string;
 };
 
 type DuplicatedElementsResult = {
@@ -74,7 +71,6 @@ export const duplicateElements = ( {
 						at: duplicatedElement.view?._index,
 						containerId: duplicatedElement.id,
 						parentContainerId: duplicatedElement.parent.id,
-						atomicAncestorId: findAtomicAncestorId( duplicatedElement ),
 					} );
 				} );
 
@@ -83,12 +79,9 @@ export const duplicateElements = ( {
 			undo: ( _: { elementIds: string[] }, { duplicatedElements }: DuplicatedElementsResult ) => {
 				onRestoreElements?.();
 
-				// Fallback for async-rendered nested elements whose views may not exist yet (ED-22825).
-				let ancestorToRerender: string | undefined;
-
 				[ ...duplicatedElements ]
 					.reverse()
-					.forEach( ( { container, containerId, parentContainerId, atomicAncestorId } ) => {
+					.forEach( ( { container, containerId, parentContainerId } ) => {
 						const freshContainer = resolveContainer( container, containerId );
 
 						if ( freshContainer ) {
@@ -100,14 +93,8 @@ export const duplicateElements = ( {
 							return;
 						}
 
-						if ( removeModelFromParent( parentContainerId, containerId ) ) {
-							ancestorToRerender = atomicAncestorId;
-						}
+						removeModelFromParent( parentContainerId, containerId );
 					} );
-
-				if ( ancestorToRerender ) {
-					rerenderAncestor( ancestorToRerender );
-				}
 			},
 			redo: (
 				_: { elementIds: string[] },
@@ -115,9 +102,8 @@ export const duplicateElements = ( {
 			): DuplicatedElementsResult => {
 				onDuplicateElements?.();
 				const duplicatedElements: DuplicatedElement[] = [];
-				let ancestorToRerender: string | undefined;
 
-				previousElements.forEach( ( { parentContainer, parentContainerId, atomicAncestorId, model, at } ) => {
+				previousElements.forEach( ( { parentContainer, parentContainerId, model, at } ) => {
 					const freshParent = resolveContainer( parentContainer, parentContainerId );
 
 					if ( freshParent ) {
@@ -134,15 +120,12 @@ export const duplicateElements = ( {
 							at,
 							containerId: createdElement.id,
 							parentContainerId: freshParent.id,
-							atomicAncestorId,
 						} );
 
 						return;
 					}
 
-					if ( addModelToParent( parentContainerId, model, { at } ) ) {
-						ancestorToRerender = atomicAncestorId;
-					}
+					addModelToParent( parentContainerId, model, { at } );
 
 					duplicatedElements.push( {
 						container: parentContainer,
@@ -151,13 +134,8 @@ export const duplicateElements = ( {
 						at,
 						containerId: model.id ?? '',
 						parentContainerId,
-						atomicAncestorId,
 					} );
 				} );
-
-				if ( ancestorToRerender ) {
-					rerenderAncestor( ancestorToRerender );
-				}
 
 				return { duplicatedElements };
 			},

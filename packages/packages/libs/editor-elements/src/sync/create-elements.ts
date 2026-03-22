@@ -3,13 +3,7 @@ import { __ } from '@wordpress/i18n';
 
 import { createElement, type CreateElementParams } from './create-element';
 import { deleteElement } from './delete-element';
-import {
-	addModelToParent,
-	findAtomicAncestorId,
-	removeModelFromParent,
-	rerenderAncestor,
-	resolveContainer,
-} from './resolve-element';
+import { addModelToParent, removeModelFromParent, resolveContainer } from './resolve-element';
 import { type V1Element, type V1ElementModelProps } from './types';
 
 type CreateElementsParams = {
@@ -25,7 +19,6 @@ type CreatedElement = {
 	options?: CreateElementParams[ 'options' ];
 	containerId: string;
 	parentContainerId: string;
-	atomicAncestorId?: string;
 };
 
 type CreatedElementsResult = {
@@ -64,89 +57,66 @@ export const createElements = ( {
 						options,
 						containerId: element.id,
 						parentContainerId: parentContainer.id,
-						atomicAncestorId: findAtomicAncestorId( parentContainer ),
 					} );
 				} );
 
 				return { createdElements };
 			},
 			undo: ( _: { elements: CreateElementParams[] }, { createdElements }: CreatedElementsResult ) => {
-				// Fallback for async-rendered nested elements whose views may not exist yet (ED-22825).
-				let ancestorToRerender: string | undefined;
+				[ ...createdElements ].reverse().forEach( ( { container, containerId, parentContainerId } ) => {
+					const freshContainer = resolveContainer( container, containerId );
 
-				[ ...createdElements ]
-					.reverse()
-					.forEach( ( { container, containerId, parentContainerId, atomicAncestorId } ) => {
-						const freshContainer = resolveContainer( container, containerId );
+					if ( freshContainer ) {
+						deleteElement( {
+							container: freshContainer,
+							options: { useHistory: false },
+						} );
 
-						if ( freshContainer ) {
-							deleteElement( {
-								container: freshContainer,
-								options: { useHistory: false },
-							} );
+						return;
+					}
 
-							return;
-						}
-
-						if ( removeModelFromParent( parentContainerId, containerId ) ) {
-							ancestorToRerender = atomicAncestorId;
-						}
-					} );
-
-				if ( ancestorToRerender ) {
-					rerenderAncestor( ancestorToRerender );
-				}
+					removeModelFromParent( parentContainerId, containerId );
+				} );
 			},
 			redo: (
 				_: { elements: CreateElementParams[] },
 				{ createdElements }: CreatedElementsResult
 			): CreatedElementsResult => {
 				const newElements: CreatedElement[] = [];
-				let ancestorToRerender: string | undefined;
 
-				createdElements.forEach(
-					( { parentContainer, parentContainerId, atomicAncestorId, model, options } ) => {
-						const freshParent = resolveContainer( parentContainer, parentContainerId );
+				createdElements.forEach( ( { parentContainer, parentContainerId, model, options } ) => {
+					const freshParent = resolveContainer( parentContainer, parentContainerId );
 
-						if ( freshParent ) {
-							const element = createElement( {
-								container: freshParent,
-								model,
-								options: { ...options, useHistory: false },
-							} );
-
-							newElements.push( {
-								container: element,
-								parentContainer: freshParent,
-								model: element.model.toJSON(),
-								options,
-								containerId: element.id,
-								parentContainerId: freshParent.id,
-								atomicAncestorId,
-							} );
-
-							return;
-						}
-
-						if ( addModelToParent( parentContainerId, model ) ) {
-							ancestorToRerender = atomicAncestorId;
-						}
+					if ( freshParent ) {
+						const element = createElement( {
+							container: freshParent,
+							model,
+							options: { ...options, useHistory: false },
+						} );
 
 						newElements.push( {
-							container: parentContainer,
-							parentContainer,
-							model,
+							container: element,
+							parentContainer: freshParent,
+							model: element.model.toJSON(),
 							options,
-							containerId: model.id ?? '',
-							parentContainerId,
-							atomicAncestorId,
+							containerId: element.id,
+							parentContainerId: freshParent.id,
 						} );
-					}
-				);
 
-				if ( ancestorToRerender ) {
-					rerenderAncestor( ancestorToRerender );
-				}
+						return;
+					}
+
+					addModelToParent( parentContainerId, model );
+
+					newElements.push( {
+						container: parentContainer,
+						parentContainer,
+						model,
+						options,
+						containerId: model.id ?? '',
+						parentContainerId,
+					} );
+				} );
 
 				return { createdElements: newElements };
 			},
