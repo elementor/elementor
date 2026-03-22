@@ -77,11 +77,8 @@ export const removeElements = ( {
 			undo: ( _: { elementIds: string[] }, { removedElements }: RemovedElementsResult ) => {
 				onRestoreElements?.();
 
-				// Atomic nested elements (e.g. Tabs) render children asynchronously via Twig, so
-				// the view tree may not contain the child views when undo/redo runs. resolveContainer
-				// tries lookup() then getContainer(); if both fail, we fall back to direct model-tree
-				// manipulation with silent:true and re-render the atomic ancestor. See ED-22825.
-				let atomicToRerender: string | undefined;
+				// Fallback for async-rendered nested elements whose views may not exist yet (ED-22825).
+				let ancestorToRerender: string | undefined;
 
 				[ ...removedElements ].reverse().forEach( ( { parent, parentId, atomicAncestorId, model, at } ) => {
 					const freshParent = resolveContainer( parent, parentId );
@@ -96,12 +93,14 @@ export const removeElements = ( {
 						return;
 					}
 
-					if ( addModelToParent( parentId, model as Record< string, unknown >, { at } ) ) {
-						atomicToRerender = atomicAncestorId;
+					if ( addModelToParent( parentId, model, { at } ) ) {
+						ancestorToRerender = atomicAncestorId;
 					}
 				} );
 
-				rerenderAncestor( atomicToRerender );
+				if ( ancestorToRerender ) {
+					rerenderAncestor( ancestorToRerender );
+				}
 			},
 			redo: (
 				_: { elementIds: string[] },
@@ -110,7 +109,7 @@ export const removeElements = ( {
 				onRemoveElements?.();
 
 				const newRemovedElements: RemovedElement[] = [];
-				let atomicToRerender: string | undefined;
+				let ancestorToRerender: string | undefined;
 
 				removedElements.forEach(
 					( { container, parent, model, at, containerId, parentId, atomicAncestorId } ) => {
@@ -137,7 +136,7 @@ export const removeElements = ( {
 						}
 
 						if ( removeModelFromParent( parentId, containerId ) ) {
-							atomicToRerender = atomicAncestorId;
+							ancestorToRerender = atomicAncestorId;
 						}
 
 						newRemovedElements.push( {
@@ -152,7 +151,9 @@ export const removeElements = ( {
 					}
 				);
 
-				rerenderAncestor( atomicToRerender );
+				if ( ancestorToRerender ) {
+					rerenderAncestor( ancestorToRerender );
+				}
 
 				return { removedElements: newRemovedElements };
 			},

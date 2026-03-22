@@ -83,11 +83,8 @@ export const duplicateElements = ( {
 			undo: ( _: { elementIds: string[] }, { duplicatedElements }: DuplicatedElementsResult ) => {
 				onRestoreElements?.();
 
-				// Atomic nested elements (e.g. Tabs) render children asynchronously via Twig, so
-				// the view tree may not contain the child views when undo/redo runs. resolveContainer
-				// tries lookup() then getContainer(); if both fail, we fall back to direct model-tree
-				// manipulation with silent:true and re-render the atomic ancestor. See ED-22825.
-				let atomicToRerender: string | undefined;
+				// Fallback for async-rendered nested elements whose views may not exist yet (ED-22825).
+				let ancestorToRerender: string | undefined;
 
 				[ ...duplicatedElements ]
 					.reverse()
@@ -104,11 +101,13 @@ export const duplicateElements = ( {
 						}
 
 						if ( removeModelFromParent( parentContainerId, containerId ) ) {
-							atomicToRerender = atomicAncestorId;
+							ancestorToRerender = atomicAncestorId;
 						}
 					} );
 
-				rerenderAncestor( atomicToRerender );
+				if ( ancestorToRerender ) {
+					rerenderAncestor( ancestorToRerender );
+				}
 			},
 			redo: (
 				_: { elementIds: string[] },
@@ -116,7 +115,7 @@ export const duplicateElements = ( {
 			): DuplicatedElementsResult => {
 				onDuplicateElements?.();
 				const duplicatedElements: DuplicatedElement[] = [];
-				let atomicToRerender: string | undefined;
+				let ancestorToRerender: string | undefined;
 
 				previousElements.forEach( ( { parentContainer, parentContainerId, atomicAncestorId, model, at } ) => {
 					const freshParent = resolveContainer( parentContainer, parentContainerId );
@@ -141,8 +140,8 @@ export const duplicateElements = ( {
 						return;
 					}
 
-					if ( addModelToParent( parentContainerId, model as Record< string, unknown >, { at } ) ) {
-						atomicToRerender = atomicAncestorId;
+					if ( addModelToParent( parentContainerId, model, { at } ) ) {
+						ancestorToRerender = atomicAncestorId;
 					}
 
 					duplicatedElements.push( {
@@ -156,7 +155,9 @@ export const duplicateElements = ( {
 					} );
 				} );
 
-				rerenderAncestor( atomicToRerender );
+				if ( ancestorToRerender ) {
+					rerenderAncestor( ancestorToRerender );
+				}
 
 				return { duplicatedElements };
 			},

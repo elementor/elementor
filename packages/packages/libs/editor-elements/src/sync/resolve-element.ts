@@ -1,5 +1,11 @@
 import { getContainer } from './get-container';
-import { type BackboneCollection, type BackboneModel, type ExtendedWindow, type V1Element } from './types';
+import {
+	type BackboneCollection,
+	type BackboneModel,
+	type ExtendedWindow,
+	type V1Element,
+	type V1ElementModelProps,
+} from './types';
 
 function isConnected( container: V1Element | null | undefined ): container is V1Element {
 	if ( ! container ) {
@@ -42,7 +48,7 @@ export function findModelInDocTree( id: string ): BackboneModel | null {
 
 export function addModelToParent(
 	parentId: string,
-	childData: Record< string, unknown >,
+	childData: V1ElementModelProps,
 	options?: { at?: number }
 ): boolean {
 	const parentModel = findModelInDocTree( parentId );

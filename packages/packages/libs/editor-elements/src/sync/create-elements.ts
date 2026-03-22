@@ -71,11 +71,8 @@ export const createElements = ( {
 				return { createdElements };
 			},
 			undo: ( _: { elements: CreateElementParams[] }, { createdElements }: CreatedElementsResult ) => {
-				// Atomic nested elements (e.g. Tabs) render children asynchronously via Twig, so
-				// the view tree may not contain the child views when undo/redo runs. resolveContainer
-				// tries lookup() then getContainer(); if both fail, we fall back to direct model-tree
-				// manipulation with silent:true and re-render the atomic ancestor. See ED-22825.
-				let atomicToRerender: string | undefined;
+				// Fallback for async-rendered nested elements whose views may not exist yet (ED-22825).
+				let ancestorToRerender: string | undefined;
 
 				[ ...createdElements ]
 					.reverse()
@@ -92,18 +89,20 @@ export const createElements = ( {
 						}
 
 						if ( removeModelFromParent( parentContainerId, containerId ) ) {
-							atomicToRerender = atomicAncestorId;
+							ancestorToRerender = atomicAncestorId;
 						}
 					} );
 
-				rerenderAncestor( atomicToRerender );
+				if ( ancestorToRerender ) {
+					rerenderAncestor( ancestorToRerender );
+				}
 			},
 			redo: (
 				_: { elements: CreateElementParams[] },
 				{ createdElements }: CreatedElementsResult
 			): CreatedElementsResult => {
 				const newElements: CreatedElement[] = [];
-				let atomicToRerender: string | undefined;
+				let ancestorToRerender: string | undefined;
 
 				createdElements.forEach(
 					( { parentContainer, parentContainerId, atomicAncestorId, model, options } ) => {
@@ -129,8 +128,8 @@ export const createElements = ( {
 							return;
 						}
 
-						if ( addModelToParent( parentContainerId, model as Record< string, unknown > ) ) {
-							atomicToRerender = atomicAncestorId;
+						if ( addModelToParent( parentContainerId, model ) ) {
+							ancestorToRerender = atomicAncestorId;
 						}
 
 						newElements.push( {
@@ -145,7 +144,9 @@ export const createElements = ( {
 					}
 				);
 
-				rerenderAncestor( atomicToRerender );
+				if ( ancestorToRerender ) {
+					rerenderAncestor( ancestorToRerender );
+				}
 
 				return { createdElements: newElements };
 			},

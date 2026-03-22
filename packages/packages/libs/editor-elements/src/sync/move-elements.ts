@@ -99,9 +99,7 @@ export const moveElements = ( {
 			undo: ( _: { moves: MoveInput[] }, { movedElements }: MovedElementsResult ) => {
 				onRestoreElements?.();
 
-				// Atomic nested elements (e.g. Tabs) render children asynchronously via Twig, so
-				// the view tree may not contain the child views when undo/redo runs. resolveContainer
-				// tries lookup() then getContainer(); if both fail, the move is skipped. See ED-22825.
+				// Fallback for async-rendered nested elements whose views may not exist yet (ED-22825).
 				[ ...movedElements ]
 					.reverse()
 					.forEach( ( { element, elementId, originalContainer, originalContainerId, originalIndex } ) => {
