@@ -90,6 +90,46 @@ export default class Component extends ComponentBase {
 
 				return null;
 			},
+			addModelToParent: ( parentId, childData, options ) => {
+				const parentModel = this.utils.findModelById( parentId );
+
+				if ( ! parentModel ) {
+					return false;
+				}
+
+				const elements = parentModel.get( 'elements' );
+
+				if ( ! elements ) {
+					return false;
+				}
+
+				elements.add( childData, { at: options?.at, silent: true } );
+
+				return true;
+			},
+			removeModelFromParent: ( parentId, childId ) => {
+				const parentModel = this.utils.findModelById( parentId );
+
+				if ( ! parentModel ) {
+					return false;
+				}
+
+				const elements = parentModel.get( 'elements' );
+
+				if ( ! elements ) {
+					return false;
+				}
+
+				const child = elements.findWhere( { id: childId } );
+
+				if ( ! child ) {
+					return false;
+				}
+
+				elements.remove( child, { silent: true } );
+
+				return true;
+			},
 		};
 	}
 }

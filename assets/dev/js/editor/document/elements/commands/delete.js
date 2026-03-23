@@ -40,7 +40,9 @@ export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 			}
 
 			if ( ! container?.view || container.view.isDestroyed ) {
-				this.deleteViaModelTree( container );
+				if ( container?.parent ) {
+					$e.components.get( 'document' ).utils.removeModelFromParent( container.parent.id, container.id );
+				}
 				return;
 			}
 
@@ -69,32 +71,6 @@ export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 		}
 
 		return containers;
-	}
-
-	deleteViaModelTree( container ) {
-		if ( ! container?.parent ) {
-			return;
-		}
-
-		const parentModel = $e.components.get( 'document' ).utils.findModelById( container.parent.id );
-
-		if ( ! parentModel ) {
-			return;
-		}
-
-		const elements = parentModel.get( 'elements' );
-
-		if ( ! elements ) {
-			return;
-		}
-
-		const child = elements.findWhere( { id: container.id } );
-
-		if ( ! child ) {
-			return;
-		}
-
-		elements.remove( child, { silent: true } );
 	}
 
 	dispatchDeleteEvent( container, callerName ) {

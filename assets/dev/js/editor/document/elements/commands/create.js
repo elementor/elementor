@@ -50,9 +50,8 @@ export class Create extends $e.modules.editor.document.CommandHistoryBase {
 				container = $e.components.get( 'document' ).utils.findContainerById( container.id ) ?? container;
 			}
 
-			// Fallback to model tree if container is not found
 			if ( ! container?.view || container.view.isDestroyed ) {
-				this.addViaModelTree( container, model, options );
+				$e.components.get( 'document' ).utils.addModelToParent( container.id, model, options );
 				return;
 			}
 
@@ -83,22 +82,6 @@ export class Create extends $e.modules.editor.document.CommandHistoryBase {
 		}
 
 		return result;
-	}
-
-	addViaModelTree( container, model, options ) {
-		const parentModel = $e.components.get( 'document' ).utils.findModelById( container.id );
-
-		if ( ! parentModel ) {
-			return;
-		}
-
-		const elements = parentModel.get( 'elements' );
-
-		if ( ! elements ) {
-			return;
-		}
-
-		elements.add( model, { at: options.at, silent: true } );
 	}
 }
 

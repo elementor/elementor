@@ -9,6 +9,8 @@ export type ExtendedWindow = Window & {
 			get?: ( name: string ) => {
 				utils?: {
 					findModelById?: ( id: string, collection?: unknown ) => BackboneModel | null;
+					addModelToParent?: ( parentId: string, childData: unknown, options?: { at?: number } ) => boolean;
+					removeModelFromParent?: ( parentId: string, childId: string ) => boolean;
 				};
 			};
 		};
