@@ -3,6 +3,8 @@
 import {
 	config,
 	getKeyframes,
+	getTransformBaselineFromComputedStyle,
+	preserveTransformKeyframes,
 	skipInteraction,
 	extractAnimationConfig,
 	getAnimateFunction,
@@ -13,9 +15,8 @@ import {
 
 import { initBreakpoints } from './interactions-breakpoints.js';
 
-function scrollOutAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc ) {
+function scrollOutAnimation( element, transition, keyframes, resetKeyframes, options, animateFunc, inViewFunc ) {
 	const viewOptions = { amount: 0.85, root: null };
-	const resetKeyframes = getKeyframes( animConfig.effect, 'in', animConfig.direction );
 
 	animateFunc( element, resetKeyframes, { duration: 0 } );
 
@@ -50,7 +51,15 @@ function defaultAnimation( element, transition, keyframes, options, animateFunc 
 }
 
 function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
-	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
+	const baseline = getTransformBaselineFromComputedStyle( element );
+	const keyframes = preserveTransformKeyframes(
+		getKeyframes( animConfig.effect, animConfig.type, animConfig.direction ),
+		baseline,
+	);
+	const resetKeyframes = preserveTransformKeyframes(
+		getKeyframes( animConfig.effect, 'in', animConfig.direction ),
+		baseline,
+	);
 
 	const options = {
 		duration: animConfig.duration / 1000,
@@ -62,7 +71,7 @@ function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	const transition = element.style.transition;
 	element.style.transition = 'none';
 	if ( 'scrollOut' === animConfig.trigger ) {
-		scrollOutAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc );
+		scrollOutAnimation( element, transition, keyframes, resetKeyframes, options, animateFunc, inViewFunc );
 	} else if ( 'scrollIn' === animConfig.trigger ) {
 		scrollInAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc );
 	} else {
