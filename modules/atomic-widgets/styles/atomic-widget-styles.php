@@ -38,7 +38,7 @@ class Atomic_Widget_Styles {
 	}
 
 	private function register_styles( Atomic_Styles_Manager $styles_manager, array $post_ids ) {
-		$context = $this->get_context( is_preview() || Plugin::$instance->preview->is_preview_mode() );
+		$context = $this->get_context( Plugin::$instance->preview->is_editor_or_preview() );
 
 		foreach ( $post_ids as $post_id ) {
 			$get_styles = fn() => $this->parse_post_styles( $post_id );

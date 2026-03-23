@@ -195,6 +195,18 @@ class Preview extends App {
 	}
 
 	/**
+	 * Whether WordPress post preview or Elementor preview iframe is active.
+	 *
+	 * @since 4.2.0
+	 * @access public
+	 *
+	 * @return bool
+	 */
+	public function is_editor_or_preview() {
+		return is_preview() || $this->is_preview_mode();
+	}
+
+	/**
 	 * Builder wrapper.
 	 *
 	 * Used to add an empty HTML wrapper for the builder, the javascript will add
