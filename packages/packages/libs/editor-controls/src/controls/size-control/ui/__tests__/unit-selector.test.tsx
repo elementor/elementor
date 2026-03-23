@@ -19,8 +19,9 @@ describe( 'UnitSelector', () => {
 		} );
 
 		it( 'should render all options in menu when menu is open', () => {
-			render( <UnitSelector value="px" options={ [ 'px', 'rem', 'ch' ] } onSelect={ jest.fn() }
-								  isUnitHighlighted /> );
+			render(
+				<UnitSelector value="px" options={ [ 'px', 'rem', 'ch' ] } onSelect={ jest.fn() } isUnitHighlighted />
+			);
 
 			fireEvent.click( screen.getByRole( 'button', { name: 'px' } ) );
 
