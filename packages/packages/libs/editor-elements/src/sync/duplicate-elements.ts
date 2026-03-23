@@ -5,11 +5,7 @@ import { createElement } from './create-element';
 import { deleteElement } from './delete-element';
 import { duplicateElement } from './duplicate-element';
 import { getContainer } from './get-container';
-import {
-	addModelToParent,
-	removeModelFromParent,
-	resolveContainer,
-} from './resolve-element';
+import { addModelToParent, removeModelFromParent, resolveContainer } from './resolve-element';
 import { type V1Element, type V1ElementModelProps } from './types';
 
 type DuplicateElementsParams = {
@@ -79,22 +75,20 @@ export const duplicateElements = ( {
 			undo: ( _: { elementIds: string[] }, { duplicatedElements }: DuplicatedElementsResult ) => {
 				onRestoreElements?.();
 
-				[ ...duplicatedElements ]
-					.reverse()
-					.forEach( ( { container, containerId, parentContainerId } ) => {
-						const freshContainer = resolveContainer( container, containerId );
+				[ ...duplicatedElements ].reverse().forEach( ( { container, containerId, parentContainerId } ) => {
+					const freshContainer = resolveContainer( container, containerId );
 
-						if ( freshContainer ) {
-							deleteElement( {
-								container: freshContainer,
-								options: { useHistory: false },
-							} );
+					if ( freshContainer ) {
+						deleteElement( {
+							container: freshContainer,
+							options: { useHistory: false },
+						} );
 
-							return;
-						}
+						return;
+					}
 
-						removeModelFromParent( parentContainerId, containerId );
-					} );
+					removeModelFromParent( parentContainerId, containerId );
+				} );
 			},
 			redo: (
 				_: { elementIds: string[] },
