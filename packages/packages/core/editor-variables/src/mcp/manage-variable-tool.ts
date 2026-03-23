@@ -1,11 +1,12 @@
-import { getMCPByDomain } from '@elementor/editor-mcp';
+import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { z } from '@elementor/schema';
 
 import { service } from '../service';
 import { GLOBAL_VARIABLES_URI } from './variables-resource';
 
-export const initManageVariableTool = () => {
-	getMCPByDomain( 'variables' ).addTool( {
+export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
+	const { addTool } = reg;
+	addTool( {
 		name: 'manage-global-variable',
 		schema: {
 			action: z.enum( [ 'create', 'update', 'delete' ] ).describe( 'Operation to perform' ),

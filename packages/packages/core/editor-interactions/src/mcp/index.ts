@@ -1,12 +1,12 @@
-import { getMCPByDomain } from '@elementor/editor-mcp';
+import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
 import { MAX_INTERACTIONS_PER_ELEMENT } from './constants';
 import { initInteractionsSchemaResource } from './resources/interactions-schema-resource';
 import { initManageElementInteractionTool } from './tools/manage-element-interaction-tool';
 
-export const initMcpInteractions = () => {
-	const reg = getMCPByDomain( 'interactions', {
-		instructions: `
+export const initMcpInteractions = ( reg: MCPRegistryEntry ) => {
+	const { setMCPDescription } = reg;
+	setMCPDescription( `
 		MCP server for managing element interactions and animations. Use this to add, modify, or remove animations and motion effects triggered by user events such as page load or scroll-into-view.
 		** IMPORTANT **
 		Use the "interactions-schema" resource to get the schema of the interactions.
@@ -64,11 +64,8 @@ export const initMcpInteractions = () => {
 		{
 			"elementId": "123",
 			"action": "clear",
-		}
-		`,
-	} );
-	reg.waitForReady().then( () => {
-		initInteractionsSchemaResource( reg );
-		initManageElementInteractionTool( reg );
-	} );
+		}` );
+
+	initInteractionsSchemaResource( reg );
+	initManageElementInteractionTool( reg );
 };

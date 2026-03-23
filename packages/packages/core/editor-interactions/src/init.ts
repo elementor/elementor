@@ -1,3 +1,5 @@
+import { getMCPByDomain } from '@elementor/editor-mcp';
+
 import { initPasteInteractionsCommand } from './commands/paste-interactions';
 import { Direction } from './components/controls/direction';
 import { Easing } from './components/controls/easing';
@@ -60,7 +62,7 @@ export function init() {
 			component: Repeat,
 		} );
 
-		initMcpInteractions();
+		initMcpInteractions( getMCPByDomain( 'interactions' ) );
 	} catch ( error ) {
 		throw error;
 	}

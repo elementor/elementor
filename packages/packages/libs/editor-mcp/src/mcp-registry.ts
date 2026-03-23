@@ -50,6 +50,19 @@ const isAlphabet = ( str: string ): string | never => {
 	return str;
 };
 
+export const toMCPTitle = ( namespace: string ): string => {
+	const capitalized = namespace.charAt( 0 ).toUpperCase() + namespace.slice( 1 );
+	return `Editor ${ capitalized }`;
+};
+
+export const getMCPByDomainAsync = async (
+	namespace: string,
+	options?: { instructions?: string }
+): Promise< MCPRegistryEntry > => {
+	await getSDK().waitForReady();
+	return getMCPByDomain( namespace, options );
+};
+
 /**
  *
  * @param namespace            The namespace of the MCP server. It should contain only lowercase alphabetic characters.
@@ -58,6 +71,7 @@ const isAlphabet = ( str: string ): string | never => {
  */
 export const getMCPByDomain = ( namespace: string, options?: { instructions?: string } ): MCPRegistryEntry => {
 	const mcpName = `editor-${ isAlphabet( namespace ) }`;
+	const title = toMCPTitle( namespace );
 	// @ts-ignore - QUnit fails this
 	if ( typeof globalThis.jest !== 'undefined' ) {
 		return mockMcpRegistry();
@@ -66,6 +80,7 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 		mcpRegistry[ namespace ] = new McpServer(
 			{
 				name: mcpName,
+				title,
 				version: '1.0.0',
 			},
 			{
