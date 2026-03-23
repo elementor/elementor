@@ -49,4 +49,5 @@ export type StylesProvider = {
 		tracking?: ( data: { event: string; [ key: string ]: unknown } ) => void;
 	};
 	capabilities?: UserCapabilities;
+	pregeneratedLinkPattern?: RegExp;
 };

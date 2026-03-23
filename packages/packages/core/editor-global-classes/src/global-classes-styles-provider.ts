@@ -27,6 +27,7 @@ export const globalClassesStylesProvider = createStylesProvider( {
 	key: GLOBAL_CLASSES_PROVIDER_KEY,
 	priority: 30,
 	limit: MAX_CLASSES,
+	pregeneratedLinkPattern: /^global-.*-css$/,
 	labels: {
 		singular: __( 'class', 'elementor' ),
 		plural: __( 'classes', 'elementor' ),

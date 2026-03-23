@@ -34,7 +34,7 @@ class Atomic_Global_Styles {
 	}
 
 	private function register_styles( Atomic_Styles_Manager $styles_manager ) {
-		$context = is_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
+		$context =  is_preview() || Plugin::$instance->preview->is_preview_mode() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
 
 		$get_styles = function () use ( $context ) {
 			return Global_Classes_Repository::make()->context( $context )->all()->get_ordered_items()->map( function( $item ) {
@@ -68,7 +68,7 @@ class Atomic_Global_Styles {
 	}
 
 	private function transform_classes_names( $ids ) {
-		$context = is_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
+		$context =  is_preview() || Plugin::$instance->preview->is_preview_mode() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
 
 		$classes = Global_Classes_Repository::make()
 			->context( $context )

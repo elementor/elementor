@@ -21,6 +21,7 @@ export type CreateStylesProviderOptions = {
 		tracking?: StylesProvider[ 'actions' ][ 'tracking' ];
 	};
 	capabilities?: UserCapabilities;
+	pregeneratedLinkPattern?: RegExp;
 };
 
 const DEFAULT_LIMIT = 10000;
@@ -34,6 +35,7 @@ export function createStylesProvider( {
 	labels,
 	actions,
 	capabilities,
+	pregeneratedLinkPattern,
 }: CreateStylesProviderOptions ): StylesProvider {
 	return {
 		getKey: typeof key === 'string' ? () => key : key,
@@ -56,5 +58,6 @@ export function createStylesProvider( {
 			updateCustomCss: actions.updateCustomCss,
 			tracking: actions.tracking,
 		},
+		pregeneratedLinkPattern,
 	};
 }
