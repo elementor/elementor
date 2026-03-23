@@ -179,20 +179,24 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_handle_elementor_upload() {
+		$elementor_tmp_dir = Plugin::$instance->uploads_manager->get_temp_dir() . uniqid() . DIRECTORY_SEPARATOR;
+		wp_mkdir_p( $elementor_tmp_dir );
+		$tmp_file = $elementor_tmp_dir . self::$template_json_file_name;
+		file_put_contents( $tmp_file, json_encode( self::$mock_template ) );
+
 		$file = [
-			'tmp_name' => self::$temp_directory . self::$template_json_file_name,
+			'tmp_name' => $tmp_file,
 		];
 
-		// Make sure unfiltered uploads are allowed for this test.
 		add_filter( 'elementor/files/allow_unfiltered_upload', function( $enabled ) {
 			return true;
 		} );
 
 		$validation_result = Plugin::$instance->uploads_manager->handle_elementor_upload( $file, [ 'json' ] );
 
-		$result = ! is_wp_error( $validation_result );
+		$this->assertFalse( is_wp_error( $validation_result ) );
 
-		$this->assertTrue( $result );
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $elementor_tmp_dir );
 	}
 
 	public function test_handle_elementor_upload_base64() {
@@ -362,28 +366,104 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_remove_file_or_dir() {
-		// Create temp directory.
-		$temp_dir = self::$temp_directory . 'temp/';
-		wp_mkdir_p( $temp_dir );
-
-		// Make sure directory was created.
-		$this->assertTrue( is_dir( $temp_dir ) );
-
-		// Create temp file.
+		$temp_dir = Plugin::$instance->uploads_manager->create_unique_dir();
 		$temp_file = $temp_dir . self::$template_json_file_name;
 		file_put_contents( $temp_file, json_encode( self::$mock_template ) );
 
-		// Make sure file was created.
 		$this->assertTrue( file_exists( $temp_file ) );
 
 		Plugin::$instance->uploads_manager->remove_file_or_dir( $temp_file );
 
-		// Check that file was deleted.
 		$this->assertFalse( file_exists( $temp_file ) );
 
 		Plugin::$instance->uploads_manager->remove_file_or_dir( $temp_dir );
 
-		// Check that directory was deleted
 		$this->assertFalse( is_dir( $temp_dir ) );
+	}
+
+	public function test_remove_file_or_dir_refuses_path_outside_elementor() {
+		$outside_path = self::$temp_directory . 'outside/';
+		wp_mkdir_p( $outside_path );
+		$outside_file = $outside_path . 'test.json';
+		file_put_contents( $outside_file, '{}' );
+
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $outside_file );
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $outside_path );
+
+		$this->assertTrue( file_exists( $outside_file ) );
+		$this->assertTrue( is_dir( $outside_path ) );
+
+		unlink( $outside_file );
+		rmdir( $outside_path );
+	}
+
+	public function test_handle_elementor_upload_rejects_tmp_name_outside_allowed_dir() {
+		$file = [
+			'tmp_name' => self::$temp_directory . self::$template_json_file_name,
+		];
+
+		add_filter( 'elementor/files/allow_unfiltered_upload', function( $enabled ) {
+			return true;
+		} );
+
+		$validation_result = Plugin::$instance->uploads_manager->handle_elementor_upload( $file, [ 'json' ] );
+
+		$this->assertWPError( $validation_result );
+		$this->assertSame( 'file_error', $validation_result->get_error_code() );
+	}
+
+	public function test_handle_elementor_upload_rejects_path_traversal_in_tmp_name() {
+		$wp_upload_dir = wp_upload_dir();
+		$traversal_path = $wp_upload_dir['basedir'] . DIRECTORY_SEPARATOR . Uploads_Manager::ELEMENTOR_UPLOAD_DIR . '/../../../etc/passwd';
+
+		$file = [
+			'tmp_name' => $traversal_path,
+		];
+
+		add_filter( 'elementor/files/allow_unfiltered_upload', function( $enabled ) {
+			return true;
+		} );
+
+		$validation_result = Plugin::$instance->uploads_manager->handle_elementor_upload( $file, [ 'json' ] );
+
+		$this->assertWPError( $validation_result );
+	}
+
+	public function test_is_path_in_allowed_dir_blocks_traversal_attacks() {
+		$wp_upload_dir = wp_upload_dir();
+		$elementor_dir = $wp_upload_dir['basedir'] . '/elementor/';
+		$traversal_path = $elementor_dir . '../../../etc/passwd';
+
+		$reflection = new \ReflectionClass( Plugin::$instance->uploads_manager );
+		$method = $reflection->getMethod( 'is_path_in_allowed_dir' );
+		$method->setAccessible( true );
+
+		$this->assertFalse( $method->invoke( Plugin::$instance->uploads_manager, $traversal_path ) );
+	}
+
+	public function test_is_path_in_allowed_dir_allows_valid_paths() {
+		$valid_path = Plugin::$instance->uploads_manager->get_temp_dir() . 'test.json';
+
+		$reflection = new \ReflectionClass( Plugin::$instance->uploads_manager );
+		$method = $reflection->getMethod( 'is_path_in_allowed_dir' );
+		$method->setAccessible( true );
+
+		$this->assertTrue( $method->invoke( Plugin::$instance->uploads_manager, $valid_path ) );
+	}
+
+	public function test_is_path_in_allowed_dir_rejects_empty_path() {
+		$reflection = new \ReflectionClass( Plugin::$instance->uploads_manager );
+		$method = $reflection->getMethod( 'is_path_in_allowed_dir' );
+		$method->setAccessible( true );
+
+		$this->assertFalse( $method->invoke( Plugin::$instance->uploads_manager, '' ) );
+	}
+
+	public function test_is_path_in_allowed_dir_rejects_absolute_path_outside_uploads() {
+		$reflection = new \ReflectionClass( Plugin::$instance->uploads_manager );
+		$method = $reflection->getMethod( 'is_path_in_allowed_dir' );
+		$method->setAccessible( true );
+
+		$this->assertFalse( $method->invoke( Plugin::$instance->uploads_manager, '/etc/passwd' ) );
 	}
 }
