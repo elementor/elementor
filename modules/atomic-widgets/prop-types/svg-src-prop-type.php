@@ -3,20 +3,19 @@
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
+	exit;
 }
 
-class Image_Src_Prop_Type extends Object_Prop_Type {
+class Svg_Src_Prop_Type extends Object_Prop_Type {
 	public static function get_key(): string {
-		return 'image-src';
+		return 'svg-src';
 	}
 
 	protected function define_shape(): array {
 		return [
-			'id' => Image_Attachment_Id_Prop_Type::make()->description( 'The ID of the image attachment in the WordPress media library, applicable for internal images only' ),
+			'id' => Image_Attachment_Id_Prop_Type::make(),
 			'url' => Url_Prop_Type::make(),
 		];
 	}
@@ -31,8 +30,8 @@ class Image_Src_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function validate_value( $value ): bool {
-		$only_one_key = count( array_filter( $value ) ) === 1;
+		$has_at_least_one_key = count( array_filter( $value ) ) >= 1;
 
-		return $only_one_key && parent::validate_value( $value );
+		return $has_at_least_one_key && parent::validate_value( $value );
 	}
 }

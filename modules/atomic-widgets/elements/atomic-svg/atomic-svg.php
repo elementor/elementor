@@ -6,12 +6,15 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Svg_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Svg_Src_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -50,11 +53,18 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
+		$svg_src = Svg_Src_Prop_Type::make()->default_url( static::DEFAULT_SVG_URL );
+
 		return [
 			'classes' => Classes_Prop_Type::make()->default( [] ),
-			'svg' => Image_Src_Prop_Type::make()
-				->default_url( static::DEFAULT_SVG_URL )
-				->meta( 'is_svg', true ),
+			'svg' => Union_Prop_Type::make()
+				->add_prop_type( $svg_src )
+				->add_prop_type(
+					Image_Src_Prop_Type::make()
+						->default_url( static::DEFAULT_SVG_URL )
+						->meta( Dynamic_Prop_Type::ignore() )
+				)
+				->default( $svg_src->get_default() ),
 			'link' => Link_Prop_Type::make(),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
@@ -107,7 +117,14 @@ class Atomic_Svg extends Atomic_Widget_Base {
 
 	protected function build_template_context(): array {
 		$context = $this->build_base_template_context();
-		$context['svg_html'] = $this->get_processed_svg_html( $context['settings'] );
+
+		$svg_data = $context['settings']['svg'] ?? [];
+		$url = $svg_data['url'] ?? null;
+
+		$context['settings']['svg'] = [
+			'html' => $this->get_processed_svg_html( $context['settings'] ),
+			'url' => $url,
+		];
 
 		return $context;
 	}

@@ -1,5 +1,6 @@
 import { type ControlComponent, TextControl } from '@elementor/editor-controls';
 import {
+	atomicSvgMediaPropTypeUtil,
 	booleanPropTypeUtil,
 	imagePropTypeUtil,
 	imageSrcPropTypeUtil,
@@ -17,7 +18,7 @@ describe( 'Controls Registry', () => {
 	describe( 'Registry Integrity', () => {
 		const expectedPropTypeUtils = {
 			image: imagePropTypeUtil,
-			'svg-media': imageSrcPropTypeUtil,
+			'svg-media': atomicSvgMediaPropTypeUtil,
 			text: stringPropTypeUtil,
 			textarea: stringPropTypeUtil,
 			size: sizePropTypeUtil,
