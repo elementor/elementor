@@ -325,6 +325,27 @@ describe( 'InteractionDetails', () => {
 			expect( updatedInteraction.animation.value.direction.value ).toBe( 'bottom' );
 		} );
 
+		it( 'should keep a default direction for slide when the last direction toggle is cleared', () => {
+			const interaction = createInteractionItemValue( {
+				trigger: 'load',
+				effect: 'slide',
+				type: 'in',
+				direction: 'top',
+				duration: 300,
+				delay: 0,
+			} );
+
+			renderInteractionDetails( interaction );
+
+			const topButton = screen.getByRole( 'button', { name: 'From top' } );
+			expect( topButton ).toHaveAttribute( 'aria-pressed', 'true' );
+			fireEvent.click( topButton );
+
+			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
+			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
+			expect( updatedInteraction.animation.value.direction.value ).toBe( 'top' );
+		} );
+
 		it( 'should call onChange when duration changes', () => {
 			const interaction = createInteractionItemValue( {
 				trigger: 'load',

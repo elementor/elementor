@@ -38,6 +38,10 @@ describe( 'resolveDirection', () => {
 			expect( resolveDirection( true, undefined, undefined, 'left', 'slide' ) ).toBe( 'top' );
 		} );
 
+		it( 'should default to top when new direction is an empty string', () => {
+			expect( resolveDirection( true, undefined, '', 'left', 'slide' ) ).toBe( 'top' );
+		} );
+
 		it( 'should use new direction when also changing effect away from slide', () => {
 			expect( resolveDirection( true, 'fade', 'left', 'top', 'slide' ) ).toBe( 'left' );
 		} );
