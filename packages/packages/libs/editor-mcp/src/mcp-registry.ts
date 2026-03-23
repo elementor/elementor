@@ -50,14 +50,21 @@ const isAlphabet = ( str: string ): string | never => {
 	return str;
 };
 
+const toMCPTitle = ( namespace: string ): string => {
+	const capitalized = namespace.charAt( 0 ).toUpperCase() + namespace.slice( 1 );
+	return `Editor ${ capitalized }`;
+};
+
 /**
  *
  * @param namespace            The namespace of the MCP server. It should contain only lowercase alphabetic characters.
  * @param options
  * @param options.instructions
  */
-export const getMCPByDomain = ( namespace: string, options?: { instructions?: string } ): MCPRegistryEntry => {
-	const mcpName = `editor-${ isAlphabet( namespace ) }`;
+export const getMCPByDomain = async ( namespace: string, options?: { instructions?: string } ): Promise< MCPRegistryEntry > => {
+	await getSDK().waitForReady();
+	const mcpName = `editor_${ isAlphabet( namespace ) }`;
+	const title = toMCPTitle( namespace );
 	// @ts-ignore - QUnit fails this
 	if ( typeof globalThis.jest !== 'undefined' ) {
 		return mockMcpRegistry();
@@ -66,6 +73,7 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 		mcpRegistry[ namespace ] = new McpServer(
 			{
 				name: mcpName,
+				title,
 				version: '1.0.0',
 			},
 			{
@@ -76,6 +84,7 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 	const mcpServer = mcpRegistry[ namespace ];
 	const { addTool } = createToolRegistry( mcpServer );
 	return {
+		title,
 		waitForReady: () => getSDK().waitForReady(),
 		// @ts-expect-error: TS is unable to infer the type here
 		resource: async ( ...args: Parameters< McpServer[ 'registerResource' ] > ) => {
@@ -116,6 +125,7 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 };
 
 export interface MCPRegistryEntry {
+	title: string;
 	addTool: < T extends undefined | z.ZodRawShape = undefined, O extends undefined | z.ZodRawShape = undefined >(
 		opts: ToolRegistrationOptions< T, O >
 	) => void;
@@ -126,6 +136,18 @@ export interface MCPRegistryEntry {
 	mcpServer: McpServer;
 	waitForReady: () => Promise< void >;
 }
+
+/**
+ * Async version of getMCPByDomain that waits for the SDK to load before returning the registry entry.
+ *
+ * @param namespace            The namespace of the MCP server. It should contain only lowercase alphabetic characters.
+ * @param options
+ * @param options.instructions
+ */
+export const getAsyncMCPByDomain = async ( namespace: string, options?: { instructions?: string } ): Promise< MCPRegistryEntry > => {
+	await getSDK().waitForReady();
+	return getMCPByDomain( namespace, options );
+};
 
 type ResourceList = {
 	uri: string;
