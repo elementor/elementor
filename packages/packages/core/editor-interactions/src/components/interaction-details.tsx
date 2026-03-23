@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type ComponentType, useMemo } from 'react';
+import { type ComponentType, useEffect, useMemo } from 'react';
 import { PopoverContent } from '@elementor/editor-controls';
 import { type PropValue } from '@elementor/editor-props';
 import { Divider, Grid } from '@elementor/ui';
@@ -14,6 +14,7 @@ import {
 	extractSize,
 	extractString,
 } from '../utils/prop-value-utils';
+import { setActiveScrollInteraction } from '../stores/active-scroll-interaction-store';
 import { resolveDirection } from '../utils/resolve-direction';
 import { parseSizeValue } from '../utils/size-transform-utils';
 import { TimeFrameIndicator } from './controls/time-frame-indicator';
@@ -152,6 +153,15 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		end,
 		customEffects,
 	};
+
+	useEffect( () => {
+		if ( trigger === 'scrollOn' ) {
+			setActiveScrollInteraction( { start, end, relativeTo } );
+		} else {
+			setActiveScrollInteraction( null );
+		}
+		return () => setActiveScrollInteraction( null );
+	}, [ trigger, start, end, relativeTo ] );
 
 	const TriggerControl = useControlComponent( 'trigger', true );
 	const EffectControl = useControlComponent( 'effect' );

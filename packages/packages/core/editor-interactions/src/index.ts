@@ -43,3 +43,4 @@ export { resolveDirection } from './utils/resolve-direction';
 export { convertTimeUnit } from './utils/time-conversion';
 export { parseSizeValue, formatSizeValue } from './utils/size-transform-utils';
 export { useElementInteractions } from './hooks/use-element-interactions';
+export { setActiveScrollInteraction, useActiveScrollInteraction, type ActiveScrollInteraction } from './stores/active-scroll-interaction-store';
