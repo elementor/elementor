@@ -68,19 +68,10 @@ describe( 'trackVariableSyncToV3', () => {
 	} );
 
 	it( 'should not throw when dispatchEvent fails', () => {
-		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 		mockDispatchEvent.mockImplementation( () => {
 			throw new Error( 'dispatch failed' );
 		} );
 
 		expect( () => trackVariableSyncToV3( { variableLabel: 'Primary Color', action: 'sync' } ) ).not.toThrow();
-
-		expect( consoleErrorSpy ).toHaveBeenCalledWith( 'Failed to track variable sync to V3', {
-			variableLabel: 'Primary Color',
-			action: 'sync',
-			error: expect.any( Error ),
-		} );
-
-		consoleErrorSpy.mockRestore();
 	} );
 } );
