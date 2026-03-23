@@ -107,8 +107,8 @@ export async function startSyncToV3( page: Page, className: string ): Promise<vo
 	await classItem.hover();
 	await classItem.locator( 'button[aria-label="More actions"]' ).click();
 
-	await page.getByRole( 'menuitem' ).filter( { hasText: 'Sync to Version 3' } ).click();
-	await page.getByRole( 'button', { name: 'Sync to version 3' } ).click();
+	await page.getByRole( 'menuitem' ).filter( { hasText: 'Sync to Global Fonts' } ).click();
+	await page.getByRole( 'button', { name: 'Sync to Global Fonts' } ).click();
 }
 
 export async function saveAndCloseClassManagerViaDialog( page: Page ): Promise<void> {
