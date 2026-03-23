@@ -11,7 +11,7 @@ import { Trigger } from './components/controls/trigger';
 import { initCleanInteractionIdsOnDuplicate } from './hooks/on-duplicate';
 import { registerInteractionsControl } from './interactions-controls-registry';
 import { interactionsRepository } from './interactions-repository';
-import { initMcpInteractions } from './mcp';
+import { EDITOR_INTERACTIONS_MCP_INSTRUCTIONS, initMcpInteractions } from './mcp';
 import { documentElementsInteractionsProvider } from './providers/document-elements-interactions-provider';
 
 export function init() {
@@ -62,7 +62,7 @@ export function init() {
 			component: Repeat,
 		} );
 
-		initMcpInteractions( getMCPByDomain( 'interactions' ) );
+		initMcpInteractions( getMCPByDomain( 'interactions', { instructions: EDITOR_INTERACTIONS_MCP_INSTRUCTIONS } ) );
 	} catch ( error ) {
 		throw error;
 	}

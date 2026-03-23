@@ -6,8 +6,6 @@ import initMcpApplyGetGlobalClassUsages from './mcp-get-global-class-usages';
 import { initManageGlobalClasses } from './mcp-manage-global-classes';
 
 export const initMcpIntegration = ( reg: MCPRegistryEntry, canvasMcpEntry: MCPRegistryEntry ) => {
-	const { setMCPDescription } = reg;
-	setMCPDescription( 'MCP server for management of Elementor global classes' );
 	initMcpApplyUnapplyGlobalClasses( reg );
 	initMcpApplyGetGlobalClassUsages( reg );
 	initManageGlobalClasses( reg );

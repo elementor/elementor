@@ -67,5 +67,8 @@ export function init() {
 		getThemeColor: ( theme ) => theme.palette.global.dark,
 	} );
 
-	initMcpIntegration( getMCPByDomain( 'classes' ), getMCPByDomain( 'canvas' ) );
+	initMcpIntegration(
+		getMCPByDomain( 'classes', { instructions: 'MCP server for management of Elementor global classes' } ),
+		getMCPByDomain( 'canvas' )
+	);
 }
