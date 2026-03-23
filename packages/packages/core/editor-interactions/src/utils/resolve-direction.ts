@@ -12,7 +12,7 @@ export const resolveDirection = (
 	if ( currentEffect === 'slide' && hasDirection ) {
 		return newDirection || 'top';
 	}
-	
+
 	if ( hasDirection ) {
 		return newDirection;
 	}
