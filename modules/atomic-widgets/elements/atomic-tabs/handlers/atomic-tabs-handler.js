@@ -1,7 +1,7 @@
 import { register } from '@elementor/frontend-handlers';
 import { Alpine } from '@elementor/alpinejs';
 import { TAB_ELEMENT_TYPE, TAB_CONTENT_ELEMENT_TYPE, getTabId, getTabContentId, getIndex, getNextTab } from './utils';
-import { getActiveTabId, setActiveTabId } from './editor-tabs-selection';
+import { getActiveTabId, setActiveTabIndex } from './editor-tabs-selection';
 
 const SELECTED_CLASS = 'e--selected';
 
@@ -29,7 +29,7 @@ register( {
 					return getTabId( tabsId, index );
 				},
 				'@click'() {
-					setActiveTabId( tabsId, this.$el.id );
+					setActiveTabIndex( tabsId, getIndex( this.$el, TAB_ELEMENT_TYPE ) );
 				},
 				'@keydown.arrow-right.prevent'( event ) {
 					this.navigateTabs( event );

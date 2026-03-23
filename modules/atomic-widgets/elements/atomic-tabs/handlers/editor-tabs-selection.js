@@ -1,4 +1,5 @@
 import { Alpine } from '@elementor/alpinejs';
+import { getTabId } from './utils';
 
 const STORE_NAME = 'editor-atomic-tabs-selection';
 
@@ -12,12 +13,30 @@ function ensureStore() {
 
 export function getActiveTabId( tabsId, fallback ) {
 	const store = ensureStore();
+	const storedIndex = store[ tabsId ];
 
-	return store[ tabsId ] ?? fallback;
+	if ( storedIndex === undefined ) {
+		return fallback;
+	}
+
+	return getTabId( tabsId, storedIndex );
 }
 
-export function setActiveTabId( tabsId, tabId ) {
+export function setActiveTabIndex( tabsId, index ) {
 	const store = ensureStore();
 
-	store[ tabsId ] = tabId;
+	store[ tabsId ] = index;
+}
+
+export function validateActiveTab( tabsId, tabCount ) {
+	const store = ensureStore();
+	const storedIndex = store[ tabsId ];
+
+	if ( storedIndex === undefined ) {
+		return;
+	}
+
+	if ( storedIndex >= tabCount ) {
+		delete store[ tabsId ];
+	}
 }

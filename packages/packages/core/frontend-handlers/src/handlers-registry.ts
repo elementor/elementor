@@ -1,6 +1,12 @@
 type Settings = Record< string, unknown >;
 
-type ChildRenderCallback = () => void;
+type ChildRenderCallbackParams = {
+	childType: string;
+	childElement: Element;
+	eventType: 'rendered' | 'destroyed';
+};
+
+type ChildRenderCallback = ( params: ChildRenderCallbackParams ) => void;
 
 interface ListenToChildrenAPI {
 	render: ( callback: ChildRenderCallback ) => void;
