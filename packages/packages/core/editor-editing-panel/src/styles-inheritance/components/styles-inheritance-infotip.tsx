@@ -125,7 +125,7 @@ export const StylesInheritanceInfotip = ( {
 						},
 					} }
 				>
-					<Stack gap={ 1.5 } sx={ { pl: 3, pr: 1, pb: 2 } } role="list">
+					<Stack gap={ 1.5 } sx={ { pl: 2, pr: 1, pt: 1.5, pb: 1.5 } } role="list">
 						{ items.map( ( item, index ) => {
 							return (
 								<Box
@@ -235,15 +235,13 @@ function TooltipOrInfotip( {
 							sx: { mx: 2 },
 						},
 					} }
-					slotProps={ {
-						popper: {
-							modifiers: [
-								{
-									name: 'offset',
-									options: { offset: [ offsetX, 0 ] },
-								},
-							],
-						},
+					PopperProps={ {
+						modifiers: [
+							{
+								name: 'offset',
+								options: { offset: [ offsetX, 0 ] },
+							},
+						],
 					} }
 				>
 					{ children }
