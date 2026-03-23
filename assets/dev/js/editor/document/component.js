@@ -78,16 +78,10 @@ export default class Component extends ComponentBase {
 				return result;
 			},
 			findModelById: ( id, collection = elementor.elementsModel.get( 'elements' ) ) => {
-				if ( ! collection?.models ) {
-					return null;
-				}
-
-				for ( const model of collection.models ) {
-					if ( model.get( 'id' ) === id ) {
-						return model;
-					}
-
-					const found = this.utils.findModelById( id, model.get( 'elements' ) );
+				for ( const model of collection?.models ?? [] ) {
+					const found = model.get( 'id' ) === id
+						? model
+						: this.utils.findModelById( id, model.get( 'elements' ) );
 
 					if ( found ) {
 						return found;

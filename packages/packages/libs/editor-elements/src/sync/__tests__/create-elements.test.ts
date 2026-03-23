@@ -4,12 +4,20 @@ import { createElement } from '../create-element';
 import { createElements } from '../create-elements';
 import { deleteElement } from '../delete-element';
 import { getContainer } from '../get-container';
+import { addModelToParent, removeModelFromParent } from '../resolve-element';
 
 jest.mock( '../create-element' );
 jest.mock( '../delete-element' );
 jest.mock( '../get-container' );
+jest.mock( '../resolve-element', () => ( {
+	...jest.requireActual( '../resolve-element' ),
+	addModelToParent: jest.fn(),
+	removeModelFromParent: jest.fn(),
+} ) );
 
 const mockGetContainer = jest.mocked( getContainer );
+const mockAddModelToParent = jest.mocked( addModelToParent );
+const mockRemoveModelFromParent = jest.mocked( removeModelFromParent );
 
 describe( 'createElements', () => {
 	const historyMock = mockHistoryManager();
@@ -21,12 +29,12 @@ describe( 'createElements', () => {
 		mockCreateElement.mockClear();
 		mockDeleteElement.mockClear();
 		mockGetContainer.mockClear();
+		mockAddModelToParent.mockClear();
+		mockRemoveModelFromParent.mockClear();
 	} );
 
 	afterEach( () => {
 		historyMock.afterEach();
-		delete ( window as unknown as Record< string, unknown > ).$e;
-		delete ( window as unknown as Record< string, unknown > ).elementor;
 	} );
 
 	it( 'should create multiple elements and return their data', () => {
@@ -188,41 +196,8 @@ describe( 'createElements', () => {
 	} );
 
 	describe( 'model-tree fallback for async-rendered nested elements', () => {
-		function setupModelTreeMock( models: { id: string; elements: { models: unknown[]; add: jest.Mock; remove: jest.Mock; findWhere: jest.Mock } }[] ) {
-			const findModelById: jest.Mock = jest.fn( ( id: string, collection?: { models: unknown[] } ) => {
-				const items = ( collection?.models ?? models ) as typeof models;
-
-				for ( const model of items ) {
-					if ( model.id === id ) {
-						return { get: ( key: string ) => ( key === 'id' ? model.id : key === 'elements' ? model.elements : undefined ) };
-					}
-				}
-
-				return null;
-			} );
-
-			( window as unknown as Record< string, unknown > ).$e = {
-				components: {
-					get: () => ( { utils: { findModelById } } ),
-				},
-			};
-
-			return findModelById;
-		}
-
 		it( 'should fall back to model-tree removal on undo when views are unavailable', () => {
 			// Arrange.
-			const parentElements = {
-				models: [],
-				add: jest.fn(),
-				remove: jest.fn(),
-				findWhere: jest.fn( ( attrs: Record< string, unknown > ) =>
-					( { get: () => attrs.id } )
-				),
-			};
-
-			setupModelTreeMock( [ { id: 'parent-1', elements: parentElements } ] );
-
 			const mockParent = createMockContainer( 'parent-1', [] );
 			const mockElement = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
 			mockCreateElement.mockReturnValueOnce( mockElement );
@@ -232,32 +207,18 @@ describe( 'createElements', () => {
 				title: 'Add Element',
 			} );
 
-			// Act — make both lookup and getContainer return null to trigger fallback.
+			// Act.
 			mockElement.lookup = jest.fn().mockReturnValue( null );
 			mockGetContainer.mockReturnValue( null );
 
 			historyMock.instance.undo();
 
-			// Assert — model was removed from the parent's collection silently.
-			expect( parentElements.remove ).toHaveBeenCalledWith(
-				expect.objectContaining( { get: expect.any( Function ) } ),
-				{ silent: true }
-			);
+			// Assert.
+			expect( mockRemoveModelFromParent ).toHaveBeenCalledWith( 'parent-1', 'element-1' );
 		} );
 
 		it( 'should fall back to model-tree addition on redo when views are unavailable', () => {
 			// Arrange.
-			const parentElements = {
-				models: [],
-				add: jest.fn(),
-				remove: jest.fn(),
-				findWhere: jest.fn( ( attrs: Record< string, unknown > ) =>
-					( { get: () => attrs.id } )
-				),
-			};
-
-			setupModelTreeMock( [ { id: 'parent-1', elements: parentElements } ] );
-
 			const mockParent = createMockContainer( 'parent-1', [] );
 			const mockElement = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
 			mockCreateElement.mockReturnValueOnce( mockElement );
@@ -269,16 +230,16 @@ describe( 'createElements', () => {
 
 			historyMock.instance.undo();
 
-			// Act — make parent unresolvable to trigger model-tree fallback on redo.
+			// Act.
 			mockParent.lookup = jest.fn().mockReturnValue( null );
 			mockGetContainer.mockReturnValue( null );
 
 			historyMock.instance.redo();
 
-			// Assert — model was added to the parent's collection silently.
-			expect( parentElements.add ).toHaveBeenCalledWith(
-				expect.objectContaining( { id: 'element-1', elType: 'widget' } ),
-				expect.objectContaining( { silent: true } )
+			// Assert.
+			expect( mockAddModelToParent ).toHaveBeenCalledWith(
+				'parent-1',
+				expect.objectContaining( { id: 'element-1', elType: 'widget' } )
 			);
 		} );
 	} );
