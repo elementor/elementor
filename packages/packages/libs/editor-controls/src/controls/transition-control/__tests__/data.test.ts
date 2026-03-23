@@ -4,6 +4,13 @@ jest.mock( '@wordpress/i18n', () => ( {
 	__: ( label: string ) => label,
 } ) );
 
+const mockHasProInstalled = jest.fn( () => false );
+
+jest.mock( '@elementor/utils', () => ( {
+	...jest.requireActual( '@elementor/utils' ),
+	hasProInstalled: () => mockHasProInstalled(),
+} ) );
+
 const setSiteDirection = ( isRtl: boolean ) => {
 	window.elementorFrontend = {
 		config: {
@@ -19,13 +26,10 @@ const setProInstalled = ( version?: string ) => {
 				version,
 			},
 		};
-		window.elementor = {
-			...window.elementor,
-			helpers: { hasPro: () => true },
-		};
+		mockHasProInstalled.mockReturnValue( true );
 	} else {
 		delete window.elementorPro;
-		delete window.elementor;
+		mockHasProInstalled.mockReturnValue( false );
 	}
 };
 
@@ -45,7 +49,7 @@ describe( 'transitionProperties RTL support', () => {
 	beforeEach( () => {
 		delete window.elementorFrontend;
 		delete window.elementorPro;
-		delete window.elementor;
+		mockHasProInstalled.mockReturnValue( false );
 		jest.resetModules();
 	} );
 
@@ -97,7 +101,7 @@ describe( 'transitionProperties Pro version handling', () => {
 	beforeEach( () => {
 		delete window.elementorFrontend;
 		delete window.elementorPro;
-		delete window.elementor;
+		mockHasProInstalled.mockReturnValue( false );
 		jest.resetModules();
 	} );
 
@@ -154,12 +158,9 @@ describe( 'transitionProperties Pro version handling', () => {
 	} );
 
 	it( 'should show only Default category when Pro is installed but version is undefined', () => {
+		mockHasProInstalled.mockReturnValue( true );
 		window.elementorPro = {
 			config: {},
-		};
-		window.elementor = {
-			...window.elementor,
-			helpers: { hasPro: () => true },
 		};
 
 		const props = getTransitionProperties();

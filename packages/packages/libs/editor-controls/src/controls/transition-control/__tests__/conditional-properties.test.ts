@@ -1,12 +1,18 @@
 type TransitionCategory = { label: string };
 
+const mockHasProInstalled = jest.fn( () => false );
+
+jest.mock( '@elementor/utils', () => ( {
+	...jest.requireActual( '@elementor/utils' ),
+	hasProInstalled: () => mockHasProInstalled(),
+} ) );
+
 describe( 'transition properties conditional loading', () => {
 	const originalElementorPro = window.elementorPro;
-	const originalElementor = window.elementor;
 
 	afterEach( () => {
 		window.elementorPro = originalElementorPro;
-		window.elementor = originalElementor;
+		mockHasProInstalled.mockReturnValue( false );
 		jest.resetModules();
 	} );
 
@@ -14,29 +20,22 @@ describe( 'transition properties conditional loading', () => {
 		{
 			scenario: 'Pro not installed',
 			proConfig: undefined,
-			hasProHelper: false,
+			hasPro: false,
 			expectedLength: 10,
 			expectedHasMargin: true,
 		},
 		{
 			scenario: 'Pro version below 3.35',
 			proConfig: { config: { version: '3.34.0' } },
-			hasProHelper: true,
+			hasPro: true,
 			expectedLength: 1,
 			expectedHasMargin: false,
 		},
 	] )(
 		'should load correct properties when $scenario',
-		( { proConfig, hasProHelper, expectedLength, expectedHasMargin } ) => {
+		( { proConfig, hasPro, expectedLength, expectedHasMargin } ) => {
 			window.elementorPro = proConfig;
-			if ( hasProHelper ) {
-				window.elementor = {
-					...window.elementor,
-					helpers: { hasPro: () => true },
-				};
-			} else {
-				delete window.elementor;
-			}
+			mockHasProInstalled.mockReturnValue( hasPro );
 
 			const { transitionProperties: props } = require( '../data' );
 
