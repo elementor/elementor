@@ -101,6 +101,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content\Atomic_Tab_Content;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Placeholder;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Success_Message\Form_Success_Message;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Error_Message\Form_Error_Message;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
@@ -285,6 +286,8 @@ class Module extends BaseModule {
 			$elements_manager->register_element_type( new Atomic_Form() );
 			$elements_manager->register_element_type( new Form_Success_Message() );
 			$elements_manager->register_element_type( new Form_Error_Message() );
+		} elseif ( ! \Elementor\Utils::has_pro() ) {
+			$elements_manager->register_element_type( new Atomic_Form_Placeholder() );
 		}
 	}
 
@@ -442,5 +445,19 @@ class Module extends BaseModule {
 		] );
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 		wp_add_inline_style( 'elementor-editor', $inline_css );
+
+		$placeholder_css = implode( '', [
+			'.e-form-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; text-align: center; gap: 8px; min-height: 200px; }',
+			'.e-form-placeholder__icon { font-size: 32px; color: #0000008A; margin-bottom: 4px; }',
+			'.e-form-placeholder__title { font-size: 16px; font-weight: 600; color: #000000; }',
+			'.e-form-placeholder__description { font-size: 12px; color: #3F444B; font-weight: 400; }',
+			'.e-form-placeholder__actions { display: flex; gap: 12px; margin-top: 12px; }',
+			'.e-form-placeholder__remove-btn { display: flex; justify-content: center; align-items: center; padding: 4px 10px; height: 30px; border: 1px solid rgba(81, 89, 98, 0.5); border-radius: 8px; background: #fff; cursor: pointer; font-family: Roboto, sans-serif; font-size: 13px; font-weight: 500; line-height: 22px; letter-spacing: 0.46px; color: #515962; box-sizing: border-box; }',
+			'.e-form-placeholder__remove-btn:hover { background: #f1f2f3; }',
+			'.e-form-placeholder__unlock-btn { display: flex; justify-content: center; align-items: center; padding: 4px 10px; height: 30px; border: none; border-radius: 8px; background: #93003F; color: #fff; cursor: pointer; font-family: Roboto, sans-serif; font-size: 13px; font-weight: 500; line-height: 22px; letter-spacing: 0.46px; text-decoration: none; box-sizing: border-box; }',
+			'.e-form-placeholder__unlock-btn:hover { background: #7a0032; color: #fff; }',
+		] );
+		wp_add_inline_style( 'elementor-frontend', $placeholder_css );
+		wp_add_inline_style( 'elementor-editor', $placeholder_css );
 	}
 }
