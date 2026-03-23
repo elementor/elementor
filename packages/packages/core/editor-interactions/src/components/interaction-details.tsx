@@ -14,7 +14,7 @@ import {
 	extractSize,
 	extractString,
 } from '../utils/prop-value-utils';
-import { setActiveScrollInteraction } from '../stores/active-scroll-interaction-store';
+import { dispatchScrollInteraction } from '../scroll-interaction-event';
 import { resolveDirection } from '../utils/resolve-direction';
 import { parseSizeValue } from '../utils/size-transform-utils';
 import { TimeFrameIndicator } from './controls/time-frame-indicator';
@@ -156,11 +156,11 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 
 	useEffect( () => {
 		if ( trigger === 'scrollOn' ) {
-			setActiveScrollInteraction( { start, end, relativeTo } );
+			dispatchScrollInteraction( { start, end, relativeTo } );
 		} else {
-			setActiveScrollInteraction( null );
+			dispatchScrollInteraction( null );
 		}
-		return () => setActiveScrollInteraction( null );
+		return () => dispatchScrollInteraction( null );
 	}, [ trigger, start, end, relativeTo ] );
 
 	const TriggerControl = useControlComponent( 'trigger', true );
