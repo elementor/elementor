@@ -1,5 +1,5 @@
 import { injectIntoLogic, injectIntoTop } from '@elementor/editor';
-import { getMCPByDomain } from '@elementor/editor-mcp';
+import { getAsyncMCPByDomain } from '@elementor/editor-mcp';
 
 import { ClassesRename } from './components/classes-rename';
 import { ElementsOverlays } from './components/elements-overlays';
@@ -51,11 +51,11 @@ export function init() {
 		component: ClassesRename,
 	} );
 
-	initCanvasMcp(
-		getMCPByDomain( 'canvas', {
-			instructions: mcpDescription,
-		} )
-	);
+	getAsyncMCPByDomain( 'canvas', {
+		instructions: mcpDescription,
+	} ).then( ( reg ) => {
+		initCanvasMcp( reg );
+	} );
 
 	initTabsModelExtensions();
 }

@@ -19,6 +19,7 @@ import { PrefetchCssClassUsage } from './hooks/use-prefetch-css-class-usage';
 import { initMcpIntegration } from './mcp-integration';
 import { slice } from './store';
 import { SyncWithDocumentSave } from './sync-with-document';
+import { getAsyncMCPByDomain } from '@elementor/editor-mcp';
 
 export function init() {
 	registerSlice( slice );
@@ -66,5 +67,10 @@ export function init() {
 		getThemeColor: ( theme ) => theme.palette.global.dark,
 	} );
 
-	initMcpIntegration();
+	Promise.all([
+		getAsyncMCPByDomain( 'classes' ),
+		getAsyncMCPByDomain( 'canvas' ),
+	]).then(([classesMcpEntry, canvasMcpEntry]) => {
+		initMcpIntegration( classesMcpEntry, canvasMcpEntry);
+	});
 }

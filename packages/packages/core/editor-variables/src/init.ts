@@ -16,6 +16,7 @@ import { StyleVariablesRenderer } from './renderers/style-variables-renderer';
 import { registerRepeaterInjections } from './repeater-injections';
 import { service as variablesService } from './service';
 import { hasVariableType } from './variables-registry/variable-type-registry';
+import { getAsyncMCPByDomain } from '@elementor/editor-mcp';
 
 const { registerPopoverAction } = controlActionsMenu;
 
@@ -44,8 +45,12 @@ export function init() {
 		useProps: usePropVariableAction,
 	} );
 
-	variablesService.init().then( () => {
-		initMcp();
+	variablesService.init().then( async () => {
+		const [canvasMcpEntry, variablesMcpEntry] = await Promise.all([
+			getAsyncMCPByDomain( 'canvas' ),
+			getAsyncMCPByDomain( 'variables' ),
+		]);
+		initMcp(variablesMcpEntry, canvasMcpEntry);
 	} );
 
 	injectIntoTop( {
