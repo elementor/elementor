@@ -127,7 +127,7 @@ jobs:
           )
           
           # Run cursor-agent with the processed prompt
-          timeout 180 cursor-agent --force --model "sonnet-4.5-thinking" --output-format=text --print "$PROMPT" "$DYNAMIC_CONTEXT" || {
+          timeout 180 cursor-agent --force --model "composer-2" --output-format=text --print "$PROMPT" "$DYNAMIC_CONTEXT" || {
             exit_code=$?
             if [ $exit_code -eq 124 ]; then
               echo "❌ Review timed out after 3 minutes"
