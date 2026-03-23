@@ -73,7 +73,8 @@
     "@tiptap/extension-link": "^3.11.1",
     "@tiptap/pm": "^3.11.1",
     "@tiptap/react": "^3.11.1",
-    "@tiptap/starter-kit": "^3.11.1"
+    "@tiptap/starter-kit": "^3.11.1",
+    "primereact": "^10.9.7"
   },
   "devDependencies": {
     "monaco-types": "^0.1.0",

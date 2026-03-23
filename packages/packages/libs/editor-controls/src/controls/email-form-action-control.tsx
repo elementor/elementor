@@ -9,8 +9,8 @@ import { ControlFormLabel } from '../components/control-form-label';
 import { ControlLabel } from '../components/control-label';
 import { createControl } from '../create-control';
 import { ChipsControl } from './chips-control';
+import { MentionTextAreaControl } from './mention-text-area-control';
 import { SelectControl } from './select-control';
-import { TextAreaControl } from './text-area-control';
 import { TextControl } from './text-control';
 
 const EmailField = ( { bind, label, placeholder }: { bind: string; label: string; placeholder?: string } ) => (
@@ -48,10 +48,10 @@ const MessageField = () => (
 			<Grid item>
 				<ControlFormLabel>{ __( 'Message', 'elementor' ) }</ControlFormLabel>
 			</Grid>
-			<Grid item>
-				<TextAreaControl
+		<Grid item>
+				<MentionTextAreaControl
 					placeholder={ __(
-						'By default, all form fields are sent via [all-fields] shortcode.',
+						'Type @ to insert a field. By default, all form fields are sent.',
 						'elementor'
 					) }
 				/>
