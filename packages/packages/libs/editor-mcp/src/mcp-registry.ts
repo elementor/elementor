@@ -4,7 +4,12 @@ import { McpServer, type ToolCallback } from '@modelcontextprotocol/sdk/server/m
 import { type RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import { type ServerNotification, type ServerRequest } from '@modelcontextprotocol/sdk/types.js';
 
-import { ANGIE_MODEL_PREFERENCES, type AngieModelPreferences } from './angie-annotations';
+import {
+	ANGIE_MODEL_PREFERENCES,
+	ANGIE_REQUIRED_RESOURCES,
+	type AngieModelPreferences,
+	createDefaultModelPreferences,
+} from './angie-annotations';
 import { mockMcpRegistry } from './test-utils/mock-mcp-registry';
 import { getSDK } from './utils/get-sdk';
 
@@ -73,15 +78,20 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 	return {
 		waitForReady: () => getSDK().waitForReady(),
 		// @ts-expect-error: TS is unable to infer the type here
-		resource: async ( ...args: Parameters< McpServer[ 'resource' ] > ) => {
+		resource: async ( ...args: Parameters< McpServer[ 'registerResource' ] > ) => {
 			await getSDK().waitForReady();
-			return mcpServer.resource( ...args );
+			return mcpServer.registerResource( ...args );
 		},
 		sendResourceUpdated: ( ...args: Parameters< McpServer[ 'server' ][ 'sendResourceUpdated' ] > ) => {
-			return new Promise( async () => {
-				await getSDK().waitForReady();
-				mcpServer.server.sendResourceUpdated( ...args );
-			} );
+			return getSDK()
+				.waitForReady()
+				.then( () => mcpServer.server.sendResourceUpdated( ...args ) )
+				.catch( ( error: Error ) => {
+					if ( error?.message?.includes( 'Not connected' ) ) {
+						return; // Expected when no MCP client is connected yet
+					}
+					throw error;
+				} );
 		},
 		mcpServer,
 		addTool,
@@ -112,7 +122,7 @@ export interface MCPRegistryEntry {
 	setMCPDescription: ( description: string ) => void;
 	getActiveChatInfo: () => { sessionId: string; expiresAt: number };
 	sendResourceUpdated: McpServer[ 'server' ][ 'sendResourceUpdated' ];
-	resource: McpServer[ 'resource' ];
+	resource: McpServer[ 'registerResource' ];
 	mcpServer: McpServer;
 	waitForReady: () => Promise< void >;
 }
@@ -169,7 +179,6 @@ function createToolRegistry( server: McpServer ) {
 			try {
 				const invocationResult = await opts.handler( opts.schema ? args : {}, extra );
 				return {
-					// TODO: Uncomment this when the outputSchema is stable
 					// structuredContent: typeof invocationResult === 'string' ? undefined : invocationResult,
 					content: [
 						{
@@ -201,12 +210,10 @@ function createToolRegistry( server: McpServer ) {
 			readOnlyHint: opts.isDestructive ? false : undefined,
 			title: opts.name,
 		};
-		if ( opts.requiredResources ) {
-			annotations[ 'angie/requiredResources' ] = opts.requiredResources;
-		}
-		if ( opts.modelPreferences ) {
-			annotations[ ANGIE_MODEL_PREFERENCES ] = opts.modelPreferences;
-		}
+		const angieAnnotations = {
+			[ ANGIE_MODEL_PREFERENCES ]: opts.modelPreferences ?? createDefaultModelPreferences(),
+			[ ANGIE_REQUIRED_RESOURCES ]: opts.requiredResources ?? undefined,
+		};
 		server.registerTool(
 			opts.name,
 			{
@@ -216,6 +223,7 @@ function createToolRegistry( server: McpServer ) {
 				// outputSchema,
 				title: opts.name,
 				annotations,
+				_meta: angieAnnotations,
 			},
 			toolCallback
 		);

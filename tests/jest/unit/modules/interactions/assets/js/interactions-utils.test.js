@@ -97,6 +97,43 @@ describe( 'interactions-utils', () => {
 			expect( result ).toEqual( { x: [ -100, 0 ] } );
 			document.documentElement.dir = originalDir;
 		} );
+
+		describe( 'diagonal directions', () => {
+			it( 'should generate slide top-left in keyframes with both x and y axes', () => {
+				const result = getKeyframes( 'slide', 'in', 'top-left' );
+				expect( result ).toEqual( { y: [ -100, 0 ], x: [ -100, 0 ] } );
+			} );
+
+			it( 'should generate slide top-right in keyframes', () => {
+				const result = getKeyframes( 'slide', 'in', 'top-right' );
+				expect( result ).toEqual( { y: [ -100, 0 ], x: [ 100, 0 ] } );
+			} );
+
+			it( 'should generate slide bottom-left in keyframes', () => {
+				const result = getKeyframes( 'slide', 'in', 'bottom-left' );
+				expect( result ).toEqual( { y: [ 100, 0 ], x: [ -100, 0 ] } );
+			} );
+
+			it( 'should generate slide bottom-right in keyframes', () => {
+				const result = getKeyframes( 'slide', 'in', 'bottom-right' );
+				expect( result ).toEqual( { y: [ 100, 0 ], x: [ 100, 0 ] } );
+			} );
+
+			it( 'should generate slide out keyframes for a diagonal direction', () => {
+				const result = getKeyframes( 'slide', 'out', 'top-left' );
+				expect( result ).toEqual( { y: [ 0, -100 ], x: [ 0, -100 ] } );
+			} );
+
+			it( 'should combine fade opacity with diagonal direction movement', () => {
+				const result = getKeyframes( 'fade', 'in', 'top-left' );
+				expect( result ).toEqual( { opacity: [ 0, 1 ], y: [ -100, 0 ], x: [ -100, 0 ] } );
+			} );
+
+			it( 'should ignore unknown parts in a direction string', () => {
+				const result = getKeyframes( 'slide', 'in', 'top-invalid' );
+				expect( result ).toEqual( { y: [ -100, 0 ] } );
+			} );
+		} );
 	} );
 
 	describe( 'parseAnimationName', () => {
