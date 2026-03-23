@@ -14,7 +14,7 @@ import {
 	extractSize,
 	extractString,
 } from '../utils/prop-value-utils';
-import { dispatchScrollInteraction } from '../scroll-interaction-event';
+import { dispatchScrollInteraction } from '../utils/scroll-interaction-event';
 import { resolveDirection } from '../utils/resolve-direction';
 import { parseSizeValue } from '../utils/size-transform-utils';
 import { TimeFrameIndicator } from './controls/time-frame-indicator';

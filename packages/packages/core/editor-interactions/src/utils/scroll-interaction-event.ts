@@ -1,4 +1,4 @@
-import { type SizeStringValue } from './types';
+import { type SizeStringValue } from '../types';
 
 export type ActiveScrollInteraction = {
 	start: SizeStringValue;

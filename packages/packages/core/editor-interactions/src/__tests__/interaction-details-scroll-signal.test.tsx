@@ -2,14 +2,14 @@ import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
 
 import { InteractionDetails } from '../components/interaction-details';
-import { dispatchScrollInteraction } from '../scroll-interaction-event';
+import { dispatchScrollInteraction } from '../utils/scroll-interaction-event';
 import { createInteractionItemValue } from './utils';
 
 jest.mock( '../interactions-controls-registry', () => ( {
 	getInteractionsControl: jest.fn( () => null ),
 } ) );
 
-jest.mock( '../scroll-interaction-event', () => ( {
+jest.mock( '../utils/scroll-interaction-event', () => ( {
 	dispatchScrollInteraction: jest.fn(),
 } ) );
 
