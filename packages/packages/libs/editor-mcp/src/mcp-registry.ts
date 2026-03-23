@@ -25,20 +25,31 @@ export const registerMcp = ( mcp: McpServer, name: string ) => {
 	mcpRegistry[ mcpName ] = mcp;
 };
 
-export async function activateMcpRegistration( sdk: AngieMcpSdk ) {
-	if ( isMcpRegistrationActivated ) {
+export async function activateMcpRegistration( sdk: AngieMcpSdk, entries = Object.entries( mcpRegistry ), retry = 3 ) {
+	if ( retry === 0 ) {
+		console.error( 'Failed to register MCP after 3 retries. failed entries: ', entries );
 		return;
 	}
-	isMcpRegistrationActivated = true;
-	const mcpServerList = Object.entries( mcpRegistry );
-	for await ( const entry of mcpServerList ) {
+	if ( entries.length === 0 ) {
+		return;
+	}
+	const failed = [];
+	for await ( const entry of entries ) {
 		const [ key, mcpServer ] = entry;
-		await sdk.registerLocalServer( {
-			name: `editor-${ key }`,
-			server: mcpServer,
-			version: '1.0.0',
-			description: mcpDescriptions[ key ] || key,
-		} );
+		try {
+			await sdk.registerLocalServer( {
+				title: toMCPTitle( key ),
+				name: `editor-${ key }`,
+				server: mcpServer,
+				version: '1.0.0',
+				description: mcpDescriptions[ key ] || key,
+			} );
+		} catch {
+			failed.push( entry );
+		}
+	}
+	if ( failed.length > 0 ) {
+		return activateMcpRegistration( sdk, failed, retry - 1 );
 	}
 }
 
@@ -53,14 +64,6 @@ const isAlphabet = ( str: string ): string | never => {
 export const toMCPTitle = ( namespace: string ): string => {
 	const capitalized = namespace.charAt( 0 ).toUpperCase() + namespace.slice( 1 );
 	return `Editor ${ capitalized }`;
-};
-
-export const getMCPByDomainAsync = async (
-	namespace: string,
-	options?: { instructions?: string }
-): Promise< MCPRegistryEntry > => {
-	await getSDK().waitForReady();
-	return getMCPByDomain( namespace, options );
 };
 
 /**
