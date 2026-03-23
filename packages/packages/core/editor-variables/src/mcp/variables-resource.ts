@@ -1,17 +1,14 @@
-import { getMCPByDomain } from '@elementor/editor-mcp';
+import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
 import { service } from '../service';
 import { type TVariable } from '../storage';
 
 export const GLOBAL_VARIABLES_URI = 'elementor://global-variables';
 
-export const initVariablesResource = () => {
-	const canvasMcpEntry = getMCPByDomain( 'canvas' );
-	const variablesMcpEntry = getMCPByDomain( 'variables' );
-
+export const initVariablesResource = ( variablesMcpEntry: MCPRegistryEntry, canvasMcpEntry: MCPRegistryEntry ) => {
 	[ canvasMcpEntry, variablesMcpEntry ].forEach( ( entry ) => {
-		const { mcpServer } = entry;
-		mcpServer.resource(
+		const { resource, sendResourceUpdated } = entry;
+		resource(
 			'global-variables',
 			GLOBAL_VARIABLES_URI,
 			{
@@ -33,7 +30,7 @@ export const initVariablesResource = () => {
 		);
 
 		window.addEventListener( 'variables:updated', () => {
-			mcpServer.server.sendResourceUpdated( {
+			sendResourceUpdated( {
 				uri: GLOBAL_VARIABLES_URI,
 			} );
 		} );
