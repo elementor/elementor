@@ -18,10 +18,12 @@ const ProPlanNoticeRoot = styled( Box )( ( { theme } ) => ( {
 	borderRadius: theme.spacing( 2 ),
 	backgroundColor: theme.palette.mode === 'dark' ? PRO_PLAN_NOTICE_BG_DARK : PRO_PLAN_NOTICE_BG_LIGHT,
 	width: 'max-content',
-	maxWidth: '100%',
+	gridColumn: '1 / -1',
+	marginBlockStart: theme.spacing( 2 ),
 	[ theme.breakpoints.down( 'sm' ) ]: {
 		flexDirection: 'column',
 		justifyContent: 'center',
+		justifySelf: 'center',
 	},
 } ) );
 

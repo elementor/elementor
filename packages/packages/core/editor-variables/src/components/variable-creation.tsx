@@ -142,11 +142,12 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 						} }
 						onErrorChange={ ( errorMsg ) => {
 							setLabelFieldError( {
-								value: label,
+								value: '',
 								message: errorMsg,
 							} );
 						} }
 						onKeyDown={ handleKeyDown }
+						focusOnShow
 					/>
 				</FormField>
 				{ ValueField && (

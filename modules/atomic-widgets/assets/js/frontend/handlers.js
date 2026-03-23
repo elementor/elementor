@@ -86,7 +86,17 @@ function handleAtomicFormSubmit( element ) {
 			if ( payload ) {
 				try {
 					const response = await submitAtomicForm( payload );
-					setFormState( element, response?.success ? 'success' : 'error' );
+					const state = response?.success ? 'success' : 'error';
+
+					setFormState( element, state );
+
+					if ( response?.success ) {
+						form.reset();
+
+						form.addEventListener( 'input', () => {
+							setFormState( element, 'default' );
+						}, { once: true } );
+					}
 				} catch ( error ) {
 					setFormState( element, 'error' );
 				} finally {
@@ -147,7 +157,7 @@ function getAtomicFormFields( form ) {
 
 		const label = getAtomicFormFieldLabel( input, form );
 		const type = getAtomicFormFieldType( input );
-		const value = input.value;
+		const value = getAtomicFormFieldValue( input, type );
 
 		fields.push( {
 			id,
@@ -183,6 +193,14 @@ function getAtomicFormFieldLabel( field, form ) {
 	const placeholder = field.getAttribute( 'placeholder' );
 
 	return placeholder || '';
+}
+
+function getAtomicFormFieldValue( input, type ) {
+	if ( 'checkbox' !== type ) {
+		return input.value;
+	}
+
+	return input.checked ? input.value || 'on' : '';
 }
 
 function getAtomicFormFieldType( field ) {

@@ -439,8 +439,8 @@ class Module extends BaseModule {
 	private function add_inline_styles() {
 		$inline_css = implode( '', [
 			'.e-heading-base a, .e-paragraph-base a { all: unset; cursor: pointer; }',
-			'form[data-element_type="e-form"].form-state-success .message-success,',
-			'form[data-element_type="e-form"].form-state-error .message-error',
+			'form[data-element_type="e-form"].form-state-success [data-element_type="e-form-success-message"],',
+			'form[data-element_type="e-form"].form-state-error [data-element_type="e-form-error-message"]',
 			'{ display: block; }',
 		] );
 		wp_add_inline_style( 'elementor-frontend', $inline_css );

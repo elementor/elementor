@@ -64,5 +64,3 @@ export const InteractionsPromotionChip = forwardRef< InteractionsPromotionChipRe
 		);
 	}
 );
-
-InteractionsPromotionChip.displayName = 'InteractionsPromotionChip';
