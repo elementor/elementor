@@ -16,6 +16,12 @@ export const imageSrcPropTypeUtil = createPropUtils(
 				url: unknownChildrenSchema,
 			} )
 		)
+		.or(
+			z.strictObject( {
+				id: unknownChildrenSchema,
+				url: unknownChildrenSchema,
+			} )
+		)
 );
 
 export type ImageSrcPropValue = z.infer< typeof imageSrcPropTypeUtil.schema >;

@@ -31,8 +31,8 @@ class Image_Src_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function validate_value( $value ): bool {
-		$only_one_key = count( array_filter( $value ) ) === 1;
+		$has_at_least_one_key = count( array_filter( $value ) ) >= 1;
 
-		return $only_one_key && parent::validate_value( $value );
+		return $has_at_least_one_key && parent::validate_value( $value );
 	}
 }

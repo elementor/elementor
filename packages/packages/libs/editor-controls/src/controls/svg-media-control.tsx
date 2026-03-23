@@ -61,7 +61,10 @@ export const SvgMediaControl = createControl( () => {
 					$$type: 'image-attachment-id',
 					value: selectedAttachment.id,
 				},
-				url: null,
+				url: {
+					$$type: 'url',
+					value: selectedAttachment.url,
+				},
 			} );
 		},
 	} );
