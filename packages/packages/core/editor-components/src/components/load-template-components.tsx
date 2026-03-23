@@ -8,7 +8,7 @@ export const LoadTemplateComponents = () => {
 	if ( isHandlingTemplateStyles() ) {
 		return <LoadTemplateComponentsInternal />;
 	}
-	
+
 	return null;
 };
 
