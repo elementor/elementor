@@ -13,7 +13,7 @@ export function createProPromotionElementType( type: string ): typeof ElementTyp
 		}
 
 		getView() {
-			return createProPromotionView( type );
+			return createProPromotionView();
 		}
 
 		getModel() {
@@ -22,7 +22,7 @@ export function createProPromotionElementType( type: string ): typeof ElementTyp
 	};
 }
 
-function createProPromotionView( type: string ): typeof ElementView {
+function createProPromotionView(): typeof ElementView {
 	const legacyWindow = window as unknown as LegacyWindow;
 
 	return class extends legacyWindow.elementor.modules.elements.views.Widget {
@@ -33,10 +33,10 @@ function createProPromotionView( type: string ): typeof ElementView {
 				e.preventDefault();
 				e.stopPropagation();
 
-				( window as unknown as { $e: { run: ( command: string, args: object ) => void } } )
-					.$e.run( 'document/elements/delete', {
-						container: this.container,
-					} );
+				( window as unknown as { $e: { run: ( command: string, args: object ) => void } } ).$e.run(
+					'document/elements/delete',
+					{ container: this.container }
+				);
 			} );
 
 			this.bindUIElements();
@@ -44,7 +44,7 @@ function createProPromotionView( type: string ): typeof ElementView {
 			window.top?.dispatchEvent(
 				new CustomEvent( 'elementor/preview/atomic-widget/render', {
 					detail: { id: this.model.get( 'id' ) },
-				} ),
+				} )
 			);
 
 			this.isRendered = true;
@@ -62,7 +62,7 @@ function createProPromotionView( type: string ): typeof ElementView {
 			window.top?.dispatchEvent(
 				new CustomEvent( 'elementor/preview/atomic-widget/destroy', {
 					detail: { id: this.model.get( 'id' ) },
-				} ),
+				} )
 			);
 		}
 
@@ -70,7 +70,7 @@ function createProPromotionView( type: string ): typeof ElementView {
 			const disabledBehaviors = [ 'InlineEditing', 'Draggable', 'Resizable' ];
 
 			const behaviorsAsEntries = Object.entries( super.behaviors() ).filter(
-				( [ key ] ) => ! disabledBehaviors.includes( key ),
+				( [ key ] ) => ! disabledBehaviors.includes( key )
 			);
 
 			return Object.fromEntries( behaviorsAsEntries );
@@ -81,9 +81,7 @@ function createProPromotionView( type: string ): typeof ElementView {
 		}
 
 		getContextMenuGroups() {
-			return super.getContextMenuGroups().filter(
-				( group: { name: string } ) => group.name !== 'save',
-			);
+			return super.getContextMenuGroups().filter( ( group: { name: string } ) => group.name !== 'save' );
 		}
 	};
 }

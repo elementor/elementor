@@ -9,8 +9,8 @@ import {
 	type ModelExtensions,
 	type NestedTemplatedElementConfig,
 } from './create-nested-templated-element-type';
-import { canBeTemplated, type CreateTemplatedElementTypeOptions } from './create-templated-element-type';
 import { createProPromotionElementType } from './create-pro-promotion-element-type';
+import { canBeTemplated, type CreateTemplatedElementTypeOptions } from './create-templated-element-type';
 import { createTemplatedElementTypeWithReplacements } from './replacements/manager';
 import type { ElementType, LegacyWindow } from './types';
 
@@ -77,7 +77,8 @@ function tryRegisterElement(
 	element: V1ElementConfig,
 	ResolvedElementType: typeof ElementType
 ) {
-	const shouldBeRegistered = canBeTemplated( element ) || canBeNestedTemplated( element ) || !! element.meta?.is_pro_promotion;
+	const shouldBeRegistered =
+		canBeTemplated( element ) || canBeNestedTemplated( element ) || !! element.meta?.is_pro_promotion;
 
 	if ( ! shouldBeRegistered ) {
 		return;
