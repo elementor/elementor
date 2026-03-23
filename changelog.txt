@@ -1,5 +1,10 @@
 == Changelog ==
 
+= 3.35.8 - 2026-03-23 =
+
+* Security Fix: Improved code security enforcement in Template Library
+* Security Fix: Improved code security enforcement in upload mechanism
+
 = 3.35.7 - 2026-03-11 =
 
 * Fix: General UI issues in Editor screens in WordPress Admin
