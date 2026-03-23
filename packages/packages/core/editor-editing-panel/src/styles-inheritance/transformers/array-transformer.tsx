@@ -9,9 +9,7 @@ export const arrayTransformer = createTransformer( ( values: ArrayValues[] ) => 
 		return null;
 	}
 
-	const allStrings = values.every(
-		( item ) => typeof item === 'string' || typeof item === 'number'
-	);
+	const allStrings = values.every( ( item ) => typeof item === 'string' || typeof item === 'number' );
 
 	if ( allStrings ) {
 		return ( values as ( string | number )[] ).join( ' ' );

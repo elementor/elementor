@@ -53,7 +53,7 @@ function registerCustomTransformers( originalStyleTransformers: ReturnType< type
 	);
 	stylesInheritanceTransformersRegistry.register(
 		'transition',
-		createRepeaterToItemsTransformer( originalStyleTransformers.transition, ', ' )
+		createRepeaterToItemsTransformer( originalStyleTransformers.transition )
 	);
 
 	[ 'background-overlay', 'box-shadow', 'transform-functions' ].forEach( ( propType ) =>
