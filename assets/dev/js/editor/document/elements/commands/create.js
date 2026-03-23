@@ -47,13 +47,10 @@ export class Create extends $e.modules.editor.document.CommandHistoryBase {
 			container = container.lookup();
 
 			if ( ! container?.view || container.view.isDestroyed ) {
-				const fresh = $e.components.get( 'document' ).utils.findContainerById( container.id );
-
-				if ( fresh ) {
-					container = fresh;
-				}
+				container = $e.components.get( 'document' ).utils.findContainerById( container.id ) ?? container;
 			}
 
+			// Fallback to model tree if container is not found
 			if ( ! container?.view || container.view.isDestroyed ) {
 				this.addViaModelTree( container, model, options );
 				return;

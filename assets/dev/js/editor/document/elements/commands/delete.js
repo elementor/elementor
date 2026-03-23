@@ -35,10 +35,12 @@ export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 		containers.forEach( ( container ) => {
 			container = container.lookup();
 
-			// Fallback for async-rendered nested elements whose views may not exist yet (ED-22825).
 			if ( ! container?.view || container.view.isDestroyed ) {
-				const fresh = $e.components.get( 'document' ).utils.findContainerById( container.id );
-				this.deleteViaModelTree( fresh );
+				container = $e.components.get( 'document' ).utils.findContainerById( container.id ) ?? container;
+			}
+
+			if ( ! container?.view || container.view.isDestroyed ) {
+				this.deleteViaModelTree( container );
 				return;
 			}
 
