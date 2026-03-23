@@ -13,7 +13,8 @@ export const initMcpInteractions = ( reg: MCPRegistryEntry ) => {
 - Create/update/delete interactions
 - Get list of interactions
 - Get details of an interaction
-` );
+`
+	);
 	initInteractionsSchemaResource( reg );
 	initManageElementInteractionTool( reg );
 };

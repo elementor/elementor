@@ -14,7 +14,8 @@ export const initMcpIntegration = ( reg: MCPRegistryEntry, canvasMcpEntry: MCPRe
 - Get list of global classes
 - Get details of a global class
 - Get details of a global class
-` );
+`
+	);
 	initMcpApplyUnapplyGlobalClasses( reg );
 	initMcpApplyGetGlobalClassUsages( reg );
 	initManageGlobalClasses( reg );

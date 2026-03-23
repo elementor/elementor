@@ -18,7 +18,7 @@ type ZodRawShape = z3.ZodRawShape;
 const mcpRegistry: { [ namespace: string ]: McpServer } = {};
 const mcpDescriptions: { [ namespace: string ]: string } = {};
 // @ts-ignore - QUnit fails this
-let isMcpRegistrationActivated = false || typeof globalThis.jest !== 'undefined';
+const isMcpRegistrationActivated = false || typeof globalThis.jest !== 'undefined';
 
 export const registerMcp = ( mcp: McpServer, name: string ) => {
 	const mcpName = isAlphabet( name );
@@ -27,6 +27,7 @@ export const registerMcp = ( mcp: McpServer, name: string ) => {
 
 export async function activateMcpRegistration( sdk: AngieMcpSdk, entries = Object.entries( mcpRegistry ), retry = 3 ) {
 	if ( retry === 0 ) {
+		/* eslint-disable-next-line no-console */
 		console.error( 'Failed to register MCP after 3 retries. failed entries: ', entries );
 		return;
 	}
