@@ -4,7 +4,7 @@ import { type ElementType, type ElementView, type LegacyWindow } from './types';
 
 const UPGRADE_URL = 'https://go.elementor.com/go-pro-atomic-form/';
 
-export function createProPlaceholderElementType( type: string ): typeof ElementType {
+export function createProPromotionElementType( type: string ): typeof ElementType {
 	const legacyWindow = window as unknown as LegacyWindow;
 
 	return class extends legacyWindow.elementor.modules.elements.types.Base {
@@ -13,7 +13,7 @@ export function createProPlaceholderElementType( type: string ): typeof ElementT
 		}
 
 		getView() {
-			return createProPlaceholderView( type );
+			return createProPromotionView( type );
 		}
 
 		getModel() {
@@ -22,12 +22,12 @@ export function createProPlaceholderElementType( type: string ): typeof ElementT
 	};
 }
 
-function createProPlaceholderView( type: string ): typeof ElementView {
+function createProPromotionView( type: string ): typeof ElementView {
 	const legacyWindow = window as unknown as LegacyWindow;
 
 	return class extends legacyWindow.elementor.modules.elements.views.Widget {
 		render() {
-			this.$el.html( buildPlaceholderHTML() );
+			this.$el.html( buildPromotionHTML() );
 
 			this.$el.on( 'click', '.e-form-placeholder__remove-btn', ( e: Event ) => {
 				e.preventDefault();
@@ -88,7 +88,7 @@ function createProPlaceholderView( type: string ): typeof ElementView {
 	};
 }
 
-function buildPlaceholderHTML(): string {
+function buildPromotionHTML(): string {
 	const title = __( 'Atomic Form is a Pro feature', 'elementor' );
 	const description = __( 'Upgrade now to access advanced styling and build fully custom forms.', 'elementor' );
 	const removeLabel = __( 'Remove', 'elementor' );

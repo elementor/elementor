@@ -10,7 +10,7 @@ import {
 	type NestedTemplatedElementConfig,
 } from './create-nested-templated-element-type';
 import { canBeTemplated, type CreateTemplatedElementTypeOptions } from './create-templated-element-type';
-import { createProPlaceholderElementType } from './create-pro-placeholder-element-type';
+import { createProPromotionElementType } from './create-pro-promotion-element-type';
 import { createTemplatedElementTypeWithReplacements } from './replacements/manager';
 import type { ElementType, LegacyWindow } from './types';
 
@@ -51,8 +51,8 @@ export function initLegacyViews() {
 }
 
 function resolveElementType( type: string, renderer: DomRenderer, element: V1ElementConfig ) {
-	if ( element.meta?.is_pro_placeholder ) {
-		return createProPlaceholderElementType( type );
+	if ( element.meta?.is_pro_promotion ) {
+		return createProPromotionElementType( type );
 	}
 
 	if ( canBeNestedTemplated( element ) ) {
@@ -77,7 +77,7 @@ function tryRegisterElement(
 	element: V1ElementConfig,
 	ResolvedElementType: typeof ElementType
 ) {
-	const shouldBeRegistered = canBeTemplated( element ) || canBeNestedTemplated( element ) || !! element.meta?.is_pro_placeholder;
+	const shouldBeRegistered = canBeTemplated( element ) || canBeNestedTemplated( element ) || !! element.meta?.is_pro_promotion;
 
 	if ( ! shouldBeRegistered ) {
 		return;
