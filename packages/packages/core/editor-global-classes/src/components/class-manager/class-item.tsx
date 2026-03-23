@@ -1,4 +1,4 @@
-import * as React from 'react';
+mport * as React from 'react';
 import { useRef, useState } from 'react';
 import { validateStyleLabel } from '@elementor/editor-styles-repository';
 import { EditableField, EllipsisWithTooltip, MenuListItem, useEditable, WarningInfotip } from '@elementor/editor-ui';
