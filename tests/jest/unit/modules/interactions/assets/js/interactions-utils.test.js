@@ -164,6 +164,69 @@ describe( 'interactions-utils', () => {
 			getComputedStyleSpy.mockRestore();
 		} );
 
+		/**
+		 * Browsers normalize transform lists to matrix() (2D affine) or matrix3d() (3D / mixed).
+		 * createMatrixFromTransform supports both via DOMMatrix and manual parsing — see interactions-shared-utils.js.
+		 */
+		describe( 'getTransformBaselineFromComputedStyle — matrix() vs matrix3d()', () => {
+			function mockTransform( transform ) {
+				const element = document.createElement( 'div' );
+				const getComputedStyleSpy = jest.spyOn( window, 'getComputedStyle' ).mockReturnValue( { transform } );
+				const baseline = getTransformBaselineFromComputedStyle( element );
+				getComputedStyleSpy.mockRestore();
+				return baseline;
+			}
+
+			it( 'parses 2D matrix() from scale + translate (browser-style normalization)', () => {
+				// Equivalent to scale3d(1,1,1) translateX(5rem) translateY(20px) → 2D affine.
+				const baseline = mockTransform( 'matrix(1, 0, 0, 1, 80, 20)' );
+				expect( baseline ).not.toBeNull();
+				expect( baseline.x ).toBe( 80 );
+				expect( baseline.y ).toBe( 20 );
+				expect( baseline.scaleX ).toBeCloseTo( 1, 5 );
+				expect( baseline.scaleY ).toBeCloseTo( 1, 5 );
+				expect( baseline.rotate ).toBeCloseTo( 0, 5 );
+			} );
+
+			it( 'parses matrix3d() that is equivalent to pure 2D translation (fourth column tx, ty)', () => {
+				const baseline = mockTransform(
+					'matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 80, 20, 0, 1)',
+				);
+				expect( baseline ).not.toBeNull();
+				expect( baseline.x ).toBe( 80 );
+				expect( baseline.y ).toBe( 20 );
+				expect( baseline.scaleX ).toBeCloseTo( 1, 5 );
+				expect( baseline.scaleY ).toBeCloseTo( 1, 5 );
+				expect( baseline.rotate ).toBeCloseTo( 0, 5 );
+			} );
+
+			it( 'parses matrix3d() when 3D rotate is present (2D affine slice + translation)', () => {
+				// Same shape as getComputedStyle after rotateX(5deg) + translate — matrix3d, not matrix().
+				// rotate from atan2(m21,m11) stays 0 here; the tilt shows up in scaleY / skew (2D-only decomposition).
+				const baseline = mockTransform(
+					'matrix3d(1, 0, 0, 0, 0, 0.996195, 0.0871557, 0, 0, -0.0871557, 0.996195, 0, 80, 20, 0, 1)',
+				);
+				expect( baseline ).not.toBeNull();
+				expect( baseline.x ).toBeCloseTo( 80, 5 );
+				expect( baseline.y ).toBeCloseTo( 20, 5 );
+				expect( baseline.scaleX ).toBeCloseTo( 1, 5 );
+				expect( baseline.scaleY ).toBeCloseTo( 0.996195, 4 );
+				expect( baseline.rotate ).toBeCloseTo( 0, 5 );
+			} );
+
+			it( 'returns null when computed transform is none', () => {
+				expect( mockTransform( 'none' ) ).toBeNull();
+			} );
+
+			it( 'returns null when transform is empty', () => {
+				expect( mockTransform( '' ) ).toBeNull();
+			} );
+
+			it( 'returns null for a non-matrix transform string', () => {
+				expect( mockTransform( 'translate(10px)' ) ).toBeNull();
+			} );
+		} );
+
 		it( 'preserves transform channels not affected by interaction keyframes', () => {
 			const keyframes = { rotate: [ 0, 45 ] };
 			const baseline = {
