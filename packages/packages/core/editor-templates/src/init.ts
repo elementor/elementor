@@ -10,12 +10,11 @@ import { clearTemplatesStyles, templatesStylesProvider } from './templates-style
 import { isHandlingTemplateStyles } from './utils';
 
 export function init() {
-	registerSlice( slice );
-
 	if ( ! isHandlingTemplateStyles() ) {
 		return;
 	}
 
+	registerSlice( slice );
 	stylesRepository.register( templatesStylesProvider );
 
 	registerDataHook( 'after', 'editor/documents/attach-preview', async () => {
