@@ -20,6 +20,13 @@ const mcpDescriptions: { [ namespace: string ]: string } = {};
 // @ts-ignore - QUnit fails this
 const isMcpRegistrationActivated = false || typeof globalThis.jest !== 'undefined';
 
+type PendingWaiter = {
+	resolve: ( entry: MCPRegistryEntry ) => void;
+	timeoutId: ReturnType< typeof setTimeout >;
+};
+
+const pendingDomainWaiters: Map< string, Set< PendingWaiter > > = new Map();
+
 export const registerMcp = ( mcp: McpServer, name: string ) => {
 	const mcpName = isAlphabet( name );
 	mcpRegistry[ mcpName ] = mcp;
@@ -69,6 +76,8 @@ export const toMCPTitle = ( namespace: string ): string => {
 
 /**
  *
+ * If you need the domain registry and you are not intent to register the actual MCP server, use `getMCPDomainRegistryEntry` instead.
+ * 
  * @param namespace            The namespace of the MCP server. It should contain only lowercase alphabetic characters.
  * @param options
  * @param options.instructions
@@ -93,6 +102,21 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 		);
 	}
 	const mcpServer = mcpRegistry[ namespace ];
+	const entry = buildRegistryEntry( namespace, mcpServer );
+
+	const waiters = pendingDomainWaiters.get( namespace );
+	if ( waiters?.size ) {
+		for ( const waiter of waiters ) {
+			clearTimeout( waiter.timeoutId );
+			waiter.resolve( entry );
+		}
+		pendingDomainWaiters.delete( namespace );
+	}
+
+	return entry;
+};
+
+function buildRegistryEntry( namespace: string, mcpServer: McpServer ): MCPRegistryEntry {
 	const { addTool } = createToolRegistry( mcpServer );
 	return {
 		waitForReady: () => getSDK().waitForReady(),
@@ -132,6 +156,56 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 			};
 		},
 	};
+}
+
+const DEFAULT_MCP_DOMAIN_TIMEOUT_MS = 10_000;
+
+/**
+ * Waits for a domain to be initialized via `getMCPByDomain` and returns its registry entry.
+ * Resolves with `undefined` if the domain is not initialized within the timeout.
+ *
+ * Use this instead of `getMCPByDomain` when you are a consumer of a domain you don't own.
+ *
+ * @param namespace   The namespace of the MCP server (lowercase alphabetic).
+ * @param options
+ * @param options.timeoutMs  Maximum time to wait in milliseconds. Defaults to 10000.
+ */
+export const getMCPDomainRegistryEntry = async (
+	namespace: string,
+	options?: { timeoutMs?: number }
+): Promise< MCPRegistryEntry | undefined > => {
+	const validatedNamespace = isAlphabet( namespace );
+	const timeoutMs = options?.timeoutMs ?? DEFAULT_MCP_DOMAIN_TIMEOUT_MS;
+
+	// @ts-ignore - QUnit fails this
+	if ( typeof globalThis.jest !== 'undefined' ) {
+		return mockMcpRegistry();
+	}
+
+	if ( mcpRegistry[ validatedNamespace ] ) {
+		return buildRegistryEntry( validatedNamespace, mcpRegistry[ validatedNamespace ] );
+	}
+
+	return new Promise< MCPRegistryEntry | undefined >( ( resolve ) => {
+		const timeoutId = setTimeout( () => {
+			const waiters = pendingDomainWaiters.get( validatedNamespace );
+			if ( waiters ) {
+				waiters.delete( waiter );
+				if ( waiters.size === 0 ) {
+					pendingDomainWaiters.delete( validatedNamespace );
+				}
+			}
+			resolve( undefined );
+		}, timeoutMs );
+
+		const waiter: PendingWaiter = { resolve, timeoutId };
+		const existing = pendingDomainWaiters.get( validatedNamespace );
+		if ( existing ) {
+			existing.add( waiter );
+		} else {
+			pendingDomainWaiters.set( validatedNamespace, new Set( [ waiter ] ) );
+		}
+	} );
 };
 
 export interface MCPRegistryEntry {

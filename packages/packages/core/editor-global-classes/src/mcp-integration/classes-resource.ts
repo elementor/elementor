@@ -12,8 +12,8 @@ const updateLocalStorageCache = () => {
 	localStorage.setItem( STORAGE_KEY, JSON.stringify( classes ) );
 };
 
-export const initClassesResource = ( classesMcpEntry: MCPRegistryEntry, canvasMcpEntry: MCPRegistryEntry ) => {
-	[ canvasMcpEntry, classesMcpEntry ].forEach( ( entry ) => {
+export const initClassesResource = ( classesMcpEntry: MCPRegistryEntry, canvasMcpEntry?: MCPRegistryEntry ) => {
+	[ canvasMcpEntry, classesMcpEntry ].filter( ( entry ): entry is MCPRegistryEntry => entry !== undefined ).forEach( ( entry ) => {
 		const { mcpServer, resource, waitForReady } = entry;
 		resource(
 			'global-classes',

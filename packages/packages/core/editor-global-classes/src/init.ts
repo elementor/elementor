@@ -4,7 +4,7 @@ import {
 	injectIntoCssClassConvert,
 	registerStyleProviderToColors,
 } from '@elementor/editor-editing-panel';
-import { getMCPByDomain } from '@elementor/editor-mcp';
+import { getMCPByDomain, getMCPDomainRegistryEntry } from '@elementor/editor-mcp';
 import { __registerPanel as registerPanel } from '@elementor/editor-panels';
 import { stylesRepository } from '@elementor/editor-styles-repository';
 import { __registerSlice as registerSlice } from '@elementor/store';
@@ -67,8 +67,10 @@ export function init() {
 		getThemeColor: ( theme ) => theme.palette.global.dark,
 	} );
 
-	initMcpIntegration(
-		getMCPByDomain( 'classes', { instructions: 'MCP server for management of Elementor global classes' } ),
-		getMCPByDomain( 'canvas' )
-	);
+	getMCPDomainRegistryEntry( 'canvas' ).then( ( canvasMcpEntry ) => {
+		initMcpIntegration(
+			getMCPByDomain( 'classes', { instructions: 'MCP server for management of Elementor global classes' } ),
+			canvasMcpEntry
+		);
+	} );
 }

@@ -1,6 +1,6 @@
 import { injectIntoLogic, injectIntoTop } from '@elementor/editor';
 import { registerControlReplacement } from '@elementor/editor-controls';
-import { getMCPByDomain } from '@elementor/editor-mcp';
+import { getMCPByDomain, getMCPDomainRegistryEntry } from '@elementor/editor-mcp';
 import { __registerPanel as registerPanel } from '@elementor/editor-panels';
 import { isTransformable, type PropValue } from '@elementor/editor-props';
 import { controlActionsMenu } from '@elementor/menus';
@@ -45,8 +45,9 @@ export function init() {
 		useProps: usePropVariableAction,
 	} );
 
-	variablesService.init().then( () => {
-		initMcp( getMCPByDomain( 'variables' ), getMCPByDomain( 'canvas' ) );
+	variablesService.init().then( async () => {
+		const canvasMcpEntry = await getMCPDomainRegistryEntry( 'canvas' );
+		initMcp( getMCPByDomain( 'variables' ), canvasMcpEntry );
 	} );
 
 	injectIntoTop( {

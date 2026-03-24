@@ -5,7 +5,7 @@ import initMcpApplyUnapplyGlobalClasses from './mcp-apply-unapply-global-classes
 import initMcpApplyGetGlobalClassUsages from './mcp-get-global-class-usages';
 import { initManageGlobalClasses } from './mcp-manage-global-classes';
 
-export const initMcpIntegration = ( reg: MCPRegistryEntry, canvasMcpEntry: MCPRegistryEntry ) => {
+export const initMcpIntegration = ( reg: MCPRegistryEntry, canvasMcpEntry?: MCPRegistryEntry ) => {
 	const { setMCPDescription } = reg;
 	setMCPDescription(
 		`Everything related to V4 ( Atomic ) global classes.

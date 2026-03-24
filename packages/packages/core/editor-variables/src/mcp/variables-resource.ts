@@ -5,8 +5,8 @@ import { type TVariable } from '../storage';
 
 export const GLOBAL_VARIABLES_URI = 'elementor://global-variables';
 
-export const initVariablesResource = ( variablesMcpEntry: MCPRegistryEntry, canvasMcpEntry: MCPRegistryEntry ) => {
-	[ canvasMcpEntry, variablesMcpEntry ].forEach( ( entry ) => {
+export const initVariablesResource = ( variablesMcpEntry: MCPRegistryEntry, canvasMcpEntry?: MCPRegistryEntry ) => {
+	[ canvasMcpEntry, variablesMcpEntry ].filter( ( entry ): entry is MCPRegistryEntry => entry !== undefined ).forEach( ( entry ) => {
 		const { resource, sendResourceUpdated } = entry;
 		resource(
 			'global-variables',
