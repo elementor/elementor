@@ -38,6 +38,33 @@ describe( 'InteractionDetails scroll signal', () => {
 		expect( dispatchScrollInteraction ).toHaveBeenCalledWith(
 			expect.objectContaining( {
 				relativeTo: 'viewport',
+				start: '85%',
+				end: '15%',
+			} )
+		);
+	} );
+
+	it( 'should dispatch updated grid lines when start and end change', () => {
+		const { unmount } = renderDetails( { trigger: 'scrollOn', start: 85, end: 15 } );
+
+		expect( dispatchScrollInteraction ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				start: '85%',
+				end: '15%',
+				relativeTo: 'viewport',
+			} )
+		);
+
+		unmount();
+		jest.clearAllMocks();
+
+		renderDetails( { trigger: 'scrollOn', start: 50, end: 30 } );
+
+		expect( dispatchScrollInteraction ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				start: '50%',
+				end: '30%',
+				relativeTo: 'viewport',
 			} )
 		);
 	} );

@@ -110,6 +110,14 @@ function normalizeTimesValue( value: unknown, fallback: number ): number {
 	return Math.max( 1, Math.floor( numericValue ) );
 }
 
+function syncGridOverlay( trigger: string, start: SizeStringValue, end: SizeStringValue, relativeTo: string ) {
+	if ( trigger === 'scrollOn' ) {
+		dispatchScrollInteraction( { start, end, relativeTo } );
+	} else {
+		dispatchScrollInteraction( null );
+	}
+}
+
 function useControlComponent( controlName: InteractionsControlType, isVisible: boolean = true ) {
 	return useMemo( () => {
 		if ( ! isVisible ) {
@@ -155,13 +163,9 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	};
 
 	useEffect( () => {
-		if ( trigger === 'scrollOn' ) {
-			dispatchScrollInteraction( { start, end, relativeTo } );
-		} else {
-			dispatchScrollInteraction( null );
-		}
+		syncGridOverlay( trigger, start, end, relativeTo );
 		return () => dispatchScrollInteraction( null );
-	}, [ trigger, start, end, relativeTo ] );
+	}, [] );
 
 	const TriggerControl = useControlComponent( 'trigger', true );
 	const EffectControl = useControlComponent( 'effect' );
@@ -240,6 +244,13 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		};
 
 		onChange( updatedInteraction );
+
+		syncGridOverlay(
+			updates.trigger ?? trigger,
+			updates.start ?? start,
+			updates.end ?? end,
+			updates.relativeTo ?? relativeTo,
+		);
 
 		const interactionId = extractString( updatedInteraction.interaction_id );
 
