@@ -3,6 +3,7 @@ import { createRef } from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { SizeComponent } from '../size-component';
+import { UnitSelector, type UnitSelectorProps } from '../ui/unit-selector';
 
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( key: string ) => key,
@@ -11,6 +12,14 @@ jest.mock( '@wordpress/i18n', () => ( {
 jest.mock( '../utils/is-extended-unit', () => ( {
 	isExtendedUnit: jest.fn(),
 } ) );
+
+jest.mock( '../ui/unit-selector', () => {
+	const actual = jest.requireActual( '../ui/unit-selector' );
+	return {
+		...actual,
+		UnitSelector: jest.fn( actual.UnitSelector ),
+	};
+} );
 
 const isExtendedUnitMock = jest.requireMock( '../utils/is-extended-unit' ).isExtendedUnit;
 
@@ -92,6 +101,83 @@ describe( 'SizeComponent', () => {
 
 				expect( sizeInput ).toHaveValue( 'calc(100% - 10px)' );
 				expect( customTextField ).toHaveValue( 'calc(100% - 10px)' );
+			} );
+		} );
+	} );
+
+	describe( 'isUnitHighlighted', () => {
+		beforeEach( () => {
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			( UnitSelector as jest.Mock ).mockImplementation( ( _: UnitSelectorProps< string > ) => (
+				<div data-testid="mock-unit-selector" />
+			) );
+		} );
+
+		afterEach( () => {
+			const actual = jest.requireActual( '../ui/unit-selector' );
+
+			( UnitSelector as jest.Mock ).mockImplementation( actual.UnitSelector );
+		} );
+
+		describe( 'isUnitHighlighted — derived from value', () => {
+			it.each( [
+				{
+					caseName: 'value is null',
+					props: { value: null },
+					expected: false,
+				},
+				{
+					caseName: 'unit is auto',
+					props: {
+						value: { size: '', unit: 'auto' },
+						units: [ 'px', 'rem', 'custom', 'em', 'auto' ],
+					},
+					expected: true,
+				},
+				{
+					caseName: 'size is a positive number',
+					props: { value: { size: 10, unit: 'px' } },
+					expected: true,
+				},
+				{
+					caseName: 'size is zero',
+					props: { value: { size: 0, unit: 'px' } },
+					expected: true,
+				},
+				{
+					caseName: 'size is empty string and unit is not auto',
+					props: {
+						value: { size: '', unit: 'px' },
+					},
+					expected: false,
+				},
+				{
+					caseName: 'size is null and unit is standard',
+					props: {
+						value: { size: null, unit: 'rem' },
+					},
+					expected: false,
+				},
+				{
+					caseName: 'size is empty string and unit is custom',
+					props: {
+						value: { size: null, unit: 'custom' },
+					},
+					expected: false,
+				},
+				{
+					caseName: 'custom string size and unit is custom',
+					props: {
+						value: { size: 'calc(90px + 30)', unit: 'rem' },
+					},
+					expected: true,
+				},
+			] )( 'should pass $expected when $caseName', ( { props, expected } ) => {
+				renderComponent( props );
+
+				const unitSelectorProps = ( UnitSelector as jest.Mock ).mock.calls[ 0 ][ 0 ];
+
+				expect( unitSelectorProps.isUnitHighlighted ).toBe( expected );
 			} );
 		} );
 	} );
