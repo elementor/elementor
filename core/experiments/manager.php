@@ -121,7 +121,9 @@ class Manager extends Base_Object {
 		$installs_history = Upgrade_Manager::get_installs_history();
 
 		if ( empty( $installs_history ) ) {
-			return false;
+			// Fresh installation: upgrade manager hasn't written history yet on this first request.
+			// Use the current plugin version as the effective first-install version.
+			return version_compare( ELEMENTOR_VERSION, $version, '>=' );
 		}
 
 		$cleaned_version = preg_replace( '/-(beta|cloud|dev)\d*$/', '', key( $installs_history ) );
