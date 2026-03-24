@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 
 import { createElement, type CreateElementParams } from './create-element';
 import { deleteElement } from './delete-element';
+import { addModelToParent, removeModelFromParent, resolveContainer } from './resolve-element';
 import { type V1Element, type V1ElementModelProps } from './types';
 
 type CreateElementsParams = {
@@ -16,6 +17,8 @@ type CreatedElement = {
 	parentContainer: V1Element;
 	model: V1ElementModelProps;
 	options?: CreateElementParams[ 'options' ];
+	containerId: string;
+	parentContainerId: string;
 };
 
 type CreatedElementsResult = {
@@ -52,21 +55,27 @@ export const createElements = ( {
 						parentContainer,
 						model: element.model?.toJSON() || {},
 						options,
+						containerId: element.id,
+						parentContainerId: parentContainer.id,
 					} );
 				} );
 
 				return { createdElements };
 			},
 			undo: ( _: { elements: CreateElementParams[] }, { createdElements }: CreatedElementsResult ) => {
-				[ ...createdElements ].reverse().forEach( ( { container } ) => {
-					const freshContainer = container.lookup?.();
+				[ ...createdElements ].reverse().forEach( ( { container, containerId, parentContainerId } ) => {
+					const freshContainer = resolveContainer( container, containerId );
 
 					if ( freshContainer ) {
 						deleteElement( {
 							container: freshContainer,
 							options: { useHistory: false },
 						} );
+
+						return;
 					}
+
+					removeModelFromParent( parentContainerId, containerId );
 				} );
 			},
 			redo: (
@@ -75,24 +84,37 @@ export const createElements = ( {
 			): CreatedElementsResult => {
 				const newElements: CreatedElement[] = [];
 
-				createdElements.forEach( ( { parentContainer, model, options } ) => {
-					const freshParent = parentContainer.lookup?.();
+				createdElements.forEach( ( { parentContainer, parentContainerId, model, options } ) => {
+					const freshParent = resolveContainer( parentContainer, parentContainerId );
 
-					if ( ! freshParent ) {
+					if ( freshParent ) {
+						const element = createElement( {
+							container: freshParent,
+							model,
+							options: { ...options, useHistory: false },
+						} );
+
+						newElements.push( {
+							container: element,
+							parentContainer: freshParent,
+							model: element.model.toJSON(),
+							options,
+							containerId: element.id,
+							parentContainerId: freshParent.id,
+						} );
+
 						return;
 					}
 
-					const element = createElement( {
-						container: freshParent,
-						model,
-						options: { ...options, useHistory: false },
-					} );
+					addModelToParent( parentContainerId, model );
 
 					newElements.push( {
-						container: element,
-						parentContainer: freshParent,
-						model: element.model.toJSON(),
+						container: parentContainer,
+						parentContainer,
+						model,
 						options,
+						containerId: model.id ?? '',
+						parentContainerId,
 					} );
 				} );
 

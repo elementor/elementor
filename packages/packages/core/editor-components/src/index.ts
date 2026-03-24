@@ -91,3 +91,4 @@ export { resolveOverridePropValue } from './utils/resolve-override-prop-value';
 export { switchToComponent } from './utils/switch-to-component';
 export { onElementDrop, trackComponentEvent } from './utils/tracking';
 export type { Source } from './utils/tracking';
+export { getComponentDocumentData } from './utils/component-document-data';
