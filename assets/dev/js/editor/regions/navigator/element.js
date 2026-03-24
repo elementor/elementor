@@ -401,14 +401,6 @@ export default class extends Marionette.CompositeView {
 				return false;
 			}
 		} );
-
-		const hasHtmlV3Change = Object.values( settingsModel.changed ).some(
-			( attribute ) => attribute && 'html-v3' === attribute.$$type,
-		);
-
-		if ( hasHtmlV3Change ) {
-			this.syncNavigatorStructureState();
-		}
 	}
 
 	syncNavigatorStructureState() {
