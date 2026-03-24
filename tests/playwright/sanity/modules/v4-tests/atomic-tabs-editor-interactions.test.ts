@@ -277,8 +277,8 @@ test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 		await expect.poll( () => getIdsByType( tabsRoot, tabType ) ).toHaveLength( 2 );
 
 		const remainingTabs = getMenuTabs( tabsRoot );
-		await expect( remainingTabs.nth( 0 ) ).toHaveAttribute( 'aria-selected', 'false' );
-		await expect( remainingTabs.nth( 1 ) ).toHaveAttribute( 'aria-selected', 'true' );
+		await expect( remainingTabs.nth( 0 ) ).toHaveAttribute( 'aria-selected', 'true' );
+		await expect( remainingTabs.nth( 1 ) ).toHaveAttribute( 'aria-selected', 'false' );
 	} );
 
 	test( 'All tabs have unique and valid content links', async () => {

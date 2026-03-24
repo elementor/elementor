@@ -73,29 +73,19 @@ export const onElementRender = ( {
 		const settings = element.getAttribute( 'data-e-settings' );
 
 		const listenToChildren = ( elementTypes: string[] ) => ( {
-			render: (
-				callback: ( params: {
-					childType: string;
-					childElement: Element;
-					eventType: 'rendered' | 'destroyed';
-				} ) => void
-			) => {
-				const createListener = ( eventType: 'rendered' | 'destroyed' ) => ( event: Event ) => {
-					const { elementType: childType, element: childElement } = ( event as CustomEvent ).detail;
+			render: ( callback: () => void ) => {
+				const listener = ( event: Event ) => {
+					const { elementType: childType } = ( event as CustomEvent ).detail;
 
 					if ( ! elementTypes.includes( childType ) ) {
 						return;
 					}
 
-					callback( { childType, childElement, eventType } );
+					callback();
 				};
 
-				element.addEventListener( ELEMENT_RENDERED_EVENT_NAME, createListener( 'rendered' ), {
-					signal: controller.signal,
-				} );
-				element.addEventListener( ELEMENT_DESTROYED_EVENT_NAME, createListener( 'destroyed' ), {
-					signal: controller.signal,
-				} );
+				element.addEventListener( ELEMENT_RENDERED_EVENT_NAME, listener, { signal: controller.signal } );
+				element.addEventListener( ELEMENT_DESTROYED_EVENT_NAME, listener, { signal: controller.signal } );
 			},
 		} );
 

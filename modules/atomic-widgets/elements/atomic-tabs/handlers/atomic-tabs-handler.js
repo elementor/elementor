@@ -1,7 +1,7 @@
 import { register } from '@elementor/frontend-handlers';
 import { Alpine } from '@elementor/alpinejs';
-import { TAB_ELEMENT_TYPE, TAB_CONTENT_ELEMENT_TYPE, getTabId, getTabContentId, getIndex, getNextTab } from './utils';
-import { getActiveTabId, setActiveTabIndex } from './editor-tabs-selection';
+import { TAB_ELEMENT_TYPE, TAB_CONTENT_ELEMENT_TYPE, getTabId, getTabContentId, getIndex, getNextTab, getDirectTabCount } from './utils';
+import { getActiveTabId, setActiveTabIndex, validateActiveTab } from './editor-tabs-state';
 
 const SELECTED_CLASS = 'e--selected';
 
@@ -13,6 +13,9 @@ register( {
 		const defaultActiveTab = settings[ 'default-active-tab' ];
 
 		Alpine.data( `eTabs${ tabsId }`, () => ( {
+			init() {
+				validateActiveTab( tabsId, getDirectTabCount( this.$el ) );
+			},
 			get activeTab() {
 				return getActiveTabId( tabsId, defaultActiveTab );
 			},
