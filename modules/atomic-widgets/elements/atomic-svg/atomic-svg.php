@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg;
 
-use Elementor\Core\Utils\Svg\Svg_Sanitizer;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Svg_Control;
@@ -20,7 +19,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -115,105 +113,9 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		];
 	}
 
-	protected function build_template_context(): array {
-		$context = $this->build_base_template_context();
-
-		$svg_data = $context['settings']['svg'] ?? [];
-		$url = $svg_data['url'] ?? null;
-
-		$context['settings']['svg'] = [
-			'html' => $this->get_processed_svg_html( $context['settings'] ),
-			'url' => $url,
-		];
-
-		return $context;
-	}
-
 	protected function get_templates(): array {
 		return [
 			'elementor/elements/atomic-svg' => __DIR__ . '/atomic-svg.html.twig',
 		];
-	}
-
-	private function get_processed_svg_html( array $settings ): string {
-		$svg = $this->get_svg_content( $settings );
-
-		if ( ! $svg ) {
-			return '';
-		}
-
-		$svg = new \WP_HTML_Tag_Processor( $svg );
-
-		if ( ! $svg->next_tag( 'svg' ) ) {
-			return '';
-		}
-
-		$svg->set_attribute( 'fill', 'currentColor' );
-		$svg->set_attribute( 'data-interaction-id', $this->get_interaction_id() );
-
-		$this->add_svg_style( $svg, 'width: 100%; height: 100%; overflow: unset;' );
-
-		return ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
-	}
-
-	private function get_svg_content( $settings ) {
-		$svg_data = $settings['svg'] ?? null;
-
-		if ( ! $svg_data ) {
-			return $this->get_default_svg_content();
-		}
-
-		if ( is_string( $svg_data ) ) {
-			return $this->fetch_svg_from_url( $svg_data );
-		}
-
-		if ( isset( $svg_data['id'] ) ) {
-			$content = Utils::file_get_contents(
-				get_attached_file( $svg_data['id'] )
-			);
-
-			if ( $content ) {
-				return $content;
-			}
-		}
-
-		if ( isset( $svg_data['url'] ) && static::DEFAULT_SVG_URL !== $svg_data['url'] ) {
-			return $this->fetch_svg_from_url( $svg_data['url'] );
-		}
-
-		return $this->get_default_svg_content();
-	}
-
-	private function fetch_svg_from_url( string $url ) {
-		if ( empty( $url ) || static::DEFAULT_SVG_URL === $url ) {
-			return $this->get_default_svg_content();
-		}
-
-		$content = wp_safe_remote_get( $url );
-
-		if ( ! is_wp_error( $content ) ) {
-			return $content['body'];
-		}
-
-		return $this->get_default_svg_content();
-	}
-
-	private function get_default_svg_content() {
-		$content = Utils::file_get_contents( static::DEFAULT_SVG_PATH );
-
-		return $content ? $content : null;
-	}
-
-	private function add_svg_style( &$svg, $new_style ) {
-		$svg_style = $svg->get_attribute( 'style' );
-		$svg_style = trim( (string) $svg_style );
-
-		if ( empty( $svg_style ) ) {
-			$svg_style = $new_style;
-		} else {
-			$svg_style = rtrim( $svg_style, ';' ) . '; ' . $new_style;
-		}
-
-		$svg->set_attribute( 'style', $svg_style );
 	}
 }

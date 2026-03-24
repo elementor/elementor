@@ -26,51 +26,39 @@ export const svgSrcPropTypeUtil = createPropUtils( 'svg-src', svgSrcValueSchema 
 
 export type SvgSrcPropValue = z.infer< typeof svgSrcValueSchema >;
 
-export type AtomicSvgMediaPropValue = SvgSrcPropValue | ImageSrcPropValue;
+export type SvgMediaPropValue = SvgSrcPropValue | ImageSrcPropValue;
 
-const atomicSvgMediaSchema = z.union( [ svgSrcPropTypeUtil.schema, imageSrcPropTypeUtil.schema ] );
+const svgMediaSchema = z.union( [ svgSrcPropTypeUtil.schema, imageSrcPropTypeUtil.schema ] );
 
-type AtomicSvgMediaPropWrapper = z.infer< typeof atomicSvgMediaSchema >;
-
-function normalizeCreateOptionsBase( createOptions?: CreateOptions ): CreateOptions | undefined {
-	if ( ! createOptions?.base ) {
-		return createOptions;
-	}
-
-	if ( ! imageSrcPropTypeUtil.isValid( createOptions.base ) ) {
-		return createOptions;
-	}
-
-	const inner = imageSrcPropTypeUtil.extract( createOptions.base );
-
-	return {
-		...createOptions,
-		base: inner ? svgSrcPropTypeUtil.create( inner ) : createOptions.base,
-	};
-}
-
-export const atomicSvgMediaPropTypeUtil = {
+/**
+ * Union prop type util that reads both `svg-src` and legacy `image-src`,
+ * but always writes `svg-src`. Enables gradual data migration on edit.
+ */
+export const svgMediaPropTypeUtil = {
 	key: 'svg-src' as const,
-	schema: atomicSvgMediaSchema,
-	isValid( prop: unknown ): prop is AtomicSvgMediaPropWrapper {
-		return atomicSvgMediaSchema.safeParse( prop ).success;
+	schema: svgMediaSchema,
+
+	isValid( prop: unknown ) {
+		return svgMediaSchema.safeParse( prop ).success;
 	},
-	extract( prop: unknown ): SvgSrcPropValue | ImageSrcPropValue | null {
-		if ( svgSrcPropTypeUtil.isValid( prop ) ) {
-			return svgSrcPropTypeUtil.extract( prop );
+
+	extract( prop: unknown ): SvgMediaPropValue | null {
+		return svgSrcPropTypeUtil.extract( prop ) ?? imageSrcPropTypeUtil.extract( prop );
+	},
+
+	create( value: SvgSrcPropValue, createOptions?: CreateOptions ) {
+		const base = createOptions?.base;
+		const needsMigration = base && imageSrcPropTypeUtil.isValid( base );
+
+		if ( ! needsMigration ) {
+			return svgSrcPropTypeUtil.create( value, createOptions );
 		}
-		if ( imageSrcPropTypeUtil.isValid( prop ) ) {
-			return imageSrcPropTypeUtil.extract( prop );
-		}
-		return null;
+
+		const inner = imageSrcPropTypeUtil.extract( base );
+
+		return svgSrcPropTypeUtil.create( value, {
+			...createOptions,
+			base: inner ? svgSrcPropTypeUtil.create( inner ) : base,
+		} );
 	},
-	create(
-		value: SvgSrcPropValue | ( ( prev?: SvgSrcPropValue ) => SvgSrcPropValue ),
-		createOptions?: CreateOptions
-	) {
-		return svgSrcPropTypeUtil.create(
-			value as SvgSrcPropValue & ( ( p?: SvgSrcPropValue ) => SvgSrcPropValue ),
-			normalizeCreateOptionsBase( createOptions )
-		);
-	},
-} as unknown as PropTypeUtil< 'svg-src', AtomicSvgMediaPropValue >;
+} as unknown as PropTypeUtil< 'svg-src', SvgMediaPropValue >;
