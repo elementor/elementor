@@ -4,7 +4,7 @@ import {
 	type NestedTemplatedElementConfig,
 } from './create-nested-templated-element-type';
 import { type CreateTemplatedElementTypeOptions } from './create-templated-element-type';
-import { type ElementType, type ElementView, type LegacyWindow } from './types';
+import { type ElementType, type ElementView } from './types';
 
 export function createProPromotionNestedType( {
 	type,
