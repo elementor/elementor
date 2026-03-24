@@ -255,9 +255,10 @@ test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 		const tabsId = await editor.addElement( { elType: tabsType }, 'document' );
 		const tabsRoot = getTabsRoot( tabsId );
 		const tabItems = getMenuTabs( tabsRoot );
+		const SELECTED_TAB_NUMBER = 2;
 
-		await tabItems.nth( 1 ).dispatchEvent( 'click' );
-		await expect( tabItems.nth( 2 ) ).toHaveAttribute( 'aria-selected', 'true' );
+		await tabItems.nth( SELECTED_TAB_NUMBER ).dispatchEvent( 'click' );
+		await expect( tabItems.nth( SELECTED_TAB_NUMBER ) ).toHaveAttribute( 'aria-selected', 'true' );
 
 		await editor.selectElement( tabsId );
 		await editor.waitForPanelToLoad();
@@ -266,9 +267,9 @@ test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 
 		// Act
 		const listItems = menuItemsField.locator( 'ul.MuiList-root > li' );
-		await listItems.nth( 2 ).hover();
+		await listItems.nth( SELECTED_TAB_NUMBER ).hover();
 
-		const removeButton = listItems.nth( 2 ).getByRole( 'button', { name: 'Remove' } );
+		const removeButton = listItems.nth( SELECTED_TAB_NUMBER ).getByRole( 'button', { name: 'Remove' } );
 		await expect( removeButton ).toBeVisible();
 		await removeButton.click();
 
