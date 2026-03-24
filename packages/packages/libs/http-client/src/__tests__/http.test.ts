@@ -18,6 +18,11 @@ type RetryConfig = {
 	timeout?: number;
 };
 
+type FakeAxiosError = {
+	config: RetryConfig;
+	response?: { status: number };
+};
+
 const mockAxiosInstance = Object.assign( jest.fn(), {
 	interceptors: {
 		response: {
@@ -28,7 +33,7 @@ const mockAxiosInstance = Object.assign( jest.fn(), {
 
 ( axios.create as jest.Mock ).mockReturnValue( mockAxiosInstance );
 
-const makeError = ( status?: number, retryCount?: number, method?: string, timeout?: number ) => {
+const makeError = ( status?: number, retryCount?: number, method?: string, timeout?: number ): FakeAxiosError => {
 	const config: RetryConfig = {
 		...( retryCount !== undefined && { __retryCount: retryCount } ),
 		...( method !== undefined && { method } ),
@@ -37,8 +42,7 @@ const makeError = ( status?: number, retryCount?: number, method?: string, timeo
 	return {
 		config,
 		response: status !== undefined ? { status } : undefined,
-		/** eslint-disable-next-line @typescript-eslint/no-explicit-any */
-	} as any;
+	};
 };
 
 describe( 'httpService', () => {
