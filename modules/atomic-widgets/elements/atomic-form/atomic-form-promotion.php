@@ -63,6 +63,13 @@ class Atomic_Form_Promotion extends Atomic_Element_Base {
 		return false;
 	}
 
+	protected function should_print_empty() {
+		return false;
+	}
+
+	public function print_content() {
+	}
+
 	public function before_render() {
 	}
 
