@@ -7,7 +7,7 @@ export type UnitSelectorProps< T extends string > = {
 	options: T[];
 	value: T;
 	onSelect: ( value: T ) => void;
-	isActive: boolean;
+	isUnitHighlighted: boolean;
 	menuItemsAttributes?: { [ key in T ]?: Record< string, unknown > };
 	optionLabelOverrides?: { [ key in T ]?: React.ReactNode };
 	disabled?: boolean;
@@ -21,7 +21,7 @@ const menuItemContentStyles = {
 
 export const UnitSelector = < T extends string >( {
 	value,
-	isActive,
+	isUnitHighlighted,
 	onSelect,
 	options,
 	disabled,
@@ -41,7 +41,12 @@ export const UnitSelector = < T extends string >( {
 
 	return (
 		<>
-			<StyledButton isActive={ isActive } disabled={ disabled } size="small" { ...bindTrigger( popupState ) }>
+			<StyledButton
+				isHighlighted={ isUnitHighlighted }
+				disabled={ disabled }
+				size="small"
+				{ ...bindTrigger( popupState ) }
+			>
 				{ optionLabelOverrides[ value ] ?? value }
 			</StyledButton>
 
@@ -71,9 +76,9 @@ export const UnitSelector = < T extends string >( {
 };
 
 const StyledButton = styled( Button, {
-	shouldForwardProp: ( prop ) => prop !== 'isActive',
-} )( ( { isActive, theme } ) => ( {
-	color: isActive ? theme.palette.text.primary : theme.palette.text.tertiary,
+	shouldForwardProp: ( prop ) => prop !== 'isHighlighted',
+} )( ( { isHighlighted, theme } ) => ( {
+	color: isHighlighted ? theme.palette.text.primary : theme.palette.text.tertiary,
 	font: 'inherit',
 	minWidth: 'initial',
 	textTransform: 'uppercase',
