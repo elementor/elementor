@@ -131,7 +131,7 @@ jobs:
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core update-db"
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8889 --command="wp core update-db"
       - name: Export WordPress major version
-        if: ${{ github.event_name == 'schedule' }}
+        if: ${{ github.event_name == 'schedule' || inputs.run_mode == 'nightly' }}
         run: |
           WP_VER=$(npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version" 2>&1 | grep -oE '^[0-9]+' | head -1)
           echo "WP_MAJOR_VERSION=$WP_VER" >> $GITHUB_ENV
