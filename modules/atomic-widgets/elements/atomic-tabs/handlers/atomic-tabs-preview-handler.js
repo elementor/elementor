@@ -1,6 +1,7 @@
 import { register } from '@elementor/frontend-handlers';
 import { Alpine, refreshTree } from '@elementor/alpinejs';
-import { TAB_ELEMENT_TYPE, TAB_CONTENT_ELEMENT_TYPE, getTabId, getIndex } from './utils';
+import { TAB_ELEMENT_TYPE, TAB_CONTENT_ELEMENT_TYPE, getIndex } from './utils';
+import { setActiveTabIndex } from './editor-tabs-state';
 
 register( {
 	elementType: 'e-tabs',
@@ -20,7 +21,7 @@ register( {
 			}
 
 			const targetIndex = getIndex( targetElement, type );
-			Alpine.$data( element ).activeTab = getTabId( element.dataset.id, targetIndex );
+			setActiveTabIndex( element.dataset.id, targetIndex );
 		}, { signal } );
 
 		// Re-initialize Alpine to sync with editor DOM manipulations that bypass Alpine's reactivity.
