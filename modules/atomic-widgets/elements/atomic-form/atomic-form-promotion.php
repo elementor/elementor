@@ -74,6 +74,6 @@ class Atomic_Form_Promotion extends Atomic_Element_Base {
 	protected function get_templates(): array {
 		return [
 			'elementor/elements/atomic-form-promotion' => __DIR__ . '/atomic-form-promotion.html.twig',
-		];
+		] ;
 	}
 }

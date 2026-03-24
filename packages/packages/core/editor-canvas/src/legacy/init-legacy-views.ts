@@ -61,14 +61,12 @@ function registerProPromotionTypes( widgetsCache: Record< string, V1ElementConfi
 }
 
 function resolveElementType( type: string, renderer: DomRenderer, element: V1ElementConfig ) {
-	const customGenerator = elementsLegacyTypes[ type ];
-
-	if ( customGenerator ) {
-		return customGenerator( { type, renderer, element } );
-	}
-
 	if ( canBeNestedTemplated( element ) ) {
-		return createNestedTemplatedType( type, renderer, element );
+		const customGenerator = elementsLegacyTypes[ type ];
+
+		return customGenerator
+			? customGenerator( { type, renderer, element } )
+			: createNestedTemplatedType( type, renderer, element );
 	}
 
 	if ( ! canBeTemplated( element ) ) {
