@@ -24,6 +24,7 @@ register( {
 			setActiveTabIndex( element.dataset.id, targetIndex );
 		}, { signal } );
 
+		// Re-initialize Alpine to sync with editor DOM manipulations that bypass Alpine's reactivity.
 		listenToChildren( [ TAB_ELEMENT_TYPE, TAB_CONTENT_ELEMENT_TYPE ] )
 			.render( () => refreshTree( element ) );
 	},
