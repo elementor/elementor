@@ -51,6 +51,7 @@ import { resolveOverridePropValue } from '../../utils/resolve-override-prop-valu
 import { ControlLabel } from '../control-label';
 import { OverrideControlInnerElementNotFoundError } from '../errors';
 import { useResolvedOriginValue } from './use-resolved-origin-value';
+import { correctExposedEmptyOverride } from './utils/correct-exposed-empty-override';
 
 type Props = {
 	overrideKey: string;
@@ -130,17 +131,7 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 			newValue[ overridableProp.overrideKey ]
 		);
 
-		// The control receives the resolved value, so when exposing a prop that was never overridden,
-		// origin_value will be the resolved value instead of null.
-		// So here, we correct this by resetting origin_value to null.
-		const newOverridableValue = componentOverridablePropTypeUtil.extract( newPropValue );
-		const isExposingEmptyOverride = newOverridableValue && matchingOverride === null;
-		if ( isExposingEmptyOverride ) {
-			newPropValue = componentOverridablePropTypeUtil.create( {
-				override_key: newOverridableValue.override_key,
-				origin_value: null,
-			} );
-		}
+		newPropValue = correctExposedEmptyOverride( newPropValue, matchingOverride );
 
 		const newOverrideValue = createOverrideValue( {
 			matchingOverride,
