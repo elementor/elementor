@@ -66,10 +66,6 @@ function createPromotionView( BaseView: typeof ElementView ): typeof ElementView
 			return Object.fromEntries( behaviorsAsEntries );
 		}
 
-		getHandlesOverlay() {
-			return null;
-		}
-
 		getContextMenuGroups() {
 			return super.getContextMenuGroups().filter( ( group: { name: string } ) => group.name !== 'save' );
 		}
