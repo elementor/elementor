@@ -14,16 +14,10 @@ type SizeUnit = SizePropValue[ 'value' ][ 'unit' ];
 
 type Props = SizeFieldProps< SizeValue, SizeUnit > & {
 	anchorRef?: RefObject< HTMLDivElement | null >;
-	isUnitActive?: boolean;
 	SizeFieldWrapper?: React.ComponentType< { children: React.ReactNode } >;
 };
 
-export const SizeComponent = ( {
-	anchorRef,
-	isUnitActive,
-	SizeFieldWrapper = React.Fragment,
-	...sizeFieldProps
-}: Props ) => {
+export const SizeComponent = ( { anchorRef, SizeFieldWrapper = React.Fragment, ...sizeFieldProps }: Props ) => {
 	const popupState = usePopupState( { variant: 'popover' } );
 	const activeBreakpoint = useActiveBreakpoint();
 
@@ -74,7 +68,6 @@ export const SizeComponent = ( {
 						} }
 						unitSelectorProps={ {
 							menuItemsAttributes: hasCustomUnitOption ? { custom: popupAttributes } : undefined,
-							isActive: isUnitActive,
 						} }
 						{ ...sizeFieldProps }
 					/>
