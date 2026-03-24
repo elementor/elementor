@@ -49,7 +49,10 @@ test.describe( 'Document tests', async () => {
 
 async function addElement( wpAdmin: WpAdminPage, elementType: string ) {
 	const frame = wpAdmin.page.frame( { name: 'editor-canvas' } );
-	await wpAdmin.page.getByRole( 'button', { name: 'Block Inserter' } ).click();
+	const inserterButton = wpAdmin.page.getByRole( 'button', { name: 'Block Inserter', exact: true } );
+	if ( 'true' !== await inserterButton.getAttribute( 'aria-expanded' ) ) {
+		await inserterButton.click();
+	}
 	await wpAdmin.page.click( `[class*="editor-block-list-item-${ elementType }"]` );
 	await frame.click( '.editor-styles-wrapper' );
 }
