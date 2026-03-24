@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useCallback, useRef } from 'react';
-import { type Unit, UnstableSizeField } from '@elementor/editor-controls';
+import { SizeComponent, type Unit } from '@elementor/editor-controls';
 import { type SizePropValue } from '@elementor/editor-props';
 
 import { DEFAULT_TIME_UNIT, TIME_UNITS } from '../../configs/time-constants';
@@ -44,10 +44,10 @@ export function TimeFrameIndicator( {
 	};
 
 	return (
-		<UnstableSizeField
+		<SizeComponent
 			units={ TIME_UNITS }
 			value={ sizeValue }
-			onChange={ handleChange }
+			setValue={ handleChange }
 			onBlur={ handleBlur }
 			InputProps={ {
 				inputProps: {
