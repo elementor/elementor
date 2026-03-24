@@ -32,11 +32,7 @@ export const UnstableSizeControl = createControl(
 			restoreValue,
 		} = useBoundProp( sizePropTypeUtil );
 
-		const { sizeValue, isUnitHighlighted, placeholder } = resolveBoundPropValue(
-			value,
-			boundPropPlaceholder,
-			propPlaceholder
-		);
+		const { sizeValue, placeholder } = resolveBoundPropValue( value, boundPropPlaceholder, propPlaceholder );
 
 		const units = getSizeUnits( propType, variant );
 		const defaultUnit = getDefaultUnit( propType );
@@ -73,7 +69,6 @@ export const UnstableSizeControl = createControl(
 				anchorRef={ anchorRef }
 				placeholder={ placeholder }
 				defaultUnit={ defaultUnit }
-				isUnitActive={ isUnitHighlighted }
 				onBlur={ handleBlur }
 				setValue={ handleChange }
 				SizeFieldWrapper={ ControlActions }
