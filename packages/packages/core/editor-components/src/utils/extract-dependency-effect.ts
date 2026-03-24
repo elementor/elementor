@@ -1,46 +1,35 @@
 import {
+	type DependencyEffect as BaseDependencyEffect,
+	extractDependencyEffect as baseExtractDependencyEffect,
+	getElementSettingsWithDefaults,
+} from '@elementor/editor-editing-panel';
+import {
 	type DependencyTerm,
 	isDependency,
 	isDependencyMet,
 	type Props,
 	type PropsSchema,
-	type PropType,
 	type TransformablePropValue,
 } from '@elementor/editor-props';
 
-type DependencyEffect = {
-	isHidden: boolean;
-	isDisabled: ( propType: PropType ) => boolean;
+export type DependencyEffect = BaseDependencyEffect & {
 	forcedNewValue: TransformablePropValue< string > | null;
 };
 
-/**
- * Given a prop key and settings, compute whether the prop should be hidden, disabled,
- * or forced to a new value based on the prop dependency system.
- * This mirrors the dependency logic in SettingsField but can operate on arbitrary settings.
- * @param bind
- * @param propsSchema
- * @param settings
- */
 export function extractDependencyEffect( bind: string, propsSchema: PropsSchema, settings: Props ): DependencyEffect {
-	const settingsWithDefaults = applySchemaDefaults( propsSchema, settings );
+	const base = baseExtractDependencyEffect( bind, propsSchema, settings );
+
+	const settingsWithDefaults = getElementSettingsWithDefaults( propsSchema, settings );
 	const propType = propsSchema[ bind ];
 	const depCheck = isDependencyMet( propType?.dependencies, settingsWithDefaults );
-
 	const failingTerm = ! depCheck.isMet ? depCheck.failingDependencies[ 0 ] : undefined;
-
-	const isHidden = !! failingTerm && ! isDependency( failingTerm ) && failingTerm?.effect === 'hide';
 
 	const forcedNewValue =
 		!! failingTerm && ! isDependency( failingTerm ) && failingTerm?.newValue
 			? ( failingTerm.newValue as TransformablePropValue< string > )
 			: null;
 
-	return {
-		isHidden,
-		isDisabled: ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, settingsWithDefaults ).isMet,
-		forcedNewValue,
-	};
+	return { ...base, forcedNewValue };
 }
 
 type Value = TransformablePropValue< string > | null;
@@ -84,8 +73,8 @@ export function computeDependentOverrideUpdates( {
 		return [];
 	}
 
-	const previousWithDefaults = applySchemaDefaults( propsSchema, previousSettings );
-	const newWithDefaults = applySchemaDefaults( propsSchema, newSettings );
+	const previousWithDefaults = getElementSettingsWithDefaults( propsSchema, previousSettings );
+	const newWithDefaults = getElementSettingsWithDefaults( propsSchema, newSettings );
 
 	const updates: DependentOverrideUpdate[] = [];
 
@@ -154,19 +143,4 @@ function collectDependentsForProp( changedPropKey: string, mapping: Record< stri
 	}
 
 	return [ ...dependents ];
-}
-
-export function applySchemaDefaults( propsSchema: PropsSchema, settings: Props ): Props {
-	const result = { ...settings };
-
-	for ( const key of Object.keys( propsSchema ) ) {
-		if ( result[ key ] === null || result[ key ] === undefined ) {
-			const defaultValue = propsSchema[ key ]?.default;
-			if ( defaultValue !== null && defaultValue !== undefined ) {
-				result[ key ] = defaultValue;
-			}
-		}
-	}
-
-	return result;
 }

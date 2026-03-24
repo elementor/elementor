@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useEffect, useRef } from 'react';
 import {
 	ControlReplacementsProvider,
 	getControlReplacements,
@@ -126,6 +125,10 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 	const type = elType === 'widget' ? widgetType : elType;
 	const elementType = getElementType( type );
 
+	if ( ! propType || ! elementType ) {
+		return null;
+	}
+
 	// Resolve settings: unwrap overridables so the dependency system can evaluate them
 	const rawSettings = elementType
 		? getElementSettings< AnyTransformable >( elementId, Object.keys( elementType.propsSchema ) )
@@ -141,69 +144,22 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 		: {};
 
 	// Dependency effects (hide/disable/newValue) based on resolved settings
-	const { isHidden, isDisabled, forcedNewValue } = elementType
-		? extractDependencyEffect( propKey, elementType.propsSchema, resolvedSettings )
-		: { isHidden: false, isDisabled: () => false, forcedNewValue: null };
+	const { isHidden, isDisabled, forcedNewValue } = extractDependencyEffect(
+		propKey,
+		elementType.propsSchema,
+		resolvedSettings
+	);
 
 	// Override value resolution
 	const resolvedOverrideValue = matchingOverride ? resolveOverridePropValue( matchingOverride ) : null;
 	const propValue = resolvedOverrideValue ?? recursiveOriginValue ?? overridableProp.originValue;
-
-	// When the origin value changes (e.g., link set in component edit mode) and a dependency
-	// is now failing with a newValue, sync the override to match the forced value.
-	const hasSyncedRef = useRef( false );
-	useEffect( () => {
-		if ( ! forcedNewValue || ! instanceValue || ! overridableProps ) {
-			hasSyncedRef.current = false;
-			return;
-		}
-
-		if ( hasSyncedRef.current ) {
-			return;
-		}
-
-		const currentValue = resolvedOverrideValue ?? recursiveOriginValue ?? overridableProp.originValue;
-		if ( JSON.stringify( currentValue ) === JSON.stringify( forcedNewValue ) ) {
-			hasSyncedRef.current = true;
-			return;
-		}
-
-		hasSyncedRef.current = true;
-
-		const newOverride = createOverrideValue( {
-			matchingOverride,
-			overrideKey: overridableProp.overrideKey,
-			overrideValue: forcedNewValue as ComponentInstanceOverrideProp,
-			componentId: componentId as number,
-		} );
-
-		const currentOverrides = overrides ?? [];
-		const alreadyHasOverride = currentOverrides.some(
-			( o ) => getOverrideKey( o ) === overridableProp.overrideKey
-		);
-
-		const updatedOverrides = alreadyHasOverride
-			? currentOverrides
-					.filter( ( o ) => isValidOverride( overridableProps, o ) )
-					.map( ( o ) => ( getOverrideKey( o ) === overridableProp.overrideKey ? newOverride : o ) )
-			: [ ...currentOverrides.filter( ( o ) => isValidOverride( overridableProps, o ) ), newOverride ];
-
-		setInstanceValue( {
-			...instanceValue,
-			overrides: componentInstanceOverridesPropTypeUtil.create( updatedOverrides ),
-		} );
-	}, [ resolvedSettings ] ); // eslint-disable-line react-hooks/exhaustive-deps
-
-	if ( ! propType || ! elementType ) {
-		return null;
-	}
 
 	if ( isHidden ) {
 		return null;
 	}
 
 	const value = {
-		[ overridableProp.overrideKey ]: propValue,
+		[ overridableProp.overrideKey ]: forcedNewValue ?? propValue,
 	} as OverridesSchema;
 
 	const setValue = ( newValue: OverridesSchema ) => {
