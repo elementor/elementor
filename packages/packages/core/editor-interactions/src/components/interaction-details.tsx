@@ -165,6 +165,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	useEffect( () => {
 		syncGridOverlay( trigger, start, end, relativeTo );
 		return () => dispatchScrollInteraction( null );
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- Mount/unmount only; updates go through updateInteraction.
 	}, [] );
 
 	const TriggerControl = useControlComponent( 'trigger', true );
@@ -249,7 +250,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			updates.trigger ?? trigger,
 			updates.start ?? start,
 			updates.end ?? end,
-			updates.relativeTo ?? relativeTo,
+			updates.relativeTo ?? relativeTo
 		);
 
 		const interactionId = extractString( updatedInteraction.interaction_id );
