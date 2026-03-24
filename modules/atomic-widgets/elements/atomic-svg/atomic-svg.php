@@ -5,7 +5,6 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Svg_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
-use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
@@ -60,7 +59,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 				->add_prop_type(
 					Image_Src_Prop_Type::make()
 						->default_url( static::DEFAULT_SVG_URL )
-						->meta( Dynamic_Prop_Type::ignore() )
+						->meta( 'is_svg', true )
 				)
 				->default( $svg_src->get_default() ),
 			'link' => Link_Prop_Type::make(),

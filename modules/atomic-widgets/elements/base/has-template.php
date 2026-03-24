@@ -34,7 +34,13 @@ trait Has_Template {
 				$renderer->register( $name, $path );
 			}
 
-			$context = $this->build_template_context();
+			$context = [
+				'id' => $this->get_id(),
+				'interaction_id' => $this->get_interaction_id(),
+				'type' => $this->get_name(),
+				'settings' => $this->get_atomic_settings(),
+				'base_styles' => $this->get_base_styles_dictionary(),
+			];
 
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo $renderer->render( $this->get_main_template(), $context );
@@ -43,20 +49,6 @@ trait Has_Template {
 				throw $e;
 			}
 		}
-	}
-
-	protected function build_base_template_context(): array {
-		return [
-			'id' => $this->get_id(),
-			'interaction_id' => $this->get_interaction_id(),
-			'type' => $this->get_name(),
-			'settings' => $this->get_atomic_settings(),
-			'base_styles' => $this->get_base_styles_dictionary(),
-		];
-	}
-
-	protected function build_template_context(): array {
-		return $this->build_base_template_context();
 	}
 
 	protected function get_templates_contents() {
