@@ -11,7 +11,12 @@ jest.mock( '../env', () => ( {
 	env: { base_url: 'http://test.com', headers: {} },
 } ) );
 
-type RetryConfig = { __retryCount?: number; method?: string };
+type RetryConfig = {
+	__retryCount?: number;
+	__baseTimeout?: number;
+	method?: string;
+	timeout?: number;
+};
 
 const mockAxiosInstance = Object.assign( jest.fn(), {
 	interceptors: {
@@ -23,10 +28,11 @@ const mockAxiosInstance = Object.assign( jest.fn(), {
 
 ( axios.create as jest.Mock ).mockReturnValue( mockAxiosInstance );
 
-const makeError = ( status?: number, retryCount?: number, method?: string ) => {
+const makeError = ( status?: number, retryCount?: number, method?: string, timeout?: number ) => {
 	const config: RetryConfig = {
 		...( retryCount !== undefined && { __retryCount: retryCount } ),
 		...( method !== undefined && { method } ),
+		...( timeout !== undefined && { timeout } ),
 	};
 	return {
 		config,
@@ -177,6 +183,46 @@ describe( 'httpService', () => {
 			// Retry received a new config with __retryCount = 1
 			const retryCallConfig = mockAxiosInstance.mock.calls[ 0 ][ 0 ];
 			expect( ( retryCallConfig as RetryConfig ).__retryCount ).toBe( 1 );
+		} );
+
+		it( 'doubles the timeout on the first retry (retryCount = 0)', async () => {
+			const error = makeError( 500, undefined, undefined, 10000 );
+			mockAxiosInstance.mockResolvedValueOnce( {} );
+
+			const promise = onError( error );
+			await jest.runAllTimersAsync();
+			await promise;
+
+			const retryConfig = mockAxiosInstance.mock.calls[ 0 ][ 0 ] as RetryConfig;
+			expect( retryConfig.timeout ).toBe( 20000 ); // 10000 * (0 + 2)
+		} );
+
+		it( 'scales timeout from the original base, not from the already-extended value', async () => {
+			// Simulate second retry: __retryCount = 1, __baseTimeout already stored as 10000
+			const error = makeError( 500, 1 );
+			( error.config as RetryConfig ).__baseTimeout = 10000;
+			( error.config as RetryConfig ).timeout = 20000; // already extended from retry 1
+			mockAxiosInstance.mockResolvedValueOnce( {} );
+
+			const promise = onError( error );
+			await jest.runAllTimersAsync();
+			await promise;
+
+			const retryConfig = mockAxiosInstance.mock.calls[ 0 ][ 0 ] as RetryConfig;
+			// Must scale from __baseTimeout (10000), not from the current timeout (20000)
+			expect( retryConfig.timeout ).toBe( 30000 ); // 10000 * (1 + 2)
+		} );
+
+		it( 'stores __baseTimeout on the retry config so the base is preserved', async () => {
+			const error = makeError( 500, undefined, undefined, 10000 );
+			mockAxiosInstance.mockResolvedValueOnce( {} );
+
+			const promise = onError( error );
+			await jest.runAllTimersAsync();
+			await promise;
+
+			const retryConfig = mockAxiosInstance.mock.calls[ 0 ][ 0 ] as RetryConfig;
+			expect( retryConfig.__baseTimeout ).toBe( 10000 );
 		} );
 
 		it( 'uses 1000ms delay for the first retry (retryCount = 0)', async () => {

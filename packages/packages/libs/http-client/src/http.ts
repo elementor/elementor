@@ -31,7 +31,10 @@ export const httpService = () => {
 		instance.interceptors.response.use(
 			( response ) => response,
 			async ( error: AxiosError ) => {
-				const config = error.config as typeof error.config & { __retryCount?: number };
+				const config = error.config as typeof error.config & {
+					__retryCount?: number;
+					__baseTimeout?: number;
+				};
 
 				if ( ! config || ! shouldRetry( error ) ) {
 					return Promise.reject( error );
@@ -47,8 +50,14 @@ export const httpService = () => {
 				const jitter = Math.random() * BASE_DELAY_MS * 0.1;
 				await sleep( baseDelay + jitter );
 
-				// Spread to avoid mutating the original config object
-				return instance( { ...config, __retryCount: retryCount + 1 } as typeof config );
+				const baseTimeout = config.__baseTimeout ?? config.timeout ?? 10000;
+
+				return instance( {
+					...config,
+					__retryCount: retryCount + 1,
+					__baseTimeout: baseTimeout,
+					timeout: baseTimeout * ( retryCount + 2 ),
+				} as typeof config );
 			}
 		);
 	}
