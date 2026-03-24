@@ -29,6 +29,7 @@ function createProPromotionView(): typeof ElementView {
 		render() {
 			this.$el.html( buildPromotionHTML() );
 
+			this.$el.off( 'click', '.e-form-placeholder__remove-btn' );
 			this.$el.on( 'click', '.e-form-placeholder__remove-btn', ( e: Event ) => {
 				e.preventDefault();
 				e.stopPropagation();
@@ -50,9 +51,7 @@ function createProPromotionView(): typeof ElementView {
 			this.isRendered = true;
 		}
 
-		_renderChildren() {
-			// No-op: children data is preserved in the model but not rendered.
-		}
+		_renderChildren() {}
 
 		onDestroy( ...args: unknown[] ) {
 			super.onDestroy( ...args );
