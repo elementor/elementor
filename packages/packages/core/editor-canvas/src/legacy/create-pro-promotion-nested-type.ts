@@ -47,6 +47,11 @@ function createPromotionView( BaseView: typeof ElementView ): typeof ElementView
 					{ container: this.container }
 				);
 			} );
+
+			this.$el.off( 'click', '.e-form-placeholder__unlock-btn' );
+			this.$el.on( 'click', '.e-form-placeholder__unlock-btn', ( e: Event ) => {
+				e.stopPropagation();
+			} );
 		}
 
 		_renderChildren() {}
@@ -72,6 +77,7 @@ function createPromotionView( BaseView: typeof ElementView ): typeof ElementView
 		onDestroy( ...args: unknown[] ) {
 			super.onDestroy( ...args );
 			this.$el.off( 'click', '.e-form-placeholder__remove-btn' );
+			this.$el.off( 'click', '.e-form-placeholder__unlock-btn' );
 		}
 	} as unknown as typeof ElementView;
 }
