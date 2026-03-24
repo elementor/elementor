@@ -10,7 +10,7 @@ describe( 'UnitSelector', () => {
 
 	describe( 'Rendering', () => {
 		it( 'should render button with current value', () => {
-			render( <UnitSelector value="px" options={ [ 'px', 'rem' ] } onSelect={ jest.fn() } isActive /> );
+			render( <UnitSelector value="px" options={ [ 'px', 'rem' ] } onSelect={ jest.fn() } isUnitHighlighted /> );
 
 			const button = screen.getByRole( 'button', { name: 'px' } );
 
@@ -19,7 +19,9 @@ describe( 'UnitSelector', () => {
 		} );
 
 		it( 'should render all options in menu when menu is open', () => {
-			render( <UnitSelector value="px" options={ [ 'px', 'rem', 'ch' ] } onSelect={ jest.fn() } isActive /> );
+			render(
+				<UnitSelector value="px" options={ [ 'px', 'rem', 'ch' ] } onSelect={ jest.fn() } isUnitHighlighted />
+			);
 
 			fireEvent.click( screen.getByRole( 'button', { name: 'px' } ) );
 
@@ -31,7 +33,7 @@ describe( 'UnitSelector', () => {
 
 		it( 'should not throw error when options is empty', () => {
 			expect( () =>
-				render( <UnitSelector options={ [] } value={ '' as 'px' } onSelect={ jest.fn() } isActive /> )
+				render( <UnitSelector options={ [] } value={ '' as 'px' } onSelect={ jest.fn() } isUnitHighlighted /> )
 			).not.toThrow();
 		} );
 
@@ -41,7 +43,7 @@ describe( 'UnitSelector', () => {
 					options={ [ 'px', 'em', 'rem' ] }
 					value="px"
 					onSelect={ jest.fn() }
-					isActive={ false }
+					isUnitHighlighted={ false }
 					optionLabelOverrides={ { px: 'Pixels' } }
 				/>
 			);
@@ -55,7 +57,7 @@ describe( 'UnitSelector', () => {
 					options={ [ 'px', 'em', 'rem' ] }
 					value="px"
 					onSelect={ jest.fn() }
-					isActive={ false }
+					isUnitHighlighted={ false }
 					optionLabelOverrides={ {
 						em: 'Ems',
 						rem: 'Rems',
@@ -74,7 +76,7 @@ describe( 'UnitSelector', () => {
 		it( 'should call onSelect with selected option and close menu when option is clicked', () => {
 			const onSelect = jest.fn();
 
-			render( <UnitSelector value="px" options={ [ 'px', 'rem' ] } onSelect={ onSelect } isActive /> );
+			render( <UnitSelector value="px" options={ [ 'px', 'rem' ] } onSelect={ onSelect } isUnitHighlighted /> );
 
 			fireEvent.click( screen.getByRole( 'button', { name: 'px' } ) );
 

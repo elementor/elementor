@@ -8,8 +8,8 @@ import { useSizeValue } from './hooks/use-size-value';
 import { type SetSizeValue, type SizeUnit } from './types';
 import { SizeInput } from './ui/size-input';
 import { UnitSelector, type UnitSelectorProps } from './ui/unit-selector';
-import { hasSizeValue } from './utils/has-size-value';
 import { isExtendedUnit } from './utils/is-extended-unit';
+import { EXTENDED_UNITS } from './utils/resolve-size-value';
 
 export type SizeFieldProps< TValue extends SizePropValue[ 'value' ], TUnit extends SizeUnit > = {
 	units: TUnit[];
@@ -100,7 +100,7 @@ export const SizeField = < T extends SizePropValue[ 'value' ], U extends SizeUni
 							options={ units }
 							value={ unit as U }
 							onSelect={ handleUnitChange }
-							isActive={ unitSelectorProps?.isActive ?? hasSizeValue( size ) }
+							isUnitHighlighted={ shouldHighlightUnit( { size, unit } as SizePropValue[ 'value' ] ) }
 							{ ...unitSelectorProps }
 							optionLabelOverrides={ UNIT_DISPLAY_LABELS_OVERRIDES }
 						/>
@@ -110,4 +110,16 @@ export const SizeField = < T extends SizePropValue[ 'value' ], U extends SizeUni
 			inputProps={ { min, step: 'any', 'arial-label': ariaLabel } }
 		/>
 	);
+};
+
+export const shouldHighlightUnit = ( value?: SizePropValue[ 'value' ] | null ) => {
+	if ( ! value ) {
+		return false;
+	}
+
+	if ( value.unit === EXTENDED_UNITS.auto ) {
+		return true;
+	}
+
+	return Boolean( value.size ) || value.size === 0;
 };
