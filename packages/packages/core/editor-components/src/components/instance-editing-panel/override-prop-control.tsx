@@ -124,11 +124,23 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 			return;
 		}
 
-		const newPropValue = getTempNewValueForDynamicProp(
+		let newPropValue = getTempNewValueForDynamicProp(
 			propType,
 			propValue,
 			newValue[ overridableProp.overrideKey ]
 		);
+
+		// The control receives the resolved value, so when exposing a prop that was never overridden,
+		// origin_value will be the resolved value instead of null.
+		// So here, we correct this by resetting origin_value to null.
+		const newOverridableValue = componentOverridablePropTypeUtil.extract( newPropValue );
+		const isExposingEmptyOverride = newOverridableValue && matchingOverride === null;
+		if ( isExposingEmptyOverride ) {
+			newPropValue = componentOverridablePropTypeUtil.create( {
+				override_key: newOverridableValue.override_key,
+				origin_value: null,
+			} );
+		}
 
 		const newOverrideValue = createOverrideValue( {
 			matchingOverride,
