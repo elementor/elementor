@@ -9,10 +9,8 @@ use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Svg_Src_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -50,18 +48,9 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		$svg_src = Svg_Src_Prop_Type::make()->default_url( static::DEFAULT_SVG_URL );
-
 		return [
 			'classes' => Classes_Prop_Type::make()->default( [] ),
-			'svg' => Union_Prop_Type::make()
-				->add_prop_type( $svg_src )
-				->add_prop_type(
-					Image_Src_Prop_Type::make()
-						->default_url( static::DEFAULT_SVG_URL )
-						->meta( 'is_svg', true )
-				)
-				->default( $svg_src->get_default() ),
+			'svg' => Svg_Src_Prop_Type::make()->default_url( static::DEFAULT_SVG_URL ),
 			'link' => Link_Prop_Type::make(),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];

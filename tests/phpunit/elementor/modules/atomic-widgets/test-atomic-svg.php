@@ -2,7 +2,6 @@
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Attachment_Id_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Svg_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
 use Elementor\Plugin;
@@ -293,29 +292,6 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 		$this->assertStringContainsString( '<button', $rendered_output );
 		$this->assertStringNotContainsString( '<a', $rendered_output );
 		$this->assertStringNotContainsString( 'href="', $rendered_output );
-	}
-
-	public function test__renders_svg_when_settings_store_legacy_image_src_atomic_format(): void {
-		$element = [
-			'id' => 'legacy-svg',
-			'elType' => 'widget',
-			'widgetType' => Atomic_Svg::get_element_type(),
-			'settings' => [
-				'svg' => Image_Src_Prop_Type::generate( [
-					'id' => Image_Attachment_Id_Prop_Type::generate( 123 ),
-					'url' => null,
-				] ),
-			],
-		];
-
-		$instance = Plugin::$instance->elements_manager->create_element_instance( $element );
-
-		ob_start();
-		$instance->render_content();
-		$rendered_output = ob_get_clean();
-
-		$this->assertStringContainsString( '<svg', $rendered_output );
-		$this->assertStringContainsString( 'data-interaction-id="legacy-svg"', $rendered_output );
 	}
 
 	public function link_href_provider(): array {

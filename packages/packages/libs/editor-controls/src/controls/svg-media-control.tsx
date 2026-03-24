@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
-import { svgMediaPropTypeUtil } from '@elementor/editor-props';
+import { svgSrcPropTypeUtil } from '@elementor/editor-props';
 import { UploadIcon } from '@elementor/icons';
 import { Button, Card, CardMedia, CardOverlay, CircularProgress, Stack, styled, ThemeProvider } from '@elementor/ui';
 import { type OpenOptions, useWpMediaAttachment, useWpMediaFrame } from '@elementor/wp-media';
@@ -43,7 +43,7 @@ const MODE_BROWSE: OpenOptions = { mode: 'browse' };
 const MODE_UPLOAD: OpenOptions = { mode: 'upload' };
 
 export const SvgMediaControl = createControl( () => {
-	const { value, setValue } = useBoundProp( svgMediaPropTypeUtil );
+	const { value, setValue } = useBoundProp( svgSrcPropTypeUtil );
 	const id = value?.id;
 	const url = value?.url;
 	const { data: attachment, isFetching } = useWpMediaAttachment( id?.value || null );

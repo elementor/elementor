@@ -23,13 +23,11 @@ import {
 } from '@elementor/editor-controls';
 import { type ControlLayout } from '@elementor/editor-elements';
 import {
-	svgMediaPropTypeUtil,
 	booleanPropTypeUtil,
 	DateTimePropTypeUtil,
 	emailPropTypeUtil,
 	htmlV3PropTypeUtil,
 	imagePropTypeUtil,
-	imageSrcPropTypeUtil,
 	keyValuePropTypeUtil,
 	linkPropTypeUtil,
 	numberPropTypeUtil,
@@ -38,6 +36,7 @@ import {
 	sizePropTypeUtil,
 	stringArrayPropTypeUtil,
 	stringPropTypeUtil,
+	svgSrcPropTypeUtil,
 	videoSrcPropTypeUtil,
 } from '@elementor/editor-props';
 
@@ -51,7 +50,7 @@ export type ControlRegistry = Record<
 
 const controlTypes = {
 	image: { component: ImageControl, layout: 'custom', propTypeUtil: imagePropTypeUtil },
-	'svg-media': { component: SvgMediaControl, layout: 'full', propTypeUtil: svgMediaPropTypeUtil },
+	'svg-media': { component: SvgMediaControl, layout: 'full', propTypeUtil: svgSrcPropTypeUtil },
 	text: { component: TextControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	textarea: { component: TextAreaControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	size: { component: SizeControl, layout: 'two-columns', propTypeUtil: sizePropTypeUtil },

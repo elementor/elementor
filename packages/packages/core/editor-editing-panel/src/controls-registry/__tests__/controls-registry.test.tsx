@@ -1,14 +1,13 @@
 import { type ControlComponent, TextControl } from '@elementor/editor-controls';
 import {
-	svgMediaPropTypeUtil,
 	booleanPropTypeUtil,
 	imagePropTypeUtil,
-	imageSrcPropTypeUtil,
 	keyValuePropTypeUtil,
 	linkPropTypeUtil,
 	sizePropTypeUtil,
 	stringArrayPropTypeUtil,
 	stringPropTypeUtil,
+	svgSrcPropTypeUtil,
 } from '@elementor/editor-props';
 
 import { ControlTypeAlreadyRegisteredError, ControlTypeNotRegisteredError } from '../../errors';
@@ -18,7 +17,7 @@ describe( 'Controls Registry', () => {
 	describe( 'Registry Integrity', () => {
 		const expectedPropTypeUtils = {
 			image: imagePropTypeUtil,
-			'svg-media': svgMediaPropTypeUtil,
+			'svg-media': svgSrcPropTypeUtil,
 			text: stringPropTypeUtil,
 			textarea: stringPropTypeUtil,
 			size: sizePropTypeUtil,

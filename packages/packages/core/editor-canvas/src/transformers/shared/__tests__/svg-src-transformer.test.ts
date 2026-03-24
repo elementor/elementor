@@ -30,10 +30,7 @@ describe( 'svgSrcTransformer', () => {
 		mockFetch( SAMPLE_SVG );
 
 		// Act.
-		const result = await svgSrcTransformer(
-			{ id: null, url: 'https://example.com/icon.svg' },
-			{ key: 'svg' }
-		);
+		const result = await svgSrcTransformer( { id: null, url: 'https://example.com/icon.svg' }, { key: 'svg' } );
 
 		// Assert.
 		expect( result ).toEqual( {
@@ -47,10 +44,10 @@ describe( 'svgSrcTransformer', () => {
 		mockFetch( SAMPLE_SVG );
 
 		// Act.
-		const result = await svgSrcTransformer(
+		const result = ( await svgSrcTransformer(
 			{ id: null, url: 'https://example.com/icon.svg' },
 			{ key: 'svg' }
-		) as { html: string; url: string };
+		) ) as { html: string; url: string };
 
 		// Assert.
 		expect( result.html ).toContain( 'width: 100%' );
@@ -60,10 +57,7 @@ describe( 'svgSrcTransformer', () => {
 
 	it( 'returns null html when url is null', async () => {
 		// Arrange & Act.
-		const result = await svgSrcTransformer(
-			{ id: null, url: null },
-			{ key: 'svg' }
-		);
+		const result = await svgSrcTransformer( { id: null, url: null }, { key: 'svg' } );
 
 		// Assert.
 		expect( result ).toEqual( { html: null, url: null } );
@@ -78,10 +72,7 @@ describe( 'svgSrcTransformer', () => {
 		mockFetch( SAMPLE_SVG );
 
 		// Act.
-		const result = await svgSrcTransformer(
-			{ id: 42, url: null },
-			{ key: 'svg' }
-		);
+		const result = await svgSrcTransformer( { id: 42, url: null }, { key: 'svg' } );
 
 		// Assert.
 		expect( mockedGetMediaAttachment ).toHaveBeenCalledWith( { id: 42 } );
@@ -97,10 +88,10 @@ describe( 'svgSrcTransformer', () => {
 		mockFetch( SAMPLE_SVG );
 
 		// Act.
-		const result = await svgSrcTransformer(
+		const result = ( await svgSrcTransformer(
 			{ id: 99, url: 'https://example.com/fallback.svg' },
 			{ key: 'svg' }
-		) as { html: string; url: string };
+		) ) as { html: string; url: string };
 
 		// Assert.
 		expect( result.url ).toBe( 'https://example.com/fallback.svg' );
@@ -112,10 +103,7 @@ describe( 'svgSrcTransformer', () => {
 		mockedGetMediaAttachment.mockResolvedValue( null as never );
 
 		// Act.
-		const result = await svgSrcTransformer(
-			{ id: 7, url: null },
-			{ key: 'svg' }
-		);
+		const result = await svgSrcTransformer( { id: 7, url: null }, { key: 'svg' } );
 
 		// Assert.
 		expect( result ).toEqual( { html: null, url: null } );
@@ -126,10 +114,7 @@ describe( 'svgSrcTransformer', () => {
 		mockFetch( '', 'image/svg+xml', false );
 
 		// Act.
-		const result = await svgSrcTransformer(
-			{ id: null, url: 'https://example.com/missing.svg' },
-			{ key: 'svg' }
-		);
+		const result = await svgSrcTransformer( { id: null, url: 'https://example.com/missing.svg' }, { key: 'svg' } );
 
 		// Assert.
 		expect( result ).toEqual( {
@@ -143,10 +128,7 @@ describe( 'svgSrcTransformer', () => {
 		mockFetch( '<html><body>Not SVG</body></html>', 'text/html' );
 
 		// Act.
-		const result = await svgSrcTransformer(
-			{ id: null, url: 'https://example.com/page.html' },
-			{ key: 'svg' }
-		);
+		const result = await svgSrcTransformer( { id: null, url: 'https://example.com/page.html' }, { key: 'svg' } );
 
 		// Assert.
 		expect( result ).toEqual( {
@@ -161,10 +143,10 @@ describe( 'svgSrcTransformer', () => {
 		mockFetch( svgWithStyle );
 
 		// Act.
-		const result = await svgSrcTransformer(
+		const result = ( await svgSrcTransformer(
 			{ id: null, url: 'https://example.com/styled.svg' },
 			{ key: 'svg' }
-		) as { html: string; url: string };
+		) ) as { html: string; url: string };
 
 		// Assert.
 		expect( result.html ).toContain( 'display: block' );
@@ -176,10 +158,7 @@ describe( 'svgSrcTransformer', () => {
 		mockFetch( '<div>Not an SVG</div>' );
 
 		// Act.
-		const result = await svgSrcTransformer(
-			{ id: null, url: 'https://example.com/not-svg.svg' },
-			{ key: 'svg' }
-		);
+		const result = await svgSrcTransformer( { id: null, url: 'https://example.com/not-svg.svg' }, { key: 'svg' } );
 
 		// Assert.
 		expect( result ).toEqual( {
@@ -200,9 +179,6 @@ describe( 'svgSrcTransformer', () => {
 		);
 
 		// Assert.
-		expect( global.fetch ).toHaveBeenCalledWith(
-			'https://example.com/icon.svg',
-			{ signal: controller.signal }
-		);
+		expect( global.fetch ).toHaveBeenCalledWith( 'https://example.com/icon.svg', { signal: controller.signal } );
 	} );
 } );
