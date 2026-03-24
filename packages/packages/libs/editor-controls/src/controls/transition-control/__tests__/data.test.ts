@@ -4,6 +4,13 @@ jest.mock( '@wordpress/i18n', () => ( {
 	__: ( label: string ) => label,
 } ) );
 
+const mockHasProInstalled = jest.fn( () => false );
+
+jest.mock( '@elementor/utils', () => ( {
+	...jest.requireActual( '@elementor/utils' ),
+	hasProInstalled: () => mockHasProInstalled(),
+} ) );
+
 const setSiteDirection = ( isRtl: boolean ) => {
 	window.elementorFrontend = {
 		config: {
@@ -19,8 +26,10 @@ const setProInstalled = ( version?: string ) => {
 				version,
 			},
 		};
+		mockHasProInstalled.mockReturnValue( true );
 	} else {
 		delete window.elementorPro;
+		mockHasProInstalled.mockReturnValue( false );
 	}
 };
 
@@ -40,6 +49,7 @@ describe( 'transitionProperties RTL support', () => {
 	beforeEach( () => {
 		delete window.elementorFrontend;
 		delete window.elementorPro;
+		mockHasProInstalled.mockReturnValue( false );
 		jest.resetModules();
 	} );
 
@@ -91,6 +101,7 @@ describe( 'transitionProperties Pro version handling', () => {
 	beforeEach( () => {
 		delete window.elementorFrontend;
 		delete window.elementorPro;
+		mockHasProInstalled.mockReturnValue( false );
 		jest.resetModules();
 	} );
 
@@ -99,15 +110,19 @@ describe( 'transitionProperties Pro version handling', () => {
 		return props;
 	};
 
-	it( 'should show only Default category when Pro is not installed', () => {
+	it( 'should show all categories with disabled properties when Pro is not installed', () => {
 		setProInstalled();
 
 		const props = getTransitionProperties();
 
-		expect( props ).toHaveLength( 1 );
+		expect( props.length ).toBeGreaterThan( 1 );
 		expect( props[ 0 ].label ).toBe( 'Default' );
-		expect( props[ 0 ].properties ).toHaveLength( 1 );
-		expect( props[ 0 ].properties[ 0 ].value ).toBe( 'all' );
+
+		props.slice( 1 ).forEach( ( cat: TransitionCategory ) => {
+			cat.properties.forEach( ( prop: TransitionProperty ) => {
+				expect( prop.isDisabled ).toBe( true );
+			} );
+		} );
 	} );
 
 	it( 'should show only Default category when Pro version is below 3.35', () => {
@@ -143,6 +158,7 @@ describe( 'transitionProperties Pro version handling', () => {
 	} );
 
 	it( 'should show only Default category when Pro is installed but version is undefined', () => {
+		mockHasProInstalled.mockReturnValue( true );
 		window.elementorPro = {
 			config: {},
 		};
