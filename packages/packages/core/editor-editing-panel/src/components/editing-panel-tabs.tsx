@@ -17,24 +17,25 @@ type TabValue = 'settings' | 'style' | 'interactions';
 
 export const EditingPanelTabs = () => {
 	const { element } = useElement();
-	const showGeneralTab = ! getWidgetsCache()?.[ element.type ]?.meta?.is_pro_promotion;
 
 	return (
 		// When switching between elements, the local states should be reset. We are using key to rerender the tabs.
 		// Reference: https://react.dev/learn/preserving-and-resetting-state#resetting-a-form-with-a-key
 		<Fragment key={ element.id }>
-			<PanelTabContent showGeneralTab={ showGeneralTab } />
+			<PanelTabContent />
 		</Fragment>
 	);
 };
 
-const PanelTabContent = ( { showGeneralTab }: { showGeneralTab: boolean } ) => {
+const PanelTabContent = () => {
+	const { element } = useElement();
 	const editorDefaults = useDefaultPanelSettings();
 	const defaultComponentTab = editorDefaults.defaultTab as TabValue;
 	const isInteractionsActive = isExperimentActive( 'e_interactions' );
+	const isPromotedElement = !! getWidgetsCache()?.[ element.type ]?.meta?.is_pro_promotion;
 
 	const [ storedTab, setCurrentTab ] = useStateByElement< TabValue >( 'tab', defaultComponentTab );
-	const currentTab = ! showGeneralTab && storedTab === 'settings' ? 'style' : storedTab;
+	const currentTab = isPromotedElement && storedTab === 'settings' ? 'style' : storedTab;
 	const { getTabProps, getTabPanelProps, getTabsProps } = useTabs< TabValue >( currentTab );
 	return (
 		<ScrollProvider>
@@ -50,7 +51,7 @@ const PanelTabContent = ( { showGeneralTab }: { showGeneralTab: boolean } ) => {
 							setCurrentTab( newValue );
 						} }
 					>
-						{ showGeneralTab && (
+						{ ! isPromotedElement && (
 							<Tab label={ __( 'General', 'elementor' ) } { ...getTabProps( 'settings' ) } />
 						) }
 						<Tab label={ __( 'Style', 'elementor' ) } { ...getTabProps( 'style' ) } />
@@ -60,7 +61,7 @@ const PanelTabContent = ( { showGeneralTab }: { showGeneralTab: boolean } ) => {
 					</Tabs>
 					<Divider />
 				</Stack>
-				{ showGeneralTab && (
+				{ ! isPromotedElement && (
 					<TabPanel { ...getTabPanelProps( 'settings' ) } disablePadding>
 						<SettingsTab />
 					</TabPanel>
