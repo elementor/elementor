@@ -1,4 +1,4 @@
-import { getMCPByDomain } from '@elementor/editor-mcp';
+import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
 import { globalClassesStylesProvider } from '../global-classes-styles-provider';
 
@@ -12,10 +12,7 @@ const updateLocalStorageCache = () => {
 	localStorage.setItem( STORAGE_KEY, JSON.stringify( classes ) );
 };
 
-export const initClassesResource = () => {
-	const canvasMcpEntry = getMCPByDomain( 'canvas' );
-	const classesMcpEntry = getMCPByDomain( 'classes' );
-
+export const initClassesResource = ( classesMcpEntry: MCPRegistryEntry, canvasMcpEntry: MCPRegistryEntry ) => {
 	[ canvasMcpEntry, classesMcpEntry ].forEach( ( entry ) => {
 		const { mcpServer, resource, waitForReady } = entry;
 		resource(
