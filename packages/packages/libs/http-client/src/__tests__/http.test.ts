@@ -31,6 +31,7 @@ const makeError = ( status?: number, retryCount?: number, method?: string ) => {
 	return {
 		config,
 		response: status !== undefined ? { status } : undefined,
+		/** eslint-disable-next-line @typescript-eslint/no-explicit-any */
 	} as any;
 };
 

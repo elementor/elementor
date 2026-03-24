@@ -1,4 +1,4 @@
-import axios, { type AxiosInstance, type AxiosError } from 'axios';
+import axios, { type AxiosError, type AxiosInstance } from 'axios';
 
 import { env } from './env';
 
@@ -31,7 +31,7 @@ export const httpService = () => {
 		instance.interceptors.response.use(
 			( response ) => response,
 			async ( error: AxiosError ) => {
-				const config = error.config as ( typeof error.config & { __retryCount?: number } );
+				const config = error.config as typeof error.config & { __retryCount?: number };
 
 				if ( ! config || ! shouldRetry( error ) ) {
 					return Promise.reject( error );
