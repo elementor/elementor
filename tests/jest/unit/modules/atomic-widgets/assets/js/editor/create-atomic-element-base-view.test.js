@@ -370,6 +370,46 @@ describe( 'createAtomicElementBaseView - renderOnChange', () => {
 		expect( currentAttributes ).toContain( 'data-element_type' );
 		expect( currentAttributes ).toContain( 'data-model-cid' );
 	} );
+
+	it( 'should call rerenderEntireView and skip base renderOnChange when tag actually changed', () => {
+		// Arrange
+		viewInstance._parent = { removeChildView: jest.fn(), addChild: jest.fn() };
+		mockElement.tagName = 'DIV';
+		viewInstance.tagName = jest.fn( () => 'a' );
+
+		const settings = {
+			changedAttributes: jest.fn( () => ( { link: { value: 'https://example.com' } } ) ),
+		};
+
+		const rerenderSpy = jest.spyOn( viewInstance, 'rerenderEntireView' ).mockImplementation( () => {} );
+
+		// Act
+		viewInstance.renderOnChange( settings );
+
+		// Assert
+		expect( rerenderSpy ).toHaveBeenCalled();
+		expect( BaseElementView.prototype.renderOnChange ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should not call rerenderEntireView when resolved tag matches DOM tag (case-insensitive)', () => {
+		// Arrange
+		viewInstance._parent = { removeChildView: jest.fn(), addChild: jest.fn() };
+		mockElement.tagName = 'A';
+		viewInstance.tagName = jest.fn( () => 'a' );
+
+		const settings = {
+			changedAttributes: jest.fn( () => ( { link: { value: 'https://example.com' } } ) ),
+		};
+
+		const rerenderSpy = jest.spyOn( viewInstance, 'rerenderEntireView' ).mockImplementation( () => {} );
+
+		// Act
+		viewInstance.renderOnChange( settings );
+
+		// Assert
+		expect( rerenderSpy ).not.toHaveBeenCalled();
+		expect( BaseElementView.prototype.renderOnChange ).toHaveBeenCalled();
+	} );
 } );
 
 describe( 'createAtomicElementBaseView - tagName with overridable props', () => {

@@ -159,6 +159,11 @@ export default function createAtomicElementBaseView( type ) {
 				return;
 			}
 
+			if ( this.isTagChanged( changed ) ) {
+				this.rerenderEntireView();
+				return;
+			}
+
 			BaseElementView.prototype.renderOnChange.apply( this, settings );
 
 			if ( changed.attributes ) {
@@ -205,14 +210,10 @@ export default function createAtomicElementBaseView( type ) {
 			}
 
 			this.$el.addClass( this.getClasses() );
-
-			if ( this.isTagChanged( changed ) ) {
-				this.rerenderEntireView();
-			}
 		},
 
 		isTagChanged( changed ) {
-			return ( changed?.tag !== undefined || changed?.link !== undefined ) && this._parent && this.tagName() !== this.el.tagName;
+			return ( changed?.tag !== undefined || changed?.link !== undefined ) && this._parent && this.tagName() !== this.el.tagName.toLowerCase();
 		},
 
 		rerenderEntireView() {
@@ -892,12 +893,22 @@ export default function createAtomicElementBaseView( type ) {
 			}
 
 			result.then( ( href ) => {
+				if ( this.isDestroyed ) {
+					return;
+				}
+
 				this.el.removeAttribute( 'href' );
 
 				const attribute = 'action' === linkValue.group ? 'data-action-link' : 'href';
 
 				this.el.setAttribute( attribute, href );
-			} ).then( () => this.dispatchPreviewEvent( 'elementor/element/render' ) );
+			} ).then( () => {
+				if ( this.isDestroyed ) {
+					return;
+				}
+
+				this.dispatchPreviewEvent( 'elementor/element/render' );
+			} );
 
 			return null;
 		},
