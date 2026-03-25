@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { createElement } from './create-element';
 import { deleteElement } from './delete-element';
 import { getContainer } from './get-container';
+import { addModelToParent, removeModelFromParent, resolveContainer } from './resolve-element';
 import { type V1Element, type V1ElementModelProps } from './types';
 
 type RemoveElementsParams = {
@@ -19,6 +20,8 @@ type RemovedElement = {
 	parent: V1Element;
 	model: V1ElementModelProps;
 	at: number;
+	containerId: string;
+	parentId: string;
 };
 
 type RemovedElementsResult = {
@@ -46,6 +49,8 @@ export const removeElements = ( {
 							parent: container.parent,
 							model: container.model.toJSON(),
 							at: container.view?._index ?? 0,
+							containerId: container.id,
+							parentId: container.parent.id,
 						} );
 					}
 				} );
@@ -64,8 +69,8 @@ export const removeElements = ( {
 			undo: ( _: { elementIds: string[] }, { removedElements }: RemovedElementsResult ) => {
 				onRestoreElements?.();
 
-				[ ...removedElements ].reverse().forEach( ( { parent, model, at } ) => {
-					const freshParent = parent.lookup?.();
+				[ ...removedElements ].reverse().forEach( ( { parent, parentId, model, at } ) => {
+					const freshParent = resolveContainer( parent, parentId );
 
 					if ( freshParent ) {
 						createElement( {
@@ -73,7 +78,11 @@ export const removeElements = ( {
 							model,
 							options: { useHistory: false, at },
 						} );
+
+						return;
 					}
+
+					addModelToParent( parentId, model, { at } );
 				} );
 			},
 			redo: (
@@ -84,24 +93,37 @@ export const removeElements = ( {
 
 				const newRemovedElements: RemovedElement[] = [];
 
-				removedElements.forEach( ( { container, parent, model, at } ) => {
-					const freshContainer = container.lookup?.();
-					const freshParent = parent.lookup?.();
+				removedElements.forEach( ( { container, parent, model, at, containerId, parentId } ) => {
+					const freshContainer = resolveContainer( container, containerId );
+					const freshParent = resolveContainer( parent, parentId );
 
-					if ( ! freshContainer || ! freshParent ) {
+					if ( freshContainer && freshParent ) {
+						deleteElement( {
+							container: freshContainer,
+							options: { useHistory: false },
+						} );
+
+						newRemovedElements.push( {
+							container: freshContainer,
+							parent: freshParent,
+							model,
+							at,
+							containerId,
+							parentId,
+						} );
+
 						return;
 					}
 
-					deleteElement( {
-						container: freshContainer,
-						options: { useHistory: false },
-					} );
+					removeModelFromParent( parentId, containerId );
 
 					newRemovedElements.push( {
-						container: freshContainer,
-						parent: freshParent,
+						container,
+						parent,
 						model,
 						at,
+						containerId,
+						parentId,
 					} );
 				} );
 
