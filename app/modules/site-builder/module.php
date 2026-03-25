@@ -48,6 +48,8 @@ class Module extends BaseModule {
 		$settings = [
 			'iframeUrl' => $this->get_iframe_url(),
 			'isAdmin' => current_user_can( 'manage_options' ),
+			'siteTitle' => get_bloginfo( 'name' ),
+			'siteAbout' => $this->get_site_about(),
 		];
 
 		$connect_auth = $this->get_connect_auth();
@@ -57,6 +59,12 @@ class Module extends BaseModule {
 		}
 
 		Plugin::$instance->app->set_settings( 'site-builder', $settings );
+	}
+
+	private function get_site_about(): array {
+		$choices = get_option( 'elementor_onboarding_choices', [] );
+
+		return $choices['site_about'] ?? [];
 	}
 
 	private function get_iframe_url(): string {

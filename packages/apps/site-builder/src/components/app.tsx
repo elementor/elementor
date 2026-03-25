@@ -28,6 +28,10 @@ function sendReferrerInfo( iframe: HTMLIFrameElement, event: MessageEvent, targe
 				connectAuth: config?.connectAuth,
 				page: { url: window.location.href },
 				user: { isAdmin: config?.isAdmin ?? false },
+				site: {
+					title: config?.siteTitle ?? '',
+					about: config?.siteAbout ?? [],
+				},
 			},
 		},
 		targetOrigin
