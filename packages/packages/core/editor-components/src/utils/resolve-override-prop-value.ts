@@ -12,27 +12,80 @@ import {
 
 type OverrideRenderContext = { overrides?: Record< string, unknown > };
 
-export function resolveInstanceElementSettings(
-	elementSettings: Props,
-	renderContext: OverrideRenderContext | undefined
-): Props {
-	const overrideMap = renderContext?.overrides ?? {};
-	const resolvedSettings: Props = {};
+type CollectedOverride = {
+	innermostKey: string;
+	outermostKey: string;
+	value: unknown;
+};
+
+export function applyInnerOverridesAndRewrap( elementSettings: Props, collectedOverrides: CollectedOverride[] ): Props {
+	const innerOverridesMap = new Map( collectedOverrides.map( ( o ) => [ o.innermostKey, o ] ) );
+	const result: Props = {};
 
 	for ( const [ propKey, propValue ] of Object.entries( elementSettings ) ) {
 		const overridable = componentOverridablePropTypeUtil.extract( propValue );
 
 		if ( ! overridable ) {
-			resolvedSettings[ propKey ] = propValue;
+			result[ propKey ] = propValue;
 			continue;
 		}
 
-		const overrideValue = overrideMap[ overridable.override_key ];
+		const collected = innerOverridesMap.get( overridable.override_key );
 
-		resolvedSettings[ propKey ] = ( overrideValue ?? overridable.origin_value ) as PropValue;
+		if ( collected ) {
+			result[ propKey ] = {
+				$$type: 'overridable',
+				value: {
+					override_key: collected.outermostKey,
+					origin_value: collected.value,
+				},
+			} as PropValue;
+		} else {
+			result[ propKey ] = propValue;
+		}
 	}
 
-	return resolvedSettings;
+	return result;
+}
+
+export function applyOverridesToSettings( elementSettings: Props, overrides: Record< string, unknown > ): Props {
+	const result: Props = {};
+
+	for ( const [ propKey, propValue ] of Object.entries( elementSettings ) ) {
+		const overridable = componentOverridablePropTypeUtil.extract( propValue );
+
+		if ( ! overridable ) {
+			result[ propKey ] = propValue;
+			continue;
+		}
+
+		const overrideValue = overrides[ overridable.override_key ];
+
+		if ( overrideValue !== undefined ) {
+			result[ propKey ] = overrideValue as PropValue;
+		} else {
+			result[ propKey ] = propValue;
+		}
+	}
+
+	return result;
+}
+
+export function unwrapOverridableSettings( elementSettings: Props ): Props {
+	const result: Props = {};
+
+	for ( const [ propKey, propValue ] of Object.entries( elementSettings ) ) {
+		const overridable = componentOverridablePropTypeUtil.extract( propValue );
+
+		if ( ! overridable ) {
+			result[ propKey ] = propValue;
+			continue;
+		}
+
+		result[ propKey ] = overridable.origin_value as PropValue;
+	}
+
+	return result;
 }
 
 export function getRenderContextFromContainer( container: unknown ): OverrideRenderContext | undefined {
