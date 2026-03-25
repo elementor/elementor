@@ -15,6 +15,7 @@ import {
 	extractString,
 } from '../utils/prop-value-utils';
 import { resolveDirection } from '../utils/resolve-direction';
+import { syncGridOverlay } from '../utils/scroll-interaction-event';
 import { parseSizeValue } from '../utils/size-transform-utils';
 import { TimeFrameIndicator } from './controls/time-frame-indicator';
 import { Field } from './field';
@@ -230,6 +231,13 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		};
 
 		onChange( updatedInteraction );
+
+		syncGridOverlay(
+			updates.trigger ?? trigger,
+			updates.start ?? start,
+			updates.end ?? end,
+			updates.relativeTo ?? relativeTo
+		);
 
 		const interactionId = extractString( updatedInteraction.interaction_id );
 
