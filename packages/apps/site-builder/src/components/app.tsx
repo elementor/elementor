@@ -22,16 +22,16 @@ function sendReferrerInfo( iframe: HTMLIFrameElement, event: MessageEvent, targe
 
 	iframe.contentWindow?.postMessage(
 		{
-			type: "referrer/info",
-			instanceId: event.data?.payload?.instanceId ?? "",
+			type: 'referrer/info',
+			instanceId: event.data?.payload?.instanceId ?? '',
 			info: {
 				connectAuth: config?.connectAuth,
 				page: {
 					url: window.location.href,
 					elementorAiCurrentContext: {
 						site: {
-							siteTitle: config?.siteTitle ?? "",
-							siteAbout: config?.siteAbout?.join( ' ' ) ?? "",
+							siteTitle: config?.siteTitle ?? '',
+							siteAbout: config?.siteAbout?.join( ' ' ) ?? '',
 						},
 					},
 				},
@@ -53,7 +53,7 @@ async function handleDeploy( iframe: HTMLIFrameElement | null, event: MessageEve
 				type: 'site-planner/deploy-website/result',
 				payload: result,
 			},
-			origin
+			origin,
 		);
 
 		if ( result.status === 'success' && result.homePageId ) {
@@ -68,7 +68,7 @@ async function handleDeploy( iframe: HTMLIFrameElement | null, event: MessageEve
 					error: err instanceof Error ? err.message : 'Deploy failed',
 				},
 			},
-			origin
+			origin,
 		);
 	}
 }
@@ -110,7 +110,7 @@ export function App() {
 				await handleDeploy( iframeRef.current, event );
 			}
 		},
-		[ allowedOrigin ]
+		[ allowedOrigin ],
 	);
 
 	useEffect( () => {
