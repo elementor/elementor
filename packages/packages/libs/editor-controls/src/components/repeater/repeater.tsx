@@ -79,6 +79,8 @@ type BaseItemSettings< T > = {
 	Icon: React.ComponentType< { value: T } >;
 	Content: RepeaterItemContent< T >;
 	actions?: ( value: T ) => React.ReactNode;
+	onPopoverOpen?: ( value: T ) => void;
+	onPopoverClose?: () => void;
 };
 
 type SortableItemSettings< T > = BaseItemSettings< T > & {
@@ -273,6 +275,8 @@ export const Repeater = < T, >( {
 									toggleDisableItem={ () => toggleDisableRepeaterItem( index ) }
 									openOnMount={ openOnAdd && openItem === index }
 									onOpen={ () => setOpenItem( EMPTY_OPEN_ITEM ) }
+									onPopoverOpen={ itemSettings.onPopoverOpen }
+									onPopoverClose={ itemSettings.onPopoverClose }
 									showDuplicate={ showDuplicate }
 									showToggle={ showToggle }
 									showRemove={ showRemove }
@@ -307,6 +311,8 @@ type RepeaterItemProps< T > = {
 	children: ( props: Pick< RepeaterItemContentProps< T >, 'anchorEl' > ) => React.ReactNode;
 	openOnMount: boolean;
 	onOpen: () => void;
+	onPopoverOpen?: ( value: T ) => void;
+	onPopoverClose?: () => void;
 	showDuplicate: boolean;
 	showToggle: boolean;
 	showRemove: boolean;
@@ -325,6 +331,8 @@ const RepeaterItem = < T, >( {
 	toggleDisableItem,
 	openOnMount,
 	onOpen,
+	onPopoverOpen,
+	onPopoverClose,
 	showDuplicate,
 	showToggle,
 	showRemove,
@@ -332,7 +340,11 @@ const RepeaterItem = < T, >( {
 	actions,
 	value,
 }: RepeaterItemProps< T > ) => {
-	const { popoverState, popoverProps, ref, setRef } = usePopover( openOnMount, onOpen );
+	const { popoverState, popoverProps, ref, setRef } = usePopover( openOnMount, () => {
+		onOpen();
+		onPopoverOpen?.( value );
+	} );
+	const triggerProps = bindTrigger( popoverState );
 
 	const duplicateLabel = __( 'Duplicate', 'elementor' );
 	const toggleLabel = propDisabled ? __( 'Show', 'elementor' ) : __( 'Hide', 'elementor' );
@@ -345,7 +357,13 @@ const RepeaterItem = < T, >( {
 				label={ label }
 				ref={ setRef }
 				aria-label={ __( 'Open item', 'elementor' ) }
-				{ ...bindTrigger( popoverState ) }
+				{ ...triggerProps }
+				onClick={ ( e: React.MouseEvent< HTMLElement > ) => {
+					triggerProps.onClick( e );
+					if ( ! popoverState.isOpen ) {
+						onPopoverOpen?.( value );
+					}
+				} }
 				startIcon={ startIcon }
 				actions={
 					<>
@@ -374,7 +392,15 @@ const RepeaterItem = < T, >( {
 					</>
 				}
 			/>
-			<RepeaterPopover width={ ref?.getBoundingClientRect().width } { ...popoverProps } anchorEl={ ref }>
+			<RepeaterPopover
+				width={ ref?.getBoundingClientRect().width }
+				{ ...popoverProps }
+				onClose={ () => {
+					popoverProps.onClose?.();
+					onPopoverClose?.();
+				} }
+				anchorEl={ ref }
+			>
 				<Box>{ children( { anchorEl: ref } ) }</Box>
 			</RepeaterPopover>
 		</>
