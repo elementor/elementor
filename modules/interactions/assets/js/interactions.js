@@ -3,12 +3,7 @@
 import {
 	config,
 	getKeyframes,
-<<<<<<< HEAD
-=======
-	getTransformBaselineFromComputedStyle,
-	preserveTransformKeyframes,
 	isFreeFrontendSupportedTrigger,
->>>>>>> b728dabd4c (Fix: Pro triggers (hover/click/scrollOn) run on page load when pro deactivated [ED-23517] (#35279))
 	skipInteraction,
 	extractAnimationConfig,
 	getAnimateFunction,
