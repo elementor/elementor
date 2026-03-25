@@ -43,7 +43,10 @@ PanelElementsWidgetCreationView = Marionette.ItemView.extend( {
 	onCtaClick() {
 		window.dispatchEvent(
 			new CustomEvent( 'elementor/editor/create-widget', {
-				detail: { prompt },
+				detail: { 
+					prompt,
+					entry_point: 'search_widget',
+				},
 			} ),
 		);
 	},
