@@ -1,5 +1,6 @@
 import { type V1Element } from '@elementor/editor-elements';
 import { type Props, type PropValue } from '@elementor/editor-props';
+import { Root } from 'react-dom/client';
 
 export type RenderContext< T = unknown > = Record< string, T >;
 
@@ -241,6 +242,6 @@ export type ReplacementSettings = {
 	id: string;
 	element: HTMLElement;
 	refreshView: () => void;
-	reactRoot: import( 'react-dom/client' ).Root;
+	reactRoot: Root;
 	reactContainer: HTMLElement;
 };
