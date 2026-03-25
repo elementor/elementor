@@ -14,7 +14,7 @@ export const STYLE_SECTIONS = {
 	EFFECTS: 'Effects',
 } as const;
 
-export const SIZE_SECTION_LABELS = {
+type SIZE_SECTION_LABELS = {
 	WIDTH: 'Width',
 	HEIGHT: 'Height',
 	MIN_WIDTH: 'Min width',
@@ -23,21 +23,21 @@ export const SIZE_SECTION_LABELS = {
 	MAX_HEIGHT: 'Max height',
 };
 
-export const OFFSET_LABELS = {
+type OFFSET_LABELS = {
 	TOP: 'Top',
 	RIGHT: 'Right',
 	BOTTOM: 'Bottom',
 	LEFT: 'Left',
 };
 
-export const FONT_SIZE_LABELS = {
+type FONT_SIZE_LABELS = {
 	LINE_HEIGHT: 'Line height',
 	LETTER_SPACING: 'Letter spacing',
 	WORD_SPACING: 'Word spacing',
 	FONT_SIZE: 'Font size',
 };
 
-export const BORDER_TYPE_LABELS = {
+type BORDER_TYPE_LABELS = {
 	NONE: 'None',
 	SOLID: 'Solid',
 	DASHED: 'Dashed',
@@ -58,12 +58,12 @@ const DISPLAY_VALUES = {
 };
 
 export type StyleSection = typeof STYLE_SECTIONS[keyof typeof STYLE_SECTIONS];
-type SizeLabel = typeof SIZE_SECTION_LABELS[keyof typeof SIZE_SECTION_LABELS];
-type OffSetLabel = typeof OFFSET_LABELS[keyof typeof OFFSET_LABELS];
+type SizeLabel = SIZE_SECTION_LABELS[keyof SIZE_SECTION_LABELS];
+type OffSetLabel = OFFSET_LABELS[keyof OFFSET_LABELS];
 type Position= 'static' | 'relative' | 'absolute' | 'fixed' | 'sticky';
 type SizeValue = { size: number, unit?: Unit ; };
-type FontProperty = typeof FONT_SIZE_LABELS[keyof typeof FONT_SIZE_LABELS];
-type BorderTypeLabel = typeof BORDER_TYPE_LABELS[keyof typeof BORDER_TYPE_LABELS];
+type FontProperty = FONT_SIZE_LABELS[keyof FONT_SIZE_LABELS];
+type BorderTypeLabel = BORDER_TYPE_LABELS[keyof BORDER_TYPE_LABELS];
 type DisplayValue = typeof DISPLAY_VALUES[keyof typeof DISPLAY_VALUES];
 type DisplayOptions = {
 	[DISPLAY_VALUES.FLEX]?: {
