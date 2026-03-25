@@ -8,6 +8,7 @@ export default class extends Marionette.CompositeView {
 		return '#tmpl-elementor-navigator__elements';
 	}
 
+	
 	ui() {
 		return {
 			item: '> .elementor-navigator__item',
