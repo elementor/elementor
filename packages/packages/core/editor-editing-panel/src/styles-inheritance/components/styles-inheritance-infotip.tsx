@@ -230,19 +230,6 @@ function TooltipOrInfotip( {
 					open={ showInfotip }
 					onClose={ onClose }
 					disableHoverListener
-					componentsProps={ {
-						tooltip: {
-							sx: { mx: 2 },
-						},
-					} }
-					PopperProps={ {
-						modifiers: [
-							{
-								name: 'offset',
-								options: { offset: [ offsetX, 0 ] },
-							},
-						],
-					} }
 				>
 					{ children }
 				</Infotip>
