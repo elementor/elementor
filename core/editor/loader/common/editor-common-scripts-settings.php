@@ -23,14 +23,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Editor_Common_Scripts_Settings {
-	private static function is_angie_plugin_active(): bool {
-		if ( ! function_exists( 'is_plugin_active' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
-
-		return is_plugin_active( 'angie/angie.php' );
-	}
-
 	public static function get() {
 		$settings = SettingsManager::get_settings_managers_config();
 		// Moved to document since 2.9.0.
@@ -78,7 +70,6 @@ class Editor_Common_Scripts_Settings {
 			'elementPromotionURL' => 'https://go.elementor.com/go-pro-%s',
 			'dynamicPromotionURL' => 'https://go.elementor.com/go-pro-dynamic-tag',
 			'additional_shapes' => Shapes::get_additional_shapes_for_config(),
-			'is_angie_active' => self::is_angie_plugin_active(),
 			'user' => [
 				'restrictions' => Plugin::$instance->role_manager->get_user_restrictions_array(),
 				'is_administrator' => current_user_can( 'manage_options' ),

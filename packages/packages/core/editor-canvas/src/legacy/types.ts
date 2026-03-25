@@ -9,7 +9,6 @@ export type LegacyWindow = Window & {
 	jQuery: JQueryStatic;
 	elementor: {
 		config: {
-			is_angie_active?: boolean;
 			user: {
 				is_administrator?: boolean;
 			};
