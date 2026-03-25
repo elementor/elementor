@@ -18,7 +18,7 @@ import {
 	SettingsField,
 	useElement,
 } from '@elementor/editor-editing-panel';
-import { type Control, getElementSetting, getElementSettings, getElementType } from '@elementor/editor-elements';
+import { type Control, getElementSettings, getElementType } from '@elementor/editor-elements';
 import { type AnyTransformable, type PropType, type PropValue } from '@elementor/editor-props';
 import { Box } from '@elementor/ui';
 
@@ -45,20 +45,19 @@ import { OverridablePropProvider } from '../../provider/overridable-prop-context
 import { updateOverridableProp } from '../../store/actions/update-overridable-prop';
 import { useCurrentComponentId } from '../../store/store';
 import { type OriginPropFields, type OverridableProp, type OverridableProps } from '../../types';
-import { getContainerByOriginId } from '../../utils/get-container-by-origin-id';
-import { getOverridableProp } from '../../utils/get-overridable-prop';
 import { getPropTypeForComponentOverride } from '../../utils/get-prop-type-for-component-override';
-import { extractInnerOverrideInfo, getMatchingOverride } from '../../utils/overridable-props-utils';
+import { getMatchingOverride } from '../../utils/overridable-props-utils';
 import {
-	applyInnerOverridesAndRewrap,
 	applyOverridesToSettings,
 	resolveOverridePropValue,
+	type SettingsOverride,
 	unwrapOverridableSettings,
 } from '../../utils/resolve-override-prop-value';
 import { ControlLabel } from '../control-label';
 import { OverrideControlInnerElementNotFoundError } from '../errors';
 import { useResolvedOriginValue } from './use-resolved-origin-value';
 import { correctExposedEmptyOverride } from './utils/correct-exposed-empty-override';
+import { resolveElementOverridesChain } from './utils/resolve-element-override-chain';
 
 type Props = {
 	overrideKey: string;
@@ -121,7 +120,7 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 		propKey,
 	} = overridableProp.originPropFields ?? overridableProp;
 
-	const { container: element, collectedOverrides } = findInnerElementContainer(
+	const { container: element, collectedOverrides } = resolveElementOverridesChain(
 		overridableProp,
 		componentInstanceElement.element.id,
 		matchingOverride
@@ -138,16 +137,16 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 	const settings = getElementSettings< AnyTransformable >( elementId, Object.keys( elementType?.propsSchema ?? {} ) );
 
 	const settingsWithInnerOverrides = useMemo(
-		() => applyInnerOverridesAndRewrap( settings, collectedOverrides ),
+		() => applyOverridesToSettings( settings, collectedOverrides ),
 		[ settings, collectedOverrides ]
 	);
 
-	const outerOverridesMap = useMemo( () => {
+	const outerOverrides = useMemo( () => {
 		if ( ! overrides ) {
-			return {};
+			return [];
 		}
 
-		const map: Record< string, unknown > = {};
+		const result: SettingsOverride[] = [];
 
 		for ( const item of overrides ) {
 			const overridable = componentOverridablePropTypeUtil.extract( item );
@@ -162,22 +161,25 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 				continue;
 			}
 
-			const { override_key: overrideKey, override_value: overrideValue } = extractedOverride;
-			map[ overrideKey ] = overrideValue;
+			result.push( {
+				innermostKey: extractedOverride.override_key,
+				value: extractedOverride.override_value,
+			} );
 		}
 
-		return map;
+		return result;
 	}, [ overrides ] );
 
 	const resolvedElementSettings = useMemo( () => {
-		const withAllOverrides = applyOverridesToSettings( settingsWithInnerOverrides, outerOverridesMap );
+		const withAllOverrides = applyOverridesToSettings( settingsWithInnerOverrides, outerOverrides );
 		return unwrapOverridableSettings( withAllOverrides );
-	}, [ settingsWithInnerOverrides, outerOverridesMap ] );
+	}, [ settingsWithInnerOverrides, outerOverrides ] );
 
 	console.log( `resolvedElementSettings for prop ${ propKey } in element ${ elementType?.title }-${ elementId }:`, {
 		settingsWithInnerOverrides,
 		resolvedElementSettings,
 		collectedOverrides,
+		outerOverrides,
 	} );
 
 	const propType = getPropTypeForComponentOverride( overridableProp );
@@ -187,7 +189,13 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 	}
 
 	const resolvedOverrideValue = matchingOverride ? resolveOverridePropValue( matchingOverride ) : null;
-	const propValue = resolvedOverrideValue ?? recursiveOriginValue ?? overridableProp.originValue;
+	const propValue_prevVersion = resolvedOverrideValue ?? recursiveOriginValue ?? overridableProp.originValue;
+	const propValue = resolvedElementSettings[ propKey ];
+
+	console.log( `propValue for prop ${ propKey } in element ${ elementType?.title }-${ elementId }:`, {
+		propValue_prevVersion,
+		propValue,
+	} );
 
 	const value = {
 		[ overridableProp.overrideKey ]: propValue,
@@ -395,108 +403,6 @@ function populateChildControlProps( props: Record< string, unknown > ) {
 	}
 
 	return props;
-}
-
-type CollectedOverride = {
-	innermostKey: string;
-	outermostKey: string;
-	value: unknown;
-};
-
-type InnerElementResult = {
-	container: ReturnType< typeof getContainerByOriginId >;
-	collectedOverrides: CollectedOverride[];
-};
-
-function findInnerElementContainer(
-	overridableProp: OverridableProp,
-	scopeElementId: string,
-	matchingOverride: ComponentInstanceOverride | null,
-	collectedOverrides: CollectedOverride[] = [],
-	depth = 0
-): InnerElementResult {
-	if ( ! overridableProp.originPropFields ) {
-		const result = getContainerByOriginId( overridableProp.elementId, scopeElementId );
-		return { container: result, collectedOverrides };
-	}
-
-	const intermediateInstance = getContainerByOriginId( overridableProp.elementId, scopeElementId );
-
-	if ( ! intermediateInstance ) {
-		return { container: null, collectedOverrides };
-	}
-
-	const instanceSetting = getElementSetting( intermediateInstance.id, 'component_instance' );
-	const instanceValue = componentInstancePropTypeUtil.extract( instanceSetting );
-	const innerComponentId = instanceValue?.component_id?.value;
-	const intermediateOverrides = componentInstanceOverridesPropTypeUtil.extract( instanceValue?.overrides );
-
-	const mergedOverrides = collectOverridesFromLevel( collectedOverrides, intermediateOverrides ?? [] );
-
-	const innerInfo = extractInnerOverrideInfo( matchingOverride );
-
-	if ( ! innerInfo || ! innerComponentId ) {
-		const result = getContainerByOriginId( overridableProp.originPropFields.elementId, intermediateInstance.id );
-		return { container: result, collectedOverrides: mergedOverrides };
-	}
-
-	const innerOverridableProp = getOverridableProp( {
-		componentId: innerComponentId,
-		overrideKey: innerInfo.innerOverrideKey,
-	} );
-
-	if ( ! innerOverridableProp ) {
-		const result = getContainerByOriginId( overridableProp.originPropFields.elementId, intermediateInstance.id );
-		return { container: result, collectedOverrides: mergedOverrides };
-	}
-
-	const nextOverride = getMatchingOverride( intermediateOverrides ?? [], innerInfo.innerOverrideKey );
-
-	return findInnerElementContainer(
-		innerOverridableProp,
-		intermediateInstance.id,
-		nextOverride,
-		mergedOverrides,
-		depth + 1
-	);
-}
-
-function collectOverridesFromLevel(
-	existing: CollectedOverride[],
-	levelOverrides: NonNullable< ReturnType< typeof componentInstanceOverridesPropTypeUtil.extract > >
-): CollectedOverride[] {
-	const result = [ ...existing ];
-	const existingInnermostKeys = new Set( existing.map( ( o ) => o.innermostKey ) );
-
-	for ( const override of levelOverrides ) {
-		const overridableValue = componentOverridablePropTypeUtil.extract( override );
-
-		if ( overridableValue ) {
-			const innerOverride = componentInstanceOverridePropTypeUtil.extract( overridableValue.origin_value );
-
-			if ( ! innerOverride ) {
-				continue;
-			}
-
-			const innermostKey = innerOverride.override_key;
-			const outermostKey = overridableValue.override_key;
-
-			if ( innermostKey && ! existingInnermostKeys.has( innermostKey ) ) {
-				result.push( { innermostKey, outermostKey, value: innerOverride.override_value } );
-				existingInnermostKeys.add( innermostKey );
-			}
-		} else {
-			const key = override.value.override_key;
-			const value = resolveOverridePropValue( override );
-
-			if ( key && ! existingInnermostKeys.has( key ) ) {
-				result.push( { innermostKey: key, outermostKey: key, value } );
-				existingInnermostKeys.add( key );
-			}
-		}
-	}
-
-	return result;
 }
 
 function isValidOverride( overridableProps: OverridableProps, override: ComponentInstanceOverride ): boolean {

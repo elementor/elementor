@@ -404,6 +404,7 @@ function createComponentView( options: ComponentTypeOptions ): typeof ElementVie
 			return {
 				...super.attributes(),
 				'data-elementor-id': this.getComponentId(),
+				'data-origin-id': this.model.get( 'originId' ),
 			};
 		}
 	};
