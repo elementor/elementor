@@ -3,9 +3,21 @@ import { createMockChild, createMockContainer, mockHistoryManager } from 'test-u
 import { createElement } from '../create-element';
 import { createElements } from '../create-elements';
 import { deleteElement } from '../delete-element';
+import { getContainer } from '../get-container';
+import { addModelToParent, removeModelFromParent } from '../resolve-element';
 
 jest.mock( '../create-element' );
 jest.mock( '../delete-element' );
+jest.mock( '../get-container' );
+jest.mock( '../resolve-element', () => ( {
+	...jest.requireActual( '../resolve-element' ),
+	addModelToParent: jest.fn(),
+	removeModelFromParent: jest.fn(),
+} ) );
+
+const mockGetContainer = jest.mocked( getContainer );
+const mockAddModelToParent = jest.mocked( addModelToParent );
+const mockRemoveModelFromParent = jest.mocked( removeModelFromParent );
 
 describe( 'createElements', () => {
 	const historyMock = mockHistoryManager();
@@ -16,6 +28,9 @@ describe( 'createElements', () => {
 		historyMock.beforeEach();
 		mockCreateElement.mockClear();
 		mockDeleteElement.mockClear();
+		mockGetContainer.mockClear();
+		mockAddModelToParent.mockClear();
+		mockRemoveModelFromParent.mockClear();
 	} );
 
 	afterEach( () => {
@@ -178,5 +193,54 @@ describe( 'createElements', () => {
 		// Assert.
 		const historyItem = historyMock.instance.get();
 		expect( historyItem?.subTitle ).toBe( 'Item added' );
+	} );
+
+	describe( 'model-tree fallback for async-rendered nested elements', () => {
+		it( 'should fall back to model-tree removal on undo when views are unavailable', () => {
+			// Arrange.
+			const mockParent = createMockContainer( 'parent-1', [] );
+			const mockElement = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
+			mockCreateElement.mockReturnValueOnce( mockElement );
+
+			createElements( {
+				elements: [ { container: mockParent, model: { elType: 'widget', widgetType: 'button' } } ],
+				title: 'Add Element',
+			} );
+
+			// Act.
+			mockElement.lookup = jest.fn().mockReturnValue( null );
+			mockGetContainer.mockReturnValue( null );
+
+			historyMock.instance.undo();
+
+			// Assert.
+			expect( mockRemoveModelFromParent ).toHaveBeenCalledWith( 'parent-1', 'element-1' );
+		} );
+
+		it( 'should fall back to model-tree addition on redo when views are unavailable', () => {
+			// Arrange.
+			const mockParent = createMockContainer( 'parent-1', [] );
+			const mockElement = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
+			mockCreateElement.mockReturnValueOnce( mockElement );
+
+			createElements( {
+				elements: [ { container: mockParent, model: { elType: 'widget', widgetType: 'button' } } ],
+				title: 'Add Element',
+			} );
+
+			historyMock.instance.undo();
+
+			// Act.
+			mockParent.lookup = jest.fn().mockReturnValue( null );
+			mockGetContainer.mockReturnValue( null );
+
+			historyMock.instance.redo();
+
+			// Assert.
+			expect( mockAddModelToParent ).toHaveBeenCalledWith(
+				'parent-1',
+				expect.objectContaining( { id: 'element-1', elType: 'widget' } )
+			);
+		} );
 	} );
 } );

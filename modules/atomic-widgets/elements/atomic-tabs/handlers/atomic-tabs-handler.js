@@ -1,6 +1,7 @@
 import { register } from '@elementor/frontend-handlers';
 import { Alpine } from '@elementor/alpinejs';
-import { TAB_ELEMENT_TYPE, TAB_CONTENT_ELEMENT_TYPE, getTabId, getTabContentId, getIndex, getNextTab } from './utils';
+import { TAB_ELEMENT_TYPE, TAB_CONTENT_ELEMENT_TYPE, getTabId, getTabContentId, getIndex, getNextTab, getDirectTabCount } from './utils';
+import { getActiveTabId, setActiveTabIndex, validateActiveTab } from './editor-tabs-state';
 
 const SELECTED_CLASS = 'e--selected';
 
@@ -9,9 +10,15 @@ register( {
 	id: 'e-tabs-handler',
 	callback: ( { element, settings } ) => {
 		const tabsId = element.dataset.id;
+		const defaultActiveTab = settings[ 'default-active-tab' ];
 
 		Alpine.data( `eTabs${ tabsId }`, () => ( {
-			activeTab: settings[ 'default-active-tab' ],
+			init() {
+				validateActiveTab( tabsId, getDirectTabCount( this.$el ) );
+			},
+			get activeTab() {
+				return getActiveTabId( tabsId, defaultActiveTab );
+			},
 
 			navigateTabs( { key, target: tab } ) {
 				const nextTab = getNextTab( key, tab );
@@ -25,9 +32,7 @@ register( {
 					return getTabId( tabsId, index );
 				},
 				'@click'() {
-					const id = this.$el.id;
-
-					this.activeTab = id;
+					setActiveTabIndex( tabsId, getIndex( this.$el, TAB_ELEMENT_TYPE ) );
 				},
 				'@keydown.arrow-right.prevent'( event ) {
 					this.navigateTabs( event );

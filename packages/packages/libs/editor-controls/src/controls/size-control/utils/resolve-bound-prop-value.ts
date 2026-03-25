@@ -1,13 +1,9 @@
 import { sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 
-import { hasSizeValue } from './has-size-value';
-import { EXTENDED_UNITS } from './resolve-size-value';
-
 type SizeValue = SizePropValue[ 'value' ] | null;
 
 export type ResolvedBoundProp = {
 	sizeValue: SizeValue;
-	isUnitHighlighted: boolean;
 	placeholder: string | undefined;
 };
 
@@ -26,7 +22,6 @@ export const resolveBoundPropValue = < T extends SizeValue >(
 
 	return {
 		sizeValue,
-		isUnitHighlighted: shouldHighlightUnit( value ),
 		placeholder: resolvePlaceholder( propPlaceholder, boundPropPlaceholder ),
 	};
 };
@@ -57,16 +52,4 @@ const resolvePlaceholder = ( propPlaceholder?: string, boundPropPlaceholder?: Si
 	}
 
 	return size;
-};
-
-const shouldHighlightUnit = ( value?: SizePropValue[ 'value' ] | null ) => {
-	if ( ! value ) {
-		return false;
-	}
-
-	if ( value.unit === EXTENDED_UNITS.auto ) {
-		return true;
-	}
-
-	return hasSizeValue( value.size );
 };

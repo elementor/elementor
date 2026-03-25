@@ -43,7 +43,8 @@
     "@elementor/editor-documents": "4.1.0",
     "@elementor/editor-styles-repository": "4.1.0",
     "@elementor/editor-v1-adapters": "4.1.0",
-    "@elementor/store": "4.1.0"
+    "@elementor/store": "4.1.0",
+    "@elementor/utils": "4.1.0"
   },
   "devDependencies": {
     "tsup": "^8.3.5"
