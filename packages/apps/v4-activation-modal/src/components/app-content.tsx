@@ -3,6 +3,7 @@ import { Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useAutoplayCarousel } from '../hooks/use-autoplay-carousel';
+import { CelebrationLottie } from './celebration-lottie';
 import { FeatureItem } from './feature-item';
 import { ModalFooter } from './modal-footer';
 import { ModalHeader } from './modal-header';
@@ -48,6 +49,7 @@ export function AppContent( { onClose }: { onClose: () => void } ) {
 	return (
 		<V4ActivationModal
 			onClose={ onClose }
+			backgroundElement={ <CelebrationLottie /> }
 			rightPanelBackgroundColor={ BACKGROUND_COLOR }
 			rightPanel={
 				<ModalImage
@@ -57,24 +59,17 @@ export function AppContent( { onClose }: { onClose: () => void } ) {
 			}
 			header={
 				<ModalHeader
-					title={ __( 'You’re now using the Atomic Editor', 'elementor' ) }
-					subtitle={
-						<>
-							{ __( 'Elementor’s new editing experience is now active.', 'elementor' ) }
-							<br />
-							{ __(
-								'Your existing pages stay exactly the same - you can keep working as usual while exploring new Atomic Elements.',
-								'elementor'
-							) }
-						</>
-					}
+					title={ __( 'You’re now using the Atomic editor', 'elementor' ) }
+					subtitle={ __(
+						'Elementor’s new editing experience is now active. Your existing pages stay exactly the same - you can keep working as usual while exploring new Atomic Elements.',
+						'elementor'
+					) }
 				/>
 			}
 			footer={
 				<ModalFooter
 					helpText={ __( 'Need help getting started?', 'elementor' ) }
-					learnMoreText={ __( 'Learn more', 'elementor' ) }
-					learnMoreUrl={ LEARN_MORE_URL }
+					link={ { text: __( 'Learn more', 'elementor' ), url: LEARN_MORE_URL } }
 				/>
 			}
 		>

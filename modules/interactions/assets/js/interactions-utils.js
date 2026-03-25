@@ -11,7 +11,19 @@ import {
 	unwrapInteractionValue,
 	timingValueToMs,
 	resetElementStyles,
+	getTransformBaselineFromComputedStyle,
+	preserveTransformKeyframes,
 } from './interactions-shared-utils.js';
+
+/**
+ * Triggers the Core `interactions.js` / `editor-interactions.js` bundles run. Pro-only triggers
+ * (e.g. hover, click) must not fall through to the load-time default path.
+ */
+const FREE_FRONTEND_SUPPORTED_TRIGGERS = [ 'load', 'scrollIn', 'scrollOut' ];
+
+export function isFreeFrontendSupportedTrigger( trigger ) {
+	return FREE_FRONTEND_SUPPORTED_TRIGGERS.includes( trigger );
+}
 
 export {
 	getConfig as config,
@@ -24,6 +36,8 @@ export {
 	unwrapInteractionValue,
 	timingValueToMs,
 	resetElementStyles,
+	getTransformBaselineFromComputedStyle,
+	preserveTransformKeyframes,
 };
 
 export function getKeyframes( effect, type, direction ) {
@@ -40,7 +54,7 @@ export function getKeyframes( effect, type, direction ) {
 		keyframes.scale = isIn ? [ config.scaleStart, 1 ] : [ 1, config.scaleStart ];
 	}
 
-	if ( direction ) {
+	if ( direction && 'string' === typeof direction ) {
 		const distance = config.slideDistance;
 		const movement = {
 			left: { x: isIn ? [ -distance, 0 ] : [ 0, -distance ] },
@@ -49,7 +63,11 @@ export function getKeyframes( effect, type, direction ) {
 			bottom: { y: isIn ? [ distance, 0 ] : [ 0, distance ] },
 		};
 
-		Object.assign( keyframes, movement[ direction ] );
+		direction.split( '-' ).forEach( ( part ) => {
+			if ( movement[ part ] ) {
+				Object.assign( keyframes, movement[ part ] );
+			}
+		} );
 	}
 
 	return keyframes;
@@ -147,7 +165,8 @@ export function extractAnimationConfig( interaction ) {
 
 	const effect = unwrapInteractionValue( animation.effect ) || animation.effect || 'fade';
 	const type = unwrapInteractionValue( animation.type ) || animation.type || 'in';
-	const direction = unwrapInteractionValue( animation.direction ) || animation.direction || '';
+	const directionUnwrapped = unwrapInteractionValue( animation.direction );
+	const direction = 'string' === typeof directionUnwrapped ? directionUnwrapped : '';
 	const easing = config.defaultEasing;
 	const replay = false;
 

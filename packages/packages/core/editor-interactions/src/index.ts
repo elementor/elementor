@@ -16,6 +16,8 @@ export { TRIGGER_OPTIONS, BASE_TRIGGERS } from './components/controls/trigger';
 export { EASING_OPTIONS, BASE_EASINGS } from './components/controls/easing';
 export { REPLAY_OPTIONS, BASE_REPLAY } from './components/controls/replay';
 export { EFFECT_OPTIONS, BASE_EFFECTS } from './components/controls/effect';
+export { REPEAT_OPTIONS, REPEAT_TOOLTIPS } from './components/controls/repeat';
+export { DEFAULT_VALUES } from './components/interaction-details';
 
 export {
 	createString,
@@ -41,3 +43,10 @@ export { resolveDirection } from './utils/resolve-direction';
 export { convertTimeUnit } from './utils/time-conversion';
 export { parseSizeValue, formatSizeValue } from './utils/size-transform-utils';
 export { useElementInteractions } from './hooks/use-element-interactions';
+export {
+	SCROLL_INTERACTION_EVENT,
+	dispatchScrollInteraction,
+	syncGridOverlay,
+	extractScrollOverlayParams,
+	type ActiveScrollInteraction,
+} from './utils/scroll-interaction-event';

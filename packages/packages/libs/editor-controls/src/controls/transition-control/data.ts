@@ -46,9 +46,9 @@ const getIsSiteRtl = () => {
 };
 
 // TODO: Remove this after version 4.01 is released
-const shouldExtendTransitionProperties = (): boolean => {
+const shouldShowAllTransitionProperties = (): boolean => {
 	if ( ! hasProInstalled() ) {
-		return false;
+		return true;
 	}
 
 	const proVersion = window.elementorPro?.config?.version;
@@ -191,7 +191,7 @@ const createTransitionPropertiesList = (): TransitionCategory[] => {
 		},
 	];
 
-	return shouldExtendTransitionProperties() ? baseProperties : [ baseProperties[ 0 ] ];
+	return shouldShowAllTransitionProperties() ? baseProperties : [ baseProperties[ 0 ] ];
 };
 
 export const transitionProperties: TransitionCategory[] = createTransitionPropertiesList();
