@@ -149,10 +149,21 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 
 		const map: Record< string, unknown > = {};
 
-		for ( const override of overrides ) {
-			const key = override.value.override_key;
-			const value = resolveOverridePropValue( override );
-			map[ key ] = value;
+		for ( const item of overrides ) {
+			const overridable = componentOverridablePropTypeUtil.extract( item );
+			let override: PropValue = item;
+
+			if ( overridable ) {
+				override = overridable.origin_value;
+			}
+
+			const extractedOverride = componentInstanceOverridePropTypeUtil.extract( override );
+			if ( ! extractedOverride ) {
+				continue;
+			}
+
+			const { override_key: overrideKey, override_value: overrideValue } = extractedOverride;
+			map[ overrideKey ] = overrideValue;
 		}
 
 		return map;
