@@ -280,6 +280,14 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			return;
 		}
 
+		const isAngieActive = elementor.config.is_angie_active;
+		const isAdministrator = elementor.config.user.is_administrator;
+
+		if ( ! isAngieActive && ! isAdministrator ) {
+			this.widgetCreation.empty();
+			return;
+		}
+
 		const elementsView = this.elements.currentView;
 
 		if ( ! elementsView || ! ( elementsView instanceof PanelElementsElementsView ) ) {

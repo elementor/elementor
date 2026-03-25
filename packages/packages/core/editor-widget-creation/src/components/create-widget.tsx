@@ -6,6 +6,7 @@ import {
 	redirectToAppAdmin,
 	redirectToInstallation,
 	sendPromptToAngie,
+	shouldShowAngieInstallPromotion,
 } from '@elementor/editor-mcp';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { XIcon } from '@elementor/icons';
@@ -28,6 +29,10 @@ export function CreateWidget() {
 
 	const handleShow = async ( event: Event ) => {
 		const customEvent = event as CustomEvent< ShowModalEventDetail >;
+
+		if ( ! shouldShowAngieInstallPromotion() ) {
+			return;
+		}
 
 		if ( isAngieAvailable() ) {
 			sendPromptToAngie( customEvent.detail?.prompt );
