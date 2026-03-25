@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
-import { svgSrcPropTypeUtil } from '@elementor/editor-props';
+import { svgSrcPropTypeUtil, urlPropTypeUtil } from '@elementor/editor-props';
 import { UploadIcon } from '@elementor/icons';
 import { Button, Card, CardMedia, CardOverlay, CircularProgress, Stack, styled, ThemeProvider } from '@elementor/ui';
 import { type OpenOptions, useWpMediaAttachment, useWpMediaFrame } from '@elementor/wp-media';
@@ -62,10 +62,7 @@ export const SvgMediaControl = createControl( () => {
 					$$type: 'image-attachment-id',
 					value: selectedAttachment.id,
 				},
-				url: {
-					$$type: 'url',
-					value: selectedAttachment.url,
-				},
+				url: urlPropTypeUtil.create( selectedAttachment.url ),
 			} );
 		},
 	} );

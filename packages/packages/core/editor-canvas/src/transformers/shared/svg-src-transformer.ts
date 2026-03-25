@@ -10,6 +10,25 @@ type SvgSrc = {
 
 const SVG_INLINE_STYLES = 'width: 100%; height: 100%; overflow: unset;';
 
+const DANGEROUS_SVG_TAGS = [ 'script', 'foreignObject' ];
+
+function sanitizeSvgElement( svgElement: SVGSVGElement ): void {
+	DANGEROUS_SVG_TAGS.forEach( ( tag ) => {
+		svgElement.querySelectorAll( tag ).forEach( ( el ) => el.remove() );
+	} );
+
+	svgElement.querySelectorAll( '*' ).forEach( ( el ) => {
+		Array.from( el.attributes ).forEach( ( attr ) => {
+			const isEventHandler = attr.name.startsWith( 'on' );
+			const isJavascriptUri = attr.value.trim().toLowerCase().startsWith( 'javascript:' );
+
+			if ( isEventHandler || isJavascriptUri ) {
+				el.removeAttribute( attr.name );
+			}
+		} );
+	} );
+}
+
 function processSvgContent( svgText: string ): string | null {
 	const parser = new DOMParser();
 	const doc = parser.parseFromString( svgText, 'image/svg+xml' );
@@ -18,6 +37,8 @@ function processSvgContent( svgText: string ): string | null {
 	if ( ! svgElement ) {
 		return null;
 	}
+
+	sanitizeSvgElement( svgElement );
 
 	svgElement.setAttribute( 'fill', 'currentColor' );
 
@@ -64,9 +85,9 @@ export const svgSrcTransformer = createTransformer( async ( value: SvgSrc, { sig
 
 	let url: string | null | undefined = urlFromValue;
 
-	if ( id ) {
+	if ( id && ! urlFromValue ) {
 		const attachment = await getMediaAttachment( { id } );
-		url = attachment?.url ?? urlFromValue;
+		url = attachment?.url ?? null;
 	}
 
 	const resolvedUrl = typeof url === 'string' ? url : null;
