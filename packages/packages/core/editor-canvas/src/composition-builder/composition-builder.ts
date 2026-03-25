@@ -3,6 +3,7 @@ import {
 	generateElementId,
 	getContainer,
 	getWidgetsCache,
+	type CreateElementParams,
 	type V1Element,
 } from '@elementor/editor-elements';
 import { type z } from '@elementor/schema';
@@ -34,7 +35,6 @@ export class CompositionBuilder {
 	private elementStylesConfig: Record< string, Record< string, AnyValue > > = {};
 	private elementCusomCSS: Record< string, string > = {};
 	private rootContainers: V1Element[] = [];
-	private containerElements: string[] = [];
 	private api: API = {
 		createElement,
 		getWidgetsCache,
@@ -82,49 +82,39 @@ export class CompositionBuilder {
 		return this.xml;
 	}
 
-	private iterateBuild( node: Element, containerElement: V1Element, childIndex: number ) {
+	private isWidgetType( elementTag: string ): boolean {
+		const widgetsCache = this.api.getWidgetsCache() || {};
+		return widgetsCache[ elementTag ]?.elType === 'widget';
+	}
+
+	private buildModelTree( node: Element ): Record< string, unknown > {
 		const elementTag = node.tagName;
-		const isContainer = this.containerElements.includes( elementTag );
-		const parentElType = containerElement.model.get( 'elType' );
-		let targetContainer =
-			parentElType === 'e-tabs'
-				? containerElement.children?.[ 1 ].children?.[ childIndex ] || containerElement.children?.[ 1 ]
-				: containerElement;
-		if ( ! targetContainer ) {
-			targetContainer = containerElement;
+		const isWidget = this.isWidgetType( elementTag );
+		const id = this.api.generateElementId();
+		const children = Array.from( node.children ).map( ( child ) => this.buildModelTree( child ) );
+
+		node.setAttribute( 'id', id );
+
+		const base = {
+			id,
+			skipDefaultChildren: true,
+			elements: children,
+			editor_settings: {
+				title: node.getAttribute( 'configuration-id' ) ?? undefined,
+			},
+		};
+
+		if ( isWidget ) {
+			return { ...base, elType: 'widget' as const, widgetType: elementTag };
 		}
-		const newElement = isContainer
-			? this.api.createElement( {
-					container: targetContainer,
-					model: {
-						elType: elementTag,
-						id: generateElementId(),
-						editor_settings: {
-							title: node.getAttribute( 'configuration-id' ) ?? undefined,
-						},
-					},
-					options: { useHistory: false },
-			  } )
-			: this.api.createElement( {
-					container: targetContainer,
-					model: {
-						elType: 'widget',
-						widgetType: elementTag,
-						id: generateElementId(),
-						editor_settings: {
-							title: node.getAttribute( 'configuration-id' ) ?? undefined,
-						},
-					},
-					options: { useHistory: false },
-			  } );
-		if ( containerElement.id === 'document' ) {
-			this.rootContainers.push( newElement );
-		}
-		node.setAttribute( 'id', newElement.id );
-		let currentChild = 0;
-		for ( const childNode of Array.from( node.children ) ) {
-			this.iterateBuild( childNode, newElement, currentChild );
-			currentChild++;
+
+		return { ...base, elType: elementTag };
+	}
+
+	private async awaitViewRender( element: V1Element ) {
+		const view = element.view as Record< string, unknown > | undefined;
+		if ( view?.[ '_currentRenderPromise' ] instanceof Promise ) {
+			await view[ '_currentRenderPromise' ];
 		}
 	}
 
@@ -229,13 +219,9 @@ export class CompositionBuilder {
 		return errors;
 	}
 
-	build( rootContainer: V1Element ) {
+	async build( rootContainer: V1Element ) {
 		const widgetsCache = this.api.getWidgetsCache() || {};
-		const CONTAINER_ELEMENTS = Object.values( widgetsCache )
-			.filter( ( widget ) => widget.meta?.is_container )
-			.map( ( widget ) => widget.elType )
-			.filter( ( x ) => typeof x === 'string' );
-		this.containerElements = CONTAINER_ELEMENTS;
+
 		new Set( this.xml.querySelectorAll( '*' ) ).forEach( ( node ) => {
 			if ( ! widgetsCache[ node.tagName ] ) {
 				throw new Error( `Unknown widget type: ${ node.tagName }` );
@@ -243,10 +229,18 @@ export class CompositionBuilder {
 		} );
 
 		const children = Array.from( this.xml.children );
-		let currentChild = 0;
 		for ( const childNode of children ) {
-			this.iterateBuild( childNode, rootContainer, currentChild );
-			currentChild++;
+			const modelTree = this.buildModelTree( childNode );
+
+			const newElement = this.api.createElement( {
+				container: rootContainer,
+				model: modelTree as CreateElementParams[ 'model' ],
+				options: { useHistory: false },
+			} );
+
+			this.rootContainers.push( newElement );
+
+			await this.awaitViewRender( newElement );
 		}
 
 		const { errors: styleErrors, invalidStyles } = this.applyStyles();

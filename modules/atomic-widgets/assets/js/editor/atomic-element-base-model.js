@@ -14,8 +14,15 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 		const elementType = this.get( 'elType' );
 		this.config = elementor.config.elements[ elementType ];
 
-		const isNewElementCreate = 0 === this.get( 'elements' ).length &&
-            $e.commands.currentTrace.includes( 'document/elements/create' );
+		const shouldSkipDefaults = this.get( 'skipDefaultChildren' );
+
+		if ( shouldSkipDefaults ) {
+			this.unset( 'skipDefaultChildren', { silent: true } );
+		}
+
+		const isNewElementCreate = ! shouldSkipDefaults &&
+			0 === this.get( 'elements' ).length &&
+			$e.commands.currentTrace.includes( 'document/elements/create' );
 
 		if ( isNewElementCreate ) {
 			this.onElementCreate();

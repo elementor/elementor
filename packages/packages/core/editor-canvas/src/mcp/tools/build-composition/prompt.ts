@@ -19,6 +19,59 @@ export const generatePrompt = () => {
 - Every element needs unique "configuration-id"
 - No attributes, classes, IDs, or text nodes in XML
 
+## COMPOUND ELEMENTS
+Some elements have an internal tree structure. You must build the FULL tree in XML.
+
+**e-tabs** — Tabbed content with trigger buttons and panels.
+Required tree structure:
+\`\`\`
+e-tabs
+  e-tabs-menu (locked container for tab triggers)
+    e-tab (one per tab — contains the tab label widget)
+      e-paragraph (tab label text)
+    e-tab ...
+  e-tabs-content-area (locked container for panels)
+    e-tab-content (one per tab — holds the panel content)
+      ...any widgets...
+    e-tab-content ...
+\`\`\`
+
+- Number of \`e-tab\` must match number of \`e-tab-content\`
+- \`e-tab\` contains a single \`e-paragraph\` for the label text
+- \`e-tab-content\` can contain any widgets
+- \`e-tabs-menu\` and \`e-tabs-content-area\` must be locked (\`isLocked: true\` is automatic)
+
+Example — 3-tab layout:
+\`\`\`xml
+<e-tabs configuration-id="Product Tabs">
+  <e-tabs-menu configuration-id="Tab Menu">
+    <e-tab configuration-id="Features Tab">
+      <e-paragraph configuration-id="Features Tab Label"></e-paragraph>
+    </e-tab>
+    <e-tab configuration-id="Pricing Tab">
+      <e-paragraph configuration-id="Pricing Tab Label"></e-paragraph>
+    </e-tab>
+    <e-tab configuration-id="FAQ Tab">
+      <e-paragraph configuration-id="FAQ Tab Label"></e-paragraph>
+    </e-tab>
+  </e-tabs-menu>
+  <e-tabs-content-area configuration-id="Content Area">
+    <e-tab-content configuration-id="Features Panel">
+      <e-heading configuration-id="Features Heading"></e-heading>
+      <e-paragraph configuration-id="Features Text"></e-paragraph>
+    </e-tab-content>
+    <e-tab-content configuration-id="Pricing Panel">
+      <e-heading configuration-id="Pricing Heading"></e-heading>
+      <e-paragraph configuration-id="Pricing Text"></e-paragraph>
+    </e-tab-content>
+    <e-tab-content configuration-id="FAQ Panel">
+      <e-heading configuration-id="FAQ Heading"></e-heading>
+      <e-paragraph configuration-id="FAQ Text"></e-paragraph>
+    </e-tab-content>
+  </e-tabs-content-area>
+</e-tabs>
+\`\`\`
+
 # CONFIGURATION
 - Map configuration-id → elementConfig (props) + stylesConfig (layout only)
 - All PropValues require \`$$type\` matching schema
