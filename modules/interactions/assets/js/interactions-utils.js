@@ -12,6 +12,16 @@ import {
 	timingValueToMs,
 } from './interactions-shared-utils.js';
 
+/**
+ * Triggers the Core `interactions.js` / `editor-interactions.js` bundles run. Pro-only triggers
+ * (e.g. hover, click) must not fall through to the load-time default path.
+ */
+const FREE_FRONTEND_SUPPORTED_TRIGGERS = [ 'load', 'scrollIn', 'scrollOut' ];
+
+export function isFreeFrontendSupportedTrigger( trigger ) {
+	return FREE_FRONTEND_SUPPORTED_TRIGGERS.includes( trigger );
+}
+
 export {
 	getConfig as config,
 	skipInteraction,

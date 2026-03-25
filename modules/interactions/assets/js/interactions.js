@@ -3,6 +3,12 @@
 import {
 	config,
 	getKeyframes,
+<<<<<<< HEAD
+=======
+	getTransformBaselineFromComputedStyle,
+	preserveTransformKeyframes,
+	isFreeFrontendSupportedTrigger,
+>>>>>>> b728dabd4c (Fix: Pro triggers (hover/click/scrollOn) run on page load when pro deactivated [ED-23517] (#35279))
 	skipInteraction,
 	extractAnimationConfig,
 	getAnimateFunction,
@@ -78,7 +84,11 @@ function processElementInteractions( element, interactions, animateFunc, inViewF
 	interactions.forEach( ( interaction ) => {
 		const animConfig = extractAnimationConfig( interaction );
 
-		if ( animConfig && ! skipInteraction( animConfig ) ) {
+		if (
+			animConfig &&
+			! skipInteraction( animConfig ) &&
+			isFreeFrontendSupportedTrigger( animConfig.trigger )
+		) {
 			applyAnimation( element, animConfig, animateFunc, inViewFunc );
 		}
 	} );
