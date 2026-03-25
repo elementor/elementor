@@ -22,19 +22,23 @@ function sendReferrerInfo( iframe: HTMLIFrameElement, event: MessageEvent, targe
 
 	iframe.contentWindow?.postMessage(
 		{
-			type: 'referrer/info',
-			instanceId: event.data?.payload?.instanceId ?? '',
+			type: "referrer/info",
+			instanceId: event.data?.payload?.instanceId ?? "",
 			info: {
 				connectAuth: config?.connectAuth,
-				page: { url: window.location.href },
-				user: { isAdmin: config?.isAdmin ?? false },
-				site: {
-					title: config?.siteTitle ?? '',
-					about: config?.siteAbout ?? [],
-				},
+				page: {
+					url: window.location.href,
+					elementorAiCurrentContext: {
+						site: {
+							siteTitle: config?.siteTitle ?? "",
+							siteAbout: config?.siteAbout.join(' ') ?? "",
+						},
+					},
+					user: { isAdmin: config?.isAdmin ?? false }
+				}
 			},
 		},
-		targetOrigin
+		targetOrigin,
 	);
 }
 
