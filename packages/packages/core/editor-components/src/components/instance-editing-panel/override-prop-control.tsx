@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 import {
 	ControlReplacementsProvider,
 	getControlReplacements,
@@ -17,7 +18,7 @@ import {
 	SettingsField,
 	useElement,
 } from '@elementor/editor-editing-panel';
-import { type Control, getElementSettings, getElementType } from '@elementor/editor-elements';
+import { type Control, getElementSetting, getElementSettings, getElementType } from '@elementor/editor-elements';
 import { type AnyTransformable, type PropType, type PropValue } from '@elementor/editor-props';
 import { Box } from '@elementor/ui';
 
@@ -45,9 +46,14 @@ import { updateOverridableProp } from '../../store/actions/update-overridable-pr
 import { useCurrentComponentId } from '../../store/store';
 import { type OriginPropFields, type OverridableProp, type OverridableProps } from '../../types';
 import { getContainerByOriginId } from '../../utils/get-container-by-origin-id';
+import { getOverridableProp } from '../../utils/get-overridable-prop';
 import { getPropTypeForComponentOverride } from '../../utils/get-prop-type-for-component-override';
-import { getMatchingOverride } from '../../utils/overridable-props-utils';
-import { resolveOverridePropValue } from '../../utils/resolve-override-prop-value';
+import { extractInnerOverrideInfo, getMatchingOverride } from '../../utils/overridable-props-utils';
+import {
+	getRenderContextFromContainer,
+	resolveInstanceElementSettings,
+	resolveOverridePropValue,
+} from '../../utils/resolve-override-prop-value';
 import { ControlLabel } from '../control-label';
 import { OverrideControlInnerElementNotFoundError } from '../errors';
 import { useResolvedOriginValue } from './use-resolved-origin-value';
@@ -79,6 +85,11 @@ type OverridesSchema = Record< string, ComponentInstanceOverride >;
 
 function OverrideControl( { overridableProp }: InternalProps ) {
 	const componentInstanceElement = useElement();
+	console.log( '[OverrideControl]', {
+		'componentInstanceElement.element.id': componentInstanceElement.element.id,
+		'overridableProp.overrideKey': overridableProp.overrideKey,
+		'overridableProp.label': overridableProp.label,
+	} );
 	const { value: instanceValue, setValue: setInstanceValue } = useBoundProp( componentInstancePropTypeUtil );
 	const wrappingComponentId = useCurrentComponentId();
 	const componentId = useComponentId();
@@ -102,9 +113,38 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 		throw new Error( 'Component has no overridable props' );
 	}
 
+	const {
+		elementId: originElementId,
+		widgetType,
+		elType,
+		propKey,
+	} = overridableProp.originPropFields ?? overridableProp;
+
+	const element = findInnerElementContainer( overridableProp, componentInstanceElement.element.id, matchingOverride );
+
+	if ( ! element ) {
+		throw new OverrideControlInnerElementNotFoundError( { context: { componentId, elementId: originElementId } } );
+	}
+	const elementId = element.id;
+
+	const type = elType === 'widget' ? widgetType : elType;
+	const elementType = getElementType( type );
+
+	const settings = getElementSettings< AnyTransformable >( elementId, Object.keys( elementType?.propsSchema ?? {} ) );
+	const renderContext = getRenderContextFromContainer( element );
+	const resolvedElementSettings = useMemo(
+		() => resolveInstanceElementSettings( settings, renderContext ),
+		[ settings, renderContext ]
+	);
+
+	console.log(
+		`resolvedElementSettings for prop ${ propKey } in element ${ elementType?.title }-${ elementId }:`,
+		resolvedElementSettings
+	);
+
 	const propType = getPropTypeForComponentOverride( overridableProp );
 
-	if ( ! propType ) {
+	if ( ! propType || ! elementType ) {
 		return null;
 	}
 
@@ -161,8 +201,13 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 				return;
 			}
 
-			const { elType, widgetType, propKey, elementId } = overridableProp;
-			updateOverridableProp( wrappingComponentId, overridableValue, { elType, widgetType, propKey, elementId } );
+			const { elType: el, widgetType: wt, propKey: pk, elementId: eid } = overridableProp;
+			updateOverridableProp( wrappingComponentId, overridableValue, {
+				elType: el,
+				widgetType: wt,
+				propKey: pk,
+				elementId: eid,
+			} );
 		}
 	};
 
@@ -171,29 +216,6 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 		overridableProp?.originPropFields ?? overridableProp,
 		overridableProp.label
 	);
-
-	const {
-		elementId: originElementId,
-		widgetType,
-		elType,
-		propKey,
-	} = overridableProp.originPropFields ?? overridableProp;
-
-	const element = getContainerByOriginId( originElementId, componentInstanceElement.element.id );
-
-	if ( ! element ) {
-		throw new OverrideControlInnerElementNotFoundError( { context: { componentId, elementId: originElementId } } );
-	}
-	const elementId = element.id;
-
-	const type = elType === 'widget' ? widgetType : elType;
-	const elementType = getElementType( type );
-
-	if ( ! elementType ) {
-		return null;
-	}
-
-	const settings = getElementSettings< AnyTransformable >( elementId, Object.keys( elementType.propsSchema ) );
 
 	const propTypeSchema = createTopLevelObjectType( {
 		schema: {
@@ -335,6 +357,71 @@ function populateChildControlProps( props: Record< string, unknown > ) {
 	}
 
 	return props;
+}
+
+function findInnerElementContainer(
+	overridableProp: OverridableProp,
+	scopeElementId: string,
+	matchingOverride: ComponentInstanceOverride | null,
+	depth = 0
+): ReturnType< typeof getContainerByOriginId > {
+	const prefix = `[findInnerElement depth=${ depth }]`;
+
+	console.log( prefix, {
+		scopeElementId,
+		'overridableProp.elementId': overridableProp.elementId,
+		'overridableProp.overrideKey': overridableProp.overrideKey,
+		hasOriginPropFields: !! overridableProp.originPropFields,
+		'originPropFields?.elementId': overridableProp.originPropFields?.elementId,
+		matchingOverride,
+	} );
+
+	if ( ! overridableProp.originPropFields ) {
+		const result = getContainerByOriginId( overridableProp.elementId, scopeElementId );
+		console.log( prefix, 'BASE CASE - direct prop, found:', result?.id ?? null );
+		return result;
+	}
+
+	const intermediateInstance = getContainerByOriginId( overridableProp.elementId, scopeElementId );
+	console.log( prefix, 'intermediateInstance:', intermediateInstance?.id ?? null );
+
+	if ( ! intermediateInstance ) {
+		console.log( prefix, 'FAILED - intermediateInstance not found' );
+		return null;
+	}
+
+	const instanceSetting = getElementSetting( intermediateInstance.id, 'component_instance' );
+	const instanceValue = componentInstancePropTypeUtil.extract( instanceSetting );
+	const innerComponentId = instanceValue?.component_id?.value;
+	const intermediateOverrides = componentInstanceOverridesPropTypeUtil.extract( instanceValue?.overrides );
+
+	console.log( prefix, 'innerComponentId:', innerComponentId );
+
+	const innerInfo = extractInnerOverrideInfo( matchingOverride );
+	console.log( prefix, 'innerInfo:', innerInfo );
+
+	if ( ! innerInfo || ! innerComponentId ) {
+		const result = getContainerByOriginId( overridableProp.originPropFields.elementId, intermediateInstance.id );
+		console.log( prefix, 'FALLBACK (no innerInfo or no innerComponentId) - found:', result?.id ?? null );
+		return result;
+	}
+
+	const innerOverridableProp = getOverridableProp( {
+		componentId: innerComponentId,
+		overrideKey: innerInfo.innerOverrideKey,
+	} );
+	console.log( prefix, 'innerOverridableProp:', innerOverridableProp ? { elementId: innerOverridableProp.elementId, overrideKey: innerOverridableProp.overrideKey, hasOriginPropFields: !! innerOverridableProp.originPropFields } : null );
+
+	if ( ! innerOverridableProp ) {
+		const result = getContainerByOriginId( overridableProp.originPropFields.elementId, intermediateInstance.id );
+		console.log( prefix, 'FALLBACK (no innerOverridableProp) - found:', result?.id ?? null );
+		return result;
+	}
+
+	const nextOverride = getMatchingOverride( intermediateOverrides ?? [], innerInfo.innerOverrideKey );
+	console.log( prefix, 'nextOverride:', nextOverride );
+
+	return findInnerElementContainer( innerOverridableProp, intermediateInstance.id, nextOverride, depth + 1 );
 }
 
 function isValidOverride( overridableProps: OverridableProps, override: ComponentInstanceOverride ): boolean {
