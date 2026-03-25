@@ -31,11 +31,11 @@ function sendReferrerInfo( iframe: HTMLIFrameElement, event: MessageEvent, targe
 					elementorAiCurrentContext: {
 						site: {
 							siteTitle: config?.siteTitle ?? "",
-							siteAbout: config?.siteAbout.join(' ') ?? "",
+							siteAbout: config?.siteAbout?.join( ' ' ) ?? "",
 						},
 					},
-					user: { isAdmin: config?.isAdmin ?? false }
-				}
+				},
+				user: { isAdmin: config?.isAdmin ?? false },
 			},
 		},
 		targetOrigin,
