@@ -893,22 +893,12 @@ export default function createAtomicElementBaseView( type ) {
 			}
 
 			result.then( ( href ) => {
-				if ( this.isDestroyed ) {
-					return;
-				}
-
 				this.el.removeAttribute( 'href' );
 
 				const attribute = 'action' === linkValue.group ? 'data-action-link' : 'href';
 
 				this.el.setAttribute( attribute, href );
-			} ).then( () => {
-				if ( this.isDestroyed ) {
-					return;
-				}
-
-				this.dispatchPreviewEvent( 'elementor/element/render' );
-			} );
+			} ).then( () => this.dispatchPreviewEvent( 'elementor/element/render' ) );
 
 			return null;
 		},
