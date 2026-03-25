@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { createRoot, type Root } from 'react-dom/client';
 import { getContainer, getElementLabel, getElementType } from '@elementor/editor-elements';
 import {
 	htmlV3PropTypeUtil,
@@ -25,8 +24,8 @@ type TagPropType = PropType< 'tag' > & {
 const HISTORY_DEBOUNCE_WAIT = 800;
 
 export default class InlineEditingReplacement extends ReplacementBase {
-	private inlineEditorRoot: Root | null = null;
 	private handlerAttached = false;
+	private editing = false;
 
 	getReplacementKey() {
 		return 'inline-editing';
@@ -37,7 +36,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	}
 
 	isEditingModeActive() {
-		return !! this.inlineEditorRoot;
+		return this.editing;
 	}
 
 	shouldRenderReplacement() {
@@ -91,8 +90,8 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	resetInlineEditorRoot() {
 		this.element.removeEventListener( 'click', this.handleRenderInlineEditor );
 		this.handlerAttached = false;
-		this.inlineEditorRoot?.unmount?.();
-		this.inlineEditorRoot = null;
+		this.reactRoot.render( null );
+		this.editing = false;
 	}
 
 	unmountInlineEditor() {
@@ -239,19 +238,26 @@ export default class InlineEditingReplacement extends ReplacementBase {
 			this.resetInlineEditorRoot();
 		}
 
-		const elementClasses = this.element.children?.[ 0 ]?.classList.toString() ?? '';
+		const contentElement = this.element.children?.[ 0 ] as HTMLElement | undefined;
+
+		if ( ! contentElement ) {
+			return;
+		}
+
+		const elementClasses = contentElement.classList.toString();
 		const propValue = this.getExtractedContentValue();
 		const expectedTag = this.getExpectedTag();
 
-		this.element.innerHTML = '';
+		contentElement.innerHTML = '';
+		this.editing = true;
 
-		this.inlineEditorRoot = createRoot( this.element );
-		this.inlineEditorRoot.render(
+		this.reactRoot.render(
 			<CanvasInlineEditor
 				elementClasses={ elementClasses }
 				initialValue={ propValue }
 				expectedTag={ expectedTag }
 				rootElement={ this.element }
+				contentElement={ contentElement }
 				id={ this.id }
 				setValue={ this.setContentValue.bind( this ) }
 				onBlur={ this.unmountInlineEditor.bind( this ) }

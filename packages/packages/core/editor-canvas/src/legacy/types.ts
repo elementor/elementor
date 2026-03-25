@@ -241,4 +241,6 @@ export type ReplacementSettings = {
 	id: string;
 	element: HTMLElement;
 	refreshView: () => void;
+	reactRoot: import( 'react-dom/client' ).Root;
+	reactContainer: HTMLElement;
 };

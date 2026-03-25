@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import { InlineEditor, InlineEditorToolbar } from '@elementor/editor-controls';
 import { Box, ThemeProvider } from '@elementor/ui';
 import { autoUpdate, flip, FloatingPortal, useFloating } from '@floating-ui/react';
@@ -14,13 +14,12 @@ import {
 	useRenderToolbar,
 } from './inline-editing-utils';
 
-const EDITOR_WRAPPER_SELECTOR = 'inline-editor-wrapper';
-
 export const CanvasInlineEditor = ( {
 	elementClasses,
 	initialValue,
 	expectedTag,
 	rootElement,
+	contentElement,
 	id,
 	setValue,
 	...props
@@ -29,6 +28,7 @@ export const CanvasInlineEditor = ( {
 	initialValue: string | null;
 	expectedTag: string | null;
 	rootElement: HTMLElement;
+	contentElement: HTMLElement;
 	id: string;
 	setValue: ( value: string | null ) => void;
 	onBlur: () => void;
@@ -36,33 +36,39 @@ export const CanvasInlineEditor = ( {
 	const [ editor, setEditor ] = useState< Editor | null >( null );
 	const { onSelectionEnd, anchor: toolbarAnchor } = useRenderToolbar( rootElement.ownerDocument, id );
 
-	const onBlur = () => {
+	const onBlur = useCallback( () => {
 		removeToolbarAnchor( rootElement.ownerDocument, id );
 
 		props.onBlur();
-	};
+	}, [ rootElement.ownerDocument, id, props ] );
 
 	useOnClickOutsideIframe( onBlur );
+
+	useEffect( () => {
+		const ownerDocument = contentElement.ownerDocument;
+
+		const handleClickAway = ( event: MouseEvent ) => {
+			if ( contentElement.contains( event.target as Node ) ) {
+				return;
+			}
+
+			onBlur();
+		};
+
+		ownerDocument.addEventListener( 'mousedown', handleClickAway );
+
+		return () => ownerDocument.removeEventListener( 'mousedown', handleClickAway );
+	}, [ contentElement, onBlur ] );
 
 	return (
 		<ThemeProvider>
 			<InlineEditingOverlay expectedTag={ expectedTag } rootElement={ rootElement } id={ id } />
-			<style>
-				{ `
-			.ProseMirror > * {
-				height: 100%;
-			}
-			.${ EDITOR_WRAPPER_SELECTOR } .ProseMirror > button[contenteditable="true"] {
-				height: auto;
-				cursor: text;
-			}
-			` }
-			</style>
 			<InlineEditor
 				onEditorCreate={ setEditor }
+				mountElement={ contentElement }
 				editorProps={ {
 					attributes: {
-						style: 'outline: none;overflow-wrap: normal;height:100%',
+						style: 'outline: none; width: 100%; height: 100%;',
 					},
 				} }
 				elementClasses={ elementClasses }
@@ -70,7 +76,6 @@ export const CanvasInlineEditor = ( {
 				setValue={ setValue }
 				onBlur={ onBlur }
 				autofocus
-				expectedTag={ expectedTag }
 				onSelectionEnd={ onSelectionEnd }
 			/>
 			{ toolbarAnchor && editor && <InlineEditingToolbar anchor={ toolbarAnchor } editor={ editor } id={ id } /> }

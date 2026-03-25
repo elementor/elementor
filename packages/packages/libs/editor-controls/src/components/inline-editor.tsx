@@ -42,6 +42,7 @@ type InlineEditorProps = {
 	onEditorCreate?: Dispatch< SetStateAction< Editor | null > >;
 	wrapperClassName?: string;
 	onSelectionEnd?: ( view: EditorView ) => void;
+	mountElement?: HTMLElement | null;
 };
 
 type WrapperProps = PropsWithChildren< {
@@ -65,6 +66,7 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 		onEditorCreate,
 		wrapperClassName,
 		onSelectionEnd,
+		mountElement = null,
 	} = props;
 
 	const containerRef = useRef< HTMLDivElement >( null );
@@ -96,6 +98,7 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 	} );
 
 	const editor = useEditor( {
+		...( mountElement ? { element: mountElement } : {} ),
 		extensions: [
 			Document.extend( {
 				content: documentContentSettings,
@@ -169,6 +172,10 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 			editor.commands.setContent( value, { emitUpdate: false } );
 		}
 	}, [ editor, value ] );
+
+	if ( mountElement ) {
+		return null;
+	}
 
 	return (
 		<>
