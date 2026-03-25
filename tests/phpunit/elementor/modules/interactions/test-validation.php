@@ -431,6 +431,65 @@ class Test_Validation extends TestCase {
 		$this->assertEquals( [], $result['elements'][0]['interactions'] );
 	}
 
+	public function test_sanitize__will_accept_all_diagonal_directions() {
+		$diagonal_directions = [ 'top-left', 'top-right', 'bottom-left', 'bottom-right' ];
+
+		foreach ( $diagonal_directions as $direction ) {
+			$interaction = $this->create_prop_type_interaction( 'load', 'slide', 'in', $direction, 300, 0 );
+
+			$document = [
+				'elements' => [
+					[
+						'id' => '1',
+						'elType' => 'e-flexbox',
+						'settings' => [],
+						'interactions' => json_encode( [
+							'items' => [ $interaction ],
+							'version' => 1,
+						] ),
+					],
+				],
+			];
+
+			$result = $this->validation()->sanitize( $document );
+
+			$this->assertNotEmpty(
+				$result['elements'][0]['interactions'],
+				"Direction '$direction' should be accepted but was stripped."
+			);
+		}
+	}
+
+	public function test_sanitize__will_strip_interaction_with_invalid_diagonal_direction() {
+		$invalid_directions = [ 'top-top', 'left-right', 'top-bottom', 'left-left', 'invalid', 'top-invalid' ];
+
+		foreach ( $invalid_directions as $direction ) {
+			$interaction = $this->create_prop_type_interaction( 'load', 'slide', 'in', $direction, 300, 0 );
+
+			$document = [
+				'elements' => [
+					[
+						'id' => '1',
+						'elType' => 'e-flexbox',
+						'settings' => [],
+						'interactions' => json_encode( [
+							'items' => [ $interaction ],
+							'version' => 1,
+						] ),
+					],
+				],
+			];
+
+			$result = $this->validation()->sanitize( $document );
+
+			$this->assertEquals(
+				[],
+				$result['elements'][0]['interactions'],
+				"Direction '$direction' should be stripped but was accepted."
+			);
+		}
+	}
+
 	public function test_sanitize__will_accept_interaction_with_times_when_repeat_is_loop() {
 		$interaction = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0, '1' );
 		$interaction['value']['animation']['value']['config'] = $this->create_config_prop( [

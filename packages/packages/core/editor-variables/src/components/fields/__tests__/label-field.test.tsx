@@ -97,6 +97,25 @@ describe( 'LabelField', () => {
 		expect( screen.getByRole( 'textbox' ) ).toHaveAttribute( 'aria-invalid', 'true' );
 	} );
 
+	it( 'should call onChange with valid value when correcting invalid input (error.value is empty)', () => {
+		// Arrange — simulate state after a client-side error (error.value = '', not the rejected name)
+		const onChange = jest.fn();
+		render(
+			<LabelField
+				value=""
+				onChange={ onChange }
+				error={ { value: '', message: ERROR_MESSAGES.INVALID_CHARACTERS } }
+			/>
+		);
+		const input = screen.getByRole( 'textbox' );
+
+		// Act — user types a valid name after correcting invalid input
+		fireEvent.change( input, { target: { value: 'my-name' } } );
+
+		// Assert — should receive the valid value, not empty string
+		expect( onChange ).toHaveBeenCalledWith( 'my-name' );
+	} );
+
 	it( 'should call onChange with empty value when new value equals error value', () => {
 		// Arrange
 		const { props } = renderLabelField( {

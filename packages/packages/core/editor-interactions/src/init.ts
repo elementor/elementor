@@ -1,14 +1,17 @@
+import { getMCPByDomain } from '@elementor/editor-mcp';
+
 import { initPasteInteractionsCommand } from './commands/paste-interactions';
 import { Direction } from './components/controls/direction';
 import { Easing } from './components/controls/easing';
 import { Effect } from './components/controls/effect';
 import { EffectType } from './components/controls/effect-type';
+import { Repeat } from './components/controls/repeat';
 import { Replay } from './components/controls/replay';
 import { Trigger } from './components/controls/trigger';
 import { initCleanInteractionIdsOnDuplicate } from './hooks/on-duplicate';
 import { registerInteractionsControl } from './interactions-controls-registry';
 import { interactionsRepository } from './interactions-repository';
-import { initMcpInteractions } from './mcp';
+import { EDITOR_INTERACTIONS_MCP_INSTRUCTIONS, initMcpInteractions } from './mcp';
 import { documentElementsInteractionsProvider } from './providers/document-elements-interactions-provider';
 
 export function init() {
@@ -54,7 +57,12 @@ export function init() {
 			options: [ 'fade', 'slide', 'scale' ],
 		} );
 
-		initMcpInteractions();
+		registerInteractionsControl( {
+			type: 'repeat',
+			component: Repeat,
+		} );
+
+		initMcpInteractions( getMCPByDomain( 'interactions', { instructions: EDITOR_INTERACTIONS_MCP_INSTRUCTIONS } ) );
 	} catch ( error ) {
 		throw error;
 	}

@@ -117,6 +117,10 @@ export function createNestedTemplatedElementView( {
 			this._lastResolvedSettingsHash = null;
 		},
 
+		renderOnChange() {
+			this.render();
+		},
+
 		render() {
 			this._abortController?.abort();
 			this._abortController = new AbortController();
