@@ -14,7 +14,7 @@ export const STYLE_SECTIONS = {
 	EFFECTS: 'Effects',
 } as const;
 
-const SIZE_SECTION_LABELS = {
+export const SIZE_SECTION_LABELS = {
 	WIDTH: 'Width',
 	HEIGHT: 'Height',
 	MIN_WIDTH: 'Min width',
@@ -23,21 +23,21 @@ const SIZE_SECTION_LABELS = {
 	MAX_HEIGHT: 'Max height',
 };
 
-const OFFSET_LABELS = {
+export const OFFSET_LABELS = {
 	TOP: 'Top',
 	RIGHT: 'Right',
 	BOTTOM: 'Bottom',
 	LEFT: 'Left',
 };
 
-const FONT_SIZE_LABELS = {
+export const FONT_SIZE_LABELS = {
 	LINE_HEIGHT: 'Line height',
 	LETTER_SPACING: 'Letter spacing',
 	WORD_SPACING: 'Word spacing',
 	FONT_SIZE: 'Font size',
 };
 
-const BORDER_TYPE_LABELS = {
+export const BORDER_TYPE_LABELS = {
 	NONE: 'None',
 	SOLID: 'Solid',
 	DASHED: 'Dashed',
@@ -255,6 +255,13 @@ export default class StyleTab extends BasePage {
 		await this.page.locator( '[aria-label="Text color control"] input' ).fill( color );
 	}
 
+	async clearFontColor(): Promise<void> {
+		const input = this.page.locator( '[aria-label="Text color control"] input' );
+
+		await input.clear();
+		await input.blur();
+	}
+
 	async setTypographySectionSizeBasedValue( property: FontProperty, size: number, unit: Unit ) {
 		const control = await this.getControlByLabel( 'Typography', property );
 
@@ -288,6 +295,13 @@ export default class StyleTab extends BasePage {
 
 		await input.clear();
 		await input.fill( color );
+		await input.blur();
+	}
+
+	async clearBackgroundColor(): Promise<void> {
+		const input = await this.getControlByLabel( 'Background', 'Color', { innerSelector: 'input' } );
+
+		await input.clear();
 		await input.blur();
 	}
 
