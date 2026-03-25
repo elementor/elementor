@@ -46,5 +46,7 @@ export { useElementInteractions } from './hooks/use-element-interactions';
 export {
 	SCROLL_INTERACTION_EVENT,
 	dispatchScrollInteraction,
+	syncGridOverlay,
+	extractScrollOverlayParams,
 	type ActiveScrollInteraction,
 } from './utils/scroll-interaction-event';

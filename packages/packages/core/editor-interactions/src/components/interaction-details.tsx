@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type ComponentType, useEffect, useMemo } from 'react';
+import { type ComponentType, useMemo } from 'react';
 import { PopoverContent } from '@elementor/editor-controls';
 import { type PropValue } from '@elementor/editor-props';
 import { Divider, Grid } from '@elementor/ui';
@@ -15,7 +15,7 @@ import {
 	extractString,
 } from '../utils/prop-value-utils';
 import { resolveDirection } from '../utils/resolve-direction';
-import { dispatchScrollInteraction } from '../utils/scroll-interaction-event';
+import { syncGridOverlay } from '../utils/scroll-interaction-event';
 import { parseSizeValue } from '../utils/size-transform-utils';
 import { TimeFrameIndicator } from './controls/time-frame-indicator';
 import { Field } from './field';
@@ -110,14 +110,6 @@ function normalizeTimesValue( value: unknown, fallback: number ): number {
 	return Math.max( 1, Math.floor( numericValue ) );
 }
 
-function syncGridOverlay( trigger: string, start: SizeStringValue, end: SizeStringValue, relativeTo: string ) {
-	if ( trigger === 'scrollOn' ) {
-		dispatchScrollInteraction( { start, end, relativeTo } );
-	} else {
-		dispatchScrollInteraction( null );
-	}
-}
-
 function useControlComponent( controlName: InteractionsControlType, isVisible: boolean = true ) {
 	return useMemo( () => {
 		if ( ! isVisible ) {
@@ -161,12 +153,6 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		end,
 		customEffects,
 	};
-
-	useEffect( () => {
-		syncGridOverlay( trigger, start, end, relativeTo );
-		return () => dispatchScrollInteraction( null );
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- Mount/unmount only; updates go through updateInteraction.
-	}, [] );
 
 	const TriggerControl = useControlComponent( 'trigger', true );
 	const EffectControl = useControlComponent( 'effect' );

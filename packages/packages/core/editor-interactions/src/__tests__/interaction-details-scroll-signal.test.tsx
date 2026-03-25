@@ -1,86 +1,73 @@
-import * as React from 'react';
-import { renderWithTheme } from 'test-utils';
-
-import { InteractionDetails } from '../components/interaction-details';
-import { dispatchScrollInteraction } from '../utils/scroll-interaction-event';
+import { SCROLL_INTERACTION_EVENT, extractScrollOverlayParams, syncGridOverlay } from '../utils/scroll-interaction-event';
 import { createInteractionItemValue } from './utils';
 
-jest.mock( '../interactions-controls-registry', () => ( {
-	getInteractionsControl: jest.fn( () => null ),
-} ) );
-
-jest.mock( '../utils/scroll-interaction-event', () => ( {
-	dispatchScrollInteraction: jest.fn(),
-} ) );
-
-const mockOnChange = jest.fn();
-const mockOnPlayInteraction = jest.fn();
-
-function renderDetails( overrides = {} ) {
-	const interaction = createInteractionItemValue( overrides );
-	return renderWithTheme(
-		<InteractionDetails
-			interaction={ interaction }
-			onChange={ mockOnChange }
-			onPlayInteraction={ mockOnPlayInteraction }
-		/>
-	);
+function getScrollEvents( spy: jest.SpyInstance ) {
+	return spy.mock.calls
+		.filter( ( [ event ]: [ Event ] ) => event.type === SCROLL_INTERACTION_EVENT )
+		.map( ( [ event ]: [ CustomEvent ] ) => event.detail );
 }
 
-describe( 'InteractionDetails scroll signal', () => {
+describe( 'syncGridOverlay', () => {
+	let dispatchSpy: jest.SpyInstance;
+
 	beforeEach( () => {
-		jest.clearAllMocks();
+		dispatchSpy = jest.spyOn( window, 'dispatchEvent' );
 	} );
 
-	it( 'should dispatch scroll interaction when trigger is scrollOn', () => {
-		renderDetails( { trigger: 'scrollOn', start: 85, end: 15 } );
-
-		expect( dispatchScrollInteraction ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				relativeTo: 'viewport',
-				start: '85%',
-				end: '15%',
-			} )
-		);
+	afterEach( () => {
+		dispatchSpy.mockRestore();
 	} );
 
-	it( 'should dispatch updated grid lines when start and end change', () => {
-		const { unmount } = renderDetails( { trigger: 'scrollOn', start: 85, end: 15 } );
+	it( 'should show grid lines when trigger is scrollOn', () => {
+		syncGridOverlay( 'scrollOn', '85%', '15%', 'viewport' );
 
-		expect( dispatchScrollInteraction ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				start: '85%',
-				end: '15%',
-				relativeTo: 'viewport',
-			} )
-		);
-
-		unmount();
-		jest.clearAllMocks();
-
-		renderDetails( { trigger: 'scrollOn', start: 50, end: 30 } );
-
-		expect( dispatchScrollInteraction ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				start: '50%',
-				end: '30%',
-				relativeTo: 'viewport',
-			} )
-		);
+		expect( getScrollEvents( dispatchSpy ) ).toEqual( [
+			{ start: '85%', end: '15%', relativeTo: 'viewport' },
+		] );
 	} );
 
-	it( 'should dispatch null for non-scrollOn triggers', () => {
-		renderDetails( { trigger: 'load' } );
+	it( 'should hide grid lines when trigger is not scrollOn', () => {
+		syncGridOverlay( 'load', '85%', '15%', 'viewport' );
 
-		expect( dispatchScrollInteraction ).toHaveBeenCalledWith( null );
+		expect( getScrollEvents( dispatchSpy ) ).toEqual( [ null ] );
 	} );
 
-	it( 'should dispatch null on unmount', () => {
-		const { unmount } = renderDetails( { trigger: 'scrollOn', start: 80, end: 20 } );
+	it( 'should pass relativeTo value through to the event', () => {
+		syncGridOverlay( 'scrollOn', '50%', '10%', 'page' );
 
-		jest.clearAllMocks();
-		unmount();
+		expect( getScrollEvents( dispatchSpy ) ).toEqual( [
+			{ start: '50%', end: '10%', relativeTo: 'page' },
+		] );
+	} );
+} );
 
-		expect( dispatchScrollInteraction ).toHaveBeenCalledWith( null );
+describe( 'extractScrollOverlayParams', () => {
+	const defaults = { trigger: 'load', start: 85, end: 15, relativeTo: 'viewport' };
+
+	it( 'should extract trigger, start, end, and relativeTo from an interaction', () => {
+		const interaction = createInteractionItemValue( {
+			trigger: 'scrollOn',
+			start: 70,
+			end: 30,
+			relativeTo: 'page',
+		} );
+
+		expect( extractScrollOverlayParams( interaction, defaults ) ).toEqual( {
+			trigger: 'scrollOn',
+			start: '70%',
+			end: '30%',
+			relativeTo: 'page',
+		} );
+	} );
+
+	it( 'should use default values when interaction omits optional scroll fields', () => {
+		const interaction = createInteractionItemValue( { trigger: 'load' } );
+
+		const result = extractScrollOverlayParams( interaction, defaults );
+
+		expect( result.trigger ).toBe( 'load' );
+		expect( result.relativeTo ).toBe( 'viewport' );
+		expect( result.start ).toBe( '85%' );
+		expect( result.end ).toBe( '15%' );
 	} );
 } );

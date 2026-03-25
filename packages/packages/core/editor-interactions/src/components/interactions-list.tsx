@@ -9,7 +9,9 @@ import { useInteractionsContext } from '../contexts/interactions-context';
 import { InteractionItemContextProvider } from '../contexts/interactions-item-context';
 import type { ElementInteractions, InteractionItemPropValue, InteractionItemValue } from '../types';
 import { buildDisplayLabel, createDefaultInteractionItem, extractString } from '../utils/prop-value-utils';
+import { dispatchScrollInteraction, extractScrollOverlayParams, syncGridOverlay } from '../utils/scroll-interaction-event';
 import { trackInteractionCreated } from '../utils/tracking';
+import { DEFAULT_VALUES } from './interaction-details';
 import { InteractionsListItem } from './interactions-list-item';
 export const MAX_NUMBER_OF_INTERACTIONS = 5;
 
@@ -125,6 +127,11 @@ export function InteractionsList( props: InteractionListProps ) {
 					Label: ( { value }: { value: InteractionItemPropValue } ) => buildDisplayLabel( value.value ),
 					Icon: () => null,
 					Content: InteractionsListItem,
+					onPopoverOpen: ( value: InteractionItemPropValue ) => {
+						const { trigger, start, end, relativeTo } = extractScrollOverlayParams( value.value, DEFAULT_VALUES );
+						syncGridOverlay( trigger, start, end, relativeTo );
+					},
+					onPopoverClose: () => dispatchScrollInteraction( null ),
 					actions: ( value: InteractionItemPropValue ) => (
 						<Tooltip key="preview" placement="top" title={ __( 'Preview', 'elementor' ) }>
 							<IconButton
