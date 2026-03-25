@@ -9,7 +9,11 @@ import { useInteractionsContext } from '../contexts/interactions-context';
 import { InteractionItemContextProvider } from '../contexts/interactions-item-context';
 import type { ElementInteractions, InteractionItemPropValue, InteractionItemValue } from '../types';
 import { buildDisplayLabel, createDefaultInteractionItem, extractString } from '../utils/prop-value-utils';
-import { dispatchScrollInteraction, extractScrollOverlayParams, syncGridOverlay } from '../utils/scroll-interaction-event';
+import {
+	dispatchScrollInteraction,
+	extractScrollOverlayParams,
+	syncGridOverlay,
+} from '../utils/scroll-interaction-event';
 import { trackInteractionCreated } from '../utils/tracking';
 import { DEFAULT_VALUES } from './interaction-details';
 import { InteractionsListItem } from './interactions-list-item';
@@ -128,7 +132,10 @@ export function InteractionsList( props: InteractionListProps ) {
 					Icon: () => null,
 					Content: InteractionsListItem,
 					onPopoverOpen: ( value: InteractionItemPropValue ) => {
-						const { trigger, start, end, relativeTo } = extractScrollOverlayParams( value.value, DEFAULT_VALUES );
+						const { trigger, start, end, relativeTo } = extractScrollOverlayParams(
+							value.value,
+							DEFAULT_VALUES
+						);
 						syncGridOverlay( trigger, start, end, relativeTo );
 					},
 					onPopoverClose: () => dispatchScrollInteraction( null ),

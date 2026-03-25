@@ -1,4 +1,8 @@
-import { SCROLL_INTERACTION_EVENT, extractScrollOverlayParams, syncGridOverlay } from '../utils/scroll-interaction-event';
+import {
+	extractScrollOverlayParams,
+	SCROLL_INTERACTION_EVENT,
+	syncGridOverlay,
+} from '../utils/scroll-interaction-event';
 import { createInteractionItemValue } from './utils';
 
 function getScrollEvents( spy: jest.SpyInstance ) {
@@ -21,9 +25,7 @@ describe( 'syncGridOverlay', () => {
 	it( 'should show grid lines when trigger is scrollOn', () => {
 		syncGridOverlay( 'scrollOn', '85%', '15%', 'viewport' );
 
-		expect( getScrollEvents( dispatchSpy ) ).toEqual( [
-			{ start: '85%', end: '15%', relativeTo: 'viewport' },
-		] );
+		expect( getScrollEvents( dispatchSpy ) ).toEqual( [ { start: '85%', end: '15%', relativeTo: 'viewport' } ] );
 	} );
 
 	it( 'should hide grid lines when trigger is not scrollOn', () => {
@@ -35,8 +37,16 @@ describe( 'syncGridOverlay', () => {
 	it( 'should pass relativeTo value through to the event', () => {
 		syncGridOverlay( 'scrollOn', '50%', '10%', 'page' );
 
+		expect( getScrollEvents( dispatchSpy ) ).toEqual( [ { start: '50%', end: '10%', relativeTo: 'page' } ] );
+	} );
+
+	it( 'should update grid lines when start or end change', () => {
+		syncGridOverlay( 'scrollOn', '85%', '15%', 'viewport' );
+		syncGridOverlay( 'scrollOn', '60%', '40%', 'viewport' );
+
 		expect( getScrollEvents( dispatchSpy ) ).toEqual( [
-			{ start: '50%', end: '10%', relativeTo: 'page' },
+			{ start: '85%', end: '15%', relativeTo: 'viewport' },
+			{ start: '60%', end: '40%', relativeTo: 'viewport' },
 		] );
 	} );
 } );
