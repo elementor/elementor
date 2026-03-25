@@ -6,9 +6,8 @@ import { INLINE_EDITING_SELECTORS } from './selectors/selectors';
 import EditorSelectors from '../../../../selectors/editor-selectors';
 
 const NAVIGATOR_INLINE_CHILD = '.elementor-navigator__inline-child';
-const NAVIGATOR_INLINE_CHILD_ICON = '.elementor-navigator__inline-child .eicon-atomic-label';
 
-test.describe( 'Navigator Inline Children @v4-tests', () => {
+test.describe( 'Navigator: no inline text children in structure @v4-tests', () => {
 	let wpAdminPage: WpAdminPage;
 	let context: BrowserContext;
 	let page: Page;
@@ -29,7 +28,7 @@ test.describe( 'Navigator Inline Children @v4-tests', () => {
 		await context.close();
 	} );
 
-	test( 'Should display inline children in the navigator when heading has formatted text', async () => {
+	test( 'Should not display inline children in the navigator when heading has formatted text', async () => {
 		// Arrange
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
@@ -54,14 +53,10 @@ test.describe( 'Navigator Inline Children @v4-tests', () => {
 		// Assert
 		const inlineChildren = navigatorElement.locator( NAVIGATOR_INLINE_CHILD );
 
-		await expect( inlineChildren ).toHaveCount( 1 );
-
-		const icons = navigatorElement.locator( NAVIGATOR_INLINE_CHILD_ICON );
-
-		await expect( icons ).toHaveCount( 1 );
+		await expect( inlineChildren ).toHaveCount( 0 );
 	} );
 
-	test( 'Should display inline children for paragraph with multiple formatting types', async () => {
+	test( 'Should not display inline children for paragraph with multiple formatting types', async () => {
 		// Arrange
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const paragraphId = await editor.addWidget( { widgetType: 'e-paragraph', container: containerId } );
@@ -96,11 +91,7 @@ test.describe( 'Navigator Inline Children @v4-tests', () => {
 		// Assert
 		const inlineChildren = navigatorElement.locator( NAVIGATOR_INLINE_CHILD );
 
-		await expect( inlineChildren.first() ).toBeVisible();
-
-		const icons = navigatorElement.locator( NAVIGATOR_INLINE_CHILD_ICON );
-
-		expect( await icons.count() ).toEqual( await inlineChildren.count() );
+		await expect( inlineChildren ).toHaveCount( 0 );
 	} );
 
 	test( 'Should not display inline children for widget without formatted text', async () => {
