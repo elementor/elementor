@@ -355,6 +355,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.35.9 - 2026-03-25 =
+
+* Fix: Inserting AI-generated images fails when "Enable Unfiltered File Uploads" is enabled
+
 = 3.35.8 - 2026-03-23 =
 
 * Security Fix: Improved code security enforcement in Template Library
