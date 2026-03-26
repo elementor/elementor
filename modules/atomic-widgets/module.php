@@ -9,6 +9,7 @@ use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Youtube\Atomic_Youtube;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox;
+use Elementor\Modules\AtomicWidgets\Elements\Grid\Grid;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
@@ -53,6 +54,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Functions_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Move_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Flex_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Grid_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Scale_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Attributes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
@@ -75,6 +77,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Gradient_Color_Stop_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V2_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Layout_Direction_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Grid_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Flex_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
@@ -122,6 +125,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
+	const EXPERIMENT_ATOMIC_GRID_CONTROL = 'e_atomic_grid_control';
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
 
@@ -152,6 +156,7 @@ class Module extends BaseModule {
 		$this->register_hooks();
 
 		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
+		add_filter( 'elementor/atomic-widgets/styles/schema', fn ( array $schema ) => $this->filter_grid_style_schema( $schema ), 100 );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_styles_schema( $settings ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_supported_units( $settings ) );
 		add_filter( 'elementor/widgets/register', fn ( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
@@ -211,6 +216,15 @@ class Module extends BaseModule {
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		]);
 
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_ATOMIC_GRID_CONTROL,
+			'title' => esc_html__( 'Grid layout control', 'elementor' ),
+			'description' => esc_html__( 'Adds the unified CSS grid control and grid display options in the atomic (v4) style panel.', 'elementor' ),
+			'hidden' => false,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+		] );
+
 		Plugin::$instance->experiments->add_feature([
 			'name' => Migrations_Orchestrator::EXPERIMENT_BC_MIGRATIONS,
 			'title' => esc_html__( 'Backward compatibility migrations', 'elementor' ),
@@ -236,6 +250,14 @@ class Module extends BaseModule {
 		( new Atomic_Widgets_Library() )->register_hooks();
 		( new Atomic_Import_Export() )->register_hooks();
 		( new Atomic_Widgets_Database_Updater() )->register();
+	}
+
+	private function filter_grid_style_schema( array $schema ): array {
+		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_ATOMIC_GRID_CONTROL ) ) {
+			unset( $schema['grid'] );
+		}
+
+		return $schema;
 	}
 
 	private function add_packages( $packages ) {
@@ -274,6 +296,7 @@ class Module extends BaseModule {
 	private function register_elements( Elements_Manager $elements_manager ) {
 		$elements_manager->register_element_type( new Div_Block() );
 		$elements_manager->register_element_type( new Flexbox() );
+		$elements_manager->register_element_type( new Grid() );
 
 		$elements_manager->register_element_type( new Atomic_Tabs() );
 		$elements_manager->register_element_type( new Atomic_Tabs_Menu() );
@@ -375,6 +398,9 @@ class Module extends BaseModule {
 			Dimensions_Prop_Type::get_key(),
 			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn ( $prop_key, $key ) => "{$prop_key}-{$key}" )
 		);
+		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_ATOMIC_GRID_CONTROL ) ) {
+			$transformers->register( Grid_Prop_Type::get_key(), new Grid_Transformer() );
+		}
 	}
 
 	public function register_import_transformers( Transformers_Registry $transformers ) {

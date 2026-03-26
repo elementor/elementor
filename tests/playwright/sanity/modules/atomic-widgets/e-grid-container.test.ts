@@ -57,7 +57,7 @@ test.describe( 'Atomic Grid container @atomic-widgets @e-grid', () => {
 		await expect( editor.page.getByRole( 'button', { name: 'Grid', exact: true } ) ).toBeVisible();
 	} );
 
-	test( 'Grid layout exposes dimension matrix and expandable grid settings', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Grid layout opens dimensions popover and expandable grid settings', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
@@ -66,7 +66,7 @@ test.describe( 'Atomic Grid container @atomic-widgets @e-grid', () => {
 		await editor.v4Panel.openTab( 'style' );
 		await editor.openV2Section( 'layout' );
 
-		await editor.page.getByRole( 'button', { name: 'Grid', exact: true } ).click();
+		await editor.page.getByRole( 'button', { name: /\d+\s*×\s*\d+/ } ).click();
 
 		await expect( editor.page.getByRole( 'grid', { name: 'Grid dimensions' } ) ).toBeVisible();
 

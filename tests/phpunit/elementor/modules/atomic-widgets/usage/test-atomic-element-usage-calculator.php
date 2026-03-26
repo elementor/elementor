@@ -386,6 +386,20 @@ class Test_Atomic_Element_Usage_Calculator extends Elementor_Test_Base {
 		$this->assertTrue( $result );
 	}
 
+	public function test_can_calculate_returns_true_for_e_grid_container() {
+		$element = [
+			'id' => 'bfad750',
+			'elType' => 'e-grid',
+			'settings' => [],
+		];
+
+		$element_instance = Plugin::$instance->elements_manager->get_element_types( 'e-grid' );
+
+		$result = $this->calculator->can_calculate( $element, $element_instance );
+
+		$this->assertTrue( $result );
+	}
+
 	public function test_calculate_tracks_e_flexbox_container_with_styles() {
 		// Arrange.
 		$element = [
@@ -473,6 +487,102 @@ class Test_Atomic_Element_Usage_Calculator extends Elementor_Test_Base {
 
 		$this->assertArrayHasKey( 'Style', $usage['e-flexbox']['controls'] );
 		$style_controls = $usage['e-flexbox']['controls']['Style'];
+
+		$this->assertArrayHasKey( 'Styles', $style_controls );
+		$styles_section = $style_controls['Styles'];
+
+		$this->assertArrayHasKey( 'classes', $styles_section );
+		$this->assertArrayHasKey( 'padding-size', $styles_section );
+		$this->assertArrayHasKey( 'padding-unit', $styles_section );
+		$this->assertArrayHasKey( 'background-background-overlay-background-image-overlay-position', $styles_section );
+		$this->assertArrayHasKey( 'background-background-overlay-background-image-overlay-repeat', $styles_section );
+		$this->assertArrayHasKey( 'background-background-overlay-background-image-overlay-size', $styles_section );
+	}
+
+	public function test_calculate_tracks_e_grid_container_with_styles() {
+		$element = [
+			'id' => 'bfad750',
+			'elType' => 'e-grid',
+			'settings' => [
+				'classes' => [
+					'$$type' => 'classes',
+					'value' => [ 'e-bfad750-cbb32d7' ],
+				],
+			],
+			'styles' => [
+				'e-bfad750-cbb32d7' => [
+					'id' => 'e-bfad750-cbb32d7',
+					'label' => 'local',
+					'type' => 'class',
+					'variants' => [
+						[
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+							'props' => [
+								'padding' => [
+									'$$type' => 'size',
+									'value' => [
+										'size' => 20,
+										'unit' => 'px',
+									],
+								],
+								'background' => [
+									'$$type' => 'background',
+									'value' => [
+										'background-overlay' => [
+											'$$type' => 'background-overlay',
+											'value' => [
+												[
+													'$$type' => 'background-image-overlay',
+													'value' => [
+														'image' => [
+															'$$type' => 'image',
+															'value' => [
+																'src' => [
+																	'$$type' => 'image-src',
+																	'value' => [
+																		'id' => null,
+																		'url' => 'https://example.com/image.jpg',
+																	],
+																],
+															],
+														],
+														'position' => [
+															'$$type' => 'string',
+															'value' => 'center center',
+														],
+														'repeat' => [
+															'$$type' => 'string',
+															'value' => 'no-repeat',
+														],
+														'size' => [
+															'$$type' => 'string',
+															'value' => 'cover',
+														],
+													],
+												],
+											],
+										],
+									],
+								],
+							],
+						],
+					],
+				],
+			],
+		];
+
+		$element_instance = Plugin::$instance->elements_manager->get_element_types( 'e-grid' );
+
+		$usage = $this->calculator->calculate( $element, $element_instance, [] );
+
+		$this->assertArrayHasKey( 'e-grid', $usage );
+		$this->assertEquals( 1, $usage['e-grid']['count'] );
+
+		$this->assertArrayHasKey( 'Style', $usage['e-grid']['controls'] );
+		$style_controls = $usage['e-grid']['controls']['Style'];
 
 		$this->assertArrayHasKey( 'Styles', $style_controls );
 		$styles_section = $style_controls['Styles'];

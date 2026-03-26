@@ -3,6 +3,7 @@ import {
 	type ControlComponent,
 	DateTimeControl,
 	EmailFormActionControl,
+	GridControl,
 	HtmlTagControl,
 	ImageControl,
 	InlineEditingControl,
@@ -26,6 +27,7 @@ import {
 	booleanPropTypeUtil,
 	DateTimePropTypeUtil,
 	emailPropTypeUtil,
+	gridPropTypeUtil,
 	htmlV3PropTypeUtil,
 	imagePropTypeUtil,
 	imageSrcPropTypeUtil,
@@ -69,6 +71,7 @@ const controlTypes = {
 	video: { component: VideoMediaControl, layout: 'full', propTypeUtil: videoSrcPropTypeUtil },
 	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: htmlV3PropTypeUtil },
 	email: { component: EmailFormActionControl, layout: 'custom', propTypeUtil: emailPropTypeUtil },
+	grid: { component: GridControl, layout: 'full', propTypeUtil: gridPropTypeUtil },
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;

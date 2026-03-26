@@ -66,6 +66,23 @@ describe( '<DisplayField />', () => {
 		jest.mocked( getBreakpointsTree ).mockImplementation( createMockBreakpointsTree );
 	} );
 
+	it( 'should select grid when useStylesFields value is grid', () => {
+		const setValues = jest.fn();
+		jest.mocked( isExperimentActive ).mockImplementation( ( name ) => name === 'e_atomic_grid_control' );
+		jest.mocked( useStylesFields ).mockReturnValue( {
+			values: { display: { $$type: 'string', value: 'grid' } },
+			setValues,
+			canEdit: true,
+		} );
+
+		mockStylesInheritanceDisplayField();
+
+		renderDisplayField();
+
+		const gridButton = screen.getByRole( 'button', { name: 'Grid' } );
+		expect( gridButton ).toHaveAttribute( 'aria-pressed', 'true' );
+	} );
+
 	it( 'should select flex when useStylesFields value is flex', () => {
 		// Arrange.
 		const setValues = jest.fn();
@@ -123,6 +140,7 @@ describe( '<DisplayField />', () => {
 		renderDisplayField();
 
 		// Assert.
+		// maxItems={ 4 }: without e_atomic_grid_control, first row is Block, Flex, Inline-block, None.
 		[ 'Block', 'Flex', 'Inline-block', 'None' ].forEach( ( label ) => {
 			expect( screen.getByRole( 'button', { name: label } ) ).toHaveAttribute( 'aria-pressed', 'false' );
 		} );

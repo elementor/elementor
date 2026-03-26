@@ -15,7 +15,7 @@ export const generatePrompt = () => {
 
 # XML STRUCTURE
 - Use widget tags: \`<e-button configuration-id="btn1"></e-button>\`
-- Containers: "e-flexbox", "e-div-block", "e-tabs"
+- Containers: "e-flexbox", "e-grid", "e-div-block", "e-tabs"
 - Every element needs unique "configuration-id"
 - No attributes, classes, IDs, or text nodes in XML
 
