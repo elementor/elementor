@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
@@ -29,6 +30,7 @@ class Grid_Prop_Type extends Object_Prop_Type {
 			'autoFlow' => String_Prop_Type::make()
 				->enum( [ 'row', 'column', 'dense', 'row dense', 'column dense' ] )
 				->default( 'row' ),
+			'showOutline' => Boolean_Prop_Type::make()->default( true ),
 		];
 	}
 }

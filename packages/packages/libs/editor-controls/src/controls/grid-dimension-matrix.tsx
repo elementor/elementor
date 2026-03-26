@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Box } from '@elementor/ui';
 import { __, sprintf } from '@wordpress/i18n';
 
@@ -30,8 +30,21 @@ export const GridDimensionMatrix = ( {
 	disabled = false,
 }: GridDimensionMatrixProps ) => {
 	const buttonsRef = useRef<( HTMLButtonElement | null )[]>( [] );
+	const isDraggingMatrixRef = useRef( false );
 	const [ focusCol, setFocusCol ] = useState( 0 );
 	const [ focusRow, setFocusRow ] = useState( 0 );
+
+	useEffect( () => {
+		const endDrag = () => {
+			isDraggingMatrixRef.current = false;
+		};
+		window.addEventListener( 'pointerup', endDrag );
+		window.addEventListener( 'pointercancel', endDrag );
+		return () => {
+			window.removeEventListener( 'pointerup', endDrag );
+			window.removeEventListener( 'pointercancel', endDrag );
+		};
+	}, [] );
 
 	const focusButton = useCallback( ( col: number, row: number ) => {
 		const c = Math.max( 0, Math.min( cols - 1, col ) );
@@ -115,14 +128,32 @@ export const GridDimensionMatrix = ( {
 						setFocusCol( c );
 						setFocusRow( r );
 					} }
-					onClick={ () => {
-						if ( disabled ) {
+					onPointerDown={ ( event: React.PointerEvent ) => {
+						if ( disabled || event.button !== 0 ) {
+							return;
+						}
+						event.preventDefault();
+						isDraggingMatrixRef.current = true;
+						const next = countsFromMatrixCell( c, r );
+						onSelect( next.columns, next.rows );
+						setFocusCol( c );
+						setFocusRow( r );
+					} }
+					onPointerEnter={ () => {
+						if ( disabled || ! isDraggingMatrixRef.current ) {
 							return;
 						}
 						const next = countsFromMatrixCell( c, r );
 						onSelect( next.columns, next.rows );
 						setFocusCol( c );
 						setFocusRow( r );
+					} }
+					onClick={ ( event: React.MouseEvent ) => {
+						if ( disabled ) {
+							return;
+						}
+						// PointerDown already applied selection; avoid duplicate onSelect on click.
+						event.preventDefault();
 					} }
 					onKeyDown={ onMatrixKeyDown }
 					sx={ {
@@ -136,6 +167,8 @@ export const GridDimensionMatrix = ( {
 						borderRadius: 0.5,
 						bgcolor: active ? 'primary.light' : 'action.hover',
 						cursor: disabled ? 'default' : 'pointer',
+						userSelect: 'none',
+						touchAction: 'none',
 						opacity: disabled ? 0.5 : 1,
 						'&:focus-visible': {
 							outline: '2px solid',
@@ -158,6 +191,7 @@ export const GridDimensionMatrix = ( {
 				display: 'grid',
 				gridTemplateColumns: `repeat(${ cols }, minmax(0, 1fr))`,
 				width: '100%',
+				userSelect: 'none',
 			} }
 		>
 			{ cells }

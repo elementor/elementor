@@ -67,8 +67,12 @@ class Size_Prop_Type extends Object_Prop_Type {
 				$value['size'] = null;
 				return ! $value['size'];
 			default:
+				// Editor may send an empty size for "cleared" length fields (e.g. grid gaps) while keeping a unit.
+				if ( '' === $value['size'] || null === $value['size'] ) {
+					return true;
+				}
+
 				return (
-					! in_array( $value['unit'], [ Size_Constants::UNIT_AUTO, Size_Constants::UNIT_CUSTOM ], true ) &&
 					( ! empty( $value['size'] ) || 0 === $value['size'] ) &&
 					is_numeric( $value['size'] )
 				);
@@ -79,6 +83,13 @@ class Size_Prop_Type extends Object_Prop_Type {
 		$unit = sanitize_text_field( $value['unit'] );
 
 		if ( ! in_array( $value['unit'], [ Size_Constants::UNIT_AUTO, Size_Constants::UNIT_CUSTOM ] ) ) {
+			if ( '' === $value['size'] || null === $value['size'] ) {
+				return [
+					'size' => '',
+					'unit' => $unit,
+				];
+			}
+
 			return [
 				// The + operator cast the $value['size'] to numeric (either int or float - depends on the value)
 				'size' => +$value['size'],

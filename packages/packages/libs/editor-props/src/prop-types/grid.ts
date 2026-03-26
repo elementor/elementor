@@ -13,6 +13,7 @@ export const gridPropTypeUtil = createPropUtils(
 		columnGap: unknownChildrenSchema,
 		rowGap: unknownChildrenSchema,
 		autoFlow: unknownChildrenSchema,
+		showOutline: unknownChildrenSchema.optional(),
 	} )
 );
 

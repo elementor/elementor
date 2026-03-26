@@ -1,6 +1,12 @@
 import * as React from 'react';
-import { useCallback, useLayoutEffect, useRef, useState } from 'react';
-import { gridPropTypeUtil, numberPropTypeUtil, sizePropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import {
+	booleanPropTypeUtil,
+	gridPropTypeUtil,
+	numberPropTypeUtil,
+	sizePropTypeUtil,
+	stringPropTypeUtil,
+} from '@elementor/editor-props';
 import { PopoverHeader, SectionPopoverBody } from '@elementor/editor-ui';
 import {
 	ArrowsMoveHorizontalIcon,
@@ -37,6 +43,7 @@ import { GridDimensionMatrix } from './grid-dimension-matrix';
 import { NumberControl } from './number-control';
 import { SelectControl } from './select-control';
 import { SizeControl } from './size-control';
+import { SwitchControl } from './switch-control';
 import { TextControl } from './text-control';
 
 const COLUMNS_LABEL = __( 'Columns', 'elementor' );
@@ -48,6 +55,7 @@ const CUSTOM_ROWS_LABEL = __( 'Custom rows', 'elementor' );
 const OPEN_GRID_SETTINGS_DEFAULT = __( 'Open grid settings', 'elementor' );
 const CLOSE_GRID_SETTINGS_DEFAULT = __( 'Close grid settings', 'elementor' );
 const GRID_POPOVER_TITLE = __( 'Grid', 'elementor' );
+const GRID_OUTLINE_EDITOR_LABEL = __( 'Grid outline in editor', 'elementor' );
 const GRID_SETTINGS_TOOLTIP = __( 'Expand grid settings', 'elementor' );
 const gridTriggerLabel = ( c: number, r: number ) => sprintf( __( '%d × %d', 'elementor' ), c, r );
 const CUSTOM_TRACKS_HELPER = __(
@@ -70,6 +78,11 @@ export type GridControlProps = {
 	closeGridSettingsLabel?: string;
 	/** Rendered inside the popover when “Open grid settings” is expanded (e.g. grid container alignment). */
 	advancedAlignmentSlot?: React.ReactNode;
+	/**
+	 * `popover` — dimensions in a popover (default, e.g. generic grid control in the registry).
+	 * `inlinePanel` — all settings visible in the layout section, similar to flex controls.
+	 */
+	presentation?: 'popover' | 'inlinePanel';
 };
 
 export function createDefaultGridInner() {
@@ -81,6 +94,7 @@ export function createDefaultGridInner() {
 		columnGap: sizePropTypeUtil.create( { unit: 'px', size: '' } ),
 		rowGap: sizePropTypeUtil.create( { unit: 'px', size: '' } ),
 		autoFlow: stringPropTypeUtil.create( 'row' ),
+		showOutline: booleanPropTypeUtil.create( true ),
 	};
 }
 
@@ -105,7 +119,7 @@ const LinkedGapRow = ( { stackRef }: { stackRef: React.RefObject< HTMLDivElement
 		setIsLinked( inferIsLinked( col, row ) );
 	}, [ col, row ] );
 
-	useLayoutEffect( () => {
+	useEffect( () => {
 		if ( ! isLinked || ! gridCtx.value ) {
 			return;
 		}
@@ -204,6 +218,136 @@ const LinkedGapRow = ( { stackRef }: { stackRef: React.RefObject< HTMLDivElement
 	);
 };
 
+type GridSharedBlocksArgs = {
+	columns: number;
+	rows: number;
+	dimensionsLocked: boolean;
+	hasCustomTracks: boolean;
+	onMatrixSelect: ( nextColumns: number, nextRows: number ) => void;
+	stackRef: React.RefObject< HTMLDivElement | null >;
+	advancedAlignmentSlot?: React.ReactNode;
+};
+
+function GridDimensionsBlock( {
+	columns,
+	rows,
+	dimensionsLocked,
+	hasCustomTracks,
+	onMatrixSelect,
+}: GridSharedBlocksArgs ) {
+	return (
+		<>
+			<Stack direction="row" gap={ 1 } alignItems="flex-end" flexWrap="nowrap">
+				<Stack flex={ 1 } gap={ 0.5 } minWidth={ 0 }>
+					<ControlFormLabel>{ COLUMNS_LABEL }</ControlFormLabel>
+					<PropKeyProvider bind="columnsCount">
+						<NumberControl
+							min={ 1 }
+							max={ 24 }
+							shouldForceInt
+							isLocked={ dimensionsLocked }
+							startIcon={ <ArrowsMoveVerticalIcon fontSize="tiny" sx={ { opacity: 0.72 } } /> }
+						/>
+					</PropKeyProvider>
+				</Stack>
+				<Typography
+					variant="body2"
+					color="text.secondary"
+					sx={ { lineHeight: 2.25, flexShrink: 0, px: 0.25 } }
+					aria-hidden
+				>
+					×
+				</Typography>
+				<Stack flex={ 1 } gap={ 0.5 } minWidth={ 0 }>
+					<ControlFormLabel>{ ROWS_LABEL }</ControlFormLabel>
+					<PropKeyProvider bind="rowsCount">
+						<NumberControl
+							min={ 1 }
+							max={ 24 }
+							shouldForceInt
+							isLocked={ dimensionsLocked }
+							startIcon={ <ArrowsMoveHorizontalIcon fontSize="tiny" sx={ { opacity: 0.72 } } /> }
+						/>
+					</PropKeyProvider>
+				</Stack>
+			</Stack>
+
+			<GridDimensionMatrix
+				columns={ columns }
+				rows={ rows }
+				onSelect={ onMatrixSelect }
+				disabled={ dimensionsLocked }
+			/>
+
+			{ hasCustomTracks && (
+				<Typography variant="caption" color="text.secondary">
+					{ CUSTOM_TRACKS_HELPER }
+				</Typography>
+			) }
+		</>
+	);
+}
+
+function GridExtendedSettingsBlock( {
+	stackRef,
+	advancedAlignmentSlot,
+}: GridSharedBlocksArgs ) {
+	return (
+		<Stack gap={ 1.5 }>
+			<LinkedGapRow stackRef={ stackRef } />
+			<Stack gap={ 0.5 }>
+				<ControlFormLabel>{ AUTO_FLOW_LABEL }</ControlFormLabel>
+				<PropKeyProvider bind="autoFlow">
+					<SelectControl options={ AUTO_FLOW_OPTIONS } ariaLabel={ AUTO_FLOW_LABEL } />
+				</PropKeyProvider>
+			</Stack>
+			<Stack gap={ 0.5 }>
+				<ControlFormLabel>{ CUSTOM_COLUMNS_LABEL }</ControlFormLabel>
+				<Typography variant="caption" color="text.tertiary">
+					{ __( 'Optional CSS track list (overrides column count).', 'elementor' ) }
+				</Typography>
+				<PropKeyProvider bind="columnsTemplate">
+					<TextControl placeholder="e.g. repeat(3, 1fr) or 1fr 2fr" />
+				</PropKeyProvider>
+			</Stack>
+			<Stack gap={ 0.5 }>
+				<ControlFormLabel>{ CUSTOM_ROWS_LABEL }</ControlFormLabel>
+				<Typography variant="caption" color="text.tertiary">
+					{ __( 'Optional CSS track list (overrides row count).', 'elementor' ) }
+				</Typography>
+				<PropKeyProvider bind="rowsTemplate">
+					<TextControl placeholder="e.g. repeat(2, minmax(40px, auto))" />
+				</PropKeyProvider>
+			</Stack>
+			{ advancedAlignmentSlot ? (
+				<>
+					<Divider sx={ { my: 0.5 } } />
+					<Stack gap={ 1.5 }>{ advancedAlignmentSlot }</Stack>
+				</>
+			) : null }
+		</Stack>
+	);
+}
+
+function GridOutlineEditorRow() {
+	return (
+		<Stack
+			direction="row"
+			alignItems="center"
+			justifyContent="space-between"
+			gap={ 1 }
+			sx={ { width: '100%' } }
+		>
+			<ControlFormLabel sx={ { flex: 1, mb: 0 } }>{ GRID_OUTLINE_EDITOR_LABEL }</ControlFormLabel>
+			<Box sx={ { flexShrink: 0 } }>
+				<PropKeyProvider bind="showOutline">
+					<SwitchControl />
+				</PropKeyProvider>
+			</Box>
+		</Stack>
+	);
+}
+
 export const GridControl = createControl( ( props: GridControlProps ) => {
 	const {
 		advancedOpen: advancedOpenProp,
@@ -211,6 +355,7 @@ export const GridControl = createControl( ( props: GridControlProps ) => {
 		openGridSettingsLabel = OPEN_GRID_SETTINGS_DEFAULT,
 		closeGridSettingsLabel = CLOSE_GRID_SETTINGS_DEFAULT,
 		advancedAlignmentSlot,
+		presentation = 'popover',
 	} = props;
 
 	const stackRef = useRef< HTMLDivElement >( null );
@@ -231,7 +376,9 @@ export const GridControl = createControl( ( props: GridControlProps ) => {
 		[ isAdvancedControlled, onAdvancedOpenChange ]
 	);
 
-	useLayoutEffect( () => {
+	// useEffect (not useLayoutEffect): setValue updates the document and can synchronously
+	// re-render Marionette views that unmount React roots — must not run during React layout commit.
+	useEffect( () => {
 		if ( gridField.value !== null || initialized.current || gridField.disabled ) {
 			return;
 		}
@@ -247,7 +394,7 @@ export const GridControl = createControl( ( props: GridControlProps ) => {
 	const rows = parseClampedGridDimension( numberPropTypeUtil.extract( inner?.rowsCount as never ), 2 );
 	const hasCustomTracks =
 		templateText( inner?.columnsTemplate ) !== '' || templateText( inner?.rowsTemplate ) !== '';
-	const dimensionsLocked = hasCustomTracks || gridField.disabled;
+	const dimensionsLocked = hasCustomTracks || Boolean( gridField.disabled );
 
 	const onMatrixSelect = useCallback(
 		( nextColumns: number, nextRows: number ) => {
@@ -298,6 +445,77 @@ export const GridControl = createControl( ( props: GridControlProps ) => {
 		</Tooltip>,
 	];
 
+	const sharedBlocksArgs: GridSharedBlocksArgs = {
+		columns,
+		rows,
+		dimensionsLocked,
+		hasCustomTracks,
+		onMatrixSelect,
+		stackRef,
+		advancedAlignmentSlot,
+	};
+
+	if ( presentation === 'inlinePanel' ) {
+		return (
+			<PropProvider { ...gridField }>
+				<Stack gap={ 1.5 } sx={ { width: '100%' } }>
+					<Box>
+						<Button
+							fullWidth
+							size="small"
+							variant="outlined"
+							color="secondary"
+							disabled={ gridField.disabled }
+							endIcon={ <ChevronDownIcon fontSize="tiny" /> }
+							{ ...bindTrigger( popoverState ) }
+							aria-haspopup="dialog"
+							sx={ { justifyContent: 'space-between', textTransform: 'none', fontWeight: 500 } }
+						>
+							{ gridTriggerLabel( columns, rows ) }
+						</Button>
+
+						<Popover
+							disablePortal
+							disableScrollLock
+							{ ...bindPopover( popoverState ) }
+							onClose={ popoverState.close }
+							anchorOrigin={ { vertical: 'bottom', horizontal: 'left' } }
+							transformOrigin={ { vertical: 'top', horizontal: 'left' } }
+							slotProps={ {
+								paper: {
+									sx: {
+										mt: 0.5,
+										maxWidth: 'min(100vw - 24px, 360px)',
+										borderRadius: 1,
+									},
+								},
+							} }
+						>
+							<SectionPopoverBody height="auto">
+								<PopoverHeader
+									title={ GRID_POPOVER_TITLE }
+									icon={ headerIcon }
+									onClose={ popoverState.close }
+								/>
+								<Divider />
+								<Box sx={ { px: 2, py: 1.5, overflow: 'auto', maxHeight: 'min(70vh, 520px)' } }>
+									<Stack gap={ 1.5 }>
+										<GridDimensionsBlock { ...sharedBlocksArgs } />
+									</Stack>
+								</Box>
+							</SectionPopoverBody>
+						</Popover>
+					</Box>
+
+					<Divider />
+					<GridExtendedSettingsBlock { ...sharedBlocksArgs } />
+					<Divider />
+					<GridOutlineEditorRow />
+				</Stack>
+			</PropProvider>
+		);
+	}
+
 	return (
 		<PropProvider { ...gridField }>
 			<Box>
@@ -314,6 +532,23 @@ export const GridControl = createControl( ( props: GridControlProps ) => {
 				>
 					{ gridTriggerLabel( columns, rows ) }
 				</Button>
+
+				<Stack
+					direction="row"
+					alignItems="center"
+					justifyContent="space-between"
+					gap={ 1 }
+					sx={ { width: '100%', mt: 1 } }
+				>
+					<ControlFormLabel sx={ { flex: 1, mb: 0 } }>
+						{ GRID_OUTLINE_EDITOR_LABEL }
+					</ControlFormLabel>
+					<Box sx={ { flexShrink: 0 } }>
+						<PropKeyProvider bind="showOutline">
+							<SwitchControl />
+						</PropKeyProvider>
+					</Box>
+				</Stack>
 
 				<Popover
 					disablePortal
@@ -342,53 +577,7 @@ export const GridControl = createControl( ( props: GridControlProps ) => {
 						<Divider />
 						<Box sx={ { px: 2, py: 1.5, overflow: 'auto', maxHeight: 'min(70vh, 520px)' } }>
 							<Stack gap={ 1.5 }>
-								<Stack direction="row" gap={ 1 } alignItems="flex-end" flexWrap="nowrap">
-									<Stack flex={ 1 } gap={ 0.5 } minWidth={ 0 }>
-										<ControlFormLabel>{ COLUMNS_LABEL }</ControlFormLabel>
-										<PropKeyProvider bind="columnsCount">
-											<NumberControl
-												min={ 1 }
-												max={ 24 }
-												shouldForceInt
-												isLocked={ dimensionsLocked }
-												startIcon={ <ArrowsMoveVerticalIcon fontSize="tiny" sx={ { opacity: 0.72 } } /> }
-											/>
-										</PropKeyProvider>
-									</Stack>
-									<Typography
-										variant="body2"
-										color="text.secondary"
-										sx={ { lineHeight: 2.25, flexShrink: 0, px: 0.25 } }
-										aria-hidden
-									>
-										×
-									</Typography>
-									<Stack flex={ 1 } gap={ 0.5 } minWidth={ 0 }>
-										<ControlFormLabel>{ ROWS_LABEL }</ControlFormLabel>
-										<PropKeyProvider bind="rowsCount">
-											<NumberControl
-												min={ 1 }
-												max={ 24 }
-												shouldForceInt
-												isLocked={ dimensionsLocked }
-												startIcon={ <ArrowsMoveHorizontalIcon fontSize="tiny" sx={ { opacity: 0.72 } } /> }
-											/>
-										</PropKeyProvider>
-									</Stack>
-								</Stack>
-
-								<GridDimensionMatrix
-									columns={ columns }
-									rows={ rows }
-									onSelect={ onMatrixSelect }
-									disabled={ dimensionsLocked }
-								/>
-
-								{ hasCustomTracks && (
-									<Typography variant="caption" color="text.secondary">
-										{ CUSTOM_TRACKS_HELPER }
-									</Typography>
-								) }
+								<GridDimensionsBlock { ...sharedBlocksArgs } />
 
 								<Button
 									fullWidth
@@ -402,39 +591,7 @@ export const GridControl = createControl( ( props: GridControlProps ) => {
 								</Button>
 
 								<Collapse in={ advancedOpen } timeout="auto">
-									<Stack gap={ 1.5 } sx={ { pt: 0.5 } }>
-										<LinkedGapRow stackRef={ stackRef } />
-										<Stack gap={ 0.5 }>
-											<ControlFormLabel>{ AUTO_FLOW_LABEL }</ControlFormLabel>
-											<PropKeyProvider bind="autoFlow">
-												<SelectControl options={ AUTO_FLOW_OPTIONS } ariaLabel={ AUTO_FLOW_LABEL } />
-											</PropKeyProvider>
-										</Stack>
-										<Stack gap={ 0.5 }>
-											<ControlFormLabel>{ CUSTOM_COLUMNS_LABEL }</ControlFormLabel>
-											<Typography variant="caption" color="text.tertiary">
-												{ __( 'Optional CSS track list (overrides column count).', 'elementor' ) }
-											</Typography>
-											<PropKeyProvider bind="columnsTemplate">
-												<TextControl placeholder="e.g. repeat(3, 1fr) or 1fr 2fr" />
-											</PropKeyProvider>
-										</Stack>
-										<Stack gap={ 0.5 }>
-											<ControlFormLabel>{ CUSTOM_ROWS_LABEL }</ControlFormLabel>
-											<Typography variant="caption" color="text.tertiary">
-												{ __( 'Optional CSS track list (overrides row count).', 'elementor' ) }
-											</Typography>
-											<PropKeyProvider bind="rowsTemplate">
-												<TextControl placeholder="e.g. repeat(2, minmax(40px, auto))" />
-											</PropKeyProvider>
-										</Stack>
-										{ advancedAlignmentSlot ? (
-											<>
-												<Divider sx={ { my: 0.5 } } />
-												<Stack gap={ 1.5 }>{ advancedAlignmentSlot }</Stack>
-											</>
-										) : null }
-									</Stack>
+									<GridExtendedSettingsBlock { ...sharedBlocksArgs } />
 								</Collapse>
 							</Stack>
 						</Box>

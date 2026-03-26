@@ -9,6 +9,8 @@ type GridValue = {
 	columnGap?: string | null;
 	rowGap?: string | null;
 	autoFlow?: string | null;
+	/** Editor-only; omitted from generated CSS. */
+	showOutline?: unknown;
 };
 
 const ALLOWED_FLOW = [ 'row', 'column', 'dense', 'row dense', 'column dense' ] as const;
