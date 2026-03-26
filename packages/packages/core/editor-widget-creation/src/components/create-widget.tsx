@@ -8,45 +8,38 @@ import {
 	sendPromptToAngie,
 } from '@elementor/editor-mcp';
 import { ThemeProvider } from '@elementor/editor-ui';
+import { trackEvent } from '@elementor/events';
 import { XIcon } from '@elementor/icons';
 import { Button, CircularProgress, Dialog, DialogContent, IconButton, Image, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 type ShowModalEventDetail = {
 	prompt?: string;
+	entry_point: string;
 };
 
 type InstallState = 'idle' | 'installing' | 'error';
 
+type CreateWidgetModalProps = {
+	prompt?: string;
+	entryPoint: string;
+	onClose: () => void;
+};
+
 const CREATE_WIDGET_EVENT = 'elementor/editor/create-widget';
 const PROMOTION_IMAGE_URL = 'https://assets.elementor.com/packages/v1/images/angie-promotion.svg';
+const ANGIE_CTA_CLICKED_EVENT = 'angie_cta_clicked' as const;
+const ANGIE_INSTALL_STARTED_EVENT = 'angie_install_started' as const;
 
-export function CreateWidget() {
-	const [ open, setOpen ] = useState( false );
-	const [ prompt, setPrompt ] = useState< string | undefined >();
+function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalProps ) {
 	const [ installState, setInstallState ] = useState< InstallState >( 'idle' );
-
-	const handleShow = async ( event: Event ) => {
-		const customEvent = event as CustomEvent< ShowModalEventDetail >;
-
-		if ( isAngieAvailable() ) {
-			sendPromptToAngie( customEvent.detail?.prompt );
-
-			return;
-		}
-
-		setPrompt( customEvent.detail?.prompt );
-		setOpen( true );
-	};
 
 	const handleClose = () => {
 		if ( installState === 'installing' ) {
 			return;
 		}
 
-		setOpen( false );
-		setPrompt( undefined );
-		setInstallState( 'idle' );
+		onClose();
 	};
 
 	const handleInstall = async () => {
@@ -55,6 +48,11 @@ export function CreateWidget() {
 		}
 
 		setInstallState( 'installing' );
+
+		trackEvent( {
+			eventName: ANGIE_INSTALL_STARTED_EVENT,
+			trigger_source: entryPoint,
+		} );
 
 		const result = await installAngiePlugin();
 
@@ -75,17 +73,9 @@ export function CreateWidget() {
 		redirectToInstallation( prompt );
 	};
 
-	useEffect( () => {
-		window.addEventListener( CREATE_WIDGET_EVENT, handleShow );
-
-		return () => {
-			window.removeEventListener( CREATE_WIDGET_EVENT, handleShow );
-		};
-	}, [] );
-
 	return (
 		<ThemeProvider>
-			<Dialog fullWidth maxWidth="md" open={ open } onClose={ handleClose }>
+			<Dialog fullWidth maxWidth="md" open onClose={ handleClose }>
 				<IconButton
 					aria-label={ __( 'Close', 'elementor' ) }
 					onClick={ handleClose }
@@ -159,5 +149,48 @@ export function CreateWidget() {
 				</DialogContent>
 			</Dialog>
 		</ThemeProvider>
+	);
+}
+
+export function CreateWidget() {
+	const [ modalData, setModalData ] = useState< ShowModalEventDetail | null >( null );
+
+	useEffect( () => {
+		const handleShow = ( event: Event ) => {
+			const customEvent = event as CustomEvent< ShowModalEventDetail >;
+			const hasAngieInstalled = isAngieAvailable();
+
+			trackEvent( {
+				eventName: ANGIE_CTA_CLICKED_EVENT,
+				entry_point: customEvent.detail.entry_point,
+				has_angie_installed: hasAngieInstalled,
+			} );
+
+			if ( hasAngieInstalled ) {
+				sendPromptToAngie( customEvent.detail?.prompt );
+
+				return;
+			}
+
+			setModalData( customEvent.detail );
+		};
+
+		window.addEventListener( CREATE_WIDGET_EVENT, handleShow );
+
+		return () => {
+			window.removeEventListener( CREATE_WIDGET_EVENT, handleShow );
+		};
+	}, [] );
+
+	if ( ! modalData ) {
+		return null;
+	}
+
+	return (
+		<CreateWidgetModal
+			prompt={ modalData.prompt }
+			entryPoint={ modalData.entry_point }
+			onClose={ () => setModalData( null ) }
+		/>
 	);
 }
