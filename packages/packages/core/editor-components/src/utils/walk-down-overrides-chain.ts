@@ -26,21 +26,17 @@ type OverridesChainResult =
 	  };
 
 /**
- * Walks through a chain of nested component instances to find the innermost element
- * and collect intermediate override values along the way.
+ * Recursively walks down a chain of nested component instances to find the inner element
+ * and get the overrides mapping for it.
  *
- * For "exposed further" props (where an inner component's prop is overridable from an outer component),
- * the override chain can span multiple nesting levels. This function recursively follows
- * the chain from the outermost overridable prop down to the actual element, collecting
- * override values set at each intermediate instance level (excluding the outermost editing level).
+ * Returns a discriminated union: either the resolved inner element with its overrides mapping,
+ * or `{ isChainBroken: true }` if at least one of the levels is not overridable anymore.
+ *
  * @param params
- * @param params.upperLevelOverridableProp - The overridable prop metadata at the current nesting level.
- * @param params.upperInstanceId           - The runtime ID of the parent element to scope the container lookup.
- * @param params.overridesMapping          - Accumulated overrides from previous (upper) levels.
- * @param params.depth                     - Current recursion depth (for debugging).
- * @return The innermost element container and an array of collected intermediate overrides,
- *         each mapping an innermostKey (the element's override_key) to an outermostKey
- *         (the one-level-in key used by the editing level's overrides).
+ * @param params.upperLevelOverridableProp - The overridable prop metadata at the current level.
+ * @param params.upperInstanceId           - Runtime ID of the parent instance to scope lookups.
+ * @param params.overridesMapping          - Accumulated overrides from upper levels.
+ * @param params.depth                     - Current recursion depth.
  */
 export function walkDownOverridesChain( {
 	upperLevelOverridableProp,
@@ -53,74 +49,70 @@ export function walkDownOverridesChain( {
 	overridesMapping?: OverridesMapping;
 	depth?: number;
 } ): OverridesChainResult {
-	try {
-		// Stop condition: if no originPropFields, we've reached the innermost component instance
-		if ( ! upperLevelOverridableProp.originPropFields ) {
-			const innerElement = getContainerByOriginId( upperLevelOverridableProp.elementId, upperInstanceId );
+	// Stop condition: no originPropFields means we've reached the most inner component instance
+	if ( ! upperLevelOverridableProp.originPropFields ) {
+		const innerElement = getContainerByOriginId( upperLevelOverridableProp.elementId, upperInstanceId );
 
-			if ( ! innerElement ) {
-				throw new Error(
-					`Inner element not found inside instance. elementId: ${ upperLevelOverridableProp.elementId }, instanceId: ${ upperInstanceId }`
-				);
-			}
-
-			return { isChainBroken: false, innerElement, overridesMapping };
-		}
-
-		// Get the component instance at this nesting level and its settings.
-		const currentInstance = getContainerByOriginId( upperLevelOverridableProp.elementId, upperInstanceId );
-		if ( ! currentInstance ) {
+		if ( ! innerElement ) {
 			throw new Error(
-				`Current instance not found inside upper instance. currentInstanceId: ${ upperLevelOverridableProp.elementId }, upperInstanceId: ${ upperInstanceId }`
-			);
-		}
-		const { componentId, overrides } = extractComponentInstanceSettings( currentInstance );
-
-		// Collect overrides from this level (translating keys for exposed-further props).
-		const mergedOverrides = collectOverridesFromLevel( overridesMapping, overrides ?? [] );
-
-		// Get overridable prop for the next level down.
-		const override = findOverrideByOuterKey( overrides, upperLevelOverridableProp.overrideKey );
-		const overrideKey = componentInstanceOverridePropTypeUtil.extract( override )?.override_key;
-
-		if ( ! componentId || ! override || ! overrideKey ) {
-			throw new Error(
-				`Override not found. componentId: ${ componentId }, overrideKey: ${
-					upperLevelOverridableProp.overrideKey
-				}, overrides: ${ JSON.stringify( overrides ) }`
+				`Inner element not found inside instance. elementId: ${ upperLevelOverridableProp.elementId }, instanceId: ${ upperInstanceId }`
 			);
 		}
 
-		const overridableProp = getOverridableProp( { componentId, overrideKey } );
+		return { isChainBroken: false, innerElement, overridesMapping };
+	}
 
-		if ( ! overridableProp ) {
-			throw new Error(
-				`Overridable prop not found. componentId: ${ componentId }, overrideKey: ${ overrideKey }`
-			);
-		}
+	// Step 1: Find the intermediate component instance and read its settings.
+	const currentInstance = getContainerByOriginId( upperLevelOverridableProp.elementId, upperInstanceId );
+	if ( ! currentInstance ) {
+		throw new Error(
+			`Current instance not found inside upper instance. currentInstanceId: ${ upperLevelOverridableProp.elementId }, upperInstanceId: ${ upperInstanceId }`
+		);
+	}
+	const { componentId, overrides } = extractComponentInstanceSettings( currentInstance );
 
-		// Recurse into the next nesting level.
-		return walkDownOverridesChain( {
-			upperLevelOverridableProp: overridableProp,
-			upperInstanceId: currentInstance.id,
-			overridesMapping: mergedOverrides,
-			depth: depth + 1,
-		} );
-	} catch {
+	if ( ! componentId ) {
+		throw new Error(
+			`Component ID not found for current instance. currentInstanceId: ${ currentInstance.id }. upperInstanceId: ${ upperInstanceId }`
+		);
+	}
+
+	// Collect overrides from this level, translating keys for exposed-further props.
+	const mergedOverrides = collectOverridesFromLevel( overridesMapping, overrides ?? [] );
+
+	// Find the overridable-override that matches the upper overridable prop's key,
+	// to get the next level's overridable prop.
+	const override = findOverrideByOuterKey( overrides, upperLevelOverridableProp.overrideKey );
+	const overrideKey = componentInstanceOverridePropTypeUtil.extract( override )?.override_key;
+
+	if ( ! override || ! overrideKey ) {
+		// No matching override found for the current level - it means it's no longer overridable.
 		return { isChainBroken: true };
 	}
+
+	const overridableProp = getOverridableProp( { componentId, overrideKey } );
+
+	if ( ! overridableProp ) {
+		throw new Error( `Overridable prop not found. componentId: ${ componentId }, overrideKey: ${ overrideKey }` );
+	}
+
+	// Step 4: Recurse into the next nesting level.
+	return walkDownOverridesChain( {
+		upperLevelOverridableProp: overridableProp,
+		upperInstanceId: currentInstance.id,
+		overridesMapping: mergedOverrides,
+		depth: depth + 1,
+	} );
 }
 
 /**
- * Merges overrides from a single intermediate instance level into the accumulated overrides.
+ * Collects overrides from an intermediate instance level into the accumulated mapping.
  *
- * Each override at this level can be either:
- * - An "exposed further" override (overridable wrapping an override): the outer key and inner key differ,
- *   so we translate from the inner override's key (innermostKey) to the overridable's key (outermostKey).
- * - A simple override: the key is the same at both levels (innermostKey === outermostKey).
+ * For exposed-further overrides (overridable wrapping an override), we have outer key (overridable's) and inner key (override's).
+ * If a higher level already set a value for the outer key, that value is carried forward to the inner key
+ * — same logic as the componentOverridableTransformer in the render pipeline.
  *
- * Earlier (upper) overrides take precedence — if an innermostKey was already collected,
- * it is not overwritten by a shallower level.
+ * For simple overrides, that are not exposed further, we just use the override's key and value.
  *
  * @param existing       - Previously accumulated overrides from upper levels.
  * @param levelOverrides - The overrides array from the current level instance.
@@ -135,27 +127,35 @@ function collectOverridesFromLevel(
 		const overridableValue = componentOverridablePropTypeUtil.extract( item );
 
 		if ( overridableValue ) {
+			// Exposed-further: overridable wraps an inner override with a different key.
 			const override = componentInstanceOverridePropTypeUtil.extract( overridableValue.origin_value );
 
 			if ( ! override ) {
 				continue;
 			}
 
-			const higherLevelOverrideKey = overridableValue.override_key;
-			const higherLevelOverride = existing[ higherLevelOverrideKey ];
+			const outerKey = overridableValue.override_key;
+			const innerKey = override.override_key;
+			const innerValue = override.override_value;
+
+			// If an upper level already set a value for the outer key, carry it forward to the inner key.
+			const higherLevelOverride = existing[ outerKey ];
+
 			if ( higherLevelOverride ) {
-				result[ override.override_key ] = {
-					value: higherLevelOverride.value ?? override.override_value,
-					outermostKey: higherLevelOverride.outermostKey ?? higherLevelOverrideKey,
+				const outerValue = higherLevelOverride.value;
+				result[ innerKey ] = {
+					value: outerValue ?? innerValue,
+					outermostKey: higherLevelOverride.outermostKey ?? outerKey,
 				};
 				continue;
 			}
 
-			result[ override.override_key ] = {
-				value: override.override_value,
-				outermostKey: higherLevelOverrideKey,
+			result[ innerKey ] = {
+				value: innerValue,
+				outermostKey: outerKey,
 			};
 		} else {
+			// Simple override: not exposed further, we just store the override's key and value.
 			const override = componentInstanceOverridePropTypeUtil.extract( item.value );
 
 			if ( ! override ) {
@@ -181,6 +181,7 @@ function extractComponentInstanceSettings( element: V1Element ) {
 	return { componentId, overrides };
 }
 
+// Finds the inner override prop whose wrapping overridable matches the given outer key.
 function findOverrideByOuterKey(
 	overrides: ComponentInstanceOverride[] | null | undefined,
 	outerKey: string
