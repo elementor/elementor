@@ -93,3 +93,21 @@ export function hasClipboardElementTypes( elements: ClipboardElement[], types: S
 		return element.elements ? hasClipboardElementTypes( element.elements, types ) : false;
 	} );
 }
+
+export function movedContainersIncludeAtomicFormRoot(
+	containers: ( V1Element | undefined )[],
+): boolean {
+	return containers.some( ( container ) => getElementType( container ) === FORM_ELEMENT_TYPE );
+}
+
+export function clipboardRootsAreAtomicForms( elements: ClipboardElement[] ): boolean {
+	if ( ! elements.length ) {
+		return false;
+	}
+
+	return elements.every( ( el ) => {
+		const elementType = el.widgetType || el.elType;
+
+		return elementType === FORM_ELEMENT_TYPE;
+	} );
+}

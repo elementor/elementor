@@ -3,12 +3,14 @@ import { blockCommand } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import {
+	clipboardRootsAreAtomicForms,
 	type CreateArgs,
 	FORM_FIELD_ELEMENT_TYPES,
 	getArgsElementType,
 	hasClipboardElementTypes,
 	hasElementTypes,
 	isWithinForm,
+	movedContainersIncludeAtomicFormRoot,
 	type MoveArgs,
 	type PasteArgs,
 	type StorageContent,
@@ -60,7 +62,11 @@ function blockFormFieldMove( args: MoveArgs ): boolean {
 		container ? hasElementTypes( container, FORM_FIELD_ELEMENT_TYPES ) : false
 	);
 
-	if ( hasFormFieldElement && ! isWithinForm( target ) ) {
+	if (
+		hasFormFieldElement &&
+		! isWithinForm( target ) &&
+		! movedContainersIncludeAtomicFormRoot( containers )
+	) {
 		handleBlockedFormField();
 
 		return true;
@@ -86,7 +92,11 @@ function blockFormFieldPaste( args: PasteArgs ): boolean {
 
 	const hasFormFieldElement = hasClipboardElementTypes( data.clipboard.elements, FORM_FIELD_ELEMENT_TYPES );
 
-	if ( hasFormFieldElement && ! isWithinForm( args.container ) ) {
+	if (
+		hasFormFieldElement &&
+		! isWithinForm( args.container ) &&
+		! clipboardRootsAreAtomicForms( data.clipboard.elements )
+	) {
 		handleBlockedFormField();
 
 		return true;
