@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect, useRef } from 'react';
 import { CircularProgress, Stack, styled, Typography } from '@elementor/ui';
 
 import { FullscreenCard, PrimaryButton, TextButton } from '../../components/fullscreen-card';
@@ -21,9 +22,9 @@ export function ProInstall() {
 	const { showToast } = useToast();
 	const { trackProInstall, trackStepViewed, trackErrorReported } = useOnboardingEvent();
 
-	const hasTrackedView = React.useRef( false );
+	const hasTrackedView = useRef( false );
 
-	React.useEffect( () => {
+	useEffect( () => {
 		if ( ! hasTrackedView.current ) {
 			hasTrackedView.current = true;
 			trackStepViewed( 'pro_install' );
