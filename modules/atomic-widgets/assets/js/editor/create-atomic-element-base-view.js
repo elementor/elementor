@@ -103,7 +103,6 @@ export default function createAtomicElementBaseView( type ) {
 			}
 
 			local[ 'data-interaction-id' ] = this.getInteractionId();
-			local[ 'data-origin-id' ] = this.model.get( 'originId' );
 
 			customAttributes.forEach( ( attribute ) => {
 				const key = attribute.value?.key?.value;
