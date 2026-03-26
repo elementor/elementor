@@ -5,27 +5,16 @@ import {
 	initBreakpoints,
 } from 'elementor/modules/interactions/assets/js/interactions-breakpoints.js';
 
+import { stubInteractionsConfig } from './utils';
+
 const ADVANCE_TIME_BY = 120;
-
-const BREAKPOINTS_CONFIG = {
-	mobile: { value: 768, direction: 'max' },
-	mobile_extra: { value: 880, direction: 'max' },
-	tablet: { value: 1024, direction: 'max' },
-	tablet_extra: { value: 1200, direction: 'max' },
-	laptop: { value: 1366, direction: 'max' },
-	widescreen: { value: 2440, direction: 'min' },
-};
-
-function setBreakpointsConfig() {
-	window.ElementorInteractionsConfig = {
-		breakpoints: BREAKPOINTS_CONFIG,
-	};
-}
 
 describe( 'interactions-breakpoints', () => {
 	beforeEach( () => {
 		jest.resetModules();
-		setBreakpointsConfig();
+
+		stubInteractionsConfig();
+
 		Object.defineProperty( window, 'innerWidth', {
 			value: 1024,
 			writable: true,
