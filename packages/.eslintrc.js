@@ -1,7 +1,14 @@
 module.exports = {
 	root: true,
 	parser: '@typescript-eslint/parser',
-	plugins: ['@typescript-eslint', '@tanstack/query', 'simple-import-sort', 'unicorn', 'react-compiler', 'local-rules'],
+	plugins: [
+		'@typescript-eslint',
+		'@tanstack/query',
+		'simple-import-sort',
+		'unicorn',
+		'react-compiler',
+		'local-rules',
+	],
 	extends: [
 		'plugin:@wordpress/eslint-plugin/recommended',
 		'plugin:@typescript-eslint/strict',
@@ -58,7 +65,7 @@ module.exports = {
 			'error',
 			{
 				selector: 'typeLike',
-				format: ['PascalCase'],
+				format: [ 'PascalCase' ],
 			},
 		],
 
@@ -82,18 +89,18 @@ module.exports = {
 				zones: [
 					{
 						target: './packages/core',
-						from: ['./packages/tools'],
+						from: [ './packages/tools' ],
 						message: 'Core cannot import from Tools.',
 					},
 
 					{
 						target: './packages/libs',
-						from: ['./packages/core', './packages/tools'],
+						from: [ './packages/core', './packages/tools' ],
 						message: 'Libraries can only import other libraries.',
 					},
 					{
 						target: './packages/tools',
-						from: ['./packages/*'],
+						from: [ './packages/*' ],
 						message: 'Tools cannot import from Core, Libs or Tools.',
 					},
 				],
@@ -103,15 +110,15 @@ module.exports = {
 	overrides: [
 		{
 			// Core Packages.
-			files: ['**/packages/@(core|libs)/**/*.[tj]s?(x)'],
+			files: [ '**/packages/@(core|libs)/**/*.[tj]s?(x)' ],
 			rules: {
-				'@wordpress/i18n-text-domain': ['error', { allowedTextDomain: 'elementor' }],
+				'@wordpress/i18n-text-domain': [ 'error', { allowedTextDomain: 'elementor' } ],
 			},
 		},
 		{
 			// Test files.
-			files: ['**/@(__mocks__|__tests__|tests|test)/**/*.[tj]s?(x)'],
-			extends: ['plugin:jest-dom/recommended', 'plugin:testing-library/react'],
+			files: [ '**/@(__mocks__|__tests__|tests|test)/**/*.[tj]s?(x)' ],
+			extends: [ 'plugin:jest-dom/recommended', 'plugin:testing-library/react' ],
 			rules: {
 				// In tests, we are importing dev dependencies of the root directory, so we need to disable this rule.
 				'import/no-extraneous-dependencies': 'off',
@@ -130,14 +137,14 @@ module.exports = {
 				'jsdoc/check-tag-names': [
 					'error',
 					{
-						definedTags: ['jest-environment'],
+						definedTags: [ 'jest-environment' ],
 					},
 				],
 			},
 		},
 		{
 			// Production files.
-			files: ['**/src/*.[tj]s?(x)'],
+			files: [ '**/src/*.[tj]s?(x)' ],
 			rules: {
 				// Don't allow importing dev dependencies in production files.
 				'import/no-extraneous-dependencies': [
@@ -156,10 +163,10 @@ function getImportSortGroups() {
 	// https://github.com/lydell/eslint-plugin-simple-import-sort/blob/66d84f742/src/imports.js#L5-L19
 	return [
 		// Side effect imports.
-		['^\\u0000'],
+		[ '^\\u0000' ],
 
 		// Node.js builtins prefixed with `node:`.
-		['^node:'],
+		[ '^node:' ],
 
 		[
 			// React imports.
@@ -180,10 +187,10 @@ function getImportSortGroups() {
 
 		// Absolute imports and other imports such as Vue-style `@/foo`.
 		// Anything not matched in another group.
-		['^'],
+		[ '^' ],
 
 		// Relative imports.
 		// Anything that starts with a dot.
-		['^\\.'],
+		[ '^\\.' ],
 	];
 }
