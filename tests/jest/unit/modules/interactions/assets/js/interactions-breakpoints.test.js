@@ -10,9 +10,7 @@ import { stubInteractionsConfig } from './utils';
 const ADVANCE_TIME_BY = 120;
 
 describe( 'interactions-breakpoints', () => {
-	beforeEach( () => {
-		jest.resetModules();
-
+	beforeAll( () => {
 		stubInteractionsConfig();
 
 		Object.defineProperty( window, 'innerWidth', {
@@ -20,6 +18,10 @@ describe( 'interactions-breakpoints', () => {
 			writable: true,
 			configurable: true,
 		} );
+	} );
+
+	beforeEach( () => {
+		jest.resetModules();
 	} );
 
 	describe( 'filtering (matchBreakpoint via getActiveBreakpoint)', () => {

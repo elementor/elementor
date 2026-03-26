@@ -24,9 +24,7 @@ import {
 } from './utils';
 
 describe( 'interactions-utils', () => {
-	beforeEach( () => {
-		jest.resetModules();
-
+	beforeAll( () => {
 		stubInteractionsConfig();
 
 		Object.defineProperty( window, 'innerWidth', {
@@ -34,6 +32,10 @@ describe( 'interactions-utils', () => {
 			writable: true,
 			configurable: true,
 		} );
+	} );
+
+	beforeEach( () => {
+		jest.resetModules();
 	} );
 
 	describe( 'skipInteraction', () => {

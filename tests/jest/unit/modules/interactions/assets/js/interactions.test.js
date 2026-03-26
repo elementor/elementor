@@ -22,9 +22,12 @@ function installMotionMocks( { animate, inView, scroll } ) {
 }
 
 describe( 'Interactions', () => {
+	beforeAll( () => {
+		stubInteractionsConfig();
+	} );
+
 	beforeEach( () => {
 		jest.resetModules();
-		stubInteractionsConfig();
 
 		document.body.innerHTML = '';
 		setReadyStateComplete();
