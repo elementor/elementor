@@ -213,7 +213,11 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		isTagChanged( changed ) {
-			return ( changed?.tag !== undefined || changed?.link !== undefined ) && this._parent && this.tagName() !== this.el.tagName.toLowerCase();
+			const hasParent = Boolean( this._parent );
+			const hasTagOrLinkChange = changed?.tag !== undefined || changed?.link !== undefined;
+			const isTagMismatch = this.tagName()?.toLowerCase() !== this.el.tagName.toLowerCase();
+
+			return hasTagOrLinkChange && hasParent && isTagMismatch;
 		},
 
 		rerenderEntireView() {
