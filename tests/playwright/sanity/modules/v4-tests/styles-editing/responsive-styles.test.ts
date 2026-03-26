@@ -1,8 +1,8 @@
 import { BrowserContext, expect } from '@playwright/test';
-import { parallelTest as test } from '../../../parallelTest';
-import WpAdminPage from '../../../pages/wp-admin-page';
-import EditorPage from '../../../pages/editor-page';
-import { timeouts } from '../../../config/timeouts';
+import { parallelTest as test } from '../../../../parallelTest';
+import WpAdminPage from '../../../../pages/wp-admin-page';
+import EditorPage from '../../../../pages/editor-page';
+import { timeouts } from '../../../../config/timeouts';
 
 const BREAKPOINT_FONT_SIZES = {
 	desktop: 32,
