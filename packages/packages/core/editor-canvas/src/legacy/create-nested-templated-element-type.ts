@@ -61,13 +61,14 @@ export function createNestedTemplatedElementType( {
 	};
 }
 
-function buildEditorAttributes( model: { get: ( key: 'id' ) => string; cid?: string } ): string {
+function buildEditorAttributes( model: ElementView[ 'model' ] ): string {
 	const id = model.get( 'id' );
+	const originId = model.get( 'originId' );
 	const cid = model.cid ?? '';
 
 	const attrs: Record< string, string > = {
 		'data-model-cid': cid,
-		'data-interaction-id': id,
+		'data-interaction-id': originId ?? id,
 		'x-ignore': 'true',
 	};
 
@@ -114,6 +115,10 @@ export function createNestedTemplatedElementView( {
 
 		invalidateRenderCache() {
 			this._lastResolvedSettingsHash = null;
+		},
+
+		renderOnChange() {
+			this.render();
 		},
 
 		render() {
@@ -181,6 +186,7 @@ export function createNestedTemplatedElementView( {
 
 					const context = {
 						id: model.get( 'id' ),
+						interaction_id: this.getInteractionId(),
 						type,
 						settings,
 						base_styles: baseStylesDictionary,
@@ -360,6 +366,13 @@ export function createNestedTemplatedElementView( {
 
 		_openEditingPanel( options?: { scrollIntoView: boolean } ) {
 			this._doAfterRender( () => parentOpenEditingPanel.call( this, options ) );
+		},
+
+		getInteractionId() {
+			const originId = this.model.get( 'originId' );
+			const id = this.model.get( 'id' );
+
+			return originId ?? id;
 		},
 	} ) as unknown as typeof ElementView;
 }

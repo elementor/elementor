@@ -4,6 +4,7 @@ import EditorPage from './editor-page';
 import { ElementorType, WindowType } from '../types/types';
 import { wpCli } from '../assets/wp-cli';
 import ApiRequests from '../assets/api-requests';
+import { timeouts } from '../config/timeouts';
 let elementor: ElementorType;
 
 export default class WpAdminPage extends BasePage {
@@ -259,8 +260,8 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async waitForPanel(): Promise<void> {
-		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached' } );
-		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden' } );
+		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached', timeout: timeouts.heavyAction } );
+		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden', timeout: timeouts.heavyAction } );
 	}
 
 	/**

@@ -807,3 +807,45 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<div class="elementor-template-library-cloud-empty__button"></div>
 </script>
+
+<script type="text/template" id="tmpl-elementor-global-styles-dialog">
+	<div class="elementor-global-styles-dialog">
+		<div class="elementor-global-styles-dialog__header">
+			<h2><?php echo esc_html__( 'Choose how to apply styles', 'elementor' ); ?></h2>
+			<p><?php echo esc_html__( 'This affects page settings, classes, and variables.', 'elementor' ); ?></p>
+		</div>
+		<div class="elementor-global-styles-dialog__options">
+			<label class="elementor-global-styles-dialog__radio-card">
+				<input type="radio" name="elementor-global-styles-mode" id="elementor-global-styles-match" value="match_site" checked>
+				<div class="elementor-global-styles-dialog__radio-card-content">
+					<div class="elementor-global-styles-dialog__radio-label"><?php echo esc_html__( 'Use this site’s style', 'elementor' ); ?></div>
+					<div class="elementor-global-styles-dialog__radio-description">
+						<?php echo esc_html__( 'Apply your site styles to the imported template.', 'elementor' ); ?>
+					</div>
+				</div>
+			</label>
+			<label class="elementor-global-styles-dialog__radio-card elementor-global-styles-dialog__radio-card--keep">
+				<input type="radio" name="elementor-global-styles-mode" id="elementor-global-styles-keep" value="keep">
+				<div class="elementor-global-styles-dialog__radio-card-content">
+					<div class="elementor-global-styles-dialog__radio-label"><?php echo esc_html__( 'Keep the template styles', 'elementor' ); ?></div>
+					<div class="elementor-global-styles-dialog__radio-description">
+						<?php echo esc_html__( 'The template will keep its original design.', 'elementor' ); ?>
+					</div>
+				</div>
+			</label>
+			<div class="elementor-global-styles-dialog__checkbox-container" style="display: none;">
+				<label class="elementor-global-styles-dialog__checkbox-option">
+					<input type="checkbox" id="elementor-global-styles-create" checked>
+					<span class="elementor-global-styles-dialog__checkbox-label">
+						<?php echo esc_html__( 'Add the template’s classes and variables to my site.', 'elementor' ); ?>
+						<a href="<?php echo esc_url( 'https://elementor.com/help/variables-manager/' ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html__( 'Learn more', 'elementor' ); ?></a>
+					</span>
+				</label>
+			</div>
+		</div>
+		<div class="elementor-global-styles-dialog__footer">
+			<button type="button" class="elementor-global-styles-dialog__button-cancel" id="elementor-global-styles-cancel"><?php echo esc_html__( 'Cancel', 'elementor' ); ?></button>
+			<button type="button" class="elementor-global-styles-dialog__button-insert" id="elementor-global-styles-insert"><?php echo esc_html__( 'Insert', 'elementor' ); ?></button>
+		</div>
+	</div>
+</script>

@@ -6,6 +6,7 @@ import { registerDataHook } from '@elementor/editor-v1-adapters';
 
 import { type RendererStyleDefinition, type StyleItem, type StyleRenderer } from '../renderers/create-styles-renderer';
 import { abortPreviousRuns } from '../utils/abort-previous-runs';
+import { removeProviderPregeneratedLinks, resetRemovedProviders } from '../utils/pregenerated-links-removal';
 import { signalizedProcess } from '../utils/signalized-process';
 import { useOnMount } from './use-on-mount';
 import { useStylePropResolver } from './use-style-prop-resolver';
@@ -69,6 +70,8 @@ export function useStyleItems() {
 
 	useOnMount( () => {
 		registerDataHook( 'after', 'editor/documents/attach-preview', async () => {
+			resetRemovedProviders();
+
 			const promises = providerAndSubscribers.map( async ( { subscriber } ) => subscriber() );
 
 			await Promise.all( promises );
@@ -136,6 +139,11 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, cach
 				const hasDiffInfo = current !== undefined && previous !== undefined;
 				const hasCache = cache.orderedIds.length > 0;
 
+				if ( hasCache && provider.isPregeneratedLink ) {
+					// if styles were rendered already (i.e. hasCache = true), we can safely remove the pregenerated css rules imported via <link /> tags
+					removeProviderPregeneratedLinks( provider.getKey(), provider.isPregeneratedLink );
+				}
+
 				if ( hasDiffInfo && hasCache ) {
 					return updateItems( previous, current, signal );
 				}
@@ -191,7 +199,7 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, cach
 		return renderStyles( { styles: breakToBreakpoints( styles ), signal } ).then( ( rendered ) => {
 			rebuildCache( cache, allStyles, rendered );
 
-			return rendered;
+			return getOrderedItems( cache );
 		} );
 	}
 

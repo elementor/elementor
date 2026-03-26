@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
 	Box,
 	Button,
@@ -12,22 +12,48 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { trackGlobalClasses } from '../../utils/tracking';
+
 const IMAGE_URL = 'https://assets.elementor.com/packages/v1/images/class-manager-sync-modal.png';
 
 type StartSyncToV3ModalProps = {
 	externalOpen?: boolean;
+	classId?: string;
 	onExternalClose?: () => void;
 	onConfirm?: () => void;
 };
 
-export const StartSyncToV3Modal = ( { externalOpen, onExternalClose, onConfirm }: StartSyncToV3ModalProps = {} ) => {
+export const StartSyncToV3Modal = ( {
+	externalOpen,
+	classId,
+	onExternalClose,
+	onConfirm,
+}: StartSyncToV3ModalProps = {} ) => {
 	const [ shouldShowAgain, setShouldShowAgain ] = useState( true );
+	const hasTrackedExposure = useRef( false );
+
+	useEffect( () => {
+		if ( externalOpen && classId && ! hasTrackedExposure.current ) {
+			hasTrackedExposure.current = true;
+			trackGlobalClasses( { event: 'classSyncToV3PopupShown', classId } );
+		}
+
+		if ( ! externalOpen ) {
+			hasTrackedExposure.current = false;
+		}
+	}, [ externalOpen, classId ] );
 
 	const handleClose = () => {
+		if ( classId ) {
+			trackGlobalClasses( { event: 'classSyncToV3PopupClick', classId, action: 'cancel' } );
+		}
 		onExternalClose?.();
 	};
 
 	const handleConfirm = () => {
+		if ( classId ) {
+			trackGlobalClasses( { event: 'classSyncToV3PopupClick', classId, action: 'sync' } );
+		}
 		onConfirm?.();
 		onExternalClose?.();
 	};
@@ -37,10 +63,10 @@ export const StartSyncToV3Modal = ( { externalOpen, onExternalClose, onConfirm }
 			<DialogContent sx={ { p: 0 } }>
 				<Box component="img" src={ IMAGE_URL } alt="" sx={ { width: '100%', display: 'block' } } />
 				<Box sx={ { px: 3, pt: 4, pb: 1 } }>
-					<Typography variant="h6">{ __( 'Sync class to version 3 Global Fonts', 'elementor' ) }</Typography>
+					<Typography variant="h6">{ __( 'Sync class to Global Fonts', 'elementor' ) }</Typography>
 					<Typography variant="body2" color="secondary" sx={ { mb: 2, pt: 1 } }>
 						{ __(
-							'Only typography settings supported in version 3 will be applied, including: font family, responsive font sizes, weight, text transform, decoration, line height, letter spacing, and word spacing. Changes made in the class will automatically apply to version 3.',
+							'Only typography settings supported in Global Fonts will be applied, including: font family, responsive font sizes, weight, text transform, decoration, line height, letter spacing, and word spacing. Changes made in the class will automatically apply to Global Fonts.',
 							'elementor'
 						) }
 					</Typography>
@@ -67,7 +93,7 @@ export const StartSyncToV3Modal = ( { externalOpen, onExternalClose, onConfirm }
 						{ __( 'Cancel', 'elementor' ) }
 					</Button>
 					<Button onClick={ handleConfirm } variant="contained" size="small">
-						{ __( 'Sync to version 3', 'elementor' ) }
+						{ __( 'Sync to Global Fonts', 'elementor' ) }
 					</Button>
 				</Box>
 			</DialogActions>

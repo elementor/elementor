@@ -25,7 +25,7 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { trackVariablesManagerEvent } from '../../utils/tracking';
+import { trackVariablesManagerEvent, trackVariableSyncToV3 } from '../../utils/tracking';
 import { type ErrorResponse, type MappedError, mapServerError } from '../../utils/validations';
 import { getMenuActionsForVariable, getVariableType } from '../../variables-registry/variable-type-registry';
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
@@ -76,8 +76,8 @@ export function VariablesManagerPanel() {
 		handleOnChange,
 		createVariable,
 		handleDeleteVariable,
-		handleStartSync,
-		handleStopSync,
+		handleStartSync: startSyncFromState,
+		handleStopSync: stopSyncFromState,
 		handleSave,
 		isSaving,
 		handleSearch,
@@ -151,23 +151,37 @@ export function VariablesManagerPanel() {
 		[ handleDeleteVariable ]
 	);
 
-	const handleStopSyncWithConfirmation = useCallback(
+	const commitStopSync = useCallback(
 		( itemId: string ) => {
-			handleStopSync( itemId );
-			setStopSyncConfirmation( null );
+			stopSyncFromState( itemId );
+			const variable = variables[ itemId ];
+			if ( variable ) {
+				trackVariableSyncToV3( { variableLabel: variable.label, action: 'unsync' } );
+			}
 		},
-		[ handleStopSync ]
+		[ stopSyncFromState, variables ]
 	);
 
-	const handleShowStopSyncDialog = useCallback(
+	const handleStartSync = useCallback(
+		( itemId: string ) => {
+			startSyncFromState( itemId );
+			const variable = variables[ itemId ];
+			if ( variable ) {
+				trackVariableSyncToV3( { variableLabel: variable.label, action: 'sync' } );
+			}
+		},
+		[ startSyncFromState, variables ]
+	);
+
+	const handleStopSync = useCallback(
 		( itemId: string ) => {
 			if ( ! isStopSyncSuppressed ) {
 				setStopSyncConfirmation( itemId );
 			} else {
-				handleStopSync( itemId );
+				commitStopSync( itemId );
 			}
 		},
-		[ isStopSyncSuppressed, handleStopSync ]
+		[ isStopSyncSuppressed, commitStopSync ]
 	);
 
 	const buildMenuActions = useCallback(
@@ -182,7 +196,7 @@ export function VariablesManagerPanel() {
 				variableId,
 				handlers: {
 					onStartSync: handleStartSync,
-					onStopSync: handleShowStopSyncDialog,
+					onStopSync: handleStopSync,
 				},
 			} );
 
@@ -203,7 +217,7 @@ export function VariablesManagerPanel() {
 
 			return [ ...typeActions, deleteAction ];
 		},
-		[ variables, handleStartSync, handleShowStopSyncDialog ]
+		[ variables, handleStartSync, handleStopSync ]
 	);
 
 	const hasVariables = Object.keys( variables ).length > 0;
@@ -368,7 +382,10 @@ export function VariablesManagerPanel() {
 				<StopSyncConfirmationDialog
 					open
 					onClose={ () => setStopSyncConfirmation( null ) }
-					onConfirm={ () => handleStopSyncWithConfirmation( stopSyncConfirmation ) }
+					onConfirm={ () => {
+						commitStopSync( stopSyncConfirmation );
+						setStopSyncConfirmation( null );
+					} }
 				/>
 			) }
 
@@ -436,7 +453,7 @@ const StopSyncConfirmationDialog = ( { open, onClose, onConfirm }: StopSyncConfi
 			<ConfirmationDialog.Content>
 				<ConfirmationDialog.ContentText>
 					{ __(
-						'This will disconnect the variable color from version 3. Existing uses on your site will automatically switch to a default color.',
+						'This will disconnect the variable color from Global Colors. Existing uses on your site will automatically switch to a default color.',
 						'elementor'
 					) }
 				</ConfirmationDialog.ContentText>

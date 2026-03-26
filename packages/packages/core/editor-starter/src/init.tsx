@@ -1,9 +1,9 @@
-import { injectIntoTop } from '@elementor/editor';
+import { injectIntoLogic } from '@elementor/editor';
 
 import StarterOverlay from './components/starter-overlay';
 
 export function init() {
-	injectIntoTop( {
+	injectIntoLogic( {
 		id: 'starter-overlay',
 		component: StarterOverlay,
 	} );

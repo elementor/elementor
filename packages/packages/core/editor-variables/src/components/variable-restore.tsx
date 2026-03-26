@@ -127,11 +127,12 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 							} }
 							onErrorChange={ ( errorMsg ) => {
 								setLabelFieldError( {
-									value: label,
+									value: '',
 									message: errorMsg,
 								} );
 							} }
 							onKeyDown={ handleKeyDown }
+							focusOnShow
 						/>
 					</FormField>
 					{ ValueField && (

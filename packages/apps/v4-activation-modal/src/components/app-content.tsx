@@ -3,6 +3,7 @@ import { Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useAutoplayCarousel } from '../hooks/use-autoplay-carousel';
+import { CelebrationLottie } from './celebration-lottie';
 import { FeatureItem } from './feature-item';
 import { ModalFooter } from './modal-footer';
 import { ModalHeader } from './modal-header';
@@ -18,25 +19,25 @@ const FEATURE_ITEMS = [
 		id: 'combineWidgets',
 		title: __( 'Use Atomic Elements alongside your existing widgets', 'elementor' ),
 		subtitle: __( 'No need to rebuild pages. Combine legacy & new workflows.', 'elementor' ),
-		image: '',
+		image: 'https://assets.elementor.com/v4-promotion/v1/images/pop_up_combine_widgets.svg',
 	},
 	{
 		id: 'designSystems',
 		title: __( 'Build reusable design systems', 'elementor' ),
 		subtitle: __( 'Classes, Variables & Components give a clear path for scale.', 'elementor' ),
-		image: '',
+		image: 'https://assets.elementor.com/v4-promotion/v1/images/pop_up_design_systems.svg',
 	},
 	{
 		id: 'consistentStyling',
 		title: __( 'Keep styles consistent across your site', 'elementor' ),
 		subtitle: __( 'A unified Style tab with full control over responsive design.', 'elementor' ),
-		image: '',
+		image: 'https://assets.elementor.com/v4-promotion/v1/images/pop_up_consistent_styling.svg',
 	},
 	{
 		id: 'performance',
 		title: __( 'Get unparalleled performance', 'elementor' ),
 		subtitle: __( 'Clean code and a light CSS footprint with single-div wrappers.', 'elementor' ),
-		image: '',
+		image: 'https://assets.elementor.com/v4-promotion/v1/images/pop_up_performance.svg',
 	},
 ];
 
@@ -48,6 +49,7 @@ export function AppContent( { onClose }: { onClose: () => void } ) {
 	return (
 		<V4ActivationModal
 			onClose={ onClose }
+			backgroundElement={ <CelebrationLottie /> }
 			rightPanelBackgroundColor={ BACKGROUND_COLOR }
 			rightPanel={
 				<ModalImage
@@ -57,24 +59,17 @@ export function AppContent( { onClose }: { onClose: () => void } ) {
 			}
 			header={
 				<ModalHeader
-					title={ __( 'You’re now using the Atomic Editor', 'elementor' ) }
-					subtitle={
-						<>
-							{ __( 'Elementor’s new editing experience is now active.', 'elementor' ) }
-							<br />
-							{ __(
-								'Your existing pages stay exactly the same - you can keep working as usual while exploring new Atomic Elements.',
-								'elementor'
-							) }
-						</>
-					}
+					title={ __( 'You’re now using the Atomic editor', 'elementor' ) }
+					subtitle={ __(
+						'Elementor’s new editing experience is now active. Your existing pages stay exactly the same - you can keep working as usual while exploring new Atomic Elements.',
+						'elementor'
+					) }
 				/>
 			}
 			footer={
 				<ModalFooter
 					helpText={ __( 'Need help getting started?', 'elementor' ) }
-					learnMoreText={ __( 'Learn more', 'elementor' ) }
-					learnMoreUrl={ LEARN_MORE_URL }
+					link={ { text: __( 'Learn more', 'elementor' ), url: LEARN_MORE_URL } }
 				/>
 			}
 		>

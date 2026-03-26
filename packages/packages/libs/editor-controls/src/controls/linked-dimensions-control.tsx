@@ -104,10 +104,21 @@ export const LinkedDimensionsControl = ( { label, isSiteRtl = false, extendedOpt
 
 	const disabled = sizeDisabled || dimensionsDisabled;
 
+	const effectiveDimensionsPlaceholder =
+		dimensionsPlaceholder ??
+		( sizePropTypeUtil.extract( masterPlaceholder )
+			? {
+					'block-start': masterPlaceholder,
+					'block-end': masterPlaceholder,
+					'inline-start': masterPlaceholder,
+					'inline-end': masterPlaceholder,
+			  }
+			: null );
+
 	const propProviderProps = {
 		propType,
 		value: dimensionsValue,
-		placeholder: dimensionsPlaceholder,
+		placeholder: effectiveDimensionsPlaceholder,
 		setValue: setDimensionsValue,
 		isDisabled: () => dimensionsDisabled,
 	};

@@ -5,6 +5,8 @@ import { type FieldProps } from '../../types';
 import { PromotionSelect } from '../../ui/promotion-select';
 import { DEFAULT_VALUES } from '../interaction-details';
 
+const TRACKING_DATA = { target_name: 'interactions_easing', location_l2: 'interactions' } as const;
+
 export const EASING_OPTIONS = {
 	easeIn: __( 'Ease In', 'elementor' ),
 	easeInOut: __( 'Ease In Out', 'elementor' ),
@@ -33,6 +35,7 @@ export function Easing( {}: FieldProps ) {
 			disabledOptions={ disabledOptions }
 			promotionContent={ __( 'Upgrade to control the smoothness of the interaction.', 'elementor' ) }
 			upgradeUrl="https://go.elementor.com/go-pro-interactions-easing-modal/"
+			trackingData={ TRACKING_DATA }
 		/>
 	);
 }

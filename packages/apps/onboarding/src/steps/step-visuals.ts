@@ -1,6 +1,6 @@
 import { StepId, type StepIdType, type StepVisualConfig } from '../types';
 
-const ONBOARDING_ASSETS_PATH = 'images/app/e-onboarding/';
+const ONBOARDING_ASSETS_PATH = 'images/app/onboarding/';
 const VIDEOS_BASE_URL = 'https://assets.elementor.com/onboarding/v1/videos/';
 
 const CONTENT_MAX_WIDTH_WIDE_ELEMENT = 724;

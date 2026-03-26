@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { numberPropTypeUtil, type PropType } from '@elementor/editor-props';
-import { InputAdornment } from '@elementor/ui';
+import { InputAdornment, Typography } from '@elementor/ui';
 
 import { useBoundProp } from '../bound-prop-context';
 import { NumberInput } from '../components/number-input';
@@ -12,7 +12,13 @@ const isEmptyOrNaN = ( value?: string | number | null ) =>
 
 const renderSuffix = ( propType: PropType ) => {
 	if ( propType.meta?.suffix ) {
-		return <InputAdornment position="end">{ propType.meta.suffix }</InputAdornment>;
+		return (
+			<InputAdornment position="end">
+				<Typography variant="caption" color="text.secondary">
+					{ propType.meta.suffix as string }
+				</Typography>
+			</InputAdornment>
+		);
 	}
 	return <></>;
 };

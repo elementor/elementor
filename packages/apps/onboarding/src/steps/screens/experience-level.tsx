@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { useCallback } from 'react';
 import { ChevronRightSmallIcon } from '@elementor/icons';
 import { Stack, Typography, withDirection } from '@elementor/ui';
 
 import { OptionButton } from '../../components/ui/option-button';
 import { StepTitle } from '../../components/ui/styled-components';
 import { useOnboarding } from '../../hooks/use-onboarding';
+import { useOnboardingEvent } from '../../hooks/use-onboarding-event';
 import { t } from '../../utils/translations';
 
 const DirectionalChevronIcon = withDirection( ChevronRightSmallIcon );
@@ -27,16 +27,15 @@ const OPTIONS: ExperienceLevelOption[] = [
 
 export function ExperienceLevel( { onComplete }: ExperienceLevelProps ) {
 	const { choices, actions } = useOnboarding();
+	const { trackExperienceSelected } = useOnboardingEvent();
 
 	const selectedValue = choices.experience_level;
 
-	const handleSelect = useCallback(
-		( value: string ) => {
-			actions.setUserChoice( 'experience_level', value );
-			onComplete( { experience_level: value } );
-		},
-		[ actions, onComplete ]
-	);
+	function handleSelect( value: string ) {
+		trackExperienceSelected( value );
+		actions.setUserChoice( 'experience_level', value );
+		onComplete( { experience_level: value } );
+	}
 
 	return (
 		<Stack spacing={ 4 } width="100%" data-testid="experience-level-step">

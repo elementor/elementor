@@ -22,6 +22,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 	protected $styles = [];
 	protected $interactions = [];
 	protected $editor_settings = [];
+	protected $origin_id = null;
 
 	public static $widget_description = null;
 
@@ -37,6 +38,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		if ( static::$widget_description ) {
 			$this->description( static::$widget_description );
 		}
+		$this->origin_id = $data['origin_id'] ?? null;
 	}
 
 	private function parse_atomic_interactions( $interactions ) {
@@ -123,10 +125,14 @@ abstract class Atomic_Element_Base extends Element_Base {
 		return [];
 	}
 
+	protected function get_interaction_id() {
+		return $this->origin_id ?? $this->get_id();
+	}
+
 	protected function add_render_attributes() {
 		parent::add_render_attributes();
 
-		$this->add_render_attribute( '_wrapper', 'data-interaction-id', $this->get_id() );
+		$this->add_render_attribute( '_wrapper', 'data-interaction-id', $this->get_interaction_id() );
 	}
 
 	/**

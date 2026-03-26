@@ -86,9 +86,8 @@ test.describe( 'Atomic Components @v4-tests', () => {
 				const createItem = page.getByRole( 'menuitem', { name: 'Create component' } );
 				await expect( createItem ).toBeVisible();
 
-				const proBadge = createItem.locator( 'a[href*="go-pro-components-create"]' );
-				await expect( proBadge ).toBeVisible();
-				await expect( proBadge ).toHaveText( 'PRO' );
+				const proIcon = createItem.locator( 'i.eicon-upgrade-crown' );
+				await expect( proIcon ).toBeVisible();
 			} );
 		} );
 	} );

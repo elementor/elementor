@@ -29,8 +29,8 @@ const ProgressFill = styled( Box )( ( { theme } ) => ( {
 	height: '100%',
 	borderRadius: 22,
 	backgroundColor: theme.palette.text.primary,
-	animation: 'e-onboarding-fake-progress 3s ease-out forwards',
-	'@keyframes e-onboarding-fake-progress': FAKE_PROGRESS_KEYFRAMES,
+	animation: 'onboarding-fake-progress 3s ease-out forwards',
+	'@keyframes onboarding-fake-progress': FAKE_PROGRESS_KEYFRAMES,
 } ) );
 
 export function CompletionScreen() {

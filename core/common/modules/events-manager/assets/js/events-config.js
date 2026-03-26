@@ -27,6 +27,8 @@ const eventsConfig = {
 		resultsUpdated: 'results_updated',
 		noResults: 'no_results',
 		selected: 'selected',
+		promotionViewed: 'promotion_viewed',
+		upgradeNow: 'upgrade_now',
 	},
 
 	targetNames: {
@@ -232,6 +234,7 @@ const eventsConfig = {
 			openManager: 'open_variables_manager',
 			saveChanges: 'save_variables_changes',
 			delete: 'delete_variable',
+			variableSyncToV3: 'variable_sync_to_v3',
 		},
 		components: {
 			createClicked: 'component_create_clicked',
@@ -264,6 +267,9 @@ const eventsConfig = {
 			classStateClicked: 'class_state_clicked',
 			classUsageClicked: 'class_usage_clicked',
 			classDuplicate: 'class_duplicate',
+			classSyncToV3PopupShown: 'class_sync_to_v3_popup_shown',
+			classSyncToV3: 'class_sync_to_v3',
+			classSyncToV3PopupClick: 'class_sync_to_v3_popup_click',
 		},
 		editorOne: {
 			topBarPublishDropdown: 'top_bar_publish_dropdown',
@@ -277,6 +283,13 @@ const eventsConfig = {
 			finderResultSelect: 'finder_result_select',
 			canvasEmptyBoxAction: 'canvas_empty_box_action',
 			widgetPanelSearch: 'widget_panel_search',
+		},
+		interactions: {
+			created: 'interactions_created',
+		},
+		promotions: {
+			viewPromotion: 'view_promotion',
+			upgradePromotionClick: 'upgrade_promotion_click',
 		},
 	},
 };

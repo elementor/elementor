@@ -4,6 +4,7 @@ import { type ButtonProps } from '@elementor/ui';
 declare module 'notistack' {
 	interface VariantOverrides {
 		promotion: true;
+		info: true;
 	}
 }
 

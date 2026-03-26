@@ -14,9 +14,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Format_Component_Elements_Id {
 	public static function format( array $elements, array $path ) {
 		return array_map( function( $element ) use ( $path ) {
-			$nesting_path = [ ...$path, $element['id'] ];
+			$origin_id = $element['id'];
+			$nesting_path = [ ...$path, $origin_id ];
 
 			$element['id'] = self::hash_string( implode( '_', $nesting_path ), 7 );
+			$element['origin_id'] = $origin_id;
 			$element['elements'] = self::format( $element['elements'], $nesting_path );
 
 			return $element;

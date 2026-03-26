@@ -152,4 +152,8 @@ export default class extends elementorModules.Module {
 	canSendEvents() {
 		return !! elementorCommon?.config?.editor_events?.can_send_events;
 	}
+
+	getMixpanelInstance() {
+		return this.isMixpanelReady() ? mixpanel : undefined;
+	}
 }

@@ -1,15 +1,18 @@
 import * as React from 'react';
-import { ComponentsIcon } from '@elementor/icons';
-import { Box, Divider, Link, List, Stack, Typography } from '@elementor/ui';
+import { ComponentsIcon, CrownFilledIcon } from '@elementor/icons';
+import { Box, Button, Divider, Link, List, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../hooks/use-components';
 import { useComponentsPermissions } from '../../hooks/use-components-permissions';
+import { isProComponentsSupported, isProOutdatedForComponents } from '../../utils/is-pro-components-supported';
 import { ComponentItem } from './components-item';
 import { LoadingComponents } from './loading-components';
 import { useSearch } from './search-provider';
 
 const LEARN_MORE_URL = 'http://go.elementor.com/components-guide-article';
+const UPGRADE_URL = 'https://go.elementor.com/go-pro-components/';
+const UPDATE_PLUGINS_URL = '/wp-admin/plugins.php';
 
 // Override legacy panel CSS reset that sets h1-h6 to font-size:100% and font-weight:normal.
 // See: assets/dev/scss/editor/panel/_reset.scss (applied via :where() selector in panel.scss).
@@ -28,7 +31,15 @@ export function ComponentsList() {
 	const isEmpty = ! components?.length;
 
 	if ( isEmpty ) {
-		return searchValue.length ? <EmptySearchResult /> : <EmptyState />;
+		if ( searchValue.length ) {
+			return <EmptySearchResult />;
+		}
+
+		if ( isProOutdatedForComponents() ) {
+			return <ProOutdatedEmptyState />;
+		}
+
+		return isProComponentsSupported() ? <EmptyState /> : <ProUpgradeEmptyState />;
 	}
 
 	return (
@@ -40,7 +51,84 @@ export function ComponentsList() {
 	);
 }
 
-export const EmptyState = () => {
+const ProUpgradeEmptyState = () => {
+	return (
+		<Stack
+			alignItems="center"
+			justifyContent="start"
+			height="100%"
+			sx={ { px: 2, py: 4 } }
+			gap={ 2 }
+			overflow="hidden"
+		>
+			<Stack alignItems="center" gap={ 1 }>
+				<ComponentsIcon fontSize="large" sx={ { color: 'text.secondary' } } />
+
+				<Typography align="center" variant="subtitle2" color="text.secondary" sx={ SUBTITLE_OVERRIDE_SX }>
+					{ __( 'Create Reusable Components', 'elementor' ) }
+				</Typography>
+
+				<Typography align="center" variant="caption" color="secondary" sx={ { maxWidth: 200 } }>
+					{ __( 'Create design elements that sync across your entire site.', 'elementor' ) }
+				</Typography>
+			</Stack>
+
+			<Button
+				variant="contained"
+				color="promotion"
+				size="small"
+				startIcon={ <CrownFilledIcon /> }
+				href={ UPGRADE_URL }
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				{ __( 'Upgrade now', 'elementor' ) }
+			</Button>
+		</Stack>
+	);
+};
+
+const ProOutdatedEmptyState = () => {
+	return (
+		<Stack
+			alignItems="center"
+			justifyContent="start"
+			height="100%"
+			sx={ { px: 2, py: 4, maxWidth: 268, m: 'auto' } }
+			gap={ 2 }
+			overflow="hidden"
+		>
+			<Stack alignItems="center" gap={ 1 }>
+				<ComponentsIcon fontSize="large" sx={ { color: 'text.secondary' } } />
+
+				<Typography align="center" variant="subtitle2" color="text.secondary" sx={ SUBTITLE_OVERRIDE_SX }>
+					{ __( 'Create Reusable Components', 'elementor' ) }
+				</Typography>
+
+				<Typography align="center" variant="caption" color="secondary">
+					{ __( 'Create design elements that sync across your entire site.', 'elementor' ) }
+				</Typography>
+
+				<Typography align="center" variant="caption" color="secondary" sx={ { mt: 1 } }>
+					{ __( 'To create components, update Elementor Pro to the latest version.', 'elementor' ) }
+				</Typography>
+			</Stack>
+
+			<Button
+				variant="text"
+				color="info"
+				size="small"
+				href={ UPDATE_PLUGINS_URL }
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				{ __( 'Update Elementor Pro', 'elementor' ) }
+			</Button>
+		</Stack>
+	);
+};
+
+const EmptyState = () => {
 	const { canCreate } = useComponentsPermissions();
 
 	return (

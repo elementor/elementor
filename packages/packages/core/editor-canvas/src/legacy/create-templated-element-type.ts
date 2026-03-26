@@ -162,6 +162,7 @@ export function createTemplatedElementView( {
 
 					const context = {
 						id: this.model.get( 'id' ),
+						interaction_id: this.getInteractionId(),
 						type,
 						settings,
 						base_styles: baseStylesDictionary,
@@ -205,6 +206,13 @@ export function createTemplatedElementView( {
 		}
 		_openEditingPanel( options?: { scrollIntoView: boolean } ) {
 			this._doAfterRender( () => super._openEditingPanel( options ) );
+		}
+
+		getInteractionId() {
+			const originId = this.model.get( 'originId' );
+			const id = this.model.get( 'id' );
+
+			return originId ?? id;
 		}
 	};
 }

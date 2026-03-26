@@ -1,30 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-	__privateListenTo as listenTo,
-	__privateRunCommand as runCommand,
-	getCurrentEditMode,
-	windowEvent,
-} from '@elementor/editor-v1-adapters';
+import apiFetch from '@wordpress/api-fetch';
 
 import type { StarterConfig } from '../types';
-import { deleteStarterConfig, getEditingPanelWidth, getStarterConfig, getTopBarHeight } from '../utils';
+import { deleteStarterConfig, getStarterConfig } from '../utils';
 
-interface ElementorChannels {
-	panelElements?: {
-		on: ( event: string, callback: () => void ) => void;
-		off: ( event: string, callback: () => void ) => void;
-	};
-}
+const EDITOR_WRAPPER_SELECTOR = '#elementor-editor-wrapper';
+const STARTER_CONTAINER_ID = 'elementor-starter-container';
 
-function getElementorChannels(): ElementorChannels | undefined {
-	return ( window as unknown as { elementor?: { channels?: ElementorChannels } } ).elementor?.channels;
-}
-
-function dismissStarterApi( config: StarterConfig ) {
-	const apiFetch = ( window as unknown as { wp?: { apiFetch?: ( args: object ) => Promise< unknown > } } ).wp
-		?.apiFetch;
-
-	apiFetch?.( {
+function markStarterDismissed( config: StarterConfig ) {
+	apiFetch( {
 		path: config.restPath,
 		method: 'POST',
 		data: { starter_dismissed: true },
@@ -34,33 +18,8 @@ function dismissStarterApi( config: StarterConfig ) {
 export function useStarter() {
 	const [ config, setConfig ] = useState< StarterConfig | null >( null );
 	const [ isDismissing, setIsDismissing ] = useState( false );
-	const [ panelWidth, setPanelWidth ] = useState( 0 );
-	const [ topOffset, setTopOffset ] = useState( 0 );
+	const [ portalContainer, setPortalContainer ] = useState< Element | null >( null );
 	const dismissedRef = useRef( false );
-
-	useEffect( () => {
-		const activate = () => {
-			const cfg = getStarterConfig();
-
-			if ( cfg ) {
-				setConfig( cfg );
-				setPanelWidth( getEditingPanelWidth() );
-				setTopOffset( getTopBarHeight() );
-			}
-		};
-
-		const onCommandAfter = ( e: Event ) => {
-			const detail = ( e as CustomEvent )?.detail;
-
-			if ( detail?.command === 'editor/documents/attach-preview' ) {
-				activate();
-			}
-		};
-
-		window.addEventListener( 'elementor/commands/run/after', onCommandAfter );
-
-		return () => window.removeEventListener( 'elementor/commands/run/after', onCommandAfter );
-	}, [] );
 
 	const dismiss = useCallback( () => {
 		if ( ! config || dismissedRef.current ) {
@@ -70,63 +29,73 @@ export function useStarter() {
 		dismissedRef.current = true;
 		setIsDismissing( true );
 
-		dismissStarterApi( config );
 		deleteStarterConfig();
 	}, [ config ] );
 
 	useEffect( () => {
-		if ( ! config ) {
-			return;
-		}
+		const insertStarters = () => {
+			const starterConfig = getStarterConfig();
 
-		const channels = getElementorChannels();
-
-		if ( ! channels?.panelElements ) {
-			return;
-		}
-
-		const handleDragStart = () => dismiss();
-
-		channels.panelElements.on( 'element:drag:start', handleDragStart );
-
-		return () => {
-			channels.panelElements?.off( 'element:drag:start', handleDragStart );
-		};
-	}, [ config, dismiss ] );
-
-	useEffect( () => {
-		if ( ! config ) {
-			return;
-		}
-
-		return listenTo( windowEvent( 'elementor/edit-mode/change' ), () => {
-			if ( getCurrentEditMode() !== 'edit' ) {
-				dismiss();
+			if ( ! starterConfig ) {
+				return;
 			}
-		} );
-	}, [ config, dismiss ] );
 
-	const openTemplatesLibrary = useCallback( () => {
-		dismiss();
-		runCommand( 'library/open' );
-	}, [ dismiss ] );
+			const wrapper = document.querySelector( EDITOR_WRAPPER_SELECTOR );
 
-	const openAiPlanner = useCallback( () => {
-		dismiss();
+			if ( ! wrapper ) {
+				return;
+			}
 
+			const container = document.createElement( 'div' );
+			container.id = STARTER_CONTAINER_ID;
+
+			wrapper.prepend( container );
+
+			setConfig( starterConfig );
+			setPortalContainer( container );
+			markStarterDismissed( starterConfig );
+		};
+
+		const onInsertStarters = ( event: Event ) => {
+			const detail = ( event as CustomEvent )?.detail;
+
+			if ( detail?.command === 'editor/documents/attach-preview' ) {
+				insertStarters();
+			}
+		};
+
+		window.addEventListener( 'elementor/commands/run/after', onInsertStarters );
+
+		return () => window.removeEventListener( 'elementor/commands/run/after', onInsertStarters );
+	}, [] );
+
+	function openTemplatesLibrary() {
+		if ( config?.kitLibraryUrl ) {
+			const url = new URL( config.kitLibraryUrl, window.location.origin );
+			url.searchParams.set( 'referrer', 'onboarding' );
+			window.open( url.toString(), '_blank', 'noopener,noreferrer' );
+		}
+	}
+
+	function openAiPlanner() {
 		if ( config?.aiPlannerUrl ) {
 			window.open( config.aiPlannerUrl, '_blank', 'noopener,noreferrer' );
 		}
-	}, [ config, dismiss ] );
+	}
+
+	const onExited = useCallback( () => {
+		portalContainer?.remove();
+		setPortalContainer( null );
+		setConfig( null );
+	}, [ portalContainer ] );
 
 	return {
 		config,
 		isDismissing,
-		panelWidth,
-		topOffset,
+		portalContainer,
 		dismiss,
 		openAiPlanner,
 		openTemplatesLibrary,
-		onExited: () => setConfig( null ),
+		onExited,
 	};
 }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { ChevronRightSmallIcon } from '@elementor/icons';
 import { Stack, withDirection } from '@elementor/ui';
 
@@ -7,6 +7,7 @@ import { GreetingBanner } from '../../components/ui/greeting-banner';
 import { OptionButton } from '../../components/ui/option-button';
 import { StepTitle } from '../../components/ui/styled-components';
 import { useOnboarding } from '../../hooks/use-onboarding';
+import { useOnboardingEvent } from '../../hooks/use-onboarding-event';
 import { t } from '../../utils/translations';
 
 const GREETING_WAVE = '\uD83D\uDC4B';
@@ -28,6 +29,7 @@ interface BuildingForProps {
 
 export function BuildingFor( { onComplete }: BuildingForProps ) {
 	const { userName, isConnected, isGuest, choices, actions } = useOnboarding();
+	const { trackPersonaSelected } = useOnboardingEvent();
 
 	const selectedValue = choices.building_for;
 
@@ -41,13 +43,11 @@ export function BuildingFor( { onComplete }: BuildingForProps ) {
 		return t( 'steps.building_for.greeting_without_name', GREETING_WAVE );
 	}, [ userName, isConnected, isGuest ] );
 
-	const handleSelect = useCallback(
-		( value: BuildingForValue ) => {
-			actions.setUserChoice( 'building_for', value );
-			onComplete( { building_for: value } );
-		},
-		[ actions, onComplete ]
-	);
+	function handleSelect( value: BuildingForValue ) {
+		trackPersonaSelected( value );
+		actions.setUserChoice( 'building_for', value );
+		onComplete( { building_for: value } );
+	}
 
 	return (
 		<Stack spacing={ 7.5 } data-testid="building-for-step">

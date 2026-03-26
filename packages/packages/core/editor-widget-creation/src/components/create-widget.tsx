@@ -1,41 +1,71 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { isAngieAvailable, redirectToInstallation, sendPromptToAngie } from '@elementor/editor-mcp';
+import {
+	installAngiePlugin,
+	isAngieAvailable,
+	redirectToAppAdmin,
+	redirectToInstallation,
+	sendPromptToAngie,
+} from '@elementor/editor-mcp';
 import { ThemeProvider } from '@elementor/editor-ui';
+import { trackEvent } from '@elementor/events';
 import { XIcon } from '@elementor/icons';
-import { Button, Dialog, DialogContent, IconButton, Image, Stack, Typography } from '@elementor/ui';
+import { Button, CircularProgress, Dialog, DialogContent, IconButton, Image, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 type ShowModalEventDetail = {
 	prompt?: string;
+	entry_point: string;
+};
+
+type InstallState = 'idle' | 'installing' | 'error';
+
+type CreateWidgetModalProps = {
+	prompt?: string;
+	entryPoint: string;
+	onClose: () => void;
 };
 
 const CREATE_WIDGET_EVENT = 'elementor/editor/create-widget';
 const PROMOTION_IMAGE_URL = 'https://assets.elementor.com/packages/v1/images/angie-promotion.svg';
+const ANGIE_CTA_CLICKED_EVENT = 'angie_cta_clicked' as const;
+const ANGIE_INSTALL_STARTED_EVENT = 'angie_install_started' as const;
 
-export function CreateWidget() {
-	const [ open, setOpen ] = useState( false );
-	const [ prompt, setPrompt ] = useState< string | undefined >();
+function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalProps ) {
+	const [ installState, setInstallState ] = useState< InstallState >( 'idle' );
 
-	const handleShow = async ( event: Event ) => {
-		const customEvent = event as CustomEvent< ShowModalEventDetail >;
+	const handleClose = () => {
+		if ( installState === 'installing' ) {
+			return;
+		}
 
-		if ( isAngieAvailable() ) {
-			sendPromptToAngie( customEvent.detail?.prompt );
+		onClose();
+	};
+
+	const handleInstall = async () => {
+		if ( ! prompt ) {
+			return;
+		}
+
+		setInstallState( 'installing' );
+
+		trackEvent( {
+			eventName: ANGIE_INSTALL_STARTED_EVENT,
+			trigger_source: entryPoint,
+		} );
+
+		const result = await installAngiePlugin();
+
+		if ( ! result.success ) {
+			setInstallState( 'error' );
 
 			return;
 		}
 
-		setPrompt( customEvent.detail?.prompt );
-		setOpen( true );
+		redirectToAppAdmin( prompt );
 	};
 
-	const handleClose = () => {
-		setOpen( false );
-		setPrompt( undefined );
-	};
-
-	const handleInstall = () => {
+	const handleFallbackInstall = () => {
 		if ( ! prompt ) {
 			return;
 		}
@@ -43,17 +73,9 @@ export function CreateWidget() {
 		redirectToInstallation( prompt );
 	};
 
-	useEffect( () => {
-		window.addEventListener( CREATE_WIDGET_EVENT, handleShow );
-
-		return () => {
-			window.removeEventListener( CREATE_WIDGET_EVENT, handleShow );
-		};
-	}, [] );
-
 	return (
 		<ThemeProvider>
-			<Dialog fullWidth maxWidth="md" open={ open } onClose={ handleClose }>
+			<Dialog fullWidth maxWidth="md" open onClose={ handleClose }>
 				<IconButton
 					aria-label={ __( 'Close', 'elementor' ) }
 					onClick={ handleClose }
@@ -79,26 +101,96 @@ export function CreateWidget() {
 						/>
 						<Stack gap={ 2 } justifyContent="center" p={ 4 }>
 							<Typography variant="h6" fontWeight={ 600 } whiteSpace="nowrap">
-								{ __( 'Install Angie to build custom widgets', 'elementor' ) }
+								{ installState === 'error'
+									? __( 'Installation failed', 'elementor' )
+									: __( 'Install Angie to build custom widgets', 'elementor' ) }
 							</Typography>
 							<Typography variant="body2" color="text.secondary">
-								{ __(
-									'Angie lets you generate custom widgets, sections, and code using simple instructions.',
-									'elementor'
-								) }
+								{ installState === 'error'
+									? __(
+											"We couldn't install Angie automatically. Click below to install it manually.",
+											'elementor'
+									  )
+									: __(
+											'Angie lets you generate custom widgets, sections, and code using simple instructions.',
+											'elementor'
+									  ) }
 							</Typography>
-							<Typography variant="body2" color="text.secondary">
-								{ __( 'Install once to start building directly inside the editor.', 'elementor' ) }
-							</Typography>
+							{ installState !== 'error' && (
+								<Typography variant="body2" color="text.secondary">
+									{ __( 'Install once to start building directly inside the editor.', 'elementor' ) }
+								</Typography>
+							) }
 							<Stack direction="row" justifyContent="flex-end" sx={ { mt: 2 } }>
-								<Button variant="contained" color="accent" onClick={ handleInstall }>
-									{ __( 'Install Angie', 'elementor' ) }
-								</Button>
+								{ installState === 'error' ? (
+									<Button variant="contained" color="accent" onClick={ handleFallbackInstall }>
+										{ __( 'Install Manually', 'elementor' ) }
+									</Button>
+								) : (
+									<Button
+										variant="contained"
+										color="accent"
+										onClick={ handleInstall }
+										disabled={ installState === 'installing' }
+										startIcon={
+											installState === 'installing' ? (
+												<CircularProgress size={ 18 } color="inherit" />
+											) : undefined
+										}
+									>
+										{ installState === 'installing'
+											? __( 'Installing…', 'elementor' )
+											: __( 'Install Angie', 'elementor' ) }
+									</Button>
+								) }
 							</Stack>
 						</Stack>
 					</Stack>
 				</DialogContent>
 			</Dialog>
 		</ThemeProvider>
+	);
+}
+
+export function CreateWidget() {
+	const [ modalData, setModalData ] = useState< ShowModalEventDetail | null >( null );
+
+	useEffect( () => {
+		const handleShow = ( event: Event ) => {
+			const customEvent = event as CustomEvent< ShowModalEventDetail >;
+			const hasAngieInstalled = isAngieAvailable();
+
+			trackEvent( {
+				eventName: ANGIE_CTA_CLICKED_EVENT,
+				entry_point: customEvent.detail.entry_point,
+				has_angie_installed: hasAngieInstalled,
+			} );
+
+			if ( hasAngieInstalled ) {
+				sendPromptToAngie( customEvent.detail?.prompt );
+
+				return;
+			}
+
+			setModalData( customEvent.detail );
+		};
+
+		window.addEventListener( CREATE_WIDGET_EVENT, handleShow );
+
+		return () => {
+			window.removeEventListener( CREATE_WIDGET_EVENT, handleShow );
+		};
+	}, [] );
+
+	if ( ! modalData ) {
+		return null;
+	}
+
+	return (
+		<CreateWidgetModal
+			prompt={ modalData.prompt }
+			entryPoint={ modalData.entry_point }
+			onClose={ () => setModalData( null ) }
+		/>
 	);
 }

@@ -21,4 +21,6 @@ export {
 	switchToDocument,
 } from './sync/utils';
 
+export { COMPONENT_DOCUMENT_TYPE } from './consts';
+
 export * from './types';

@@ -9,7 +9,7 @@ import {
 	type TimesFieldProps,
 } from './types';
 
-type InteractionsControlType =
+export type InteractionsControlType =
 	| 'trigger'
 	| 'effect'
 	| 'effectType'
