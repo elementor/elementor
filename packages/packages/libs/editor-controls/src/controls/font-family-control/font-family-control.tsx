@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 import { stringPropTypeUtil } from '@elementor/editor-props';
 import { ChevronDownIcon, TextIcon } from '@elementor/icons';
 import { bindPopover, bindTrigger, Popover, UnstableTag, usePopupState } from '@elementor/ui';
@@ -34,7 +35,7 @@ export const FontFamilyControl = createControl(
 		const popoverState = usePopupState( { variant: 'popover' } );
 		const isShowingPlaceholder = ! fontFamily && placeholder;
 
-		const mapFontSubs = React.useMemo< Category[] >( () => {
+		const mapFontSubs = useMemo< Category[] >( () => {
 			return fontFamilies.map( ( { label, fonts } ) => ( {
 				label,
 				items: fonts,

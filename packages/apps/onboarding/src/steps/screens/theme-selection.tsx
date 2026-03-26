@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Stack, Typography } from '@elementor/ui';
 
 import {
@@ -32,7 +32,7 @@ export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
 	const recommendedTheme = useMemo( () => getRecommendedTheme( choices ), [ choices ] );
 	const greetingText = useMemo( () => getGreetingText( choices.experience_level ), [ choices.experience_level ] );
 
-	const hasTrackedSuggestion = React.useRef( false );
+	const hasTrackedSuggestion = useRef( false );
 
 	useEffect( () => {
 		if ( recommendedTheme && ! hasTrackedSuggestion.current ) {
