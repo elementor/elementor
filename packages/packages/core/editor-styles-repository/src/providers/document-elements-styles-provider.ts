@@ -12,8 +12,7 @@ import { createStylesProvider } from '../utils/create-styles-provider';
 
 export const ELEMENTS_STYLES_PROVIDER_KEY_PREFIX = 'document-elements-';
 export const ELEMENTS_STYLES_RESERVED_LABEL = 'local';
-const PREGENERATED_LINK_PATTERN =
-	/^local-\d+-(preview|frontend)-[a-zA-Z_-]+-css$/;
+const PREGENERATED_LINK_PATTERN = /^local-\d+-(preview|frontend)-[a-zA-Z_-]+-css$/;
 
 type ElementsMeta = {
 	elementId: string;

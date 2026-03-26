@@ -61,7 +61,10 @@ describe( 'pregenerated-links-removal', () => {
 			jest.mocked( getCanvasIframeDocument ).mockReturnValue( mockDocument );
 
 			// Act.
-			removeProviderPregeneratedLinks( 'document-elements-123', /^local-\d+-(preview|frontend)-[a-zA-Z_-]+-css$/ );
+			removeProviderPregeneratedLinks(
+				'document-elements-123',
+				/^local-\d+-(preview|frontend)-[a-zA-Z_-]+-css$/
+			);
 
 			// Assert.
 			const remainingLinkIds = Array.from( head.querySelectorAll( 'link' ) ).map( ( link ) =>
@@ -102,7 +105,10 @@ describe( 'pregenerated-links-removal', () => {
 
 			// Act.
 			removeProviderPregeneratedLinks( 'global-classes', /^global-(preview|frontend)-[a-zA-Z_-]+-css$/ );
-			removeProviderPregeneratedLinks( 'document-elements-123', /^local-\d+-(preview|frontend)-[a-zA-Z_-]+-css$/ );
+			removeProviderPregeneratedLinks(
+				'document-elements-123',
+				/^local-\d+-(preview|frontend)-[a-zA-Z_-]+-css$/
+			);
 
 			// Assert.
 			const remainingLinkIds = Array.from( head.querySelectorAll( 'link' ) ).map( ( link ) =>

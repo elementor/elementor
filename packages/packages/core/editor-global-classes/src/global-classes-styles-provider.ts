@@ -1,8 +1,5 @@
 import { generateId, type StyleDefinition, type StyleDefinitionVariant } from '@elementor/editor-styles';
-import {
-	GLOBAL_CLASSES_ATOMIC_STYLES_LINK_ID_PATTERN,
-	createStylesProvider,
-} from '@elementor/editor-styles-repository';
+import { createStylesProvider } from '@elementor/editor-styles-repository';
 import {
 	__dispatch as dispatch,
 	__getState as getState,
