@@ -1,3 +1,4 @@
+import { type PregeneratedLinkItem } from '@elementor/editor-styles-repository';
 import { getCanvasIframeDocument } from '@elementor/editor-v1-adapters';
 
 import { removeProviderPregeneratedLinks, resetRemovedProviders } from '../pregenerated-links-removal';
@@ -6,11 +7,13 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	getCanvasIframeDocument: jest.fn(),
 } ) );
 
-function createLink( id: string, href: string ): HTMLLinkElement {
+function createLink( id: string, href: string, media: string = 'all' ): HTMLLinkElement {
 	const link = document.createElement( 'link' );
 	link.setAttribute( 'rel', 'stylesheet' );
 	link.setAttribute( 'id', id );
 	link.setAttribute( 'href', href );
+	link.setAttribute( 'media', media );
+
 	return link;
 }
 
@@ -40,7 +43,9 @@ describe( 'pregenerated-links-removal', () => {
 			jest.mocked( getCanvasIframeDocument ).mockReturnValue( mockDocument );
 
 			// Act.
-			removeProviderPregeneratedLinks( 'global-classes', /^global-(preview|frontend)-[a-zA-Z_-]+-css$/ );
+			removeProviderPregeneratedLinks( 'global-classes', ( { id } ) =>
+				/^global-(preview|frontend)-[a-zA-Z_-]+-css$/.test( id )
+			);
 
 			// Assert.
 			const remainingLinkIds = Array.from( head.querySelectorAll( 'link' ) ).map( ( link ) =>
@@ -61,9 +66,8 @@ describe( 'pregenerated-links-removal', () => {
 			jest.mocked( getCanvasIframeDocument ).mockReturnValue( mockDocument );
 
 			// Act.
-			removeProviderPregeneratedLinks(
-				'document-elements-123',
-				/^local-\d+-(preview|frontend)-[a-zA-Z_-]+-css$/
+			removeProviderPregeneratedLinks( 'document-elements-123', ( { id } ) =>
+				/^local-\d+-(preview|frontend)-[a-zA-Z_-]+-css$/.test( id )
 			);
 
 			// Assert.
@@ -86,10 +90,14 @@ describe( 'pregenerated-links-removal', () => {
 			const initialLinkCount = head.querySelectorAll( 'link' ).length;
 
 			// Act.
-			removeProviderPregeneratedLinks( 'global-classes', /^global-(preview|frontend)-[a-zA-Z_-]+-css$/ );
+			removeProviderPregeneratedLinks( 'global-classes', ( { id } ) =>
+				/^global-(preview|frontend)-[a-zA-Z_-]+-css$/.test( id )
+			);
 			const afterFirstRemoval = head.querySelectorAll( 'link' ).length;
 
-			removeProviderPregeneratedLinks( 'global-classes', /^global-(preview|frontend)-[a-zA-Z_-]+-css$/ );
+			removeProviderPregeneratedLinks( 'global-classes', ( { id } ) =>
+				/^global-(preview|frontend)-[a-zA-Z_-]+-css$/.test( id )
+			);
 			const afterSecondCall = head.querySelectorAll( 'link' ).length;
 
 			// Assert.
@@ -104,10 +112,11 @@ describe( 'pregenerated-links-removal', () => {
 			jest.mocked( getCanvasIframeDocument ).mockReturnValue( mockDocument );
 
 			// Act.
-			removeProviderPregeneratedLinks( 'global-classes', /^global-(preview|frontend)-[a-zA-Z_-]+-css$/ );
-			removeProviderPregeneratedLinks(
-				'document-elements-123',
-				/^local-\d+-(preview|frontend)-[a-zA-Z_-]+-css$/
+			removeProviderPregeneratedLinks( 'global-classes', ( { id } ) =>
+				/^global-(preview|frontend)-[a-zA-Z_-]+-css$/.test( id )
+			);
+			removeProviderPregeneratedLinks( 'document-elements-123', ( { id } ) =>
+				/^local-\d+-(preview|frontend)-[a-zA-Z_-]+-css$/.test( id )
 			);
 
 			// Assert.
@@ -128,8 +137,40 @@ describe( 'pregenerated-links-removal', () => {
 
 			// Act & Assert - should not throw.
 			expect( () => {
-				removeProviderPregeneratedLinks( 'global-classes', /^global-(preview|frontend)-[a-zA-Z_-]+-css$/ );
+				removeProviderPregeneratedLinks( 'global-classes', ( { id } ) =>
+					/^global-(preview|frontend)-[a-zA-Z_-]+-css$/.test( id )
+				);
 			} ).not.toThrow();
+		} );
+
+		it( 'should pass id, path, and media from each link to the predicate', () => {
+			const head = document.createElement( 'head' );
+
+			const link1Params = {
+				id: 'test-123',
+				href: 'test-123.css',
+				media: 'all',
+			};
+			const link2Params = {
+				id: 'test-456',
+				href: 'alternative-test-456.css',
+				media: 'screen and (max-width: 1024px)',
+			};
+			const link1 = createLink( link1Params.id, link1Params.href, link1Params.media );
+			const link2 = createLink( link2Params.id, link2Params.href, link2Params.media );
+			head.appendChild( link1 );
+			head.appendChild( link2 );
+
+			const mockDocument = { head } as Document;
+			jest.mocked( getCanvasIframeDocument ).mockReturnValue( mockDocument );
+
+			const received: PregeneratedLinkItem[] = [];
+			removeProviderPregeneratedLinks( 'pregenerated-link-attrs', ( item ) => {
+				received.push( item );
+				return false;
+			} );
+
+			expect( received ).toMatchObject( [ link1Params, link2Params ] );
 		} );
 	} );
 
@@ -140,7 +181,9 @@ describe( 'pregenerated-links-removal', () => {
 			const mockDocument = { head } as Document;
 			jest.mocked( getCanvasIframeDocument ).mockReturnValue( mockDocument );
 
-			removeProviderPregeneratedLinks( 'global-classes', /^global-(preview|frontend)-[a-zA-Z_-]+-css$/ );
+			removeProviderPregeneratedLinks( 'global-classes', ( { id } ) =>
+				/^global-(preview|frontend)-[a-zA-Z_-]+-css$/.test( id )
+			);
 			const countAfterFirstRemoval = head.querySelectorAll( 'link' ).length;
 
 			head.appendChild( createLink( 'global-preview-widescreen-css', 'global-preview-widescreen.css' ) );
@@ -149,7 +192,9 @@ describe( 'pregenerated-links-removal', () => {
 
 			// Act.
 			resetRemovedProviders();
-			removeProviderPregeneratedLinks( 'global-classes', /^global-(preview|frontend)-[a-zA-Z_-]+-css$/ );
+			removeProviderPregeneratedLinks( 'global-classes', ( { id } ) =>
+				/^global-(preview|frontend)-[a-zA-Z_-]+-css$/.test( id )
+			);
 
 			// Assert.
 			const countAfterSecondRemoval = head.querySelectorAll( 'link' ).length;

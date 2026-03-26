@@ -29,7 +29,7 @@ export const documentElementsStylesProvider = createStylesProvider( {
 		return `${ ELEMENTS_STYLES_PROVIDER_KEY_PREFIX }${ documentId }`;
 	},
 	priority: 50,
-	pregeneratedLinkPattern: PREGENERATED_LINK_PATTERN,
+	isPregeneratedLink: ( { id } ) => PREGENERATED_LINK_PATTERN.test( id ),
 	subscribe: ( cb ) => listenTo( styleRerenderEvents, () => cb() ),
 	actions: {
 		all: ( meta = {} ) => {

@@ -197,7 +197,7 @@ class Preview extends App {
 	/**
 	 * Whether WordPress post preview or Elementor preview iframe is active.
 	 *
-	 * @since 4.2.0
+	 * @since 4.1.0
 	 * @access public
 	 *
 	 * @return bool

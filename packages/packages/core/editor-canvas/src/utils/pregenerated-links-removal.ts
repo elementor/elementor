@@ -1,8 +1,12 @@
+import { type PregeneratedLinkItem } from '@elementor/editor-styles-repository';
 import { getCanvasIframeDocument } from '@elementor/editor-v1-adapters';
 
 const removedProviderKeys = new Set< string >();
 
-export function removeProviderPregeneratedLinks( providerKey: string, pattern: RegExp ): void {
+export function removeProviderPregeneratedLinks(
+	providerKey: string,
+	removePregeneratedLink: ( pregeneratedLinkItem: PregeneratedLinkItem ) => boolean
+): void {
 	if ( removedProviderKeys.has( providerKey ) ) {
 		return;
 	}
@@ -16,9 +20,9 @@ export function removeProviderPregeneratedLinks( providerKey: string, pattern: R
 	const links = iframeDocument.head.querySelectorAll< HTMLLinkElement >( 'link[rel="stylesheet"]' );
 
 	links.forEach( ( link ) => {
-		const id = link.getAttribute( 'id' ) ?? '';
+		const { id, href, media } = link;
 
-		if ( pattern.test( id ) ) {
+		if ( removePregeneratedLink( { id, href, media } ) ) {
 			link.remove();
 		}
 	} );

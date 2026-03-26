@@ -139,9 +139,9 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, cach
 				const hasDiffInfo = current !== undefined && previous !== undefined;
 				const hasCache = cache.orderedIds.length > 0;
 
-				if ( hasCache && provider.pregeneratedLinkPattern ) {
+				if ( hasCache && provider.isPregeneratedLink ) {
 					// if styles were rendered already (i.e. hasCache = true), we can safely remove the pregenerated css rules imported via <link /> tags
-					removeProviderPregeneratedLinks( provider.getKey(), provider.pregeneratedLinkPattern );
+					removeProviderPregeneratedLinks( provider.getKey(), provider.isPregeneratedLink );
 				}
 
 				if ( hasDiffInfo && hasCache ) {
