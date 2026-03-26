@@ -1,11 +1,5 @@
-import { type ComponentInstanceOverride } from '../prop-types/component-instance-overrides-prop-type';
-import { componentInstanceOverridesPropTypeUtil } from '../prop-types/component-instance-overrides-prop-type';
-import { componentInstancePropTypeUtil } from '../prop-types/component-instance-prop-type';
-import { componentOverridablePropTypeUtil } from '../prop-types/component-overridable-prop-type';
 import { type OverridableProp, type OverridableProps } from '../types';
-import { getContainerByOriginId } from './get-container-by-origin-id';
-import { getOverridableProp } from './get-overridable-prop';
-import { extractInnerOverrideInfo } from './overridable-props-utils';
+import { walkDownOverridesChain } from './walk-down-overrides-chain';
 
 export function filterValidOverridableProps(
 	overridableProps: OverridableProps,
@@ -36,59 +30,10 @@ export function filterValidOverridableProps(
 }
 
 export function isExposedPropValid( prop: OverridableProp, instanceElementId?: string ): boolean {
-	if ( ! prop.originPropFields ) {
-		// if no originPropFields - the prop is on the widget level itself, therefore no need to lookup for a corresponding component's overridables
-		return true;
-	}
+	const { isChainBroken } = walkDownOverridesChain( {
+		upperLevelOverridableProp: prop,
+		upperInstanceId: instanceElementId,
+	} );
 
-	const innerComponentInstanceElement = getContainerByOriginId( prop.elementId, instanceElementId );
-
-	if ( ! innerComponentInstanceElement ) {
-		return false;
-	}
-
-	const setting = innerComponentInstanceElement.settings?.get( 'component_instance' ) ?? null;
-	const componentInstance = componentInstancePropTypeUtil.extract( setting );
-
-	if ( ! componentInstance?.component_id?.value ) {
-		return false;
-	}
-
-	const overrides = componentInstanceOverridesPropTypeUtil.extract( componentInstance.overrides ) ?? undefined;
-	const matchingOverride = findOverrideByOuterKey( overrides, prop.overrideKey );
-	const innerOverrideInfo = extractInnerOverrideInfo( matchingOverride );
-
-	if ( ! innerOverrideInfo ) {
-		return false;
-	}
-
-	const { componentId, innerOverrideKey } = innerOverrideInfo;
-	const innerOverridableProp = getOverridableProp( { componentId, overrideKey: innerOverrideKey } );
-
-	if ( ! innerOverridableProp ) {
-		return false;
-	}
-
-	return isExposedPropValid( innerOverridableProp, innerComponentInstanceElement.id );
-}
-
-function findOverrideByOuterKey(
-	overrides: ComponentInstanceOverride[] | undefined,
-	outerKey: string
-): ComponentInstanceOverride | null {
-	if ( ! overrides ) {
-		return null;
-	}
-
-	return (
-		overrides.find( ( override ) => {
-			const overridableValue = componentOverridablePropTypeUtil.extract( override );
-
-			if ( overridableValue ) {
-				return overridableValue.override_key === outerKey;
-			}
-
-			return override.value.override_key === outerKey;
-		} ) ?? null
-	);
+	return ! isChainBroken;
 }

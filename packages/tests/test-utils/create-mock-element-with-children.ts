@@ -70,7 +70,7 @@ function createMockChildren( children: V1Element[] ): V1Element[ 'children' ] {
 	return mockChildren;
 }
 
-export function createMockContainer( id: string, children: V1Element[] = [], elType = 'container' ): V1Element {
+export function createMockContainer( id: string, children: V1Element[] = [], elType = 'container', settings: V1ElementSettingsProps = {} ): V1Element {
 	const childModels = children.map( ( child ) => child.model );
 
 	const modelData: ModelData = {
@@ -82,7 +82,7 @@ export function createMockContainer( id: string, children: V1Element[] = [], elT
 	const mockContainer: Partial< V1Element > = {
 		id,
 		model: createMockModel( modelData ),
-		settings: createMockSettings(),
+		settings: createMockSettings( settings ),
 		children: createMockChildren( children ),
 	};
 

@@ -1,4 +1,5 @@
 import { createMockElement } from 'test-utils';
+import { type V1Element } from '@elementor/editor-elements';
 import { type PropValue } from '@elementor/editor-props';
 
 import { componentInstanceOverridePropTypeUtil } from '../../prop-types/component-instance-override-prop-type';
@@ -98,13 +99,30 @@ function createInnerOverridableProps( propKeys: string[] ): OverridableProps {
 	};
 }
 
-function mockContainerWithComponentInstance( componentInstanceSetting: PropValue ) {
-	mockGetContainerByOriginId.mockReturnValue(
-		createMockElement( {
-			model: { id: COMPONENT_INSTANCE_ELEMENT_ID, widgetType: 'e-component' },
-			settings: { component_instance: componentInstanceSetting },
-		} )
+function mockElements( elements: V1Element[] ) {
+	const elementsMap = elements.reduce(
+		( acc, element ) => {
+			acc[ element.id ] = element;
+			return acc;
+		},
+		{} as Record< string, V1Element >
 	);
+
+	mockGetContainerByOriginId.mockImplementation( ( elementId ) => {
+		return elementsMap[ elementId ] ?? null;
+	} );
+}
+
+function mockContainerWithComponentInstance( componentInstanceSetting: PropValue ) {
+	const componentInstanceElement = createMockElement( {
+		model: { id: COMPONENT_INSTANCE_ELEMENT_ID, widgetType: 'e-component' },
+		settings: { component_instance: componentInstanceSetting },
+	} );
+	const innerDirectElement = createMockElement( {
+		model: { id: 'direct-element-id', widgetType: 'e-button' },
+	} );
+
+	mockElements( [ componentInstanceElement, innerDirectElement ] );
 }
 
 describe( 'filter-valid-overridable-props', () => {
@@ -117,6 +135,8 @@ describe( 'filter-valid-overridable-props', () => {
 			// Arrange
 			const prop = createDirectProp( 'prop-1' );
 			jest.mocked( getOverridableProp ).mockReturnValue( undefined );
+
+			mockElements( [ createMockElement( { model: { id: 'direct-element-id', widgetType: 'e-button' } } ) ] );
 
 			// Act
 			const result = isExposedPropValid( prop );

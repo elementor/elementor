@@ -49,10 +49,10 @@ import { type OriginPropFields, type OverridableProp, type OverridableProps } fr
 import { getPropTypeForComponentOverride } from '../../utils/get-prop-type-for-component-override';
 import { getMatchingOverride } from '../../utils/overridable-props-utils';
 import { resolveOverridePropValue } from '../../utils/resolve-override-prop-value';
+import { walkDownOverridesChain } from '../../utils/walk-down-overrides-chain';
 import { ControlLabel } from '../control-label';
 import { OverrideControlInnerElementNotFoundError } from '../errors';
 import { correctExposedEmptyOverride } from './utils/correct-exposed-empty-override';
-import { resolveElementOverridesChain } from './utils/resolve-element-override-chain';
 import {
 	applyOverridesToSettings,
 	type OverridesMapping,
@@ -113,16 +113,17 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 		propKey,
 	} = overridableProp.originPropFields ?? overridableProp;
 
-	const { element, overridesMapping } = resolveElementOverridesChain( {
+	const overridesChainResult = walkDownOverridesChain( {
 		upperLevelOverridableProp: overridableProp,
-		upperLevelOverride: matchingOverride,
-		scopeElementId: componentInstanceElement.element.id,
+		upperInstanceId: componentInstanceElement.element.id,
 	} );
 
-	if ( ! element ) {
+	if ( overridesChainResult.isChainBroken ) {
 		throw new OverrideControlInnerElementNotFoundError( { context: { componentId, elementId: originElementId } } );
 	}
-	const elementId = element.id;
+
+	const { innerElement, overridesMapping } = overridesChainResult;
+	const elementId = innerElement.id;
 
 	const type = elType === 'widget' ? widgetType : elType;
 	const elementType = getElementType( type );
