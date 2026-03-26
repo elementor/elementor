@@ -3,6 +3,7 @@
 import {
 	config,
 	getKeyframes,
+	isFreeFrontendSupportedTrigger,
 	skipInteraction,
 	extractAnimationConfig,
 	getAnimateFunction,
@@ -78,7 +79,11 @@ function processElementInteractions( element, interactions, animateFunc, inViewF
 	interactions.forEach( ( interaction ) => {
 		const animConfig = extractAnimationConfig( interaction );
 
-		if ( animConfig && ! skipInteraction( animConfig ) ) {
+		if (
+			animConfig &&
+			! skipInteraction( animConfig ) &&
+			isFreeFrontendSupportedTrigger( animConfig.trigger )
+		) {
 			applyAnimation( element, animConfig, animateFunc, inViewFunc );
 		}
 	} );
