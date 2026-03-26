@@ -1,13 +1,10 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Grid;
 
-use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
-use Elementor\Modules\AtomicWidgets\PropTypes\Grid_Track_Size_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Layout_Direction_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Grid_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -20,17 +17,14 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Grid extends Atomic_Element_Base {
-	use Has_Element_Template;
-
 	const BASE_STYLE_KEY = 'base';
-
-	public static $widget_description = 'CSS grid layout. Always set grid-template-rows to match the actual number of rows the children fill. Empty fr row tracks do not collapse and render as an equal-height empty band below the content.';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -50,11 +44,16 @@ class Grid extends Atomic_Element_Base {
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic', 'grid', 'layout' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'grid' ];
 	}
 
 	public function get_icon() {
-		return 'eicon-library-grid';
+		return 'eicon-container-grid';
+	}
+
+	protected function should_show_in_panel() {
+		return parent::should_show_in_panel()
+			&& Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_ATOMIC_GRID_CONTROL );
 	}
 
 	protected static function define_props_schema(): array {
@@ -83,7 +82,7 @@ class Grid extends Atomic_Element_Base {
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer', 'a', 'button' ] )
 				->default( 'div' )
-				->description( 'The HTML tag for the grid container. One of: div, header, section, article, aside, footer, a (link), or button.' )
+				->description( 'The HTML tag for the grid container. Could be div, header, section, article, aside, footer, or a (link).' )
 				->set_dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
@@ -122,7 +121,7 @@ class Grid extends Atomic_Element_Base {
 								'value' => 'footer',
 								'label' => 'Footer',
 							],
-						])
+						] )
 						->set_label( esc_html__( 'HTML Tag', 'elementor' ) )
 						->set_fallback_labels( [
 							'a' => 'a (link)',
@@ -141,39 +140,16 @@ class Grid extends Atomic_Element_Base {
 	}
 
 	protected function define_base_styles(): array {
+		$display = String_Prop_Type::generate( 'grid' );
+		$grid = Grid_Prop_Type::generate( [] );
+
 		return [
 			static::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
-						->set_breakpoint( Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP )
-						->add_prop( 'display', String_Prop_Type::generate( 'grid' ) )
+						->add_prop( 'display', $display )
+						->add_prop( 'grid', $grid )
 						->add_prop( 'padding', $this->get_base_padding() )
-						->add_prop( 'grid-template-columns', Grid_Track_Size_Prop_Type::generate( [
-							'size' => 3,
-							'unit' => 'fr',
-						] ) )
-						->add_prop( 'grid-template-rows', Grid_Track_Size_Prop_Type::generate( [
-							'size' => 2,
-							'unit' => 'fr',
-						] ) )
-						->add_prop( 'gap', Layout_Direction_Prop_Type::generate( [
-							'column' => Size_Prop_Type::generate( [
-								'size' => 20,
-								'unit' => 'px',
-							] ),
-							'row' => Size_Prop_Type::generate( [
-								'size' => 20,
-								'unit' => 'px',
-							] ),
-						] ) )
-				)
-				->add_variant(
-					Style_Variant::make()
-						->set_breakpoint( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE )
-						->add_prop( 'grid-template-columns', Grid_Track_Size_Prop_Type::generate( [
-							'size' => 1,
-							'unit' => 'fr',
-						] ) )
 				),
 		];
 	}
@@ -210,11 +186,5 @@ class Grid extends Atomic_Element_Base {
 		}
 
 		$this->add_render_attribute( '_wrapper', array_merge( $initial_attributes, $attributes ) );
-	}
-
-	protected function get_templates(): array {
-		return [
-			'elementor/elements/grid' => __DIR__ . '/grid.html.twig',
-		];
 	}
 }

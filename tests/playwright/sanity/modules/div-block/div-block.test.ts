@@ -8,6 +8,7 @@ import { wpCli } from '../../../assets/wp-cli';
 test.describe( 'Div Block tests @div-block', () => {
 	test.beforeAll( async () => {
 		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
+		await wpCli( 'wp elementor experiments activate e_atomic_grid_control' );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -50,6 +51,7 @@ test.describe( 'Div Block tests @div-block', () => {
 
 		const flexbox = await editor.addElement( { elType: 'e-flexbox' }, 'document' );
 		const divBlock = await editor.addElement( { elType: 'e-div-block' }, 'document' );
+		const grid = await editor.addElement( { elType: 'e-grid' }, 'document' );
 
 		const testDragToEmptyContainer = async ( targetContainer: string ) => {
 			// Note: Apply the drag-and-drop method twice as a workaround for the failure that occurs after [ED-18996].
@@ -89,6 +91,10 @@ test.describe( 'Div Block tests @div-block', () => {
 
 		await test.step( 'Drag heading to empty div block', async () => {
 			await testDragToEmptyContainer( divBlock );
+		} );
+
+		await test.step( 'Drag heading to empty grid', async () => {
+			await testDragToEmptyContainer( grid );
 		} );
 	} );
 

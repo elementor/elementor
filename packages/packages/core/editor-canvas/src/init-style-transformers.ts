@@ -13,13 +13,11 @@ import { createCombineArrayTransformer } from './transformers/styles/create-comb
 import { createMultiPropsTransformer } from './transformers/styles/create-multi-props-transformer';
 import { filterTransformer } from './transformers/styles/filter-transformer';
 import { flexTransformer } from './transformers/styles/flex-transformer';
-import { fontFamilyTransformer } from './transformers/styles/font-family-transformer';
-import { gridTrackSizeTransformer } from './transformers/styles/grid-track-size-transformer';
+import { gridTransformer } from './transformers/styles/grid-transformer';
 import { perspectiveOriginTransformer } from './transformers/styles/perspective-origin-transformer';
 import { positionTransformer } from './transformers/styles/position-transformer';
 import { shadowTransformer } from './transformers/styles/shadow-transformer';
 import { sizeTransformer } from './transformers/styles/size-transformer';
-import { spanTransformer } from './transformers/styles/span-transformer';
 import { strokeTransformer } from './transformers/styles/stroke-transformer';
 import { transformFunctionsTransformer } from './transformers/styles/transform-functions-transformer';
 import { transformMoveTransformer } from './transformers/styles/transform-move-transformer';
@@ -31,9 +29,7 @@ import { transitionTransformer } from './transformers/styles/transition-transfor
 
 export function initStyleTransformers() {
 	styleTransformersRegistry
-		.register( 'font-family', fontFamilyTransformer )
 		.register( 'size', sizeTransformer )
-		.register( 'grid-track-size', gridTrackSizeTransformer )
 		.register( 'shadow', shadowTransformer )
 		.register( 'stroke', strokeTransformer )
 		.register(
@@ -58,7 +54,6 @@ export function initStyleTransformers() {
 		.register( 'image-src', imageSrcTransformer )
 		.register( 'image', imageTransformer )
 		.register( 'object-position', positionTransformer )
-		.register( 'span', spanTransformer )
 		.register( 'transform-origin', transformOriginTransformer )
 		.register( 'perspective-origin', perspectiveOriginTransformer )
 		.register( 'transform-move', transformMoveTransformer )
@@ -79,15 +74,16 @@ export function initStyleTransformers() {
 			createMultiPropsTransformer( [ 'row', 'column' ], ( { propKey, key } ) => `${ key }-${ propKey }` )
 		)
 		.register( 'flex', flexTransformer )
+		.register( 'grid', gridTransformer )
 		.register(
-			'border-width-v2',
+			'border-width',
 			createMultiPropsTransformer(
 				[ 'block-start', 'block-end', 'inline-start', 'inline-end' ],
 				( { key } ) => `border-${ key }-width`
 			)
 		)
 		.register(
-			'border-radius-v2',
+			'border-radius',
 			createMultiPropsTransformer(
 				[ 'start-start', 'start-end', 'end-start', 'end-end' ],
 				( { key } ) => `border-${ key }-radius`
