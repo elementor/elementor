@@ -98,9 +98,7 @@ export function hasClipboardElementTypes( elements: ClipboardElement[], types: S
 	} );
 }
 
-export function movedContainersIncludeAtomicFormRoot(
-	containers: ( V1Element | undefined )[],
-): boolean {
+export function movedContainersIncludeAtomicFormRoot( containers: ( V1Element | undefined )[] ): boolean {
 	return containers.some( ( container ) => getElementType( container ) === FORM_ELEMENT_TYPE );
 }
 

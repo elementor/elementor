@@ -26,9 +26,9 @@ function mockElement( widgetType?: string, elType?: string ): V1Element {
 describe( 'form-structure utils', () => {
 	describe( 'getClipboardElementType', () => {
 		it( 'prefers widgetType over elType', () => {
-			expect(
-				getClipboardElementType( { widgetType: 'e-form-input', elType: 'widget' } )
-			).toBe( 'e-form-input' );
+			expect( getClipboardElementType( { widgetType: 'e-form-input', elType: 'widget' } ) ).toBe(
+				'e-form-input'
+			);
 		} );
 
 		it( 'falls back to elType', () => {
@@ -56,15 +56,11 @@ describe( 'form-structure utils', () => {
 
 	describe( 'clipboardRootsAreAtomicForms', () => {
 		it( 'returns true when every root is e-form', () => {
-			expect(
-				clipboardRootsAreAtomicForms( [ { elType: FORM_ELEMENT_TYPE, elements: [] } ] )
-			).toBe( true );
+			expect( clipboardRootsAreAtomicForms( [ { elType: FORM_ELEMENT_TYPE, elements: [] } ] ) ).toBe( true );
 		} );
 
 		it( 'returns false when a root is a bare form field', () => {
-			expect(
-				clipboardRootsAreAtomicForms( [ { widgetType: 'e-form-input', elements: [] } ] )
-			).toBe( false );
+			expect( clipboardRootsAreAtomicForms( [ { widgetType: 'e-form-input', elements: [] } ] ) ).toBe( false );
 		} );
 
 		it( 'returns false for empty roots', () => {

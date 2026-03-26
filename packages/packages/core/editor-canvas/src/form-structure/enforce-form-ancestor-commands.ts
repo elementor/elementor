@@ -10,8 +10,8 @@ import {
 	hasClipboardElementTypes,
 	hasElementTypes,
 	isWithinForm,
-	movedContainersIncludeAtomicFormRoot,
 	type MoveArgs,
+	movedContainersIncludeAtomicFormRoot,
 	type PasteArgs,
 	type StorageContent,
 } from './utils';
@@ -62,11 +62,7 @@ function blockFormFieldMove( args: MoveArgs ): boolean {
 		container ? hasElementTypes( container, FORM_FIELD_ELEMENT_TYPES ) : false
 	);
 
-	if (
-		hasFormFieldElement &&
-		! isWithinForm( target ) &&
-		! movedContainersIncludeAtomicFormRoot( containers )
-	) {
+	if ( hasFormFieldElement && ! isWithinForm( target ) && ! movedContainersIncludeAtomicFormRoot( containers ) ) {
 		handleBlockedFormField();
 
 		return true;
