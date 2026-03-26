@@ -704,7 +704,9 @@ describe( 'useSizeValue', () => {
 
 			const { result } = renderHook(
 				( { value } ) => useSizeValue( { value, setValue, units: [ 'vh', 'em' ] } ),
-				{ initialProps: { value: null } }
+				{
+					initialProps: { value: null },
+				}
 			);
 
 			expect( result.current.unit ).toBe( 'vh' );
