@@ -51,6 +51,7 @@ import { resolveOverridePropValue } from '../../utils/resolve-override-prop-valu
 import { ControlLabel } from '../control-label';
 import { OverrideControlInnerElementNotFoundError } from '../errors';
 import { useResolvedOriginValue } from './use-resolved-origin-value';
+import { correctExposedEmptyOverride } from './utils/correct-exposed-empty-override';
 
 type Props = {
 	overrideKey: string;
@@ -124,11 +125,13 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 			return;
 		}
 
-		const newPropValue = getTempNewValueForDynamicProp(
+		let newPropValue = getTempNewValueForDynamicProp(
 			propType,
 			propValue,
 			newValue[ overridableProp.overrideKey ]
 		);
+
+		newPropValue = correctExposedEmptyOverride( newPropValue, matchingOverride );
 
 		const newOverrideValue = createOverrideValue( {
 			matchingOverride,
