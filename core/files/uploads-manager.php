@@ -144,7 +144,11 @@ class Uploads_Manager extends Base_Object {
 				return new \WP_Error( 'file_error', esc_html__( 'Invalid temporary file path.', 'elementor' ) );
 			}
 
-			if ( ! $this->is_path_in_allowed_dir( $data['tmp_name'] ) ) {
+			// Path validation only applies to direct calls (e.g. import_template) where
+			// tmp_name originates from user input. When is_elementor_upload is true, this
+			// method is used as a WordPress filter (wp_handle_sideload_prefilter) and
+			// tmp_name is set by WordPress core.
+			if ( ! $this->is_elementor_upload && ! $this->is_path_in_allowed_dir( $data['tmp_name'] ) ) {
 				return new \WP_Error( 'file_error', esc_html__( 'Invalid temporary file path.', 'elementor' ) );
 			}
 		}
