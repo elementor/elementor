@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import { getMediaAttachment } from '@elementor/wp-media';
 
 import { createTransformer } from '../create-transformer';
@@ -10,35 +11,18 @@ type SvgSrc = {
 
 const SVG_INLINE_STYLES = 'width: 100%; height: 100%; overflow: unset;';
 
-const DANGEROUS_SVG_TAGS = [ 'script', 'foreignObject' ];
-
-function sanitizeSvgElement( svgElement: SVGSVGElement ): void {
-	DANGEROUS_SVG_TAGS.forEach( ( tag ) => {
-		svgElement.querySelectorAll( tag ).forEach( ( el ) => el.remove() );
-	} );
-
-	svgElement.querySelectorAll( '*' ).forEach( ( el ) => {
-		Array.from( el.attributes ).forEach( ( attr ) => {
-			const isEventHandler = attr.name.startsWith( 'on' );
-			const isJavascriptUri = attr.value.trim().toLowerCase().startsWith( 'javascript:' );
-
-			if ( isEventHandler || isJavascriptUri ) {
-				el.removeAttribute( attr.name );
-			}
-		} );
-	} );
-}
-
 function processSvgContent( svgText: string ): string | null {
+	const sanitized = DOMPurify.sanitize( svgText, {
+		USE_PROFILES: { svg: true, svgFilters: true },
+	} );
+
 	const parser = new DOMParser();
-	const doc = parser.parseFromString( svgText, 'image/svg+xml' );
+	const doc = parser.parseFromString( sanitized, 'image/svg+xml' );
 	const svgElement = doc.querySelector( 'svg' );
 
 	if ( ! svgElement ) {
 		return null;
 	}
-
-	sanitizeSvgElement( svgElement );
 
 	svgElement.setAttribute( 'fill', 'currentColor' );
 

@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "@elementor/editor": "4.1.0",
+    "dompurify": "^3.2.6",
     "@elementor/editor-controls": "4.1.0",
     "@elementor/editor-documents": "4.1.0",
     "@elementor/editor-elements": "4.1.0",

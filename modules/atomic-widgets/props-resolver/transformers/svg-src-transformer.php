@@ -49,12 +49,6 @@ class Svg_Src_Transformer extends Transformer_Base {
 			return null;
 		}
 
-		$local_content = $this->try_local_asset_read( $url );
-
-		if ( $local_content ) {
-			return $local_content;
-		}
-
 		$response = wp_safe_remote_get( $url );
 
 		if ( ! is_wp_error( $response ) ) {
@@ -62,21 +56,6 @@ class Svg_Src_Transformer extends Transformer_Base {
 		}
 
 		return null;
-	}
-
-	private function try_local_asset_read( string $url ): ?string {
-		if ( ! defined( 'ELEMENTOR_ASSETS_URL' ) || ! defined( 'ELEMENTOR_ASSETS_PATH' ) ) {
-			return null;
-		}
-
-		if ( 0 !== strpos( $url, ELEMENTOR_ASSETS_URL ) ) {
-			return null;
-		}
-
-		$relative = substr( $url, strlen( ELEMENTOR_ASSETS_URL ) );
-		$content = Utils::file_get_contents( ELEMENTOR_ASSETS_PATH . $relative );
-
-		return $content ?: null;
 	}
 
 	private function process_svg( string $content ): string {
