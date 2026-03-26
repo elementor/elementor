@@ -1,4 +1,24 @@
+import { getWidgetsCache } from '@elementor/editor-elements';
 import { toolPrompts } from '@elementor/editor-mcp';
+
+function generateChildTypeConstraints(): string {
+	const widgetsCache = getWidgetsCache() || {};
+	const lines: string[] = [];
+
+	for ( const [ elementType, config ] of Object.entries( widgetsCache ) ) {
+		const allowedTypes = ( config as Record< string, unknown > ).allowed_child_types as string[] | undefined;
+		if ( ! allowedTypes?.length ) {
+			continue;
+		}
+		lines.push(
+			`- \`${ elementType }\` ONLY accepts these children: ${ allowedTypes
+				.map( ( t ) => `\`${ t }\`` )
+				.join( ', ' ) }`
+		);
+	}
+
+	return lines.length ? `\nChild type restrictions (violations will throw errors):\n${ lines.join( '\n' ) }\n` : '';
+}
 
 export const generatePrompt = () => {
 	const buildCompositionsToolPrompt = toolPrompts( 'build-compositions' );
@@ -36,10 +56,10 @@ e-tabs
     e-tab-content ...
 \`\`\`
 
-- Number of \`e-tab\` must match number of \`e-tab-content\`
+${ generateChildTypeConstraints() }
+- Number of \`e-tab\` MUST equal number of \`e-tab-content\`
 - \`e-tab\` contains a single \`e-paragraph\` for the label text
-- \`e-tab-content\` can contain any widgets
-- \`e-tabs-menu\` and \`e-tabs-content-area\` must be locked (\`isLocked: true\` is automatic)
+- Inside \`e-tab-content\`, any widget is allowed
 
 Example — 3-tab layout:
 \`\`\`xml

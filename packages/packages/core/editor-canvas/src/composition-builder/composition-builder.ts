@@ -1,9 +1,9 @@
 import {
 	createElement,
+	type CreateElementParams,
 	generateElementId,
 	getContainer,
 	getWidgetsCache,
-	type CreateElementParams,
 	type V1Element,
 } from '@elementor/editor-elements';
 import { type z } from '@elementor/schema';
@@ -82,16 +82,14 @@ export class CompositionBuilder {
 		return this.xml;
 	}
 
-	private isWidgetType( elementTag: string ): boolean {
-		const widgetsCache = this.api.getWidgetsCache() || {};
-		return widgetsCache[ elementTag ]?.elType === 'widget';
-	}
-
-	private buildModelTree( node: Element ): Record< string, unknown > {
+	private buildModelTree(
+		node: Element,
+		widgetsCache: Record< string, { elType?: string } >
+	): Record< string, unknown > {
 		const elementTag = node.tagName;
-		const isWidget = this.isWidgetType( elementTag );
+		const isWidget = widgetsCache[ elementTag ]?.elType === 'widget';
 		const id = this.api.generateElementId();
-		const children = Array.from( node.children ).map( ( child ) => this.buildModelTree( child ) );
+		const children = Array.from( node.children ).map( ( child ) => this.buildModelTree( child, widgetsCache ) );
 
 		node.setAttribute( 'id', id );
 
@@ -113,9 +111,35 @@ export class CompositionBuilder {
 
 	private async awaitViewRender( element: V1Element ) {
 		const view = element.view as Record< string, unknown > | undefined;
-		if ( view?.[ '_currentRenderPromise' ] instanceof Promise ) {
-			await view[ '_currentRenderPromise' ];
+		if ( view?._currentRenderPromise instanceof Promise ) {
+			await view._currentRenderPromise;
 		}
+	}
+
+	private validateChildTypes(
+		node: Element,
+		widgetsCache: Record< string, { allowed_child_types?: string[] } >
+	): string[] {
+		const errors: string[] = [];
+		const allowedChildTypes = widgetsCache[ node.tagName ]?.allowed_child_types;
+
+		if ( allowedChildTypes?.length ) {
+			for ( const child of Array.from( node.children ) ) {
+				if ( ! allowedChildTypes.includes( child.tagName ) ) {
+					errors.push(
+						`"${ child.tagName }" is not allowed as a child of "${
+							node.tagName
+						}". Allowed: ${ allowedChildTypes.join( ', ' ) }`
+					);
+				}
+			}
+		}
+
+		for ( const child of Array.from( node.children ) ) {
+			errors.push( ...this.validateChildTypes( child, widgetsCache ) );
+		}
+
+		return errors;
 	}
 
 	private findSchemaForNode( node: Element ) {
@@ -228,9 +252,17 @@ export class CompositionBuilder {
 			}
 		} );
 
+		const childTypeErrors: string[] = [];
+		for ( const rootChild of Array.from( this.xml.children ) ) {
+			childTypeErrors.push( ...this.validateChildTypes( rootChild, widgetsCache ) );
+		}
+		if ( childTypeErrors.length ) {
+			throw new Error( `Invalid element structure:\n${ childTypeErrors.join( '\n' ) }` );
+		}
+
 		const children = Array.from( this.xml.children );
 		for ( const childNode of children ) {
-			const modelTree = this.buildModelTree( childNode );
+			const modelTree = this.buildModelTree( childNode, widgetsCache );
 
 			const newElement = this.api.createElement( {
 				container: rootContainer,
