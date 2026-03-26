@@ -62,7 +62,7 @@ export const CanvasInlineEditor = ( {
 				mountElement={ contentElement }
 				editorProps={ {
 					attributes: {
-						style: 'outline: none; width: 100%; text-align: inherit;',
+						style: 'outline: none; display: inherit; justify-content: inherit; align-items: inherit; flex-direction: inherit; text-align: inherit;',
 					},
 				} }
 				elementClasses={ elementClasses }
