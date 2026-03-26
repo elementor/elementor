@@ -8,11 +8,16 @@ import {
 } from '@elementor/editor-v1-adapters';
 
 import type { ElementOverlayConfig } from '../types/element-overlay';
+import { GridOutlineOverlay } from './grid-outline-overlay';
 import { OutlineOverlay } from './outline-overlay';
 
 const ELEMENTS_DATA_ATTR = 'atomic';
 
 const overlayRegistry: ElementOverlayConfig[] = [
+	{
+		component: GridOutlineOverlay,
+		shouldRender: () => true,
+	},
 	{
 		component: OutlineOverlay,
 		shouldRender: () => true,
@@ -32,18 +37,19 @@ export function ElementsOverlays() {
 		return null;
 	}
 
-	return elements.map( ( { id, domElement, isGlobal } ) => {
+	return elements.map( ( { id, domElement, isGlobal, widgetType } ) => {
 		const isSelected = selected.element?.id === id;
 
 		return overlayRegistry.map(
 			( { shouldRender, component: Overlay }, index ) =>
-				shouldRender( { id, element: domElement, isSelected } ) && (
+				shouldRender( { id, element: domElement, isSelected, widgetType } ) && (
 					<Overlay
 						key={ `${ id }-${ index }` }
 						id={ id }
 						element={ domElement }
 						isSelected={ isSelected }
 						isGlobal={ isGlobal }
+						widgetType={ widgetType }
 					/>
 				)
 		);
@@ -54,6 +60,7 @@ type ElementData = {
 	id: string;
 	domElement: HTMLElement;
 	isGlobal: boolean;
+	widgetType: string;
 };
 
 function useElementsDom() {
@@ -66,6 +73,7 @@ function useElementsDom() {
 					id: element.id,
 					domElement: element.view?.getDomElement?.()?.get?.( 0 ),
 					isGlobal: element.model.get( 'isGlobal' ) ?? false,
+					widgetType: String( element.model.get( 'widgetType' ) ?? element.model.get( 'elType' ) ?? '' ),
 				} ) )
 				.filter( ( item ): item is ElementData => !! item.domElement );
 		}

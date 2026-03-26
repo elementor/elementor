@@ -28,6 +28,7 @@ const checkTextDomain = {
 				'!bin/**',
 				'!node_modules/**',
 				'!build/**',
+				'!docker-output/**',
 				'!tests/**',
 				'!tmp/**',
 				'!.github/**',

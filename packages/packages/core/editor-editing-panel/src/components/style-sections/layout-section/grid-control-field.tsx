@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useState } from 'react';
 import { GridControl } from '@elementor/editor-controls';
 import { __ } from '@wordpress/i18n';
 
@@ -13,8 +12,6 @@ import { JustifyItemsField } from './justify-items-field';
 const GRID_LABEL = __( 'Grid', 'elementor' );
 
 export const GridControlField = () => {
-	const [ advancedOpen, setAdvancedOpen ] = useState( false );
-
 	const advancedAlignmentSlot = (
 		<>
 			<JustifyItemsField />
@@ -28,8 +25,7 @@ export const GridControlField = () => {
 	return (
 		<StylesField bind="grid" propDisplayName={ GRID_LABEL }>
 			<GridControl
-				advancedOpen={ advancedOpen }
-				onAdvancedOpenChange={ setAdvancedOpen }
+				presentation="inlinePanel"
 				advancedAlignmentSlot={ advancedAlignmentSlot }
 			/>
 		</StylesField>

@@ -32,10 +32,12 @@ export const LayoutSection = () => {
 	} );
 	const displayPlaceholder = useDisplayPlaceholderValue();
 	const isDisplayFlex = shouldDisplayFlexFields( display, displayPlaceholder as StringPropValue );
+	const { element, elementType } = useElement();
+	const isAtomicGridExperiment = isExperimentActive( ATOMIC_GRID_CONTROL_EXPERIMENT );
+	const isEGrid = elementType.key === 'e-grid';
 	const isDisplayGrid =
-		isExperimentActive( ATOMIC_GRID_CONTROL_EXPERIMENT ) &&
-		shouldDisplayGridFields( display, displayPlaceholder as StringPropValue );
-	const { element } = useElement();
+		isAtomicGridExperiment &&
+		( isEGrid || shouldDisplayGridFields( display, displayPlaceholder as StringPropValue ) );
 	const parent = useParentElement( element.id );
 	const parentStyle = useComputedStyle( parent?.id || null );
 	const parentStyleDirection = parentStyle?.flexDirection ?? 'row';

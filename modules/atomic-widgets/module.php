@@ -221,7 +221,7 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Grid layout control', 'elementor' ),
 			'description' => esc_html__( 'Adds the unified CSS grid control and grid display options in the atomic (v4) style panel.', 'elementor' ),
 			'hidden' => false,
-			'default' => Experiments_Manager::STATE_INACTIVE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
 		] );
 

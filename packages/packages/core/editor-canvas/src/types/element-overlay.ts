@@ -5,12 +5,15 @@ export type ElementOverlayProps = {
 	id: string;
 	isSelected: boolean;
 	isGlobal?: boolean;
+	/** Widget / element type (e.g. `e-grid`) for overlays that only apply to specific atomics. */
+	widgetType?: string;
 };
 
 export type OverlayFilterArgs = {
 	id: string;
 	element: HTMLElement;
 	isSelected: boolean;
+	widgetType?: string;
 };
 
 export type ElementOverlayConfig = {

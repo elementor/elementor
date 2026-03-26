@@ -4,16 +4,24 @@ import { autoUpdate, offset, size, useFloating } from '@floating-ui/react';
 type Options = {
 	element: HTMLElement;
 	isSelected: boolean;
+	/** When true, the floating layer stays open (e.g. editor grid cell guides while editing). */
+	forceVisible?: boolean;
 };
 
-export function useFloatingOnElement( { element, isSelected }: Options ) {
+export function useFloatingOnElement( { element, isSelected, forceVisible = false }: Options ) {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const sizeModifier = 2;
+	const open = forceVisible || isOpen || isSelected;
 
 	const { refs, floatingStyles, context } = useFloating( {
 		// Must be controlled for interactions (like hover) to work.
-		open: isOpen || isSelected,
-		onOpenChange: setIsOpen,
+		open,
+		onOpenChange: ( next ) => {
+			if ( forceVisible ) {
+				return;
+			}
+			setIsOpen( next );
+		},
 
 		whileElementsMounted: autoUpdate,
 
@@ -43,7 +51,7 @@ export function useFloatingOnElement( { element, isSelected }: Options ) {
 	}, [ element, refs ] );
 
 	return {
-		isVisible: isOpen || isSelected,
+		isVisible: open,
 		context,
 		floating: {
 			setRef: refs.setFloating,
