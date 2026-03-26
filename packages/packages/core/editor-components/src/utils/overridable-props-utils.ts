@@ -28,31 +28,3 @@ export function getMatchingOverride(
 		} ) ?? null
 	);
 }
-
-export function extractInnerOverrideInfo( override: ComponentInstanceOverride | null ): InnerOverrideInfo | null {
-	if ( ! override ) {
-		return null;
-	}
-
-	const overridableValue = componentOverridablePropTypeUtil.extract( override );
-	const innerOverride = overridableValue
-		? componentInstanceOverridePropTypeUtil.extract( overridableValue.origin_value )
-		: componentInstanceOverridePropTypeUtil.extract( override );
-
-	if ( ! innerOverride ) {
-		return null;
-	}
-
-	const {
-		schema_source: schemaSource,
-		override_key: innerOverrideKey,
-		override_value: overrideValue,
-	} = innerOverride;
-	const componentId = schemaSource?.id;
-
-	if ( ! componentId || ! innerOverrideKey ) {
-		return null;
-	}
-
-	return { componentId, innerOverrideKey, overrideValue };
-}
