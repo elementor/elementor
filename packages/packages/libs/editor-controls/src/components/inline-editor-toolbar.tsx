@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { type ElementID, getContainer, getElementSetting } from '@elementor/editor-elements';
 import { type LinkPropValue } from '@elementor/editor-props';
 import {
@@ -100,7 +100,7 @@ export const InlineEditorToolbar = ( { editor, elementId, sx = {} }: InlineEdito
 		linkPopupState.close();
 	};
 
-	React.useEffect( () => {
+	useEffect( () => {
 		editor?.commands?.focus();
 	}, [ editor ] );
 
