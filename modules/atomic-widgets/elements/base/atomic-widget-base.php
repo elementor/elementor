@@ -21,6 +21,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	protected $styles = [];
 	protected $interactions = [];
 	protected $editor_settings = [];
+	protected $origin_id = null;
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -32,6 +33,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		if ( static::$widget_description ) {
 			$this->description( static::$widget_description );
 		}
+		$this->origin_id = $data['origin_id'] ?? null;
 	}
 
 	private function parse_atomic_interactions( $interactions ) {
@@ -96,5 +98,9 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 	public function get_script_depends() {
 		return [ Frontend_Assets_Loader::ATOMIC_WIDGETS_HANDLER ];
+	}
+
+	public function get_interaction_id() {
+		return $this->origin_id ?? $this->get_id();
 	}
 }

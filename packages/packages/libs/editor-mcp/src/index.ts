@@ -16,4 +16,6 @@ export { toolPrompts } from './utils/prompt-builder';
 export { ANGIE_MODEL_PREFERENCES, type AngieModelPreferences } from './angie-annotations';
 export { sendPromptToAngie } from './utils/send-prompt-to-angie';
 export { redirectToInstallation } from './utils/redirect-to-installation';
+export { redirectToAppAdmin } from './utils/redirect-to-app-admin';
+export { installAngiePlugin, type InstallAngieResult } from './utils/install-angie-plugin';
 export const getAngieSdk = () => getSDK();

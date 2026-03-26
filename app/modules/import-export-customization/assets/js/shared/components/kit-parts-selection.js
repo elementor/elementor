@@ -1,16 +1,62 @@
-import { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect, Fragment, useMemo } from 'react';
 import { Box, Typography, Stack, Checkbox, FormControlLabel, Button, Tooltip } from '@elementor/ui';
+import { AlertTriangleFilledIcon } from '@elementor/icons';
 import PropTypes from 'prop-types';
+import { __ } from '@wordpress/i18n';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import kitContentData from '../kit-content-data';
 import useContextDetection from '../hooks/use-context-detection';
+import { useClassesVariablesLimits } from '../hooks/use-classes-variables-limits';
 import { ReExportBanner } from './re-export-banner';
 import { UpgradeVersionBanner } from './upgrade-version-banner';
+
+function isExperimentActive( experimentName ) {
+	const common = typeof globalThis !== 'undefined' ? globalThis.elementorCommon : undefined;
+	return !! common?.config?.experimentalFeatures?.[ experimentName ];
+}
+
+function isClassesFeatureActive() {
+	return isExperimentActive( 'e_classes' ) && isExperimentActive( 'e_atomic_elements' );
+}
+
+function isVariablesFeatureActive() {
+	return isExperimentActive( 'e_variables' ) && isExperimentActive( 'e_atomic_elements' );
+}
 
 export default function KitPartsSelection( { onCheckboxChange, testId, handleSaveCustomization, isCloudKitsEligible = false, showMediaFormatValidation = false } ) {
 	const [ activeDialog, setActiveDialog ] = useState( null );
 	const { isImport = false, contextData = {} } = useContextDetection() ?? {};
 	const { data = null } = contextData;
+
+	const showClassesSection = isClassesFeatureActive();
+	const showVariablesSection = isVariablesFeatureActive();
+
+	const {
+		existingClassesCount,
+		existingVariablesCount,
+		classesLimit,
+		variablesLimit,
+		calculateLimitInfo,
+	} = useClassesVariablesLimits( { open: true, isImport } );
+
+	const importedClassesCount = contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.classesCount ?? 0;
+	const importedVariablesCount = contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.variablesCount ?? 0;
+	const isClassesExportedInManifest = !! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.classes;
+	const isVariablesExportedInManifest = !! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.variables;
+
+	const classesLimitInfo = useMemo(
+		() => calculateLimitInfo( existingClassesCount, importedClassesCount, classesLimit ),
+		[ existingClassesCount, importedClassesCount, classesLimit, calculateLimitInfo ],
+	);
+	const variablesLimitInfo = useMemo(
+		() => calculateLimitInfo( existingVariablesCount, importedVariablesCount, variablesLimit ),
+		[ existingVariablesCount, importedVariablesCount, variablesLimit, calculateLimitInfo ],
+	);
+
+	const hasSettingsLimitWarning = isImport && (
+		( showClassesSection && isClassesExportedInManifest && classesLimitInfo.isExceeded ) ||
+		( showVariablesSection && isVariablesExportedInManifest && variablesLimitInfo.isExceeded )
+	);
 
 	useEffect( () => {
 		if ( showMediaFormatValidation && ! isImport ) {
@@ -200,7 +246,25 @@ export default function KitPartsSelection( { onCheckboxChange, testId, handleSav
 						>
 							<Box sx={ { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' } }>
 								<Box sx={ { flex: 1, opacity: isLockedFeaturesNoPro ? 0.5 : 1 } }>
-									{ renderCheckboxControl( item, disabled ) }
+									<Box sx={ { display: 'flex', alignItems: 'center' } }>
+										{ renderCheckboxControl( item, disabled ) }
+										{ 'settings' === item.type && hasSettingsLimitWarning && (
+											<Tooltip
+												title={ __( 'Limit exceeded. Click \'Edit\' to review conflicts or override existing items', 'elementor' ) }
+												placement="top"
+												arrow
+											>
+												<AlertTriangleFilledIcon
+													sx={ {
+														fontSize: 20,
+														color: 'warning.main',
+														ml: 0.5,
+													} }
+													aria-hidden
+												/>
+											</Tooltip>
+										) }
+									</Box>
 									{ renderFeatureDescription( item, isLockedFeaturesNoPro ) }
 								</Box>
 								{ getSectionEditButton( item, isLockedFeaturesNoPro ) }

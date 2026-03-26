@@ -5,6 +5,7 @@ export class Delete extends $e.modules.CommandBase {
 		if ( selectedElements.length ) {
 			return $e.run( 'document/elements/delete', {
 				containers: selectedElements,
+				callerName: 'keyboard',
 			} );
 		}
 

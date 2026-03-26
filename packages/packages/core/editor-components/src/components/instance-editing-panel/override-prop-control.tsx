@@ -10,6 +10,7 @@ import {
 	BaseControl,
 	controlsRegistry,
 	type ControlType,
+	ControlTypeContainer,
 	createTopLevelObjectType,
 	ElementProvider,
 	isDynamicPropValue,
@@ -18,7 +19,7 @@ import {
 } from '@elementor/editor-editing-panel';
 import { type Control, getElementSettings, getElementType } from '@elementor/editor-elements';
 import { type AnyTransformable, type PropType, type PropValue } from '@elementor/editor-props';
-import { Stack } from '@elementor/ui';
+import { Box } from '@elementor/ui';
 
 import { useControlsByWidgetType } from '../../hooks/use-controls-by-widget-type';
 import {
@@ -50,6 +51,7 @@ import { resolveOverridePropValue } from '../../utils/resolve-override-prop-valu
 import { ControlLabel } from '../control-label';
 import { OverrideControlInnerElementNotFoundError } from '../errors';
 import { useResolvedOriginValue } from './use-resolved-origin-value';
+import { correctExposedEmptyOverride } from './utils/correct-exposed-empty-override';
 
 type Props = {
 	overrideKey: string;
@@ -123,11 +125,13 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 			return;
 		}
 
-		const newPropValue = getTempNewValueForDynamicProp(
+		let newPropValue = getTempNewValueForDynamicProp(
 			propType,
 			propValue,
 			newValue[ overridableProp.overrideKey ]
 		);
+
+		newPropValue = correctExposedEmptyOverride( newPropValue, matchingOverride );
 
 		const newOverrideValue = createOverrideValue( {
 			matchingOverride,
@@ -214,10 +218,14 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 					>
 						<PropKeyProvider bind={ overridableProp.overrideKey }>
 							<ControlReplacementsProvider replacements={ controlReplacements }>
-								<Stack direction="column" gap={ 1 } mb={ 1.5 }>
-									{ layout !== 'custom' && <ControlLabel>{ overridableProp.label }</ControlLabel> }
-									<OriginalControl control={ control } controlProps={ controlProps } />
-								</Stack>
+								<Box mb={ 1.5 }>
+									<ControlTypeContainer layout={ layout }>
+										{ layout !== 'custom' && (
+											<ControlLabel>{ overridableProp.label }</ControlLabel>
+										) }
+										<OriginalControl control={ control } controlProps={ controlProps } />
+									</ControlTypeContainer>
+								</Box>
 							</ControlReplacementsProvider>
 						</PropKeyProvider>
 					</PropProvider>

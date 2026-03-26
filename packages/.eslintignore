@@ -1,6 +1,5 @@
 node_modules/
-packages/**/dist/
-apps/**/dist/
+**/dist/
 docs/**
 !.github/
 scripts/**

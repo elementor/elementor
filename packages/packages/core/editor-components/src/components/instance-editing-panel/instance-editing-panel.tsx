@@ -5,11 +5,16 @@ import { __ } from '@wordpress/i18n';
 
 import { useComponentsPermissions } from '../../hooks/use-components-permissions';
 import { ComponentInstanceProvider } from '../../provider/component-instance-context';
+import { isProComponentsSupported, isProOutdatedForComponents } from '../../utils/is-pro-components-supported';
+import { ComponentsUpdateAlert } from '../components-update-alert';
+import { ComponentsUpgradeAlert } from '../components-upgrade-alert';
 import { DetachAction } from './detach-action';
 import { EmptyState } from './empty-state';
 import { InstancePanelBody } from './instance-panel-body';
 import { EditComponentAction, InstancePanelHeader } from './instance-panel-header';
 import { useInstancePanelData } from './use-instance-panel-data';
+
+const EDIT_UPGRADE_URL = 'https://go.elementor.com/go-pro-components-Instance-edit-footer/';
 
 export function InstanceEditingPanel() {
 	const { canEdit } = useComponentsPermissions();
@@ -32,7 +37,7 @@ export function InstanceEditingPanel() {
 	);
 
 	return (
-		<Box data-testid="instance-editing-panel">
+		<Box data-testid="instance-editing-panel" sx={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
 			<ComponentInstanceProvider
 				componentId={ componentId }
 				overrides={ overrides }
@@ -46,6 +51,22 @@ export function InstanceEditingPanel() {
 					componentInstanceId={ componentInstanceId }
 				/>
 			</ComponentInstanceProvider>
+			{ ! isProComponentsSupported() &&
+				( isProOutdatedForComponents() ? (
+					<ComponentsUpdateAlert
+						title={ __( 'Edit Component', 'elementor' ) }
+						description={ __(
+							'To edit components, update Elementor Pro to the latest version.',
+							'elementor'
+						) }
+					/>
+				) : (
+					<ComponentsUpgradeAlert
+						title={ __( 'Edit components', 'elementor' ) }
+						description={ __( 'Editing components requires an active Pro subscription.', 'elementor' ) }
+						upgradeUrl={ EDIT_UPGRADE_URL }
+					/>
+				) ) }
 		</Box>
 	);
 }

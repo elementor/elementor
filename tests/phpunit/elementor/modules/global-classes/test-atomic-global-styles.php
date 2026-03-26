@@ -5,8 +5,9 @@ namespace Elementor\Testing\Modules\GlobalClasses;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
-use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Atomic_Global_Styles;
+use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -73,7 +74,7 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 		// Arrange.
 		$global_classes = new Atomic_Global_Styles();
 		$global_classes->register_hooks();
-		$context = is_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
+		$context = Plugin::$instance->preview->is_editor_or_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
 
 		Global_Classes_Repository::make()->put(
 			$this->mock_global_classes['items'],

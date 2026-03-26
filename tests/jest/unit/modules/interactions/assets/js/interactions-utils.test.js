@@ -1,5 +1,7 @@
 import {
 	getKeyframes,
+	getTransformBaselineFromComputedStyle,
+	preserveTransformKeyframes,
 	parseAnimationName,
 	extractAnimationConfig,
 	extractInteractionId,
@@ -96,6 +98,175 @@ describe( 'interactions-utils', () => {
 			const result = getKeyframes( 'slide', 'in', 'left' );
 			expect( result ).toEqual( { x: [ -100, 0 ] } );
 			document.documentElement.dir = originalDir;
+		} );
+
+		describe( 'diagonal directions', () => {
+			it( 'should generate slide top-left in keyframes with both x and y axes', () => {
+				const result = getKeyframes( 'slide', 'in', 'top-left' );
+				expect( result ).toEqual( { y: [ -100, 0 ], x: [ -100, 0 ] } );
+			} );
+
+			it( 'should generate slide top-right in keyframes', () => {
+				const result = getKeyframes( 'slide', 'in', 'top-right' );
+				expect( result ).toEqual( { y: [ -100, 0 ], x: [ 100, 0 ] } );
+			} );
+
+			it( 'should generate slide bottom-left in keyframes', () => {
+				const result = getKeyframes( 'slide', 'in', 'bottom-left' );
+				expect( result ).toEqual( { y: [ 100, 0 ], x: [ -100, 0 ] } );
+			} );
+
+			it( 'should generate slide bottom-right in keyframes', () => {
+				const result = getKeyframes( 'slide', 'in', 'bottom-right' );
+				expect( result ).toEqual( { y: [ 100, 0 ], x: [ 100, 0 ] } );
+			} );
+
+			it( 'should generate slide out keyframes for a diagonal direction', () => {
+				const result = getKeyframes( 'slide', 'out', 'top-left' );
+				expect( result ).toEqual( { y: [ 0, -100 ], x: [ 0, -100 ] } );
+			} );
+
+			it( 'should combine fade opacity with diagonal direction movement', () => {
+				const result = getKeyframes( 'fade', 'in', 'top-left' );
+				expect( result ).toEqual( { opacity: [ 0, 1 ], y: [ -100, 0 ], x: [ -100, 0 ] } );
+			} );
+
+			it( 'should ignore unknown parts in a direction string', () => {
+				const result = getKeyframes( 'slide', 'in', 'top-invalid' );
+				expect( result ).toEqual( { y: [ -100, 0 ] } );
+			} );
+
+			it( 'should not throw and should skip movement when direction is a non-string (e.g. a typed wrapper object)', () => {
+				const nonStringDirection = { $$type: 'string', value: '' };
+				expect( () => getKeyframes( 'fade', 'in', nonStringDirection ) ).not.toThrow();
+				expect( getKeyframes( 'fade', 'in', nonStringDirection ) ).toEqual( { opacity: [ 0, 1 ] } );
+			} );
+		} );
+	} );
+
+	describe( 'computed transform keyframes preservation', () => {
+		it( 'extracts baseline transform values from computed style', () => {
+			const element = document.createElement( 'div' );
+			const getComputedStyleSpy = jest.spyOn( window, 'getComputedStyle' ).mockReturnValue( {
+				transform: 'matrix(1.2, 0, 0, 1.2, 30, 40)',
+			} );
+
+			const baseline = getTransformBaselineFromComputedStyle( element );
+
+			expect( baseline ).toMatchObject( {
+				x: 30,
+				y: 40,
+				scaleX: 1.2,
+				scaleY: 1.2,
+				rotate: 0,
+			} );
+
+			getComputedStyleSpy.mockRestore();
+		} );
+
+		/**
+		 * Browsers normalize transform lists to matrix() (2D affine) or matrix3d() (3D / mixed).
+		 * createMatrixFromTransform supports both via DOMMatrix and manual parsing — see interactions-shared-utils.js.
+		 */
+		describe( 'getTransformBaselineFromComputedStyle — matrix() vs matrix3d()', () => {
+			function mockTransform( transform ) {
+				const element = document.createElement( 'div' );
+				const getComputedStyleSpy = jest.spyOn( window, 'getComputedStyle' ).mockReturnValue( { transform } );
+				const baseline = getTransformBaselineFromComputedStyle( element );
+				getComputedStyleSpy.mockRestore();
+				return baseline;
+			}
+
+			it( 'parses 2D matrix() from scale + translate (browser-style normalization)', () => {
+				// Equivalent to scale3d(1,1,1) translateX(5rem) translateY(20px) → 2D affine.
+				const baseline = mockTransform( 'matrix(1, 0, 0, 1, 80, 20)' );
+				expect( baseline ).not.toBeNull();
+				expect( baseline.x ).toBe( 80 );
+				expect( baseline.y ).toBe( 20 );
+				expect( baseline.scaleX ).toBeCloseTo( 1, 5 );
+				expect( baseline.scaleY ).toBeCloseTo( 1, 5 );
+				expect( baseline.rotate ).toBeCloseTo( 0, 5 );
+			} );
+
+			it( 'parses matrix3d() that is equivalent to pure 2D translation (fourth column tx, ty)', () => {
+				const baseline = mockTransform(
+					'matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 80, 20, 0, 1)',
+				);
+				expect( baseline ).not.toBeNull();
+				expect( baseline.x ).toBe( 80 );
+				expect( baseline.y ).toBe( 20 );
+				expect( baseline.scaleX ).toBeCloseTo( 1, 5 );
+				expect( baseline.scaleY ).toBeCloseTo( 1, 5 );
+				expect( baseline.rotate ).toBeCloseTo( 0, 5 );
+			} );
+
+			it( 'parses matrix3d() when 3D rotate is present (2D affine slice + translation)', () => {
+				// Same shape as getComputedStyle after rotateX(5deg) + translate — matrix3d, not matrix().
+				// rotate from atan2(m21,m11) stays 0 here; the tilt shows up in scaleY / skew (2D-only decomposition).
+				const baseline = mockTransform(
+					'matrix3d(1, 0, 0, 0, 0, 0.996195, 0.0871557, 0, 0, -0.0871557, 0.996195, 0, 80, 20, 0, 1)',
+				);
+				expect( baseline ).not.toBeNull();
+				expect( baseline.x ).toBeCloseTo( 80, 5 );
+				expect( baseline.y ).toBeCloseTo( 20, 5 );
+				expect( baseline.scaleX ).toBeCloseTo( 1, 5 );
+				expect( baseline.scaleY ).toBeCloseTo( 0.996195, 4 );
+				expect( baseline.rotate ).toBeCloseTo( 0, 5 );
+			} );
+
+			it( 'returns null when computed transform is none', () => {
+				expect( mockTransform( 'none' ) ).toBeNull();
+			} );
+
+			it( 'returns null when transform is empty', () => {
+				expect( mockTransform( '' ) ).toBeNull();
+			} );
+
+			it( 'returns null for a non-matrix transform string', () => {
+				expect( mockTransform( 'translate(10px)' ) ).toBeNull();
+			} );
+		} );
+
+		it( 'preserves transform channels not affected by interaction keyframes', () => {
+			const keyframes = { rotate: [ 0, 45 ] };
+			const baseline = {
+				x: 20,
+				y: 10,
+				scaleX: 1.5,
+				scaleY: 1.5,
+				rotate: 0,
+				skewX: 0,
+			};
+
+			const merged = preserveTransformKeyframes( keyframes, baseline );
+
+			expect( merged ).toEqual( {
+				rotate: [ 0, 45 ],
+				x: [ 20, 20 ],
+				y: [ 10, 10 ],
+				scale: [ 1.5, 1.5 ],
+			} );
+		} );
+
+		it( 'does not override interaction-owned transform channels', () => {
+			const keyframes = { x: [ -100, 0 ], scale: [ 0, 1 ] };
+			const baseline = {
+				x: 20,
+				y: 10,
+				scaleX: 1.5,
+				scaleY: 1.5,
+				rotate: 45,
+				skewX: 0,
+			};
+
+			const merged = preserveTransformKeyframes( keyframes, baseline );
+
+			expect( merged ).toEqual( {
+				x: [ -100, 0 ],
+				y: [ 10, 10 ],
+				scale: [ 0, 1 ],
+				rotate: [ 45, 45 ],
+			} );
 		} );
 	} );
 
@@ -219,6 +390,25 @@ describe( 'interactions-utils', () => {
 			expect( parsed.breakpoints ).toEqual( {
 				excluded: [ 'widescreen', 'desktop', 'laptop' ],
 			} );
+		} );
+
+		it( 'should return direction as empty string when typed wrapper has empty string value — regression for direction.split TypeError', () => {
+			const interaction = mockInteraction( {
+				trigger: 'load',
+				animation: mockAnimation( {
+					effect: 'fade',
+					type: 'in',
+					direction: '', // Wrapped as { $$type: 'string', value: '' } by mockAnimation
+					timingConfig: mockTiming( { duration: 300, delay: 0 } ),
+					config: mockConfig( { replay: false, easing: 'easeIn' } ),
+				} ),
+				breakpoints: mockBreakpoints( { excluded: [] } ),
+			} );
+
+			// Before the fix, direction would be set to the raw wrapper object { $$type: 'string', value: '' }
+			// because '' is falsy and the || fallback kicked in, causing direction.split to throw.
+			expect( () => extractAnimationConfig( interaction ) ).not.toThrow();
+			expect( extractAnimationConfig( interaction ).direction ).toBe( '' );
 		} );
 
 		it( 'should normalize size in seconds into ms', () => {

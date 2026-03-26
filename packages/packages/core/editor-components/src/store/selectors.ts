@@ -6,6 +6,7 @@ import {
 	selectArchivedThisSession,
 	selectComponentByUid,
 	selectComponents,
+	selectCreatedThisSession,
 	selectCurrentComponent,
 	selectCurrentComponentId,
 	selectOverridableProps,
@@ -39,6 +40,9 @@ export const componentsSelectors = {
 	},
 	getArchivedThisSession() {
 		return selectArchivedThisSession( getState() );
+	},
+	getCreatedThisSession() {
+		return selectCreatedThisSession( getState() );
 	},
 	getComponents() {
 		return selectComponents( getState() );

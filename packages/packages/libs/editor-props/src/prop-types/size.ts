@@ -2,23 +2,25 @@ import { z } from '@elementor/schema';
 
 import { createPropUtils } from '../utils/create-prop-utils';
 
+const sizeNumberOrEmpty = z.union( [ z.number(), z.literal( '' ) ] );
+
 export const sizePropTypeUtil = createPropUtils(
 	'size',
 	z
 		.strictObject( {
 			unit: z.enum( [ 'px', 'em', 'rem', '%', 'vw', 'vh', 'ch' ] ),
-			size: z.number(),
+			size: sizeNumberOrEmpty,
 		} )
 		.or(
 			z.strictObject( {
 				unit: z.enum( [ 'deg', 'rad', 'grad', 'turn' ] ),
-				size: z.number(),
+				size: sizeNumberOrEmpty,
 			} )
 		)
 		.or(
 			z.strictObject( {
 				unit: z.enum( [ 's', 'ms' ] ),
-				size: z.number(),
+				size: sizeNumberOrEmpty,
 			} )
 		)
 		.or(

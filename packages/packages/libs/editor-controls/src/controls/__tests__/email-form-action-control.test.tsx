@@ -174,6 +174,6 @@ describe( 'EmailFormActionControl', () => {
 		// Assert
 		expect( screen.getByText( /from name/i ) ).toBeInTheDocument();
 		expect( screen.getByText( /reply-to/i ) ).toBeInTheDocument();
-		expect( screen.getByText( /meta data/i ) ).toBeInTheDocument();
+		expect( screen.getByText( /metadata/i ) ).toBeInTheDocument();
 	} );
 } );

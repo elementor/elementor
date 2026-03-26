@@ -9,7 +9,7 @@ import { createVariableWithSync, deleteAllVariablesViaApi } from './variables-ap
 const initTemplate = async ( page: Page, testInfo: TestInfo, apiRequests: ApiRequests ) => {
 	const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 	await wpAdminPage.setExperiments( { e_variables: 'active', e_atomic_elements: 'active' } );
-	await wpAdminPage.setExperiments( { e_variables_manager: 'active', e_design_system_sync: 'active' } );
+	await wpAdminPage.setExperiments( { e_variables_manager: 'active' } );
 	const editorPage = await wpAdminPage.openNewPage();
 	await editorPage.loadTemplate( 'tests/playwright/sanity/modules/v4-tests/editor-variables/variables-manager-template.json' );
 	return { wpAdminPage, editorPage };

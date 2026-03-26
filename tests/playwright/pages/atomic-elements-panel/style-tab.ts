@@ -14,59 +14,54 @@ export const STYLE_SECTIONS = {
 	EFFECTS: 'Effects',
 } as const;
 
-const SIZE_SECTION_LABELS = {
-	WIDTH: 'Width',
-	HEIGHT: 'Height',
-	MIN_WIDTH: 'Min width',
-	MIN_HEIGHT: 'Min height',
-	MAX_WIDTH: 'Max width',
-	MAX_HEIGHT: 'Max height',
-};
+enum SizeSectionLabel {
+	WIDTH = 'Width',
+	HEIGHT = 'Height',
+	MIN_WIDTH = 'Min width',
+	MIN_HEIGHT = 'Min height',
+	MAX_WIDTH = 'Max width',
+	MAX_HEIGHT = 'Max height',
+}
 
-const OFFSET_LABELS = {
-	TOP: 'Top',
-	RIGHT: 'Right',
-	BOTTOM: 'Bottom',
-	LEFT: 'Left',
-};
+enum OffsetLabel {
+	TOP = 'Top',
+	RIGHT = 'Right',
+	BOTTOM = 'Bottom',
+	LEFT = 'Left',
+}
 
-const FONT_SIZE_LABELS = {
-	LINE_HEIGHT: 'Line height',
-	LETTER_SPACING: 'Letter spacing',
-	WORD_SPACING: 'Word spacing',
-	FONT_SIZE: 'Font size',
-};
+enum FontSizeLabel {
+	LINE_HEIGHT = 'Line height',
+	LETTER_SPACING = 'Letter spacing',
+	WORD_SPACING = 'Word spacing',
+	FONT_SIZE = 'Font size',
+}
 
-const BORDER_TYPE_LABELS = {
-	NONE: 'None',
-	SOLID: 'Solid',
-	DASHED: 'Dashed',
-	DOTTED: 'Dotted',
-	DOUBLE: 'Double',
-	GROOVE: 'Groove',
-	RIDGE: 'Ridge',
-	INSET: 'Inset',
-	OUTSET: 'Outset',
-};
+enum BorderTypeLabel {
+	NONE = 'None',
+	SOLID = 'Solid',
+	DASHED = 'Dashed',
+	DOTTED = 'Dotted',
+	DOUBLE = 'Double',
+	GROOVE = 'Groove',
+	RIDGE = 'Ridge',
+	INSET = 'Inset',
+	OUTSET = 'Outset',
+}
 
-const DISPLAY_VALUES = {
-	BLOCK: 'block',
-	FLEX: 'flex',
-	INLINE_BLOCK: 'inline-block',
-	NONE: 'none',
-	INLINE_FLEX: 'inline-flex',
-};
+enum DisplayValue {
+	BLOCK = 'block',
+	FLEX = 'flex',
+	INLINE_BLOCK = 'inline-block',
+	NONE = 'none',
+	INLINE_FLEX = 'inline-flex',
+}
 
 export type StyleSection = typeof STYLE_SECTIONS[keyof typeof STYLE_SECTIONS];
-type SizeLabel = typeof SIZE_SECTION_LABELS[keyof typeof SIZE_SECTION_LABELS];
-type OffSetLabel = typeof OFFSET_LABELS[keyof typeof OFFSET_LABELS];
 type Position= 'static' | 'relative' | 'absolute' | 'fixed' | 'sticky';
 type SizeValue = { size: number, unit?: Unit ; };
-type FontProperty = typeof FONT_SIZE_LABELS[keyof typeof FONT_SIZE_LABELS];
-type BorderTypeLabel = typeof BORDER_TYPE_LABELS[keyof typeof BORDER_TYPE_LABELS];
-type DisplayValue = typeof DISPLAY_VALUES[keyof typeof DISPLAY_VALUES];
 type DisplayOptions = {
-	[DISPLAY_VALUES.FLEX]?: {
+	[DisplayValue.FLEX]?: {
 		flexDirection?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
 		flexWrap?: 'nowrap' | 'wrap' | 'wrap-reverse';
 		justifyContent?: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
@@ -74,7 +69,7 @@ type DisplayOptions = {
 	};
 };
 
-const FLEX_DISPLAY_OPTIONS: Record<keyof DisplayOptions[typeof DISPLAY_VALUES.FLEX], string> = {
+const FLEX_DISPLAY_OPTIONS: Record<keyof DisplayOptions[DisplayValue.FLEX], string> = {
 	flexDirection: 'direction',
 	flexWrap: 'flex wrap',
 	justifyContent: 'justify content',
@@ -188,7 +183,7 @@ export default class StyleTab extends BasePage {
 		await sectionButton.click();
 	}
 
-	async setSpacingSectionValue( property: 'Margin' | 'Padding', offsetLabel: OffSetLabel, value: number, unit: Unit, linked: boolean = true ): Promise<void> {
+	async setSpacingSectionValue( property: 'Margin' | 'Padding', offsetLabel: OffsetLabel, value: number, unit: Unit, linked: boolean = true ): Promise<void> {
 		const controlIndex = [ 'Margin', 'Padding' ].indexOf( property );
 		const linkButton = this.page.locator( 'label', { hasText: property } )
 			.locator( '..' )
@@ -204,13 +199,13 @@ export default class StyleTab extends BasePage {
 		await this.changeSizeControl( control, value, unit );
 	}
 
-	async setSizeSectionValue( property: SizeLabel, value: number, unit: Unit ) {
+	async setSizeSectionValue( property: SizeSectionLabel, value: number, unit: Unit ) {
 		const control = await this.getControlByLabel( 'Size', property );
 
 		await this.changeSizeControl( control, value, unit );
 	}
 
-	async setPositionSectionValue( position: Position, offsets: Partial< Record< OffSetLabel, SizeValue > > = {}, options: {
+	async setPositionSectionValue( position: Position, offsets: Partial< Record< OffsetLabel, SizeValue > > = {}, options: {
 		zIndex?: number | typeof NaN;
 		offset?: SizeValue;
 	} = {} ) {
@@ -242,10 +237,10 @@ export default class StyleTab extends BasePage {
 	}
 
 	async setFontFamily( fontName: string, fontType: 'system' | 'google' = 'system' ): Promise<void> {
-		const categorySelector = 'google' === fontType ? 'Google Fonts' : 'System';
+		const categorySelector = 'google' === fontType ? 'Google' : 'System';
 
 		await this.page.getByRole( 'button', { name: 'Font family' } ).click();
-		await this.page.locator( '.MuiListSubheader-root', { hasText: new RegExp( categorySelector, 'i' ) } ).click();
+		await this.page.locator( '.MuiListSubheader-root' ).getByText( categorySelector, { exact: true } ).click();
 		await this.page.locator( 'input[placeholder="Search"]' ).fill( fontName );
 		await this.page.waitForTimeout( timeouts.short );
 		await this.page.locator( '[role="option"]', { hasText: fontName } ).first().click();
@@ -255,26 +250,33 @@ export default class StyleTab extends BasePage {
 		await this.page.locator( '[aria-label="Text color control"] input' ).fill( color );
 	}
 
-	async setTypographySectionSizeBasedValue( property: FontProperty, size: number, unit: Unit ) {
+	async clearFontColor(): Promise<void> {
+		const input = this.page.locator( '[aria-label="Text color control"] input' );
+
+		await input.clear();
+		await input.blur();
+	}
+
+	async setTypographySectionSizeBasedValue( property: FontSizeLabel, size: number, unit: Unit ) {
 		const control = await this.getControlByLabel( 'Typography', property );
 
 		await this.changeSizeControl( control, size, unit );
 	}
 
 	setFontSize( size: number, unit: Unit ) {
-		return this.setTypographySectionSizeBasedValue( 'Font size', size, unit );
+		return this.setTypographySectionSizeBasedValue( FontSizeLabel.FONT_SIZE, size, unit );
 	}
 
 	setLetterSpacing( size: number, unit: Unit ) {
-		return this.setTypographySectionSizeBasedValue( 'Letter spacing', size, unit );
+		return this.setTypographySectionSizeBasedValue( FontSizeLabel.LETTER_SPACING, size, unit );
 	}
 
 	setWordSpacing( size: number, unit: Unit ) {
-		return this.setTypographySectionSizeBasedValue( 'Word spacing', size, unit );
+		return this.setTypographySectionSizeBasedValue( FontSizeLabel.WORD_SPACING, size, unit );
 	}
 
 	setLineHeight( size: number, unit: Unit ) {
-		return this.setTypographySectionSizeBasedValue( 'Line height', size, unit );
+		return this.setTypographySectionSizeBasedValue( FontSizeLabel.LINE_HEIGHT, size, unit );
 	}
 
 	async setFontWeight( weight: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 ): Promise<void> {
@@ -288,6 +290,13 @@ export default class StyleTab extends BasePage {
 
 		await input.clear();
 		await input.fill( color );
+		await input.blur();
+	}
+
+	async clearBackgroundColor(): Promise<void> {
+		const input = await this.getControlByLabel( 'Background', 'Color', { innerSelector: 'input' } );
+
+		await input.clear();
 		await input.blur();
 	}
 
@@ -343,16 +352,16 @@ export default class StyleTab extends BasePage {
 		await menuItem.click();
 	}
 
-	async setLayoutSectionValue<T extends DisplayValue >( display: T, options?: DisplayOptions[T]	 ) {
+	async setLayoutSectionValue( display: DisplayValue, options?: DisplayOptions[DisplayValue.FLEX] ) {
 		const control = await this.getControlByLabel( 'Layout', 'display', { nestingLevel: 2 } );
 
 		await this.changeButtonGroupControl( control, display );
 
-		if ( 'flex' === display ) {
+		if ( DisplayValue.FLEX === display ) {
 			for ( const [ key, value ] of Object.entries( options ?? {} ) ) {
 				const flexControls = await this.getControlByLabel( 'Layout', FLEX_DISPLAY_OPTIONS[ key as keyof typeof FLEX_DISPLAY_OPTIONS ] );
 
-				await this.changeButtonGroupControl( flexControls, value );
+				await this.changeButtonGroupControl( flexControls, value as string );
 			}
 		}
 	}

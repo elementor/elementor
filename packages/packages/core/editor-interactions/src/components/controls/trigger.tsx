@@ -5,6 +5,8 @@ import { type FieldProps } from '../../types';
 import { PromotionSelect } from '../../ui/promotion-select';
 import { DEFAULT_VALUES } from '../interaction-details';
 
+const TRACKING_DATA = { target_name: 'interactions_trigger', location_l2: 'interactions' } as const;
+
 export const TRIGGER_OPTIONS = {
 	load: __( 'Page load', 'elementor' ),
 	scrollIn: __( 'Scroll into view', 'elementor' ),
@@ -33,6 +35,7 @@ export function Trigger( { value, onChange }: FieldProps ) {
 			promotionLabel={ __( 'PRO triggers', 'elementor' ) }
 			promotionContent={ __( 'Upgrade to unlock more interactions triggers.', 'elementor' ) }
 			upgradeUrl="https://go.elementor.com/go-pro-interactions-triggers-modal/"
+			trackingData={ TRACKING_DATA }
 		/>
 	);
 }

@@ -34,8 +34,15 @@ export const EmptyState = ( { onEditComponent }: { onEditComponent?: () => void 
 			<Typography align="center" variant="caption" maxWidth="170px">
 				{ message }
 			</Typography>
-			{ canEdit && !! onEditComponent && (
-				<Button variant="outlined" color="secondary" size="small" sx={ { mt: 1 } } onClick={ onEditComponent }>
+			{ canEdit && (
+				<Button
+					variant="outlined"
+					color="secondary"
+					size="small"
+					sx={ { mt: 1 } }
+					disabled={ ! onEditComponent }
+					onClick={ onEditComponent }
+				>
 					<PencilIcon fontSize="small" />
 					{ __( 'Edit component', 'elementor' ) }
 				</Button>

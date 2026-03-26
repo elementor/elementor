@@ -11,6 +11,12 @@ import { trackVariablesManagerEvent } from '../../utils/tracking';
 import { getVariableTypes } from '../../variables-registry/variable-type-registry';
 import { VariablePromotionChip, type VariablePromotionChipRef } from '../ui/variable-promotion-chip';
 
+const TRACKING_DATA = {
+	target_name: 'variables_manager',
+	target_location: 'variables_manager',
+	location_l1: 'create variable menu',
+} as const;
+
 export const SIZE = 'tiny';
 
 type MenuOptionConfig = {
@@ -133,6 +139,7 @@ const MenuOption = ( {
 					variableType={ config.variableType }
 					upgradeUrl={ `https://go.elementor.com/go-pro-manager-${ config.variableType }-variable/` }
 					ref={ promotionRef }
+					trackingData={ TRACKING_DATA }
 				/>
 			) }
 		</MenuItem>
