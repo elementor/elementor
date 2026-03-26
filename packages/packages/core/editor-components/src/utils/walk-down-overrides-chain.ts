@@ -65,9 +65,8 @@ export function walkDownOverridesChain( {
 	// Step 1: Find the intermediate component instance and read its settings.
 	const currentInstance = getContainerByOriginId( upperLevelOverridableProp.elementId, upperInstanceId );
 	if ( ! currentInstance ) {
-		throw new Error(
-			`Current instance not found inside upper instance. currentInstanceId: ${ upperLevelOverridableProp.elementId }, upperInstanceId: ${ upperInstanceId }`
-		);
+		// One of the instances in the chain was deleted.
+		return { isChainBroken: true };
 	}
 	const { componentId, overrides } = extractComponentInstanceSettings( currentInstance );
 
