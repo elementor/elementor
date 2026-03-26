@@ -170,7 +170,10 @@ describe( 'pregenerated-links-removal', () => {
 				return false;
 			} );
 
-			expect( received ).toMatchObject( [ link1Params, link2Params ] );
+			expect( received ).toMatchObject( [
+				{ ...link1Params, href: link1.href },
+				{ ...link2Params, href: link2.href },
+			] );
 		} );
 	} );
 
