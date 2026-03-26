@@ -8,6 +8,7 @@ import { type OverridableProp, type PublishedComponent } from '../../types';
 import { getOverridableProp } from '../../utils/get-overridable-prop';
 import { extractInnerOverrideInfo } from '../../utils/overridable-props-utils';
 
+// todo: delete file
 export function useResolvedOriginValue( override: ComponentInstanceOverride | null, overridableProp: OverridableProp ) {
 	const components = useSelector( selectData );
 
