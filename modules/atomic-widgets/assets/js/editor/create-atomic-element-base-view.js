@@ -13,6 +13,16 @@ export default function createAtomicElementBaseView( type ) {
 
 		_childrenRenderPromises: [],
 
+		_createElement( tag ) {
+			const previewDocument = elementor.$preview?.[ 0 ]?.contentDocument;
+
+			if ( previewDocument ) {
+				return previewDocument.createElement( tag );
+			}
+
+			return document.createElement( tag );
+		},
+
 		tagName() {
 			return resolvedTagCache.get( this.model ) ?? this._resolveTag();
 		},
