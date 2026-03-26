@@ -1,16 +1,21 @@
-import { type Props, type PropValue } from '@elementor/editor-props';
+import { type AnyTransformable } from '@elementor/editor-props';
 
 import { componentOverridablePropTypeUtil } from '../../../prop-types/component-overridable-prop-type';
 
+type ElementSettings = Record< string, AnyTransformable | null >;
+
 export type OverridesMapping = {
 	[ key: string ]: {
-		value: unknown;
+		value: AnyTransformable | null;
 		outermostKey?: string;
 	};
 };
 
-export function applyOverridesToSettings( elementSettings: Props, overrides: OverridesMapping ): Props {
-	const result: Props = {};
+export function applyOverridesToSettings(
+	elementSettings: ElementSettings,
+	overrides: OverridesMapping
+): ElementSettings {
+	const result: ElementSettings = {};
 
 	for ( const [ propKey, propValue ] of Object.entries( elementSettings ) ) {
 		const overridable = componentOverridablePropTypeUtil.extract( propValue );
@@ -34,7 +39,7 @@ export function applyOverridesToSettings( elementSettings: Props, overrides: Ove
 					override_key: override.outermostKey,
 					origin_value: override.value ?? propValue,
 				},
-			} as PropValue;
+			};
 		} else {
 			result[ propKey ] = override.value ?? propValue;
 		}
@@ -43,8 +48,8 @@ export function applyOverridesToSettings( elementSettings: Props, overrides: Ove
 	return result;
 }
 
-export function unwrapOverridableSettings( elementSettings: Props ): Props {
-	const result: Props = {};
+export function unwrapOverridableSettings( elementSettings: ElementSettings ): ElementSettings {
+	const result: ElementSettings = {};
 
 	for ( const [ propKey, propValue ] of Object.entries( elementSettings ) ) {
 		const overridable = componentOverridablePropTypeUtil.extract( propValue );
@@ -54,7 +59,7 @@ export function unwrapOverridableSettings( elementSettings: Props ): Props {
 			continue;
 		}
 
-		result[ propKey ] = overridable.origin_value as PropValue;
+		result[ propKey ] = overridable.origin_value as AnyTransformable | null;
 	}
 
 	return result;

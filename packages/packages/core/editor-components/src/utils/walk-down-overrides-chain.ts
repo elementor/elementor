@@ -1,4 +1,5 @@
 import { type V1Element } from '@elementor/editor-elements';
+import { type AnyTransformable } from '@elementor/editor-props';
 
 import { type OverridesMapping } from '../components/instance-editing-panel/utils/resolve-element-settings';
 import {
@@ -116,7 +117,7 @@ export function walkDownOverridesChain( {
  * @param existing       - Previously accumulated overrides from upper levels.
  * @param levelOverrides - The overrides array from the current level instance.
  */
-function collectOverridesFromLevel(
+export function collectOverridesFromLevel(
 	existing: OverridesMapping,
 	levelOverrides: ComponentInstanceOverride[]
 ): OverridesMapping {
@@ -135,7 +136,7 @@ function collectOverridesFromLevel(
 
 			const outerKey = overridableValue.override_key;
 			const innerKey = override.override_key;
-			const innerValue = override.override_value;
+			const innerValue = override.override_value as AnyTransformable | null;
 
 			// If an upper level already set a value for the outer key, carry it forward to the inner key.
 			const higherLevelOverride = existing[ outerKey ];
@@ -155,14 +156,14 @@ function collectOverridesFromLevel(
 			};
 		} else {
 			// Simple override: not exposed further, we just store the override's key and value.
-			const override = componentInstanceOverridePropTypeUtil.extract( item.value );
+			const override = componentInstanceOverridePropTypeUtil.extract( item );
 
 			if ( ! override ) {
 				continue;
 			}
 
 			const key = override.override_key;
-			const value = override.override_value;
+			const value = override.override_value as AnyTransformable | null;
 
 			result[ key ] = { value };
 		}

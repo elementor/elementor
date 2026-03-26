@@ -112,28 +112,35 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 		elType,
 		propKey,
 	} = overridableProp.originPropFields ?? overridableProp;
-
-	const overridesChainResult = walkDownOverridesChain( {
-		upperLevelOverridableProp: overridableProp,
-		upperInstanceId: componentInstanceElement.element.id,
-	} );
-
-	if ( overridesChainResult.isChainBroken ) {
-		throw new OverrideControlInnerElementNotFoundError( { context: { componentId, elementId: originElementId } } );
-	}
-
-	const { innerElement, overridesMapping } = overridesChainResult;
-	const elementId = innerElement.id;
-
 	const type = elType === 'widget' ? widgetType : elType;
 	const elementType = getElementType( type );
 
-	const settings = getElementSettings< AnyTransformable >( elementId, Object.keys( elementType?.propsSchema ?? {} ) );
+	const { elementId, overridesMapping } = useMemo( () => {
+		const overridesChainResult = walkDownOverridesChain( {
+			upperLevelOverridableProp: overridableProp,
+			upperInstanceId: componentInstanceElement.element.id,
+		} );
 
-	const settingsWithInnerOverrides = useMemo(
-		() => applyOverridesToSettings( settings, overridesMapping ),
-		[ settings, overridesMapping ]
-	);
+		if ( overridesChainResult.isChainBroken ) {
+			throw new OverrideControlInnerElementNotFoundError( {
+				context: { componentId, elementId: originElementId },
+			} );
+		}
+
+		return {
+			elementId: overridesChainResult.innerElement.id,
+			overridesMapping: overridesChainResult.overridesMapping,
+		};
+	}, [ overridableProp, componentInstanceElement.element.id, componentId, originElementId ] );
+
+	const settingsWithInnerOverrides = useMemo( () => {
+		const settings = getElementSettings< AnyTransformable >(
+			elementId,
+			Object.keys( elementType?.propsSchema ?? {} )
+		);
+
+		return applyOverridesToSettings( settings, overridesMapping );
+	}, [ elementId, elementType?.propsSchema, overridesMapping ] );
 
 	const resolvedElementSettings = useMemo( () => {
 		const withAllOverrides = applyOverridesToSettings(
@@ -228,7 +235,11 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 			value={ componentOverridablePropTypeUtil.extract( matchingOverride ) ?? undefined }
 			componentInstanceElement={ componentInstanceElement }
 		>
-			<ElementProvider element={ { id: elementId, type } } elementType={ elementType } settings={ settings }>
+			<ElementProvider
+				element={ { id: elementId, type } }
+				elementType={ elementType }
+				settings={ resolvedElementSettings }
+			>
 				<SettingsField bind={ propKey } propDisplayName={ overridableProp.label }>
 					<PropProvider
 						propType={ propTypeSchema }
@@ -388,7 +399,7 @@ function formatOverridesToApply( overrides: ComponentInstanceOverridesPropValue 
 		}
 
 		result[ extractedOverride.override_key ] = {
-			value: extractedOverride.override_value,
+			value: extractedOverride.override_value as AnyTransformable | null,
 		};
 	}
 
