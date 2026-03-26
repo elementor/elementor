@@ -9,7 +9,6 @@ import {
 	type Editor,
 	getInlineEditorElement,
 	horizontalShifterMiddleware as horizontalShifter,
-	removeToolbarAnchor,
 	useOnClickOutsideIframe,
 	useRenderToolbar,
 } from './inline-editing-utils';
@@ -22,7 +21,7 @@ export const CanvasInlineEditor = ( {
 	contentElement,
 	id,
 	setValue,
-	...props
+	requestDestroy,
 }: {
 	elementClasses: string;
 	initialValue: string | null;
@@ -31,34 +30,29 @@ export const CanvasInlineEditor = ( {
 	contentElement: HTMLElement;
 	id: string;
 	setValue: ( value: string | null ) => void;
-	onBlur: () => void;
+	requestDestroy: () => void;
 } ) => {
+	const [ active, setActive ] = useState( true );
 	const [ editor, setEditor ] = useState< Editor | null >( null );
-	const { onSelectionEnd, anchor: toolbarAnchor } = useRenderToolbar( rootElement.ownerDocument, id );
+	const { onSelectionEnd, anchor: toolbarAnchor, clearAnchor } = useRenderToolbar( rootElement.ownerDocument, id );
+
+	useEffect( () => {
+		if ( ! active ) {
+			clearAnchor();
+			requestDestroy();
+		}
+	}, [ active, clearAnchor, requestDestroy ] );
 
 	const onBlur = useCallback( () => {
-		removeToolbarAnchor( rootElement.ownerDocument, id );
-
-		props.onBlur();
-	}, [ rootElement.ownerDocument, id, props ] );
+		setEditor( null );
+		setActive( false );
+	}, [] );
 
 	useOnClickOutsideIframe( onBlur );
 
-	useEffect( () => {
-		const ownerDocument = contentElement.ownerDocument;
-
-		const handleClickAway = ( event: MouseEvent ) => {
-			if ( contentElement.contains( event.target as Node ) ) {
-				return;
-			}
-
-			onBlur();
-		};
-
-		ownerDocument.addEventListener( 'mousedown', handleClickAway );
-
-		return () => ownerDocument.removeEventListener( 'mousedown', handleClickAway );
-	}, [ contentElement, onBlur ] );
+	if ( ! active ) {
+		return null;
+	}
 
 	return (
 		<ThemeProvider>
@@ -68,7 +62,7 @@ export const CanvasInlineEditor = ( {
 				mountElement={ contentElement }
 				editorProps={ {
 					attributes: {
-						style: 'outline: none; width: 100%; height: 100%;',
+						style: 'outline: none; width: 100%; text-align: inherit;',
 					},
 				} }
 				elementClasses={ elementClasses }
@@ -103,7 +97,7 @@ const InlineEditingOverlay = ( {
 };
 
 const InlineEditingToolbar = ( { anchor, editor, id }: { anchor: HTMLElement; editor: Editor; id: string } ) => {
-	const { refs, floatingStyles } = useFloating( {
+	const { refs, floatingStyles, isPositioned } = useFloating( {
 		placement: 'top',
 		strategy: 'fixed',
 		transform: false,
@@ -119,7 +113,14 @@ const InlineEditingToolbar = ( { anchor, editor, id }: { anchor: HTMLElement; ed
 
 	return (
 		<FloatingPortal id={ CANVAS_WRAPPER_ID }>
-			<Box ref={ refs.setFloating } role="presentation" style={ { ...floatingStyles, pointerEvents: 'none' } }>
+			<Box
+				ref={ refs.setFloating }
+				role="presentation"
+				style={ {
+					...floatingStyles,
+					pointerEvents: 'none',
+				} }
+			>
 				<InlineEditorToolbar editor={ editor } elementId={ id } />
 			</Box>
 		</FloatingPortal>

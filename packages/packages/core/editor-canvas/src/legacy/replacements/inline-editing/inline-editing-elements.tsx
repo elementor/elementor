@@ -260,7 +260,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 				contentElement={ contentElement }
 				id={ this.id }
 				setValue={ this.setContentValue.bind( this ) }
-				onBlur={ this.unmountInlineEditor.bind( this ) }
+				requestDestroy={ this.unmountInlineEditor.bind( this ) }
 			/>
 		);
 	}

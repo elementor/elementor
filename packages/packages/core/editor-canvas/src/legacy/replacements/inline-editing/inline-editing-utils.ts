@@ -79,6 +79,12 @@ export const useOnClickOutsideIframe = ( handleUnmount: () => void ) => {
 export const useRenderToolbar = ( ownerDocument: Document, id: string ) => {
 	const [ anchor, setAnchor ] = useState< HTMLElement | null >( null );
 
+	useEffect( () => {
+		if ( ! anchor ) {
+			removeToolbarAnchor( ownerDocument, id );
+		}
+	}, [ anchor, ownerDocument, id ] );
+
 	const onSelectionEnd = ( view: EditorView ) => {
 		const hasSelection = ! view.state.selection.empty;
 
@@ -91,7 +97,11 @@ export const useRenderToolbar = ( ownerDocument: Document, id: string ) => {
 		}
 	};
 
-	return { onSelectionEnd, anchor };
+	const clearAnchor = useCallback( () => {
+		setAnchor( null );
+	}, [] );
+
+	return { onSelectionEnd, anchor, clearAnchor };
 };
 
 const createAnchorBasedOnSelection = ( ownerDocument: Document, id: string ): HTMLElement | null => {
