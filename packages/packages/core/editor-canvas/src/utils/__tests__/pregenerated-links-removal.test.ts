@@ -20,7 +20,7 @@ describe( 'pregenerated-links-removal', () => {
 		head.appendChild( createLink( 'base-desktop-css', 'base-desktop.css' ) );
 		head.appendChild( createLink( 'base-tablet-css', 'base-tablet.css' ) );
 		head.appendChild( createLink( 'global-preview-desktop-css', 'global-preview-desktop.css' ) );
-		head.appendChild( createLink( 'global-preview-tablet-css', 'global-preview-tablet.css' ) );
+		head.appendChild( createLink( 'global-preview-mobile_extra-css', 'global-preview-mobile_extra.css' ) );
 		head.appendChild( createLink( 'local-123-preview-desktop-css', 'local-123-preview-desktop.css' ) );
 		head.appendChild( createLink( 'local-456-preview-desktop-css', 'local-456-preview-desktop.css' ) );
 		head.appendChild( createLink( 'elementor-post-123-css', 'elementor-post-123.css' ) );
@@ -40,7 +40,7 @@ describe( 'pregenerated-links-removal', () => {
 			jest.mocked( getCanvasIframeDocument ).mockReturnValue( mockDocument );
 
 			// Act.
-			removeProviderPregeneratedLinks( 'global-classes', /^global-.*-css$/ );
+			removeProviderPregeneratedLinks( 'global-classes', /^global-(preview|frontend)-[a-zA-Z_-]+-css$/ );
 
 			// Assert.
 			const remainingLinkIds = Array.from( head.querySelectorAll( 'link' ) ).map( ( link ) =>
@@ -48,7 +48,7 @@ describe( 'pregenerated-links-removal', () => {
 			);
 
 			expect( remainingLinkIds ).not.toContain( 'global-preview-desktop-css' );
-			expect( remainingLinkIds ).not.toContain( 'global-preview-tablet-css' );
+			expect( remainingLinkIds ).not.toContain( 'global-preview-mobile_extra-css' );
 			expect( remainingLinkIds ).toContain( 'base-desktop-css' );
 			expect( remainingLinkIds ).toContain( 'local-123-preview-desktop-css' );
 			expect( remainingLinkIds ).toContain( 'other-plugin-css' );
@@ -61,7 +61,7 @@ describe( 'pregenerated-links-removal', () => {
 			jest.mocked( getCanvasIframeDocument ).mockReturnValue( mockDocument );
 
 			// Act.
-			removeProviderPregeneratedLinks( 'document-elements-123', /^local-\d+-.*-css$/ );
+			removeProviderPregeneratedLinks( 'document-elements-123', /^local-\d+-(preview|frontend)-[a-zA-Z_-]+-css$/ );
 
 			// Assert.
 			const remainingLinkIds = Array.from( head.querySelectorAll( 'link' ) ).map( ( link ) =>
@@ -83,10 +83,10 @@ describe( 'pregenerated-links-removal', () => {
 			const initialLinkCount = head.querySelectorAll( 'link' ).length;
 
 			// Act.
-			removeProviderPregeneratedLinks( 'global-classes', /^global-.*-css$/ );
+			removeProviderPregeneratedLinks( 'global-classes', /^global-(preview|frontend)-[a-zA-Z_-]+-css$/ );
 			const afterFirstRemoval = head.querySelectorAll( 'link' ).length;
 
-			removeProviderPregeneratedLinks( 'global-classes', /^global-.*-css$/ );
+			removeProviderPregeneratedLinks( 'global-classes', /^global-(preview|frontend)-[a-zA-Z_-]+-css$/ );
 			const afterSecondCall = head.querySelectorAll( 'link' ).length;
 
 			// Assert.
@@ -101,8 +101,8 @@ describe( 'pregenerated-links-removal', () => {
 			jest.mocked( getCanvasIframeDocument ).mockReturnValue( mockDocument );
 
 			// Act.
-			removeProviderPregeneratedLinks( 'global-classes', /^global-.*-css$/ );
-			removeProviderPregeneratedLinks( 'document-elements-123', /^local-\d+-.*-css$/ );
+			removeProviderPregeneratedLinks( 'global-classes', /^global-(preview|frontend)-[a-zA-Z_-]+-css$/ );
+			removeProviderPregeneratedLinks( 'document-elements-123', /^local-\d+-(preview|frontend)-[a-zA-Z_-]+-css$/ );
 
 			// Assert.
 			const remainingLinkIds = Array.from( head.querySelectorAll( 'link' ) ).map( ( link ) =>
@@ -122,7 +122,7 @@ describe( 'pregenerated-links-removal', () => {
 
 			// Act & Assert - should not throw.
 			expect( () => {
-				removeProviderPregeneratedLinks( 'global-classes', /^global-.*-css$/ );
+				removeProviderPregeneratedLinks( 'global-classes', /^global-(preview|frontend)-[a-zA-Z_-]+-css$/ );
 			} ).not.toThrow();
 		} );
 	} );
@@ -134,16 +134,16 @@ describe( 'pregenerated-links-removal', () => {
 			const mockDocument = { head } as Document;
 			jest.mocked( getCanvasIframeDocument ).mockReturnValue( mockDocument );
 
-			removeProviderPregeneratedLinks( 'global-classes', /^global-.*-css$/ );
+			removeProviderPregeneratedLinks( 'global-classes', /^global-(preview|frontend)-[a-zA-Z_-]+-css$/ );
 			const countAfterFirstRemoval = head.querySelectorAll( 'link' ).length;
 
-			head.appendChild( createLink( 'global-new-desktop-css', 'global-new.css' ) );
+			head.appendChild( createLink( 'global-preview-widescreen-css', 'global-preview-widescreen.css' ) );
 
 			const countAfterAddingNewLink = head.querySelectorAll( 'link' ).length;
 
 			// Act.
 			resetRemovedProviders();
-			removeProviderPregeneratedLinks( 'global-classes', /^global-.*-css$/ );
+			removeProviderPregeneratedLinks( 'global-classes', /^global-(preview|frontend)-[a-zA-Z_-]+-css$/ );
 
 			// Assert.
 			const countAfterSecondRemoval = head.querySelectorAll( 'link' ).length;

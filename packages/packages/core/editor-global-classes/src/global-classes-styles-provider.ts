@@ -1,5 +1,8 @@
 import { generateId, type StyleDefinition, type StyleDefinitionVariant } from '@elementor/editor-styles';
-import { createStylesProvider } from '@elementor/editor-styles-repository';
+import {
+	GLOBAL_CLASSES_ATOMIC_STYLES_LINK_ID_PATTERN,
+	createStylesProvider,
+} from '@elementor/editor-styles-repository';
 import {
 	__dispatch as dispatch,
 	__getState as getState,
@@ -22,12 +25,13 @@ import { trackGlobalClasses, type TrackingEvent } from './utils/tracking';
 const MAX_CLASSES = 100;
 
 export const GLOBAL_CLASSES_PROVIDER_KEY = 'global-classes';
+const PREGENERATED_LINK_PATTERN = /^global-(preview|frontend)-[a-zA-Z_-]+-css$/;
 
 export const globalClassesStylesProvider = createStylesProvider( {
 	key: GLOBAL_CLASSES_PROVIDER_KEY,
 	priority: 30,
 	limit: MAX_CLASSES,
-	pregeneratedLinkPattern: /^global-.*-css$/,
+	pregeneratedLinkPattern: PREGENERATED_LINK_PATTERN,
 	labels: {
 		singular: __( 'class', 'elementor' ),
 		plural: __( 'classes', 'elementor' ),
