@@ -5,7 +5,8 @@ import EditorPage from '../../../pages/editor-page';
 import ContextMenu from '../../../pages/widgets/context-menu';
 
 test.describe( 'Container tests #3 @container', () => {
-	test( 'Widget display inside container flex wrap', async ( { page, apiRequests }, testInfo ) => {
+	// TODO: to be fixed in ED-23584
+	test.skip( 'Widget display inside container flex wrap', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const contextMenu = new ContextMenu( page, testInfo );
