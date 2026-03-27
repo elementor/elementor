@@ -87,7 +87,6 @@
 		&__items-area {
 			display: flex;
 			flex-direction: row-reverse;
-			align-items: center;
 		}
 
 		&__item {
@@ -109,16 +108,6 @@
 		}
 
 		&__close {
-			// Reset browser button defaults when rendered as a <button> element
-			&:is(button) {
-				background: transparent;
-				margin: 0;
-				font-size: inherit;
-				font-family: inherit;
-				color: inherit;
-				border: none;
-				cursor: pointer;
-			}
 
 			&--normal {
 				width: 47px;
