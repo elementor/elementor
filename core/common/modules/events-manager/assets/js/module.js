@@ -1,6 +1,9 @@
 import eventsConfig from './events-config';
-import mixpanel from 'mixpanel-browser';
+import mixpanel, { Mixpanel } from 'mixpanel-browser';
 import { TIERS } from 'elementor-utils/tiers';
+
+/** @type {Mixpanel | null} */
+let mixpanelInstance = null;
 
 export default class extends elementorModules.Module {
 	trackingEnabled = false;
@@ -16,18 +19,29 @@ export default class extends elementorModules.Module {
 	}
 
 	initializeMixpanel( onLoaded ) {
-		mixpanel.init(
-			elementorCommon.config.editor_events?.token,
-			{
-				persistence: 'localStorage',
-				autocapture: false,
-				flags: true,
-				api_hosts: {
-					flags: 'https://api-eu.mixpanel.com',
+		if ( mixpanelInstance && mixpanelInstance.isInitialized ) {
+			onLoaded( mixpanelInstance );
+		} else {
+			mixpanelInstance = mixpanel.init(
+				elementorCommon.config.editor_events?.token,
+				{
+					persistence: 'localStorage',
+					autocapture: false,
+					flags: true,
+					api_hosts: {
+						flags: 'https://api-eu.mixpanel.com',
+					},
+					loaded: onLoaded,
+					record_sessions_percent: 1,
+					record_idle_timeout_ms: 60 * 1000, // 60 Seconds
+					record_min_ms: 5 * 1000, // 5 Seconds
+					record_max_ms: 30 * 1000, // 30 Seconds
+					record_mask_text_selector: '',
 				},
-				loaded: onLoaded,
-			},
-		);
+				'elementor-editor',
+			);
+		}
+		elementorCommon.config.editor_events.mixpanelInstance = mixpanelInstance;
 	}
 
 	enableTracking() {
@@ -37,14 +51,14 @@ export default class extends elementorModules.Module {
 
 		const userId = elementorCommon.config.library_connect?.user_id;
 
+		mixpanelInstance.register( {
+			appType: 'Editor',
+		} );
+
 		if ( userId ) {
-			mixpanel.identify( userId );
+			mixpanelInstance.identify( userId );
 
-			mixpanel.register( {
-				appType: 'Editor',
-			} );
-
-			mixpanel.people.set_once( {
+			mixpanelInstance.people.set_once( {
 				$user_id: userId,
 				$last_login: new Date().toISOString(),
 				$plan_type: elementorCommon.config.library_connect?.plan_type || TIERS.free,
@@ -76,15 +90,15 @@ export default class extends elementorModules.Module {
 			...data,
 		};
 
-		mixpanel.track( name, eventData, options );
+		mixpanelInstance.track( name, eventData, options );
 	}
 
 	async featureFlagIsActive( flagName ) {
-		if ( 'function' !== typeof mixpanel?.flags?.is_enabled ) {
+		if ( 'function' !== typeof mixpanelInstance?.flags?.is_enabled ) {
 			return false;
 		}
 
-		const isEnabled = await mixpanel.flags.is_enabled( flagName, false );
+		const isEnabled = await mixpanelInstance.flags.is_enabled( flagName, false );
 		return true === isEnabled;
 	}
 
@@ -100,7 +114,7 @@ export default class extends elementorModules.Module {
 				return defaultValue;
 			}
 
-			if ( ! mixpanel ) {
+			if ( ! mixpanelInstance ) {
 				return defaultValue;
 			}
 
@@ -108,15 +122,15 @@ export default class extends elementorModules.Module {
 				this.enableTracking();
 			}
 
-			if ( ! mixpanel.flags ) {
+			if ( ! mixpanelInstance.flags ) {
 				return defaultValue;
 			}
 
-			if ( 'function' !== typeof mixpanel.flags.get_variant_value ) {
+			if ( 'function' !== typeof mixpanelInstance.flags.get_variant_value ) {
 				return defaultValue;
 			}
 
-			const variant = await mixpanel.flags.get_variant_value( experimentName, defaultValue );
+			const variant = await mixpanelInstance.flags.get_variant_value( experimentName, defaultValue );
 
 			if ( undefined === variant || null === variant ) {
 				return defaultValue;
@@ -133,16 +147,16 @@ export default class extends elementorModules.Module {
 			return;
 		}
 
-		mixpanel.track( '$experiment_started', { 'Experiment name': experimentName, 'Variant name': experimentVariant } );
+		mixpanelInstance.track( '$experiment_started', { 'Experiment name': experimentName, 'Variant name': experimentVariant } );
 	}
 
 	isMixpanelReady() {
-		if ( 'undefined' === typeof mixpanel || ! mixpanel ) {
+		if ( 'undefined' === typeof mixpanelInstance || ! mixpanelInstance ) {
 			return false;
 		}
 
 		try {
-			const distinctId = mixpanel.get_distinct_id();
+			const distinctId = mixpanelInstance.get_distinct_id();
 			return distinctId !== undefined && distinctId !== null;
 		} catch ( error ) {
 			return false;
@@ -154,6 +168,6 @@ export default class extends elementorModules.Module {
 	}
 
 	getMixpanelInstance() {
-		return this.isMixpanelReady() ? mixpanel : undefined;
+		return this.isMixpanelReady() ? mixpanelInstance : undefined;
 	}
 }
