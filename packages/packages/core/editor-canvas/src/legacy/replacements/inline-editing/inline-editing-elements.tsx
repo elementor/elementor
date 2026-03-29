@@ -26,7 +26,6 @@ const HISTORY_DEBOUNCE_WAIT = 800;
 export default class InlineEditingReplacement extends ReplacementBase {
 	private handlerAttached = false;
 	private editing = false;
-	private editingSession = 0;
 
 	getReplacementKey() {
 		return 'inline-editing';
@@ -251,9 +250,6 @@ export default class InlineEditingReplacement extends ReplacementBase {
 
 		contentElement.innerHTML = '';
 		this.editing = true;
-		this.editingSession++;
-
-		const session = this.editingSession;
 
 		this.reactRoot.render(
 			<CanvasInlineEditor
@@ -264,11 +260,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 				contentElement={ contentElement }
 				id={ this.id }
 				setValue={ this.setContentValue.bind( this ) }
-				requestDestroy={ () => {
-					if ( this.editingSession === session ) {
-						this.unmountInlineEditor();
-					}
-				} }
+				requestDestroy={ this.unmountInlineEditor.bind( this ) }
 			/>
 		);
 	}

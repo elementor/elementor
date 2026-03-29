@@ -43,12 +43,28 @@ export const CanvasInlineEditor = ( {
 		}
 	}, [ active, clearAnchor, requestDestroy ] );
 
-	const onBlur = useCallback( () => {
+	const dismiss = useCallback( () => {
 		setEditor( null );
 		setActive( false );
 	}, [] );
 
-	useOnClickOutsideIframe( onBlur );
+	useOnClickOutsideIframe( dismiss );
+
+	useEffect( () => {
+		const ownerDocument = contentElement.ownerDocument;
+
+		const handleClickAway = ( event: MouseEvent ) => {
+			if ( contentElement.contains( event.target as Node ) ) {
+				return;
+			}
+
+			dismiss();
+		};
+
+		ownerDocument.addEventListener( 'mousedown', handleClickAway );
+
+		return () => ownerDocument.removeEventListener( 'mousedown', handleClickAway );
+	}, [ contentElement, dismiss ] );
 
 	if ( ! active ) {
 		return null;
@@ -68,7 +84,7 @@ export const CanvasInlineEditor = ( {
 				elementClasses={ elementClasses }
 				value={ initialValue }
 				setValue={ setValue }
-				onBlur={ onBlur }
+				onBlur={ dismiss }
 				autofocus
 				onSelectionEnd={ onSelectionEnd }
 			/>

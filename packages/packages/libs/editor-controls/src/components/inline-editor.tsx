@@ -142,19 +142,7 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 			},
 		},
 		onCreate: onEditorCreate ? ( { editor: mountedEditor } ) => onEditorCreate( mountedEditor ) : undefined,
-		onBlur: () => {
-			if ( mountElement ) {
-				requestAnimationFrame( () => {
-					if ( ! mountElement.contains( mountElement.ownerDocument.activeElement ) ) {
-						onBlurRef.current?.();
-					}
-				} );
-
-				return;
-			}
-
-			onBlurRef.current?.();
-		},
+		onBlur: mountElement ? undefined : () => onBlurRef.current?.(),
 		onSelectionUpdate: onSelectionEnd
 			? ( { editor: updatedEditor } ) => onSelectionEnd( updatedEditor.view )
 			: undefined,
