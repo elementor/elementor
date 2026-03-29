@@ -72,7 +72,7 @@ export const InteractionsProvider = ( { children, elementId }: { children: React
 
 	const setInteractions = ( value: ElementInteractions | undefined ) => {
 		const normalizedValue = value && value.items?.length === 0 ? undefined : value;
-		const prevItemCount = getElementInteractions( elementId )?.items?.length ?? 0;
+		const prevItemCount = interactions.items?.length ?? 0;
 		const newItemCount = normalizedValue?.items?.length ?? 0;
 
 		if ( newItemCount > prevItemCount ) {
