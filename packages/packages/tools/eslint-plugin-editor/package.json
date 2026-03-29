@@ -2,7 +2,7 @@
   "name": "@elementor/eslint-plugin-editor",
   "description": "Internal ESLint plugin",
   "version": "4.1.0",
-  "private": true,
+  "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
   "license": "GPL-3.0-or-later",

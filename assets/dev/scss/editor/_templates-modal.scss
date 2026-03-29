@@ -34,12 +34,6 @@ $remote-templates-items-space: 30px;
 		@include focus-outline($radius: 2px);
 	}
 
-	// Reset button styles for the close button changed from div to button
-	button.elementor-templates-modal__header__close {
-		@include button-reset;
-		cursor: pointer;
-	}
-
 	a.elementor-template-library-blank-footer-link {
 		font-style: normal;
 		text-decoration: underline;
