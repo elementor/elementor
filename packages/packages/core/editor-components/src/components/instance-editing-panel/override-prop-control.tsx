@@ -133,6 +133,8 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 		};
 	}, [ overridableProp, componentInstanceElement.element.id, componentId, originElementId ] );
 
+	// Not reactive to inner element store changes — intentional.
+	// Inner element settings can only change in component edit mode, which unmounts this component.
 	const settingsWithInnerOverrides = useMemo( () => {
 		const settings = getElementSettings< AnyTransformable >(
 			elementId,

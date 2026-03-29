@@ -233,19 +233,22 @@ describe( 'walkDownOverridesChain', () => {
 	describe( 'one level of nesting', () => {
 		const INNER_COMPONENT_ID = 200;
 		const INNER_ELEMENT_ID = 'inner-element';
-		const INNER_COMPONENT_INSTANCE_ID = 'middle-instance';
+		const INNER_COMPONENT_INSTANCE_ID = 'inner-instance';
+		const OUTER_COMPONENT_INSTANCE_ID = 'outer-instance';
 
 		it( 'should walk one level down and collect overrides', () => {
 			// Arrange
 			const innerValue = stringValue( 'Inner Value' );
-			const middleInstance = createComponentInstance( INNER_COMPONENT_INSTANCE_ID, INNER_COMPONENT_ID, [
-				exposedFurtherOverride( 'outer-key', 'inner-key', innerValue ),
-			] );
+			const innerComponentInstanceElement = createComponentInstance(
+				INNER_COMPONENT_INSTANCE_ID,
+				INNER_COMPONENT_ID,
+				[ exposedFurtherOverride( 'outer-key', 'inner-key', innerValue ) ]
+			);
 
 			const innerElement = createMockContainer( INNER_ELEMENT_ID, [] );
 
 			const outerProp = createOverridableProp( {
-				elementId: 'middle-origin',
+				elementId: INNER_COMPONENT_INSTANCE_ID,
 				overrideKey: 'outer-key',
 				originPropFields: {
 					propKey: 'title',
@@ -260,13 +263,21 @@ describe( 'walkDownOverridesChain', () => {
 				elementId: INNER_ELEMENT_ID,
 			} );
 
-			mockGetContainerByOriginId.mockReturnValueOnce( middleInstance ).mockReturnValueOnce( innerElement );
+			mockGetContainerByOriginId.mockImplementation( ( elementId, scopeId ) => {
+				if ( elementId === INNER_COMPONENT_INSTANCE_ID && scopeId === OUTER_COMPONENT_INSTANCE_ID ) {
+					return innerComponentInstanceElement;
+				}
+				if ( elementId === INNER_ELEMENT_ID && scopeId === INNER_COMPONENT_INSTANCE_ID ) {
+					return innerElement;
+				}
+				return null;
+			} );
 			mockGetOverridableProp.mockReturnValue( innerOverridableProp );
 
 			// Act
 			const result = walkDownOverridesChain( {
 				upperLevelOverridableProp: outerProp,
-				upperInstanceId: 'top-instance',
+				upperInstanceId: OUTER_COMPONENT_INSTANCE_ID,
 			} );
 
 			// Assert
@@ -279,7 +290,7 @@ describe( 'walkDownOverridesChain', () => {
 			}
 		} );
 
-		it( 'should return isChainBroken when intermediate instance is not found', () => {
+		it( 'should return isChainBroken when inner instance is not found', () => {
 			// Arrange
 			const outerProp = createOverridableProp( {
 				elementId: 'deleted-instance',
@@ -334,110 +345,119 @@ describe( 'walkDownOverridesChain', () => {
 		} );
 	} );
 
-	describe( 'deep nesting — 3 levels (A → B → innermost element)', () => {
-		const COMPONENT_A = 300;
-		const COMPONENT_B = 301;
+	describe( '2 levels of nesting', () => {
+		// Component nesting goes C -> B -> A. when C is the outer component, B is the middle, and A is the innermost component.
+		const COMPONENT_A = 100;
+		const COMPONENT_B = 200;
+
+		const COMPONENT_A_INSTANCE_ID = 'component-a-instance';
+		const COMPONENT_B_INSTANCE_ID = 'component-b-instance';
+		const COMPONENT_C_INSTANCE_ID = 'component-c-instance';
+		const INNER_ELEMENT_ID = 'inner-element';
+
+		const OVERRIDE_KEY_0 = 'prop-0';
+		const OVERRIDE_KEY_1 = 'prop-1';
+		const OVERRIDE_KEY_2 = 'prop-2';
+
+		const innerElement = createMockContainer( INNER_ELEMENT_ID, [] );
+
+		const innerProp = createOverridableProp( {
+			elementId: INNER_ELEMENT_ID,
+			overrideKey: OVERRIDE_KEY_0,
+		} );
+
+		const middleProp = createOverridableProp( {
+			elementId: COMPONENT_A_INSTANCE_ID,
+			overrideKey: OVERRIDE_KEY_1,
+			originPropFields: {
+				propKey: 'title',
+				widgetType: 'e-heading',
+				elType: 'widget',
+				elementId: INNER_ELEMENT_ID,
+			},
+		} );
+
+		const outerProp = createOverridableProp( {
+			elementId: COMPONENT_B_INSTANCE_ID,
+			overrideKey: OVERRIDE_KEY_2,
+			originPropFields: {
+				propKey: 'title',
+				widgetType: 'e-heading',
+				elType: 'widget',
+				elementId: INNER_ELEMENT_ID,
+			},
+		} );
+		const setupComponents = ( { isChainBroken }: { isChainBroken: boolean } ) => {
+			const aExposedFurtherOverride = exposedFurtherOverride(
+				OVERRIDE_KEY_1,
+				OVERRIDE_KEY_0,
+				stringValue( 'A Inner Value' )
+			);
+			const aNonOverridableOverride = simpleOverride( OVERRIDE_KEY_0, stringValue( 'A Inner Value' ) );
+
+			const aInstance = createComponentInstance( COMPONENT_A_INSTANCE_ID, COMPONENT_A, [
+				isChainBroken ? aNonOverridableOverride : aExposedFurtherOverride,
+			] );
+
+			const bInstance = createComponentInstance( COMPONENT_B_INSTANCE_ID, COMPONENT_B, [
+				exposedFurtherOverride( OVERRIDE_KEY_2, OVERRIDE_KEY_1, stringValue( 'B Inner Value' ) ),
+				simpleOverride( 'not-part-of-the-chain', stringValue( 'Not part of the chain' ) ),
+			] );
+
+			mockGetContainerByOriginId.mockImplementation( ( elementId, scopeId ) => {
+				if ( elementId === INNER_ELEMENT_ID && scopeId === COMPONENT_A_INSTANCE_ID ) {
+					return innerElement;
+				}
+				if ( elementId === COMPONENT_A_INSTANCE_ID && scopeId === COMPONENT_B_INSTANCE_ID ) {
+					return aInstance;
+				}
+				if ( elementId === COMPONENT_B_INSTANCE_ID && scopeId === COMPONENT_C_INSTANCE_ID ) {
+					return bInstance;
+				}
+				return null;
+			} );
+
+			mockGetOverridableProp.mockImplementation( ( { componentId, overrideKey } ) => {
+				if ( componentId === COMPONENT_A && overrideKey === OVERRIDE_KEY_0 ) {
+					return innerProp;
+				}
+				if ( componentId === COMPONENT_B && overrideKey === OVERRIDE_KEY_1 ) {
+					return middleProp;
+				}
+			} );
+		};
 
 		it( 'should walk through 3 levels and carry forward override values', () => {
 			// Arrange
-			// Key chain: top-outer → a-inner (= b-outer at level B) → b-inner (innermost)
-			const levelAInnerValue = stringValue( 'A Inner Value' );
-			const levelAInstance = createComponentInstance( 'instance-a', COMPONENT_A, [
-				exposedFurtherOverride( 'top-outer', 'a-inner', levelAInnerValue ),
-			] );
-
-			const levelBInstance = createComponentInstance( 'instance-b', COMPONENT_B, [
-				exposedFurtherOverride( 'a-inner', 'b-inner', stringValue( 'B Inner Value' ) ),
-			] );
-
-			const innermostElement = createMockContainer( 'innermost', [] );
-
-			const topProp = createOverridableProp( {
-				elementId: 'origin-a',
-				overrideKey: 'top-outer',
-				originPropFields: {
-					propKey: 'title',
-					widgetType: 'e-heading',
-					elType: 'widget',
-					elementId: 'origin-b',
-				},
-			} );
-
-			const middleProp = createOverridableProp( {
-				elementId: 'origin-b',
-				overrideKey: 'a-inner',
-				originPropFields: {
-					propKey: 'title',
-					widgetType: 'e-heading',
-					elType: 'widget',
-					elementId: 'innermost',
-				},
-			} );
-
-			const innermostProp = createOverridableProp( {
-				overrideKey: 'b-inner',
-				elementId: 'innermost',
-			} );
-
-			mockGetContainerByOriginId
-				.mockReturnValueOnce( levelAInstance )
-				.mockReturnValueOnce( levelBInstance )
-				.mockReturnValueOnce( innermostElement );
-
-			mockGetOverridableProp.mockReturnValueOnce( middleProp ).mockReturnValueOnce( innermostProp );
-
+			setupComponents( { isChainBroken: false } );
 			// Act
 			const result = walkDownOverridesChain( {
-				upperLevelOverridableProp: topProp,
-				upperInstanceId: 'top-instance',
+				upperLevelOverridableProp: outerProp,
+				upperInstanceId: COMPONENT_C_INSTANCE_ID,
 			} );
 
 			// Assert
 			expect( result.isChainBroken ).toBe( false );
 			if ( ! result.isChainBroken ) {
-				expect( result.innerElement ).toBe( innermostElement );
-				expect( result.overridesMapping[ 'b-inner' ] ).toEqual( {
-					value: levelAInnerValue,
-					outermostKey: 'top-outer',
+				expect( result.innerElement ).toBe( innerElement );
+				expect( result.overridesMapping[ OVERRIDE_KEY_0 ] ).toEqual( {
+					value: stringValue( 'B Inner Value' ),
+					outermostKey: OVERRIDE_KEY_2,
+				} );
+				expect( result.overridesMapping[ 'not-part-of-the-chain' ] ).toEqual( {
+					value: stringValue( 'Not part of the chain' ),
 				} );
 			}
 		} );
 
 		it( 'should return isChainBroken when any level in the chain fails', () => {
 			// Arrange
-			const levelAInstance = createComponentInstance( 'instance-a', COMPONENT_A, [
-				exposedFurtherOverride( 'top-outer', 'a-inner', stringValue( 'A Inner Value' ) ),
-			] );
-
-			const topProp = createOverridableProp( {
-				elementId: 'origin-a',
-				overrideKey: 'top-outer',
-				originPropFields: {
-					propKey: 'title',
-					widgetType: 'e-heading',
-					elType: 'widget',
-					elementId: 'origin-b',
-				},
-			} );
-
-			const middleProp = createOverridableProp( {
-				elementId: 'origin-b',
-				overrideKey: 'a-inner',
-				originPropFields: {
-					propKey: 'title',
-					widgetType: 'e-heading',
-					elType: 'widget',
-					elementId: 'innermost',
-				},
-			} );
-
-			mockGetContainerByOriginId.mockReturnValueOnce( levelAInstance ).mockReturnValueOnce( null );
-			mockGetOverridableProp.mockReturnValueOnce( middleProp );
+			setupComponents( { isChainBroken: true } );
 
 			// Act
 			const result = walkDownOverridesChain( {
-				upperLevelOverridableProp: topProp,
-				upperInstanceId: 'top-instance',
+				upperLevelOverridableProp: outerProp,
+				upperInstanceId: COMPONENT_C_INSTANCE_ID,
 			} );
 
 			// Assert

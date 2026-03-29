@@ -5,12 +5,6 @@ import {
 } from '../prop-types/component-instance-overrides-prop-type';
 import { componentOverridablePropTypeUtil } from '../prop-types/component-overridable-prop-type';
 
-export type InnerOverrideInfo = {
-	componentId: number;
-	innerOverrideKey: string;
-	overrideValue: unknown;
-};
-
 export function getMatchingOverride(
 	overrides: ComponentInstanceOverridesPropValue,
 	overrideKey: string

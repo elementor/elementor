@@ -104,6 +104,26 @@ describe( 'applyOverridesToSettings', () => {
 		// Assert
 		expect( result.title ).toEqual( wrappedSetting );
 	} );
+
+	it( 'should fall back to origin_value when override value is null and outermostKey is present', () => {
+		// Arrange
+		const settings = { title: overridableSetting( 'inner-key', STRING_VALUE ) };
+		const overrides: OverridesMapping = {
+			'inner-key': { value: null, outermostKey: 'outer-key' },
+		};
+
+		// Act
+		const result = applyOverridesToSettings( settings, overrides );
+
+		// Assert
+		expect( result.title ).toEqual( {
+			$$type: 'overridable',
+			value: {
+				override_key: 'outer-key',
+				origin_value: STRING_VALUE,
+			},
+		} );
+	} );
 } );
 
 describe( 'unwrapOverridableSettings', () => {

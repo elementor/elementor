@@ -26,19 +26,10 @@ type OverridesChainResult =
 			isChainBroken: true;
 	  };
 
-/**
- * Recursively walks down a chain of nested component instances to find the inner element
- * and get the overrides mapping for it.
- *
- * Returns a discriminated union: either the resolved inner element with its overrides mapping,
- * or `{ isChainBroken: true }` if at least one of the levels is not overridable anymore.
- *
- * @param params
- * @param params.upperLevelOverridableProp - The overridable prop metadata at the current level.
- * @param params.upperInstanceId           - Runtime ID of the parent instance to scope lookups.
- * @param params.overridesMapping          - Accumulated overrides from upper levels.
- * @param params.depth                     - Current recursion depth.
- */
+// Recursively walks down a chain of nested component instances to find the innermost element
+// and collect the overrides mapping for it.
+// Returns the resolved inner element with its overrides mapping,
+// or { isChainBroken: true } if any level in the chain is no longer overridable.
 export function walkDownOverridesChain( {
 	upperLevelOverridableProp,
 	upperInstanceId,

@@ -33,13 +33,12 @@ export function applyOverridesToSettings(
 		}
 
 		if ( override.outermostKey && override.outermostKey !== overridable.override_key ) {
-			result[ propKey ] = {
-				$$type: 'overridable',
-				value: {
-					override_key: override.outermostKey,
-					origin_value: override.value ?? propValue,
-				},
-			};
+			const originValue = overridable.origin_value as AnyTransformable | null;
+
+			result[ propKey ] = componentOverridablePropTypeUtil.create( {
+				override_key: override.outermostKey,
+				origin_value: override.value ?? originValue,
+			} );
 		} else {
 			result[ propKey ] = override.value ?? propValue;
 		}
