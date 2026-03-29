@@ -5,7 +5,6 @@ namespace Elementor\Testing\Modules\AtomicWidgets\Elements;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Divider\Atomic_Divider;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -87,15 +86,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 					'widgetType' => Atomic_Paragraph::get_element_type(),
 				],
 			],
-			'Atomic SVG default' => [
-				[
-					'id' => 'abcd123',
-					'elType' => 'widget',
-					'settings' => [],
-					'widgetType' => Atomic_Svg::get_element_type(),
-				]
-			],
-			'Atomic Divider default' => [
+		'Atomic Divider default' => [
 				[
 					'id' => 'e8e55a1',
 					'elType' => 'widget',
