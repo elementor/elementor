@@ -37,7 +37,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 	const ELEMENT_TYPE_TAB = 'e-tab';
 	const ELEMENT_TYPE_TAB_CONTENT = 'e-tab-content';
 
-	public static $widget_description = 'Create a tabbed interface with customizable tabs and content areas. LLM support: Each child element will be represented as a tab, the menu auto-generates based on the children';
+	public static $widget_description = 'Create a tabbed interface with customizable tabs and content areas. Structure: e-tabs contains e-tabs-menu (with e-tab triggers) and e-tabs-content-area (with e-tab-content panels). Each e-tab at index N is paired with the e-tab-content at index N.';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
