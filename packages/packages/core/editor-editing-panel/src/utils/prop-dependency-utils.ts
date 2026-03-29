@@ -2,6 +2,7 @@ import {
 	type Dependency,
 	type DependencyTerm,
 	extractValue,
+	isDependency,
 	isDependencyMet,
 	type Props,
 	type PropsSchema,
@@ -14,15 +15,38 @@ type Value = TransformablePropValue< string > | null;
 
 export type Values = Record< string, Value >;
 
+export type DependencyEffect = {
+	isHidden: boolean;
+	isDisabled: ( propType: PropType ) => boolean;
+};
+
 export function getElementSettingsWithDefaults( propsSchema: PropsSchema, elementSettings?: Props ): Values {
 	const elementSettingsWithDefaults = { ...elementSettings };
 	Object.keys( propsSchema ).forEach( ( key ) => {
-		if ( elementSettingsWithDefaults[ key ] === null && propsSchema[ key ].default !== null ) {
+		if (
+			( elementSettingsWithDefaults[ key ] === null || elementSettingsWithDefaults[ key ] === undefined ) &&
+			propsSchema[ key ]?.default !== null &&
+			propsSchema[ key ]?.default !== undefined
+		) {
 			elementSettingsWithDefaults[ key ] = propsSchema[ key ].default as Values[ keyof Values ];
 		}
 	} );
 
 	return elementSettingsWithDefaults as Values;
+}
+
+export function extractDependencyEffect( bind: string, propsSchema: PropsSchema, settings: Props ): DependencyEffect {
+	const settingsWithDefaults = getElementSettingsWithDefaults( propsSchema, settings );
+	const propType = propsSchema[ bind ];
+	const depCheck = isDependencyMet( propType?.dependencies, settingsWithDefaults );
+
+	const failingTerm = ! depCheck.isMet ? depCheck.failingDependencies[ 0 ] : undefined;
+	const isHidden = !! failingTerm && ! isDependency( failingTerm ) && failingTerm?.effect === 'hide';
+
+	return {
+		isHidden,
+		isDisabled: ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, settingsWithDefaults ).isMet,
+	};
 }
 
 export function extractOrderedDependencies( dependenciesPerTargetMapping: Record< string, string[] > ): string[] {
