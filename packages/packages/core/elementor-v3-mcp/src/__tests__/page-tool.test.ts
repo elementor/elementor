@@ -1,4 +1,4 @@
-import { cleanupElementorMocks, type ElementorMockSetup, setupElementorMocks } from 'mocks/elementorMocks';
+import { cleanupElementorMocks, type ElementorMockSetup, setupElementorMocks } from '@elementor/elementor-mcp-common';
 import { type McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 const mockConsoleLog = jest.fn();

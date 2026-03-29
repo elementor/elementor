@@ -31,9 +31,6 @@
       ],
       "test-utils": [
         "./tests/test-utils"
-      ],
-      "mocks/*": [
-        "./tests/mocks/*"
       ]
     },
   },

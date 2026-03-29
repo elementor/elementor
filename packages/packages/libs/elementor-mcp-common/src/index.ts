@@ -34,3 +34,14 @@ export type {
 	ElementorFrontendInstance,
 	ElementorCommandsInstance,
 } from './types';
+
+export {
+	createMockContainer,
+	createMockDocument,
+	createMockElementor,
+	setupElementorMocks,
+	cleanupElementorMocks,
+	createContainerMock,
+	type ElementorMockSetup,
+	elementorCommon as mockElementorCommon,
+} from './test-mocks';

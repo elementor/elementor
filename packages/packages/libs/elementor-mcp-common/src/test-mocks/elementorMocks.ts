@@ -1,4 +1,4 @@
-import type { ElementorContainer } from '@elementor/elementor-v3-mcp';
+import type { ElementorContainer } from '../types';
 import { elementorCommon } from './elementorCommon';
 
 interface MockElementorControl {
