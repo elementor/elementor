@@ -4,7 +4,7 @@ import {
 	type NestedTemplatedElementConfig,
 } from './create-nested-templated-element-type';
 import { type CreateTemplatedElementTypeOptions } from './create-templated-element-type';
-import { type ElementType, type ElementView } from './types';
+import { type ElementType, type ElementView, type LegacyWindow } from './types';
 
 export function createProPromotionNestedType( {
 	type,
@@ -32,10 +32,16 @@ export function createProPromotionNestedType( {
 	};
 }
 
+const PROMOTION_FONT_URL = 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap';
+
 function createPromotionView( BaseView: typeof ElementView ): typeof ElementView {
 	return class extends BaseView {
 		_afterRender() {
 			super._afterRender();
+
+			const legacyWindow = window as unknown as LegacyWindow;
+
+			legacyWindow.elementor.helpers.enqueuePreviewStylesheet( PROMOTION_FONT_URL );
 
 			this.$el.off( 'click', '.e-form-placeholder__remove-btn' );
 			this.$el.on( 'click', '.e-form-placeholder__remove-btn', ( e: Event ) => {

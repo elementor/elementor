@@ -49,6 +49,7 @@ export type LegacyWindow = Window & {
 		$previewWrapper: JQueryElement;
 		helpers: {
 			hasPro: () => boolean;
+			enqueuePreviewStylesheet: ( url: string ) => void;
 		};
 	};
 };

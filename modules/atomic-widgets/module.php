@@ -454,17 +454,29 @@ class Module extends BaseModule {
 			return;
 		}
 
-//		wp_enqueue_style(
-//			'elementor-atomic-widgets-promotion-fonts',
-//			'https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap',
-//			[],
-//			ELEMENTOR_VERSION
-//		);
+		wp_enqueue_style(
+			'elementor-atomic-widgets-promotion-fonts',
+			'https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap',
+			[],
+			ELEMENTOR_VERSION
+		);
 
 		wp_enqueue_style(
 			'elementor-atomic-widgets-promotion',
 			$this->get_css_assets_url( 'modules/atomic-widgets/editor' ),
-//			[ 'elementor-atomic-widgets-promotion-fonts' ],
+			[ 'elementor-atomic-widgets-promotion-fonts' ],
+			ELEMENTOR_VERSION
+		);
+	}
+
+	private function enqueue_preview_promotion_styles() {
+		if ( \Elementor\Utils::has_pro() ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'elementor-atomic-widgets-promotion',
+			$this->get_css_assets_url( 'modules/atomic-widgets/editor' ),
 			[],
 			ELEMENTOR_VERSION
 		);
