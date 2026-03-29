@@ -43,7 +43,7 @@
     "@elementor/locations": "4.1.0",
     "@elementor/utils": "4.1.0",
     "@elementor/editor-ui": "4.1.0",
-    "@elementor/ui": "1.36.17"
+    "@elementor/ui": "1.38.0"
   },
   "peerDependencies": {
     "react": "^18.3.1"

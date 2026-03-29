@@ -3,15 +3,18 @@ import { GripVerticalIcon } from '@elementor/icons';
 import {
 	Box,
 	styled,
+	UnstableSortable,
+	UnstableSortableGroup,
 	UnstableSortableItem,
 	type UnstableSortableItemProps,
 	type UnstableSortableItemRenderProps,
-	UnstableSortableProvider,
-	type UnstableSortableProviderProps,
+	type UnstableSortableProps,
 } from '@elementor/ui';
 
-export const SortableProvider = < T extends string >( props: UnstableSortableProviderProps< T > ) => (
-	<UnstableSortableProvider restrictAxis variant="static" dragPlaceholderStyle={ { opacity: '1' } } { ...props } />
+export const SortableProvider = < T extends string >( { children, ...rest }: UnstableSortableProps< T > ) => (
+	<UnstableSortable restrictAxis variant="static" dragPlaceholderStyle={ { opacity: '1' } } { ...rest }>
+		<UnstableSortableGroup>{ children }</UnstableSortableGroup>
+	</UnstableSortable>
 );
 
 export type SortableTriggerProps = React.HTMLAttributes< HTMLDivElement >;

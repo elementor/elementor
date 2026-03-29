@@ -5,18 +5,21 @@ import {
 	List,
 	ListItem,
 	styled,
+	UnstableSortable,
+	UnstableSortableGroup,
 	UnstableSortableItem,
 	type UnstableSortableItemProps,
 	type UnstableSortableItemRenderProps,
-	UnstableSortableProvider,
-	type UnstableSortableProviderProps,
+	type UnstableSortableProps,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-export const SortableProvider = < T extends string | number >( props: UnstableSortableProviderProps< T > ) => {
+export const SortableProvider = < T extends string | number >( { children, ...rest }: UnstableSortableProps< T > ) => {
 	return (
 		<List sx={ { p: 0, my: -0.5, mx: 0 } }>
-			<UnstableSortableProvider restrictAxis disableDragOverlay={ false } variant={ 'static' } { ...props } />
+			<UnstableSortable restrictAxis disableDragOverlay={ false } variant={ 'static' } { ...rest }>
+				<UnstableSortableGroup>{ children }</UnstableSortableGroup>
+			</UnstableSortable>
 		</List>
 	);
 };
@@ -31,7 +34,6 @@ export const SortableItem = ( { id, children, disabled }: SortableItemProps ): R
 	return (
 		<UnstableSortableItem
 			id={ id }
-			disabled={ disabled }
 			render={ ( {
 				itemProps,
 				triggerProps,

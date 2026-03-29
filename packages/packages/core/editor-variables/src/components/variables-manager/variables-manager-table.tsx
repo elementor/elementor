@@ -7,9 +7,10 @@ import {
 	TableContainer,
 	TableHead,
 	TableRow,
+	UnstableSortable,
+	UnstableSortableGroup,
 	UnstableSortableItem,
 	type UnstableSortableItemRenderProps,
-	UnstableSortableProvider,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -115,7 +116,7 @@ export const VariablesManagerTable = ( {
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					<UnstableSortableProvider
+					<UnstableSortable
 						value={ ids }
 						onChange={ handleReorder }
 						variant="static"
@@ -126,26 +127,28 @@ export const VariablesManagerTable = ( {
 							</Table>
 						) }
 					>
-						{ rows.map( ( row ) => (
-							<UnstableSortableItem
-								key={ row.id }
-								id={ row.id }
-								render={ ( props: UnstableSortableItemRenderProps ) => (
-									<VariableRow
-										{ ...props }
-										row={ row }
-										variables={ variables }
-										handleOnChange={ handleOnChange }
-										autoEditVariableId={ autoEditVariableId }
-										onAutoEditComplete={ onAutoEditComplete }
-										onFieldError={ onFieldError }
-										menuActions={ menuActions }
-										handleRowRef={ handleRowRef }
-									/>
-								) }
-							/>
-						) ) }
-					</UnstableSortableProvider>
+						<UnstableSortableGroup>
+							{ rows.map( ( row ) => (
+								<UnstableSortableItem
+									key={ row.id }
+									id={ row.id }
+									render={ ( props: UnstableSortableItemRenderProps ) => (
+										<VariableRow
+											{ ...props }
+											row={ row }
+											variables={ variables }
+											handleOnChange={ handleOnChange }
+											autoEditVariableId={ autoEditVariableId }
+											onAutoEditComplete={ onAutoEditComplete }
+											onFieldError={ onFieldError }
+											menuActions={ menuActions }
+											handleRowRef={ handleRowRef }
+										/>
+									) }
+								/>
+							) ) }
+						</UnstableSortableGroup>
+					</UnstableSortable>
 				</TableBody>
 			</Table>
 		</TableContainer>

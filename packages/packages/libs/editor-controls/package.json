@@ -53,7 +53,7 @@
     "@elementor/events": "4.1.0",
     "@elementor/query": "4.1.0",
     "@elementor/session": "4.1.0",
-    "@elementor/ui": "1.36.17",
+    "@elementor/ui": "1.38.0",
     "@elementor/utils": "4.1.0",
     "@elementor/wp-media": "4.1.0",
     "@wordpress/i18n": "^5.13.0",

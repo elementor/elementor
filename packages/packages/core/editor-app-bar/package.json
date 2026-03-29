@@ -50,7 +50,7 @@
     "@elementor/locations": "4.1.0",
     "@elementor/menus": "4.1.0",
     "@elementor/events": "4.1.0",
-    "@elementor/ui": "1.36.17",
+    "@elementor/ui": "1.38.0",
     "@wordpress/i18n": "^5.13.0"
   },
   "devDependencies": {
