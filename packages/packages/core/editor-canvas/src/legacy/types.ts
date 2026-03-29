@@ -1,6 +1,6 @@
+import { type Root } from 'react-dom/client';
 import { type V1Element } from '@elementor/editor-elements';
 import { type Props, type PropValue } from '@elementor/editor-props';
-import { Root } from 'react-dom/client';
 
 export type RenderContext< T = unknown > = Record< string, T >;
 
