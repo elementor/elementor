@@ -78,7 +78,7 @@ export function walkDownOverridesChain( {
 	}
 
 	// Collect overrides from this level, translating keys for exposed-further props.
-	const mergedOverrides = collectOverridesFromLevel( overridesMapping, overrides ?? [] );
+	const mergedOverrides = buildOverridesMap( overridesMapping, overrides ?? [] );
 
 	// Find the overridable-override that matches the upper overridable prop's key,
 	// to get the next level's overridable prop.
@@ -106,7 +106,8 @@ export function walkDownOverridesChain( {
 }
 
 /**
- * Collects overrides from an intermediate instance level into the accumulated mapping.
+ * Builds overrides map from instances chain:
+ * At each level, we collect overrides from the current instance and merge them with the overrides from the upper levels.
  *
  * For exposed-further overrides (overridable wrapping an override), we have outer key (overridable's) and inner key (override's).
  * If a higher level already set a value for the outer key, that value is carried forward to the inner key
@@ -117,7 +118,7 @@ export function walkDownOverridesChain( {
  * @param existing       - Previously accumulated overrides from upper levels.
  * @param levelOverrides - The overrides array from the current level instance.
  */
-export function collectOverridesFromLevel(
+export function buildOverridesMap(
 	existing: OverridesMapping,
 	levelOverrides: ComponentInstanceOverride[]
 ): OverridesMapping {
