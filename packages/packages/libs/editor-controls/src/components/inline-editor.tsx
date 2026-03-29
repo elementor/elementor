@@ -1,12 +1,5 @@
 import * as React from 'react';
-import {
-	type DependencyList,
-	type Dispatch,
-	type RefObject,
-	type SetStateAction,
-	useEffect,
-	useRef,
-} from 'react';
+import { type DependencyList, type Dispatch, type RefObject, type SetStateAction, useEffect, useRef } from 'react';
 import { Box, type SxProps, type Theme } from '@elementor/ui';
 import Bold from '@tiptap/extension-bold';
 import Document from '@tiptap/extension-document';
