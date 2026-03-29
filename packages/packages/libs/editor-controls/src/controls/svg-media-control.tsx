@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
-import { imageSrcPropTypeUtil } from '@elementor/editor-props';
+import { svgSrcPropTypeUtil, urlPropTypeUtil } from '@elementor/editor-props';
 import { UploadIcon } from '@elementor/icons';
 import { Button, Card, CardMedia, CardOverlay, CircularProgress, Stack, styled, ThemeProvider } from '@elementor/ui';
 import { type OpenOptions, useWpMediaAttachment, useWpMediaFrame } from '@elementor/wp-media';
@@ -43,8 +43,9 @@ const MODE_BROWSE: OpenOptions = { mode: 'browse' };
 const MODE_UPLOAD: OpenOptions = { mode: 'upload' };
 
 export const SvgMediaControl = createControl( () => {
-	const { value, setValue } = useBoundProp( imageSrcPropTypeUtil );
-	const { id, url } = value ?? {};
+	const { value, setValue } = useBoundProp( svgSrcPropTypeUtil );
+	const id = value?.id;
+	const url = value?.url;
 	const { data: attachment, isFetching } = useWpMediaAttachment( id?.value || null );
 	const src = attachment?.url ?? url?.value ?? null;
 	const { data: allowSvgUpload } = useUnfilteredFilesUpload();
@@ -61,7 +62,7 @@ export const SvgMediaControl = createControl( () => {
 					$$type: 'image-attachment-id',
 					value: selectedAttachment.id,
 				},
-				url: null,
+				url: urlPropTypeUtil.create( selectedAttachment.url ),
 			} );
 		},
 	} );

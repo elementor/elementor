@@ -34,6 +34,9 @@ jobs:
     outputs:
       PACKAGE_VERSION: ${{ steps.output-data.outputs.PACKAGE_VERSION }}
       PACKAGE_TAG: ${{ steps.output-data.outputs.PACKAGE_TAG }}
+      CLEAN_PACKAGE_VERSION: ${{ steps.output-data.outputs.CLEAN_PACKAGE_VERSION }}
+      VERSION_SUFFIX: ${{ steps.output-data.outputs.VERSION_SUFFIX }}
+      NPM_TAG: ${{ steps.output-data.outputs.NPM_TAG }}
     steps:
       - name: Check if Custom Core was executed
         if: github.event.inputs.custom_core_executed == 'false'
@@ -210,14 +213,26 @@ jobs:
         run: |
           echo "PACKAGE_VERSION=${{ env.PACKAGE_VERSION }}" >> $GITHUB_OUTPUT
           echo "PACKAGE_TAG=${{ steps.package-tag.outputs.tag }}" >> $GITHUB_OUTPUT
+          echo "CLEAN_PACKAGE_VERSION=${{ env.CLEAN_PACKAGE_VERSION }}" >> $GITHUB_OUTPUT
+
+          if [ "${{ env.CHANNEL }}" == "ga" ]; then
+            echo "VERSION_SUFFIX=" >> $GITHUB_OUTPUT
+            echo "NPM_TAG=latest" >> $GITHUB_OUTPUT
+          else
+            VERSION_SUFFIX="${{ env.PACKAGE_VERSION }}"
+            VERSION_SUFFIX="${VERSION_SUFFIX#${{ env.CLEAN_PACKAGE_VERSION }}-}"
+            echo "VERSION_SUFFIX=${VERSION_SUFFIX}" >> $GITHUB_OUTPUT
+            echo "NPM_TAG=${{ env.CHANNEL }}" >> $GITHUB_OUTPUT
+          fi
 
   publish-packages:
     needs: release
     if: github.event.inputs.dry_run == 'false'
     uses: ./.github/workflows/publish-packages.yml
     with:
-      version: ${{ needs.release.outputs.PACKAGE_VERSION }}
-      tag: ${{ needs.release.outputs.PACKAGE_TAG }}
+      version: ${{ needs.release.outputs.CLEAN_PACKAGE_VERSION }}
+      version_suffix: ${{ needs.release.outputs.VERSION_SUFFIX }}
+      tag: ${{ needs.release.outputs.NPM_TAG }}
     secrets:
       NPMJS_CLOUD_DEVOPS_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
       MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useId, useRef, useState } from 'react';
+import { useId, useMemo, useRef, useState } from 'react';
 import { enqueueFont, ItemSelector, useFontFamilies } from '@elementor/editor-controls';
 import { useSectionWidth } from '@elementor/editor-ui';
 import { ChevronDownIcon, TextIcon } from '@elementor/icons';
@@ -26,7 +26,7 @@ export const FontField = ( { value, onChange, onValidationChange }: FontFieldPro
 	const fontFamilies = useFontFamilies();
 	const sectionWidth = useSectionWidth();
 
-	const mapFontSubs = React.useMemo( () => {
+	const mapFontSubs = useMemo( () => {
 		return fontFamilies.map( ( { label, fonts } ) => ( {
 			label,
 			items: fonts,
