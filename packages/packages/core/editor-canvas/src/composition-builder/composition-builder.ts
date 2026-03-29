@@ -5,6 +5,7 @@ import {
 	getContainer,
 	getWidgetsCache,
 	type V1Element,
+	type V1ElementConfig,
 } from '@elementor/editor-elements';
 import { type z } from '@elementor/schema';
 
@@ -84,7 +85,7 @@ export class CompositionBuilder {
 
 	private buildModelTree(
 		node: Element,
-		widgetsCache: Record< string, { elType?: string } >
+		widgetsCache: Record< string, V1ElementConfig >
 	): Record< string, unknown > {
 		const elementTag = node.tagName;
 		const isWidget = widgetsCache[ elementTag ]?.elType === 'widget';
@@ -116,10 +117,7 @@ export class CompositionBuilder {
 		}
 	}
 
-	private validateChildTypes(
-		node: Element,
-		widgetsCache: Record< string, { allowed_child_types?: string[] } >
-	): string[] {
+	private validateChildTypes( node: Element, widgetsCache: Record< string, V1ElementConfig > ): string[] {
 		const errors: string[] = [];
 		const allowedChildTypes = widgetsCache[ node.tagName ]?.allowed_child_types;
 
