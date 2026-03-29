@@ -1,3 +1,4 @@
+import { type Root } from 'react-dom/client';
 import { type V1Element } from '@elementor/editor-elements';
 import { type Props, type PropValue } from '@elementor/editor-props';
 
@@ -241,4 +242,6 @@ export type ReplacementSettings = {
 	id: string;
 	element: HTMLElement;
 	refreshView: () => void;
+	reactRoot: Root;
+	reactContainer: HTMLElement;
 };
