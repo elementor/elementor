@@ -1,5 +1,9 @@
 {
-  "widgetKeys": {},
+  "widgetKeys": {
+    "e-form-submit-button": [
+      { "from": "label", "to": "text" }
+    ]
+  },
   "propTypes": {
     "string-to-html": {
       "fromType": "string",
