@@ -468,5 +468,4 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION
 		);
 	}
-
 }
