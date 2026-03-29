@@ -31,8 +31,8 @@ export function filterValidOverridableProps(
 
 export function isExposedPropValid( prop: OverridableProp, instanceElementId?: string ): boolean {
 	const { isChainBroken } = resolveOverridesChain( {
-		upperLevelOverridableProp: prop,
-		upperInstanceId: instanceElementId,
+		outerOverridableProp: prop,
+		outerInstanceId: instanceElementId,
 	} );
 
 	return ! isChainBroken;
