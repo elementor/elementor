@@ -4,6 +4,7 @@ namespace Elementor\Core\Common\Modules\EventsManager;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
+use Elementor\Core\Common\Modules\Connect\Apps\Common_App;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Utils;
@@ -51,6 +52,7 @@ class Module extends BaseModule {
 			'subscription' => self::get_subscription(),
 			'token' => ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN,
 			'flags_enabled' => $is_flags_enabled,
+			'user_id' => self::get_user_id(),
 		];
 
 		return $settings;
@@ -98,5 +100,15 @@ class Module extends BaseModule {
 		] );
 
 		return $editor_assets_api->get_assets_data();
+	}
+
+	private static function get_user_id() {
+		$user_common_data = get_user_option( Common_App::OPTION_CONNECT_COMMON_DATA_KEY );
+
+		if ( ! is_array( $user_common_data ) ) {
+			return null;
+		}
+
+		return Common_App::get_connect_user_id_from_access_token( $user_common_data['access_token'] ?? null );
 	}
 }

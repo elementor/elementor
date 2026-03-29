@@ -5,7 +5,6 @@ import {
 	getKeyframes,
 	getTransformBaselineFromComputedStyle,
 	preserveTransformKeyframes,
-	isFreeFrontendSupportedTrigger,
 	skipInteraction,
 	extractAnimationConfig,
 	getAnimateFunction,
@@ -88,11 +87,7 @@ function processElementInteractions( element, interactions, animateFunc, inViewF
 	interactions.forEach( ( interaction ) => {
 		const animConfig = extractAnimationConfig( interaction );
 
-		if (
-			animConfig &&
-			! skipInteraction( animConfig ) &&
-			isFreeFrontendSupportedTrigger( animConfig.trigger )
-		) {
+		if ( animConfig && ! skipInteraction( animConfig ) ) {
 			applyAnimation( element, animConfig, animateFunc, inViewFunc );
 		}
 	} );
