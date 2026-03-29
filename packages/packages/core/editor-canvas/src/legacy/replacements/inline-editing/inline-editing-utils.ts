@@ -43,6 +43,7 @@ export const INLINE_EDITING_PROPERTY_PER_TYPE: Record< string, string > = {
 	'e-form-label': 'text',
 	'e-heading': 'title',
 	'e-paragraph': 'paragraph',
+	'e-form-submit-button': 'text',
 };
 
 export const legacyWindow = window as unknown as LegacyWindow;
