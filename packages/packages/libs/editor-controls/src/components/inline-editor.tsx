@@ -184,7 +184,7 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 	}
 
 	return (
-		<Box ref={ containerRef } { ...sx } className={ wrapperClassName }>
+		<Box ref={ containerRef } sx={ sx } className={ wrapperClassName }>
 			<EditorContent ref={ ref } editor={ editor } />
 		</Box>
 	);
