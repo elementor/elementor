@@ -7,6 +7,7 @@ export * from './flex';
 export * from './image';
 export * from './image-attachment-id';
 export * from './image-src';
+export * from './svg-src';
 export * from './video-attachment-id';
 export * from './video-src';
 export * from './dimensions';
