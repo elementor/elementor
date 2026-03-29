@@ -462,16 +462,9 @@ class Module extends BaseModule {
 		}
 
 		wp_enqueue_style(
-			'elementor-atomic-widgets-promotion-fonts',
-			'https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap',
-			[],
-			ELEMENTOR_VERSION
-		);
-
-		wp_enqueue_style(
 			'elementor-atomic-widgets-promotion',
 			$this->get_css_assets_url( 'modules/atomic-widgets/editor' ),
-			[ 'elementor-atomic-widgets-promotion-fonts' ],
+			[],
 			ELEMENTOR_VERSION
 		);
 	}
