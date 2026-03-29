@@ -39,6 +39,8 @@ class Module extends BaseModule {
 
 		// TODO: When the `e_atomic_elements` feature is not hidden, add it as a dependency
 		if ( $is_feature_active && $is_atomic_widgets_active ) {
+			( new Global_Class_Post_Type() )->register();
+
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 
 			( new Global_Classes_Usage() )->register_hooks();
