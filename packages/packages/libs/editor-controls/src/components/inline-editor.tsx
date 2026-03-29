@@ -2,7 +2,6 @@ import * as React from 'react';
 import {
 	type DependencyList,
 	type Dispatch,
-	type PropsWithChildren,
 	type RefObject,
 	type SetStateAction,
 	useEffect,
@@ -44,12 +43,6 @@ type InlineEditorProps = {
 	onSelectionEnd?: ( view: EditorView ) => void;
 	mountElement?: HTMLElement | null;
 };
-
-type WrapperProps = PropsWithChildren< {
-	containerRef: RefObject< HTMLDivElement >;
-	sx: SxProps< Theme >;
-	className?: string;
-} >;
 
 export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) => {
 	const {
@@ -191,19 +184,11 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 	}
 
 	return (
-		<>
-			<Wrapper containerRef={ containerRef } sx={ sx } className={ wrapperClassName }>
-				<EditorContent ref={ ref } editor={ editor } />
-			</Wrapper>
-		</>
+		<Box ref={ containerRef } { ...sx } className={ wrapperClassName }>
+			<EditorContent ref={ ref } editor={ editor } />
+		</Box>
 	);
 } );
-
-const Wrapper = ( { children, containerRef, sx, className }: WrapperProps ) => (
-	<Box ref={ containerRef } { ...sx } className={ className }>
-		{ children }
-	</Box>
-);
 
 const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void => {
 	const hasMounted = useRef( false );
