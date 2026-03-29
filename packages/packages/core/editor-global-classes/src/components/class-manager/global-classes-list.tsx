@@ -47,10 +47,9 @@ export const GlobalClassesList = ( { disabled, onStopSyncRequest, onStartSyncReq
 				dispatch( slice.actions.undo() );
 			}
 		};
-		window.addEventListener( 'keydown', handler, {
-			capture: true,
-		} );
-		return () => window.removeEventListener( 'keydown', handler );
+		const keydownListenerOptions = { capture: true as const };
+		window.addEventListener( 'keydown', handler, keydownListenerOptions );
+		return () => window.removeEventListener( 'keydown', handler, keydownListenerOptions );
 	}, [ dispatch ] );
 
 	if ( ! cssClasses?.length ) {

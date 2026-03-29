@@ -609,6 +609,24 @@ describe( 'GlobalClassesList', () => {
 		expect( triggers ).toHaveLength( 0 );
 		expect( mockTracking ).not.toHaveBeenCalled();
 	} );
+
+	it( 'removes the capture keydown listener on unmount', () => {
+		const removeListenerSpy = jest.spyOn( window, 'removeEventListener' );
+
+		mockClasses( [ { id: 'class-1', label: 'Class 1' } ] );
+
+		const { unmount } = renderWithStore( <GlobalClassesList />, store );
+
+		unmount();
+
+		expect( removeListenerSpy ).toHaveBeenCalledWith(
+			'keydown',
+			expect.any( Function ),
+			expect.objectContaining( { capture: true } )
+		);
+
+		removeListenerSpy.mockRestore();
+	} );
 } );
 
 const mockClasses = ( classes: Pick< StyleDefinition, 'id' | 'label' >[] ) => {
