@@ -1,24 +1,4 @@
-import { getWidgetsCache } from '@elementor/editor-elements';
 import { toolPrompts } from '@elementor/editor-mcp';
-
-function generateChildTypeConstraints(): string {
-	const widgetsCache = getWidgetsCache() || {};
-	const lines: string[] = [];
-
-	for ( const [ elementType, config ] of Object.entries( widgetsCache ) ) {
-		const allowedTypes = ( config as Record< string, unknown > ).allowed_child_types as string[] | undefined;
-		if ( ! allowedTypes?.length ) {
-			continue;
-		}
-		lines.push(
-			`- \`${ elementType }\` ONLY accepts these children: ${ allowedTypes
-				.map( ( t ) => `\`${ t }\`` )
-				.join( ', ' ) }`
-		);
-	}
-
-	return lines.length ? `\nChild type restrictions (violations will throw errors):\n${ lines.join( '\n' ) }\n` : '';
-}
 
 export const generatePrompt = () => {
 	const buildCompositionsToolPrompt = toolPrompts( 'build-compositions' );
@@ -39,58 +19,11 @@ export const generatePrompt = () => {
 - Every element needs unique "configuration-id"
 - No attributes, classes, IDs, or text nodes in XML
 
-## COMPOUND ELEMENTS
-Some elements have an internal tree structure. You must build the FULL tree in XML.
-
-**e-tabs** — Tabbed content with trigger buttons and panels.
-Required tree structure:
-\`\`\`
-e-tabs
-  e-tabs-menu (locked container for tab triggers)
-    e-tab (one per tab — contains the tab label widget)
-      e-paragraph (tab label text)
-    e-tab ...
-  e-tabs-content-area (locked container for panels)
-    e-tab-content (one per tab — holds the panel content)
-      ...any widgets...
-    e-tab-content ...
-\`\`\`
-
-${ generateChildTypeConstraints() }
-- Number of \`e-tab\` MUST equal number of \`e-tab-content\`
-- \`e-tab\` contains a single \`e-paragraph\` for the label text
-- Inside \`e-tab-content\`, any widget is allowed
-
-Example — 3-tab layout:
-\`\`\`xml
-<e-tabs configuration-id="Product Tabs">
-  <e-tabs-menu configuration-id="Tab Menu">
-    <e-tab configuration-id="Features Tab">
-      <e-paragraph configuration-id="Features Tab Label"></e-paragraph>
-    </e-tab>
-    <e-tab configuration-id="Pricing Tab">
-      <e-paragraph configuration-id="Pricing Tab Label"></e-paragraph>
-    </e-tab>
-    <e-tab configuration-id="FAQ Tab">
-      <e-paragraph configuration-id="FAQ Tab Label"></e-paragraph>
-    </e-tab>
-  </e-tabs-menu>
-  <e-tabs-content-area configuration-id="Content Area">
-    <e-tab-content configuration-id="Features Panel">
-      <e-heading configuration-id="Features Heading"></e-heading>
-      <e-paragraph configuration-id="Features Text"></e-paragraph>
-    </e-tab-content>
-    <e-tab-content configuration-id="Pricing Panel">
-      <e-heading configuration-id="Pricing Heading"></e-heading>
-      <e-paragraph configuration-id="Pricing Text"></e-paragraph>
-    </e-tab-content>
-    <e-tab-content configuration-id="FAQ Panel">
-      <e-heading configuration-id="FAQ Heading"></e-heading>
-      <e-paragraph configuration-id="FAQ Text"></e-paragraph>
-    </e-tab-content>
-  </e-tabs-content-area>
-</e-tabs>
-\`\`\`
+## NESTED ELEMENTS
+Some elements have internal tree structures (nesting). When using these elements, you MUST build the FULL tree in XML.
+- Check \`llm_guidance.nesting\` in widget schemas for structure requirements
+- \`allowed_child_types\` lists which element types can be nested inside
+- \`allowed_parents\` lists which element types this element can be placed inside
 
 # CONFIGURATION
 - Map configuration-id → elementConfig (props) + stylesConfig (layout only)

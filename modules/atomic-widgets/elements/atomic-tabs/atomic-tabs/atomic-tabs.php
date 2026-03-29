@@ -1,8 +1,10 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs;
 
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -37,7 +39,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 	const ELEMENT_TYPE_TAB = 'e-tab';
 	const ELEMENT_TYPE_TAB_CONTENT = 'e-tab-content';
 
-	public static $widget_description = 'Create a tabbed interface with customizable tabs and content areas. Structure: e-tabs contains e-tabs-menu (with e-tab triggers) and e-tabs-content-area (with e-tab-content panels). Each e-tab at index N is paired with the e-tab-content at index N.';
+	public static $widget_description = 'Create a tabbed interface with customizable tabs and content areas. Structure: e-tabs contains e-tabs-menu (with e-tab triggers) and e-tabs-content-area (with e-tab-content panels). The number of e-tab elements MUST equal the number of e-tab-content elements. Each e-tab at index N is paired with the e-tab-content at index N.';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
