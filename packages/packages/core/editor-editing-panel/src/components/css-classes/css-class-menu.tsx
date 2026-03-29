@@ -179,10 +179,12 @@ function getMenuItemsByProvider( {
 	const providerActions = providerInstance?.actions;
 
 	const canUpdate = providerActions?.update;
+	const canDuplicate = providerActions?.create && providerActions?.get;
 	const canUnapply = ! fixed;
 
 	const actions = [
 		canUpdate && <RenameClassMenuItem key="rename-class" closeMenu={ closeMenu } />,
+		canDuplicate && <DuplicateClassMenuItem key="duplicate-class" closeMenu={ closeMenu } />,
 		canUnapply && <UnapplyClassMenuItem key="unapply-class" closeMenu={ closeMenu } />,
 	].filter( Boolean );
 
@@ -307,6 +309,72 @@ function RenameClassMenuItem( { closeMenu }: { closeMenu: () => void } ) {
 				) }
 			>
 				{ __( 'Rename', 'elementor' ) }
+			</MenuItemInfotip>
+		</MenuListItem>
+	);
+}
+
+function getUniqueDuplicateLabel( originalLabel: string, existingLabels: string[] ): string {
+	let newLabel = `Copy of ${ originalLabel }`;
+	let counter = 2;
+	while ( existingLabels.includes( newLabel ) ) {
+		newLabel = `Copy of ${ originalLabel } (${ counter })`;
+		counter++;
+	}
+	return newLabel;
+}
+
+function DuplicateClassMenuItem( { closeMenu }: { closeMenu: () => void } ) {
+	const { id: classId, provider } = useCssClass();
+	const { userCan } = useUserStylesCapability();
+
+	if ( ! provider || ! classId ) {
+		return null;
+	}
+
+	const providerInstance = stylesRepository.getProviderByKey( provider );
+	const createAction = providerInstance?.actions.create;
+	const getAction = providerInstance?.actions.get;
+
+	if ( ! createAction || ! getAction ) {
+		return null;
+	}
+
+	const isAllowed = userCan( provider ).create;
+
+	return (
+		<MenuListItem
+			disabled={ ! isAllowed }
+			onClick={ () => {
+				if ( ! isAllowed ) {
+					return;
+				}
+				const styleDef = getAction( classId );
+				if ( ! styleDef ) {
+					closeMenu();
+					return;
+				}
+				const existingLabels = providerInstance.actions.all().map( ( style ) => style.label );
+				const newLabel = getUniqueDuplicateLabel( styleDef.label, existingLabels );
+				const newId = createAction( newLabel, styleDef.variants );
+				if ( newId ) {
+					trackStyles( provider, 'classCreated', {
+						classId: newId,
+						source: 'created',
+						classTitle: newLabel,
+					} );
+				}
+				closeMenu();
+			} }
+		>
+			<MenuItemInfotip
+				showInfoTip={ ! isAllowed }
+				content={ __(
+					'With your current role, you can use existing classes but can’t modify them.',
+					'elementor'
+				) }
+			>
+				{ __( 'Duplicate', 'elementor' ) }
 			</MenuItemInfotip>
 		</MenuListItem>
 	);

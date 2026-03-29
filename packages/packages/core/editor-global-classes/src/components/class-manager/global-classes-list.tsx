@@ -1,10 +1,13 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
+import { useUserStylesCapability } from '@elementor/editor-styles-repository';
 import { __useDispatch as useDispatch } from '@elementor/store';
 import { List, Stack, styled, Typography, type TypographyProps } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { duplicateGlobalClass } from '../../duplicate-global-class';
+import { globalClassesStylesProvider } from '../../global-classes-styles-provider';
 import { useClassesOrder } from '../../hooks/use-classes-order';
 import { useFilters } from '../../hooks/use-filters';
 import { useOrderedClasses } from '../../hooks/use-ordered-classes';
@@ -29,6 +32,8 @@ export const GlobalClassesList = ( { disabled, onStopSyncRequest, onStartSyncReq
 	} = useSearchAndFilters();
 	const cssClasses = useOrderedClasses();
 	const dispatch = useDispatch();
+	const { userCan } = useUserStylesCapability();
+	const canDuplicateClass = userCan( globalClassesStylesProvider.getKey() ).create;
 	const filters = useFilters();
 	const [ draggedItemId, setDraggedItemId ] = useState< StyleDefinitionID | null >( null );
 	const draggedItemLabel = cssClasses.find( ( cssClass ) => cssClass.id === draggedItemId )?.label ?? '';
@@ -85,6 +90,7 @@ export const GlobalClassesList = ( { disabled, onStopSyncRequest, onStartSyncReq
 									<ClassItem
 										id={ cssClass.id }
 										label={ cssClass.label }
+										duplicateClass={ canDuplicateClass ? duplicateGlobalClass : undefined }
 										renameClass={ ( newLabel: string ) => {
 											trackGlobalClasses( {
 												event: 'classRenamed',
