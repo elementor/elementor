@@ -1,7 +1,8 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { setupElementorMocks, cleanupElementorMocks, ElementorMockSetup } from 'mocks/elementorMocks';
+import { cleanupElementorMocks, type ElementorMockSetup, setupElementorMocks } from 'mocks/elementorMocks';
+import { type McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 const mockConsoleLog = jest.fn();
+// eslint-disable-next-line no-console
 console.log = mockConsoleLog;
 
 describe( 'page-tool.ts - Save Changes Suggestions', () => {
@@ -22,8 +23,7 @@ describe( 'page-tool.ts - Save Changes Suggestions', () => {
 			writable: true,
 			configurable: true,
 		} );
-
-} );
+	} );
 
 	afterEach( () => {
 		cleanupElementorMocks();
@@ -58,8 +58,12 @@ describe( 'page-tool.ts - Save Changes Suggestions', () => {
 			expect( result.content[ 0 ].type ).toBe( 'text' );
 			const response = JSON.parse( result.content[ 0 ].text );
 
-			expect( response.saveChangesSuggestion ).toBe( 'Suggest the following quick user replies: "Publish Changes", "Save Draft"' );
-			expect( response.nextStep ).toBe( 'Page settings updated in editor. User should save the page to persist changes.' );
+			expect( response.saveChangesSuggestion ).toBe(
+				'Suggest the following quick user replies: "Publish Changes", "Save Draft"'
+			);
+			expect( response.nextStep ).toBe(
+				'Page settings updated in editor. User should save the page to persist changes.'
+			);
 			expect( response.message ).toContain( 'Document settings updated successfully' );
 		} );
 
@@ -118,7 +122,9 @@ describe( 'page-tool.ts - Save Changes Suggestions', () => {
 			};
 
 			// Act & Assert
-			await expect( toolHandler( params ) ).rejects.toThrow( 'settings object is required for update-settings action' );
+			await expect( toolHandler( params ) ).rejects.toThrow(
+				'settings object is required for update-settings action'
+			);
 		} );
 	} );
 } );

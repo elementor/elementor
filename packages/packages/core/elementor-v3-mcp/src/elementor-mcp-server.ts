@@ -87,7 +87,7 @@ export async function createElementorServer(): Promise< McpServer > {
 	addAiTool( server );
 	addStylingTool( server );
 
-const sdk = getAngieSdk();
+	const sdk = getAngieSdk();
 	await sdk.waitForReady();
 	sdk.registerLocalServer( { server, version: VERSION, description: SERVER_INSTRUCTIONS, name: 'Elementor' } );
 

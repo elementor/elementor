@@ -1,5 +1,9 @@
-import { validateDocumentSettingsUpdated, validateDynamicTagEnabled, validateDynamicTagDisabled } from '../validation-helpers';
 import type { ElementorContainer } from '../types';
+import {
+	validateDocumentSettingsUpdated,
+	validateDynamicTagDisabled,
+	validateDynamicTagEnabled,
+} from '../validation-helpers';
 
 describe( 'Elementor Validation Helpers', () => {
 	describe( 'validateDocumentSettingsUpdated', () => {
@@ -50,7 +54,9 @@ describe( 'Elementor Validation Helpers', () => {
 				},
 			} as unknown as ElementorContainer;
 
-			expect( () => validateDynamicTagEnabled( container, 'test_control' ) ).toThrow( 'Dynamic tag enable failed' );
+			expect( () => validateDynamicTagEnabled( container, 'test_control' ) ).toThrow(
+				'Dynamic tag enable failed'
+			);
 		} );
 	} );
 
@@ -82,7 +88,9 @@ describe( 'Elementor Validation Helpers', () => {
 				},
 			} as unknown as ElementorContainer;
 
-			expect( () => validateDynamicTagDisabled( container, 'test_control' ) ).toThrow( 'Dynamic tag disable failed' );
+			expect( () => validateDynamicTagDisabled( container, 'test_control' ) ).toThrow(
+				'Dynamic tag disable failed'
+			);
 		} );
 	} );
 } );

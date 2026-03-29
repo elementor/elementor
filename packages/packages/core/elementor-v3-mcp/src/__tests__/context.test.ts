@@ -1,5 +1,6 @@
+import { cleanupElementorMocks, type ElementorMockSetup, setupElementorMocks } from 'mocks/elementorMocks';
+
 import { getElementSchema } from '../context';
-import { setupElementorMocks, cleanupElementorMocks, ElementorMockSetup } from 'mocks/elementorMocks';
 
 describe( 'context.ts', () => {
 	let elementorMocks: ElementorMockSetup;
@@ -47,7 +48,7 @@ describe( 'context.ts', () => {
 		} );
 
 		it( 'should filter out undefined values from control schema', () => {
-			( elementorMocks.mockElementor as unknown as { widgetsCache: Record<string, unknown> } ).widgetsCache = {
+			( elementorMocks.mockElementor as unknown as { widgetsCache: Record< string, unknown > } ).widgetsCache = {
 				minimal: {
 					controls: {
 						basic_control: {
@@ -75,7 +76,7 @@ describe( 'context.ts', () => {
 
 		describe( 'deepmerge behavior', () => {
 			it( 'should merge global config controls with widget-specific controls', () => {
-				( elementorMocks.mockElementor as unknown as { config: Record<string, unknown> } ).config = {
+				( elementorMocks.mockElementor as unknown as { config: Record< string, unknown > } ).config = {
 					controls: {
 						size: {
 							default: 10,
@@ -84,7 +85,9 @@ describe( 'context.ts', () => {
 					},
 				};
 
-				( elementorMocks.mockElementor as unknown as { widgetsCache: Record<string, unknown> } ).widgetsCache = {
+				(
+					elementorMocks.mockElementor as unknown as { widgetsCache: Record< string, unknown > }
+				 ).widgetsCache = {
 					custom_widget: {
 						controls: {
 							number: {
@@ -107,7 +110,7 @@ describe( 'context.ts', () => {
 			} );
 
 			it( 'should allow widget-specific controls to override global config properties', () => {
-				( elementorMocks.mockElementor as unknown as { config: Record<string, unknown> } ).config = {
+				( elementorMocks.mockElementor as unknown as { config: Record< string, unknown > } ).config = {
 					controls: {
 						text: {
 							type: 'text',
@@ -117,7 +120,9 @@ describe( 'context.ts', () => {
 					},
 				};
 
-				( elementorMocks.mockElementor as unknown as { widgetsCache: Record<string, unknown> } ).widgetsCache = {
+				(
+					elementorMocks.mockElementor as unknown as { widgetsCache: Record< string, unknown > }
+				 ).widgetsCache = {
 					custom_widget: {
 						controls: {
 							title: {
@@ -141,7 +146,7 @@ describe( 'context.ts', () => {
 			} );
 
 			it( 'should merge nested object properties from global config', () => {
-				( elementorMocks.mockElementor as unknown as { config: Record<string, unknown> } ).config = {
+				( elementorMocks.mockElementor as unknown as { config: Record< string, unknown > } ).config = {
 					controls: {
 						slider: {
 							type: 'slider',
@@ -155,7 +160,9 @@ describe( 'context.ts', () => {
 					},
 				};
 
-				( elementorMocks.mockElementor as unknown as { widgetsCache: Record<string, unknown> } ).widgetsCache = {
+				(
+					elementorMocks.mockElementor as unknown as { widgetsCache: Record< string, unknown > }
+				 ).widgetsCache = {
 					custom_widget: {
 						controls: {
 							my_slider: {
@@ -180,7 +187,7 @@ describe( 'context.ts', () => {
 			} );
 
 			it( 'should merge options from global config with widget options', () => {
-				( elementorMocks.mockElementor as unknown as { config: Record<string, unknown> } ).config = {
+				( elementorMocks.mockElementor as unknown as { config: Record< string, unknown > } ).config = {
 					controls: {
 						select: {
 							type: 'select',
@@ -192,7 +199,9 @@ describe( 'context.ts', () => {
 					},
 				};
 
-				( elementorMocks.mockElementor as unknown as { widgetsCache: Record<string, unknown> } ).widgetsCache = {
+				(
+					elementorMocks.mockElementor as unknown as { widgetsCache: Record< string, unknown > }
+				 ).widgetsCache = {
 					custom_widget: {
 						controls: {
 							my_select: {
@@ -219,7 +228,7 @@ describe( 'context.ts', () => {
 			} );
 
 			it( 'should deeply merge repeater fields with global config', () => {
-				( elementorMocks.mockElementor as unknown as { config: Record<string, unknown> } ).config = {
+				( elementorMocks.mockElementor as unknown as { config: Record< string, unknown > } ).config = {
 					controls: {
 						repeater: {
 							type: 'repeater',
@@ -228,7 +237,9 @@ describe( 'context.ts', () => {
 					},
 				};
 
-				( elementorMocks.mockElementor as unknown as { widgetsCache: Record<string, unknown> } ).widgetsCache = {
+				(
+					elementorMocks.mockElementor as unknown as { widgetsCache: Record< string, unknown > }
+				 ).widgetsCache = {
 					custom_widget: {
 						controls: {
 							items: {

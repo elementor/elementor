@@ -98,8 +98,9 @@ async function handleGetDynamicSettings( params: ToolParams ): Promise< McpToolR
 		throw new Error( 'Dynamic tags API is not available.' );
 	}
 
-	const relevantTags = Object.values( dynamicTags.getConfig( 'tags' ) ).filter( ( tag: { categories: string[] } ) =>
-		tag.categories.find( ( category: string ) => categories.includes( category ) )
+	const tags = dynamicTags.getConfig( 'tags' ) as Record< string, { categories: string[] } >;
+	const relevantTags = Object.values( tags ).filter( ( tag ) =>
+		tag.categories.find( ( category ) => categories.includes( category ) )
 	);
 
 	return {

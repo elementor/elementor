@@ -28,7 +28,7 @@ export async function updateRepeaterControl(
 		Object.keys( repeaterModel ).forEach( ( fieldKey ) => {
 			itemModel[ fieldKey ] = val[ fieldKey ] ?? repeaterModel[ fieldKey ];
 		} );
-		itemModel._id = window.elementorCommon?.helpers.getUniqueId();
+		itemModel._id = window.elementorCommon?.helpers?.getUniqueId?.();
 
 		window.$e?.run( 'document/repeater/insert', {
 			container,
@@ -109,27 +109,38 @@ export async function extractAndApplyGlobalStyles(
 		remainingSettings[ key ] = settings[ key ];
 	} );
 
-	if ( ! window.$e ) {
+	if ( ! window.$e?.data?.get ) {
 		return { globalStyles, remainingSettings };
 	}
 
-	const globalColors = await window.$e.data.get( 'globals/colors' );
-	const globalTypography = await window.$e.data.get( 'globals/typography' );
+	const globalColorsResult = ( await window.$e.data.get( 'globals/colors' ) ) as
+		| {
+				data: Record< string, { value: unknown } >;
+		  }
+		| undefined;
+	const globalTypographyResult = ( await window.$e.data.get( 'globals/typography' ) ) as
+		| {
+				data: Record< string, { value: unknown } >;
+		  }
+		| undefined;
+
+	const globalColors = globalColorsResult?.data ?? {};
+	const globalTypography = globalTypographyResult?.data ?? {};
 
 	const keysToRemove: string[] = [];
 
 	Object.keys( remainingSettings ).forEach( ( key ) => {
 		const value = remainingSettings[ key ];
 		if ( typeof value === 'string' && value ) {
-			if ( globalColors.data[ value ] || globalTypography.data[ value ] ) {
+			if ( globalColors[ value ] || globalTypography[ value ] ) {
 				globalStyles[ key ] = value;
 				keysToRemove.push( key );
 			} else {
-				const globalColorKey = Object.keys( globalColors.data ).find(
-					( globalKey ) => globalColors.data[ globalKey ]?.value === value
+				const globalColorKey = Object.keys( globalColors ).find(
+					( globalKey ) => globalColors[ globalKey ]?.value === value
 				);
-				const globalTypographyKey = Object.keys( globalTypography.data ).find( ( globalKey ) => {
-					const globalTypo = globalTypography.data[ globalKey ];
+				const globalTypographyKey = Object.keys( globalTypography ).find( ( globalKey ) => {
+					const globalTypo = globalTypography[ globalKey ];
 					return globalTypo && JSON.stringify( globalTypo.value ) === JSON.stringify( value );
 				} );
 
@@ -176,5 +187,5 @@ export function getElementType( elementId: string ): string {
 		throw new Error( `Container with ID ${ elementId } not found.` );
 	}
 
-	return ( container.model.attributes.widgetType ?? 'container' ) as string;
+	return ( container.model.attributes?.widgetType ?? 'container' ) as string;
 }

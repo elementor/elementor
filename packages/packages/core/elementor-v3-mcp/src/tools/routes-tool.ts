@@ -6,13 +6,13 @@ import { type McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { McpToolResult, ToolParams } from '../types';
 
 export function addRoutesTool( server: McpServer ): void {
-	const routes = window.$e?.routes.getAll() || [];
-	const components = window.$e?.components.getAll() || [];
+	const routes = window.$e?.routes?.getAll?.() || [];
+	const components = window.$e?.components?.getAll?.() || [];
 	const availableToOpenComponents = components.filter(
-		( component ) => window.$e?.components.get( component ).getCommands().open
+		( component ) => window.$e?.components?.get( component )?.getCommands?.()?.open
 	);
 	const availableToCloseComponents = components.filter(
-		( component ) => window.$e?.components.get( component ).getCommands().close
+		( component ) => window.$e?.components?.get( component )?.getCommands?.()?.close
 	);
 
 	server.registerTool(
@@ -61,7 +61,7 @@ export function addRoutesTool( server: McpServer ): void {
 
 async function handleOpen( params: ToolParams ): Promise< McpToolResult > {
 	const component = ( params.componentToOpen || params.route ) as string;
-	const openCommand = window.$e?.components.get( component )?.getCommands().open?.registerConfig.command;
+	const openCommand = window.$e?.components?.get( component )?.getCommands?.()?.open?.registerConfig.command;
 
 	if ( openCommand ) {
 		await window.$e?.run( openCommand, {} );
@@ -77,18 +77,21 @@ async function handleOpen( params: ToolParams ): Promise< McpToolResult > {
 async function handleNavigate( params: ToolParams ): Promise< McpToolResult > {
 	const route = params.route as string;
 	const componentToOpen = params.componentToOpen as string;
-	const openCommand = window.$e?.components.get( componentToOpen )?.getCommands().open?.registerConfig.command;
+	const openCommand = window.$e?.components?.get( componentToOpen )?.getCommands?.()?.open?.registerConfig.command;
 
 	if ( openCommand ) {
 		await window.$e?.run( openCommand, {} );
 	}
 
-	window.$e?.routes.saveState( window.$e?.routes.getComponent( route ).getNamespace() );
+	const routeComponent = window.$e?.routes?.getComponent?.( route );
+	if ( routeComponent ) {
+		window.$e?.routes?.saveState?.( routeComponent.getNamespace() );
+	}
 
 	try {
-		window.$e?.routes.to( route, {} );
+		window.$e?.routes?.to?.( route, {} );
 	} catch {
-		const openCommandFallback = window.$e?.components.get( route )?.getCommands().open?.registerConfig.command;
+		const openCommandFallback = window.$e?.components?.get( route )?.getCommands?.()?.open?.registerConfig.command;
 
 		if ( openCommandFallback ) {
 			await window.$e?.run( openCommandFallback, {} );
@@ -104,10 +107,10 @@ async function handleNavigate( params: ToolParams ): Promise< McpToolResult > {
 
 async function handleGoBack( params: ToolParams ): Promise< McpToolResult > {
 	const route = params.route as string;
-	const component = window.$e?.routes.getComponent( route );
+	const component = window.$e?.routes?.getComponent?.( route );
 
 	if ( component ) {
-		window.$e?.routes.back( component.getNamespace() );
+		window.$e?.routes?.back?.( component.getNamespace() );
 	}
 
 	return {
@@ -117,7 +120,7 @@ async function handleGoBack( params: ToolParams ): Promise< McpToolResult > {
 
 async function handleClose( params: ToolParams ): Promise< McpToolResult > {
 	const component = params.componentToClose as string;
-	const closeCommand = window.$e?.components.get( component )?.getCommands().close?.registerConfig.command;
+	const closeCommand = window.$e?.components?.get( component )?.getCommands?.()?.close?.registerConfig.command;
 
 	if ( closeCommand ) {
 		await window.$e?.run( closeCommand, {} );

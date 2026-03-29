@@ -46,13 +46,18 @@ export function getPageOverView(): {
 		}
 
 		const model = element.model.attributes;
+
+		if ( ! model ) {
+			return null;
+		}
+
 		const result: Record< string, unknown > = {
 			id: model.id,
 			elType: model.elType,
 			widgetType: model.widgetType || undefined,
 		};
 
-		const title = ( model.title as string ) || element.model?.editor_settings?.title;
+		const title = ( model.title as string ) || element.model.editor_settings?.title;
 
 		if ( title ) {
 			result.title = title;
@@ -67,13 +72,13 @@ export function getPageOverView(): {
 		return result;
 	}
 
-	const containers = document.container.children;
+	const containers = document.container.children ?? [];
 	const elements = containers.map( ( container: ElementorContainer ) => extractElementData( container ) );
 
 	return {
 		documentId: document.id,
-		documentType: document.config.type,
-		title: ( ( document.config.settings as Record< string, unknown > )?.post_title as string ) || 'Untitled',
+		documentType: document.config?.type ?? 'unknown',
+		title: ( ( document.config?.settings as Record< string, unknown > )?.post_title as string ) || 'Untitled',
 		elements: elements.filter( ( el ): el is Record< string, unknown > => el !== null ),
 	};
 }
@@ -164,32 +169,35 @@ function mapControlsToSchema( controlsData: ElementorControls ): ElementorContro
 }
 
 function getDocumentSchema( documentId: string ): ElementorControlsMapped | undefined {
-	const document = window.elementor?.documents.get( documentId );
+	const document = window.elementor?.documents?.get?.( documentId );
 	if ( ! document ) {
 		return;
 	}
 
-	const controls = document.config?.settings.controls;
+	const controls = document.config?.settings?.controls;
 	return mapControlsToSchema( controls as ElementorControls );
 }
 
 export function getElementSchema( type: string ): ElementorControlsMapped {
-	const controls = window.elementor?.widgetsCache[ type ]?.controls;
+	const controls = window.elementor?.widgetsCache?.[ type ]?.controls;
 	return mapControlsToSchema( controls as ElementorControls );
 }
 
 export function loadDocumentSettings( documentId: string ): Record< string, unknown > | undefined {
-	const document = window.elementor?.documents?.get( documentId );
+	const document = window.elementor?.documents?.get?.( documentId );
 	if ( ! document ) {
 		return;
 	}
 
-	const allSettings = document.config?.settings.settings || {};
-	const controls = document.config?.settings.controls || {};
+	const allSettings = ( document.config?.settings as Record< string, unknown > )?.settings || {};
+	const controls = ( ( document.config?.settings as Record< string, unknown > )?.controls || {} ) as Record<
+		string,
+		{ default?: unknown }
+	>;
 	const result: Record< string, unknown > = {};
 
 	Object.entries( allSettings ).forEach( ( [ controlKey, value ] ) => {
-		const control = controls[ controlKey ] as { default?: unknown } | undefined;
+		const control = controls[ controlKey ];
 		if ( value !== control?.default ) {
 			result[ controlKey ] = value;
 		}

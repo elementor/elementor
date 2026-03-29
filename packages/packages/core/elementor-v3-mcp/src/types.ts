@@ -14,18 +14,20 @@ export interface ElementorContainer {
 	id: string;
 	model: {
 		id: string;
-		attributes: Record< string, unknown >;
+		attributes?: Record< string, unknown >;
 		editor_settings?: { title?: string };
+		get?: ( key: string ) => unknown;
 	};
 	settings: {
-		attributes: Record< string, unknown >;
-		controls: Record< string, unknown >;
+		attributes?: Record< string, unknown >;
+		controls?: Record< string, unknown >;
 		get: ( key: string ) => unknown;
 	};
 	children?: ElementorContainer[];
 	view?: {
 		el: HTMLElement;
 	};
+	parent?: ElementorContainer;
 }
 
 export interface ElementorControls {
