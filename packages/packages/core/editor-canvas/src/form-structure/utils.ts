@@ -50,6 +50,10 @@ export function getElementType( element?: V1Element ): string | undefined {
 	return element?.model.get( 'widgetType' ) || element?.model.get( 'elType' );
 }
 
+export function getClipboardElementType( element?: ClipboardElement ): string | undefined {
+	return element?.widgetType || element?.elType;
+}
+
 export function isElementWithinFormSelector( element?: V1Element ): boolean {
 	return !! element?.view?.el?.closest( 'form,[data-element_type="e-form"]' );
 }
@@ -72,7 +76,7 @@ export function hasElementTypes( element: V1Element, types: Set< string > ): boo
 
 export function hasClipboardElementType( elements: ClipboardElement[], type: string ): boolean {
 	return elements.some( ( element ) => {
-		const elementType = element.widgetType || element.elType;
+		const elementType = getClipboardElementType( element );
 
 		if ( elementType === type ) {
 			return true;
@@ -84,7 +88,7 @@ export function hasClipboardElementType( elements: ClipboardElement[], type: str
 
 export function hasClipboardElementTypes( elements: ClipboardElement[], types: Set< string > ): boolean {
 	return elements.some( ( element ) => {
-		const elementType = element.widgetType || element.elType;
+		const elementType = getClipboardElementType( element );
 
 		if ( elementType && types.has( elementType ) ) {
 			return true;
@@ -92,4 +96,16 @@ export function hasClipboardElementTypes( elements: ClipboardElement[], types: S
 
 		return element.elements ? hasClipboardElementTypes( element.elements, types ) : false;
 	} );
+}
+
+export function movedContainersIncludeAtomicFormRoot( containers: ( V1Element | undefined )[] ): boolean {
+	return containers.some( ( container ) => getElementType( container ) === FORM_ELEMENT_TYPE );
+}
+
+export function clipboardRootsAreAtomicForms( elements: ClipboardElement[] ): boolean {
+	if ( ! elements.length ) {
+		return false;
+	}
+
+	return elements.every( ( el ) => getClipboardElementType( el ) === FORM_ELEMENT_TYPE );
 }
