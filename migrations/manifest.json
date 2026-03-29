@@ -20,6 +20,11 @@
       "fromType": "html-v2",
       "toType": "html-v3",
       "path": "operations/html-v2-to-html-v3.json"
+    },
+    "image-src-to-svg-src": {
+      "fromType": "image-src",
+      "toType": "svg-src",
+      "path": "operations/image-src-to-svg-src.json"
     }
   }
 }
