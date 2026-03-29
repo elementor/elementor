@@ -73,7 +73,11 @@ function resolveElementType( type: string, renderer: DomRenderer, element: V1Ele
 		return createElementType( type );
 	}
 
-	return createTemplatedElementTypeWithReplacements( { type, renderer, element } );
+	const customGenerator = elementsLegacyTypes[ type ];
+
+	return customGenerator
+		? customGenerator( { type, renderer, element } )
+		: createTemplatedElementTypeWithReplacements( { type, renderer, element } );
 }
 
 function tryRegisterElement(

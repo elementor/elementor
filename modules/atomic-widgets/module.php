@@ -160,8 +160,8 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
 		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_scripts() );
-		add_action( 'elementor/editor/after_enqueue_styles', fn () => $this->enqueue_editor_styles() );
-		add_action( 'elementor/preview/enqueue_styles', fn () => $this->enqueue_editor_styles() );
+		add_action( 'elementor/editor/after_enqueue_styles', fn () => $this->enqueue_promotion_styles() );
+		add_action( 'elementor/preview/enqueue_styles', fn () => $this->enqueue_promotion_styles() );
 		add_action( 'elementor/frontend/before_register_scripts', fn () => $this->register_frontend_scripts() );
 		add_action( 'elementor/frontend/after_enqueue_styles', fn () => $this->add_inline_styles() );
 
@@ -449,7 +449,7 @@ class Module extends BaseModule {
 		wp_add_inline_style( 'elementor-editor', $inline_css );
 	}
 
-	private function enqueue_editor_styles() {
+	private function enqueue_promotion_styles() {
 		if ( \Elementor\Utils::has_pro() ) {
 			return;
 		}
@@ -468,4 +468,5 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION
 		);
 	}
+
 }
