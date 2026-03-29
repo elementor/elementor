@@ -49,7 +49,7 @@ import { type OriginPropFields, type OverridableProp, type OverridableProps } fr
 import { getPropTypeForComponentOverride } from '../../utils/get-prop-type-for-component-override';
 import { getMatchingOverride } from '../../utils/overridable-props-utils';
 import { resolveOverridePropValue } from '../../utils/resolve-override-prop-value';
-import { walkDownOverridesChain } from '../../utils/walk-down-overrides-chain';
+import { resolveOverridesChain } from '../../utils/resolve-overrides-chain';
 import { ControlLabel } from '../control-label';
 import { OverrideControlInnerElementNotFoundError } from '../errors';
 import { correctExposedEmptyOverride } from './utils/correct-exposed-empty-override';
@@ -116,9 +116,9 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 	const elementType = getElementType( type );
 
 	const { elementId, overridesMapping } = useMemo( () => {
-		const overridesChainResult = walkDownOverridesChain( {
-			upperLevelOverridableProp: overridableProp,
-			upperInstanceId: componentInstanceElement.element.id,
+		const overridesChainResult = resolveOverridesChain( {
+			outerOverridableProp: overridableProp,
+			outerInstanceId: componentInstanceElement.element.id,
 		} );
 
 		if ( overridesChainResult.isChainBroken ) {

@@ -9,7 +9,7 @@ import { componentOverridablePropTypeUtil } from '../../prop-types/component-ove
 import { type OverridableProp } from '../../types';
 import { getContainerByOriginId } from '../get-container-by-origin-id';
 import { getOverridableProp } from '../get-overridable-prop';
-import { buildOverridesMap, walkDownOverridesChain } from '../walk-down-overrides-chain';
+import { buildOverridesMap, resolveOverridesChain } from '../resolve-overrides-chain';
 
 jest.mock( '@elementor/editor-elements' );
 
@@ -202,9 +202,9 @@ describe( 'walkDownOverridesChain', () => {
 			} );
 
 			// Act
-			const result = walkDownOverridesChain( {
-				upperLevelOverridableProp: prop,
-				upperInstanceId: 'instance-1',
+			const result = resolveOverridesChain( {
+				outerOverridableProp: prop,
+				outerInstanceId: 'instance-1',
 			} );
 
 			// Assert
@@ -222,9 +222,9 @@ describe( 'walkDownOverridesChain', () => {
 
 			// Act & Assert
 			expect( () =>
-				walkDownOverridesChain( {
-					upperLevelOverridableProp: prop,
-					upperInstanceId: 'instance-1',
+				resolveOverridesChain( {
+					outerOverridableProp: prop,
+					outerInstanceId: 'instance-1',
 				} )
 			).toThrow( 'Inner element not found inside instance' );
 		} );
@@ -275,9 +275,9 @@ describe( 'walkDownOverridesChain', () => {
 			mockGetOverridableProp.mockReturnValue( innerOverridableProp );
 
 			// Act
-			const result = walkDownOverridesChain( {
-				upperLevelOverridableProp: outerProp,
-				upperInstanceId: OUTER_COMPONENT_INSTANCE_ID,
+			const result = resolveOverridesChain( {
+				outerOverridableProp: outerProp,
+				outerInstanceId: OUTER_COMPONENT_INSTANCE_ID,
 			} );
 
 			// Assert
@@ -306,9 +306,9 @@ describe( 'walkDownOverridesChain', () => {
 			mockGetContainerByOriginId.mockReturnValue( null );
 
 			// Act
-			const result = walkDownOverridesChain( {
-				upperLevelOverridableProp: outerProp,
-				upperInstanceId: 'top-instance',
+			const result = resolveOverridesChain( {
+				outerOverridableProp: outerProp,
+				outerInstanceId: 'top-instance',
 			} );
 
 			// Assert
@@ -335,9 +335,9 @@ describe( 'walkDownOverridesChain', () => {
 			mockGetContainerByOriginId.mockReturnValueOnce( middleInstance );
 
 			// Act
-			const result = walkDownOverridesChain( {
-				upperLevelOverridableProp: outerProp,
-				upperInstanceId: 'top-instance',
+			const result = resolveOverridesChain( {
+				outerOverridableProp: outerProp,
+				outerInstanceId: 'top-instance',
 			} );
 
 			// Assert
@@ -431,9 +431,9 @@ describe( 'walkDownOverridesChain', () => {
 			// Arrange
 			setupComponents( { isChainBroken: false } );
 			// Act
-			const result = walkDownOverridesChain( {
-				upperLevelOverridableProp: outerProp,
-				upperInstanceId: COMPONENT_C_INSTANCE_ID,
+			const result = resolveOverridesChain( {
+				outerOverridableProp: outerProp,
+				outerInstanceId: COMPONENT_C_INSTANCE_ID,
 			} );
 
 			// Assert
@@ -455,9 +455,9 @@ describe( 'walkDownOverridesChain', () => {
 			setupComponents( { isChainBroken: true } );
 
 			// Act
-			const result = walkDownOverridesChain( {
-				upperLevelOverridableProp: outerProp,
-				upperInstanceId: COMPONENT_C_INSTANCE_ID,
+			const result = resolveOverridesChain( {
+				outerOverridableProp: outerProp,
+				outerInstanceId: COMPONENT_C_INSTANCE_ID,
 			} );
 
 			// Assert

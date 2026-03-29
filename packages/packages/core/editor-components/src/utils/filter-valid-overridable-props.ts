@@ -1,5 +1,5 @@
 import { type OverridableProp, type OverridableProps } from '../types';
-import { walkDownOverridesChain } from './walk-down-overrides-chain';
+import { resolveOverridesChain } from './resolve-overrides-chain';
 
 export function filterValidOverridableProps(
 	overridableProps: OverridableProps,
@@ -30,7 +30,7 @@ export function filterValidOverridableProps(
 }
 
 export function isExposedPropValid( prop: OverridableProp, instanceElementId?: string ): boolean {
-	const { isChainBroken } = walkDownOverridesChain( {
+	const { isChainBroken } = resolveOverridesChain( {
 		upperLevelOverridableProp: prop,
 		upperInstanceId: instanceElementId,
 	} );

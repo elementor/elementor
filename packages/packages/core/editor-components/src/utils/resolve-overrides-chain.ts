@@ -30,24 +30,22 @@ type OverridesChainResult =
 // and collect the overrides mapping for it.
 // Returns the resolved inner element with its overrides mapping,
 // or { isChainBroken: true } if any level in the chain is no longer overridable.
-export function walkDownOverridesChain( {
-	upperLevelOverridableProp,
-	upperInstanceId,
+export function resolveOverridesChain( {
+	outerOverridableProp,
+	outerInstanceId,
 	overridesMapping = {},
-	depth = 0,
 }: {
-	upperLevelOverridableProp: OverridableProp;
-	upperInstanceId?: string;
+	outerOverridableProp: OverridableProp;
+	outerInstanceId?: string;
 	overridesMapping?: OverridesMapping;
-	depth?: number;
 } ): OverridesChainResult {
 	// Stop condition: no originPropFields means we've reached the most inner component instance
-	if ( ! upperLevelOverridableProp.originPropFields ) {
-		const innerElement = getContainerByOriginId( upperLevelOverridableProp.elementId, upperInstanceId );
+	if ( ! outerOverridableProp.originPropFields ) {
+		const innerElement = getContainerByOriginId( outerOverridableProp.elementId, outerInstanceId );
 
 		if ( ! innerElement ) {
 			throw new Error(
-				`Inner element not found inside instance. elementId: ${ upperLevelOverridableProp.elementId }, instanceId: ${ upperInstanceId }`
+				`Inner element not found inside instance. elementId: ${ outerOverridableProp.elementId }, instanceId: ${ outerInstanceId }`
 			);
 		}
 
@@ -55,7 +53,7 @@ export function walkDownOverridesChain( {
 	}
 
 	// Step 1: Find the intermediate component instance and read its settings.
-	const currentInstance = getContainerByOriginId( upperLevelOverridableProp.elementId, upperInstanceId );
+	const currentInstance = getContainerByOriginId( outerOverridableProp.elementId, outerInstanceId );
 	if ( ! currentInstance ) {
 		// One of the instances in the chain was deleted.
 		return { isChainBroken: true };
@@ -64,16 +62,16 @@ export function walkDownOverridesChain( {
 
 	if ( ! componentId ) {
 		throw new Error(
-			`Component ID not found for current instance. currentInstanceId: ${ currentInstance.id }. upperInstanceId: ${ upperInstanceId }`
+			`Component ID not found for current instance. currentInstanceId: ${ currentInstance.id }. outerInstanceId: ${ outerInstanceId }`
 		);
 	}
 
 	// Collect overrides from this level, translating keys for exposed-further props.
 	const mergedOverrides = buildOverridesMap( overridesMapping, overrides ?? [] );
 
-	// Find the overridable-override that matches the upper overridable prop's key,
+	// Find the overridable-override that matches the outer overridable prop's key,
 	// to get the next level's overridable prop.
-	const override = findOverrideByOuterKey( overrides, upperLevelOverridableProp.overrideKey );
+	const override = findOverrideByOuterKey( overrides, outerOverridableProp.overrideKey );
 	const overrideKey = componentInstanceOverridePropTypeUtil.extract( override )?.override_key;
 
 	if ( ! override || ! overrideKey ) {
@@ -88,17 +86,16 @@ export function walkDownOverridesChain( {
 	}
 
 	// Step 4: Recurse into the next nesting level.
-	return walkDownOverridesChain( {
-		upperLevelOverridableProp: overridableProp,
-		upperInstanceId: currentInstance.id,
+	return resolveOverridesChain( {
+		outerOverridableProp: overridableProp,
+		outerInstanceId: currentInstance.id,
 		overridesMapping: mergedOverrides,
-		depth: depth + 1,
 	} );
 }
 
 /**
  * Builds overrides map from instances chain:
- * At each level, we collect overrides from the current instance and merge them with the overrides from the upper levels.
+ * At each level, we collect overrides from the current instance and merge them with the overrides from the outer levels.
  *
  * For exposed-further overrides (overridable wrapping an override), we have outer key (overridable's) and inner key (override's).
  * If a higher level already set a value for the outer key, that value is carried forward to the inner key
@@ -106,7 +103,7 @@ export function walkDownOverridesChain( {
  *
  * For simple overrides, that are not exposed further, we just use the override's key and value.
  *
- * @param existing       - Previously accumulated overrides from upper levels.
+ * @param existing       - Previously accumulated overrides from outer levels.
  * @param levelOverrides - The overrides array from the current level instance.
  */
 export function buildOverridesMap(
