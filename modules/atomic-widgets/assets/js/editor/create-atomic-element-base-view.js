@@ -159,6 +159,11 @@ export default function createAtomicElementBaseView( type ) {
 				return;
 			}
 
+			if ( this.isTagChanged( changed ) ) {
+				this.rerenderEntireView();
+				return;
+			}
+
 			BaseElementView.prototype.renderOnChange.apply( this, settings );
 
 			if ( changed.attributes ) {
@@ -205,14 +210,14 @@ export default function createAtomicElementBaseView( type ) {
 			}
 
 			this.$el.addClass( this.getClasses() );
-
-			if ( this.isTagChanged( changed ) ) {
-				this.rerenderEntireView();
-			}
 		},
 
 		isTagChanged( changed ) {
-			return ( changed?.tag !== undefined || changed?.link !== undefined ) && this._parent && this.tagName() !== this.el.tagName;
+			const hasParent = Boolean( this._parent );
+			const hasTagOrLinkChange = changed?.tag !== undefined || changed?.link !== undefined;
+			const isTagMismatch = this.tagName()?.toLowerCase() !== this.el.tagName.toLowerCase();
+
+			return hasTagOrLinkChange && hasParent && isTagMismatch;
 		},
 
 		rerenderEntireView() {
