@@ -2,7 +2,7 @@
 
 import {
 	config as getConfig,
-	skipInteraction,
+	skipInteraction as utilsSkipInteraction,
 	extractInteractionId,
 	getAnimateFunction,
 	getInViewFunction,
@@ -14,6 +14,25 @@ import {
 	getTransformBaselineFromComputedStyle,
 	preserveTransformKeyframes,
 } from './interactions-shared-utils.js';
+
+function isSupportedInteraction( animationConfig ) {
+	if ( ! [ 'load', 'scrollIn', 'scrollOut' ].includes( animationConfig.trigger ) ) {
+		return false;
+	}
+
+	if ( 'custom' === animationConfig.effect ) {
+		return false;
+	}
+
+	return true;
+}
+
+function skipInteraction( animationConfig ) {
+	if ( ! isSupportedInteraction( animationConfig ) ) {
+		return true;
+	}
+	return utilsSkipInteraction( animationConfig );
+}
 
 export {
 	getConfig as config,

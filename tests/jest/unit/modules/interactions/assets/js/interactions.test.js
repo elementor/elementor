@@ -1,3 +1,5 @@
+import { stubInteractionsConfig } from './utils';
+
 function flushPromises() {
 	return Promise.resolve();
 }
@@ -11,30 +13,6 @@ function setReadyStateComplete() {
 	} );
 }
 
-function initBreakpoints() {
-	window.ElementorInteractionsConfig = {
-		constants: {
-			defaultEasing: 'easeIn',
-			defaultDuration: 600,
-			defaultDelay: 0,
-			slideDistance: 100,
-			scaleStart: 0,
-			defaultReplay: false,
-			defaultRelativeTo: 'viewport',
-			defaultStart: 0,
-			defaultEnd: 100,
-		},
-		breakpoints: {
-			mobile: { value: 768, direction: 'max' },
-			mobile_extra: { value: 880, direction: 'max' },
-			tablet: { value: 1024, direction: 'max' },
-			tablet_extra: { value: 1200, direction: 'max' },
-			laptop: { value: 1366, direction: 'max' },
-			widescreen: { value: 2440, direction: 'min' },
-		},
-	};
-}
-
 function installMotionMocks( { animate, inView, scroll } ) {
 	window.Motion = {
 		animate,
@@ -45,11 +23,12 @@ function installMotionMocks( { animate, inView, scroll } ) {
 
 describe( 'Interactions', () => {
 	beforeAll( () => {
-		initBreakpoints();
+		stubInteractionsConfig();
 	} );
 
 	beforeEach( () => {
 		jest.resetModules();
+
 		document.body.innerHTML = '';
 		setReadyStateComplete();
 	} );
