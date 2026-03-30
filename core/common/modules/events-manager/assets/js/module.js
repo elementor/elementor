@@ -5,8 +5,23 @@ import { TIERS } from 'elementor-utils/tiers';
 /** @type {Mixpanel | null} */
 let mixpanelInstance = null;
 
+const RECORD_SESSION_PERCENT = 1;
+
+function shouldRecordSession( distinctId, percent ) {
+	const fraction = Math.min( Math.max( percent / 100, 0 ), 1 );
+	let hash = 0;
+	for ( let i = 0; i < distinctId.length; i++ ) {
+		// eslint-disable-next-line no-bitwise
+		hash = ( ( hash * 31 ) + distinctId.charCodeAt( i ) ) >>> 0;
+	}
+	return ( hash / 4294967295 ) < fraction;
+}
+
 export default class extends elementorModules.Module {
 	trackingEnabled = false;
+	sessionRecordingStartEvent = null;
+	sessionRecordingEndEvent = null;
+	isRecording = false;
 
 	onInit() {
 		this.config = eventsConfig;
@@ -32,7 +47,7 @@ export default class extends elementorModules.Module {
 						flags: 'https://api-eu.mixpanel.com',
 					},
 					loaded: onLoaded,
-					record_sessions_percent: 1,
+					record_sessions_percent: 0,
 					record_idle_timeout_ms: 60 * 1000, // 60 Seconds
 					record_min_ms: 5 * 1000, // 5 Seconds
 					record_max_ms: 30 * 1000, // 30 Seconds
@@ -68,6 +83,15 @@ export default class extends elementorModules.Module {
 		this.trackingEnabled = true;
 	}
 
+	configureSessionRecording( startEvent, endEvent = null ) {
+		if ( 'string' !== typeof startEvent || ! startEvent ) {
+			return;
+		}
+
+		this.sessionRecordingStartEvent = startEvent;
+		this.sessionRecordingEndEvent = endEvent;
+	}
+
 	dispatchEvent( name, data, options = {} ) {
 		if ( ! this.canSendEvents() ) {
 			return;
@@ -75,6 +99,19 @@ export default class extends elementorModules.Module {
 
 		if ( ! this.trackingEnabled ) {
 			this.enableTracking();
+		}
+
+		if ( name === this.sessionRecordingStartEvent ) {
+			const distinctId = mixpanelInstance.get_distinct_id();
+			if ( shouldRecordSession( distinctId, RECORD_SESSION_PERCENT ) ) {
+				mixpanelInstance.start_session_recording();
+				this.isRecording = true;
+			} else {
+				this.isRecording = false;
+			}
+		} else if ( name === this.sessionRecordingEndEvent && this.isRecording ) {
+			mixpanelInstance.stop_session_recording();
+			this.isRecording = false;
 		}
 
 		const eventData = {
@@ -87,6 +124,7 @@ export default class extends elementorModules.Module {
 			client_id: elementorCommon.config.editor_events?.site_key,
 			app_version: elementorCommon.config.editor_events?.elementor_version,
 			site_language: elementorCommon.config.editor_events?.site_language,
+			session_recording: this.isRecording,
 			...data,
 		};
 
