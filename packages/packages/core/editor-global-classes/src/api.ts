@@ -7,11 +7,25 @@ import { type GlobalClasses } from './store';
 const RESOURCE_URL = '/global-classes';
 const BASE_URL = 'elementor/v1';
 const RESOURCE_USAGE_URL = `${ RESOURCE_URL }/usage`;
+const RESOURCE_INDEX_URL = `${ RESOURCE_URL }/index`;
 
 type GlobalClassesUsageResponse = HttpResponse< CssClassUsage >;
 
 export type GlobalClassesGetAllResponse = HttpResponse<
 	StyleDefinitionsMap,
+	{
+		order: StyleDefinition[ 'id' ][];
+	}
+>;
+
+export type GlobalClassesIndexItem = {
+	label: string;
+};
+
+export type GlobalClassesIndexMap = Record< StyleDefinitionID, GlobalClassesIndexItem >;
+
+export type GlobalClassesIndexResponse = HttpResponse<
+	GlobalClassesIndexMap,
 	{
 		order: StyleDefinition[ 'id' ][];
 	}
@@ -33,6 +47,13 @@ export const apiClient = {
 	all: ( context: ApiContext = 'preview' ) =>
 		httpService().get< GlobalClassesGetAllResponse >( `${ BASE_URL }${ RESOURCE_URL }`, {
 			params: { context },
+		} ),
+
+	getIndex: () => httpService().get< GlobalClassesIndexResponse >( `${ BASE_URL }${ RESOURCE_INDEX_URL }` ),
+
+	getByIds: ( ids: StyleDefinitionID[], context: ApiContext = 'preview' ) =>
+		httpService().get< GlobalClassesGetAllResponse >( `${ BASE_URL }${ RESOURCE_URL }`, {
+			params: { context, ids: ids.join( ',' ) },
 		} ),
 
 	publish: ( payload: UpdatePayload ) =>

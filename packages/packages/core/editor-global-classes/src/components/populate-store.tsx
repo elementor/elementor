@@ -8,25 +8,35 @@ export function PopulateStore() {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		Promise.all( [ apiClient.all( 'preview' ), apiClient.all( 'frontend' ) ] ).then(
-			( [ previewRes, frontendRes ] ) => {
-				const { data: previewData } = previewRes;
-				const { data: frontendData } = frontendRes;
+		Promise.all( [
+			apiClient.all( 'preview' ),
+			apiClient.all( 'frontend' ),
+			apiClient.getIndex(),
+		] ).then( ( [ previewRes, frontendRes, indexRes ] ) => {
+			const { data: previewData } = previewRes;
+			const { data: frontendData } = frontendRes;
+			const { data: indexData } = indexRes;
 
-				dispatch(
-					slice.actions.load( {
-						preview: {
-							items: previewData.data,
-							order: previewData.meta.order,
-						},
-						frontend: {
-							items: frontendData.data,
-							order: frontendData.meta.order,
-						},
-					} )
-				);
-			}
-		);
+			dispatch(
+				slice.actions.load( {
+					preview: {
+						items: previewData.data,
+						order: previewData.meta.order,
+					},
+					frontend: {
+						items: frontendData.data,
+						order: frontendData.meta.order,
+					},
+				} )
+			);
+
+			dispatch(
+				slice.actions.loadIndex( {
+					items: indexData.data,
+					order: indexData.meta.order,
+				} )
+			);
+		} );
 	}, [ dispatch ] );
 
 	return null;
