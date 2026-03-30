@@ -58,7 +58,11 @@ class Global_Class_Post {
 	public function get_class_id(): string {
 		$class_id = get_post_meta( $this->post->ID, self::META_KEY_ID, true );
 
-		return $class_id ? $class_id : '';
+		if ( ! $class_id ) {
+			return '';
+		}
+
+		return $class_id;
 	}
 
 	public function get_label(): string {

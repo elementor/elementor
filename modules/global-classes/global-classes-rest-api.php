@@ -61,7 +61,7 @@ class Global_Classes_REST_API {
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE_INDEX, [
 			[
 				'methods' => 'GET',
-				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->get_index( $request ) ),
+				'callback' => fn() => $this->route_wrapper( fn() => $this->get_index() ),
 				'permission_callback' => fn() => is_user_logged_in(),
 			],
 		] );
@@ -178,8 +178,8 @@ class Global_Classes_REST_API {
 			->build();
 	}
 
-	private function get_index( \WP_REST_Request $request ) {
-		$classes = $this->get_repository()->context( Global_Classes_Repository::CONTEXT_FRONTEND )->all();
+	private function get_index() {
+		$classes = $this->get_repository()->context( Global_Classes_Repository::CONTEXT_PREVIEW )->all();
 		$items = $classes->get_items()->all();
 		$order = $classes->get_order()->all();
 
