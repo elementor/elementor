@@ -105,6 +105,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content\Atomic_Tab_Content;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Promotion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Success_Message\Form_Success_Message;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Error_Message\Form_Error_Message;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
@@ -163,6 +164,8 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
 		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_scripts() );
+		add_action( 'elementor/editor/after_enqueue_styles', fn () => $this->enqueue_promotion_styles() );
+		add_action( 'elementor/preview/enqueue_styles', fn () => $this->enqueue_promotion_styles() );
 		add_action( 'elementor/frontend/before_register_scripts', fn () => $this->register_frontend_scripts() );
 		add_action( 'elementor/frontend/after_enqueue_styles', fn () => $this->add_inline_styles() );
 
@@ -289,6 +292,8 @@ class Module extends BaseModule {
 			$elements_manager->register_element_type( new Atomic_Form() );
 			$elements_manager->register_element_type( new Form_Success_Message() );
 			$elements_manager->register_element_type( new Form_Error_Message() );
+		} elseif ( ! \Elementor\Utils::has_pro() ) {
+			$elements_manager->register_element_type( new Atomic_Form_Promotion() );
 		}
 	}
 
@@ -449,5 +454,25 @@ class Module extends BaseModule {
 		] );
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 		wp_add_inline_style( 'elementor-editor', $inline_css );
+	}
+
+	private function enqueue_promotion_styles() {
+		if ( \Elementor\Utils::has_pro() ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'elementor-atomic-widgets-promotion-fonts',
+			'https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap',
+			[],
+			ELEMENTOR_VERSION
+		);
+
+		wp_enqueue_style(
+			'elementor-atomic-widgets-promotion',
+			$this->get_css_assets_url( 'modules/atomic-widgets/editor' ),
+			[ 'elementor-atomic-widgets-promotion-fonts' ],
+			ELEMENTOR_VERSION
+		);
 	}
 }
