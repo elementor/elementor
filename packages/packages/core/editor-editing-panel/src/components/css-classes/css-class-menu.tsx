@@ -6,7 +6,6 @@ import {
 	useUserStylesCapability,
 } from '@elementor/editor-styles-repository';
 import { MenuItemInfotip, MenuListItem } from '@elementor/editor-ui';
-import { useSessionStorage } from '@elementor/session';
 import { bindMenu, Divider, Menu, MenuSubheader, type PopupState, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -17,8 +16,9 @@ import { getTempStylesProviderThemeColor } from '../../utils/get-styles-provider
 import { trackStyles } from '../../utils/tracking/subscribe';
 import { StyleIndicator } from '../style-indicator';
 import { useCssClass } from './css-class-context';
+import { DuplicateClassMenuItem } from './duplicate-class-menu-item';
 import { LocalClassSubMenu } from './local-class-sub-menu';
-import { useApplyClass, useUnapplyClass } from './use-apply-and-unapply-class';
+import { useUnapplyClass } from './use-apply-and-unapply-class';
 
 type State = {
 	key: StyleDefinitionStateWithNormal;
@@ -310,76 +310,6 @@ function RenameClassMenuItem( { closeMenu }: { closeMenu: () => void } ) {
 				) }
 			>
 				{ __( 'Rename', 'elementor' ) }
-			</MenuItemInfotip>
-		</MenuListItem>
-	);
-}
-
-function getUniqueDuplicateLabel( originalLabel: string, existingLabels: string[] ): string {
-	let newLabel = `copy-of-${ originalLabel }`;
-	let counter = 2;
-	while ( existingLabels.includes( newLabel ) ) {
-		newLabel = `copy-of-${ originalLabel }-${ counter }`;
-		counter++;
-	}
-	return newLabel;
-}
-
-function DuplicateClassMenuItem( { closeMenu }: { closeMenu: () => void } ) {
-	const { id: classId, provider } = useCssClass();
-	const { userCan } = useUserStylesCapability();
-	const applyClass = useApplyClass();
-	const [ , setPendingEditId ] = useSessionStorage( 'last-converted-class-generated-name', 'app' );
-
-	if ( ! provider || ! classId ) {
-		return null;
-	}
-
-	const providerInstance = stylesRepository.getProviderByKey( provider );
-	const createAction = providerInstance?.actions.create;
-	const getAction = providerInstance?.actions.get;
-
-	if ( ! createAction || ! getAction ) {
-		return null;
-	}
-
-	const isAllowed = userCan( provider ).create;
-
-	return (
-		<MenuListItem
-			disabled={ ! isAllowed }
-			onClick={ () => {
-				if ( ! isAllowed ) {
-					return;
-				}
-				const styleDef = getAction( classId );
-				if ( ! styleDef ) {
-					closeMenu();
-					return;
-				}
-				const existingLabels = providerInstance.actions.all().map( ( style ) => style.label );
-				const newLabel = getUniqueDuplicateLabel( styleDef.label, existingLabels );
-				const newId = createAction( newLabel, styleDef.variants );
-				if ( newId ) {
-					applyClass( { classId: newId, classLabel: newLabel } );
-					setPendingEditId( newId );
-					trackStyles( provider, 'classCreated', {
-						classId: newId,
-						source: 'created',
-						classTitle: newLabel,
-					} );
-				}
-				closeMenu();
-			} }
-		>
-			<MenuItemInfotip
-				showInfoTip={ ! isAllowed }
-				content={ __(
-					"With your current role, you can use existing classes but can't modify them.",
-					'elementor'
-				) }
-			>
-				{ __( 'Duplicate', 'elementor' ) }
 			</MenuItemInfotip>
 		</MenuListItem>
 	);

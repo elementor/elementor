@@ -2,6 +2,9 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 import { __useDispatch as useDispatch } from '@elementor/store';
+import { List, Stack, styled, Typography, type TypographyProps } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+
 import { useClassesOrder } from '../../hooks/use-classes-order';
 import { useFilters } from '../../hooks/use-filters';
 import { useOrderedClasses } from '../../hooks/use-ordered-classes';
@@ -79,10 +82,10 @@ export const GlobalClassesList = ( { disabled, onStopSyncRequest, onStartSyncReq
 									setDraggedItemId( cssClass.id );
 								}
 								return (
-								<ClassItem
-									id={ cssClass.id }
-									label={ cssClass.label }
-									renameClass={ ( newLabel: string ) => {
+									<ClassItem
+										id={ cssClass.id }
+										label={ cssClass.label }
+										renameClass={ ( newLabel: string ) => {
 											trackGlobalClasses( {
 												event: 'classRenamed',
 												classId: cssClass.id,

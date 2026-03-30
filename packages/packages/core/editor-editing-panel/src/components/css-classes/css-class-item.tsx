@@ -54,7 +54,7 @@ export function CssClassItem( props: CssClassItemProps ) {
 	const { userCan } = useUserStylesCapability();
 
 	const [ convertedFromLocalId, , clearConvertedFromLocalId ] = useSessionStorage(
-		'last-converted-class-generated-name',
+		'pending-class-rename-id',
 		'app'
 	);
 
