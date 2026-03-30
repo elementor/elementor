@@ -97,12 +97,17 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['default_html_tag'] = $this->define_default_html_tag();
 		$config['meta'] = $this->get_meta();
 		$config['allowed_child_types'] = $this->define_allowed_child_types();
+		$config['is_nested_structural_part'] = $this->is_nested_structural_part();
 
 		return $config;
 	}
 
 	protected function should_show_in_panel() {
 		return true;
+	}
+
+	public function is_nested_structural_part(): bool {
+		return false;
 	}
 
 	protected function define_panel_categories(): array {

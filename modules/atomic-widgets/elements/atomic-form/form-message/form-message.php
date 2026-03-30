@@ -41,6 +41,10 @@ abstract class Form_Message extends Atomic_Element_Base {
 		return false;
 	}
 
+	public function is_nested_structural_part(): bool {
+		return true;
+	}
+
 	protected static function define_props_schema(): array {
 		return [
 			'classes' => Classes_Prop_Type::make()

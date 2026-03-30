@@ -461,7 +461,7 @@ export default function createAtomicElementBaseView( type ) {
 					name: 'save',
 					title: __( 'Save as a template', 'elementor' ),
 					callback: this.saveAsTemplate.bind( this ),
-					isEnabled: () => ! this.getContainer().isLocked(),
+					isEnabled: () => ! elementor.config.elements[ this.model.get( 'elType' ) ]?.is_nested_structural_part,
 				},
 			];
 
@@ -484,7 +484,7 @@ export default function createAtomicElementBaseView( type ) {
 					shortcut: ( isProActive || isProOutdated ) ? newBadge : proBadge,
 					hasShortcutAction: showPromoBadge,
 					callback: this.saveAsComponent.bind( this ),
-					isEnabled: () => ( isProActive || isProOutdated ) && ! this.getContainer().isLocked(),
+					isEnabled: () => ( isProActive || isProOutdated ) && ! elementor.config.elements[ this.model.get( 'elType' ) ]?.is_nested_structural_part,
 				} );
 			}
 

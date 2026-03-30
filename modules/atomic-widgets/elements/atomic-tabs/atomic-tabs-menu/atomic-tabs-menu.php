@@ -50,6 +50,10 @@ class Atomic_Tabs_Menu extends Atomic_Element_Base {
 		return false;
 	}
 
+	public function is_nested_structural_part(): bool {
+		return true;
+	}
+
 	public function define_initial_attributes(): array {
 		return [
 			'role' => 'tablist',

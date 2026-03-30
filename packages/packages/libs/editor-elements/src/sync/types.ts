@@ -190,6 +190,7 @@ export type V1ElementConfig< T = object > = {
 	atomic_style_states?: ClassState[];
 	atomic_pseudo_states?: PseudoState[];
 	show_in_panel?: boolean;
+	is_nested_structural_part?: boolean;
 	meta?: { [ key: string ]: string | number | boolean | null | NonNullable< V1ElementConfig[ 'meta' ] > };
 } & T;
 

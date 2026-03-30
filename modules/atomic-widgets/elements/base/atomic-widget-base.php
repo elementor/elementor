@@ -78,8 +78,13 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$config['dependencies_per_target_mapping'] = Dependency_Manager::get_source_to_dependents( $props_schema );
 		$config['version'] = $this->version;
 		$config['meta'] = $this->get_meta();
+		$config['is_nested_structural_part'] = $this->is_nested_structural_part();
 
 		return $config;
+	}
+
+	public function is_nested_structural_part(): bool {
+		return false;
 	}
 
 	public function get_categories(): array {
