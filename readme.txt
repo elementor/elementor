@@ -355,70 +355,28 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.35.9 - 2026-03-25 =
+= 4.0.0 - 2026-03-30 =
 
-* Fix: Inserting AI-generated images fails when "Enable Unfiltered File Uploads" is enabled
-
-= 3.35.8 - 2026-03-23 =
-
-* Security Fix: Improved code security enforcement in Template Library
-* Security Fix: Improved code security enforcement in upload mechanism
-
-= 3.35.7 - 2026-03-11 =
-
-* Fix: General UI issues in Editor screens in WordPress Admin
-
-= 3.35.6 - 2026-03-03 =
-
-* Tweak: Improved compatibility with WordPress 7.0
-* Security Fix: Improved code security enforcement in request handling
-* Security Fix: Improved code security enforcement in Lightbox
-* Security Fix: Improved code security enforcement in image loading
-* Fix: General UI issues in Editor screens in WordPress Admin
-* Fix: Inline editing toolbar is hidden behind the editor panel in various scenarios - Editor V4
-* Fix: Styles do not load as expected when using nested templates inside the Editor - Editor V4
-* Fix: Properties do not work as expected in certain scenarios in Components - Editor V4
-
-= 3.35.5 - 2026-02-17 =
-
-* Security Fix: Improved code security enforcement in global style settings
-* Fix: General UI issues in Editor screens in WordPress Admin
-
-= 3.35.4 - 2026-02-11 =
-
-* Fix: License activation issues in various scenarios
-* Fix: General UI issues in Editor screens in WordPress Admin
-* Fix: Inline editing UI issues on canvas - Editor V4
-
-= 3.35.3 - 2026-02-05 =
-
-* Fix: Fatal error appears in dashboard widget in WordPress Admin ([#34663](https://github.com/elementor/elementor/issues/34663), [#34659](https://github.com/elementor/elementor/issues/34659))
-
-= 3.35.2 - 2026-02-05 =
-
-* Fix: Editor menu in WordPress admin displays incorrectly in RTL
-
-= 3.35.1 - 2026-02-04 =
-
-* Fix: Editor Top Bar does not appear in various scenarios ([#34623](https://github.com/elementor/elementor/issues/34623))
-* Fix: Fatal error when the PHP `mbstring` module is missing
-* Fix: General UI issues in Editor screens in WordPress Admin
-
-= 3.35.0 - 2026-02-02 =
-
-* New: Introducing Components - reusable layout building blocks with global sync and per-instance content overrides - Editor V4
-* New: Introducing Inline Editing - edit Atomic Heading and Paragraph text directly on the canvas - Editor V4
-* New: Introducing a contextual formatting toolbar for inline text editing, including links and common text styles - Editor V4
-* Tweak: Version 4 status updated to Beta and production-ready - Editor V4
-* Tweak: Children perspective controls available only for relevant parent elements - Editor V4
-* Tweak: `:hover` styling automatically applies to `:focus-visible` for improved accessibility - Editor V4
-* Tweak: Dynamic tags support added to color picker controls - Editor V4
-* Tweak: Link and Button accessibility improvements in Dynamic Tags - Editor V4
-* Tweak: Nested Accordion optimizations with Grid in Chrome browser
-* Fix: Size link-unlink operations not applying consistently - Editor V4
-* Fix: Div Block and Flexbox base styles overriding user settings when viewed from another document - Editor V4
-* Fix: Flex and Div blocks lose selection when deleting an assigned class via the Class Manager - Editor V4
-* Fix: Container handles not visible when "Overflow: Hidden" is enabled
+* New: Introducing syncing between Atomic Variables, Classes and Global Styles - ensures consistent styling between Atomic elements and legacy widgets - Atomic Editor
+* New: Introducing self-hosted Video Atomic Element - Atomic Editor
+* New: Introducing a new onboarding flow for new Editor installations to provide better guidance for getting started
+* Tweak: Updated Atomic Editor status to Stable - Atomic Editor
+* Tweak: Enabled Atomic Editor by default for new websites - Atomic Editor
+* Tweak: Added inline editing support for the Atomic Button element - Atomic Editor
+* Tweak: Improved performance and ordering of Global Classes styles on the frontend - Atomic Editor
+* Tweak: Improved request reliability during temporary network issues - Atomic Editor
+* Tweak: Improved size control structure and behavior - Atomic Editor
+* Tweak: Added support for importing and exporting Classes and Variables through website templates
+* Tweak: Added support for importing and exporting Classes and Variables through templates
+* Tweak: Improved accessibility in Cloud Templates modal
+* Fix: PHP warnings in the editor when WP_DEBUG is enabled after updating to WordPress 6.9.1 ([#34617](https://github.com/elementor/elementor/issues/34617), [#34831](https://github.com/elementor/elementor/issues/34831))
+* Fix: Typography modal fails to apply settings after using the "Back to default" reset option
+* Fix: Data Updater does not run automatically after plugin updates
+* Fix: Revision is not working as expected - Atomic Editor
+* Fix: Styling issues in Repeater Indications popovers – Atomic Editor
+* Fix: Selecting "auto" for size returns an incorrect value - Atomic Editor
+* Fix: Resetting position does not clear related properties - Atomic Editor
+* Fix: Variable name field does not auto-focus on creation in Variables - Atomic Editor
 
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)
