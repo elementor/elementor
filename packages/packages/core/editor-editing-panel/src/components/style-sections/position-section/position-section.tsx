@@ -46,12 +46,12 @@ const POSITION_DEPENDENT_PROP_NAMES = [
 	'z-index',
 ] as const;
 
-const CLEARED_POSITION_DEPENDENT_VALUES: Record< ( typeof POSITION_DEPENDENT_PROP_NAMES )[ number ], undefined > = {
-	'inset-block-start': undefined,
-	'inset-block-end': undefined,
-	'inset-inline-start': undefined,
-	'inset-inline-end': undefined,
-	'z-index': undefined,
+const CLEARED_POSITION_DEPENDENT_VALUES: Record< ( typeof POSITION_DEPENDENT_PROP_NAMES )[ number ], null > = {
+	'inset-block-start': null,
+	'inset-block-end': null,
+	'inset-inline-start': null,
+	'inset-inline-end': null,
+	'z-index': null,
 };
 
 export const PositionSection = () => {
