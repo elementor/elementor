@@ -399,7 +399,6 @@ const RepeaterItem = < T, >( {
 			/>
 			<RepeaterPopover width={ ref?.getBoundingClientRect().width } { ...popoverProps } anchorEl={ ref }>
 				<ClickAwayListener
-					disableReactTree
 					mouseEvent="onMouseDown"
 					touchEvent="onTouchStart"
 					onClickAway={ popoverProps.onClose }
