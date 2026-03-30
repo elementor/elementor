@@ -106,7 +106,7 @@ class Test_Revert extends Elementor_Test_Base {
 
 		$this->create_mock_import_session();
 
-		$_GET['referrer_kit'] = 'test-kit-123';
+		$_GET['referrer_kit'] = 'test-kit-manor';
 
 		$response = $this->send_revert_request();
 
@@ -114,7 +114,7 @@ class Test_Revert extends Elementor_Test_Base {
 		$data = $response->get_data();
 
 		$this->assertTrue( $data['data']['revert_completed'] );
-		$this->assertEquals( 'test-kit-123', $data['data']['referrer_kit_id'] );
+		$this->assertEquals( 'test-kit-manor', $data['data']['referrer_kit_id'] );
 		$this->assertTrue( $data['data']['show_referrer_dialog'] );
 
 		unset( $_GET['referrer_kit'] );

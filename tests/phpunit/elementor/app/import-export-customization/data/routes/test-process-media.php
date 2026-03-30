@@ -50,7 +50,7 @@ class Test_Process_Media extends Elementor_Test_Base {
         $this->init_rest_api();
         $this->act_as_admin();
 
-        $response = $this->send_request( [ 'https://example.com/image.jpg' ] );
+        $response = $this->send_request( [ 'https://examplemanor.com/image.jpg' ] );
 
         $this->assertNotEquals( 403, $response->get_status() );
     }
@@ -70,8 +70,8 @@ class Test_Process_Media extends Elementor_Test_Base {
         $request = new \WP_REST_Request( 'POST', '/test' );
         $request->set_param( 'media_urls', [ $test_image_url ] );
         $request->set_param( 'kit', [
-            'mediaUploadUrl' => 'https://example.com/upload',
-            'id' => 'test-kit-123'
+            'mediaUploadUrl' => 'https://examplemanor.com/upload',
+            'id' => 'test-kit-manor'
         ] );
 
         $reflection = new \ReflectionClass( $mock_route );
@@ -137,8 +137,8 @@ class Test_Process_Media extends Elementor_Test_Base {
 
         $request->set_param( 'media_urls', $media_urls );
         $request->set_param( 'kit', [
-            'mediaUploadUrl' => 'https://example.com/upload',
-            'id' => 'test-kit-123'
+            'mediaUploadUrl' => 'https://examplemanor.com/upload',
+            'id' => 'test-kit-manor'
         ] );
 
         return rest_do_request( $request );
