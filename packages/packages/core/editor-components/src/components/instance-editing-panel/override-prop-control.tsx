@@ -158,10 +158,18 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 		return null;
 	}
 
-	const propValue = resolvedElementSettings[ propKey ];
+	const { propValue, placeholderValue } = resolveValueAndPlaceholder(
+		matchingOverride,
+		settingsWithInnerOverrides,
+		propKey
+	);
 
 	const value = {
 		[ overridableProp.overrideKey ]: propValue,
+	} as OverridesSchema;
+
+	const placeholder = {
+		[ overridableProp.overrideKey ]: placeholderValue,
 	} as OverridesSchema;
 
 	const setValue = ( newValue: OverridesSchema ) => {
@@ -247,6 +255,7 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 						propType={ propTypeSchema }
 						value={ value }
 						setValue={ setValue }
+						placeholder={ placeholder }
 						isDisabled={ () => {
 							return false;
 						} }
@@ -270,7 +279,27 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 	);
 }
 
-// temp solution to allow dynamic values to be overridden, will be removed once placeholder is implemented
+type ElementSettings = Record< string, AnyTransformable | null >;
+
+function resolveValueAndPlaceholder(
+	matchingOverride: ComponentInstanceOverride | null,
+	settingsWithInnerOverrides: ElementSettings,
+	propKey: string
+) {
+	const overrideValue = matchingOverride ? resolveOverridePropValue( matchingOverride ) : null;
+
+	const placeholderSettings = unwrapOverridableSettings( settingsWithInnerOverrides );
+	const inheritedValue = placeholderSettings[ propKey ] ?? null;
+	const isInheritedDynamic = isDynamicPropValue( inheritedValue );
+
+	const propValue = isInheritedDynamic && ! matchingOverride ? inheritedValue : overrideValue;
+	const placeholderValue = matchingOverride || isInheritedDynamic ? null : inheritedValue;
+
+	return { propValue, placeholderValue };
+}
+
+// Temp solution: when removing an override on a dynamic value, fall back to propType.default
+// instead of null, since we don't have placeholder support for dynamics yet.
 function getTempNewValueForDynamicProp( propType: PropType, propValue: PropValue, newPropValue: PropValue ) {
 	const isRemovingOverride = newPropValue === null;
 
