@@ -14,6 +14,10 @@ import {
 	ControlTypeContainer,
 	createTopLevelObjectType,
 	ElementProvider,
+	extractDependencyEffect,
+	extractOrderedDependencies,
+	getElementSettingsWithDefaults,
+	getUpdatedValues,
 	isDynamicPropValue,
 	SettingsField,
 	useElement,
@@ -65,7 +69,7 @@ type Props = {
 
 export function OverridePropControl( { overrideKey }: Props ) {
 	const overridableProps = useComponentOverridableProps();
-	const overridableProp = overridableProps?.props[ overrideKey ];
+	const overridableProp = overridableProps.props[ overrideKey ];
 
 	if ( ! overridableProp ) {
 		return null;
@@ -92,19 +96,11 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 	const overrides = useComponentInstanceOverrides();
 
 	const controls = useControlsByWidgetType(
-		overridableProp?.originPropFields?.widgetType ?? overridableProp.widgetType
+		overridableProp.originPropFields?.widgetType ?? overridableProp.widgetType
 	);
 	const controlReplacements = getControlReplacements();
 
 	const matchingOverride = getMatchingOverride( overrides, overridableProp.overrideKey );
-
-	if ( ! componentId ) {
-		throw new Error( 'Component ID is required' );
-	}
-
-	if ( ! overridableProps ) {
-		throw new Error( 'Component has no overridable props' );
-	}
 
 	const {
 		elementId: originElementId,
@@ -158,22 +154,38 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 		return null;
 	}
 
-	const propValue = resolvedElementSettings[ propKey ];
+	const resolvedSettingsWithDefaults = getElementSettingsWithDefaults(
+		elementType.propsSchema,
+		resolvedElementSettings
+	);
+
+	const dependents = extractOrderedDependencies( elementType.dependenciesPerTargetMapping ?? {} );
+
+	const settingsWithDepsNewValues = getUpdatedValues(
+		resolvedElementSettings,
+		dependents,
+		elementType.propsSchema,
+		resolvedSettingsWithDefaults,
+		elementId
+	);
+
+	const propValue = settingsWithDepsNewValues[ propKey ];
 
 	const value = {
 		[ overridableProp.overrideKey ]: propValue,
 	} as OverridesSchema;
 
+	const { isDisabled, isHidden } = extractDependencyEffect(
+		propKey,
+		elementType.propsSchema,
+		settingsWithDepsNewValues
+	);
+
+	if ( isHidden ) {
+		return null;
+	}
+
 	const setValue = ( newValue: OverridesSchema ) => {
-		if ( ! overridableProps ) {
-			setInstanceValue( {
-				...instanceValue,
-				overrides: undefined,
-			} );
-
-			return;
-		}
-
 		let newPropValue = getTempNewValueForDynamicProp(
 			propType,
 			propValue,
@@ -242,14 +254,11 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 				elementType={ elementType }
 				settings={ resolvedElementSettings }
 			>
-				<SettingsField bind={ propKey } propDisplayName={ overridableProp.label }>
 					<PropProvider
 						propType={ propTypeSchema }
 						value={ value }
 						setValue={ setValue }
-						isDisabled={ () => {
-							return false;
-						} }
+							isDisabled={ isDisabled }
 					>
 						<PropKeyProvider bind={ overridableProp.overrideKey }>
 							<ControlReplacementsProvider replacements={ controlReplacements }>
@@ -264,7 +273,6 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 							</ControlReplacementsProvider>
 						</PropKeyProvider>
 					</PropProvider>
-				</SettingsField>
 			</ElementProvider>
 		</OverridablePropProvider>
 	);
