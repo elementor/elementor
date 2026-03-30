@@ -1,174 +1,174 @@
 import { EditorOneEventManager } from 'elementor-editor-utils/editor-one-events';
 
 export class Back extends $e.modules.CommandBase {
-  document = null;
-  confirmDialog = null;
-  unsavedChangesDialog = [];
+	document = null;
+	confirmDialog = null;
+	unsavedChangesDialog = [];
 
-  apply() {
-    const panelHistory = $e.routes.getHistory('panel');
-    const currentRoute = panelHistory[panelHistory.length - 1]?.route;
+	apply() {
+		const panelHistory = $e.routes.getHistory( 'panel' );
+		const currentRoute = panelHistory[ panelHistory.length - 1 ]?.route;
 
-    // When at the root Site Settings page, back should behave like close —
-    // switching back to the initial document and clearing the active-document query param.
-    if (currentRoute === this.component.getNamespace() + '/menu') {
-      $e.run('panel/global/close');
-      return;
-    }
+		// When at the root Site Settings page, back should behave like close —
+		// switching back to the initial document and clearing the active-document query param.
+		if ( currentRoute === this.component.getNamespace() + '/menu' ) {
+			$e.run( 'panel/global/close' );
+			return;
+		}
 
-    // If the user is on the global colors/typography page, and there are unsaved changes,
-    // prompt the user with a confirmation dialog asking if they would like to save the changes.
-    if (this.isGlobalRoute()) {
-      const kit = elementor.config.kit_id;
-      this.document = elementor.documents.get(kit);
+		// If the user is on the global colors/typography page, and there are unsaved changes,
+		// prompt the user with a confirmation dialog asking if they would like to save the changes.
+		if ( this.isGlobalRoute() ) {
+			const kit = elementor.config.kit_id;
+			this.document = elementor.documents.get( kit );
 
-      if (this.isDocumentChanged()) {
-        this.resolveChanges().then(() => {
-          return $e.routes.back('panel');
-        });
+			if ( this.isDocumentChanged() ) {
+				this.resolveChanges().then( () => {
+					return $e.routes.back( 'panel' );
+				} );
 
-        return;
-      }
-    }
+				return;
+			}
+		}
 
-    return $e.routes.back('panel');
-  }
+		return $e.routes.back( 'panel' );
+	}
 
-  markSessionSaved() {
-    const globalComponent = this.component;
+	markSessionSaved() {
+		const globalComponent = this.component;
 
-    if (!globalComponent) {
-      return;
-    }
+		if ( ! globalComponent ) {
+			return;
+		}
 
-    globalComponent.siteSettingsSession.hasSaved = true;
+		globalComponent.siteSettingsSession.hasSaved = true;
 
-    const currentTab = globalComponent.currentTab;
-    let activeSection = null;
+		const currentTab = globalComponent.currentTab;
+		let activeSection = null;
 
-    try {
-      const panelView = elementor.getPanelView();
-      const currentPage = panelView?.getCurrentPageView?.();
-      const contentView = currentPage?.content?.currentView;
-      activeSection = contentView?.activeSection || null;
-    } catch (e) {}
+		try {
+			const panelView = elementor.getPanelView();
+			const currentPage = panelView?.getCurrentPageView?.();
+			const contentView = currentPage?.content?.currentView;
+			activeSection = contentView?.activeSection || null;
+		} catch ( e ) {}
 
-    const savedItem = activeSection ? `${currentTab} - ${activeSection}` : currentTab;
+		const savedItem = activeSection ? `${ currentTab } - ${ activeSection }` : currentTab;
 
-    if (savedItem) {
-      globalComponent.trackSavedItem(savedItem);
-    }
-  }
+		if ( savedItem ) {
+			globalComponent.trackSavedItem( savedItem );
+		}
+	}
 
-  trackSiteSettingsSession(targetType, state) {
-    const sessionData = this.component.getSiteSettingsSessionData?.() || {};
+	trackSiteSettingsSession( targetType, state ) {
+		const sessionData = this.component.getSiteSettingsSessionData?.() || {};
 
-    EditorOneEventManager.sendSiteSettingsSession({
-      targetType,
-      visitedItems: sessionData.visitedItems || [],
-      savedItems: sessionData.savedItems || [],
-      state,
-    });
+		EditorOneEventManager.sendSiteSettingsSession( {
+			targetType,
+			visitedItems: sessionData.visitedItems || [],
+			savedItems: sessionData.savedItems || [],
+			state,
+		} );
 
-    this.component.resetSiteSettingsSession?.();
-  }
+		this.component.resetSiteSettingsSession?.();
+	}
 
-  getCloseConfirmDialog(event) {
-    if (!this.confirmDialog) {
-      const modalOptions = {
-        id: 'elementor-kit-warn-on-close',
-        headerMessage: __('Exit', 'elementor'),
-        message: __('Would you like to exit?', 'elementor'),
-        position: {
-          my: 'center center',
-          at: 'center center',
-        },
-        strings: {
-          confirm: __('Exit', 'elementor'),
-          cancel: __('Cancel', 'elementor'),
-        },
-        onConfirm: () => {
-          this.trackSiteSettingsSession('back', 'discard');
-          $e.run('panel/global/close');
-        },
-      };
+	getCloseConfirmDialog( event ) {
+		if ( ! this.confirmDialog ) {
+			const modalOptions = {
+				id: 'elementor-kit-warn-on-close',
+				headerMessage: __( 'Exit', 'elementor' ),
+				message: __( 'Would you like to exit?', 'elementor' ),
+				position: {
+					my: 'center center',
+					at: 'center center',
+				},
+				strings: {
+					confirm: __( 'Exit', 'elementor' ),
+					cancel: __( 'Cancel', 'elementor' ),
+				},
+				onConfirm: () => {
+					this.trackSiteSettingsSession( 'back', 'discard' );
+					$e.run( 'panel/global/close' );
+				},
+			};
 
-      this.confirmDialog = elementorCommon.dialogsManager.createWidget('confirm', modalOptions);
-    }
+			this.confirmDialog = elementorCommon.dialogsManager.createWidget( 'confirm', modalOptions );
+		}
 
-    this.confirmDialog.setSettings('hide', {
-      onEscKeyPress: !event,
-    });
+		this.confirmDialog.setSettings( 'hide', {
+			onEscKeyPress: ! event,
+		} );
 
-    return this.confirmDialog;
-  }
+		return this.confirmDialog;
+	}
 
-  isGlobalRoute() {
-    const panelHistory = $e.routes.getHistory('panel');
+	isGlobalRoute() {
+		const panelHistory = $e.routes.getHistory( 'panel' );
 
-    return /global\/\bglobal-colors|global-typography\b/.test(
-      panelHistory[panelHistory.length - 1].route
-    );
-  }
+		return /global\/\bglobal-colors|global-typography\b/.test(
+			panelHistory[ panelHistory.length - 1 ].route,
+		);
+	}
 
-  isDocumentChanged() {
-    return this.document && this.document.editor.isChanged;
-  }
+	isDocumentChanged() {
+		return this.document && this.document.editor.isChanged;
+	}
 
-  resolveChanges() {
-    return new Promise((resolve) => {
-      this.getUnsavedChangesDialog(resolve).show();
-    });
-  }
+	resolveChanges() {
+		return new Promise( ( resolve ) => {
+			this.getUnsavedChangesDialog( resolve ).show();
+		} );
+	}
 
-  getUnsavedChangesDialog(resolve) {
-    if (!this.document) {
-      resolve();
-      return;
-    }
+	getUnsavedChangesDialog( resolve ) {
+		if ( ! this.document ) {
+			resolve();
+			return;
+		}
 
-    const document = this.document;
+		const document = this.document;
 
-    if (!this.unsavedChangesDialog[document]) {
-      const modalOptions = {
-        id: `elementor-${document}-save-changes`,
-        headerMessage: __('Save Changes', 'elementor'),
-        message: __("Would you like to save the changes you've made?", 'elementor'),
-        position: {
-          my: 'center center',
-          at: 'center center',
-        },
-        strings: {
-          confirm: __('Save', 'elementor'),
-          cancel: __('Discard', 'elementor'),
-        },
-        onConfirm: () => {
-          this.markSessionSaved();
-          $e.run('document/save/update').then(() => {
-            this.trackSiteSettingsSession('save', 'saved');
-            resolve();
-          });
-        },
-        onCancel: () => {
-          $e.run('document/save/discard', { document }).then(() => {
-            this.trackSiteSettingsSession('back', 'discard');
-            resolve();
-          });
-        },
-      };
+		if ( ! this.unsavedChangesDialog[ document ] ) {
+			const modalOptions = {
+				id: `elementor-${ document }-save-changes`,
+				headerMessage: __( 'Save Changes', 'elementor' ),
+				message: __( "Would you like to save the changes you've made?", 'elementor' ),
+				position: {
+					my: 'center center',
+					at: 'center center',
+				},
+				strings: {
+					confirm: __( 'Save', 'elementor' ),
+					cancel: __( 'Discard', 'elementor' ),
+				},
+				onConfirm: () => {
+					this.markSessionSaved();
+					$e.run( 'document/save/update' ).then( () => {
+						this.trackSiteSettingsSession( 'save', 'saved' );
+						resolve();
+					} );
+				},
+				onCancel: () => {
+					$e.run( 'document/save/discard', { document } ).then( () => {
+						this.trackSiteSettingsSession( 'back', 'discard' );
+						resolve();
+					} );
+				},
+			};
 
-      this.unsavedChangesDialog[document] = elementorCommon.dialogsManager.createWidget(
-        'confirm',
-        modalOptions
-      );
-    }
+			this.unsavedChangesDialog[ document ] = elementorCommon.dialogsManager.createWidget(
+				'confirm',
+				modalOptions,
+			);
+		}
 
-    this.unsavedChangesDialog[document].setSettings('hide', {
-      onEscKeyPress: !event,
-    });
+		this.unsavedChangesDialog[ document ].setSettings( 'hide', {
+			onEscKeyPress: ! event,
+		} );
 
-    return this.unsavedChangesDialog[document];
-  }
+		return this.unsavedChangesDialog[ document ];
+	}
 }
 
 export default Back;
