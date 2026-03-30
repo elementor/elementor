@@ -49,70 +49,17 @@ class Interactions_Frontend_Handler {
 
 		$collector = Interactions_Collector::instance();
 
-		// Recursively collect interactions from all elements
-		$this->collect_interactions_recursive( $elements_data, $collector );
+		$cached_rows = Interactions_Cache::get_valid_rows( $post_id );
+
+		if ( null !== $cached_rows ) {
+			foreach ( $cached_rows as $row ) {
+				$collector->register( $row['elementId'], [ 'items' => $row['interactions'] ] );
+			}
+		} else {
+			Interactions_Data_Builder::collect_into_collector( $elements_data, $collector );
+		}
 
 		return $elements_data;
-	}
-
-	/**
-	 * Recursively iterate through all elements and collect interactions.
-	 *
-	 * @param array                  $elements  Array of element data.
-	 * @param Interactions_Collector $collector The collector instance.
-	 */
-	private function collect_interactions_recursive( $elements, $collector ) {
-		if ( ! is_array( $elements ) ) {
-			return;
-		}
-
-		foreach ( $elements as $element ) {
-			if ( ! is_array( $element ) ) {
-				continue;
-			}
-
-			// Check if this element has interactions
-			if ( ! empty( $element['id'] ) && isset( $element['interactions'] ) ) {
-				$element_id = $element['id'];
-				$interactions = $element['interactions'];
-
-				// Decode if it's a JSON string
-				if ( is_string( $interactions ) ) {
-					$decoded = json_decode( $interactions, true );
-					if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
-						$interactions = $decoded;
-					} else {
-						$interactions = null;
-					}
-				}
-
-				// Normalize the interactions format - ensure we have items array
-				if ( is_array( $interactions ) ) {
-					// If interactions has 'items' key, it's already in the right format
-					// If not, check if it's a direct array of items or has other structure
-					if ( ! isset( $interactions['items'] ) ) {
-						// Check if this looks like a direct array of interaction items
-						// (first element has 'trigger' or 'animation' or '$$type')
-						$first_item = reset( $interactions );
-						if ( is_array( $first_item ) && ( isset( $first_item['trigger'] ) || isset( $first_item['animation'] ) || isset( $first_item['$$type'] ) ) ) {
-							// It's a direct array of items, wrap it
-							$interactions = [ 'items' => $interactions ];
-						}
-					}
-
-					// Register with collector if we have valid items
-					$items = $interactions['items'] ?? [];
-					if ( ! empty( $items ) || ! empty( $interactions ) ) {
-						$collector->register( $element_id, $interactions );
-					}
-				}
-			}
-
-			// Recursively process child elements
-			if ( ! empty( $element['elements'] ) && is_array( $element['elements'] ) ) {
-				$this->collect_interactions_recursive( $element['elements'], $collector );
-			}
-		}
 	}
 
 	/**
@@ -137,7 +84,7 @@ class Interactions_Frontend_Handler {
 		// Format: array of elements, each with elementId, dataId, and cleaned interactions
 		$elements_with_interactions = [];
 		foreach ( $all_interactions as $element_id => $interactions ) {
-			$items = $this->extract_interaction_items( $interactions );
+			$items = Interactions_Data_Builder::extract_interaction_items( $interactions );
 
 			if ( empty( $items ) ) {
 				continue;
@@ -162,43 +109,6 @@ class Interactions_Frontend_Handler {
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON data is already encoded
 		echo '<script type="application/json" id="' . Module::SCRIPT_ID_INTERACTIONS_DATA . '">' . $json_data . '</script>';
-	}
-
-	/**
-	 * Extract interaction items from various data formats.
-	 *
-	 * Handles multiple formats:
-	 * - v1 format: { items: [...] }
-	 * - v2 format with $$type: { items: { $$type: '...', value: [...] } }
-	 * - Direct arrays: [{ trigger: ..., animation: ... }, ...]
-	 *
-	 * @param array $interactions The interactions data.
-	 * @return array The extracted items array.
-	 */
-	private function extract_interaction_items( $interactions ) {
-		if ( ! is_array( $interactions ) ) {
-			return [];
-		}
-
-		// Check if it has 'items' key (standard format)
-		if ( isset( $interactions['items'] ) ) {
-			$items = $interactions['items'];
-
-			return is_array( $items ) ? $items : [];
-		}
-
-		// Check if interactions itself is a direct array of items
-		// (first element has interaction-related keys)
-		$first_item = reset( $interactions );
-		if ( is_array( $first_item ) && (
-			isset( $first_item['trigger'] ) ||
-			isset( $first_item['animation'] ) ||
-			isset( $first_item['$$type'] )
-		) ) {
-			return $interactions;
-		}
-
-		return [];
 	}
 
 	private function enqueue_interactions_assets() {

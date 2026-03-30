@@ -89,7 +89,6 @@ class Module extends BaseModule {
 				$validation = new Validation();
 				$document_after_sanitization = $validation->sanitize( $data );
 				$validation->validate();
-
 				return $document_after_sanitization;
 			},
 		10, 2 );
@@ -97,6 +96,14 @@ class Module extends BaseModule {
 		add_filter( 'elementor/document/save/data', function( $data, $document ) {
 			return ( new Parser( $document->get_main_id() ) )->assign_interaction_ids( $data );
 		}, 11, 2 );
+
+		add_action( 'elementor/document/after_save', function( $document, $data ) {
+			if ( Interactions_Cache::should_skip_sync_for_save_data( $data ) ) {
+				return;
+			}
+			$elements = isset( $data['elements'] ) && is_array( $data['elements'] ) ? $data['elements'] : [];
+			Interactions_Cache::sync( $document->get_main_id(), $elements );
+		}, 10, 2 );
 	}
 
 	public function get_config() {
