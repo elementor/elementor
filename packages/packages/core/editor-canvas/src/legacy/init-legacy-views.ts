@@ -9,6 +9,7 @@ import {
 	type ModelExtensions,
 	type NestedTemplatedElementConfig,
 } from './create-nested-templated-element-type';
+import { createProPromotionNestedType } from './create-pro-promotion-nested-type';
 import { canBeTemplated, type CreateTemplatedElementTypeOptions } from './create-templated-element-type';
 import { createTemplatedElementTypeWithReplacements } from './replacements/manager';
 import type { ElementType, LegacyWindow } from './types';
@@ -37,6 +38,8 @@ export function initLegacyViews() {
 		const legacyWindow = window as unknown as LegacyWindow;
 		const renderer = createDomRenderer();
 
+		registerProPromotionTypes( widgetsCache );
+
 		Object.entries( widgetsCache ).forEach( ( [ type, element ] ) => {
 			if ( ! element.atomic ) {
 				return;
@@ -49,9 +52,21 @@ export function initLegacyViews() {
 	} );
 }
 
+function registerProPromotionTypes( widgetsCache: Record< string, V1ElementConfig > ) {
+	Object.entries( widgetsCache ).forEach( ( [ type, element ] ) => {
+		if ( element.meta?.is_pro_promotion ) {
+			registerElementType( type, ( options ) => createProPromotionNestedType( options ) );
+		}
+	} );
+}
+
 function resolveElementType( type: string, renderer: DomRenderer, element: V1ElementConfig ) {
 	if ( canBeNestedTemplated( element ) ) {
-		return createNestedTemplatedType( type, renderer, element );
+		const customGenerator = elementsLegacyTypes[ type ];
+
+		return customGenerator
+			? customGenerator( { type, renderer, element } )
+			: createNestedTemplatedType( type, renderer, element );
 	}
 
 	if ( ! canBeTemplated( element ) ) {
@@ -60,10 +75,9 @@ function resolveElementType( type: string, renderer: DomRenderer, element: V1Ele
 
 	const customGenerator = elementsLegacyTypes[ type ];
 
-	return (
-		customGenerator?.( { type, renderer, element } ) ??
-		createTemplatedElementTypeWithReplacements( { type, renderer, element } )
-	);
+	return customGenerator
+		? customGenerator( { type, renderer, element } )
+		: createTemplatedElementTypeWithReplacements( { type, renderer, element } );
 }
 
 function tryRegisterElement(
