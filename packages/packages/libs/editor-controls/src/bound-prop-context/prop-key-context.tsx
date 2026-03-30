@@ -89,12 +89,21 @@ const ArrayPropKeyProvider = ( { children, bind }: PropKeyProviderProps ) => {
 	};
 
 	const value = context.value?.[ Number( bind ) ];
+	const placeholder = context.placeholder?.[ Number( bind ) ];
 
 	const propType = context.propType.item_prop_type;
 
 	return (
 		<PropKeyContext.Provider
-			value={ { ...context, value, setValue, bind, propType, path: [ ...( path ?? [] ), bind ] } }
+			value={ {
+				...context,
+				value,
+				setValue,
+				bind,
+				propType,
+				path: [ ...( path ?? [] ), bind ],
+				placeholder: placeholder ?? undefined,
+			} }
 		>
 			{ children }
 		</PropKeyContext.Provider>

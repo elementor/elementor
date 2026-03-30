@@ -7,50 +7,67 @@ import {
 	getUpdatedValues,
 } from '@elementor/editor-editing-panel';
 import { type ElementType } from '@elementor/editor-elements';
-import { type PropValue } from '@elementor/editor-props';
+import { type AnyTransformable } from '@elementor/editor-props';
 
+import { type ComponentInstanceOverride } from '../../../prop-types/component-instance-overrides-prop-type';
+import { resolveOverridePropValue } from '../../../utils/resolve-override-prop-value';
 import { type ElementSettings } from './resolve-element-settings';
 
 type OverrideDependenciesResult = DependencyEffect & {
-	propValue: PropValue;
+	overrideValue: AnyTransformable | null;
 };
 
-export function useOverrideDependencies( {
-	elementType,
-	elementSettings,
+export function useOverrideControlDependencies( {
+	existingOverride,
+	resolvedElementSettings,
 	elementId,
+	elementType,
 	propKey,
 }: {
+	existingOverride: ComponentInstanceOverride | null;
+	resolvedElementSettings: ElementSettings;
 	elementType: ElementType;
-	elementSettings: ElementSettings;
 	elementId: string;
 	propKey: string;
 } ): OverrideDependenciesResult {
 	return useMemo( () => {
-		const resolvedSettingsWithDefaults = getElementSettingsWithDefaults( elementType.propsSchema, elementSettings );
+		const { isDisabled, isHidden } = extractDependencyEffect(
+			propKey,
+			elementType.propsSchema,
+			resolvedElementSettings
+		);
+
+		const existingOverrideValue = existingOverride ? resolveOverridePropValue( existingOverride ) : null;
+		const settingsForDepsNewValuesCalculation = { ...resolvedElementSettings, [ propKey ]: existingOverrideValue };
+
+		const resolvedSettingsWithDefaults = getElementSettingsWithDefaults(
+			elementType.propsSchema,
+			settingsForDepsNewValuesCalculation
+		);
 
 		const dependents = extractOrderedDependencies( elementType.dependenciesPerTargetMapping ?? {} );
 
 		const settingsWithDepsNewValues = getUpdatedValues(
-			elementSettings,
+			settingsForDepsNewValuesCalculation,
 			dependents,
 			elementType.propsSchema,
 			resolvedSettingsWithDefaults,
 			elementId
 		);
 
-		const propValue = settingsWithDepsNewValues[ propKey ];
-
-		const { isDisabled, isHidden } = extractDependencyEffect(
-			propKey,
-			elementType.propsSchema,
-			settingsWithDepsNewValues
-		);
+		const overrideValue = settingsWithDepsNewValues[ propKey ];
 
 		return {
-			propValue,
+			overrideValue,
 			isDisabled,
 			isHidden,
 		};
-	}, [ elementType.propsSchema, elementType.dependenciesPerTargetMapping, elementSettings, elementId, propKey ] );
+	}, [
+		existingOverride,
+		resolvedElementSettings,
+		propKey,
+		elementType.propsSchema,
+		elementType.dependenciesPerTargetMapping,
+		elementId,
+	] );
 }
