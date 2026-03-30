@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Global_Classes_REST_API {
 	const API_NAMESPACE = 'elementor/v1';
 	const API_BASE = 'global-classes';
+	const API_BASE_INDEX = self::API_BASE . '/index';
 	const API_BASE_USAGE = self::API_BASE . '/usage';
 	const MAX_ITEMS = 100;
 	const LABEL_PREFIX = 'DUP_';
@@ -48,7 +49,20 @@ class Global_Classes_REST_API {
 							Global_Classes_Repository::CONTEXT_PREVIEW,
 						],
 					],
+					'ids' => [
+						'type' => 'string',
+						'required' => false,
+						'description' => 'Comma-separated list of class IDs to fetch',
+					],
 				],
+			],
+		] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE_INDEX, [
+			[
+				'methods' => 'GET',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->get_index( $request ) ),
+				'permission_callback' => fn() => is_user_logged_in(),
 			],
 		] );
 
@@ -147,11 +161,38 @@ class Global_Classes_REST_API {
 
 	private function all( \WP_REST_Request $request ) {
 		$context = $request->get_param( 'context' );
+		$ids_param = $request->get_param( 'ids' );
 
 		$classes = $this->get_repository()->context( $context )->all();
+		$items = $classes->get_items()->all();
+		$order = $classes->get_order()->all();
 
-		return Response_Builder::make( (object) $classes->get_items()->all() )
-			->set_meta( [ 'order' => $classes->get_order()->all() ] )
+		if ( ! empty( $ids_param ) ) {
+			$requested_ids = array_map( 'trim', explode( ',', $ids_param ) );
+			$items = array_intersect_key( $items, array_flip( $requested_ids ) );
+			$order = array_values( array_intersect( $order, $requested_ids ) );
+		}
+
+		return Response_Builder::make( (object) $items )
+			->set_meta( [ 'order' => $order ] )
+			->build();
+	}
+
+	private function get_index( \WP_REST_Request $request ) {
+		$classes = $this->get_repository()->context( Global_Classes_Repository::CONTEXT_FRONTEND )->all();
+		$items = $classes->get_items()->all();
+		$order = $classes->get_order()->all();
+
+		$index_data = [];
+
+		foreach ( $items as $id => $item ) {
+			$index_data[ $id ] = [
+				'label' => $item['label'] ?? '',
+			];
+		}
+
+		return Response_Builder::make( (object) $index_data )
+			->set_meta( [ 'order' => $order ] )
 			->build();
 	}
 

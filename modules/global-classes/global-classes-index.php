@@ -66,9 +66,13 @@ class Global_Classes_Index {
 
 	public function remove_class( string $id ): bool {
 		$order = $this->get_order();
-		$order = array_filter( $order, fn( $item ) => $item !== $id );
+		$new_order = array_values( array_filter( $order, fn( $item ) => $item !== $id ) );
 
-		return $this->set_order( $order );
+		if ( $order === $new_order ) {
+			return true;
+		}
+
+		return $this->set_order( $new_order );
 	}
 
 	public function get_labels(): array {
