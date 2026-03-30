@@ -48,6 +48,7 @@ class Module extends BaseModule {
 		$settings = [
 			'iframeUrl' => $this->get_iframe_url(),
 			'isAdmin' => current_user_can( 'manage_options' ),
+			'siteIdentifier' => Site_Identity::get_id(),
 		];
 
 		$connect_auth = $this->get_connect_auth();
