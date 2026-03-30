@@ -66,7 +66,7 @@ class Import extends Import_Runner_Base {
 			return $imported_classes;
 		}
 
-		$existing_classes = $repository->all()->get();
+		$existing_classes = $this->get_existing_classes( $repository, $imported_data );
 		$merged = $this->merge_classes( $existing_classes, $imported_classes );
 
 		$repository->put(
@@ -75,6 +75,30 @@ class Import extends Import_Runner_Base {
 		);
 
 		return $imported_classes;
+	}
+
+	private function get_existing_classes( Global_Classes_Repository $repository, array $imported_data ): array {
+		$existing = $repository->all()->get();
+
+		if ( ! empty( $existing['items'] ) ) {
+			return $existing;
+		}
+
+		$was_new_kit_created = ! empty( $imported_data['site-settings']['imported_kit_id'] );
+
+		if ( ! $was_new_kit_created ) {
+			return $existing;
+		}
+
+		$previous_kit_id = Plugin::$instance->kits_manager->get_previous_id();
+
+		if ( ! $previous_kit_id ) {
+			return $existing;
+		}
+
+		$previous_kit = Plugin::$instance->kits_manager->get_kit( $previous_kit_id );
+
+		return Global_Classes_Repository::make( $previous_kit )->all()->get();
 	}
 
 	private function merge_classes( array $existing, array $imported ): array {
