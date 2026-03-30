@@ -1,4 +1,5 @@
-import './types';
+import type { WpApiSettings } from './types';
+import { getAjaxUrl, getJQuery, getWpApiSettings } from './utils';
 
 type HeartbeatTickData = {
 	angie_nonce?: string;
@@ -8,17 +9,20 @@ let isNonceRefreshInitialized = false;
 let nonceRefreshPromise: Promise< string > | null = null;
 
 export function initNonceRefresh(): void {
-	if ( isNonceRefreshInitialized || typeof window.jQuery === 'undefined' || ! window.wpApiSettings ) {
+	const jQuery = getJQuery();
+	const wpApiSettings = getWpApiSettings();
+	if ( isNonceRefreshInitialized || typeof jQuery === 'undefined' || ! wpApiSettings ) {
 		return;
 	}
 
 	isNonceRefreshInitialized = true;
 
-	window.jQuery?.( document ).on( 'heartbeat-tick.angieNonceRefresh', ( _event: unknown, data: unknown ) => {
+	jQuery?.( document ).on( 'heartbeat-tick.angieNonceRefresh', ( _event: unknown, data: unknown ) => {
 		try {
 			const tickData = data as HeartbeatTickData;
-			if ( tickData.angie_nonce && window.wpApiSettings && window.wpApiSettings.nonce !== tickData.angie_nonce ) {
-				window.wpApiSettings.nonce = tickData.angie_nonce;
+			const currentSettings = getWpApiSettings() as WpApiSettings | undefined;
+			if ( tickData.angie_nonce && currentSettings && currentSettings.nonce !== tickData.angie_nonce ) {
+				currentSettings.nonce = tickData.angie_nonce;
 			}
 		} catch ( error ) {
 			// eslint-disable-next-line no-console
@@ -42,7 +46,7 @@ export async function refreshNonce(): Promise< string > {
 }
 
 async function fetchFreshNonce(): Promise< string > {
-	const ajaxUrl = new URL( window.ajaxurl || '/wp-admin/admin-ajax.php', window.location.origin );
+	const ajaxUrl = new URL( getAjaxUrl() || '/wp-admin/admin-ajax.php', window.location.origin );
 	ajaxUrl.searchParams.set( 'action', 'rest-nonce' );
 	const response = await fetch( ajaxUrl.toString(), {
 		credentials: 'same-origin',
@@ -58,11 +62,12 @@ async function fetchFreshNonce(): Promise< string > {
 		throw new Error( 'Session expired — received invalid nonce' );
 	}
 
-	if ( ! window.wpApiSettings ) {
+	const wpApiSettings = getWpApiSettings() as WpApiSettings | undefined;
+	if ( ! wpApiSettings ) {
 		throw new Error( 'wpApiSettings not available — cannot refresh nonce' );
 	}
 
-	window.wpApiSettings.nonce = nonce;
+	wpApiSettings.nonce = nonce;
 	return nonce;
 }
 

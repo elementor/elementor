@@ -1,11 +1,9 @@
-import '../types';
-
 import { z } from '@elementor/schema';
 import { type McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 import { RESOURCE_URI_PAGE_SETTINGS } from '../resources';
 import type { ElementorContainer, McpToolResult, ToolParams } from '../types';
-import { encodeToolJson } from '../utils';
+import { encodeToolJson, get$e, getElementor } from '../utils';
 import { validateDocumentSettingsUpdated } from '../validation-helpers';
 
 export function addPageTool( server: McpServer ): void {
@@ -89,49 +87,49 @@ export function addPageTool( server: McpServer ): void {
 }
 
 async function handleSavePageDraft(): Promise< McpToolResult > {
-	await window.$e?.run( 'document/save/draft' );
+	await get$e()?.run( 'document/save/draft' );
 	return {
 		content: [ { type: 'text', text: 'Page saved as draft.' } ],
 	};
 }
 
 async function handleSavePagePublish(): Promise< McpToolResult > {
-	await window.$e?.run( 'document/save/publish' );
+	await get$e()?.run( 'document/save/publish' );
 	return {
 		content: [ { type: 'text', text: 'Page published.' } ],
 	};
 }
 
 async function handleSavePageUpdate(): Promise< McpToolResult > {
-	await window.$e?.run( 'document/save/update' );
+	await get$e()?.run( 'document/save/update' );
 	return {
 		content: [ { type: 'text', text: 'Page updated.' } ],
 	};
 }
 
 async function handleSavePageDiscard(): Promise< McpToolResult > {
-	await window.$e?.run( 'document/save/discard' );
+	await get$e()?.run( 'document/save/discard' );
 	return {
 		content: [ { type: 'text', text: 'Page changes discarded.' } ],
 	};
 }
 
 async function handleHistoryUndo(): Promise< McpToolResult > {
-	await window.$e?.run( 'document/history/undo' );
+	await get$e()?.run( 'document/history/undo' );
 	return {
 		content: [ { type: 'text', text: 'Undo performed.' } ],
 	};
 }
 
 async function handleHistoryRedo(): Promise< McpToolResult > {
-	await window.$e?.run( 'document/history/redo' );
+	await get$e()?.run( 'document/history/redo' );
 	return {
 		content: [ { type: 'text', text: 'Redo performed.' } ],
 	};
 }
 
 async function handleHistoryUndoAll(): Promise< McpToolResult > {
-	await window.$e?.run( 'document/history/undo-all', { document: window.elementor?.documents.getCurrent() } );
+	await get$e()?.run( 'document/history/undo-all', { document: getElementor()?.documents.getCurrent() } );
 	return {
 		content: [ { type: 'text', text: 'All changes undone.' } ],
 	};
@@ -142,7 +140,7 @@ async function handleOpenPage( params: ToolParams ): Promise< McpToolResult > {
 		throw new Error( 'pageId is required for open action' );
 	}
 
-	await window.$e?.run( 'editor/documents/open', {
+	await get$e()?.run( 'editor/documents/open', {
 		id: params.pageId,
 	} );
 
@@ -152,14 +150,14 @@ async function handleOpenPage( params: ToolParams ): Promise< McpToolResult > {
 }
 
 async function handlePreviewPage(): Promise< McpToolResult > {
-	await window.$e?.run( 'editor/documents/preview' );
+	await get$e()?.run( 'editor/documents/preview' );
 	return {
 		content: [ { type: 'text', text: 'Page preview opened.' } ],
 	};
 }
 
 async function handleGetDocumentSettings(): Promise< McpToolResult > {
-	const document = window.elementor?.documents?.getCurrent();
+	const document = getElementor()?.documents?.getCurrent();
 	if ( ! document ) {
 		throw new Error( 'No active document found.' );
 	}
@@ -181,7 +179,7 @@ async function handleGetDocumentSettings(): Promise< McpToolResult > {
 }
 
 async function handleUpdateDocumentSettings( params: ToolParams ): Promise< McpToolResult > {
-	const currentDocument = window.elementor?.documents?.getCurrent();
+	const currentDocument = getElementor()?.documents?.getCurrent();
 	if ( ! currentDocument ) {
 		throw new Error( 'No active document found.' );
 	}
@@ -190,7 +188,7 @@ async function handleUpdateDocumentSettings( params: ToolParams ): Promise< McpT
 		throw new Error( 'settings object is required for update-settings action' );
 	}
 
-	await window.$e?.run( 'document/elements/settings', {
+	await get$e()?.run( 'document/elements/settings', {
 		container: currentDocument.container,
 		settings: params.settings,
 		options: {
@@ -198,7 +196,7 @@ async function handleUpdateDocumentSettings( params: ToolParams ): Promise< McpT
 		},
 	} );
 
-	const updatedDocument = window.elementor?.documents?.getCurrent();
+	const updatedDocument = getElementor()?.documents?.getCurrent();
 	if ( ! updatedDocument?.container ) {
 		throw new Error( 'Document container not found after update' );
 	}

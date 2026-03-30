@@ -1,9 +1,8 @@
-import '../types';
-
 import { z } from '@elementor/schema';
 import { type McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 import type { ElementorContainer, McpToolResult, ToolParams } from '../types';
+import { get$e, getElementor, getElementorCommon } from '../utils';
 import { validateDynamicTagDisabled, validateDynamicTagEnabled } from '../validation-helpers';
 
 export function addDynamicTool( server: McpServer ): void {
@@ -75,7 +74,8 @@ async function handleGetDynamicSettings( params: ToolParams ): Promise< McpToolR
 		throw new Error( 'elementId and controlName are required for get-settings' );
 	}
 
-	const container = window.elementor?.getContainer( params.elementId as string );
+	const elementor = getElementor();
+	const container = elementor?.getContainer( params.elementId as string );
 	if ( ! container ) {
 		throw new Error( `Element with ID ${ params.elementId } not found.` );
 	}
@@ -92,7 +92,7 @@ async function handleGetDynamicSettings( params: ToolParams ): Promise< McpToolR
 	}
 
 	const { categories } = control.dynamic;
-	const dynamicTags = window.elementor?.dynamicTags;
+	const dynamicTags = elementor?.dynamicTags;
 
 	if ( ! dynamicTags?.getConfig ) {
 		throw new Error( 'Dynamic tags API is not available.' );
@@ -117,7 +117,8 @@ async function handleDynamicEnable( params: ToolParams ): Promise< McpToolResult
 		throw new Error( 'get-dynamic-settings action has not been run. Run it first before using the enable action.' );
 	}
 
-	const container = window.elementor?.getContainer( params.elementId as string );
+	const elementor = getElementor();
+	const container = elementor?.getContainer( params.elementId as string );
 	if ( ! container ) {
 		throw new Error( `Element with ID ${ params.elementId } not found.` );
 	}
@@ -133,13 +134,14 @@ async function handleDynamicEnable( params: ToolParams ): Promise< McpToolResult
 	};
 	settings.toJSON = () => settings;
 
-	if ( ! window.elementorCommon?.helpers?.getUniqueId ) {
+	const elementorCommon = getElementorCommon();
+	if ( ! elementorCommon?.helpers?.getUniqueId ) {
 		throw new Error( 'Elementor Common API is not available.' );
 	}
 
-	const uniqueId = window.elementorCommon.helpers.getUniqueId();
+	const uniqueId = elementorCommon.helpers.getUniqueId();
 
-	const dynamicTags = window.elementor?.dynamicTags;
+	const dynamicTags = elementor?.dynamicTags;
 
 	if ( ! dynamicTags?.tagDataToTagText ) {
 		throw new Error( 'Dynamic tags API is not available.' );
@@ -147,7 +149,7 @@ async function handleDynamicEnable( params: ToolParams ): Promise< McpToolResult
 
 	const tagText = dynamicTags.tagDataToTagText( String( uniqueId ), dynamicName, settings );
 
-	await window.$e?.run( 'document/dynamic/enable', {
+	await get$e()?.run( 'document/dynamic/enable', {
 		container,
 		settings: { [ params.controlName as string ]: tagText },
 	} );
@@ -169,7 +171,7 @@ async function handleDynamicDisable( params: ToolParams ): Promise< McpToolResul
 		throw new Error( 'elementId and controlName are required for dynamic disable' );
 	}
 
-	const container = window.elementor?.getContainer( params.elementId as string );
+	const container = getElementor()?.getContainer( params.elementId as string );
 	if ( ! container ) {
 		throw new Error( `Element with ID ${ params.elementId } not found.` );
 	}
@@ -214,7 +216,7 @@ async function handleDynamicDisable( params: ToolParams ): Promise< McpToolResul
 		);
 	}
 
-	await window.$e?.run( 'document/dynamic/disable', {
+	await get$e()?.run( 'document/dynamic/disable', {
 		container,
 		settings: {
 			[ params.controlName as string ]: '',

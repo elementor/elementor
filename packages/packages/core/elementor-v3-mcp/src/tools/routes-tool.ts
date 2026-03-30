@@ -2,15 +2,17 @@ import { z } from '@elementor/schema';
 import { type McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 import type { McpToolResult, ToolParams } from '../types';
+import { get$e } from '../utils';
 
 export function addRoutesTool( server: McpServer ): void {
-	const routes = window.$e?.routes?.getAll?.() || [];
-	const components = window.$e?.components?.getAll?.() || [];
+	const $e = get$e();
+	const routes = $e?.routes?.getAll?.() || [];
+	const components = $e?.components?.getAll?.() || [];
 	const availableToOpenComponents = components.filter(
-		( component ) => window.$e?.components?.get( component )?.getCommands?.()?.open
+		( component: string ) => $e?.components?.get( component )?.getCommands?.()?.open
 	);
 	const availableToCloseComponents = components.filter(
-		( component ) => window.$e?.components?.get( component )?.getCommands?.()?.close
+		( component: string ) => $e?.components?.get( component )?.getCommands?.()?.close
 	);
 
 	server.registerTool(
@@ -58,11 +60,12 @@ export function addRoutesTool( server: McpServer ): void {
 }
 
 async function handleOpen( params: ToolParams ): Promise< McpToolResult > {
+	const $e = get$e();
 	const component = ( params.componentToOpen || params.route ) as string;
-	const openCommand = window.$e?.components?.get( component )?.getCommands?.()?.open?.registerConfig.command;
+	const openCommand = $e?.components?.get( component )?.getCommands?.()?.open?.registerConfig.command;
 
 	if ( openCommand ) {
-		await window.$e?.run( openCommand, {} );
+		await $e?.run( openCommand, {} );
 	} else {
 		throw new Error( 'Could not open component' );
 	}
@@ -73,26 +76,27 @@ async function handleOpen( params: ToolParams ): Promise< McpToolResult > {
 }
 
 async function handleNavigate( params: ToolParams ): Promise< McpToolResult > {
+	const $e = get$e();
 	const route = params.route as string;
 	const componentToOpen = params.componentToOpen as string;
-	const openCommand = window.$e?.components?.get( componentToOpen )?.getCommands?.()?.open?.registerConfig.command;
+	const openCommand = $e?.components?.get( componentToOpen )?.getCommands?.()?.open?.registerConfig.command;
 
 	if ( openCommand ) {
-		await window.$e?.run( openCommand, {} );
+		await $e?.run( openCommand, {} );
 	}
 
-	const routeComponent = window.$e?.routes?.getComponent?.( route );
+	const routeComponent = $e?.routes?.getComponent?.( route );
 	if ( routeComponent ) {
-		window.$e?.routes?.saveState?.( routeComponent.getNamespace() );
+		$e?.routes?.saveState?.( routeComponent.getNamespace() );
 	}
 
 	try {
-		window.$e?.routes?.to?.( route, {} );
+		$e?.routes?.to?.( route, {} );
 	} catch {
-		const openCommandFallback = window.$e?.components?.get( route )?.getCommands?.()?.open?.registerConfig.command;
+		const openCommandFallback = $e?.components?.get( route )?.getCommands?.()?.open?.registerConfig.command;
 
 		if ( openCommandFallback ) {
-			await window.$e?.run( openCommandFallback, {} );
+			await $e?.run( openCommandFallback, {} );
 		} else {
 			throw new Error( 'Could not navigate to route' );
 		}
@@ -104,11 +108,12 @@ async function handleNavigate( params: ToolParams ): Promise< McpToolResult > {
 }
 
 async function handleGoBack( params: ToolParams ): Promise< McpToolResult > {
+	const $e = get$e();
 	const route = params.route as string;
-	const component = window.$e?.routes?.getComponent?.( route );
+	const component = $e?.routes?.getComponent?.( route );
 
 	if ( component ) {
-		window.$e?.routes?.back?.( component.getNamespace() );
+		$e?.routes?.back?.( component.getNamespace() );
 	}
 
 	return {
@@ -117,11 +122,12 @@ async function handleGoBack( params: ToolParams ): Promise< McpToolResult > {
 }
 
 async function handleClose( params: ToolParams ): Promise< McpToolResult > {
+	const $e = get$e();
 	const component = params.componentToClose as string;
-	const closeCommand = window.$e?.components?.get( component )?.getCommands?.()?.close?.registerConfig.command;
+	const closeCommand = $e?.components?.get( component )?.getCommands?.()?.close?.registerConfig.command;
 
 	if ( closeCommand ) {
-		await window.$e?.run( closeCommand, {} );
+		await $e?.run( closeCommand, {} );
 	} else {
 		throw new Error( 'Could not close component' );
 	}

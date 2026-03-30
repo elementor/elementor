@@ -1,5 +1,12 @@
-import { cleanupElementorMocks, type ElementorMockSetup, setupElementorMocks } from '@elementor/elementor-mcp-common';
 import { type McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+
+/* eslint-disable import/no-relative-packages */
+import {
+	cleanupElementorMocks,
+	type ElementorMockSetup,
+	setupElementorMocks,
+} from '../../../../libs/elementor-mcp-common/src/__tests__/test-mocks';
+/* eslint-enable import/no-relative-packages */
 
 const mockConsoleLog = jest.fn();
 // eslint-disable-next-line no-console

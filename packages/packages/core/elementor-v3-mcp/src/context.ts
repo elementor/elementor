@@ -1,6 +1,5 @@
-import './types';
-
 import type { ElementorContainer, ElementorControls, ElementorControlsMapped } from './types';
+import { getElementor } from './utils';
 
 function deepMerge< T >( target: T, source: T ): T {
 	if ( ! source || typeof source !== 'object' ) {
@@ -35,7 +34,7 @@ export function getPageOverView(): {
 	elements?: Record< string, unknown >[];
 	error?: string;
 } {
-	const document = window.elementor?.documents?.getCurrent();
+	const document = getElementor()?.documents?.getCurrent();
 	if ( ! document ) {
 		return { error: 'No active document found' };
 	}
@@ -84,7 +83,7 @@ export function getPageOverView(): {
 }
 
 export function getElementSettings( elementId: string ): Record< string, unknown > {
-	const container = window.elementor?.getContainer( elementId );
+	const container = getElementor()?.getContainer( elementId );
 
 	if ( ! container ) {
 		throw new Error( `Container with ID ${ elementId } not found.` );
@@ -128,7 +127,8 @@ function mapControlsToSchema( controlsData: ElementorControls ): ElementorContro
 			.map( ( [ controlKey, control ] ) => {
 				let options;
 
-				const controlConfig = window.elementor?.config?.controls?.[ control.type ] || {};
+				const controlConfig =
+					( getElementor()?.config?.controls as Record< string, unknown > )?.[ control.type ] || {};
 				const completeConfig = deepMerge( controlConfig, control ) as Record< string, unknown >;
 				const returnValue = completeConfig.return_value;
 
@@ -169,7 +169,7 @@ function mapControlsToSchema( controlsData: ElementorControls ): ElementorContro
 }
 
 function getDocumentSchema( documentId: string ): ElementorControlsMapped | undefined {
-	const document = window.elementor?.documents?.get?.( documentId );
+	const document = getElementor()?.documents?.get?.( documentId );
 	if ( ! document ) {
 		return;
 	}
@@ -179,12 +179,12 @@ function getDocumentSchema( documentId: string ): ElementorControlsMapped | unde
 }
 
 export function getElementSchema( type: string ): ElementorControlsMapped {
-	const controls = window.elementor?.widgetsCache?.[ type ]?.controls;
+	const controls = getElementor()?.widgetsCache?.[ type ]?.controls;
 	return mapControlsToSchema( controls as ElementorControls );
 }
 
 export function loadDocumentSettings( documentId: string ): Record< string, unknown > | undefined {
-	const document = window.elementor?.documents?.get?.( documentId );
+	const document = getElementor()?.documents?.get?.( documentId );
 	if ( ! document ) {
 		return;
 	}

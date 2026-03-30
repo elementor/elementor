@@ -1,4 +1,4 @@
-import './types';
+import { get$e, getElementor, getElementorAiConfig, getElementorFrontend, getWp } from './utils';
 
 type WaitForElementorOptions = {
 	maxRetries: number;
@@ -13,11 +13,11 @@ const DEFAULT_MAX_RETRIES = ELEMENTOR_LOAD_TIMEOUT_MS / ELEMENTOR_CHECK_INTERVAL
 const DEFAULT_WAIT_FOR_ELEMENTOR_OPTIONS: WaitForElementorOptions = {
 	maxRetries: DEFAULT_MAX_RETRIES,
 	retryInterval: ELEMENTOR_CHECK_INTERVAL_MS,
-	checkFn: () => !! ( window.elementor && window.$e ),
+	checkFn: () => !! ( getElementor() && get$e() ),
 };
 
 export function isGutenbergEditor(): boolean {
-	return window.wp?.data?.select( 'core/editor' ) !== undefined;
+	return getWp()?.data?.select( 'core/editor' ) !== undefined;
 }
 
 export function isElementorEditor(): boolean {
@@ -31,7 +31,7 @@ export function isElementorEditor(): boolean {
 }
 
 export function isElementorAIActive(): boolean {
-	return !! window.ElementorAiConfig;
+	return !! getElementorAiConfig();
 }
 
 export function hasGutenbergUI(): boolean {
@@ -39,13 +39,14 @@ export function hasGutenbergUI(): boolean {
 }
 
 export function ensureElementorFrontend(): void {
-	if ( ! window.elementorFrontend?.elements?.$body ) {
+	const frontend = getElementorFrontend() as { elements?: { $body?: unknown } } | undefined;
+	if ( ! frontend?.elements?.$body ) {
 		throw new Error( 'elementorFrontend or its required components not available' );
 	}
 }
 
 export function isElementorEditorReady(): boolean {
-	return !! window.$e?.components.get( 'panel' );
+	return !! get$e()?.components.get( 'panel' );
 }
 
 export function waitForElementorEditor(): Promise< void > {

@@ -1,8 +1,8 @@
 import { type McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 import { getPageOverView, loadDocumentSchema, loadDocumentSettings } from './context';
-import type { ElementorControls, ElementorInstance } from './types';
-import { encodeToolJson } from './utils';
+import type { ElementorControls } from './types';
+import { encodeToolJson, getElementor } from './utils';
 
 export const RESOURCE_NAME_ELEMENT_SETTINGS = 'elementor-element-settings';
 export const RESOURCE_URI_ELEMENT_SETTINGS_TEMPLATE = 'elementor://editor/element-settings/{elementId}';
@@ -15,10 +15,6 @@ export const RESOURCE_URI_PAGE_OVERVIEW = 'elementor://editor/page-overview';
 
 export const RESOURCE_NAME_PAGE_SETTINGS = 'elementor-page-settings';
 export const RESOURCE_URI_PAGE_SETTINGS = 'elementor://editor/page-settings';
-
-function getElementor(): ElementorInstance | undefined {
-	return window.elementor as unknown as ElementorInstance | undefined;
-}
 
 export function decodeResourceVariable( value: string ): string {
 	try {

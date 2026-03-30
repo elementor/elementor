@@ -1,9 +1,8 @@
-import '../types';
-
 import { z } from '@elementor/schema';
 import { type McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 import type { McpToolResult } from '../types';
+import { get$e } from '../utils';
 
 export function addAiTool( server: McpServer ): void {
 	server.registerTool(
@@ -35,7 +34,7 @@ export function addAiTool( server: McpServer ): void {
 }
 
 async function handleOpenBrandVoice(): Promise< McpToolResult > {
-	await window.$e?.run( 'ai-integration/open-brand-voice' );
+	await get$e()?.run( 'ai-integration/open-brand-voice' );
 
 	return {
 		content: [ { type: 'text', text: 'Brand Voice interface opened.' } ],
@@ -43,7 +42,7 @@ async function handleOpenBrandVoice(): Promise< McpToolResult > {
 }
 
 async function handleOpenChooseElement(): Promise< McpToolResult > {
-	await window.$e?.run( 'ai-integration/open-choose-element' );
+	await get$e()?.run( 'ai-integration/open-choose-element' );
 
 	return {
 		content: [ { type: 'text', text: 'Choose Element interface opened.' } ],
@@ -51,7 +50,7 @@ async function handleOpenChooseElement(): Promise< McpToolResult > {
 }
 
 async function handleOpenTextToElementor(): Promise< McpToolResult > {
-	await window.$e?.run( 'ai-integration/open-text-to-elementor' );
+	await get$e()?.run( 'ai-integration/open-text-to-elementor' );
 
 	return {
 		content: [ { type: 'text', text: 'Text to Elementor interface opened.' } ],

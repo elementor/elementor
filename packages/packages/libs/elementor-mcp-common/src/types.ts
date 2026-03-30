@@ -159,10 +159,10 @@ export interface WpDataInstance {
 	dispatch: ( store: string ) => Record< string, unknown >;
 }
 
-type JQuery = {
+export interface JQuery {
 	resize: () => void;
 	[ index: number ]: HTMLElement;
-};
+}
 
 export interface ElementorCommonInstance {
 	eventsManager?: {
@@ -183,23 +183,4 @@ export interface ElementorCommonInstance {
 	ajax?: {
 		addRequest?: ( endpoint: string, options: { success?: ( data: unknown ) => void } ) => Promise< void >;
 	};
-}
-
-declare global {
-	interface Window {
-		wpApiSettings?: WpApiSettings;
-		ajaxurl?: string;
-		elementor?: ElementorInstance;
-		elementorFrontend?: ElementorFrontendInstance;
-		elementorCommon?: ElementorCommonInstance;
-		$e?: ElementorCommandsInstance;
-		ElementorAiConfig?: Record< string, unknown >;
-		wp?: {
-			data: WpDataInstance;
-		};
-		jQuery?: ( selector: unknown ) => {
-			on: ( event: string, callback: ( event: unknown, data: unknown ) => void ) => void;
-			get?: ( index: number ) => HTMLElement;
-		};
-	}
 }

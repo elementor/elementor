@@ -117,9 +117,10 @@ describe( 'Dynamic Tool', () => {
 			} ) ) as { content: Array< { text: string } > };
 
 			expect(
-				( window.elementorCommon as NonNullable< typeof window.elementorCommon > ).helpers?.getUniqueId
+				( window as unknown as { elementorCommon: { helpers: { getUniqueId: jest.Mock } } } ).elementorCommon
+					.helpers.getUniqueId
 			).toHaveBeenCalled();
-			expect( ( window.$e as NonNullable< typeof window.$e > ).run ).toHaveBeenCalledWith(
+			expect( ( window as unknown as { $e: { run: jest.Mock } } ).$e.run ).toHaveBeenCalledWith(
 				'document/dynamic/enable',
 				expect.any( Object )
 			);

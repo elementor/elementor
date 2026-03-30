@@ -1,6 +1,5 @@
-import './types';
-
 import { ensureElementorFrontend, isGutenbergEditor } from './editor-detection';
+import { get$e, getElementor, getElementorFrontend, getWp } from './utils';
 
 interface GutenbergBlockEditorDispatch {
 	updateBlockAttributes: ( clientId: string, attributes: Record< string, unknown > ) => void;
@@ -20,7 +19,7 @@ export function injectElementCSS( elementId: string, css: string ): void {
 	style.appendChild( document.createTextNode( css ) );
 
 	ensureElementorFrontend();
-	const frontend = window.elementorFrontend;
+	const frontend = getElementorFrontend() as { elements: { $body: HTMLElement[] } } | undefined;
 	if ( frontend ) {
 		frontend.elements.$body[ 0 ].appendChild( style );
 	}
@@ -28,7 +27,7 @@ export function injectElementCSS( elementId: string, css: string ): void {
 
 export function removeElementCSS( elementId: string ): void {
 	ensureElementorFrontend();
-	const frontend = window.elementorFrontend;
+	const frontend = getElementorFrontend() as { elements: { $body: HTMLElement[] } } | undefined;
 	if ( ! frontend ) {
 		return;
 	}
@@ -37,7 +36,7 @@ export function removeElementCSS( elementId: string ): void {
 	const styleTags = bodyElement.querySelectorAll( `#${ CSS.escape( elementId ) }` );
 
 	if ( styleTags?.length > 0 ) {
-		styleTags.forEach( ( tag ) => {
+		styleTags.forEach( ( tag: Element ) => {
 			bodyElement.removeChild( tag );
 		} );
 	}
@@ -50,12 +49,12 @@ export async function updateElementSettings( {
 	id: string;
 	settings: Record< string, unknown >;
 } ): Promise< unknown > {
-	const containerToUpdateSettings = window.elementor?.getContainer( id );
+	const containerToUpdateSettings = getElementor()?.getContainer( id );
 	if ( ! containerToUpdateSettings ) {
 		throw new Error( `Element with ID "${ id }" not found.` );
 	}
 
-	const updateResult = await window.$e?.run( 'document/elements/settings', {
+	const updateResult = await get$e()?.run( 'document/elements/settings', {
 		container: containerToUpdateSettings,
 		settings,
 		options: {
@@ -64,13 +63,14 @@ export async function updateElementSettings( {
 		},
 	} );
 
-	window.elementorFrontend?.elements.$body.resize();
+	const frontend = getElementorFrontend() as { elements: { $body: { resize: () => void } } } | undefined;
+	frontend?.elements.$body.resize();
 
 	return updateResult;
 }
 
 export function getElementSettings( id: string ): unknown {
-	const container = window.elementor?.getContainer( id );
+	const container = getElementor()?.getContainer( id );
 	if ( ! container ) {
 		throw new Error( `Element with ID "${ id }" not found.` );
 	}
@@ -81,14 +81,13 @@ export function getGutenbergBlockEditorApis(): {
 	blockEditorDispatch: GutenbergBlockEditorDispatch;
 	blockEditorSelect: GutenbergBlockEditorSelect;
 } {
-	if ( ! isGutenbergEditor() || ! window.wp ) {
+	const wp = getWp();
+	if ( ! isGutenbergEditor() || ! wp ) {
 		throw new Error( 'WordPress editor API is not available' );
 	}
 
-	const blockEditorDispatch = window.wp.data.dispatch(
-		'core/block-editor'
-	) as unknown as GutenbergBlockEditorDispatch;
-	const blockEditorSelect = window.wp.data.select( 'core/block-editor' ) as unknown as GutenbergBlockEditorSelect;
+	const blockEditorDispatch = wp.data.dispatch( 'core/block-editor' ) as unknown as GutenbergBlockEditorDispatch;
+	const blockEditorSelect = wp.data.select( 'core/block-editor' ) as unknown as GutenbergBlockEditorSelect;
 
 	if ( ! blockEditorDispatch || ! blockEditorSelect ) {
 		throw new Error( 'Block editor API is not available' );
@@ -133,7 +132,7 @@ export function extractElementImageData(
 	let extractedImageUrl = fallbackImageUrl;
 
 	if ( targetElementId && ( ! extractedImageId || ! extractedImageUrl ) ) {
-		const targetContainer = window.elementor?.getContainer?.( targetElementId );
+		const targetContainer = getElementor()?.getContainer?.( targetElementId );
 		if ( targetContainer ) {
 			const imageData = targetContainer.settings.get( 'image' );
 			if ( imageData && typeof imageData === 'object' ) {

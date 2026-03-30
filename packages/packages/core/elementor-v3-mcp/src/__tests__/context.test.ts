@@ -1,5 +1,10 @@
-import { cleanupElementorMocks, type ElementorMockSetup, setupElementorMocks } from '@elementor/elementor-mcp-common';
-
+/* eslint-disable import/no-relative-packages */
+import {
+	cleanupElementorMocks,
+	type ElementorMockSetup,
+	setupElementorMocks,
+} from '../../../../libs/elementor-mcp-common/src/__tests__/test-mocks';
+/* eslint-enable import/no-relative-packages */
 import { getElementSchema } from '../context';
 
 describe( 'context.ts', () => {
@@ -14,10 +19,10 @@ describe( 'context.ts', () => {
 	} );
 
 	describe( 'getElementSchema', () => {
-		it( 'should return element schema for valid widget type', () => {
-			const result = getElementSchema( 'heading' );
+		it( 'should return mapped controls schema for a valid widget type', () => {
+			const schema = getElementSchema( 'heading' );
 
-			expect( result ).toEqual( {
+			expect( schema ).toEqual( {
 				text: {
 					type: 'text',
 					default: 'Default heading',
@@ -37,9 +42,11 @@ describe( 'context.ts', () => {
 					default: [],
 					fields: {
 						item_text: {
+							type: undefined,
 							default: 'Item text',
 						},
 						item_link: {
+							type: undefined,
 							default: '',
 						},
 					},
@@ -47,237 +54,272 @@ describe( 'context.ts', () => {
 			} );
 		} );
 
-		it( 'should filter out undefined values from control schema', () => {
-			( elementorMocks.mockElementor as unknown as { widgetsCache: Record< string, unknown > } ).widgetsCache = {
-				minimal: {
+		it( 'should return empty object for non-existent widget type', () => {
+			const schema = getElementSchema( 'non-existent' );
+			expect( schema ).toEqual( {} );
+		} );
+
+		it( 'should filter out section, tab, and tabs control types', () => {
+			const mockWidgetsCache = {
+				'test-widget': {
 					controls: {
-						basic_control: {
-							type: 'text',
-							default: 'test',
-							options: undefined,
-							return_value: undefined,
-							fields: undefined,
-							size_units: undefined,
-							range: undefined,
+						section_start: { type: 'section', default: null },
+						tab_start: { type: 'tab', default: null },
+						tabs_start: { type: 'tabs', default: null },
+						actual_control: { type: 'text', default: 'value' },
+					},
+				},
+			};
+
+			Object.defineProperty( window, 'elementor', {
+				value: {
+					...elementorMocks.mockElementor,
+					widgetsCache: mockWidgetsCache,
+					config: { controls: {} },
+				},
+				writable: true,
+				configurable: true,
+			} );
+
+			const schema = getElementSchema( 'test-widget' );
+
+			expect( schema ).toHaveProperty( 'actual_control' );
+			expect( schema ).not.toHaveProperty( 'section_start' );
+			expect( schema ).not.toHaveProperty( 'tab_start' );
+			expect( schema ).not.toHaveProperty( 'tabs_start' );
+		} );
+
+		it( 'should include options array from controls that have options', () => {
+			const mockWidgetsCache = {
+				'select-widget': {
+					controls: {
+						dropdown: {
+							type: 'select',
+							default: 'option1',
+							options: {
+								option1: 'Option 1',
+								option2: 'Option 2',
+								option3: 'Option 3',
+							},
 						},
 					},
 				},
 			};
 
-			const result = getElementSchema( 'minimal' );
+			Object.defineProperty( window, 'elementor', {
+				value: {
+					...elementorMocks.mockElementor,
+					widgetsCache: mockWidgetsCache,
+					config: { controls: {} },
+				},
+				writable: true,
+				configurable: true,
+			} );
 
-			expect( result ).toEqual( {
-				basic_control: {
-					type: 'text',
-					default: 'test',
+			const schema = getElementSchema( 'select-widget' );
+
+			expect( schema.dropdown ).toEqual( {
+				type: 'select',
+				default: 'option1',
+				options: [ 'option1', 'option2', 'option3' ],
+			} );
+		} );
+
+		it( 'should recursively map nested fields in repeater controls', () => {
+			const mockWidgetsCache = {
+				'repeater-widget': {
+					controls: {
+						items: {
+							type: 'repeater',
+							default: [],
+							fields: {
+								title: { type: 'text', default: '' },
+								content: { type: 'textarea', default: '' },
+							},
+						},
+					},
+				},
+			};
+
+			Object.defineProperty( window, 'elementor', {
+				value: {
+					...elementorMocks.mockElementor,
+					widgetsCache: mockWidgetsCache,
+					config: { controls: {} },
+				},
+				writable: true,
+				configurable: true,
+			} );
+
+			const schema = getElementSchema( 'repeater-widget' );
+
+			expect( schema.items ).toEqual( {
+				type: 'repeater',
+				default: [],
+				fields: {
+					title: { type: 'text', default: '' },
+					content: { type: 'textarea', default: '' },
 				},
 			} );
 		} );
 
-		describe( 'deepmerge behavior', () => {
-			it( 'should merge global config controls with widget-specific controls', () => {
-				( elementorMocks.mockElementor as unknown as { config: Record< string, unknown > } ).config = {
+		it( 'should include size_units when present in control config', () => {
+			const mockWidgetsCache = {
+				'dimension-widget': {
 					controls: {
-						size: {
-							default: 10,
-							size_units: [ 'px' ],
-						},
-					},
-				};
-
-				(
-					elementorMocks.mockElementor as unknown as { widgetsCache: Record< string, unknown > }
-				 ).widgetsCache = {
-					custom_widget: {
-						controls: {
-							number: {
-								type: 'size',
-								default: 50,
-							},
-						},
-					},
-				};
-
-				const result = getElementSchema( 'custom_widget' );
-
-				expect( result ).toEqual( {
-					number: {
-						type: 'size',
-						default: 50,
-						size_units: [ 'px' ],
-					},
-				} );
-			} );
-
-			it( 'should allow widget-specific controls to override global config properties', () => {
-				( elementorMocks.mockElementor as unknown as { config: Record< string, unknown > } ).config = {
-					controls: {
-						text: {
-							type: 'text',
-							default: 'Global default',
-							size_units: [ 'px' ],
-						},
-					},
-				};
-
-				(
-					elementorMocks.mockElementor as unknown as { widgetsCache: Record< string, unknown > }
-				 ).widgetsCache = {
-					custom_widget: {
-						controls: {
-							title: {
-								type: 'text',
-								default: 'Widget override',
-								size_units: [ 'px', 'em', 'rem' ],
-							},
-						},
-					},
-				};
-
-				const result = getElementSchema( 'custom_widget' );
-
-				expect( result ).toEqual( {
-					title: {
-						type: 'text',
-						default: 'Widget override',
-						size_units: [ 'px', 'em', 'rem' ],
-					},
-				} );
-			} );
-
-			it( 'should merge nested object properties from global config', () => {
-				( elementorMocks.mockElementor as unknown as { config: Record< string, unknown > } ).config = {
-					controls: {
-						slider: {
+						width: {
 							type: 'slider',
-							default: 50,
-							range: {
-								min: 0,
-								max: 100,
-								step: 1,
-							},
+							default: { size: 100, unit: 'px' },
+							size_units: [ 'px', '%', 'em', 'rem' ],
 						},
 					},
-				};
+				},
+			};
 
-				(
-					elementorMocks.mockElementor as unknown as { widgetsCache: Record< string, unknown > }
-				 ).widgetsCache = {
-					custom_widget: {
-						controls: {
-							my_slider: {
-								type: 'slider',
-								default: 75,
-								range: {
-									max: 200,
-								},
-							},
-						},
-					},
-				};
-
-				const result = getElementSchema( 'custom_widget' );
-
-				expect( result ).toEqual( {
-					my_slider: {
-						type: 'slider',
-						default: 75,
-					},
-				} );
+			Object.defineProperty( window, 'elementor', {
+				value: {
+					...elementorMocks.mockElementor,
+					widgetsCache: mockWidgetsCache,
+					config: { controls: {} },
+				},
+				writable: true,
+				configurable: true,
 			} );
 
-			it( 'should merge options from global config with widget options', () => {
-				( elementorMocks.mockElementor as unknown as { config: Record< string, unknown > } ).config = {
+			const schema = getElementSchema( 'dimension-widget' );
+
+			expect( schema.width ).toEqual( {
+				type: 'slider',
+				default: { size: 100, unit: 'px' },
+				size_units: [ 'px', '%', 'em', 'rem' ],
+			} );
+		} );
+
+		it( 'should include onValue (return_value) when present', () => {
+			const mockWidgetsCache = {
+				'toggle-widget': {
 					controls: {
-						select: {
-							type: 'select',
-							options: {
-								option1: 'Option 1',
-								option2: 'Option 2',
-							},
+						show_title: {
+							type: 'switcher',
+							default: '',
+							return_value: 'yes',
 						},
 					},
-				};
+				},
+			};
 
-				(
-					elementorMocks.mockElementor as unknown as { widgetsCache: Record< string, unknown > }
-				 ).widgetsCache = {
-					custom_widget: {
-						controls: {
-							my_select: {
-								type: 'select',
-								default: 'option3',
-								options: {
-									option3: 'Option 3',
-									option4: 'Option 4',
-								},
-							},
-						},
-					},
-				};
-
-				const result = getElementSchema( 'custom_widget' );
-
-				expect( result ).toEqual( {
-					my_select: {
-						type: 'select',
-						default: 'option3',
-						options: [ 'option1', 'option2', 'option3', 'option4' ],
-					},
-				} );
+			Object.defineProperty( window, 'elementor', {
+				value: {
+					...elementorMocks.mockElementor,
+					widgetsCache: mockWidgetsCache,
+					config: { controls: {} },
+				},
+				writable: true,
+				configurable: true,
 			} );
 
-			it( 'should deeply merge repeater fields with global config', () => {
-				( elementorMocks.mockElementor as unknown as { config: Record< string, unknown > } ).config = {
+			const schema = getElementSchema( 'toggle-widget' );
+
+			expect( schema.show_title ).toEqual( {
+				type: 'switcher',
+				default: '',
+				onValue: 'yes',
+			} );
+		} );
+
+		it( 'should merge control config with global control type config', () => {
+			const mockWidgetsCache = {
+				'merge-widget': {
 					controls: {
-						repeater: {
-							type: 'repeater',
-							default: [],
+						custom_text: {
+							type: 'text',
+							default: 'local default',
 						},
 					},
-				};
+				},
+			};
 
-				(
-					elementorMocks.mockElementor as unknown as { widgetsCache: Record< string, unknown > }
-				 ).widgetsCache = {
-					custom_widget: {
-						controls: {
-							items: {
-								type: 'repeater',
-								fields: {
-									title: {
-										type: 'text',
-										default: 'Item title',
-									},
-									link: {
-										type: 'url',
-										default: '',
-									},
-								},
-							},
-						},
+			const mockGlobalConfig = {
+				controls: {
+					text: {
+						type: 'text',
+						default: 'global default',
+						return_value: 'global_return',
 					},
-				};
+				},
+			};
 
-				const result = getElementSchema( 'custom_widget' );
-
-				expect( result ).toEqual( {
-					items: {
-						type: 'repeater',
-						default: [],
-						fields: {
-							title: {
-								type: 'text',
-								default: 'Item title',
-							},
-							link: {
-								type: 'url',
-								default: '',
-							},
-						},
-					},
-				} );
+			Object.defineProperty( window, 'elementor', {
+				value: {
+					...elementorMocks.mockElementor,
+					widgetsCache: mockWidgetsCache,
+					config: mockGlobalConfig,
+				},
+				writable: true,
+				configurable: true,
 			} );
+
+			const schema = getElementSchema( 'merge-widget' );
+
+			expect( schema.custom_text ).toEqual( {
+				type: 'text',
+				default: 'local default',
+				onValue: 'global_return',
+			} );
+		} );
+
+		it( 'should handle undefined widgetsCache gracefully', () => {
+			Object.defineProperty( window, 'elementor', {
+				value: {
+					...elementorMocks.mockElementor,
+					widgetsCache: undefined,
+				},
+				writable: true,
+				configurable: true,
+			} );
+
+			const schema = getElementSchema( 'any-widget' );
+			expect( schema ).toEqual( {} );
+		} );
+
+		it( 'should handle widget with no controls', () => {
+			const mockWidgetsCache = {
+				'empty-widget': {
+					controls: {},
+				},
+			};
+
+			Object.defineProperty( window, 'elementor', {
+				value: {
+					...elementorMocks.mockElementor,
+					widgetsCache: mockWidgetsCache,
+					config: { controls: {} },
+				},
+				writable: true,
+				configurable: true,
+			} );
+
+			const schema = getElementSchema( 'empty-widget' );
+			expect( schema ).toEqual( {} );
+		} );
+
+		it( 'should handle widget with undefined controls', () => {
+			const mockWidgetsCache = {
+				'no-controls-widget': {},
+			};
+
+			Object.defineProperty( window, 'elementor', {
+				value: {
+					...elementorMocks.mockElementor,
+					widgetsCache: mockWidgetsCache,
+					config: { controls: {} },
+				},
+				writable: true,
+				configurable: true,
+			} );
+
+			const schema = getElementSchema( 'no-controls-widget' );
+			expect( schema ).toEqual( {} );
 		} );
 	} );
 } );

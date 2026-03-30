@@ -1,9 +1,8 @@
-import '../types';
-
 import { z } from '@elementor/schema';
 import { type McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 import type { McpToolResult, ToolParams } from '../types';
+import { get$e, getElementor } from '../utils';
 
 export function addUiTool( server: McpServer ): void {
 	server.registerTool(
@@ -58,7 +57,7 @@ async function handleChangeDeviceMode( params: ToolParams ): Promise< McpToolRes
 		throw new Error( 'deviceMode is required for change-device-mode action' );
 	}
 
-	window.$e?.run( 'panel/change-device-mode', {
+	get$e()?.run( 'panel/change-device-mode', {
 		device: params.deviceMode,
 	} );
 
@@ -72,7 +71,7 @@ async function handleToggleFavorite( params: ToolParams ): Promise< McpToolResul
 		throw new Error( 'widgetType is required for toggle-favorite action' );
 	}
 
-	window.$e?.run( 'favorites/toggle', {
+	get$e()?.run( 'favorites/toggle', {
 		name: params.widgetType,
 	} );
 
@@ -86,12 +85,12 @@ async function handleUiPaste( params: ToolParams ): Promise< McpToolResult > {
 		throw new Error( 'elementId is required for ui-paste action' );
 	}
 
-	const container = window.elementor?.getContainer( params.elementId as string );
+	const container = getElementor()?.getContainer( params.elementId as string );
 	if ( ! container ) {
 		throw new Error( `Element with ID ${ params.elementId } not found.` );
 	}
 
-	window.$e?.run( 'document/ui/paste', {
+	get$e()?.run( 'document/ui/paste', {
 		container,
 	} );
 

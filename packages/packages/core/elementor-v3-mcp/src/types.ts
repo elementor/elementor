@@ -112,3 +112,9 @@ export interface ElementorCommandsInstance {
 		};
 	};
 }
+
+export interface ElementorCommonInstance {
+	helpers?: {
+		getUniqueId?: () => number | string;
+	};
+}

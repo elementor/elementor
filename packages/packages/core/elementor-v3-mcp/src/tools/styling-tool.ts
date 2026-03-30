@@ -1,10 +1,9 @@
-import '../types';
-
 import { z } from '@elementor/schema';
 import { type McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { SamplingMessageSchema } from '@modelcontextprotocol/sdk/types.js';
 
 import type { McpToolResult } from '../types';
+import { getElementor } from '../utils';
 
 export function addStylingTool( server: McpServer ): void {
 	server.registerTool(
@@ -65,12 +64,12 @@ This tool generates CSS code using AI, provides preview functionality, and handl
 }
 
 async function handleCustomCss( elementId: string, prompt: string, server: McpServer ): Promise< McpToolResult > {
-	const container = window.elementor?.getContainer( elementId );
+	const container = getElementor()?.getContainer( elementId );
 	if ( ! container ) {
 		throw new Error( `Element with ID ${ elementId } not found.` );
 	}
 
-	const htmlMarkup = container.view?.el.outerHTML || '';
+	const htmlMarkup = container.view?.el?.outerHTML || '';
 
 	const parseCSS = ( css: string ) => {
 		return css && css.replace( /`/g, '' ).replace( /^css\s*/i, '' );

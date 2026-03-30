@@ -1,7 +1,23 @@
-import './types';
-
-import type { ElementorContainer } from './types';
+import type {
+	ElementorCommandsInstance,
+	ElementorCommonInstance,
+	ElementorContainer,
+	ElementorInstance,
+} from './types';
 import { widgetMandatoryFields } from './widget-mandatory-fields';
+
+interface McpWindow {
+	elementor?: ElementorInstance;
+	$e?: ElementorCommandsInstance;
+	elementorCommon?: ElementorCommonInstance;
+}
+
+export const getElementor = (): ElementorInstance | undefined => ( window as unknown as McpWindow ).elementor;
+
+export const get$e = (): ElementorCommandsInstance | undefined => ( window as unknown as McpWindow ).$e;
+
+export const getElementorCommon = (): ElementorCommonInstance | undefined =>
+	( window as unknown as McpWindow ).elementorCommon;
 
 export async function updateRepeaterControl(
 	container: ElementorContainer,
@@ -9,7 +25,7 @@ export async function updateRepeaterControl(
 	widgetType: string,
 	settings: Record< string, unknown >
 ): Promise< Record< string, unknown >[] > {
-	const repeaterControl = window.elementor?.widgetsCache?.[ widgetType ]?.controls?.[ repeaterName ] as {
+	const repeaterControl = getElementor()?.widgetsCache?.[ widgetType ]?.controls?.[ repeaterName ] as {
 		fields?: Record< string, { default?: unknown } >;
 	};
 	const existingAttribute = container.settings?.attributes?.[ repeaterName ] as { models?: unknown[] };
@@ -28,9 +44,9 @@ export async function updateRepeaterControl(
 		Object.keys( repeaterModel ).forEach( ( fieldKey ) => {
 			itemModel[ fieldKey ] = val[ fieldKey ] ?? repeaterModel[ fieldKey ];
 		} );
-		itemModel._id = window.elementorCommon?.helpers?.getUniqueId?.();
+		itemModel._id = getElementorCommon()?.helpers?.getUniqueId?.();
 
-		window.$e?.run( 'document/repeater/insert', {
+		get$e()?.run( 'document/repeater/insert', {
 			container,
 			name: repeaterName,
 			model: itemModel,
@@ -40,7 +56,7 @@ export async function updateRepeaterControl(
 	} );
 
 	while ( existingItemsCount-- ) {
-		await window.$e?.run( 'document/repeater/remove', { container, name: repeaterName, index: 0 } );
+		await get$e()?.run( 'document/repeater/remove', { container, name: repeaterName, index: 0 } );
 	}
 
 	return insertedModels;
@@ -64,14 +80,16 @@ export function addMandatoryFields( settings: Record< string, unknown > ): Recor
 }
 
 export function getCurrentSelection(): string[] {
-	return Object.keys( window.elementor?.selection?.elements || {} );
+	return Object.keys( getElementor()?.selection?.elements || {} );
 }
 
 export async function restoreCurrentSelection( selectedElementId: string | null ): Promise< void > {
-	if ( selectedElementId && window.elementor && window.$e ) {
+	const elementor = getElementor();
+	const $e = get$e();
+	if ( selectedElementId && elementor && $e ) {
 		try {
-			await window.$e.run( 'document/elements/select', {
-				container: window.elementor.getContainer( selectedElementId ),
+			await $e.run( 'document/elements/select', {
+				container: elementor.getContainer( selectedElementId ),
 			} );
 		} catch {
 			// Unable to restore selection
@@ -109,16 +127,17 @@ export async function extractAndApplyGlobalStyles(
 		remainingSettings[ key ] = settings[ key ];
 	} );
 
-	if ( ! window.$e?.data?.get ) {
+	const $e = get$e();
+	if ( ! $e?.data?.get ) {
 		return { globalStyles, remainingSettings };
 	}
 
-	const globalColorsResult = ( await window.$e.data.get( 'globals/colors' ) ) as
+	const globalColorsResult = ( await $e.data.get( 'globals/colors' ) ) as
 		| {
 				data: Record< string, { value: unknown } >;
 		  }
 		| undefined;
-	const globalTypographyResult = ( await window.$e.data.get( 'globals/typography' ) ) as
+	const globalTypographyResult = ( await $e.data.get( 'globals/typography' ) ) as
 		| {
 				data: Record< string, { value: unknown } >;
 		  }
@@ -162,11 +181,12 @@ export async function extractAndApplyGlobalStyles(
 		}
 	} );
 
-	if ( Object.keys( globalStyles ).length > 0 && window.elementor ) {
-		const container = window.elementor.getContainer( elementId );
+	const elementor = getElementor();
+	if ( Object.keys( globalStyles ).length > 0 && elementor ) {
+		const container = elementor.getContainer( elementId );
 		if ( container ) {
 			const convertedSettings = convertToGlobalFormat( globalStyles );
-			await window.$e.run( 'document/globals/enable', {
+			await $e?.run( 'document/globals/enable', {
 				container,
 				settings: convertedSettings,
 			} );
@@ -181,7 +201,7 @@ export function encodeToolJson( data: unknown ): string {
 }
 
 export function getElementType( elementId: string ): string {
-	const container = window.elementor?.getContainer( elementId );
+	const container = getElementor()?.getContainer( elementId );
 
 	if ( ! container ) {
 		throw new Error( `Container with ID ${ elementId } not found.` );

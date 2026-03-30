@@ -1,6 +1,5 @@
-import './types';
-
 import { isNonceError, refreshNonce } from './nonce-refresh';
+import { getWpApiSettings } from './utils';
 
 type WpApiResponse = unknown;
 
@@ -33,11 +32,12 @@ async function executeWpApiCall< T = WpApiResponse >(
 	options?: CallWpApiOptions,
 	allowNonceRetry = false
 ): Promise< CallWpApiResult< T > > {
-	if ( ! window.wpApiSettings?.nonce || ! window.wpApiSettings.root ) {
+	const wpApiSettings = getWpApiSettings();
+	if ( ! wpApiSettings?.nonce || ! wpApiSettings.root ) {
 		throw new Error( 'wpApiSettings not available' );
 	}
 
-	const baseUrl = window.wpApiSettings.root;
+	const baseUrl = wpApiSettings.root;
 	const urlObject = new URL( baseUrl );
 	const endpointUrl = new URL( endpoint, baseUrl );
 
@@ -50,7 +50,7 @@ async function executeWpApiCall< T = WpApiResponse >(
 	const url = urlObject.toString();
 
 	const headers: Record< string, string > = {
-		'X-WP-Nonce': window.wpApiSettings.nonce,
+		'X-WP-Nonce': wpApiSettings.nonce,
 		...( options?.customHeaders || {} ),
 	};
 

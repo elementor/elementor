@@ -27,10 +27,26 @@ export { callWpApi, extractJSONFromResponse } from './rest-client';
 export { initNonceRefresh, refreshNonce, isNonceError } from './nonce-refresh';
 
 export type {
-	WpApiSettings,
+	ElementorChannels,
+	ElementorCommandsInstance,
+	ElementorCommonInstance,
 	ElementorContainer,
 	ElementorDocument,
-	ElementorInstance,
 	ElementorFrontendInstance,
-	ElementorCommandsInstance,
+	ElementorInstance,
+	JQuery,
+	WpApiSettings,
+	WpDataInstance,
 } from './types';
+
+export {
+	get$e,
+	getAjaxUrl,
+	getElementor,
+	getElementorAiConfig,
+	getElementorCommon,
+	getElementorFrontend,
+	getJQuery,
+	getWp,
+	getWpApiSettings,
+} from './utils';
