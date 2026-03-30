@@ -6,6 +6,7 @@ import {
 	bindPopover,
 	bindTrigger,
 	Box,
+	ClickAwayListener,
 	IconButton,
 	Infotip,
 	Tooltip,
@@ -340,10 +341,14 @@ const RepeaterItem = < T, >( {
 	actions,
 	value,
 }: RepeaterItemProps< T > ) => {
-	const { popoverState, popoverProps, ref, setRef } = usePopover( openOnMount, () => {
-		onOpen();
-		onPopoverOpen?.( value );
-	} );
+	const { popoverState, popoverProps, ref, setRef } = usePopover(
+		openOnMount,
+		() => {
+			onOpen();
+			onPopoverOpen?.( value );
+		},
+		onPopoverClose
+	);
 	const triggerProps = bindTrigger( popoverState );
 
 	const duplicateLabel = __( 'Duplicate', 'elementor' );
@@ -395,19 +400,22 @@ const RepeaterItem = < T, >( {
 			<RepeaterPopover
 				width={ ref?.getBoundingClientRect().width }
 				{ ...popoverProps }
-				onClose={ () => {
-					popoverProps.onClose?.();
-					onPopoverClose?.();
-				} }
 				anchorEl={ ref }
 			>
-				<Box>{ children( { anchorEl: ref } ) }</Box>
+				<ClickAwayListener
+					disableReactTree
+					mouseEvent="onMouseDown"
+					touchEvent="onTouchStart"
+					onClickAway={ popoverProps.onClose }
+				>
+					<Box>{ children( { anchorEl: ref } ) }</Box>
+				</ClickAwayListener>
 			</RepeaterPopover>
 		</>
 	);
 };
 
-const usePopover = ( openOnMount: boolean, onOpen: () => void ) => {
+const usePopover = ( openOnMount: boolean, onOpen: () => void, onPopoverClose?: () => void ) => {
 	const [ ref, setRef ] = useState< HTMLElement | null >( null );
 
 	const popoverState = usePopupState( { variant: 'popover' } );
@@ -422,10 +430,15 @@ const usePopover = ( openOnMount: boolean, onOpen: () => void ) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ ref ] );
 
+	const onClose = () => {
+		popoverProps.onClose?.();
+		onPopoverClose?.();
+	};
+
 	return {
 		popoverState,
 		ref,
 		setRef,
-		popoverProps,
+		popoverProps: { ...popoverProps, onClose },
 	};
 };
