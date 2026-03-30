@@ -26,6 +26,7 @@ function sendReferrerInfo( iframe: HTMLIFrameElement, event: MessageEvent, targe
 			instanceId: event.data?.payload?.instanceId ?? '',
 			info: {
 				connectAuth: config?.connectAuth,
+				siteIdentifier: config?.siteIdentifier,
 				page: { url: window.location.href },
 				user: { isAdmin: config?.isAdmin ?? false },
 			},
