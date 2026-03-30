@@ -139,6 +139,8 @@ export function AppContent( { onClose }: AppContentProps ) {
 				setCanSendEvents( true );
 			}
 
+			updateLibraryConnectConfig( data );
+
 			if ( shouldEnableTracking ) {
 				initializeAndEnableTracking( ( mp ) => {
 					( mp as { set_config?: ( c: object ) => void } )?.set_config?.( {
@@ -148,8 +150,6 @@ export function AppContent( { onClose }: AppContentProps ) {
 					flushQueue();
 				} );
 			}
-
-			updateLibraryConnectConfig( data );
 
 			const result = await checkProInstallScreen();
 			actions.setShouldShowProInstallScreen( result.shouldShowProInstallScreen );
