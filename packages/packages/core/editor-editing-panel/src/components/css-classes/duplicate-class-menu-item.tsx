@@ -63,10 +63,7 @@ export function DuplicateClassMenuItem( { closeMenu }: { closeMenu: () => void }
 	};
 
 	return (
-		<MenuListItem
-			disabled={ ! isAllowed }
-			onClick={ handleDuplicate }
-		>
+		<MenuListItem disabled={ ! isAllowed } onClick={ handleDuplicate }>
 			<MenuItemInfotip
 				showInfoTip={ ! isAllowed }
 				content={ __(
