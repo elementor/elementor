@@ -25,6 +25,7 @@ const UNDERLINE_KEYBOARD_SHORTCUT = 'u';
 type InlineEditorProps = {
 	value: string | null;
 	setValue: ( value: string | null ) => void;
+	placeholder?: string | null;
 	editorProps?: EditorProps;
 	elementClasses?: string;
 	sx?: SxProps< Theme >;
@@ -41,6 +42,7 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 	const {
 		value,
 		setValue,
+		placeholder = null,
 		editorProps = {},
 		elementClasses = '',
 		autofocus = false,
