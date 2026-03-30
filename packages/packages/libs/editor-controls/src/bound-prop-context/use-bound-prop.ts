@@ -73,7 +73,10 @@ export function useBoundProp< TKey extends string, TValue extends PropValue >(
 
 	const propType = resolveUnionPropType( propKeyContext.propType, propTypeUtil.key );
 
-	const value = propTypeUtil.extract( propKeyContext.value ?? propType.default ?? null );
+	const hasPlaceholder = propKeyContext.placeholder !== undefined && propKeyContext.placeholder !== null;
+	const fallbackValue = hasPlaceholder ? null : propType.default;
+
+	const value = propTypeUtil.extract( propKeyContext.value ?? fallbackValue ?? null );
 	const placeholder = propTypeUtil.extract( propKeyContext.placeholder ?? null );
 
 	return {
