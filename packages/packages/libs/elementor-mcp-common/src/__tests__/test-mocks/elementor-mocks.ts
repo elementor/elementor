@@ -1,31 +1,31 @@
 import type { ElementorContainer } from '../types';
-import { elementorCommon } from './elementorCommon';
+import { elementorCommon } from './elementor-common';
 
 interface MockElementorControl {
 	type?: string;
 	default?: unknown;
-	options?: Record<string, string> | undefined;
+	options?: Record< string, string > | undefined;
 	return_value?: string | undefined;
-	fields?: Record<string, Partial<MockElementorControl>> | undefined;
+	fields?: Record< string, Partial< MockElementorControl > > | undefined;
 	size_units?: string[] | undefined;
 	range?: { min?: number; max?: number; step?: number } | undefined;
-	[key: string]: unknown;
+	[ key: string ]: unknown;
 }
 
 interface MockElementorWidget {
-	controls: Record<string, MockElementorControl>;
+	controls: Record< string, MockElementorControl >;
 }
 
 interface MockElementorDocuments {
-	getCurrent: jest.Mock<MockElementorDocument | null>;
+	getCurrent: jest.Mock< MockElementorDocument | null >;
 }
 
 interface MockElementor {
 	documents: MockElementorDocuments;
-	getContainer: jest.Mock<ElementorContainer | null, [string]>;
-	widgetsCache: Record<string, MockElementorWidget>;
+	getContainer: jest.Mock< ElementorContainer | null, [ string ] >;
+	widgetsCache: Record< string, MockElementorWidget >;
 	config: {
-		controls: Record<string, MockElementorControl>;
+		controls: Record< string, MockElementorControl >;
 	};
 }
 
@@ -46,7 +46,7 @@ interface MockElementorDocument {
 	container: ElementorContainer;
 }
 
-export function createMockContainer( overrides: Partial<Record<string, unknown>> = {} ): ElementorContainer {
+export function createMockContainer( overrides: Partial< Record< string, unknown > > = {} ): ElementorContainer {
 	const defaultContainer = {
 		id: 'test-container-id',
 		type: 'widget',
@@ -83,7 +83,7 @@ export function createMockContainer( overrides: Partial<Record<string, unknown>>
 	return { ...defaultContainer, ...overrides } as unknown as ElementorContainer;
 }
 
-export function createMockDocument( overrides: Partial<MockElementorDocument> = {} ): MockElementorDocument {
+export function createMockDocument( overrides: Partial< MockElementorDocument > = {} ): MockElementorDocument {
 	const defaultDocument: MockElementorDocument = {
 		id: 'test-document-id',
 		history: {
@@ -104,12 +104,12 @@ export function createMockDocument( overrides: Partial<MockElementorDocument> = 
 	return { ...defaultDocument, ...overrides };
 }
 
-export function createMockElementor( overrides: Partial<MockElementor> = {} ): MockElementor {
+export function createMockElementor( overrides: Partial< MockElementor > = {} ): MockElementor {
 	const defaultElementor: MockElementor = {
 		documents: {
 			getCurrent: jest.fn( () => createMockDocument() ),
 		},
-		getContainer: jest.fn( ( id: string ) => id === 'test-container-id' ? createMockContainer() : null ),
+		getContainer: jest.fn( ( id: string ) => ( id === 'test-container-id' ? createMockContainer() : null ) ),
 		config: {
 			controls: {
 				text: { type: 'text' },
@@ -167,12 +167,14 @@ export interface ElementorMockSetup {
 	mockContainer: ElementorContainer;
 }
 
-export function setupElementorMocks( overrides: {
-	elementor?: Partial<MockElementor>;
-	elementorCommon?: Partial<typeof elementorCommon>;
-	document?: Partial<MockElementorDocument>;
-	container?: Partial<Record<string, unknown>>;
-} = {} ): ElementorMockSetup {
+export function setupElementorMocks(
+	overrides: {
+		elementor?: Partial< MockElementor >;
+		elementorCommon?: Partial< typeof elementorCommon >;
+		document?: Partial< MockElementorDocument >;
+		container?: Partial< Record< string, unknown > >;
+	} = {}
+): ElementorMockSetup {
 	const mockContainer = createMockContainer( overrides.container );
 	const mockDocument = createMockDocument( overrides.document );
 	const mockElementor = createMockElementor( {
@@ -181,7 +183,9 @@ export function setupElementorMocks( overrides: {
 			getCurrent: jest.fn( () => mockDocument ),
 			...overrides.elementor?.documents,
 		},
-		getContainer: jest.fn( ( id: string ) => ( id === ( mockContainer as unknown as { id: string } ).id ? mockContainer : null ) ),
+		getContainer: jest.fn( ( id: string ) =>
+			id === ( mockContainer as unknown as { id: string } ).id ? mockContainer : null
+		),
 		...overrides.elementor,
 	} );
 	const mockElementorCommon = { ...elementorCommon, ...overrides.elementorCommon };

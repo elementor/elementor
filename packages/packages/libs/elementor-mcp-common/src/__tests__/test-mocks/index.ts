@@ -6,6 +6,6 @@ export {
 	cleanupElementorMocks,
 	createContainerMock,
 	type ElementorMockSetup,
-} from './elementorMocks';
+} from './elementor-mocks';
 
-export { elementorCommon } from './elementorCommon';
+export { elementorCommon } from './elementor-common';
