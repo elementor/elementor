@@ -397,11 +397,7 @@ const RepeaterItem = < T, >( {
 					</>
 				}
 			/>
-			<RepeaterPopover
-				width={ ref?.getBoundingClientRect().width }
-				{ ...popoverProps }
-				anchorEl={ ref }
-			>
+			<RepeaterPopover width={ ref?.getBoundingClientRect().width } { ...popoverProps } anchorEl={ ref }>
 				<ClickAwayListener
 					disableReactTree
 					mouseEvent="onMouseDown"
