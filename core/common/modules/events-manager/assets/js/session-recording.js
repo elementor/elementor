@@ -26,8 +26,11 @@ export function configureSessionRecording( pairs ) {
 }
 
 /**
+ * Evaluates whether to start/stop recording based on the event name.
+ *
  * @param {string}                              name
  * @param {import('mixpanel-browser').Mixpanel} mixpanelInstance
+ * @return {'recording_started'|'recording_skipped'|'recording_stopped'|null} The recording decision, or null if no action taken.
  */
 export function handleSessionRecording( name, mixpanelInstance ) {
 	const matchedPair = sessionRecordingPairs.find( ( pair ) => pair.start === name );
@@ -38,15 +41,22 @@ export function handleSessionRecording( name, mixpanelInstance ) {
 			mixpanelInstance.start_session_recording();
 			isRecording = true;
 			activeEndEvent = matchedPair.end ?? null;
-		} else {
-			isRecording = false;
-			activeEndEvent = null;
+			return 'recording_started';
 		}
-	} else if ( activeEndEvent && name === activeEndEvent ) {
+
+		isRecording = false;
+		activeEndEvent = null;
+		return 'recording_skipped';
+	}
+
+	if ( activeEndEvent && name === activeEndEvent ) {
 		mixpanelInstance.stop_session_recording();
 		isRecording = false;
 		activeEndEvent = null;
+		return 'recording_stopped';
 	}
+
+	return null;
 }
 
 export function getIsRecording() {

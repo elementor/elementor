@@ -107,8 +107,7 @@ class Module extends BaseModule {
 		return [
 			// Each entry defines a recording window: recording starts when 'start' fires
 			// and stops when 'end' fires. 'end' is optional — omit or set to null to record indefinitely.
-			// Example:
-			// [ 'start' => 'editor/editor-loaded', 'end' => 'editor/close' ],
+			[ 'start' => 'editor_loaded' ],
 		];
 	}
 

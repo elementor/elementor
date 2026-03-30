@@ -1,7 +1,7 @@
 import eventsConfig from './events-config';
 import mixpanel, { Mixpanel } from 'mixpanel-browser';
 import { TIERS } from 'elementor-utils/tiers';
-import { configureSessionRecording, handleSessionRecording, getIsRecording } from './session-recording';
+import { configureSessionRecording, handleSessionRecording } from './session-recording';
 
 /** @type {Mixpanel | null} */
 let mixpanelInstance = null;
@@ -79,10 +79,9 @@ export default class extends elementorModules.Module {
 			this.enableTracking();
 		}
 
-		handleSessionRecording( name, mixpanelInstance );
-
+    
 		const eventData = {
-			user_id: elementorCommon.config.library_connect?.user_id || null,
+      user_id: elementorCommon.config.library_connect?.user_id || null,
 			user_roles: elementorCommon.config.library_connect?.user_roles || [],
 			subscription_id: elementorCommon.config.editor_events?.subscription_id || null,
 			user_tier: elementorCommon.config.library_connect?.current_access_tier || null,
@@ -91,11 +90,15 @@ export default class extends elementorModules.Module {
 			client_id: elementorCommon.config.editor_events?.site_key,
 			app_version: elementorCommon.config.editor_events?.elementor_version,
 			site_language: elementorCommon.config.editor_events?.site_language,
-			session_recording: getIsRecording(),
 			...data,
 		};
 
 		mixpanelInstance.track( name, eventData, options );
+
+		const recordingDecision = handleSessionRecording( name, mixpanelInstance );
+		if ( recordingDecision ) {
+			mixpanelInstance.track( recordingDecision, eventData );
+		}
 	}
 
 	async featureFlagIsActive( flagName ) {
