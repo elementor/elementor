@@ -6,6 +6,7 @@ import {
 	useUserStylesCapability,
 } from '@elementor/editor-styles-repository';
 import { MenuItemInfotip, MenuListItem } from '@elementor/editor-ui';
+import { useSessionStorage } from '@elementor/session';
 import { bindMenu, Divider, Menu, MenuSubheader, type PopupState, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -17,7 +18,7 @@ import { trackStyles } from '../../utils/tracking/subscribe';
 import { StyleIndicator } from '../style-indicator';
 import { useCssClass } from './css-class-context';
 import { LocalClassSubMenu } from './local-class-sub-menu';
-import { useUnapplyClass } from './use-apply-and-unapply-class';
+import { useApplyClass, useUnapplyClass } from './use-apply-and-unapply-class';
 
 type State = {
 	key: StyleDefinitionStateWithNormal;
@@ -304,7 +305,7 @@ function RenameClassMenuItem( { closeMenu }: { closeMenu: () => void } ) {
 			<MenuItemInfotip
 				showInfoTip={ ! isAllowed }
 				content={ __(
-					'With your current role, you can use existing classes but can’t modify them.',
+					"With your current role, you can use existing classes but can't modify them.",
 					'elementor'
 				) }
 			>
@@ -327,6 +328,8 @@ function getUniqueDuplicateLabel( originalLabel: string, existingLabels: string[
 function DuplicateClassMenuItem( { closeMenu }: { closeMenu: () => void } ) {
 	const { id: classId, provider } = useCssClass();
 	const { userCan } = useUserStylesCapability();
+	const applyClass = useApplyClass();
+	const [ , setPendingEditId ] = useSessionStorage( 'last-converted-class-generated-name', 'app' );
 
 	if ( ! provider || ! classId ) {
 		return null;
@@ -358,6 +361,8 @@ function DuplicateClassMenuItem( { closeMenu }: { closeMenu: () => void } ) {
 				const newLabel = getUniqueDuplicateLabel( styleDef.label, existingLabels );
 				const newId = createAction( newLabel, styleDef.variants );
 				if ( newId ) {
+					applyClass( { classId: newId, classLabel: newLabel } );
+					setPendingEditId( newId );
 					trackStyles( provider, 'classCreated', {
 						classId: newId,
 						source: 'created',
@@ -370,7 +375,7 @@ function DuplicateClassMenuItem( { closeMenu }: { closeMenu: () => void } ) {
 			<MenuItemInfotip
 				showInfoTip={ ! isAllowed }
 				content={ __(
-					'With your current role, you can use existing classes but can’t modify them.',
+					"With your current role, you can use existing classes but can't modify them.",
 					'elementor'
 				) }
 			>

@@ -28,7 +28,6 @@ type ClassItemProps = React.PropsWithChildren< {
 	id: string;
 	label: string;
 	renameClass: ( newLabel: string ) => void;
-	duplicateClass?: ( id: string ) => void;
 	selected?: boolean;
 	disabled?: boolean;
 	sortableTriggerProps: SortableTriggerProps;
@@ -41,7 +40,6 @@ export const ClassItem = ( {
 	id,
 	label,
 	renameClass,
-	duplicateClass,
 	selected,
 	disabled,
 	sortableTriggerProps,
@@ -143,19 +141,6 @@ export const ClassItem = ( {
 						{ __( 'Rename', 'elementor' ) }
 					</Typography>
 				</MenuListItem>
-				{ duplicateClass && (
-					<MenuListItem
-						sx={ { minWidth: '160px' } }
-						onClick={ () => {
-							popupState.close();
-							duplicateClass( id );
-						} }
-					>
-						<Typography variant="caption" sx={ { color: 'text.primary' } }>
-							{ __( 'Duplicate', 'elementor' ) }
-						</Typography>
-					</MenuListItem>
-				) }
 				{ onToggleSync && (
 					<MenuListItem
 						onClick={ () => {
