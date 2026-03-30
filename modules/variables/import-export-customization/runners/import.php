@@ -87,11 +87,6 @@ class Import extends Import_Runner_Base {
 		}
 
 		$previous_kit = Plugin::$instance->kits_manager->get_kit( $previous_kit_id );
-
-		if ( ! $previous_kit ) {
-			return $existing;
-		}
-
 		$previous_repository = new Variables_Repository( $previous_kit );
 
 		return $previous_repository->load();
