@@ -160,6 +160,21 @@ declare global {
 		};
 		elementorAppConfig?: {
 			'onboarding'?: OnboardingConfig;
+<<<<<<< HEAD
+=======
+		'site-builder'?: {
+			iframeUrl?: string;
+			isAdmin?: boolean;
+			siteIdentifier?: string;
+			connectAuth?: {
+					signature: string;
+					accessToken: string;
+					clientId: string;
+					homeUrl: string;
+					siteKey: string;
+				};
+			};
+>>>>>>> 2a481eded9 (Internal: Site-builder session management [ED-23301] (#35314))
 		};
 		ElementorInteractionsConfig?: InteractionsConfig;
 		ElementorVariablesQuotaConfig?: Record< string, number >;
