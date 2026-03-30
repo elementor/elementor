@@ -53,6 +53,7 @@ class Module extends BaseModule {
 			'token' => ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN,
 			'flags_enabled' => $is_flags_enabled,
 			'user_id' => self::get_user_id(),
+			'session_recording_events' => self::get_session_recording_events(),
 		];
 
 		return $settings;
@@ -100,6 +101,15 @@ class Module extends BaseModule {
 		] );
 
 		return $editor_assets_api->get_assets_data();
+	}
+
+	private static function get_session_recording_events(): array {
+		return [
+			// Each entry defines a recording window: recording starts when 'start' fires
+			// and stops when 'end' fires. 'end' is optional — omit or set to null to record indefinitely.
+			// Example:
+			// [ 'start' => 'editor/editor-loaded', 'end' => 'editor/close' ],
+		];
 	}
 
 	private static function get_user_id() {
