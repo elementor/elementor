@@ -97,12 +97,8 @@ class Import extends Import_Runner_Base {
 		}
 
 		$previous_kit = Plugin::$instance->kits_manager->get_kit( $previous_kit_id );
-		$previous_classes = $previous_kit->get_json_meta( Global_Classes_Repository::META_KEY_FRONTEND );
 
-		return [
-			'items' => $previous_classes['items'] ?? [],
-			'order' => $previous_classes['order'] ?? [],
-		];
+		return Global_Classes_Repository::make( $previous_kit )->all()->get();
 	}
 
 	private function merge_classes( array $existing, array $imported ): array {
