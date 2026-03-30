@@ -58,13 +58,38 @@ class Import extends Import_Runner_Base {
 			return $variables_data;
 		}
 
-		$existing_collection = $repository->load();
+		$existing_collection = $this->get_existing_collection( $repository, $imported_data );
 		$imported_collection = Variables_Collection::hydrate( $variables_data );
 
 		$merged_collection = $this->merge_collections( $existing_collection, $imported_collection );
 		$this->save_collection( $repository, $merged_collection );
 
 		return $variables_data;
+	}
+
+	private function get_existing_collection( Variables_Repository $repository, array $imported_data ): Variables_Collection {
+		$existing = $repository->load();
+
+		if ( count( $existing->all() ) > 0 ) {
+			return $existing;
+		}
+
+		$was_new_kit_created = ! empty( $imported_data['site-settings']['imported_kit_id'] );
+
+		if ( ! $was_new_kit_created ) {
+			return $existing;
+		}
+
+		$previous_kit_id = Plugin::$instance->kits_manager->get_previous_id();
+
+		if ( ! $previous_kit_id ) {
+			return $existing;
+		}
+
+		$previous_kit = Plugin::$instance->kits_manager->get_kit( $previous_kit_id );
+		$previous_repository = new Variables_Repository( $previous_kit );
+
+		return $previous_repository->load();
 	}
 
 	private function merge_collections(
