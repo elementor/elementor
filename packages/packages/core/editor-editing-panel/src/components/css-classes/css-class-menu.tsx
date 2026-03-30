@@ -315,10 +315,10 @@ function RenameClassMenuItem( { closeMenu }: { closeMenu: () => void } ) {
 }
 
 function getUniqueDuplicateLabel( originalLabel: string, existingLabels: string[] ): string {
-	let newLabel = `Copy of ${ originalLabel }`;
+	let newLabel = `copy-of-${ originalLabel }`;
 	let counter = 2;
 	while ( existingLabels.includes( newLabel ) ) {
-		newLabel = `Copy of ${ originalLabel } (${ counter })`;
+		newLabel = `copy-of-${ originalLabel }-${ counter }`;
 		counter++;
 	}
 	return newLabel;
