@@ -5,7 +5,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\AtomicWidgets\Abilities;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\Abilities\Atomic_Widgets_Ability;
-use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {

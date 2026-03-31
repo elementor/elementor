@@ -11,7 +11,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Variables_Ability {
 
-	public function __construct( private Kits_Manager $kits_manager ) {}
+	private Kits_Manager $kits_manager;
+
+	public function __construct( Kits_Manager $kits_manager ) {
+		$this->kits_manager = $kits_manager;
+	}
 
 	public function register_hooks(): void {
 		add_action( 'wp_abilities_api_init', [ $this, 'register_ability' ] );
@@ -30,10 +34,22 @@ class Variables_Ability {
 			'output_schema' => [
 				'type'       => 'object',
 				'properties' => [
-					'data'            => [ 'type' => 'object',  'description' => 'Raw variable data from Kit post meta.' ],
-					'count'           => [ 'type' => 'integer', 'description' => 'Total number of variables.' ],
-					'supported_types' => [ 'type' => 'array',   'description' => 'Supported variable types.' ],
-					'max_per_site'    => [ 'type' => 'integer', 'description' => 'Maximum variables per site.' ],
+					'data'            => [
+						'type'        => 'object',
+						'description' => 'Raw variable data from Kit post meta.',
+					],
+					'count'           => [
+						'type'        => 'integer',
+						'description' => 'Total number of variables.',
+					],
+					'supported_types' => [
+						'type'        => 'array',
+						'description' => 'Supported variable types.',
+					],
+					'max_per_site'    => [
+						'type'        => 'integer',
+						'description' => 'Maximum variables per site.',
+					],
 				],
 			],
 			'execute_callback'    => [ $this, 'execute' ],
@@ -65,7 +81,10 @@ class Variables_Ability {
 		$variables = $kit->get_json_meta( Constants::VARIABLES_META_KEY );
 
 		if ( ! is_array( $variables ) ) {
-			$variables = [ 'format_version' => Constants::FORMAT_VERSION_V2, 'data' => [] ];
+			$variables = [
+				'format_version' => Constants::FORMAT_VERSION_V2,
+				'data'           => [],
+			];
 		}
 
 		return [

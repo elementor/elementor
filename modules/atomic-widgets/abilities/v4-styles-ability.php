@@ -11,7 +11,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class V4_Styles_Ability {
 
-	public function __construct( private Breakpoints_Manager $breakpoints_manager ) {}
+	private Breakpoints_Manager $breakpoints_manager;
+
+	public function __construct( Breakpoints_Manager $breakpoints_manager ) {
+		$this->breakpoints_manager = $breakpoints_manager;
+	}
 
 	public function register_hooks(): void {
 		add_action( 'wp_abilities_api_init', [ $this, 'register_ability' ] );
@@ -94,16 +98,25 @@ class V4_Styles_Ability {
 		$rendered_css = '';
 		try {
 			$breakpoints_config = $this->breakpoints_manager->get_breakpoints_config();
-			$rendered_css       = Styles_Renderer::make( $breakpoints_config, '' )->render( [ [
-				'id'       => 'vp',
-				'label'    => 'preview',
-				'type'     => 'class',
-				'variants' => [ [
-					'meta'       => [ 'breakpoint' => 'desktop', 'state' => null ],
-					'props'      => $props,
-					'custom_css' => null,
-				] ],
-			] ] );
+			$rendered_css = Styles_Renderer::make( $breakpoints_config, '' )->render(
+				[
+					[
+						'id'       => 'vp',
+						'label'    => 'preview',
+						'type'     => 'class',
+						'variants' => [
+							[
+								'meta'       => [
+									'breakpoint' => 'desktop',
+									'state'      => null,
+								],
+								'props'      => $props,
+								'custom_css' => null,
+							],
+						],
+					],
+				]
+			);
 		} catch ( \Throwable $exception ) {
 			$warnings[] = 'RENDER ERROR: ' . $exception->getMessage();
 		} finally {
@@ -158,26 +171,71 @@ class V4_Styles_Ability {
 				'type'  => 'class',
 				'variants' => [
 					[
-						'meta'  => [ 'breakpoint' => 'desktop', 'state' => null ],
+						'meta'  => [
+							'breakpoint' => 'desktop',
+							'state'      => null,
+						],
 						'props' => [
-							'font-size' => [ '$$type' => 'size', 'value' => [ 'size' => 64, 'unit' => 'px' ] ],
-							'padding'   => [ '$$type' => 'size', 'value' => [ 'size' => 80, 'unit' => 'px' ] ],
+							'font-size' => [
+								'$$type' => 'size',
+								'value'  => [
+									'size' => 64,
+									'unit' => 'px',
+								],
+							],
+							'padding'   => [
+								'$$type' => 'size',
+								'value'  => [
+									'size' => 80,
+									'unit' => 'px',
+								],
+							],
 						],
 						'custom_css' => null,
 					],
 					[
-						'meta'  => [ 'breakpoint' => 'tablet', 'state' => null ],
+						'meta'  => [
+							'breakpoint' => 'tablet',
+							'state'      => null,
+						],
 						'props' => [
-							'font-size' => [ '$$type' => 'size', 'value' => [ 'size' => 40, 'unit' => 'px' ] ],
-							'padding'   => [ '$$type' => 'size', 'value' => [ 'size' => 48, 'unit' => 'px' ] ],
+							'font-size' => [
+								'$$type' => 'size',
+								'value'  => [
+									'size' => 40,
+									'unit' => 'px',
+								],
+							],
+							'padding'   => [
+								'$$type' => 'size',
+								'value'  => [
+									'size' => 48,
+									'unit' => 'px',
+								],
+							],
 						],
 						'custom_css' => null,
 					],
 					[
-						'meta'  => [ 'breakpoint' => 'mobile', 'state' => null ],
+						'meta'  => [
+							'breakpoint' => 'mobile',
+							'state'      => null,
+						],
 						'props' => [
-							'font-size' => [ '$$type' => 'size', 'value' => [ 'size' => 28, 'unit' => 'px' ] ],
-							'padding'   => [ '$$type' => 'size', 'value' => [ 'size' => 24, 'unit' => 'px' ] ],
+							'font-size' => [
+								'$$type' => 'size',
+								'value'  => [
+									'size' => 28,
+									'unit' => 'px',
+								],
+							],
+							'padding'   => [
+								'$$type' => 'size',
+								'value'  => [
+									'size' => 24,
+									'unit' => 'px',
+								],
+							],
 						],
 						'custom_css' => null,
 					],

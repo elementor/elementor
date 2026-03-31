@@ -11,7 +11,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Global_Classes_Ability {
 
-	public function __construct( private Kits_Manager $kits_manager ) {}
+	private Kits_Manager $kits_manager;
+
+	public function __construct( Kits_Manager $kits_manager ) {
+		$this->kits_manager = $kits_manager;
+	}
 
 	public function register_hooks(): void {
 		add_action( 'wp_abilities_api_init', [ $this, 'register_ability' ] );
@@ -30,9 +34,18 @@ class Global_Classes_Ability {
 			'output_schema' => [
 				'type'       => 'object',
 				'properties' => [
-					'frontend' => [ 'type' => 'object',  'description' => 'Published global classes (items + order).' ],
-					'preview'  => [ 'type' => 'object',  'description' => 'Preview-only global classes (items + order).' ],
-					'count'    => [ 'type' => 'integer', 'description' => 'Total number of published global classes.' ],
+					'frontend' => [
+						'type'        => 'object',
+						'description' => 'Published global classes (items + order).',
+					],
+					'preview'  => [
+						'type'        => 'object',
+						'description' => 'Preview-only global classes (items + order).',
+					],
+					'count'    => [
+						'type'        => 'integer',
+						'description' => 'Total number of published global classes.',
+					],
 				],
 			],
 			'execute_callback'    => [ $this, 'execute' ],
@@ -66,10 +79,16 @@ class Global_Classes_Ability {
 		$preview  = $kit->get_json_meta( Global_Classes_Repository::META_KEY_PREVIEW );
 
 		if ( ! is_array( $frontend ) ) {
-			$frontend = [ 'items' => [], 'order' => [] ];
+			$frontend = [
+				'items' => [],
+				'order' => [],
+			];
 		}
 		if ( ! is_array( $preview ) ) {
-			$preview = [ 'items' => [], 'order' => [] ];
+			$preview = [
+				'items' => [],
+				'order' => [],
+			];
 		}
 
 		return [

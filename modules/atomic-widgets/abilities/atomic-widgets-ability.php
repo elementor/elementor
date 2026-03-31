@@ -4,7 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Abilities;
 
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Elements_Manager;
-use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,11 +13,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Widgets_Ability {
 
+	private Elements_Manager $elements_manager;
+	private Breakpoints_Manager $breakpoints_manager;
+	private string $prop_types_dir;
+
 	public function __construct(
-		private Elements_Manager $elements_manager,
-		private Breakpoints_Manager $breakpoints_manager,
-		private string $prop_types_dir = ''
+		Elements_Manager $elements_manager,
+		Breakpoints_Manager $breakpoints_manager,
+		string $prop_types_dir = ''
 	) {
+		$this->elements_manager    = $elements_manager;
+		$this->breakpoints_manager = $breakpoints_manager;
+		$this->prop_types_dir      = $prop_types_dir;
+
 		if ( '' === $this->prop_types_dir ) {
 			$this->prop_types_dir = ELEMENTOR_PATH . 'modules/atomic-widgets/prop-types';
 		}
@@ -40,10 +48,22 @@ class Atomic_Widgets_Ability {
 			'output_schema' => [
 				'type'       => 'object',
 				'properties' => [
-					'style_schema'    => [ 'type' => 'object',  'description' => 'Full Elementor v4 style property schema.' ],
-					'prop_types'      => [ 'type' => 'array',   'description' => 'Registered atomic prop type file names.' ],
-					'atomic_elements' => [ 'type' => 'array',   'description' => 'Registered atomic element type names.' ],
-					'breakpoints'     => [ 'type' => 'object',  'description' => 'Active breakpoint configuration.' ],
+					'style_schema'    => [
+						'type'        => 'object',
+						'description' => 'Full Elementor v4 style property schema.',
+					],
+					'prop_types'      => [
+						'type'        => 'array',
+						'description' => 'Registered atomic prop type file names.',
+					],
+					'atomic_elements' => [
+						'type'        => 'array',
+						'description' => 'Registered atomic element type names.',
+					],
+					'breakpoints'     => [
+						'type'        => 'object',
+						'description' => 'Active breakpoint configuration.',
+					],
 				],
 			],
 			'execute_callback'    => [ $this, 'execute' ],
@@ -82,7 +102,8 @@ class Atomic_Widgets_Ability {
 
 		$prop_types = [];
 		if ( is_dir( $this->prop_types_dir ) ) {
-			$files = glob( $this->prop_types_dir . '/*.php' ) ?: [];
+			$glob_result = glob( $this->prop_types_dir . '/*.php' );
+			$files       = false !== $glob_result ? $glob_result : [];
 			foreach ( $files as $file ) {
 				$prop_types[] = basename( $file, '.php' );
 			}
