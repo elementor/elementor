@@ -8,14 +8,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Set_Post_Content_Ability {
+class Set_Post_Content_Ability extends Abstract_Ability {
 
-	public function register_hooks(): void {
-		add_action( 'wp_abilities_api_init', [ $this, 'register_ability' ] );
+	protected function get_name(): string {
+		return 'elementor/set-post-content';
 	}
 
-	public function register_ability(): void {
-		wp_register_ability( 'elementor/set-post-content', [
+	protected function get_config(): array {
+		return [
 			'label'       => 'Elementor Set Post Content',
 			'description' => 'Writes the Elementor elements tree to a post. Handles wp_slash, cache clearing, and CSS regeneration automatically.',
 			'category'    => 'elementor',
@@ -41,8 +41,6 @@ class Set_Post_Content_Ability {
 					'success' => [ 'type' => 'boolean' ],
 				],
 			],
-			'execute_callback'    => [ $this, 'execute' ],
-			'permission_callback' => [ $this, 'permission' ],
 			'meta' => [
 				'show_in_rest' => true,
 				'mcp'          => [ 'public' => true ],
@@ -60,11 +58,7 @@ class Set_Post_Content_Ability {
 					'idempotent'  => true,
 				],
 			],
-		] );
-	}
-
-	public function permission(): bool {
-		return current_user_can( 'manage_options' );
+		];
 	}
 
 	public function execute( array $input ): array {
@@ -74,7 +68,7 @@ class Set_Post_Content_Ability {
 		$document = Plugin::$instance->documents->get( $post_id );
 
 		if ( ! $document ) {
-			throw new \InvalidArgumentException( "Post $post_id not found or not an Elementor document." );
+			throw new \InvalidArgumentException( "Post $post_id not found or not an Elementor document." ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		$saved = $document->save( [ 'elements' => $elements ] );

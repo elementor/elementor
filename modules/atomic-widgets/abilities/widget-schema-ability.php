@@ -120,6 +120,7 @@ class Widget_Schema_Ability {
 				}
 			} catch ( \Throwable $e ) {
 				// Some prop types have no default — skip silently.
+				unset( $e );
 			}
 		}
 

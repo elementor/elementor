@@ -44,8 +44,14 @@ class Set_Variable_Ability {
 			'output_schema' => [
 				'type'       => 'object',
 				'properties' => [
-					'id'        => [ 'type' => 'string', 'description' => 'Variable ID usable in $$type prop references.' ],
-					'action'    => [ 'type' => 'string', 'description' => '"created" or "updated".' ],
+					'id'        => [
+						'type'        => 'string',
+						'description' => 'Variable ID usable in $$type prop references.',
+					],
+					'action'    => [
+						'type'        => 'string',
+						'description' => '"created" or "updated".',
+					],
 					'label'     => [ 'type' => 'string' ],
 					'type'      => [ 'type' => 'string' ],
 					'watermark' => [ 'type' => 'integer' ],

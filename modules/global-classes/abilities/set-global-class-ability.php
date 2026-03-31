@@ -2,20 +2,21 @@
 
 namespace Elementor\Modules\GlobalClasses\Abilities;
 
+use Elementor\Core\Abilities\Abstract_Ability;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Set_Global_Class_Ability {
+class Set_Global_Class_Ability extends Abstract_Ability {
 
-	public function register_hooks(): void {
-		add_action( 'wp_abilities_api_init', [ $this, 'register_ability' ] );
+	protected function get_name(): string {
+		return 'elementor/set-global-class';
 	}
 
-	public function register_ability(): void {
-		wp_register_ability( 'elementor/set-global-class', [
+	protected function get_config(): array {
+		return [
 			'label'       => 'Elementor Set Global Class',
 			'description' => 'Creates or updates a global CSS class in the active Elementor Kit. Looks up by label; creates new if not found.',
 			'category'    => 'elementor',
@@ -37,13 +38,17 @@ class Set_Global_Class_Ability {
 			'output_schema' => [
 				'type'       => 'object',
 				'properties' => [
-					'id'     => [ 'type' => 'string', 'description' => 'Class ID used in element settings.classes.' ],
-					'action' => [ 'type' => 'string', 'description' => '"created" or "updated".' ],
+					'id'     => [
+						'type'        => 'string',
+						'description' => 'Class ID used in element settings.classes.',
+					],
+					'action' => [
+						'type'        => 'string',
+						'description' => '"created" or "updated".',
+					],
 					'label'  => [ 'type' => 'string' ],
 				],
 			],
-			'execute_callback'    => [ $this, 'execute' ],
-			'permission_callback' => [ $this, 'permission' ],
 			'meta' => [
 				'show_in_rest' => true,
 				'mcp'          => [ 'public' => true ],
@@ -61,11 +66,7 @@ class Set_Global_Class_Ability {
 					'idempotent'  => true,
 				],
 			],
-		] );
-	}
-
-	public function permission(): bool {
-		return current_user_can( 'manage_options' );
+		];
 	}
 
 	public function execute( array $input ): array {
@@ -77,7 +78,6 @@ class Set_Global_Class_Ability {
 		$items      = $classes->get_items()->all();
 		$order      = $classes->get_order()->all();
 
-		// Find existing class by label.
 		$existing_id = null;
 		foreach ( $items as $id => $item ) {
 			if ( ( $item['label'] ?? '' ) === $label ) {
@@ -91,7 +91,7 @@ class Set_Global_Class_Ability {
 			$action   = 'updated';
 			$class_id = $existing_id;
 		} else {
-			$class_id          = 'e-gc-' . wp_generate_uuid4();
+			$class_id           = 'e-gc-' . wp_generate_uuid4();
 			$items[ $class_id ] = [
 				'id'       => $class_id,
 				'label'    => $label,

@@ -8,14 +8,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Get_Post_Content_Ability {
+class Get_Post_Content_Ability extends Abstract_Ability {
 
-	public function register_hooks(): void {
-		add_action( 'wp_abilities_api_init', [ $this, 'register_ability' ] );
+	protected function get_name(): string {
+		return 'elementor/get-post-content';
 	}
 
-	public function register_ability(): void {
-		wp_register_ability( 'elementor/get-post-content', [
+	protected function get_config(): array {
+		return [
 			'label'       => 'Elementor Get Post Content',
 			'description' => 'Returns the decoded Elementor elements tree (_elementor_data) for any post or page.',
 			'category'    => 'elementor',
@@ -41,8 +41,6 @@ class Get_Post_Content_Ability {
 					'is_built_with_elementor' => [ 'type' => 'boolean' ],
 				],
 			],
-			'execute_callback'    => [ $this, 'execute' ],
-			'permission_callback' => [ $this, 'permission' ],
 			'meta' => [
 				'show_in_rest' => true,
 				'mcp'          => [ 'public' => true ],
@@ -58,11 +56,7 @@ class Get_Post_Content_Ability {
 					'idempotent'  => true,
 				],
 			],
-		] );
-	}
-
-	public function permission(): bool {
-		return current_user_can( 'manage_options' );
+		];
 	}
 
 	public function execute( array $input ): array {
@@ -70,14 +64,14 @@ class Get_Post_Content_Ability {
 		$document = Plugin::$instance->documents->get( $post_id );
 
 		if ( ! $document ) {
-			throw new \InvalidArgumentException( "Post $post_id not found or not an Elementor document." );
+			throw new \InvalidArgumentException( "Post $post_id not found or not an Elementor document." ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		$elements = $document->get_elements_data();
 
 		return [
 			'post_id'                 => $post_id,
-			'elements'                => $elements ?: [],
+			'elements'                => $elements ? $elements : [],
 			'is_built_with_elementor' => ! empty( $elements ),
 		];
 	}

@@ -13,6 +13,7 @@ class Abilities_Bootstrap {
 
 		( new Get_Post_Content_Ability() )->register_hooks();
 		( new Set_Post_Content_Ability() )->register_hooks();
+		( new Delete_Post_Content_Ability() )->register_hooks();
 	}
 
 	public function register_categories(): void {
