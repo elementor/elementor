@@ -64,7 +64,8 @@ class Get_Post_Content_Ability extends Abstract_Ability {
 		$document = Plugin::$instance->documents->get( $post_id );
 
 		if ( ! $document ) {
-			throw new \InvalidArgumentException( "Post $post_id not found or not an Elementor document." ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			throw new \InvalidArgumentException( "Post $post_id not found or not an Elementor document." );
 		}
 
 		$elements = $document->get_elements_data();

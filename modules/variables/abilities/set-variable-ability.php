@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Variables\Abilities;
 
+use Elementor\Core\Abilities\Abstract_Ability;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
@@ -11,14 +12,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Set_Variable_Ability {
+class Set_Variable_Ability extends Abstract_Ability {
 
-	public function register_hooks(): void {
-		add_action( 'wp_abilities_api_init', [ $this, 'register_ability' ] );
+	protected function get_name(): string {
+		return 'elementor/set-variable';
 	}
 
-	public function register_ability(): void {
-		wp_register_ability( 'elementor/set-variable', [
+	protected function get_config(): array {
+		return [
 			'label'       => 'Elementor Set Variable',
 			'description' => 'Creates or updates a global CSS variable (color, font, size) in the active Elementor Kit. Looks up by label; creates new if not found.',
 			'category'    => 'elementor',
@@ -57,8 +58,6 @@ class Set_Variable_Ability {
 					'watermark' => [ 'type' => 'integer' ],
 				],
 			],
-			'execute_callback'    => [ $this, 'execute' ],
-			'permission_callback' => [ $this, 'permission' ],
 			'meta' => [
 				'show_in_rest' => true,
 				'mcp'          => [ 'public' => true ],
@@ -77,11 +76,7 @@ class Set_Variable_Ability {
 					'idempotent'  => true,
 				],
 			],
-		] );
-	}
-
-	public function permission(): bool {
-		return current_user_can( 'manage_options' );
+		];
 	}
 
 	public function execute( array $input ): array {
@@ -92,7 +87,6 @@ class Set_Variable_Ability {
 		$service    = $this->make_service();
 		$collection = $this->make_repository()->load();
 
-		// Find existing variable by label (case-insensitive, matching the collection logic).
 		$existing = null;
 		foreach ( $collection->all() as $variable ) {
 			if ( ! $variable->is_deleted() && strcasecmp( $variable->label(), $label ) === 0 ) {
@@ -107,6 +101,7 @@ class Set_Variable_Ability {
 			$id     = $existing->id();
 		} else {
 			if ( ! $type ) {
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 				throw new \InvalidArgumentException( 'Parameter "type" is required when creating a new variable.' );
 			}
 

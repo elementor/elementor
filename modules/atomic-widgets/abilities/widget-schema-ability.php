@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\Abilities;
 
+use Elementor\Core\Abilities\Abstract_Ability;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 
@@ -9,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Widget_Schema_Ability {
+class Widget_Schema_Ability extends Abstract_Ability {
 
 	private Elements_Manager $elements_manager;
 
@@ -17,12 +18,12 @@ class Widget_Schema_Ability {
 		$this->elements_manager = $elements_manager;
 	}
 
-	public function register_hooks(): void {
-		add_action( 'wp_abilities_api_init', [ $this, 'register_ability' ] );
+	protected function get_name(): string {
+		return 'elementor/widget-schema';
 	}
 
-	public function register_ability(): void {
-		wp_register_ability( 'elementor/widget-schema', [
+	protected function get_config(): array {
+		return [
 			'label'       => 'Elementor Widget Schema',
 			'description' => 'Returns the props schema (settings keys, types, and defaults) for a registered Elementor atomic widget type.',
 			'category'    => 'elementor',
@@ -55,8 +56,6 @@ class Widget_Schema_Ability {
 					],
 				],
 			],
-			'execute_callback'    => [ $this, 'execute' ],
-			'permission_callback' => [ $this, 'permission' ],
 			'meta' => [
 				'show_in_rest' => true,
 				'mcp'          => [ 'public' => true ],
@@ -73,17 +72,13 @@ class Widget_Schema_Ability {
 					'idempotent'  => true,
 				],
 			],
-		] );
-	}
-
-	public function permission(): bool {
-		return current_user_can( 'manage_options' );
+		];
 	}
 
 	public function execute( array $input ): array {
-		$widget_type    = $input['widget_type'];
-		$element_types  = $this->elements_manager->get_element_types();
-		$available      = [];
+		$widget_type   = $input['widget_type'];
+		$element_types = $this->elements_manager->get_element_types();
+		$available     = [];
 
 		foreach ( $element_types as $type => $object ) {
 			if ( $object instanceof Atomic_Widget_Base ) {
@@ -119,7 +114,6 @@ class Widget_Schema_Ability {
 					$defaults[ $key ] = $default;
 				}
 			} catch ( \Throwable $e ) {
-				// Some prop types have no default — skip silently.
 				unset( $e );
 			}
 		}

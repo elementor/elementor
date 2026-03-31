@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Variables\Abilities;
 
+use Elementor\Core\Abilities\Abstract_Ability;
 use Elementor\Core\Kits\Manager as Kits_Manager;
 use Elementor\Modules\Variables\Storage\Constants;
 
@@ -9,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Variables_Ability {
+class Variables_Ability extends Abstract_Ability {
 
 	private Kits_Manager $kits_manager;
 
@@ -17,12 +18,12 @@ class Variables_Ability {
 		$this->kits_manager = $kits_manager;
 	}
 
-	public function register_hooks(): void {
-		add_action( 'wp_abilities_api_init', [ $this, 'register_ability' ] );
+	protected function get_name(): string {
+		return 'elementor/variables';
 	}
 
-	public function register_ability(): void {
-		wp_register_ability( 'elementor/variables', [
+	protected function get_config(): array {
+		return [
 			'label'       => 'Elementor Global Variables',
 			'description' => 'Returns all global CSS variables (color, font, size) stored in the Elementor Kit.',
 			'category'    => 'elementor',
@@ -52,8 +53,6 @@ class Variables_Ability {
 					],
 				],
 			],
-			'execute_callback'    => [ $this, 'execute' ],
-			'permission_callback' => [ $this, 'permission' ],
 			'meta' => [
 				'show_in_rest' => true,
 				'mcp'          => [ 'public' => true ],
@@ -69,14 +68,10 @@ class Variables_Ability {
 					'idempotent'  => true,
 				],
 			],
-		] );
+		];
 	}
 
-	public function permission(): bool {
-		return current_user_can( 'manage_options' );
-	}
-
-	public function execute( array $input ): array {
+	public function execute( array $_input ): array {
 		$kit       = $this->kits_manager->get_active_kit();
 		$variables = $kit->get_json_meta( Constants::VARIABLES_META_KEY );
 

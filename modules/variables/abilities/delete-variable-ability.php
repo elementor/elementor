@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Variables\Abilities;
 
+use Elementor\Core\Abilities\Abstract_Ability;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
@@ -11,14 +12,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Delete_Variable_Ability {
+class Delete_Variable_Ability extends Abstract_Ability {
 
-	public function register_hooks(): void {
-		add_action( 'wp_abilities_api_init', [ $this, 'register_ability' ] );
+	protected function get_name(): string {
+		return 'elementor/delete-variable';
 	}
 
-	public function register_ability(): void {
-		wp_register_ability( 'elementor/delete-variable', [
+	protected function get_config(): array {
+		return [
 			'label'       => 'Elementor Delete Variable',
 			'description' => 'Soft-deletes a global CSS variable from the active Elementor Kit by ID or label.',
 			'category'    => 'elementor',
@@ -39,14 +40,15 @@ class Delete_Variable_Ability {
 			'output_schema' => [
 				'type'       => 'object',
 				'properties' => [
-					'id'        => [ 'type' => 'string', 'description' => 'ID of the deleted variable.' ],
+					'id'        => [
+						'type'        => 'string',
+						'description' => 'ID of the deleted variable.',
+					],
 					'label'     => [ 'type' => 'string' ],
 					'deleted'   => [ 'type' => 'boolean' ],
 					'watermark' => [ 'type' => 'integer' ],
 				],
 			],
-			'execute_callback'    => [ $this, 'execute' ],
-			'permission_callback' => [ $this, 'permission' ],
 			'meta' => [
 				'show_in_rest' => true,
 				'mcp'          => [ 'public' => true ],
@@ -64,11 +66,7 @@ class Delete_Variable_Ability {
 					'idempotent'  => false,
 				],
 			],
-		] );
-	}
-
-	public function permission(): bool {
-		return current_user_can( 'manage_options' );
+		];
 	}
 
 	public function execute( array $input ): array {
@@ -76,13 +74,13 @@ class Delete_Variable_Ability {
 		$target_label = $input['label'] ?? null;
 
 		if ( ! $target_id && ! $target_label ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 			throw new \InvalidArgumentException( 'At least one of "id" or "label" must be provided.' );
 		}
 
 		$repository = $this->make_repository();
 		$collection = $repository->load();
 
-		// Resolve by id first, then fall back to label.
 		$found_id    = null;
 		$found_label = null;
 
@@ -92,7 +90,7 @@ class Delete_Variable_Ability {
 				$found_id    = $target_id;
 				$found_label = $variable->label();
 			} catch ( \Exception $e ) {
-				// Fall through to label search if id not found.
+				unset( $e );
 			}
 		}
 
@@ -108,7 +106,7 @@ class Delete_Variable_Ability {
 
 		if ( ! $found_id ) {
 			$identifier = $target_id ?? $target_label;
-			throw new \InvalidArgumentException( "Variable \"$identifier\" not found." );
+			throw new \InvalidArgumentException( "Variable \"$identifier\" not found." ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		$result = $this->make_service()->delete( $found_id );

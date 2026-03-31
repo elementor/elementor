@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\Abilities;
 
+use Elementor\Core\Abilities\Abstract_Ability;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 
@@ -9,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class V4_Styles_Ability {
+class V4_Styles_Ability extends Abstract_Ability {
 
 	private Breakpoints_Manager $breakpoints_manager;
 
@@ -17,12 +18,12 @@ class V4_Styles_Ability {
 		$this->breakpoints_manager = $breakpoints_manager;
 	}
 
-	public function register_hooks(): void {
-		add_action( 'wp_abilities_api_init', [ $this, 'register_ability' ] );
+	protected function get_name(): string {
+		return 'elementor/v4-styles';
 	}
 
-	public function register_ability(): void {
-		wp_register_ability( 'elementor/v4-styles', [
+	protected function get_config(): array {
+		return [
 			'label'       => 'Elementor V4 Style Prop-Type Reference',
 			'description' => 'Verified data formats for every Elementor v4 style prop type. Validates props against live renderer. Call this before writing any style props.',
 			'category'    => 'elementor',
@@ -46,8 +47,6 @@ class V4_Styles_Ability {
 					'breakpoints'       => [ 'type' => 'object' ],
 				],
 			],
-			'execute_callback'    => [ $this, 'execute' ],
-			'permission_callback' => [ $this, 'permission' ],
 			'meta' => [
 				'show_in_rest' => true,
 				'mcp'          => [ 'public' => true ],
@@ -65,11 +64,7 @@ class V4_Styles_Ability {
 					'idempotent'  => true,
 				],
 			],
-		] );
-	}
-
-	public function permission(): bool {
-		return current_user_can( 'manage_options' );
+		];
 	}
 
 	public function execute( array $input ): array {
@@ -148,7 +143,7 @@ class V4_Styles_Ability {
 		}
 
 		return [
-			'note'   => 'Add multiple variants to a single style to make it responsive. Each variant specifies a breakpoint in meta.breakpoint.',
+			'note'        => 'Add multiple variants to a single style to make it responsive. Each variant specifies a breakpoint in meta.breakpoint.',
 			'breakpoints' => [
 				'desktop'      => 'No media query — base styles, always applied. Always include this variant.',
 				'laptop'       => '@media (max-width: 1366px)',
@@ -159,83 +154,38 @@ class V4_Styles_Ability {
 				'widescreen'   => '@media (min-width: 2400px)',
 			],
 			'active_config' => $breakpoints_config,
-			'rules' => [
+			'rules'         => [
 				'Always define a desktop variant first — it is the base and has no media query.',
 				'Only include the props that change at each breakpoint — CSS cascade handles the rest.',
 				'The same $$type prop formats apply at every breakpoint.',
 				'Use validate_props (desktop only) to verify prop formats before adding responsive variants.',
 			],
 			'example' => [
-				'id'    => 'e-my-heading-s',
-				'label' => 'local',
-				'type'  => 'class',
+				'id'       => 'e-my-heading-s',
+				'label'    => 'local',
+				'type'     => 'class',
 				'variants' => [
 					[
-						'meta'  => [
-							'breakpoint' => 'desktop',
-							'state'      => null,
-						],
-						'props' => [
-							'font-size' => [
-								'$$type' => 'size',
-								'value'  => [
-									'size' => 64,
-									'unit' => 'px',
-								],
-							],
-							'padding'   => [
-								'$$type' => 'size',
-								'value'  => [
-									'size' => 80,
-									'unit' => 'px',
-								],
-							],
+						'meta'       => [ 'breakpoint' => 'desktop', 'state' => null ],
+						'props'      => [
+							'font-size' => [ '$$type' => 'size', 'value' => [ 'size' => 64, 'unit' => 'px' ] ],
+							'padding'   => [ '$$type' => 'size', 'value' => [ 'size' => 80, 'unit' => 'px' ] ],
 						],
 						'custom_css' => null,
 					],
 					[
-						'meta'  => [
-							'breakpoint' => 'tablet',
-							'state'      => null,
-						],
-						'props' => [
-							'font-size' => [
-								'$$type' => 'size',
-								'value'  => [
-									'size' => 40,
-									'unit' => 'px',
-								],
-							],
-							'padding'   => [
-								'$$type' => 'size',
-								'value'  => [
-									'size' => 48,
-									'unit' => 'px',
-								],
-							],
+						'meta'       => [ 'breakpoint' => 'tablet', 'state' => null ],
+						'props'      => [
+							'font-size' => [ '$$type' => 'size', 'value' => [ 'size' => 40, 'unit' => 'px' ] ],
+							'padding'   => [ '$$type' => 'size', 'value' => [ 'size' => 48, 'unit' => 'px' ] ],
 						],
 						'custom_css' => null,
 					],
 					[
-						'meta'  => [
-							'breakpoint' => 'mobile',
-							'state'      => null,
-						],
-						'props' => [
-							'font-size' => [
-								'$$type' => 'size',
-								'value'  => [
-									'size' => 28,
-									'unit' => 'px',
-								],
-							],
-							'padding'   => [
-								'$$type' => 'size',
-								'value'  => [
-									'size' => 24,
-									'unit' => 'px',
-								],
-							],
+						'meta'       => [ 'breakpoint' => 'mobile', 'state' => null ],
+						'props'      => [
+							'font-size' => [ '$$type' => 'size', 'value' => [ 'size' => 28, 'unit' => 'px' ] ],
+							'padding'   => [ '$$type' => 'size', 'value' => [ 'size' => 24, 'unit' => 'px' ] ],
 						],
 						'custom_css' => null,
 					],

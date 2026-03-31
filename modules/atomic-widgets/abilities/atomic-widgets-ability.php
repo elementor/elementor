@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\Abilities;
 
+use Elementor\Core\Abilities\Abstract_Ability;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
@@ -11,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Atomic_Widgets_Ability {
+class Atomic_Widgets_Ability extends Abstract_Ability {
 
 	private Elements_Manager $elements_manager;
 	private Breakpoints_Manager $breakpoints_manager;
@@ -31,12 +32,12 @@ class Atomic_Widgets_Ability {
 		}
 	}
 
-	public function register_hooks(): void {
-		add_action( 'wp_abilities_api_init', [ $this, 'register_ability' ] );
+	protected function get_name(): string {
+		return 'elementor/atomic-widgets';
 	}
 
-	public function register_ability(): void {
-		wp_register_ability( 'elementor/atomic-widgets', [
+	protected function get_config(): array {
+		return [
 			'label'       => 'Elementor Atomic Widgets Context',
 			'description' => 'Returns style schema, prop types, registered atomic element types, and breakpoints for the Elementor v4 atomic widget system.',
 			'category'    => 'elementor',
@@ -66,8 +67,6 @@ class Atomic_Widgets_Ability {
 					],
 				],
 			],
-			'execute_callback'    => [ $this, 'execute' ],
-			'permission_callback' => [ $this, 'permission' ],
 			'meta' => [
 				'show_in_rest' => true,
 				'mcp'          => [ 'public' => true ],
@@ -85,14 +84,10 @@ class Atomic_Widgets_Ability {
 					'idempotent'  => true,
 				],
 			],
-		] );
+		];
 	}
 
-	public function permission(): bool {
-		return current_user_can( 'manage_options' );
-	}
-
-	public function execute( array $input ): array {
+	public function execute( array $_input ): array {
 		$style_schema = null;
 		try {
 			$style_schema = Style_Schema::get();

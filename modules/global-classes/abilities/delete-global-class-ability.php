@@ -2,20 +2,21 @@
 
 namespace Elementor\Modules\GlobalClasses\Abilities;
 
+use Elementor\Core\Abilities\Abstract_Ability;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Delete_Global_Class_Ability {
+class Delete_Global_Class_Ability extends Abstract_Ability {
 
-	public function register_hooks(): void {
-		add_action( 'wp_abilities_api_init', [ $this, 'register_ability' ] );
+	protected function get_name(): string {
+		return 'elementor/delete-global-class';
 	}
 
-	public function register_ability(): void {
-		wp_register_ability( 'elementor/delete-global-class', [
+	protected function get_config(): array {
+		return [
 			'label'       => 'Elementor Delete Global Class',
 			'description' => 'Removes a global CSS class from the active Elementor Kit by ID or label.',
 			'category'    => 'elementor',
@@ -36,13 +37,18 @@ class Delete_Global_Class_Ability {
 			'output_schema' => [
 				'type'       => 'object',
 				'properties' => [
-					'id'      => [ 'type' => 'string', 'description' => 'ID of the deleted class.' ],
-					'label'   => [ 'type' => 'string' ],
-					'deleted' => [ 'type' => 'boolean' ],
+					'id'      => [
+						'type'        => 'string',
+						'description' => 'ID of the deleted class.',
+					],
+					'label'   => [
+						'type' => 'string',
+					],
+					'deleted' => [
+						'type' => 'boolean',
+					],
 				],
 			],
-			'execute_callback'    => [ $this, 'execute' ],
-			'permission_callback' => [ $this, 'permission' ],
 			'meta' => [
 				'show_in_rest' => true,
 				'mcp'          => [ 'public' => true ],
@@ -59,11 +65,7 @@ class Delete_Global_Class_Ability {
 					'idempotent'  => false,
 				],
 			],
-		] );
-	}
-
-	public function permission(): bool {
-		return current_user_can( 'manage_options' );
+		];
 	}
 
 	public function execute( array $input ): array {
@@ -71,7 +73,7 @@ class Delete_Global_Class_Ability {
 		$target_label = $input['label'] ?? null;
 
 		if ( ! $target_id && ! $target_label ) {
-			throw new \InvalidArgumentException( 'At least one of "id" or "label" must be provided.' );
+			throw new \InvalidArgumentException( 'At least one of "id" or "label" must be provided.' ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		$repository = new Global_Classes_Repository();
@@ -79,7 +81,6 @@ class Delete_Global_Class_Ability {
 		$items      = $classes->get_items()->all();
 		$order      = $classes->get_order()->all();
 
-		// Resolve by id first, then fall back to label.
 		$found_id    = null;
 		$found_label = null;
 
@@ -98,7 +99,7 @@ class Delete_Global_Class_Ability {
 
 		if ( ! $found_id ) {
 			$identifier = $target_id ?? $target_label;
-			throw new \InvalidArgumentException( "Global class \"$identifier\" not found." );
+			throw new \InvalidArgumentException( "Global class \"$identifier\" not found." ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		unset( $items[ $found_id ] );
