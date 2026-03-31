@@ -1,5 +1,28 @@
 == Changelog ==
 
+= 4.0.0 - 2026-03-30 =
+
+* New: Introducing syncing between Atomic Variables, Classes and Global Styles - ensures consistent styling between Atomic elements and legacy widgets - Atomic Editor
+* New: Introducing self-hosted Video Atomic Element - Atomic Editor
+* New: Introducing a new onboarding flow for new Editor installations to provide better guidance for getting started
+* Tweak: Updated Atomic Editor status to Stable - Atomic Editor
+* Tweak: Enabled Atomic Editor by default for new websites - Atomic Editor
+* Tweak: Added inline editing support for the Atomic Button element - Atomic Editor
+* Tweak: Improved performance and ordering of Global Classes styles on the frontend - Atomic Editor
+* Tweak: Improved request reliability during temporary network issues - Atomic Editor
+* Tweak: Improved size control structure and behavior - Atomic Editor
+* Tweak: Added support for importing and exporting Classes and Variables through website templates
+* Tweak: Added support for importing and exporting Classes and Variables through templates
+* Tweak: Improved accessibility in Cloud Templates modal
+* Fix: PHP warnings in the editor when WP_DEBUG is enabled after updating to WordPress 6.9.1 ([#34617](https://github.com/elementor/elementor/issues/34617), [#34831](https://github.com/elementor/elementor/issues/34831))
+* Fix: Typography modal fails to apply settings after using the "Back to default" reset option
+* Fix: Data Updater does not run automatically after plugin updates
+* Fix: Revision is not working as expected - Atomic Editor
+* Fix: Styling issues in Repeater Indications popovers – Atomic Editor
+* Fix: Selecting "auto" for size returns an incorrect value - Atomic Editor
+* Fix: Resetting position does not clear related properties - Atomic Editor
+* Fix: Variable name field does not auto-focus on creation in Variables - Atomic Editor
+
 = 3.35.9 - 2026-03-25 =
 
 * Fix: Inserting AI-generated images fails when "Enable Unfiltered File Uploads" is enabled

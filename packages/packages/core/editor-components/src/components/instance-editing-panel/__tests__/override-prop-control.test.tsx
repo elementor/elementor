@@ -222,7 +222,9 @@ describe( '<OverridePropControl />', () => {
 
 			// Assert
 			expect( screen.getByText( 'Nested Title' ) ).toBeInTheDocument();
-			expect( screen.getByDisplayValue( 'Element 1 Original Title' ) ).toBeInTheDocument();
+			const input = screen.getByRole( 'textbox' );
+			expect( input ).toHaveValue( '' );
+			expect( input ).toHaveAttribute( 'placeholder', 'Element 1 Original Title' );
 			expect( getElementType ).toHaveBeenCalledWith( 'e-heading' );
 		} );
 	} );
@@ -277,7 +279,7 @@ describe( '<OverridePropControl />', () => {
 			},
 		} );
 
-		it( 'should show originValue when override is cleared (single level)', () => {
+		it( 'should show empty value with no placeholder when override exists with null value (single level)', () => {
 			// Arrange
 			const overridableProp: OverridableProp = {
 				overrideKey: INNER_OVERRIDE_KEY_1,
@@ -317,10 +319,49 @@ describe( '<OverridePropControl />', () => {
 
 			// Assert
 			const input = screen.getByRole( 'textbox' );
-			expect( input ).toHaveValue( 'Innermost Origin Value' );
+			expect( input ).toHaveValue( '' );
+			expect( input ).not.toHaveAttribute( 'placeholder' );
 		} );
 
-		it( 'should recursively find origin value through nested overridable structure', () => {
+		it( 'should show originValue as placeholder when no override exists (single level)', () => {
+			// Arrange
+			const overridableProp: OverridableProp = {
+				overrideKey: INNER_OVERRIDE_KEY_1,
+				label: 'Title',
+				elementId: INNER_ELEMENT_ID,
+				propKey: 'title',
+				widgetType: 'e-heading',
+				elType: 'widget',
+				groupId: 'content',
+				originValue: INNER_ORIGIN_VALUE_1,
+			};
+
+			setupElementsMocks( { [ INNER_ELEMENT_ID ]: INNER_ELEMENT } );
+			setupNestedComponents( [
+				{
+					componentId: INNER_COMPONENT_ID,
+					elementId: INNER_ELEMENT_ID,
+					props: [
+						{
+							overrideKey: INNER_OVERRIDE_KEY_1,
+							propKey: 'title',
+							label: 'Title',
+							originValue: INNER_ORIGIN_VALUE_1,
+						},
+					],
+				},
+			] );
+
+			// Act
+			renderOverridePropControl( store, overridableProp, [], INNER_COMPONENT_ID );
+
+			// Assert
+			const input = screen.getByRole( 'textbox' );
+			expect( input ).toHaveValue( '' );
+			expect( input ).toHaveAttribute( 'placeholder', 'Innermost Origin Value' );
+		} );
+
+		it( 'should show empty value with no placeholder when nested override exists with null value', () => {
 			// Arrange
 			const overridablePropWithNullOrigin: OverridableProp = {
 				overrideKey: MIDDLE_OVERRIDE_KEY_1,
@@ -395,12 +436,77 @@ describe( '<OverridePropControl />', () => {
 
 			// Assert
 			const input = screen.getByRole( 'textbox' );
-			expect( input ).toHaveValue( 'Innermost Origin Value' );
+			expect( input ).toHaveValue( '' );
+			expect( input ).not.toHaveAttribute( 'placeholder' );
 		} );
 
-		it( 'should resolve correct origin when multiple props share the same elementId', () => {
+		it( 'should recursively find origin value as placeholder when no override exists', () => {
 			// Arrange
+			const overridablePropWithNullOrigin: OverridableProp = {
+				overrideKey: MIDDLE_OVERRIDE_KEY_1,
+				label: 'Nested Title',
+				elementId: MIDDLE_ELEMENT_ID,
+				propKey: 'title',
+				widgetType: 'e-heading',
+				elType: 'widget',
+				groupId: 'content',
+				originValue: null,
+				originPropFields: {
+					propKey: 'title',
+					widgetType: 'e-heading',
+					elType: 'widget',
+					elementId: INNER_ELEMENT_ID,
+				},
+			};
 
+			setupElementsMocks( {
+				[ INNER_ELEMENT_ID ]: INNER_ELEMENT,
+				[ MIDDLE_ELEMENT_ID ]: INNER_COMPONENT_INSTANCE,
+			} );
+			setupNestedComponents( [
+				{
+					componentId: INNER_COMPONENT_ID,
+					elementId: INNER_ELEMENT_ID,
+					props: [
+						{
+							overrideKey: INNER_OVERRIDE_KEY_1,
+							propKey: 'title',
+							label: 'Title',
+							originValue: INNER_ORIGIN_VALUE_1,
+						},
+					],
+				},
+				{
+					componentId: MIDDLE_COMPONENT_ID,
+					elementId: MIDDLE_ELEMENT_ID,
+					props: [
+						{
+							overrideKey: MIDDLE_OVERRIDE_KEY_1,
+							propKey: 'title',
+							label: 'Title',
+							originValue: null,
+							originPropFields: {
+								propKey: 'title',
+								widgetType: 'e-heading',
+								elType: 'widget',
+								elementId: INNER_ELEMENT_ID,
+							},
+						},
+					],
+				},
+			] );
+
+			// Act
+			renderOverridePropControl( store, overridablePropWithNullOrigin, [], MIDDLE_COMPONENT_ID );
+
+			// Assert
+			const input = screen.getByRole( 'textbox' );
+			expect( input ).toHaveValue( '' );
+			expect( input ).toHaveAttribute( 'placeholder', 'Innermost Origin Value' );
+		} );
+
+		it( 'should show empty value with no placeholder when override exists for specific prop among multiple', () => {
+			// Arrange
 			const linkOverridableProp: OverridableProp = {
 				overrideKey: MIDDLE_OVERRIDE_KEY_2,
 				label: 'Link',
@@ -487,7 +593,91 @@ describe( '<OverridePropControl />', () => {
 
 			// Assert
 			const input = screen.getByRole( 'textbox' );
-			expect( input ).toHaveValue( 'Link Origin Value' );
+			expect( input ).toHaveValue( '' );
+			expect( input ).not.toHaveAttribute( 'placeholder' );
+		} );
+
+		it( 'should resolve correct origin as placeholder when no override exists for specific prop among multiple', () => {
+			// Arrange
+			const linkOverridableProp: OverridableProp = {
+				overrideKey: MIDDLE_OVERRIDE_KEY_2,
+				label: 'Link',
+				elementId: MIDDLE_ELEMENT_ID,
+				propKey: 'link',
+				widgetType: 'e-heading',
+				elType: 'widget',
+				groupId: 'content',
+				originValue: null,
+				originPropFields: {
+					propKey: 'link',
+					widgetType: 'e-heading',
+					elType: 'widget',
+					elementId: INNER_ELEMENT_ID,
+				},
+			};
+
+			setupNestedComponents( [
+				{
+					componentId: INNER_COMPONENT_ID,
+					elementId: INNER_ELEMENT_ID,
+					props: [
+						{
+							overrideKey: INNER_OVERRIDE_KEY_1,
+							propKey: 'title',
+							label: 'Title',
+							originValue: INNER_ORIGIN_VALUE_1,
+						},
+						{
+							overrideKey: INNER_OVERRIDE_KEY_2,
+							propKey: 'link',
+							label: 'Link',
+							originValue: INNER_ORIGIN_VALUE_2,
+						},
+					],
+				},
+				{
+					componentId: MIDDLE_COMPONENT_ID,
+					elementId: MIDDLE_ELEMENT_ID,
+					props: [
+						{
+							overrideKey: MIDDLE_OVERRIDE_KEY_1,
+							propKey: 'title',
+							label: 'Title',
+							originValue: null,
+							originPropFields: {
+								propKey: 'title',
+								widgetType: 'e-heading',
+								elType: 'widget',
+								elementId: INNER_ELEMENT_ID,
+							},
+						},
+						{
+							overrideKey: MIDDLE_OVERRIDE_KEY_2,
+							propKey: 'link',
+							label: 'Link',
+							originValue: null,
+							originPropFields: {
+								propKey: 'link',
+								widgetType: 'e-heading',
+								elType: 'widget',
+								elementId: INNER_ELEMENT_ID,
+							},
+						},
+					],
+				},
+			] );
+			setupElementsMocks( {
+				[ INNER_ELEMENT_ID ]: INNER_ELEMENT,
+				[ MIDDLE_ELEMENT_ID ]: INNER_COMPONENT_INSTANCE,
+			} );
+
+			// Act
+			renderOverridePropControl( store, linkOverridableProp, [], MIDDLE_COMPONENT_ID );
+
+			// Assert
+			const input = screen.getByRole( 'textbox' );
+			expect( input ).toHaveValue( '' );
+			expect( input ).toHaveAttribute( 'placeholder', 'Link Origin Value' );
 		} );
 	} );
 } );

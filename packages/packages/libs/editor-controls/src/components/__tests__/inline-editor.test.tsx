@@ -87,4 +87,44 @@ describe( 'InlineEditor', () => {
 		expect( paragraph ).toHaveClass( 'custom-padding' );
 		expect( paragraph ).toHaveClass( 'custom-margin' );
 	} );
+
+	it.each( [
+		[ null, true ],
+		[ '', true ],
+		[ 'Some content', false ],
+	] )( 'should toggle is-empty class based on value (%s)', ( value, shouldBeEmpty ) => {
+		// Arrange & Act.
+		setup( { value } );
+
+		// Assert.
+		const editor = screen.getByRole( 'textbox' );
+
+		if ( shouldBeEmpty ) {
+			expect( editor ).toHaveClass( 'is-empty' );
+		} else {
+			expect( editor ).not.toHaveClass( 'is-empty' );
+		}
+	} );
+
+	it.each( [
+		[ 'Enter text here', 'Enter text here' ],
+		[ 'hello<br>world', 'hello\nworld' ],
+		[ '<strong>Bold</strong> text', 'Bold text' ],
+	] )( 'should convert placeholder HTML to plain text (%s)', ( placeholder, expected ) => {
+		// Arrange & Act.
+		setup( { value: null, placeholder } );
+
+		// Assert.
+		const editor = screen.getByRole( 'textbox' );
+		expect( editor ).toHaveAttribute( 'data-placeholder', expected );
+	} );
+
+	it( 'should not set data-placeholder when placeholder is null', () => {
+		// Arrange & Act.
+		setup( { value: null, placeholder: null } );
+
+		// Assert.
+		const editor = screen.getByRole( 'textbox' );
+		expect( editor ).not.toHaveAttribute( 'data-placeholder' );
+	} );
 } );
