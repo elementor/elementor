@@ -228,6 +228,6 @@ class Component extends Document {
 	}
 
 	private function is_component_instance( array $element ): bool {
-		return $element['elType'] === 'widget' && $element['widgetType'] === Component_Instance::get_element_type();
+		return 'widget' === $element['elType'] && Component_Instance::get_element_type() === $element['widgetType'];
 	}
 }
