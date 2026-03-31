@@ -119,7 +119,7 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 		propValue,
 		baseValue: resolvedBaseValue,
 		placeholderValue,
-	} = resolveValueAndBaseValue( matchingOverride, overrideValue, resolvedOriginValues, propKey );
+	} = resolveOverrideValues( matchingOverride, overrideValue, resolvedOriginValues, propKey );
 
 	const value = {
 		[ overridableProp.overrideKey ]: propValue,
@@ -224,7 +224,7 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 	);
 }
 
-function resolveValueAndBaseValue(
+function resolveOverrideValues(
 	matchingOverride: ComponentInstanceOverride | null,
 	overrideValue: AnyTransformable | null,
 	resolvedOriginValues: ElementSettings,
