@@ -173,7 +173,7 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 			} }
 		>
 			<ClickAwayListener onClickAway={ closePopover }>
-				<Box>{ children }</Box>
+				<Box sx={ { display: 'contents' } }>{ children }</Box>
 			</ClickAwayListener>
 		</RepeaterContext.Provider>
 	);

@@ -360,7 +360,7 @@ const RepeaterItem = < T, >( {
 				}
 			} }
 		>
-			<Box>
+			<Box sx={ { display: 'contents' } }>
 				<RepeaterTag
 					disabled={ disabled }
 					label={ label }
