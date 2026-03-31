@@ -1,0 +1,21 @@
+<?php
+
+namespace Elementor\Core\Abilities;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+class Abilities_Bootstrap {
+
+	public function register_hooks(): void {
+		add_action( 'wp_abilities_api_categories_init', [ $this, 'register_categories' ] );
+	}
+
+	public function register_categories(): void {
+		wp_register_ability_category( 'elementor', [
+			'label'       => 'Elementor',
+			'description' => 'Abilities for working with the Elementor page builder.',
+		] );
+	}
+}

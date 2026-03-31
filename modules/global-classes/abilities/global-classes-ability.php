@@ -2,11 +2,16 @@
 
 namespace Elementor\Modules\GlobalClasses\Abilities;
 
+use Elementor\Core\Kits\Manager as Kits_Manager;
+use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 class Global_Classes_Ability {
+
+	public function __construct( private Kits_Manager $kits_manager ) {}
 
 	public function register_hooks(): void {
 		add_action( 'wp_abilities_api_init', [ $this, 'register_ability' ] );
@@ -56,9 +61,9 @@ class Global_Classes_Ability {
 	}
 
 	public function execute( array $input ): array {
-		$kit_id   = (int) get_option( 'elementor_active_kit' );
-		$frontend = get_post_meta( $kit_id, '_elementor_global_classes', true );
-		$preview  = get_post_meta( $kit_id, '_elementor_global_classes_preview', true );
+		$kit      = $this->kits_manager->get_active_kit();
+		$frontend = $kit->get_json_meta( Global_Classes_Repository::META_KEY_FRONTEND );
+		$preview  = $kit->get_json_meta( Global_Classes_Repository::META_KEY_PREVIEW );
 
 		if ( ! is_array( $frontend ) ) {
 			$frontend = [ 'items' => [], 'order' => [] ];

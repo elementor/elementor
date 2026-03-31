@@ -247,8 +247,11 @@ class Module extends BaseModule {
 		( new Atomic_Widgets_Database_Updater() )->register();
 
 		if ( function_exists( 'wp_register_ability' ) ) {
-			( new Atomic_Widgets_Ability() )->register_hooks();
-			( new V4_Styles_Ability() )->register_hooks();
+			( new Atomic_Widgets_Ability(
+				Plugin::$instance->elements_manager,
+				Plugin::$instance->breakpoints
+			) )->register_hooks();
+			( new V4_Styles_Ability( Plugin::$instance->breakpoints ) )->register_hooks();
 		}
 	}
 

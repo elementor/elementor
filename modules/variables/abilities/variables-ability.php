@@ -2,11 +2,16 @@
 
 namespace Elementor\Modules\Variables\Abilities;
 
+use Elementor\Core\Kits\Manager as Kits_Manager;
+use Elementor\Modules\Variables\Storage\Constants;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 class Variables_Ability {
+
+	public function __construct( private Kits_Manager $kits_manager ) {}
 
 	public function register_hooks(): void {
 		add_action( 'wp_abilities_api_init', [ $this, 'register_ability' ] );
@@ -56,18 +61,18 @@ class Variables_Ability {
 	}
 
 	public function execute( array $input ): array {
-		$kit_id   = (int) get_option( 'elementor_active_kit' );
-		$variables = get_post_meta( $kit_id, '_elementor_global_variables', true );
+		$kit       = $this->kits_manager->get_active_kit();
+		$variables = $kit->get_json_meta( Constants::VARIABLES_META_KEY );
 
 		if ( ! is_array( $variables ) ) {
-			$variables = [ 'format_version' => 2, 'data' => [] ];
+			$variables = [ 'format_version' => Constants::FORMAT_VERSION_V2, 'data' => [] ];
 		}
 
 		return [
 			'data'            => $variables,
 			'count'           => count( $variables['data'] ?? [] ),
 			'supported_types' => [ 'color', 'font', 'size' ],
-			'max_per_site'    => 1000,
+			'max_per_site'    => Constants::TOTAL_VARIABLES_COUNT,
 		];
 	}
 }

@@ -2,9 +2,10 @@
 
 namespace Elementor\Modules\AtomicWidgets\Abilities;
 
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
+use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -12,16 +13,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Widgets_Ability {
 
-	public function register_hooks(): void {
-		add_action( 'wp_abilities_api_categories_init', [ $this, 'register_category' ] );
-		add_action( 'wp_abilities_api_init', [ $this, 'register_ability' ] );
+	public function __construct(
+		private Elements_Manager $elements_manager,
+		private Breakpoints_Manager $breakpoints_manager,
+		private string $prop_types_dir = ''
+	) {
+		if ( '' === $this->prop_types_dir ) {
+			$this->prop_types_dir = ELEMENTOR_PATH . 'modules/atomic-widgets/prop-types';
+		}
 	}
 
-	public function register_category(): void {
-		wp_register_ability_category( 'elementor', [
-			'label'       => 'Elementor',
-			'description' => 'Abilities for working with the Elementor page builder.',
-		] );
+	public function register_hooks(): void {
+		add_action( 'wp_abilities_api_init', [ $this, 'register_ability' ] );
 	}
 
 	public function register_ability(): void {
@@ -73,14 +76,13 @@ class Atomic_Widgets_Ability {
 		$style_schema = null;
 		try {
 			$style_schema = Style_Schema::get();
-		} catch ( \Throwable $e ) {
-			$style_schema = [ 'error' => $e->getMessage() ];
+		} catch ( \Throwable $exception ) {
+			$style_schema = [ 'error' => $exception->getMessage() ];
 		}
 
-		$prop_types     = [];
-		$prop_types_dir = ELEMENTOR_PATH . 'modules/atomic-widgets/prop-types';
-		if ( is_dir( $prop_types_dir ) ) {
-			$files = glob( $prop_types_dir . '/*.php' ) ?: [];
+		$prop_types = [];
+		if ( is_dir( $this->prop_types_dir ) ) {
+			$files = glob( $this->prop_types_dir . '/*.php' ) ?: [];
 			foreach ( $files as $file ) {
 				$prop_types[] = basename( $file, '.php' );
 			}
@@ -88,17 +90,17 @@ class Atomic_Widgets_Ability {
 
 		$atomic_elements = [];
 		try {
-			$all = Plugin::$instance->elements_manager->get_element_types();
-			foreach ( $all as $type => $obj ) {
-				if ( $obj instanceof Atomic_Widget_Base ) {
+			$element_types = $this->elements_manager->get_element_types();
+			foreach ( $element_types as $type => $object ) {
+				if ( $object instanceof Atomic_Widget_Base ) {
 					$atomic_elements[] = $type;
 				}
 			}
-		} catch ( \Throwable $e ) {
-			$atomic_elements = [ 'error' => $e->getMessage() ];
+		} catch ( \Throwable $exception ) {
+			$atomic_elements = [ 'error' => $exception->getMessage() ];
 		}
 
-		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints_config();
+		$breakpoints = $this->breakpoints_manager->get_breakpoints_config();
 
 		return [
 			'style_schema'    => $style_schema,

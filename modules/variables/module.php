@@ -57,7 +57,7 @@ class Module extends BaseModule {
 		( new Import_Export_Customization() )->register_hooks();
 
 		if ( function_exists( 'wp_register_ability' ) ) {
-			( new Variables_Ability() )->register_hooks();
+			( new Variables_Ability( Plugin::$instance->kits_manager ) )->register_hooks();
 		}
 
 		add_action( 'init', [ $this, 'init_variable_types_registry' ] );

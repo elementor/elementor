@@ -51,7 +51,7 @@ class Module extends BaseModule {
 			( new Global_Classes_Database_Updater() )->register();
 
 			if ( function_exists( 'wp_register_ability' ) ) {
-				( new Global_Classes_Ability() )->register_hooks();
+				( new Global_Classes_Ability( Plugin::$instance->kits_manager ) )->register_hooks();
 			}
 
 			add_filter(
