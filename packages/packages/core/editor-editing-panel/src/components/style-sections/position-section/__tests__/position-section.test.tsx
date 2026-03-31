@@ -228,11 +228,11 @@ describe( 'Dimensions values persistence', () => {
 		] );
 		expect( setStylesFields ).toHaveBeenCalledWith(
 			{
-				'inset-block-start': undefined,
-				'inset-block-end': undefined,
-				'inset-inline-start': undefined,
-				'inset-inline-end': undefined,
-				'z-index': undefined,
+				'inset-block-start': null,
+				'inset-block-end': null,
+				'inset-inline-start': null,
+				'inset-inline-end': null,
+				'z-index': null,
 			},
 			{ history: { propDisplayName: 'Dimensions' } }
 		);
@@ -267,11 +267,11 @@ describe( 'Dimensions values persistence', () => {
 		// Assert.
 		expect( setStylesFields ).toHaveBeenCalledWith(
 			{
-				'inset-block-start': undefined,
-				'inset-block-end': undefined,
-				'inset-inline-start': undefined,
-				'inset-inline-end': undefined,
-				'z-index': undefined,
+				'inset-block-start': null,
+				'inset-block-end': null,
+				'inset-inline-start': null,
+				'inset-inline-end': null,
+				'z-index': null,
 			},
 			{ history: { propDisplayName: 'Dimensions' } }
 		);
@@ -300,11 +300,11 @@ describe( 'Dimensions values persistence', () => {
 		// Assert — useEffect should have fired and cleared all position-dependent props.
 		expect( setStylesFields ).toHaveBeenCalledWith(
 			{
-				'inset-block-start': undefined,
-				'inset-block-end': undefined,
-				'inset-inline-start': undefined,
-				'inset-inline-end': undefined,
-				'z-index': undefined,
+				'inset-block-start': null,
+				'inset-block-end': null,
+				'inset-inline-start': null,
+				'inset-inline-end': null,
+				'z-index': null,
 			},
 			{ history: { propDisplayName: 'Dimensions' } }
 		);

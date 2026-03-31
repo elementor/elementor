@@ -1,12 +1,15 @@
 @import "../../../helpers/variables";
 @import "../../../frontend/breakpoints/proxy";
 
-.elementor-lightbox {
+:where(.elementor-lightbox) {
 	--lightbox-ui-color: #{$slides_gui};
 	--lightbox-ui-color-hover: #fff;
 	--lightbox-text-color: var(--lightbox-ui-color);
 	--lightbox-header-icons-size: 20px;
 	--lightbox-navigation-icons-size: 25px;
+}
+
+.elementor-lightbox {
 
 	&:not(.elementor-popup-modal) {
 
@@ -206,7 +209,7 @@
 
 		.swiper-pagination-fraction {
 			width: max-content;
-			color: $white;
+			color: currentColor;
 		}
 	}
 

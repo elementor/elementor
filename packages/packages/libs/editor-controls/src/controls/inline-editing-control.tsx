@@ -21,7 +21,7 @@ export const InlineEditingControl = createControl(
 		attributes?: Record< string, string >;
 		props?: ComponentProps< 'div' >;
 	} ) => {
-		const { value, setValue } = useBoundProp( htmlV3PropTypeUtil );
+		const { value, setValue, placeholder } = useBoundProp( htmlV3PropTypeUtil );
 		const content = stringPropTypeUtil.extract( value?.content ?? null ) ?? '';
 
 		const debouncedParse = useMemo(
@@ -82,6 +82,13 @@ export const InlineEditingControl = createControl(
 								margin: 0,
 								padding: 0,
 							},
+							'&.is-empty::before': {
+								content: 'attr(data-placeholder)',
+								color: 'text.tertiary',
+								pointerEvents: 'none',
+								position: 'absolute',
+								opacity: 0.6,
+							},
 						},
 						'.strip-styles *': {
 							all: 'unset',
@@ -91,7 +98,11 @@ export const InlineEditingControl = createControl(
 					{ ...attributes }
 					{ ...props }
 				>
-					<InlineEditor value={ content } setValue={ handleChange } />
+					<InlineEditor
+						value={ content }
+						setValue={ handleChange }
+						placeholder={ placeholder?.content?.value ?? null }
+					/>
 				</Box>
 			</ControlActions>
 		);
