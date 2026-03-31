@@ -52,9 +52,9 @@ class V4_Styles_Ability extends Abstract_Ability {
 							'css'          => [ 'type' => 'string' ],
 							'declarations' => [ 'type' => 'string' ],
 							'warnings'     => [
-							'type'  => 'array',
-							'items' => [ 'type' => 'string' ],
-						],
+								'type'  => 'array',
+								'items' => [ 'type' => 'string' ],
+							],
 							'valid'        => [ 'type' => 'boolean' ],
 							'hint'         => [ 'type' => [ 'string', 'null' ] ],
 						],
