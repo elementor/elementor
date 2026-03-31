@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createMockPropType, renderWithTheme } from 'test-utils';
-import { fireEvent, screen } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { usePropContext } from '../../../bound-prop-context';
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
@@ -544,6 +544,53 @@ describe( 'ControlRepeater', () => {
 				value: 'First item',
 			},
 		] );
+	} );
+
+	it( 'should close the popover when clicking outside the repeater', async () => {
+		// Arrange.
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			value: [],
+			setValue: jest.fn(),
+			...globalUseBoundPropArgs,
+		} );
+
+		// Act.
+		renderWithTheme(
+			<ControlRepeater { ...defaultProps }>
+				<RepeaterHeader label={ 'Test Repeater' }>
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
+				</RepeaterHeader>
+				<ItemsContainer>
+					<Item { ...createItemSettings() } />
+				</ItemsContainer>
+				<EditItemPopover>
+					<Content />
+				</EditItemPopover>
+			</ControlRepeater>
+		);
+
+		// Open the popover by adding a new item. MUI Modal sets body overflow:hidden
+		// to indicate the popover is open — we use this as the "open" observable
+		// because it fires regardless of whether rowRef has been set yet.
+		const addButton = screen.getByRole( 'button', { name: /Add Test repeater item/i } );
+
+		fireEvent.click( addButton );
+
+		// Assert the popover modal is open.
+		await waitFor( () => expect( document.body ).toHaveStyle( { overflow: 'hidden' } ) );
+
+		// Yield to the macrotask queue so ClickAwayListener's setTimeout(0) sets activatedRef.
+		await act( async () => {
+			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+		} );
+
+		// Act — simulate click outside (e.g. breakpoint switcher in app bar).
+		fireEvent.click( document.body );
+
+		// Assert — the modal closes (overflow:hidden is removed).
+		await waitFor( () => {
+			expect( document.body ).not.toHaveStyle( { overflow: 'hidden' } );
+		} );
 	} );
 
 	it.skip( 'should open the added repeater item popover', () => {
