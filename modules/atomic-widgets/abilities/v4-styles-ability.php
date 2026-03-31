@@ -166,26 +166,71 @@ class V4_Styles_Ability extends Abstract_Ability {
 				'type'     => 'class',
 				'variants' => [
 					[
-						'meta'       => [ 'breakpoint' => 'desktop', 'state' => null ],
+						'meta'       => [
+							'breakpoint' => 'desktop',
+							'state'      => null,
+						],
 						'props'      => [
-							'font-size' => [ '$$type' => 'size', 'value' => [ 'size' => 64, 'unit' => 'px' ] ],
-							'padding'   => [ '$$type' => 'size', 'value' => [ 'size' => 80, 'unit' => 'px' ] ],
+							'font-size' => [
+								'$$type' => 'size',
+								'value'  => [
+									'size' => 64,
+									'unit' => 'px',
+								],
+							],
+							'padding'   => [
+								'$$type' => 'size',
+								'value'  => [
+									'size' => 80,
+									'unit' => 'px',
+								],
+							],
 						],
 						'custom_css' => null,
 					],
 					[
-						'meta'       => [ 'breakpoint' => 'tablet', 'state' => null ],
+						'meta'       => [
+							'breakpoint' => 'tablet',
+							'state'      => null,
+						],
 						'props'      => [
-							'font-size' => [ '$$type' => 'size', 'value' => [ 'size' => 40, 'unit' => 'px' ] ],
-							'padding'   => [ '$$type' => 'size', 'value' => [ 'size' => 48, 'unit' => 'px' ] ],
+							'font-size' => [
+								'$$type' => 'size',
+								'value'  => [
+									'size' => 40,
+									'unit' => 'px',
+								],
+							],
+							'padding'   => [
+								'$$type' => 'size',
+								'value'  => [
+									'size' => 48,
+									'unit' => 'px',
+								],
+							],
 						],
 						'custom_css' => null,
 					],
 					[
-						'meta'       => [ 'breakpoint' => 'mobile', 'state' => null ],
+						'meta'       => [
+							'breakpoint' => 'mobile',
+							'state'      => null,
+						],
 						'props'      => [
-							'font-size' => [ '$$type' => 'size', 'value' => [ 'size' => 28, 'unit' => 'px' ] ],
-							'padding'   => [ '$$type' => 'size', 'value' => [ 'size' => 24, 'unit' => 'px' ] ],
+							'font-size' => [
+								'$$type' => 'size',
+								'value'  => [
+									'size' => 28,
+									'unit' => 'px',
+								],
+							],
+							'padding'   => [
+								'$$type' => 'size',
+								'value'  => [
+									'size' => 24,
+									'unit' => 'px',
+								],
+							],
 						],
 						'custom_css' => null,
 					],
