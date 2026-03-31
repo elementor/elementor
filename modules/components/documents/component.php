@@ -189,11 +189,11 @@ class Component extends Document {
 
 					$overridable_props_map[ $override_key ] = $origin_value;
 				}
-			}
-		}
 
-		if ( is_array( $element['elements'] ) ) {
-			$overridable_props_map = array_merge( $overridable_props_map, $this->get_elements_origin_values_map( $element['elements'], $overridable_props_map ) );
+				if ( is_array( $element['elements'] ) ) {
+					$overridable_props_map = array_merge( $overridable_props_map, $this->get_elements_origin_values_map( $element['elements'], $overridable_props_map ) );
+				}
+			}
 		}
 
 		return $overridable_props_map;
