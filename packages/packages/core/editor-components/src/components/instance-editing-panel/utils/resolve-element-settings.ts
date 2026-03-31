@@ -2,7 +2,7 @@ import { type AnyTransformable } from '@elementor/editor-props';
 
 import { componentOverridablePropTypeUtil } from '../../../prop-types/component-overridable-prop-type';
 
-type ElementSettings = Record< string, AnyTransformable | null >;
+export type ElementSettings = Record< string, AnyTransformable | null >;
 
 export type OverridesMapping = {
 	[ key: string ]: {
