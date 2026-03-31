@@ -20,6 +20,7 @@ export type PropKeyContextValue< T, P > = {
 	value: T;
 	propType: P;
 	placeholder?: T;
+	baseValue?: T;
 	path: PropKey[];
 	isDisabled?: ( propType: PropType ) => boolean | undefined;
 	disabled?: boolean;
@@ -55,7 +56,7 @@ const ObjectPropKeyProvider = ( { children, bind }: PropKeyProviderProps ) => {
 
 	const setValue: SetValue< PropValue > = ( value, options, meta ) => {
 		const newValue = {
-			...context.value,
+			...( context.value ?? context.baseValue ),
 			[ bind ]: value,
 		};
 
@@ -64,12 +65,22 @@ const ObjectPropKeyProvider = ( { children, bind }: PropKeyProviderProps ) => {
 
 	const value = context.value?.[ bind ];
 	const placeholder = context.placeholder?.[ bind ];
+	const baseValue = context.baseValue?.[ bind ];
 
 	const propType = context.propType.shape[ bind ];
 
 	return (
 		<PropKeyContext.Provider
-			value={ { ...context, value, setValue, placeholder, bind, propType, path: [ ...( path ?? [] ), bind ] } }
+			value={ {
+				...context,
+				value,
+				setValue,
+				placeholder,
+				baseValue,
+				bind,
+				propType,
+				path: [ ...( path ?? [] ), bind ],
+			} }
 		>
 			{ children }
 		</PropKeyContext.Provider>
@@ -81,7 +92,7 @@ const ArrayPropKeyProvider = ( { children, bind }: PropKeyProviderProps ) => {
 	const { path } = useContext( PropKeyContext ) ?? {};
 
 	const setValue = ( value: PropValue, options?: CreateOptions ) => {
-		const newValue = [ ...( context.value ?? [] ) ];
+		const newValue = [ ...( context.value ?? context.baseValue ?? [] ) ];
 
 		newValue[ Number( bind ) ] = value;
 
@@ -90,6 +101,7 @@ const ArrayPropKeyProvider = ( { children, bind }: PropKeyProviderProps ) => {
 
 	const value = context.value?.[ Number( bind ) ];
 	const placeholder = context.placeholder?.[ Number( bind ) ];
+	const baseValue = context.baseValue?.[ Number( bind ) ];
 
 	const propType = context.propType.item_prop_type;
 
@@ -103,6 +115,7 @@ const ArrayPropKeyProvider = ( { children, bind }: PropKeyProviderProps ) => {
 				propType,
 				path: [ ...( path ?? [] ), bind ],
 				placeholder: placeholder ?? undefined,
+				baseValue: baseValue ?? undefined,
 			} }
 		>
 			{ children }
