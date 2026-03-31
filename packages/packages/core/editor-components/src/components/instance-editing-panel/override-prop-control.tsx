@@ -50,7 +50,7 @@ import { resolveOverridePropValue } from '../../utils/resolve-override-prop-valu
 import { ControlLabel } from '../control-label';
 import { OverrideControlPropTypeNotFoundError } from '../errors';
 import { correctExposedEmptyOverride } from './utils/correct-exposed-empty-override';
-import { unwrapOverridableSettings } from './utils/resolve-element-settings';
+import { type ElementSettings, unwrapOverridableSettings } from './utils/resolve-element-settings';
 import { useOverrideControlDependencies } from './utils/use-override-dependencies';
 import { useResolvedInnerElement } from './utils/use-resolved-inner-element';
 
@@ -115,7 +115,7 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 		return null;
 	}
 
-	const { propValue, placeholderValue } = resolveValueAndPlaceholder(
+	const { propValue, baseValue: resolvedBaseValue } = resolveOverrideValues(
 		matchingOverride,
 		overrideValue,
 		resolvedOriginValues,
@@ -126,8 +126,8 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 		[ overridableProp.overrideKey ]: propValue,
 	} as OverridesSchema;
 
-	const placeholder = {
-		[ overridableProp.overrideKey ]: placeholderValue,
+	const baseValue = {
+		[ overridableProp.overrideKey ]: resolvedBaseValue,
 	} as OverridesSchema;
 
 	const { control, controlProps, layout } = getControlParams(
@@ -201,7 +201,7 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 					propType={ propTypeSchema }
 					value={ value }
 					setValue={ setValue }
-					placeholder={ placeholder }
+					baseValue={ baseValue }
 					isDisabled={ isDisabled }
 				>
 					<PropKeyProvider bind={ overridableProp.overrideKey }>
@@ -220,24 +220,22 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 	);
 }
 
-type ElementSettings = Record< string, AnyTransformable | null >;
-
-function resolveValueAndPlaceholder(
+function resolveOverrideValues(
 	matchingOverride: ComponentInstanceOverride | null,
 	overrideValue: AnyTransformable | null,
 	resolvedOriginValues: ElementSettings,
 	propKey: string
 ) {
-	const placeholderSettings = unwrapOverridableSettings( resolvedOriginValues );
-	const inheritedValue = placeholderSettings[ propKey ] ?? null;
+	const unwrappedSettings = unwrapOverridableSettings( resolvedOriginValues );
+	const inheritedValue = unwrappedSettings[ propKey ] ?? null;
 	const isInheritedDynamic = isDynamicPropValue( inheritedValue );
 
 	const shouldUseInheritedAsValue = isInheritedDynamic && ! matchingOverride;
 
 	const propValue = shouldUseInheritedAsValue ? inheritedValue : overrideValue;
-	const placeholderValue = matchingOverride || isInheritedDynamic ? null : inheritedValue;
+	const baseValue = matchingOverride || isInheritedDynamic ? null : inheritedValue;
 
-	return { propValue, placeholderValue };
+	return { propValue, baseValue };
 }
 
 // Temp solution: when removing an override on a dynamic value, fall back to propType.default
@@ -263,10 +261,8 @@ function createOverrideValue( {
 	overrideValue: ComponentInstanceOverrideProp | ComponentOverridableProp;
 	componentId: number;
 } ): ComponentInstanceOverride {
-	// this is for an override that's already set as overridable
 	const overridableValue = componentOverridablePropTypeUtil.extract( matchingOverride );
 
-	// this is for changes via the overridable-prop-indicator
 	const newOverridableValue = componentOverridablePropTypeUtil.extract( overrideValue );
 
 	const anyOverridable = newOverridableValue ?? overridableValue;
