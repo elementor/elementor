@@ -122,6 +122,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Video_Src_Transfo
 use Elementor\Modules\AtomicWidgets\PropTypes\Video_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Abilities\Atomic_Widgets_Ability;
 use Elementor\Modules\AtomicWidgets\Abilities\V4_Styles_Ability;
+use Elementor\Modules\AtomicWidgets\Abilities\Widget_Schema_Ability;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -252,6 +253,7 @@ class Module extends BaseModule {
 				Plugin::$instance->breakpoints
 			) )->register_hooks();
 			( new V4_Styles_Ability( Plugin::$instance->breakpoints ) )->register_hooks();
+			( new Widget_Schema_Ability( Plugin::$instance->elements_manager ) )->register_hooks();
 		}
 	}
 

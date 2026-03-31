@@ -10,6 +10,9 @@ class Abilities_Bootstrap {
 
 	public function register_hooks(): void {
 		add_action( 'wp_abilities_api_categories_init', [ $this, 'register_categories' ] );
+
+		( new Get_Post_Content_Ability() )->register_hooks();
+		( new Set_Post_Content_Ability() )->register_hooks();
 	}
 
 	public function register_categories(): void {
