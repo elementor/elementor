@@ -1,0 +1,16 @@
+{%- if settings.svg.html is defined and settings.svg.html is not empty -%}
+    {%- set classes = settings.classes | merge([base_styles.base]) | join(' ') -%}
+    {%- set id_attribute = settings._cssid is not empty ? 'id="' ~ settings._cssid | e('html_attr') ~ '"' : '' -%}
+    {%- if settings.link.href is defined and settings.link.href is not empty -%}
+        {%- set linkAttr = settings.link.tag == 'a' ? 'href' : 'data-action-link' -%}
+        <{{ settings.link.tag | e('html_tag') }} {{ linkAttr }}="{{ settings.link.href | raw }}" target="{{ settings.link.target }}" class="{{ classes }}" data-interaction-id="{{ interaction_id }}"
+            {%- if id_attribute is not empty %} {{ id_attribute }}{% endif -%}
+            {%- if settings.attributes is defined and settings.attributes is not empty %} {{ settings.attributes | raw }}{% endif -%}
+        >{{ settings.svg.html | raw }}</{{ settings.link.tag | e('html_tag') }}>
+    {%- else -%}
+        <div class="{{ classes }}" data-interaction-id="{{ interaction_id }}"
+            {%- if id_attribute is not empty %} {{ id_attribute }}{% endif -%}
+            {%- if settings.attributes is defined and settings.attributes is not empty %} {{ settings.attributes | raw }}{% endif -%}
+        >{{ settings.svg.html | raw }}</div>
+    {%- endif -%}
+{%- endif -%}
