@@ -64,9 +64,5 @@ export function DuplicateClassMenuItem( { closeMenu }: { closeMenu: () => void }
 		closeMenu();
 	};
 
-	return (
-		<MenuListItem onClick={ handleDuplicate }>
-			{ __( 'Duplicate', 'elementor' ) }
-		</MenuListItem>
-	);
+	return <MenuListItem onClick={ handleDuplicate }>{ __( 'Duplicate', 'elementor' ) }</MenuListItem>;
 }
