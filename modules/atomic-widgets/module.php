@@ -120,6 +120,8 @@ use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Self_Hosted_Video\Atomic_Self_Hosted_Video;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Video_Src_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Video_Src_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Abilities\Atomic_Widgets_Ability;
+use Elementor\Modules\AtomicWidgets\Abilities\V4_Styles_Ability;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -243,6 +245,11 @@ class Module extends BaseModule {
 		( new Atomic_Widgets_Library() )->register_hooks();
 		( new Atomic_Import_Export() )->register_hooks();
 		( new Atomic_Widgets_Database_Updater() )->register();
+
+		if ( function_exists( 'wp_register_ability' ) ) {
+			( new Atomic_Widgets_Ability() )->register_hooks();
+			( new V4_Styles_Ability() )->register_hooks();
+		}
 	}
 
 	private function add_packages( $packages ) {
