@@ -1229,15 +1229,15 @@ describe( '<CssClassSelector />', () => {
 			fireEvent.click( within( menu ).getByText( 'Duplicate' ) );
 
 			// Assert.
-			expect( createAction ).toHaveBeenCalledWith(
-				'copy-of-Provider-1-a',
-				provider1MockStyleA.variants
-			);
+			expect( createAction ).toHaveBeenCalledWith( 'copy-of-Provider-1-a', provider1MockStyleA.variants );
 
 			expect( updateElementSettings ).toHaveBeenCalledWith( {
 				id: 'mock-element',
 				props: {
-					'my-classes': { $$type: 'classes', value: [ 'local', 'provider-1-b', 'provider-1-a', 'duplicated-id' ] },
+					'my-classes': {
+						$$type: 'classes',
+						value: [ 'local', 'provider-1-b', 'provider-1-a', 'duplicated-id' ],
+					},
 				},
 				withHistory: false,
 			} );
