@@ -31,3 +31,10 @@ export { doApplyClasses, doGetAppliedClasses, doUnapplyClass } from './apply-una
 export { setLicenseConfig } from './hooks/use-license-config';
 export { type DynamicTag, type DynamicTags, type DynamicTagsManager } from './dynamics/types';
 export { isDynamicPropValue } from './dynamics/utils';
+export {
+	extractDependencyEffect,
+	type DependencyEffect,
+	getElementSettingsWithDefaults,
+	getUpdatedValues,
+	extractOrderedDependencies,
+} from './utils/prop-dependency-utils';
