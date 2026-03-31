@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { getCurrentDocument } from '@elementor/editor-documents';
 import {
 	__privateUseListenTo as useListenTo,
 	commandEndEvent,
@@ -13,6 +12,7 @@ import { type StyleItem } from '../renderers/create-styles-renderer';
 
 export function StyleRenderer() {
 	const container = usePortalContainer();
+
 	const styleItems = useStyleItems();
 	const linksAttrs = useDocumentsCssLinks();
 
@@ -33,14 +33,7 @@ export function StyleRenderer() {
 }
 
 function usePortalContainer() {
-	/**
-	 * Firefox's JS scheduler dispatches React's pending render microtasks earlier within the initialization macrotask boundary —
-	 * before Load.apply() → setCurrent() has completed.
-	 * Chrome processes these in the opposite order, so when React's mountMemo runs, currentDocument is already populated.
-	 */
-	return useListenTo( commandEndEvent( 'editor/documents/attach-preview' ), () =>
-		getCurrentDocument() ? getCanvasIframeDocument()?.head : null
-	);
+	return useListenTo( commandEndEvent( 'editor/documents/attach-preview' ), () => getCanvasIframeDocument()?.head );
 }
 
 // we load local styles also from components, which are handled differently
