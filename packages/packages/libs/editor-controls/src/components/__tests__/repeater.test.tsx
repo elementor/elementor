@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { renderWithTheme } from 'test-utils';
-import { fireEvent, screen } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { Repeater, type RepeaterItem } from '../repeater/repeater';
 
@@ -460,6 +460,49 @@ describe( 'Repeater', () => {
 		// Assert.
 		const toggleButton = screen.queryByLabelText( 'Hide' );
 		expect( toggleButton ).not.toBeInTheDocument();
+	} );
+
+	it( 'should close the popover when clicking outside the repeater item', async () => {
+		// Arrange.
+		const itemSettings = {
+			Icon: () => <span>Item Icon</span>,
+			Label: () => <span>Item label</span>,
+			Content: ( { bind }: { bind: string } ) => <span>Content - { bind }</span>,
+			initialValues: {
+				$$type: 'example',
+				value: 'Hello World',
+			},
+			getId: ( { index }: { index: number } ) => `item-${ index }`,
+		};
+
+		const values = [
+			{
+				$$type: 'example',
+				value: 'First item',
+			},
+		];
+
+		// Act.
+		renderWithTheme(
+			<Repeater label={ 'Repeater' } itemSettings={ itemSettings } values={ values } setValues={ jest.fn() } />
+		);
+
+		const openItemButton = screen.getByRole( 'button', { name: 'Open item' } );
+		fireEvent.click( openItemButton );
+		expect( screen.getByText( 'Content - 0' ) ).toBeInTheDocument();
+
+		// Yield to the macrotask queue so ClickAwayListener's setTimeout(0) sets activatedRef.
+		await act( async () => {
+			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+		} );
+
+		// Act — simulate click outside (e.g. breakpoint switcher in app bar).
+		fireEvent.click( document.body );
+
+		// Assert — popover closes after the transition completes.
+		await waitFor( () => {
+			expect( screen.queryByText( 'Content - 0' ) ).not.toBeInTheDocument();
+		} );
 	} );
 
 	it( 'should hide the remove button when showRemove is false', () => {

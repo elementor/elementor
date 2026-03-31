@@ -357,57 +357,67 @@ const RepeaterItem = < T, >( {
 	const removeLabel = __( 'Remove', 'elementor' );
 
 	return (
-		<>
-			<RepeaterTag
-				disabled={ disabled }
-				label={ label }
-				ref={ setRef }
-				aria-label={ __( 'Open item', 'elementor' ) }
-				{ ...triggerProps }
-				onClick={ ( e: React.MouseEvent< HTMLElement > ) => {
-					triggerProps.onClick( e );
-					if ( ! popoverState.isOpen ) {
-						onPopoverOpen?.( value );
-					}
-				} }
-				startIcon={ startIcon }
-				actions={
-					<>
-						{ showDuplicate && (
-							<Tooltip title={ duplicateLabel } placement="top">
-								<IconButton size={ SIZE } onClick={ duplicateItem } aria-label={ duplicateLabel }>
-									<CopyIcon fontSize={ SIZE } />
-								</IconButton>
-							</Tooltip>
-						) }
-						{ showToggle && (
-							<Tooltip title={ toggleLabel } placement="top">
-								<IconButton size={ SIZE } onClick={ toggleDisableItem } aria-label={ toggleLabel }>
-									{ propDisabled ? <EyeOffIcon fontSize={ SIZE } /> : <EyeIcon fontSize={ SIZE } /> }
-								</IconButton>
-							</Tooltip>
-						) }
-						{ actions?.( value ) }
-						{ showRemove && (
-							<Tooltip title={ removeLabel } placement="top">
-								<IconButton size={ SIZE } onClick={ removeItem } aria-label={ removeLabel }>
-									<XIcon fontSize={ SIZE } />
-								</IconButton>
-							</Tooltip>
-						) }
-					</>
+		<ClickAwayListener
+			onClickAway={ () => {
+				if ( popoverState.isOpen ) {
+					popoverProps.onClose();
 				}
-			/>
-			<RepeaterPopover width={ ref?.getBoundingClientRect().width } { ...popoverProps } anchorEl={ ref }>
-				<ClickAwayListener
-					mouseEvent="onMouseDown"
-					touchEvent="onTouchStart"
-					onClickAway={ popoverProps.onClose }
+			} }
+		>
+			<Box sx={ { display: 'contents' } }>
+				<RepeaterTag
+					disabled={ disabled }
+					label={ label }
+					ref={ setRef }
+					aria-label={ __( 'Open item', 'elementor' ) }
+					{ ...triggerProps }
+					onClick={ ( e: React.MouseEvent< HTMLElement > ) => {
+						triggerProps.onClick( e );
+						if ( ! popoverState.isOpen ) {
+							onPopoverOpen?.( value );
+						}
+					} }
+					startIcon={ startIcon }
+					actions={
+						<>
+							{ showDuplicate && (
+								<Tooltip title={ duplicateLabel } placement="top">
+									<IconButton size={ SIZE } onClick={ duplicateItem } aria-label={ duplicateLabel }>
+										<CopyIcon fontSize={ SIZE } />
+									</IconButton>
+								</Tooltip>
+							) }
+							{ showToggle && (
+								<Tooltip title={ toggleLabel } placement="top">
+									<IconButton size={ SIZE } onClick={ toggleDisableItem } aria-label={ toggleLabel }>
+										{ propDisabled ? (
+											<EyeOffIcon fontSize={ SIZE } />
+										) : (
+											<EyeIcon fontSize={ SIZE } />
+										) }
+									</IconButton>
+								</Tooltip>
+							) }
+							{ actions?.( value ) }
+							{ showRemove && (
+								<Tooltip title={ removeLabel } placement="top">
+									<IconButton size={ SIZE } onClick={ removeItem } aria-label={ removeLabel }>
+										<XIcon fontSize={ SIZE } />
+									</IconButton>
+								</Tooltip>
+							) }
+						</>
+					}
+				/>
+				<RepeaterPopover
+					width={ ref?.getBoundingClientRect().width }
+					{ ...popoverProps }
+					anchorEl={ ref }
 				>
 					<Box>{ children( { anchorEl: ref } ) }</Box>
-				</ClickAwayListener>
-			</RepeaterPopover>
-		</>
+				</RepeaterPopover>
+			</Box>
+		</ClickAwayListener>
 	);
 };
 

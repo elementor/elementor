@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { type PropTypeUtil } from '@elementor/editor-props';
-import { type PopupState, usePopupState } from '@elementor/ui';
+import { Box, ClickAwayListener, type PopupState, usePopupState } from '@elementor/ui';
 
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
 import { useSyncExternalState } from '../../../hooks/use-sync-external-state';
@@ -144,6 +144,16 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 		setItems( newItems );
 	};
 
+	const closePopover = () => {
+		if ( ! isOpen ) {
+			return;
+		}
+
+		setOpenItemIndex( EMPTY_OPEN_ITEM );
+		setRowRef( null );
+		popoverState.close();
+	};
+
 	return (
 		<RepeaterContext.Provider
 			value={ {
@@ -162,7 +172,9 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 				isItemDisabled: ( index: number ) => isItemDisabled( itemsWithKeys[ index ].item ),
 			} }
 		>
-			{ children }
+			<ClickAwayListener onClickAway={ closePopover }>
+				<Box>{ children }</Box>
+			</ClickAwayListener>
 		</RepeaterContext.Provider>
 	);
 };
