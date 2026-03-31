@@ -37,25 +37,35 @@ export function useStyleItems() {
 	const styleItemsCacheRef = useRef< Map< string, StyleItemsCache > >( new Map() );
 
 	const providerAndSubscribers = useMemo( () => {
-		return stylesRepository.getProviders().map( ( provider ): ProviderAndSubscriber => {
-			const providerKey = provider.getKey();
+		const createEmptyCache = () => {
+			return { orderedIds: [], itemsById: new Map() };
+		};
 
-			if ( ! styleItemsCacheRef.current.has( providerKey ) ) {
-				styleItemsCacheRef.current.set( providerKey, { orderedIds: [], itemsById: new Map() } );
+		const getCache = ( provider: StylesProvider ): StyleItemsCache => {
+			const providerKey = safeGetKey( provider );
+
+			if ( ! providerKey ) {
+				return createEmptyCache();
 			}
 
-			const cache = styleItemsCacheRef.current.get( providerKey ) as StyleItemsCache;
+			if ( ! styleItemsCacheRef.current.has( providerKey ) ) {
+				styleItemsCacheRef.current.set( providerKey, createEmptyCache() );
+			}
 
-			return {
+			return styleItemsCacheRef.current.get( providerKey ) as StyleItemsCache;
+		};
+
+		return stylesRepository.getProviders().map(
+			( provider ): ProviderAndSubscriber => ( {
 				provider,
 				subscriber: createProviderSubscriber( {
 					provider,
 					renderStyles,
 					setStyleItems,
-					cache,
+					getCache: () => getCache( provider ),
 				} ),
-			};
-		} );
+			} )
+		);
 	}, [ renderStyles ] );
 
 	useEffect( () => {
@@ -125,17 +135,26 @@ function createBreakpointSorter( breakpointsOrder: BreakpointId[] ) {
 		breakpointsOrder.indexOf( breakpointB as BreakpointId );
 }
 
+function safeGetKey( provider: StylesProvider ): string | null {
+	try {
+		return provider.getKey();
+	} catch {
+		return null;
+	}
+}
+
 type CreateProviderSubscriberArgs = {
 	provider: StylesProvider;
 	renderStyles: StyleRenderer;
 	setStyleItems: Dispatch< SetStateAction< ProviderAndStyleItemsMap > >;
-	cache: StyleItemsCache;
+	getCache: () => StyleItemsCache;
 };
 
-function createProviderSubscriber( { provider, renderStyles, setStyleItems, cache }: CreateProviderSubscriberArgs ) {
+function createProviderSubscriber( { provider, renderStyles, setStyleItems, getCache }: CreateProviderSubscriberArgs ) {
 	return abortPreviousRuns( ( abortController, previous?: StylesCollection, current?: StylesCollection ) =>
 		signalizedProcess( abortController.signal )
 			.then( ( _, signal ) => {
+				const cache = getCache();
 				const hasDiffInfo = current !== undefined && previous !== undefined;
 				const hasCache = cache.orderedIds.length > 0;
 
@@ -145,10 +164,10 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, cach
 				}
 
 				if ( hasDiffInfo && hasCache ) {
-					return updateItems( previous, current, signal );
+					return updateItems( cache, previous, current, signal );
 				}
 
-				return createItems( signal );
+				return createItems( cache, signal );
 			} )
 			.then( ( items ) => {
 				setStyleItems( ( prev ) => ( {
@@ -159,7 +178,12 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, cach
 			.execute()
 	);
 
-	async function updateItems( previous: StylesCollection, current: StylesCollection, signal: AbortSignal ) {
+	async function updateItems(
+		cache: StyleItemsCache,
+		previous: StylesCollection,
+		current: StylesCollection,
+		signal: AbortSignal
+	) {
 		const changedIds = getChangedStyleIds( previous, current );
 
 		cache.orderedIds = provider.actions
@@ -186,7 +210,7 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, cach
 		return getOrderedItems( cache );
 	}
 
-	async function createItems( signal: AbortSignal ) {
+	async function createItems( cache: StyleItemsCache, signal: AbortSignal ) {
 		const allStyles = provider.actions.all();
 
 		const styles = [ ...allStyles ].reverse().map( ( style ) => {
