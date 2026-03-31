@@ -19,6 +19,8 @@ class Global_Classes_Repository {
 
 	private string $context = self::CONTEXT_FRONTEND;
 
+	private static ?bool $uses_posts = null;
+
 	private ?Global_Classes $cache = null;
 
 	private ?Kit $kit = null;

@@ -62,14 +62,13 @@ class Test_Global_Classes_Rest_Api_Index extends Elementor_Test_Base {
 	public function tearDown(): void {
 		parent::tearDown();
 
-		$this->kit->delete_meta( Global_Classes_Repository::META_KEY_FRONTEND );
 		$this->kit->delete_meta( Global_Classes_Repository::META_KEY_PREVIEW );
 	}
 
 	public function test_get_index__returns_lightweight_data() {
 		// Arrange
 		$this->act_as_admin();
-		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $this->mock_global_classes );
+		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_PREVIEW, $this->mock_global_classes );
 
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes/index' );
@@ -98,7 +97,7 @@ class Test_Global_Classes_Rest_Api_Index extends Elementor_Test_Base {
 	public function test_get_index__fails_when_not_logged_in() {
 		// Arrange
 		wp_set_current_user( 0 );
-		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $this->mock_global_classes );
+		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_PREVIEW, $this->mock_global_classes );
 
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes/index' );
@@ -111,7 +110,7 @@ class Test_Global_Classes_Rest_Api_Index extends Elementor_Test_Base {
 	public function test_all_with_ids__returns_only_requested_classes() {
 		// Arrange
 		$this->act_as_admin();
-		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $this->mock_global_classes );
+		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_PREVIEW, $this->mock_global_classes );
 
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes' );
@@ -138,7 +137,7 @@ class Test_Global_Classes_Rest_Api_Index extends Elementor_Test_Base {
 	public function test_all_with_ids__returns_empty_for_non_existing_ids() {
 		// Arrange
 		$this->act_as_admin();
-		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $this->mock_global_classes );
+		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_PREVIEW, $this->mock_global_classes );
 
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes' );
@@ -158,7 +157,7 @@ class Test_Global_Classes_Rest_Api_Index extends Elementor_Test_Base {
 	public function test_all_without_ids__returns_all_classes() {
 		// Arrange
 		$this->act_as_admin();
-		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $this->mock_global_classes );
+		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_PREVIEW, $this->mock_global_classes );
 
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes' );
