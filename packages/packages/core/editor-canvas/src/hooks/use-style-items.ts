@@ -38,13 +38,15 @@ export function useStyleItems() {
 
 	const providerAndSubscribers = useMemo( () => {
 		return stylesRepository.getProviders().map( ( provider ): ProviderAndSubscriber => {
-			const providerKey = provider.getKey();
+			const providerKey = safeGetKey( provider );
 
-			if ( ! styleItemsCacheRef.current.has( providerKey ) ) {
+			if ( providerKey && ! styleItemsCacheRef.current.has( providerKey ) ) {
 				styleItemsCacheRef.current.set( providerKey, { orderedIds: [], itemsById: new Map() } );
 			}
 
-			const cache = styleItemsCacheRef.current.get( providerKey ) as StyleItemsCache;
+			const cache = providerKey
+				? ( styleItemsCacheRef.current.get( providerKey ) as StyleItemsCache )
+				: { orderedIds: [], itemsById: new Map() };
 
 			return {
 				provider,
@@ -125,6 +127,14 @@ function createBreakpointSorter( breakpointsOrder: BreakpointId[] ) {
 		breakpointsOrder.indexOf( breakpointB as BreakpointId );
 }
 
+function safeGetKey( provider: StylesProvider ): string | null {
+	try {
+		return provider.getKey();
+	} catch {
+		return null;
+	}
+}
+
 type CreateProviderSubscriberArgs = {
 	provider: StylesProvider;
 	renderStyles: StyleRenderer;
@@ -140,7 +150,6 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, cach
 				const hasCache = cache.orderedIds.length > 0;
 
 				if ( hasCache && provider.isPregeneratedLink ) {
-					// if styles were rendered already (i.e. hasCache = true), we can safely remove the pregenerated css rules imported via <link /> tags
 					removeProviderPregeneratedLinks( provider.getKey(), provider.isPregeneratedLink );
 				}
 
