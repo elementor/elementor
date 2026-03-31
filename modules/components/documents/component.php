@@ -177,7 +177,7 @@ class Component extends Document {
 	private function get_elements_origin_values_map( array $elements_data, array $overridable_props_map ) {
 		foreach ( $elements_data as $element ) {
 			foreach ( $element['settings'] as $prop_key => $prop_value ) {
-				if ( isset( $prop_value['$$type'] ) && $prop_value['$$type'] === Overridable_Prop_Type::get_key() ) {
+				if ( isset( $prop_value['$$type'] ) && Overridable_Prop_Type::get_key() === $prop_value['$$type'] ) {
 					$override_key = $prop_value['value']['override_key'];
 					$origin_value = $prop_value['value']['origin_value'];
 
