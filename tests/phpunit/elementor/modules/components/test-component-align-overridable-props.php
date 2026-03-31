@@ -50,7 +50,10 @@ class Test_Component_Align_Overridable_Props extends Elementor_Test_Base {
 		$new_origin_value = [
 			'$$type' => 'html-v3',
 			'value'  => [
-				'content'  => [ '$$type' => 'string', 'value' => 'Migrated Title' ],
+				'content'  => [
+					'$$type' => 'string',
+					'value' => 'Migrated Title',
+				],
 				'children' => [],
 			],
 		];
@@ -117,7 +120,7 @@ class Test_Component_Align_Overridable_Props extends Elementor_Test_Base {
 		);
 	}
 
-	public function test_align__unwraps_override_prop_type_from_origin_value() {
+	public function test_align__for_nested_component_with_exposed_further_override_unwraps_override_prop_type_from_origin_value() {
 		// Arrange
 		$this->act_as_admin();
 
@@ -144,7 +147,10 @@ class Test_Component_Align_Overridable_Props extends Elementor_Test_Base {
 		$new_origin_value = [
 			'$$type' => 'html-v3',
 			'value'  => [
-				'content'  => [ '$$type' => 'string', 'value' => 'Title' ],
+				'content'  => [
+					'$$type' => 'string',
+					'value' => 'Title',
+				],
 				'children' => [],
 			],
 		];
@@ -155,17 +161,34 @@ class Test_Component_Align_Overridable_Props extends Elementor_Test_Base {
 				'elType'   => 'widget',
 				'widgetType' => 'e-component',
 				'settings' => [
-					'some_prop' => [
-						'$$type' => 'overridable',
+					'component_instance' => [
+						'$$type' => 'component-instance',
 						'value'  => [
-							'override_key' => 'prop-222',
-							'origin_value' => [
-								'$$type' => 'override',
-								'value'  => [
-									'override_key'   => 'inner-key',
-									'override_value' => $new_origin_value,
-									'schema_source' => [ 'type' => 'component', 'id' => $inner_component_id ],
-								],
+							'component_id' => [
+								'$$type' => 'number',
+								'value' => $inner_component_id,
+							],
+							'overrides' => [
+								'$$type' => 'overrides',
+								'value' => [
+									[
+										'$$type' => 'overridable',
+										'value'  => [
+											'override_key' => 'prop-222',
+											'origin_value' => [
+												'$$type' => 'override',
+												'value'  => [
+													'override_key'   => 'inner-key',
+													'override_value' => $new_origin_value,
+													'schema_source' => [
+														'type' => 'component',
+														'id' => $inner_component_id,
+													],
+												],
+											],
+										],
+									]
+								]
 							],
 						],
 					],
@@ -186,7 +209,10 @@ class Test_Component_Align_Overridable_Props extends Elementor_Test_Base {
 					'originValue' => [
 						'$$type' => 'html-v3',
 						'value'  => [
-							'content'  => [ '$$type' => 'string', 'value' => 'Old Title' ],
+							'content'  => [
+								'$$type' => 'string',
+								'value' => 'Old Title',
+							],
 							'children' => [],
 						],
 					],
@@ -285,7 +311,10 @@ class Test_Component_Align_Overridable_Props extends Elementor_Test_Base {
 		$new_origin_value = [
 			'$$type' => 'html-v3',
 			'value'  => [
-				'content'  => [ '$$type' => 'string', 'value' => 'Nested Migrated Value' ],
+				'content'  => [
+					'$$type' => 'string',
+					'value' => 'Nested Migrated Value',
+				],
 				'children' => [],
 			],
 		];
@@ -366,7 +395,10 @@ class Test_Component_Align_Overridable_Props extends Elementor_Test_Base {
 		$new_title_origin_value = [
 			'$$type' => 'html-v3',
 			'value'  => [
-				'content'  => [ '$$type' => 'string', 'value' => 'New Title' ],
+				'content'  => [
+					'$$type' => 'string',
+					'value' => 'New Title',
+				],
 				'children' => [],
 			],
 		];
@@ -383,7 +415,10 @@ class Test_Component_Align_Overridable_Props extends Elementor_Test_Base {
 					'$$type' => 'image-src',
 					'value'  => [
 						'id'  => null,
-						'url' => [ '$$type' => 'url', 'value' => 'https://new.com/img.jpg' ],
+						'url' => [
+							'$$type' => 'url',
+							'value' => 'https://new.com/img.jpg',
+						],
 					],
 				],
 			],
@@ -438,7 +473,10 @@ class Test_Component_Align_Overridable_Props extends Elementor_Test_Base {
 					'widgetType'  => 'e-heading',
 					'propKey'     => 'title',
 					'label'       => 'Title',
-					'originValue' => [ '$$type' => 'string', 'value' => 'Stale Title' ],
+					'originValue' => [
+						'$$type' => 'string',
+						'value' => 'Stale Title',
+					],
 					'groupId'     => 'group-1',
 				],
 				'prop-tag' => [
@@ -448,7 +486,10 @@ class Test_Component_Align_Overridable_Props extends Elementor_Test_Base {
 					'widgetType'  => 'e-heading',
 					'propKey'     => 'tag',
 					'label'       => 'Tag',
-					'originValue' => [ '$$type' => 'string-v0', 'value' => 'h3' ],
+					'originValue' => [
+						'$$type' => 'string-v0',
+						'value' => 'h3',
+					],
 					'groupId'     => 'group-1',
 				],
 				'prop-image' => [
@@ -465,7 +506,10 @@ class Test_Component_Align_Overridable_Props extends Elementor_Test_Base {
 								'$$type' => 'image-src-v0',
 								'value'  => [
 									'id'  => null,
-									'url' => [ '$$type' => 'url', 'value' => 'https://old.com/img.jpg' ],
+									'url' => [
+										'$$type' => 'url',
+										'value' => 'https://old.com/img.jpg',
+									],
 								],
 							],
 						],
