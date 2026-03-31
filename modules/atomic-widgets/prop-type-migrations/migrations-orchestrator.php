@@ -311,6 +311,8 @@ class Migrations_Orchestrator {
 					Document::ELEMENTOR_DATA_META_KEY,
 					$migrated_data
 				);
+
+				do_action( 'elementor/document/after_migrate', $document, $migrated_data );
 			}
 		);
 

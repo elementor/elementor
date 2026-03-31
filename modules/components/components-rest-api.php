@@ -320,6 +320,7 @@ class Components_REST_API {
 				->build();
 		}
 
+		/** @var Component $document */
 		$document = $this->get_repository()->get( $component_id );
 
 		if ( ! $document ) {
@@ -327,6 +328,16 @@ class Components_REST_API {
 				->set_status( 404 )
 				->set_message( __( 'Component not found', 'elementor' ) )
 				->build();
+		}
+
+		// This is a fix for the case where overridable props in element settings where migrated
+		// but the overridable props metadata were not aligned with the new origin values.
+		// In version 4.0.1, we fixed this by running the align_overridable_props_with_elements method after the migration.
+		$document_version = $document->get_elementor_version();
+		$overridable_props_migration_fix_version = '4.0.1';
+		$should_align_overridable_props = version_compare( $document_version, $overridable_props_migration_fix_version, '<=' );
+		if ( $should_align_overridable_props ) {
+			$document->align_overridable_props_with_elements();
 		}
 
 		$overridable = $document->get_json_meta( Component::OVERRIDABLE_PROPS_META_KEY ) ?? null;

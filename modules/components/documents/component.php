@@ -4,6 +4,7 @@ namespace Elementor\Modules\Components\Documents;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Api\Parse_Result;
 use Elementor\Modules\Components\OverridableProps\Component_Overridable_Props_Parser;
+use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -147,5 +148,54 @@ class Component extends Document {
 
 	public function print_elements_without_cache( array $elements_data ) {
 		$this->do_print_elements( $elements_data );
+	}
+
+	public function align_overridable_props_with_elements() {
+		$elements_data = $this->get_elements_data();
+		// format elements data to flat map of overridable prop key -> new origin value
+		$overridable_props_map = $this->get_elements_origin_values_map( $elements_data, [] );
+
+		if ( empty( $overridable_props_map ) ) {
+			return;
+		}
+
+		$updated_overridable_props = $this->get_overridable_props();
+
+		foreach ( $updated_overridable_props->props as $prop ) {
+
+			$new_origin_value = $overridable_props_map[ $prop->override_key ];
+
+			if ( isset( $new_origin_value ) ) {
+				$prop->origin_value = $new_origin_value;
+			}
+		}
+
+		$this->update_overridable_props( $updated_overridable_props->to_associative_array() );
+	}
+
+	private function get_elements_origin_values_map( array $elements_data, array $overridable_props_map ) {
+		foreach ( $elements_data as $element ) {
+			foreach ( $element['settings'] as $prop_key => $prop_value ) {
+				if ( isset( $prop_value['$$type'] ) && $prop_value['$$type'] === 'overridable' ) {
+					$override_key = $prop_value['value']['override_key'];
+					$origin_value = $prop_value['value']['origin_value'];
+
+					if (
+						isset( $origin_value['$$type'] ) &&
+						Override_Prop_Type::get_key() === $origin_value['$$type']
+					) {
+						$origin_value = $origin_value['value']['override_value'];
+					}
+
+					$overridable_props_map[ $override_key ] = $origin_value;
+				}
+			}
+		}
+
+		if ( is_array( $element['elements'] ) ) {
+			$overridable_props_map = array_merge( $overridable_props_map, $this->get_elements_origin_values_map( $element['elements'], $overridable_props_map ) );
+		}
+
+		return $overridable_props_map;
 	}
 }
