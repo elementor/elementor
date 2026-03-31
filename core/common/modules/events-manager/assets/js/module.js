@@ -79,9 +79,8 @@ export default class extends elementorModules.Module {
 			this.enableTracking();
 		}
 
-    
 		const eventData = {
-      user_id: elementorCommon.config.library_connect?.user_id || null,
+			user_id: elementorCommon.config.library_connect?.user_id || null,
 			user_roles: elementorCommon.config.library_connect?.user_roles || [],
 			subscription_id: elementorCommon.config.editor_events?.subscription_id || null,
 			user_tier: elementorCommon.config.library_connect?.current_access_tier || null,
