@@ -37,15 +37,19 @@ export function useStyleItems() {
 	const styleItemsCacheRef = useRef< Map< string, StyleItemsCache > >( new Map() );
 
 	const providerAndSubscribers = useMemo( () => {
+		const createEmptyCache = () => {
+			return { orderedIds: [], itemsById: new Map() };
+		};
+
 		const getCache = ( provider: StylesProvider ): StyleItemsCache => {
 			const providerKey = safeGetKey( provider );
 
 			if ( ! providerKey ) {
-				return { orderedIds: [], itemsById: new Map() };
+				return createEmptyCache();
 			}
 
 			if ( ! styleItemsCacheRef.current.has( providerKey ) ) {
-				styleItemsCacheRef.current.set( providerKey, { orderedIds: [], itemsById: new Map() } );
+				styleItemsCacheRef.current.set( providerKey, createEmptyCache() );
 			}
 
 			return styleItemsCacheRef.current.get( providerKey ) as StyleItemsCache;
