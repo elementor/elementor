@@ -1297,6 +1297,12 @@ export default class EditorBase extends Marionette.Application {
 		this.initPanel();
 
 		this.previewLoadedOnce = true;
+
+		const eventsManager = elementorCommon.eventsManager;
+
+		if ( eventsManager ) {
+			eventsManager.dispatchEvent( eventsManager.config?.names?.elementorEditor?.editorLoaded, {} );
+		}
 	}
 
 	onEditModeSwitched() {
