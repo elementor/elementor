@@ -12,7 +12,7 @@ export class Back extends $e.modules.CommandBase {
 		// When at the root Site Settings page, back should behave like close —
 		// switching back to the initial document and clearing the active-document query param.
 		if ( currentRoute === this.component.getNamespace() + '/menu' ) {
-			$e.run( 'panel/global/close' );
+			this.getCloseConfirmDialog( event ).show();
 			return;
 		}
 
