@@ -1,6 +1,12 @@
 import * as React from 'react';
 import { useMemo, useState } from 'react';
-import { numberPropTypeUtil, stringPropTypeUtil, urlPropTypeUtil } from '@elementor/editor-props';
+import {
+	numberPropTypeUtil,
+	queryPropTypeUtil,
+	type QueryPropValue,
+	stringPropTypeUtil,
+	urlPropTypeUtil,
+} from '@elementor/editor-props';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 import { SearchIcon } from '@elementor/icons';
 import { debounce } from '@elementor/utils';
@@ -35,56 +41,51 @@ type Response = HttpResponse< { value: FlatOption[] | CategorizedOption[] } >;
 type FetchOptionsParams = Record< string, unknown > & { term: string };
 
 export const QueryControl = createControl( ( props: Props ) => {
-	const { value, setValue } = useBoundProp< DestinationProp >();
+	const { value: queryValue, setValue: setQueryValue } = useBoundProp( queryPropTypeUtil );
+	const { value: urlValue, setValue: setUrlValue, placeholder: urlPlaceholder } = useBoundProp( urlPropTypeUtil );
 
 	const {
 		allowCustomValues = true,
 		queryOptions: { url, params = {} },
-		placeholder,
+		placeholder = __( 'Search', 'elementor' ),
 		minInputLength = 2,
 		onSetValue,
 		ariaLabel,
 	} = props || {};
 
-	const normalizedPlaceholder = placeholder || __( 'Search', 'elementor' );
-
 	const [ options, setOptions ] = useState< FlatOption[] | CategorizedOption[] >(
-		generateFirstLoadedOption( value?.value )
+		generateFirstLoadedOption( queryValue )
 	);
 
 	const onOptionChange = ( newValue: number | null ) => {
 		if ( newValue === null ) {
-			setValue( null );
+			setQueryValue( null );
 			onSetValue?.( null );
 
 			return;
 		}
 
-		const valueToSave = {
-			$$type: 'query',
-			value: {
-				id: numberPropTypeUtil.create( newValue ),
-				label: stringPropTypeUtil.create( findMatchingOption( options, newValue )?.label || null ),
-			},
+		const newQueryValue = {
+			id: numberPropTypeUtil.create( newValue ),
+			label: stringPropTypeUtil.create( findMatchingOption( options, newValue )?.label || null ),
 		};
 
-		setValue( valueToSave );
-		onSetValue?.( valueToSave );
+		setQueryValue( newQueryValue );
+		onSetValue?.( queryPropTypeUtil.create( newQueryValue ) );
 	};
 
 	const onTextChange = ( newValue: string | null ) => {
-		if ( ! newValue ) {
-			setValue( null );
+		const trimmedValue = newValue?.trim() || '';
+
+		if ( ! trimmedValue ) {
+			setUrlValue( null );
 			onSetValue?.( null );
 
 			return;
 		}
 
-		const newLinkValue = newValue?.trim() || '';
-		const valueToSave = newLinkValue ? urlPropTypeUtil.create( newLinkValue ) : null;
-
-		setValue( valueToSave );
-		onSetValue?.( valueToSave );
+		setUrlValue( trimmedValue );
+		onSetValue?.( urlPropTypeUtil.create( trimmedValue ) );
 		updateOptions( newValue );
 	};
 
@@ -110,14 +111,16 @@ export const QueryControl = createControl( ( props: Props ) => {
 		[ url ]
 	);
 
+	const displayValue = queryValue?.id?.value ?? urlValue;
+
 	return (
 		<ControlActions>
 			<Autocomplete
 				options={ options }
 				allowCustomValues={ allowCustomValues }
-				placeholder={ normalizedPlaceholder }
+				placeholder={ urlPlaceholder ?? placeholder }
 				startAdornment={ <SearchIcon fontSize="tiny" /> }
-				value={ value?.value?.id?.value || value?.value }
+				value={ displayValue }
 				onOptionChange={ onOptionChange }
 				onTextChange={ onTextChange }
 				minInputLength={ minInputLength }
@@ -152,17 +155,15 @@ function formatOptions( options: FlatOption[] | CategorizedOption[] ): FlatOptio
 	);
 }
 
-function generateFirstLoadedOption( unionValue: DestinationProp | null ): FlatOption[] {
-	const value = unionValue?.id?.value;
-	const label = unionValue?.label?.value;
-	const type = unionValue?.id?.$$type || 'url';
+function generateFirstLoadedOption( queryValue: QueryPropValue[ 'value' ] | null ): FlatOption[] {
+	const id = queryValue?.id?.value;
+	const label = queryValue?.label?.value;
 
-	return value && label && type === 'number'
-		? [
-				{
-					id: value.toString(),
-					label,
-				},
-		  ]
-		: [];
+	const option = [];
+
+	if ( id && label ) {
+		option.push( { id: id.toString(), label } );
+	}
+
+	return option;
 }
