@@ -5,14 +5,17 @@ import { useSessionStorage } from '@elementor/session';
 import { __ } from '@wordpress/i18n';
 
 import { trackStyles } from '../../utils/tracking/subscribe';
+import { PENDING_CLASS_RENAME_SESSION_KEY } from './consts';
 import { useCssClass } from './css-class-context';
 import { useApplyClass } from './use-apply-and-unapply-class';
 
-function getUniqueDuplicateLabel( originalLabel: string, existingLabels: string[] ): string {
-	let newLabel = `copy-of-${ originalLabel }`;
+const DUPLICATE_LABEL_PREFIX = 'copy-of';
+
+export function getUniqueDuplicateLabel( originalLabel: string, existingLabels: string[] ): string {
+	let newLabel = `${ DUPLICATE_LABEL_PREFIX }-${ originalLabel }`;
 	let counter = 2;
 	while ( existingLabels.includes( newLabel ) ) {
-		newLabel = `copy-of-${ originalLabel }-${ counter }`;
+		newLabel = `${ DUPLICATE_LABEL_PREFIX }-${ originalLabel }-${ counter }`;
 		counter++;
 	}
 	return newLabel;
@@ -22,7 +25,7 @@ export function DuplicateClassMenuItem( { closeMenu }: { closeMenu: () => void }
 	const { id: classId, provider } = useCssClass();
 	const { userCan } = useUserStylesCapability();
 	const applyClass = useApplyClass();
-	const [ , setPendingEditId ] = useSessionStorage( 'pending-class-rename-id', 'app' );
+	const [ , setPendingEditId ] = useSessionStorage( PENDING_CLASS_RENAME_SESSION_KEY, 'app' );
 
 	if ( ! provider || ! classId ) {
 		return null;
@@ -55,7 +58,7 @@ export function DuplicateClassMenuItem( { closeMenu }: { closeMenu: () => void }
 			setPendingEditId( newId );
 			trackStyles( provider, 'classCreated', {
 				classId: newId,
-				source: 'created',
+				source: 'duplicated',
 				classTitle: newLabel,
 			} );
 		}

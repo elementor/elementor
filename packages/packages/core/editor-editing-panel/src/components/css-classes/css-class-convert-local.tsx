@@ -8,6 +8,7 @@ import { useSessionStorage } from '@elementor/session';
 import { useClassesProp } from '../../contexts/classes-prop-context';
 import { useElement } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
+import { PENDING_CLASS_RENAME_SESSION_KEY } from './consts';
 
 export const { Slot: CssClassConvertSlot, inject: injectIntoCssClassConvert } = createLocation< {
 	styleDef: StyleDefinition | null;
@@ -30,7 +31,7 @@ export const CssClassConvert = ( props: OwnProps ) => {
 	const elementId = element.id;
 	const currentClassesProp = useClassesProp();
 	const { setId: setActiveId } = useStyle();
-	const [ , saveValue ] = useSessionStorage( 'pending-class-rename-id', 'app' );
+	const [ , saveValue ] = useSessionStorage( PENDING_CLASS_RENAME_SESSION_KEY, 'app' );
 
 	const successCallback = ( newId: string ) => {
 		if ( ! props.styleDef ) {

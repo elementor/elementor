@@ -20,6 +20,7 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { useStyle } from '../../contexts/style-context';
+import { PENDING_CLASS_RENAME_SESSION_KEY } from './consts';
 import { CssClassProvider } from './css-class-context';
 import { CssClassMenu, useElementStates } from './css-class-menu';
 
@@ -53,7 +54,10 @@ export function CssClassItem( props: CssClassItemProps ) {
 
 	const { userCan } = useUserStylesCapability();
 
-	const [ convertedFromLocalId, , clearConvertedFromLocalId ] = useSessionStorage( 'pending-class-rename-id', 'app' );
+	const [ convertedFromLocalId, , clearConvertedFromLocalId ] = useSessionStorage(
+		PENDING_CLASS_RENAME_SESSION_KEY,
+		'app'
+	);
 
 	const {
 		ref,
