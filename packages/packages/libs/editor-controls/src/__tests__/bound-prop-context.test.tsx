@@ -461,7 +461,7 @@ describe( 'useBoundProp', () => {
 		expect( setValue ).toHaveBeenCalledWith( { key: null }, undefined, { bind: 'key' } );
 	} );
 
-	it( 'should return baseValue sliced by bind from PropProvider', () => {
+	it( 'should return baseValue sliced by bind and derive placeholder from it', () => {
 		// Arrange
 		const propType = createMockPropType( {
 			kind: 'object',
@@ -485,6 +485,7 @@ describe( 'useBoundProp', () => {
 
 		// Assert
 		expect( result.current.baseValue ).toBe( 'inherited' );
+		expect( result.current.placeholder ).toBe( 'inherited' );
 		expect( result.current.value ).toBe( null );
 	} );
 
@@ -575,7 +576,7 @@ describe( 'useBoundProp', () => {
 		);
 	} );
 
-	it( 'should return placeholder independently from baseValue', () => {
+	it( 'should prefer explicit placeholder over baseValue when both are provided', () => {
 		// Arrange
 		const propType = createMockPropType( {
 			kind: 'object',

@@ -115,11 +115,12 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 		return null;
 	}
 
-	const {
-		propValue,
-		baseValue: resolvedBaseValue,
-		placeholderValue,
-	} = resolveOverrideValues( matchingOverride, overrideValue, resolvedOriginValues, propKey );
+	const { propValue, baseValue: resolvedBaseValue } = resolveOverrideValues(
+		matchingOverride,
+		overrideValue,
+		resolvedOriginValues,
+		propKey
+	);
 
 	const value = {
 		[ overridableProp.overrideKey ]: propValue,
@@ -127,10 +128,6 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 
 	const baseValue = {
 		[ overridableProp.overrideKey ]: resolvedBaseValue,
-	} as OverridesSchema;
-
-	const placeholder = {
-		[ overridableProp.overrideKey ]: placeholderValue,
 	} as OverridesSchema;
 
 	const { control, controlProps, layout } = getControlParams(
@@ -205,7 +202,6 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 					value={ value }
 					setValue={ setValue }
 					baseValue={ baseValue }
-					placeholder={ placeholder }
 					isDisabled={ isDisabled }
 				>
 					<PropKeyProvider bind={ overridableProp.overrideKey }>
@@ -237,10 +233,9 @@ function resolveOverrideValues(
 	const shouldUseInheritedAsValue = isInheritedDynamic && ! matchingOverride;
 
 	const propValue = shouldUseInheritedAsValue ? inheritedValue : overrideValue;
-	const baseValue = isInheritedDynamic ? null : inheritedValue;
-	const placeholderValue = matchingOverride || isInheritedDynamic ? null : inheritedValue;
+	const baseValue = matchingOverride || isInheritedDynamic ? null : inheritedValue;
 
-	return { propValue, baseValue, placeholderValue };
+	return { propValue, baseValue };
 }
 
 // Temp solution: when removing an override on a dynamic value, fall back to propType.default
