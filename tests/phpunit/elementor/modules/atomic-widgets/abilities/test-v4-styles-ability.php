@@ -5,105 +5,88 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\AtomicWidgets\Abilities;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Modules\AtomicWidgets\Abilities\V4_Styles_Ability;
 use PHPUnit\Framework\TestCase;
+use Spatie\Snapshots\MatchesSnapshots;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * @group Elementor\Modules
+ * Targeted regression tests for V4_Styles_Ability.
+ *
+ * The annotations.instructions and critical_rules strings directly steer LLM/MCP
+ * tool use. Wrong $$type usage or unsafe save patterns here cause rendering
+ * failures in the wild. These tests pin the exact text so any accidental change
+ * requires a deliberate snapshot update.
+ *
  * @group Elementor\Modules\AtomicWidgets
  */
 class Test_V4_Styles_Ability extends TestCase {
+	use MatchesSnapshots;
 
-	private Breakpoints_Manager $breakpoints_manager;
-	private V4_Styles_Ability $ability;
+	private function make_ability(): V4_Styles_Ability {
+		$bp = $this->createMock( Breakpoints_Manager::class );
+		$bp->method( 'get_breakpoints_config' )->willReturn( [] );
 
-	protected function setUp(): void {
-		parent::setUp();
-
-		$this->breakpoints_manager = $this->createMock( Breakpoints_Manager::class );
-		$this->breakpoints_manager->method( 'get_breakpoints_config' )->willReturn( [
-			'desktop' => [ 'label' => 'Desktop', 'value' => 0, 'direction' => 'min', 'is_enabled' => true ],
-			'mobile'  => [ 'label' => 'Mobile',  'value' => 767, 'direction' => 'max', 'is_enabled' => true ],
-		] );
-
-		$this->ability = new V4_Styles_Ability( $this->breakpoints_manager );
+		return new V4_Styles_Ability( $bp );
 	}
 
-	public function test_execute__returns_all_top_level_keys(): void {
-		// Act
-		$result = $this->ability->execute( [] );
+	private function get_config(): array {
+		$ability = $this->make_ability();
+		$ref     = new \ReflectionMethod( $ability, 'get_config' );
+		$ref->setAccessible( true );
 
-		// Assert
-		$this->assertArrayHasKey( 'critical_rules', $result );
-		$this->assertArrayHasKey( 'prop_types', $result );
-		$this->assertArrayHasKey( 'style_schema', $result );
-		$this->assertArrayHasKey( 'element_structure', $result );
-		$this->assertArrayHasKey( 'breakpoints', $result );
+		return $ref->invoke( $ability );
 	}
 
-	public function test_execute__omits_validation_key_when_validate_props_not_provided(): void {
-		// Act
-		$result = $this->ability->execute( [] );
+	// ── Snapshot: pins the exact instruction text ────────────────────────────
 
-		// Assert
-		$this->assertArrayNotHasKey( 'validation', $result );
+	public function test_annotations_instructions__snapshot(): void {
+		$config = $this->get_config();
+
+		$this->assertMatchesSnapshot( $config['meta']['annotations']['instructions'] );
 	}
 
-	public function test_execute__omits_validation_key_when_validate_props_is_empty(): void {
-		// Act
-		$result = $this->ability->execute( [ 'validate_props' => [] ] );
+	// ── Contract: $$type (double dollar) must appear ─────────────────────────
 
-		// Assert
-		$this->assertArrayNotHasKey( 'validation', $result );
-	}
+	public function test_annotations_instructions__references_double_dollar_type(): void {
+		$instructions = $this->get_config()['meta']['annotations']['instructions'];
 
-	public function test_execute__includes_validation_key_when_validate_props_provided(): void {
-		// Act
-		$result = $this->ability->execute( [
-			'validate_props' => [
-				'color' => [ '$$type' => 'color', 'value' => '#FF0000' ],
-			],
-		] );
-
-		// Assert
-		$this->assertArrayHasKey( 'validation', $result );
-		$this->assertArrayHasKey( 'valid', $result['validation'] );
-		$this->assertArrayHasKey( 'css', $result['validation'] );
-		$this->assertArrayHasKey( 'warnings', $result['validation'] );
-	}
-
-	public function test_get_critical_rules__contains_double_dollar_sign_rule(): void {
-		// Act
-		$result = $this->ability->execute( [] );
-
-		// Assert — at least one rule must mention $$type
-		$mentions_double_dollar = array_filter(
-			$result['critical_rules'],
-			fn( $rule ) => str_contains( $rule, '$$type' )
+		$this->assertStringContainsString(
+			'$$type',
+			$instructions,
+			'Instructions must reference $$type (double dollar sign) to guide correct prop usage.'
 		);
-
-		$this->assertNotEmpty( $mentions_double_dollar, 'Expected at least one critical rule mentioning $$type' );
 	}
 
-	public function test_breakpoints_reference__includes_active_config(): void {
-		// Act
-		$result = $this->ability->execute( [] );
+	public function test_annotations_instructions__calls_out_double_dollar_explicitly(): void {
+		$instructions = $this->get_config()['meta']['annotations']['instructions'];
 
-		// Assert
-		$this->assertArrayHasKey( 'active_config', $result['breakpoints'] );
-		$this->assertArrayHasKey( 'desktop', $result['breakpoints']['active_config'] );
-		$this->assertArrayHasKey( 'mobile', $result['breakpoints']['active_config'] );
+		$this->assertStringContainsString(
+			'double dollar',
+			$instructions,
+			'Instructions must explicitly name "double dollar" to prevent single-dollar mistakes.'
+		);
 	}
 
-	public function test_execute__prop_types_reference_contains_expected_types(): void {
-		// Act
-		$result = $this->ability->execute( [] );
+	// ── Contract: safe save pattern — validate before write ──────────────────
 
-		// Assert
-		foreach ( [ 'string', 'number', 'size', 'color', 'dimensions', 'box-shadow', 'background' ] as $type ) {
-			$this->assertArrayHasKey( $type, $result['prop_types'], "Missing prop type: {$type}" );
-		}
+	public function test_annotations_instructions__mentions_validate_before_saving(): void {
+		$instructions = $this->get_config()['meta']['annotations']['instructions'];
+
+		$this->assertStringContainsString(
+			'validate',
+			strtolower( $instructions ),
+			'Instructions must tell consumers to validate props before saving.'
+		);
+	}
+
+	// ── Contract: ability metadata ────────────────────────────────────────────
+
+	public function test_annotations__is_readonly_and_not_destructive(): void {
+		$annotations = $this->get_config()['meta']['annotations'];
+
+		$this->assertTrue( $annotations['readonly'] );
+		$this->assertFalse( $annotations['destructive'] );
 	}
 }

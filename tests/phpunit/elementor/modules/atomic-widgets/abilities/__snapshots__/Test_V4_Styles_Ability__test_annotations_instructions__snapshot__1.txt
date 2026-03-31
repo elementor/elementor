@@ -1,0 +1,6 @@
+CRITICAL: All prop type keys use "$$type" (double dollar), NEVER "$type" (single dollar). This is the #1 cause of rendering failures.
+Call this ability before writing any Elementor v4 style props to learn the correct formats.
+Use validate_props input to verify your props render to correct CSS before saving to the database.
+Every prop value must be wrapped in {$$type, value} — no raw scalars ever.
+Styles are stored INLINE in each element's "styles" property, keyed by style ID (e.g. "e-myid-s").
+The element settings.classes references the style ID: {"$$type":"classes","value":["e-myid-s"]}.

@@ -1,0 +1,5 @@
+Returns all Elementor global CSS classes from the active Kit.
+Use class IDs in element settings.classes to apply global styles:
+  {"$$type":"classes","value":["existing-global-class-id","e-{elementId}-s"]}
+Preview classes are editor-only and not rendered on the frontend.
+To create or modify global classes, use elementor/set-global-class.

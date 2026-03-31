@@ -1,0 +1,4 @@
+Returns all Elementor global CSS variables from the active Kit.
+Variable IDs can be referenced in style props using:
+  - {"$$type":"global-color-variable","value":"<id>"} for colors
+  - {"$$type":"global-font-variable","value":"<id>"} for fonts

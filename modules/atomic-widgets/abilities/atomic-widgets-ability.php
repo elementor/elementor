@@ -51,15 +51,15 @@ class Atomic_Widgets_Ability extends Abstract_Ability {
 				'properties' => [
 					'style_schema'    => [
 						'type'        => 'object',
-						'description' => 'Full Elementor v4 style property schema.',
+						'description' => 'Full Elementor v4 style property schema. On failure: { error: string }.',
 					],
 					'prop_types'      => [
 						'type'        => 'array',
 						'description' => 'Registered atomic prop type file names.',
 					],
 					'atomic_elements' => [
-						'type'        => 'array',
-						'description' => 'Registered atomic element type names.',
+						'type'        => [ 'array', 'object' ],
+						'description' => 'Registered atomic element type names. On failure: { error: string } instead of a string array.',
 					],
 					'breakpoints'     => [
 						'type'        => 'object',

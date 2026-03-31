@@ -45,6 +45,17 @@ class V4_Styles_Ability extends Abstract_Ability {
 					'style_schema'      => [ 'type' => 'object' ],
 					'element_structure' => [ 'type' => 'object' ],
 					'breakpoints'       => [ 'type' => 'object' ],
+					'validation'        => [
+						'type'       => 'object',
+						'description' => 'Present only when validate_props input is provided.',
+						'properties' => [
+							'css'          => [ 'type' => 'string' ],
+							'declarations' => [ 'type' => 'string' ],
+							'warnings'     => [ 'type' => 'array', 'items' => [ 'type' => 'string' ] ],
+							'valid'        => [ 'type' => 'boolean' ],
+							'hint'         => [ 'type' => [ 'string', 'null' ] ],
+						],
+					],
 				],
 			],
 			'meta' => [
