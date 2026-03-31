@@ -39,27 +39,72 @@ class V4_Styles_Reference {
 		return [
 			'string' => [
 				'description' => 'Plain string. Used for flex-direction, justify-content, align-items, text-align, font-weight, text-transform, border-style, display, position, font-family, cursor, overflow, clip-path, font-style, flex-wrap.',
-				'format'      => [ '$$type' => 'string', 'value' => '<string>' ],
+				'format'      => [
+					'$$type' => 'string',
+					'value' => '<string>',
+				],
 				'examples'    => [
-					'flex-direction'  => [ '$$type' => 'string', 'value' => 'column' ],
-					'justify-content' => [ '$$type' => 'string', 'value' => 'center' ],
-					'align-items'     => [ '$$type' => 'string', 'value' => 'flex-start' ],
-					'text-align'      => [ '$$type' => 'string', 'value' => 'center' ],
-					'text-transform'  => [ '$$type' => 'string', 'value' => 'uppercase' ],
-					'font-weight'     => [ '$$type' => 'string', 'value' => '700' ],
-					'font-style'      => [ '$$type' => 'string', 'value' => 'italic' ],
-					'font-family'     => [ '$$type' => 'string', 'value' => 'Georgia, serif' ],
-					'border-style'    => [ '$$type' => 'string', 'value' => 'solid' ],
-					'display'         => [ '$$type' => 'string', 'value' => 'flex' ],
-					'overflow'        => [ '$$type' => 'string', 'value' => 'hidden' ],
-					'flex-wrap'       => [ '$$type' => 'string', 'value' => 'wrap' ],
-					'clip-path'       => [ '$$type' => 'string', 'value' => 'polygon(0 0, 100% 0, 100% 90%, 0 100%)' ],
+					'flex-direction'  => [
+						'$$type' => 'string',
+						'value' => 'column',
+					],
+					'justify-content' => [
+						'$$type' => 'string',
+						'value' => 'center',
+					],
+					'align-items'     => [
+						'$$type' => 'string',
+						'value' => 'flex-start',
+					],
+					'text-align'      => [
+						'$$type' => 'string',
+						'value' => 'center',
+					],
+					'text-transform'  => [
+						'$$type' => 'string',
+						'value' => 'uppercase',
+					],
+					'font-weight'     => [
+						'$$type' => 'string',
+						'value' => '700',
+					],
+					'font-style'      => [
+						'$$type' => 'string',
+						'value' => 'italic',
+					],
+					'font-family'     => [
+						'$$type' => 'string',
+						'value' => 'Georgia, serif',
+					],
+					'border-style'    => [
+						'$$type' => 'string',
+						'value' => 'solid',
+					],
+					'display'         => [
+						'$$type' => 'string',
+						'value' => 'flex',
+					],
+					'overflow'        => [
+						'$$type' => 'string',
+						'value' => 'hidden',
+					],
+					'flex-wrap'       => [
+						'$$type' => 'string',
+						'value' => 'wrap',
+					],
+					'clip-path'       => [
+						'$$type' => 'string',
+						'value' => 'polygon(0 0, 100% 0, 100% 90%, 0 100%)',
+					],
 				],
 			],
 
 			'number' => [
 				'description' => 'Plain number. Used inside object shapes: gradient angle, color-stop offset, z-index, column-count, flex order.',
-				'format'      => [ '$$type' => 'number', 'value' => 135 ],
+				'format'      => [
+					'$$type' => 'number',
+					'value' => 135,
+				],
 				'used_for'    => [
 					'gradient angle (degrees, e.g. 135 = top-left to bottom-right)',
 					'color-stop offset (0-100, represents percent position)',
@@ -71,45 +116,138 @@ class V4_Styles_Reference {
 
 			'size' => [
 				'description' => 'CSS dimension. Used for font-size, letter-spacing, line-height, width, height, min-height, max-width, gap, and also for simple (uniform) border-radius and border-width.',
-				'format'      => [ '$$type' => 'size', 'value' => [ 'size' => 16, 'unit' => 'px' ] ],
+				'format'      => [
+					'$$type' => 'size',
+					'value' => [
+						'size' => 16,
+						'unit' => 'px',
+					],
+				],
 				'units'       => [ 'px', 'em', 'rem', '%', 'vw', 'vh', 'deg', 'ms', 's', 'fr', 'ch', 'svh', 'dvh', 'auto', 'custom' ],
 				'note'        => 'Use unit="auto" with size="" for CSS auto. Use unit="custom" when size is a full CSS value string.',
 				'examples'    => [
-					'font-size'                      => [ '$$type' => 'size', 'value' => [ 'size' => 48,   'unit' => 'px' ] ],
-					'letter-spacing'                 => [ '$$type' => 'size', 'value' => [ 'size' => -1,   'unit' => 'px' ] ],
-					'line-height'                    => [ '$$type' => 'size', 'value' => [ 'size' => 1.6,  'unit' => 'em' ] ],
-					'min-height (100vh)'             => [ '$$type' => 'size', 'value' => [ 'size' => 100,  'unit' => 'vh' ] ],
-					'max-width'                      => [ '$$type' => 'size', 'value' => [ 'size' => 1200, 'unit' => 'px' ] ],
-					'gap'                            => [ '$$type' => 'size', 'value' => [ 'size' => 24,   'unit' => 'px' ] ],
-					'width 50%'                      => [ '$$type' => 'size', 'value' => [ 'size' => 50,   'unit' => '%'  ] ],
-					'border-radius (simple uniform)' => [ '$$type' => 'size', 'value' => [ 'size' => 8,    'unit' => 'px' ] ],
-					'border-width (simple uniform)'  => [ '$$type' => 'size', 'value' => [ 'size' => 2,    'unit' => 'px' ] ],
-					'padding (simple uniform)'       => [ '$$type' => 'size', 'value' => [ 'size' => 40,   'unit' => 'px' ] ],
+					'font-size'                      => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => 48,
+							'unit' => 'px',
+						],
+					],
+					'letter-spacing'                 => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => -1,
+							'unit' => 'px',
+						],
+					],
+					'line-height'                    => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => 1.6,
+							'unit' => 'em',
+						],
+					],
+					'min-height (100vh)'             => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => 100,
+							'unit' => 'vh',
+						],
+					],
+					'max-width'                      => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => 1200,
+							'unit' => 'px',
+						],
+					],
+					'gap'                            => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => 24,
+							'unit' => 'px',
+						],
+					],
+					'width 50%'                      => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => 50,
+							'unit' => '%',
+						],
+					],
+					'border-radius (simple uniform)' => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => 8,
+							'unit' => 'px',
+						],
+					],
+					'border-width (simple uniform)'  => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => 2,
+							'unit' => 'px',
+						],
+					],
+					'padding (simple uniform)'       => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => 40,
+							'unit' => 'px',
+						],
+					],
 				],
 			],
 
 			'color' => [
 				'description' => 'CSS color value. Used for color (text), border-color, outline-color, and inside shadow/background overlays.',
-				'format'      => [ '$$type' => 'color', 'value' => '#RRGGBB or rgba(...) or hsl(...)' ],
+				'format'      => [
+					'$$type' => 'color',
+					'value' => '#RRGGBB or rgba(...) or hsl(...)',
+				],
 				'examples'    => [
-					[ '$$type' => 'color', 'value' => '#FFFFFF' ],
-					[ '$$type' => 'color', 'value' => '#D2001A' ],
-					[ '$$type' => 'color', 'value' => 'rgba(0,0,0,0.2)' ],
-					[ '$$type' => 'color', 'value' => 'rgba(210,0,26,0.5)' ],
+					[
+						'$$type' => 'color',
+						'value' => '#FFFFFF',
+					],
+					[
+						'$$type' => 'color',
+						'value' => '#D2001A',
+					],
+					[
+						'$$type' => 'color',
+						'value' => 'rgba(0,0,0,0.2)',
+					],
+					[
+						'$$type' => 'color',
+						'value' => 'rgba(210,0,26,0.5)',
+					],
 				],
 			],
 
 			'global-color-variable' => [
 				'description' => 'References a kit global color variable by ID. Renders as var(--e-global-color-...). Can be used anywhere a color is accepted.',
-				'format'      => [ '$$type' => 'global-color-variable', 'value' => '<variable-id>' ],
-				'example'     => [ '$$type' => 'global-color-variable', 'value' => 'e-gv-e70596b' ],
+				'format'      => [
+					'$$type' => 'global-color-variable',
+					'value' => '<variable-id>',
+				],
+				'example'     => [
+					'$$type' => 'global-color-variable',
+					'value' => 'e-gv-e70596b',
+				],
 				'note'        => 'Get variable IDs from the elementor/variables ability.',
 			],
 
 			'global-font-variable' => [
 				'description' => 'References a kit global font variable by ID.',
-				'format'      => [ '$$type' => 'global-font-variable', 'value' => '<variable-id>' ],
-				'example'     => [ '$$type' => 'global-font-variable', 'value' => 'e-gv-1fa868d' ],
+				'format'      => [
+					'$$type' => 'global-font-variable',
+					'value' => '<variable-id>',
+				],
+				'example'     => [
+					'$$type' => 'global-font-variable',
+					'value' => 'e-gv-1fa868d',
+				],
 				'note'        => 'Get variable IDs from the elementor/variables ability.',
 			],
 
@@ -125,10 +263,34 @@ class V4_Styles_Reference {
 				'format'      => [
 					'$$type' => 'dimensions',
 					'value'  => [
-						'block-start'  => [ '$$type' => 'size', 'value' => [ 'size' => 80, 'unit' => 'px' ] ],
-						'inline-end'   => [ '$$type' => 'size', 'value' => [ 'size' => 40, 'unit' => 'px' ] ],
-						'block-end'    => [ '$$type' => 'size', 'value' => [ 'size' => 80, 'unit' => 'px' ] ],
-						'inline-start' => [ '$$type' => 'size', 'value' => [ 'size' => 40, 'unit' => 'px' ] ],
+						'block-start'  => [
+							'$$type' => 'size',
+							'value' => [
+								'size' => 80,
+								'unit' => 'px',
+							],
+						],
+						'inline-end'   => [
+							'$$type' => 'size',
+							'value' => [
+								'size' => 40,
+								'unit' => 'px',
+							],
+						],
+						'block-end'    => [
+							'$$type' => 'size',
+							'value' => [
+								'size' => 80,
+								'unit' => 'px',
+							],
+						],
+						'inline-start' => [
+							'$$type' => 'size',
+							'value' => [
+								'size' => 40,
+								'unit' => 'px',
+							],
+						],
 					],
 				],
 				'note' => 'padding/margin schema is Union(dimensions|size). Use dimensions for individual sides; use {$$type:size} for uniform all-sides.',
@@ -140,10 +302,34 @@ class V4_Styles_Reference {
 				'format'      => [
 					'$$type' => 'border-radius',
 					'value'  => [
-						'start-start' => [ '$$type' => 'size', 'value' => [ 'size' => 16, 'unit' => 'px' ] ],
-						'start-end'   => [ '$$type' => 'size', 'value' => [ 'size' => 16, 'unit' => 'px' ] ],
-						'end-start'   => [ '$$type' => 'size', 'value' => [ 'size' => 16, 'unit' => 'px' ] ],
-						'end-end'     => [ '$$type' => 'size', 'value' => [ 'size' => 16, 'unit' => 'px' ] ],
+						'start-start' => [
+							'$$type' => 'size',
+							'value' => [
+								'size' => 16,
+								'unit' => 'px',
+							],
+						],
+						'start-end'   => [
+							'$$type' => 'size',
+							'value' => [
+								'size' => 16,
+								'unit' => 'px',
+							],
+						],
+						'end-start'   => [
+							'$$type' => 'size',
+							'value' => [
+								'size' => 16,
+								'unit' => 'px',
+							],
+						],
+						'end-end'     => [
+							'$$type' => 'size',
+							'value' => [
+								'size' => 16,
+								'unit' => 'px',
+							],
+						],
 					],
 				],
 				'note' => 'border-radius schema is Union(border-radius|size). Use {$$type:size} for uniform radius.',
@@ -154,10 +340,34 @@ class V4_Styles_Reference {
 				'format'      => [
 					'$$type' => 'border-width',
 					'value'  => [
-						'block-start'  => [ '$$type' => 'size', 'value' => [ 'size' => 2, 'unit' => 'px' ] ],
-						'block-end'    => [ '$$type' => 'size', 'value' => [ 'size' => 2, 'unit' => 'px' ] ],
-						'inline-start' => [ '$$type' => 'size', 'value' => [ 'size' => 2, 'unit' => 'px' ] ],
-						'inline-end'   => [ '$$type' => 'size', 'value' => [ 'size' => 2, 'unit' => 'px' ] ],
+						'block-start'  => [
+							'$$type' => 'size',
+							'value' => [
+								'size' => 2,
+								'unit' => 'px',
+							],
+						],
+						'block-end'    => [
+							'$$type' => 'size',
+							'value' => [
+								'size' => 2,
+								'unit' => 'px',
+							],
+						],
+						'inline-start' => [
+							'$$type' => 'size',
+							'value' => [
+								'size' => 2,
+								'unit' => 'px',
+							],
+						],
+						'inline-end'   => [
+							'$$type' => 'size',
+							'value' => [
+								'size' => 2,
+								'unit' => 'px',
+							],
+						],
 					],
 				],
 			],
@@ -171,11 +381,38 @@ class V4_Styles_Reference {
 						[
 							'$$type' => 'shadow',
 							'value'  => [
-								'hOffset' => [ '$$type' => 'size', 'value' => [ 'size' => 0,  'unit' => 'px' ] ],
-								'vOffset' => [ '$$type' => 'size', 'value' => [ 'size' => 8,  'unit' => 'px' ] ],
-								'blur'    => [ '$$type' => 'size', 'value' => [ 'size' => 24, 'unit' => 'px' ] ],
-								'spread'  => [ '$$type' => 'size', 'value' => [ 'size' => 0,  'unit' => 'px' ] ],
-								'color'   => [ '$$type' => 'color', 'value' => 'rgba(0,0,0,0.2)' ],
+								'hOffset' => [
+									'$$type' => 'size',
+									'value' => [
+										'size' => 0,
+										'unit' => 'px',
+									],
+								],
+								'vOffset' => [
+									'$$type' => 'size',
+									'value' => [
+										'size' => 8,
+										'unit' => 'px',
+									],
+								],
+								'blur'    => [
+									'$$type' => 'size',
+									'value' => [
+										'size' => 24,
+										'unit' => 'px',
+									],
+								],
+								'spread'  => [
+									'$$type' => 'size',
+									'value' => [
+										'size' => 0,
+										'unit' => 'px',
+									],
+								],
+								'color'   => [
+									'$$type' => 'color',
+									'value' => 'rgba(0,0,0,0.2)',
+								],
 							],
 						],
 					],
@@ -202,7 +439,12 @@ class V4_Styles_Reference {
 								'value'  => [
 									[
 										'$$type' => 'background-color-overlay',
-										'value'  => [ 'color' => [ '$$type' => 'color', 'value' => '#D2001A' ] ],
+										'value'  => [
+											'color' => [
+												'$$type' => 'color',
+												'value' => '#D2001A',
+											],
+										],
 									],
 								],
 							],
@@ -218,13 +460,43 @@ class V4_Styles_Reference {
 									[
 										'$$type' => 'background-gradient-overlay',
 										'value'  => [
-											'type'  => [ '$$type' => 'string', 'value' => 'linear' ],
-											'angle' => [ '$$type' => 'number', 'value' => 135 ],
+											'type'  => [
+												'$$type' => 'string',
+												'value' => 'linear',
+											],
+											'angle' => [
+												'$$type' => 'number',
+												'value' => 135,
+											],
 											'stops' => [
 												'$$type' => 'gradient-color-stop',
 												'value'  => [
-													[ '$$type' => 'color-stop', 'value' => [ 'color' => [ '$$type' => 'color', 'value' => '#CC0000' ], 'offset' => [ '$$type' => 'number', 'value' => 0   ] ] ],
-													[ '$$type' => 'color-stop', 'value' => [ 'color' => [ '$$type' => 'color', 'value' => '#0A0A0A' ], 'offset' => [ '$$type' => 'number', 'value' => 100 ] ] ],
+													[
+														'$$type' => 'color-stop',
+														'value' => [
+															'color' => [
+																'$$type' => 'color',
+																'value' => '#CC0000',
+															],
+															'offset' => [
+																'$$type' => 'number',
+																'value' => 0,
+															],
+														],
+													],
+													[
+														'$$type' => 'color-stop',
+														'value' => [
+															'color' => [
+																'$$type' => 'color',
+																'value' => '#0A0A0A',
+															],
+															'offset' => [
+																'$$type' => 'number',
+																'value' => 100,
+															],
+														],
+													],
 												],
 											],
 										],
@@ -241,7 +513,12 @@ class V4_Styles_Reference {
 				'warning'     => 'Only "all" is supported as property. Per-property transitions are silently ignored.',
 				'format'      => [
 					'$$type' => 'transition',
-					'value'  => [ [ 'selection' => [ 'value' => 'all' ], 'size' => '0.3s ease' ] ],
+					'value'  => [
+						[
+							'selection' => [ 'value' => 'all' ],
+							'size' => '0.3s ease',
+						],
+					],
 				],
 			],
 		];
@@ -274,15 +551,45 @@ class V4_Styles_Reference {
 			'custom_css_format'   => 'custom_css.raw = base64_encode($css_string). Set to null to omit.',
 			'saving_command'      => 'update_post_meta($id, "_elementor_data", wp_slash(wp_json_encode($data))); delete_post_meta($id, "_elementor_css");',
 			'widget_types_note'   => 'Call the elementor/atomic-widgets ability to get the live list of registered element types (e-heading, e-flexbox, etc.).',
-			'html_v3_format'    => [ '$$type' => 'html-v3', 'value' => [ 'content' => [ '$$type' => 'string', 'value' => 'Your text here' ], 'children' => [] ] ],
+			'html_v3_format'    => [
+				'$$type' => 'html-v3',
+				'value' => [
+					'content' => [
+						'$$type' => 'string',
+						'value' => 'Your text here',
+					],
+					'children' => [],
+				],
+			],
 			'flexbox_container' => [
-				'id' => 'my-id', 'elType' => 'e-flexbox',
-				'settings' => [ 'classes' => [ '$$type' => 'classes', 'value' => [ 'e-my-id-s' ] ] ],
-				'elements' => [], 'isInner' => true, 'interactions' => [], 'editor_settings' => [], 'version' => '0.0',
+				'id' => 'my-id',
+				'elType' => 'e-flexbox',
+				'settings' => [
+					'classes' => [
+						'$$type' => 'classes',
+						'value' => [ 'e-my-id-s' ],
+					],
+				],
+				'elements' => [],
+				'isInner' => true,
+				'interactions' => [],
+				'editor_settings' => [],
+				'version' => '0.0',
 				'styles' => [
 					'e-my-id-s' => [
-						'id' => 'e-my-id-s', 'label' => 'local', 'type' => 'class',
-						'variants' => [ [ 'meta' => [ 'breakpoint' => 'desktop', 'state' => null ], 'props' => [], 'custom_css' => null ] ],
+						'id' => 'e-my-id-s',
+						'label' => 'local',
+						'type' => 'class',
+						'variants' => [
+							[
+								'meta' => [
+									'breakpoint' => 'desktop',
+									'state' => null,
+								],
+								'props' => [],
+								'custom_css' => null,
+							],
+						],
 					],
 				],
 			],
