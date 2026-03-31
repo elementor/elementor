@@ -15,9 +15,8 @@ export function htmlToPlainText( html: string | null ): string {
 		return '';
 	}
 
-	const div = document.createElement( 'div' );
+	const normalizedHtml = html.replace( /<br\s*\/?>/gi, '\n' ).replace( /<\/p>\s*<p[^>]*>/gi, '\n' );
+	const doc = new DOMParser().parseFromString( normalizedHtml, 'text/html' );
 
-	div.innerHTML = html.replace( /<br\s*\/?>/gi, '\n' ).replace( /<\/p>\s*<p[^>]*>/gi, '\n' );
-
-	return div.textContent ?? '';
+	return doc.body.textContent ?? '';
 }
