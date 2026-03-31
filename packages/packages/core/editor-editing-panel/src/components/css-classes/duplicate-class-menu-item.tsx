@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { stylesRepository, useUserStylesCapability } from '@elementor/editor-styles-repository';
-import { MenuItemInfotip, MenuListItem } from '@elementor/editor-ui';
+import { MenuListItem } from '@elementor/editor-ui';
 import { useSessionStorage } from '@elementor/session';
 import { __ } from '@wordpress/i18n';
 
@@ -39,12 +39,11 @@ export function DuplicateClassMenuItem( { closeMenu }: { closeMenu: () => void }
 		return null;
 	}
 
-	const isAllowed = userCan( provider ).create;
+	if ( ! userCan( provider ).create ) {
+		return null;
+	}
 
 	const handleDuplicate = () => {
-		if ( ! isAllowed ) {
-			return;
-		}
 		const styleDef = getAction( classId );
 		if ( ! styleDef ) {
 			closeMenu();
@@ -66,16 +65,8 @@ export function DuplicateClassMenuItem( { closeMenu }: { closeMenu: () => void }
 	};
 
 	return (
-		<MenuListItem disabled={ ! isAllowed } onClick={ handleDuplicate }>
-			<MenuItemInfotip
-				showInfoTip={ ! isAllowed }
-				content={ __(
-					"With your current role, you can use existing classes but can't modify them.",
-					'elementor'
-				) }
-			>
-				{ __( 'Duplicate', 'elementor' ) }
-			</MenuItemInfotip>
+		<MenuListItem onClick={ handleDuplicate }>
+			{ __( 'Duplicate', 'elementor' ) }
 		</MenuListItem>
 	);
 }

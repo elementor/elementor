@@ -1250,7 +1250,7 @@ describe( '<CssClassSelector />', () => {
 			} );
 		} );
 
-		it( 'should disable the "Duplicate" button if user does not have the create capability', () => {
+		it( 'should not show the "Duplicate" button if user does not have the create capability', () => {
 			// Arrange.
 			jest.mocked( useUserStylesCapability ).mockReturnValue( {
 				userCan: () => ( {
@@ -1279,11 +1279,9 @@ describe( '<CssClassSelector />', () => {
 			fireEvent.click( menuTrigger );
 
 			const menu = screen.getByRole( 'menu' );
-			const duplicateButton = within( menu ).getByRole( 'menuitem', { name: 'Duplicate' } );
 
 			// Assert.
-			expect( duplicateButton ).toBeInTheDocument();
-			expect( duplicateButton ).toHaveAttribute( 'aria-disabled', 'true' );
+			expect( within( menu ).queryByText( 'Duplicate' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
