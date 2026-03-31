@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { getCurrentDocument } from '@elementor/editor-documents';
 import {
 	__privateUseListenTo as useListenTo,
 	commandEndEvent,
@@ -13,12 +14,20 @@ import { type StyleItem } from '../renderers/create-styles-renderer';
 export function StyleRenderer() {
 	const container = usePortalContainer();
 
-	const styleItems = useStyleItems();
-	const linksAttrs = useDocumentsCssLinks();
-
 	if ( ! container ) {
 		return null;
 	}
+
+	return <StyleRendererWithContainer container={ container } />;
+}
+
+type Props = {
+	container: HTMLElement;
+};
+
+function StyleRendererWithContainer( { container }: Props ) {
+	const styleItems = useStyleItems();
+	const linksAttrs = useDocumentsCssLinks();
 
 	return (
 		<Portal container={ container }>
@@ -33,7 +42,16 @@ export function StyleRenderer() {
 }
 
 function usePortalContainer() {
-	return useListenTo( commandEndEvent( 'editor/documents/attach-preview' ), () => getCanvasIframeDocument()?.head );
+	/**
+	 * Firefox's JS scheduler dispatches React's pending render microtasks earlier within the initialization macrotask boundary —
+	 * before Load.apply() → setCurrent() has completed.
+	 * Chrome processes these in the opposite order, so when React's mountMemo runs, currentDocument is already populated.
+	 *
+	 * In this listener - I'll first check if the currentDocument is available, and if it is, I'll return the canvasIframeDocument.head.
+	 */
+	return useListenTo( commandEndEvent( 'editor/documents/attach-preview' ), () =>
+		getCurrentDocument() ? getCanvasIframeDocument()?.head : null
+	);
 }
 
 // we load local styles also from components, which are handled differently
