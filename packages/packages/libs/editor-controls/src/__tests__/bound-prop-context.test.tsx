@@ -461,6 +461,187 @@ describe( 'useBoundProp', () => {
 		expect( setValue ).toHaveBeenCalledWith( { key: null }, undefined, { bind: 'key' } );
 	} );
 
+	it( 'should return baseValue sliced by bind from PropProvider', () => {
+		// Arrange
+		const propType = createMockPropType( {
+			kind: 'object',
+			shape: {
+				key: createMockPropType( { kind: 'plain' } ),
+			},
+		} );
+
+		const baseValue = {
+			key: stringPropTypeUtil.create( 'inherited' ),
+		};
+
+		// Act
+		const { result } = renderHook( () => useBoundProp( stringPropTypeUtil ), {
+			wrapper: ( { children } ) => (
+				<PropProvider value={ null } setValue={ jest.fn() } propType={ propType } baseValue={ baseValue }>
+					<PropKeyProvider bind="key">{ children }</PropKeyProvider>
+				</PropProvider>
+			),
+		} );
+
+		// Assert
+		expect( result.current.baseValue ).toBe( 'inherited' );
+		expect( result.current.value ).toBe( null );
+	} );
+
+	it( 'should merge siblings from baseValue when value is null and setValue is called', () => {
+		// Arrange
+		const nestedPropType = createMockPropType( { kind: 'plain' } );
+
+		const propType = createMockPropType( {
+			kind: 'object',
+			shape: {
+				'key-1': nestedPropType,
+				'key-2': nestedPropType,
+			},
+		} );
+
+		const baseValue = {
+			'key-1': stringPropTypeUtil.create( 'sibling-value' ),
+			'key-2': stringPropTypeUtil.create( 'other-sibling' ),
+		};
+
+		const parentSetValue = jest.fn();
+
+		// Act
+		const { result } = renderHook( () => useBoundProp( stringPropTypeUtil ), {
+			wrapper: ( { children } ) => (
+				<PropProvider value={ null } setValue={ parentSetValue } propType={ propType } baseValue={ baseValue }>
+					<PropKeyProvider bind="key-1">{ children }</PropKeyProvider>
+				</PropProvider>
+			),
+		} );
+
+		result.current.setValue( 'new value' );
+
+		// Assert
+		expect( parentSetValue ).toHaveBeenCalledWith(
+			{
+				'key-1': stringPropTypeUtil.create( 'new value' ),
+				'key-2': stringPropTypeUtil.create( 'other-sibling' ),
+			},
+			{},
+			{ bind: 'key-1' }
+		);
+	} );
+
+	it( 'should prefer value over baseValue for sibling merging when both exist', () => {
+		// Arrange
+		const nestedPropType = createMockPropType( { kind: 'plain' } );
+
+		const propType = createMockPropType( {
+			kind: 'object',
+			shape: {
+				'key-1': nestedPropType,
+				'key-2': nestedPropType,
+			},
+		} );
+
+		const value = {
+			'key-1': stringPropTypeUtil.create( 'override-1' ),
+			'key-2': stringPropTypeUtil.create( 'override-2' ),
+		};
+
+		const baseValue = {
+			'key-1': stringPropTypeUtil.create( 'base-1' ),
+			'key-2': stringPropTypeUtil.create( 'base-2' ),
+		};
+
+		const parentSetValue = jest.fn();
+
+		// Act
+		const { result } = renderHook( () => useBoundProp( stringPropTypeUtil ), {
+			wrapper: ( { children } ) => (
+				<PropProvider value={ value } setValue={ parentSetValue } propType={ propType } baseValue={ baseValue }>
+					<PropKeyProvider bind="key-1">{ children }</PropKeyProvider>
+				</PropProvider>
+			),
+		} );
+
+		result.current.setValue( 'changed' );
+
+		// Assert
+		expect( parentSetValue ).toHaveBeenCalledWith(
+			{
+				'key-1': stringPropTypeUtil.create( 'changed' ),
+				'key-2': stringPropTypeUtil.create( 'override-2' ),
+			},
+			{},
+			{ bind: 'key-1' }
+		);
+	} );
+
+	it( 'should return placeholder independently from baseValue', () => {
+		// Arrange
+		const propType = createMockPropType( {
+			kind: 'object',
+			shape: {
+				key: createMockPropType( { kind: 'plain' } ),
+			},
+		} );
+
+		const baseValue = {
+			key: stringPropTypeUtil.create( 'base' ),
+		};
+
+		const placeholder = {
+			key: stringPropTypeUtil.create( 'hint' ),
+		};
+
+		// Act
+		const { result } = renderHook( () => useBoundProp( stringPropTypeUtil ), {
+			wrapper: ( { children } ) => (
+				<PropProvider
+					value={ null }
+					setValue={ jest.fn() }
+					propType={ propType }
+					baseValue={ baseValue }
+					placeholder={ placeholder }
+				>
+					<PropKeyProvider bind="key">{ children }</PropKeyProvider>
+				</PropProvider>
+			),
+		} );
+
+		// Assert
+		expect( result.current.baseValue ).toBe( 'base' );
+		expect( result.current.placeholder ).toBe( 'hint' );
+		expect( result.current.value ).toBe( null );
+	} );
+
+	it( 'should not use propType default when baseValue is provided', () => {
+		// Arrange
+		const defaultValue = stringPropTypeUtil.create( 'default-text' );
+
+		const propType = createMockPropType( {
+			kind: 'object',
+			shape: {
+				key: createMockPropType( { kind: 'plain', key: 'string', default: defaultValue } ),
+			},
+		} );
+
+		const baseValue = {
+			key: stringPropTypeUtil.create( 'inherited' ),
+		};
+
+		// Act
+		const { result } = renderHook( () => useBoundProp( stringPropTypeUtil ), {
+			wrapper: ( { children } ) => (
+				<PropProvider value={ null } setValue={ jest.fn() } propType={ propType } baseValue={ baseValue }>
+					<PropKeyProvider bind="key">{ children }</PropKeyProvider>
+				</PropProvider>
+			),
+		} );
+
+		// Assert
+		expect( result.current.value ).toBe( null );
+		expect( result.current.baseValue ).toBe( 'inherited' );
+	} );
+
 	it( 'should resetValue to initial_value when initial_value is set', () => {
 		// Arrange.
 		const initialValue = sizePropTypeUtil.create( { size: 201, unit: 'rem' } );

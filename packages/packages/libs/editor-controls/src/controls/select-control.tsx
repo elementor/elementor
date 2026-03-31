@@ -39,6 +39,12 @@ export const SelectControl = createControl(
 		};
 		const isDisabled = disabled || options.length === 0;
 
+		const normalizeSelectValue = ( v: string | null | undefined ) =>
+			v === null || v === undefined || v === '' ? null : v;
+
+		const findOptionByValue = ( searchValue: string | null | undefined ) =>
+			options.find( ( opt ) => normalizeSelectValue( opt.value ) === normalizeSelectValue( searchValue ) );
+
 		return (
 			<ControlActions>
 				<Select
@@ -48,24 +54,30 @@ export const SelectControl = createControl(
 					MenuProps={ MenuProps }
 					aria-label={ ariaLabel || placeholder }
 					renderValue={ ( selectedValue: string | null ) => {
-						const findOptionByValue = ( searchValue: string | null ) =>
-							options.find( ( opt ) => opt.value === searchValue );
+						const isEmpty = ! selectedValue || selectedValue === '';
 
-						if ( ! selectedValue || selectedValue === '' ) {
-							if ( placeholder ) {
-								const placeholderOption = findOptionByValue( placeholder );
-								const displayText = placeholderOption?.label || placeholder;
+						if ( isEmpty && placeholder ) {
+							const placeholderOption = findOptionByValue( placeholder );
+							const displayText = placeholderOption?.label || placeholder;
 
-								return (
-									<Typography component="span" variant="caption" color="text.tertiary">
-										{ displayText }
-									</Typography>
-								);
-							}
+							return (
+								<Typography component="span" variant="caption" color="text.tertiary">
+									{ displayText }
+								</Typography>
+							);
+						}
+
+						const option = findOptionByValue( selectedValue );
+
+						if ( option ) {
+							return option.label;
+						}
+
+						if ( isEmpty ) {
 							return '';
 						}
-						const option = findOptionByValue( selectedValue );
-						return option?.label || selectedValue;
+
+						return selectedValue;
 					} }
 					value={ value ?? '' }
 					onChange={ handleChange }

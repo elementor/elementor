@@ -17,6 +17,7 @@ type UseBoundProp< TValue extends PropValue > = {
 	value: TValue;
 	propType: PropType;
 	placeholder?: TValue;
+	baseValue?: TValue;
 	path: PropKey[];
 	restoreValue: () => void;
 	resetValue: () => void;
@@ -73,10 +74,12 @@ export function useBoundProp< TKey extends string, TValue extends PropValue >(
 
 	const propType = resolveUnionPropType( propKeyContext.propType, propTypeUtil.key );
 
+	const hasBaseValue = propKeyContext.baseValue !== undefined && propKeyContext.baseValue !== null;
 	const hasPlaceholder = propKeyContext.placeholder !== undefined && propKeyContext.placeholder !== null;
-	const fallbackValue = hasPlaceholder ? null : propType.default;
+	const fallbackValue = hasBaseValue || hasPlaceholder ? null : propType.default;
 
 	const value = propTypeUtil.extract( propKeyContext.value ?? fallbackValue ?? null );
+	const baseValue = propTypeUtil.extract( propKeyContext.baseValue ?? null );
 	const placeholder = propTypeUtil.extract( propKeyContext.placeholder ?? null );
 
 	return {
@@ -86,6 +89,7 @@ export function useBoundProp< TKey extends string, TValue extends PropValue >(
 		value: isValid ? value : null,
 		restoreValue,
 		placeholder,
+		baseValue,
 		disabled,
 		resetValue,
 	};

@@ -158,14 +158,18 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 		return null;
 	}
 
-	const { propValue, placeholderValue } = resolveValueAndPlaceholder(
-		matchingOverride,
-		settingsWithInnerOverrides,
-		propKey
-	);
+	const {
+		propValue,
+		baseValue: resolvedBaseValue,
+		placeholderValue,
+	} = resolveValueAndBaseValue( matchingOverride, settingsWithInnerOverrides, propKey );
 
 	const value = {
 		[ overridableProp.overrideKey ]: propValue,
+	} as OverridesSchema;
+
+	const baseValue = {
+		[ overridableProp.overrideKey ]: resolvedBaseValue,
 	} as OverridesSchema;
 
 	const placeholder = {
@@ -255,6 +259,7 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 						propType={ propTypeSchema }
 						value={ value }
 						setValue={ setValue }
+						baseValue={ baseValue }
 						placeholder={ placeholder }
 						isDisabled={ () => {
 							return false;
@@ -281,21 +286,22 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 
 type ElementSettings = Record< string, AnyTransformable | null >;
 
-function resolveValueAndPlaceholder(
+function resolveValueAndBaseValue(
 	matchingOverride: ComponentInstanceOverride | null,
 	settingsWithInnerOverrides: ElementSettings,
 	propKey: string
 ) {
 	const overrideValue = matchingOverride ? resolveOverridePropValue( matchingOverride ) : null;
 
-	const placeholderSettings = unwrapOverridableSettings( settingsWithInnerOverrides );
-	const inheritedValue = placeholderSettings[ propKey ] ?? null;
+	const unwrappedSettings = unwrapOverridableSettings( settingsWithInnerOverrides );
+	const inheritedValue = unwrappedSettings[ propKey ] ?? null;
 	const isInheritedDynamic = isDynamicPropValue( inheritedValue );
 
 	const propValue = isInheritedDynamic && ! matchingOverride ? inheritedValue : overrideValue;
+	const baseValue = isInheritedDynamic ? null : inheritedValue;
 	const placeholderValue = matchingOverride || isInheritedDynamic ? null : inheritedValue;
 
-	return { propValue, placeholderValue };
+	return { propValue, baseValue, placeholderValue };
 }
 
 // Temp solution: when removing an override on a dynamic value, fall back to propType.default
