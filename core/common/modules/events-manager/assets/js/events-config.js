@@ -217,6 +217,7 @@ const eventsConfig = {
 		},
 		// ChecklistSteps event names are generated dynamically, based on stepId and action type taken: title, action, done, undone, upgrade
 		elementorEditor: {
+			editorLoaded: 'editor_loaded',
 			checklist: {
 				checklistHeaderClose: 'checklist_header_close_icon',
 				checklistFirstPopup: 'checklist popup triggered',
