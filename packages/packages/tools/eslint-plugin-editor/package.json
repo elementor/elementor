@@ -1,6 +1,6 @@
 {
   "name": "@elementor/eslint-plugin-editor",
-  "description": "Internal ESLint plugin",
+  "description": "Elementor Editor ESLint plugin",
   "version": "4.1.0",
   "private": false,
   "author": "Elementor Team",
@@ -24,7 +24,7 @@
     "url": "https://github.com/elementor/elementor/issues"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   },
   "files": [
     "README.md",
