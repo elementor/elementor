@@ -9,7 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-
 class Key_Value_Prop_Type extends Object_Prop_Type {
 	public static function get_key(): string {
 		return 'key-value';
