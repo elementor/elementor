@@ -16,7 +16,7 @@ import Underline from '@tiptap/extension-underline';
 import { type EditorProps, type EditorView } from '@tiptap/pm/view';
 import { type Editor, EditorContent, useEditor } from '@tiptap/react';
 
-import { isEmpty } from '../utils/inline-editing';
+import { htmlToPlainText, isEmpty } from '../utils/inline-editing';
 
 const ITALIC_KEYBOARD_SHORTCUT = 'i';
 const BOLD_KEYBOARD_SHORTCUT = 'b';
@@ -141,7 +141,7 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 			attributes: {
 				...( editorProps.attributes ?? {} ),
 				role: 'textbox',
-				...( placeholder ? { 'data-placeholder': placeholder } : {} ),
+				...( placeholder ? { 'data-placeholder': htmlToPlainText( placeholder ) } : {} ),
 				...( value === null || value === '' ? { class: 'is-empty' } : {} ),
 			},
 		},
