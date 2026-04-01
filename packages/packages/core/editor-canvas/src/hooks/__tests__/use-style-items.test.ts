@@ -340,6 +340,74 @@ describe( 'useStyleItems', () => {
 		expect( breakpointOrderAfterUpdate ).toEqual( [ 'desktop', 'tablet', 'mobile' ] );
 	} );
 
+	it( 'should recover and render styles when a provider key becomes available after initial failure', async () => {
+		// Arrange.
+		let shouldThrow = true;
+
+		const dynamicKey: () => string = () => {
+			if ( shouldThrow ) {
+				throw new Error( 'Document not ready' );
+			}
+
+			return 'late-provider';
+		};
+
+		const failingThenSucceedingProvider = createMockStylesProvider(
+			{
+				key: dynamicKey,
+				priority: 2,
+			},
+			[ createMockStyleDefinition( { id: 'late-style1' } ), createMockStyleDefinition( { id: 'late-style2' } ) ]
+		);
+
+		const stableProvider = createMockStylesProvider(
+			{
+				key: 'stable-provider',
+				priority: 1,
+			},
+			[
+				createMockStyleDefinition( { id: 'stable-style1' } ),
+				createMockStyleDefinition( { id: 'stable-style2' } ),
+			]
+		);
+
+		jest.mocked( stylesRepository ).getProviders.mockReturnValue( [
+			failingThenSucceedingProvider,
+			stableProvider,
+		] );
+
+		let attachPreviewCallback: () => Promise< void >;
+
+		jest.mocked( registerDataHook ).mockImplementation( ( position, command, callback ) => {
+			if ( command === 'editor/documents/attach-preview' && position === 'after' ) {
+				attachPreviewCallback = callback as never;
+			}
+
+			return null as never;
+		} );
+
+		// Act.
+		const { result } = renderHook( () => useStyleItems() );
+
+		// Assert - hook should not crash, should return empty initially.
+		expect( result.current ).toEqual( [] );
+
+		// Act - simulate document becoming ready, then trigger attach-preview.
+		shouldThrow = false;
+
+		await act( async () => {
+			await attachPreviewCallback?.();
+		} );
+
+		// Assert - both providers' styles should render in correct priority order.
+		expect( result.current ).toEqual( [
+			{ id: 'stable-style2', breakpoint: 'desktop' },
+			{ id: 'stable-style1', breakpoint: 'desktop' },
+			{ id: 'late-style2', breakpoint: 'desktop' },
+			{ id: 'late-style1', breakpoint: 'desktop' },
+		] );
+	} );
+
 	it( 'should only re-render changed styles on differential update', async () => {
 		// Arrange.
 		const renderStylesMock = jest.fn().mockImplementation( ( { styles } ) =>

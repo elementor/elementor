@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import { InlineEditor, InlineEditorToolbar } from '@elementor/editor-controls';
 import { Box, ThemeProvider } from '@elementor/ui';
 import { autoUpdate, flip, FloatingPortal, useFloating } from '@floating-ui/react';
@@ -9,68 +9,83 @@ import {
 	type Editor,
 	getInlineEditorElement,
 	horizontalShifterMiddleware as horizontalShifter,
-	removeToolbarAnchor,
 	useOnClickOutsideIframe,
 	useRenderToolbar,
 } from './inline-editing-utils';
-
-const EDITOR_WRAPPER_SELECTOR = 'inline-editor-wrapper';
 
 export const CanvasInlineEditor = ( {
 	elementClasses,
 	initialValue,
 	expectedTag,
 	rootElement,
+	contentElement,
 	id,
 	setValue,
-	...props
+	requestDestroy,
 }: {
 	elementClasses: string;
 	initialValue: string | null;
 	expectedTag: string | null;
 	rootElement: HTMLElement;
+	contentElement: HTMLElement;
 	id: string;
 	setValue: ( value: string | null ) => void;
-	onBlur: () => void;
+	requestDestroy: () => void;
 } ) => {
+	const [ active, setActive ] = useState( true );
 	const [ editor, setEditor ] = useState< Editor | null >( null );
-	const { onSelectionEnd, anchor: toolbarAnchor } = useRenderToolbar( rootElement.ownerDocument, id );
+	const { onSelectionEnd, anchor: toolbarAnchor, clearAnchor } = useRenderToolbar( rootElement.ownerDocument, id );
 
-	const onBlur = () => {
-		removeToolbarAnchor( rootElement.ownerDocument, id );
+	useEffect( () => {
+		if ( ! active ) {
+			clearAnchor();
+			requestDestroy();
+		}
+	}, [ active, clearAnchor, requestDestroy ] );
 
-		props.onBlur();
-	};
+	const dismiss = useCallback( () => {
+		setEditor( null );
+		setActive( false );
+	}, [] );
 
-	useOnClickOutsideIframe( onBlur );
+	useOnClickOutsideIframe( dismiss );
+
+	useEffect( () => {
+		const ownerDocument = contentElement.ownerDocument;
+
+		const handleClickAway = ( event: MouseEvent ) => {
+			if ( contentElement.contains( event.target as Node ) ) {
+				return;
+			}
+
+			dismiss();
+		};
+
+		ownerDocument.addEventListener( 'mousedown', handleClickAway );
+
+		return () => ownerDocument.removeEventListener( 'mousedown', handleClickAway );
+	}, [ contentElement, dismiss ] );
+
+	if ( ! active ) {
+		return null;
+	}
 
 	return (
 		<ThemeProvider>
 			<InlineEditingOverlay expectedTag={ expectedTag } rootElement={ rootElement } id={ id } />
-			<style>
-				{ `
-			.ProseMirror > * {
-				height: 100%;
-			}
-			.${ EDITOR_WRAPPER_SELECTOR } .ProseMirror > button[contenteditable="true"] {
-				height: auto;
-				cursor: text;
-			}
-			` }
-			</style>
 			<InlineEditor
 				onEditorCreate={ setEditor }
+				mountElement={ contentElement }
 				editorProps={ {
 					attributes: {
-						style: 'outline: none;overflow-wrap: normal;height:100%',
+						style: 'outline: none; display: inherit; justify-content: inherit; align-items: inherit; flex-direction: inherit; text-align: inherit;',
 					},
 				} }
 				elementClasses={ elementClasses }
 				value={ initialValue }
 				setValue={ setValue }
-				onBlur={ onBlur }
+				onBlur={ dismiss }
 				autofocus
-				expectedTag={ expectedTag }
 				onSelectionEnd={ onSelectionEnd }
 			/>
 			{ toolbarAnchor && editor && <InlineEditingToolbar anchor={ toolbarAnchor } editor={ editor } id={ id } /> }
@@ -114,7 +129,14 @@ const InlineEditingToolbar = ( { anchor, editor, id }: { anchor: HTMLElement; ed
 
 	return (
 		<FloatingPortal id={ CANVAS_WRAPPER_ID }>
-			<Box ref={ refs.setFloating } role="presentation" style={ { ...floatingStyles, pointerEvents: 'none' } }>
+			<Box
+				ref={ refs.setFloating }
+				role="presentation"
+				style={ {
+					...floatingStyles,
+					pointerEvents: 'none',
+				} }
+			>
 				<InlineEditorToolbar editor={ editor } elementId={ id } />
 			</Box>
 		</FloatingPortal>
