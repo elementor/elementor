@@ -50,7 +50,7 @@ class Set_Global_Classes_Ability extends Abstract_Ability {
 				'properties' => [
 					'results' => [
 						'type'        => 'array',
-						'description' => 'One entry per input class: { id, label, action }. action is "created" or "updated".',
+						'description' => 'One entry per input class: { id, label, action }. action is "created" or "updated". id is the FULL UUID string (e.g. "e-gc-9705bfbc-2335-4e75-b761-71e4973977df") — always use the complete string, never truncate.',
 					],
 					'count' => [ 'type' => 'integer' ],
 				],

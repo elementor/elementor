@@ -87,9 +87,6 @@ class Widget_Schema_Ability extends Abstract_Ability {
 			}
 		}
 
-		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-		error_log( '[Elementor widget-schema] execute: requested=' . $widget_type . ', total_widgets=' . count( $widget_types ) . ', atomic_count=' . count( $available ) . ', atomic_types=' . implode( ', ', $available ) );
-
 		if ( ! isset( $widget_types[ $widget_type ] ) ) {
 			return [
 				'widget_type'     => $widget_type,

@@ -20,6 +20,7 @@ class Abilities_Bootstrap {
 		( new Append_Elements_Ability() )->register_hooks();
 		( new Update_Element_Ability() )->register_hooks();
 		( new Create_From_Template_Ability() )->register_hooks();
+		( new Build_Page_Ability() )->register_hooks();
 		( new Context_Ability(
 			Plugin::$instance->kits_manager,
 			Plugin::$instance->widgets_manager,

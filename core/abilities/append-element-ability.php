@@ -59,6 +59,7 @@ class Append_Element_Ability extends Abstract_Ability {
 					'instructions' => implode( "\n", [
 						'Appends one element to a post without fetching the full content first.',
 						'Use this for simple insertions instead of get-post-content + set-post-content.',
+						'For building a complete page from scratch, use set-post-content with the full element tree — it is one write vs N reads + N writes when called in a loop.',
 						'parent_id: ID of the container element to append into. Omit or pass null to append at root level.',
 						'The element id must be unique within the document — generate one (e.g. a short random string).',
 						'Returns success:false (does not throw) if parent_id is provided but not found in the tree.',
@@ -111,5 +112,4 @@ class Append_Element_Ability extends Abstract_Ability {
 			'success'     => (bool) $saved,
 		];
 	}
-
 }

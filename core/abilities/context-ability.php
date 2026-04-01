@@ -91,6 +91,10 @@ class Context_Ability extends Abstract_Ability {
 						'type'        => 'object',
 						'description' => 'Active breakpoint configuration.',
 					],
+					'class_labels'    => [
+						'type'        => 'object',
+						'description' => 'Flat map of label → full class ID (e.g. {"ajax-hero-outer":"e-gc-9705bfbc-2335-4e75-b761-71e4973977df"}). Use this to wire class IDs without scanning the full global_classes payload.',
+					],
 				],
 			],
 			'meta' => [
@@ -102,6 +106,7 @@ class Context_Ability extends Abstract_Ability {
 						'Returns all context needed for Elementor work in a single round-trip, replacing:',
 						'  elementor/global-classes + elementor/variables + elementor/atomic-widgets + elementor/v4-styles',
 						'global_classes.frontend.items: keyed by class ID — use IDs in settings.classes.',
+						'class_labels: flat label→full_id map — shortcut to get class IDs without scanning global_classes.frontend.items.',
 						'variables.data.data: keyed by variable ID — use IDs in $$type variable props.',
 						'variables.watermark: integer — pass as since_watermark.variables on the NEXT call to skip the variables payload if nothing changed.',
 						'widget_types: use with elementor/widget-schema to inspect a specific widget.',
@@ -123,24 +128,19 @@ class Context_Ability extends Abstract_Ability {
 		$cached    = get_transient( $cache_key );
 
 		if ( false !== $cached ) {
-			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-			error_log( '[Elementor context] execute: cache HIT key=' . $cache_key . ', widget_types_count=' . count( $cached['widget_types'] ?? [] ) );
 			return $this->apply_since_watermark( $cached, $since_watermark );
 		}
 
-		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-		error_log( '[Elementor context] execute: cache MISS key=' . $cache_key . ', building fresh response' );
+		$global_classes = $this->get_global_classes();
 
 		$result = [
-			'global_classes'  => $this->get_global_classes(),
+			'global_classes'  => $global_classes,
+			'class_labels'    => $this->get_class_labels( $global_classes ),
 			'variables'       => $this->get_variables(),
 			'widget_types'    => $this->get_widget_types(),
 			'style_reference' => $this->get_style_reference(),
 			'breakpoints'     => $this->get_breakpoints(),
 		];
-
-		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-		error_log( '[Elementor context] execute: caching result, widget_types_count=' . count( $result['widget_types'] ?? [] ) );
 
 		set_transient( $cache_key, $result, HOUR_IN_SECONDS );
 
@@ -162,6 +162,16 @@ class Context_Ability extends Abstract_Ability {
 		}
 
 		return $result;
+	}
+
+	private function get_class_labels( array $global_classes ): array {
+		$map = [];
+		foreach ( $global_classes['frontend']['items'] ?? [] as $id => $item ) {
+			if ( isset( $item['label'] ) ) {
+				$map[ $item['label'] ] = $id;
+			}
+		}
+		return $map;
 	}
 
 	private function get_global_classes(): array {
@@ -211,26 +221,16 @@ class Context_Ability extends Abstract_Ability {
 
 	private function get_widget_types(): array {
 		try {
-			// Atomic widgets (e-heading, e-paragraph, e-button, e-image, etc.) are
-			// registered into Widgets_Manager via the elementor/widgets/register filter,
-			// NOT into Elements_Manager. Elements_Manager only holds container-type
-			// atomic elements (e-flexbox, e-div-block) which extend Atomic_Element_Base.
-			$all_widget_types = $this->widgets_manager->get_widget_types();
-			$atomic_types     = [];
+			$widget_types = [];
 
-			foreach ( $all_widget_types as $type => $object ) {
+			foreach ( $this->widgets_manager->get_widget_types() as $type => $object ) {
 				if ( $object instanceof Atomic_Widget_Base ) {
-					$atomic_types[] = $type;
+					$widget_types[] = $type;
 				}
 			}
 
-			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-			error_log( '[Elementor context] get_widget_types: total_widgets=' . count( $all_widget_types ) . ', atomic_count=' . count( $atomic_types ) . ', atomic_types=' . implode( ', ', $atomic_types ) );
-
-			return $atomic_types;
+			return $widget_types;
 		} catch ( \Throwable $e ) {
-			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-			error_log( '[Elementor context] get_widget_types exception: ' . $e->getMessage() );
 			return [ 'error' => $e->getMessage() ];
 		}
 	}
