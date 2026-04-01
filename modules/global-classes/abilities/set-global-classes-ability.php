@@ -66,6 +66,16 @@ class Set_Global_Classes_Ability extends Abstract_Ability {
 						'Returns an id per class. Use these ids in element settings.classes:',
 						'  {"$$type":"classes","value":["<id-1>","<id-2>"]}',
 						'custom_css in variants may be a plain CSS string — base64 encoding is automatic.',
+						'VARIANT META: always include state — use null for default/base state, NOT "normal":',
+						'  correct:   {"breakpoint":"desktop","state":null}',
+						'  incorrect: {"breakpoint":"desktop","state":"normal"}  ← rejected, produces broken selectors',
+						'Valid non-default state values: "hover", "focus", "active".',
+						'COMMON PROP TYPES (always use $$type, never $type):',
+						'  color:     {"$$type":"color","value":"#rrggbb"}',
+						'  size:      {"$$type":"size","value":{"size":16,"unit":"px"}}  — NOT a plain string like "16px"',
+						'  string:    {"$$type":"string","value":"Arial, sans-serif"}',
+						'  variable:  {"$$type":"global-color-variable","value":"<variable-id>"}',
+						'Check style_reference.prop_types from elementor/context for the full list.',
 					] ),
 					'readonly'    => false,
 					'destructive' => false,
@@ -117,7 +127,7 @@ class Set_Global_Classes_Ability extends Abstract_Ability {
 			];
 		}
 
-		$repository->put( $items, $order );
+		$repository->put( $items, $order, true );
 
 		return [
 			'results' => $results,
@@ -126,13 +136,24 @@ class Set_Global_Classes_Ability extends Abstract_Ability {
 	}
 
 	/**
-	 * Normalize variants: accept custom_css as a plain string or the structured
-	 * ['raw' => '<base64>'] format. Plain strings are base64-encoded automatically.
+	 * Normalize variants:
+	 * - custom_css: accept plain string or structured ['raw' => '<base64>'] format.
+	 * - meta.state: always present as null for default state; reject "normal" (invalid).
 	 */
 	private function normalize_variants( array $variants ): array {
 		foreach ( $variants as &$variant ) {
 			if ( isset( $variant['custom_css'] ) && is_string( $variant['custom_css'] ) ) {
 				$variant['custom_css'] = [ 'raw' => base64_encode( $variant['custom_css'] ) ]; // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
+			}
+
+			if ( isset( $variant['meta'] ) && is_array( $variant['meta'] ) ) {
+				if ( isset( $variant['meta']['state'] ) && 'normal' === $variant['meta']['state'] ) {
+					throw new \InvalidArgumentException( 'Variant meta.state "normal" is not valid — use null for the default/base state. "normal" is not a Style_States value and produces broken CSS selectors.' );
+				}
+
+				if ( ! array_key_exists( 'state', $variant['meta'] ) ) {
+					$variant['meta']['state'] = null;
+				}
 			}
 		}
 		unset( $variant );

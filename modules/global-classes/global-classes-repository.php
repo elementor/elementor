@@ -68,7 +68,13 @@ class Global_Classes_Repository {
 		return $this->cache;
 	}
 
-	public function put( array $items, array $order ) {
+	/**
+	 * @param bool $preserve_preview When true, skip deleting the preview context after writing
+	 *                               to the frontend. Pass true from MCP ability writes to avoid
+	 *                               destroying in-editor unpublished changes. The default (false)
+	 *                               preserves the existing editor publish-flow behavior.
+	 */
+	public function put( array $items, array $order, bool $preserve_preview = false ) {
 		$current_value = $this->all()->get();
 
 		$updated_value = [
@@ -84,7 +90,7 @@ class Global_Classes_Repository {
 		$meta_key = $this->get_meta_key();
 		$value = $this->get_kit()->update_json_meta( $meta_key, $updated_value );
 
-		$should_delete_preview = static::META_KEY_FRONTEND === $meta_key;
+		$should_delete_preview = static::META_KEY_FRONTEND === $meta_key && ! $preserve_preview;
 
 		if ( $should_delete_preview ) {
 			$this->get_kit()->delete_meta( static::META_KEY_PREVIEW );

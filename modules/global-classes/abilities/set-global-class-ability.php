@@ -60,6 +60,9 @@ class Set_Global_Class_Ability extends Abstract_Ability {
 						'The returned id is the class ID to use in element settings.classes:',
 						'  {"$$type":"classes","value":["<returned-id>"]}',
 						'After saving, the global class is published immediately (frontend context).',
+						'VARIANT META: always include state — use null for default/base state, NOT "normal":',
+						'  correct:   {"breakpoint":"desktop","state":null}',
+						'  incorrect: {"breakpoint":"desktop","state":"normal"}  ← rejected, produces broken selectors',
 					] ),
 					'readonly'    => false,
 					'destructive' => false,
@@ -102,7 +105,7 @@ class Set_Global_Class_Ability extends Abstract_Ability {
 			$action   = 'created';
 		}
 
-		$repository->put( $items, $order );
+		$repository->put( $items, $order, true );
 
 		return [
 			'id'     => $class_id,
@@ -112,13 +115,24 @@ class Set_Global_Class_Ability extends Abstract_Ability {
 	}
 
 	/**
-	 * Accept custom_css as a plain string or the structured ['raw' => '<base64>'] format.
-	 * Plain strings are base64-encoded automatically.
+	 * Normalize variants:
+	 * - custom_css: accept plain string or structured ['raw' => '<base64>'] format.
+	 * - meta.state: always present as null for default state; reject "normal" (invalid).
 	 */
 	private function normalize_variants( array $variants ): array {
 		foreach ( $variants as &$variant ) {
 			if ( isset( $variant['custom_css'] ) && is_string( $variant['custom_css'] ) ) {
 				$variant['custom_css'] = [ 'raw' => base64_encode( $variant['custom_css'] ) ]; // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
+			}
+
+			if ( isset( $variant['meta'] ) && is_array( $variant['meta'] ) ) {
+				if ( isset( $variant['meta']['state'] ) && 'normal' === $variant['meta']['state'] ) {
+					throw new \InvalidArgumentException( 'Variant meta.state "normal" is not valid — use null for the default/base state. "normal" is not a Style_States value and produces broken CSS selectors.' );
+				}
+
+				if ( ! array_key_exists( 'state', $variant['meta'] ) ) {
+					$variant['meta']['state'] = null;
+				}
 			}
 		}
 		unset( $variant );

@@ -71,6 +71,7 @@ class Set_Variables_Ability extends Abstract_Ability {
 						'Batch-creates or updates multiple global CSS variables in a single call.',
 						'Use this instead of calling elementor/set-variable in a loop — much faster.',
 						'Upsert by label (case-insensitive): existing variables are updated; otherwise created.',
+						'The "type" field accepts shorthand values: "color", "font", or "size". These are mapped to full storage keys automatically.',
 						'Returned ids are usable in style props:',
 						'  color: {"$$type":"global-color-variable","value":"<id>"}',
 						'  font:  {"$$type":"global-font-variable","value":"<id>"}',
@@ -106,6 +107,13 @@ class Set_Variables_Ability extends Abstract_Ability {
 
 			if ( isset( $label_to_var[ $label_lower ] ) ) {
 				$variable = $label_to_var[ $label_lower ];
+
+				// Fix legacy shorthand type stored by earlier ability versions.
+				$corrected_type = $this->map_type( $variable->type() );
+				if ( $corrected_type !== $variable->type() ) {
+					$variable->set_type( $corrected_type );
+				}
+
 				$variable->apply_changes( [ 'value' => $value ] );
 				$action = 'updated';
 				$id     = $variable->id();
@@ -122,7 +130,7 @@ class Set_Variables_Ability extends Abstract_Ability {
 				$data = [
 					'id'    => $id,
 					'label' => $label,
-					'type'  => $type,
+					'type'  => $this->map_type( $type ),
 					'value' => $value,
 					'order' => $collection->get_next_order(),
 				];
@@ -161,5 +169,20 @@ class Set_Variables_Ability extends Abstract_Ability {
 		return new Variables_Repository(
 			Plugin::$instance->kits_manager->get_active_kit()
 		);
+	}
+
+	/**
+	 * Map shorthand type inputs to the full storage keys expected by Prop_Type_Adapter.
+	 * Accepts "color", "font", or "size" and returns the full key.
+	 * Already-correct keys (e.g. "global-color-variable") are passed through unchanged.
+	 */
+	private function map_type( string $type ): string {
+		$type_map = [
+			'color' => 'global-color-variable',
+			'font'  => 'global-font-variable',
+			'size'  => 'global-size-variable',
+		];
+
+		return $type_map[ $type ] ?? $type;
 	}
 }

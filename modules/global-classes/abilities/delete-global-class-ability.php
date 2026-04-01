@@ -105,7 +105,7 @@ class Delete_Global_Class_Ability extends Abstract_Ability {
 		unset( $items[ $found_id ] );
 		$order = array_values( array_filter( $order, fn( $id ) => $id !== $found_id ) );
 
-		$repository->put( $items, $order );
+		$repository->put( $items, $order, true );
 
 		return [
 			'id'      => $found_id,
