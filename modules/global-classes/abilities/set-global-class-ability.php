@@ -29,7 +29,7 @@ class Set_Global_Class_Ability extends Abstract_Ability {
 					],
 					'variants' => [
 						'type'        => 'array',
-						'description' => 'Array of style variants. Each variant: { meta: { breakpoint, state }, props: { [css-prop]: { $$type, value } }, custom_css: null }.',
+						'description' => 'Array of style variants. Each variant: { meta: { breakpoint, state }, props: { [css-prop]: { $$type, value } }, custom_css: string|null }. custom_css may be a plain CSS string — base64 encoding is handled automatically.',
 					],
 				],
 				'required'             => [ 'label', 'variants' ],
@@ -71,7 +71,7 @@ class Set_Global_Class_Ability extends Abstract_Ability {
 
 	public function execute( array $input ): array {
 		$label    = $input['label'];
-		$variants = $input['variants'];
+		$variants = $this->normalize_variants( $input['variants'] );
 
 		$repository = new Global_Classes_Repository();
 		$classes    = $repository->all();
@@ -109,5 +109,20 @@ class Set_Global_Class_Ability extends Abstract_Ability {
 			'action' => $action,
 			'label'  => $label,
 		];
+	}
+
+	/**
+	 * Accept custom_css as a plain string or the structured ['raw' => '<base64>'] format.
+	 * Plain strings are base64-encoded automatically.
+	 */
+	private function normalize_variants( array $variants ): array {
+		foreach ( $variants as &$variant ) {
+			if ( isset( $variant['custom_css'] ) && is_string( $variant['custom_css'] ) ) {
+				$variant['custom_css'] = [ 'raw' => base64_encode( $variant['custom_css'] ) ]; // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
+			}
+		}
+		unset( $variant );
+
+		return $variants;
 	}
 }

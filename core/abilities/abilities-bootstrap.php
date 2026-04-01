@@ -2,6 +2,8 @@
 
 namespace Elementor\Core\Abilities;
 
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -14,6 +16,12 @@ class Abilities_Bootstrap {
 		( new Get_Post_Content_Ability() )->register_hooks();
 		( new Set_Post_Content_Ability() )->register_hooks();
 		( new Delete_Post_Content_Ability() )->register_hooks();
+		( new Append_Element_Ability() )->register_hooks();
+		( new Context_Ability(
+			Plugin::$instance->kits_manager,
+			Plugin::$instance->elements_manager,
+			Plugin::$instance->breakpoints
+		) )->register_hooks();
 	}
 
 	public function register_categories(): void {

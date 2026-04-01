@@ -7,6 +7,7 @@ use Elementor\Core\Experiments\Manager as ExperimentsManager;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\Variables\Abilities\Delete_Variable_Ability;
 use Elementor\Modules\Variables\Abilities\Set_Variable_Ability;
+use Elementor\Modules\Variables\Abilities\Set_Variables_Ability;
 use Elementor\Modules\Variables\Abilities\Variables_Ability;
 use Elementor\Modules\Variables\Classes\Variable_Types_Registry;
 use Elementor\Modules\Variables\ImportExportCustomization\Import_Export_Customization;
@@ -61,6 +62,7 @@ class Module extends BaseModule {
 		if ( function_exists( 'wp_register_ability' ) ) {
 			( new Variables_Ability( Plugin::$instance->kits_manager ) )->register_hooks();
 			( new Set_Variable_Ability() )->register_hooks();
+			( new Set_Variables_Ability() )->register_hooks();
 			( new Delete_Variable_Ability() )->register_hooks();
 		}
 

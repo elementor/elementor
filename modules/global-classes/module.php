@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\GlobalClasses\Abilities\Delete_Global_Class_Ability;
 use Elementor\Modules\GlobalClasses\Abilities\Global_Classes_Ability;
 use Elementor\Modules\GlobalClasses\Abilities\Set_Global_Class_Ability;
+use Elementor\Modules\GlobalClasses\Abilities\Set_Global_Classes_Ability;
 use Elementor\Modules\GlobalClasses\Database\Global_Classes_Database_Updater;
 use Elementor\Modules\GlobalClasses\ImportExport\Import_Export;
 use Elementor\Modules\GlobalClasses\ImportExportCustomization\Import_Export_Customization;
@@ -55,6 +56,7 @@ class Module extends BaseModule {
 			if ( function_exists( 'wp_register_ability' ) ) {
 				( new Global_Classes_Ability( Plugin::$instance->kits_manager ) )->register_hooks();
 				( new Set_Global_Class_Ability() )->register_hooks();
+				( new Set_Global_Classes_Ability() )->register_hooks();
 				( new Delete_Global_Class_Ability() )->register_hooks();
 			}
 
