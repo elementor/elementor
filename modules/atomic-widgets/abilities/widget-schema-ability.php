@@ -79,8 +79,24 @@ class Widget_Schema_Ability extends Abstract_Ability {
 		$widget_type = $input['widget_type'];
 
 		$element_types = $this->elements_manager->get_element_types();
-		$available     = [];
 
+		// Widgets_Manager is constructed before Modules_Manager in init_components(),
+		// so it can cache _element_types before the atomic module hooks in.
+		// Re-fire the action if no atomic types are found — their hook is now registered.
+		$has_atomic = false;
+		foreach ( $element_types as $obj ) {
+			if ( $obj instanceof Atomic_Widget_Base ) {
+				$has_atomic = true;
+				break;
+			}
+		}
+
+		if ( ! $has_atomic ) {
+			do_action( 'elementor/elements/elements_registered', $this->elements_manager );
+			$element_types = $this->elements_manager->get_element_types();
+		}
+
+		$available = [];
 		foreach ( $element_types as $type => $object ) {
 			if ( $object instanceof Atomic_Widget_Base ) {
 				$available[] = $type;

@@ -201,18 +201,38 @@ class Context_Ability extends Abstract_Ability {
 	}
 
 	private function get_widget_types(): array {
-		$widget_types = [];
 		try {
-			foreach ( $this->elements_manager->get_element_types() as $type => $object ) {
+			$element_types = $this->elements_manager->get_element_types();
+
+			// Widgets_Manager is constructed before Modules_Manager in init_components(),
+			// so it can trigger init_elements() (and cache _element_types) before the
+			// atomic module has registered its elementor/elements/elements_registered hook.
+			// Detect this by checking whether any atomic types are present; if not,
+			// re-fire the action — the atomic module's hook is now in place.
+			$has_atomic = false;
+			foreach ( $element_types as $obj ) {
+				if ( $obj instanceof Atomic_Widget_Base ) {
+					$has_atomic = true;
+					break;
+				}
+			}
+
+			if ( ! $has_atomic ) {
+				do_action( 'elementor/elements/elements_registered', $this->elements_manager );
+				$element_types = $this->elements_manager->get_element_types();
+			}
+
+			$widget_types = [];
+			foreach ( $element_types as $type => $object ) {
 				if ( $object instanceof Atomic_Widget_Base ) {
 					$widget_types[] = $type;
 				}
 			}
+
+			return $widget_types;
 		} catch ( \Throwable $e ) {
 			return [ 'error' => $e->getMessage() ];
 		}
-
-		return $widget_types;
 	}
 
 	private function get_style_reference(): array {
