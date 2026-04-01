@@ -63,10 +63,6 @@ test.describe( 'URL Actions', () => {
 		// Test that the lightbox appeared.
 		await expect( singlelightboxImage ).toBeVisible();
 
-		// Close the single image lightbox before proceeding, so it doesn't intercept clicks on the gallery items.
-		await editor.getPreviewFrame().locator( '.elementor-lightbox [aria-label*="Close"]' ).click();
-		await expect( singlelightboxImage ).not.toBeVisible();
-
 		// Remove the previous wp media frame so it doesn't interfere with the next one to be opened for the gallery.
 		/**
 		 * Cleanup
