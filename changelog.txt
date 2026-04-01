@@ -1,4 +1,5 @@
 == Changelog ==
+
 = 4.0.1 - 2026-04-01 =
 
 * Fix: Interactions on canvas do not work across various elements - Atomic Editor
