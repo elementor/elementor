@@ -98,6 +98,7 @@ jobs:
         run: npx playwright install --with-deps ${{ steps.browsers.outputs.list }}
 
       - name: Update snapshots
+        continue-on-error: true
         env:
           BROWSERS: ${{ steps.browsers.outputs.list }}
         run: npm run test:playwright -- --update-snapshots
@@ -106,7 +107,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add tests/playwright/**/*-snapshots/ tests/elements-regression/**/*-snapshots/ || true
+          find tests -type d -name '*-snapshots' -exec git add {} + || true
           if git diff --cached --quiet; then
             echo "No snapshot changes to commit"
           else
