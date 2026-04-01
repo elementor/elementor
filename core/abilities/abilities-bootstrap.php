@@ -17,6 +17,7 @@ class Abilities_Bootstrap {
 		( new Set_Post_Content_Ability() )->register_hooks();
 		( new Delete_Post_Content_Ability() )->register_hooks();
 		( new Append_Element_Ability() )->register_hooks();
+		( new Update_Element_Ability() )->register_hooks();
 		( new Context_Ability(
 			Plugin::$instance->kits_manager,
 			Plugin::$instance->elements_manager,
