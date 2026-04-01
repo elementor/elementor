@@ -78,11 +78,6 @@ class Widget_Schema_Ability extends Abstract_Ability {
 	public function execute( array $input ): array {
 		$widget_type = $input['widget_type'];
 
-		// In REST API context, elements may not have been registered yet.
-		if ( ! did_action( 'elementor/elements/elements_registered' ) ) {
-			do_action( 'elementor/elements/elements_registered', $this->elements_manager );
-		}
-
 		$element_types = $this->elements_manager->get_element_types();
 		$available     = [];
 

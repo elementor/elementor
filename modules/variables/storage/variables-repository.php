@@ -32,6 +32,7 @@ class Variables_Repository {
 		$record = Prop_Type_Adapter::to_storage( $collection );
 
 		if ( $this->kit->update_json_meta( Constants::VARIABLES_META_KEY, $record ) ) {
+			do_action( 'elementor/variables/save' );
 			return $collection->watermark();
 		}
 

@@ -21,6 +21,8 @@ class Context_Ability extends Abstract_Ability {
 	private Elements_Manager $elements_manager;
 	private Breakpoints_Manager $breakpoints_manager;
 
+	const CACHE_KEY = 'elementor_context_cache';
+
 	public function __construct(
 		Kits_Manager $kits_manager,
 		Elements_Manager $elements_manager,
@@ -29,6 +31,13 @@ class Context_Ability extends Abstract_Ability {
 		$this->kits_manager        = $kits_manager;
 		$this->elements_manager    = $elements_manager;
 		$this->breakpoints_manager = $breakpoints_manager;
+
+		add_action( 'elementor/global_classes/update', [ $this, 'clear_cache' ] );
+		add_action( 'elementor/variables/save', [ $this, 'clear_cache' ] );
+	}
+
+	public function clear_cache(): void {
+		delete_transient( self::CACHE_KEY );
 	}
 
 	protected function get_name(): string {
@@ -41,18 +50,45 @@ class Context_Ability extends Abstract_Ability {
 			'description' => 'Returns everything needed to start working with Elementor in one call: global classes, variables, registered widget types, style reference, and breakpoints.',
 			'category'    => 'elementor',
 			'input_schema' => [
-				'type'                 => 'object',
-				'properties'           => [],
+				'type'       => 'object',
+				'properties' => [
+					'since_watermark' => [
+						'type'        => 'object',
+						'description' => 'Pass watermarks from a previous response to skip unchanged sections.',
+						'properties'  => [
+							'variables' => [
+								'type'        => 'integer',
+								'description' => 'Variables watermark from a prior context response.',
+							],
+						],
+						'additionalProperties' => false,
+					],
+				],
 				'additionalProperties' => false,
 			],
 			'output_schema' => [
 				'type'       => 'object',
 				'properties' => [
-					'global_classes'  => [ 'type' => 'object', 'description' => 'All global classes (frontend + preview + count).' ],
-					'variables'       => [ 'type' => 'object', 'description' => 'All global variables (data + count + supported types).' ],
-					'widget_types'    => [ 'type' => 'array', 'description' => 'Registered atomic widget type identifiers (e-heading, e-flexbox, etc.).' ],
-					'style_reference' => [ 'type' => 'object', 'description' => 'Critical rules, prop types, and style schema for v4 styles.' ],
-					'breakpoints'     => [ 'type' => 'object', 'description' => 'Active breakpoint configuration.' ],
+					'global_classes'  => [
+						'type'        => 'object',
+						'description' => 'All global classes (frontend + preview + count).',
+					],
+					'variables'       => [
+						'type'        => 'object',
+						'description' => 'All global variables (data + count + supported types + watermark). Returns { changed: false, watermark: N } if since_watermark.variables matches.',
+					],
+					'widget_types'    => [
+						'type'        => 'array',
+						'description' => 'Registered atomic widget type identifiers (e-heading, e-flexbox, etc.).',
+					],
+					'style_reference' => [
+						'type'        => 'object',
+						'description' => 'Critical rules, prop types, and style schema for v4 styles.',
+					],
+					'breakpoints'     => [
+						'type'        => 'object',
+						'description' => 'Active breakpoint configuration.',
+					],
 				],
 			],
 			'meta' => [
@@ -65,8 +101,10 @@ class Context_Ability extends Abstract_Ability {
 						'  elementor/global-classes + elementor/variables + elementor/atomic-widgets + elementor/v4-styles',
 						'global_classes.frontend.items: keyed by class ID — use IDs in settings.classes.',
 						'variables.data.data: keyed by variable ID — use IDs in $$type variable props.',
+						'variables.watermark: integer — pass as since_watermark.variables on the NEXT call to skip the variables payload if nothing changed.',
 						'widget_types: use with elementor/widget-schema to inspect a specific widget.',
 						'style_reference.critical_rules: read before writing any style props.',
+						'since_watermark.variables: if provided and matches current watermark, variables returns { changed: false, watermark: N } instead of full data.',
 					] ),
 					'readonly'    => true,
 					'destructive' => false,
@@ -76,14 +114,43 @@ class Context_Ability extends Abstract_Ability {
 		];
 	}
 
-	public function execute( array $_input ): array {
-		return [
+	public function execute( array $input ): array {
+		$since_watermark = $input['since_watermark'] ?? null;
+
+		$cached = get_transient( self::CACHE_KEY );
+
+		if ( false !== $cached ) {
+			return $this->apply_since_watermark( $cached, $since_watermark );
+		}
+
+		$result = [
 			'global_classes'  => $this->get_global_classes(),
 			'variables'       => $this->get_variables(),
 			'widget_types'    => $this->get_widget_types(),
 			'style_reference' => $this->get_style_reference(),
 			'breakpoints'     => $this->get_breakpoints(),
 		];
+
+		set_transient( self::CACHE_KEY, $result, HOUR_IN_SECONDS );
+
+		return $this->apply_since_watermark( $result, $since_watermark );
+	}
+
+	private function apply_since_watermark( array $result, ?array $since_watermark ): array {
+		if ( empty( $since_watermark ) ) {
+			return $result;
+		}
+
+		$vars_watermark = $since_watermark['variables'] ?? null;
+
+		if ( null !== $vars_watermark && isset( $result['variables']['watermark'] ) && (int) $vars_watermark === (int) $result['variables']['watermark'] ) {
+			$result['variables'] = [
+				'watermark' => $result['variables']['watermark'],
+				'changed'   => false,
+			];
+		}
+
+		return $result;
 	}
 
 	private function get_global_classes(): array {
@@ -92,10 +159,16 @@ class Context_Ability extends Abstract_Ability {
 		$preview  = $kit->get_json_meta( Global_Classes_Repository::META_KEY_PREVIEW );
 
 		if ( ! is_array( $frontend ) ) {
-			$frontend = [ 'items' => [], 'order' => [] ];
+			$frontend = [
+				'items' => [],
+				'order' => [],
+			];
 		}
 		if ( ! is_array( $preview ) ) {
-			$preview = [ 'items' => [], 'order' => [] ];
+			$preview = [
+				'items' => [],
+				'order' => [],
+			];
 		}
 
 		return [
@@ -121,14 +194,11 @@ class Context_Ability extends Abstract_Ability {
 			'count'           => count( $variables['data'] ?? [] ),
 			'supported_types' => [ 'color', 'font', 'size' ],
 			'max_per_site'    => Constants::TOTAL_VARIABLES_COUNT,
+			'watermark'       => (int) ( $variables['watermark'] ?? 0 ),
 		];
 	}
 
 	private function get_widget_types(): array {
-		if ( ! did_action( 'elementor/elements/elements_registered' ) ) {
-			do_action( 'elementor/elements/elements_registered', $this->elements_manager );
-		}
-
 		$widget_types = [];
 		try {
 			foreach ( $this->elements_manager->get_element_types() as $type => $object ) {

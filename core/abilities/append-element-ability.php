@@ -10,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Append_Element_Ability extends Abstract_Ability {
 
+	use Element_Tree_Helpers;
+
 	protected function get_name(): string {
 		return 'elementor/append-element';
 	}
@@ -42,7 +44,10 @@ class Append_Element_Ability extends Abstract_Ability {
 				'type'       => 'object',
 				'properties' => [
 					'post_id'      => [ 'type' => 'integer' ],
-					'appended_id'  => [ 'type' => 'string', 'description' => 'id of the appended element.' ],
+					'appended_id'  => [
+						'type'        => 'string',
+						'description' => 'id of the appended element.',
+					],
 					'parent_id'    => [ 'type' => [ 'string', 'null' ] ],
 					'success'      => [ 'type' => 'boolean' ],
 				],
@@ -78,7 +83,8 @@ class Append_Element_Ability extends Abstract_Ability {
 			throw new \InvalidArgumentException( "Post $post_id not found or not an Elementor document." );
 		}
 
-		$elements = $document->get_elements_data() ?: [];
+		$raw_elements = $document->get_elements_data();
+		$elements     = $raw_elements ? $raw_elements : [];
 
 		if ( null === $parent_id ) {
 			$elements[] = $element;
@@ -106,31 +112,4 @@ class Append_Element_Ability extends Abstract_Ability {
 		];
 	}
 
-	/**
-	 * Recursively walk $elements looking for an element whose 'id' matches
-	 * $parent_id, then append $new_element to its 'elements' children.
-	 *
-	 * @param array  $elements    The elements array (modified in-place via reference).
-	 * @param string $parent_id   Target parent ID.
-	 * @param array  $new_element Element to append.
-	 * @return bool True if the parent was found and the element was appended.
-	 */
-	private function append_to_parent( array &$elements, string $parent_id, array $new_element ): bool {
-		foreach ( $elements as &$el ) {
-			if ( isset( $el['id'] ) && $el['id'] === $parent_id ) {
-				$el['elements']   = $el['elements'] ?? [];
-				$el['elements'][] = $new_element;
-				return true;
-			}
-
-			if ( ! empty( $el['elements'] ) && is_array( $el['elements'] ) ) {
-				if ( $this->append_to_parent( $el['elements'], $parent_id, $new_element ) ) {
-					return true;
-				}
-			}
-		}
-		unset( $el );
-
-		return false;
-	}
 }

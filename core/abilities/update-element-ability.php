@@ -10,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Update_Element_Ability extends Abstract_Ability {
 
+	use Element_Tree_Helpers;
+
 	protected function get_name(): string {
 		return 'elementor/update-element';
 	}
@@ -88,7 +90,8 @@ class Update_Element_Ability extends Abstract_Ability {
 			throw new \InvalidArgumentException( "Post $post_id not found or not an Elementor document." );
 		}
 
-		$elements = $document->get_elements_data() ?: [];
+		$raw_elements = $document->get_elements_data();
+		$elements     = $raw_elements ? $raw_elements : [];
 		$found    = $this->patch_element( $elements, $element_id, $settings, $styles );
 
 		if ( ! $found ) {
@@ -108,37 +111,4 @@ class Update_Element_Ability extends Abstract_Ability {
 		];
 	}
 
-	/**
-	 * Recursively walk $elements to find the target element and apply the patch.
-	 *
-	 * @param array       $elements   Elements array (modified in-place via reference).
-	 * @param string      $element_id Target element ID.
-	 * @param array|null  $settings   Settings keys to merge (shallow). Null = no change.
-	 * @param array|null  $styles     Style entries to merge by style ID. Null = no change.
-	 * @return bool True if the element was found and patched.
-	 */
-	private function patch_element( array &$elements, string $element_id, ?array $settings, ?array $styles ): bool {
-		foreach ( $elements as &$el ) {
-			if ( isset( $el['id'] ) && $el['id'] === $element_id ) {
-				if ( null !== $settings ) {
-					$el['settings'] = array_merge( $el['settings'] ?? [], $settings );
-				}
-
-				if ( null !== $styles ) {
-					$el['styles'] = array_merge( $el['styles'] ?? [], $styles );
-				}
-
-				return true;
-			}
-
-			if ( ! empty( $el['elements'] ) && is_array( $el['elements'] ) ) {
-				if ( $this->patch_element( $el['elements'], $element_id, $settings, $styles ) ) {
-					return true;
-				}
-			}
-		}
-		unset( $el );
-
-		return false;
-	}
 }
