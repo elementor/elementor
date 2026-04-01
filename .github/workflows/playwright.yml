@@ -279,7 +279,7 @@ jobs:
         id: browsers
         run: |
           BROWSERS=""
-          if [[ "${{ inputs.browser_chromium }}" != "false" ]]; then
+          if [[ "${{ inputs.browser_chromium }}" == "true" ]]; then
             BROWSERS="chromium"
           fi
           if [[ "${{ inputs.browser_firefox }}" == "true" ]]; then
