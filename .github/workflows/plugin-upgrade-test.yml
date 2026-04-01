@@ -1,89 +1,115 @@
-name: Upgrade Elementor test
+name: Update Playwright Snapshots
 
 on:
-  #push:
-    # branches:
-    #   - 'main'
-    #   - '[0-9].[0-9][0-9]'
-    # paths-ignore:
-    #   - '**.md'
-    #   - '**.txt'
-    #   - '.github/config.json'
-    #   - 'bin/**'
-    #   - '.gitignore'
-    #   - 'docs/**'
   workflow_dispatch:
     inputs:
-      version:
-        description: 'Elementor version from WordPress svn'
+      browser_chromium:
+        type: boolean
+        description: 'Update Chromium snapshots'
         required: false
-        default: ''
+        default: true
+      browser_firefox:
+        type: boolean
+        description: 'Update Firefox snapshots'
+        required: false
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
 
 jobs:
+  get-php-version:
+    name: Calculate PHP Version
+    uses: ./.github/workflows/calculate_php_version.yml
+
   build-plugin:
+    name: Build plugin
     uses: ./.github/workflows/build.yml
-  run-upgrade-test:
-    name: Playwright plugin upgrade test
+
+  update-snapshots:
+    name: Update snapshots on PHP (${{ needs.get-php-version.outputs.php_version }})
     runs-on: ubuntu-22.04
-    needs: [build-plugin]
-    if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
+    needs: [build-plugin, get-php-version]
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set PHP_VERSION environment variable
+        run: echo "PHP_VERSION=${{ needs.get-php-version.outputs.php_version }}" >> $GITHUB_ENV
+
+      - name: Cache Docker images
+        uses: ScribeMD/docker-cache@0.5.0
+        with:
+          key: docker-${{ runner.os }}-${{ hashFiles('tests/playwright/.playwright-wp-lite-env.json') }}
+
       - name: Install Node.js 20.x
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
           cache: 'npm'
+
       - name: Install dependencies
-        run: |
-          npm run install:ci
+        run: npm run install:ci
+
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
           path: ./build
+
       - name: Download hello-elementor theme
         run: |
           curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
           unzip hello-elementor
-      - name: Install WordPress environment
-        run: |
-          npm run setup-templates
-          npx wp-lite-env start --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --port=8888
-      - name: Setup test data
-        run: |
-          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp plugin install elementor" --port=8888
-          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="bash elementor-config/setup.sh" --port=8888
-      - name: WordPress debug information
-        run: |
-          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp core version" --port=8888
-          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp --info" --port=8888
-      - name: Install playwright/test
-        run: |
-          npx playwright install chromium
-      - name: Upgrade site
-        run: |
-          zip -r ./templates/playwright/elementor.zip ./build
-          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp plugin install ./elementor-playwright-templates/elementor.zip --force" --port=8888
-          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp plugin list" --port=8888
-      - name: Run Playwright tests
-        run: npm run test:playwright:elements-regression -- --grep="Test heading template"
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-test-results-elements-regression
-          path: test-results/
-          retention-days: 3
 
-  test-result:
-    needs: run-upgrade-test
-    if: ${{ always() }} # Will be run even if 'Playwright' matrix will be skipped
-    runs-on: ubuntu-22.04
-    name: Playwright - Test Results
-    steps:
-      - name: Test status
-        run: echo "Test status is - ${{ needs.run-upgrade-test.result }}"
-      - name: Check Playwright matrix status
-        if: ${{ needs.run-upgrade-test.result != 'success' && needs.run-upgrade-test.result != 'skipped' }}
-        run: exit 1
+      - name: Update PHP version in config
+        run: |
+          jq --arg php_version "${{ env.PHP_VERSION }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
+
+      - name: Install WordPress environment
+        run: npm run start-local-server
+
+      - name: Setup test data
+        run: npm run test:setup:playwright
+
+      - name: Resolve browsers to install
+        id: browsers
+        run: |
+          BROWSERS=""
+          if [[ "${{ inputs.browser_chromium }}" == "true" ]]; then
+            BROWSERS="chromium"
+          fi
+          if [[ "${{ inputs.browser_firefox }}" == "true" ]]; then
+            BROWSERS="$BROWSERS firefox"
+          fi
+          BROWSERS=$(echo "$BROWSERS" | xargs)
+          if [[ -z "$BROWSERS" ]]; then
+            BROWSERS="chromium"
+          fi
+          echo "list=$BROWSERS" >> $GITHUB_OUTPUT
+          echo "Updating snapshots for browsers: $BROWSERS"
+
+      - name: Install playwright/test
+        run: npx playwright install --with-deps ${{ steps.browsers.outputs.list }}
+
+      - name: Update snapshots
+        env:
+          BROWSERS: ${{ steps.browsers.outputs.list }}
+        run: npm run test:playwright -- --update-snapshots
+
+      - name: Commit updated snapshots
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add tests/playwright/**/*-snapshots/ tests/elements-regression/**/*-snapshots/ || true
+          if git diff --cached --quiet; then
+            echo "No snapshot changes to commit"
+          else
+            git commit -m "test: update playwright snapshots [${{ steps.browsers.outputs.list }}]"
+            git push origin HEAD:${{ github.ref_name }}
+          fi
